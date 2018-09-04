@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Pablo Meseguer
---## FECHA_CREACION=20180619
+--## FECHA_CREACION=20180904
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=2.0.19
 --## INCIDENCIA_LINK=HREOS-4197
@@ -15,6 +15,7 @@
 --##        0.1  Versión inicial
 --##        0.2  Control de errores en HLP_HISTORICO_LANZA_PERIODICO
 --##        1.01 Se elimina la restricción para los gastos con iva. Ahora pueden actualizar la fecha de contabilización.
+--##		1.02 Se añaden modificaciones segun el item REMVIP-1698.
 --##########################################
 --*/
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
@@ -52,12 +53,17 @@ create or replace PROCEDURE #ESQUEMA#.SP_EXT_PR_ACT_GASTOS (
     V_EGA_CODIGO                    VARCHAR2(10 CHAR) := '';
     V_NUM_FACTUR_UVEM               VARCHAR2(20 CHAR) := '';
     V_GDE_ID                        NUMBER(16) := -1;
+    V_GGE_ID                        NUMBER(16) := -1;
     V_EJE_ID                        NUMBER(16) := -1;
     V_FEC_CONTABILIZACION           VARCHAR2(10 CHAR) := '';
     V_FECHA_PAGO                    VARCHAR2(10 CHAR) := '';
     V_CUENTA_CONTABLE               VARCHAR2(50 CHAR) := '';
     V_PTDA_PRESUPESTARIA            VARCHAR2(50 CHAR) := '';
     V_GPV_NUM_GASTO_HAYA            VARCHAR2(16 CHAR);
+    DD_DEG_ID 						NUMBER(16) := -1;
+    DD_DEG_ID_CONTABILIZA 			NUMBER(16) := -1;
+    DD_EAP_ID_ANTERIOR				NUMBER(16) := -1;
+    DD_EAP_ID_NUEVO					NUMBER(16) := -1;
 
     --Info
     V_OP_1_DESC                     VARCHAR2(400 CHAR) := '[OPERATORIA] Para todos los registros con FECHA DE CONTABILIZACION relacionado con un gasto cuyo estado no sea "Rechazado administración","Contabilizado","Pagado" "Rechazado propietario" o "Anulado".';
@@ -402,6 +408,58 @@ BEGIN
                 COD_RETORNO := 1;
                 V_ERROR_DESC := '[ERROR] No se ha podido informar el campo GIC_FECHA_CONTABILIZACION para el NÚMERO DE GASTO '||V_GPV_NUM_GASTO_HAYA||'. Paramos la ejecución.';
             END IF;
+            
+            ------------------------------------------------------------
+            -----MODIFICACIONES NUEVAS -- REMVIP-1698
+            ------------------------------------------------------------       
+            EXECUTE IMMEDIATE 'SELECT DD_DEG_ID_CONTABILIZA FROM '||V_ESQUEMA||'.GIC_GASTOS_INFO_CONTABILIDAD WHERE GIC_ID = '||V_GIC_ID INTO DD_DEG_ID_CONTABILIZA;
+            EXECUTE IMMEDIATE 'SELECT DD_DEG_ID FROM '||V_ESQUEMA||'.DD_DEG_DESTINATARIOS_GASTO WHERE DD_DEG_CODIGO = ''03'' ' INTO DD_DEG_ID;
+            V_MSQL := '
+            UPDATE '||V_ESQUEMA||'.GIC_GASTOS_INFO_CONTABILIDAD
+            SET DD_DEG_ID_CONTABILIZA = '||DD_DEG_ID||',
+            USUARIOMODIFICAR = ''SP_EXT_PR_ACT_GASTOS'',
+            FECHAMODIFICAR = SYSDATE
+            WHERE GIC_ID = '||V_GIC_ID||'
+            ';
+            EXECUTE IMMEDIATE V_MSQL; 
+            --Comprobamos si se ha actualizado o no
+            IF SQL%ROWCOUNT > 0 THEN
+                DBMS_OUTPUT.PUT_LINE('[INFO] Se ha informado el campo DD_DEG_ID_CONTABILIZA para el NÚMERO DE GASTO '||V_GPV_NUM_GASTO_HAYA||'. Continuamos la ejecución.');
+                --Logado en HLD_HIST_LANZA_PER_DETA
+                PARAM1 := 'GIC_GASTOS_INFO_CONTABILIDAD';
+                PARAM2 := 'GIC_ID';
+                PARAM3 := 'DD_DEG_ID_CONTABILIZA';
+                HLD_HIST_LANZA_PER_DETA (TO_CHAR(V_GPV_NUM_GASTO_HAYA), PARAM1, PARAM2, V_GIC_ID, PARAM3, DD_DEG_ID_CONTABILIZA, DD_DEG_ID);
+            ELSE
+                COD_RETORNO := 1;
+                V_ERROR_DESC := '[ERROR] No se ha podido informar el campo DD_DEG_ID_CONTABILIZA para el NÚMERO DE GASTO '||V_GPV_NUM_GASTO_HAYA||'. Paramos la ejecución.';
+            END IF;
+    
+			EXECUTE IMMEDIATE 'SELECT GGE_ID FROM '||V_ESQUEMA||'.GGE_GASTOS_GESTION WHERE GPV_ID = '||V_GPV_ID||' AND ROWNUM = 1' INTO V_GGE_ID;
+			EXECUTE IMMEDIATE 'SELECT DD_EAP_ID FROM '||V_ESQUEMA||'.GGE_GASTOS_GESTION WHERE GPV_ID = '||V_GPV_ID||' AND ROWNUM = 1' INTO DD_EAP_ID_ANTERIOR;
+            EXECUTE IMMEDIATE 'SELECT DD_EAP_ID FROM '||V_ESQUEMA||'.DD_EAP_ESTADOS_AUTORIZ_PROP WHERE DD_EAP_CODIGO = ''07'' ' INTO DD_EAP_ID_NUEVO;
+            V_MSQL := '
+            UPDATE '||V_ESQUEMA||'.GGE_GASTOS_GESTION
+            SET DD_EAP_ID = '||DD_EAP_ID_NUEVO||',
+			GGE_FECHA_EAP = SYSDATE,
+			USUARIOMODIFICAR = ''SP_EXT_PR_ACT_GASTOS'',
+			FECHAMODIFICAR = SYSDATE
+            WHERE GPV_ID = '||V_GPV_ID||'
+            ';
+            EXECUTE IMMEDIATE V_MSQL;
+            --Comprobamos si se ha actualizado o no
+            IF SQL%ROWCOUNT > 0 THEN
+                DBMS_OUTPUT.PUT_LINE('[INFO] Se ha informado el campo DD_EAP_ID para el NÚMERO DE GASTO '||V_GPV_NUM_GASTO_HAYA||'. Continuamos la ejecución.');
+                --Logado en HLD_HIST_LANZA_PER_DETA
+                PARAM1 := 'GGE_GASTOS_GESTION';
+                PARAM2 := 'GGE_ID';
+                PARAM3 := 'DD_EAP_ID';
+                HLD_HIST_LANZA_PER_DETA (TO_CHAR(V_GPV_NUM_GASTO_HAYA), PARAM1, PARAM2, V_GGE_ID, PARAM3, DD_EAP_ID_ANTERIOR, DD_EAP_ID_NUEVO);
+            ELSE
+                COD_RETORNO := 1;
+                V_ERROR_DESC := '[ERROR] No se ha podido informar el campo DD_EAP_ID para el NÚMERO DE GASTO '||V_GPV_NUM_GASTO_HAYA||'. Paramos la ejecución.';
+            END IF;
+                 
         END IF;
         --------------
         -- PASO 4/6 -- OPCIONAL
@@ -488,6 +546,7 @@ BEGIN
         IF GIC_PTDA_PRESUPUESTARIA IS NOT NULL AND COD_RETORNO = 0 THEN
             --PASO 6/6 Actualizar la partida presupuestaria (GIC_GASTOS_INFO_CONTABILIDAD.GIC_PTDA_PRESUPUESTARIA) con el dato de Partida Presupuestaria si llega informado.
             --Recuperamos el NUEVO valor
+            /*
             V_VALOR_NUEVO := GIC_PTDA_PRESUPUESTARIA;
             --Realizamos la actuación
             V_MSQL := '
@@ -514,6 +573,8 @@ BEGIN
                 COD_RETORNO := 1;
                 V_ERROR_DESC := '[ERROR] No se ha podido actualizar la partida presupuestaria a '||V_VALOR_NUEVO||' para el NÚMERO DE GASTO '||V_GPV_NUM_GASTO_HAYA||'. Paramos la ejecución.';
             END IF;
+            */---> COMENTAMOS ESTE CÓDIGO POR LA MIGRACION DE LIBERBANK - 04-09-2018
+            V_PASOS := V_PASOS+1;
         END IF;
 
         ----------------------
@@ -679,6 +740,58 @@ BEGIN
                 COD_RETORNO := 1;
                 V_ERROR_DESC := '[ERROR] No se ha podido informar el campo GIC_FECHA_CONTABILIZACION para el NÚMERO DE GASTO '||V_GPV_NUM_GASTO_HAYA||'. Paramos la ejecución.';
             END IF;
+            
+            ------------------------------------------------------------
+            -----MODIFICACIONES NUEVAS -- REMVIP-1698
+            ------------------------------------------------------------       
+            EXECUTE IMMEDIATE 'SELECT DD_DEG_ID_CONTABILIZA FROM '||V_ESQUEMA||'.GIC_GASTOS_INFO_CONTABILIDAD WHERE GIC_ID = '||V_GIC_ID INTO DD_DEG_ID_CONTABILIZA;
+            EXECUTE IMMEDIATE 'SELECT DD_DEG_ID FROM '||V_ESQUEMA||'.DD_DEG_DESTINATARIOS_GASTO WHERE DD_DEG_CODIGO = ''03'' ' INTO DD_DEG_ID;
+            V_MSQL := '
+            UPDATE '||V_ESQUEMA||'.GIC_GASTOS_INFO_CONTABILIDAD
+            SET DD_DEG_ID_CONTABILIZA = '||DD_DEG_ID||',
+            USUARIOMODIFICAR = ''SP_EXT_PR_ACT_GASTOS'',
+            FECHAMODIFICAR = SYSDATE
+            WHERE GIC_ID = '||V_GIC_ID||'
+            ';
+            EXECUTE IMMEDIATE V_MSQL; 
+            --Comprobamos si se ha actualizado o no
+            IF SQL%ROWCOUNT > 0 THEN
+                DBMS_OUTPUT.PUT_LINE('[INFO] Se ha informado el campo DD_DEG_ID_CONTABILIZA para el NÚMERO DE GASTO '||V_GPV_NUM_GASTO_HAYA||'. Continuamos la ejecución.');
+                --Logado en HLD_HIST_LANZA_PER_DETA
+                PARAM1 := 'GIC_GASTOS_INFO_CONTABILIDAD';
+                PARAM2 := 'GIC_ID';
+                PARAM3 := 'DD_DEG_ID_CONTABILIZA';
+                HLD_HIST_LANZA_PER_DETA (TO_CHAR(V_GPV_NUM_GASTO_HAYA), PARAM1, PARAM2, V_GIC_ID, PARAM3, DD_DEG_ID_CONTABILIZA, DD_DEG_ID);
+            ELSE
+                COD_RETORNO := 1;
+                V_ERROR_DESC := '[ERROR] No se ha podido informar el campo DD_DEG_ID_CONTABILIZA para el NÚMERO DE GASTO '||V_GPV_NUM_GASTO_HAYA||'. Paramos la ejecución.';
+            END IF;
+    
+			EXECUTE IMMEDIATE 'SELECT GGE_ID FROM '||V_ESQUEMA||'.GGE_GASTOS_GESTION WHERE GPV_ID = '||V_GPV_ID||' AND ROWNUM = 1' INTO V_GGE_ID;
+			EXECUTE IMMEDIATE 'SELECT DD_EAP_ID FROM '||V_ESQUEMA||'.GGE_GASTOS_GESTION WHERE GPV_ID = '||V_GPV_ID||' AND ROWNUM = 1' INTO DD_EAP_ID_ANTERIOR;
+            EXECUTE IMMEDIATE 'SELECT DD_EAP_ID FROM '||V_ESQUEMA||'.DD_EAP_ESTADOS_AUTORIZ_PROP WHERE DD_EAP_CODIGO = ''07'' ' INTO DD_EAP_ID_NUEVO;
+            V_MSQL := '
+            UPDATE '||V_ESQUEMA||'.GGE_GASTOS_GESTION
+            SET DD_EAP_ID = '||DD_EAP_ID_NUEVO||',
+			GGE_FECHA_EAP = SYSDATE,
+			USUARIOMODIFICAR = ''SP_EXT_PR_ACT_GASTOS'',
+			FECHAMODIFICAR = SYSDATE
+            WHERE GPV_ID = '||V_GPV_ID||'
+            ';
+            EXECUTE IMMEDIATE V_MSQL;
+            --Comprobamos si se ha actualizado o no
+            IF SQL%ROWCOUNT > 0 THEN
+                DBMS_OUTPUT.PUT_LINE('[INFO] Se ha informado el campo DD_EAP_ID para el NÚMERO DE GASTO '||V_GPV_NUM_GASTO_HAYA||'. Continuamos la ejecución.');
+                --Logado en HLD_HIST_LANZA_PER_DETA
+                PARAM1 := 'GGE_GASTOS_GESTION';
+                PARAM2 := 'GGE_ID';
+                PARAM3 := 'DD_EAP_ID';
+                HLD_HIST_LANZA_PER_DETA (TO_CHAR(V_GPV_NUM_GASTO_HAYA), PARAM1, PARAM2, V_GGE_ID, PARAM3, DD_EAP_ID_ANTERIOR, DD_EAP_ID_NUEVO);
+            ELSE
+                COD_RETORNO := 1;
+                V_ERROR_DESC := '[ERROR] No se ha podido informar el campo DD_EAP_ID para el NÚMERO DE GASTO '||V_GPV_NUM_GASTO_HAYA||'. Paramos la ejecución.';
+            END IF;
+            
         END IF;
         --------------
         -- PASO 4/7 -- OPCIONAL
@@ -799,7 +912,7 @@ BEGIN
         IF GIC_PTDA_PRESUPUESTARIA IS NOT NULL AND COD_RETORNO = 0 THEN
             --PASO 6/6 Actualizar la partida presupuestaria (GIC_GASTOS_INFO_CONTABILIDAD.GIC_PTDA_PRESUPUESTARIA) con el dato de Partida Presupuestaria si llega informado.
             --Recuperamos el NUEVO valor
-            V_VALOR_NUEVO := GIC_PTDA_PRESUPUESTARIA;
+            /*V_VALOR_NUEVO := GIC_PTDA_PRESUPUESTARIA;
             --Realizamos la actuación
             V_MSQL := '
             UPDATE '||V_ESQUEMA||'.GIC_GASTOS_INFO_CONTABILIDAD
@@ -825,6 +938,8 @@ BEGIN
                 COD_RETORNO := 1;
                 V_ERROR_DESC := '[ERROR] No se ha podido actualizar la partida presupuestaria a '||V_VALOR_NUEVO||' para el NÚMERO DE GASTO '||V_GPV_NUM_GASTO_HAYA||'. Paramos la ejecución.';
             END IF;
+            */---> COMENTAMOS ESTE CÓDIGO POR LA MIGRACION DE LIBERBANK - 04-09-2018
+            V_PASOS := V_PASOS+1;
         END IF;
 
         ----------------------

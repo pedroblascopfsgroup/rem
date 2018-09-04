@@ -47,7 +47,7 @@ import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.VBusquedaGastoActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaGastoTrabajos;
-import es.pfsgroup.plugin.rem.model.VGastosProveedor;
+import es.pfsgroup.plugin.rem.model.VGastosProveedorExcel;
 
 
 @Controller
@@ -782,8 +782,8 @@ public class GastosProveedorController extends ParadiseJsonController {
 		dtoGastosFilter.setStart(excelReportGeneratorApi.getStart());
 		dtoGastosFilter.setLimit(excelReportGeneratorApi.getLimit());
 
-		DtoPage page = gastoProveedorApi.getListGastos(dtoGastosFilter);
-		List<VGastosProveedor> listaGastosProveedor = (List<VGastosProveedor>) page.getResults();
+		DtoPage page = gastoProveedorApi.getListGastosExcel(dtoGastosFilter);
+		List<VGastosProveedorExcel> listaGastosProveedor = (List<VGastosProveedorExcel>) page.getResults();
 
 		ExcelReport report = new GestionGastosExcelReport(listaGastosProveedor);
 

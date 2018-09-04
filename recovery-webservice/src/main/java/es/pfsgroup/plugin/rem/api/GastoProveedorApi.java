@@ -307,5 +307,8 @@ public interface GastoProveedorApi {
 		 * 
 		 * */
 		public float regulaPorcentajeUltimoGasto(List<GastoProveedorActivo> gastosActivosList, Float ultimoPorcentaje);
+
+
+		DtoPage getListGastosExcel(DtoGastosFilter dtoGastosFilter);
 }
 

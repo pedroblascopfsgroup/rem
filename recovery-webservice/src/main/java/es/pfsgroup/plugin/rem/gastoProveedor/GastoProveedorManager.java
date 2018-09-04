@@ -236,10 +236,36 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			Boolean isGestoria = genericAdapter.tienePerfil(COD_PEF_GESTORIA_ADMINISTRACION, usuarioLogado) 
 					|| genericAdapter.tienePerfil(COD_PEF_GESTORIA_PLUSVALIA, usuarioLogado)
 					|| genericAdapter.tienePerfil(COD_PEF_USUARIO_CERTIFICADOR, usuarioLogado);
-			return gastoDao.getListGastosFilteredByProveedorContactoAndGestoria(dtoGastosFilter, usuarioLogado.getId(), isGestoria);
+			return gastoDao.getListGastosFilteredByProveedorContactoAndGestoria(dtoGastosFilter, usuarioLogado.getId(), isGestoria, false);
 		}
 
 		return gastoDao.getListGastos(dtoGastosFilter);
+	}
+	
+	@Override
+	public DtoPage getListGastosExcel(DtoGastosFilter dtoGastosFilter) {
+
+		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+		
+		// HREOS-2179 - Búsqueda carterizada
+		UsuarioCartera usuarioCartera = genericDao.get(UsuarioCartera.class,
+				genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioLogado.getId()));
+		if (!Checks.esNulo(usuarioCartera)) {
+			dtoGastosFilter.setEntidadPropietariaCodigo(usuarioCartera.getCartera().getCodigo());
+		}
+		
+		
+		// Comprobar si el usuario es externo y de tipo proveedor y, en tal caso, seteamos proveedores contacto del
+		// usuario logado para filtrar los gastos en los que esté como emisor
+		// Ademas si es un tipo de gestoria concreto, se filtrará los gastos que le pertenezcan como gestoria.
+		if (gestorActivoDao.isUsuarioGestorExternoProveedor(usuarioLogado.getId())) {
+			Boolean isGestoria = genericAdapter.tienePerfil(COD_PEF_GESTORIA_ADMINISTRACION, usuarioLogado) 
+					|| genericAdapter.tienePerfil(COD_PEF_GESTORIA_PLUSVALIA, usuarioLogado)
+					|| genericAdapter.tienePerfil(COD_PEF_USUARIO_CERTIFICADOR, usuarioLogado);
+			return gastoDao.getListGastosFilteredByProveedorContactoAndGestoria(dtoGastosFilter, usuarioLogado.getId(), isGestoria, true);
+		}
+
+		return gastoDao.getListGastosExcel(dtoGastosFilter);
 	}
 
 	private DtoFichaGastoProveedor gastoToDtoFichaGasto(GastoProveedor gasto) {

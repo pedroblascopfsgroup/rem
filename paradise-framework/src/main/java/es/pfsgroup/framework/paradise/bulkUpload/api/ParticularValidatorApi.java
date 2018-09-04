@@ -328,6 +328,6 @@ public interface ParticularValidatorApi {
 
 	Boolean existePromocion(String promocion);
 
-
+	Boolean mediadorExisteVigente(String codMediador);
 
 }

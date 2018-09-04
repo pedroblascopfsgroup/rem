@@ -1547,7 +1547,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	@Override
 	public boolean comprobarDistintoPropietario(String numActivo, String numAgrupacion) {
 				
-		String agrPro;
+		String agrPro = null;
 		String actPro;
 				
 		agrPro = rawDao.getExecuteSQL("SELECT PRO_ID FROM ACT_PAC_PROPIETARIO_ACTIVO PAC " + 
@@ -1567,7 +1567,9 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		actPro = rawDao.getExecuteSQL("SELECT PRO_ID FROM ACT_PAC_PROPIETARIO_ACTIVO PAC " +
 				"JOIN ACT_ACTIVO ACT ON ACT.ACT_ID = PAC.ACT_ID AND ACT_NUM_ACTIVO = "+numActivo);
 		
-		
+		if(Checks.esNulo(agrPro)) return false;
+			
+			
 		if(actPro.equals(agrPro)) return false;
 				else return true;
 	}
@@ -1768,6 +1770,26 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 			return false;
 		else
 			return true;
+	}
+
+	public Boolean mediadorExisteVigente(String codMediador){
+		
+		if(!Checks.esNulo(codMediador)){
+			String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) FROM ACT_PVE_PROVEEDOR "
+					+ " WHERE PVE_COD_REM = "+ codMediador +" AND BORRADO = 0");
+			
+			if ((Integer.valueOf(resultado) > 0)) {
+				
+				resultado = rawDao.getExecuteSQL("SELECT COUNT(1) FROM ACT_PVE_PROVEEDOR "
+						+ " WHERE PVE_COD_REM = "+ codMediador +" AND PVE_FECHA_BAJA IS NULL OR PVE_FECHA_BAJA >= SYSDATE"
+						+ " AND BORRADO = 0");
+				
+				if ((Integer.valueOf(resultado) > 0)) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 	
 }

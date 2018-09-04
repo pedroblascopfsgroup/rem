@@ -518,7 +518,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		boolean resultado = true;
 		// Si el activo pertenece a un lote comercial, no se pueden aceptar
 		// ofertas de forma individual en el activo
-		if (activoAgrupacionActivoDao.activoEnAgrupacionLoteComercial(dto.getIdActivo())) {
+		if (activoAgrupacionActivoDao.activoEnAgrupacionLoteComercial(dto.getIdActivo()) && (Checks.esNulo(dto.getEsAnulacion()) || !dto.getEsAnulacion())) {
 			throw new JsonViewerException(messageServices.getMessage(AVISO_MENSAJE_ACTIVO_EN_LOTE_COMERCIAL));
 		}
 
@@ -673,9 +673,10 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				&& !Checks.esNulo(oferta.getActivoPrincipal().getCartera())
 				&& DDCartera.CODIGO_CARTERA_CAJAMAR.equals(oferta.getActivoPrincipal().getCartera().getCodigo())){
 			nuevoCondicionante.setSolicitaReserva(1);
-			DDTipoCalculo tipoCalculoImporteFijo = (DDTipoCalculo) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoCalculo.class, DDTipoCalculo.TIPO_CALCULO_IMPORTE_FIJO);
-			nuevoCondicionante.setTipoCalculoReserva(tipoCalculoImporteFijo);
-			nuevoCondicionante.setImporteReserva(new Double(1000));
+			DDTipoCalculo tipoCalculo = (DDTipoCalculo) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoCalculo.class, DDTipoCalculo.TIPO_CALCULO_PORCENTAJE);
+			nuevoCondicionante.setTipoCalculoReserva(tipoCalculo);
+			nuevoCondicionante.setPorcentajeReserva(new Double(3));
+			nuevoCondicionante.setImporteReserva(oferta.getImporteOferta() * (new Double(3) / 100));
 			nuevoCondicionante.setPlazoFirmaReserva(5);
 
 			//Obtiene las condiciones del activo con la misma logica que se aplica para calcularlas
@@ -753,7 +754,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		//HREOS-2511 El combo "Comité seleccionado" vendrá informado para cartera Sareb
 		if(oferta.getActivoPrincipal().getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_SAREB)
 				|| oferta.getActivoPrincipal().getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_TANGO)
-				|| oferta.getActivoPrincipal().getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_GIANTS)) {
+				|| oferta.getActivoPrincipal().getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_GIANTS)
+				|| oferta.getActivoPrincipal().getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_CERBERUS)) {
 			Double precioMinimoAutorizado = 0.0;
 			ActivoBancario activoBancario = getActivoBancarioByIdActivo(oferta.getActivoPrincipal().getId());
 			if(Checks.esNulo(oferta.getAgrupacion())) {
@@ -796,8 +798,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				}
 				else if(oferta.getActivoPrincipal().getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_GIANTS)){
 					nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_HAYA_GIANTS)));
-				}
-				else{
+				}else if(oferta.getActivoPrincipal().getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_CERBERUS)) {
+					nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_HAYA_CERBERUS)));
+				}else{
 					// 1º Clase de activo (financiero/inmobiliario) y sin formalización.
 					if(esFinanciero && !Checks.esNulo(activoBancario) && !Checks.esNulo(activoBancario.getActivo()) && getPerimetroByIdActivo(activoBancario.getActivo().getId()).getAplicaFormalizar() == 0) {
 						nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_HAYA_SAREB)));

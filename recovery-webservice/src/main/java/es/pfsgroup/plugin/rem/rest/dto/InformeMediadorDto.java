@@ -72,11 +72,11 @@ public class InformeMediadorDto implements Serializable {
 		Update.class })
 	private Long idProveedorRemAnterior;
 
-/*	Guarda idProveedorRem como mediador del activo
- * @NotNull(groups = { Insert.class, Update.class })
- *	@Diccionary(clase = ActivoProveedor.class, foreingField="codigoProveedorRem",message = "El idProveedorRem no existe", groups = { Insert.class,
- *			Update.class })
- *	@EntityDefinition(propertyName = "mediadorInforme", classObj = ActivoProveedor.class, foreingField = "codigoProveedorRem")*/
+	//Guarda idProveedorRem como mediador del activo
+//	@NotNull(groups = { Insert.class, Update.class })
+// 	@Diccionary(clase = ActivoProveedor.class, foreingField="codigoProveedorRem",message = "El idProveedorRem no existe", groups = { Insert.class,
+// 			Update.class })
+// 	@EntityDefinition(propertyName = "mediadorInforme", classObj = ActivoProveedor.class, foreingField = "codigoProveedorRem")
 	private Long idProveedorRem;
 
 	@EntityDefinition(propertyName = "posibleInforme" ,transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)

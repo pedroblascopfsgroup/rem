@@ -49,6 +49,15 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 							xtype: 'displayfieldbase',
 							fieldLabel:  HreRem.i18n('fiedlabel.numero.activo.agrupacion'),
 		                	bind:		'{expediente.numEntidad}'
+		                },
+		                {
+		                	xtype: 'comboboxfieldbase',
+		                	bind: {
+								store: '{comboEstadoExpediente}',
+								value: '{expediente.codigoEstado}'
+							},
+							hidden: !$AU.userIsRol("HAYASUPER"),
+		                	fieldLabel:  HreRem.i18n('fieldlabel.estado')
 		                }
 						
 					]
@@ -179,8 +188,8 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 	                	xtype:'datefieldbase',
 						formatter: 'date("d/m/Y")',
 	                	fieldLabel: HreRem.i18n('fieldlabel.fecha.venta'),
-	                	bind:		'{expediente.fechaVenta}'
-	                	//,readOnly: true
+	                	bind:		'{expediente.fechaVenta}',
+	                	readOnly: !$AU.userIsRol("HAYASUPER")
 	                	
 	                },
 	                {
@@ -268,7 +277,7 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 							        		disabled: '{!expediente.tieneReserva}',
 							        		store: '{storeEstadosDevolucion}',
 						            		value: '{expediente.estadoDevolucionCodigo}',
-						            		readOnly: '{esCarteraLiberbank}'
+						            		readOnly: '{esReadOnly}'
 						            	},
 						            	listeners:{
 						            		change: function(){

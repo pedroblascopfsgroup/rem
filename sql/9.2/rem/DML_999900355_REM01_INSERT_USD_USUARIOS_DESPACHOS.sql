@@ -46,7 +46,7 @@ DECLARE
       T_FUNCION('prodriguezg',  'REMSUPCOM'),
       T_FUNCION('prodriguezg',  'REMGBOINM'),
       T_FUNCION('imartin',		'SBACKOFFICEINMLIBER'),
-      T_FUNCION('lclaret',		'SBACKOFFICEINMLIBER'),
+      T_FUNCION('lclaret',		'SBACKOFFICEINMLIBER')
       
     ); 
     V_TMP_FUNCION T_FUNCION;

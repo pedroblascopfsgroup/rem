@@ -23,7 +23,7 @@ SET DEFINE OFF;
 DECLARE
 
    V_SQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar
-   V_ESQUEMA VARCHAR2(25 CHAR):= ''||V_ESQUEMA||''; -- Configuracion Esquema
+   V_ESQUEMA VARCHAR2(25 CHAR):= 'REM01'; -- Configuracion Esquema
    V_ESQUEMA_M VARCHAR2(25 CHAR):= 'REMMASTER'; -- Configuracion Esquema Master
    ERR_NUM NUMBER(25); -- Vble. auxiliar para registrar errores en el script.
    ERR_MSG VARCHAR2(10024 CHAR); -- Vble. auxiliar para registrar errores en el script.

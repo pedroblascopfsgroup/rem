@@ -529,8 +529,8 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 			ActivoPropietario propietario = genericDao.get(ActivoPropietarioActivo.class, filterProp).getPropietario();
 			
 			if(tramite.getActivo().getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_CAJAMAR)) {
-				if (!ActivoPropietario.CODIGO_FONDOS_TITULIZACION.equals(propietario.getCodigo()) && ActivoPropietario.CODIGO_GIVP.equals(propietario.getCodigo()) 
-						&& ActivoPropietario.CODIGO_GIVP_II.equals(propietario.getCodigo())){					
+				if (!ActivoPropietario.CODIGO_FONDOS_TITULIZACION.equals(propietario.getCodigo()) && !ActivoPropietario.CODIGO_GIVP.equals(propietario.getCodigo()) 
+						&& !ActivoPropietario.CODIGO_GIVP_II.equals(propietario.getCodigo())){					
 					cuerpo = cuerpo + "<p>Pinche <a href=\"" + reservationUrl + expediente.getId() + "/" + reservationKey
 							+ "/1\">aquí</a> para la descarga del contrato de reserva.</p>";
 				}

@@ -58,21 +58,24 @@ BEGIN
 			V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.UCA_USUARIO_CARTERA WHERE USU_ID = 
 						(SELECT USU_ID FROM '||V_ESQUEMA_M||'.USU_USUARIOS WHERE USU_USERNAME = '''||TRIM(V_TMP_FUNCION(1))||''')';
 			EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
-			
 			IF V_NUM_TABLAS > 0 THEN	  
 				DBMS_OUTPUT.PUT_LINE('[INFO] Ya existen los datos en la tabla '||V_ESQUEMA||'.UCA_USUARIO_CARTERA...no se modifica nada.');
 				
 			ELSE
-				V_MSQL_1 := 'INSERT INTO '||V_ESQUEMA||'.UCA_USUARIO_CARTERA' ||
-							' (UCA_ID, USU_ID, DD_CRA_ID)' || 
-							' SELECT '||V_ESQUEMA||'.S_UCA_USUARIO_CARTERA.NEXTVAL,' ||
-							' (SELECT USU_ID FROM '||V_ESQUEMA_M||'.USU_USUARIOS WHERE USU_USERNAME = '''||TRIM(V_TMP_FUNCION(1))||'''),' ||
-							' (SELECT DD_CRA_ID FROM '||V_ESQUEMA||'.DD_CRA_CARTERA WHERE DD_CRA_DESCRIPCION = '''||TRIM(V_TMP_FUNCION(2))||''')' ||
-							' FROM DUAL';
-		    	
-				EXECUTE IMMEDIATE V_MSQL_1;
-				DBMS_OUTPUT.PUT_LINE('[INFO] Datos de la tabla '||V_ESQUEMA||'.UCA_USUARIO_CARTERA insertados correctamente.');
-				
+                V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA_M||'.USU_USUARIOS WHERE USU_USERNAME = '''||TRIM(V_TMP_FUNCION(1))||'''';
+                EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+                IF V_NUM_TABLAS > 0 THEN
+                    V_MSQL_1 := 'INSERT INTO '||V_ESQUEMA||'.UCA_USUARIO_CARTERA' ||
+                                ' (UCA_ID, USU_ID, DD_CRA_ID)' || 
+                                ' SELECT '||V_ESQUEMA||'.S_UCA_USUARIO_CARTERA.NEXTVAL,' ||
+                                ' (SELECT USU_ID FROM '||V_ESQUEMA_M||'.USU_USUARIOS WHERE USU_USERNAME = '''||TRIM(V_TMP_FUNCION(1))||'''),' ||
+                                ' (SELECT DD_CRA_ID FROM '||V_ESQUEMA||'.DD_CRA_CARTERA WHERE DD_CRA_DESCRIPCION = '''||TRIM(V_TMP_FUNCION(2))||''')' ||
+                                ' FROM DUAL';
+                    EXECUTE IMMEDIATE V_MSQL_1;
+                    DBMS_OUTPUT.PUT_LINE('[INFO] Datos de la tabla '||V_ESQUEMA||'.UCA_USUARIO_CARTERA insertados correctamente.');
+				ELSE 
+                    DBMS_OUTPUT.PUT_LINE('[ERROR] El usuario '||TRIM(V_TMP_FUNCION(1))|| ' no existe ');
+                END IF;
 		    END IF;	
       END LOOP;
     COMMIT;

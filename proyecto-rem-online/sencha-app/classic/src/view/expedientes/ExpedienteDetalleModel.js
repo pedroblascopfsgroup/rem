@@ -93,6 +93,11 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	     	var carteraCodigo = get('expediente.entidadPropietariaCodigo');
 	     	return CONST.CARTERA['GIANTS'] == carteraCodigo;
 	     },
+	     esCarteraZeus: function(get) {
+		     	
+		     	var carteraCodigo = get('expediente.entidadPropietariaCodigo');
+		     	return CONST.CARTERA['ZEUS'] == carteraCodigo;
+		     },
 	     
 	     esCarteraCajamar: function(get) {
 		     	

@@ -4699,6 +4699,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			if (!Checks.esNulo(condiciones)) {
 
 				dto.setSolicitaFinanciacion(condiciones.getSolicitaFinanciacion());
+				
+				if(!Checks.esNulo(dto.getSolicitaFinanciacion()) && dto.getSolicitaFinanciacion() > 0 && Checks.esNulo(dto.getCapitalConcedido())){
+					dto.setCapitalConcedido(expediente.getCompradores().get(0).getImporteFinanciado());
+				}
+				
 				if (!Checks.esNulo(condiciones.getEstadoFinanciacion())) {
 					dto.setEstadosFinanciacion(condiciones.getEstadoFinanciacion().getCodigo());
 					dto.setEstadosFinanciacionBankia(condiciones.getEstadoFinanciacion().getCodigo());

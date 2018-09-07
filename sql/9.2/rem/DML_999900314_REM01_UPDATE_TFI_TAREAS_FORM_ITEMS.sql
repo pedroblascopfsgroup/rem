@@ -4,7 +4,7 @@
 --## FECHA_CREACION=20180829
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=
+--## INCIDENCIA_LINK=MIREC-1166
 --## PRODUCTO=NO
 --## Finalidad: Adaptar los tipos de elementos visuales en la tabla TFI_TAREAS_FORM_ITEMS.
 --##

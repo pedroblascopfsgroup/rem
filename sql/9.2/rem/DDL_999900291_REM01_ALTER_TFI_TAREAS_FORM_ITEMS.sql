@@ -4,7 +4,7 @@
 --## FECHA_CREACION=20180829
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=
+--## INCIDENCIA_LINK=MIREC-1166
 --## PRODUCTO=NO
 --## Finalidad: Modificar el tamaño de la columna TFI_TIPO en TFI_TAREAS_FORM_ITEMS y añadir comentarios a la tabla.
 --##

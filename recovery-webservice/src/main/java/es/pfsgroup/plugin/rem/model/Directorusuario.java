@@ -30,7 +30,6 @@ import es.capgemini.pfs.users.domain.Usuario;
 @Entity
 @Table(name = "DUS_DIRECTOR_USUARIO", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-@PrimaryKeyJoinColumn(name="dus")
 public class Directorusuario extends GestorEntidad implements Serializable {
 
 	private static final long serialVersionUID = 7594603536051797805L;

@@ -16,7 +16,7 @@ if [[ -z ${DIR_DESTINO} ]] || [[ ! -d ${DIR_DESTINO} ]]; then
 fi
 rm -f ${DIR_DESTINO}$ficheros*
 
-mascara='_'$1
+mascara='_'$2
 extensionSem=".sem"
 extensionZip=".dat"
 
@@ -35,14 +35,14 @@ do
     ficheroZip=$DIR_INPUT_AUX$fichero$mascara$extensionZip
 
     echo "$ficheroSem"
-    if [[ "$#" -gt 1 ]] && [[ "$2" -eq "-ftp" ]]; then
-        ./ftp/ftp_get_aux_files.sh $1 $fichero
+    if [[ "$#" -gt 1 ]] && [[ "$3" -eq "-ftp" ]]; then
+        ./ftp/ftp_get_aux_files.sh $2 $fichero
     fi
 	while [[ "$hora_actual" -lt "$hora_limite" ]] && [[ ! -e $ficheroSem || ! -e $ficheroZip ]]; do
 	    sleep 10
 	    hora_actual=`date +%Y%m%d%H%M%S`
-        if [[ "$#" -gt 1 ]] && [[ "$2" -eq "-ftp" ]]; then
-	        ./ftp/ftp_get_aux_files.sh $1 $fichero
+        if [[ "$#" -gt 1 ]] && [[ "$3" -eq "-ftp" ]]; then
+	        ./ftp/ftp_get_aux_files.sh $2 $fichero
         fi
 	done
 done

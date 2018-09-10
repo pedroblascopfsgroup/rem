@@ -47,7 +47,7 @@ import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.VBusquedaGastoActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaGastoTrabajos;
-import es.pfsgroup.plugin.rem.model.VGastosProveedor;
+import es.pfsgroup.plugin.rem.model.VGastosProveedorExcel;
 
 
 @Controller
@@ -269,6 +269,22 @@ public class GastosProveedorController extends ParadiseJsonController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView searchActivoCarteraAndGastoPrinex(@RequestParam String numGastoHaya) {
+		ModelMap model = new ModelMap();
+		
+		try {
+			model.put("data", gastoProveedorApi.searchActivoCarteraAndGastoPrinex(numGastoHaya));
+			model.put("success", true);			
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+			model.put("success", false);		
+		}
+		
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView saveDetalleEconomico(DtoDetalleEconomicoGasto dto, @RequestParam Long id, ModelMap model) {
 		try {		
 			
@@ -385,6 +401,23 @@ public class GastosProveedorController extends ParadiseJsonController {
 		try {		
 			
 			boolean success = gastoProveedorApi.updateGastoContabilidad(dtoContabilidad, id);
+			model.put("success", success);
+			
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+			model.put("success", false);
+		}	
+		
+		return createModelAndViewJson(model);
+		
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView updateGastoByPrinexLBK( @RequestParam String idGasto, ModelMap model) {
+		try {		
+			
+			boolean success = gastoProveedorApi.updateGastoByPrinexLBK(idGasto);
 			model.put("success", success);
 			
 		} catch (Exception e) {
@@ -749,8 +782,8 @@ public class GastosProveedorController extends ParadiseJsonController {
 		dtoGastosFilter.setStart(excelReportGeneratorApi.getStart());
 		dtoGastosFilter.setLimit(excelReportGeneratorApi.getLimit());
 
-		DtoPage page = gastoProveedorApi.getListGastos(dtoGastosFilter);
-		List<VGastosProveedor> listaGastosProveedor = (List<VGastosProveedor>) page.getResults();
+		DtoPage page = gastoProveedorApi.getListGastosExcel(dtoGastosFilter);
+		List<VGastosProveedorExcel> listaGastosProveedor = (List<VGastosProveedorExcel>) page.getResults();
 
 		ExcelReport report = new GestionGastosExcelReport(listaGastosProveedor);
 

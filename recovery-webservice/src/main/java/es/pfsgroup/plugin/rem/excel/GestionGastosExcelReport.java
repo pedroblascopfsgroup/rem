@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import es.pfsgroup.plugin.rem.model.VGastosProveedor;
+import es.pfsgroup.plugin.rem.model.VGastosProveedorExcel;
 
 public class GestionGastosExcelReport extends AbstractExcelReport implements ExcelReport {
 	private static final String CAB_NUM_GASTO = "Nº Gasto";
@@ -23,9 +24,10 @@ public class GestionGastosExcelReport extends AbstractExcelReport implements Exc
 	private static final String CAB_SUJETO_IMPUESTO_INDIRECTO = "Sujeto Impuesto Indirecto";
 	private static final String CAB_NOMBRE_GESTORIA = "Nombre Gestoría";
 	private static final String CAB_CARTERA = "Cartera";
-	private List<VGastosProveedor> listaGastosProveedor;
+	private static final String CAB_NUM_ACTIVO = "Nº Activo";
+	private List<VGastosProveedorExcel> listaGastosProveedor;
 
-	public GestionGastosExcelReport(List<VGastosProveedor> listaGastosProveedor2) {
+	public GestionGastosExcelReport(List<VGastosProveedorExcel> listaGastosProveedor2) {
 		this.listaGastosProveedor = listaGastosProveedor2;
 	}
 
@@ -33,6 +35,7 @@ public class GestionGastosExcelReport extends AbstractExcelReport implements Exc
 
 		List<String> listaCabeceras = new ArrayList<String>();
 		listaCabeceras.add(CAB_NUM_GASTO);
+		listaCabeceras.add(CAB_NUM_ACTIVO);
 		listaCabeceras.add(CAB_NUM_FACTURA_LUQUIDACION);
 		listaCabeceras.add(CAB_TIPO);
 		listaCabeceras.add(CAB_SUBTIPO);
@@ -57,9 +60,10 @@ public class GestionGastosExcelReport extends AbstractExcelReport implements Exc
 
 		List<List<String>> valores = new ArrayList<List<String>>();
 
-		for (VGastosProveedor gastoProveedor : listaGastosProveedor) {
+		for (VGastosProveedorExcel gastoProveedor : listaGastosProveedor) {
 			List<String> fila = new ArrayList<String>();
 			fila.add(String.valueOf(gastoProveedor.getNumGastoHaya()));
+			fila.add(gastoProveedor.getNumActivo());
 			fila.add(gastoProveedor.getNumFactura());
 			fila.add(gastoProveedor.getTipoDescripcion());
 			fila.add(gastoProveedor.getSubtipoDescripcion());

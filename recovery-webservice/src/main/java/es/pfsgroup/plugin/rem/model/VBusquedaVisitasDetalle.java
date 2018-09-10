@@ -337,8 +337,6 @@ public class VBusquedaVisitasDetalle implements Serializable {
 
 	public void setCarteraCodigo(String carteraCodigo) {
 		this.carteraCodigo = carteraCodigo;
-	}
-	
-	
+	}	
 
 }

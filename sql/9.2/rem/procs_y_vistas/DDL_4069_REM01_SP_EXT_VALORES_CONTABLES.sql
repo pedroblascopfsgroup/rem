@@ -1,16 +1,17 @@
 --/*
 --##########################################
---## AUTOR=Marco Munoz
---## FECHA_CREACION=20180615
+--## AUTOR=Pablo Meseguer
+--## FECHA_CREACION=20180620
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=2.0.18
---## INCIDENCIA_LINK=HREOS-4154
+--## VERSION_ARTEFACTO=2.0.19
+--## INCIDENCIA_LINK=HREOS-4197
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
 --## INSTRUCCIONES:
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##        0.2 Control de errores en HLP_HISTORICO_LANZA_PERIODICO
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -238,7 +239,7 @@ BEGIN
 						
 			V_MSQL := ' UPDATE '||V_ESQUEMA||'.ACT_VAL_VALORACIONES VAL
 						SET
-							VAL.VAL_IMPORTE = '||IMPORTE||',
+							VAL.VAL_IMPORTE = '''||IMPORTE||''',
 							VAL.VAL_FECHA_INICIO = SYSDATE,
 							VAL.USUARIOMODIFICAR = '''||V_NOMBRESP||''',
 							VAL.FECHAMODIFICAR = SYSDATE
@@ -264,7 +265,7 @@ BEGIN
 							'||V_NEXTVAL||',
 							(SELECT ACT.ACT_ID FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT WHERE ACT.ACT_NUM_ACTIVO = '||ID_ACTIVO_HAYA||'), 
 							(SELECT TPC.DD_TPC_ID FROM '||V_ESQUEMA||'.DD_TPC_TIPO_PRECIO TPC WHERE TPC.DD_TPC_CODIGO = '''||TIPO_PRECIO||'''), 
-							'||IMPORTE||', 
+							'''||IMPORTE||''', 
 							SYSDATE,
 							-1,
 							'''||V_NOMBRESP||''',
@@ -321,7 +322,7 @@ BEGIN
 			'''||V_NOMBRESP||''',
 			SYSDATE,
 			1,
-			NVL('''||ID_ACTIVO_HAYA||''',''-1''),
+			NVL('''||ID_ACTIVO_HAYA||''',''-1'') ||''|''|| NVL('''||TIPO_PRECIO||''',''-1''),
 			'''||HLP_REGISTRO_EJEC||'''
 		FROM DUAL
 		';
@@ -345,7 +346,7 @@ BEGIN
 			'''||V_NOMBRESP||''',
 			SYSDATE,
 			0,
-			'''||ID_ACTIVO_HAYA||''',
+			'''||ID_ACTIVO_HAYA||''' ||''|''|| '''||TIPO_PRECIO||''',
 			'''||V_NUMREGISTROS||'''
 		FROM DUAL
 	  ';
@@ -374,7 +375,7 @@ EXCEPTION
 			'''||V_NOMBRESP||''',
 			SYSDATE,
 			1,
-			NVL('''||ID_ACTIVO_HAYA||''',''-1''),
+			NVL('''||ID_ACTIVO_HAYA||''',''-1'') ||''|''|| NVL('''||TIPO_PRECIO||''',''-1''),
 			'''||ERR_MSG||'''
 		FROM DUAL
 	  ';

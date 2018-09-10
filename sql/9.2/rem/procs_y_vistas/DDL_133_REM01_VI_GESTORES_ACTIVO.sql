@@ -1,16 +1,17 @@
 --/*
 --##########################################
---## AUTOR=Pau Serrano Rodrigo
---## FECHA_CREACION=20180530
+--## AUTOR=Sergio Ortuño
+--## FECHA_CREACION=20180719
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-4102
+--## INCIDENCIA_LINK=REMVIP-1352
 --## PRODUCTO=NO
 --## Finalidad: Crear vista gestores activo
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
---##        0.1 Versión inicial
+--##        0.1 Versión inicial Pau Serrano Rodrigo
+--##		0.2 Cambio de GCBO a HAYAGBOINM / HAYASBOFIN SOG
 --##########################################
 --*/
 
@@ -58,6 +59,13 @@ SELECT act.act_id, TO_NUMBER(cra.dd_cra_codigo), NULL dd_eac_codigo, NULL dd_tcr
              LEFT JOIN '||V_ESQUEMA||'.dd_cra_cartera cra on TO_NUMBER(cra.dd_cra_codigo) = dist1.cod_cartera 
            where act.borrado = 0 AND cra.dd_cra_id = act.dd_cra_id
            UNION ALL
+/*Gestor de grupo - SUPERVISOR COMERCIAL BACKOFFICE LIBERBANK*/
+SELECT act.act_id, TO_NUMBER(cra.dd_cra_codigo), NULL dd_eac_codigo, NULL dd_tcr_codigo, NULL dd_prv_codigo, NULL dd_loc_codigo, NULL cod_postal, dist1.tipo_gestor, dist1.username username,
+                  dist1.nombre_usuario nombre
+             FROM act_activo act JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist1 ON dist1.tipo_gestor = ''SBACKOFFICEINMLIBER''
+             LEFT JOIN '||V_ESQUEMA||'.dd_cra_cartera cra on TO_NUMBER(cra.dd_cra_codigo) = dist1.cod_cartera 
+           where act.borrado = 0 AND cra.dd_cra_id = act.dd_cra_id
+           UNION ALL
 /*Gestor capa de control*/
            SELECT act.act_id, dist1.cod_cartera, NULL dd_eac_codigo, NULL dd_tcr_codigo, NULL dd_prv_codigo, NULL dd_loc_codigo, NULL cod_postal, dist1.tipo_gestor tipo_gestor,
                   dist1.username username, dist1.nombre_usuario nombre
@@ -65,11 +73,15 @@ SELECT act.act_id, TO_NUMBER(cra.dd_cra_codigo), NULL dd_eac_codigo, NULL dd_tcr
                   JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist1 ON (dist1.cod_cartera = dd_cra.dd_cra_codigo AND dist1.tipo_gestor = ''GCCBANKIA'')
            where act.borrado = 0
            UNION ALL
-/*Gestor Comercial BackOffice*/
+/*Gestor Comercial BackOffice Inmobiliario*/
            SELECT act.act_id, dist1.cod_cartera, NULL dd_eac_codigo, NULL dd_tcr_codigo, NULL dd_prv_codigo, NULL dd_loc_codigo, NULL cod_postal, dist1.tipo_gestor tipo_gestor,
                   dist1.username username, dist1.nombre_usuario nombre
              FROM act_activo act JOIN dd_cra_cartera dd_cra ON dd_cra.dd_cra_id = act.dd_cra_id
-                  JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist1 ON (dist1.cod_cartera = dd_cra.dd_cra_codigo AND dist1.tipo_gestor = ''GCBO'')
+                  JOIN '||V_ESQUEMA||'.BIE_LOCALIZACION BL ON BL.BIE_ID = ACT.BIE_ID
+                  JOIN '||V_ESQUEMA_M||'.DD_PRV_PROVINCIA PRV ON PRV.DD_PRV_ID = BL.DD_PRV_ID 
+                  LEFT JOIN '||V_ESQUEMA_M||'.DD_LOC_LOCALIDAD LOC ON LOC.DD_LOC_ID = BL.DD_LOC_ID 
+                  LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist1 ON dist1.cod_cartera = dd_cra.dd_cra_codigo AND dist1.tipo_gestor = ''HAYAGBOINM''
+                  AND PRV.DD_PRV_CODIGO = dist1.COD_PROVINCIA AND LOC.DD_LOC_CODIGO = NVL(dist1.COD_MUNICIPIO,LOC.DD_LOC_CODIGO)
            where act.borrado = 0
            UNION ALL
 /*Gestor del activo*/

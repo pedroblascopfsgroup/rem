@@ -18,7 +18,7 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
     listeners: {
     	boxready: function() { // Anyadir seccion por tipo de activo.
     		var me = this;
-
+			
     		this.cargarDatosSegunTipoActivoDelMediador(me,me.lookupViewModel().get('activo.tipoActivoMediadorCodigo'));
 
 	    	me.lookupController().cargarTabData(me);
@@ -27,7 +27,13 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 
     initComponent: function () {
         var me = this;
-
+        
+		var editaPosibleInforme = !(($AU.userIsRol(CONST.PERFILES['HAYAGESTPUBL']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['HAYASUPPUBL'])));
+		
+		var isCarteraLiberbank = me.lookupViewModel().get('activo.isCarteraLiberbank');
+		
+		var tienePosibleInformeMediador = me.lookupViewModel().get('activo.tienePosibleInformeMediador');
+		
         me.setTitle(HreRem.i18n('title.informe.comercial.activo'));
 
         me.items = [
@@ -134,7 +140,12 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 							colspan: 3,
 							items :
 								[
-									{xtype: "historicomediadorgrid", reference: "historicomediadorgrid", colspan: 3}
+									{
+										xtype: "historicomediadorgrid", 
+										secFunToEdit: 'EDITAR_GRID_PUBLICACION_HISTORICO_MEDIADORES',
+										reference: "historicomediadorgrid", 
+										colspan: 3
+									}
 								]
 						}						
 				]
@@ -303,7 +314,50 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 					                }
 							]               
 			          	},
-
+						// Informe Mediador
+						{
+							xtype:'fieldsettable',
+							title:HreRem.i18n('title.informe.mediador'),
+							defaultType: 'textfieldbase',
+							hidden: !isCarteraLiberbank,
+							colspan: 3,
+							items :
+								[
+									{ 
+							        	xtype: 'comboboxfieldbase',
+							        	fieldLabel: HreRem.i18n('fieldlabel.posible.informe'),
+										id: 'comboPosibleInforme',
+										readOnly: editaPosibleInforme,
+							        	bind: {
+						            		store: '{comboSiNoRem}',
+						            		value: '{infoComercial.posibleInforme}'
+						            	},
+			    						listeners: {
+						                	select: function(){
+						                		var posible = this.getValue();
+						                		if (posible == "0"){
+						                			Ext.getCmp('noPosibleInformeTextArea').show();
+						                		} else {
+						                			Ext.getCmp('noPosibleInformeTextArea').hidden = false;
+						                			Ext.getCmp('noPosibleInformeTextArea').hide();
+						                		}
+						                	}
+						            	}
+							        },
+									{
+										xtype: 'textareafieldbase',
+										id: 'noPosibleInformeTextArea',
+										fieldLabel: HreRem.i18n('fieldlabel.motivo.no.posible.informe'),
+										hidden: tienePosibleInformeMediador,
+										bind:		'{infoComercial.motivoNoPosibleInforme}',
+										readOnly: editaPosibleInforme,
+										margin: '0 0 26 0',
+										rowspan: 2,
+										width: 600,
+										maxWidth: 600
+					                }
+							]
+						},
 			         // Datos Mediador
 						{
 							xtype:'fieldsettable',
@@ -822,6 +876,7 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 		];
 
    	 	me.callParent();
+   	 	
     }, 
 
     funcionRecargar: function() {

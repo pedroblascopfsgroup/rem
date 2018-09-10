@@ -195,7 +195,7 @@ public class AgendaAdapter {
 		
 		return tareaActivo.getActivo().getId().toString();
 	}
-
+	
 	public String getIdTrabajoTarea(Long id){
 		TareaNotificacion tar = proxyFactory.proxy(TareaNotificacionApi.class).get(id);
 //		TareaActivo tareaActivo = proxyFactory.proxy(TareaActivoApi.class).getByIdTareaExterna(tar.getTareaExterna().getId());

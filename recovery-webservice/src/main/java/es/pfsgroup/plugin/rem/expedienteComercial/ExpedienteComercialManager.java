@@ -746,6 +746,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		if (!Checks.esNulo(dto.getImporteOferta())) {
 			ofertaApi.resetPBC(expedienteComercial, false);
 		}
+		
+		
 
 		try {
 			beanUtilNotNull.copyProperties(oferta, dto);
@@ -761,7 +763,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		// oferta.setImporteContraOferta(dto.getImporteContraoferta());
 
 		expedienteComercial.setOferta(oferta);
-
+		
+		if(!Checks.esNulo(dto.getImporteOferta())){
+			expedienteComercial.setComiteSancion(ofertaApi.calculoComiteLiberbank(oferta));
+		}
+		
 		genericDao.save(ExpedienteComercial.class, expedienteComercial);
 
 		// Si se ha modificado el importe de la oferta o de la contraoferta
@@ -774,6 +780,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			this.actualizarImporteReservaPorExpediente(expedienteComercial);
 			this.actualizarHonorariosPorExpediente(expedienteComercial.getId());
 		}
+		
 
 		return true;
 	}
@@ -4692,6 +4699,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			if (!Checks.esNulo(condiciones)) {
 
 				dto.setSolicitaFinanciacion(condiciones.getSolicitaFinanciacion());
+				
+				if(!Checks.esNulo(dto.getSolicitaFinanciacion()) && dto.getSolicitaFinanciacion() > 0 && Checks.esNulo(dto.getCapitalConcedido())){
+					dto.setCapitalConcedido(expediente.getCompradores().get(0).getImporteFinanciado());
+				}
+				
 				if (!Checks.esNulo(condiciones.getEstadoFinanciacion())) {
 					dto.setEstadosFinanciacion(condiciones.getEstadoFinanciacion().getCodigo());
 					dto.setEstadosFinanciacionBankia(condiciones.getEstadoFinanciacion().getCodigo());

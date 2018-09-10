@@ -39,6 +39,7 @@ Ext.define('HreRem.view.activos.detalle.ValoresPreciosActivo', {
 							xtype		: 'gridBaseEditableRow',
 							reference	: 'gridPreciosVigentes',
 							cls			: 'grid-no-seleccionable',
+							secFunToEdit: 'EDITAR_GRID_PRECIOS_VIGENTES',
 							loadAfterBind	: false,
 							colspan		: 3,
 							minHeight	: 200,
@@ -161,7 +162,8 @@ Ext.define('HreRem.view.activos.detalle.ValoresPreciosActivo', {
 											        items: [{
 											           	iconCls: 'fa fa-remove',
 											           	handler: 'onDeletePrecioVigenteClick'
-											        }]
+											        }],
+											        hidden: !$AU.userHasFunction('EDITAR_GRID_PRECIOS_VIGENTES')
 									    		}
 						    				]
 							},

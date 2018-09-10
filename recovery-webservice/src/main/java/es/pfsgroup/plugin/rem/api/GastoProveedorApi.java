@@ -7,6 +7,7 @@ import es.capgemini.devon.files.WebFileItem;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
+import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.DtoActivoGasto;
 import es.pfsgroup.plugin.rem.model.DtoActivoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
@@ -18,6 +19,7 @@ import es.pfsgroup.plugin.rem.model.DtoImpugnacionGasto;
 import es.pfsgroup.plugin.rem.model.DtoInfoContabilidadGasto;
 import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
+import es.pfsgroup.plugin.rem.model.GastoProveedorActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaGastoActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaGastoTrabajos;
 
@@ -77,7 +79,24 @@ public interface GastoProveedorApi {
 		 * @param idGasto
 		 * @return
 		 */
+		
+		public boolean searchActivoCarteraAndGastoPrinex(String numGastoHaya);
+		
+		/**
+		 * Método que recoge información de la pestaña Detalle económico del gasto
+		 * @param dto
+		 * @param idGasto
+		 * @return
+		 */
 		boolean saveDetalleEconomico(DtoDetalleEconomicoGasto dto, Long idGasto);
+		
+		/**
+		 * Método que updatea la información de la pestaña Detalle económico del gasto segun prinex
+		 * @param dto
+		 * @param idGasto
+		 * @return
+		 */
+		boolean updateGastoByPrinexLBK(String idGasto);
 		
 		/**
 		 * Método que recupera los activos relacionados con un gasto
@@ -276,5 +295,20 @@ public interface GastoProveedorApi {
 		 * @param porcentajeParticipacion: indica el porcentaje de participacion del activo en el gasto.
 		 */
 		public void actualizarPorcentajeParticipacionGastoProveedorActivo(Long idActivo, Long idGasto, Float porcentajeParticipacion);
+
+
+		public GastoProveedorActivo buscarRelacionPorActivoYGasto(Activo activo, GastoProveedor gasto);
+		
+		/**
+		 * Método que devuelve el porcenaje de participación del último gasto ajustado para corregir errores de redondeo.
+		 * 
+		 * @param  gastosActivosList: lista de GastoProveedorActivo
+		 * @param ultimoPorcentaje: porcentaje de participación del último gasto
+		 * 
+		 * */
+		public float regulaPorcentajeUltimoGasto(List<GastoProveedorActivo> gastosActivosList, Float ultimoPorcentaje);
+
+
+		DtoPage getListGastosExcel(DtoGastosFilter dtoGastosFilter);
 }
 

@@ -54,6 +54,7 @@ import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDSituacionCarga;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBien;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBValoracionesBien;
+import es.pfsgroup.plugin.rem.activo.ActivoManager;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
@@ -77,6 +78,7 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjuntoActivo;
 import es.pfsgroup.plugin.rem.model.ActivoAdmisionDocumento;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoCargas;
 import es.pfsgroup.plugin.rem.model.ActivoCatastro;
 import es.pfsgroup.plugin.rem.model.ActivoCondicionEspecifica;
@@ -139,6 +141,7 @@ import es.pfsgroup.plugin.rem.model.VBusquedaActivosTrabajoPresupuesto;
 import es.pfsgroup.plugin.rem.model.VBusquedaPresupuestosActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaTramitesActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaVisitasDetalle;
+import es.pfsgroup.plugin.rem.model.VCalculosActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.VPreciosVigentes;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
@@ -269,6 +272,8 @@ public class ActivoAdapter {
     @Autowired 
     private GestorExpedienteComercialManager gestorExpedienteComercialManager;
     
+    @Autowired
+    private ActivoManager activoManager;
 
 	@Resource
 	MessageService messageServices;
@@ -1076,31 +1081,36 @@ public class ActivoAdapter {
 	public List<DtoAgrupacionesActivo> getListAgrupacionesActivoById(Long id) {
 
 		Activo activo = activoApi.get(id);
+		
+		List<VCalculosActivoAgrupacion> agrupacionesActivo = getCalculoActivoAgrupacion(id);
 
 		List<DtoAgrupacionesActivo> listaDtoAgrupaciones = new ArrayList<DtoAgrupacionesActivo>();
 
-		if (activo.getAgrupaciones() != null) {
+		if (!Checks.esNulo(agrupacionesActivo) && !Checks.estaVacio(agrupacionesActivo)) {
 
-			for (int i = 0; i < activo.getAgrupaciones().size(); i++) {
+			for (VCalculosActivoAgrupacion calcAgrupacion: agrupacionesActivo) {
 				DtoAgrupacionesActivo dtoActivoAgrupaciones = new DtoAgrupacionesActivo();
 				try {
+					
+					ActivoAgrupacionActivo agrupacion = genericDao.get(ActivoAgrupacionActivo.class, 
+							genericDao.createFilter(FilterType.EQUALS, "agrupacion.id", calcAgrupacion.getIdAgrupacion()),
+							genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId()));	
 
-					BeanUtils.copyProperties(dtoActivoAgrupaciones, activo.getAgrupaciones().get(i));
-					BeanUtils.copyProperties(dtoActivoAgrupaciones, activo.getAgrupaciones().get(i).getAgrupacion());
+					BeanUtils.copyProperties(dtoActivoAgrupaciones, agrupacion);
+					BeanUtils.copyProperties(dtoActivoAgrupaciones, agrupacion.getAgrupacion());
 
 					BeanUtils.copyProperty(dtoActivoAgrupaciones, "fechaInclusion",
-							activo.getAgrupaciones().get(i).getFechaInclusion());
+							agrupacion.getFechaInclusion());
 					BeanUtils.copyProperty(dtoActivoAgrupaciones, "tipoAgrupacionDescripcion",
-							activo.getAgrupaciones().get(i).getAgrupacion().getTipoAgrupacion().getDescripcion());
+							agrupacion.getAgrupacion().getTipoAgrupacion().getDescripcion());
 					BeanUtils.copyProperty(dtoActivoAgrupaciones, "tipoAgrupacionCodigo",
-							activo.getAgrupaciones().get(i).getAgrupacion().getTipoAgrupacion().getCodigo());
+							agrupacion.getAgrupacion().getTipoAgrupacion().getCodigo());
 					BeanUtils.copyProperty(dtoActivoAgrupaciones, "idAgrupacion",
-							activo.getAgrupaciones().get(i).getAgrupacion().getId());
+							agrupacion.getAgrupacion().getId());
 					BeanUtils.copyProperty(dtoActivoAgrupaciones, "numActivos",
-							activo.getAgrupaciones().get(i).getAgrupacion().getActivos().size());
+							calcAgrupacion.getNumActivos());
 					BeanUtils.copyProperty(dtoActivoAgrupaciones, "numActivosPublicados",
-							activoApi.getNumActivosPublicadosByAgrupacion(
-									activo.getAgrupaciones().get(i).getAgrupacion().getActivos()));
+							calcAgrupacion.getNumActivosPublicados());
 
 				} catch (IllegalAccessException e) {
 					e.printStackTrace();
@@ -1114,6 +1124,20 @@ public class ActivoAdapter {
 
 		return listaDtoAgrupaciones;
 
+	}
+	
+	public List<VCalculosActivoAgrupacion> getCalculoActivoAgrupacion(Long idActivo){
+		
+		List<Long> listaAgrId = activoManager.getIdAgrupacionesActivo(idActivo);
+		List<VCalculosActivoAgrupacion> listaCalc = new ArrayList<VCalculosActivoAgrupacion>();
+		
+		for(Long agrId: listaAgrId) {
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "idAgrupacion", agrId);
+			
+			listaCalc.add(genericDao.get(VCalculosActivoAgrupacion.class, filtro));
+		}
+		
+		return listaCalc;
 	}
 
 	public List<VBusquedaVisitasDetalle> getListVisitasActivoById(Long id)
@@ -1966,6 +1990,7 @@ public class ActivoAdapter {
 				// beanUtilNotNull.copyProperty(dtoListadoTareas, "idTramite",
 				// value);
 
+				beanUtilNotNull.copyProperty(dtoListadoTareas, "codigoTarea",tareaExterna.getTareaProcedimiento().getCodigo());
 				beanUtilNotNull.copyProperty(dtoListadoTareas, "fechaInicio", tareaActivo.getFechaInicio());
 				beanUtilNotNull.copyProperty(dtoListadoTareas, "fechaVenc", tareaActivo.getFechaVenc());
 				beanUtilNotNull.copyProperty(dtoListadoTareas, "fechaFin", tareaActivo.getFechaFin());

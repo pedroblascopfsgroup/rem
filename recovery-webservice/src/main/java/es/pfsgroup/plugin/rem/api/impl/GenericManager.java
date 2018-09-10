@@ -39,6 +39,7 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.GenericApi;
+import es.pfsgroup.plugin.rem.gestor.GestorActivoManager;
 import es.pfsgroup.plugin.rem.model.ActivoPropietario;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.AuthenticationData;
@@ -90,6 +91,9 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 
 	BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 
+	@Autowired
+	private GestorActivoManager gestorEntidad;
+	
 	@Override
 	public String managerName() {
 		return "genericManager";
@@ -117,8 +121,14 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 
 		authData.setUserName(usuario.getApellidoNombre());
 		authData.setAuthorities(authorities);
-		authData.setUserId(usuario.getId());
+		
+		Long id = usuario.getId();
+		
+		authData.setUserId(id);
 		authData.setRoles(roles);
+		
+		authData.setCodigoGestor(gestorEntidad.getCodigoGestorPorUsuario(id)); 
+		
 		authData.setEsGestorSustituto(esGestorSustituto(usuario));
 
 		return authData;
@@ -363,7 +373,8 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		for (EXTDDTipoGestor tipoGestor : lista) {
 			if (tipoGestor.getCodigo().equals("GCOM") || tipoGestor.getCodigo().equals("GCBO")
 					|| tipoGestor.getCodigo().equals("GFORM") || tipoGestor.getCodigo().equals("FVDNEG")
-					|| tipoGestor.getCodigo().equals("FVDBACKOFR") || tipoGestor.getCodigo().equals("FVDBACKVNT")) {
+					|| tipoGestor.getCodigo().equals("FVDBACKOFR") || tipoGestor.getCodigo().equals("FVDBACKVNT")
+					|| tipoGestor.getCodigo().equals("HAYAGBOINM") || tipoGestor.getCodigo().equals("SBACKOFFICEINMLIBER")) {
 				listaResultado.add(tipoGestor);
 			}
 		}

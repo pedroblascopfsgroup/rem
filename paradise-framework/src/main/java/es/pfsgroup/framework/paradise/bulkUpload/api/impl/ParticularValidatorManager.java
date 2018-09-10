@@ -1177,6 +1177,51 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 	
 	@Override
+	public Boolean esGastoDeLiberbank(String numGasto){
+		if(Checks.esNulo(numGasto) || !StringUtils.isNumeric(numGasto))
+			return false;
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "		 FROM GPV_GASTOS_PROVEEDOR GPV "
+				+ "      JOIN ACT_PRO_PROPIETARIO PRO ON GPV.PRO_ID = PRO.PRO_ID "
+				+ "      JOIN DD_CRA_CARTERA CRA ON PRO.DD_CRA_ID = CRA.DD_CRA_ID "
+				+ "		 WHERE GPV.GPV_NUM_GASTO_HAYA = "+numGasto+" "
+				+ "         AND CRA.DD_CRA_CODIGO = '08' "
+				+ "		 	AND GPV.BORRADO = 0");
+		if("0".equals(resultado))
+			return false;
+		else
+			return true;
+	}
+	
+	@Override
+	public Boolean tienenRelacionActivoGasto(String numActivo, String numGasto){
+		if(Checks.esNulo(numGasto) || !StringUtils.isNumeric(numGasto) || Checks.esNulo(numActivo) || !StringUtils.isNumeric(numActivo))
+			return false;
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) FROM GPV_ACT "
+				+ "		WHERE GPV_ID = (SELECT GPV_ID FROM GPV_GASTOS_PROVEEDOR WHERE GPV_NUM_GASTO_HAYA = '"+numGasto+"')"
+				+ "		AND ACT_ID = (SELECT ACT_ID FROM ACT_ACTIVO WHERE ACT_NUM_ACTIVO = '"+numActivo+"')");
+		if("0".equals(resultado))
+			return false;
+		else
+			return true;
+	}
+	
+	@Override
+	public List<Long> getRelacionGastoActivo(String numGasto){
+		if(Checks.esNulo(numGasto) || !StringUtils.isNumeric(numGasto))
+			return new ArrayList<Long>();
+		List<Object> listaObj = rawDao.getExecuteSQLList("SELECT ACT_NUM_ACTIVO FROM ACT_ACTIVO "
+				+ "WHERE ACT_ID IN (SELECT ACT_ID FROM GPV_ACT WHERE GPV_ID = "
+				+ "(SELECT GPV_ID FROM GPV_GASTOS_PROVEEDOR WHERE GPV_NUM_GASTO_HAYA = "+numGasto+"))");
+		List<Long> listaNumActivos = new ArrayList<Long>();
+		for(Object o: listaObj){
+			String objetoString = o.toString();
+			listaNumActivos.add(Long.parseLong(objetoString));
+		}
+		return listaNumActivos;
+	}
+	
+	@Override
 	public Boolean propietarioGastoConDocumento(String numGasto){
 		if(Checks.esNulo(numGasto) || !StringUtils.isNumeric(numGasto))
 			return false;
@@ -1705,6 +1750,28 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 	
 	@Override
+	public Boolean esParGastoActivo(String numGasto, String numActivo){
+		if(!StringUtils.isNumeric(numGasto) || !StringUtils.isNumeric(numActivo))
+			return false;
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) FROM GPV_ACT "
+				+ "		WHERE GPV_ID = (SELECT GPV_ID FROM GPV_GASTOS_PROVEEDOR WHERE GPV_NUM_GASTO_HAYA = '"+numGasto+"')"
+				+ "		AND ACT_ID = (SELECT ACT_ID FROM ACT_ACTIVO WHERE ACT_NUM_ACTIVO = '"+numActivo+"')");
+		if("0".equals(resultado))
+			return false;
+		else
+			return true;
+	}
+	
+	@Override
+	public Boolean existePromocion(String promocion){
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) FROM ACT_ACTIVO "
+				+ "WHERE ACT_COD_PROMOCION_PRINEX = '"+promocion+"'");
+		if("0".equals(resultado))
+			return false;
+		else
+			return true;
+	}
+
 	public Boolean mediadorExisteVigente(String codMediador){
 		
 		if(!Checks.esNulo(codMediador)){
@@ -1724,6 +1791,5 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		}
 		return false;
 	}
-	
 	
 }

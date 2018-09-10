@@ -312,11 +312,21 @@ public interface ParticularValidatorApi {
 	
 	public String getSubcartera(String numActivo);
 
+	Boolean tienenRelacionActivoGasto(String numActivo, String numGasto);
+
+	List<Long> getRelacionGastoActivo(String numGasto);
+
 	public Boolean agrupacionEstaVacia(String numAgrupacion);
 
 	public Boolean distintosTiposImpuestoAgrupacionVacia(List<String> activosList);
 
 	Boolean subcarteraPerteneceCartera(String subcartera, String cartera);
+
+	Boolean esGastoDeLiberbank(String numGasto);
+
+	Boolean esParGastoActivo(String numGasto, String numActivo);
+
+	Boolean existePromocion(String promocion);
 
 	Boolean mediadorExisteVigente(String codMediador);
 

@@ -1,12 +1,20 @@
 #!/bin/bash
  
+
+if [ $1 -eq 1 ]; then
 ficheros=ALTA_ACTIVOS
+elif [ $1 -eq 0 ]; then
+ficheros=ALTA_LBB
+else
+    echo "Error: El parametro de entrada es incorrecto (0 para Cajamar y 1 para Liberbank)"
+    exit 1
+fi
 
 if [[ -z ${DIR_DESTINO} ]] || [[ ! -d ${DIR_DESTINO} ]]; then
     echo "$(basename $0) Error: DIR_DESTINO no definido o no es un directorio. Compruebe invocación previa a setBatchEnv.sh"
     exit 1
 fi
-rm -f ${DIR_DESTINO}ALTA_ACTIVOS*
+rm -f ${DIR_DESTINO}$ficheros*
 
 mascara='_'$1
 extensionSem=".sem"

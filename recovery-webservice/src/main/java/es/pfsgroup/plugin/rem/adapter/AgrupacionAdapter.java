@@ -102,6 +102,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
@@ -534,7 +535,18 @@ public class AgrupacionAdapter {
 			if (Checks.esNulo(activo)) {
 				throw new JsonViewerException("El activo no existe");
 			}
-
+			
+			//Si el activo es de Liberbank, además debe ser de la misma subcartera
+			if(DDCartera.CODIGO_CARTERA_LIBERBANK.equals(activo.getCartera().getCodigo()) && !Checks.estaVacio(agrupacion.getActivos())) {
+				if(!Checks.esNulo(activo.getSubcartera())) {
+					if(!agrupacion.getActivos().get(0).getActivo().getSubcartera().equals(activo.getSubcartera())) {
+						throw new JsonViewerException("El activo añadido tiene que tener la misma subcartera que los ya existentes");
+					}
+				}else{
+					throw new JsonViewerException("El activo no se puede añadir por que no tiene subcartera");
+				}
+			}
+			
 			// Si la agrupación es asistida, el activo además de existir tiene
 			// que ser asistido.
 			if (DDTipoAgrupacion.AGRUPACION_ASISTIDA.equals(agrupacion.getTipoAgrupacion().getCodigo())) {
@@ -1310,9 +1322,13 @@ public class AgrupacionAdapter {
 		if (!Checks.estaVacio(agr.getActivos()) && !Checks.esNulo(agr.getActivos().get(0))
 				&& !Checks.esNulo(agr.getActivos().get(0).getActivo())
 				&& !Checks.esNulo(agr.getActivos().get(0).getActivo().getCartera())
-				&& !Checks.esNulo(agr.getActivos().get(0).getActivo().getCartera().getCodigo()) && agr.getActivos()
-						.get(0).getActivo().getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_CAJAMAR)) {
-			if (Checks.esNulo(loteComercial.getUsuarioGestorComercial())) {
+				&& !Checks.esNulo(agr.getActivos().get(0).getActivo().getCartera().getCodigo()) 
+				&& (agr.getActivos().get(0).getActivo().getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_CAJAMAR)
+						|| agr.getActivos().get(0).getActivo().getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_LIBERBANK))) {
+			if (Checks.esNulo(loteComercial.getUsuarioGestorComercial()) && 
+					!agr.getActivos().get(0).getActivo().getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_LIBERBANK)) {
+				return false;
+			} else if(Checks.esNulo(loteComercial.getUsuarioGestorComercialBackOffice())) {
 				return false;
 			}
 		} else {

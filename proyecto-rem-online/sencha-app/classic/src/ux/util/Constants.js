@@ -169,7 +169,8 @@ Ext.define('HreRem.ux.util.Constants', {
     	HYT: '06',
     	LIBERBANK: '08',
     	TANGO: '10',
-    	GIANTS: '12'
+    	GIANTS: '12',
+    	LIBERBANK: '08'
     },
 
     NOMBRE_CARTERA:	{
@@ -180,7 +181,8 @@ Ext.define('HreRem.ux.util.Constants', {
     	'06': 'HYT',
     	'08': 'LIBERBANK',    	
     	'10': 'TANGO',
-    	'12': 'GIANTS'
+    	'12': 'GIANTS',
+    	'08': 'LIBERBANK'
     },
 
     
@@ -217,7 +219,8 @@ Ext.define('HreRem.ux.util.Constants', {
     	HAYACAL: 'HAYACAL',
     	HAYASUPCAL: 'HAYASUPCAL',
     	HAYAGESTPREC: 'HAYAGESTPREC',
-    	HAYAGESTPUBL: 'HAYAGESTPUBL'
+    	HAYAGESTPUBL: 'HAYAGESTPUBL',
+    	HAYASUPPUBL: 'HAYASUPPUBL'
     },
     
     TIPOS_OFERTA: {

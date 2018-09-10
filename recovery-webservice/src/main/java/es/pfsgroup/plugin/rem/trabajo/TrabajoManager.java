@@ -3413,12 +3413,18 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			int nActivos = listActivos.size();
 			boolean hasCodPrinex = false;
 			
-			for(ActivoTrabajo activo : listActivos) {
-				if(null != activo.getActivo().getCodigoPromocionPrinex() && !activo.getActivo().getCodigoPromocionPrinex().isEmpty()){
-					hasCodPrinex = true;
-					break;
+			if(!Checks.esNulo(trabajo.getAgrupacion()))
+				for(ActivoTrabajo activo : listActivos) {
+					if(null != activo.getActivo().getCodigoPromocionPrinex() && !activo.getActivo().getCodigoPromocionPrinex().isEmpty()){
+						hasCodPrinex = true;
+						break;
+					}
 				}
-			}
+			else
+				if(!Checks.esNulo(trabajo.getCodigoPromocionPrinex()))
+					hasCodPrinex = true;
+			
+			
 			
 			if (!Checks.esNulo(trabajo.getEsTarificado()) && !trabajo.getEsTarificado()) { // Presupuesto
 				List<PresupuestoTrabajo> presupuestos = genericDao.getList(PresupuestoTrabajo.class, filtro);

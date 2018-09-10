@@ -29,6 +29,7 @@ import es.pfsgroup.plugin.rem.model.ActivoDistribucion;
 import es.pfsgroup.plugin.rem.model.ActivoEdificio;
 import es.pfsgroup.plugin.rem.model.ActivoEstadosInformeComercialHistorico;
 import es.pfsgroup.plugin.rem.model.ActivoInfoComercial;
+import es.pfsgroup.plugin.rem.model.ActivoInformeComercialHistoricoMediador;
 import es.pfsgroup.plugin.rem.model.ActivoInfraestructura;
 import es.pfsgroup.plugin.rem.model.ActivoInstalacion;
 import es.pfsgroup.plugin.rem.model.ActivoLocalComercial;
@@ -1299,6 +1300,8 @@ public class InformeMediadorManager implements InformeMediadorApi {
 					}
 				}
 			}
+			
+			
 
 			if (informe.getIdProveedorRem() != null) {
 				ActivoProveedor mediador = genericDao.get(ActivoProveedor.class,

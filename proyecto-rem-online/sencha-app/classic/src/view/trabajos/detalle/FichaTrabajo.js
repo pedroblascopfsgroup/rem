@@ -12,12 +12,12 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
         var me = this;
         console.log(this);
         me.setTitle(HreRem.i18n('title.ficha'));
-
+        
         //Si el tipo es de Precios/Publicacion/Sancion no mostrar el bloque -Cuando hay que hacerlo...-
         me.codigoTipoTrabajo = me.lookupController().getViewModel().get('trabajo').get('tipoTrabajoCodigo');
         me.idGestorActivoResponsable = me.lookupController().getViewModel().get('trabajo').get('idGestorActivoResponsable');
         me.idSupervisorActivo = me.lookupController().getViewModel().get('trabajo').get('idSupervisorActivo');
-
+        
         me.items= [
         			{
 						xtype:'fieldsettable',
@@ -421,8 +421,11 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 								{
 									xtype: 'datefieldbase',
 									fieldLabel: HreRem.i18n('fieldlabel.fecha.ejecucion.real'),
-									bind: '{trabajo.fechaEjecucionReal}',
-									readOnly: true
+									bind: {
+										value:'{trabajo.fechaEjecucionReal}',
+										hidden: '{!esVisibleFechaEjecucionReal}',
+										readOnly: true
+									}
 								},
 								{ 
 				                	xtype: 'displayfieldbase',
@@ -442,8 +445,11 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 								{
 									xtype: 'datefieldbase',
 									fieldLabel: HreRem.i18n('fieldlabel.fecha.validacion'),
-									bind: '{trabajo.fechaValidacion}',
-									readOnly: true
+									bind: {
+										value: '{trabajo.fechaValidacion}',
+										hidden: '{!esVisibleFechaValidacion}',
+										readOnly: true
+										}
 								},
 								{
 									xtype: 'datefieldbase',
@@ -503,8 +509,7 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 		                		}						
 						]
 		           }
-        ];
-
+        ];  
     	me.callParent();
     },
 

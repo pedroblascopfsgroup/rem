@@ -19,6 +19,8 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
     initComponent: function () {
         var me = this;
         me.setTitle(HreRem.i18n('title.datos.publicacion.activo'));
+        
+        var isCarteraLiberbank = me.lookupViewModel().get('activo.isCarteraLiberbank');
 
         me.items = [
 // Resumen estado publicación.
@@ -202,6 +204,17 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 					                		},
 					                		iconAlign: 'left'
 					                	},
+					                	 {
+					                		xtype: 'button',
+					                		cls: 'no-pointer',
+					                		hidden: !isCarteraLiberbank,
+								    		html : '<div style="color: #000;">'+HreRem.i18n('title.publicaciones.condicion.sinAcceso')+'</div>',
+								    		style : 'background: transparent; border: none;',
+					                		bind: {
+					                			iconCls: '{getIconClsCondicionantesSinAcceso}'
+					                		},
+					                		iconAlign: 'left'
+					                	},
 					                	{
 						                	xtype: 'comboboxfieldbase',
 						                	fieldLabel:  HreRem.i18n('title.publicaciones.condicion.otro'),
@@ -237,7 +250,8 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 									 [
 										 {
 											 xtype: "historicocondicioneslist",
-											 reference: "historicocondicioneslist"
+											 reference: "historicocondicioneslist",
+											 secFunToEdit: 'EDITAR_GRID_PUBLICACION_CONDICIONES_ESPECIFICAS'
 										 }
 									 ]
 							 }

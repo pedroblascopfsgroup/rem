@@ -174,7 +174,7 @@ Ext.define('HreRem.view.activos.tramites.TramiteDetalleController', {
 	
 	onTareasListDobleClickHistorico : function(gridView,record) {
 		var me = this;
-		me.getView().fireEvent('abrirtareahistorico',record);
+		me.getView().fireEvent('abrirtareahistorico',record,gridView.up('grid'));
 	},
 	
 	onEnlaceActivosClick: function(tableView, indiceFila, indiceColumna) {

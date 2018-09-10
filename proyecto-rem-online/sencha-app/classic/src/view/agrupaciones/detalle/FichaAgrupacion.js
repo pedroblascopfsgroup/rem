@@ -279,6 +279,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
 			            		value: '{agrupacionficha.codigoGestoriaFormalizacion}'
 			            	}
 						},
+						//Si es Liberbank se muestra el de Gestores Backoffice, si no el de Gestor Comercial
 						{
 							xtype		: 'comboboxfieldbase',
 				        	fieldLabel	: HreRem.i18n('fieldlabel.gestor.comercial'),
@@ -287,7 +288,20 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
 				        	valueField	: 'id',
 				        	bind		: {
 			            		store: '{comboGestorComercial}',
-			            		value: '{agrupacionficha.codigoGestorComercial}'
+			            		value: '{agrupacionficha.codigoGestorComercial}',
+			            		hidden: '{esAgrupacionLiberbank}'
+			            	}
+						},
+						{
+							xtype		: 'comboboxfieldbase',
+				        	fieldLabel	: HreRem.i18n('fieldlabel.gestor.comercial.backoffice'),
+				        	reference	: 'cbGestorComercialBackoffice',
+				        	displayField: 'apellidoNombre',
+				        	valueField	: 'id',
+				        	bind		: {
+			            		store: '{comboGestorComercialBackoffice}',
+			            		value: '{agrupacionficha.codigoGestorComercialBackOffice}',
+			            		hidden: '{!esAgrupacionLiberbank}'
 			            	}
 						},
 						{

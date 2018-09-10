@@ -21,6 +21,7 @@ import es.pfsgroup.plugin.rem.gasto.dao.GastoDao;
 import es.pfsgroup.plugin.rem.model.DtoGastosFilter;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.VGastosProveedor;
+import es.pfsgroup.plugin.rem.model.VGastosProveedorExcel;
 import es.pfsgroup.plugin.rem.model.VGastosProvision;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoGasto;
 import es.pfsgroup.plugin.rem.proveedores.dao.ProveedoresDao;
@@ -34,16 +35,26 @@ public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implem
 	@Override
 	public DtoPage getListGastos(DtoGastosFilter dtoGastosFilter) {
 
-		HQLBuilder hb = this.rellenarFiltrosBusquedaGasto(dtoGastosFilter);
+		HQLBuilder hb = this.rellenarFiltrosBusquedaGasto(dtoGastosFilter, false);
 
 		return this.getListadoGastosCompleto(dtoGastosFilter, hb);
+	}
+	
+	@Override
+	public DtoPage getListGastosExcel(DtoGastosFilter dtoGastosFilter) {
+
+		HQLBuilder hb = this.rellenarFiltrosBusquedaGasto(dtoGastosFilter, true);
+		
+		hb.orderBy("vgasto.numGastoHaya", HQLBuilder.ORDER_ASC);
+
+		return this.getListadoGastosCompletoExcel(dtoGastosFilter, hb);
 	}
 
 	@Override
 	public DtoPage getListGastosFilteredByProveedorContactoAndGestoria(DtoGastosFilter dtoGastosFilter,
-			Long idUsuario, Boolean isGestoria) {
+			Long idUsuario, Boolean isGestoria, Boolean isGenerateExcel) {
 
-		HQLBuilder hb = this.rellenarFiltrosBusquedaGasto(dtoGastosFilter);
+		HQLBuilder hb = this.rellenarFiltrosBusquedaGasto(dtoGastosFilter, isGenerateExcel);
 
 		List<String> nombresProveedor = proveedorDao.getNombreProveedorByIdUsuario(idUsuario);
 		if (!Checks.estaVacio(nombresProveedor)) {
@@ -64,7 +75,10 @@ public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implem
 			// Si no hay proveedores, no debe mostrar ningún gasto en el listado
 			hb.appendWhere("vgasto.id is null");
 		}
-
+		
+		if(isGenerateExcel) {
+			return this.getListadoGastosCompletoExcel(dtoGastosFilter, hb);
+		}
 		return this.getListadoGastosCompleto(dtoGastosFilter, hb);
 	}
 
@@ -90,10 +104,38 @@ public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implem
 		}
 		return new DtoPage(gastos, pageGastos.getTotalCount());
 	}
+	
+	@SuppressWarnings("unchecked")
+	private DtoPage getListadoGastosCompletoExcel(DtoGastosFilter dtoGastosFilter, HQLBuilder hb) {
 
-	private HQLBuilder rellenarFiltrosBusquedaGasto(DtoGastosFilter dtoGastosFilter) {
+		Page pageGastos = HibernateQueryUtils.page(this, hb, dtoGastosFilter);
+		List<VGastosProveedorExcel> gastos = (List<VGastosProveedorExcel>) pageGastos.getResults();
+		if (dtoGastosFilter.getIdProvision() != null) {
+			dtoGastosFilter.setLimit(100000);
+			Page pageGastosAll = HibernateQueryUtils.page(this, hb, dtoGastosFilter);
+			List<VGastosProveedorExcel> gastosAll = (List<VGastosProveedorExcel>) pageGastosAll.getResults();
+			Double importeTotalAgrupacion = new Double(0);
+			for (VGastosProveedorExcel gasto : gastosAll) {
+				if (gasto.getImporteTotal() != null && gasto.getEstadoGastoCodigo() != null
+						&& gasto.getEstadoGastoCodigo().equals(DDEstadoGasto.AUTORIZADO_ADMINISTRACION)) {
+					importeTotalAgrupacion += gasto.getImporteTotal();
+				}
+			}
+			for (VGastosProveedorExcel gasto : gastos) {
+				gasto.setImporteTotalAgrupacion(importeTotalAgrupacion);
+			}
+		}
+		return new DtoPage(gastos, pageGastos.getTotalCount());
+	}
+
+	private HQLBuilder rellenarFiltrosBusquedaGasto(DtoGastosFilter dtoGastosFilter, Boolean isGenerateExcel) {
 		String select = "select vgasto ";
-		String from = "from VGastosProveedor vgasto";
+		String from;
+		if(isGenerateExcel) {
+			from = "from VGastosProveedorExcel vgasto";
+		}else {
+			from = "from VGastosProveedor vgasto";
+		}
 		String where = "";
 		boolean hasWhere = false;
 		HQLBuilder hb = null;
@@ -273,6 +315,14 @@ public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implem
 		StringBuilder sb = new StringBuilder("delete from GastoProveedorTrabajo gpt where gpt.id = " + id);
 		this.getSessionFactory().getCurrentSession().createQuery(sb.toString()).executeUpdate();
 
+	}
+
+	public GastoProveedor getGastoById(Long id) {
+		
+		HQLBuilder hb = new HQLBuilder("from GastoProveedor gpv" );
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "id", id);
+		
+		return HibernateQueryUtils.uniqueResult(this, hb);
 	}
 
 	// Convierte una lista en una cadena con los elementos separados por comas

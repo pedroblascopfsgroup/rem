@@ -10,7 +10,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
@@ -18,8 +17,8 @@ import javax.persistence.Version;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
+import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
-import es.capgemini.pfs.gestorEntidad.model.GestorEntidad;
 import es.capgemini.pfs.users.domain.Usuario;
 
 /**
@@ -30,7 +29,7 @@ import es.capgemini.pfs.users.domain.Usuario;
 @Entity
 @Table(name = "DUS_DIRECTOR_USUARIO", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-public class Directorusuario extends GestorEntidad implements Serializable {
+public class Directorusuario implements Auditable, Serializable {
 
 	private static final long serialVersionUID = 7594603536051797805L;
 

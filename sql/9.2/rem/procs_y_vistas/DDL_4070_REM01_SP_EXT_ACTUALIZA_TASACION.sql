@@ -19,7 +19,7 @@ WHENEVER SQLERROR EXIT SQL.SQLCODE;
 SET SERVEROUTPUT ON;
 SET DEFINE OFF;
 
-create or replace PROCEDURE       SP_EXT_ACTUALIZA_TASACION (
+create or replace PROCEDURE       #ESQUEMA#.SP_EXT_ACTUALIZA_TASACION (
           ID_ACTIVO_HAYA       			IN  #ESQUEMA#.ACT_ACTIVO.ACT_NUM_ACTIVO%TYPE
        ,  COD_EXPEDIENTE 	   			IN  #ESQUEMA#.ACT_TAS_TASACION.TAS_EXPEDIENTE_EXTERNO%TYPE
        ,  IMPORTE_TAS_TOTAL    			IN  #ESQUEMA#.ACT_TAS_TASACION.TAS_IMPORTE_TAS_FIN%TYPE
@@ -281,7 +281,13 @@ BEGIN
        ***************************************************************************************************************************************************************/
        ELSIF V_COUNT = 0 THEN
         
-           V_MSQL :=  'SELECT COUNT(*) FROM '||V_ESQUEMA||'.ACT_TAS_TASACION TAS WHERE TRIM(TAS.TAS_EXPEDIENTE_EXTERNO) = TRIM('''||COD_EXPEDIENTE||''') ';
+            V_MSQL := 'SELECT COUNT(*)
+                        FROM '||V_ESQUEMA||'.ACT_TAS_TASACION TAS
+                        JOIN '||V_ESQUEMA||'.ACT_ACTIVO       ACT
+                        ON TAS.ACT_ID = ACT.ACT_ID
+                        WHERE ACT.ACT_NUM_ACTIVO = '||ID_ACTIVO_HAYA||'
+                        AND TRIM(TAS.TAS_EXPEDIENTE_EXTERNO) = TRIM('''||COD_EXPEDIENTE||''')';
+                        
            EXECUTE IMMEDIATE V_MSQL INTO V_COUNT;
            
            IF V_COUNT > 1 THEN
@@ -585,3 +591,4 @@ EXCEPTION
 END SP_EXT_ACTUALIZA_TASACION;
 /
 EXIT;
+

@@ -3,7 +3,6 @@ package es.pfsgroup.framework.paradise.gestorEntidad.dao.impl;
 import java.util.List;
 
 import org.hibernate.Query;
-import org.springframework.stereotype.Repository;
 
 import es.capgemini.pfs.dao.AbstractEntityDao;
 import es.capgemini.pfs.gestorEntidad.model.GestorEntidad;
@@ -15,6 +14,7 @@ import es.pfsgroup.framework.paradise.gestorEntidad.dao.GestorEntidadDao;
 
 public class GestorEntidadDaoImpl extends AbstractEntityDao<GestorEntidad, Long> implements GestorEntidadDao {
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public List<EXTDDTipoGestor> getListTipoGestorEditables(Long idTipoGestor) {
 		
@@ -30,6 +30,7 @@ public class GestorEntidadDaoImpl extends AbstractEntityDao<GestorEntidad, Long>
 		
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public List<Usuario> getListUsuariosGestoresExpedientePorTipo(Long idTipoGestor) {
 		

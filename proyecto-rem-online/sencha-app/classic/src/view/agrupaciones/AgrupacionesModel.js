@@ -28,8 +28,7 @@ Ext.define('HreRem.view.agrupaciones.AgrupacionesModel', {
 	    	model: 'HreRem.model.ComboBase',
 	    	proxy: {
 		        type: 'uxproxy',
-		        remoteUrl: 'generic/getDiccionario',
-				extraParams: {diccionario: 'tipoAgrupacion'}
+		        remoteUrl: 'generic/getComboTipoAgrupacion'
 	    	},
 	    	autoLoad: true
     	},

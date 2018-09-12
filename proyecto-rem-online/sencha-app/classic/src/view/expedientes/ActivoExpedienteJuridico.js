@@ -43,7 +43,7 @@ Ext.define('HreRem.view.expedientes.ActivoExpedienteJuridico', {
 		     ,
 			{
 			    xtype: 'bloqueosformalizacionlist',
-				reference: 'bloqueosformalizacionlistref',
+				reference: 'bloqueosformalizacionlistref'
 			}
 		];
 

@@ -9,6 +9,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -23,10 +24,9 @@ import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
-import es.pfsgroup.plugin.rem.model.dd.DDResolucionComite;
 
 @Component
-public class UpdaterServiceSancionOfertaAlquileresResolucionExpediente implements UpdaterService {
+public class UpdaterServiceSancionOfertaAlquileresAceptacionCliente implements UpdaterService {
 
     @Autowired
     private GenericABMDao genericDao;
@@ -36,15 +36,14 @@ public class UpdaterServiceSancionOfertaAlquileresResolucionExpediente implement
     
     @Autowired
     private ExpedienteComercialApi expedienteComercialApi;
-        
-    protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaAlquileresResolucionExpediente.class);
-			
-    private static final String RESOLUCION_EXPEDIENTE = "resolucionExpediente";
-	private static final String FECHA_RESOLUCION = "fechaResolucion";
-	private static final String MOTIVO = "motivo";
-	private static final String IMPORTE_CONTRAOFERTA = "importeContraoferta";
+
+    protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaAlquileresAceptacionCliente.class);
+    
+    private static final String ACEPTACION_CONTRAOFERTA = "aceptacionContraoferta";
+    private static final String FECHA_ACEPTACION_DENEGACION = "fechaAceptaDenega"; 
+    private static final String MOTIVO = "motivoAC";
 	
-	private static final String CODIGO_T015_RESOLUCION_EXPEDIENTE = "T015_ResolucionExpediente";
+	private static final String CODIGO_T015_ACEPTACION_CLIENTE= "T015_AceptacionCliente";
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 	
@@ -52,37 +51,46 @@ public class UpdaterServiceSancionOfertaAlquileresResolucionExpediente implement
 
 		ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByTrabajo(tramite.getTrabajo());
 		Oferta oferta = expedienteComercial.getOferta();
+		
+		Boolean aceptacionContraoferta = false;
 		DDEstadosExpedienteComercial estadoExpedienteComercial = null;
 		DDEstadoOferta estadoOferta = null;
 		for(TareaExternaValor valor :  valores){
-
-			if(RESOLUCION_EXPEDIENTE.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+			
+			if(ACEPTACION_CONTRAOFERTA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 				
-				if(DDResolucionComite.CODIGO_APRUEBA.equals(valor.getValor())) {
-					estadoExpedienteComercial = genericDao.get(DDEstadosExpedienteComercial.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadosExpedienteComercial.PTE_PBC));
+				if(DDSiNo.SI.equals(valor.getValor())) {
+					aceptacionContraoferta = true;
+					estadoExpedienteComercial = genericDao.get(DDEstadosExpedienteComercial.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadosExpedienteComercial.CONTRAOFERTADO_ALQUILER));
 					expedienteComercial.setEstado(estadoExpedienteComercial);
-
-					estadoOferta = (DDEstadoOferta) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoOferta.class, DDEstadoOferta.CODIGO_ACEPTADA);
-					oferta.setEstadoOferta(estadoOferta);
-
-				}else if(DDResolucionComite.CODIGO_RECHAZA.equals(valor.getValor())) {
+				}else {
 					estadoExpedienteComercial = genericDao.get(DDEstadosExpedienteComercial.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadosExpedienteComercial.ANULADO));
 					expedienteComercial.setEstado(estadoExpedienteComercial);
 
 					estadoOferta = (DDEstadoOferta) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoOferta.class, DDEstadoOferta.CODIGO_RECHAZADA);
 					oferta.setEstadoOferta(estadoOferta);
-
-				}else if(DDResolucionComite.CODIGO_CONTRAOFERTA.equals(valor.getValor())) {
-					estadoExpedienteComercial = genericDao.get(DDEstadosExpedienteComercial.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadosExpedienteComercial.CONTRAOFERTADO));
-					expedienteComercial.setEstado(estadoExpedienteComercial);
+					expedienteComercial.setOferta(oferta);
 				}
 			}
 			
-			if(FECHA_RESOLUCION.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+			if(FECHA_ACEPTACION_DENEGACION.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+				if(aceptacionContraoferta) {
+					try {
+						expedienteComercial.setFechaAlta(ft.parse(valor.getValor()));
+					} catch (ParseException e) {
+						logger.error("Error insertando Fecha alta.", e);
+					}
+				}else {
+					try {
+						expedienteComercial.setFechaAnulacion(ft.parse(valor.getValor()));
+					} catch (ParseException e) {
+						logger.error("Error insertando Fecha anulación.", e);
+					}
+				}
 				try {
 					expedienteComercial.setFechaSancion(ft.parse(valor.getValor()));
 				} catch (ParseException e) {
-					logger.error("Error insertando Fecha Sancion Comite.", e);
+					logger.error("Error insertando Fecha anulación.", e);
 				}
 			}
 			
@@ -91,17 +99,12 @@ public class UpdaterServiceSancionOfertaAlquileresResolucionExpediente implement
 				DDMotivoAnulacionExpediente motivoAnulacion = genericDao.get(DDMotivoAnulacionExpediente.class, filtroMotivo);
 				expedienteComercial.setMotivoAnulacion(motivoAnulacion);
 			}
-			
-			if(IMPORTE_CONTRAOFERTA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
-				oferta.setImporteContraOferta(Double.parseDouble(valor.getValor()));
-			}
 		}
-		expedienteComercial.setOferta(oferta);
 		expedienteComercialApi.update(expedienteComercial);
 	}
 
 	public String[] getCodigoTarea() {
-		return new String[]{CODIGO_T015_RESOLUCION_EXPEDIENTE};
+		return new String[]{CODIGO_T015_ACEPTACION_CLIENTE};
 	}
 
 	public String[] getKeys() {

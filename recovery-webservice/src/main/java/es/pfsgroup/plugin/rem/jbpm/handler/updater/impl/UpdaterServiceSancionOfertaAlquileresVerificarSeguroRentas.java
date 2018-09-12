@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.jbpm.handler.updater.impl;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
@@ -13,13 +14,19 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.HistoricoSeguroRentasAlquiler;
+import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.SeguroRentasAlquiler;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoSeguroRentas;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoAlquiler;
+import es.pfsgroup.plugin.rem.model.dd.DDResultadoCampo;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposImpuesto;
 
 @Component
@@ -27,6 +34,9 @@ public class UpdaterServiceSancionOfertaAlquileresVerificarSeguroRentas implemen
 
     @Autowired
     private GenericABMDao genericDao;
+    
+    @Autowired
+	private UtilDiccionarioApi utilDiccionarioApi;
     
     @Autowired
     private ExpedienteComercialApi expedienteComercialApi;
@@ -58,6 +68,7 @@ public class UpdaterServiceSancionOfertaAlquileresVerificarSeguroRentas implemen
 
 		ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByTrabajo(tramite.getTrabajo());
 		CondicionanteExpediente condiciones = expedienteComercial.getCondicionante();
+		Oferta oferta = expedienteComercial.getOferta();
 		
 		Boolean checkDepositoMarcado = false;
 		Boolean checkFiadorSolidarioMarcado = false;
@@ -65,39 +76,67 @@ public class UpdaterServiceSancionOfertaAlquileresVerificarSeguroRentas implemen
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "expediente.id", expedienteComercial.getId());
 		SeguroRentasAlquiler seguroRentasAlquiler = genericDao.get(SeguroRentasAlquiler.class, filtro);
 		
+		HistoricoSeguroRentasAlquiler historicoSeguroRentasAlquiler = new HistoricoSeguroRentasAlquiler();
+		
+		if(Checks.esNulo(seguroRentasAlquiler)) {
+			seguroRentasAlquiler = new SeguroRentasAlquiler();
+			seguroRentasAlquiler.setExpediente(expedienteComercial);
+		}
+		DDResultadoCampo resultadoCampo = null;
 		for(TareaExternaValor valor :  valores){
 
 			if(RESULTADO_SEGURO_RENTAS.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+				@SuppressWarnings("unused")
 				Filter filtroResultadoSeguroRentas = null;
-				
-				if(DDEstadoSeguroRentas.Pendiente.equals(valor.getValor())) {
-					filtroResultadoSeguroRentas = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoSeguroRentas.Pendiente);
-				}else if(DDEstadoSeguroRentas.aceptado.equals(valor.getValor())) {
-					filtroResultadoSeguroRentas = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoSeguroRentas.aceptado);
-				}else if(DDEstadoSeguroRentas.rechazado.equals(valor.getValor())) {
-					filtroResultadoSeguroRentas = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoSeguroRentas.rechazado);
-				}
-				
-				if(!Checks.esNulo(filtroResultadoSeguroRentas)) {
-					DDEstadoSeguroRentas estadoSeguroRentas = genericDao.get(DDEstadoSeguroRentas.class, filtroResultadoSeguroRentas);
-					seguroRentasAlquiler.setEstadoSeguroRentas(estadoSeguroRentas);
+				DDEstadosExpedienteComercial estadoExpedienteComercial = null;
+				if(DDResultadoCampo.RESULTADO_APROBADO.equals(valor.getValor())) {
+					filtroResultadoSeguroRentas = genericDao.createFilter(FilterType.EQUALS, "codigo", DDResultadoCampo.RESULTADO_APROBADO);
+					estadoExpedienteComercial = genericDao.get(DDEstadosExpedienteComercial.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadosExpedienteComercial.PTE_ELEVAR_SANCION));
+					expedienteComercial.setEstado(estadoExpedienteComercial);
+					resultadoCampo = (DDResultadoCampo) utilDiccionarioApi.dameValorDiccionarioByCod(DDResultadoCampo.class, DDResultadoCampo.RESULTADO_APROBADO);
+					historicoSeguroRentasAlquiler.setResultadoSeguroRentas(resultadoCampo);
+				}else {
+					filtroResultadoSeguroRentas = genericDao.createFilter(FilterType.EQUALS, "codigo", DDResultadoCampo.RESULTADO_RECHAZADO);
+					estadoExpedienteComercial = genericDao.get(DDEstadosExpedienteComercial.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadosExpedienteComercial.ANULADO));
+					expedienteComercial.setEstado(estadoExpedienteComercial);
+					DDEstadoOferta estadoOferta = (DDEstadoOferta) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoOferta.class, DDEstadoOferta.CODIGO_RECHAZADA);
+					oferta.setEstadoOferta(estadoOferta);
+					resultadoCampo = (DDResultadoCampo) utilDiccionarioApi.dameValorDiccionarioByCod(DDResultadoCampo.class, DDResultadoCampo.RESULTADO_RECHAZADO);
+					historicoSeguroRentasAlquiler.setResultadoSeguroRentas(resultadoCampo);
 				}
 			}
 			
 			if(FECHA_SANCION_RENTAS.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
-				//
+				try {
+					historicoSeguroRentasAlquiler.setFechaSancion(ft.parse(valor.getValor()));
+				} catch (ParseException e) {
+					logger.error("Error insertando Fecha sanción scoring.", e);
+				}
 			}
 			
 			if(MOTIVO_RECHAZO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
-				seguroRentasAlquiler.setMotivoRechazo(valor.getValor());
+				//TODO motivo rechazo a partir de diccionario DDMotivoRechazoAlquiler cuando este definido.
+				DDMotivoRechazoAlquiler motivoRechazoAlquiler = null;
+				if(DDMotivoRechazoAlquiler.MOTIVO_RECHAZO_1.equals(valor.getValor())) {
+					motivoRechazoAlquiler = (DDMotivoRechazoAlquiler) utilDiccionarioApi.dameValorDiccionarioByCod(DDMotivoRechazoAlquiler.class, DDMotivoRechazoAlquiler.MOTIVO_RECHAZO_1);
+					seguroRentasAlquiler.setMotivoRechazo(motivoRechazoAlquiler.getDescripcion());
+				}else if(DDMotivoRechazoAlquiler.MOTIVO_RECHAZO_2.equals(valor.getValor())) {
+					motivoRechazoAlquiler = (DDMotivoRechazoAlquiler) utilDiccionarioApi.dameValorDiccionarioByCod(DDMotivoRechazoAlquiler.class, DDMotivoRechazoAlquiler.MOTIVO_RECHAZO_2);
+					seguroRentasAlquiler.setMotivoRechazo(motivoRechazoAlquiler.getDescripcion());
+				}else {
+					motivoRechazoAlquiler = (DDMotivoRechazoAlquiler) utilDiccionarioApi.dameValorDiccionarioByCod(DDMotivoRechazoAlquiler.class, DDMotivoRechazoAlquiler.MOTIVO_RECHAZO_3);
+					seguroRentasAlquiler.setMotivoRechazo(motivoRechazoAlquiler.getDescripcion());
+				}
 			}
 			
 			if(N_MESES_FIANZA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 				condiciones.setMesesFianza(Integer.parseInt(valor.getValor()));
+				historicoSeguroRentasAlquiler.setMesesFianza(Integer.parseInt(valor.getValor()));
 			}
 				
 			if(IMPORTE_FIANZA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 				condiciones.setImporteFianza(Double.parseDouble(valor.getValor()));
+				historicoSeguroRentasAlquiler.setImportFianza(Long.parseLong(valor.getValor()));
 			}
 				
 			if(DEPOSITO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
@@ -160,9 +199,14 @@ public class UpdaterServiceSancionOfertaAlquileresVerificarSeguroRentas implemen
 			}
 				
 			if(OBSERVACIONES.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
-				//
+				seguroRentasAlquiler.setComentarios(valor.getValor());
 			}
 		}
+		expedienteComercial.setOferta(oferta);
+		expedienteComercialApi.update(expedienteComercial);
+		genericDao.save(SeguroRentasAlquiler.class, seguroRentasAlquiler);
+		historicoSeguroRentasAlquiler.setSeguroRentasAlquiler(seguroRentasAlquiler);
+		genericDao.save(HistoricoSeguroRentasAlquiler.class, historicoSeguroRentasAlquiler);
 	}
 
 	public String[] getCodigoTarea() {

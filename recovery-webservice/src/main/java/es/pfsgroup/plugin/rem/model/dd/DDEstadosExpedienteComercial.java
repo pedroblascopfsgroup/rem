@@ -48,9 +48,19 @@ public class DDEstadosExpedienteComercial implements Auditable, Dictionary {
 	public final static String RPTA_OFERTANTE = "14";
 	public final static String ALQUILADO = "15";
 	public final static String EN_DEVOLUCION = "16";
+	public final static String ANULADO_PTE_DEVOLUCION = "17";
 	public final static String PTE_SCORING = "18";
 	public final static String PTE_SEGURO_RENTAS = "19";
 	public final static String PTE_ELEVAR_SANCION = "20";
+	public final static String ELEVAR_A_SANCION = "21";
+	public final static String ANULADA = "22";
+	public final static String PTE_SANCION_COMITE = "23";
+	public final static String PTE_PBC = "24";
+	public final static String PTE_POSICIONAMIENTO = "25";
+	public final static String CONTRAOFERTADO_ALQUILER = "26";
+	public final static String PTE_FIRMA = "27";
+	public final static String PTE_CIERRE = "28";
+	public final static String FIRMADO_AQLUILER = "29";
 
 	@Id
 	@Column(name = "DD_EEC_ID")

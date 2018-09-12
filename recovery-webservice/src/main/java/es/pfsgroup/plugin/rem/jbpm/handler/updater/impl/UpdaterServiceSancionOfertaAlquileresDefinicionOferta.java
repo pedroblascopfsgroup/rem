@@ -151,13 +151,15 @@ public class UpdaterServiceSancionOfertaAlquileresDefinicionOferta implements Up
 				}
 				
 				if(OBSERVACIONES.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
-					//
+					//TODO El funcional no indica donde se guarda el campo.
 				}
 			}else{
 				if(FECHA_TRATAMIENTO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 					try {
 						if(!Checks.esNulo(expedienteComercial))
-							expedienteComercial.getReserva().setFechaFirma(ft.parse(valor.getValor()));
+							if(!Checks.esNulo(expedienteComercial.getReserva()))
+								
+								expedienteComercial.getReserva().setFechaFirma(ft.parse(valor.getValor()));
 					} catch (ParseException e) {
 						logger.error("Error insertando Fecha Tratamiento.", e);
 					}

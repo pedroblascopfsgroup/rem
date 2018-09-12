@@ -1596,6 +1596,7 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
     			me.down('[name=nMesesFianza]').noObligatorio=true;
     			me.down('[name=importeFianza]').noObligatorio=true;
     			
+            	me.deshabilitarCampo(me.down('[name=nMesesFianza]'));
             	me.deshabilitarCampo(me.down('[name=importeFianza]'));
             	
             	me.borrarCampo(me.down('[name=nMesesFianza]'));

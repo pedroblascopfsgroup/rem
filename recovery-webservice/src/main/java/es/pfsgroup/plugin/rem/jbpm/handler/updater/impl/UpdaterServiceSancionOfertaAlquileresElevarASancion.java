@@ -12,13 +12,17 @@ import org.springframework.stereotype.Component;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.dd.DDComiteAlquiler;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDResolucionOferta;
 
 @Component
@@ -26,6 +30,9 @@ public class UpdaterServiceSancionOfertaAlquileresElevarASancion implements Upda
 
     @Autowired
     private GenericABMDao genericDao;
+    
+    @Autowired
+	private UtilDiccionarioApi utilDiccionarioApi;
     
     @Autowired
     private ExpedienteComercialApi expedienteComercialApi;
@@ -51,17 +58,18 @@ public class UpdaterServiceSancionOfertaAlquileresElevarASancion implements Upda
 		for(TareaExternaValor valor :  valores){
 
 			if(RESOLUCION_OFERTA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
-				Filter filtroResolucionOferta = null;
-				
 				if(DDResolucionOferta.CODIGO_ELEVAR.equals(valor.getValor())) {
-					filtroResolucionOferta = genericDao.createFilter(FilterType.EQUALS, "codigo", DDResolucionOferta.CODIGO_ELEVAR);
+					DDEstadosExpedienteComercial estadoExpComercial =  (DDEstadosExpedienteComercial) utilDiccionarioApi.dameValorDiccionarioByCod(
+							DDEstadosExpedienteComercial.class, DDEstadosExpedienteComercial.PTE_SANCION_COMITE);
+					expedienteComercial.setEstado(estadoExpComercial);
 				}else if(DDResolucionOferta.CODIGO_ANULAR.equals(valor.getValor())) {
-					filtroResolucionOferta = genericDao.createFilter(FilterType.EQUALS, "codigo", DDResolucionOferta.CODIGO_ANULAR);
-				}
-				
-				if(!Checks.esNulo(filtroResolucionOferta)) {
-					DDResolucionOferta resolucionOferta = genericDao.get(DDResolucionOferta.class, filtroResolucionOferta);
-					//¿Donde se guarda la resolucion de la oferta?
+					DDEstadosExpedienteComercial estadoExpComercial =  (DDEstadosExpedienteComercial) utilDiccionarioApi.dameValorDiccionarioByCod(
+							DDEstadosExpedienteComercial.class, DDEstadosExpedienteComercial.ANULADA);
+					expedienteComercial.setEstado(estadoExpComercial);
+					DDEstadoOferta estadoOferta = (DDEstadoOferta) utilDiccionarioApi.dameValorDiccionarioByCod(
+							DDEstadoOferta.class, DDEstadoOferta.CODIGO_RECHAZADA);
+					oferta.setEstadoOferta(estadoOferta);
+					expedienteComercial.setOferta(oferta);
 				}
 			}
 			
@@ -75,12 +83,14 @@ public class UpdaterServiceSancionOfertaAlquileresElevarASancion implements Upda
 			}
 			
 			if(MOTIVO_ANULACION.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
-				//¿Donde se guarda el motivo anulacion? 
-				//Porque en el funcional pone que es un campo de texto pero en la BBDD sale como id DD_MRO_ID.
+				DDMotivoAnulacionExpediente motivoAnulacion = genericDao.get(DDMotivoAnulacionExpediente.class, genericDao.createFilter(FilterType.EQUALS,"codigo", valor.getValor()));
+				expedienteComercial.setMotivoAnulacion(motivoAnulacion);
 			}
 			
-			if(COMITE.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
-				//¿Donde se guarda el comite?
+			if(COMITE.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) { 
+				DDComiteAlquiler comiteAlquiler = (DDComiteAlquiler) utilDiccionarioApi.dameValorDiccionarioByCod(
+						DDComiteAlquiler.class, valor.getValor());
+				expedienteComercial.setComiteAlquiler(comiteAlquiler);
 			}
 				
 			if(REF_CIRCUITO_CLIENTE.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
@@ -88,9 +98,16 @@ public class UpdaterServiceSancionOfertaAlquileresElevarASancion implements Upda
 			}
 				
 			if(FECHA_ELEVACION.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
-				//¿Donde se guarda la fecha elevacion?
+				try {
+					expedienteComercial.setFechaSancionComite(ft.parse(valor.getValor()));
+				} catch (ParseException e) {
+					logger.error("Error insertando Fecha elevación.", e);
+				}
 			}
 		}
+		expedienteComercial.setOferta(oferta);
+		expedienteComercialApi.update(expedienteComercial);
+		
 	}
 
 	public String[] getCodigoTarea() {

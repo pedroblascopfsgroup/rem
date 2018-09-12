@@ -35,6 +35,7 @@ import org.hibernate.annotations.Where;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.plugin.rem.model.dd.DDComiteAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
@@ -229,6 +230,17 @@ public class ExpedienteComercial implements Serializable, Auditable {
     @JoinColumn(name = "ECO_ID")
     @Where(clause = Auditoria.UNDELETED_RESTICTION)
     private SeguroRentasAlquiler seguroRentasAlquiler;
+    
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_COA_ID")
+	private DDComiteAlquiler comiteAlquiler;
+    
+    @Column(name="ECO_DOCUMENTACION_OK")
+    private Boolean documentacionOk;
+    
+    @Column(name="ECO_FECHA_VALIDACION")
+    private Date fechaValidacion;
     
 	@Version   
 	private Long version;
@@ -688,6 +700,30 @@ public class ExpedienteComercial implements Serializable, Auditable {
 
 	public void setSeguroRentasAlquiler(SeguroRentasAlquiler seguroRentasAlquiler) {
 		this.seguroRentasAlquiler = seguroRentasAlquiler;
+	}
+
+	public DDComiteAlquiler getComiteAlquiler() {
+		return comiteAlquiler;
+	}
+
+	public void setComiteAlquiler(DDComiteAlquiler comiteAlquiler) {
+		this.comiteAlquiler = comiteAlquiler;
+	}
+
+	public Boolean getDocumentacionOk() {
+		return documentacionOk;
+	}
+
+	public void setDocumentacionOk(Boolean documentacionOk) {
+		this.documentacionOk = documentacionOk;
+	}
+
+	public Date getFechaValidacion() {
+		return fechaValidacion;
+	}
+
+	public void setFechaValidacion(Date fechaValidacion) {
+		this.fechaValidacion = fechaValidacion;
 	}
 	
    

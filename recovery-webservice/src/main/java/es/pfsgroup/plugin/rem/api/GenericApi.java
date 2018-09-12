@@ -228,6 +228,13 @@ public interface GenericApi {
 	
 	
 	public List<DDComiteAlquiler> getComitesAlquilerByCartera(Long idActivo);
+	
+	/**
+	 * Devuelve una lista de comites alquiler por el código de cartera.
+	 * @param carteraCodigo
+	 * @return
+	 */
+	public List<DDComiteAlquiler> getComitesAlquilerByCarteraCodigo(String carteraCodigo);
 
 }
 

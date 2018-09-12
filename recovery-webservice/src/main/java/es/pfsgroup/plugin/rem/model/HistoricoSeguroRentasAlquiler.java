@@ -23,6 +23,7 @@ import org.hibernate.annotations.Where;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoSeguroRentas;
+import es.pfsgroup.plugin.rem.model.dd.DDResultadoCampo;
 
 
 
@@ -59,9 +60,8 @@ public class HistoricoSeguroRentasAlquiler implements Serializable,Auditable  {
 	private Date fechaSancion;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "DD_ESR_ID")
-	private DDEstadoSeguroRentas estadoSeguroRentas;
-	
+    @JoinColumn(name = "DD_REC_ID")
+	private DDResultadoCampo resultadoSeguroRentas;
 
 	@Column(name = "SRE_HIS_ID_SOLICITUD")
 	private String idSolicitud;
@@ -103,14 +103,6 @@ public class HistoricoSeguroRentasAlquiler implements Serializable,Auditable  {
 
 	public void setFechaSancion(Date fechaSancion) {
 		this.fechaSancion = fechaSancion;
-	}
-
-	public DDEstadoSeguroRentas getEstadoSeguroRentas() {
-		return estadoSeguroRentas;
-	}
-
-	public void setEstadoSeguroRentas(DDEstadoSeguroRentas estadoSeguroRentas) {
-		this.estadoSeguroRentas = estadoSeguroRentas;
 	}
 
 	public String getIdSolicitud() {
@@ -159,6 +151,14 @@ public class HistoricoSeguroRentasAlquiler implements Serializable,Auditable  {
 
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
+	}
+
+	public DDResultadoCampo getResultadoSeguroRentas() {
+		return resultadoSeguroRentas;
+	}
+
+	public void setResultadoSeguroRentas(DDResultadoCampo resultadoSeguroRentas) {
+		this.resultadoSeguroRentas = resultadoSeguroRentas;
 	}
 	
 	

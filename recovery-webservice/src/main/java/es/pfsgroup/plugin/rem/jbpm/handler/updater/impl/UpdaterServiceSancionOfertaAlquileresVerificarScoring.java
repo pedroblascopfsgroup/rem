@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.jbpm.handler.updater.impl;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
@@ -13,13 +14,20 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.HistoricoScoringAlquiler;
+import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.ScoringAlquiler;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoScoring;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoAlquiler;
+import es.pfsgroup.plugin.rem.model.dd.DDResultadoCampo;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposImpuesto;
 
 @Component
@@ -29,11 +37,15 @@ public class UpdaterServiceSancionOfertaAlquileresVerificarScoring implements Up
     private GenericABMDao genericDao;
     
     @Autowired
+	private UtilDiccionarioApi utilDiccionarioApi;
+    
+    @Autowired
     private ExpedienteComercialApi expedienteComercialApi;
         
     protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaAlquileresVerificarScoring.class);
     
     private static final String RESULTADO_SCORING = "resultadoScoring";
+    private static final String FECHA_SANCION_SCORING = "fechaSancScoring";
 	private static final String MOTIVO_RECHAZO = "motivoRechazo";
 	private static final String N_EXPEDIENTE = "nExpediente";
 	private static final String N_MESES_FIANZA = "nMesesFianza";
@@ -56,6 +68,7 @@ public class UpdaterServiceSancionOfertaAlquileresVerificarScoring implements Up
 
 		ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByTrabajo(tramite.getTrabajo());
 		CondicionanteExpediente condiciones = expedienteComercial.getCondicionante();
+		Oferta oferta = expedienteComercial.getOferta();
 		
 		Boolean checkDepositoMarcado = false;
 		Boolean checkFiadorSolidarioMarcado = false;
@@ -63,27 +76,60 @@ public class UpdaterServiceSancionOfertaAlquileresVerificarScoring implements Up
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "expediente.id", expedienteComercial.getId());
 		ScoringAlquiler scoringAlquiler = genericDao.get(ScoringAlquiler.class, filtro);
 		
+		HistoricoScoringAlquiler histScoringAlquiler = new HistoricoScoringAlquiler();
+		
+		if(Checks.esNulo(scoringAlquiler)) {
+			scoringAlquiler = new ScoringAlquiler();
+			scoringAlquiler.setExpediente(expedienteComercial);
+		}
+		
 		for(TareaExternaValor valor :  valores){
 			
 			if(RESULTADO_SCORING.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 				Filter filtroResultadoScoring = null;
-				
-				if(DDEstadoScoring.PENDIENTE.equals(valor.getValor())) {
-					filtroResultadoScoring = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoScoring.PENDIENTE);
-				}else if(DDEstadoScoring.ACEPTADO.equals(valor.getValor())) {
-					filtroResultadoScoring = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoScoring.ACEPTADO);
-				}else if(DDEstadoScoring.RECHAZADO.equals(valor.getValor())) {
-					filtroResultadoScoring = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoScoring.RECHAZADO);
+				DDEstadosExpedienteComercial estadoExpedienteComercial = null;
+				if(DDResultadoCampo.RESULTADO_APROBADO.equals(valor.getValor())) {
+					filtroResultadoScoring = genericDao.createFilter(FilterType.EQUALS, "codigo", DDResultadoCampo.RESULTADO_APROBADO);
+					estadoExpedienteComercial = genericDao.get(DDEstadosExpedienteComercial.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadosExpedienteComercial.PTE_ELEVAR_SANCION));
+					expedienteComercial.setEstado(estadoExpedienteComercial);
+				}else {
+					filtroResultadoScoring = genericDao.createFilter(FilterType.EQUALS, "codigo", DDResultadoCampo.RESULTADO_RECHAZADO);
+					estadoExpedienteComercial = genericDao.get(DDEstadosExpedienteComercial.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadosExpedienteComercial.ANULADO));
+					expedienteComercial.setEstado(estadoExpedienteComercial);
+					DDEstadoOferta estadoOferta = (DDEstadoOferta) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoOferta.class, DDEstadoOferta.CODIGO_RECHAZADA);
+					oferta.setEstadoOferta(estadoOferta);
 				}
 				
 				if(!Checks.esNulo(filtroResultadoScoring)) {
 					DDEstadoScoring estadoScoring = genericDao.get(DDEstadoScoring.class, filtroResultadoScoring);
 					scoringAlquiler.setEstadoEscoring(estadoScoring);
+					histScoringAlquiler.setEstadoEscoring(scoringAlquiler.getEstadoEscoring());
+				}
+			}
+			
+			if(FECHA_SANCION_SCORING.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+				try {
+					histScoringAlquiler.setFechaSancion(ft.parse((valor.getValor())));
+				} catch (ParseException e) {
+					logger.error("Error insertando Fecha sanción scoring.", e);
 				}
 			}
 			
 			if(MOTIVO_RECHAZO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
-				scoringAlquiler.setMotivoRechazo(valor.getValor());
+				Filter filtroMotivoRezhazo = null;
+				
+				if(DDMotivoRechazoAlquiler.MOTIVO_RECHAZO_1.equals(valor.getValor())) {
+					filtroMotivoRezhazo = genericDao.createFilter(FilterType.EQUALS, "codigo", DDMotivoRechazoAlquiler.MOTIVO_RECHAZO_1);
+				}else if(DDMotivoRechazoAlquiler.MOTIVO_RECHAZO_2.equals(valor.getValor())) {
+					filtroMotivoRezhazo = genericDao.createFilter(FilterType.EQUALS, "codigo", DDMotivoRechazoAlquiler.MOTIVO_RECHAZO_2);
+				}else if(DDMotivoRechazoAlquiler.MOTIVO_RECHAZO_3.equals(valor.getValor())) {
+					filtroMotivoRezhazo = genericDao.createFilter(FilterType.EQUALS, "codigo", DDMotivoRechazoAlquiler.MOTIVO_RECHAZO_3);
+				}
+				
+				if(!Checks.esNulo(filtroMotivoRezhazo)) {
+					DDMotivoRechazoAlquiler motivoRechazo = genericDao.get(DDMotivoRechazoAlquiler.class, filtroMotivoRezhazo);
+					scoringAlquiler.setMotivoRechazo(motivoRechazo.getDescripcion());
+				}
 			}
 			
 			if(N_EXPEDIENTE.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
@@ -92,10 +138,12 @@ public class UpdaterServiceSancionOfertaAlquileresVerificarScoring implements Up
 			
 			if(N_MESES_FIANZA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 				condiciones.setMesesFianza(Integer.parseInt(valor.getValor()));
+				histScoringAlquiler.setMesesFianza(Integer.parseInt(valor.getValor()));
 			}
 				
 			if(IMPORTE_FIANZA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 				condiciones.setImporteFianza(Double.parseDouble(valor.getValor()));
+				histScoringAlquiler.setImportFianza(Long.parseLong(valor.getValor()));
 			}
 				
 			if(DEPOSITO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
@@ -150,9 +198,15 @@ public class UpdaterServiceSancionOfertaAlquileresVerificarScoring implements Up
 			}
 				
 			if(OBSERVACIONES.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
-				//
+				scoringAlquiler.setComentarios(valor.getValor());
 			}
 		}
+		expedienteComercial.setOferta(oferta);
+		expedienteComercialApi.update(expedienteComercial);
+		genericDao.save(ScoringAlquiler.class, scoringAlquiler);
+		histScoringAlquiler.setScoringAlquiler(scoringAlquiler);
+		genericDao.save(HistoricoScoringAlquiler.class, histScoringAlquiler);
+		
 	}
 
 	public String[] getCodigoTarea() {

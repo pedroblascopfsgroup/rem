@@ -105,6 +105,7 @@ import es.pfsgroup.plugin.rem.model.DtoCondiciones;
 import es.pfsgroup.plugin.rem.model.DtoCondicionesActivoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoDatosBasicosOferta;
 import es.pfsgroup.plugin.rem.model.DtoEntregaReserva;
+import es.pfsgroup.plugin.rem.model.DtoExpedienteDocumentos;
 import es.pfsgroup.plugin.rem.model.DtoExpedienteHistScoring;
 import es.pfsgroup.plugin.rem.model.DtoExpedienteScoring;
 import es.pfsgroup.plugin.rem.model.DtoFichaExpediente;
@@ -155,6 +156,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDAdministracion;
 import es.pfsgroup.plugin.rem.model.dd.DDAreaBloqueo;
 import es.pfsgroup.plugin.rem.model.dd.DDCanalPrescripcion;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDComiteAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDDevolucionReserva;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadesAvalistas;
@@ -219,6 +221,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	public final String PESTANA_FORMALIZACION = "formalizacion";
 	public final String PESTANA_SEGURO_RENTAS= "segurorentasexpediente";
 	public final String PESTANA_SCORING = "scoring";
+	public final String PESTANA_DOCUMENTOS = "documentos";
 
 	// Textos a mostrar por defecto
 	public static final String TANTEO_CONDICIONES_TRANSMISION = "msg.defecto.oferta.tanteo.condiciones.transmision";
@@ -292,9 +295,6 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
     
     @Autowired
     private TareaActivoApi tareaActivoApi;
-    
-    @Autowired
-	private TrabajoAdapter trabajoAdapter;
 
 	@Override
 	public String managerName() {
@@ -368,6 +368,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				dto = expedienteToDtoSeguroRentas(expediente);
 			} else if (PESTANA_SCORING.equals(tab)) {
 				dto = expedienteToDtoScoring(expediente);
+			} else if (PESTANA_DOCUMENTOS.equals(tab)) {
+				dto = expedienteToDtoDocumentos(expediente);
 			}
 			
 
@@ -578,6 +580,12 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			DDComiteSancion comiteSancion = genericDao.get(DDComiteSancion.class, filtro);
 			expedienteComercial.setComiteSancion(comiteSancion);
 			expedienteComercial.setComiteSuperior(comiteSancion);
+		}
+		
+		if (!Checks.esNulo(dto.getComiteSancionadorCodigoAlquiler())) {
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getComiteSancionadorCodigoAlquiler());
+			DDComiteAlquiler comitesAlquiler = genericDao.get(DDComiteAlquiler.class, filtro);
+			expedienteComercial.setComiteAlquiler(comitesAlquiler);
 		}
 		
 		//HREOS-4360
@@ -1210,9 +1218,6 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		dto.setImporteOferta(oferta.getImporteOferta());
 		dto.setImporteContraOferta(oferta.getImporteContraOferta());
 
-		// TODO Comités sin definir
-		// dto.setComite();
-
 		if (!Checks.esNulo(oferta.getVisita())) {
 			dto.setNumVisita(oferta.getVisita().getNumVisitaRem().toString());
 		}
@@ -1234,6 +1239,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 		if (!Checks.esNulo(expediente.getComiteSancion())) {
 			dto.setComiteSancionadorCodigo(expediente.getComiteSancion().getCodigo());
+		}
+		
+		if(!Checks.esNulo(expediente.getComiteAlquiler())) {
+			dto.setComiteSancionadorCodigoAlquiler(expediente.getComiteAlquiler().getCodigo());
 		}
 
 		// nuevo canal prescriptor
@@ -6846,6 +6855,16 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		return scoringDto;
 	}
 
+	public DtoExpedienteDocumentos expedienteToDtoDocumentos(ExpedienteComercial expediente) {
+		
+		DtoExpedienteDocumentos documentosExpDto = new DtoExpedienteDocumentos();
+		
+		documentosExpDto.setDocOk(expediente.getDocumentacionOk());
+		documentosExpDto.setFechaValidacion(expediente.getFechaValidacion());
+	
+		return documentosExpDto;
+	}
+
 	@Override
 	public List<DtoExpedienteHistScoring> getHistoricoScoring(Long idScoring) {
 		
@@ -6855,12 +6874,29 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		listaHistoricoScoring = genericDao.getList(HistoricoScoringAlquiler.class, filtro);
         for (HistoricoScoringAlquiler hist : listaHistoricoScoring){
 	        	DtoExpedienteHistScoring dto =new DtoExpedienteHistScoring();
-	        	dto.setFechaSancion(hist.getFechaSancion());
-	        	dto.setResultadoScoring(hist.getEstadoEscoring().getCodigo());
-	        	dto.setnSolicitud(Long.parseLong(hist.getIdSolicitud()));
-	        	dto.setDocScoring(hist.getDocumentoScoring());
-	        	dto.setnMesesFianza(hist.getMesesFianza());
-	        	dto.setImporteFianza(hist.getImportFianza());
+	        	if(!Checks.esNulo(hist.getFechaSancion())) {
+	        		dto.setFechaSancion(hist.getFechaSancion());
+	        	}
+	        	
+	        	if(!Checks.esNulo(hist.getEstadoEscoring())) {
+	        		dto.setResultadoScoring(hist.getEstadoEscoring().getDescripcion());
+	        	}
+	        	
+	        	if(!Checks.esNulo(hist.getIdSolicitud())) {
+	        		dto.setnSolicitud(Long.parseLong(hist.getIdSolicitud()));
+	        	}
+	        	
+	        	if(!Checks.esNulo(hist.getDocumentoScoring())) {
+	        		dto.setDocScoring(hist.getDocumentoScoring());
+	        	}
+	        	
+	        	if(!Checks.esNulo(hist.getMesesFianza())) {
+	        		dto.setnMesesFianza(hist.getMesesFianza());
+	        	}
+	        	
+	        	if(!Checks.esNulo(hist.getImportFianza())) {
+	        		dto.setImporteFianza(hist.getImportFianza());
+	        	}
 	        	
 		        listaHstco.add(dto);
         	}

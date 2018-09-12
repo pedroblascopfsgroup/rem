@@ -1272,14 +1272,7 @@ public class AgrupacionAdapter {
 
 			} else if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_PROYECTO)) {
 				
-				ActivoAgrupacion activoAgrupacion = (ActivoAgrupacion) agrupacion;
-				
-				Filter filtroActivoProyecto = genericDao.createFilter(FilterType.EQUALS, "agrupacion", activoAgrupacion);
-				ActivoProyecto activoProyecto = genericDao.get(ActivoProyecto.class, filtroActivoProyecto);				
-				
-				genericDao.deleteById(ActivoProyecto.class, activoProyecto.getId());
-				
-				genericDao.deleteById(ActivoAgrupacion.class, Long.valueOf(dtoAgrupacion.getId()));
+				genericDao.deleteById(ActivoProyecto.class, Long.valueOf(dtoAgrupacion.getId()));
 
 			} else if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_ASISTIDA)) {
 

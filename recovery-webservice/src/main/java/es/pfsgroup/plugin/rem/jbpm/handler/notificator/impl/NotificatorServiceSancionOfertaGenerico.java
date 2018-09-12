@@ -128,12 +128,14 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 
 	private void sendNotification(ActivoTramite tramite, boolean permiteRechazar, Activo activo, Oferta oferta, boolean permiteNotificarAprobacion) {
 
+		ArrayList<String> destinatarios = new ArrayList<String>();
+		
 		if (!Checks.esNulo(oferta)) {
 			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(oferta.getId());
 			if (permiteNotificarAprobacion && !Checks.esNulo(expediente)
 					&& DDEstadosExpedienteComercial.APROBADO.equals(expediente.getEstado().getCodigo())) { // APROBACIÓN
 
-				ArrayList<String> destinatarios = getDestinatariosNotificacion(activo, oferta, expediente);
+				destinatarios = getDestinatariosNotificacion(activo, oferta, expediente);
 				
 				if (activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_CAJAMAR)){
 					destinatarios.add(usuarioManager.getByUsername(USUARIO_FICTICIO_OFERTA_CAJAMAR).getEmail());
@@ -161,15 +163,30 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 					logger.warn("No se ha encontrado el prescriptor. No se va a mandar la notificación [oferta.id="
 							+ oferta.getId() + "]");
 					return;
+				}else {
+					destinatarios.add(prescriptor);
 				}
+				
 				String gestorFormalizacion = null;
 				if(ofertaApi.checkReserva(oferta)) {
 					gestorFormalizacion = getGestorFormalizacion(activo,oferta, expediente);
 				}
-				if(Checks.esNulo(gestorFormalizacion))
-					this.enviaNotificacionRechazar(tramite, activo, oferta, prescriptor, gestorComercial);
-				else
-					this.enviaNotificacionRechazar(tramite, activo, oferta, prescriptor, gestorComercial, gestorFormalizacion);
+				
+				if (Checks.esNulo(gestorComercial)) {
+					logger.warn("No se ha encontrado el gestor comercial. No se va a mandar la notificación [oferta.id="
+							+ oferta.getId() + "] a este gestor.");
+				}else {
+					destinatarios.add(gestorComercial);
+				}
+				
+				if (Checks.esNulo(gestorFormalizacion)) {
+					logger.warn("No se ha encontrado el gestor de formalizacion. No se va a mandar la notificación [oferta.id="
+							+ oferta.getId() + "] a este gestor.");
+				}else {
+					destinatarios.add(gestorFormalizacion);
+				}
+				
+				this.enviaNotificacionRechazar(tramite, activo, oferta, destinatarios.toArray(new String[] {}));
 			}
 		}
 	}

@@ -44,7 +44,6 @@ Ext.define('HreRem.view.expedientes.ActivoExpedienteJuridico', {
 			{
 			    xtype: 'bloqueosformalizacionlist',
 				reference: 'bloqueosformalizacionlistref',
-				secFunToEdit: 'EDITAR_GRID_INFROME_JURIDICO_EXPEDIENTE'
 			}
 		];
 

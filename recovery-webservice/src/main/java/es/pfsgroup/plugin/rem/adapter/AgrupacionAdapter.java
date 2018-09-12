@@ -68,7 +68,6 @@ import es.pfsgroup.plugin.rem.model.ActivoLoteComercial;
 import es.pfsgroup.plugin.rem.model.ActivoObraNueva;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoPropietario;
-import es.pfsgroup.plugin.rem.model.ActivoPropietarioActivo;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoProyecto;
 import es.pfsgroup.plugin.rem.model.ActivoRestringida;
@@ -365,10 +364,7 @@ public class AgrupacionAdapter {
 					// SI ES TIPO PROYECTO
 				} else if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_PROYECTO)) {
 
-					ActivoAgrupacion activoAgrupacion = (ActivoAgrupacion) agrupacion;
-					
-					Filter filtroActivoProyecto = genericDao.createFilter(FilterType.EQUALS, "agrupacion", activoAgrupacion);
-					ActivoProyecto proyectoTemp = genericDao.get(ActivoProyecto.class, filtroActivoProyecto);
+					ActivoProyecto proyectoTemp = (ActivoProyecto) agrupacion;
 
 					BeanUtils.copyProperties(dtoAgrupacion, proyectoTemp);
 
@@ -850,15 +846,11 @@ public class AgrupacionAdapter {
 			return restringida;
 			
 		} else if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_PROYECTO)) {	
-			ActivoAgrupacion activoAgrupacion = (ActivoAgrupacion) agrupacion;
-			
-			Filter filtroActivoProyecto = genericDao.createFilter(FilterType.EQUALS, "agrupacion", activoAgrupacion);
-			ActivoProyecto proyecto = genericDao.get(ActivoProyecto.class, filtroActivoProyecto);
-			
+			ActivoProyecto proyecto = (ActivoProyecto) agrupacion;
 			proyecto.setLocalidad(pobl.getLocalidad());
 			proyecto.setProvincia(pobl.getProvincia());
 			proyecto.setCodigoPostal(pobl.getCodPostal());
-			return proyecto.getAgrupacion();
+			return proyecto;
 
 		} else if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_ASISTIDA)) {
 			ActivoAsistida asistida = (ActivoAsistida) agrupacion;
@@ -1218,22 +1210,12 @@ public class AgrupacionAdapter {
 			// Si es PROYECTO
 		} else if (dtoAgrupacion.getTipoAgrupacion().equals(DDTipoAgrupacion.AGRUPACION_PROYECTO)) {
 
-			ActivoAgrupacion activoAgrupacion = new ActivoAgrupacion();
-			
-			activoAgrupacion.setDescripcion(dtoAgrupacion.getDescripcion());
-			activoAgrupacion.setNombre(dtoAgrupacion.getNombre());
-			activoAgrupacion.setTipoAgrupacion(tipoAgrupacion);
-			activoAgrupacion.setFechaAlta(new Date());
-			activoAgrupacion.setNumAgrupRem(numAgrupacionRem);
-			
-			genericDao.save(ActivoAgrupacion.class, activoAgrupacion);
-			
 			ActivoProyecto proyecto = new ActivoProyecto();
-			
-			Filter filtroAgrupacionId = genericDao.createFilter(FilterType.EQUALS, "id", activoAgrupacion.getId());
-			ActivoAgrupacion idActivoAgrupacion = (ActivoAgrupacion) genericDao.get(ActivoAgrupacion.class, filtroAgrupacionId);
-						
-			proyecto.setAgrupacion(idActivoAgrupacion);
+			proyecto.setDescripcion(dtoAgrupacion.getDescripcion());
+			proyecto.setNombre(dtoAgrupacion.getNombre());
+			proyecto.setTipoAgrupacion(tipoAgrupacion);
+			proyecto.setFechaAlta(new Date());
+			proyecto.setNumAgrupRem(numAgrupacionRem);
 			
 			genericDao.save(ActivoProyecto.class, proyecto);
 
@@ -2125,7 +2107,7 @@ public class AgrupacionAdapter {
 				
 				}
 				
-				activoAgrupacionApi.saveOrUpdate(proyecto.getAgrupacion());
+				activoAgrupacionApi.saveOrUpdate(proyecto);
 
 			} catch (Exception e) {
 

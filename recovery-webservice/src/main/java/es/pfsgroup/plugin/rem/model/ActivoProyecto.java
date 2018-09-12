@@ -5,19 +5,14 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
+import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import es.capgemini.pfs.auditoria.Auditable;
-import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.users.domain.Usuario;
@@ -35,16 +30,11 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 @Entity
 @Table(name = "ACT_PRY_PROYECTO", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@PrimaryKeyJoinColumn(name="AGR_ID")
 public class ActivoProyecto extends ActivoAgrupacion implements Serializable {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
-	
-	@ManyToOne
-    @JoinColumn(name = "AGR_ID", insertable = false, updatable = false)
-	private ActivoAgrupacion agrupacion;
+
 	
     @ManyToOne
     @JoinColumn(name = "DD_PRV_ID")
@@ -90,14 +80,6 @@ public class ActivoProyecto extends ActivoAgrupacion implements Serializable {
 	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_CRA_ID")
     private DDCartera cartera;  
-	
-	public ActivoAgrupacion getAgrupacion() {
-		return agrupacion;
-	}
-
-	public void setAgrupacion(ActivoAgrupacion agrupacion) {
-		this.agrupacion = agrupacion;
-	}
 
 	public DDProvincia getProvincia() {
 		return provincia;

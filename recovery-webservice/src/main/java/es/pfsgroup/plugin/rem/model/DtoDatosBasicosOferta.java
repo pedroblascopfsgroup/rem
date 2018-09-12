@@ -2,14 +2,7 @@ package es.pfsgroup.plugin.rem.model;
 
 import java.util.Date;
 
-import javax.persistence.Column;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-
 import es.capgemini.devon.dto.WebDto;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoInquilino;
 
 
 /**
@@ -64,6 +57,8 @@ public class DtoDatosBasicosOferta extends WebDto {
     private String canalPrescripcionDescripcion;
     
     private String comiteSancionadorCodigo;
+    
+    private String comiteSancionadorCodigoAlquiler;
     
     private String comitePropuestoDescripcion;
     
@@ -318,6 +313,14 @@ public class DtoDatosBasicosOferta extends WebDto {
 
 	public void setRefCircuitoCliente(String refCircuitoCliente) {
 		this.refCircuitoCliente = refCircuitoCliente;
+	}
+
+	public String getComiteSancionadorCodigoAlquiler() {
+		return comiteSancionadorCodigoAlquiler;
+	}
+
+	public void setComiteSancionadorCodigoAlquiler(String comiteSancionadorCodigoAlquiler) {
+		this.comiteSancionadorCodigoAlquiler = comiteSancionadorCodigoAlquiler;
 	}
 
 }

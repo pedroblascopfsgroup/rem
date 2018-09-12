@@ -11,6 +11,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
@@ -66,6 +67,10 @@ public class ScoringAlquiler implements Serializable, Auditable {
 
 	@Column(name = "SCO_COMENTARIOS")
 	private String comentarios;
+	
+	@OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ECO_ID")
+    private ExpedienteComercial expediente;
 	
 	@Version   
 	private Long version;
@@ -135,6 +140,14 @@ public class ScoringAlquiler implements Serializable, Auditable {
 
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
+	}
+
+	public ExpedienteComercial getExpediente() {
+		return expediente;
+	}
+
+	public void setExpediente(ExpedienteComercial expediente) {
+		this.expediente = expediente;
 	}
 	
 	

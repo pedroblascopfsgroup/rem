@@ -584,6 +584,15 @@ public interface ActivoApi {
 	 * @return
 	 */
 	public boolean isActivoVendido(Activo activo);
+	
+	/**
+	 * HREOS-843. Comrpueba si el activo esta vendido, viendo si tiene fecha de
+	 * escritura (en Formalizacion)
+	 * 
+	 * @param activo
+	 * @return
+	 */
+	public boolean isActivoAlquilado(Activo activo);
 
 	/**
 	 * Comprueba si el activo esta incluido en alguna agrupacion VIGENTE de tipo

@@ -61,6 +61,8 @@ public class DDEstadosExpedienteComercial implements Auditable, Dictionary {
 	public final static String PTE_FIRMA = "27";
 	public final static String PTE_CIERRE = "28";
 	public final static String FIRMADO_AQLUILER = "29";
+	public final static String VENTA = "1";
+	public final static String ALQUILER = "0";
 
 	@Id
 	@Column(name = "DD_EEC_ID")
@@ -75,7 +77,10 @@ public class DDEstadosExpedienteComercial implements Auditable, Dictionary {
 	private String descripcion;
 	    
 	@Column(name = "DD_EEC_DESCRIPCION_LARGA")   
-	private String descripcionLarga;	    
+	private String descripcionLarga;
+	
+	@Column(name = "DD_EEC_VENTA")   
+	private boolean estadoVenta;
 
 	@Version   
 	private Long version;
@@ -113,6 +118,14 @@ public class DDEstadosExpedienteComercial implements Auditable, Dictionary {
 
 	public void setDescripcionLarga(String descripcionLarga) {
 		this.descripcionLarga = descripcionLarga;
+	}
+	
+	public boolean getEstadoVenta() {
+		return estadoVenta;
+	}
+
+	public void setEstadoVenta(boolean estadoVenta) {
+		this.estadoVenta = estadoVenta;
 	}
 
 	public Long getVersion() {

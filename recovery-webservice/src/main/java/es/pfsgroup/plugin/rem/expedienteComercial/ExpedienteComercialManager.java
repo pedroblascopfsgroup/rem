@@ -104,6 +104,7 @@ import es.pfsgroup.plugin.rem.model.DtoComparecienteVendedor;
 import es.pfsgroup.plugin.rem.model.DtoCondiciones;
 import es.pfsgroup.plugin.rem.model.DtoCondicionesActivoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoDatosBasicosOferta;
+import es.pfsgroup.plugin.rem.model.DtoDiccionario;
 import es.pfsgroup.plugin.rem.model.DtoEntregaReserva;
 import es.pfsgroup.plugin.rem.model.DtoExpedienteDocumentos;
 import es.pfsgroup.plugin.rem.model.DtoExpedienteHistScoring;
@@ -7119,5 +7120,37 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 	}
 	
+	@Override
+	public List<DtoDiccionario> getComboExpedienteComercialByEstado(String esVenta) {
+		
+		DtoDiccionario diccionario = new DtoDiccionario();
+		
+		List<DDEstadosExpedienteComercial> listaEstados = new ArrayList<DDEstadosExpedienteComercial>();
+		List<DtoDiccionario> listaDiccionario = new ArrayList<DtoDiccionario>();
+		
+		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+		
+		if(!Checks.esNulo(esVenta)) {
+			if(DDEstadosExpedienteComercial.VENTA.equals(esVenta)) {
+				Filter filtroVenta = genericDao.createFilter(FilterType.EQUALS, "estadoVenta", true);
+				listaEstados = genericDao.getList(DDEstadosExpedienteComercial.class, filtroVenta, filtroBorrado);
+			} else if(DDEstadosExpedienteComercial.ALQUILER.equals(esVenta)) {
+				Filter filtroAlquiler = genericDao.createFilter(FilterType.EQUALS, "estadoVenta", false);
+				listaEstados = genericDao.getList(DDEstadosExpedienteComercial.class, filtroAlquiler, filtroBorrado);
+			}
+		}
+			
+
+		for (DDEstadosExpedienteComercial estadosExpedieteComercial : listaEstados) {
+			diccionario = new DtoDiccionario();
+			
+			diccionario.setId(estadosExpedieteComercial.getId());
+			diccionario.setDescripcion(estadosExpedieteComercial.getDescripcion());
+			diccionario.setCodigo(estadosExpedieteComercial.getCodigo());
+			listaDiccionario.add(diccionario);
+		}
+		
+		return listaDiccionario;
+	}
 
 }

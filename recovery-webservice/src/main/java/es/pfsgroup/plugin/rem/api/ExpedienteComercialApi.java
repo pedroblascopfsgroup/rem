@@ -7,6 +7,7 @@ import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.pagination.Page;
+import es.capgemini.pfs.diccionarios.Dictionary;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
@@ -19,6 +20,7 @@ import es.pfsgroup.plugin.rem.model.DtoBloqueosFinalizacion;
 import es.pfsgroup.plugin.rem.model.DtoCondiciones;
 import es.pfsgroup.plugin.rem.model.DtoCondicionesActivoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoDatosBasicosOferta;
+import es.pfsgroup.plugin.rem.model.DtoDiccionario;
 import es.pfsgroup.plugin.rem.model.DtoEntregaReserva;
 import es.pfsgroup.plugin.rem.model.DtoExpedienteHistScoring;
 import es.pfsgroup.plugin.rem.model.DtoExpedienteScoring;
@@ -1050,5 +1052,12 @@ public interface ExpedienteComercialApi {
 	 * @return
 	 */
 	public boolean enviarCorreoGestionLlaves(Long idExpediente);
+	
+	/**
+	 * Método que saca una lista de estados del expediente segun si es de tipo venta o de tipo alquiler
+	 * @param idEstado
+	 * @return
+	 */
+	public List<DtoDiccionario> getComboExpedienteComercialByEstado(String esVenta);
 	
 }

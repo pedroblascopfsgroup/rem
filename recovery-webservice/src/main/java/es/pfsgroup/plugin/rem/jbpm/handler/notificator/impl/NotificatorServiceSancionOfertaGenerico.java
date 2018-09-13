@@ -217,6 +217,9 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 					genericDao.createFilter(FilterType.EQUALS, "id", ofertaAceptada.getAgrupacion().getId()));
 			Map<String, String> gestores = getGestores(activo, ofertaAceptada, activoLoteComercial, null, comercial);
 			return gestores.get(comercial);
+		}else if(Checks.esNulo(ofertaAceptada.getAgrupacion()) && GESTOR_COMERCIAL_ACTIVO.equals(comercial)) {
+			Map<String, String> gestores = getGestores(activo, ofertaAceptada, null, null, comercial);
+			return gestores.get(comercial);
 		}
 		return null;
 		

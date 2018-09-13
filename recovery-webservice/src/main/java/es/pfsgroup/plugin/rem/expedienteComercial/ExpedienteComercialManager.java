@@ -65,7 +65,6 @@ import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoTramiteDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
-import es.pfsgroup.plugin.rem.adapter.TrabajoAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
@@ -164,8 +163,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDEntidadesAvalistas;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoDevolucion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoFinanciacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoScoring;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoSeguroRentas;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTitulo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
@@ -175,6 +172,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivosDesbloqueo;
 import es.pfsgroup.plugin.rem.model.dd.DDPaises;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
+import es.pfsgroup.plugin.rem.model.dd.DDResultadoCampo;
 import es.pfsgroup.plugin.rem.model.dd.DDResultadoTanteo;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionesPosesoria;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
@@ -507,8 +505,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 		if (!Checks.esNulo(dto.getEstado())) {
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getEstado());
-			DDEstadoSeguroRentas estadoSeguroRentas = genericDao.get(DDEstadoSeguroRentas.class, filtro);
-			seguro.setEstadoSeguroRentas(estadoSeguroRentas);
+			DDResultadoCampo estadoSeguroRentas = genericDao.get(DDResultadoCampo.class, filtro);
+			seguro.setResultadoSeguroRentas(estadoSeguroRentas);
 		}
 		if (!Checks.esNulo(dto.getEmailPoliza())) {
 			seguro.setEmailPolizaAseguradora(dto.getEmailPoliza());
@@ -2782,8 +2780,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				seguroRentasDto.setRevision(false);
 			}
 			seguroRentasDto.setMotivoRechazo(seguroRentas.getMotivoRechazo());
-			if(!Checks.esNulo(seguroRentas.getEstadoSeguroRentas())) {
-				seguroRentasDto.setEstado(seguroRentas.getEstadoSeguroRentas().getCodigo());
+			if(!Checks.esNulo(seguroRentas.getResultadoSeguroRentas())) {
+				seguroRentasDto.setEstado(seguroRentas.getResultadoSeguroRentas().getCodigo());
 			}
 			seguroRentasDto.setAseguradoras(seguroRentas.getAseguradoras());
 			seguroRentasDto.setEmailPoliza(seguroRentas.getEmailPolizaAseguradora());
@@ -6823,21 +6821,17 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	public DtoExpedienteScoring  expedienteToDtoScoring(ExpedienteComercial expediente) {
 		
 		DtoExpedienteScoring scoringDto = new DtoExpedienteScoring();
-		
-		if(!Checks.esNulo(expediente.getEstado())) {
-
-			if(DDEstadosExpedienteComercial.APROBADO.equals(expediente.getEstado().getCodigo())) {
-				scoringDto.setComboEstadoScoring(DDEstadoScoring.ACEPTADO);
-			}else if(DDEstadosExpedienteComercial.ANULADO.equals(expediente.getEstado().getCodigo())){
-				scoringDto.setComboEstadoScoring(DDEstadoScoring.RECHAZADO);
-			}else {
-				scoringDto.setComboEstadoScoring(DDEstadoScoring.PENDIENTE);
-			}
-		}
-		
+		DDResultadoCampo resultadoCampo = null;
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "expediente.id", expediente.getId());
 		ScoringAlquiler scoringAlquiler = genericDao.get(ScoringAlquiler.class, filtro);
 		if (!Checks.esNulo(scoringAlquiler)) {
+			if(DDResultadoCampo.RESULTADO_APROBADO.equals(scoringAlquiler.getResultadoScoring().getCodigo())) {
+				resultadoCampo = (DDResultadoCampo) utilDiccionarioApi.dameValorDiccionarioByCod(DDResultadoCampo.class, DDResultadoCampo.RESULTADO_APROBADO);
+				scoringDto.setComboEstadoScoring(resultadoCampo.getDescripcion());
+			}else {
+				resultadoCampo = (DDResultadoCampo) utilDiccionarioApi.dameValorDiccionarioByCod(DDResultadoCampo.class, DDResultadoCampo.RESULTADO_RECHAZADO);
+				scoringDto.setComboEstadoScoring(resultadoCampo.getDescripcion());
+			}
 			scoringDto.setId(scoringAlquiler.getId());
 			scoringDto.setMotivoRechazo(scoringAlquiler.getMotivoRechazo());
 			scoringDto.setnSolicitud(scoringAlquiler.getIdSolicitud());
@@ -6879,8 +6873,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	        		dto.setFechaSancion(hist.getFechaSancion());
 	        	}
 	        	
-	        	if(!Checks.esNulo(hist.getEstadoEscoring())) {
-	        		dto.setResultadoScoring(hist.getEstadoEscoring().getDescripcion());
+	        	if(!Checks.esNulo(hist.getResultadoScoring())) {
+	        		dto.setResultadoScoring(hist.getResultadoScoring().getDescripcion());
 	        	}
 	        	
 	        	if(!Checks.esNulo(hist.getIdSolicitud())) {
@@ -6937,8 +6931,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		
 		if (!Checks.esNulo(dto.getComboEstadoScoring())) {
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getComboEstadoScoring());
-			DDEstadoScoring estadoScoring = genericDao.get(DDEstadoScoring.class, filtro);
-			scoring.setEstadoEscoring(estadoScoring);
+			DDResultadoCampo estadoScoring = genericDao.get(DDResultadoCampo.class, filtro);
+			scoring.setResultadoScoring(estadoScoring);
 		}
 		
 		if (!Checks.esNulo(dto.getComentarios())) {

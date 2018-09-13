@@ -22,7 +22,7 @@ import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoScoring;
+import es.pfsgroup.plugin.rem.model.dd.DDResultadoCampo;
 
 
 
@@ -62,8 +62,8 @@ public class ScoringAlquiler implements Serializable, Auditable {
 	private Integer revision;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "DD_ESS_ID")
-    private DDEstadoScoring estadoEscoring;
+    @JoinColumn(name = "DD_REC_ID")
+	private DDResultadoCampo resultadoScoring;
 
 	@Column(name = "SCO_COMENTARIOS")
 	private String comentarios;
@@ -110,14 +110,6 @@ public class ScoringAlquiler implements Serializable, Auditable {
 		this.revision = revision;
 	}
 
-	public DDEstadoScoring getEstadoEscoring() {
-		return estadoEscoring;
-	}
-
-	public void setEstadoEscoring(DDEstadoScoring estadoEscoring) {
-		this.estadoEscoring = estadoEscoring;
-	}
-
 	public String getComentarios() {
 		return comentarios;
 	}
@@ -149,9 +141,13 @@ public class ScoringAlquiler implements Serializable, Auditable {
 	public void setExpediente(ExpedienteComercial expediente) {
 		this.expediente = expediente;
 	}
-	
-	
-	
-	
-	
+
+	public DDResultadoCampo getResultadoScoring() {
+		return resultadoScoring;
+	}
+
+	public void setResultadoScoring(DDResultadoCampo resultadoScoring) {
+		this.resultadoScoring = resultadoScoring;
+	}
+
 }

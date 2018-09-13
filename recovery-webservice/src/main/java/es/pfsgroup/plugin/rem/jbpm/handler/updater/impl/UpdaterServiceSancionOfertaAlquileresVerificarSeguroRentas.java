@@ -95,6 +95,7 @@ public class UpdaterServiceSancionOfertaAlquileresVerificarSeguroRentas implemen
 					expedienteComercial.setEstado(estadoExpedienteComercial);
 					resultadoCampo = (DDResultadoCampo) utilDiccionarioApi.dameValorDiccionarioByCod(DDResultadoCampo.class, DDResultadoCampo.RESULTADO_APROBADO);
 					historicoSeguroRentasAlquiler.setResultadoSeguroRentas(resultadoCampo);
+					seguroRentasAlquiler.setResultadoSeguroRentas(resultadoCampo);
 				}else {
 					filtroResultadoSeguroRentas = genericDao.createFilter(FilterType.EQUALS, "codigo", DDResultadoCampo.RESULTADO_RECHAZADO);
 					estadoExpedienteComercial = genericDao.get(DDEstadosExpedienteComercial.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadosExpedienteComercial.ANULADO));
@@ -103,6 +104,7 @@ public class UpdaterServiceSancionOfertaAlquileresVerificarSeguroRentas implemen
 					oferta.setEstadoOferta(estadoOferta);
 					resultadoCampo = (DDResultadoCampo) utilDiccionarioApi.dameValorDiccionarioByCod(DDResultadoCampo.class, DDResultadoCampo.RESULTADO_RECHAZADO);
 					historicoSeguroRentasAlquiler.setResultadoSeguroRentas(resultadoCampo);
+					seguroRentasAlquiler.setResultadoSeguroRentas(resultadoCampo);
 				}
 			}
 			

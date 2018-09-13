@@ -22,8 +22,7 @@ import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoScoring;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoSeguroRentas;
+import es.pfsgroup.plugin.rem.model.dd.DDResultadoCampo;
 
 
 
@@ -52,15 +51,14 @@ public class SeguroRentasAlquiler implements Serializable, Auditable {
     private Long id;
 	
 	@Column(name = "SRE_MOTIVO_RECHAZO")
-    private String motivoRechazo;
-	
+    private String motivoRechazo;	
 	
 	@Column(name = "SRE_EN_REVISION")
 	private Integer enRevision;
-	
+
 	@ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "DD_ESR_ID")
-    private DDEstadoSeguroRentas estadoSeguroRentas;
+    @JoinColumn(name = "DD_REC_ID")
+	private DDResultadoCampo resultadoSeguroRentas;
 
 	@Column(name = "SRE_ASEGURADORAS")
 	private String aseguradoras;
@@ -104,14 +102,6 @@ public class SeguroRentasAlquiler implements Serializable, Auditable {
 
 	public void setEnRevision(Integer enRevision) {
 		this.enRevision = enRevision;
-	}
-
-	public DDEstadoSeguroRentas getEstadoSeguroRentas() {
-		return estadoSeguroRentas;
-	}
-
-	public void setEstadoSeguroRentas(DDEstadoSeguroRentas estadoSeguroRentas) {
-		this.estadoSeguroRentas = estadoSeguroRentas;
 	}
 
 	public String getAseguradoras() {
@@ -160,6 +150,14 @@ public class SeguroRentasAlquiler implements Serializable, Auditable {
 
 	public void setComentarios(String comentarios) {
 		this.comentarios = comentarios;
+	}
+
+	public DDResultadoCampo getResultadoSeguroRentas() {
+		return resultadoSeguroRentas;
+	}
+
+	public void setResultadoSeguroRentas(DDResultadoCampo resultadoSeguroRentas) {
+		this.resultadoSeguroRentas = resultadoSeguroRentas;
 	}
 	
 	

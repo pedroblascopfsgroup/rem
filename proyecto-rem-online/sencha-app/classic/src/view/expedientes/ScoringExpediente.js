@@ -31,13 +31,11 @@ Ext.define('HreRem.view.expedientes.ScoringExpediente', {
 				items :
 					[
 		                { 
-		                	xtype:'comboboxfieldbase',
+		                	xtype:'textfieldbase',
 							fieldLabel:HreRem.i18n('fieldlabel.estadoScoring'),
 							cls: 'cabecera-info-field',
 							readOnly: true,
-							bind :{ 
-									store :'{comboEstadoScoring}'
-							}
+							bind :'{scoring.comboEstadoScoring}' 
 		                },
 		                { 
 							xtype: 'textfieldbase',

@@ -9,7 +9,7 @@ Ext.define('HreRem.model.ExpedienteScoring', {
     fields: [ 
     		
 		    {
-		    	name: 'estadoEscoring'
+		    	name: 'comboEstadoScoring'
 		    },
 		    {
     			name:'motivoRechazo'

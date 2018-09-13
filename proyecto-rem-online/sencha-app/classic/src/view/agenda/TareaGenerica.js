@@ -1786,6 +1786,8 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 		me.deshabilitarCampo(me.down('[name=comite]'));
 		me.deshabilitarCampo(me.down('[name=fechaElevacion]'));
 		
+		me.down('[name=refCircuitoCliente]').maxLength=20;
+		
 		var storeComite = Ext.create('Ext.data.Store', {
 		     model:Ext.create('HreRem.model.ComiteAlquilerModel'),
 		     proxy: {

@@ -2628,23 +2628,30 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "oferta.id",
 							activoOferta.getPrimaryKey().getOferta().getId());
 					ExpedienteComercial expediente = genericDao.get(ExpedienteComercial.class, filtro);
-
-					// if (!Checks.esNulo(expediente) &&
-					// !Checks.esNulo(expediente.getFormalizacion())
-					// &&
-					// !Checks.esNulo(expediente.getFormalizacion().getFechaEscritura()))
-					// {
-					// return true;
-					// }
 					if (!Checks.esNulo(expediente)) {
-						if (!Checks.esNulo(expediente.getFechaVenta()))
+						if (!Checks.esNulo(expediente.getFechaVenta()) && DDTipoOferta.CODIGO_VENTA.equals(activoOferta.getPrimaryKey().getOferta().getTipoOferta().getCodigo()))
 							return true;
 					}
-
 				}
 			}
 		}
 
+		return false;
+	}
+	
+	@Override
+	public boolean isActivoAlquilado(Activo activo) {
+		if (!Checks.estaVacio(activo.getOfertas())) {
+			for (ActivoOferta activoOferta : activo.getOfertas()) {
+				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "oferta.id",
+						activoOferta.getPrimaryKey().getOferta().getId());
+				ExpedienteComercial expediente = genericDao.get(ExpedienteComercial.class, filtro);
+				if (!Checks.esNulo(expediente)) {
+					if (!Checks.esNulo(expediente.getFechaVenta()) && DDTipoOferta.CODIGO_ALQUILER.equals(activoOferta.getPrimaryKey().getOferta().getTipoOferta().getCodigo()))
+						return true;
+				}
+			}
+		}
 		return false;
 	}
 

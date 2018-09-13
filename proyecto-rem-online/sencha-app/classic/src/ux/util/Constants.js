@@ -356,6 +356,11 @@ Ext.define('HreRem.ux.util.Constants', {
     	APRUEBA: '01',
     	RECHAZA: '02',
     	CONTRAOFERTA: '03'
+    },
+    
+    ES_VENTA: {
+    	SI: 1,
+    	NO: 0
     }
     
 });

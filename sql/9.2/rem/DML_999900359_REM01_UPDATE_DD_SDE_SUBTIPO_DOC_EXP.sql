@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Juan Angel Sánchez
---## FECHA_CREACION=20180817
+--## FECHA_CREACION=20180913
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-4373
@@ -11,6 +11,7 @@
 --## INSTRUCCIONES:
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##		0.2 Añadimos las Matriculas
 --##########################################
 --*/
 
@@ -37,18 +38,17 @@ DECLARE
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
                     --DD_TDE_CODIGO      --DD_SDE_CODIGO         --DESCRIPCION                                    --DESC LARGA                         --Matricula
-        T_TIPO_DATA('06',                 '43'	                   ,'Scoring'					      			  ,'Scoring',               			null),
-        T_TIPO_DATA('06',                 '44'	                   ,'Seguro rentas'				                  ,'Seguro rentas',                     null),
-        T_TIPO_DATA('06',                 '45'	                   ,'Sanción de la oferta'				          ,'Sanción de la oferta',              null),
-        T_TIPO_DATA('06',                 '46'	                   ,'Renovación contrato'				          ,'Renovación contrato',               null),
-        T_TIPO_DATA('06',                 '47'	                   ,'Pre-Contrato'				                  ,'Pre-Contrato',                      null),
-        T_TIPO_DATA('06',                 '48'	                   ,'Pre-Liquidación ITP'				          ,'Pre-Liquidación ITP',               null),
-        T_TIPO_DATA('06',                 '49'	                   ,'Contrato'				                      ,'Contrato',                          null),
-        T_TIPO_DATA('06',                 '50'	                   ,'Liquidación ITP'				              ,'Liquidación ITP',                   null),
-        T_TIPO_DATA('06',                 '51'	                   ,'Fianza'				                      ,'Fianza',                            null),
-        T_TIPO_DATA('06',                 '52'	                   ,'Garantía adicional'				          ,'Garantía adicional',                null),
-        T_TIPO_DATA('06',                 '53'	                   ,'Aval bancario'				                  ,'Aval bancario',                     null),
-        T_TIPO_DATA('06',                 '54'	                   ,'Justificante de ingresos'				      ,'Justificante de ingresos',          null)
+        T_TIPO_DATA('06',                 '43'	                   ,'Scoring'					      			  ,'Scoring',               			'OP-29-ESIN-BP'),
+        T_TIPO_DATA('06',                 '44'	                   ,'Seguro rentas'				                  ,'Seguro rentas',                     'OP-29-SEGU-21'),
+        T_TIPO_DATA('06',                 '45'	                   ,'Sanción de la oferta'				          ,'Sanción de la oferta',              'OP-29-ACUI-28'),
+        T_TIPO_DATA('06',                 '46'	                   ,'Renovación contrato'				          ,'Renovación contrato',               'OP-29-CNCV-85'),
+        T_TIPO_DATA('06',                 '47'	                   ,'Pre-Contrato'				                  ,'Pre-Contrato',                      'OP-29-CNCV-86'),
+        T_TIPO_DATA('06',                 '48'	                   ,'Pre-Liquidación ITP'				          ,'Pre-Liquidación ITP',               'OP-29-DECL-14'),
+        T_TIPO_DATA('06',                 '49'	                   ,'Contrato'				                      ,'Contrato',                          'OP-29-CNCV-04'),
+        T_TIPO_DATA('06',                 '50'	                   ,'Liquidación ITP'				              ,'Liquidación ITP',                   'OP-29-DECL-11'),
+        T_TIPO_DATA('06',                 '51'	                   ,'Fianza'				                      ,'Fianza',                            'OP-29-CERJ-54'),
+        T_TIPO_DATA('06',                 '52'	                   ,'Aval bancario'				                  ,'Aval bancario',                     'OP-29-FIAV-06'),
+        T_TIPO_DATA('06',                 '53'	                   ,'Justificante de ingresos'				      ,'Justificante de ingresos',          'OP-29-CERJ-75')
     );
     V_TMP_TIPO_DATA T_TIPO_DATA;
 

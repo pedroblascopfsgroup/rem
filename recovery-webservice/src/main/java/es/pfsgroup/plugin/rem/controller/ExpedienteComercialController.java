@@ -47,6 +47,7 @@ import es.pfsgroup.plugin.rem.model.DtoBloqueosFinalizacion;
 import es.pfsgroup.plugin.rem.model.DtoCondiciones;
 import es.pfsgroup.plugin.rem.model.DtoCondicionesActivoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoDatosBasicosOferta;
+import es.pfsgroup.plugin.rem.model.DtoDiccionario;
 import es.pfsgroup.plugin.rem.model.DtoEntregaReserva;
 import es.pfsgroup.plugin.rem.model.DtoExpedienteHistScoring;
 import es.pfsgroup.plugin.rem.model.DtoExpedienteScoring;
@@ -1686,6 +1687,25 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 		model.put("success", false);
 	}
 		return new ModelAndView("jsonView", model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getEstadoExpedienteComercial(ModelMap model, @RequestParam(value = "esVenta") String esVenta) {
+		
+		try {
+			List<DtoDiccionario> list = expedienteComercialApi.getComboExpedienteComercialByEstado(esVenta);
+			model.put("data", list);
+			model.put("success", true);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+			model.put("error", e.getMessage());
+		}	
+		
+		return createModelAndViewJson(model);
+		
 	}
 	
 }

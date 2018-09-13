@@ -1,18 +1,47 @@
 Ext.define('HreRem.view.expedientes.DocumentosExpediente', {
-    extend: 'Ext.form.Panel',
+    extend: 'HreRem.view.common.FormBase',
     xtype: 'documentosexpediente',
     cls	: 'panel-base shadow-panel',
     collapsed: false,
+    disableValidation: true,
     reference: 'documentosexpedienteref',
     scrollable	: 'y',
+    recordName: "expedienteDocumentos",
+	
+	recordClass: "HreRem.model.ExpedienteDocumentos",
+    
+    requires: ['HreRem.model.ExpedienteDocumentos'],
+    
+    listeners: {
+		boxready:'cargarTabData'
+    },
 
     initComponent: function () {
     	
         var me = this;
         me.setTitle(HreRem.i18n('title.documentos'));
     	var items= [
-    	
-	          {			
+			{
+            	xtype: 'fieldsettable',
+            	title:  HreRem.i18n('fieldset.title.doc'),
+            	items : [
+            		{
+	                	xtype: 'checkboxfieldbase',
+	                	reference: 'chckboxfieldbase',
+	                	fieldLabel:  HreRem.i18n('checkboxfieldbase.doc.ok'),
+	                	bind: {
+							value: '{expedienteDocumentos.docOk}',
+	                		readOnly:true
+						}
+            		},{	
+					 	xtype:'datefieldbase',
+					 	fieldLabel:  HreRem.i18n('datefieldbase.fecha.validacion'),
+    					bind: '{expedienteDocumentos.fechaValidacion}',
+    					readOnly: true
+			        }
+            	]
+				},
+				{			
 				    xtype		: 'gridBase',
 				    topBar		: $AU.userHasFunction(['EDITAR_TAB_DOCUMENTOS_EXPEDIENTES']),
 				    features: [{ftype:'grouping'}],
@@ -21,9 +50,6 @@ Ext.define('HreRem.view.expedientes.DocumentosExpediente', {
 					bind: {
 						store: '{storeDocumentosExpediente}'
 					},
-					/*buttonSecurity: {
-						secFunPermToEnable : 'TRABAJO_DOCUMENTOS_ADD'
-					},*/
 					columns: [
 					
 						{
@@ -96,8 +122,8 @@ Ext.define('HreRem.view.expedientes.DocumentosExpediente', {
 				       	        
 				    ]
 				
-	          }
-    	];
+				}
+		];
     	me.addPlugin({ptype: 'lazyitems', items: items });
     	me.callParent();
     	

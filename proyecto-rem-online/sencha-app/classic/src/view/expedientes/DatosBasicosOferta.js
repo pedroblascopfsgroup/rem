@@ -145,7 +145,27 @@ Ext.define('HreRem.view.expedientes.DatosBasicosOferta', {
 						                	bind: {
 												store: '{comboComites}',
 												value: '{datosbasicosoferta.comiteSancionadorCodigo}',
-												readOnly: '{comiteSancionadorNoEditable}'
+												readOnly: '{comiteSancionadorNoEditable}',
+												hidden: '{esOfertaAlquiler}'
+												
+											},
+											// TODO Sobreescribimos la función porque está dando problemas la carga del store. A veces llega null.
+											setStore: function(store) {
+												if(!Ext.isEmpty(store)) {
+													this.bindStore(store);
+												}
+											}
+						                },
+						                {
+						                	xtype: 'comboboxfieldbase',
+						                	fieldLabel:  HreRem.i18n('fieldlabel.comite.alquiler'),
+						                	reference: 'comboComiteSeleccionadoAlquiler',
+						                	readOnly: false,
+						                	bind: {
+												store: '{comboComitesAlquiler}',
+												value: '{datosbasicosoferta.comiteSancionadorCodigoAlquiler}',
+												readOnly: '{comiteSancionadorNoEditable}',
+												hidden: '{!esOfertaAlquiler}'
 												
 											},
 											// TODO Sobreescribimos la función porque está dando problemas la carga del store. A veces llega null.

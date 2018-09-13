@@ -208,6 +208,22 @@ Ext.define('HreRem.view.comercial.ComercialOfertasController', {
     		agrupacionesVinculadas.setDisabled(true);
     		agrupacionesVinculadas.setValue("");
     	}
+    },
+    
+    activarComboEstadoExpediente: function(field, newValue, oldValue, eOpts){
+    	var me= this;
+    	var tipoOferta = me.lookupReference('tipoOfertaComercial');
+    	var comboVenta = me.lookupReference('comboExpedienteVenta');
+    	var comboAlquiler = me.lookupReference('comboExpedienteAlquiler');
+    	
+    	if(!Ext.isEmpty(tipoOferta) && tipoOferta.value == CONST.TIPOS_EXPEDIENTE_COMERCIAL["VENTA"]){
+    		comboVenta.setDisabled(false);
+    		comboAlquiler.setDisabled(true);
+    	} else if(!Ext.isEmpty(tipoOferta) && tipoOferta.value == CONST.TIPOS_EXPEDIENTE_COMERCIAL["ALQUILER"]){
+    		comboAlquiler.setDisabled(false);
+    		comboVenta.setDisabled(true);
+    	}
+    	
     }
 
 });

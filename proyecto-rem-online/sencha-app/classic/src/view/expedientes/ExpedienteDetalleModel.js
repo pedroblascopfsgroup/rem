@@ -281,6 +281,15 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 		     	var revision = get('segurorentasexpediente.revision');
 		     	return revision;
 		     	
+		 },
+		 esOfertaAlquiler: function(get) {
+			 var tipoOfertaCodigo = get('datosbasicosoferta.tipoOfertaCodigo');
+			 
+			 if(tipoOfertaCodigo == CONST.TIPOS_OFERTA["ALQUILER"]){
+				 return true
+			 }else{
+				 return false;
+			 }
 		 }
 	 },
 
@@ -888,6 +897,14 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 		        remoteUrl: 'expedientecomercial/getHistoricoScoring',
 		        extraParams: {idScoring: '{scoring.id}'}
 	    	}
-		}	
+		},
+		comboComitesAlquiler: {
+	    	model: 'HreRem.model.ComboBase',
+	    	proxy: {
+		        type: 'uxproxy',
+		        remoteUrl: 'generic/getComitesAlquilerByCarteraCodigo',
+		        extraParams: {carteraCodigo: '{expediente.entidadPropietariaCodigo}'}
+	    	}	    	
+	    }
     }
 });

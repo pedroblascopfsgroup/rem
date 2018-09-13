@@ -868,4 +868,13 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		Filter filterBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
 		return (List<DDComiteAlquiler>) genericDao.getListOrdered(DDComiteAlquiler.class, order, filter, filterBorrado);
 	}
+
+	@Override
+	public List<DDComiteAlquiler> getComitesAlquilerByCarteraCodigo(String carteraCodigo) {
+		Filter filtroCartera = genericDao.createFilter(FilterType.EQUALS, "cartera.codigo", carteraCodigo);
+		
+		List<DDComiteAlquiler> listaSubcartera= genericDao.getList(DDComiteAlquiler.class, filtroCartera);
+		
+		return listaSubcartera;
+	}
 }

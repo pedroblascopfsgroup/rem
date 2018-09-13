@@ -4,9 +4,9 @@
 if [ $1 -eq 1 ]; then
 ficheros=ALTA_ACTIVOS
 elif [ $1 -eq 0 ]; then
-ficheros=ALTA_LBB
+ficheros=ALTA_ACTIVOS_LB
 else
-    echo "Error: El parametro de entrada es incorrecto (0 para Cajamar y 1 para Liberbank)"
+    echo "Error: El parametro de entrada es incorrecto (1 para Cajamar y 0 para Liberbank)"
     exit 1
 fi
 
@@ -36,16 +36,35 @@ do
 
     echo "$ficheroSem"
     if [[ "$#" -gt 1 ]] && [[ "$3" -eq "-ftp" ]]; then
+    echo "Primer intento"
         ./ftp/ftp_get_aux_files.sh $2 $fichero
     fi
-	while [[ "$hora_actual" -lt "$hora_limite" ]] && [[ ! -e $ficheroSem || ! -e $ficheroZip ]]; do
-	    sleep 10
-	    hora_actual=`date +%Y%m%d%H%M%S`
-        if [[ "$#" -gt 1 ]] && [[ "$3" -eq "-ftp" ]]; then
+     if [ $1 -eq 1 ]; then
+	 while [[ "$hora_actual" -lt "$hora_limite" ]] && [[ ! -e $ficheroSem || ! -e $ficheroZip ]]; do
+	     sleep 10
+	     hora_actual=`date +%Y%m%d%H%M%S`
+	     echo "Segundo intento"
+
+         if [[ "$#" -gt 1 ]] && [[ "$3" -eq "-ftp" ]]; then
+	     echo "Segundo intento descarga fichero"
 	        ./ftp/ftp_get_aux_files.sh $2 $fichero
-        fi
-	done
+         fi
+	 done
+    else 
+	while [[ "$hora_actual" -lt "$hora_limite" ]] && [[ ! -e $ficheroZip ]]; do
+             sleep 10
+             hora_actual=`date +%Y%m%d%H%M%S`
+	     echo "Segundo intento sin Sem"
+         if [[ "$#" -gt 1 ]] && [[ "$3" -eq "-ftp" ]]; then
+		echo "Segundo intento descarga fichero Sem"
+                ./ftp/ftp_get_aux_files.sh $2 $fichero
+         fi
+         done
+    fi
+		
 done
+
+echo "Comienza el movimiento de ficheros a input"
 
 if [ "$hora_actual" -ge "$hora_limite" ]
 then
@@ -59,7 +78,9 @@ else
 	
 	    sed -i 's/ //g' $ficheroSem
 	    mv $ficheroZip $DIR_DESTINO
+	if [ $1 -eq 1 ]; then
 	    mv $ficheroSem $DIR_DESTINO
+	fi
    done
    echo "$(basename $0) Ficheros encontrados"
    exit 0

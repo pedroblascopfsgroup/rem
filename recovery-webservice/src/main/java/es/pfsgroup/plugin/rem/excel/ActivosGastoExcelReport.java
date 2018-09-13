@@ -21,7 +21,7 @@ public class ActivosGastoExcelReport extends AbstractExcelReport implements Exce
 		listaCabeceras.add("Referencia catastral");
 		listaCabeceras.add("Subtipo activo");
 		listaCabeceras.add("Dirección");
-		listaCabeceras.add("% participació gasto");
+		listaCabeceras.add("% participación gasto");
 		listaCabeceras.add("Importe proporcional total");
 				
 		return listaCabeceras;

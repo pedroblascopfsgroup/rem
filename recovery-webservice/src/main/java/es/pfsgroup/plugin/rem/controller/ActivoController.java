@@ -2473,6 +2473,9 @@ public class ActivoController extends ParadiseJsonController {
 				ActivoControllerDispatcher dispatcher = new ActivoControllerDispatcher(this);
 			
 				dispatcher.dispatchSave(restRequest.getJsonObject());
+			} catch (JsonViewerException jvex) {
+				model.put("success", false);
+				model.put("msgError", jvex.getMessage());
 			} catch (Exception e) {
 				logger.error("No se ha podido guardar el activo", e);
 				model.put("error", e.getMessage());
@@ -2651,5 +2654,18 @@ public class ActivoController extends ParadiseJsonController {
 		}
 
 		return true;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getHistoricoDestinoComercialByActivo(@RequestParam Long id, ModelMap model, WebDto dto) {
+		
+		List<DtoHistoricoDestinoComercial> data = activoApi.getDtoHistoricoDestinoComercialByActivo(id);
+		
+		//model.put("data", data.subList(dto.getStart(), ( ((data.size() - 1 ) + dto.getStart() ) < dto.getLimit() ? data.size() : (dto.getStart() + dto.getLimit() ) ) ));
+		model.put("data", data.subList(dto.getStart(), ( (data.size() < (dto.getStart() + dto.getLimit()) ) ? data.size() : (dto.getStart() + dto.getLimit()) ) ));
+		model.put("totalCount", data.size());
+
+		return createModelAndViewJson(model);
 	}
 }

@@ -1084,5 +1084,20 @@ public interface ActivoApi {
 	public boolean esLiberBank(Long idActivo);
 	
 	public DtoActivoFichaCabecera getActivosPropagables(Long idActivo);
+	
+	/**
+	 * 
+	 * Transforma una lista de HistoricoDestinoComercial en su correspondiente dto
+	 * 
+	 * @param hdc
+	 * @return List<DtoHistoricoDestinoComercial>
+	 */
+	public List<DtoHistoricoDestinoComercial> getListDtoHistoricoDestinoComercialByBeanList(List<HistoricoDestinoComercial> hdc);
+	
+	public DtoHistoricoDestinoComercial getDtoHistoricoDestinoComercialByBean(HistoricoDestinoComercial hdc);
+	
+	public List<DtoHistoricoDestinoComercial> getDtoHistoricoDestinoComercialByActivo(Long id);
+	
+	public void updateHistoricoDestinoComercial(Activo activo, Object[] extraArgs);
 
 }

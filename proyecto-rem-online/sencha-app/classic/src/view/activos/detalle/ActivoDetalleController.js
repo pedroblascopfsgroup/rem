@@ -3019,13 +3019,19 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	      if (!Ext.isEmpty(formActivo)) {	
 	        var successFn = function(record, operation) {
 	          if (activosSeleccionados.length > 0) {
-	            me.propagarCambios(window, activosSeleccionados);
+	        	me.manageToastJsonResponse(me, record.responseText);
+	            me.propagarCambios(window, activosSeleccionados, record.responseText);
 	          } else {
 	            window.destroy();
-	            me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+	              
+	            me.manageToastJsonResponse(me, record.responseText);
+	            
 	            me.getView().unmask();
 	            me.refrescarActivo(formActivo.refreshAfterSave);
 	            me.getView().fireEvent("refreshComponentOnActivate", "container[reference=tabBuscadorActivos]");
+	            
+	            me.actualizarGridHistoricoDestinoComercial(formActivo);
+	            
 	          }
 	        };
 	
@@ -3035,10 +3041,10 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	
 	        var successFn = function(record, operation) {
 	          if (activosSeleccionados.length > 0) {
-	            me.propagarCambios(window, activosSeleccionados);
+	            me.propagarCambios(window, activosSeleccionados, record.responseText);
 	          } else {
 	            window.destroy();
-	            me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+	            me.manageToastJsonResponse(me, record.responseText);
 	            me.getView().unmask();
 	            me.getView().fireEvent("refreshComponentOnActivate", "container[reference=tabBuscadorActivos]");
 	          }
@@ -3087,7 +3093,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	 * @param {} activos
 	 * @return {Boolean}
 	 */
-    propagarCambios: function(window, activos) {
+    propagarCambios: function(window, activos, jsonResponse) {
     	
     	var me = this,
     	grid = window.down("grid"),
@@ -3114,7 +3120,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     		var successFn = function(response, opts){
 				// Lanzamos el evento de refrescar el activo por si está abierto.
 				me.getView().fireEvent("refreshEntityOnActivate", CONST.ENTITY_TYPES['ACTIVO'], activo.get("activoId"));
-				me.propagarCambios(window, activos);
+				me.manageToastJsonResponse(me,response.responseText);
+				me.propagarCambios(window, activos,response.responseText);
 			};
 
 			window.mask("Guardando activos "+ numActivoActual +" de " + numTotalActivos);
@@ -3122,7 +3129,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 
     	} else {
     		Ext.ComponentQuery.query('opcionespropagacioncambios')[0].destroy();
-    		me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
 			me.getView().unmask();
     		return false;
     	}
@@ -3368,10 +3374,15 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 				}
 			
 				var successFn = function(response, eOpts) {
-					me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+					
+					me.manageToastJsonResponse(me, response.responseText);
+					
 					me.getView().unmask();
 					me.refrescarActivo(form.refreshAfterSave);
 					me.getView().fireEvent("refreshComponentOnActivate", "container[reference=tabBuscadorActivos]");
+					
+					me.actualizarGridHistoricoDestinoComercial(form);
+					
 				}
 				me.saveActivo(tabData, successFn);
     		},
@@ -3380,6 +3391,38 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		    }
     	});
 		
+	},
+	actualizarGridHistoricoDestinoComercial : function(form) {
+		
+		if (form.down('historicodestinocomercialactivoform') 
+				&& form.down('historicodestinocomercialactivoform').down('gridBase') 
+				&& form.down('historicodestinocomercialactivoform').down('gridBase').store) {
+			form.down('historicodestinocomercialactivoform').down('gridBase').store.load();
+		}
+		
+	},
+	manageToastJsonResponse : function(scope,jsonData) {
+		
+		if (!Ext.isEmpty(scope)) {
+			if (this.fireEvent) {
+				scope = this;
+			} else {
+				scope = Ext.GlobalEvents;
+			}
+		}
+
+		if (!Ext.isEmpty(jsonData)) {
+			var data = JSON.parse(jsonData);
+			
+			if (data.success !== null && data.success !== undefined && data.success === "false") { 
+				scope.fireEvent("errorToast", data.msgError);
+			} else { 
+				scope.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+			}
+		} else {
+			scope.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+		}
+
 	}
     
 });

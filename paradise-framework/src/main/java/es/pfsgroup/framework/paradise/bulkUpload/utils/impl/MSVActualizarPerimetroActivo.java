@@ -55,8 +55,11 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 	public static final String VALID_PERIMETRO_FORMALIZAR_ACTIVO_COMERCIALIZABLE = "No puede indicar 'S' en la columna 'Formalizar' porque el activo no es comercializable";
 	public static final String VALID_PERIMETRO_COMERCIALIZACION_OFERTAS_VIVAS = "msg.error.masivo.actualizar.perimetro.activo.ofertas.vivas";
 	public static final String VALID_PERIMETRO_FORMALIZACION_EXPEDIENTE_VIVO = "msg.error.masivo.actualizar.perimetro.activo.expediente.vivo";
+	public static final String VALID_DESTINO_COMERCIAL_OFERTAS_VENTA_VIVAS = "msg.error.tipo.comercializacion.ofertas.vivas.venta";
+	public static final String VALID_DESTINO_COMERCIAL_OFERTAS_ALQUILER_VIVAS = "msg.error.tipo.comercializacion.ofertas.vivas.alquiler";
 	
 	//Posicion fija de Columnas excel, para validaciones especiales de diccionario
+	public static final int COL_NUM_ACTIVO_HAYA = 0;
 	public static final int COL_NUM_EN_PERIMETRO_SN = 1;
 	public static final int COL_NUM_CON_GESTION_SN = 2;
 	public static final int COL_NUM_CON_COMERCIAL_SN = 4;
@@ -66,6 +69,13 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 	public static final int COL_NUM_DESTINO_COMERCIAL = 8;
 	public static final int COL_NUM_TIPO_ALQUILER = 9;
 	public static final int COL_NUM_CON_FORMALIZAR_SN = 10;
+	
+	// Codigos tipo comercializacion
+	
+	public static final String CODIGO_VENTA = "01";
+    public static final String CODIGO_ALQUILER_VENTA = "02";
+    public static final String CODIGO_SOLO_ALQUILER = "03";
+    public static final String CODIGO_ALQUILER_OPCION_COMPRA = "04";
 
     protected final Log logger = LogFactory.getLog(getClass());
     
@@ -130,6 +140,8 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 				mapaErrores.put(messageServices.getMessage(VALID_PERIMETRO_FUERA_RESTO_CHECKS_NO), getFueraPerimetroIsRestoChecksNegativos(exc));
 				mapaErrores.put(VALID_PERIMETRO_FORMALIZAR_SEGUN_COMERCIAL, getFormalizarConComercial(exc));
 				mapaErrores.put(messageServices.getMessage(VALID_PERIMETRO_DESTINO_COMERCIAL), getPerimetroConDestinoComercial(exc));
+				mapaErrores.put(messageServices.getMessage(VALID_DESTINO_COMERCIAL_OFERTAS_VENTA_VIVAS), getOfertasVentaVivasRows(exc));
+				mapaErrores.put(messageServices.getMessage(VALID_DESTINO_COMERCIAL_OFERTAS_ALQUILER_VIVAS), getOfertasAlquilerVivasRows(exc));
 				mapaErrores.put(messageServices.getMessage(VALID_PERIMETRO_TIPO_ALQUILER), getPerimetroTipoAlquilerRows(exc));
 				mapaErrores.put(VALID_PERIMETRO_FORMALIZAR_ACTIVO_COMERCIALIZABLE, getFormalizarActivoNoComercializable(exc));
 				mapaErrores.put(messageServices.getMessage(VALID_PERIMETRO_COMERCIALIZACION_OFERTAS_VIVAS), getComercializarConOfertasVivas(exc));
@@ -144,6 +156,8 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 					|| !mapaErrores.get(messageServices.getMessage(VALID_PERIMETRO_FUERA_RESTO_CHECKS_NO)).isEmpty()
 					|| !mapaErrores.get(VALID_PERIMETRO_FORMALIZAR_SEGUN_COMERCIAL).isEmpty()
 					|| !mapaErrores.get(messageServices.getMessage(VALID_PERIMETRO_DESTINO_COMERCIAL)).isEmpty()
+					|| !mapaErrores.get(messageServices.getMessage(VALID_DESTINO_COMERCIAL_OFERTAS_VENTA_VIVAS)).isEmpty()
+					|| !mapaErrores.get(messageServices.getMessage(VALID_DESTINO_COMERCIAL_OFERTAS_ALQUILER_VIVAS)).isEmpty()
 					|| !mapaErrores.get(messageServices.getMessage(VALID_PERIMETRO_TIPO_ALQUILER)).isEmpty()
 					|| !mapaErrores.get(VALID_PERIMETRO_FORMALIZAR_ACTIVO_COMERCIALIZABLE).isEmpty()
 					|| !mapaErrores.get(messageServices.getMessage(VALID_PERIMETRO_COMERCIALIZACION_OFERTAS_VIVAS))
@@ -452,16 +466,21 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 			for(int i=1; i<this.numFilasHoja;i++){
 
 				try {
-					if(!Checks.esNulo(exc.dameCelda(i, COL_NUM_DESTINO_COMERCIAL)))
+					
+					if(!Checks.esNulo(exc.dameCelda(i, COL_NUM_DESTINO_COMERCIAL))) {
 						codigoDestinoComercial = exc.dameCelda(i, COL_NUM_DESTINO_COMERCIAL).substring(0, 2);
-					else 
+					} else {
 						codigoDestinoComercial = null;
+					}
+					
+					if(!(Checks.esNulo(codigoDestinoComercial) || "01".equals(codigoDestinoComercial) || "02".equals(codigoDestinoComercial) || "03".equals(codigoDestinoComercial) ) ) {
+						listaFilas.add(i);
+					}
+						
 				} catch (ParseException e) {
 					listaFilas.add(i);
 				}
-				
-				if(!(Checks.esNulo(codigoDestinoComercial) || "01".equals(codigoDestinoComercial) || "02".equals(codigoDestinoComercial) || "03".equals(codigoDestinoComercial) ) )
-					listaFilas.add(i);
+					
 			}
 		} catch (Exception e) {
 			listaFilas.add(0);
@@ -581,6 +600,94 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 				} catch (ParseException e) {
 					listaFilas.add(i);
 				}
+			}
+		} catch (Exception e) {
+			listaFilas.add(0);
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		}
+		return listaFilas;
+	}
+	
+	
+	private List<Integer> getOfertasVentaVivasRows(MSVHojaExcel exc) {
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		
+		/** 
+		 * 		Validará que no se intenté cambiar de venta a alquiler un activo que tenga ofertas
+		 *		de tipo venta vivas
+		 */
+		try{
+			String codigoDestinoComercial = null;
+			String codigoDestinoComercialActual = null;
+			for(int i=1; i<this.numFilasHoja;i++){
+
+				try {
+					
+					if(!Checks.esNulo(exc.dameCelda(i, COL_NUM_DESTINO_COMERCIAL))) {
+						codigoDestinoComercial = exc.dameCelda(i, COL_NUM_DESTINO_COMERCIAL).substring(0, 2);
+					} else {
+						codigoDestinoComercial = null;
+					}
+					
+				  	codigoDestinoComercialActual = particularValidator.getCodigoDestinoComercialByNumActivo(exc.dameCelda(i, COL_NUM_ACTIVO_HAYA));
+					
+					if (!Checks.esNulo(codigoDestinoComercialActual) && !Checks.esNulo(codigoDestinoComercial)
+							&& CODIGO_SOLO_ALQUILER.equals(codigoDestinoComercial)
+							&& (CODIGO_VENTA.equals(codigoDestinoComercialActual) 
+									|| CODIGO_ALQUILER_VENTA.equals(codigoDestinoComercialActual)) 
+							&& particularValidator.existeActivoConOfertaVentaViva("" + exc.dameCelda(i, COL_NUM_ACTIVO_HAYA))) {
+						listaFilas.add(i);
+					}
+					
+				} catch (ParseException e) {
+					listaFilas.add(i);
+				}
+					
+			}
+		} catch (Exception e) {
+			listaFilas.add(0);
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		}
+		return listaFilas;
+	}
+	
+	
+	private List<Integer> getOfertasAlquilerVivasRows(MSVHojaExcel exc) {
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		
+		/** 
+		 * 		Validará que no se intenté cambiar de alquiler a venta un activo que tenga ofertas
+		 *		de tipo alquiler vivas
+		 */
+		try{
+			String codigoDestinoComercial = null;
+			String codigoDestinoComercialActual = null;
+			for(int i=1; i<this.numFilasHoja;i++){
+
+				try {
+					
+					if(!Checks.esNulo(exc.dameCelda(i, COL_NUM_DESTINO_COMERCIAL))) {
+						codigoDestinoComercial = exc.dameCelda(i, COL_NUM_DESTINO_COMERCIAL).substring(0, 2);
+					} else {
+						codigoDestinoComercial = null;
+					}
+					
+				  	codigoDestinoComercialActual = particularValidator.getCodigoDestinoComercialByNumActivo(exc.dameCelda(i, COL_NUM_ACTIVO_HAYA));
+					
+					if (!Checks.esNulo(codigoDestinoComercialActual) && !Checks.esNulo(codigoDestinoComercial)
+							&& CODIGO_VENTA.equals(codigoDestinoComercial)
+							&& (CODIGO_SOLO_ALQUILER.equals(codigoDestinoComercialActual) 
+									|| CODIGO_ALQUILER_VENTA.equals(codigoDestinoComercialActual)) 
+							&& particularValidator.existeActivoConOfertaAlquilerViva("" + exc.dameCelda(i, COL_NUM_ACTIVO_HAYA))) {
+						listaFilas.add(i);
+					}
+					
+				} catch (ParseException e) {
+					listaFilas.add(i);
+				}
+					
 			}
 		} catch (Exception e) {
 			listaFilas.add(0);

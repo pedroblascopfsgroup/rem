@@ -11,7 +11,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 	
 	recordClass: "HreRem.model.Activo",
     
-    requires: ['HreRem.model.Activo'],
+    requires: ['HreRem.model.Activo','HreRem.view.activos.detalle.HistoricoDestinoComercialActivo'],
 
     initComponent: function () {
 
@@ -634,18 +634,29 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 						
 					} //Fin activo bancario
 				]
-			} //Fin perimetros
+			}, //Fin perimetros
+			{	// Histórico Destino Comercial ---------------------------------------------------------
+				xtype:'fieldsettable',
+				defaultType: 'textfieldbase',
+				title: HreRem.i18n('title.historico.destino.comercial'),
+				items :
+					[
+					{
+						xtype: 'historicodestinocomercialactivoform'
+					}
+					]
+			} // Fin Histórico Destino Comercial
             
      ];
 	me.addPlugin({ptype: 'lazyitems', items: items });
     me.callParent();    	
-    	
+
     },
     
     funcionRecargar: function() {
     	var me = this; 
 		me.recargar = false;
-		me.lookupController().cargarTabData(me);    	
+		me.lookupController().cargarTabData(me);
     },
     
     actualizarCoordenadas: function(latitud, longitud) {

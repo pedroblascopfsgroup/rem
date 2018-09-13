@@ -180,6 +180,22 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	Boolean publicarAgrupacionConHistorico(Long idAgrupacion, String username);
 	
 	Boolean publicarAgrupacionSinHistorico(Long idAgrupacion, String username, String eleccionUsuarioTipoPublicacionAlquiler);
+	
+	
+	/**
+	 * Establece la fecha fin de los registros de un activo en el Historico de destino comercial
+	 * 
+	 * @param activo
+	 */
+	public void finHistoricoDestinoComercial(Activo activo, Object[] extraArgs);
+	
+	/**
+	 * Crea un nuevo registro de un activo en el Historico de destino comercial 
+	 * con fechaFin a null y fechaInicio a la fecha actual
+	 * 
+	 * @param activo
+	 */
+	public void crearHistoricoDestinoComercial(Activo activo, Object[] extraArgs);
 
 
 }

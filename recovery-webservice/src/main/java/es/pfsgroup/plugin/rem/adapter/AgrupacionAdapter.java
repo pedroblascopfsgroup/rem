@@ -113,6 +113,7 @@ import es.pfsgroup.plugin.rem.rest.api.RestApi.ENTIDADES;
 import es.pfsgroup.plugin.rem.thread.LiberarFichero;
 import es.pfsgroup.plugin.rem.thread.ReactivarActivosAgrupacion;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
+import es.pfsgroup.plugin.rem.utils.MSVREMUtils;
 import es.pfsgroup.plugin.rem.validate.AgrupacionValidator;
 import es.pfsgroup.plugin.rem.validate.AgrupacionValidatorFactoryApi;
 import es.pfsgroup.plugin.rem.validate.BusinessValidators;
@@ -191,6 +192,9 @@ public class AgrupacionAdapter {
 
 	@Autowired
 	private NotificationOfertaManager notificationOfertaManager;
+	
+	@Autowired
+	private MSVREMUtils msvREMUtils;
 
 	@Resource
 	MessageService messageServices;
@@ -1581,7 +1585,7 @@ public class AgrupacionAdapter {
 		processAdapter.setStateProcessing(document.getProcesoMasivo().getId(),new Long(numFilas));
 		Usuario usu=proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
 		
-		Thread liberarFicheroThread = new Thread(new LiberarFichero(idProcess, idOperation, usu.getUsername()));
+		Thread liberarFicheroThread = new Thread(new LiberarFichero(idProcess, idOperation, usu.getUsername(), msvREMUtils.getExtraArgs()));
 		liberarFicheroThread.start();
 
 		return true;

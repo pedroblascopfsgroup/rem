@@ -134,6 +134,7 @@ import es.pfsgroup.plugin.rem.model.DtoCondicionantesDisponibilidad;
 import es.pfsgroup.plugin.rem.model.DtoDatosPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoEstadosInformeComercialHistorico;
+import es.pfsgroup.plugin.rem.model.DtoHistoricoDestinoComercial;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoMediador;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPrecios;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPreciosFilter;
@@ -152,6 +153,7 @@ import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Formalizacion;
 import es.pfsgroup.plugin.rem.model.GastosExpediente;
 import es.pfsgroup.plugin.rem.model.GestorActivo;
+import es.pfsgroup.plugin.rem.model.HistoricoDestinoComercial;
 import es.pfsgroup.plugin.rem.model.ImpuestosActivo;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
@@ -4939,6 +4941,93 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 		return null;
 
+	}
+	
+	
+	public List<DtoHistoricoDestinoComercial> getListDtoHistoricoDestinoComercialByBeanList(List<HistoricoDestinoComercial> hdc) {
+
+		List<DtoHistoricoDestinoComercial> dtoList = new ArrayList<DtoHistoricoDestinoComercial>();
+		
+		if (!Checks.esNulo(hdc) && !Checks.estaVacio(hdc)) {
+			
+			DtoHistoricoDestinoComercial dto;
+			
+			for (HistoricoDestinoComercial historicoDestinoComercial : hdc) {
+					
+				dto = new DtoHistoricoDestinoComercial();
+				
+				if (!Checks.esNulo(historicoDestinoComercial.getTipoComercializacion()) 
+						&& !Checks.esNulo(historicoDestinoComercial.getTipoComercializacion().getDescripcion())) {
+					
+					dto.setTipoComercializacion(historicoDestinoComercial.getTipoComercializacion().getDescripcion());
+					
+				}
+				
+				if (!Checks.esNulo(historicoDestinoComercial.getFechaInicio())) {
+					dto.setFechaInicio(historicoDestinoComercial.getFechaInicio());
+				}
+				
+				if (!Checks.esNulo(historicoDestinoComercial.getFechaFin())) {
+					dto.setFechaFin(historicoDestinoComercial.getFechaFin());
+				}
+				
+				if (!Checks.esNulo(historicoDestinoComercial.getGestorActualizacion())) {
+					dto.setGestorActualizacion(historicoDestinoComercial.getGestorActualizacion());
+				}
+				
+				dtoList.add(dto);
+				
+			}
+			
+		}
+		
+		return dtoList;
+		
+	}
+	
+	public DtoHistoricoDestinoComercial getDtoHistoricoDestinoComercialByBean(HistoricoDestinoComercial hdc) {
+
+		List<HistoricoDestinoComercial> hdcList = new ArrayList<HistoricoDestinoComercial>();
+		
+		hdcList.add(hdc);
+		
+		return getListDtoHistoricoDestinoComercialByBeanList(hdcList).get(0);
+		
+	}
+	
+	
+	public List<DtoHistoricoDestinoComercial> getDtoHistoricoDestinoComercialByActivo(Long id) {
+
+		List<DtoHistoricoDestinoComercial> dto = new ArrayList<DtoHistoricoDestinoComercial>();
+		
+		if (!Checks.esNulo(id)) {
+			
+			Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", id);
+			Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+			
+			Order order = new Order(OrderType.DESC,"fechaInicio");
+			
+			List<HistoricoDestinoComercial> historico = genericDao.getListOrdered(HistoricoDestinoComercial.class, order, filtroActivo, filtroBorrado);
+			
+			dto = getListDtoHistoricoDestinoComercialByBeanList(historico);
+			
+		}
+		
+		
+		return dto;
+		
+	}
+	
+	public void updateHistoricoDestinoComercial(Activo activo, Object[] extraArgs) {
+		
+		// Pasamos la fecha fin a null para todos los registros del historico del activo
+		
+		activoDao.finHistoricoDestinoComercial(activo, extraArgs);
+		
+		// Creamos el nuevo registro en el historico
+		
+		activoDao.crearHistoricoDestinoComercial(activo, extraArgs);
+		
 	}
 
 }

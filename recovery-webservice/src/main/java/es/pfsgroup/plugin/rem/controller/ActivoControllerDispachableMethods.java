@@ -6,8 +6,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.ui.ModelMap;
+import org.springframework.web.servlet.ModelAndView;
 
 import es.pfsgroup.plugin.rem.model.*;
+import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.rem.activo.ActivoPropagacionFieldTabMap;
 import es.pfsgroup.plugin.rem.model.DtoActivoAdministracion;
 import es.pfsgroup.plugin.rem.model.DtoActivoCargasTab;
@@ -59,7 +62,15 @@ class ActivoControllerDispachableMethods {
 			@Override
 			public void execute(Long id, DtoActivoFichaCabecera dto) {
 				if (dto != null ){
-					this.controller.saveDatosBasicos(dto, id, new ModelMap());
+
+					ModelAndView mm = this.controller.saveDatosBasicos(dto, id, new ModelMap());
+
+					if ("false".equals(mm.getModel().get("success").toString())
+							&& !Checks.esNulo(mm.getModel().get("msgError"))) {
+						
+						throw new JsonViewerException(mm.getModel().get("msgError").toString());
+					}
+
 				}
 				
 			}

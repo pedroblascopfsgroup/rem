@@ -6,7 +6,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
     'HreRem.model.IncrementoPresupuesto', 'HreRem.model.Distribuciones', 'HreRem.model.Observaciones',
     'HreRem.model.Carga', 'HreRem.model.Llaves', 'HreRem.model.PreciosVigentes','HreRem.model.VisitasActivo',
     'HreRem.model.OfertaActivo', 'HreRem.model.PropuestaActivosVinculados', 'HreRem.model.HistoricoMediadorModel',
-    'HreRem.model.MediadorModel', 'HreRem.model.MovimientosLlave', 'HreRem.model.ActivoPatrimonio', 'HreRem.model.HistoricoAdecuacionesPatrimonioModel', 'HreRem.model.ImpuestosActivo'],
+    'HreRem.model.MediadorModel', 'HreRem.model.MovimientosLlave', 'HreRem.model.ActivoPatrimonio'
+    ,'HreRem.model.HistoricoAdecuacionesPatrimonioModel', 'HreRem.model.ImpuestosActivo'
+    ,'HreRem.model.HistoricoDestinoComercialModel'],
     
     data: {
     	activo: null,
@@ -1364,7 +1366,17 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				remoteUrl: 'activo/getHistoricoAdecuacionesAlquilerByActivo',
 				extraParams: {id: '{activo.id}'}
 			}
-		}
+		},
+		
+		storeHistoricoDestinoComercial: {    	
+			 pageSize: 10,
+	   		 model: 'HreRem.model.HistoricoDestinoComercialModel',
+	   		 proxy: {
+		        type: 'uxproxy',
+		        remoteUrl: 'activo/getHistoricoDestinoComercialByActivo',
+		        extraParams: {id: '{activo.id}'}
+	    	 }
+   		}
 		
 
 //		

@@ -317,5 +317,27 @@ public interface ParticularValidatorApi {
 	public Boolean distintosTiposImpuestoAgrupacionVacia(List<String> activosList);
 
 	Boolean subcarteraPerteneceCartera(String subcartera, String cartera);
+	
+	
+	/**
+	 * Devuelve true si un activo tiene ofertas vivas de tipo venta
+	 * @param numActivo
+	 * @return
+	 */
+	public Boolean existeActivoConOfertaVentaViva(String numActivo);
+	
+	/**
+	 * Devuelve true si un activo tiene ofertas vivas de tipo alquiler
+	 * @param numActivo
+	 * @return
+	 */
+	public Boolean existeActivoConOfertaAlquilerViva(String numActivo);
+	
+	/**
+	 * Devuelve el codigo del destino comercial de un activo
+	 * @param numActivo
+	 * @return
+	 */
+	public String getCodigoDestinoComercialByNumActivo(String numActivo);
 
 }

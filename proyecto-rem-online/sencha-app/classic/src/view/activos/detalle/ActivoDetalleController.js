@@ -2778,8 +2778,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		var url =  $AC.getRemoteUrl('proveedores/searchProveedorCodigo');
 		var codPrescriptor = field.getValue();
 		var data;
-		var re = new RegExp("^((04$))|^((18$))|^((28$))|^((29$))|^((31$))|^((37$))|^((30$))|^((35$))|^((23$)).*$");
-
+		var re = new RegExp("^((04$))|^((18$))|^((28$))|^((29$))|^((31$))|^((37$))|^((30$))|^((35$))|^((23$))|^((38$)).*$");
+debugger;
 		
 		Ext.Ajax.request({
 		    			
@@ -2790,7 +2790,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			    	data = Ext.decode(response.responseText);
 		    		var buscadorPrescriptor = field.up('formBase').down('[name=buscadorPrescriptores]'),
 		    		nombrePrescriptorField = field.up('formBase').down('[name=nombrePrescriptor]');
-		    		
+		    		debugger;
 			    	if(!Utils.isEmptyJSON(data.data)){
 						var id= data.data.id;
 						var tipoProveedorCodigo = data.data.tipoProveedor.codigo;

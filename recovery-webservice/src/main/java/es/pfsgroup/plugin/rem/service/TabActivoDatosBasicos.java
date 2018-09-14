@@ -334,16 +334,20 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		BeanUtils.copyProperty(activoDto, "informeComercialAceptado", activoApi.isInformeComercialAceptado(activo));
 		
 		//Obtener si tiene posible informe mediador
-		if (!Checks.esNulo(activo.getInfoComercial().getPosibleInforme())){
-			if (activo.getInfoComercial().getPosibleInforme() == 1){
-				BeanUtils.copyProperty(activoDto, "tienePosibleInformeMediador", true);
+		if (!Checks.esNulo(activo.getInfoComercial())) {
+			if (!Checks.esNulo(activo.getInfoComercial().getPosibleInforme())){
+				if (activo.getInfoComercial().getPosibleInforme() == 1){
+					BeanUtils.copyProperty(activoDto, "tienePosibleInformeMediador", true);
+				} else {
+					BeanUtils.copyProperty(activoDto, "tienePosibleInformeMediador", false);
+				}
 			} else {
-				BeanUtils.copyProperty(activoDto, "tienePosibleInformeMediador", false);
+				BeanUtils.copyProperty(activoDto, "tienePosibleInformeMediador", true);
 			}
-		} else {
+		}
+		else {
 			BeanUtils.copyProperty(activoDto, "tienePosibleInformeMediador", true);
 		}
-		
 		
 
 

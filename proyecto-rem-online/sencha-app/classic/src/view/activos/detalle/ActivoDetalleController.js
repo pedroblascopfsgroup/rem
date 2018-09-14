@@ -653,6 +653,25 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
            }
     	 });
     },
+    
+    onChkbxMuestraHistorico: function(chkbx, checked) {
+    	
+    	var me = this;
+    	
+    	var grid = chkbx.up('gestoresactivo').down("gestoreslist");
+    	var store = me.getViewModel().get("storeGestoresActivos");
+    	
+    	var prox = store.getProxy();
+    	var _idActivo = prox.getExtraParams().idActivo;
+    	var _incluirGestoresInactivos = checked;
+    	
+    	prox.setExtraParams({
+    		"idActivo": _idActivo, 
+    		"incluirGestoresInactivos": _incluirGestoresInactivos
+    	});
+    	store.load();
+    	
+    },
 	
 	onClickBotonEditar: function(btn) {
 		

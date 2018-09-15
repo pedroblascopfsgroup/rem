@@ -84,9 +84,8 @@ public class DDSubtipoDocumentoExpediente implements Auditable, Dictionary {
     public static final String CODIGO_CONTRATO= "49";
     public static final String CODIGO_LIQUIDACION_IPP= "50";
     public static final String CODIGO_FIANZA= "51";
-    public static final String CODIGO_GARANTIA_ADICIONAL= "52";
-    public static final String CODIGO_AVAL_BANCARIO= "53";
-    public static final String CODIGO_JUSTIFICANTE_INGRESOS= "54";
+    public static final String CODIGO_AVAL_BANCARIO= "52";
+    public static final String CODIGO_JUSTIFICANTE_INGRESOS= "53";
     
 	/**
 	 * 

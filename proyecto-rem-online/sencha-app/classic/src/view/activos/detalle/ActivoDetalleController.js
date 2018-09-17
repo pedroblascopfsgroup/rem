@@ -216,7 +216,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 
 			var idActivo;
 
-            if(	   tabData.models[0].name == "activohistoricoestadopublicacion"
+            if(	   tabData.models[0].name == "datospublicacion"
                 || tabData.models[0].name == "cargasactivo"
                 || tabData.models[0].name == "activocondicionantesdisponibilidad"
                 || tabData.models[0].name == "activotrabajo"

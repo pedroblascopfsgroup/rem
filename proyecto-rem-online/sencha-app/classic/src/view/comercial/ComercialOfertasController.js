@@ -52,8 +52,15 @@ Ext.define('HreRem.view.comercial.ComercialOfertasController', {
 	},
 	
 		// Funcion que se ejecuta al hacer click en el botón limpiar
-	onCleanFiltersClick: function(btn) {			
-		btn.up('form').getForm().reset();				
+	onCleanFiltersClick: function(btn) {
+		btn.up('form').getForm().reset();
+		var form = btn.up('form');
+		
+		var comboboxTipoAlquiler = form.up().lookupReference('comboExpedienteAlquiler');
+		var comboboxTipoVenta = form.up().lookupReference('comboExpedienteVenta'); 
+		
+		comboboxTipoAlquiler.setDisabled(true);
+		comboboxTipoVenta.setDisabled(true);
 	},
 	
 	onClickDescargarExcel: function(btn) {

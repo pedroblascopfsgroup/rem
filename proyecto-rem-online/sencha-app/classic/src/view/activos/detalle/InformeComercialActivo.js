@@ -326,7 +326,7 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 									{ 
 							        	xtype: 'comboboxfieldbase',
 							        	fieldLabel: HreRem.i18n('fieldlabel.posible.informe'),
-										id: 'comboPosibleInforme',
+										reference: 'comboPosibleInforme',
 										readOnly: editaPosibleInforme,
 							        	bind: {
 						            		store: '{comboSiNoRem}',
@@ -346,7 +346,7 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 							        },
 									{
 										xtype: 'textareafieldbase',
-										id: 'noPosibleInformeTextArea',
+										reference: 'noPosibleInformeTextArea',
 										fieldLabel: HreRem.i18n('fieldlabel.motivo.no.posible.informe'),
 										hidden: tienePosibleInformeMediador,
 										bind:		'{infoComercial.motivoNoPosibleInforme}',

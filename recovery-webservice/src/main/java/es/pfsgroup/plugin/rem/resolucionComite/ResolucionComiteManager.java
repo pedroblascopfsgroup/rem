@@ -99,9 +99,9 @@ public class ResolucionComiteManager extends BusinessOperationOverrider<Resoluci
 			if (!Checks.esNulo(resolucionComiteDto.getOfertaHRE())) {
 				Oferta ofr = ofertaApi.getOfertaByNumOfertaRem(resolucionComiteDto.getOfertaHRE());
 				if (Checks.esNulo(ofr) || (!Checks.esNulo(ofr)
-						&& !ofr.getEstadoOferta().getCodigo().equalsIgnoreCase(DDEstadoOferta.CODIGO_ACEPTADA))) {
-					hashErrores.put("ofertaHRE", "La oferta no esta aceptada.");
-
+						&& !ofr.getEstadoOferta().getCodigo().equalsIgnoreCase(DDEstadoOferta.CODIGO_ACEPTADA) 
+						&& !ResolucionComiteController.ACCION_RESOLUCION_DEVOLUCION.equals(resolucionComiteDto.getCodigoAccion()))) {				
+						hashErrores.put("ofertaHRE", "La oferta no esta aceptada.");
 				} else {
 					ExpedienteComercial eco = expedienteComercialApi.expedienteComercialPorOferta(ofr.getId());
 					if (Checks.esNulo(eco)) {

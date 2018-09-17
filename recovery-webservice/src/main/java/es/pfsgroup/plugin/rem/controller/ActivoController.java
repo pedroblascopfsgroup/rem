@@ -1254,7 +1254,7 @@ public class ActivoController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getTramites(Long idActivo, WebDto webDto, ModelMap model) {
+	public ModelAndView getTramites(Long idActivo, WebDto webDto, ModelMap model, HttpServletRequest request) {
 
 		model.put("data", adapter.getTramitesActivo(idActivo, webDto));
 
@@ -1336,9 +1336,10 @@ public class ActivoController extends ParadiseJsonController {
 	 */
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getTramite(Long id, ModelMap model) {
+	public ModelAndView getTramite(Long id, ModelMap model, HttpServletRequest request) {
 
 		model.put("data", adapter.getTramite(id));
+		trustMe.registrarSuceso(request, id, ENTIDAD_CODIGO.CODIGO_TRAMITE, "datosGenerales", ACCION_CODIGO.CODIGO_VER);
 
 		return createModelAndViewJson(model);
 	}
@@ -1363,9 +1364,10 @@ public class ActivoController extends ParadiseJsonController {
 	 */
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getTareasTramite(Long idTramite, WebDto webDto, ModelMap model) {
+	public ModelAndView getTareasTramite(Long idTramite, WebDto webDto, ModelMap model, HttpServletRequest request) {
 
 		model.put("data", adapter.getTareasTramite(idTramite));
+		trustMe.registrarSuceso(request, idTramite, ENTIDAD_CODIGO.CODIGO_TRAMITE, "tareas", ACCION_CODIGO.CODIGO_VER);
 
 		return createModelAndViewJson(model);
 	}
@@ -1379,9 +1381,10 @@ public class ActivoController extends ParadiseJsonController {
 	 */
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getTareasTramiteHistorico(Long idTramite, WebDto webDto, ModelMap model) {
+	public ModelAndView getTareasTramiteHistorico(Long idTramite, WebDto webDto, ModelMap model, HttpServletRequest request) {
 
 		model.put("data", adapter.getTareasTramiteHistorico(idTramite));
+		trustMe.registrarSuceso(request, idTramite, ENTIDAD_CODIGO.CODIGO_TRAMITE, "historicoTareas", ACCION_CODIGO.CODIGO_VER);
 
 		return createModelAndViewJson(model);
 	}
@@ -1396,12 +1399,13 @@ public class ActivoController extends ParadiseJsonController {
 	 */
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getActivosTramite(Long idTramite, WebDto webDto, ModelMap model) {
+	public ModelAndView getActivosTramite(Long idTramite, WebDto webDto, ModelMap model, HttpServletRequest request) {
 
 		List<Activo> listActivos = activoTramiteApi.getActivosTramite(idTramite);
 		List<DtoActivoTramite> listDtoActivosTramite = activoTramiteApi.getDtoActivosTramite(listActivos);
 		model.put("data", listDtoActivosTramite);
 		model.put("totalCount", listDtoActivosTramite.size());
+		trustMe.registrarSuceso(request, idTramite, ENTIDAD_CODIGO.CODIGO_TRAMITE, "activos", ACCION_CODIGO.CODIGO_VER);
 
 		return createModelAndViewJson(model);
 	}

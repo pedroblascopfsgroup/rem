@@ -59,8 +59,8 @@ public class ActivoAgrupacionActivo implements Serializable , Auditable {
     @Column(name = "AGA_FECHA_INCLUSION")
 	private Date fechaInclusion;
     
-//	@Column(name = "AGA_PRINCIPAL")
-//	private Integer principal;
+	@Column(name = "AGA_PRINCIPAL")
+	private Integer principal;
 
 	
 	
@@ -105,13 +105,13 @@ public class ActivoAgrupacionActivo implements Serializable , Auditable {
 		this.fechaInclusion = fechaInclusion;
 	}
 
-//	public Integer getPrincipal() {
-//		return principal;
-//	}
-//
-//	public void setPrincipal(Integer principal) {
-//		this.principal = principal;
-//	}
+	public Integer getPrincipal() {
+		return principal;
+	}
+
+	public void setPrincipal(Integer principal) {
+		this.principal = principal;
+	}
 
 	public Long getVersion() {
 		return version;

@@ -168,4 +168,18 @@ public class ActivoAgrupacionActivoDaoImpl extends AbstractEntityDao<ActivoAgrup
 
 		return (list.size() > 0);
 	}
+	
+	@Override
+	public ActivoAgrupacionActivo getActivoAgrupacionActivoPrincipalByIdAgrupacion(long idAgrupacion) {
+
+		HQLBuilder hb = new HQLBuilder(" from ActivoAgrupacionActivo aaa");
+		
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "aaa.agrupacion.id", idAgrupacion);
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "aaa.principal", 1);
+		HQLBuilder.addFiltroIgualQue(hb, "aaa.auditoria.borrado", false);
+		HQLBuilder.addFiltroIgualQue(hb, "aaa.agrupacion.auditoria.borrado", false);
+
+		return HibernateQueryUtils.uniqueResult(this, hb);
+
+	}
 }

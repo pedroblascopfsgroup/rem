@@ -40,6 +40,10 @@ import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.Downloader;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.DownloaderFactoryApi;
+import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento;
+import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.ACCION_CODIGO;
+import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.ENTIDAD_CODIGO;
+import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.REQUEST_STATUS_CODE;
 import es.pfsgroup.plugin.rem.model.DtoActivosExpediente;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoAviso;
@@ -97,6 +101,9 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 	
 	@Autowired
 	private DownloaderFactoryApi downloaderFactoryApi;
+	
+	@Autowired
+	private LogTrustEvento trustMe;
 	
 	
 	/**
@@ -160,15 +167,17 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 	 */
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getTabExpediente(Long id, String tab, ModelMap model) {
+	public ModelAndView getTabExpediente(Long id, String tab, ModelMap model, HttpServletRequest request) {
 
 		try {
 			Object data = expedienteComercialApi.getTabExpediente(id, tab);
 			model.put("data", data);
 			model.put("success", true);
+			trustMe.registrarSuceso(request, id, ENTIDAD_CODIGO.CODIGO_EXPEDIENTE_COMERCIAL, tab, ACCION_CODIGO.CODIGO_VER);
 		} catch (Exception e) {
 			model.put("success", false);
 			model.put("error", e.getMessage());
+			trustMe.registrarError(request, id, ENTIDAD_CODIGO.CODIGO_EXPEDIENTE_COMERCIAL, tab, ACCION_CODIGO.CODIGO_VER, REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
 		}
 
 		return createModelAndViewJson(model);
@@ -202,7 +211,7 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getListTextosOfertaById(@RequestParam Long id, ModelMap model) {
+	public ModelAndView getListTextosOfertaById(@RequestParam Long id, ModelMap model, HttpServletRequest request) {
 		
 		
 	try {
@@ -211,10 +220,12 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 		
 		model.put("data", lista);
 		model.put("success", true);
+		trustMe.registrarSuceso(request, id, ENTIDAD_CODIGO.CODIGO_EXPEDIENTE_COMERCIAL, "textosOferta", ACCION_CODIGO.CODIGO_VER);
 		
 	} catch (Exception e) {
 		e.printStackTrace();
 		model.put("success", false);
+		trustMe.registrarError(request, id, ENTIDAD_CODIGO.CODIGO_EXPEDIENTE_COMERCIAL, "textosOferta", ACCION_CODIGO.CODIGO_VER, REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
 	}
 
 		return createModelAndViewJson(model);
@@ -223,7 +234,7 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getListEntregasReserva(@RequestParam Long id,WebDto dto, ModelMap model) {
+	public ModelAndView getListEntregasReserva(@RequestParam Long id,WebDto dto, ModelMap model, HttpServletRequest request) {
 		
 	try {
 		
@@ -231,10 +242,12 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 		
 		model.put("data", lista);
 		model.put("success", true);
+		trustMe.registrarSuceso(request, id, ENTIDAD_CODIGO.CODIGO_EXPEDIENTE_COMERCIAL, "entregasReserva", ACCION_CODIGO.CODIGO_VER);
 		
 	} catch (Exception e) {
 		e.printStackTrace();
 		model.put("success", false);
+		trustMe.registrarError(request, id, ENTIDAD_CODIGO.CODIGO_EXPEDIENTE_COMERCIAL, "entregasReserva", ACCION_CODIGO.CODIGO_VER, REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
 	}
 
 		return createModelAndViewJson(model);
@@ -259,20 +272,23 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView saveDatosBasicosOferta(DtoDatosBasicosOferta dto, @RequestParam Long id, ModelMap model) {
+	public ModelAndView saveDatosBasicosOferta(DtoDatosBasicosOferta dto, @RequestParam Long id, ModelMap model, HttpServletRequest request) {
 		try {		
 			
 			model.put("success", expedienteComercialApi.saveDatosBasicosOferta(dto, id));
+			trustMe.registrarSuceso(request, id, ENTIDAD_CODIGO.CODIGO_EXPEDIENTE_COMERCIAL, "datosBasicosOferta", ACCION_CODIGO.CODIGO_MODIFICAR);
 			
 		}catch (JsonViewerException e) {
 			e.printStackTrace();
 			model.put("msg", e.getMessage());
 			model.put("success", false);
+			trustMe.registrarError(request, id, ENTIDAD_CODIGO.CODIGO_EXPEDIENTE_COMERCIAL, "datosBasicosOferta", ACCION_CODIGO.CODIGO_MODIFICAR, REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
 		}
 		
 		catch (Exception e) {
 			e.printStackTrace();
 			model.put("success", false);
+			trustMe.registrarError(request, id, ENTIDAD_CODIGO.CODIGO_EXPEDIENTE_COMERCIAL, "datosBasicosOferta", ACCION_CODIGO.CODIGO_MODIFICAR, REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
 		}	
 		
 		return createModelAndViewJson(model);
@@ -303,14 +319,16 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView saveCondicionesExpediente(DtoCondiciones dto, @RequestParam Long id, ModelMap model) {
+	public ModelAndView saveCondicionesExpediente(DtoCondiciones dto, @RequestParam Long id, ModelMap model, HttpServletRequest request) {
 		try {		
 			
 			model.put("success", expedienteComercialApi.saveCondicionesExpediente(dto, id));
+			trustMe.registrarSuceso(request, id, ENTIDAD_CODIGO.CODIGO_EXPEDIENTE_COMERCIAL, "condiciones", ACCION_CODIGO.CODIGO_MODIFICAR);
 			
 		} catch (Exception e) {
 			e.printStackTrace();
 			model.put("success", false);
+			trustMe.registrarError(request, id, ENTIDAD_CODIGO.CODIGO_EXPEDIENTE_COMERCIAL, "condiciones", ACCION_CODIGO.CODIGO_MODIFICAR, REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
 		}	
 		
 		return createModelAndViewJson(model);
@@ -319,7 +337,7 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 
 @SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getObservaciones(ModelMap model, WebDto dto, Long idExpediente) {
+	public ModelAndView getObservaciones(ModelMap model, WebDto dto, Long idExpediente, HttpServletRequest request) {
 		
 		try {
 			DtoPage page = expedienteComercialApi.getListObservaciones(idExpediente, dto);
@@ -327,10 +345,12 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 			model.put("data", page.getResults());
 			model.put("totalCount", page.getTotalCount());
 			model.put("success", true);
+			trustMe.registrarSuceso(request, idExpediente, ENTIDAD_CODIGO.CODIGO_EXPEDIENTE_COMERCIAL, "observaciones", ACCION_CODIGO.CODIGO_VER);
 			
 		} catch (Exception e) {
 			e.printStackTrace();
 			model.put("success", false);
+			trustMe.registrarError(request, idExpediente, ENTIDAD_CODIGO.CODIGO_EXPEDIENTE_COMERCIAL, "observaciones", ACCION_CODIGO.CODIGO_VER, REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
 		}	
 		
 		return createModelAndViewJson(model);
@@ -396,7 +416,7 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getActivosExpediente(ModelMap model, Long idExpediente) {
+	public ModelAndView getActivosExpediente(ModelMap model, Long idExpediente, HttpServletRequest request) {
 		
 		try {
 			DtoPage dto= expedienteComercialApi.getActivosExpediente(idExpediente);
@@ -404,10 +424,12 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 			model.put("data", dto.getResults());
 			model.put("totalCount", dto.getTotalCount());
 			model.put("success", true);
+			trustMe.registrarSuceso(request, idExpediente, ENTIDAD_CODIGO.CODIGO_EXPEDIENTE_COMERCIAL, "activos", ACCION_CODIGO.CODIGO_VER);
 			
 		} catch (Exception e) {
 			e.printStackTrace();
 			model.put("success", false);
+			trustMe.registrarError(request, idExpediente, ENTIDAD_CODIGO.CODIGO_EXPEDIENTE_COMERCIAL, "activos", ACCION_CODIGO.CODIGO_VER, REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
 		}	
 		
 		return createModelAndViewJson(model);
@@ -452,14 +474,16 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getListAdjuntos(Long idExpediente, ModelMap model){
+	public ModelAndView getListAdjuntos(Long idExpediente, ModelMap model, HttpServletRequest request){
 
 		try {
 			model.put("data", expedienteComercialAdapter.getAdjuntosExpedienteComercial(idExpediente));
+			trustMe.registrarSuceso(request, idExpediente, ENTIDAD_CODIGO.CODIGO_EXPEDIENTE_COMERCIAL, "adjuntos", ACCION_CODIGO.CODIGO_VER);
 		} catch (Exception e) {
 			logger.error("error en ExpedienteComercialController", e);
 			model.put("success", false);
 			model.put("errorMessage", e.getMessage());
+			trustMe.registrarError(request, idExpediente, ENTIDAD_CODIGO.CODIGO_EXPEDIENTE_COMERCIAL, "adjuntos", ACCION_CODIGO.CODIGO_VER, REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
 		}
 		
 		return createModelAndViewJson(model);
@@ -522,7 +546,7 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 	 */
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getTramitesTareas(Long idExpediente, WebDto webDto, ModelMap model) {
+	public ModelAndView getTramitesTareas(Long idExpediente, WebDto webDto, ModelMap model, HttpServletRequest request) {
 		
 		ExpedienteComercial expediente = expedienteComercialApi.findOne(idExpediente);
 		List<DtoListadoTramites> tramites = trabajoAdapter.getListadoTramitesTareasTrabajo(expediente.getTrabajo().getId(), webDto);
@@ -534,13 +558,14 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 		}
 		
 		model.put("tramite", tramite);
+		trustMe.registrarSuceso(request, idExpediente, ENTIDAD_CODIGO.CODIGO_EXPEDIENTE_COMERCIAL, "tamitesTareas", ACCION_CODIGO.CODIGO_VER);
 		
 		return createModelAndViewJson(model);
 	}
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getPosicionamientosExpediente(Long idExpediente, WebDto webDto, ModelMap model) {
+	public ModelAndView getPosicionamientosExpediente(Long idExpediente, WebDto webDto, ModelMap model, HttpServletRequest request) {
 		
 		try {
 			DtoPage dto= expedienteComercialApi.getPosicionamientosExpediente(idExpediente);
@@ -548,10 +573,12 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 			model.put("data", dto.getResults());
 			model.put("totalCount", dto.getTotalCount());
 			model.put("success", true);
+			trustMe.registrarSuceso(request, idExpediente, ENTIDAD_CODIGO.CODIGO_EXPEDIENTE_COMERCIAL, "posicionamiento", ACCION_CODIGO.CODIGO_VER);
 			
 		} catch (Exception e) {
 			e.printStackTrace();
 			model.put("success", false);
+			trustMe.registrarError(request, idExpediente, ENTIDAD_CODIGO.CODIGO_EXPEDIENTE_COMERCIAL, "posicionamiento", ACCION_CODIGO.CODIGO_VER, REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
 		}	
 		
 		return createModelAndViewJson(model);
@@ -580,7 +607,7 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getSubsanacionesExpediente(ModelMap model, Long idExpediente) {
+	public ModelAndView getSubsanacionesExpediente(ModelMap model, Long idExpediente, HttpServletRequest request) {
 		
 		try {
 			DtoPage dto= expedienteComercialApi.getSubsanacionesExpediente(idExpediente);
@@ -588,10 +615,12 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 			model.put("data", dto.getResults());
 			model.put("totalCount", dto.getTotalCount());
 			model.put("success", true);
+			trustMe.registrarSuceso(request, idExpediente, ENTIDAD_CODIGO.CODIGO_EXPEDIENTE_COMERCIAL, "subsanaciones", ACCION_CODIGO.CODIGO_VER);
 			
 		} catch (Exception e) {
 			e.printStackTrace();
 			model.put("success", false);
+			trustMe.registrarError(request, idExpediente, ENTIDAD_CODIGO.CODIGO_EXPEDIENTE_COMERCIAL, "subsanaciones", ACCION_CODIGO.CODIGO_VER, REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
 		}	
 		
 		return createModelAndViewJson(model);
@@ -619,17 +648,19 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getHonorarios(ModelMap model, Long idExpediente) {
+	public ModelAndView getHonorarios(ModelMap model, Long idExpediente, HttpServletRequest request) {
 		
 		try {
 			List<DtoGastoExpediente> list = expedienteComercialApi.getHonorarios(idExpediente, null);
 			
 			model.put("data", list);
 			model.put("success", true);
+			trustMe.registrarSuceso(request, idExpediente, ENTIDAD_CODIGO.CODIGO_EXPEDIENTE_COMERCIAL, "honorarios", ACCION_CODIGO.CODIGO_VER);
 			
 		} catch (Exception e) {
 			e.printStackTrace();
 			model.put("success", false);
+			trustMe.registrarError(request, idExpediente, ENTIDAD_CODIGO.CODIGO_EXPEDIENTE_COMERCIAL, "honorarios", ACCION_CODIGO.CODIGO_VER, REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
 		}	
 		
 		return createModelAndViewJson(model);
@@ -644,7 +675,7 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 	 */
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getCompradoresExpediente(Long idExpediente, WebDto dto, ModelMap model) {
+	public ModelAndView getCompradoresExpediente(Long idExpediente, WebDto dto, ModelMap model, HttpServletRequest request) {
 
 		try {
 			
@@ -652,10 +683,12 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 			model.put("data", page.getResults());
 			model.put("totalCount", page.getTotalCount());
 			model.put("success", true);
+			trustMe.registrarSuceso(request, idExpediente, ENTIDAD_CODIGO.CODIGO_EXPEDIENTE_COMERCIAL, "compradores", ACCION_CODIGO.CODIGO_VER);
 			
 		} catch (Exception e) {
 			e.printStackTrace();
 			model.put("success", false);
+			trustMe.registrarError(request, idExpediente, ENTIDAD_CODIGO.CODIGO_EXPEDIENTE_COMERCIAL, "compradores", ACCION_CODIGO.CODIGO_VER, REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
 		}
 		
 		return createModelAndViewJson(model);
@@ -715,14 +748,16 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView saveReserva(DtoReserva dto, @RequestParam Long id, ModelMap model) {
+	public ModelAndView saveReserva(DtoReserva dto, @RequestParam Long id, ModelMap model, HttpServletRequest request) {
 		try {		
 			
 			model.put("success", expedienteComercialApi.saveReserva(dto, id));
+			trustMe.registrarSuceso(request, id, ENTIDAD_CODIGO.CODIGO_EXPEDIENTE_COMERCIAL, "reserva", ACCION_CODIGO.CODIGO_MODIFICAR);
 			
 		} catch (Exception e) {
 			e.printStackTrace();
 			model.put("success", false);
+			trustMe.registrarError(request, id, ENTIDAD_CODIGO.CODIGO_EXPEDIENTE_COMERCIAL, "reserva", ACCION_CODIGO.CODIGO_MODIFICAR, REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
 		}	
 		
 		return createModelAndViewJson(model);
@@ -754,14 +789,16 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView saveFichaExpediente(DtoFichaExpediente dto, @RequestParam Long id, ModelMap model) {
+	public ModelAndView saveFichaExpediente(DtoFichaExpediente dto, @RequestParam Long id, ModelMap model, HttpServletRequest request) {
 		try {		
 			
 			model.put("success", expedienteComercialApi.saveFichaExpediente(dto, id));
+			trustMe.registrarSuceso(request, id, ENTIDAD_CODIGO.CODIGO_EXPEDIENTE_COMERCIAL, "ficha", ACCION_CODIGO.CODIGO_MODIFICAR);
 			
 		} catch (Exception e) {
 			e.printStackTrace();
 			model.put("success", false);
+			trustMe.registrarError(request, id, ENTIDAD_CODIGO.CODIGO_EXPEDIENTE_COMERCIAL, "ficha", ACCION_CODIGO.CODIGO_MODIFICAR, REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
 		}	
 		
 		return createModelAndViewJson(model);
@@ -1132,13 +1169,15 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getFormalizacionFinanciacion(ModelMap model, DtoFormalizacionFinanciacion dto) {
+	public ModelAndView getFormalizacionFinanciacion(ModelMap model, DtoFormalizacionFinanciacion dto, HttpServletRequest request) {
 		try {
 			model.put("data", expedienteComercialApi.getFormalizacionFinanciacion(dto));
 			model.put("success", true);
+			trustMe.registrarSuceso(request, Long.parseLong(dto.getId()), ENTIDAD_CODIGO.CODIGO_EXPEDIENTE_COMERCIAL, "formalizacion", ACCION_CODIGO.CODIGO_VER);
 		} catch (Exception e) {
 			e.printStackTrace();
 			model.put("success", false);
+			trustMe.registrarError(request, Long.parseLong(dto.getId()), ENTIDAD_CODIGO.CODIGO_EXPEDIENTE_COMERCIAL, "formalizacion", ACCION_CODIGO.CODIGO_VER, REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
 		}	
 
 		return createModelAndViewJson(model);
@@ -1146,12 +1185,14 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView saveFormalizacionFinanciacion(ModelMap model, DtoFormalizacionFinanciacion dto) {
+	public ModelAndView saveFormalizacionFinanciacion(ModelMap model, DtoFormalizacionFinanciacion dto, HttpServletRequest request) {
 		try {
 			model.put("success", expedienteComercialApi.saveFormalizacionFinanciacion(dto));
+			trustMe.registrarSuceso(request, Long.parseLong(dto.getId()), ENTIDAD_CODIGO.CODIGO_EXPEDIENTE_COMERCIAL, "formalizacion", ACCION_CODIGO.CODIGO_MODIFICAR);
 		} catch (Exception e) {
 			e.printStackTrace();
 			model.put("success", false);
+			trustMe.registrarError(request, Long.parseLong(dto.getId()), ENTIDAD_CODIGO.CODIGO_EXPEDIENTE_COMERCIAL, "formalizacion", ACCION_CODIGO.CODIGO_MODIFICAR, REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
 		}	
 
 		return createModelAndViewJson(model);
@@ -1190,9 +1231,10 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getGestores(Long idExpediente, WebDto webDto, ModelMap model) {
+	public ModelAndView getGestores(Long idExpediente, WebDto webDto, ModelMap model, HttpServletRequest request) {
 
 		model.put("data", expedienteComercialApi.getGestores(idExpediente));
+		trustMe.registrarSuceso(request, idExpediente, ENTIDAD_CODIGO.CODIGO_EXPEDIENTE_COMERCIAL, "gestores", ACCION_CODIGO.CODIGO_VER);
 
 		return new ModelAndView("jsonView", model);
 	}
@@ -1268,17 +1310,19 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 	}
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getTanteosActivo(ModelMap model, Long idExpediente,Long idActivo) {
+	public ModelAndView getTanteosActivo(ModelMap model, Long idExpediente,Long idActivo, HttpServletRequest request) {
 		
 		try {
 			List<DtoTanteoActivoExpediente> list = expedienteComercialApi.getTanteosPorActivoExpediente(idExpediente, idActivo);
 			
 			model.put("data", list);
 			model.put("success", true);
+			trustMe.registrarSuceso(request, idExpediente, ENTIDAD_CODIGO.CODIGO_EXPEDIENTE_COMERCIAL, "tanteos", ACCION_CODIGO.CODIGO_VER);
 			
 		} catch (Exception e) {
 			e.printStackTrace();
 			model.put("success", false);
+			trustMe.registrarError(request, idExpediente, ENTIDAD_CODIGO.CODIGO_EXPEDIENTE_COMERCIAL, "tanteos", ACCION_CODIGO.CODIGO_VER, REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
 		}	
 		
 		return new ModelAndView("jsonView", model);
@@ -1306,7 +1350,7 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView saveTanteo(DtoTanteoActivoExpediente tanteo, @RequestParam(value = "idEntidad") Long idActivo,
-			@RequestParam(value = "idEntidadPk") Long idExpedienteComercial) {
+			@RequestParam(value = "idEntidadPk") Long idExpedienteComercial, HttpServletRequest request) {
 
 		ModelMap model = new ModelMap();
 
@@ -1315,10 +1359,12 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 			tanteo.setEcoId(idExpedienteComercial);
 			expedienteComercialApi.guardarTanteoActivo(tanteo);
 			model.put("success", true);
+			trustMe.registrarSuceso(request, idExpedienteComercial, ENTIDAD_CODIGO.CODIGO_EXPEDIENTE_COMERCIAL, "tanteo", ACCION_CODIGO.CODIGO_MODIFICAR);
 
 		} catch (Exception e) {
 			e.printStackTrace();
 			model.put("success", false);
+			trustMe.registrarError(request, idExpedienteComercial, ENTIDAD_CODIGO.CODIGO_EXPEDIENTE_COMERCIAL, "tanteo", ACCION_CODIGO.CODIGO_MODIFICAR, REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
 		}
 
 		return createModelAndViewJson(model);

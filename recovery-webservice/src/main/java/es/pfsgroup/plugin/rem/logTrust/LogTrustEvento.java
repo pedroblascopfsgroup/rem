@@ -9,8 +9,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import es.capgemini.devon.beans.Service;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.plugin.rem.api.ActivoAgrupacionActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
+import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
+import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
+import es.pfsgroup.plugin.rem.model.ActivoTramite;
+import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.Trabajo;
 
 @Service
 public class LogTrustEvento extends LogTrust {
@@ -30,7 +38,11 @@ public class LogTrustEvento extends LogTrust {
 	public enum ENTIDAD_CODIGO {
 		CODIGO_ACTIVO("activo"),
 		CODIGO_TRABAJO("trabajo"),
-		CODIGO_AGRUPACION("agrupacion");
+		CODIGO_AGRUPACION("agrupacion"),
+		CODIGO_EXPEDIENTE_COMERCIAL("expediente"),
+		CODIGO_PROVEEDOR("proveedor"),
+		CODIGO_GASTOS_PROVEEDOR("gastosProveedor"),
+		CODIGO_TRAMITE("tramite");
 
 	    private final String text;
 
@@ -46,7 +58,18 @@ public class LogTrustEvento extends LogTrust {
 
 	@Autowired
 	private ActivoApi activoApi;
+	
+	@Autowired
+	private ActivoAgrupacionActivoApi activoAgrupacionActivoApi;
+	
+	@Autowired
+	private ExpedienteComercialApi expedienteComercialApi;
+	
+	@Autowired
+	private TrabajoApi trabajoApi;
 
+	@Autowired
+	private ActivoTramiteApi activoTramiteApi;
 
 	public LogTrustEvento() {
 		super();
@@ -89,13 +112,11 @@ public class LogTrustEvento extends LogTrust {
 	 * @param tabOrEvento: indica la tab o el evento de la entidad con el que se interacciona.
 	 */
 	private void obtenerInformacionDelEvento(HttpServletRequest peticion, ENTIDAD_CODIGO entidad, Long idEntidad, ACCION_CODIGO accion, REQUEST_STATUS_CODE codigoEstadoPeticion, String tabOrEvento) {
-		Activo activo = activoApi.get(idEntidad);
+
+		Activo activo = null;
 		String codigoCarteraActivo = "";
-
-		if(!Checks.esNulo(activo.getCartera())) {
-			codigoCarteraActivo = activo.getCartera().getCodigo();
-		}
-
+		String numActivo = "";
+		
 		StringBuilder builder = new StringBuilder();
 		builder.append(sdf.format(new Date()));
 		builder.append(SEPARADOR);
@@ -109,8 +130,52 @@ public class LogTrustEvento extends LogTrust {
 		builder.append(SEPARADOR);
 		builder.append(this.obtenerStringCodigoEstado(codigoEstadoPeticion));
 		builder.append(SEPARADOR);
-		builder.append(activo.getNumActivo().toString());
-		builder.append(SEPARADOR);
+				
+		switch(entidad){
+			case CODIGO_ACTIVO:
+				activo = activoApi.get(idEntidad);
+				break;
+			case CODIGO_TRABAJO:
+				Trabajo trabajo = trabajoApi.findOne(idEntidad);
+				activo = trabajo.getActivo();
+				break;
+			case CODIGO_AGRUPACION:
+				ActivoAgrupacionActivo activoAgrupacion;
+				activoAgrupacion = activoAgrupacionActivoApi.getActivoAgrupacionActivoPrincipalByIdAgrupacion(idEntidad);
+				
+				if(Checks.esNulo(activoAgrupacion)) {
+					activoAgrupacion = activoAgrupacionActivoApi.primerActivoPorActivoAgrupacion(idEntidad);
+				}
+				
+				activo = activoAgrupacion.getActivo();
+				break;
+			case CODIGO_EXPEDIENTE_COMERCIAL:
+				ExpedienteComercial expediente = expedienteComercialApi.findOne(idEntidad);
+				activo = expediente.getOferta().getActivoPrincipal();
+				break;
+			case CODIGO_PROVEEDOR:
+				activo = activoApi.getActivoByIdProveedor(idEntidad);
+				break;
+			case CODIGO_GASTOS_PROVEEDOR:
+				activo = activoApi.getActivoByIdGastoProveedor(idEntidad);
+				break;
+			case CODIGO_TRAMITE:
+				ActivoTramite activoTramite = activoTramiteApi.get(idEntidad);
+				activo = activoTramite.getActivo();
+				break;
+			default:
+				break;
+		}
+		
+		if(!Checks.esNulo(activo)) {
+			numActivo = activo.getNumActivo().toString();
+			if(!Checks.esNulo(activo.getCartera())) {
+				codigoCarteraActivo = activo.getCartera().getCodigo();
+			}
+		}
+		
+		builder.append(numActivo);
+		builder.append(SEPARADOR);		
 		builder.append(codigoCarteraActivo);
 		
 		registrarMensaje(builder.toString());

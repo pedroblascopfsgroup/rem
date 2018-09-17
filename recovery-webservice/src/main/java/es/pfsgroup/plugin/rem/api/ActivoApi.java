@@ -1116,4 +1116,18 @@ public interface ActivoApi {
 
 	public boolean esLiberBank(Long idActivo);
 
+	/**
+	 * Recoge el activo relacionado con el proveedor a partir del id del proveedor.
+	 * @param idProveedor
+	 * @return
+	 */
+	public Activo getActivoByIdProveedor(Long idProveedor);
+
+	/**
+	 * Recoge el activo relacionado con el proveedor a partir del id del gasto del proveedor.
+	 * @param idGastoProveedor
+	 * @return
+	 */
+	public Activo getActivoByIdGastoProveedor(Long idGastoProveedor);
+
 }

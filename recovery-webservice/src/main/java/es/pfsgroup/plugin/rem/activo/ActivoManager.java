@@ -145,6 +145,7 @@ import es.pfsgroup.plugin.rem.model.DtoReglasPublicacionAutomatica;
 import es.pfsgroup.plugin.rem.model.DtoTasacion;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Formalizacion;
+import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.GastosExpediente;
 import es.pfsgroup.plugin.rem.model.GestorActivo;
 import es.pfsgroup.plugin.rem.model.ImpuestosActivo;
@@ -4810,5 +4811,25 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		Activo activo = genericDao.get(Activo.class, filterAct);
 		
 		return DDCartera.CODIGO_CARTERA_LIBERBANK.equals(activo.getCartera().getCodigo());
+	}
+	
+	@Override
+	public Activo getActivoByIdProveedor(Long idProveedor) {
+		Filter filterPVE = genericDao.createFilter(FilterType.EQUALS, "id", String.valueOf(idProveedor));
+		VBusquedaProveedoresActivo proveedorActivo = genericDao.get(VBusquedaProveedoresActivo.class, filterPVE);
+		
+		if(!Checks.esNulo(proveedorActivo.getIdActivo())) {
+			return get(Long.parseLong(proveedorActivo.getIdActivo()));
+		} else {
+			return null;
+		}
+	}
+	
+	@Override
+	public Activo getActivoByIdGastoProveedor(Long idGastoProveedor) {
+		Filter filterGPV = genericDao.createFilter(FilterType.EQUALS, "id", idGastoProveedor);
+		GastoProveedor gastoProveedor = genericDao.get(GastoProveedor.class, filterGPV);
+		
+		return getActivoByIdProveedor(gastoProveedor.getProveedor().getId());
 	}
 }

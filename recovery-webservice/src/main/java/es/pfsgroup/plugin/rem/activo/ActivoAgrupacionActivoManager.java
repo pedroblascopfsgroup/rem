@@ -197,5 +197,10 @@ public class ActivoAgrupacionActivoManager extends BusinessOperationOverrider<Ac
 		
 		return false;
 	}
+	
+	@Override
+	public ActivoAgrupacionActivo getActivoAgrupacionActivoPrincipalByIdAgrupacion(long idAgrupacion) {
+		return activoAgrupacionActivoDao.getActivoAgrupacionActivoPrincipalByIdAgrupacion(idAgrupacion);
+	}
 
 }

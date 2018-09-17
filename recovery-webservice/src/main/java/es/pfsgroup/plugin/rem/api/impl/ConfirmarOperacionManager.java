@@ -108,6 +108,7 @@ public class ConfirmarOperacionManager extends BusinessOperationOverrider<Confir
 				ReservaDto reservaDto = new ReservaDto();
 				reservaDto.setAccion(confirmacionOpDto.getAccion());
 				reservaDto.setActivo(confirmacionOpDto.getActivo());
+				reservaDto.setOfertaHRE(confirmacionOpDto.getOfertaHRE());
 				errorList = reservaApi.validateReservaPostRequestData(reservaDto, jsonFields);
 				hashErrores.putAll(errorList);
 

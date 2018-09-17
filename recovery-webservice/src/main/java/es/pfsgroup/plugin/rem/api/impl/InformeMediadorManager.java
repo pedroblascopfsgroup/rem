@@ -1270,7 +1270,7 @@ public class InformeMediadorManager implements InformeMediadorApi {
 				errorsList = restApi.validateRequestObject(informe, TIPO_VALIDACION.INSERT);
 			}
 			Activo activo = activoApi.getByNumActivo(informe.getIdActivoHaya());
-			if (informe.getPlantas() != null) {
+			if (!Checks.esNulo(informe.getPlantas()) && !Checks.estaVacio(informe.getPlantas())) {
 				for (PlantaDto planta : informe.getPlantas()) {
 					HashMap<String, String> errorsListPlanta = null;
 					if (this.existeInformemediadorActivo(informe.getIdActivoHaya())) {
@@ -1283,7 +1283,7 @@ public class InformeMediadorManager implements InformeMediadorApi {
 			}
 			
 			//validamos que no existan plantas repetidas
-			if (informe.getPlantas() != null) {
+			if (!Checks.esNulo(informe.getPlantas()) && !Checks.estaVacio(informe.getPlantas())) {
 				for (PlantaDto planta : informe.getPlantas()) {
 					if(planta.getNumero() != null && planta.getCodTipoEstancia() != null){
 						int contOcurrencias = 0;

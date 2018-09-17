@@ -289,6 +289,10 @@
             	def ofertaManager = ctx.getBean("ofertaManager");
             	return ofertaManager.checkComiteSancionador(tareaExterna);
             }
+            def checkComiteSancionadorAlquilerHaya = {
+            	def ofertaManager = ctx.getBean("ofertaManager");
+            	return ofertaManager.checkComiteSancionadorAlquilerHaya(tareaExterna);
+            }
             def checkAtribuciones = {
             	def ofertaManager = ctx.getBean("ofertaManager");
             	return ofertaManager.checkAtribuciones(tareaExterna);

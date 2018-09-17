@@ -326,6 +326,14 @@ public interface OfertaApi {
 	 */
 	public boolean checkComiteSancionador(TareaExterna tareaExterna);
 	
+	
+	/**
+	 * Metodo que comprueba si la oferta tiene el comite sancionador alquiler HAYA
+	 * @param tareaExterna
+	 * @return
+	 */
+	public boolean checkComiteSancionadorAlquilerHaya(TareaExterna tareaExterna);
+	
 	/**
 	 * Método que comprueba si el activo tiene atribuciones para sancionar el
 	 * expediente

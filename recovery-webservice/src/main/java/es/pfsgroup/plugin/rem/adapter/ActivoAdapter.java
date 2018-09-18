@@ -2914,7 +2914,7 @@ public class ActivoAdapter {
 	private void cambiarTrabajosActivosAGestorActivo(Activo activo, String tipoGestorCodigo) {
 		if(GestorActivoApi.CODIGO_GESTOR_EDIFICACIONES.equals(tipoGestorCodigo)) {
 			for(ActivoTrabajo activoTrabajo : activo.getActivoTrabajos()) {
-				Usuario  usuGestor = activoTrabajo.getTrabajo().getResponsableTrabajo();
+				Usuario  usuGestor = activoTrabajo.getTrabajo().getUsuarioResponsableTrabajo();
 				String estadoTrabajo = activoTrabajo.getTrabajo().getEstado().getCodigo();
 	
 				if(gestorActivoApi.isGestorEdificaciones(activo, usuGestor) && (
@@ -2927,14 +2927,14 @@ public class ActivoAdapter {
 						DDEstadoTrabajo.ESTADO_VALIDADO.equals(estadoTrabajo)
 						)) {
 					// Asignar trabajos a gestor Activo
-					activoTrabajo.getTrabajo().setResponsableTrabajo(gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_ACTIVO));
+					activoTrabajo.getTrabajo().setUsuarioResponsableTrabajo(gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_ACTIVO));
 					trabajoDao.saveOrUpdate(activoTrabajo.getTrabajo());
 
 				}
 			}
 		}else if(GestorActivoApi.CODIGO_GESTOR_SUELOS.equals(tipoGestorCodigo)) {
 			for(ActivoTrabajo activoTrabajo : activo.getActivoTrabajos()) {
-				Usuario  usuGestor = activoTrabajo.getTrabajo().getResponsableTrabajo();
+				Usuario  usuGestor = activoTrabajo.getTrabajo().getUsuarioResponsableTrabajo();
 				String estadoTrabajo = activoTrabajo.getTrabajo().getEstado().getCodigo();
 	
 				if(gestorActivoApi.isGestorSuelos(activo, usuGestor) && (
@@ -2947,14 +2947,14 @@ public class ActivoAdapter {
 						DDEstadoTrabajo.ESTADO_VALIDADO.equals(estadoTrabajo)
 						)) {
 					// Asignar trabajos a gestor Activo
-					activoTrabajo.getTrabajo().setResponsableTrabajo(gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_ACTIVO));
+					activoTrabajo.getTrabajo().setUsuarioResponsableTrabajo(gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_ACTIVO));
 					trabajoDao.saveOrUpdate(activoTrabajo.getTrabajo());
 
 				}
 			}
 		}else if(GestorActivoApi.CODIGO_GESTOR_ALQUILERES.equals(tipoGestorCodigo)) {
 			for(ActivoTrabajo activoTrabajo : activo.getActivoTrabajos()) {
-				Usuario  usuGestor = activoTrabajo.getTrabajo().getResponsableTrabajo();
+				Usuario  usuGestor = activoTrabajo.getTrabajo().getUsuarioResponsableTrabajo();
 				String estadoTrabajo = activoTrabajo.getTrabajo().getEstado().getCodigo();
 	
 				if(gestorActivoApi.isGestorAlquileres(activo, usuGestor) && (
@@ -2967,7 +2967,7 @@ public class ActivoAdapter {
 						DDEstadoTrabajo.ESTADO_VALIDADO.equals(estadoTrabajo)
 						)) {
 					// Asignar trabajos a gestor Activo
-					activoTrabajo.getTrabajo().setResponsableTrabajo(gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_ACTIVO));
+					activoTrabajo.getTrabajo().setUsuarioResponsableTrabajo(gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_ACTIVO));
 					trabajoDao.saveOrUpdate(activoTrabajo.getTrabajo());
 				
 					

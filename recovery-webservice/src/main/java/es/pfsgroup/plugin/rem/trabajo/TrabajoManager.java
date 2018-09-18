@@ -490,7 +490,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			trabajo.setFechaSolicitud(new Date());
 			trabajo.setNumTrabajo(trabajoDao.getNextNumTrabajo());
 			trabajo.setSolicitante(genericAdapter.getUsuarioLogado());
-			trabajo.setResponsableTrabajo(genericAdapter.getUsuarioLogado());
+			trabajo.setUsuarioResponsableTrabajo(genericAdapter.getUsuarioLogado());
 
 			trabajo.setTipoTrabajo(subtipoTrabajo.getTipoTrabajo());
 			trabajo.setSubtipoTrabajo(subtipoTrabajo);
@@ -721,7 +721,28 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			trabajo.setFechaSolicitud(new Date());
 			trabajo.setNumTrabajo(trabajoDao.getNextNumTrabajo());
 			trabajo.setAgrupacion(agrupacion);
-			trabajo.setSolicitante(genericAdapter.getUsuarioLogado());
+			
+			if (GestorActivoApi.CODIGO_GESTOR_ACTIVO.equals(dtoTrabajo.getResponsableTrabajo()) 
+					&& !Checks.esNulo(dtoTrabajo.getIdSolicitante())) {
+				
+				Filter filtroSolicitante = genericDao.createFilter(FilterType.EQUALS, "id", dtoTrabajo.getIdSolicitante());
+				
+				Usuario solicitante = genericDao.get(Usuario.class, filtroSolicitante);
+				Usuario responsable = gestorActivoApi.getGestorByActivoYTipo(agrupacion.getActivos().get(0).getActivo(), "GACT");
+				
+				if (!Checks.esNulo(solicitante) && !Checks.esNulo(responsable)) {
+					trabajo.setSolicitante(solicitante);
+					trabajo.setUsuarioResponsableTrabajo(responsable);
+				} else {
+					trabajo.setSolicitante(genericAdapter.getUsuarioLogado());
+				}
+				
+			} else {
+
+				trabajo.setSolicitante(genericAdapter.getUsuarioLogado());
+				
+			}
+			
 			
 			List<Long> activosID = new ArrayList<Long>();
 			
@@ -882,7 +903,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 					trabajo.setFechaSolicitud(new Date());
 					trabajo.setNumTrabajo(trabajoDao.getNextNumTrabajo());
 					trabajo.setSolicitante(genericAdapter.getUsuarioLogado());
-					trabajo.setResponsableTrabajo(genericAdapter.getUsuarioLogado());
+					trabajo.setUsuarioResponsableTrabajo(genericAdapter.getUsuarioLogado());
 					trabajo.setEstado(getEstadoNuevoTrabajo(dtoTrabajo, activo));
 
 					// El gestor de activo se salta tareas de estos trámites y
@@ -957,26 +978,35 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		
 		Usuario solicitante = genericAdapter.getUsuarioLogado();
 		
-		if(Checks.esNulo(galq) && Checks.esNulo(gsue) && Checks.esNulo(gedi) && !Checks.esNulo(gact)){
-			trabajo.setResponsableTrabajo(gact);
+		if (GestorActivoApi.CODIGO_GESTOR_ACTIVO.equals(dtoTrabajo.getResponsableTrabajo()) 
+				&& !Checks.esNulo(gact)) {
+			
+			trabajo.setUsuarioResponsableTrabajo(gact);
+			
+		} else {
+			if(Checks.esNulo(galq) && Checks.esNulo(gsue) && Checks.esNulo(gedi) && !Checks.esNulo(gact)){
+			trabajo.setUsuarioResponsableTrabajo(gact);
 		}else if((!Checks.esNulo(galq) && solicitante.equals(galq)) 
 				|| (!Checks.esNulo(gsue) && solicitante.equals(gsue)) 
 				|| (!Checks.esNulo(gedi) && solicitante.equals(gedi)) 
 				|| (!Checks.esNulo(gact) && solicitante.equals(gact))){
-			trabajo.setResponsableTrabajo(solicitante);
+			trabajo.setUsuarioResponsableTrabajo(solicitante);
 		}else{
 			if (!Checks.esNulo(galq))
 			{
-				trabajo.setResponsableTrabajo(galq);
+				trabajo.setUsuarioResponsableTrabajo(galq);
 			}
 			else if (!Checks.esNulo(gsue)) {
-				trabajo.setResponsableTrabajo(gsue);
+				trabajo.setUsuarioResponsableTrabajo(gsue);
 			}
 			else if (!Checks.esNulo(gedi))
 			{
-				trabajo.setResponsableTrabajo(gedi);
+				trabajo.setUsuarioResponsableTrabajo(gedi);
 			}
 		}
+		}
+		
+		
 		
 		try {
 
@@ -1141,7 +1171,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		if(!Checks.esNulo(dtoTrabajo.getIdResponsableTrabajo())){
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dtoTrabajo.getIdResponsableTrabajo());
 			Usuario usuario = genericDao.get(Usuario.class, filtro);
-			trabajo.setResponsableTrabajo(usuario);
+			trabajo.setUsuarioResponsableTrabajo(usuario);
 
 			List<ActivoTramite> activoTramites = activoTramiteApi.getTramitesActivoTrabajoList(trabajo.getId());
 			ActivoTramite activoTramite = activoTramites.get(0);
@@ -1432,9 +1462,9 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			}
 		}
 		
-		if(!Checks.esNulo(trabajo.getResponsableTrabajo())){
-			dtoTrabajo.setResponsableTrabajo(trabajo.getResponsableTrabajo().getApellidoNombre());
-			dtoTrabajo.setIdResponsableTrabajo(trabajo.getResponsableTrabajo().getId());
+		if(!Checks.esNulo(trabajo.getUsuarioResponsableTrabajo())){
+			dtoTrabajo.setResponsableTrabajo(trabajo.getUsuarioResponsableTrabajo().getApellidoNombre());
+			dtoTrabajo.setIdResponsableTrabajo(trabajo.getUsuarioResponsableTrabajo().getId());
 			
 		}
 		else if (!Checks.esNulo(trabajo.getSolicitante())){
@@ -1461,7 +1491,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		 Usuario gestorAlquileres = gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_ALQUILERES);
 		 Usuario gestorSuelos = gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_SUELOS);
 		 Usuario gestorActivo = gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_ACTIVO);
-		 Usuario responsableTrabajo = trabajo.getResponsableTrabajo();
+		 Usuario responsableTrabajo = trabajo.getUsuarioResponsableTrabajo();
 			
 		 if(!Checks.esNulo(responsableTrabajo)?usuariologado.equals(responsableTrabajo):false){
 			 dtoTrabajo.setBloquearResponsable(false);
@@ -1500,8 +1530,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	 for (ActivoTramite actTra : listActTra) {
 		 List<TareaActivo> listaActivo = genericDao.getList(TareaActivo.class,genericDao.createFilter(FilterType.EQUALS, "tramite.id", actTra.getId()),genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
 		 for (TareaActivo tarAct: listaActivo) {
-			 if(!Checks.esNulo(trabajo.getResponsableTrabajo())){
-				 tarAct.setUsuario(trabajo.getResponsableTrabajo());
+			 if(!Checks.esNulo(trabajo.getUsuarioResponsableTrabajo())){
+				 tarAct.setUsuario(trabajo.getUsuarioResponsableTrabajo());
 					genericDao.save(TareaActivo.class, tarAct);
 						
 				 

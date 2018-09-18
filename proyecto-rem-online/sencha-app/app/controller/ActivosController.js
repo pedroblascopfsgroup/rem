@@ -846,7 +846,10 @@ Ext.define('HreRem.controller.ActivosController', {
     	HreRem.model.Tramite.load(id, {
     		scope: this,
 		    success: function(tramite) {
-		    	detalle.getViewModel().set("tramite", tramite);
+		        if(!Ext.isEmpty(detalle.getViewModel())) {
+		            // Continuar si el trámite sigue abierto en el tabpanel y su modelo existe.
+		            detalle.getViewModel().set("tramite", tramite);
+		        }
 		    }
 		});
     	

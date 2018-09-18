@@ -2841,7 +2841,12 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				}
 
 				sumaTasaciones += (!Checks.esNulo(importeTasacion)) ? importeTasacion : precioAprobadoVenta;
-				sumaPreciosMinimosAutorizados += precioMinimoAutorizado;
+				if(!Checks.esNulo(precioMinimoAutorizado)) {
+					sumaPreciosMinimosAutorizados += precioMinimoAutorizado;
+				}else {
+					sumaPreciosMinimosAutorizados = precioMinimoAutorizado;
+				}
+				
 			}
 			
 			if((!Checks.esNulo(sumaTasaciones) && sumaTasaciones < importeUmbral) 

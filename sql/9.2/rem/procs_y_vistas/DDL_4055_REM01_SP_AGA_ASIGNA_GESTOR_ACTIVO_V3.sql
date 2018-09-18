@@ -1,16 +1,17 @@
 --/*
 --##########################################
---## AUTOR=Pau Serrano
---## FECHA_CREACION=20180529
+--## AUTOR=JIN LI, HU
+--## FECHA_CREACION=20180918
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=2.0.16
---## INCIDENCIA_LINK=REMVIP-598
+--## INCIDENCIA_LINK=HREOS-4490
 --## PRODUCTO=NO
 --## Finalidad: Procedimiento almacenado que asigna Gestores de todos los tipos.
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
---##        0.1 Versión inicial
+--##        0.1 Versión inicial - Pau Serrano
+--##		0.2 JIN [HREOS-4490] > AÑADIDA LA NUEVA CARTERA - SUBCARTERA GALEON - INMOBILIARIO EN V_CLASE_ACTIVO
 --##########################################
 --*/
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
@@ -24,7 +25,7 @@ CREATE OR REPLACE PROCEDURE #ESQUEMA#.SP_AGA_ASIGNA_GESTOR_ACTIVO_V3 (
     P_ACT_ID        IN #ESQUEMA#.act_activo.act_id%TYPE,
     P_ALL_ACTIVOS   IN NUMBER,
     P_CLASE_ACTIVO  IN VARCHAR2) AS
---v0.4
+--v0.2
 
     V_ESQUEMA VARCHAR2(15 CHAR) := '#ESQUEMA#';
     V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := '#ESQUEMA_MASTER#';
@@ -32,7 +33,7 @@ CREATE OR REPLACE PROCEDURE #ESQUEMA#.SP_AGA_ASIGNA_GESTOR_ACTIVO_V3 (
     V_NUM NUMBER(16);
     V_COUNT_1 NUMBER(16) := 0;
     V_ACT_ID VARCHAR2(50 CHAR) := NULL;
-    V_CLASE_ACTIVO VARCHAR (500 CHAR);
+    V_CLASE_ACTIVO VARCHAR (5000 CHAR);
     TYPE T_GESTOR IS TABLE OF VARCHAR2(250 CHAR);
     V_GESTOR_FINANCIERO T_GESTOR := T_GESTOR('GPUBL','SPUBL','GCOM','SCOM','FVDNEG','FVDBACKOFR','FVDBACKVNT','SUPFVD','SFORM','GCODI','GCOINM','GCOIN','GLIBINVINM','GLIBSINTER','GLIBRES');
     V_GESTOR_INMOBILIAR T_GESTOR := T_GESTOR('GADM','SUPADM','GACT','SUPACT','GPREC','SPREC','GPUBL','SPUBL','GCOM','SCOM','FVDNEG','FVDBACKOFR','FVDBACKVNT','SUPFVD','SFORM','GGADM','GIAFORM','GTOCED','CERT','GIAADMT','PTEC', 'GTREE','GCODI','GCOINM','GCOIN','GLIBINVINM','GLIBSINTER','GLIBRES');
@@ -63,12 +64,26 @@ BEGIN
         V_GESTOR := V_GESTOR_FINANCIERO;
         V_CLASE_ACTIVO :=  'JOIN '||V_ESQUEMA||'.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = ACT.DD_CRA_ID
             JOIN '||V_ESQUEMA||'.DD_SCR_SUBCARTERA SCR ON SCR.DD_CRA_ID = CRA.DD_CRA_ID AND SCR.DD_SCR_ID = ACT.DD_SCR_ID
-            WHERE SCR.DD_SCR_CODIGO = DECODE (CRA.DD_CRA_CODIGO, ''01'',''01'',''02'',''03'',''03'',''05'',''04'',''10'',''05'',''12'',''09'',''21'',''00'')';
+            WHERE SCR.DD_SCR_CODIGO = DECODE (CRA.DD_CRA_CODIGO, ''01'',''01'',
+																 ''02'',''03'',
+																 ''03'',''05'',
+																 ''04'',''10'',
+																 ''05'',''12'',
+																 ''09'',''21'',
+																 ''15'',''02'',
+																 ''00'')';
     ELSIF P_CLASE_ACTIVO = '02' THEN-- ACTIVOS INMOBILIAROS
         V_GESTOR := V_GESTOR_INMOBILIAR;
         V_CLASE_ACTIVO := 'JOIN '||V_ESQUEMA||'.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = ACT.DD_CRA_ID
             JOIN '||V_ESQUEMA||'.DD_SCR_SUBCARTERA SCR ON SCR.DD_CRA_ID = CRA.DD_CRA_ID AND SCR.DD_SCR_ID = ACT.DD_SCR_ID
-            WHERE SCR.DD_SCR_CODIGO <> DECODE (CRA.DD_CRA_CODIGO, ''01'',''01'',''02'',''03'',''03'',''05'',''04'',''10'',''05'',''12'',''09'',''21'',''00'')';
+            WHERE SCR.DD_SCR_CODIGO <> DECODE (CRA.DD_CRA_CODIGO, ''01'',''01'',
+																  ''02'',''03'',
+																  ''03'',''05'',
+																  ''04'',''10'',
+																  ''05'',''12'',
+																  ''09'',''21'',
+																  ''15'',''02'',
+																  ''00'')';
     END IF;
 
     IF P_ACT_ID IS NOT NULL THEN --SI SE PASA UN ACTIVO, SE HARÁ ÚNICAMENTE PARA EL MISMO

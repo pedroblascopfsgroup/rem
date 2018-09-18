@@ -506,7 +506,8 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 										fieldLabel: HreRem.i18n('fieldlabel.perimetro.destino.comercial'),
 										bind: {
 											store: '{comboTipoDestinoComercialCreaFiltered}',
-											value: '{activo.tipoComercializacionCodigo}'
+											value: '{activo.tipoComercializacionCodigo}',
+											readOnly: '{activoPerteneceAgrupacionRestringida}'
 										}
 									},
 									{

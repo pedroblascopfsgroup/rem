@@ -299,7 +299,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
         	  defaultType	: 'textfieldbase',
         	  title			: HreRem.i18n('title.datos.gestores'),
         	  bind			: {
-        		  hidden: '{esAgrupacionProyecto}'
+        		  hidden: '{!esAgrupacionLoteComercial}'
         		 //hidden: '{!esAgrupacionLoteComercialOrProyecto}'
         	  },
         	  items			: [

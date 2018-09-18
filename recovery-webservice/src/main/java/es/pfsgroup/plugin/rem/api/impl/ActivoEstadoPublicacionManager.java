@@ -359,11 +359,19 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 
 	@Override
 	@Transactional
-	public Boolean setDatosPublicacionAgrupacion(Long id, DtoDatosPublicacionActivo dto) throws JsonViewerException{
+	public Boolean setDatosPublicacionAgrupacion(Long id, DtoDatosPublicacionAgrupacion dto) throws JsonViewerException{
 		ActivoAgrupacion agrupacion = activoAgrupacionApi.get(id);
 		List<ActivoAgrupacionActivo> activos = agrupacion.getActivos();
 
 		for(ActivoAgrupacionActivo aga : activos) {
+			// Registrar el condicionante de disponibilidad 'otros' si se ha modificado.
+			if(!Checks.esNulo(dto.getOtro())) {
+				DtoCondicionantesDisponibilidad dtoCondicionateDisponibilidad = new DtoCondicionantesDisponibilidad();
+				dtoCondicionateDisponibilidad.setOtro(dto.getOtro());
+				activoApi.saveCondicionantesDisponibilidad(aga.getActivo().getId(), dtoCondicionateDisponibilidad);
+			}
+
+			// Registrar los cambios en la publicación.
 			ActivoPublicacion activoPublicacion = activoPublicacionDao.getActivoPublicacionPorIdActivo(aga.getActivo().getId());
 			if(this.registrarHistoricoPublicacion(activoPublicacion, dto)) {
 				this.actualizarDatosEstadoActualPublicacion(dto, activoPublicacion);

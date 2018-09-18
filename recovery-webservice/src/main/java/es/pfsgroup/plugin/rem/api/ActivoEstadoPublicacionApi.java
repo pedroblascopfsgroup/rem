@@ -148,7 +148,7 @@ public interface ActivoEstadoPublicacionApi {
 	 * @param dto: dto de la pestaña datos publicación de un activo.
 	 * @return Devuelve True si la operación ha sido satisfactoria.
 	 */
-	Boolean setDatosPublicacionAgrupacion(Long id, DtoDatosPublicacionActivo dto);
+	Boolean setDatosPublicacionAgrupacion(Long id, DtoDatosPublicacionAgrupacion dto);
 
 	/**
 	 * Este método setea parte del dto de DtoDatosPublicacionAgrupacion.

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.text.ParseException;
 
+import es.pfsgroup.plugin.rem.model.DtoDatosPublicacionAgrupacion;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -66,7 +67,7 @@ public class MSVAgruparActivosRestringido extends AbstractMSVActualizador implem
 			for (int fila = this.getFilaInicial(); fila < numFilas; fila++) {
 				Activo activo = activoApi.getByNumActivo(Long.parseLong(exc.dameCelda(fila, COL_ID_ACTIVO_PRINC_AGRUP)));
 
-				DtoDatosPublicacionActivo dto = new DtoDatosPublicacionActivo();
+				DtoDatosPublicacionAgrupacion dto = new DtoDatosPublicacionAgrupacion();
 				dto.setIdActivo(activo.getId());
 
 				if (activoApi.isActivoIntegradoAgrupacionRestringida(activo.getId())) {

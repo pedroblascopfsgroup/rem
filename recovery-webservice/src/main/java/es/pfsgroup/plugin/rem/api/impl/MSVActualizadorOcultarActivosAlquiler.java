@@ -12,6 +12,7 @@ import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.DtoDatosPublicacionActivo;
+import es.pfsgroup.plugin.rem.model.DtoDatosPublicacionAgrupacion;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,7 +50,7 @@ public class MSVActualizadorOcultarActivosAlquiler extends AbstractMSVActualizad
 	public ResultadoProcesarFila procesaFila(MSVHojaExcel exc, int fila, Long prmToken) throws IOException, ParseException, JsonViewerException, SQLException {
 		Activo activo = activoApi.getByNumActivo(Long.parseLong(exc.dameCelda(fila, COL_NUM.NUM_ACTIVO_HAYA)));
 
-		DtoDatosPublicacionActivo dto = new DtoDatosPublicacionActivo();
+		DtoDatosPublicacionAgrupacion dto = new DtoDatosPublicacionAgrupacion();
 		dto.setIdActivo(activo.getId());
 		dto.setOcultarAlquiler(true);
 		dto.setMotivoOcultacionAlquilerCodigo(exc.dameCelda(fila, COL_NUM.MOTIVO_OCULTACION));

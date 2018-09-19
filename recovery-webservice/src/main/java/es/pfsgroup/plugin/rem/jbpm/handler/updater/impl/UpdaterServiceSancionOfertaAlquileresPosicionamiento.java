@@ -102,8 +102,8 @@ public class UpdaterServiceSancionOfertaAlquileresPosicionamiento implements Upd
 		
 		genericDao.save(Posicionamiento.class, posicionamiento);
 		
-		expedienteComercialApi.enviarCorreoGestionLlaves(expedienteComercial.getId(), 0);
-		expedienteComercialApi.enviarCorreoPosicionamientoFirma(expedienteComercial.getId());
+		expedienteComercialApi.enviarCorreoGestionLlaves(expedienteComercial.getId(), posicionamiento, 0);
+		expedienteComercialApi.enviarCorreoPosicionamientoFirma(expedienteComercial.getId(), posicionamiento);
 	}
 
 	public String[] getCodigoTarea() {

@@ -7036,11 +7036,14 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	}
 	
 	@Override
-	public boolean enviarCorreoGestionLlaves(Long idExpediente, int envio) {
-	boolean resultado = false;
-	ExpedienteComercial expediente = this.findOne(idExpediente);
-	Posicionamiento posicionamiento = expediente.getUltimoPosicionamiento();
-	Activo activo = expediente.getOferta().getActivoPrincipal();
+	public boolean enviarCorreoGestionLlaves(Long idExpediente, Posicionamiento posicionamiento, int envio) {
+		boolean resultado = false;
+		ExpedienteComercial expediente = this.findOne(idExpediente);
+		Activo activo = expediente.getOferta().getActivoPrincipal();
+		
+		if(Checks.esNulo(posicionamiento)) {
+			posicionamiento = expediente.getUltimoPosicionamiento();
+		}
 	
 		// Solo enviamos el correo si hay un posicionamiento vigente.
 		if(!Checks.esNulo(posicionamiento)) {
@@ -7172,11 +7175,14 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	}
 	
 	@Override
-	public boolean enviarCorreoPosicionamientoFirma(Long idExpediente) {
+	public boolean enviarCorreoPosicionamientoFirma(Long idExpediente, Posicionamiento posicionamiento) {
 		boolean resultado = false;
 		ExpedienteComercial expediente = this.findOne(idExpediente);
-		Posicionamiento posicionamiento = expediente.getUltimoPosicionamiento();
 		Activo activo = expediente.getOferta().getActivoPrincipal();
+		
+		if(Checks.esNulo(posicionamiento)) {
+			posicionamiento = expediente.getUltimoPosicionamiento();
+		}
 		
 		// Solo enviamos el correo si hay un posicionamiento vigente.
 		if(!Checks.esNulo(posicionamiento)) {

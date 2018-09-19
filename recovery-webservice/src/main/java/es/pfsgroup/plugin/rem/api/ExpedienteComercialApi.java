@@ -46,6 +46,7 @@ import es.pfsgroup.plugin.rem.model.EntregaReserva;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.GastosExpediente;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.Posicionamiento;
 import es.pfsgroup.plugin.rem.model.Reserva;
 import es.pfsgroup.plugin.rem.model.TanteoActivoExpediente;
 import es.pfsgroup.plugin.rem.model.Trabajo;
@@ -1049,10 +1050,11 @@ public interface ExpedienteComercialApi {
 	/**
 	 * Método que envía un correo para avisar de la fecha prevista para la entrega de llaves del alquiler
 	 * @param idExpediente
+	 * @param posicionamiento
 	 * @param envio
 	 * @return
 	 */
-	public boolean enviarCorreoGestionLlaves(Long idExpediente, int envio);
+	public boolean enviarCorreoGestionLlaves(Long idExpediente, Posicionamiento posicionamiento, int envio);
 	
 	/**
 	 * Método que saca una lista de estados del expediente segun si es de tipo venta o de tipo alquiler
@@ -1064,9 +1066,10 @@ public interface ExpedienteComercialApi {
 	/**
 	 * Metodo que envia correo al gestor comercial notificándole que se ha posicionado una oferta
 	 * @param idExpediente
+	 * @param posicionamiento
 	 * @return
 	 */
-	public boolean enviarCorreoPosicionamientoFirma(Long idExpediente);
+	public boolean enviarCorreoPosicionamientoFirma(Long idExpediente, Posicionamiento posicionamiento);
 
 	/**
 	 * Metodo que envia correo al prescriptor de la oferta notificándole que se han subido a REM los documentos necesarios para la firma del contrato.

@@ -1,13 +1,13 @@
 --/*
 --##########################################
 --## AUTOR=Ivan Castelló
---## FECHA_CREACION=20180920
+--## FECHA_CREACION=20180922
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=REMVIP-1837
---## PRODUCTO=SI
+--## PRODUCTO=NO
 --##
---## Finalidad: Poner activos 
+--## Finalidad: 
 --## VERSIONES:
 --##        0.1 Version inicial
 --##########################################
@@ -41,71 +41,18 @@ V_SQL := 'MERGE INTO '||V_ESQUEMA||'.ACT_MLV_MOVIMIENTO_LLAVE T1 USING (
                   JOIN '||V_ESQUEMA||'.ACT_LLV_LLAVE LLV ON LLV.LLV_ID = MLV.LLV_ID
                   JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_ID = LLV.ACT_ID
                   JOIN '||V_ESQUEMA||'.AUX_CARGA_LLAVES aux ON AUX.ACT_NUM_UVEM = ACT.ACT_NUM_ACTIVO_UVEM
-                  WHERE MLV.USUARIOCREAR =  '''||V_USUARIO||''' and ACT_NUM_ACTIVO in (6979392,
-                        6980310,
-                        6980578,
-                        6980904,
-                        6980943,
-                        6981408,
-                        6981417,
-                        6981525,
-                        6981585,
-                        6981682,
-                        6982982,
-                        6983116,
-                        6983762,
-                        6984761,
-                        6984764,
-                        6984789,
-                        6984895,
-                        6984937,
-                        6985918,
-                        6985946,
-                        6986149,
-                        6986281,
-                        6987726,
-                        6988160,
-                        6988518,
-                        6989397,
-                        6989515,
-                        6989701,
-                        6990195,
-                        6990402,
-                        6990433,
-                        6990457,
-                        6990460,
-                        6990652,
-                        6990853,
-                        6990883,
-                        6991143,
-                        6991342,
-                        6991359,
-                        6992220,
-                        6992221,
-                        6992938,
-                        6995302,
-                        6999614,
-                        6999617,
-                        6999680,
-                        7000048,
-                        7000072,
-                        7000073,
-                        7000074,
-                        7000076,
-                        7000078,
-                        7000088,
-                        7000092,
-                        7000298,
-                        7001359,
-                        7002198,
-                        7002260,
-                        7002322)and mlv.usuariomodificar is null) where RN = 1 
+                  WHERE MLV.USUARIOCREAR =  ''REMVIP-1428'' and ACT_NUM_ACTIVO in (6979392, 6980310,6980578,
+                        6980904,6980943, 6981408, 6981417, 6981525,6981585, 6981682,6982982,6983116,6983762, 6984761,
+                        6984764,6984789,6984895,6984937,6985918,6985946, 6986149,6986281,6987726,
+                        6988160,6988518,6989397,6989515, 6989701,6990195,6990402, 6990433,6990457, 6990460,6990652,
+                        6990853,6990883,6991143,6991342,6991359,6992220,6992221, 6992938,6995302,6999614,6999617,
+                        6999680,7000048,7000072,7000073, 7000074,7000076,7000078,7000088, 7000092, 7000298,
+                        7001359, 7002198,7002260,7002322) AND mlv.usuariomodificar is null) where RN = 1 
              ) T2 ON (T1.MLV_ID = T2.MLV_ID)
           WHEN MATCHED THEN UPDATE SET
             T1.BORRADO = 0
           , T1.USUARIOMODIFICAR = '''||V_USUARIO||'''
-          , T1.FECHAMODIFICAR = SYSDATE'
-          ;
+          , T1.FECHAMODIFICAR = SYSDATE';
 
 
 
@@ -114,7 +61,7 @@ V_SQL := 'MERGE INTO '||V_ESQUEMA||'.ACT_MLV_MOVIMIENTO_LLAVE T1 USING (
       DBMS_OUTPUT.PUT_LINE('Se han actualizado '||SQL%ROWCOUNT||' registros en ACT_MLV_MOVIMIENTO_LLAVE');
 
 
-    COMMIT;
+   COMMIT;
 
 EXCEPTION
      WHEN OTHERS THEN

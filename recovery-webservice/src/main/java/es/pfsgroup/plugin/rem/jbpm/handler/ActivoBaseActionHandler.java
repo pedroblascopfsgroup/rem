@@ -678,7 +678,7 @@ public abstract class ActivoBaseActionHandler implements ActionHandler {
 		// Asignador de GESTOR por factoria - Gestores encontrados por tarea-Activo
 		Trabajo trabajo = tarea.getTramite().getTrabajo();
 		Usuario solicitante = trabajo.getSolicitante();
-		Usuario responsableTrabajo = trabajo.getResponsableTrabajo();
+		Usuario responsableTrabajo = trabajo.getUsuarioResponsableTrabajo();
 
 		if(!Checks.esNulo(tareaExterna) && !Checks.esNulo(tareaExterna.getTareaProcedimiento()) && 
 				(CODIGO_T004_AUTORIZACION_BANKIA.equals(tareaExterna.getTareaProcedimiento().getCodigo()) || 

@@ -1435,7 +1435,7 @@ public class InformeMediadorManager implements InformeMediadorApi {
 							(JSONObject) jsonFields.getJSONArray("data").get(i));
 					// Si viene información de las plantas lo guardamos
 					List<PlantaDto> plantas = informe.getPlantas();
-					if (plantas != null) {
+					if (!Checks.esNulo(informe.getPlantas()) && !Checks.estaVacio(informe.getPlantas())) {
 
 						if (!Checks.esNulo(informeEntity) && !Checks.esNulo(informeEntity.getId())) {
 							Long idInfoComercial = informeEntity.getId();
@@ -1450,19 +1450,21 @@ public class InformeMediadorManager implements InformeMediadorApi {
 													.equals(DDTipoHabitaculo.TIPO_HABITACULO_TRASTERO))) {
 								continue;
 							}*/
-							ActivoDistribucion activoDistribucion = new ActivoDistribucion();
-							activoDistribucion.setNumPlanta(planta.getNumero());
-							activoDistribucion.setInfoComercial(informeEntity);
-							DDTipoHabitaculo tipoHabitaculo = null;
-							if (planta.getCodTipoEstancia() != null && !planta.getCodTipoEstancia().isEmpty()) {
-								tipoHabitaculo = (DDTipoHabitaculo) genericDao.get(DDTipoHabitaculo.class, genericDao
-										.createFilter(FilterType.EQUALS, "codigo", planta.getCodTipoEstancia()));
+							if(!Checks.esNulo(planta.getNumero()) || !Checks.esNulo(planta.getCodTipoEstancia())) {
+								ActivoDistribucion activoDistribucion = new ActivoDistribucion();
+								activoDistribucion.setNumPlanta(planta.getNumero());
+								activoDistribucion.setInfoComercial(informeEntity);
+								DDTipoHabitaculo tipoHabitaculo = null;
+								if (planta.getCodTipoEstancia() != null && !planta.getCodTipoEstancia().isEmpty()) {
+									tipoHabitaculo = (DDTipoHabitaculo) genericDao.get(DDTipoHabitaculo.class, genericDao
+											.createFilter(FilterType.EQUALS, "codigo", planta.getCodTipoEstancia()));
+								}
+								activoDistribucion.setTipoHabitaculo(tipoHabitaculo);
+								activoDistribucion.setCantidad(planta.getNumeroEstancias());
+								activoDistribucion.setSuperficie(planta.getEstancias());
+								activoDistribucion.setDescripcion(planta.getDescripcionEstancias());
+								genericDao.save(ActivoDistribucion.class, activoDistribucion);
 							}
-							activoDistribucion.setTipoHabitaculo(tipoHabitaculo);
-							activoDistribucion.setCantidad(planta.getNumeroEstancias());
-							activoDistribucion.setSuperficie(planta.getEstancias());
-							activoDistribucion.setDescripcion(planta.getDescripcionEstancias());
-							genericDao.save(ActivoDistribucion.class, activoDistribucion);
 
 						}
 					}

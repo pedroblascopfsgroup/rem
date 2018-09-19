@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Ivan Castelló
---## FECHA_CREACION=20180919
+--## FECHA_CREACION=20180920
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=REMVIP-1837
@@ -103,8 +103,8 @@ V_SQL := 'MERGE INTO '||V_ESQUEMA||'.ACT_MLV_MOVIMIENTO_LLAVE T1 USING (
              ) T2 ON (T1.MLV_ID = T2.MLV_ID)
           WHEN MATCHED THEN UPDATE SET
             T1.BORRADO = 0
-          , T1.USUARIOBORRAR = '''||V_USUARIO||'''
-          , T1.FECHABORRAR = SYSDATE'
+          , T1.USUARIOMODIFICAR = '''||V_USUARIO||'''
+          , T1.FECHAMODIFICAR = SYSDATE'
           ;
 
 

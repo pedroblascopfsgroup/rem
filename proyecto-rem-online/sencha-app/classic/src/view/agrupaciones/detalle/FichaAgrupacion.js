@@ -339,7 +339,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
 				        	bind		: {
 			            		store: '{comboGestorComercial}',
 			            		value: '{agrupacionficha.codigoGestorComercial}',
-			            		hidden: '{esAgrupacionLiberbank}'
+			            		hidden: '{esAgrupacionLiberbank}',
 			            		readOnly:'{agrupacionProyectoTieneActivos}'
 			            	}
 						},

@@ -2843,32 +2843,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				sumaPreciosMinimosAutorizados += precioMinimoAutorizado;
 				
 			}
-			/*
-			for(ActivoAgrupacionActivo aga : activos) {
-				ActivoTasacion tasacion = activoApi.getTasacionMasReciente(aga.getActivo());
-				Double importeTasacion = 0.0;
-				Double precioAprobadoVenta = 0.0;	
-				Double precioMinimoAutorizado = 0.0;
-				
-				importeTasacion = (!Checks.esNulo(tasacion)) ? tasacion.getImporteTasacionFin() : null;				
-				List<VPreciosVigentes> precios = activoApi.getPreciosVigentesById(aga.getActivo().getId());																										
-				for(VPreciosVigentes p : precios) {
-					if(DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA.equals(p.getCodigoTipoPrecio())) {
-						precioAprobadoVenta = p.getImporte();
-					} else if(DDTipoPrecio.CODIGO_TPC_MIN_AUTORIZADO.equals(p.getCodigoTipoPrecio())) {
-						precioMinimoAutorizado = p.getImporte();
-					}
-				}
-
-				sumaTasaciones += (!Checks.esNulo(importeTasacion)) ? importeTasacion : precioAprobadoVenta;
-				if(!Checks.esNulo(precioMinimoAutorizado)) {
-					sumaPreciosMinimosAutorizados += precioMinimoAutorizado;
-				}else {
-					sumaPreciosMinimosAutorizados = precioMinimoAutorizado;
-				}
-				
-			}*/
-			//Fin del for
 			if((!Checks.esNulo(sumaTasaciones) && sumaTasaciones < importeUmbral) 
 					&& (!Checks.esNulo(importeOferta) && !Checks.esNulo(sumaPreciosMinimosAutorizados) && importeOferta >= sumaPreciosMinimosAutorizados)) {
 				Filter filterComite = genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_HAYA_LIBERBANK);

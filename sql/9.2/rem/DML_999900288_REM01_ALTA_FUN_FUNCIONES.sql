@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Pau Serrano rodrigo
---## FECHA_CREACION=20180721
+--## AUTOR=Marco Munoz
+--## FECHA_CREACION=20180719
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-4330
+--## INCIDENCIA_LINK=HREOS-4298
 --## PRODUCTO=NO
 --##
 --## Finalidad: Script que para crear la función o funciones especificadas en el array y las asigna a los perfiles de indicados en la misa línea.
@@ -35,8 +35,8 @@ DECLARE
     TYPE T_FUNCION IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_FUNCION IS TABLE OF T_FUNCION;
     V_FUNCION T_ARRAY_FUNCION := T_ARRAY_FUNCION(
-    --			Descripción														                            Función
-      T_FUNCION('Permitir seleccionar el procesado de carga masiva para "Información detalle PRINEX LBK".', 'MASIVO_PRINEX_LBK')
+    --			 Descripción														                                					 Función
+      T_FUNCION('Permitir seleccionar el procesado de carga masiva para agrupaciones de activos de tipo "Proyecto".',		            'MASIVO_PROYECTO')
     ); 
     V_TMP_FUNCION T_FUNCION;
 
@@ -59,7 +59,7 @@ BEGIN
 				V_MSQL := 'INSERT INTO '|| V_ESQUEMA_M ||'.FUN_FUNCIONES (' ||
 						'FUN_ID, FUN_DESCRIPCION_LARGA, FUN_DESCRIPCION, VERSION, USUARIOCREAR, FECHACREAR, BORRADO)' ||
 						'SELECT '|| V_ENTIDAD_ID || ','''||V_TMP_FUNCION(1)||''','''||TRIM(V_TMP_FUNCION(2))||''','||
-						'0, ''HREOS-4330'',SYSDATE,0 FROM DUAL';
+						'0, ''HREOS-4298'',SYSDATE,0 FROM DUAL';
 				DBMS_OUTPUT.PUT_LINE('INSERTANDO: '''||V_TMP_FUNCION(1)||''','''||TRIM(V_TMP_FUNCION(2))||'''');
 				EXECUTE IMMEDIATE V_MSQL;
 			END IF;

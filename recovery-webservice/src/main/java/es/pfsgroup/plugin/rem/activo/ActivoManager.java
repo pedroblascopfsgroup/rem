@@ -166,6 +166,7 @@ import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaPublicacionActivo;
 import es.pfsgroup.plugin.rem.model.VCondicionantesDisponibilidad;
 import es.pfsgroup.plugin.rem.model.VPreciosVigentes;
+import es.pfsgroup.plugin.rem.model.VTasacionCalculoLBK;
 import es.pfsgroup.plugin.rem.model.Visita;
 import es.pfsgroup.plugin.rem.model.dd.DDAccionGastos;
 import es.pfsgroup.plugin.rem.model.dd.DDAdministracion;
@@ -4865,6 +4866,12 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 		
 		return listaAgr;
+	}
+
+	@Override
+	public List<VTasacionCalculoLBK> getVistaTasacion(Long idAgrupacion) {
+		
+		return genericDao.getList(VTasacionCalculoLBK.class, genericDao.createFilter(FilterType.EQUALS, "idAgrupacion", idAgrupacion));
 	}
 	
 }

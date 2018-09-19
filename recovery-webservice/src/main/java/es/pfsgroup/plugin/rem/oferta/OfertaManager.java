@@ -85,6 +85,7 @@ import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.VPreciosVigentes;
+import es.pfsgroup.plugin.rem.model.VTasacionCalculoLBK;
 import es.pfsgroup.plugin.rem.model.Visita;
 import es.pfsgroup.plugin.rem.model.dd.DDAccionGastos;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
@@ -2824,6 +2825,25 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			Double sumaTasaciones = 0.0;
 			Double sumaPreciosMinimosAutorizados = 0.0;
 			
+			List<VTasacionCalculoLBK> vista = activoApi.getVistaTasacion(agrupacion.getId());
+			
+			for(VTasacionCalculoLBK reg: vista) {
+				Double importeTasacion = reg.getImporteTasacion();
+				Double precioAprobadoVenta = 0.0;	
+				Double precioMinimoAutorizado = 0.0;
+				
+				if(DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA.equals(reg.getCodigoTipoPrecio())) {
+					precioAprobadoVenta = (!Checks.esNulo(reg.getImporteTipoPrecio())) ? reg.getImporteTipoPrecio() : 0.0;
+				}else {
+					precioMinimoAutorizado = (!Checks.esNulo(reg.getImporteTipoPrecio())) ? reg.getImporteTipoPrecio() : 0.0;
+				}
+				
+				
+				sumaTasaciones += (!Checks.esNulo(importeTasacion)) ? importeTasacion : precioAprobadoVenta;
+				sumaPreciosMinimosAutorizados += precioMinimoAutorizado;
+				
+			}
+			/*
 			for(ActivoAgrupacionActivo aga : activos) {
 				ActivoTasacion tasacion = activoApi.getTasacionMasReciente(aga.getActivo());
 				Double importeTasacion = 0.0;
@@ -2847,8 +2867,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					sumaPreciosMinimosAutorizados = precioMinimoAutorizado;
 				}
 				
-			}
-			
+			}*/
+			//Fin del for
 			if((!Checks.esNulo(sumaTasaciones) && sumaTasaciones < importeUmbral) 
 					&& (!Checks.esNulo(importeOferta) && !Checks.esNulo(sumaPreciosMinimosAutorizados) && importeOferta >= sumaPreciosMinimosAutorizados)) {
 				Filter filterComite = genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_HAYA_LIBERBANK);

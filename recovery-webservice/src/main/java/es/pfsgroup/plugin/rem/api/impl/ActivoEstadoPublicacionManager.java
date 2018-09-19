@@ -176,7 +176,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	 */
 	private Boolean deshabilitarCheckPublicarAlquiler(Long idActivo) {
 		return !isPublicable(idActivo) || !isComercializable(idActivo) || isVendido(idActivo) || isReservado(idActivo) || isPublicadoAlquiler(idActivo) || isOcultoAlquiler(idActivo) ||
-				isFueraDePerimetro(idActivo) || (!isInformeAprobado(idActivo) && (!tienePrecioRenta(idActivo) && !isPublicarSinPrecioAlquilerActivado(idActivo)));
+				!isAdecuacionAlquilerSiOrNoAplica(idActivo) || isFueraDePerimetro(idActivo) || (!isInformeAprobado(idActivo) && (!tienePrecioRenta(idActivo) && !isPublicarSinPrecioAlquilerActivado(idActivo)));
 	}
 
 	/**
@@ -187,6 +187,16 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	 */
 	private Boolean deshabilitarCheckOcultarAlquiler(Long idActivo) {
 		return !isPublicable(idActivo) || !isComercializable(idActivo) || isVendido(idActivo) || !isPublicadoAlquiler(idActivo) || isOcultoAutomaticoAlquiler(idActivo) || isFueraDePerimetro(idActivo);
+	}
+
+	// Comprobación mínima.
+	private Boolean isAdecuacionAlquilerSiOrNoAplica(Long idActivo) {
+		DDAdecuacionAlquiler adecuacionAlquiler = activoPatrimonioDao.getAdecuacionAlquilerFromPatrimonioByIdActivo(idActivo);
+		if(!Checks.esNulo(adecuacionAlquiler)) {
+			return DDAdecuacionAlquiler.CODIGO_ADA_SI.equals(adecuacionAlquiler.getCodigo()) || DDAdecuacionAlquiler.CODIGO_ADA_NO_APLICA.equals(adecuacionAlquiler.getCodigo());
+		}
+
+		return false;
 	}
 
 	// Comprobación mínima.

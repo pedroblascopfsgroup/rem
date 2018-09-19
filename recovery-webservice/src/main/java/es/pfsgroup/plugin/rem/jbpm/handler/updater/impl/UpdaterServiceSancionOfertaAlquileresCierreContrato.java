@@ -66,6 +66,10 @@ public class UpdaterServiceSancionOfertaAlquileresCierreContrato implements Upda
 				oferta.setNumContratoPrinex(valor.getValor());
 			}
 		}
+		
+		if (!Checks.esNulo(expedienteComercial.getSeguroRentasAlquiler())) {
+			expedienteComercialApi.enviarCorreoAsegurador(expedienteComercial.getId());
+		}
 	}
 
 	public String[] getCodigoTarea() {

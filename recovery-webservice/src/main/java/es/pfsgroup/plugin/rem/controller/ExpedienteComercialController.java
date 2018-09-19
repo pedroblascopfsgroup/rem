@@ -1679,7 +1679,7 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 	public ModelAndView enviarCorreoGestionLlaves(Long idExpediente, ModelMap model) {
 
 	try {
-		boolean success = expedienteComercialApi.enviarCorreoGestionLlaves(idExpediente);
+		boolean success = expedienteComercialApi.enviarCorreoGestionLlaves(idExpediente, 1);
 		model.put("success", success);
 
 	} catch (Exception e) {

@@ -239,7 +239,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	 private static final String FECHA_SCORING = "Fecha Scoring";
 	 
 	public static final String ESTADO_PROCEDIMIENTO_FINALIZADO = "11";
-
+	private static final String STR_MISSING_VALUE = "---";
 
 	@Autowired
 	private GenericABMDao genericDao;
@@ -1817,6 +1817,16 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			adjuntoExpediente.setIdDocRestClient(idDocRestClient);
 			Auditoria.save(adjuntoExpediente);
 
+			for (AdjuntoExpedienteComercial adjuntoExpedienteAux : expedienteComercial.getAdjuntos()) {
+				if(DDSubtipoDocumentoExpediente.CODIGO_PRE_LIQUIDACION_ITP.equals(adjuntoExpedienteAux.getSubtipoDocumentoExpediente().getCodigo()) 
+						&& DDSubtipoDocumentoExpediente.CODIGO_PRE_CONTRATO.equals(adjuntoExpediente.getSubtipoDocumentoExpediente().getCodigo())) {
+					this.enviarCorreoSubidaDeContrato(expedienteComercial.getId());
+				} else if(DDSubtipoDocumentoExpediente.CODIGO_PRE_CONTRATO.equals(adjuntoExpedienteAux.getSubtipoDocumentoExpediente().getCodigo()) 
+						&& DDSubtipoDocumentoExpediente.CODIGO_PRE_LIQUIDACION_ITP.equals(adjuntoExpediente.getSubtipoDocumentoExpediente().getCodigo())) {
+					this.enviarCorreoSubidaDeContrato(expedienteComercial.getId());
+				}
+			}
+			
 			expedienteComercial.getAdjuntos().add(adjuntoExpediente);
 
 			genericDao.save(ExpedienteComercial.class, expedienteComercial);
@@ -6960,18 +6970,18 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	public boolean enviarCorreoAsegurador(Long idExpediente) {
 		boolean resultado = false;
 		ExpedienteComercial expediente = this.findOne(idExpediente);
+		Activo activo = expediente.getOferta().getActivoPrincipal();
 
 		try {
 			ArrayList<String> mailsParaEnviarAsegurador = this.obtenerEmailsParaEnviarAsegurador(expediente);	
 			String asunto = "Firma contrato alquiler";		
-			/*TODO
-			 * Falta definir cuerpo del e-mail
-			 */
-			String cuerpo = "FALTA DEFINICIÓN";
+			String cuerpo = "Comunicamos que se ha firmado el contrato de arrendamiento del inmueble " + activo.getNumActivo() + "."
+					+ "<br><br> Adjunto copia del contrato suscrito para el alta para la gestión del alta en cobertura de la póliza de seguro de rentas."
+					+ "<br><br> Rogamos confirmación del alta.";
+			
 			List<AdjuntoExpedienteComercial> adjuntosRecuperados = new ArrayList<AdjuntoExpedienteComercial>();	
 			List<DtoAdjuntoMail> adjuntosParaEnviarAsegurador = new ArrayList<DtoAdjuntoMail>();	
 			adjuntosRecuperados = expediente.getAdjuntos();
-			
 			
 			for (AdjuntoExpedienteComercial adjunto : adjuntosRecuperados) {
 				
@@ -6992,16 +7002,17 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	}
 
 	private ArrayList<String> obtenerEmailsParaEnviarAsegurador(ExpedienteComercial expediente) {
-			
-		
-			/*TODO
-			 * Falta definir, en el caso de que el campo "Envío email poliza asegurado" este vacío como se obtiene el mail de la aseguradora
-			 */
-			
+
 			ArrayList<String> mailsParaEnviarAsegurador = new ArrayList<String>();
 
-			if(!Checks.esNulo(expediente.getSeguroRentasAlquiler()) && !Checks.esNulo(expediente.getSeguroRentasAlquiler().getEmailPolizaAseguradora())) {
-				mailsParaEnviarAsegurador.add(expediente.getSeguroRentasAlquiler().getEmailPolizaAseguradora());
+			if(!Checks.esNulo(expediente.getSeguroRentasAlquiler())) {
+				if(!Checks.esNulo(expediente.getSeguroRentasAlquiler().getEmailPolizaAseguradora())) {
+					mailsParaEnviarAsegurador.add(expediente.getSeguroRentasAlquiler().getEmailPolizaAseguradora());
+				} else {
+					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", Long.valueOf(expediente.getSeguroRentasAlquiler().getAseguradoras()));
+					ActivoProveedor aseguradora = genericDao.get(ActivoProveedor.class, filtro);
+					mailsParaEnviarAsegurador.add(aseguradora.getEmail());
+				}
 			}
 			
 			if (expediente.getOferta() != null && expediente.getOferta().getActivoPrincipal() != null) {
@@ -7025,10 +7036,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	}
 	
 	@Override
-	public boolean enviarCorreoGestionLlaves(Long idExpediente) {
+	public boolean enviarCorreoGestionLlaves(Long idExpediente, int envio) {
 	boolean resultado = false;
 	ExpedienteComercial expediente = this.findOne(idExpediente);
 	Posicionamiento posicionamiento = expediente.getUltimoPosicionamiento();
+	Activo activo = expediente.getOferta().getActivoPrincipal();
 	
 		// Solo enviamos el correo si hay un posicionamiento vigente.
 		if(!Checks.esNulo(posicionamiento)) {
@@ -7036,17 +7048,18 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			DateFormat fechaCompleta = new SimpleDateFormat("dd/MM/yyyy");
 		    String fechaFirmaContrato = fechaCompleta.format(posicionamiento.getFechaPosicionamiento());
 		    
-		    DateFormat horaCompleta = new SimpleDateFormat("HH:mm");
-		    String horaFirma = horaCompleta.format(posicionamiento.getFechaPosicionamiento());
-		    
 			try {
 		
 				ArrayList<String> mailsParaEnviarAsegurador = this.obtenerEmailsEnviarGestionLlaves(expediente);
-				String asunto = "Firma contrato alquiler";
-				String cuerpo = "Estimado cliente,<br><br> "
-						+ "Le informamos que la firma del contrato y la entrega de las llaves del piso se va a realizar el día " + fechaFirmaContrato
-						+ " a las " + horaFirma + " en ".concat(String.valueOf(posicionamiento.getLugarFirma())) 
-						+ "<br><br> Un saludo.";
+				String asunto = null;
+				if(envio == 0)
+					asunto = "Firma contrato alquiler";
+				else if(envio == 1)
+					asunto = "Modificación fecha firma contrato alquiler";
+				String cuerpo = "Comunicamos que se ha posicionado para el día " + fechaFirmaContrato
+						+ ", la firma del contrato de arrendamiento del inmueble " + activo.getNumActivo()
+						+ ", siendo el " + String.format("Api gestor de la firma  %s", (activo.getInfoComercial() != null) ? activo.getInfoComercial().getMediadorInforme() : STR_MISSING_VALUE )
+						+ "<br><br> Rogamos se gestione el envío de llaves para dicha operación.";
 			
 				genericAdapter.sendMail(mailsParaEnviarAsegurador, new ArrayList<String>(), asunto, cuerpo);
 				resultado = true;
@@ -7061,13 +7074,20 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		
 		ArrayList<String> mailsParaEnviarComercializadora = new ArrayList<String>();
 		
-		/*TODO
-		 * Gestión llaves
-		 */
+		if (expediente.getOferta() != null && expediente.getOferta().getActivoPrincipal() != null) {
+			Usuario gestorActivoGestorLlaves = gestorActivoApi.getGestorByActivoYTipo(
+					expediente.getOferta().getActivoPrincipal(), GestorActivoApi.CODIGO_GESTOR_LLAVES);
+			if (gestorActivoGestorLlaves != null && gestorActivoGestorLlaves.getEmail() != null) {
+				mailsParaEnviarComercializadora.add(gestorActivoGestorLlaves.getEmail());
+			}
+		}
 		
-		/*TODO
-		 * API Custodio.
-		 */
+		if (expediente.getOferta() != null && expediente.getOferta().getActivoPrincipal().getInfoComercial().getMediadorInforme() != null) {
+			ActivoProveedor custodio = expediente.getOferta().getActivoPrincipal().getInfoComercial().getMediadorInforme();
+			if(custodio.getEmail() != null) {
+				mailsParaEnviarComercializadora.add(custodio.getEmail());
+			}
+		}
 		
 		if (expediente.getOferta() != null && expediente.getOferta().getPrescriptor() != null
 				&& expediente.getOferta().getPrescriptor().getEmail() != null) {
@@ -7106,9 +7126,13 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			}
 		}		
 		
-		/*TODO
-		 * Gestor activo HPM.
-		 */
+		if (expediente.getOferta() != null && expediente.getOferta().getActivoPrincipal() != null) {
+			Usuario gestorActivoHPM = gestorActivoApi.getGestorByActivoYTipo(
+					expediente.getOferta().getActivoPrincipal(), GestorActivoApi.CODIGO_GESTOR_HPM);
+			if (gestorActivoHPM != null && gestorActivoHPM.getEmail() != null) {
+				mailsParaEnviarComercializadora.add(gestorActivoHPM.getEmail());
+			}
+		}
 						
 		return mailsParaEnviarComercializadora;
 
@@ -7146,5 +7170,105 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		
 		return listaDiccionario;
 	}
-
+	
+	@Override
+	public boolean enviarCorreoPosicionamientoFirma(Long idExpediente) {
+		boolean resultado = false;
+		ExpedienteComercial expediente = this.findOne(idExpediente);
+		Posicionamiento posicionamiento = expediente.getUltimoPosicionamiento();
+		Activo activo = expediente.getOferta().getActivoPrincipal();
+		
+		// Solo enviamos el correo si hay un posicionamiento vigente.
+		if(!Checks.esNulo(posicionamiento)) {
+		
+			DateFormat fechaCompleta = new SimpleDateFormat("dd/MM/yyyy");
+		    String fechaFirmaContrato = fechaCompleta.format(posicionamiento.getFechaPosicionamiento());
+		    
+			try {
+				ArrayList<String> mailsParaEnviar = this.obtenerEmailsParaEnviarPosicionamientoFirma(expediente);	
+				String asunto = "Posicionamiento firma contrato alquiler";
+				String cuerpo = "Confirmamos la aprobación de la operación de arrendamiento del inmueble "
+						+ activo.getNumActivo() + ", y confirmamos posicionamiento de firma el día " + fechaFirmaContrato + "."
+						+ "<br><br> Se gestiona el envío de llaves por nuestra parte."
+						+ "<br><br> Rogamos se gestione la coordinación de la firma con el cliente en los términos aprobados.";
+				
+				genericAdapter.sendMail(mailsParaEnviar, new ArrayList<String>(),asunto,cuerpo);
+				resultado = true;
+			} catch (Exception e) {
+				logger.error("No se ha podido notificar el posicionamiento de firma.", e);
+			}
+		}
+		return resultado;
+	}
+	
+	private ArrayList<String> obtenerEmailsParaEnviarPosicionamientoFirma(ExpedienteComercial expediente) {
+		
+		ArrayList<String> mailsParaEnviarPosicionamientoFirma = new ArrayList<String>();
+		
+		if (expediente.getOferta() != null && expediente.getOferta().getActivoPrincipal() != null) {
+			Usuario gestorActivoGestorAlquileres = gestorActivoApi.getGestorByActivoYTipo(
+					expediente.getOferta().getActivoPrincipal(), GestorActivoApi.CODIGO_GESTOR_COMERCIAL_ALQUILERES);
+			if (gestorActivoGestorAlquileres != null && gestorActivoGestorAlquileres.getEmail() != null) {
+				mailsParaEnviarPosicionamientoFirma.add(gestorActivoGestorAlquileres.getEmail());
+			}
+		}
+		
+		if (expediente.getOferta() != null && expediente.getOferta().getActivoPrincipal() != null) {
+			Usuario gestorActivoSupervisorAlquileres = gestorActivoApi.getGestorByActivoYTipo(
+					expediente.getOferta().getActivoPrincipal(), GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL_ALQUILERES);
+			if (gestorActivoSupervisorAlquileres != null && gestorActivoSupervisorAlquileres.getEmail() != null) {
+				mailsParaEnviarPosicionamientoFirma.add(gestorActivoSupervisorAlquileres.getEmail());
+			}
+		}
+		
+		return mailsParaEnviarPosicionamientoFirma;
+	}
+	
+	@Override
+	public boolean enviarCorreoSubidaDeContrato(Long idExpediente) {
+		boolean resultado = false;
+		ExpedienteComercial expediente = this.findOne(idExpediente);
+		Activo activo = expediente.getOferta().getActivoPrincipal();
+		
+		try {
+			ArrayList<String> mailsParaEnviar = this.obtenerEmailsParaEnviarSubidaDeContrato(expediente);	
+			String asunto = "Documentación disponible para la firma contrato alquiler";
+			String cuerpo = "CSe ha subido al gestor documental de HAYA copia del contrato de arrendamiento suscrito del inmueble "
+					+ activo.getNumActivo() + " para su descarga, firma y posterior incorporación de nuevo al gestor documental de REM.";
+			
+			genericAdapter.sendMail(mailsParaEnviar, new ArrayList<String>(),asunto,cuerpo);
+			resultado = true;
+		} catch (Exception e) {
+			logger.error("No se ha podido notificar la subida de contratos.", e);
+		}
+		return resultado;
+	}
+	
+	private ArrayList<String> obtenerEmailsParaEnviarSubidaDeContrato(ExpedienteComercial expediente) {
+		
+		ArrayList<String> mailsParaEnviarSubidaDeContrato = new ArrayList<String>();
+		
+		if (expediente.getOferta() != null && expediente.getOferta().getActivoPrincipal() != null) {
+			Usuario gestorActivoGestorAlquileres = gestorActivoApi.getGestorByActivoYTipo(
+					expediente.getOferta().getActivoPrincipal(), GestorActivoApi.CODIGO_GESTOR_COMERCIAL_ALQUILERES);
+			if (gestorActivoGestorAlquileres != null && gestorActivoGestorAlquileres.getEmail() != null) {
+				mailsParaEnviarSubidaDeContrato.add(gestorActivoGestorAlquileres.getEmail());
+			}
+		}
+		
+		if (expediente.getOferta() != null && expediente.getOferta().getActivoPrincipal() != null) {
+			Usuario gestorActivoSupervisorAlquileres = gestorActivoApi.getGestorByActivoYTipo(
+					expediente.getOferta().getActivoPrincipal(), GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL_ALQUILERES);
+			if (gestorActivoSupervisorAlquileres != null && gestorActivoSupervisorAlquileres.getEmail() != null) {
+				mailsParaEnviarSubidaDeContrato.add(gestorActivoSupervisorAlquileres.getEmail());
+			}
+		}
+		
+		if (expediente.getOferta() != null && expediente.getOferta().getPrescriptor() != null
+				&& expediente.getOferta().getPrescriptor().getEmail() != null) {
+			mailsParaEnviarSubidaDeContrato.add(expediente.getOferta().getPrescriptor().getEmail());
+		}
+		
+		return mailsParaEnviarSubidaDeContrato;
+	}
 }

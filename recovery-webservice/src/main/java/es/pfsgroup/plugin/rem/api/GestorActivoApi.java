@@ -58,7 +58,8 @@ public interface GestorActivoApi extends GestorEntidadApi {
 	public static final String CODIGO_SUPERVISOR_SUELOS = "SUPSUE";
 	public static final String CODIGO_GESTOR_EDIFICACIONES = "GEDI";
 	public static final String CODIGO_SUPERVISOR_EDIFICACIONES = "SUPEDI";
-
+	public static final String CODIGO_GESTOR_LLAVES = "GLLA";
+	public static final String CODIGO_GESTOR_HPM = "GALQ";
 	
 	
 	Boolean insertarGestorAdicionalActivo(GestorEntidadDto dto);

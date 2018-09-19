@@ -1049,9 +1049,10 @@ public interface ExpedienteComercialApi {
 	/**
 	 * Método que envía un correo para avisar de la fecha prevista para la entrega de llaves del alquiler
 	 * @param idExpediente
+	 * @param envio
 	 * @return
 	 */
-	public boolean enviarCorreoGestionLlaves(Long idExpediente);
+	public boolean enviarCorreoGestionLlaves(Long idExpediente, int envio);
 	
 	/**
 	 * Método que saca una lista de estados del expediente segun si es de tipo venta o de tipo alquiler
@@ -1059,5 +1060,19 @@ public interface ExpedienteComercialApi {
 	 * @return
 	 */
 	public List<DtoDiccionario> getComboExpedienteComercialByEstado(String esVenta);
+
+	/**
+	 * Metodo que envia correo al gestor comercial notificándole que se ha posicionado una oferta
+	 * @param idExpediente
+	 * @return
+	 */
+	public boolean enviarCorreoPosicionamientoFirma(Long idExpediente);
+
+	/**
+	 * Metodo que envia correo al prescriptor de la oferta notificándole que se han subido a REM los documentos necesarios para la firma del contrato.
+	 * @param idExpediente
+	 * @return
+	 */
+	public boolean enviarCorreoSubidaDeContrato(Long idExpediente);
 	
 }

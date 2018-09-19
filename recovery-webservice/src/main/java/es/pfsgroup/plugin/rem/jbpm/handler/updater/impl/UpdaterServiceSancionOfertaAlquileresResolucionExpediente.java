@@ -24,6 +24,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDResolucionComite;
+import es.pfsgroup.plugin.rem.oferta.NotificationOfertaManager;
 
 @Component
 public class UpdaterServiceSancionOfertaAlquileresResolucionExpediente implements UpdaterService {
@@ -36,6 +37,9 @@ public class UpdaterServiceSancionOfertaAlquileresResolucionExpediente implement
     
     @Autowired
     private ExpedienteComercialApi expedienteComercialApi;
+    
+    @Autowired
+    private NotificationOfertaManager notificatorOfertaManager;
         
     protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaAlquileresResolucionExpediente.class);
 			
@@ -64,6 +68,8 @@ public class UpdaterServiceSancionOfertaAlquileresResolucionExpediente implement
 
 					estadoOferta = (DDEstadoOferta) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoOferta.class, DDEstadoOferta.CODIGO_ACEPTADA);
 					oferta.setEstadoOferta(estadoOferta);
+					
+					notificatorOfertaManager.enviarMailAprobacion(oferta);
 
 				}else if(DDResolucionComite.CODIGO_RECHAZA.equals(valor.getValor())) {
 					estadoExpedienteComercial = genericDao.get(DDEstadosExpedienteComercial.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadosExpedienteComercial.ANULADO));

@@ -77,6 +77,7 @@ import es.pfsgroup.plugin.rem.model.ActivoAdjuntoActivo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
+import es.pfsgroup.plugin.rem.model.VActivoOfertaImporte;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
@@ -1163,6 +1164,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 		return new DtoPage(observaciones, page.getTotalCount());
 	}
+	
 
 	@Transactional(readOnly = false)
 	public boolean saveObservacion(DtoObservacion dtoObservacion) {
@@ -5088,15 +5090,17 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			return false;
 		}
 
-		List<ActivoOferta> activosExpediente = oferta.getActivosOferta();
-
+		//List<ActivoOferta> activosExpediente = oferta.getActivosOferta();
+		
+		List<VActivoOfertaImporte> activosOfertas = this.getListActivosOfertaImporte(oferta.getId());
+		
 		Double importeExpediente = oferta.getImporteContraOferta() != null ? oferta.getImporteContraOferta()
 				: oferta.getImporteOferta();
 		if (importeExpediente == null) {
 			return false;
 		}
 
-		for (ActivoOferta activoOferta : activosExpediente) {
+		for (VActivoOfertaImporte activoOferta : activosOfertas) {
 			if (!Checks.esNulo(activoOferta.getImporteActivoOferta())) {
 				totalImporteParticipacionActivos = totalImporteParticipacionActivos
 						.add(BigDecimal.valueOf(activoOferta.getImporteActivoOferta()));
@@ -5104,6 +5108,16 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 
 		return importeExpediente.equals(totalImporteParticipacionActivos.doubleValue());
+	}
+
+	private List<VActivoOfertaImporte> getListActivosOfertaImporte(Long id) {		
+		//Filter
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "oferta", id);
+		
+		//Declarar lista + genericDao.getList
+		List<VActivoOfertaImporte> listaActOfrImp = genericDao.getList(VActivoOfertaImporte.class, filtro);
+		
+		return listaActOfrImp;
 	}
 
 	public DtoCondicionesActivoExpediente getCondicionesActivoExpediete(Long idExpediente, Long idActivo) {

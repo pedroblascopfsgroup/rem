@@ -1118,6 +1118,8 @@ public interface ActivoApi {
 
 	public boolean esLiberBank(Long idActivo);
 	
+	public boolean esCajamar(Long idActivo);
+	
 	public DtoActivoFichaCabecera getActivosPropagables(Long idActivo);
 	
 	public List<VTasacionCalculoLBK> getVistaTasacion(Long idAgrupacion);

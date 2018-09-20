@@ -76,10 +76,18 @@ public class TrabajoAdapter {
     BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 	
 	public List<ActivoTrabajo> getListadoActivoTrabajos(Long idActivo, String codigoSubtipotrabajo){
-		Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "primaryKey.activo.id", idActivo);
-		Filter filtroSubtipoTrabajo = genericDao.createFilter(FilterType.EQUALS, "primaryKey.trabajo.subtipoTrabajo.codigo", codigoSubtipotrabajo);
+		List<ActivoTrabajo> ActivoTrabajo = new ArrayList<ActivoTrabajo>();
 		
-		return genericDao.getList(ActivoTrabajo.class, filtroActivo, filtroSubtipoTrabajo);		
+		  Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS,"activo.id", idActivo); 
+		  Filter filtroSubtipoTrabajo =genericDao.createFilter(FilterType.EQUALS,"trabajo.subtipoTrabajo.codigo", codigoSubtipotrabajo);
+		 
+		try {
+			ActivoTrabajo = genericDao.getList(ActivoTrabajo.class,filtroActivo,filtroSubtipoTrabajo);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return ActivoTrabajo;		
 	}
 	
 	public List<DtoListadoTramites> getListadoTramitesTareasTrabajo(Long idTrabajo, WebDto webDto){		

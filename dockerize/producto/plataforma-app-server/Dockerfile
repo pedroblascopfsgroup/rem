@@ -49,7 +49,7 @@ ENV WEB_REPO_USER queryman@pfsgroup.es
 ENV WEB_REPO_PASSWD "4'Nz^Ojf~v"
 
 # Especificamos la ruta de la que nos vamos a descargar el isntalador
-ENV WEB_BASE_ZIP_URL http://nexus.pfsgroup.es/nexus/content/repositories/releases/installation/cajamar/RECOVERY-INSTALL-APP-SERVER-files/1.0/RECOVERY-INSTALL-APP-SERVER-files-1.0.zip
+ENV WEB_BASE_ZIP_URL http://nexus.pfsgroup.es/nexus/repository/releases/installation/cajamar/RECOVERY-INSTALL-APP-SERVER-files/1.0/RECOVERY-INSTALL-APP-SERVER-files-1.0.zip
 
 # Especificamos las ruta de instalación
 ENV WEB_INSTALL_PATH /$DEVON_HOME
@@ -62,8 +62,8 @@ ENV TOMCAT_TGZ_URL https://archive.apache.org/dist/tomcat/tomcat-$TOMCAT_MAJOR/v
 
 # Datos para la instalación de JAMON Api.
 ENV WEB_JAMON_VERSION 2.71
-ENV WEB_JAMONALL_URL http://nexus.pfsgroup.es/nexus/content/repositories/thirdparty/jamonapi/jamonall/2.71/jamonall-2.71.zip
-ENV WEB_ORACLE_JDBC_DRIVER_URL http://nexus.pfsgroup.es/nexus/content/repositories/thirdparty/batch/libraries/ojdbc14/STABLE/ojdbc14-STABLE.jar
+ENV WEB_JAMONALL_URL http://nexus.pfsgroup.es/nexus/repository/thirdparty/jamonapi/jamonall/2.71/jamonall-2.71.zip
+ENV WEB_ORACLE_JDBC_DRIVER_URL http://nexus.pfsgroup.es/nexus/repository/thirdparty/batch/libraries/ojdbc14/STABLE/ojdbc14-STABLE.jar
 ENV WEB_ORACLE_JDBC_DRIVER_VERSION 14-STABLE
 
 # Especificamos el nombre que debe tener el WAR

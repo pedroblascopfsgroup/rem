@@ -22,7 +22,7 @@ RUN apt-get update && apt-get -y install curl unzip libc6-i386
 ENV INSTALL_DIR /haya-rem
 
 ENV JAVA_VERSION 1.8.0_60
-ENV JAVA_7_URL http://nexus.pfsgroup.es/nexus/service/rest/repository/thirdparty/oracle-java/jre/$JAVA_VERSION/jre-$JAVA_VERSION.zip
+ENV JAVA_7_URL http://nexus.pfsgroup.es/nexus/service/rest/repository/browse/thirdparty/oracle-java/jre/$JAVA_VERSION/jre-$JAVA_VERSION.zip
 ENV ART_REPO_USER queryman@pfsgroup.es
 ENV ART_REPO_PASSWD "4'Nz^Ojf~v"
 

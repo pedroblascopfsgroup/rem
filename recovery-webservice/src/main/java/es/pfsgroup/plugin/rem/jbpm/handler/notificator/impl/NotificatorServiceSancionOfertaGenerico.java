@@ -690,10 +690,11 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 					adjuntos.add(createAdjunto(f1, "contrato_reserva_Tango.docx"));
 				}
 				//ADJUNTOS SI ES GIANTS
-				else if(activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_GIANTS)){
+				//Comentamos esta parte del código hasta que tengamos contrato de reserva de GIANTS
+				/*else if(activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_GIANTS)){
 					f1 = FileItemUtils.fromResource("docs/contrato_reserva_Giants.docx");
 					adjuntos.add(createAdjunto(f1, "contrato_reserva_Giants.docx"));
-				}
+				}*/
 				//ADJUNTOS SI ES LIBERBANK
 				else if(activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_LIBERBANK)) {
 					f1 = FileItemUtils.fromResource("docs/instrucciones_reserva_y_formalizacion_Liberbank.docx");

@@ -95,6 +95,9 @@ public class UpdaterServiceSancionOfertaDocumentosPostVenta implements UpdaterSe
 
 				PerimetroActivo perimetro = activoApi.getPerimetroByIdActivo(activo.getId());
 				perimetro.setAplicaComercializar(0);
+				perimetro.setAplicaPublicar(false);
+				perimetro.setFechaAplicaPublicar(new Date());
+				perimetro.setFechaAplicaComercializar(new Date());
 				genericDao.save(PerimetroActivo.class, perimetro);
 
 				// Marcamos el activo como vendido
@@ -103,6 +106,8 @@ public class UpdaterServiceSancionOfertaDocumentosPostVenta implements UpdaterSe
 
 				activo.setBloqueoPrecioFechaIni(new Date());
 				activoApi.saveOrUpdate(activo);
+				
+				
 			}
 
 			// Rechazamos el resto de ofertas

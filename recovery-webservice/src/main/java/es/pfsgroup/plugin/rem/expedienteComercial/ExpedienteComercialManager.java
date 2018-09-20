@@ -5494,6 +5494,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			String codigoColaboracion) {
 
 		GastosExpediente gastoExpediente = new GastosExpediente();
+		
+		
 		DtoGastoExpediente dtoGastoExpediente = ofertaApi.calculaHonorario(oferta, codigoColaboracion, activo);
 
 		if (!Checks.esNulo(codigoColaboracion)) {

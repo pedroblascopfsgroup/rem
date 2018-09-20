@@ -2659,18 +2659,29 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 
 		List<GastosExpediente> gastosExpediente = new ArrayList<GastosExpediente>();
-
-		String[] acciones = {DDAccionGastos.CODIGO_COLABORACION,DDAccionGastos.CODIGO_PRESCRIPCION,DDAccionGastos.CODIGO_RESPONSABLE_CLIENTE};
+		List<String> acciones = new ArrayList<String>();
+		String codigoOferta = oferta.getTipoOferta().getCodigo();
+		
+		acciones.add(DDAccionGastos.CODIGO_COLABORACION);
+		acciones.add(DDAccionGastos.CODIGO_PRESCRIPCION);
+		
+		if(DDTipoOferta.CODIGO_VENTA.equals(codigoOferta)) {
+			
+			acciones.add(DDAccionGastos.CODIGO_RESPONSABLE_CLIENTE);
+		}
 		
 		for(ActivoOferta activoOferta : oferta.getActivosOferta()) {
 			
 			Activo activo = activoOferta.getPrimaryKey().getActivo();
-			
-			for(int i=0; i<acciones.length;i++) {
-				GastosExpediente gex = expedienteComercialApi.creaGastoExpediente(nuevoExpediente, oferta, activo,  acciones[i]);
-				gastosExpediente.add(gex);
+
+			for(int i=0; i<acciones.size();i++) {
+				GastosExpediente gexAlq = expedienteComercialApi.creaGastoExpediente(nuevoExpediente, oferta, activo,  acciones.get(i));
+				gastosExpediente.add(gexAlq);	
 			}
 		}
+		
+		return gastosExpediente;
+		
 		
 		
 		/*try {
@@ -2910,7 +2921,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			return false;
 		}*/
 
-		return gastosExpediente;
+		//return gastosExpediente;
 	}
 
 	@Override

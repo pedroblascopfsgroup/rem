@@ -2831,15 +2831,18 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				Double importeTasacion = reg.getImporteTasacion();
 				Double precioAprobadoVenta = 0.0;	
 				Double precioMinimoAutorizado = 0.0;
+				Boolean esPrecioAprobadoVenta = false;
 				
 				if(DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA.equals(reg.getCodigoTipoPrecio())) {
 					precioAprobadoVenta = (!Checks.esNulo(reg.getImporteTipoPrecio())) ? reg.getImporteTipoPrecio() : 0.0;
+					esPrecioAprobadoVenta = true;
 				}else {
 					precioMinimoAutorizado = (!Checks.esNulo(reg.getImporteTipoPrecio())) ? reg.getImporteTipoPrecio() : 0.0;
 				}
 				
-				
-				sumaTasaciones += (!Checks.esNulo(importeTasacion)) ? importeTasacion : precioAprobadoVenta;
+				if(esPrecioAprobadoVenta) {
+					sumaTasaciones += (!Checks.esNulo(importeTasacion)) ? importeTasacion : precioAprobadoVenta;
+				}
 				sumaPreciosMinimosAutorizados += precioMinimoAutorizado;
 				
 			}

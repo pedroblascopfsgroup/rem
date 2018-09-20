@@ -1,14 +1,14 @@
 package es.pfsgroup.framework.paradise.bulkUpload.bvfactory;
 
 /**
- * ExtensiÃ³n de los validadores de negocio con soporte para el autowiring de Spring
+ * Extensión de los validadores de negocio con soporte para el autowiring de Spring
  * @author bruno
  *
  */
 public interface MSVBusinessValidatorsAutowiredSupport extends MSVBusinessValidators {
 
 	/**
-	 * CÃ³digo de tipo de operaciÃ³n para el que aplica este validador.
+	 * Código de tipo de operación para el que aplica este validador.
 	 * @return
 	 */
 	String getCodigoTipoOperacion();

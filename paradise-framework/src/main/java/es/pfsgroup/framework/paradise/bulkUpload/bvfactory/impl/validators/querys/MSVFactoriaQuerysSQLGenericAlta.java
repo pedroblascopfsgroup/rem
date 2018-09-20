@@ -13,11 +13,11 @@ public class MSVFactoriaQuerysSQLGenericAlta implements MSVFactoriaQuerysSQL{
 	
 	private Map<String, String> sqlValidacion;
 	
-	//Mapa con la relaciÃ³n entre los nombres de las columnas del excel y las constantes.
+	//Mapa con la relación entre los nombres de las columnas del excel y las constantes.
 	private Map<String, String> mapaColumnas = new HashMap<String,String>(); 
 	
 	/**
-	 * Inicializamos el el mapa para poder obtener las query en funciÃ³n del valor de la constante y no al revÃ©s.
+	 * Inicializamos el el mapa para poder obtener las query en función del valor de la constante y no al revés.
 	 */	
 	@SuppressWarnings("rawtypes")
 	public void init(Class clazz){

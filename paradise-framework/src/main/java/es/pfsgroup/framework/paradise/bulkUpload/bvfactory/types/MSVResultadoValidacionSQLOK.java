@@ -1,7 +1,7 @@
 package es.pfsgroup.framework.paradise.bulkUpload.bvfactory.types;
 
 /**
- * Resultado de la ejecuciÃ³n de una SQL OK
+ * Resultado de la ejecución de una SQL OK
  * @author bruno
  *
  */

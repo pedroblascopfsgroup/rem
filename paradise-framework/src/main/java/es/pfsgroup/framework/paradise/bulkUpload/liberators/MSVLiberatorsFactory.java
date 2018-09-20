@@ -3,8 +3,8 @@ package es.pfsgroup.framework.paradise.bulkUpload.liberators;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
 
 /**
- * FactorÃ­a de liberadores
- * Devuelve el liberador correpondiente a un determinado tipo de operaciÃ³n
+ * Factoría de liberadores
+ * Devuelve el liberador correpondiente a un determinado tipo de operación
  * @author Carlos
  *
  */

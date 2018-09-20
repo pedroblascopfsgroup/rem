@@ -3,7 +3,7 @@ package es.pfsgroup.framework.paradise.bulkUpload.bvfactory.impl.validators.type
 import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.types.MSVColumnSQLValidator;
 
 /**
- * Clase genÃ©rica para los validadores de clolumna
+ * Clase genérica para los validadores de clolumna
  * @author bruno
  *
  */

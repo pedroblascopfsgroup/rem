@@ -14,7 +14,7 @@ public class SessionFactoryFacadeImpl implements SessionFactoryFacade {
 	@SuppressWarnings("all")
 	@Override
 	public Session getSession(HibernateDaoSupport dao) {
-		// La implementaciÃ³n por defecto simplemente devuelve la misma sesiÃ³n que se le pasa
+		// La implementación por defecto simplemente devuelve la misma sesión que se le pasa
 		if (dao == null){
 			throw new  IllegalArgumentException("currentSession no puede ser NULL");
 		}
@@ -23,7 +23,7 @@ public class SessionFactoryFacadeImpl implements SessionFactoryFacade {
 			m.setAccessible(true);
 			return (Session) m.invoke(dao, null);
 		} catch (Exception e) {
-			throw new IllegalStateException("El mÃ©todo getSession no es accesible para el objeto.",e);
+			throw new IllegalStateException("El método getSession no es accesible para el objeto.",e);
 		} 
 	}
 

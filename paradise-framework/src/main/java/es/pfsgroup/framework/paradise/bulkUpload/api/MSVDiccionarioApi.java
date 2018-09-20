@@ -34,7 +34,7 @@ public interface MSVDiccionarioApi {
 	List<MSVPlantillaOperacion> dameListaPlantillasUsuario();
 	
 	/**
-	 * Devuelve la ruta de una plantilla excel en funciÃ³n del tipo de operaciÃ³n.
+	 * Devuelve la ruta de una plantilla excel en función del tipo de operación.
 	 * Incluye el nombre de la plantilla.
 	 * @param tipoPlantilla
 	 * @return

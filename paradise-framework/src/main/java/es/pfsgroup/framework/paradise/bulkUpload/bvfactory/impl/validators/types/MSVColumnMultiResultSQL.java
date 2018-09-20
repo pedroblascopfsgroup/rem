@@ -7,9 +7,9 @@ import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.types.MSVColumnSQLVal
 import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.types.MSVResultadoValidacionSQL;
 
 /**
- * El propÃ³sito de esta clase es la de poder hacer una validaciÃ³n de una columna
- * mediante una SQL que nos devuelve un Ãºnico resultado numÃ©rico, y poder
- * pasarle una configuraciÃ³n que nos diga quÃ© nÃºmeros devueltos por la SQL son
+ * El propósito de esta clase es la de poder hacer una validación de una columna
+ * mediante una SQL que nos devuelve un único resultado numérico, y poder
+ * pasarle una configuración que nos diga qué números devueltos por la SQL son
  * errores y cuales son OK
  * 
  * @author bruno
@@ -48,7 +48,7 @@ public class MSVColumnMultiResultSQL extends MSVGenericColumnValidator implement
 
 	@Override
 	public boolean isRequired() {
-		// Gestionamos si el valor es requerido o no durante la validaciÃ³n de
+		// Gestionamos si el valor es requerido o no durante la validación de
 		// formato
 		return false;
 	}

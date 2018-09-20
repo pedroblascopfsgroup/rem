@@ -2,7 +2,7 @@ package es.pfsgroup.framework.paradise.bulkUpload.utils.filecolumns;
 
 /**
  * Contiene constantes con los nombres de las columnas del fichero de listado de activos
- * @author Daniel GutiÃ©rrez
+ * @author Daniel Gutiérrez
  *
  */
 public class MSVListadoActivosColumns {

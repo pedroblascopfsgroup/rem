@@ -1,7 +1,7 @@
 package es.pfsgroup.framework.paradise.bulkUpload.utils.filecolumns;
 
 /**
- * Contiene constantes con los nombre de las columnas del fichero de EnvÃ­o Demanda (Masivo)
+ * Contiene constantes con los nombre de las columnas del fichero de Envío Demanda (Masivo)
  * @author Pedro
  *
  */

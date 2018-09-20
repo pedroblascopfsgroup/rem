@@ -16,7 +16,7 @@ public interface MSVColumnValidator {
 	public static final String CONFIGURABLE = "MSVColumnValidator.CONFIGURABLE";
 
 	/**
-	 * Devuelve el tipo de validaci贸n que se quiere hacer.
+	 * Devuelve el tipo de validaci髇 que se quiere hacer.
 	 * 
 	 * @return
 	 */
@@ -31,20 +31,20 @@ public interface MSVColumnValidator {
 	String getErrorMessage();
 
 	/**
-	 * Indica si el par谩metro es requerido
+	 * Indica si el par醡etro es requerido
 	 * 
 	 * @return
 	 */
 	boolean isRequired();
 
 	/**
-	 * Devuelve la configuraci贸n del resultado de la SQL.
+	 * Devuelve la configuraci髇 del resultado de la SQL.
 	 * <p>
-	 * Esta configuraci贸n se usa en el tipo de validaci贸n CONFIGURABLE y consise
-	 * en un Map cuya clave (Integer) es el resultado que devuelva la validaci贸n
+	 * Esta configuraci髇 se usa en el tipo de validaci髇 CONFIGURABLE y consise
+	 * en un Map cuya clave (Integer) es el resultado que devuelva la validaci髇
 	 * y el valor indica si es OK o KO
 	 * 
-	 * @return Devuelve NULL si la validaci贸n no es de tipo configurable
+	 * @return Devuelve NULL si la validaci髇 no es de tipo configurable
 	 */
 	Map<Integer, MSVResultadoValidacionSQL> getResultConfig();
 }

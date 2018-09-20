@@ -8,14 +8,14 @@ import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.types.MSVMultiColumnV
 
 
 /**
- * Interfaz del componente que se encargar√° de ejecutar las validaciones de negocio.
+ * Interfaz del componente que se encargar· de ejecutar las validaciones de negocio.
  * @author bruno
  *
  */
 public interface MSVBusinessValidationRunner {
 
 	/**
-	 * Ejecuta una validaci√≥n de negocio usando un validador proporcionado.
+	 * Ejecuta una validaciÛn de negocio usando un validador proporcionado.
 	 * @param validator Validador que se quiere usar.
 	 * @param value valor que queremos validar
 	 * @return
@@ -23,8 +23,8 @@ public interface MSVBusinessValidationRunner {
 	MSVValidationResult runValidation(MSVColumnValidator validator, String value);
 
 	/**
-	 * Ejecuta una validaci√≥n compuesta de negocio usando un validador proporcionado.
-	 * @param validadores Validador que se quiere usar.
+	 * Ejecuta una validaciÛn compuesta de negocio usando un validador proporcionado.
+	 * @param validator Validador que se quiere usar.
 	 * @param mapaDatos valores que hemos de validar
 	 * @return
 	 */

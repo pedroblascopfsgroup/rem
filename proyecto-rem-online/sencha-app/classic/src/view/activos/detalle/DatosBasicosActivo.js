@@ -398,13 +398,9 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								fieldLabel: HreRem.i18n('fieldlabel.perimetro.check.publicacion'),
 								reference: 'chkbxPerimetroPublicar',
 								bind: {
-									value: '{activo.aplicaPublicar}',
-									readOnly: '{activo.isVendido}'
-								},
-								listeners: {
-									change: 'onChkbxPerimetroChange'
+									readOnly: '{activo.isVendido}',
+									value: '{activo.aplicaPublicar}'
 								}
-								
 							},
 							{
 								xtype: 'datefieldbase',

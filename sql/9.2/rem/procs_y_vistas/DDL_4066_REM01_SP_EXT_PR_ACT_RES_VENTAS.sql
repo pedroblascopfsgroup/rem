@@ -1021,16 +1021,16 @@ BEGIN
                 FETCH C_OBTIENE_COBRO INTO V_NUM, V_ECO_ID, V_ACT_ID, V_OFR_ID, V_VALOR_ACTUAL;
                 EXIT WHEN C_OBTIENE_COBRO%NOTFOUND;
                 V_NUM2:=V_NUM2+1;
+                V_PASOS:=0;
 
-                IF V_NUM2 <= V_NUM THEN
-             --   V_MSQL := V_OBTIENE_COBRO||V_FROM_COBRO;
-             --   EXECUTE IMMEDIATE V_MSQL INTO V_NUM, V_ECO_ID, V_ACT_ID, V_OFR_ID, V_VALOR_ACTUAL USING V_ID_COBRO;
+                IF V_NUM <= V_NUM2 THEN
+            
                 --Llegados a éste punto, o ejecutamos la actualización o pasamos con la siguiente comprobación.
                 IF V_NUM > 0 THEN
                     DBMS_OUTPUT.PUT_LINE('[INFO] ACT_ID > '||V_ACT_ID||', ECO_ID > '||V_ECO_ID||', OFR_ID > '||V_OFR_ID||', RES_ID > '||V_RES_ID||', DD_EEC_ID > '||V_VALOR_ACTUAL||'.');
                     COD_RETORNO := 1;
                     V_ERROR_DESC := '[ERROR] El estado del expediente es "Vendido" ó "Anulado", o no existe estado para éste expediente.';
-                    --DBMS_OUTPUT.PUT_LINE(V_ERROR_DESC);
+                    
                 ELSE
                     DBMS_OUTPUT.PUT_LINE('[INFO] El estado del expediente NO es "Vendido" ó "Anulado". Continuamos la ejecución.');
                     DBMS_OUTPUT.PUT_LINE('[INFO] ACT_ID > '||V_ACT_ID||', ECO_ID > '||V_ECO_ID||', OFR_ID > '||V_OFR_ID||', RES_ID > '||V_RES_ID||', DD_EEC_ID > '||V_VALOR_ACTUAL||'.');
@@ -1047,8 +1047,7 @@ BEGIN
                     WHERE ECO_ID = '||V_ECO_ID||'
                     AND OFR_ID = '||V_OFR_ID||'
                     ';
-                    DBMS_OUTPUT.PUT_LINE(V_MSQL);
-
+                    --DBMS_OUTPUT.PUT_LINE(V_MSQL);
                     EXECUTE IMMEDIATE V_MSQL;
 
                     IF SQL%ROWCOUNT > 0 THEN
@@ -1072,9 +1071,7 @@ BEGIN
                     IF COD_RETORNO = 0 THEN
                         --PASO 2/2 Actualizar ECO_EXPEDIENTE_COMERCIAL.ECO_FECHA_CONT_PROPIETARIO con el valor de la fecha de cobro.
                         --Recuperamos valor actual
-                        V_MSQL := '
-                        SELECT NVL(TO_CHAR(ECO_FECHA_CONT_PROPIETARIO,''yyyyMMdd''),''-'') AS ECO_FECHA_CONT_PROPIETARIO FROM '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL WHERE ECO_ID = '||V_ECO_ID||'
-                        ';
+                        V_MSQL := 'SELECT NVL(TO_CHAR(ECO_FECHA_CONT_PROPIETARIO,''yyyyMMdd''),''-'') AS ECO_FECHA_CONT_PROPIETARIO FROM '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL WHERE ECO_ID = '||V_ECO_ID||' ';
                         EXECUTE IMMEDIATE V_MSQL INTO V_VALOR_ACTUAL;
 
                         V_VALOR_NUEVO := FECHA_COBRO_VENTA_DATE;
@@ -1087,9 +1084,7 @@ BEGIN
                         WHERE ECO_ID = '||V_ECO_ID||'
                         AND OFR_ID = '||V_OFR_ID||'
                         ';
-
-                        DBMS_OUTPUT.PUT_LINE(V_MSQL);
-
+                        --DBMS_OUTPUT.PUT_LINE(V_MSQL);
                         EXECUTE IMMEDIATE V_MSQL;
 
                         IF SQL%ROWCOUNT > 0 THEN

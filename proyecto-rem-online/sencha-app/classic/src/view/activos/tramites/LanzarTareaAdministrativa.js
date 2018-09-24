@@ -513,8 +513,8 @@ Ext.define('HreRem.view.activos.tramites.LanzarTareaAdministrativa', {
 			name : 'tipoArras',
 			bind : {
 				store : '{comboTipoArras}'
-			},
-			allowBlank : false
+			}/*,
+			allowBlank : false*/
 		};
 
 		return items;
@@ -528,8 +528,8 @@ Ext.define('HreRem.view.activos.tramites.LanzarTareaAdministrativa', {
 			addUxReadOnlyEditFieldPlugin : false,
 			fieldLabel : HreRem
 					.i18n('datefield.salto.tarea.instrucciones.reserva.fecha.envio'),
-			name : 'fechaEnvioReserva',
-			allowBlank: false
+			name : 'fechaEnvioReserva'/*,
+			allowBlank: false*/
 		};
 
 		return items;
@@ -701,10 +701,12 @@ Ext.define('HreRem.view.activos.tramites.LanzarTareaAdministrativa', {
 					value: value,
 					readOnly : readOnly,
 					listeners : {
-
+						//Dependiendo del valor de solicitaReserva, los campos dependientes de la reserva se podrán dejar en blanco o no
 						select : function(combo, record) {
 							var codigo = record.data.codigo;
 							combo.up("form").down("field[name=fechaFirmaReserva]").setAllowBlank(codigo != 1)
+							combo.up("form").down("field[name=tipoArras]").setAllowBlank(codigo != 1)
+							combo.up("form").down("field[name=fechaEnvioReserva]").setAllowBlank(codigo != 1)
 						}
 					}
 				}

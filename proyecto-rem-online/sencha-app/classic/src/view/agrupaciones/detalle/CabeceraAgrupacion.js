@@ -146,6 +146,22 @@ Ext.define('HreRem.view.agrupaciones.detalle.CabeceraAgrupacion', {
 											},
 											cls: 'cabecera-apartado cabecera-info',
 											items: [
+														{
+															fieldLabel: HreRem.i18n('title.publicaciones.venta'),
+															cls: 'cabecera-info-field',
+															bind: {
+																hidden: '{!agrupacionficha.isRestringida}',
+																value: '{agrupacionficha.estadoVentaDescripcion}'
+															}
+														},
+														{
+															fieldLabel: HreRem.i18n('title.publicaciones.alquiler'),
+															cls: 'cabecera-info-field',
+															bind: {
+																hidden: '{!agrupacionficha.isRestringida}',
+																value: '{agrupacionficha.estadoAlquilerDescripcion}'
+															}
+														},
 									                   	{
 									                   		fieldLabel: HreRem.i18n('fieldlabel.numero.agrupacion'),
 															bind:		'{agrupacionficha.numAgrupRem}'

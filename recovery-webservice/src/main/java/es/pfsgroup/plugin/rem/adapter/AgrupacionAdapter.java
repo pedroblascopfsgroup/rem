@@ -423,6 +423,13 @@ public class AgrupacionAdapter {
 						
 						BeanUtils.copyProperty(dtoAgrupacion, "tipoComercializacionCodigo",
 								activoPrincipal.getActivoPublicacion().getTipoComercializacion().getCodigo());
+						
+						if(!Checks.esNulo(activoPrincipal.getActivoPublicacion())){
+							BeanUtils.copyProperty(dtoAgrupacion, "estadoAlquilerDescripcion", !Checks.esNulo(activoPrincipal.getActivoPublicacion().getEstadoPublicacionAlquiler()) ? activoPrincipal.getActivoPublicacion().getEstadoPublicacionAlquiler().getDescripcion() : "");
+							BeanUtils.copyProperty(dtoAgrupacion, "estadoVentaDescripcion", !Checks.esNulo(activoPrincipal.getActivoPublicacion().getEstadoPublicacionVenta()) ? activoPrincipal.getActivoPublicacion().getEstadoPublicacionVenta().getDescripcion(): "");
+							BeanUtils.copyProperty(dtoAgrupacion, "estadoAlquilerCodigo", !Checks.esNulo(activoPrincipal.getActivoPublicacion().getEstadoPublicacionAlquiler()) ? activoPrincipal.getActivoPublicacion().getEstadoPublicacionAlquiler().getCodigo() : "");
+							BeanUtils.copyProperty(dtoAgrupacion, "estadoVentaCodigo", !Checks.esNulo(activoPrincipal.getActivoPublicacion().getEstadoPublicacionVenta()) ? activoPrincipal.getActivoPublicacion().getEstadoPublicacionVenta().getCodigo(): "");
+						}
 					} else {
 						if (activoPrincipal.getActivoPublicacion().getTipoComercializacion() != null) {
 							BeanUtils.copyProperty(dtoAgrupacion, "tipoComercializacionDescripcion",

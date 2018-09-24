@@ -79,6 +79,13 @@ Ext.define('HreRem.model.AgrupacionFicha', {
 	            	},
 	            	depends: 'tipoAgrupacionCodigo'
 	            },
+	            {
+	            	name: 'isRestringida',
+	            	calculate: function(data) {
+	            		return data.tipoAgrupacionCodigo == CONST.TIPOS_AGRUPACION['RESTRINGIDA'];
+	            	},
+	            	depends: 'tipoAgrupacionCodigo'
+	            },
 		    	{
 		    		name : 'acreedorPDV'
 		    	},
@@ -157,6 +164,18 @@ Ext.define('HreRem.model.AgrupacionFicha', {
 	            {
 	            	name: 'incluidoEnPerimetro',
 	            	type: 'boolean'
+	            },
+	            {
+	            	name: 'estadoAlquilerDescripcion'
+	            },
+	            {
+	            	name: 'estadoVentaDescripcion'
+	            },
+	            {
+	            	name: 'estadoAlquilerCodigo'
+	            },
+	            {
+	            	name: 'estadoVentaCodigo'
 	            }
     ],
     

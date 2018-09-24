@@ -221,19 +221,19 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
 	            //renderer: Utils.rendererBooleanToSiNo
 	        },
 	        {
-	            dataIndex: 'situacionComercial',
-	            text: HreRem.i18n('header.disponibilidad.comercial'),
-	            flex: 1
-	        },
-	        {
 	            dataIndex: 'estadoSituacionComercial',
-	            text: HreRem.i18n('header.estado.disponibilidad.comercial'),
+	            text: HreRem.i18n('header.estado.publicacion'),
 	            flex: 1,
 	            bind: {
 	            	hidden: '{!esAgrupacionRestringida}'
 	            },
 	            renderer: estadoRenderer
 	            
+	        },
+	        {
+	            dataIndex: 'situacionComercial',
+	            text: HreRem.i18n('header.disponibilidad.comercial'),
+	            flex: 1
 	        },
 	        {
 	            dataIndex: 'importeMinimoAutorizado',

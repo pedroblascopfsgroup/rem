@@ -51,6 +51,11 @@ public class DtoAgrupaciones extends WebDto {
 	private String tipoComercializacionCodigo;
 	private String tipoComercializacionDescripcion;
 	private Boolean incluidoEnPerimetro;
+	private String estadoAlquilerDescripcion;
+	private String estadoVentaDescripcion;
+	private String estadoAlquilerCodigo;
+	private String estadoVentaCodigo;
+	
 
 	public Boolean getEstaCaducada() {
 		return estaCaducada;
@@ -283,5 +288,29 @@ public class DtoAgrupaciones extends WebDto {
 	}
 	public void setIncluidoEnPerimetro(Boolean incluidoEnPerimetro) {
 		this.incluidoEnPerimetro = incluidoEnPerimetro;
+	}
+	public String getEstadoAlquilerDescripcion() {
+		return estadoAlquilerDescripcion;
+	}
+	public void setEstadoAlquilerDescripcion(String estadoAlquilerDescripcion) {
+		this.estadoAlquilerDescripcion = estadoAlquilerDescripcion;
+	}
+	public String getEstadoVentaDescripcion() {
+		return estadoVentaDescripcion;
+	}
+	public void setEstadoVentaDescripcion(String estadoVentaDescripcion) {
+		this.estadoVentaDescripcion = estadoVentaDescripcion;
+	}
+	public String getEstadoAlquilerCodigo() {
+		return estadoAlquilerCodigo;
+	}
+	public void setEstadoAlquilerCodigo(String estadoAlquilerCodigo) {
+		this.estadoAlquilerCodigo = estadoAlquilerCodigo;
+	}
+	public String getEstadoVentaCodigo() {
+		return estadoVentaCodigo;
+	}
+	public void setEstadoVentaCodigo(String estadoVentaCodigo) {
+		this.estadoVentaCodigo = estadoVentaCodigo;
 	}
 }

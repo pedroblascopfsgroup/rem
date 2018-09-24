@@ -7058,12 +7058,12 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				ArrayList<String> mailsParaEnviarAsegurador = this.obtenerEmailsEnviarGestionLlaves(expediente);
 				String asunto = null;
 				if(envio == 0)
-					asunto = "Firma contrato alquiler";
+					asunto = "Fecha firma contrato alquiler";
 				else if(envio == 1)
 					asunto = "Modificación fecha firma contrato alquiler";
 				String cuerpo = "Comunicamos que se ha posicionado para el día " + fechaFirmaContrato
 						+ ", la firma del contrato de arrendamiento del inmueble " + activo.getNumActivo()
-						+ ", siendo el " + String.format("Api gestor de la firma  %s", (activo.getInfoComercial() != null) ? activo.getInfoComercial().getMediadorInforme() : STR_MISSING_VALUE )
+						+ ", siendo el " + String.format("Api gestor de la firma  %s", (activo.getInfoComercial() != null) ? activo.getInfoComercial().getMediadorInforme().getNombre() : STR_MISSING_VALUE )
 						+ "<br><br> Rogamos se gestione el envío de llaves para dicha operación.";
 			
 				genericAdapter.sendMail(mailsParaEnviarAsegurador, new ArrayList<String>(), asunto, cuerpo);
@@ -7241,7 +7241,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		try {
 			ArrayList<String> mailsParaEnviar = this.obtenerEmailsParaEnviarSubidaDeContrato(expediente);	
 			String asunto = "Documentación disponible para la firma contrato alquiler";
-			String cuerpo = "CSe ha subido al gestor documental de HAYA copia del contrato de arrendamiento suscrito del inmueble "
+			String cuerpo = "Se ha subido al gestor documental de HAYA copia del contrato de arrendamiento suscrito del inmueble "
 					+ activo.getNumActivo() + " para su descarga, firma y posterior incorporación de nuevo al gestor documental de REM.";
 			
 			genericAdapter.sendMail(mailsParaEnviar, new ArrayList<String>(),asunto,cuerpo);

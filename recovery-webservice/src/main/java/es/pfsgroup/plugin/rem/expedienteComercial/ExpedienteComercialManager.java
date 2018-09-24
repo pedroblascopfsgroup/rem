@@ -11,7 +11,6 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -77,11 +76,9 @@ import es.pfsgroup.plugin.rem.model.ActivoAdjuntoActivo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
-import es.pfsgroup.plugin.rem.model.VActivoOfertaImporte;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
-import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.AdjuntoExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.BloqueoActivoFormalizacion;
 import es.pfsgroup.plugin.rem.model.ComparecienteVendedor;
@@ -135,7 +132,9 @@ import es.pfsgroup.plugin.rem.model.TanteoActivoExpediente;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.TextosOferta;
 import es.pfsgroup.plugin.rem.model.Trabajo;
+import es.pfsgroup.plugin.rem.model.VActivoOfertaImporte;
 import es.pfsgroup.plugin.rem.model.VBusquedaDatosCompradorExpediente;
+import es.pfsgroup.plugin.rem.model.VListadoActivosExpediente;
 import es.pfsgroup.plugin.rem.model.Visita;
 import es.pfsgroup.plugin.rem.model.dd.DDAccionGastos;
 import es.pfsgroup.plugin.rem.model.dd.DDAdministracion;
@@ -1268,132 +1267,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 	@Override
 	public DtoPage getActivosExpediente(Long idExpediente) {
+		
+		List<VListadoActivosExpediente> listadoActivos = genericDao.getList(VListadoActivosExpediente.class, 
+				genericDao.createFilter(FilterType.EQUALS, "idExpediente", idExpediente));
 
-		ExpedienteComercial expediente = findOne(idExpediente);
-		List<DtoActivosExpediente> activos = new ArrayList<DtoActivosExpediente>();
-		List<ActivoOferta> activosExpediente = expediente.getOferta().getActivosOferta();
-		List<Activo> listaActivosExpediente = new ArrayList<Activo>();
-
-		// Se crea un mapa para cada dato que se quiere obtener
-		Map<Long, Double> activoPorcentajeParti = new HashMap<Long, Double>();
-		Map<Long, Double> activoPrecioAprobado = new HashMap<Long, Double>();
-		Map<Long, Double> activoPrecioMinimo = new HashMap<Long, Double>();
-		Map<Long, Double> activoImporteParticipacion = new HashMap<Long, Double>();
-
-		// Recorre los activos de la oferta y los añade a la lista de activos a
-		// mostrar
-		for (ActivoOferta activoOferta : activosExpediente) {
-			listaActivosExpediente.add(activoOferta.getPrimaryKey().getActivo());
-			if (!Checks.esNulo(activoOferta.getPorcentajeParticipacion())) {
-				activoPorcentajeParti.put(activoOferta.getPrimaryKey().getActivo().getId(),
-						activoOferta.getPorcentajeParticipacion());
-				if (!Checks.esNulo(activoOferta.getImporteActivoOferta())) {
-					activoImporteParticipacion.put(activoOferta.getPrimaryKey().getActivo().getId(),
-							(activoOferta.getImporteActivoOferta()));
-				}
-			}
-		}
-
-		// Recorre la relacion activo-trabajo del expediente, por cada una
-		// guarda en un mapa el
-		// porcentaje de participacion del activo y el importe calculado a
-		// partir de dicho
-		// porcentaje
-		// if(!Checks.esNulo(expediente.getTrabajo())){
-		// for(ActivoTrabajo activoTrabajo:
-		// expediente.getTrabajo().getActivosTrabajo()){
-		// activoPorcentajeParti.put(activoTrabajo.getPrimaryKey().getActivo().getId(),
-		// activoTrabajo.getParticipacion());
-		// activoImporteParticipacion.put(activoTrabajo.getPrimaryKey().getActivo().getId(),
-		// (expediente.getOferta().getImporteOferta()*activoTrabajo.getParticipacion())/100);
-		// }
-		// }
-
-		// Por cada activo recorre todas sus valoraciones para adquirir el
-		// precio aprobado de venta
-		// y el precio minimo autorizado
-		for (Activo activo : listaActivosExpediente) {
-			for (ActivoValoraciones valoracion : activo.getValoracion()) {
-				if (DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA.equals(valoracion.getTipoPrecio().getCodigo())) {
-					activoPrecioAprobado.put(activo.getId(), valoracion.getImporte());
-				}
-				if (DDTipoPrecio.CODIGO_TPC_MIN_AUTORIZADO.equals(valoracion.getTipoPrecio().getCodigo())) {
-					activoPrecioMinimo.put(activo.getId(), valoracion.getImporte());
-				}
-
-			}
-
-			// Convierte todos los datos obtenidos en un dto
-			DtoActivosExpediente dtoActivo = activosToDto(activo, activoPorcentajeParti, activoPrecioAprobado,
-					activoPrecioMinimo, activoImporteParticipacion);
-
-			// calculamos los pilotos de tanteos,condiciones y bloqueos
-
-			DtoInformeJuridico dtoInfoJuridico = this.getFechaEmisionInfJuridico(idExpediente, dtoActivo.getIdActivo());
-			if (dtoInfoJuridico == null || dtoInfoJuridico.getFechaEmision() == null) {
-				dtoActivo.setBloqueos(2);// pendiente
-			} else {
-				if (dtoInfoJuridico.getResultadoBloqueo() != null
-						&& dtoInfoJuridico.getResultadoBloqueo().equals(InformeJuridico.RESULTADO_FAVORABLE)) {
-					dtoActivo.setBloqueos(1);
-				} else {
-					dtoActivo.setBloqueos(0);
-				}
-			}
-
-			DtoCondicionesActivoExpediente condiciones = this.getCondicionesActivoExpediete(idExpediente,
-					dtoActivo.getIdActivo());
-			if (condiciones.getSituacionPosesoriaCodigo() != null
-					&& condiciones.getSituacionPosesoriaCodigoInformada() != null
-					&& condiciones.getSituacionPosesoriaCodigo()
-							.equals(condiciones.getSituacionPosesoriaCodigoInformada())
-					&& condiciones.getPosesionInicial() != null
-					&& condiciones.getPosesionInicialInformada() != null
-							& condiciones.getPosesionInicial().equals(condiciones.getPosesionInicialInformada())
-					&& condiciones.getEstadoTitulo() != null && condiciones.getEstadoTituloInformada() != null
-					&& condiciones.getEstadoTitulo().equals(condiciones.getEstadoTituloInformada())) {
-				dtoActivo.setCondiciones(1);
-
-			} else {
-				dtoActivo.setCondiciones(0);
-			}
-			CondicionanteExpediente condicionantes = expediente.getCondicionante();
-
-			if (condicionantes != null) {
-				if (condicionantes.getSujetoTanteoRetracto() != null
-						&& condicionantes.getSujetoTanteoRetracto().equals(Integer.valueOf(0))) {
-					dtoActivo.setTanteos(3);
-				} else {
-					dtoActivo.setTanteos(3);
-					List<TanteoActivoExpediente> tanteosExpediente = expediente.getTanteoActivoExpediente();
-					int contTanteosActivo = 0;
-					int contTanteosActivoRenunciado = 0;
-					for (TanteoActivoExpediente tanteo : tanteosExpediente) {
-						if (tanteo.getActivo().getId().equals(activo.getId())) {
-							contTanteosActivo++;
-							if (tanteo.getResultadoTanteo() != null) {
-								if (tanteo.getResultadoTanteo().getCodigo().equals(DDResultadoTanteo.CODIGO_EJERCIDO)) {
-									dtoActivo.setTanteos(2);
-									break;
-								} else if (tanteo.getResultadoTanteo().getCodigo()
-										.equals(DDResultadoTanteo.CODIGO_RENUNCIADO)) {
-									contTanteosActivoRenunciado++;
-								}
-							} else {
-								dtoActivo.setTanteos(0);
-							}
-						}
-					}
-					if (contTanteosActivo > 0 && contTanteosActivo == contTanteosActivoRenunciado) {
-						dtoActivo.setTanteos(1);
-					}
-				}
-			}
-
-			activos.add(dtoActivo);
-		}
-
-		return new DtoPage(activos, activos.size());
+		return new DtoPage(listadoActivos, listadoActivos.size());
 	}
 
 	/**
@@ -1401,7 +1279,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	 * 
 	 * @param activo
 	 * @return
-	 */
+	 *//*
 	private DtoActivosExpediente activosToDto(Activo activo, Map<Long, Double> activoPorcentajeParti,
 			Map<Long, Double> activoPrecioAprobado, Map<Long, Double> activoPrecioMinimo,
 			Map<Long, Double> activoImporteParticipacion) {
@@ -1453,7 +1331,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 
 		return dtoActivo;
-	}
+	}*/
 
 	public FileItem getFileItemAdjunto(DtoAdjuntoExpediente dtoAdjunto) {
 

@@ -399,7 +399,7 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 	public ModelAndView getActivosExpediente(ModelMap model, Long idExpediente) {
 		
 		try {
-			DtoPage dto= expedienteComercialApi.getActivosExpediente(idExpediente);
+			DtoPage dto= expedienteComercialApi.getActivosExpedienteVista(idExpediente);
 			
 			model.put("data", dto.getResults());
 			model.put("totalCount", dto.getTotalCount());

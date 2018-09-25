@@ -554,6 +554,20 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
    	    	 }
        		},
        		
+       		storeHistoricoOcupacionesIlegales: {
+         		pageSize: 10,
+         		model: 'HreRem.model.OcupacionIlegal',
+         		sorters: [{ property: 'numAsunto', direction: 'DESC' }],
+         		proxy: {
+         			type: 'uxproxy',
+         			remoteUrl: 'activo/getListHistoricoOcupacionesIlegales',
+			        actionMethods: {create: 'POST', read: 'POST', update: 'POST', destroy: 'POST'},
+			        extraParams: {idActivo: '{activo.id}'}
+		    	},
+	         	remoteSort: true,
+		    	remoteFilter: true 
+        	},
+       		
     		storeLlaves: {
 	    		pageSize: 10,
 	     		model: 'HreRem.model.Llaves',

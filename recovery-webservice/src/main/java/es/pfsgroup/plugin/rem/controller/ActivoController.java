@@ -2320,6 +2320,26 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 
 	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView getListHistoricoOcupacionesIlegales(ModelMap model, WebDto dto, Long idActivo) {
+
+		try {
+
+			DtoPage page = activoApi.getListHistoricoOcupacionesIlegales(dto, idActivo);
+
+			model.put("data", page.getResults());
+			model.put("totalCount", page.getTotalCount());
+			model.put("success", true);
+
+		} catch (Exception e) {
+			logger.error("error en activoController", e);
+			model.put("success", false);
+		}
+
+		return createModelAndViewJson(model);
+	}
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)

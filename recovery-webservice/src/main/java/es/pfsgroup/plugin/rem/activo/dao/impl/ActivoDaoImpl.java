@@ -30,6 +30,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVRawSQLDao;
+import es.pfsgroup.plugin.recovery.mejoras.registro.model.MEJInfoRegistro;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.model.Activo;
@@ -844,6 +845,16 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		
 		HQLBuilder hb = new HQLBuilder(" from VBusquedaActivosCrearTrabajo act");
 		HQLBuilder.addFiltroWhereInSiNotNull(hb, "numActivoHaya", listIdActivos);
+		
+		return HibernateQueryUtils.page(this, hb, dto);
+	}
+	
+	@Override
+	public Page getListHistoricoOcupacionesIlegalesByActivo(WebDto dto, Long idActivo) {
+		//También se puede usar el genericDao en REM, pero hay que ver como devolver un Page porque no he encontrado casos así.
+		//List<ActivoOcupacionIlegal> listaOcupacionesIlegales = genericDao.getList(ActivoOcupacionIlegal.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo));
+		HQLBuilder hb = new HQLBuilder("select ocu from ActivoOcupacionIlegal ocu ");
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activo.id", idActivo);
 		
 		return HibernateQueryUtils.page(this, hb, dto);
 	}

@@ -61,7 +61,9 @@ public class MSVActualizadorPreciosFSVActivoImporte extends AbstractMSVActualiza
 					DDTipoPrecio.CODIGO_TPC_FSV_VENTA, 
 					Double.parseDouble(exc.dameCelda(fila, 1)),
 					null,
-					null);
+					null,
+					exc.dameCelda(fila, 3),
+					exc.dameCelda(fila, 4));
 		}
 		
 		//Si hay Valoracion = Precio FSV Renta
@@ -70,13 +72,15 @@ public class MSVActualizadorPreciosFSVActivoImporte extends AbstractMSVActualiza
 					DDTipoPrecio.CODIGO_TPC_FSV_RENTA, 
 					Double.parseDouble(exc.dameCelda(fila, 2)),
 					null,
-					null);
+					null,
+					exc.dameCelda(fila, 3),
+					exc.dameCelda(fila, 4));
 		}
 		return new ResultadoProcesarFila();
 	}
 
 	private void actualizarCrearValoresPrecios(Activo activo, String codigoTipoPrecio,
-			Double importe, String fechaInicioExcel, String fechaFinExcel) throws ParseException{
+			Double importe, String fechaInicioExcel, String fechaFinExcel, String fechaVentaHaya, String liquidez) throws ParseException{
 		
 		//Intenta ver si el activo tiene ya un precio del tipo indicado para actualizar
 		//Se prevee la posibilidad de que exista mas de 1 tipo precio por activo, en ese caso solo se toma el ultimo insertado para evitar error
@@ -96,6 +100,8 @@ public class MSVActualizadorPreciosFSVActivoImporte extends AbstractMSVActualiza
 		dtoActivoValoracion.setIdActivo(activo.getId());
 		dtoActivoValoracion.setCodigoTipoPrecio(codigoTipoPrecio);
 		dtoActivoValoracion.setImporte(importe);
+		dtoActivoValoracion.setFechaVentaHaya(simpleDate.parse(fechaVentaHaya));
+		dtoActivoValoracion.setLiquidez(liquidez.toUpperCase());
 		if(!Checks.esNulo(fechaFinExcel)){
 			Date fechaFin = simpleDate.parse(fechaFinExcel);
 			dtoActivoValoracion.setFechaFin(fechaFin);

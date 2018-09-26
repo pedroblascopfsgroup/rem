@@ -162,6 +162,20 @@ Ext.define('HreRem.model.AgrupacionFicha', {
 	                depends: 'tipoComercializacionCodigo'
 	            },
 	            {
+	                name: 'incluyeDestinoComercialAlquilerYIsRestringida',
+	                calculate: function(data) {
+	                    return data.isRestringida && data.tipoComercializacionCodigo ===  CONST.TIPOS_COMERCIALIZACION['SOLO_ALQUILER'] || data.isRestringida && data.tipoComercializacionCodigo ===  CONST.TIPOS_COMERCIALIZACION['ALQUILER_VENTA'];
+	                },
+	                depends: ['tipoComercializacionCodigo', 'isRestringida']
+	            },
+	            {
+	                name: 'incluyeDestinoComercialVentaYIsRestringida',
+	                calculate: function(data) {
+	                    return data.isRestringida && data.tipoComercializacionCodigo ===  CONST.TIPOS_COMERCIALIZACION['VENTA'] || data.isRestringida && data.tipoComercializacionCodigo ===  CONST.TIPOS_COMERCIALIZACION['ALQUILER_VENTA'];
+	                },
+	                depends: ['tipoComercializacionCodigo', 'isRestringida']
+	            },
+	            {
 	            	name: 'incluidoEnPerimetro',
 	            	type: 'boolean'
 	            },

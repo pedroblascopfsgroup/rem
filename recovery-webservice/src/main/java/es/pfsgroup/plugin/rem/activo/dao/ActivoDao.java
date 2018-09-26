@@ -96,6 +96,8 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	
 	public Page getActivosFromCrearTrabajo(List<String> listIdActivos, DtoTrabajoListActivos dto);
 	
+	public Page getListHistoricoOcupacionesIlegalesByActivo(WebDto dto, Long idActivo);
+	
 	public Page getLlavesByActivo(DtoLlaves dto);
 	
 	public Page getListMovimientosLlaveByLlave(WebDto dto, Long idLlave);

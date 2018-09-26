@@ -332,30 +332,15 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
             {    
                 
 				xtype:'fieldsettable',
-				title:HreRem.i18n('title.ocupante.ilegal'),
+				title:HreRem.i18n('title.historico.ocupaciones.ilegales'),
 				bind: {hidden:'{!esOcupacionIlegal}'},
 				defaultType: 'textfieldbase',
 				items :
 					[
-						{ 
-							xtype:'datefieldbase',
-							reference: 'fechaSolDesahucio',
-					 		fieldLabel: HreRem.i18n('fieldlabel.fecha.tratamiento.ocupacion'),
-			            	bind:		'{situacionPosesoria.fechaSolDesahucio}'
-						},
-						{ 
-							xtype:'datefieldbase',
-							hidden: true,
-							reference: 'fechaLanzamiento',
-							fieldLabel: HreRem.i18n('fieldlabel.fecha.senyalamiento.lanzamiento'),
-		                	bind:		'{situacionPosesoria.fechalanzamiento}'
-		                },
-		                { 
-		                	xtype:'datefieldbase',
-							reference: 'fechaLanzamientoEfectivo',
-		                	fieldLabel: HreRem.i18n('fieldlabel.fecha.recuperacion.posesion'),
-		                	bind:		'{situacionPosesoria.fechaLanzamientoEfectivo}'
-		                }
+						{
+		                	xtype: 'historicoocupacionesilegalesgrid',
+		                	colspan: 3
+    				    }
 					
 					]
                 

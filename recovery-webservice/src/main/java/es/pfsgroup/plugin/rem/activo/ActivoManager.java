@@ -102,6 +102,7 @@ import es.pfsgroup.plugin.rem.model.ActivoInformeComercialHistoricoMediador;
 import es.pfsgroup.plugin.rem.model.ActivoIntegrado;
 import es.pfsgroup.plugin.rem.model.ActivoLlave;
 import es.pfsgroup.plugin.rem.model.ActivoMovimientoLlave;
+import es.pfsgroup.plugin.rem.model.ActivoOcupacionIlegal;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoPropietarioActivo;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
@@ -138,6 +139,7 @@ import es.pfsgroup.plugin.rem.model.DtoHistoricoPresupuestosFilter;
 import es.pfsgroup.plugin.rem.model.DtoImpuestosActivo;
 import es.pfsgroup.plugin.rem.model.DtoLlaves;
 import es.pfsgroup.plugin.rem.model.DtoMovimientoLlave;
+import es.pfsgroup.plugin.rem.model.DtoOcupacionIlegal;
 import es.pfsgroup.plugin.rem.model.DtoOfertaActivo;
 import es.pfsgroup.plugin.rem.model.DtoPrecioVigente;
 import es.pfsgroup.plugin.rem.model.DtoPropietario;
@@ -3601,6 +3603,50 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	public boolean checkVPO(TareaExterna tareaExterna) {
 		Activo activo = tareaExternaToActivo(tareaExterna);
 		return ("1".equals(activo.getVpo()));
+	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public DtoPage getListHistoricoOcupacionesIlegales(WebDto dto, Long idActivo) {
+
+		Page page;
+		
+		page = activoDao.getListHistoricoOcupacionesIlegalesByActivo(dto, idActivo);
+
+		List<DtoOcupacionIlegal> listaOcupacionesIlegales = new ArrayList<DtoOcupacionIlegal>();
+
+		for (ActivoOcupacionIlegal ocupacionIlegal : (List<ActivoOcupacionIlegal>) page.getResults()) {
+
+			DtoOcupacionIlegal dtoOcu = this.ocupacionToDto(ocupacionIlegal);
+
+			listaOcupacionesIlegales.add(dtoOcu);
+		}
+
+		return new DtoPage(listaOcupacionesIlegales, page.getTotalCount());
+	}
+	
+	private DtoOcupacionIlegal ocupacionToDto(ActivoOcupacionIlegal ocupacion) {
+
+		DtoOcupacionIlegal dtoOcu = new DtoOcupacionIlegal();
+
+		try {
+			BeanUtils.copyProperties(dtoOcu, ocupacion);
+
+			if (!Checks.esNulo(ocupacion.getTipoAsunto())) {
+				BeanUtils.copyProperty(dtoOcu, "tipoAsunto", ocupacion.getTipoAsunto().getDescripcion());
+			}
+
+			if (!Checks.esNulo(ocupacion.getTipoActuacion())) {
+				BeanUtils.copyProperty(dtoOcu, "tipoActuacion", ocupacion.getTipoActuacion().getDescripcion());
+			}
+
+		} catch (IllegalAccessException ex) {
+			logger.error("Error en activoManager", ex);
+		} catch (InvocationTargetException ex) {
+			logger.error("Error en activoManager", ex);
+		}
+
+		return dtoOcu;
 	}
 
 	@Override

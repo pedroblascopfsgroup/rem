@@ -2895,27 +2895,40 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	
 	@Override
 	public boolean necesitaDocumentoInformeOcupacion(Activo activo) {
+			
+		ActivoSituacionPosesoria activoSitPos = activo.getSituacionPosesoria();
 		
-		Filter filterSit = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
-		Filter filterAud = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
-		ActivoSituacionPosesoria activoSitPos = genericDao.get(ActivoSituacionPosesoria.class , filterSit, filterAud);
-		
-		if (!Checks.esNulo(activoSitPos)){
-			if ((Checks.esNulo(activoSitPos.getSitaucionJuridica()) || 0 == activoSitPos.getSitaucionJuridica().getIndicaPosesion()) 
-					&& 1 == activoSitPos.getOcupado()){
-				if (0 == activoSitPos.getConTitulo()){
-					List<ActivoAdjuntoActivo> listAdjuntos = activo.getAdjuntos();
-					if (!Checks.estaVacio(listAdjuntos)){
-						for (ActivoAdjuntoActivo adjunto : listAdjuntos){
-							if (DDTipoDocumentoActivo.CODIGO_INFORME_OCUPACION_DESOCUPACION.equals(adjunto.getTipoDocumentoActivo().getCodigo())) {
-								return false;
-							}
-						}	
+		if(!Checks.esNulo(activo.getCartera())) {
+			if(DDCartera.CODIGO_CARTERA_BANKIA.equals(activo.getCartera().getCodigo())) {
+				if ((Checks.esNulo(activoSitPos.getSitaucionJuridica()) || 0 == activoSitPos.getSitaucionJuridica().getIndicaPosesion()) 
+						&& 1 == activoSitPos.getOcupado()){
+					if (0 == activoSitPos.getConTitulo()){
+						List<ActivoAdjuntoActivo> listAdjuntos = activo.getAdjuntos();
+						if (!Checks.estaVacio(listAdjuntos)){
+							for (ActivoAdjuntoActivo adjunto : listAdjuntos){
+								if (DDTipoDocumentoActivo.CODIGO_INFORME_OCUPACION_DESOCUPACION.equals(adjunto.getTipoDocumentoActivo().getCodigo())) {
+									return false;
+								}
+							}	
+						}
+					}
+				}					
+			} else {
+				if (!Checks.esNulo(activoSitPos.getFechaRevisionEstado())
+						|| !Checks.esNulo(activoSitPos.getFechaTomaPosesion())) {					
+					if (1 == activoSitPos.getOcupado() && 0 == activoSitPos.getConTitulo()){
+						List<ActivoAdjuntoActivo> listAdjuntos = activo.getAdjuntos();
+						if (!Checks.estaVacio(listAdjuntos)){
+							for (ActivoAdjuntoActivo adjunto : listAdjuntos){
+								if (DDTipoDocumentoActivo.CODIGO_INFORME_OCUPACION_DESOCUPACION.equals(adjunto.getTipoDocumentoActivo().getCodigo())) {
+									return false;
+								}
+							}	
+						}
 					}
 				}
 			}
-		}
-		
+		}		
 		return true;
 	}
 

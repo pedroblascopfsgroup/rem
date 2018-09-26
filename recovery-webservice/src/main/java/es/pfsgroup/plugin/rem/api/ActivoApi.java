@@ -149,6 +149,8 @@ public interface ActivoApi {
 	public boolean isIntegradoAgrupacionObraNueva(Long id, Usuario usuarioLogado);
 
 	public boolean isIntegradoAgrupacionComercial(Activo activo);
+	
+	public boolean necesitaDocumentoInformeOcupacion(Activo activo);
 	/**
 	 * Elimina un adjunto
 	 * 

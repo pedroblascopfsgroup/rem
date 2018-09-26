@@ -77,6 +77,7 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 		boolean obraNueva = false;
 		boolean asistida = false;
 		boolean lote = false;
+		boolean conTitulo = false;
 		
 		try {
 		//Avisos 1 y 2: Integrado en agrupación restringida / Integrado en obra nueva
@@ -85,6 +86,7 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 			obraNueva = activoApi.isIntegradoAgrupacionObraNueva(id, usuarioLogado);
 			asistida = activoApi.isIntegradoAgrupacionAsistida(activo);
 			lote = activoApi.isIntegradoAgrupacionComercial(activo);
+			conTitulo = activoApi.necesitaDocumentoInformeOcupacion(activo);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -113,6 +115,13 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 		if(lote) {
 			DtoAviso dtoAviso = new DtoAviso();
 			dtoAviso.setDescripcion("Incluido en agrupación comercial");
+			dtoAviso.setId(String.valueOf(id));
+			listaAvisos.add(dtoAviso);
+		}
+		
+		if(conTitulo) {
+			DtoAviso dtoAviso = new DtoAviso();
+			dtoAviso.setDescripcion("Es necesario adjuntar el documento “Informe ocupación”");
 			dtoAviso.setId(String.valueOf(id));
 			listaAvisos.add(dtoAviso);
 		}

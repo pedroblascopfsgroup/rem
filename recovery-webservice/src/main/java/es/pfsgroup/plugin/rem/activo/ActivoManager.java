@@ -2871,7 +2871,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 		return false;
 	}
-
+	
 	@Override
 	public boolean isIntegradoAgrupacionComercial(Activo activo) {
 
@@ -2889,6 +2889,32 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 
 		return false;
+	}
+	
+	@Override
+	public boolean necesitaDocumentoInformeOcupacion(Activo activo) {
+		
+		Filter filterSit = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+		Filter filterAud = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+		ActivoSituacionPosesoria activoSitPos = genericDao.get(ActivoSituacionPosesoria.class , filterSit, filterAud);
+		
+		if (!Checks.esNulo(activoSitPos)){
+			if ((Checks.esNulo(activoSitPos.getSitaucionJuridica()) || 0 == activoSitPos.getSitaucionJuridica().getIndicaPosesion()) 
+					&& 1 == activoSitPos.getOcupado()){
+				if (0 == activoSitPos.getConTitulo()){
+					List<ActivoAdjuntoActivo> listAdjuntos = activo.getAdjuntos();
+					if (!Checks.estaVacio(listAdjuntos)){
+						for (ActivoAdjuntoActivo adjunto : listAdjuntos){
+							if (DDTipoDocumentoActivo.CODIGO_INFORME_OCUPACION_DESOCUPACION.equals(adjunto.getTipoDocumentoActivo().getCodigo())) {
+								return false;
+							}
+						}	
+					}
+				}
+			}
+		}
+		
+		return true;
 	}
 
 	@Override

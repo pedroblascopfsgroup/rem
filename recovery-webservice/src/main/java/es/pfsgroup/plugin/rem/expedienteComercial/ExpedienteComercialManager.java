@@ -60,6 +60,7 @@ import es.pfsgroup.framework.paradise.gestorEntidad.model.GestorEntidadHistorico
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
+import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.recovery.agendaMultifuncion.impl.dto.DtoAdjuntoMail;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoTramiteDao;
@@ -73,8 +74,10 @@ import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.GestorExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.TareaActivoApi;
+import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
 import es.pfsgroup.plugin.rem.expedienteComercial.dao.ExpedienteComercialDao;
+import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionService;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjuntoActivo;
@@ -291,10 +294,15 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	@Autowired
 	private ActivoApi activoApi;
 	
-    
     @Autowired
     private TareaActivoApi tareaActivoApi;
+    
+    @Autowired
+    private GestorDocumentalAdapterApi gestorDocumentalAdapterApi;
 
+    @Autowired
+	private TrabajoApi trabajoApi;
+    
 	@Override
 	public String managerName() {
 		return "expedienteComercialManager";
@@ -1844,7 +1852,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				}
 			}
 
-			if (!Checks.esNulo(adjuntoActivo)) {
+			if (!Checks.esNulo(adjuntoActivo) && !Checks.esNulo(adjuntoActivo.getIdDocRestClient())) {
 				adjuntoExpediente.setIdDocRestClient(adjuntoActivo.getIdDocRestClient());
 				genericDao.update(AdjuntoExpedienteComercial.class, adjuntoExpediente);
 			}
@@ -7278,5 +7286,32 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 		
 		return mailsParaEnviarSubidaDeContrato;
+	}
+
+	@Override
+	public boolean checkPrecontratoSubido(TareaExterna tareaExterna) {
+		
+		ExpedienteComercial expedienteComercial = tareaExternaToExpedienteComercial(tareaExterna);
+		try {
+			List<DtoAdjunto> adjuntosExpediente = gestorDocumentalAdapterApi.getAdjuntosExpedienteComercial(expedienteComercial);
+			for (DtoAdjunto adjunto : adjuntosExpediente) {
+				if(DDSubtipoDocumentoExpediente.MATRICULA_PRE_CONTRATO.equals(adjunto.getMatricula())) {
+					return true;
+				}
+			}
+		} catch (GestorDocumentalException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+	
+	@Override
+	public ExpedienteComercial tareaExternaToExpedienteComercial(TareaExterna tareaExterna) {
+		ExpedienteComercial expedienteComercial = null;
+		Trabajo trabajo = trabajoApi.tareaExternaToTrabajo(tareaExterna);
+		if (!Checks.esNulo(trabajo)) {
+			expedienteComercial = this.findOneByTrabajo(trabajo);
+		}
+		return expedienteComercial;
 	}
 }

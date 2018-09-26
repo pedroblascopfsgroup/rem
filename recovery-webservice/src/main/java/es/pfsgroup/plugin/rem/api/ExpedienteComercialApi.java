@@ -9,6 +9,7 @@ import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.diccionarios.Dictionary;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
+import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.model.Activo;
@@ -1077,5 +1078,20 @@ public interface ExpedienteComercialApi {
 	 * @return
 	 */
 	public boolean enviarCorreoSubidaDeContrato(Long idExpediente);
+	
+	/**
+	 * Metodo que comprueba si el documento Precontrato está subido al expediente 
+	 * @param tareaExterna
+	 * @return
+	 */
+	public boolean checkPrecontratoSubido(TareaExterna tareaExterna);
+
+	/**
+	 * Método que saca el expediente comercial a partir de una tarea externa
+	 * 
+	 * @param tareaExterna
+	 * @return ExpedienteComercial
+	 */
+	public ExpedienteComercial tareaExternaToExpedienteComercial(TareaExterna tareaExterna);
 	
 }

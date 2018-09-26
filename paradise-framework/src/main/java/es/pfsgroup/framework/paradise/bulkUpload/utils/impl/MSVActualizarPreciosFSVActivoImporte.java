@@ -41,7 +41,7 @@ public class MSVActualizarPreciosFSVActivoImporte extends MSVExcelValidatorAbstr
 		
 	public static final String ACTIVE_NOT_EXISTS = "El activo no existe.";
 	public static final String ACTIVE_PRIZE_NAN = "msg.error.masivo.actualizar.precios.fsv.activo.importe.formato.incorrecto";
-	public static final String ACTIVE_PRIZES_VENTA_RENTA_LIMIT_EXCEEDED = "El valor FSV de Renta no puede ser mayor al valor FSV de Renta (FSV Venta >= FSV Renta) o uno de estos valores no tiene un formato correcto";
+	public static final String ACTIVE_PRIZES_VENTA_RENTA_LIMIT_EXCEEDED = "El valor renta Haya no puede ser mayor al valor venta Haya (Valor Venta Haya >= Valor Renta Haya) o uno de estos valores no tiene un formato correcto";
 	public static final String ACTIVE_PRIZES_VENTA_NOT_GREATER_ZERO = "msg.error.masivo.actualizar.precios.FSV.Venta.importe.no.mayor.cero";
 	public static final String ACTIVE_PRIZES_RENTA_NOT_GREATER_ZERO = "msg.error.masivo.actualizar.precios.FSV.Renta.importe.no.mayor.cero";
 	

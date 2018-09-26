@@ -13,7 +13,8 @@ Ext.define('HreRem.view.activos.detalle.PatrimonioActivo', {
     	boxready: function() {
     		var me = this;
     		me.lookupController().cargarTabData(me);
-    	}
+    	},
+    	activate :'onActivateTabPatrimonioActivo'
     },
     
     initComponent: function () {
@@ -64,6 +65,17 @@ Ext.define('HreRem.view.activos.detalle.PatrimonioActivo', {
 							}
 						},
 						//Fila 2
+						{ 	
+							xtype: 'checkboxfieldbase',
+							fieldLabel: HreRem.i18n('title.patrimonio.rentaAntigua'),
+							bind: {
+								readOnly: '{enableCheckRentaAntigua}',
+								value: '{patrimonio.chkRentaAntigua}'
+								
+								
+							},
+							colspan: 3
+						},
 						{
 							xtype:'fieldsettable',
 							title:HreRem.i18n('title.grid.historico.adecuaciones'),
@@ -73,7 +85,7 @@ Ext.define('HreRem.view.activos.detalle.PatrimonioActivo', {
 								[
 									{xtype: 'historicoadecuacionesgrid', reference: 'historicoadecuacionesgrid', colspan: 3}
 								]
-						}
+						}						
 				]
 			}
 			

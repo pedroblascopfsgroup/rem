@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Carlos López
---## FECHA_CREACION=20180921
+--## FECHA_CREACION=20180927
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-4540
@@ -61,6 +61,28 @@ BEGIN
 		EXECUTE IMMEDIATE V_MSQL;
 		
 		DBMS_OUTPUT.PUT_LINE('Registros actualizados: '||SQL%ROWCOUNT);
+
+		V_MSQL:='UPDATE '|| V_ESQUEMA ||'.'||V_TEXT_TABLA||' ACT '||
+				'SET PAC_CHECK_PUBLICAR =  1 '||
+				'   ,PAC_FECHA_PUBLICAR = sysdate '|| 
+				'   ,USUARIOMODIFICAR = ''HREOS-4540'' 
+					,FECHAMODIFICAR = SYSDATE
+				 WHERE EXISTS (SELECT 1
+							  FROM '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION APU
+							  JOIN '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO PAC ON PAC.ACT_ID = APU.ACT_ID AND PAC.PAC_CHECK_PUBLICAR = 0 
+                JOIN '|| V_ESQUEMA ||'.DD_TCO_TIPO_COMERCIALIZACION TCO ON TCO.DD_TCO_ID = APU.DD_TCO_ID AND TCO.DD_TCO_CODIGO = ''03'' AND TCO.BORRADO = 0  
+							   
+							 WHERE APU.APU_CHECK_PUBLICAR_A = 1
+							   AND APU.ACT_ID = ACT.ACT_ID)
+				   AND EXISTS (select 1 
+				                 from '|| V_ESQUEMA ||'.act_activo act2 
+				                 join '|| V_ESQUEMA ||'.DD_SCM_SITUACION_COMERCIAL scm on SCM.DD_SCM_ID = ACT2.DD_SCM_ID AND SCM.DD_SCM_CODIGO <> ''05'' AND SCM.BORRADO = 0
+				                where act2.act_id=ACT.act_id  )	            
+							   '
+				;
+		EXECUTE IMMEDIATE V_MSQL;
+		
+		DBMS_OUTPUT.PUT_LINE('Registros actualizados alquiler: '||SQL%ROWCOUNT);
 
 		V_MSQL:='UPDATE '|| V_ESQUEMA ||'.'||V_TEXT_TABLA||' ACT '||
 				'SET PAC_CHECK_PUBLICAR =  0 '||

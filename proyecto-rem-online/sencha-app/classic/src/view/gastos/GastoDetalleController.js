@@ -874,6 +874,51 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
     	Ext.create("HreRem.view.gastos.SeleccionTrabajosGasto",{gasto: gasto, parent: btn.up('formBase')}).show();
 	},
 	
+	onExportClickTrabajos: function(btn){
+		var me = this;
+		var idGasto = me.getViewModel().get("gasto.id");
+		var url =  $AC.getRemoteUrl('gastosproveedor/generateExcelTrabajosGasto');
+		
+		var config = {};
+
+		var initialData = {idGasto: idGasto};
+		var params = Ext.apply(initialData);
+
+		Ext.Object.each(params, function(key, val) {
+			if (Ext.isEmpty(val)) {
+				delete params[key];
+			}
+		});
+
+		config.params = params;
+		config.url= url;
+		
+		me.fireEvent("downloadFile", config);		
+	},
+	
+	onExportClickActivos: function(btn){
+    	var me = this;
+    	
+    	var idGasto = me.getViewModel().get("gasto.id");
+		var url =  $AC.getRemoteUrl('gastosproveedor/generateExcelActivosGasto');
+		
+		var config = {};
+
+		var initialData = {idGasto: idGasto};
+		var params = Ext.apply(initialData);
+
+		Ext.Object.each(params, function(key, val) {
+			if (Ext.isEmpty(val)) {
+				delete params[key];
+			}
+		});
+
+		config.params = params;
+		config.url= url;
+		
+		me.fireEvent("downloadFile", config);		
+    },
+	
 	onClickBotonDesasignarTrabajosGasto: function(btn) {
 
 		var me = this,

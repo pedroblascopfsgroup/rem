@@ -217,19 +217,21 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 						expediente.setFechaAnulacion(new Date());
 					}
 					
-					//Finaliza el trámite
-					Filter filtroEstadoTramite = genericDao.createFilter(FilterType.EQUALS, "codigo", UpdaterStateOfertaApi.CODIGO_TRAMITE_FINALIZADO);
-					tramite.setEstadoTramite(genericDao.get(DDEstadoProcedimiento.class, filtroEstadoTramite));
-					genericDao.save(ActivoTramite.class, tramite);
+					if (!tieneReserva) {
+						//Finaliza el trámite
+						Filter filtroEstadoTramite = genericDao.createFilter(FilterType.EQUALS, "codigo", UpdaterStateOfertaApi.CODIGO_TRAMITE_FINALIZADO);
+						tramite.setEstadoTramite(genericDao.get(DDEstadoProcedimiento.class, filtroEstadoTramite));
+						genericDao.save(ActivoTramite.class, tramite);
 
-					//Rechaza la oferta y descongela el resto
-					ofertaApi.rechazarOferta(ofertaAceptada);
-					try {
-						ofertaApi.descongelarOfertas(expediente);
-					} catch (Exception e) {
-						logger.error("Error descongelando ofertas.", e);
+						//Rechaza la oferta y descongela el resto
+						ofertaApi.rechazarOferta(ofertaAceptada);
+						try {
+							ofertaApi.descongelarOfertas(expediente);
+						} catch (Exception e) {
+							logger.error("Error descongelando ofertas.", e);
+						}
 					}
-
+					
 					genericDao.save(ExpedienteComercial.class, expediente);
 				}
 			}

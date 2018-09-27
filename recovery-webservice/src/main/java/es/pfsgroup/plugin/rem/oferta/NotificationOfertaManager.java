@@ -111,6 +111,11 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 			if(!Checks.esNulo(usuario)){
 				mailsPara.add(usuario.getEmail());
 				
+				Usuario directorEquipo = gestorActivoManager.getDirectorEquipoByGestor(usuario);
+				if (!Checks.esNulo(directorEquipo)){
+					mailsPara.add(directorEquipo.getEmail());
+				}
+				
 				List<GestorSustituto> sustitutos = genericDao.getList(GestorSustituto.class, genericDao.createFilter(FilterType.EQUALS, "usuarioGestorOriginal.id", usuario.getId()));
 				if (!Checks.esNulo(sustitutos)){
 					for (GestorSustituto gestorSustituto : sustitutos) {
@@ -119,13 +124,14 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 								mailsPara.add(gestorSustituto.getUsuarioGestorSustituto().getEmail());
 							}
 						}
-						
 					}
 				}				
 			}
+			
 			if(!Checks.esNulo(supervisor)){
 				mailsPara.add(supervisor.getEmail());
 			}
+			
 			if(!Checks.esNulo(activo.getCartera()) && DDCartera.CODIGO_CARTERA_CAJAMAR.equals(activo.getCartera().getCodigo())){
 				if(!Checks.esNulo(usuarioManager.getByUsername(USUARIO_FICTICIO_OFERTA_CAJAMAR))){
 					mailsPara.add(usuarioManager.getByUsername(USUARIO_FICTICIO_OFERTA_CAJAMAR).getEmail());

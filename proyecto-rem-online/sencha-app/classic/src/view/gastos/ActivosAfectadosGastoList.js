@@ -52,7 +52,8 @@ Ext.define('HreRem.view.gastos.ActivosAfectadosGastoList', {
 			dock: 'top',
 			items: [
 					{itemId: 'addButton', iconCls:'x-fa fa-plus', handler: 'onAddClick', bind: {hidden: '{ocultarBotonesActivos}'}, scope: this},
-					{itemId: 'removeButton', iconCls:'x-fa fa-minus', handler: 'onDeleteClick', bind: {hidden: '{ocultarBotonesActivos}'}, disabled: true, scope: this}
+					{itemId: 'removeButton', iconCls:'x-fa fa-minus', handler: 'onDeleteClick', bind: {hidden: '{ocultarBotonesActivos}'}, disabled: true, scope: this},
+					{itemId: 'downloadButton', iconCls:'x-fa fa-download', handler: 'onExportClickActivos'}
 			]
 		};			
 					

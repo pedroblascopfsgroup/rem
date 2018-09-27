@@ -12,6 +12,7 @@ public interface GestorEntidadDao extends AbstractDao<GestorEntidad, Long> {
 	List<EXTDDTipoGestor> getListTipoGestorEditables(Long idTipoGestor);
 	
 	List<Usuario> getListUsuariosGestoresExpedientePorTipo(Long idTipoGestor);
+	
 
 	String getCodigoGestorPorUsuario(Long idUsuario);
 

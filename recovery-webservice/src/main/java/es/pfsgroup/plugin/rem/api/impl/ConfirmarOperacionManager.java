@@ -108,6 +108,7 @@ public class ConfirmarOperacionManager extends BusinessOperationOverrider<Confir
 				ReservaDto reservaDto = new ReservaDto();
 				reservaDto.setAccion(confirmacionOpDto.getAccion());
 				reservaDto.setActivo(confirmacionOpDto.getActivo());
+				reservaDto.setOfertaHRE(confirmacionOpDto.getOfertaHRE());
 				errorList = reservaApi.validateReservaPostRequestData(reservaDto, jsonFields);
 				hashErrores.putAll(errorList);
 
@@ -608,18 +609,22 @@ public class ConfirmarOperacionManager extends BusinessOperationOverrider<Confir
 			throw new Exception("No existe el activo");
 		}
 
-		// HREOS-1704: Para la ANULACION_DEVOLUCION_RESERVA hay que buscar la
-		// última oferta rechazada.
-		DtoOfertasFilter dtoOfertasFilter = new DtoOfertasFilter();
-		dtoOfertasFilter.setIdActivo(activo.getId());
-		dtoOfertasFilter.setEstadoOferta(DDEstadoOferta.CODIGO_RECHAZADA);
-
-		List<VOfertasActivosAgrupacion> listaOfer = (List<VOfertasActivosAgrupacion>) ofertaApi
-				.getListOfertasFromView(dtoOfertasFilter);
-		if (!Checks.esNulo(listaOfer) && listaOfer.size() > 0) {
-			Long idOferta = Long.valueOf(listaOfer.get(0).getIdOferta());
-			if (!Checks.esNulo(idOferta)) {
-				oferta = ofertaApi.getOfertaById(idOferta);
+		if (!Checks.esNulo(confirmacionOpDto.getOfertaHRE())){
+			oferta = ofertaApi.getOfertaByNumOfertaRem(confirmacionOpDto.getOfertaHRE());
+		} else {
+			// HREOS-1704: Para la ANULACION_DEVOLUCION_RESERVA hay que buscar la
+			// última oferta rechazada.
+			DtoOfertasFilter dtoOfertasFilter = new DtoOfertasFilter();
+			dtoOfertasFilter.setIdActivo(activo.getId());
+			dtoOfertasFilter.setEstadoOferta(DDEstadoOferta.CODIGO_RECHAZADA);
+			
+			List<VOfertasActivosAgrupacion> listaOfer = (List<VOfertasActivosAgrupacion>) ofertaApi
+					.getListOfertasFromView(dtoOfertasFilter);
+			if (!Checks.esNulo(listaOfer) && listaOfer.size() > 0) {
+				Long idOferta = Long.valueOf(listaOfer.get(0).getIdOferta());
+				if (!Checks.esNulo(idOferta)) {
+					oferta = ofertaApi.getOfertaById(idOferta);
+				}
 			}
 		}
 		if (Checks.esNulo(oferta)) {

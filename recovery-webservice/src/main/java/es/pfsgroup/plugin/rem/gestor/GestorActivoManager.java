@@ -198,6 +198,16 @@ public class GestorActivoManager extends GestorEntidadManager implements GestorA
 		}
 	}
 	
+	public Usuario getDirectorEquipoByGestor(Usuario gestor){
+		Usuario directorEquipo = ((GestorActivoDao) gestorEntidadDao).getDirectorEquipoByGestor(gestor);
+		
+		if(directorEquipo != null) {
+			return directorEquipo;
+		} else {
+			return null;
+		}
+	}
+	
 	public Usuario getGestorByActivoYTipo(Activo activo, String codigoTipo){
 		Usuario gestor = null;
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", codigoTipo);

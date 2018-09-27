@@ -473,6 +473,10 @@
 				def activoManager = ctx.getBean("activoManager");
             	return activoManager.esLiberBank(idActivo);
 			}
+			def esCajamar = {
+				def activoManager = ctx.getBean("activoManager");
+            	return activoManager.esCajamar(idActivo);
+			}
 			def superaLimiteLiberbank = {
 				def trabajoManager = ctx.getBean("trabajoManager");
             	return trabajoManager.superaLimiteLiberbank(idTramite);

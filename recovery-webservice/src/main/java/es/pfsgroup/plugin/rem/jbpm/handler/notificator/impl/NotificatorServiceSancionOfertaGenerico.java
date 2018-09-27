@@ -128,12 +128,14 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 
 	private void sendNotification(ActivoTramite tramite, boolean permiteRechazar, Activo activo, Oferta oferta, boolean permiteNotificarAprobacion) {
 
+		ArrayList<String> destinatarios = new ArrayList<String>();
+		
 		if (!Checks.esNulo(oferta)) {
 			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(oferta.getId());
 			if (permiteNotificarAprobacion && !Checks.esNulo(expediente)
 					&& DDEstadosExpedienteComercial.APROBADO.equals(expediente.getEstado().getCodigo())) { // APROBACIÓN
 
-				ArrayList<String> destinatarios = getDestinatariosNotificacion(activo, oferta, expediente);
+				destinatarios = getDestinatariosNotificacion(activo, oferta, expediente);
 				
 				if (activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_CAJAMAR)){
 					destinatarios.add(usuarioManager.getByUsername(USUARIO_FICTICIO_OFERTA_CAJAMAR).getEmail());
@@ -161,15 +163,30 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 					logger.warn("No se ha encontrado el prescriptor. No se va a mandar la notificación [oferta.id="
 							+ oferta.getId() + "]");
 					return;
+				}else {
+					destinatarios.add(prescriptor);
 				}
+				
 				String gestorFormalizacion = null;
 				if(ofertaApi.checkReserva(oferta)) {
 					gestorFormalizacion = getGestorFormalizacion(activo,oferta, expediente);
 				}
-				if(Checks.esNulo(gestorFormalizacion))
-					this.enviaNotificacionRechazar(tramite, activo, oferta, prescriptor, gestorComercial);
-				else
-					this.enviaNotificacionRechazar(tramite, activo, oferta, prescriptor, gestorComercial, gestorFormalizacion);
+				
+				if (Checks.esNulo(gestorComercial)) {
+					logger.warn("No se ha encontrado el gestor comercial. No se va a mandar la notificación [oferta.id="
+							+ oferta.getId() + "] a este gestor.");
+				}else {
+					destinatarios.add(gestorComercial);
+				}
+				
+				if (Checks.esNulo(gestorFormalizacion)) {
+					logger.warn("No se ha encontrado el gestor de formalizacion. No se va a mandar la notificación [oferta.id="
+							+ oferta.getId() + "] a este gestor.");
+				}else {
+					destinatarios.add(gestorFormalizacion);
+				}
+				
+				this.enviaNotificacionRechazar(tramite, activo, oferta, destinatarios.toArray(new String[] {}));
 			}
 		}
 	}
@@ -199,6 +216,9 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 			ActivoLoteComercial activoLoteComercial= genericDao.get(ActivoLoteComercial.class,
 					genericDao.createFilter(FilterType.EQUALS, "id", ofertaAceptada.getAgrupacion().getId()));
 			Map<String, String> gestores = getGestores(activo, ofertaAceptada, activoLoteComercial, null, comercial);
+			return gestores.get(comercial);
+		}else if(Checks.esNulo(ofertaAceptada.getAgrupacion()) && GESTOR_COMERCIAL_ACTIVO.equals(comercial)) {
+			Map<String, String> gestores = getGestores(activo, ofertaAceptada, null, null, comercial);
 			return gestores.get(comercial);
 		}
 		return null;
@@ -670,10 +690,11 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 					adjuntos.add(createAdjunto(f1, "contrato_reserva_Tango.docx"));
 				}
 				//ADJUNTOS SI ES GIANTS
-				else if(activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_GIANTS)){
+				//Comentamos esta parte del código hasta que tengamos contrato de reserva de GIANTS
+				/*else if(activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_GIANTS)){
 					f1 = FileItemUtils.fromResource("docs/contrato_reserva_Giants.docx");
 					adjuntos.add(createAdjunto(f1, "contrato_reserva_Giants.docx"));
-				}
+				}*/
 				//ADJUNTOS SI ES LIBERBANK
 				else if(activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_LIBERBANK)) {
 					f1 = FileItemUtils.fromResource("docs/instrucciones_reserva_y_formalizacion_Liberbank.docx");

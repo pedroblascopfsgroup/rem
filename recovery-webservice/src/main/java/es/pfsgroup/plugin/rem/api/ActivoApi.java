@@ -60,6 +60,7 @@ import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
 import es.pfsgroup.plugin.rem.model.VCondicionantesDisponibilidad;
 import es.pfsgroup.plugin.rem.model.VPreciosVigentes;
+import es.pfsgroup.plugin.rem.model.VTasacionCalculoLBK;
 import es.pfsgroup.plugin.rem.model.Visita;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.rest.dto.File;
@@ -1117,6 +1118,10 @@ public interface ActivoApi {
 
 	public boolean esLiberBank(Long idActivo);
 	
+	public boolean esCajamar(Long idActivo);
+	
 	public DtoActivoFichaCabecera getActivosPropagables(Long idActivo);
+	
+	public List<VTasacionCalculoLBK> getVistaTasacion(Long idAgrupacion);
 
 }

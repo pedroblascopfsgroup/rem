@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Guillermo Llidó Parra
---## FECHA_CREACION=20180920
+--## AUTOR=Ivan Castelló Cabrelles
+--## FECHA_CREACION=20180927
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=2.0.18
---## INCIDENCIA_LINK=REMVIP-1542
+--## INCIDENCIA_LINK=REMVIP-2071
 --## PRODUCTO=NO
 --## Finalidad: Permitir la actualización de reservas y ventas vía la llegada de datos externos de Prinex. Una llamada por modificación. Liberbank.
 --## Info: https://link-doc.pfsgroup.es/confluence/display/REOS/SP_EXT_PR_ACT_RES_VENTA
@@ -17,6 +17,7 @@
 --##        0.3 (20180622) - Marco Munoz - Se soluciona log de error de la HLP para tener siempre el mismo formato.
 --##        0.4 (20180724) - Pablo Meseguer - Se deja de utilizar el numero de reserva y se añade tratamiento para los expedientes economicos en "En devolucion"
 --##        0.5 (20180920) - Marco Muñoz - Se ajusta el SP para actuar también sobre agrupaciones de activos en los pasos 2.1 y 2.2.
+--##        1.02 (20180927) - Ivan Castelló - Añadir estado o en Pendiente de devolución.
 --##########################################
 --*/
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
@@ -77,7 +78,7 @@ create or replace PROCEDURE       #ESQUEMA#.SP_EXT_PR_ACT_RES_VENTA (
     V_OBTIENE_RESERVA_2            VARCHAR2(1000 CHAR)  := 'SELECT
                                                             CASE
                                                               WHEN EEC.DD_EEC_CODIGO IS NULL THEN 1
-                                                              WHEN EEC.DD_EEC_CODIGO IN (''06'',''16'') THEN 0
+                                                              WHEN EEC.DD_EEC_CODIGO IN (''06'',''16'',''17'') THEN 0
                                                             ELSE 1
                                                             END AS COD,
                                                             RES.RES_ID,
@@ -300,7 +301,7 @@ create or replace PROCEDURE       #ESQUEMA#.SP_EXT_PR_ACT_RES_VENTA (
     END;
 
 BEGIN
---v1.01
+--v1.02
 
     COD_RETORNO := 0;
     DBMS_OUTPUT.PUT_LINE('[INICIO] Permitir la actualización de reservas y ventas vía la llegada de datos externos de Prinex. Una llamada por modificación.');

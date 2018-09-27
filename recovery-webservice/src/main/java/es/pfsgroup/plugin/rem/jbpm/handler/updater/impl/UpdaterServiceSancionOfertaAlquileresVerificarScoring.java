@@ -116,20 +116,13 @@ public class UpdaterServiceSancionOfertaAlquileresVerificarScoring implements Up
 			}
 			
 			if(MOTIVO_RECHAZO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
-				Filter filtroMotivoRezhazo = null;
 				
-				if(DDMotivoRechazoAlquiler.MOTIVO_RECHAZO_1.equals(valor.getValor())) {
-					filtroMotivoRezhazo = genericDao.createFilter(FilterType.EQUALS, "codigo", DDMotivoRechazoAlquiler.MOTIVO_RECHAZO_1);
-				}else if(DDMotivoRechazoAlquiler.MOTIVO_RECHAZO_2.equals(valor.getValor())) {
-					filtroMotivoRezhazo = genericDao.createFilter(FilterType.EQUALS, "codigo", DDMotivoRechazoAlquiler.MOTIVO_RECHAZO_2);
-				}else if(DDMotivoRechazoAlquiler.MOTIVO_RECHAZO_3.equals(valor.getValor())) {
-					filtroMotivoRezhazo = genericDao.createFilter(FilterType.EQUALS, "codigo", DDMotivoRechazoAlquiler.MOTIVO_RECHAZO_3);
-				}
-				
-				if(!Checks.esNulo(filtroMotivoRezhazo)) {
-					DDMotivoRechazoAlquiler motivoRechazo = genericDao.get(DDMotivoRechazoAlquiler.class, filtroMotivoRezhazo);
+				Filter filtroMotivoRezhazo = genericDao.createFilter(FilterType.EQUALS, "codigo", valor.getValor());;
+				DDMotivoRechazoAlquiler motivoRechazo = genericDao.get(DDMotivoRechazoAlquiler.class, filtroMotivoRezhazo);
+					
+				if (!Checks.esNulo(scoringAlquiler)) {
 					scoringAlquiler.setMotivoRechazo(motivoRechazo.getDescripcion());
-				}
+				}				
 			}
 			
 			if(N_EXPEDIENTE.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {

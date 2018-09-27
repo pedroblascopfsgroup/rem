@@ -496,12 +496,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			seguro.setExpediente(expedienteComercial);
 		}
 		if (!Checks.esNulo(dto.getRevision())) {
-			if(dto.getRevision()) {
-				seguro.setEnRevision(1);
-			}
-			else{
-				seguro.setEnRevision(0);
-			}
+			seguro.setEnRevision(dto.getRevision());
 		}
 		if (!Checks.esNulo(dto.getEstado())) {
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getEstado());
@@ -2102,8 +2097,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				dto.setDocumentoFiador(condiciones.getDocumentoFiador());
 			}
 						
-			if (!Checks.esNulo(condiciones.getImporteAval())) { 
-				dto.setImporteAval(condiciones.getImporteAval());
+			if (!Checks.esNulo(condiciones.getImporteAval())) {
+				Double aux = condiciones.getImporteAval();
+				String importeAval = String.valueOf(aux);
+				dto.setImporteAval(importeAval);
 			}
 						
 			if (!Checks.esNulo(condiciones.getRenunciaTanteo())) { 
@@ -2113,14 +2110,52 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			if (!Checks.esNulo(condiciones.getCarencia())) { 
 				dto.setCarencia(condiciones.getCarencia());
 			}
+			
+			if (!Checks.esNulo(condiciones.getMesesCarencia())) {
+				Integer aux = condiciones.getMesesCarencia();
+				String mesesCarencia = String.valueOf(aux);
+				dto.setMesesCarencia(mesesCarencia);
+			}
+			
+			if(!Checks.esNulo(condiciones.getImporteCarencia())) {
+				Double aux = condiciones.getImporteCarencia();
+				String importeCarencia = String.valueOf(aux);
+				dto.setImporteCarencia(importeCarencia);
+			}
 						
 			if (!Checks.esNulo(condiciones.getBonificacion())) { 
 				dto.setBonificacion(condiciones.getBonificacion());
 			}
+			
+			if (!Checks.esNulo(condiciones.getMesesBonificacion())) {
+				Integer aux = condiciones.getMesesBonificacion();
+				String mesesBonificacion = String.valueOf(aux);
+				dto.setMesesBonificacion(mesesBonificacion);
+			}
+			
+			if(!Checks.esNulo(condiciones.getImporteBonificacion())) {
+				Double aux = condiciones.getImporteBonificacion();
+				String importeBonificaicon =String.valueOf(aux);
+				dto.setImporteBonificacion(importeBonificaicon);
+			}
+			
+			if(!Checks.esNulo(condiciones.getDuracionBonificacion())) {
+				Integer aux = condiciones.getDuracionBonificacion();
+				String duracionBonificacion = String.valueOf(aux);
+				dto.setDuracionBonificacion(duracionBonificacion);
+			}
 						
 			if (!Checks.esNulo(condiciones.getGastosRepercutibles())) { 
 				dto.setGastosRepercutibles(condiciones.getGastosRepercutibles());
-			}						
+			}
+			
+			if(!Checks.esNulo(condiciones.getRepercutiblesComments())) {
+				dto.setRepercutiblesComments(condiciones.getRepercutiblesComments());
+			}
+			
+			if (!Checks.esNulo(condiciones.getEntidadComments())) {
+				dto.setEntidadComments(condiciones.getEntidadComments());
+			}
 		}
 
 		return dto;
@@ -2444,20 +2479,72 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				condiciones.setSujetoTanteoRetracto(dto.getSujetoTramiteTanteo() == true ? 1 : 0);
 			}
 								
-			if (!Checks.esNulo(dto.getImporteAval())) {
-				condiciones.setImporteAval(dto.getImporteAval());
-			}			
+			if (("").equals(dto.getImporteAval())) { //Checks.esNulo considera un string vacio como nulo también....pero un dto puede devolver un string vacio/nulo.
+				condiciones.setImporteAval(null);  //En caso de String vacio QUIERO setear null en ImporteAval...
+			}else if(!Checks.esNulo(dto.getImporteAval())){
+				String aux = dto.getImporteAval();
+				Double importeAval = Double.parseDouble(aux);
+				condiciones.setImporteAval(importeAval);
+			}	
 			
 			if (!Checks.esNulo(dto.getCarencia())) {
 				condiciones.setCarencia(dto.getCarencia());
+			}
+			
+			if (("").equals(dto.getMesesCarencia())){
+				condiciones.setMesesCarencia(null);
+			}else if (!Checks.esNulo(dto.getMesesCarencia())) {
+				String aux = dto.getMesesCarencia();
+				Integer mesesCarencia = Integer.parseInt(aux);
+				condiciones.setMesesCarencia(mesesCarencia);
+			}
+			
+			if (("").equals(dto.getImporteCarencia())){
+				condiciones.setImporteCarencia(null);
+			}else if (!Checks.esNulo(dto.getImporteCarencia())) {
+				String aux = dto.getImporteCarencia();
+				Double importeCarencia = Double.parseDouble(aux);
+				condiciones.setImporteCarencia(importeCarencia);
 			}
 			
 			if (!Checks.esNulo(dto.getGastosRepercutibles())) {
 				condiciones.setGastosRepercutibles(dto.getGastosRepercutibles());
 			}
 			
+			if (!Checks.esNulo(dto.getRepercutiblesComments())) {
+				condiciones.setRepercutiblesComments(dto.getRepercutiblesComments());
+			}
+			
+			if(!Checks.esNulo(dto.getEntidadComments())) {
+				condiciones.setEntidadComments(dto.getEntidadComments());
+			}
+			
 			if (!Checks.esNulo(dto.getBonificacion())) {
 				condiciones.setBonificacion(dto.getBonificacion());
+			}
+			
+			if (("").equals(dto.getMesesBonificacion())){
+				condiciones.setMesesBonificacion(null);
+			}else if (!Checks.esNulo(dto.getMesesBonificacion())) {
+				String aux = dto.getMesesBonificacion();
+				Integer mesesBonificacion = Integer.parseInt(aux);
+				condiciones.setMesesBonificacion(mesesBonificacion);
+			}
+			
+			if (("").equals(dto.getImporteBonificacion())){
+				condiciones.setImporteBonificacion(null);
+			}else if (!Checks.esNulo(dto.getImporteBonificacion())) {
+				String aux = dto.getImporteBonificacion();
+				Double importeBonificacion = Double.parseDouble(aux);
+				condiciones.setImporteBonificacion(importeBonificacion);
+			}
+			
+			if (("").equals(dto.getDuracionBonificacion())){
+				condiciones.setDuracionBonificacion(null);
+			}else if (!Checks.esNulo(dto.getDuracionBonificacion())) {
+				String aux = dto.getDuracionBonificacion();
+				Integer	duracionBonificacion = Integer.parseInt(aux);
+				condiciones.setDuracionBonificacion(duracionBonificacion);
 			}
 			
 			if (!Checks.esNulo(dto.getRenunciaTanteo())) {
@@ -2783,11 +2870,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		if (!Checks.esNulo(seguroRentas)) {
 			seguroRentasDto.setId(seguroRentas.getId());
 			
-			if(!Checks.esNulo(seguroRentas.getEnRevision()) && seguroRentas.getEnRevision()==1) {
-				seguroRentasDto.setRevision(true);
-			}
-			else {
-				seguroRentasDto.setRevision(false);
+			if(!Checks.esNulo(seguroRentas.getEnRevision())) {
+				seguroRentasDto.setRevision(seguroRentas.getEnRevision());
 			}
 			seguroRentasDto.setMotivoRechazo(seguroRentas.getMotivoRechazo());
 			if(!Checks.esNulo(seguroRentas.getResultadoSeguroRentas())) {

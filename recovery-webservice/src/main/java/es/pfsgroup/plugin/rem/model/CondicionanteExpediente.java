@@ -252,13 +252,34 @@ public class CondicionanteExpediente implements Serializable, Auditable {
     private Boolean renunciaTanteo;
     
     @Column(name="ALQ_CARENCIA")
-    private Double carencia;
+    private Boolean carencia;
+    
+    @Column(name="ALQ_CARENCIA_MESES")
+    private Integer mesesCarencia;
+    
+    @Column(name="ALQ_CARENCIA_IMPORTE")
+    private Double importeCarencia;
     
     @Column(name="ALQ_BONIFICACION")
-    private Double bonificacion;
+    private Boolean bonificacion;
+    
+    @Column(name="ALQ_BONIFICACION_MESES")
+    private Integer mesesBonificacion;
+    
+    @Column(name="ALQ_BONIFICACION_IMPORTE")
+    private Double importeBonificacion;
+    
+    @Column(name="ALQ_BONIFICACION_DURACION")
+    private Integer duracionBonificacion;
     
     @Column(name="ALQ_GASTOS_REPERCUTIBLES")
-    private Double gastosRepercutibles;
+    private Boolean gastosRepercutibles;
+    
+    @Column(name="ALQ_REPERCUTIBLES_COMMENTS")
+    private String repercutiblesComments;
+    
+    @Column(name="ALQ_ENTIDAD_COMMENTS")
+    private String entidadComments;
            
     @Version   
 	private Long version;
@@ -769,28 +790,84 @@ public class CondicionanteExpediente implements Serializable, Auditable {
 		this.renunciaTanteo = renunciaTanteo;
 	}
 
-	public Double getCarencia() {
+	public Boolean getCarencia() {
 		return carencia;
 	}
 
-	public void setCarencia(Double carencia) {
+	public void setCarencia(Boolean carencia) {
 		this.carencia = carencia;
 	}
 
-	public Double getBonificacion() {
+	public Boolean getBonificacion() {
 		return bonificacion;
 	}
 
-	public void setBonificacion(Double bonificacion) {
+	public void setBonificacion(Boolean bonificacion) {
 		this.bonificacion = bonificacion;
 	}
 
-	public Double getGastosRepercutibles() {
+	public Boolean getGastosRepercutibles() {
 		return gastosRepercutibles;
 	}
 
-	public void setGastosRepercutibles(Double gastosRepercutibles) {
+	public void setGastosRepercutibles(Boolean gastosRepercutibles) {
 		this.gastosRepercutibles = gastosRepercutibles;
+	}
+
+	public Integer getMesesCarencia() {
+		return mesesCarencia;
+	}
+
+	public void setMesesCarencia(Integer mesesCarencia) {
+		this.mesesCarencia = mesesCarencia;
+	}
+
+	public Double getImporteCarencia() {
+		return importeCarencia;
+	}
+
+	public void setImporteCarencia(Double importeCarencia) {
+		this.importeCarencia = importeCarencia;
+	}
+
+	public Integer getMesesBonificacion() {
+		return mesesBonificacion;
+	}
+
+	public void setMesesBonificacion(Integer mesesBonificacion) {
+		this.mesesBonificacion = mesesBonificacion;
+	}
+
+	public Double getImporteBonificacion() {
+		return importeBonificacion;
+	}
+
+	public void setImporteBonificacion(Double importeBonificacion) {
+		this.importeBonificacion = importeBonificacion;
+	}
+
+	public Integer getDuracionBonificacion() {
+		return duracionBonificacion;
+	}
+
+	public void setDuracionBonificacion(Integer duracionBonificacion) {
+		this.duracionBonificacion = duracionBonificacion;
+	}
+
+	public String getRepercutiblesComments() {
+		return repercutiblesComments;
+	}
+
+	public void setRepercutiblesComments(String repercutiblesComments) {
+		this.repercutiblesComments = repercutiblesComments;
+	}
+
+	public String getEntidadComments() {
+		return entidadComments;
+	}
+
+	public void setEntidadComments(String entidadComments) {
+		this.entidadComments = entidadComments;
 	}
 	  
 }

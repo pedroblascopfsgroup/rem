@@ -2368,14 +2368,11 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	onchkbxEnRevisionChange: function(checkbox, newValue, oldValue, eOpts){
     	var me = this;
     	seguroComentario = me.lookupReference('textareafieldsegurocomentarios');
-    	if(newValue == false){   
-    		seguroComentario.setValue("");
+    	if(newValue == false){
     		seguroComentario.setDisabled(true);
-    		seguroComentario.setReadOnly(true);
         }  
     	else{
     		seguroComentario.setDisabled(false);
-    		seguroComentario.setReadOnly(false);
     	}
 
     	
@@ -2388,14 +2385,10 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
     	//Si el estado es pendiente(01), habilitamos el check de revision 
     	if(newValue === '01'){   
     		enRevision.setReadOnly(false);
-    		seguroComentario.setDisabled(false);
-    		seguroComentario.setReadOnly(false);
 			
         }  
     	else{
     		enRevision.setReadOnly(true);
-    		seguroComentario.setDisabled(true);
-    		seguroComentario.setReadOnly(true);
     	}
  	},
 
@@ -2656,5 +2649,63 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 				}					
 			}			
 		);		
+	},
+	
+    onChangeEntidadBancaria: function(combo, newValue, oldValue, eOpts){
+    	var me = this;
+    	condicionComentario = me.lookupReference('textareafieldcondicioncomentarios');
+    	if(newValue == '19'){
+    		condicionComentario.setDisabled(false);
+    	}else{
+    		condicionComentario.setDisabled(true);
+    	}
+    },
+    
+    onChangeCarencia: function(checkbox, newValue, oldValue, eOpts) {
+		if(!Ext.isEmpty(oldValue)){
+			var me = this,
+			meses = me.lookupReference('mesesCarencia'),
+			importe = me.lookupReference('importeCarencia');
+	
+			if(newValue == true) {
+				meses.setDisabled(false);
+				importe.setDisabled(false);
+			} else {
+				meses.setDisabled(true);
+				importe.setDisabled(true);
+			}
+		}
+	},
+	
+	onChangeBonificacion: function(checkbox, newValue, oldValue, eOpts) {
+		if(!Ext.isEmpty(oldValue)){
+			var me = this,
+			meses = me.lookupReference('mesesBonificacion'),
+			importe = me.lookupReference('importeBonificacion'),
+			duracion = me.lookupReference('duracionBonificacion');
+	
+			if(newValue == true) {
+				meses.setDisabled(false);
+				importe.setDisabled(false);
+				duracion.setDisabled(false);
+			} else {
+				meses.setDisabled(true);
+				importe.setDisabled(true);
+				duracion.setDisabled(true);
+			}
+		}
+	},
+	
+	onChangeRepercutibles: function(checkbox, newValue, oldValue, eOpts){
+		if(!Ext.isEmpty(oldValue)){
+			var me = this,
+			comentarios = me.lookupReference('textareafieldcondicioncomentariosgastos');
+	
+			if(newValue == true) {
+				comentarios.setDisabled(false);
+			} else {
+				comentarios.setDisabled(true);
+			}
+		}
 	}
 });

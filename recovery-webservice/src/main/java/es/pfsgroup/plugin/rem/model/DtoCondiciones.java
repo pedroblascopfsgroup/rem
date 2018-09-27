@@ -80,11 +80,18 @@ public class DtoCondiciones extends WebDto {
 	private String avalista;
 	private String documentoFiador;
 	private String codigoEntidad;
-	private Double importeAval;
+	private String importeAval;
 	private Boolean renunciaTanteo;
-	private Double carencia;
-	private Double bonificacion;
-	private Double gastosRepercutibles;
+	private Boolean carencia;
+	private String mesesCarencia;
+	private String importeCarencia;
+	private Boolean bonificacion;
+	private String mesesBonificacion;
+	private String importeBonificacion;
+	private String duracionBonificacion;
+	private Boolean gastosRepercutibles;
+	private String repercutiblesComments;
+	private String entidadComments;
 
 	//********Datos que vienen del activos (no se editan)********
 	private Date fechaUltimaActualizacion;
@@ -167,11 +174,11 @@ public class DtoCondiciones extends WebDto {
 		this.codigoEntidad = codigoEntidad;
 	}
 
-	public Double getImporteAval() {
+	public String getImporteAval() {
 		return importeAval;
 	}
 
-	public void setImporteAval(Double importeAval) {
+	public void setImporteAval(String importeAval) {
 		this.importeAval = importeAval;
 	}
 
@@ -635,28 +642,84 @@ public class DtoCondiciones extends WebDto {
 		this.renunciaTanteo = renunciaTanteo;
 	}
 
-	public Double getCarencia() {
+	public Boolean getCarencia() {
 		return carencia;
 	}
 
-	public void setCarencia(Double carencia) {
+	public void setCarencia(Boolean carencia) {
 		this.carencia = carencia;
 	}
 
-	public Double getBonificacion() {
+	public Boolean getBonificacion() {
 		return bonificacion;
 	}
 
-	public void setBonificacion(Double bonificacion) {
+	public void setBonificacion(Boolean bonificacion) {
 		this.bonificacion = bonificacion;
 	}
 
-	public Double getGastosRepercutibles() {
+	public Boolean getGastosRepercutibles() {
 		return gastosRepercutibles;
 	}
 
-	public void setGastosRepercutibles(Double gastosRepercutibles) {
+	public void setGastosRepercutibles(Boolean gastosRepercutibles) {
 		this.gastosRepercutibles = gastosRepercutibles;
+	}
+
+	public String getMesesCarencia() {
+		return mesesCarencia;
+	}
+
+	public void setMesesCarencia(String mesesCarencia) {
+		this.mesesCarencia = mesesCarencia;
+	}
+
+	public String getImporteCarencia() {
+		return importeCarencia;
+	}
+
+	public void setImporteCarencia(String importeCarencia) {
+		this.importeCarencia = importeCarencia;
+	}
+
+	public String getMesesBonificacion() {
+		return mesesBonificacion;
+	}
+
+	public void setMesesBonificacion(String mesesBonificacion) {
+		this.mesesBonificacion = mesesBonificacion;
+	}
+
+	public String getImporteBonificacion() {
+		return importeBonificacion;
+	}
+
+	public void setImporteBonificacion(String importeBonificacion) {
+		this.importeBonificacion = importeBonificacion;
+	}
+
+	public String getDuracionBonificacion() {
+		return duracionBonificacion;
+	}
+
+	public void setDuracionBonificacion(String duracionBonificacion) {
+		this.duracionBonificacion = duracionBonificacion;
+	}
+
+	public String getRepercutiblesComments() {
+		return repercutiblesComments;
+	}
+
+	public void setRepercutiblesComments(String repercutiblesComments) {
+		this.repercutiblesComments = repercutiblesComments;
+	}
+
+	public String getEntidadComments() {
+		return entidadComments;
+	}
+
+	public void setEntidadComments(String entidadComments) {
+		this.entidadComments = entidadComments;
 	}    	
-   	
+	
 }

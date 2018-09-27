@@ -522,7 +522,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 					
 								{
 						        	xtype:'fieldset',
-						        	height: 140,
+						        	height: 240,
 						        	margin: '0 10 10 0',
 						        	layout: {
 								        type: 'table',
@@ -537,7 +537,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 												reference: 'mesesDeposito',
 										 		fieldLabel: HreRem.i18n('fieldlabel.meses'),
 										 		bind: '{condiciones.mesesFianza}',
-				                				readOnly: true
+				                				readOnly: false
 							                },
 							                {
 							                	xtype: 'checkboxfieldbase',
@@ -546,7 +546,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 							                	bind: {
 							                		value: '{condiciones.fianzaActualizable}'										             
 							                	},
-							                	readOnly: true
+							                	readOnly: false
 		                					},
 		                					{ 
 												xtype: 'numberfieldbase',
@@ -554,7 +554,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 										 		fieldLabel: HreRem.i18n('fieldlabel.importe'),
 										 		symbol: HreRem.i18n('symbol.euro'),				
 				                				bind: '{condiciones.importeFianza}',
-				                				readOnly: true
+				                				readOnly: false
 				                				
 							                }
 				
@@ -563,7 +563,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 						        
 						        {
 						        	xtype:'fieldset',
-						        	height: 140,
+						        	height: 240,
 						        	margin: '0 10 10 0',
 						        	layout: {
 								        type: 'table',
@@ -601,31 +601,99 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 				            						}
 				            						
 			                					},
-										        {
-			                						xtype: 'numberfieldbase',
-								                	reference: 'carencias',
-								                	fieldLabel:  HreRem.i18n('fieldlabel.carencia'),
-								                	bind: {
-						        						value: '{condiciones.carencia}'
-				            						}
-			                					},
-			                					{		                
-			                						xtype: 'numberfieldbase',
-								                	reference: 'bonificacion',
-								                	fieldLabel:  HreRem.i18n('fieldlabel.bonificacion'),
-								                	bind: {
-						        						value: '{condiciones.bonificacion}'							             
-				            						}
-				            						
-			                					},
-										        {
-			                						xtype: 'numberfieldbase',
+			                					{
+			                						xtype: 'checkboxfieldbase',
 								                	reference: 'gastosRepercutibles',
 								                	fieldLabel:  HreRem.i18n('fieldlabel.gastos.repercutibles'),
 								                	bind: {
 								                		value: '{condiciones.gastosRepercutibles}'
+								                	},
+								                	listeners: {
+								                		change: 'onChangeRepercutibles'
 								                	}
-			                					}
+			                					},
+			                					{		                
+			                						xtype: 'checkboxfieldbase',
+								                	reference: 'bonificacion',
+								                	fieldLabel:  HreRem.i18n('fieldlabel.bonificacion'),
+								                	bind: {
+						        						value: '{condiciones.bonificacion}'							             
+				            						},
+				            						listeners: {
+				            							change: 'onChangeBonificacion'
+				            						}
+				            						
+			                					},
+			                					{
+						                             xtype: 'textareafieldbase',
+						                             fieldLabel: HreRem.i18n('fieldlabel.comentarios'),
+						                             reference: 'textareafieldcondicioncomentariosgastos',
+						     						 bind:{
+						     							 value:  '{condiciones.repercutiblesComments}',
+						     							 disabled: '{!condiciones.esRepercutible}'
+						     						 },	
+						                             maxWidth: 500,
+						                             maxLength: 200
+							                    },
+							                    { 
+													xtype: 'numberfieldbase',
+													reference: 'mesesBonificacion',
+											 		fieldLabel: HreRem.i18n('fieldlabel.meses'),
+											 		bind: {
+											 			value: '{condiciones.mesesBonificacion}',
+											 			disabled: '{!condiciones.siBonificacion}'
+											 		}
+								                },
+										        {
+			                						xtype: 'checkboxfieldbase',
+								                	reference: 'carencias',
+								                	fieldLabel:  HreRem.i18n('fieldlabel.carencia'),
+								                	bind: {
+						        						value: '{condiciones.carencia}'
+				            						},
+				            						listeners: {
+				       	                             change: 'onChangeCarencia'
+
+				       	                         }
+			                					},
+								                { 
+													xtype: 'numberfieldbase',
+													reference: 'importeBonificacion',
+											 		fieldLabel: HreRem.i18n('fieldlabel.importe'),
+											 		symbol: HreRem.i18n('symbol.euro'),				
+					                				bind: {
+					                					value: '{condiciones.importeBonificacion}',
+					                					disabled: '{!condiciones.siBonificacion}'
+					                				}
+								                },
+								                { 
+													xtype: 'numberfieldbase',
+													reference: 'mesesCarencia',
+											 		fieldLabel: HreRem.i18n('fieldlabel.meses'),
+											 		bind: {
+											 			value: '{condiciones.mesesCarencia}',
+											 			disabled: '{!condiciones.siCarencia}'
+											 		}
+								                },
+								                { 
+													xtype: 'numberfieldbase',
+													reference: 'duracionBonificacion',
+											 		fieldLabel: HreRem.i18n('fieldlabel.duracion'),
+											 		bind: {
+											 			value: '{condiciones.duracionBonificacion}',
+											 			disabled: '{!condiciones.siBonificacion}'
+											 		}	
+								                },
+								                { 
+													xtype: 'numberfieldbase',
+													reference: 'importeCarencia',
+											 		fieldLabel: HreRem.i18n('fieldlabel.importe'),
+											 		symbol: HreRem.i18n('symbol.euro'),				
+					                				bind: { 
+					                					value: '{condiciones.importeCarencia}',
+					                					disabled: '{!condiciones.siCarencia}'
+					                				}
+								                }
 			                					
 											]
 						        	}
@@ -640,7 +708,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 													
 								{
 									xtype:'fieldset',
-									height: 140,
+									height: 240,
 						        	margin: '0 10 10 0',
 						        	layout: {
 								        type: 'table',
@@ -656,7 +724,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 							                	bind: {
 													value: '{condiciones.mesesDeposito}'
 												},
-												readOnly: true
+												readOnly: false
 							                },
 											{
 							                	xtype: 'checkboxfieldbase',
@@ -665,7 +733,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 							                	bind: {
 							                		value: '{condiciones.depositoActualizable}'										             
 							                	},
-							                	readOnly: true
+							                	readOnly: false
 		                					},
 		                					{ 
 												xtype: 'numberfieldbase',
@@ -673,7 +741,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 										 		fieldLabel: HreRem.i18n('fieldlabel.importe'),
 				                				bind: '{condiciones.importeDeposito}',
 				                				symbol: HreRem.i18n('symbol.euro'),	
-				                				readOnly: true
+				                				readOnly: false
 				                				
 							                }
 											
@@ -682,7 +750,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 						        
 						        {
 						        	xtype:'fieldset',
-						        	height: 140,
+						        	height: 240,
 						        	margin: '0 10 10 0',
 						        	layout: {
 								        type: 'table',
@@ -698,8 +766,14 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 							                	fieldLabel:  HreRem.i18n('fieldlabel.avalista'),
 							                	bind: {
 													value: '{condiciones.avalista}'
-												},
-												readOnly: true
+												}
+							                },
+									        {	
+							                	xtype: 'textfieldbase',
+							                	fieldLabel:  HreRem.i18n('fieldlabel.documento'),
+							                	bind: {
+													value: '{condiciones.documentoFiador}'
+												}
 							                },
 							                { 
 												xtype: 'comboboxfieldbase',
@@ -710,17 +784,13 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 								            	},
 								            	displayField: 'descripcion',
 					    						valueField: 'codigo',
-					    						reference: 'entidadBancariaFiador'
+					    						reference: 'entidadBancariaFiador',
+					    						listeners: {
+						                             change: 'onChangeEntidadBancaria'
+
+						                         }
 					    						
 									        },
-									        {	
-							                	xtype: 'textfieldbase',
-							                	fieldLabel:  HreRem.i18n('fieldlabel.documento'),
-							                	bind: {
-													value: '{condiciones.documentoFiador}'
-												},
-												readOnly: true
-							                },
 											{ 
 												xtype: 'numberfieldbase',
 												reference: 'importeDeposito',
@@ -729,7 +799,18 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 				                				symbol: HreRem.i18n('symbol.euro'),	
 				                				readOnly: false
 				                				
-							                } 	
+							                },
+							                {
+					                             xtype: 'textareafieldbase',
+					                             fieldLabel: HreRem.i18n('fieldlabel.comentarios'),
+					                             reference: 'textareafieldcondicioncomentarios',
+					     						 bind:{
+					     							 value:  '{condiciones.entidadComments}',
+					     							 disabled: '{!condiciones.esOtros}'
+					     						 },	
+					                             maxWidth: 500,
+					                             maxLength: 200
+						                    }
 										]
 						        	}
 						        ]

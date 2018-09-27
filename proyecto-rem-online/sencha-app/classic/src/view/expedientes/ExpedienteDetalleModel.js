@@ -279,7 +279,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	     enRevision: function(get) {
 		     	
 		     	var revision = get('segurorentasexpediente.revision');
-		     	return revision;
+		     	return revision == 'true';
 		     	
 		 },
 		 esOfertaAlquiler: function(get) {

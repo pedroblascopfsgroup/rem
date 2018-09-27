@@ -247,7 +247,58 @@ Ext.define('HreRem.model.CondicionesExpediente', {
 	    },
 	    {
 	    	name: 'gastosRepercutibles'
-	    }
+	    },
+	    {
+	    	name: 'mesesCarencia'
+	    },
+	    {
+	    	name: 'importeCarencia'
+	    },
+	    {
+	    	name: 'mesesBonificacion'
+	    },
+	    {
+	    	name: 'importeBonificacion'
+	    },
+	    {
+	    	name: 'duracionBonificacion'
+	    },
+	    {
+	    	name: 'repercutiblesComments'
+	    },
+	    {
+	    	name: 'entidadComments'
+	    },
+	    {
+			name: 'siCarencia',
+			calculate: function(data) { 
+				return data.carencia == 'true';
+			},
+			depends: 'carencia'
+			
+		},
+		{
+			name: 'siBonificacion',
+			calculate: function(data) { 
+				return data.bonificacion == 'true';
+			},
+			depends: 'bonificacion'
+			
+		},
+		{
+			name: 'esOtros',
+			calculate: function(data) {
+				return data.codigoEntidad == '19'
+			},
+			depends: 'codigoEntidad'
+		},
+		{
+			name: 'esRepercutible',
+			calculate: function(data) {
+				return data.gastosRepercutibles == 'true';
+			},
+			depends: 'gastosRepercutibles'
+		}
 	    
     ],
     

@@ -57,6 +57,13 @@ Ext.define('HreRem.model.SeguroRentasExpediente', {
     		},
     		{
     			name:'comentarios'
+    		},
+    		{
+    			name: 'enRevision',
+    			calculate: function(data) {
+    				return data.revision == 'true'
+    			},
+    			depends: 'revision'
     		}
     ],
     

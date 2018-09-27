@@ -54,7 +54,7 @@ public class SeguroRentasAlquiler implements Serializable, Auditable {
     private String motivoRechazo;	
 	
 	@Column(name = "SRE_EN_REVISION")
-	private Integer enRevision;
+	private Boolean enRevision;
 
 	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_REC_ID")
@@ -96,11 +96,11 @@ public class SeguroRentasAlquiler implements Serializable, Auditable {
 		this.motivoRechazo = motivoRechazo;
 	}
 
-	public Integer getEnRevision() {
+	public Boolean getEnRevision() {
 		return enRevision;
 	}
 
-	public void setEnRevision(Integer enRevision) {
+	public void setEnRevision(Boolean enRevision) {
 		this.enRevision = enRevision;
 	}
 

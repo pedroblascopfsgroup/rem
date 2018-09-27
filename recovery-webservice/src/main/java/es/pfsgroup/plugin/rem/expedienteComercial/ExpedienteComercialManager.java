@@ -60,6 +60,7 @@ import es.pfsgroup.framework.paradise.gestorEntidad.model.GestorEntidadHistorico
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
+import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.recovery.agendaMultifuncion.impl.dto.DtoAdjuntoMail;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoTramiteDao;
@@ -73,8 +74,10 @@ import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.GestorExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.TareaActivoApi;
+import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
 import es.pfsgroup.plugin.rem.expedienteComercial.dao.ExpedienteComercialDao;
+import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionService;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjuntoActivo;
@@ -291,10 +294,15 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	@Autowired
 	private ActivoApi activoApi;
 	
-    
     @Autowired
     private TareaActivoApi tareaActivoApi;
+    
+    @Autowired
+    private GestorDocumentalAdapterApi gestorDocumentalAdapterApi;
 
+    @Autowired
+	private TrabajoApi trabajoApi;
+    
 	@Override
 	public String managerName() {
 		return "expedienteComercialManager";
@@ -1839,7 +1847,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				}
 			}
 
-			if (!Checks.esNulo(adjuntoActivo)) {
+			if (!Checks.esNulo(adjuntoActivo) && !Checks.esNulo(adjuntoActivo.getIdDocRestClient())) {
 				adjuntoExpediente.setIdDocRestClient(adjuntoActivo.getIdDocRestClient());
 				genericDao.update(AdjuntoExpedienteComercial.class, adjuntoExpediente);
 			}
@@ -7142,12 +7150,12 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				ArrayList<String> mailsParaEnviarAsegurador = this.obtenerEmailsEnviarGestionLlaves(expediente);
 				String asunto = null;
 				if(envio == 0)
-					asunto = "Firma contrato alquiler";
+					asunto = "Fecha firma contrato alquiler";
 				else if(envio == 1)
 					asunto = "Modificación fecha firma contrato alquiler";
 				String cuerpo = "Comunicamos que se ha posicionado para el día " + fechaFirmaContrato
 						+ ", la firma del contrato de arrendamiento del inmueble " + activo.getNumActivo()
-						+ ", siendo el " + String.format("Api gestor de la firma  %s", (activo.getInfoComercial() != null) ? activo.getInfoComercial().getMediadorInforme() : STR_MISSING_VALUE )
+						+ ", siendo el " + String.format("Api gestor de la firma  %s", (activo.getInfoComercial() != null) ? activo.getInfoComercial().getMediadorInforme().getNombre() : STR_MISSING_VALUE )
 						+ "<br><br> Rogamos se gestione el envío de llaves para dicha operación.";
 			
 				genericAdapter.sendMail(mailsParaEnviarAsegurador, new ArrayList<String>(), asunto, cuerpo);
@@ -7325,7 +7333,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		try {
 			ArrayList<String> mailsParaEnviar = this.obtenerEmailsParaEnviarSubidaDeContrato(expediente);	
 			String asunto = "Documentación disponible para la firma contrato alquiler";
-			String cuerpo = "CSe ha subido al gestor documental de HAYA copia del contrato de arrendamiento suscrito del inmueble "
+			String cuerpo = "Se ha subido al gestor documental de HAYA copia del contrato de arrendamiento suscrito del inmueble "
 					+ activo.getNumActivo() + " para su descarga, firma y posterior incorporación de nuevo al gestor documental de REM.";
 			
 			genericAdapter.sendMail(mailsParaEnviar, new ArrayList<String>(),asunto,cuerpo);
@@ -7362,5 +7370,32 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 		
 		return mailsParaEnviarSubidaDeContrato;
+	}
+
+	@Override
+	public boolean checkPrecontratoSubido(TareaExterna tareaExterna) {
+		
+		ExpedienteComercial expedienteComercial = tareaExternaToExpedienteComercial(tareaExterna);
+		try {
+			List<DtoAdjunto> adjuntosExpediente = gestorDocumentalAdapterApi.getAdjuntosExpedienteComercial(expedienteComercial);
+			for (DtoAdjunto adjunto : adjuntosExpediente) {
+				if(DDSubtipoDocumentoExpediente.MATRICULA_PRE_CONTRATO.equals(adjunto.getMatricula())) {
+					return true;
+				}
+			}
+		} catch (GestorDocumentalException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+	
+	@Override
+	public ExpedienteComercial tareaExternaToExpedienteComercial(TareaExterna tareaExterna) {
+		ExpedienteComercial expedienteComercial = null;
+		Trabajo trabajo = trabajoApi.tareaExternaToTrabajo(tareaExterna);
+		if (!Checks.esNulo(trabajo)) {
+			expedienteComercial = this.findOneByTrabajo(trabajo);
+		}
+		return expedienteComercial;
 	}
 }

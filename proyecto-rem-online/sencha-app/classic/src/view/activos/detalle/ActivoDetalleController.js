@@ -3423,6 +3423,12 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			scope.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
 		}
 
+	},
+	
+	onActivateTabPatrimonioActivo : function(tab, eOpts){
+		var me = this;
+		
+		me.getViewModel().get('enableCheckRentaAntigua');
 	}
     
 });

@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=JOSE LUIS BARBA RIBERA
---## FECHA_CREACION=20180913
+--## FECHA_CREACION=20180926
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-4484
@@ -35,11 +35,11 @@ DECLARE
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
     	--			        		TRF_LLAVES_HRE		DD_TPR_CODIGO		TRF_PRC_COLAB		TRF_PRC_PRESC
-        T_TIPO_DATA(					'1',				'04',				'0',			    '120,00'),
-        T_TIPO_DATA(					'0',				'04',				'48,00',			'100,00'),
-        T_TIPO_DATA(					'0',				'28',				'48,00',			 '0,00'),
-        T_TIPO_DATA(					'0',				'29',				'48,00',			 '0,00'),
-        T_TIPO_DATA(					'0',				'18',				'48,00',			 '0,00')
+        T_TIPO_DATA(					'1',				'04',				'0',			    '120'),
+        T_TIPO_DATA(					'0',				'04',				'48',			'100'),
+        T_TIPO_DATA(					'0',				'28',				'48',			 '0'),
+        T_TIPO_DATA(					'0',				'29',				'48',			 '0'),
+        T_TIPO_DATA(					'0',				'18',				'48',			 '0')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
 
@@ -53,16 +53,28 @@ BEGIN
       LOOP
 
         V_TMP_TIPO_DATA := V_TIPO_DATA(I);
-
-       	-- Insertar datos.
+            --Comprobamos el dato a insertar
+        V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TEXT_TABLA||'
+					WHERE TRF_LLAVES_HRE = '''||TRIM(V_TMP_TIPO_DATA(1))||''' '||	
+					' AND DD_TPR_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(2))||''' ';
+	DBMS_OUTPUT.PUT_LINE(V_SQL);
+        EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+        
+        --Si existe no hacemos nada
+        IF V_NUM_TABLAS = 0 THEN
+        
+        -- Insertar datos.
           DBMS_OUTPUT.PUT_LINE('[INFO]: INSERTAR NUEVO REGISTRO');   
           V_MSQL := 'SELECT '||V_ESQUEMA||'.S_'||V_TEXT_TABLA||'.NEXTVAL FROM DUAL';
           EXECUTE IMMEDIATE V_MSQL INTO V_ID;	
           V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.'||V_TEXT_TABLA||' (' ||
-                      'TRF_ID, TRF_LLAVES_HRE, DD_TPR_CODIGO, TRF_PRC_COLAB, TRF_PRC_PRESC) ' ||
-                      'SELECT '|| V_ID || ','''||TRIM(V_TMP_TIPO_DATA(1))||''','''||TRIM(V_TMP_TIPO_DATA(2))||''','''||TRIM(V_TMP_TIPO_DATA(3))||''','''||TRIM(V_TMP_TIPO_DATA(4))||''' FROM DUAL';
+                      'TRF_ID, TRF_LLAVES_HRE, DD_TPR_CODIGO, TRF_PRC_COLAB, TRF_PRC_PRESC, VERSION, USUARIOCREAR, FECHACREAR, BORRADO) ' ||
+                      'SELECT '|| V_ID || ','''||TRIM(V_TMP_TIPO_DATA(1))||''','''||TRIM(V_TMP_TIPO_DATA(2))||''','''||TRIM(V_TMP_TIPO_DATA(3))||''','''||TRIM(V_TMP_TIPO_DATA(4))||''', 0, ''HREOS-4484'', SYSDATE, 0 FROM DUAL';
           EXECUTE IMMEDIATE V_MSQL;
-          DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO INSERTADO CORRECTAMENTE');
+          DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO INSERTADO CORRECTAMENTE');  
+		END IF;
+        
+       	
 
       END LOOP;
     COMMIT;

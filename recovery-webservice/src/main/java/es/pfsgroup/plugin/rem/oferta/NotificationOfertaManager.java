@@ -36,6 +36,7 @@ import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.utils.FileItemUtils;
 
@@ -97,8 +98,13 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 		}
 
 		if (activo != null && (usuario != null || supervisor != null)) {
-
-			String titulo = "Solicitud de oferta para compra del inmueble con referencia: " + activo.getNumActivo();
+			
+			String titulo;
+			if (DDTipoOferta.CODIGO_VENTA.equals(oferta.getTipoOferta().getCodigo())) {
+				titulo = "Solicitud de oferta para compra del inmueble con referencia: " + activo.getNumActivo();
+			} else {
+				titulo = "Solicitud de oferta para alquiler del inmueble con referencia: " + activo.getNumActivo();
+			}
 			String tipoDocIndentificacion= "";
 			String docIdentificacion="";
 			String codigoPrescriptor="";

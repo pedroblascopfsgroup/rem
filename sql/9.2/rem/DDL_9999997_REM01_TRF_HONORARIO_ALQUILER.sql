@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Jose Luis Barba Ribera
---## FECHA_CREACION=20180917
+--## FECHA_CREACION=20180926
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-4484
@@ -43,10 +43,18 @@ BEGIN
 		V_MSQL := 'CREATE TABLE ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'
 		(
 			TRF_ID           		NUMBER(16, 0) NOT NULL,
-			TRF_LLAVES_HRE        	NUMBER(1,0),
+			TRF_LLAVES_HRE        		NUMBER(1,0),
 			DD_TPR_CODIGO			VARCHAR2(20 CHAR),
 			TRF_PRC_COLAB			NUMBER(5,2),
-			TRF_PRC_PRESC			NUMBER(5,2)
+			TRF_PRC_PRESC			NUMBER(5,2),
+			VERSION 			NUMBER(38,0) 		   DEFAULT 0 NOT NULL ENABLE, 
+			USUARIOCREAR 			VARCHAR2(50 CHAR) 	   NOT NULL ENABLE, 
+			FECHACREAR 			TIMESTAMP (6) 		   NOT NULL ENABLE, 
+			USUARIOMODIFICAR 		VARCHAR2(50 CHAR), 
+			FECHAMODIFICAR 			TIMESTAMP (6), 
+			USUARIOBORRAR 			VARCHAR2(50 CHAR), 
+			FECHABORRAR 			TIMESTAMP (6), 
+			BORRADO 			NUMBER(1,0) 		   DEFAULT 0 NOT NULL ENABLE
 		)';
 		EXECUTE IMMEDIATE V_MSQL;
 		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'... Tabla creada.');
@@ -70,26 +78,20 @@ BEGIN
 
 		
 		-- Creamos el comentario de las columnas
-		V_MSQL := 'COMMENT ON TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' IS ''Tabla de honorarios para expedientes de tipo alquiler.''';
-		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la tabla creado.');		
-
-		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.TRF_LLAVES_HRE IS ''Código es custodio de llaves o no''';
-		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna TRF_LLAVES_HRE creado.');
-
-		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.DD_TPR_CODIGO IS ''Código tipo de proveedor''';
-		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna DD_TPR_CODIGO creado.');	
-
-		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.TRF_PRC_COLAB IS ''Código identificador colaboracion''';
-		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna TRF_PRC_COLAB creado.');
-
-		V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.TRF_PRC_PRESC IS ''Código identificador prescripcion''';
-		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] Comentario de la columna TRF_PRC_PRESC creado.');	
-
+		DBMS_OUTPUT.PUT_LINE('[INFO] Inicio añadir Comentarios de la columna COMMENTS.');
+		EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.TRF_LLAVES_HRE IS ''Código es custodio de llaves o no''';
+		EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.DD_TPR_CODIGO IS ''Código tipo de proveedor''';
+		EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.TRF_PRC_COLAB IS ''Código identificador colaboración''';
+		EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.TRF_PRC_PRESC IS ''Código identificador prescripción''';
+		EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.VERSION IS ''Indica la version del registro.''';
+   		EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.USUARIOCREAR IS ''Indica el usuario que creo el registro.''';
+   		EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.FECHACREAR IS ''Indica la fecha en la que se creo el registro.''';
+   		EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.USUARIOMODIFICAR IS ''Indica el usuario que modificó el registro.''';
+   		EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.FECHAMODIFICAR IS ''Indica la fecha en la que se modificó el registro.''';
+   		EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.USUARIOBORRAR IS ''Indica el usuario que borró el registro.''';
+   		EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.FECHABORRAR IS ''Indica la fecha en la que se borró el registro.''';
+   		EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.BORRADO IS ''Indicador de borrado.''';
+		DBMS_OUTPUT.PUT_LINE('[INFO] Fin añadir Comentarios de la columna COMMENTS.');
 		COMMIT;
 	END IF;
 

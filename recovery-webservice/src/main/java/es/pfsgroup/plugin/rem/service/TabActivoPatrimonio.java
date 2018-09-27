@@ -66,6 +66,9 @@ public class TabActivoPatrimonio implements TabActivoService {
 			if(!Checks.esNulo(activoP.getCheckHPM())) {
 				activoPatrimonioDto.setChkPerimetroAlquiler(activoP.getCheckHPM());
 			}
+			if(!Checks.esNulo(activoP.getCheckRentaAntigua())){
+				activoPatrimonioDto.setChkRentaAntigua(activoP.getCheckRentaAntigua());
+			}
 			if(!Checks.esNulo(activoP.getAdecuacionAlquiler())) {
 				activoPatrimonioDto.setCodigoAdecuacion(activoP.getAdecuacionAlquiler().getCodigo());
 				activoPatrimonioDto.setDescripcionAdecuacion(activoP.getAdecuacionAlquiler().getDescripcion());
@@ -91,6 +94,7 @@ public class TabActivoPatrimonio implements TabActivoService {
 			activoPatrimonio = new ActivoPatrimonio();
 			activoPatrimonio.setActivo(activo);
 			activoPatrimonio.setCheckHPM(activoPatrimonioDto.getChkPerimetroAlquiler());
+			activoPatrimonio.setCheckRentaAntigua(activoPatrimonioDto.getChkRentaAntigua());
 			if(!Checks.esNulo(activoPatrimonioDto.getCodigoAdecuacion())) {
 				if(!DDAdecuacionAlquiler.CODIGO_ADA_NULO.equals(activoPatrimonioDto.getCodigoAdecuacion())) {
 					DDAdecuacionAlquiler adecuacionAlquiler = genericDao.get(DDAdecuacionAlquiler.class, genericDao.createFilter(FilterType.EQUALS, "codigo",activoPatrimonioDto.getCodigoAdecuacion()));
@@ -127,9 +131,15 @@ public class TabActivoPatrimonio implements TabActivoService {
 			activoHistPatrimonio.setFechaFinHPM(new Date());
 			activoHistPatrimonio.setActivo(activo);
 			activoHistPatrimonio.setCheckHPM(activoPatrimonio.getCheckHPM());
+			activoHistPatrimonio.setCheckRentaAntigua(activoPatrimonio.getCheckRentaAntigua());
+			
 			
 			if(!Checks.esNulo(activoPatrimonioDto.getChkPerimetroAlquiler())) {
 				activoPatrimonio.setCheckHPM(activoPatrimonioDto.getChkPerimetroAlquiler());
+			}
+			
+			if (!Checks.esNulo(activoPatrimonioDto.getChkRentaAntigua())){
+				activoPatrimonio.setCheckRentaAntigua(activoPatrimonioDto.getChkRentaAntigua());
 			}
 			
 			activoHistoricoPatrimonioDao.save(activoHistPatrimonio);

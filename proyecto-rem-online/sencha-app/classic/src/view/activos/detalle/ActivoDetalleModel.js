@@ -295,6 +295,16 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			}
 		 },
 		 
+		 enableCheckRentaAntigua: function(get){
+			var chkPerimetroAlquiler = get('patrimonio.chkPerimetroAlquiler');
+			var situacionActivo = get('activo.situacionComercialCodigo');
+			if((chkPerimetroAlquiler == true || chkPerimetroAlquiler == "true" ) && CONST.SITUACION_COMERCIAL['ALQUILADO'] == situacionActivo){
+				return false;
+			}else{
+				return true;
+			}
+		 },
+		 
 		 esEditableCodigoPromocion: function(get){
 			 var isGestorActivos = $AU.userIsRol('HAYAGESACT') || $AU.userIsRol('HAYAGESTADM');
 			 var isLiberbank = get('activo.isCarteraLiberbank');

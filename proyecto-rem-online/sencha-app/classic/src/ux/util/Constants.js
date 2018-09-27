@@ -303,7 +303,8 @@ Ext.define('HreRem.ux.util.Constants', {
     	TRASPASADO: '06',
     	DISPONIBLE_ALQUILER: '07',
     	DISPONIBLE_VENTA_ALQUILER: '08',
-    	DISPONIBLE_CONDICIONADO: '09'
+    	DISPONIBLE_CONDICIONADO: '09',
+    	ALQUILADO: '10'
     },
 
     ACCION_GASTOS: {

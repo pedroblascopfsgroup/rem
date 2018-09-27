@@ -493,6 +493,10 @@
 				def ofertaManager = ctx.getBean("ofertaManager");
 				return ofertaManager.checkProvinciaCompradores(tareaExterna);
 			}
+			def checkPrecontratoSubido = {
+				def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
+            	return expedienteComercialManager.checkPrecontratoSubido(tareaExterna);
+			}
   			 ]]></value>
   		</list>
   	</property>

@@ -517,9 +517,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		if (!Checks.esNulo(dto.getAseguradoras())) {
 			seguro.setAseguradoras(dto.getAseguradoras());
 		}
-
+		if (!Checks.esNulo(dto.getComentarios())){
 		seguro.setComentarios(dto.getComentarios());
-		
+		}
 		if (!Checks.esNulo(seguro.getId())) {
 			try {
 				genericDao.update(SeguroRentasAlquiler.class, seguro);

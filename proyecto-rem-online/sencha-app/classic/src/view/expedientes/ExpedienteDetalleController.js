@@ -2384,11 +2384,12 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
     	seguroComentario = me.lookupReference('textareafieldsegurocomentarios');
     	//Si el estado es pendiente(01), habilitamos el check de revision 
     	if(newValue === '01'){   
-    		enRevision.setReadOnly(false);
-			
+    		enRevision.setDisabled(false);
+			enRevision.setReadOnly(false);
         }  
     	else{
-    		enRevision.setReadOnly(true);
+    		enRevision.setDisabled(true);
+    		seguroComentario.setDisabled(true);
     	}
  	},
 

@@ -4,18 +4,19 @@ import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
-import org.apache.commons.beanutils.PropertyUtils;
+
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -32,9 +33,10 @@ import es.capgemini.devon.message.MessageService;
 //import es.capgemini.devon.utils.PropertyUtils;
 import es.capgemini.pfs.adjunto.model.Adjunto;
 import es.capgemini.pfs.auditoria.model.Auditoria;
-import es.capgemini.pfs.persona.model.DDPropietario;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.HQLBuilder;
+import es.pfsgroup.commons.utils.HibernateQueryUtils;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
@@ -88,16 +90,20 @@ import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.GastoProveedorActivo;
 import es.pfsgroup.plugin.rem.model.GastoProveedorTrabajo;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.ProvisionGastos;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.VBusquedaGastoActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaGastoTrabajos;
+import es.pfsgroup.plugin.rem.model.VGastosProveedor;
+import es.pfsgroup.plugin.rem.model.VGastosProvision;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDDestinatarioGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDDestinatarioPago;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoAutorizacionHaya;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoAutorizacionPropietario;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoGasto;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoProvisionGastos;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAutorizacionPropietario;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoAutorizacionHaya;
@@ -112,6 +118,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoPagador;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPeriocidad;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloPosesorio;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposImpuesto;
+import es.pfsgroup.plugin.rem.provisiongastos.dao.ProvisionGastosDao;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateGastoApi;
 
 @Service("gastoProveedorManager")
@@ -174,6 +181,9 @@ public class GastoProveedorManager implements GastoProveedorApi {
 
 	@Resource
 	private MessageService messageServices;
+	
+	@Autowired
+	private ProvisionGastosDao provisionGastosDao;
 
 	@Override
 	public GastoProveedor findOne(Long id) {
@@ -2474,7 +2484,145 @@ public class GastoProveedorManager implements GastoProveedorApi {
 
 		return true;
 	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public boolean autorizarGastosContabilidad(Long[] idsGastos, String fechaConta, String fechaPago, Boolean individual) {
 
+		for (Long id : idsGastos) {
+
+			autorizarGastoContabilidad(id, fechaConta, fechaPago, individual);
+		}
+
+		return true;
+	}
+
+	@Override
+	@Transactional(readOnly = false)
+	public boolean autorizarGastoContabilidad(Long idGasto, String fechaConta, String fechaPago, Boolean individual) {
+		
+		SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+		
+		Date miFechaConta = null;
+		
+		Date miFechaPago = null;
+		
+		if(!Checks.esNulo(fechaConta) && !("").equals(fechaConta)){
+			try {
+				miFechaConta = formatter.parse(fechaConta);
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		if(!Checks.esNulo(fechaPago) && !("").equals(fechaPago)){
+			try {
+				miFechaPago = formatter.parse(fechaPago);
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		GastoProveedor gasto = findOne(idGasto);
+		
+		if(!Checks.esNulo(gasto.getProvision()) && individual){
+			throw new JsonViewerException("El gasto " + gasto.getNumGastoHaya() + " no se puede autorizar individualmente: pertenece a una agrupación.");
+		}else{
+		DDEstadoAutorizacionPropietario estadoAutorizacionPropietario= (DDEstadoAutorizacionPropietario) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoAutorizacionPropietario.class,
+				DDEstadoAutorizacionPropietario.CODIGO_AUTORIZADO_POR_CONTABILIDAD);
+
+		GastoGestion gastoGestion = gasto.getGastoGestion();
+		
+		if(!Checks.esNulo(miFechaConta) && !Checks.esNulo(miFechaPago)){
+			GastoInfoContabilidad gastoInfoContabilidad = gasto.getGastoInfoContabilidad();
+			GastoDetalleEconomico gastoDetalleEconomico = gasto.getGastoDetalleEconomico();
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoGasto.PAGADO);
+			DDEstadoGasto pagado = genericDao.get(DDEstadoGasto.class, filtro);
+			
+			if(DDEstadoGasto.AUTORIZADO_ADMINISTRACION.equals(gasto.getEstadoGasto().getCodigo())){
+				gastoInfoContabilidad.setFechaContabilizacion(miFechaConta);
+				gastoDetalleEconomico.setFechaPago(miFechaPago);
+				gasto.setGastoDetalleEconomico(gastoDetalleEconomico);
+				gasto.setGastoInfoContabilidad(gastoInfoContabilidad);
+				gasto.setEstadoGasto(pagado);
+			}else if(DDEstadoGasto.SUBSANADO.equals(gasto.getEstadoGasto().getCodigo())){
+				gastoInfoContabilidad.setFechaContabilizacion(miFechaConta);
+				gastoDetalleEconomico.setFechaPago(miFechaPago);
+				gasto.setGastoDetalleEconomico(gastoDetalleEconomico);
+				gasto.setGastoInfoContabilidad(gastoInfoContabilidad);
+				gasto.setEstadoGasto(pagado);
+			}else if(DDEstadoGasto.CONTABILIZADO.equals(gasto.getEstadoGasto().getCodigo())){
+				gastoDetalleEconomico.setFechaPago(miFechaPago);
+				gasto.setGastoDetalleEconomico(gastoDetalleEconomico);
+				gasto.setEstadoGasto(pagado);
+			}
+		}else if(!Checks.esNulo(miFechaConta) && Checks.esNulo(miFechaPago)){
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoGasto.CONTABILIZADO);
+			DDEstadoGasto contabilizado = genericDao.get(DDEstadoGasto.class, filtro);
+			
+			if(DDEstadoGasto.AUTORIZADO_ADMINISTRACION.equals(gasto.getEstadoGasto().getCodigo())){
+				GastoInfoContabilidad gastoInfoContabilidad = gasto.getGastoInfoContabilidad();
+				gastoInfoContabilidad.setFechaContabilizacion(miFechaConta);
+				gasto.setGastoInfoContabilidad(gastoInfoContabilidad);
+				gasto.setEstadoGasto(contabilizado);
+			}else if(DDEstadoGasto.SUBSANADO.equals(gasto.getEstadoGasto().getCodigo())){
+				GastoInfoContabilidad gastoInfoContabilidad = gasto.getGastoInfoContabilidad();
+				gastoInfoContabilidad.setFechaContabilizacion(miFechaConta);
+				gasto.setGastoInfoContabilidad(gastoInfoContabilidad);
+				gasto.setEstadoGasto(contabilizado);
+			}
+		}else if(Checks.esNulo(miFechaConta) && !Checks.esNulo(miFechaPago)){
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoGasto.PAGADO);
+			DDEstadoGasto estadoGasto = genericDao.get(DDEstadoGasto.class, filtro);
+			
+			if(DDEstadoGasto.CONTABILIZADO.equals(gasto.getEstadoGasto().getCodigo())){
+				GastoDetalleEconomico gastoDetalleEconomico = gasto.getGastoDetalleEconomico();
+				gastoDetalleEconomico.setFechaPago(miFechaPago);
+				gasto.setGastoDetalleEconomico(gastoDetalleEconomico);
+				gasto.setEstadoGasto(estadoGasto);
+			}
+		}
+		
+		gastoGestion.setFechaEstadoAutorizacionPropietario(new Date());
+		gastoGestion.setEstadoAutorizacionPropietario(estadoAutorizacionPropietario);
+		gastoGestion.setMotivoRechazoAutorizacionHaya(null);
+		genericDao.update(GastoGestion.class, gastoGestion);
+		genericDao.update(GastoProveedor.class, gasto);
+		}
+		
+		return true;
+		
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public boolean autorizarGastosContabilidadAgrupacion(Long[] idsGastos, Long idAgrupacion, String fechaConta, String fechaPago, Boolean individual) {
+		
+		
+		//Setamos el estado de la agrupación
+		ProvisionGastos agrupGasto = provisionGastosDao.get(idAgrupacion);
+		
+		DDEstadoProvisionGastos estadoProvisionGastos = (DDEstadoProvisionGastos) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoProvisionGastos.class,
+				DDEstadoProvisionGastos.CODIGO_AUTORIZADO);
+		
+		if(!Checks.esNulo(agrupGasto)) {
+			
+			agrupGasto.setEstadoProvision(estadoProvisionGastos);
+			
+			agrupGasto.getAuditoria().setUsuarioModificar(genericAdapter.getUsuarioLogado().getUsername());
+			agrupGasto.getAuditoria().setFechaModificar(new Date());
+			
+			genericDao.update(ProvisionGastos.class, agrupGasto);
+		}
+		
+		//Seteamos el estado y las fechas a los gastos de la agrupación
+		for (Long id : idsGastos) {
+			autorizarGastoContabilidad(id, fechaConta, fechaPago, individual);
+		}
+
+		return true;
+	}
+	
 	@Override
 	@Transactional(readOnly = false)
 	public boolean rechazarGastos(Long[] idsGastos, String motivoRechazo) {
@@ -2529,6 +2677,47 @@ public class GastoProveedorManager implements GastoProveedorApi {
 
 		return true;
 	}
+	
+	@Override 
+	@Transactional(readOnly = false)
+	public boolean rechazarGastosContabilidad(Long[] idsGastos, String motivoRechazo, Boolean individual) {
+
+		DDEstadoAutorizacionPropietario estadoAutorizacionPropietario = (DDEstadoAutorizacionPropietario) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoAutorizacionPropietario.class,
+				DDEstadoAutorizacionPropietario.CODIGO_RECHAZADO_CONTABILIDAD);
+		
+		for (Long id : idsGastos) {
+			GastoProveedor gasto = findOne(id);
+			
+			if(!Checks.esNulo(gasto.getProvision()) && individual){
+				throw new JsonViewerException("El gasto " + gasto.getNumGastoHaya() + " no se puede rechazar individualmente: pertenece a una agrupación.");
+			}else{
+				String error = updaterStateApi.validarCamposMinimos(gasto);
+				if (!Checks.esNulo(error)) {
+					throw new JsonViewerException("El gasto " + gasto.getNumGastoHaya() + " no se puede rechazar: " + error);
+				}
+				
+				// Se activa el borrado de los gastos-trabajo, y dejamos el trabajo como diponible para un
+				// futuro nuevo gasto
+				this.reactivarTrabajoParaGastos(gasto.getGastoProveedorTrabajos());
+
+				GastoGestion gastoGestion = gasto.getGastoGestion();
+				gastoGestion.setEstadoAutorizacionPropietario(estadoAutorizacionPropietario);
+				gastoGestion.setFechaEstadoAutorizacionPropietario(new Date());
+				gastoGestion.setMotivoRechazoAutorizacionPropietario(motivoRechazo);
+
+				gasto.setGastoGestion(gastoGestion);
+				updaterStateApi.updaterStates(gasto, DDEstadoGasto.RECHAZADO_PROPIETARIO);
+
+				
+				gasto.setProvision(null);
+
+				genericDao.update(GastoProveedor.class, gasto);
+			}
+		}
+
+		return true;
+	}
+
 
 	/*
 	 * Deja el Trabajo disponible para que sea asignable a un gasto, y activa el borrado lógico de
@@ -2868,9 +3057,70 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	}
 
 	@Override
+
 	public GastoProveedorActivo buscarRelacionPorActivoYGasto(Activo activo, GastoProveedor gasto) {
 		
 		return genericDao.get(GastoProveedorActivo.class, genericDao.createFilter(FilterType.EQUALS, "activo", activo),
 				genericDao.createFilter(FilterType.EQUALS, "gastoProveedor", gasto));
+		
+	}
+
+	@Transactional(readOnly = false)
+	public boolean rechazarGastosContabilidadAgrupGastos(Long idAgrupGasto,Long[] idsGasto, String motivoRechazo, Boolean individual) {
+		
+		if(Checks.esNulo(idAgrupGasto)) {
+			return false;
+		}
+		
+		boolean resultadoFinal = false;
+		boolean resultadoGastos = false;
+		boolean resultadoAgrupGastos = false;
+		
+		DDEstadoProvisionGastos estadoProvisionGastos = (DDEstadoProvisionGastos) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoProvisionGastos.class,
+				DDEstadoProvisionGastos.CODIGO_RECHAZADO_NO_SUBSANABLE);
+		
+		resultadoAgrupGastos = rechazarAgrupacionGastoContabilidad(idAgrupGasto, motivoRechazo, estadoProvisionGastos);
+
+		resultadoGastos = rechazarGastosContabilidad(idsGasto, motivoRechazo, individual);
+		
+		if(resultadoGastos && resultadoAgrupGastos) {
+			resultadoFinal = true;
+		}
+
+		return resultadoFinal;
+	}
+
+	/** Rechaza una agrupacion gasto
+	 * @param idAgrupGasto
+	 * @param motivoRechazo
+	 * @param estadoProvisionGastos
+	 * @return 
+	 */
+	@Transactional(readOnly = false)
+	private boolean rechazarAgrupacionGastoContabilidad(Long idAgrupGasto, String motivoRechazo,
+			DDEstadoProvisionGastos estadoProvisionGastos) {
+		ProvisionGastos agrupGasto = provisionGastosDao.get(idAgrupGasto);
+		
+		if(!Checks.esNulo(agrupGasto)) {
+			
+			agrupGasto.setEstadoProvision(estadoProvisionGastos);
+			
+			agrupGasto.getAuditoria().setUsuarioModificar(genericAdapter.getUsuarioLogado().getUsername());
+			agrupGasto.getAuditoria().setFechaModificar(new Date());
+			
+			genericDao.update(ProvisionGastos.class, agrupGasto);
+		}else {
+			return false;
+		}
+
+		return true;
+	}
+
+	@Override
+	public List<VGastosProveedor> getListGastosProvisionAgrupGastos(Long idProvision) {
+		Filter filter = genericDao.createFilter(FilterType.EQUALS, "idProvision", idProvision);
+		
+		return genericDao.getList(VGastosProveedor.class, filter);
+
 	}
 }

@@ -9,6 +9,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Component;
 
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.gestorDocumental.api.BaseWS;
 import es.pfsgroup.plugin.gestorDocumental.api.GestorDocumentalMaestroApi;
 import es.pfsgroup.plugin.gestorDocumental.assembler.GDActivoInputAssembler;
@@ -70,25 +71,30 @@ public class GestorDocumentalMaestroManager extends BaseWS implements GestorDocu
 			String urlWSDL = getWSURL(WEB_SERVICE_PERSONAS);
 			String targetNamespace = getWSNamespace();
 			String name = getWSName();
-			
-			URL wsdlLocation = new URL(urlWSDL);
-			QName qName = new QName(targetNamespace, name);
-			
-			es.pfsgroup.plugin.gestorDocumental.ws.MAESTRO_PERSONAS.WsWS service = new es.pfsgroup.plugin.gestorDocumental.ws.MAESTRO_PERSONAS.WsWS(wsdlLocation, qName);
-			es.pfsgroup.plugin.gestorDocumental.ws.MAESTRO_PERSONAS.WsPort servicePort = service.getWs();
-			output = servicePort.processEvent(input);
-			
-			logger.info("WS invocado! Valores de respuesta del MAESTRO: ");
-			if (output.getParameters().getParameter().get(0).getCode().equals("ERROR")) {
-				logger.info("RESULTADO_COD_MAESTRO: Servicio inactivo");
-			} else {
-				logger.info("RESULTADO_COD_MAESTRO: " + output.getResultCode());
-				logger.info("RESULTADO_DESCRIPCION_MAESTRO: " + output.getResultDescription());
+			//si es nulo no avanzar para no estropear los codigos en local
+			if(!Checks.esNulo(urlWSDL)) {
+				URL wsdlLocation = new URL(urlWSDL);
+				QName qName = new QName(targetNamespace, name);
+				
+				es.pfsgroup.plugin.gestorDocumental.ws.MAESTRO_PERSONAS.WsWS service = new es.pfsgroup.plugin.gestorDocumental.ws.MAESTRO_PERSONAS.WsWS(wsdlLocation, qName);
+				es.pfsgroup.plugin.gestorDocumental.ws.MAESTRO_PERSONAS.WsPort servicePort = service.getWs();
+				output = servicePort.processEvent(input);
+				
+				logger.info("WS invocado! Valores de respuesta del MAESTRO: ");
+				if (output.getParameters().getParameter().get(0).getCode().equals("ERROR")) {
+					logger.info("RESULTADO_COD_MAESTRO: Servicio inactivo");
+				} else {
+					logger.info("RESULTADO_COD_MAESTRO: " + output.getResultCode());
+					logger.info("RESULTADO_DESCRIPCION_MAESTRO: " + output.getResultDescription());
+				}
+			}else {
+				return null;
 			}
 		} catch (MalformedURLException e) {
 			logger.error("Error en el método al invocarServicio", e);
 		}
 		return GDPersonaOutputAssembler.outputToDtoPersona(output);
-	}
+		}
+		
 
 }

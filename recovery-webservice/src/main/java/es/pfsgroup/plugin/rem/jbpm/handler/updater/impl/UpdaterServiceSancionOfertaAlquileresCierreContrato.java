@@ -9,16 +9,25 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.plugin.gestorDocumental.dto.PersonaInputDto;
+import es.pfsgroup.plugin.gestorDocumental.dto.PersonaOutputDto;
+import es.pfsgroup.plugin.gestorDocumental.manager.GestorDocumentalMaestroManager;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
+import es.pfsgroup.plugin.rem.model.CompradorExpediente;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
+import es.pfsgroup.plugin.rem.thread.MaestroDePersonas;
 
 @Component
 public class UpdaterServiceSancionOfertaAlquileresCierreContrato implements UpdaterService {
@@ -28,12 +37,19 @@ public class UpdaterServiceSancionOfertaAlquileresCierreContrato implements Upda
     
     @Autowired
     private ExpedienteComercialApi expedienteComercialApi;
-
+    
+	@Autowired
+	private GestorDocumentalMaestroManager gestorDocumentalMaestroManager;
+	
+    @Autowired
+	private ApiProxyFactory proxyFactory;
+	
     protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaAlquileresCierreContrato.class);
     
 	private static final String DOCUMENTO_OK = "docOK";
 	private static final String FECHA_VALIDACION = "fechaValidacion";
 	private static final String N_CONTRATO_PRINEX = "ncontratoPrinex";
+	private static final String MAESTRO_ORIGEN_REM= "REM";
 	
 	private static final String CODIGO_T015_CIERRE_CONTRATO = "T015_CierreContrato";
 
@@ -52,6 +68,7 @@ public class UpdaterServiceSancionOfertaAlquileresCierreContrato implements Upda
 				estadoExpedienteComercial = genericDao.get(DDEstadosExpedienteComercial.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadosExpedienteComercial.FIRMADO_AQLUILER));
 				expedienteComercial.setEstado(estadoExpedienteComercial);
 				expedienteComercial.setDocumentacionOk(true);
+
 			}
 			
 			if(FECHA_VALIDACION.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
@@ -65,6 +82,17 @@ public class UpdaterServiceSancionOfertaAlquileresCierreContrato implements Upda
 			if(N_CONTRATO_PRINEX.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 				oferta.setNumContratoPrinex(valor.getValor());
 			}
+		}
+		
+		//Llamada a Maestro de Personas
+		try {
+		if(DDTipoOferta.CODIGO_ALQUILER.equals(oferta.getTipoOferta().getCodigo()) && MAESTRO_ORIGEN_REM.equals(oferta.getOrigen())){
+			Usuario usu=proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+			Thread maestroPersona = new Thread( new MaestroDePersonas(expedienteComercial.getId(),usu.getUsername(),oferta.getActivoPrincipal().getCartera().getCodigo()));
+			maestroPersona.start();
+		}
+		}catch(Exception e){
+			logger.error("Error Maestro persona.", e);
 		}
 		
 		if (!Checks.esNulo(expedienteComercial.getSeguroRentasAlquiler())) {

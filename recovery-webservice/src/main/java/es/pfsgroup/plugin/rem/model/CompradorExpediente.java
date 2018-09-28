@@ -172,6 +172,8 @@ public class CompradorExpediente implements Serializable {
     @JoinColumn(name = "DD_PAI_ID_RTE")
     private DDPaises paisRte;
     
+    @Column(name = "CEX_ID_PERSONA_HAYA")
+    private String idPersonaHaya;
     
 	@Version   
 	private Long version;
@@ -441,6 +443,17 @@ public class CompradorExpediente implements Serializable {
 
 	public void setFechaFactura(Date fechaFactura) {
 		this.fechaFactura = fechaFactura;
+	}
+
+
+
+
+	public String getIdPersonaHaya() {
+		return idPersonaHaya;
+	}
+
+	public void setIdPersonaHaya(String idPersonaHaya) {
+		this.idPersonaHaya = idPersonaHaya;
 	}
 
 

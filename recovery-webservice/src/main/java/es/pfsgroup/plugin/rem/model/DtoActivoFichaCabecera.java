@@ -186,6 +186,9 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	
 	//HREOS-3415
 	private String acbCoreaeTexto;
+	
+	//HREOS-4470
+	private Boolean asignaGestPorCambioDeProv;
 
 	public int getPage() {
 		return page;
@@ -1389,6 +1392,14 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 
 	public void setAcreedorNumExp(String acreedorNumExp) {
 		this.acreedorNumExp = acreedorNumExp;
+	}
+
+	public Boolean getAsignaGestPorCambioDeProv() {
+		return asignaGestPorCambioDeProv;
+	}
+
+	public void setAsignaGestPorCambioDeProv(Boolean asignaGestPorCambioDeProv) {
+		this.asignaGestPorCambioDeProv = asignaGestPorCambioDeProv;
 	}
 
 	

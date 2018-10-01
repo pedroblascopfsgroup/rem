@@ -607,6 +607,10 @@ Ext.define('HreRem.model.Activo', {
 			},
 			{
 				name: 'activoBNK'
+			},
+			{
+				name: 'asignaGestPorCambioDeProv',
+				type: 'boolean'
 			}
     ],
     

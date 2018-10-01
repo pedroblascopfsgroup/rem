@@ -555,7 +555,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     
     onEstadoDivHorizontalAdmisionSelect: function(combo, value) {
     	
-    	var me = this,
+    	var me = this;
     	disabled = (value == 1 || Ext.isEmpty(value)) ;
 
     	me.lookupReference('estadoDivHorizontalNoInscritaAdmision').allowBlank = disabled
@@ -567,6 +567,16 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	}
     	
     },    
+    
+    onChangeProvincia: function(combo, value, oldValue, eOpts){
+    	var me = this;
+    	me.getViewModel().get('activo').set('asignaGestPorCambioDeProv', false);
+    	if(value != oldValue){
+    		var me = this;
+    		me.getViewModel().get('activo').set('asignaGestPorCambioDeProv', true);
+    	}
+    	
+    },
     
     cargaGestores : function(grid){
     	var me = this;

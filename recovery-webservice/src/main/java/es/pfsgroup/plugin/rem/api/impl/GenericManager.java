@@ -782,4 +782,12 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 			return listaTipoAgrupaciones;
 		}
 	}
+	
+	@Override
+	public List<DDTipoAgrupacion> getTodosComboTipoAgrupacion()
+	{
+		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+		List<DDTipoAgrupacion> listaTipoAgrupaciones = genericDao.getList(DDTipoAgrupacion.class, filtroBorrado, filtroBorrado);
+		return listaTipoAgrupaciones;
+	}
 }

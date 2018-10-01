@@ -323,5 +323,10 @@ public class GenericController extends ParadiseJsonController{
 	public ModelAndView getComboTipoAgrupacion() {
 		return createModelAndViewJson(new ModelMap("data", genericApi.getComboTipoAgrupacion()));
 	}
-
+	
+	@RequestMapping(method= RequestMethod.GET)
+	public ModelAndView getTodosComboTipoAgrupacion()
+	{
+		return createModelAndViewJson(new ModelMap("data", genericApi.getTodosComboTipoAgrupacion()));
+	}
 }

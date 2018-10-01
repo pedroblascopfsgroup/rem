@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Maria Presencia 
---## FECHA_CREACION=20180919
+--## FECHA_CREACION=20180920
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-4495
@@ -45,7 +45,7 @@ DECLARE
 
 BEGIN
 
-   EXECUTE IMMEDIATE 'TRUNCATE TABLE '||V_ESQUEMA||'.'||V_DD||'';
+   --EXECUTE IMMEDIATE 'TRUNCATE TABLE '||V_ESQUEMA||'.'||V_DD||'';
 
     
    FOR I IN V_TIPO_DATA.FIRST .. V_TIPO_DATA.LAST

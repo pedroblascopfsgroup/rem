@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.oferta;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
+import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -26,6 +27,7 @@ import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
+import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
@@ -46,6 +48,7 @@ import es.pfsgroup.plugin.rem.api.ActivoAgrupacionActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
+import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
@@ -198,6 +201,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 	@Autowired
 	private AgendaAdapter adapter;
+	
+	@Autowired
+	ActivoTareaExternaApi activoTareaExternaApi;
 
 	@Override
 	public String managerName() {
@@ -382,7 +388,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			// Mirar si hace falta validar que no se pueda modificar la
 			// oferta si ha pasado al comité
 			if (!Checks.esNulo(oferta) && !Checks.esNulo(oferta.getEstadoOferta())
-					&& !oferta.getEstadoOferta().getCodigo().equalsIgnoreCase(DDEstadoOferta.CODIGO_PENDIENTE)) {
+					&& !oferta.getEstadoOferta().getCodigo().equalsIgnoreCase(DDEstadoOferta.CODIGO_PENDIENTE) 
+					&& Checks.esNulo(ofertaDto.getTarea())) {
 				errorsList.put("idOfertaWebcom", RestApi.REST_MSG_UNKNOWN_KEY);
 			}
 		}
@@ -466,6 +473,20 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						errorsList.put("codTipoDocumento", RestApi.REST_MSG_UNKNOWN_KEY);
 					}
 				}
+			}
+		}
+		if (!Checks.esNulo(ofertaDto.getTarea())) {
+			if (ofertaDto.getTarea().equals("01") && Checks.esNulo(ofertaDto.getSancionContraoferta())) {
+				errorsList.put("sancionContraoferta", RestApi.REST_MSG_MISSING_REQUIRED);
+			} else if (ofertaDto.getTarea().equals("02")) {
+				if(Checks.esNulo(ofertaDto.getFechaPrevistaFirma())) {
+					errorsList.put("fechaPrevistaFirma", RestApi.REST_MSG_MISSING_REQUIRED);
+				}
+				if(Checks.esNulo(ofertaDto.getLugarFirma())) {
+					errorsList.put("lugarFirma", RestApi.REST_MSG_MISSING_REQUIRED);
+				}
+			} else if (ofertaDto.getTarea().equals("03") && Checks.esNulo(ofertaDto.getFechaFirma())) {
+				errorsList.put("fechaFirma", RestApi.REST_MSG_MISSING_REQUIRED);
 			}
 		}
 
@@ -602,8 +623,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 			if (!Checks.esNulo(ofertaDto.getIsExpress())) {
 				oferta.setOfertaExpress(ofertaDto.getIsExpress());
-
-				
 			}
 
 			Long idOferta = this.saveOferta(oferta);
@@ -615,6 +634,10 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 			if (ofertaDto.getIsExpress())
 				congelarExpedientesPorOfertaExpress(oferta);
+			
+			if (!Checks.esNulo(ofertaDto.getTarea())) {
+				errorsList = avanzaTarea(oferta, ofertaDto, errorsList);
+			}
 			
 			notificationOfertaManager.sendNotification(oferta);
 
@@ -728,6 +751,10 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 			oferta = updateEstadoOferta(oferta.getId(), ofertaDto.getFechaAccion());
 			this.updateStateDispComercialActivosByOferta(oferta);
+			
+			if (!Checks.esNulo(ofertaDto.getTarea())) {
+				errorsList = avanzaTarea(oferta, ofertaDto, errorsList);
+			}
 		}
 
 		return errorsList;
@@ -2852,5 +2879,45 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		}
 		
 		return null;
+	}
+	
+	private HashMap<String, String> avanzaTarea(Oferta oferta, OfertaDto ofertaDto, HashMap<String, String> errorsList) {
+		try {
+			Map<String, String[]> valoresTarea = new HashMap<String, String[]>();
+			ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByOferta(oferta);
+			List<ActivoTramite> listaTramites = activoTramiteApi.getTramitesActivoTrabajoList(expedienteComercial.getTrabajo().getId());
+			List<TareaExterna> tareasTramite = activoTareaExternaApi.getActivasByIdTramiteTodas(listaTramites.get(0).getId());
+			DateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+			boolean avanzar = true;
+			
+			if (ofertaDto.getTarea().equals("01")  && DDEstadosExpedienteComercial.CONTRAOFERTADO.equals(expedienteComercial.getEstado().getCodigo())) {
+				if (ofertaDto.getSancionContraoferta().equals("Si")) {
+					valoresTarea.put("aceptacionContraoferta", new String[] { DDSiNo.SI });
+				} else if (ofertaDto.getSancionContraoferta().equals("No")) {
+					valoresTarea.put("aceptacionContraoferta", new String[] { DDSiNo.NO });
+				} else {
+					avanzar = false;
+				}
+			} else if (ofertaDto.getTarea().equals("02") && DDEstadosExpedienteComercial.PTE_POSICIONAMIENTO.equals(expedienteComercial.getEstado().getCodigo())) {
+				valoresTarea.put("fechaFirmaContrato", new String[] { format.format(ofertaDto.getFechaPrevistaFirma()) });
+				valoresTarea.put("lugarFirma", new String[] { ofertaDto.getLugarFirma() });
+			} else if (ofertaDto.getTarea().equals("03") && DDEstadosExpedienteComercial.PTE_FIRMA.equals(expedienteComercial.getEstado().getCodigo())) {
+				valoresTarea.put("fechaFirma", new String[] { format.format(ofertaDto.getFechaFirma()) });
+			} else {
+				avanzar = false;
+			}
+			
+			valoresTarea.put("idTarea", new String[] { tareasTramite.get(0).getTareaPadre().getId().toString() });
+		
+			if (avanzar) {
+				adapter.save(valoresTarea);
+			} else {
+				errorsList.put("tarea", RestApi.REST_MSG_TAREA_INVALIDA);
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return errorsList;
 	}
 }

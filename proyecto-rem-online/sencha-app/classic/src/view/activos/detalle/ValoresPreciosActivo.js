@@ -380,7 +380,7 @@ Ext.define('HreRem.view.activos.detalle.ValoresPreciosActivo', {
 						margin: '0 10 10 0',
 						layout: {
 					        type: 'table',
-							columns: 1
+							columns: 2
 						},
 						defaultType: 'textfieldbase',
 						title: HreRem.i18n("title.internos.haya"),
@@ -389,13 +389,13 @@ Ext.define('HreRem.view.activos.detalle.ValoresPreciosActivo', {
 							 {
 							   xtype: 'currencyfieldbase',
 							   readOnly: true,
-							   fieldLabel: HreRem.i18n('fieldlabel.fsv.venta'),
+							   fieldLabel: HreRem.i18n('fieldlabel.valor.venta.haya'),
 							   bind:  '{valoraciones.fsvVenta}'
 							 },
 							 {
 							   xtype: 'currencyfieldbase',
 							   readOnly: true,
-							   fieldLabel: HreRem.i18n('fieldlabel.fsv.renta'),
+							   fieldLabel: HreRem.i18n('fieldlabel.valor.renta.haya'),
 							   bind:  '{valoraciones.fsvRenta}'
 							 },
 							 {
@@ -409,6 +409,20 @@ Ext.define('HreRem.view.activos.detalle.ValoresPreciosActivo', {
 							   readOnly: true,
 							   fieldLabel: HreRem.i18n('fieldlabel.estimado.renta'),
 							   bind:  '{valoraciones.valorEstimadoRenta}'
+							 },
+							 {
+							   xtype: 'datefieldbase',
+							   reference: 'fechaVentaHayaPrecioActivo',
+							   readOnly: true,
+							   fieldLabel: HreRem.i18n('fieldlabel.fecha.venta.haya'),
+							   bind:  '{valoraciones.fechaVentaHaya}'
+							 },
+							 {
+							   xtype: 'textfieldbase',
+							   reference: 'liquidezPrecioActivo',
+							   readOnly: true,
+							   fieldLabel: HreRem.i18n('fieldlabel.liquidez'),
+							   bind:  '{valoraciones.liquidez}'
 							 }
 							 
 							]

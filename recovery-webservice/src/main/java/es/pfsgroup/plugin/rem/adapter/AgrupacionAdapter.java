@@ -1428,7 +1428,8 @@ public class AgrupacionAdapter {
 			if (Checks.esNulo(loteComercial.getUsuarioGestorComercial()) && 
 					!agr.getActivos().get(0).getActivo().getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_LIBERBANK)) {
 				return false;
-			} else if(Checks.esNulo(loteComercial.getUsuarioGestorComercialBackOffice())) {
+			} else if(Checks.esNulo(loteComercial.getUsuarioGestorComercialBackOffice()) &&
+					agr.getActivos().get(0).getActivo().getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_LIBERBANK)) {
 				return false;
 			}
 		} else {

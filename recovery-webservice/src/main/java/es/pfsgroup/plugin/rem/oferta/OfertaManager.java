@@ -85,6 +85,7 @@ import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.VPreciosVigentes;
+import es.pfsgroup.plugin.rem.model.VTasacionCalculoLBK;
 import es.pfsgroup.plugin.rem.model.Visita;
 import es.pfsgroup.plugin.rem.model.dd.DDAccionGastos;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
@@ -1363,7 +1364,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						Boolean tieneNifConyugue = true;
 						
 						for(CompradorExpediente cex: listaCex){
-							if(!Checks.esNulo(cex) && DDEstadosCiviles.CODIGO_ESTADO_CIVIL_CASADO.equals(cex.getEstadoCivil().getCodigo()) && Checks.esNulo(cex.getDocumentoConyuge())){
+							if(!Checks.esNulo(cex) && DDEstadosCiviles.CODIGO_ESTADO_CIVIL_CASADO.equals(cex.getEstadoCivil().getCodigo()) && Checks.esNulo(cex.getDocumentoConyuge())
+									&& DDRegimenesMatrimoniales.COD_GANANCIALES.equals(cex.getRegimenMatrimonial().getCodigo())){
 								tieneNifConyugue = false;
 								break;
 							}
@@ -1382,7 +1384,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						Boolean tieneNifConyugue = true;
 						
 						for(CompradorExpediente cex: listaCex){
-							if(!Checks.esNulo(cex) && DDEstadosCiviles.CODIGO_ESTADO_CIVIL_CASADO.equals(cex.getEstadoCivil().getCodigo()) && Checks.esNulo(cex.getDocumentoConyuge())){
+							if(!Checks.esNulo(cex) && DDEstadosCiviles.CODIGO_ESTADO_CIVIL_CASADO.equals(cex.getEstadoCivil().getCodigo()) && Checks.esNulo(cex.getDocumentoConyuge())
+									&& DDRegimenesMatrimoniales.COD_GANANCIALES.equals(cex.getRegimenMatrimonial().getCodigo())){
 								tieneNifConyugue = false;
 								break;
 							}
@@ -2824,31 +2827,27 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			Double sumaTasaciones = 0.0;
 			Double sumaPreciosMinimosAutorizados = 0.0;
 			
-			for(ActivoAgrupacionActivo aga : activos) {
-				ActivoTasacion tasacion = activoApi.getTasacionMasReciente(aga.getActivo());
-				Double importeTasacion = 0.0;
+			List<VTasacionCalculoLBK> vista = activoApi.getVistaTasacion(agrupacion.getId());
+			
+			for(VTasacionCalculoLBK reg: vista) {
+				Double importeTasacion = reg.getImporteTasacion();
 				Double precioAprobadoVenta = 0.0;	
 				Double precioMinimoAutorizado = 0.0;
+				Boolean esPrecioAprobadoVenta = false;
 				
-				importeTasacion = (!Checks.esNulo(tasacion)) ? tasacion.getImporteTasacionFin() : null;				
-				List<VPreciosVigentes> precios = activoApi.getPreciosVigentesById(aga.getActivo().getId());																										
-				for(VPreciosVigentes p : precios) {
-					if(DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA.equals(p.getCodigoTipoPrecio())) {
-						precioAprobadoVenta = p.getImporte();
-					} else if(DDTipoPrecio.CODIGO_TPC_MIN_AUTORIZADO.equals(p.getCodigoTipoPrecio())) {
-						precioMinimoAutorizado = p.getImporte();
-					}
-				}
-
-				sumaTasaciones += (!Checks.esNulo(importeTasacion)) ? importeTasacion : precioAprobadoVenta;
-				if(!Checks.esNulo(precioMinimoAutorizado)) {
-					sumaPreciosMinimosAutorizados += precioMinimoAutorizado;
+				if(DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA.equals(reg.getCodigoTipoPrecio())) {
+					precioAprobadoVenta = (!Checks.esNulo(reg.getImporteTipoPrecio())) ? reg.getImporteTipoPrecio() : 0.0;
+					esPrecioAprobadoVenta = true;
 				}else {
-					sumaPreciosMinimosAutorizados = precioMinimoAutorizado;
+					precioMinimoAutorizado = (!Checks.esNulo(reg.getImporteTipoPrecio())) ? reg.getImporteTipoPrecio() : 0.0;
 				}
+				
+				if(esPrecioAprobadoVenta) {
+					sumaTasaciones += (!Checks.esNulo(importeTasacion)) ? importeTasacion : precioAprobadoVenta;
+				}
+				sumaPreciosMinimosAutorizados += precioMinimoAutorizado;
 				
 			}
-			
 			if((!Checks.esNulo(sumaTasaciones) && sumaTasaciones < importeUmbral) 
 					&& (!Checks.esNulo(importeOferta) && !Checks.esNulo(sumaPreciosMinimosAutorizados) && importeOferta >= sumaPreciosMinimosAutorizados)) {
 				Filter filterComite = genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_HAYA_LIBERBANK);

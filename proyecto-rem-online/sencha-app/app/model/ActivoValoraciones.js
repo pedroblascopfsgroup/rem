@@ -138,6 +138,14 @@ Ext.define('HreRem.model.ActivoValoraciones', {
     		},
     		{
     			name:'valorRazonable'
+    		},
+    		{
+    			name:'fechaVentaHaya',
+    			type:'date',
+    			dateFormat: 'c'
+    		},
+    		{
+    			name:'liquidez'
     		}
     		
     ],

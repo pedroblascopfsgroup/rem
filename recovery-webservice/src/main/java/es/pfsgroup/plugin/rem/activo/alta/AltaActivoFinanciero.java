@@ -282,7 +282,8 @@ public class AltaActivoFinanciero implements AltaActivoService {
 		genericDao.save(ActivoInfoRegistral.class, activoInfoRegistral);
 
 		// ActivoPropietarioActivo.
-		ActivoPropietario activoPropietario = genericDao.get(ActivoPropietario.class, genericDao.createFilter(FilterType.EQUALS, "docIdentificativo", dtoAAF.getNifPropietario()));
+		ActivoPropietario activoPropietario = genericDao.get(ActivoPropietario.class, genericDao.createFilter(FilterType.EQUALS, "docIdentificativo", dtoAAF.getNifPropietario()),
+				genericDao.createFilter(FilterType.EQUALS, "cartera", activo.getCartera()));
 		if(Checks.esNulo(activoPropietario)) {
 			// Si el propietario no existe se crea uno nuevo con el NIF recibido.
 			activoPropietario = new ActivoPropietario();

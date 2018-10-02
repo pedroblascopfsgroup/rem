@@ -13,7 +13,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
 	},
 	recordName	: "agrupacionficha",
 	recordClass	: "HreRem.model.AgrupacionFicha",
-    requires	: ['HreRem.model.AgrupacionFicha', 'HreRem.ux.tab.TabBase'],
+    requires	: ['HreRem.model.AgrupacionFicha', 'HreRem.ux.tab.TabBase', 'HreRem.model.Activo'],
     bind		: {
     	ocultarBotonesEdicion: '{!agrupacionficha.esEditable}'
     },
@@ -209,6 +209,14 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
 		                          }
 		                        }
 		                    }
+						},
+						{
+							xtype: 'comboboxfieldbase',
+							fieldLabel: HreRem.i18n('fieldlabel.perimetro.destino.comercial'),
+							bind: {
+								store: '{comboTipoDestinoComercialCreaFiltered}',
+								value: '{agrupacionficha.tipoComercializacionCodigo}'
+							}
 						}
 				]
           },

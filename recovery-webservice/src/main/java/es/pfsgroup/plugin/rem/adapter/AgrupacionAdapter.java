@@ -47,6 +47,9 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.api.model.NMBLocalizaciones
 import es.pfsgroup.plugin.rem.activo.ActivoManager;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoHistoricoPatrimonioDao;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoPatrimonioDao;
+import es.pfsgroup.plugin.rem.activo.publicacion.dao.ActivoPublicacionDao;
 import es.pfsgroup.plugin.rem.activo.valoracion.dao.ActivoValoracionDao;
 import es.pfsgroup.plugin.rem.api.ActivoAgrupacionActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
@@ -65,11 +68,14 @@ import es.pfsgroup.plugin.rem.model.ActivoAgrupacionObservacion;
 import es.pfsgroup.plugin.rem.model.ActivoAsistida;
 import es.pfsgroup.plugin.rem.model.ActivoBancario;
 import es.pfsgroup.plugin.rem.model.ActivoFoto;
+import es.pfsgroup.plugin.rem.model.ActivoHistoricoPatrimonio;
 import es.pfsgroup.plugin.rem.model.ActivoLoteComercial;
 import es.pfsgroup.plugin.rem.model.ActivoObraNueva;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
+import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.ActivoPropietario;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
+import es.pfsgroup.plugin.rem.model.ActivoPublicacion;
 import es.pfsgroup.plugin.rem.model.ActivoRestringida;
 import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
 import es.pfsgroup.plugin.rem.model.AgrupacionesVigencias;
@@ -79,9 +85,8 @@ import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
 import es.pfsgroup.plugin.rem.model.DtoAgrupaciones;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionesCreateDelete;
 import es.pfsgroup.plugin.rem.model.DtoAviso;
-import es.pfsgroup.plugin.rem.model.DtoDatosPublicacionActivo;
-import es.pfsgroup.plugin.rem.model.DtoEstadoDisponibilidadComercial;
 import es.pfsgroup.plugin.rem.model.DtoDatosPublicacionAgrupacion;
+import es.pfsgroup.plugin.rem.model.DtoEstadoDisponibilidadComercial;
 import es.pfsgroup.plugin.rem.model.DtoObservacion;
 import es.pfsgroup.plugin.rem.model.DtoOfertaActivo;
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
@@ -213,7 +218,16 @@ public class AgrupacionAdapter {
 	
 	@Autowired
 	private ActivoValoracionDao activoValoracionDao;
-
+	
+	@Autowired
+	private ActivoPatrimonioDao activoPatrimonioDao;
+	
+	@Autowired
+	private ActivoPublicacionDao activoPublicacionDao;
+	
+	@Autowired
+	private ActivoHistoricoPatrimonioDao activoHistoricoPatrimonioDao;
+	
 	private final Log logger = LogFactory.getLog(getClass());
 
 	public static final String OFERTA_INCOMPATIBLE_AGR_MSG = "El tipo de oferta es incompatible con el destino comercial de algún activo";
@@ -1808,6 +1822,7 @@ public class AgrupacionAdapter {
 		return res;
 	}
 
+	@SuppressWarnings("unused")
 	@Transactional(readOnly = false)
 	public boolean saveAgrupacion(DtoAgrupaciones dto, Long id) throws Exception {
 
@@ -1997,9 +2012,89 @@ public class AgrupacionAdapter {
 				}
 
 				activoAgrupacionApi.saveOrUpdate(restringida);
+				
+				List <Oferta> ofertasAgr = restringida.getOfertas();
+				
+				Boolean ofertaViva = false;
+				Boolean ofertaVivaVenta = false;
+				Boolean ofertaVivaAlquiler = false;
+				
+				DDTipoComercializacion tipoComercializacion = (DDTipoComercializacion) utilDiccionarioApi
+						.dameValorDiccionarioByCod(DDTipoComercializacion.class, dto.getTipoComercializacionCodigo());
+				if(!Checks.estaVacio(ofertasAgr)) {
+					for(Oferta oferta : ofertasAgr) {
+						if(DDEstadoOferta.CODIGO_ACEPTADA.equals(oferta.getEstadoOferta().getCodigo())) {
+							ofertaViva = true;
+							if(DDTipoOferta.CODIGO_VENTA.equals(oferta.getTipoOferta().getCodigo())) {
+								ofertaVivaVenta = true;
+							}
+							
+							if(DDTipoOferta.CODIGO_VENTA.equals(oferta.getTipoOferta().getCodigo())) {
+								ofertaVivaAlquiler = true;
+							}
+							break;
+						}
+					}
+				}
 
+				if(!ofertaViva) {
+					List<ActivoAgrupacionActivo> listaActivos = restringida.getActivos();
+					
+					if(!Checks.estaVacio(listaActivos)) {
+						for (ActivoAgrupacionActivo activoAgrupacionActivo : listaActivos) {
+							ActivoPatrimonio activoPatrimonio = activoPatrimonioDao.getActivoPatrimonioByActivo(activoAgrupacionActivo.getActivo().getId());
+							ActivoPublicacion activoPublicacion = activoAgrupacionActivo.getActivo().getActivoPublicacion();
+							
+							if(!ofertaVivaAlquiler || !ofertaVivaVenta) {
+								ActivoHistoricoPatrimonio newActiHistPatrimonio = new ActivoHistoricoPatrimonio();
+								if(!Checks.esNulo(activoPatrimonio)) {
+									newActiHistPatrimonio.setActivo(activoPatrimonio.getActivo());
+									newActiHistPatrimonio.setAdecuacionAlquiler(activoPatrimonio.getAdecuacionAlquiler());
+									newActiHistPatrimonio.setCheckHPM(activoPatrimonio.getCheckHPM());
+									newActiHistPatrimonio.setFechaFinAdecuacionAlquiler(new Date());
+									newActiHistPatrimonio.setFechaFinHPM(new Date());
+									newActiHistPatrimonio.setFechaInicioAdecuacionAlquiler(new Date());
+									newActiHistPatrimonio.setFechaInicioHPM(new Date());
+								}else {
+									newActiHistPatrimonio.setCheckHPM(false);
+									newActiHistPatrimonio.setFechaInicioHPM(new Date());
+									newActiHistPatrimonio.setFechaFinAdecuacionAlquiler(new Date());
+									newActiHistPatrimonio.setFechaFinHPM(new Date());
+									newActiHistPatrimonio.setFechaInicioAdecuacionAlquiler(new Date());
+									newActiHistPatrimonio.setActivo(activoAgrupacionActivo.getActivo());
+								}
+								activoHistoricoPatrimonioDao.saveOrUpdate(newActiHistPatrimonio);
+							}
+							
+							if(Checks.esNulo(activoPatrimonio)) {
+								activoPatrimonio = new ActivoPatrimonio();
+								activoPatrimonio.setActivo(activoAgrupacionActivo.getActivo());
+							}
+							if(Checks.esNulo(activoPublicacion)) {
+								activoPublicacion = new ActivoPublicacion();
+								activoPublicacion.setActivo(activoAgrupacionActivo.getActivo());
+							}
+							
+							activoPublicacion.setTipoComercializacion(tipoComercializacion);
+							
+							if(!ofertaVivaAlquiler && DDTipoComercializacion.CODIGO_VENTA.equals(dto.getTipoComercializacionCodigo())) {
+								activoPatrimonio.setCheckHPM(false);
+							}
+							
+							if(!ofertaVivaVenta && DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(dto.getTipoComercializacionCodigo())) {
+								activoPatrimonio.setCheckHPM(true);
+							}
+							
+							if(DDTipoComercializacion.CODIGO_ALQUILER_VENTA.equals(dto.getTipoComercializacionCodigo())) {
+								activoPatrimonio.setCheckHPM(true);
+							}
+							
+							activoPatrimonioDao.saveOrUpdate(activoPatrimonio);
+							activoPublicacionDao.saveOrUpdate(activoPublicacion);
+						}
+					}
+				}
 			} catch (Exception e) {
-
 				logger.error("error en agrupacionAdapter", e);
 				return false;
 			}

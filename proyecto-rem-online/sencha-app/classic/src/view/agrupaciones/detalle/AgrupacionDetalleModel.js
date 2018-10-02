@@ -588,6 +588,13 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 				remoteUrl: 'activo/getCondicionEspecificaByActivo',
 				extraParams: {id: '{datospublicacionagrupacion.idActivoPrincipal}'}
 			}
+		},
+		comboTipoDestinoComercialCreaFiltered: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getComboTipoDestinoComercialCreaFiltered'
+			}
 		}
      }
 });

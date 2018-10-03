@@ -47,12 +47,6 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionesDetalleMain', {
      	
 		var tabSeguimientoAgrupacion= me.down('seguimientoagrupacion');
 		tabSeguimientoAgrupacion.tab.setVisible(false);
-	
-		if(me.getViewModel().get('agrupacionficha.tipoAgrupacionCodigo') === CONST.TIPOS_AGRUPACION['PROYECTO'])
-		{
-			var tabFotosAgrupacion = me.down('fotosagrupacion');
-			tabFotosAgrupacion.tab.setVisible(false);
-		}
 		
     }
 });

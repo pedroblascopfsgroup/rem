@@ -51,6 +51,8 @@ public interface GestorActivoApi extends GestorEntidadApi {
 	public static final String CODIGO_GESTOR_COMITE_INMOBILIARIO_LIBERBANK = "GCOINM";
 	public static final String CODIGO_GESTOR_LIBERBANK_RESIDENCIAL = "GLIBRES";
 	public static final String CODIGO_SUPERVISOR_COMERCIAL_BACKOFFICE_INMOBILIARIO_LIBERBANK= "SBACKOFFICEINMLIBER";
+	public static final String CODIGO_GESTOR_PUBLICACION= "GPUBL";
+	public static final String CODIGO_SUPERVISOR_PUBLICACION = "SPUBL";
 	
 	Boolean insertarGestorAdicionalActivo(GestorEntidadDto dto);
 

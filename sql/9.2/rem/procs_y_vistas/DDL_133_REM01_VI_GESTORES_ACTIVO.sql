@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Sergio Ortuño
---## FECHA_CREACION=20180719
+--## AUTOR=PIER GOTTA
+--## FECHA_CREACION=20181002
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=REMVIP-1352
+--## INCIDENCIA_LINK=REMVIP-2011
 --## PRODUCTO=NO
 --## Finalidad: Crear vista gestores activo
 --##           
@@ -12,6 +12,7 @@
 --## VERSIONES:
 --##        0.1 Versión inicial Pau Serrano Rodrigo
 --##		0.2 Cambio de GCBO a HAYAGBOINM / HAYASBOFIN SOG
+--##		0.3 Cambio de GESRES y SUPRES.
 --##########################################
 --*/
 
@@ -25,7 +26,7 @@ SET DEFINE OFF;
 
 DECLARE
 
-    V_MSQL VARCHAR2( 32000 CHAR); -- Sentencia a ejecutar    
+    V_MSQL VARCHAR2( 32767 CHAR); -- Sentencia a ejecutar    
     V_ESQUEMA VARCHAR2( 25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
     V_ESQUEMA_M VARCHAR2( 25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
     ERR_NUM NUMBER( 25);  -- Vble. auxiliar para registrar errores en el script.
@@ -49,7 +50,7 @@ BEGIN
 /*Gestores de grupo*/
 SELECT act.act_id, NULL dd_cra_codigo, NULL dd_eac_codigo, NULL dd_tcr_codigo, NULL dd_prv_codigo, NULL dd_loc_codigo, NULL cod_postal, dist1.tipo_gestor, dist1.username username,
                   dist1.nombre_usuario nombre
-             FROM act_activo act JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist1 ON dist1.tipo_gestor IN (''GADM'', ''GPUBL'', ''GMARK'', ''GPREC'', ''GTOPDV'', ''GTOPLUS'', ''GESTLLA'', ''GADMT'', ''GFSV'', ''GCAL'', ''SPUBL'', ''GESRES'', ''SUPRES'', ''GESMIN'', ''SUPMIN'', ''SUPADM'')
+             FROM act_activo act JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist1 ON dist1.tipo_gestor IN (''GADM'', ''GPUBL'', ''GMARK'', ''GPREC'', ''GTOPDV'', ''GTOPLUS'', ''GESTLLA'', ''GADMT'', ''GFSV'', ''GCAL'', ''SPUBL'', ''GESMIN'', ''SUPMIN'', ''SUPADM'')
            where act.borrado = 0
            UNION ALL
 /*Gestor de grupo - SUPERVISOR COMERCIAL BACKOFFICE*/
@@ -247,11 +248,11 @@ SELECT act.act_id, TO_NUMBER (dd_cra.dd_cra_codigo), NULL cod_estado_activo, NUL
             UNION ALL
 /*Gestor comercial*/
  SELECT act.act_id, TO_NUMBER (dd_cra.dd_cra_codigo) dd_cra_codigo, null dd_eac_codigo, dd_tcr.dd_tcr_codigo, dd_prov.dd_prv_codigo,
-       COALESCE (dist1.cod_municipio,dist2.cod_municipio,dist3.cod_municipio,dist0.cod_municipio) cod_municipio,
-       COALESCE (dist1.cod_postal, dist2.cod_postal, dist3.cod_postal, dist0.cod_postal) cod_postal,
-       COALESCE (dist1.tipo_gestor, dist2.tipo_gestor, dist3.tipo_gestor, dist0.tipo_gestor) AS tipo_gestor,
-       COALESCE (dist1.username, dist2.username, dist3.username, dist0.username) username,
-       COALESCE (dist1.nombre_usuario, dist2.nombre_usuario, dist3.nombre_usuario, dist0.nombre_usuario) nombre
+       COALESCE (dist3.cod_municipio,dist2.cod_municipio,dist1.cod_municipio,dist0.cod_municipio) cod_municipio,
+       COALESCE (dist3.cod_postal, dist2.cod_postal, dist1.cod_postal, dist0.cod_postal) cod_postal,
+       COALESCE (dist3.tipo_gestor, dist2.tipo_gestor, dist1.tipo_gestor, dist0.tipo_gestor) AS tipo_gestor,
+       COALESCE (dist3.username, dist2.username, dist1.username, dist0.username) username,
+       COALESCE (dist3.nombre_usuario, dist2.nombre_usuario, dist1.nombre_usuario, dist0.nombre_usuario) nombre
   FROM act_activo act JOIN act_loc_localizacion aloc ON act.act_id = aloc.act_id
        JOIN bie_localizacion loc ON loc.bie_loc_id = aloc.bie_loc_id
        JOIN '||V_ESQUEMA_M||'.dd_loc_localidad dd_loc ON loc.dd_loc_id = dd_loc.dd_loc_id
@@ -294,11 +295,11 @@ SELECT act.act_id, TO_NUMBER (dd_cra.dd_cra_codigo), NULL cod_estado_activo, NUL
 		UNION ALL
 /* SUPERVISOR COMERCIAL */
 SELECT act.act_id, TO_NUMBER (dd_cra.dd_cra_codigo) dd_cra_codigo, null dd_eac_codigo, dd_tcr.dd_tcr_codigo, dd_prov.dd_prv_codigo, 
-       COALESCE (dist1.cod_municipio,dist2.cod_municipio,dist3.cod_municipio) cod_municipio, 
-       COALESCE (dist1.cod_postal, dist2.cod_postal, dist3.cod_postal) cod_postal,
-       COALESCE (dist1.tipo_gestor, dist2.tipo_gestor, dist3.tipo_gestor) AS tipo_gestor, 
-       COALESCE (dist1.username, dist2.username, dist3.username) username,
-       COALESCE (dist1.nombre_usuario, dist2.nombre_usuario, dist3.nombre_usuario) nombre
+       COALESCE (dist3.cod_municipio,dist2.cod_municipio,dist1.cod_municipio) cod_municipio, 
+       COALESCE (dist3.cod_postal, dist2.cod_postal, dist1.cod_postal) cod_postal,
+       COALESCE (dist3.tipo_gestor, dist2.tipo_gestor, dist1.tipo_gestor) AS tipo_gestor, 
+       COALESCE (dist3.username, dist2.username, dist1.username) username,
+       COALESCE (dist3.nombre_usuario, dist2.nombre_usuario, dist1.nombre_usuario) nombre
   FROM act_activo act JOIN act_loc_localizacion aloc ON act.act_id = aloc.act_id
        JOIN bie_localizacion loc ON loc.bie_loc_id = aloc.bie_loc_id
        JOIN '||V_ESQUEMA_M||'.dd_loc_localidad dd_loc ON loc.dd_loc_id = dd_loc.dd_loc_id
@@ -330,6 +331,104 @@ SELECT act.act_id, TO_NUMBER (dd_cra.dd_cra_codigo) dd_cra_codigo, null dd_eac_c
            AND dist3.tipo_gestor = ''SCOM''
           )
           where act.borrado = 0		
+		UNION ALL
+/*Gestor de Reserva (Cajamar)*/
+ SELECT act.act_id, TO_NUMBER (dd_cra.dd_cra_codigo) dd_cra_codigo, null dd_eac_codigo, dd_tcr.dd_tcr_codigo, dd_prov.dd_prv_codigo,
+       COALESCE (dist1.cod_municipio,dist2.cod_municipio,dist3.cod_municipio,dist0.cod_municipio) cod_municipio,
+       COALESCE (dist1.cod_postal, dist2.cod_postal, dist3.cod_postal, dist0.cod_postal) cod_postal,
+       COALESCE (dist1.tipo_gestor, dist2.tipo_gestor, dist3.tipo_gestor, dist0.tipo_gestor) AS tipo_gestor,
+       COALESCE (dist1.username, dist2.username, dist3.username, dist0.username) username,
+       COALESCE (dist1.nombre_usuario, dist2.nombre_usuario, dist3.nombre_usuario, dist0.nombre_usuario) nombre
+  FROM act_activo act JOIN act_loc_localizacion aloc ON act.act_id = aloc.act_id
+       JOIN bie_localizacion loc ON loc.bie_loc_id = aloc.bie_loc_id
+       JOIN '||V_ESQUEMA_M||'.dd_loc_localidad dd_loc ON loc.dd_loc_id = dd_loc.dd_loc_id
+       JOIN '||V_ESQUEMA_M||'.dd_prv_provincia dd_prov ON dd_prov.dd_prv_id = loc.dd_prv_id
+       JOIN dd_tcr_tipo_comercializar dd_tcr ON dd_tcr.dd_tcr_id = act.dd_tcr_id
+       JOIN dd_cra_cartera dd_cra ON dd_cra.dd_cra_id = act.dd_cra_id
+       left JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist0
+       ON (dist0.cod_tipo_comerzialzacion IS NULL
+           AND dist0.cod_cartera = dd_cra.dd_cra_codigo
+           AND dist0.cod_provincia IS NULL
+           AND dist0.cod_municipio IS NULL
+           AND dist0.cod_postal IS NULL
+           AND dist0.tipo_gestor = ''GESRES''
+          )
+       left JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist1
+       ON (dd_tcr.dd_tcr_codigo = dist1.cod_tipo_comerzialzacion
+           AND dist1.cod_cartera = dd_cra.dd_cra_codigo
+           AND dd_prov.dd_prv_codigo = dist1.cod_provincia
+           AND dist1.cod_municipio IS NULL
+           AND dist1.cod_postal IS NULL
+           AND dist1.tipo_gestor = ''GESRES''
+          )
+       left JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist2
+       ON (dd_tcr.dd_tcr_codigo = dist2.cod_tipo_comerzialzacion
+           AND dist2.cod_cartera = dd_cra.dd_cra_codigo
+           AND dd_prov.dd_prv_codigo = dist2.cod_provincia
+           AND dist2.cod_municipio = dd_loc.dd_loc_codigo
+           AND dist2.cod_postal IS NULL
+           AND dist2.tipo_gestor = ''GESRES''
+          )
+       left JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist3
+       ON (dd_tcr.dd_tcr_codigo = dist3.cod_tipo_comerzialzacion
+           AND dist3.cod_cartera = dd_cra.dd_cra_codigo
+           AND dd_prov.dd_prv_codigo = dist3.cod_provincia
+           AND dist3.cod_municipio = dd_loc.dd_loc_codigo
+           AND dist3.cod_postal = loc.BIE_LOC_COD_POST
+           AND dist3.tipo_gestor = ''GESRES''
+          )
+          where act.borrado = 0
+	  and act.dd_cra_id in (select dd_cra_id from dd_cra_cartera where dd_cra_codigo = ''01'')
+	  and act.dd_scm_id in (select dd_scm_id from dd_scm_situacion_comercial  where dd_scm_codigo <> ''05'')
+		UNION ALL
+/*Supervisor de Reserva (Cajamar)*/
+ SELECT act.act_id, TO_NUMBER (dd_cra.dd_cra_codigo) dd_cra_codigo, null dd_eac_codigo, dd_tcr.dd_tcr_codigo, dd_prov.dd_prv_codigo,
+       COALESCE (dist1.cod_municipio,dist2.cod_municipio,dist3.cod_municipio,dist0.cod_municipio) cod_municipio,
+       COALESCE (dist1.cod_postal, dist2.cod_postal, dist3.cod_postal, dist0.cod_postal) cod_postal,
+       COALESCE (dist1.tipo_gestor, dist2.tipo_gestor, dist3.tipo_gestor, dist0.tipo_gestor) AS tipo_gestor,
+       COALESCE (dist1.username, dist2.username, dist3.username, dist0.username) username,
+       COALESCE (dist1.nombre_usuario, dist2.nombre_usuario, dist3.nombre_usuario, dist0.nombre_usuario) nombre
+  FROM act_activo act JOIN act_loc_localizacion aloc ON act.act_id = aloc.act_id
+       JOIN bie_localizacion loc ON loc.bie_loc_id = aloc.bie_loc_id
+       JOIN '||V_ESQUEMA_M||'.dd_loc_localidad dd_loc ON loc.dd_loc_id = dd_loc.dd_loc_id
+       JOIN '||V_ESQUEMA_M||'.dd_prv_provincia dd_prov ON dd_prov.dd_prv_id = loc.dd_prv_id
+       JOIN dd_tcr_tipo_comercializar dd_tcr ON dd_tcr.dd_tcr_id = act.dd_tcr_id
+       JOIN dd_cra_cartera dd_cra ON dd_cra.dd_cra_id = act.dd_cra_id
+       left JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist0
+       ON (dist0.cod_tipo_comerzialzacion IS NULL
+           AND dist0.cod_cartera = dd_cra.dd_cra_codigo
+           AND dist0.cod_provincia IS NULL
+           AND dist0.cod_municipio IS NULL
+           AND dist0.cod_postal IS NULL
+           AND dist0.tipo_gestor = ''SUPRES''
+          )
+       left JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist1
+       ON (dd_tcr.dd_tcr_codigo = dist1.cod_tipo_comerzialzacion
+           AND dist1.cod_cartera = dd_cra.dd_cra_codigo
+           AND dd_prov.dd_prv_codigo = dist1.cod_provincia
+           AND dist1.cod_municipio IS NULL
+           AND dist1.cod_postal IS NULL
+           AND dist1.tipo_gestor = ''SUPRES''
+          )
+       left JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist2
+       ON (dd_tcr.dd_tcr_codigo = dist2.cod_tipo_comerzialzacion
+           AND dist2.cod_cartera = dd_cra.dd_cra_codigo
+           AND dd_prov.dd_prv_codigo = dist2.cod_provincia
+           AND dist2.cod_municipio = dd_loc.dd_loc_codigo
+           AND dist2.cod_postal IS NULL
+           AND dist2.tipo_gestor = ''SUPRES''
+          )
+       left JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist3
+       ON (dd_tcr.dd_tcr_codigo = dist3.cod_tipo_comerzialzacion
+           AND dist3.cod_cartera = dd_cra.dd_cra_codigo
+           AND dd_prov.dd_prv_codigo = dist3.cod_provincia
+           AND dist3.cod_municipio = dd_loc.dd_loc_codigo
+           AND dist3.cod_postal = loc.BIE_LOC_COD_POST
+           AND dist3.tipo_gestor = ''SUPRES''
+          )
+          where act.borrado = 0
+	  and act.dd_cra_id in (select dd_cra_id from dd_cra_cartera where dd_cra_codigo = ''01'')
+	  and act.dd_scm_id in (select dd_scm_id from dd_scm_situacion_comercial  where dd_scm_codigo <> ''05'')
 		UNION ALL
 /*PROVEEDOR TECNICO*/
  SELECT act.act_id, TO_NUMBER (dd_cra.dd_cra_codigo) dd_cra_codigo, null dd_eac_codigo, null dd_tcr_codigo, dd_prov.dd_prv_codigo,

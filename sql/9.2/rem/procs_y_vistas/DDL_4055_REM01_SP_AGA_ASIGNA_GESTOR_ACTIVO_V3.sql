@@ -13,6 +13,7 @@
 --##        0.1 Versión inicial Pau Serrano
 --##		0.2 Añadidos gestor comercial backoffice liberbank SOG
 --##		0.3 Modificación para que los grestores de la tabla ACT_GES_DIST_GESTORES que no tengan cartera también los asigne al activo
+--##		0.4 Añadidos gestor de reserva para Cajamar
 --##########################################
 --*/
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE

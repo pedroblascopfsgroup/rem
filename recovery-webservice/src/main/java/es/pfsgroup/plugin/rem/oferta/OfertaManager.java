@@ -19,8 +19,12 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
+import es.capgemini.devon.exception.UserException;
 import es.capgemini.devon.message.MessageService;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.core.api.usuario.UsuarioApi;
@@ -204,6 +208,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	
 	@Autowired
 	ActivoTareaExternaApi activoTareaExternaApi;
+	
+	@Resource(name = "entityTransactionManager")
+	private PlatformTransactionManager transactionManager;
 
 	@Override
 	public String managerName() {
@@ -1382,13 +1389,14 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 	@Override
 	@Transactional(readOnly = false)
-	public ArrayList<Map<String, Object>> saveOrUpdateOfertas(List<OfertaDto> listaOfertaDto, JSONObject jsonFields)
+	public void saveOrUpdateOfertas(List<OfertaDto> listaOfertaDto, JSONObject jsonFields, ArrayList<Map<String, Object>> listaRespuesta)
 			throws Exception {
 		Map<String, Object> map = null;
 		OfertaDto ofertaDto = null;
 		Oferta oferta = null;
 		HashMap<String, String> errorsList = null;
-		ArrayList<Map<String, Object>> listaRespuesta = new ArrayList<Map<String, Object>>();
+		boolean error = false;
+		
 		for (int i = 0; i < listaOfertaDto.size(); i++) {
 
 			map = new HashMap<String, Object>();
@@ -1425,12 +1433,19 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				map.put("idOfertaWebcom", ofertaDto.getIdOfertaWebcom());
 				map.put("idOfertaRem", ofertaDto.getIdOfertaRem());
 				map.put("success", false);
-				map.put("invalidFields", errorsList);
+				
+				if (!Checks.esNulo(ofertaDto.getError())) {
+					map.put("error", ofertaDto.getError());
+					error = true;
+				} else {
+					map.put("invalidFields", errorsList);
+				}
 			}
 			listaRespuesta.add(map);
-
 		}
-		return listaRespuesta;
+		if (error) {
+			throw new UserException(new Exception());
+		}
 	}
 
 	@Override
@@ -2882,41 +2897,41 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	}
 	
 	private HashMap<String, String> avanzaTarea(Oferta oferta, OfertaDto ofertaDto, HashMap<String, String> errorsList) {
-		try {
-			Map<String, String[]> valoresTarea = new HashMap<String, String[]>();
-			ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByOferta(oferta);
-			List<ActivoTramite> listaTramites = activoTramiteApi.getTramitesActivoTrabajoList(expedienteComercial.getTrabajo().getId());
-			List<TareaExterna> tareasTramite = activoTareaExternaApi.getActivasByIdTramiteTodas(listaTramites.get(0).getId());
-			DateFormat format = new SimpleDateFormat("dd/MM/yyyy");
-			boolean avanzar = true;
-			
-			if (ofertaDto.getTarea().equals("01")  && DDEstadosExpedienteComercial.CONTRAOFERTADO.equals(expedienteComercial.getEstado().getCodigo())) {
-				if (ofertaDto.getSancionContraoferta().equals("Si")) {
-					valoresTarea.put("aceptacionContraoferta", new String[] { DDSiNo.SI });
-				} else if (ofertaDto.getSancionContraoferta().equals("No")) {
-					valoresTarea.put("aceptacionContraoferta", new String[] { DDSiNo.NO });
-				} else {
-					avanzar = false;
-				}
-			} else if (ofertaDto.getTarea().equals("02") && DDEstadosExpedienteComercial.PTE_POSICIONAMIENTO.equals(expedienteComercial.getEstado().getCodigo())) {
-				valoresTarea.put("fechaFirmaContrato", new String[] { format.format(ofertaDto.getFechaPrevistaFirma()) });
-				valoresTarea.put("lugarFirma", new String[] { ofertaDto.getLugarFirma() });
-			} else if (ofertaDto.getTarea().equals("03") && DDEstadosExpedienteComercial.PTE_FIRMA.equals(expedienteComercial.getEstado().getCodigo())) {
-				valoresTarea.put("fechaFirma", new String[] { format.format(ofertaDto.getFechaFirma()) });
+		Map<String, String[]> valoresTarea = new HashMap<String, String[]>();
+		ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByOferta(oferta);
+		List<ActivoTramite> listaTramites = activoTramiteApi.getTramitesActivoTrabajoList(expedienteComercial.getTrabajo().getId());
+		List<TareaExterna> tareasTramite = activoTareaExternaApi.getActivasByIdTramiteTodas(listaTramites.get(0).getId());
+		DateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+		boolean avanzar = true;
+		
+		if (ofertaDto.getTarea().equals("01")  && DDEstadosExpedienteComercial.CONTRAOFERTADO.equals(expedienteComercial.getEstado().getCodigo())) {
+			if (ofertaDto.getSancionContraoferta().equals("Si")) {
+				valoresTarea.put("aceptacionContraoferta", new String[] { DDSiNo.SI });
+			} else if (ofertaDto.getSancionContraoferta().equals("No")) {
+				valoresTarea.put("aceptacionContraoferta", new String[] { DDSiNo.NO });
 			} else {
 				avanzar = false;
 			}
-			
-			valoresTarea.put("idTarea", new String[] { tareasTramite.get(0).getTareaPadre().getId().toString() });
+		} else if (ofertaDto.getTarea().equals("02") && DDEstadosExpedienteComercial.PTE_POSICIONAMIENTO.equals(expedienteComercial.getEstado().getCodigo())) {
+			valoresTarea.put("fechaFirmaContrato", new String[] { format.format(ofertaDto.getFechaPrevistaFirma()) });
+			valoresTarea.put("lugarFirma", new String[] { ofertaDto.getLugarFirma() });
+		} else if (ofertaDto.getTarea().equals("03") && DDEstadosExpedienteComercial.PTE_FIRMA.equals(expedienteComercial.getEstado().getCodigo())) {
+			valoresTarea.put("fechaFirma", new String[] { format.format(ofertaDto.getFechaFirma()) });
+		} else {
+			avanzar = false;
+		}
 		
-			if (avanzar) {
+		valoresTarea.put("idTarea", new String[] { tareasTramite.get(0).getTareaPadre().getId().toString() });
+	
+		if (avanzar) {
+			try {
 				adapter.save(valoresTarea);
-			} else {
-				errorsList.put("tarea", RestApi.REST_MSG_TAREA_INVALIDA);
+			} catch (Exception e) {
+				errorsList.put("tarea", e.getMessage());
+				ofertaDto.setError(e.getMessage());
 			}
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} else {
+			errorsList.put("tarea", RestApi.REST_MSG_TAREA_INVALIDA);
 		}
 		return errorsList;
 	}

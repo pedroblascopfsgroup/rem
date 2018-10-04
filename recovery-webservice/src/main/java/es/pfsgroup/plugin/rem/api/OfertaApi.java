@@ -150,10 +150,11 @@ public interface OfertaApi {
 	 * 
 	 * @param listaOfertaDto
 	 * @param jsonFields
+	 * @param listaRespuesta
 	 * @return
 	 * @throws Exception
 	 */
-	public ArrayList<Map<String, Object>> saveOrUpdateOfertas(List<OfertaDto> listaOfertaDto,JSONObject jsonFields)throws Exception;
+	public void saveOrUpdateOfertas(List<OfertaDto> listaOfertaDto,JSONObject jsonFields, ArrayList<Map<String, Object>> listaRespuesta)throws Exception;
 
 	/**
 	 * Actualizar el estado de disponibilidad comercial en los activos

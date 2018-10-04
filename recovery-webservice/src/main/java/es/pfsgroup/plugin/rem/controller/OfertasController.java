@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.rem.controller;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
+import es.capgemini.devon.exception.UserException;
 import es.capgemini.devon.files.FileItem;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -126,27 +128,32 @@ public class OfertasController {
 	@RequestMapping(method = RequestMethod.POST, value = "/ofertas")
 	public void saveOrUpdateOferta(ModelMap model, RestRequestWrapper request, HttpServletResponse response) {
 		OfertaRequestDto jsonData = null;
-		ArrayList<Map<String, Object>> listaRespuesta = null;
+		ArrayList<Map<String, Object>> listaRespuesta = new ArrayList<Map<String, Object>>();
 		JSONObject jsonFields = null;
-
+		List<OfertaDto> listaOfertaDto = null;
+		
 		try {
 
 			jsonFields = request.getJsonObject();
 			jsonData = (OfertaRequestDto) request.getRequestData(OfertaRequestDto.class);
-			List<OfertaDto> listaOfertaDto = jsonData.getData();
+			listaOfertaDto = jsonData.getData();
 
 			if (Checks.esNulo(jsonFields) && jsonFields.isEmpty()) {
 				throw new Exception(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
 
 			} else {
 
-				listaRespuesta = ofertaApi.saveOrUpdateOfertas(listaOfertaDto, jsonFields);
+				ofertaApi.saveOrUpdateOfertas(listaOfertaDto, jsonFields, listaRespuesta);
+				
 				model.put("id", jsonFields.get("id"));
 				model.put("data", listaRespuesta);
 				model.put("error", "null");
-
 			}
 
+		} catch (UserException e) {
+			model.put("id", jsonFields.get("id"));
+			model.put("data", listaRespuesta);
+			model.put("error", "null");
 		} catch (Exception e) {
 			logger.error("Error ofertas", e);
 			request.getPeticionRest().setErrorDesc(e.getMessage());

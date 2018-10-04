@@ -331,7 +331,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		enableComboTipoInquilino: function(get){
 			var comboEstadoAlquiler = get('patrimonio.estadoAlquiler');
 			
-			return (Ext.isEmpty(comboEstadoAlquiler) && comboEstadoAlquiler == CONST.COMBO_TIPO_ALQUILER["LIBRE"]);			
+			return (Ext.isEmpty(comboEstadoAlquiler) && comboEstadoAlquiler == CONST.COMBO_ESTADO_ALQUILER["LIBRE"]);			
 		},
 		
 		esEditableComboOcupacion: function(get){

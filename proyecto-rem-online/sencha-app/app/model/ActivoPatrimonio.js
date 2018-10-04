@@ -21,7 +21,7 @@ Ext.define('HreRem.model.ActivoPatrimonio', {
     			name:'descripcionAdecuacion'
     		},
     		{
-    			name:'chkRentaAntigua'
+    			name:'comboRentaAntigua'
     		}
     		
     ],

@@ -22,7 +22,7 @@ public class DtoActivoPatrimonio extends DtoTabActivo {
 	private Boolean checkPerimetroAlquiler;
 	private Boolean chkPerimetroAlquiler;
 	private String tipoAlquilerCodigo;
-	private Boolean chkRentaAntigua;
+	private String comboRentaAntigua;
 	
 	//Grid historico adecuaciones patrimonio activo
 	private Date fechaInicioAdecuacion;
@@ -104,11 +104,11 @@ public class DtoActivoPatrimonio extends DtoTabActivo {
 	public void setTipoAlquilerCodigo(String tipoAlquilerCodigo) {
 		this.tipoAlquilerCodigo = tipoAlquilerCodigo;
 	}
-	public Boolean getChkRentaAntigua() {
-		return chkRentaAntigua;
+	public String getComboRentaAntigua() {
+		return comboRentaAntigua;
 	}
-	public void setChkRentaAntigua(Boolean chkRentaAntigua) {
-		this.chkRentaAntigua = chkRentaAntigua;
+	public void setComboRentaAntigua(String comboRentaAntigua) {
+		this.comboRentaAntigua = comboRentaAntigua;
 	}
    
     

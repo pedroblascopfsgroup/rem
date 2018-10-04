@@ -295,7 +295,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			}
 		 },
 		 
-		 enableCheckRentaAntigua: function(get){
+		 enableComboRentaAntigua: function(get){
 			var chkPerimetroAlquiler = get('patrimonio.chkPerimetroAlquiler');
 			var situacionActivo = get('activo.situacionComercialCodigo');
 			if((chkPerimetroAlquiler == true || chkPerimetroAlquiler == "true" ) && CONST.SITUACION_COMERCIAL['ALQUILADO'] == situacionActivo){

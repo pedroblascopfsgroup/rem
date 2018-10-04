@@ -66,11 +66,12 @@ Ext.define('HreRem.view.activos.detalle.PatrimonioActivo', {
 						},
 						//Fila 2
 						{ 	
-							xtype: 'checkboxfieldbase',
+							xtype: 'comboboxfieldbase',
 							fieldLabel: HreRem.i18n('title.patrimonio.rentaAntigua'),
 							bind: {
-								readOnly: '{enableCheckRentaAntigua}',
-								value: '{patrimonio.chkRentaAntigua}'
+								disabled: '{enableComboRentaAntigua}',
+								store: '{comboSiNoRem}',
+								value: '{patrimonio.comboRentaAntigua}'
 								
 								
 							},

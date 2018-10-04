@@ -70,7 +70,7 @@ public class ActivoHistoricoPatrimonio implements Serializable, Auditable {
 	private Date fechaFinHPM;
 	
 	@Column(name = "PTA_RENTA_ANTIGUA")
-	private Boolean checkRentaAntigua;
+	private String comboRentaAntigua;
 
 	@Version
 	private Long version;
@@ -158,12 +158,12 @@ public class ActivoHistoricoPatrimonio implements Serializable, Auditable {
 		this.auditoria = auditoria;
 	}
 
-	public Boolean getCheckRentaAntigua() {
-		return checkRentaAntigua;
+	public String getComboRentaAntigua() {
+		return comboRentaAntigua;
 	}
 
-	public void setCheckRentaAntigua(Boolean checkRentaAntigua) {
-		this.checkRentaAntigua = checkRentaAntigua;
+	public void setComboRentaAntigua(String comboRentaAntigua) {
+		this.comboRentaAntigua = comboRentaAntigua;
 	}
 	
 	

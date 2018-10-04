@@ -3428,7 +3428,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	onActivateTabPatrimonioActivo : function(tab, eOpts){
 		var me = this;
 		
-		me.getViewModel().get('enableCheckRentaAntigua');
+		me.getViewModel().get('enableComboRentaAntigua');
 	}
     
 });

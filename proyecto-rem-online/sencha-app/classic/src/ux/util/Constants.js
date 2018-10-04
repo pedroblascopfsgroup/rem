@@ -362,6 +362,22 @@ Ext.define('HreRem.ux.util.Constants', {
     ES_VENTA: {
     	SI: 1,
     	NO: 0
+    },
+    
+    COMBO_OCUPACION: {
+    	SI: 1,
+    	NO: 0
+    },
+    
+    COMBO_CON_TITULO: {
+    	SI: 1,
+    	NO: 0
+    },
+    
+    COMBO_ESTADO_ALQUILER: {
+    	LIBRE: '01',
+    	ALQUILADO: '02',
+    	CON_DEMANDAS: '03'
     }
     
 });

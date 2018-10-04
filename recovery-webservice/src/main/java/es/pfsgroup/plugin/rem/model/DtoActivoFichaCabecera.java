@@ -186,6 +186,43 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	
 	//HREOS-3415
 	private String acbCoreaeTexto;
+	
+	private int ocupado;
+	private int conTitulo;
+	private String tipoInquilino;
+	private String tipoEstadoAlquiler;
+
+	public int getConTitulo() {
+		return conTitulo;
+	}
+
+	public void setConTitulo(int conTitulo) {
+		this.conTitulo = conTitulo;
+	}
+
+	public String getTipoInquilino() {
+		return tipoInquilino;
+	}
+
+	public void setTipoInquilino(String tipoInquilino) {
+		this.tipoInquilino = tipoInquilino;
+	}
+
+	public String getTipoEstadoAlquiler() {
+		return tipoEstadoAlquiler;
+	}
+
+	public void setTipoEstadoAlquiler(String tipoEstadoAlquiler) {
+		this.tipoEstadoAlquiler = tipoEstadoAlquiler;
+	}
+
+	public int getOcupado() {
+		return ocupado;
+	}
+
+	public void setOcupado(int ocupado) {
+		this.ocupado = ocupado;
+	}
 
 	public int getPage() {
 		return page;

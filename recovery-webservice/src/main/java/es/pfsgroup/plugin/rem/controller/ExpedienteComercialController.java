@@ -1691,10 +1691,10 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getEstadoExpedienteComercial(ModelMap model, @RequestParam(value = "esVenta") String esVenta) {
+	public ModelAndView getEstadoExpedienteComercial(ModelMap model, @RequestParam(value = "esVenta") String idEstado) {
 		
 		try {
-			List<DtoDiccionario> list = expedienteComercialApi.getComboExpedienteComercialByEstado(esVenta);
+			List<DtoDiccionario> list = expedienteComercialApi.getComboExpedienteComercialByEstado(idEstado);
 			model.put("data", list);
 			model.put("success", true);
 			
@@ -1707,5 +1707,5 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 		return createModelAndViewJson(model);
 		
 	}
-	
+		
 }

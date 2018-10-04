@@ -21,8 +21,13 @@ public class DtoActivoPatrimonio extends DtoTabActivo {
 	private String descripcionAdecuacionLarga;
 	private Boolean checkPerimetroAlquiler;
 	private Boolean chkPerimetroAlquiler;
+	private Boolean chkSubrogado;
 	private String tipoAlquilerCodigo;
 	private Boolean chkRentaAntigua;
+	private String tipoInquilino;
+	private String estadoAlquiler;
+	private int ocupacion;
+	private int conTitulo;
 	
 	//Grid historico adecuaciones patrimonio activo
 	private Date fechaInicioAdecuacion;
@@ -30,7 +35,36 @@ public class DtoActivoPatrimonio extends DtoTabActivo {
 	private Date fechaInicioPerimetroAlquiler;
 	private Date fechaFinPerimetroAlquiler;
 	
-	
+	public Boolean getChkSubrogado() {
+		return chkSubrogado;
+	}
+	public void setChkSubrogado(Boolean chkSubrogado) {
+		this.chkSubrogado = chkSubrogado;
+	}
+	public String getTipoInquilino() {
+		return tipoInquilino;
+	}
+	public void setTipoInquilino(String tipoInquilino) {
+		this.tipoInquilino = tipoInquilino;
+	}
+	public String getEstadoAlquiler() {
+		return estadoAlquiler;
+	}
+	public void setEstadoAlquiler(String estadoAlquiler) {
+		this.estadoAlquiler = estadoAlquiler;
+	}
+	public int getOcupacion() {
+		return ocupacion;
+	}
+	public void setOcupacion(int ocupacion) {
+		this.ocupacion = ocupacion;
+	}
+	public int getConTitulo() {
+		return conTitulo;
+	}
+	public void setConTitulo(int conTitulo) {
+		this.conTitulo = conTitulo;
+	}	
 	public String getIdPatrimonio() {
 		return idPatrimonio;
 	}
@@ -42,8 +76,7 @@ public class DtoActivoPatrimonio extends DtoTabActivo {
 	}
 	public void setIdActivo(String idActivo) {
 		this.idActivo = idActivo;
-	}
-	
+	}	
 	public Boolean getCheckPerimetroAlquiler() {
 		return checkPerimetroAlquiler;
 	}

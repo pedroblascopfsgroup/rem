@@ -82,7 +82,7 @@ Ext.define('HreRem.view.comercial.ofertas.OfertasComercialSearch', {
 					        	xtype: 'checkboxfield',
 					        	boxLabel: HreRem.i18n('fieldlabel.check.agrupaciones.vinculadas'),
 					        	name: 'agrupacionesVinculadas',
-					        	reference: 'agrupacionesVinculadasOfertaComercial',
+					        	reference: 'agrupacionesVinculadasOfertaComercial', 
 					        	disabled: true
 					        }
 							

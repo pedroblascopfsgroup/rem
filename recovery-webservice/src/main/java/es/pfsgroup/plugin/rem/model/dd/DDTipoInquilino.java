@@ -25,14 +25,12 @@ import es.capgemini.pfs.diccionarios.Dictionary;
 @Where(clause=Auditoria.UNDELETED_RESTICTION)
 public class DDTipoInquilino implements Auditable, Dictionary{
 	
-		
 		public final static String TIPO_INQUILINO_NORMAL= "01";
 		public final static String TIPO_INQUILINO_ANTIGUO_DEUDOR = "02";
 		public final static String TIPO_INQUILINO_EMPLEADO_PROPIETARIO = "03";
 		public final static String TIPO_INQUILINO_EMPLEADO_HAYA = "04";
-		
 
-		private static final long serialVersionUID = 1L;
+		private static final long serialVersionUID = 2429941762560843718L;
 
 		@Id
 		@Column(name = "DD_TPI_ID")

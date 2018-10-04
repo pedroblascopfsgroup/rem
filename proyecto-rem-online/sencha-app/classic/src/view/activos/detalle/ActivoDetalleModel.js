@@ -57,7 +57,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 	     	var ocupado = get('situacionPosesoria.ocupado') == "1";
 	     	var conTitulo = get('situacionPosesoria.conTitulo') == "1";
 	     	
-	     	return ocupado && conTitulo
+	     	return ocupado && conTitulo;
 	     	
 	     },
 	     
@@ -68,7 +68,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 	     },
 	     
 	     esOcupacionIlegal: function(get) {
-	     	
 	     	var ocupado = get('situacionPosesoria.ocupado') == "1";
 	     	var conTitulo = get('situacionPosesoria.conTitulo') == "1";
 	     	
@@ -305,13 +304,55 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			}
 		 },
 		 
+		 enableCheckPerimetroAlquiler: function(get){
+		 	var comboEstadoAlquiler = get('patrimonio.estadoAlquiler');
+		 	
+		 	if(comboEstadoAlquiler != null){
+		 		if(comboEstadoAlquiler.value == CONST.COMBO_ESTADO_ALQUILER["ALQUILADO"] || comboEstadoAlquiler.value == CONST.COMBO_ESTADO_ALQUILER["CON_DEMANDAS"]){
+			 		return true;
+		 		}
+		 	}
+		 	return false;
+		 },
+		 
 		 esEditableCodigoPromocion: function(get){
 			 var isGestorActivos = $AU.userIsRol('HAYAGESACT') || $AU.userIsRol('HAYAGESTADM');
 			 var isLiberbank = get('activo.isCarteraLiberbank');
 			 if(isGestorActivos && isLiberbank) return true;
 			 else return false;
-		 }
+		 },
+		 
+		 esEditableComboEstadoAlquiler: function(get){
+			var comboOcupacion = get('activo.ocupado'); 
+		 	 
+			return comboOcupacion == CONST.COMBO_OCUPACION["SI"];			
+		},
+		 
+		enableComboTipoInquilino: function(get){
+			var comboEstadoAlquiler = get('patrimonio.estadoAlquiler');
+			
+			return (Ext.isEmpty(comboEstadoAlquiler) && comboEstadoAlquiler == CONST.COMBO_TIPO_ALQUILER["LIBRE"]);			
+		},
+		
+		esEditableComboOcupacion: function(get){
+			var estadoAlquilerCodigo = get('situacionPosesoria.tipoEstadoAlquiler');
+
+			if(!Ext.isEmpty(estadoAlquilerCodigo)){
+				 return (CONST.COMBO_ESTADO_ALQUILER["LIBRE"] == estadoAlquilerCodigo);  
+			}
+		},
+		
+		enableComboEstadoAlquiler: function(get){
+			var estadoComboOcupacion = get('patrimonio.ocupacion');
+			
+			if(!Ext.isEmpty(estadoComboOcupacion)){
+				return (CONST.COMBO_OCUPACION["SI"] == estadoComboOcupacion);
+			} 
+		}
+		
 	 },
+	
+	 
 
     stores: {
     		
@@ -1254,6 +1295,25 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				extraParams: {diccionario: 'tiposAlquilerActivo'}
 			}
 		},
+				 
+    	comboTipoInquilino: {
+    		model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tiposInquilino'} 
+			}
+    	},
+    	
+    	
+    	comboEstadoAlquiler: {
+    		model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tiposEstadoAlquiler'}
+			}
+    	},
 
 		comboTipoTenedor: {
 			model: 'HreRem.model.ComboBase',
@@ -1387,8 +1447,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		        extraParams: {id: '{activo.id}'}
 	    	 }
    		}
-		
-
 //		
 //		filtroComboPrescriptor: {
 //			//pageSize: $AC.getDefaultPageSize(),

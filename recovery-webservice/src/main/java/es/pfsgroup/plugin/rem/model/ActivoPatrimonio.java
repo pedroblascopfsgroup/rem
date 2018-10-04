@@ -10,6 +10,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -22,6 +23,8 @@ import org.hibernate.annotations.Where;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.pfsgroup.plugin.rem.model.dd.DDAdecuacionAlquiler;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoEstadoAlquiler;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoInquilino;
 
 /**
  * Modelo que gestiona el patrimonio de un activo.
@@ -49,21 +52,56 @@ public class ActivoPatrimonio implements Serializable, Auditable {
 	@JoinColumn(name = "ACT_ID")
 	private Activo activo;
 
-	@OneToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "DD_ADA_ID")
-	private DDAdecuacionAlquiler AdecuacionAlquiler;
+	private DDAdecuacionAlquiler adecuacionAlquiler;
 
 	@Column(name = "CHECK_HPM")
 	private Boolean checkHPM;
 	
 	@Column(name = "PTA_RENTA_ANTIGUA")
 	private Boolean checkRentaAntigua;
+	
+	@Column(name = "CHECK_SUBROGADO")
+	private Boolean checkSubrogado;
 
+	@ManyToOne
+	@JoinColumn(name = "DD_TPI_ID")
+	private DDTipoInquilino tipoInquilino;
+	
+	@ManyToOne
+	@JoinColumn(name = "DD_EAL_ID")
+	private DDTipoEstadoAlquiler tipoEstadoAlquiler;
+	
 	@Version
 	private Long version;
 
 	@Embedded
 	private Auditoria auditoria;
+
+	public Boolean getCheckSubrogado() {
+		return checkSubrogado;
+	}
+
+	public void setCheckSubrogado(Boolean checkSubrogado) {
+		this.checkSubrogado = checkSubrogado;
+	}
+
+	public DDTipoInquilino getTipoInquilino() {
+		return tipoInquilino;
+	}
+
+	public void setTipoInquilino(DDTipoInquilino tipoInquilino) {
+		this.tipoInquilino = tipoInquilino;
+	}
+
+	public DDTipoEstadoAlquiler getTipoEstadoAlquiler() {
+		return tipoEstadoAlquiler;
+	}
+
+	public void setTipoEstadoAlquiler(DDTipoEstadoAlquiler tipoEstadoAlquiler) {
+		this.tipoEstadoAlquiler = tipoEstadoAlquiler;
+	}
 
 	public Long getId() {
 		return id;
@@ -82,11 +120,11 @@ public class ActivoPatrimonio implements Serializable, Auditable {
 	}
 
 	public DDAdecuacionAlquiler getAdecuacionAlquiler() {
-		return AdecuacionAlquiler;
+		return adecuacionAlquiler;
 	}
 
 	public void setAdecuacionAlquiler(DDAdecuacionAlquiler adecuacionAlquiler) {
-		AdecuacionAlquiler = adecuacionAlquiler;
+		this.adecuacionAlquiler = adecuacionAlquiler;
 	}
 
 	public Boolean getCheckHPM() {

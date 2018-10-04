@@ -6,7 +6,7 @@ Ext.define('HreRem.model.ActivoPatrimonio', {
     idProperty: 'id',
     
 
-    fields: [    
+    fields: [
      		
     		{
     			name:'chkPerimetroAlquiler'
@@ -21,7 +21,22 @@ Ext.define('HreRem.model.ActivoPatrimonio', {
     			name:'descripcionAdecuacion'
     		},
     		{
-    			name:'chkRentaAntigua'
+				name:'chkRentaAntigua'
+			},
+			{
+				name:'chkSubrogado'
+			},
+			{
+    			name: 'tipoInquilino'
+    		},
+    		{
+    			name: 'estadoAlquiler'
+    		},
+    		{
+    			name: 'ocupacion'
+    		},
+    		{
+    			name: 'conTitulo'
     		}
     		
     ],

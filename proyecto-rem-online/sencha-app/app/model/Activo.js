@@ -20,7 +20,7 @@ Ext.define('HreRem.model.Activo', {
     			name:'entidadPropietaria'
     		},
     		{
-    			name:'entidadPropietariaCodigo'
+    			name:'entidadPropietariaCodigo' 
     		},
     		{
     			name: 'isCarteraBankia',
@@ -607,6 +607,12 @@ Ext.define('HreRem.model.Activo', {
 			},
 			{
 				name: 'activoBNK'
+			},
+			{
+				name: 'ocupado'
+			},
+			{
+				name: 'tipoEstadoAlquiler'
 			}
     ],
     

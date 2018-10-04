@@ -31,6 +31,7 @@ import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDCicCodigoIsoCirbeBKP;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBLocalizacionesBien;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoPatrimonioDao;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoPropagacionApi;
@@ -44,8 +45,10 @@ import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoBancario;
 import es.pfsgroup.plugin.rem.model.ActivoEstadosInformeComercialHistorico;
 import es.pfsgroup.plugin.rem.model.ActivoLocalizacion;
+import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
+import es.pfsgroup.plugin.rem.model.DtoActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.DtoEstadosInformeComercialHistorico;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
@@ -119,6 +122,9 @@ public class TabActivoDatosBasicos implements TabActivoService {
 	
 	@Autowired
 	private ActivoPropagacionApi activoPropagacionApi;
+	
+	@Autowired
+	private ActivoPatrimonioDao activoPatrimonioDao;
 	
 	@Autowired
 	private RestApi restApi;
@@ -456,7 +462,25 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		// HREOS-2761: Buscamos los campos que pueden ser propagados para esta pestaña
 		 activoDto.setCamposPropagables(TabActivoService.TAB_DATOS_BASICOS);
 
-		
+		 if (!Checks.esNulo(activo.getSituacionPosesoria()) && !Checks.esNulo(activo.getSituacionPosesoria().getOcupado())) {
+			 activoDto.setOcupado(activo.getSituacionPosesoria().getOcupado());
+		 } else {
+			 activoDto.setOcupado(0);
+		 }
+		 			
+		 ActivoPatrimonio activoP = activoPatrimonioDao.getActivoPatrimonioByActivo(activo.getId());
+		 
+		 if(!Checks.esNulo(activoP)) {
+			 if (!Checks.esNulo(activoP.getTipoEstadoAlquiler())) {
+				 activoDto.setTipoEstadoAlquiler(activoP.getTipoEstadoAlquiler().getCodigo());
+				 
+			 }
+
+			 if(!Checks.esNulo(activoP.getTipoInquilino())) {
+				 activoDto.setTipoInquilino(activoP.getTipoInquilino().getCodigo());
+			 }
+		 }
+		 
 		return activoDto;	
 	}
 

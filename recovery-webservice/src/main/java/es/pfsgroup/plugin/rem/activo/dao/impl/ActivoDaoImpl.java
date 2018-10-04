@@ -1034,17 +1034,17 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 	 * @return Devuelve True si la operación ha sido satisfactorio, False si no ha sido satisfactoria.
 	 */
 	private Boolean publicarActivo(Long idActivo, String username, Boolean historificar, String eleccionUsuarioTipoPublicacionAlquiler) {
-		String procedureHQL = "BEGIN SP_CAMBIO_ESTADO_PUBLICACION(:idActivoParam, :eleccionUsuarioParam, :usernameParam, :historificarParam);  END;";
-
-		Query callProcedureSql = this.getSessionFactory().getCurrentSession().createSQLQuery(procedureHQL);
-		callProcedureSql.setParameter("idActivoParam", idActivo);
-		callProcedureSql.setParameter("eleccionUsuarioParam", eleccionUsuarioTipoPublicacionAlquiler);
-		callProcedureSql.setParameter("usernameParam", username);
-		callProcedureSql.setParameter("historificarParam", historificar ? "S" : "N");
-
-		Integer resultado = callProcedureSql.executeUpdate();
-
-    	return resultado == 1;
+//		String procedureHQL = "BEGIN SP_CAMBIO_ESTADO_PUBLICACION(:idActivoParam, :eleccionUsuarioParam, :usernameParam, :historificarParam);  END;";
+//
+//		Query callProcedureSql = this.getSessionFactory().getCurrentSession().createSQLQuery(procedureHQL);
+//		callProcedureSql.setParameter("idActivoParam", idActivo);
+//		callProcedureSql.setParameter("eleccionUsuarioParam", eleccionUsuarioTipoPublicacionAlquiler);
+//		callProcedureSql.setParameter("usernameParam", username);
+//		callProcedureSql.setParameter("historificarParam", historificar ? "S" : "N");
+//
+//		Integer resultado = callProcedureSql.executeUpdate();
+		
+		return true;
 	}
 	
 	@Override

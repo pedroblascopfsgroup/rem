@@ -1,7 +1,7 @@
 --/*
 --#########################################
 --## AUTOR=Maria Presencia
---## FECHA_CREACION=20180925
+--## FECHA_CREACION=20180926
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=2.0.18
 --## INCIDENCIA_LINK=HREOS-4529
@@ -52,15 +52,25 @@ BEGIN
 	 
 	 IF COD_RETORNO = 0 AND ID_ACTIVO_HAYA IS NULL THEN
 		HLP_REGISTRO_EJEC := '[ERROR] El ID_ACTIVO_HAYA indicado como parámetro de entrada no se ha ingresado. Por favor ingrese un valor para este campo.';
-		DBMS_OUTPUT.PUT_LINE('[ERROR] '||HLP_REGISTRO_EJEC||' .');
+		DBMS_OUTPUT.PUT_LINE(' '||HLP_REGISTRO_EJEC||' ');
 		COD_RETORNO := 1;
 	END IF;
 	 
 	 
 	  IF COD_RETORNO = 0 AND FLAG_ACTIVO_HAYA IS NULL THEN
 		HLP_REGISTRO_EJEC := '[ERROR] El FLAG_ACTIVO_HAYA indicado como parámetro de entrada no se ha ingresado. Por favor ingrese un valor para este campo.';
-		DBMS_OUTPUT.PUT_LINE('[ERROR] '||HLP_REGISTRO_EJEC||' .');
+		DBMS_OUTPUT.PUT_LINE(' '||HLP_REGISTRO_EJEC||' ');
 		COD_RETORNO := 1;
+	END IF;
+	
+	IF COD_RETORNO = 0 THEN
+		V_MSQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT WHERE ACT.ACT_NUM_ACTIVO = '||ID_ACTIVO_HAYA||' AND ACT.BORRADO = 0';
+		EXECUTE IMMEDIATE V_MSQL INTO V_COUNT;
+		IF V_COUNT < 1 THEN
+				HLP_REGISTRO_EJEC := '[ERROR] El ID_ACTIVO_HAYA indicado no existe en la tabla ACT_ACTIVO o es un activo borrado.';
+				DBMS_OUTPUT.PUT_LINE(' '||HLP_REGISTRO_EJEC||' ');
+				COD_RETORNO := 1;
+		END IF;
 	END IF;
 	
 	IF COD_RETORNO = 0 THEN
@@ -119,7 +129,7 @@ BEGIN
 	
 	EXECUTE IMMEDIATE V_MSQL;
 	 
-	 	END IF;
+	 END IF;
 
 	COD_RETORNO := 0;
 	

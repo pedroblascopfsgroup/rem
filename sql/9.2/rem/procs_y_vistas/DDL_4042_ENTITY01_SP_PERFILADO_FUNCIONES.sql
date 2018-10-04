@@ -1,10 +1,10 @@
 --/*
 --######################################### 
---## AUTOR=Pau Serrano
---## FECHA_CREACION=20180721
+--## AUTOR=Sergio Ortuño
+--## FECHA_CREACION=20181004
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-4330
+--## INCIDENCIA_LINK=REMVIP-2158
 --## PRODUCTO=NO
 --## 
 --## Finalidad: Procedimiento encargado de perfilar las funciones

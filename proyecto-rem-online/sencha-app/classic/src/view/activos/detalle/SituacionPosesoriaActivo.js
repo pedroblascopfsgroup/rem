@@ -182,10 +182,10 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 
 			            			if(tipoComercializacionCodigo != CONST.TIPOS_COMERCIALIZACION['VENTA']){
 				            			if(value == CONST.COMBO_OCUPACION['SI']) {
-				            				me.up('formBase').down('[reference=comboSituacionPosesoriaConTituloRef]').setValue('01');
-				            				me.up('formBase').down('[reference=comboSituacionPosesoriaConTituloRef]').setEditable(true);
+				            				me.up('formBase').down('[reference=comboSituacionPosesoriaConTituloRef]').setValue(1);
+				            				me.up('formBase').down('[reference=comboSituacionPosesoriaConTituloRef]').setDisabled(false);
 				            			} else if (value == CONST.COMBO_OCUPACION['NO']){
-				            				me.up('formBase').down('[reference=comboSituacionPosesoriaConTituloRef]').setEditable(false); 
+				            				me.up('formBase').down('[reference=comboSituacionPosesoriaConTituloRef]').setDisabled(true); 
 				            			}
 			            			}			            			
 			            		}

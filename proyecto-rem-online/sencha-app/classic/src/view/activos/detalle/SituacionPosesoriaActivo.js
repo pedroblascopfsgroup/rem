@@ -446,8 +446,6 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
    		fechaTomaPosesion = me.down('[reference=fechaTomaPosesion]'),
    		fechaRevisionEstadoPosesorio = me.down('[reference=fechaRevisionEstadoPosesorio]'),
    		fechaSolDesahucio = me.down('[reference=fechaSolDesahucio]'),
-   		fechaLanzamiento = me.down('[reference=fechaLanzamiento]'),
-   		fechaLanzamientoEfectivo = me.down('[reference=fechaLanzamientoEfectivo]'),
    		datefieldFechaTitulo = me.down('[reference=datefieldFechaTitulo]'),
    		datefieldFechaVencTitulo = me.down('[reference=datefieldFechaVencTitulo]');
 
@@ -455,19 +453,7 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 		    error = HreRem.i18n("txt.validacion.fechaTomaPosesion.mayor.fechaRevisionEstadoPosesorio");
    			errores.push(error);
    			fechaTomaPosesion.markInvalid(error);   			
-   		}  		
-   		
-   		if(!Ext.isEmpty(fechaLanzamiento.getValue()) && fechaLanzamiento.getValue() < fechaSolDesahucio.getValue()) {
-		    error = HreRem.i18n("txt.validacion.fechaLanzamiento.menor.fechaSolDesahucio");
-   			errores.push(error);
-   			fechaLanzamiento.markInvalid(error);   			
-   		}  	
-   		
-   		if(!Ext.isEmpty(fechaLanzamientoEfectivo.getValue()) && fechaLanzamientoEfectivo.getValue() < fechaLanzamiento.getValue()) {
-		    error = HreRem.i18n("txt.validacion.fechaLanzamientoEfectivo.menor.fechaLanzamiento");
-   			errores.push(error);
-   			fechaLanzamientoEfectivo.markInvalid(error);   			
-   		}  	
+   		}  				
    		
    		//La fecha de t�tulo posesorio debe ser anterior a la fecha de vencimiento
    		if(!Ext.isEmpty(datefieldFechaTitulo.getValue()) && datefieldFechaTitulo.getValue() >= datefieldFechaVencTitulo.getValue()) {

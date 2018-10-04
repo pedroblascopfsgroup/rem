@@ -728,9 +728,12 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		// Ejecución especial si la pestaña es 'Comercial'.
 		if("comercialactivo" == form.getXType()) {
 			me.onSaveFormularioCompletoTabComercial(btn, form);
+		} else if("datospatrimonio" == form.getXType()){
+			me.onSaveFormularioCompletoTabPatrimonio(btn, form);
 		} else {
 			me.onSaveFormularioCompleto(btn, form);
 		}
+		
 	},
 
 	onClickBotonCancelar: function(btn) {
@@ -2949,11 +2952,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	saveActivo: function(jsonData, successFn) {
 		var me = this,
 		url =  $AC.getRemoteUrl('activo/saveActivo');
-		
 		me.getView().mask(HreRem.i18n("msg.mask.loading"));
 		
 		successFn = successFn || Ext.emptyFn
-			
 		
 		if(Ext.isEmpty(jsonData)) {
 			me.fireEvent("log", "Obligatorio jsonData para guardar el activo");
@@ -3024,7 +3025,12 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	          } else {
 	            window.destroy();
 	              
-	            me.manageToastJsonResponse(me, record.responseText);
+	            if (record) {
+	            	me.manageToastJsonResponse(me, record.responseText);
+	            } else {
+	            	me.manageToastJsonResponse(me);
+	            }
+	            
 	            
 	            me.getView().unmask();
 	            me.refrescarActivo(formActivo.refreshAfterSave);
@@ -3374,7 +3380,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 				}
 			
 				var successFn = function(response, eOpts) {
-					
 					me.manageToastJsonResponse(me, response.responseText);
 					
 					me.getView().unmask();
@@ -3427,8 +3432,46 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	
 	onActivateTabPatrimonioActivo : function(tab, eOpts){
 		var me = this;
-		
+
 		me.getViewModel().get('enableComboRentaAntigua');
+		me.getViewModel().get('enableCheckPerimetroAlquiler');
+		
+	},    
+	
+	onSaveFormularioCompletoTabPatrimonio: function(btn, form){
+		var me = this;
+		var comboEstadoAlquiler = me.lookupReference('comboEstadoAlquilerRef');
+		var comboTipoInquilino = me.lookupReference('comboTipoInquilinoRef');
+		var comboOcupado = me.getViewModel().get('activo.ocupado');
+				
+		if(comboEstadoAlquiler != null && comboTipoInquilino != null && comboOcupado != null){
+			if(comboEstadoAlquiler.value == CONST.COMBO_ESTADO_ALQUILER['ALQUILADO'] && comboOcupado.value == CONST.COMBO_OCUPACION["SI"]){
+				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+			} else if(comboEstadoAlquiler.value == CONST.COMBO_ESTADO_ALQUILER['LIBRE']){
+				comboTipoInquilino.setValue(null);
+				me.onSaveFormularioCompleto(btn, form);
+			} else {
+				me.onSaveFormularioCompleto(btn, form);
+			}		
+		}
+		
+	},
+	
+	esEditableChkYcombo: function(){
+		var me = this;
+		
+		var comboEstadoAlquiler = me.lookupReference('comboEstadoAlquilerRef');
+		var chkPerimetroAlquiler = me.lookupReference('chkPerimetroAlquilerRef');
+		var comboTipoInquilino = me.lookupReference('comboTipoInquilinoRef');
+		
+		if(comboEstadoAlquiler != null){
+			if(comboEstadoAlquiler.value == CONST.COMBO_ESTADO_ALQUILER["ALQUILADO"] || comboEstadoAlquiler.value == CONST.COMBO_ESTADO_ALQUILER["CON_DEMANDAS"]){
+				chkPerimetroAlquiler.setDisabled(true);
+				comboTipoInquilino.setDisabled(false);
+			} else {
+				chkPerimetroAlquiler.setDisabled(false);
+				comboTipoInquilino.setDisabled(true); 
+			}		
+		}		
 	}
-    
 });

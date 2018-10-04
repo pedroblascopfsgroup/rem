@@ -7236,7 +7236,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	}
 	
 	@Override
-	public List<DtoDiccionario> getComboExpedienteComercialByEstado(String esVenta) {
+	public List<DtoDiccionario> getComboExpedienteComercialByEstado(String idEstado) {
 		
 		DtoDiccionario diccionario = new DtoDiccionario();
 		
@@ -7245,11 +7245,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		
 		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
 		
-		if(!Checks.esNulo(esVenta)) {
-			if(DDEstadosExpedienteComercial.VENTA.equals(esVenta)) {
+		if(!Checks.esNulo(idEstado)) {
+			if(DDEstadosExpedienteComercial.VENTA.equals(idEstado)) {
 				Filter filtroVenta = genericDao.createFilter(FilterType.EQUALS, "estadoVenta", true);
 				listaEstados = genericDao.getList(DDEstadosExpedienteComercial.class, filtroVenta, filtroBorrado);
-			} else if(DDEstadosExpedienteComercial.ALQUILER.equals(esVenta)) {
+			} else if(DDEstadosExpedienteComercial.ALQUILER.equals(idEstado)) {
 				Filter filtroAlquiler = genericDao.createFilter(FilterType.EQUALS, "estadoVenta", false);
 				listaEstados = genericDao.getList(DDEstadosExpedienteComercial.class, filtroAlquiler, filtroBorrado);
 			}

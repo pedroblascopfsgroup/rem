@@ -1062,7 +1062,7 @@ public interface ExpedienteComercialApi {
 	 * @param idEstado
 	 * @return
 	 */
-	public List<DtoDiccionario> getComboExpedienteComercialByEstado(String esVenta);
+	public List<DtoDiccionario> getComboExpedienteComercialByEstado(String idEstado);
 
 	/**
 	 * Metodo que envia correo al gestor comercial notificándole que se ha posicionado una oferta

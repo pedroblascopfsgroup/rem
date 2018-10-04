@@ -1,7 +1,7 @@
 --/*
 --#########################################
 --## AUTOR=Maria Presencia
---## FECHA_CREACION=20180924
+--## FECHA_CREACION=20180925
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=2.0.18
 --## INCIDENCIA_LINK=HREOS-4529
@@ -41,11 +41,30 @@ AS
 	V_TABLA_HLP VARCHAR2(30 CHAR) := 'HLP_HISTORICO_LANZA_PERIODICO';
 	V_TABLA_HLD VARCHAR2(30 CHAR) := 'HLD_HISTORICO_LANZA_PER_DETA';
 	V_TABLA_ACTIVO VARCHAR2(30 CHAR) := 'ACT_ACTIVO';	
+	HLP_REGISTRO_EJEC VARCHAR2(1024 CHAR) := '';
+
 
 BEGIN
 
 	 DBMS_OUTPUT.PUT_LINE('[INICIO] Inicio del proceso');
 	 
+	 COD_RETORNO := 0;
+	 
+	 IF COD_RETORNO = 0 AND ID_ACTIVO_HAYA IS NULL THEN
+		HLP_REGISTRO_EJEC := '[ERROR] El ID_ACTIVO_HAYA indicado como parámetro de entrada no se ha ingresado. Por favor ingrese un valor para este campo.';
+		DBMS_OUTPUT.PUT_LINE('[ERROR] '||HLP_REGISTRO_EJEC||' .');
+		COD_RETORNO := 1;
+	END IF;
+	 
+	 
+	  IF COD_RETORNO = 0 AND FLAG_ACTIVO_HAYA IS NULL THEN
+		HLP_REGISTRO_EJEC := '[ERROR] El FLAG_ACTIVO_HAYA indicado como parámetro de entrada no se ha ingresado. Por favor ingrese un valor para este campo.';
+		DBMS_OUTPUT.PUT_LINE('[ERROR] '||HLP_REGISTRO_EJEC||' .');
+		COD_RETORNO := 1;
+	END IF;
+	
+	IF COD_RETORNO = 0 THEN
+	
 	 DBMS_OUTPUT.PUT_LINE('[INICIO] Inicio de la insercion tabla : '||V_TABLA_HLD||' .');
 
 	V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.'||V_TABLA_HLD||' (
@@ -100,7 +119,8 @@ BEGIN
 	
 	EXECUTE IMMEDIATE V_MSQL;
 	 
-	  
+	 	END IF;
+
 	COD_RETORNO := 0;
 	
 COMMIT;

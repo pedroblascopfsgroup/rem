@@ -40,6 +40,7 @@ import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.GestorActivo;
 import es.pfsgroup.plugin.rem.model.GestorActivoHistorico;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 
 @Component
 @Service("gestorActivoManager")
@@ -68,6 +69,8 @@ public class GestorActivoManager extends GestorEntidadManager implements GestorA
 	
 	@Autowired
 	private GestorEntidadApi gestorEntidadApi;
+	
+	public static final String CODIGO_TGE_PROVEEDOR_TECNICO = "PTEC";
 	
 
 	@Transactional(readOnly = false)
@@ -366,7 +369,7 @@ public class GestorActivoManager extends GestorEntidadManager implements GestorA
 			Filter filterAuditoria = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
 			List<GestorActivo> gestoresActivo = genericDao.getList(GestorActivo.class, filterActivo, filterAuditoria);
 			for (GestorActivo gestorActivo : gestoresActivo) {
-				if ("PTEC".equals(gestorActivo.getTipoGestor().getCodigo())) {
+				if (CODIGO_TGE_PROVEEDOR_TECNICO.equals(gestorActivo.getTipoGestor().getCodigo())) {
 					proveedorTecnico = gestorActivo;
 					break;
 				}
@@ -376,8 +379,10 @@ public class GestorActivoManager extends GestorEntidadManager implements GestorA
 				GestorEntidad gestorEntidad = genericDao.get(GestorEntidad.class, filterGee, filterAuditoria);
 				Filter filterPvc = genericDao.createFilter(FilterType.EQUALS, "usuario.id",
 						gestorEntidad.getUsuario().getId());
+				Filter filtroCodigoTipoProveedor = genericDao.createFilter(FilterType.EQUALS, "proveedor.tipoProveedor.codigo", 
+						DDTipoProveedor.COD_MANTENIMIENTO_TECNICO);
 				List<ActivoProveedorContacto> pvc = genericDao.getList(ActivoProveedorContacto.class, filterAuditoria,
-						filterPvc);
+						filterPvc, filtroCodigoTipoProveedor);
 				if (!Checks.estaVacio(pvc)) {
 					if (!Checks.esNulo(pvc.get(0))) {
 						pve = pvc.get(0).getProveedor();

@@ -32,6 +32,16 @@ Ext.define('HreRem.view.agrupaciones.AgrupacionesModel', {
 	    	},
 	    	autoLoad: true
     	},
+
+    	comboTodosTipoAgrupacion: {
+			pageSize: 10,
+	    	model: 'HreRem.model.ComboBase',
+	    	proxy: {
+		        type: 'uxproxy',
+		        remoteUrl: 'generic/getTodosComboTipoAgrupacion'
+	    	},
+	    	autoLoad: true
+    	},
     	
     	comboSubcarteraFiltered: {
 			model: 'HreRem.model.ComboBase',

@@ -483,17 +483,21 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			}
 		}
 		if (!Checks.esNulo(ofertaDto.getTarea())) {
-			if (ofertaDto.getTarea().equals("01") && Checks.esNulo(ofertaDto.getSancionContraoferta())) {
-				errorsList.put("sancionContraoferta", RestApi.REST_MSG_MISSING_REQUIRED);
-			} else if (ofertaDto.getTarea().equals("02")) {
-				if(Checks.esNulo(ofertaDto.getFechaPrevistaFirma())) {
-					errorsList.put("fechaPrevistaFirma", RestApi.REST_MSG_MISSING_REQUIRED);
+			if (alta) {
+				errorsList.put("tarea", RestApi.REST_MSG_TAREA_INVALIDA);
+			} else {
+				if (ofertaDto.getTarea().equals("01") && Checks.esNulo(ofertaDto.getSancionContraoferta())) {
+					errorsList.put("sancionContraoferta", RestApi.REST_MSG_MISSING_REQUIRED);
+				} else if (ofertaDto.getTarea().equals("02")) {
+					if(Checks.esNulo(ofertaDto.getFechaPrevistaFirma())) {
+						errorsList.put("fechaPrevistaFirma", RestApi.REST_MSG_MISSING_REQUIRED);
+					}
+					if(Checks.esNulo(ofertaDto.getLugarFirma())) {
+						errorsList.put("lugarFirma", RestApi.REST_MSG_MISSING_REQUIRED);
+					}
+				} else if (ofertaDto.getTarea().equals("03") && Checks.esNulo(ofertaDto.getFechaFirma())) {
+					errorsList.put("fechaFirma", RestApi.REST_MSG_MISSING_REQUIRED);
 				}
-				if(Checks.esNulo(ofertaDto.getLugarFirma())) {
-					errorsList.put("lugarFirma", RestApi.REST_MSG_MISSING_REQUIRED);
-				}
-			} else if (ofertaDto.getTarea().equals("03") && Checks.esNulo(ofertaDto.getFechaFirma())) {
-				errorsList.put("fechaFirma", RestApi.REST_MSG_MISSING_REQUIRED);
 			}
 		}
 

@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=PIER GOTTA
---## FECHA_CREACION=20181002
+--## FECHA_CREACION=20181004
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=REMVIP-2011
+--## INCIDENCIA_LINK=REMVIP-2105
 --## PRODUCTO=NO
 --## Finalidad: Crear vista gestores activo
 --##           
@@ -13,6 +13,7 @@
 --##        0.1 Versión inicial Pau Serrano Rodrigo
 --##		0.2 Cambio de GCBO a HAYAGBOINM / HAYASBOFIN SOG
 --##		0.3 Cambio de GESRES y SUPRES.
+--##		0.4 Cambio de SFORM
 --##########################################
 --*/
 
@@ -27,6 +28,7 @@ SET DEFINE OFF;
 DECLARE
 
     V_MSQL VARCHAR2( 32767 CHAR); -- Sentencia a ejecutar    
+    V_MSQL2 VARCHAR2( 32767 CHAR); -- Sentencia a ejecutar    
     V_ESQUEMA VARCHAR2( 25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
     V_ESQUEMA_M VARCHAR2( 25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
     ERR_NUM NUMBER( 25);  -- Vble. auxiliar para registrar errores en el script.
@@ -232,8 +234,9 @@ SELECT act.act_id, TO_NUMBER (dd_cra.dd_cra_codigo), TO_NUMBER (dd_eac.dd_eac_co
                            LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist4 ON (loc.bie_loc_cod_post = dist4.cod_postal AND dist4.cod_cartera = dd_cra.dd_cra_codigo AND dist4.tipo_gestor = ''GIAFORM'')
                            LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist5 ON (dist5.cod_cartera = dd_cra.dd_cra_codigo AND dist5.tipo_gestor = ''GIAFORM'' AND DIST1.username IS NULL AND DIST2.username IS NULL AND DIST3.username IS NULL AND DIST4.username IS NULL)
            where act.borrado = 0
-           UNION ALL
-/*Gestor de formalización*/
+           UNION ALL';
+
+ V_MSQL2 := '/*Gestor de formalización*/
 SELECT act.act_id, TO_NUMBER (dd_cra.dd_cra_codigo), NULL cod_estado_activo, NULL dd_tcr_codigo, to_char(dist1.cod_provincia), NULL cod_municipio, NULL cod_postal, 
 			COALESCE (dist1.tipo_gestor, dist2.tipo_gestor) AS tipo_gestor,
 			COALESCE (dist1.username, dist2.username) username,
@@ -244,6 +247,19 @@ SELECT act.act_id, TO_NUMBER (dd_cra.dd_cra_codigo), NULL cod_estado_activo, NUL
        JOIN dd_cra_cartera dd_cra ON dd_cra.dd_cra_id = act.dd_cra_id
        LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist1 ON (dist1.cod_cartera = dd_cra.dd_cra_codigo AND dd_prov.dd_prv_codigo = dist1.cod_provincia AND dist1.tipo_gestor = ''GFORM'')
        LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist2 ON (dist2.cod_cartera = dd_cra.dd_cra_codigo AND dist2.tipo_gestor = ''GFORM'' AND DIST1.username IS NULL)                         
+            where act.borrado = 0
+            UNION ALL
+/*Supervisor de formalizacion*/
+SELECT act.act_id, TO_NUMBER (dd_cra.dd_cra_codigo), NULL cod_estado_activo, NULL dd_tcr_codigo, to_char(dist1.cod_provincia), NULL cod_municipio, NULL cod_postal, 
+			COALESCE (dist1.tipo_gestor, dist2.tipo_gestor) AS tipo_gestor,
+			COALESCE (dist1.username, dist2.username) username,
+			COALESCE (dist1.nombre_usuario, dist2.nombre_usuario) nombre
+  FROM act_activo act JOIN act_loc_localizacion aloc ON act.act_id = aloc.act_id
+       JOIN bie_localizacion loc ON loc.bie_loc_id = aloc.bie_loc_id
+       JOIN '||V_ESQUEMA_M||'.dd_prv_provincia dd_prov ON dd_prov.dd_prv_id = loc.dd_prv_id
+       JOIN dd_cra_cartera dd_cra ON dd_cra.dd_cra_id = act.dd_cra_id
+       LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist1 ON (dist1.cod_cartera = dd_cra.dd_cra_codigo AND dd_prov.dd_prv_codigo = dist1.cod_provincia AND dist1.tipo_gestor = ''SFORM'')
+       LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist2 ON (dist2.cod_cartera = dd_cra.dd_cra_codigo AND dist2.tipo_gestor = ''SFORM'' AND DIST1.username IS NULL)                         
             where act.borrado = 0
             UNION ALL
 /*Gestor comercial*/
@@ -519,8 +535,8 @@ SELECT act.act_id, TO_NUMBER (dd_cra.dd_cra_codigo) dd_cra_codigo, null dd_eac_c
 
 ';
 
-        --DBMS_OUTPUT.PUT_LINE(  V_MSQL); 
-	EXECUTE IMMEDIATE V_MSQL;
+        --DBMS_OUTPUT.PUT_LINE(  V_MSQL || V_MSQL); 
+	EXECUTE IMMEDIATE V_MSQL || V_MSQL2;
 
 	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_VISTA||'... Vista creada.');
 

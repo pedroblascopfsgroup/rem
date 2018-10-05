@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=rasul Akhmeddibirov
---## FECHA_CREACION=20180918
+--## FECHA_CREACION=20181005
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-4473

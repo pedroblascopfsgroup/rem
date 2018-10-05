@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Rasul Abdulaev
---## FECHA_CREACION=20180926
+--## FECHA_CREACION=20181005
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-4473

@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Rasul Abdulaev
---## FECHA_CREACION=20180927
+--## FECHA_CREACION=20181005
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-4546
@@ -34,6 +34,7 @@ DECLARE
 
     V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar
     V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'HIST_PTA_PATRIMONIO_ACTIVO'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
+    V_CREAR_FK VARCHAR2(2 CHAR) := 'SI'; -- [SI, NO] Vble. para indicar al script si debe o no crear tambien las relaciones Foreign Keys.
 
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(256);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
@@ -45,6 +46,15 @@ DECLARE
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     
+    /* TABLA: ACT_ICO_INFO_COMERCIAL -- ARRAY CON NUEVAS FOREIGN KEYS */
+    TYPE T_FK IS TABLE OF VARCHAR2(4000);
+    TYPE T_ARRAY_FK IS TABLE OF T_FK;
+    V_FK T_ARRAY_FK := T_ARRAY_FK(
+    			--NOMBRE FK 								CAMPO FK 			TABLA DESTINO FK 										CAMPO DESTINO FK
+    	T_FK(	'FK_DD_EAL_ESTADO_ALQUILER',				'DD_EAL_ID',		V_ESQUEMA||'.DD_EAL_ESTADO_ALQUILER',					'DD_EAL_ID'			),
+		T_FK(	'FK_DD_TPI_TIPO_INQUILINO',					'DD_TPI_ID',		V_ESQUEMA||'.DD_TPI_TIPO_INQUILINO',					'DD_TPI_ID'			)
+    );
+    V_T_FK T_FK;
     
 BEGIN
 
@@ -65,6 +75,51 @@ BEGIN
 			DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.'||V_TMP_TIPO_DATA(1)||'... Creada');        
        	END IF;
       END LOOP;
+
+      
+
+    -- Solo si esta activo el indicador de creacion FK, el script creara tambien las FK.
+	IF V_CREAR_FK = 'SI' THEN
+
+		-- Bucle que CREA las FK de las nuevas columnas.
+		FOR I IN V_FK.FIRST .. V_FK.LAST
+		LOOP
+
+			V_T_FK := V_FK(I);	
+
+			-- Verificar si la FK ya existe. Si ya existe la FK, no se hace nada.
+			V_MSQL := 'SELECT COUNT(1) FROM ALL_CONSTRAINTS WHERE OWNER = '''||V_ESQUEMA||''' AND TABLE_NAME = '''||V_TEXT_TABLA||''' AND CONSTRAINT_NAME = '''||V_T_FK(1)||'''';
+			EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;	
+			IF V_NUM_TABLAS = 0 THEN
+				-- Si no existe la FK la creamos
+				DBMS_OUTPUT.PUT_LINE('[INFO] Cambios en ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'['||V_T_FK(1)||'] -------------------------------------------');
+				V_MSQL := '
+					ALTER TABLE '||V_TEXT_TABLA||'
+					ADD CONSTRAINT '||V_T_FK(1)||' FOREIGN KEY
+					(
+					  '||V_T_FK(2)||'
+					)
+					REFERENCES '||V_T_FK(3)||'
+					(
+					  '||V_T_FK(4)||' 
+					)
+					ON DELETE SET NULL ENABLE
+				';
+
+				EXECUTE IMMEDIATE V_MSQL;
+				DBMS_OUTPUT.PUT_LINE('[INFO] ... '||V_T_FK(1)||' creada en tabla: FK en columna '||V_T_FK(2)||' hacia '||V_T_FK(3)||'.'||V_T_FK(4)||'... OK');
+
+			END IF;
+
+		END LOOP;
+
+	END IF;
+
+    DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||' AMPLIADA CON COLUMNAS NUEVAS Y FKS .... OK *************************************************');
+	COMMIT;
+	DBMS_OUTPUT.PUT_LINE('[INFO] COMMIT');
+
+
 	
 EXCEPTION
      WHEN OTHERS THEN

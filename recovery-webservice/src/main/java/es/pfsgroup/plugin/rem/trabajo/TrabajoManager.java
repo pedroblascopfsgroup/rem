@@ -149,15 +149,6 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 	protected static final Log logger = LogFactory.getLog(TrabajoManager.class);
 
-	private static final String PESTANA_FICHA = "ficha";
-	private static final String PESTANA_GESTION_ECONOMICA = "gestionEconomica";
-	private static final String CODIGO_T004_AUTORIZACION_BANKIA = "T004_AutorizacionBankia";
-	private static final String CODIGO_T004_AUTORIZACION_PROPIETARIO = "T004_AutorizacionPropietario";
-	private static final String PERFIL_CAPA_CONTROL_BANKIA="PERFGCCBANKIA";
-	private static final String PERFIL_USUARIOS_DE_CONSULTA="HAYACONSU";
-	private static final String CODIGO_OBTENCION_DOCUMENTACION="02";
-	private static final String CODIGO_ACTUACION_TECNICA="03";
-
 	@Autowired
 	private GenericABMDao genericDao;
 	

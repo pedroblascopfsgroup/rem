@@ -802,6 +802,7 @@ create or replace PROCEDURE SP_CAMBIO_ESTADO_PUBLI_AGR (pAGR_ID IN NUMBER DEFAUL
 						  USING '||vQUERY_SINACT||'
 						  ON (ACT.ACT_ID = AUX.ACT_ID)
 						WHEN MATCHED THEN
+						  UPDATE
                                 SET APU_CHECK_OCULTAR_V = 0
                                   , DD_MTO_V_ID = NULL
                                   , USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''

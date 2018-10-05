@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=CARLOS LOPEZ
---## FECHA_CREACION=20180605
---## ARTEFACTO=online
---## VERSION_ARTEFACTO=2.0.17
---## INCIDENCIA_LINK=HREOS-4074
+--## AUTOR=Carlos López
+--## FECHA_CREACION=20181003
+--## ARTEFACTO=batch
+--## VERSION_ARTEFACTO=2.0.19
+--## INCIDENCIA_LINK=HREOS-4525
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -135,7 +135,7 @@ create or replace PROCEDURE SP_MOTIVO_OCULTACION_AGR (nAGR_ID IN NUMBER
                                           AND DDTCO.DD_TCO_CODIGO IN (''02'',''03'',''04'') 
                                           AND DDTCO.BORRADO = 0
                                     LEFT JOIN '|| V_ESQUEMA ||'.DD_MTO_MOTIVOS_OCULTACION MTO ON MTO.DD_MTO_CODIGO = ''03'' AND MTO.BORRADO = 0 /*Alquilado*/
-                                   WHERE ACT.BORRADO = 0.
+                                   WHERE ACT.BORRADO = 0
                                      AND SPS.SPS_OCUPADO = 1 
                                      AND SPS.SPS_CON_TITULO = 1 
                                      AND ((TRUNC(SPS.SPS_FECHA_TITULO) <= TRUNC(SYSDATE) AND TRUNC(SPS.SPS_FECHA_VENC_TITULO) >= TRUNC(sysdate)) OR (TRUNC(SPS.SPS_FECHA_TITULO) <= TRUNC(SYSDATE) AND SPS.SPS_FECHA_VENC_TITULO IS NULL))
@@ -147,7 +147,8 @@ create or replace PROCEDURE SP_MOTIVO_OCULTACION_AGR (nAGR_ID IN NUMBER
                                , MTO.DD_MTO_ORDEN ORDEN
                                     FROM '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION ACT
                                     JOIN '|| V_ESQUEMA ||'.V_COND_DISPONIBILIDAD V ON V.ACT_ID = ACT.ACT_ID AND V.ES_CONDICIONADO = 0
-                                    JOIN '|| V_ESQUEMA ||'.V_CAMBIO_ESTADO_PUBLI_AGR EST ON EST.AGR_ID = '||nAGR_ID||' AND EST.INFORME_COMERCIAL = 0
+                                    JOIN '|| V_ESQUEMA ||'.ACT_AGA_AGRUPACION_ACTIVO agr on act.act_id = agr.act_id and agr.borrado = 0
+                                    JOIN '|| V_ESQUEMA ||'.V_CAMBIO_ESTADO_PUBLI_AGR EST ON EST.agr_id = agr.agr_id AND EST.INFORME_COMERCIAL = 0 AND EST.AGR_ID = '||nAGR_ID||'
                                     LEFT JOIN '|| V_ESQUEMA ||'.DD_MTO_MOTIVOS_OCULTACION MTO ON MTO.DD_MTO_CODIGO = ''06'' AND MTO.BORRADO = 0 /*Revisión Publicación*/
                                    WHERE ACT.BORRADO = 0.
                                      AND ACT.ES_CONDICONADO_ANTERIOR = 1 
@@ -233,7 +234,7 @@ create or replace PROCEDURE SP_MOTIVO_OCULTACION_AGR (nAGR_ID IN NUMBER
                                           ))   
                                      AND EXISTS '||vQUERY||                                       
                        ')
-                    )AUX WHERE AUX.ROWNUMBER = 1
+                    )AUX WHERE AUX.ROWNUMBER = 1 AND rownum = 1
                  '
        ;
       
@@ -246,8 +247,6 @@ create or replace PROCEDURE SP_MOTIVO_OCULTACION_AGR (nAGR_ID IN NUMBER
       END;
 
 	  /*DBMS_OUTPUT.PUT_LINE('[FIN]');*/
-
-	  COMMIT;
 
 	EXCEPTION
 	  WHEN OTHERS THEN

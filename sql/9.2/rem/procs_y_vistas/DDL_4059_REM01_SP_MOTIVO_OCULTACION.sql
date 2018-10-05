@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=CARLOS LOPEZ
---## FECHA_CREACION=20180518
---## ARTEFACTO=online
---## VERSION_ARTEFACTO=2.0.17
---## INCIDENCIA_LINK=HREOS-4077
+--## AUTOR=Carlos López
+--## FECHA_CREACION=20181003
+--## ARTEFACTO=batch
+--## VERSION_ARTEFACTO=2.0.19
+--## INCIDENCIA_LINK=HREOS-4525
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -237,8 +237,6 @@ create or replace PROCEDURE SP_MOTIVO_OCULTACION (pACT_ID IN NUMBER
       END;
 
 	  /*DBMS_OUTPUT.PUT_LINE('[FIN]');*/
-
-	  COMMIT;
 
 	EXCEPTION
 	  WHEN OTHERS THEN

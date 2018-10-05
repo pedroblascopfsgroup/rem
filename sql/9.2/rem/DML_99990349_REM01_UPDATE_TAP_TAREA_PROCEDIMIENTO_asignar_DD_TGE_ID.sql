@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Carles Molins
---## FECHA_CREACION=20181002
+--## FECHA_CREACION=20181004
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-4557
@@ -42,8 +42,8 @@ BEGIN
         
 		IF V_NUM_TABLAS > 0 THEN
 
-		    V_MSQL := 'UPDATE '||V_ESQUEMA||'.'||V_TABLA||' SET DD_TGE_ID = (SELECT DD_TGE_ID FROM '||V_ESQUEMA_M||'.'||V_TABLA2||' WHERE DD_TGE_CODIGO = ''GACT''), USUARIOMODIFICAR = '''||V_USU_MODIFICAR||''', FECHAMODIFICAR = SYSDATE WHERE TAP_CODIGO = ''T004_AutorizacionBankia'' ';
-			DBMS_OUTPUT.PUT_LINE('[INFO] Actualizando tarea T015_Posicionamiento.......');
+		    V_MSQL := 'UPDATE '||V_ESQUEMA||'.'||V_TABLA||' SET DD_TGE_ID = (SELECT DD_TGE_ID FROM '||V_ESQUEMA_M||'.'||V_TABLA2||' WHERE DD_TGE_CODIGO = ''GCCBANKIA''), USUARIOMODIFICAR = '''||V_USU_MODIFICAR||''', FECHAMODIFICAR = SYSDATE WHERE TAP_CODIGO = ''T004_AutorizacionBankia'' ';
+			DBMS_OUTPUT.PUT_LINE('[INFO] Actualizando tarea T004_AutorizacionBankia.......');
 		    DBMS_OUTPUT.PUT_LINE(V_MSQL);
 		    EXECUTE IMMEDIATE V_MSQL;
 		  

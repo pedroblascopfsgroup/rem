@@ -58,10 +58,7 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBValoracionesBien;
 import es.pfsgroup.plugin.rem.activo.ActivoManager;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
-import es.pfsgroup.plugin.rem.activo.dao.impl.ActivoHistoricoPatrimonioDaoImpl;
 import es.pfsgroup.plugin.rem.activo.dao.impl.ActivoPatrimonioDaoImpl;
-import es.pfsgroup.plugin.rem.activo.dao.impl.ActivoTramiteDaoImpl;
-import es.pfsgroup.plugin.rem.activotrabajo.dao.ActivoTrabajoDao;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoAvisadorApi;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
@@ -146,7 +143,6 @@ import es.pfsgroup.plugin.rem.model.IncrementoPresupuesto;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
-import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.VAdmisionDocumentos;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivosTrabajoPresupuesto;
@@ -297,23 +293,13 @@ public class ActivoAdapter {
 	private TrabajoDao trabajoDao;
 	
 	@Autowired
-	private ActivoTrabajoDao activoTrabajoDao;
-	
-	@Autowired
 	private ActivoPatrimonioDaoImpl activoPatrimonio;
-	
-	@Autowired 
-	private ActivoHistoricoPatrimonioDaoImpl activoHistoricoPatrimonioDaoImpl;
-	
-	@Autowired
-	private ActivoTramiteDaoImpl activoTramiteDaoImpl;
 	
 	@Autowired
 	private GestorExpedienteComercialDao gestorExpedienteComercialDao;
 	
 	@Autowired
 	private UsuarioManager usuarioManager;
-	
 	
 	
 	// private static final String PROPIEDAD_ACTIVAR_REST_CLIENT =
@@ -1924,7 +1910,16 @@ public class ActivoAdapter {
 					beanUtilNotNull.copyProperty(dtoTramite, "desactivarBotonLanzarTareaAdministrativa", true);
 				}
 				
-				
+				if (ActivoTramiteApi.CODIGO_TRAMITE_ACTUACION_TECNICA.equals(tramite.getTipoTramite().getCodigo())) {
+					
+					List<TareaExterna> tareasTramite = activoTareaExternaApi.getActivasByIdTramiteTodas(idTramite);
+					
+					for (TareaExterna tarea : tareasTramite) {
+						if (TrabajoApi.CODIGO_T004_AUTORIZACION_BANKIA.equals(tarea.getTareaProcedimiento().getCodigo())) {
+							beanUtilNotNull.copyProperty(dtoTramite, "esTareaAutorizacionBankia", true);
+						}
+					}
+				}
 			}
 				
 				

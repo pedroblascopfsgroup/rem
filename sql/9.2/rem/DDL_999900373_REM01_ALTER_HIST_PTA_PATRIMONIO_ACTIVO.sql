@@ -41,7 +41,6 @@ DECLARE
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
         T_TIPO_DATA(  'DD_EAL_ID',							'NUMBER',	        '',				'Código identificador único del diccionario de estado alquiler',			'FK_DD_EAL_HIST_PTA', 				'DD_EAL_ID', 		V_ESQUEMA||'.DD_EAL_ESTADO_ALQUILER', 			'DD_EAL_ID'),
 		T_TIPO_DATA(  'DD_TPI_ID',							'NUMBER',	        '',				'Código identificador único del diccionario de tipo inquilino', 			'FK_DD_TPI_HIST_PTA',				'DD_TPI_ID',		V_ESQUEMA||'.DD_TPI_TIPO_INQUILINO',			'DD_TPI_ID')
-		T_TIPO_DATA(  'CHECK_SUBROGADO',					'NUMBER',	        '',				'Incida si tiene el check Subrogado')
      
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
@@ -66,7 +65,6 @@ BEGIN
 			DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.'||V_TMP_TIPO_DATA(1)||'... Creada');
 
 			DBMS_OUTPUT.PUT_LINE('[INFO] Creando FK...');
-			DBMS_OUTPUT.PUT_LINE('[INFO] Cambios en ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||'['||V_T_FK(1)||'] -------------------------------------------');
 
 			V_MSQL := '
 				ALTER TABLE '||V_TEXT_TABLA||'
@@ -86,6 +84,16 @@ BEGIN
 
        	END IF;
       END LOOP;
+
+      V_MSQL := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE COLUMN_NAME= ''CHECK_SUBROGADO'' and TABLE_NAME = '''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||'''';
+      EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
+      IF V_NUM_TABLAS = 1 THEN
+          DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||' CHECK_SUBROGADO ... Ya existe');
+      ELSE
+          EXECUTE IMMEDIATE 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD (CHECK_SUBROGADO NUMBER)';
+          EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.CHECK_SUBROGADO IS Indica si tiene el check Subrogado';
+          DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.CHECK_SUBROGADO ... Creada');
+      END IF;
 
     DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TEXT_TABLA||' AMPLIADA CON COLUMNAS NUEVAS Y FKS .... OK *************************************************');
 	COMMIT;
@@ -111,3 +119,4 @@ END;
 /
 
 EXIT
+

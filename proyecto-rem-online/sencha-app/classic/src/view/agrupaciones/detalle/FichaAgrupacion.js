@@ -59,8 +59,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
 			            		store: '{comboMunicipio}',
 			            		value: '{agrupacionficha.municipioCodigo}',
 			            		disabled: '{!agrupacionficha.provinciaCodigo}',
-			            		readOnly: '{agrupacionTieneActivosOrExisteFechaBaja}',
-			            		allowBlank	:	'{!esAgrupacionProyecto}'
+			            		readOnly: '{agrupacionTieneActivosOrExisteFechaBaja}'
 			            	}
 
 						},

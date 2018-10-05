@@ -682,9 +682,8 @@ public class AgrupacionAdapter {
 			if (DDTipoAgrupacion.AGRUPACION_PROYECTO.equals(agrupacion.getTipoAgrupacion().getCodigo())) {
 				ActivoProyecto proyecto = (ActivoProyecto) agrupacion;
 				if(!activo.getCartera().equals(proyecto.getCartera())
-						|| !activo.getProvincia().equals(proyecto.getProvincia().getCodigo())
-						|| !activo.getMunicipio().equals(proyecto.getLocalidad().getCodigo())){
-					throw new JsonViewerException("El activo no tiene la misma Provincia o Municipio o Cartera que la agrupación");
+						|| !activo.getProvincia().equals(proyecto.getProvincia().getCodigo())){
+					throw new JsonViewerException("El activo no tiene la misma Provincia o Cartera que la agrupación");
 				}
 			}
 			

@@ -116,19 +116,19 @@ public class MSVAgrupacionProyectoExcelValidator extends MSVExcelValidatorAbstra
 			mapaErrores.put(messageServices.getMessage(ACTIVO_EN_AGRUPACION), activosEnAgrupacionRows(exc));
 			mapaErrores.put(messageServices.getMessage(AGRUPACION_NO_PROYECTO), agrupacionNoProyecto(exc));
 			mapaErrores.put(messageServices.getMessage(ACTIVO_SIN_PROVINCIA), activeSinProvincia(exc));
-			mapaErrores.put(messageServices.getMessage(ACTIVO_SIN_MUNICIPIO), activeSinMunicipio(exc));
+		//	mapaErrores.put(messageServices.getMessage(ACTIVO_SIN_MUNICIPIO), activeSinMunicipio(exc)); //Quitamos a petición de REMVIP-2168
 			mapaErrores.put(messageServices.getMessage(ACTIVO_AGRUPACION_PRV), activoAgrupacionPRV(exc));
-			mapaErrores.put(messageServices.getMessage(ACTIVO_AGRUPACION_LOC), activoAgrupacionLOC(exc));
+		//	mapaErrores.put(messageServices.getMessage(ACTIVO_AGRUPACION_LOC), activoAgrupacionLOC(exc)); //Quitamos a petición de REMVIP-2168
 			mapaErrores.put(messageServices.getMessage(ACTIVOS_NO_MISMA_CARTERA.mensajeError), activosAgrupMultipleValidacionRows(exc, ACTIVOS_NO_MISMA_CARTERA.codigoError));
 
 			if    (!mapaErrores.get(messageServices.getMessage(ACTIVO_NO_EXISTE)).isEmpty()
 			    || !mapaErrores.get(messageServices.getMessage(ACTIVO_EN_AGRUPACION)).isEmpty()
 			    || !mapaErrores.get(messageServices.getMessage(AGRUPACION_NO_PROYECTO)).isEmpty()
 			    || !mapaErrores.get(messageServices.getMessage(ACTIVO_SIN_PROVINCIA)).isEmpty()
-			    || !mapaErrores.get(messageServices.getMessage(ACTIVO_SIN_MUNICIPIO)).isEmpty()
+		//	    || !mapaErrores.get(messageServices.getMessage(ACTIVO_SIN_MUNICIPIO)).isEmpty() //Quitamos a petición de REMVIP-2168
 			    || !mapaErrores.get(messageServices.getMessage(ACTIVO_AGRUPACION_PRV)).isEmpty()
-			    || !mapaErrores.get(messageServices.getMessage(ACTIVO_AGRUPACION_LOC)).isEmpty()
-			    || !mapaErrores.get(messageServices.getMessage(ACTIVOS_NO_MISMA_CARTERA.mensajeError)).isEmpty()
+		//	    || !mapaErrores.get(messageServices.getMessage(ACTIVO_AGRUPACION_LOC)).isEmpty()//Quitamos a petición de REMVIP-2168
+			    || !mapaErrores.get(messageServices.getMessage(ACTIVOS_NO_MISMA_CARTERA.mensajeError)).isEmpty() 
 			) {
 				dtoValidacionContenido.setFicheroTieneErrores(true);
 				exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());

@@ -26,8 +26,7 @@ SET DEFINE OFF;
 
 
 DECLARE
-
-    V_MSQL2 VARCHAR2( 32000 CHAR); -- Sentencia a ejecutar    
+ 
     V_MSQL VARCHAR2( 32767 CHAR); -- Sentencia a ejecutar    
     V_MSQL2 VARCHAR2( 32767 CHAR); -- Sentencia a ejecutar    
     V_ESQUEMA VARCHAR2( 25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema

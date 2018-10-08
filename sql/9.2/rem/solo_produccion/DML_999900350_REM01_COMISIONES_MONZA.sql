@@ -44,12 +44,11 @@ BEGIN
 					join '||V_ESQUEMA||'.act_activo act on act.act_id = gex.act_id
 					join '||V_ESQUEMA||'.DD_ACC_ACCION_GASTOS accion on accion.dd_acc_id = gex.dd_acc_id
 					join '||V_ESQUEMA||'.DD_TPH_TIPO_PROV_HONORARIO tph on tph.dd_tph_id = gex.dd_tph_id
-					join '||V_ESQUEMA||'.act_ofr ao on ao.act_id = act.act_id
-					WHERE gex.USUARIOMODIFICAR <> ''REMVIP-2190'') T2 ON (T1.GEX_ID = T2.GEX_ID)
+					join '||V_ESQUEMA||'.act_ofr ao on ao.act_id = act.act_id) T2 ON (T1.GEX_ID = T2.GEX_ID)
 					WHEN MATCHED THEN UPDATE SET 
-					T1.GEX_IMPORTE_FINAL = T1.GEX_IMPORTE_FINAL * (CASE WHEN T1.DD_ACC_ID = (SELECT ACC.DD_ACC_ID FROM DD_ACC_ACCION_GASTOS ACC WHERE ACC.DD_ACC_CODIGO = ''04'')
+					T1.GEX_IMPORTE_FINAL = T1.GEX_IMPORTE_FINAL * (CASE WHEN T1.DD_ACC_ID = (SELECT ACC.DD_ACC_ID FROM '||V_ESQUEMA||'.DD_ACC_ACCION_GASTOS ACC WHERE ACC.DD_ACC_CODIGO = ''04'')
 																		THEN 0.75
-																		WHEN T1.DD_ACC_ID = (SELECT ACC.DD_ACC_ID FROM DD_ACC_ACCION_GASTOS ACC WHERE ACC.DD_ACC_CODIGO = ''05'')
+																		WHEN T1.DD_ACC_ID = (SELECT ACC.DD_ACC_ID FROM '||V_ESQUEMA||'.DD_ACC_ACCION_GASTOS ACC WHERE ACC.DD_ACC_CODIGO = ''05'')
 																		THEN 0.25
 																   END),
 					T1.USUARIOMODIFICAR = ''REMVIP-2190'',

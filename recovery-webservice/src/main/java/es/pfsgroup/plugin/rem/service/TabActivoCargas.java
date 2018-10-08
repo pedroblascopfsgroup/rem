@@ -10,7 +10,6 @@ import es.capgemini.devon.dto.WebDto;
 import es.pfsgroup.plugin.rem.api.ActivoCargasApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.DtoActivoCargasTab;
-import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 
 @Component
 public class TabActivoCargas implements TabActivoService {

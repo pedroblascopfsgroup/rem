@@ -58,10 +58,7 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBValoracionesBien;
 import es.pfsgroup.plugin.rem.activo.ActivoManager;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
-import es.pfsgroup.plugin.rem.activo.dao.impl.ActivoHistoricoPatrimonioDaoImpl;
 import es.pfsgroup.plugin.rem.activo.dao.impl.ActivoPatrimonioDaoImpl;
-import es.pfsgroup.plugin.rem.activo.dao.impl.ActivoTramiteDaoImpl;
-import es.pfsgroup.plugin.rem.activotrabajo.dao.ActivoTrabajoDao;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoAvisadorApi;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
@@ -146,7 +143,6 @@ import es.pfsgroup.plugin.rem.model.IncrementoPresupuesto;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
-import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.VAdmisionDocumentos;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivosTrabajoPresupuesto;
@@ -297,23 +293,13 @@ public class ActivoAdapter {
 	private TrabajoDao trabajoDao;
 	
 	@Autowired
-	private ActivoTrabajoDao activoTrabajoDao;
-	
-	@Autowired
 	private ActivoPatrimonioDaoImpl activoPatrimonio;
-	
-	@Autowired 
-	private ActivoHistoricoPatrimonioDaoImpl activoHistoricoPatrimonioDaoImpl;
-	
-	@Autowired
-	private ActivoTramiteDaoImpl activoTramiteDaoImpl;
 	
 	@Autowired
 	private GestorExpedienteComercialDao gestorExpedienteComercialDao;
 	
 	@Autowired
 	private UsuarioManager usuarioManager;
-	
 	
 	
 	// private static final String PROPIEDAD_ACTIVAR_REST_CLIENT =
@@ -1924,7 +1910,16 @@ public class ActivoAdapter {
 					beanUtilNotNull.copyProperty(dtoTramite, "desactivarBotonLanzarTareaAdministrativa", true);
 				}
 				
-				
+				if (ActivoTramiteApi.CODIGO_TRAMITE_ACTUACION_TECNICA.equals(tramite.getTipoTramite().getCodigo())) {
+					
+					List<TareaExterna> tareasTramite = activoTareaExternaApi.getActivasByIdTramiteTodas(idTramite);
+					
+					for (TareaExterna tarea : tareasTramite) {
+						if (TrabajoApi.CODIGO_T004_AUTORIZACION_BANKIA.equals(tarea.getTareaProcedimiento().getCodigo())) {
+							beanUtilNotNull.copyProperty(dtoTramite, "esTareaAutorizacionBankia", true);
+						}
+					}
+				}
 			}
 				
 				
@@ -2767,9 +2762,9 @@ public class ActivoAdapter {
 				 if (((DtoActivoPatrimonio)dto).getChkPerimetroAlquiler() ) { 
 					 
 					//anyadimos el nuevo gestor 
-         			if(!this.anydairGestor(activo, GestorActivoApi.CODIGO_GESTOR_ALQUILERES))
+         			if(!this.anyadirGestor(activo, GestorActivoApi.CODIGO_GESTOR_ALQUILERES))
 							logger.error("Error en ActivoAdpter [saveTabActivoTransactional]: No se ha podido guardar el "+GestorActivoApi.CODIGO_GESTOR_ALQUILERES);
-					if(!this.anydairGestor(activo, GestorActivoApi.CODIGO_SUPERVISOR_ALQUILERES))
+					if(!this.anyadirGestor(activo, GestorActivoApi.CODIGO_SUPERVISOR_ALQUILERES))
 							logger.error("Error en ActivoAdpter [saveTabActivoTransactional]: No se ha podido guardar el "+GestorActivoApi.CODIGO_SUPERVISOR_ALQUILERES);
 					
 					//si el codigo del tipo de actvo no es nulo, comprabamos si es de tipo de suelo borramos el gestor/supervisor de suelos en caso contrario el de alquileres.
@@ -2803,15 +2798,15 @@ public class ActivoAdapter {
 								
 								if (activo.getTipoActivo().getCodigo().equals(DDTipoActivo.COD_SUELO)) {
 									
-									if(!this.anydairGestor(activo, GestorActivoApi.CODIGO_GESTOR_SUELOS))
+									if(!this.anyadirGestor(activo, GestorActivoApi.CODIGO_GESTOR_SUELOS))
 										logger.error("Error en ActivoAdpter [saveTabActivoTransactional]: No se ha podido guardar el "+GestorActivoApi.CODIGO_GESTOR_SUELOS);
-									if(!this.anydairGestor(activo, GestorActivoApi.CODIGO_SUPERVISOR_SUELOS))
+									if(!this.anyadirGestor(activo, GestorActivoApi.CODIGO_SUPERVISOR_SUELOS))
 										logger.error("Error en ActivoAdpter [saveTabActivoTransactional]: No se ha podido guardar el "+GestorActivoApi.CODIGO_SUPERVISOR_SUELOS);
 								}
 								else {
-									if(!this.anydairGestor(activo, GestorActivoApi.CODIGO_GESTOR_EDIFICACIONES))
+									if(!this.anyadirGestor(activo, GestorActivoApi.CODIGO_GESTOR_EDIFICACIONES))
 										logger.error("Error en ActivoAdpter [saveTabActivoTransactional]: No se ha podido guardar el "+GestorActivoApi.CODIGO_GESTOR_EDIFICACIONES);
-									if(!this.anydairGestor(activo, GestorActivoApi.CODIGO_SUPERVISOR_EDIFICACIONES))
+									if(!this.anyadirGestor(activo, GestorActivoApi.CODIGO_SUPERVISOR_EDIFICACIONES))
 										logger.error("Error en ActivoAdpter [saveTabActivoTransactional]: No se ha podido guardar el "+GestorActivoApi.CODIGO_SUPERVISOR_EDIFICACIONES);
 							
 								}
@@ -2832,6 +2827,29 @@ public class ActivoAdapter {
 		else {
 			ajustaGestores(activo);
 		}
+		
+		
+		// comprobamos si se ha modificado la provincia en la ficha de datos basicos del activo
+		if(!(Checks.esNulo(((DtoActivoFichaCabecera)dto).getAsignaGestPorCambioDeProv())) && ((DtoActivoFichaCabecera)dto).getAsignaGestPorCambioDeProv()) {
+		
+			// si se ha cambiado borramos los gestores para reasignarlos de nuevo
+			this.borrarGestor(activo,GestorActivoApi.CODIGO_GESTOR_ACTIVO);
+			this.borrarGestor(activo,GestorActivoApi.CODIGO_GESTOR_EDIFICACIONES);
+			this.borrarGestor(activo,GestorActivoApi.CODIGO_GESTOR_SUELOS);
+			
+			if(!this.anyadirGestor(activo, GestorActivoApi.CODIGO_GESTOR_ACTIVO))
+				logger.error("Error en ActivoAdapter [saveTabActivoTransactional]: No se ha podido guardar el "+GestorActivoApi.CODIGO_GESTOR_ACTIVO);
+			if(!this.anyadirGestor(activo, GestorActivoApi.CODIGO_GESTOR_EDIFICACIONES))
+				logger.error("Error en ActivoAdpter [saveTabActivoTransactional]: No se ha podido guardar el "+GestorActivoApi.CODIGO_GESTOR_EDIFICACIONES);
+			if(!this.anyadirGestor(activo, GestorActivoApi.CODIGO_GESTOR_SUELOS))
+				logger.error("Error en ActivoAdpter [saveTabActivoTransactional]: No se ha podido guardar el "+GestorActivoApi.CODIGO_GESTOR_SUELOS);
+			
+			((DtoActivoFichaCabecera)dto).setAsignaGestPorCambioDeProv(false);
+			
+			
+		}
+		
+		
 	}
 	
 	private void ajustaGestores(Activo activo){
@@ -2839,9 +2857,9 @@ public class ActivoAdapter {
 		if(DDTipoActivo.COD_SUELO.equals(activo.getTipoActivo().getCodigo()) && !gestorActivoApi.existeGestorEnActivo(activo, GestorActivoApi.CODIGO_GESTOR_SUELOS)
 				&& DDEstadoActivo.ESTADO_ACTIVO_SUELO.equals(activo.getEstadoActivo().getCodigo())){
 			// ANYADIR GESTOR Y SUPERVISOR SUELOS
-			if(!this.anydairGestor(activo, GestorActivoApi.CODIGO_GESTOR_SUELOS))
+			if(!this.anyadirGestor(activo, GestorActivoApi.CODIGO_GESTOR_SUELOS))
 				logger.error("Error en ActivoAdpter [saveTabActivoTransactional]: No se ha podido guardar el "+GestorActivoApi.CODIGO_GESTOR_SUELOS);
-			if(!this.anydairGestor(activo, GestorActivoApi.CODIGO_SUPERVISOR_SUELOS))
+			if(!this.anyadirGestor(activo, GestorActivoApi.CODIGO_SUPERVISOR_SUELOS))
 				logger.error("Error en ActivoAdpter [saveTabActivoTransactional]: No se ha podido guardar el "+GestorActivoApi.CODIGO_SUPERVISOR_SUELOS);
 			
 		}else if(gestorActivoApi.existeGestorEnActivo(activo, GestorActivoApi.CODIGO_GESTOR_SUELOS)){
@@ -2863,9 +2881,9 @@ public class ActivoAdapter {
 						|| DDEstadoActivo.ESTADO_ACTIVO_NO_OBRA_NUEVA_PDTE_LEGALIZAR.equals(activo.getEstadoActivo().getCodigo()))){
 				//&& (!Checks.esNulo(activo.getEstadoActivo()) || !Checks.esNulo(((DtoActivoFichaCabecera)dto).getEstadoActivoCodigo()))){
 			
-			if(!this.anydairGestor(activo, GestorActivoApi.CODIGO_GESTOR_EDIFICACIONES))
+			if(!this.anyadirGestor(activo, GestorActivoApi.CODIGO_GESTOR_EDIFICACIONES))
 				logger.error("Error en ActivoAdpter [saveTabActivoTransactional]: No se ha podido guardar el "+GestorActivoApi.CODIGO_GESTOR_EDIFICACIONES);
-			if(!this.anydairGestor(activo, GestorActivoApi.CODIGO_SUPERVISOR_EDIFICACIONES))
+			if(!this.anyadirGestor(activo, GestorActivoApi.CODIGO_SUPERVISOR_EDIFICACIONES))
 				logger.error("Error en ActivoAdpter [saveTabActivoTransactional]: No se ha podido guardar el "+GestorActivoApi.CODIGO_SUPERVISOR_EDIFICACIONES);
 		}else if(!DDTipoActivo.COD_SUELO.equals(activo.getTipoActivo().getCodigo()) && gestorActivoApi.existeGestorEnActivo(activo, GestorActivoApi.CODIGO_GESTOR_EDIFICACIONES)
 				&& (!DDEstadoActivo.ESTADO_ACTIVO_EN_CONSTRUCCION_EN_CURSO.equals(activo.getEstadoActivo().getCodigo())
@@ -2888,7 +2906,7 @@ public class ActivoAdapter {
 		}
 	}
 
-	private boolean anydairGestor(Activo activo, String tipoGestorCodigo) {
+	private boolean anyadirGestor(Activo activo, String tipoGestorCodigo) {
 		
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", tipoGestorCodigo);
 		EXTDDTipoGestor tipoGestor= genericDao.get(EXTDDTipoGestor.class, filtro);

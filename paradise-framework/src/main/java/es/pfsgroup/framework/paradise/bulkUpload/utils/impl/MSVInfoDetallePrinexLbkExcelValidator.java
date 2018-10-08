@@ -442,10 +442,12 @@ public class MSVInfoDetallePrinexLbkExcelValidator extends MSVExcelValidatorAbst
 	
 	private List<Integer> existePromocion(MSVHojaExcel exc, Integer promocion){
 		List<Integer> listaFilas = new ArrayList<Integer>();
+		List<String> valoresValidos = Arrays.asList("9000", "9001", "9002", "9005", "9006");
 		
 		for(int i = 1; i<this.numFilasHoja; i++){
 			try{
-				if(!Checks.esNulo(exc.dameCelda(i, promocion))){
+				String valor = exc.dameCelda(i, promocion);
+				if(!Checks.esNulo(valor) && !valoresValidos.contains(valor)){
 					if(!particularValidator.existePromocion(exc.dameCelda(i, promocion))){
 						listaFilas.add(i);
 					}

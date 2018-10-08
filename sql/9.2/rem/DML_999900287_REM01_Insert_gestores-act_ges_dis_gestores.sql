@@ -1,11 +1,11 @@
 --/*
 --/*
 --###########################################
---## AUTOR=Sergio Nieto
---## FECHA_CREACION=20180725
+--## AUTOR=Juan Torrella
+--## FECHA_CREACION=20181005
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=2.0.19
---## INCIDENCIA_LINK=HREOS-4318
+--## INCIDENCIA_LINK=HREOS-4579
 --## PRODUCTO=NO
 --## 
 --## Finalidad: Carga gestores
@@ -14,6 +14,7 @@
 --## VERSIONES:
 --##        0.1 Versión inicial
 --##        0.2 Añadido gestor de edificaciones 
+--##		0.3 Añadido gestor "imorillo" para la cartera CAJAMAR y provincias con ID 3, 12 y 46
 --###########################################
 ----*/
 
@@ -219,9 +220,9 @@ DECLARE
 		T_TIPO_DATA('GACT',01,17,null,'jberenguerx','Jose Berenguer Aleixandre'),
 		T_TIPO_DATA('GACT',01,25,null,'jberenguerx','Jose Berenguer Aleixandre'),
 		T_TIPO_DATA('GACT',01,43,null,'jberenguerx','Jose Berenguer Aleixandre'),
-		T_TIPO_DATA('GACT',01,3,null,'mgarciade','Maria del Mar García Delgado'),
-		T_TIPO_DATA('GACT',01,12,null,'mgarciade','Maria del Mar García Delgado'),
-		T_TIPO_DATA('GACT',01,46,null,'mgarciade','Maria del Mar García Delgado'),
+		T_TIPO_DATA('GACT',01,3,null,'imorillo','Isabel Morillo Martinez'),
+		T_TIPO_DATA('GACT',01,12,null,'imorillo','Isabel Morillo Martinez'),
+		T_TIPO_DATA('GACT',01,46,null,'imorillo','Isabel Morillo Martinez'),
 		T_TIPO_DATA('GACT',01,6,null,'maranda','Maria Elena Aranda Cesar'),
 		T_TIPO_DATA('GACT',01,10,null,'maranda','Maria Elena Aranda Cesar'),
 		T_TIPO_DATA('GACT',01,15,null,'rguirado','Rosa Fernanda Guirado Miras'),

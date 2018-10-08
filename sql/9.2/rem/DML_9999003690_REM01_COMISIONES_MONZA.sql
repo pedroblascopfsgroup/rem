@@ -1,7 +1,7 @@
 --/*
 --#########################################
 --## AUTOR=JINLI, HU
---## FECHA_CREACION=20181007
+--## FECHA_CREACION=20181009
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=?
 --## INCIDENCIA_LINK=REMVIP-2190
@@ -36,15 +36,7 @@ BEGIN
 	V_SQL := 'MERGE INTO '||V_ESQUEMA||'.'||V_TABLA||' T1
 					USING (
 					SELECT DISTINCT
-					gex.GEX_ID,
-					ofr.ofr_num_oferta, 
-					ofr.OFR_IMPORTE, 
-					ofr.OFR_IMPORTE_CONTRAOFERTA, 
-					act.ACT_NUM_ACTIVO, 
-					gex.GEX_IMPORTE_CALCULO, 
-					ao.ACT_OFR_IMPORTE, 
-					gex.GEX_IMPORTE_FINAL, 
-					accion.dd_acc_descripcion 
+					gex.GEX_ID
 					from REM_EXT.TMP_MONZA_FIN tmp
 					join '||V_ESQUEMA||'.ofr_ofertas ofr on ofr.ofr_num_oferta = tmp.ofr_num_oferta
 					join '||V_ESQUEMA||'.eco_expediente_comercial eco on eco.ofr_id = ofr.ofr_id

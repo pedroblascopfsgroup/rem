@@ -164,9 +164,39 @@ BEGIN
 	
 	EXECUTE IMMEDIATE V_MSQL;
 	 
-	 END IF;
+	 	COD_RETORNO := 0;
 
-	COD_RETORNO := 0;
+	 
+	 END IF;
+	 
+	 IF COD_RETORNO = 1 THEN
+
+		ROLLBACK;
+		DBMS_OUTPUT.PUT_LINE('[ERROR] Procedemos a informar la tabla HLP_HISTORICO_LANZA_PERIODICO.');
+		
+			V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.'||V_TABLA_HLP||' (
+				HLP_SP_CARGA,
+				HLP_FECHA_EJEC,
+				HLP_RESULTADO_EJEC,
+				HLP_CODIGO_REG,
+				HLP_REGISTRO_EJEC
+			)VALUES(
+				''SP_EXT_AFECTACION_DEMANDA'',
+				SYSDATE,
+				1,
+				NVL('''||ID_ACTIVO_HAYA||''', ''-1''),
+				'''||HLP_REGISTRO_EJEC||'''
+			)';
+	
+		EXECUTE IMMEDIATE V_MSQL;
+	
+		DBMS_OUTPUT.PUT_LINE('[INFO] - Ha habido errores. Se inserta '||SQL%ROWCOUNT||' registro en la HLP_HISTORICO_LANZA_PERIODICO.');
+	
+		COD_RETORNO := 1;
+
+		
+	END IF;
+
 	
 COMMIT;
 

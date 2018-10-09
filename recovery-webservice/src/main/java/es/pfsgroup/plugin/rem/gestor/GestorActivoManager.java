@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.gestor;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -419,13 +420,17 @@ public class GestorActivoManager extends GestorEntidadManager implements GestorA
  		Filter filtroUsuario = genericDao.createFilter(FilterType.EQUALS, "usuario.id", dto.getIdUsuario());
  		Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", dto.getIdEntidad());
  		
- 		GestorEntidad gestorEntidad;
  		
- 		gestorEntidad = genericDao.get(GestorActivo.class,filtroUsuario,filtroActivo,filtroAuditoria);
+ 		List<GestorActivo> listaGesores = genericDao.getList(GestorActivo.class,filtroUsuario,filtroActivo,filtroAuditoria);
  		
- 		if (gestorEntidad != null) {
- 			this.actualizaFechaHastaHistoricoGestorAdicional(gestorEntidad);
- 			gestorEntidadDao.delete(gestorEntidad);
+ 	
+ 		if(listaGesores != null){
+ 			for(GestorEntidad gestorEntidad :  listaGesores){
+ 				if (gestorEntidad != null) {
+ 		 			this.actualizaFechaHastaHistoricoGestorAdicional(gestorEntidad);
+ 		 			gestorEntidadDao.delete(gestorEntidad);
+ 		 		}
+ 			}
  		}
  
  	}

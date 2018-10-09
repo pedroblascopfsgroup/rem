@@ -2830,7 +2830,7 @@ public class ActivoAdapter {
 		
 		
 		// comprobamos si se ha modificado la provincia en la ficha de datos basicos del activo
-		if(!(Checks.esNulo(((DtoActivoFichaCabecera)dto).getAsignaGestPorCambioDeProv())) && ((DtoActivoFichaCabecera)dto).getAsignaGestPorCambioDeProv()) {
+		if(dto instanceof DtoActivoFichaCabecera && !(Checks.esNulo(((DtoActivoFichaCabecera)dto).getAsignaGestPorCambioDeProv())) && ((DtoActivoFichaCabecera)dto).getAsignaGestPorCambioDeProv()) {
 		
 			// si se ha cambiado borramos los gestores para reasignarlos de nuevo
 			this.borrarGestor(activo,GestorActivoApi.CODIGO_GESTOR_ACTIVO);

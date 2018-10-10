@@ -20,7 +20,11 @@ DECLARE
     V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquemas
     V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
     V_SQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
+    V_SQL_2 VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
+    V_SQL_3 VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
     V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.
+    V_NUM_TABLAS_2 NUMBER(16); -- Vble. para validar la existencia de una tabla.
+    V_NUM_TABLAS_3 NUMBER(16); -- Vble. para validar la existencia de una tabla.
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
     V_USR VARCHAR2(30 CHAR) := 'HREOS-4449'; -- USUARIOCREAR/USUARIOMODIFICAR.
@@ -35,9 +39,15 @@ BEGIN
 			   WHERE DD_CRA_ID = (SELECT DD_CRA_ID FROM DD_CRA_CARTERA WHERE DD_CRA_CODIGO = ''15'')
 			   AND PVE_ID = (SELECT PVE_ID FROM ACT_PVE_PROVEEDOR WHERE PVE_DOCIDENTIF = ''B02386431'')';
 			   
+	V_SQL_2 := 'SELECT COUNT(1) FROM DD_CRA_CARTERA WHERE DD_CRA_CODIGO = ''15''';
+	
+	V_SQL_3 := 'SELECT COUNT(1) FROM ACT_PVE_PROVEEDOR WHERE PVE_DOCIDENTIF = ''B02386431''';
+			   
 	EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
 	
-	IF V_NUM_TABLAS = 0 THEN
+	EXECUTE IMMEDIATE V_SQL_2 INTO V_NUM_TABLAS_2;
+	
+	IF V_NUM_TABLAS = 0 AND V_NUM_TABLAS_2 = 1 AND V_NUM_TABLAS_3 = 1 THEN
 
 	V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.ACT_ETP_ENTIDAD_PROVEEDOR 
 			  (ETP_ID, 
@@ -65,7 +75,7 @@ BEGIN
 	
 	ELSE
 	
-	DBMS_OUTPUT.PUT_LINE('[FIN] El registro ya existe');
+	DBMS_OUTPUT.PUT_LINE('[FIN] El registro ya existe o no existe la cartera o no existe el proveedor');
 	
 	END IF;
 	

@@ -1,0 +1,240 @@
+--/*
+--##########################################
+--## AUTOR=VIOREL REMUS OVIDIU
+--## FECHA_CREACION=20181008
+--## ARTEFACTO=online
+--## VERSION_ARTEFACTO=9.2
+--## INCIDENCIA_LINK=REMVIP-2176
+--## PRODUCTO=NO
+--##
+--## Finalidad: Update act_num_activo con prefijo de 999
+--## INSTRUCCIONES:
+--## VERSIONES:
+--##        0.1 Versión inicial
+--##########################################
+--*/
+
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON; 
+SET DEFINE OFF;
+
+
+DECLARE
+    V_MSQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar     
+    V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
+    V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
+    V_SQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
+    V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.   
+    ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
+    ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
+    V_USUARIO VARCHAR2(65 CHAR) := 'REMVIP-2176';
+    V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar
+    V_ENTIDAD_ID NUMBER(16);
+    V_ID NUMBER(16);
+    V_SEQ_GEH NUMBER(16);
+    V_TIPO_ID NUMBER(16); --Vle para el id DD_TTR_TIPO_TRABAJO
+    
+    
+    TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
+    TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
+    V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
+    	--act_num_activo	
+		   T_TIPO_DATA(171433)
+		,  T_TIPO_DATA(66546)
+		,  T_TIPO_DATA(66342)
+		,  T_TIPO_DATA(171527)
+		,  T_TIPO_DATA(166342)
+		,  T_TIPO_DATA(66971)
+		,  T_TIPO_DATA(66547)
+		,  T_TIPO_DATA(66267)
+		,  T_TIPO_DATA(66970)
+		,  T_TIPO_DATA(66969)
+		,  T_TIPO_DATA(181466)
+		,  T_TIPO_DATA(181465)
+		,  T_TIPO_DATA(66165)
+		,  T_TIPO_DATA(66268)
+		,  T_TIPO_DATA(181467)
+		,  T_TIPO_DATA(171526)
+		,  T_TIPO_DATA(171434)
+		,  T_TIPO_DATA(66343)
+		,  T_TIPO_DATA(66341)
+		,  T_TIPO_DATA(66548)
+		,  T_TIPO_DATA(166230)
+		,  T_TIPO_DATA(166343)
+		,  T_TIPO_DATA(166341)
+		,  T_TIPO_DATA(171528)
+		,  T_TIPO_DATA(181370)
+		,  T_TIPO_DATA(171525)
+		,  T_TIPO_DATA(166232)
+		,  T_TIPO_DATA(171166)
+		,  T_TIPO_DATA(66164)
+		,  T_TIPO_DATA(181468)
+		,  T_TIPO_DATA(171165)
+		,  T_TIPO_DATA(66550)
+		,  T_TIPO_DATA(171700)
+		,  T_TIPO_DATA(171529)
+		,  T_TIPO_DATA(171436)
+		,  T_TIPO_DATA(166340)
+		,  T_TIPO_DATA(181369)
+		,  T_TIPO_DATA(181464)
+		,  T_TIPO_DATA(171167)
+		,  T_TIPO_DATA(171437)
+		,  T_TIPO_DATA(171168)
+		,  T_TIPO_DATA(66340)
+		,  T_TIPO_DATA(181372)
+		,  T_TIPO_DATA(166345)
+		,  T_TIPO_DATA(66163)
+		,  T_TIPO_DATA(166346)
+		,  T_TIPO_DATA(181373)
+		,  T_TIPO_DATA(171531)
+		,  T_TIPO_DATA(166233)
+		,  T_TIPO_DATA(66973)
+		,  T_TIPO_DATA(171524)
+		,  T_TIPO_DATA(66551)
+		,  T_TIPO_DATA(171169)
+		,  T_TIPO_DATA(171532)
+		,  T_TIPO_DATA(181368)
+		,  T_TIPO_DATA(66162)
+		,  T_TIPO_DATA(66974)
+		,  T_TIPO_DATA(171164)
+		,  T_TIPO_DATA(66545)
+		,  T_TIPO_DATA(181641)
+		,  T_TIPO_DATA(66544)
+		,  T_TIPO_DATA(171432)
+		,  T_TIPO_DATA(66345)
+		,  T_TIPO_DATA(66543)
+		,  T_TIPO_DATA(181792)
+		,  T_TIPO_DATA(181642)
+		,  T_TIPO_DATA(66975)
+		,  T_TIPO_DATA(171701)
+		,  T_TIPO_DATA(66161)
+		,  T_TIPO_DATA(166648)
+		,  T_TIPO_DATA(66976)
+		,  T_TIPO_DATA(66346)
+		,  T_TIPO_DATA(66266)
+		,  T_TIPO_DATA(171702)
+		,  T_TIPO_DATA(171170)
+		,  T_TIPO_DATA(66270)
+		,  T_TIPO_DATA(166650)
+		,  T_TIPO_DATA(66553)
+		,  T_TIPO_DATA(166917)
+		,  T_TIPO_DATA(166918)
+		,  T_TIPO_DATA(66271)
+		,  T_TIPO_DATA(181115)
+		,  T_TIPO_DATA(181793)
+		,  T_TIPO_DATA(181794)
+		,  T_TIPO_DATA(181408)
+		,  T_TIPO_DATA(171648)
+		,  T_TIPO_DATA(66542)
+		,  T_TIPO_DATA(181367)
+		,  T_TIPO_DATA(181643)
+		,  T_TIPO_DATA(66339)
+		,  T_TIPO_DATA(171704)
+		,  T_TIPO_DATA(181796)
+		,  T_TIPO_DATA(166229)
+		,  T_TIPO_DATA(166238)
+		,  T_TIPO_DATA(171439)
+		,  T_TIPO_DATA(66977)
+		,  T_TIPO_DATA(66541)
+		,  T_TIPO_DATA(66540)
+		,  T_TIPO_DATA(166909)
+		,  T_TIPO_DATA(181639)
+		,  T_TIPO_DATA(166339)
+		,  T_TIPO_DATA(166228)
+		,  T_TIPO_DATA(171431)
+		,  T_TIPO_DATA(171523)
+		,  T_TIPO_DATA(171163)
+		,  T_TIPO_DATA(66338)
+		,  T_TIPO_DATA(171430)
+		,  T_TIPO_DATA(66185)
+		,  T_TIPO_DATA(181114)
+		,  T_TIPO_DATA(166908)
+		,  T_TIPO_DATA(166410)
+		,  T_TIPO_DATA(181638)
+		,  T_TIPO_DATA(171361)
+		,  T_TIPO_DATA(166907)
+		,  T_TIPO_DATA(166649)
+		,  T_TIPO_DATA(166910)
+		,  T_TIPO_DATA(171697)
+		,  T_TIPO_DATA(166911)
+		,  T_TIPO_DATA(171698)
+		,  T_TIPO_DATA(166912)
+		,  T_TIPO_DATA(66972)
+		,  T_TIPO_DATA(171699)
+		,  T_TIPO_DATA(171435)
+		,  T_TIPO_DATA(166231)
+		,  T_TIPO_DATA(66549)
+		,  T_TIPO_DATA(166344)
+		,  T_TIPO_DATA(66269)
+		,  T_TIPO_DATA(181371)
+		,  T_TIPO_DATA(181640)
+		,  T_TIPO_DATA(171530)
+		,  T_TIPO_DATA(181469)
+		,  T_TIPO_DATA(66344)
+		,  T_TIPO_DATA(166913)
+		,  T_TIPO_DATA(166234)
+		,  T_TIPO_DATA(166235)
+		,  T_TIPO_DATA(166914)
+		,  T_TIPO_DATA(181374)
+		,  T_TIPO_DATA(166347)
+		,  T_TIPO_DATA(66552)
+		,  T_TIPO_DATA(166915)
+		,  T_TIPO_DATA(166236)
+		,  T_TIPO_DATA(166456)
+		,  T_TIPO_DATA(166916)
+		,  T_TIPO_DATA(181405)
+		,  T_TIPO_DATA(181406)
+		,  T_TIPO_DATA(66272)
+		,  T_TIPO_DATA(171438)
+		,  T_TIPO_DATA(181795)
+		,  T_TIPO_DATA(171533)
+		,  T_TIPO_DATA(166237)
+		,  T_TIPO_DATA(66347)
+	); 
+    V_TMP_TIPO_DATA T_TIPO_DATA;
+
+BEGIN	
+	
+	DBMS_OUTPUT.PUT_LINE('[INICIO] ');
+
+	--MODIFICAMOS EL ACT_NUM_ACTIVO AÑADIENDO EL PREFIJO 999 
+    FOR I IN V_TIPO_DATA.FIRST .. V_TIPO_DATA.LAST
+      LOOP
+      
+		V_TMP_TIPO_DATA := V_TIPO_DATA(I);
+    
+   		V_MSQL := 'update '||V_ESQUEMA||'.act_activo
+			  set act_num_activo = 999||act_num_activo,
+				USUARIOMODIFICAR = '''||V_USUARIO||''',
+				FECHAMODIFICAR = SYSDATE
+		where act_num_activo ='||V_TMP_TIPO_DATA(1);
+		EXECUTE IMMEDIATE V_MSQL;
+        	V_SQL := 'select act_num_activo from '||V_ESQUEMA||'.act_activo where act_num_activo =999'|| V_TMP_TIPO_DATA(1);
+        	EXECUTE IMMEDIATE V_SQL;
+		DBMS_OUTPUT.PUT_LINE('Actualizado el activo '||V_TMP_TIPO_DATA(1)||' con el ACT_NUM_ACTIVO: ' || V_SQL);
+		
+    END LOOP;
+
+    COMMIT;
+   
+
+EXCEPTION
+     WHEN OTHERS THEN
+          err_num := SQLCODE;
+          err_msg := SQLERRM;
+
+          DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(err_num));
+          DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
+          DBMS_OUTPUT.put_line(err_msg);
+
+          ROLLBACK;
+          RAISE;          
+
+END;
+
+/
+
+EXIT
+
+

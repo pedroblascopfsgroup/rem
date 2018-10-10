@@ -3813,6 +3813,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			if (!Checks.esNulo(activo.getObservacionesVentaExterna())) {
 				beanUtilNotNull.copyProperty(dto, "observaciones", activo.getObservacionesVentaExterna());
 			}
+			if (!Checks.esNulo(activo.getEstaEnPuja())) {
+				beanUtilNotNull.copyProperty(dto, "puja", activo.getEstaEnPuja());
+			}
 
 		} catch (IllegalAccessException e) {
 			logger.error("Error en activoManager", e);
@@ -3838,6 +3841,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			beanUtilNotNull.copyProperty(activo, "importeVentaExterna", dto.getImporteVenta());
 			beanUtilNotNull.copyProperty(activo, "observacionesVentaExterna", dto.getObservaciones());
 			dto.setVentaExterna(Checks.esNulo(activo.getFechaVentaExterna()));
+			dto.setPuja(!Checks.esNulo(activo.getEstaEnPuja()));
 
 			// Si se ha introducido valores en fecha o importe de venta, se
 			// actualiza la situación comercial y estado publicación del activo.
@@ -3880,6 +3884,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 
 		activo.setObservacionesVentaExterna(dto.getObservaciones());
+		activo.setEstaEnPuja(dto.getPuja());
 		activoDao.save(activo);
 
 		return true;

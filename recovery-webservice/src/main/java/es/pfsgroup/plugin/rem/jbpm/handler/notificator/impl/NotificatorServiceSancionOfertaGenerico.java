@@ -262,6 +262,7 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 			}
 		}
 		clavesGestores.add(GESTOR_FORMALIZACION);
+		clavesGestores.add(SUPERVISOR_COMERCIAL);
 		return clavesGestores.toArray(new String[] {});
 	}
 
@@ -332,6 +333,8 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 		String[] claves = filtroGestores != null ? filtroGestores
 				: new String[] { GESTOR_PRESCRIPTOR, GESTOR_MEDIADOR, GESTOR_COMERCIAL_ACTIVO,
 						GESTOR_COMERCIAL_LOTE_RESTRINGIDO, GESTOR_COMERCIAL_LOTE_COMERCIAL, GESTOR_FORMALIZACION, GESTOR_BACKOFFICE, GESTOR_GESTORIA_FASE_3,SUPERVISOR_COMERCIAL};
+		
+		
 		this.compruebaRequisitos(activo, oferta, loteComercial, expediente, Arrays.asList(claves));
 
 		HashMap<String, String> gestores = new HashMap<String, String>();
@@ -461,6 +464,8 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 				}								
 			}
 		}
+		
+		
 		
 		return gestores;
 	}

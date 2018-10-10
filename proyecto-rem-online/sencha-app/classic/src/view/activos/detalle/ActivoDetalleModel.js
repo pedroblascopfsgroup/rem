@@ -309,6 +309,13 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			var codigo = Ext.isEmpty(get('activo.estadoPublicacionCodigo')) ? "" : get('activo.estadoPublicacionCodigo');
 			return codigo;
 		 },
+		 
+		 estaPublicadoVentaOAlquiler: function(get) {
+			 var estadoAlquilerCodigo = get('activo.estadoAlquilerCodigo');
+			 var estadoVentaCodigo = get('activo.estadoVentaCodigo');
+			 
+			 return estadoAlquilerCodigo === CONST.ESTADO_PUBLICACION_ALQUILER['PUBLICADO'] || estadoVentaCodigo === CONST.ESTADO_PUBLICACION_VENTA['PUBLICADO'];
+		 },
 
 		 activoPertenceAgrupacionComercialOrRestringida: function(get) {
 			 var restringida = get('activo.pertenceAgrupacionRestringida');

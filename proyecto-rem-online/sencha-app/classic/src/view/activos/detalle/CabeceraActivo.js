@@ -188,7 +188,8 @@ Ext.define('HreRem.view.activos.detalle.CabeceraActivo', {
 								margin: '5 10 10 10 ',
 								defaultType: 'displayfield',
 								defaults: {
-									labelWidth: 80},
+									labelWidth: 80
+								},
 								autoScroll: true,
 								layout: {
 									type: 'table',
@@ -217,6 +218,14 @@ Ext.define('HreRem.view.activos.detalle.CabeceraActivo', {
 										bind: {
 											hidden: '{!activo.incluyeDestinoComercialAlquiler}',
 											value: '{activo.estadoAlquilerDescripcion}'
+										}
+									},
+									{
+										fieldLabel: HreRem.i18n('fieldlabel.enlace.externo'),
+										cls: 'cabecera-info-field',
+										bind: {
+											hidden: '{!estaPublicadoVentaOAlquiler}',
+											value: '<a href="' + HreRem.i18n('fieldlabel.link.web.haya') + '{activo.idSareb}" target="_blank">' + HreRem.i18n('fieldlabel.web.haya') + '</a>'
 										}
 									},
 									{

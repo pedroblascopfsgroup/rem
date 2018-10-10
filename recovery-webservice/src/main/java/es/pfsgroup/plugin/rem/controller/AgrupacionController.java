@@ -739,8 +739,10 @@ public class AgrupacionController extends ParadiseJsonController {
 
 		List<VActivosAgrupacion> listaActivosPorAgrupacion = (List<VActivosAgrupacion>) adapter
 				.getListActivosAgrupacionById(dtoAgrupacionFilter, agrID).getResults();
+		
+		DtoAgrupaciones agruDto = adapter.getAgrupacionById(agrID);
 
-		ExcelReport report = new AgrupacionListadoActivosExcelReport(listaActivosPorAgrupacion);
+		ExcelReport report = new AgrupacionListadoActivosExcelReport(listaActivosPorAgrupacion,agruDto);
 
 		excelReportGeneratorApi.generateAndSend(report, response);
 	}

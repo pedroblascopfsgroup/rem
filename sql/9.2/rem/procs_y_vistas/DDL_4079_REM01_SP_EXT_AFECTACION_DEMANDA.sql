@@ -1,7 +1,7 @@
 --/*
 --#########################################
 --## AUTOR=Maria Presencia
---## FECHA_CREACION=20180926
+--## FECHA_CREACION=20181010
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=2.0.18
 --## INCIDENCIA_LINK=HREOS-4529
@@ -65,6 +65,12 @@ BEGIN
 				DBMS_OUTPUT.PUT_LINE(' '||HLP_REGISTRO_EJEC||' ');
 				COD_RETORNO := 1;
 		END IF;
+	END IF;
+	
+	IF COD_RETORNO = 0 AND FLAG_ACTIVO_HAYA NOT IN (1,0) THEN
+		HLP_REGISTRO_EJEC := '[ERROR] El FLAG_ACTIVO_HAYA no contiene los valores correctos';
+		DBMS_OUTPUT.PUT_LINE(' '||HLP_REGISTRO_EJEC||' ');
+		COD_RETORNO := 1;
 	END IF;
 	
 	IF COD_RETORNO = 0 THEN

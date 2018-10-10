@@ -191,6 +191,26 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private int conTitulo;
 	private String tipoInquilino;
 	private String tipoEstadoAlquiler;
+	
+	//HREOS-4545
+	private Boolean tieneOfertaAlquilerViva;
+	private Boolean esGestorAlquiler;
+	
+	public Boolean getTieneOfertaAlquilerViva() {
+		return tieneOfertaAlquilerViva;
+	}
+
+	public void setTieneOfertaAlquilerViva(Boolean tieneOfertaAlquilerViva) {
+		this.tieneOfertaAlquilerViva = tieneOfertaAlquilerViva;
+	}
+	
+	public Boolean getEsGestorAlquiler() {
+		return esGestorAlquiler;
+	}
+
+	public void setEsGestorAlquiler(Boolean esGestorAlquiler) {
+		this.esGestorAlquiler = esGestorAlquiler;
+	}
 
 	public int getConTitulo() {
 		return conTitulo;

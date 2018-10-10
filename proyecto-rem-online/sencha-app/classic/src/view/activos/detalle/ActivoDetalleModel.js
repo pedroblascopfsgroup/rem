@@ -275,6 +275,11 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		 	 return get('activo.pertenceAgrupacionRestringida');
 		 },
 		 
+		 enableChkPerimetroAlquiler: function(get){
+			 var esGestorAlquiler = me.getViewModel().get('activo.esGestorAlquiler');
+			 return esGestorAlquiler;
+		 },
+		 
 		 enableComboTipoAlquiler: function(get){
 			var chkPerimetroAlquiler = get('patrimonio.chkPerimetroAlquiler');
 			var tipoComercializacion = get('activo.tipoComercializacionCodigo');

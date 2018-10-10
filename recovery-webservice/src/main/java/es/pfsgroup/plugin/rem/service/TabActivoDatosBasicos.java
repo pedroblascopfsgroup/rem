@@ -16,6 +16,7 @@ import org.springframework.stereotype.Component;
 
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.message.MessageService;
+import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.DDTipoVia;
 import es.capgemini.pfs.direccion.model.Localidad;
@@ -32,6 +33,7 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDCicCodigoIsoCirbeBK
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBLocalizacionesBien;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoPatrimonioDao;
+import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoPropagacionApi;
@@ -45,12 +47,15 @@ import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoBancario;
 import es.pfsgroup.plugin.rem.model.ActivoEstadosInformeComercialHistorico;
 import es.pfsgroup.plugin.rem.model.ActivoLocalizacion;
+import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
 import es.pfsgroup.plugin.rem.model.DtoActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.DtoEstadosInformeComercialHistorico;
+import es.pfsgroup.plugin.rem.model.DtoListadoGestores;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.VPreciosVigentes;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
@@ -59,6 +64,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpIncorrienteBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpRiesgoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoInformeComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
@@ -131,6 +137,12 @@ public class TabActivoDatosBasicos implements TabActivoService {
 	
 	@Autowired
 	private ParticularValidatorApi particularValidator;
+	
+	@Autowired
+	private ActivoAdapter adapter;
+	
+	@Autowired
+	private UsuarioApi usuarioApi;
 	
 	@Resource
     MessageService messageServices;
@@ -478,6 +490,24 @@ public class TabActivoDatosBasicos implements TabActivoService {
 
 			 if(!Checks.esNulo(activoP.getTipoInquilino())) {
 				 activoDto.setTipoInquilino(activoP.getTipoInquilino().getCodigo());
+			 }
+		 }
+		 
+		 for(ActivoOferta activoOferta : activo.getOfertas()) {
+			 Oferta oferta = ofertaApi.getOfertaById(activoOferta.getOferta());
+			 if(DDEstadoOferta.CODIGO_ACEPTADA.equals(oferta.getEstadoOferta())) {
+				 BeanUtils.copyProperty(activoDto, "tieneOfertaAlquilerViva", true);
+			 }
+		 }
+		 
+		 Usuario usuarioLogado = usuarioApi.getUsuarioLogado();
+		 for(DtoListadoGestores gestor : adapter.getGestoresActivos(activo.getId())){
+			 if(usuarioLogado.getId() == gestor.getIdUsuario() 
+					 && (GestorActivoApi.CODIGO_GESTOR_ALQUILERES.equals(gestor.getCodigo()) 
+							 || GestorActivoApi.CODIGO_SUPERVISOR_ALQUILERES.equals(gestor.getCodigo()) 
+							 || GestorActivoApi.CODIGO_GESTOR_COMERCIAL_ALQUILERES.equals(gestor.getCodigo()) 
+							 || GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL_ALQUILERES.equals(gestor.getCodigo()))) {
+				 BeanUtils.copyProperty(activoDto, "esGestorAlquiler", true);
 			 }
 		 }
 		 

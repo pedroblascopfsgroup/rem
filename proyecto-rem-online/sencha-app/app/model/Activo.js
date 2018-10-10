@@ -613,6 +613,14 @@ Ext.define('HreRem.model.Activo', {
 			},
 			{
 				name: 'tipoEstadoAlquiler'
+			},
+			{
+				name: 'tieneOfertaAlquilerViva',
+				type: 'boolean'
+			},
+			{
+				name: 'esGestorAlquiler',
+				type: 'boolean'
 			}
     ],
     

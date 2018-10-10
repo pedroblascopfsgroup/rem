@@ -35,6 +35,7 @@ Ext.define('HreRem.view.activos.detalle.DatosPatrimonio', {
 							fieldLabel: HreRem.i18n('title.patrimonio.perimetroAlquiler'),
 							reference: 'chkPerimetroAlquilerRef',							
 							bind: {
+								disabled: '{enableChkPerimetroAlquiler}',
 								value: '{patrimonio.chkPerimetroAlquiler}'	
 							},
 							listeners:{

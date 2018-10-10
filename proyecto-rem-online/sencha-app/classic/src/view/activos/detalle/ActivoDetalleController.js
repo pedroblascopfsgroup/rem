@@ -1,7 +1,7 @@
 
 Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     extend: 'Ext.app.ViewController',
-    alias: 'controller.activodetalle',  
+    alias: 'controller.activodetalle',
     requires: ['HreRem.view.activos.detalle.AnyadirEntidadActivo' , 'HreRem.view.activos.detalle.CargaDetalle',
     "HreRem.view.activos.detalle.OpcionesPropagacionCambios"],
     
@@ -3443,11 +3443,18 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		var comboEstadoAlquiler = me.lookupReference('comboEstadoAlquilerRef');
 		var comboTipoInquilino = me.lookupReference('comboTipoInquilinoRef');
 		var comboOcupado = me.getViewModel().get('activo.ocupado');
+		var chkPerimetroAlquiler = me.getViewModel().get('patrimonio.chkPerimetroAlquiler');
+		var destinoComercialAlquiler = me.getViewModel().get('activo.isDestinoComercialAlquiler');
+		var tieneOfertaAlquilerViva = me.getViewModel().get('activo.tieneOfertaAlquilerViva');
 				
 		if(comboEstadoAlquiler != null && comboTipoInquilino != null && comboOcupado != null){
 			if(comboEstadoAlquiler.value == CONST.COMBO_ESTADO_ALQUILER['ALQUILADO'] && comboOcupado.value == CONST.COMBO_OCUPACION["SI"]){
 				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-			} else if(comboEstadoAlquiler.value == CONST.COMBO_ESTADO_ALQUILER['LIBRE']){
+			} else if(destinoComercialAlquiler == false && chkPerimetroAlquiler == true){
+				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.destino.comercial"));
+			} else if(tieneOfertaAlquilerViva == true && chkPerimetroAlquiler == false) {
+				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.oferta.alquiler"));
+			}else if(comboEstadoAlquiler.value == CONST.COMBO_ESTADO_ALQUILER['LIBRE']){
 				comboTipoInquilino.setValue(null);
 				me.onSaveFormularioCompleto(btn, form);
 			} else {

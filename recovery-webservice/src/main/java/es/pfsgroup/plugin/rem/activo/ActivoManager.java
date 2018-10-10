@@ -2912,6 +2912,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 							tieneAdjunto = true;
 						}
 					}	
+				} else {
+					tieneAdjunto = true;
 				}
 			}	
 		return tieneAdjunto;

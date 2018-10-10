@@ -1,16 +1,17 @@
 --/*
 --##########################################
---## AUTOR=JOSE VILLEL
---## FECHA_CREACION=20160510
+--## AUTOR=Sergio Beleña
+--## FECHA_CREACION=20180928
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.1
+--## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=0
---## PRODUCTO=NO
+--## PRODUCTO=SI
 --## Finalidad: DDL VISTA PARA LAS SUBDIVISIONES DE AGRUPACION
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
---##        0.1 Versión inicial
+--##        0.1 Versión inicial (JOSE VILLEL 20160510)
+--##        0.2 Creación columna de Estado de publicación
 --##########################################
 --*/
 
@@ -33,7 +34,7 @@ DECLARE
     CUENTA NUMBER;
     
 BEGIN
-
+--v0.2
   SELECT COUNT(*) INTO CUENTA FROM ALL_OBJECTS WHERE OBJECT_NAME = 'V_ACTIVOS_SUBDIVISION' AND OWNER=V_ESQUEMA AND OBJECT_TYPE='MATERIALIZED VIEW';  
   IF CUENTA>0 THEN
     DBMS_OUTPUT.PUT_LINE('DROP MATERIALIZED VIEW '|| V_ESQUEMA ||'.V_ACTIVOS_SUBDIVISION...');
@@ -52,7 +53,27 @@ BEGIN
   EXECUTE IMMEDIATE 'CREATE VIEW ' || V_ESQUEMA || '.V_ACTIVOS_SUBDIVISION 
 
 	AS
-		SELECT act_sd.ID, aga.agr_id, act_sd.act_id, act_sd.act_num_activo, act_sd.bie_dreg_num_finca, act_sd.dd_tpa_descripcion, act_sd.dd_sac_descripcion, act_sd.dd_aic_descripcion
+		SELECT act_sd.ID, aga.agr_id, act_sd.act_id, act_sd.act_num_activo, act_sd.bie_dreg_num_finca, act_sd.dd_tpa_descripcion, act_sd.dd_sac_descripcion, act_sd.dd_aic_descripcion,
+		(CASE 
+       		 WHEN cond.CON_CARGAS= 0
+		 AND cond.DIVHORIZONTAL_NOINSCRITA= 0
+		 AND cond.ES_CONDICIONADO= 0 
+		 AND cond.OBRANUEVA_ENCONSTRUCCION= 0
+		 AND cond.OBRANUEVA_SINDECLARAR= 0 
+        	 AND cond.OCUPADO_CONTITULO= 0
+		 AND cond.OCUPADO_SINTITULO= 0
+		 AND cond.PENDIENTE_INSCRIPCION= 0
+		 AND cond.ESTADO_PORTAL_EXTERNO= 0
+		 AND cond.PROINDIVISO= 0
+		 AND cond.RUINA= 0
+        	 AND cond.SIN_INFORME_APROBADO= 0
+		 AND cond.SIN_TOMA_POSESION_INICIAL= 0
+		 AND cond.VANDALIZADO= 0
+		 AND cond.TAPIADO= 0
+		 THEN 0
+       		 ELSE 1 
+		END) AS ESTADOPUBLICACION
+
   FROM (SELECT subd.ID, subd.act_id, subd.act_num_activo, subd.bie_dreg_num_finca, tpa.dd_tpa_descripcion, sac.dd_sac_descripcion, subd.dd_aic_descripcion
           FROM (SELECT   act.act_id, act.act_num_activo, act.dd_tpa_id, act.dd_sac_id, biedreg.bie_dreg_num_finca, aic.dd_aic_descripcion,
                          ORA_HASH (   act.dd_tpa_id
@@ -61,6 +82,8 @@ BEGIN
                                    || NVL (SUM (DECODE (dis.dd_tph_id, 1, dis.dis_cantidad, NULL)), 0)
                                    || NVL (SUM (DECODE (dis.dd_tph_id, 2, dis.dis_cantidad, NULL)), 0)
                                   ) ID
+ 
+
                     FROM act_ico_info_comercial ico JOIN act_activo act ON act.act_id = ico.act_id
                          left JOIN v_max_act_hic_est_inf_com maxhic ON (maxhic.act_id = act.act_id AND maxhic.pos = 1)
                          left JOIN dd_aic_accion_inf_comercial aic ON aic.dd_aic_id = maxhic.dd_aic_id
@@ -74,7 +97,8 @@ BEGIN
                JOIN dd_sac_subtipo_activo sac ON sac.dd_sac_id = subd.dd_sac_id
                ) act_sd
        JOIN
-       act_aga_agrupacion_activo aga ON aga.act_id = act_sd.act_id';
+        act_aga_agrupacion_activo aga ON aga.act_id = act_sd.act_id
+	JOIN V_COND_DISPONIBILIDAD cond ON  aga.act_id = cond.act_id';
 
   DBMS_OUTPUT.PUT_LINE('CREATE VIEW '|| V_ESQUEMA ||'.V_ACTIVOS_SUBDIVISION...Creada OK');
   

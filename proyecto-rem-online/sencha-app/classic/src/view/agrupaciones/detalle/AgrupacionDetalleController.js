@@ -388,12 +388,49 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
     	
     	me.getView().fireEvent('abrirDetalleActivo', id, titulo);
     },
+	 //Actualizar Estado  Informe comercial MSV
+	 aprobarInformeComercialMSV:function(grid, row, col){
+		 var me = this.getView().down('[reference=listaActivosSubdivisionGrid]');
+		 var activosObjects = me.getPersistedSelection();
+		 var resultado = "";
+		 debugger;
+		  for (var i in activosObjects) {
+			  if(i == activosObjects.length-1){
+				  resultado+=activosObjects[i].id
+			  }else{
+				  resultado+=activosObjects[0].data.activoId+",";
+			  }
+			  }
+		 if(!Ext.isEmpty(activosObjects)){
+				var url =  $AC.getRemoteUrl('activo/updateInformeComercialMSV');
+    			Ext.Ajax.request({
+	    		     url: url,
+	    		     params: { activosId:resultado},
+	    		     success: function (a, operation, context) {
+	                //Se marcan los activos actualizados
+	    		    	 debugger;
+	    		    	console.log(context);
+	                },
+	                
+	                failure: function (a, operation, context) {
+	                	console.log(context);
+	                	 me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+						 me.unmask();
+	                }
+    		     
+				});
+			 
+		 }else{
+			 me.fireEvent("errorToast", HreRem.i18n("msg.grid.no.activo.seleccionado"));
+		 }
+		 
+	},
     
     onSubdivisionesAgrupacionListClick: function(grid,record) {
 		var me = this;		
 		me.getViewModel().set("subdivision", record);
 		me.getViewModel().notify();
-		grid.up('form').down('[reference=listaActivosSubdivision]').getStore().loadPage(1);
+		grid.up('form').down('[reference=listaActivosSubdivisionGrid]').getStore().loadPage(1);
 	},
 	
 	updateOrdenFotosInterno: function(data, record, store) {

@@ -35,9 +35,12 @@ import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.devon.utils.FileUtils;
+import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
@@ -46,7 +49,9 @@ import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.activo.ActivoPropagacionFieldTabMap;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
+import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoPropagacionApi;
@@ -56,55 +61,7 @@ import es.pfsgroup.plugin.rem.excel.ActivoExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
 import es.pfsgroup.plugin.rem.excel.PublicacionExcelReport;
-import es.pfsgroup.plugin.rem.model.Activo;
-import es.pfsgroup.plugin.rem.model.ActivoFoto;
-import es.pfsgroup.plugin.rem.model.DtoActivoAdministracion;
-import es.pfsgroup.plugin.rem.model.DtoActivoCargas;
-import es.pfsgroup.plugin.rem.model.DtoActivoCargasTab;
-import es.pfsgroup.plugin.rem.model.DtoActivoCatastro;
-import es.pfsgroup.plugin.rem.model.DtoActivoDatosRegistrales;
-import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
-import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
-import es.pfsgroup.plugin.rem.model.DtoActivoInformacionAdministrativa;
-import es.pfsgroup.plugin.rem.model.DtoActivoInformacionComercial;
-import es.pfsgroup.plugin.rem.model.DtoActivoInformeComercial;
-import es.pfsgroup.plugin.rem.model.DtoActivoIntegrado;
-import es.pfsgroup.plugin.rem.model.DtoActivoOcupanteLegal;
-import es.pfsgroup.plugin.rem.model.DtoActivoSituacionPosesoria;
-import es.pfsgroup.plugin.rem.model.DtoActivoTramite;
-import es.pfsgroup.plugin.rem.model.DtoActivoValoraciones;
-import es.pfsgroup.plugin.rem.model.DtoActivosPublicacion;
-import es.pfsgroup.plugin.rem.model.DtoAdjunto;
-import es.pfsgroup.plugin.rem.model.DtoAdmisionDocumento;
-import es.pfsgroup.plugin.rem.model.DtoComercialActivo;
-import es.pfsgroup.plugin.rem.model.DtoComunidadpropietariosActivo;
-import es.pfsgroup.plugin.rem.model.DtoCondicionEspecifica;
-import es.pfsgroup.plugin.rem.model.DtoCondicionHistorico;
-import es.pfsgroup.plugin.rem.model.DtoCondicionantesDisponibilidad;
-import es.pfsgroup.plugin.rem.model.DtoDistribucion;
-import es.pfsgroup.plugin.rem.model.DtoFichaTrabajo;
-import es.pfsgroup.plugin.rem.model.DtoFoto;
-import es.pfsgroup.plugin.rem.model.DtoHistoricoMediador;
-import es.pfsgroup.plugin.rem.model.DtoHistoricoPreciosFilter;
-import es.pfsgroup.plugin.rem.model.DtoHistoricoPresupuestosFilter;
-import es.pfsgroup.plugin.rem.model.DtoImpuestosActivo;
-import es.pfsgroup.plugin.rem.model.DtoIncrementoPresupuestoActivo;
-import es.pfsgroup.plugin.rem.model.DtoLlaves;
-import es.pfsgroup.plugin.rem.model.DtoMovimientoLlave;
-import es.pfsgroup.plugin.rem.model.DtoObservacion;
-import es.pfsgroup.plugin.rem.model.DtoOfertaActivo;
-import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
-import es.pfsgroup.plugin.rem.model.DtoPrecioVigente;
-import es.pfsgroup.plugin.rem.model.DtoPresupuestoGraficoActivo;
-import es.pfsgroup.plugin.rem.model.DtoPropietario;
-import es.pfsgroup.plugin.rem.model.DtoPropuestaActivosVinculados;
-import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
-import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
-import es.pfsgroup.plugin.rem.model.DtoReglasPublicacionAutomatica;
-import es.pfsgroup.plugin.rem.model.DtoTasacion;
-import es.pfsgroup.plugin.rem.model.VBusquedaActivos;
-import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
-import es.pfsgroup.plugin.rem.model.VBusquedaPublicacionActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoInformeComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDRatingActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoHabitaculo;
 import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
@@ -130,6 +87,9 @@ public class ActivoController extends ParadiseJsonController {
 
 	@Autowired
 	private GenericABMDao genericDao;
+	
+	@Autowired
+	private ActivoDao activoDao;
 
 	@Autowired
 	private ActivoApi activoApi;
@@ -151,6 +111,9 @@ public class ActivoController extends ParadiseJsonController {
 
 	@Autowired
 	private ActivoPropagacionApi activoPropagacionApi;
+	
+    @Autowired
+    private GenericAdapter genericAdapter;
 
 
 	@SuppressWarnings("unchecked")
@@ -1002,6 +965,82 @@ public class ActivoController extends ParadiseJsonController {
 	public ModelAndView updateFotosById(DtoFoto dtoFoto, ModelMap model) {
 		try {
 			boolean success = adapter.saveFoto(dtoFoto);
+			model.put(RESPONSE_SUCCESS_KEY, success);
+
+		} catch (Exception e) {
+			logger.error("error en activoController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+		}
+
+		model.put(RESPONSE_SUCCESS_KEY, true);
+
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView updateInformeComercialMSV(String activosId, ModelMap model) {
+		try {
+			Filter estadoInformeComercialFilter;
+			Boolean success=false;
+			ActivoEstadosInformeComercialHistorico activoEstadosInformeComercialHistorico = new ActivoEstadosInformeComercialHistorico();
+
+			List<Long> activosIdInt = new ArrayList<Long>();
+			String[] activosIdString = activosId.split(",");
+			for (String activo : activosIdString) {
+				activosIdInt.add(Long.valueOf(activo));
+			}
+			
+			for (Long activoId : activosIdInt) {
+				Activo activo = activoDao.get(activoId);
+			
+				if(!activoApi.checkTiposDistintos(activo)){
+						estadoInformeComercialFilter = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoInformeComercial.ESTADO_INFORME_COMERCIAL_ACEPTACION);
+						activoEstadosInformeComercialHistorico.setEstadoInformeComercial(genericDao.get(DDEstadoInformeComercial.class, estadoInformeComercialFilter));
+						activoEstadosInformeComercialHistorico.setFecha(new Date());
+						activo.getInfoComercial().setFechaAceptacion(new Date());
+						activo.getInfoComercial().setFechaRechazo(null);
+							
+							if(!activoEstadoPublicacionApi.isPublicadoVentaByIdActivo(activo.getId())) {
+								// 3.) Se marca activo como publicable, porque en el tramite se han cumplido todos los requisitos
+								activo.setFechaPublicable(new Date());
+								activoApi.saveOrUpdate(activo);
+							}
+						
+					}
+				
+				//Si han habido cambios en el historico, los persistimos.
+				if(!Checks.esNulo(activoEstadosInformeComercialHistorico) && !Checks.esNulo(activoEstadosInformeComercialHistorico.getEstadoInformeComercial())){
+					success=true;
+					if(Checks.esNulo(activoEstadosInformeComercialHistorico.getAuditoria())){
+						Auditoria auditoria = new Auditoria();
+						auditoria.setUsuarioCrear(genericAdapter.getUsuarioLogado().getUsername());
+						auditoria.setFechaCrear(new Date());
+						activoEstadosInformeComercialHistorico.setAuditoria(auditoria);
+					}else{
+						activoEstadosInformeComercialHistorico.getAuditoria().setUsuarioCrear(genericAdapter.getUsuarioLogado().getUsername());
+						activoEstadosInformeComercialHistorico.getAuditoria().setFechaCrear(new Date());
+					}
+					activoEstadosInformeComercialHistorico.setActivo(activo);
+					genericDao.save(ActivoEstadosInformeComercialHistorico.class, activoEstadosInformeComercialHistorico);
+				}
+				
+				//Si han habido cambios en el activo, lo persistimos
+				if(!Checks.esNulo(activo)){
+					//actualizamos el informemediador para que se envie el cambio de estado
+					if(!Checks.esNulo(activo.getInfoComercial())){
+						activo.getInfoComercial().getAuditoria().setFechaModificar(new Date());
+						if(!Checks.esNulo(genericAdapter.getUsuarioLogado())){
+							activo.getInfoComercial().getAuditoria().setUsuarioModificar(genericAdapter.getUsuarioLogado().getUsername());
+						}
+					}
+					
+					activoApi.saveOrUpdate(activo);
+				}
+				
+				activoDao.publicarActivoConHistorico(activo.getId(), genericAdapter.getUsuarioLogado().getUsername());
+			}
+			
 			model.put(RESPONSE_SUCCESS_KEY, success);
 
 		} catch (Exception e) {

@@ -1,16 +1,17 @@
 --/*
 --##########################################
---## AUTOR=JIN LI, HU
---## FECHA_CREACION=20181002
+--## AUTOR=Maria Presencia
+--## FECHA_CREACION=20181009
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-4528
+--## INCIDENCIA_LINK=HREOS-4583
 --## PRODUCTO=NO
 --##
 --## Finalidad: Carga Inicial REP_REVISION_POSESION
 --## INSTRUCCIONES:
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##		0.2 Modificado los campos NO NULLABLES
 --##########################################
 --*/
 
@@ -30,11 +31,14 @@ DECLARE
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
     V_TABLA VARCHAR2(30 CHAR) := 'REP_REVISION_POSESION';  -- Tabla a modificar  
     V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar
-    V_USR VARCHAR2(30 CHAR) := 'HREOS-4528'; -- USUARIOCREAR/USUARIOMODIFICAR
+    V_USR VARCHAR2(30 CHAR) := 'HREOS-4583'; -- USUARIOCREAR/USUARIOMODIFICAR
     
 BEGIN	
 	
     DBMS_OUTPUT.PUT_LINE('[INICIO] ');
+         
+         
+         
          
 			--Insertar datos
 			DBMS_OUTPUT.PUT_LINE('[INFO]: INSERTAMOS EL REGISTRO');
@@ -59,8 +63,8 @@ BEGIN
 						(CASE WHEN SPS.SPS_FECHA_REVISION_ESTADO IS NOT NULL AND SPS_FECHA_TOMA_POSESION IS NOT NULL THEN ''1''
 						ELSE ''0'' END)
 				END) AS REP_POSESION
-				, SPS.SPS_OCUPADO
-				, SPS.SPS_CON_TITULO
+				, NVL(SPS.SPS_OCUPADO,0)
+				, NVL(SPS.SPS_CON_TITULO,0)
 				, 0
 				, '''||V_USR||'''
 				, SYSDATE

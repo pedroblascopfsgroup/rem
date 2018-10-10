@@ -2897,39 +2897,24 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	public boolean necesitaDocumentoInformeOcupacion(Activo activo) {
 			
 		ActivoSituacionPosesoria activoSitPos = activo.getSituacionPosesoria();
-		
-		if(!Checks.esNulo(activo.getCartera())) {
-			if(DDCartera.CODIGO_CARTERA_BANKIA.equals(activo.getCartera().getCodigo())) {
-				if ((Checks.esNulo(activoSitPos.getSitaucionJuridica()) || 0 == activoSitPos.getSitaucionJuridica().getIndicaPosesion()) 
-						&& 1 == activoSitPos.getOcupado()){
-					if (0 == activoSitPos.getConTitulo()){
-						List<ActivoAdjuntoActivo> listAdjuntos = activo.getAdjuntos();
-						if (!Checks.estaVacio(listAdjuntos)){
-							for (ActivoAdjuntoActivo adjunto : listAdjuntos){
-								if (DDTipoDocumentoActivo.CODIGO_INFORME_OCUPACION_DESOCUPACION.equals(adjunto.getTipoDocumentoActivo().getCodigo())) {
-									return false;
-								}
-							}	
+		boolean tieneAdjunto = false;
+		boolean tieneInforme = false;
+			if (1 == activoSitPos.getOcupado() && 0 == activoSitPos.getConTitulo()){
+				List<ActivoAdjuntoActivo> listAdjuntos = activo.getAdjuntos();
+				
+				if (!Checks.estaVacio(listAdjuntos)){
+					Integer countDocs = 0;
+					for (ActivoAdjuntoActivo adjunto : listAdjuntos){
+						if (DDTipoDocumentoActivo.CODIGO_INFORME_OCUPACION_DESOCUPACION.equals(adjunto.getTipoDocumentoActivo().getCodigo())) {
+							tieneAdjunto = false;
+							tieneInforme = true;
+						} else if(!tieneInforme){
+							tieneAdjunto = true;
 						}
-					}
-				}					
-			} else {
-				if (!Checks.esNulo(activoSitPos.getFechaRevisionEstado())
-						|| !Checks.esNulo(activoSitPos.getFechaTomaPosesion())) {					
-					if (1 == activoSitPos.getOcupado() && 0 == activoSitPos.getConTitulo()){
-						List<ActivoAdjuntoActivo> listAdjuntos = activo.getAdjuntos();
-						if (!Checks.estaVacio(listAdjuntos)){
-							for (ActivoAdjuntoActivo adjunto : listAdjuntos){
-								if (DDTipoDocumentoActivo.CODIGO_INFORME_OCUPACION_DESOCUPACION.equals(adjunto.getTipoDocumentoActivo().getCodigo())) {
-									return false;
-								}
-							}	
-						}
-					}
+					}	
 				}
-			}
-		}		
-		return true;
+			}	
+		return tieneAdjunto;
 	}
 
 	@Override

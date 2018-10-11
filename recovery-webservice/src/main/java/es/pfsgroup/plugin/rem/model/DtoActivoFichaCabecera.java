@@ -195,6 +195,9 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	
 	//HREOS-3415
 	private String acbCoreaeTexto;
+	
+	//REMVIP-REMVIP-2193
+	private Boolean isLogUsuGestComerSupComerSupAdmin;
 
 	public int getPage() {
 		return page;
@@ -1454,6 +1457,14 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 
 	public void setCatContableDescripcion(String catContableDescripcion) {
 		this.catContableDescripcion = catContableDescripcion;
+	}
+
+	public Boolean getIsLogUsuGestComerSupComerSupAdmin() {
+		return isLogUsuGestComerSupComerSupAdmin;
+	}
+
+	public void setIsLogUsuGestComerSupComerSupAdmin(Boolean isLogUsuGestComerSupComerSupAdmin) {
+		this.isLogUsuGestComerSupComerSupAdmin = isLogUsuGestComerSupComerSupAdmin;
 	}
 	
 }

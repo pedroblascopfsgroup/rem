@@ -489,7 +489,18 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		 
 		// HREOS-2761: Buscamos los campos que pueden ser propagados para esta pestaña
 		 activoDto.setCamposPropagables(TabActivoService.TAB_DATOS_BASICOS);
-
+		
+		//REMVIP-REMVIP-2193
+		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+		Usuario gestorComercial = gestorActivoApi.getGestorComercialActual(activo, "GCOM");
+		Usuario supervisorComercial = gestorActivoApi.getGestorComercialActual(activo, "SCOM");
+		if(usuarioLogado.equals(gestorComercial) 
+				|| usuarioLogado.equals(supervisorComercial)
+				|| "SUPER".equals(usuarioLogado.getUsername())){
+			activoDto.setIsLogUsuGestComerSupComerSupAdmin(true);
+		}else{
+			activoDto.setIsLogUsuGestComerSupComerSupAdmin(false);
+		}
 		
 		return activoDto;	
 	}

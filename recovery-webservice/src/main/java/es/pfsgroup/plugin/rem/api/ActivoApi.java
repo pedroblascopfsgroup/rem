@@ -1124,4 +1124,6 @@ public interface ActivoApi {
 	
 	public List<VTasacionCalculoLBK> getVistaTasacion(Long idAgrupacion);
 
+	boolean isActivoEnPuja(Activo activo);
+
 }

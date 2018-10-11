@@ -92,7 +92,7 @@ BEGIN
 	
 	DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||V_ESQUEMA||'.AUX_AGRUP_PROYECTO_HREOS_4591 actualizada. '||SQL%ROWCOUNT||' registros no volcaran por actvios con distinta cartera/provincia.');
 	
-	/*UPDATE REM01.AUX_AGRUP_PROYECTO_HREOS_4591 AUX1
+	UPDATE REM01.AUX_AGRUP_PROYECTO_HREOS_4591 AUX1
 	SET AUX1.CARGAR_AGRUPACION = 0
 	WHERE ID_PROYECTO IN (5782, 6092, 6062, 5971);
 	
@@ -139,7 +139,7 @@ BEGIN
 	WHERE ID_PROYECTO = 6066
 	AND ACT_NUM_ACTIVO = 6839948;
 	
-	DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||V_ESQUEMA||'.AUX_AGRUP_PROYECTO_HREOS_4591 actualizada. '||SQL%ROWCOUNT||' registro por duplicado en distintas agrupaciones.');*/
+	DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||V_ESQUEMA||'.AUX_AGRUP_PROYECTO_HREOS_4591 actualizada. '||SQL%ROWCOUNT||' registro por duplicado en distintas agrupaciones.');
 	
 		
 	UPDATE REM01.AUX_AGRUP_PROYECTO_HREOS_4591 AUX1

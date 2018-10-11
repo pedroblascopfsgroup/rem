@@ -2907,6 +2907,15 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				return true;
 		return false;
 	}
+	
+	@Override
+	public boolean isActivoEnPuja(Activo activo) {
+		if (!Checks.esNulo(activo.getEstaEnPuja())){
+			return activo.getEstaEnPuja();
+		}else{
+			return false;
+		}
+	}
 
 	@Override
 	public Integer getNumActivosPublicadosByAgrupacion(List<ActivoAgrupacionActivo> activos) {
@@ -3813,6 +3822,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			if (!Checks.esNulo(activo.getObservacionesVentaExterna())) {
 				beanUtilNotNull.copyProperty(dto, "observaciones", activo.getObservacionesVentaExterna());
 			}
+			if (!Checks.esNulo(activo.getEstaEnPuja())) {
+				beanUtilNotNull.copyProperty(dto, "puja", activo.getEstaEnPuja());
+			}
 
 		} catch (IllegalAccessException e) {
 			logger.error("Error en activoManager", e);
@@ -3880,6 +3892,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 
 		activo.setObservacionesVentaExterna(dto.getObservaciones());
+		activo.setEstaEnPuja(dto.getPuja());
 		activoDao.save(activo);
 
 		return true;

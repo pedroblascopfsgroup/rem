@@ -198,6 +198,8 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	
 	//HREOS-4470
 	private Boolean asignaGestPorCambioDeProv;
+	//REMVIP-REMVIP-2193
+	private Boolean isLogUsuGestComerSupComerSupAdmin;
 
 	public int getPage() {
 		return page;
@@ -1464,5 +1466,13 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 
 	public void setAsignaGestPorCambioDeProv(Boolean asignaGestPorCambioDeProv) {
 		this.asignaGestPorCambioDeProv = asignaGestPorCambioDeProv;
+	}
+
+	public Boolean getIsLogUsuGestComerSupComerSupAdmin() {
+		return isLogUsuGestComerSupComerSupAdmin;
+	}
+
+	public void setIsLogUsuGestComerSupComerSupAdmin(Boolean isLogUsuGestComerSupComerSupAdmin) {
+		this.isLogUsuGestComerSupComerSupAdmin = isLogUsuGestComerSupComerSupAdmin;
 	}
 }

@@ -2833,7 +2833,7 @@ public class ActivoAdapter {
 			ajustaGestores(activo);
 		}
 		
-		
+		/*
 		// comprobamos si se ha modificado la provincia en la ficha de datos basicos del activo
 		if(dto instanceof DtoActivoFichaCabecera && !(Checks.esNulo(((DtoActivoFichaCabecera)dto).getAsignaGestPorCambioDeProv())) && ((DtoActivoFichaCabecera)dto).getAsignaGestPorCambioDeProv()) {
 		
@@ -2852,7 +2852,7 @@ public class ActivoAdapter {
 			((DtoActivoFichaCabecera)dto).setAsignaGestPorCambioDeProv(false);
 			
 			
-		}
+		}*/
 		
 		
 	}

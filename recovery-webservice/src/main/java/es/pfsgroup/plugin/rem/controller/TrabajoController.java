@@ -528,7 +528,7 @@ public class TrabajoController extends ParadiseJsonController {
 			
 			if ( avisador.getAviso(trabajo, usuarioLogado) != null 
 					&&  avisador.getAviso(trabajo, usuarioLogado).getDescripcion() != null) {
-				avisosFormateados.setDescripcion(avisosFormateados.getDescripcion() + "<div class='div-aviso'>" + avisador.getAviso(trabajo, usuarioLogado).getDescripcion() + "</div>");
+				avisosFormateados.setDescripcion(avisosFormateados.getDescripcion() + "<div class='div-aviso red'>" + avisador.getAviso(trabajo, usuarioLogado).getDescripcion() + "</div>");
 			}
 			
         }

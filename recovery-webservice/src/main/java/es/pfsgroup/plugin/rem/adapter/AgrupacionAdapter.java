@@ -1681,7 +1681,7 @@ public class AgrupacionAdapter {
 
 			if (avisador.getAviso(agrupacion, usuarioLogado) != null
 					&& avisador.getAviso(agrupacion, usuarioLogado).getDescripcion() != null) {
-				avisosFormateados.setDescripcion(avisosFormateados.getDescripcion() + "<div class='div-aviso'>"
+				avisosFormateados.setDescripcion(avisosFormateados.getDescripcion() + "<div class='div-aviso red'>"
 						+ avisador.getAviso(agrupacion, usuarioLogado).getDescripcion() + "</div>");
 			}
 

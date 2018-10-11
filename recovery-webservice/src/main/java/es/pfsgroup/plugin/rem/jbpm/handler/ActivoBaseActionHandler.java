@@ -681,8 +681,15 @@ public abstract class ActivoBaseActionHandler implements ActionHandler {
 
 		// Asignador de GESTOR por factoria - Gestores encontrados por tarea-Activo
 		Trabajo trabajo = tarea.getTramite().getTrabajo();
-		Usuario solicitante = trabajo.getSolicitante();
-		Usuario responsableTrabajo = trabajo.getResponsableTrabajo();
+		Usuario solicitante = null;
+		Usuario responsableTrabajo = null;
+		if(trabajo != null){
+			 solicitante = trabajo.getSolicitante();
+			 responsableTrabajo = trabajo.getResponsableTrabajo();
+		}else{
+			solicitante = usuarioLogado;
+			responsableTrabajo = usuarioLogado;
+		}
 		
 		if(!Checks.esNulo(tareaExterna) && !Checks.esNulo(tareaExterna.getTareaProcedimiento()) && 
 				(!tareaExterna.getTareaProcedimiento().getTipoProcedimiento().getCodigo().equals("T004") ||

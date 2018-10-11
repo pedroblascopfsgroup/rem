@@ -2907,6 +2907,15 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				return true;
 		return false;
 	}
+	
+	@Override
+	public boolean isActivoEnPuja(Activo activo) {
+		if (!Checks.esNulo(activo.getEstaEnPuja())){
+			return activo.getEstaEnPuja();
+		}else{
+			return false;
+		}
+	}
 
 	@Override
 	public Integer getNumActivosPublicadosByAgrupacion(List<ActivoAgrupacionActivo> activos) {
@@ -3841,7 +3850,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			beanUtilNotNull.copyProperty(activo, "importeVentaExterna", dto.getImporteVenta());
 			beanUtilNotNull.copyProperty(activo, "observacionesVentaExterna", dto.getObservaciones());
 			dto.setVentaExterna(Checks.esNulo(activo.getFechaVentaExterna()));
-			dto.setPuja(!Checks.esNulo(activo.getEstaEnPuja()));
 
 			// Si se ha introducido valores en fecha o importe de venta, se
 			// actualiza la situación comercial y estado publicación del activo.

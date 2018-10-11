@@ -640,7 +640,11 @@ Ext.define('HreRem.model.Activo', {
     		{
 				name: 'asignaGestPorCambioDeProv',
 				type: 'boolean'
-			}
+			},
+			{
+    			name: 'isLogUsuGestComerSupComerSupAdmin',
+    			type: 'boolean'
+    		}
     ],
     
 	proxy: {

@@ -2419,12 +2419,17 @@ public class ActivoAdapter {
 		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 
 		List<DtoAviso> avisos = activoAvisadorApi.getListActivoAvisador(id, usuarioLogado);
-
+		String green = "Incluido en Haz tu Puja hasta 15/11/2018";
 		DtoAviso avisosFormateados = new DtoAviso();
 		avisosFormateados.setDescripcion("");
 		for (int i = 0; i < avisos.size(); i++) {
-			avisosFormateados.setDescripcion(avisosFormateados.getDescripcion() + "<div class='div-aviso'>"
-					+ avisos.get(i).getDescripcion() + "</div>");
+			if(green.equals(avisos.get(i).getDescripcion())){
+				avisosFormateados.setDescripcion(avisosFormateados.getDescripcion() + "<div class='div-aviso green'>"
+						+ avisos.get(i).getDescripcion() + "</div>");
+			} else {
+				avisosFormateados.setDescripcion(avisosFormateados.getDescripcion() + "<div class='div-aviso red'>"
+						+ avisos.get(i).getDescripcion() + "</div>");
+			}
 		}
 
 		return avisosFormateados;

@@ -496,7 +496,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		Usuario supervisorComercial = gestorActivoApi.getGestorComercialActual(activo, "SCOM");
 		if(usuarioLogado.equals(gestorComercial) 
 				|| usuarioLogado.equals(supervisorComercial)
-				|| "SUPER".equals(usuarioLogado.getUsername())){
+				|| genericAdapter.isSuper(usuarioLogado)){
 			activoDto.setIsLogUsuGestComerSupComerSupAdmin(true);
 		}else{
 			activoDto.setIsLogUsuGestComerSupComerSupAdmin(false);

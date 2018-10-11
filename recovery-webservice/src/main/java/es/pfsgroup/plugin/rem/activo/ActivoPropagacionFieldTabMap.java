@@ -503,7 +503,8 @@ public class ActivoPropagacionFieldTabMap {
 					"fechaVenta",
 					"expedienteComercialVivo",
 					"observaciones",
-					"importeVenta"
+					"importeVenta",
+					"puja"
     			));
     	pmap.put(TAB_ADMINISTRACION,
     			Arrays.asList(

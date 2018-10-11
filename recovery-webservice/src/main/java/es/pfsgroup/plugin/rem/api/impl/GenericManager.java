@@ -374,7 +374,8 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 			if (tipoGestor.getCodigo().equals("GCOM") || tipoGestor.getCodigo().equals("GCBO")
 					|| tipoGestor.getCodigo().equals("GFORM") || tipoGestor.getCodigo().equals("FVDNEG")
 					|| tipoGestor.getCodigo().equals("FVDBACKOFR") || tipoGestor.getCodigo().equals("FVDBACKVNT")
-					|| tipoGestor.getCodigo().equals("HAYAGBOINM") || tipoGestor.getCodigo().equals("SBACKOFFICEINMLIBER")) {
+					|| tipoGestor.getCodigo().equals("HAYAGBOINM") || tipoGestor.getCodigo().equals("SBACKOFFICEINMLIBER") 
+					|| tipoGestor.getCodigo().equals("GESRES") || tipoGestor.getCodigo().equals("SUPRES")) {
 				listaResultado.add(tipoGestor);
 			}
 		}

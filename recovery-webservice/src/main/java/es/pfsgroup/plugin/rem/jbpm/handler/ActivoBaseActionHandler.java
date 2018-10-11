@@ -36,6 +36,7 @@ import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
 import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
 import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
+import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.bpm.ExtendedProcessManager;
@@ -133,6 +134,9 @@ public abstract class ActivoBaseActionHandler implements ActionHandler {
 
 	@Autowired
 	private GestorActivoApi gestorActivoApi;
+	
+	@Autowired
+	private UsuarioManager usuarioManager;
 	
     /**
      * Método que recupera el ID del BPM asociado a la ejecución.
@@ -682,7 +686,6 @@ public abstract class ActivoBaseActionHandler implements ActionHandler {
 		
 		if(!Checks.esNulo(tareaExterna) && !Checks.esNulo(tareaExterna.getTareaProcedimiento()) && 
 				(!tareaExterna.getTareaProcedimiento().getTipoProcedimiento().getCodigo().equals("T004") ||
-						CODIGO_T004_AUTORIZACION_BANKIA.equals(tareaExterna.getTareaProcedimiento().getCodigo()) || 
 				(CODIGO_T004_AUTORIZACION_PROPIETARIO.equals(tareaExterna.getTareaProcedimiento().getCodigo()) && DDCartera.CODIGO_CARTERA_LIBERBANK.equals(activo.getCartera().getCodigo())))){
 			supervisor = userAssigantionService.getSupervisor(tareaExterna);
 			Usuario gestor = userAssigantionService.getUser(tareaExterna); 
@@ -705,6 +708,12 @@ public abstract class ActivoBaseActionHandler implements ActionHandler {
 				}
 			}
 
+		}if(CODIGO_T004_AUTORIZACION_BANKIA.equals(tareaExterna.getTareaProcedimiento().getCodigo())) {
+			Usuario bankiaAut = usuarioManager.getByUsername("usugruccb");
+			if(bankiaAut != null){
+				tareaActivo.setUsuario(bankiaAut);
+			}
+			
 		}else{
 			Usuario galq = gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_ALQUILERES);
 			Usuario gsue = gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_SUELOS);

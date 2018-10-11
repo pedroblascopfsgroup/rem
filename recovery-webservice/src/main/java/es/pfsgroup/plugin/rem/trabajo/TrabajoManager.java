@@ -38,9 +38,11 @@ import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.procesosJudiciales.TipoProcedimientoManager;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
+import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -141,6 +143,7 @@ import es.pfsgroup.plugin.rem.trabajo.dao.impl.TrabajoDaoImpl;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoActivosTrabajoFilter;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoTrabajoFilter;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
+import es.pfsgroup.recovery.api.UsuarioApi;
 
 @Service("trabajoManager")
 public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> implements TrabajoApi {
@@ -252,6 +255,9 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	
 	@Autowired
 	private ExpedienteComercialDao expedienteComercialDao;
+	
+	@Autowired
+	private UsuarioManager usuarioManager;
 	
 	@Override
 	public String managerName() {
@@ -771,6 +777,36 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 			if (DDTipoTrabajo.CODIGO_OBTENCION_DOCUMENTAL.equals(trabajo.getTipoTrabajo().getCodigo()))
 				trabajo.setEsTarificado(true);
+			
+			if (activosAgrupacionTrabajo.size() > 0) {
+				Activo activo = activoDao.get(Long.valueOf(activosAgrupacionTrabajo.get(0).getIdActivo()));
+				Usuario galq = gestorActivoApi.getGestorByActivoYTipo(activo, "GALQ");
+				Usuario gsue = gestorActivoApi.getGestorByActivoYTipo(activo, "GSUE");
+				Usuario gedi = gestorActivoApi.getGestorByActivoYTipo(activo, "GEDI");
+				Usuario gact = gestorActivoApi.getGestorByActivoYTipo(activo, "GACT");
+
+				Usuario solicitante = genericAdapter.getUsuarioLogado();
+
+				if (Checks.esNulo(galq) && Checks.esNulo(gsue) && Checks.esNulo(gedi) && !Checks.esNulo(gact)) {
+					trabajo.setResponsableTrabajo(gact);
+				} else if ((!Checks.esNulo(galq) && solicitante.equals(galq))
+						|| (!Checks.esNulo(gsue) && solicitante.equals(gsue))
+						|| (!Checks.esNulo(gedi) && solicitante.equals(gedi))
+						|| (!Checks.esNulo(gact) && solicitante.equals(gact))) {
+					trabajo.setResponsableTrabajo(solicitante);
+				} else {
+					if (!Checks.esNulo(galq)) {
+						trabajo.setResponsableTrabajo(galq);
+					} else if (!Checks.esNulo(gsue)) {
+						trabajo.setResponsableTrabajo(gsue);
+					} else if (!Checks.esNulo(gedi)) {
+						trabajo.setResponsableTrabajo(gedi);
+					}
+				}
+			} else {
+				trabajo.setResponsableTrabajo(genericAdapter.getUsuarioLogado());
+			}
+			
 
 			trabajoDao.saveOrUpdate(trabajo);
 

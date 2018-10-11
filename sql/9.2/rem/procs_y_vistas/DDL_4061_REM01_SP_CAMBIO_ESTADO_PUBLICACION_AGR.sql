@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=Ivan Rubio
---## FECHA_CREACION=20180712
+--## AUTOR=CARLOS LOPEZ
+--## FECHA_CREACION=20181006
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=2.0.17
 --## INCIDENCIA_LINK=HREOS-4074
@@ -207,7 +207,7 @@ create or replace PROCEDURE SP_CAMBIO_ESTADO_PUBLI_AGR (pAGR_ID IN NUMBER DEFAUL
               ON (ACT.ACT_ID = AUX.ACT_ID)
             WHEN MATCHED THEN
               UPDATE 
-                SET APU_MOT_OCULTACION_MANUAL_A = (SELECT PAC.PAC_MOTIVO_PUBLICAR
+                SET APU_MOT_OCULTACION_MANUAL_A = (SELECT substr(PAC.PAC_MOTIVO_PUBLICAR,1,250)
                                    FROM '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO PAC
                                   WHERE PAC.ACT_ID = ACT.ACT_ID
                                     AND PAC.BORRADO = 0)
@@ -230,7 +230,7 @@ create or replace PROCEDURE SP_CAMBIO_ESTADO_PUBLI_AGR (pAGR_ID IN NUMBER DEFAUL
               ON (ACT.ACT_ID = AUX.ACT_ID)
             WHEN MATCHED THEN
               UPDATE 
-                SET APU_MOT_OCULTACION_MANUAL_A = (SELECT PAC.PAC_MOT_EXCL_COMERCIALIZAR
+                SET APU_MOT_OCULTACION_MANUAL_A = (SELECT SUBSTR(PAC.PAC_MOT_EXCL_COMERCIALIZAR,1,250)
                                    FROM '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO PAC
                                   WHERE PAC.ACT_ID = ACT.ACT_ID
                                     AND PAC.BORRADO = 0)
@@ -308,7 +308,7 @@ create or replace PROCEDURE SP_CAMBIO_ESTADO_PUBLI_AGR (pAGR_ID IN NUMBER DEFAUL
               ON (ACT.ACT_ID = AUX.ACT_ID)
             WHEN MATCHED THEN
               UPDATE 
-                SET APU_MOT_OCULTACION_MANUAL_V = (SELECT PAC.PAC_MOTIVO_PUBLICAR
+                SET APU_MOT_OCULTACION_MANUAL_V = (SELECT substr(PAC.PAC_MOTIVO_PUBLICAR,1,250)
                                    FROM '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO PAC
                                   WHERE PAC.ACT_ID = ACT.ACT_ID
                                     AND PAC.BORRADO = 0)
@@ -330,7 +330,7 @@ create or replace PROCEDURE SP_CAMBIO_ESTADO_PUBLI_AGR (pAGR_ID IN NUMBER DEFAUL
               ON (ACT.ACT_ID = AUX.ACT_ID)
             WHEN MATCHED THEN
               UPDATE 
-                SET APU_MOT_OCULTACION_MANUAL_V = (SELECT PAC.PAC_MOT_EXCL_COMERCIALIZAR
+                SET APU_MOT_OCULTACION_MANUAL_V = (SELECT SUBSTR(PAC.PAC_MOT_EXCL_COMERCIALIZAR,1,250)
                                    FROM '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO PAC
                                   WHERE PAC.ACT_ID = ACT.ACT_ID
                                     AND PAC.BORRADO = 0)

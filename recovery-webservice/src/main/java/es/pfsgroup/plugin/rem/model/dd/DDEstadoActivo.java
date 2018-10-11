@@ -38,7 +38,7 @@ public class DDEstadoActivo implements Auditable, Dictionary {
 	public static final String ESTADO_ACTIVO_SUELO = "01";
 	public static final String ESTADO_ACTIVO_PROMOCION = "02";
 	public static final String ESTADO_ACTIVO_TERMINADO = "03";
-	public static final String ESTADO_ACTIVO_RUINA = "04";
+	public static final String ESTADO_ACTIVO_RUINA = "05";
 	public static final String ESTADO_ACTIVO_VANDALIZADO = "07";
 	public static final String ESTADO_ACTIVO_EN_CONSTRUCCION_EN_CURSO = "02";
 	public static final String ESTADO_ACTIVO_EN_CONSTRUCCION_PARADA = "06";

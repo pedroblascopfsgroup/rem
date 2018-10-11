@@ -708,7 +708,7 @@ public abstract class ActivoBaseActionHandler implements ActionHandler {
 				}
 			}
 
-		}if(CODIGO_T004_AUTORIZACION_BANKIA.equals(tareaExterna.getTareaProcedimiento().getCodigo())) {
+		}else if(CODIGO_T004_AUTORIZACION_BANKIA.equals(tareaExterna.getTareaProcedimiento().getCodigo())) {
 			Usuario bankiaAut = usuarioManager.getByUsername("usugruccb");
 			if(bankiaAut != null){
 				tareaActivo.setUsuario(bankiaAut);

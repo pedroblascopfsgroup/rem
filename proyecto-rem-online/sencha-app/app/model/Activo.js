@@ -636,6 +636,10 @@ Ext.define('HreRem.model.Activo', {
     				return data.entidadPropietariaCodigo == CONST.CARTERA['CAJAMAR'] || data.entidadPropietariaCodigo == CONST.CARTERA['LIBERBANK'];
     			},
     			depends: 'entidadPropietariaCodigo'
+    		},
+    		{
+    			name: 'isLogUsuGestComerSupComerSupAdmin',
+    			type: 'boolean'
     		}
     ],
     

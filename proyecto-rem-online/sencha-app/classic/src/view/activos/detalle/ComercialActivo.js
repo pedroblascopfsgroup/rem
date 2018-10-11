@@ -15,6 +15,7 @@ Ext.define('HreRem.view.activos.detalle.ComercialActivo', {
 
     initComponent: function () {
     	var me = this;
+    	var isLogUsuGestComerSupComerSupAdmin = me.lookupViewModel().get('activo.isLogUsuGestComerSupComerSupAdmin');
     	me.setTitle(HreRem.i18n('title.comercial'));
 
     	me.items = [
@@ -114,7 +115,8 @@ Ext.define('HreRem.view.activos.detalle.ComercialActivo', {
 						   allowBlank: false,
 						   bind : {
 					     		value: '{comercial.puja}'
-						   }
+						   },
+						   disabled: !isLogUsuGestComerSupComerSupAdmin
 						}
 				]
 			},

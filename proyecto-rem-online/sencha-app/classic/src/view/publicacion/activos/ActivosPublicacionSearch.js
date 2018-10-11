@@ -84,7 +84,7 @@ Ext.define('HreRem.view.publicacion.activos.ActivosPublicacionSearch', {
 					        { 
 					        	xtype: 'comboboxfieldbase',
 					        	addUxReadOnlyEditFieldPlugin: false,
-					        	fieldLabel: HreRem.i18n('combolabel.publicaciones.combo.estado'),
+					        	fieldLabel: HreRem.i18n('combolabel.publicaciones.combo.estado.venta'),
 					        	name: 'estadoPublicacionCodigo',
 					        	//value: CONST.ESTADO_PUBLICACION_VENTA['NO_PUBLICADO'], // Establecido por defecto.
 					        	bind: {

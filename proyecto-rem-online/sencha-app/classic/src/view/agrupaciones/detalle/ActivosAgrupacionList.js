@@ -215,14 +215,8 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
 	            flex: 0.5
 	        },
 	        {
-	            dataIndex: 'publicado',
-	            text: HreRem.i18n('header.publicado'),
-	            flex: 1//,
-	            //renderer: Utils.rendererBooleanToSiNo
-	        },
-	        {
 	            dataIndex: 'estadoSituacionComercial',
-	            text: HreRem.i18n('header.estado.publicacion'),
+	            text: HreRem.i18n('header.condicionantes.disponibilidad'),
 	            flex: 1,
 	            bind: {
 	            	hidden: '{!esAgrupacionRestringida}'

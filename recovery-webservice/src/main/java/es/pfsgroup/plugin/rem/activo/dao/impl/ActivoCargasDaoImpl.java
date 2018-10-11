@@ -28,7 +28,7 @@ public class ActivoCargasDaoImpl extends AbstractEntityDao<ActivoCargas, Long> i
 
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "ac.activo.id", idActivo);
 		hb.appendWhere("ac.fechaCancelacionRegistral IS NULL OR (cb.fechaCancelacion IS NULL AND cb.auditoria.borrado = 0 "
-				+ "AND ac.auditoria.borrado = 0 AND (NOT sce.codigo = '" + DDSituacionCarga.CANCELADA + "' OR sce.id IS NULL))");
+				+ "AND ac.auditoria.borrado = 0 AND (NOT sce.codigo = '" + DDSituacionCarga.CANCELADA + "'))");
 
 		List<ActivoCargas> lista = HibernateQueryUtils.list(this, hb);
 

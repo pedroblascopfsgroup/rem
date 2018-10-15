@@ -125,7 +125,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 	     	var aprobadoVentaWeb= get('activo.aprobadoVentaWeb');
 	     	var aprobadoRentaWeb= get('activo.aprobadoRentaWeb');
 
-	     	if(!Ext.isEmpty(aprobadoVentaWeb) || !Ext.isEmpty(aprobadoRentaWeb)) {
+	     	if(!Ext.isEmpty(aprobadoVentaWeb) && aprobadoVentaWeb>0 || !Ext.isEmpty(aprobadoRentaWeb) && aprobadoRentaWeb>0) {
 	     		return 'app-tbfiedset-ico icono-ok';
 	     	} else {
 	     		return 'app-tbfiedset-ico icono-ko';

@@ -37,7 +37,9 @@ Ext.define('HreRem.view.expedientes.ReservaExpediente', {
 		                	fieldLabel:  HreRem.i18n('fieldlabel.tipo.arras'),
 				        	bind: {
 			            		store: '{storeTiposArras}',
-			            		value: '{reserva.tipoArrasCodigo}'
+			            		value: '{reserva.tipoArrasCodigo}',
+			            		readOnly:'{esCarteraGaleon}'
+			            		
 			            	}
 				        },		                
 		                {

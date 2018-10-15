@@ -30,6 +30,10 @@ if [ "$1" == "formacion" ] ; then
     BASE_DIR=/recovery/map018/app-server/
 fi
 
+if [ "$1" == "val06" ] ; then
+    BASE_DIR=/home/map023/
+fi
+
 echo "Copiando fichero de configuración ..."
 cp config/$1/devon.properties $BASE_DIR/
 

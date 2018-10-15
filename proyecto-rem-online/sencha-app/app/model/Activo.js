@@ -638,6 +638,10 @@ Ext.define('HreRem.model.Activo', {
     			depends: 'entidadPropietariaCodigo'
     		},
     		{
+				name: 'asignaGestPorCambioDeProv',
+				type: 'boolean'
+			},
+			{
     			name: 'isLogUsuGestComerSupComerSupAdmin',
     			type: 'boolean'
     		}

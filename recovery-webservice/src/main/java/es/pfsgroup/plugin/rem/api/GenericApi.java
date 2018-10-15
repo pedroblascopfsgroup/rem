@@ -3,6 +3,9 @@ package es.pfsgroup.plugin.rem.api;
 import java.util.List;
 import java.util.Set;
 
+import org.springframework.ui.ModelMap;
+
+import es.capgemini.devon.dto.WebDto;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.procesosJudiciales.model.TipoJuzgado;
@@ -22,6 +25,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDSubtipoCarga;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoClaseActivoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoBloqueo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
@@ -81,6 +85,9 @@ public interface GenericApi {
 	
 	@BusinessOperationDefinition("genericManager.getComboTipoGestor")
 	public List<EXTDDTipoGestor> getComboTipoGestor();
+	
+	@BusinessOperationDefinition("genericManager.getComboTipoGestorActivo")
+	public List<EXTDDTipoGestor> getComboTipoGestorByActivo(WebDto webDto, ModelMap model, String idActivo);
 
 	List<EXTDDTipoGestor> getComboTipoGestorFiltrado(Set<String> tipoGestorCodigos);
 
@@ -217,8 +224,20 @@ public interface GenericApi {
 	List<DDMotivoRechazoOferta> getComboMotivoRechazoOferta(String tipoRechazoOfertaCodigo);
 
 	List<DDComiteSancion> getComitesByIdExpediente(String expediente);
+	
+	/**
+	 * Este método obtiene una lista con los tipos de agrupaciones. 
+	 * Filtrará los resultados dependiendo del tipo de gestor del usuario logado
+	 * 
+	 * @return Devuelve una lista de tipos de agrupaciones
+	 */
+	public List<DDTipoAgrupacion> getComboTipoAgrupacion();
+	
+	/**
+	 * Este método obtiene una lista con todos los tipos de agrupaciones.
+	 * 
+	 * @return Devuelve una lista de tipos de agrupaciones
+	 */
+	public List<DDTipoAgrupacion> getTodosComboTipoAgrupacion();
 
 }
-
-	  
-	    

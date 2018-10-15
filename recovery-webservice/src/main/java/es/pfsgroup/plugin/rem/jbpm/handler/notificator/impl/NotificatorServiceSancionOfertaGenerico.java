@@ -262,6 +262,9 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 			}
 		}
 		clavesGestores.add(GESTOR_FORMALIZACION);
+
+		clavesGestores.add(SUPERVISOR_COMERCIAL);
+
 		return clavesGestores.toArray(new String[] {});
 	}
 
@@ -461,6 +464,8 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 				}								
 			}
 		}
+		
+		
 		
 		return gestores;
 	}

@@ -16,6 +16,7 @@ import es.pfsgroup.framework.paradise.gestorEntidad.model.GestorEntidadHistorico
  */
 public interface GestorEntidadApi {
 
+	List<GestorEntidadHistorico> getListGestoresActivosAdicionalesHistoricoData(GestorEntidadDto dto);
 	List<GestorEntidadHistorico> getListGestoresAdicionalesHistoricoData(GestorEntidadDto dto);
 	void insertarGestorAdicionalEntidad(GestorEntidadDto dto);
 	void borrarGestorAdicionalEntidad(GestorEntidadDto dto);

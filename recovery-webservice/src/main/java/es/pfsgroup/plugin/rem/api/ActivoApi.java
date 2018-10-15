@@ -19,6 +19,7 @@ import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
+import es.pfsgroup.plugin.rem.model.*;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoBancario;
@@ -1107,6 +1108,14 @@ public interface ActivoApi {
 	 * Crea un expediente comercial
 	 * */
 	public boolean crearExpediente(Oferta oferta, Trabajo trabajo);
+	
+	/**
+	 * Devuelve una lista de adecuaciones alquiler para el grid de adecuaciones en la pestaña patrimonio de un activo
+	 *
+	 * @param idActivo
+	 * @return
+	 */
+	List<DtoActivoPatrimonio> getHistoricoAdecuacionesAlquilerByActivo(Long idActivo);
 	
 	public List<DtoImpuestosActivo> getImpuestosByActivo(Long idActivo);
 	

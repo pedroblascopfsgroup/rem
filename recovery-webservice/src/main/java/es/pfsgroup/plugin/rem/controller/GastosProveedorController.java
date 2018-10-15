@@ -878,7 +878,7 @@ public class GastosProveedorController extends ParadiseJsonController {
 	}
 	
 	private String formateaAviso(String descripcion) {
-		return  "<div class='div-aviso'>" + descripcion + "</div>";
+		return  "<div class='div-aviso red'>" + descripcion + "</div>";
 	}
 	
 	@SuppressWarnings("unchecked")

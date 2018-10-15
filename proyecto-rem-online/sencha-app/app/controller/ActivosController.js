@@ -207,12 +207,12 @@ Ext.define('HreRem.controller.ActivosController', {
     refrescarDetalleActivo: function (detalle) {
     	
     	var me = this,
-    	id = detalle.getViewModel().get("activo.id");	;
+    	id = detalle.getViewModel().get("activo.id");	
     	
     	HreRem.model.Activo.load(id, {
     		scope: this,
 		    success: function(activo) {
-		    	
+		    	detalle.getViewModel().getStore('comboTipoGestorByActivo').load();
 		    	detalle.getViewModel().set("activo", activo);		    	
 		    	detalle.configCmp(activo);
 		    	
@@ -507,7 +507,7 @@ Ext.define('HreRem.controller.ActivosController', {
     	me.abrirDetalleAgrupacionActivoById(id, titulo);    	
     	
     },
-    
+        
     abrirDetalleAgrupacionActivoById: function(id, titulo) {
     	var me = this,    	
     	cfg = {}, 

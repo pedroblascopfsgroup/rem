@@ -199,7 +199,9 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 			            	    value: '{activo.provinciaCodigo}'
 			            	},
     						listeners: {
-								select: 'onChangeChainedCombo'
+								select: 'onChangeChainedCombo',
+								change: 'onChangeProvincia'
+								
     						},
     						allowBlank: false
 						},

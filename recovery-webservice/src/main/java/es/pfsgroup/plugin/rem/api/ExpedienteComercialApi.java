@@ -952,6 +952,8 @@ public interface ExpedienteComercialApi {
 
 	DtoModificarCompradores vistaADtoModCompradores(VBusquedaDatosCompradorExpediente vista);
 
-	public String getCodigoCarteraExpediente(String idExpediente);	
+	public String getCodigoCarteraExpediente(String idExpediente);
+
+	DtoPage getActivosExpedienteVista(Long idExpediente);	
 	
 }

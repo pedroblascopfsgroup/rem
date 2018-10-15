@@ -15,6 +15,7 @@ Ext.define('HreRem.view.activos.detalle.ComercialActivo', {
 
     initComponent: function () {
     	var me = this;
+    	var isLogUsuGestComerSupComerSupAdmin = me.lookupViewModel().get('activo.isLogUsuGestComerSupComerSupAdmin');
     	me.setTitle(HreRem.i18n('title.comercial'));
 
     	me.items = [
@@ -56,6 +57,8 @@ Ext.define('HreRem.view.activos.detalle.ComercialActivo', {
 							rowspan: 2,
 				        	height: 80
 				        },
+				        
+				        
 					// Fila 1
 				        {
 						   xtype: 'checkboxfieldbase',
@@ -104,6 +107,16 @@ Ext.define('HreRem.view.activos.detalle.ComercialActivo', {
 				        		value: '{comercial.importeVenta}',
 				        		disabled: '{!comercial.ventaExterna}'
 						   }
+						},
+						{
+						   xtype: 'checkboxfieldbase',
+						   fieldLabel: HreRem.i18n('fieldlabel.puja'),
+						   reference: 'checkSubasta',
+						   allowBlank: false,
+						   bind : {
+					     		value: '{comercial.puja}'
+						   },
+						   disabled: !isLogUsuGestComerSupComerSupAdmin
 						}
 				]
 			},

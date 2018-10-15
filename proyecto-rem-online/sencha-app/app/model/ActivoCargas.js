@@ -131,6 +131,8 @@ Ext.define('HreRem.model.ActivoCargas', {
     				}
     				return value;
     			}
+    		},{
+    			name: 'cargasPropias'
     		}
     		
     ],

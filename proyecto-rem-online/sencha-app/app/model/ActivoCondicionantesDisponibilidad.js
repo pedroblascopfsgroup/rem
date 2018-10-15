@@ -76,6 +76,10 @@ Ext.define('HreRem.model.ActivoCondicionantesDisponibilidad', {
     		{
     			name: 'conCargas',
     			type: 'boolean'
+    		},
+    		{
+    			name: 'sinAcceso',
+    			type: 'boolean'
     		}
 
     ],
@@ -87,7 +91,7 @@ Ext.define('HreRem.model.ActivoCondicionantesDisponibilidad', {
 		},
 		writeAll: true,
 		api: {
-            read: 'activo/getCondicionantesDisponibilidad',
+			read: 'activo/getTabActivo',
             update: 'activo/saveCondicionantesDisponibilidad',
             create: 'activo/saveCondicionantesDisponibilidad',
             destroy: 'activo/getCondicionantesDisponibilidad'

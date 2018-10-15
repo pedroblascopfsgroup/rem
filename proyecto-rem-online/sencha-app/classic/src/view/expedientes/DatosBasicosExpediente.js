@@ -277,7 +277,7 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 							        		disabled: '{!expediente.tieneReserva}',
 							        		store: '{storeEstadosDevolucion}',
 						            		value: '{expediente.estadoDevolucionCodigo}',
-						            		readOnly: '{!esSubcarteraBH}'
+						            		readOnly: '{esReadOnly}'
 						            	},
 						            	listeners:{
 						            		change: function(){

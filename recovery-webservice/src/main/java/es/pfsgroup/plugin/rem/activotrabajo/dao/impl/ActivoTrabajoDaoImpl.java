@@ -10,7 +10,7 @@ import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
 
 @Repository("ActivoTrabajoDao")
 public class ActivoTrabajoDaoImpl extends AbstractEntityDao<ActivoTrabajo, Long> implements ActivoTrabajoDao{
-		
+			
 	@Override
 	public ActivoTrabajo findOne(Long idActivo,	Long idTrabajo) {
 		
@@ -23,10 +23,4 @@ public class ActivoTrabajoDaoImpl extends AbstractEntityDao<ActivoTrabajo, Long>
 		
 		return (ActivoTrabajo) q.uniqueResult();
 	}
-
-	
-	
-	
-	
-
 }

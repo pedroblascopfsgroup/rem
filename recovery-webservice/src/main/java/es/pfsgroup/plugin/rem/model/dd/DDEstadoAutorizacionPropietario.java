@@ -34,6 +34,7 @@ public class DDEstadoAutorizacionPropietario implements Auditable, Dictionary {
 	
 	public static final String CODIGO_PENDIENTE = "01";
 	public static final String CODIGO_RECHAZADO_CONTABILIDAD = "04";
+	public static final String CODIGO_AUTORIZADO_POR_CONTABILIDAD = "07";
 
 	@Id
 	@Column(name = "DD_EAP_ID")

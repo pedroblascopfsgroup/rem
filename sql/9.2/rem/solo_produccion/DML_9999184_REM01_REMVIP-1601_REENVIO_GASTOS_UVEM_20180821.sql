@@ -16,7 +16,9 @@
 --##########################################
 --*/
 
-set serveroutput on;
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON;
+SET DEFINE OFF;
 
 DECLARE
 
@@ -807,5 +809,7 @@ EXCEPTION
       ROLLBACK;
       RAISE;
 END;
+/
 
+EXIT
 

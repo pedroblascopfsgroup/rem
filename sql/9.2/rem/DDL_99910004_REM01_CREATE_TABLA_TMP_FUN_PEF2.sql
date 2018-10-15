@@ -1,7 +1,7 @@
 --/*
 --######################################### 
 --## AUTOR=Sergio Ortuño
---## FECHA_CREACION=20180718
+--## FECHA_CREACION=20181004
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-2318
@@ -14,6 +14,7 @@
 --##        0.1 Versión inicial DAP
 --##		0.2 Añadido GESPROV SOG
 --##		0.3 Añadido PERFGCCLIBERBANK SOG
+--##		0.4 Añadido VALORACIONES SOG
 --#########################################
 --*/
 
@@ -106,6 +107,7 @@ BEGIN
 			,GESMIN	        VARCHAR2(1 CHAR)
 			,SUPMIN         VARCHAR2(1 CHAR)
 			,GESPROV 		VARCHAR2(1 CHAR)
+			,VALORACIONES	VARCHAR2(1 CHAR)
       )
       LOGGING 
       NOCOMPRESS 

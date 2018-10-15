@@ -42,6 +42,7 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoBancario;
 import es.pfsgroup.plugin.rem.model.ActivoEstadosInformeComercialHistorico;
+import es.pfsgroup.plugin.rem.model.ActivoInfoLiberbank;
 import es.pfsgroup.plugin.rem.model.ActivoLocalizacion;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
@@ -49,6 +50,7 @@ import es.pfsgroup.plugin.rem.model.DtoEstadosInformeComercialHistorico;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.VPreciosVigentes;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDEntradaActivoBankia;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
@@ -58,8 +60,10 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoInformeComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivoBDE;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoClaseActivoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoActivoBDE;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
@@ -197,6 +201,25 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				BeanUtils.copyProperty(activoDto, "tipoActivoAdmisionMediadorCorresponde", activo.getTipoActivo().getCodigo().equals(activo.getInfoComercial().getTipoActivo().getCodigo()));
 			}
 		}
+		Filter filterLbk = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+		ActivoInfoLiberbank actInfLiber = genericDao.get(ActivoInfoLiberbank.class, filterLbk);
+		
+		if (!Checks.esNulo(actInfLiber)){
+			if (!Checks.esNulo(actInfLiber.getTipoActivoBde())){
+				BeanUtils.copyProperty(activoDto, "tipoActivoCodigoBde", actInfLiber.getTipoActivoBde().getCodigo());
+				BeanUtils.copyProperty(activoDto, "tipoActivoDescripcionBde", actInfLiber.getTipoActivoBde().getDescripcion());
+			}			
+			if (!Checks.esNulo(actInfLiber.getSubtipoActivoBde())){
+				BeanUtils.copyProperty(activoDto, "subtipoActivoCodigoBde", actInfLiber.getSubtipoActivoBde().getCodigo());	
+				BeanUtils.copyProperty(activoDto, "subtipoActivoDescripcionBde", actInfLiber.getSubtipoActivoBde().getDescripcion());
+			}
+			if (!Checks.esNulo(actInfLiber.getCodPromocion())){
+				BeanUtils.copyProperty(activoDto, "codPromocionFinal", actInfLiber.getCodPromocion());
+			}
+			if (!Checks.esNulo(actInfLiber.getCategoriaContable())){
+				BeanUtils.copyProperty(activoDto, "catContableDescripcion", actInfLiber.getCategoriaContable().getDescripcion());
+			}
+		}
 		 
 		if (activo.getSubtipoActivo() != null ) {
 			BeanUtils.copyProperty(activoDto, "subtipoActivoCodigo", activo.getSubtipoActivo().getCodigo());	
@@ -309,6 +332,23 @@ public class TabActivoDatosBasicos implements TabActivoService {
 
 		// Obtener si el ultimo estado del informe comercial es ACEPTADO.
 		BeanUtils.copyProperty(activoDto, "informeComercialAceptado", activoApi.isInformeComercialAceptado(activo));
+		
+		//Obtener si tiene posible informe mediador
+		if (!Checks.esNulo(activo.getInfoComercial())) {
+			if (!Checks.esNulo(activo.getInfoComercial().getPosibleInforme())){
+				if (activo.getInfoComercial().getPosibleInforme() == 1){
+					BeanUtils.copyProperty(activoDto, "tienePosibleInformeMediador", true);
+				} else {
+					BeanUtils.copyProperty(activoDto, "tienePosibleInformeMediador", false);
+				}
+			} else {
+				BeanUtils.copyProperty(activoDto, "tienePosibleInformeMediador", true);
+			}
+		}
+		else {
+			BeanUtils.copyProperty(activoDto, "tienePosibleInformeMediador", true);
+		}
+		
 
 
 		//HREOS-843 Situacion Comercial del activo
@@ -449,7 +489,18 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		 
 		// HREOS-2761: Buscamos los campos que pueden ser propagados para esta pestaña
 		 activoDto.setCamposPropagables(TabActivoService.TAB_DATOS_BASICOS);
-
+		
+		//REMVIP-REMVIP-2193
+		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+		Usuario gestorComercial = gestorActivoApi.getGestorComercialActual(activo, "GCOM");
+		Usuario supervisorComercial = gestorActivoApi.getGestorComercialActual(activo, "SCOM");
+		if(usuarioLogado.equals(gestorComercial) 
+				|| usuarioLogado.equals(supervisorComercial)
+				|| genericAdapter.isSuper(usuarioLogado)){
+			activoDto.setIsLogUsuGestComerSupComerSupAdmin(true);
+		}else{
+			activoDto.setIsLogUsuGestComerSupComerSupAdmin(false);
+		}
 		
 		return activoDto;	
 	}
@@ -526,6 +577,33 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				DDSubtipoActivo subtipoActivo = (DDSubtipoActivo) diccionarioApi.dameValorDiccionarioByCod(DDSubtipoActivo.class,  dto.getSubtipoActivoCodigo());
 				activo.setSubtipoActivo(subtipoActivo);
 				reiniciarPBC = true;
+			}
+			
+			Filter filterLbk = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+			ActivoInfoLiberbank actInfLiber = genericDao.get(ActivoInfoLiberbank.class, filterLbk);
+			
+			if (!Checks.esNulo(actInfLiber)){
+				if (!Checks.esNulo(dto.getTipoActivoCodigoBde())){
+					DDTipoActivoBDE tipoActivoBde = (DDTipoActivoBDE) diccionarioApi.dameValorDiccionarioByCod(DDTipoActivoBDE.class,  dto.getTipoActivoCodigoBde());
+					actInfLiber.setTipoActivoBde(tipoActivoBde);
+				}			
+				if (!Checks.esNulo(dto.getSubtipoActivoCodigoBde())){
+					DDSubtipoActivoBDE subTipoActivoBde = (DDSubtipoActivoBDE) diccionarioApi.dameValorDiccionarioByCod(DDSubtipoActivoBDE.class,  dto.getSubtipoActivoCodigoBde());
+					actInfLiber.setSubtipoActivoBde(subTipoActivoBde);
+				}
+				genericDao.update(ActivoInfoLiberbank.class, actInfLiber);
+			} else {
+				actInfLiber = new ActivoInfoLiberbank();
+				if (!Checks.esNulo(dto.getTipoActivoCodigoBde())){
+					DDTipoActivoBDE tipoActivoBde = (DDTipoActivoBDE) diccionarioApi.dameValorDiccionarioByCod(DDTipoActivoBDE.class,  dto.getTipoActivoCodigoBde());
+					actInfLiber.setTipoActivoBde(tipoActivoBde);
+				}			
+				if (!Checks.esNulo(dto.getSubtipoActivoCodigoBde())){
+					DDSubtipoActivoBDE subTipoActivoBde = (DDSubtipoActivoBDE) diccionarioApi.dameValorDiccionarioByCod(DDSubtipoActivoBDE.class,  dto.getSubtipoActivoCodigoBde());
+					actInfLiber.setSubtipoActivoBde(subTipoActivoBde);
+				}
+				actInfLiber.setId(activo.getId());
+				genericDao.save(ActivoInfoLiberbank.class, actInfLiber);
 			}
 			
 			if (!Checks.esNulo(dto.getTipoTitulo())) {

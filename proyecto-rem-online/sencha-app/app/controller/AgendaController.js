@@ -178,7 +178,7 @@ Ext.define('HreRem.controller.AgendaController', {
 
 	},
     
-    abrirtareahistorico: function(record) {	
+    abrirtareahistorico: function(record,grid) {	
 		var me = this;
         var window;
 
@@ -224,8 +224,7 @@ Ext.define('HreRem.controller.AgendaController', {
 	        			url:url,
 	        			params: {idTarea : idTarea, subtipoTarea: sta},
 	        			success: function(response,opts){
-	
-	        				window = Ext.create('HreRem.view.agenda.TareaHistorico',{idTarea : idTarea, titulo : record.get("tipoTarea"), campos:response.responseText});
+	        				window = Ext.create('HreRem.view.agenda.TareaHistorico',{idTarea : idTarea, titulo : record.get("tipoTarea"), codigoTarea : record.get("codigoTarea"), parent: grid, campos:response.responseText});
 	        			},
 	        			callback: function(options, success, response){
 	        				window.show();

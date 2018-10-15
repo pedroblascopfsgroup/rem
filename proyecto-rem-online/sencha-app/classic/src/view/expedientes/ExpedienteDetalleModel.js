@@ -73,8 +73,8 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	     
 	     comiteSancionadorNoEditable: function(get) {
 	     	var carteraCodigo = get('expediente.entidadPropietariaCodigo');
-	     	return CONST.CARTERA['BANKIA'] == carteraCodigo || CONST.CARTERA['CAJAMAR'] == carteraCodigo;	
-	     },
+	     	return CONST.CARTERA['BANKIA'] == carteraCodigo || CONST.CARTERA['CAJAMAR'] == carteraCodigo || CONST.CARTERA['LIBERBANK'] == carteraCodigo;	
+	     }, 
 	     
 	     esCarteraSareb: function(get) {
 	     	
@@ -112,9 +112,17 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	     	return CONST.CARTERA['LIBERBANK'] == carteraCodigo;
 		 },
 		 
-		 esSubcarteraBH: function(get) {
+		 esReadOnly: function(get) {
 			 var subcarteraCodigo = get('expediente.subcarteraCodigo');
-		     return CONST.SUBCARTERA['BH'] == subcarteraCodigo;
+			 var carteraCodigo = get('expediente.entidadPropietariaCodigo');
+			 
+			 if(CONST.CARTERA['BANKIA'] == carteraCodigo && CONST.SUBCARTERA['BH'] != subcarteraCodigo){
+				 return true;
+			 }else if(CONST.CARTERA['LIBERBANK'] == carteraCodigo){
+				 return true;
+			 }
+			 
+		     return false;
 		 },
 	     
 	     getTipoExpedienteCabecera: function(get) {

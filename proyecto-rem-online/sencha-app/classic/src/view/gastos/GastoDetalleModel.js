@@ -46,7 +46,6 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 	     	
 	     	return true;
 	     },
-	     
 	     ocultarBotonesTrabajos: function(get) {
 	    	 var codigoEstadoCodigo = get('gasto.estadoGastoCodigo');
 	    	 

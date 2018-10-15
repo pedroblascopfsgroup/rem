@@ -16,12 +16,14 @@ import es.capgemini.pfs.api.controlAcceso.EXTControlAccesoApi;
 import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.diccionarios.Dictionary;
 import es.capgemini.pfs.diccionarios.DictionaryManager;
+import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.framework.paradise.gestorEntidad.model.GestorEntidadHistorico;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.plugin.recovery.agendaMultifuncion.impl.dto.DtoAdjuntoMail;
 import es.pfsgroup.plugin.recovery.agendaMultifuncion.impl.utils.AgendaMultifuncionCorreoUtils;
@@ -65,7 +67,7 @@ public class GenericAdapter {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public List<Dictionary> getDiccionario(String diccionario) {
 		
-		Class<?> clase = DiccionarioTargetClassMap.convertToTargetClass(diccionario);
+		Class<?> clase = null;
 		List lista = null;
 		
 		//TODO: Código bueno:
@@ -80,34 +82,37 @@ public class GenericAdapter {
 //		}
 		
 		//TODO: Para ver que diccionarios no tienen auditoria.
-		lista = diccionarioApi.dameValoresDiccionario(clase);
-		
-		List listaPeriodicidad = new ArrayList();
-		//sí el diccionario es 'tiposPeriodicidad' modificamos el orden
-		if(clase.equals(DDTipoPeriocidad.class)){
-			if(!Checks.esNulo(lista)){
-				for(int i=1; i<=lista.size();i++){
-					String cod;
-					if(i<10)
-						cod = "0"+i;
-					else
-						cod = ""+i;
-					listaPeriodicidad.add(diccionarioApi.dameValorDiccionarioByCod(clase, cod));
+		if("gestorCommiteLiberbank".equals(diccionario)) {
+			lista = new ArrayList();
+			lista.add(diccionarioApi.dameValorDiccionarioByCod(DiccionarioTargetClassMap.convertToTargetClass("entidadesPropietarias")
+					, DDCartera.CODIGO_CARTERA_LIBERBANK));
+		}else {
+			clase = DiccionarioTargetClassMap.convertToTargetClass(diccionario);
+			lista = diccionarioApi.dameValoresDiccionario(clase);
+
+			List listaPeriodicidad = new ArrayList();
+			//sí el diccionario es 'tiposPeriodicidad' modificamos el orden
+			if(clase.equals(DDTipoPeriocidad.class)){
+				if(!Checks.esNulo(lista)){
+					for(int i=1; i<=lista.size();i++){
+						String cod;
+						if(i<10)
+							cod = "0"+i;
+						else
+							cod = ""+i;
+						listaPeriodicidad.add(diccionarioApi.dameValorDiccionarioByCod(clase, cod));
+					}
 				}
-				lista = listaPeriodicidad;
-			}else{
-				return listaPeriodicidad;
+			} else if (clase.equals(DDCartera.class)) {
+				Usuario usuarioLogado = getUsuarioLogado();
+				UsuarioCartera usuarioCartera = genericDao.get(UsuarioCartera.class,
+						genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioLogado.getId()));
+				if (!Checks.esNulo(usuarioCartera)) {
+					listaPeriodicidad.add(diccionarioApi.dameValorDiccionarioByCod(clase, usuarioCartera.getCartera().getCodigo()));
+					lista = listaPeriodicidad;
+				}
 			}
-		} else if (clase.equals(DDCartera.class)) {
-			Usuario usuarioLogado = getUsuarioLogado();
-			UsuarioCartera usuarioCartera = genericDao.get(UsuarioCartera.class,
-					genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioLogado.getId()));
-			if (!Checks.esNulo(usuarioCartera)) {
-				listaPeriodicidad.add(diccionarioApi.dameValorDiccionarioByCod(clase, usuarioCartera.getCartera().getCodigo()));
-				lista = listaPeriodicidad;
-			}
-		}
-			
+		}	
 		return lista;
 	}
 
@@ -199,6 +204,12 @@ public class GenericAdapter {
 
 		return usuario.getPerfiles().contains(perfilProveedor);
 	}
+	
+	
+
+	
+	
+	
 
 	/**
 	 * Es proveedor HAYA o CEE?

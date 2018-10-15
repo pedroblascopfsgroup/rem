@@ -460,4 +460,45 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 		return tipoExp;
 	}
 
+	@Override
+	public Long uploadDocumentoPromociones(GastoProveedor gasto, WebFileItem webFileItem, String userLogin, String matricula) throws GestorDocumentalException {
+		RecoveryToGestorDocAssembler recoveryToGestorDocAssembler =  new RecoveryToGestorDocAssembler(appProperties);
+		Long respuesta = null;
+		
+		CabeceraPeticionRestClientDto cabecera = recoveryToGestorDocAssembler.getCabeceraPeticionRestClient(gasto.getNumGastoHaya().toString(), GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_REO, GestorDocumentalConstants.CODIGO_CLASE_PROMOCIONES);
+		
+		CrearDocumentoDto crearDoc = recoveryToGestorDocAssembler.getCrearDocumentoDto(webFileItem, userLogin, matricula);
+		RespuestaCrearDocumento respuestaCrearDocumento = gestorDocumentalApi.crearDocumento(cabecera, crearDoc);
+		
+		if(!Checks.esNulo(respuestaCrearDocumento) && !Checks.esNulo(respuestaCrearDocumento.getCodigoError())) {
+			logger.debug(respuestaCrearDocumento.getCodigoError() + " - " + respuestaCrearDocumento.getMensajeError());
+			throw new GestorDocumentalException(respuestaCrearDocumento.getCodigoError() + " - " + respuestaCrearDocumento.getMensajeError());
+		}
+		respuesta =  new Long(respuestaCrearDocumento.getIdDocumento());
+		
+		return respuesta;
+	}
+	
+	@Override
+	public List<DtoAdjunto> getAdjuntosPromociones(Long idPromocion) throws GestorDocumentalException {
+		RecoveryToGestorDocAssembler recoveryToGestorDocAssembler = new RecoveryToGestorDocAssembler(appProperties);
+		List<DtoAdjunto> list;
+		Usuario userLogin = genericAdapter.getUsuarioLogado();
+		CabeceraPeticionRestClientDto cabecera = recoveryToGestorDocAssembler.getCabeceraPeticionRestClient(idPromocion.toString(), GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_REO, GestorDocumentalConstants.CODIGO_CLASE_PROMOCIONES);
+		DocumentosExpedienteDto docExpDto = recoveryToGestorDocAssembler.getDocumentosExpedienteDto(userLogin.getUsername());
+		RespuestaDocumentosExpedientes respuesta = null;
+		respuesta = gestorDocumentalApi.documentosExpediente(cabecera, docExpDto);
+		list = GestorDocToRecoveryAssembler.getListDtoAdjunto(respuesta);
+		for (DtoAdjunto adjunto : list) {
+			DDTdnTipoDocumento tipoDoc = (DDTdnTipoDocumento) diccionarioApi
+					.dameValorDiccionarioByCod(DDTdnTipoDocumento.class, adjunto.getCodigoTipo());
+			if (tipoDoc == null) {
+				adjunto.setDescripcionTipo("");
+			} else {
+				adjunto.setDescripcionTipo(tipoDoc.getDescripcion());
+			}
+		}
+		return list;
+	}
+	
 }

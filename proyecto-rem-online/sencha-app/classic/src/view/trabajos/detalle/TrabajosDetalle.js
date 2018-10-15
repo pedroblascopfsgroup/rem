@@ -32,13 +32,11 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajosDetalle', {
     configCmp: function(data) {
     	
     	var me = this;
-    	
     	if(me.down('[cls=container-mask-background]')) {
     		me.removeAll();
 	    	me.add({xtype: 'trabajosdetallecabecera'});
 	    	me.add({xtype: 'trabajosdetalletabpanel', flex: 1});
     	}
-    	
     	me.down("trabajosdetallecabecera").configCmp(data);
     	//me.down('botonfavorito').setOpenId(data.get("id"));
     	

@@ -38,6 +38,7 @@ public class DtoActivoCargas {
     private String estadoEconomicaDescripcion;
     private String observaciones;
     private Long idActivo;
+    private Integer cargasPropias;
     
     
     
@@ -212,6 +213,12 @@ public class DtoActivoCargas {
 	}
 	public void setObservaciones(String observaciones) {
 		this.observaciones = observaciones;
+	}
+	public Integer getCargasPropias() {
+		return cargasPropias;
+	}
+	public void setCargasPropias(Integer cargasPropias) {
+		this.cargasPropias = cargasPropias;
 	}
 	
 	

@@ -18,7 +18,7 @@ Ext.define('HreRem.view.expedientes.ActivoExpedienteJuridico', {
 		me.items = [
 		     {   
 				xtype:'fieldsettable',
-				defaultType: 'textfieldbase',				
+				defaultType: 'textfieldbase',
 				title: HreRem.i18n('title.situacion.activo.comunicada.comprador'),
 				items :
 					[

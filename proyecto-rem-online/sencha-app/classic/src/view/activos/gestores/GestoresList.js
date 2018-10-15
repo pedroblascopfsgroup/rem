@@ -2,7 +2,7 @@ Ext.define('HreRem.view.activos.gestores.GestoresList', {
     extend: 'HreRem.view.common.GridBaseEditableRowSinEdicion',
     xtype: 'gestoreslist',
 	bind: {
-		store: '{storeGestores}'
+		store: '{storeGestoresActivos}'
 	},
 	reference: 'listadoGestores',
 
@@ -40,38 +40,38 @@ Ext.define('HreRem.view.activos.gestores.GestoresList', {
 
 		me.columns = [
             {
-            	text	 : 'Descripcion',
+            	text	 : HreRem.i18n('gestores.gestoresList.grid.column.descripcion'),
                 flex	 : 2,
                 dataIndex: 'descripcion',
                 renderer: coloredRender
             }, 
 		    {               
-                text	 : 'Usuario',
+                text	 : HreRem.i18n('gestores.gestoresList.grid.column.usuario'),
                 flex	 : 3,
                 dataIndex: 'apellidoNombre',
                 renderer: coloredRender
             },
             {
-                text	 : 'Desde',               
+                text	 : HreRem.i18n('gestores.gestoresList.grid.column.desde'),
                 flex	 : 1,
                 dataIndex: 'fechaDesde',
                 renderer: dateColoredRender
             },
             {
-            	text	 : 'Hasta',
+            	text	 : HreRem.i18n('gestores.gestoresList.grid.column.hasta'),
             	flex	 : 1,
                 dataIndex: 'fechaHasta',
                 align	 : 'center',
                 renderer: dateColoredRender
             },     
             {
-                text     : 'Teléfono',
+                text     : HreRem.i18n('gestores.gestoresList.grid.column.telefono'),
                 flex     : 1,
                 dataIndex: 'telefono',
                 renderer: coloredRender
             }, 
             {
-            	text	 : 'Email',
+            	text	 : HreRem.i18n('gestores.gestoresList.grid.column.email'),
                 flex	 : 1,
                 dataIndex: 'email',
                 renderer: coloredRender
@@ -86,7 +86,7 @@ Ext.define('HreRem.view.activos.gestores.GestoresList', {
 	            itemId: 'gestoresPaginationToolbar',
 	            displayInfo: true,
 				bind: {
-					store: '{storeGestores}'
+					store: '{storeGestoresActivos}'
 				}
 	
 	        }	

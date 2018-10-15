@@ -117,8 +117,8 @@ public class MSVAltaActivosTPExcelValidator extends MSVExcelValidatorAbstract{
 	public static final String SUPERVISOR_FORMALIZACION_NOT_EXISTS = "El supervisor de formalización no existe";
 	public static final String GESTOR_ADMISION_IS_NULL = "El gestor de admisión no puede estar vacío";
 	public static final String GESTOR_ADMISION_NOT_EXISTS ="El gestor de admisión no existe";
-	public static final String GESTOR_ACTIVOS_IS_NULL = "El gestor de activos no puede estar vacío";
-	public static final String GESTOR_ACTIVOS_NOT_EXISTS = "El gestor de activos no existe";
+	public static final String GESTOR_ACTIVOS_IS_NULL = "El gestor de mantenimiento no puede estar vacío";
+	public static final String GESTOR_ACTIVOS_NOT_EXISTS = "El gestor de mantenimiento no existe";
 	public static final String GESTORIA_FORMALIZACION_IS_NULL = "La gestoría de formalización no puede estar vacía";
 	public static final String GESTORIA_FORMALIZACION_NOT_EXISTS ="La gestoría de formalización no existe";
 	

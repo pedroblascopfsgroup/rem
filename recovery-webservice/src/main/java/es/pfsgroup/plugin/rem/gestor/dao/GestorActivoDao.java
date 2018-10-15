@@ -9,6 +9,9 @@ import es.pfsgroup.plugin.rem.model.Activo;
 
 public interface GestorActivoDao extends GestorEntidadDao{
 	public List<Usuario> getListUsuariosGestoresActivoByTipoYActivo(Long idTipoGestor, Activo activo);
+	
+	public Usuario getDirectorEquipoByGestor(Usuario gestor);
+	
 	public List<Usuario> getListUsuariosGestoresActivoBycodigoTipoYActivo(String codigoTipoGestor, Activo activo);
 	
 	/**

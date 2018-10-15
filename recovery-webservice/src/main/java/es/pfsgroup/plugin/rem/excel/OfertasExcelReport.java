@@ -27,6 +27,8 @@ public class OfertasExcelReport extends AbstractExcelReport implements ExcelRepo
 		//listaCabeceras.add("Subtipo activo");
 		listaCabeceras.add("Importe oferta");
 		listaCabeceras.add("Ofertante");
+		listaCabeceras.add("Prescriptor");
+		listaCabeceras.add("Canal prescripcion");
 		//NO ESTA DEFINIDO
 //		listaCabeceras.add("Comité");
 //		listaCabeceras.add("Drch. tanteo");
@@ -57,6 +59,17 @@ public class OfertasExcelReport extends AbstractExcelReport implements ExcelRepo
 			fila.add(oferta.getImporteOferta());
 			fila.add(oferta.getOfertante());
 			
+			if(!Checks.esNulo(oferta.getNombreCanal())) {
+				fila.add(oferta.getNombreCanal());
+			}else {
+				fila.add("");
+			}
+			
+			if(!Checks.esNulo(oferta.getCanalDescripcion())) {
+				fila.add(oferta.getCanalDescripcion());
+			}else {
+				fila.add("");
+			}
 			//NO ESTA DEFINIDO
 //			fila.add(oferta.getComite());
 //			if(!Checks.esNulo(oferta.getDerechoTanteo())){

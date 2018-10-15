@@ -828,8 +828,6 @@ body.x-masked > .x-mask {
 }
 
 .div-aviso {
-    background-color: #D60A3A;
-    border: #D60A3A;
     border-style: solid;
     width: 100% !important;
     height: 100% !important;
@@ -837,9 +835,18 @@ body.x-masked > .x-mask {
     border-radius: 10px;
     text-align: center;
     font-weight: bolder; 
-    font-size: 1.1em;   
+    font-size: 1.1em;
 }
 
+.red {
+	background-color: #D60A3A;
+	border: #D60A3A;
+}
+
+.green {
+	background-color: #109942;
+	border: #109942;
+}
 
 .tbar-grid-button.x-btn-default-toolbar-small {
 	background-image: none;

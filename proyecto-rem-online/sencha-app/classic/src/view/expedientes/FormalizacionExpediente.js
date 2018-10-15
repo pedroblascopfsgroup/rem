@@ -304,6 +304,7 @@ Ext.define('HreRem.view.expedientes.FormalizacionExpediente', {
 					items : [{
 						xtype : 'gridBaseEditableRow',
 						title : HreRem.i18n('title.posicionamiento'),
+						secFunToEdit: 'EDITAR_GRID_POS_FIRMA_FORMALIZACION_EXPEDIENTE',
 						reference : 'listadoposicionamiento',
 						idPrincipal : 'expediente.id',
 						topBar : true,

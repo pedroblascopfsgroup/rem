@@ -12,13 +12,24 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
         var me = this;
         console.log(this);
         me.setTitle(HreRem.i18n('title.ficha'));
-
+        
         //Si el tipo es de Precios/Publicacion/Sancion no mostrar el bloque -Cuando hay que hacerlo...-
         me.codigoTipoTrabajo = me.lookupController().getViewModel().get('trabajo').get('tipoTrabajoCodigo');
         me.idGestorActivoResponsable = me.lookupController().getViewModel().get('trabajo').get('idGestorActivoResponsable');
         me.idSupervisorActivo = me.lookupController().getViewModel().get('trabajo').get('idSupervisorActivo');
-
-        me.items= [
+        me.idProveedor =  me.lookupController().getViewModel().get('trabajo').get('idProveedor');
+        me.idSolicitante =  me.lookupController().getViewModel().get('trabajo').get('idSolicitante');
+        me.idResponsableTrabajo = me.lookupController().getViewModel().get('trabajo').get('idResponsableTrabajo');
+        me.idSupervisorEdificaciones = me.lookupController().getViewModel().get('trabajo').get('idSupervisorEdificaciones');
+        me.idSupervisorAlquileres = me.lookupController().getViewModel().get('trabajo').get('idSupervisorAlquileres');
+        me.idSupervisorSuelos = me.lookupController().getViewModel().get('trabajo').get('idSupervisorSuelos');
+        var editar = me.lookupController().getViewModel().get('trabajo').get('bloquearResponsable');
+        //NOTA: En cuanto a la visualización del campo “Responsable del trabajo”, 
+        //lo podrán ver tanto el “Gestor/Supervisor de activo” y el “Gestor/Supervisor de alquileres, edificaciones, suelo”, así comomo, el proveedor y el solicitante.
+        var mostrar =  !($AU.getUser().userId ==  me.idResponsableTrabajo|| $AU.getUser().userId ==   me.idSupervisorActivo || 
+        		$AU.getUser().userId == me.idGestorActivoResponsable || $AU.getUser().userId == me.idProveedor || $AU.getUser().userId == me.idSolicitante ||
+        		$AU.getUser().userId == me.idSupervisorEdificaciones || $AU.getUser().userId == me.idSupervisorAlquileres || $AU.getUser().userId == me.idSupervisorSuelos);
+             me.items= [
         			{
 						xtype:'fieldsettable',
 						defaultType: 'textfieldbase',						
@@ -39,7 +50,24 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 						        	xtype: 'displayfieldbase',
 						        	fieldLabel: HreRem.i18n('fieldlabel.entidad.propietaria'),
 									bind:		'{trabajo.cartera}'
-								},			                
+								},
+								{
+						        	xtype: 'comboboxfieldbase',
+						        	editable: false,
+						        	fieldLabel: HreRem.i18n('fieldlabel.responsable.trabajo'),
+						        	bind: {
+					            		store: '{comboResponsableTrabajo}',
+					            		value: '{trabajo.idResponsableTrabajo}',
+					            		readOnly: '{trabajo.bloquearResponsable}'
+					            	},
+					            	displayField: 'apellidoNombre',
+		    						valueField: 'id',
+		    						//readOnly: editar,
+		    						hidden: mostrar,
+						        	reference: 'comboTrabajoResposable'
+
+						    
+						        },
 				                { 
 						        	xtype: 'displayfieldbase',
 						        	fieldLabel: HreRem.i18n('fieldlabel.tipo.trabajo'),
@@ -421,8 +449,11 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 								{
 									xtype: 'datefieldbase',
 									fieldLabel: HreRem.i18n('fieldlabel.fecha.ejecucion.real'),
-									bind: '{trabajo.fechaEjecucionReal}',
-									readOnly: true
+									bind: {
+										value:'{trabajo.fechaEjecucionReal}',
+										hidden: '{!esVisibleFechaEjecucionReal}',
+										readOnly: true
+									}
 								},
 								{ 
 				                	xtype: 'displayfieldbase',
@@ -442,8 +473,11 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 								{
 									xtype: 'datefieldbase',
 									fieldLabel: HreRem.i18n('fieldlabel.fecha.validacion'),
-									bind: '{trabajo.fechaValidacion}',
-									readOnly: true
+									bind: {
+										value: '{trabajo.fechaValidacion}',
+										hidden: '{!esVisibleFechaValidacion}',
+										readOnly: true
+										}
 								},
 								{
 									xtype: 'datefieldbase',
@@ -503,8 +537,7 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 		                		}						
 						]
 		           }
-        ];
-
+        ];  
     	me.callParent();
     },
 

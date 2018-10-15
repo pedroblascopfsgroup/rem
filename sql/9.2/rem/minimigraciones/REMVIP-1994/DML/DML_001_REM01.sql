@@ -1,0 +1,118 @@
+--/*
+--#########################################
+--## AUTOR=Marco Munoz
+--## FECHA_CREACION=20180927
+--## ARTEFACTO=batch
+--## VERSION_ARTEFACTO=2.0.17
+--## INCIDENCIA_LINK=REMVIP-1994
+--## PRODUCTO=NO
+--## 
+--## Finalidad: Actualizamos las direcciones de los suelos que nos pasan en la excel.
+--##			
+--## INSTRUCCIONES:  
+--## VERSIONES:
+--##        0.1 Versión inicial
+--#########################################
+--*/
+
+--Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON;
+SET DEFINE OFF;
+
+
+DECLARE
+
+TABLE_COUNT NUMBER(1,0) := 0;
+V_ESQUEMA_1 VARCHAR2(20 CHAR) := 'REM01';
+V_ESQUEMA_2 VARCHAR2(20 CHAR) := 'REMMASTER'; --SE CREA UNA SEGUNDA VARIABLE DE ESQUEMA POR SI EN ALGÚN MOMENTO QUEREMOS CREAR LA TABLA EN UN ESQUEMA DIFERENTE AL DEL USUARIO QUE LA ACCEDE O VICEVERSA
+V_TABLA VARCHAR2(40 CHAR) := 'AUX_MMC_ACTIVOS_COOPER_SUELOS';
+
+BEGIN
+
+	DBMS_OUTPUT.PUT_LINE('[INICIO]');
+
+	EXECUTE IMMEDIATE 'MERGE INTO REM01.BIE_LOCALIZACION  LOC
+						USING (
+							SELECT DISTINCT LOC.BIE_LOC_ID BIE_LOC_ID,
+											APR.NOMBRE_VIA,
+											APR.PISO,
+											APR.NUM_PUERTA,
+											APR.ESCALERA,
+											APR.PORTAL_PUNTO_KM
+							FROM REM01.AUX_MMC_ACTIVOS_COOPER_SUELOS       AUX
+							JOIN REM01.ACT_ACTIVO                          ACT
+							  ON ACT.ACT_NUM_ACTIVO = AUX.ID_HAYA
+							JOIN REM01.APR_AUX_STOCK_UVEM_TO_REM           APR
+							  ON ACT.ACT_NUM_ACTIVO_UVEM = APR.ACT_NUMERO_UVEM
+							JOIN REM01.BIE_BIEN BIE
+							  ON BIE.BIE_ID = ACT.BIE_ID
+							JOIN REM01.BIE_LOCALIZACION                    LOC
+							  ON LOC.BIE_ID = BIE.BIE_ID
+							LEFT JOIN REM01.ACT_ICO_INFO_COMERCIAL         ICO
+							  ON ACT.ACT_ID = ICO.ACT_ID 
+							WHERE AUX.ES_CORRECTO = 0
+						) T2
+						ON (LOC.BIE_LOC_ID = T2.BIE_LOC_ID)
+						WHEN MATCHED THEN UPDATE SET
+							LOC.BIE_LOC_NOMBRE_VIA = T2.NOMBRE_VIA,
+							LOC.BIE_LOC_PISO = T2.PISO,
+							LOC.BIE_LOC_PUERTA = T2.NUM_PUERTA,
+							LOC.BIE_LOC_ESCALERA = T2.ESCALERA,
+							LOC.BIE_LOC_NUMERO_DOMICILIO = T2.PORTAL_PUNTO_KM,
+							LOC.USUARIOMODIFICAR = ''REMVIP-1994'',
+							LOC.FECHAMODIFICAR = SYSDATE  
+	';
+	DBMS_OUTPUT.PUT_LINE('	[INFO] '||SQL%ROWCOUNT||' Activos a los que acualizamos sus direcciones en la BIE_LOCALIZACION.');  
+
+
+	EXECUTE IMMEDIATE  'MERGE INTO REM01.ACT_ICO_INFO_COMERCIAL  ICO
+						USING (
+							SELECT DISTINCT ICO.ICO_ID ICO_ID,
+											APR.NOMBRE_VIA,
+											APR.PISO,
+											APR.NUM_PUERTA,
+											APR.ESCALERA,
+											APR.PORTAL_PUNTO_KM
+							FROM REM01.AUX_MMC_ACTIVOS_COOPER_SUELOS       AUX
+							JOIN REM01.ACT_ACTIVO                          ACT
+							  ON ACT.ACT_NUM_ACTIVO = AUX.ID_HAYA
+							JOIN REM01.APR_AUX_STOCK_UVEM_TO_REM           APR
+							  ON ACT.ACT_NUM_ACTIVO_UVEM = APR.ACT_NUMERO_UVEM
+							JOIN REM01.BIE_BIEN BIE
+							  ON BIE.BIE_ID = ACT.BIE_ID
+							JOIN REM01.BIE_LOCALIZACION                    LOC
+							  ON LOC.BIE_ID = BIE.BIE_ID
+							LEFT JOIN REM01.ACT_ICO_INFO_COMERCIAL         ICO
+							  ON ACT.ACT_ID = ICO.ACT_ID 
+							WHERE AUX.ES_CORRECTO = 0
+						) T2
+						ON (ICO.ICO_ID = T2.ICO_ID)
+						WHEN MATCHED THEN UPDATE SET
+							ICO.ICO_NOMBRE_VIA = T2.NOMBRE_VIA,
+							ICO.ICO_PLANTA = T2.PISO,
+							ICO.ICO_PUERTA = T2.NUM_PUERTA,
+							ICO.ICO_ESCALERA = T2.ESCALERA,
+							ICO.ICO_NUM_VIA = T2.PORTAL_PUNTO_KM,
+							ICO.USUARIOMODIFICAR = ''REMVIP-1994'',
+							ICO.FECHAMODIFICAR = SYSDATE  
+	';
+	DBMS_OUTPUT.PUT_LINE('	[INFO] '||SQL%ROWCOUNT||' Activos a los que acualizamos sus direcciones en la BIE_LOCALIZACION.');  
+
+	COMMIT;
+
+	DBMS_OUTPUT.PUT_LINE('[FIN]');
+
+EXCEPTION
+
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecucion:'||TO_CHAR(SQLCODE));
+        DBMS_OUTPUT.put_line('-----------------------------------------------------------');
+        DBMS_OUTPUT.put_line(SQLERRM);
+        ROLLBACK;
+        RAISE;
+END;
+/
+
+EXIT;

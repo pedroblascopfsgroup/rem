@@ -555,7 +555,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     
     onEstadoDivHorizontalAdmisionSelect: function(combo, value) {
     	
-    	var me = this,
+    	var me = this;
     	disabled = (value == 1 || Ext.isEmpty(value)) ;
 
     	me.lookupReference('estadoDivHorizontalNoInscritaAdmision').allowBlank = disabled
@@ -567,6 +567,16 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	}
     	
     },    
+    
+    onChangeProvincia: function(combo, value, oldValue, eOpts){
+    	var me = this;
+    	me.getViewModel().get('activo').set('asignaGestPorCambioDeProv', false);
+    	if(value != oldValue){
+    		var me = this;
+    		me.getViewModel().get('activo').set('asignaGestPorCambioDeProv', true);
+    	}
+    	
+    },
     
     cargaGestores : function(grid){
     	var me = this;
@@ -652,6 +662,25 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
            	  me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
            }
     	 });
+    },
+    
+    onChkbxMuestraHistorico: function(chkbx, checked) {
+    	
+    	var me = this;
+    	
+    	var grid = chkbx.up('gestoresactivo').down("gestoreslist");
+    	var store = me.getViewModel().get("storeGestoresActivos");
+    	
+    	var prox = store.getProxy();
+    	var _idActivo = prox.getExtraParams().idActivo;
+    	var _incluirGestoresInactivos = checked;
+    	
+    	prox.setExtraParams({
+    		"idActivo": _idActivo, 
+    		"incluirGestoresInactivos": _incluirGestoresInactivos
+    	});
+    	store.load();
+    	
     },
 	
 	onClickBotonEditar: function(btn) {
@@ -2778,7 +2807,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		var url =  $AC.getRemoteUrl('proveedores/searchProveedorCodigo');
 		var codPrescriptor = field.getValue();
 		var data;
-		var re = new RegExp("^((04$))|^((18$))|^((28$))|^((29$))|^((31$))|^((37$))|^((30$))|^((35$))|^((23$)).*$");
+		var re = new RegExp("^((04$))|^((18$))|^((28$))|^((29$))|^((31$))|^((37$))|^((30$))|^((35$))|^((23$))|^((38$)).*$");
 
 		
 		Ext.Ajax.request({

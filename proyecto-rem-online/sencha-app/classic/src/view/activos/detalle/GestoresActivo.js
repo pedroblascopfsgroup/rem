@@ -2,8 +2,8 @@ Ext.define('HreRem.view.activos.detalle.GestoresActivo', {
     extend: 'Ext.panel.Panel',
     xtype: 'gestoresactivo',
     requires: ['HreRem.view.activos.gestores.ComboGestores','HreRem.view.activos.gestores.GestoresList','Ext.plugin.LazyItems'],
-    layout: 'fit',
-
+    //autoScroll: true,
+    overflowY: 'scroll',
     listeners: { 	
     	boxready: function (tabPanel) { 
     		tabPanel.evaluarEdicion();
@@ -13,28 +13,35 @@ Ext.define('HreRem.view.activos.detalle.GestoresActivo', {
     initComponent: function () {
     	var me = this;   	
     	me.setTitle(HreRem.i18n('title.gestores'));
-
-    	var items= [
-	          {
-	          	xtype:'container',
-				flex : 1,
-				defaultType: 'displayfield',
-				layout: {
-					type: 'hbox',
-					align: 'stretch'
-				},
-				items: [
-			        {
-			        	xtype : 'gestoreslist',
-			        	flex: 0.7
-					},
-			        {xtype : 'combogestores',
-						secFunPermToShow: 'MOSTRAR_COMBO_GESTORES',
-			        	flex: 0.3,
-			        	maxHeight: 150
-			        }
+    	
+    	var items = [
+			{
+				xtype : 'combogestores',
+				secFunPermToShow: 'MOSTRAR_COMBO_GESTORES'
+	        },
+			{
+	        	xtype : 'gestoreslist'
+			},
+			{
+				xtype:'fieldsettable',
+				title: HreRem.i18n('gestores.historico.title'),
+				items : [
+					{
+						xtype:'checkboxfieldbase',
+						
+						labelSeparator: '',
+					    hideLabel: true,
+					    boxLabel: HreRem.i18n('gestores.historico.fieldlabel.check'),
+					    fieldLabel: ' ',
+					    
+						reference: 'chkbxPerimetroAdmision',
+						addUxReadOnlyEditFieldPlugin: false,
+						listeners: {
+							change: 'onChkbxMuestraHistorico'
+						}
+					}
 				]
-    	       }
+			}
     	];
 
     	me.addPlugin({ptype: 'lazyitems', items: items });

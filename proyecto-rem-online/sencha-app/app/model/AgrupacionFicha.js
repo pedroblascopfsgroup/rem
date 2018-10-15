@@ -117,8 +117,16 @@ Ext.define('HreRem.model.AgrupacionFicha', {
 		    		name: 'codigoGestoriaFormalizacion'
 		    	},
 		    	{
+		    		name: 'codigoGestorActivo'
+		    	}
+		    	,
+		    	{
 		    		name: 'codigoGestorComercial'
 		    	},
+		    	{
+		    		name: 'codigoGestorDobleActivo'
+		    	}
+		    	,
 		    	{
 		    		name: 'codigoGestorFormalizacion'
 		    	},
@@ -126,7 +134,16 @@ Ext.define('HreRem.model.AgrupacionFicha', {
 		    		name: 'codigoGestorComercialBackOffice'
 		    	},
 		    	{
-		    		name: 'cartera'
+		    		name: 'codigoCartera'
+		    	},
+		    	{
+		    		name: 'estadoActivoCodigo'
+		    	},
+		    	{
+		    		name:'tipoActivoCodigo'
+		    	},
+		    	{
+		    		name:'subtipoActivoCodigo'
 		    	}
     ],
     

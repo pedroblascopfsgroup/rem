@@ -330,4 +330,13 @@ public interface ParticularValidatorApi {
 
 	Boolean mediadorExisteVigente(String codMediador);
 
+	public Boolean agrupacionEsProyecto(String numAgrupacion);
+
+	public Boolean activoTienePRV(String numActivo);
+
+	public Boolean activoTieneLOC(String numActivo);
+
+	public Boolean esMismaProvincia(Long numActivo, Long numAgrupacion);
+
+	public Boolean esMismaLocalidad(Long numActivo, Long numAgrupacion);
 }

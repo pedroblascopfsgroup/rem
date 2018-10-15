@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Kevin Fernández
---## FECHA_CREACION=20170105
+--## AUTOR=Alejandro Valverde Herrera
+--## FECHA_CREACION=20180720
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-1190
+--## INCIDENCIA_LINK=HREOS-4293
 --## PRODUCTO=NO
 --##
 --## Finalidad: Script que crea las funciones añadidas en T_ARRAY_FUNCION.
@@ -71,6 +71,10 @@ DECLARE
 	  T_FUNCION('Permite acceder a la tab de fotos de la agrupación',															'TAB_FOTOS_AGRUPACION'),
 	  T_FUNCION('Permite editar la tab de observaciones de la agrupación',														'EDITAR_TAB_OBSERVACIONES_AGRUPACION'),
 	  T_FUNCION('Permite acceder a la tab de observaciones de la agrupación',													'TAB_OBSERVACIONES_AGRUPACION'),
+	  T_FUNCION('Permite editar la tab de documentos de la agrupación',														'EDITAR_TAB_DOCUMENTOS_AGRUPACION'),
+	  T_FUNCION('Permite acceder a la tab de documentos de la agrupación',													'TAB_DOCUMENTOS_AGRUPACION'),
+	  T_FUNCION('Permite editar la tab de seguimiento de la agrupación',														'EDITAR_TAB_SEGUIMIENTO_AGRUPACION'),
+	  T_FUNCION('Permite acceder a la tab de seguimiento de la agrupación',													'TAB_SEGUIMIENTO_AGRUPACION'),
 	  T_FUNCION('Permite acceder a la tab de subdivisiones de la agrupación',													'TAB_SUBDIVISIONES_AGRUPACION'),
 	  T_FUNCION('Permite editar la tab de comercial de la agrupación',															'EDITAR_TAB_COMERCIAL_AGRUPACION'),
 	  T_FUNCION('Permite acceder a la tab de comercial de la agrupación',														'TAB_COMERCIAL_AGRUPACION'),
@@ -174,7 +178,7 @@ BEGIN
 				V_MSQL := 'INSERT INTO '|| V_ESQUEMA_M ||'.FUN_FUNCIONES (' ||
 						'FUN_ID, FUN_DESCRIPCION_LARGA, FUN_DESCRIPCION, VERSION, USUARIOCREAR, FECHACREAR, BORRADO)' ||
 						'SELECT '|| V_ENTIDAD_ID || ','''||V_TMP_FUNCION(1)||''','''||TRIM(V_TMP_FUNCION(2))||''','||
-						'0, ''DML'',SYSDATE,0 FROM DUAL';
+						'0, ''HREOS-4293'',SYSDATE,0 FROM DUAL';
 				DBMS_OUTPUT.PUT_LINE('INSERTANDO: '''||V_TMP_FUNCION(1)||''','''||TRIM(V_TMP_FUNCION(2))||'''');
 				EXECUTE IMMEDIATE V_MSQL;
 			END IF;

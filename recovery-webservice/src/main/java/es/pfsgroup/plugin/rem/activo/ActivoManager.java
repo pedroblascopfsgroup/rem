@@ -622,7 +622,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			if(DDCartera.CODIGO_CARTERA_CAJAMAR.equals(oferta.getActivoPrincipal().getCartera().getCodigo())) {
 					tipoArras = (DDTiposArras) utilDiccionarioApi.dameValorDiccionarioByCod(DDTiposArras.class, DDTiposArras.CONFIRMATORIAS);					
 			}
-			if(DDCartera.CODIGO_CARTERA_GALEON.equals(oferta.getActivoPrincipal().getCartera().getCodigo())) {
+			if(DDCartera.CODIGO_CARTERA_GALEON.equals(oferta.getActivoPrincipal().getCartera().getCodigo()) 
+					|| DDCartera.CODIGO_CARTERA_ZEUS.equals(oferta.getActivoPrincipal().getCartera().getCodigo())) {
 		            tipoArras = (DDTiposArras) utilDiccionarioApi.dameValorDiccionarioByCod(DDTiposArras.class, DDTiposArras.PENITENCIALES);
 			}
 
@@ -634,6 +635,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					expedienteComercial.getReserva().setTipoArras(tipoArras);				
 				}
 		}				
+
 		return expedienteComercial;
 	}
 	
@@ -690,7 +692,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			}
 			// HREOS-4450
 			//Activos de Galeon, debe haber reserva necesaria con un importe fijo del 5%
-			if(DDCartera.CODIGO_CARTERA_GALEON.equals(oferta.getActivoPrincipal().getCartera().getCodigo())) {
+			if(DDCartera.CODIGO_CARTERA_GALEON.equals(oferta.getActivoPrincipal().getCartera().getCodigo()) 
+					|| DDCartera.CODIGO_CARTERA_ZEUS.equals(oferta.getActivoPrincipal().getCartera().getCodigo())) {
 				nuevoCondicionante.setSolicitaReserva(1);
 				DDTipoCalculo tipoCalculo = (DDTipoCalculo) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoCalculo.class, DDTipoCalculo.TIPO_CALCULO_PORCENTAJE);
 				nuevoCondicionante.setTipoCalculoReserva(tipoCalculo);

@@ -38,8 +38,7 @@ Ext.define('HreRem.view.expedientes.ReservaExpediente', {
 				        	bind: {
 			            		store: '{storeTiposArras}',
 			            		value: '{reserva.tipoArrasCodigo}',
-			            		readOnly:'{esCarteraGaleon}'
-			            		
+			            		readOnly:'{esCarteraGaleonOZeus}'
 			            	}
 				        },		                
 		                {

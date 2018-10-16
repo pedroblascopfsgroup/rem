@@ -979,80 +979,27 @@ public class ActivoController extends ParadiseJsonController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView updateInformeComercialMSV(String activosId, ModelMap model) {
+	public ModelAndView updateInformeComercialMSV(String activosId, ModelMap model){
 		try {
-			Filter estadoInformeComercialFilter;
-			Boolean success=false;
-			ActivoEstadosInformeComercialHistorico activoEstadosInformeComercialHistorico = new ActivoEstadosInformeComercialHistorico();
-
-			List<Long> activosIdInt = new ArrayList<Long>();
-			String[] activosIdString = activosId.split(",");
-			for (String activo : activosIdString) {
-				activosIdInt.add(Long.valueOf(activo));
-			}
-			
-			for (Long activoId : activosIdInt) {
-				Activo activo = activoDao.get(activoId);
-			
-				if(!activoApi.checkTiposDistintos(activo)){
-						estadoInformeComercialFilter = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoInformeComercial.ESTADO_INFORME_COMERCIAL_ACEPTACION);
-						activoEstadosInformeComercialHistorico.setEstadoInformeComercial(genericDao.get(DDEstadoInformeComercial.class, estadoInformeComercialFilter));
-						activoEstadosInformeComercialHistorico.setFecha(new Date());
-						activo.getInfoComercial().setFechaAceptacion(new Date());
-						activo.getInfoComercial().setFechaRechazo(null);
-							
-							if(!activoEstadoPublicacionApi.isPublicadoVentaByIdActivo(activo.getId())) {
-								// 3.) Se marca activo como publicable, porque en el tramite se han cumplido todos los requisitos
-								activo.setFechaPublicable(new Date());
-								activoApi.saveOrUpdate(activo);
-							}
-						
-					}
-				
-				//Si han habido cambios en el historico, los persistimos.
-				if(!Checks.esNulo(activoEstadosInformeComercialHistorico) && !Checks.esNulo(activoEstadosInformeComercialHistorico.getEstadoInformeComercial())){
-					success=true;
-					if(Checks.esNulo(activoEstadosInformeComercialHistorico.getAuditoria())){
-						Auditoria auditoria = new Auditoria();
-						auditoria.setUsuarioCrear(genericAdapter.getUsuarioLogado().getUsername());
-						auditoria.setFechaCrear(new Date());
-						activoEstadosInformeComercialHistorico.setAuditoria(auditoria);
-					}else{
-						activoEstadosInformeComercialHistorico.getAuditoria().setUsuarioCrear(genericAdapter.getUsuarioLogado().getUsername());
-						activoEstadosInformeComercialHistorico.getAuditoria().setFechaCrear(new Date());
-					}
-					activoEstadosInformeComercialHistorico.setActivo(activo);
-					genericDao.save(ActivoEstadosInformeComercialHistorico.class, activoEstadosInformeComercialHistorico);
-				}
-				
-				//Si han habido cambios en el activo, lo persistimos
-				if(!Checks.esNulo(activo)){
-					//actualizamos el informemediador para que se envie el cambio de estado
-					if(!Checks.esNulo(activo.getInfoComercial())){
-						activo.getInfoComercial().getAuditoria().setFechaModificar(new Date());
-						if(!Checks.esNulo(genericAdapter.getUsuarioLogado())){
-							activo.getInfoComercial().getAuditoria().setUsuarioModificar(genericAdapter.getUsuarioLogado().getUsername());
-						}
-					}
-					
-					activoApi.saveOrUpdate(activo);
-				}
-				
-				activoDao.publicarActivoConHistorico(activo.getId(), genericAdapter.getUsuarioLogado().getUsername());
-			}
+			Boolean success = adapter.updateInformeComercialMSV(activosId);
 			
 			model.put(RESPONSE_SUCCESS_KEY, success);
+			model.put(RESPONSE_SUCCESS_KEY, true);
 
+		} catch (JsonViewerException e) {
+			logger.error("error en activoController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put("msgError", e.getMessage());
 		} catch (Exception e) {
 			logger.error("error en activoController", e);
 			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put("msgError", e.getMessage());
 		}
-
-		model.put(RESPONSE_SUCCESS_KEY, true);
 
 		return createModelAndViewJson(model);
 	}
 
+	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView insertarGestorAdicional(Long idActivo, Long usuarioGestor, Long tipoGestor, WebDto webDto, ModelMap model) {

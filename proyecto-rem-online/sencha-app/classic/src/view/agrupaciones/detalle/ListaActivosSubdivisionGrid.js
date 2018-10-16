@@ -16,8 +16,10 @@ Ext.define('HreRem.view.trabajos.detalle.ListaActivosSubdivisionGrid', {
 	        {
 	            xtype: 'button',
 	            text: 'Aprobar informe comercial',
+	            //secFunPermToShow: 'ROLE_PUEDE_VER_BOTON_APROBAR_INFORME',
 	            listeners: {
 	        		click: 'aprobarInformeComercialMSV'
+	        	
 	        	}
 	        }
 	    ]
@@ -25,6 +27,8 @@ Ext.define('HreRem.view.trabajos.detalle.ListaActivosSubdivisionGrid', {
 	plugins : 'pagingselectpersist',
 
 	initComponent : function() {
+		
+		var me = this;
 
 		var estadoRenderer =  function(condicionado) {
         	var src = '',
@@ -40,7 +44,7 @@ Ext.define('HreRem.view.trabajos.detalle.ListaActivosSubdivisionGrid', {
         	return '<div> <img src="resources/images/'+src+'" alt ="'+alt+'" width="15px"></div>';
         }; 
 
-		var me = this;
+	
 		var subdivisionDescripcion = me.getTitle;
 		me.title=HreRem.i18n('title.activos.del.tipo') + ' ' + subdivisionDescripcion;
 		me.columns = [
@@ -113,7 +117,7 @@ Ext.define('HreRem.view.trabajos.detalle.ListaActivosSubdivisionGrid', {
 
     	me.callParent();
 
-      	me.getSelectionModel().on({
+    	me.getSelectionModel().on({
         	'selectionchange': function(sm,record,e) {
         		var displaySelection = me.down('displayfield[itemId=displaySelection]');
     			var persistedSelection = me.getPersistedSelection();
@@ -131,15 +135,13 @@ Ext.define('HreRem.view.trabajos.detalle.ListaActivosSubdivisionGrid', {
         	},
 
         	'selectall': function(sm) {
-        		me.pagingSelectPersist.selectAll();
-        		me.submenuItemsDisabled(false);
+        		me.getPlugin('pagingselectpersist').selectAll();
         	},
 
         	'deselectall': function(sm) {
-        		me.pagingSelectPersist.deselectAll();
-        		me.submenuItemsDisabled(true);
+        		me.getPlugin('pagingselectpersist').deselectAll();
         	}
-        	});
+        });
     },
 
     getPersistedSelection: function() {

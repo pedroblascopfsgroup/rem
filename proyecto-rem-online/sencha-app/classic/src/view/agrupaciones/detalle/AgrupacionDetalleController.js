@@ -390,26 +390,31 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
     },
 	 //Actualizar Estado  Informe comercial MSV
 	 aprobarInformeComercialMSV:function(grid, row, col){
+		 
 		 var me = this.getView().down('[reference=listaActivosSubdivisionGrid]');
 		 var activosObjects = me.getPersistedSelection();
 		 var resultado = "";
-		 debugger;
 		  for (var i in activosObjects) {
-			  if(i == activosObjects.length-1){
-				  resultado+=activosObjects[i].id
+			  if(i < activosObjects.length-1){
+				  resultado+=activosObjects[i].id+",";
 			  }else{
-				  resultado+=activosObjects[0].data.activoId+",";
+				  resultado+=activosObjects[i].id;
 			  }
-			  }
+		}
 		 if(!Ext.isEmpty(activosObjects)){
+			 me.getView().mask();
 				var url =  $AC.getRemoteUrl('activo/updateInformeComercialMSV');
     			Ext.Ajax.request({
 	    		     url: url,
 	    		     params: { activosId:resultado},
-	    		     success: function (a, operation, context) {
-	                //Se marcan los activos actualizados
-	    		    	 debugger;
-	    		    	console.log(context);
+	    		     success: function (result, operation) {
+	    		    	var success = Ext.decode(result.responseText);
+	    		    	if(success.success == "true"){
+	    		    		me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+	    		    	}else{
+	    		    		me.fireEvent("errorToast", success.msgError);
+	    		    	}
+	    		    	 me.getView().unmask();
 	                },
 	                
 	                failure: function (a, operation, context) {
@@ -425,7 +430,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 		 }
 		 
 	},
-    
+
     onSubdivisionesAgrupacionListClick: function(grid,record) {
 		var me = this;		
 		me.getViewModel().set("subdivision", record);

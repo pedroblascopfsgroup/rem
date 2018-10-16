@@ -26,6 +26,7 @@ import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.message.MessageService;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
+import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.despachoExterno.model.DespachoExterno;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
@@ -47,6 +48,7 @@ import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
 import es.pfsgroup.framework.paradise.gestorEntidad.model.GestorEntidadHistorico;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
+import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.recovery.coreextension.api.coreextensionApi;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
@@ -141,6 +143,7 @@ import es.pfsgroup.plugin.rem.model.VBusquedaActivosTrabajoPresupuesto;
 import es.pfsgroup.plugin.rem.model.VBusquedaPresupuestosActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaTramitesActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaVisitasDetalle;
+import es.pfsgroup.plugin.rem.model.VCondicionantesDisponibilidad;
 import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.VPreciosVigentes;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
@@ -160,6 +163,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoHabitaculo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoObservacionActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoPublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTasacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTenedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
@@ -278,6 +282,9 @@ public class ActivoAdapter {
 	public static final String OFERTA_INCOMPATIBLE_MSG = "El tipo de oferta es incompatible con el destino comercial del activo";
 	private static final String AVISO_TITULO_MODIFICADAS_CONDICIONES_JURIDICAS = "activo.aviso.titulo.modificadas.condiciones.juridicas";
 	private static final String AVISO_DESCRIPCION_MODIFICADAS_CONDICIONES_JURIDICAS = "activo.aviso.descripcion.modificadas.condiciones.juridicas";
+	private static final String ERROR_ACTIVO_UPDATE_SUBDIVISION = "No se puede actualizar el estado de publicación: no cumple las condiciones de publicación.";
+	private static final String ERROR_ACTIVO_UPDATE_SUBDIVISION_ACTIVO_FORZADO ="No se puede actualizar el estado de publicación: el activo esta publicado forzado.";
+	
 
 	private BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 
@@ -3212,4 +3219,113 @@ public class ActivoAdapter {
 		return null;
 
 	}
+	
+	
+	/**
+	 * @param activosId
+	 * @return
+	 */
+	@Transactional(readOnly = false)
+	public Boolean updateInformeComercialMSV(String activosId) throws JsonViewerException {
+		
+		Filter estadoInformeComercialFilter;
+		Boolean success=false;
+		ActivoEstadosInformeComercialHistorico activoEstadosInformeComercialHistorico = new ActivoEstadosInformeComercialHistorico();
+
+		List<Long> activosIdInt = new ArrayList<Long>();
+		String[] activosIdString = activosId.split(",");
+		for (String activo : activosIdString) {
+			activosIdInt.add(Long.valueOf(activo));
+		}
+		
+		for (Long activoId : activosIdInt) {
+			Activo activo = activoDao.get(activoId);
+			
+			try {
+				if(!Checks.esNulo(activo)){
+					
+					if(!activoApi.checkTiposDistintos(activo)){
+							estadoInformeComercialFilter = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoInformeComercial.ESTADO_INFORME_COMERCIAL_ACEPTACION);
+							activoEstadosInformeComercialHistorico.setEstadoInformeComercial(genericDao.get(DDEstadoInformeComercial.class, estadoInformeComercialFilter));
+							activoEstadosInformeComercialHistorico.setFecha(new Date());
+							activo.getInfoComercial().setFechaAceptacion(new Date());
+							activo.getInfoComercial().setFechaRechazo(null);
+								
+								if(!activoEstadoPublicacionApi.isPublicadoVentaByIdActivo(activo.getId())) {
+									// 3.) Se marca activo como publicable, porque en el tramite se han cumplido todos los requisitos
+									activo.setFechaPublicable(new Date());
+									activoApi.saveOrUpdate(activo);
+								}
+							
+						}
+					
+					//Si han habido cambios en el historico, los persistimos.
+					if(!Checks.esNulo(activoEstadosInformeComercialHistorico) && !Checks.esNulo(activoEstadosInformeComercialHistorico.getEstadoInformeComercial())){
+						
+						if(Checks.esNulo(activoEstadosInformeComercialHistorico.getAuditoria())){
+							Auditoria auditoria = new Auditoria();
+							auditoria.setUsuarioCrear(genericAdapter.getUsuarioLogado().getUsername());
+							auditoria.setFechaCrear(new Date());
+							activoEstadosInformeComercialHistorico.setAuditoria(auditoria);
+						}else{
+							activoEstadosInformeComercialHistorico.getAuditoria().setUsuarioCrear(genericAdapter.getUsuarioLogado().getUsername());
+							activoEstadosInformeComercialHistorico.getAuditoria().setFechaCrear(new Date());
+						}
+						activoEstadosInformeComercialHistorico.setActivo(activo);
+						genericDao.save(ActivoEstadosInformeComercialHistorico.class, activoEstadosInformeComercialHistorico);
+					}
+					
+					//Si han habido cambios en el activo, lo persistimos
+					
+						//actualizamos el informemediador para que se envie el cambio de estado
+						if(!Checks.esNulo(activo.getInfoComercial())){
+							activo.getInfoComercial().getAuditoria().setFechaModificar(new Date());
+							if(!Checks.esNulo(genericAdapter.getUsuarioLogado())){
+								activo.getInfoComercial().getAuditoria().setUsuarioModificar(genericAdapter.getUsuarioLogado().getUsername());
+							}
+						}
+					
+					activoApi.saveOrUpdate(activo);
+					
+					if(!DDTipoPublicacion.CODIGO_FORZADA.equals(activo.getTipoPublicacion().getCodigo())) {
+						if(comprobarCondicionesActivo(activo)) {
+							success=true;
+							activoDao.publicarActivoConHistorico(activo.getId(), genericAdapter.getUsuarioLogado().getUsername());
+						}else {
+							throw new JsonViewerException(ERROR_ACTIVO_UPDATE_SUBDIVISION);
+						}
+						
+					}else {
+						throw new JsonViewerException(ERROR_ACTIVO_UPDATE_SUBDIVISION_ACTIVO_FORZADO);
+					}
+				}
+			} catch(JsonViewerException e) {
+				throw e;
+			} 
+
+		}
+		return success;
+	}
+	
+	
+	/**
+	 *  Comprueba para un activo si tiene todos los condicionantes a true(azules) menos el de sin informe comercial aprobado.
+	 * @param activo
+	 * @return boolean true or false
+	 */
+	private Boolean comprobarCondicionesActivo(Activo activo) {
+		Boolean check = false;
+		VCondicionantesDisponibilidad vCondicionante = activoApi.getCondicionantesDisponibilidad(activo.getId());
+		if(!Checks.esNulo(vCondicionante)) {
+			if(!(vCondicionante.getConCargas() || vCondicionante.getDivHorizontalNoInscrita() || vCondicionante.getIsCondicionado() || vCondicionante.getObraNuevaEnConstruccion() ||
+					vCondicionante.getObraNuevaSinDeclarar() || vCondicionante.getOcupadoConTitulo() || vCondicionante.getOcupadoSinTitulo() || vCondicionante.getPendienteInscripcion() ||
+					vCondicionante.getPortalesExternos() || vCondicionante.getProindiviso() || vCondicionante.getRuina() || 
+					vCondicionante.getSinTomaPosesionInicial() || vCondicionante.getTapiado() || vCondicionante.getVandalizado())) {
+				check = true;
+			}
+		}
+		return check;
+	}
+
+	
 }

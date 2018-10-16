@@ -256,7 +256,7 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 			// DESTINATARIOS SI ES CAJAMAR
 		} else if (activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_CAJAMAR)) {
 			clavesGestores.addAll(
-					Arrays.asList(GESTOR_PRESCRIPTOR, GESTOR_MEDIADOR, claveGestorComercial, GESTOR_BACKOFFICE, GESTOR_COMERCIAL_ACTIVO_SUS, GESTOR_BACKOFFICE_SUS));
+					Arrays.asList(GESTOR_PRESCRIPTOR, GESTOR_MEDIADOR, claveGestorComercial, GESTOR_BACKOFFICE, GESTOR_COMERCIAL_ACTIVO_SUS, GESTOR_BACKOFFICE_SUS, GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO));
 			if (formalizacion) {
 				clavesGestores.addAll(Arrays.asList(GESTOR_FORMALIZACION, GESTOR_FORMALIZACION_SUS));
 			}
@@ -552,13 +552,8 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 			cuerpo = cuerpo + " hasta la formalización de las arras/reserva";
 		}
 		
-		cuerpo = cuerpo + ". Adjunto a este correo encontrará el documento con las instrucciones a seguir para la reserva y formalización";
+		cuerpo = cuerpo + ". Adjunto a este correo encontrará el documento con las instrucciones a seguir para la reserva y formalización.</p>";
 		
-		if (DDCartera.CODIGO_CARTERA_CAJAMAR.equals(codigoCartera)) {
-			cuerpo = cuerpo + ", así como la Ficha cliente a cumplimentar</p>";
-		}else {
-			cuerpo = cuerpo + ".</p>";
-		}
 		ActivoBancario activoBancario = genericDao.get(ActivoBancario.class,
 				genericDao.createFilter(FilterType.EQUALS, "activo.id", tramite.getActivo().getId())); 
 		if (!Checks.esNulo(expediente.getId()) && !Checks.esNulo(expediente.getReserva()) 
@@ -761,13 +756,8 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 			cuerpo = cuerpo + " hasta la formalización de las arras/reserva";
 		}
 		
-		cuerpo = cuerpo + ". Adjunto a este correo encontrará el documento con las instrucciones a seguir para la reserva y formalización";
+		cuerpo = cuerpo + ". Adjunto a este correo encontrará el documento con las instrucciones a seguir para la reserva y formalización.</p>";
 		
-		if (DDCartera.CODIGO_CARTERA_CAJAMAR.equals(codigoCartera)) {
-			cuerpo = cuerpo + ", así como la Ficha cliente a cumplimentar</p>";
-		}else {
-			cuerpo = cuerpo + ".</p>";
-		}
 		ActivoBancario activoBancario = genericDao.get(ActivoBancario.class,
 				genericDao.createFilter(FilterType.EQUALS, "activo.id", tramite.getActivo().getId())); 
 		if (!Checks.esNulo(expediente.getId()) && !Checks.esNulo(expediente.getReserva()) 

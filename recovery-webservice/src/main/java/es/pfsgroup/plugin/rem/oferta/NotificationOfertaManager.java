@@ -125,7 +125,8 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 							}
 						}
 					}
-				}				
+				}
+				
 			}
 			
 			if(!Checks.esNulo(supervisor)){
@@ -133,9 +134,18 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 			}
 			
 			if(!Checks.esNulo(activo.getCartera()) && DDCartera.CODIGO_CARTERA_CAJAMAR.equals(activo.getCartera().getCodigo())){
+				
 				if(!Checks.esNulo(usuarioManager.getByUsername(USUARIO_FICTICIO_OFERTA_CAJAMAR))){
 					mailsPara.add(usuarioManager.getByUsername(USUARIO_FICTICIO_OFERTA_CAJAMAR).getEmail());
-				}				
+				}
+				
+				if(!Checks.esNulo(gestorActivoManager.getGestorByActivoYTipo(activo, "GESRES"))) {
+					mailsPara.add(gestorActivoManager.getGestorByActivoYTipo(activo, "GESRES").getEmail());
+				}
+				
+				if(!Checks.esNulo(gestorActivoManager.getGestorByActivoYTipo(activo, "SUPRES"))){
+					mailsPara.add(gestorActivoManager.getGestorByActivoYTipo(activo, "SUPRES").getEmail());
+				}
 			}
 
 			

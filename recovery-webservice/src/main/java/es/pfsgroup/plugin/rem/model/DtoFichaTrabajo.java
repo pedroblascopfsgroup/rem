@@ -21,6 +21,8 @@ public class DtoFichaTrabajo {
     
     private String nombreProveedor;
     
+    private Long idProveedor;
+    
     private String tipoTrabajoCodigo;
     
     private String tipoTrabajoDescripcion;
@@ -56,6 +58,10 @@ public class DtoFichaTrabajo {
     private Long idSupervisorActivo;
     
     private String supervisorActivo;
+    
+    private Long idResponsableTrabajo;
+    
+    private String responsableTrabajo;
         
     private Boolean esSolicitudConjunta;
     
@@ -136,7 +142,14 @@ public class DtoFichaTrabajo {
     private String codigoPromocionPrinex;
 
     private Date fechaAutorizacionPropietario;
-
+    
+    private Boolean bloquearResponsable;
+    
+    private Long idSupervisorAlquileres;
+    
+    private Long idSupervisorSuelos;
+    
+    private Long idSupervisorEdificaciones;
 	
     public Long getIdTrabajo() {
 		return idTrabajo;
@@ -145,7 +158,25 @@ public class DtoFichaTrabajo {
 	public void setIdTrabajo(Long idTrabajo) {
 		this.idTrabajo = idTrabajo;
 	}
+	
+	
     
+	public Long getIdResponsableTrabajo() {
+		return idResponsableTrabajo;
+	}
+
+	public void setIdResponsableTrabajo(Long idResponsableTrabajo) {
+		this.idResponsableTrabajo = idResponsableTrabajo;
+	}
+
+	public String getResponsableTrabajo() {
+		return responsableTrabajo;
+	}
+
+	public void setResponsableTrabajo(String responsableTrabajo) {
+		this.responsableTrabajo = responsableTrabajo;
+	}
+
 	public String getNumTrabajo() {
 		return numTrabajo;
 	}
@@ -184,6 +215,14 @@ public class DtoFichaTrabajo {
 
 	public void setTipoTrabajoDescripcion(String tipoTrabajoDescripcion) {
 		this.tipoTrabajoDescripcion = tipoTrabajoDescripcion;
+	}
+	
+	public Long getIdProveedor() {
+		return idProveedor;
+	}
+
+	public void setIdProveedor(Long idProveedor) {
+		this.idProveedor = idProveedor;
 	}
 
 	public String getSubtipoTrabajoCodigo() {
@@ -653,6 +692,40 @@ public class DtoFichaTrabajo {
 		this.fechaAutorizacionPropietario = fechaAutorizacionPropietario;
 
 	}
+
+	public Boolean getBloquearResponsable() {
+		return bloquearResponsable;
+	}
+
+	public void setBloquearResponsable(Boolean bloquearResponsable) {
+		this.bloquearResponsable = bloquearResponsable;
+	}
+
+	public Long getIdSupervisorAlquileres() {
+		return idSupervisorAlquileres;
+	}
+
+	public void setIdSupervisorAlquileres(Long idSupervisorAlquileres) {
+		this.idSupervisorAlquileres = idSupervisorAlquileres;
+	}
+
+	public Long getIdSupervisorSuelos() {
+		return idSupervisorSuelos;
+	}
+
+	public void setIdSupervisorSuelos(Long idSupervisorSuelos) {
+		this.idSupervisorSuelos = idSupervisorSuelos;
+	}
+
+	public Long getIdSupervisorEdificaciones() {
+		return idSupervisorEdificaciones;
+	}
+
+	public void setIdSupervisorEdificaciones(Long idSupervisorEdificaciones) {
+		this.idSupervisorEdificaciones = idSupervisorEdificaciones;
+	}
+	
+	
 	
 	
 }

@@ -75,6 +75,7 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 	private static final String USUARIO_FICTICIO_OFERTA_CAJAMAR = "ficticioOfertaCajamar";
 	private static final String SUPERVISOR_BACKOFFICE_LIBERBANK = "supervisor-backoffice-liberbank";
 	private static final String GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO = "gestor-comercial-backoffice-inmobiliario";
+	private static final String BUZON_REM = "buzonrem";
 	
 	// Patrón para validar el email
     Pattern pattern = Pattern
@@ -151,6 +152,8 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 									+ oferta.getId() + "]");
 					return;
 				}
+				
+				destinatarios.add(usuarioManager.getByUsername(BUZON_REM).getEmail());
 
 				this.enviaNotificacionAceptar(tramite, oferta,
 						expediente,
@@ -186,6 +189,8 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 				}else {
 					destinatarios.add(gestorFormalizacion);
 				}
+				
+				destinatarios.add(usuarioManager.getByUsername(BUZON_REM).getEmail());
 				
 				this.enviaNotificacionRechazar(tramite, activo, oferta, destinatarios.toArray(new String[] {}));
 			}

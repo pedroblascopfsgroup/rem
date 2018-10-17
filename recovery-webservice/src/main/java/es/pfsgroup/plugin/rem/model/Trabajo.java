@@ -247,7 +247,19 @@ public class Trabajo implements Serializable, Auditable {
     @JoinColumn(name="TBJ_SUPERVISOR_ACT_RESPONSABLE")
     private Usuario supervisorActivoResponsable;
     
-    @Column(name="STR_TARIFA_PLANA")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="TBJ_RESPONSABLE_TRABAJO")
+    private Usuario responsableTrabajo;
+    
+    public Usuario getResponsableTrabajo() {
+		return responsableTrabajo;
+	}
+
+	public void setResponsableTrabajo(Usuario responsableTrabajo) {
+		this.responsableTrabajo = responsableTrabajo;
+	}
+
+	@Column(name="STR_TARIFA_PLANA")
     private Boolean esTarifaPlana = false;
     
     @Column(name = "ACT_COD_PROMOCION_PRINEX")

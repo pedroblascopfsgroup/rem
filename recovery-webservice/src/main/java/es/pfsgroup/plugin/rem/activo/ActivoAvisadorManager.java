@@ -78,6 +78,7 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 		boolean asistida = false;
 		boolean lote = false;
 		boolean conTitulo = false;
+		boolean enPuja = false;
 		
 		try {
 		//Avisos 1 y 2: Integrado en agrupación restringida / Integrado en obra nueva
@@ -87,8 +88,16 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 			asistida = activoApi.isIntegradoAgrupacionAsistida(activo);
 			lote = activoApi.isIntegradoAgrupacionComercial(activo);
 			conTitulo = activoApi.necesitaDocumentoInformeOcupacion(activo);
+			enPuja = activoApi.isActivoEnPuja(activo);
 		} catch (Exception e) {
 			e.printStackTrace();
+		}
+		
+		if(enPuja) {
+			DtoAviso dtoAviso = new DtoAviso();
+			dtoAviso.setDescripcion("Incluido en Haz tu Puja hasta 15/11/2018");
+			dtoAviso.setId(String.valueOf(id));
+			listaAvisos.add(dtoAviso);
 		}
 		
 		if (restringida) {

@@ -67,6 +67,7 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 	private static final String GESTOR_COMERCIAL_LOTE_COMERCIAL_SUS = "gestor-comercial-lote-comercial-sustituto";
 	private static final String GESTOR_FORMALIZACION = "gestor-formalizacion";
 	private static final String GESTOR_FORMALIZACION_SUS = "gestor-formalizacion-sustituto";
+	private static final String SUPERVISOR_COMERCIAL = "supervisor-comercial";
 	private static final String GESTOR_BACKOFFICE = "gestor-backoffice";
 	private static final String GESTOR_BACKOFFICE_SUS = "gestor-backoffice-sustituto";
 	private static final String GESTOR_GESTORIA_FASE_3 = "gestoria-fase-3";
@@ -260,7 +261,8 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 				clavesGestores.addAll(Arrays.asList(GESTOR_FORMALIZACION, GESTOR_FORMALIZACION_SUS));
 			}
 		}
-
+		clavesGestores.add(GESTOR_FORMALIZACION);
+		clavesGestores.add(SUPERVISOR_COMERCIAL);
 		return clavesGestores.toArray(new String[] {});
 	}
 
@@ -330,7 +332,9 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 			ExpedienteComercial expediente, String... filtroGestores) {
 		String[] claves = filtroGestores != null ? filtroGestores
 				: new String[] { GESTOR_PRESCRIPTOR, GESTOR_MEDIADOR, GESTOR_COMERCIAL_ACTIVO,
-						GESTOR_COMERCIAL_LOTE_RESTRINGIDO, GESTOR_COMERCIAL_LOTE_COMERCIAL, GESTOR_FORMALIZACION, GESTOR_BACKOFFICE, GESTOR_GESTORIA_FASE_3};
+						GESTOR_COMERCIAL_LOTE_RESTRINGIDO, GESTOR_COMERCIAL_LOTE_COMERCIAL, GESTOR_FORMALIZACION, GESTOR_BACKOFFICE, GESTOR_GESTORIA_FASE_3,SUPERVISOR_COMERCIAL};
+		
+		
 		this.compruebaRequisitos(activo, oferta, loteComercial, expediente, Arrays.asList(claves));
 
 		HashMap<String, String> gestores = new HashMap<String, String>();
@@ -452,8 +456,16 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 				if(!Checks.esNulo(gesBackInmobiliario)) {
 					addMail(s, gestores.put(s, extractEmail(gesBackInmobiliario)), gestores);
 				}
+				addMail(s,gestores.put(s, extractEmail(gestorExpedienteComercialApi.getGestorByExpedienteComercialYTipo(expediente, "GIAFORM"))), gestores);				
+			} else if (SUPERVISOR_COMERCIAL.equals(s)) {
+				Usuario sComercial = gestorExpedienteComercialApi.getGestorByExpedienteComercialYTipo(expediente, "SCOM");
+				if(sComercial != null){
+					addMail(s,gestores.put(s, extractEmail(sComercial)), gestores);
+				}								
 			}
 		}
+		
+		
 		
 		return gestores;
 	}
@@ -690,10 +702,11 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 					adjuntos.add(createAdjunto(f1, "contrato_reserva_Tango.docx"));
 				}
 				//ADJUNTOS SI ES GIANTS
-				else if(activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_GIANTS)){
+				//Comentamos esta parte del código hasta que tengamos contrato de reserva de GIANTS
+				/*else if(activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_GIANTS)){
 					f1 = FileItemUtils.fromResource("docs/contrato_reserva_Giants.docx");
 					adjuntos.add(createAdjunto(f1, "contrato_reserva_Giants.docx"));
-				}
+				}*/
 				//ADJUNTOS SI ES LIBERBANK
 				else if(activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_LIBERBANK)) {
 					f1 = FileItemUtils.fromResource("docs/instrucciones_reserva_y_formalizacion_Liberbank.docx");

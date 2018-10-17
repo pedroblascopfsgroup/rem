@@ -62,7 +62,7 @@ Ext.define('HreRem.view.agrupaciones.AgrupacionesSearch', {
 							        	fieldLabel: HreRem.i18n('fieldlabel.tipo'),
 							        	name: 'tipoAgrupacion',
 							        	bind: {
-						            		store: '{comboTipoAgrupacion}'
+						            		store: '{comboTodosTipoAgrupacion}'
 						            	},
 						            	displayField: 'descripcion',
 			    						valueField: 'codigo'

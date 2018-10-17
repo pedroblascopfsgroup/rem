@@ -226,6 +226,13 @@ public class GenericController extends ParadiseJsonController{
 		return new ModelAndView("jsonView", model);
 	}
 	
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getComboTipoGestorByActivo(WebDto webDto, ModelMap model, String idActivo){
+		model.put("data", genericApi.getComboTipoGestorByActivo(webDto, model, idActivo));
+		
+		return new ModelAndView("jsonView", model);
+	}
+	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getComboTipoGestorOfertas(WebDto webDto, ModelMap model){
@@ -342,5 +349,15 @@ public class GenericController extends ParadiseJsonController{
 	public ModelAndView getComboSubcartera(String idCartera) {
 		return createModelAndViewJson(new ModelMap("data", genericApi.getComboSubcartera(idCartera)));	
 	}
-
+	
+	@RequestMapping(method= RequestMethod.GET)
+	public ModelAndView getComboTipoAgrupacion() {
+		return createModelAndViewJson(new ModelMap("data", genericApi.getComboTipoAgrupacion()));
+	}
+	
+	@RequestMapping(method= RequestMethod.GET)
+	public ModelAndView getTodosComboTipoAgrupacion()
+	{
+		return createModelAndViewJson(new ModelMap("data", genericApi.getTodosComboTipoAgrupacion()));
+	}
 }

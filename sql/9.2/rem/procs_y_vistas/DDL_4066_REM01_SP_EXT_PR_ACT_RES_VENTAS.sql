@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Guillermo Llidó Parra
---## FECHA_CREACION=20180817
+--## AUTOR=Marco Munoz
+--## FECHA_CREACION=20181001
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=2.0.18
---## INCIDENCIA_LINK=REMVIP-1542
+--## INCIDENCIA_LINK=REMVIP-2082
 --## PRODUCTO=NO
 --## Finalidad: Permitir la actualización de reservas y ventas vía la llegada de datos externos de Prinex. Una llamada por modificación. Liberbank.
 --## Info: https://link-doc.pfsgroup.es/confluence/display/REOS/SP_EXT_PR_ACT_RES_VENTA
@@ -16,6 +16,9 @@
 --##		0.2 Control de errores en HLP_HISTORICO_LANZA_PERIODICO
 --##        0.3 (20180622) - Marco Munoz - Se soluciona log de error de la HLP para tener siempre el mismo formato.
 --##        0.4 (20180724) - Pablo Meseguer - Se deja de utilizar el numero de reserva y se añade tratamiento para los expedientes economicos en "En devolucion"
+--##        0.5 (20180920) - Marco Muñoz - Se ajusta el SP para actuar también sobre agrupaciones de activos en los pasos 2.1 y 2.2.
+--##        1.02 (20180927) - Ivan Castelló - Añadir estado o en Pendiente de devolución.
+--##		1.03 (20181001) - Marco Muñoz - Se añade la actualización de la fecha de devolucion de la reserva del Expediente en la segunda casuistica (FECHA_DEVOLUCION_RESERVA)
 --##########################################
 --*/
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
@@ -24,7 +27,7 @@ WHENEVER SQLERROR EXIT SQL.SQLCODE;
 SET SERVEROUTPUT ON; 
 SET DEFINE OFF;
 
-CREATE OR REPLACE PROCEDURE #ESQUEMA#.SP_EXT_PR_ACT_RES_VENTA (
+create or replace PROCEDURE       #ESQUEMA#.SP_EXT_PR_ACT_RES_VENTA (
 
     --Parametros de entrada
     NUM_RESERVA                 IN NUMBER,
@@ -61,7 +64,7 @@ CREATE OR REPLACE PROCEDURE #ESQUEMA#.SP_EXT_PR_ACT_RES_VENTA (
 
     V_COUNT                         VARCHAR2(30 CHAR)   := 'SELECT COUNT(1) ';
 
-    V_OBTIENE_RESERVA               VARCHAR2(1000 CHAR)  := 'SELECT 
+    V_OBTIENE_RESERVA               VARCHAR2(1000 CHAR)  := 'SELECT
                                                             CASE
                                                             WHEN EEC.DD_EEC_CODIGO NOT IN (''02'',''03'',''06'',''08'',''16'') AND ERE.DD_ERE_CODIGO IN (''01'')
                                                             THEN 0
@@ -76,7 +79,7 @@ CREATE OR REPLACE PROCEDURE #ESQUEMA#.SP_EXT_PR_ACT_RES_VENTA (
     V_OBTIENE_RESERVA_2            VARCHAR2(1000 CHAR)  := 'SELECT
                                                             CASE
                                                               WHEN EEC.DD_EEC_CODIGO IS NULL THEN 1
-                                                              WHEN EEC.DD_EEC_CODIGO IN (''06'',''16'') THEN 0
+                                                              WHEN EEC.DD_EEC_CODIGO IN (''06'',''16'',''17'') THEN 0
                                                             ELSE 1
                                                             END AS COD,
                                                             RES.RES_ID,
@@ -102,6 +105,25 @@ CREATE OR REPLACE PROCEDURE #ESQUEMA#.SP_EXT_PR_ACT_RES_VENTA (
                                                             ON ERE.DD_ERE_ID = RES.DD_ERE_ID
                                                             WHERE CAR.DD_CRA_CODIGO = ''08''
                                                             AND OFR.OFR_NUM_OFERTA = :1';
+                                                            
+    V_FROM_RESERVA2                VARCHAR2(2000 CHAR) := 'FROM REM01.RES_RESERVAS RES
+                                                            INNER JOIN REM01.ECO_EXPEDIENTE_COMERCIAL ECO
+                                                            ON ECO.ECO_ID = RES.ECO_ID
+                                                            INNER JOIN REM01.OFR_OFERTAS OFR
+                                                            ON OFR.OFR_ID = ECO.OFR_ID
+                                                            INNER JOIN REM01.ACT_OFR OFA
+                                                            ON OFA.OFR_ID = OFR.OFR_ID
+                                                            INNER JOIN REM01.ACT_ACTIVO ACT
+                                                            ON ACT.ACT_ID = OFA.ACT_ID
+                                                            INNER JOIN REM01.DD_CRA_CARTERA CAR
+                                                            ON CAR.DD_CRA_ID = ACT.DD_CRA_ID
+                                                            LEFT JOIN REM01.DD_EEC_EST_EXP_COMERCIAL EEC
+                                                            ON EEC.DD_EEC_ID = ECO.DD_EEC_ID
+                                                            LEFT JOIN REM01.DD_ERE_ESTADOS_RESERVA ERE
+                                                            ON ERE.DD_ERE_ID = RES.DD_ERE_ID
+                                                            WHERE CAR.DD_CRA_CODIGO = ''08''
+                                                            AND OFR.OFR_NUM_OFERTA = :1
+                                                            AND ROWNUM = 1';                                                        
 
     V_OBTIENE_COBRO               VARCHAR2(1000 CHAR) := 'SELECT
                                                             CASE
@@ -136,6 +158,26 @@ CREATE OR REPLACE PROCEDURE #ESQUEMA#.SP_EXT_PR_ACT_RES_VENTA (
                                                             WHERE CAR.DD_CRA_CODIGO = '08' /*LIBERBANK*/
                                                             AND OFR.OFR_NUM_OFERTA =  ''||IDENTIFICACION_COBRO||'';
                                                             
+    CURSOR ACTIVOS IS SELECT
+                                                            ACT.ACT_ID
+                                                            FROM REM01.RES_RESERVAS RES
+                                                            INNER JOIN REM01.ECO_EXPEDIENTE_COMERCIAL ECO
+                                                            ON ECO.ECO_ID = RES.ECO_ID
+                                                            INNER JOIN REM01.OFR_OFERTAS OFR
+                                                            ON OFR.OFR_ID = ECO.OFR_ID
+                                                            INNER JOIN REM01.ACT_OFR OFA
+                                                            ON OFA.OFR_ID = OFR.OFR_ID
+                                                            INNER JOIN REM01.ACT_ACTIVO ACT
+                                                            ON ACT.ACT_ID = OFA.ACT_ID
+                                                            INNER JOIN REM01.DD_CRA_CARTERA CAR
+                                                            ON CAR.DD_CRA_ID = ACT.DD_CRA_ID
+                                                            LEFT JOIN REM01.DD_EEC_EST_EXP_COMERCIAL EEC
+                                                            ON EEC.DD_EEC_ID = ECO.DD_EEC_ID
+                                                            LEFT JOIN REM01.DD_ERE_ESTADOS_RESERVA ERE
+                                                            ON ERE.DD_ERE_ID = RES.DD_ERE_ID
+                                                            WHERE CAR.DD_CRA_CODIGO = '08'
+                                                            AND OFR.OFR_NUM_OFERTA = ''||IDENTIFICACION_COBRO||'';
+
     V_FROM_COBRO                    VARCHAR2(2000 CHAR) := 'FROM REM01.ECO_EXPEDIENTE_COMERCIAL ECO
                                                             INNER JOIN REM01.OFR_OFERTAS OFR
                                                             ON OFR.OFR_ID = ECO.OFR_ID
@@ -147,7 +189,7 @@ CREATE OR REPLACE PROCEDURE #ESQUEMA#.SP_EXT_PR_ACT_RES_VENTA (
                                                             ON CAR.DD_CRA_ID = ACT.DD_CRA_ID
                                                             LEFT JOIN REM01.DD_EEC_EST_EXP_COMERCIAL EEC
                                                             ON EEC.DD_EEC_ID = ECO.DD_EEC_ID
-                                                            WHERE CAR.DD_CRA_CODIGO = ''08'' 
+                                                            WHERE CAR.DD_CRA_CODIGO = ''08''
                                                             AND OFR.OFR_NUM_OFERTA = '||IDENTIFICACION_COBRO||'';
 
     V_LOGAR_HDL                     VARCHAR2(1400 CHAR) := 'HLD_HIST_LANZA_PER_DETA(''SP_EXT_PR_ACT_RES_VENTA'',:1,:2,:3,:4,:5,:6,:7)'; -- 1 HLD_SP_CARGA, 2 HLD_CODIGO_REG, 3 HLD_TABLA_MODIFICAR, 4 HLD_TABLA_MODIFICAR_CLAVE, 5 HLD_TABLA_MODIFICAR_CLAVE_ID, 6 HLD_CAMPO_MODIFICAR, 7 HLD_VALOR_ORIGINAL, 8 HLD_VALOR_ACTUALIZADO
@@ -220,8 +262,8 @@ CREATE OR REPLACE PROCEDURE #ESQUEMA#.SP_EXT_PR_ACT_RES_VENTA (
       END IF;
 
     END;
-    
-   
+
+
 
     --Procedure que inserta en HLP_HISTORICO_LANZA_PERIODICO, sin comitear.
     PROCEDURE HLP_HISTORICO_LANZA_PERIODICO (
@@ -260,7 +302,7 @@ CREATE OR REPLACE PROCEDURE #ESQUEMA#.SP_EXT_PR_ACT_RES_VENTA (
     END;
 
 BEGIN
---v1.01
+--v1.03
 
     COD_RETORNO := 0;
     DBMS_OUTPUT.PUT_LINE('[INICIO] Permitir la actualización de reservas y ventas vía la llegada de datos externos de Prinex. Una llamada por modificación.');
@@ -331,7 +373,7 @@ BEGIN
     ------------------------------------------------------------------------------
     --2.1. Para todos los registros con Número de Reserva  y Fecha de Cobro de reserva informada cuyo expediente no esté en los estados ("Reservado", "Firmado","Vendido", "En Devolución", "Anulado")
     IF (FECHA_COBRO_RESERVA IS NOT NULL) AND COD_RETORNO = 0 AND V_PASOS = 0 THEN
-        
+
         V_ID_COBRO := IDENTIFICACION_COBRO;
         V_NUM_RESERVA := NULL;
         DBMS_OUTPUT.PUT_LINE(V_OP_1_DESC);
@@ -346,18 +388,26 @@ BEGIN
 
             --Comprobamos que el estado del expediente NO está en los estados "Reservado", "Firmado","Vendido", "En Devolución" ó "Anulado".
             --Si el resultado de la consulta es 0, quiere decir que cumple con la linea de arriba, en caso contrario, devolverá 1.
-            V_MSQL := V_OBTIENE_RESERVA||V_FROM_RESERVA;
+            V_MSQL := V_OBTIENE_RESERVA||V_FROM_RESERVA2;
             EXECUTE IMMEDIATE V_MSQL INTO V_NUM, V_RES_ID, V_ECO_ID, V_ACT_ID, V_OFR_ID, V_VALOR_ACTUAL USING IDENTIFICACION_COBRO;
 
             --Llegados a éste punto, o ejecutamos la actualización o pasamos con la siguiente comprobación.
             IF V_NUM > 0 THEN
-                DBMS_OUTPUT.PUT_LINE('[INFO] ACT_ID > '||V_ACT_ID||', ECO_ID > '||V_ECO_ID||', OFR_ID > '||V_OFR_ID||', RES_ID > '||V_RES_ID||', DD_EEC_ID > '||V_VALOR_ACTUAL||'.');
+                FOR row in ACTIVOS
+                LOOP
+                       DBMS_OUTPUT.PUT_LINE('[INFO] ACT_ID > '||row.ACT_ID||', ECO_ID > '||V_ECO_ID||', OFR_ID > '||V_OFR_ID||', RES_ID > '||V_RES_ID||', DD_EEC_ID > '||V_VALOR_ACTUAL||'.');
+                END LOOP;
+                --DBMS_OUTPUT.PUT_LINE('[INFO] ACT_ID > '||V_ACT_ID||', ECO_ID > '||V_ECO_ID||', OFR_ID > '||V_OFR_ID||', RES_ID > '||V_RES_ID||', DD_EEC_ID > '||V_VALOR_ACTUAL||'.');
                 COD_RETORNO := 1;
                 V_ERROR_DESC := '[ERROR] El estado del expediente es "Reservado", "Firmado","Vendido", "En Devolución" ó "Anulado", o la reserva no esta en estado "Pendiente de firma" o no existe estado para éste expediente.';
                 --DBMS_OUTPUT.PUT_LINE(V_ERROR_DESC);
             ELSE
                 DBMS_OUTPUT.PUT_LINE('[INFO] El estado del expediente NO es "Reservado", "Firmado","Vendido", "En Devolución" ó "Anulado" y la reserva esta en estado "Pendiente de firma". Continuamos la ejecución.');
-                DBMS_OUTPUT.PUT_LINE('[INFO] ACT_ID > '||V_ACT_ID||', ECO_ID > '||V_ECO_ID||', OFR_ID > '||V_OFR_ID||', RES_ID > '||V_RES_ID||', DD_EEC_ID > '||V_VALOR_ACTUAL||'.');
+                FOR row in ACTIVOS
+                LOOP
+                       DBMS_OUTPUT.PUT_LINE('[INFO] ACT_ID > '||row.ACT_ID||', ECO_ID > '||V_ECO_ID||', OFR_ID > '||V_OFR_ID||', RES_ID > '||V_RES_ID||', DD_EEC_ID > '||V_VALOR_ACTUAL||'.');
+                END LOOP;
+                --DBMS_OUTPUT.PUT_LINE('[INFO] ACT_ID > '||V_ACT_ID||', ECO_ID > '||V_ECO_ID||', OFR_ID > '||V_OFR_ID||', RES_ID > '||V_RES_ID||', DD_EEC_ID > '||V_VALOR_ACTUAL||'.');
                 --PASO 1/4 Actualizar el estado del expediente a "Reservado"
                 V_MSQL := '
                 SELECT DD_EEC_ID FROM '||V_ESQUEMA||'.DD_EEC_EST_EXP_COMERCIAL WHERE DD_EEC_CODIGO = ''06'''; /*RESERVADO*/
@@ -527,8 +577,11 @@ BEGIN
             ---------------------
 
             IF V_OP_1_PASOS = V_PASOS THEN
-                DBMS_OUTPUT.PUT_LINE('[INFO] Lanzando el SP_ASC_ACTUALIZA_SIT_COMERCIAL para el ACT_ID > '||V_ACT_ID||'.');
-                EXECUTE IMMEDIATE V_EXEC_ACT_SIT USING V_ACT_ID;
+                FOR row in ACTIVOS
+                LOOP
+                        DBMS_OUTPUT.PUT_LINE('[INFO] Lanzando el SP_ASC_ACTUALIZA_SIT_COMERCIAL para el ACT_ID > '||row.ACT_ID||'.');
+                        EXECUTE IMMEDIATE V_EXEC_ACT_SIT USING row.ACT_ID;
+                END LOOP;   
             ELSE
                 COD_RETORNO := 1;
                 V_ERROR_DESC := V_ERROR_DESC||'[ERROR] No se han cumplido todos los pasos de la operatoria. Paramos la ejecución. OPERATORIA 1 PASOS '||V_PASOS||' / '||V_OP_1_PASOS||'.';
@@ -559,18 +612,26 @@ BEGIN
 
             --Comprobamos que el estado del expediente está en "Reservado" o "En devolución".
             --Si el resultado de la consulta es 0, quiere decir que cumple con la linea de arriba, en caso contrario, devolverá 1.
-            V_MSQL := V_OBTIENE_RESERVA_2||V_FROM_RESERVA;
+            V_MSQL := V_OBTIENE_RESERVA_2||V_FROM_RESERVA2;
             EXECUTE IMMEDIATE V_MSQL INTO V_NUM, V_RES_ID, V_ECO_ID, V_ACT_ID, V_OFR_ID, V_VALOR_ACTUAL USING IDENTIFICACION_COBRO;
 
             --Llegados a éste punto, o ejecutamos la actualización o pasamos con la siguiente comprobación.
             IF V_NUM > 0 THEN
-                DBMS_OUTPUT.PUT_LINE('[INFO] ACT_ID > '||V_ACT_ID||', ECO_ID > '||V_ECO_ID||', OFR_ID > '||V_OFR_ID||', RES_ID > '||V_RES_ID||'.');
+                FOR row in ACTIVOS
+                LOOP
+                       DBMS_OUTPUT.PUT_LINE('[INFO] ACT_ID > '||row.ACT_ID||', ECO_ID > '||V_ECO_ID||', OFR_ID > '||V_OFR_ID||', RES_ID > '||V_RES_ID||'.');
+                END LOOP;
+                --DBMS_OUTPUT.PUT_LINE('[INFO] ACT_ID > '||V_ACT_ID||', ECO_ID > '||V_ECO_ID||', OFR_ID > '||V_OFR_ID||', RES_ID > '||V_RES_ID||'.');
                 COD_RETORNO := 1;
                 V_ERROR_DESC := '[ERROR] El estado del expediente NO es "Reservado" o "En devolución", o no existe estado para éste expediente.';
                 --DBMS_OUTPUT.PUT_LINE(V_ERROR_DESC);
             ELSE
                 DBMS_OUTPUT.PUT_LINE('[INFO] El estado del expediente es "Reservado" o "En devolución". Continuamos la ejecución.');
-                DBMS_OUTPUT.PUT_LINE('[INFO] ACT_ID > '||V_ACT_ID||', ECO_ID > '||V_ECO_ID||', OFR_ID > '||V_OFR_ID||', RES_ID > '||V_RES_ID||'.');
+                FOR row in ACTIVOS
+                LOOP
+                       DBMS_OUTPUT.PUT_LINE('[INFO] ACT_ID > '||row.ACT_ID||', ECO_ID > '||V_ECO_ID||', OFR_ID > '||V_OFR_ID||', RES_ID > '||V_RES_ID||'.');
+                END LOOP;
+                --DBMS_OUTPUT.PUT_LINE('[INFO] ACT_ID > '||V_ACT_ID||', ECO_ID > '||V_ECO_ID||', OFR_ID > '||V_OFR_ID||', RES_ID > '||V_RES_ID||'.');
                 --PASO 1/8 Actualizar el estado del expediente a "Anulado"
                 V_MSQL := '
                 SELECT DD_EEC_ID FROM '||V_ESQUEMA||'.DD_EEC_EST_EXP_COMERCIAL WHERE DD_EEC_CODIGO = ''02'''; /*Anulado*/
@@ -578,21 +639,34 @@ BEGIN
 
                 V_MSQL := '
                 UPDATE '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL
-                SET DD_EEC_ID = '||V_VALOR_NUEVO||', /*EN DEVOLUCION*/
-                USUARIOMODIFICAR = ''SP_EXT_PR_ACT_RES_VENTA'',
-                FECHAMODIFICAR = SYSDATE
+                SET DD_EEC_ID = '||V_VALOR_NUEVO||', /*ANULADO*/
+                    ECO_FECHA_DEV_ENTREGAS = '''||FECHA_DEVOLUCION_RESERVA_DATE||''',
+					USUARIOMODIFICAR = ''SP_EXT_PR_ACT_RES_VENTA'',
+					FECHAMODIFICAR = SYSDATE
                 WHERE ECO_ID = '||V_ECO_ID||'
                 AND OFR_ID = '||V_OFR_ID||'
                 ';
                 EXECUTE IMMEDIATE V_MSQL;
 
                 IF SQL%ROWCOUNT > 0 THEN
-                    DBMS_OUTPUT.PUT_LINE('[INFO] PASO 1/8 | El estado del expediente a pasado a "En devolución" para la OFERTA '||IDENTIFICACION_COBRO||'.');
+                    DBMS_OUTPUT.PUT_LINE('[INFO] PASO 1/8 | El estado del expediente a pasado a "ANULADO" para la OFERTA '||IDENTIFICACION_COBRO||'.');
                     V_PASOS := V_PASOS+1;
                     --Logado en HLD_HIST_LANZA_PER_DETA
                     PARAM1 := 'ECO_EXPEDIENTE_COMERCIAL';
                     PARAM2 := 'ECO_ID';
                     PARAM3 := 'DD_EEC_ED';
+                    HLD_HISTORICO_LANZA_PER_DETA (TO_CHAR(IDENTIFICACION_COBRO), PARAM1, PARAM2, V_ECO_ID, PARAM3, V_VALOR_ACTUAL, V_VALOR_NUEVO);
+                    --Reseteamos el V_VALOR_NUEVO
+                    V_VALOR_NUEVO := '';
+                    
+                    DBMS_OUTPUT.PUT_LINE('[INFO] PASO 1/8 | La fecha de devolución de la reserva del expediente se ha informado para la OFERTA '||IDENTIFICACION_COBRO||'.');
+                    V_MSQL := 'SELECT NVL(TO_CHAR(ECO_FECHA_DEV_ENTREGAS,''yyyyMMdd''),''-'') FROM '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL WHERE ECO_ID = '||V_ECO_ID||' AND OFR_ID = '||V_OFR_ID||''; 
+					EXECUTE IMMEDIATE V_MSQL INTO V_VALOR_ACTUAL;
+                    V_VALOR_NUEVO := FECHA_DEVOLUCION_RESERVA_DATE;
+                    --Logado en HLD_HIST_LANZA_PER_DETA
+                    PARAM1 := 'ECO_EXPEDIENTE_COMERCIAL';
+                    PARAM2 := 'ECO_ID';
+                    PARAM3 := 'ECO_FECHA_DEV_ENTREGAS';
                     HLD_HISTORICO_LANZA_PER_DETA (TO_CHAR(IDENTIFICACION_COBRO), PARAM1, PARAM2, V_ECO_ID, PARAM3, V_VALOR_ACTUAL, V_VALOR_NUEVO);
                     --Reseteamos el V_VALOR_NUEVO
                     V_VALOR_NUEVO := '';
@@ -774,97 +848,6 @@ BEGIN
                                     V_ERROR_DESC := '[ERROR] No se ha podido insertar un registro en ERE_ENTREGAS_RESERVA para la OFERTA '||IDENTIFICACION_COBRO||'. Paramos la ejecución.';
                                     --DBMS_OUTPUT.PUT_LINE(V_ERROR_DESC);
                                 END IF;
-                                
-                                IF COD_RETORNO = 0 THEN
-                                    --PASO 7/8 Revivir las tareas pertenecientes a expedientes económicos de ofertas congeladas
-                                    V_MSQL := '
-                                    UPDATE '||V_ESQUEMA||'.TAR_TAREAS_NOTIFICACIONES 
-                                    SET BORRADO = 0,
-                                    USUARIOMODIFICAR = ''SP_EXT_PR_ACT_RES_VENTA'',
-                                    FECHAMODIFICAR = SYSDATE
-                                    WHERE TAR_ID IN (
-                                        SELECT TAR.TAR_ID
-                                        FROM '||V_ESQUEMA||'.OFR_OFERTAS OFR
-                                        INNER JOIN '||V_ESQUEMA||'.ACT_OFR ACT_OFR ON ACT_OFR.OFR_ID = OFR.OFR_ID
-                                        INNER JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_ID = ACT_OFR.ACT_ID
-                                        INNER JOIN '||V_ESQUEMA||'.DD_EOF_ESTADOS_OFERTA EOF ON EOF.DD_EOF_ID = OFR.DD_EOF_ID
-                                        INNER JOIN '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL ECO ON ECO.OFR_ID = OFR.OFR_ID
-                                        INNER JOIN '||V_ESQUEMA||'.ACT_TRA_TRAMITE TRA ON TRA.TBJ_ID = ECO.TBJ_ID
-                                        INNER JOIN '||V_ESQUEMA||'.TAC_TAREAS_ACTIVOS TAC ON TAC.TRA_ID = TRA.TRA_ID
-                                        INNER JOIN '||V_ESQUEMA||'.TAR_TAREAS_NOTIFICACIONES TAR ON TAR.TAR_ID = TAC.TAR_ID
-                                        WHERE ACT.ACT_ID = '||V_ACT_ID||'
-                                        AND EOF.DD_EOF_CODIGO = ''03''
-                                        AND TAR.BORRADO = 1
-                                        AND TAR_FECHA_FIN IS NULL
-                                    )
-                                    ';
-                                    EXECUTE IMMEDIATE V_MSQL;
-                                    
-                                    IF SQL%ROWCOUNT > 0 THEN
-                                        DBMS_OUTPUT.PUT_LINE('[INFO] PASO 7/8 | Revividas '||SQL%ROWCOUNT||' tareas pertenecientes a expedientes ecomicos de ofertas "Congeladas" para la OFERTA '||IDENTIFICACION_COBRO||'.');
-                                        V_PASOS := V_PASOS+1;
-                                        --Logado en HLD_HIST_LANZA_PER_DETA
-    
-                                        V_VALOR_ACTUAL := '-';
-                                        V_VALOR_NUEVO := '-';
-    
-                                        PARAM1 := 'TAR_TAREAS_NOTIFICACIONES';
-                                        PARAM2 := 'TAR_ID';
-                                        PARAM3 := '-';
-                                        HLD_HISTORICO_LANZA_PER_DETA (TO_CHAR(IDENTIFICACION_COBRO), PARAM1, PARAM2, V_RES_ID, PARAM3, V_VALOR_ACTUAL, V_VALOR_NUEVO);
-                                        --Reseteamos el V_VALOR_NUEVO
-                                        V_VALOR_NUEVO := '';
-    
-                                    ELSE
-                                        V_PASOS := V_PASOS+1;
-                                        DBMS_OUTPUT.PUT_LINE('[INFO] PASO 7/8 | No existen tareas pertenecientes a expedientes ecomicos de ofertas "Congeladas" para la OFERTA '||IDENTIFICACION_COBRO||'.');
-                                    END IF;
-                                    
-                                    IF COD_RETORNO = 0 THEN
-                                        --PASO 8/8 Actualizar ofertas en estado "Congelada" a "Tramitada"
-                                        V_MSQL := '
-                                        SELECT DD_EOF_ID FROM '||V_ESQUEMA||'.DD_EOF_ESTADOS_OFERTA WHERE DD_EOF_CODIGO = ''03'''; /*CONGELADA*/
-                                        EXECUTE IMMEDIATE V_MSQL INTO V_VALOR_ACTUAL;
-                                        V_MSQL := '
-                                        SELECT DD_EOF_ID FROM '||V_ESQUEMA||'.DD_EOF_ESTADOS_OFERTA WHERE DD_EOF_CODIGO = ''01'''; /*TRAMITADA*/
-                                        EXECUTE IMMEDIATE V_MSQL INTO V_VALOR_NUEVO;
-                                        
-                                        V_MSQL := '
-                                        UPDATE '||V_ESQUEMA||'.OFR_OFERTAS 
-                                        SET DD_EOF_ID = '||V_VALOR_NUEVO||', /*TRAMITADA*/
-                                        USUARIOMODIFICAR = ''SP_EXT_PR_ACT_RES_VENTA'',
-                                        FECHAMODIFICAR = SYSDATE
-                                        WHERE OFR_ID IN (
-                                            SELECT OFR1.OFR_ID
-                                            FROM '||V_ESQUEMA||'.OFR_OFERTAS OFR1
-                                            INNER JOIN '||V_ESQUEMA||'.ACT_OFR ACT_OFR1 ON ACT_OFR1.OFR_ID = OFR1.OFR_ID
-                                            INNER JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT1 ON ACT1.ACT_ID = ACT_OFR1.ACT_ID
-                                            INNER JOIN '||V_ESQUEMA||'.DD_EOF_ESTADOS_OFERTA EOF1 ON EOF1.DD_EOF_ID = OFR1.DD_EOF_ID
-                                            WHERE ACT1.ACT_ID = '||V_ACT_ID||'
-                                            AND EOF1.DD_EOF_CODIGO = ''03'' /*CONGELADA*/
-                                        )
-                                        ';
-                                        EXECUTE IMMEDIATE V_MSQL;
-                                        
-                                        IF SQL%ROWCOUNT > 0 THEN
-                                          DBMS_OUTPUT.PUT_LINE('[INFO] PASO 8/8 | El estado de la ofertas "Congeladas" han pasado a "Tramitadas" para la OFERTA '||IDENTIFICACION_COBRO||'.');
-                                          V_PASOS := V_PASOS+1;
-                                          --Logado en HLD_HIST_LANZA_PER_DETA
-                                          PARAM1 := 'OFR_OFERTAS';
-                                          PARAM2 := 'OFR_ID';
-                                          PARAM3 := 'DD_EOF_ID';
-                                          HLD_HISTORICO_LANZA_PER_DETA (TO_CHAR(IDENTIFICACION_COBRO), PARAM1, PARAM2, V_OFR_ID, PARAM3, V_VALOR_ACTUAL, V_VALOR_NUEVO);
-                                          --Reseteamos el V_VALOR_NUEVO
-                                          V_VALOR_NUEVO := '';
-          
-                                      ELSE
-                                          V_PASOS := V_PASOS+1;
-                                          DBMS_OUTPUT.PUT_LINE('[INFO] PASO 8/8 | No existen ofertas "Congeladas" para la OFERTA '||IDENTIFICACION_COBRO||'.');
-                                      END IF;
-                                    
-                                    END IF;                                    
-                                                                                                       
-                                END IF;
 
                                 IF COD_RETORNO = 0 THEN
                                     --PASO 7/8 Revivir las tareas pertenecientes a expedientes económicos de ofertas congeladas
@@ -883,7 +866,27 @@ BEGIN
                                         INNER JOIN '||V_ESQUEMA||'.ACT_TRA_TRAMITE TRA ON TRA.TBJ_ID = ECO.TBJ_ID
                                         INNER JOIN '||V_ESQUEMA||'.TAC_TAREAS_ACTIVOS TAC ON TAC.TRA_ID = TRA.TRA_ID
                                         INNER JOIN '||V_ESQUEMA||'.TAR_TAREAS_NOTIFICACIONES TAR ON TAR.TAR_ID = TAC.TAR_ID
-                                        WHERE ACT.ACT_ID = '||V_ACT_ID||'
+                                        WHERE ACT.ACT_ID in (   
+                                                            SELECT
+                                                            ACT.ACT_ID
+                                                            FROM REM01.RES_RESERVAS RES
+                                                            INNER JOIN REM01.ECO_EXPEDIENTE_COMERCIAL ECO
+                                                            ON ECO.ECO_ID = RES.ECO_ID
+                                                            INNER JOIN REM01.OFR_OFERTAS OFR
+                                                            ON OFR.OFR_ID = ECO.OFR_ID
+                                                            INNER JOIN REM01.ACT_OFR OFA
+                                                            ON OFA.OFR_ID = OFR.OFR_ID
+                                                            INNER JOIN REM01.ACT_ACTIVO ACT
+                                                            ON ACT.ACT_ID = OFA.ACT_ID
+                                                            INNER JOIN REM01.DD_CRA_CARTERA CAR
+                                                            ON CAR.DD_CRA_ID = ACT.DD_CRA_ID
+                                                            LEFT JOIN REM01.DD_EEC_EST_EXP_COMERCIAL EEC
+                                                            ON EEC.DD_EEC_ID = ECO.DD_EEC_ID
+                                                            LEFT JOIN REM01.DD_ERE_ESTADOS_RESERVA ERE
+                                                            ON ERE.DD_ERE_ID = RES.DD_ERE_ID
+                                                            WHERE CAR.DD_CRA_CODIGO = ''08''
+                                                            AND OFR.OFR_NUM_OFERTA = '||IDENTIFICACION_COBRO||'
+                                                         )
                                         AND EOF.DD_EOF_CODIGO = ''03''
                                         AND TAR.BORRADO = 1
                                         AND TAR_FECHA_FIN IS NULL
@@ -931,7 +934,27 @@ BEGIN
                                             INNER JOIN '||V_ESQUEMA||'.ACT_OFR ACT_OFR1 ON ACT_OFR1.OFR_ID = OFR1.OFR_ID
                                             INNER JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT1 ON ACT1.ACT_ID = ACT_OFR1.ACT_ID
                                             INNER JOIN '||V_ESQUEMA||'.DD_EOF_ESTADOS_OFERTA EOF1 ON EOF1.DD_EOF_ID = OFR1.DD_EOF_ID
-                                            WHERE ACT1.ACT_ID = '||V_ACT_ID||'
+                                            WHERE ACT1.ACT_ID in (   
+                                                            SELECT
+                                                            ACT.ACT_ID
+                                                            FROM REM01.RES_RESERVAS RES
+                                                            INNER JOIN REM01.ECO_EXPEDIENTE_COMERCIAL ECO
+                                                            ON ECO.ECO_ID = RES.ECO_ID
+                                                            INNER JOIN REM01.OFR_OFERTAS OFR
+                                                            ON OFR.OFR_ID = ECO.OFR_ID
+                                                            INNER JOIN REM01.ACT_OFR OFA
+                                                            ON OFA.OFR_ID = OFR.OFR_ID
+                                                            INNER JOIN REM01.ACT_ACTIVO ACT
+                                                            ON ACT.ACT_ID = OFA.ACT_ID
+                                                            INNER JOIN REM01.DD_CRA_CARTERA CAR
+                                                            ON CAR.DD_CRA_ID = ACT.DD_CRA_ID
+                                                            LEFT JOIN REM01.DD_EEC_EST_EXP_COMERCIAL EEC
+                                                            ON EEC.DD_EEC_ID = ECO.DD_EEC_ID
+                                                            LEFT JOIN REM01.DD_ERE_ESTADOS_RESERVA ERE
+                                                            ON ERE.DD_ERE_ID = RES.DD_ERE_ID
+                                                            WHERE CAR.DD_CRA_CODIGO = ''08''
+                                                            AND OFR.OFR_NUM_OFERTA = '||IDENTIFICACION_COBRO||'
+                                                         )
                                             AND EOF1.DD_EOF_CODIGO = ''03'' /*CONGELADA*/
                                         )
                                         ';
@@ -972,8 +995,11 @@ BEGIN
             ---------------------
 
             IF V_OP_2_PASOS = V_PASOS THEN
-                DBMS_OUTPUT.PUT_LINE('[INFO] Lanzando el SP_ASC_ACTUALIZA_SIT_COMERCIAL para el ACT_ID > '||V_ACT_ID||'.');
-                EXECUTE IMMEDIATE V_EXEC_ACT_SIT USING V_ACT_ID;
+                FOR row in ACTIVOS
+                LOOP
+                        DBMS_OUTPUT.PUT_LINE('[INFO] Lanzando el SP_ASC_ACTUALIZA_SIT_COMERCIAL para el ACT_ID > '||row.ACT_ID||'.');
+                        EXECUTE IMMEDIATE V_EXEC_ACT_SIT USING row.ACT_ID;
+                END LOOP; 
             ELSE
                 COD_RETORNO := 1;
                 V_ERROR_DESC := V_ERROR_DESC||'[ERROR] No se han cumplido todos los pasos de la operatoria. Paramos la ejecución. OPERATORIA 2 PASOS '||V_PASOS||' / '||V_OP_2_PASOS||'.';
@@ -1010,16 +1036,16 @@ BEGIN
                 FETCH C_OBTIENE_COBRO INTO V_NUM, V_ECO_ID, V_ACT_ID, V_OFR_ID, V_VALOR_ACTUAL;
                 EXIT WHEN C_OBTIENE_COBRO%NOTFOUND;
                 V_NUM2:=V_NUM2+1;
-                
-                IF V_NUM2 <= V_NUM THEN
-             --   V_MSQL := V_OBTIENE_COBRO||V_FROM_COBRO;
-             --   EXECUTE IMMEDIATE V_MSQL INTO V_NUM, V_ECO_ID, V_ACT_ID, V_OFR_ID, V_VALOR_ACTUAL USING V_ID_COBRO;
+                V_PASOS:=0;
+
+                IF V_NUM <= V_NUM2 THEN
+            
                 --Llegados a éste punto, o ejecutamos la actualización o pasamos con la siguiente comprobación.
                 IF V_NUM > 0 THEN
                     DBMS_OUTPUT.PUT_LINE('[INFO] ACT_ID > '||V_ACT_ID||', ECO_ID > '||V_ECO_ID||', OFR_ID > '||V_OFR_ID||', RES_ID > '||V_RES_ID||', DD_EEC_ID > '||V_VALOR_ACTUAL||'.');
                     COD_RETORNO := 1;
                     V_ERROR_DESC := '[ERROR] El estado del expediente es "Vendido" ó "Anulado", o no existe estado para éste expediente.';
-                    --DBMS_OUTPUT.PUT_LINE(V_ERROR_DESC);
+                    
                 ELSE
                     DBMS_OUTPUT.PUT_LINE('[INFO] El estado del expediente NO es "Vendido" ó "Anulado". Continuamos la ejecución.');
                     DBMS_OUTPUT.PUT_LINE('[INFO] ACT_ID > '||V_ACT_ID||', ECO_ID > '||V_ECO_ID||', OFR_ID > '||V_OFR_ID||', RES_ID > '||V_RES_ID||', DD_EEC_ID > '||V_VALOR_ACTUAL||'.');
@@ -1027,7 +1053,7 @@ BEGIN
                     V_MSQL := '
                     SELECT DD_EEC_ID FROM '||V_ESQUEMA||'.DD_EEC_EST_EXP_COMERCIAL WHERE DD_EEC_CODIGO = ''08'''; /*VENDIDO*/
                     EXECUTE IMMEDIATE V_MSQL INTO V_VALOR_NUEVO;
-    
+
                     V_MSQL := '
                     UPDATE '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL
                     SET DD_EEC_ID = '||V_VALOR_NUEVO||', /*RESERVADO*/
@@ -1036,10 +1062,9 @@ BEGIN
                     WHERE ECO_ID = '||V_ECO_ID||'
                     AND OFR_ID = '||V_OFR_ID||'
                     ';
-                    DBMS_OUTPUT.PUT_LINE(V_MSQL);
-                    
+                    --DBMS_OUTPUT.PUT_LINE(V_MSQL);
                     EXECUTE IMMEDIATE V_MSQL;
-    
+
                     IF SQL%ROWCOUNT > 0 THEN
 
                         DBMS_OUTPUT.PUT_LINE('[INFO] PASO 1/2 | El estado del expediente a pasado a "Vendido" para IDENTIFICACION_COBRO '||IDENTIFICACION_COBRO||'.');
@@ -1051,23 +1076,21 @@ BEGIN
                         HLD_HISTORICO_LANZA_PER_DETA (TO_CHAR(IDENTIFICACION_COBRO), PARAM1, PARAM2, V_ECO_ID, PARAM3, V_VALOR_ACTUAL, V_VALOR_NUEVO);
                         --Reseteamos el V_VALOR_NUEVO
                         V_VALOR_NUEVO := '';
-    
+
                     ELSE
                         COD_RETORNO := 1;
                         V_ERROR_DESC := '[ERROR] No se ha podido cambiar el estado del expediente a "Vendido" para IDENTIFICACION_COBRO '||IDENTIFICACION_COBRO||'. Paramos la ejecución.';
                         --DBMS_OUTPUT.PUT_LINE(V_ERROR_DESC);
                     END IF;
-    
+
                     IF COD_RETORNO = 0 THEN
                         --PASO 2/2 Actualizar ECO_EXPEDIENTE_COMERCIAL.ECO_FECHA_CONT_PROPIETARIO con el valor de la fecha de cobro.
                         --Recuperamos valor actual
-                        V_MSQL := '
-                        SELECT NVL(TO_CHAR(ECO_FECHA_CONT_PROPIETARIO,''yyyyMMdd''),''-'') AS ECO_FECHA_CONT_PROPIETARIO FROM '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL WHERE ECO_ID = '||V_ECO_ID||'
-                        ';
+                        V_MSQL := 'SELECT NVL(TO_CHAR(ECO_FECHA_CONT_PROPIETARIO,''yyyyMMdd''),''-'') AS ECO_FECHA_CONT_PROPIETARIO FROM '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL WHERE ECO_ID = '||V_ECO_ID||' ';
                         EXECUTE IMMEDIATE V_MSQL INTO V_VALOR_ACTUAL;
-    
+
                         V_VALOR_NUEVO := FECHA_COBRO_VENTA_DATE;
-    
+
                         V_MSQL := '
                         UPDATE '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL
                         SET ECO_FECHA_CONT_PROPIETARIO = '''||FECHA_COBRO_VENTA_DATE||''',
@@ -1076,11 +1099,9 @@ BEGIN
                         WHERE ECO_ID = '||V_ECO_ID||'
                         AND OFR_ID = '||V_OFR_ID||'
                         ';
-                        
-                        DBMS_OUTPUT.PUT_LINE(V_MSQL);
-
+                        --DBMS_OUTPUT.PUT_LINE(V_MSQL);
                         EXECUTE IMMEDIATE V_MSQL;
-    
+
                         IF SQL%ROWCOUNT > 0 THEN
 
                             DBMS_OUTPUT.PUT_LINE('[INFO] PASO 2/2 | Se ha informado el campo ECO_FECHA_CONT_PROPIETARIO para IDENTIFICACION_COBRO '||IDENTIFICACION_COBRO||'.');
@@ -1097,38 +1118,38 @@ BEGIN
                             V_ERROR_DESC := '[ERROR] No se ha podido informar el campo ECO_FECHA_CONT_PROPIETARIO para IDENTIFICACION_COBRO '||IDENTIFICACION_COBRO||'. Paramos la ejecución.';
                             --DBMS_OUTPUT.PUT_LINE(V_ERROR_DESC);
                         END IF;
-                        
+
                     END IF;
-    
+
                 END IF;
-              
-            END IF;      
+
+            END IF;
               /*  END LOOP;
                 CLOSE C_OBTIENE_COBRO;
-              */  
+              */
 --END IF;
             ---------------------
             -- FIN OPERATORIA 3 -- Lanzamos SP_ASC_ACTUALIZA_SIT_COMERCIAL si todos los pasos se han completado
             ---------------------
             IF V_OP_3_PASOS = V_PASOS THEN
-          
+
                DBMS_OUTPUT.PUT_LINE('[INFO] Lanzando el SP_ASC_ACTUALIZA_SIT_COMERCIAL para el ACT_ID -> '||V_ACT_ID||'.');
                EXECUTE IMMEDIATE V_EXEC_ACT_SIT USING V_ACT_ID;
-                    
+
             ELSE
                 COD_RETORNO := 1;
                 V_ERROR_DESC := V_ERROR_DESC||'[ERROR] No se han cumplido todos los pasos de la operatoria. Paramos la ejecución. OPERATORIA 3 PASOS '||V_PASOS||' / '||V_OP_3_PASOS||'.';
                 DBMS_OUTPUT.PUT_LINE('[ERROR] No se han cumplido todos los pasos de la operatoria. Paramos la ejecución. OPERATORIA 3 PASOS '||V_PASOS||' / '||V_OP_3_PASOS||'.');
-            
+
             END IF;
         END LOOP;
         CLOSE C_OBTIENE_COBRO;
-        
+
         ELSE
             COD_RETORNO := 1;
             V_ERROR_DESC := '[ERROR] [OP3] NO existe la oferta con IDENTIFICACION_COBRO '||IDENTIFICACION_COBRO||', o está duplicada. Paramos la ejecución.';
         END IF;
-    
+
     END IF;
 --Finalizamos en función del COD_RETORNO
 IF COD_RETORNO = 1 THEN

@@ -34,8 +34,11 @@ import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
+import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
+import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.adapter.TrabajoAdapter;
+import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.PreciosApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.api.TrabajoAvisadorApi;
@@ -43,6 +46,7 @@ import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
 import es.pfsgroup.plugin.rem.excel.TrabajoExcelReport;
 import es.pfsgroup.plugin.rem.factory.GenerarPropuestaPreciosFactoryApi;
+import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.DtoActivoTrabajo;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
@@ -57,15 +61,18 @@ import es.pfsgroup.plugin.rem.model.DtoProvisionSuplido;
 import es.pfsgroup.plugin.rem.model.DtoRecargoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoTarifaTrabajo;
 import es.pfsgroup.plugin.rem.model.DtoTrabajoListActivos;
+import es.pfsgroup.plugin.rem.model.DtoUsuario;
 import es.pfsgroup.plugin.rem.model.PropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.TrabajoFoto;
 import es.pfsgroup.plugin.rem.model.VBusquedaTrabajos;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.propuestaprecios.service.GenerarPropuestaPreciosService;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.dto.TrabajoDto;
 import es.pfsgroup.plugin.rem.rest.dto.TrabajoRequestDto;
 import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
+import es.pfsgroup.plugin.rem.trabajo.dao.TrabajoDao;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoActivosTrabajoFilter;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoTrabajoFilter;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
@@ -80,7 +87,13 @@ public class TrabajoController extends ParadiseJsonController {
 	private TrabajoApi trabajoApi;
 	
 	@Autowired
+	private ActivoAdapter adapter;
+	
+	@Autowired
 	private GenericAdapter genericAdapter;
+	
+	@Autowired
+	private UtilDiccionarioApi utilDiccionarioApi;
 	
 	@Autowired
 	private UploadAdapter uploadAdapter;
@@ -105,7 +118,12 @@ public class TrabajoController extends ParadiseJsonController {
 	
 	@Autowired
 	private GenerarPropuestaPreciosFactoryApi generarPropuestaApi;
-		
+	
+	@Autowired
+	private GestorActivoApi gestorActivoApi;
+	
+	@Autowired
+	private TrabajoDao trabajoDao;
 	
 	private final Log logger = LogFactory.getLog(getClass());
 
@@ -140,21 +158,20 @@ public class TrabajoController extends ParadiseJsonController {
 		
 	}	
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView saveFichaTrabajo(DtoFichaTrabajo dtoTrabajo, @RequestParam Long id){
-		
-		boolean success = false;
-		
+	public ModelAndView saveFichaTrabajo(ModelMap model, DtoFichaTrabajo dtoTrabajo, @RequestParam Long id){
 		try {
-			
-			success = trabajoApi.saveFichaTrabajo(dtoTrabajo, id);
+			Boolean success = trabajoApi.saveFichaTrabajo(dtoTrabajo, id);
+			model.put("success", success);
 			
 		} catch(Exception e) {
 			logger.error(e.getMessage());
+			model.put("error", e.getMessage());
+			model.put("success", false);
 		}
-		
-		return createModelAndViewJson(new ModelMap("success", success));
-		
+
+		return createModelAndViewJson(model);
 	}
 	
 	@RequestMapping(method = RequestMethod.POST)
@@ -511,7 +528,7 @@ public class TrabajoController extends ParadiseJsonController {
 			
 			if ( avisador.getAviso(trabajo, usuarioLogado) != null 
 					&&  avisador.getAviso(trabajo, usuarioLogado).getDescripcion() != null) {
-				avisosFormateados.setDescripcion(avisosFormateados.getDescripcion() + "<div class='div-aviso'>" + avisador.getAviso(trabajo, usuarioLogado).getDescripcion() + "</div>");
+				avisosFormateados.setDescripcion(avisosFormateados.getDescripcion() + "<div class='div-aviso red'>" + avisador.getAviso(trabajo, usuarioLogado).getDescripcion() + "</div>");
 			}
 			
         }
@@ -829,6 +846,54 @@ public class TrabajoController extends ParadiseJsonController {
 		}
 		return createModelAndViewJson(model);
 		
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getComboResponsableTrabajo(Long idTrabajo, ModelMap model) {
+		
+		Trabajo trabajo = trabajoDao.get(idTrabajo);
+		
+		Activo activo = trabajo.getActivo();
+		
+		Usuario gestorActivo = gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_ACTIVO);
+		Usuario gestorAlquileres = gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_ALQUILERES);
+		Usuario gestorSuelos = gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_SUELOS);
+		Usuario gestorEdificaciones = gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_EDIFICACIONES);
+		
+		List<DtoUsuario> listaResponsables = new ArrayList<DtoUsuario>();
+		
+		DtoUsuario dtoGestorActivo = new DtoUsuario();
+		DtoUsuario dtoGestorAlquileres = new DtoUsuario();
+		DtoUsuario dtoGestorSuelos = new DtoUsuario();
+		DtoUsuario dtoGestorEdificaciones = new DtoUsuario();
+		
+		try {
+			if(!Checks.esNulo(gestorActivo)){
+				BeanUtils.copyProperties(dtoGestorActivo, gestorActivo);
+				listaResponsables.add(dtoGestorActivo);
+			}
+			if(!Checks.esNulo(gestorAlquileres)){
+				BeanUtils.copyProperties(dtoGestorAlquileres, gestorAlquileres);
+				listaResponsables.add(dtoGestorAlquileres);
+			}
+			if(!Checks.esNulo(gestorSuelos)){
+				BeanUtils.copyProperties(dtoGestorSuelos, gestorSuelos);
+				listaResponsables.add(dtoGestorSuelos);
+			}
+			if(!Checks.esNulo(gestorEdificaciones)){
+				BeanUtils.copyProperties(dtoGestorEdificaciones, gestorEdificaciones);
+				listaResponsables.add(dtoGestorEdificaciones);
+			}
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			e.printStackTrace();
+		}
+		
+		model.put("data", listaResponsables);
+		
+		return new ModelAndView("jsonView", model);
 	}
 	
 	@SuppressWarnings("unchecked")

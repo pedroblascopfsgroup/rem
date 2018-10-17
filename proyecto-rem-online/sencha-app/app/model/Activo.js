@@ -177,7 +177,25 @@ Ext.define('HreRem.model.Activo', {
     		}, 
     		{
     			name:'tipoActivoDescripcion'
+    		},
+    		{
+    			name:'tipoActivoCodigoBde'
     		}, 
+    		{
+    			name:'subtipoActivoCodigoBde'
+    		}, 
+    		{
+    			name:'subtipoActivoDescripcionBde'
+    		}, 
+    		{
+    			name:'tipoActivoDescripcionBde'
+    		},
+    		{
+    			name:'codPromocionFinal'
+    		}, 
+    		{
+    			name:'catContableDescripcion'
+    		},
     		{
     			name:'municipioDescripcion'
     		},
@@ -621,7 +639,26 @@ Ext.define('HreRem.model.Activo', {
 			{
 				name: 'esGestorAlquiler',
 				type: 'boolean'
-			}
+			},
+			{
+				name: 'tienePosibleInformeMediador',
+				type: 'boolean'
+			},
+			{
+    			name: 'isVisibleCodPrinex',
+    			calculate: function(data) { 
+    				return data.entidadPropietariaCodigo == CONST.CARTERA['CAJAMAR'] || data.entidadPropietariaCodigo == CONST.CARTERA['LIBERBANK'];
+    			},
+    			depends: 'entidadPropietariaCodigo'
+    		},
+    		{
+				name: 'asignaGestPorCambioDeProv',
+				type: 'boolean'
+			},
+			{
+    			name: 'isLogUsuGestComerSupComerSupAdmin',
+    			type: 'boolean'
+    		}
     ],
     
 	proxy: {

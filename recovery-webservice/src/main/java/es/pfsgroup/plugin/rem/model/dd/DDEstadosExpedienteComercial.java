@@ -63,6 +63,7 @@ public class DDEstadosExpedienteComercial implements Auditable, Dictionary {
 	public final static String FIRMADO_AQLUILER = "29";
 	public final static String VENTA = "1";
 	public final static String ALQUILER = "0";
+	public final static String ANULADO_PDTE_DEVOLUCION = "17";
 
 	@Id
 	@Column(name = "DD_EEC_ID")

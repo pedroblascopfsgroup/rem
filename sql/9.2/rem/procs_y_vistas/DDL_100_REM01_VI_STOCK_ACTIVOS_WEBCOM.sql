@@ -39,7 +39,7 @@ DECLARE
     CUENTA NUMBER;
     
 BEGIN
-	
+	--V1.1 DAP Se añade rownumber a proveedor tecnico para evitar duplicados por este motivo
 
 	DBMS_OUTPUT.PUT_LINE('********' ||V_TEXT_VISTA|| '********'); 
 	DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_VISTA||'... Comprobaciones previas');
@@ -267,7 +267,7 @@ BEGIN
 					FROM '||V_ESQUEMA||'.ACT_COE_CONDICION_ESPECIFICA COE
 					WHERE COE.COE_FECHA_HASTA IS NULL AND COE.BORRADO = 0 AND COE.COE_FECHA_DESDE <= SYSDATE ) COE on COE.ACT_ID = ACT.ACT_ID
 
-    	LEFT JOIN(  SELECT distinct pve.pve_cod_rem, gac.act_id
+    	LEFT JOIN(  SELECT pve.pve_cod_rem, gac.act_id, row_number() over(partition by gac.act_id order by pve.fechacrear desc) rn
                             FROM '||V_ESQUEMA||'.gac_gestor_add_activo gac INNER JOIN rem01.gee_gestor_entidad gee ON gee.gee_id = gac.gee_id
                                  INNER JOIN '||V_ESQUEMA||'.act_pvc_proveedor_contacto pvc ON pvc.usu_id = gee.usu_id
                                  INNER JOIN '||V_ESQUEMA||'.act_pve_proveedor pve ON pve.pve_id = pvc.pve_id
@@ -276,7 +276,7 @@ BEGIN
                                  INNER join '||V_ESQUEMA||'.act_activo act on act.act_id = gac.ACT_ID
                                  INNER join '||V_ESQUEMA_M||'.dd_tge_tipo_gestor tge on tge.DD_TGE_ID = gee.DD_TGE_ID
                                  INNER join '||V_ESQUEMA||'.ACT_ETP_ENTIDAD_PROVEEDOR etp on etp.DD_CRA_ID = act.DD_CRA_ID and etp.PVE_ID = pve.PVE_ID
-                            where tge.DD_TGE_CODIGO = ''PTEC'') PVEPRV ON PVEPRV.ACT_ID = act.ACT_ID
+                            where tge.DD_TGE_CODIGO = ''PTEC'') PVEPRV ON PVEPRV.ACT_ID = act.ACT_ID and PVEPRV.RN = 1
 
 		
 		where act.borrado = 0 and sps.borrado = 0';

@@ -246,10 +246,9 @@ public class TabActivoPatrimonio implements TabActivoService {
 		}
 		
 		activoPatrimonioDao.save(activoPatrimonio);
-
-		// Actualizar estado publicación activo a través del procedure.
-		/*activoAdapterApi.actualizarEstadoPublicacionActivo(activo.getId());*/
-
+		
+		activoAdapterApi.updateGestoresTabActivoTransactional(activoPatrimonioDto,activo.getId());
+		
 		return activo;
 	}
 

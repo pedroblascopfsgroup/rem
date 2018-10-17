@@ -3,7 +3,7 @@ Ext.define('HreRem.view.agenda.TareaHistorico',{
 					xtype : 'tareaHistorico',
 					reference : 'windowTareaHistorico',
 					title : "Cheking",
-					requires : ['HreRem.view.common.TareaController','HreRem.view.common.GenericCombo', 'HreRem.view.common.GenericComboEspecial', 'HreRem.view.common.GenericTextLabel' ],
+					requires : ['HreRem.view.common.TareaController','HreRem.view.common.GenericCombo', 'HreRem.view.common.GenericComboEspecial', 'HreRem.view.common.GenericTextLabel'],
 					tareaEditable: false,
 					initComponent : function() {
 
@@ -224,7 +224,12 @@ Ext.define('HreRem.view.agenda.TareaHistorico',{
 
 						} ];
 						me.callParent();
-
+						
+						//El me. se puede sustituir por me.getLookupController() y meterlo dentro del controlador de vista.
+				        var validacion = eval('me.' + me.codigoTarea + 'Validacion');
+				        if (!Ext.isEmpty(validacion))
+				            eval('me.' + me.codigoTarea + 'Validacion()');
+						
 					},
 
 					showMotivo : function(cmp, newValue, oldValue) {
@@ -272,6 +277,20 @@ Ext.define('HreRem.view.agenda.TareaHistorico',{
 
 					mostrarValidacionesPost : function() {
 
-					}
-
-				});
+					},
+					
+					T004_AutorizacionPropietarioValidacion: function() {
+				        var me = this;
+				        if(CONST.CARTERA['LIBERBANK']===me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera')){
+				        	me.ocultarCampo(me.down('[name=numIncremento]'));
+				        	me.ocultarCampo(me.down('[name=comboAmpliacion]'));
+				        }else{
+				        	me.ocultarCampo(me.down('[name=comboAmpliacionYAutorizacion]'));
+				        }
+				    },
+					
+					ocultarCampo: function(campo) {
+				        var me = this;
+				        campo.setHidden(true);
+				    }
+			});

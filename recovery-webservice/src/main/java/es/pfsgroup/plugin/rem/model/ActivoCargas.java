@@ -83,6 +83,9 @@ public class ActivoCargas implements Serializable, Auditable {
     @ManyToOne
     @JoinColumn(name = "DD_ODT_ID")
     private DDOrigenDato origenDato;
+    
+    @Column(name = "CRG_CARGAS_PROPIAS")
+    private Integer cargasPropias;
 
 	@Version   
 	private Long version;
@@ -187,6 +190,14 @@ public class ActivoCargas implements Serializable, Auditable {
 
 	public void setObservaciones(String observaciones) {
 		this.observaciones = observaciones;
+	}
+
+	public Integer getCargasPropias() {
+		return cargasPropias;
+	}
+
+	public void setCargasPropias(Integer cargasPropias) {
+		this.cargasPropias = cargasPropias;
 	}
 	
 	

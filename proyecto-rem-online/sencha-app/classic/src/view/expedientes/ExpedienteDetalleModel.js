@@ -66,6 +66,11 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	     },
 	  	     
 	     fechaIngresoChequeReadOnly: function(get) {
+	    	 
+	    	 if($AU.userIsRol("HAYASUPER")){
+	    		 return false;
+	    	 }
+	    	 
 	    	 var carteraCodigo = get('expediente.entidadPropietariaCodigo');
 	    	 var subCartera = get('expediente.propietario');
 	    	 return (CONST.CARTERA['BANKIA'] == carteraCodigo && CONST.NOMBRE_SUBCARTERA['BANKIA_HABITAT'] != subCartera) || CONST.CARTERA['LIBERBANK'] == carteraCodigo;
@@ -73,8 +78,8 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	     
 	     comiteSancionadorNoEditable: function(get) {
 	     	var carteraCodigo = get('expediente.entidadPropietariaCodigo');
-	     	return CONST.CARTERA['BANKIA'] == carteraCodigo || CONST.CARTERA['CAJAMAR'] == carteraCodigo;	
-	     },
+	     	return CONST.CARTERA['BANKIA'] == carteraCodigo || CONST.CARTERA['CAJAMAR'] == carteraCodigo || CONST.CARTERA['LIBERBANK'] == carteraCodigo;	
+	     }, 
 	     
 	     esCarteraSareb: function(get) {
 	     	
@@ -104,6 +109,19 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 		     	
 	     	var carteraCodigo = get('expediente.entidadPropietariaCodigo');
 	     	return CONST.CARTERA['LIBERBANK'] == carteraCodigo;
+		 },
+		 
+		 esReadOnly: function(get) {
+			 var subcarteraCodigo = get('expediente.subcarteraCodigo');
+			 var carteraCodigo = get('expediente.entidadPropietariaCodigo');
+			 
+			 if(CONST.CARTERA['BANKIA'] == carteraCodigo && CONST.SUBCARTERA['BH'] != subcarteraCodigo){
+				 return true;
+			 }else if(CONST.CARTERA['LIBERBANK'] == carteraCodigo){
+				 return true;
+			 }
+			 
+		     return false;
 		 },
 	     
 	     getTipoExpedienteCabecera: function(get) {
@@ -693,6 +711,24 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 				type: 'uxproxy',
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'estadosOfertas'}
+			}
+	    },
+	    
+	    comboEstadoReserva: {
+	    	model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'estadosReserva'}
+			}
+	    },
+	    
+	    comboEstadoExpediente: {
+	    	model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'estadosExpediente'}
 			}
 	    },
 	    

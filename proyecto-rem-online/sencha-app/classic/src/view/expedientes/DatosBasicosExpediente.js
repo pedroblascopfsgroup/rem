@@ -60,6 +60,7 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 							fieldLabel:  HreRem.i18n('fiedlabel.numero.activo.agrupacion'),
 		                	bind:		'{expediente.numEntidad}'
 		                },
+
 		                { 
 		                	xtype:'comboboxfieldbase',
 							fieldLabel:HreRem.i18n('fieldlabel.tipo.inquilino'),
@@ -69,6 +70,16 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 								hidden: '{esOfertaVenta}',
 									store :'{comboTiposInquilino}'
 							}
+		                },
+
+		                {
+		                	xtype: 'comboboxfieldbase',
+		                	bind: {
+								store: '{comboEstadoExpediente}',
+								value: '{expediente.codigoEstado}'
+							},
+							hidden: !$AU.userIsRol("HAYASUPER"),
+		                	fieldLabel:  HreRem.i18n('fieldlabel.estado')
 		                }
 						
 					]
@@ -209,6 +220,7 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 	                		fieldLabel:'{fechaVentaEsAlquiler}'
 	                		}
 	                	//,readOnly: true
+	                	//readOnly: !$AU.userIsRol("HAYASUPER")
 	                	
 	                },
 	                {
@@ -315,7 +327,7 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 							        		disabled: '{!expediente.tieneReserva}',
 							        		store: '{storeEstadosDevolucion}',
 						            		value: '{expediente.estadoDevolucionCodigo}',
-						            		readOnly: '{esCarteraLiberbank}'
+						            		readOnly: '{esReadOnly}'
 						            	},
 						            	listeners:{
 						            		change: function(){

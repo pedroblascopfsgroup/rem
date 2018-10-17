@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=NURIA GARCES
---## FECHA_CREACION=20180719
+--## AUTOR=Alejandro Valverde Herrera
+--## FECHA_CREACION=20180822
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-4309
+--## INCIDENCIA_LINK=HREOS-4434
 --## PRODUCTO=NO
 --##
 --## Finalidad: Script que añade en ZON_PEF_USU los datos añadidos en T_ARRAY_FUNCION.
@@ -39,6 +39,9 @@ DECLARE
     --		    USU_USERNAME	CODIGO PERFIL
 	  T_FUNCION('gestcomalq',	'HAYAGESTCOM'),
 	  T_FUNCION('supcomalq',	'HAYASUPCOM')
+	  T_FUNCION('gestalq',		'GESTALQ'),
+	  T_FUNCION('gestsue',		'GESTSUE'),
+	  T_FUNCION('gestedi',		'GESTEDI')
     );
     V_TMP_FUNCION T_FUNCION;
     V_PERFILES VARCHAR2(100 CHAR) := '%'; 
@@ -64,12 +67,12 @@ BEGIN
 
 			ELSE
 				V_MSQL_1 := 'INSERT INTO '||V_ESQUEMA||'.ZON_PEF_USU' ||
-					    ' (ZPU_ID, ZON_ID, PEF_ID, USU_ID, USUARIOCREAR, FECHACREAR, BORRADO)' || 
-					    ' SELECT '||V_ESQUEMA||'.S_ZON_PEF_USU.NEXTVAL,' ||
-					    ' (SELECT ZON_ID FROM '||V_ESQUEMA||'.ZON_ZONIFICACION WHERE ZON_DESCRIPCION = ''REM''),' ||
-					    ' (SELECT PEF_ID FROM '||V_ESQUEMA||'.PEF_PERFILES WHERE PEF_CODIGO = '''||TRIM(V_TMP_FUNCION(2))||'''),' ||
-				            ' (SELECT USU_ID FROM '||V_ESQUEMA_M||'.USU_USUARIOS WHERE USU_USERNAME = '''||TRIM(V_TMP_FUNCION(1))||'''),' ||
-					    ' ''DML'',SYSDATE,0 FROM DUAL';
+							' (ZPU_ID, ZON_ID, PEF_ID, USU_ID, USUARIOCREAR, FECHACREAR, BORRADO)' || 
+							' SELECT '||V_ESQUEMA||'.S_ZON_PEF_USU.NEXTVAL,' ||
+							' (SELECT ZON_ID FROM '||V_ESQUEMA||'.ZON_ZONIFICACION WHERE ZON_DESCRIPCION = ''REM''),' ||
+							' (SELECT PEF_ID FROM '||V_ESQUEMA||'.PEF_PERFILES WHERE PEF_CODIGO = '''||TRIM(V_TMP_FUNCION(2))||'''),' ||
+							' (SELECT USU_ID FROM '||V_ESQUEMA_M||'.USU_USUARIOS WHERE USU_USERNAME = '''||TRIM(V_TMP_FUNCION(1))||'''),' ||
+							' ''HREOS-4434'',SYSDATE,0 FROM DUAL';
 		    	
 				EXECUTE IMMEDIATE V_MSQL_1;
 				DBMS_OUTPUT.PUT_LINE('[INFO] Datos de la tabla '||V_ESQUEMA||'.ZON_PEF_USU insertados correctamente.');
@@ -77,7 +80,9 @@ BEGIN
 		    END IF;	
       END LOOP;
     COMMIT;
+    
     DBMS_OUTPUT.PUT_LINE('[FIN]: ZON_PEF_USU ACTUALIZADO CORRECTAMENTE ');
+
 
 
 EXCEPTION

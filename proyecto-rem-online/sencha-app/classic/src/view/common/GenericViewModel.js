@@ -36,6 +36,26 @@ Ext.define('HreRem.view.common.GenericViewModel', {
     			autoLoad: true
     		},
     		
+    		comboTipoActivoBde: {
+				model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDiccionario',
+					extraParams: {diccionario: 'tiposActivoBde'}
+				},
+				autoLoad: true
+    		},
+    		
+    		comboSubtipoActivoBde: {
+    			model: 'HreRem.model.ComboBase',
+    			proxy: {
+    				type: 'uxproxy',
+    				remoteUrl: 'generic/getDiccionario',
+    				extraParams: {diccionario: 'subtiposActivoBde'}
+    			},
+    			autoLoad: true
+    		},
+    		
     		comboEstadoActivo: {
 				model: 'HreRem.model.ComboBase',
 				proxy: {

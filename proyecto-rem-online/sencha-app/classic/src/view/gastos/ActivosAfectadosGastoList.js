@@ -52,7 +52,8 @@ Ext.define('HreRem.view.gastos.ActivosAfectadosGastoList', {
 			dock: 'top',
 			items: [
 					{itemId: 'addButton', iconCls:'x-fa fa-plus', handler: 'onAddClick', bind: {hidden: '{ocultarBotonesActivos}'}, scope: this},
-					{itemId: 'removeButton', iconCls:'x-fa fa-minus', handler: 'onDeleteClick', bind: {hidden: '{ocultarBotonesActivos}'}, disabled: true, scope: this}
+					{itemId: 'removeButton', iconCls:'x-fa fa-minus', handler: 'onDeleteClick', bind: {hidden: '{ocultarBotonesActivos}'}, disabled: true, scope: this},
+					{itemId: 'downloadButton', iconCls:'x-fa fa-download', handler: 'onExportClickActivos'}
 			]
 		};			
 					
@@ -129,7 +130,6 @@ Ext.define('HreRem.view.gastos.ActivosAfectadosGastoList', {
 					flex : 1,
 					editor: 'numberfield',
 					summaryType: function(){
-							
 						var store = this;
 	                    var records = store.getData().items;
 	                    var field = ['participacion'];
@@ -189,9 +189,11 @@ Ext.define('HreRem.view.gastos.ActivosAfectadosGastoList', {
 		            		style = "style= 'color: red'";
 		            	}			            	
 		            	return "<span "+style+ ">"+msg+"</span>"
-		            }
-				}
+		            },listeners:{
+						beforerender:'updateGastoByPrinexLBK'
+					}
 
+				}
 		];
 		
 		me.callParent();

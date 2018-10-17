@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import es.capgemini.devon.beans.Service;
 import es.capgemini.pfs.asunto.model.Asunto;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.core.api.asunto.AsuntoApi;
@@ -225,6 +226,12 @@ public class GestorEntidadManager implements GestorEntidadApi {
 	public List<Usuario> getListUsuariosGestoresExpedientePorTipo(Long idTipoGestor) {
 		return gestorEntidadDao.getListUsuariosGestoresExpedientePorTipo(idTipoGestor);
 	}
+
+	@Override
+	public String getCodigoGestorPorUsuario(Long idUsuario) {
+		return gestorEntidadDao.getCodigoGestorPorUsuario(idUsuario);
+	}
+	
 	
 
 }

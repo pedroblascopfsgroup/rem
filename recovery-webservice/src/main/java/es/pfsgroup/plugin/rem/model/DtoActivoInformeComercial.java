@@ -61,6 +61,9 @@ public class DtoActivoInformeComercial extends DtoActivoInformacionComercial{
 	private Boolean tieneProveedorTecnico;
 	private String codigoProveedor;
 	private String nombreProveedor;
+	private Integer posibleInforme;
+	private String motivoNoPosibleInforme;
+	private Boolean posibleInformeBoolean;
 	
 	public String getInferiorMunicipioCodigo() {
 		return inferiorMunicipioCodigo;
@@ -364,5 +367,24 @@ public class DtoActivoInformeComercial extends DtoActivoInformacionComercial{
 	public void setNombreProveedor(String nombreProveedor) {
 		this.nombreProveedor = nombreProveedor;
 	}
+	public Integer getPosibleInforme() {
+		return posibleInforme;
+	}
+	public void setPosibleInforme(Integer posibleInforme) {
+		this.posibleInforme = posibleInforme;
+	}
+	public String getMotivoNoPosibleInforme() {
+		return motivoNoPosibleInforme;
+	}
+	public void setMotivoNoPosibleInforme(String motivoNoPosibleInforme) {
+		this.motivoNoPosibleInforme = motivoNoPosibleInforme;
+	}
+	public Boolean getPosibleInformeBoolean() {
+		return posibleInformeBoolean;
+	}
+	public void setPosibleInformeBoolean(Boolean posibleInformeBoolean) {
+		this.posibleInformeBoolean = posibleInformeBoolean;
+	}
+	
 	
 }

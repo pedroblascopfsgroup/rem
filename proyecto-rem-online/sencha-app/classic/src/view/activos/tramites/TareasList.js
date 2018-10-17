@@ -61,6 +61,7 @@ Ext.define('HreRem.view.activos.tramites.TareasList', {
 	           	 //secFunPermToShow: 'BOTON_REASIGNAR_TAREA',
 	          	 handler: 'reasignarTarea',
 	          	 bind: {
+	          		 hidden: '{tramite.esTareaAutorizacionBankia}',
 	          		 disabled: '{!listadoTareasTramite.selection}'
 	          	 }
              },

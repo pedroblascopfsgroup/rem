@@ -563,5 +563,7 @@ public interface OfertaApi {
 	DDComiteSancion calculoComiteLiberbank(Oferta ofertaAceptada);
 
 	Boolean checkProvinciaCompradores(TareaExterna tareaExterna);
+
+	Boolean checkNifConyugueLBB(TareaExterna tareaExterna);
 }
 

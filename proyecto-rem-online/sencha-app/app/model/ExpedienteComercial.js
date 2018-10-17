@@ -199,6 +199,12 @@ Ext.define('HreRem.model.ExpedienteComercial', {
     		{
     			name: 'definicionOfertaScoring',
        			type: 'boolean'
+    		},
+       		{
+       			name: 'codigoEstado'
+    		},
+    		{
+    			name: 'subcarteraCodigo'
     		}
     		 
     ],

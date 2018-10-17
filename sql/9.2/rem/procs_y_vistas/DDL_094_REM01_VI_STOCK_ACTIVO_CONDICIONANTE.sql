@@ -81,7 +81,7 @@ BEGIN
 	              		  THEN ''04''
 	                      ELSE
 	                        CASE
-							  WHEN (SIN_INFORME_APROBADO = 1  and DD_CRA_CODIGO like ''01'')
+							  WHEN (SIN_INFORME_APROBADO = 1  and DD_CRA_CODIGO IN (''01'', ''08''))
 	                          THEN ''13''                         
 	                          ELSE
 	                            CASE

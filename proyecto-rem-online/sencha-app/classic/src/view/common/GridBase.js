@@ -103,9 +103,21 @@ Ext.define('HreRem.view.common.GridBase', {
 			//grid.mask();
 			grid.getStore().load({callback:function() {grid.unmask();}});			
 		})*/;
-		me.callParent();	
+		me.callParent();
 		
+		me.disableAddButton($AU.userIsRol('HAYACONSU'));
+		me.disablePropagationButton($AU.userIsRol('HAYACONSU') || $AU.userIsRol('PERFGCCLIBERBANK'));
+				
 	},
+	
+	disableAddButton: function(disabled) {
+    	
+    	var me = this;
+    	
+    	if (!Ext.isEmpty(me.down('#addButton'))) {
+    		me.down('#addButton').setDisabled(disabled);    		
+    	}
+    },
 	
 	disableRemoveButton: function(disabled) {
     	

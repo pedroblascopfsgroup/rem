@@ -22,6 +22,7 @@ import org.springframework.ui.ModelMap;
 
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.utils.MessageUtils;
+import es.capgemini.pfs.despachoExterno.model.DespachoExterno;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.procesosJudiciales.model.TipoJuzgado;
@@ -29,6 +30,7 @@ import es.capgemini.pfs.users.domain.Funcion;
 import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -37,12 +39,14 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
+import es.pfsgroup.plugin.recovery.coreextension.api.coreextensionApi;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.rem.activo.dao.impl.ActivoPatrimonioDaoImpl;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.GenericApi;
+import es.pfsgroup.plugin.rem.gestor.GestorActivoManager;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.ActivoPropietario;
@@ -69,6 +73,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDSubtipoClaseActivoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoBloqueo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
@@ -90,6 +95,9 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 
 	@Autowired
 	private GenericAdapter adapter;
+	
+	@Autowired
+	private ApiProxyFactory proxyFactory;
 
 	@Autowired
 	private ActivoApi activoApi;
@@ -105,6 +113,9 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 
 	BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 
+	@Autowired
+	private GestorActivoManager gestorEntidad;
+	
 	@Override
 	public String managerName() {
 		return "genericManager";
@@ -132,8 +143,14 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 
 		authData.setUserName(usuario.getApellidoNombre());
 		authData.setAuthorities(authorities);
-		authData.setUserId(usuario.getId());
+		
+		Long id = usuario.getId();
+		
+		authData.setUserId(id);
 		authData.setRoles(roles);
+		
+		authData.setCodigoGestor(gestorEntidad.getCodigoGestorPorUsuario(id)); 
+		
 		authData.setEsGestorSustituto(esGestorSustituto(usuario));
 
 		return authData;
@@ -481,7 +498,9 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		for (EXTDDTipoGestor tipoGestor : lista) {
 			if (tipoGestor.getCodigo().equals("GCOM") || tipoGestor.getCodigo().equals("GCBO")
 					|| tipoGestor.getCodigo().equals("GFORM") || tipoGestor.getCodigo().equals("FVDNEG")
-					|| tipoGestor.getCodigo().equals("FVDBACKOFR") || tipoGestor.getCodigo().equals("FVDBACKVNT")) {
+					|| tipoGestor.getCodigo().equals("FVDBACKOFR") || tipoGestor.getCodigo().equals("FVDBACKVNT")
+					|| tipoGestor.getCodigo().equals("HAYAGBOINM") || tipoGestor.getCodigo().equals("SBACKOFFICEINMLIBER") 
+					|| tipoGestor.getCodigo().equals("GESRES") || tipoGestor.getCodigo().equals("SUPRES")) {
 				listaResultado.add(tipoGestor);
 			}
 		}
@@ -857,6 +876,7 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		
 	}
 
+
 	@Override
 	public List<DDComiteAlquiler> getComitesAlquilerByCartera(Long idActivo) {
 		
@@ -876,5 +896,44 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		List<DDComiteAlquiler> listaSubcartera= genericDao.getList(DDComiteAlquiler.class, filtroCartera);
 		
 		return listaSubcartera;
+
+	}
+	
+	@Override
+	public List<DDTipoAgrupacion> getComboTipoAgrupacion() {
+		//Se obtiene el tipo de gestor "Gestor de mantenimiento"
+		Filter filtroTipoAgrupacionBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+		Filter filtroCodigoTipoAgrupacion = genericDao.createFilter(FilterType.EQUALS, "codigo", "GACT");
+		EXTDDTipoGestor tipoGestor = genericDao.get(EXTDDTipoGestor.class, filtroTipoAgrupacionBorrado, filtroCodigoTipoAgrupacion);
+		
+		// Se obtiene el listado completo de tipos de agrupacion.
+		List<DDTipoAgrupacion> listaTipoAgrupacionesFiltrado = new ArrayList<DDTipoAgrupacion>();
+		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+		List<DDTipoAgrupacion> listaTipoAgrupaciones = genericDao.getList(DDTipoAgrupacion.class, filtroBorrado, filtroBorrado);
+		
+		// Se mira si el usuario logueado e s de tipo gestor mantenimiento.
+		Usuario usuario = adapter.getUsuarioLogado();
+		List<DespachoExterno> despachos = proxyFactory.proxy(coreextensionApi.class).getListDespachosDeUsuario(tipoGestor.getId(), usuario.getId(), false, false);
+		
+		
+		if (!despachos.isEmpty()) {
+			for(DDTipoAgrupacion tipoAgr: listaTipoAgrupaciones) {
+				if (!DDTipoAgrupacion.AGRUPACION_PROYECTO.equals(tipoAgr.getCodigo())) {
+					listaTipoAgrupacionesFiltrado.add(tipoAgr);
+				}
+			}
+			return listaTipoAgrupacionesFiltrado;
+		} else {
+			return listaTipoAgrupaciones;
+		}
+	}
+	
+	@Override
+	public List<DDTipoAgrupacion> getTodosComboTipoAgrupacion()
+	{
+		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+		List<DDTipoAgrupacion> listaTipoAgrupaciones = genericDao.getList(DDTipoAgrupacion.class, filtroBorrado, filtroBorrado);
+		return listaTipoAgrupaciones;
+
 	}
 }

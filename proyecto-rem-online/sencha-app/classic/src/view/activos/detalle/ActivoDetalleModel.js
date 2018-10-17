@@ -214,6 +214,14 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			   		return 'app-tbfiedset-ico icono-ko'
 			   	}
 			 },
+			 getIconClsCondicionantesSinAcceso: function(get) {
+			var condicion = get('activoCondicionantesDisponibilidad.sinAcceso');
+			   	if(!eval(condicion)) {
+			   		return 'app-tbfiedset-ico'
+			   	} else {
+			   		return 'app-tbfiedset-ico icono-ko'
+			   	}
+			 },
 		 getSiNoFromOtro: function(get) {
 				var condicion = get('activoCondicionantesDisponibilidad.otro');
 

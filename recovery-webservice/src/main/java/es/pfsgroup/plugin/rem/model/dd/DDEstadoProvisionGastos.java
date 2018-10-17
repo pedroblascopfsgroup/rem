@@ -32,6 +32,10 @@ public class DDEstadoProvisionGastos implements Auditable, Dictionary {
 	
 
 	private static final long serialVersionUID = 1L;
+	
+	public static final String CODIGO_RECHAZADO_NO_SUBSANABLE = "04";
+	
+	public static final String CODIGO_AUTORIZADO = "05";
 
 	@Id
 	@Column(name = "DD_EPR_ID")

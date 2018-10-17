@@ -52,6 +52,7 @@ public interface GestorActivoApi extends GestorEntidadApi {
 	public static final String CODIGO_GESTOR_LIBERBANK_RESIDENCIAL = "GLIBRES";
 	public static final String CODIGO_GESTOR_COMERCIAL_ALQUILERES = "GESTCOMALQ";
 	public static final String CODIGO_SUPERVISOR_COMERCIAL_ALQUILERES = "SUPCOMALQ";
+	public static final String CODIGO_SUPERVISOR_COMERCIAL_BACKOFFICE_INMOBILIARIO_LIBERBANK= "SBACKOFFICEINMLIBER";
 	public static final String CODIGO_SUPERVISOR_ALQUILERES = "SUALQ";
 	public static final String CODIGO_GESTOR_ALQUILERES = "GALQ";
 	public static final String CODIGO_GESTOR_SUELOS = "GSUE";
@@ -60,11 +61,14 @@ public interface GestorActivoApi extends GestorEntidadApi {
 	public static final String CODIGO_SUPERVISOR_EDIFICACIONES = "SUPEDI";
 	public static final String CODIGO_GESTOR_LLAVES = "GLLA";
 	public static final String CODIGO_GESTOR_HPM = "GALQ";
-	
+	public static final String CODIGO_GESTOR_PUBLICACION= "GPUBL";
+	public static final String CODIGO_SUPERVISOR_PUBLICACION = "SPUBL";
 	
 	Boolean insertarGestorAdicionalActivo(GestorEntidadDto dto);
 
 	Usuario getGestorByActivoYTipo(Activo activo, Long tipo);
+	
+	Usuario getDirectorEquipoByGestor(Usuario gestor);
 	
 	Usuario getGestorByActivoYTipo(Activo activo, String codigoTipo);
 	

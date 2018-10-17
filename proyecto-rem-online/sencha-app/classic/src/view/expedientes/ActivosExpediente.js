@@ -93,6 +93,7 @@ Ext.define('HreRem.view.expedientes.ActivosExpediente', {
 			    idPrincipal : 'expediente.id',
 			    reference: 'listadoactivosexpediente',
 				cls	: 'panel-base shadow-panel',
+				secFunToEdit: 'EDITAR_GRID_LISTADO_ACTIVOS_EXPEDIENTE',
 				bind: {
 					store: '{storeActivosExpediente}'
 				},

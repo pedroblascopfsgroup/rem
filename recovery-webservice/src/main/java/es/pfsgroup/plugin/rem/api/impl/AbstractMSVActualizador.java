@@ -135,7 +135,11 @@ abstract public class AbstractMSVActualizador implements MSVLiberator {
 							e);
 					if (!file.getProcesoMasivo().getTipoOperacion().getCodigo()
 							.equals(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_VENTA_DE_CARTERA)) {
-						transactionManager.rollback(transaction);
+						try {
+							transactionManager.rollback(transaction);
+						} catch (Exception ex) {
+							logger.error("error rollback proceso masivo");
+						}
 					}
 					resultProcesaFila = new ResultadoProcesarFila();
 					resultProcesaFila.setCorrecto(false);

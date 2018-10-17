@@ -76,8 +76,7 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 				
 		if (!Checks.esNulo(usuarioGestor)) {
 			
-			if (adapter.tienePerfil("HAYAGESTCOM", usuarioGestor)
-					|| adapter.tienePerfil("GESTCOMBACKOFFICE", usuarioGestor)) {
+			if (dtoOfertasFilter.getTipoGestor().equals(GestorActivoApi.CODIGO_GESTOR_COMERCIAL) || dtoOfertasFilter.getTipoGestor().equals(GestorActivoApi.CODIGO_GESTOR_FORMALIZACION)) {
 				
 				// Consulta el tipo gestor: Gestor Comercial (para cruzar por ID en lugar de codigo - evitar subconsulta)
 				Filter filtroTipoGestorComer = genericDao.createFilter(FilterType.EQUALS, "codigo", GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
@@ -126,26 +125,44 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 					+ "  "; 
 				}				
 
-			} else if (adapter.tienePerfil("HAYAGESTFORM", usuarioGestor)) {			
+			}else{
 				
-				if(Checks.esNulo(usuarioGestoria)) {
-					from = from	+ ",GestorExpedienteComercial gestorExpediente ";
-					where = "gestorExpediente.expedienteComercial.id = voferta.idExpediente and gestorExpediente.tipoGestor.codigo = '".concat(GestorExpedienteComercialApi.CODIGO_GESTOR_FORMALIZACION).concat("' and gestorExpediente.usuario.id =".concat(String.valueOf(usuarioGestor.getId())));
-				} else{
-					from = from	+ ",GestorExpedienteComercial gestorExpediente, GestorExpedienteComercial gestoriaExpediente";
-					where = "gestorExpediente.expedienteComercial.id = voferta.idExpediente and gestoriaExpediente.expedienteComercial.id = voferta.idExpediente and "
-							+ "(gestorExpediente.tipoGestor.codigo = '".concat(GestorExpedienteComercialApi.CODIGO_GESTOR_FORMALIZACION).concat("' and gestorExpediente.usuario.id =".concat(String.valueOf(usuarioGestor.getId())))+") or"
-							+ "(gestoriaExpediente.tipoGestor.codigo = '".concat(GestorExpedienteComercialApi.CODIGO_GESTORIA_FORMALIZACION).concat("' and gestoriaExpediente.usuario.id =".concat(String.valueOf(usuarioGestoria.getId()))+") ");
-				}
+				from = from	+ " ,Oferta ofr ,ActivoOferta afr ,GestorActivo gac ,GestorEntidad gee ,Usuario usu "+" ".concat(" ");
+				
+				where = " "+" voferta.numOferta = ofr.numOferta ".concat(" ")
+						+" "+" AND ofr.id = afr.oferta "+" ".concat(" ") 
+						+" "+" AND gac.activo = afr.activo "+" ".concat(" ")
+						+" "+" AND gee.id = gac.id "+" ".concat(" ")
+						+" "+" AND usu.id = gee.usuario.id "+" ".concat(" ")
+						+" "+" AND gee.tipoGestor.codigo = '".concat(dtoOfertasFilter.getTipoGestor()).concat("' ").concat("and gee.usuario.id = '".concat(String.valueOf(usuarioGestor.getId())).concat("'"));
+				
 			} 
-		} 
-		
-		if (!Checks.esNulo(usuarioGestoria) && Checks.esNulo(usuarioGestor)) {			
-			from = from	+ ",GestorExpedienteComercial gestorExpediente ";
-			where = "gestorExpediente.expedienteComercial.id = voferta.idExpediente and gestorExpediente.tipoGestor.codigo = '".concat(GestorExpedienteComercialApi.CODIGO_GESTORIA_FORMALIZACION).concat("' and gestorExpediente.usuario.id =".concat(String.valueOf(usuarioGestoria.getId())));
+			
+		}else if(!Checks.esNulo(usuarioGestor) && !Checks.esNulo(dtoOfertasFilter.getTipoGestor())){			
+					
+			from = from	+ " ,Oferta ofr ,ActivoOferta afr ,GestorActivo gac ,GestorEntidad gee ,Usuario usu ".concat(" ")+" ";
+			
+			where = " "+" voferta.numOferta = ofr.numOferta "+" ".concat(" ")
+					+" "+" AND ofr.id = afr.oferta "+" ".concat(" ") 
+					+" "+" AND gac.activo = afr.activo "+" ".concat(" ")
+					+" "+" AND gee.id = gac.id "+" ".concat(" ")
+					+" "+" AND usu.id = gee.usuario.id "+" ".concat(" ")
+					+" "+" AND ((gee.tipoGestor.codigo = ".concat(" '").concat(dtoOfertasFilter.getTipoGestor()).concat("' ").concat(" and gee.usuario.id = '".concat(String.valueOf(usuarioGestor.getId())).concat("' ")+" )) "+" ");
+			
+				
+		}else if(!Checks.esNulo(dtoOfertasFilter.getTipoGestor()) && Checks.esNulo(usuarioGestor)){
+			
+			from = from	+ " ,Oferta ofr ,ActivoOferta afr ,GestorActivo gac ,GestorEntidad gee ,Usuario usu "+" ".concat(" ");
+			
+			where = " "+" voferta.numOferta = ofr.numOferta ".concat(" ")
+					+" "+" AND ofr.id = afr.oferta "+" ".concat(" ") 
+					+" "+" AND gac.activo = afr.activo "+" ".concat(" ")
+					+" "+" AND gee.id = gac.id "+" ".concat(" ")
+					+" "+" AND usu.id = gee.usuario.id "+" ".concat(" ")
+					+" "+" AND gee.tipoGestor.codigo = '".concat(dtoOfertasFilter.getTipoGestor()).concat("' ");
+				
 		}
-		
-		
+			
 		hb = new HQLBuilder(from);
 		
 		if(!Checks.esNulo(where)) {

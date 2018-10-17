@@ -424,6 +424,9 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 									            		store: '{comboRegimenesMatrimoniales}',
 									            		value: '{comprador.codigoRegimenMatrimonial}'
 									            	},
+									            	listeners: {
+									            		change: 'comprobarObligatoriedadCamposNexos'
+									            	},
 									            	allowBlank:true
 						                		},
 												{ 

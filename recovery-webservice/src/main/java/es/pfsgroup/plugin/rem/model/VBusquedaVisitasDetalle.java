@@ -349,6 +349,4 @@ public class VBusquedaVisitasDetalle implements Serializable {
 	public void setIdCartera(String idCartera) {
 		this.idCartera = idCartera;
 	}
-	
-
 }

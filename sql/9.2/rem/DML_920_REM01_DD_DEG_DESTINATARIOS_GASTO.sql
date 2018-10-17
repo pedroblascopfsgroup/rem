@@ -1,16 +1,16 @@
 --/*
 --##########################################
 --## AUTOR=JOSE VILLEL
---## FECHA_CREACION=20160923
+--## FECHA_CREACION=20180904
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1
---## INCIDENCIA_LINK=0
+--## INCIDENCIA_LINK=REMVIP-1698
 --## PRODUCTO=NO
 --##
---## Finalidad: Script que añade en DD_DEG_DESTINATARIOS_GASTO los datos añadidos en T_ARRAY_DATA
+--## Finalidad: Se añade un valor nuevo de DD para incidencia en la migración de Liberbank.
 --## INSTRUCCIONES:
 --## VERSIONES:
---##        0.1 Versión inicial
+--##        0.1 Versión inicial - Jose Villel (20160923) Script que añade en DD_DEG_DESTINATARIOS_GASTO los datos añadidos en T_ARRAY_DATA 		
 --##########################################
 --*/
 
@@ -39,7 +39,8 @@ DECLARE
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
         T_TIPO_DATA('01'	,'Propietario (u obligado al pago sustituto)'	,'Propietario (u obligado al pago sustituto)'),
-        T_TIPO_DATA('02'	,'Haya'	,'Haya')
+        T_TIPO_DATA('02'	,'Haya'	,'Haya'),
+        T_TIPO_DATA('03'	,'Contabilidad Liberbank'	,'Contabilidad Liberbank')
 	); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     

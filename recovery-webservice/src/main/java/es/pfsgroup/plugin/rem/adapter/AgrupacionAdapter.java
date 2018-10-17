@@ -68,8 +68,8 @@ import es.pfsgroup.plugin.rem.model.ActivoLoteComercial;
 import es.pfsgroup.plugin.rem.model.ActivoObraNueva;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoPropietario;
-import es.pfsgroup.plugin.rem.model.ActivoPropietarioActivo;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
+import es.pfsgroup.plugin.rem.model.ActivoProyecto;
 import es.pfsgroup.plugin.rem.model.ActivoRestringida;
 import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
 import es.pfsgroup.plugin.rem.model.AgrupacionesVigencias;
@@ -95,6 +95,7 @@ import es.pfsgroup.plugin.rem.model.VBusquedaVisitasDetalle;
 import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoObraNueva;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacion;
@@ -102,7 +103,9 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
@@ -253,7 +256,7 @@ public class AgrupacionAdapter {
 						agrupacion.getTipoAgrupacion().getDescripcion());
 				BeanUtils.copyProperty(dtoAgrupacion, "tipoAgrupacionCodigo",
 						agrupacion.getTipoAgrupacion().getCodigo());
-
+				
 				// Si es de tipo 'Lote Comercial'
 				if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL)) {
 					ActivoLoteComercial agrupacionTemp = (ActivoLoteComercial) agrupacion;
@@ -362,6 +365,66 @@ public class AgrupacionAdapter {
 								agrupacionTemp.getProvincia().getCodigo());
 					}
 
+					// SI ES TIPO PROYECTO
+				} else if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_PROYECTO)) {
+
+					ActivoProyecto proyectoTemp = (ActivoProyecto) agrupacion;
+
+					BeanUtils.copyProperties(dtoAgrupacion, proyectoTemp);
+
+					if (proyectoTemp.getLocalidad() != null) {
+						BeanUtils.copyProperty(dtoAgrupacion, "municipioDescripcion",
+								proyectoTemp.getLocalidad().getDescripcion());
+						BeanUtils.copyProperty(dtoAgrupacion, "municipioCodigo",
+								proyectoTemp.getLocalidad().getCodigo());
+					}
+
+					if (proyectoTemp.getProvincia() != null) {
+						BeanUtils.copyProperty(dtoAgrupacion, "provinciaDescripcion",
+								proyectoTemp.getProvincia().getDescripcion());
+						BeanUtils.copyProperty(dtoAgrupacion, "provinciaCodigo",
+								proyectoTemp.getProvincia().getCodigo());
+					}
+					
+					if (proyectoTemp.getDobleGestorActivo() != null) {
+						BeanUtils.copyProperty(dtoAgrupacion, "codigoGestorDobleActivo",
+								proyectoTemp.getDobleGestorActivo().getId());
+					}
+					if (proyectoTemp.getGestorActivo() != null) {
+						BeanUtils.copyProperty(dtoAgrupacion, "codigoGestorActivo",
+								proyectoTemp.getGestorActivo().getId());
+					}
+					
+					if (proyectoTemp.getCodigoPostal() != null) {
+						BeanUtils.copyProperty(dtoAgrupacion, "codigoPostal",
+								proyectoTemp.getCodigoPostal());
+					}
+					if (proyectoTemp.getEstadoActivo() != null) {
+						BeanUtils.copyProperty(dtoAgrupacion, "estadoActivoCodigo",
+								proyectoTemp.getEstadoActivo().getCodigo());
+						dtoAgrupacion.setEstadoActivoCodigo(proyectoTemp.getEstadoActivo().getCodigo());
+					}
+					
+					if (proyectoTemp.getTipoActivo()!= null) {
+						BeanUtils.copyProperty(dtoAgrupacion, "tipoActivoCodigo",
+								proyectoTemp.getTipoActivo().getCodigo());
+					}
+					
+					if (proyectoTemp.getSubtipoActivo() != null) {
+						BeanUtils.copyProperty(dtoAgrupacion, "subtipoActivoCodigo",
+								proyectoTemp.getSubtipoActivo().getCodigo());
+					}
+					
+					if (proyectoTemp.getGestorcomercial() != null) {
+						BeanUtils.copyProperty(dtoAgrupacion, "codigoGestorComercial",
+								proyectoTemp.getGestorcomercial().getId());
+					}
+					
+					if (proyectoTemp.getCartera() != null) {
+						BeanUtils.copyProperty(dtoAgrupacion, "cartera", proyectoTemp.getCartera().getDescripcion());
+						BeanUtils.copyProperty(dtoAgrupacion, "codigoCartera", proyectoTemp.getCartera().getCodigo());
+					}
+					
 				}
 
 				// TODO: Hacer cuando esté listo el activo principal dentro de
@@ -375,13 +438,16 @@ public class AgrupacionAdapter {
 					}
 				}
 
-				if (agrupacion.getActivoPrincipal() != null && agrupacion.getActivoPrincipal().getCartera() != null) {
+				if (agrupacion.getActivoPrincipal() != null 
+						&& agrupacion.getActivoPrincipal().getCartera() != null
+						&& !agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_PROYECTO)) {
 					BeanUtils.copyProperty(dtoAgrupacion, "cartera",
 							agrupacion.getActivoPrincipal().getCartera().getDescripcion());
 					BeanUtils.copyProperty(dtoAgrupacion, "codigoCartera",
 							agrupacion.getActivoPrincipal().getCartera().getCodigo());
 				} else if (agrupacion.getActivos() != null && !agrupacion.getActivos().isEmpty()
-						&& agrupacion.getActivos().get(0).getActivo().getCartera() != null) {
+						&& agrupacion.getActivos().get(0).getActivo().getCartera() != null
+						&& !agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_PROYECTO)) {
 					BeanUtils.copyProperty(dtoAgrupacion, "cartera",
 							agrupacion.getActivos().get(0).getActivo().getCartera().getDescripcion());
 					BeanUtils.copyProperty(dtoAgrupacion, "codigoCartera",
@@ -538,7 +604,18 @@ public class AgrupacionAdapter {
 			if (Checks.esNulo(activo)) {
 				throw new JsonViewerException("El activo no existe");
 			}
-
+			
+			//Si el activo es de Liberbank, además debe ser de la misma subcartera
+			if(DDCartera.CODIGO_CARTERA_LIBERBANK.equals(activo.getCartera().getCodigo()) && !Checks.estaVacio(agrupacion.getActivos())) {
+				if(!Checks.esNulo(activo.getSubcartera())) {
+					if(!agrupacion.getActivos().get(0).getActivo().getSubcartera().equals(activo.getSubcartera())) {
+						throw new JsonViewerException("El activo añadido tiene que tener la misma subcartera que los ya existentes");
+					}
+				}else{
+					throw new JsonViewerException("El activo no se puede añadir por que no tiene subcartera");
+				}
+			}
+			
 			// Si la agrupación es asistida, el activo además de existir tiene
 			// que ser asistido.
 			if (DDTipoAgrupacion.AGRUPACION_ASISTIDA.equals(agrupacion.getTipoAgrupacion().getCodigo())) {
@@ -563,8 +640,8 @@ public class AgrupacionAdapter {
 				//Comprobamos no mezclar activos canarios y peninsulares
 				distintosTiposImpuesto(agrupacion, activo);
 				
-				//Comprobamos no
-			//	comprobarDistintoPropietario(agrupacion, activo);
+				//Comprobamos que los activos son del mismo propietario
+				comprobarDistintoPropietario(agrupacion, activo);
 				
 				List<Oferta> ofertasAgrupacion = agrupacion.getOfertas();
 				if (tieneOfertasNoAnuladas(ofertasAgrupacion)) {
@@ -604,6 +681,16 @@ public class AgrupacionAdapter {
 				activoAgrupacionActivo.setFechaInclusion(today);
 				activoAgrupacionActivoApi.save(activoAgrupacionActivo);
 			}
+			
+			//Validaciones para las agrupaciones de tipo proyecto
+			if (DDTipoAgrupacion.AGRUPACION_PROYECTO.equals(agrupacion.getTipoAgrupacion().getCodigo())) {
+				ActivoProyecto proyecto = (ActivoProyecto) agrupacion;
+				if(!activo.getCartera().equals(proyecto.getCartera())
+						|| !activo.getProvincia().equals(proyecto.getProvincia().getCodigo())){
+					throw new JsonViewerException("El activo no tiene la misma Provincia o Cartera que la agrupación");
+				}
+			}
+			
 			// En asistidas hay que hacer una serie de actualizaciones
 			// 'especiales'.
 			if (DDTipoAgrupacion.AGRUPACION_ASISTIDA.equals(agrupacion.getTipoAgrupacion().getCodigo())) {
@@ -655,9 +742,12 @@ public class AgrupacionAdapter {
 					// Solo tratar con agrupaciones del tipo 'restringida'.
 					if (activoAgrupacionActivo.getAgrupacion().getTipoAgrupacion().getCodigo()
 							.equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA)) {
-						incluidoAgrupacionRestringida = true;
-						List<ActivoAgrupacionActivo> activosAgrupacion = activoAgrupacionActivo.getAgrupacion()
-								.getActivos();
+					
+						// Solo tratar con agrupaciones que no tengan informada 'fecha baja'.
+						if(Checks.esNulo(activoAgrupacionActivo.getAgrupacion().getFechaBaja()) && 
+								!Checks.esNulo(activoAgrupacionActivo.getAgrupacion().getActivos())){
+							List<ActivoAgrupacionActivo> activosAgrupacion = activoAgrupacionActivo.getAgrupacion().getActivos();
+							incluidoAgrupacionRestringida = true;
 						if (!Checks.estaVacio(activosAgrupacion)) {
 							// Obtener todos los activos de la agrupación
 							// restringida en la que se encuentra el activo a
@@ -677,6 +767,7 @@ public class AgrupacionAdapter {
 					}
 				}
 			}
+		}
 
 			if (!Checks.estaVacio(activosList)) {
 				for (Activo act : activosList) {
@@ -738,7 +829,8 @@ public class AgrupacionAdapter {
 			throw new JsonViewerException(BusinessValidators.ERROR_PROV_NULL);
 
 		if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_OBRA_NUEVA)
-				|| agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_ASISTIDA)) {
+				|| agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_ASISTIDA)
+				|| agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_PROYECTO)) {
 
 			if (Checks.esNulo(activo.getCartera()))
 				throw new JsonViewerException(BusinessValidators.ERROR_CARTERA_NULL);
@@ -770,6 +862,13 @@ public class AgrupacionAdapter {
 			restringida.setCodigoPostal(pobl.getCodPostal());
 			restringida.setActivoPrincipal(activo);
 			return restringida;
+			
+		} else if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_PROYECTO)) {	
+			ActivoProyecto proyecto = (ActivoProyecto) agrupacion;
+			proyecto.setLocalidad(pobl.getLocalidad());
+			proyecto.setProvincia(pobl.getProvincia());
+			proyecto.setCodigoPostal(pobl.getCodPostal());
+			return proyecto;
 
 		} else if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_ASISTIDA)) {
 			ActivoAsistida asistida = (ActivoAsistida) agrupacion;
@@ -1126,6 +1225,18 @@ public class AgrupacionAdapter {
 
 			genericDao.save(ActivoRestringida.class, restringida);
 
+			// Si es PROYECTO
+		} else if (dtoAgrupacion.getTipoAgrupacion().equals(DDTipoAgrupacion.AGRUPACION_PROYECTO)) {
+
+			ActivoProyecto proyecto = new ActivoProyecto();
+			proyecto.setDescripcion(dtoAgrupacion.getDescripcion());
+			proyecto.setNombre(dtoAgrupacion.getNombre());
+			proyecto.setTipoAgrupacion(tipoAgrupacion);
+			proyecto.setFechaAlta(new Date());
+			proyecto.setNumAgrupRem(numAgrupacionRem);
+			
+			genericDao.save(ActivoProyecto.class, proyecto);
+
 			// Si es ASISTIDA
 		} else if (dtoAgrupacion.getTipoAgrupacion().equals(DDTipoAgrupacion.AGRUPACION_ASISTIDA)) {
 
@@ -1176,6 +1287,10 @@ public class AgrupacionAdapter {
 			} else if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA)) {
 
 				genericDao.deleteById(ActivoRestringida.class, Long.valueOf(dtoAgrupacion.getId()));
+
+			} else if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_PROYECTO)) {
+				
+				genericDao.deleteById(ActivoProyecto.class, Long.valueOf(dtoAgrupacion.getId()));
 
 			} else if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_ASISTIDA)) {
 
@@ -1310,9 +1425,14 @@ public class AgrupacionAdapter {
 		if (!Checks.estaVacio(agr.getActivos()) && !Checks.esNulo(agr.getActivos().get(0))
 				&& !Checks.esNulo(agr.getActivos().get(0).getActivo())
 				&& !Checks.esNulo(agr.getActivos().get(0).getActivo().getCartera())
-				&& !Checks.esNulo(agr.getActivos().get(0).getActivo().getCartera().getCodigo()) && agr.getActivos()
-						.get(0).getActivo().getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_CAJAMAR)) {
-			if (Checks.esNulo(loteComercial.getUsuarioGestorComercial())) {
+				&& !Checks.esNulo(agr.getActivos().get(0).getActivo().getCartera().getCodigo()) 
+				&& (agr.getActivos().get(0).getActivo().getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_CAJAMAR)
+						|| agr.getActivos().get(0).getActivo().getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_LIBERBANK))) {
+			if (Checks.esNulo(loteComercial.getUsuarioGestorComercial()) && 
+					!agr.getActivos().get(0).getActivo().getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_LIBERBANK)) {
+				return false;
+			} else if(Checks.esNulo(loteComercial.getUsuarioGestorComercialBackOffice()) &&
+					agr.getActivos().get(0).getActivo().getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_LIBERBANK)) {
 				return false;
 			}
 		} else {
@@ -1565,7 +1685,7 @@ public class AgrupacionAdapter {
 
 			if (avisador.getAviso(agrupacion, usuarioLogado) != null
 					&& avisador.getAviso(agrupacion, usuarioLogado).getDescripcion() != null) {
-				avisosFormateados.setDescripcion(avisosFormateados.getDescripcion() + "<div class='div-aviso'>"
+				avisosFormateados.setDescripcion(avisosFormateados.getDescripcion() + "<div class='div-aviso red'>"
 						+ avisador.getAviso(agrupacion, usuarioLogado).getDescripcion() + "</div>");
 			}
 
@@ -1897,6 +2017,121 @@ public class AgrupacionAdapter {
 				return false;
 			}
 		}
+		
+		// Si es de tipo 'Proyecto'.
+		if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_PROYECTO)) {
+			
+			ActivoProyecto proyecto = (ActivoProyecto) agrupacion;
+			
+			try {
+
+				beanUtilNotNull.copyProperties(proyecto, dto);
+				
+				
+
+				if (dto.getMunicipioCodigo() != null) {
+
+					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getMunicipioCodigo());
+					Localidad municipioNuevo = (Localidad) genericDao.get(Localidad.class, filtro);
+
+					proyecto.setLocalidad(municipioNuevo);
+				}
+
+				if (dto.getProvinciaCodigo() != null) {
+
+					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getProvinciaCodigo());
+					DDProvincia provinciaNueva = (DDProvincia) genericDao.get(DDProvincia.class, filtro);
+
+					proyecto.setProvincia(provinciaNueva);
+				}
+				
+				if (dto.getCodigoPostal() != null) {
+
+					proyecto.setCodigoPostal(dto.getCodigoPostal());
+				}
+				
+				if (dto.getTipoActivoCodigo() != null) {
+					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getTipoActivoCodigo() );
+					DDTipoActivo tipoActivo = (DDTipoActivo) genericDao.get(DDTipoActivo.class, filtro);
+					proyecto.setTipoActivo(tipoActivo);
+					
+				}
+				
+				if (dto.getSubtipoActivoCodigo() != null) {
+					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getSubtipoActivoCodigo() );
+					DDSubtipoActivo subTipoActivo = (DDSubtipoActivo) genericDao.get(DDSubtipoActivo.class, filtro);
+					proyecto.setSubtipoActivo(subTipoActivo);
+
+				}
+				
+				if (dto.getEstadoActivoCodigo() != null) {
+					
+					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getEstadoActivoCodigo());
+					DDEstadoActivo estadoActivo = (DDEstadoActivo) genericDao.get(DDEstadoActivo.class, filtro);
+					proyecto.setEstadoActivo(estadoActivo);
+
+				}
+				
+				if(dto.getNombre() != null) {
+					
+					proyecto.setNombre(dto.getNombre());
+					
+				}
+				
+				if(dto.getDescripcion() != null) {
+					
+					proyecto.setDescripcion(dto.getDescripcion());
+				}
+				
+				
+				if (dto.getCodigoGestorActivo() != null) {
+					
+					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dto.getCodigoGestorActivo());
+					Usuario GestorActivo = genericDao.get(Usuario.class, filtro);
+					proyecto.setGestorActivo(GestorActivo);
+
+				}
+				
+				if (dto.getCodigoGestorDobleActivo() != null) {
+					
+					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dto.getCodigoGestorDobleActivo());
+					Usuario dobleGestorActivo = genericDao.get(Usuario.class, filtro);
+					proyecto.setDobleGestorActivo(dobleGestorActivo);
+
+				}
+				
+				if (dto.getCodigoGestorComercial() != null) {
+					
+					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dto.getCodigoGestorComercial());
+					Usuario gestorComercial = genericDao.get(Usuario.class, filtro);
+					proyecto.setGestorcomercial(gestorComercial);
+
+				}
+				
+				if (dto.getFechaBaja() != null) {
+	
+					proyecto.setFechaBaja(dto.getFechaBaja());
+				}
+				
+				if (!Checks.esNulo(dto.getCodigoCartera())) {
+					
+					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getCodigoCartera());
+					
+					DDCartera cartera = genericDao.get(DDCartera.class, filtro);
+					
+					proyecto.setCartera(cartera);
+				
+				}
+				
+				activoAgrupacionApi.saveOrUpdate(proyecto);
+
+			} catch (Exception e) {
+
+				logger.error("error en agrupacionAdapter", e);
+				return false;
+			}
+		}
+		
 		//si modificamos la vigencia ejecutamos reactivación activos
 		if(vigenciaModificada && agrupacion.getActivos() != null){
 			// lo ejecutamos de forma asincrona, si hay muchos tarda em completar
@@ -1957,6 +2192,32 @@ public class AgrupacionAdapter {
 
 		if (!Checks.esNulo(tipoGestor)) {
 			return activoAdapter.getComboUsuarios(tipoGestor.getId());
+		}
+
+		return null;
+	}
+	
+	public List<DtoUsuario> getUsuariosPorDobleCodTipoGestor(String codigoGestorEdi,String codigoGestorSu) {
+		
+		List<DtoUsuario> listaUsuariosDtoDobleActivo = new ArrayList<DtoUsuario>();
+		
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", codigoGestorEdi);
+		EXTDDTipoGestor tipoGestor = (EXTDDTipoGestor) genericDao.get(EXTDDTipoGestor.class, filtro);
+		
+		Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "codigo", codigoGestorSu);
+		EXTDDTipoGestor tipoGestor2 = (EXTDDTipoGestor) genericDao.get(EXTDDTipoGestor.class, filtro2);
+
+		if (!Checks.esNulo(tipoGestor) && !Checks.esNulo(tipoGestor2) ) {
+			
+			for (DtoUsuario dtoUsuario : activoAdapter.getComboUsuarios(tipoGestor.getId())) {
+				listaUsuariosDtoDobleActivo.add(dtoUsuario);
+			}
+			
+			for (DtoUsuario dtoUsuario2 : activoAdapter.getComboUsuarios(tipoGestor2.getId())) {
+				listaUsuariosDtoDobleActivo.add(dtoUsuario2);
+			}
+			
+			return listaUsuariosDtoDobleActivo;
 		}
 
 		return null;
@@ -2326,16 +2587,16 @@ public class AgrupacionAdapter {
 	
 	private void comprobarDistintoPropietario(ActivoAgrupacion agrupacion, Activo activo) {
 
-		Activo actAgr;
+		Activo actAgr = null;
 		
 		if (!Checks.esNulo(agrupacion.getActivoPrincipal())) {
 			actAgr = agrupacion.getActivoPrincipal();
-		}else {
+		}else if(!Checks.esNulo(agrupacion.getActivos()) && !Checks.estaVacio(agrupacion.getActivos())){
 			actAgr = agrupacion.getActivos().get(0).getActivo();
 		}
 		
 			
-		if (actAgr.getPropietarioPrincipal().getId() != activo.getPropietarioPrincipal().getId()) {
+		if (!Checks.esNulo(actAgr) && actAgr.getPropietarioPrincipal().getId() != activo.getPropietarioPrincipal().getId()) {
 			throw new JsonViewerException(AgrupacionValidator.ERROR_ACTIVO_DISTINTO_PROPIETARIO);
 		}
 		

@@ -174,8 +174,10 @@ public class ActivoController extends ParadiseJsonController {
 
 		try {
 			boolean success = adapter.saveTabActivo(activoDto, id, TabActivoService.TAB_DATOS_BASICOS);
-			if (success)
+			if (success){
 				adapter.updatePortalPublicacion(id);
+				adapter.updateGestoresTabActivoTransactional(activoDto, id);
+			}
 			model.put("success", success);
 		} catch (JsonViewerException jvex) {
 			model.put("success", false);
@@ -1530,7 +1532,10 @@ public class ActivoController extends ParadiseJsonController {
 			response.setHeader("Pragma", "public");
 			response.setDateHeader("Expires", 0); // prevents caching at the
 													// proxy
-			response.setContentType(fileItem.getContentType());
+			if(!Checks.esNulo(fileItem.getContentType())) {
+				response.setContentType(fileItem.getContentType());
+			}
+			
 			// Write
 			FileUtils.copy(fileItem.getInputStream(), salida);
 			salida.flush();
@@ -2525,7 +2530,7 @@ public class ActivoController extends ParadiseJsonController {
 	public ModelAndView saveDatosPatrimonio(DtoActivoPatrimonio patrimonioDto, @RequestParam Long id, ModelMap model) {
 		try {
 			boolean success = adapter.saveTabActivo(patrimonioDto, id, TabActivoService.TAB_PATRIMONIO);
-			if (success) adapter.actualizarEstadoPublicacionActivo(id);
+			//if (success) adapter.actualizarEstadoPublicacionActivo(id);
 			model.put("success", success);
 
 		} catch (JsonViewerException jvex) {

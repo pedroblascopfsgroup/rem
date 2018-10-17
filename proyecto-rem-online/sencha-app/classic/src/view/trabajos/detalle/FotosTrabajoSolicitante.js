@@ -147,9 +147,19 @@ Ext.define('HreRem.view.trabajos.detalle.FotosTrabajoSolicitante', {
 		}
 		];
 		
-
     	me.callParent();
+        me.disableAddButton($AU.userIsRol('HAYACONSU') || $AU.userIsRol('PERFGCCLIBERBANK'));
+
     	
+    },
+    
+    disableAddButton: function(disabled) {
+    	
+    	var me = this;
+    	
+    	if (!Ext.isEmpty(me.down('#addButton'))) {
+    		me.down('#addButton').setDisabled(disabled);    		
+    	}
     },
     
     dragDrop: function() {

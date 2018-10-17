@@ -40,6 +40,7 @@ Ext.define('HreRem.view.activos.detalle.DatosComunidadActivo', {
 									    removeButton: false,
 									    reference: 'listadoEntidadesref',
 										cls	: 'panel-base shadow-panel',
+										secFunToEdit: 'EDITAR_GRID_LISTADO_FICHA_COMUNIDAD_ENTIDADES',
 										bind: {
 											store: '{storeEntidades}'
 										},

@@ -17,13 +17,13 @@ import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.agendaMultifuncion.impl.dto.DtoAdjuntoMail;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.notificator.AbstractNotificatorService;
-import es.pfsgroup.plugin.rem.jbpm.handler.notificator.impl.NotificatorServiceSancionOfertaGenerico;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoBancario;
 import es.pfsgroup.plugin.rem.model.ActivoLoteComercial;
@@ -125,15 +125,35 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 
 			if(!Checks.esNulo(usuario)){
 				mailsPara.add(usuario.getEmail());
+				
+				Usuario directorEquipo = gestorActivoManager.getDirectorEquipoByGestor(usuario);
+				if (!Checks.esNulo(directorEquipo)){
+					mailsPara.add(directorEquipo.getEmail());
+				}
+				
+				List<GestorSustituto> sustitutos = genericDao.getList(GestorSustituto.class, genericDao.createFilter(FilterType.EQUALS, "usuarioGestorOriginal.id", usuario.getId()));
+				if (!Checks.esNulo(sustitutos)){
+					for (GestorSustituto gestorSustituto : sustitutos) {
+						if (!Checks.esNulo(gestorSustituto)){
+							if ((gestorSustituto.getFechaFin().after(new Date()) || gestorSustituto.getFechaFin().equals(new Date())) && (gestorSustituto.getFechaInicio().before(new Date()) || gestorSustituto.getFechaInicio().equals(new Date())) && !gestorSustituto.getAuditoria().isBorrado()){
+								mailsPara.add(gestorSustituto.getUsuarioGestorSustituto().getEmail());
+							}
+						}
+					}
+				}				
 			}
+			
 			if(!Checks.esNulo(supervisor)){
 				mailsPara.add(supervisor.getEmail());
 			}
+			
 			if(!Checks.esNulo(activo.getCartera()) && DDCartera.CODIGO_CARTERA_CAJAMAR.equals(activo.getCartera().getCodigo())){
 				if(!Checks.esNulo(usuarioManager.getByUsername(USUARIO_FICTICIO_OFERTA_CAJAMAR))){
 					mailsPara.add(usuarioManager.getByUsername(USUARIO_FICTICIO_OFERTA_CAJAMAR).getEmail());
 				}				
-			}			
+			}
+
+			
 			mailsCC.add(this.getCorreoFrom());
 			
 			if(!Checks.esNulo(oferta) && !Checks.esNulo(oferta.getCliente()) && !Checks.esNulo(oferta.getCliente().getTipoDocumento())){
@@ -186,7 +206,7 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 				}
 				//ADJUNTOS SI ES BANKIA
 				else if(activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_BANKIA)){
-					f1 = FileItemUtils.fromResource("docs/instrucciones_reserva_Bankia_v6.docx");
+					f1 = FileItemUtils.fromResource("docs/instrucciones_reserva_Bankia_v7.docx");
 					adjuntos.add(createAdjunto(f1, "instrucciones_reserva_Bankia.docx"));
 				}
 				//ADJUNTOS SI ES TANGO

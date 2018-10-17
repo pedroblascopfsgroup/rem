@@ -1093,5 +1093,9 @@ public interface ExpedienteComercialApi {
 	 * @return ExpedienteComercial
 	 */
 	public ExpedienteComercial tareaExternaToExpedienteComercial(TareaExterna tareaExterna);
+
+	public String getCodigoCarteraExpediente(String idExpediente);
+
+	DtoPage getActivosExpedienteVista(Long idExpediente);	
 	
 }

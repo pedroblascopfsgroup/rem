@@ -36,6 +36,7 @@ import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
 import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
 import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
+import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.bpm.ExtendedProcessManager;
@@ -133,6 +134,9 @@ public abstract class ActivoBaseActionHandler implements ActionHandler {
 
 	@Autowired
 	private GestorActivoApi gestorActivoApi;
+	
+	@Autowired
+	private UsuarioManager usuarioManager;
 	
     /**
      * Método que recupera el ID del BPM asociado a la ejecución.
@@ -668,7 +672,7 @@ public abstract class ActivoBaseActionHandler implements ActionHandler {
 		TareaExterna tareaExterna = activoTareaExternaManagerApi.get(idTarea);
 		TareaActivo tareaActivo = ((TareaActivo)tareaExterna.getTareaPadre());
 		EXTTareaProcedimiento tareaProcedimiento = (EXTTareaProcedimiento) tareaExterna.getTareaProcedimiento();
-		Usuario usuarioLogado = adapter.getUsuarioLogado();;
+		Usuario usuarioLogado = adapter.getUsuarioLogado();
 		String nombreUsuarioWS = RestApi.REST_LOGGED_USER_USERNAME;
 
 		// Factoria asignador gestores por tarea
@@ -677,11 +681,20 @@ public abstract class ActivoBaseActionHandler implements ActionHandler {
 
 		// Asignador de GESTOR por factoria - Gestores encontrados por tarea-Activo
 		Trabajo trabajo = tarea.getTramite().getTrabajo();
-		Usuario solicitante = trabajo.getSolicitante();
-		Usuario responsableTrabajo = trabajo.getUsuarioResponsableTrabajo();
+
+		Usuario solicitante = null;
+		Usuario responsableTrabajo = null;
+		if(trabajo != null){
+			 solicitante = trabajo.getSolicitante();
+			 responsableTrabajo = trabajo.getUsuarioResponsableTrabajo();
+		}else{
+			solicitante = usuarioLogado;
+			responsableTrabajo = usuarioLogado;
+		}
+		
 
 		if(!Checks.esNulo(tareaExterna) && !Checks.esNulo(tareaExterna.getTareaProcedimiento()) && 
-				(CODIGO_T004_AUTORIZACION_BANKIA.equals(tareaExterna.getTareaProcedimiento().getCodigo()) || 
+				(!tareaExterna.getTareaProcedimiento().getTipoProcedimiento().getCodigo().equals("T004") ||
 				(CODIGO_T004_AUTORIZACION_PROPIETARIO.equals(tareaExterna.getTareaProcedimiento().getCodigo()) && DDCartera.CODIGO_CARTERA_LIBERBANK.equals(activo.getCartera().getCodigo())))){
 			supervisor = userAssigantionService.getSupervisor(tareaExterna);
 			Usuario gestor = userAssigantionService.getUser(tareaExterna); 
@@ -704,6 +717,12 @@ public abstract class ActivoBaseActionHandler implements ActionHandler {
 				}
 			}
 
+		}else if(CODIGO_T004_AUTORIZACION_BANKIA.equals(tareaExterna.getTareaProcedimiento().getCodigo())) {
+			Usuario bankiaAut = usuarioManager.getByUsername("usugruccb");
+			if(bankiaAut != null){
+				tareaActivo.setUsuario(bankiaAut);
+			}
+			
 		}else{
 			Usuario galq = gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_ALQUILERES);
 			Usuario gsue = gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_SUELOS);

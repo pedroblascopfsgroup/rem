@@ -25,6 +25,9 @@ public class MSVExcelValidatorFactoryImpl {
 	private MSVAgrupacionLoteComercialExcelValidator agrupacionLoteComercialExcelValidator;
 	
 	@Autowired
+	private MSVAgrupacionProyectoExcelValidator agrupacionProyectoExcelValidator;
+	
+	@Autowired
 	private MSVListadoActivosExcelValidator listadoActivosExcelValidator;
 	
 	@Autowired
@@ -78,6 +81,12 @@ public class MSVExcelValidatorFactoryImpl {
 	@Autowired
 	private MSVOkTecnicoExcelValidator okTecnicoValidator;
 	
+	@Autowired
+	private MSVActivosGastoPorcentajeValidator activosGastoPorcentajeValidator;
+
+	@Autowired
+	private MSVInfoDetallePrinexLbkExcelValidator infoDetallePrinexLbk;
+	
 	public MSVExcelValidator getForTipoValidador(String codTipoOperacion) {
 		
 		if (MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_AGRUPATION_RESTRICTED.equals(codTipoOperacion)) {
@@ -88,7 +97,9 @@ public class MSVExcelValidatorFactoryImpl {
 				return agrupacionAsistidaExcelValidator;
 			} else if (MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_AGRUPACION_LOTE_COMERCIAL.equals(codTipoOperacion)) {
 				return agrupacionLoteComercialExcelValidator;
-			}else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ALTA_ACTIVOS_FINANCIEROS.equals(codTipoOperacion)) {
+			} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_AGRUPACION_PROYECTO.equals(codTipoOperacion)){
+				return agrupacionProyectoExcelValidator;
+			} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ALTA_ACTIVOS_FINANCIEROS.equals(codTipoOperacion)) {
 				return altaActvos;
 			} else if (MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_LISTAACTIVOS.equals(codTipoOperacion)) {
 				return listadoActivosExcelValidator;
@@ -136,9 +147,14 @@ public class MSVExcelValidatorFactoryImpl {
 				return altaActivosTP;
 			}else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CENTRAL_TECNICA_OK_TECNICO.equals(codTipoOperacion)){
 				return okTecnicoValidator;
+			}else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_ACTIVOS_GASTOS_PORCENTAJE.equals(codTipoOperacion)){
+				return activosGastoPorcentajeValidator;
 			}
 			else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_VENTA_DE_CARTERA.equals(codTipoOperacion)){
 				return ventaDeCartera;
+			}
+			else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_INFO_DETALLE_PRINEX_LBK.equals(codTipoOperacion)){
+				return infoDetallePrinexLbk;
 			}
 		return null;
 	}

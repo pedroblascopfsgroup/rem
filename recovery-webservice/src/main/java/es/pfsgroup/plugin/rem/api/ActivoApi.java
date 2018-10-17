@@ -52,7 +52,6 @@ import es.pfsgroup.plugin.rem.model.DtoPropuestaActivosVinculados;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
 import es.pfsgroup.plugin.rem.model.DtoReglasPublicacionAutomatica;
 import es.pfsgroup.plugin.rem.model.DtoTasacion;
-import es.pfsgroup.plugin.rem.model.ImpuestosActivo;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.Reserva;
@@ -62,10 +61,11 @@ import es.pfsgroup.plugin.rem.model.VCondicionantesDisponibilidad;
 import es.pfsgroup.plugin.rem.model.VPreciosVigentes;
 import es.pfsgroup.plugin.rem.model.VTasacionCalculoLBK;
 import es.pfsgroup.plugin.rem.model.Visita;
-import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 import es.pfsgroup.plugin.rem.rest.dto.File;
 import es.pfsgroup.plugin.rem.rest.dto.PortalesDto;
 import es.pfsgroup.plugin.rem.validate.validator.DtoPublicacionValidaciones;
+import net.sf.json.JSONObject;
 
 public interface ActivoApi {
 
@@ -612,6 +612,17 @@ public interface ActivoApi {
 	 * @return
 	 */
 	public boolean isActivoConReservaByEstado(Activo activo, String codEstado);
+
+	/**
+	 * Comprueba que el Activo modificado cumple ciertas condiciones para mandar un correo
+	 */
+	public void checkAndSendMailAvisoOcupacion(JSONObject json, Activo activo, DDTipoDocumentoActivo tipoAdjunto);
+
+	/**
+	 * Comprueba que el Activo cumple ciertas condiciones para mandar un correo
+	 * @param activo
+	 */
+	public void checkMailAvisoOcupacion(Activo activo);
 
 	/**
 	 * Devuelve una lista de reservas asociadas al activo pasado por parametro

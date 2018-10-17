@@ -1343,6 +1343,24 @@ public class Activo implements Serializable, Auditable {
         return null;
     }
 
+	/**
+	 * Comprueba que tiene un documento adjuntado del 
+	 * @param activo
+	 * @param codigoDocumento
+	 * @return
+	 */
+	public boolean hasAdjunto(String codigoDocumento)
+	{
+		for(ActivoAdjuntoActivo adjunto : getAdjuntos())
+		{
+			if(!Checks.esNulo(adjunto.getTipoDocumentoActivo()) && codigoDocumento.equals(adjunto.getTipoDocumentoActivo().getCodigo()))
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+
 	public Integer getLlavesHre() {
 		return llavesHre;
 	}

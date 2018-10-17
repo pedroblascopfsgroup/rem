@@ -57,6 +57,7 @@ import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.gestorDocumental.manager.GestorDocumentalExpedientesManager;
+import es.pfsgroup.plugin.recovery.agendaMultifuncion.impl.dto.DtoAdjuntoMail;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDSituacionCarga;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDTipoCarga;
@@ -83,6 +84,7 @@ import es.pfsgroup.plugin.rem.gestor.dao.GestorExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.notificator.impl.NotificatorServiceSancionOfertaAceptacionYRechazo;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoAdjudicacionNoJudicial;
 import es.pfsgroup.plugin.rem.model.ActivoAdjuntoActivo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
@@ -228,6 +230,8 @@ import es.pfsgroup.plugin.rem.utils.DiccionarioTargetClassMap;
 import es.pfsgroup.plugin.rem.validate.validator.DtoPublicacionValidaciones;
 import es.pfsgroup.plugin.rem.visita.dao.VisitaDao;
 import es.pfsgroup.recovery.ext.api.multigestor.EXTGrupoUsuariosApi;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 
 @Service("activoManager")
 public class ActivoManager extends BusinessOperationOverrider<ActivoApi> implements ActivoApi {
@@ -1215,6 +1219,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				activo.getAdjuntos().add(adjuntoActivo);
 
 				activoDao.save(activo);
+				checkAndSendMailAvisoOcupacion(null, activo, tipoDocumento);
 			} else {
 				throw new Exception("No se ha encontrado activo o tipo para relacionar adjunto");
 			}
@@ -2544,6 +2549,72 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		return false;
 	}
 
+	public void checkAndSendMailAvisoOcupacion(JSONObject json, Activo activo, DDTipoDocumentoActivo tipoAdjunto)
+	{
+		if((json != null) && !json.isEmpty())
+		{
+			if(json.containsKey("id") && json.containsKey("models"))
+			{
+				Long id = json.getLong("id");
+				JSONArray modelsArray = json.getJSONArray("models");
+				if(modelsArray.toString().contains("ocupado") || modelsArray.toString().contains("conTitulo"))
+				{
+					activo = this.get(id);
+					if(!Checks.esNulo(activo))
+					{
+						checkMailAvisoOcupacion(activo);
+					}
+				}
+			}
+		}
+		else if(!Checks.esNulo(activo) && !Checks.esNulo(tipoAdjunto))
+		{
+			if(DDTipoDocumentoActivo.CODIGO_INFORME_OCUPACION_DESOCUPACION.equals(tipoAdjunto.getCodigo()))
+			{
+				checkMailAvisoOcupacion(activo);
+			}
+		}
+	}
+
+	public void checkMailAvisoOcupacion(Activo activo)
+	{
+		if(!Checks.esNulo(activo))
+		{
+			ActivoSituacionPosesoria posesoria = activo.getSituacionPosesoria();
+			ActivoAdjudicacionNoJudicial judicial = activo.getAdjNoJudicial();
+			if(!Checks.esNulo(posesoria) && !Checks.esNulo(judicial))
+			{
+				if((!Checks.esNulo(posesoria.getOcupado()) && !Checks.esNulo(posesoria.getConTitulo())) &&
+					(!Checks.esNulo(judicial.getFechaTitulo()) && activo.hasAdjunto(DDTipoDocumentoActivo.CODIGO_INFORME_OCUPACION_DESOCUPACION)))
+				{
+					List<DtoAdjuntoMail> sendAdj = new ArrayList<DtoAdjuntoMail>();
+					for(ActivoAdjuntoActivo adjunto : activo.getAdjuntos())
+					{
+						if(!Checks.esNulo(adjunto.getTipoDocumentoActivo()) && 
+							DDTipoDocumentoActivo.CODIGO_INFORME_OCUPACION_DESOCUPACION.equals(adjunto.getTipoDocumentoActivo().getCodigo()))
+						{
+							DtoAdjuntoMail adj = new DtoAdjuntoMail();
+							adj.setNombre(adjunto.getNombre());
+							adj.setAdjunto(adjunto.getAdjunto());
+							sendAdj.add(adj);
+						}
+					}
+					List<String> para = new ArrayList<String>();
+					para.add("ocupaciones@haya.es");
+					String activoS = activo.getId()+"";
+					String carteraS = activo.getCartera().getDescripcion();
+					StringBuilder cuerpo = new StringBuilder("<!DOCTYPE HTML PUBLIC '-//W3C//DTD HTML 4.01 Transitional//EN'><html><head><META http-equiv='Content-Type' content='text/html; charset=utf-8'></head><body>");
+					cuerpo.append("<div><p>Se ha marcado en REM una ocupación ilegal del activo ");
+					cuerpo.append(activoS);
+					cuerpo.append("de la cartera ");
+					cuerpo.append(carteraS);
+					cuerpo.append("</p><p>Se anexa el informe de ocupación remitido por el API custodio</p><p>Un saludo</p></div></body></html>");
+					genericAdapter.sendMail(para, null, "Ocupación ilegal del activo: " + activoS + ", de la cartera " + carteraS, cuerpo.toString(), sendAdj);
+				}
+			}
+		}
+	}
+
 	@Override
 	public List<Reserva> getReservasByActivoOfertaAceptada(Activo activo) {
 
@@ -2894,28 +2965,36 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	}
 	
 	@Override
-	public boolean necesitaDocumentoInformeOcupacion(Activo activo) {
-			
+	public boolean necesitaDocumentoInformeOcupacion(Activo activo)
+	{
 		ActivoSituacionPosesoria activoSitPos = activo.getSituacionPosesoria();
 		boolean tieneAdjunto = false;
 		boolean tieneInforme = false;
-			if (1 == activoSitPos.getOcupado() && 0 == activoSitPos.getConTitulo()){
-				List<ActivoAdjuntoActivo> listAdjuntos = activo.getAdjuntos();
-				
-				if (!Checks.estaVacio(listAdjuntos)){
-					Integer countDocs = 0;
-					for (ActivoAdjuntoActivo adjunto : listAdjuntos){
-						if (DDTipoDocumentoActivo.CODIGO_INFORME_OCUPACION_DESOCUPACION.equals(adjunto.getTipoDocumentoActivo().getCodigo())) {
-							tieneAdjunto = false;
-							tieneInforme = true;
-						} else if(!tieneInforme){
-							tieneAdjunto = true;
-						}
-					}	
-				} else {
-					tieneAdjunto = true;
+		if(!Checks.esNulo(activoSitPos) && (!Checks.esNulo(activoSitPos.getOcupado()) && !Checks.esNulo(activoSitPos.getConTitulo()) && (1 == activoSitPos.getOcupado() && 0 == activoSitPos.getConTitulo())))
+		{
+			List<ActivoAdjuntoActivo> listAdjuntos = activo.getAdjuntos();
+			
+			if(!Checks.estaVacio(listAdjuntos))
+			{
+				Integer countDocs = 0;
+				for(ActivoAdjuntoActivo adjunto : listAdjuntos)
+				{
+					if(DDTipoDocumentoActivo.CODIGO_INFORME_OCUPACION_DESOCUPACION.equals(adjunto.getTipoDocumentoActivo().getCodigo()))
+					{
+						tieneAdjunto = false;
+						tieneInforme = true;
+					}
+					else if(!tieneInforme)
+					{
+						tieneAdjunto = true;
+					}
 				}
-			}	
+			}
+			else
+			{
+				tieneAdjunto = true;
+			}
+		}
 		return tieneAdjunto;
 	}
 

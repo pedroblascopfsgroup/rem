@@ -112,6 +112,7 @@ import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi;
 import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
 import es.pfsgroup.plugin.rem.service.TabActivoService;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoActivosTrabajoFilter;
+import net.sf.json.JSONObject;
 
 @Controller
 public class ActivoController extends ParadiseJsonController {
@@ -2522,8 +2523,9 @@ public class ActivoController extends ParadiseJsonController {
 			try {
 				RestRequestWrapper restRequest = new RestRequestWrapper(request);
 				ActivoControllerDispatcher dispatcher = new ActivoControllerDispatcher(this);
-			
-				dispatcher.dispatchSave(restRequest.getJsonObject());
+				JSONObject json = restRequest.getJsonObject();
+				dispatcher.dispatchSave(json);
+				activoApi.checkAndSendMailAvisoOcupacion(json, null, null);
 			} catch (Exception e) {
 				logger.error("No se ha podido guardar el activo", e);
 				model.put("error", e.getMessage());
@@ -2533,7 +2535,17 @@ public class ActivoController extends ParadiseJsonController {
 
 		return new ModelAndView("jsonView", model);
 	}
-	
+
+	/**
+	 * Método que comprueba y envía un correo si el Activo está ocupado.
+	 */
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView checkAndSendMailAvisoOcupacion(HttpServletRequest request, ModelMap model)
+	{
+		
+		return new ModelAndView("jsonView", new ModelMap());
+	}
+
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView createTasacionActivo(String importeTasacionFin, String tipoTasacionCodigo, String nomTasador, Date fechaValorTasacion, Long idEntidad, ModelMap model) {

@@ -834,13 +834,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				
 				genericDao.update(ExpedienteComercial.class, expComercial);
 				
-				//genericDao.update(CondicionanteExpediente.class, coe);
-				
-				//Se ocultará el activo con el motivo “Oferta Express Cajamar”
-				/*Activo activo = oferta.getActivoPrincipal();
-				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoPublicacion.CODIGO_PUBLICADO_OCULTO);
-				activoEstadoPublicacionApi.cambiarEstadoPublicacionAndRegistrarHistorico(activo, ActivoHistoricoEstadoPublicacion.MOTIVO_OFERTA_EXPRES, filtro,activo.getEstadoPublicacion(), null, null);*/
-				
 			}else{
 				oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_PENDIENTE)));	
 			}

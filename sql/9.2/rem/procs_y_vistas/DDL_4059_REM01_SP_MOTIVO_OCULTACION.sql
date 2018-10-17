@@ -1,16 +1,17 @@
 --/*
 --##########################################
---## AUTOR=Carlos López
---## FECHA_CREACION=20181003
+--## AUTOR=Carles Molins
+--## FECHA_CREACION=20181017
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=2.0.19
---## INCIDENCIA_LINK=HREOS-4525
+--## INCIDENCIA_LINK=HREOS-4563
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##		0.2 Versión con ofertas express
 --##########################################
 --*/
 
@@ -222,7 +223,19 @@ create or replace PROCEDURE SP_MOTIVO_OCULTACION (pACT_ID IN NUMBER
                                                         AND PTA.CHECK_HPM = 1
                                                         AND PTA.ACT_ID = APU.ACT_ID)
                                           ))   
-                                     AND SPS.ACT_ID= '||pACT_ID||                                        
+                                     AND SPS.ACT_ID= '||pACT_ID||
+                         ' UNION
+                         SELECT ACT.ACT_ID
+                               , 1 OCULTO
+                               , MTO.DD_MTO_CODIGO
+                               , MTO.DD_MTO_ORDEN ORDEN
+                                    FROM '|| V_ESQUEMA ||'.ACT_ACTIVO ACT
+                                    JOIN '|| V_ESQUEMA ||'.ACT_OFR AO ON AO.ACT_ID = ACT.ACT_ID
+                                    JOIN '|| V_ESQUEMA ||'.OFR_OFERTAS OFR ON OFR.OFR_ID = AO.OFR_ID AND OFR.OFR_OFERTA_EXPRESS = 1 AND OFR.BORRADO = 0
+                                    JOIN '|| V_ESQUEMA ||'.DD_EOF_ESTADOS_OFERTA EOF ON EOF.DD_EOF_ID = OFR.DD_EOF_ID AND EOF.DD_EOF_CODIGO = ''01'' AND EOF.BORRADO = 0
+                                    LEFT JOIN '|| V_ESQUEMA ||'.DD_MTO_MOTIVOS_OCULTACION MTO ON MTO.DD_MTO_CODIGO = ''15'' AND MTO.BORRADO = 0 /*Oferta Express*/
+                                   WHERE ACT.BORRADO = 0
+                                     AND ACT.ACT_ID= '||pACT_ID||
                        ')
                     )AUX WHERE AUX.ROWNUMBER = 1
                  '

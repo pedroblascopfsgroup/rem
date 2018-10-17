@@ -46,6 +46,7 @@ public class DDMotivosOcultacion implements Auditable, Dictionary {
 	public static final String CODIGO_OTROS = "12";
 	public static final String CODIGO_VENDIDO = "13";
 	public static final String CODIGO_SIN_PRECIO = "14";
+	public static final String CODIGO_OFERTA_EXPRESS = "15";
 
 	@Id
 	@Column(name = "DD_MTO_ID")

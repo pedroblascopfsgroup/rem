@@ -280,8 +280,6 @@ public class MSVActualizarGestores extends MSVExcelValidatorAbstract {
 				try {
 					if(!Checks.esNulo(exc.dameCelda(i, 1)) && !particularValidator.existeUsuario(exc.dameCelda(i, 1))) {
 						listaFilas.add(i);
-					}else if(Checks.esNulo(exc.dameCelda(i, 5))) {
-						listaFilas.add(i);
 					}
 				} catch (ParseException e) {
 					listaFilas.add(i);

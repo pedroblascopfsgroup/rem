@@ -284,8 +284,12 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		 },
 		 
 		 enableChkPerimetroAlquiler: function(get){
-			 var esGestorAlquiler = me.getViewModel().get('activo.esGestorAlquiler');
-			 return esGestorAlquiler;
+			 var esGestorAlquiler = get('activo.esGestorAlquiler');
+			 if(esGestorAlquiler == true || esGestorAlquiler == "true" ){
+				 return false;
+			 }else{
+				 return true;
+			 }
 		 },
 		 
 		 enableComboTipoAlquiler: function(get){

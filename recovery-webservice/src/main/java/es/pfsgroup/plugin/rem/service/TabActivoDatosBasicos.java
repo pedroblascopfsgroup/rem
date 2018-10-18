@@ -535,14 +535,14 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		 
 		 for(ActivoOferta activoOferta : activo.getOfertas()) {
 			 Oferta oferta = ofertaApi.getOfertaById(activoOferta.getOferta());
-			 if(DDEstadoOferta.CODIGO_ACEPTADA.equals(oferta.getEstadoOferta())) {
+			 if(DDEstadoOferta.CODIGO_ACEPTADA.equals(oferta.getEstadoOferta().getCodigo())) {
 				 BeanUtils.copyProperty(activoDto, "tieneOfertaAlquilerViva", true);
 			 }
 		 }
 		 
 		 Usuario usuarioLogado = usuarioApi.getUsuarioLogado();
 		 for(DtoListadoGestores gestor : adapter.getGestoresActivos(activo.getId())){
-			 if(usuarioLogado.getId() == gestor.getIdUsuario() 
+			 if(usuarioLogado.getId().equals(gestor.getIdUsuario())
 					 && (GestorActivoApi.CODIGO_GESTOR_ALQUILERES.equals(gestor.getCodigo()) 
 							 || GestorActivoApi.CODIGO_SUPERVISOR_ALQUILERES.equals(gestor.getCodigo()) 
 							 || GestorActivoApi.CODIGO_GESTOR_COMERCIAL_ALQUILERES.equals(gestor.getCodigo()) 

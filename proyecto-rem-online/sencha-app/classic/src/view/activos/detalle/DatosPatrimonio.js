@@ -33,10 +33,11 @@ Ext.define('HreRem.view.activos.detalle.DatosPatrimonio', {
 						{ 	
 							xtype: 'checkboxfieldbase',
 							fieldLabel: HreRem.i18n('title.patrimonio.perimetroAlquiler'),
-							reference: 'chkPerimetroAlquilerRef',							
+							reference: 'chkPerimetroAlquilerRef',
+							disabled: true,
 							bind: {
-								disabled: '{!enableChkPerimetroAlquiler}',
-								value: '{patrimonio.chkPerimetroAlquiler}'	
+								value: '{patrimonio.chkPerimetroAlquiler}',
+								disabled: '{enableChkPerimetroAlquiler}'
 							},
 							listeners:{
 								change: function(me){

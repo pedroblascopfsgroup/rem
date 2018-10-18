@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=ANAHUAC DE VICENTE
---## FECHA_CREACION=20160919
+--## AUTOR=Isidro Sotoca
+--## FECHA_CREACION=20171018
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=0
+--## INCIDENCIA_LINK=HREOS-4502
 --## PRODUCTO=NO
 --## Finalidad: Tabla para almacentar el historico de las ofertas enviadas a webcom
 --##           

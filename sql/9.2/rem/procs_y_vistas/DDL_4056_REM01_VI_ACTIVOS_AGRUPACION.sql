@@ -1,16 +1,17 @@
 --/*
 --##########################################
---## AUTOR=DANIEL ALGABA
---## FECHA_CREACION=20180313
+--## AUTOR=HECTOR GOMEZ
+--## FECHA_CREACION=20181018
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-3890
+--## INCIDENCIA_LINK=HREOS-4633
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##		0.2 Direccion separada por espacios
 --##########################################
 --*/
 
@@ -52,7 +53,7 @@ BEGIN
   V_MSQL := 'CREATE VIEW ' || V_ESQUEMA || '.V_ACTIVOS_AGRUPACION 
 	AS
 		SELECT DISTINCT DECODE (AGRU.AGR_ACT_PRINCIPAL, ACT.ACT_ID, 1, 0) AS PRINCIPAL,
-     	(TVI.DD_TVI_DESCRIPCION || '''' || LOC.BIE_LOC_NOMBRE_VIA || '''' || LOC.BIE_LOC_NUMERO_DOMICILIO || '''' || LOC.BIE_LOC_PUERTA) AS DIRECCION,
+     	(TVI.DD_TVI_DESCRIPCION || '' '' || LOC.BIE_LOC_NOMBRE_VIA || '' '' || LOC.BIE_LOC_NUMERO_DOMICILIO || '' '' || LOC.BIE_LOC_PUERTA) AS DIRECCION,
 		LOC.BIE_LOC_PUERTA,
 		BIE.BIE_DREG_NUM_FINCA,
         0 AS NUMEROPROPIETARIOS,

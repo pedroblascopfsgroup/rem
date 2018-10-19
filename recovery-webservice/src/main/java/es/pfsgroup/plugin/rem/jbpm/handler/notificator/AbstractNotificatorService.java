@@ -281,13 +281,8 @@ public String creaCuerpoOfertaExpress(Oferta oferta){
 			cuerpo = cuerpo + " hasta la formalización de las arras/reserva";
 		}
 		
-		cuerpo = cuerpo + ". Adjunto a este correo encontrará el documento con las instrucciones a seguir para la reserva y formalización";
-		
-		if (DDCartera.CODIGO_CARTERA_CAJAMAR.equals(codigoCartera)) {
-			cuerpo = cuerpo + ", así como la Ficha cliente a cumplimentar</p>";
-		}else {
-			cuerpo = cuerpo + ".</p>";
-		}
+		cuerpo = cuerpo + ". Adjunto a este correo encontrará el documento con las instrucciones a seguir para la reserva y formalización.</p>";
+
 		ActivoBancario activoBancario = genericDao.get(ActivoBancario.class,
 
 				genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId()));

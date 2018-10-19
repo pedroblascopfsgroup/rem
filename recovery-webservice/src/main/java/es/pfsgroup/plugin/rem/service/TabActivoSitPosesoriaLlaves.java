@@ -91,7 +91,7 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 		if (activo.getSituacionPosesoria() != null) {
 			
 			//fecha toma posesion
-			activoApi.calcularFechaTomaPosesion(activo);
+			//activoApi.calcularFechaTomaPosesion(activo); se ha trasladado a la clase ActivoAvisadorManager antes de calcular los disclaimers
 			beanUtilNotNull.copyProperties(activoDto, activo.getSituacionPosesoria());
 			
 			if (activo.getSituacionPosesoria().getTipoTituloPosesorio() != null) {

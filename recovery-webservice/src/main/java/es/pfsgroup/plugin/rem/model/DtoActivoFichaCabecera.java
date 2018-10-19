@@ -199,6 +199,7 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	
 	//HREOS-4470
 	private Boolean asignaGestPorCambioDeProv;
+
 	//REMVIP-REMVIP-2193
 	private Boolean isLogUsuGestComerSupComerSupAdmin;
 	
@@ -1518,6 +1519,7 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	public void setCatContableDescripcion(String catContableDescripcion) {
 		this.catContableDescripcion = catContableDescripcion;
 	}
+
 	public Boolean getAsignaGestPorCambioDeProv() {
 		return asignaGestPorCambioDeProv;
 	}
@@ -1533,4 +1535,5 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	public void setIsLogUsuGestComerSupComerSupAdmin(Boolean isLogUsuGestComerSupComerSupAdmin) {
 		this.isLogUsuGestComerSupComerSupAdmin = isLogUsuGestComerSupComerSupAdmin;
 	}
+
 }

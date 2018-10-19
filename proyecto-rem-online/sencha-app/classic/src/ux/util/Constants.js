@@ -341,6 +341,7 @@ Ext.define('HreRem.ux.util.Constants', {
 		ITP: '02',
 		IGIC: '03',
 		IPSI: '04'
+<<<<<<< HEAD
     },
     
     TIPO_TITULO_ACTIVO: {
@@ -375,5 +376,24 @@ Ext.define('HreRem.ux.util.Constants', {
     	ALQUILADO: '02',
     	CON_DEMANDAS: '03'
     }
+=======
+	},
+
+	TIPO_TITULO_ACTIVO: {
+		JUDICIAL: '01',
+		NO_JUDICIAL: '02',
+		PDV: '03'
+	},
+
+	TIPO_RESOLUCION_COMITE: {
+		APRUEBA: '01',
+		RECHAZA: '02',
+		CONTRAOFERTA: '03'
+	},
+	
+	EXPORTADOR:{
+		LIMITE: '1000'
+	}
+>>>>>>> 2.0.18-18101801-rem
 
 });

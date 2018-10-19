@@ -115,6 +115,14 @@ public class TabActivoValoracionesPrecios implements TabActivoService {
 						if(val.getTipoPrecio() != null && val.getTipoPrecio().getCodigo().equalsIgnoreCase("23")) 
 							beanUtilNotNull.copyProperty(valoracionesDto, "valorRazonable", val.getImporte());
 						
+						if(!Checks.esNulo(val.getFechaVentaHaya())) {
+							beanUtilNotNull.copyProperty(valoracionesDto, "fechaVentaHaya", val.getFechaVentaHaya());
+						}
+						
+						if(!Checks.esNulo(val.getLiquidez())) {
+							beanUtilNotNull.copyProperty(valoracionesDto, "liquidez", val.getLiquidez());
+						}
+						
 						/*
 						 * valorLegalVpo se informa desde la Info administrativa
 						if(val.getTipoPrecio() != null && val.getTipoPrecio().getCodigo().equalsIgnoreCase("09"))

@@ -109,7 +109,20 @@ Ext.define('HreRem.view.activos.detalle.CargasActivo', {
                       return Ext.util.Format.currency(value);
                     },
                     flex : 1
-                  }
+                  }, {   
+                	text : HreRem.i18n('fieldlabel.con.cargas.propias'),
+		        	dataIndex: 'cargasPropias',
+		        	renderer : function(value) {
+		        		if(value == "1"){
+		        			return "Si";
+		        		}else if(value == "0"){
+		        			return "No";
+		        		}else {
+		        			return "";
+		        		}
+	                },
+		        	flex: 1
+				  }
 
               ],
               dockedItems : [{

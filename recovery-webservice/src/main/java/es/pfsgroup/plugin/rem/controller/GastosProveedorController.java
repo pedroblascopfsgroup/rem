@@ -36,6 +36,7 @@ import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
 import es.pfsgroup.plugin.rem.excel.GestionGastosExcelReport;
 import es.pfsgroup.plugin.rem.excel.TrabajosGastoExcelReport;
+import es.pfsgroup.plugin.rem.gasto.dao.GastoDao;
 import es.pfsgroup.plugin.rem.model.DtoActivoGasto;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoAviso;
@@ -49,7 +50,9 @@ import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.VBusquedaGastoActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaGastoTrabajos;
+import es.pfsgroup.plugin.rem.model.VGastosProveedor;
 import es.pfsgroup.plugin.rem.model.VGastosProveedorExcel;
+
 
 
 @Controller
@@ -74,6 +77,9 @@ public class GastosProveedorController extends ParadiseJsonController {
 
 	@Autowired
 	private ExcelReportGeneratorApi excelReportGeneratorApi;
+	
+	@Autowired
+	private GastoDao gastoDao;
 
 
 	/**
@@ -713,6 +719,44 @@ public class GastosProveedorController extends ParadiseJsonController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView autorizarGastosContabilidad(Long[] idsGasto, String fechaConta, String fechaPago, Boolean individual, ModelMap model) {
+		try {		
+			
+			boolean success = gastoProveedorApi.autorizarGastosContabilidad(idsGasto, fechaConta, fechaPago, individual);
+			model.put("success", success);
+			
+		} catch (JsonViewerException ex) {
+			model.put("msg", ex.getMessage());
+			model.put("success", false);
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+			model.put("success", false);
+		}
+		
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView autorizarGastosContabilidadAgrupacion(Long[] idsGasto, Long idAgrupacion, String fechaConta, String fechaPago, Boolean individual, ModelMap model) {
+		try {		
+			
+			boolean success = gastoProveedorApi.autorizarGastosContabilidadAgrupacion(idsGasto, idAgrupacion, fechaConta, fechaPago, individual);
+			model.put("success", success);
+			
+		} catch (JsonViewerException ex) {
+			model.put("msg", ex.getMessage());
+			model.put("success", false);
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+			model.put("success", false);
+		}
+		
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView rechazarGastos(Long[] idsGasto, String motivoRechazo, ModelMap model) {
 		try {		
 			
@@ -769,6 +813,25 @@ public class GastosProveedorController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 	
+	@SuppressWarnings({"unchecked"})
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView rechazarGastosContabilidad(Long[] idsGasto, String motivoRechazo, Boolean individual, ModelMap model) {
+		try {		
+			
+			boolean success = gastoProveedorApi.rechazarGastosContabilidad(idsGasto, motivoRechazo, individual);
+			model.put("success", success);
+			
+		} catch (JsonViewerException ex) {
+			model.put("msg", ex.getMessage());
+			model.put("success", false);
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+			model.put("success", false);
+		}
+		
+		return createModelAndViewJson(model);
+	}
+	
 	@SuppressWarnings({ "unchecked"})
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getAvisosGastoById(Long id, WebDto webDto, ModelMap model){
@@ -815,7 +878,7 @@ public class GastosProveedorController extends ParadiseJsonController {
 	}
 	
 	private String formateaAviso(String descripcion) {
-		return  "<div class='div-aviso'>" + descripcion + "</div>";
+		return  "<div class='div-aviso red'>" + descripcion + "</div>";
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -827,6 +890,25 @@ public class GastosProveedorController extends ParadiseJsonController {
 
 			model.put("data", page.getResults());
 			model.put("totalCount", page.getTotalCount());
+			model.put("success", true);
+
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+			model.put("success", false);
+			model.put("exception", e.getMessage());
+		}
+		
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView getListGastosProvisionAgrupGastos(Long id, ModelMap model) {
+		try {
+
+			List<VGastosProveedor> lista = gastoProveedorApi.getListGastosProvisionAgrupGastos(id);
+
+			model.put("data", lista);
 			model.put("success", true);
 
 		} catch (Exception e) {
@@ -862,4 +944,24 @@ public class GastosProveedorController extends ParadiseJsonController {
 
 		return createModelAndViewJson(model);
 	}
+	
+	@SuppressWarnings({"unchecked"})
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView rechazarGastosContabilidadAgrupGastos(Long idAgrupGasto, Long[] idsGasto, String motivoRechazo, Boolean individual, ModelMap model) {
+		try {		
+			
+			boolean success = gastoProveedorApi.rechazarGastosContabilidadAgrupGastos(idAgrupGasto,idsGasto, motivoRechazo, individual);
+			model.put("success", success);
+			
+		} catch (JsonViewerException ex) {
+			model.put("msg", ex.getMessage());
+			model.put("success", false);
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+			model.put("success", false);
+		}
+		
+		return createModelAndViewJson(model);
+	}
+	
 }

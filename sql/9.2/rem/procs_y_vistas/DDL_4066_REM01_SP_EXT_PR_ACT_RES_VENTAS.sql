@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Guillermo Llidó Parra
---## FECHA_CREACION=20180920
+--## AUTOR=Marco Munoz
+--## FECHA_CREACION=20181001
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=2.0.18
---## INCIDENCIA_LINK=REMVIP-1542
+--## INCIDENCIA_LINK=REMVIP-2082
 --## PRODUCTO=NO
 --## Finalidad: Permitir la actualización de reservas y ventas vía la llegada de datos externos de Prinex. Una llamada por modificación. Liberbank.
 --## Info: https://link-doc.pfsgroup.es/confluence/display/REOS/SP_EXT_PR_ACT_RES_VENTA
@@ -17,6 +17,8 @@
 --##        0.3 (20180622) - Marco Munoz - Se soluciona log de error de la HLP para tener siempre el mismo formato.
 --##        0.4 (20180724) - Pablo Meseguer - Se deja de utilizar el numero de reserva y se añade tratamiento para los expedientes economicos en "En devolucion"
 --##        0.5 (20180920) - Marco Muñoz - Se ajusta el SP para actuar también sobre agrupaciones de activos en los pasos 2.1 y 2.2.
+--##        1.02 (20180927) - Ivan Castelló - Añadir estado o en Pendiente de devolución.
+--##		1.03 (20181001) - Marco Muñoz - Se añade la actualización de la fecha de devolucion de la reserva del Expediente en la segunda casuistica (FECHA_DEVOLUCION_RESERVA)
 --##########################################
 --*/
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
@@ -77,7 +79,7 @@ create or replace PROCEDURE       #ESQUEMA#.SP_EXT_PR_ACT_RES_VENTA (
     V_OBTIENE_RESERVA_2            VARCHAR2(1000 CHAR)  := 'SELECT
                                                             CASE
                                                               WHEN EEC.DD_EEC_CODIGO IS NULL THEN 1
-                                                              WHEN EEC.DD_EEC_CODIGO IN (''06'',''16'') THEN 0
+                                                              WHEN EEC.DD_EEC_CODIGO IN (''06'',''16'',''17'') THEN 0
                                                             ELSE 1
                                                             END AS COD,
                                                             RES.RES_ID,
@@ -300,7 +302,7 @@ create or replace PROCEDURE       #ESQUEMA#.SP_EXT_PR_ACT_RES_VENTA (
     END;
 
 BEGIN
---v1.01
+--v1.03
 
     COD_RETORNO := 0;
     DBMS_OUTPUT.PUT_LINE('[INICIO] Permitir la actualización de reservas y ventas vía la llegada de datos externos de Prinex. Una llamada por modificación.');
@@ -637,21 +639,34 @@ BEGIN
 
                 V_MSQL := '
                 UPDATE '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL
-                SET DD_EEC_ID = '||V_VALOR_NUEVO||', /*EN DEVOLUCION*/
-                USUARIOMODIFICAR = ''SP_EXT_PR_ACT_RES_VENTA'',
-                FECHAMODIFICAR = SYSDATE
+                SET DD_EEC_ID = '||V_VALOR_NUEVO||', /*ANULADO*/
+                    ECO_FECHA_DEV_ENTREGAS = '''||FECHA_DEVOLUCION_RESERVA_DATE||''',
+					USUARIOMODIFICAR = ''SP_EXT_PR_ACT_RES_VENTA'',
+					FECHAMODIFICAR = SYSDATE
                 WHERE ECO_ID = '||V_ECO_ID||'
                 AND OFR_ID = '||V_OFR_ID||'
                 ';
                 EXECUTE IMMEDIATE V_MSQL;
 
                 IF SQL%ROWCOUNT > 0 THEN
-                    DBMS_OUTPUT.PUT_LINE('[INFO] PASO 1/8 | El estado del expediente a pasado a "En devolución" para la OFERTA '||IDENTIFICACION_COBRO||'.');
+                    DBMS_OUTPUT.PUT_LINE('[INFO] PASO 1/8 | El estado del expediente a pasado a "ANULADO" para la OFERTA '||IDENTIFICACION_COBRO||'.');
                     V_PASOS := V_PASOS+1;
                     --Logado en HLD_HIST_LANZA_PER_DETA
                     PARAM1 := 'ECO_EXPEDIENTE_COMERCIAL';
                     PARAM2 := 'ECO_ID';
                     PARAM3 := 'DD_EEC_ED';
+                    HLD_HISTORICO_LANZA_PER_DETA (TO_CHAR(IDENTIFICACION_COBRO), PARAM1, PARAM2, V_ECO_ID, PARAM3, V_VALOR_ACTUAL, V_VALOR_NUEVO);
+                    --Reseteamos el V_VALOR_NUEVO
+                    V_VALOR_NUEVO := '';
+                    
+                    DBMS_OUTPUT.PUT_LINE('[INFO] PASO 1/8 | La fecha de devolución de la reserva del expediente se ha informado para la OFERTA '||IDENTIFICACION_COBRO||'.');
+                    V_MSQL := 'SELECT NVL(TO_CHAR(ECO_FECHA_DEV_ENTREGAS,''yyyyMMdd''),''-'') FROM '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL WHERE ECO_ID = '||V_ECO_ID||' AND OFR_ID = '||V_OFR_ID||''; 
+					EXECUTE IMMEDIATE V_MSQL INTO V_VALOR_ACTUAL;
+                    V_VALOR_NUEVO := FECHA_DEVOLUCION_RESERVA_DATE;
+                    --Logado en HLD_HIST_LANZA_PER_DETA
+                    PARAM1 := 'ECO_EXPEDIENTE_COMERCIAL';
+                    PARAM2 := 'ECO_ID';
+                    PARAM3 := 'ECO_FECHA_DEV_ENTREGAS';
                     HLD_HISTORICO_LANZA_PER_DETA (TO_CHAR(IDENTIFICACION_COBRO), PARAM1, PARAM2, V_ECO_ID, PARAM3, V_VALOR_ACTUAL, V_VALOR_NUEVO);
                     --Reseteamos el V_VALOR_NUEVO
                     V_VALOR_NUEVO := '';

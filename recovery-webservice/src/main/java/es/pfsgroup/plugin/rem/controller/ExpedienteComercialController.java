@@ -189,7 +189,7 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 			
 			DtoAviso aviso  = avisador.getAviso(expediente, usuarioLogado);
 			if (!Checks.esNulo(aviso) && !Checks.esNulo(aviso.getDescripcion())) {
-				avisosFormateados.setDescripcion(avisosFormateados.getDescripcion() + "<div class='div-aviso'>" + aviso.getDescripcion() + "</div>");
+				avisosFormateados.setDescripcion(avisosFormateados.getDescripcion() + "<div class='div-aviso red'>" + aviso.getDescripcion() + "</div>");
 			}
 			
         }

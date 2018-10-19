@@ -89,8 +89,13 @@ Ext.define('HreRem.view.activos.detalle.CargaDetalle', {
 											         	allowBlank: false
 													},
 									               	{
-														fieldLabel: '',
-														readOnly: true
+											        	xtype: 'comboboxfieldbase',
+											        	fieldLabel: HreRem.i18n('fieldlabel.con.cargas.propias'),
+										               	reference: 'cargasPropias',
+												      	bind: {
+												      		store: '{comboSiNoRem}',
+											           		value: '{carga.cargasPropias}'
+											         	}
 									               	},
 													{ 
 														xtype: 'comboboxfieldbase',

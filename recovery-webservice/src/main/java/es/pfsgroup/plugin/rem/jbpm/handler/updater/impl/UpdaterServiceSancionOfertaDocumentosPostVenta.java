@@ -25,6 +25,7 @@ import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
@@ -85,7 +86,12 @@ public class UpdaterServiceSancionOfertaDocumentosPostVenta implements UpdaterSe
 			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
 
 			// Expediente se marca a vendido.
-			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.VENDIDO);
+			Filter filtro = null;
+			if(DDCartera.CODIGO_CARTERA_LIBERBANK.equals(expediente.getOferta().getActivosOferta().get(0).getPrimaryKey().getActivo().getCartera().getCodigo())) {
+				filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.FIRMADO);
+			}else {
+				filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.VENDIDO);
+			}
 			DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
 			expediente.setEstado(estado);
 			genericDao.save(ExpedienteComercial.class, expediente);

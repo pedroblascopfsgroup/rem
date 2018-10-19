@@ -99,7 +99,7 @@ public class TrabajoAdapter {
 			@SuppressWarnings("unchecked")
 			List<ActivoTramite> tramitesActivo = (List<ActivoTramite>) activoTramiteApi.getTramitesActivoTrabajo(idTrabajo, webDto).getResults();
 	
-			List<VBusquedaActivosTrabajoParticipa> listaActivosTrabajo =  genericDao.getList(VBusquedaActivosTrabajoParticipa.class, genericDao.createFilter(FilterType.EQUALS,"idTrabajo", idTrabajo.toString()));
+			//List<VBusquedaActivosTrabajoParticipa> listaActivosTrabajo =  genericDao.getList(VBusquedaActivosTrabajoParticipa.class, genericDao.createFilter(FilterType.EQUALS,"idTrabajo", idTrabajo.toString()));
 			
 			for(ActivoTramite tramite : tramitesActivo){
 				
@@ -108,10 +108,12 @@ public class TrabajoAdapter {
 					beanUtilNotNull.copyProperty(dtoTramite, "idTramite", tramite.getId());
 					beanUtilNotNull.copyProperty(dtoTramite, "idTipoTramite", tramite.getTipoTramite().getId());
 					beanUtilNotNull.copyProperty(dtoTramite, "tipoTramite", tramite.getTipoTramite().getDescripcion());
-					if(!Checks.esNulo(tramite.getTramitePadre()))
-					beanUtilNotNull.copyProperty(dtoTramite, "idTramitePadre", tramite.getTramitePadre().getId());
-					if(!Checks.estaVacio(listaActivosTrabajo))
-					beanUtilNotNull.copyProperty(dtoTramite, "idActivo", listaActivosTrabajo.get(0).getIdActivo());
+					if(!Checks.esNulo(tramite.getTramitePadre())) {
+						beanUtilNotNull.copyProperty(dtoTramite, "idTramitePadre", tramite.getTramitePadre().getId());
+					}
+					/*if(!Checks.estaVacio(listaActivosTrabajo)) {
+						beanUtilNotNull.copyProperty(dtoTramite, "idActivo", listaActivosTrabajo.get(0).getIdActivo());
+					}*/
 					beanUtilNotNull.copyProperty(dtoTramite, "nombre", tramite.getTipoTramite().getDescripcion());
 					beanUtilNotNull.copyProperty(dtoTramite, "estado", tramite.getEstadoTramite().getDescripcion());
 					

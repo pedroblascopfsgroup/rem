@@ -721,6 +721,23 @@ public class AgrupacionController extends ParadiseJsonController {
 
 		return createModelAndViewJson(model);
 	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getDobleGestorActivo(@RequestParam Long agrId, @RequestParam String codigoGestorEdi,@RequestParam String codigoGestorSu,
+			ModelMap model) {
+
+		try {
+			model.put("data", adapter.getUsuariosPorDobleCodTipoGestor(codigoGestorEdi,codigoGestorSu));
+			model.put("success", true);
+		} catch (Exception e) {
+			logger.error(e);
+			model.put("success", false);
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)

@@ -33,6 +33,7 @@ import es.capgemini.pfs.procesosJudiciales.TipoProcedimientoManager;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
 import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
+import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
@@ -57,6 +58,7 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBValoracionesBien;
 import es.pfsgroup.plugin.rem.activo.ActivoManager;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
+import es.pfsgroup.plugin.rem.activo.dao.impl.ActivoPatrimonioDaoImpl;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoAvisadorApi;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
@@ -66,9 +68,10 @@ import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.ProveedoresApi;
 import es.pfsgroup.plugin.rem.api.TareaActivoApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
-import es.pfsgroup.plugin.rem.controller.AccesoActivoException;
+//import es.pfsgroup.plugin.rem.controller.AccesoActivoException;
 import es.pfsgroup.plugin.rem.factory.TabActivoFactoryApi;
 import es.pfsgroup.plugin.rem.gestor.GestorExpedienteComercialManager;
+import es.pfsgroup.plugin.rem.gestor.dao.GestorExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.Downloader;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.DownloaderFactoryApi;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
@@ -93,18 +96,22 @@ import es.pfsgroup.plugin.rem.model.ActivoMovimientoLlave;
 import es.pfsgroup.plugin.rem.model.ActivoObservacion;
 import es.pfsgroup.plugin.rem.model.ActivoOcupanteLegal;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
+import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.ActivoPropietarioActivo;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
 import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
+import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ActivoVivienda;
 import es.pfsgroup.plugin.rem.model.ClienteComercial;
 import es.pfsgroup.plugin.rem.model.DtoActivoCargas;
 import es.pfsgroup.plugin.rem.model.DtoActivoCatastro;
+import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoActivoOcupanteLegal;
+import es.pfsgroup.plugin.rem.model.DtoActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.DtoActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoAdmisionDocumento;
@@ -130,6 +137,7 @@ import es.pfsgroup.plugin.rem.model.DtoTramite;
 import es.pfsgroup.plugin.rem.model.DtoUsuario;
 import es.pfsgroup.plugin.rem.model.DtoValoracion;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.GestorActivo;
 import es.pfsgroup.plugin.rem.model.GestorSustituto;
 import es.pfsgroup.plugin.rem.model.IncrementoPresupuesto;
 import es.pfsgroup.plugin.rem.model.Oferta;
@@ -145,6 +153,7 @@ import es.pfsgroup.plugin.rem.model.VCalculosActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.VPreciosVigentes;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoDocumento;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoInformeComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
@@ -179,6 +188,7 @@ import es.pfsgroup.plugin.rem.service.TabActivoDatosBasicos;
 import es.pfsgroup.plugin.rem.service.TabActivoDatosRegistrales;
 import es.pfsgroup.plugin.rem.service.TabActivoService;
 import es.pfsgroup.plugin.rem.service.TabActivoSitPosesoriaLlaves;
+import es.pfsgroup.plugin.rem.trabajo.dao.TrabajoDao;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoActivosTrabajoFilter;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 
@@ -275,9 +285,23 @@ public class ActivoAdapter {
     @Autowired
     private ActivoManager activoManager;
 
+
 	@Resource
 	MessageService messageServices;
 
+	@Autowired
+	private TrabajoDao trabajoDao;
+	
+	@Autowired
+	private ActivoPatrimonioDaoImpl activoPatrimonio;
+	
+	@Autowired
+	private GestorExpedienteComercialDao gestorExpedienteComercialDao;
+	
+	@Autowired
+	private UsuarioManager usuarioManager;
+	
+	
 	// private static final String PROPIEDAD_ACTIVAR_REST_CLIENT =
 	// "rest.client.gestor.documental.activar";
 	private static final String CONSTANTE_REST_CLIENT = "rest.client.gestor.documental.constante";
@@ -1464,7 +1488,35 @@ public class ActivoAdapter {
 		return getComboUsuarios(tipoGestorGestoria.getId());
 	}
 	
-	
+	public List<DtoListadoGestores> getGestoresActivos(Long idActivo) {
+		GestorEntidadDto gestorEntidadDto = new GestorEntidadDto();
+		gestorEntidadDto.setIdEntidad(idActivo);
+		gestorEntidadDto.setTipoEntidad(GestorEntidadDto.TIPO_ENTIDAD_ACTIVO);
+		List<GestorEntidadHistorico> gestoresEntidad = gestorActivoApi
+				.getListGestoresActivosAdicionalesHistoricoData(gestorEntidadDto);
+
+		List<DtoListadoGestores> listadoGestoresDto = new ArrayList<DtoListadoGestores>();
+
+		for (GestorEntidadHistorico gestor : gestoresEntidad) {
+			DtoListadoGestores dtoGestor = new DtoListadoGestores();
+			try {
+				BeanUtils.copyProperties(dtoGestor, gestor);
+				BeanUtils.copyProperties(dtoGestor, gestor.getUsuario());
+				BeanUtils.copyProperties(dtoGestor, gestor.getTipoGestor());
+				BeanUtils.copyProperty(dtoGestor, "id", gestor.getId());
+				BeanUtils.copyProperty(dtoGestor, "idUsuario", gestor.getUsuario().getId());
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			} catch (InvocationTargetException e) {
+				e.printStackTrace();
+			}
+
+			listadoGestoresDto.add(dtoGestor);
+		}
+
+		return listadoGestoresDto;
+
+	}
 
 	public List<DtoListadoGestores> getGestores(Long idActivo) {
 		GestorEntidadDto gestorEntidadDto = new GestorEntidadDto();
@@ -1858,7 +1910,16 @@ public class ActivoAdapter {
 					beanUtilNotNull.copyProperty(dtoTramite, "desactivarBotonLanzarTareaAdministrativa", true);
 				}
 				
-				
+				if (ActivoTramiteApi.CODIGO_TRAMITE_ACTUACION_TECNICA.equals(tramite.getTipoTramite().getCodigo())) {
+					
+					List<TareaExterna> tareasTramite = activoTareaExternaApi.getActivasByIdTramiteTodas(idTramite);
+					
+					for (TareaExterna tarea : tareasTramite) {
+						if (TrabajoApi.CODIGO_T004_AUTORIZACION_BANKIA.equals(tarea.getTareaProcedimiento().getCodigo())) {
+							beanUtilNotNull.copyProperty(dtoTramite, "esTareaAutorizacionBankia", true);
+						}
+					}
+				}
 			}
 				
 				
@@ -2358,12 +2419,17 @@ public class ActivoAdapter {
 		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 
 		List<DtoAviso> avisos = activoAvisadorApi.getListActivoAvisador(id, usuarioLogado);
-
+		String green = "Incluido en Haz tu Puja hasta 15/11/2018";
 		DtoAviso avisosFormateados = new DtoAviso();
 		avisosFormateados.setDescripcion("");
 		for (int i = 0; i < avisos.size(); i++) {
-			avisosFormateados.setDescripcion(avisosFormateados.getDescripcion() + "<div class='div-aviso'>"
-					+ avisos.get(i).getDescripcion() + "</div>");
+			if(green.equals(avisos.get(i).getDescripcion())){
+				avisosFormateados.setDescripcion(avisosFormateados.getDescripcion() + "<div class='div-aviso green'>"
+						+ avisos.get(i).getDescripcion() + "</div>");
+			} else {
+				avisosFormateados.setDescripcion(avisosFormateados.getDescripcion() + "<div class='div-aviso red'>"
+						+ avisos.get(i).getDescripcion() + "</div>");
+			}
 		}
 
 		return avisosFormateados;
@@ -2633,17 +2699,11 @@ public class ActivoAdapter {
 		return listaDto;
 	}
 
-	public WebDto getTabActivo(Long id, String tab) throws IllegalAccessException, InvocationTargetException,AccesoActivoException {
+	public WebDto getTabActivo(Long id, String tab) throws IllegalAccessException, InvocationTargetException {
 
 		TabActivoService tabActivoService = tabActivoFactory.getService(tab);
 		Activo activo = activoApi.get(id);
-		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
-		UsuarioCartera usuarioCartera = genericDao.get(UsuarioCartera.class, genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioLogado.getId()));
-		if(!Checks.esNulo(usuarioCartera)){
-			if(!usuarioCartera.getCartera().getCodigo().equals(activo.getCartera().getCodigo())){
-				throw new AccesoActivoException("No tiene permiso para consultar al activo seleccionado");
-			}
-		}
+
 		return tabActivoService.getTabData(activo);
 
 	}
@@ -2681,21 +2741,295 @@ public class ActivoAdapter {
 	
 	@Transactional(readOnly = false)
 	public boolean saveTabActivoTransactional(WebDto dto, Long id, String tab) {
-
+		
 		TabActivoService tabActivoService = tabActivoFactory.getService(tab);
 		Activo activo = activoApi.get(id);
-
 		activo = tabActivoService.saveTabActivo(activo, dto);
-
 		activoApi.saveOrUpdate(activo);
-
+		
 		// Metodo que recoge funciones que requieren el guardado previo de los
 		// datos
 		afterSaveTabActivo(dto, activo, tabActivoService);
 
 		return true;
 	}
+	
+	@Transactional(readOnly = false)
+	public void updateGestoresTabActivoTransactional(WebDto dto, Long id) {
+		
+		Activo activo = activoApi.get(id);
+		ActivoPatrimonio actPatrimonio = activoPatrimonio.getActivoPatrimonioByActivo(activo.getId());
+		
+		if (dto instanceof  DtoActivoPatrimonio  && !Checks.esNulo(actPatrimonio)   &&  !Checks.esNulo(((DtoActivoPatrimonio)dto).getChkPerimetroAlquiler())) {
+			//todos los activos que en REM están marcados dentro del perímetro de alquiler
+			//Cuando en REM se marque que un activo entra en el perímetro de alquiler (bien individual o masivamente) REM asignará Gestor y Supervisor de activo de este tipo según cliente y provincia
+				if(!Checks.esNulo(((DtoActivoPatrimonio)dto).getChkPerimetroAlquiler())  ) {
+				 if (((DtoActivoPatrimonio)dto).getChkPerimetroAlquiler() ) { 
+					 
+					//anyadimos el nuevo gestor 
+         			if(!this.anyadirGestor(activo, GestorActivoApi.CODIGO_GESTOR_ALQUILERES))
+							logger.error("Error en ActivoAdpter [saveTabActivoTransactional]: No se ha podido guardar el "+GestorActivoApi.CODIGO_GESTOR_ALQUILERES);
+					if(!this.anyadirGestor(activo, GestorActivoApi.CODIGO_SUPERVISOR_ALQUILERES))
+							logger.error("Error en ActivoAdpter [saveTabActivoTransactional]: No se ha podido guardar el "+GestorActivoApi.CODIGO_SUPERVISOR_ALQUILERES);
+					
+					//si el codigo del tipo de actvo no es nulo, comprabamos si es de tipo de suelo borramos el gestor/supervisor de suelos en caso contrario el de alquileres.
+					if (!Checks.esNulo(activo.getTipoActivo().getCodigo())) {
+							if (activo.getTipoActivo().getCodigo().equals(DDTipoActivo.COD_SUELO)) { 
+								this.borrarGestor(activo,GestorActivoApi.CODIGO_GESTOR_SUELOS);
+								this.borrarGestor(activo,GestorActivoApi.CODIGO_SUPERVISOR_SUELOS);
+								}
+							else {
+								this.borrarGestor(activo,GestorActivoApi.CODIGO_GESTOR_EDIFICACIONES);
+								this.borrarGestor(activo,GestorActivoApi.CODIGO_SUPERVISOR_EDIFICACIONES);
+								}
+					}
+				 
+				 
+				 }
+					
+					//Cuando en REM se marque que un activo sale del perímetro de alquiler (bien individual o masivamente) REM eliminará el Gestor y Supervisor de activo de este tipo.	
+				
+						
+					 else if (!((DtoActivoPatrimonio)dto).getChkPerimetroAlquiler() && gestorActivoApi.existeGestorEnActivo(activo, GestorActivoApi.CODIGO_GESTOR_ALQUILERES)  ) { 
+							//en este caso si existieran trabajos abiertos REM los reasignará al Gestor de mantenimiento (ACTIVO)
+														
+							this.cambiarTrabajosActivosAGestorActivo(activo,GestorActivoApi.CODIGO_GESTOR_ALQUILERES);
+							this.borrarGestor(activo,GestorActivoApi.CODIGO_GESTOR_ALQUILERES);
+							this.borrarGestor(activo,GestorActivoApi.CODIGO_SUPERVISOR_ALQUILERES);
+							
 
+							//si el codigo del tipo de actvo no es nulo, comprabamos si es de tipo de suelo anyadimos el gestor/supervisor de suelos en caso contrario el de alquileres.
+							if (!Checks.esNulo(activo.getTipoActivo().getCodigo())) {
+								
+								if (activo.getTipoActivo().getCodigo().equals(DDTipoActivo.COD_SUELO)) {
+									
+									if(!this.anyadirGestor(activo, GestorActivoApi.CODIGO_GESTOR_SUELOS))
+										logger.error("Error en ActivoAdpter [saveTabActivoTransactional]: No se ha podido guardar el "+GestorActivoApi.CODIGO_GESTOR_SUELOS);
+									if(!this.anyadirGestor(activo, GestorActivoApi.CODIGO_SUPERVISOR_SUELOS))
+										logger.error("Error en ActivoAdpter [saveTabActivoTransactional]: No se ha podido guardar el "+GestorActivoApi.CODIGO_SUPERVISOR_SUELOS);
+								}
+								else {
+									if(!this.anyadirGestor(activo, GestorActivoApi.CODIGO_GESTOR_EDIFICACIONES))
+										logger.error("Error en ActivoAdpter [saveTabActivoTransactional]: No se ha podido guardar el "+GestorActivoApi.CODIGO_GESTOR_EDIFICACIONES);
+									if(!this.anyadirGestor(activo, GestorActivoApi.CODIGO_SUPERVISOR_EDIFICACIONES))
+										logger.error("Error en ActivoAdpter [saveTabActivoTransactional]: No se ha podido guardar el "+GestorActivoApi.CODIGO_SUPERVISOR_EDIFICACIONES);
+							
+								}
+							}
+				}			
+			}	//fin 	if(!Checks.esNulo(((DtoActivoPatrimonio)dto).getChkPerimetroAlquiler())  ) {
+	
+		
+		}
+		//todos los activos existentes en REM que no estén dentro del perímetro de alquiler pero que alguna vez si que lo han estado, en este caso es posible que en algun momento el activo haya estado
+		//dentro del perimetro de alquiler por lo que hacemos la siguiente comprobación
+		else if (!Checks.esNulo(actPatrimonio)  && !Checks.esNulo(actPatrimonio.getCheckHPM())) { 
+			if( !actPatrimonio.getCheckHPM()){
+				ajustaGestores(activo);	
+			}
+		}
+		//todos los activos existentes en REM que no estén dentro del perímetro de alquiler y que nunca lo hayan estado
+		else {
+			ajustaGestores(activo);
+		}
+		
+		/*
+		// comprobamos si se ha modificado la provincia en la ficha de datos basicos del activo
+		if(dto instanceof DtoActivoFichaCabecera && !(Checks.esNulo(((DtoActivoFichaCabecera)dto).getAsignaGestPorCambioDeProv())) && ((DtoActivoFichaCabecera)dto).getAsignaGestPorCambioDeProv()) {
+		
+			// si se ha cambiado borramos los gestores para reasignarlos de nuevo
+			this.borrarGestor(activo,GestorActivoApi.CODIGO_GESTOR_ACTIVO);
+			this.borrarGestor(activo,GestorActivoApi.CODIGO_GESTOR_EDIFICACIONES);
+			this.borrarGestor(activo,GestorActivoApi.CODIGO_GESTOR_SUELOS);
+			
+			if(!this.anyadirGestor(activo, GestorActivoApi.CODIGO_GESTOR_ACTIVO))
+				logger.error("Error en ActivoAdapter [saveTabActivoTransactional]: No se ha podido guardar el "+GestorActivoApi.CODIGO_GESTOR_ACTIVO);
+			if(!this.anyadirGestor(activo, GestorActivoApi.CODIGO_GESTOR_EDIFICACIONES))
+				logger.error("Error en ActivoAdpter [saveTabActivoTransactional]: No se ha podido guardar el "+GestorActivoApi.CODIGO_GESTOR_EDIFICACIONES);
+			if(!this.anyadirGestor(activo, GestorActivoApi.CODIGO_GESTOR_SUELOS))
+				logger.error("Error en ActivoAdpter [saveTabActivoTransactional]: No se ha podido guardar el "+GestorActivoApi.CODIGO_GESTOR_SUELOS);
+			
+			((DtoActivoFichaCabecera)dto).setAsignaGestPorCambioDeProv(false);
+			
+			
+		}*/
+		
+		
+	}
+	
+	private void ajustaGestores(Activo activo){
+		
+		if(DDTipoActivo.COD_SUELO.equals(activo.getTipoActivo().getCodigo()) && !gestorActivoApi.existeGestorEnActivo(activo, GestorActivoApi.CODIGO_GESTOR_SUELOS)
+				&& DDEstadoActivo.ESTADO_ACTIVO_SUELO.equals(activo.getEstadoActivo().getCodigo())){
+			// ANYADIR GESTOR Y SUPERVISOR SUELOS
+			if(!this.anyadirGestor(activo, GestorActivoApi.CODIGO_GESTOR_SUELOS))
+				logger.error("Error en ActivoAdpter [saveTabActivoTransactional]: No se ha podido guardar el "+GestorActivoApi.CODIGO_GESTOR_SUELOS);
+			if(!this.anyadirGestor(activo, GestorActivoApi.CODIGO_SUPERVISOR_SUELOS))
+				logger.error("Error en ActivoAdpter [saveTabActivoTransactional]: No se ha podido guardar el "+GestorActivoApi.CODIGO_SUPERVISOR_SUELOS);
+			
+		}else if(gestorActivoApi.existeGestorEnActivo(activo, GestorActivoApi.CODIGO_GESTOR_SUELOS)){
+			// Cambiar los gestores
+			this.cambiarTrabajosActivosAGestorActivo(activo,GestorActivoApi.CODIGO_GESTOR_SUELOS);
+			// BORRAR GESTOR Y SUPERVISOR SUELOS
+			this.borrarGestor(activo,GestorActivoApi.CODIGO_GESTOR_SUELOS);
+			this.borrarGestor(activo,GestorActivoApi.CODIGO_SUPERVISOR_SUELOS);
+		}
+		
+		if(!DDTipoActivo.COD_SUELO.equals(activo.getTipoActivo().getCodigo()) && !gestorActivoApi.existeGestorEnActivo(activo, GestorActivoApi.CODIGO_GESTOR_EDIFICACIONES)
+				&& (DDEstadoActivo.ESTADO_ACTIVO_EN_CONSTRUCCION_EN_CURSO.equals(activo.getEstadoActivo().getCodigo())
+						|| DDEstadoActivo.ESTADO_ACTIVO_RUINA.equals(activo.getEstadoActivo().getCodigo())
+						|| DDEstadoActivo.ESTADO_ACTIVO_EN_CONSTRUCCION_PARADA.equals(activo.getEstadoActivo().getCodigo())
+						|| DDEstadoActivo.ESTADO_ACTIVO_OBRA_NUEVA_VANDALIZADO.equals(activo.getEstadoActivo().getCodigo())
+						|| DDEstadoActivo.ESTADO_ACTIVO_NO_OBRA_NUEVA_VANDALIZADO.equals(activo.getEstadoActivo().getCodigo())
+						|| DDEstadoActivo.ESTADO_ACTIVO_EDIFICIO_A_REHABILITAR.equals(activo.getEstadoActivo().getCodigo())
+						|| DDEstadoActivo.ESTADO_ACTIVO_NO_OBRA_NUEVA_PDTE_LEGALIZAR.equals(activo.getEstadoActivo().getCodigo())
+						|| DDEstadoActivo.ESTADO_ACTIVO_OBRA_NUEVA_PDTE_LEGALIZAR.equals(activo.getEstadoActivo().getCodigo()))){
+				//&& (!Checks.esNulo(activo.getEstadoActivo()) || !Checks.esNulo(((DtoActivoFichaCabecera)dto).getEstadoActivoCodigo()))){
+			
+			if(!this.anyadirGestor(activo, GestorActivoApi.CODIGO_GESTOR_EDIFICACIONES))
+				logger.error("Error en ActivoAdpter [saveTabActivoTransactional]: No se ha podido guardar el "+GestorActivoApi.CODIGO_GESTOR_EDIFICACIONES);
+			if(!this.anyadirGestor(activo, GestorActivoApi.CODIGO_SUPERVISOR_EDIFICACIONES))
+				logger.error("Error en ActivoAdpter [saveTabActivoTransactional]: No se ha podido guardar el "+GestorActivoApi.CODIGO_SUPERVISOR_EDIFICACIONES);
+		}else if(!DDTipoActivo.COD_SUELO.equals(activo.getTipoActivo().getCodigo()) && gestorActivoApi.existeGestorEnActivo(activo, GestorActivoApi.CODIGO_GESTOR_EDIFICACIONES)
+				&& (!DDEstadoActivo.ESTADO_ACTIVO_EN_CONSTRUCCION_EN_CURSO.equals(activo.getEstadoActivo().getCodigo())
+						& !DDEstadoActivo.ESTADO_ACTIVO_RUINA.equals(activo.getEstadoActivo().getCodigo())
+						& !DDEstadoActivo.ESTADO_ACTIVO_EN_CONSTRUCCION_PARADA.equals(activo.getEstadoActivo().getCodigo())
+						& !DDEstadoActivo.ESTADO_ACTIVO_OBRA_NUEVA_VANDALIZADO.equals(activo.getEstadoActivo().getCodigo())
+						& !DDEstadoActivo.ESTADO_ACTIVO_NO_OBRA_NUEVA_VANDALIZADO.equals(activo.getEstadoActivo().getCodigo())
+						& !DDEstadoActivo.ESTADO_ACTIVO_EDIFICIO_A_REHABILITAR.equals(activo.getEstadoActivo().getCodigo())
+						& !DDEstadoActivo.ESTADO_ACTIVO_NO_OBRA_NUEVA_PDTE_LEGALIZAR.equals(activo.getEstadoActivo().getCodigo())
+						& !DDEstadoActivo.ESTADO_ACTIVO_OBRA_NUEVA_PDTE_LEGALIZAR.equals(activo.getEstadoActivo().getCodigo()))){
+			// BORRAR GESTOR Y SUPERVISOR EDIFICACIONES
+			this.borrarGestor(activo,GestorActivoApi.CODIGO_GESTOR_EDIFICACIONES);
+			this.borrarGestor(activo,GestorActivoApi.CODIGO_SUPERVISOR_EDIFICACIONES);
+		}else if(DDTipoActivo.COD_SUELO.equals(activo.getTipoActivo().getCodigo())) {
+			// Cambiar los gestores
+			this.cambiarTrabajosActivosAGestorActivo(activo,GestorActivoApi.CODIGO_GESTOR_EDIFICACIONES);
+			// BORRAR GESTOR Y SUPERVISOR EDIFICACIONES
+			this.borrarGestor(activo,GestorActivoApi.CODIGO_GESTOR_EDIFICACIONES);
+			this.borrarGestor(activo,GestorActivoApi.CODIGO_SUPERVISOR_EDIFICACIONES);
+		}
+	}
+
+	private boolean anyadirGestor(Activo activo, String tipoGestorCodigo) {
+		
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", tipoGestorCodigo);
+		EXTDDTipoGestor tipoGestor= genericDao.get(EXTDDTipoGestor.class, filtro);
+		
+		String username = gestorExpedienteComercialDao.getUsuarioGestor(activo.getId(), tipoGestorCodigo);
+		Usuario user = usuarioManager.getByUsername(username);
+		
+		if(!Checks.esNulo(user) && !Checks.esNulo(tipoGestor) && !Checks.esNulo(activo)){
+			
+			GestorEntidadDto dtoGestor = new GestorEntidadDto();
+			dtoGestor.setIdEntidad(activo.getId());
+			dtoGestor.setIdUsuario(user.getId());
+			dtoGestor.setIdTipoGestor(tipoGestor.getId());
+			
+			return this.insertarGestorAdicional(dtoGestor);
+			
+		}else{
+			return false;
+		}
+	}
+	
+	/*
+	 *
+	 * Cambiar el Gestor de tipo Suelos o Edificaciones al Gestor de Activos cuando estos deben ser eliminados y tiene trabajos abiertos.
+	 * @param activo Activo sobre el que vamos a trabajar
+	 * @param tipoGestorCodigo código del tipo de gestor que estamos buscando para quitarle los trabajos activos. (Suelos o Edificaciones)
+	 * 
+	 */
+	private void cambiarTrabajosActivosAGestorActivo(Activo activo, String tipoGestorCodigo) {
+		if(GestorActivoApi.CODIGO_GESTOR_EDIFICACIONES.equals(tipoGestorCodigo)) {
+			for(ActivoTrabajo activoTrabajo : activo.getActivoTrabajos()) {
+				Usuario  usuGestor = activoTrabajo.getTrabajo().getResponsableTrabajo();
+				String estadoTrabajo = activoTrabajo.getTrabajo().getEstado().getCodigo();
+	
+				if(gestorActivoApi.isGestorEdificaciones(activo, usuGestor) && (
+						DDEstadoTrabajo.ESTADO_SOLICITADO.equals(estadoTrabajo) ||
+						DDEstadoTrabajo.ESTADO_EN_TRAMITE.equals(estadoTrabajo) ||
+						DDEstadoTrabajo.ESTADO_IMPOSIBLE_OBTENCION.equals(estadoTrabajo) ||
+						DDEstadoTrabajo.ESTADO_CEE_PENDIENTE_ETIQUETA.equals(estadoTrabajo) ||
+						DDEstadoTrabajo.ESTADO_FINALIZADO_PENDIENTE_VALIDACION.equals(estadoTrabajo) ||
+						DDEstadoTrabajo.ESTADO_PENDIENTE_CIERRE_ECONOMICO.equals(estadoTrabajo) ||
+						DDEstadoTrabajo.ESTADO_VALIDADO.equals(estadoTrabajo)
+						)) {
+					// Asignar trabajos a gestor Activo
+					activoTrabajo.getTrabajo().setResponsableTrabajo(gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_ACTIVO));
+					trabajoDao.saveOrUpdate(activoTrabajo.getTrabajo());
+
+				}
+			}
+		}else if(GestorActivoApi.CODIGO_GESTOR_SUELOS.equals(tipoGestorCodigo)) {
+			for(ActivoTrabajo activoTrabajo : activo.getActivoTrabajos()) {
+				Usuario  usuGestor = activoTrabajo.getTrabajo().getResponsableTrabajo();
+				String estadoTrabajo = activoTrabajo.getTrabajo().getEstado().getCodigo();
+	
+				if(gestorActivoApi.isGestorSuelos(activo, usuGestor) && (
+						DDEstadoTrabajo.ESTADO_SOLICITADO.equals(estadoTrabajo) ||
+						DDEstadoTrabajo.ESTADO_EN_TRAMITE.equals(estadoTrabajo) ||
+						DDEstadoTrabajo.ESTADO_IMPOSIBLE_OBTENCION.equals(estadoTrabajo) ||
+						DDEstadoTrabajo.ESTADO_CEE_PENDIENTE_ETIQUETA.equals(estadoTrabajo) ||
+						DDEstadoTrabajo.ESTADO_FINALIZADO_PENDIENTE_VALIDACION.equals(estadoTrabajo) ||
+						DDEstadoTrabajo.ESTADO_PENDIENTE_CIERRE_ECONOMICO.equals(estadoTrabajo) ||
+						DDEstadoTrabajo.ESTADO_VALIDADO.equals(estadoTrabajo)
+						)) {
+					// Asignar trabajos a gestor Activo
+					activoTrabajo.getTrabajo().setResponsableTrabajo(gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_ACTIVO));
+					trabajoDao.saveOrUpdate(activoTrabajo.getTrabajo());
+
+				}
+			}
+		}else if(GestorActivoApi.CODIGO_GESTOR_ALQUILERES.equals(tipoGestorCodigo)) {
+			for(ActivoTrabajo activoTrabajo : activo.getActivoTrabajos()) {
+				Usuario  usuGestor = activoTrabajo.getTrabajo().getResponsableTrabajo();
+				String estadoTrabajo = activoTrabajo.getTrabajo().getEstado().getCodigo();
+	
+				if(gestorActivoApi.isGestorAlquileres(activo, usuGestor) && (
+						DDEstadoTrabajo.ESTADO_SOLICITADO.equals(estadoTrabajo) ||
+						DDEstadoTrabajo.ESTADO_EN_TRAMITE.equals(estadoTrabajo) ||
+						DDEstadoTrabajo.ESTADO_IMPOSIBLE_OBTENCION.equals(estadoTrabajo) ||
+						DDEstadoTrabajo.ESTADO_CEE_PENDIENTE_ETIQUETA.equals(estadoTrabajo) ||
+						DDEstadoTrabajo.ESTADO_FINALIZADO_PENDIENTE_VALIDACION.equals(estadoTrabajo) ||
+						DDEstadoTrabajo.ESTADO_PENDIENTE_CIERRE_ECONOMICO.equals(estadoTrabajo) ||
+						DDEstadoTrabajo.ESTADO_VALIDADO.equals(estadoTrabajo)
+						)) {
+					// Asignar trabajos a gestor Activo
+					activoTrabajo.getTrabajo().setResponsableTrabajo(gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_ACTIVO));
+					trabajoDao.saveOrUpdate(activoTrabajo.getTrabajo());
+				
+					
+				}
+			
+			}
+		
+	}
+	}
+	
+	
+
+			
+		
+	
+	private void borrarGestor(Activo activo, String tipoGestorCodigo) {
+		
+		Filter f1 = genericDao.createFilter(FilterType.EQUALS, "codigo", tipoGestorCodigo);
+		EXTDDTipoGestor tipoGestor = genericDao.get(EXTDDTipoGestor.class, f1);
+		Filter f2 = genericDao.createFilter(FilterType.EQUALS, "activo", activo);
+		Filter f3 = genericDao.createFilter(FilterType.EQUALS, "tipoGestor",tipoGestor);
+		GestorActivo actGest = genericDao.get(GestorActivo.class, f2,f3);
+				
+		if(!Checks.esNulo(actGest) && !Checks.esNulo(activo) && !Checks.esNulo(tipoGestor)){
+			GestorEntidadDto dtoGestor = new GestorEntidadDto();
+			dtoGestor.setIdEntidad(activo.getId());
+			dtoGestor.setIdUsuario(actGest.getUsuario().getId());
+			dtoGestor.setIdTipoGestor(tipoGestor.getId());
+			dtoGestor.setTipoEntidad(GestorEntidadDto.TIPO_ENTIDAD_ACTIVO);
+			gestorActivoApi.borrarGestorAdicionalEntidad(dtoGestor);
+		}
+	}
+	
 	private void afterSaveTabActivo(WebDto dto, Activo activo, TabActivoService tabActivoService) {
 		
 		if (tabActivoService instanceof TabActivoDatosBasicos) {			
@@ -3270,5 +3604,19 @@ public class ActivoAdapter {
 
 		return null;
 
+	}
+	
+	@Transactional(readOnly = false)
+	public boolean actualizarEstadoPublicacionActivo(Long id) {
+		Activo activo = activoApi.get(id);
+		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+
+		if(activoApi.isActivoIntegradoAgrupacionRestringida(id)) {
+			activoDao.publicarAgrupacionConHistorico(activoApi.getActivoAgrupacionActivoAgrRestringidaPorActivoID(id).getAgrupacion().getId(), usuarioLogado.getUsername());
+		} else {
+			activoDao.publicarActivoConHistorico(activo.getId(), usuarioLogado.getUsername());
+		}
+
+		return true;
 	}
 }

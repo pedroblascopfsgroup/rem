@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.api;
 
+import java.util.Date;
 import java.util.List;
 
 import es.capgemini.devon.files.FileItem;
@@ -22,6 +23,8 @@ import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.GastoProveedorActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaGastoActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaGastoTrabajos;
+import es.pfsgroup.plugin.rem.model.VGastosProveedor;
+import es.pfsgroup.plugin.rem.model.VGastosProvision;
 
 
 public interface GastoProveedorApi {
@@ -256,6 +259,15 @@ public interface GastoProveedorApi {
 		 */
 		public boolean rechazarGasto(Long idGasto, String motivoRechazo);
 		
+		
+		/**
+		 * Método para rechazar gastos contablidad recibidos
+		 * @param idsGastos
+		 * @param motivoRechazo
+		 * @return
+		 */
+		public boolean rechazarGastosContabilidad (Long[] idsGastos, String motivoRechazo, Boolean individual);
+		
 		/**
 		 * Devuelve si ya existe un gasto comparando la información de varios campos concretos.
 		 * @param dto
@@ -297,6 +309,7 @@ public interface GastoProveedorApi {
 		public void actualizarPorcentajeParticipacionGastoProveedorActivo(Long idActivo, Long idGasto, Float porcentajeParticipacion);
 
 
+
 		public GastoProveedorActivo buscarRelacionPorActivoYGasto(Activo activo, GastoProveedor gasto);
 		
 		/**
@@ -310,5 +323,28 @@ public interface GastoProveedorApi {
 
 
 		DtoPage getListGastosExcel(DtoGastosFilter dtoGastosFilter);
+
+		boolean autorizarGastosContabilidad(Long[] idsGastos, String fechaConta, String fechaPago, Boolean individual);
+
+		boolean autorizarGastoContabilidad(Long idGasto, String fechaConta, String fechaPago, Boolean individual);
+
+		boolean autorizarGastosContabilidadAgrupacion(Long[] idsGastos, Long idAgrupacion, String fechaConta, String fechaPago, Boolean individual);
+
+		/**
+		 * Método para rechazar agrupacion de gastos y los gastos de contablidad recibidos de dicha agrupacion 
+		 * @param idAgrupGasto
+		 * @param motivoRechazo
+		 * @return
+		 */
+		public boolean rechazarGastosContabilidadAgrupGastos(Long idAgrupGasto,Long[] idsGasto,String motivoRechazo, Boolean individual);
+
+		/**
+		 * 
+		 * @param idProvision
+		 * @return
+		 */
+		List<VGastosProveedor> getListGastosProvisionAgrupGastos(Long idProvision);
+		
+
 }
 

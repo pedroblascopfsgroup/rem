@@ -79,6 +79,12 @@ public class ActivoValoraciones implements Serializable, Auditable {
 	@Column(name = "VAL_OBSERVACIONES")
 	private String observaciones;
 	
+	@Column(name = "VAL_FECHA_VENTA")
+	private Date fechaVentaHaya;
+	
+	@Column(name = "VAL_LIQUIDEZ")
+	private String liquidez;
+	
 	@Version   
 	private Long version;
 	
@@ -179,6 +185,22 @@ public class ActivoValoraciones implements Serializable, Auditable {
 
 	public void setObservaciones(String observaciones) {
 		this.observaciones = observaciones;
+	}
+
+	public Date getFechaVentaHaya() {
+		return fechaVentaHaya;
+	}
+
+	public void setFechaVentaHaya(Date fechaVentaHaya) {
+		this.fechaVentaHaya = fechaVentaHaya;
+	}
+
+	public String getLiquidez() {
+		return liquidez;
+	}
+
+	public void setLiquidez(String liquidez) {
+		this.liquidez = liquidez;
 	}
 
 }

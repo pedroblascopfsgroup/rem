@@ -142,6 +142,14 @@ Ext.define('HreRem.view.common.GenericViewModel', {
 				remoteUrl: 'generic/getComboTipoGestor'
 				}/*,autoLoad: true*/
     		},
+    		comboTipoGestorByActivo: {
+				model: 'HreRem.model.ComboBase',
+				proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getComboTipoGestorByActivo',
+				extraParams: {idActivo: '{activo.id}'} 
+				}/*,autoLoad: true*/
+    		},
 
     		comboEstadoObraNueva: {
 				model: 'HreRem.model.ComboBase',

@@ -13,6 +13,19 @@ import es.pfsgroup.framework.paradise.gestorEntidad.model.GestorEntidadHistorico
 
 @Repository("GestorEntidadHistoricoDao")
 public class GestorEntidadHistoricoDaoImpl extends AbstractEntityDao<GestorEntidadHistorico, Long> implements GestorEntidadHistoricoDao {
+	
+	@SuppressWarnings("unchecked")
+	public List<GestorEntidadHistorico> getListGestorActivoOrderedByEntidad(GestorEntidadDto dto) {
+
+		StringBuilder hqlList = new StringBuilder(" from GestorEntidadHistorico geh ");
+		hqlList.append(resuelveTipoEntidad(dto.getTipoEntidad(), dto.getIdEntidad()));
+		hqlList.append(" and geh.fechaHasta is null");
+		hqlList.append(" order by geh.tipoGestor.descripcion asc, geh.fechaDesde desc");
+		Query queryList = this.getSession().createQuery(hqlList.toString());
+
+		
+		return queryList.list();
+	}
 
 	@SuppressWarnings("unchecked")
 	public List<GestorEntidadHistorico> getListOrderedByEntidad(GestorEntidadDto dto) {

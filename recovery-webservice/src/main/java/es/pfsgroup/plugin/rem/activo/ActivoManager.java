@@ -357,6 +357,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	private static final String AVISO_MENSAJE_CLIENTE_OBLIGATORIO = "activo.motivo.oferta.cliente";
 	private static final String AVISO_MEDIADOR_NO_EXISTE= "activo.aviso.mediador.no.existe";
 	private static final String AVISO_MEDIADOR_BAJA= "activo.aviso.mediador.baja";
+	private static final String EMAIL_OCUPACIONES = "emailOcupaciones";
 
 	@Override
 	@BusinessOperation(overrides = "activoManager.get")
@@ -2599,17 +2600,21 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 							sendAdj.add(adj);
 						}
 					}
-					List<String> para = new ArrayList<String>();
-					para.add("ocupaciones@haya.es");
-					String activoS = activo.getId()+"";
-					String carteraS = activo.getCartera().getDescripcion();
-					StringBuilder cuerpo = new StringBuilder("<!DOCTYPE HTML PUBLIC '-//W3C//DTD HTML 4.01 Transitional//EN'><html><head><META http-equiv='Content-Type' content='text/html; charset=utf-8'></head><body>");
-					cuerpo.append("<div><p>Se ha marcado en REM una ocupación ilegal del activo ");
-					cuerpo.append(activoS);
-					cuerpo.append("de la cartera ");
-					cuerpo.append(carteraS);
-					cuerpo.append("</p><p>Se anexa el informe de ocupación remitido por el API custodio</p><p>Un saludo</p></div></body></html>");
-					genericAdapter.sendMail(para, null, "Ocupación ilegal del activo: " + activoS + ", de la cartera " + carteraS, cuerpo.toString(), sendAdj);
+					Usuario usu = usuarioApi.getByUsername(EMAIL_OCUPACIONES);
+					if(!Checks.esNulo(usu) && !Checks.esNulo(usu.getEmail()))
+					{
+						List<String> para = new ArrayList<String>();
+						para.add(usu.getEmail());
+						String activoS = activo.getId()+"";
+						String carteraS = activo.getCartera().getDescripcion();
+						StringBuilder cuerpo = new StringBuilder("<!DOCTYPE HTML PUBLIC '-//W3C//DTD HTML 4.01 Transitional//EN'><html><head><META http-equiv='Content-Type' content='text/html; charset=utf-8'></head><body>");
+						cuerpo.append("<div><p>Se ha marcado en REM una ocupación ilegal del activo ");
+						cuerpo.append(activoS);
+						cuerpo.append("de la cartera ");
+						cuerpo.append(carteraS);
+						cuerpo.append("</p><p>Se anexa el informe de ocupación remitido por el API custodio</p><p>Un saludo</p></div></body></html>");
+						genericAdapter.sendMail(para, null, "Ocupación ilegal del activo: " + activoS + ", de la cartera " + carteraS, cuerpo.toString(), sendAdj);
+					}
 				}
 			}
 		}

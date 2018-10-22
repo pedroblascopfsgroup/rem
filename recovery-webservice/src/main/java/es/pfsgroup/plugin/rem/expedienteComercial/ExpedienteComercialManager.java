@@ -19,6 +19,7 @@ import javax.annotation.Resource;
 
 import es.pfsgroup.plugin.rem.model.*;
 import es.pfsgroup.plugin.rem.model.dd.*;
+import es.pfsgroup.plugin.rem.model.CompradorExpediente.CompradorExpedientePk;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
@@ -74,7 +75,6 @@ import es.pfsgroup.plugin.rem.api.TareaActivoApi;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
 import es.pfsgroup.plugin.rem.expedienteComercial.dao.ExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionService;
-import es.pfsgroup.plugin.rem.model.CompradorExpediente.CompradorExpedientePk;
 import es.pfsgroup.plugin.rem.reserva.dao.ReservaDao;
 import es.pfsgroup.plugin.rem.rest.dto.*;
 
@@ -429,6 +429,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			ofertaApi.resetPBC(expedienteComercial, false);
 		}
 
+
+
 		try {
 			beanUtilNotNull.copyProperties(oferta, dto);
 
@@ -440,7 +442,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 
 		expedienteComercial.setOferta(oferta);
-		
+
+		if(!Checks.esNulo(dto.getImporteOferta())){
+			expedienteComercial.setComiteSancion(ofertaApi.calculoComiteLiberbank(oferta));
+		}
+
 		ofertaApi.updateStateDispComercialActivosByOferta(oferta);
 
 		genericDao.save(ExpedienteComercial.class, expedienteComercial);
@@ -829,6 +835,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		return new DtoPage(observaciones, page.getTotalCount());
 	}
 
+
 	@Transactional(readOnly = false)
 	public boolean saveObservacion(DtoObservacion dtoObservacion) {
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", Long.valueOf(dtoObservacion.getId()));
@@ -958,7 +965,6 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			(condiciones.getPosesionInicialInformada()) && condiciones.getEstadoTitulo() != null && condiciones.getEstadoTituloInformada() != null && condiciones.getEstadoTitulo().equals(condiciones
 			.getEstadoTituloInformada())) {
 				dtoActivo.setCondiciones(1);
-
 			} else {
 				dtoActivo.setCondiciones(0);
 			}
@@ -975,15 +981,14 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					int contTanteosActivoRenunciado = 0;
 					for (TanteoActivoExpediente tanteo : tanteosExpediente) {
 						if (tanteo.getActivo().getId().equals(activo.getId())) {
-							contTanteosActivo++;
+								contTanteosActivo++;
 							if (tanteo.getResultadoTanteo() != null) {
 								if (tanteo.getResultadoTanteo().getCodigo().equals(DDResultadoTanteo.CODIGO_EJERCIDO)) {
 									dtoActivo.setTanteos(2);
 									break;
-								} else if (tanteo.getResultadoTanteo().getCodigo().equals(DDResultadoTanteo.CODIGO_RENUNCIADO)) {
+								} else if (DDResultadoTanteo.CODIGO_RENUNCIADO.equals(tanteo.getResultadoTanteo().getCodigo())) {
 									contTanteosActivoRenunciado++;
 								}
-
 							} else {
 								dtoActivo.setTanteos(0);
 							}
@@ -1000,6 +1005,14 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 
 		return new DtoPage(activos, activos.size());
+	}
+
+	@Override
+	public DtoPage getActivosExpedienteVista(Long idExpediente) {
+		List<VListadoActivosExpediente> listadoActivos = genericDao.getList(VListadoActivosExpediente.class,
+				genericDao.createFilter(FilterType.EQUALS, "idExpediente", idExpediente));
+
+		return new DtoPage(listadoActivos, listadoActivos.size());
 	}
 
 	/**
@@ -4012,6 +4025,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			if (!Checks.esNulo(condiciones)) {
 				dto.setSolicitaFinanciacion(condiciones.getSolicitaFinanciacion());
 
+				if(!Checks.esNulo(dto.getSolicitaFinanciacion()) && dto.getSolicitaFinanciacion() > 0 && Checks.esNulo(dto.getCapitalConcedido())){
+					dto.setCapitalConcedido(expediente.getCompradores().get(0).getImporteFinanciado());
+				}
+
 				if (!Checks.esNulo(condiciones.getEstadoFinanciacion())) {
 					dto.setEstadosFinanciacion(condiciones.getEstadoFinanciacion().getCodigo());
 					dto.setEstadosFinanciacionBankia(condiciones.getEstadoFinanciacion().getCodigo());
@@ -4369,14 +4386,14 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			return false;
 		}
 
-		List<ActivoOferta> activosExpediente = oferta.getActivosOferta();
+		List<VActivoOfertaImporte> activosOfertas = this.getListActivosOfertaImporte(oferta.getId());
 
 		Double importeExpediente = oferta.getImporteContraOferta() != null ? oferta.getImporteContraOferta() : oferta.getImporteOferta();
 		if (importeExpediente == null) {
 			return false;
 		}
 
-		for (ActivoOferta activoOferta : activosExpediente) {
+		for (VActivoOfertaImporte activoOferta : activosOfertas) {
 			if (!Checks.esNulo(activoOferta.getImporteActivoOferta())) {
 				totalImporteParticipacionActivos = totalImporteParticipacionActivos
 						.add(BigDecimal.valueOf(activoOferta.getImporteActivoOferta()));
@@ -4384,6 +4401,16 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 
 		return importeExpediente.equals(totalImporteParticipacionActivos.doubleValue());
+	}
+
+	private List<VActivoOfertaImporte> getListActivosOfertaImporte(Long id) {
+		//Filter
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "oferta", id);
+
+		//Declarar lista + genericDao.getList
+		List<VActivoOfertaImporte> listaActOfrImp = genericDao.getList(VActivoOfertaImporte.class, filtro);
+
+		return listaActOfrImp;
 	}
 
 	public DtoCondicionesActivoExpediente getCondicionesActivoExpediete(Long idExpediente, Long idActivo) {

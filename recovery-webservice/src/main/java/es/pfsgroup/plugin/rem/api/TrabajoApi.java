@@ -45,6 +45,15 @@ import es.pfsgroup.plugin.rem.trabajo.dto.DtoTrabajoFilter;
 
 public interface TrabajoApi {
 
+	public static final String PESTANA_FICHA = "ficha";
+	public static final String PESTANA_GESTION_ECONOMICA = "gestionEconomica";
+	public static final String CODIGO_T004_AUTORIZACION_BANKIA = "T004_AutorizacionBankia";
+	public static final String CODIGO_T004_AUTORIZACION_PROPIETARIO = "T004_AutorizacionPropietario";
+	public static final String PERFIL_CAPA_CONTROL_BANKIA="PERFGCCBANKIA";
+	public static final String PERFIL_USUARIOS_DE_CONSULTA="HAYACONSU";
+	public static final String CODIGO_OBTENCION_DOCUMENTACION="02";
+	public static final String CODIGO_ACTUACION_TECNICA="03";
+	
 	/**
 	 * 
 	 * @param id

@@ -49,6 +49,10 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private String subtipoActivoCodigo;
 	private String tipoActivoDescripcion;
 	private String subtipoActivoDescripcion;
+	private String tipoActivoCodigoBde;
+	private String subtipoActivoCodigoBde;
+	private String tipoActivoDescripcionBde;
+	private String subtipoActivoDescripcionBde;
 	private String latitud;
 	private String longitud;
 	private String entidadPropietaria;
@@ -60,6 +64,8 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private Integer divHorizontal;
 	private String tipoUsoDestinoCodigo;
 	private String tipoUsoDestinoDescripcion;
+	private String codPromocionFinal;
+	private String catContableDescripcion;
 
 	// Comunidad de propietarios
 	private String tipoCuotaCodigo;
@@ -191,12 +197,21 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	// HREOS-2761
 	private List<?> activosPropagables;
 	
+	//REMVIP-969
+	private Boolean tienePosibleInformeMediador;
+
 	private int page;
 	private int start;
 	private int limit;
 	
 	//HREOS-3415
 	private String acbCoreaeTexto;
+
+	//HREOS-4470
+	private Boolean asignaGestPorCambioDeProv;
+
+	//REMVIP-REMVIP-2193
+	private Boolean isLogUsuGestComerSupComerSupAdmin;
 
 	public int getPage() {
 		return page;
@@ -1477,4 +1492,75 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 		this.acreedorNumExp = acreedorNumExp;
 	}
 
+	public Boolean getTienePosibleInformeMediador() {
+		return tienePosibleInformeMediador;
+	}
+
+	public void setTienePosibleInformeMediador(Boolean tienePosibleInformeMediador) {
+		this.tienePosibleInformeMediador = tienePosibleInformeMediador;
+	}
+
+	public String getTipoActivoCodigoBde() {
+		return tipoActivoCodigoBde;
+	}
+
+	public void setTipoActivoCodigoBde(String tipoActivoCodigoBde) {
+		this.tipoActivoCodigoBde = tipoActivoCodigoBde;
+	}
+
+	public String getSubtipoActivoCodigoBde() {
+		return subtipoActivoCodigoBde;
+	}
+
+	public void setSubtipoActivoCodigoBde(String subtipoActivoCodigoBde) {
+		this.subtipoActivoCodigoBde = subtipoActivoCodigoBde;
+	}
+
+	public String getTipoActivoDescripcionBde() {
+		return tipoActivoDescripcionBde;
+	}
+
+	public void setTipoActivoDescripcionBde(String tipoActivoDescripcionBde) {
+		this.tipoActivoDescripcionBde = tipoActivoDescripcionBde;
+	}
+
+	public String getSubtipoActivoDescripcionBde() {
+		return subtipoActivoDescripcionBde;
+	}
+
+	public void setSubtipoActivoDescripcionBde(String subtipoActivoDescripcionBde) {
+		this.subtipoActivoDescripcionBde = subtipoActivoDescripcionBde;
+	}
+
+	public String getCodPromocionFinal() {
+		return codPromocionFinal;
+	}
+
+	public void setCodPromocionFinal(String codPromocionFinal) {
+		this.codPromocionFinal = codPromocionFinal;
+	}
+
+	public String getCatContableDescripcion() {
+		return catContableDescripcion;
+	}
+
+	public void setCatContableDescripcion(String catContableDescripcion) {
+		this.catContableDescripcion = catContableDescripcion;
+	}
+
+	public Boolean getAsignaGestPorCambioDeProv() {
+		return asignaGestPorCambioDeProv;
+	}
+
+	public void setAsignaGestPorCambioDeProv(Boolean asignaGestPorCambioDeProv) {
+		this.asignaGestPorCambioDeProv = asignaGestPorCambioDeProv;
+	}
+
+	public Boolean getIsLogUsuGestComerSupComerSupAdmin() {
+		return isLogUsuGestComerSupComerSupAdmin;
+	}
+
+	public void setIsLogUsuGestComerSupComerSupAdmin(Boolean isLogUsuGestComerSupComerSupAdmin) {
+		this.isLogUsuGestComerSupComerSupAdmin = isLogUsuGestComerSupComerSupAdmin;
+	}
 }

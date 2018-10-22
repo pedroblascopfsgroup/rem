@@ -38,7 +38,7 @@ public class ActuacionTecnicaUserAssignationService implements UserAssigantionSe
 	private static final String CODIGO_T004_SOLICITUD_PRESUPUESTOS = "T004_SolicitudPresupuestos";
 	private static final String CODIGO_T004_VALIDACION_TRABAJO = "T004_ValidacionTrabajo";
 	
-	public static final double LIBERBANK_LIMITE_INFERIOR = 5000;
+	public static final double LIBERBANK_LIMITE_INFERIOR = 3000;
 	public static final double LIBERBANK_LIMITE_INFERIOR_AGRUPACIONES = 25000;
 	public static final double LIBERBANK_LIMITE_INTERMEDIO_AGRUPACIONES = 50000;
 	public static final double LIBERBANK_LIMITE_SUPERIOR_AGRUPACIONES = 500000;
@@ -78,13 +78,17 @@ public class ActuacionTecnicaUserAssignationService implements UserAssigantionSe
 			Double importe = new Double("0.0");
 			
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", trabajo.getId());
-			
-			for(ActivoTrabajo activo : listActivos) {
-				if(null != activo.getActivo().getCodigoPromocionPrinex() && !activo.getActivo().getCodigoPromocionPrinex().isEmpty()){
-					hasCodPrinex = true;
-					break;
+			if(!Checks.esNulo(trabajo.getAgrupacion()))
+				for(ActivoTrabajo activo : listActivos) {
+					if(null != activo.getActivo().getCodigoPromocionPrinex() && !activo.getActivo().getCodigoPromocionPrinex().isEmpty()){
+						hasCodPrinex = true;
+						break;
+					}
 				}
-			}
+			else
+				if(!Checks.esNulo(trabajo.getCodigoPromocionPrinex()))
+					hasCodPrinex = true;
+			
 			
 			if (!Checks.esNulo(trabajo.getEsTarificado()) && !trabajo.getEsTarificado()) { // Presupuesto
 				List<PresupuestoTrabajo> presupuestos = genericDao.getList(PresupuestoTrabajo.class, filtro);

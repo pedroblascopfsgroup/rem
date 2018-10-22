@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.api;
 
+import java.util.Date;
 import java.util.List;
 
 import es.capgemini.devon.files.FileItem;
@@ -7,6 +8,7 @@ import es.capgemini.devon.files.WebFileItem;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
+import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.DtoActivoGasto;
 import es.pfsgroup.plugin.rem.model.DtoActivoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
@@ -18,8 +20,11 @@ import es.pfsgroup.plugin.rem.model.DtoImpugnacionGasto;
 import es.pfsgroup.plugin.rem.model.DtoInfoContabilidadGasto;
 import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
+import es.pfsgroup.plugin.rem.model.GastoProveedorActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaGastoActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaGastoTrabajos;
+import es.pfsgroup.plugin.rem.model.VGastosProveedor;
+import es.pfsgroup.plugin.rem.model.VGastosProvision;
 
 
 public interface GastoProveedorApi {
@@ -77,7 +82,24 @@ public interface GastoProveedorApi {
 		 * @param idGasto
 		 * @return
 		 */
+		
+		public boolean searchActivoCarteraAndGastoPrinex(String numGastoHaya);
+		
+		/**
+		 * Método que recoge información de la pestaña Detalle económico del gasto
+		 * @param dto
+		 * @param idGasto
+		 * @return
+		 */
 		boolean saveDetalleEconomico(DtoDetalleEconomicoGasto dto, Long idGasto);
+		
+		/**
+		 * Método que updatea la información de la pestaña Detalle económico del gasto segun prinex
+		 * @param dto
+		 * @param idGasto
+		 * @return
+		 */
+		boolean updateGastoByPrinexLBK(String idGasto);
 		
 		/**
 		 * Método que recupera los activos relacionados con un gasto
@@ -237,6 +259,15 @@ public interface GastoProveedorApi {
 		 */
 		public boolean rechazarGasto(Long idGasto, String motivoRechazo);
 		
+		
+		/**
+		 * Método para rechazar gastos contablidad recibidos
+		 * @param idsGastos
+		 * @param motivoRechazo
+		 * @return
+		 */
+		public boolean rechazarGastosContabilidad (Long[] idsGastos, String motivoRechazo, Boolean individual);
+		
 		/**
 		 * Devuelve si ya existe un gasto comparando la información de varios campos concretos.
 		 * @param dto
@@ -276,5 +307,44 @@ public interface GastoProveedorApi {
 		 * @param porcentajeParticipacion: indica el porcentaje de participacion del activo en el gasto.
 		 */
 		public void actualizarPorcentajeParticipacionGastoProveedorActivo(Long idActivo, Long idGasto, Float porcentajeParticipacion);
+
+
+
+		public GastoProveedorActivo buscarRelacionPorActivoYGasto(Activo activo, GastoProveedor gasto);
+		
+		/**
+		 * Método que devuelve el porcenaje de participación del último gasto ajustado para corregir errores de redondeo.
+		 * 
+		 * @param  gastosActivosList: lista de GastoProveedorActivo
+		 * @param ultimoPorcentaje: porcentaje de participación del último gasto
+		 * 
+		 * */
+		public float regulaPorcentajeUltimoGasto(List<GastoProveedorActivo> gastosActivosList, Float ultimoPorcentaje);
+
+
+		DtoPage getListGastosExcel(DtoGastosFilter dtoGastosFilter);
+
+		boolean autorizarGastosContabilidad(Long[] idsGastos, String fechaConta, String fechaPago, Boolean individual);
+
+		boolean autorizarGastoContabilidad(Long idGasto, String fechaConta, String fechaPago, Boolean individual);
+
+		boolean autorizarGastosContabilidadAgrupacion(Long[] idsGastos, Long idAgrupacion, String fechaConta, String fechaPago, Boolean individual);
+
+		/**
+		 * Método para rechazar agrupacion de gastos y los gastos de contablidad recibidos de dicha agrupacion 
+		 * @param idAgrupGasto
+		 * @param motivoRechazo
+		 * @return
+		 */
+		public boolean rechazarGastosContabilidadAgrupGastos(Long idAgrupGasto,Long[] idsGasto,String motivoRechazo, Boolean individual);
+
+		/**
+		 * 
+		 * @param idProvision
+		 * @return
+		 */
+		List<VGastosProveedor> getListGastosProvisionAgrupGastos(Long idProvision);
+		
+
 }
 

@@ -27,7 +27,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
         		return 'resources/images/'+src;	     
         	}
 	     },
-	     
+
 	     esAgrupacionRestringida: function(get) {
 	    	 
 		     	var tipoAgrupacion = get('agrupacionficha.tipoAgrupacionCodigo');
@@ -37,9 +37,9 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 		     		return false;
 		     	}
 		 },
-		 
+
 		 esAgrupacionRestringidaIncluyeDestinoComercialVenta: function(get) {
-			 
+
 			 var tipoAgrupacion = get('agrupacionficha.tipoAgrupacionCodigo');
 			 var incluyeDestinoComercialVenta = get('agrupacionficha.incluyeDestinoComercialVenta');
 		     	if((tipoAgrupacion == CONST.TIPOS_AGRUPACION['RESTRINGIDA']) && incluyeDestinoComercialVenta) {
@@ -48,9 +48,9 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 		     		return false;
 		     	}
 		 },
-		 
+
 		 esAgrupacionRestringidaIncluyeDestinoComercialAlquiler: function(get) {
-			 
+
 			 var tipoAgrupacion = get('agrupacionficha.tipoAgrupacionCodigo');
 			 var incluyeDestinoComercialAlquiler = get('agrupacionficha.incluyeDestinoComercialAlquiler');
 		     	if((tipoAgrupacion == CONST.TIPOS_AGRUPACION['RESTRINGIDA']) && incluyeDestinoComercialAlquiler) {
@@ -102,11 +102,56 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 		     	}
 		 },
 
+		 esAgrupacionProyecto: function(get) {
+
+		     	var tipoAgrupacion = get('agrupacionficha.tipoAgrupacionCodigo');
+		     	if((tipoAgrupacion == CONST.TIPOS_AGRUPACION['PROYECTO'])) {
+		     		return true;
+		     	} else {
+		     		return false;
+		     	}
+		 },
+		 agrupacionProyectoTieneActivos: function(get) {
+
+		     	var tipoAgrupacion = get('agrupacionficha.tipoAgrupacionCodigo');
+		     	var numeroActivos = get('agrupacionficha.numeroActivos');
+		     	if((tipoAgrupacion == CONST.TIPOS_AGRUPACION['PROYECTO']) && numeroActivos > 0) {
+		     		return true;
+		     	} else {
+		     		return false;
+		     	}
+		 },
+		 agrupacionTieneActivosOrExisteFechaBaja: function(get) {
+		     	var tipoAgrupacion = get('agrupacionficha.tipoAgrupacionCodigo');
+		     	var numeroActivos = get('agrupacionficha.numeroActivos');
+		     	var existeFechaBaja = get('agrupacionficha.existeFechaBaja');
+		     	if((tipoAgrupacion == CONST.TIPOS_AGRUPACION['PROYECTO'])) {
+		     		if(numeroActivos > 0 || existeFechaBaja){
+		     			return true;
+		     		}else{
+		     			return false;
+		     		}
+
+		     	} else {
+		     		return existeFechaBaja;
+		     	}
+		 },
+
 	     esAgrupacionObraNuevaOrAsistida: function(get) {
 	    	 
 	     	return get('esAgrupacionObraNueva') || get('esAgrupacionAsistida');
 	     },
 	     
+	     esAgrupacionObraNuevaOrAsistidaOrProyecto: function(get) {
+
+		   	return get('esAgrupacionObraNueva') || get('esAgrupacionAsistida') || get('esAgrupacionProyecto');
+		 },
+
+	     esAgrupacionLoteComercialOrProyecto: function(get) {
+
+		  	return get('esAgrupacionLoteComercial') || get('esAgrupacionProyecto');
+		 },
+
 	     existeFechaBaja : function(get) {
 	    	var existeFechaBaja = get('agrupacionficha.existeFechaBaja');
 	    	return existeFechaBaja;
@@ -126,43 +171,47 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 	     		return (get('agrupacionficha.numeroActivos')>0);
 	     },
 
+	     esAgrupacionLiberbank: function(get) {
+			return get('agrupacionficha.codigoCartera') == CONST.CARTERA['LIBERBANK'];
+	     },
+
 	     getIconClsEstadoVenta: function(get) {
-		     	
-		     	var estadoVenta = get('agrupacionficha.estadoVenta');
-		     	if(estadoVenta == 0) {
-		     		return 'app-tbfiedset-ico icono-ko'
-		     	} else if (estadoVenta == 1){
-		     		return 'app-tbfiedset-ico icono-ok'
-		     	}else if (estadoVenta == 2){
-		     		return 'app-tbfiedset-ico icono-okn'
-		     	}
+	        var estadoVenta = get('agrupacionficha.estadoVenta');
+
+	        if(estadoVenta == 0) {
+	            return 'app-tbfiedset-ico icono-ko'
+	        } else if (estadoVenta == 1){
+	            return 'app-tbfiedset-ico icono-ok'
+	        }else if (estadoVenta == 2){
+	            return 'app-tbfiedset-ico icono-okn'
+	        }
 		 },
-		 
+
 		 getIconClsestadoAlquiler : function(get) {
+			var estadoAlquiler = get('agrupacionficha.estadoAlquiler');
 
-				var estadoAlquiler = get('agrupacionficha.estadoAlquiler');
-
-				if (estadoAlquiler == 0) {
-					return 'app-tbfiedset-ico icono-ko'
-				} else if (estadoAlquiler == 1) {
-					return 'app-tbfiedset-ico icono-ok'
-				} else if (estadoAlquiler == 2) {
-					return 'app-tbfiedset-ico icono-okn'
-					}
+			if (estadoAlquiler == 0) {
+				return 'app-tbfiedset-ico icono-ko'
+			} else if (estadoAlquiler == 1) {
+				return 'app-tbfiedset-ico icono-ok'
+			} else if (estadoAlquiler == 2) {
+				return 'app-tbfiedset-ico icono-okn'
+			}
 		 },
 
-	   //Condicionantes
 	     getIconClsCondicionantesRuina: function(get) {
-	    	 var condicion = get('datospublicacionagrupacion.ruina');
+	        var condicion = get('datospublicacionagrupacion.ruina');
+
 	     	if(!eval(condicion)) {
 	     		return 'app-tbfiedset-ico icono-ok'
 	     	} else {
 	     		return 'app-tbfiedset-ico icono-ko'
 	     	}
 	     },
-		     
+
 		 getIconClsCondicionantesPendiente: function(get) {
 		 	var claseActivo= get('datospublicacionagrupacion.claseActivoCodigo');
+
 			if(CONST.CLASE_ACTIVO['FINANCIERO'] != claseActivo){
 				var condicion = get('datospublicacionagrupacion.pendienteInscripcion');
 			   	if(!eval(condicion)) {
@@ -171,20 +220,23 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 			   		return 'app-tbfiedset-ico icono-ko'
 			   	}
 			}
+
 			return 'app-tbfiedset-ico'
-		},	
-		
+		},
+
 		getIconClsCondicionantesObraTerminada: function(get) {
 			var condicion = get('datospublicacionagrupacion.obraNuevaSinDeclarar');
+
 		   	if(!eval(condicion)) {
 		   		return 'app-tbfiedset-ico icono-ok'
 		   	} else {
 		   		return 'app-tbfiedset-ico icono-ko'
 		   	}
 		 },
-		 
+
 		getIconClsCondicionantesSinPosesion: function(get) {
 			var claseActivo= get('datospublicacionagrupacion.claseActivoCodigo');
+
 			if(CONST.CLASE_ACTIVO['FINANCIERO'] != claseActivo){
 				var condicion = get('datospublicacionagrupacion.sinTomaPosesionInicial');
 				if(!eval(condicion)) {
@@ -193,81 +245,101 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 					return 'app-tbfiedset-ico icono-ko'
 				}
 			}
+
 			return 'app-tbfiedset-ico'
 		},
+
 		getIconClsCondicionantesProindiviso: function(get) {
 			var condicion = get('datospublicacionagrupacion.proindiviso');
+
 		   	if(!eval(condicion)) {
 		   		return 'app-tbfiedset-ico icono-ok'
 		   	} else {
 		   		return 'app-tbfiedset-ico icono-ko'
 		   	}
-		 },
+		},
+
 		getIconClsCondicionantesObraNueva: function(get) {
 			var condicion = get('datospublicacionagrupacion.obraNuevaEnConstruccion');
+
 		   	if(!eval(condicion)) {
 		   		return 'app-tbfiedset-ico icono-ok'
 		   	} else {
 		   		return 'app-tbfiedset-ico icono-ko'
 		   	}
-		 },					 
+		},
+
 		getIconClsCondicionantesOcupadoConTitulo: function(get) {
 			var condicion = get('datospublicacionagrupacion.ocupadoConTitulo');
+
 		   	if(!eval(condicion)) {
 		   		return 'app-tbfiedset-ico icono-ok'
 		   	} else {
 		   		return 'app-tbfiedset-ico icono-ko'
 		   	}
-		 },							 
+		},
+
 		getIconClsCondicionantesTapiado: function(get) {
 			var condicion = get('datospublicacionagrupacion.tapiado');
+
 		   	if(!eval(condicion)) {
 		   		return 'app-tbfiedset-ico icono-ok'
 		   	} else {
 		   		return 'app-tbfiedset-ico icono-ko'
 		   	}
-		 },
+		},
+
 		getIconClsCondicionantesOcupadoSinTitulo: function(get) {
 			var condicion = get('datospublicacionagrupacion.ocupadoSinTitulo');
+
 		   	if(!eval(condicion)) {
 		   		return 'app-tbfiedset-ico icono-ok'
 		   	} else {
 		   		return 'app-tbfiedset-ico icono-ko'
 		   	}
-		},	
+		},
+
 		getIconClsCondicionantesDivHorizontal: function(get) {
 			var condicion = get('datospublicacionagrupacion.divHorizontalNoInscrita');
-			   	if(!eval(condicion)) {
-			   		return 'app-tbfiedset-ico icono-ok'
-			   	} else {
-			   		return 'app-tbfiedset-ico icono-ko'
-			   	}
-		 },
-		 getIconClsCondicionantesConCargas: function(get) {
+
+		    if(!eval(condicion)) {
+		        return 'app-tbfiedset-ico icono-ok'
+		    } else {
+		        return 'app-tbfiedset-ico icono-ko'
+		    }
+		},
+
+		getIconClsCondicionantesConCargas: function(get) {
 			var condicion = get('datospublicacionagrupacion.conCargas');
-			   	if(!eval(condicion)) {
-			   		return 'app-tbfiedset-ico icono-ok'
-			   	} else {
-			   		return 'app-tbfiedset-ico icono-ko'
-			   	}
-		 },
-		 getIconClsCondicionantesSinInformeAprobado: function(get) {
+
+		    if(!eval(condicion)) {
+		        return 'app-tbfiedset-ico icono-ok'
+		    } else {
+		        return 'app-tbfiedset-ico icono-ko'
+		    }
+		},
+
+		getIconClsCondicionantesSinInformeAprobado: function(get) {
 			var condicion = get('datospublicacionagrupacion.sinInformeAprobado');
-			   	if(!eval(condicion)) {
-			   		return 'app-tbfiedset-ico icono-ok'
-			   	} else {
-			   		return 'app-tbfiedset-ico icono-ko'
-			   	}
-		 },
-		 getIconClsCondicionantesVandalizado: function(get) {
+
+		    if(!eval(condicion)) {
+		        return 'app-tbfiedset-ico icono-ok'
+		    } else {
+		        return 'app-tbfiedset-ico icono-ko'
+		    }
+		},
+
+		getIconClsCondicionantesVandalizado: function(get) {
 			var condicion = get('datospublicacionagrupacion.vandalizado');
-			   	if(!eval(condicion)) {
-			   		return 'app-tbfiedset-ico icono-ok'
-			   	} else {
-			   		return 'app-tbfiedset-ico icono-ko'
-			   	}
-		 },
-		 getSiNoFromOtro: function(get) {
+
+		    if(!eval(condicion)) {
+		        return 'app-tbfiedset-ico icono-ok'
+		    } else {
+		        return 'app-tbfiedset-ico icono-ko'
+		    }
+		},
+
+		getSiNoFromOtro: function(get) {
 			var condicion = get('datospublicacionagrupacion.otro');
 
 		   	if(Ext.isEmpty(condicion)) {
@@ -275,39 +347,47 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 		   	} else {
 		   		return '1';
 		   	}
-		 },
-		 //FinCondicionantes
-		 filtrarComboMotivosOcultacionVenta: function(get) {
-				var bloqueoCheckOcultar = get('datospublicacionagrupacion.deshabilitarCheckOcultarVenta');
+		},
 
-				if(!Ext.isEmpty(bloqueoCheckOcultar) && !bloqueoCheckOcultar) {
-					 this.getData().comboMotivosOcultacionVenta.filter([{
-	                     filterFn: function(rec){
-	                         return rec.getData().esMotivoManual === 'true';
-	                     }
-	                 }]);
-				} else {
-					this.getData().comboMotivosOcultacionVenta.clearFilter();
-				}
-			},
+		filtrarComboMotivosOcultacionVenta: function(get) {
+			var bloqueoCheckOcultar = get('datospublicacionagrupacion.deshabilitarCheckOcultarVenta');
 
-			filtrarComboMotivosOcultacionAlquiler: function(get) {
-	            var bloqueoCheckOcultar = get('datospublicacionagrupacion.deshabilitarCheckOcultarAlquiler');
+			if(!Ext.isEmpty(bloqueoCheckOcultar) && !bloqueoCheckOcultar) {
+				 this.getData().comboMotivosOcultacionVenta.filter([{
+                     filterFn: function(rec){
+                         return rec.getData().esMotivoManual === 'true';
+                     }
+                 }]);
+			} else {
+				this.getData().comboMotivosOcultacionVenta.clearFilter();
+			}
+		},
 
-	            if(!Ext.isEmpty(bloqueoCheckOcultar) && !bloqueoCheckOcultar) {
-	                 this.getData().comboMotivosOcultacionAlquiler.filter([{
-	                     filterFn: function(rec){
-	                         return rec.getData().esMotivoManual === 'true';
-	                     }
-	                 }]);
-	            } else {
-	                this.getData().comboMotivosOcultacionAlquiler.clearFilter();
-	            }
-	        }
+		filtrarComboMotivosOcultacionAlquiler: function(get) {
+            var bloqueoCheckOcultar = get('datospublicacionagrupacion.deshabilitarCheckOcultarAlquiler');
+
+            if(!Ext.isEmpty(bloqueoCheckOcultar) && !bloqueoCheckOcultar) {
+                 this.getData().comboMotivosOcultacionAlquiler.filter([{
+                     filterFn: function(rec){
+                         return rec.getData().esMotivoManual === 'true';
+                     }
+                 }]);
+            } else {
+                this.getData().comboMotivosOcultacionAlquiler.clearFilter();
+            }
+        }
     },
-    
+
     stores: {
-    	
+    	comboCartera: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'entidadesPropietarias'}
+			}
+	    },
+
     	comboProvincia: {
 			model: 'HreRem.model.ComboBase',
 			proxy: {
@@ -479,6 +559,33 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 			}   	
 	    },
 
+	    comboGestorComercialBackoffice: {
+	    	model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'agrupacion/getGestoresLoteComercial',
+				extraParams: {agrId: '{agrupacionficha.id}', codigoGestor: 'HAYAGBOINM'}
+			}
+	    },
+
+	    comboDobleGestorActivo: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'agrupacion/getDobleGestorActivo',
+				extraParams: {agrId: '{agrupacionficha.id}', codigoGestorEdi: 'GEDI', codigoGestorSu: 'GSUE'}
+			}
+	    },
+
+	    comboGestorActivos: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'agrupacion/getGestoresLoteComercial',
+				extraParams: {agrId: '{agrupacionficha.id}', codigoGestor: 'GACT'}
+			}
+	    },
+
 	    comboGestorFormalizacion: {
 			model: 'HreRem.model.ComboBase',
 			proxy: {
@@ -515,7 +622,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 			},
 			autoLoad: true   	
 	    },
-	    
+
 	    comboMotivosOcultacionVenta: {
 			model: 'HreRem.model.ComboBase',
 			proxy: {
@@ -524,7 +631,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 				extraParams: {diccionario: 'motivosOcultacion'}
 			}
 		},
-		
+
 		comboAdecuacionAlquiler: {
 			model: 'HreRem.model.ComboBase',
 			proxy: {
@@ -533,7 +640,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 				extraParams: {diccionario: 'comboAdecuacionAlquiler'}
 			}
 		},
-		
+
 		comboMotivosOcultacionAlquiler: {
             model: 'HreRem.model.ComboBase',
             proxy: {
@@ -542,14 +649,14 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
                 extraParams: {diccionario: 'motivosOcultacion'}
             }
         },
-        
+
         comboSiNoRemActivo: {
 			data : [
 		        {"codigo":"1", "descripcion":eval(String.fromCharCode(34,83,237,34))},
 		        {"codigo":"0", "descripcion":"No"}
 		    ]
 		},
-		
+
 		storeEstadoDisponibilidadComercial: {
 			model: 'HreRem.model.DDBase',
 			proxy: {
@@ -559,7 +666,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 			},
 			autoLoad: true
 		},
-		
+
 		historicoEstadosPublicacionVenta: {
 			pageSize: $AC.getDefaultPageSize(),
 			model: 'HreRem.model.HistoricoEstadosPublicacion',
@@ -569,7 +676,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 				extraParams: {idActivo: '{datospublicacionagrupacion.idActivoPrincipal}'}
 			}
 		},
-		
+
 		historicoEstadosPublicacionAlquiler: {
 			pageSize: $AC.getDefaultPageSize(),
 			model: 'HreRem.model.HistoricoEstadosPublicacion',
@@ -579,8 +686,8 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 				extraParams: {idActivo: '{datospublicacionagrupacion.idActivoPrincipal}'}
 			}
 		},
-		
-		historicocondicionesagrupacion: {    
+
+		historicocondicionesagrupacion: {
 			pageSize: $AC.getDefaultPageSize(),
 			model: 'HreRem.model.CondicionEspecificaAgrupacion',
 			proxy: {

@@ -297,7 +297,7 @@ public class Activo implements Serializable, Auditable {
     @OneToOne(mappedBy = "activo", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "ACT_ID")
     private ActivoPublicacion activoPublicacion;
-    
+
     @OneToMany(mappedBy = "activo", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "ACT_ID")
     @Where(clause = Auditoria.UNDELETED_RESTICTION)
@@ -315,7 +315,7 @@ public class Activo implements Serializable, Auditable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_TPU_ID")
     private DDTipoPublicacion tipoPublicacion;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_TCO_ID")
     private DDTipoComercializacion tipoComercializacion;
@@ -408,7 +408,10 @@ public class Activo implements Serializable, Auditable {
     
     @Column(name = "OK_TECNICO")
     private Boolean tieneOkTecnico;
-	
+
+    @Column(name = "ACT_PUJA")
+    private Boolean estaEnPuja;
+
 	
 	
     // Getters del activo --------------------------------------------
@@ -1613,5 +1616,13 @@ public class Activo implements Serializable, Auditable {
 
 	public void setTieneOkTecnico(Boolean tieneOkTecnico) {
 		this.tieneOkTecnico = tieneOkTecnico;
+	}
+	
+	public Boolean getEstaEnPuja() {
+		return estaEnPuja;
+	}
+
+	public void setEstaEnPuja(Boolean estaEnPuja) {
+		this.estaEnPuja = estaEnPuja;
 	}
 }

@@ -92,10 +92,18 @@ Ext.define('HreRem.view.activos.detalle.AdmisionActivoTabPanel', {
 		 }else{
 			 ocultarAdmisioncheckinfoactivo = !$AU.userHasFunction('EDITAR_CHECKING_INFO_ADMISION');
 		 }
+		 
+		 var ocultarAdmisioncheckdocactivo = false;		
+		 if(me.lookupController().getViewModel().get('activo').get('claseActivoCodigo')=='01'){
+			 ocultarAdmisioncheckdocactivo = !(($AU.userIsRol(CONST.PERFILES['GESTOPDV']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['HAYACAL']) || $AU.userIsRol(CONST.PERFILES['HAYASUPCAL'])) 
+					 && $AU.userHasFunction('EDITAR_CHECKING_DOC_ADMISION'));
+		 }else{
+			 ocultarAdmisioncheckdocactivo = !$AU.userHasFunction('EDITAR_CHECKING_DOC_ADMISION');
+		 }
 
 	     me.items = [];
 	     $AU.confirmFunToFunctionExecution(function(){me.items.push({xtype: 'admisioncheckinfoactivo', ocultarBotonesEdicion: ocultarAdmisioncheckinfoactivo, title: HreRem.i18n('title.admision.check.inf.activo')})}, ['TAB_CHECKING_INFO_ADMISION']);
-	     $AU.confirmFunToFunctionExecution(function(){me.items.push({xtype: 'admisioncheckdocactivo', ocultarBotonesEdicion: true, title: HreRem.i18n('title.admision.check.doc.activo')})}, ['TAB_CHECKING_DOC_ADMISION']);
+	     $AU.confirmFunToFunctionExecution(function(){me.items.push({xtype: 'admisioncheckdocactivo', ocultarBotonesEdicion: ocultarAdmisioncheckdocactivo, title: HreRem.i18n('title.admision.check.doc.activo')})}, ['TAB_CHECKING_DOC_ADMISION']);
 
 	     me.callParent();
 	 },

@@ -1,0 +1,70 @@
+--/*
+--##########################################
+--## AUTOR=Viorel Remus Ovidiu
+--## FECHA_CREACION=20180919
+--## ARTEFACTO=online
+--## VERSION_ARTEFACTO=9.2
+--## INCIDENCIA_LINK=REMVIP-1849
+--## PRODUCTO=NO
+--## Finalidad: DDL
+--##           
+--## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
+--## VERSIONES:
+--##        0.1 Versión inicial
+--##########################################
+--*/
+
+--Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON; 
+
+DECLARE
+    seq_count number(3); -- Vble. para validar la existencia de las Secuencias.
+    table_count number(3); -- Vble. para validar la existencia de las Tablas.
+    v_column_count number(3); -- Vble. para validar la existencia de las Columnas.    
+    v_constraint_count number(3); -- Vble. para validar la existencia de las Constraints.
+    err_num NUMBER; -- N?mero de errores
+    err_msg VARCHAR2(2048); -- Mensaje de error
+    V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquemas
+    V_MSQL VARCHAR2(4000 CHAR); 
+
+    CUENTA NUMBER;
+    
+BEGIN
+	
+-- Modificación de la vista V_TASACION_CALCULO_LBK de Fase1.
+
+  SELECT COUNT(*) INTO CUENTA FROM ALL_OBJECTS WHERE OBJECT_NAME = 'V_TASACION_CALCULO_LBK' AND OWNER=V_ESQUEMA AND OBJECT_TYPE='MATERIALIZED VIEW';  
+  IF CUENTA>0 THEN
+    DBMS_OUTPUT.PUT_LINE('DROP MATERIALIZED VIEW '|| V_ESQUEMA ||'.V_TASACION_CALCULO_LBK...');
+    EXECUTE IMMEDIATE 'DROP MATERIALIZED VIEW ' || V_ESQUEMA || '.V_TASACION_CALCULO_LBK';  
+    DBMS_OUTPUT.PUT_LINE('DROP MATERIALIZED VIEW '|| V_ESQUEMA ||'.V_TASACION_CALCULO_LBK... borrada OK');
+  END IF;
+
+  SELECT COUNT(*) INTO CUENTA FROM ALL_OBJECTS WHERE OBJECT_NAME = 'V_TASACION_CALCULO_LBK' AND OWNER=V_ESQUEMA AND OBJECT_TYPE='VIEW';  
+  IF CUENTA>0 THEN
+    DBMS_OUTPUT.PUT_LINE('DROP VIEW '|| V_ESQUEMA ||'.V_TASACION_CALCULO_LBK...');
+    EXECUTE IMMEDIATE 'DROP VIEW ' || V_ESQUEMA || '.V_TASACION_CALCULO_LBK';  
+    DBMS_OUTPUT.PUT_LINE('DROP VIEW '|| V_ESQUEMA ||'.V_TASACION_CALCULO_LBK... borrada OK');
+  END IF;
+
+  DBMS_OUTPUT.PUT_LINE('CREATE VIEW '|| V_ESQUEMA ||'.V_TASACION_CALCULO_LBK...');
+  EXECUTE IMMEDIATE 'CREATE VIEW '|| V_ESQUEMA ||'.V_TASACION_CALCULO_LBK 
+      AS
+  SELECT ROWNUM AS ID_VISTA, ACT.ACT_ID, AGA.AGR_ID, TAS.TAS_IMPORTE_TAS_FIN AS TASACION, V_PRE.DD_TPC_CODIGO, V_PRE.VAL_IMPORTE, MAX(BIE.BIE_FECHA_VALOR_TASACION) AS FECHA_VALOR_TASACION 
+  FROM '|| V_ESQUEMA ||'.ACT_ACTIVO ACT
+  LEFT JOIN '|| V_ESQUEMA ||'.V_PRECIOS_VIGENTES V_PRE ON ACT.ACT_ID = V_PRE.ACT_ID AND V_PRE.DD_TPC_CODIGO IN (''02'', ''04'')
+  JOIN '|| V_ESQUEMA ||'.ACT_AGA_AGRUPACION_ACTIVO AGA ON ACT.ACT_ID = AGA.ACT_ID
+  JOIN '|| V_ESQUEMA ||'.ACT_TAS_TASACION TAS ON ACT.ACT_ID = TAS.ACT_ID AND TAS.TAS_TASACION_ACTIVA = ''S''
+  JOIN '|| V_ESQUEMA ||'.BIE_VALORACIONES BIE ON TAS.BIE_VAL_ID = BIE.BIE_VAL_ID
+  GROUP BY ROWNUM, ACT.ACT_ID, AGA.AGR_ID, TAS.TAS_IMPORTE_TAS_FIN, V_PRE.DD_TPC_CODIGO, V_PRE.VAL_IMPORTE
+  ';
+
+  DBMS_OUTPUT.PUT_LINE('CREATE VIEW '|| V_ESQUEMA ||'.V_TASACION_CALCULO_LBK...Creada OK');
+
+  
+END;
+/
+
+EXIT;

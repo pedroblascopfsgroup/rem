@@ -49,6 +49,7 @@ Ext.define('HreRem.view.activos.detalle.PatrimonioActivo', {
 							reference: 'comboTipoAlquilerRef',
 							bind: {
 								store: '{comboTipoAlquiler}',
+								disabled: '{enableComboTipoAlquiler}',
 								value: '{patrimonio.tipoAlquilerCodigo}'
 							}
 						},

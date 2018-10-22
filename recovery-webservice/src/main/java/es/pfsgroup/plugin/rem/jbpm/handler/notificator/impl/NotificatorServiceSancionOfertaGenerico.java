@@ -67,11 +67,15 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 	private static final String GESTOR_COMERCIAL_LOTE_COMERCIAL_SUS = "gestor-comercial-lote-comercial-sustituto";
 	private static final String GESTOR_FORMALIZACION = "gestor-formalizacion";
 	private static final String GESTOR_FORMALIZACION_SUS = "gestor-formalizacion-sustituto";
+	private static final String SUPERVISOR_COMERCIAL = "supervisor-comercial";
 	private static final String GESTOR_BACKOFFICE = "gestor-backoffice";
 	private static final String GESTOR_BACKOFFICE_SUS = "gestor-backoffice-sustituto";
 	private static final String GESTOR_GESTORIA_FASE_3 = "gestoria-fase-3";
 	private static final String GESTOR_GESTORIA_FASE_3_SUS = "gestoria-fase-3-sustituto";
 	private static final String USUARIO_FICTICIO_OFERTA_CAJAMAR = "ficticioOfertaCajamar";
+	private static final String SUPERVISOR_BACKOFFICE_LIBERBANK = "supervisor-backoffice-liberbank";
+	private static final String GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO = "gestor-comercial-backoffice-inmobiliario";
+	private static final String BUZON_REM = "buzonrem";
 	
 	// Patrón para validar el email
     Pattern pattern = Pattern
@@ -126,12 +130,14 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 
 	private void sendNotification(ActivoTramite tramite, boolean permiteRechazar, Activo activo, Oferta oferta, boolean permiteNotificarAprobacion) {
 
+		ArrayList<String> destinatarios = new ArrayList<String>();
+		
 		if (!Checks.esNulo(oferta)) {
 			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(oferta.getId());
 			if (permiteNotificarAprobacion && !Checks.esNulo(expediente)
 					&& DDEstadosExpedienteComercial.APROBADO.equals(expediente.getEstado().getCodigo())) { // APROBACIÓN
 
-				ArrayList<String> destinatarios = getDestinatariosNotificacion(activo, oferta, expediente);
+				destinatarios = getDestinatariosNotificacion(activo, oferta, expediente);
 				
 				if (activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_CAJAMAR)){
 					destinatarios.add(usuarioManager.getByUsername(USUARIO_FICTICIO_OFERTA_CAJAMAR).getEmail());
@@ -146,6 +152,8 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 									+ oferta.getId() + "]");
 					return;
 				}
+				
+				destinatarios.add(usuarioManager.getByUsername(BUZON_REM).getEmail());
 
 				this.enviaNotificacionAceptar(tramite, oferta,
 						expediente,
@@ -159,15 +167,32 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 					logger.warn("No se ha encontrado el prescriptor. No se va a mandar la notificación [oferta.id="
 							+ oferta.getId() + "]");
 					return;
+				}else {
+					destinatarios.add(prescriptor);
 				}
+				
 				String gestorFormalizacion = null;
 				if(ofertaApi.checkReserva(oferta)) {
 					gestorFormalizacion = getGestorFormalizacion(activo,oferta, expediente);
 				}
-				if(Checks.esNulo(gestorFormalizacion))
-					this.enviaNotificacionRechazar(tramite, activo, oferta, prescriptor, gestorComercial);
-				else
-					this.enviaNotificacionRechazar(tramite, activo, oferta, prescriptor, gestorComercial, gestorFormalizacion);
+				
+				if (Checks.esNulo(gestorComercial)) {
+					logger.warn("No se ha encontrado el gestor comercial. No se va a mandar la notificación [oferta.id="
+							+ oferta.getId() + "] a este gestor.");
+				}else {
+					destinatarios.add(gestorComercial);
+				}
+				
+				if (Checks.esNulo(gestorFormalizacion)) {
+					logger.warn("No se ha encontrado el gestor de formalizacion. No se va a mandar la notificación [oferta.id="
+							+ oferta.getId() + "] a este gestor.");
+				}else {
+					destinatarios.add(gestorFormalizacion);
+				}
+				
+				destinatarios.add(usuarioManager.getByUsername(BUZON_REM).getEmail());
+				
+				this.enviaNotificacionRechazar(tramite, activo, oferta, destinatarios.toArray(new String[] {}));
 			}
 		}
 	}
@@ -198,6 +223,9 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 					genericDao.createFilter(FilterType.EQUALS, "id", ofertaAceptada.getAgrupacion().getId()));
 			Map<String, String> gestores = getGestores(activo, ofertaAceptada, activoLoteComercial, null, comercial);
 			return gestores.get(comercial);
+		}else if(Checks.esNulo(ofertaAceptada.getAgrupacion()) && GESTOR_COMERCIAL_ACTIVO.equals(comercial)) {
+			Map<String, String> gestores = getGestores(activo, ofertaAceptada, null, null, comercial);
+			return gestores.get(comercial);
 		}
 		return null;
 		
@@ -218,7 +246,13 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 				|| activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_TANGO)
 				|| activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_LIBERBANK)
 				|| activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_GIANTS)) {
+			
 			clavesGestores.addAll(Arrays.asList(GESTOR_PRESCRIPTOR, GESTOR_MEDIADOR, claveGestorComercial, GESTOR_COMERCIAL_ACTIVO_SUS));
+			
+			if(DDCartera.CODIGO_CARTERA_LIBERBANK.equals(activo.getCartera().getCodigo())) {
+				clavesGestores.addAll(Arrays.asList(GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO, SUPERVISOR_BACKOFFICE_LIBERBANK));
+			}
+			
 			if (formalizacion) {
 				clavesGestores.addAll(Arrays.asList(GESTOR_FORMALIZACION, GESTOR_FORMALIZACION_SUS));
 				clavesGestores.addAll(Arrays.asList(GESTOR_GESTORIA_FASE_3, GESTOR_GESTORIA_FASE_3_SUS));
@@ -227,11 +261,14 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 			// DESTINATARIOS SI ES CAJAMAR
 		} else if (activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_CAJAMAR)) {
 			clavesGestores.addAll(
-					Arrays.asList(GESTOR_PRESCRIPTOR, GESTOR_MEDIADOR, claveGestorComercial, GESTOR_BACKOFFICE, GESTOR_COMERCIAL_ACTIVO_SUS, GESTOR_BACKOFFICE_SUS));
+					Arrays.asList(GESTOR_PRESCRIPTOR, GESTOR_MEDIADOR, claveGestorComercial, GESTOR_BACKOFFICE, GESTOR_COMERCIAL_ACTIVO_SUS, GESTOR_BACKOFFICE_SUS, GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO));
 			if (formalizacion) {
 				clavesGestores.addAll(Arrays.asList(GESTOR_FORMALIZACION, GESTOR_FORMALIZACION_SUS));
 			}
 		}
+		clavesGestores.add(GESTOR_FORMALIZACION);
+
+		clavesGestores.add(SUPERVISOR_COMERCIAL);
 
 		return clavesGestores.toArray(new String[] {});
 	}
@@ -302,7 +339,7 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 			ExpedienteComercial expediente, String... filtroGestores) {
 		String[] claves = filtroGestores != null ? filtroGestores
 				: new String[] { GESTOR_PRESCRIPTOR, GESTOR_MEDIADOR, GESTOR_COMERCIAL_ACTIVO,
-						GESTOR_COMERCIAL_LOTE_RESTRINGIDO, GESTOR_COMERCIAL_LOTE_COMERCIAL, GESTOR_FORMALIZACION, GESTOR_BACKOFFICE, GESTOR_GESTORIA_FASE_3};
+						GESTOR_COMERCIAL_LOTE_RESTRINGIDO, GESTOR_COMERCIAL_LOTE_COMERCIAL, GESTOR_FORMALIZACION, GESTOR_BACKOFFICE, GESTOR_GESTORIA_FASE_3,SUPERVISOR_COMERCIAL};
 		this.compruebaRequisitos(activo, oferta, loteComercial, expediente, Arrays.asList(claves));
 
 		HashMap<String, String> gestores = new HashMap<String, String>();
@@ -414,8 +451,26 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 						}
 					}
 				}
+			} else if (SUPERVISOR_BACKOFFICE_LIBERBANK.equals(s)) {
+				Usuario supBackLiberbank= gestorActivoApi.getGestorByActivoYTipo(activo, "SBACKOFFICEINMLIBER");
+				if(!Checks.esNulo(supBackLiberbank)) {
+					addMail(s, gestores.put(s, extractEmail(supBackLiberbank)), gestores);
+				}
+			} else if(GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO.equals(s)) {
+				Usuario gesBackInmobiliario = gestorActivoApi.getGestorByActivoYTipo(activo, "HAYAGBOINM");
+				if(!Checks.esNulo(gesBackInmobiliario)) {
+					addMail(s, gestores.put(s, extractEmail(gesBackInmobiliario)), gestores);
+				}
+				addMail(s,gestores.put(s, extractEmail(gestorExpedienteComercialApi.getGestorByExpedienteComercialYTipo(expediente, "GIAFORM"))), gestores);				
+			} else if (SUPERVISOR_COMERCIAL.equals(s)) {
+				Usuario sComercial = gestorExpedienteComercialApi.getGestorByExpedienteComercialYTipo(expediente, "SCOM");
+				if(sComercial != null){
+					addMail(s,gestores.put(s, extractEmail(sComercial)), gestores);
+				}								
 			}
 		}
+		
+		
 		
 		return gestores;
 	}
@@ -502,13 +557,8 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 			cuerpo = cuerpo + " hasta la formalización de las arras/reserva";
 		}
 		
-		cuerpo = cuerpo + ". Adjunto a este correo encontrará el documento con las instrucciones a seguir para la reserva y formalización";
+		cuerpo = cuerpo + ". Adjunto a este correo encontrará el documento con las instrucciones a seguir para la reserva y formalización.</p>";
 		
-		if (DDCartera.CODIGO_CARTERA_CAJAMAR.equals(codigoCartera)) {
-			cuerpo = cuerpo + ", así como la Ficha cliente a cumplimentar</p>";
-		}else {
-			cuerpo = cuerpo + ".</p>";
-		}
 		ActivoBancario activoBancario = genericDao.get(ActivoBancario.class,
 				genericDao.createFilter(FilterType.EQUALS, "activo.id", tramite.getActivo().getId())); 
 		if (!Checks.esNulo(expediente.getId()) && !Checks.esNulo(expediente.getReserva()) 
@@ -529,8 +579,8 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 			ActivoPropietario propietario = genericDao.get(ActivoPropietarioActivo.class, filterProp).getPropietario();
 			
 			if(tramite.getActivo().getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_CAJAMAR)) {
-				if (!ActivoPropietario.CODIGO_FONDOS_TITULIZACION.equals(propietario.getCodigo()) && ActivoPropietario.CODIGO_GIVP.equals(propietario.getCodigo()) 
-						&& ActivoPropietario.CODIGO_GIVP_II.equals(propietario.getCodigo())){					
+				if (!ActivoPropietario.CODIGO_FONDOS_TITULIZACION.equals(propietario.getCodigo()) && !ActivoPropietario.CODIGO_GIVP.equals(propietario.getCodigo()) 
+						&& !ActivoPropietario.CODIGO_GIVP_II.equals(propietario.getCodigo())){					
 					cuerpo = cuerpo + "<p>Pinche <a href=\"" + reservationUrl + expediente.getId() + "/" + reservationKey
 							+ "/1\">aquí</a> para la descarga del contrato de reserva.</p>";
 				}
@@ -541,6 +591,11 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 			
 			
 		}
+		if(DDCartera.CODIGO_CARTERA_SAREB.equals(codigoCartera)) {
+			cuerpo = cuerpo + "<p>A tal efecto le solicitamos a través de este documento que:</p>"
+					+ "<p>- Confirme los datos de la oferta remitidos informando de cualquier error que detecte en los mismos.</p>" + 
+					"<p>- Autorice a HAYA REAL ESTATE, S.A. para que a través de sus colaboradores pueda elevar en su nombre la documentación necesaria a la indicada herramienta ePBC.</p>";
+		}		
 
 		cuerpo = cuerpo + "<p>Quedamos a su disposición para cualquier consulta o aclaración. Saludos cordiales.</p>";
 
@@ -647,10 +702,11 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 					adjuntos.add(createAdjunto(f1, "contrato_reserva_Tango.docx"));
 				}
 				//ADJUNTOS SI ES GIANTS
-				else if(activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_GIANTS)){
+				//Comentamos esta parte del código hasta que tengamos contrato de reserva de GIANTS
+				/*else if(activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_GIANTS)){
 					f1 = FileItemUtils.fromResource("docs/contrato_reserva_Giants.docx");
 					adjuntos.add(createAdjunto(f1, "contrato_reserva_Giants.docx"));
-				}
+				}*/
 				//ADJUNTOS SI ES LIBERBANK
 				else if(activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_LIBERBANK)) {
 					f1 = FileItemUtils.fromResource("docs/instrucciones_reserva_y_formalizacion_Liberbank.docx");
@@ -705,13 +761,8 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 			cuerpo = cuerpo + " hasta la formalización de las arras/reserva";
 		}
 		
-		cuerpo = cuerpo + ". Adjunto a este correo encontrará el documento con las instrucciones a seguir para la reserva y formalización";
+		cuerpo = cuerpo + ". Adjunto a este correo encontrará el documento con las instrucciones a seguir para la reserva y formalización.</p>";
 		
-		if (DDCartera.CODIGO_CARTERA_CAJAMAR.equals(codigoCartera)) {
-			cuerpo = cuerpo + ", así como la Ficha cliente a cumplimentar</p>";
-		}else {
-			cuerpo = cuerpo + ".</p>";
-		}
 		ActivoBancario activoBancario = genericDao.get(ActivoBancario.class,
 				genericDao.createFilter(FilterType.EQUALS, "activo.id", tramite.getActivo().getId())); 
 		if (!Checks.esNulo(expediente.getId()) && !Checks.esNulo(expediente.getReserva()) 

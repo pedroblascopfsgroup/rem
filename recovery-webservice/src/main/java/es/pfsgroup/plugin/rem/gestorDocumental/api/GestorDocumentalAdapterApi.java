@@ -37,5 +37,8 @@ public interface GestorDocumentalAdapterApi {
 	Integer crearExpedienteComercial(ExpedienteComercial expedienteComercial, String username) throws GestorDocumentalException;
 	
 	void crearRelacionActivosExpediente(ExpedienteComercial expedienteComercial, Long idDocRestClient, String[] listaActivos, String login, CrearRelacionExpedienteDto crearRelacionExpedienteDto) throws GestorDocumentalException ;
-
+	
+	Long uploadDocumentoPromociones(GastoProveedor gasto, WebFileItem webFileItem, String userLogin, String matricula) throws Exception;
+	
+	List<DtoAdjunto> getAdjuntosPromociones (Long idPromocion) throws GestorDocumentalException;
 }

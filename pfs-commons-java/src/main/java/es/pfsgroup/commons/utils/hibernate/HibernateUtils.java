@@ -60,7 +60,7 @@ public class HibernateUtils extends HibernateDaoSupport {
 	 *
 	 * <pre>
 	 * Ejemplo:
-	 * 
+	 *
 	 * {@code
 	 * Criteria criteria = getSession().createCriteria(XXXXX.class);
 	 * criteria.add(Restrictions.eq("id", dto.getId())).setFirstResult(dto.getStart()).setMaxResults(dto.getLimit()).addOrder(Order.desc("id"));

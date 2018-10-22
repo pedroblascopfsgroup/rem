@@ -1,5 +1,7 @@
 package es.pfsgroup.framework.paradise.bulkUpload.bvfactory;
 
+import java.util.List;
+
 /**
  * Este es un DAO que nos permite realizar consultas lanzando SQL's a pelo
  * @author bruno
@@ -38,4 +40,12 @@ public interface MSVRawSQLDao {
 	 * @return
 	 */
 	Object[] getExecuteSQLArray(String sqlValidacion);
+
+	/**
+	 * Ejecuta una SQL y devuelve el resultado como List de objetos.
+	 *
+	 * @param sqlValidacion
+	 * @return
+	 */
+	List<Object> getExecuteSQLList(String sqlValidacion);
 }

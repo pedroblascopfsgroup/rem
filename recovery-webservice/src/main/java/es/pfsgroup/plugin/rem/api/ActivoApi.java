@@ -903,9 +903,9 @@ public interface ActivoApi {
 
 	/**
 	 * Crea un expediente comercial
-	 */
+	 **/
 	boolean crearExpediente(Oferta oferta, Trabajo trabajo);
-
+	
 	/**
 	 * Devuelve una lista de adecuaciones alquiler para el grid de adecuaciones en la pestaña patrimonio de un activo
 	 *
@@ -921,8 +921,14 @@ public interface ActivoApi {
 	boolean deleteImpuestos(DtoImpuestosActivo dtoImpuestosFilter);
 
 	boolean esLiberBank(Long idActivo);
+	
+	boolean esCajamar(Long idActivo);
 
 	DtoActivoFichaCabecera getActivosPropagables(Long idActivo);
+
+	List<VTasacionCalculoLBK> getVistaTasacion(Long idAgrupacion);
+
+	boolean isActivoEnPuja(Activo activo);
 
 	boolean updateImpuestos(DtoImpuestosActivo dtoImpuestosFilter) throws ParseException;
 

@@ -361,8 +361,13 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
 	  var me = this;
       var isFormalizacion = me.up('agrupacionesdetallemain').lookupReference('comboFormalizacion').value;
       var isComercial = me.up('agrupacionesdetallemain').getViewModel().get("agrupacionficha.isComercial");
+      var provincia = me.up('agrupacionesdetallemain').getViewModel().get("agrupacionficha.provinciaCodigo");
+      var cartera = me.up('agrupacionesdetallemain').getViewModel().get("agrupacionficha.codigoCartera");
+      var tipoAgrupacion = me.up('agrupacionesdetallemain').getViewModel().get('agrupacionficha').get('tipoAgrupacionCodigo');
       if (isComercial && isFormalizacion==null) {
           Ext.Msg.show({ message: 'No se ha definido el perímetro de formalización.', buttons: Ext.Msg.YES});
+      } else if ((tipoAgrupacion == CONST.TIPOS_AGRUPACION['PROYECTO']) && (provincia == null || cartera == null)){
+    	  Ext.Msg.show({ message: 'No se ha cumplimentado el campo Provincia o Cartera.', buttons: Ext.Msg.YES});
       } else {
           var rec = Ext.create(me.getStore().config.model);
           me.getStore().sorters.clear();

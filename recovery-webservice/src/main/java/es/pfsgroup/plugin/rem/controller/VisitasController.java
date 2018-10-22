@@ -132,7 +132,7 @@ public class VisitasController {
 			// }
 			// Page page = comercialApi.getListVisitas(dtoVisitasFilter);
 			DtoPage page = visitaApi.getListVisitasDetalle(dtoVisitasFilter);
-
+			
 			model.put("data", page.getResults());
 			model.put("totalCount", page.getTotalCount());
 			model.put("success", true);

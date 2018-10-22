@@ -26,6 +26,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.commons.utils.dao.abm.Order;
+import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVRawSQLDao;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
@@ -47,8 +48,8 @@ import es.pfsgroup.plugin.rem.gestor.dao.GestorExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.notificator.impl.NotificatorServiceSancionOfertaAceptacionYRechazo;
 import es.pfsgroup.plugin.rem.model.*;
-import es.pfsgroup.plugin.rem.model.CompradorExpediente.CompradorExpedientePk;
 import es.pfsgroup.plugin.rem.model.dd.*;
+import es.pfsgroup.plugin.rem.model.CompradorExpediente.CompradorExpedientePk;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PRINCIPAL;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PROPIEDAD;
@@ -64,7 +65,6 @@ import es.pfsgroup.plugin.rem.service.TabActivoService;
 import es.pfsgroup.plugin.rem.tareasactivo.TareaActivoManager;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 import es.pfsgroup.plugin.rem.utils.DiccionarioTargetClassMap;
-import es.pfsgroup.plugin.rem.validate.validator.DtoPublicacionValidaciones;
 import es.pfsgroup.plugin.rem.visita.dao.VisitaDao;
 import es.pfsgroup.recovery.ext.api.multigestor.EXTGrupoUsuariosApi;
 import org.apache.commons.beanutils.BeanUtils;
@@ -78,7 +78,6 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
-import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -128,6 +127,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 	@Autowired
 	private VisitaDao visitasDao;
+
+	@Autowired
+	private ActivoHistoricoPatrimonioDao activoHistoricoPatrimonioDao;
 
 	@Autowired
 	private ActivoPropagacionApi activoPropagacionApi;
@@ -196,7 +198,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	private Properties appProperties;
 
 	@Autowired
-	private ActivoHistoricoPatrimonioDao activoHistoricoPatrimonioDao;
+	private MSVRawSQLDao rawDao;
 
 	@Override
 	public String managerName() {
@@ -678,7 +680,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			// Comprador-Expediente
 			if (!Checks.esNulo(compradorBusqueda)) {
 
-				CompradorExpedientePk pk = new CompradorExpedientePk();
+				CompradorExpediente.CompradorExpedientePk pk = new CompradorExpediente.CompradorExpedientePk();
 				pk.setComprador(compradorBusqueda);
 				pk.setExpediente(nuevoExpediente);
 				compradorExpedienteNuevo.setPrimaryKey(pk);
@@ -2118,6 +2120,15 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	}
 
 	@Override
+	public boolean isActivoEnPuja(Activo activo) {
+		if (!Checks.esNulo(activo.getEstaEnPuja())){
+			return activo.getEstaEnPuja();
+		}else{
+			return false;
+		}
+	}
+
+	@Override
 	public Integer getNumActivosPublicadosByAgrupacion(List<ActivoAgrupacionActivo> activos) {
 		Integer contador = 0;
 
@@ -2977,6 +2988,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			if (!Checks.esNulo(activo.getObservacionesVentaExterna())) {
 				beanUtilNotNull.copyProperty(dto, "observaciones", activo.getObservacionesVentaExterna());
 			}
+			if (!Checks.esNulo(activo.getEstaEnPuja())) {
+				beanUtilNotNull.copyProperty(dto, "puja", activo.getEstaEnPuja());
+			}
 
 		} catch (IllegalAccessException e) {
 			logger.error("Error en activoManager", e);
@@ -3041,6 +3055,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 
 		activo.setObservacionesVentaExterna(dto.getObservaciones());
+		activo.setEstaEnPuja(dto.getPuja());
 		activoDao.save(activo);
 
 		return true;
@@ -3486,6 +3501,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		Usuario usuarioGestorComercial = null;
 		Usuario usuarioSupervisorComercial = null;
 		Usuario usuarioGestorComercialBack = null;
+		Usuario usuarioSupervisorFormalizacion = null;
 		Usuario usuarioGestorReserva = null;
 		Usuario usuarioSupervisorReserva = null;
 		Usuario usuarioGestorMinuta = null;
@@ -3541,12 +3557,12 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				if (!Checks.esNulo(idUsuarioGestoriaFormalizacion))
 					usuarioGestoriaFormalizacion = genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "id", idUsuarioGestoriaFormalizacion));
 
-				// HREOS-2827
 				if (activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_CAJAMAR)) {
-					String usernameGestorReservaGrupo = gestorExpedienteComercialDao.getUsuarioGestor(activo.getId(), gestorExpedienteComercialApi.CODIGO_GESTOR_RESERVA_CAJAMAR);
-					String usernameSupervisorReservaGrupo = gestorExpedienteComercialDao.getUsuarioGestor(activo.getId(), gestorExpedienteComercialApi.CODIGO_SUPERVISOR_RESERVA_CAJAMAR);
-					String usernameGestorMinutaGrupo = gestorExpedienteComercialDao.getUsuarioGestor(activo.getId(), gestorExpedienteComercialApi.CODIGO_GESTOR_MINUTA_CAJAMAR);
-					String usernameSupervisorMinutaGrupo = gestorExpedienteComercialDao.getUsuarioGestor(activo.getId(), gestorExpedienteComercialApi.CODIGO_SUPERVISOR_MINUTA_CAJAMAR);
+					String usernameGestorReservaGrupo = gestorExpedienteComercialDao.getUsuarioGestor(activo.getId(), GestorExpedienteComercialApi.CODIGO_GESTOR_RESERVA_CAJAMAR);
+					String usernameSupervisorReservaGrupo = gestorExpedienteComercialDao.getUsuarioGestor(activo.getId(), GestorExpedienteComercialApi.CODIGO_SUPERVISOR_RESERVA_CAJAMAR);
+					String usernameGestorMinutaGrupo = gestorExpedienteComercialDao.getUsuarioGestor(activo.getId(), GestorExpedienteComercialApi.CODIGO_GESTOR_MINUTA_CAJAMAR);
+					String usernameSupervisorMinutaGrupo = gestorExpedienteComercialDao.getUsuarioGestor(activo.getId(), GestorExpedienteComercialApi.CODIGO_SUPERVISOR_MINUTA_CAJAMAR);
+					String usernameSupervisorFormalizacion = gestorExpedienteComercialDao.getUsuarioGestor(activo.getId(), GestorExpedienteComercialApi.CODIGO_SUPERVISOR_FORMALIZACION);
 
 					if (!Checks.esNulo(usernameGestorReservaGrupo)) {
 						usuarioGestorReserva = genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "username", usernameGestorReservaGrupo));
@@ -3563,20 +3579,28 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					if (!Checks.esNulo(usernameSupervisorMinutaGrupo)) {
 						usuarioSupervisorMinuta = genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "username", usernameSupervisorMinutaGrupo));
 					}
+
+					if (!Checks.esNulo(usernameSupervisorFormalizacion)) {
+						usuarioSupervisorFormalizacion = genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "username", usernameSupervisorFormalizacion));
+					}
 				}
 			}
 		}
 
 		PerimetroActivo perimetro = getPerimetroByIdActivo(activo.getId());
 
-		if ((Checks.esNulo(agrupacion) && !Checks.esNulo(perimetro) && !Checks.esNulo(perimetro.getAplicaFormalizar()) && BooleanUtils.toBoolean(perimetro.getAplicaFormalizar())) || (!Checks.esNulo
-		(agrupacion) && agrupacion.getIsFormalizacion() != null && BooleanUtils.toBoolean(agrupacion.getIsFormalizacion()))) {
-			if (!Checks.esNulo(usuarioGestorFormalizacion))
+		if ((Checks.esNulo(agrupacion) && !Checks.esNulo(perimetro) && !Checks.esNulo(perimetro.getAplicaFormalizar()) && BooleanUtils.toBoolean(perimetro.getAplicaFormalizar())) || (!Checks.esNulo(agrupacion) && agrupacion.getIsFormalizacion() != null && BooleanUtils.toBoolean(agrupacion.getIsFormalizacion()))) {
+			if (!Checks.esNulo(usuarioGestorFormalizacion)) {
 				this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_GESTOR_FORMALIZACION, usuarioGestorFormalizacion.getUsername(), dto);
-			else this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_GESTOR_FORMALIZACION, "GESTFORM", dto);
+			} else {
+				this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_GESTOR_FORMALIZACION, "GESTFORM", dto);
+			}
 
-			if (!activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_THIRD_PARTY)) {
-				this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_SUPERVISOR_FORMALIZACION, "SUPFORM", dto);
+			if (!activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_THIRD_PARTY)){
+				if(!activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_CAJAMAR)) {
+					this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_SUPERVISOR_FORMALIZACION, "SUPFORM",dto);
+				}
+
 			} else {
 				Filter f1 = genericDao.createFilter(FilterType.EQUALS, "codigo", "SFORM");
 				EXTDDTipoGestor tipoGestor = genericDao.get(EXTDDTipoGestor.class, f1);
@@ -3610,11 +3634,10 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		//HREOS-2827
 		if (activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_CAJAMAR)) {
 			if (!Checks.esNulo(usuarioGestorReserva)) this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_GESTOR_RESERVA_CAJAMAR, usuarioGestorReserva.getUsername(), dto);
-			if (!Checks.esNulo(usuarioSupervisorReserva))
-				this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_SUPERVISOR_RESERVA_CAJAMAR, usuarioSupervisorReserva.getUsername(), dto);
-			if (!Checks.esNulo(usuarioGestorMinuta)) this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_GESTOR_MINUTA_CAJAMAR, usuarioGestorMinuta.getUsername(), dto);
-			if (!Checks.esNulo(usuarioSupervisorMinuta)) this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_SUPERVISOR_MINUTA_CAJAMAR, usuarioSupervisorMinuta.getUsername(),
-			dto);
+			if (!Checks.esNulo(usuarioSupervisorReserva)) this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_SUPERVISOR_RESERVA_CAJAMAR, usuarioSupervisorReserva.getUsername(), dto);
+			if(!Checks.esNulo(usuarioGestorMinuta)) this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_GESTOR_MINUTA_CAJAMAR, usuarioGestorMinuta.getUsername(), dto);
+			if(!Checks.esNulo(usuarioSupervisorMinuta)) this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_SUPERVISOR_MINUTA_CAJAMAR, usuarioSupervisorMinuta.getUsername(), dto);
+			if(!Checks.esNulo(usuarioSupervisorFormalizacion)) this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_SUPERVISOR_FORMALIZACION, usuarioSupervisorFormalizacion.getUsername(), dto);
 		}
 	}
 
@@ -4014,6 +4037,14 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	}
 
 	@Override
+	public boolean esCajamar(Long idActivo){
+		Filter filterAct = genericDao.createFilter(FilterType.EQUALS, "id", idActivo);
+		Activo activo = genericDao.get(Activo.class, filterAct);
+
+		return DDCartera.CODIGO_CARTERA_CAJAMAR.equals(activo.getCartera().getCodigo());
+	}
+
+	@Override
 	public DtoActivoFichaCabecera getActivosPropagables(Long idActivo) {
 
 		if (!Checks.esNulo(idActivo)) {
@@ -4035,6 +4066,26 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 		return null;
 
+	}
+
+	public List<Long> getIdAgrupacionesActivo(Long idActivo){
+		if(Checks.esNulo(idActivo)) return null;
+
+		List<Object> listaObj = (List<Object>) rawDao.getExecuteSQLList("SELECT AGR_ID FROM ACT_AGA_AGRUPACION_ACTIVO WHERE ACT_ID = " + idActivo.toString());
+
+		List<Long> listaAgr = new ArrayList<Long>();
+
+		for(Object o: listaObj) {
+			listaAgr.add(Long.parseLong(o.toString()));
+		}
+
+		return listaAgr;
+	}
+
+	@Override
+	public List<VTasacionCalculoLBK> getVistaTasacion(Long idAgrupacion) {
+
+		return genericDao.getList(VTasacionCalculoLBK.class, genericDao.createFilter(FilterType.EQUALS, "idAgrupacion", idAgrupacion));
 	}
 
 }

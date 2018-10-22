@@ -177,6 +177,19 @@ Ext.define('HreRem.model.ActivoInformeComercial', {
     			name: 'subtipoPlazagarajeCodigo'
     		},
     		{
+    			name: 'posibleInforme'/*,
+    			convert: function(data) {
+    				if (data) {
+    					return 1;
+    				} else {
+    					return 0;
+    				}
+    			}*/
+    		},
+    		{
+    			name: 'motivoNoPosibleInforme'
+    		},
+    		{
     			name: 'tieneProveedorTecnico',
     			type: 'boolean'
     		}

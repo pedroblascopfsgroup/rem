@@ -13,6 +13,7 @@ import javax.annotation.Resource;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.annotations.Check;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -360,14 +361,16 @@ public class AgendaAdapter {
 
 			//Para advertencia en Tarea, solo deben contabilizarse trabajos del mismo tipo anteriores
 			// al q está tramitando el usuario, por esto eliminamos de la lista el ActivoTrabajo de la tarea.
-			Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "primaryKey.activo.id", idActivo);
-			Filter filtroTrabajo = genericDao.createFilter(FilterType.EQUALS, "primaryKey.trabajo.id", tarea.getTramite().getTrabajo().getId());
+			Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
+			Filter filtroTrabajo = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", tarea.getTramite().getTrabajo().getId());
 
 			ActivoTrabajo activoTrabajoTarea = genericDao.get(ActivoTrabajo.class, filtroActivo, filtroTrabajo);
 
 			listaActivoTrabajo.remove(activoTrabajoTarea);
 
-			mensaje = trabajoAdapter.getAdvertenciaCrearTrabajo(null, null, listaActivoTrabajo);
+			if(!Checks.estaVacio(listaActivoTrabajo)){
+				mensaje = trabajoAdapter.getAdvertenciaCrearTrabajo(null, null, listaActivoTrabajo);
+			}
 		}
 
 		return mensaje;

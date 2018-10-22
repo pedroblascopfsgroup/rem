@@ -20,6 +20,8 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 		var me = this;
 		me.setTitle(HreRem.i18n('title.datos.publicacion.activo'));
 
+		var isCarteraLiberbank = me.lookupViewModel().get('activo.isCarteraLiberbank');
+
 		me.items = [
 // Resumen estado publicación.
 					{
@@ -117,7 +119,7 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 									},
 									items:
 										[
-											
+
 											{
 												fieldLabel: HreRem.i18n('fieldlabel.datos.publicacion.estados.publicar'),
 												reference: 'chkbxpublicarventa',
@@ -164,7 +166,7 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 												xtype: 'label',
 												colspan: 1
 											},
-											{ 
+											{
 												xtype: 'comboboxfieldbase',
 												fieldLabel: HreRem.i18n('fieldlabel.datos.publicacion.estados.motivos.ocultacion'),
 												reference: 'comboMotivoOcultacionVenta',
@@ -328,7 +330,7 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 												xtype: 'label',
 												colspan: 1
 											},
-											{ 
+											{
 									        	xtype: 'comboboxfieldbase',
 									        	fieldLabel: HreRem.i18n('fieldlabel.datos.publicacion.estados.motivos.ocultacion'),
 												reference: 'comboMotivoOcultacionAlquiler',
@@ -509,6 +511,17 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 						                		},
 						                		iconAlign: 'left'
 						                	},
+						                	{
+                                                xtype: 'button',
+                                                cls: 'no-pointer',
+                                                hidden: !isCarteraLiberbank,
+                                                html : '<div style="color: #000;">'+HreRem.i18n('title.publicaciones.condicion.sinAcceso')+'</div>',
+                                                style : 'background: transparent; border: none;',
+                                                bind: {
+                                                    iconCls: '{getIconClsCondicionantesSinAcceso}'
+                                                },
+                                                iconAlign: 'left'
+                                            },
 											{
 												xtype: 'comboboxfieldbase',
 												fieldLabel:  HreRem.i18n('title.publicaciones.condicion.otro'),
@@ -546,7 +559,7 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 												reference: "historicocondicioneslist",
 												idPrincipal : 'activo.id',
 												propagationButton: true,
-												targetGrid	: 'condicionesespecificas',												
+												targetGrid	: 'condicionesespecificas',
 											    bind: {
 											        store: '{historicocondiciones}'
 											    },

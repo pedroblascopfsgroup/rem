@@ -1,7 +1,7 @@
 --/*
 --#########################################
 --## AUTOR=DAP
---## FECHA_CREACION=20180529
+--## FECHA_CREACION=20180925
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=2.0.17
 --## INCIDENCIA_LINK=REMVIP-783
@@ -34,7 +34,7 @@ DECLARE
     TYPE T_ARRAY_JBV IS TABLE OF T_JBV; 
 
 	V_JBV T_ARRAY_JBV := T_ARRAY_JBV(
-		T_JBV('01','noreply.rem@haya.es','abotella@haya.es','lgomezc@haya.es, dgutierrez@haya.es, guardias.rem@pfsgroup.es, daniel.albert@pfsgroup.es','Retorno UVEM de detalle de gastos con IVA ','Se adjunta excel con retorno UVEM de detalle de gastos con IVA.','URFACREJ.xlsx')
+		T_JBV('01','noreply.rem@haya.es','abotella@haya.es','lgomezc@haya.es, dgutierrez@haya.es, guardias.rem@pfsgroup.es, gustavo.mora@pfsgroup.es','Retorno UVEM de detalle de gastos con IVA ','Se adjunta excel con retorno UVEM de detalle de gastos con IVA.','URFACREJ.xlsx')
 	); 
 	V_TMP_JBV T_JBV;
 

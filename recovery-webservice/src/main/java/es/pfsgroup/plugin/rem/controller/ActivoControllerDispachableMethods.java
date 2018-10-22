@@ -6,13 +6,7 @@ import java.util.Map;
 
 import es.pfsgroup.plugin.rem.model.*;
 import org.springframework.ui.ModelMap;
-
 import es.pfsgroup.plugin.rem.activo.ActivoPropagacionFieldTabMap;
-
-import es.pfsgroup.plugin.rem.model.DtoComercialActivo;
-import es.pfsgroup.plugin.rem.model.DtoComunidadpropietariosActivo;
-import es.pfsgroup.plugin.rem.model.DtoCondicionEspecifica;
-import es.pfsgroup.plugin.rem.model.DtoHistoricoMediador;
 
 
 @SuppressWarnings("rawtypes")
@@ -299,7 +293,7 @@ class ActivoControllerDispachableMethods {
 				}
 			}
 		});
-		
+
 		/*
 		 * TAB_COMUNIDAD-ENTIDADES
 		 */

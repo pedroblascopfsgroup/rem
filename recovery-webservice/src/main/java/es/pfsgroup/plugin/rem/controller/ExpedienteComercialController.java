@@ -133,7 +133,7 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 		for (ExpedienteAvisadorApi avisador : avisadores) {
 			DtoAviso aviso = avisador.getAviso(expediente, usuarioLogado);
 			if (!Checks.esNulo(aviso) && !Checks.esNulo(aviso.getDescripcion())) {
-				avisosFormateados.setDescripcion(avisosFormateados.getDescripcion() + "<div class='div-aviso'>" + aviso.getDescripcion() + "</div>");
+				avisosFormateados.setDescripcion(avisosFormateados.getDescripcion() + "<div class='div-aviso red'>" + aviso.getDescripcion() + "</div>");
 			}
 		}
 
@@ -308,7 +308,7 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getActivosExpediente(ModelMap model, Long idExpediente) {
 		try {
-			DtoPage dto = expedienteComercialApi.getActivosExpediente(idExpediente);
+			DtoPage dto = expedienteComercialApi.getActivosExpedienteVista(idExpediente);
 			model.put(RESPONSE_DATA_KEY, dto.getResults());
 			model.put(RESPONSE_TOTALCOUNT_KEY, dto.getTotalCount());
 			model.put(RESPONSE_SUCCESS_KEY, true);

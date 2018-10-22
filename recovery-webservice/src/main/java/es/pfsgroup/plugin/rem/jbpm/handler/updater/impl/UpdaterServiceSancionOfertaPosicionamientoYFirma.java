@@ -79,7 +79,7 @@ public class UpdaterServiceSancionOfertaPosicionamientoYFirma implements Updater
 						Filter filtro;
 						if(DDSiNo.SI.equals(valor.getValor())){
 	
-							if(Checks.esNulo(expediente.getFechaContabilizacionPropietario()) && DDCartera.CODIGO_CARTERA_BANKIA.equals(ofertaAceptada.getActivoPrincipal().getCartera().getCodigo())) {
+							if(DDCartera.CODIGO_CARTERA_LIBERBANK.equals(ofertaAceptada.getActivoPrincipal().getCartera().getCodigo()) || (Checks.esNulo(expediente.getFechaContabilizacionPropietario()) && DDCartera.CODIGO_CARTERA_BANKIA.equals(ofertaAceptada.getActivoPrincipal().getCartera().getCodigo()))) {
 								// Si el activo es de la cartera Bankia y no se ha hecho el ingreso de la compraventa (campo fecha ingreso cheque vacío).
 								filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.FIRMADO);
 							} else {

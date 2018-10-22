@@ -34,6 +34,7 @@ public class MSVDDOperacionMasiva implements Serializable, Auditable, Dictionary
 	public static final String CODE_FILE_BULKUPLOAD_NEW_BUILDING="AGAN";
 	public static final String CODE_FILE_BULKUPLOAD_AGRUPACION_ASISTIDA="AGAA";
 	public static final String CODE_FILE_BULKUPLOAD_AGRUPACION_LOTE_COMERCIAL="AGLC";
+	public static final String CODE_FILE_BULKUPLOAD_AGRUPACION_PROYECTO="AGAP";
 	public static final String CODE_FILE_BULKUPLOAD_LISTAACTIVOS="LACT";
 	public static final String CODE_FILE_BULKUPLOAD_ACTUALIZAR_PUBLICAR_ORDINARIA="APBO"; //TODO: eliminar.
 	public static final String CODE_FILE_BULKUPLOAD_ACTUALIZAR_PUBLICAR="APUB"; //TODO: eliminar.
@@ -68,7 +69,9 @@ public class MSVDDOperacionMasiva implements Serializable, Auditable, Dictionary
 	public static final String CODE_FILE_BULKUPLOAD_CENTRAL_TECNICA_OK_TECNICO = "OKTEC";
 	public static final String CODE_FILE_BULKUPLOAD_OCULTACION_ALQUILER_AGRUPACION_RESTRINGIDA = "OAAR";
 	public static final String CODE_FILE_BULKUPLOAD_OCULTACION_VENTA_AGRUPACION_RESTRINGIDA = "OVAR";
-		  
+	public static final String CODE_FILE_BULKUPLOAD_CARGA_ACTIVOS_GASTOS_PORCENTAJE="AGP";
+	public static final String CODE_FILE_BULKUPLOAD_INFO_DETALLE_PRINEX_LBK = "PRINEX";
+
 	private static final long serialVersionUID = 5938440720826995243L;
 
 	

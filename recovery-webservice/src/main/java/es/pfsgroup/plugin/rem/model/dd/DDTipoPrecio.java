@@ -59,6 +59,10 @@ public class DDTipoPrecio implements Auditable, Dictionary {
 	public static final String CODIGO_TPC_FSV_RENTA = "20";				//	FSV renta
 	public static final String CODIGO_TPC_DEUDA_BRUTA = "21";           //  Deuda Bruta
 	public static final String CODIGO_TPC_VALOR_RAZONABLE = "22";       //  Valor Razonable
+	public static final Double MAX_DEUDA_BRUTA_LIBERBANK = 500000d;
+	public static final String CODIGO_TPC_VALOR_NETO_CONT_LIBERBANK = "25";
+	public static final String CODIGO_TPC_DEUDA_BRUTA_LIBERBANK = "24"; 
+	
 	
 	private static final long serialVersionUID = 1L;
 	

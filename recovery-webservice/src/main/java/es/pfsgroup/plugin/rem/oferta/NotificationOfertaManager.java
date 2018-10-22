@@ -42,6 +42,7 @@ import es.pfsgroup.plugin.rem.utils.FileItemUtils;
 public class NotificationOfertaManager extends AbstractNotificatorService {
 
 	private static final String USUARIO_FICTICIO_OFERTA_CAJAMAR = "ficticioOfertaCajamar";
+	private static final String BUZON_REM = "buzonrem";
 
 	@Autowired
 	private GenericAdapter genericAdapter;
@@ -111,6 +112,11 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 			if(!Checks.esNulo(usuario)){
 				mailsPara.add(usuario.getEmail());
 				
+				Usuario directorEquipo = gestorActivoManager.getDirectorEquipoByGestor(usuario);
+				if (!Checks.esNulo(directorEquipo)){
+					mailsPara.add(directorEquipo.getEmail());
+				}
+				
 				List<GestorSustituto> sustitutos = genericDao.getList(GestorSustituto.class, genericDao.createFilter(FilterType.EQUALS, "usuarioGestorOriginal.id", usuario.getId()));
 				if (!Checks.esNulo(sustitutos)){
 					for (GestorSustituto gestorSustituto : sustitutos) {
@@ -119,17 +125,40 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 								mailsPara.add(gestorSustituto.getUsuarioGestorSustituto().getEmail());
 							}
 						}
-						
 					}
-				}				
+				}
+				
 			}
+			
 			if(!Checks.esNulo(supervisor)){
 				mailsPara.add(supervisor.getEmail());
 			}
+			
 			if(!Checks.esNulo(activo.getCartera()) && DDCartera.CODIGO_CARTERA_CAJAMAR.equals(activo.getCartera().getCodigo())){
-				if(!Checks.esNulo(usuarioManager.getByUsername(USUARIO_FICTICIO_OFERTA_CAJAMAR))){
-					mailsPara.add(usuarioManager.getByUsername(USUARIO_FICTICIO_OFERTA_CAJAMAR).getEmail());
-				}				
+				
+				Usuario ficticioCajamar = usuarioManager.getByUsername(USUARIO_FICTICIO_OFERTA_CAJAMAR);
+				
+				if(!Checks.esNulo(ficticioCajamar)){
+					mailsPara.add(ficticioCajamar.getEmail());
+				}
+				
+				Usuario gesRes = gestorActivoManager.getGestorByActivoYTipo(activo, "GESRES");
+				
+				if(!Checks.esNulo(gesRes)) {
+					mailsPara.add(gesRes.getEmail());
+				}
+				
+				Usuario supRes = gestorActivoManager.getGestorByActivoYTipo(activo, "SUPRES");
+				
+				if(!Checks.esNulo(supRes)){
+					mailsPara.add(supRes.getEmail());
+				}
+			}
+			
+			Usuario buzonRem = usuarioManager.getByUsername(BUZON_REM);
+			
+			if(!Checks.esNulo(buzonRem)) {
+				mailsPara.add(buzonRem.getEmail());
 			}
 
 			

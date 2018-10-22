@@ -36,6 +36,26 @@ Ext.define('HreRem.view.common.GenericViewModel', {
     			autoLoad: true
     		},
     		
+    		comboTipoActivoBde: {
+				model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDiccionario',
+					extraParams: {diccionario: 'tiposActivoBde'}
+				},
+				autoLoad: true
+    		},
+    		
+    		comboSubtipoActivoBde: {
+    			model: 'HreRem.model.ComboBase',
+    			proxy: {
+    				type: 'uxproxy',
+    				remoteUrl: 'generic/getDiccionario',
+    				extraParams: {diccionario: 'subtiposActivoBde'}
+    			},
+    			autoLoad: true
+    		},
+    		
     		comboEstadoActivo: {
 				model: 'HreRem.model.ComboBase',
 				proxy: {
@@ -120,6 +140,14 @@ Ext.define('HreRem.view.common.GenericViewModel', {
 				proxy: {
 				type: 'uxproxy',
 				remoteUrl: 'generic/getComboTipoGestor'
+				}/*,autoLoad: true*/
+    		},
+    		comboTipoGestorByActivo: {
+				model: 'HreRem.model.ComboBase',
+				proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getComboTipoGestorByActivo',
+				extraParams: {idActivo: '{activo.id}'} 
 				}/*,autoLoad: true*/
     		},
 

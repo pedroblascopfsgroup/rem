@@ -122,7 +122,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
    		
    		if (dto.getMunicipio() != null)
    			HQLBuilder.addFiltroLikeSiNotNull(hb, "act.localidadDescripcion", dto.getMunicipio(), true);
-   		
+
    		if (dto.getPaisCodigo() != null)
    			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.paisCodigo", dto.getPaisCodigo());
    		
@@ -638,7 +638,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.precio", dto.getPrecio());
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.informeComercial", dto.getInformeComercial());
    		if (!Checks.esNulo(dto.getTipoComercializacionCodigo()))HQLBuilder.addFiltroWhereInSiNotNull(hb, "activopubli.tipoComercializacionCodigo", Arrays.asList(dto.getTipoComercializacionCodigo()));
-   		
+
 		return HibernateQueryUtils.page(this, hb, dto);
 	}
 
@@ -666,7 +666,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		getHibernateTemplate().flush();
 		return this.publicarActivo(idActivo, username, false, eleccionUsuarioTipoPublicacionAlquiler);
 	}
-	
+
 	@Override
 	public Boolean publicarAgrupacionSinHistorico(Long idAgrupacion, String username, String eleccionUsuarioTipoPublicacionAlquiler) {
 		getHibernateTemplate().flush();
@@ -703,7 +703,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 	
 	/**
 	 * Este metodo lanza el procedimiento de cambio de estado de publicación de agrupaciones
-	 * 
+	 *
 	 * @param idAgrupacion: ID del activo para el cual se desea realizar la operación.
 	 * @param username: nombre del usuario, si la llamada es desde la web, que realiza la operación.
 	 * @param historificar: indica si la operación ha de realizar un histórico de los movimientos realizados.
@@ -711,15 +711,15 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 	 */
 	private Boolean publicarAgrupacion(Long idAgrupacion, String username, Boolean historificar, String eleccionUsuarioTipoPublicacionAlquiler) {
 		String procedureHQL = "BEGIN SP_CAMBIO_ESTADO_PUBLI_AGR(:idAgrupacionParam, :eleccionUsusarioParam, :usernameParam, :historificarParam); END;";
-	
+
 		Query callProcedureSql = this.getSessionFactory().getCurrentSession().createSQLQuery(procedureHQL);
 		callProcedureSql.setParameter("idAgrupacionParam", idAgrupacion);
 		callProcedureSql.setParameter("eleccionUsusarioParam", eleccionUsuarioTipoPublicacionAlquiler);
 		callProcedureSql.setParameter("usernameParam", username);
 		callProcedureSql.setParameter("historificarParam", historificar ? "S" : "N");
-		
+
 		int resultado = callProcedureSql.executeUpdate();
-		
+
 		return resultado == 1;
 	}
 	
@@ -971,6 +971,15 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		
 		return HibernateQueryUtils.list(this, hb);
 	}
+
+	@Override
+	public Activo getActivoById(Long activoId) {
+		HQLBuilder hb = new HQLBuilder("from Activo act" );
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "id", activoId);
+
+		return HibernateQueryUtils.uniqueResult(this, hb);
+	}
+
 
 	/*Borra todos las distribuciones excelto las de tipo garaje y trastero*/
 	public void deleteActivoDistribucion(Long idActivoInfoComercial){

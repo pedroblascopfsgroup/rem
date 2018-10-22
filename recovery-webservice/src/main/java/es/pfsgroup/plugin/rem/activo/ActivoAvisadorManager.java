@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.activo;
 
 import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
@@ -16,16 +17,14 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.List;
-
 
 @Service("activoAvisadorManager")
 public class ActivoAvisadorManager implements ActivoAvisadorApi {
 	
 	protected static final Log logger = LogFactory.getLog(ActivoAvisadorManager.class);
-	
+
 	@Autowired 
     private ActivoApi activoApi;
 
@@ -40,11 +39,14 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 	public List<DtoAviso> getListActivoAvisador(Long id, Usuario usuarioLogado) {
 		List<DtoAviso> listaAvisos = new ArrayList<DtoAviso>();
 		Activo activo = activoApi.get(id);
+		activoApi.calcularFechaTomaPosesion(activo);
+		List<Perfil> perfilesUsuario = usuarioLogado.getPerfiles();
 
 		boolean restringida = false;
 		boolean obraNueva = false;
 		boolean asistida = false;
 		boolean lote = false;
+		boolean enPuja = false;
 
 		try {
 		//Avisos 1 y 2: Integrado en agrupación restringida / Integrado en obra nueva
@@ -53,9 +55,16 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 			obraNueva = activoApi.isIntegradoAgrupacionObraNueva(id, usuarioLogado);
 			asistida = activoApi.isIntegradoAgrupacionAsistida(activo);
 			lote = activoApi.isIntegradoAgrupacionComercial(activo);
-
+			enPuja = activoApi.isActivoEnPuja(activo);
 		} catch (Exception e) {
 			e.printStackTrace();
+		}
+
+		if(enPuja) {
+			DtoAviso dtoAviso = new DtoAviso();
+			dtoAviso.setDescripcion("Incluido en Haz tu Puja hasta 15/11/2018");
+			dtoAviso.setId(String.valueOf(id));
+			listaAvisos.add(dtoAviso);
 		}
 
 		if (restringida) {
@@ -157,10 +166,10 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 
 		// Aviso 9: Estado Comercial		
 		if(!Checks.esNulo(activo.getSituacionComercial())) {
-				DtoAviso dtoAviso = new DtoAviso();
-				dtoAviso.setDescripcion(activo.getSituacionComercial().getDescripcion());
-				dtoAviso.setId(String.valueOf(id));
-				listaAvisos.add(dtoAviso);
+			DtoAviso dtoAviso = new DtoAviso();
+			dtoAviso.setDescripcion(activo.getSituacionComercial().getDescripcion());
+			dtoAviso.setId(String.valueOf(id));
+			listaAvisos.add(dtoAviso);
 		}
 
 		// Aviso 10: Perímetro Haya
@@ -180,22 +189,32 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 			dtoAviso.setId(String.valueOf(id));
 			listaAvisos.add(dtoAviso);
 		}
-		
+
 		// Aviso 13: Activo publicable
-		if(!Checks.esNulo(perimetroActivo) && !Checks.esNulo(perimetroActivo.getAplicaPublicar()) && perimetroActivo.getAplicaPublicar()) {			
+		if(!Checks.esNulo(perimetroActivo) && !Checks.esNulo(perimetroActivo.getAplicaPublicar()) && perimetroActivo.getAplicaPublicar()) {
 			DtoAviso dtoAviso = new DtoAviso();
 			dtoAviso.setDescripcion("Publicable");
 			dtoAviso.setId(String.valueOf(id));
 			listaAvisos.add(dtoAviso);
 		}
-		
+
 		// Aviso 14: Estado activo vandalizado
 		if(!Checks.esNulo(activo.getEstadoActivo())) {
 			if(DDEstadoActivo.ESTADO_ACTIVO_VANDALIZADO.equals(activo.getEstadoActivo().getCodigo())) {
 				DtoAviso dtoAviso = new DtoAviso();
 				dtoAviso.setDescripcion(activo.getEstadoActivo().getDescripcion());
 				dtoAviso.setId(String.valueOf(id));
-				listaAvisos.add(dtoAviso);		
+				listaAvisos.add(dtoAviso);
+			}
+		}
+
+		// Aviso 15: Estado activo vandalizado
+		if(!Checks.esNulo(activo.getEstadoActivo())) {
+			if(DDEstadoActivo.ESTADO_ACTIVO_VANDALIZADO.equals(activo.getEstadoActivo().getCodigo())) {
+				DtoAviso dtoAviso = new DtoAviso();
+				dtoAviso.setDescripcion(activo.getEstadoActivo().getDescripcion());
+				dtoAviso.setId(String.valueOf(id));
+				listaAvisos.add(dtoAviso);
 			}
 		}
 

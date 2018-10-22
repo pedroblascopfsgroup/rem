@@ -268,6 +268,15 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		        return 'app-tbfiedset-ico icono-ko';
 		    }
 		},
+		getIconClsCondicionantesSinAcceso: function(get) {
+	        var condicion = get('activoCondicionantesDisponibilidad.sinAcceso');
+
+            if(!eval(condicion)) {
+                return 'app-tbfiedset-ico icono-ok';
+            } else {
+                return 'app-tbfiedset-ico icono-ko';
+            }
+         },
 		getSiNoFromOtro: function(get) {
 			var condicion = get('activoCondicionantesDisponibilidad.otro');
 
@@ -309,11 +318,11 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			var codigo = Ext.isEmpty(get('activo.estadoPublicacionCodigo')) ? "" : get('activo.estadoPublicacionCodigo');
 			return codigo;
 		 },
-		 
+
 		 estaPublicadoVentaOAlquiler: function(get) {
 			 var estadoAlquilerCodigo = get('activo.estadoAlquilerCodigo');
 			 var estadoVentaCodigo = get('activo.estadoVentaCodigo');
-			 
+
 			 return estadoAlquilerCodigo === CONST.ESTADO_PUBLICACION_ALQUILER['PUBLICADO'] || estadoVentaCodigo === CONST.ESTADO_PUBLICACION_VENTA['PUBLICADO'];
 		 },
 
@@ -334,6 +343,25 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 
 		 activoPerteneceAgrupacionRestringida: function(get){
 		 	 return get('activo.pertenceAgrupacionRestringida');
+		 },
+
+		 enableComboTipoAlquiler: function(get){
+			var chkPerimetroAlquiler = get('patrimonio.chkPerimetroAlquiler');
+			var tipoComercializacion = get('activo.tipoComercializacionCodigo');
+			if((chkPerimetroAlquiler == true || chkPerimetroAlquiler == "true" ) && CONST.TIPOS_COMERCIALIZACION['VENTA'] != tipoComercializacion){
+				return false;
+			}else{
+				return true;
+			}
+		 },
+
+		 enableComboAdecuacion: function(get){
+			var chkPerimetroAlquiler = get('patrimonio.chkPerimetroAlquiler');
+			if((chkPerimetroAlquiler == true || chkPerimetroAlquiler == "true" )){
+				return false;
+			}else{
+				return true;
+			}
 		 },
 
 		 esEditableCodigoPromocion: function(get){
@@ -720,9 +748,23 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 	    	 }
     		},
 
+    		storeGestoresActivos: {
+    			pageSize: $AC.getDefaultPageSize(),
+				model: 'HreRem.model.GestorActivo',
+			   	proxy: {
+			   		type: 'uxproxy',
+			   	    remoteUrl: 'activo/getGestoresActivos',
+			   	    extraParams: {
+			   	    	idActivo: '{activo.id}',
+			   	    	incluirGestoresInactivos: false
+			   	    }
+			    }
+    		},
+
     		storeGestores: {
     			pageSize: $AC.getDefaultPageSize(),
 				model: 'HreRem.model.GestorActivo',
+				autoLoad: true,
 			   	proxy: {
 			   		type: 'uxproxy',
 			   	    remoteUrl: 'activo/getGestores',
@@ -1182,7 +1224,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				type: 'uxproxy',
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'estadosOfertas'}
-			}   	
+			},
+			autoLoad: true
 	    },
 
 	    comboTipoOferta: {
@@ -1468,7 +1511,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				extraParams: {diccionario: 'comboAdecuacionAlquiler'}
 			}
 		},
-		
+
 		storeHistoricoAdecuacionesAlquiler:{
 			pageSize: $AC.getDefaultPageSize(),
 			model: 'HreRem.model.HistoricoAdecuacionesPatrimonioModel',

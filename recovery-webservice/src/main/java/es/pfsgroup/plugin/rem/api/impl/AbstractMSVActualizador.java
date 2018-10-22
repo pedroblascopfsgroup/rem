@@ -100,7 +100,7 @@ abstract public class AbstractMSVActualizador implements MSVLiberator {
 						resultProcesaFila = this.procesaFila(exc, fila, token);
 						transactionManager.commit(transaction);
 					}
-					if (resultProcesaFila.getErrorDesc() != null && !resultProcesaFila.getErrorDesc().isEmpty()) {
+					if(resultProcesaFila.getErrorDesc() != null && !resultProcesaFila.getErrorDesc().isEmpty()) {
 						resultProcesaFila.setFila(fila);
 						resultados.add(resultProcesaFila);
 						processAdapter.addFilaProcesada(file.getProcesoMasivo().getId(), false);
@@ -114,7 +114,11 @@ abstract public class AbstractMSVActualizador implements MSVLiberator {
 				} catch (Exception e) {
 					logger.error("error procesando fila " + fila + " del proceso " + file.getProcesoMasivo().getId(), e);
 					if (!file.getProcesoMasivo().getTipoOperacion().getCodigo().equals(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_VENTA_DE_CARTERA)) {
-						transactionManager.rollback(transaction);
+						try {
+							transactionManager.rollback(transaction);
+						} catch (Exception ex) {
+							logger.error("error rollback proceso masivo");
+						}
 					}
 					resultProcesaFila = new ResultadoProcesarFila();
 					resultProcesaFila.setCorrecto(false);

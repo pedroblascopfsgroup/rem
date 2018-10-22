@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Juanjo Arbona
---## FECHA_CREACION=20180406
+--## FECHA_CREACION=20180612
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=REMVIP-448
+--## INCIDENCIA_LINK=REMVIP-969
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -20,8 +20,9 @@
 --##		0.7 HREOS-2992 - Correcciones para PDVs
 --##		0.8 HREOS-3344 - Cambio check obra nueva en construcción
 --##		0.9 HREOS-3890 - Vandalizado añadido
---##		0.9 REMVIP-205 - Cambio de la forma de cálculo de el campo "Pendiente de inscripción"
---##		0.9 REMVIP-448 - Añadir condicion de poner nulos a 0
+--##		0.10 REMVIP-205 - Cambio de la forma de cálculo de el campo "Pendiente de inscripción"
+--##		0.11 REMVIP-448 - Añadir condicion de poner nulos a 0
+--##		0.12 REMVIP-969 - Añadir condicionante "Sin acceso"
 --##########################################
 --*/
 
@@ -63,12 +64,13 @@ BEGIN
                                                           obranueva_enconstruccion,
                                                           divhorizontal_noinscrita,
                                                           ruina,
-                                                          vandalizado, 
+                                                          vandalizado,
                                                           otro,
                                                           sin_informe_aprobado,
                                                           revision,
                                                           procedimiento_judicial,
                                                           con_cargas,
+							                                sin_acceso,
                                                           ocupado_sintitulo,
                                                           estado_portal_externo,
                                                           es_condicionado,
@@ -77,14 +79,15 @@ BEGIN
                                                          )
 AS
    SELECT act_id, sin_toma_posesion_inicial, ocupado_contitulo, pendiente_inscripcion, proindiviso, tapiado, obranueva_sindeclarar, obranueva_enconstruccion, divhorizontal_noinscrita, ruina, vandalizado, otro,
-          sin_informe_aprobado, revision, procedimiento_judicial, con_cargas, ocupado_sintitulo, estado_portal_externo, DECODE (est_disp_com_codigo, ''01'', 1, 0) AS es_condicionado,
+          sin_informe_aprobado, revision, procedimiento_judicial, con_cargas, sin_acceso, ocupado_sintitulo, estado_portal_externo, DECODE (est_disp_com_codigo, ''01'', 1, 0) AS es_condicionado,
           est_disp_com_codigo, borrado
      FROM (SELECT act.act_id, NVL2 (sps7.sps_id, 1, NVL2 (sps4.sps_id, 1, 0)) AS sin_toma_posesion_inicial, NVL2 (sps3.sps_id, 1, 0) AS ocupado_contitulo, NVL2 (tit.act_id, 0, 1) AS pendiente_inscripcion,
                   NVL2 (npa.act_id, 1, 0) AS proindiviso, NVL2 (sps1.sps_id, 1, 0) AS tapiado, NVL2 (eon.dd_eon_id, 1, 0) AS obranueva_sindeclarar,
                   NVL2 (eac2.dd_eac_id, 1, 0) AS obranueva_enconstruccion, NVL2 (reg2.reg_id, 1, 0) AS divhorizontal_noinscrita, NVL2 (eac1.dd_eac_id, 1, 0) AS ruina, NVL2 (eac3.dd_eac_id, 1, 0) as vandalizado, sps5.sps_otro AS otro,
                   DECODE (vei.dd_aic_codigo, ''02'', 0, 1) AS sin_informe_aprobado, 0 AS revision,                                                                                      --NO EXISTE EN REM
-                                                                                                0 AS procedimiento_judicial,                                                          --NO EXISTE EN REM
-                                                                                                                            NVL2 (vcg.con_cargas, vcg.con_cargas, 0) AS con_cargas,
+                  0 AS procedimiento_judicial,                                                          --NO EXISTE EN REM
+                  NVL2 (vcg.con_cargas, vcg.con_cargas, 0) AS con_cargas,
+                  DECODE (ico.ico_posible_hacer_inf, 1, 0, 0, 1, 0) AS sin_acceso,
                   NVL2 (sps2.sps_id, 1, 0) AS ocupado_sintitulo, NVL2 (sps6.sps_id, 1, 0) AS estado_portal_externo,
                   CASE
                      WHEN (   NVL2 (sps4.sps_id, 1, 0) = 1
@@ -134,13 +137,13 @@ AS
 
 
   DBMS_OUTPUT.PUT_LINE('CREATE VIEW '|| V_ESQUEMA ||'.V_COND_DISPONIBILIDAD...Creada OK');
-  
+
   	/*EXECUTE IMMEDIATE 'GRANT SELECT ON '||V_ESQUEMA||'.V_COND_DISPONIBILIDAD TO PFSREM';
 
 	EXECUTE IMMEDIATE 'GRANT SELECT ON '||V_ESQUEMA||'.V_COND_DISPONIBILIDAD TO REM_QUERY';
 
 	EXECUTE IMMEDIATE 'GRANT SELECT ON '||V_ESQUEMA||'.V_COND_DISPONIBILIDAD TO REMWS';*/
-  
+
 END;
 /
 

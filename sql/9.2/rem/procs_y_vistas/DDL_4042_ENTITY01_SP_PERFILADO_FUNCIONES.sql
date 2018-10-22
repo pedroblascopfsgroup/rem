@@ -11,8 +11,7 @@
 --##      
 --## INSTRUCCIONES:  
 --## VERSIONES:
---##        0.1 Versión inicial (JIN LI HU - 20180625 - HREOS-4090)
---##		0.2 Versión actual inserción de una nueva función para el gestor y supervisor de publicaciones y para el superusuario IT.
+--##        0.1 Versión inicial
 --#########################################
 --*/
 
@@ -25,15 +24,14 @@ CREATE OR REPLACE PROCEDURE SP_PERFILADO_FUNCIONES (
 )
 AS
 
-  V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; 	-- '#ESQUEMA#'; -- Configuracion Esquema
-  V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#';	-- '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
+  V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; 	-- 'REM01'; -- Configuracion Esquema
+  V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#';	-- 'REMMASTER'; -- Configuracion Esquema Master
   V_SQL VARCHAR2(4000 CHAR); -- Vble. para almacenar la sentencia.
   V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.
 
   V_TABLA VARCHAR2(30 CHAR) := 'FUN_PEF';  -- Tabla objetivo
   V_TABLA_TMP VARCHAR2(30 CHAR) := 'TMP_FUN_PEF';  -- Tabla objetivo
 
-  vVERSION VARCHAR2(5 CHAR);
   --Array que contiene los registros que se van a actualizar
   TYPE T_VAR is table of VARCHAR2(250);
   TYPE T_ARRAY IS TABLE OF T_VAR;
@@ -245,8 +243,7 @@ T_VAR( 'ALTA_ACTIVOS_THIRD_PARTY','S','S','S','S','S','S','S','S','S','S','S','S
 T_VAR( 'ASISTIDAPDV_CARGA','N','N','N','N','N','N','S','S','S','S','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','N','N','N','S','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N'),
 T_VAR( 'MASIVO_LOTE_COMERCIAL','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','S','S','S','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','S','S','S','S','S','S','S','N','N','N','N','N','N','N','N'),
 
-
-T_VAR( 'MASIVO_PROYECTO','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','N','N','N','N','N','N','N','N','N','N','N','N','S','S','N','S'),
+T_VAR( 'MASIVO_PROYECTO','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','S','N','N','N','N','N','N','N','N','N','N','N','S','S','N','S'),
 T_VAR( 'SUBIR_LISTA_ACTIVOS_IBI','S','S','S','S','S','S','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','S','N','N','N','N','S','S','S','S','S','S','N','N','N','S','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N'),
 
 T_VAR( 'CARGA_ACTIVOS_GASTOS_PORCENTAJE','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','S','N','N','N','N','N','N','N','N','N','N','N','N','N','S','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N'),
@@ -279,13 +276,11 @@ T_VAR( 'OPTIMIZACION_BUZON_TAREAS','S','S','S','S','S','S','S','S','S','S','S','
 V_TMP_VAR T_VAR;
 
 BEGIN
---v.02
+
     DBMS_OUTPUT.PUT_LINE('[INICIO]');
     --######################################
     --########   INSERTAR VALORES  #########
     --######################################
-
-    vVERSION := '0.2';
 
     -- Verificar si la tabla existe
     V_SQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME = '''||V_TABLA_TMP||''' AND OWNER = '''||V_ESQUEMA||'''';
@@ -361,6 +356,9 @@ BEGIN
 			,GESMIN
 			,SUPMIN
 			,GESPROV
+			,GESTSUE
+			,GESTEDI
+			,VALORACIONES
             )
             SELECT
               '''||V_TMP_VAR(1)||'''
@@ -410,9 +408,12 @@ BEGIN
 			  , '''||V_TMP_VAR(45)||'''
 			  , '''||V_TMP_VAR(46)||'''
 			  , '''||V_TMP_VAR(47)||'''
-            , '''||V_TMP_VAR(48)||'''
-            , '''||V_TMP_VAR(49)||'''
-            , '''||V_TMP_VAR(50)||'''
+		      , '''||V_TMP_VAR(48)||'''
+		      , '''||V_TMP_VAR(49)||'''
+		      , '''||V_TMP_VAR(50)||'''
+		      , '''||V_TMP_VAR(51)||'''
+              , '''||V_TMP_VAR(52)||'''
+              , '''||V_TMP_VAR(53)||'''
             FROM DUAL
           '
           ;
@@ -497,6 +498,9 @@ BEGIN
 			,GESMIN
 			,SUPMIN
             ,GESPROV
+			,GESTSUE
+			,GESTEDI
+            ,VALORACIONES
                 )
               )
             )
@@ -595,6 +599,9 @@ BEGIN
 			,GESMIN
 			,SUPMIN
             ,GESPROV
+			,GESTSUE
+			,GESTEDI
+            ,VALORACIONES
                )
             )
           )

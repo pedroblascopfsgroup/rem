@@ -1,9 +1,12 @@
 Ext.define('HreRem.view.administracion.gastos.GestionProvisionesList', {
 	extend		: 'HreRem.view.common.GridBase',
     xtype		: 'gestionprovisioneslist',
+    requires: ['HreRem.view.common.CheckBoxModelBase', 'HreRem.ux.plugin.PagingSelectionPersistence'],
     bind: {
         store: '{provisiones}'
     },
+    loadAfterBind: false,    
+    plugins: 'pagingselectpersist',
     listeners : {
     	rowclick: 'onRowClickProvisionesList'
     },
@@ -12,8 +15,17 @@ Ext.define('HreRem.view.administracion.gastos.GestionProvisionesList', {
     initComponent: function () {
         
         var me = this;
-        
         me.setTitle(HreRem.i18n("title.agrupacion.gasto.listado.provisiones"));
+        var configRechazarContabilidadButton = {text: HreRem.i18n('btn.rechazar.contabilidad') , cls:'tbar-grid-button', disabled: true, itemId:'rechazarContabilidadAgrupGastoBtn', handler: 'onClickRechazarContabilidadAgrupGastos', secFunPermToRender: 'BOTONES_GASTOS_CONTABILIDAD'};
+        var configAutorizarContaAgruGastosBtn = {text: HreRem.i18n('btn.autorizar.contabilidad'), cls:'tbar-grid-button', itemId:'autorizarContAgruGastosBtn', handler: 'onClickAutorizarContabilidadAgrupacion', disabled: true, secFunPermToRender: 'BOTONES_GASTOS_CONTABILIDAD'};
+        var separador = {xtype: 'tbfill'};
+        
+        me.tbar = {
+        		xtype: 'toolbar',
+        		dock: 'top',
+        		items: [separador, configAutorizarContaAgruGastosBtn,configRechazarContabilidadButton]
+    	};
+
         me.columns= [
         
 		        {	        	
@@ -80,14 +92,45 @@ Ext.define('HreRem.view.administracion.gastos.GestionProvisionesList', {
 		            displayInfo: true,
 		            bind: {
 		                store: '{provisiones}'
-		            }
+		            },
+		            items:[
+		            	{
+		            		xtype: 'tbfill'
+		            	},
+		                {
+		                	xtype: 'displayfieldbase',
+		                	itemId: 'displaySelection',
+		                	fieldStyle: 'color:#0c364b; padding-top: 4px'
+		                }
+		            ]
 		        }
 		];
+
     	
-    	me.callParent();       
+        //me.selModel = Ext.create('HreRem.view.common.CheckBoxModelBase');  
+        
+    	me.callParent();   
+    	
+    	me.getSelectionModel().on({
+        	'selectionchange': function(sm,record,e) {
+        		me.fireEvent('persistedsselectionchange', sm, record, e, me, me.getPersistedSelection());
+        	}
+
+        	/*'selectall': function(sm) {
+        		me.getPlugin('pagingselectpersist').selectAll();
+        	},
+
+        	'deselectall': function(sm) {
+        		me.getPlugin('pagingselectpersist').deselectAll();
+        	}*/
+        });
+    	
+    },
+
+    getPersistedSelection: function() {
+    	var me = this;
+    	return me.getPlugin('pagingselectpersist').getPersistedSelection();
     }
     
-
-
 });
 

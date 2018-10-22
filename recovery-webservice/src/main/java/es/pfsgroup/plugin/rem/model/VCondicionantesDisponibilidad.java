@@ -14,81 +14,76 @@ import org.hibernate.annotations.Where;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 
 
-
 /**
- * Gestiona la vista que identifica los condicionantes de disponibilidad de cada activo
- * 
- * @author Daniel Gutiérrez
- *
+ * Gestiona la vista que identifica los condicionantes de disponibilidad de cada activo.
  */
 @Entity
 @Table(name = "V_COND_DISPONIBILIDAD", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Where(clause = Auditoria.UNDELETED_RESTICTION)
 public class VCondicionantesDisponibilidad  implements Serializable {
-	
-	/**
-	 * 
-	 */
+
 	private static final long serialVersionUID = 1L;
+
 
 	@Id
     @Column(name = "ACT_ID")
     private Long idActivo;
-
 	@Column(name = "RUINA")
 	private Boolean ruina;
-	
+
 	@Column(name = "PENDIENTE_INSCRIPCION")
 	private Boolean pendienteInscripcion;
-	
+
 	@Column(name = "OBRANUEVA_SINDECLARAR")
 	private Boolean obraNuevaSinDeclarar;
-	
+
 	@Column(name = "SIN_TOMA_POSESION_INICIAL")
 	private Boolean sinTomaPosesionInicial;
-	
+
 	@Column(name = "PROINDIVISO")
 	private Boolean proindiviso;
-	
+
 	@Column(name = "OBRANUEVA_ENCONSTRUCCION")
 	private Boolean obraNuevaEnConstruccion;
-	
+
 	@Column(name = "OCUPADO_CONTITULO")
 	private Boolean ocupadoConTitulo;
-	
+
 	@Column(name = "TAPIADO")
 	private Boolean tapiado;
-	
+
 	@Column(name = "OTRO")
 	private String otro;
-	
+
 	@Column(name = "ESTADO_PORTAL_EXTERNO")
 	private Boolean portalesExternos;
-	
+
 	@Column(name = "OCUPADO_SINTITULO")
 	private Boolean ocupadoSinTitulo;
-	
+
 	@Column(name = "DIVHORIZONTAL_NOINSCRITA")
 	private Boolean divHorizontalNoInscrita;
-	
+
 	@Column(name = "ES_CONDICIONADO")
 	private Boolean isCondicionado;
-	
+
 	@Column(name = "EST_DISP_COM_CODIGO")
 	private String estadoCondicionadoCodigo;
 
 	@Column(name = "SIN_INFORME_APROBADO")
 	private Boolean sinInformeAprobado;
-	
+
 	@Column(name = "CON_CARGAS")
 	private Boolean conCargas;
-	
+
 	@Column(name = "VANDALIZADO")
 	private Boolean vandalizado;
-	
 
-	
+	@Column(name = "SIN_ACCESO")
+	private Boolean sinAcceso;
+
+
 	public Long getIdActivo() {
 		return idActivo;
 	}
@@ -232,6 +227,13 @@ public class VCondicionantesDisponibilidad  implements Serializable {
 	public void setVandalizado(Boolean vandalizado) {
 		this.vandalizado = vandalizado;
 	}
-	
+
+	public Boolean getSinAcceso() {
+		return sinAcceso;
+	}
+
+	public void setSinAcceso(Boolean sinAcceso) {
+		this.sinAcceso = sinAcceso;
+	}
 
 }

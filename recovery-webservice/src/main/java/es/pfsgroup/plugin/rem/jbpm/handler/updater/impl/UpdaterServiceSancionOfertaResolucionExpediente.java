@@ -156,27 +156,38 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 
 				}
 
-				if(valores != null && !valores.isEmpty() && !tieneReserva) {
-					// Anula el expediente si NO tiene reserva.
-					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.ANULADO);
-					DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
-					expediente.setFechaVenta(null);
-					expediente.setEstado(estado);
-					expediente.setFechaAnulacion(new Date());
-
-					//Finaliza el trámite
-					Filter filtroEstadoTramite = genericDao.createFilter(FilterType.EQUALS, "codigo", UpdaterStateOfertaApi.CODIGO_TRAMITE_FINALIZADO);
-					tramite.setEstadoTramite(genericDao.get(DDEstadoProcedimiento.class, filtroEstadoTramite));
-					genericDao.save(ActivoTramite.class, tramite);
-
-					//Rechaza la oferta y descongela el resto
-					ofertaApi.rechazarOferta(ofertaAceptada);
-					try {
-						ofertaApi.descongelarOfertas(expediente);
-					} catch (Exception e) {
-						logger.error("Error descongelando ofertas.", e);
+				if(valores != null && !valores.isEmpty()) {
+					if(tieneReserva && !DDDevolucionReserva.CODIGO_NO.equals(valorComboProcede) && DDCartera.CODIGO_CARTERA_LIBERBANK.equals(ofertaAceptada.getActivoPrincipal().getCartera().getCodigo())){
+						// Anula el expediente con pendiente de devolución si tiene reserva y es de cartera Liberbank.
+						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.ANULADO_PDTE_DEVOLUCION);
+						DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
+						expediente.setFechaVenta(null);
+						expediente.setEstado(estado);
+						expediente.setFechaAnulacion(new Date());
+					}else if(!tieneReserva){
+						// Anula el expediente si NO tiene reserva.
+						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.ANULADO);
+						DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
+						expediente.setFechaVenta(null);
+						expediente.setEstado(estado);
+						expediente.setFechaAnulacion(new Date());
 					}
+					
+					if (!tieneReserva) {
+						//Finaliza el trámite
+						Filter filtroEstadoTramite = genericDao.createFilter(FilterType.EQUALS, "codigo", UpdaterStateOfertaApi.CODIGO_TRAMITE_FINALIZADO);
+						tramite.setEstadoTramite(genericDao.get(DDEstadoProcedimiento.class, filtroEstadoTramite));
+						genericDao.save(ActivoTramite.class, tramite);
 
+						//Rechaza la oferta y descongela el resto
+						ofertaApi.rechazarOferta(ofertaAceptada);
+						try {
+							ofertaApi.descongelarOfertas(expediente);
+						} catch (Exception e) {
+							logger.error("Error descongelando ofertas.", e);
+						}
+					}
+					
 					genericDao.save(ExpedienteComercial.class, expediente);
 				}
 			}

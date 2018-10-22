@@ -341,7 +341,6 @@ Ext.define('HreRem.ux.util.Constants', {
 		ITP: '02',
 		IGIC: '03',
 		IPSI: '04'
-<<<<<<< HEAD
     },
     
     TIPO_TITULO_ACTIVO: {
@@ -375,8 +374,6 @@ Ext.define('HreRem.ux.util.Constants', {
     	LIBRE: '01',
     	ALQUILADO: '02',
     	CON_DEMANDAS: '03'
-    }
-=======
 	},
 
 	TIPO_TITULO_ACTIVO: {
@@ -394,6 +391,5 @@ Ext.define('HreRem.ux.util.Constants', {
 	EXPORTADOR:{
 		LIMITE: '1000'
 	}
->>>>>>> 2.0.18-18101801-rem
 
 });

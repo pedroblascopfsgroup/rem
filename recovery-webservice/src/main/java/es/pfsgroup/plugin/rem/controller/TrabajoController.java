@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.NonUniqueObjectException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -126,6 +127,8 @@ public class TrabajoController extends ParadiseJsonController {
 	private TrabajoDao trabajoDao;
 	
 	private final Log logger = LogFactory.getLog(getClass());
+	
+	private static final String ERROR_DUPLICADOS_CREAR_TRABAJOS = "El fichero contiene registros duplicados";
 
 		
 	/**
@@ -191,10 +194,13 @@ public class TrabajoController extends ParadiseJsonController {
 		
 	}
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView create(DtoFichaTrabajo dtoTrabajo){
 
 		boolean success = false;
+		
+		ModelMap model = new ModelMap();
 		
 		try {
 			
@@ -202,12 +208,15 @@ public class TrabajoController extends ParadiseJsonController {
 			dtoTrabajo.setIdTrabajo(idTrabajo);
 			success = true;
 			
-		} catch (Exception e) {			
+		} catch(NonUniqueObjectException e) {
+			logger.error(e.getMessage(),e);
+			model.put("error", ERROR_DUPLICADOS_CREAR_TRABAJOS);
+		} catch (Exception e) {
 			logger.error(e.getMessage(),e);
 		}
 		
-		
-		return createModelAndViewJson(new ModelMap("success", success));
+		model.put("success", success);
+		return createModelAndViewJson(model);
 		
 	}
 	

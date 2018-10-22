@@ -82,7 +82,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
 			            		store: '{comboMunicipio}',
 			            		value: '{agrupacionficha.municipioCodigo}',
 			            		disabled: '{!agrupacionficha.provinciaCodigo}',
-			            		readOnly: '{agrupacionficha.existeFechaBaja}'
+			            		readOnly: '{agrupacionTieneActivosOrExisteFechaBaja}'
 			            	}
 
 						},
@@ -92,6 +92,15 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
 		                	fieldLabel	: HreRem.i18n('fieldlabel.fecha.alta'),
 			            	bind		: {
 			            		value: '{agrupacionficha.fechaAlta}'
+			            	}		
+						},
+						{
+		                	xtype		: 'displayfieldbase',
+		                	fieldLabel	:  HreRem.i18n('fieldlabel.numero.agrupacion.uvem'),
+		                	bind		: {
+			            		value: '{agrupacionficha.numAgrupUvem}',
+			            		hidden:'{esAgrupacionProyecto}'
+
 			            	}		
 						},
 		                {
@@ -110,10 +119,12 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
 							fieldLabel	: HreRem.i18n('fieldlabel.direccion'),
 							bind		: {
 								value: '{agrupacionficha.direccion}',
-								readOnly: '{agrupacionficha.existeFechaBaja}'
+								readOnly: '{agrupacionficha.existeFechaBaja}',
+								hidden:'{esAgrupacionProyecto}'
 							},
 							allowBlank	:	'{esAgrupacionLoteComercial}'
 						},
+						
 						{ 
 		                	xtype		:'datefieldbase',
 		                	fieldLabel	:  HreRem.i18n('fieldlabel.fecha.baja'),
@@ -123,6 +134,16 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
 			            		readOnly: '{agrupacionficha.existeFechaBaja}',
 			            		disabled: '{esAgrupacionAsistida}'
 			            	}
+						},
+						{
+							xtype		: 'comboboxfieldbase',
+							fieldLabel	: HreRem.i18n('fieldlabel.entidad.propietaria'),
+							bind		: {
+								store: '{comboCartera}',
+								value: '{agrupacionficha.codigoCartera}',
+								readOnly: '{agrupacionTieneActivosOrExisteFechaBaja}',
+								allowBlank	:'{esAgrupacionLoteComercial}'	
+							}	
 						},
 		                { 
 		                	fieldLabel	:  HreRem.i18n('fieldlabel.descripcion'),
@@ -138,11 +159,11 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
 							reference	: 'provinciaCombo',
 							chainedStore: 'comboMunicipio',
 							chainedReference: 'municipioCombo',
-							allowBlank	:	'{esAgrupacionLoteComercial}',
 			            	bind		: {
 			            		store: '{comboProvincia}',
 			            	    value: '{agrupacionficha.provinciaCodigo}',
-			            	    readOnly: '{agrupacionficha.existeFechaBaja}'
+			            	    readOnly: '{agrupacionTieneActivosOrExisteFechaBaja}',
+			            	    allowBlank	:'{esAgrupacionLoteComercial}'
 			            	},
     						listeners	: {
 								select: 'onChangeChainedCombo'
@@ -180,6 +201,17 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
 		                          }
 		                        }
 		                    }
+						},  
+						{ 
+		                	xtype		:'datefieldbase',
+		                	fieldLabel	:  HreRem.i18n('fieldlabel.fecha.baja'),
+			            	bind		: {
+			            		value: 	'{agrupacionficha.fechaBaja}',
+			            		minValue: '{agrupacionficha.fechaAlta}',
+			            		readOnly: '{agrupacionficha.existeFechaBaja}',
+			            		disabled: '{esAgrupacionAsistida}'
+			            	}
+
 						},
 						{ 
 							xtype		: 'displayfieldbase',
@@ -194,12 +226,46 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
 							fieldLabel	: HreRem.i18n('fieldlabel.codigo.postal'),
 							bind		: {
 								value: '{agrupacionficha.codigoPostal}',
-								readOnly: '{agrupacionficha.existeFechaBaja}'
+								readOnly: '{agrupacionTieneActivosOrExisteFechaBaja}'
 							},
 							allowBlank	:	'{esAgrupacionLoteComercial}',
 							maskRe		: /^\d*$/,
 							vtype		: 'codigoPostal'
 						},
+						{ 
+							xtype: 'comboboxfieldbase',
+				        	fieldLabel: HreRem.i18n('fieldlabel.tipo.activo'),
+				        	bind: {
+			            		store: '{comboTipoActivo}',
+			            		value: '{agrupacionficha.tipoActivoCodigo}',
+			            		hidden: '{!esAgrupacionProyecto}',
+			            		readOnly: '{agrupacionTieneActivosOrExisteFechaBaja}'
+			            	}
+			            	
+		                },
+		                { 
+		                	xtype: 'comboboxfieldbase',
+				        	fieldLabel:  HreRem.i18n('fieldlabel.subtipo.activo'),
+				        	bind: {
+			            		store: '{comboSubtipoActivo}',
+			            		value: '{agrupacionficha.subtipoActivoCodigo}',
+			            		hidden: '{!esAgrupacionProyecto}',
+			            		readOnly: '{agrupacionTieneActivosOrExisteFechaBaja}'
+			            	}
+    					
+		                },
+		                { 
+		                	xtype: 'comboboxfieldbase',
+				        	fieldLabel:  HreRem.i18n('fieldlabel.estado.fisico.activo'),
+				        	name: 'estadoActivoCodigo',
+				        	bind: {
+			            		store: '{comboEstadoActivo}',
+			            		value: '{agrupacionficha.estadoActivoCodigo}',
+			            		hidden: '{!esAgrupacionProyecto}',
+			            		readOnly: '{agrupacionTieneActivosOrExisteFechaBaja}'
+			            	}
+		                },
+						
 						{ 
 		                	xtype		: 'datefieldbase',
 		                	fieldLabel	: HreRem.i18n('header.fecha.inicio.vigencia'),
@@ -281,13 +347,9 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
         	  collapsible	: true,
         	  defaultType	: 'textfieldbase',
         	  title			: HreRem.i18n('title.datos.gestores'),
-        	  colspan		: 3,
-        	  layout		: {
-        		  type: 'table',
-        		  columns: 2
-        	  },
         	  bind			: {
         		  hidden: '{!esAgrupacionLoteComercial}'
+        		 //hidden: '{!esAgrupacionLoteComercialOrProyecto}'
         	  },
         	  items			: [
 						{
@@ -302,15 +364,57 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
 			            		value: '{agrupacionficha.codigoGestoriaFormalizacion}'
 			            	}
 						},
+						//Si es Liberbank se muestra el de Gestores Backoffice, si no el de Gestor Comercial
+						{
+							xtype		: 'comboboxfieldbase',
+				        	fieldLabel	: HreRem.i18n('fieldlabel.gestor.activo'),
+				        	reference	: 'cbGestorActivo',
+				        	displayField: 'apellidoNombre',
+				        	valueField	: 'id',
+				        	bind		: {
+			            		store: '{comboGestorActivos}',
+			            		value: '{agrupacionficha.codigoGestorActivo}',
+			            		hidden: '{!esAgrupacionProyecto}',
+			            		readOnly:'{agrupacionProyectoTieneActivos}'
+			            	}
+						},
 						{
 							xtype		: 'comboboxfieldbase',
 				        	fieldLabel	: HreRem.i18n('fieldlabel.gestor.comercial'),
 				        	reference	: 'cbGestorComercial',
 				        	displayField: 'apellidoNombre',
 				        	valueField	: 'id',
+		            		
 				        	bind		: {
 			            		store: '{comboGestorComercialTipo}',
-			            		value: '{agrupacionficha.codigoGestorComercial}'
+			            		value: '{agrupacionficha.codigoGestorComercial}',
+			            		hidden: '{esAgrupacionLiberbank}',
+			            		readOnly:'{agrupacionProyectoTieneActivos}'
+			            	}
+						},
+						{
+							xtype		: 'comboboxfieldbase',
+				        	fieldLabel	: HreRem.i18n('fieldlabel.gestor.comercial.backoffice'),
+				        	reference	: 'cbGestorComercialBackoffice',
+				        	displayField: 'apellidoNombre',
+				        	valueField	: 'id',
+				        	bind		: {
+			            		store: '{comboGestorComercialBackoffice}',
+			            		value: '{agrupacionficha.codigoGestorComercialBackOffice}',
+			            		hidden: '{!esAgrupacionLiberbank}'
+				        	}
+						},
+						{
+							xtype		: 'comboboxfieldbase',
+				        	fieldLabel	: HreRem.i18n('fieldlabel.doble.gestor.activo'),
+				        	reference	: 'cbDobleGestorActivo',
+				        	displayField: 'apellidoNombre',
+				        	valueField	: 'id',
+				        	bind		: { 
+			            		store: '{comboDobleGestorActivo}',
+			            		value: '{agrupacionficha.codigoGestorDobleActivo}',
+			            		hidden: '{!esAgrupacionProyecto}',
+			            		readOnly:'{agrupacionProyectoTieneActivos}'
 			            	}
 						},
 						{

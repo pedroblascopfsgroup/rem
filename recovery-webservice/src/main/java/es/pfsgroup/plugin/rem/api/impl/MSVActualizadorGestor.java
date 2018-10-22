@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.rem.api.impl;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.text.ParseException;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -18,6 +19,7 @@ import es.pfsgroup.framework.paradise.bulkUpload.adapter.ProcessAdapter;
 import es.pfsgroup.framework.paradise.bulkUpload.liberators.MSVLiberator;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
 import es.pfsgroup.framework.paradise.bulkUpload.model.ResultadoProcesarFila;
+import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVActualizarGestores;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVHojaExcel;
 import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
@@ -28,7 +30,9 @@ import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GestorExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoLoteComercial;
+import es.pfsgroup.plugin.rem.model.DtoHistoricoMediador;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 
@@ -68,6 +72,7 @@ public class MSVActualizadorGestor extends AbstractMSVActualizador implements MS
 		ExpedienteComercial expediente= null;
 		Usuario usuario= null;
 		EXTDDTipoGestor tipoGestor= null;
+		DtoHistoricoMediador dtoMediador = null;
 		
 		if(!Checks.esNulo(exc.dameCelda(fila, 2))){
 			activo = activoApi.getByNumActivo(Long.parseLong(exc.dameCelda(fila, 2)));
@@ -81,7 +86,7 @@ public class MSVActualizadorGestor extends AbstractMSVActualizador implements MS
 			expediente= expedienteComercialApi.findOneByNumExpediente(Long.parseLong(exc.dameCelda(fila, 4)));
 		}
 		
-		if(!Checks.esNulo(exc.dameCelda(fila, 0))){					
+		if(!Checks.esNulo(exc.dameCelda(fila, 0)) && !MSVActualizarGestores.GESTOR_MEDIADOR.equals(exc.dameCelda(fila, 0))){					
 			Filter filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo", exc.dameCelda(fila, 0));
 			Filter filtroBorrado= genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
 			tipoGestor = (EXTDDTipoGestor) genericDao.get(EXTDDTipoGestor.class, filtroTipoGestor,filtroBorrado);
@@ -91,6 +96,26 @@ public class MSVActualizadorGestor extends AbstractMSVActualizador implements MS
 			Filter filtroUsuario= genericDao.createFilter(FilterType.EQUALS,"username", exc.dameCelda(fila, 1));
 			Filter filtroBorrado= genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
 			usuario = genericDao.get(Usuario.class,filtroUsuario,filtroBorrado);
+		}
+		if(!Checks.esNulo(exc.dameCelda(fila, 5))) {
+			dtoMediador = new DtoHistoricoMediador();
+			dtoMediador.setCodigo(exc.dameCelda(fila, 5));
+			
+			if(!Checks.esNulo(activo)) {
+				dtoMediador.setIdActivo(activo.getId());
+				
+				activoApi.createHistoricoMediador(dtoMediador);
+			}
+			
+			if(!Checks.esNulo(agrupacion)) {
+				List<ActivoAgrupacionActivo> aga = agrupacion.getActivos();
+				
+				for(ActivoAgrupacionActivo act: aga) {
+					dtoMediador.setIdActivo(act.getActivo().getId());
+					
+					activoApi.createHistoricoMediador(dtoMediador);
+				}
+			}
 		}
 		
 		if(!Checks.esNulo(tipoGestor) && !Checks.esNulo(usuario)){

@@ -19,6 +19,7 @@ import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
+import es.pfsgroup.plugin.rem.model.*;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoBancario;
@@ -60,6 +61,7 @@ import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
 import es.pfsgroup.plugin.rem.model.VCondicionantesDisponibilidad;
 import es.pfsgroup.plugin.rem.model.VPreciosVigentes;
+import es.pfsgroup.plugin.rem.model.VTasacionCalculoLBK;
 import es.pfsgroup.plugin.rem.model.Visita;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.rest.dto.File;
@@ -1107,6 +1109,14 @@ public interface ActivoApi {
 	 * */
 	public boolean crearExpediente(Oferta oferta, Trabajo trabajo);
 	
+	/**
+	 * Devuelve una lista de adecuaciones alquiler para el grid de adecuaciones en la pestaña patrimonio de un activo
+	 *
+	 * @param idActivo
+	 * @return
+	 */
+	List<DtoActivoPatrimonio> getHistoricoAdecuacionesAlquilerByActivo(Long idActivo);
+	
 	public List<DtoImpuestosActivo> getImpuestosByActivo(Long idActivo);
 	
 	public boolean createImpuestos(DtoImpuestosActivo dtoImpuestosfilter) throws ParseException;
@@ -1117,6 +1127,12 @@ public interface ActivoApi {
 
 	public boolean esLiberBank(Long idActivo);
 	
+	public boolean esCajamar(Long idActivo);
+	
 	public DtoActivoFichaCabecera getActivosPropagables(Long idActivo);
+	
+	public List<VTasacionCalculoLBK> getVistaTasacion(Long idAgrupacion);
+
+	boolean isActivoEnPuja(Activo activo);
 
 }

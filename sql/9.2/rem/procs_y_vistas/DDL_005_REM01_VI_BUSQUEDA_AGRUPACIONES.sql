@@ -65,9 +65,9 @@ BEGIN
 			agr.agr_publicado,
 			nvl(agr_p.activos,0) AS activos, 
 			nvl(agr_p.publicados,0) AS publicados, 
-			COALESCE (obr.dd_prv_id, res.dd_prv_id, lco.dd_prv_id, asi.dd_prv_id) AS provincia,
-			COALESCE (obr.dd_loc_id, res.dd_loc_id, lco.dd_loc_id, asi.dd_loc_id) AS localidad, 
-			COALESCE (obr.onv_direccion, res.res_direccion, lco.lco_direccion, asi.asi_direccion) AS direccion,
+			COALESCE (obr.dd_prv_id, res.dd_prv_id, lco.dd_prv_id, asi.dd_prv_id, pry.dd_prv_id) AS provincia,
+			COALESCE (obr.dd_loc_id, res.dd_loc_id, lco.dd_loc_id, asi.dd_loc_id, pry.dd_loc_id) AS localidad, 
+			COALESCE (obr.onv_direccion, res.res_direccion, lco.lco_direccion, asi.asi_direccion, pry.PRY_DIRECCION) AS direccion,
 			agr_p.dd_cra_codigo cartera, 
 			agr.agr_is_formalizacion,
 			alq.dd_tal_id AS idTipoAlquiler,
@@ -93,6 +93,7 @@ BEGIN
 		LEFT JOIN '||V_ESQUEMA||'.act_lco_lote_comercial lco ON (agr.agr_id = lco.agr_id)
 		LEFT JOIN '||V_ESQUEMA||'.act_asi_asistida asi ON (agr.agr_id = asi.agr_id)
 		LEFT JOIN '||V_ESQUEMA||'.dd_tal_tipo_alquiler alq ON (agr.dd_tal_id = alq.dd_tal_id)
+		LEFT JOIN '||V_ESQUEMA||'.ACT_PRY_PROYECTO PRY ON (agr.agr_id = PRY.agr_id)
 		WHERE agr.borrado = 0 AND tag.borrado = 0';
 
 	SELECT COUNT(*) INTO table_count FROM ALL_OBJECTS WHERE OBJECT_NAME = 'ACT_AGA_IDX1' AND OWNER=V_ESQUEMA AND OBJECT_TYPE='INDEX';  

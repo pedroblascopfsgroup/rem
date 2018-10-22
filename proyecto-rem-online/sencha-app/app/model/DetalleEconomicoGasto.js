@@ -181,6 +181,18 @@ Ext.define('HreRem.model.DetalleEconomicoGasto', {
 		},
 		{
 			name: 'cartera'
+		},
+		{
+			name: 'exencionlbk'
+		},
+		{
+			name: 'totalImportePromocion'
+		},
+		{
+			name: 'importeTotalPrinex'
+		},
+		{
+			name: 'prorrata'
 		}
 	],
     

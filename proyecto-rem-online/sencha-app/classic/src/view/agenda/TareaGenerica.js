@@ -405,7 +405,7 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
         ];
         me.callParent();
 
-
+        
         //El me. se puede sustituir por me.getLookupController() y meterlo dentro del controlador de vista.
         var validacion = eval('me.' + me.codigoTarea + 'Validacion');
         if (!Ext.isEmpty(validacion))
@@ -736,16 +736,24 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 
     T004_AutorizacionPropietarioValidacion: function() {
         var me = this;
-
-        me.deshabilitarCampo(me.down('[name=numIncremento]'));
-
-        me.down('[name=comboAmpliacion]').addListener('change', function(combo) {
-            if (combo.value == '01') {
-                me.habilitarCampo(me.down('[name=numIncremento]'));
-            } else {
-                me.deshabilitarCampo(me.down('[name=numIncremento]'));
-            }
-        })
+        
+        if(CONST.CARTERA['LIBERBANK']===me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera')){
+        	me.ocultarCampo(me.down('[name=numIncremento]'));
+        	me.ocultarCampo(me.down('[name=comboAmpliacion]'));
+        	me.deshabilitarCampo(me.down('[name=numIncremento]'));
+        	me.deshabilitarCampo(me.down('[name=comboAmpliacion]'));
+        }else{
+        	me.ocultarCampo(me.down('[name=comboAmpliacionYAutorizacion]'));
+        	me.deshabilitarCampo(me.down('[name=comboAmpliacionYAutorizacion]'));
+        	me.deshabilitarCampo(me.down('[name=numIncremento]'));
+        	me.down('[name=comboAmpliacion]').addListener('change', function(combo) {
+                if (combo.value == '01') {
+                    me.habilitarCampo(me.down('[name=numIncremento]'));
+                } else {
+                    me.deshabilitarCampo(me.down('[name=numIncremento]'));
+                }
+            });
+        }
     },
 
 
@@ -1106,6 +1114,7 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 	T013_DocumentosPostVentaValidacion: function() {
 		var me = this;
 		var fechaIngreso = me.down('[name=fechaIngreso]');
+		var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
 		fechaIngreso.setMaxValue($AC.getCurrentDate());
 
 		if(!Ext.isEmpty(fechaIngreso.getValue())) {
@@ -1117,15 +1126,17 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 		}
 
 		me.down('[name=checkboxVentaDirecta]').addListener('change', function(checkbox, newValue, oldValue, eOpts) {
-            if (newValue) {
-            	me.habilitarCampo(me.down('[name=fechaIngreso]'));
-            	me.down('[name=fechaIngreso]').allowBlank = false;
-            	me.down('[name=fechaIngreso]').validate();
-            } else {
-            	me.deshabilitarCampo(me.down('[name=fechaIngreso]'));
-            	me.campoNoObligatorio(me.down('[name=fechaIngreso]'));
-            	me.down('[name=fechaIngreso]').reset();
-            }
+			if(CONST.CARTERA['LIBERBANK'] != codigoCartera){
+				if (newValue) {
+	            	me.habilitarCampo(me.down('[name=fechaIngreso]'));
+	            	me.down('[name=fechaIngreso]').allowBlank = false;
+	            	me.down('[name=fechaIngreso]').validate();
+	            } else {
+	            	me.deshabilitarCampo(me.down('[name=fechaIngreso]'));
+	            	me.campoNoObligatorio(me.down('[name=fechaIngreso]'));
+	            	me.down('[name=fechaIngreso]').reset();
+	            }
+			}
         })
 	},
     T013_FirmaPropietarioValidacion: function() {

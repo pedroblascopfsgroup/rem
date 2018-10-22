@@ -98,12 +98,57 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 	     		return false;
 	     	}
 	     },
+		 
+		 esAgrupacionProyecto: function(get) {
+	    	 
+		     	var tipoAgrupacion = get('agrupacionficha.tipoAgrupacionCodigo');
+		     	if((tipoAgrupacion == CONST.TIPOS_AGRUPACION['PROYECTO'])) {
+		     		return true;
+		     	} else {
+		     		return false;
+		     	}
+		 },
+		 agrupacionProyectoTieneActivos: function(get) {
+	    	 
+		     	var tipoAgrupacion = get('agrupacionficha.tipoAgrupacionCodigo');
+		     	var numeroActivos = get('agrupacionficha.numeroActivos');
+		     	if((tipoAgrupacion == CONST.TIPOS_AGRUPACION['PROYECTO']) && numeroActivos > 0) {
+		     		return true;
+		     	} else {
+		     		return false;
+		     	}
+		 },
+		 agrupacionTieneActivosOrExisteFechaBaja: function(get) {
+		     	var tipoAgrupacion = get('agrupacionficha.tipoAgrupacionCodigo');
+		     	var numeroActivos = get('agrupacionficha.numeroActivos');
+		     	var existeFechaBaja = get('agrupacionficha.existeFechaBaja');
+		     	if((tipoAgrupacion == CONST.TIPOS_AGRUPACION['PROYECTO'])) {
+		     		if(numeroActivos > 0 || existeFechaBaja){
+		     			return true;
+		     		}else{
+		     			return false;
+		     		}
+		     		
+		     	} else {
+		     		return existeFechaBaja;
+		     	}
+		 },
 
 	     esAgrupacionObraNuevaOrAsistida: function(get) {
 	    	 
 	     	return get('esAgrupacionObraNueva') || get('esAgrupacionAsistida');
 	     },
 	     
+	     esAgrupacionObraNuevaOrAsistidaOrProyecto: function(get) {
+	    	 
+		   	return get('esAgrupacionObraNueva') || get('esAgrupacionAsistida') || get('esAgrupacionProyecto');
+		 },
+	     
+	     esAgrupacionLoteComercialOrProyecto: function(get) {
+	    	 
+		  	return get('esAgrupacionLoteComercial') || get('esAgrupacionProyecto');
+		 },
+     
 	     existeFechaBaja : function(get) {
 	    	var existeFechaBaja = get('agrupacionficha.existeFechaBaja');
 	    	return existeFechaBaja;
@@ -121,10 +166,22 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 
 	     agrupacionTieneActivos: function(get) {
 	     		return (get('agrupacionficha.numeroActivos')>0);
+	     },
+	     
+	     esAgrupacionLiberbank: function(get) {
+	    	 return get('agrupacionficha.codigoCartera') == CONST.CARTERA['LIBERBANK'];
 	     }
     },
     
     stores: {
+    	comboCartera: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'entidadesPropietarias'}
+			}   	
+	    },
     	
     	comboProvincia: {
 			model: 'HreRem.model.ComboBase',
@@ -303,6 +360,33 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 				type: 'uxproxy',
 				remoteUrl: 'agrupacion/getGestoresLoteComercialPorTipo',
 				extraParams: {agrId: '{agrupacionficha.id}'}
+			}   	
+	    },
+
+	    comboGestorComercialBackoffice: {
+	    	model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'agrupacion/getGestoresLoteComercial',
+				extraParams: {agrId: '{agrupacionficha.id}', codigoGestor: 'HAYAGBOINM'}
+			}   	
+	    },
+
+	    comboDobleGestorActivo: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'agrupacion/getDobleGestorActivo',
+				extraParams: {agrId: '{agrupacionficha.id}', codigoGestorEdi: 'GEDI', codigoGestorSu: 'GSUE'}
+			}   	
+	    },
+
+	    comboGestorActivos: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'agrupacion/getGestoresLoteComercial',
+				extraParams: {agrId: '{agrupacionficha.id}', codigoGestor: 'GACT'}
 			}   	
 	    },
 

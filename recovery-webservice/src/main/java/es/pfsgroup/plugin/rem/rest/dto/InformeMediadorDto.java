@@ -14,6 +14,7 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.Diccionary;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.EntityDefinition;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoInfoComercial;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDAcabadoCarpinteria;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoConservacion;
@@ -71,18 +72,17 @@ public class InformeMediadorDto implements Serializable {
 		Update.class })
 	private Long idProveedorRemAnterior;
 
-/*	Guarda idProveedorRem como mediador del activo
- * @NotNull(groups = { Insert.class, Update.class })
- *	@Diccionary(clase = ActivoProveedor.class, foreingField="codigoProveedorRem",message = "El idProveedorRem no existe", groups = { Insert.class,
- *			Update.class })
- *	@EntityDefinition(propertyName = "mediadorInforme", classObj = ActivoProveedor.class, foreingField = "codigoProveedorRem")*/
+	//Guarda idProveedorRem como mediador del activo
+//	@NotNull(groups = { Insert.class, Update.class })
+// 	@Diccionary(clase = ActivoProveedor.class, foreingField="codigoProveedorRem",message = "El idProveedorRem no existe", groups = { Insert.class,
+// 			Update.class })
+// 	@EntityDefinition(propertyName = "mediadorInforme", classObj = ActivoProveedor.class, foreingField = "codigoProveedorRem")
 	private Long idProveedorRem;
 
-	@NotNull(groups = Insert.class)
-	@EntityDefinition(procesar = false)
+	@EntityDefinition(propertyName = "posibleInforme" ,transform = TRANSFORM_TYPE.BOOLEAN_TO_INTEGER)
 	private Boolean posibleInforme;
 
-	@EntityDefinition(procesar = false)
+	@EntityDefinition(propertyName = "motivoNoPosibleInforme")
 	private String motivoNoPosibleInforme;
 
 	//@NotNull(groups = Insert.class)

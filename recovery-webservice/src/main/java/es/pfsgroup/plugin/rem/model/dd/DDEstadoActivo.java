@@ -38,7 +38,15 @@ public class DDEstadoActivo implements Auditable, Dictionary {
 	public static final String ESTADO_ACTIVO_SUELO = "01";
 	public static final String ESTADO_ACTIVO_PROMOCION = "02";
 	public static final String ESTADO_ACTIVO_TERMINADO = "03";
-	public static final String ESTADO_ACTIVO_RUINA = "04";
+	public static final String ESTADO_ACTIVO_RUINA = "05";
+	public static final String ESTADO_ACTIVO_VANDALIZADO = "07";
+	public static final String ESTADO_ACTIVO_EN_CONSTRUCCION_EN_CURSO = "02";
+	public static final String ESTADO_ACTIVO_EN_CONSTRUCCION_PARADA = "06";
+	public static final String ESTADO_ACTIVO_OBRA_NUEVA_VANDALIZADO = "07";
+	public static final String ESTADO_ACTIVO_NO_OBRA_NUEVA_VANDALIZADO = "08";
+	public static final String ESTADO_ACTIVO_EDIFICIO_A_REHABILITAR = "09";
+	public static final String ESTADO_ACTIVO_OBRA_NUEVA_PDTE_LEGALIZAR = "10";
+	public static final String ESTADO_ACTIVO_NO_OBRA_NUEVA_PDTE_LEGALIZAR = "11";
 
 	@Id
 	@Column(name = "DD_EAC_ID")

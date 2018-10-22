@@ -63,7 +63,7 @@ Ext.define('HreRem.view.agrupaciones.AgrupacionesSearch', {
 							        	reference: 'prueba',
 							        	name: 'tipoAgrupacion',
 							        	bind: {
-						            		store: '{comboTipoAgrupacion}'
+						            		store: '{comboTodosTipoAgrupacion}'
 						            	},
 						            	displayField: 'descripcion',
 						            	valueField: 'codigo',

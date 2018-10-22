@@ -31,7 +31,6 @@ public class DtoAgrupaciones extends WebDto {
 	private String codigoPostal;
 	private String tipoAgrupacionCodigo;
 	private String estadoObraNuevaCodigo;
-	private String cartera;
 	private String codigoCartera;
 	@SuppressWarnings("unused")
 	private Boolean existeFechaBaja;
@@ -40,7 +39,9 @@ public class DtoAgrupaciones extends WebDto {
 	private boolean esEditable;
 	private Boolean existenOfertasVivas;
 	private Long codigoGestoriaFormalizacion;
+	private Long codigoGestorActivo;
 	private Long codigoGestorComercial;
+	private Long codigoGestorDobleActivo;
 	private Long codigoGestorFormalizacion;
 	private Long codigoGestorComercialBackOffice;
 	private Integer isFormalizacion;
@@ -48,6 +49,9 @@ public class DtoAgrupaciones extends WebDto {
 	private Boolean agrupacionEliminada;
 	private String subTipoComercial; 
 	private String tipoAlquilerCodigo;
+	private String tipoActivoCodigo;
+	private String estadoActivoCodigo;
+	private String subtipoActivoCodigo;
 
 
 	public Boolean getEstaCaducada() {
@@ -171,12 +175,6 @@ public class DtoAgrupaciones extends WebDto {
 	public void setEstadoObraNuevaCodigo(String estadoObraNuevaCodigo) {
 		this.estadoObraNuevaCodigo = estadoObraNuevaCodigo;
 	}
-	public String getCartera() {
-		return cartera;
-	}
-	public void setCartera(String cartera) {
-		this.cartera = cartera;
-	}
 	public Boolean getExisteFechaBaja() {
 		if (this.fechaBaja != null)
 			return true;
@@ -264,6 +262,34 @@ public class DtoAgrupaciones extends WebDto {
 	public void setTipoAlquilerCodigo(String tipoAlquilerCodigo) {
 		this.tipoAlquilerCodigo = tipoAlquilerCodigo;
 	}
-
-
+	public Long getCodigoGestorActivo() {
+		return codigoGestorActivo;
+	}
+	public void setCodigoGestorActivo(Long codigoGestorActivo) {
+		this.codigoGestorActivo = codigoGestorActivo;
+	}
+	public Long getCodigoGestorDobleActivo() {
+		return codigoGestorDobleActivo;
+	}
+	public void setCodigoGestorDobleActivo(Long codigoGestorDobleActivo) {
+		this.codigoGestorDobleActivo = codigoGestorDobleActivo;
+	}
+	public String getTipoActivoCodigo() {
+		return tipoActivoCodigo;
+	}
+	public void setTipoActivoCodigo(String tipoActivoCodigo) {
+		this.tipoActivoCodigo = tipoActivoCodigo;
+	}
+	public String getEstadoActivoCodigo() {
+		return estadoActivoCodigo;
+	}
+	public void setEstadoActivoCodigo(String estadoActivoCodigo) {
+		this.estadoActivoCodigo = estadoActivoCodigo;
+	}
+	public String getSubtipoActivoCodigo() {
+		return subtipoActivoCodigo;
+	}
+	public void setSubtipoActivoCodigo(String subtipoActivoCodigo) {
+		this.subtipoActivoCodigo = subtipoActivoCodigo;
+	}
 }

@@ -56,7 +56,7 @@ Ext.define('HreRem.view.expedientes.DatosBasicosOferta', {
 								store: '{comboEstadoOferta}',
 								value: '{datosbasicosoferta.estadoCodigo}'
 							},
-							readOnly: true,
+							readOnly: !$AU.userIsRol("HAYASUPER"),
 		                	fieldLabel:  HreRem.i18n('fieldlabel.estado')
 		                },
 		                {	
@@ -209,10 +209,10 @@ Ext.define('HreRem.view.expedientes.DatosBasicosOferta', {
 		                },
 		    			{
 		                    xtype: 'fieldsettable',
-		                    title: HreRem.i18n('title.comerical.oferta.detalle.oferta.express'),
-		                    bind: {
+		                    title: HreRem.i18n('title.comerical.oferta'),
+		                    /*bind: {
 		                        hidden: '{!esCarteraCajamar}'
-		                    },
+		                    },*/
 		                    colspan: 3,
 		                    items: [
 		                    		{
@@ -261,6 +261,7 @@ Ext.define('HreRem.view.expedientes.DatosBasicosOferta', {
 					    topBar: false,
 					    reference: 'listadoTextosOferta',
 						cls	: 'panel-base shadow-panel',
+						secFunToEdit: 'EDITAR_GRID_TEXTOS_OFERTA_EXPEDIENTE',
 						bind: {
 							store: '{storeTextosOferta}'
 						},									

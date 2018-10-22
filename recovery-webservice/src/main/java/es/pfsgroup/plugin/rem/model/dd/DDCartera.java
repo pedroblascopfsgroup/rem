@@ -38,6 +38,7 @@ public class DDCartera implements Auditable, Dictionary {
 	public static final String CODIGO_CARTERA_THIRD_PARTY = "11";
 	public static final String CODIGO_CARTERA_GIANTS = "12";
 	public static final String CODIGO_CARTERA_LIBERBANK = "08";
+	public static final String CODIGO_CARTERA_CERBERUS = "07";
 	public static final String DESCRIPCION_CARTERA_BANKIA = "Bankia";
 	public static final String DESCRIPCION_CARTERA_HYT = "Haya Titulizacion";
 

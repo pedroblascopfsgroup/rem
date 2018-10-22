@@ -1,7 +1,14 @@
 package es.pfsgroup.plugin.rem.service;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.annotation.Resource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -13,20 +20,23 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.DDTipoVia;
 import es.capgemini.pfs.direccion.model.Localidad;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
-import es.pfsgroup.plugin.recovery.coreextension.utils.UtilDiccionarioManager;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.rem.activo.ActivoManager;
+import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.factory.TabActivoFactoryApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoComunidadPropietarios;
 import es.pfsgroup.plugin.rem.model.ActivoEdificio;
+import es.pfsgroup.plugin.rem.model.ActivoEstadosInformeComercialHistorico;
 import es.pfsgroup.plugin.rem.model.ActivoInfoComercial;
 import es.pfsgroup.plugin.rem.model.ActivoLocalComercial;
 import es.pfsgroup.plugin.rem.model.ActivoPlazaAparcamiento;
@@ -34,16 +44,17 @@ import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.ActivoVivienda;
 import es.pfsgroup.plugin.rem.model.DtoActivoInformeComercial;
+import es.pfsgroup.plugin.rem.model.DtoSendNotificator;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoConservacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoConstruccion;
-import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoInformeComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDUbicacionActivo;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi.ENTIDADES;
+import es.pfsgroup.recovery.api.UsuarioApi;
 
 @Component
 public class TabActivoInformeComercial implements TabActivoService {
@@ -67,6 +78,21 @@ public class TabActivoInformeComercial implements TabActivoService {
 
 	@Autowired
 	private UtilDiccionarioApi utilDiccionarioApi;
+	
+	@Autowired
+	private GestorActivoApi gestorActivoApi;
+	
+	@Autowired
+	private GenericAdapter genericAdapter;
+	
+	@Resource
+	private Properties appProperties;
+	
+	// Patrón para validar el email
+    Pattern pattern = Pattern
+            .compile("^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
+                    + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$");
+	private ApiProxyFactory proxyFactory;
 
 	@Override
 	public String[] getKeys() {
@@ -148,6 +174,13 @@ public class TabActivoInformeComercial implements TabActivoService {
 					}
 				}else{
 					informeComercial.setAutorizacionWeb(0);
+				}
+				
+				//Informe mediador
+				beanUtilNotNull.copyProperty(informeComercial, "posibleInforme", activo.getInfoComercial().getPosibleInforme());
+				beanUtilNotNull.copyProperty(informeComercial, "posibleInformeBoolean", activo.getInfoComercial().getPosibleInforme());
+				if (!Checks.esNulo(activo.getInfoComercial().getMotivoNoPosibleInforme())){
+					beanUtilNotNull.copyProperty(informeComercial, "motivoNoPosibleInforme", activo.getInfoComercial().getMotivoNoPosibleInforme());
 				}
 				
 				// Datos del proveedor tecnico.
@@ -366,9 +399,23 @@ public class TabActivoInformeComercial implements TabActivoService {
 					DDEstadoConservacion estadoConservacion = (DDEstadoConservacion) genericDao.get(DDEstadoConservacion.class, filtro);
 					beanUtilNotNull.copyProperty(activo.getInfoComercial(), "estadoConservacion", estadoConservacion);
 				}
+				
+				//Informe Mediador
+				if (!Checks.esNulo(activoInformeDto.getPosibleInforme())){
+					beanUtilNotNull.copyProperty(activo.getInfoComercial(), "posibleInforme", activoInformeDto.getPosibleInforme());
+						if (activoInformeDto.getPosibleInforme() == 1){
+							beanUtilNotNull.copyProperty(activo.getInfoComercial(), "motivoNoPosibleInforme", " ");
+						} else {
+							if (!Checks.esNulo(activoInformeDto.getMotivoNoPosibleInforme())){
+								beanUtilNotNull.copyProperty(activo.getInfoComercial(), "motivoNoPosibleInforme", activoInformeDto.getMotivoNoPosibleInforme());
+							}
+						}
+				}
 
-				// Datos del edificio.
-				if (!Checks.esNulo(activo.getInfoComercial().getEdificio())) {
+				// Datos del edificio. Si el edificio es nulo, creamos registro en la tabla 
+				if (Checks.esNulo(activo.getInfoComercial().getEdificio())) {
+					activo.getInfoComercial().setEdificio(crearRegistroEdificio(activoInformeDto, activo));
+				}else {
 					// Reformas.
 					beanUtilNotNull.copyProperty(activo.getInfoComercial().getEdificio(), "reformaFachada", activoInformeDto.getReformaFachada());
 					beanUtilNotNull.copyProperty(activo.getInfoComercial().getEdificio(), "reformaEscalera", activoInformeDto.getReformaEscalera());
@@ -377,41 +424,44 @@ public class TabActivoInformeComercial implements TabActivoService {
 					beanUtilNotNull.copyProperty(activo.getInfoComercial().getEdificio(), "reformaCubierta", activoInformeDto.getReformaCubierta());
 					beanUtilNotNull.copyProperty(activo.getInfoComercial().getEdificio(), "reformaOtraZona", activoInformeDto.getReformaOtrasZonasComunes());
 					beanUtilNotNull.copyProperty(activo.getInfoComercial().getEdificio(), "reformaOtroDescEdificio", activoInformeDto.getReformaOtroDescEdificio());
-
+	
 					// Inf general.
 					if (!Checks.esNulo(activoInformeDto.getEstadoConservacionEdificioCodigo())) {
 						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", activoInformeDto.getEstadoConservacionEdificioCodigo());
 						DDEstadoConservacion estadoConservacion = (DDEstadoConservacion) genericDao.get(DDEstadoConservacion.class, filtro);
 						beanUtilNotNull.copyProperty(activo.getInfoComercial().getEdificio(), "estadoConservacionEdificio", estadoConservacion);
 					}
-
+	
 					if (!Checks.esNulo(activoInformeDto.getAnyoRehabilitacionEdificio())) {
 						beanUtilNotNull.copyProperty(activo.getInfoComercial().getEdificio(), "anyoRehabilitacionEdificio",
 								Integer.parseInt(activoInformeDto.getAnyoRehabilitacionEdificio()));
 					}
-
+	
 					beanUtilNotNull.copyProperty(activo.getInfoComercial().getEdificio(), "numPlantas", activoInformeDto.getNumPlantas());
 					beanUtilNotNull.copyProperty(activo.getInfoComercial().getEdificio(), "ascensorEdificio", activoInformeDto.getAscensor());
 					beanUtilNotNull.copyProperty(activo.getInfoComercial().getEdificio(), "numAscensores", activoInformeDto.getNumAscensores());
 					beanUtilNotNull.copyProperty(activo.getInfoComercial().getEdificio(), "ediDescripcion", activoInformeDto.getEdiDescripcion());
 					beanUtilNotNull.copyProperty(activo.getInfoComercial().getEdificio(), "entornoInfraestructura", activoInformeDto.getEntornoInfraestructuras());
 					beanUtilNotNull.copyProperty(activo.getInfoComercial().getEdificio(), "entornoComunicacion", activoInformeDto.getEntornoComunicaciones());
+					beanUtilNotNull.copyProperty(activo.getInfoComercial().getEdificio(), "edificioDescPlantas", activoInformeDto.getEdificioDescPlantas());
+				
+				}
 					
-					//Datos de la propiedad de comunitarios
-					beanUtilNotNull.copyProperty(activo.getInfoComercial(), "existeComunidadEdificio", activoInformeDto.getInscritaComunidad());
-					beanUtilNotNull.copyProperty(activo.getInfoComercial(), "derramaOrientativaComunidad", activoInformeDto.getDerramaOrientativaComunidad());
-					beanUtilNotNull.copyProperty(activo.getInfoComercial(), "cuotaOrientativaComunidad", activoInformeDto.getCuotaOrientativaComunidad());
-					beanUtilNotNull.copyProperty(activo.getInfoComercial(), "nombrePresidenteComunidadEdificio", activoInformeDto.getNomPresidenteComunidad());
-					beanUtilNotNull.copyProperty(activo.getInfoComercial(), "telefonoAdministradorComunidadEdificio", activoInformeDto.getTelAdministradorComunidad());
-					beanUtilNotNull.copyProperty(activo.getInfoComercial(), "nombreAdministradorComunidadEdificio", activoInformeDto.getNomAdministradorComunidad());
-					beanUtilNotNull.copyProperty(activo.getInfoComercial(), "telefonoPresidenteComunidadEdificio", activoInformeDto.getTelPresidenteComunidad());
+				//Datos de la propiedad de comunitarios
+				beanUtilNotNull.copyProperty(activo.getInfoComercial(), "existeComunidadEdificio", activoInformeDto.getInscritaComunidad());
+				beanUtilNotNull.copyProperty(activo.getInfoComercial(), "derramaOrientativaComunidad", activoInformeDto.getDerramaOrientativaComunidad());
+				beanUtilNotNull.copyProperty(activo.getInfoComercial(), "cuotaOrientativaComunidad", activoInformeDto.getCuotaOrientativaComunidad());
+				beanUtilNotNull.copyProperty(activo.getInfoComercial(), "nombrePresidenteComunidadEdificio", activoInformeDto.getNomPresidenteComunidad());
+				beanUtilNotNull.copyProperty(activo.getInfoComercial(), "telefonoAdministradorComunidadEdificio", activoInformeDto.getTelAdministradorComunidad());
+				beanUtilNotNull.copyProperty(activo.getInfoComercial(), "nombreAdministradorComunidadEdificio", activoInformeDto.getNomAdministradorComunidad());
+				beanUtilNotNull.copyProperty(activo.getInfoComercial(), "telefonoPresidenteComunidadEdificio", activoInformeDto.getTelPresidenteComunidad());
 					
 					
-					//terrazas
-					beanUtilNotNull.copyProperty(activo.getInfoComercial(), "numeroTerrazasCubiertas", activoInformeDto.getNumTerrazaCubierta());
-					beanUtilNotNull.copyProperty(activo.getInfoComercial(), "descripcionTerrazasCubiertas", activoInformeDto.getDescTerrazaCubierta());
-					beanUtilNotNull.copyProperty(activo.getInfoComercial(), "numeroTerrazasDescubiertas", activoInformeDto.getNumTerrazaDescubierta());
-					beanUtilNotNull.copyProperty(activo.getInfoComercial(), "descripcionTerrazasDescubiertas", activoInformeDto.getDescTerrazaDescubierta());
+				//terrazas
+				beanUtilNotNull.copyProperty(activo.getInfoComercial(), "numeroTerrazasCubiertas", activoInformeDto.getNumTerrazaCubierta());
+				beanUtilNotNull.copyProperty(activo.getInfoComercial(), "descripcionTerrazasCubiertas", activoInformeDto.getDescTerrazaCubierta());
+				beanUtilNotNull.copyProperty(activo.getInfoComercial(), "numeroTerrazasDescubiertas", activoInformeDto.getNumTerrazaDescubierta());
+				beanUtilNotNull.copyProperty(activo.getInfoComercial(), "descripcionTerrazasDescubiertas", activoInformeDto.getDescTerrazaDescubierta());
 					
 					
 					
@@ -440,7 +490,7 @@ public class TabActivoInformeComercial implements TabActivoService {
 					beanUtilNotNull.copyProperty(activo.getInfoComercial(), "otrosOtrasDependencias", activoInformeDto.getDescOtras());
 					
 					
-				}
+				
 
 				// Datos de Infraestructura
 				if (!Checks.esNulo(activo.getInfoComercial().getInfraestructura())) {
@@ -528,11 +578,47 @@ public class TabActivoInformeComercial implements TabActivoService {
 					valoraciones.add(valoracionEstimadoRenta);
 				}
 				
+			if(!Checks.esNulo(activo.getInfoComercial().getPosibleInforme())) {
+				if (activo.getInfoComercial().getPosibleInforme() == 0) {
+					Filter filterEstado = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoInformeComercial.ESTADO_INFORME_COMERCIAL_RECHAZO);
+					DDEstadoInformeComercial estadoRechazado = genericDao.get(DDEstadoInformeComercial.class, filterEstado);
+					
+					ActivoEstadosInformeComercialHistorico historico = new ActivoEstadosInformeComercialHistorico();
+					historico.setActivo(activo);
+					historico.setEstadoInformeComercial(estadoRechazado);
+					historico.setFecha(new Date());
+					if (!Checks.esNulo(activo.getInfoComercial().getMotivoNoPosibleInforme())){
+						historico.setMotivo(activo.getInfoComercial().getMotivoNoPosibleInforme());
+					}
+					genericDao.save(ActivoEstadosInformeComercialHistorico.class, historico);
+					
+					//Creación y envio correo rechazo informe comercial
+					String asunto = "No se ha podido realizar el informe comercial del activo " + activo.getNumActivo();
+					String cuerpo = "No se ha podido realizar le informe comercial del activo " +activo.getNumActivo()+ ", motivo: "+activo.getInfoComercial().getMotivoNoPosibleInforme();
+					
+					DtoSendNotificator dtoSendNotificator = new DtoSendNotificator();
+					dtoSendNotificator.setNumActivo(activo.getNumActivo());
+					dtoSendNotificator.setDireccion(activo.getDireccion());
+					
+					List<String> mailsCC = new ArrayList<String>();
+					
+					String gestorPublicacion = extractEmail(gestorActivoApi.getGestorByActivoYTipo(activo, "GPUBL"));
+					String supervisorPublicacion = extractEmail(gestorActivoApi.getGestorByActivoYTipo(activo, "SPUBL"));
+					
+					ArrayList<String> destinatarios = new ArrayList<String>();
+					destinatarios.add(gestorPublicacion);
+					destinatarios.add(supervisorPublicacion);
+					
+					String cuerpoCorreo = this.generateCuerpoCorreo(dtoSendNotificator, cuerpo);
+					genericAdapter.sendMail(destinatarios, mailsCC, asunto, cuerpoCorreo);
+				}
+				
 				activo.setValoracion(valoraciones);
 				activo.setInfoComercial(genericDao.save(ActivoInfoComercial.class, activo.getInfoComercial()));
 				restApi.marcarRegistroParaEnvio(ENTIDADES.INFORME, activo.getInfoComercial());
 				activoApi.saveOrUpdate(activo);				
 			}
+		}
 			
 
 			
@@ -543,6 +629,56 @@ public class TabActivoInformeComercial implements TabActivoService {
 		}
 
 		return activo;
+	}
+	
+	private ActivoEdificio crearRegistroEdificio(DtoActivoInformeComercial activoInformeDto, Activo activo) {
+		ActivoEdificio edi = new ActivoEdificio();
+		
+		edi.setInfoComercial(activo.getInfoComercial());
+		
+		Auditoria auditoria = new Auditoria();
+		auditoria.setFechaCrear(new Date());
+		auditoria.setBorrado(false);
+		auditoria.setUsuarioCrear(proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado().getUsername());
+		
+		edi.setAuditoria(auditoria);
+		
+		// Reformas.
+		try {
+			beanUtilNotNull.copyProperty(edi, "reformaFachada", activoInformeDto.getReformaFachada());
+			beanUtilNotNull.copyProperty(edi, "reformaEscalera", activoInformeDto.getReformaEscalera());
+			beanUtilNotNull.copyProperty(edi, "reformaPortal", activoInformeDto.getReformaPortal());
+			beanUtilNotNull.copyProperty(edi, "reformaAscensor", activoInformeDto.getReformaAscensor());
+			beanUtilNotNull.copyProperty(edi, "reformaCubierta", activoInformeDto.getReformaCubierta());
+			beanUtilNotNull.copyProperty(edi, "reformaOtraZona", activoInformeDto.getReformaOtrasZonasComunes());
+			beanUtilNotNull.copyProperty(edi, "reformaOtroDescEdificio", activoInformeDto.getReformaOtroDescEdificio());
+		
+			// Inf general.
+			if (!Checks.esNulo(activoInformeDto.getEstadoConservacionEdificioCodigo())) {
+				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", activoInformeDto.getEstadoConservacionEdificioCodigo());
+				DDEstadoConservacion estadoConservacion = (DDEstadoConservacion) genericDao.get(DDEstadoConservacion.class, filtro);
+				beanUtilNotNull.copyProperty(edi, "estadoConservacionEdificio", estadoConservacion);
+			}
+		
+			if (!Checks.esNulo(activoInformeDto.getAnyoRehabilitacionEdificio())) {
+				beanUtilNotNull.copyProperty(edi, "anyoRehabilitacionEdificio",
+						Integer.parseInt(activoInformeDto.getAnyoRehabilitacionEdificio()));
+			}
+		
+			beanUtilNotNull.copyProperty(edi, "numPlantas", activoInformeDto.getNumPlantas());
+			beanUtilNotNull.copyProperty(edi, "ascensorEdificio", activoInformeDto.getAscensor());
+			beanUtilNotNull.copyProperty(edi, "numAscensores", activoInformeDto.getNumAscensores());
+			beanUtilNotNull.copyProperty(edi, "ediDescripcion", activoInformeDto.getEdiDescripcion());
+			beanUtilNotNull.copyProperty(edi, "entornoInfraestructura", activoInformeDto.getEntornoInfraestructuras());
+			beanUtilNotNull.copyProperty(edi, "entornoComunicacion", activoInformeDto.getEntornoComunicaciones());
+			beanUtilNotNull.copyProperty(edi, "edificioDescPlantas", activoInformeDto.getEdificioDescPlantas());
+		} catch (Exception e) {
+			e.printStackTrace();
+		} 
+		
+		genericDao.save(ActivoEdificio.class, edi);
+		
+		return edi;
 	}
 
 	private void getDatosByTipoActivo(Activo activo, DtoActivoInformeComercial activoInformeDto) {
@@ -598,5 +734,84 @@ public class TabActivoInformeComercial implements TabActivoService {
 		} catch (InvocationTargetException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	protected String generateCuerpoCorreo(DtoSendNotificator dtoSendNotificator, String contenido){
+		String cuerpo = "<html>"
+				+ "<!DOCTYPE HTML PUBLIC '-//W3C//DTD HTML 4.01 Transitional//EN'>"
+				+ "<html>"
+				+ "<head>"
+				+ "<META http-equiv='Content-Type' content='text/html; charset=utf-8'>"
+				+ "</head>"
+				+ "<body>"
+				+ "	<div>"
+				+ "		<div style='font-family: Arial,&amp; amp;'>"
+				+ "			<div style='border-radius: 12px 12px 0px 0px; background: #b7ddf0; width: 300px; height: 60px; display: table'>"
+				+ "				<img src='"+this.getUrlImagenes()+"ico_notificacion.png' "
+				+ "					style='display: table-cell; padding: 12px; display: inline-block' />"
+				+ "				<div style='font-size: 20px; vertical-align: top; color: #333; display: table-cell; padding: 12px'> " + dtoSendNotificator.getTitulo() + "</div>"
+				+ "			</div>"
+				+ "			<div style='background: #b7ddf0; width: 785px; min-height: 600px; border-radius: 0px 20px 20px 20px; padding: 20px'>"
+				+ "				<div style='background: #054664; width: 600px; height: 375px; border-radius: 20px; color: #fff; display: inline-block'>"
+				+ "					<div style='display: table; margin: 20px;'>"
+				+ "						<div style='display: table-row;'>"
+				+ "							<div style='display: table-cell; vertical-align: middle; padding: 10px;'>"
+				+ "								<img src='"+this.getUrlImagenes()+"ico_activos.png' />"
+				+ "							</div>"
+				+ "							<div style='display: table-cell; vertical-align: middle; font-size: 16px;'>"
+				+ "								Nº Activo: <strong>"+dtoSendNotificator.getNumActivo()+"</strong>"
+				+ "							</div>"
+				+ "						</div>"
+				+ "						<div style='display: table-row;'>"
+				+ "							<div style='display: table-cell; vertical-align: middle; padding: 10px;'>"
+				+ "								<img src='"+this.getUrlImagenes()+"ico_direccion.png' />"
+				+ "							</div>"
+				+ "							<div style='display: table-cell; vertical-align: middle; font-size: 16px;'>"
+				+ "								Dirección: <strong>"+dtoSendNotificator.getDireccion()+"</strong>"
+				+ "							</div>"
+				+ "						</div>"
+				+ "					</div>"
+				+ "				</div>"			
+				+ "				<div style='display: inline-block; width: 140px; vertical-align: top'>"
+				+ "					<img src='"+this.getUrlImagenes()+"logo_haya.png' "
+				+ "						style='display: block; margin: 30px auto' /> "
+				+ "					<img src='"+this.getUrlImagenes()+"logo_rem.png' "
+				+ "						style='display: block; margin: 30px auto' /> "
+				+ "				</div>"
+				+ "				<div style='background: #fff; color: #333; border-radius: 20px; padding: 25px; line-height: 22px; text-align: justify; margin-top: 20px; font-size: 16px'>"
+				+ 					contenido
+				+ "				</div>"
+				+ "				<div style='color: #333; margin: 23px 0px 0px 65px; font-size: 16px; display: table;'>"
+				+ "					<div style='display: table-cell'>"
+				+ "						<img src='"+this.getUrlImagenes()+"ico_advertencia.png' />"
+				+ "					</div>"			
+				+ "					<div style='display: table-cell; vertical-align: middle; padding: 5px;'>"
+				+ "						Este mensaje es una notificación automática. No responda a este correo.</div>"
+				+ "				</div>"
+				+ "			</div>"
+				+ "		</div>"
+				+ "</body>"
+				+ "</html>";
+		
+		return cuerpo;
+	}
+	
+	private String getUrlImagenes(){
+		String url = appProperties.getProperty("url");
+		
+		return url+"/pfs/js/plugin/rem/resources/images/notificator/";
+	}
+	
+	private String extractEmail(Usuario u) {
+		String eMail = null;
+		if (u != null) {
+			if(u.getEmail() != null && !u.getEmail().isEmpty()){
+				Matcher mather = pattern.matcher(u.getEmail());
+				if( mather.find() == true){
+					eMail = u.getEmail();
+				}
+			}
+		}
+		return eMail;
 	}
 }

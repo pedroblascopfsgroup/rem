@@ -77,7 +77,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionesPosesoria;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializar;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoFoto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoHabitaculo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
@@ -212,16 +211,15 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi {
 		Filter filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo", GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
 
 		EXTDDTipoGestor tipoGestor = genericDao.get(EXTDDTipoGestor.class, filtroTipoGestor);
-		if (!Checks.esNulo(tipoGestor)) {
+		if (Checks.esNulo(tipoGestor)) {
 			mapaValores.put("Gestor", FileUtilsREM.stringify(null));
-
 		} else if (gestorActivoApi.getGestorByActivoYTipo(activo, tipoGestor.getId()) != null) {
 			mapaValores.put("Gestor",
 					gestorActivoApi.getGestorByActivoYTipo(activo, tipoGestor.getId()).getApellidoNombre());
 		} else {
 			mapaValores.put("Gestor", FileUtilsREM.stringify(null));
 		}
-
+		
 		ActivoHistoricoEstadoPublicacion historicoPublicacion= activoApi.getUltimoHistoricoEstadoPublicado(activo.getId());
 		if(!Checks.esNulo(historicoPublicacion)){
 			mapaValores.put("FPublWeb", FileUtilsREM.stringify(historicoPublicacion.getFechaDesde()));

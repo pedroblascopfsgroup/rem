@@ -146,6 +146,7 @@ public class MSVAgrupacionLoteComercialExcelValidator extends MSVExcelValidatorA
 			mapaErrores.put(messageServices.getMessage(AGRUPACION_NO_TIPO_COMERCIAL_VENTA), agrupacionNoTipoComercialVentaRows(exc));
 			mapaErrores.put(messageServices.getMessage(ERROR_ACTIVO_DISTINTO_PROPIETARIO), comprobarDistintoPropietario(exc));
 			mapaErrores.put(messageServices.getMessage(ACTIVO_DISTINTA_SUBCARTERA), activosDistintaSubcartera(exc));
+
 			
 			// mapaErrores.put(messageServices.getMessage(ACTIVO_INCLUIDO_PERIMETRO), activosIncluidosPerimetroRows(exc));
 			// mapaErrores.put(messageServices.getMessage(ACTIVO_NO_FINANCIERO),activosFinancierosRows(exc));

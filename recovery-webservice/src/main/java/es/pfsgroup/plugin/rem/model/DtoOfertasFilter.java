@@ -39,6 +39,7 @@ public class DtoOfertasFilter extends WebDto {
 	private String tipoDocumento;
 	private Boolean deDerechoTanteo;
 	private String codigoPrescriptor;
+	private String tipoGestor;
 	private Long usuarioGestor;
 	private String tipoFecha;
 	private String fechaDesde;
@@ -65,7 +66,7 @@ public class DtoOfertasFilter extends WebDto {
 	private Boolean agrupacionesVinculadas;	
 	private Boolean ventaDirecta;
 	private Long idUvem;
-	
+		
 	public Long getNumOferta() {
 		return numOferta;
 	}
@@ -389,6 +390,12 @@ public class DtoOfertasFilter extends WebDto {
 	}
 	public void setIdUvem(Long idUvem) {
 		this.idUvem = idUvem;
+	}
+	public String getTipoGestor() {
+		return tipoGestor;
+	}
+	public void setTipoGestor(String tipoGestor) {
+		this.tipoGestor = tipoGestor;
 	}
 		
 }

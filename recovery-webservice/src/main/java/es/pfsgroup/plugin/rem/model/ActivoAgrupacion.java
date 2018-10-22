@@ -114,7 +114,7 @@ public class ActivoAgrupacion implements Serializable, Auditable {
     
     @OneToMany(mappedBy = "agrupacion", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "AGR_ID")
-    //@Where(clause = Auditoria.UNDELETED_RESTICTION)
+    @Where(clause = Auditoria.UNDELETED_RESTICTION)
     private List<ActivoAgrupacionActivo> activos;
     
     @OneToMany(mappedBy = "agrupacion", cascade = CascadeType.ALL, fetch = FetchType.LAZY)

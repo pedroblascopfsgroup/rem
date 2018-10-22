@@ -258,8 +258,12 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
      */
 	onClickBotonRefrescar: function (btn) {
 		var me = this;
+		tabPanel = me.getView().down("tabpanel");
+		var activeTab = tabPanel.getActiveTab();
+		if(activeTab.xtype = "activosafectadosgasto"){
+			me.updateGastoByPrinexLBK();
+		}
 		me.refrescarGasto(true);
-
 	},
 	
 	refrescarGasto: function(refrescarPestañaActiva) {	
@@ -688,7 +692,39 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
     	
     	
     },
-    
+    updateGastoByPrinexLBK: function(){
+    	me = this;
+    	var url =  $AC.getRemoteUrl('gastosproveedor/updateGastoByPrinexLBK');
+    	var idGasto = me.getViewModel().get("gasto.id"); 
+
+
+		Ext.Ajax.request({		    			
+	 		url: url,
+	   		params: {
+	   			idGasto: idGasto
+   			},	    		
+	    	success: function(response, opts) {
+	    		
+	    		var data = {};
+	            try {
+	            	data = Ext.decode(response.responseText);
+	            	if(data.success == "true"){
+	            		me.refrescarGasto(true);
+	            	}
+	            	
+	            }
+	            catch (e){ };
+    			
+    		
+	    		
+	    	},
+   			failure: function(response) {
+				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+		    }
+		});
+
+    	
+    },
     asociarGastoConActivos: function(idGasto, numeroActivo, numeroAgrupacion, detalle, form, window) {
     	
     	var me = this;
@@ -837,6 +873,51 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
     	var gasto = me.getViewModel().get("gasto");
     	Ext.create("HreRem.view.gastos.SeleccionTrabajosGasto",{gasto: gasto, parent: btn.up('formBase')}).show();
 	},
+	
+	onExportClickTrabajos: function(btn){
+		var me = this;
+		var idGasto = me.getViewModel().get("gasto.id");
+		var url =  $AC.getRemoteUrl('gastosproveedor/generateExcelTrabajosGasto');
+		
+		var config = {};
+
+		var initialData = {idGasto: idGasto};
+		var params = Ext.apply(initialData);
+
+		Ext.Object.each(params, function(key, val) {
+			if (Ext.isEmpty(val)) {
+				delete params[key];
+			}
+		});
+
+		config.params = params;
+		config.url= url;
+		
+		me.fireEvent("downloadFile", config);		
+	},
+	
+	onExportClickActivos: function(btn){
+    	var me = this;
+    	
+    	var idGasto = me.getViewModel().get("gasto.id");
+		var url =  $AC.getRemoteUrl('gastosproveedor/generateExcelActivosGasto');
+		
+		var config = {};
+
+		var initialData = {idGasto: idGasto};
+		var params = Ext.apply(initialData);
+
+		Ext.Object.each(params, function(key, val) {
+			if (Ext.isEmpty(val)) {
+				delete params[key];
+			}
+		});
+
+		config.params = params;
+		config.url= url;
+		
+		me.fireEvent("downloadFile", config);		
+    },
 	
 	onClickBotonDesasignarTrabajosGasto: function(btn) {
 
@@ -1361,6 +1442,48 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 	    	fechaField.setMinValue(fechaMin);
 	    	fechaField.setMaxValue(fechaActual);
     	}
+    },
+    isLiberbankAndGastosPrinex:function(panel){
+    	var me = this;
+    	var url = $AC.getRemoteUrl('gastosproveedor/searchActivoCarteraAndGastoPrinex');
+    	var gastoHaya = me.getViewModel().get("gasto.numGastoHaya"); 
+    	
+    	Ext.Ajax.request({
+			
+		     url: url,
+		     params: {numGastoHaya: gastoHaya},
+		
+		     success: function(response, opts) {
+		    	 data = Ext.decode(response.responseText);
+		    	 
+		    	 	if(data.success == "true"){
+		    	 		if(data.data == "true"){
+		    	 			panel.up().getLayout().columns=4;
+		    				panel.up().getLayout().tdAttrs.width="25%";
+		    				panel.lookupController().refrescarGasto();
+		    	 		}else{
+		    	 			panel.destroy();
+		    	 		}
+		    	 	}
+		     },
+		     
+		     failure: function(response) {
+		     	grid.unmask();
+	     		var data = {};
+               try {
+            	   me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+               }
+               catch (e){
+            	   me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+               };
+              
+		     }
+	    		     
+	    });
+    	
+		
+    	
+    	
     },
     
     botonesEdicionGasto: function(estadoGasto, autorizado, rechazado, agrupado,gestoria, tabSeleccionada){

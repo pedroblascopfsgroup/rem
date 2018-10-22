@@ -21,6 +21,9 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.DtoAviso;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacion;
+import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 
 
 @Service("activoAvisadorManager")
@@ -48,12 +51,14 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 		
 		List<DtoAviso> listaAvisos = new ArrayList<DtoAviso>();
 		Activo activo = activoApi.get(id);
+		activoApi.calcularFechaTomaPosesion(activo);
 		List<Perfil> perfilesUsuario = usuarioLogado.getPerfiles();
 		
 		boolean restringida = false;
 		boolean obraNueva = false;
 		boolean asistida = false;
 		boolean lote = false;
+		boolean enPuja = false;
 		
 		try {
 		//Avisos 1 y 2: Integrado en agrupación restringida / Integrado en obra nueva
@@ -62,8 +67,16 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 			obraNueva = activoApi.isIntegradoAgrupacionObraNueva(id, usuarioLogado);
 			asistida = activoApi.isIntegradoAgrupacionAsistida(activo);
 			lote = activoApi.isIntegradoAgrupacionComercial(activo);
+			enPuja = activoApi.isActivoEnPuja(activo);
 		} catch (Exception e) {
 			e.printStackTrace();
+		}
+		
+		if(enPuja) {
+			DtoAviso dtoAviso = new DtoAviso();
+			dtoAviso.setDescripcion("Incluido en Haz tu Puja hasta 15/11/2018");
+			dtoAviso.setId(String.valueOf(id));
+			listaAvisos.add(dtoAviso);
 		}
 		
 		if (restringida) {
@@ -173,11 +186,13 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 		
 		// Aviso 9: Estado Comercial		
 		if(!Checks.esNulo(activo.getSituacionComercial())) {
-			DtoAviso dtoAviso = new DtoAviso();
-			dtoAviso.setDescripcion(activo.getSituacionComercial().getDescripcion());
-			dtoAviso.setId(String.valueOf(id));
-			listaAvisos.add(dtoAviso);			
+				DtoAviso dtoAviso = new DtoAviso();
+				dtoAviso.setDescripcion(activo.getSituacionComercial().getDescripcion());
+				dtoAviso.setId(String.valueOf(id));
+				listaAvisos.add(dtoAviso);		
+			
 		}
+		
 		
 		// Aviso 10: Perímetro Haya
 		if(!activoApi.isActivoIncluidoEnPerimetro(id)) {
@@ -187,6 +202,7 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 			listaAvisos.add(dtoAviso);	
 		}
 		
+
 		// Aviso 11: Activo en trámite
 		if(activo.getEnTramite()) {
 			DtoAviso dtoAviso = new DtoAviso();
@@ -195,33 +211,18 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 			listaAvisos.add(dtoAviso);	
 		}
 		
+
+		// Aviso 12: Estado activo vandalizado
+		if(!Checks.esNulo(activo.getEstadoActivo())) {
+			if(DDEstadoActivo.ESTADO_ACTIVO_VANDALIZADO.equals(activo.getEstadoActivo().getCodigo())) {
+				DtoAviso dtoAviso = new DtoAviso();
+				dtoAviso.setDescripcion(activo.getEstadoActivo().getDescripcion());
+				dtoAviso.setId(String.valueOf(id));
+				listaAvisos.add(dtoAviso);		
+			}
+		}
+
 		
 		return listaAvisos;
 	}
-
-
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 }

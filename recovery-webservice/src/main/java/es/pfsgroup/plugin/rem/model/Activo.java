@@ -295,7 +295,7 @@ public class Activo implements Serializable, Auditable {
     
     @OneToMany(mappedBy = "activo", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "ACT_ID")
-    /*@Where(clause = Auditoria.UNDELETED_RESTICTION)*/
+    @Where(clause = Auditoria.UNDELETED_RESTICTION)
     private List<ActivoAgrupacionActivo> agrupaciones;
     
     @OneToMany(mappedBy = "activo", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -415,6 +415,9 @@ public class Activo implements Serializable, Auditable {
     
     @Column(name = "ACT_EN_TRAMITE")
     private Boolean enTramite;
+
+    @Column(name = "ACT_PUJA")
+    private Boolean estaEnPuja;
 	
 	
     // Getters del activo --------------------------------------------
@@ -1629,6 +1632,13 @@ public class Activo implements Serializable, Auditable {
 		this.enTramite = enTramite;
 	}
 	
+	public Boolean getEstaEnPuja() {
+		return estaEnPuja;
+	}
+
+	public void setEstaEnPuja(Boolean estaEnPuja) {
+		this.estaEnPuja = estaEnPuja;
+	}
 	
 	
 	

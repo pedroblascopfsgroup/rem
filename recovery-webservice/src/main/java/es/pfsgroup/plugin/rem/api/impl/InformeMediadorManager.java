@@ -1228,8 +1228,7 @@ public class InformeMediadorManager implements InformeMediadorApi {
 	 * @param informe
 	 * @throws Exception
 	 */
-	private Long parcheEspecificacionTablas(Object objeto, InformeMediadorDto informe) throws Exception {
-		Long idProveedor = null;
+	private void parcheEspecificacionTablas(Object objeto, InformeMediadorDto informe) throws Exception {
 		if (objeto instanceof ActivoLocalComercial || objeto instanceof ActivoPlazaAparcamiento
 				|| objeto instanceof ActivoVivienda) {
 
@@ -1241,17 +1240,12 @@ public class InformeMediadorManager implements InformeMediadorApi {
 						&& !infoAux.getTipoActivo().getCodigo().equals(informe.getCodTipoActivo()))
 						|| (infoAux.getId() != null && infoAux.getTipoActivo() == null)
 						|| ((ActivoInfoComercial) objeto).getId() == null) {
-					if(infoAux.getMediadorInforme() != null){
-						idProveedor = infoAux.getMediadorInforme().getId();
-					}
-					
 					genericaRestDaoImp.deleteInformeMediador(infoAux);
 					//((ActivoInfoComercial) objeto).setAuditoria(null);
 					//((ActivoInfoComercial) objeto).setId(null);
 				}
 			}
 		}
-		return idProveedor;
 	}
 
 	@Override
@@ -1326,11 +1320,10 @@ public class InformeMediadorManager implements InformeMediadorApi {
 				ActivoInfoComercial informeEntity = null;
 				if (!tieneInformeComercialAceptado || autorizacionWebProveedor) {
 					ArrayList<Serializable> entitys = new ArrayList<Serializable>();
-					Long idProveedorParche = null;
 					if (informe.getCodTipoActivo().equals(DDTipoActivo.COD_COMERCIAL)) {
 						informeEntity = (ActivoLocalComercial) dtoToEntity.obtenerObjetoEntity(
 								informe.getIdActivoHaya(), ActivoLocalComercial.class, "activo.numActivo");
-						idProveedorParche = parcheEspecificacionTablas(informeEntity, informe);
+						parcheEspecificacionTablas(informeEntity, informe);
 						informeEntity = (ActivoLocalComercial) dtoToEntity.obtenerObjetoEntity(
 								informe.getIdActivoHaya(), ActivoLocalComercial.class, "activo.numActivo");
 						((ActivoLocalComercial)informeEntity).setMtsAlturaLibre(informe.getAltura());
@@ -1347,7 +1340,7 @@ public class InformeMediadorManager implements InformeMediadorApi {
 					} else if (informe.getCodTipoActivo().equals(DDTipoActivo.COD_OTROS)) {
 						informeEntity = (ActivoPlazaAparcamiento) dtoToEntity.obtenerObjetoEntity(
 								informe.getIdActivoHaya(), ActivoPlazaAparcamiento.class, "activo.numActivo");
-						idProveedorParche = parcheEspecificacionTablas(informeEntity, informe);
+						parcheEspecificacionTablas(informeEntity, informe);
 						informeEntity = (ActivoPlazaAparcamiento) dtoToEntity.obtenerObjetoEntity(
 								informe.getIdActivoHaya(), ActivoPlazaAparcamiento.class, "activo.numActivo");
 						((ActivoPlazaAparcamiento)informeEntity).setAparcamientoAltura(informe.getAltura());
@@ -1359,7 +1352,7 @@ public class InformeMediadorManager implements InformeMediadorApi {
 					} else if (informe.getCodTipoActivo().equals(DDTipoActivo.COD_VIVIENDA)) {
 						informeEntity = (ActivoVivienda) dtoToEntity.obtenerObjetoEntity(informe.getIdActivoHaya(),
 								ActivoVivienda.class, "activo.numActivo");
-						idProveedorParche = parcheEspecificacionTablas(informeEntity, informe);
+						parcheEspecificacionTablas(informeEntity, informe);
 						informeEntity = (ActivoVivienda) dtoToEntity.obtenerObjetoEntity(informe.getIdActivoHaya(),
 								ActivoVivienda.class, "activo.numActivo");
 
@@ -1432,15 +1425,16 @@ public class InformeMediadorManager implements InformeMediadorApi {
 						informeEntity.setActivo(activo);
 					}
 					
+					//Se comenta porque no se quiere guardar en REM el mediador venga como venga informado desde WEBCOM.
 					
-					if (!Checks.esNulo(idProveedorParche)){
-						Filter filterPve = genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem", idProveedorParche);
-						ActivoProveedor proveedor = genericDao.get(ActivoProveedor.class, filterPve);
-						if (!Checks.esNulo(proveedor)){
-							informeEntity.setMediadorInforme(proveedor);
-						}
-					}
-					
+					/*if (Checks.esNulo(informeEntity.getMediadorInforme())){
+					*	Filter filterPve = genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem", informe.getIdProveedorRem());
+					*	ActivoProveedor proveedor = genericDao.get(ActivoProveedor.class, filterPve);
+					*	if (!Checks.esNulo(proveedor)){
+					*		informeEntity.setMediadorInforme(proveedor);
+					*	}
+					*}
+					*/
 					
 					informeEntity = (ActivoInfoComercial) dtoToEntity.saveDtoToBbdd(informe, entitys,
 							(JSONObject) jsonFields.getJSONArray("data").get(i));

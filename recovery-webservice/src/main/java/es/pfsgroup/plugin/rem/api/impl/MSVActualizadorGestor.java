@@ -19,7 +19,6 @@ import es.pfsgroup.framework.paradise.bulkUpload.adapter.ProcessAdapter;
 import es.pfsgroup.framework.paradise.bulkUpload.liberators.MSVLiberator;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
 import es.pfsgroup.framework.paradise.bulkUpload.model.ResultadoProcesarFila;
-import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVActualizarGestores;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVHojaExcel;
 import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
@@ -86,7 +85,7 @@ public class MSVActualizadorGestor extends AbstractMSVActualizador implements MS
 			expediente= expedienteComercialApi.findOneByNumExpediente(Long.parseLong(exc.dameCelda(fila, 4)));
 		}
 		
-		if(!Checks.esNulo(exc.dameCelda(fila, 0)) && !MSVActualizarGestores.GESTOR_MEDIADOR.equals(exc.dameCelda(fila, 0))){					
+		if(!Checks.esNulo(exc.dameCelda(fila, 0))){					
 			Filter filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo", exc.dameCelda(fila, 0));
 			Filter filtroBorrado= genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
 			tipoGestor = (EXTDDTipoGestor) genericDao.get(EXTDDTipoGestor.class, filtroTipoGestor,filtroBorrado);

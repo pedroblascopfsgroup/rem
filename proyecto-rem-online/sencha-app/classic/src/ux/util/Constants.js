@@ -342,10 +342,6 @@ Ext.define('HreRem.ux.util.Constants', {
 		APRUEBA: '01',
 		RECHAZA: '02',
 		CONTRAOFERTA: '03'
-	},
-	
-	EXPORTADOR:{
-		LIMITE: '1000'
 	}
 
 });

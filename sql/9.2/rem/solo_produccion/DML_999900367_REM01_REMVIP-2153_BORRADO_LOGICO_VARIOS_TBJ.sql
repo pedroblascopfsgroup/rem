@@ -23,7 +23,7 @@ DECLARE
     V_SQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
     V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.
     V_TABLA VARCHAR2(50 CHAR) := 'ACT_TBJ_TRABAJO';
-    V_USUARIO VARCHAR2(30 CHAR) := 'REMVIP-2299';
+    V_USUARIO VARCHAR2(30 CHAR) := 'REMVIP-2153';
     err_num NUMBER; -- Numero de errores
     err_msg VARCHAR2(2048); -- Mensaje de error
     V_ENTIDAD_ID NUMBER(16);

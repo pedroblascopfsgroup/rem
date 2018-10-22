@@ -1094,7 +1094,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				type: 'uxproxy',
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'estadosOfertas'}
-			}   	
+			},
+			autoLoad: true   	
 	    },
 
 	    comboTipoOferta: {

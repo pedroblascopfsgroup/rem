@@ -71,6 +71,7 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 		
 		List<DtoAviso> listaAvisos = new ArrayList<DtoAviso>();
 		Activo activo = activoApi.get(id);
+		activoApi.calcularFechaTomaPosesion(activo);
 		List<Perfil> perfilesUsuario = usuarioLogado.getPerfiles();
 		
 		boolean restringida = false;

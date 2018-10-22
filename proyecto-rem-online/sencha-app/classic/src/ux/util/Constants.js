@@ -370,6 +370,11 @@ Ext.define('HreRem.ux.util.Constants', {
     	NO: 0
     },
     
+    COMBO_SI_NO: {
+    	SI: 1,
+    	NO: 0
+    },
+    
     COMBO_ESTADO_ALQUILER: {
     	LIBRE: '01',
     	ALQUILADO: '02',

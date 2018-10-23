@@ -60,6 +60,7 @@ import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
 import es.pfsgroup.plugin.rem.excel.PublicacionExcelReport;
 import es.pfsgroup.plugin.rem.model.*;
+import es.pfsgroup.plugin.rem.model.dd.*;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi;
 import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
 import es.pfsgroup.plugin.rem.service.TabActivoService;

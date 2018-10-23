@@ -6812,14 +6812,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		DDSubcartera subcartera= null;
 		
 		if(!Checks.esNulo(idExpediente)){
-			DtoPage dto= this.getActivosExpediente(idExpediente);
-			List<DtoActivosExpediente> dtosActivos= (List<DtoActivosExpediente>) dto.getResults();
-			if(!Checks.estaVacio(dtosActivos)){
-				Activo primerActivo = activoApi.get(dtosActivos.get(0).getIdActivo());
-				if(!Checks.esNulo(primerActivo)){
-					subcartera= primerActivo.getSubcartera();
-				}
-			}				
+			ExpedienteComercial expediente = findOne(idExpediente);
+			if(!Checks.esNulo(expediente)) {
+				subcartera = expediente.getOferta().getActivosOferta().get(0).getPrimaryKey().getActivo().getSubcartera();
+			}
 		}
 		
 		return subcartera;
@@ -6934,7 +6930,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	public Boolean esBH(String idExpediente){
 		Long id = Long.parseLong(idExpediente);
 
-		return DDSubcartera.CODIGO_BAN_BH.equals(getCodigoSubCarteraExpediente(id));
+		return DDSubcartera.CODIGO_BAN_BH.equals(getCodigoSubCarteraExpediente(id).getCodigo());
 	}
 	
 	@SuppressWarnings("unchecked")

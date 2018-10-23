@@ -14,6 +14,8 @@ import org.springframework.stereotype.Component;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.agenda.model.Notificacion;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
@@ -57,6 +59,11 @@ public class NotificatorServiceResolucionComite extends AbstractNotificatorServi
 	
 	@Autowired
 	private NotificatorServiceSancionOfertaAceptacionYRechazo notificatorServiceSancionOfertaAceptacionYRechazo;
+	
+	@Autowired
+	private GenericABMDao genericDao;
+	
+	private static final String BUZON_REM = "buzonrem";
 	
 
 	List<String> mailsPara = new ArrayList<String>();
@@ -102,6 +109,7 @@ public class NotificatorServiceResolucionComite extends AbstractNotificatorServi
 			
 			Usuario gestor = null;
 			Usuario supervisor = null;
+			Usuario buzonRem = genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "username", BUZON_REM));
 			
 			for (TareaActivo tareaActivo : tramite.getTareas()) {				
 				if (CODIGO_T013_DEFINICION_OFERTA.equals(tareaActivo.getTareaExterna().getTareaProcedimiento().getCodigo())) {
@@ -116,6 +124,9 @@ public class NotificatorServiceResolucionComite extends AbstractNotificatorServi
 			List<Usuario> usuarios = new ArrayList<Usuario>();
 			usuarios.add(gestor);
 			usuarios.add(supervisor);
+			if(!Checks.esNulo(buzonRem)) {
+				usuarios.add(buzonRem);
+			}
 			
 		    mailsPara = getEmailsNotificacionContraoferta(usuarios);
 		    if(!Checks.esNulo(preescriptor) && !Checks.esNulo(preescriptor.getEmail())){

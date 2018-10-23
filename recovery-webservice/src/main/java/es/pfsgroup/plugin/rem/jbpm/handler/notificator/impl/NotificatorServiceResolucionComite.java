@@ -64,6 +64,7 @@ public class NotificatorServiceResolucionComite extends AbstractNotificatorServi
 	private GenericABMDao genericDao;
 	
 	private static final String BUZON_REM = "buzonrem";
+	private static final String BUZON_PFS = "buzonpfs";
 	
 
 	List<String> mailsPara = new ArrayList<String>();
@@ -110,6 +111,7 @@ public class NotificatorServiceResolucionComite extends AbstractNotificatorServi
 			Usuario gestor = null;
 			Usuario supervisor = null;
 			Usuario buzonRem = genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "username", BUZON_REM));
+			Usuario buzonPfs = genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "username", BUZON_PFS));
 			
 			for (TareaActivo tareaActivo : tramite.getTareas()) {				
 				if (CODIGO_T013_DEFINICION_OFERTA.equals(tareaActivo.getTareaExterna().getTareaProcedimiento().getCodigo())) {
@@ -126,6 +128,9 @@ public class NotificatorServiceResolucionComite extends AbstractNotificatorServi
 			usuarios.add(supervisor);
 			if(!Checks.esNulo(buzonRem)) {
 				usuarios.add(buzonRem);
+			}
+			if(!Checks.esNulo(buzonPfs)) {
+				usuarios.add(buzonPfs);
 			}
 			
 		    mailsPara = getEmailsNotificacionContraoferta(usuarios);

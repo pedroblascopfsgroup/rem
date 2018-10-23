@@ -4946,4 +4946,20 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		return genericDao.getList(VTasacionCalculoLBK.class, genericDao.createFilter(FilterType.EQUALS, "idAgrupacion", idAgrupacion));
 	}
 	
+	@Override
+	public Long getIdByNumActivo(Long numActivo) {
+		
+		Long idActivo = null;
+		
+		try {
+		
+		idActivo = Long.parseLong(rawDao.getExecuteSQL("SELECT ACT_ID FROM ACT_ACTIVO WHERE ACT_NUM_ACTIVO = " + numActivo));
+		
+		} catch (Exception e) {
+			return null;
+		}
+		
+		return idActivo;
+	}
+	
 }

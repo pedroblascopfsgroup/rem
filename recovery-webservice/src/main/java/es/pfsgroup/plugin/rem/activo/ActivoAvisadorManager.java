@@ -195,11 +195,13 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 		// Si no es judicial...
 		if(!Checks.esNulo(activo)){
 			PerimetroActivo perimetro= activoApi.getPerimetroByIdActivo(activo.getId());
-			if(!Checks.esNulo(perimetro) && 0 == perimetro.getAplicaGestion()){
-				DtoAviso dtoAviso = new DtoAviso();
-				dtoAviso.setDescripcion("Activo sin gestión");
-				dtoAviso.setId(String.valueOf(id));
-				listaAvisos.add(dtoAviso);
+			if(!Checks.esNulo(perimetro)){
+				if(!Checks.esNulo(perimetro.getAplicaGestion()) && 0 == perimetro.getAplicaGestion()){
+					DtoAviso dtoAviso = new DtoAviso();
+					dtoAviso.setDescripcion("Activo sin gestión");
+					dtoAviso.setId(String.valueOf(id));
+					listaAvisos.add(dtoAviso);
+				}
 			}
 		}
 		

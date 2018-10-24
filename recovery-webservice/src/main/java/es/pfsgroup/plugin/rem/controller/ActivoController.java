@@ -17,9 +17,6 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import es.pfsgroup.plugin.rem.model.*;
-import es.pfsgroup.plugin.rem.model.dd.DDRatingActivo;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoHabitaculo;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -38,6 +35,7 @@ import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.devon.utils.FileUtils;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
@@ -60,10 +58,63 @@ import es.pfsgroup.plugin.rem.excel.ActivoExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
 import es.pfsgroup.plugin.rem.excel.PublicacionExcelReport;
+import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoFoto;
+import es.pfsgroup.plugin.rem.model.DtoActivoAdministracion;
+import es.pfsgroup.plugin.rem.model.DtoActivoCargas;
+import es.pfsgroup.plugin.rem.model.DtoActivoCargasTab;
+import es.pfsgroup.plugin.rem.model.DtoActivoCatastro;
+import es.pfsgroup.plugin.rem.model.DtoActivoDatosRegistrales;
+import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
+import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
+import es.pfsgroup.plugin.rem.model.DtoActivoInformacionAdministrativa;
+import es.pfsgroup.plugin.rem.model.DtoActivoInformacionComercial;
+import es.pfsgroup.plugin.rem.model.DtoActivoInformeComercial;
+import es.pfsgroup.plugin.rem.model.DtoActivoIntegrado;
+import es.pfsgroup.plugin.rem.model.DtoActivoOcupanteLegal;
+import es.pfsgroup.plugin.rem.model.DtoActivoPatrimonio;
+import es.pfsgroup.plugin.rem.model.DtoActivoSituacionPosesoria;
+import es.pfsgroup.plugin.rem.model.DtoActivoTramite;
+import es.pfsgroup.plugin.rem.model.DtoActivoValoraciones;
+import es.pfsgroup.plugin.rem.model.DtoActivosPublicacion;
+import es.pfsgroup.plugin.rem.model.DtoAdjunto;
+import es.pfsgroup.plugin.rem.model.DtoAdmisionDocumento;
+import es.pfsgroup.plugin.rem.model.DtoComercialActivo;
+import es.pfsgroup.plugin.rem.model.DtoComunidadpropietariosActivo;
+import es.pfsgroup.plugin.rem.model.DtoCondicionEspecifica;
+import es.pfsgroup.plugin.rem.model.DtoCondicionHistorico;
+import es.pfsgroup.plugin.rem.model.DtoCondicionantesDisponibilidad;
+import es.pfsgroup.plugin.rem.model.DtoDatosPublicacionActivo;
+import es.pfsgroup.plugin.rem.model.DtoDistribucion;
+import es.pfsgroup.plugin.rem.model.DtoFichaTrabajo;
+import es.pfsgroup.plugin.rem.model.DtoFoto;
+import es.pfsgroup.plugin.rem.model.DtoHistoricoMediador;
+import es.pfsgroup.plugin.rem.model.DtoHistoricoPreciosFilter;
+import es.pfsgroup.plugin.rem.model.DtoHistoricoPresupuestosFilter;
+import es.pfsgroup.plugin.rem.model.DtoImpuestosActivo;
+import es.pfsgroup.plugin.rem.model.DtoIncrementoPresupuestoActivo;
+import es.pfsgroup.plugin.rem.model.DtoLlaves;
+import es.pfsgroup.plugin.rem.model.DtoMovimientoLlave;
+import es.pfsgroup.plugin.rem.model.DtoObservacion;
+import es.pfsgroup.plugin.rem.model.DtoOfertaActivo;
+import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
+import es.pfsgroup.plugin.rem.model.DtoPaginadoHistoricoEstadoPublicacion;
+import es.pfsgroup.plugin.rem.model.DtoPrecioVigente;
+import es.pfsgroup.plugin.rem.model.DtoPresupuestoGraficoActivo;
+import es.pfsgroup.plugin.rem.model.DtoPropietario;
+import es.pfsgroup.plugin.rem.model.DtoPropuestaActivosVinculados;
+import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
+import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
+import es.pfsgroup.plugin.rem.model.DtoReglasPublicacionAutomatica;
+import es.pfsgroup.plugin.rem.model.DtoTasacion;
+import es.pfsgroup.plugin.rem.model.VBusquedaActivos;
+import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
+import es.pfsgroup.plugin.rem.model.VBusquedaPublicacionActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDRatingActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoHabitaculo;
 import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
 import es.pfsgroup.plugin.rem.service.TabActivoService;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoActivosTrabajoFilter;
-import es.capgemini.pfs.users.domain.Usuario;
 
 @Controller
 public class ActivoController extends ParadiseJsonController {
@@ -111,7 +162,6 @@ public class ActivoController extends ParadiseJsonController {
 
     @Autowired
     private GenericAdapter genericAdapter;
-
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
@@ -991,7 +1041,7 @@ public class ActivoController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView updateInformeComercialMSV(String activosId, ModelMap model){
+	public ModelAndView updateInformeComercialMSV(@RequestParam String[] activosId, ModelMap model){
 		try {
 			Boolean success = adapter.updateInformeComercialMSV(activosId);
 			model.put(RESPONSE_SUCCESS_KEY, success);
@@ -2286,5 +2336,28 @@ public class ActivoController extends ParadiseJsonController {
 		}
 
 		return true;
+
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView cerrarTramitesActivo(@RequestParam String[] activosId, ModelMap model){
+		try {
+			Boolean success = adapter.updateTramitesActivo(activosId);
+			
+			model.put(RESPONSE_SUCCESS_KEY, success);
+
+		} catch (JsonViewerException e) {
+			logger.error("error en activoController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put("msgError", e.getMessage());
+		} catch (Exception e) {
+			logger.error("error en activoController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put("msgError", e.getMessage());
+		}
+
+		return createModelAndViewJson(model);
+
 	}
 }

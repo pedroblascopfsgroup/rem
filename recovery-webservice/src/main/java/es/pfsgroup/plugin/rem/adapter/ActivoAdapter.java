@@ -34,6 +34,8 @@ import es.capgemini.pfs.procesosJudiciales.TipoProcedimientoManager;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
 import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
+import es.capgemini.pfs.tareaNotificacion.model.EXTTareaNotificacion;
+import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
 import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
@@ -59,6 +61,7 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBValoracionesBien;
 import es.pfsgroup.plugin.rem.activo.ActivoManager;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoTramiteDao;
 import es.pfsgroup.plugin.rem.activo.dao.impl.ActivoPatrimonioDaoImpl;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoAvisadorApi;
@@ -70,7 +73,6 @@ import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.ProveedoresApi;
 import es.pfsgroup.plugin.rem.api.TareaActivoApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
-//import es.pfsgroup.plugin.rem.controller.AccesoActivoException;
 import es.pfsgroup.plugin.rem.factory.TabActivoFactoryApi;
 import es.pfsgroup.plugin.rem.gestor.GestorExpedienteComercialManager;
 import es.pfsgroup.plugin.rem.gestor.dao.GestorExpedienteComercialDao;
@@ -110,7 +112,6 @@ import es.pfsgroup.plugin.rem.model.ActivoVivienda;
 import es.pfsgroup.plugin.rem.model.ClienteComercial;
 import es.pfsgroup.plugin.rem.model.DtoActivoCargas;
 import es.pfsgroup.plugin.rem.model.DtoActivoCatastro;
-import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoActivoOcupanteLegal;
 import es.pfsgroup.plugin.rem.model.DtoActivoPatrimonio;
@@ -153,8 +154,8 @@ import es.pfsgroup.plugin.rem.model.VBusquedaActivosTrabajoPresupuesto;
 import es.pfsgroup.plugin.rem.model.VBusquedaPresupuestosActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaTramitesActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaVisitasDetalle;
-import es.pfsgroup.plugin.rem.model.VCondicionantesDisponibilidad;
 import es.pfsgroup.plugin.rem.model.VCalculosActivoAgrupacion;
+import es.pfsgroup.plugin.rem.model.VCondicionantesDisponibilidad;
 import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.VPreciosVigentes;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
@@ -289,6 +290,9 @@ public class ActivoAdapter {
 
     @Autowired
     private ActivoManager activoManager;
+    
+    @Autowired 
+    private ActivoTramiteDao activoTramiteDao;
 
 	@Resource
 	private MessageService messageServices;
@@ -311,6 +315,9 @@ public class ActivoAdapter {
 	private static final String AVISO_DESCRIPCION_MODIFICADAS_CONDICIONES_JURIDICAS = "activo.aviso.descripcion.modificadas.condiciones.juridicas";
 	private static final String ERROR_ACTIVO_UPDATE_SUBDIVISION = "No se puede actualizar el estado de publicación: no cumple las condiciones de publicación.";
 	private static final String ERROR_ACTIVO_UPDATE_SUBDIVISION_ACTIVO_FORZADO ="No se puede actualizar el estado de publicación: el activo esta publicado forzado.";
+	public static final String T_PUBLICACION= "T011";
+	public static final String CODIGO_ESTADO_PROCEDIMIENTO_EN_TRAMITE = "10";
+
 
 	private BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 
@@ -3581,83 +3588,72 @@ public class ActivoAdapter {
 	 * @return
 	 */
 	@Transactional(readOnly = false)
-	public Boolean updateInformeComercialMSV(String activosId) throws JsonViewerException {
-
-		Filter estadoInformeComercialFilter;
+	public Boolean updateInformeComercialMSV(String[] activosId) throws JsonViewerException {
+		
 		Boolean success=false;
 		ActivoEstadosInformeComercialHistorico activoEstadosInformeComercialHistorico = new ActivoEstadosInformeComercialHistorico();
-
-		List<Long> activosIdInt = new ArrayList<Long>();
-		String[] activosIdString = activosId.split(",");
-		for (String activo : activosIdString) {
-			activosIdInt.add(Long.valueOf(activo));
-		}
-
-		for (Long activoId : activosIdInt) {
-			Activo activo = activoDao.get(activoId);
-
+		Filter estadoInformeComercialFilter = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoInformeComercial.ESTADO_INFORME_COMERCIAL_ACEPTACION);
+		activoEstadosInformeComercialHistorico.setEstadoInformeComercial(genericDao.get(DDEstadoInformeComercial.class, estadoInformeComercialFilter));
+		String username = genericAdapter.getUsuarioLogado().getUsername();
+		Date fecha = new Date();
+		for (String activoId : activosId) {
+			Activo activo = activoDao.get(Long.parseLong(activoId));
+			
 			try {
 				if(!Checks.esNulo(activo)){
+					if(!Checks.esNulo(activo.getTipoPublicacion())) {
+						if(!activoApi.checkTiposDistintos(activo)){
+								//Si han habido cambios en el historico, los persistimos.
+								if(!Checks.esNulo(activoEstadosInformeComercialHistorico) && !Checks.esNulo(activoEstadosInformeComercialHistorico.getEstadoInformeComercial())){
+									activoEstadosInformeComercialHistorico.setFecha(fecha);
+									if(Checks.esNulo(activoEstadosInformeComercialHistorico.getAuditoria())){
+										Auditoria auditoria = new Auditoria();
+										auditoria.setUsuarioCrear(username);
+										auditoria.setFechaCrear(fecha);
+										activoEstadosInformeComercialHistorico.setAuditoria(auditoria);
+									}else{
+										activoEstadosInformeComercialHistorico.getAuditoria().setUsuarioCrear(username);
+										activoEstadosInformeComercialHistorico.getAuditoria().setFechaCrear(fecha);
+									}
+									activoEstadosInformeComercialHistorico.setActivo(activo);
+									genericDao.save(ActivoEstadosInformeComercialHistorico.class, activoEstadosInformeComercialHistorico);
+								}
+							}
 
-					if(!activoApi.checkTiposDistintos(activo)){
-							estadoInformeComercialFilter = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoInformeComercial.ESTADO_INFORME_COMERCIAL_ACEPTACION);
-							activoEstadosInformeComercialHistorico.setEstadoInformeComercial(genericDao.get(DDEstadoInformeComercial.class, estadoInformeComercialFilter));
-							activoEstadosInformeComercialHistorico.setFecha(new Date());
+						if(!Checks.esNulo(activo.getInfoComercial())){
+							activo.getInfoComercial().getAuditoria().setFechaModificar(fecha);
+							if(!Checks.esNulo(genericAdapter.getUsuarioLogado())){
+								activo.getInfoComercial().getAuditoria().setUsuarioModificar(username);
+							}
 							activo.getInfoComercial().setFechaAceptacion(new Date());
 							activo.getInfoComercial().setFechaRechazo(null);
-
-								if(!activoEstadoPublicacionApi.isPublicadoVentaByIdActivo(activo.getId())) {
-									// 3.) Se marca activo como publicable, porque en el tramite se han cumplido todos los requisitos
-									activo.setFechaPublicable(new Date());
-									activoApi.saveOrUpdate(activo);
-								}
-
 						}
 
-					//Si han habido cambios en el historico, los persistimos.
-					if(!Checks.esNulo(activoEstadosInformeComercialHistorico) && !Checks.esNulo(activoEstadosInformeComercialHistorico.getEstadoInformeComercial())){
-
-						if(Checks.esNulo(activoEstadosInformeComercialHistorico.getAuditoria())){
-							Auditoria auditoria = new Auditoria();
-							auditoria.setUsuarioCrear(genericAdapter.getUsuarioLogado().getUsername());
-							auditoria.setFechaCrear(new Date());
-							activoEstadosInformeComercialHistorico.setAuditoria(auditoria);
-						}else{
-							activoEstadosInformeComercialHistorico.getAuditoria().setUsuarioCrear(genericAdapter.getUsuarioLogado().getUsername());
-							activoEstadosInformeComercialHistorico.getAuditoria().setFechaCrear(new Date());
+						if(!activoEstadoPublicacionApi.isPublicadoVentaByIdActivo(activo.getId())) {
+							// 3.) Se marca activo como publicable, porque en el tramite se han cumplido todos los requisitos
+							activo.setFechaPublicable(fecha);
 						}
-						activoEstadosInformeComercialHistorico.setActivo(activo);
-						genericDao.save(ActivoEstadosInformeComercialHistorico.class, activoEstadosInformeComercialHistorico);
-					}
+						
+						activoApi.saveOrUpdate(activo);
 
-					//Si han habido cambios en el activo, lo persistimos
-
-						//actualizamos el informemediador para que se envie el cambio de estado
-						if(!Checks.esNulo(activo.getInfoComercial())){
-							activo.getInfoComercial().getAuditoria().setFechaModificar(new Date());
-							if(!Checks.esNulo(genericAdapter.getUsuarioLogado())){
-								activo.getInfoComercial().getAuditoria().setUsuarioModificar(genericAdapter.getUsuarioLogado().getUsername());
+						if(!DDTipoPublicacion.CODIGO_FORZADA.equals(activo.getTipoPublicacion().getCodigo())) {
+							if(comprobarCondicionesActivo(activo)) {
+								success=true;
+								activoDao.publicarActivoConHistorico(activo.getId(),username);
+							}else {
+								throw new JsonViewerException(ERROR_ACTIVO_UPDATE_SUBDIVISION);
 							}
-						}
-
-					activoApi.saveOrUpdate(activo);
-
-					if(!DDTipoPublicacion.CODIGO_FORZADA.equals(activo.getTipoPublicacion().getCodigo())) {
-						if(comprobarCondicionesActivo(activo)) {
-							success=true;
-							activoDao.publicarActivoConHistorico(activo.getId(), genericAdapter.getUsuarioLogado().getUsername());
+							
 						}else {
-							throw new JsonViewerException(ERROR_ACTIVO_UPDATE_SUBDIVISION);
-						}
-
+							throw new JsonViewerException(ERROR_ACTIVO_UPDATE_SUBDIVISION_ACTIVO_FORZADO);
+						}	
 					}else {
-						throw new JsonViewerException(ERROR_ACTIVO_UPDATE_SUBDIVISION_ACTIVO_FORZADO);
+						throw new JsonViewerException("No se puede actualizar el estado de publicación: El activo "+activo.getNumActivo()+" no tiene tipo de publicación.");
 					}
 				}
 			} catch(JsonViewerException e) {
 				throw e;
 			}
-
 		}
 		return success;
 	}
@@ -3681,6 +3677,90 @@ public class ActivoAdapter {
 		}
 		return check;
 	}
+	
+	/**
+	 * Comprueba si existen tramites de tipo publicacion en los activos y si estan en tramitacion los cerrara automaticamente
+	 * @param activosId
+	 * @return booleano true o false
+	 */
+	@Transactional(readOnly = false)
+	public Boolean updateTramitesActivo(String[] activosId) throws JsonViewerException  {
+		Boolean resultado = false;
+		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+		for (String activoId : activosId) {
+			
+			List<ActivoTramite> listActTramites =  activoTramiteDao.getListaTramitesActivo(Long.parseLong(activoId));
+			
+			if(!Checks.estaVacio(listActTramites)) {
+				for (ActivoTramite activoTramite : listActTramites) {
+					if(T_PUBLICACION.equals(activoTramite.getTipoTramite().getCodigo()) && CODIGO_ESTADO_PROCEDIMIENTO_EN_TRAMITE.equals(activoTramite.getEstadoTramite().getCodigo())) {
+						try {
+							borradoLogicoTareaExternaByIdTramite(activoTramite, usuarioLogado);
+							borradoLogicoActivoTramite(usuarioLogado, activoTramite);
+							resultado = true;
+						}catch(JsonViewerException e) {
+							resultado = false;
+							throw new JsonViewerException("No se ha podido cerrar automaticamente los tramites asociados a los activos.");
+						}
+					}
+				}
+			}
+		}
+		if(!resultado) {
+			throw new JsonViewerException("No se ha podido cerrar automaticamente los tramites asociados a los activos, no existen trámites.");
+		}
+		return resultado;
+	}
 
+	/**
+	 * @param usuarioLogado
+	 * @param activoTramite
+	 */
+	public void borradoLogicoActivoTramite(Usuario usuarioLogado, ActivoTramite activoTramite) {
+		DDEstadoProcedimiento estadoTramite = (DDEstadoProcedimiento) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoProcedimiento.class,
+						DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CERRADO);
+		activoTramite.setEstadoTramite(estadoTramite);
+		activoTramite.getAuditoria().setBorrado(true);
+		activoTramite.getAuditoria().setUsuarioBorrar(usuarioLogado.getNombre());
+		activoTramite.getAuditoria().setFechaBorrar(new Date());
+		activoTramiteDao.saveOrUpdate(activoTramite);
+	}
+
+	/**
+	 * 
+	 * @param activoTramite
+	 * @return
+	 */
+	@Transactional(readOnly = false)
+	public void borradoLogicoTareaExternaByIdTramite(ActivoTramite activoTramite, Usuario usuarioLogado) {
+		TareaExterna tarExt;
+		TareaNotificacion tarea;
+		List<TareaActivo>  listaTareas = tareaActivoApi.getTareasActivoByIdTramite(activoTramite.getId());
+		if(!Checks.estaVacio(listaTareas)){
+			
+			for (TareaActivo tareaActivo : listaTareas) {
+				
+				if(Checks.esNulo(tareaActivo.getFechaFin())){
+					tarExt  = tareaActivo.getTareaExterna();
+					if(!Checks.esNulo(tarExt)) {
+						tarExt.getAuditoria().setBorrado(true);
+						tarExt.getAuditoria().setFechaBorrar(new Date());
+						tarExt.getAuditoria().setUsuarioBorrar(usuarioLogado.getNombre());
+						genericDao.update(TareaExterna.class, tarExt);
+					}
+					
+					tarea = genericDao.get(EXTTareaNotificacion.class, genericDao.createFilter(FilterType.EQUALS, "id", tareaActivo.getId()));
+					if(!Checks.esNulo(tarea)) {
+						tarea.setFechaFin(new Date());
+						tarea.setTareaFinalizada(true);
+						tarea.getAuditoria().setBorrado(true);
+						tarea.getAuditoria().setUsuarioBorrar(usuarioLogado.getNombre());
+						tarea.getAuditoria().setFechaBorrar(new Date());
+						genericDao.update(TareaNotificacion.class, tarea);
+					}
+				}
+			}
+		}
+	}
 
 }

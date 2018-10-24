@@ -16,7 +16,7 @@ Ext.define('HreRem.view.trabajos.detalle.ListaActivosSubdivisionGrid', {
 	        {
 	            xtype: 'button',
 	            text: 'Aprobar informe comercial',
-	            //secFunPermToShow: 'ROLE_PUEDE_VER_BOTON_APROBAR_INFORME',
+	            secFunPermToShow: 'ROLE_PUEDE_VER_BOTON_APROBAR_INFORME',
 	            listeners: {
 	        		click: 'aprobarInformeComercialMSV'
 	        	

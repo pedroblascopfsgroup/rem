@@ -131,7 +131,7 @@ public class StockDto implements WebcomRESTDto{
 	private LongDataType activoProveedorTecnico;
 	
 	//HREOS-4500 - Modificaciones WS Stock
-	private String tipoAlquiler;
+	private StringDataType tipoAlquiler;
 	
 	public LongDataType getIdActivoHaya() {
 		return idActivoHaya;
@@ -635,10 +635,10 @@ public class StockDto implements WebcomRESTDto{
 	public void setActivoProveedorTecnico(LongDataType activoProveedorTecnico) {
 		this.activoProveedorTecnico = activoProveedorTecnico;
 	}
-	public String getTipoAlquiler() {
+	public StringDataType getTipoAlquiler() {
 		return tipoAlquiler;
 	}
-	public void setTipoAlquiler(String tipoAlquiler) {
+	public void setTipoAlquiler(StringDataType tipoAlquiler) {
 		this.tipoAlquiler = tipoAlquiler;
 	}
 	

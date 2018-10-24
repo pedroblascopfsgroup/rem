@@ -219,7 +219,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
 		        	hidden: '{!esAgrupacionObraNuevaOrAsistida}'
 		        },
 	            flex: 0.5
-	        },/////////////////////////////////////////////////////////////
+	        },
 	        {   
 	        	dataIndex: 'estadoVenta',
 	            text: HreRem.i18n('header.condicionantes.publicacion.venta'),
@@ -231,7 +231,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
 	            text: HreRem.i18n('header.condicionantes.publicacion.alquiler'),
 	            flex: 1,
 	            renderer: condPublRenderer
-	        },/////////////////////////////////////////////////////////////
+	        },
 	        {
 	            dataIndex: 'situacionComercial',
 	            text: HreRem.i18n('header.disponibilidad.comercial'),

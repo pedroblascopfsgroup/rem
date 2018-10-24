@@ -418,7 +418,20 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "		WHERE " 
 				+ "		scr.DD_SCR_CODIGO IN ('01','02','03','38') "
 				+ "		AND act.ACT_NUM_ACTIVO = "+numActivo+" ");
-		return !"0".equals(resultado);
+		
+		String resultado2 = rawDao.getExecuteSQL("SELECT COUNT(1) "
+				+ "		FROM ACT_ACTIVO act "
+				+ "		INNER JOIN ACT_ABA_ACTIVO_BANCARIO aba "
+				+ "		ON act.act_id            = aba.act_id "
+				+ "		INNER JOIN DD_CLA_CLASE_ACTIVO cla "
+				+ "		ON aba.dd_cla_id            = cla.dd_cla_id "
+				+ "		WHERE " 
+				+ "		cla.DD_CLA_CODIGO = '01' "
+				+ "		AND act.ACT_NUM_ACTIVO = "+numActivo+" ");
+		if("0".equals(resultado) && "0".equals(resultado2))
+			return false;
+		else
+			return true;
 	}
 
 	@Override

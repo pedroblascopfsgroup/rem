@@ -115,8 +115,7 @@ AS
                            OR sps1.sps_acc_tapiado = 1                                                  -- TAPIADO
                            OR (sps1.sps_ocupado = 1 AND sps1.sps_con_titulo = 0)                        -- OCUPADO SIN TITULO
                            OR NVL2 (reg2.reg_id, 1, 0) = 1
-                           OR NVL2(sps1.sps_otro,1,0) = 1                                               -- OTROS MOTIVOS
-                           OR eac1.dd_eac_codigo = ''07''                                                 -- VANDALIZADO
+                           OR NVL2(sps1.sps_otro,1,0) = 1                                               -- OTROS MOTIVOS                           
                           )                                                                                                                              --OR DECODE(VEI.DD_AIC_CODIGO ,''02'' ,0 , 1) = 1
 						   OR NVL2 (vcg.con_cargas, vcg.con_cargas, 0) = 1
 					THEN ''01''

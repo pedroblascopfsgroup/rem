@@ -388,17 +388,38 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
     	
     	me.getView().fireEvent('abrirDetalleActivo', id, titulo);
     },
-	 //Actualizar Estado  Informe comercial MSV
+    
+    cerrarTramitesActivo: function(activosId){
+    	var me = this;
+		var url =  $AC.getRemoteUrl('activo/cerrarTramitesActivo');
+		Ext.Ajax.request({
+		     url: url,
+		     params: { activosId:activosId},
+		     success: function (result, operation) {
+		    	var success = Ext.decode(result.responseText);
+		    	if(success.success == "true"){
+		    		me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+		    	}else{
+		    		me.getView().fireEvent("errorToast", success.msgError);
+		    	}
+            },
+            
+            failure: function (a, operation, context) {
+            	 me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+            }
+	     
+		});
+		
+	},
+	
 	 aprobarInformeComercialMSV:function(grid, row, col){
 		 
 		 var me = this.getView().down('[reference=listaActivosSubdivisionGrid]');
 		 var activosObjects = me.getPersistedSelection();
-		 var resultado = "";
+		 var resultado = [];
 		  for (var i in activosObjects) {
-			  if(i < activosObjects.length-1){
-				  resultado+=activosObjects[i].id+",";
-			  }else{
-				  resultado+=activosObjects[i].id;
+			  if(i <= activosObjects.length-1){
+				  resultado[i]=activosObjects[i].id;
 			  }
 		}
 		 if(!Ext.isEmpty(activosObjects)){
@@ -411,16 +432,18 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 	    		    	var success = Ext.decode(result.responseText);
 	    		    	if(success.success == "true"){
 	    		    		me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+	    		    		me.lookupController().cerrarTramitesActivo(resultado);
 	    		    	}else{
 	    		    		me.fireEvent("errorToast", success.msgError);
 	    		    	}
 	    		    	 me.getView().unmask();
+	    		    	
 	                },
 	                
 	                failure: function (a, operation, context) {
 	                	console.log(context);
 	                	 me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-						 me.unmask();
+	                	 me.getView().unmask();
 	                }
     		     
 				});

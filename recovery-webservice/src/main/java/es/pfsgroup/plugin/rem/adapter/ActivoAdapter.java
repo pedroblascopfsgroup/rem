@@ -151,6 +151,7 @@ import es.pfsgroup.plugin.rem.model.VBusquedaTramitesActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaVisitasDetalle;
 import es.pfsgroup.plugin.rem.model.VCalculosActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
+import es.pfsgroup.plugin.rem.model.VOfertasTramitadasPendientesActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.VPreciosVigentes;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
@@ -2181,6 +2182,12 @@ public class ActivoAdapter {
 	public List<VOfertasActivosAgrupacion> getListOfertasActivos(Long idActivo) {
 
 		return activoDao.getListOfertasActivo(idActivo);
+
+	}
+	
+	public List<VOfertasTramitadasPendientesActivosAgrupacion> getListOfertasTramitadasVendidasActivos(Long idActivo) {
+
+		return activoDao.getListOfertasTramitadasPendientesActivo(idActivo);
 
 	}
 

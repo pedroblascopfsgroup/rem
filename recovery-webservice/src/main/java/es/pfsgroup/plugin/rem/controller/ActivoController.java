@@ -1303,9 +1303,15 @@ public class ActivoController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getListOfertasActivos(Long id, WebDto webDto, ModelMap model) {
-
-		model.put("data", adapter.getListOfertasActivos(id));
+	public ModelAndView getListOfertasActivos(Long id, Boolean incluirOfertasAnuladas, WebDto webDto, ModelMap model) {
+		
+		
+		if (incluirOfertasAnuladas) {
+			model.put("data", adapter.getListOfertasActivos(id));
+		}
+		else {
+			model.put("data", adapter.getListOfertasTramitadasVendidasActivos(id));
+		}
 		return createModelAndViewJson(model);
 
 	}

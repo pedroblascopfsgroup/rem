@@ -1616,6 +1616,22 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		me.onSaveFormularioCompletoOferta(form, success);
 	},
 	
+	onChkbxOfertasAnuladas: function(chkbox, checked){
+    	var me = this;
+    	var grid = chkbox.up('ofertascomercialactivo').down("ofertascomercialactivolist");
+    	var store = me.getViewModel().get("storeOfertasActivo");
+    	
+    	var prox = store.getProxy();
+    	var _id = prox.getExtraParams().id;
+    	var _incluirOfertasAnuladas = checked;
+    	
+    	prox.setExtraParams({
+    		"id": _id, 
+    		"incluirOfertasAnuladas": _incluirOfertasAnuladas
+    	});
+    	store.load();
+	},
+	
 	// Este mÃ©todo copia los valores de los campos de 'Datos Mediador' a los campos de 'Datos admisiÃ³n'.
 	onClickCopiarDatosDelMediador: function(btn) {
 		var me =this;

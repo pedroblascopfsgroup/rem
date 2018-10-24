@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Sergio Belenguer Gadea
---## FECHA_CREACION=20181022
+--## FECHA_CREACION=20181024
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-4606

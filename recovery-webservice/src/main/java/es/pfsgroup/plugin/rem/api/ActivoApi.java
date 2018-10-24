@@ -931,5 +931,7 @@ public interface ActivoApi {
 	boolean isActivoEnPuja(Activo activo);
 
 	boolean updateImpuestos(DtoImpuestosActivo dtoImpuestosFilter) throws ParseException;
+	
+	DtoActivoFichaCabecera getActivosAgrupacionRestringida(Long idActivo);
 
 }

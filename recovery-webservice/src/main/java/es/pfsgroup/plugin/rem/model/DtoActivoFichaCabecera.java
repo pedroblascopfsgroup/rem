@@ -212,7 +212,11 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 
 	//REMVIP-REMVIP-2193
 	private Boolean isLogUsuGestComerSupComerSupAdmin;
-
+	
+	//HREOS-4634
+	private Boolean activoChkPerimetroAlquiler;
+	private List<?> activosAgrupacionRestringida;
+	
 	public int getPage() {
 		return page;
 	}
@@ -1562,5 +1566,21 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 
 	public void setIsLogUsuGestComerSupComerSupAdmin(Boolean isLogUsuGestComerSupComerSupAdmin) {
 		this.isLogUsuGestComerSupComerSupAdmin = isLogUsuGestComerSupComerSupAdmin;
+	}
+
+	public Boolean getActivoChkPerimetroAlquiler() {
+		return activoChkPerimetroAlquiler;
+	}
+
+	public void setActivoChkPerimetroAlquiler(Boolean activoChkPerimetroAlquiler) {
+		this.activoChkPerimetroAlquiler = activoChkPerimetroAlquiler;
+	}
+
+	public List<?> getActivosAgrupacionRestringida() {
+		return activosAgrupacionRestringida;
+	}
+
+	public void setActivosAgrupacionRestringida(List<?> activosAgrupacionRestringida) {
+		this.activosAgrupacionRestringida = activosAgrupacionRestringida;
 	}
 }

@@ -63,6 +63,7 @@ import es.pfsgroup.plugin.rem.excel.PublicacionExcelReport;
 import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
 import es.pfsgroup.plugin.rem.service.TabActivoService;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoActivosTrabajoFilter;
+import net.sf.json.JSONObject;
 import es.capgemini.pfs.users.domain.Usuario;
 
 @Controller
@@ -2116,6 +2117,33 @@ public class ActivoController extends ParadiseJsonController {
 
 				ActivoControllerDispatcher dispatcher = new ActivoControllerDispatcher(this);
 				dispatcher.dispatchSave(restRequest.getJsonObject());
+
+			} catch (Exception e) {
+				logger.error("No se ha podido guardar el activo", e);
+				model.put(RESPONSE_ERROR_KEY, e.getMessage());
+			}
+		}
+
+		return new ModelAndView("jsonView", model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView saveActivosAgrRestringida(HttpServletRequest request, ModelMap model) {
+		if (request != null) {
+			try {
+				RestRequestWrapper restRequest = new RestRequestWrapper(request);
+				ActivoControllerDispatcher dispatcher = new ActivoControllerDispatcher(this);
+				JSONObject json = restRequest.getJsonObject();
+				
+				DtoActivoFichaCabecera dto = activoApi.getActivosAgrupacionRestringida(json.getLong("id"));
+				List<VActivosAgrupacion> activos = (List<VActivosAgrupacion>) dto.getActivosAgrupacionRestringida();
+				
+				for(VActivosAgrupacion act : activos) {
+					json.put("id", act.getActivoId());
+					json.put("models.id", act.getActivoId());
+					dispatcher.dispatchSave(json);
+				}
 
 			} catch (Exception e) {
 				logger.error("No se ha podido guardar el activo", e);

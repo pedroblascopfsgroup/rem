@@ -487,6 +487,11 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		}else{
 			activoDto.setIsLogUsuGestComerSupComerSupAdmin(false);
 		}
+		
+		ActivoPatrimonio activoP = activoPatrimonioDao.getActivoPatrimonioByActivo(activo.getId());
+		if(!Checks.esNulo(activoP) && !Checks.esNulo(activoP.getCheckHPM())) {
+			BeanUtils.copyProperty(activoDto, "activoChkPerimetroAlquiler", activoP.getCheckHPM());
+		}
 
 		return activoDto;
 	}

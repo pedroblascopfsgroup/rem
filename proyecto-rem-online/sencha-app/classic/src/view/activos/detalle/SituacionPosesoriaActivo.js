@@ -180,14 +180,14 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 			            		change: function(combo, value) {
 			            			var me = this;
 
-		            				if(me.up('formBase').down('[reference=conPosesion]').getValue() == CONST.COMBO_SI_NO['SI']){
+		            				
 				            			if(value == CONST.COMBO_OCUPACION['SI']) {
-				            				me.up('formBase').down('[reference=comboSituacionPosesoriaConTituloRef]').setValue(CONST.COMBO_CON_TITULO['SI']);
-				            				me.up('formBase').down('[reference=comboSituacionPosesoriaConTituloRef]').setDisabled(false);
+				            				me.up('formBase').down('[reference=comboSituacionPosesoriaConTitulo]').setValue(CONST.COMBO_CON_TITULO['SI']);
+				            				me.up('formBase').down('[reference=comboSituacionPosesoriaConTitulo]').setDisabled(false);
 				            			} else if (value == CONST.COMBO_OCUPACION['NO']){
-				            				me.up('formBase').down('[reference=comboSituacionPosesoriaConTituloRef]').setDisabled(true); 
+				            				me.up('formBase').down('[reference=comboSituacionPosesoriaConTitulo]').setDisabled(true); 
 				            			}
-		            				}
+		            				
 			            					            			
 			            		}
 			            	}
@@ -204,7 +204,7 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 				        },
 				        { 
 				        	xtype: 'comboboxfieldbase',
-				        	reference: 'comboSituacionPosesoriaConTituloRef',
+				        	reference: 'comboSituacionPosesoriaConTitulo',
 							fieldLabel: HreRem.i18n('fieldlabel.con.titulo'),
 				        	bind: {
 			            		store: '{comboSiNoRem}',

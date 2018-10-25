@@ -57,6 +57,7 @@ import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
+import es.pfsgroup.plugin.gestorDocumental.manager.GestorDocumentalExpedientesManager;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDSituacionCarga;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDTipoCarga;
@@ -629,14 +630,12 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		// cuando creamos el expediente, si procede, creamos el repositorio
 		// en el gestor documental
 		if (resultado) {
-			//if (!Checks.esNulo(appProperties
-			//		.getProperty(GestorDocumentalExpedientesManager.URL_REST_CLIENT_GESTOR_DOCUMENTAL_EXPEDIENTES))) {
-				// gestorDocumentalAdapterApi.crearExpedienteComercial(expedienteComercial,genericAdapter.getUsuarioLogado().getUsername());
+			if (!Checks.esNulo(appProperties
+					.getProperty(GestorDocumentalExpedientesManager.URL_REST_CLIENT_GESTOR_DOCUMENTAL_EXPEDIENTES))) {
 				Thread hiloReactivar = new Thread( new ContenedorExpComercial(genericAdapter.getUsuarioLogado().getUsername(), expedienteComercial.getId()));
 				hiloReactivar.start();	
 
-			//}
-
+			}
 			
 		}
 

@@ -5944,7 +5944,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			if (!Checks.esNulo(trabajo)) {
 				ExpedienteComercial expediente = expedienteComercialDao
 						.getExpedienteComercialByTrabajo(trabajo.getId());
-				if (!Checks.esNulo(expediente.getReserva())){
+				if (!Checks.esNulo(expediente.getReserva()) 
+						&& !Checks.esNulo(expediente.getReserva().getEstadoReserva()) ){
 					return expediente.getReserva().getEstadoReserva().getCodigo().equals(DDEstadosReserva.CODIGO_FIRMADA);
 				}
 			}

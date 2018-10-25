@@ -1118,22 +1118,18 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
                                 	
                                 	storeTemp.load();
 
-                                    Ext.toast({
-									     html: 'LA OPERACIÃN SE HA REALIZADO CORRECTAMENTE',
-									     width: 360,
-									     height: 100,
-									     align: 't'
-									 });
+                                	var data = Ext.decode(a.responseText);
+                                	if(data.success == "true"){
+                                		me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+                                	}else{
+                                		me.fireEvent("errorToast", data.error);
+                                	}
+                                	
                                 },
                                 
                                 failure: function (a, operation, context) {
 
-                                	  Ext.toast({
-									     html: 'NO HA SIDO POSIBLE REALIZAR LA OPERACIÃN',
-									     width: 360,
-									     height: 100,
-									     align: 't'									     
-									 });
+                                	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
                                 }
 			    		     
 			    		 });

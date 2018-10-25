@@ -71,6 +71,9 @@ import es.capgemini.pfs.users.domain.Usuario;
 public class ActivoController extends ParadiseJsonController {
 
 	protected static final Log logger = LogFactory.getLog(ActivoController.class);
+	public static final String ERROR_ACTIVO_NOT_EXISTS = "No existe el activo que esta buscando, pruebe con otro Nº de Activo";
+	public static final String ERROR_ACTIVO_NO_NUMERICO = "El campo introducido es de carácter numérico";
+	public static final String ERROR_GENERICO = "La operación no se ha podido realizar";
 
 	@Autowired
 	private ActivoAdapter adapter;
@@ -1300,9 +1303,15 @@ public class ActivoController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getListOfertasActivos(Long id, WebDto webDto, ModelMap model) {
-
-		model.put("data", adapter.getListOfertasActivos(id));
+	public ModelAndView getListOfertasActivos(Long id, Boolean incluirOfertasAnuladas, WebDto webDto, ModelMap model) {
+		
+		
+		if (incluirOfertasAnuladas) {
+			model.put("data", adapter.getListOfertasActivos(id));
+		}
+		else {
+			model.put("data", adapter.getListOfertasTramitadasVendidasActivos(id));
+		}
 		return createModelAndViewJson(model);
 
 	}
@@ -2656,5 +2665,32 @@ public class ActivoController extends ParadiseJsonController {
 		}
 
 		return true;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView getActivoExists(String numActivo, ModelMap model) {
+
+		try {
+			Long idActivo = activoApi.getIdByNumActivo(Long.parseLong(numActivo));
+			
+			if(!Checks.esNulo(idActivo)) {
+				model.put("success", true);
+				model.put("data", idActivo);
+			}else {
+				model.put("success", false);
+				model.put("error", ERROR_ACTIVO_NOT_EXISTS);
+			}
+		} catch (NumberFormatException e) {
+			e.printStackTrace();
+			model.put("success", false);
+			model.put("error", ERROR_ACTIVO_NO_NUMERICO);
+		} catch(Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+			model.put("error", ERROR_GENERICO);
+		}
+		
+		return createModelAndViewJson(model);
 	}
 }

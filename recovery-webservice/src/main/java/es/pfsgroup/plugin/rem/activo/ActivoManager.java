@@ -2899,11 +2899,13 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 	@Override
 	public boolean isActivoAsistido(Activo activo) {
+		ActivoBancario activoBancario = getActivoBancarioByIdActivo(activo.getId());
 		if (!Checks.esNulo(activo.getSubcartera()))
 			if (DDSubcartera.CODIGO_CAJ_ASISTIDA.equals(activo.getSubcartera().getCodigo())
 					|| DDSubcartera.CODIGO_SAR_ASISTIDA.equals(activo.getSubcartera().getCodigo())
 					|| DDSubcartera.CODIGO_BAN_ASISTIDA.equals(activo.getSubcartera().getCodigo())
-					|| DDSubcartera.CODIGO_JAIPUR_FINANCIERO.equals(activo.getSubcartera().getCodigo()))
+					|| DDSubcartera.CODIGO_JAIPUR_FINANCIERO.equals(activo.getSubcartera().getCodigo())
+					|| DDClaseActivoBancario.CODIGO_FINANCIERO.equals(activoBancario.getClaseActivo().getCodigo()))
 				return true;
 		return false;
 	}
@@ -4944,6 +4946,22 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	public List<VTasacionCalculoLBK> getVistaTasacion(Long idAgrupacion) {
 		
 		return genericDao.getList(VTasacionCalculoLBK.class, genericDao.createFilter(FilterType.EQUALS, "idAgrupacion", idAgrupacion));
+	}
+	
+	@Override
+	public Long getIdByNumActivo(Long numActivo) {
+		
+		Long idActivo = null;
+		
+		try {
+		
+		idActivo = Long.parseLong(rawDao.getExecuteSQL("SELECT ACT_ID FROM ACT_ACTIVO WHERE ACT_NUM_ACTIVO = " + numActivo));
+		
+		} catch (Exception e) {
+			return null;
+		}
+		
+		return idActivo;
 	}
 	
 }

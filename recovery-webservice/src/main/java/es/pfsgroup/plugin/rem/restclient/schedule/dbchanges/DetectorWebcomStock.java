@@ -81,8 +81,8 @@ public class DetectorWebcomStock extends DetectorCambiosBD<StockDto> {
 	@Override
 	public List<String> vistasAuxiliares() {
 		ArrayList<String> vistasAuxiliares = new ArrayList<String>();
-		vistasAuxiliares.add("REM01.VI_STOCK_PIVOT_AGRUP_ACTIVO");
-		vistasAuxiliares.add("REM01.VI_STOCK_ACTIVOS_SUBDIVISON");
+		//vistasAuxiliares.add("REM01.VI_STOCK_PIVOT_AGRUP_ACTIVO");
+		//vistasAuxiliares.add("REM01.VI_STOCK_ACTIVOS_SUBDIVISON");
 		vistasAuxiliares.add("REM01.VI_STOCK_PIVOT_PRECIOS");
 		vistasAuxiliares.add("REM01.VI_STOCK_PIVOT_PRECIOS_ANT");
 		vistasAuxiliares.add("REM01.VI_STOCK_ACTIVO_CONDICIONANTE");

@@ -43,6 +43,7 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 
 	private static final String USUARIO_FICTICIO_OFERTA_CAJAMAR = "ficticioOfertaCajamar";
 	private static final String BUZON_REM = "buzonrem";
+	private static final String BUZON_PFS = "buzonpfs";
 
 	@Autowired
 	private GenericAdapter genericAdapter;
@@ -156,9 +157,13 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 			}
 			
 			Usuario buzonRem = usuarioManager.getByUsername(BUZON_REM);
+			Usuario buzonPfs = usuarioManager.getByUsername(BUZON_PFS);
 			
 			if(!Checks.esNulo(buzonRem)) {
 				mailsPara.add(buzonRem.getEmail());
+			}
+			if(!Checks.esNulo(buzonPfs)) {
+				mailsPara.add(buzonPfs.getEmail());
 			}
 
 			

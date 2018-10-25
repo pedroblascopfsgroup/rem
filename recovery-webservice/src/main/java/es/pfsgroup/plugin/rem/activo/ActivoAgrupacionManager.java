@@ -188,14 +188,15 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 			}
 			
 			Activo activo = activoApi.get(actAgrup.getActivoId());
-			if(DDTipoComercializacion.CODIGO_VENTA.equals(activo.getTipoComercializacion().getCodigo()) 
-					|| DDTipoComercializacion.CODIGO_ALQUILER_VENTA.equals(activo.getTipoComercializacion().getCodigo())
-					|| DDTipoComercializacion.CODIGO_ALQUILER_OPCION_COMPRA.equals(activo.getTipoComercializacion().getCodigo())) {
+			String codigoTCO = activo.getActivoPublicacion().getTipoComercializacion().getCodigo();
+			if(DDTipoComercializacion.CODIGO_VENTA.equals(codigoTCO) 
+					|| DDTipoComercializacion.CODIGO_ALQUILER_VENTA.equals(codigoTCO)
+					|| DDTipoComercializacion.CODIGO_ALQUILER_OPCION_COMPRA.equals(codigoTCO)) {
 				dtoVActAgrup.setEstadoVenta(activoEstadoPublicacionApi.getEstadoIndicadorPublicacionVenta(activo));
 			}
-			if(DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(activo.getTipoComercializacion().getCodigo()) 
-					|| DDTipoComercializacion.CODIGO_ALQUILER_VENTA.equals(activo.getTipoComercializacion().getCodigo())
-					|| DDTipoComercializacion.CODIGO_ALQUILER_OPCION_COMPRA.equals(activo.getTipoComercializacion().getCodigo())) {
+			if(DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(codigoTCO) 
+					|| DDTipoComercializacion.CODIGO_ALQUILER_VENTA.equals(codigoTCO)
+					|| DDTipoComercializacion.CODIGO_ALQUILER_OPCION_COMPRA.equals(codigoTCO)) {
 				dtoVActAgrup.setEstadoAlquiler(activoEstadoPublicacionApi.getEstadoIndicadorPublicacionAlquiler(activo));
 			}
 			

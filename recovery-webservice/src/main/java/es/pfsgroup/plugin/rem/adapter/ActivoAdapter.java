@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.beans.Service;
 import es.capgemini.devon.dto.WebDto;
+import es.capgemini.devon.exception.UserException;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.message.MessageService;
@@ -108,7 +109,6 @@ import es.pfsgroup.plugin.rem.model.ActivoVivienda;
 import es.pfsgroup.plugin.rem.model.ClienteComercial;
 import es.pfsgroup.plugin.rem.model.DtoActivoCargas;
 import es.pfsgroup.plugin.rem.model.DtoActivoCatastro;
-import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoActivoOcupanteLegal;
 import es.pfsgroup.plugin.rem.model.DtoActivoPatrimonio;
@@ -309,6 +309,7 @@ public class ActivoAdapter {
 	public static final String OFERTA_INCOMPATIBLE_MSG = "El tipo de oferta es incompatible con el destino comercial del activo";
 	public static final String AVISO_TITULO_MODIFICADAS_CONDICIONES_JURIDICAS = "activo.aviso.titulo.modificadas.condiciones.juridicas";
 	public static final String AVISO_DESCRIPCION_MODIFICADAS_CONDICIONES_JURIDICAS = "activo.aviso.descripcion.modificadas.condiciones.juridicas";
+	public static final String ERROR_CRM_UNKNOWN_ID = "UNKNOWN_ID";
 
 	BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 
@@ -2444,25 +2445,20 @@ public class ActivoAdapter {
 	}
 
 	@Transactional(readOnly = false)
-	public boolean deleteFotosActivoById(Long[] id) {
+	public boolean deleteFotosActivoById(Long[] id) throws Exception {
 		boolean resultado = true;
-		try {
-
-			for (int i = 0; i < id.length; i++) {
-				ActivoFoto actvFoto = this.getFotoActivoById(id[i]);
-				if (actvFoto.getRemoteId() != null) {
-					OperationResultResponse reponseDelete = gestorDocumentalFotos.delete(actvFoto.getRemoteId());
-					if (reponseDelete.getError() != null && !reponseDelete.getError().isEmpty()) {
-						throw new Exception(reponseDelete.getError());
-					}
+		
+		for (int i = 0; i < id.length; i++) {
+			ActivoFoto actvFoto = this.getFotoActivoById(id[i]);
+			if (actvFoto.getRemoteId() != null) {
+				OperationResultResponse reponseDelete = gestorDocumentalFotos.delete(actvFoto.getRemoteId());
+				if (reponseDelete.getError() != null && !reponseDelete.getError().isEmpty()
+						&& !reponseDelete.getError().equals(ERROR_CRM_UNKNOWN_ID)) {
+					throw new UserException(reponseDelete.getError());
 				}
-				genericDao.deleteById(ActivoFoto.class, actvFoto.getId());
 			}
-
-		} catch (Exception e) {
-			logger.error(e);
-			resultado = false;
-		}
+			genericDao.deleteById(ActivoFoto.class, actvFoto.getId());
+		}		
 
 		return resultado;
 

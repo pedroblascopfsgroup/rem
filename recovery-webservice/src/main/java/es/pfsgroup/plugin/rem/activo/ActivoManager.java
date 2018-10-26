@@ -4985,7 +4985,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		
 		try {
 		
-		idActivo = Long.parseLong(rawDao.getExecuteSQL("SELECT ACT_ID FROM ACT_ACTIVO WHERE ACT_NUM_ACTIVO = " + numActivo));
+		idActivo = Long.parseLong(rawDao.getExecuteSQL("SELECT ACT_ID FROM ACT_ACTIVO WHERE ACT_NUM_ACTIVO = " + numActivo + " AND BORRADO = 0"));
 		
 		} catch (Exception e) {
 			return null;

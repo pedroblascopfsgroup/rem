@@ -5324,19 +5324,14 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public DDSubcartera getCodigoSubCarteraExpediente(Long idExpediente) {
-		DDSubcartera subcartera = null;
-
-		if (!Checks.esNulo(idExpediente)) {
-			DtoPage dto = this.getActivosExpediente(idExpediente);
-			List<DtoActivosExpediente> dtosActivos = (List<DtoActivosExpediente>) dto.getResults();
-
-			if (!Checks.estaVacio(dtosActivos)) {
-				Activo primerActivo = activoApi.get(dtosActivos.get(0).getIdActivo());
-
-				if (!Checks.esNulo(primerActivo)) {
-					subcartera = primerActivo.getSubcartera();
-				}
+	public DDSubcartera getCodigoSubCarteraExpediente(Long idExpediente){
+		
+		DDSubcartera subcartera= null;
+		
+		if(!Checks.esNulo(idExpediente)){
+			ExpedienteComercial expediente = findOne(idExpediente);
+			if(!Checks.esNulo(expediente)) {
+				subcartera = expediente.getOferta().getActivosOferta().get(0).getPrimaryKey().getActivo().getSubcartera();
 			}
 		}
 

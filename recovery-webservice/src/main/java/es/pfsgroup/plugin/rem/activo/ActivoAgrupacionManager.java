@@ -31,6 +31,7 @@ import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
+import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.model.Activo;
@@ -54,6 +55,7 @@ import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.VActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.VListaActivosAgrupacionVSCondicionantes;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoFoto;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PRINCIPAL;
@@ -96,13 +98,10 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 	private OfertaApi ofertaApi;
 	
 	@Autowired
-	private GenericAdapter genericAdapter;
-	
-	@Autowired
-	private ActivoDao activoDao;
-	
-	@Autowired
 	private RestApi restApi;
+	
+	@Autowired
+	private ActivoEstadoPublicacionApi activoEstadoPublicacionApi;
 
 	// @Override
 	// public String managerName() {
@@ -186,6 +185,19 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 			if(!Checks.esNulo(actAgrup.getSubtipoActivo())) {
 				dtoVActAgrup.setCodigoSubtipoActivo(actAgrup.getSubtipoActivo().getCodigo());
 				dtoVActAgrup.setSubtipoActivoDesc(actAgrup.getSubtipoActivo().getDescripcion());
+			}
+			
+			Activo activo = activoApi.get(actAgrup.getActivoId());
+			String codigoTCO = activo.getActivoPublicacion().getTipoComercializacion().getCodigo();
+			if(DDTipoComercializacion.CODIGO_VENTA.equals(codigoTCO) 
+					|| DDTipoComercializacion.CODIGO_ALQUILER_VENTA.equals(codigoTCO)
+					|| DDTipoComercializacion.CODIGO_ALQUILER_OPCION_COMPRA.equals(codigoTCO)) {
+				dtoVActAgrup.setEstadoVenta(activoEstadoPublicacionApi.getEstadoIndicadorPublicacionVenta(activo));
+			}
+			if(DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(codigoTCO) 
+					|| DDTipoComercializacion.CODIGO_ALQUILER_VENTA.equals(codigoTCO)
+					|| DDTipoComercializacion.CODIGO_ALQUILER_OPCION_COMPRA.equals(codigoTCO)) {
+				dtoVActAgrup.setEstadoAlquiler(activoEstadoPublicacionApi.getEstadoIndicadorPublicacionAlquiler(activo));
 			}
 			
 			listaDto.add(dtoVActAgrup);

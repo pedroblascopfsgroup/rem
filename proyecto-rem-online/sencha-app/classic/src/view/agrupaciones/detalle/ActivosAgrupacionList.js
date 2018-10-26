@@ -114,21 +114,27 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
 				me.tbar.items.push(configRemoveBtn);
 			}
     	};
-		
-		var estadoRenderer =  function(condicionado) {
+    	
+    	var condPublRenderer =  function(condicionado) {
         	var src = '',
         	alt = '';
         	
-        	if (condicionado) {
+        	if (condicionado == 0) {
         		src = 'icono_KO.svg';
         		alt = 'KO';
-        	} else { 
+        	} else if (condicionado == 1) {
         		src = 'icono_OK.svg';
         		alt = 'OK';
+        	} else if (condicionado == 2) { 
+        		src = 'icono_OKN.svg';
+        		alt = 'OKN';
         	}  
 
-        	return '<div> <img src="resources/images/'+src+'" alt ="'+alt+'" width="15px"></div>';
-        };  
+        	if(condicionado != null)
+        		return '<div> <img src="resources/images/'+src+'" alt ="'+alt+'" width="15px"></div>';
+        	else
+        		return '<div> - </div>';;
+        };
 		
         me.columns= [
         	{
@@ -214,15 +220,17 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
 		        },
 	            flex: 0.5
 	        },
-	        {
-	            dataIndex: 'estadoSituacionComercial',
-	            text: HreRem.i18n('header.condicionantes.disponibilidad'),
+	        {   
+	        	dataIndex: 'estadoVenta',
+	            text: HreRem.i18n('header.condicionantes.publicacion.venta'),
 	            flex: 1,
-	            bind: {
-	            	hidden: '{!esAgrupacionRestringida}'
-	            },
-	            renderer: estadoRenderer
-	            
+	            renderer: condPublRenderer
+	        },
+	        {
+	            dataIndex: 'estadoAlquiler',
+	            text: HreRem.i18n('header.condicionantes.publicacion.alquiler'),
+	            flex: 1,
+	            renderer: condPublRenderer
 	        },
 	        {
 	            dataIndex: 'situacionComercial',

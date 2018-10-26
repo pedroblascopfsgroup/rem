@@ -40,6 +40,7 @@ import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoHistoricoPatrimonioDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
+import es.pfsgroup.plugin.rem.adapter.AgrupacionAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.*;
 import es.pfsgroup.plugin.rem.condiciontanteo.CondicionTanteoApi;
@@ -199,6 +200,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 	@Autowired
 	private MSVRawSQLDao rawDao;
+	
+	@Autowired
+	private AgrupacionAdapter agrupacionAdapter;
 
 	@Override
 	public String managerName() {
@@ -4087,5 +4091,51 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 		return genericDao.getList(VTasacionCalculoLBK.class, genericDao.createFilter(FilterType.EQUALS, "idAgrupacion", idAgrupacion));
 	}
+	
+	@Override
+	public DtoActivoFichaCabecera getActivosAgrupacionRestringida(Long idActivo) {
+		if (!Checks.esNulo(idActivo)) {
+			DtoActivoFichaCabecera activoDto = new DtoActivoFichaCabecera();
 
+			Activo activo = activoAdapter.getActivoById(idActivo);
+
+			if (!Checks.esNulo(activo)) {
+				try {
+					BeanUtils.copyProperties(activoDto, activo);
+					activoDto.setActivosAgrupacionRestringida(getAllActivosAgrupacionRestringida(activo));
+					return activoDto;
+				} catch (IllegalAccessException e) {
+					e.printStackTrace();
+				} catch (InvocationTargetException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return null;
+	}
+
+	public List<?> getAllActivosAgrupacionRestringida(Activo activo) {
+		if (activo != null) {
+			for (ActivoAgrupacionActivo activoAgrupacionActivo : activo.getAgrupaciones()) {
+				if (activoAgrupacionActivo.getAgrupacion() != null 
+						&& isActivoAgrupacionTipo(activoAgrupacionActivo, DDTipoAgrupacion.AGRUPACION_RESTRINGIDA)) {
+					DtoAgrupacionFilter filter = new DtoAgrupacionFilter();
+					filter.setLimit(1000);
+					filter.setStart(0);
+					Page page = agrupacionAdapter.getListActivosAgrupacionById(filter, activoAgrupacionActivo.getAgrupacion().getId());
+					return page.getResults();
+				}
+			}
+		}
+		return new ArrayList<String>();
+	}
+
+	private boolean isActivoAgrupacionTipo(ActivoAgrupacionActivo activoAgrupacionActivo, String... codigosTipoAgrupacion) {
+		for (String codigo : codigosTipoAgrupacion) {
+			if (activoAgrupacionActivo.getAgrupacion().getTipoAgrupacion() != null && codigo.equals(activoAgrupacionActivo.getAgrupacion().getTipoAgrupacion().getCodigo())) {
+				return true;
+			}
+		}
+		return false;
+	}
 }

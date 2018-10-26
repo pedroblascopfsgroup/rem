@@ -168,7 +168,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		});		
 	},
 	    
-   	onSaveFormularioCompleto: function(btn, form) {
+   	onSaveFormularioCompleto: function(btn, form, restringida) {
 		var me = this;
 		me.getView().mask(HreRem.i18n("msg.mask.loading"));
 		//disableValidation: Atributo para indicar si el guardado del formulario debe aplicar o no, las validaciones.
@@ -192,6 +192,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			
 			// Obtener jsondata para guardar activo
 			var tabData = me.createTabData(form);
+			
 			if(tabData.models != null){
 				if (tabData.models[0].name == "datosregistrales"){
 					record = form.getBindRecord();
@@ -228,7 +229,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
                 idActivo = tabData.models[0].data.id;
             }
 
-            me.checkActivosToPropagate(idActivo, form, tabData);
+            me.checkActivosToPropagate(idActivo, form, tabData, restringida);
 
 		} else {
 			me.getView().unmask();
@@ -731,7 +732,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			   buttons: Ext.MessageBox.YESNO,
 			   fn: function(buttonId) {
 			        if (buttonId == 'yes') {
-			        	me.onSaveFormularioCompleto(btn, form);
+			        	me.onSaveFormularioCompleto(btn, form, false);
 			        }
 			   }
 		});
@@ -743,7 +744,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 				   buttons: Ext.MessageBox.YESNO,
 				   fn: function(buttonId) {
 				        if (buttonId == 'yes') {
-				        	me.onSaveFormularioCompleto(btn, form);
+				        	me.onSaveFormularioCompleto(btn, form, false);
 				        }
 				   }
 			});
@@ -753,12 +754,14 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	onClickBotonGuardar: function(btn) {
 		var me = this;
 		var form = btn.up('tabpanel').getActiveTab();
-
+		
 		// Ejecución especial si la pestaña es 'Comercial'.
 		if("comercialactivo" == form.getXType()) {
 			me.onSaveFormularioCompletoTabComercial(btn, form);
+		} else if("patrimonioactivo" == form.getXType()) {
+			me.onSaveFormularioCompletoTabPatrimonio(btn, form);
 		} else {
-			me.onSaveFormularioCompleto(btn, form);
+			me.onSaveFormularioCompleto(btn, form, false);
 		}
 	},
 
@@ -2889,6 +2892,31 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		}
 	},
 	
+	saveActivosAgrRestringida: function(jsonData, successFn) {
+		var me = this,
+		url =  $AC.getRemoteUrl('activo/saveActivosAgrRestringida');
+		
+		me.getView().mask(HreRem.i18n("msg.mask.loading"));
+		
+		successFn = successFn || Ext.emptyFn
+			
+		
+		if(Ext.isEmpty(jsonData)) {
+			me.fireEvent("log", "Obligatorio jsonData para guardar el activo");
+		} else {
+		
+			Ext.Ajax.request({
+				method : 'POST',
+				url: url,
+				jsonData: Ext.JSON.encode(jsonData),
+				success: successFn,
+			 	failure: function(response, opts) {
+			 		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+			    }			    
+			});
+		}
+	},
+	
 	saveDistribucion: function(jsonData, successFn) {
 		
 		var me = this,
@@ -3399,7 +3427,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	record = grid.getStore().getAt(rowIndex);
     },
 
-	checkActivosToPropagate: function(idActivo, form, tabData){
+	checkActivosToPropagate: function(idActivo, form, tabData, restringida){
 		var me = this,
 		url =  $AC.getRemoteUrl('activo/getActivosPropagables');
 		Ext.Ajax.request({
@@ -3439,12 +3467,38 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 					me.refrescarActivo(form.refreshAfterSave);
 					me.getView().fireEvent("refreshComponentOnActivate", "container[reference=tabBuscadorActivos]");
 				}
-				me.saveActivo(tabData, successFn);
+				
+				if(restringida == true){
+					me.saveActivosAgrRestringida(tabData, successFn);
+				} else {
+					me.saveActivo(tabData, successFn);
+				}
     		},
 
 		 	failure: function(record, operation) {
 		 		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
 		    }
     	});
-	}
+	},
+    
+    onSaveFormularioCompletoTabPatrimonio: function(btn, form){
+    	var me = this;
+    	var chkPerimetroAlquiler = me.getViewModel().get('patrimonio.chkPerimetroAlquiler');
+    	var isRestringida = me.getViewModel().get('activo.pertenceAgrupacionRestringida');
+    	var activoChkPerimetroAlquiler = me.getViewModel().get('activo.activoChkPerimetroAlquiler');
+    	
+    	if(isRestringida == true && activoChkPerimetroAlquiler != chkPerimetroAlquiler){
+    		Ext.Msg.confirm(
+				HreRem.i18n("title.agrupacion.restringida"),
+				HreRem.i18n("msg.confirm.agrupacion.restringida"),
+				function(btnConfirm){
+					if (btnConfirm == "yes"){
+						me.onSaveFormularioCompleto(btn, form, true);
+					}
+				}
+			);			
+    	} else {
+    		me.onSaveFormularioCompleto(btn, form, false);
+    	}
+    }
 });

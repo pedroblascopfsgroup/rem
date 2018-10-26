@@ -476,8 +476,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								reference: 'chkbxPerimetroComercializar',
 								bind: {
 									value: '{activo.aplicaComercializar}',
-									readOnly: '{activo.isVendido}'
-
+									disabled: 'esEditableChkbxComercializar'
 								},
 								listeners: {
 									change: 'onChkbxPerimetroChange'

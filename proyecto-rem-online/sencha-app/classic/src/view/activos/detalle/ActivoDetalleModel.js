@@ -423,7 +423,14 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
             var informeComercialAprobado = get('activo.informeComercialAceptado');
             var precioRentaWeb = !Ext.isEmpty(get('datospublicacionactivo.precioWebAlquiler'));
             return !informeComercialAprobado && (publicarSinPrecioAlquiler || precioRentaWeb);
-        }
+        },
+	
+		esEditableChkbxComercializar: function(get){
+			var activoVendido = get('activo.isVendido');
+			
+			return activoVendido;
+		}
+        
 	 },
 
     stores: {

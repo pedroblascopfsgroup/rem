@@ -3269,15 +3269,27 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	window.close();
     },
 
-    onChangeComboMotivoOcultacion: function(combo) {
+    onChangeComboMotivoOcultacionVenta: function() {
     	var me = this;
-    	var record = combo.findRecord(combo.valueField, combo.getValue());
+    	var combo = me.lookupReference('comboMotivoOcultacionVenta');
     	var textArea = me.lookupReference(combo.textareaRefChained);
 
-    	if(record && record.data.esMotivoManual === 'true') {
-    		textArea.setReadOnly(false);
+    	if(combo && combo.value === CONST.MOTIVO_OCULTACION['OTROS']) {
+    		textArea.setDisabled(false);
     	} else {
-    		textArea.setReadOnly(true);
+    		textArea.setDisabled(true); 
+    	}
+    },
+    
+    onChangeComboMotivoOcultacionAlquiler: function() { 
+    	var me = this;
+    	var combo = me.lookupReference('comboMotivoOcultacionAlquiler');
+    	var textArea = me.lookupReference(combo.textareaRefChained);
+
+    	if(combo && combo.value === CONST.MOTIVO_OCULTACION['OTROS']) {
+    		textArea.setDisabled(false);
+    	} else {
+    		textArea.setDisabled(true); 
     	}
     },
 

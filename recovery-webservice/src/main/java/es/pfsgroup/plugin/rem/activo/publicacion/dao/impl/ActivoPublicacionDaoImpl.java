@@ -32,28 +32,35 @@ public class ActivoPublicacionDaoImpl extends AbstractEntityDao<ActivoPublicacio
 		if (!Checks.esNulo(entidad.getEstadoPublicacionVenta())) {
 			dto.setEstadoPublicacionVenta(entidad.getEstadoPublicacionVenta().getDescripcion());
 		}
+		
 		if (!Checks.esNulo(entidad.getEstadoPublicacionAlquiler())) {
 			dto.setEstadoPublicacionAlquiler(entidad.getEstadoPublicacionAlquiler().getDescripcion());
 		}
+		
 		dto.setPublicarVenta(entidad.getCheckPublicarVenta());
 		dto.setOcultarVenta(entidad.getCheckOcultarVenta());
 		dto.setMotivoPublicacion(entidad.getMotivoPublicacion());
 		dto.setPublicarSinPrecioVenta(entidad.getCheckSinPrecioVenta());
 		dto.setNoMostrarPrecioVenta(entidad.getCheckOcultarPrecioVenta());
+		
 		if (!Checks.esNulo(entidad.getMotivoOcultacionVenta())) {
 			dto.setMotivoOcultacionVentaCodigo(entidad.getMotivoOcultacionVenta().getCodigo());
 		}
+		
 		dto.setMotivoOcultacionManualVenta(entidad.getMotivoOcultacionManualVenta());
 		dto.setPublicarAlquiler(entidad.getCheckPublicarAlquiler());
 		dto.setOcultarAlquiler(entidad.getCheckOcultarAlquiler());
 		dto.setPublicarSinPrecioAlquiler(entidad.getCheckSinPrecioAlquiler());
 		dto.setNoMostrarPrecioAlquiler(entidad.getCheckOcultarPrecioAlquiler());
+		
 		if (!Checks.esNulo(entidad.getMotivoOcultacionAlquiler())) {
 			dto.setMotivoOcultacionAlquilerCodigo(entidad.getMotivoOcultacionAlquiler().getCodigo());
 		}
+		
 		dto.setMotivoOcultacionManualAlquiler(entidad.getMotivoOcultacionManualAlquiler());
 		dto.setFechaInicioEstadoVenta(entidad.getFechaInicioVenta());
 		dto.setFechaInicioEstadoAlquiler(entidad.getFechaInicioAlquiler());
+		
 		if(!Checks.esNulo(entidad.getTipoPublicacionVenta())) {
 			dto.setTipoPublicacionVentaCodigo(entidad.getTipoPublicacionVenta().getCodigo());
 			dto.setTipoPublicacionVentaDescripcion(entidad.getTipoPublicacionVenta().getDescripcion());

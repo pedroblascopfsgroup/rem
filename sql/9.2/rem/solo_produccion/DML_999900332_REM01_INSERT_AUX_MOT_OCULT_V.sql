@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=JIN LI, HU
---## FECHA_CREACION=20181004
+--## FECHA_CREACION=20181026
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-4525

@@ -119,17 +119,17 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 									},
 									items:
 										[
-
 											{
 												fieldLabel: HreRem.i18n('fieldlabel.datos.publicacion.estados.publicar'),
 												reference: 'chkbxpublicarventa',
+												textareaRefChained: 'textareaMotivoPublicacionVenta',
 												bind: {
 													readOnly: '{datospublicacionactivo.deshabilitarCheckPublicarVenta}',
 													value: '{datospublicacionactivo.publicarVenta}'
 												},
-                                                listeners: {
-                                                    dirtychange: 'onChangeCheckboxPublicarVenta'
-                                               }
+											    listeners: {
+											        dirtychange: 'onChangeCheckboxPublicarVenta',
+											   }
 											},
 											{
 												fieldLabel: HreRem.i18n('fieldlabel.datos.publicacion.estados.ocultar'),
@@ -182,7 +182,7 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 											},
 											{
 												xtype: 'label',
-												colspan: 2
+												colspan: 1
 											},
 											{
 												xtype: 'label',
@@ -190,9 +190,20 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 											},
 											{
 												xtype: 'textareafieldbase',
+												reference: 'textareaMotivoPublicacionVenta',
+												textareaRefChained: 'chkbxpublicarventa',
+												bind: {
+													readOnly: '{!datospublicacionactivo.publicarVenta}',
+													value: '{datospublicacionactivo.motivoPublicacion}'
+												},
+												maxLength: 200,
+												height: 80
+											},
+											{
+												xtype: 'textareafieldbase',
 												reference: 'textareaMotivoOcultacionManualVenta',
 												bind: {
-													readOnly: '{datospublicacionactivo.deshabilitarCheckOcultarVenta}',
+													readOnly: '{!datospublicacionactivo.deshabilitarCheckOcultarVenta}',
 													value: '{datospublicacionactivo.motivoOcultacionManualVenta}'
 												},
 												maxLength: 200,

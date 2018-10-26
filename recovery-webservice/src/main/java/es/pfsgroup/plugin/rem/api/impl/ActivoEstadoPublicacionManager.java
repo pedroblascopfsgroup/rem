@@ -452,6 +452,8 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 					!Checks.esNulo(dto.getOcultarAlquiler()) || !Checks.esNulo(dto.getPublicarSinPrecioAlquiler()) || !Checks.esNulo(dto.getNoMostrarPrecioAlquiler())) {
 				activoPublicacion.setFechaInicioAlquiler(new Date());
 			}
+			
+			activoPublicacion.setMotivoPublicacion(dto.getMotivoPublicacion());
 
 			activoPublicacionDao.save(activoPublicacion);
 

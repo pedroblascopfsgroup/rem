@@ -214,6 +214,9 @@ Ext.define('HreRem.model.DatosPublicacionAgrupacion', {
     		},
     		{
             	name: 'claseActivoCodigo'
+            },
+            {
+            	name: 'motivoPublicacion'
             }
 	 	],
     

@@ -44,6 +44,7 @@ public class DtoDatosPublicacionAgrupacion extends DtoDatosPublicacionActivo {
 		this.setTipoPublicacionVentaDescripcion(aux.getTipoPublicacionVentaDescripcion());
 		this.setTipoPublicacionAlquilerDescripcion(aux.getTipoPublicacionAlquilerDescripcion());
 		this.setEleccionUsuarioTipoPublicacionAlquiler(aux.getEleccionUsuarioTipoPublicacionAlquiler());
+		this.setMotivoPublicacion(aux.getMotivoPublicacion());
 	}
 	
 	private Long id;
@@ -256,4 +257,5 @@ public class DtoDatosPublicacionAgrupacion extends DtoDatosPublicacionActivo {
 	public void setCodigoEstadoPublicacionAlquiler(String codigoEstadoPublicacionAlquiler) {
 		this.codigoEstadoPublicacionAlquiler = codigoEstadoPublicacionAlquiler;
 	}
+
 }

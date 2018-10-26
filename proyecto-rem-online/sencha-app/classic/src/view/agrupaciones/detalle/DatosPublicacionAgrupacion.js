@@ -175,11 +175,22 @@ Ext.define('HreRem.view.agrupaciones.detalle.DatosPublicacionAgrupacion', {
 							},
 							{
 								xtype: 'label',
-								colspan: 2
+								colspan: 1
 							},
 							{
 								xtype: 'label',
 								colspan: 1
+							},
+							{
+								xtype: 'textareafieldbase',
+								reference: 'textareaMotivoPublicacionVenta',
+								textareaRefChained: 'chkbxpublicarventa',
+								bind: {
+									readOnly: '{!datospublicacionagrupacion.publicarVenta}',
+									value: '{datospublicacionagrupacion.motivoPublicacion}'
+								},
+								maxLength: 200,
+								height: 80
 							},
 							{
 								xtype: 'textareafieldbase',

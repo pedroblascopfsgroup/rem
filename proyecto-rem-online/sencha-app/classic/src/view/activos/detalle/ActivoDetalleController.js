@@ -3286,15 +3286,24 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     },
 
     onChangeCheckboxPublicarVenta: function(checkbox, isDirty){
+    	
         var me = this;
         var estadoPubVentaPublicado = me.getViewModel().get('activo').getData().estadoVentaCodigo === CONST.ESTADO_PUBLICACION_VENTA['PUBLICADO'] ||
         me.getViewModel().get('activo').getData().estadoVentaCodigo === CONST.ESTADO_PUBLICACION_VENTA['OCULTO'];
+        var textarea = me.lookupReference(checkbox.textareaRefChained);
 
         if(!isDirty && estadoPubVentaPublicado) {
     		var readOnly = Ext.isEmpty(me.getViewModel().get('datospublicacionactivo').getData().precioWebVenta) && !checkbox.getValue();
             checkbox.setReadOnly(readOnly);
-            checkbox.setValue(true);
+            checkbox.setValue(false);
     	}
+        
+        if (checkbox.getValue()) {
+        	textarea.setDisabled(false);
+        } else {
+        	textarea.setDisabled(true);
+        	textarea.setValue("");
+        }
     },
 
     onChangeCheckboxPublicarAlquiler: function(checkbox, isDirty) {

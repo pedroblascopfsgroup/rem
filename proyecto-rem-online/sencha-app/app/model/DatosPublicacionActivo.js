@@ -126,7 +126,11 @@ Ext.define('HreRem.model.DatosPublicacionActivo', {
 	    },
 	    {
 	        name:'eleccionUsuarioTipoPublicacionAlquiler'
+	    },
+	    {
+	    	name:'motivoPublicacion'
 	    }
+
 	],
 
 	proxy: {

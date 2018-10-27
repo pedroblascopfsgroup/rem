@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=CARLOS LOPEZ
---## FECHA_CREACION=20181006
+--## FECHA_CREACION=20181027
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=2.0.17
---## INCIDENCIA_LINK=HREOS-4077
+--## VERSION_ARTEFACTO=2.0.19
+--## INCIDENCIA_LINK=HREOS-4674
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -321,6 +321,50 @@ create or replace PROCEDURE SP_CAMBIO_ESTADO_PUBLICACION (pACT_ID IN NUMBER DEFA
 			vACTUALIZADO := 'S';
 		  END IF;   
 		   
+		END IF;
+
+		IF pDD_MTO_CODIGO IN ('13') THEN /*Vendido*/
+      V_MSQL:='UPDATE '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO ACT '||
+          '       SET ACT.PAC_CHECK_COMERCIALIZAR = 0
+                     ,ACT.PAC_FECHA_COMERCIALIZAR = SYSDATE
+                     ,ACT.USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
+					 ,ACT.FECHAMODIFICAR = SYSDATE
+                WHERE ACT.ACT_ID = '||nACT_ID||' 
+                  AND ACT.PAC_CHECK_COMERCIALIZAR = 1            
+          ';
+
+		  EXECUTE IMMEDIATE V_MSQL;
+		  IF SQL%ROWCOUNT > 0 THEN
+			  vACTUALIZADO := 'S';
+		  END IF;
+
+      V_MSQL:='UPDATE '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO ACT '||
+          '       SET ACT.PAC_CHECK_FORMALIZAR = 0
+                     ,ACT.PAC_FECHA_FORMALIZAR = SYSDATE
+                     ,ACT.USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
+					 ,ACT.FECHAMODIFICAR = SYSDATE
+                WHERE ACT.ACT_ID = '||nACT_ID||' 
+                  AND ACT.PAC_CHECK_FORMALIZAR = 1            
+          ';
+
+		  EXECUTE IMMEDIATE V_MSQL;
+		  IF SQL%ROWCOUNT > 0 THEN
+			  vACTUALIZADO := 'S';
+		  END IF;
+      
+      V_MSQL:='UPDATE '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO ACT '||
+          '       SET ACT.PAC_CHECK_PUBLICAR = 0
+                     ,ACT.PAC_FECHA_PUBLICAR = SYSDATE
+                     ,ACT.USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
+					 ,ACT.FECHAMODIFICAR = SYSDATE
+                WHERE ACT.ACT_ID = '||nACT_ID||' 
+                  AND ACT.PAC_CHECK_PUBLICAR = 1            
+          ';
+
+		  EXECUTE IMMEDIATE V_MSQL;
+		  IF SQL%ROWCOUNT > 0 THEN
+			  vACTUALIZADO := 'S';
+		  END IF;      
 		END IF;
 		
 		IF pDD_MTO_CODIGO = '06' THEN /*Revisión Publicación*/

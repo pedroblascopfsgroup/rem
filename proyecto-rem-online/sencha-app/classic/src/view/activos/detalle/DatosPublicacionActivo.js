@@ -128,7 +128,7 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 													value: '{datospublicacionactivo.publicarVenta}'
 												},
 											    listeners: {
-											        dirtychange: 'onChangeCheckboxPublicarVenta',
+											        dirtychange: 'onChangeCheckboxPublicarVenta'
 											   }
 											},
 											{

@@ -24,7 +24,13 @@ Ext.define('HreRem.model.VisitasActivo', {
     		name : 'fechaVisita',
     		type : 'date',
     		dateFormat: 'c'
-    	}    	
+    	},  
+    	{
+    		name : 'estadoVisitaDescripcion'
+    	},
+    	{
+    		name : 'subEstadoVisitaDescripcion'
+    	}
 
     ],
     

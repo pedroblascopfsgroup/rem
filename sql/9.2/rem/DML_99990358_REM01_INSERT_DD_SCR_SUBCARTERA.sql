@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=Carles Molins
---## FECHA_CREACION=20181025
+--## AUTOR=Maria Presencia
+--## FECHA_CREACION=20181026
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=0
@@ -11,6 +11,7 @@
 --## INSTRUCCIONES:
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##		0.2 MOdificado nombre subcartera
 --##########################################
 --*/
 
@@ -38,7 +39,7 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-        T_TIPO_DATA('135' ,'Agora'	,'Agora'		,'07')
+        T_TIPO_DATA('135' ,'Agora - Inmobiliario'	,'Agora - Inmobiliario'		,'07')
 		); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     

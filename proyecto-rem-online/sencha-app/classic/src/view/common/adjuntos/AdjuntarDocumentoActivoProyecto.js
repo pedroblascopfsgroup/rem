@@ -114,7 +114,6 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoActivoProyecto', {
 
     	var me = this,
     	form = me.down("form");
-    	debugger;
     	if(form.isValid()){
 
             form.submit({

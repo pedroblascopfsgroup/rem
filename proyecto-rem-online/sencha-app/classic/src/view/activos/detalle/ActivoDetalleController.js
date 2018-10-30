@@ -995,7 +995,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		
 		var me = this,
 		idActivo = me.getViewModel().get("activo.id");
-		debugger;
     	Ext.create("HreRem.view.common.adjuntos.AdjuntarDocumentoActivoProyecto", {entidad: 'promocion', idEntidad: idActivo, parent: grid}).show();
 		
 	},

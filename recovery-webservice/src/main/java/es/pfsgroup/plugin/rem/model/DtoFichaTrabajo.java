@@ -109,6 +109,8 @@ public class DtoFichaTrabajo {
 	
 	private String cartera;
 	
+	private String codCartera;
+	
 	private Date fechaFinCompromiso;
     
     private Date fechaRechazo;
@@ -150,6 +152,10 @@ public class DtoFichaTrabajo {
     private Long idSupervisorSuelos;
     
     private Long idSupervisorEdificaciones;
+    
+    private Boolean requerimiento;
+    
+    private Boolean logadoGestorMantenimiento;
 	
     public Long getIdTrabajo() {
 		return idTrabajo;
@@ -723,6 +729,30 @@ public class DtoFichaTrabajo {
 
 	public void setIdSupervisorEdificaciones(Long idSupervisorEdificaciones) {
 		this.idSupervisorEdificaciones = idSupervisorEdificaciones;
+	}
+
+	public Boolean getRequerimiento() {
+		return requerimiento;
+	}
+
+	public void setRequerimiento(Boolean requerimiento) {
+		this.requerimiento = requerimiento;
+	}
+
+	public String getCodCartera() {
+		return codCartera;
+	}
+
+	public void setCodCartera(String codCartera) {
+		this.codCartera = codCartera;
+	}
+
+	public Boolean getLogadoGestorMantenimiento() {
+		return logadoGestorMantenimiento;
+	}
+
+	public void setLogadoGestorMantenimiento(Boolean logadoGestorMantenimiento) {
+		this.logadoGestorMantenimiento = logadoGestorMantenimiento;
 	}
 	
 	

@@ -138,7 +138,8 @@ Ext.define('HreRem.model.FichaTrabajo', {
     			name: 'fechaEleccionProveedor',
     			type:'date',
     			dateFormat: 'c'
-    		}, {
+    		}, 
+    		{
     			name: 'bloquearResponsable',
     			type: 'boolean'
     		},
@@ -226,7 +227,26 @@ Ext.define('HreRem.model.FichaTrabajo', {
     		},
     		{
     			name: 'cartera'
+    		},
+    		{
+    			name: 'codCartera'
+    		},
+    		{
+    			name: 'requerimiento',
+    			type: 'boolean'
+    		},
+    		{
+    			name: 'esSareb',
+    			calculate: function(data) {
+    				 return data.codCartera == CONST.CARTERA['SAREB'];
+    			}
+    			
+    		},
+    		{
+    			name: 'logadoGestorMantenimiento',
+    			type: 'boolean'
     		}
+    		
     ],
     
 	proxy: {

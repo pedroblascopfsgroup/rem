@@ -178,6 +178,8 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		
 		BeanUtils.copyProperty(activoDto, "propietario", activo.getFullNamePropietario());	
 		
+		BeanUtils.copyProperty(activoDto, "tieneOkTecnico", activo.getTieneOkTecnico());
+		
 		if(activo.getTipoActivo() != null ) {					
 			BeanUtils.copyProperty(activoDto, "tipoActivoCodigo", activo.getTipoActivo().getCodigo());
 			BeanUtils.copyProperty(activoDto, "tipoActivoDescripcion", activo.getTipoActivo().getDescripcion());

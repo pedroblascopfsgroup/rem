@@ -50,6 +50,7 @@ import es.pfsgroup.plugin.rem.model.PropuestaActivosVinculados;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivosPrecios;
 import es.pfsgroup.plugin.rem.model.VBusquedaPublicacionActivo;
 import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
+import es.pfsgroup.plugin.rem.model.VOfertasTramitadasPendientesActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
@@ -941,6 +942,34 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		
 	}
 	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<VOfertasTramitadasPendientesActivosAgrupacion> getListOfertasTramitadasPendientesActivo(Long idActivo) {
+		
+		String hql = " from VOfertasTramitadasPendientesActivosAgrupacion voa2 ";
+		String listaIdsOfertas = "";
+		
+		HQLBuilder hb = new HQLBuilder(hql);
+
+		if (!Checks.esNulo(idActivo)) {
+			Filter filtroIdActivo = genericDao.createFilter(FilterType.EQUALS, "id", idActivo);
+			Activo activo = genericDao.get(Activo.class, filtroIdActivo);
+			
+			List<ActivoOferta> listaActivoOfertas = activo.getOfertas();
+
+			
+			for (ActivoOferta activoOferta : listaActivoOfertas){
+				listaIdsOfertas = listaIdsOfertas.concat(activoOferta.getPrimaryKey().getOferta().getId().toString()).concat(",");
+			}
+			listaIdsOfertas = listaIdsOfertas.concat("-1");
+			
+			hb.appendWhere(" voa2.idOferta in (" + listaIdsOfertas + ") ");
+		}
+		
+		return (List<VOfertasTramitadasPendientesActivosAgrupacion>) this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).list();
+				
+		
+	}
 	
 	@Override
 	public void actualizarRatingActivo(Long idActivo, String username) {	

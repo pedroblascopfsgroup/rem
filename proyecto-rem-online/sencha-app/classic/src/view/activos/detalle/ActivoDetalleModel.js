@@ -485,7 +485,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
    		        extraParams: {id: '{activo.id}'}
    	    	 }
        		},
-       		storeOfertasActivo: {    	
+       		storeOfertasActivo: {  
 	       		 pageSize: $AC.getDefaultPageSize(),
 	       		 model: 'HreRem.model.OfertaActivo',
 	       		 sorters: [
@@ -501,7 +501,10 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 	   		     proxy: {
 	   		        type: 'uxproxy',
 	   		        remoteUrl: 'activo/getListOfertasActivos',
-	   		        extraParams: {id: '{activo.id}'}
+	   		        extraParams: {
+	   		        	id: '{activo.id}',
+	   		        	incluirOfertasAnuladas: false
+	   		        }
 	   	    	 }
        		},
     		

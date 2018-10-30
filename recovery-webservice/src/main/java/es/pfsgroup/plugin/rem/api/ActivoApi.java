@@ -1135,4 +1135,6 @@ public interface ActivoApi {
 
 	boolean isActivoEnPuja(Activo activo);
 
+	public Long getIdByNumActivo(Long numActivo);
+
 }

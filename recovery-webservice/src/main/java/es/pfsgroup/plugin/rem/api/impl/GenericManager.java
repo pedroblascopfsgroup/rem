@@ -867,16 +867,16 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 	@Override
 	public List<DDTipoAgrupacion> getComboTipoAgrupacion() {
 		//Se obtiene el tipo de gestor "Gestor de mantenimiento"
-		Filter filtroTipoAgrupacionBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
-		Filter filtroCodigoTipoAgrupacion = genericDao.createFilter(FilterType.EQUALS, "codigo", "GACT");
-		EXTDDTipoGestor tipoGestor = genericDao.get(EXTDDTipoGestor.class, filtroTipoAgrupacionBorrado, filtroCodigoTipoAgrupacion);
+		//Filter filtroTipoAgrupacionBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+		//Filter filtroCodigoTipoAgrupacion = genericDao.createFilter(FilterType.EQUALS, "codigo", "GACT");
+		//EXTDDTipoGestor tipoGestor = genericDao.get(EXTDDTipoGestor.class, filtroTipoAgrupacionBorrado, filtroCodigoTipoAgrupacion);
 		
 		// Se obtiene el listado completo de tipos de agrupacion.
-		List<DDTipoAgrupacion> listaTipoAgrupacionesFiltrado = new ArrayList<DDTipoAgrupacion>();
+		//List<DDTipoAgrupacion> listaTipoAgrupacionesFiltrado = new ArrayList<DDTipoAgrupacion>();
 		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
 		List<DDTipoAgrupacion> listaTipoAgrupaciones = genericDao.getList(DDTipoAgrupacion.class, filtroBorrado, filtroBorrado);
 		
-		// Se mira si el usuario logueado e s de tipo gestor mantenimiento.
+		/*// Se mira si el usuario logueado e s de tipo gestor mantenimiento.
 		Usuario usuario = adapter.getUsuarioLogado();
 		List<DespachoExterno> despachos = proxyFactory.proxy(coreextensionApi.class).getListDespachosDeUsuario(tipoGestor.getId(), usuario.getId(), false, false);
 		
@@ -890,7 +890,8 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 			return listaTipoAgrupacionesFiltrado;
 		} else {
 			return listaTipoAgrupaciones;
-		}
+		}*/ //REMVIP-2289
+		return listaTipoAgrupaciones;
 	}
 	
 	@Override

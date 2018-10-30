@@ -398,7 +398,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 		     success: function (result, operation) {
 		    	var success = Ext.decode(result.responseText);
 		    	if(success.success == "true"){
-		    		me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+		    		me.fireEvent("infoToast", HreRem.i18n("msg.cerrarTramite.ok"));
 		    	}else{
 		    		me.getView().fireEvent("errorToast", success.msgError);
 		    	}

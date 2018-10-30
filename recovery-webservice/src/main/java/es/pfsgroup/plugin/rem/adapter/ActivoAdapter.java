@@ -3601,24 +3601,25 @@ public class ActivoAdapter {
 			
 			try {
 				if(!Checks.esNulo(activo)){
-					if(!Checks.esNulo(activo.getTipoPublicacion())) {
+					
+					if(!informeComercialAprobado(activo)) {
 						if(!activoApi.checkTiposDistintos(activo)){
-								//Si han habido cambios en el historico, los persistimos.
-								if(!Checks.esNulo(activoEstadosInformeComercialHistorico) && !Checks.esNulo(activoEstadosInformeComercialHistorico.getEstadoInformeComercial())){
-									activoEstadosInformeComercialHistorico.setFecha(fecha);
-									if(Checks.esNulo(activoEstadosInformeComercialHistorico.getAuditoria())){
-										Auditoria auditoria = new Auditoria();
-										auditoria.setUsuarioCrear(username);
-										auditoria.setFechaCrear(fecha);
-										activoEstadosInformeComercialHistorico.setAuditoria(auditoria);
-									}else{
-										activoEstadosInformeComercialHistorico.getAuditoria().setUsuarioCrear(username);
-										activoEstadosInformeComercialHistorico.getAuditoria().setFechaCrear(fecha);
-									}
-									activoEstadosInformeComercialHistorico.setActivo(activo);
-									genericDao.save(ActivoEstadosInformeComercialHistorico.class, activoEstadosInformeComercialHistorico);
+							//Si han habido cambios en el historico, los persistimos.
+							if(!Checks.esNulo(activoEstadosInformeComercialHistorico) && !Checks.esNulo(activoEstadosInformeComercialHistorico.getEstadoInformeComercial())){
+								activoEstadosInformeComercialHistorico.setFecha(fecha);
+								if(Checks.esNulo(activoEstadosInformeComercialHistorico.getAuditoria())){
+									Auditoria auditoria = new Auditoria();
+									auditoria.setUsuarioCrear(username);
+									auditoria.setFechaCrear(fecha);
+									activoEstadosInformeComercialHistorico.setAuditoria(auditoria);
+								}else{
+									activoEstadosInformeComercialHistorico.getAuditoria().setUsuarioCrear(username);
+									activoEstadosInformeComercialHistorico.getAuditoria().setFechaCrear(fecha);
 								}
+								activoEstadosInformeComercialHistorico.setActivo(activo);
+								genericDao.save(ActivoEstadosInformeComercialHistorico.class, activoEstadosInformeComercialHistorico);
 							}
+						}
 
 						if(!Checks.esNulo(activo.getInfoComercial())){
 							activo.getInfoComercial().getAuditoria().setFechaModificar(fecha);
@@ -3628,32 +3629,45 @@ public class ActivoAdapter {
 							activo.getInfoComercial().setFechaAceptacion(new Date());
 							activo.getInfoComercial().setFechaRechazo(null);
 						}
-
+	
 						if(!activoEstadoPublicacionApi.isPublicadoVentaByIdActivo(activo.getId())) {
 							// 3.) Se marca activo como publicable, porque en el tramite se han cumplido todos los requisitos
 							activo.setFechaPublicable(fecha);
 						}
 						
 						activoApi.saveOrUpdate(activo);
-
-						if(!DDTipoPublicacion.CODIGO_FORZADA.equals(activo.getTipoPublicacion().getCodigo())) {
-							if(comprobarCondicionesActivo(activo)) {
-								success=true;
-								activoDao.publicarActivoConHistorico(activo.getId(),username);
+						
+						if(!Checks.esNulo(activo.getTipoPublicacion())) {
+							if(!DDTipoPublicacion.CODIGO_FORZADA.equals(activo.getTipoPublicacion().getCodigo())) {
+								success = publicarActivoConHistorico(success, username, activo);
+								
 							}else {
-								throw new JsonViewerException(ERROR_ACTIVO_UPDATE_SUBDIVISION);
-							}
-							
+								throw new JsonViewerException(ERROR_ACTIVO_UPDATE_SUBDIVISION_ACTIVO_FORZADO);
+							}	
 						}else {
-							throw new JsonViewerException(ERROR_ACTIVO_UPDATE_SUBDIVISION_ACTIVO_FORZADO);
-						}	
-					}else {
-						throw new JsonViewerException("No se puede actualizar el estado de publicación: El activo "+activo.getNumActivo()+" no tiene tipo de publicación.");
+							success = publicarActivoConHistorico(success, username, activo);
+						}
 					}
 				}
 			} catch(JsonViewerException e) {
 				throw e;
 			}
+		}
+		return success;
+	}
+
+	/**
+	 * @param success
+	 * @param username
+	 * @param activo
+	 * @return
+	 */
+	private Boolean publicarActivoConHistorico(Boolean success, String username, Activo activo) {
+		if(comprobarCondicionesActivo(activo)) {
+			success=true;
+			activoDao.publicarActivoConHistorico(activo.getId(),username);
+		}else {
+			throw new JsonViewerException(ERROR_ACTIVO_UPDATE_SUBDIVISION);
 		}
 		return success;
 	}
@@ -3679,13 +3693,29 @@ public class ActivoAdapter {
 	}
 	
 	/**
+	 * Comprueba para un activo si tiene el condicionante de sin informe comercial aprobado marcado en naranja.
+	 * @param activo
+	 * @return
+	 */
+	private Boolean informeComercialAprobado(Activo activo) {
+		Boolean check = false;
+		VCondicionantesDisponibilidad vCondicionante = activoApi.getCondicionantesDisponibilidad(activo.getId());
+		if(!Checks.esNulo(vCondicionante)) {
+			if(vCondicionante.getSinInformeAprobado()) {
+				check = true;
+			}
+		}
+		return check;
+	}
+	
+	/**
 	 * Comprueba si existen tramites de tipo publicacion en los activos y si estan en tramitacion los cerrara automaticamente
 	 * @param activosId
 	 * @return booleano true o false
 	 */
 	@Transactional(readOnly = false)
 	public Boolean updateTramitesActivo(String[] activosId) throws JsonViewerException  {
-		Boolean resultado = false;
+		Boolean resultado = true;
 		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 		for (String activoId : activosId) {
 			
@@ -3697,18 +3727,15 @@ public class ActivoAdapter {
 						try {
 							borradoLogicoTareaExternaByIdTramite(activoTramite, usuarioLogado);
 							borradoLogicoActivoTramite(usuarioLogado, activoTramite);
-							resultado = true;
 						}catch(JsonViewerException e) {
 							resultado = false;
-							throw new JsonViewerException("No se ha podido cerrar automaticamente los tramites asociados a los activos.");
+							throw new JsonViewerException("No se han podido cerrar automaticamente los tr&aacute;mites asociados a los activos.");
 						}
 					}
 				}
 			}
 		}
-		if(!resultado) {
-			throw new JsonViewerException("No se ha podido cerrar automaticamente los tramites asociados a los activos, no existen trámites.");
-		}
+		
 		return resultado;
 	}
 

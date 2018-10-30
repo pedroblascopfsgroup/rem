@@ -1383,9 +1383,10 @@ public class ActivoAdapter {
 	public List<ActivoFoto> getListFotosActivoById(Long id) {
 
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", id);
+		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
 		Order order = new Order(OrderType.ASC, "orden");
 
-		List<ActivoFoto> listaActivoFoto = genericDao.getListOrdered(ActivoFoto.class, order, filtro);
+		List<ActivoFoto> listaActivoFoto = genericDao.getListOrdered(ActivoFoto.class, order, filtro, filtroBorrado);
 		Activo activo = this.getActivoById(id);
 
 		if (activo != null) {

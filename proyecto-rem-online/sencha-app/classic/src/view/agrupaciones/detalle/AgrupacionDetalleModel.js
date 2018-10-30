@@ -425,6 +425,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 			 model: 'HreRem.model.ActivoAgrupacionActivo',
 			 proxy: {
 			    type: 'uxproxy',
+			    timeout: 60000,
 				remoteUrl: 'agrupacion/getListActivosAgrupacionById',
 				extraParams: {id: '{agrupacionficha.id}'}
 			 },

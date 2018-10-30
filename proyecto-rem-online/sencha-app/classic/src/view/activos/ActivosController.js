@@ -22,7 +22,32 @@ Ext.define('HreRem.view.activos.ActivosController', {
 	onSearchClick: function(btn) {
 		
 		var me = this;
-		this.lookupReference('activoslist').getStore().loadPage(1);
+		var numActivo = btn.up('activossearch').down('[name="numActivo"]').value;
+		
+		if(numActivo != ""){
+		  	var url= $AC.getRemoteUrl('activo/getActivoExists');
+        	var data;
+    		Ext.Ajax.request({
+    		     url: url,
+    		     params: {numActivo : numActivo},
+    		     success: function(response, opts) {
+    		    	 data = Ext.decode(response.responseText);
+    		    	 if(data.success == "true"){
+    		    		 var titulo = "Activo " + numActivo;
+        		    	 me.getView().fireEvent('abrirDetalleActivoById', data.data, titulo);
+    		    	 }else{
+        		    	 me.fireEvent("errorToast", data.error);
+    		    	 }
+    		         
+    		     },
+    		     failure: function(response) {
+    		    	 me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+    		     }
+    		 });    
+			
+		}else{
+			this.lookupReference('activoslist').getStore().loadPage(1);
+		}
         
 	},	
 	

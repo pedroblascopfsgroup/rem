@@ -26,7 +26,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import edu.emory.mathcs.backport.java.util.Arrays;
 import es.capgemini.devon.dto.WebDto;
@@ -302,6 +305,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
     @Autowired
     private GestorDocumentalAdapterApi gestorDocumentalAdapterApi;
 
+    @Resource(name = "entityTransactionManager")
+	private PlatformTransactionManager transactionManager;
+
     @Autowired
 	private TrabajoApi trabajoApi;
     
@@ -315,6 +321,22 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", id);
 		ExpedienteComercial expediente = genericDao.get(ExpedienteComercial.class, filtro);
+
+		return expediente;
+	}
+	
+	@Override
+	public ExpedienteComercial findOneTransactional(Long id) {
+		TransactionStatus transaction = null;
+		ExpedienteComercial expediente = null;
+		try{
+			transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
+			expediente = this.findOne(id);
+			transactionManager.commit(transaction);
+		}catch(Exception e){
+			logger.error("error buscando el eco", e);
+			transactionManager.rollback(transaction);
+		}
 
 		return expediente;
 	}
@@ -6646,7 +6668,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			if (!Checks.esNulo(trabajo)) {
 				ExpedienteComercial expediente = expedienteComercialDao
 						.getExpedienteComercialByTrabajo(trabajo.getId());
-				if (!Checks.esNulo(expediente.getReserva())){
+				if (!Checks.esNulo(expediente.getReserva()) 
+						&& !Checks.esNulo(expediente.getReserva().getEstadoReserva()) ){
 					return expediente.getReserva().getEstadoReserva().getCodigo().equals(DDEstadosReserva.CODIGO_FIRMADA);
 				}
 			}

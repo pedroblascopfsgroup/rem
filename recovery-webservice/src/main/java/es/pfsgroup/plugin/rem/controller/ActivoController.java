@@ -31,11 +31,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import es.capgemini.devon.dto.WebDto;
+import es.capgemini.devon.exception.UserException;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.devon.utils.FileUtils;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
@@ -65,12 +67,15 @@ import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi;
 import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
 import es.pfsgroup.plugin.rem.service.TabActivoService;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoActivosTrabajoFilter;
-import es.capgemini.pfs.users.domain.Usuario;
 
 @Controller
 public class ActivoController extends ParadiseJsonController {
 
 	protected static final Log logger = LogFactory.getLog(ActivoController.class);
+	public static final String ERROR_ACTIVO_NOT_EXISTS = "No existe el activo que esta buscando, pruebe con otro Nº de Activo";
+	public static final String ERROR_ACTIVO_NO_NUMERICO = "El campo introducido es de carácter numérico";
+	public static final String ERROR_GENERICO = "La operación no se ha podido realizar";
+	public static final String ERROR_CONEXION_FOTOS = "Ha habido un error al conectar con CRM";
 
 	@Autowired
 	private ActivoAdapter adapter;
@@ -1300,9 +1305,15 @@ public class ActivoController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getListOfertasActivos(Long id, WebDto webDto, ModelMap model) {
-
-		model.put("data", adapter.getListOfertasActivos(id));
+	public ModelAndView getListOfertasActivos(Long id, Boolean incluirOfertasAnuladas, WebDto webDto, ModelMap model) {
+		
+		
+		if (incluirOfertasAnuladas) {
+			model.put("data", adapter.getListOfertasActivos(id));
+		}
+		else {
+			model.put("data", adapter.getListOfertasTramitadasVendidasActivos(id));
+		}
 		return createModelAndViewJson(model);
 
 	}
@@ -1635,9 +1646,13 @@ public class ActivoController extends ParadiseJsonController {
 			boolean success = adapter.deleteFotosActivoById(id);
 			model.put("success", success);
 
+		} catch (UserException e) {
+			model.put("success", false);
+			model.put("error", ERROR_CONEXION_FOTOS);
 		} catch (Exception e) {
 			logger.error("error en activoController", e);
 			model.put("success", false);
+			model.put("error", ERROR_GENERICO);
 		}
 
 		return createModelAndViewJson(model);
@@ -2670,7 +2685,31 @@ public class ActivoController extends ParadiseJsonController {
 		//model.put("data", data.subList(dto.getStart(), ( ((data.size() - 1 ) + dto.getStart() ) < dto.getLimit() ? data.size() : (dto.getStart() + dto.getLimit() ) ) ));
 		model.put("data", data.subList(dto.getStart(), ( (data.size() < (dto.getStart() + dto.getLimit()) ) ? data.size() : (dto.getStart() + dto.getLimit()) ) ));
 		model.put("totalCount", data.size());
+		return createModelAndViewJson(model);
+	}
 
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView getActivoExists(String numActivo, ModelMap model) {
+
+		try {
+			Long idActivo = activoApi.getIdByNumActivo(Long.parseLong(numActivo));
+			
+			if(!Checks.esNulo(idActivo)) {
+				model.put("success", true);
+				model.put("data", idActivo);
+			}else {
+				model.put("success", false);
+				model.put("error", ERROR_ACTIVO_NOT_EXISTS);
+			}
+		} catch (NumberFormatException e) {
+			e.printStackTrace();
+			model.put("success", false);
+			model.put("error", ERROR_ACTIVO_NO_NUMERICO);
+		} catch(Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+			model.put("error", ERROR_GENERICO);
+		}
 		return createModelAndViewJson(model);
 	}
 }

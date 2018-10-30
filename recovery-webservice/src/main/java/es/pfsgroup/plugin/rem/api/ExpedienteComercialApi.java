@@ -71,6 +71,8 @@ public interface ExpedienteComercialApi {
 	 * @return ExpedienteComercial
 	 */
 	public ExpedienteComercial findOne(Long id);
+	
+	public ExpedienteComercial findOneTransactional(Long id);
 
 	/**
 	 * Recupera el ExpedienteComercial indicado.

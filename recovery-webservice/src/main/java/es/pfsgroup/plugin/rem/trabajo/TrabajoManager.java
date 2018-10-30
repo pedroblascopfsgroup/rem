@@ -897,6 +897,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		List<Activo> listaActivos = this.getListaActivosProceso(dtoTrabajo.getIdProceso());
 		Trabajo trabajo = new Trabajo();
 		List<Trabajo> listaTrabajos = new ArrayList<Trabajo>();
+		
+		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 		try {
 
 			Boolean isFirstLoop = true;
@@ -923,19 +925,36 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 				dtoTrabajo.setParticipacion(Checks.esNulo(participacion) ? "0" : participacion.toString());
 				
+				Usuario usuarioGestor = null;
+				
+				if(!Checks.esNulo(dtoTrabajo.getIdGestorActivoResponsable())){
+					usuarioGestor = genericDao.get(Usuario.class,genericDao.createFilter(FilterType.EQUALS,"id", dtoTrabajo.getIdGestorActivoResponsable()),genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
+					if(!Checks.esNulo(usuarioGestor)){
+						trabajo.setUsuarioGestorActivoResponsable(usuarioGestor);
+					}
+				}
+				
 				if (isFirstLoop || !dtoTrabajo.getEsSolicitudConjunta()) {
 					trabajo = new Trabajo();
 					dtoToTrabajo(dtoTrabajo, trabajo);
 					trabajo.setFechaSolicitud(new Date());
 					trabajo.setNumTrabajo(trabajoDao.getNextNumTrabajo());
+
 					trabajo.setSolicitante(genericAdapter.getUsuarioLogado());
 					trabajo.setUsuarioResponsableTrabajo(genericAdapter.getUsuarioLogado());
+
+					if(!Checks.esNulo(usuarioGestor)) {
+						trabajo.setUsuarioResponsableTrabajo(usuarioGestor);
+					}else {
+						trabajo.setUsuarioResponsableTrabajo(usuarioLogado);
+					}
+					
 					trabajo.setEstado(getEstadoNuevoTrabajo(dtoTrabajo, activo));
 
 					// El gestor de activo se salta tareas de estos trámites y
 					// por tanto es necesario settear algunos datos
 					// al crear el trabajo.
-					if (gestorActivoManager.isGestorActivo(activo, genericAdapter.getUsuarioLogado())) {
+					if (gestorActivoManager.isGestorActivo(activo, usuarioLogado)) {
 						if (DDTipoTrabajo.CODIGO_OBTENCION_DOCUMENTAL.equals(trabajo.getTipoTrabajo().getCodigo())
 								|| DDTipoTrabajo.CODIGO_TASACION.equals(trabajo.getTipoTrabajo().getCodigo())
 								|| DDSubtipoTrabajo.CODIGO_AT_VERIFICACION_AVERIAS.equals(trabajo.getSubtipoTrabajo().getCodigo())) {
@@ -958,17 +977,10 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				trabajo.getActivosTrabajo().add(activoTrabajo);
 				isFirstLoop = false;
 				
-				if(!Checks.esNulo(dtoTrabajo.getIdGestorActivoResponsable())){
-					Usuario usuarioGestor = genericDao.get(Usuario.class,genericDao.createFilter(FilterType.EQUALS,"id", dtoTrabajo.getIdGestorActivoResponsable()),genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
-					if(!Checks.esNulo(usuarioGestor)){
-						trabajo.setUsuarioGestorActivoResponsable(usuarioGestor);
-					}
-				}
-				
 				if(!Checks.esNulo(dtoTrabajo.getIdSupervisorActivo())){
-					Usuario usuarioGestor = genericDao.get(Usuario.class,genericDao.createFilter(FilterType.EQUALS,"id", dtoTrabajo.getIdSupervisorActivo()),genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
-					if(!Checks.esNulo(usuarioGestor)){
-						trabajo.setSupervisorActivoResponsable(usuarioGestor);
+					Usuario usuarioSupervisor = genericDao.get(Usuario.class,genericDao.createFilter(FilterType.EQUALS,"id", dtoTrabajo.getIdSupervisorActivo()),genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
+					if(!Checks.esNulo(usuarioSupervisor)){
+						trabajo.setSupervisorActivoResponsable(usuarioSupervisor);
 					}
 				}
 
@@ -1839,50 +1851,53 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	@Transactional(readOnly = false)
 	public String upload(WebFileItem fileItem) throws Exception {
 
-		// Subida de adjunto al Trabajo
-		Trabajo trabajo = trabajoDao.get(Long.parseLong(fileItem.getParameter("idEntidad")));
-
-		Adjunto adj = uploadAdapter.saveBLOB(fileItem.getFileItem());
-
-		AdjuntoTrabajo adjuntoTrabajo = new AdjuntoTrabajo();
-		adjuntoTrabajo.setAdjunto(adj);
-
-		adjuntoTrabajo.setTrabajo(trabajo);
-
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("tipo"));
 		DDTipoDocumentoActivo tipoDocumento = genericDao.get(DDTipoDocumentoActivo.class,
 				filtro);
-		adjuntoTrabajo.setTipoDocumentoActivo(tipoDocumento);
+		
+		if(!Checks.esNulo(tipoDocumento)) {
+			// Subida de adjunto al Trabajo
+			Trabajo trabajo = trabajoDao.get(Long.parseLong(fileItem.getParameter("idEntidad")));
 
-		adjuntoTrabajo.setContentType(fileItem.getFileItem().getContentType());
+			Adjunto adj = uploadAdapter.saveBLOB(fileItem.getFileItem());
 
-		adjuntoTrabajo.setTamanyo(fileItem.getFileItem().getLength());
+			AdjuntoTrabajo adjuntoTrabajo = new AdjuntoTrabajo();
+			adjuntoTrabajo.setAdjunto(adj);
 
-		adjuntoTrabajo.setNombre(fileItem.getFileItem().getFileName());
+			adjuntoTrabajo.setTrabajo(trabajo);
 
-		adjuntoTrabajo.setDescripcion(fileItem.getParameter("descripcion"));
+			adjuntoTrabajo.setTipoDocumentoActivo(tipoDocumento);
 
-		adjuntoTrabajo.setFechaDocumento(new Date());
+			adjuntoTrabajo.setContentType(fileItem.getFileItem().getContentType());
 
-		Auditoria.save(adjuntoTrabajo);
+			adjuntoTrabajo.setTamanyo(fileItem.getFileItem().getLength());
 
-		trabajo.getAdjuntos().add(adjuntoTrabajo);
+			adjuntoTrabajo.setNombre(fileItem.getFileItem().getFileName());
 
-		trabajoDao.save(trabajo);
+			adjuntoTrabajo.setDescripcion(fileItem.getParameter("descripcion"));
 
-		// Copia de adjunto al Activo
-		ActivoAdjuntoActivo adjuntoActivo = new ActivoAdjuntoActivo();
+			adjuntoTrabajo.setFechaDocumento(new Date());
 
-		adjuntoActivo.setAdjunto(adj);
-		adjuntoActivo.setActivo(trabajo.getActivo());
-		adjuntoActivo.setTipoDocumentoActivo(tipoDocumento);
-		adjuntoActivo.setContentType(fileItem.getFileItem().getContentType());
-		adjuntoActivo.setTamanyo(fileItem.getFileItem().getLength());
-		adjuntoActivo.setNombre(fileItem.getFileItem().getFileName());
-		adjuntoActivo.setDescripcion(fileItem.getParameter("descripcion"));
-		adjuntoActivo.setFechaDocumento(new Date());
-		Auditoria.save(adjuntoActivo);
-		trabajo.getActivo().getAdjuntos().add(adjuntoActivo);
+			Auditoria.save(adjuntoTrabajo);
+
+			trabajo.getAdjuntos().add(adjuntoTrabajo);
+
+			trabajoDao.save(trabajo);
+
+			// Copia de adjunto al Activo
+			ActivoAdjuntoActivo adjuntoActivo = new ActivoAdjuntoActivo();
+
+			adjuntoActivo.setAdjunto(adj);
+			adjuntoActivo.setActivo(trabajo.getActivo());
+			adjuntoActivo.setTipoDocumentoActivo(tipoDocumento);
+			adjuntoActivo.setContentType(fileItem.getFileItem().getContentType());
+			adjuntoActivo.setTamanyo(fileItem.getFileItem().getLength());
+			adjuntoActivo.setNombre(fileItem.getFileItem().getFileName());
+			adjuntoActivo.setDescripcion(fileItem.getParameter("descripcion"));
+			adjuntoActivo.setFechaDocumento(new Date());
+			Auditoria.save(adjuntoActivo);
+			trabajo.getActivo().getAdjuntos().add(adjuntoActivo);
+		}
 
 		return null;
 

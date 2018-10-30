@@ -24,6 +24,7 @@ import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
 import es.pfsgroup.plugin.rem.model.DtoTrabajoListActivos;
 import es.pfsgroup.plugin.rem.model.PropuestaActivosVinculados;
 import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
+import es.pfsgroup.plugin.rem.model.VOfertasTramitadasPendientesActivosAgrupacion;
 
 public interface ActivoDao extends AbstractDao<Activo, Long>{
 	
@@ -198,6 +199,8 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	 * @param activo
 	 */
 	public void crearHistoricoDestinoComercial(Activo activo, Object[] extraArgs);
+
+	public List<VOfertasTramitadasPendientesActivosAgrupacion> getListOfertasTramitadasPendientesActivo(Long idActivo);
 
 
 }

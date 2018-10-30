@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.restclient.schedule.dbchanges;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,7 +61,10 @@ public class DetectorWebcomCabecerasObrasNuevas  extends DetectorCambiosBD<Cabec
 
 	@Override
 	public List<String> vistasAuxiliares() {
-		return null;
+		ArrayList<String> vistasAuxiliares = new ArrayList<String>();
+		vistasAuxiliares.add("REM01.VI_STOCK_PIVOT_AGRUP_ACTIVO");
+		vistasAuxiliares.add("REM01.VI_STOCK_ACTIVOS_SUBDIVISON");
+		return vistasAuxiliares;
 	}
 
 	@Override

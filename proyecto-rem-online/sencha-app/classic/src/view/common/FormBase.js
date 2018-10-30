@@ -123,7 +123,7 @@
     		me.buttonAlign = 'left';
     		//me.buttons = [{ text: HreRem.i18n('btn.buscar'), handler: 'onSearchClick' },{ text: HreRem.i18n('btn.limpiar'), handler: 'onCleanFiltersClick'}, { text: HreRem.i18n('btn.exportar'), handler: 'onClickDescargarExcel'}, { text: HreRem.i18n('btn.crearTrabajo'), handler: 'onClickCrearTrabajo', hidden: !$AU.userIsRol(CONST.PERFILES['SUPERVISOR_ACTIVO'])}]
     		//El botón de crear trabajo se pone visible para todos en el arranque
-    		me.buttons = [{ text: HreRem.i18n('btn.buscar'), handler: 'onSearchClick' },{ text: HreRem.i18n('btn.limpiar'), handler: 'onCleanFiltersClick'}, { text: HreRem.i18n('btn.exportar'), handler: 'onClickDescargarExcel'}, { text: HreRem.i18n('btn.crearTrabajo'), handler: 'onClickCrearTrabajo'}]
+    		me.buttons = [{ text: HreRem.i18n('btn.buscar'), handler: 'onSearchClick' },{ text: HreRem.i18n('btn.abrir.activo'), handler: 'onSearchBusquedaDirectaActivos', reference: 'btnActivo', disabled: true },{ text: HreRem.i18n('btn.limpiar'), handler: 'onCleanFiltersClick'}, { text: HreRem.i18n('btn.exportar'), handler: 'onClickDescargarExcel'}, { text: HreRem.i18n('btn.crearTrabajo'), handler: 'onClickCrearTrabajo'}]
     	}
     	   		
     	if (me.isSearchForm) {

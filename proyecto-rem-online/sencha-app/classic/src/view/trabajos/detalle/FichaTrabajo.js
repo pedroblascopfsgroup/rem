@@ -276,7 +276,7 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 												bind:{
 													value: '{trabajo.requerimiento}',
 													hidden: '{!trabajo.esSareb}',
-													readonly: '{!trabajo.logadoGestorMantenimiento}'
+													readOnly: '{!trabajo.logadoGestorMantenimiento}'
 												}
 											},
 											{

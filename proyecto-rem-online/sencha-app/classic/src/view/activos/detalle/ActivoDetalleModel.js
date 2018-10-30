@@ -429,6 +429,30 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			var activoVendido = get('activo.isVendido');
 			
 			return activoVendido;
+		},
+		
+		esVisibleTipoPublicacionVenta: function(get){
+			var estadoVenta = get('datospublicacionactivo.estadoPublicacionVenta');
+			var tipoPublicacionVenta = get('datospublicacionactivo.tipoPublicacionVentaDescripcion');
+			
+			if(!Ext.isEmpty(estadoVenta) && estadoVenta != CONST.DESCRIPCION_PUBLICACION['OCULTO_VENTA']){
+				return tipoPublicacionVenta;
+			}else{
+				return null;
+			}
+			
+		},
+		
+		esVisibleTipoPublicacionAlquiler: function(get){
+			var estadoAlquiler = get('datospublicacionactivo.estadoPublicacionAlquiler');
+			var tipoPublicacionAlquiler = get('datospublicacionactivo.tipoPublicacionAlquilerDescripcion');
+						
+			if(!Ext.isEmpty(estadoAlquiler) && estadoAlquiler != CONST.DESCRIPCION_PUBLICACION['OCULTO_ALQUILER']){
+				return tipoPublicacionAlquiler;
+			} else {
+				return null;
+			}
+			
 		}
         
 	 },

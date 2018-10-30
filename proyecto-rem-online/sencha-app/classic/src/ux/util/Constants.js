@@ -374,5 +374,12 @@ Ext.define('HreRem.ux.util.Constants', {
         PRE_PUBLICADO: '02',
         PUBLICADO: '03',
         OCULTO: '04'
+    },
+    
+    DESCRIPCION_PUBLICACION:{    
+        PUBLICADO_VENTA: 'Publicado Venta',
+        OCULTO_VENTA: 'Oculto Venta',
+        PUBLICADO_ALQUILER: 'Publicado Alquiler',
+        OCULTO_ALQUILER: 'Oculto Alquiler'
     }
 });

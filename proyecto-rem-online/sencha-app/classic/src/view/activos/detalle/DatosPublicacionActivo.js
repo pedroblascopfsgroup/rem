@@ -92,7 +92,7 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 	                                        },
 	                                        {
                                                 fieldLabel:  HreRem.i18n('fieldlabel.datos.publicacion.estados.tipo.publicacion'),
-                                                bind: '{datospublicacionactivo.tipoPublicacionVentaDescripcion}',
+                                                bind: '{esVisibleTipoPublicacionVenta}',
                                                 readOnly: true
                                             }
 										]
@@ -259,7 +259,7 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 	                                        },
 	                                        {
 	                                             fieldLabel:  HreRem.i18n('fieldlabel.datos.publicacion.estados.tipo.publicacion'),
-	                                             bind: '{datospublicacionactivo.tipoPublicacionAlquilerDescripcion}',
+	                                             bind: '{esVisibleTipoPublicacionAlquiler}',
 	                                             readOnly: true
 	                                        },
 	                                        {

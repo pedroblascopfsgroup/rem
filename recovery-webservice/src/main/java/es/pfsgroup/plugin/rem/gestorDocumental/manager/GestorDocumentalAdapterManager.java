@@ -11,6 +11,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
@@ -41,6 +44,7 @@ import es.pfsgroup.plugin.gestorDocumental.model.servicios.RespuestaCrearExpedie
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
+import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.Downloader;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
 import es.pfsgroup.plugin.rem.gestorDocumental.dto.documentos.GestorDocToRecoveryAssembler;
@@ -58,6 +62,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
+
 
 @Service("gestorDocumentalAdapterManager")
 public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterApi, Downloader {
@@ -93,10 +98,14 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
     private ActivoApi activoApi;
     
     @Autowired
-	private UtilDiccionarioApi utilDiccionarioApi;
+    private ExpedienteComercialApi expedienteComercialApi;
+    
+    
+    @Resource(name = "entityTransactionManager")
+    private PlatformTransactionManager transactionManager;
     
     private final String GESTOR_DOCUMENTAL = "GESTOR_DOC";
-    private final String TANGO_MANDAR_GESTOR_DOCUMENTAL = "Waterfall";
+    
     
 	@Override
 	public List<DtoAdjunto> getAdjuntosActivo(Activo activo) throws GestorDocumentalException {
@@ -338,6 +347,24 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 		return respuesta;
 	}
 
+	public Integer crearExpedienteComercialTransactional(Long idEco, String username) throws GestorDocumentalException {		
+		Integer resultado = null;
+		
+		
+		TransactionStatus transaction = null;
+		try{
+			transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
+			ExpedienteComercial eco = expedienteComercialApi.findOne(idEco);
+			resultado = this.crearExpedienteComercial(eco, username);
+			transactionManager.commit(transaction);
+		}catch(Exception e){
+			logger.error("error creando el contenedor", e);
+			transactionManager.rollback(transaction);
+		}
+		
+		return resultado;
+		
+	}
 	
 	public Integer crearExpedienteComercial(ExpedienteComercial expedienteComercial, String username) throws GestorDocumentalException {		
 		String idExpedienteComercial = expedienteComercial.getNumExpediente().toString();
@@ -408,19 +435,6 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 
 	}
 	
-	// Obtiene en nombre del Cliente tal y como se va a utilizar en el GD
-	private String getClienteByCartera(DDCartera cartera) {
-		if (cartera!=null) {
-			if (DDCartera.CODIGO_CARTERA_HYT.equals(cartera.getCodigo())) {
-				return DDCartera.DESCRIPCION_CARTERA_HYT;
-			} else if(DDCartera.CODIGO_CARTERA_TANGO.equals(cartera.getCodigo())){
-				return TANGO_MANDAR_GESTOR_DOCUMENTAL;
-			}else {
-				return cartera.getDescripcion();
-			}
-		}
-		return "";
-	}
 	
 	public void crearRelacionActivosExpediente(ExpedienteComercial expedienteComercial, Long idDocRestClient, String[] listaActivos, String login, CrearRelacionExpedienteDto crearRelacionExpedienteDto) throws GestorDocumentalException {	
 		

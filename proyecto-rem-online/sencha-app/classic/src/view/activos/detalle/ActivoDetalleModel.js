@@ -111,7 +111,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		 },
 
 	     getIconClsEstadoGestion: function(get) {
-	     	var estadoAdmision = get('activo.gestion');
+	     	var estadoAdmision = get('activo.tieneOkTecnico');
 
 	     	if(estadoAdmision) {
 	     		return 'app-tbfiedset-ico icono-ok';

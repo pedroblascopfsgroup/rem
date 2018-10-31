@@ -325,6 +325,10 @@ Ext.define('HreRem.model.Activo', {
     			type: 'boolean'
     		},
     		{
+    			name: 'tieneOkTecnico',
+    			type: 'boolean'
+    		},
+    		{
     			name: 'informeComercialAceptado',
     			type: 'boolean'
     		},

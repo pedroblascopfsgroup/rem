@@ -217,6 +217,16 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private Boolean activoChkPerimetroAlquiler;
 	private List<?> activosAgrupacionRestringida;
 	
+	private Boolean tieneOkTecnico;
+
+	public Boolean getTieneOkTecnico() {
+		return tieneOkTecnico;
+	}
+
+	public void setTieneOkTecnico(Boolean tieneOkTecnico) {
+		this.tieneOkTecnico = tieneOkTecnico;
+	}
+
 	public int getPage() {
 		return page;
 	}

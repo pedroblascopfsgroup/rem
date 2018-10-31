@@ -159,9 +159,11 @@ public class UpdaterStateManager implements UpdaterStateApi{
 		}
 		else if(activoApi.getCondicionantesDisponibilidad(activo.getId()).getIsCondicionado()) {
 			codigo = DDSituacionComercial.CODIGO_DISPONIBLE_CONDICIONADO;
-		}
-		else if (!Checks.esNulo(activo.getTipoComercializacion())) {
-			int indexAux = Integer.parseInt(activo.getTipoComercializacion().getCodigo()); 
+		}					
+		else if (!Checks.esNulo(activo.getActivoPublicacion())) {
+			
+			int indexAux = Integer.parseInt(activo.getActivoPublicacion().getTipoComercializacion().getCodigo());
+			
 			switch(indexAux) {
 				case 1:
 					codigo = DDSituacionComercial.CODIGO_DISPONIBLE_VENTA;

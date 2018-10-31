@@ -66,8 +66,9 @@ public class NotificatorServiceODocCEEAnalisisPeticion extends AbstractNotificat
 	@Override
 	public void notificatorFinTareaConValores(ActivoTramite tramite, List<TareaExternaValor> valores) {
 		
-		if(!Checks.esNulo(tramite.getTrabajo().getSolicitante()) && !Checks.esNulo(tramite.getTrabajo().getSolicitante().getEmail())
-				&& !tramite.getTrabajo().getSolicitante().equals(genericAdapter.getUsuarioLogado())) {
+		if(!Checks.esNulo(tramite) && !Checks.esNulo(tramite.getTrabajo()) &&
+			!Checks.esNulo(tramite.getTrabajo().getSolicitante()) && !Checks.esNulo(tramite.getTrabajo().getSolicitante().getEmail())
+			&& !tramite.getTrabajo().getSolicitante().equals(genericAdapter.getUsuarioLogado())) {
 
 			//Notificacion al solicitante
 			Usuario peticionario = null;

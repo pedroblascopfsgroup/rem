@@ -982,7 +982,10 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	public Oferta trabajoToOferta(Trabajo trabajo) {
 		ExpedienteComercial expediente = expedienteComercialApi.findOneByTrabajo(trabajo);
 
-		return expediente.getOferta();
+		if(!Checks.esNulo(expediente) && !Checks.esNulo(expediente.getOferta())) {
+			return expediente.getOferta();
+		}
+		return null;
 	}
 
 	@Override
@@ -1384,7 +1387,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						Boolean tieneNifConyugue = true;
 						
 						for(CompradorExpediente cex: listaCex){
-							if(!Checks.esNulo(cex) && DDEstadosCiviles.CODIGO_ESTADO_CIVIL_CASADO.equals(cex.getEstadoCivil().getCodigo()) && Checks.esNulo(cex.getDocumentoConyuge())
+							if(!Checks.esNulo(cex) && !Checks.esNulo(cex.getEstadoCivil()) && !Checks.esNulo(cex.getRegimenMatrimonial()) 
+									&& DDEstadosCiviles.CODIGO_ESTADO_CIVIL_CASADO.equals(cex.getEstadoCivil().getCodigo()) && Checks.esNulo(cex.getDocumentoConyuge())
 									&& DDRegimenesMatrimoniales.COD_GANANCIALES.equals(cex.getRegimenMatrimonial().getCodigo())){
 								tieneNifConyugue = false;
 								break;

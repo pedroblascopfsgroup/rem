@@ -93,7 +93,9 @@ public class ActivoControllerDispatcher {
 					value = object.toString();
 				} else if (Date.class.isAssignableFrom(type)) {
 					SimpleDateFormat formatter = new  SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-					value = (object instanceof Date) ? (Date) object : formatter.parse(object.toString());
+					if(!Checks.esNulo(object) && !Checks.esNulo(object.toString())) {
+						value = (object instanceof Date) ? (Date) object : formatter.parse(object.toString());
+					}
 				}  else if (Integer.class.isAssignableFrom(type)) {
 					value = Integer.parseInt(object.toString());
 				} else if (Long.class.isAssignableFrom(type)) {

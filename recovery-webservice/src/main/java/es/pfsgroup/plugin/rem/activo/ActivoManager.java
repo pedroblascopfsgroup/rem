@@ -1,5 +1,29 @@
 package es.pfsgroup.plugin.rem.activo;
 
+import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
+import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+
+import javax.annotation.Resource;
+
+import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.files.FileItem;
@@ -32,7 +56,6 @@ import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
-import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.gestorDocumental.manager.GestorDocumentalExpedientesManager;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.*;
@@ -46,7 +69,6 @@ import es.pfsgroup.plugin.rem.api.*;
 import es.pfsgroup.plugin.rem.condiciontanteo.CondicionTanteoApi;
 import es.pfsgroup.plugin.rem.factory.TabActivoFactoryApi;
 import es.pfsgroup.plugin.rem.gestor.dao.GestorExpedienteComercialDao;
-import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.notificator.impl.NotificatorServiceSancionOfertaAceptacionYRechazo;
 import es.pfsgroup.plugin.rem.model.*;
 import es.pfsgroup.plugin.rem.model.dd.*;
@@ -64,6 +86,7 @@ import es.pfsgroup.plugin.rem.rest.dto.FileResponse;
 import es.pfsgroup.plugin.rem.rest.dto.PortalesDto;
 import es.pfsgroup.plugin.rem.service.TabActivoService;
 import es.pfsgroup.plugin.rem.tareasactivo.TareaActivoManager;
+import es.pfsgroup.plugin.rem.thread.ContenedorExpComercial;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 import es.pfsgroup.plugin.rem.utils.DiccionarioTargetClassMap;
 import es.pfsgroup.plugin.rem.visita.dao.VisitaDao;
@@ -188,7 +211,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 	@Autowired
 	private GestorDocumentalAdapterApi gestorDocumentalAdapterApi;
-
+	
 	@Autowired
 	private ApiProxyFactory proxyFactory;
 
@@ -200,9 +223,12 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 	@Autowired
 	private MSVRawSQLDao rawDao;
-	
+
 	@Autowired
 	private AgrupacionAdapter agrupacionAdapter;
+
+	@Resource(name = "entityTransactionManager")
+    private PlatformTransactionManager transactionManager;
 
 	@Override
 	public String managerName() {
@@ -333,7 +359,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	@Override
 	@BusinessOperation(overrides = "activoManager.saveOfertaActivo")
 	@Transactional(readOnly = false)
-	public boolean saveOfertaActivo(DtoOfertaActivo dto) throws JsonViewerException {
+	public boolean saveOfertaActivo(DtoOfertaActivo dto) throws JsonViewerException, Exception {
 		boolean resultado = true;
 
 		// Si el activo pertenece a un lote comercial, no se pueden aceptar ofertas de forma individual en el activo
@@ -379,44 +405,76 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				Usuario usu = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
 				oferta.setUsuarioBaja(usu.getApellidoNombre());
 			}
+			
+			resultado = this.persistOferta(oferta);
+			
+			//ofertaApi.updateStateDispComercialActivosByOferta(oferta);
+			//genericDao.update(Oferta.class, oferta);
 
 			notificatorServiceSancionOfertaAceptacionYRechazo.notificatorFinSinTramite(oferta.getId());
 		}
 
 		return true;
 	}
+	
+	private boolean persistOferta(Oferta oferta){
+		TransactionStatus transaction = null;
+		boolean resultado = false;
+		try{
+			transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
+			ofertaApi.updateStateDispComercialActivosByOferta(oferta);
+			genericDao.update(Oferta.class, oferta);
+			transactionManager.commit(transaction);
+			resultado = true;
+		}catch(Exception e){
+			logger.error("Error en activoManager", e);
+			transactionManager.rollback(transaction);
+			
+		}
+		return resultado;
+	}
 
+	
 	@Override
 	public boolean crearExpediente(Oferta oferta, Trabajo trabajo) {
+
+		TransactionStatus transaction = null;
+		ExpedienteComercial expedienteComercial = null;
+		boolean resultado = false;
+
 		try {
-			ExpedienteComercial expedienteComercial = crearExpedienteGuardado(oferta, trabajo);
+			transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
+			expedienteComercial = crearExpedienteGuardado(oferta, trabajo);
 			expedienteComercial = crearExpedienteReserva(expedienteComercial);
 			expedienteComercialApi.crearCondicionesActivoExpediente(oferta.getActivoPrincipal(), expedienteComercial);
-
-			// cuando creamos el expediente, si procede, creamos el repositorio en el gestor documental
-			Integer idExpediente;
-			try{
-				if(!Checks.esNulo(appProperties.getProperty(GestorDocumentalExpedientesManager.URL_REST_CLIENT_GESTOR_DOCUMENTAL_EXPEDIENTES))){
-					idExpediente = gestorDocumentalAdapterApi.crearExpedienteComercial(expedienteComercial,genericAdapter.getUsuarioLogado().getUsername());
-					logger.debug("GESTOR DOCUMENTAL [ crearExpediente para " + expedienteComercial.getNumExpediente() + "]: ID EXPEDIENTE RECIBIDO " + idExpediente);
-				}
-
-			} catch (GestorDocumentalException gexc) {
-				logger.error("Error al crear el repositorio para el expediente comercial", gexc);
-			}
+			
+			transactionManager.commit(transaction);
+			resultado = true;
 
 		} catch (Exception ex) {
 			logger.error("Error en activoManager", ex);
-			return false;
+			transactionManager.rollback(transaction);
+			resultado = false;
 		}
 
-		return true;
-	}
+		// cuando creamos el expediente, si procede, creamos el repositorio
+		// en el gestor documental
+		if (resultado) {
+			if (!Checks.esNulo(appProperties
+					.getProperty(GestorDocumentalExpedientesManager.URL_REST_CLIENT_GESTOR_DOCUMENTAL_EXPEDIENTES))) {
+				Thread hiloReactivar = new Thread( new ContenedorExpComercial(genericAdapter.getUsuarioLogado().getUsername(), expedienteComercial.getId()));
+				hiloReactivar.start();	
 
-	@Transactional(readOnly = false)
-	private ExpedienteComercial crearExpedienteReserva(ExpedienteComercial expedienteComercial) {
-		// HREOS-2799
-		// Activos de Cajamar, debe tener en Reserva - tipo de Arras por defecto: Confirmatorias
+			}
+			
+		}
+
+		return resultado;
+	}
+	
+	private ExpedienteComercial crearExpedienteReserva(ExpedienteComercial expedienteComercial){
+		//HREOS-2799
+		//Activos de Cajamar, debe tener en Reserva - tipo de Arras por defecto: Confirmatorias
 		Oferta oferta = expedienteComercial.getOferta();
 
 		if (!Checks.esNulo(oferta.getActivoPrincipal()) && !Checks.esNulo(oferta.getActivoPrincipal().getCartera()) && DDCartera.CODIGO_CARTERA_CAJAMAR.equals(oferta.getActivoPrincipal().getCartera
@@ -436,7 +494,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 		return expedienteComercial;
 	}
-
+	
 	@Transactional(readOnly = false)
 	private ExpedienteComercial crearExpedienteGuardado(Oferta oferta, Trabajo trabajo) throws Exception {
 
@@ -628,8 +686,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 
 		crearCompradores(oferta, nuevoExpediente);
+		
+		nuevoExpediente = genericDao.save(ExpedienteComercial.class, nuevoExpediente);
 
-		genericDao.save(ExpedienteComercial.class, nuevoExpediente);
 		genericDao.save(Oferta.class, oferta);
 
 		crearGastosExpediente(oferta, nuevoExpediente);
@@ -2114,11 +2173,13 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 	@Override
 	public boolean isActivoAsistido(Activo activo) {
+		ActivoBancario activoBancario = getActivoBancarioByIdActivo(activo.getId());
 		if (!Checks.esNulo(activo.getSubcartera()))
 			if (DDSubcartera.CODIGO_CAJ_ASISTIDA.equals(activo.getSubcartera().getCodigo())
 					|| DDSubcartera.CODIGO_SAR_ASISTIDA.equals(activo.getSubcartera().getCodigo())
 					|| DDSubcartera.CODIGO_BAN_ASISTIDA.equals(activo.getSubcartera().getCodigo())
-					|| DDSubcartera.CODIGO_JAIPUR_FINANCIERO.equals(activo.getSubcartera().getCodigo()))
+					|| DDSubcartera.CODIGO_JAIPUR_FINANCIERO.equals(activo.getSubcartera().getCodigo())
+					|| DDClaseActivoBancario.CODIGO_FINANCIERO.equals(activoBancario.getClaseActivo().getCodigo()))
 				return true;
 		return false;
 	}
@@ -4138,4 +4199,20 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 		return false;
 	}
+
+	public Long getIdByNumActivo(Long numActivo) {
+		
+		Long idActivo = null;
+		
+		try {
+		
+		idActivo = Long.parseLong(rawDao.getExecuteSQL("SELECT ACT_ID FROM ACT_ACTIVO WHERE ACT_NUM_ACTIVO = " + numActivo + " AND BORRADO = 0"));
+		
+		} catch (Exception e) {
+			return null;
+		}
+		
+		return idActivo;
+	}
+
 }

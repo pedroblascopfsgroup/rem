@@ -82,6 +82,7 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 				boolean tieneReserva = false;
 				if(valores != null && !valores.isEmpty()){
 					tieneReserva = ofertaApi.checkReserva(valores.get(0).getTareaExterna()) && !Checks.esNulo(expediente.getReserva()) && 
+							!Checks.esNulo(expediente.getReserva().getEstadoReserva()) &&
 							(DDEstadosReserva.CODIGO_FIRMADA.equals(expediente.getReserva().getEstadoReserva().getCodigo()) ||
 									DDEstadosReserva.CODIGO_RESUELTA_POSIBLE_REINTEGRO.equals(expediente.getReserva().getEstadoReserva().getCodigo()) || 
 									DDEstadosReserva.CODIGO_PENDIENTE_DEVOLUCION.equals(expediente.getReserva().getEstadoReserva().getCodigo()));

@@ -28,7 +28,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import edu.emory.mathcs.backport.java.util.Arrays;
 import es.capgemini.devon.dto.WebDto;
@@ -150,6 +153,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
     @Autowired
     private TareaActivoApi tareaActivoApi;
+    
+    @Resource(name = "entityTransactionManager")
+	private PlatformTransactionManager transactionManager;
 
 	@Override
 	public String managerName() {
@@ -159,6 +165,22 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	@Override
 	public ExpedienteComercial findOne(Long id) {
 		return expedienteComercialDao.get(id);
+	}
+	
+	@Override
+	public ExpedienteComercial findOneTransactional(Long id) {
+		TransactionStatus transaction = null;
+		ExpedienteComercial expediente = null;
+		try{
+			transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
+			expediente = this.findOne(id);
+			transactionManager.commit(transaction);
+		}catch(Exception e){
+			logger.error("error buscando el eco", e);
+			transactionManager.rollback(transaction);
+		}
+
+		return expediente;
 	}
 
 	@Override
@@ -5154,8 +5176,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		if (!Checks.esNulo(activoTramite)) {
 			Trabajo trabajo = activoTramite.getTrabajo();
 			if (!Checks.esNulo(trabajo)) {
-				ExpedienteComercial expediente = expedienteComercialDao.getExpedienteComercialByIdTrabajo(trabajo.getId());
-				if (!Checks.esNulo(expediente.getReserva())){
+				ExpedienteComercial expediente = expedienteComercialDao
+						.getExpedienteComercialByTrabajo(trabajo.getId());
+				if (!Checks.esNulo(expediente.getReserva()) 
+						&& !Checks.esNulo(expediente.getReserva().getEstadoReserva()) ){
 					return expediente.getReserva().getEstadoReserva().getCodigo().equals(DDEstadosReserva.CODIGO_FIRMADA);
 				}
 			}

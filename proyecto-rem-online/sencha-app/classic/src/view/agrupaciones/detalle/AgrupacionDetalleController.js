@@ -328,7 +328,12 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
                                 	
                             	//storeTemp.removeAll();
                             	storeTemp.load();
-								me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+                            	var data = Ext.decode(a.responseText);
+                            	if(data.success == "true"){
+                            		me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+                            	}else{
+                            		me.fireEvent("errorToast", data.error);
+                            	}
 								 //me.unmask();
                             },
                             

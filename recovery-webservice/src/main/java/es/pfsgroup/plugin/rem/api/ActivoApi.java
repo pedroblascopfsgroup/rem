@@ -934,4 +934,6 @@ public interface ActivoApi {
 	
 	DtoActivoFichaCabecera getActivosAgrupacionRestringida(Long idActivo);
 
+	public Long getIdByNumActivo(Long numActivo);
+
 }

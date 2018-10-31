@@ -23,6 +23,7 @@ import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
 import es.pfsgroup.plugin.rem.model.DtoTrabajoListActivos;
 import es.pfsgroup.plugin.rem.model.PropuestaActivosVinculados;
 import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
+import es.pfsgroup.plugin.rem.model.VOfertasTramitadasPendientesActivosAgrupacion;
 
 public interface ActivoDao extends AbstractDao<Activo, Long>{
 	
@@ -168,6 +169,8 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	Boolean publicarAgrupacionConHistorico(Long idAgrupacion, String username);
 
 	Boolean publicarAgrupacionSinHistorico(Long idAgrupacion, String username, String eleccionUsuarioTipoPublicacionAlquiler);
+
+	public List<VOfertasTramitadasPendientesActivosAgrupacion> getListOfertasTramitadasPendientesActivo(Long idActivo);
 
 
 	/**

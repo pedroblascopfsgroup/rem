@@ -50,6 +50,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
+import es.pfsgroup.plugin.rem.trabajo.TrabajoManager;
 import es.pfsgroup.plugin.rem.utils.FileItemUtils;
 
 public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNotificatorService
@@ -112,6 +113,9 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 	
 	@Autowired
 	private UsuarioManager usuarioManager;
+	
+	@Autowired
+	private TrabajoManager trabajoManager;
 
 	@Override
 	public final void notificator(ActivoTramite tramite) {
@@ -121,7 +125,7 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 	protected void generaNotificacion(ActivoTramite tramite, boolean permieRechazar, boolean permiteNotificarAprobacion) {
 
 		Activo activo = tramite.getActivo();
-		Oferta oferta = ofertaApi.trabajoToOferta(tramite.getTrabajo());
+		Oferta oferta = ofertaApi.trabajoToOferta(trabajoManager.findOne(tramite.getTrabajo().getId()));
 
 		ActivoTramite tramiteSimulado = new ActivoTramite();
 		tramiteSimulado.setActivo(activo);
@@ -132,6 +136,9 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 	private void sendNotification(ActivoTramite tramite, boolean permiteRechazar, Activo activo, Oferta oferta, boolean permiteNotificarAprobacion) {
 
 		ArrayList<String> destinatarios = new ArrayList<String>();
+		
+		Usuario buzonRem = usuarioManager.getByUsername(BUZON_REM);
+		Usuario buzonPfs = usuarioManager.getByUsername(BUZON_PFS);
 		
 		if (!Checks.esNulo(oferta)) {
 			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(oferta.getId());
@@ -154,8 +161,12 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 					return;
 				}
 				
-				destinatarios.add(usuarioManager.getByUsername(BUZON_REM).getEmail());
-				destinatarios.add(usuarioManager.getByUsername(BUZON_PFS).getEmail());
+				if(!Checks.esNulo(buzonRem)) {
+					destinatarios.add(buzonRem.getEmail());
+				}
+				if(!Checks.esNulo(buzonPfs)) {
+					destinatarios.add(buzonPfs.getEmail());
+				}
 
 				this.enviaNotificacionAceptar(tramite, oferta,
 						expediente,
@@ -192,8 +203,12 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 					destinatarios.add(gestorFormalizacion);
 				}
 				
-				destinatarios.add(usuarioManager.getByUsername(BUZON_REM).getEmail());
-				destinatarios.add(usuarioManager.getByUsername(BUZON_PFS).getEmail());
+				if(!Checks.esNulo(buzonRem)) {
+					destinatarios.add(buzonRem.getEmail());
+				}
+				if(!Checks.esNulo(buzonPfs)) {	
+					destinatarios.add(buzonPfs.getEmail());
+				}
 				
 				this.enviaNotificacionRechazar(tramite, activo, oferta, destinatarios.toArray(new String[] {}));
 			}
@@ -564,7 +579,7 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 		
 		ActivoBancario activoBancario = genericDao.get(ActivoBancario.class,
 				genericDao.createFilter(FilterType.EQUALS, "activo.id", tramite.getActivo().getId())); 
-		if (!Checks.esNulo(expediente.getId()) && !Checks.esNulo(expediente.getReserva()) 
+		if (!Checks.esNulo(expediente.getId()) && !Checks.esNulo(expediente.getReserva()) && !Checks.esNulo(activoBancario) && !Checks.esNulo(activoBancario.getClaseActivo())
 				&& !DDClaseActivoBancario.CODIGO_FINANCIERO.equals(activoBancario.getClaseActivo().getCodigo())) {
 			tieneReserva = true;
 			String reservationKey = "";

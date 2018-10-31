@@ -402,11 +402,6 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 		     params: { activosId:activosId},
 		     success: function (result, operation) {
 		    	var success = Ext.decode(result.responseText);
-		    	if(success.success == "true"){
-		    		me.fireEvent("infoToast", HreRem.i18n("msg.cerrarTramite.ok"));
-		    	}else{
-		    		me.getView().fireEvent("errorToast", success.msgError);
-		    	}
             },
             
             failure: function (a, operation, context) {

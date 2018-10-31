@@ -317,6 +317,7 @@ public class ActivoAdapter {
 	private static final String AVISO_DESCRIPCION_MODIFICADAS_CONDICIONES_JURIDICAS = "activo.aviso.descripcion.modificadas.condiciones.juridicas";
 	private static final String ERROR_ACTIVO_UPDATE_SUBDIVISION = "No se puede actualizar el estado de publicación: no cumple las condiciones de publicación.";
 	private static final String ERROR_ACTIVO_UPDATE_SUBDIVISION_ACTIVO_FORZADO ="No se puede actualizar el estado de publicación: el activo esta publicado forzado.";
+	private static final String ERROR_ACTIVO_UPDATE_SUBDIVISION_INFORME_COMERCIAL = "No se han podido aprobar todos los informes comerciales de los activos seleccionados.";
 	public static final String T_PUBLICACION= "T011";
 	public static final String CODIGO_ESTADO_PROCEDIMIENTO_EN_TRAMITE = "10";
 	public static final String ERROR_CRM_UNKNOWN_ID = "UNKNOWN_ID";
@@ -3592,7 +3593,7 @@ public class ActivoAdapter {
 	 */
 	@Transactional(readOnly = false)
 	public Boolean updateInformeComercialMSV(String[] activosId) throws JsonViewerException {
-		
+		int contador= 0;
 		Boolean success=false;
 		ActivoEstadosInformeComercialHistorico activoEstadosInformeComercialHistorico = new ActivoEstadosInformeComercialHistorico();
 		Filter estadoInformeComercialFilter = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoInformeComercial.ESTADO_INFORME_COMERCIAL_ACEPTACION);
@@ -3606,6 +3607,7 @@ public class ActivoAdapter {
 				if(!Checks.esNulo(activo)){
 					
 					if(!informeComercialAprobado(activo)) {
+						
 						if(!activoApi.checkTiposDistintos(activo)){
 							//Si han habido cambios en el historico, los persistimos.
 							if(!Checks.esNulo(activoEstadosInformeComercialHistorico) && !Checks.esNulo(activoEstadosInformeComercialHistorico.getEstadoInformeComercial())){
@@ -3650,7 +3652,12 @@ public class ActivoAdapter {
 						}else {
 							success = publicarActivoConHistorico(success, username, activo);
 						}
+					}else{
+						contador++;
 					}
+				}
+				if(contador > 0) {
+					throw new JsonViewerException(ERROR_ACTIVO_UPDATE_SUBDIVISION_INFORME_COMERCIAL);
 				}
 			} catch(JsonViewerException e) {
 				throw e;
@@ -3698,14 +3705,14 @@ public class ActivoAdapter {
 	/**
 	 * Comprueba para un activo si tiene el condicionante de sin informe comercial aprobado marcado en naranja.
 	 * @param activo
-	 * @return
+	 * @return booleano a true si esta en naranja
 	 */
 	private Boolean informeComercialAprobado(Activo activo) {
-		Boolean check = false;
+		Boolean check = true;
 		VCondicionantesDisponibilidad vCondicionante = activoApi.getCondicionantesDisponibilidad(activo.getId());
 		if(!Checks.esNulo(vCondicionante)) {
 			if(vCondicionante.getSinInformeAprobado()) {
-				check = true;
+				check = false;
 			}
 		}
 		return check;

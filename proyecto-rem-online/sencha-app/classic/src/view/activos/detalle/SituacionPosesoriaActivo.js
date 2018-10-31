@@ -180,15 +180,12 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 			            		change: function(combo, value) {
 			            			var me = this;
 
-		            				
-				            			if(value == CONST.COMBO_OCUPACION['SI']) {
-				            				me.up('formBase').down('[reference=comboSituacionPosesoriaConTitulo]').setValue(CONST.COMBO_CON_TITULO['SI']);
-				            				me.up('formBase').down('[reference=comboSituacionPosesoriaConTitulo]').setDisabled(false);
-				            			} else if (value == CONST.COMBO_OCUPACION['NO']){
-				            				me.up('formBase').down('[reference=comboSituacionPosesoriaConTitulo]').setDisabled(true); 
-				            			}
-		            				
-			            					            			
+			            			if(value == CONST.COMBO_OCUPACION['SI']) {
+			            				me.up('formBase').down('[reference=comboSituacionPosesoriaConTitulo]').setValue(CONST.COMBO_CON_TITULO['SI']);
+			            				me.up('formBase').down('[reference=comboSituacionPosesoriaConTitulo]').setDisabled(false);
+			            			} else if (value == CONST.COMBO_OCUPACION['NO']){
+			            				me.up('formBase').down('[reference=comboSituacionPosesoriaConTitulo]').setDisabled(true); 
+			            			}		
 			            		}
 			            	}
 				        },				      

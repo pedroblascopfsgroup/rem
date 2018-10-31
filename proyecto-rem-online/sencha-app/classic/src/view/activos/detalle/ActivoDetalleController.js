@@ -3521,15 +3521,24 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		var comboEstadoAlquiler = me.lookupReference('comboEstadoAlquilerRef');
 		var chkPerimetroAlquiler = me.lookupReference('chkPerimetroAlquilerRef');
 		var comboTipoInquilino = me.lookupReference('comboTipoInquilinoRef');
+		var comboOcupacion = me.getViewModel().get('activo.ocupado');
 		
-		if(comboEstadoAlquiler != null){
-			if(comboEstadoAlquiler.value == CONST.COMBO_ESTADO_ALQUILER["ALQUILADO"] || comboEstadoAlquiler.value == CONST.COMBO_ESTADO_ALQUILER["CON_DEMANDAS"]){
+		var comboValue = comboEstadoAlquiler.value;
+               
+		if(!Ext.isEmpty(comboEstadoAlquiler)){
+			if(comboValue == CONST.COMBO_ESTADO_ALQUILER["ALQUILADO"] || comboValue == CONST.COMBO_ESTADO_ALQUILER["CON_DEMANDAS"]){
+				chkPerimetroAlquiler.setValue(true);
 				chkPerimetroAlquiler.setDisabled(true);
 				comboTipoInquilino.setDisabled(false);
+				
+				if(!Ext.isEmpty(comboOcupacion) && CONST.COMBO_SI_NO["SI"]== comboOcupacion){
+					comboEstadoAlquiler.setDisabled(true);
+				}
 			} else {
+				chkPerimetroAlquiler.setValue(false);
 				chkPerimetroAlquiler.setDisabled(false);
 				comboTipoInquilino.setDisabled(true); 
-			}		
+			}            	
 		}		
 	}
 });

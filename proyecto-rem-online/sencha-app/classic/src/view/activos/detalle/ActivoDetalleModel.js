@@ -360,10 +360,11 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		},
 		
 		enableComboEstadoAlquiler: function(get){
-			var estadoComboOcupacion = get('patrimonio.ocupacion');
+			var estadoComboOcupacion = get('situacionPosesoria.ocupado');
+			var estadoComboConTitulo = get('situacionPosesoria.conTitulo');
 			
-			if(!Ext.isEmpty(estadoComboOcupacion)){
-				return (CONST.COMBO_OCUPACION["SI"] == estadoComboOcupacion);
+			if(!Ext.isEmpty(estadoComboOcupacion) && !Ext.isEmpty(estadoComboConTitulo)){
+				return (CONST.COMBO_OCUPACION["SI"] == estadoComboOcupacion && CONST.COMBO_CON_TITULO["SI"] == estadoComboConTitulo);
 			} 
 		}
 		

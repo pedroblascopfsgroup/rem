@@ -89,4 +89,17 @@ public  class ExpedienteComercialDaoImpl extends AbstractEntityDao<ExpedienteCom
 
 		return HibernateUtils.castObject(ExpedienteComercial.class, criteria.uniqueResult());
 	}
+	
+	@Override
+	public ExpedienteComercial getExpedienteComercialByTrabajo(Long idTrabajo) {
+		HQLBuilder hql = new HQLBuilder("from ExpedienteComercial exp");
+		HQLBuilder.addFiltroIgualQueSiNotNull(hql, "exp.trabajo.id", idTrabajo);
+
+		List<ExpedienteComercial> listaExpedientes = HibernateQueryUtils.list(this, hql);
+
+		if(!Checks.estaVacio(listaExpedientes))
+			return listaExpedientes.get(0);
+		else
+			return null;
+	}
 }

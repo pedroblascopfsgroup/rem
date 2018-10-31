@@ -69,4 +69,11 @@ public interface ExpedienteComercialDao extends AbstractDao<ExpedienteComercial,
 	 * @return Devuelve una entidad ExpedienteComercial.
 	 */
 	ExpedienteComercial getExpedienteComercialByIdOferta(Long idOferta);
+	
+	/**
+	* Devuelve el expedienteComercial asociado al trabajo
+	* @param idTrabajo
+	* @return
+	*/
+	ExpedienteComercial getExpedienteComercialByTrabajo(Long idTrabajo);
 }

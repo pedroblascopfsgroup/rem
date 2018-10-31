@@ -319,8 +319,6 @@ public class ActivoAdapter {
 	private static final String ERROR_ACTIVO_UPDATE_SUBDIVISION_ACTIVO_FORZADO ="No se puede actualizar el estado de publicación: el activo esta publicado forzado.";
 	public static final String T_PUBLICACION= "T011";
 	public static final String CODIGO_ESTADO_PROCEDIMIENTO_EN_TRAMITE = "10";
-	public static final String AVISO_TITULO_MODIFICADAS_CONDICIONES_JURIDICAS = "activo.aviso.titulo.modificadas.condiciones.juridicas";
-	public static final String AVISO_DESCRIPCION_MODIFICADAS_CONDICIONES_JURIDICAS = "activo.aviso.descripcion.modificadas.condiciones.juridicas";
 	public static final String ERROR_CRM_UNKNOWN_ID = "UNKNOWN_ID";
 
 	private BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();

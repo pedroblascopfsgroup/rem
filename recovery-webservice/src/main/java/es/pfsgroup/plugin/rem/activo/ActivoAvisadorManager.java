@@ -225,11 +225,20 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 		
 		// Aviso 12: Estado activo vandalizado
 		if(!Checks.esNulo(activo.getEstadoActivo())) {
-			if(DDEstadoActivo.ESTADO_ACTIVO_VANDALIZADO.equals(activo.getEstadoActivo().getCodigo())) {
+			if (DDEstadoActivo.ESTADO_ACTIVO_VANDALIZADO.equals(activo.getEstadoActivo().getCodigo())) {
 				DtoAviso dtoAviso = new DtoAviso();
 				dtoAviso.setDescripcion(activo.getEstadoActivo().getDescripcion());
 				dtoAviso.setId(String.valueOf(id));
 				listaAvisos.add(dtoAviso);		
+			}
+			
+			if (DDEstadoActivo.ESTADO_ACTIVO_NO_OBRA_NUEVA_VANDALIZADO.equals(activo.getEstadoActivo().getCodigo())) {
+				
+				DtoAviso dtoAviso = new DtoAviso();
+				dtoAviso.setDescripcion(activo.getEstadoActivo().getDescripcion());
+				dtoAviso.setId(String.valueOf(id));
+				listaAvisos.add(dtoAviso);
+				
 			}
 		}
 		

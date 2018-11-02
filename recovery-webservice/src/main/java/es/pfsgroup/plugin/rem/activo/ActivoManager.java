@@ -4946,4 +4946,23 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		return genericDao.getList(VTasacionCalculoLBK.class, genericDao.createFilter(FilterType.EQUALS, "idAgrupacion", idAgrupacion));
 	}
 	
+	@Override
+	public Integer getGeolocalizacion(Activo activo) {
+		if(activo.getLocalizacion() != null && activo.getLocalizacion().getLocalizacionBien() != null
+					&& activo.getLocalizacion().getLocalizacionBien().getProvincia() != null) {
+			String codigo = activo.getLocalizacion().getLocalizacionBien().getProvincia().getCodigo();
+			if (codigo.equals("0")
+					|| codigo.equals("98")
+					|| codigo.equals("99")) {
+				return 0;
+			} else if (codigo.equals("35")
+					|| codigo.equals("38")) {
+				return 1; // Islas Canarias
+			} else {
+				return 2; // Península
+			}
+		} else {
+			return 0;
+		}
+	}
 }

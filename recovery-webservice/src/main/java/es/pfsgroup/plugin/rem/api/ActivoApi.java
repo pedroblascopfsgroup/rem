@@ -1135,4 +1135,5 @@ public interface ActivoApi {
 
 	boolean isActivoEnPuja(Activo activo);
 
+	public Integer getGeolocalizacion(Activo activo);
 }

@@ -556,5 +556,7 @@ public interface OfertaApi {
 	Boolean checkProvinciaCompradores(TareaExterna tareaExterna);
 
 	Boolean checkNifConyugueLBB(TareaExterna tareaExterna);
+	
+	public List<Oferta> getListaOfertasByActivo(Activo activo);
 }
 

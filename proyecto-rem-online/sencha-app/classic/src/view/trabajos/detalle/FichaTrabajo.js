@@ -272,7 +272,6 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 												xtype: 'checkboxfieldbase',
 												boxLabel:  HreRem.i18n('fieldlabel.requerimiento'),												
 												reference: 'checkRequerimiento',
-												hidden: true,
 												bind:{
 													value: '{trabajo.requerimiento}',
 													hidden: '{!trabajo.esSareb}',

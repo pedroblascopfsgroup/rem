@@ -2921,17 +2921,16 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 				Oferta oferta = gastoExpediente.getExpediente().getOferta();
 
-				if (!Checks.esNulo(gastoExpediente.getImporteCalculo())) {
-					if (!Checks.esNulo(oferta.getImporteContraOferta())) {
-						Double importeContraOferta = oferta.getImporteContraOferta();
-						Double honorario = (importeContraOferta * gastoExpediente.getImporteCalculo()) / 100;
-
-						gastoExpediente.setImporteFinal(honorario);
-					} else {
-						Double importeOferta = oferta.getImporteOferta();
-						Double honorario = (importeOferta * gastoExpediente.getImporteCalculo()) / 100;
-
-						gastoExpediente.setImporteFinal(honorario);
+				Double calculoImporteC = gastoExpediente.getImporteCalculo();
+				
+				Long idActivo = gastoExpediente.getActivo().getId();
+				
+				for(ActivoOferta activoOferta : oferta.getActivosOferta()){
+					if(!Checks.esNulo(activoOferta.getImporteActivoOferta())){
+						if(activoOferta.getPrimaryKey().getActivo().getId().equals(idActivo)){
+							Double honorario = (activoOferta.getImporteActivoOferta() * calculoImporteC / 100);
+							gastoExpediente.setImporteFinal(honorario);
+						}
 					}
 				}
 

@@ -2052,6 +2052,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					beanUtilNotNull.copyProperty(dtoHistoricoMediador, "email",
 							historico.getMediadorInforme().getEmail());
 				}
+				if(historico.getAuditoria() != null){
+					beanUtilNotNull.copyProperty(dtoHistoricoMediador, "responsableCambio", historico.getAuditoria().getUsuarioCrear());
+				}				
 			} catch (IllegalAccessException e) {
 				logger.error("Error en activoManager", e);
 			} catch (InvocationTargetException e) {
@@ -3729,17 +3732,17 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	public ActivoTasacion getTasacionMasReciente(Activo activo) {
 
 		ActivoTasacion tasacionMasReciente = null;
-
-		if (!Checks.estaVacio(activo.getTasacion())) {
-			tasacionMasReciente = activo.getTasacion().get(0);
+		List<ActivoTasacion> tasacionesActivo = activo.getTasacion();
+		
+		if (!Checks.estaVacio(tasacionesActivo)) {
+			tasacionMasReciente = tasacionesActivo.get(0);
 			if (tasacionMasReciente != null) {
 				Date fechaValorTasacionMasReciente = new Date();
 				if (!Checks.esNulo(tasacionMasReciente.getValoracionBien())
 						&& !Checks.esNulo(tasacionMasReciente.getValoracionBien().getFechaValorTasacion())) {
 					fechaValorTasacionMasReciente = tasacionMasReciente.getValoracionBien().getFechaValorTasacion();
 				}
-				for (int i = 0; i < activo.getTasacion().size(); i++) {
-					ActivoTasacion tas = activo.getTasacion().get(i);
+				for (ActivoTasacion tas : tasacionesActivo) {
 					if (tas.getValoracionBien().getFechaValorTasacion() != null) {
 						if (!Checks.esNulo(tas) && !Checks.esNulo(tas.getValoracionBien())
 								&& !Checks.esNulo(tas.getValoracionBien().getFechaValorTasacion())

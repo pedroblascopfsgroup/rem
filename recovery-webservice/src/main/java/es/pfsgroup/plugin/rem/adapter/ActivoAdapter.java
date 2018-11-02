@@ -1384,9 +1384,10 @@ public class ActivoAdapter {
 	public List<ActivoFoto> getListFotosActivoById(Long id) {
 
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", id);
+		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
 		Order order = new Order(OrderType.ASC, "orden");
 
-		List<ActivoFoto> listaActivoFoto = genericDao.getListOrdered(ActivoFoto.class, order, filtro);
+		List<ActivoFoto> listaActivoFoto = genericDao.getListOrdered(ActivoFoto.class, order, filtro, filtroBorrado);
 		Activo activo = this.getActivoById(id);
 
 		if (activo != null) {
@@ -2455,6 +2456,7 @@ public class ActivoAdapter {
 				OperationResultResponse reponseDelete = gestorDocumentalFotos.delete(actvFoto.getRemoteId());
 				if (reponseDelete.getError() != null && !reponseDelete.getError().isEmpty()
 						&& !reponseDelete.getError().equals(ERROR_CRM_UNKNOWN_ID)) {
+					genericDao.deleteById(ActivoFoto.class, actvFoto.getId());
 					throw new UserException(reponseDelete.getError());
 				}
 			}

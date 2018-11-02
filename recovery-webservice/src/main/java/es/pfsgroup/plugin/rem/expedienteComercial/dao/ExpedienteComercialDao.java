@@ -49,5 +49,12 @@ public interface ExpedienteComercialDao extends AbstractDao<ExpedienteComercial,
 	 * @return
 	 */
 	public ExpedienteComercial getExpedienteComercialByTrabajo(Long idTrabajo);
-	
+
+	/**
+	 * Este método obtiene un expediente comercial por el número de expediente comercial asociado.
+	 *
+	 * @param numeroExpediente: número del expediente comercial.
+	 * @return Devuelve un objeto ExpedienteComercial si coincide con el número de expediente pasado por parámetro.
+	 */
+    ExpedienteComercial getExpedienteComercialByNumExpediente(Long numeroExpediente);
 }

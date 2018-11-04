@@ -35,6 +35,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -432,6 +433,12 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 			beanUtilNotNull.copyProperty(activoPublicacion, "checkOcultarPrecioVenta", dto.getNoMostrarPrecioVenta());
 			beanUtilNotNull.copyProperty(activoPublicacion, "checkSinPrecioVenta", dto.getPublicarSinPrecioVenta());
 			beanUtilNotNull.copyProperty(activoPublicacion, "checkPublicarAlquiler", dto.getPublicarAlquiler());
+			if (activoPublicacion.getCheckOcultarAlquiler() && !dto.getOcultarAlquiler()){
+				Boolean envioCorreo = comprobarEnvioCorreoAdecuacion(activoPublicacion);
+				if (envioCorreo){
+					
+				}
+			}
 			beanUtilNotNull.copyProperty(activoPublicacion, "checkOcultarAlquiler", dto.getOcultarAlquiler());
 			if(!Checks.esNulo(dto.getOcultarAlquiler()) && !dto.getOcultarAlquiler()) {
 				// Si el check de ocultar viene implícitamente a false vaciar motivos de ocultación.
@@ -785,5 +792,50 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	@Override
 	public Date getFechaInicioEstadoActualPublicacionVenta(Long idActivo) {
 		return activoPublicacionDao.getFechaInicioEstadoActualPublicacionVenta(idActivo);
+	}
+	
+	@Override
+	public Boolean comprobarEnvioCorreoAdecuacion(ActivoPublicacion activoPublicacion){
+		
+		Activo activo = activoPublicacion.getActivo();
+		Boolean precioPublicacion = activoPublicacion.getCheckSinPrecioAlquiler();
+		
+		List<DtoAdmisionDocumento> listDtoAdmisionDocumento = activoAdapter.getListDocumentacionAdministrativaById(activo.getId());
+		boolean conCee = false;
+
+		for(DtoAdmisionDocumento aListDtoAdmisionDocumento : listDtoAdmisionDocumento) {
+			if (DDTipoDocumentoActivo.CODIGO_CEE.equals(aListDtoAdmisionDocumento.getCodigoTipoDocumentoActivo())) {
+				conCee = true;
+			}
+		}
+		
+		//Falta adecuacion
+		if (precioPublicacion && !conCee){
+			return true;
+		}else {
+			return false;
+		}
+	}
+	
+	@Override
+	public boolean enviarCorreoAdecuacion(ActivoPublicacion activoPublicacion) {
+		boolean resultado = false;
+
+		Activo activo = activoPublicacion.getActivo();
+
+		try {
+			ArrayList<String> mailsPara = new ArrayList<String>();
+			mailsPara.add("vhernandezi@haya.es");
+			String asunto = "Adecuación del activo "+ activo.getNumActivo() +" por publicación en www.haya.es";
+			String cuerpo = "Se ha pre-publicado en alquiler el activo "
+			+ activo.getNumActivo() +" que NO está adecuado, por favor revíselo y actualice el dato correspondiente para que se pueda publicar el activo en la web"
+			+"Muchas gracias y un saludo";
+
+			genericAdapter.sendMail(mailsPara, new ArrayList<String>(),asunto,cuerpo);
+			resultado = true;
+		} catch (Exception e) {
+			logger.error("No se ha podido notificar la adecuación del activo.", e);
+		}
+		return resultado;
 	}
 }

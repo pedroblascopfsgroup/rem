@@ -175,4 +175,8 @@ public interface ActivoEstadoPublicacionApi {
 	 * @return Devuelve un objeto fecha si el activo consta de estado de publicación, null de otro modo.
 	 */
 	Date getFechaInicioEstadoActualPublicacionVenta(Long idActivo);
+
+	Boolean comprobarEnvioCorreoAdecuacion(ActivoPublicacion activoPublicacion);
+
+	boolean enviarCorreoAdecuacion(ActivoPublicacion activoPublicacion);
 }

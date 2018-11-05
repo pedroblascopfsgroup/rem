@@ -27,11 +27,12 @@ DECLARE
 	  P_ACT_ID NUMBER;
 	  P_ALL_ACTIVOS NUMBER;
 	  P_CLASE_ACTIVO VARCHAR2(3200);
-
+	  ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
+          ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
 
 BEGIN	
 
-  	REM01.SP_AGA_ASIGNA_GESTOR_ACTIVO_V3('SP_AGA_V4', PL_OUTPUT, NULL, NULL, '02');
+  	  REM01.SP_AGA_ASIGNA_GESTOR_ACTIVO_V3('SP_AGA_V4', PL_OUTPUT, NULL, NULL, '02');
 
 EXCEPTION
      WHEN OTHERS THEN

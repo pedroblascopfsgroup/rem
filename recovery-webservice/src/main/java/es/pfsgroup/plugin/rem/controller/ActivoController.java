@@ -60,6 +60,7 @@ import es.pfsgroup.plugin.rem.excel.ActivoExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
 import es.pfsgroup.plugin.rem.excel.PublicacionExcelReport;
+import es.pfsgroup.plugin.rem.exception.RemUserException;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoFoto;
 import es.pfsgroup.plugin.rem.model.DtoActivoAdministracion;
@@ -1534,10 +1535,14 @@ public class ActivoController extends ParadiseJsonController {
 			boolean success = adapter.saveAdmisionDocumento(dtoAdmisionDocumento);
 			model.put("success", success);
 
-		} catch (Exception e) {
+		} 		
+		catch (RemUserException e) {
 			logger.error("error en activoController", e);
 			model.put("success", false);
-		}
+			model.put("msg", e.getMensaje());
+		} 
+		
+
 
 		return createModelAndViewJson(model);
 	}

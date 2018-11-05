@@ -322,8 +322,18 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		 estaPublicadoVentaOAlquiler: function(get) {
 			 var estadoAlquilerCodigo = get('activo.estadoAlquilerCodigo');
 			 var estadoVentaCodigo = get('activo.estadoVentaCodigo');
-
-			 return estadoAlquilerCodigo === CONST.ESTADO_PUBLICACION_ALQUILER['PUBLICADO'] || estadoVentaCodigo === CONST.ESTADO_PUBLICACION_VENTA['PUBLICADO'];
+			 var incluyeDestinoComercialAlquiler = get('activo.incluyeDestinoComercialAlquiler');
+			 var incluyeDestinoComercialVenta = get('activo.incluyeDestinoComercialVenta');
+			 
+			 if(incluyeDestinoComercialVenta && incluyeDestinoComercialAlquiler) {
+				 return estadoAlquilerCodigo === CONST.ESTADO_PUBLICACION_ALQUILER['PUBLICADO'] || estadoVentaCodigo === CONST.ESTADO_PUBLICACION_VENTA['PUBLICADO'];
+			 } else if(incluyeDestinoComercialVenta) {
+				 return estadoVentaCodigo === CONST.ESTADO_PUBLICACION_VENTA['PUBLICADO'];
+			 } else if (incluyeDestinoComercialAlquiler){
+				 return estadoAlquilerCodigo === CONST.ESTADO_PUBLICACION_ALQUILER['PUBLICADO'];
+			 } else {
+				 return false;
+			 }
 		 },
 
 		 activoPertenceAgrupacionComercialOrRestringida: function(get) {

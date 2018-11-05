@@ -2738,11 +2738,10 @@ public class ActivoController extends ParadiseJsonController {
 				model.put("error", ERROR_ACTIVO_NOT_EXISTS);
 			}
 		} catch (NumberFormatException e) {
-			e.printStackTrace();
 			model.put("success", false);
 			model.put("error", ERROR_ACTIVO_NO_NUMERICO);
 		} catch(Exception e) {
-			e.printStackTrace();
+			logger.error("error obteniendo el activo ",e);
 			model.put("success", false);
 			model.put("error", ERROR_GENERICO);
 		}

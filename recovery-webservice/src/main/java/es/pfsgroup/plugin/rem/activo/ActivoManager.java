@@ -1181,7 +1181,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			// inserta en el histórico
 			genericDao.deleteById(ActivoValoraciones.class, id);			
 		}
-		restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO, activoValoracion.getActivo());
+		if(activoValoracion != null && activoValoracion.getActivo() != null){ 
+			restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO, activoValoracion.getActivo());
+		}
 		return true;
 	}
 
@@ -1719,11 +1721,16 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	}
 
 	public Boolean checkAdmisionAndGestion(TareaExterna tareaExterna) {
-
-		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", tareaExternaToActivo(tareaExterna).getId());
-		VBusquedaPublicacionActivo publicacionActivo = genericDao.get(VBusquedaPublicacionActivo.class, filtro);
-
-		return (publicacionActivo.getAdmision() && publicacionActivo.getGestion());
+		Boolean resultado = false;
+		Activo activo = tareaExternaToActivo(tareaExterna);
+		if(activo != null){
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", activo.getId());
+			VBusquedaPublicacionActivo publicacionActivo = genericDao.get(VBusquedaPublicacionActivo.class, filtro);
+			if(publicacionActivo != null){
+				resultado =  (publicacionActivo.getAdmision() && publicacionActivo.getGestion());
+			}			
+		}
+		return resultado;
 
 	}
 

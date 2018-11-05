@@ -290,6 +290,13 @@
 		<appender-ref ref="syslog" />
 		<appender-ref ref="email" />
 	</logger>
+	<logger name="es.capgemini.pfs.security.manager.RSASecurityDecrypter" additivity="false">
+		<level value="fatal" />
+		<appender-ref ref="console" />
+		<appender-ref ref="file" />
+		<appender-ref ref="syslog" />
+		<appender-ref ref="email" />
+	</logger>
 
 
 
@@ -310,7 +317,7 @@
 
 	<!-- root -->
 	<root>
-		<priority value="warn" />
+		<priority value="error" />
 		<appender-ref ref="console" />
 		<appender-ref ref="file" />
 		<appender-ref ref="syslog" />

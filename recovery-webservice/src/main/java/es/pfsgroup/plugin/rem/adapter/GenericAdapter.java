@@ -169,7 +169,7 @@ public class GenericAdapter {
 	}
 	
 	public void sendMail(List<String> mailsPara, List<String> mailsCC, String asunto, String cuerpo, List<DtoAdjuntoMail> adjuntos) {
-		Thread hiloCorreo = new Thread(new EnvioCorreoAsync(mailsPara, mailsCC, asunto, cuerpo, adjuntos));
+		Thread hiloCorreo = new Thread(new EnvioCorreoAsync(appProperties,mailsPara, mailsCC, asunto, cuerpo, adjuntos));
 		hiloCorreo.start();	
 	}
 	

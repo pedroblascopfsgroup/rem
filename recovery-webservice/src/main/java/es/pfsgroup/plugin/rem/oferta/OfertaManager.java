@@ -740,7 +740,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	private Oferta updateEstadoOferta(Long idOferta, Date fechaAccion) throws JsonViewerException, SQLException {
 
 		Oferta ofertaAcepted = null;
-		Boolean inLoteComercial = false;
+		//Boolean inLoteComercial = false;
 		Boolean incompatible = false;
 		Oferta oferta = this.getOfertaById(idOferta);
 
@@ -761,9 +761,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					// HREOS-1674 - Si 1 activo pertenece a un lote comercial,
 					// ésta debe crearse
 					// siempre congelada.
-					if (activoAgrupacionActivoDao.activoEnAgrupacionLoteComercial(act.getId())) {
+					/* if (activoAgrupacionActivoDao.activoEnAgrupacionLoteComercial(act.getId())) {
 						inLoteComercial = true;
-					}
+					}*/ 
 
 					// HREOS-1669 - Validar el tipo destino comercial
 					if (!Checks.esNulo(act.getTipoComercializacion()) && !Checks.esNulo(oferta.getTipoOferta())) {
@@ -783,8 +783,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			}
 		}
 
-		if (!Checks.esNulo(ofertaAcepted) || inLoteComercial) {
-			if (inLoteComercial) {
+		if (!Checks.esNulo(ofertaAcepted)) {
+			if (oferta.getAgrupacion() != null) {
 				oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class,
 						genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_PENDIENTE)));
 			} else {

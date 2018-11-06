@@ -185,6 +185,7 @@ import es.pfsgroup.plugin.rem.rest.api.RestApi.ENTIDADES;
 import es.pfsgroup.plugin.rem.rest.dto.FileListResponse;
 import es.pfsgroup.plugin.rem.rest.dto.FileResponse;
 import es.pfsgroup.plugin.rem.rest.dto.OperationResultResponse;
+import es.pfsgroup.plugin.rem.restclient.exception.UnknownIdException;
 import es.pfsgroup.plugin.rem.service.TabActivoDatosBasicos;
 import es.pfsgroup.plugin.rem.service.TabActivoDatosRegistrales;
 import es.pfsgroup.plugin.rem.service.TabActivoService;
@@ -192,6 +193,7 @@ import es.pfsgroup.plugin.rem.service.TabActivoSitPosesoriaLlaves;
 import es.pfsgroup.plugin.rem.trabajo.dao.TrabajoDao;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoActivosTrabajoFilter;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
+import es.pfsgroup.plugin.rem.restclient.exception.UnknownIdException;
 
 @Service
 public class ActivoAdapter {
@@ -2452,15 +2454,15 @@ public class ActivoAdapter {
 		
 		for (int i = 0; i < id.length; i++) {
 			ActivoFoto actvFoto = this.getFotoActivoById(id[i]);
+			genericDao.deleteById(ActivoFoto.class, actvFoto.getId());
 			if (actvFoto.getRemoteId() != null) {
-				OperationResultResponse reponseDelete = gestorDocumentalFotos.delete(actvFoto.getRemoteId());
-				if (reponseDelete.getError() != null && !reponseDelete.getError().isEmpty()
-						&& !reponseDelete.getError().equals(ERROR_CRM_UNKNOWN_ID)) {
-					genericDao.deleteById(ActivoFoto.class, actvFoto.getId());
-					throw new UserException(reponseDelete.getError());
+				try{
+					gestorDocumentalFotos.delete(actvFoto.getRemoteId());
+				}catch(UnknownIdException e){
+					logger.error("la foto no existe en el gestor documental");
 				}
 			}
-			genericDao.deleteById(ActivoFoto.class, actvFoto.getId());
+			
 		}		
 
 		return resultado;

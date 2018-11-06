@@ -285,8 +285,14 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		 
 		 enableChkPerimetroAlquiler: function(get){
 			 var esGestorAlquiler = get('activo.esGestorAlquiler');
+			 var estadoAlquiler = get('patrimonio.estadoAlquiler');
+
 			 if(esGestorAlquiler == true || esGestorAlquiler == "true" ){
-				 return false;
+				if(estadoAlquiler == CONST.COMBO_ESTADO_ALQUILER["ALQUILADO"] || estadoAlquiler == CONST.COMBO_ESTADO_ALQUILER["CON_DEMANDAS"]){
+					return true;
+				} else {
+					return false;
+				}				 
 			 }else{
 				 return true;
 			 }

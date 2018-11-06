@@ -180,7 +180,8 @@ Ext.define('HreRem.controller.ActivosController', {
     	'ofertascomercialmain': {
     		abrirDetalleActivo: 'abrirDetalleActivoComercialOfertas',
 			abrirDetalleAgrupacion : 'abrirDetalleAgrupacionComercialOfertas',
-			abrirDetalleExpediente: 'abrirDetalleExpediente'
+			abrirDetalleExpediente: 'abrirDetalleExpediente',
+			abrirDetalleExpedienteDirecto: 'abrirDetalleExpedienteDirecto'
     	},
     	
     	'expedientedetallemain': {
@@ -676,8 +677,13 @@ Ext.define('HreRem.controller.ActivosController', {
     	
     },
     
+    abrirDetalleExpedienteDirecto: function(id, titulo, refLinks) {
+    	var me = this;
+    	me.redirectTo('activos', true);    	
+    	me.abrirDetalleExpedienteById(id, titulo, refLinks);
+    },
+    
     abrirDetalleExpedienteById: function(id, titulo, refLinks) {
-
     	var me = this,
     	cfg = {}, 
     	tab=null;

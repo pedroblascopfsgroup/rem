@@ -47,6 +47,7 @@ AS
 	V_TABLA_HLD VARCHAR2(30 CHAR) := 'HLD_HISTORICO_LANZA_PER_DETA';
 	V_TABLA_SPS VARCHAR2(30 CHAR) := 'ACT_SPS_SIT_POSESORIA';
 	V_TABLA_ADJ VARCHAR2(30 CHAR) := 'BIE_ADJ_ADJUDICACION';
+	V_TABLA_ADN VARCHAR2(30 CHAR) := 'ACT_ADN_ADJNOJUDICIAL';
 	V_TABLA_ILB VARCHAR2(30 CHAR) := 'ACT_ILB_NFO_LIBERBANK';
 	V_TABLA_ACTIVO VARCHAR2(30 CHAR) := 'ACT_ACTIVO';	
 	CODIGO_ANTERIOR #ESQUEMA#.ACT_ACTIVO.ACT_COD_PROMOCION_PRINEX%TYPE;
@@ -254,21 +255,24 @@ BEGIN
 						 '''||FECHA_TOMA_POSESION_DATE||'''
 				 FROM '||V_ESQUEMA||'.'||V_TABLA_ADJ||' ADJ WHERE ADJ.BIE_ADJ_ID IN (
 																					SELECT ADJ.BIE_ADJ_ID 
-																					FROM '||V_ESQUEMA||'.ACT_ACTIVO 		  ACT
-																					JOIN '||V_ESQUEMA||'.BIE_BIEN   		  BIE
+																					FROM '||V_ESQUEMA||'.ACT_ACTIVO 		  		ACT
+																					JOIN '||V_ESQUEMA||'.BIE_BIEN   		  		BIE
 																					ON ACT.BIE_ID = BIE.BIE_ID
-																					JOIN '||V_ESQUEMA||'.BIE_ADJ_ADJUDICACION ADJ
+																					JOIN '||V_ESQUEMA||'.BIE_ADJ_ADJUDICACION 		ADJ
 																					ON ADJ.BIE_ID = BIE.BIE_ID
+																					JOIN '||V_ESQUEMA||'.DD_TTA_TIPO_TITULO_ACTIVO  TTA 
+                                                                                    ON TTA.DD_TTA_ID = ACT.DD_TTA_ID 
 																					WHERE ACT.ACT_NUM_ACTIVO = '||ID_ACTIVO_HAYA||'
-																					  AND ACT.BORRADO = 0
+																					  AND ACT.BORRADO = 0 
+																					  AND TTA.DD_TTA_CODIGO = ''01''
 																			    )
 				 ';
 				 EXECUTE IMMEDIATE V_MSQL;
 				 
 				 V_MSQL := 'UPDATE '||V_ESQUEMA||'.'||V_TABLA_ADJ||' ADJ 
 							SET ADJ.BIE_ADJ_F_REA_POSESION = '''||FECHA_TOMA_POSESION_DATE||''', 
-							    USUARIOMODIFICAR = ''SP_EXT_ACTUALIZA_PROMOCION'', 
-							    FECHAMODIFICAR = SYSDATE 
+							    ADJ.USUARIOMODIFICAR = ''SP_EXT_ACTUALIZA_PROMOCION'', 
+							    ADJ.FECHAMODIFICAR = SYSDATE 
 							WHERE ADJ.BIE_ADJ_ID IN (
 														SELECT ADJ.BIE_ADJ_ID 
 														FROM '||V_ESQUEMA||'.ACT_ACTIVO 		  ACT
@@ -276,8 +280,73 @@ BEGIN
 														ON ACT.BIE_ID = BIE.BIE_ID
 														JOIN '||V_ESQUEMA||'.BIE_ADJ_ADJUDICACION ADJ
 														ON ADJ.BIE_ID = BIE.BIE_ID
+														JOIN '||V_ESQUEMA||'.DD_TTA_TIPO_TITULO_ACTIVO  TTA 
+                                                        ON TTA.DD_TTA_ID = ACT.DD_TTA_ID 
 														WHERE ACT.ACT_NUM_ACTIVO = '||ID_ACTIVO_HAYA||'
 														  AND ACT.BORRADO = 0
+														  AND TTA.DD_TTA_CODIGO = ''01''
+													)
+							';
+				 EXECUTE IMMEDIATE V_MSQL; 
+				 V_COUNT := V_COUNT + SQL%ROWCOUNT;
+				 
+				 
+				 V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.'||V_TABLA_HLD||' (
+					HLD_SP_CARGA,
+					HLD_FECHA_EJEC,	
+					HLD_CODIGO_REG,
+					HLD_TABLA_MODIFICAR,	
+					HLD_TABLA_MODIFICAR_CLAVE,	
+					HLD_TABLA_MODIFICAR_CLAVE_ID,	
+					HLD_CAMPO_MODIFICAR,	
+					HLD_VALOR_ORIGINAL,	
+					HLD_VALOR_ACTUALIZADO
+				 )
+				 SELECT ''SP_EXT_ACTUALIZA_PROMOCION'',
+						 SYSDATE,
+						 '||ID_ACTIVO_HAYA||',
+						 '''||V_TABLA_ADN||''',
+						 ''ADN_ID'',
+						 ADN.ADN_ID,
+						 ''ADN_FECHA_TITULO'',
+						 ADN.ADN_FECHA_TITULO,
+						 '''||FECHA_TOMA_POSESION_DATE||'''
+				 FROM '||V_ESQUEMA||'.'||V_TABLA_ADN||' ADN WHERE ADN.ADN_ID IN (
+																					SELECT ADN.ADN_ID 
+																					FROM '||V_ESQUEMA||'.ACT_ACTIVO 		  		ACT
+																					JOIN '||V_ESQUEMA||'.BIE_BIEN   		  		BIE
+																					ON ACT.BIE_ID = BIE.BIE_ID
+																					JOIN '||V_ESQUEMA||'.BIE_ADJ_ADJUDICACION 		ADJ
+																					ON ADJ.BIE_ID = BIE.BIE_ID
+																					JOIN '||V_ESQUEMA||'.DD_TTA_TIPO_TITULO_ACTIVO  TTA 
+                                                                                    ON TTA.DD_TTA_ID = ACT.DD_TTA_ID
+                                                                                    JOIN '||V_ESQUEMA||'.ACT_ADN_ADJNOJUDICIAL 	    ADN
+                                                                                    ON ADN.ACT_ID = ACT.ACT_ID
+																					WHERE ACT.ACT_NUM_ACTIVO = '||ID_ACTIVO_HAYA||'
+																					  AND ACT.BORRADO = 0 
+																					  AND TTA.DD_TTA_CODIGO = ''02''
+																			    )
+				 ';
+				 EXECUTE IMMEDIATE V_MSQL;
+				 
+				 V_MSQL := 'UPDATE '||V_ESQUEMA||'.'||V_TABLA_ADN||' ADN 
+							SET ADN.ADN_FECHA_TITULO = '''||FECHA_TOMA_POSESION_DATE||''', 
+							    ADN.USUARIOMODIFICAR = ''SP_EXT_ACTUALIZA_PROMOCION'', 
+							    ADN.FECHAMODIFICAR = SYSDATE 
+							WHERE ADN.ADN_ID IN (
+														SELECT ADN.ADN_ID 
+														FROM '||V_ESQUEMA||'.ACT_ACTIVO 		  		ACT
+														JOIN '||V_ESQUEMA||'.BIE_BIEN   		  		BIE
+														ON ACT.BIE_ID = BIE.BIE_ID
+														JOIN '||V_ESQUEMA||'.BIE_ADJ_ADJUDICACION 		ADJ
+														ON ADJ.BIE_ID = BIE.BIE_ID
+														JOIN '||V_ESQUEMA||'.DD_TTA_TIPO_TITULO_ACTIVO  TTA 
+														ON TTA.DD_TTA_ID = ACT.DD_TTA_ID
+														JOIN '||V_ESQUEMA||'.ACT_ADN_ADJNOJUDICIAL 	    ADN
+														ON ADN.ACT_ID = ACT.ACT_ID
+														WHERE ACT.ACT_NUM_ACTIVO = '||ID_ACTIVO_HAYA||'
+														  AND ACT.BORRADO = 0 
+														  AND TTA.DD_TTA_CODIGO = ''02''
 													)
 							';
 				 EXECUTE IMMEDIATE V_MSQL; 

@@ -150,7 +150,7 @@ public class AgendaMultifuncionCorreoUtils {
 				// Si da error la desencriptación o el parseo lo intentaremos
 				// con el valor obtenido del properties directamente.
 				pass = passValueProp;
-				logger.error("[AgendaMultifuncionCorreoUtils.enviarCorreoConAdjuntos] ee="+ ee.getMessage());
+			//	logger.error("[AgendaMultifuncionCorreoUtils.enviarCorreoConAdjuntos] ee="+ ee.getMessage());
 			}
 
                         //Settea Email From cargado de BBDD o del devon.prop, con esa prioridad en el origen del valor
@@ -165,7 +165,7 @@ public class AgendaMultifuncionCorreoUtils {
 					// intentaremos con el valor obtenido del properties
 					// directamente.
 					passBB = passValuePropBD;
-					logger.error("[AgendaMultifuncionCorreoUtils.enviarCorreoConAdjuntos] ee="+ ee.getMessage());
+					//logger.error("[AgendaMultifuncionCorreoUtils.enviarCorreoConAdjuntos] ee="+ ee.getMessage());
 				}
 				try {
 					envioCorreoGenerico(message, t, usuarioBD, passBB);

@@ -978,6 +978,7 @@ public class ActivoAdapter {
 	public List<DtoNumPlantas> getNumeroPlantasActivo(Long idActivo) {
 		List<DtoNumPlantas> listaPlantas = new ArrayList<DtoNumPlantas>();
 		Activo activo = activoApi.get(Long.valueOf(idActivo));
+		
 		if (activo.getInfoComercial().getTipoActivo().getCodigo().equals(DDTipoActivo.COD_VIVIENDA)) {
 			ActivoVivienda vivienda = (ActivoVivienda) activo.getInfoComercial();
 
@@ -1383,9 +1384,10 @@ public class ActivoAdapter {
 	public List<ActivoFoto> getListFotosActivoById(Long id) {
 
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", id);
+		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
 		Order order = new Order(OrderType.ASC, "orden");
 
-		List<ActivoFoto> listaActivoFoto = genericDao.getListOrdered(ActivoFoto.class, order, filtro);
+		List<ActivoFoto> listaActivoFoto = genericDao.getListOrdered(ActivoFoto.class, order, filtro, filtroBorrado);
 		Activo activo = this.getActivoById(id);
 
 		if (activo != null) {
@@ -2427,7 +2429,7 @@ public class ActivoAdapter {
 		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 
 		List<DtoAviso> avisos = activoAvisadorApi.getListActivoAvisador(id, usuarioLogado);
-		String green = "Incluido en Haz tu Puja hasta 15/11/2018";
+		String green = "Incluido en Haz tu Puja hasta 30/11/2018";
 		DtoAviso avisosFormateados = new DtoAviso();
 		avisosFormateados.setDescripcion("");
 		for (int i = 0; i < avisos.size(); i++) {
@@ -2454,6 +2456,7 @@ public class ActivoAdapter {
 				OperationResultResponse reponseDelete = gestorDocumentalFotos.delete(actvFoto.getRemoteId());
 				if (reponseDelete.getError() != null && !reponseDelete.getError().isEmpty()
 						&& !reponseDelete.getError().equals(ERROR_CRM_UNKNOWN_ID)) {
+					genericDao.deleteById(ActivoFoto.class, actvFoto.getId());
 					throw new UserException(reponseDelete.getError());
 				}
 			}

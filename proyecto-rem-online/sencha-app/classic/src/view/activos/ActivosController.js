@@ -22,6 +22,12 @@ Ext.define('HreRem.view.activos.ActivosController', {
 	onSearchClick: function(btn) {
 		
 		var me = this;
+		this.lookupReference('activoslist').getStore().loadPage(1);
+        
+	},
+	
+	onSearchBusquedaDirectaActivos: function(btn){
+		var me = this;
 		var numActivo = btn.up('activossearch').down('[name="numActivo"]').value;
 		
 		if(numActivo != ""){
@@ -45,11 +51,20 @@ Ext.define('HreRem.view.activos.ActivosController', {
     		     }
     		 });    
 			
-		}else{
-			this.lookupReference('activoslist').getStore().loadPage(1);
 		}
-        
-	},	
+	},
+	
+	onChangeNumActivo: function(me, oValue, nValue){
+		
+		var numActivo = me.value;
+		var btn = me.up('activossearch').down('[reference="btnActivo"]');
+		
+		if(numActivo != ""){
+			btn.setDisabled(false);
+		}else{
+			btn.setDisabled(true); 
+		}
+	},
 	
 	paramLoading: function(store, operation, opts) {
 		

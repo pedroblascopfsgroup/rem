@@ -161,7 +161,7 @@ public class UvemManager implements UvemManagerApi {
 			llamada = servicio.getInParams().toXMLGeneric(true);
 			respuesta = servicio.getOutParams().toXMLGeneric(true);
 		} catch (Exception e) {
-			logger.error("Error obteniendo los datos del ws", e);
+			logger.info("Error obteniendo los datos del ws", e);
 		}
 		this.registrarLlamada(servicio.getClass().getName(), llamada, respuesta, errorDesc);
 	}

@@ -208,7 +208,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	public static final String TANTEO_CONDICIONES_TRANSMISION = "msg.defecto.oferta.tanteo.condiciones.transmision";
 	public static final String VISITA_SIN_RELACION_OFERTA = "oferta.validacion.numVisita";
 	public static final String PROVEDOR_NO_EXISTE_O_DISTINTO_TIPO = "El proveedor indicado no existe, o no es del tipo indicado";
-	public static final int NUMERO_DIAS_VENCIMIENTO = 45;
+	public static final Integer NUMERO_DIAS_VENCIMIENTO = 45;
+	public static final Integer NUMERO_DIAS_VENCIMIENTO_SAREB = 40;
 
 	public static final String PERFIL_GESTOR_FORMALIZACION = "HAYAGESTFORM";
 	public static final String PERFIL_SUPERVISOR_FORMALIZACION = "HAYASUPFORM";
@@ -2920,17 +2921,16 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 				Oferta oferta = gastoExpediente.getExpediente().getOferta();
 
-				if (!Checks.esNulo(gastoExpediente.getImporteCalculo())) {
-					if (!Checks.esNulo(oferta.getImporteContraOferta())) {
-						Double importeContraOferta = oferta.getImporteContraOferta();
-						Double honorario = (importeContraOferta * gastoExpediente.getImporteCalculo()) / 100;
-
-						gastoExpediente.setImporteFinal(honorario);
-					} else {
-						Double importeOferta = oferta.getImporteOferta();
-						Double honorario = (importeOferta * gastoExpediente.getImporteCalculo()) / 100;
-
-						gastoExpediente.setImporteFinal(honorario);
+				Double calculoImporteC = gastoExpediente.getImporteCalculo();
+				
+				Long idActivo = gastoExpediente.getActivo().getId();
+				
+				for(ActivoOferta activoOferta : oferta.getActivosOferta()){
+					if(!Checks.esNulo(activoOferta.getImporteActivoOferta())){
+						if(activoOferta.getPrimaryKey().getActivo().getId().equals(idActivo)){
+							Double honorario = (activoOferta.getImporteActivoOferta() * calculoImporteC / 100);
+							gastoExpediente.setImporteFinal(honorario);
+						}
 					}
 				}
 
@@ -5470,7 +5470,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	@Transactional(readOnly = false)
 	public void actualizarFVencimientoReservaTanteosRenunciados(TanteoActivoExpediente tanteoActivo,
 			List<TanteoActivoExpediente> tanteosActivo) {
-
+		
+		Activo activo = null;
 		Boolean todosRenunciados = true;
 		Date fechaResolucionMayor = null;
 		if (!Checks.esNulo(tanteoActivo)) {
@@ -5486,6 +5487,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 							fechaResolucionMayor = tanteosExpediente.get(0).getFechaResolucion();
 						}
 						for (TanteoActivoExpediente tanteo : tanteosExpediente) {
+							activo = tanteo.getActivo();
 							if (!Checks.esNulo(tanteo.getResultadoTanteo())) {
 								if (!DDResultadoTanteo.CODIGO_RENUNCIADO
 										.equals(tanteo.getResultadoTanteo().getCodigo())) {
@@ -5506,7 +5508,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 						if (todosRenunciados && !Checks.esNulo(fechaResolucionMayor)) {
 							Calendar calendar = Calendar.getInstance();
 							calendar.setTime(fechaResolucionMayor);
-							calendar.add(Calendar.DAY_OF_YEAR, NUMERO_DIAS_VENCIMIENTO);
+							if(!Checks.esNulo(activo) && DDCartera.CODIGO_CARTERA_SAREB.equals(activo.getCartera().getCodigo())) {
+								calendar.add(Calendar.DAY_OF_YEAR, NUMERO_DIAS_VENCIMIENTO_SAREB);
+							}else {
+								calendar.add(Calendar.DAY_OF_YEAR, NUMERO_DIAS_VENCIMIENTO);
+							}
 							this.actualizaFechaVencimientoReserva(tanteoActivo.getExpediente().getReserva(), calendar.getTime());
 						} else {
 							this.actualizaFechaVencimientoReserva(tanteoActivo.getExpediente().getReserva(), null);
@@ -5519,6 +5525,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		} else if (!Checks.esNulo(tanteosActivo) && !Checks.estaVacio(tanteosActivo)) {
 			fechaResolucionMayor = tanteosActivo.get(0).getFechaResolucion();
 			for (TanteoActivoExpediente tanteo : tanteosActivo) {
+				activo = tanteo.getActivo();
 				if (!Checks.esNulo(tanteo.getResultadoTanteo())) {
 					if (!DDResultadoTanteo.CODIGO_RENUNCIADO.equals(tanteo.getResultadoTanteo().getCodigo())) {
 						todosRenunciados = false;
@@ -5539,7 +5546,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				ExpedienteComercial expediente = tanteosActivo.get(0).getExpediente();
 				Calendar calendar = Calendar.getInstance();
 				calendar.setTime(fechaResolucionMayor);
-				calendar.add(Calendar.DAY_OF_YEAR, NUMERO_DIAS_VENCIMIENTO);
+				if(!Checks.esNulo(activo) && DDCartera.CODIGO_CARTERA_SAREB.equals(activo.getCartera().getCodigo())) {
+					calendar.add(Calendar.DAY_OF_YEAR, NUMERO_DIAS_VENCIMIENTO_SAREB);
+				}else {
+					calendar.add(Calendar.DAY_OF_YEAR, NUMERO_DIAS_VENCIMIENTO);
+				}
 				this.actualizaFechaVencimientoReserva(expediente.getReserva(), calendar.getTime());
 			}
 

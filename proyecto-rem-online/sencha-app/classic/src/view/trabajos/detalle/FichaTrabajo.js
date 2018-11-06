@@ -267,7 +267,18 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 													}
 													
 												}
-											},	
+											},
+											{
+												xtype: 'checkboxfieldbase',
+												boxLabel:  HreRem.i18n('fieldlabel.requerimiento'),												
+												reference: 'checkRequerimiento',
+												hidden: false,
+												bind:{
+													value: '{trabajo.requerimiento}',
+													hidden: '{!trabajo.esSareb}',
+													readOnly: '{!trabajo.logadoGestorMantenimiento}'
+												}
+											},
 											{
 												xtype: 'datefieldbase',
 												reference: 'datefieldFechaTope',

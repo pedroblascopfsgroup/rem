@@ -129,7 +129,7 @@ public class ActivoGenericLeaveActionHandler extends ActivoGenericActionHandler 
 				}
 
 			} catch (UserException e) {
-				logger.error("No se ha podido validar el formulario correctamente. Trámite [" + getActivoTramite(executionContext).getId() + "], tarea [" + tareaExterna.getId() + "]. Mensaje ["
+				logger.info("No se ha podido validar el formulario correctamente. Trámite [" + getActivoTramite(executionContext).getId() + "], tarea [" + tareaExterna.getId() + "]. Mensaje ["
 						+ e.getMessage() + "]", e);
 				// Relanzamos la userException para que le aparezca al usuario
 				// en pantalla

@@ -997,9 +997,9 @@ public class ActivoController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView updateInformeComercialMSV(@RequestParam String[] activosId, ModelMap model){
+	public ModelAndView updateInformeComercialMSV(@RequestParam Long idActivo, ModelMap model){
 		try {
-			Boolean success = adapter.updateInformeComercialMSV(activosId);
+			Boolean success = adapter.updateInformeComercialMSV(idActivo);
 			model.put(RESPONSE_SUCCESS_KEY, success);
 
 		} catch (JsonViewerException e) {
@@ -2333,28 +2333,6 @@ public class ActivoController extends ParadiseJsonController {
 		}
 
 		return true;
-
-	}
-	
-	@SuppressWarnings("unchecked")
-	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView cerrarTramitesActivo(@RequestParam String[] activosId, ModelMap model){
-		try {
-			Boolean success = adapter.updateTramitesActivo(activosId);
-			
-			model.put(RESPONSE_SUCCESS_KEY, success);
-
-		} catch (JsonViewerException e) {
-			logger.error("error en activoController", e);
-			model.put(RESPONSE_SUCCESS_KEY, false);
-			model.put("msgError", e.getMessage());
-		} catch (Exception e) {
-			logger.error("error en activoController", e);
-			model.put(RESPONSE_SUCCESS_KEY, false);
-			model.put("msgError", e.getMessage());
-		}
-
-		return createModelAndViewJson(model);
 
 	}
 	

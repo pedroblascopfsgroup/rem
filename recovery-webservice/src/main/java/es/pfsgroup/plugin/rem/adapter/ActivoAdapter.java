@@ -315,8 +315,7 @@ public class ActivoAdapter {
 	public static final String OFERTA_INCOMPATIBLE_MSG = "El tipo de oferta es incompatible con el destino comercial del activo";
 	private static final String AVISO_TITULO_MODIFICADAS_CONDICIONES_JURIDICAS = "activo.aviso.titulo.modificadas.condiciones.juridicas";
 	private static final String AVISO_DESCRIPCION_MODIFICADAS_CONDICIONES_JURIDICAS = "activo.aviso.descripcion.modificadas.condiciones.juridicas";
-	private static final String ERROR_ACTIVO_UPDATE_SUBDIVISION = "No se puede actualizar el estado de publicación: no cumple las condiciones de publicación.";
-	private static final String ERROR_ACTIVO_UPDATE_SUBDIVISION_ACTIVO_FORZADO ="No se puede actualizar el estado de publicación: el activo esta publicado forzado.";
+	private static final String UPDATE_ERROR_TRAMITES_PUBLI_ACTIVO ="No se han podido cerrar automaticamente los tr&aacute;mites asociados a los activos.";
 	private static final String ERROR_ACTIVO_UPDATE_SUBDIVISION_INFORME_COMERCIAL = "No se han podido aprobar todos los informes comerciales de los activos seleccionados.";
 	public static final String T_PUBLICACION= "T011";
 	public static final String CODIGO_ESTADO_PROCEDIMIENTO_EN_TRAMITE = "10";
@@ -3595,78 +3594,76 @@ public class ActivoAdapter {
 	 * @return
 	 */
 	@Transactional(readOnly = false)
-	public Boolean updateInformeComercialMSV(String[] activosId) throws JsonViewerException {
-		int contador= 0;
+	public Boolean updateInformeComercialMSV(Long idActivo) throws JsonViewerException {
 		Boolean success=false;
+		Boolean aprobado=false;
 		ActivoEstadosInformeComercialHistorico activoEstadosInformeComercialHistorico = new ActivoEstadosInformeComercialHistorico();
 		Filter estadoInformeComercialFilter = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoInformeComercial.ESTADO_INFORME_COMERCIAL_ACEPTACION);
 		activoEstadosInformeComercialHistorico.setEstadoInformeComercial(genericDao.get(DDEstadoInformeComercial.class, estadoInformeComercialFilter));
 		String username = genericAdapter.getUsuarioLogado().getUsername();
 		Date fecha = new Date();
-		for (String activoId : activosId) {
-			Activo activo = activoDao.get(Long.parseLong(activoId));
-			
-			try {
-				if(!Checks.esNulo(activo)){
-					
-					if(!informeComercialAprobado(activo)) {
-						
-						if(!activoApi.checkTiposDistintos(activo)){
-							//Si han habido cambios en el historico, los persistimos.
-							if(!Checks.esNulo(activoEstadosInformeComercialHistorico) && !Checks.esNulo(activoEstadosInformeComercialHistorico.getEstadoInformeComercial())){
-								activoEstadosInformeComercialHistorico.setFecha(fecha);
-								if(Checks.esNulo(activoEstadosInformeComercialHistorico.getAuditoria())){
-									Auditoria auditoria = new Auditoria();
-									auditoria.setUsuarioCrear(username);
-									auditoria.setFechaCrear(fecha);
-									activoEstadosInformeComercialHistorico.setAuditoria(auditoria);
-								}else{
-									activoEstadosInformeComercialHistorico.getAuditoria().setUsuarioCrear(username);
-									activoEstadosInformeComercialHistorico.getAuditoria().setFechaCrear(fecha);
-								}
-								activoEstadosInformeComercialHistorico.setActivo(activo);
-								genericDao.save(ActivoEstadosInformeComercialHistorico.class, activoEstadosInformeComercialHistorico);
-							}
-						}
 
-						if(!Checks.esNulo(activo.getInfoComercial())){
-							activo.getInfoComercial().getAuditoria().setFechaModificar(fecha);
-							if(!Checks.esNulo(genericAdapter.getUsuarioLogado())){
-								activo.getInfoComercial().getAuditoria().setUsuarioModificar(username);
+		Activo activo = activoDao.get(idActivo);
+		
+		try {
+			if(!Checks.esNulo(activo)){
+				
+				if(!informeComercialAprobado(activo)) {
+					
+					if(!activoApi.checkTiposDistintos(activo)){
+						//Si han habido cambios en el historico, los persistimos.
+						if(!Checks.esNulo(activoEstadosInformeComercialHistorico) && !Checks.esNulo(activoEstadosInformeComercialHistorico.getEstadoInformeComercial())){
+							activoEstadosInformeComercialHistorico.setFecha(fecha);
+							if(Checks.esNulo(activoEstadosInformeComercialHistorico.getAuditoria())){
+								Auditoria auditoria = new Auditoria();
+								auditoria.setUsuarioCrear(username);
+								auditoria.setFechaCrear(fecha);
+								activoEstadosInformeComercialHistorico.setAuditoria(auditoria);
+							}else{
+								activoEstadosInformeComercialHistorico.getAuditoria().setUsuarioCrear(username);
+								activoEstadosInformeComercialHistorico.getAuditoria().setFechaCrear(fecha);
 							}
-							activo.getInfoComercial().setFechaAceptacion(new Date());
-							activo.getInfoComercial().setFechaRechazo(null);
+							activoEstadosInformeComercialHistorico.setActivo(activo);
+							genericDao.save(ActivoEstadosInformeComercialHistorico.class, activoEstadosInformeComercialHistorico);
 						}
-	
-						if(!activoEstadoPublicacionApi.isPublicadoVentaByIdActivo(activo.getId())) {
-							// 3.) Se marca activo como publicable, porque en el tramite se han cumplido todos los requisitos
-							activo.setFechaPublicable(fecha);
+					}
+
+					if(!Checks.esNulo(activo.getInfoComercial())){
+						activo.getInfoComercial().getAuditoria().setFechaModificar(fecha);
+						if(!Checks.esNulo(genericAdapter.getUsuarioLogado())){
+							activo.getInfoComercial().getAuditoria().setUsuarioModificar(username);
 						}
-						
-						activoApi.saveOrUpdate(activo);
-						
-						if(!Checks.esNulo(activo.getTipoPublicacion())) {
-							if(!DDTipoPublicacion.CODIGO_FORZADA.equals(activo.getTipoPublicacion().getCodigo())) {
-								success = publicarActivoConHistorico(success, username, activo);
-								
-							}else {
-								throw new JsonViewerException(ERROR_ACTIVO_UPDATE_SUBDIVISION_ACTIVO_FORZADO);
-							}	
-						}else {
-							success = publicarActivoConHistorico(success, username, activo);
+						activo.getInfoComercial().setFechaAceptacion(new Date());
+						activo.getInfoComercial().setFechaRechazo(null);
+					}
+
+					if(!activoEstadoPublicacionApi.isPublicadoVentaByIdActivo(activo.getId())) {
+						activo.setFechaPublicable(fecha);
+					}
+					
+					activoApi.saveOrUpdate(activo);
+					
+					if(!Checks.esNulo(activo.getTipoPublicacion())) {
+						if(!DDTipoPublicacion.CODIGO_FORZADA.equals(activo.getTipoPublicacion().getCodigo())) {
+							aprobado = publicarActivoConHistorico(success, username, activo);
+							if(aprobado) {
+								aprobado = updateTramitesActivo(activo.getId());
+							}
 						}
-					}else{
-						contador++;
+					}else {
+						aprobado = publicarActivoConHistorico(success, username, activo);
+						if(aprobado) {
+							aprobado = updateTramitesActivo(activo.getId());
+						}
 					}
 				}
-				if(contador > 0) {
-					throw new JsonViewerException(ERROR_ACTIVO_UPDATE_SUBDIVISION_INFORME_COMERCIAL);
-				}
-			} catch(JsonViewerException e) {
-				throw e;
 			}
+			
+		} catch(JsonViewerException e) {
+			throw e;
 		}
-		return success;
+		
+		return aprobado;
 	}
 
 	/**
@@ -3680,7 +3677,7 @@ public class ActivoAdapter {
 			success=true;
 			activoDao.publicarActivoConHistorico(activo.getId(),username);
 		}else {
-			throw new JsonViewerException(ERROR_ACTIVO_UPDATE_SUBDIVISION);
+			success=false;
 		}
 		return success;
 	}
@@ -3708,7 +3705,7 @@ public class ActivoAdapter {
 	/**
 	 * Comprueba para un activo si tiene el condicionante de sin informe comercial aprobado marcado en naranja.
 	 * @param activo
-	 * @return booleano a true si esta en naranja
+	 * @return booleano a false si esta en naranja
 	 */
 	private Boolean informeComercialAprobado(Activo activo) {
 		Boolean check = true;
@@ -3722,33 +3719,30 @@ public class ActivoAdapter {
 	}
 	
 	/**
-	 * Comprueba si existen tramites de tipo publicacion en los activos y si estan en tramitacion los cerrara automaticamente
+	 * Comprueba si existen tramites de tipo publicacion en el activo y si estan en tramitacion los cerrara automaticamente
 	 * @param activosId
 	 * @return booleano true o false
 	 */
 	@Transactional(readOnly = false)
-	public Boolean updateTramitesActivo(String[] activosId) throws JsonViewerException  {
+	private Boolean updateTramitesActivo(Long idActivo) throws JsonViewerException  {
 		Boolean resultado = true;
-		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
-		for (String activoId : activosId) {
-			
-			List<ActivoTramite> listActTramites =  activoTramiteDao.getListaTramitesActivo(Long.parseLong(activoId));
-			
-			if(!Checks.estaVacio(listActTramites)) {
-				for (ActivoTramite activoTramite : listActTramites) {
-					if(T_PUBLICACION.equals(activoTramite.getTipoTramite().getCodigo()) && CODIGO_ESTADO_PROCEDIMIENTO_EN_TRAMITE.equals(activoTramite.getEstadoTramite().getCodigo())) {
-						try {
-							borradoLogicoTareaExternaByIdTramite(activoTramite, usuarioLogado);
-							borradoLogicoActivoTramite(usuarioLogado, activoTramite);
-						}catch(JsonViewerException e) {
-							resultado = false;
-							throw new JsonViewerException("No se han podido cerrar automaticamente los tr&aacute;mites asociados a los activos.");
-						}
+		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();			
+		List<ActivoTramite> listActTramites =  activoTramiteDao.getListaTramitesActivo(idActivo);
+		
+		if(!Checks.estaVacio(listActTramites)) {
+			for (ActivoTramite activoTramite : listActTramites) {
+				if(T_PUBLICACION.equals(activoTramite.getTipoTramite().getCodigo()) && CODIGO_ESTADO_PROCEDIMIENTO_EN_TRAMITE.equals(activoTramite.getEstadoTramite().getCodigo())) {
+					try {
+						borradoLogicoTareaExternaByIdTramite(activoTramite, usuarioLogado);
+						borradoLogicoActivoTramite(usuarioLogado, activoTramite);
+					}catch(JsonViewerException e) {
+						resultado = false;
+						throw new JsonViewerException(UPDATE_ERROR_TRAMITES_PUBLI_ACTIVO);
 					}
 				}
 			}
 		}
-		
+
 		return resultado;
 	}
 

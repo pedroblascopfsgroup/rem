@@ -2475,8 +2475,6 @@ public class ActivoAdapter {
 			ActivoFoto actvFoto = this.getFotoActivoByRemoteId(remoteId);
 			if (actvFoto != null) {
 				genericDao.deleteById(ActivoFoto.class, actvFoto.getId());
-			} else {
-				throw new Exception("La foto con id remoto ".concat(remoteId.toString()).concat(" no existe"));
 			}
 		} catch (Exception e) {
 			logger.error("Error borrando la foto", e);

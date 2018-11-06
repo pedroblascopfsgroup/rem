@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Miguel Sánchez
---## FECHA_CREACION=20181106
+--## FECHA_CREACION=20181107
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=RECOVERY-13445

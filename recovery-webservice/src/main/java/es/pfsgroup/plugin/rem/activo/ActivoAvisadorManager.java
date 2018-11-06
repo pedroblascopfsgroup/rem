@@ -223,7 +223,25 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 			listaAvisos.add(dtoAviso);	
 		}
 		
-		// Aviso 12: Estado activo vandalizado
+		PerimetroActivo perimetroActivo = activoApi.getPerimetroByIdActivo(activo.getId());
+		
+		// Aviso 12: Activo no publicable
+		if(!Checks.esNulo(perimetroActivo) && !Checks.esNulo(perimetroActivo.getAplicaPublicar()) && !perimetroActivo.getAplicaPublicar()) {
+			DtoAviso dtoAviso = new DtoAviso();
+			dtoAviso.setDescripcion("No publicable");
+			dtoAviso.setId(String.valueOf(id));
+			listaAvisos.add(dtoAviso);
+		}
+		
+		// Aviso 13: Activo publicable
+		if(!Checks.esNulo(perimetroActivo) && !Checks.esNulo(perimetroActivo.getAplicaPublicar()) && perimetroActivo.getAplicaPublicar()) {
+			DtoAviso dtoAviso = new DtoAviso();
+			dtoAviso.setDescripcion("Publicable");
+			dtoAviso.setId(String.valueOf(id));
+			listaAvisos.add(dtoAviso);
+		}
+		
+		// Aviso 14: Estado activo vandalizado
 		if(!Checks.esNulo(activo.getEstadoActivo())) {
 			if (DDEstadoActivo.ESTADO_ACTIVO_VANDALIZADO.equals(activo.getEstadoActivo().getCodigo())) {
 				DtoAviso dtoAviso = new DtoAviso();
@@ -231,7 +249,10 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 				dtoAviso.setId(String.valueOf(id));
 				listaAvisos.add(dtoAviso);		
 			}
-			
+		}
+		
+		// Aviso 15: Estado activo vandalizado
+		if(!Checks.esNulo(activo.getEstadoActivo())) {
 			if (DDEstadoActivo.ESTADO_ACTIVO_NO_OBRA_NUEVA_VANDALIZADO.equals(activo.getEstadoActivo().getCodigo())) {
 				
 				DtoAviso dtoAviso = new DtoAviso();

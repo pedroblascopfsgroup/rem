@@ -1,10 +1,10 @@
 --/*
 +--##########################################
-+--## AUTOR=Juan Angel Sánchez
-+--## FECHA_CREACION=20180903
-+--## ARTEFACTO=online
++--## AUTOR=Miguel Sánchez
++--## FECHA_CREACION=20181106
++--## ARTEFACTO=batch
 +--## VERSION_ARTEFACTO=9.2
-+--## INCIDENCIA_LINK=0
++--## INCIDENCIA_LINK=RECOVERY-13445
 +--## PRODUCTO=NO
 +--## Finalidad: Tabla auxiliar para el aprovisionamiento de la información de los PDV de recovery-HAYA.
 +--##           
@@ -222,4 +222,4 @@
 +
 +END;
 +/
-+EXIT6;
++EXIT;

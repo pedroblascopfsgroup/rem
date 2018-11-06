@@ -29,8 +29,8 @@ import es.capgemini.pfs.diccionarios.Dictionary;
 @Where(clause=Auditoria.UNDELETED_RESTICTION)
 public class DDTipoCalculo implements Auditable, Dictionary {
 	
-	public static String TIPO_CALCULO_PORCENTAJE = "01";
-	public static String TIPO_CALCULO_IMPORTE_FIJO = "02";
+	public static final String TIPO_CALCULO_PORCENTAJE = "01";
+	public static final String TIPO_CALCULO_IMPORTE_FIJO = "02";
 
 
 	/**

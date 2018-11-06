@@ -4,7 +4,7 @@ Ext.define('HreRem.view.comercial.ofertas.OfertasComercialSearch', {
     cls	: 'panel-base shadow-panel',
     collapsible: true,
     collapsed: false,
-    isSearchForm: true,
+    isSearchFormOfertas: true,
   	layout: {
         type: 'table',
         columns: 4,
@@ -45,11 +45,17 @@ Ext.define('HreRem.view.comercial.ofertas.OfertasComercialSearch', {
 
 							{
 								fieldLabel: HreRem.i18n('fieldlabel.num.oferta'),
-							    name: 'numOferta'        	
+							    name: 'numOferta',
+							    listeners : {
+							    	change: 'onChangeNumOfertaOExpediente'
+							    }         	
 							},
 							{
 								fieldLabel: HreRem.i18n('fieldlabel.num.expediente'),
-							    name: 'numExpediente'        	
+							    name: 'numExpediente',
+							    listeners : {
+							    	change: 'onChangeNumOfertaOExpediente'
+							    }          	
 							},
 							{
 								fieldLabel: HreRem.i18n('fieldlabel.num.activo'),

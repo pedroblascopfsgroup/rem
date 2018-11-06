@@ -1,16 +1,17 @@
 --/*
 --##########################################
---## AUTOR=CARLOS LOPEZ
---## FECHA_CREACION=20181027
+--## AUTOR=Maria Presencia
+--## FECHA_CREACION=20181106
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=2.0.19
---## INCIDENCIA_LINK=HREOS-4674
+--## INCIDENCIA_LINK=HREOS-4734
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##		0.2 Actualizar tipo de publicacion
 --##########################################
 --*/
 
@@ -719,31 +720,34 @@ create or replace PROCEDURE SP_CAMBIO_ESTADO_PUBLICACION (pACT_ID IN NUMBER DEFA
         /*Publicado*/
         /***********/
         
-        IF vDD_TCO_CODIGO IN ('02','03','04') THEN
+         IF vDD_TCO_CODIGO IN ('02','03','04') THEN
           IF (vCODIGO_ESTADO_A = '03' AND vCHECK_PUBLICAR_A = 1) THEN
-            #ESQUEMA#.SP_MOTIVO_OCULTACION (nACT_ID, 'A', OutOCULTAR, OutMOTIVO);
-    
+            REM01.SP_MOTIVO_OCULTACION (nACT_ID, 'A', OutOCULTAR, OutMOTIVO);
+
             IF OutOCULTAR = 1 THEN
               PLP$CAMBIO_OCULTO_MOTIVO(nACT_ID, 'A', vDD_TCO_CODIGO, OutOCULTAR, OutMOTIVO, vUSUARIOMODIFICAR);
               PLP$CAMBIO_ESTADO_ALQUILER(nACT_ID, '04', vUSUARIOMODIFICAR);
             END IF;
-    
+
             IF OutOCULTAR = 0 THEN
               IF vCHECK_OCULTAR_A = 1 THEN
                 PLP$CAMBIO_ESTADO_ALQUILER(nACT_ID, '04', vUSUARIOMODIFICAR);
                 IF vDD_MTO_MANUAL_A = 0 THEN
                   PLP$CAMBIO_OCULTO_MOTIVO(nACT_ID, 'A', vDD_TCO_CODIGO, OutOCULTAR, OutMOTIVO, vUSUARIOMODIFICAR);
-                END IF;  
+                END IF;
+              ELSE
+                PLP$CONDICIONANTE_ALQUILER(nACT_ID, nADMISION, nGESTION, nINFORME_COMERCIAL,nPRECIO_A, nCEE_VIGENTE, nADECUADO, vUSUARIOMODIFICAR, vCondAlquiler);
               END IF;
+              
             END IF;
           END IF;
-  
+
         END IF;
-        
+
         IF vDD_TCO_CODIGO IN ('01','02') THEN
           IF (vCODIGO_ESTADO_V = '03' AND vCHECK_PUBLICAR_V = 1) THEN
-            #ESQUEMA#.SP_MOTIVO_OCULTACION (nACT_ID, 'V', OutOCULTAR, OutMOTIVO);
-    
+            REM01.SP_MOTIVO_OCULTACION (nACT_ID, 'V', OutOCULTAR, OutMOTIVO);
+
             IF OutOCULTAR = 1 THEN
               IF OutMOTIVO = '03' AND vDD_TAL_CODIGO = '01' THEN /*SI MOTIVO ES ALQUILADO Y TIPO ALQUILER ORDINARIO, NO OCULTAR*/
                 IF vDD_MTO_MANUAL_V = 0 THEN /*MOTIVO AUTOMÁTICO*/
@@ -755,84 +759,91 @@ create or replace PROCEDURE SP_CAMBIO_ESTADO_PUBLICACION (pACT_ID IN NUMBER DEFA
                                 WHERE ACT_ID = '||nACT_ID||'
                                 AND BORRADO = 0
                               ';
-            
-                  EXECUTE IMMEDIATE V_MSQL; 
+
+                  EXECUTE IMMEDIATE V_MSQL;
                 ELSE
-                  PLP$CAMBIO_ESTADO_VENTA(nACT_ID, '04', vUSUARIOMODIFICAR);               
+                  PLP$CAMBIO_ESTADO_VENTA(nACT_ID, '04', vUSUARIOMODIFICAR);
                 END IF;
               ELSE
                 PLP$CAMBIO_OCULTO_MOTIVO(nACT_ID, 'V', vDD_TCO_CODIGO, OutOCULTAR, OutMOTIVO, vUSUARIOMODIFICAR);
                 PLP$CAMBIO_ESTADO_VENTA(nACT_ID, '04', vUSUARIOMODIFICAR);
               END IF;
             END IF;
-    
+
             IF OutOCULTAR = 0 THEN
               IF vCHECK_OCULTAR_V = 1 then
                 PLP$CAMBIO_ESTADO_VENTA(nACT_ID, '04', vUSUARIOMODIFICAR);
-                
+
                 IF vDD_MTO_MANUAL_V = 0 THEN
                   PLP$CAMBIO_OCULTO_MOTIVO(nACT_ID, 'V', vDD_TCO_CODIGO, OutOCULTAR, OutMOTIVO, vUSUARIOMODIFICAR);
                 END IF;
+              ELSE
+                PLP$CONDICIONANTE_VENTA(nACT_ID, nADMISION, nGESTION, nINFORME_COMERCIAL,nPRECIO_V, vUSUARIOMODIFICAR);
               END IF;
             END IF;
-          END IF;     
+          END IF;
         END IF;
   
         /***********/
         /**OCULTAR**/
         /***********/
         
-        IF vDD_TCO_CODIGO IN ('02','03','04') THEN
+         IF vDD_TCO_CODIGO IN ('02','03','04') THEN
           IF vCODIGO_ESTADO_A = '04' THEN
-            #ESQUEMA#.SP_MOTIVO_OCULTACION (nACT_ID, 'A', OutOCULTAR, OutMOTIVO);
-    
+            REM01.SP_MOTIVO_OCULTACION (nACT_ID, 'A', OutOCULTAR, OutMOTIVO);
+
             IF OutOCULTAR = 0 AND vDD_MTO_MANUAL_A = 0 THEN
-              PLP$CAMBIO_ESTADO_ALQUILER(nACT_ID, '03', vUSUARIOMODIFICAR);
+              --PLP$CAMBIO_ESTADO_ALQUILER(nACT_ID, '03', vUSUARIOMODIFICAR);
+                PLP$CONDICIONANTE_ALQUILER(nACT_ID, nADMISION, nGESTION, nINFORME_COMERCIAL,nPRECIO_A, nCEE_VIGENTE, nADECUADO, vUSUARIOMODIFICAR, vCondAlquiler);
+
               PLP$LIMPIAR_ALQUILER(nACT_ID, vUSUARIOMODIFICAR);
             END IF;
-    
+
             IF OutOCULTAR = 1 THEN
               PLP$CAMBIO_OCULTO_MOTIVO(nACT_ID, 'A', vDD_TCO_CODIGO, OutOCULTAR, OutMOTIVO, vUSUARIOMODIFICAR);
-            END IF; 
-            
-            /*Si el activo está oculto por un motivo automático y el proceso 
+            END IF;
+
+            /*Si el activo está oculto por un motivo automático y el proceso
             no encuentra ningún motivo automático hay que quitar la ocultación del activo.*/
             IF vDD_MTO_MANUAL_A = 0 AND OutOCULTAR = 0 THEN
               PLP$CAMBIO_OCULTO_MOTIVO(nACT_ID, 'A', vDD_TCO_CODIGO, OutOCULTAR, OutMOTIVO, vUSUARIOMODIFICAR);
             END IF;
           END IF;
-  
+
         END IF;
-        
+
         IF vDD_TCO_CODIGO IN ('01','02') THEN
           IF vCODIGO_ESTADO_V = '04' THEN
-            #ESQUEMA#.SP_MOTIVO_OCULTACION (nACT_ID, 'V', OutOCULTAR, OutMOTIVO);
-    
+            REM01.SP_MOTIVO_OCULTACION (nACT_ID, 'V', OutOCULTAR, OutMOTIVO);
+
             IF OutOCULTAR = 0 AND vDD_MTO_MANUAL_V = 0 THEN
-              PLP$CAMBIO_ESTADO_VENTA(nACT_ID, '03', vUSUARIOMODIFICAR);
+              --PLP$CAMBIO_ESTADO_VENTA(nACT_ID, '03', vUSUARIOMODIFICAR);
+                PLP$CONDICIONANTE_VENTA(nACT_ID, nADMISION, nGESTION, nINFORME_COMERCIAL,nPRECIO_V, vUSUARIOMODIFICAR);
+              
               PLP$LIMPIAR_VENTA(nACT_ID, vUSUARIOMODIFICAR);
             END IF;
-    
+
             IF OutOCULTAR = 1 THEN
               IF OutMOTIVO = '03' AND vDD_TAL_CODIGO = '01' THEN /*SI MOTIVO ES ALQUILADO Y TIPO ALQUILER ORDINARIO, NO OCULTAR*/
                 IF vDD_MTO_MANUAL_V = 1 THEN /*MOTIVO MANUAL*/
                   NULL;
                 ELSE
-                  PLP$CAMBIO_ESTADO_VENTA(nACT_ID, '03', vUSUARIOMODIFICAR);
+                  --PLP$CAMBIO_ESTADO_VENTA(nACT_ID, '03', vUSUARIOMODIFICAR);
+                    PLP$CONDICIONANTE_VENTA(nACT_ID, nADMISION, nGESTION, nINFORME_COMERCIAL,nPRECIO_V, vUSUARIOMODIFICAR);
                 END IF;
               ELSE
                 PLP$CAMBIO_OCULTO_MOTIVO(nACT_ID, 'V', vDD_TCO_CODIGO, OutOCULTAR, OutMOTIVO, vUSUARIOMODIFICAR);
               END IF;
             END IF;
-            
-            /*Si el activo está oculto por un motivo automático y el proceso 
+
+            /*Si el activo está oculto por un motivo automático y el proceso
             no encuentra ningún motivo automático hay que quitar la ocultación del activo.*/
             IF vDD_MTO_MANUAL_V = 0 AND OutOCULTAR = 0 THEN
               PLP$CAMBIO_OCULTO_MOTIVO(nACT_ID, 'V', vDD_TCO_CODIGO, OutOCULTAR, OutMOTIVO, vUSUARIOMODIFICAR);
-            END IF;            
-          END IF;      
+            END IF;
+          END IF;
         END IF;
-  
+
         IF vACTUALIZAR_COND = 'S' THEN
 		    V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION ACT
 						SET ACT.ES_CONDICONADO_ANTERIOR = '||nES_CONDICONADO||'
@@ -843,7 +854,7 @@ create or replace PROCEDURE SP_CAMBIO_ESTADO_PUBLICACION (pACT_ID IN NUMBER DEFA
 					'
 					;
 
-		    EXECUTE IMMEDIATE V_MSQL;        
+		    EXECUTE IMMEDIATE V_MSQL;
         END IF;
   
         /**************/

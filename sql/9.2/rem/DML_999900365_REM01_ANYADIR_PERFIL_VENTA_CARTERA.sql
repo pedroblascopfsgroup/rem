@@ -36,7 +36,7 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
 
 	V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.PEF_PERFILES (PEF_ID, PEF_DESCRIPCION_LARGA, PEF_DESCRIPCION, USUARIOCREAR, FECHACREAR, PEF_CODIGO)
 		VALUES
-		(S_PEF_PERFILES.NEXTVAL, ''Perfil de carga masiva Venta Cartera'', ''Perfil de carga masiva Venta Cartera'', ''REMVIP-2455'', SYSDATE, ''PMSVVC'');';
+		(S_PEF_PERFILES.NEXTVAL, ''Perfil de carga masiva Venta Cartera'', ''Perfil de carga masiva Venta Cartera'', ''REMVIP-2455'', SYSDATE, ''PMSVVC'')';
 
   EXECUTE IMMEDIATE V_MSQL;
 

@@ -94,7 +94,7 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 		
 		if(enPuja) {
 			DtoAviso dtoAviso = new DtoAviso();
-			dtoAviso.setDescripcion("Incluido en Haz tu Puja hasta 15/11/2018");
+			dtoAviso.setDescripcion("Incluido en Haz tu Puja hasta 30/11/2018");
 			dtoAviso.setId(String.valueOf(id));
 			listaAvisos.add(dtoAviso);
 		}
@@ -195,11 +195,13 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 		// Si no es judicial...
 		if(!Checks.esNulo(activo)){
 			PerimetroActivo perimetro= activoApi.getPerimetroByIdActivo(activo.getId());
-			if(!Checks.esNulo(perimetro) && 0 == perimetro.getAplicaGestion()){
-				DtoAviso dtoAviso = new DtoAviso();
-				dtoAviso.setDescripcion("Activo sin gestión");
-				dtoAviso.setId(String.valueOf(id));
-				listaAvisos.add(dtoAviso);
+			if(!Checks.esNulo(perimetro)){
+				if(!Checks.esNulo(perimetro.getAplicaGestion()) && 0 == perimetro.getAplicaGestion()){
+					DtoAviso dtoAviso = new DtoAviso();
+					dtoAviso.setDescripcion("Activo sin gestión");
+					dtoAviso.setId(String.valueOf(id));
+					listaAvisos.add(dtoAviso);
+				}
 			}
 		}
 		

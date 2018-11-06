@@ -85,7 +85,7 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 
 		} else {
 			// por activo
-			usuario = gestorActivoManager.getGestorByActivoYTipo(activo, "GCOM");
+			usuario = gestorActivoManager.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
 			supervisor = gestorActivoManager.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL);
 		}
 
@@ -143,13 +143,13 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 					mailsPara.add(ficticioCajamar.getEmail());
 				}
 				
-				Usuario gesRes = gestorActivoManager.getGestorByActivoYTipo(activo, "GESRES");
+				Usuario gesRes = gestorActivoManager.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_RESERVA_CAJAMAR);
 				
 				if(!Checks.esNulo(gesRes)) {
 					mailsPara.add(gesRes.getEmail());
 				}
 				
-				Usuario supRes = gestorActivoManager.getGestorByActivoYTipo(activo, "SUPRES");
+				Usuario supRes = gestorActivoManager.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_SUPERVISOR_RESERVA_CAJAMAR);
 				
 				if(!Checks.esNulo(supRes)){
 					mailsPara.add(supRes.getEmail());

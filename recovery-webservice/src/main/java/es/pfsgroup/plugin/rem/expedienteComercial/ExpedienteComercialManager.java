@@ -25,7 +25,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import edu.emory.mathcs.backport.java.util.Arrays;
 import es.capgemini.devon.dto.WebDto;
@@ -205,7 +208,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	public static final String TANTEO_CONDICIONES_TRANSMISION = "msg.defecto.oferta.tanteo.condiciones.transmision";
 	public static final String VISITA_SIN_RELACION_OFERTA = "oferta.validacion.numVisita";
 	public static final String PROVEDOR_NO_EXISTE_O_DISTINTO_TIPO = "El proveedor indicado no existe, o no es del tipo indicado";
-	public static final int NUMERO_DIAS_VENCIMIENTO = 45;
+	public static final Integer NUMERO_DIAS_VENCIMIENTO = 45;
+	public static final Integer NUMERO_DIAS_VENCIMIENTO_SAREB = 40;
 
 	public static final String PERFIL_GESTOR_FORMALIZACION = "HAYAGESTFORM";
 	public static final String PERFIL_SUPERVISOR_FORMALIZACION = "HAYASUPFORM";
@@ -266,6 +270,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
     
     @Autowired
     private TareaActivoApi tareaActivoApi;
+    
+    @Resource(name = "entityTransactionManager")
+	private PlatformTransactionManager transactionManager;
 
 	@Override
 	public String managerName() {
@@ -277,6 +284,22 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", id);
 		ExpedienteComercial expediente = genericDao.get(ExpedienteComercial.class, filtro);
+
+		return expediente;
+	}
+	
+	@Override
+	public ExpedienteComercial findOneTransactional(Long id) {
+		TransactionStatus transaction = null;
+		ExpedienteComercial expediente = null;
+		try{
+			transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
+			expediente = this.findOne(id);
+			transactionManager.commit(transaction);
+		}catch(Exception e){
+			logger.error("error buscando el eco", e);
+			transactionManager.rollback(transaction);
+		}
 
 		return expediente;
 	}
@@ -2898,17 +2921,16 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 				Oferta oferta = gastoExpediente.getExpediente().getOferta();
 
-				if (!Checks.esNulo(gastoExpediente.getImporteCalculo())) {
-					if (!Checks.esNulo(oferta.getImporteContraOferta())) {
-						Double importeContraOferta = oferta.getImporteContraOferta();
-						Double honorario = (importeContraOferta * gastoExpediente.getImporteCalculo()) / 100;
-
-						gastoExpediente.setImporteFinal(honorario);
-					} else {
-						Double importeOferta = oferta.getImporteOferta();
-						Double honorario = (importeOferta * gastoExpediente.getImporteCalculo()) / 100;
-
-						gastoExpediente.setImporteFinal(honorario);
+				Double calculoImporteC = gastoExpediente.getImporteCalculo();
+				
+				Long idActivo = gastoExpediente.getActivo().getId();
+				
+				for(ActivoOferta activoOferta : oferta.getActivosOferta()){
+					if(!Checks.esNulo(activoOferta.getImporteActivoOferta())){
+						if(activoOferta.getPrimaryKey().getActivo().getId().equals(idActivo)){
+							Double honorario = (activoOferta.getImporteActivoOferta() * calculoImporteC / 100);
+							gastoExpediente.setImporteFinal(honorario);
+						}
 					}
 				}
 
@@ -5448,7 +5470,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	@Transactional(readOnly = false)
 	public void actualizarFVencimientoReservaTanteosRenunciados(TanteoActivoExpediente tanteoActivo,
 			List<TanteoActivoExpediente> tanteosActivo) {
-
+		
+		Activo activo = null;
 		Boolean todosRenunciados = true;
 		Date fechaResolucionMayor = null;
 		if (!Checks.esNulo(tanteoActivo)) {
@@ -5464,6 +5487,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 							fechaResolucionMayor = tanteosExpediente.get(0).getFechaResolucion();
 						}
 						for (TanteoActivoExpediente tanteo : tanteosExpediente) {
+							activo = tanteo.getActivo();
 							if (!Checks.esNulo(tanteo.getResultadoTanteo())) {
 								if (!DDResultadoTanteo.CODIGO_RENUNCIADO
 										.equals(tanteo.getResultadoTanteo().getCodigo())) {
@@ -5484,7 +5508,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 						if (todosRenunciados && !Checks.esNulo(fechaResolucionMayor)) {
 							Calendar calendar = Calendar.getInstance();
 							calendar.setTime(fechaResolucionMayor);
-							calendar.add(Calendar.DAY_OF_YEAR, NUMERO_DIAS_VENCIMIENTO);
+							if(!Checks.esNulo(activo) && DDCartera.CODIGO_CARTERA_SAREB.equals(activo.getCartera().getCodigo())) {
+								calendar.add(Calendar.DAY_OF_YEAR, NUMERO_DIAS_VENCIMIENTO_SAREB);
+							}else {
+								calendar.add(Calendar.DAY_OF_YEAR, NUMERO_DIAS_VENCIMIENTO);
+							}
 							this.actualizaFechaVencimientoReserva(tanteoActivo.getExpediente().getReserva(), calendar.getTime());
 						} else {
 							this.actualizaFechaVencimientoReserva(tanteoActivo.getExpediente().getReserva(), null);
@@ -5497,6 +5525,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		} else if (!Checks.esNulo(tanteosActivo) && !Checks.estaVacio(tanteosActivo)) {
 			fechaResolucionMayor = tanteosActivo.get(0).getFechaResolucion();
 			for (TanteoActivoExpediente tanteo : tanteosActivo) {
+				activo = tanteo.getActivo();
 				if (!Checks.esNulo(tanteo.getResultadoTanteo())) {
 					if (!DDResultadoTanteo.CODIGO_RENUNCIADO.equals(tanteo.getResultadoTanteo().getCodigo())) {
 						todosRenunciados = false;
@@ -5517,7 +5546,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				ExpedienteComercial expediente = tanteosActivo.get(0).getExpediente();
 				Calendar calendar = Calendar.getInstance();
 				calendar.setTime(fechaResolucionMayor);
-				calendar.add(Calendar.DAY_OF_YEAR, NUMERO_DIAS_VENCIMIENTO);
+				if(!Checks.esNulo(activo) && DDCartera.CODIGO_CARTERA_SAREB.equals(activo.getCartera().getCodigo())) {
+					calendar.add(Calendar.DAY_OF_YEAR, NUMERO_DIAS_VENCIMIENTO_SAREB);
+				}else {
+					calendar.add(Calendar.DAY_OF_YEAR, NUMERO_DIAS_VENCIMIENTO);
+				}
 				this.actualizaFechaVencimientoReserva(expediente.getReserva(), calendar.getTime());
 			}
 
@@ -5922,7 +5955,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			if (!Checks.esNulo(trabajo)) {
 				ExpedienteComercial expediente = expedienteComercialDao
 						.getExpedienteComercialByTrabajo(trabajo.getId());
-				if (!Checks.esNulo(expediente.getReserva())){
+				if (!Checks.esNulo(expediente.getReserva()) 
+						&& !Checks.esNulo(expediente.getReserva().getEstadoReserva()) ){
 					return expediente.getReserva().getEstadoReserva().getCodigo().equals(DDEstadosReserva.CODIGO_FIRMADA);
 				}
 			}

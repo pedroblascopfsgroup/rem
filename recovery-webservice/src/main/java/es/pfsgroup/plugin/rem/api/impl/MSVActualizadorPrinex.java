@@ -23,6 +23,7 @@ import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVInfoDetallePrinex
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.GastoApi;
+import es.pfsgroup.plugin.rem.api.GastoProveedorApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.GastoPrinex;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
@@ -38,6 +39,9 @@ public class MSVActualizadorPrinex extends AbstractMSVActualizador implements MS
 	
 	@Autowired
 	private ActivoApi activoApi;
+	
+	@Autowired
+	private GastoProveedorApi gastoProveedorApi;
 
 	private final Log logger = LogFactory.getLog(getClass());
 
@@ -103,6 +107,7 @@ public class MSVActualizadorPrinex extends AbstractMSVActualizador implements MS
 		} else {
 			genericDao.update(GastoPrinex.class, gasto);
 		}
+		gastoProveedorApi.updateGastoByPrinexLBK(exc.dameCelda(fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPV_NUM_GASTO_HAYA));
 		return resultado;
 	}
 	

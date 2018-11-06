@@ -43,6 +43,16 @@ Ext.define('HreRem.view.activos.detalle.VisitasComercialActivoList', {
 		            formatter: 'date("d/m/Y")',
 		            flex: 1
 		        },
+		        {
+		            dataIndex: 'estadoVisitaDescripcion',
+		            text: HreRem.i18n('header.estado.visita'),
+		            flex: 1
+		        },
+		        {
+		            dataIndex: 'subEstadoVisitaDescripcion',
+		            text: HreRem.i18n('header.subestado.visita'),
+		            flex: 1
+		        },
 		        
 		        //campos ocultos para el detalle
 		        {	        	

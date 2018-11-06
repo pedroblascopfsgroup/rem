@@ -102,9 +102,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	private static final String PESTANA_CONDICIONES = "condiciones";
 	private static final String PESTANA_FORMALIZACION = "formalizacion";
 	private static final String TAR_INFORME_JURIDICO = "Informe jurídico";
-
 	@Resource
 	private MessageService messageServices;
+
+	// Textos a mostrar por defecto
+	public static final Integer NUMERO_DIAS_VENCIMIENTO_SAREB = 40;
 
 	@Autowired
 	private GenericABMDao genericDao;
@@ -2366,16 +2368,17 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			if (DDTipoCalculo.TIPO_CALCULO_PORCENTAJE.equals(gastoExpediente.getTipoCalculo().getCodigo())) {
 				Oferta oferta = gastoExpediente.getExpediente().getOferta();
 
-				if (!Checks.esNulo(gastoExpediente.getImporteCalculo())) {
-					if (!Checks.esNulo(oferta.getImporteContraOferta())) {
-						Double importeContraOferta = oferta.getImporteContraOferta();
-						Double honorario = (importeContraOferta * gastoExpediente.getImporteCalculo()) / 100;
-						gastoExpediente.setImporteFinal(honorario);
 
-					} else {
-						Double importeOferta = oferta.getImporteOferta();
-						Double honorario = (importeOferta * gastoExpediente.getImporteCalculo()) / 100;
-						gastoExpediente.setImporteFinal(honorario);
+				Double calculoImporteC = gastoExpediente.getImporteCalculo();
+				
+				Long idActivo = gastoExpediente.getActivo().getId();
+				
+				for(ActivoOferta activoOferta : oferta.getActivosOferta()){
+					if(!Checks.esNulo(activoOferta.getImporteActivoOferta())){
+						if(activoOferta.getPrimaryKey().getActivo().getId().equals(idActivo)){
+							Double honorario = (activoOferta.getImporteActivoOferta() * calculoImporteC / 100);
+							gastoExpediente.setImporteFinal(honorario);
+						}
 					}
 				}
 
@@ -4728,7 +4731,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 	@Override
 	@Transactional(readOnly = false)
-	public void actualizarFVencimientoReservaTanteosRenunciados(TanteoActivoExpediente tanteoActivo, List<TanteoActivoExpediente> tanteosActivo) {
+	public void actualizarFVencimientoReservaTanteosRenunciados(TanteoActivoExpediente tanteoActivo,
+			List<TanteoActivoExpediente> tanteosActivo) {
+		
+		Activo activo = null;
 		Boolean todosRenunciados = true;
 		Date fechaResolucionMayor = null;
 
@@ -4742,6 +4748,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 						}
 
 						for (TanteoActivoExpediente tanteo : tanteosExpediente) {
+							activo = tanteo.getActivo();
 							if (!Checks.esNulo(tanteo.getResultadoTanteo())) {
 								if (!DDResultadoTanteo.CODIGO_RENUNCIADO.equals(tanteo.getResultadoTanteo().getCodigo())) {
 									todosRenunciados = false;
@@ -4762,7 +4769,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 						if (todosRenunciados && !Checks.esNulo(fechaResolucionMayor)) {
 							Calendar calendar = Calendar.getInstance();
 							calendar.setTime(fechaResolucionMayor);
-							calendar.add(Calendar.DAY_OF_YEAR, NUMERO_DIAS_VENCIMIENTO);
+							if(!Checks.esNulo(activo) && DDCartera.CODIGO_CARTERA_SAREB.equals(activo.getCartera().getCodigo())) {
+								calendar.add(Calendar.DAY_OF_YEAR, NUMERO_DIAS_VENCIMIENTO_SAREB);
+							}else {
+								calendar.add(Calendar.DAY_OF_YEAR, NUMERO_DIAS_VENCIMIENTO);
+							}
 							this.actualizaFechaVencimientoReserva(tanteoActivo.getExpediente().getReserva(), calendar.getTime());
 
 						} else {
@@ -4779,6 +4790,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			fechaResolucionMayor = tanteosActivo.get(0).getFechaResolucion();
 
 			for (TanteoActivoExpediente tanteo : tanteosActivo) {
+				activo = tanteo.getActivo();
 				if (!Checks.esNulo(tanteo.getResultadoTanteo())) {
 					if (!DDResultadoTanteo.CODIGO_RENUNCIADO.equals(tanteo.getResultadoTanteo().getCodigo())) {
 						todosRenunciados = false;
@@ -4800,7 +4812,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				ExpedienteComercial expediente = tanteosActivo.get(0).getExpediente();
 				Calendar calendar = Calendar.getInstance();
 				calendar.setTime(fechaResolucionMayor);
-				calendar.add(Calendar.DAY_OF_YEAR, NUMERO_DIAS_VENCIMIENTO);
+				if(!Checks.esNulo(activo) && DDCartera.CODIGO_CARTERA_SAREB.equals(activo.getCartera().getCodigo())) {
+					calendar.add(Calendar.DAY_OF_YEAR, NUMERO_DIAS_VENCIMIENTO_SAREB);
+				}else {
+					calendar.add(Calendar.DAY_OF_YEAR, NUMERO_DIAS_VENCIMIENTO);
+				}
 				this.actualizaFechaVencimientoReserva(expediente.getReserva(), calendar.getTime());
 			}
 

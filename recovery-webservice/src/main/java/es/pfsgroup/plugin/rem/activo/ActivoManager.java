@@ -986,9 +986,11 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			genericDao.deleteById(ActivoValoraciones.class, id);
 		}
 
-		restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO, activoValoracion.getActivo());
-		activoAdapter.actualizarEstadoPublicacionActivo(activoValoracion.getActivo().getId());
-
+		if(activoValoracion != null && activoValoracion.getActivo() != null){ 
+			restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO, activoValoracion.getActivo());
+			activoAdapter.actualizarEstadoPublicacionActivo(activoValoracion.getActivo().getId());
+		}
+		
 		return true;
 	}
 
@@ -1415,10 +1417,16 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	}
 
 	public Boolean checkAdmisionAndGestion(TareaExterna tareaExterna) {
-		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", tareaExternaToActivo(tareaExterna).getId());
-		VBusquedaPublicacionActivo publicacionActivo = genericDao.get(VBusquedaPublicacionActivo.class, filtro);
-
-		return (publicacionActivo.getAdmision() && publicacionActivo.getGestion());
+		Boolean resultado = false;
+		Activo activo = tareaExternaToActivo(tareaExterna);
+		if(activo != null){
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", activo.getId());
+			VBusquedaPublicacionActivo publicacionActivo = genericDao.get(VBusquedaPublicacionActivo.class, filtro);
+			if(publicacionActivo != null){
+				resultado =  (publicacionActivo.getAdmision() && publicacionActivo.getGestion());
+			}			
+		}
+		return resultado;
 	}
 
 	@Override
@@ -1669,7 +1677,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					beanUtilNotNull.copyProperty(dtoHistoricoMediador, "telefono", historico.getMediadorInforme().getTelefono1());
 					beanUtilNotNull.copyProperty(dtoHistoricoMediador, "email", historico.getMediadorInforme().getEmail());
 				}
-
+				if(historico.getAuditoria() != null){
+					beanUtilNotNull.copyProperty(dtoHistoricoMediador, "responsableCambio", historico.getAuditoria().getUsuarioCrear());
+				}			
 			} catch (IllegalAccessException e) {
 				logger.error("Error en activoManager", e);
 
@@ -2935,9 +2945,10 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	@Override
 	public ActivoTasacion getTasacionMasReciente(Activo activo) {
 		ActivoTasacion tasacionMasReciente = null;
-
-		if (!Checks.estaVacio(activo.getTasacion())) {
-			tasacionMasReciente = activo.getTasacion().get(0);
+		List<ActivoTasacion> tasacionesActivo = activo.getTasacion();
+		
+		if (!Checks.estaVacio(tasacionesActivo)) {
+			tasacionMasReciente = tasacionesActivo.get(0);
 			if (tasacionMasReciente != null) {
 				Date fechaValorTasacionMasReciente = new Date();
 
@@ -2945,8 +2956,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					fechaValorTasacionMasReciente = tasacionMasReciente.getValoracionBien().getFechaValorTasacion();
 				}
 
-				for (int i = 0; i < activo.getTasacion().size(); i++) {
-					ActivoTasacion tas = activo.getTasacion().get(i);
+				for (ActivoTasacion tas : tasacionesActivo) {
 					if (tas.getValoracionBien().getFechaValorTasacion() != null) {
 						if (!Checks.esNulo(tas) && !Checks.esNulo(tas.getValoracionBien()) && !Checks.esNulo(tas.getValoracionBien().getFechaValorTasacion()) && tas.getValoracionBien()
 						.getFechaValorTasacion().after(fechaValorTasacionMasReciente)) {

@@ -20,6 +20,9 @@ Ext.define('HreRem.model.HistoricoMediadorModel', {
     		},
     		{
     			name:'email'
+    		},
+    		{
+    			name:'responsableCambio'
     		}
     ],
 

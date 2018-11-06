@@ -98,7 +98,7 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 		
 		if(enPuja) {
 			DtoAviso dtoAviso = new DtoAviso();
-			dtoAviso.setDescripcion("Incluido en Haz tu Puja hasta 15/11/2018");
+			dtoAviso.setDescripcion("Incluido en Haz tu Puja hasta 30/11/2018");
 			dtoAviso.setId(String.valueOf(id));
 			listaAvisos.add(dtoAviso);
 		}

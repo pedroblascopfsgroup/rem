@@ -650,12 +650,13 @@ Ext.define('HreRem.view.trabajos.detalle.CrearTrabajo', {
     	var me = this,    	
     	form = me.down('formBase'); 
     	
-    	me.getViewModel().set('idActivo', me.idActivo);
-    	me.getViewModel().set('idAgrupacion', me.idAgrupacion);
+    	
 
 		form.setBindRecord(form.getModelInstance());
 		form.reset();
 
+		me.getViewModel().set('idActivo', me.idActivo);
+    	me.getViewModel().set('idAgrupacion', me.idAgrupacion);
 		/*me.getViewModel().set('idActivo', me.idActivo);
 		me.getViewModel().set('idAgrupacion', me.idAgrupacion);*/
 		//me.getViewModel().notify();

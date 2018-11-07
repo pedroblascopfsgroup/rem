@@ -34,15 +34,12 @@ import es.capgemini.devon.pagination.Page;
 import es.capgemini.devon.utils.FileUtils;
 import es.capgemini.pfs.adjunto.model.Adjunto;
 import es.capgemini.pfs.auditoria.model.Auditoria;
-import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.procesosJudiciales.TipoProcedimientoManager;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
-import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
-import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -63,7 +60,6 @@ import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
-import es.pfsgroup.plugin.rem.activotrabajo.dao.ActivoTrabajoDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
@@ -75,7 +71,6 @@ import es.pfsgroup.plugin.rem.api.GastoProveedorApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.TareaActivoApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
-import es.pfsgroup.plugin.rem.expedienteComercial.dao.ExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.gestor.GestorActivoManager;
 import es.pfsgroup.plugin.rem.gestor.dao.GestorActivoDao;
 import es.pfsgroup.plugin.rem.historicotarifaplana.dao.HistoricoTarifaPlanaDao;
@@ -139,11 +134,9 @@ import es.pfsgroup.plugin.rem.rest.api.RestApi.TIPO_VALIDACION;
 import es.pfsgroup.plugin.rem.rest.dto.TrabajoDto;
 import es.pfsgroup.plugin.rem.tareasactivo.TareaActivoManager;
 import es.pfsgroup.plugin.rem.trabajo.dao.TrabajoDao;
-import es.pfsgroup.plugin.rem.trabajo.dao.impl.TrabajoDaoImpl;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoActivosTrabajoFilter;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoTrabajoFilter;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
-import es.pfsgroup.recovery.api.UsuarioApi;
 
 @Service("trabajoManager")
 public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> implements TrabajoApi {
@@ -155,8 +148,6 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	@Autowired
 	private GenericABMDao genericDao;
 	
-	@Autowired
-	private TrabajoDaoImpl trabajoDaoImp;
 	
 	@Autowired
 	private GestorActivoApi gestorActivoApi;
@@ -173,9 +164,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	@Autowired
 	private TrabajoDao trabajoDao;
 
-	@Autowired
-	private ActivoTrabajoDao activoTrabajoDao;
-
+	
 	@Autowired
 	private GestorActivoManager gestorActivoManager;
 
@@ -253,12 +242,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 	private BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 	
-	@Autowired
-	private ExpedienteComercialDao expedienteComercialDao;
-	
-	@Autowired
-	private UsuarioManager usuarioManager;
-	
+		
 	@Override
 	public String managerName() {
 		return "trabajoManager";
@@ -1470,7 +1454,6 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			Usuario supervisorActivo = gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_SUPERVISOR_ACTIVOS);
 			if(!Checks.esNulo(supervisorActivo)){
 				
-				List<TareaExterna> lista =  activoTareaExternaManagerApi.getTareasByIdTramite(activo.getId());
 				dtoTrabajo.setSupervisorActivo(supervisorActivo.getApellidoNombre());
 				dtoTrabajo.setIdSupervisorActivo(supervisorActivo.getId());
 			}

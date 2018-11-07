@@ -23,6 +23,8 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
         me.idSupervisorEdificaciones = me.lookupController().getViewModel().get('trabajo').get('idSupervisorEdificaciones');
         me.idSupervisorAlquileres = me.lookupController().getViewModel().get('trabajo').get('idSupervisorAlquileres');
         me.idSupervisorSuelos = me.lookupController().getViewModel().get('trabajo').get('idSupervisorSuelos');
+        var isSareb= me.lookupController().getViewModel().get('trabajo').get('esSareb');
+        var logadoGestorMantenimiento= me.lookupController().getViewModel().get('trabajo').get('logadoGestorMantenimiento');
         var editar = me.lookupController().getViewModel().get('trabajo').get('bloquearResponsable');
         //NOTA: En cuanto a la visualización del campo “Responsable del trabajo”, 
         //lo podrán ver tanto el “Gestor/Supervisor de activo” y el “Gestor/Supervisor de alquileres, edificaciones, suelo”, así comomo, el proveedor y el solicitante.
@@ -272,10 +274,10 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 												xtype: 'checkboxfieldbase',
 												boxLabel:  HreRem.i18n('fieldlabel.requerimiento'),												
 												reference: 'checkRequerimiento',
+												hidden: !isSareb,
+												readOnly: !logadoGestorMantenimiento,
 												bind:{
-													value: '{trabajo.requerimiento}',
-													disabled: '{trabajo.esSareb}',
-													readOnly: '{!trabajo.logadoGestorMantenimiento}'
+													value: '{trabajo.requerimiento}'													
 												}
 											},
 											{

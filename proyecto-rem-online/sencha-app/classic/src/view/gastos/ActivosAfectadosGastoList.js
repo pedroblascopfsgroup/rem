@@ -189,9 +189,7 @@ Ext.define('HreRem.view.gastos.ActivosAfectadosGastoList', {
 		            		style = "style= 'color: red'";
 		            	}			            	
 		            	return "<span "+style+ ">"+msg+"</span>"
-		            },listeners:{
-						beforerender:'updateGastoByPrinexLBK'
-					}
+		            }
 
 				}
 		];

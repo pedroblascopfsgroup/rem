@@ -42,6 +42,8 @@ import es.pfsgroup.plugin.rem.utils.FileItemUtils;
 public class NotificationOfertaManager extends AbstractNotificatorService {
 
 	private static final String USUARIO_FICTICIO_OFERTA_CAJAMAR = "ficticioOfertaCajamar";
+	private static final String BUZON_REM = "buzonrem";
+	private static final String BUZON_PFS = "buzonpfs";
 
 	@Autowired
 	private GenericAdapter genericAdapter;
@@ -83,7 +85,7 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 
 		} else {
 			// por activo
-			usuario = gestorActivoManager.getGestorByActivoYTipo(activo, "GCOM");
+			usuario = gestorActivoManager.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
 			supervisor = gestorActivoManager.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL);
 		}
 
@@ -136,6 +138,34 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 				if(!Checks.esNulo(usuarioManager.getByUsername(USUARIO_FICTICIO_OFERTA_CAJAMAR))){
 					mailsPara.add(usuarioManager.getByUsername(USUARIO_FICTICIO_OFERTA_CAJAMAR).getEmail());
 				}				
+				
+				Usuario ficticioCajamar = usuarioManager.getByUsername(USUARIO_FICTICIO_OFERTA_CAJAMAR);
+				
+				if(!Checks.esNulo(ficticioCajamar)){
+					mailsPara.add(ficticioCajamar.getEmail());
+				}
+				
+				Usuario gesRes = gestorActivoManager.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_RESERVA_CAJAMAR);
+				
+				if(!Checks.esNulo(gesRes)) {
+					mailsPara.add(gesRes.getEmail());
+				}
+				
+				Usuario supRes = gestorActivoManager.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_SUPERVISOR_RESERVA_CAJAMAR);
+				
+				if(!Checks.esNulo(supRes)){
+					mailsPara.add(supRes.getEmail());
+				}
+			}
+			
+			Usuario buzonRem = usuarioManager.getByUsername(BUZON_REM);
+			Usuario buzonPfs = usuarioManager.getByUsername(BUZON_PFS);
+			
+			if(!Checks.esNulo(buzonRem)) {
+				mailsPara.add(buzonRem.getEmail());
+			}
+			if(!Checks.esNulo(buzonPfs)) {
+				mailsPara.add(buzonPfs.getEmail());
 			}
 
 			

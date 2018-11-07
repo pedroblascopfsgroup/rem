@@ -52,6 +52,11 @@ Ext.define('HreRem.view.activos.detalle.HistoricoMediadorGrid', {
 		        	dataIndex: 'email',
 		            text: HreRem.i18n('title.publicaciones.mediador.email'),
 		            flex: 1
+		        },
+		        {
+		        	dataIndex: 'responsableCambio',
+		            text: HreRem.i18n('header.responsable.cambio'),
+		            flex: 1
 		        }
 		    ];
 

@@ -301,7 +301,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
 					remoteUrl: 'generic/getComboTipoTrabajoCreaFiltered',
 					extraParams: {
 						idActivo: '{idActivo}'
-					},
+					}
 				}
     		},
     		

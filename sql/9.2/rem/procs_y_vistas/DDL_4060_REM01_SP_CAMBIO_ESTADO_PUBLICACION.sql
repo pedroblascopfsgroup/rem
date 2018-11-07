@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Maria Presencia
+--## AUTOR=Carles Molins
 --## FECHA_CREACION=20181107
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=2.0.19
---## INCIDENCIA_LINK=HREOS-4734
+--## INCIDENCIA_LINK=HREOS-4683
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -12,6 +12,7 @@
 --## VERSIONES:
 --##        0.1 Versión inicial
 --##		0.2 Actualizar tipo de publicacion
+--##		0.3 Llamada SP_CREAR_AVISO
 --##########################################
 --*/
 
@@ -370,6 +371,7 @@ create or replace PROCEDURE SP_CAMBIO_ESTADO_PUBLICACION (pACT_ID IN NUMBER DEFA
 		
 		IF pDD_MTO_CODIGO = '06' THEN /*Revisión Publicación*/
 		  vACTUALIZAR_COND := 'N';
+		  REM01.SP_CREAR_AVISO (pACT_ID, 'GPUBL', pUSUARIOMODIFICAR, 'Se ha situado en Oculto Venta con motivo Revisión Publicación el activo: ', 0);
 		END IF; 		
 		
 	  END IF;	  		  

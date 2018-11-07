@@ -42,7 +42,7 @@ BEGIN
 							T1.ACT_FECHA_SELLO_CALIDAD = T2.FECHA_SELLO,
 							T1.ACT_SELLO_CALIDAD = 1,
 							T1.USUARIOMODIFICAR = ''REMVIP-2450'',
-							T1.FECHAMODIFICAR = SYSDATE;
+							T1.FECHAMODIFICAR = SYSDATE
 	';
 	DBMS_OUTPUT.PUT_LINE('	[INFO] '||SQL%ROWCOUNT||' Activos a los que actualizamos los sellos de calidad.');  
 

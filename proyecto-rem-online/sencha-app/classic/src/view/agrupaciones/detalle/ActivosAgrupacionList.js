@@ -49,7 +49,13 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
         		me.getStore().remove(me.getStore().getAt(me.editPosition));
         		editor.isNew = false;
         	}
-	    }
+	    },
+    	afterbind: function(grid) {
+    		var me = this;
+			if (me.loadAfterBind) {
+				grid.getStore().load();
+			}
+		}
     },
 
     initComponent: function () {
@@ -113,8 +119,44 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
 				me.tbar.items.push(configAddBtn);
 				me.tbar.items.push(configRemoveBtn);
 			}
-    	};
-    	
+			
+			var tipoAgrupacion = me.up('agrupacionesdetallemain').getViewModel().get('agrupacionficha').get('tipoAgrupacionCodigo');
+			if($AU.userHasFunction(['EDITAR_TAB_PUBLICACION_LISTA_ACTIVOS_AGRUPACION']) &&
+					(tipoAgrupacion==CONST.TIPOS_AGRUPACION['OBRA_NUEVA'] || tipoAgrupacion==CONST.TIPOS_AGRUPACION['ASISTIDA'])) {
+				// Submenu del Grid.
+		        me.menu = Ext.create("Ext.menu.Menu", {
+				    cls: 'menu-favoritos',
+				    plain: true,
+				    floating: true,
+			    	items: [
+			    		{
+			    			text: HreRem.i18n('grid.submenu.msg.publicar.agrupacion'),
+			    			handler: 'onClickPublicarAgrupacionSubmenuGrid'
+			    		},
+			    		{
+			    			text: HreRem.i18n('grid.submenu.msg.publicar.activos.seleccionados'),
+			    			handler: 'onClickPublicarActivosSeleccionadosSubmenuGrid',
+			    			reference: 'submenugridpublicaractivosbtn',
+			    			disabled: true
+			    		},
+			    		{
+			    			text: HreRem.i18n('grid.menu.msg.publicar.subdivisiones.activos.seleccionados'),
+			    			handler: 'onClickPublicarSubdivisionesActivosSeleccioandosSubmenuGrid',
+			    			reference: 'submenugridpublicarsubdivisionesbtn',
+			    			disabled: true
+			    		}
+			    	]
+			    	
+			    });
+		     // Botones de submenú de la barra del grid.
+		        var configGridMenu = {iconCls:'x-fa fa-bars', cls:'boton-cabecera', itemId:'menuGridBtn', arrowVisible: false, menuAlign: 'tr-br', menu: me.menu};
+		        var separador = {xtype: 'tbfill'};
+				
+				me.tbar.items.push(separador);
+				me.tbar.items.push(configGridMenu);
+			}
+		}
+		
     	var condPublRenderer =  function(condicionado) {
         	var src = '',
         	alt = '';
@@ -133,9 +175,10 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
         	if(condicionado != null)
         		return '<div> <img src="resources/images/'+src+'" alt ="'+alt+'" width="15px"></div>';
         	else
-        		return '<div> - </div>';;
+        		return '<div> - </div>';
         };
-		
+
+ 
         me.columns= [
         	{
 		        xtype: 'actioncolumn',
@@ -294,6 +337,8 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
 	    		me.lookupController().onClickBotonRefrescar();
 	    	}
 	    };
+	    
+		
 
         me.dockedItems = [
         	{

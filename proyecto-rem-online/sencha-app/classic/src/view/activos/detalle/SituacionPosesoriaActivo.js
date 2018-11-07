@@ -182,10 +182,10 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 
 			            			if(value == CONST.COMBO_OCUPACION['SI']) {
 			            				me.up('formBase').down('[reference=comboSituacionPosesoriaConTitulo]').setValue(CONST.COMBO_CON_TITULO['SI']);
-			            				me.up('formBase').down('[reference=comboSituacionPosesoriaConTitulo]').setDisabled(false);
+			            				me.up('formBase').down('[reference=comboSituacionPosesoriaConTitulo]').setDisabled(true);
 			            			} else if (value == CONST.COMBO_OCUPACION['NO']){
 			            				me.up('formBase').down('[reference=comboSituacionPosesoriaConTitulo]').setDisabled(true); 
-			            			}		
+			            			}
 			            		}
 			            	}
 				        },				      

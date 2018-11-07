@@ -360,6 +360,7 @@ public class GenericController extends ParadiseJsonController{
 		return createModelAndViewJson(new ModelMap("data", genericApi.getComitesAlquilerByCarteraCodigo(carteraCodigo)));	
 	}
 
+	@RequestMapping(method= RequestMethod.GET)
 	public ModelAndView getComboTipoAgrupacion() {
 		return createModelAndViewJson(new ModelMap("data", genericApi.getComboTipoAgrupacion()));
 	}

@@ -53,9 +53,11 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
     },
     
     onClickCrearTrabajo: function (btn) {
+    	
     	var me = this;
     	var idActivo = me.getViewModel().get("activo.id");
 	  	var idAgrupacion = me.getViewModel().get("agrupacionficha.id");
+    	
 	  	var url= $AC.getRemoteUrl('trabajo/getSupervisorGestorTrabajo');
     	var tipoAgrupacionCodigo= me.getViewModel().get("agrupacionficha.tipoAgrupacionCodigo");
     	var data;
@@ -142,8 +144,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 	
     onChangeChainedCombo: function(combo) {
     	
-    	var me = this,
-    	chainedCombo = me.lookupReference(combo.chainedReference);
+    	var me = this, chainedCombo = me.lookupReference(combo.chainedReference);
     	me.getViewModel().notify();
 		chainedCombo.clearValue("");
 		chainedCombo.getStore().load(); 	

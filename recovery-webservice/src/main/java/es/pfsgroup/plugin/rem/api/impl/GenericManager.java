@@ -48,6 +48,7 @@ import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.GenericApi;
 import es.pfsgroup.plugin.rem.gestor.GestorActivoManager;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.ActivoPropietario;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
@@ -499,8 +500,8 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	@BusinessOperationDefinition("genericManager.getComboTipoTrabajoCreaFiltered")
-	public List<DDTipoTrabajo> getComboTipoTrabajoCreaFiltered(String idActivo) {
-
+	public List<DDTipoTrabajo> getComboTipoTrabajoCreaFiltered(String idActivo, String idAgrupacion) {
+		
 		List<DDTipoTrabajo> tiposTrabajo = new ArrayList<DDTipoTrabajo>();
 		List<DDTipoTrabajo> tiposTrabajoFiltered = new ArrayList<DDTipoTrabajo>();
 		tiposTrabajo.addAll((List<DDTipoTrabajo>) (List) adapter.getDiccionario("tiposTrabajo"));
@@ -525,7 +526,7 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 						tiposTrabajoFiltered.add(tipoTrabajo);
 					}
 				} else if (!DDTipoTrabajo.CODIGO_COMERCIALIZACION.equals(tipoTrabajo.getCodigo())
-						&& !DDTipoTrabajo.CODIGO_TASACION.equals(tipoTrabajo.getCodigo())) {
+						&& !DDTipoTrabajo.CODIGO_TASACION.equals(tipoTrabajo.getCodigo()) && !DDTipoTrabajo.CODIGO_PUBLICACIONES.equals(tipoTrabajo.getCodigo())) {
 					// El resto de tipos, si no es comercialización o tasación,
 					// se pueden generar.
 					tiposTrabajoFiltered.add(tipoTrabajo);
@@ -533,7 +534,12 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 			}
 
 			return tiposTrabajoFiltered;
+			
 		} else {
+			
+			Filter filter = genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(idAgrupacion));
+			ActivoAgrupacion agrupacion = genericDao.get(ActivoAgrupacion.class, filter);
+			String codigoAgrupacion = agrupacion.getTipoAgrupacion().getCodigo();
 
 			for (DDTipoTrabajo tipoTrabajo : tiposTrabajo) {
 				// No se generan los tipos de trabajo tasación o
@@ -542,7 +548,17 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 						&& !DDTipoTrabajo.CODIGO_TASACION.equals(tipoTrabajo.getCodigo())) {
 					// El resto de tipos, si no es comercialización o tasación,
 					// se pueden generar.
-					tiposTrabajoFiltered.add(tipoTrabajo);
+					
+					
+					//Excluiremos los trabajos del tipo publicacion para las agrupaciones de tipo asistida o de tipo obra nueva
+					
+					if ( DDTipoTrabajo.CODIGO_PUBLICACIONES.equals(tipoTrabajo.getCodigo()) && 
+							!(DDTipoAgrupacion.AGRUPACION_OBRA_NUEVA.equals(codigoAgrupacion) || DDTipoAgrupacion.AGRUPACION_ASISTIDA.equals(codigoAgrupacion))) {
+						tiposTrabajoFiltered.add(tipoTrabajo);
+					} else if (!DDTipoTrabajo.CODIGO_PUBLICACIONES.equals(tipoTrabajo.getCodigo())) {
+						tiposTrabajoFiltered.add(tipoTrabajo);
+					}
+					
 				}
 			}
 			return tiposTrabajoFiltered;

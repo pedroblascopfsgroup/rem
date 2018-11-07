@@ -411,9 +411,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     
     onClickCrearTrabajo: function (btn) {
     	var me = this;
-    	var idActivo = me.getViewModel().get("activo.id");
+    	var idActivo = me.getViewModel().get("activo.id");    	
     	me.getView().fireEvent('openModalWindow',"HreRem.view.trabajos.detalle.CrearTrabajo",{idActivo: idActivo, idAgrupacion: null});
-  	    	
     },
     
     onAnyadirPropietarioClick: function (btn) {
@@ -448,6 +447,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     },
     
     onChangeChainedCombo: function(combo) {
+    	
     	var me = this,
     	chainedCombo = me.lookupReference(combo.chainedReference);   
     	

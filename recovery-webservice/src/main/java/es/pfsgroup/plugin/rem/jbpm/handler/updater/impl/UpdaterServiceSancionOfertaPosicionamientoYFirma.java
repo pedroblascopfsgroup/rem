@@ -92,6 +92,8 @@ public class UpdaterServiceSancionOfertaPosicionamientoYFirma implements Updater
 	
 								PerimetroActivo perimetro = activoApi.getPerimetroByIdActivo(activo.getId());
 								perimetro.setAplicaComercializar(0);
+								perimetro.setAplicaFormalizar(0);
+								perimetro.setAplicaPublicar(false);
 								//TODO: Cuando esté el motivo de no comercialización como texto libre, poner el texto: "Vendido".
 								genericDao.save(PerimetroActivo.class, perimetro);
 	

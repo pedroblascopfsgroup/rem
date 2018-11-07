@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.api.impl;
 
 import es.capgemini.devon.message.MessageService;
+import es.capgemini.pfs.users.UsuarioManager;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
@@ -35,6 +36,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -91,6 +93,9 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	
 	@Autowired
 	private ActivoAgrupacionApi activoAgrupacionApi;
+	
+	@Autowired
+	private UsuarioManager usuarioManager;
 
     private BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 
@@ -432,6 +437,14 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 			beanUtilNotNull.copyProperty(activoPublicacion, "checkOcultarPrecioVenta", dto.getNoMostrarPrecioVenta());
 			beanUtilNotNull.copyProperty(activoPublicacion, "checkSinPrecioVenta", dto.getPublicarSinPrecioVenta());
 			beanUtilNotNull.copyProperty(activoPublicacion, "checkPublicarAlquiler", dto.getPublicarAlquiler());
+			if (activoPublicacion.getCheckOcultarAlquiler() && !dto.getOcultarAlquiler()){
+				if (DDEstadoPublicacionAlquiler.CODIGO_OCULTO_ALQUILER.equals(activoPublicacion.getEstadoPublicacionAlquiler().getCodigo())){
+					Boolean envioCorreo = comprobarEnvioCorreoAdecuacion(activoPublicacion);
+					if (envioCorreo){
+						enviarCorreoAdecuacion(activoPublicacion);
+					}
+				}
+			}
 			beanUtilNotNull.copyProperty(activoPublicacion, "checkOcultarAlquiler", dto.getOcultarAlquiler());
 			if(!Checks.esNulo(dto.getOcultarAlquiler()) && !dto.getOcultarAlquiler()) {
 				// Si el check de ocultar viene implícitamente a false vaciar motivos de ocultación.
@@ -785,5 +798,63 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	@Override
 	public Date getFechaInicioEstadoActualPublicacionVenta(Long idActivo) {
 		return activoPublicacionDao.getFechaInicioEstadoActualPublicacionVenta(idActivo);
+	}
+	
+	@Override
+	public Boolean comprobarEnvioCorreoAdecuacion(ActivoPublicacion activoPublicacion){
+		
+		Activo activo = activoPublicacion.getActivo();
+		Boolean precioPublicacion = false;
+		Boolean conCee = false;
+		Boolean conAdecuacion = false;
+		
+		List<VPreciosVigentes> precios = activoAdapter.getPreciosVigentesById(activo.getId());
+		for (VPreciosVigentes precio : precios) {
+			if (!Checks.esNulo(precio.getFechaFin())){
+				precioPublicacion = true;
+				break;
+			}
+		}
+			
+		List<VAdmisionDocumentos> documentos =  activoAdapter.getListAdmisionCheckDocumentos(activo.getId());
+		for (VAdmisionDocumentos documento : documentos) {
+			DDTipoDocumentoActivo documentoActivo = genericDao.get(DDTipoDocumentoActivo.class, genericDao.createFilter(FilterType.EQUALS, "descripcion", documento.getDescripcionTipoDoc()));
+			if (!Checks.esNulo(documentoActivo)){
+				if (DDTipoDocumentoActivo.CODIGO_CEE.equals(documentoActivo.getCodigo()) && documento.getAplica() == "1"){
+					conCee = true;
+				}else if (DDTipoDocumentoActivo.CODIGO_CEDULA_HABITABILIDAD.equals(documentoActivo.getCodigo()) && documento.getAplica() == "1"){
+					conAdecuacion = true;
+				}
+			}
+		}
+		
+		//Si no tiene precio de publicacion, no tiene el documento CEE activo y no tiene el documento de Cedula de Habitabilidad activo
+		if (!precioPublicacion && !conCee && !conAdecuacion){
+			return true;
+		}else {
+			return false;
+		}
+	}
+	
+	@Override
+	public boolean enviarCorreoAdecuacion(ActivoPublicacion activoPublicacion) {
+		boolean resultado = false;
+
+		Activo activo = activoPublicacion.getActivo();
+
+		try {
+			ArrayList<String> mailsPara = new ArrayList<String>();
+			mailsPara.add(usuarioManager.getByUsername("vhernandezi").getEmail());
+			String asunto = "Adecuación del activo "+ activo.getNumActivo() +" por publicación en www.haya.es";
+			String cuerpo = "Se ha pre-publicado en alquiler el activo "
+			+ activo.getNumActivo() +" que NO está adecuado, por favor revíselo y actualice el dato correspondiente para que se pueda publicar el activo en la web"
+			+"Muchas gracias y un saludo";
+
+			genericAdapter.sendMail(mailsPara, new ArrayList<String>(),asunto,cuerpo);
+			resultado = true;
+		} catch (Exception e) {
+			logger.error("No se ha podido notificar la adecuación del activo.", e);
+		}
+		return resultado;
 	}
 }

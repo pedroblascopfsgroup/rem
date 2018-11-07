@@ -1,0 +1,14 @@
+
+Proceso - Pasos de la ejecución 
+
+= 1 = DESPLEGAR
+======================================================
+DEscomprimir el paquete y dar permisos a todos los ficheros del proceso.
+
+= 2 = EJECUTAR
+======================================================
+Ejecutar el script desde el directorio de inicio
+Los parametros del script son
+ 1.- Cadena de conexión 
+ 2.- Fecha actual
+

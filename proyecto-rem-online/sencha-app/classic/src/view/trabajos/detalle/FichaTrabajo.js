@@ -551,11 +551,12 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 		           }
         ];  
     	me.callParent();
-    	var isSareb= me.lookupController().getViewModel().get('trabajo').get('esSareb');
-        if(!isSareb){
-        	me.down("[reference=checkRequerimiento]").setVisible(false);
+    	var cartera= me.lookupController().getViewModel().get('trabajo').get('codCartera');
+    	alert(cartera)
+        if(CONST.CARTERA['SAREB'] == cartera){
+        	me.down("[reference=checkRequerimiento]").setVisible(true);        	
         }else{
-        	me.down("[reference=checkRequerimiento]").setVisible(true);
+        	me.down("[reference=checkRequerimiento]").setVisible(false);
         }
     },
 

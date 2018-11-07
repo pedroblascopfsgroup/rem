@@ -302,7 +302,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
 					extraParams: {
 						idActivo: '{idActivo}',
 						idAgrupacion: '{idAgrupacion}'
-					},
+					}
 				}
     		},
     		

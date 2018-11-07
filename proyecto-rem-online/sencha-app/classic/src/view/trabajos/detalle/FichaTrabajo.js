@@ -23,7 +23,7 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
         me.idSupervisorEdificaciones = me.lookupController().getViewModel().get('trabajo').get('idSupervisorEdificaciones');
         me.idSupervisorAlquileres = me.lookupController().getViewModel().get('trabajo').get('idSupervisorAlquileres');
         me.idSupervisorSuelos = me.lookupController().getViewModel().get('trabajo').get('idSupervisorSuelos');
-        var isSareb= me.lookupController().getViewModel().get('trabajo').get('esSareb');
+        
         var logadoGestorMantenimiento= me.lookupController().getViewModel().get('trabajo').get('logadoGestorMantenimiento');
         var editar = me.lookupController().getViewModel().get('trabajo').get('bloquearResponsable');
         //NOTA: En cuanto a la visualización del campo “Responsable del trabajo”, 
@@ -274,7 +274,7 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 												xtype: 'checkboxfieldbase',
 												boxLabel:  HreRem.i18n('fieldlabel.requerimiento'),												
 												reference: 'checkRequerimiento',
-												hidden: !isSareb,
+												//hidden: !isSareb,
 												readOnly: !logadoGestorMantenimiento,
 												bind:{
 													value: '{trabajo.requerimiento}'													
@@ -551,6 +551,12 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 		           }
         ];  
     	me.callParent();
+    	var isSareb= me.lookupController().getViewModel().get('trabajo').get('esSareb');
+        if(!isSareb){
+        	me.down("[reference=checkRequerimiento]").setVisible(false);
+        }else{
+        	me.down("[reference=checkRequerimiento]").setVisible(true);
+        }
     },
 
     funcionRecargar: function() {

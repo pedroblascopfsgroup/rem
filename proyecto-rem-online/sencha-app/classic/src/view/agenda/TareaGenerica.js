@@ -438,13 +438,28 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 
         var parametros = me.down("form").getValues();
         parametros.idTarea = me.idTarea;
+        
+        var urlTipoTitulo =  $AC.getRemoteUrl('agenda/getTipoTituloActivoByIdTarea');
+		Ext.Ajax.request({
+			
+			url: urlTipoTitulo,
+		     params: parametros,
+		
+		     success: function(response, opts) {
+		    	 var data = Ext.decode(response.responseText);
+		    	 var tipoTituloActivoCodigo = data.tipoTituloActivo;
+		    	 if ("04" == tipoTituloActivoCodigo) {
+		    		 Ext.MessageBox.alert(' ',HreRem.i18n('tarea.aviso.liquidacion.colaterales'));
+		    	 }
+		     }
+		});
 
         //var url = $AC.getRemoteUrl('tarea/saveFormAndAdvance');
         var url = $AC.getRemoteUrl('agenda/save');
         Ext.Ajax.request({
             url: url,
             params: parametros,
-            success: function(response, opts) {
+            success: function(response, opts) {            	
                 //me.parent.fireEvent('aftersaveTarea', me.parent);
                 me.json = Ext.decode(response.responseText);
 

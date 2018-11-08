@@ -1760,6 +1760,27 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 	
 	@Override
+	public Boolean subtipoPerteneceTipoTitulo(String subtipo, String tipoTitulo){
+		
+		String resultado;
+		
+		if(!Checks.esNulo(tipoTitulo) && !Checks.esNulo(subtipo)){
+			if(!StringUtils.isNumeric(tipoTitulo) || !StringUtils.isNumeric(subtipo)) {
+				return false;
+			} else {
+				resultado = rawDao.getExecuteSQL("SELECT COUNT(1) FROM REM01.DD_STA_SUBTIPO_TITULO_ACTIVO STA "
+					+ "JOIN REM01.DD_TTA_TIPO_TITULO_ACTIVO TTA ON STA.DD_TTA_ID = TTA.DD_TTA_ID AND TTA.DD_TTA_CODIGO = "+tipoTitulo+" "
+					+ "WHERE STA.DD_STA_CODIGO = "+subtipo+"");
+			}
+			
+			if ((Integer.valueOf(resultado) > 0)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	@Override
 	public Boolean esParGastoActivo(String numGasto, String numActivo){
 		if(!StringUtils.isNumeric(numGasto) || !StringUtils.isNumeric(numActivo))
 			return false;

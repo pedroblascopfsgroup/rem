@@ -117,7 +117,11 @@ function check_pitertul_name() {
 	declare -A rule=(	[name]="Pitertul nombre"
 						[file]=$file
 						[problem]="El fichero no tiene un nombre correcto para PITERTUL."
+<<<<<<< HEAD
 						[solution]="Patrón válido: $patron"
+=======
+						[solution]="Puedes encontrar ayuda en https://link-doc.pfsgroup.es/confluence/display/TEC/PITERTUL%3A+making+of"
+>>>>>>> 616d71fccb... RECOVERY-13610 Nuevo hook
 					)
 	fsinpath=${file##*/}
 	if [[ ! $fsinpath =~ $patron ]] ; then 
@@ -167,6 +171,9 @@ function SQL_rules() {
 	for f in `eval $modified_files | grep  -E .sql$ | grep -v ^reports/ | grep -v migracion`; do
 		check_pitertul_name $f
 		
+<<<<<<< HEAD
+>>>>>>> 616d71fccb... RECOVERY-13610 Nuevo hook
+=======
 >>>>>>> 616d71fccb... RECOVERY-13610 Nuevo hook
 		file_content=$(cat $f);
 		check_UTF8 $f

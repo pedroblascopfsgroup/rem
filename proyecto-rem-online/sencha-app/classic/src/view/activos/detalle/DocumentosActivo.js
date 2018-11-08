@@ -19,7 +19,7 @@ Ext.define('HreRem.view.activos.detalle.DocumentosActivo', {
 					colspan: 3
     	        	 
     	        	 
-    	         },
+    	         }/*,
     	         
     			 {
     				xtype:'documentosactivopromocion',
@@ -31,7 +31,7 @@ Ext.define('HreRem.view.activos.detalle.DocumentosActivo', {
 					collapsible: true,
 					colspan: 3
 
-    			 }
+    			 }*/
     	];
 
     	me.addPlugin({ptype: 'lazyitems', items: items });

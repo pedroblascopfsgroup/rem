@@ -365,11 +365,24 @@ public class AgrupacionController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView saveAgrupacion(DtoAgrupaciones dtoAgrupacion, @RequestParam Long id, ModelMap model) {
-
-		try {
-			boolean success = adapter.saveAgrupacion(dtoAgrupacion, id);
-			model.put("success", success);
+	public ModelAndView saveAgrupacion(DtoAgrupaciones dtoAgrupacion, @RequestParam Long id, ModelMap model)
+	{
+		try
+		{
+			String success = adapter.saveAgrupacion(dtoAgrupacion, id);
+			if(success.contains(AgrupacionAdapter.SPLIT_VALUE))
+			{
+				String response[] = success.split(AgrupacionAdapter.SPLIT_VALUE);
+				if(response.length == 2)
+				{
+					model.put("success", response[0]);
+					model.put("msgError", response[1]);
+				}
+			}
+			else
+			{
+				model.put("success", success);
+			}
 			
 		} catch (JsonViewerException jvex) {
 			logger.error(jvex);

@@ -2,6 +2,10 @@ package es.pfsgroup.plugin.rem.expedienteComercial.dao.impl;
 
 import java.util.List;
 
+import es.pfsgroup.commons.utils.hibernate.HibernateUtils;
+import org.hibernate.Criteria;
+import org.hibernate.Session;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
 import es.capgemini.devon.dto.WebDto;
@@ -76,5 +80,17 @@ public  class ExpedienteComercialDaoImpl extends AbstractEntityDao<ExpedienteCom
 			return listaExpedientes.get(0);
 		else
 			return null;
+	}
+
+	@Override
+	public ExpedienteComercial getExpedienteComercialByNumExpediente(Long numeroExpediente) {
+		Session session = getSession();
+		Criteria criteria = session.createCriteria(ExpedienteComercial.class);
+		criteria.add(Restrictions.eq("numExpediente", numeroExpediente));
+
+		ExpedienteComercial expedienteComercial = HibernateUtils.castObject(ExpedienteComercial.class, criteria.uniqueResult());
+		session.disconnect();
+
+		return expedienteComercial;
 	}
 }

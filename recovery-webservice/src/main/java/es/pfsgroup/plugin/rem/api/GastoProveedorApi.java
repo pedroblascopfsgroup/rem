@@ -344,7 +344,7 @@ public interface GastoProveedorApi {
 		 * @return
 		 */
 		List<VGastosProveedor> getListGastosProvisionAgrupGastos(Long idProvision);
-		
+
 
 }
 

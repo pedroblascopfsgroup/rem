@@ -2318,7 +2318,7 @@ public class ActivoAdapter {
 		}
 		return listaAdjuntos;
 	}
-
+	
 	private List<DtoAdjunto> getAdjuntosActivo(Long id, List<DtoAdjunto> listaAdjuntos)
 			throws IllegalAccessException, InvocationTargetException {
 		Activo activo = activoApi.get(id);
@@ -2335,7 +2335,7 @@ public class ActivoAdapter {
 		}
 		return listaAdjuntos;
 	}
-
+	
 	public String uploadDocumento(WebFileItem webFileItem, Activo activoEntrada, String matricula) throws Exception {
 
 		if (Checks.esNulo(activoEntrada)) {

@@ -25,7 +25,8 @@ Ext.define('HreRem.view.activos.detalle.DocumentosActivo', {
     				xtype:'documentosactivopromocion',
 					reference: 'listadoDocumentosPromo',
                     bind: {
-                        hidden: '{!activo.isVisibleCodPrinex}'
+                       // hidden: '{!activo.isVisibleCodPrinex}'
+                    	hidden: true
                     },
 					collapsible: true,
 					colspan: 3

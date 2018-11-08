@@ -174,9 +174,6 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	private TrabajoDao trabajoDao;
 
 	@Autowired
-	private ActivoTrabajoDao activoTrabajoDao;
-
-	@Autowired
 	private GestorActivoManager gestorActivoManager;
 
 	@Autowired
@@ -3708,5 +3705,12 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		}
 		return false;
 	}
+	
+	public Boolean activoEnTramite(Long idActivo) {
+		Activo activo = activoApi.get(idActivo);
+		return activo.getEnTramite();
+	}
+	
+	
 }
 

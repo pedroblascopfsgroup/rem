@@ -46,8 +46,9 @@ import es.pfsgroup.plugin.rem.activo.dao.impl.ActivoPatrimonioDaoImpl;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.GenericApi;
-import es.pfsgroup.plugin.rem.gestor.GestorActivoManager;
+import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.gestor.GestorActivoManager;
 import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.ActivoPropietario;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
@@ -79,6 +80,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPorCuenta;
+import es.pfsgroup.plugin.rem.trabajo.dao.DDSubtipoTrabajoDao;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import net.sf.sojo.interchange.json.JsonParser;
@@ -110,6 +112,12 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 
 	@Resource
 	private Properties appProperties;
+	
+	@Autowired
+	private GestorActivoApi gestorActivoApi;
+	
+	@Autowired
+	private DDSubtipoTrabajoDao ddSubtipoTrabajoDao;
 
 	BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 
@@ -516,31 +524,37 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		List<DDTipoTrabajo> tiposTrabajo = new ArrayList<DDTipoTrabajo>();
 		List<DDTipoTrabajo> tiposTrabajoFiltered = new ArrayList<DDTipoTrabajo>();
 		tiposTrabajo.addAll((List<DDTipoTrabajo>) (List) adapter.getDiccionario("tiposTrabajo"));
-
+		Activo act = activoApi.get(Long.parseLong(idActivo));
 		if (!Checks.esNulo(idActivo)) {
 			Long activo = Long.parseLong(idActivo);
-
+			
 			for (DDTipoTrabajo tipoTrabajo : tiposTrabajo) {
 				// No se pueden crear tipos de trabajo ACTUACION TECNICA ni
 				// OBTENCION DOCUMENTAL
 				// cuando el activo no tiene condicion de gestion en el
 				// perimetro (check gestion = false)
-				if (DDTipoTrabajo.CODIGO_ACTUACION_TECNICA.equals(tipoTrabajo.getCodigo())
-						|| DDTipoTrabajo.CODIGO_OBTENCION_DOCUMENTAL.equals(tipoTrabajo.getCodigo())) {
-					// Si no hay registro en BBDD de perimetro, el get nos
-					// devuelve un PerimetroActivo nuevo
-					// con todas las condiciones de perimetro activas
-					PerimetroActivo perimetroActivo = activoApi.getPerimetroByIdActivo(activo);
-
-					if (!Checks.esNulo(perimetroActivo.getAplicaGestion()) && perimetroActivo.getAplicaGestion() == 1) {
-						// Activo con Gestion en perimetro
+				if (act.getEnTramite()){
+					if(!Checks.esNulo(tipoTrabajo.getFiltroEnTramite()) && tipoTrabajo.getFiltroEnTramite()) {
 						tiposTrabajoFiltered.add(tipoTrabajo);
 					}
-				} else if (!DDTipoTrabajo.CODIGO_COMERCIALIZACION.equals(tipoTrabajo.getCodigo())
-						&& !DDTipoTrabajo.CODIGO_TASACION.equals(tipoTrabajo.getCodigo())) {
-					// El resto de tipos, si no es comercialización o tasación,
-					// se pueden generar.
-					tiposTrabajoFiltered.add(tipoTrabajo);
+				}else {
+					if (DDTipoTrabajo.CODIGO_ACTUACION_TECNICA.equals(tipoTrabajo.getCodigo())
+							|| DDTipoTrabajo.CODIGO_OBTENCION_DOCUMENTAL.equals(tipoTrabajo.getCodigo())) {
+						// Si no hay registro en BBDD de perimetro, el get nos
+						// devuelve un PerimetroActivo nuevo
+						// con todas las condiciones de perimetro activas
+						PerimetroActivo perimetroActivo = activoApi.getPerimetroByIdActivo(activo);
+
+						if (!Checks.esNulo(perimetroActivo.getAplicaGestion()) && perimetroActivo.getAplicaGestion() == 1) {
+							// Activo con Gestion en perimetro
+							tiposTrabajoFiltered.add(tipoTrabajo);
+						}
+					} else if (!DDTipoTrabajo.CODIGO_COMERCIALIZACION.equals(tipoTrabajo.getCodigo())
+							&& !DDTipoTrabajo.CODIGO_TASACION.equals(tipoTrabajo.getCodigo())) {
+						// El resto de tipos, si no es comercialización o tasación,
+						// se pueden generar.
+						tiposTrabajoFiltered.add(tipoTrabajo);
+					}
 				}
 			}
 
@@ -563,11 +577,28 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 
 	@Override
 	@BusinessOperationDefinition("genericManager.getComboSubtipoTrabajo")
-	public List<DDSubtipoTrabajo> getComboSubtipoTrabajo(String tipoTrabajoCodigo) {
-
-		Order order = new Order(GenericABMDao.OrderType.ASC, "descripcion");
-		Filter filter = genericDao.createFilter(FilterType.EQUALS, "tipoTrabajo.codigo", tipoTrabajoCodigo);
-		return (List<DDSubtipoTrabajo>) genericDao.getListOrdered(DDSubtipoTrabajo.class, order, filter);
+	public List<DDSubtipoTrabajo> getComboSubtipoTrabajo(String tipoTrabajoCodigo, Long idActivo) {
+		Activo activo = activoApi.get(idActivo);
+		List<DDSubtipoTrabajo> lista = new ArrayList<DDSubtipoTrabajo>();
+		DDTipoTrabajo tipoTrabajo =  genericDao.get(DDTipoTrabajo.class, genericDao.createFilter(FilterType.EQUALS,"codigo", tipoTrabajoCodigo));
+				
+		if(activo.getEnTramite()) {
+			Usuario gestorProveedorTecnico = gestorActivoApi.getGestorByActivoYTipo(activo, "PTEC");
+			if(!Checks.esNulo(gestorProveedorTecnico)){
+				
+				lista = ddSubtipoTrabajoDao.getSubtipoTrabajoconTarifaPlana(tipoTrabajo.getId(), new Date());
+			}else {
+				Order order = new Order(GenericABMDao.OrderType.ASC, "descripcion");
+				Filter filter = genericDao.createFilter(FilterType.EQUALS, "tipoTrabajo.codigo", tipoTrabajoCodigo);	
+				lista = genericDao.getListOrdered(DDSubtipoTrabajo.class, order, filter);	
+			}
+		}else {
+			Order order = new Order(GenericABMDao.OrderType.ASC, "descripcion");
+			Filter filter = genericDao.createFilter(FilterType.EQUALS, "tipoTrabajo.codigo", tipoTrabajoCodigo);	
+			lista = genericDao.getListOrdered(DDSubtipoTrabajo.class, order, filter);
+		}
+		
+		return lista;
 
 	}
 

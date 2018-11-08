@@ -25,6 +25,9 @@ public class MSVExcelValidatorFactoryImpl {
 	private MSVAgrupacionLoteComercialExcelValidator agrupacionLoteComercialExcelValidator;
 	
 	@Autowired
+	private MSVAgrupacionLoteComercialAlquilerExcelValidator agrupacionLoteComercialAlquilerExcelValidator;
+
+	@Autowired
 	private MSVAgrupacionProyectoExcelValidator agrupacionProyectoExcelValidator;
 	
 	@Autowired
@@ -152,6 +155,8 @@ public class MSVExcelValidatorFactoryImpl {
 			}
 			else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_VENTA_DE_CARTERA.equals(codTipoOperacion)){
 				return ventaDeCartera;
+			} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_AGRUPACION_LOTE_COMERCIAL_ALQUILER.equals(codTipoOperacion)) {
+				return agrupacionLoteComercialAlquilerExcelValidator;
 			}
 			else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_INFO_DETALLE_PRINEX_LBK.equals(codTipoOperacion)){
 				return infoDetallePrinexLbk;

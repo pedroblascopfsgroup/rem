@@ -36,7 +36,9 @@ public class DtoAgrupacionFilter extends WebDto {
 	private Long numActUVEM;
 	private Long numActReco;
 	private String nif;
-
+	private String tipoAlquiler;
+	
+	
 	public String getNombre() {
 		return nombre;
 	}
@@ -235,6 +237,14 @@ public class DtoAgrupacionFilter extends WebDto {
 
 	public void setNif(String nif) {
 		this.nif = nif;
+	}
+
+	public String getTipoAlquiler() {
+		return tipoAlquiler;
+	}
+
+	public void setTipoAlquiler(String tipoAlquiler) {
+		this.tipoAlquiler = tipoAlquiler;
 	}
 	
 	

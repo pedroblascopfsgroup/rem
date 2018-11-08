@@ -510,6 +510,10 @@
 				def ofertaManager = ctx.getBean("ofertaManager");
 				return ofertaManager.checkNifConyugueLBB(tareaExterna);
 			}
+			def activoEnTramite = {
+				def trabajoManager = ctx.getBean("trabajoManager");
+            	return trabajoManager.activoEnTramite(idActivo);
+			}
   			 ]]></value>
   		</list>
   	</property>

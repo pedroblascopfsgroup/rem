@@ -1954,7 +1954,152 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		else {
 			return false;
 		}
+	}
 	
+	/**
+	 * 
+	 * @param idActivo
+	 * @return devuelve true si un activo tiene un destino comercial de tipo venta (no confundir con venta y alquiler)
+	 */
+	@Override
+	public Boolean activoConDestinoComercialVenta(String numActivo) {
+		
+		if(!Checks.esNulo(numActivo)){
+			String resultado = rawDao.getExecuteSQL("select DD_TCO_CODIGO from ACT_ACTIVO act "
+					 + " inner join DD_TCO_TIPO_COMERCIALIZACION tco on tco.DD_TCO_ID = act.DD_TCO_ID"
+					 + " where act.ACT_NUM_ACTIVO = "+numActivo);
+			
+			if(resultado != null && "01".equals(resultado)) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	/**
+	 * 
+	 * @param idActivo
+	 * @return devuelve true si un activo tiene un destino comercial de tipo alquiler (no confundir con venta y alquiler)
+	 */
+	@Override
+	public Boolean activoConDestinoComercialAlquiler(String numActivo) {
+		
+		if(!Checks.esNulo(numActivo)){
+			String resultado = rawDao.getExecuteSQL("select DD_TCO_CODIGO from ACT_ACTIVO act "
+					 + " inner join DD_TCO_TIPO_COMERCIALIZACION tco on tco.DD_TCO_ID = act.DD_TCO_ID"
+					 + " where act.ACT_NUM_ACTIVO = "+numActivo);
+			
+			if(resultado != null && "03".equals(resultado)) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	@Override
+	public Boolean esActivoAlquilado(String numActivo) {
+		
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(act.act_id) "
+				+ "			FROM DD_SCM_SITUACION_COMERCIAL scm, "
+				+ "			  ACT_ACTIVO act "
+				+ "			WHERE scm.dd_scm_id   = act.dd_scm_id "
+				+ "			  AND scm.dd_scm_codigo = '10' "
+				+ "			  AND act.ACT_NUM_ACTIVO = "+numActivo+" "
+				+ "			  AND act.borrado       = 0");
+		
+		return Integer.valueOf(resultado) > 0;
+
+	}
+	
+	
+	@Override
+	public Boolean activoEnAgrupacionComercialViva(String numActivo) {
+		
+		String resultado = rawDao.getExecuteSQL("select count(agr.AGR_ID) from ACT_AGR_AGRUPACION agr " + 
+				" inner join DD_TAG_TIPO_AGRUPACION tag on tag.DD_TAG_ID = agr.DD_TAG_ID and (tag.DD_TAG_CODIGO = '14' or tag.DD_TAG_CODIGO = '15') " + 
+				" inner join ACT_AGA_AGRUPACION_ACTIVO aga on aga.AGR_ID = agr.AGR_ID " + 
+				" inner join ACT_ACTIVO act on act.ACT_ID = aga.ACT_ID and act.ACT_NUM_ACTIVO = " + numActivo + 
+				" where agr.AGR_FECHA_BAJA IS NULL AND agr.AGR_FIN_VIGENCIA >= sysdate " + 
+				" and act.borrado = 0" + 
+				" and agr.borrado = 0" + 
+				" and tag.borrado = 0" + 
+				" and aga.borrado = 0");
+		
+		return Integer.valueOf(resultado) > 0;
+
+	}
+	
+	@Override
+	public Boolean esAgrupacionTipoAlquiler(String numAgrupacion) {
+		if(Checks.esNulo(numAgrupacion) || !StringUtils.isNumeric(numAgrupacion))
+			return false;
+
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) FROM ACT_AGR_AGRUPACION agr " + 
+				" INNER JOIN DD_TAG_TIPO_AGRUPACION tipo ON tipo.DD_TAG_ID = agr.DD_TAG_ID AND DD_TAG_CODIGO = '15'" + 
+				" WHERE agr.AGR_NUM_AGRUP_REM = '" + numAgrupacion + "'" +
+				" AND agr.BORRADO = 0");
+
+		return !"0".equals(resultado);
+	}
+	
+	
+	@Override
+	public Boolean mismoTipoAlquilerActivoAgrupacion(String numAgrupacion, String numActivo) {
+		if(Checks.esNulo(numAgrupacion) || !StringUtils.isNumeric(numAgrupacion))
+			return false;
+
+		String tipoAlquilerAgrupacion = rawDao.getExecuteSQL("SELECT DD_TAL_ID FROM ACT_AGR_AGRUPACION agr WHERE agr.AGR_NUM_AGRUP_REM = '" + numAgrupacion + "'" + 
+				" AND agr.BORRADO = 0");
+		
+		String tipoAlquilerActivo = rawDao.getExecuteSQL("SELECT DD_TAL_ID FROM ACT_ACTIVO act WHERE act.ACT_NUM_ACTIVO = '" + numActivo + "'" + 
+				" AND act.BORRADO = 0");
+
+		if (!Checks.esNulo(tipoAlquilerAgrupacion) && tipoAlquilerAgrupacion != "") {
+
+			return tipoAlquilerAgrupacion.equals(tipoAlquilerActivo);
+
+		} else {
+			
+			try {
+				
+				return tipoAlquilerActivo.equals(tipoAlquilerAgrupacion);
+				
+			} catch (Exception e) {
+				return false;
+			}
+			
+		}
+
+	}
+	
+	
+	@Override
+	public Boolean esAgrupacionTipoComercialVenta(String numAgrupacion) {
+		if(Checks.esNulo(numAgrupacion) || !StringUtils.isNumeric(numAgrupacion))
+			return false;
+
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) FROM ACT_AGR_AGRUPACION agr " + 
+				" INNER JOIN DD_TAG_TIPO_AGRUPACION tipo ON tipo.DD_TAG_ID = agr.DD_TAG_ID AND DD_TAG_CODIGO = '14'" + 
+				" WHERE agr.AGR_NUM_AGRUP_REM = '" + numAgrupacion + "'" +
+				" AND agr.BORRADO = 0");
+
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public String getCodigoSubcarteraAgrupacion(String numAgrupacion) {
+		String resultado = "";
+		if(numAgrupacion != null && !numAgrupacion.isEmpty()){
+			 resultado = rawDao.getExecuteSQL("SELECT scr.DD_SCR_CODIGO " + 
+			 		" FROM ACT_ACTIVO act  " + 
+			 		" INNER JOIN ACT_AGR_AGRUPACION agr ON agr.AGR_NUM_AGRUP_REM = '" + numAgrupacion + "'" + 
+			 		" INNER JOIN ACT_AGA_AGRUPACION_ACTIVO aga ON agr.AGR_ID = aga.AGR_ID AND aga.AGA_PRINCIPAL = 1 " + 
+			 		" INNER JOIN DD_SCR_SUBCARTERA scr ON act.DD_SCR_ID = scr.DD_SCR_ID  " + 
+			 		" WHERE act.ACT_ID = aga.ACT_ID");
+		}
+		return resultado;
 	}
 	
 	@Override

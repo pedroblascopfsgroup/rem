@@ -134,6 +134,15 @@ Ext.define('HreRem.model.AgrupacionFicha', {
 		    		name: 'codigoGestorComercialBackOffice'
 		    	},
 		    	{
+		    		name: 'cartera'
+		    	},
+		    	{
+		    		name: 'subTipoComercial'
+		    	},
+		    	{
+		    		name: 'tipoAlquilerCodigo'
+		    	},    	
+		    	{
 		    		name: 'codigoCartera'
 		    	},
 		    	{

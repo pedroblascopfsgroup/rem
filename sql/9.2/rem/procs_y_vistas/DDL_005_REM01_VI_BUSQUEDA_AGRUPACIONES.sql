@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Sergio Ortuño
---## FECHA_CREACION=20171129
+--## AUTOR=CARLOS GÓRRIZ
+--## FECHA_CREACION=20180817
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-3302
+--## INCIDENCIA_LINK=HREOS-4403
 --## PRODUCTO=NO
 --## Finalidad: Vista para la búsqueda de agrupaciones.
 --##  
@@ -15,6 +15,7 @@
 --##		0.3 Modificación.
 --##		0.4 Corrección activos publicados.
 --##		0.5 Nuevo campo en select
+--##		0.6 Nuevo campo en select (código e id del tipo de alquiler)
 --##########################################
 --*/
 
@@ -68,7 +69,9 @@ BEGIN
 			COALESCE (obr.dd_loc_id, res.dd_loc_id, lco.dd_loc_id, asi.dd_loc_id, pry.dd_loc_id) AS localidad, 
 			COALESCE (obr.onv_direccion, res.res_direccion, lco.lco_direccion, asi.asi_direccion, pry.PRY_DIRECCION) AS direccion,
 			agr_p.dd_cra_codigo cartera, 
-			agr.agr_is_formalizacion
+			agr.agr_is_formalizacion,
+			alq.dd_tal_id AS idTipoAlquiler,
+			alq.dd_tal_codigo AS codTipoAlquiler
 		FROM '||V_ESQUEMA||'.act_agr_agrupacion agr 
 		JOIN '||V_ESQUEMA||'.dd_tag_tipo_agrupacion tag ON tag.dd_tag_id = agr.dd_tag_id
 		LEFT JOIN
@@ -89,6 +92,7 @@ BEGIN
 		LEFT JOIN '||V_ESQUEMA||'.act_res_restringida res ON (agr.agr_id = res.agr_id)
 		LEFT JOIN '||V_ESQUEMA||'.act_lco_lote_comercial lco ON (agr.agr_id = lco.agr_id)
 		LEFT JOIN '||V_ESQUEMA||'.act_asi_asistida asi ON (agr.agr_id = asi.agr_id)
+		LEFT JOIN '||V_ESQUEMA||'.dd_tal_tipo_alquiler alq ON (agr.dd_tal_id = alq.dd_tal_id)
 		LEFT JOIN '||V_ESQUEMA||'.ACT_PRY_PROYECTO PRY ON (agr.agr_id = PRY.agr_id)
 		WHERE agr.borrado = 0 AND tag.borrado = 0';
 

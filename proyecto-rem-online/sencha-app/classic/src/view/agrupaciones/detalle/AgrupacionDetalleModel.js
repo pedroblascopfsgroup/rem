@@ -48,6 +48,35 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 	     	}
 	     },
 	     
+	     esComercialAlquiler: function(get) {
+	    	 
+	     	var tipoComercialAlquiler = get('agrupacionficha.tipoAgrupacionCodigo');
+	     	if((tipoComercialAlquiler == CONST.TIPOS_AGRUPACION['COMERCIAL_ALQUILER'])) {
+	     		return true;
+	     	} else {
+	     		return false;
+	     	}
+		 },
+		 
+		 esComercialVentaOAlquiler: function(get) {
+		     	var tipoComercialAlquiler = get('agrupacionficha.tipoAgrupacionCodigo');
+		     	if((tipoComercialAlquiler == CONST.TIPOS_AGRUPACION['COMERCIAL_ALQUILER']) || (tipoComercialAlquiler == CONST.TIPOS_AGRUPACION['LOTE_COMERCIAL'])) {
+		     		return true;
+		     	} else {
+		     		return false;
+		     	}
+		 },
+		     
+		 esAgrupacionLoteComercial: function(get) {
+		    	 
+	     	var tipoComercial = get('agrupacionficha.tipoAgrupacionCodigo');
+	     	if((tipoComercial == CONST.TIPOS_AGRUPACION['COMERCIAL_ALQUILER']) || (tipoComercial == CONST.TIPOS_AGRUPACION['LOTE_COMERCIAL'])) {
+	     		return true;
+	     	} else {
+	     		return false;
+	     	}
+		 },
+	     
 	     esAgrupacionAsistidaAndFechaVigenciaNotNull: function(get) {
 	    	 
 	     	var tipoAgrupacion = get('agrupacionficha.tipoAgrupacionCodigo');
@@ -69,16 +98,6 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 	     		return false;
 	     	}
 	     },
-
-	     esAgrupacionLoteComercial: function(get) {
-	    	 
-		     	var tipoAgrupacion = get('agrupacionficha.tipoAgrupacionCodigo');
-		     	if((tipoAgrupacion == CONST.TIPOS_AGRUPACION['LOTE_COMERCIAL'])) {
-		     		return true;
-		     	} else {
-		     		return false;
-		     	}
-		 },
 		 
 		 esAgrupacionProyecto: function(get) {
 	    	 
@@ -334,6 +353,15 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 				extraParams: {agrId: '{agrupacionficha.id}', codigoGestor: 'GCOM'}
 			}   	
 	    },
+	    
+	    comboGestorComercialTipo: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'agrupacion/getGestoresLoteComercialPorTipo',
+				extraParams: {agrId: '{agrupacionficha.id}'}
+			}   	
+	    },
 
 	    comboGestorComercialBackoffice: {
 	    	model: 'HreRem.model.ComboBase',
@@ -397,6 +425,16 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 				extraParams: {diccionario: 'regimenesMatrimoniales'}
 			},
 			autoLoad: true   	
+	    },
+	    
+	    comboTipoAlquiler: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tiposAlquilerActivo'}
+			}
 	    }
+	 
      }
 });

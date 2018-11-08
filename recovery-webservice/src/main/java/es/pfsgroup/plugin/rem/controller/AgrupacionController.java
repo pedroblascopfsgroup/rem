@@ -293,8 +293,9 @@ public class AgrupacionController extends ParadiseJsonController {
 	public ModelAndView createAgrupacion(DtoAgrupacionesCreateDelete dtoAgrupacion, ModelMap model) {
 
 		try {
-			boolean success = adapter.createAgrupacion(dtoAgrupacion);
-			model.put("success", success);
+			DtoAgrupacionesCreateDelete agrupDto = adapter.createAgrupacion(dtoAgrupacion);
+			model.put("data", agrupDto);
+			model.put("success", true);
 
 		} catch (Exception e) {
 			logger.error(e);
@@ -694,14 +695,12 @@ public class AgrupacionController extends ParadiseJsonController {
 																		// idTrabajo);
 			model.put("success", success);
 
+		} catch (JsonViewerException jvex) {
+			model.put("msg", jvex.getMessage());
+			model.put("success", false);
 		} catch (Exception e) {
-			if (e.getMessage().equals(AgrupacionAdapter.OFERTA_INCOMPATIBLE_AGR_MSG)) {
-				model.put("msg", AgrupacionAdapter.OFERTA_INCOMPATIBLE_AGR_MSG);
-				model.put("success", false);
-			} else {
-				logger.error(e);
-				model.put("success", false);
-			}
+			logger.error(e);
+			model.put("success", false);
 		}
 		return createModelAndViewJson(model);
 	}
@@ -724,6 +723,18 @@ public class AgrupacionController extends ParadiseJsonController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getGestoresLoteComercialPorTipo(@RequestParam Long agrId, ModelMap model) {
+
+		try {
+			model.put("data", adapter.getUsuariosPorCodTipoGestor(agrId));
+			model.put("success", true);
+		} catch (Exception e) {
+			logger.error(e);
+			model.put("success", false);
+		}
+
+		return createModelAndViewJson(model);
+	}
 	public ModelAndView getDobleGestorActivo(@RequestParam Long agrId, @RequestParam String codigoGestorEdi,@RequestParam String codigoGestorSu,
 			ModelMap model) {
 
@@ -737,7 +748,6 @@ public class AgrupacionController extends ParadiseJsonController {
 
 		return createModelAndViewJson(model);
 	}
-	
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)

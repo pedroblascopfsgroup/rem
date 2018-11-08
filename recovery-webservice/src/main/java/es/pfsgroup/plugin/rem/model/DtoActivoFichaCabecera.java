@@ -142,6 +142,9 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private String tipoAlquilerDescripcion;
 	private Boolean bloqueoTipoComercializacionAutomatico;
 	private String numInmovilizadoBankia;
+	private Boolean enTramite;
+
+
 
 	//Activo Bancario datos:
 	private String claseActivoCodigo;
@@ -1462,6 +1465,14 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 
 	public void setAcreedorNumExp(String acreedorNumExp) {
 		this.acreedorNumExp = acreedorNumExp;
+	}
+	
+	public Boolean getEnTramite() {
+		return enTramite;
+	}
+
+	public void setEnTramite(Boolean enTramite) {
+		this.enTramite = enTramite;
 	}
 
 	public Boolean getTienePosibleInformeMediador() {

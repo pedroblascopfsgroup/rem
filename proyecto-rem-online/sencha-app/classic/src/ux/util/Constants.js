@@ -13,57 +13,68 @@ Ext.define('HreRem.ux.util.Constants', {
 	alternateClassName: ['CONST'],
 	singleton: true,
 
-	constructor: function (config) {
-		this.initConfig(config)
-	},
+    constructor: function (config) {
+    	this.initConfig(config)
+    },    
+         
+    ENTITY_TYPES: {
+        	
+    	ACTIVO: 1,
+        TRABAJO: 2,
+        TRAMITE: 3,
+        TAREA: 4,
+        EXPEDIENTE: 5,
+        GASTO: 6
+    },
 
-	ENTITY_TYPES: {
-		ACTIVO: 1,
-		TRABAJO: 2,
-		TRAMITE: 3,
-		TAREA: 4,
-		EXPEDIENTE: 5,
-		GASTO: 6
-	},
-
-	TIPOS_COMERCIALIZACION: {
-		VENTA: '01',
-		ALQUILER_VENTA: '02',
-		SOLO_ALQUILER: '03',
-		ALQUILER_OPCION_COMPRA: '04'
-	},
-
-	TIPOS_AGRUPACION: {
-		OBRA_NUEVA: '01',
-		RESTRINGIDA: '02',
-		PROYECTO: '04',
-		ASISTIDA: '13',
-		LOTE_COMERCIAL: '14'
-	},
-
-	TIPOS_INFO_COMERCIAL: {
-		VIVIENDA: '01',
-		LOCAL_COMERCIAL: '02',
-		PLAZA_APARCAMIENTO: '03'
-	},
-
-	TIPOS_ACTIVO: {
-		SUELO: '01',
-		VIVIENDA: '02',
-		COMERCIAL_Y_TERCIARIO: '03',
-		INDUSTRIAL: '04',
-		EDIFICIO_COMPLETO: '05',
-		EN_CONSTRUCCION: '06',
-		OTROS: '07'
-	},
-
-	TIPOS_EXPEDIENTE_COMERCIAL: {
-		VENTA: '01',
-		ALQUILER: '02'
-	},
-
-	TIPOS_TRABAJO: {
-		TASACION: '01',
+    TIPOS_COMERCIALIZACION: {    	
+    	VENTA: '01',
+    	ALQUILER_VENTA: '02',
+    	SOLO_ALQUILER: '03',
+    	ALQUILER_OPCION_COMPRA: '04'
+    },
+    
+    TIPOS_AGRUPACION: {
+    	
+    	OBRA_NUEVA: '01',
+    	RESTRINGIDA: '02',
+    	PROYECTO: '04',
+    	ASISTIDA: '13',
+    	LOTE_COMERCIAL: '14',
+    	COMERCIAL_ALQUILER:'15'
+    },
+    
+    TIPOS_ACTIVO: {
+    	
+    	SUELO: '01'    	
+    },
+    
+    TIPOS_INFO_COMERCIAL: {
+    	
+    	VIVIENDA: '01',
+    	LOCAL_COMERCIAL: '02',
+    	PLAZA_APARCAMIENTO: '03'
+    },
+    
+    TIPOS_ACTIVO: {
+    	
+    	SUELO: '01',
+    	VIVIENDA: '02',
+    	COMERCIAL_Y_TERCIARIO: '03',
+    	INDUSTRIAL: '04',
+    	EDIFICIO_COMPLETO: '05',
+    	EN_CONSTRUCCION: '06',
+    	OTROS: '07'
+    },
+    
+    TIPOS_EXPEDIENTE_COMERCIAL: {
+    	
+    	VENTA: '01',
+    	ALQUILER: '02'
+    },
+    
+    TIPOS_TRABAJO: {
+    	TASACION: '01',
 		OBTENCION_DOCUMENTACION: '02',
 		ACTUACION_TECNICA: '03',
 		PRECIOS: '04',

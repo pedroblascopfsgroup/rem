@@ -513,6 +513,10 @@ Ext.define('HreRem.model.Activo', {
 				type: 'boolean'
 			},
 			{
+				name: 'enTramite',
+				type: 'boolean'
+			},
+			{
 				name: 'tipoComercializacionCodigo'
 			},
 			{

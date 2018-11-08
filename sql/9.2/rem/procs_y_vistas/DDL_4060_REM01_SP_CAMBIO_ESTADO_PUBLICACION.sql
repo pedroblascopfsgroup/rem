@@ -239,6 +239,7 @@ create or replace PROCEDURE SP_CAMBIO_ESTADO_PUBLICACION (pACT_ID IN NUMBER DEFA
 		  	  
 		  IF pDD_MTO_CODIGO = '06' THEN /*Revisión Publicación*/
 		    vACTUALIZAR_COND := 'N';
+		    REM01.SP_CREAR_AVISO (pACT_ID, 'GPUBL', pUSUARIOMODIFICAR, 'Se ha situado en Oculto Alquiler con motivo Revisión Publicación el activo: ', 0);
 		  END IF; 
 		  	  
 		END IF;

@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Maria Presencia
---## FECHA_CREACION=20181106
+--## AUTOR=Carles Molins
+--## FECHA_CREACION=20181107
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=2.0.19
---## INCIDENCIA_LINK=HREOS-4734
+--## INCIDENCIA_LINK=HREOS-4683
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -13,6 +13,7 @@
 --##        0.1 Versión inicial Carlos Lopez HREOS-4074
 --##		0.2 Cambio SP_MOTIVO_OCULTACION por SP_MOTIVO_OCULTACION_AGR por fleco Ivan Rubio HREOS-4218
 --##		0.3 Cambio SP_MOTIVO_OCULTACION para actualizacion de tipo publicacion.
+--##		0.4 Llamada SP_CREAR_AVISO
 --##########################################
 --*/
 
@@ -270,6 +271,7 @@ create or replace PROCEDURE SP_CAMBIO_ESTADO_PUBLI_AGR (pAGR_ID IN NUMBER DEFAUL
 
 		  IF pDD_MTO_CODIGO = '06' THEN /*Revisión Publicación*/
 		    vACTUALIZAR_COND := 'N';
+		    REM01.SP_CREAR_AVISO (pAGR_ID, 'GPUBL', pUSUARIOMODIFICAR, 'Se ha situado en Oculto Alquiler con motivo Revisión Publicación la agrupación: ', 1);
 		  END IF; 
 		  	  
 		END IF;
@@ -427,6 +429,7 @@ create or replace PROCEDURE SP_CAMBIO_ESTADO_PUBLI_AGR (pAGR_ID IN NUMBER DEFAUL
 		
 		IF pDD_MTO_CODIGO = '06' THEN /*Revisión Publicación*/
 		  vACTUALIZAR_COND := 'N';
+		  REM01.SP_CREAR_AVISO (pAGR_ID, 'GPUBL', pUSUARIOMODIFICAR, 'Se ha situado en Oculto Venta con motivo Revisión Publicación la agrupación: ', 1);
 		END IF; 		
 		
 	  END IF;	  		  
@@ -798,7 +801,7 @@ create or replace PROCEDURE SP_CAMBIO_ESTADO_PUBLI_AGR (pAGR_ID IN NUMBER DEFAUL
               PLP$LIMPIAR_ALQUILER(nAGR_ID, vUSUARIOMODIFICAR);
             END IF;
   
-            IF vCHECK_PUBLICAR_A = 1 AND pCondAlquiler IS NOT NULL THEN
+            IF vCHECK_PUBLICAR_A = 1 AND vCondAlquiler IS NOT NULL THEN
               PLP$CONDICIONANTE_ALQUILER(nAGR_ID, nADMISION, nGESTION, nINFORME_COMERCIAL,nPRECIO_A, nCEE_VIGENTE, nADECUADO, vUSUARIOMODIFICAR, vCondAlquiler);
             END IF;
   

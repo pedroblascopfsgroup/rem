@@ -347,7 +347,7 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 												reference: 'comboMotivoOcultacionAlquiler',
 												textareaRefChained: 'textareaMotivoOcultacionManualAlquiler',
 												disabled: true,
-									        	bind: {
+												bind: {
 								            		store: '{comboMotivosOcultacionAlquiler}',
 								            		value: '{datospublicacionactivo.motivoOcultacionAlquilerCodigo}'
 								            	},
@@ -679,5 +679,9 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 		Ext.Array.each(me.query('grid'), function(grid) {
 			grid.getStore().load();
 		});
+		var combo1 = me.down('comboboxfieldbase[reference=comboMotivoOcultacionAlquiler]');
+		combo1.setDisabled(true);
+		var combo2 = me.down('comboboxfieldbase[reference=comboMotivoOcultacionVenta]');
+		combo2.setDisabled(true);
 	}
 });

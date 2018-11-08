@@ -162,6 +162,13 @@ Ext.define('HreRem.view.agrupaciones.detalle.CabeceraAgrupacion', {
 																value: '{agrupacionficha.estadoAlquilerDescripcion}'
 															}
 														},
+														{
+									                   		fieldLabel: HreRem.i18n('fieldlabel.enlace.externo'),
+									                   		bind: {
+									                   			hidden: '{!agrupacionRestringidaYPublicada}',
+									                   			value: '<a href="' + HreRem.i18n('fieldlabel.link.web.haya') + '{agrupacionficha.idNumActivoPrincipal}" target="_blank">' + HreRem.i18n('fieldlabel.web.haya') + '</a>'
+									                   		}
+									                   	},
 									                   	{
 									                   		fieldLabel: HreRem.i18n('fieldlabel.numero.agrupacion'),
 															bind:		'{agrupacionficha.numAgrupRem}'
@@ -169,7 +176,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.CabeceraAgrupacion', {
 									                   	{
 									                   		fieldLabel: HreRem.i18n('fieldlabel.numero.agrupacion.uvem'),
 															bind:		'{agrupacionficha.numAgrupUvem}'
-									                   	},	   
+									                   	},									                   
 										                { 
 															fieldLabel: HreRem.i18n('fieldlabel.nombre'),
 										                	bind: 		'{agrupacionficha.nombre}'

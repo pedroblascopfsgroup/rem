@@ -31,13 +31,14 @@ Ext.define('HreRem.view.trabajos.detalle.CrearTrabajo', {
 						if(index == 0) field.focus();
 					}
 			);
+			
 		},
 		
 		show: function() {			
 			var me = this;
-			me.resetWindow();			
+			me.resetWindow();
 		}
-		
+
 	},
 	
     initComponent: function() {
@@ -645,14 +646,19 @@ Ext.define('HreRem.view.trabajos.detalle.CrearTrabajo', {
     },
     
     resetWindow: function() {
-    	
+
     	var me = this,    	
     	form = me.down('formBase'); 
+    	
+    	
 
 		form.setBindRecord(form.getModelInstance());
 		form.reset();
 
 		me.getViewModel().set('idActivo', me.idActivo);
+    	me.getViewModel().set('idAgrupacion', me.idAgrupacion);
+		/*me.getViewModel().set('idActivo', me.idActivo);
+		me.getViewModel().set('idAgrupacion', me.idAgrupacion);*/
 		//me.getViewModel().notify();
 		    	
     	me.down("[reference=checkFechaConcreta]").setValue(false);
@@ -714,6 +720,9 @@ Ext.define('HreRem.view.trabajos.detalle.CrearTrabajo', {
     	// Recarga el combo de tipos de trabajo
     	me.down("[reference=tipoTrabajo]").reset();
 		me.down("[reference=tipoTrabajo]").getStore().removeAll();
+		if (!Ext.isEmpty(me.down("[reference=tipoTrabajo]").getStore().getProxy())) {
+			me.down("[reference=tipoTrabajo]").getStore().getProxy().extraParams.idAgrupacion = me.idAgrupacion;
+		}
     	me.down("[reference=tipoTrabajo]").getStore().load();
     	
     	me.down("[reference=checkEnglobaTodosActivosRef]").setValue(true);

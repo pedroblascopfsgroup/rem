@@ -653,13 +653,15 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 	},
 
 	addParamAgrupacion: function(store, operation, opts){
-	
+		
 		var me = this;
 		
 		var idAgrupacion = Ext.ComponentQuery.query("creartrabajowindow")[0].idAgrupacion;
 		store.getProxy().extraParams = {id: idAgrupacion};	
 		return true;		
 	},
+	
+
 	
 	addParamProveedores: function(store, operation, opts) {
 		var me = this;

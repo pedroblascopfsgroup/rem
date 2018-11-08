@@ -411,9 +411,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     
     onClickCrearTrabajo: function (btn) {
     	var me = this;
-    	var idActivo = me.getViewModel().get("activo.id");
+    	var idActivo = me.getViewModel().get("activo.id");    	
     	me.getView().fireEvent('openModalWindow',"HreRem.view.trabajos.detalle.CrearTrabajo",{idActivo: idActivo, idAgrupacion: null});
-  	    	
     },
     
     onAnyadirPropietarioClick: function (btn) {
@@ -448,6 +447,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     },
     
     onChangeChainedCombo: function(combo) {
+    	
     	var me = this,
     	chainedCombo = me.lookupReference(combo.chainedReference);   
     	
@@ -3363,7 +3363,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
         if (checkbox.getValue() && me.getViewModel().get('debePreguntarPorTipoPublicacionAlquiler')) {
 			Ext.create('HreRem.view.activos.detalle.VentanaEleccionTipoPublicacion').show();
         }
-
+        
 		var estadoPubAlquilerPublicado = me.getViewModel().get('activo').getData().estadoAlquilerCodigo === CONST.ESTADO_PUBLICACION_ALQUILER['PUBLICADO'] ||
 		me.getViewModel().get('activo').getData().estadoAlquilerCodigo === CONST.ESTADO_PUBLICACION_ALQUILER['OCULTO'];
         if(!isDirty && estadoPubAlquilerPublicado) {

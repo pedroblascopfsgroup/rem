@@ -434,6 +434,31 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
             var precioRentaWeb = !Ext.isEmpty(get('datospublicacionactivo.precioWebAlquiler'));
             return !informeComercialAprobado && (publicarSinPrecioAlquiler || precioRentaWeb);
         },
+        
+        esReadonlyChkbxPublicar: function(get){
+			var activoVendido = get('activo.isVendido');
+			var informeComercialAceptado = get('activo.informeComercialAceptado');
+			var activoNoPublicadoAlquiler = get('activo.estadoAlquilerCodigo') === CONST.ESTADO_PUBLICACION_ALQUILER['NO_PUBLICADO'];
+			var activoPrecioAlquiler = get('datospublicacionactivo.precioWebAlquiler');
+			var activoNoPublicadoVenta = get('activo.estadoVentaCodigo') === CONST.ESTADO_PUBLICACION_VENTA['NO_PUBLICADO'];
+			var activoPrecioVenta = get('datospublicacionactivo.precioWebVenta');
+			
+			var ponerPublicarAReadonly = false;
+			if((get('activo.incluyeDestinoComercialAlquiler') && activoNoPublicadoAlquiler 
+					&& !informeComercialAceptado && activoPrecioAlquiler == '') || !get('activo.incluidoEnPerimetro')) {
+				ponerPublicarAReadonly = true;
+			}
+			if((get('activo.incluyeDestinoComercialVenta') && activoNoPublicadoVenta 
+					&& !informeComercialAceptado && activoPrecioVenta == '') || !get('activo.incluidoEnPerimetro')) {
+				ponerPublicarAReadonly = true;
+			}
+			
+			if(activoVendido) {
+				ponerPublicarAReadonly = true;
+			}
+			
+			return ponerPublicarAReadonly;
+		},
 	
 		esEditableChkbxComercializar: function(get){
 			var activoVendido = get('activo.isVendido');

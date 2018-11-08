@@ -3666,40 +3666,19 @@ public class ActivoAdapter {
 		return aprobado;
 	}
 
-	/**
+	/** 
+	 * Publica un activo
 	 * @param success
 	 * @param username
 	 * @param activo
 	 * @return
 	 */
 	private Boolean publicarActivoConHistorico(Boolean success, String username, Activo activo) {
-		if(comprobarCondicionesActivo(activo)) {
-			success=true;
-			activoDao.publicarActivoConHistorico(activo.getId(),username);
-		}else {
-			success=false;
-		}
+
+		activoDao.publicarActivoConHistorico(activo.getId(),username);
+		success=true;
+		
 		return success;
-	}
-
-
-	/**
-	 *  Comprueba para un activo si tiene todos los condicionantes a true(azules) menos el de sin informe comercial aprobado.
-	 * @param activo
-	 * @return boolean true or false
-	 */
-	private Boolean comprobarCondicionesActivo(Activo activo) {
-		Boolean check = false;
-		VCondicionantesDisponibilidad vCondicionante = activoApi.getCondicionantesDisponibilidad(activo.getId());
-		if(!Checks.esNulo(vCondicionante)) {
-			if(!(vCondicionante.getConCargas() || vCondicionante.getDivHorizontalNoInscrita() || vCondicionante.getIsCondicionado() || vCondicionante.getObraNuevaEnConstruccion() ||
-					vCondicionante.getObraNuevaSinDeclarar() || vCondicionante.getOcupadoConTitulo() || vCondicionante.getOcupadoSinTitulo() || vCondicionante.getPendienteInscripcion() ||
-					vCondicionante.getPortalesExternos() || vCondicionante.getProindiviso() || vCondicionante.getRuina() ||
-					vCondicionante.getSinTomaPosesionInicial() || vCondicionante.getTapiado() || vCondicionante.getVandalizado())) {
-				check = true;
-			}
-		}
-		return check;
 	}
 	
 	/**

@@ -62,6 +62,7 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.*;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoHistoricoPatrimonioDao;
+import es.pfsgroup.plugin.rem.activo.publicacion.dao.ActivoPublicacionDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.AgrupacionAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
@@ -230,6 +231,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 	@Resource(name = "entityTransactionManager")
     private PlatformTransactionManager transactionManager;
+	
+	@Autowired
+	private ActivoPublicacionDao activoPublicacionDao;
 
 	@Override
 	public String managerName() {
@@ -351,10 +355,47 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		if (!Checks.esNulo(expediente)) {
 			ofertaApi.resetPBC(expediente, false);
 		}
-
+		
+		ActivoPublicacion actPubli = activoPublicacionDao.get(dto.getIdActivo());
+		
 		activoAdapter.actualizarEstadoPublicacionActivo(activo.getId());
+		
+		updateActivoPublicacion(dto, actPubli);
 
 		return true;
+	}
+
+	/** Actualiza el estado del check publicar sin precio segun el precio vigente que se guarda.
+	 * @param dto
+	 * @param actPubli
+	 */
+	@Transactional(readOnly = false)
+	private void updateActivoPublicacion(DtoPrecioVigente dto, ActivoPublicacion actPubli) {
+		
+		if(!Checks.esNulo(actPubli)) {
+			
+			if(DDTipoComercializacion.CODIGO_VENTA.equals(actPubli.getTipoComercializacion().getCodigo())) {
+				actPubli.setCheckSinPrecioVenta(false);
+			}
+			
+			if(DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(actPubli.getTipoComercializacion().getCodigo())) {
+				actPubli.setCheckSinPrecioAlquiler(false);
+			}
+			
+			if(DDTipoComercializacion.CODIGO_ALQUILER_VENTA.equals(actPubli.getTipoComercializacion().getCodigo())) {
+				
+				if(DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA.equals(dto.getCodigoTipoPrecio())) {
+					actPubli.setCheckSinPrecioVenta(false);
+				}
+				
+				if(DDTipoPrecio.CODIGO_TPC_APROBADO_RENTA.equals(dto.getCodigoTipoPrecio())) {
+					actPubli.setCheckSinPrecioAlquiler(false);
+				}
+				
+			}
+			
+			activoPublicacionDao.save(actPubli);
+		}
 	}
 
 	@Override

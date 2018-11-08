@@ -385,6 +385,10 @@ public class AgrupacionAdapter {
 						BeanUtils.copyProperty(dtoAgrupacion, "provinciaCodigo",
 								agrupacionTemp.getProvincia().getCodigo());
 					}
+					if (!Checks.esNulo(agrupacion.getActivoPrincipal())) {
+						BeanUtils.copyProperty(dtoAgrupacion, "idNumActivoPrincipal",
+								agrupacion.getActivoPrincipal().getNumActivo());
+					}
 
 					Activo activo = agrupacion.getActivoPrincipal();
 					if(!Checks.esNulo(activo)) {

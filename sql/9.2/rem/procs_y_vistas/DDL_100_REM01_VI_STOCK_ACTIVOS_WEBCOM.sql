@@ -288,8 +288,8 @@ BEGIN
                    || vi.obranueva_enconstruccion --En construcción obra nueva
                    || vi.divhorizontal_noinscrita --División horizontal no inscrita
                    || vi.ruina --Ruina
-                   || 0 --Inmueble en Situación Especial
-                   || 0 --Inmueble en Precomercialización
+				   || NVL2 (vi.otro, 1, 0) --Inmueble en Situación Especial
+                   || vi.sin_informe_aprobado --Inmueble en Precomercialización
                    || vi.revision --Inmueble en Revisión
                    || vi.procedimiento_judicial --Procedimiento Judicial
                    || vi.con_cargas --Inmueble con Cargas

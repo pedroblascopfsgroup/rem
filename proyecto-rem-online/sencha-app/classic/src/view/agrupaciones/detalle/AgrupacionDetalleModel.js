@@ -375,7 +375,26 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
             } else {
                 this.getData().comboMotivosOcultacionAlquiler.clearFilter();
             }
-        }
+        },
+	     agrupacionRestringidaYPublicada: function(get) { 
+	    	 var tipoAgrupacion = get('agrupacionficha.tipoAgrupacionCodigo');
+		     	if((tipoAgrupacion == CONST.TIPOS_AGRUPACION['RESTRINGIDA'])) {
+		     		 var estadoAlquilerCodigo = get('agrupacionficha.estadoAlquilerCodigo');
+					 var estadoVentaCodigo = get('agrupacionficha.estadoVentaCodigo');
+					 var incluyeDestinoComercialAlquiler = get('agrupacionficha.incluyeDestinoComercialAlquiler');
+					 var incluyeDestinoComercialVenta = get('agrupacionficha.incluyeDestinoComercialVenta');
+					 
+					 if(incluyeDestinoComercialVenta && incluyeDestinoComercialAlquiler) {
+						 return estadoAlquilerCodigo === CONST.ESTADO_PUBLICACION_ALQUILER['PUBLICADO'] || estadoVentaCodigo === CONST.ESTADO_PUBLICACION_VENTA['PUBLICADO'];
+					 } else if(incluyeDestinoComercialVenta) {
+						 return estadoVentaCodigo === CONST.ESTADO_PUBLICACION_VENTA['PUBLICADO'];
+					 } else if (incluyeDestinoComercialAlquiler){
+						 return estadoAlquilerCodigo === CONST.ESTADO_PUBLICACION_ALQUILER['PUBLICADO'];
+					 } else {
+						 return false;
+					 }
+		     	}else return false;
+	     }
     },
 
     stores: {

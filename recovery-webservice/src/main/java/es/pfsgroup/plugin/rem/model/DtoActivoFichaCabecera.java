@@ -218,6 +218,9 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private List<?> activosAgrupacionRestringida;
 	
 	private Boolean tieneOkTecnico;
+	
+	//HREOS-4767
+	private Long activoPrincipalRestringida;
 
 	public Boolean getTieneOkTecnico() {
 		return tieneOkTecnico;
@@ -1592,5 +1595,13 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 
 	public void setActivosAgrupacionRestringida(List<?> activosAgrupacionRestringida) {
 		this.activosAgrupacionRestringida = activosAgrupacionRestringida;
+	}
+
+	public Long getActivoPrincipalRestringida() {
+		return activoPrincipalRestringida;
+	}
+
+	public void setActivoPrincipalRestringida(Long activoPrincipalRestringida) {
+		this.activoPrincipalRestringida = activoPrincipalRestringida;
 	}
 }

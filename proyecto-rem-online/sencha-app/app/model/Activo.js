@@ -698,6 +698,9 @@ Ext.define('HreRem.model.Activo', {
     		{
     			name: 'activoChkPerimetroAlquiler',
     			type: 'boolean'
+    		},
+    		{
+    			name: 'activoPrincipalRestringida'
     		}
     ],
     

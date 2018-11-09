@@ -285,6 +285,10 @@ public class TabActivoDatosBasicos implements TabActivoService {
 											|| agrupaciones.getAgrupacion().getFechaFinVigencia().equals(currentDate))))
 					){
 						perteneceAgrupacionRestringidaVigente = true;
+						if (!Checks.esNulo(agrupaciones.getAgrupacion().getActivoPrincipal())) {
+							BeanUtils.copyProperty(activoDto, "activoPrincipalRestringida",
+									agrupaciones.getAgrupacion().getActivoPrincipal().getNumActivo());
+						}
 						break;
 					}
 				}

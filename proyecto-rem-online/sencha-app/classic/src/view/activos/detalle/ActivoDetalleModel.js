@@ -354,6 +354,14 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		 activoPerteneceAgrupacionRestringida: function(get){
 		 	 return get('activo.pertenceAgrupacionRestringida');
 		 },
+		 
+		 getLinkHayaActivo: function(get) {
+			 if(get('activo.perteneceAgrupacionRestringidaVigente')) {
+				 return get('activo.activoPrincipalRestringida');
+			 } else {
+				 return get('activo.numActivo');
+			 }
+		 },
 
 		 enableComboTipoAlquiler: function(get){
 			var chkPerimetroAlquiler = get('patrimonio.chkPerimetroAlquiler');

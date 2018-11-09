@@ -440,7 +440,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
             var publicarSinPrecioAlquiler = get('datospublicacionactivo.publicarSinPrecioAlquiler');
             var informeComercialAprobado = get('activo.informeComercialAceptado');
             var precioRentaWeb = !Ext.isEmpty(get('datospublicacionactivo.precioWebAlquiler'));
-            return !informeComercialAprobado && (publicarSinPrecioAlquiler || precioRentaWeb);
+            return (informeComercialAprobado || !informeComercialAprobado) && (publicarSinPrecioAlquiler || precioRentaWeb);
         },
         
         esReadonlyChkbxPublicar: function(get){

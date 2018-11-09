@@ -635,6 +635,19 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				 }
     		},
     		
+    		storeGestoresActivos: {
+    			pageSize: $AC.getDefaultPageSize(),
+				model: 'HreRem.model.GestorActivo',
+			   	proxy: {
+			   		type: 'uxproxy',
+			   	    remoteUrl: 'activo/getGestoresActivos',
+			   	    extraParams: {
+			   	    	idActivo: '{activo.id}',
+			   	    	incluirGestoresInactivos: false
+			   	    }
+			    }
+    		},
+    		
     		storeDistribuciones: {
 				 model: 'HreRem.model.Distribuciones',
 				 proxy: {

@@ -16,6 +16,8 @@ import es.pfsgroup.plugin.rem.model.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.context.SecurityContext;
+import org.springframework.security.context.SecurityContextHolder;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -217,5 +219,15 @@ public class ConsistenciaAdjuntosRunnableUtils implements Runnable {
      */
     public GestorDocumentalConstants.Contenedor getContenedor() {
         return this.contenedor;
+    }
+
+    /**
+     * Este método establece el contexto de seguridad de Spring, entre lo que se eincluye el usuario logueado que está realizando
+     * la petición, para que se permita ejecutar en el entorno las peticiones de la clase runnable.
+     *
+     * @param context: contexto de seguridad de Spring con los recursos de seguridad de la sesión en Spring.
+     */
+    void setSpringSecurityContext(SecurityContext context) {
+        SecurityContextHolder.setContext(context);
     }
 }

@@ -170,6 +170,9 @@ public class ActivoController extends ParadiseJsonController {
 	@Autowired
 	GestorDocumentalFotosApi gestorDocumentalFotos;
 	
+	public ActivoApi getActivoApi() {
+		return activoApi;
+	}
 
 	/**
 	 * Método que recupera un conjunto de datos del Activo según su id
@@ -2567,11 +2570,15 @@ public class ActivoController extends ParadiseJsonController {
 				ActivoControllerDispatcher dispatcher = new ActivoControllerDispatcher(this);
 				JSONObject json = restRequest.getJsonObject();
 				dispatcher.dispatchSave(json);
-				activoApi.checkAndSendMailAvisoOcupacion(json, null, null);
+				//activoApi.checkAndSendMailAvisoOcupacion(json, null, null);
+			} catch (JsonViewerException jvex) {
+				model.put("success", false);
+				model.put("msgError", jvex.getMessage());
 			} catch (Exception e) {
 				logger.error("No se ha podido guardar el activo", e);
 				model.put("error", e.getMessage());
-			}
+			} 
+			
 		}
 
 

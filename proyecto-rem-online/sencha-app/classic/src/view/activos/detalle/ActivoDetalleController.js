@@ -3016,7 +3016,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 				success: successFn,
 			 	failure: function(response, opts) {
 			 		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-			    }			    
+			 		}
+			    			    
 			});
 		}
 	},
@@ -3062,19 +3063,24 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	    	me.fireEvent("errorToast", HreRem.i18n("msg.no.activos.seleccionados"));
 	    	return false;
     	}
-    	
 	    // Si estamos modificando una pestaña con formulario
-	    if (Ext.isEmpty(targetGrid)) {
-	    	
+	    if (Ext.isEmpty(targetGrid)) {  
 	      if (!Ext.isEmpty(formActivo)) {	
-	        var successFn = function(record, operation) {
-	          if (activosSeleccionados.length > 0) {
+	        var successFn = function(record, operation) { 
+	        	if (activosSeleccionados.length > 0) {
 	            me.propagarCambios(window, activosSeleccionados);
 	          } else {
 	            window.destroy();
-	            me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-	            me.getView().unmask();
-	            me.refrescarActivo(formActivo.refreshAfterSave);
+	            var data = JSON.parse(record.responseText);
+		 		if(data.msgError !== undefined && data.success === "false"){
+		 			me.fireEvent("errorToast", data.msgError);
+		 			me.getView().unmask();
+		            me.refrescarActivo(true);
+		 		}else{
+		 			me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+		 			me.getView().unmask();
+		            me.refrescarActivo(formActivo.refreshAfterSave);
+		 		}
 	            me.getView().fireEvent("refreshComponentOnActivate", "container[reference=tabBuscadorActivos]");
 	          }
 	        };

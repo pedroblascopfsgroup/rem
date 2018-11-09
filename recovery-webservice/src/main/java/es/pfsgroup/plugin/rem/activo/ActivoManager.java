@@ -127,6 +127,7 @@ import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoActivoIntegrado;
 import es.pfsgroup.plugin.rem.model.DtoActivoPatrimonio;
+import es.pfsgroup.plugin.rem.model.DtoActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.DtoActivosPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoCambioEstadoPublicacion;
@@ -5179,4 +5180,69 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			return 0;
 		}
 	}
+	
+	@Override
+	public boolean compruebaParaEnviarEmailAvisoOcupacion(DtoActivoSituacionPosesoria activoDto, Long id) 
+	{		
+		Activo activo= this.get(id);
+		ActivoSituacionPosesoria posesoria=activo.getSituacionPosesoria();
+		Integer ocupado;
+		Integer conTitulo;
+		if(activoDto.getConTitulo() != null) {
+			conTitulo=activoDto.getConTitulo();
+		}else conTitulo=posesoria.getConTitulo();
+		if(activoDto.getOcupado() != null) {
+			ocupado=activoDto.getOcupado();
+		}else ocupado=posesoria.getOcupado();
+		if(!Checks.esNulo(id)) 
+		{
+			if(!Checks.esNulo(posesoria)) 
+			{
+				if(!Checks.esNulo(posesoria.getOcupado()) && !Checks.esNulo(posesoria.getConTitulo()) && (1 == ocupado && 0 == conTitulo))
+				{
+					boolean val= comprobarExisteAdjuntoActivo(id, DDTipoDocumentoActivo.CODIGO_INFORME_OCUPACION_DESOCUPACION);
+					if(val)
+						{
+						//falta enviar el mensaje
+						List<DtoAdjuntoMail> sendAdj = new ArrayList<DtoAdjuntoMail>();
+						for(ActivoAdjuntoActivo adjunto : activo.getAdjuntos())
+						{
+							if(!Checks.esNulo(adjunto.getTipoDocumentoActivo()) && 
+								DDTipoDocumentoActivo.CODIGO_INFORME_OCUPACION_DESOCUPACION.equals(adjunto.getTipoDocumentoActivo().getCodigo()))
+							{
+								DtoAdjuntoMail adj = new DtoAdjuntoMail();
+								adj.setNombre(adjunto.getNombre());
+								adj.setAdjunto(adjunto.getAdjunto());
+								sendAdj.add(adj);
+							}
+						}
+						Usuario usu = usuarioApi.getByUsername(EMAIL_OCUPACIONES);
+						if(!Checks.esNulo(usu) && !Checks.esNulo(usu.getEmail()))
+						{
+							List<String> para = new ArrayList<String>();
+							para.add(usu.getEmail());
+							String activoS = activo.getNumActivo()+"";
+							String carteraS = activo.getCartera().getDescripcion();
+							StringBuilder cuerpo = new StringBuilder("<!DOCTYPE HTML PUBLIC '-//W3C//DTD HTML 4.01 Transitional//EN'><html><head><META http-equiv='Content-Type' content='text/html; charset=utf-8'></head><body>");
+							cuerpo.append("<div><p>Se ha marcado en REM una ocupación ilegal del activo ");
+							cuerpo.append(activoS);
+							cuerpo.append(" de la cartera ");
+							cuerpo.append(carteraS);
+							cuerpo.append("</p><p>Se anexa el informe de ocupación remitido por el API custodio</p><p>Un saludo</p></div></body></html>");
+							genericAdapter.sendMail(para, null, "Ocupación ilegal del activo: " + activoS + ", de la cartera " + carteraS, cuerpo.toString(), sendAdj);
+						}
+						//se envia un true, por que ya hemos mandado el correo y tiene que guardar los cambios
+						return true;
+						}else return false;
+							//devolvemos un false por que no esta adjuntado el archivo y no se pueden guardar los cambios
+				}
+				//se envia un true, por que tiene que guardar los datos modificados del activo, ya que no se cumple la condicion
+				else return true;
+			}
+		}
+		
+		return true;
+		
+	}
+	
 }

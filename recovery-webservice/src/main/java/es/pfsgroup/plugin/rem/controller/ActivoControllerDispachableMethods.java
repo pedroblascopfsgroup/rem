@@ -5,10 +5,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.ModelMap;
 
 import es.pfsgroup.plugin.rem.model.*;
+import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.rem.activo.ActivoPropagacionFieldTabMap;
+import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.model.DtoActivoAdministracion;
 import es.pfsgroup.plugin.rem.model.DtoActivoCargasTab;
 import es.pfsgroup.plugin.rem.model.DtoActivoDatosRegistrales;
@@ -43,6 +46,7 @@ class ActivoControllerDispachableMethods {
 
 	private static Map<String, DispachableMethod> dispachableMethods;
 	
+
 	static {
 		dispachableMethods = new HashMap<String, DispachableMethod>();
 		
@@ -78,7 +82,13 @@ class ActivoControllerDispachableMethods {
 			@Override
 			public void execute(Long id, DtoActivoSituacionPosesoria dto) {
 				if (dto != null ){
-					this.controller.saveActivoSituacionPosesoria(dto, id, new ModelMap());
+					ActivoApi activoApi=controller.getActivoApi();
+					if(activoApi.compruebaParaEnviarEmailAvisoOcupacion(dto, id)) {
+						this.controller.saveActivoSituacionPosesoria(dto, id, new ModelMap());
+					}else {
+						throw new JsonViewerException("Informe okupación y/o desokupación no adjunto. Se necesita para poder guardar el activo como ocupado SI y con título NO");
+					}
+					
 				}
 				
 			}

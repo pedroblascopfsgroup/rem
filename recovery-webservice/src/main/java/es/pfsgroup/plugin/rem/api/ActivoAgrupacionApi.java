@@ -16,6 +16,7 @@ import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionesCreateDelete;
 import es.pfsgroup.plugin.rem.model.DtoSubdivisiones;
 import es.pfsgroup.plugin.rem.model.DtoVigenciaAgrupacion;
+import es.pfsgroup.plugin.rem.model.GestorActivo;
 import es.pfsgroup.plugin.rem.rest.dto.File;
 
 public interface ActivoAgrupacionApi {
@@ -120,5 +121,7 @@ public interface ActivoAgrupacionApi {
 	 * @return
 	 */
 	public Boolean estaActivoEnOtraAgrupacionVigente(ActivoAgrupacion agrupacion,Activo activo);
+	
+	public Usuario getGestorComercialAgrupacion(List<Long> numActivos);
 		
 }

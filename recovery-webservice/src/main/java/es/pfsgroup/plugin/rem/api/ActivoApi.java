@@ -150,8 +150,9 @@ public interface ActivoApi {
 	public boolean isIntegradoAgrupacionObraNueva(Long id, Usuario usuarioLogado);
 
 	public boolean isIntegradoAgrupacionComercial(Activo activo);
-	
+
 	public boolean necesitaDocumentoInformeOcupacion(Activo activo);
+
 	/**
 	 * Elimina un adjunto
 	 * 
@@ -904,10 +905,10 @@ public interface ActivoApi {
 	 * @return devuelve true si es VPO, false en caso contrario
 	 */
 	public boolean checkVPO(TareaExterna tareaExterna);
-	
+
 	/**
 	 * Método que devuelve una lista de ocupaciones ilegales de un activo
-	 * 
+	 *
 	 * @param dto
 	 * @return
 	 */
@@ -1158,4 +1159,5 @@ public interface ActivoApi {
 
 	public Long getIdByNumActivo(Long numActivo);
 
+	public Integer getGeolocalizacion(Activo activo);
 }

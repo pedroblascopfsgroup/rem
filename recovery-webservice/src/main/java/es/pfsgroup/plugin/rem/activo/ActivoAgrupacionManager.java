@@ -17,16 +17,19 @@ import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionDao;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
@@ -41,6 +44,7 @@ import es.pfsgroup.plugin.rem.model.DtoAgrupacionesCreateDelete;
 import es.pfsgroup.plugin.rem.model.DtoSubdivisiones;
 import es.pfsgroup.plugin.rem.model.DtoVigenciaAgrupacion;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.GestorActivo;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoFoto;
@@ -86,6 +90,9 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 	
 	@Autowired
 	private RestApi restApi;
+	
+	@Autowired
+	private GestorActivoApi gestorActivoApi;
 
 	// @Override
 	// public String managerName() {
@@ -625,6 +632,26 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 	public Boolean estaActivoEnOtraAgrupacionVigente(ActivoAgrupacion agrupacion,Activo activo) {
 		
 		return activoAgrupacionDao.estaActivoEnOtraAgrupacionVigente(agrupacion,activo);
+	}
+	
+	@Override
+	public Usuario getGestorComercialAgrupacion(List<Long> numActivos) {
+		EXTDDTipoGestor tipoGestor = genericDao.get(EXTDDTipoGestor.class, genericDao.createFilter(FilterType.EQUALS, "codigo", "GCOM"));
+		Usuario gestorComercial = null;
+		Usuario gestorAux = null;
+				
+		for (int i=0; i<numActivos.size(); i++) {
+			Activo activo = activoApi.getByNumActivo(numActivos.get(i));
+			if (i==0) {
+				gestorComercial = gestorActivoApi.getGestorByActivoYTipo(activo, tipoGestor.getId());
+			} else {
+				gestorAux = gestorActivoApi.getGestorByActivoYTipo(activo, tipoGestor.getId());
+				if (!gestorAux.equals(gestorComercial)) {
+					return null;
+				}
+			}
+		}
+		return gestorComercial;
 	}
 
 }

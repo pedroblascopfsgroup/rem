@@ -337,7 +337,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	
 	@Autowired
 	private GenericAdapter genericAdapter;
-	
+
 	
 	@Autowired
 	private ApiProxyFactory proxyFactory;
@@ -353,7 +353,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	
 	@Resource(name = "entityTransactionManager")
     private PlatformTransactionManager transactionManager;
-	
+
 
 	BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 
@@ -565,7 +565,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				resultado = crearExpediente(oferta, trabajo);
 				trabajoApi.createTramiteTrabajo(trabajo);
 			}
-			
+
 
 			// si la oferta ha sido rechazada guarda los motivos de rechazo y enviamos un email/notificacion.
 			if (DDEstadoOferta.CODIGO_RECHAZADA.equals(tipoOferta.getCodigo())) {
@@ -580,9 +580,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				
 				notificatorServiceSancionOfertaAceptacionYRechazo.notificatorFinSinTramite(oferta.getId());
 			}
-			
+
 			resultado = this.persistOferta(oferta);
-			
+
 			//ofertaApi.updateStateDispComercialActivosByOferta(oferta);
 			//genericDao.update(Oferta.class, oferta);
 
@@ -607,11 +607,11 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}catch(Exception e){
 			logger.error("Error en activoManager", e);
 			transactionManager.rollback(transaction);
-			
+
 		}
 		return resultado;
 	}
-	
+
 	@Override
 	public boolean crearExpediente(Oferta oferta, Trabajo trabajo) {
 
@@ -624,7 +624,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			expedienteComercial = crearExpedienteGuardado(oferta, trabajo);
 			expedienteComercial = crearExpedienteReserva(expedienteComercial);
 			expedienteComercialApi.crearCondicionesActivoExpediente(oferta.getActivoPrincipal(), expedienteComercial);
-			
+
 			transactionManager.commit(transaction);
 			resultado = true;
 
@@ -640,15 +640,15 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			if (!Checks.esNulo(appProperties
 					.getProperty(GestorDocumentalExpedientesManager.URL_REST_CLIENT_GESTOR_DOCUMENTAL_EXPEDIENTES))) {
 				Thread hiloReactivar = new Thread( new ContenedorExpComercial(genericAdapter.getUsuarioLogado().getUsername(), expedienteComercial.getId()));
-				hiloReactivar.start();	
+				hiloReactivar.start();
 
 			}
-			
+
 		}
 
 		return resultado;
 	}
-	
+
 	private ExpedienteComercial crearExpedienteReserva(ExpedienteComercial expedienteComercial){
 		//HREOS-2799
 		//Activos de Cajamar, debe tener en Reserva - tipo de Arras por defecto: Confirmatorias
@@ -672,7 +672,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		
 		return expedienteComercial;
 	}
-	
+
 	private ExpedienteComercial crearExpedienteGuardado(Oferta oferta, Trabajo trabajo) throws Exception {
 
 		ExpedienteComercial nuevoExpediente = new ExpedienteComercial();
@@ -1188,7 +1188,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			// inserta en el histórico
 			genericDao.deleteById(ActivoValoraciones.class, id);			
 		}
-		if(activoValoracion != null && activoValoracion.getActivo() != null){ 
+		if(activoValoracion != null && activoValoracion.getActivo() != null){
 			restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO, activoValoracion.getActivo());
 		}
 		return true;
@@ -1736,7 +1736,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			VBusquedaPublicacionActivo publicacionActivo = genericDao.get(VBusquedaPublicacionActivo.class, filtro);
 			if(publicacionActivo != null){
 				resultado =  (publicacionActivo.getAdmision() && publicacionActivo.getGestion());
-			}			
+			}
 		}
 		return resultado;
 
@@ -2069,7 +2069,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				}
 				if(historico.getAuditoria() != null){
 					beanUtilNotNull.copyProperty(dtoHistoricoMediador, "responsableCambio", historico.getAuditoria().getUsuarioCrear());
-				}				
+				}
 			} catch (IllegalAccessException e) {
 				logger.error("Error en activoManager", e);
 			} catch (InvocationTargetException e) {
@@ -2637,7 +2637,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					List<DtoAdjuntoMail> sendAdj = new ArrayList<DtoAdjuntoMail>();
 					for(ActivoAdjuntoActivo adjunto : activo.getAdjuntos())
 					{
-						if(!Checks.esNulo(adjunto.getTipoDocumentoActivo()) && 
+						if(!Checks.esNulo(adjunto.getTipoDocumentoActivo()) &&
 							DDTipoDocumentoActivo.CODIGO_INFORME_OCUPACION_DESOCUPACION.equals(adjunto.getTipoDocumentoActivo().getCodigo()))
 						{
 							DtoAdjuntoMail adj = new DtoAdjuntoMail();
@@ -2995,7 +2995,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 		return false;
 	}
-	
+
 	@Override
 	public boolean isIntegradoAgrupacionComercial(Activo activo) {
 
@@ -3014,7 +3014,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 		return false;
 	}
-	
+
 	@Override
 	public boolean necesitaDocumentoInformeOcupacion(Activo activo)
 	{
@@ -3024,7 +3024,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		if(!Checks.esNulo(activoSitPos) && (!Checks.esNulo(activoSitPos.getOcupado()) && !Checks.esNulo(activoSitPos.getConTitulo()) && (1 == activoSitPos.getOcupado() && 0 == activoSitPos.getConTitulo())))
 		{
 			List<ActivoAdjuntoActivo> listAdjuntos = activo.getAdjuntos();
-			
+
 			if(!Checks.estaVacio(listAdjuntos))
 			{
 				Integer countDocs = 0;
@@ -3745,13 +3745,13 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		Activo activo = tareaExternaToActivo(tareaExterna);
 		return ("1".equals(activo.getVpo()));
 	}
-	
+
 	@Override
 	@SuppressWarnings("unchecked")
 	public DtoPage getListHistoricoOcupacionesIlegales(WebDto dto, Long idActivo) {
 
 		Page page;
-		
+
 		page = activoDao.getListHistoricoOcupacionesIlegalesByActivo(dto, idActivo);
 
 		List<DtoOcupacionIlegal> listaOcupacionesIlegales = new ArrayList<DtoOcupacionIlegal>();
@@ -3765,7 +3765,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 		return new DtoPage(listaOcupacionesIlegales, page.getTotalCount());
 	}
-	
+
 	private DtoOcupacionIlegal ocupacionToDto(ActivoOcupacionIlegal ocupacion) {
 
 		DtoOcupacionIlegal dtoOcu = new DtoOcupacionIlegal();
@@ -3896,7 +3896,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 		ActivoTasacion tasacionMasReciente = null;
 		List<ActivoTasacion> tasacionesActivo = activo.getTasacion();
-		
+
 		if (!Checks.estaVacio(tasacionesActivo)) {
 			tasacionMasReciente = tasacionesActivo.get(0);
 			if (tasacionMasReciente != null) {
@@ -5146,18 +5146,37 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	
 	@Override
 	public Long getIdByNumActivo(Long numActivo) {
-		
+
 		Long idActivo = null;
-		
+
 		try {
-		
+
 		idActivo = Long.parseLong(rawDao.getExecuteSQL("SELECT ACT_ID FROM ACT_ACTIVO WHERE ACT_NUM_ACTIVO = " + numActivo + " AND BORRADO = 0"));
-		
+
 		} catch (Exception e) {
 			return null;
 		}
-		
+
 		return idActivo;
 	}
-	
+
+	@Override
+	public Integer getGeolocalizacion(Activo activo) {
+		if(activo.getLocalizacion() != null && activo.getLocalizacion().getLocalizacionBien() != null
+					&& activo.getLocalizacion().getLocalizacionBien().getProvincia() != null) {
+			String codigo = activo.getLocalizacion().getLocalizacionBien().getProvincia().getCodigo();
+			if (codigo.equals("0")
+					|| codigo.equals("98")
+					|| codigo.equals("99")) {
+				return 0;
+			} else if (codigo.equals("35")
+					|| codigo.equals("38")) {
+				return 1; // Islas Canarias
+			} else {
+				return 2; // Península
+			}
+		} else {
+			return 0;
+		}
+	}
 }

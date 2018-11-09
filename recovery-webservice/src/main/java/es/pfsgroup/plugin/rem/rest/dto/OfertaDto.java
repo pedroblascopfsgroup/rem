@@ -28,7 +28,7 @@ public class OfertaDto implements Serializable {
 	@NotNull(groups = { Insert.class })
 	private Long idClienteRem;
 	@NotNull(groups = { Insert.class })
-	private Long idActivoHaya;
+	private List<Long> listIdActivosHaya;
 	@NotNull(groups = { Insert.class })
 	private Double importe;
 	private Double importeContraoferta;
@@ -56,6 +56,7 @@ public class OfertaDto implements Serializable {
 	private Boolean financiacion;
 	@NotNull(groups = {Insert.class})
 	private Boolean isExpress;
+	private Boolean indicadorOfertaLote;
 	
 	
 	public Long getIdOfertaWebcom() {
@@ -88,11 +89,11 @@ public class OfertaDto implements Serializable {
 	public void setIdClienteRem(Long idClienteRem) {
 		this.idClienteRem = idClienteRem;
 	}
-	public Long getIdActivoHaya() {
-		return idActivoHaya;
+	public List<Long> getListIdActivosHaya() {
+		return listIdActivosHaya;
 	}
-	public void setIdActivoHaya(Long idActivoHaya) {
-		this.idActivoHaya = idActivoHaya;
+	public void setListIdActivosHaya(List<Long> listIdActivosHaya) {
+		this.listIdActivosHaya = listIdActivosHaya;
 	}
 	public Date getFechaAccion() {
 		return fechaAccion;
@@ -178,5 +179,11 @@ public class OfertaDto implements Serializable {
 	}
 	public void setIsExpress(Boolean isExpress) {
 		this.isExpress = isExpress;
+	}
+	public Boolean getIndicadorOfertaLote() {
+		return indicadorOfertaLote;
+	}
+	public void setIndicadorOfertaLote(Boolean indicadorOfertaLote) {
+		this.indicadorOfertaLote = indicadorOfertaLote;
 	}
 }

@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=Carles Molins
---## FECHA_CREACION=20181107
+--## AUTOR=Maria Presencia
+--## FECHA_CREACION=20181108
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=2.0.19
 --## INCIDENCIA_LINK=HREOS-4683
@@ -13,6 +13,7 @@
 --##        0.1 Versión inicial
 --##		0.2 Actualizar tipo de publicacion
 --##		0.3 Llamada SP_CREAR_AVISO
+--##		0.4 Modificado CONDICIONANTE_ALQUIER
 --##########################################
 --*/
 
@@ -486,52 +487,97 @@ create or replace PROCEDURE SP_CAMBIO_ESTADO_PUBLICACION (pACT_ID IN NUMBER DEFA
 
   BEGIN
 
-    IF pINFORME_COMERCIAL = 1 THEN
-      IF pPRECIO = 1 THEN
+IF pINFORME_COMERCIAL = 1 THEN
+   IF pPRECIO = 1 THEN
         IF pADMISION = 1 AND pGESTION = 1 THEN
-          /*PUBLICADO ORDINARIO*/
-          V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION
-                        SET DD_EPA_ID = (SELECT DD_EPA_ID
-                                           FROM '|| V_ESQUEMA ||'.DD_EPA_ESTADO_PUB_ALQUILER
-                                          WHERE BORRADO = 0
-                                            AND DD_EPA_CODIGO = ''03'')
-                          , DD_TPU_A_ID = (SELECT DD_TPU_ID
-                                           FROM '|| V_ESQUEMA ||'.DD_TPU_TIPO_PUBLICACION
-                                          WHERE BORRADO = 0
-                                            AND DD_TPU_CODIGO = ''01'')
-                          , USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
-                          , FECHAMODIFICAR = SYSDATE
-                      WHERE ACT_ID = '||nACT_ID||'
-                        AND BORRADO = 0
-                    ';
+			/*PUBLICADO ORDINARIO*/
+			V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION
+							SET DD_EPA_ID = (SELECT DD_EPA_ID
+											FROM '|| V_ESQUEMA ||'.DD_EPA_ESTADO_PUB_ALQUILER
+											WHERE BORRADO = 0
+												AND DD_EPA_CODIGO = ''03'')
+							, DD_TPU_A_ID = (SELECT DD_TPU_ID
+											FROM '|| V_ESQUEMA ||'.DD_TPU_TIPO_PUBLICACION
+											WHERE BORRADO = 0
+												AND DD_TPU_CODIGO = ''01'')
+							, USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
+							, FECHAMODIFICAR = SYSDATE
+						WHERE ACT_ID = '||nACT_ID||'
+							AND BORRADO = 0
+						';
+		
+			EXECUTE IMMEDIATE V_MSQL;
+				IF SQL%ROWCOUNT > 0 THEN
+					vACTUALIZADO := 'S';
+				END IF;
+		ELSIF pCEE_VIGENTE = 1 AND pADECUADO = 1 THEN
+			/*PUBLICADO FORZADO*/
+			V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION
+							SET DD_EPA_ID = (SELECT DD_EPA_ID
+											FROM '|| V_ESQUEMA ||'.DD_EPA_ESTADO_PUB_ALQUILER
+											WHERE BORRADO = 0
+												AND DD_EPA_CODIGO = ''03'')
+							, DD_TPU_A_ID = (SELECT DD_TPU_ID
+											FROM '|| V_ESQUEMA ||'.DD_TPU_TIPO_PUBLICACION
+											WHERE BORRADO = 0
+												AND DD_TPU_CODIGO = ''02'')
+							, USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
+							, FECHAMODIFICAR = SYSDATE
+						WHERE ACT_ID = '||nACT_ID||'
+							AND BORRADO = 0
+						';
+		
+			EXECUTE IMMEDIATE V_MSQL;
+				IF SQL%ROWCOUNT > 0 THEN
+					vACTUALIZADO := 'S';
+				END IF;
+				
+		ELSIF pCondAlquiler = 0 THEN
+			/*PRE PUBLICADO ORDINARIO*/
+			V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION
+						  SET DD_EPA_ID = (SELECT DD_EPA_ID
+											 FROM '|| V_ESQUEMA ||'.DD_EPA_ESTADO_PUB_ALQUILER
+											WHERE BORRADO = 0
+											  AND DD_EPA_CODIGO = ''02'')
+							, DD_TPU_A_ID = (SELECT DD_TPU_ID
+											 FROM '|| V_ESQUEMA ||'.DD_TPU_TIPO_PUBLICACION
+											WHERE BORRADO = 0
+											  AND DD_TPU_CODIGO = ''01'')
+							, USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
+							, FECHAMODIFICAR = SYSDATE
+						WHERE ACT_ID = '||nACT_ID||'
+						  AND BORRADO = 0
+					  ';
 
-          EXECUTE IMMEDIATE V_MSQL;
-          IF SQL%ROWCOUNT > 0 THEN
-            vACTUALIZADO := 'S';
-          END IF;
-        ELSIF pCEE_VIGENTE = 1 AND pADECUADO = 1 THEN
-          /*PUBLICADO FORZADO*/
-          V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION
-                        SET DD_EPA_ID = (SELECT DD_EPA_ID
-                                           FROM '|| V_ESQUEMA ||'.DD_EPA_ESTADO_PUB_ALQUILER
-                                          WHERE BORRADO = 0
-                                            AND DD_EPA_CODIGO = ''03'')
-                          , DD_TPU_A_ID = (SELECT DD_TPU_ID
-                                           FROM '|| V_ESQUEMA ||'.DD_TPU_TIPO_PUBLICACION
-                                          WHERE BORRADO = 0
-                                            AND DD_TPU_CODIGO = ''02'')
-                          , USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
-                          , FECHAMODIFICAR = SYSDATE
-                      WHERE ACT_ID = '||nACT_ID||'
-                        AND BORRADO = 0
-                    ';
+			EXECUTE IMMEDIATE V_MSQL;
+				IF SQL%ROWCOUNT > 0 THEN
+				vACTUALIZADO := 'S';
+				END IF;  		
 
-          EXECUTE IMMEDIATE V_MSQL;
-          IF SQL%ROWCOUNT > 0 THEN
-            vACTUALIZADO := 'S';
-          END IF;
-        END IF;
-      ELSE
+		ELSIF pCondAlquiler = 1 THEN
+				/*PUBLICADO FORZADO*/
+				V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION
+							SET DD_EPA_ID = (SELECT DD_EPA_ID
+												FROM '|| V_ESQUEMA ||'.DD_EPA_ESTADO_PUB_ALQUILER
+												WHERE BORRADO = 0
+												AND DD_EPA_CODIGO = ''03'')
+								, DD_TPU_A_ID = (SELECT DD_TPU_ID
+												FROM '|| V_ESQUEMA ||'.DD_TPU_TIPO_PUBLICACION
+												WHERE BORRADO = 0
+												AND DD_TPU_CODIGO = ''02'')
+								, USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
+								, FECHAMODIFICAR = SYSDATE
+							WHERE ACT_ID = '||nACT_ID||'
+							AND BORRADO = 0
+						';
+	
+				EXECUTE IMMEDIATE V_MSQL;
+					IF SQL%ROWCOUNT > 0 THEN
+					vACTUALIZADO := 'S';
+					END IF;   
+		END IF;
+		
+   ELSE
         /*PRE PUBLICADO ORDINARIO*/
         V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION
                       SET DD_EPA_ID = (SELECT DD_EPA_ID
@@ -549,12 +595,12 @@ create or replace PROCEDURE SP_CAMBIO_ESTADO_PUBLICACION (pACT_ID IN NUMBER DEFA
                   ';
 
         EXECUTE IMMEDIATE V_MSQL;
-        IF SQL%ROWCOUNT > 0 THEN
-          vACTUALIZADO := 'S';
-        END IF;
-      END IF;
-    ELSE
-      IF pPRECIO = 1 THEN
+			IF SQL%ROWCOUNT > 0 THEN
+			vACTUALIZADO := 'S';
+			END IF;
+    END IF;
+ELSE
+    IF pPRECIO = 1 THEN
 		IF pCondAlquiler = 0 THEN
 			/*PRE PUBLICADO ORDINARIO*/
 			V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION
@@ -595,13 +641,12 @@ create or replace PROCEDURE SP_CAMBIO_ESTADO_PUBLICACION (pACT_ID IN NUMBER DEFA
 					  ';
 
 			EXECUTE IMMEDIATE V_MSQL;
-			IF SQL%ROWCOUNT > 0 THEN
-			  vACTUALIZADO := 'S';
-			END IF;   
+				IF SQL%ROWCOUNT > 0 THEN
+				vACTUALIZADO := 'S';
+				END IF;   
         END IF;
-      END IF;
-    END IF;
-
+   END IF;
+END IF;
   END;
 
   BEGIN
@@ -664,7 +709,7 @@ create or replace PROCEDURE SP_CAMBIO_ESTADO_PUBLICACION (pACT_ID IN NUMBER DEFA
   
           IF vCODIGO_ESTADO_A = '01' THEN
   
-            IF vCHECK_PUBLICAR_A = 1 THEN
+            IF vCHECK_PUBLICAR_A = 1 AND vCondAlquiler IS NOT NULL THEN
               PLP$CONDICIONANTE_ALQUILER(nACT_ID, nADMISION, nGESTION, nINFORME_COMERCIAL,nPRECIO_A, nCEE_VIGENTE, nADECUADO, vUSUARIOMODIFICAR, vCondAlquiler);
             END IF;
   

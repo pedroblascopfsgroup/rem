@@ -54,6 +54,7 @@ import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoPropagacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
+import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.excel.ActivoExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
@@ -99,6 +100,9 @@ public class ActivoController extends ParadiseJsonController {
 	private ActivoApi activoApi;
 
 	@Autowired
+	private OfertaApi ofertaApi;
+
+	@Autowired
 	private TrabajoApi trabajoApi;
 
 	@Autowired
@@ -116,8 +120,13 @@ public class ActivoController extends ParadiseJsonController {
 	@Autowired
 	private ActivoPropagacionApi activoPropagacionApi;
 
-    @Autowired
-    private GenericAdapter genericAdapter;
+	@Autowired
+	private GenericAdapter genericAdapter;
+
+	public ActivoApi getActivoApi()
+	{
+		return activoApi;
+	}
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
@@ -2360,5 +2369,17 @@ public class ActivoController extends ParadiseJsonController {
 		}
 		
 		return createModelAndViewJson(model);
+	}
+
+	public boolean activoTieneOfertaByTipoOfertaCodigo(List<Oferta> ofertas, String tipoCodigo)
+	{
+		for(Oferta oferta : ofertas)
+		{
+			if(ofertaApi.estaViva(oferta) && tipoCodigo.equals(oferta.getTipoOferta().getCodigo()))
+			{
+				return true;
+			}
+		}
+		return false;
 	}
 }

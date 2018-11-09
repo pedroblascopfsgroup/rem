@@ -1957,36 +1957,42 @@ public class AgrupacionAdapter {
 			ActivoObraNueva obraNueva = (ActivoObraNueva) agrupacion;
 
 			try {
-
-				beanUtilNotNull.copyProperties(obraNueva, dto);
-
-				if (dto.getMunicipioCodigo() != null) {
-
-					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getMunicipioCodigo());
-					Localidad municipioNuevo = (Localidad) genericDao.get(Localidad.class, filtro);
-
-					obraNueva.setLocalidad(municipioNuevo);
+				if(!permiteCambiarDestinoComercial(obraNueva))
+				{
+					return "false"+SPLIT_VALUE+OFERTA_INCOMPATIBLE_AGR_MSG;
 				}
-
-				if (dto.getEstadoObraNuevaCodigo() != null) {
-
-					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo",
-							dto.getEstadoObraNuevaCodigo());
-					DDEstadoObraNueva estadoNuevo = (DDEstadoObraNueva) genericDao.get(DDEstadoObraNueva.class, filtro);
-
-					obraNueva.setEstadoObraNueva(estadoNuevo);
-
+				else
+				{
+					beanUtilNotNull.copyProperties(obraNueva, dto);
+	
+					if (dto.getMunicipioCodigo() != null) {
+	
+						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getMunicipioCodigo());
+						Localidad municipioNuevo = (Localidad) genericDao.get(Localidad.class, filtro);
+	
+						obraNueva.setLocalidad(municipioNuevo);
+					}
+	
+					if (dto.getEstadoObraNuevaCodigo() != null) {
+	
+						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo",
+								dto.getEstadoObraNuevaCodigo());
+						DDEstadoObraNueva estadoNuevo = (DDEstadoObraNueva) genericDao.get(DDEstadoObraNueva.class, filtro);
+	
+						obraNueva.setEstadoObraNueva(estadoNuevo);
+	
+					}
+	
+					if (dto.getProvinciaCodigo() != null) {
+	
+						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getProvinciaCodigo());
+						DDProvincia provinciaNueva = (DDProvincia) genericDao.get(DDProvincia.class, filtro);
+	
+						obraNueva.setProvincia(provinciaNueva);
+					}
+	
+					activoAgrupacionApi.saveOrUpdate(obraNueva);
 				}
-
-				if (dto.getProvinciaCodigo() != null) {
-
-					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getProvinciaCodigo());
-					DDProvincia provinciaNueva = (DDProvincia) genericDao.get(DDProvincia.class, filtro);
-
-					obraNueva.setProvincia(provinciaNueva);
-				}
-
-				activoAgrupacionApi.saveOrUpdate(obraNueva);
 
 			} catch (Exception e) {
 				logger.error("error en agrupacionAdapter", e);
@@ -2465,29 +2471,27 @@ public class AgrupacionAdapter {
 		return true;		
 	}
 
-	public boolean permiteCambiarDestinoComercial(ActivoRestringida agrupacion)
+	public boolean permiteCambiarDestinoComercial(ActivoAgrupacion agrupacion)
 	{
 		if(!Checks.esNulo(agrupacion) && !Checks.esNulo(agrupacion.getActivoPrincipal()))
 		{
-			Activo activo = agrupacion.getActivoPrincipal();
 			String tipoCodigo = getDiffTipoOfertaByTipoComercializacion(agrupacion);
 			if(!Checks.esNulo(tipoCodigo) && !Checks.estaVacio(agrupacion.getActivoPrincipal().getOfertas()))
 			{
-				List<ActivoOferta> ofertas = agrupacion.getActivoPrincipal().getOfertas();
+				List<Oferta> ofertas = new ArrayList<Oferta>();
 				List<ActivoAgrupacionActivo> activos = agrupacion.getActivos();
 				for(ActivoAgrupacionActivo act : activos)
 				{
-					Activo a = act.getActivo();
-					if(a.getId() == activo.getId())
+					for(ActivoOferta ao : act.getActivo().getOfertas())
 					{
-						activos.remove(act);
-						break;
+						ofertas.add(ao.getPrimaryKey().getOferta());
 					}
 				}
-				for(ActivoAgrupacionActivo act : activos)
+				if(!activoTieneOfertaByTipoOfertaCodigo(ofertas, tipoCodigo))
 				{
-					ofertas.addAll(act.getActivo().getOfertas());
+					return false;
 				}
+				/*
 				for(ActivoOferta ao : ofertas)
 				{
 					Oferta oferta = ao.getPrimaryKey().getOferta();
@@ -2495,13 +2499,25 @@ public class AgrupacionAdapter {
 					{
 						return false;
 					}
-				}
+				}*/
 			}
 		}
 		return true;
 	}
 
-	public String getDiffTipoOfertaByTipoComercializacion(ActivoRestringida agrupacion)
+	public boolean activoTieneOfertaByTipoOfertaCodigo(List<Oferta> ofertas, String tipoCodigo)
+	{
+		for(Oferta oferta : ofertas)
+		{
+			if(ofertaApi.estaViva(oferta) && tipoCodigo.equals(oferta.getTipoOferta().getCodigo()))
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public String getDiffTipoOfertaByTipoComercializacion(ActivoAgrupacion agrupacion)
 	{
 		Activo activo = agrupacion.getActivoPrincipal();
 		final String codigoActivo = activo.getActivoPublicacion().getTipoComercializacion().getCodigo();

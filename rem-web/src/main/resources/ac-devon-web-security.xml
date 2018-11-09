@@ -92,11 +92,11 @@
     <!-- JDBC users detail -->
     <beans:bean id="fwk.sec.JDBCUsersDetailService" class="es.capgemini.devon.security.JDBCUsersDetailService" abstract="true" />
 
-    <!-- Permite a los nuevos hilos heredar el contexto de seguridad de Spring a partir del hilo del cual nacieron -->
+    <!-- Permite a los nuevos hilos heredar el contexto de seguridad de Spring a partir del hilo del cual nacieron>
     <beans:bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
         <beans:property name="targetClass" value="org.springframework.security.context.SecurityContextHolder"/>
         <beans:property name="targetMethod" value="setStrategyName"/>
         <beans:property name="arguments"><beans:list><beans:value>MODE_INHERITABLETHREADLOCAL</beans:value></beans:list></beans:property>
-    </beans:bean>
+    </beans:bean -->
     
 </beans:beans>

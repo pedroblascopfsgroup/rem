@@ -176,7 +176,5 @@ public interface ActivoEstadoPublicacionApi {
 	 */
 	Date getFechaInicioEstadoActualPublicacionVenta(Long idActivo);
 
-	Boolean comprobarEnvioCorreoAdecuacion(ActivoPublicacion activoPublicacion);
-
-	boolean enviarCorreoAdecuacion(ActivoPublicacion activoPublicacion);
+	Boolean enviarCorreoAdecuacion(ActivoPublicacion activoPublicacion);
 }

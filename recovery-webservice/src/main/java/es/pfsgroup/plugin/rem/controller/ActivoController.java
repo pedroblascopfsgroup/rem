@@ -83,6 +83,7 @@ public class ActivoController extends ParadiseJsonController {
 	public static final String ERROR_ACTIVO_NO_NUMERICO = "El campo introducido es de carácter numérico";
 	public static final String ERROR_GENERICO = "La operación no se ha podido realizar";
 	public static final String ERROR_CONEXION_FOTOS = "Ha habido un error al conectar con CRM";
+	public static final String ERROR_PRECIO_CERO = "No se puede realizar la operación. Está introduciendo un importe 0";
 
 	@Autowired
 	private ActivoAdapter adapter;
@@ -595,11 +596,16 @@ public class ActivoController extends ParadiseJsonController {
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView savePrecioVigente(DtoPrecioVigente precioVigenteDto, ModelMap model) {
 		try {
-			boolean success = activoApi.savePrecioVigente(precioVigenteDto);
-			if (success) {
-				adapter.actualizarEstadoPublicacionActivo(precioVigenteDto.getIdActivo());
+			if(precioVigenteDto.getImporte().equals(0d)) {
+				model.put(RESPONSE_SUCCESS_KEY, false);
+				model.put(RESPONSE_MESSAGE_KEY, ERROR_PRECIO_CERO);
+			} else {
+				boolean success = activoApi.savePrecioVigente(precioVigenteDto);
+				if (success) {
+					adapter.actualizarEstadoPublicacionActivo(precioVigenteDto.getIdActivo());
+				}
+				model.put(RESPONSE_SUCCESS_KEY, success);
 			}
-			model.put(RESPONSE_SUCCESS_KEY, success);
 
 		} catch (Exception e) {
 			logger.error("error en activoController", e);

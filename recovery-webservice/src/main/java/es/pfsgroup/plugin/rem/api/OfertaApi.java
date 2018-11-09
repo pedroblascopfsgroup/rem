@@ -554,5 +554,10 @@ public interface OfertaApi {
 	Boolean checkProvinciaCompradores(TareaExterna tareaExterna);
 
 	Boolean checkNifConyugueLBB(TareaExterna tareaExterna);
+
+	/*
+	 * Método que comprueba que la oferta está activa, es decir, el estado de la oferta es: Tramitada, Congelada o Pendiente.
+	 */
+	boolean estaViva(Oferta oferta);
 }
 

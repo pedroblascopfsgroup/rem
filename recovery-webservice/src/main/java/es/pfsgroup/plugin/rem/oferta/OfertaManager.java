@@ -2866,4 +2866,13 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		
 		return null;
 	}
+
+	public boolean estaViva(Oferta oferta)
+	{
+		if(DDEstadoOferta.CODIGO_ACEPTADA.equals(oferta.getEstadoOferta().getCodigo()) || DDEstadoOferta.CODIGO_PENDIENTE.equals(oferta.getEstadoOferta().getCodigo()))
+		{
+			return true;
+		}
+		return false;
+	}
 }

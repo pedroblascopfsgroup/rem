@@ -437,14 +437,6 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 			beanUtilNotNull.copyProperty(activoPublicacion, "checkOcultarPrecioVenta", dto.getNoMostrarPrecioVenta());
 			beanUtilNotNull.copyProperty(activoPublicacion, "checkSinPrecioVenta", dto.getPublicarSinPrecioVenta());
 			beanUtilNotNull.copyProperty(activoPublicacion, "checkPublicarAlquiler", dto.getPublicarAlquiler());
-			if (activoPublicacion.getCheckOcultarAlquiler() && !dto.getOcultarAlquiler()){
-				if (DDEstadoPublicacionAlquiler.CODIGO_OCULTO_ALQUILER.equals(activoPublicacion.getEstadoPublicacionAlquiler().getCodigo())){
-					Boolean envioCorreo = comprobarEnvioCorreoAdecuacion(activoPublicacion);
-					if (envioCorreo){
-						enviarCorreoAdecuacion(activoPublicacion);
-					}
-				}
-			}
 			beanUtilNotNull.copyProperty(activoPublicacion, "checkOcultarAlquiler", dto.getOcultarAlquiler());
 			if(!Checks.esNulo(dto.getOcultarAlquiler()) && !dto.getOcultarAlquiler()) {
 				// Si el check de ocultar viene implícitamente a false vaciar motivos de ocultación.
@@ -578,6 +570,35 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	 */
 	private Boolean publicarActivoProcedure(Long idActivo, String username, String eleccionUsuarioTipoPublicacionAlquiler) throws JsonViewerException{
 		if(activoDao.publicarActivoSinHistorico(idActivo, username, eleccionUsuarioTipoPublicacionAlquiler)) {
+			Filter filterActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
+			Filter filterAuditoria = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+			ActivoPublicacion activoPublicacion = genericDao.get(ActivoPublicacion.class, filterActivo, filterAuditoria);
+			ActivoPatrimonio activoPatrimonio = genericDao.get(ActivoPatrimonio.class, filterActivo, filterAuditoria);
+			
+			Boolean precioPublicacion = false;
+			Boolean informeAprobado = this.isInformeAprobado(idActivo);
+			Boolean adecuacion = false;
+			if (Checks.esNulo(activoPatrimonio)){
+				adecuacion=false;
+			}else if (!DDAdecuacionAlquiler.CODIGO_ADA_NO.equals(activoPatrimonio.getAdecuacionAlquiler().getCodigo()) && !Checks.esNulo(activoPatrimonio.getAdecuacionAlquiler())){
+				adecuacion = true;
+			}
+			if (!Checks.esNulo(activoPublicacion)){
+				List<VPreciosVigentes> precios = activoAdapter.getPreciosVigentesById(idActivo);
+				if (!Checks.estaVacio(precios)){
+					for (VPreciosVigentes precio : precios) {
+						if (!Checks.esNulo(precio.getImporte())){
+							precioPublicacion = true;
+						}
+					}
+				}
+				if (!precioPublicacion && informeAprobado && !adecuacion){
+					if (DDEstadoPublicacionAlquiler.CODIGO_NO_PUBLICADO_ALQUILER.equals(activoPublicacion.getEstadoPublicacionAlquiler().getCodigo())){
+						enviarCorreoAdecuacion(activoPublicacion);
+					}
+				}
+			}
+			
 			logger.info(messageServices.getMessage("activo.publicacion.OK.publicar.ordinario.server").concat(" ").concat(String.valueOf(idActivo)));
 			return true;
 		} else {
@@ -801,43 +822,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	}
 	
 	@Override
-	public Boolean comprobarEnvioCorreoAdecuacion(ActivoPublicacion activoPublicacion){
-		
-		Activo activo = activoPublicacion.getActivo();
-		Boolean precioPublicacion = false;
-		Boolean conCee = false;
-		Boolean conAdecuacion = false;
-		
-		List<VPreciosVigentes> precios = activoAdapter.getPreciosVigentesById(activo.getId());
-		for (VPreciosVigentes precio : precios) {
-			if (!Checks.esNulo(precio.getFechaFin())){
-				precioPublicacion = true;
-				break;
-			}
-		}
-			
-		List<VAdmisionDocumentos> documentos =  activoAdapter.getListAdmisionCheckDocumentos(activo.getId());
-		for (VAdmisionDocumentos documento : documentos) {
-			DDTipoDocumentoActivo documentoActivo = genericDao.get(DDTipoDocumentoActivo.class, genericDao.createFilter(FilterType.EQUALS, "descripcion", documento.getDescripcionTipoDoc()));
-			if (!Checks.esNulo(documentoActivo)){
-				if (DDTipoDocumentoActivo.CODIGO_CEE.equals(documentoActivo.getCodigo()) && documento.getAplica() == "1"){
-					conCee = true;
-				}else if (DDTipoDocumentoActivo.CODIGO_CEDULA_HABITABILIDAD.equals(documentoActivo.getCodigo()) && documento.getAplica() == "1"){
-					conAdecuacion = true;
-				}
-			}
-		}
-		
-		//Si no tiene precio de publicacion, no tiene el documento CEE activo y no tiene el documento de Cedula de Habitabilidad activo
-		if (!precioPublicacion && !conCee && !conAdecuacion){
-			return true;
-		}else {
-			return false;
-		}
-	}
-	
-	@Override
-	public boolean enviarCorreoAdecuacion(ActivoPublicacion activoPublicacion) {
+	public Boolean enviarCorreoAdecuacion(ActivoPublicacion activoPublicacion) {
 		boolean resultado = false;
 
 		Activo activo = activoPublicacion.getActivo();

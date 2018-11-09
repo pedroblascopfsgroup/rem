@@ -299,7 +299,7 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 												fieldLabel: HreRem.i18n('fieldlabel.datos.publicacion.estados.publicar'),
 												reference: 'chkbxpublicaralquiler',
 												bind: {
-													readOnly: '{datospublicacionactivo.deshabilitarCheckPublicarAlquiler}',
+													readOnly: false,
 													value: '{datospublicacionactivo.publicarAlquiler}'
 												},
                                                 listeners: {

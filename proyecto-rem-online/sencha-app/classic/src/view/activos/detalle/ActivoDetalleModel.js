@@ -726,7 +726,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 	      	        remoteUrl: 'promocion/getListAdjuntosPromocion',
 	      	        extraParams: {id:'{activo.id}'}
 	          	 },
-	          	 groupField: 'descripcionTipo'
+	          	 groupField: 'descripcionTipo',
+	          	 autoLoad: false
     		},
 
     		historicoTrabajos: {

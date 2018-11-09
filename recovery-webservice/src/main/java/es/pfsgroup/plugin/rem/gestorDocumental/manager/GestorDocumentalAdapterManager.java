@@ -536,4 +536,9 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 		});
 		thread.start();
 	}
+
+	@Override
+	public FileItem getFileItemPromocion(Long idDocumento, String nombreDocumento) throws Exception {
+		return this.getFileItem(idDocumento, nombreDocumento);
+	}
 }

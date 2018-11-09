@@ -8,8 +8,16 @@ Ext.define('HreRem.view.activos.detalle.DocumentosActivo', {
     requires	: ['HreRem.model.AdjuntoActivo','HreRem.model.AdjuntoActivoPromocion','Ext.data.Store'],
 
     initComponent: function () {
-    	 var me = this;
+    	var me = this;
         me.setTitle(HreRem.i18n('title.documentos'));
+        var isVisibleCodPrinex = me.lookupController().getViewModel().get('activo').get('isVisibleCodPrinex');
+        
+        var gridDocsPromocion ={
+    		xtype:'documentosactivopromocion',
+			reference: 'listadoDocumentosPromo',
+            collapsible: true,
+			colspan: 3
+		}
 
     	var items= [
     	         {
@@ -19,23 +27,15 @@ Ext.define('HreRem.view.activos.detalle.DocumentosActivo', {
 					colspan: 3
     	        	 
     	        	 
-    	         }/*,
-    	         
-    			 {
-    				xtype:'documentosactivopromocion',
-					reference: 'listadoDocumentosPromo',
-                    bind: {
-                       // hidden: '{!activo.isVisibleCodPrinex}'
-                    	hidden: true
-                    },
-					collapsible: true,
-					colspan: 3
-
-    			 }*/
+    	         }
     	];
+    	
+    	if(isVisibleCodPrinex){
+    		items.push(gridDocsPromocion);
+    	}
 
     	me.addPlugin({ptype: 'lazyitems', items: items });
-    	me.callParent();
+    	me.callParent();    	
     },
 
     funcionRecargar: function() {

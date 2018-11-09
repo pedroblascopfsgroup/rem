@@ -22,7 +22,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
          'documentosactivopromocion gridBase': {
              abrirFormulario: 'abrirFormularioAdjuntarDocPromo',
              //onClickRemove: 'borrarDocumentoAdjunto',
-             //download: 'downloadDocumentoAdjunto',
+             download: 'downloadDocumentoAdjuntoPromocion',
              afterupload: function(grid) {
              	grid.getStore().load();
              }
@@ -1025,6 +1025,19 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		config = {};
 		
 		config.url=$AC.getWebPath()+"activo/bajarAdjuntoActivo."+$AC.getUrlPattern();
+		config.params = {};
+		config.params.id=record.get('id');
+		config.params.idActivo=record.get("idActivo");
+		config.params.nombreDocumento=record.get("nombre");
+		me.fireEvent("downloadFile", config);
+	},
+	
+	downloadDocumentoAdjuntoPromocion: function(grid, record) {
+		
+		var me = this,
+		config = {};
+		
+		config.url=$AC.getWebPath()+"promocion/bajarAdjuntoActivoPromocion."+$AC.getUrlPattern();
 		config.params = {};
 		config.params.id=record.get('id');
 		config.params.idActivo=record.get("idActivo");

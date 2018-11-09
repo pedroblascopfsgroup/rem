@@ -1,6 +1,8 @@
 package es.pfsgroup.plugin.rem.controller;
 
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -10,7 +12,11 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
+
+import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
+import es.capgemini.devon.utils.FileUtils;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
@@ -64,6 +70,41 @@ public class PromocionController extends ParadiseJsonController {
 			model.put("errorMessage", "Ha habido un problema con la subida del fichero de promociones.");
 		}
 		return createModelAndViewJson(model);
+	}
+	
+	/**
+	 * 
+	 * @param request
+	 * @param response
+	 */
+	@RequestMapping(method = RequestMethod.GET)
+	public void bajarAdjuntoActivoPromocion(HttpServletRequest request, HttpServletResponse response) {
+
+		Long id = null;
+		try {
+			id = Long.parseLong(request.getParameter("id"));
+			String nombreDocumento = request.getParameter("nombreDocumento");
+			ServletOutputStream salida = response.getOutputStream();
+			FileItem fileItem = promocionAdapter.download(id,nombreDocumento);
+			response.setHeader("Content-disposition", "attachment; filename=" + fileItem.getFileName());
+			response.setHeader("Cache-Control", "must-revalidate, post-check=0,pre-check=0");
+			response.setHeader("Cache-Control", "max-age=0");
+			response.setHeader("Expires", "0");
+			response.setHeader("Pragma", "public");
+			response.setDateHeader("Expires", 0); // prevents caching at the
+													// proxy
+			if(!Checks.esNulo(fileItem.getContentType())) {
+				response.setContentType(fileItem.getContentType());
+			}
+			
+			// Write
+			FileUtils.copy(fileItem.getInputStream(), salida);
+			salida.flush();
+			salida.close();
+		} catch (Exception e) {
+			logger.error("error en activoController", e);
+		}
+
 	}
 
 }

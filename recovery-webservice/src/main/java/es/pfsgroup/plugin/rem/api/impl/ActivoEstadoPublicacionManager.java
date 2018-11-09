@@ -116,6 +116,8 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		dto.setDeshabilitarCheckOcultarVenta(this.deshabilitarCheckOcultarVenta(idActivo));
 		dto.setDeshabilitarCheckPublicarAlquiler(this.deshabilitarCheckPublicarAlquiler(idActivo));
 		dto.setDeshabilitarCheckOcultarAlquiler(this.deshabilitarCheckOcultarAlquiler(idActivo));
+		dto.setDeshabilitarCheckPublicarSinPrecioVenta(this.deshabilitarCheckPublicarSinPrecioVenta(idActivo));
+		dto.setDeshabilitarCheckPublicarSinPrecioAlquiler(this.deshabilitarCheckPublicarSinPrecioAlquiler(idActivo));
 
     	return dto;
 	}
@@ -161,6 +163,27 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	private Boolean deshabilitarCheckPublicarVenta(Long idActivo) {
 		return !isPublicable(idActivo) || !isComercializable(idActivo) || isVendido(idActivo) || isReservado(idActivo) || isPublicadoVenta(idActivo) || isOcultoVenta(idActivo) ||
 				isFueraDePerimetro(idActivo) || (!isInformeAprobado(idActivo) && (!tienePrecioVenta(idActivo) && !isPublicarSinPrecioVentaActivado(idActivo)));
+	}
+	
+	/**
+	 * Este método calcula si el check de publicar sin precio venta se ha de deshabilitar en base a unas reglas.
+	 *
+	 * @param idActivo: ID del activo del que obtener los datos para verificar las reglas.
+	 * @return Devuelve True si el check de publicar sin precio venta debe estar deshabilitado.
+	 */
+	private Boolean deshabilitarCheckPublicarSinPrecioVenta(Long idActivo) {
+		return isPublicadoVenta(idActivo) || isOcultoVenta(idActivo) || tienePrecioVenta(idActivo);
+	}
+	
+
+	/**
+	 * Este método calcula si el check de publicar sin precio venta se ha de deshabilitar en base a unas reglas.
+	 *
+	 * @param idActivo: ID del activo del que obtener los datos para verificar las reglas.
+	 * @return Devuelve True si el check de publicar sin precio venta debe estar deshabilitado.
+	 */
+	private Boolean deshabilitarCheckPublicarSinPrecioAlquiler(Long idActivo) {
+		return isPublicadoAlquiler(idActivo) || isOcultoAlquiler(idActivo) || tienePrecioRenta(idActivo);
 	}
 
 	/**

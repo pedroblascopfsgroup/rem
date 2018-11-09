@@ -276,25 +276,31 @@ BEGIN
         LEFT JOIN '||V_ESQUEMA||'.dd_tpu_tipo_publicacion tpu ON tpu.dd_tpu_id = actpub.DD_TPU_V_ID
         LEFT JOIN '||V_ESQUEMA||'.dd_tpu_tipo_publicacion tpu ON tpu.dd_tpu_id = actpub.DD_TPU_A_ID
         LEFT JOIN
-           (SELECT v.act_id,
-                      v.sin_toma_posesion_inicial
-                   || v.ocupado_contitulo
-                   || v.pendiente_inscripcion
-                   || v.proindiviso
-                   || v.tapiado
-                   || v.obranueva_sindeclarar
-                   || v.obranueva_enconstruccion
-                   || v.divhorizontal_noinscrita
-                   || v.ruina
-                   || NVL2 (v.otro, 1, 0)
-                   || v.sin_informe_aprobado
-                   || v.revision
-                   || v.procedimiento_judicial
-                   || v.con_cargas
-                   || v.ocupado_sintitulo
-                   || TO_CHAR (v.estado_portal_externo) condicionantes,
-                   v.otro descripcion_otros
-              FROM rem01.v_cond_disponibilidad v) v ON v.act_id = actpub.act_id
+           (SELECT vi.act_id,
+                      pac.pac_check_comercializar --Disponible
+                   || vi.sin_toma_posesion_inicial --Sin Posesión
+                   || vi.ocupado_contitulo --Alquilado
+                   || vi.ocupado_sintitulo --Ocupado
+                   || vi.pendiente_inscripcion --Pendiente inscripción
+                   || vi.proindiviso --Proindiviso
+                   || vi.tapiado --Tapiado
+                   || vi.obranueva_sindeclarar --Sin declarar obra nueva
+                   || vi.obranueva_enconstruccion --En construcción obra nueva
+                   || vi.divhorizontal_noinscrita --División horizontal no inscrita
+                   || vi.ruina --Ruina
+				   || NVL2 (vi.otro, 1, 0) --Inmueble en Situación Especial
+                   || vi.sin_informe_aprobado --Inmueble en Precomercialización
+                   || vi.revision --Inmueble en Revisión
+                   || vi.procedimiento_judicial --Procedimiento Judicial
+                   || vi.con_cargas --Inmueble con Cargas
+                   || 0 --Inmueble sin Título
+                   || 0 --Pendiente de adjudicación
+                   || vi.vandalizado --Vandalizado
+                   || vi.sin_acceso --Sin Acceso
+                   condicionantes,
+                   vi.otro descripcion_otros
+              FROM rem01.v_cond_disponibilidad vi
+              join rem01.ACT_PAC_PERIMETRO_ACTIVO pac on pac.act_id = vi.act_id) v ON v.act_id = actpub.act_id
 
     	LEFT JOIN(  SELECT DISTINCT pve.PVE_COD_REM, gac.ACT_ID, row_number() over(partition by gac.act_id order by pve.fechacrear desc) rn
     	    FROM '||V_ESQUEMA||'.GAC_GESTOR_ADD_ACTIVO gac

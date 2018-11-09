@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=Carles Molins
---## FECHA_CREACION=20181107
+--## AUTOR=Maria Presencia
+--## FECHA_CREACION=20181108
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=2.0.19
 --## INCIDENCIA_LINK=HREOS-4683
@@ -14,6 +14,7 @@
 --##		0.2 Cambio SP_MOTIVO_OCULTACION por SP_MOTIVO_OCULTACION_AGR por fleco Ivan Rubio HREOS-4218
 --##		0.3 Cambio SP_MOTIVO_OCULTACION para actualizacion de tipo publicacion.
 --##		0.4 Llamada SP_CREAR_AVISO
+--##		0.5 Modificado las condiciones alquiler
 --##########################################
 --*/
 
@@ -271,6 +272,7 @@ create or replace PROCEDURE SP_CAMBIO_ESTADO_PUBLI_AGR (pAGR_ID IN NUMBER DEFAUL
 
 		  IF pDD_MTO_CODIGO = '06' THEN /*Revisión Publicación*/
 		    vACTUALIZAR_COND := 'N';
+		    REM01.SP_CREAR_AVISO (pAGR_ID, 'GPUBL', pUSUARIOMODIFICAR, 'Se ha situado en Oculto Alquiler con motivo Revisión Publicación la agrupación: ', 1);
 		  END IF; 
 		  	  
 		END IF;
@@ -555,65 +557,109 @@ create or replace PROCEDURE SP_CAMBIO_ESTADO_PUBLI_AGR (pAGR_ID IN NUMBER DEFAUL
 
   BEGIN
 
-    IF pINFORME_COMERCIAL = 1 THEN
-      IF pPRECIO = 1 THEN
+IF pINFORME_COMERCIAL = 1 THEN
+   IF pPRECIO = 1 THEN
         IF pADMISION = 1 AND pGESTION = 1 THEN
-          /*PUBLICADO ORDINARIO*/
-			V_MSQL := '      
-			  MERGE INTO '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION ACT
-				  USING '||vQUERY_SINACT||'
-				  ON (ACT.ACT_ID = AUX.ACT_ID)
-				WHEN MATCHED THEN
-				  UPDATE 
-                        SET DD_EPA_ID = (SELECT DD_EPA_ID
-                                           FROM '|| V_ESQUEMA ||'.DD_EPA_ESTADO_PUB_ALQUILER
-                                          WHERE BORRADO = 0
-                                            AND DD_EPA_CODIGO = ''03'')
-                          , DD_TPU_A_ID = (SELECT DD_TPU_ID
-                                           FROM '|| V_ESQUEMA ||'.DD_TPU_TIPO_PUBLICACION
-                                          WHERE BORRADO = 0
-                                            AND DD_TPU_CODIGO = ''01'')
-                          , USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
-                          , FECHAMODIFICAR = SYSDATE
-				  WHERE BORRADO = 0
-					  '; 
-          EXECUTE IMMEDIATE V_MSQL;
-          IF SQL%ROWCOUNT > 0 THEN
-            vACTUALIZADO := 'S';
-          END IF;
-        ELSIF pCEE_VIGENTE = 1 AND pADECUADO = 1 THEN
-          /*PUBLICADO FORZADO*/
-			V_MSQL := '      
-			  MERGE INTO '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION ACT
-				  USING '||vQUERY_SINACT||'
-				  ON (ACT.ACT_ID = AUX.ACT_ID)
-				WHEN MATCHED THEN
-				  UPDATE 
-                        SET DD_EPA_ID = (SELECT DD_EPA_ID
-                                           FROM '|| V_ESQUEMA ||'.DD_EPA_ESTADO_PUB_ALQUILER
-                                          WHERE BORRADO = 0
-                                            AND DD_EPA_CODIGO = ''03'')
-                          , DD_TPU_A_ID = (SELECT DD_TPU_ID
-                                           FROM '|| V_ESQUEMA ||'.DD_TPU_TIPO_PUBLICACION
-                                          WHERE BORRADO = 0
-                                            AND DD_TPU_CODIGO = ''02'')
-                          , USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
-                          , FECHAMODIFICAR = SYSDATE
-				  WHERE BORRADO = 0
-					  '; 
-          EXECUTE IMMEDIATE V_MSQL;
-          IF SQL%ROWCOUNT > 0 THEN
-            vACTUALIZADO := 'S';
-          END IF;
-        END IF;
-      ELSE
+			/*PUBLICADO ORDINARIO*/
+			V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION
+							USING '||vQUERY_SINACT||'
+							ON (ACT.ACT_ID = AUX.ACT_ID)
+							SET DD_EPA_ID = (SELECT DD_EPA_ID
+											FROM '|| V_ESQUEMA ||'.DD_EPA_ESTADO_PUB_ALQUILER
+											WHERE BORRADO = 0
+												AND DD_EPA_CODIGO = ''03'')
+							, DD_TPU_A_ID = (SELECT DD_TPU_ID
+											FROM '|| V_ESQUEMA ||'.DD_TPU_TIPO_PUBLICACION
+											WHERE BORRADO = 0
+												AND DD_TPU_CODIGO = ''01'')
+							, USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
+							, FECHAMODIFICAR = SYSDATE
+						WHERE ACT_ID = '||nACT_ID||'
+							AND BORRADO = 0
+						';
+		
+			EXECUTE IMMEDIATE V_MSQL;
+				IF SQL%ROWCOUNT > 0 THEN
+					vACTUALIZADO := 'S';
+				END IF;
+		ELSIF pCEE_VIGENTE = 1 AND pADECUADO = 1 THEN
+			/*PUBLICADO FORZADO*/
+			V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION
+						USING '||vQUERY_SINACT||'
+						ON (ACT.ACT_ID = AUX.ACT_ID)
+							SET DD_EPA_ID = (SELECT DD_EPA_ID
+											FROM '|| V_ESQUEMA ||'.DD_EPA_ESTADO_PUB_ALQUILER
+											WHERE BORRADO = 0
+												AND DD_EPA_CODIGO = ''03'')
+							, DD_TPU_A_ID = (SELECT DD_TPU_ID
+											FROM '|| V_ESQUEMA ||'.DD_TPU_TIPO_PUBLICACION
+											WHERE BORRADO = 0
+												AND DD_TPU_CODIGO = ''02'')
+							, USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
+							, FECHAMODIFICAR = SYSDATE
+						WHERE ACT_ID = '||nACT_ID||'
+							AND BORRADO = 0
+						';
+		
+			EXECUTE IMMEDIATE V_MSQL;
+				IF SQL%ROWCOUNT > 0 THEN
+					vACTUALIZADO := 'S';
+				END IF;
+				
+		ELSIF pCondAlquiler = 0 THEN
+			/*PRE PUBLICADO ORDINARIO*/
+			V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION
+							USING '||vQUERY_SINACT||'
+					    	ON (ACT.ACT_ID = AUX.ACT_ID)
+						  SET DD_EPA_ID = (SELECT DD_EPA_ID
+											 FROM '|| V_ESQUEMA ||'.DD_EPA_ESTADO_PUB_ALQUILER
+											WHERE BORRADO = 0
+											  AND DD_EPA_CODIGO = ''02'')
+							, DD_TPU_A_ID = (SELECT DD_TPU_ID
+											 FROM '|| V_ESQUEMA ||'.DD_TPU_TIPO_PUBLICACION
+											WHERE BORRADO = 0
+											  AND DD_TPU_CODIGO = ''01'')
+							, USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
+							, FECHAMODIFICAR = SYSDATE
+						WHERE ACT_ID = '||nACT_ID||'
+						  AND BORRADO = 0
+					  ';
+
+			EXECUTE IMMEDIATE V_MSQL;
+				IF SQL%ROWCOUNT > 0 THEN
+				vACTUALIZADO := 'S';
+				END IF;  		
+
+		ELSIF pCondAlquiler = 1 THEN
+				/*PUBLICADO FORZADO*/
+				V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION
+								USING '||vQUERY_SINACT||'
+								ON (ACT.ACT_ID = AUX.ACT_ID)
+							SET DD_EPA_ID = (SELECT DD_EPA_ID
+												FROM '|| V_ESQUEMA ||'.DD_EPA_ESTADO_PUB_ALQUILER
+												WHERE BORRADO = 0
+												AND DD_EPA_CODIGO = ''03'')
+								, DD_TPU_A_ID = (SELECT DD_TPU_ID
+												FROM '|| V_ESQUEMA ||'.DD_TPU_TIPO_PUBLICACION
+												WHERE BORRADO = 0
+												AND DD_TPU_CODIGO = ''02'')
+								, USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
+								, FECHAMODIFICAR = SYSDATE
+							WHERE ACT_ID = '||nACT_ID||'
+							AND BORRADO = 0
+						';
+	
+				EXECUTE IMMEDIATE V_MSQL;
+					IF SQL%ROWCOUNT > 0 THEN
+					vACTUALIZADO := 'S';
+					END IF;   
+		END IF;
+		
+   ELSE
         /*PRE PUBLICADO ORDINARIO*/
-			V_MSQL := '      
-			  MERGE INTO '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION ACT
-				  USING '||vQUERY_SINACT||'
-				  ON (ACT.ACT_ID = AUX.ACT_ID)
-				WHEN MATCHED THEN
-				  UPDATE 
+        V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION
+					USING '||vQUERY_SINACT||'
+					ON (ACT.ACT_ID = AUX.ACT_ID)
                       SET DD_EPA_ID = (SELECT DD_EPA_ID
                                          FROM '|| V_ESQUEMA ||'.DD_EPA_ESTADO_PUB_ALQUILER
                                         WHERE BORRADO = 0
@@ -624,13 +670,16 @@ create or replace PROCEDURE SP_CAMBIO_ESTADO_PUBLI_AGR (pAGR_ID IN NUMBER DEFAUL
                                           AND DD_TPU_CODIGO = ''01'')
                         , USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
                         , FECHAMODIFICAR = SYSDATE
-				  WHERE BORRADO = 0
-					  '; 
+                    WHERE ACT_ID = '||nACT_ID||'
+                      AND BORRADO = 0
+                  ';
+
         EXECUTE IMMEDIATE V_MSQL;
-        IF SQL%ROWCOUNT > 0 THEN
-          vACTUALIZADO := 'S';
-        END IF;
-      END IF;
+			IF SQL%ROWCOUNT > 0 THEN
+			vACTUALIZADO := 'S';
+			END IF;
+    END IF;
+ELSE
     ELSE
       IF pPRECIO = 1 THEN
 		IF pCondAlquiler = 0 THEN

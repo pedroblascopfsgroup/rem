@@ -225,7 +225,7 @@ Ext.define('HreRem.view.activos.detalle.CabeceraActivo', {
 										cls: 'cabecera-info-field',
 										bind: {
 											hidden: '{!estaPublicadoVentaOAlquiler}',
-											value: '<a href="' + HreRem.i18n('fieldlabel.link.web.haya') + '{activo.numActivo}" target="_blank">' + HreRem.i18n('fieldlabel.web.haya') + '</a>'
+											value: '<a href="' + HreRem.i18n('fieldlabel.link.web.haya') + '{getLinkHayaActivo}" target="_blank">' + HreRem.i18n('fieldlabel.web.haya') + '</a>'
 										}
 									},
 									{

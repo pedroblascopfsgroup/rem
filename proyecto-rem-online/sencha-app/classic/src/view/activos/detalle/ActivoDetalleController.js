@@ -3048,6 +3048,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 
 	onClickGuardarPropagarCambios: function(btn) {
     	var me = this,
+    	
     	window = btn.up("window"),
     	grid = me.lookupReference("listaActivos"),
     	radioGroup = me.lookupReference("opcionesPropagacion"),
@@ -3056,7 +3057,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	opcionPropagacion = radioGroup.getValue().seleccion,
     	cambios =  window.propagableData,
     	targetGrid = window.targetGrid;
-
+    	
 		me.fireEvent("log", cambios);
 		
     	if (opcionPropagacion == "4" &&  activosSeleccionados.length == 0) {
@@ -3067,6 +3068,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	    if (Ext.isEmpty(targetGrid)) {  
 	      if (!Ext.isEmpty(formActivo)) {	
 	        var successFn = function(record, operation) { 
+	        	
 	        	if (activosSeleccionados.length > 0) {
 	            me.propagarCambios(window, activosSeleccionados);
 	          } else {
@@ -3425,10 +3427,18 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 				}
 			
 				var successFn = function(response, eOpts) {
-					me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-					me.getView().unmask();
-					me.refrescarActivo(form.refreshAfterSave);
-					me.getView().fireEvent("refreshComponentOnActivate", "container[reference=tabBuscadorActivos]");
+				
+					var data = JSON.parse(response.responseText);
+			 		if(data.msgError !== undefined && data.success === "false"){
+			 			me.fireEvent("errorToast", data.msgError);
+			 			me.getView().unmask();
+			            me.refrescarActivo(true);
+			 		}else{
+						me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+						me.getView().unmask();
+						me.refrescarActivo(form.refreshAfterSave);
+						me.getView().fireEvent("refreshComponentOnActivate", "container[reference=tabBuscadorActivos]");
+			 		}
 				}
 				me.saveActivo(tabData, successFn);
     		},

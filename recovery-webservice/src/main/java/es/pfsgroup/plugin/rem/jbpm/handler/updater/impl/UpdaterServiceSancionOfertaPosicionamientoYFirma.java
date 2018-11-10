@@ -7,6 +7,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDSituacionPosesoria;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -26,8 +27,11 @@ import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
+import es.pfsgroup.plugin.rem.model.ActivoPublicacion;
 import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
+import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
+import es.pfsgroup.plugin.rem.model.CondicionesActivo;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
@@ -36,6 +40,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDSituacionesPosesoria;
 
 @Component
 public class UpdaterServiceSancionOfertaPosicionamientoYFirma implements UpdaterService {
@@ -144,10 +149,18 @@ public class UpdaterServiceSancionOfertaPosicionamientoYFirma implements Updater
 							}
 
 							activo.setBloqueoPrecioFechaIni(new Date());
-	
+							
+														
 							ActivoSituacionPosesoria situacionPosesoria = activo.getSituacionPosesoria();
-							situacionPosesoria.setConTitulo(1);
-							situacionPosesoria.setOcupado(1);
+							
+							if((situacionPosesoria.getConTitulo() == 1) && (situacionPosesoria.getOcupado() == 1)){
+								situacionPosesoria.setConTitulo(1);
+								situacionPosesoria.setOcupado(1);
+							}else{
+								situacionPosesoria.setConTitulo(0);
+								situacionPosesoria.setOcupado(0);
+							}
+							
 							try {
 								situacionPosesoria.setFechaTomaPosesion(ft.parse(valor.getValor()));
 							} catch (ParseException e) {

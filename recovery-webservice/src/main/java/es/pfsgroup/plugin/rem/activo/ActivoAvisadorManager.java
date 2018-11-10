@@ -242,6 +242,14 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 			}
 		}
 		
+		//Aviso 13: Activo con demanda con afectación comercial
+		if(!(Checks.esNulo(activo.getTieneDemandaAfecCom())) && activo.getTieneDemandaAfecCom()==1) {
+			DtoAviso dtoAviso = new DtoAviso();
+			dtoAviso.setDescripcion("Activo con demanda con afectación comercial");
+			dtoAviso.setId(String.valueOf(id));
+			listaAvisos.add(dtoAviso);			
+		}
+		
 		return listaAvisos;
 		//activoDao.getListActivos(id, usuarioLogado);
 	}

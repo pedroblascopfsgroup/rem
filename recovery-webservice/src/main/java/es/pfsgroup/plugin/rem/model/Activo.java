@@ -413,6 +413,9 @@ public class Activo implements Serializable, Auditable {
     @Column(name = "OK_TECNICO")
     private Boolean tieneOkTecnico;
     
+    @Column(name = "ACT_ACTIVO_DEMANDA_AFECT_COM")
+    private Integer tieneDemandaAfecCom; 
+    
     @Column(name = "ACT_PUJA")
     private Boolean estaEnPuja;
 	
@@ -1638,6 +1641,14 @@ public class Activo implements Serializable, Auditable {
 
 	public void setTieneOkTecnico(Boolean tieneOkTecnico) {
 		this.tieneOkTecnico = tieneOkTecnico;
+	}
+	
+	public Integer getTieneDemandaAfecCom() {
+		return tieneDemandaAfecCom;
+	}
+	
+	public void setTieneDemandaAfecCom(Integer tieneDemandaAfecCom) {
+		this.tieneDemandaAfecCom = tieneDemandaAfecCom;
 	}
 	
 	public Boolean getEstaEnPuja() {

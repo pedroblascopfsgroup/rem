@@ -333,7 +333,7 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
                 
 				xtype:'fieldsettable',
 				title:HreRem.i18n('title.historico.ocupaciones.ilegales'),
-				bind: {hidden:'{!esOcupacionIlegal}'},
+				reference: 'fieldHistoricoOcupacionesIlegales',
 				defaultType: 'textfieldbase',
 				items :
 					[

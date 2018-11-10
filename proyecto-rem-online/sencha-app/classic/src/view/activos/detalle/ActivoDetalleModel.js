@@ -70,7 +70,16 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 	     	
 	     	var ocupado = get('situacionPosesoria.ocupado') == "1";
 	     	var conTitulo = get('situacionPosesoria.conTitulo') == "1";
-	     	
+	     	var gridHistoricoOcupacionesIlegales = this.getView().lookupReference('historicoocupacionesilegalesgridref');
+			var fieldHistoricoOcupacionesIlegales = this.getView().lookupReference('fieldHistoricoOcupacionesIlegales');
+			
+			var hayDatosEnStore = gridHistoricoOcupacionesIlegales.store.data.length>0
+			if(hayDatosEnStore  || ocupado){
+				fieldHistoricoOcupacionesIlegales.show();
+			}else {
+				fieldHistoricoOcupacionesIlegales.hide();
+			}
+
 	     	return ocupado && !conTitulo;
 	     	
 	     },

@@ -139,7 +139,7 @@ BEGIN
                                                                       ,BORRADO)
           VALUES('||nSeq||'
                   ,'||nACT_ID||'
-                  ,'||NUMERO_ASUNTO||'
+                  ,'''||NUMERO_ASUNTO||'''
                   ,to_date('''||FECHA_INI_ASUNTO||''',''yyyyMMdd'')
                   ,to_date('''||FECHA_FIN_ASUNTO||''',''yyyyMMdd'')
                   ,to_date('''||FECHA_LANZAMIENTO||''',''yyyyMMdd'')

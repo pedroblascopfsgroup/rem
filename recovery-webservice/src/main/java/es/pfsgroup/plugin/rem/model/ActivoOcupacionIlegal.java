@@ -51,7 +51,7 @@ public class ActivoOcupacionIlegal implements Serializable, Auditable {
 	private Activo activo;
 
 	@Column(name = "OKU_NUM_ASUNTO")
-	private Long numAsunto;
+	private String numAsunto;
 	
 	@Column(name = "OKU_FECHA_INICIO_ASUNTO")
 	private Date fechaInicioAsunto;
@@ -92,11 +92,11 @@ public class ActivoOcupacionIlegal implements Serializable, Auditable {
 		this.activo = activo;
 	}
 
-	public Long getNumAsunto() {
+	public String getNumAsunto() {
 		return numAsunto;
 	}
 
-	public void setNumAsunto(Long numAsunto) {
+	public void setNumAsunto(String numAsunto) {
 		this.numAsunto = numAsunto;
 	}
 

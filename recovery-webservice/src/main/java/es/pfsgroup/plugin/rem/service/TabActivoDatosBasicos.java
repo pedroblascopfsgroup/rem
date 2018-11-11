@@ -732,7 +732,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			//Hace referencia a Destino Comercial (Si te lía el nombre, habla con Fernando)
 			if (!Checks.esNulo(dto.getTipoComercializacionCodigo()) && !Checks.esNulo(activo.getActivoPublicacion())) {
 				// Hace throws en caso de inflingir alguna valdiacion con el cambio de TipoComercializacion a realizar
-				this.validarCambiosTipoComercializacion(activo,dto);
+				validarCambiosTipoComercializacion(activo,dto);
 				
 				DDTipoComercializacion tipoComercializacion = (DDTipoComercializacion) diccionarioApi.dameValorDiccionarioByCod(DDTipoComercializacion.class,  dto.getTipoComercializacionCodigo());
 				activo.getActivoPublicacion().setTipoComercializacion(tipoComercializacion);

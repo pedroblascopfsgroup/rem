@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Maria Presencia
---## FECHA_CREACION=20181111
+--## AUTOR=ANAHUAC DE VICENTE
+--## FECHA_CREACION=20160919
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-4620
+--## INCIDENCIA_LINK=HREOS-1551
 --## PRODUCTO=NO
 --## Finalidad: Tabla para almacentar el historico del stock de activos enviados a webcom. Se añaden campos HREOS-1551. Se amplia campo CondicionesEspecificas HREOS-1930.
 --##           
@@ -12,7 +12,6 @@
 --## VERSIONES:
 --##        0.1 Versión inicial
 --##		0.2 HREOS-4620: Añadir el campo agrupación comercial
---##		0.3 Modificado para el despliegue del VAL04
 --##########################################
 --*/
 
@@ -291,9 +290,8 @@ BEGIN
             JOIN '||V_ESQUEMA||'.ACT_CFD_CONFIG_DOCUMENTO CFD ON CFD.CFD_ID = ADO.CFD_ID
             WHERE ADO.DD_TCE_ID IS NOT NULL AND ADO.BORRADO = 0 AND DDTCE.BORRADO = 0 AND CFD.BORRADO = 0
             ) DDTCE ON DDTCE.ACT_ID = ACT.ACT_ID AND DDTPA.DD_TPA_ID = DDTCE.DD_TPA_ID AND DDTCE.RN = 1
-		INNER JOIN '||V_ESQUEMA||'.ACT_AGA_AGRUPACION_ACTIVO AGA ON ACT.ACT_ID = AGA.ACT_ID AND AGA.BORRADO = 0
-		INNER JOIN '||V_ESQUEMA||'.ACT_AGR_AGRUPACION AGR ON AGA.AGR_ID = AGR.AGR_ID AND AGR.BORRADO = 0 AND agr.AGR_FECHA_BAJA is null AND (AGR.AGR_FIN_VIGENCIA IS NULL OR AGR.AGR_FIN_VIGENCIA > SYSDATE)
-		INNER JOIN '||V_ESQUEMA||'.DD_TAG_TIPO_AGRUPACION DD ON AGR.DD_TAG_ID = DD.DD_TAG_ID and DD.DD_TAG_CODIGO in (''14'',''15'') AND DD.BORRADO = 0
+		INNER JOIN '||V_ESQUEMA||'.ACT_AGA_AGRUPACION_ACTIVO AGA ON ACT.ACT_ID = AGA.ACT_ID
+		INNER JOIN '||V_ESQUEMA||'.ACT_AGR_AGRUPACION AGR ON AGA.AGR_ID = AGR.AGR_ID
 
 		where act.borrado = 0 and sps.borrado = 0';
 

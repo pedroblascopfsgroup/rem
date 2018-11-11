@@ -428,4 +428,25 @@ public interface ParticularValidatorApi {
 	public Boolean esMismaProvincia(Long numActivo, Long numAgrupacion);
 
 	public Boolean esMismaLocalidad(Long numActivo, Long numAgrupacion);
+	
+		/**
+		 * Devuelve true si un activo tiene ofertas vivas de tipo venta
+		 * @param numActivo
+		 * @return
+		 */
+		public Boolean existeActivoConOfertaVentaViva(String numActivo);
+		
+		/**
+		 * Devuelve true si un activo tiene ofertas vivas de tipo alquiler
+		 * @param numActivo
+		 * @return
+		 */
+		public Boolean existeActivoConOfertaAlquilerViva(String numActivo);
+		
+		/**
+		 * Devuelve el codigo del destino comercial de un activo
+		 * @param numActivo
+		 * @return
+		 */
+		public String getCodigoDestinoComercialByNumActivo(String numActivo);
 }

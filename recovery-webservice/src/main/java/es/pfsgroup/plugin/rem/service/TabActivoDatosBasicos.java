@@ -28,6 +28,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.agenda.model.Notificacion;
+import es.pfsgroup.framework.paradise.bulkUpload.api.ParticularValidatorApi;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDCicCodigoIsoCirbeBKP;
@@ -60,7 +61,9 @@ public class TabActivoDatosBasicos implements TabActivoService {
 	private static final String MSG_ERROR_PERIMETRO_COMERCIALIZACION_AGR_RESTRINGIDA_NO_PRINCIPAL = "activo.aviso.demsarcar.comercializar.agr.restringida.no.principal";
 	private static final String AVISO_TITULO_GESTOR_COMERCIAL = "activo.aviso.titulo.cambio.gestor.comercial";
 	private static final String AVISO_MENSAJE_GESTOR_COMERCIAL = "activo.aviso.descripcion.cambio.gestor.comercial";
-    
+	private static final String MSG_ERROR_DESTINO_COMERCIAL_OFERTAS_VIVAS_VENTA = "msg.error.tipo.comercializacion.ofertas.vivas";
+	private static final String MSG_ERROR_DESTINO_COMERCIAL_OFERTAS_VIVAS_ALQUILER = "msg.error.tipo.comercializacion.ofertas.vivas";
+
 
 	@Autowired
 	private GenericABMDao genericDao;
@@ -109,6 +112,9 @@ public class TabActivoDatosBasicos implements TabActivoService {
 
 	@Autowired
 	private ActivoEstadoPublicacionApi activoEstadoPublicacionApi;
+	
+	@Autowired
+	private ParticularValidatorApi particularValidator;
 
 	@Resource
 	private MessageService messageServices;
@@ -725,6 +731,9 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			}
 			//Hace referencia a Destino Comercial (Si te lía el nombre, habla con Fernando)
 			if (!Checks.esNulo(dto.getTipoComercializacionCodigo()) && !Checks.esNulo(activo.getActivoPublicacion())) {
+				// Hace throws en caso de inflingir alguna valdiacion con el cambio de TipoComercializacion a realizar
+				this.validarCambiosTipoComercializacion(activo,dto);
+				
 				DDTipoComercializacion tipoComercializacion = (DDTipoComercializacion) diccionarioApi.dameValorDiccionarioByCod(DDTipoComercializacion.class,  dto.getTipoComercializacionCodigo());
 				activo.getActivoPublicacion().setTipoComercializacion(tipoComercializacion);
 			}
@@ -824,7 +833,8 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				}
 			}
 			restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO, activo);
-			
+		} catch(JsonViewerException jve) {
+			throw jve;
 		} catch (IllegalAccessException e) {
 			e.printStackTrace();
 		} catch (InvocationTargetException e) {
@@ -891,7 +901,41 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		if(!Checks.esNulo(error))
 			throw new JsonViewerException(error);
 	}
-
+	
+	public void validarCambiosTipoComercializacion(Activo activo, DtoActivoFichaCabecera dto) {
+				
+		
+				String error = null;
+				// Si intentamos cambiar de venta a alquiler 
+				// o de Alquiler y venta a alquiler
+				// Se validará que no exista ninguna oferta viva de tipo venta
+				
+				if (DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(dto.getTipoComercializacionCodigo())
+						&& (DDTipoComercializacion.CODIGO_VENTA.equals(activo.getTipoComercializacion().getCodigo())
+								|| DDTipoComercializacion.CODIGO_ALQUILER_VENTA.equals(activo.getTipoComercializacion().getCodigo()))
+						&& particularValidator.existeActivoConOfertaVentaViva("" + activo.getNumActivo())) {
+		
+						error = messageServices.getMessage(MSG_ERROR_DESTINO_COMERCIAL_OFERTAS_VIVAS_VENTA);
+					
+				}
+				
+				// Si intentamos cambiar de alquiler a venta
+				// o de Alquiler y venta a Venta
+				// Se validará que no exista ninguna oferta viva de tipo alquiler
+				
+				if (DDTipoComercializacion.CODIGO_VENTA.equals(dto.getTipoComercializacionCodigo())
+						&& (DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(activo.getTipoComercializacion().getCodigo())
+								|| DDTipoComercializacion.CODIGO_ALQUILER_VENTA.equals(activo.getTipoComercializacion().getCodigo()))
+						&& particularValidator.existeActivoConOfertaAlquilerViva("" + activo.getNumActivo())) {
+		
+					error = messageServices.getMessage(MSG_ERROR_DESTINO_COMERCIAL_OFERTAS_VIVAS_ALQUILER);
+					
+				}
+				
+				if(!Checks.esNulo(error))
+					throw new JsonViewerException(error);
+			}
+	
 	/**
 	 * Este método pone la comercialización de todos los activos de una agrupación de tipo restringida
 	 * a NO. Obtiene la agrupación en base a un activo.

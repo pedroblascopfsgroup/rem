@@ -174,8 +174,11 @@ public class ActivoController extends ParadiseJsonController {
 			model.put(RESPONSE_SUCCESS_KEY, success);
 
 		} catch (JsonViewerException jvex) {
+					model.put("success", false);
+					model.put("msgError", jvex.getMessage());
+		/*} catch (JsonViewerException jvex) {
 			model.put(RESPONSE_SUCCESS_KEY, false);
-			model.put(RESPONSE_ERROR_MESSAGE_KEY, jvex.getMessage());
+			model.put(RESPONSE_ERROR_MESSAGE_KEY, jvex.getMessage());*/
 		} catch (Exception e) {
 			logger.error("error en activoController", e);
 			model.put(RESPONSE_SUCCESS_KEY, false);
@@ -2152,7 +2155,10 @@ public class ActivoController extends ParadiseJsonController {
 				ActivoControllerDispatcher dispatcher = new ActivoControllerDispatcher(this);
 				dispatcher.dispatchSave(restRequest.getJsonObject());
 
-			} catch (Exception e) {
+			} catch (JsonViewerException jvex) {
+				model.put(RESPONSE_SUCCESS_KEY, false);
+				model.put(RESPONSE_ERROR_MESSAGE_KEY, jvex.getMessage());
+			}catch (Exception e) {
 				logger.error("No se ha podido guardar el activo", e);
 				model.put(RESPONSE_ERROR_KEY, e.getMessage());
 			}

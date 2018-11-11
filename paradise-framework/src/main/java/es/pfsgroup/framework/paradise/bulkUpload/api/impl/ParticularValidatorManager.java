@@ -2137,4 +2137,62 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 			return false;
 		}
 	}
+	
+	public Boolean existeActivoConOfertaVentaViva(String numActivo) {
+		if(Checks.esNulo(numActivo))
+			return false;
+		
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "		FROM ACT_ACTIVO ACT "
+				+ " 	JOIN ACT_OFR ACTOF ON ACT.ACT_ID = ACTOF.ACT_ID "
+				+ " 	JOIN OFR_OFERTAS OFR ON ACTOF.OFR_ID = OFR.OFR_ID "
+				+ " 	JOIN DD_TOF_TIPOS_OFERTA TOF ON OFR.DD_TOF_ID = TOF.DD_TOF_ID "
+				+ " 	JOIN DD_EOF_ESTADOS_OFERTA EOF ON OFR.DD_EOF_ID = EOF.DD_EOF_ID "
+				+ "		WHERE ACT.ACT_NUM_ACTIVO ="+numActivo+" "
+				+ " 	AND EOF.DD_EOF_CODIGO IN ('01','03','04')"
+				+ "		AND TOF.DD_TOF_CODIGO = '01'");
+		
+
+		if("0".equals(resultado))
+			return false;
+		else
+			return true;
+
+	}
+	
+	public Boolean existeActivoConOfertaAlquilerViva(String numActivo) {
+		if(Checks.esNulo(numActivo))
+			return false;
+		
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "		FROM ACT_ACTIVO ACT "
+				+ " 	JOIN ACT_OFR ACTOF ON ACT.ACT_ID = ACTOF.ACT_ID "
+				+ " 	JOIN OFR_OFERTAS OFR ON ACTOF.OFR_ID = OFR.OFR_ID "
+				+ " 	JOIN DD_TOF_TIPOS_OFERTA TOF ON OFR.DD_TOF_ID = TOF.DD_TOF_ID "
+				+ " 	JOIN DD_EOF_ESTADOS_OFERTA EOF ON OFR.DD_EOF_ID = EOF.DD_EOF_ID "
+				+ "		WHERE ACT.ACT_NUM_ACTIVO ="+numActivo+" "
+				+ " 	AND EOF.DD_EOF_CODIGO IN ('01','03','04')"
+				+ "		AND TOF.DD_TOF_CODIGO = '02'");
+		
+
+		if("0".equals(resultado))
+			return false;
+		else
+			return true;
+
+	}
+	
+	
+	public String getCodigoDestinoComercialByNumActivo(String numActivo) {
+		
+		if(Checks.esNulo(numActivo))
+			return null;
+		
+		String resultado = rawDao.getExecuteSQL("SELECT tco.DD_TCO_CODIGO FROM ACT_ACTIVO act "
+				+ " INNER JOIN DD_TCO_TIPO_COMERCIALIZACION tco ON act.DD_TCO_ID = tco.DD_TCO_ID " 
+				+ " WHERE act.ACT_NUM_ACTIVO = '"+numActivo+"'");
+		
+		return resultado;
+		
+	}
 }

@@ -1589,7 +1589,6 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
     	
     	me.down('[name=resultadoScoring]').addListener('change', function() {
     		var resultadoScoring = me.down('[name=resultadoScoring]');
-
     		if(resultadoScoring.value == '01'){
     			
     			me.down('[name=nMesesFianza]').noObligatorio=false;
@@ -1597,21 +1596,35 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
     			
     			me.habilitarCampo(me.down('[name=nMesesFianza]'));
     			me.habilitarCampo(me.down('[name=importeFianza]'));
+    			me.habilitarCampo(me.down('[name=motivoRechazo]'));
     			
     			me.campoObligatorio(me.down('[name=nMesesFianza]'));
     			me.campoObligatorio(me.down('[name=importeFianza]'));
+    			
+    			me.down('[name=motivoRechazo]').noObligatorio=true;
+            	me.deshabilitarCampo(me.down('[name=motivoRechazo]'));
+            	me.borrarCampo(me.down('[name=motivoRechazo]'));
+            	me.campoNoObligatorio(me.down('[name=motivoRechazo]'));
+
+    			
     		}else{
     			me.down('[name=nMesesFianza]').noObligatorio=true;
     			me.down('[name=importeFianza]').noObligatorio=true;
-    			
+    			me.down('[name=motivoRechazo]').noObligatorio=false;
+
             	me.deshabilitarCampo(me.down('[name=nMesesFianza]'));
             	me.deshabilitarCampo(me.down('[name=importeFianza]'));
+    			
+            	me.habilitarCampo(me.down('[name=motivoRechazo]'));
             	
             	me.borrarCampo(me.down('[name=nMesesFianza]'));
             	me.borrarCampo(me.down('[name=importeFianza]'));
     			
             	me.campoNoObligatorio(me.down('[name=nMesesFianza]'));
             	me.campoNoObligatorio(me.down('[name=importeFianza]'));
+            	
+    			me.campoObligatorio(me.down('[name=motivoRechazo]'));
+
     		}
         });
     	

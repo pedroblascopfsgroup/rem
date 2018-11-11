@@ -10,7 +10,7 @@ public class DtoOcupacionIlegal extends WebDto {
 	
 	private String id; //id ocupación
 	private Long idActivo;
-	private Long numAsunto;
+	private String numAsunto;
 	private Date fechaInicioAsunto;
 	private Date fechaFinAsunto;
 	private Date fechaLanzamiento;
@@ -30,10 +30,10 @@ public class DtoOcupacionIlegal extends WebDto {
 	public void setIdActivo(Long idActivo) {
 		this.idActivo = idActivo;
 	}
-	public Long getNumAsunto() {
+	public String getNumAsunto() {
 		return numAsunto;
 	}
-	public void setNumAsunto(Long numAsunto) {
+	public void setNumAsunto(String numAsunto) {
 		this.numAsunto = numAsunto;
 	}
 	public Date getFechaInicioAsunto() {

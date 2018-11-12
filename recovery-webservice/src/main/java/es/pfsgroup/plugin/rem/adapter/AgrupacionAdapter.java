@@ -112,6 +112,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
 import es.pfsgroup.plugin.rem.oferta.NotificationOfertaManager;
+import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi.ENTIDADES;
 import es.pfsgroup.plugin.rem.thread.LiberarFichero;
@@ -210,6 +211,9 @@ public class AgrupacionAdapter {
 	
 	@Autowired
 	private MSVProcesoApi msvProcesoApi;
+	
+	@Autowired
+    private OfertaDao ofertaDao;
 
 	private final Log logger = LogFactory.getLog(getClass());
 
@@ -1517,7 +1521,18 @@ public class AgrupacionAdapter {
 						.dameValorDiccionarioByCod(DDMotivoRechazoOferta.class, dto.getMotivoRechazoCodigo());
 				oferta.setMotivoRechazo(motivoRechazoOferta);
 			}
-
+			
+			if (!Checks.esNulo(oferta.getAgrupacion())) {
+				ActivoAgrupacion agrupacion = oferta.getAgrupacion();
+				
+				List<Oferta> ofertasVivasAgrupacion = ofertaDao.getListOtrasOfertasVivasAgr(oferta.getId(), agrupacion.getId());
+				
+				if (!Checks.esNulo(ofertasVivasAgrupacion) && ofertasVivasAgrupacion.isEmpty()) {
+					agrupacion.setFechaBaja(new Date());
+					activoAgrupacionApi.saveOrUpdate(agrupacion);
+				}
+			}
+			
 			notificatorServiceSancionOfertaAceptacionYRechazo.notificatorFinSinTramite(oferta.getId());
 		}
 

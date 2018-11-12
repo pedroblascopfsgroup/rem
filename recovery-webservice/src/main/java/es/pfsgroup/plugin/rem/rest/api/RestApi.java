@@ -66,16 +66,6 @@ public interface RestApi {
 	public static final String REST_API_WEBCOM = "WEBCOM";
 	public static final String REST_API_BANKIA = "BANKIA";
 	public static final String REST_API_ENVIAR_CAMBIOS = "CAMBIOS";
-	public static final String REST_MSG_LIST_ID_HAYA = "NO_ES_POSIBLE_CREAR_OFERTA_PARA_VARIOS_ACTIVOS_SIN_LOTE_COMERCIAL";
-	public static final String REST_MSG_VENDIDO = "VENDIDO";
-	public static final String REST_MSG_NO_COMERCIALIZABLE = "NO_COMERCIALIZABLE";
-	public static final String REST_MSG_PERIMETRO = "FUERA_PERIMETRO_HAYA";
-	public static final String REST_MSG_LOTE_COMERCIAL_VIVO = "LOTE_COMERCIAL_VIVO";
-	public static final String REST_MSG_OFERTAS_INDIVIDUALES_VIVAS = "OFERTAS_INDIVIDUALES_VIVAS";
-	public static final String REST_MSG_DISTINTA_CARTERA = "ACTIVOS_DE_DISTINTA_CARTERA";
-	public static final String REST_MSG_DISTINTA_SUBCARTERA = "ACTIVOS_DE_DISTINTA_SUBCARTERA";
-	public static final String REST_MSG_DISTINTO_PROPIETARIO = "ACTIVOS_DE_DISTINTO_PROPIETARIO";
-	public static final String REST_MSG_DISTINTA_GEOLOCALIZACION = "DISTINTA_GEOLOCALIZACION";
 
 	/**
 	 * Valida la firma

@@ -416,7 +416,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			}
 		}
 		if (!Checks.esNulo(ofertaDto.getIndicadorOfertaLote()) && ofertaDto.getIndicadorOfertaLote()) {
-			List<Long> numActivos = ofertaDto.getListIdActivosHaya();
+			List<Long> numActivos = ofertaDto.getActivosLote();
 			DDCartera cartera = null;
 			DDSubcartera subcartera = null;
 			ActivoPropietario propietario = null;
@@ -426,7 +426,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				Activo activo = activoApi.getByNumActivo(numActivos.get(i));
 				
 				if (Checks.esNulo(activo)) {
-					errorsList.put("idActivoHaya: " + numActivos.get(i), RestApi.REST_MSG_UNKNOWN_KEY);
+					errorsList.put("activosLote", RestApi.REST_MSG_UNKNOWN_KEY);
 					break;
 				} else {
 					this.validacionesActivoOfertaLote(errorsList, activo);
@@ -441,8 +441,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					}
 				}
 			}
-		} else if (ofertaDto.getListIdActivosHaya().size() > 1){
-			errorsList.put("listIdActivosHaya", RestApi.REST_MSG_LIST_ID_HAYA);
+		} else if (Checks.esNulo(ofertaDto.getIdActivoHaya())){
+			errorsList.put("idActivoHaya", RestApi.REST_MSG_UNKNOWN_KEY);
 		}
 		if (!Checks.esNulo(ofertaDto.getIdUsuarioRemAccion())) {
 			Usuario user = genericDao.get(Usuario.class,
@@ -509,9 +509,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	}
 
 	@Override
-	public HashMap<String, String> saveOferta(OfertaDto ofertaDto) throws Exception {
+	public Boolean saveOferta(HashMap<String, String> errorsList, OfertaDto ofertaDto) throws Exception {
 		Oferta oferta = null;
-		HashMap<String, String> errorsList = null;
 		ActivoAgrupacion agrup = null;
 
 		// ValidateAlta
@@ -529,12 +528,13 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				} else {
 					dtoAgrupacion.setDescripcion("Agrupación creada desde CRM");
 				}
-				dtoAgrupacion.setGestorComercial(activoAgrupacionApi.getGestorComercialAgrupacion(ofertaDto.getListIdActivosHaya()));
+				dtoAgrupacion.setGestorComercial(activoAgrupacionApi.getGestorComercialAgrupacion(ofertaDto.getActivosLote()));
 				Long numAgrupacionRem = agrupacionAdapter.createAgrupacion(dtoAgrupacion);
+				errorsList.put("codigoAgrupacionComercialRem", numAgrupacionRem.toString());
 				agrup = genericDao.get(ActivoAgrupacion.class, genericDao.createFilter(
 						FilterType.EQUALS, "numAgrupRem", numAgrupacionRem));
-				for (int i=0; i<ofertaDto.getListIdActivosHaya().size(); i++) {
-					agrupacionAdapter.createActivoAgrupacion(ofertaDto.getListIdActivosHaya().get(i), agrup.getId(), i+1, false);
+				for (int i=0; i<ofertaDto.getActivosLote().size(); i++) {
+					agrupacionAdapter.createActivoAgrupacion(ofertaDto.getActivosLote().get(i), agrup.getId(), i+1, false);
 				}
 			}
 
@@ -566,10 +566,10 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				oferta.setImporteOferta(ofertaDto.getImporte());
 			}
 
-			if (!Checks.esNulo(ofertaDto.getListIdActivosHaya())) {
+			if (!Checks.esNulo(ofertaDto.getActivosLote())) {
 				List<ActivoOferta> listaActOfr = new ArrayList<ActivoOferta>();
 				
-				for (Long idActivo : ofertaDto.getListIdActivosHaya()) {
+				for (Long idActivo : ofertaDto.getActivosLote()) {
 					ActivoAgrupacion agrupacion = null;
 					List<ActivoOferta> buildListaActOfr = new ArrayList<ActivoOferta>();
 					List<ActivoAgrupacionActivo> listaAgrups = null;
@@ -682,10 +682,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				congelarExpedientesPorOfertaExpress(oferta);
 			
 			notificationOfertaManager.sendNotification(oferta);
-
+			
+			return true;
+		} else {
+			return false;
 		}
-		return errorsList;
-
 	}
 	
 	@Transactional(readOnly = false)
@@ -741,9 +742,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 	@Override
 	@Transactional(readOnly = false)
-	public HashMap<String, String> updateOferta(Oferta oferta, OfertaDto ofertaDto, Object jsonFields)
+	public Boolean updateOferta(HashMap<String, String> errorsList, Oferta oferta, OfertaDto ofertaDto, Object jsonFields)
 			throws Exception {
-		HashMap<String, String> errorsList = null;
 		// ValidateUpdate
 		errorsList = validateOfertaPostRequestData(ofertaDto, jsonFields, false);
 		if (errorsList.isEmpty()) {
@@ -793,9 +793,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 			oferta = updateEstadoOferta(oferta.getId(), ofertaDto.getFechaAccion());
 			this.updateStateDispComercialActivosByOferta(oferta);
+			
+			return true;
+		} else {
+			return false;
 		}
-
-		return errorsList;
 	}
 
 	@Transactional(readOnly = false)
@@ -1491,6 +1493,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		Oferta oferta = null;
 		HashMap<String, String> errorsList = null;
 		ArrayList<Map<String, Object>> listaRespuesta = new ArrayList<Map<String, Object>>();
+		Boolean success;
+		
 		for (int i = 0; i < listaOfertaDto.size(); i++) {
 
 			map = new HashMap<String, Object>();
@@ -1504,14 +1508,13 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			}
 
 			if (Checks.esNulo(oferta)) {
-				errorsList = this.saveOferta(ofertaDto);
+				success = this.saveOferta(errorsList, ofertaDto);
 
 			} else {
-				errorsList = this.updateOferta(oferta, ofertaDto, jsonFields.getJSONArray("data").get(i));
-
+				success = this.updateOferta(errorsList, oferta, ofertaDto, jsonFields.getJSONArray("data").get(i));
 			}
 
-			if (!Checks.esNulo(errorsList) && errorsList.isEmpty()) {
+			if (success) {
 				if (oferta == null || oferta.getNumOferta() == null) {
 					oferta = ofertaDao.getOfertaByIdwebcom(ofertaDto.getIdOfertaWebcom());
 				}
@@ -1521,7 +1524,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				} else {
 					map.put("idOfertaRem", null);
 				}
-
+				if(!Checks.esNulo(errorsList) && !errorsList.isEmpty() && !Checks.esNulo(errorsList.get("codigoAgrupacionComercialRem"))) {
+					map.put("codigoAgrupacionComercialRem", errorsList.get("codigoAgrupacionComercialRem"));
+				}
 				map.put("success", true);
 			} else {
 				map.put("idOfertaWebcom", ofertaDto.getIdOfertaWebcom());
@@ -3009,20 +3014,17 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			}
 		}
 		
-		if (!Checks.esNulo(activo.getSituacionComercial()) && DDSituacionComercial.CODIGO_VENDIDO.equals(activo.getSituacionComercial().getCodigo())) {
-			errorsList.put("idActivoHaya: " + activo.getNumActivo(), RestApi.REST_MSG_VENDIDO);
-		} else if (!Checks.esNulo(activo.getSituacionComercial()) && DDSituacionComercial.CODIGO_NO_COMERCIALIZABLE.equals(activo.getSituacionComercial().getCodigo())) {
-			errorsList.put("idActivoHaya: " + activo.getNumActivo(), RestApi.REST_MSG_NO_COMERCIALIZABLE);
-		} else if (!Checks.esNulo(perimetroActivo) && perimetroActivo.getIncluidoEnPerimetro() == 0) {
-			errorsList.put("idActivoHaya: " + activo.getNumActivo(), RestApi.REST_MSG_PERIMETRO);
-		} else if (loteComercialVivo) {
-			errorsList.put("idActivoHaya: " + activo.getNumActivo(), RestApi.REST_MSG_LOTE_COMERCIAL_VIVO);
+		if (!Checks.esNulo(activo.getSituacionComercial()) && DDSituacionComercial.CODIGO_VENDIDO.equals(activo.getSituacionComercial().getCodigo())
+				|| !Checks.esNulo(activo.getSituacionComercial()) && DDSituacionComercial.CODIGO_NO_COMERCIALIZABLE.equals(activo.getSituacionComercial().getCodigo())
+				|| !Checks.esNulo(perimetroActivo) && perimetroActivo.getIncluidoEnPerimetro() == 0
+				|| loteComercialVivo) {
+			errorsList.put("activosLote", RestApi.REST_MSG_UNKNOWN_KEY);
 		} else {
 			for (Oferta oferta : ofertas) {
 				if (DDEstadoOferta.CODIGO_ACEPTADA.equals(oferta.getEstadoOferta().getCodigo())
 						|| DDEstadoOferta.CODIGO_CONGELADA.equals(oferta.getEstadoOferta().getCodigo())
 						|| DDEstadoOferta.CODIGO_PENDIENTE.equals(oferta.getEstadoOferta().getCodigo())) {
-					errorsList.put("idActivoHaya: " + activo.getNumActivo(), RestApi.REST_MSG_OFERTAS_INDIVIDUALES_VIVAS);
+					errorsList.put("activosLote", RestApi.REST_MSG_UNKNOWN_KEY);
 				}
 			}
 		}
@@ -3044,15 +3046,12 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	}
 	
 	private void validacionesLote(HashMap<String, String> errorsList, Activo activo, DDCartera cartera, 
-			DDSubcartera subcartera, ActivoPropietario propietario, Integer geolocalizacion) {
-		if (activo.getCartera() != cartera) {
-			errorsList.put("listIdActivosHaya", RestApi.REST_MSG_DISTINTA_CARTERA);
-		} else if (activo.getSubcartera() != subcartera) {
-			errorsList.put("listIdActivosHaya", RestApi.REST_MSG_DISTINTA_SUBCARTERA);
-		} else if (activo.getPropietarioPrincipal() != propietario) {
-			errorsList.put("listIdActivosHaya", RestApi.REST_MSG_DISTINTO_PROPIETARIO);
-		} else if (activoApi.getGeolocalizacion(activo) != geolocalizacion) {
-			errorsList.put("listIdActivosHaya", RestApi.REST_MSG_DISTINTA_GEOLOCALIZACION);
+			DDSubcartera subcartera, ActivoPropietario propietario, Integer geolocalizacion) {		
+		if (activo.getCartera() != cartera 
+				|| activo.getSubcartera() != subcartera
+				|| activo.getPropietarioPrincipal() != propietario
+				|| activoApi.getGeolocalizacion(activo) != geolocalizacion) {
+			errorsList.put("activosLote", RestApi.REST_MSG_UNKNOWN_KEY);
 		}
 	}
 }

@@ -27,8 +27,9 @@ public class OfertaDto implements Serializable {
 	private Long idVisitaRem;
 	@NotNull(groups = { Insert.class })
 	private Long idClienteRem;
+	private Long idActivoHaya;
 	@NotNull(groups = { Insert.class })
-	private List<Long> listIdActivosHaya;
+	private List<Long> activosLote;
 	@NotNull(groups = { Insert.class })
 	private Double importe;
 	private Double importeContraoferta;
@@ -57,6 +58,8 @@ public class OfertaDto implements Serializable {
 	@NotNull(groups = {Insert.class})
 	private Boolean isExpress;
 	private Boolean indicadorOfertaLote;
+	private Long idAgrupacionComercialWebcom;
+	private Long codigoAgrupacionComercialRem;
 	
 	
 	public Long getIdOfertaWebcom() {
@@ -89,11 +92,17 @@ public class OfertaDto implements Serializable {
 	public void setIdClienteRem(Long idClienteRem) {
 		this.idClienteRem = idClienteRem;
 	}
-	public List<Long> getListIdActivosHaya() {
-		return listIdActivosHaya;
+	public Long getIdActivoHaya() {
+		return idActivoHaya;
 	}
-	public void setListIdActivosHaya(List<Long> listIdActivosHaya) {
-		this.listIdActivosHaya = listIdActivosHaya;
+	public void setIdActivoHaya(Long idActivoHaya) {
+		this.idActivoHaya = idActivoHaya;
+	}
+	public List<Long> getActivosLote() {
+		return activosLote;
+	}
+	public void setActivosLote(List<Long> activosLote) {
+		this.activosLote = activosLote;
 	}
 	public Date getFechaAccion() {
 		return fechaAccion;
@@ -185,5 +194,17 @@ public class OfertaDto implements Serializable {
 	}
 	public void setIndicadorOfertaLote(Boolean indicadorOfertaLote) {
 		this.indicadorOfertaLote = indicadorOfertaLote;
+	}
+	public Long getIdAgrupacionComercialWebcom() {
+		return idAgrupacionComercialWebcom;
+	}
+	public void setIdAgrupacionComercialWebcom(Long idAgrupacionComercialWebcom) {
+		this.idAgrupacionComercialWebcom = idAgrupacionComercialWebcom;
+	}
+	public Long getCodigoAgrupacionComercialRem() {
+		return codigoAgrupacionComercialRem;
+	}
+	public void setCodigoAgrupacionComercialRem(Long codigoAgrupacionComercialRem) {
+		this.codigoAgrupacionComercialRem = codigoAgrupacionComercialRem;
 	}
 }

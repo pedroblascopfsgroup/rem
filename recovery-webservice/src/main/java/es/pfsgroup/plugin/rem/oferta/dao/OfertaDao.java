@@ -63,4 +63,6 @@ public interface OfertaDao extends AbstractDao<Oferta, Long>{
 	 * @return
 	 */
 	public Oferta getOfertaByIdRem(Long idRem);
+	
+	public List<Oferta> getListOtrasOfertasVivasAgr(Long idOferta, Long idAgr);
 }

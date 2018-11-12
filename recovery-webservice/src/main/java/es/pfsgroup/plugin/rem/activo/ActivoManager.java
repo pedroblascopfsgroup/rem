@@ -214,6 +214,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoUsoDestino;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposArras;
+import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PRINCIPAL;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PROPIEDAD;
@@ -351,6 +352,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	
 	@Autowired
 	private MSVRawSQLDao rawDao;
+	
+	@Autowired
+    private OfertaDao ofertaDao;
 	
 	@Resource(name = "entityTransactionManager")
     private PlatformTransactionManager transactionManager;
@@ -577,6 +581,17 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					oferta.setMotivoRechazo(motivoRechazoOferta);
 					Usuario usu = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
 					oferta.setUsuarioBaja(usu.getApellidoNombre());
+				}
+				
+				if (!Checks.esNulo(oferta.getAgrupacion())) {
+					ActivoAgrupacion agrupacion = oferta.getAgrupacion();
+					
+					List<Oferta> ofertasVivasAgrupacion = ofertaDao.getListOtrasOfertasVivasAgr(oferta.getId(), agrupacion.getId());
+					
+					if (!Checks.esNulo(ofertasVivasAgrupacion) && ofertasVivasAgrupacion.isEmpty()) {
+						agrupacion.setFechaBaja(new Date());
+						activoAgrupacionApi.saveOrUpdate(agrupacion);
+					}
 				}
 				
 				notificatorServiceSancionOfertaAceptacionYRechazo.notificatorFinSinTramite(oferta.getId());

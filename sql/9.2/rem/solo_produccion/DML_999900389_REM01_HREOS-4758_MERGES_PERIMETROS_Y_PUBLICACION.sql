@@ -58,65 +58,65 @@ BEGIN
 				ON (T1.PAC_ID = T2.PAC_ID)
 				WHEN MATCHED THEN 
 				UPDATE SET
-					T1.PAC_CHECK_GESTIONAR =     CASE  WHEN T2.PAC_INCLUIDO = 0        	 AND (T1.PAC_CHECK_GESTIONAR IS NULL OR T1.PAC_CHECK_GESTIONAR <> 0)          THEN 0
-													   WHEN T2.DD_SCM_CODIGO IN (''05'') AND (T1.PAC_CHECK_GESTIONAR IS NULL OR T1.PAC_CHECK_GESTIONAR <> 1)          THEN 1
-													   WHEN T2.DD_SCM_CODIGO IN (''01'') AND (T1.PAC_CHECK_GESTIONAR IS NULL OR T1.PAC_CHECK_GESTIONAR <> 1)          THEN 1
-																																									  ELSE T1.PAC_CHECK_GESTIONAR
+					T1.PAC_CHECK_GESTIONAR =     CASE  WHEN T2.PAC_INCLUIDO = 0        	             THEN 0
+													   WHEN T2.DD_SCM_CODIGO IN (''05'')             THEN 1
+													   WHEN T2.DD_SCM_CODIGO IN (''01'')             THEN 1
+																									 ELSE T1.PAC_CHECK_GESTIONAR
 												 END,
-					T1.PAC_FECHA_GESTIONAR =     CASE  WHEN T2.PAC_INCLUIDO = 0          AND (T1.PAC_CHECK_GESTIONAR IS NULL OR T1.PAC_CHECK_GESTIONAR <> 0)          THEN SYSDATE
-													   WHEN T2.DD_SCM_CODIGO IN (''05'') AND (T1.PAC_CHECK_GESTIONAR IS NULL OR T1.PAC_CHECK_GESTIONAR <> 1)          THEN SYSDATE
-													   WHEN T2.DD_SCM_CODIGO IN (''01'') AND (T1.PAC_CHECK_GESTIONAR IS NULL OR T1.PAC_CHECK_GESTIONAR <> 1)          THEN SYSDATE
-																																									  ELSE T1.PAC_FECHA_GESTIONAR
+					T1.PAC_FECHA_GESTIONAR =     CASE  WHEN T2.PAC_INCLUIDO = 0                      THEN SYSDATE
+													   WHEN T2.DD_SCM_CODIGO IN (''05'')             THEN SYSDATE
+													   WHEN T2.DD_SCM_CODIGO IN (''01'')             THEN SYSDATE
+																									 ELSE T1.PAC_FECHA_GESTIONAR
 												 END,
-					T1.PAC_MOTIVO_GESTIONAR =    CASE  WHEN T2.PAC_INCLUIDO = 0          AND (T1.PAC_CHECK_GESTIONAR IS NULL OR T1.PAC_CHECK_GESTIONAR <> 0)          THEN ''Activo fuera del perimetro HAYA''
-													   WHEN T2.DD_SCM_CODIGO IN (''05'') AND (T1.PAC_CHECK_GESTIONAR IS NULL OR T1.PAC_CHECK_GESTIONAR <> 1)          THEN ''Activo vendido''
-													   WHEN T2.DD_SCM_CODIGO IN (''01'') AND (T1.PAC_CHECK_GESTIONAR IS NULL OR T1.PAC_CHECK_GESTIONAR <> 1)          THEN ''Activo no comercializable''
-																																									  ELSE T1.PAC_MOTIVO_GESTIONAR
+					T1.PAC_MOTIVO_GESTIONAR =    CASE  WHEN T2.PAC_INCLUIDO = 0                      THEN ''Activo fuera del perimetro HAYA''
+													   WHEN T2.DD_SCM_CODIGO IN (''05'')             THEN ''Activo vendido''
+													   WHEN T2.DD_SCM_CODIGO IN (''01'')             THEN ''Activo no comercializable''
+																									 ELSE T1.PAC_MOTIVO_GESTIONAR
 												 END,
-					T1.PAC_CHECK_PUBLICAR =      CASE  WHEN T2.PAC_INCLUIDO = 0          AND (T1.PAC_CHECK_PUBLICAR IS NULL OR T1.PAC_CHECK_PUBLICAR <> 0)            THEN 0
-													   WHEN T2.DD_SCM_CODIGO IN (''05'') AND (T1.PAC_CHECK_PUBLICAR IS NULL OR T1.PAC_CHECK_PUBLICAR <> 0)            THEN 0
-													   WHEN T2.DD_SCM_CODIGO IN (''01'') AND (T1.PAC_CHECK_PUBLICAR IS NULL OR T1.PAC_CHECK_PUBLICAR <> 0)            THEN 0
-																																									  ELSE T1.PAC_CHECK_PUBLICAR
+					T1.PAC_CHECK_PUBLICAR =      CASE  WHEN T2.PAC_INCLUIDO = 0                      THEN 0
+													   WHEN T2.DD_SCM_CODIGO IN (''05'')             THEN 0
+													   WHEN T2.DD_SCM_CODIGO IN (''01'')             THEN 0
+																									 ELSE T1.PAC_CHECK_PUBLICAR
 												 END,
-					T1.PAC_FECHA_PUBLICAR =      CASE  WHEN T2.PAC_INCLUIDO = 0          AND (T1.PAC_CHECK_PUBLICAR IS NULL OR T1.PAC_CHECK_PUBLICAR <> 0)            THEN SYSDATE
-													   WHEN T2.DD_SCM_CODIGO IN (''05'') AND (T1.PAC_CHECK_PUBLICAR IS NULL OR T1.PAC_CHECK_PUBLICAR <> 1)            THEN SYSDATE
-													   WHEN T2.DD_SCM_CODIGO IN (''01'') AND (T1.PAC_CHECK_PUBLICAR IS NULL OR T1.PAC_CHECK_PUBLICAR <> 1)            THEN SYSDATE
-																																									  ELSE T1.PAC_FECHA_PUBLICAR
+					T1.PAC_FECHA_PUBLICAR =      CASE  WHEN T2.PAC_INCLUIDO = 0                      THEN SYSDATE
+													   WHEN T2.DD_SCM_CODIGO IN (''05'')             THEN SYSDATE
+													   WHEN T2.DD_SCM_CODIGO IN (''01'')             THEN SYSDATE
+																									 ELSE T1.PAC_FECHA_PUBLICAR
 												 END,
-					T1.PAC_MOTIVO_PUBLICAR =     CASE  WHEN T2.PAC_INCLUIDO = 0          AND (T1.PAC_CHECK_PUBLICAR IS NULL OR T1.PAC_CHECK_PUBLICAR <> 0)            THEN ''Activo fuera del perimetro HAYA''
-													   WHEN T2.DD_SCM_CODIGO IN (''05'') AND (T1.PAC_CHECK_PUBLICAR IS NULL OR T1.PAC_CHECK_PUBLICAR <> 1)            THEN ''Activo vendido''
-													   WHEN T2.DD_SCM_CODIGO IN (''01'') AND (T1.PAC_CHECK_PUBLICAR IS NULL OR T1.PAC_CHECK_PUBLICAR <> 1)            THEN ''Activo no comercializable''
-																																									  ELSE T1.PAC_MOTIVO_PUBLICAR
+					T1.PAC_MOTIVO_PUBLICAR =     CASE  WHEN T2.PAC_INCLUIDO = 0                      THEN ''Activo fuera del perimetro HAYA''
+													   WHEN T2.DD_SCM_CODIGO IN (''05'')             THEN ''Activo vendido''
+													   WHEN T2.DD_SCM_CODIGO IN (''01'')             THEN ''Activo no comercializable''
+																									 ELSE T1.PAC_MOTIVO_PUBLICAR
 												 END,                            
-					T1.PAC_CHECK_COMERCIALIZAR = CASE  WHEN T2.PAC_INCLUIDO = 0          AND (T1.PAC_CHECK_COMERCIALIZAR IS NULL OR T1.PAC_CHECK_COMERCIALIZAR <> 0)  THEN 0
-													   WHEN T2.DD_SCM_CODIGO IN (''05'') AND (T1.PAC_CHECK_COMERCIALIZAR IS NULL OR T1.PAC_CHECK_COMERCIALIZAR <> 0)  THEN 0
-													   WHEN T2.DD_SCM_CODIGO IN (''01'') AND (T1.PAC_CHECK_COMERCIALIZAR IS NULL OR T1.PAC_CHECK_COMERCIALIZAR <> 1)  THEN 1
-																																									  ELSE T1.PAC_CHECK_COMERCIALIZAR
+					T1.PAC_CHECK_COMERCIALIZAR = CASE  WHEN T2.PAC_INCLUIDO = 0            			 THEN 0
+													   WHEN T2.DD_SCM_CODIGO IN (''05'')   			 THEN 0
+													   WHEN T2.DD_SCM_CODIGO IN (''01'')   			 THEN 1
+																									 ELSE T1.PAC_CHECK_COMERCIALIZAR
 												 END,
-					T1.PAC_FECHA_COMERCIALIZAR = CASE  WHEN T2.PAC_INCLUIDO = 0          AND (T1.PAC_CHECK_COMERCIALIZAR IS NULL OR T1.PAC_CHECK_COMERCIALIZAR <> 0)  THEN SYSDATE
-													   WHEN T2.DD_SCM_CODIGO IN (''05'') AND (T1.PAC_CHECK_COMERCIALIZAR IS NULL OR T1.PAC_CHECK_COMERCIALIZAR <> 1)  THEN SYSDATE
-													   WHEN T2.DD_SCM_CODIGO IN (''01'') AND (T1.PAC_CHECK_COMERCIALIZAR IS NULL OR T1.PAC_CHECK_COMERCIALIZAR <> 1)  THEN SYSDATE
-																																									  ELSE T1.PAC_FECHA_COMERCIALIZAR
+					T1.PAC_FECHA_COMERCIALIZAR = CASE  WHEN T2.PAC_INCLUIDO = 0            			 THEN SYSDATE
+													   WHEN T2.DD_SCM_CODIGO IN (''05'')   			 THEN SYSDATE
+													   WHEN T2.DD_SCM_CODIGO IN (''01'')   			 THEN SYSDATE
+																									 ELSE T1.PAC_FECHA_COMERCIALIZAR
 												 END,
-					T1.PAC_MOT_EXCL_COMERCIALIZAR =    CASE  WHEN T2.PAC_INCLUIDO = 0    AND (T1.PAC_CHECK_COMERCIALIZAR IS NULL OR T1.PAC_CHECK_COMERCIALIZAR <> 0)  THEN ''Activo fuera del perimetro HAYA''
-													   WHEN T2.DD_SCM_CODIGO IN (''05'') AND (T1.PAC_CHECK_COMERCIALIZAR IS NULL OR T1.PAC_CHECK_COMERCIALIZAR <> 1)  THEN ''Activo vendido''
-													   WHEN T2.DD_SCM_CODIGO IN (''01'') AND (T1.PAC_CHECK_COMERCIALIZAR IS NULL OR T1.PAC_CHECK_COMERCIALIZAR <> 1)  THEN ''Activo no comercializable''
-																																									  ELSE T1.PAC_MOT_EXCL_COMERCIALIZAR
+					T1.PAC_MOT_EXCL_COMERCIALIZAR =    CASE  WHEN T2.PAC_INCLUIDO = 0         	     THEN ''Activo fuera del perimetro HAYA''
+													   WHEN T2.DD_SCM_CODIGO IN (''05'') 		     THEN ''Activo vendido''
+													   WHEN T2.DD_SCM_CODIGO IN (''01'') 		     THEN ''Activo no comercializable''
+																									 ELSE T1.PAC_MOT_EXCL_COMERCIALIZAR
 												 END,                             
-					T1.PAC_CHECK_FORMALIZAR =    CASE  WHEN T2.PAC_INCLUIDO = 0          AND (T1.PAC_CHECK_FORMALIZAR IS NULL OR T1.PAC_CHECK_FORMALIZAR <> 0)        THEN 0
-													   WHEN T2.DD_SCM_CODIGO IN (''05'') AND (T1.PAC_CHECK_FORMALIZAR IS NULL OR T1.PAC_CHECK_FORMALIZAR <> 0)        THEN 0
-													   WHEN T2.DD_SCM_CODIGO IN (''01'') AND (T1.PAC_CHECK_FORMALIZAR IS NULL OR T1.PAC_CHECK_FORMALIZAR <> 1)        THEN 1
-																																									  ELSE T1.PAC_CHECK_FORMALIZAR
+					T1.PAC_CHECK_FORMALIZAR =    CASE  WHEN T2.PAC_INCLUIDO = 0                 	 THEN 0
+													   WHEN T2.DD_SCM_CODIGO IN (''05'') 	         THEN 0
+													   WHEN T2.DD_SCM_CODIGO IN (''01'') 			 THEN 1
+																									 ELSE T1.PAC_CHECK_FORMALIZAR
 												 END,
-					T1.PAC_FECHA_FORMALIZAR =    CASE  WHEN T2.PAC_INCLUIDO = 0          AND (T1.PAC_CHECK_FORMALIZAR IS NULL OR T1.PAC_CHECK_FORMALIZAR <> 0)        THEN SYSDATE
-													   WHEN T2.DD_SCM_CODIGO IN (''05'') AND (T1.PAC_CHECK_FORMALIZAR IS NULL OR T1.PAC_CHECK_FORMALIZAR <> 1)        THEN SYSDATE
-													   WHEN T2.DD_SCM_CODIGO IN (''01'') AND (T1.PAC_CHECK_FORMALIZAR IS NULL OR T1.PAC_CHECK_FORMALIZAR <> 1)        THEN SYSDATE
-																																									  ELSE T1.PAC_FECHA_FORMALIZAR
+					T1.PAC_FECHA_FORMALIZAR =    CASE  WHEN T2.PAC_INCLUIDO = 0          			 THEN SYSDATE
+													   WHEN T2.DD_SCM_CODIGO IN (''05'') 	         THEN SYSDATE
+													   WHEN T2.DD_SCM_CODIGO IN (''01'') 	         THEN SYSDATE
+																									 ELSE T1.PAC_FECHA_FORMALIZAR
 												 END,
-					T1.PAC_MOTIVO_FORMALIZAR =   CASE  WHEN T2.PAC_INCLUIDO = 0          AND (T1.PAC_CHECK_FORMALIZAR IS NULL OR T1.PAC_CHECK_FORMALIZAR <> 0)        THEN ''Activo fuera del perimetro HAYA''
-													   WHEN T2.DD_SCM_CODIGO IN (''05'') AND (T1.PAC_CHECK_FORMALIZAR IS NULL OR T1.PAC_CHECK_FORMALIZAR <> 1)        THEN ''Activo vendido''
-													   WHEN T2.DD_SCM_CODIGO IN (''01'') AND (T1.PAC_CHECK_FORMALIZAR IS NULL OR T1.PAC_CHECK_FORMALIZAR <> 1)        THEN ''Activo no comercializable''
-																																									  ELSE T1.PAC_MOTIVO_FORMALIZAR
+					T1.PAC_MOTIVO_FORMALIZAR =   CASE  WHEN T2.PAC_INCLUIDO = 0                      THEN ''Activo fuera del perimetro HAYA''
+													   WHEN T2.DD_SCM_CODIGO IN (''05'') 	         THEN ''Activo vendido''
+													   WHEN T2.DD_SCM_CODIGO IN (''01'') 	         THEN ''Activo no comercializable''
+																									 ELSE T1.PAC_MOTIVO_FORMALIZAR
 												 END,                            
 					T1.USUARIOMODIFICAR = ''HREOS-4758'',
 					T1.FECHAMODIFICAR = SYSDATE
@@ -152,31 +152,31 @@ BEGIN
 				ON (T1.APU_ID = T2.APU_ID)
 				WHEN MATCHED THEN 
 				UPDATE SET
-					T1.APU_CHECK_OCULTAR_A =  CASE  WHEN T2.PAC_INCLUIDO = 0        AND T2.DD_TCO_CODIGO IN (''02'',''03'',''04'') AND (T1.APU_CHECK_OCULTAR_A IS NULL OR T1.APU_CHECK_OCULTAR_A <> 1)    	THEN 1
-													WHEN T2.DD_SCM_CODIGO IN (''05'') AND T2.DD_TCO_CODIGO IN (''02'',''03'',''04'') AND (T1.APU_CHECK_OCULTAR_A IS NULL OR T1.APU_CHECK_OCULTAR_A <> 1)    THEN 1
-													WHEN T2.DD_SCM_CODIGO IN (''01'') AND T2.DD_TCO_CODIGO IN (''02'',''03'',''04'') AND (T1.APU_CHECK_OCULTAR_A IS NULL OR T1.APU_CHECK_OCULTAR_A <> 1)    THEN 1
-																																																			ELSE T1.APU_CHECK_OCULTAR_A
+					T1.APU_CHECK_OCULTAR_A =  CASE  WHEN T2.PAC_INCLUIDO = 0        AND T2.DD_TCO_CODIGO IN (''02'',''03'',''04'') 	    	THEN 1
+													WHEN T2.DD_SCM_CODIGO IN (''05'') AND T2.DD_TCO_CODIGO IN (''02'',''03'',''04'') 	    THEN 1
+													WHEN T2.DD_SCM_CODIGO IN (''01'') AND T2.DD_TCO_CODIGO IN (''02'',''03'',''04'') 	    THEN 1
+																																			ELSE T1.APU_CHECK_OCULTAR_A
 											  END,
 					T1.DD_EPA_ID =            CASE  WHEN T2.DD_TCO_CODIGO IN (''02'',''03'',''04'') AND (T1.DD_EPA_ID IS NULL OR T1.DD_EPA_ID <> T2.OCULTO_ALQUILER)                                      	THEN T2.OCULTO_ALQUILER
 																																																			ELSE T1.DD_EPA_ID
 											  END,
-					T1.DD_MTO_A_ID =          CASE  WHEN T2.PAC_INCLUIDO = 0        AND T2.DD_TCO_CODIGO IN (''02'',''03'',''04'') AND (T1.DD_MTO_A_ID IS NULL OR T1.DD_MTO_A_ID <> T2.SALIDA_PERIMETRO)  	THEN T2.SALIDA_PERIMETRO
-													WHEN T2.DD_SCM_CODIGO IN (''05'') AND T2.DD_TCO_CODIGO IN (''02'',''03'',''04'') AND (T1.DD_MTO_A_ID IS NULL OR T1.DD_MTO_A_ID <> T2.VENDIDO)           THEN T2.VENDIDO
-													WHEN T2.DD_SCM_CODIGO IN (''01'') AND T2.DD_TCO_CODIGO IN (''02'',''03'',''04'') AND (T1.DD_MTO_A_ID IS NULL OR T1.DD_MTO_A_ID <> T2.NO_PUBLICABLE)     THEN T2.NO_PUBLICABLE
+					T1.DD_MTO_A_ID =          CASE  WHEN T2.PAC_INCLUIDO = 0        AND T2.DD_TCO_CODIGO IN (''02'',''03'',''04'') 		 	THEN T2.SALIDA_PERIMETRO
+													WHEN T2.DD_SCM_CODIGO IN (''05'') AND T2.DD_TCO_CODIGO IN (''02'',''03'',''04'')        THEN T2.VENDIDO
+													WHEN T2.DD_SCM_CODIGO IN (''01'') AND T2.DD_TCO_CODIGO IN (''02'',''03'',''04'') 		THEN T2.NO_PUBLICABLE
 																																																			ELSE T1.DD_MTO_A_ID
 											  END,
-					T1.APU_CHECK_OCULTAR_V =  CASE  WHEN T2.PAC_INCLUIDO = 0        AND T2.DD_TCO_CODIGO IN (''01'',''02'') AND (T1.APU_CHECK_OCULTAR_V IS NULL OR T1.APU_CHECK_OCULTAR_V <> 1)         	THEN 1
-													WHEN T2.DD_SCM_CODIGO IN (''05'') AND T2.DD_TCO_CODIGO IN (''01'',''02'') AND (T1.APU_CHECK_OCULTAR_V IS NULL OR T1.APU_CHECK_OCULTAR_V <> 1)         	THEN 1
-													WHEN T2.DD_SCM_CODIGO IN (''01'') AND T2.DD_TCO_CODIGO IN (''01'',''02'') AND (T1.APU_CHECK_OCULTAR_V IS NULL OR T1.APU_CHECK_OCULTAR_V <> 1)         	THEN 1
+					T1.APU_CHECK_OCULTAR_V =  CASE  WHEN T2.PAC_INCLUIDO = 0        AND T2.DD_TCO_CODIGO IN (''01'',''02'')          		THEN 1
+													WHEN T2.DD_SCM_CODIGO IN (''05'') AND T2.DD_TCO_CODIGO IN (''01'',''02'') 	        	THEN 1
+													WHEN T2.DD_SCM_CODIGO IN (''01'') AND T2.DD_TCO_CODIGO IN (''01'',''02'') 	         	THEN 1
 																																																			ELSE T1.APU_CHECK_OCULTAR_V
 											  END,
 					T1.DD_EPV_ID =            CASE WHEN T2.DD_TCO_CODIGO IN (''01'',''02'') AND (T1.DD_EPV_ID IS NULL OR T1.DD_EPV_ID <> T2.OCULTO_VENTA)                                               	THEN T2.OCULTO_VENTA
 																																																			ELSE T1.DD_EPV_ID
 											  END,
-					T1.DD_MTO_V_ID =          CASE  WHEN T2.PAC_INCLUIDO = 0        AND T2.DD_TCO_CODIGO IN (''01'',''02'') AND (T1.DD_MTO_V_ID IS NULL OR T1.DD_MTO_V_ID <> T2.SALIDA_PERIMETRO)       	THEN T2.SALIDA_PERIMETRO
-													WHEN T2.DD_SCM_CODIGO IN (''05'') AND T2.DD_TCO_CODIGO IN (''01'',''02'') AND (T1.DD_MTO_V_ID IS NULL OR T1.DD_MTO_V_ID <> T2.VENDIDO)                	THEN T2.VENDIDO
-													WHEN T2.DD_SCM_CODIGO IN (''01'') AND T2.DD_TCO_CODIGO IN (''01'',''02'') AND (T1.DD_MTO_V_ID IS NULL OR T1.DD_MTO_V_ID <> T2.NO_PUBLICABLE)          	THEN T2.NO_PUBLICABLE
-																																																			ELSE T1.DD_MTO_V_ID
+					T1.DD_MTO_V_ID =          CASE  WHEN T2.PAC_INCLUIDO = 0        AND T2.DD_TCO_CODIGO IN (''01'',''02'') 		       	THEN T2.SALIDA_PERIMETRO
+													WHEN T2.DD_SCM_CODIGO IN (''05'') AND T2.DD_TCO_CODIGO IN (''01'',''02'') 	           	THEN T2.VENDIDO
+													WHEN T2.DD_SCM_CODIGO IN (''01'') AND T2.DD_TCO_CODIGO IN (''01'',''02'') 	         	THEN T2.NO_PUBLICABLE
+																																			ELSE T1.DD_MTO_V_ID
 											  END,
 					T1.USUARIOMODIFICAR = ''HREOS-4758'',
 					T1.FECHAMODIFICAR = SYSDATE

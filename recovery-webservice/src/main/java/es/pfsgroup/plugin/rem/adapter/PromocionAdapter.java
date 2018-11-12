@@ -126,7 +126,7 @@ public class PromocionAdapter {
 			if (Checks.esNulo(activoEntrada)) {
 				
 				if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
-					String codPromo =activo.getIdProp().toString()+"_"+activo.getCartera().getCodigo().toString();
+					String codPromo =activo.getCodigoPromocionPrinex()+"_"+activo.getCartera().getCodigo().toString();
 					Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 	
 					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", webFileItem.getParameter("tipo"));
@@ -141,7 +141,7 @@ public class PromocionAdapter {
 			} else {
 				if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
 					Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
-					String codPromo =activoEntrada.getIdProp().toString()+"_"+activoEntrada.getCartera().getCodigo().toString();
+					String codPromo =activoEntrada.getCodigoPromocionPrinex()+"_"+activoEntrada.getCartera().getCodigo().toString();
 	
 					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "matricula", matricula);
 					DDTipoDocumentoPromocion tipoDocumento = (DDTipoDocumentoPromocion) genericDao

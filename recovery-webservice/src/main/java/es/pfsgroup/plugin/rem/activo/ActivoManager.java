@@ -5216,9 +5216,10 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}else ocupado=posesoria.getOcupado();
 		if(!Checks.esNulo(id)) 
 		{
-			if(!Checks.esNulo(posesoria)) 
+			if(!Checks.esNulo(posesoria) && (!Checks.esNulo(posesoria.getFechaRevisionEstado())
+					|| !Checks.esNulo(posesoria.getFechaTomaPosesion()))) 
 			{
-				if(!Checks.esNulo(posesoria.getOcupado()) && !Checks.esNulo(posesoria.getConTitulo()) && (1 == ocupado && 0 == conTitulo))
+				if(!Checks.esNulo(posesoria.getOcupado()) && (1 == ocupado && 0 == conTitulo))
 				{
 					boolean val = compruebaSiExisteActivoBienPorMatricula(id, DDTipoDocumentoActivo.CODIGO_INFORME_OCUPACION_DESOCUPACION);
 					if(val)
@@ -5267,6 +5268,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	
 	@Override
 	public boolean compruebaSiExisteActivoBienPorMatricula(Long idActivo, String matriculaActivo) {
+		DDTipoDocumentoActivo tipoDocu=null;
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", matriculaActivo);
+		tipoDocu = (DDTipoDocumentoActivo) genericDao.get(DDTipoDocumentoActivo.class, filtro);
 		List<DtoAdjunto> listaAdjuntos = new ArrayList<DtoAdjunto>();
 		if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
 			Activo activo= this.get(idActivo);
@@ -5276,7 +5280,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					for (DtoAdjunto adj : listaAdjuntos) {
 						String matricula =adj.getMatricula();
 						if(!Checks.esNulo(matricula)) {
-							if(matricula.equals(matriculaActivo)) {
+							if(matricula.equals(tipoDocu.getMatricula())) {
 								return true;
 							}
 						}

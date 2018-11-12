@@ -35,7 +35,6 @@ public class ActivoPropagacionFieldTabMap {
 	    			"tipoActivoCodigo",
 	    			"subtipoActivoCodigo",
 	    			"estadoActivoCodigo",
-
 	    			// direccion
 	    			"tipoUsoDestinoCodigo",
 	    			"longitud",

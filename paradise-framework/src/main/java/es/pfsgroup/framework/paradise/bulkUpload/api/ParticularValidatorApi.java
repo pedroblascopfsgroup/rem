@@ -339,4 +339,10 @@ public interface ParticularValidatorApi {
 	public Boolean esMismaProvincia(Long numActivo, Long numAgrupacion);
 
 	public Boolean esMismaLocalidad(Long numActivo, Long numAgrupacion);
+
+	public Boolean existeComunidadPropietarios(String idPropietarios);
+
+	public Boolean updateComunidadesPropietarios(Long long1, String string, String string2, Date date);
+
+	public Boolean existeSituacion(String idSituacion);
 }

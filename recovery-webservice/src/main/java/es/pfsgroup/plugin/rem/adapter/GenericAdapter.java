@@ -19,14 +19,17 @@ import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.plugin.recovery.agendaMultifuncion.impl.dto.DtoAdjuntoMail;
 import es.pfsgroup.plugin.recovery.agendaMultifuncion.impl.utils.AgendaMultifuncionCorreoUtils;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDSubtipoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPeriocidad;
 import es.pfsgroup.plugin.rem.thread.EnvioCorreoAsync;
 import es.pfsgroup.plugin.rem.utils.DiccionarioTargetClassMap;
@@ -112,6 +115,31 @@ public class GenericAdapter {
 			}
 		}	
 		return lista;
+	}
+	
+	
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public List<Dictionary> getDiccionarioDeGastos(String diccionario) {
+		
+		Class<?> clase = null;
+		String ibiRustica ="01";
+		String ibiUrbana ="02";
+		String otrasTasas ="17";
+		List<Dictionary> listaImpuestos = new ArrayList<Dictionary>();
+			
+			clase = DiccionarioTargetClassMap.convertToTargetClass(diccionario);
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+			Order order = new Order(OrderType.ASC,"descripcion");
+			DDSubtipoGasto impuestoRustico = (DDSubtipoGasto) diccionarioApi.dameValorDiccionarioByCod(clase, ibiRustica);
+			DDSubtipoGasto impuestoUrbano = (DDSubtipoGasto) diccionarioApi.dameValorDiccionarioByCod(clase, ibiUrbana);
+			DDSubtipoGasto impuestoOtrosAyuntamiento = (DDSubtipoGasto) diccionarioApi.dameValorDiccionarioByCod(clase, otrasTasas);
+			listaImpuestos.add(impuestoUrbano);
+			listaImpuestos.add(impuestoOtrosAyuntamiento);
+			listaImpuestos.add(impuestoRustico);
+				
+				
+		return listaImpuestos;
 	}
 
 	public List<Dictionary> getDiccionarioTareas(String diccionario) {

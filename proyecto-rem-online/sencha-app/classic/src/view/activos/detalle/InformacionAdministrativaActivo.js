@@ -297,6 +297,25 @@ Ext.define('HreRem.view.activos.detalle.InformacionAdministrativaActivo', {
 			        		maxLength : 400
 			        	},
 			        	flex: 1
+			        },
+			        {   
+			        	text: HreRem.i18n('fieldlabel.resultado'),
+			        	dataIndex: 'resultadoSiNO',
+			        	editor: {
+			        		xtype:'textarea',
+			        		maxLength : 400
+			        	},
+			        	flex: 1
+			        },
+			        {   
+			        	text: HreRem.i18n('fieldlabel.fechaSoliciud901'),
+			        	dataIndex: 'fechaSolicitud901',
+			        	formatter: 'date("d/m/Y")',
+			        	
+			        	editor: {
+			        		xtype:'datefield'
+			        	},
+			        	flex: 1
 			        }
 			       	        
 			    ],

@@ -1345,6 +1345,14 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				remoteUrl: 'activo/getHistoricoAdecuacionesAlquilerByActivo',
 				extraParams: {id: '{activo.id}'}
 			}
+		},
+		  	comboSituacionActivo: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'situacionActivo'}
+			}
 		}
 		
 

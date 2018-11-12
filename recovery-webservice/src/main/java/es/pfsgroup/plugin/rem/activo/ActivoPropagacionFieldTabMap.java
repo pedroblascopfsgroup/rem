@@ -519,7 +519,11 @@ public class ActivoPropagacionFieldTabMap {
     				"numCartas",
     				"contactoTel",
     				"visita",
-    				"burofax"
+    				"burofax",
+    				"situacion",
+    				"situacionId",
+    				"fechaEnvioCarta",
+    				"situacionDescripcion"
     			));
     	
         map = Collections.unmodifiableMap(pmap);

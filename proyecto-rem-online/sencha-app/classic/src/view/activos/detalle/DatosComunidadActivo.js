@@ -186,7 +186,18 @@ Ext.define('HreRem.view.activos.detalle.DatosComunidadActivo', {
 									      store : '{comboSiNoRemActivo}',
 									      value : '{datosComunidad.burofax}'
 									    }
-									}
+									}, {xtype : 'comboboxfieldbase',
+										fieldLabel : HreRem.i18n('fieldlabel.situacion'),
+									    bind : {
+										      store : '{comboSituacionActivo}',
+										      value : '{datosComunidad.situacionCodigo}'
+										    }	
+									},							
+										{
+										xtype : 'datefieldbase',
+									    fieldLabel : HreRem.i18n('fieldlabel.fechaEnvioCarta'),
+										bind : '{datosComunidad.fechaEnvioCarta}'
+									  }
 						]
 				}
 			]
@@ -195,6 +206,8 @@ Ext.define('HreRem.view.activos.detalle.DatosComunidadActivo', {
 	        me.callParent();
 
       },
+      
+
       
        funcionRecargar: function() {
 		var me = this; 

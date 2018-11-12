@@ -1,17 +1,17 @@
 --/*
 --##########################################
---## AUTOR=ANAHUAC DE VICENTE
---## FECHA_CREACION=20160919
+--## AUTOR=Carles Molins
+--## FECHA_CREACION=20181112
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-1551
+--## INCIDENCIA_LINK=HREOS-4757
 --## PRODUCTO=NO
 --## Finalidad: Tabla para almacentar el historico del stock de activos enviados a webcom. Se añaden campos HREOS-1551. Se amplia campo CondicionesEspecificas HREOS-1930.
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
---##		0.2 HREOS-4620: Añadir el campo agrupación comercial
+--##		0.2 HREOS-4757: Añadir el campo agrupación comercial
 --##########################################
 --*/
 
@@ -221,11 +221,7 @@ BEGIN
 					(AGA.AGR_FIN_VIGENCIA IS NULL OR AGA.AGR_FIN_VIGENCIA > SYSDATE))
 			THEN CAST(AGA.AGR_NUM_AGRUP_REM AS NUMBER(16,0))
 			ELSE NULL
-<<<<<<< Updated upstream
-		END																						AS AGRUPACION_COMERCIAL
-=======
 		END																					AS COD_AGRUPACION_COMERCIAL_REM
->>>>>>> Stashed changes
 
     	FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT
 		INNER JOIN '||V_ESQUEMA||'.ACT_LOC_LOCALIZACION LOC ON LOC.ACT_ID = ACT.ACT_ID

@@ -219,7 +219,10 @@ public class MSVActualizadorPerimetroActivo extends AbstractMSVActualizador impl
 			perimetro.setAplicaTramiteAdmision(CHECK_VALOR_NO);
 			perimetro.setFechaAplicaTramiteAdmision(new Date());
 		}
-		
+		if(perimetro.getAplicaPublicar()) {
+			perimetro.setAplicaPublicar(BooleanUtils.toBooleanObject(CHECK_VALOR_NO));
+			perimetro.setFechaAplicaTramiteAdmision(new Date());
+		}
 	}
 
 

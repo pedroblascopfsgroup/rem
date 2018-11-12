@@ -18,6 +18,7 @@ import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
+import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.rem.model.*;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
@@ -1126,4 +1127,12 @@ public interface ActivoApi {
 	 * @return 
 	 */
 	public boolean compruebaParaEnviarEmailAvisoOcupacion(DtoActivoSituacionPosesoria activoDto, Long id) ; 
+	
+	/**
+	 * Devuelve true or false en funcion de lo que devuelve el GD y existe el adjunto con la matricula que le pasamos por parametro
+	 *
+	 * @param idActivo, matriculaActivo
+	 * @return 
+	 */
+	public boolean compruebaSiExisteActivoBienPorMatricula(Long idActivo, String matriculaActivo);
 }

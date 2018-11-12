@@ -57,6 +57,7 @@ import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
+import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.gestorDocumental.manager.GestorDocumentalExpedientesManager;
 import es.pfsgroup.plugin.recovery.agendaMultifuncion.impl.dto.DtoAdjuntoMail;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
@@ -83,6 +84,7 @@ import es.pfsgroup.plugin.rem.api.UvemManagerApi;
 import es.pfsgroup.plugin.rem.condiciontanteo.CondicionTanteoApi;
 import es.pfsgroup.plugin.rem.factory.TabActivoFactoryApi;
 import es.pfsgroup.plugin.rem.gestor.dao.GestorExpedienteComercialDao;
+import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.notificator.impl.NotificatorServiceSancionOfertaAceptacionYRechazo;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjudicacionNoJudicial;
@@ -354,6 +356,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	
 	@Resource(name = "entityTransactionManager")
     private PlatformTransactionManager transactionManager;
+	
+	@Autowired
+	private GestorDocumentalAdapterApi gestorDocumentalAdapterApi;
 
 
 	BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
@@ -5200,7 +5205,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			{
 				if(!Checks.esNulo(posesoria.getOcupado()) && !Checks.esNulo(posesoria.getConTitulo()) && (1 == ocupado && 0 == conTitulo))
 				{
-					boolean val= comprobarExisteAdjuntoActivo(id, DDTipoDocumentoActivo.CODIGO_INFORME_OCUPACION_DESOCUPACION);
+					boolean val = compruebaSiExisteActivoBienPorMatricula(id, DDTipoDocumentoActivo.CODIGO_INFORME_OCUPACION_DESOCUPACION);
 					if(val)
 						{
 						//falta enviar el mensaje
@@ -5243,6 +5248,30 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		
 		return true;
 		
+	}
+	
+	@Override
+	public boolean compruebaSiExisteActivoBienPorMatricula(Long idActivo, String matriculaActivo) {
+		List<DtoAdjunto> listaAdjuntos = new ArrayList<DtoAdjunto>();
+		if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
+			Activo activo= this.get(idActivo);
+			try { 
+				listaAdjuntos = gestorDocumentalAdapterApi.getAdjuntosActivo(activo);
+				if(!Checks.esNulo(listaAdjuntos)) {
+					for (DtoAdjunto adj : listaAdjuntos) {
+						String matricula =adj.getMatricula();
+						if(!Checks.esNulo(matricula)) {
+							if(matricula.equals(matriculaActivo)) {
+								return true;
+							}
+						}
+					}
+				}
+			}catch (GestorDocumentalException e) {
+				e.printStackTrace();
+			}
+		}
+		return false;
 	}
 	
 }

@@ -13,6 +13,8 @@ import es.pfsgroup.plugin.rem.gasto.dao.AdjuntoGastoDao;
 import es.pfsgroup.plugin.rem.gasto.dao.DDTipoDocumentoGastoDao;
 import es.pfsgroup.plugin.rem.gasto.dao.GastoDao;
 import es.pfsgroup.plugin.rem.model.*;
+import es.pfsgroup.plugin.rem.rest.api.RestApi;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,35 +61,50 @@ public class ConsistenciaAdjuntosRunnableUtils implements Runnable {
 
     @Autowired
     private DDTipoDocumentoGastoDao ddTipoDocumentoGastoDao;
+    
+    @Autowired
+	private RestApi restApi;
+    
+    private String usuarioLogado;
 
 
-    ConsistenciaAdjuntosRunnableUtils(IdentificacionDocumento[] documentos, GestorDocumentalConstants.Contenedor contenedor) {
+    public ConsistenciaAdjuntosRunnableUtils(IdentificacionDocumento[] documentos, GestorDocumentalConstants.Contenedor contenedor,String usuarioLogado) {
         this.documentos = documentos;
         this.contenedor = contenedor;
+        this.usuarioLogado = usuarioLogado;
     }
 
-    /**
-     * Establecer aquí las diferentes iteraciones por tipo de contenedor del gestor documental.
-     */
-    public void run() {
-        switch (contenedor) {
-            case Activo:
-                comprobarDocumentosAdjuntosEnActivo();
-                // FUTURE: limpiarDocumentosAdjuntosEnDesusoEnActivo();
-                break;
-            case ExpedienteComercial:
-                comprobarDocumentosAdjuntosEnExpedientes();
-                // FUTURE: limpiarDocumentosAdjuntosEnDesusoEnExpedientes();
-                break;
-            case Gasto:
-                comprobarDocumentosAdjuntosEnGastos();
-                // FUTURE: limpiarDocumentosAdjuntosEnDesusoEnGastos();
-                break;
-            default:
-                logger.error("Error en ConsistenciaAdjuntosRunnableUtils en el tipo de contenedor a comprobar del gestor documental");
-                break;
-        }
-    }
+	/**
+	 * Establecer aquí las diferentes iteraciones por tipo de contenedor del
+	 * gestor documental.
+	 */
+	public void run() {
+		try {
+			restApi.doSessionConfig(this.usuarioLogado);
+			switch (contenedor) {
+			case Activo:
+				comprobarDocumentosAdjuntosEnActivo();
+				// FUTURE: limpiarDocumentosAdjuntosEnDesusoEnActivo();
+				break;
+			case ExpedienteComercial:
+				comprobarDocumentosAdjuntosEnExpedientes();
+				// FUTURE: limpiarDocumentosAdjuntosEnDesusoEnExpedientes();
+				break;
+			case Gasto:
+				comprobarDocumentosAdjuntosEnGastos();
+				// FUTURE: limpiarDocumentosAdjuntosEnDesusoEnGastos();
+				break;
+			default:
+				logger.error(
+						"Error en ConsistenciaAdjuntosRunnableUtils en el tipo de contenedor a comprobar del gestor documental");
+				break;
+			}
+		} catch (Exception e) {
+			logger.error(
+					"Error en ConsistenciaAdjuntosRunnableUtils en el tipo de contenedor a comprobar del gestor documental",
+					e);
+		}
+	}
 
     /**
      * Este método comprueba si existen una serie de documentos por gasto obtenidos desde el gestor documental. Si no existen en
@@ -230,4 +247,5 @@ public class ConsistenciaAdjuntosRunnableUtils implements Runnable {
     void setSpringSecurityContext(SecurityContext context) {
         SecurityContextHolder.setContext(context);
     }
+
 }

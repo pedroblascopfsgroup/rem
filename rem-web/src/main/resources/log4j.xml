@@ -157,7 +157,7 @@
 		<appender-ref ref="email" />
 	</logger>
 	<logger name="es.pfsgroup.plugin.gestorDocumental" additivity="false">
-		<level value="debug" />
+		<level value="error" />
 		<appender-ref ref="console" />
 		<appender-ref ref="file" />
 		<appender-ref ref="syslog" />

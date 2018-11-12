@@ -125,7 +125,7 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 		RespuestaDocumentosExpedientes respuesta = gestorDocumentalApi.documentosExpediente(cabecera, docExpDto);
 
 		if (!Checks.esNulo(respuesta.getDocumentos())) {
-			ConsistenciaAdjuntosRunnableUtils caru = new ConsistenciaAdjuntosRunnableUtils(respuesta.getDocumentos(), GestorDocumentalConstants.Contenedor.Activo);
+			ConsistenciaAdjuntosRunnableUtils caru = new ConsistenciaAdjuntosRunnableUtils(respuesta.getDocumentos(), GestorDocumentalConstants.Contenedor.Activo,userLogin.getUsername());
 			launchNewTasker(caru);
 		}
 
@@ -175,7 +175,7 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 		RespuestaDocumentosExpedientes respuesta = gestorDocumentalApi.documentosExpediente(cabecera, docExpDto);
 
 		if (!Checks.esNulo(respuesta.getDocumentos())) {
-			ConsistenciaAdjuntosRunnableUtils caru = new ConsistenciaAdjuntosRunnableUtils(respuesta.getDocumentos(), GestorDocumentalConstants.Contenedor.Gasto);
+			ConsistenciaAdjuntosRunnableUtils caru = new ConsistenciaAdjuntosRunnableUtils(respuesta.getDocumentos(), GestorDocumentalConstants.Contenedor.Gasto,userLogin.getUsername());
 			launchNewTasker(caru);
 		}
 
@@ -307,7 +307,7 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 		RespuestaDocumentosExpedientes respuesta = gestorDocumentalApi.documentosExpediente(cabecera, docExpDto);
 
 		if (!Checks.esNulo(respuesta.getDocumentos())) {
-			ConsistenciaAdjuntosRunnableUtils caru = new ConsistenciaAdjuntosRunnableUtils(respuesta.getDocumentos(), GestorDocumentalConstants.Contenedor.ExpedienteComercial);
+			ConsistenciaAdjuntosRunnableUtils caru = new ConsistenciaAdjuntosRunnableUtils(respuesta.getDocumentos(), GestorDocumentalConstants.Contenedor.ExpedienteComercial,userLogin.getUsername());
 			launchNewTasker(caru);
 		}
 

@@ -2817,8 +2817,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					DDSubtipoActivo subtipoActivo = activo.getSubtipoActivo();
 					if(DDTipoActivo.COD_VIVIENDA.equals(tipoActivo.getCodigo()) 
 							|| DDSubtipoActivo.COD_GARAJE.equals(subtipoActivo.getCodigo()) 
-							|| DDSubtipoActivo.COD_TRASTERO.equals(subtipoActivo.getCodigo()) 
-							|| DDSubtipoActivo.COD_LOCAL_COMERCIAL.equals(subtipoActivo.getCodigo())) {
+							|| DDSubtipoActivo.COD_TRASTERO.equals(subtipoActivo.getCodigo())) {
 						
 						Filter filterComite = genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_LIBERBANK_RESIDENCIAL);
 						DDComiteSancion comiteSancion = genericDao.get(DDComiteSancion.class, filterComite);
@@ -2882,8 +2881,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				
 				if(DDTipoActivo.COD_VIVIENDA.equals(tipoActivo.getCodigo()) 
 						|| DDSubtipoActivo.COD_GARAJE.equals(subtipoActivo.getCodigo()) 
-						|| DDSubtipoActivo.COD_TRASTERO.equals(subtipoActivo.getCodigo()) 
-						|| DDSubtipoActivo.COD_LOCAL_COMERCIAL.equals(subtipoActivo.getCodigo())) {
+						|| DDSubtipoActivo.COD_TRASTERO.equals(subtipoActivo.getCodigo())) {
 					
 					tipoResidencial++;						
 				} else {						

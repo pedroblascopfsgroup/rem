@@ -12,6 +12,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.security.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
@@ -518,13 +519,16 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 	/**
 	 * Este método lanza un nuevo hilo de ejecución con una clase runnable pasada por parámetro para llevar a cabo labores de
 	 * consistencia entre las relaciones de los documentos adjuntos en las bases de REM y los documentos localizados en el
-	 * gestor documental.
+	 * gestor documental. Establece el contexto de seguridad para la sesión en el nuevo hilo así como inicializar los autowired.
 	 *
 	 * @param caru: clase runnable para llevar a cabo labores de consistencia de documentos.
 	 */
 	private void launchNewTasker(final ConsistenciaAdjuntosRunnableUtils caru) {
 		// Inicializa los elementos Autowired de la clase runnable.
 		applicationContext.getAutowireCapableBeanFactory().autowireBean(caru);
+
+		// Traslada el contexto de seguridad de Spring hacia el nuevo hilo.
+		caru.setSpringSecurityContext(SecurityContextHolder.getContext());
 
 		Thread thread = new Thread(caru);
 		thread.setName("GD-CONSISTENCY-TASKER-");

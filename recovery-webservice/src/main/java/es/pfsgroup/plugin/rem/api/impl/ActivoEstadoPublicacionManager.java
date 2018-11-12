@@ -595,29 +595,15 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		if(activoDao.publicarActivoSinHistorico(idActivo, username, eleccionUsuarioTipoPublicacionAlquiler)) {
 			Filter filterActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
 			Filter filterAuditoria = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
-			ActivoPublicacion activoPublicacion = genericDao.get(ActivoPublicacion.class, filterActivo, filterAuditoria);
-			ActivoPatrimonio activoPatrimonio = genericDao.get(ActivoPatrimonio.class, filterActivo, filterAuditoria);
-			
-			Boolean precioPublicacion = false;
-			Boolean informeAprobado = this.isInformeAprobado(idActivo);
-			Boolean adecuacion = false;
-			if (Checks.esNulo(activoPatrimonio)){
-				adecuacion=false;
-			}else if (!DDAdecuacionAlquiler.CODIGO_ADA_NO.equals(activoPatrimonio.getAdecuacionAlquiler().getCodigo()) && !Checks.esNulo(activoPatrimonio.getAdecuacionAlquiler())){
-				adecuacion = true;
-			}
-			if (!Checks.esNulo(activoPublicacion)){
-				List<VPreciosVigentes> precios = activoAdapter.getPreciosVigentesById(idActivo);
-				if (!Checks.estaVacio(precios)){
-					for (VPreciosVigentes precio : precios) {
-						if (!Checks.esNulo(precio.getImporte())){
-							precioPublicacion = true;
-						}
-					}
-				}
-				if (!precioPublicacion && informeAprobado && !adecuacion){
-					if (DDEstadoPublicacionAlquiler.CODIGO_NO_PUBLICADO_ALQUILER.equals(activoPublicacion.getEstadoPublicacionAlquiler().getCodigo())){
+			if (!Checks.esNulo(eleccionUsuarioTipoPublicacionAlquiler) && "0".equals(eleccionUsuarioTipoPublicacionAlquiler)){
+				ActivoPublicacion activoPublicacion = genericDao.get(ActivoPublicacion.class, filterActivo, filterAuditoria);
+				ActivoPatrimonio activoPatrimonio = genericDao.get(ActivoPatrimonio.class, filterActivo, filterAuditoria);
+				if (!Checks.esNulo(activoPatrimonio) && !Checks.esNulo(activoPublicacion)){
+					
+					if (Checks.esNulo(activoPatrimonio.getAdecuacionAlquiler())){
 						enviarCorreoAdecuacion(activoPublicacion);
+					} else if (DDAdecuacionAlquiler.CODIGO_ADA_NO.equals(activoPatrimonio.getAdecuacionAlquiler().getCodigo()) || DDAdecuacionAlquiler.CODIGO_ADA_NULO.equals(activoPatrimonio.getAdecuacionAlquiler().getCodigo())){
+						enviarCorreoAdecuacion(activoPublicacion);		
 					}
 				}
 			}

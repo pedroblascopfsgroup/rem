@@ -1,16 +1,17 @@
 --/*
 --##########################################
---## AUTOR=ANAHUAC DE VICENTE
---## FECHA_CREACION=20160920
+--## AUTOR=Carles Molins
+--## FECHA_CREACION=20181112
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-1551
+--## INCIDENCIA_LINK=HREOS-4757
 --## PRODUCTO=NO
 --## Finalidad: Tabla para almacentar el historico de las agrupaciones de Obra Nueva enviadas a webcom. HREOS-1551 - Se añaden agrupaciones Asistidas.
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##		0.2 HREOS-4757: Filtrar por agrupaciones de tipo comercial
 --##########################################
 --*/
 
@@ -154,7 +155,7 @@ BEGIN
 		LEFT JOIN INFO_ACTIVO_AGRUPACION IAG ON IAG.AGR_ID = AGR.AGR_ID
 		LEFT JOIN DIRECCION_AGRUPA DIR ON DIR.AGR_ID = AGR.AGR_ID
 		WHERE agr.borrado = 0
-		and (AGR.AGR_NUM_AGRUP_REM IS NOT NULL AND DDTAG.DD_TAG_CODIGO IS NOT NULL AND (DDTAG.DD_TAG_CODIGO = ''01'' OR  DDTAG.DD_TAG_CODIGO = ''13''))';
+		and (AGR.AGR_NUM_AGRUP_REM IS NOT NULL AND DDTAG.DD_TAG_CODIGO IS NOT NULL AND (DDTAG.DD_TAG_CODIGO = ''14'' OR DDTAG.DD_TAG_CODIGO = ''15''))';
 		   
    	 	
  		DBMS_OUTPUT.PUT_LINE('[INFO] Vista materializada : '|| V_ESQUEMA ||'.'|| V_TEXT_VISTA ||'... creada');

@@ -127,9 +127,10 @@ public interface OfertaApi {
 	 * 
 	 * @param ofertaDto
 	 *            con la información de la Oferta a dar de alta
-	 * @return List<String> con la lista de errores detectados
+	 * @param List<String> con la lista de errores detectados
+	 * @return Boolean success
 	 */
-	public HashMap<String,String> saveOferta(OfertaDto ofertaDto) throws Exception;
+	public Boolean saveOferta(HashMap<String,String> errorsList, OfertaDto ofertaDto) throws Exception;
 
 	/**
 	 * Actualiza una Oferta a partir de la información pasada por parámetro.
@@ -140,9 +141,10 @@ public interface OfertaApi {
 	 *            estructura con los parámetros a actualizar. Si no vienen, no
 	 *            hay que actualizar. Si vienen y están a null, hay que seterlos
 	 *            a null
-	 * @return List<String> con la lista de errores detectados
+	 * @param List<String> con la lista de errores detectados
+	 * @return Boolean success
 	 */
-	public HashMap<String,String> updateOferta(Oferta oferta, OfertaDto ofertaDto, Object jsonFields)
+	public Boolean updateOferta(HashMap<String,String> errorsList, Oferta oferta, OfertaDto ofertaDto, Object jsonFields)
 			throws Exception;
 	
 	/**

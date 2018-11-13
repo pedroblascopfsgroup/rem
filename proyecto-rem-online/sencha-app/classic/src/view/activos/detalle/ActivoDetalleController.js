@@ -555,7 +555,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     
     onEstadoDivHorizontalAdmisionSelect: function(combo, value) {
     	
-    	var me = this,
+    	var me = this;
     	disabled = (value == 1 || Ext.isEmpty(value)) ;
 
     	me.lookupReference('estadoDivHorizontalNoInscritaAdmision').allowBlank = disabled
@@ -567,6 +567,16 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	}
     	
     },    
+    
+    onChangeProvincia: function(combo, value, oldValue, eOpts){
+    	var me = this;
+    	me.getViewModel().get('activo').set('asignaGestPorCambioDeProv', false);
+    	if(value != oldValue){
+    		var me = this;
+    		me.getViewModel().get('activo').set('asignaGestPorCambioDeProv', true);
+    	}
+    	
+    },
     
     cargaGestores : function(grid){
     	var me = this;
@@ -652,6 +662,25 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
            	  me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
            }
     	 });
+    },
+    
+    onChkbxMuestraHistorico: function(chkbx, checked) {
+    	
+    	var me = this;
+    	
+    	var grid = chkbx.up('gestoresactivo').down("gestoreslist");
+    	var store = me.getViewModel().get("storeGestoresActivos");
+    	
+    	var prox = store.getProxy();
+    	var _idActivo = prox.getExtraParams().idActivo;
+    	var _incluirGestoresInactivos = checked;
+    	
+    	prox.setExtraParams({
+    		"idActivo": _idActivo, 
+    		"incluirGestoresInactivos": _incluirGestoresInactivos
+    	});
+    	store.load();
+    	
     },
 	
 	onClickBotonEditar: function(btn) {
@@ -1089,22 +1118,18 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
                                 	
                                 	storeTemp.load();
 
-                                    Ext.toast({
-									     html: 'LA OPERACIÃN SE HA REALIZADO CORRECTAMENTE',
-									     width: 360,
-									     height: 100,
-									     align: 't'
-									 });
+                                	var data = Ext.decode(a.responseText);
+                                	if(data.success == "true"){
+                                		me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+                                	}else{
+                                		me.fireEvent("errorToast", data.error);
+                                	}
+                                	
                                 },
                                 
                                 failure: function (a, operation, context) {
 
-                                	  Ext.toast({
-									     html: 'NO HA SIDO POSIBLE REALIZAR LA OPERACIÃN',
-									     width: 360,
-									     height: 100,
-									     align: 't'									     
-									 });
+                                	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
                                 }
 			    		     
 			    		 });
@@ -1585,6 +1610,22 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	    	window.destroy();    
 		};
 		me.onSaveFormularioCompletoOferta(form, success);
+	},
+	
+	onChkbxOfertasAnuladas: function(chkbox, checked){
+    	var me = this;
+    	var grid = chkbox.up('ofertascomercialactivo').down("ofertascomercialactivolist");
+    	var store = me.getViewModel().get("storeOfertasActivo");
+    	
+    	var prox = store.getProxy();
+    	var _id = prox.getExtraParams().id;
+    	var _incluirOfertasAnuladas = checked;
+    	
+    	prox.setExtraParams({
+    		"id": _id, 
+    		"incluirOfertasAnuladas": _incluirOfertasAnuladas
+    	});
+    	store.load();
 	},
 	
 	// Este mÃ©todo copia los valores de los campos de 'Datos Mediador' a los campos de 'Datos admisiÃ³n'.

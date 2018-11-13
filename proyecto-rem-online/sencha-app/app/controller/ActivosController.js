@@ -180,7 +180,8 @@ Ext.define('HreRem.controller.ActivosController', {
     	'ofertascomercialmain': {
     		abrirDetalleActivo: 'abrirDetalleActivoComercialOfertas',
 			abrirDetalleAgrupacion : 'abrirDetalleAgrupacionComercialOfertas',
-			abrirDetalleExpediente: 'abrirDetalleExpediente'
+			abrirDetalleExpediente: 'abrirDetalleExpediente',
+			abrirDetalleExpedienteDirecto: 'abrirDetalleExpedienteDirecto'
     	},
     	
     	'expedientedetallemain': {
@@ -207,12 +208,12 @@ Ext.define('HreRem.controller.ActivosController', {
     refrescarDetalleActivo: function (detalle) {
     	
     	var me = this,
-    	id = detalle.getViewModel().get("activo.id");	;
+    	id = detalle.getViewModel().get("activo.id");	
     	
     	HreRem.model.Activo.load(id, {
     		scope: this,
 		    success: function(activo) {
-		    	
+		    	detalle.getViewModel().getStore('comboTipoGestorByActivo').load();
 		    	detalle.getViewModel().set("activo", activo);		    	
 		    	detalle.configCmp(activo);
 		    	
@@ -507,7 +508,7 @@ Ext.define('HreRem.controller.ActivosController', {
     	me.abrirDetalleAgrupacionActivoById(id, titulo);    	
     	
     },
-    
+        
     abrirDetalleAgrupacionActivoById: function(id, titulo) {
     	var me = this,    	
     	cfg = {}, 
@@ -676,8 +677,13 @@ Ext.define('HreRem.controller.ActivosController', {
     	
     },
     
+    abrirDetalleExpedienteDirecto: function(id, titulo, refLinks) {
+    	var me = this;
+    	me.redirectTo('activos', true);    	
+    	me.abrirDetalleExpedienteById(id, titulo, refLinks);
+    },
+    
     abrirDetalleExpedienteById: function(id, titulo, refLinks) {
-
     	var me = this,
     	cfg = {}, 
     	tab=null;

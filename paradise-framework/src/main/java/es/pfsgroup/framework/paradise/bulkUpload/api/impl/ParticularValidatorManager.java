@@ -472,7 +472,17 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "		WHERE " 
 				+ "		scr.DD_SCR_CODIGO IN ('01','02','03','38') "
 				+ "		AND act.ACT_NUM_ACTIVO = "+numActivo+" ");
-		if("0".equals(resultado))
+		
+		String resultado2 = rawDao.getExecuteSQL("SELECT COUNT(1) "
+				+ "		FROM ACT_ACTIVO act "
+				+ "		INNER JOIN ACT_ABA_ACTIVO_BANCARIO aba "
+				+ "		ON act.act_id            = aba.act_id "
+				+ "		INNER JOIN DD_CLA_CLASE_ACTIVO cla "
+				+ "		ON aba.dd_cla_id            = cla.dd_cla_id "
+				+ "		WHERE " 
+				+ "		cla.DD_CLA_CODIGO = '01' "
+				+ "		AND act.ACT_NUM_ACTIVO = "+numActivo+" ");
+		if("0".equals(resultado) && "0".equals(resultado2))
 			return false;
 		else
 			return true;
@@ -1763,6 +1773,24 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 	
 	@Override
+	public Boolean agrupacionEsProyecto(String numAgrupacion) {
+		
+		if(Checks.esNulo(numAgrupacion) || !StringUtils.isNumeric(numAgrupacion)) 
+			return false;
+		
+		String resultado = rawDao.getExecuteSQL("	SELECT COUNT(1) FROM ACT_AGR_AGRUPACION             AGR "
+				+ " JOIN DD_TAG_TIPO_AGRUPACION TAG "
+				+ " ON TAG.DD_TAG_CODIGO = '04' "
+				+ " AND TAG.DD_TAG_ID = AGR.DD_TAG_ID "
+				+ " WHERE AGR.AGR_NUM_AGRUP_REM = "+numAgrupacion+"    "
+				+ " AND AGR.BORRADO = 0 ");
+		if("0".equals(resultado))
+			return false;
+		else
+			return true;
+	}
+
+	@Override
 	public Boolean existePromocion(String promocion){
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) FROM ACT_ACTIVO "
 				+ "WHERE ACT_COD_PROMOCION_PRINEX = '"+promocion+"'");
@@ -1792,4 +1820,128 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		return false;
 	}
 	
+	@Override
+    public Boolean activoTienePRV(String numActivo) {
+		
+    	String resultado = "0";
+		if(numActivo != null && !numActivo.isEmpty()){
+	    	 resultado = rawDao.getExecuteSQL("SELECT COUNT(1) FROM ACT_ACTIVO ACT "
+					+ " JOIN BIE_BIEN BIE "
+					+ " ON ACT.BIE_ID = BIE.BIE_ID "
+					+ " JOIN BIE_LOCALIZACION   BIE_LOC "
+					+ " ON BIE.BIE_ID = BIE_LOC.BIE_ID "
+					+ " JOIN REMMASTER.DD_PRV_PROVINCIA PRV "
+					+ " ON PRV.DD_PRV_ID = BIE_LOC.DD_PRV_ID "
+					+ " WHERE ACT.ACT_NUM_ACTIVO = "+numActivo+" "
+					+ " AND ACT.BORRADO=0 "
+					+ " AND BIE.BORRADO=0 "
+					+ " AND BIE_LOC.BORRADO=0 ");
+		}
+			
+		if("0".equals(resultado))
+			return false;
+		else
+			return true;		
+	}
+    
+	@Override
+    public Boolean activoTieneLOC(String numActivo) {
+		
+    	String resultado = "0";
+		if(numActivo != null && !numActivo.isEmpty()){
+			 resultado = rawDao.getExecuteSQL("SELECT COUNT(1) FROM ACT_ACTIVO ACT "
+					+ " JOIN BIE_BIEN BIE "
+					+ " ON ACT.BIE_ID = BIE.BIE_ID "
+					+ " JOIN BIE_LOCALIZACION   BIE_LOC "
+					+ " ON BIE.BIE_ID = BIE_LOC.BIE_ID "
+					+ " JOIN REMMASTER.DD_LOC_LOCALIDAD LOC "
+					+ " ON LOC.DD_LOC_ID = BIE_LOC.DD_LOC_ID "
+					+ " WHERE ACT.ACT_NUM_ACTIVO = "+numActivo+" "
+					+ " AND ACT.BORRADO=0 "
+					+ " AND BIE.BORRADO=0 "
+					+ " AND BIE_LOC.BORRADO=0 ");
+		}
+		if("0".equals(resultado))
+			return false;
+		else
+			return true;		
+	}
+	
+	@Override
+	public Boolean esMismaProvincia(Long numActivo, Long numAgrupacion) {
+		
+		String prv_activo = "";
+		prv_activo = rawDao.getExecuteSQL("SELECT PRV.DD_PRV_ID FROM ACT_ACTIVO ACT "
+				+ " JOIN BIE_BIEN BIE "
+				+ " ON ACT.BIE_ID = BIE.BIE_ID "
+				+ " JOIN BIE_LOCALIZACION   BIE_LOC "
+				+ " ON BIE.BIE_ID = BIE_LOC.BIE_ID "
+				+ " JOIN REMMASTER.DD_PRV_PROVINCIA PRV "
+				+ " ON PRV.DD_PRV_ID = BIE_LOC.DD_PRV_ID "
+				+ " WHERE ACT.ACT_NUM_ACTIVO = "+numActivo+" "
+				+ " AND ACT.BORRADO=0 "
+				+ " AND BIE.BORRADO=0 "
+				+ " AND BIE_LOC.BORRADO=0 ");
+		
+		String prv_agrupacion = "";
+		prv_agrupacion = rawDao.getExecuteSQL("SELECT PRV.DD_PRV_ID FROM ACT_AGR_AGRUPACION AGR "
+				+ " JOIN ACT_PRY_PROYECTO PRY "
+				+ " ON AGR.AGR_ID = PRY.AGR_ID "
+				+ " JOIN REMMASTER.DD_PRV_PROVINCIA PRV "
+				+ " ON PRV.DD_PRV_ID = PRY.DD_PRV_ID "
+				+ " WHERE AGR.AGR_NUM_AGRUP_REM = "+numAgrupacion+" "
+				+ " AND AGR.BORRADO = 0 ");
+
+		if(!Checks.esNulo(prv_activo) && !Checks.esNulo(prv_agrupacion)){
+			if (prv_activo.equals(prv_agrupacion)) {
+	        	return true;
+	        }
+	        else {
+	        	return false;
+	        }
+		}
+		else {
+			return false;
+		}
+	
+	}
+	
+	@Override
+	public Boolean esMismaLocalidad(Long numActivo, Long numAgrupacion) {
+		
+		String loc_activo = "";
+		loc_activo = rawDao.getExecuteSQL("SELECT LOC.DD_LOC_ID FROM ACT_ACTIVO ACT "
+				+ " JOIN BIE_BIEN BIE "
+				+ " ON ACT.BIE_ID = BIE.BIE_ID "
+				+ " JOIN BIE_LOCALIZACION   BIE_LOC "
+				+ " ON BIE.BIE_ID = BIE_LOC.BIE_ID "
+				+ " JOIN REMMASTER.DD_LOC_LOCALIDAD LOC "
+				+ " ON LOC.DD_LOC_ID = BIE_LOC.DD_LOC_ID "
+				+ " WHERE ACT.ACT_NUM_ACTIVO = "+numActivo+" "
+				+ " AND ACT.BORRADO=0 "
+				+ " AND BIE.BORRADO=0 "
+				+ " AND BIE_LOC.BORRADO=0 ");
+		
+		String loc_agrupacion = "";
+		loc_agrupacion = rawDao.getExecuteSQL("SELECT LOC.DD_LOC_ID FROM ACT_AGR_AGRUPACION AGR "
+				+ " JOIN ACT_PRY_PROYECTO PRY "
+				+ " ON AGR.AGR_ID = PRY.AGR_ID "
+				+ " JOIN REMMASTER.DD_LOC_LOCALIDAD LOC "
+				+ " ON LOC.DD_LOC_ID = PRY.DD_LOC_ID "
+				+ " WHERE AGR.AGR_NUM_AGRUP_REM = "+numAgrupacion+" "
+				+ " AND AGR.BORRADO = 0 ");
+
+		if(!Checks.esNulo(loc_activo) && !Checks.esNulo(loc_agrupacion)){
+			if (loc_activo.equals(loc_agrupacion)) {
+	        	return true;
+	        }
+	        else {
+	        	return false;
+	        }
+		}
+		else {
+			return false;
+		}
+	
+	}
 }

@@ -247,7 +247,14 @@ public class Trabajo implements Serializable, Auditable {
     @JoinColumn(name="TBJ_SUPERVISOR_ACT_RESPONSABLE")
     private Usuario supervisorActivoResponsable;
     
-    @Column(name="STR_TARIFA_PLANA")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="TBJ_RESPONSABLE_TRABAJO")
+    private Usuario responsableTrabajo;
+    
+    @Column(name="TBJ_REQUERIMIENTO")
+    private Boolean requerimiento;
+    
+   	@Column(name="STR_TARIFA_PLANA")
     private Boolean esTarifaPlana = false;
     
     @Column(name = "ACT_COD_PROMOCION_PRINEX")
@@ -266,6 +273,14 @@ public class Trabajo implements Serializable, Auditable {
 	public Long getId() {
 		return id;
 	}
+	
+	 public Usuario getResponsableTrabajo() {
+			return responsableTrabajo;
+		}
+
+		public void setResponsableTrabajo(Usuario responsableTrabajo) {
+			this.responsableTrabajo = responsableTrabajo;
+		}
 
 	public void setId(Long id) {
 		this.id = id;
@@ -883,6 +898,14 @@ public class Trabajo implements Serializable, Auditable {
 
 	public void setCodigoPromocionPrinex(String codigoPromocionPrinex) {
 		this.codigoPromocionPrinex = codigoPromocionPrinex;
+	}
+
+	public Boolean getRequerimiento() {
+		return requerimiento;
+	}
+
+	public void setRequerimiento(Boolean requerimiento) {
+		this.requerimiento = requerimiento;
 	}
 
 }

@@ -11,7 +11,6 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import es.capgemini.devon.beans.Service;
-import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.api.controlAcceso.EXTControlAccesoApi;
 import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.diccionarios.Dictionary;
@@ -29,6 +28,7 @@ import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPeriocidad;
+import es.pfsgroup.plugin.rem.thread.EnvioCorreoAsync;
 import es.pfsgroup.plugin.rem.utils.DiccionarioTargetClassMap;
 
 @Service
@@ -136,7 +136,7 @@ public class GenericAdapter {
 	 *            indicado en mailsPara y mailsCC
 	 * @param adjuntos Archivos adjuntos a manar por correo
 	 */
-	public void sendMail(List<String> mailsPara, List<String> mailsCC, String asunto, String cuerpo, List<DtoAdjuntoMail> adjuntos) {
+	public void sendMailSinc(List<String> mailsPara, List<String> mailsCC, String asunto, String cuerpo, List<DtoAdjuntoMail> adjuntos) {
 		// TODO: Para poner remitente, sustituirlo por el primer null de la
 		// llamada al método enviarCorreoConAdjuntos
 		try {
@@ -166,6 +166,11 @@ public class GenericAdapter {
 			logger.error("mailsPara: " + mailsPara + ", mailsCC: " + mailsCC + ", asunto: " + asunto);
 			logger.error("error enviando correo",e);			
 		}
+	}
+	
+	public void sendMail(List<String> mailsPara, List<String> mailsCC, String asunto, String cuerpo, List<DtoAdjuntoMail> adjuntos) {
+		Thread hiloCorreo = new Thread(new EnvioCorreoAsync(mailsPara, mailsCC, asunto, cuerpo, adjuntos));
+		hiloCorreo.start();	
 	}
 	
 	/**
@@ -202,6 +207,12 @@ public class GenericAdapter {
 
 		return usuario.getPerfiles().contains(perfilProveedor);
 	}
+	
+	
+
+	
+	
+	
 
 	/**
 	 * Es proveedor HAYA o CEE?

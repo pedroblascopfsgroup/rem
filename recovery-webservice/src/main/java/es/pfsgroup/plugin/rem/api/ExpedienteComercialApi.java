@@ -61,6 +61,8 @@ public interface ExpedienteComercialApi {
 	 * @return ExpedienteComercial
 	 */
 	public ExpedienteComercial findOne(Long id);
+	
+	public ExpedienteComercial findOneTransactional(Long id);
 
 	/**
 	 * Recupera el ExpedienteComercial indicado.
@@ -954,6 +956,10 @@ public interface ExpedienteComercialApi {
 
 	public String getCodigoCarteraExpediente(String idExpediente);
 
-	DtoPage getActivosExpedienteVista(Long idExpediente);	
+	DtoPage getActivosExpedienteVista(Long idExpediente);
+
+	Long getIdByNumExpOrNumOfr(Long numBusqueda, String campo);
+
+	Long getNumExpByNumOfr(Long numBusqueda);	
 	
 }

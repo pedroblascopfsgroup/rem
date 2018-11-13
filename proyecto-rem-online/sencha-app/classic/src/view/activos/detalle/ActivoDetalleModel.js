@@ -6,7 +6,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
     'HreRem.model.IncrementoPresupuesto', 'HreRem.model.Distribuciones', 'HreRem.model.Observaciones',
     'HreRem.model.Carga', 'HreRem.model.Llaves', 'HreRem.model.PreciosVigentes','HreRem.model.VisitasActivo',
     'HreRem.model.OfertaActivo', 'HreRem.model.PropuestaActivosVinculados', 'HreRem.model.HistoricoMediadorModel',
-    'HreRem.model.MediadorModel', 'HreRem.model.MovimientosLlave', 'HreRem.model.ImpuestosActivo'],
+    'HreRem.model.MediadorModel', 'HreRem.model.MovimientosLlave', 'HreRem.model.ActivoPatrimonio', 'HreRem.model.HistoricoAdecuacionesPatrimonioModel', 'HreRem.model.ImpuestosActivo'],
     
     data: {
     	activo: null,
@@ -282,6 +282,25 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		 	 return get('activo.pertenceAgrupacionRestringida');
 		 },
 		 
+		 enableComboTipoAlquiler: function(get){
+			var chkPerimetroAlquiler = get('patrimonio.chkPerimetroAlquiler');
+			var tipoComercializacion = get('activo.tipoComercializacionCodigo');
+			if((chkPerimetroAlquiler == true || chkPerimetroAlquiler == "true" ) && CONST.TIPOS_COMERCIALIZACION['VENTA'] != tipoComercializacion){
+				return false;
+			}else{
+				return true;
+			}
+		 },
+		 
+		 enableComboAdecuacion: function(get){
+			var chkPerimetroAlquiler = get('patrimonio.chkPerimetroAlquiler');
+			if((chkPerimetroAlquiler == true || chkPerimetroAlquiler == "true" )){
+				return false;
+			}else{
+				return true;
+			}
+		 },
+		 
 		 esEditableCodigoPromocion: function(get){
 			 var isGestorActivos = $AU.userIsRol('HAYAGESACT') || $AU.userIsRol('HAYAGESTADM');
 			 var isLiberbank = get('activo.isCarteraLiberbank');
@@ -493,7 +512,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
    		        extraParams: {id: '{activo.id}'}
    	    	 }
        		},
-       		storeOfertasActivo: {    	
+       		storeOfertasActivo: {  
 	       		 pageSize: $AC.getDefaultPageSize(),
 	       		 model: 'HreRem.model.OfertaActivo',
 	       		 sorters: [
@@ -509,7 +528,10 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 	   		     proxy: {
 	   		        type: 'uxproxy',
 	   		        remoteUrl: 'activo/getListOfertasActivos',
-	   		        extraParams: {id: '{activo.id}'}
+	   		        extraParams: {
+	   		        	id: '{activo.id}',
+	   		        	incluirOfertasAnuladas: false
+	   		        }
 	   	    	 }
        		},
     		
@@ -611,10 +633,24 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		        extraParams: {id: '{activo.id}'}
 	    	 }
     		},
+    		
+    		storeGestoresActivos: {
+    			pageSize: $AC.getDefaultPageSize(),
+				model: 'HreRem.model.GestorActivo',
+			   	proxy: {
+			   		type: 'uxproxy',
+			   	    remoteUrl: 'activo/getGestoresActivos',
+			   	    extraParams: {
+			   	    	idActivo: '{activo.id}',
+			   	    	incluirGestoresInactivos: false
+			   	    }
+			    }
+    		},
 
     		storeGestores: {
     			pageSize: $AC.getDefaultPageSize(),
 				model: 'HreRem.model.GestorActivo',
+				autoLoad: true,
 			   	proxy: {
 			   		type: 'uxproxy',
 			   	    remoteUrl: 'activo/getGestores',
@@ -1046,7 +1082,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				type: 'uxproxy',
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'estadosOfertas'}
-			}   	
+			},
+			autoLoad: true   	
 	    },
 
 	    comboTipoOferta: {
@@ -1322,6 +1359,23 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 							}
 
 				}
+		},
+		comboAdecuacionAlquiler: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'comboAdecuacionAlquiler'}
+			}
+		},
+		storeHistoricoAdecuacionesAlquiler:{
+			pageSize: $AC.getDefaultPageSize(),
+			model: 'HreRem.model.HistoricoAdecuacionesPatrimonioModel',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'activo/getHistoricoAdecuacionesAlquilerByActivo',
+				extraParams: {id: '{activo.id}'}
+			}
 		}
 		
 

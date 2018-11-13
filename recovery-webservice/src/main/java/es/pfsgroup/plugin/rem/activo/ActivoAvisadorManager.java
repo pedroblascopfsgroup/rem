@@ -71,12 +71,14 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 		
 		List<DtoAviso> listaAvisos = new ArrayList<DtoAviso>();
 		Activo activo = activoApi.get(id);
+		activoApi.calcularFechaTomaPosesion(activo);
 		List<Perfil> perfilesUsuario = usuarioLogado.getPerfiles();
 		
 		boolean restringida = false;
 		boolean obraNueva = false;
 		boolean asistida = false;
 		boolean lote = false;
+		boolean enPuja = false;
 		
 		try {
 		//Avisos 1 y 2: Integrado en agrupación restringida / Integrado en obra nueva
@@ -85,8 +87,16 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 			obraNueva = activoApi.isIntegradoAgrupacionObraNueva(id, usuarioLogado);
 			asistida = activoApi.isIntegradoAgrupacionAsistida(activo);
 			lote = activoApi.isIntegradoAgrupacionComercial(activo);
+			enPuja = activoApi.isActivoEnPuja(activo);
 		} catch (Exception e) {
 			e.printStackTrace();
+		}
+		
+		if(enPuja) {
+			DtoAviso dtoAviso = new DtoAviso();
+			dtoAviso.setDescripcion("Incluido en Haz tu Puja hasta 15/11/2018");
+			dtoAviso.setId(String.valueOf(id));
+			listaAvisos.add(dtoAviso);
 		}
 		
 		if (restringida) {
@@ -185,11 +195,13 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 		// Si no es judicial...
 		if(!Checks.esNulo(activo)){
 			PerimetroActivo perimetro= activoApi.getPerimetroByIdActivo(activo.getId());
-			if(!Checks.esNulo(perimetro) && 0 == perimetro.getAplicaGestion()){
-				DtoAviso dtoAviso = new DtoAviso();
-				dtoAviso.setDescripcion("Activo sin gestión");
-				dtoAviso.setId(String.valueOf(id));
-				listaAvisos.add(dtoAviso);
+			if(!Checks.esNulo(perimetro)){
+				if(!Checks.esNulo(perimetro.getAplicaGestion()) && 0 == perimetro.getAplicaGestion()){
+					DtoAviso dtoAviso = new DtoAviso();
+					dtoAviso.setDescripcion("Activo sin gestión");
+					dtoAviso.setId(String.valueOf(id));
+					listaAvisos.add(dtoAviso);
+				}
 			}
 		}
 		

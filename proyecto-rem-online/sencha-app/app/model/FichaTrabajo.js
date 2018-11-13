@@ -2,13 +2,9 @@
  * This view is used to present the details of a single AgendaItem.
  */
 Ext.define('HreRem.model.FichaTrabajo', {
-    extend: 'HreRem.model.Base',
-    idProperty: 'id',
-    
-    /**
-     * Al crear un registro se genera como id un número negativo y no un String 
-     */
-    //identifier: 'negative',
+	extend : 'HreRem.model.Base',
+	idProperty : 'id',
+
 
     fields: [ 
     		
@@ -100,6 +96,15 @@ Ext.define('HreRem.model.FichaTrabajo', {
     			name: 'supervisorActivo'
     		},
     		{
+    			name: 'idSupervisorAlquileres'
+    		},
+    		{
+    			name: 'idSupervisorSuelos'
+    		},
+    		{
+    			name: 'idSupervisorEdificaciones'
+    		},
+    		{
     			name: 'fechaConcreta',
     			type:'date',
     			dateFormat: 'c'
@@ -133,6 +138,10 @@ Ext.define('HreRem.model.FichaTrabajo', {
     			name: 'fechaEleccionProveedor',
     			type:'date',
     			dateFormat: 'c'
+    		}, 
+    		{
+    			name: 'bloquearResponsable',
+    			type: 'boolean'
     		},
     		{
     			name: 'urgente'
@@ -218,7 +227,26 @@ Ext.define('HreRem.model.FichaTrabajo', {
     		},
     		{
     			name: 'cartera'
+    		},
+    		{
+    			name: 'codCartera'
+    		},
+    		{
+    			name: 'requerimiento',
+    			type: 'boolean'
+    		},
+    		{
+    			name: 'esSareb',
+    			calculate: function(data) {
+    				 return data.codCartera == CONST.CARTERA['SAREB'];
+    			}
+    			
+    		},
+    		{
+    			name: 'logadoGestorMantenimiento',
+    			type: 'boolean'
     		}
+    		
     ],
     
 	proxy: {
@@ -232,7 +260,11 @@ Ext.define('HreRem.model.FichaTrabajo', {
             update: 'trabajo/saveFichaTrabajo',
             destroy: 'trabajo/findOne'
         },
-        extraParams: {pestana: 'ficha'}
+        extraParams: {pestana: 'ficha'},
+        reader:{
+        	messageProperty: 'error'
+        }
     }    
+
 
 });

@@ -40,7 +40,10 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 			    	items:[
 				        { 
 				        	fieldLabel: HreRem.i18n('fieldlabel.numero.activo.haya'),
-				        	name: 'numActivo'
+				        	name: 'numActivo',
+				        	listeners : {
+				        		change: 'onChangeNumActivo'
+				        	} 
 				        },
 				        { 
 							xtype: 'comboboxfieldbase',

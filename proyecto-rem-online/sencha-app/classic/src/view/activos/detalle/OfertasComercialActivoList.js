@@ -200,7 +200,22 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 		            bind: {
 		                store: '{storeOfertasActivo}'
 		            }
-		        }
+		        },{
+					xtype:'checkboxfieldbase',
+					
+					labelSeparator: '',
+				    hideLabel: true,
+				    boxLabel: HreRem.i18n('check.comercial.ofertas.anuladas.fieldlabel'),
+				    fieldLabel: ' ',
+				    
+					reference: 'chkbxPerimetroAdmision',
+					addUxReadOnlyEditFieldPlugin: false,
+					listeners: {
+						change: 'onChkbxOfertasAnuladas'
+					}
+						
+	        	}
+		        
 		];
 		
         me.callParent(); 

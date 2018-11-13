@@ -31,11 +31,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import es.capgemini.devon.dto.WebDto;
+import es.capgemini.devon.exception.UserException;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.devon.utils.FileUtils;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
@@ -46,7 +48,9 @@ import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.activo.ActivoPropagacionFieldTabMap;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
+import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoPropagacionApi;
@@ -56,6 +60,7 @@ import es.pfsgroup.plugin.rem.excel.ActivoExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
 import es.pfsgroup.plugin.rem.excel.PublicacionExcelReport;
+import es.pfsgroup.plugin.rem.exception.RemUserException;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoFoto;
 import es.pfsgroup.plugin.rem.model.DtoActivoAdministracion;
@@ -70,6 +75,7 @@ import es.pfsgroup.plugin.rem.model.DtoActivoInformacionComercial;
 import es.pfsgroup.plugin.rem.model.DtoActivoInformeComercial;
 import es.pfsgroup.plugin.rem.model.DtoActivoIntegrado;
 import es.pfsgroup.plugin.rem.model.DtoActivoOcupanteLegal;
+import es.pfsgroup.plugin.rem.model.DtoActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.DtoActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.DtoActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoActivoValoraciones;
@@ -117,6 +123,10 @@ import es.pfsgroup.plugin.rem.trabajo.dto.DtoActivosTrabajoFilter;
 public class ActivoController extends ParadiseJsonController {
 
 	protected static final Log logger = LogFactory.getLog(ActivoController.class);
+	public static final String ERROR_ACTIVO_NOT_EXISTS = "No existe el activo que esta buscando, pruebe con otro Nº de Activo";
+	public static final String ERROR_ACTIVO_NO_NUMERICO = "El campo introducido es de carácter numérico";
+	public static final String ERROR_GENERICO = "La operación no se ha podido realizar";
+	public static final String ERROR_CONEXION_FOTOS = "Ha habido un error al conectar con CRM";
 
 	@Autowired
 	private ActivoAdapter adapter;
@@ -147,6 +157,12 @@ public class ActivoController extends ParadiseJsonController {
 
 	@Autowired
 	private ActivoPropagacionApi activoPropagacionApi;
+	
+	@Autowired
+	private GenericAdapter genericAdapter;
+	
+	@Autowired
+	private ActivoDao activoDao;
 	
 	@Autowired
 	GestorDocumentalFotosApi gestorDocumentalFotos;
@@ -213,12 +229,12 @@ public class ActivoController extends ParadiseJsonController {
 	public ModelAndView saveDatosBasicos(DtoActivoFichaCabecera activoDto, @RequestParam Long id, ModelMap model) {
 
 		try {
-
 			boolean success = adapter.saveTabActivo(activoDto, id, TabActivoService.TAB_DATOS_BASICOS);
-			if (success)
+			if (success){
 				adapter.updatePortalPublicacion(id);
+				adapter.updateGestoresTabActivoTransactional(activoDto, id);
+			}
 			model.put("success", success);
-
 		} catch (JsonViewerException jvex) {
 			model.put("success", false);
 			model.put("msgError", jvex.getMessage());
@@ -1033,7 +1049,21 @@ public class ActivoController extends ParadiseJsonController {
 
 		return new ModelAndView("jsonView", model);
 
-	}	
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getGestoresActivos(Long idActivo, WebDto webDto, ModelMap model, Boolean incluirGestoresInactivos) {
+
+		if (incluirGestoresInactivos) {
+			model.put("data", adapter.getGestores(idActivo));
+		}
+		else {
+			model.put("data", adapter.getGestoresActivos(idActivo));
+		}
+
+		return new ModelAndView("jsonView", model);
+	}
 	
 
 	@SuppressWarnings("unchecked")
@@ -1326,9 +1356,15 @@ public class ActivoController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getListOfertasActivos(Long id, WebDto webDto, ModelMap model) {
-
-		model.put("data", adapter.getListOfertasActivos(id));
+	public ModelAndView getListOfertasActivos(Long id, Boolean incluirOfertasAnuladas, WebDto webDto, ModelMap model) {
+		
+		
+		if (incluirOfertasAnuladas) {
+			model.put("data", adapter.getListOfertasActivos(id));
+		}
+		else {
+			model.put("data", adapter.getListOfertasTramitadasVendidasActivos(id));
+		}
 		return createModelAndViewJson(model);
 
 	}
@@ -1499,10 +1535,14 @@ public class ActivoController extends ParadiseJsonController {
 			boolean success = adapter.saveAdmisionDocumento(dtoAdmisionDocumento);
 			model.put("success", success);
 
-		} catch (Exception e) {
+		} 		
+		catch (RemUserException e) {
 			logger.error("error en activoController", e);
 			model.put("success", false);
-		}
+			model.put("msg", e.getMensaje());
+		} 
+		
+
 
 		return createModelAndViewJson(model);
 	}
@@ -1661,9 +1701,13 @@ public class ActivoController extends ParadiseJsonController {
 			boolean success = adapter.deleteFotosActivoById(id);
 			model.put("success", success);
 
+		} catch (UserException e) {
+			model.put("success", false);
+			model.put("error", ERROR_CONEXION_FOTOS);
 		} catch (Exception e) {
 			logger.error("error en activoController", e);
 			model.put("success", false);
+			model.put("error", ERROR_GENERICO);
 		}
 
 		return createModelAndViewJson(model);
@@ -2549,6 +2593,34 @@ public class ActivoController extends ParadiseJsonController {
 	}
 	
 	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView saveDatosPatrimonio(DtoActivoPatrimonio patrimonioDto, @RequestParam Long id, ModelMap model) {
+		try {
+			boolean success = adapter.saveTabActivo(patrimonioDto, id, TabActivoService.TAB_PATRIMONIO);
+			//if (success) adapter.actualizarEstadoPublicacionActivo(id);
+			model.put("success", success);
+
+		} catch (JsonViewerException jvex) {
+			model.put("success", false);
+			model.put("msgError", jvex.getMessage());
+
+		} catch (Exception e) {
+			logger.error("error en activoController", e);
+			model.put("success", false);
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getHistoricoAdecuacionesAlquilerByActivo(DtoActivoPatrimonio dto, @RequestParam Long id, ModelMap model) {
+		model.put("data", activoApi.getHistoricoAdecuacionesAlquilerByActivo(id));
+
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getImpuestosByActivo(Long idActivo, ModelMap model) {
 
@@ -2637,6 +2709,47 @@ public class ActivoController extends ParadiseJsonController {
 			logger.error("error en activoController", e);
 			model.put("success", false);
 			model.put("error", e.getMessage());
+		}
+		
+		return createModelAndViewJson(model);
+	}
+	
+	@Transactional(readOnly = false)
+	public boolean actualizarEstadoPublicacionActivo(Long id) {
+		Activo activo = activoApi.get(id);
+		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+
+		if(activoApi.isActivoIntegradoAgrupacionRestringida(id)) {
+			activoDao.publicarAgrupacionConHistorico(activoApi.getActivoAgrupacionActivoAgrRestringidaPorActivoID(id).getAgrupacion().getId(), usuarioLogado.getUsername());
+		} else {
+			activoDao.publicarActivoConHistorico(activo.getId(), usuarioLogado.getUsername());
+		}
+
+		return true;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView getActivoExists(String numActivo, ModelMap model) {
+
+		try {
+			Long idActivo = activoApi.getIdByNumActivo(Long.parseLong(numActivo));
+			
+			if(!Checks.esNulo(idActivo)) {
+				model.put("success", true);
+				model.put("data", idActivo);
+			}else {
+				model.put("success", false);
+				model.put("error", ERROR_ACTIVO_NOT_EXISTS);
+			}
+		} catch (NumberFormatException e) {
+			e.printStackTrace();
+			model.put("success", false);
+			model.put("error", ERROR_ACTIVO_NO_NUMERICO);
+		} catch(Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+			model.put("error", ERROR_GENERICO);
 		}
 		
 		return createModelAndViewJson(model);

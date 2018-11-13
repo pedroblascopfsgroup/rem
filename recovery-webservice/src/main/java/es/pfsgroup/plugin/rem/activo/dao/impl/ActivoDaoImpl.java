@@ -50,6 +50,7 @@ import es.pfsgroup.plugin.rem.model.PropuestaActivosVinculados;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivosPrecios;
 import es.pfsgroup.plugin.rem.model.VBusquedaPublicacionActivo;
 import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
+import es.pfsgroup.plugin.rem.model.VOfertasTramitadasPendientesActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
@@ -941,6 +942,34 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		
 	}
 	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<VOfertasTramitadasPendientesActivosAgrupacion> getListOfertasTramitadasPendientesActivo(Long idActivo) {
+		
+		String hql = " from VOfertasTramitadasPendientesActivosAgrupacion voa2 ";
+		String listaIdsOfertas = "";
+		
+		HQLBuilder hb = new HQLBuilder(hql);
+
+		if (!Checks.esNulo(idActivo)) {
+			Filter filtroIdActivo = genericDao.createFilter(FilterType.EQUALS, "id", idActivo);
+			Activo activo = genericDao.get(Activo.class, filtroIdActivo);
+			
+			List<ActivoOferta> listaActivoOfertas = activo.getOfertas();
+
+			
+			for (ActivoOferta activoOferta : listaActivoOfertas){
+				listaIdsOfertas = listaIdsOfertas.concat(activoOferta.getPrimaryKey().getOferta().getId().toString()).concat(",");
+			}
+			listaIdsOfertas = listaIdsOfertas.concat("-1");
+			
+			hb.appendWhere(" voa2.idOferta in (" + listaIdsOfertas + ") ");
+		}
+		
+		return (List<VOfertasTramitadasPendientesActivosAgrupacion>) this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).list();
+				
+		
+	}
 	
 	@Override
 	public void actualizarRatingActivo(Long idActivo, String username) {	
@@ -1023,5 +1052,69 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		query.executeUpdate();
 		
 		
+	}
+
+	/**
+	 * Este método lanza el procedimiento de cambio de estado de publicación
+	 *
+	 * @param idActivo: ID del activo para el cual se desea realizar la operación.
+	 * @param username: nombre del usuario, si la llamada es desde la web, que realiza la operación.
+	 * @param historificar: indica si la operación ha de realizar un histórico de los movimientos realizados.
+	 * @return Devuelve True si la operación ha sido satisfactorio, False si no ha sido satisfactoria.
+	 */
+	private Boolean publicarActivo(Long idActivo, String username, Boolean historificar, String eleccionUsuarioTipoPublicacionAlquiler) {
+		String procedureHQL = "BEGIN SP_CAMBIO_ESTADO_PUBLICACION(:idActivoParam, :eleccionUsuarioParam, :usernameParam, :historificarParam);  END;";
+
+		Query callProcedureSql = this.getSessionFactory().getCurrentSession().createSQLQuery(procedureHQL);
+		callProcedureSql.setParameter("idActivoParam", idActivo);
+		callProcedureSql.setParameter("eleccionUsuarioParam", eleccionUsuarioTipoPublicacionAlquiler);
+		callProcedureSql.setParameter("usernameParam", username);
+		callProcedureSql.setParameter("historificarParam", historificar ? "S" : "N");
+
+		Integer resultado = callProcedureSql.executeUpdate();
+
+    	return resultado == 1;
+	}
+	
+	@Override
+	public Boolean publicarActivoConHistorico(Long idActivo, String username) {
+    	// Antes de realizar la llamada al SP realizar las operaciones previas con los datos.
+		getHibernateTemplate().flush();
+		return this.publicarActivo(idActivo, username, true, null);
+	}
+	
+	/**
+	 * Este metodo lanza el procedimiento de cambio de estado de publicación de agrupaciones
+	 * 
+	 * @param idAgrupacion: ID del activo para el cual se desea realizar la operación.
+	 * @param username: nombre del usuario, si la llamada es desde la web, que realiza la operación.
+	 * @param historificar: indica si la operación ha de realizar un histórico de los movimientos realizados.
+	 * @return Devuelve True si la operacion ha sido satisfactoria, False si no ha sido satisfactoria.
+	 */
+	private Boolean publicarAgrupacion(Long idAgrupacion, String username, Boolean historificar, String eleccionUsuarioTipoPublicacionAlquiler) {
+		String procedureHQL = "BEGIN SP_CAMBIO_ESTADO_PUBLI_AGR(:idAgrupacionParam, :eleccionUsusarioParam, :usernameParam, :historificarParam); END;";
+	
+		Query callProcedureSql = this.getSessionFactory().getCurrentSession().createSQLQuery(procedureHQL);
+		callProcedureSql.setParameter("idAgrupacionParam", idAgrupacion);
+		callProcedureSql.setParameter("eleccionUsusarioParam", eleccionUsuarioTipoPublicacionAlquiler);
+		callProcedureSql.setParameter("usernameParam", username);
+		callProcedureSql.setParameter("historificarParam", historificar ? "S" : "N");
+		
+		Integer resultado = callProcedureSql.executeUpdate();
+		
+		return resultado == 1;
+		
+	}
+	
+	@Override
+	public Boolean publicarAgrupacionSinHistorico(Long idAgrupacion, String username, String eleccionUsuarioTipoPublicacionAlquiler) {
+		getHibernateTemplate().flush();
+		return this.publicarAgrupacion(idAgrupacion, username, false, eleccionUsuarioTipoPublicacionAlquiler);
+	}
+	
+	@Override
+	public Boolean publicarAgrupacionConHistorico(Long idAgrupacion, String username) {
+		getHibernateTemplate().flush();
+		return this.publicarAgrupacion(idAgrupacion, username, true, null);
 	}
 }

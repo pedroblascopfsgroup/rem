@@ -21,11 +21,13 @@ import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
+import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.Reserva;
 import es.pfsgroup.plugin.rem.model.TanteoActivoExpediente;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
 
@@ -41,7 +43,8 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 	@Autowired
 	private ActivoTramiteApi activoTramiteApi;
 
-	private static int NUMERO_DIAS_VENCIMIENTO = 45;
+	private static final Integer NUMERO_DIAS_VENCIMIENTO = 45;
+	private static final Integer NUMERO_DIAS_VENCIMIENTO_SAREB = 40;
 
 	@Autowired
 	private ExpedienteComercialApi expedienteComercialApi;
@@ -61,6 +64,7 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 		Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());
 		ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
 		Filter filtro;
+		Activo activo = null;
 		
 // Se comenta por errores en el merge c9d4164588f764216e0eeaf20836605357cf6b24
 //		for (TareaExternaValor valor : valores) {
@@ -85,6 +89,7 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 		if (!Checks.esNulo(ofertaAceptada)) {
 			
 			Boolean finalizado = false;
+			activo = ofertaAceptada.getActivoPrincipal();
 			
 			List<TareaExterna> listaTareas = activoTramiteApi
 					.getListaTareaExternaByIdTramite(tramite.getId());
@@ -116,7 +121,11 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 				if(!Checks.esNulo(expediente.getReserva().getFechaFirma()) && !ofertaApi.checkDerechoTanteo(tramite.getTrabajo())){
 					Calendar calendar = Calendar.getInstance();
 					calendar.setTime(expediente.getReserva().getFechaFirma());
-				    calendar.add(Calendar.DAY_OF_YEAR, UpdaterServiceSancionOfertaObtencionContrato.NUMERO_DIAS_VENCIMIENTO);
+					if(!Checks.esNulo(activo) && DDCartera.CODIGO_CARTERA_SAREB.equals(activo.getCartera().getCodigo())) {
+						calendar.add(Calendar.DAY_OF_YEAR, NUMERO_DIAS_VENCIMIENTO_SAREB);
+					}else {
+						calendar.add(Calendar.DAY_OF_YEAR, UpdaterServiceSancionOfertaObtencionContrato.NUMERO_DIAS_VENCIMIENTO);
+					}
 				    expediente.getReserva().setFechaVencimiento(calendar.getTime());
 				}
 				

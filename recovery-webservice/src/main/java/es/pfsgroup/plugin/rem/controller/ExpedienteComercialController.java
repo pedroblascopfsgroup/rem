@@ -72,6 +72,13 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 	protected static final Log logger = LogFactory.getLog(ActivoController.class);
 	private static final String CONSTANTE_REST_CLIENT = "rest.client.gestor.documental.constante";
 	
+	public static final String ERROR_EXPEDIENTE_NOT_EXISTS = "No existe el expediente que esta buscando, pruebe con otro Nº de Expediente";
+	public static final String ERROR_OFERTA_NOT_EXISTS = "No existe la oferta que esta buscando, pruebe con otro Nº de Oferta";
+	public static final String ERROR_CAMPO_NO_NUMERICO = "El campo introducido es de carácter numérico";
+	public static final String ERROR_GENERICO = "La operación no se ha podido realizar";
+	public static final String CAMPO_EXPEDIENTE = "E";
+	public static final String CAMPO_OFERTA = "O";
+	
 	@Autowired
 	private ExpedienteComercialApi expedienteComercialApi;
 	
@@ -189,7 +196,7 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 			
 			DtoAviso aviso  = avisador.getAviso(expediente, usuarioLogado);
 			if (!Checks.esNulo(aviso) && !Checks.esNulo(aviso.getDescripcion())) {
-				avisosFormateados.setDescripcion(avisosFormateados.getDescripcion() + "<div class='div-aviso'>" + aviso.getDescripcion() + "</div>");
+				avisosFormateados.setDescripcion(avisosFormateados.getDescripcion() + "<div class='div-aviso red'>" + aviso.getDescripcion() + "</div>");
 			}
 			
         }
@@ -1507,6 +1514,42 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 			model.put("msg", e.getMessage());
 			model.put("success", false);
 		}	
+		
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView getExpedienteExists(String numBusqueda, String campo, ModelMap model) {
+
+		try {
+			Long idExpediente = expedienteComercialApi.getIdByNumExpOrNumOfr(Long.parseLong(numBusqueda), campo);
+			
+			if(!Checks.esNulo(idExpediente)) {
+				model.put("success", true);
+				model.put("data", idExpediente);
+				if(CAMPO_EXPEDIENTE.equals(campo)) {
+					model.put("numExpediente", numBusqueda);
+				}else {
+					model.put("numExpediente", expedienteComercialApi.getNumExpByNumOfr(Long.parseLong(numBusqueda)));
+				}
+			}else {
+				model.put("success", false);
+				if(CAMPO_EXPEDIENTE.equals(campo)) {
+					model.put("error", ERROR_EXPEDIENTE_NOT_EXISTS);
+				}else {
+					model.put("error", ERROR_OFERTA_NOT_EXISTS);
+				}
+			}
+		} catch (NumberFormatException e) {
+			e.printStackTrace();
+			model.put("success", false);
+			model.put("error", ERROR_CAMPO_NO_NUMERICO);
+		} catch(Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+			model.put("error", ERROR_GENERICO);
+		}
 		
 		return createModelAndViewJson(model);
 	}

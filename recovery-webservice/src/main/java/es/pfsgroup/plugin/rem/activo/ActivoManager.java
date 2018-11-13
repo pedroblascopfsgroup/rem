@@ -1708,7 +1708,11 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", tareaExternaToActivo(tareaExterna).getId());
 		VBusquedaPublicacionActivo publicacionActivo = genericDao.get(VBusquedaPublicacionActivo.class, filtro);
-
+		
+		if(Checks.esNulo(publicacionActivo.getAdmision()) || Checks.esNulo(publicacionActivo.getGestion())){
+			return false;
+		}
+		
 		return (publicacionActivo.getAdmision() && publicacionActivo.getGestion());
 
 	}

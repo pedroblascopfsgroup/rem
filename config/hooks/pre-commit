@@ -161,13 +161,9 @@ function JS_rules() {
 }
 
 function SQL_rules() {
-<<<<<<< HEAD
-	for f in `eval $modified_files | grep  -E .sql$ | grep -v ^reports/`; do
-=======
 	for f in `eval $modified_files | grep  -E .sql$ | grep -v ^reports/ | grep -v migracion`; do
 		check_pitertul_name $f
 		
->>>>>>> 616d71fccb... RECOVERY-13610 Nuevo hook
 		file_content=$(cat $f);
 		check_UTF8 $f
 

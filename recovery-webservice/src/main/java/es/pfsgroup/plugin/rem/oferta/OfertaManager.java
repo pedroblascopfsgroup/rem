@@ -441,8 +441,12 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					}
 				}
 			}
-		} else if (Checks.esNulo(ofertaDto.getIdActivoHaya())){
-			errorsList.put("idActivoHaya", RestApi.REST_MSG_UNKNOWN_KEY);
+		} else if (!Checks.esNulo(ofertaDto.getIdActivoHaya())){
+			Activo activo = genericDao.get(Activo.class,
+					genericDao.createFilter(FilterType.EQUALS, "numActivo", ofertaDto.getIdActivoHaya()));
+			if (Checks.esNulo(activo)) {
+				errorsList.put("idActivoHaya", RestApi.REST_MSG_UNKNOWN_KEY);
+			}
 		}
 		if (!Checks.esNulo(ofertaDto.getIdUsuarioRemAccion())) {
 			Usuario user = genericDao.get(Usuario.class,
@@ -509,15 +513,19 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	}
 
 	@Override
-	public Boolean saveOferta(HashMap<String, String> errorsList, OfertaDto ofertaDto) throws Exception {
+	public HashMap<String, String> saveOferta(OfertaDto ofertaDto) throws Exception {
 		Oferta oferta = null;
+		HashMap<String, String> errorsList = null;
 		ActivoAgrupacion agrup = null;
 
 		// ValidateAlta
 		errorsList = validateOfertaPostRequestData(ofertaDto, null, true);
 		if (errorsList.isEmpty()) {
 			
-			if (!Checks.esNulo(ofertaDto.getIndicadorOfertaLote()) && ofertaDto.getIndicadorOfertaLote()) {
+			if (!Checks.esNulo(ofertaDto.getIndicadorOfertaLote()) 
+					&& ofertaDto.getIndicadorOfertaLote() 
+					&& !Checks.esNulo(ofertaDto.getActivosLote())
+					&& !ofertaDto.getActivosLote().isEmpty()) {
 				DtoAgrupacionesCreateDelete dtoAgrupacion = new DtoAgrupacionesCreateDelete();
 				dtoAgrupacion.setTipoAgrupacion(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL);
 				dtoAgrupacion.setNombre("Agrupación creada desde CRM");
@@ -565,8 +573,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			if (!Checks.esNulo(ofertaDto.getImporte())) {
 				oferta.setImporteOferta(ofertaDto.getImporte());
 			}
-
-			if (!Checks.esNulo(ofertaDto.getActivosLote())) {
+			if (!Checks.esNulo(ofertaDto.getIndicadorOfertaLote()) && ofertaDto.getIndicadorOfertaLote()) {
 				List<ActivoOferta> listaActOfr = new ArrayList<ActivoOferta>();
 				
 				for (Long idActivo : ofertaDto.getActivosLote()) {
@@ -604,13 +611,45 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						}
 					}
 				}
-				
 				// Seteamos la lista de ActivosOferta
 				oferta.setActivosOferta(listaActOfr);
 				// Seteamos la agrupación a la que pertenece la oferta
 				oferta.setAgrupacion(agrup);
-			}
+			} else if (!Checks.esNulo(ofertaDto.getIdActivoHaya())) {
+				ActivoAgrupacion agrupacion = null;
+				List<ActivoOferta> listaActOfr = new ArrayList<ActivoOferta>();
+				List<ActivoAgrupacionActivo> listaAgrups = null;
 
+				Activo activo = genericDao.get(Activo.class,
+						genericDao.createFilter(FilterType.EQUALS, "numActivo", ofertaDto.getIdActivoHaya()));
+				if (!Checks.esNulo(activo)) {
+
+					// Verificamos si el activo pertenece a una agrupación
+					// restringida
+					DtoAgrupacionFilter dtoAgrupActivo = new DtoAgrupacionFilter();
+					dtoAgrupActivo.setActId(activo.getId());
+					dtoAgrupActivo.setTipoAgrupacion(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA);
+					listaAgrups = activoAgrupacionActivoApi.getListActivosAgrupacion(dtoAgrupActivo);
+					if (!Checks.esNulo(listaAgrups) && !listaAgrups.isEmpty()) {
+						ActivoAgrupacionActivo agrAct = listaAgrups.get(0);
+						if (!Checks.esNulo(agrAct) && !Checks.esNulo(agrAct.getAgrupacion())) {
+							// Seteamos la agrupación restringida a la oferta
+							agrupacion = agrAct.getAgrupacion();
+							oferta.setAgrupacion(agrupacion);
+						}
+					}
+
+					if (!Checks.esNulo(agrupacion)) {
+						// Oferta sobre 1 lote restringido de n activos
+						listaActOfr = buildListaActivoOferta(null, agrupacion, oferta);
+					} else {
+						// Oferta sobre 1 único activo
+						listaActOfr = buildListaActivoOferta(activo, null, oferta);
+					}
+				}
+				// Seteamos la lista de ActivosOferta
+				oferta.setActivosOferta(listaActOfr);
+			}
 			if (!Checks.esNulo(ofertaDto.getIdUsuarioRemAccion())) {
 				Usuario user = genericDao.get(Usuario.class,
 						genericDao.createFilter(FilterType.EQUALS, "id", ofertaDto.getIdUsuarioRemAccion()));
@@ -682,11 +721,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				congelarExpedientesPorOfertaExpress(oferta);
 			
 			notificationOfertaManager.sendNotification(oferta);
-			
-			return true;
-		} else {
-			return false;
 		}
+		return errorsList;
 	}
 	
 	@Transactional(readOnly = false)
@@ -742,8 +778,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 	@Override
 	@Transactional(readOnly = false)
-	public Boolean updateOferta(HashMap<String, String> errorsList, Oferta oferta, OfertaDto ofertaDto, Object jsonFields)
+	public HashMap<String, String> updateOferta(Oferta oferta, OfertaDto ofertaDto, Object jsonFields)
 			throws Exception {
+		HashMap<String, String> errorsList = null;
 		// ValidateUpdate
 		errorsList = validateOfertaPostRequestData(ofertaDto, jsonFields, false);
 		if (errorsList.isEmpty()) {
@@ -793,11 +830,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 			oferta = updateEstadoOferta(oferta.getId(), ofertaDto.getFechaAccion());
 			this.updateStateDispComercialActivosByOferta(oferta);
-			
-			return true;
-		} else {
-			return false;
 		}
+		return errorsList;
 	}
 
 	@Transactional(readOnly = false)
@@ -1493,7 +1527,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		Oferta oferta = null;
 		HashMap<String, String> errorsList = null;
 		ArrayList<Map<String, Object>> listaRespuesta = new ArrayList<Map<String, Object>>();
-		Boolean success;
 		
 		for (int i = 0; i < listaOfertaDto.size(); i++) {
 
@@ -1508,13 +1541,14 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			}
 
 			if (Checks.esNulo(oferta)) {
-				success = this.saveOferta(errorsList, ofertaDto);
+				errorsList = this.saveOferta(ofertaDto);
 
 			} else {
-				success = this.updateOferta(errorsList, oferta, ofertaDto, jsonFields.getJSONArray("data").get(i));
+				errorsList = this.updateOferta(oferta, ofertaDto, jsonFields.getJSONArray("data").get(i));
 			}
 
-			if (success) {
+			if ((!Checks.esNulo(errorsList) && errorsList.isEmpty()) 
+					|| (!Checks.esNulo(errorsList) && !Checks.esNulo(errorsList.get("codigoAgrupacionComercialRem")))) {
 				if (oferta == null || oferta.getNumOferta() == null) {
 					oferta = ofertaDao.getOfertaByIdwebcom(ofertaDto.getIdOfertaWebcom());
 				}
@@ -1524,7 +1558,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				} else {
 					map.put("idOfertaRem", null);
 				}
-				if(!Checks.esNulo(errorsList) && !errorsList.isEmpty() && !Checks.esNulo(errorsList.get("codigoAgrupacionComercialRem"))) {
+				if(!Checks.esNulo(errorsList.get("codigoAgrupacionComercialRem"))) {
 					map.put("codigoAgrupacionComercialRem", errorsList.get("codigoAgrupacionComercialRem"));
 				}
 				map.put("success", true);

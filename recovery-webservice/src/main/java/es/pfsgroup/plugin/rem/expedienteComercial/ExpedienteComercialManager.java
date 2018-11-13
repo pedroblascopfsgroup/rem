@@ -7487,5 +7487,22 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 		return expedienteComercial;
 	}
+	
+	@Override
+	public boolean checkContratoSubido(TareaExterna tareaExterna) {
+		
+		ExpedienteComercial expedienteComercial = tareaExternaToExpedienteComercial(tareaExterna);
+		try {
+			List<DtoAdjunto> adjuntosExpediente = gestorDocumentalAdapterApi.getAdjuntosExpedienteComercial(expedienteComercial);
+			for (DtoAdjunto adjunto : adjuntosExpediente) {
+				if(DDSubtipoDocumentoExpediente.MATRICULA_CONTRATO.equals(adjunto.getMatricula())) {
+					return true;
+				}
+			}
+		} catch (GestorDocumentalException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
 
 }

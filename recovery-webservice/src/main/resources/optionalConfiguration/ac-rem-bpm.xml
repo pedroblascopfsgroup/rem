@@ -514,6 +514,10 @@
 				def trabajoManager = ctx.getBean("trabajoManager");
             	return trabajoManager.activoEnTramite(idActivo);
 			}
+			def checkContratoSubido = {
+				def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
+            	return expedienteComercialManager.checkContratoSubido(tareaExterna);
+			}
   			 ]]></value>
   		</list>
   	</property>

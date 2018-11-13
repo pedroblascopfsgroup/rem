@@ -1098,6 +1098,14 @@ public interface ExpedienteComercialApi {
 
 	public String getCodigoCarteraExpediente(String idExpediente);
 
-	DtoPage getActivosExpedienteVista(Long idExpediente);	
+	DtoPage getActivosExpedienteVista(Long idExpediente);
+	
+	/**
+	 * Metodo que comprueba si el documento Contrato está subido al expediente 
+	 * @param tareaExterna
+	 * @return
+	 */
+	public boolean checkContratoSubido(TareaExterna tareaExterna);
+
 	
 }

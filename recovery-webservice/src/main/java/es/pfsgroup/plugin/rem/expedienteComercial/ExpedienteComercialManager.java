@@ -794,7 +794,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 		expedienteComercial.setOferta(oferta);
 		
-		if(!Checks.esNulo(dto.getImporteOferta())){
+		Activo activo = oferta.getActivoPrincipal();
+		
+		if(!Checks.esNulo(activo) && !Checks.esNulo(activo.getCartera()) && !Checks.esNulo(dto.getImporteOferta()) && DDCartera.CODIGO_CARTERA_LIBERBANK.equals(activo.getCartera().getCodigo())){
 			expedienteComercial.setComiteSancion(ofertaApi.calculoComiteLiberbank(oferta));
 		}
 		

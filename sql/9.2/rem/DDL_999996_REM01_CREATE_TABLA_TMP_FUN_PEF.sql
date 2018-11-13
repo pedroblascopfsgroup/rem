@@ -1,7 +1,7 @@
 --/*
 --######################################### 
---## AUTOR=Ramon Llinares
---## FECHA_CREACION=20181009
+--## AUTOR=Vicente Martinez Cifre
+--## FECHA_CREACION=20181106
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-4476
@@ -107,6 +107,7 @@ BEGIN
 		, VALORACIONES VARCHAR2(1 CHAR) 
 		, GESPROV VARCHAR2(1 CHAR) 
 		, PERFGCCLIBERBANK VARCHAR2(1 CHAR) 
+		, PMSVVC VARCHAR2(1 CHAR)
       )
       LOGGING 
       NOCOMPRESS 

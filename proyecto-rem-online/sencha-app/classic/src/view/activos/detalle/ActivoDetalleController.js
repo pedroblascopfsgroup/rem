@@ -7,7 +7,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     
     control: {
     	
-         'documentosactivo gridBase': {
+         'documentosactivosimple gridBase': {
              abrirFormulario: 'abrirFormularioAdjuntarDocumentos',
              onClickRemove: 'borrarDocumentoAdjunto',
              download: 'downloadDocumentoAdjunto',
@@ -15,6 +15,15 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
              	grid.getStore().load();
              },
              afterdelete: function(grid) {
+             	grid.getStore().load();
+             }
+         },
+         
+         'documentosactivopromocion gridBase': {
+             abrirFormulario: 'abrirFormularioAdjuntarDocPromo',
+             //onClickRemove: 'borrarDocumentoAdjunto',
+             download: 'downloadDocumentoAdjuntoPromocion',
+             afterupload: function(grid) {
              	grid.getStore().load();
              }
          },
@@ -27,20 +36,21 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
          	actualizarCoordenadas: 'actualizarCoordenadas'
          },
          
-         'datoscomunidadactivo gridBase': {
-             abrirFormulario: 'abrirFormularioAnyadirEntidadActivo',
-             afterupload: function(grid) {
-             	grid.getStore().load();
-             },
-             afterdelete: function(grid) {
-             	grid.getStore().load();
-             }
-         },
-         
-         'cargasactivo gridBase': {         	abrirFormulario: 'abrirFormularioAnyadirCarga',
+         'cargasactivo gridBase': {         	
+        	abrirFormulario: 'abrirFormularioAnyadirCarga',
          	onClickRemove: 'onClickRemoveCarga',
          	onClickPropagation :  'onClickPropagation' 
          }
+    },
+	
+    'datoscomunidadactivo gridBase': {
+        abrirFormulario: 'abrirFormularioAnyadirEntidadActivo',
+        afterupload: function(grid) {
+        	grid.getStore().load();
+        },
+        afterdelete: function(grid) {
+        	grid.getStore().load();
+        }
     },
     
 	cargarTabData: function (form) {
@@ -981,6 +991,14 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		
 	},
 	
+	abrirFormularioAdjuntarDocPromo: function(grid) {
+		
+		var me = this,
+		idActivo = me.getViewModel().get("activo.id");
+    	Ext.create("HreRem.view.common.adjuntos.AdjuntarDocumentoActivoProyecto", {entidad: 'promocion', idEntidad: idActivo, parent: grid}).show();
+		
+	},
+	
 	borrarDocumentoAdjunto: function(grid, record) {
 		var me = this,
 		idActivo = me.getViewModel().get("activo.id");
@@ -1007,6 +1025,19 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		config = {};
 		
 		config.url=$AC.getWebPath()+"activo/bajarAdjuntoActivo."+$AC.getUrlPattern();
+		config.params = {};
+		config.params.id=record.get('id');
+		config.params.idActivo=record.get("idActivo");
+		config.params.nombreDocumento=record.get("nombre");
+		me.fireEvent("downloadFile", config);
+	},
+	
+	downloadDocumentoAdjuntoPromocion: function(grid, record) {
+		
+		var me = this,
+		config = {};
+		
+		config.url=$AC.getWebPath()+"promocion/bajarAdjuntoActivoPromocion."+$AC.getUrlPattern();
 		config.params = {};
 		config.params.id=record.get('id');
 		config.params.idActivo=record.get("idActivo");

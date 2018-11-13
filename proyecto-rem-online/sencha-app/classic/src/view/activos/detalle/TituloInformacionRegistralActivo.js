@@ -527,7 +527,8 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 			                	xtype: 'datefieldbase',
 			                	reference: 'fechaRealizacionPosesion',
 			                	fieldLabel: HreRem.i18n('fieldlabel.fecha.realizacion.posesion'),			                	
-								bind: '{datosRegistrales.fechaRealizacionPosesion}'
+								bind: '{datosRegistrales.fechaRealizacionPosesion}',
+								disabled: true
 			                },
 			                {
 								xtype: 'comboboxfieldbase',

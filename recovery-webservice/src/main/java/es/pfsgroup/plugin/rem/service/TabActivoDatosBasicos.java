@@ -323,11 +323,28 @@ public class TabActivoDatosBasicos implements TabActivoService {
 					break;
 				}
 			}
+			
+			Boolean pertenceAgrupacionProyecto = false;
+			for(ActivoAgrupacionActivo agrupaciones: activo.getAgrupaciones()){
+				if(Checks.esNulo(agrupaciones.getAgrupacion().getFechaBaja()) && !Checks.esNulo(agrupaciones.getAgrupacion().getTipoAgrupacion()) &&
+						DDTipoAgrupacion.AGRUPACION_PROYECTO.equals(agrupaciones.getAgrupacion().getTipoAgrupacion().getCodigo())) {
+					pertenceAgrupacionProyecto = true;
+					break;
+				}
+			}
 
 			BeanUtils.copyProperty(activoDto, "pertenceAgrupacionRestringida", pertenceAgrupacionRestringida);
 			BeanUtils.copyProperty(activoDto, "pertenceAgrupacionComercial", pertenceAgrupacionComercial);
 			BeanUtils.copyProperty(activoDto, "pertenceAgrupacionAsistida", pertenceAgrupacionAsistida);
 			BeanUtils.copyProperty(activoDto, "pertenceAgrupacionObraNueva", pertenceAgrupacionObraNueva);
+			BeanUtils.copyProperty(activoDto, "pertenceAgrupacionProyecto", pertenceAgrupacionProyecto);
+		}
+		
+		for(ActivoAgrupacionActivo agrupaciones: activo.getAgrupaciones()){
+			if(Checks.esNulo(agrupaciones.getAgrupacion().getFechaBaja()) && !Checks.esNulo(agrupaciones.getAgrupacion().getId())) {
+				BeanUtils.copyProperty(activoDto,"idAgrupacion", agrupaciones.getAgrupacion().getId());
+				break;
+			}
 		}
 
 		// Obtener si el ultimo estado del informe comercial es ACEPTADO.

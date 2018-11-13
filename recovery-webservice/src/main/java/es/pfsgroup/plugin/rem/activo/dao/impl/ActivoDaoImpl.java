@@ -9,16 +9,16 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import javax.annotation.Resource;
-
+import es.pfsgroup.commons.utils.hibernate.HibernateUtils;
 import org.apache.commons.lang.BooleanUtils;
+import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import es.capgemini.devon.dto.WebDto;
-import es.capgemini.devon.hibernate.pagination.PaginationManager;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.dao.AbstractEntityDao;
 import es.capgemini.pfs.users.domain.Usuario;
@@ -63,9 +63,6 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 	
 	@Autowired
 	private GenericABMDao genericDao;
-	
-	@Resource
-	private PaginationManager paginationManager;
 
     @Override
 	public Page getListActivos(DtoActivoFilter dto, Usuario usuLogado) {
@@ -799,10 +796,14 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 
 	@Override
 	public Activo getActivoByNumActivo(Long activoVinculado) {
-		HQLBuilder hb = new HQLBuilder(" from Activo act");
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.numActivo", activoVinculado);
-		
-		return HibernateQueryUtils.uniqueResult(this, hb);
+    	Session session = getSession();
+		Criteria criteria = session.createCriteria(Activo.class);
+		criteria.add(Restrictions.eq("numActivo", activoVinculado));
+
+		Activo activo =  HibernateUtils.castObject(Activo.class, criteria.uniqueResult());
+		session.disconnect();
+
+		return activo;
 	}
 
 	@Override

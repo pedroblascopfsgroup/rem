@@ -513,6 +513,10 @@ Ext.define('HreRem.model.Activo', {
 				type: 'boolean'
 			},
 			{
+				name: 'enTramite',
+				type: 'boolean'
+			},
+			{
 				name: 'tipoComercializacionCodigo'
 			},
 			{
@@ -586,6 +590,10 @@ Ext.define('HreRem.model.Activo', {
 				type: 'boolean'
 			},
 			{
+				name: 'pertenceAgrupacionProyecto',
+				type: 'boolean'
+			},
+			{
 				name: 'bloqueoTipoComercializacionAutomatico',
 				type: 'boolean'
 			},
@@ -627,13 +635,17 @@ Ext.define('HreRem.model.Activo', {
 				name: 'activoBNK'
 			},
 			{
+				name: 'idAgrupacion'
+			},
+			{
 				name: 'tienePosibleInformeMediador',
 				type: 'boolean'
 			},
 			{
     			name: 'isVisibleCodPrinex',
     			calculate: function(data) { 
-    				return data.entidadPropietariaCodigo == CONST.CARTERA['CAJAMAR'] || data.entidadPropietariaCodigo == CONST.CARTERA['LIBERBANK'];
+    				return (data.entidadPropietariaCodigo == CONST.CARTERA['CAJAMAR'] || data.entidadPropietariaCodigo == CONST.CARTERA['LIBERBANK']) 
+    					&& data.codigoPromocionPrinex != '';
     			},
     			depends: 'entidadPropietariaCodigo'
     		},

@@ -99,7 +99,7 @@ public class ActivoCatastro implements Serializable, Auditable {
 	
 
 	@Column(name = "CAT_RESULTADO")
-	private String resultado;
+	private String resultadoSiNO;
 	
 	@Column(name = "CAT_FECHA_SOLICITUD_901")
 	private Date fechaSolicitud901;
@@ -270,11 +270,11 @@ public class ActivoCatastro implements Serializable, Auditable {
 	}
 
 	public String getResultado() {
-		return resultado;
+		return resultadoSiNO;
 	}
 
-	public void setResultado(String resultado) {
-		this.resultado = resultado;
+	public void setResultado(String resultadoSiNO) {
+		this.resultadoSiNO = resultadoSiNO;
 	}
 
 	public Date getFechaSolicitud901() {

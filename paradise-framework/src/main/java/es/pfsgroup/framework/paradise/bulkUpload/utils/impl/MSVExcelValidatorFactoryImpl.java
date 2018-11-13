@@ -90,6 +90,11 @@ public class MSVExcelValidatorFactoryImpl {
 	@Autowired
 	private MSVSituacionComunidadesPropietariosExcelValidator situacionComunidadesPropietarios;
 	
+	
+	@Autowired
+	private MSVSituacionImpuestosExcelValidator situacionImpuestos;
+	
+	
 	public MSVExcelValidator getForTipoValidador(String codTipoOperacion) {
 		
 		if (MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_AGRUPATION_RESTRICTED.equals(codTipoOperacion)) {
@@ -161,6 +166,9 @@ public class MSVExcelValidatorFactoryImpl {
 			}
 			else if (MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_SITUACION_COMUNIDADEDES_PROPIETARIOS.equals(codTipoOperacion)) {
 				return situacionComunidadesPropietarios;
+			}
+			else if (MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_SITUACION_IMPUESTOS.equals(codTipoOperacion)) {
+				return situacionImpuestos;
 			}
 		return null;
 	}

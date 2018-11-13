@@ -19,6 +19,7 @@ import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVHojaExcel;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.rem.adapter.AgrupacionAdapter;
 import es.pfsgroup.plugin.rem.adapter.ComunidadesPropietariosAdapter;
+import es.pfsgroup.plugin.rem.adapter.ImpuestosAdapter;
 import es.pfsgroup.framework.paradise.bulkUpload.model.ResultadoProcesarFila;
 
 @Component
@@ -26,6 +27,9 @@ public class MSVActualizadorSituacionImpuestos extends AbstractMSVActualizador i
 	
 	@Autowired
 	ComunidadesPropietariosAdapter comunidadesPropietariosAdapter;
+	
+	@Autowired
+	ImpuestosAdapter impuestosAdapter;
 	
 	@Autowired
 	ProcessAdapter processAdapter;
@@ -47,7 +51,7 @@ public class MSVActualizadorSituacionImpuestos extends AbstractMSVActualizador i
 	public ResultadoProcesarFila procesaFila(MSVHojaExcel exc, int fila, Long prmToken) throws IOException, ParseException, JsonViewerException, SQLException {
 		
 
-		comunidadesPropietariosAdapter.updateComunidad(new Long(exc.dameCelda(fila, 1)), new String(exc.dameCelda(fila, 2)), new String(exc.dameCelda(fila, 3)),new String(exc.dameCelda(fila, 4)));	
+		//comunidadesPropietariosAdapter.updateComunidad(new Long(exc.dameCelda(fila, 1)), new String(exc.dameCelda(fila, 2)), new String(exc.dameCelda(fila, 3)),new String(exc.dameCelda(fila, 4)));	
 		return new ResultadoProcesarFila();
 	}
 	
@@ -64,8 +68,8 @@ public class MSVActualizadorSituacionImpuestos extends AbstractMSVActualizador i
 		MSVHojaExcel exc = proxyFactory.proxy(ExcelManagerApi.class).getHojaExcel(file);		
 		
 		for (int fila = 1; fila < exc.getNumeroFilas(); fila++) {
-			
-			comunidadesPropietariosAdapter.updateComunidad(new Long(exc.dameCelda(fila, 0)), new String(exc.dameCelda(fila, 1)), new String(exc.dameCelda(fila, 2)),new String(exc.dameCelda(fila, 3)));	
+			impuestosAdapter.updateImpuesto(new Long(exc.dameCelda(fila, 0)),  new String(exc.dameCelda(fila, 1)), new String(exc.dameCelda(fila, 2)),new String(exc.dameCelda(fila, 3)));
+			//comunidadesPropietariosAdapter.updateComunidad(new Long(exc.dameCelda(fila, 0)), new String(exc.dameCelda(fila, 1)), new String(exc.dameCelda(fila, 2)),new String(exc.dameCelda(fila, 3)));	
 	
 		}
 

@@ -230,6 +230,21 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 			return true;
 	}
 	
+	@Override
+	public Boolean existeImpuesto(String idImpuesto){
+		if(Checks.esNulo(idImpuesto) || !StringUtils.isAlphanumeric(idImpuesto))
+			return false;
+		
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "		 FROM DD_TIT_TIPOS_IMPUESTO WHERE" 
+				+ "		 DD_TIT_CODIGO ='0"+idImpuesto+"' "
+				+ "		 	AND BORRADO = 0");
+		if("0".equals(resultado))
+			return false;
+		else
+			return true;
+	}
+	
 	
 	@Override
 	public Boolean existeSituacion(String idSituacion){
@@ -248,25 +263,6 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	
 	
-	
-	public Boolean updateComunidadesPropietarios(Long long1, String integer, String integer2, Date date) {
-		if(Checks.esNulo(long1) || !StringUtils.isAlphanumeric(integer))
-			return false;
-		
-		String resultado = rawDao.getExecuteSQL("SELECT CPR_ID "
-				+ "		 FROM ACT_CPR_COM_PROPIETARIOS WHERE" 
-				+ "		 CPR_COD_COM_PROP_UVEM ='"+integer+"' "
-				+ "		 	AND BORRADO = 0");
-		String resultado2 = rawDao.getExecuteSQL("UPDATE  "
-				+ "		  ACT_CPR_COM_PROPIETARIOS SET DD_SACT_ID='"+integer2+"' WHERE" 
-				+ "		 CPR_COD_COM_PROP_UVEM ='"+integer+"' "
-				+ "		 	AND BORRADO = 0");
-		
-		if("0".equals(resultado))
-			return false;
-		else
-			return true;
-	}
 	
 	
 	

@@ -236,13 +236,13 @@ public class ImpuestosAdapter
 
 
 	@Transactional(readOnly = false)
-	public void updateImpuesto(Long idActivo, String tipoImpuesto,  String fechaSolicitud901, String resultado,String observaciones)
+	public void updateImpuesto(Long idActivo,String fechaSolicitud901, String resultado,String observaciones)
 			throws JsonViewerException {
 
 		Filter filter = genericDao.createFilter(FilterType.EQUALS, "numActivo", idActivo);
 		Activo activo = genericDao.get(Activo.class, filter);
 		GastoDetalleEconomico  gastoDeTalleEconomico = new GastoDetalleEconomico(); 
-		ActivoCatastro actCat =  new ActivoCatastro();
+		List<ActivoCatastro>  lista =  new ArrayList<ActivoCatastro>();
 		
 		
 
@@ -254,18 +254,25 @@ public class ImpuestosAdapter
 				throw new JsonViewerException("El activo no existe");
 			}
 			
-			actCat = genericDao.get(ActivoCatastro.class, genericDao.createFilter(FilterType.EQUALS,"activo",activo));
+			lista = genericDao.getList(ActivoCatastro.class, genericDao.createFilter(FilterType.EQUALS,"activo",activo));
 			
 			
-			if (!Checks.esNulo(actCat)) {
+			if (!Checks.estaVacio(lista)) {
 			    Date date1=new SimpleDateFormat("dd/MM/yyyy").parse(fechaSolicitud901);  
+			    
+			    for (ActivoCatastro actCat : lista) {
+					actCat.setFechaSolicitud901(date1);
+					actCat.setObservaciones(observaciones);
+					actCat.setResultado(resultado);
+					genericDao.save(ActivoCatastro.class, actCat);
 
-				actCat.setFechaSolicitud901(date1);
-				actCat.setObservaciones(observaciones);
-				actCat.setResultado(resultado);
+			    	
+			    	
+			    }
+
+		
 			}
 			
-			genericDao.save(ActivoCatastro.class, actCat);
 			
 			/*
 			DDSituacionActivo ddSituacionActivo = genericDao.get(DDSituacionActivo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", situacion));
@@ -282,17 +289,7 @@ public class ImpuestosAdapter
 			}
 			*/
 			
-			DDTiposImpuesto ddImpuesto = genericDao.get(DDTiposImpuesto.class, genericDao.createFilter(FilterType.EQUALS, "codigo", tipoImpuesto));
 			
-			if (!Checks.esNulo(ddImpuesto)) {
-				gastoDeTalleEconomico.setImpuestoIndirectoTipo(ddImpuesto);
-				
-			}
-				
-			genericDao.save(GastoDetalleEconomico.class, gastoDeTalleEconomico);
-			
-			
-
 		
 			
 		

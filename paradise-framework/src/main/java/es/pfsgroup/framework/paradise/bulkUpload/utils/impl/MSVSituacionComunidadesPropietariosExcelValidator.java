@@ -121,14 +121,14 @@ public class MSVSituacionComunidadesPropietariosExcelValidator extends MSVExcelV
 
 
 			mapaErrores.put(ACTIVE_EXISTS , noExisteActivo(exc));
-			mapaValores.put(ACTIVE_EXISTS , noExisteActivo3(exc));
+			mapaValores.put(ACTIVE_EXISTS , dameValorActivo(exc));
 
 			mapaErrores.put(PROPIETARIOS_EXISTS, isComunidadPropietariosExists(exc));
-			mapaValores.put(PROPIETARIOS_EXISTS, isComunidadPropietariosExists2(exc));
+			mapaValores.put(PROPIETARIOS_EXISTS, dameValorPropietarios(exc));
 
 			mapaErrores.put(FECHA_EMVIO, isColumnNotDateByRows(exc, COL_NUM.FECHA_ENVIO_CARTA));
 			mapaErrores.put(SITUACION_EXISTS, isSituacionExists(exc));
-			mapaValores.put(SITUACION_EXISTS, isSituacionExists2(exc));
+			mapaValores.put(SITUACION_EXISTS, dameValorSituacion(exc));
 			
 				if (!mapaErrores.get(ACTIVE_EXISTS).isEmpty() || !mapaErrores.get(PROPIETARIOS_EXISTS).isEmpty()
 						|| !mapaErrores.get(FECHA_EMVIO).isEmpty()
@@ -209,9 +209,7 @@ public class MSVSituacionComunidadesPropietariosExcelValidator extends MSVExcelV
 			for (i = COL_NUM.DATOS_PRIMERA_FILA; i < numFilasHoja; i++) {
 				if (!particularValidator.existeComunidadPropietarios(exc.dameCelda(i, COL_NUM.ID_COMUNIDAD_PROPIETARIOS)))
 					listaFilas.add(i);
-				else
-					listaFilas.add(null);
-			
+						
 			}
 		} catch (IllegalArgumentException e) {
 			logger.error(e.getMessage(),e);
@@ -227,7 +225,7 @@ public class MSVSituacionComunidadesPropietariosExcelValidator extends MSVExcelV
 		return listaFilas;
 	}
 	
-	private List<String> isComunidadPropietariosExists2(MSVHojaExcel exc) {
+	private List<String> dameValorPropietarios(MSVHojaExcel exc) {
 		List<String> listaFilas = new ArrayList<String>();
 
 		int i = 0;
@@ -235,9 +233,7 @@ public class MSVSituacionComunidadesPropietariosExcelValidator extends MSVExcelV
 			for (i = COL_NUM.DATOS_PRIMERA_FILA; i < numFilasHoja; i++) {
 				if (!particularValidator.existeComunidadPropietarios(exc.dameCelda(i, COL_NUM.ID_COMUNIDAD_PROPIETARIOS)))
 					listaFilas.add(exc.dameCelda(i, COL_NUM.ID_COMUNIDAD_PROPIETARIOS));
-				else
-					listaFilas.add("0");
-					
+		
 			
 			}
 		} catch (IllegalArgumentException e) {
@@ -263,11 +259,7 @@ public class MSVSituacionComunidadesPropietariosExcelValidator extends MSVExcelV
 			for (i = COL_NUM.DATOS_PRIMERA_FILA; i < numFilasHoja; i++) {
 				if (!particularValidator.existeSituacion(exc.dameCelda(i, COL_NUM.SITUACION)))
 					listaFilas.add(i);
-				else 
-					listaFilas.add(null);
-
 					
-			
 			}
 		} catch (IllegalArgumentException e) {
 			logger.error(e.getMessage(),e);
@@ -283,7 +275,7 @@ public class MSVSituacionComunidadesPropietariosExcelValidator extends MSVExcelV
 		return listaFilas;
 	}
 	
-	private List<String> isSituacionExists2(MSVHojaExcel exc) {
+	private List<String> dameValorSituacion(MSVHojaExcel exc) {
 		List<String> listaFilas = new ArrayList<String>();
 
 		int i = 0;
@@ -291,8 +283,6 @@ public class MSVSituacionComunidadesPropietariosExcelValidator extends MSVExcelV
 			for (i = COL_NUM.DATOS_PRIMERA_FILA; i < numFilasHoja; i++) {
 				if (!particularValidator.existeSituacion(exc.dameCelda(i, COL_NUM.SITUACION)))
 					listaFilas.add(exc.dameCelda(i, COL_NUM.SITUACION));
-				else
-					listaFilas.add("0");
 			
 			}
 		} catch (IllegalArgumentException e) {
@@ -313,29 +303,7 @@ public class MSVSituacionComunidadesPropietariosExcelValidator extends MSVExcelV
 	
 	
 	
-	private List<String> listComunity(MSVHojaExcel exc) {
-		List<String> listaFilas = new ArrayList<String>();
-
-		String i = "0";
-		int i2=0;
-		try {
-			for (i2 = COL_NUM.DATOS_PRIMERA_FILA; i2 < numFilasHoja; i2++) {
-				if (!particularValidator.existeComunidadPropietarios(exc.dameCelda(i2, COL_NUM.ID_COMUNIDAD_PROPIETARIOS)))
-					listaFilas.add(exc.dameCelda(i2, COL_NUM.ID_COMUNIDAD_PROPIETARIOS));
-			}
-		} catch (IllegalArgumentException e) {
-			logger.error(e.getMessage(),e);
-			e.printStackTrace();
-		} catch (IOException e) {
-			logger.error(e.getMessage(),e);
-			e.printStackTrace();
-		} catch (ParseException e) {
-			logger.error(e.getMessage(),e);
-			listaFilas.add(i);
-		}
-
-		return listaFilas;
-	}
+	
 	
 	
 	private List<Integer> isActiveExistsRows(MSVHojaExcel exc) {
@@ -361,9 +329,6 @@ public class MSVSituacionComunidadesPropietariosExcelValidator extends MSVExcelV
 		return listaFilas;
 	}
 	
-	
-	
-	
 	private List<Integer> noExisteActivo(MSVHojaExcel exc) {
 		List<Integer> listaFilas = new ArrayList<Integer>();
 
@@ -372,9 +337,6 @@ public class MSVSituacionComunidadesPropietariosExcelValidator extends MSVExcelV
 			for (i = COL_NUM.DATOS_PRIMERA_FILA; i < numFilasHoja; i++) {
 				if (!particularValidator.existeActivo(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA)))
 					listaFilas.add(i);
-				else
-					listaFilas.add(null);
-				
 			}
 		} catch (IllegalArgumentException e) {
 			logger.error(e.getMessage(),e);
@@ -386,14 +348,12 @@ public class MSVSituacionComunidadesPropietariosExcelValidator extends MSVExcelV
 			logger.error(e.getMessage(),e);
 			listaFilas.add(i);
 		}
-		
-		
-	
-		
 
 		return listaFilas;
 	}
-	private List<String> noExisteActivo3(MSVHojaExcel exc) {
+	
+	
+	private List<String> dameValorActivo(MSVHojaExcel exc) {
 		List<String> listaFilas = new ArrayList<String>();
 
 		int i = 0;
@@ -401,8 +361,7 @@ public class MSVSituacionComunidadesPropietariosExcelValidator extends MSVExcelV
 			for (i = COL_NUM.DATOS_PRIMERA_FILA; i < numFilasHoja; i++) {
 				if (!particularValidator.existeActivo(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA)))
 					listaFilas.add(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA));
-				else
-					listaFilas.add("0");
+			
 					
 				
 			}
@@ -423,77 +382,6 @@ public class MSVSituacionComunidadesPropietariosExcelValidator extends MSVExcelV
 
 		return listaFilas;
 	}
-	
-	private List<Integer> noExisteActivo2(MSVHojaExcel exc) {
-		List<Integer> listaFilas = new ArrayList<Integer>();
-		List<Integer> listaFilas2 = new ArrayList<Integer>();
-
-
-		int i = 0;
-		try {
-			for (i = COL_NUM.DATOS_PRIMERA_FILA; i < numFilasHoja; i++) {
-				if (!particularValidator.existeActivo(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA)))
-					listaFilas.add(i);
-			}
-		} catch (IllegalArgumentException e) {
-			logger.error(e.getMessage(),e);
-			e.printStackTrace();
-		} catch (IOException e) {
-			logger.error(e.getMessage(),e);
-			e.printStackTrace();
-		} catch (ParseException e) {
-			logger.error(e.getMessage(),e);
-			listaFilas.add(i);
-		}
-		
-		
-		for (int j =0; j< listaFilas.size();j++) {
-			try {
-				listaFilas.get(j).equals(exc.dameCelda(j, COL_NUM.NUM_ACTIVO_HAYA));
-			} catch (IllegalArgumentException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (ParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		
-		listaFilas2 = listaFilas;
-		
-		
-
-		return listaFilas2;
-	}
-	
-
-	private List<String> listActivs(MSVHojaExcel exc) {
-		List<String> listaFilas = new ArrayList<String>();
-
-		String i = "0";
-		int i2=0;
-		try {
-			for (i2 = COL_NUM.DATOS_PRIMERA_FILA; i2 < numFilasHoja; i2++) {
-				if (!particularValidator.existeActivo(exc.dameCelda(i2, COL_NUM.ID_COMUNIDAD_PROPIETARIOS)))
-					listaFilas.add(exc.dameCelda(i2, COL_NUM.NUM_ACTIVO_HAYA));
-			}
-		} catch (IllegalArgumentException e) {
-			logger.error(e.getMessage(),e);
-			e.printStackTrace();
-		} catch (IOException e) {
-			logger.error(e.getMessage(),e);
-			e.printStackTrace();
-		} catch (ParseException e) {
-			logger.error(e.getMessage(),e);
-			listaFilas.add(i);
-		}
-
-		return listaFilas;
-	}
-
 	/**
 	 * Método genérico para comprobar si el valor de una columna está informado
 	 * o no.

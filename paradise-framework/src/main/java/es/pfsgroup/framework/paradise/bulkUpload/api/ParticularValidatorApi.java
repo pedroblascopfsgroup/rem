@@ -342,7 +342,8 @@ public interface ParticularValidatorApi {
 
 	public Boolean existeComunidadPropietarios(String idPropietarios);
 
-	public Boolean updateComunidadesPropietarios(Long long1, String string, String string2, Date date);
 
 	public Boolean existeSituacion(String idSituacion);
+
+	Boolean existeImpuesto(String idImpuesto);
 }

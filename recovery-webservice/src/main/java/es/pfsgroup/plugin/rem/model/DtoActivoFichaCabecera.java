@@ -66,6 +66,7 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private String tipoUsoDestinoDescripcion;
 	private String codPromocionFinal;
 	private String catContableDescripcion;
+	private String motivoActivo;
 	
 	// Comunidad de propietarios
 	private String tipoCuotaCodigo;
@@ -1545,6 +1546,14 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 
 	public void setIsLogUsuGestComerSupComerSupAdmin(Boolean isLogUsuGestComerSupComerSupAdmin) {
 		this.isLogUsuGestComerSupComerSupAdmin = isLogUsuGestComerSupComerSupAdmin;
+	}
+
+	public String getMotivoActivo() {
+		return motivoActivo;
+	}
+
+	public void setMotivoActivo(String motivoActivo) {
+		this.motivoActivo = motivoActivo;
 	}
 
 }

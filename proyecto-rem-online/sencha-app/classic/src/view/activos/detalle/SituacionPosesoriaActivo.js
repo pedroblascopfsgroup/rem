@@ -181,7 +181,7 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 			            			var me = this;
 
 			            			if(value == CONST.COMBO_OCUPACION['SI']) {
-			            				me.up('formBase').down('[reference=comboSituacionPosesoriaConTitulo]').setValue(CONST.COMBO_CON_TITULO['SI']);
+			            				me.up('formBase').down('[reference=comboSituacionPosesoriaConTitulo]').setValue(CONST.COMBO_CON_TITULO['NO']);
 			            				me.up('formBase').down('[reference=comboSituacionPosesoriaConTitulo]').setDisabled(true);
 			            			} else if (value == CONST.COMBO_OCUPACION['NO']){
 			            				me.up('formBase').down('[reference=comboSituacionPosesoriaConTitulo]').setDisabled(true); 

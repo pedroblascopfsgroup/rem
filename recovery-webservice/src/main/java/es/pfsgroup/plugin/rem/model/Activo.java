@@ -418,6 +418,9 @@ public class Activo implements Serializable, Auditable {
 
     @Column(name = "ACT_PUJA")
     private Boolean estaEnPuja;
+    
+    @Column(name = "ACT_MOTIVO")
+    private String motivoActivo;
 	
 	
     // Getters del activo --------------------------------------------
@@ -1639,6 +1642,16 @@ public class Activo implements Serializable, Auditable {
 	public void setEstaEnPuja(Boolean estaEnPuja) {
 		this.estaEnPuja = estaEnPuja;
 	}
+
+	public String getMotivoActivo() {
+		return motivoActivo;
+	}
+
+	public void setMotivoActivo(String motivoActivo) {
+		this.motivoActivo = motivoActivo;
+	}
+
+	
 	
 	
 	

@@ -152,6 +152,15 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 				            		store: '{comboTipoUsoDestino}',
 				            		value: '{activo.tipoUsoDestinoCodigo}'
 				            	}
+			                },
+			                {
+			                	xtype: 'textfieldbase',
+			                	fieldLabel: HreRem.i18n('fieldlabel.motivorechazoform.motivo'),
+			                	name: 'motivoActivo',
+			                	bind: {
+			                		value: '{activo.motivoActivo}'
+			                	},
+			                	maxLength: 50
 			                }
 						]
 					},{ // Columna 3

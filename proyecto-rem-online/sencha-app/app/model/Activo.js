@@ -662,6 +662,9 @@ Ext.define('HreRem.model.Activo', {
 			{
     			name: 'isLogUsuGestComerSupComerSupAdmin',
     			type: 'boolean'
+    		},
+    		{
+    			name: 'motivoActivo'
     		}
     ],
     

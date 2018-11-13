@@ -202,6 +202,10 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			
 		}
 		
+		if (activo.getMotivoActivo() != null) {
+			BeanUtils.copyProperty(activoDto, "motivoActivo", activo.getMotivoActivo());
+		}
+		
 		if (activo.getCartera() != null) {
 			BeanUtils.copyProperty(activoDto, "entidadPropietariaCodigo", activo.getCartera().getCodigo());
 			BeanUtils.copyProperty(activoDto, "entidadPropietariaDescripcion", activo.getCartera().getDescripcion());

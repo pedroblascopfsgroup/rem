@@ -1903,28 +1903,6 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
     	
     },
     
-    T015_AceptacionClienteValidacion: function(){
-    	var me = this;
-    	
-    	me.deshabilitarCampo(me.down('[name=motivoAC]'));
-    	
-    	var aceptacionContraoferta = me.down('[name=aceptacionContraoferta]');
-    	
-    	me.down('[name=aceptacionContraoferta]').addListener('change', function(){
-    		
-    		if(aceptacionContraoferta.value == '02'){
-        		me.down('[name=motivoAC]').noObligatorio=false;
-        		me.habilitarCampo(me.down('[name=motivoAC]'));
-        		
-        	}else{
-        		me.down('[name=motivoAC]').noObligatorio=true;
-        		me.deshabilitarCampo(me.down('[name=motivoAC]'));
-        		me.borrarCampo(me.down('[name=motivoAC]'));
-        	}
-    	});
-
-    },
-    
     T015_ResolucionPBCValidacion: function(){
     	var me = this;
     	me.down('[name=resultadoPBC]').noObligatorio=false;

@@ -3,8 +3,6 @@ package es.pfsgroup.plugin.rem.thread;
 import java.util.List;
 import java.util.Properties;
 
-import javax.annotation.Resource;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
@@ -23,7 +21,6 @@ public class EnvioCorreoAsync implements Runnable {
 
 	protected final Log logger = LogFactory.getLog(getClass());
 	
-	@Resource
 	private Properties appProperties;
 	
 	private AgendaMultifuncionCorreoUtils agendaMultifuncionCorreoUtils = new AgendaMultifuncionCorreoUtils();
@@ -31,7 +28,7 @@ public class EnvioCorreoAsync implements Runnable {
 	private static final String SERVIDOR_CORREO = "agendaMultifuncion.mail.server";
 	private static final String PUERTO_CORREO = "agendaMultifuncion.mail.port";
 	
-	public EnvioCorreoAsync(List<String> mailsPara, List<String> mailsCC, String asunto, String cuerpo,
+	public EnvioCorreoAsync(Properties appProperties,List<String> mailsPara, List<String> mailsCC, String asunto, String cuerpo,
 			List<DtoAdjuntoMail> adjuntos) {
 		SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
 		this.mailsPara = mailsPara;
@@ -39,6 +36,7 @@ public class EnvioCorreoAsync implements Runnable {
 		this.asunto = asunto;
 		this.cuerpo = cuerpo;
 		this.adjuntos = adjuntos;
+		this.appProperties = appProperties;
 	}
 
 	@Override

@@ -113,6 +113,7 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private Boolean pertenceAgrupacionComercial;
 	private Boolean pertenceAgrupacionAsistida;
 	private Boolean pertenceAgrupacionObraNueva;
+	private Boolean pertenceAgrupacionProyecto;
 	private String situacionComercialCodigo;
 	private String situacionComercialDescripcion;
 	
@@ -188,6 +189,10 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	
 	//REMVIP-969
 	private Boolean tienePosibleInformeMediador;
+
+	// HREOS-4608
+	private String idAgrupacion;
+	private Boolean tienePromocion;
 	
 	private int page;
 	private int start;
@@ -1406,7 +1411,32 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 		this.acreedorNumExp = acreedorNumExp;
 	}
 
-	public Boolean getTienePosibleInformeMediador() {
+
+	public Boolean getPertenceAgrupacionProyecto() {
+		return pertenceAgrupacionProyecto;
+	}
+
+	public void setPertenceAgrupacionProyecto(Boolean pertenceAgrupacionProyecto) {
+		this.pertenceAgrupacionProyecto = pertenceAgrupacionProyecto;
+	}
+
+	public String getIdAgrupacion() {
+		return idAgrupacion;
+	}
+
+	public void setIdAgrupacion(String idAgrupacion) {
+		this.idAgrupacion = idAgrupacion;
+	}
+
+	public Boolean getTienePromocion() {
+		return tienePromocion;
+	}
+
+	public void setTienePromocion(Boolean tienePromocion) {
+		this.tienePromocion = tienePromocion;
+	}
+
+public Boolean getTienePosibleInformeMediador() {
 		return tienePosibleInformeMediador;
 	}
 
@@ -1477,5 +1507,5 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	public void setIsLogUsuGestComerSupComerSupAdmin(Boolean isLogUsuGestComerSupComerSupAdmin) {
 		this.isLogUsuGestComerSupComerSupAdmin = isLogUsuGestComerSupComerSupAdmin;
 	}
-
+	
 }

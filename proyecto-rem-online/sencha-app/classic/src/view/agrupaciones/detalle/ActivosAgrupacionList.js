@@ -131,7 +131,8 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
 			    	items: [
 			    		{
 			    			text: HreRem.i18n('grid.submenu.msg.publicar.agrupacion'),
-			    			handler: 'onClickPublicarAgrupacionSubmenuGrid'
+			    			handler: 'onClickPublicarAgrupacionSubmenuGrid',
+			    			disabled: true
 			    		},
 			    		{
 			    			text: HreRem.i18n('grid.submenu.msg.publicar.activos.seleccionados'),

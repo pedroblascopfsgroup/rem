@@ -131,7 +131,7 @@ public class MSVSituacionImpuestosExcelValidator extends MSVExcelValidatorAbstra
 			mapaErrores.put(FECHA_EMVIO, isColumnNotDateByRows(exc, COL_NUM.FECHA901));
 
 			
-				if (!mapaErrores.get(ACTIVE_EXISTS).isEmpty() || !mapaErrores.get(FECHA_EMVIO).isEmpty()) 
+				if (!mapaErrores.get(ACTIVE_EXISTS).isEmpty() || !mapaErrores.get(FECHA_EMVIO).isEmpty() || !mapaErrores.get(CATASTRO_EXISTS).isEmpty() ) 
 			 {
 
 					dtoValidacionContenido.setFicheroTieneErrores(true);
@@ -324,7 +324,7 @@ public class MSVSituacionImpuestosExcelValidator extends MSVExcelValidatorAbstra
 		try {
 			for (i = COL_NUM.DATOS_PRIMERA_FILA; i < numFilasHoja; i++) {
 				if (!particularValidator.existeCatastro(exc.dameCelda(i, COL_NUM.CATASTRO)))
-					listaFilas.add(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA));
+					listaFilas.add(exc.dameCelda(i, COL_NUM.CATASTRO));
 				
 				
 			}

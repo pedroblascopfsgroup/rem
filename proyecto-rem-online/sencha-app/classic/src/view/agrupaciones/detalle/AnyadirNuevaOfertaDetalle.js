@@ -48,9 +48,9 @@ Ext.define('HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaDetalle', {
 								layout: {
 							        type: 'table',
 							        // The total column count must be specified here
-							        columns: 1,
-							        trAttrs: {height: '45px', width: '100%'},
-							        tdAttrs: {width: '100%'},
+							        columns: 2,
+							        trAttrs: {height: '45px', width: '50%'},
+							        tdAttrs: {width: '50%'},
 							        tableAttrs: {
 							            style: {
 							                width: '100%',
@@ -60,8 +60,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaDetalle', {
 								},
 								defaultType: 'textfieldbase',
 								collapsed: false,
-									scrollable	: 'y',
-								cls:'',	    				
+								scrollable	: 'y',	    				
 				            	items: [
 				            	    {
 				            	    	name:		'cesionDatos',
@@ -130,7 +129,8 @@ Ext.define('HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaDetalle', {
 	    	    								checkTanteo.setDisabled(CONST.TIPOS_OFERTA['ALQUILER'] == value)
 	    	    								
 	    	    							}
-	    	    						}
+	    	    						},
+	    			    				colspan: 2
 									},
 									{
 										fieldLabel: HreRem.i18n('fieldlabel.nombre.cliente'),
@@ -149,7 +149,8 @@ Ext.define('HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaDetalle', {
 										bind:		{
 											value: '{oferta.apellidosCliente}',
 											disabled: '{oferta.razonSocialCliente}'
-										}
+										},
+					    				colspan: 2
 				            	    },
 				            	    {
 				            	    	fieldLabel: HreRem.i18n('fieldlabel.razonSocial.cliente'),
@@ -171,7 +172,10 @@ Ext.define('HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaDetalle', {
 	    					        	bind: {
 	    				            		store: '{comboTipoDocumento}',
 	    				            		value: '{oferta.tipoDocumento}'
-	    				            	}	    				            	
+	    				            	},
+	    				            	displayField: 'descripcion',
+	    	    						valueField: 'codigo',
+	    			    				colspan: 2
 									},
 				            	    {
 				            	    	fieldLabel: HreRem.i18n('fieldlabel.documento.cliente'),
@@ -209,7 +213,8 @@ Ext.define('HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaDetalle', {
 	    	    								}
 	    	    								
 	    	    							}
-	    	    						}
+	    	    						},
+	    			    				colspan: 2
 									},
 									{
 										xtype: 'comboboxfieldbase',
@@ -253,7 +258,8 @@ Ext.define('HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaDetalle', {
 	    				            	},
 	    				            	displayField: 'descripcion',
 	    	    						valueField: 'codigo',
-	    	    						disabled: true
+	    	    						disabled: true,
+	    			    				colspan: 2
 									},
 				            	    {
 				            	    	xtype: 		'checkboxfieldbase',
@@ -263,6 +269,15 @@ Ext.define('HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaDetalle', {
 				            	    	bind:		'{oferta.deDerechoTanteo}',
 							        	inputValue: true
 				            	    },
+				            	    {
+										xtype: 		'checkboxfieldbase',
+				            	    	fieldLabel:	HreRem.i18n('fieldlabel.intencionfinanciar'),
+				            	    	name:		'intencionfinanciar',
+				            	    	allowBlank:	false,
+				            	    	bind:		'{oferta.intencionFinanciar}',
+							        	inputValue: true,
+							        	colspan: 2
+									},
 				            	    {
 										xtype: 'textfieldbase',
 										fieldLabel: HreRem.i18n('header.visita.detalle.proveedor.presriptor.codigo.rem'),
@@ -319,7 +334,6 @@ Ext.define('HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaDetalle', {
 										},
 										allowBlank: true,
 										triggers: {
-											
 												buscarEmisor: {
 										            cls: Ext.baseCSSPrefix + 'form-search-trigger',
 										            handler: 'buscarSucursal'
@@ -334,7 +348,8 @@ Ext.define('HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaDetalle', {
 								        			field.lookupController().buscarSucursal(field);											        			
 								        		}
 								        	}
-								        }
+								        },
+								        colspan: 2
 				                	},
 				                	{
 										xtype: 'textfieldbase',
@@ -342,11 +357,10 @@ Ext.define('HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaDetalle', {
 										name: 'nombreSucursal',
 										//disabled: true,
 										readOnly: true,
-										allowBlank: true
+										allowBlank: true,
+							        	colspan: 2
 									}
-
-				            	]
-		    		
+								]
 				}
     	];
     	

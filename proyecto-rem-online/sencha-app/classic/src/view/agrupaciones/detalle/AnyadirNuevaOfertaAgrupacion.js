@@ -2,7 +2,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaAgrupacion', {
     extend		: 'HreRem.view.common.WindowBase',
     xtype		: 'anyadirnuevaofertaagrupacion',
     layout	: 'fit',
-    width	: Ext.Element.getViewportWidth() / 3,    
+    width	: Ext.Element.getViewportWidth() / 2,    
     //height	: Ext.Element.getViewportHeight() > 500 ? 500 : Ext.Element.getViewportHeight() - 50 ,
     //closable: true,		
     //closeAction: 'hide',

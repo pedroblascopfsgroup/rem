@@ -1497,7 +1497,9 @@ public class AgrupacionAdapter {
 
 			List<Activo> listaActivos = new ArrayList<Activo>();
 
-			for (ActivoOferta activoOferta : oferta.getActivosOferta()) {
+			List<ActivoOferta> ofertasActivo = oferta.getActivosOferta();
+			
+			for (ActivoOferta activoOferta : ofertasActivo) {
 				listaActivos.add(activoOferta.getPrimaryKey().getActivo());
 			}
 

@@ -956,6 +956,10 @@ public interface ExpedienteComercialApi {
 
 	public String getCodigoCarteraExpediente(String idExpediente);
 
-	DtoPage getActivosExpedienteVista(Long idExpediente);	
+	DtoPage getActivosExpedienteVista(Long idExpediente);
+
+	Long getIdByNumExpOrNumOfr(Long numBusqueda, String campo);
+
+	Long getNumExpByNumOfr(Long numBusqueda);	
 	
 }

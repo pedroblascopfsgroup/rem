@@ -109,7 +109,10 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 				codigoGestor = this.getMapCodigoTipoGestorActivoAndLoteRestEntidad01(isActivoFinanciero).get(codigoTarea);
 			} else {
 				// Si es un lote comercial comprobar si aplica formalizar.
-				Boolean formalizacion = (1 == loteComercial.getIsFormalizacion()) ? true : false;
+				Boolean formalizacion = false;
+				if(!Checks.esNulo(loteComercial) && !Checks.esNulo(loteComercial.getIsFormalizacion())) {
+					formalizacion = (1 == loteComercial.getIsFormalizacion()) ? true : false;
+				}
 				codigoGestor = this.getMapCodigoTipoGestorActivoAndLoteRestEntidad01Formalizacion(formalizacion).get(codigoTarea);
 			}
 		} else if(this.isActivoGiants(tareaActivo)){
@@ -172,7 +175,11 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 				codigoSupervisor = this.getMapCodigoTipoSupervisorActivoAndLoteRestEntidad01(isActivoFinanciero).get(codigoTarea);
 			} else {
 				// Si es un lote comercial comprobar si aplica formalizar.
-				Boolean formalizacion = (1 == loteComercial.getIsFormalizacion()) ? true : false;
+				Boolean formalizacion = false;
+				if(!Checks.esNulo(loteComercial) && !Checks.esNulo(loteComercial.getIsFormalizacion())) {
+					formalizacion = (1 == loteComercial.getIsFormalizacion()) ? true : false;
+				}
+				
 				codigoSupervisor = this.getMapCodigoTipoSupervisorActivoAndLoteRestEntidad01Formalizacion(formalizacion).get(codigoTarea);
 			}
 		}else {

@@ -68,6 +68,7 @@ import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.ProveedoresApi;
 import es.pfsgroup.plugin.rem.api.TareaActivoApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
+import es.pfsgroup.plugin.rem.exception.RemUserException;
 //import es.pfsgroup.plugin.rem.controller.AccesoActivoException;
 import es.pfsgroup.plugin.rem.factory.TabActivoFactoryApi;
 import es.pfsgroup.plugin.rem.gestor.GestorExpedienteComercialManager;
@@ -284,7 +285,6 @@ public class ActivoAdapter {
     
     @Autowired
     private ActivoManager activoManager;
-
 
 	@Resource
 	MessageService messageServices;
@@ -2203,7 +2203,7 @@ public class ActivoAdapter {
 	}
 
 	@Transactional(readOnly = false)
-	public boolean saveAdmisionDocumento(DtoAdmisionDocumento dtoAdmisionDocumento) {
+	public boolean saveAdmisionDocumento(DtoAdmisionDocumento dtoAdmisionDocumento) throws RemUserException {
 
 		ActivoAdmisionDocumento activoAdmisionDocumento = null;
 
@@ -2235,13 +2235,19 @@ public class ActivoAdapter {
 		} else {
 
 			activoAdmisionDocumento = new ActivoAdmisionDocumento();
-
+			
 			rellenaCheckingDocumentoAdmision(activoAdmisionDocumento, dtoAdmisionDocumento);
 
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dtoAdmisionDocumento.getIdActivo());
 			activoAdmisionDocumento.setActivo(genericDao.get(Activo.class, filtro));
 			filtro = genericDao.createFilter(FilterType.EQUALS, "id", dtoAdmisionDocumento.getIdConfiguracionDoc());
-			activoAdmisionDocumento.setConfigDocumento(genericDao.get(ActivoConfigDocumento.class, filtro));
+			ActivoConfigDocumento tipodoc = null;
+			try {
+				tipodoc = genericDao.get(ActivoConfigDocumento.class, filtro);
+			} catch (Exception e) {
+				throw new RemUserException("user.exception.tipodoc.incorrecto", messageServices);
+			}
+			activoAdmisionDocumento.setConfigDocumento(tipodoc);
 
 			rellenaCheckingDocumentoAdmision(activoAdmisionDocumento, dtoAdmisionDocumento);
 			genericDao.save(ActivoAdmisionDocumento.class, activoAdmisionDocumento);

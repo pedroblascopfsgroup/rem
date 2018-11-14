@@ -54,6 +54,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.Order;
+import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVRawSQLDao;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
 import es.pfsgroup.framework.paradise.gestorEntidad.model.GestorEntidadHistorico;
@@ -73,6 +74,7 @@ import es.pfsgroup.plugin.rem.api.GestorExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.TareaActivoApi;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
+import es.pfsgroup.plugin.rem.controller.ExpedienteComercialController;
 import es.pfsgroup.plugin.rem.expedienteComercial.dao.ExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionService;
 import es.pfsgroup.plugin.rem.model.Activo;
@@ -278,6 +280,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	public String managerName() {
 		return "expedienteComercialManager";
 	}
+	
+	@Autowired
+	private MSVRawSQLDao rawDao;
 
 	@Override
 	public ExpedienteComercial findOne(Long id) {
@@ -6263,5 +6268,40 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 		
 		return cartera;
+	}
+	
+	@Override
+	public Long getIdByNumExpOrNumOfr(Long numBusqueda, String campo) {
+		
+		Long idExpediente = null;
+		
+		try {	
+			if(ExpedienteComercialController.CAMPO_EXPEDIENTE.equals(campo)) {
+				idExpediente = Long.parseLong(rawDao.getExecuteSQL("SELECT ECO_ID FROM ECO_EXPEDIENTE_COMERCIAL WHERE ECO_NUM_EXPEDIENTE =" + numBusqueda + " AND BORRADO = 0"));	
+			}else {
+				Long idOferta = Long.parseLong(rawDao.getExecuteSQL("SELECT OFR_ID FROM OFR_OFERTAS WHERE OFR_NUM_OFERTA = " + numBusqueda + " AND BORRADO = 0"));
+				
+				idExpediente = Long.parseLong(rawDao.getExecuteSQL("SELECT ECO_ID FROM ECO_EXPEDIENTE_COMERCIAL WHERE OFR_ID = " + idOferta + " AND BORRADO = 0"));	
+			}	
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	
+		return idExpediente;
+		
+	}
+	
+	@Override
+	public Long getNumExpByNumOfr(Long numBusqueda) {
+		
+		Long numExpediente = null;
+		
+		Long idOferta = Long.parseLong(rawDao.getExecuteSQL("SELECT OFR_ID FROM OFR_OFERTAS WHERE OFR_NUM_OFERTA = " + numBusqueda + " AND BORRADO = 0"));
+		
+		numExpediente = Long.parseLong(rawDao.getExecuteSQL("SELECT ECO_NUM_EXPEDIENTE FROM ECO_EXPEDIENTE_COMERCIAL WHERE OFR_ID = " + idOferta + " AND BORRADO = 0"));	
+	
+		return numExpediente;
+		
 	}
 }

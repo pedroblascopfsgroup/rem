@@ -2749,6 +2749,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	}
 	@Override
 	public DDComiteSancion calculoComiteLiberbank(Oferta ofertaAceptada) {
+		if(!Checks.esNulo(ofertaAceptada)){
 		ActivoAgrupacion agrupacion = ofertaAceptada.getAgrupacion();
 		Double importeOferta = this.getImporteOferta(ofertaAceptada);
 		Double importeUmbral = 500000.0;
@@ -2920,5 +2921,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		}
 		
 		return null;
+		
+		}else{
+			return null;
+		}
 	}
 }

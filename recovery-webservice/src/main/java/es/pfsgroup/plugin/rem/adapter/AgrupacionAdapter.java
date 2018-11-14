@@ -1283,6 +1283,7 @@ public class AgrupacionAdapter {
 			obraNueva.setTipoAgrupacion(tipoAgrupacion);
 			obraNueva.setFechaAlta(new Date());
 			obraNueva.setNumAgrupRem(numAgrupacionRem);
+			obraNueva.setDireccion(dtoAgrupacion.getDireccion());
 
 		    genericDao.save(ActivoObraNueva.class, obraNueva);
 		    
@@ -1298,6 +1299,7 @@ public class AgrupacionAdapter {
 			restringida.setTipoAgrupacion(tipoAgrupacion);
 			restringida.setFechaAlta(new Date());
 			restringida.setNumAgrupRem(numAgrupacionRem);
+			restringida.setDireccion(dtoAgrupacion.getDireccion());
 
 			genericDao.save(ActivoRestringida.class, restringida);
 			
@@ -1312,6 +1314,7 @@ public class AgrupacionAdapter {
 			proyecto.setTipoAgrupacion(tipoAgrupacion);
 			proyecto.setFechaAlta(new Date());
 			proyecto.setNumAgrupRem(numAgrupacionRem);
+			proyecto.setDireccion(dtoAgrupacion.getDireccion());
 			
 			genericDao.save(ActivoProyecto.class, proyecto);
 
@@ -1327,6 +1330,7 @@ public class AgrupacionAdapter {
 			asistida.setFechaInicioVigencia(dtoAgrupacion.getFechaInicioVigencia());
 			asistida.setFechaFinVigencia(dtoAgrupacion.getFechaFinVigencia());
 			asistida.setNumAgrupRem(numAgrupacionRem);
+			asistida.setDireccion(dtoAgrupacion.getDireccion());
 
 			genericDao.save(ActivoAsistida.class, asistida);
 			
@@ -1344,6 +1348,7 @@ public class AgrupacionAdapter {
 			loteComercial.setTipoAgrupacion(tipoAgrupacion);
 			loteComercial.setFechaAlta(new Date());
 			loteComercial.setNumAgrupRem(numAgrupacionRem);
+			loteComercial.setDireccion(dtoAgrupacion.getDireccion());
 
 			genericDao.save(ActivoLoteComercial.class, loteComercial);
 			

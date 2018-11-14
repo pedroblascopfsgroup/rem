@@ -958,8 +958,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	refrescarActivo: function(refrescarPestanyaActiva) {
 		var me = this,
 		refrescarPestanyaActiva = Ext.isEmpty(refrescarPestanyaActiva) ? false: refrescarPestanyaActiva,
-		activeTab = me.getView().down("tabpanel").getActiveTab();		
-  		
+		activeTab = me.getView().down("tabpanel").getActiveTab();
 		// Marcamos todas los componentes para refrescar, de manera que se vayan actualizando conforme se vayan mostrando.
 		Ext.Array.each(me.getView().query('component[funcionRecargar]'), function(component) {
   			if(component.rendered) {
@@ -3458,7 +3457,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		
 	},
 	manageToastJsonResponse : function(scope,jsonData) {
-		
+		var me= this;
 		if (!Ext.isEmpty(scope)) {
 			if (this.fireEvent) {
 				scope = this;
@@ -3469,8 +3468,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 
 		if (!Ext.isEmpty(jsonData)) {
 			var data = JSON.parse(jsonData);
-			
-			if (data.success !== null && data.success !== undefined && data.success === "false") { 
+			if (data.success !== null && data.success !== undefined && data.success === "false") {
+				me.getViewModel().getData().activo.reject();
 				scope.fireEvent("errorToast", data.msgError);
 			} else { 
 				scope.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
@@ -3478,6 +3477,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		} else {
 			scope.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
 		}
+		
 
 	},
 	

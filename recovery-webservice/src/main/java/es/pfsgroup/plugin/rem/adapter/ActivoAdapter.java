@@ -50,6 +50,7 @@ import es.pfsgroup.framework.paradise.gestorEntidad.model.GestorEntidadHistorico
 import es.pfsgroup.framework.paradise.jbpm.JBPMProcessManagerApi;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
+import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.recovery.coreextension.api.coreextensionApi;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
@@ -109,6 +110,7 @@ import es.pfsgroup.plugin.rem.model.ActivoVivienda;
 import es.pfsgroup.plugin.rem.model.ClienteComercial;
 import es.pfsgroup.plugin.rem.model.DtoActivoCargas;
 import es.pfsgroup.plugin.rem.model.DtoActivoCatastro;
+import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoActivoOcupanteLegal;
 import es.pfsgroup.plugin.rem.model.DtoActivoPatrimonio;
@@ -164,6 +166,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalificacionEnergetica;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCargaActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
@@ -192,6 +195,7 @@ import es.pfsgroup.plugin.rem.service.TabActivoSitPosesoriaLlaves;
 import es.pfsgroup.plugin.rem.trabajo.dao.TrabajoDao;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoActivosTrabajoFilter;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
+import net.sf.json.JSONException;
 
 @Service
 public class ActivoAdapter {
@@ -2744,17 +2748,33 @@ public class ActivoAdapter {
 	
 	@Transactional(readOnly = false)
 	public boolean saveTabActivoTransactional(WebDto dto, Long id, String tab) {
-		
 		TabActivoService tabActivoService = tabActivoFactory.getService(tab);
 		Activo activo = activoApi.get(id);
-		activo = tabActivoService.saveTabActivo(activo, dto);
-		activoApi.saveOrUpdate(activo);
-		
-		// Metodo que recoge funciones que requieren el guardado previo de los
-		// datos
-		afterSaveTabActivo(dto, activo, tabActivoService);
+		DtoActivoFichaCabecera dtofichacabecera = (DtoActivoFichaCabecera) dto;
+		boolean tieneAgrupVenta=false;
+		if(dtofichacabecera.getTipoComercializacionCodigo().equals(DDTipoComercializacion.CODIGO_SOLO_ALQUILER)){
+			List<ActivoAgrupacionActivo> agrupaciones = activo.getAgrupaciones();
+			for(ActivoAgrupacionActivo agrupActivo : agrupaciones) {
+				ActivoAgrupacion agrup= agrupActivo.getAgrupacion();
+				if(agrup.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_VENTA)) {
+					tieneAgrupVenta=true;
+					break;
+				}
+			}
+		}
+		if(!tieneAgrupVenta) {
+			activo = tabActivoService.saveTabActivo(activo, dto);
+			activoApi.saveOrUpdate(activo);
+			
+			// Metodo que recoge funciones que requieren el guardado previo de los
+			// datos
+			afterSaveTabActivo(dto, activo, tabActivoService);
 
-		return true;
+			return true;
+		}else {
+			throw new JsonViewerException("El activo pertenece a una agrupación comercial-venta, no se puede cambiar el destino comercial a alquiler del activo");
+		}
+		
 	}
 	
 	@Transactional(readOnly = false)

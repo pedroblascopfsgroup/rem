@@ -23,8 +23,8 @@ create or replace PROCEDURE SP_MOTIVO_OCULTACION_HA (pAHP_ID IN NUMBER
 	ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
 	ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
 
-    V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquemas.
-    V_ESQUEMA_MASTER VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquemas.
+    V_ESQUEMA VARCHAR2(25 CHAR):= 'REM01'; -- Configuracion Esquemas.
+    V_ESQUEMA_MASTER VARCHAR2(25 CHAR):= 'REMMASTER'; -- Configuracion Esquemas.
 
     V_MSQL VARCHAR2(20000 CHAR); -- Sentencia a ejecutar
     vWHERE VARCHAR2(4000 CHAR);

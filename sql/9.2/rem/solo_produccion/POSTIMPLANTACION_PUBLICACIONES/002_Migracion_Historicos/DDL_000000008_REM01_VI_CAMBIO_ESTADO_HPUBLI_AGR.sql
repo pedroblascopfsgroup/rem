@@ -26,8 +26,8 @@ DECLARE
     v_constraint_count number(3); -- Vble. para validar la existencia de las Constraints.
     err_num NUMBER; -- N?mero de errores
     err_msg VARCHAR2(2048); -- Mensaje de error
-    V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquemas
-    V_ESQUEMA_MASTER VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquemas
+    V_ESQUEMA VARCHAR2(25 CHAR):= 'REM01'; -- Configuracion Esquemas
+    V_ESQUEMA_MASTER VARCHAR2(25 CHAR):= 'REMMASTER'; -- Configuracion Esquemas
     V_MSQL VARCHAR2(32000 CHAR); 
 
     CUENTA NUMBER;

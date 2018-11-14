@@ -4379,16 +4379,19 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	@Override
 	@Transactional(readOnly = false)
 	public void calcularFechaTomaPosesion(Activo activo) {
+
 		ActivoSituacionPosesoria situacionActual = activo.getSituacionPosesoria();
+
 		if (!Checks.esNulo(activo.getTipoTitulo())) {
 			if (DDTipoTituloActivo.tipoTituloJudicial.equals(activo.getTipoTitulo().getCodigo())) {
+
 				if (!Checks.esNulo(activo.getAdjJudicial())
 						&& !Checks.esNulo(activo.getAdjJudicial().getAdjudicacionBien())) {
 					if (!Checks.esNulo(activo.getAdjJudicial().getAdjudicacionBien().getLanzamientoNecesario())) {
 						if (activo.getAdjJudicial().getAdjudicacionBien().getLanzamientoNecesario()) {
 							activo.getSituacionPosesoria().setFechaTomaPosesion(
 									activo.getAdjJudicial().getAdjudicacionBien().getFechaRealizacionLanzamiento());
-
+							// activoDto.setFechaTomaPosesion(activo.getAdjJudicial().getAdjudicacionBien().getFechaRealizacionLanzamiento());
 						} else {
 							if (!Checks.esNulo(
 									activo.getAdjJudicial().getAdjudicacionBien().getFechaRealizacionPosesion())) {

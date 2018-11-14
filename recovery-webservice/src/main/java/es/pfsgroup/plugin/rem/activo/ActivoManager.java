@@ -4680,6 +4680,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	@Override
 	@Transactional(readOnly = false)
 	public void calcularFechaTomaPosesion(Activo activo){
+		
+		ActivoSituacionPosesoria situacionActual = activo.getSituacionPosesoria();
+		
 		if(!Checks.esNulo(activo.getTipoTitulo())){
 			if(DDTipoTituloActivo.tipoTituloJudicial.equals(activo.getTipoTitulo().getCodigo())){
 				
@@ -4720,7 +4723,10 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				}
 			}
 		}
-		genericDao.save(ActivoSituacionPosesoria.class, activo.getSituacionPosesoria());
+		
+		if((Checks.esNulo(situacionActual) && !Checks.esNulo(activo.getSituacionPosesoria())) || !situacionActual.equals(activo.getSituacionPosesoria())) {
+			genericDao.save(ActivoSituacionPosesoria.class, activo.getSituacionPosesoria());
+		}
 		
 	}
 

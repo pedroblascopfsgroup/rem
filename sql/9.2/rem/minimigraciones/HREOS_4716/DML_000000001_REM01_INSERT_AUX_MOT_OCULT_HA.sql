@@ -1,16 +1,17 @@
 --/*
 --##########################################
---## AUTOR=Carlos López
---## FECHA_CREACION=20181104
+--## AUTOR=Maria Presencia
+--## FECHA_CREACION=20181113
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=2.2.20
---## INCIDENCIA_LINK=HREOS-4716
+--## INCIDENCIA_LINK=HREOS-4780
 --## PRODUCTO=NO
 --##
 --## Finalidad: 
 --## INSTRUCCIONES:
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##		0.2 Añadido modificaciones del sp_motivo_ocultacion
 --##########################################
 --*/
 
@@ -30,7 +31,7 @@ DECLARE
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
     V_TABLA VARCHAR2(30 CHAR) := 'AUX_MOT_OCULT_HA';  -- Tabla a modificar  
     V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar
-    V_USR VARCHAR2(30 CHAR) := 'HREOS-4716'; -- USUARIOCREAR/USUARIOMODIFICAR
+    V_USR VARCHAR2(30 CHAR) := 'HREOS-4780'; -- USUARIOCREAR/USUARIOMODIFICAR
     
 BEGIN	
     EXECUTE IMMEDIATE ' TRUNCATE TABLE '||V_ESQUEMA||'.'||V_TABLA||'';  
@@ -70,7 +71,7 @@ BEGIN
                                , MTO.DD_MTO_ORDEN ORDEN
                                     FROM '||V_ESQUEMA||'.ACT_PTA_PATRIMONIO_ACTIVO PTA
                                     JOIN '||V_ESQUEMA||'.ACT_AHP_HIST_PUBLICACION APU ON APU.ACT_ID = PTA.ACT_ID
-                                    LEFT JOIN '||V_ESQUEMA||'.DD_MTO_MOTIVOS_OCULTACION MTO ON MTO.DD_MTO_CODIGO = ''05'' AND MTO.BORRADO = 0 
+                                    LEFT JOIN '||V_ESQUEMA||'.DD_MTO_MOTIVOS_OCULTACION MTO ON MTO.DD_MTO_CODIGO = ''05'' AND MTO.BORRADO = 0 /*No adecuado*/
                                    WHERE (PTA.DD_ADA_ID = (SELECT DDADA.DD_ADA_ID
                                                              FROM '||V_ESQUEMA||'.DD_ADA_ADECUACION_ALQUILER DDADA
                                                             WHERE DDADA.BORRADO = 0
@@ -81,7 +82,7 @@ BEGIN
                                      AND PTA.CHECK_HPM = 1
                               
                           UNION
-                          SELECT APU.ACT_ID
+                          SELECT APU.AHP_ID
                                , 1 OCULTO
                                , MTO.DD_MTO_CODIGO
                                , MTO.DD_MTO_ORDEN ORDEN
@@ -147,7 +148,7 @@ BEGIN
                                , 1 OCULTO
                                , MTO.DD_MTO_CODIGO
                                , MTO.DD_MTO_ORDEN ORDEN
-                                    FROM '||V_ESQUEMA||'.ACT_AHP_HIST_PUBLICACION APU
+                                    FROM '||V_ESQUEMA||'.ACT_AHP_HIST_PUBLICACION APU 
                                     JOIN '||V_ESQUEMA||'.DD_TCO_TIPO_COMERCIALIZACION DDTCO ON DDTCO.DD_TCO_ID = APU.DD_TCO_ID
                                           AND DDTCO.DD_TCO_CODIGO IN (''02'',''03'',''04'')
                                           AND DDTCO.BORRADO = 0
@@ -201,6 +202,18 @@ BEGIN
                                                         AND PTA.CHECK_HPM = 1
                                                         AND PTA.ACT_ID = APU.ACT_ID)
                                           ))
+                        UNION
+                        SELECT APU.AHP_ID
+                               , 1 OCULTO
+                               , MTO.DD_MTO_CODIGO
+                               , MTO.DD_MTO_ORDEN ORDEN
+									FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT
+                                    JOIN '||V_ESQUEMA||'.ACT_AHP_HIST_PUBLICACION APU ON APU.ACT_ID = ACT.ACT_ID AND APU.BORRADO = 0
+                                    JOIN '||V_ESQUEMA||'.ACT_OFR AO ON AO.ACT_ID = ACT.ACT_ID
+                                    JOIN '||V_ESQUEMA||'.OFR_OFERTAS OFR ON OFR.OFR_ID = AO.OFR_ID AND OFR.OFR_OFERTA_EXPRESS = 1 AND OFR.BORRADO = 0
+                                    JOIN '||V_ESQUEMA||'.DD_EOF_ESTADOS_OFERTA EOF ON EOF.DD_EOF_ID = OFR.DD_EOF_ID AND EOF.DD_EOF_CODIGO = ''01'' AND EOF.BORRADO = 0
+                                    LEFT JOIN '||V_ESQUEMA||'.DD_MTO_MOTIVOS_OCULTACION MTO ON MTO.DD_MTO_CODIGO = ''15'' AND MTO.BORRADO = 0
+                                    WHERE ACT.BORRADO = 0
                                 
                        )
                     )AUX WHERE AUX.ROWNUMBER = 1

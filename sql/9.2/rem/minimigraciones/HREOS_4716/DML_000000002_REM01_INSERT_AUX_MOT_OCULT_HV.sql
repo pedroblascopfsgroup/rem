@@ -1,16 +1,17 @@
 --/*
 --##########################################
---## AUTOR=Carlos López
---## FECHA_CREACION=20181104
+--## AUTOR=Maria Presencia
+--## FECHA_CREACION=20181114
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=2.2.20
 --## INCIDENCIA_LINK=HREOS-4716
 --## PRODUCTO=NO
---##
---## Finalidad: 
---## INSTRUCCIONES:
+--## Finalidad: DDL
+--##           
+--## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
---##        0.1 Versión inicial
+--##        0.1 Versión inicial Carlos Lopez HREOS-4074
+--##		0.2 Modificado el DML con los cambios del SP
 --##########################################
 --*/
 
@@ -141,6 +142,18 @@ BEGIN
                                                       JOIN '||V_ESQUEMA||'.DD_TPC_TIPO_PRECIO TPC ON TPC.DD_TPC_ID = VAL.DD_TPC_ID AND TPC.BORRADO = 0 AND TPC.DD_TPC_CODIGO = ''02''
                                                      WHERE VAL.BORRADO = 0
                                                        AND VAL.ACT_ID = APU.ACT_ID)
+                           UNION
+                        SELECT APU.AHP_ID
+                               , 1 OCULTO
+                               , MTO.DD_MTO_CODIGO
+                               , MTO.DD_MTO_ORDEN ORDEN
+									FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT
+                                    JOIN '||V_ESQUEMA||'.ACT_AHP_HIST_PUBLICACION APU ON APU.ACT_ID = ACT.ACT_ID AND APU.BORRADO = 0
+                                    JOIN '||V_ESQUEMA||'.ACT_OFR AO ON AO.ACT_ID = ACT.ACT_ID
+                                    JOIN '||V_ESQUEMA||'.OFR_OFERTAS OFR ON OFR.OFR_ID = AO.OFR_ID AND OFR.OFR_OFERTA_EXPRESS = 1 AND OFR.BORRADO = 0
+                                    JOIN '||V_ESQUEMA||'.DD_EOF_ESTADOS_OFERTA EOF ON EOF.DD_EOF_ID = OFR.DD_EOF_ID AND EOF.DD_EOF_CODIGO = ''01'' AND EOF.BORRADO = 0
+                                    LEFT JOIN '||V_ESQUEMA||'.DD_MTO_MOTIVOS_OCULTACION MTO ON MTO.DD_MTO_CODIGO = ''15'' AND MTO.BORRADO = 0
+                                    WHERE ACT.BORRADO = 0
                        )
                     )AUX WHERE AUX.ROWNUMBER = 1)';
 	DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTROS INSERTADOS CORRECTAMENTE');

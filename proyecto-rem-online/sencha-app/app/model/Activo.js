@@ -644,7 +644,8 @@ Ext.define('HreRem.model.Activo', {
 			{
     			name: 'isVisibleCodPrinex',
     			calculate: function(data) { 
-    				return data.entidadPropietariaCodigo == CONST.CARTERA['CAJAMAR'] || data.entidadPropietariaCodigo == CONST.CARTERA['LIBERBANK'];
+    				return (data.entidadPropietariaCodigo == CONST.CARTERA['CAJAMAR'] || data.entidadPropietariaCodigo == CONST.CARTERA['LIBERBANK']) 
+    					&& data.codigoPromocionPrinex != '';
     			},
     			depends: 'entidadPropietariaCodigo'
     		},

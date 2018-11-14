@@ -107,7 +107,7 @@ public class ActivoPromocionManager extends BusinessOperationOverrider<ActivoPro
 				
 				adjuntoPromocion.setActivo(activo);
 				
-				adjuntoPromocion.setCodPromo(activo.getIdProp().toString()+"_"+activo.getCartera().getCodigo().toString());
+				adjuntoPromocion.setCodPromo(activo.getCodigoPromocionPrinex()+"_"+activo.getCartera().getCodigo().toString());
 				
 				adjuntoPromocion.setIdDocRestClient(idDocRestClient);
 

@@ -1872,7 +1872,6 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
     	me.down('[name=resolucionExpediente]').addListener('change', function(){
     		
     		var resolucionExpediente = me.down('[name=resolucionExpediente]');
-    		
     		if(resolucionExpediente.value == '01'){
     			
     			me.down('[name=motivo]').noObligatorio=true;
@@ -1884,7 +1883,8 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
     		} else if (resolucionExpediente.value == '03'){
     			
     			me.down('[name=motivo]').noObligatorio=true;
-    			me.down('[name=importeContraoferta]').noObligatorio=true;
+    			me.down('[name=importeContraoferta]').noObligatorio=false;
+    			me.campoObligatorio(me.down('[name=importeContraoferta]'));
     			
     			me.deshabilitarCampo(me.down('[name=motivo]'));
     			me.habilitarCampo(me.down('[name=importeContraoferta]'));

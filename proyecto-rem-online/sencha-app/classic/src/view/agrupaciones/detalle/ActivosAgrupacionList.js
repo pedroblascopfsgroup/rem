@@ -50,12 +50,12 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
         		editor.isNew = false;
         	}
 	    },
-    	afterbind: function(grid) {
+    	/*afterbind: function(grid) {
     		var me = this;
 			if (me.loadAfterBind) {
 				grid.getStore().load();
 			}
-		}
+		}*/
     },
 
     initComponent: function () {
@@ -120,7 +120,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
 				me.tbar.items.push(configRemoveBtn);
 			}
 			
-			var tipoAgrupacion = me.up('agrupacionesdetallemain').getViewModel().get('agrupacionficha').get('tipoAgrupacionCodigo');
+			/*var tipoAgrupacion = me.up('agrupacionesdetallemain').getViewModel().get('agrupacionficha').get('tipoAgrupacionCodigo');
 			if($AU.userHasFunction(['EDITAR_TAB_PUBLICACION_LISTA_ACTIVOS_AGRUPACION']) &&
 					(tipoAgrupacion==CONST.TIPOS_AGRUPACION['OBRA_NUEVA'] || tipoAgrupacion==CONST.TIPOS_AGRUPACION['ASISTIDA'])) {
 				// Submenu del Grid.
@@ -155,7 +155,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
 				
 				me.tbar.items.push(separador);
 				me.tbar.items.push(configGridMenu);
-			}
+			}*/
 		}
 		
     	var condPublRenderer =  function(condicionado) {

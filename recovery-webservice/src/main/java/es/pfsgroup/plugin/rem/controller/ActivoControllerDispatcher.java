@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.controller;
 
 import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedList;
@@ -11,7 +12,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.plugin.rem.adapter.AgrupacionAdapter;
 import es.pfsgroup.plugin.rem.controller.ActivoControllerDispachableMethods.DispachableMethod;
+import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoOferta;
+import es.pfsgroup.plugin.rem.model.Oferta;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
@@ -36,7 +41,22 @@ public class ActivoControllerDispatcher {
 			if (json.containsKey("id") && json.containsKey("models")) {
 				Long id = json.getLong("id");
 				JSONArray modelsArray = json.getJSONArray("models");
-				if (!modelsArray.isEmpty()) {
+				if(!modelsArray.isEmpty())
+				{
+					if(modelsArray.toString().contains("tipoComercializacionCodigo"))
+					{
+						String codigo = (String) ((JSONObject) modelsArray.getJSONObject(0).get("data")).get("tipoComercializacionCodigo");
+						Activo activo = controller.getActivoApi().get(id);
+						List<Oferta> ofertas = new ArrayList<Oferta>();
+						for(ActivoOferta oferta : activo.getOfertas())
+						{
+							ofertas.add(oferta.getPrimaryKey().getOferta());
+						}
+						if(controller.activoTieneOfertaByTipoOfertaCodigo(ofertas, codigo))
+						{
+							throw new IllegalArgumentException(AgrupacionAdapter.OFERTA_INCOMPATIBLE_AGR_MSG);
+						}
+					}
 					saveModels(id, modelsArray);
 				}
 				

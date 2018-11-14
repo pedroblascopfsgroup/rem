@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding">
+    <file url="file://$PROJECT_DIR$/batch-monitor" charset="ISO-8859-1" />
+    <file url="file://$PROJECT_DIR$/batch-shell" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/devon-framework" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/devon-framework/devon-batch" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/devon-framework/devon-birt" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/devon-framework/devon-bpm" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/devon-framework/devon-core" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/devon-framework/devon-hibernate" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/devon-framework/devon-web" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/devon-framework/devon-webflow" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/paradise-framework" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/pfs-commons-java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/plugins" charset="ISO-8859-1" />
+    <file url="file://$PROJECT_DIR$/proyecto-rem-online" charset="ISO-8859-1" />
+    <file url="file://$PROJECT_DIR$/proyecto-rem-online/sencha-app/app/model/DatosPublicacionActivo.js" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/proyecto-rem-online/sencha-app/classic/src/view/activos/detalle/CabeceraActivo.js" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/rec-batch" charset="ISO-8859-1" />
+    <file url="file://$PROJECT_DIR$/rec-common" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/rec-web" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/recovery-agendaMultifuncion-plugin" charset="ISO-8859-1" />
+    <file url="file://$PROJECT_DIR$/recovery-api-plugin" charset="ISO-8859-1" />
+    <file url="file://$PROJECT_DIR$/recovery-ayuda-plugin" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/recovery-bpmframework-plugin" charset="ISO-8859-1" />
+    <file url="file://$PROJECT_DIR$/recovery-burofax-plugin" charset="ISO-8859-1" />
+    <file url="file://$PROJECT_DIR$/recovery-busquedaProcedimientos-plugin" charset="ISO-8859-1" />
+    <file url="file://$PROJECT_DIR$/recovery-busquedaTareas-plugin" charset="ISO-8859-1" />
+    <file url="file://$PROJECT_DIR$/recovery-calendario-plugin" charset="ISO-8859-1" />
+    <file url="file://$PROJECT_DIR$/recovery-cambiosMasivosAsunto-plugin" charset="ISO-8859-1" />
+    <file url="file://$PROJECT_DIR$/recovery-comites-plugin" charset="ISO-8859-1" />
+    <file url="file://$PROJECT_DIR$/recovery-config-plugin" charset="ISO-8859-1" />
+    <file url="file://$PROJECT_DIR$/recovery-coreextension-plugin" charset="ISO-8859-1" />
+    <file url="file://$PROJECT_DIR$/recovery-diccionarios-plugin" charset="ISO-8859-1" />
+    <file url="file://$PROJECT_DIR$/recovery-domain" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/recovery-editor-plugin" charset="ISO-8859-1" />
+    <file url="file://$PROJECT_DIR$/recovery-expediente-plugin" charset="ISO-8859-1" />
+    <file url="file://$PROJECT_DIR$/recovery-instruccionesExterna-plugin" charset="ISO-8859-1" />
+    <file url="file://$PROJECT_DIR$/recovery-integracionuvem-plugin" charset="ISO-8859-1" />
+    <file url="file://$PROJECT_DIR$/recovery-itinerarios-plugin" charset="ISO-8859-1" />
+    <file url="file://$PROJECT_DIR$/recovery-liquidaciones-plugin" charset="ISO-8859-1" />
+    <file url="file://$PROJECT_DIR$/recovery-liquidacionesWeb-plugin" charset="ISO-8859-1" />
+    <file url="file://$PROJECT_DIR$/recovery-masivo-common" charset="ISO-8859-1" />
+    <file url="file://$PROJECT_DIR$/recovery-masivo-plugin" charset="ISO-8859-1" />
+    <file url="file://$PROJECT_DIR$/recovery-mejoras-plugin" charset="ISO-8859-1" />
+    <file url="file://$PROJECT_DIR$/recovery-nuevoModeloBienes-plugin" charset="ISO-8859-1" />
+    <file url="file://$PROJECT_DIR$/recovery-nuevoModeloBienesCommon-plugin" charset="ISO-8859-1" />
+    <file url="file://$PROJECT_DIR$/recovery-panelcontrol-plugin" charset="ISO-8859-1" />
+    <file url="file://$PROJECT_DIR$/recovery-plazasJuzgados-plugin" charset="ISO-8859-1" />
+    <file url="file://$PROJECT_DIR$/recovery-plazosExterna-plugin" charset="ISO-8859-1" />
+    <file url="file://$PROJECT_DIR$/recovery-precontencioso-plugin" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/recovery-procuradores-common" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/recovery-procuradores-plugin" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/recovery-sidhi-api" charset="ISO-8859-1" />
+    <file url="file://$PROJECT_DIR$/recovery-sidhiweb-plugin" charset="ISO-8859-1" />
+    <file url="file://$PROJECT_DIR$/rem-web" charset="UTF-8" />
+  </component>
+</project>

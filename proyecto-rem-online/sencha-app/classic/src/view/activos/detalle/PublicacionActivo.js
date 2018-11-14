@@ -32,6 +32,8 @@ Ext.define('HreRem.view.activos.detalle.Publicacion', {
 			}
 			if(pestanyaDatosPublicacion != null){
 				pestanyaDatosPublicacion.ocultarBotonesEdicion = !muestraEdicion;
+				me.up('activosdetallemain').getViewModel().get('filtrarComboMotivosOcultacionVenta');
+				me.up('activosdetallemain').getViewModel().get('filtrarComboMotivosOcultacionAlquiler');
 			}
 		},
 
@@ -119,6 +121,10 @@ Ext.define('HreRem.view.activos.detalle.Publicacion', {
 						 && $AU.userHasFunction('EDITAR_TAB_DATOS_PUBLICACION'));
 				}else{
 					visible = $AU.userHasFunction('EDITAR_TAB_DATOS_PUBLICACION');
+				}
+				
+				if(me.lookupController().getViewModel().get('activo').get('perteneceAgrupacionRestringidaVigente')){
+					visible = false;
 				}
 			}
 			me.down("[itemId=botoneditar]").setVisible(visible);

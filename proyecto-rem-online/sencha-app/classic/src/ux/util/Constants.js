@@ -343,9 +343,43 @@ Ext.define('HreRem.ux.util.Constants', {
 		RECHAZA: '02',
 		CONTRAOFERTA: '03'
 	},
-	
+
 	EXPORTADOR:{
 		LIMITE: '1000'
-	}
+	},
 
+	MOTIVO_OCULTACION: {
+        OTROS: '12'
+    },
+
+	ORIGEN_DATO: {
+		REM: '01',
+		RECOVERY: '02'
+	},
+
+	MODO_PUBLICACION_ALQUILER: {
+		PRE_PUBLICAR: '0',
+		FORZADO: '1'
+	},
+
+	ESTADO_PUBLICACION_ALQUILER: {
+        NO_PUBLICADO: '01',
+        PRE_PUBLICADO: '02',
+        PUBLICADO: '03',
+        OCULTO: '04'
+    },
+
+    ESTADO_PUBLICACION_VENTA: {
+        NO_PUBLICADO: '01',
+        PRE_PUBLICADO: '02',
+        PUBLICADO: '03',
+        OCULTO: '04'
+    },
+    
+    DESCRIPCION_PUBLICACION:{    
+        PUBLICADO_VENTA: 'Publicado Venta',
+        OCULTO_VENTA: 'Oculto Venta',
+        PUBLICADO_ALQUILER: 'Publicado Alquiler',
+        OCULTO_ALQUILER: 'Oculto Alquiler'
+    }
 });

@@ -27,9 +27,13 @@ import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.DtoAviso;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacion;
-import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
-
+import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service("activoAvisadorManager")
 public class ActivoAvisadorManager implements ActivoAvisadorApi {
@@ -129,7 +133,6 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 		
 		if (Checks.esNulo(activo.getSituacionPosesoria())) {
 			Auditoria auditoria = Auditoria.getNewInstance();
-
 			ActivoSituacionPosesoria actSit = new ActivoSituacionPosesoria();
 			actSit.setActivo(activo);
 			actSit.setVersion(new Long(0));
@@ -141,7 +144,6 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 		// Aviso 3 / 4: Situación posesoria OCUPADO + Con o sín título
 		if (!Checks.esNulo(activo.getSituacionPosesoria().getOcupado())) {
 			if (activo.getSituacionPosesoria().getOcupado() == 1) {
-
 				if (activo.getSituacionPosesoria().getConTitulo() == 1) {
 					DtoAviso dtoAviso = new DtoAviso();
 					dtoAviso.setDescripcion("Situación posesoria ocupado con título");
@@ -153,7 +155,6 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 					dtoAviso.setId(String.valueOf(id));
 					listaAvisos.add(dtoAviso);
 				}
-
 			}
 		}
 		
@@ -164,7 +165,6 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 				dtoAviso.setDescripcion("Situación de acceso tapiado");
 				dtoAviso.setId(String.valueOf(id));
 				listaAvisos.add(dtoAviso);
-
 			}
 		}
 
@@ -175,7 +175,6 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 				dtoAviso.setDescripcion("Situación de acceso con puerta antiocupa");
 				dtoAviso.setId(String.valueOf(id));
 				listaAvisos.add(dtoAviso);
-
 			}
 		}
 				
@@ -224,13 +223,43 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 			listaAvisos.add(dtoAviso);	
 		}
 		
-		// Aviso 12: Estado activo vandalizado
+		PerimetroActivo perimetroActivo = activoApi.getPerimetroByIdActivo(activo.getId());
+		
+		// Aviso 12: Activo no publicable
+		if(!Checks.esNulo(perimetroActivo) && !Checks.esNulo(perimetroActivo.getAplicaPublicar()) && !perimetroActivo.getAplicaPublicar()) {
+			DtoAviso dtoAviso = new DtoAviso();
+			dtoAviso.setDescripcion("No publicable");
+			dtoAviso.setId(String.valueOf(id));
+			listaAvisos.add(dtoAviso);
+		}
+		
+		// Aviso 13: Activo publicable
+		if(!Checks.esNulo(perimetroActivo) && !Checks.esNulo(perimetroActivo.getAplicaPublicar()) && perimetroActivo.getAplicaPublicar()) {
+			DtoAviso dtoAviso = new DtoAviso();
+			dtoAviso.setDescripcion("Publicable");
+			dtoAviso.setId(String.valueOf(id));
+			listaAvisos.add(dtoAviso);
+		}
+		
+		// Aviso 14: Estado activo vandalizado
 		if(!Checks.esNulo(activo.getEstadoActivo())) {
-			if(DDEstadoActivo.ESTADO_ACTIVO_VANDALIZADO.equals(activo.getEstadoActivo().getCodigo())) {
+			if (DDEstadoActivo.ESTADO_ACTIVO_VANDALIZADO.equals(activo.getEstadoActivo().getCodigo())) {
 				DtoAviso dtoAviso = new DtoAviso();
 				dtoAviso.setDescripcion(activo.getEstadoActivo().getDescripcion());
 				dtoAviso.setId(String.valueOf(id));
 				listaAvisos.add(dtoAviso);		
+			}
+		}
+		
+		// Aviso 15: Estado activo vandalizado
+		if(!Checks.esNulo(activo.getEstadoActivo())) {
+			if (DDEstadoActivo.ESTADO_ACTIVO_NO_OBRA_NUEVA_VANDALIZADO.equals(activo.getEstadoActivo().getCodigo())) {
+				
+				DtoAviso dtoAviso = new DtoAviso();
+				dtoAviso.setDescripcion(activo.getEstadoActivo().getDescripcion());
+				dtoAviso.setId(String.valueOf(id));
+				listaAvisos.add(dtoAviso);
+				
 			}
 		}
 		

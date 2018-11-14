@@ -2,9 +2,15 @@ package es.pfsgroup.framework.paradise.bulkUpload.utils.impl;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.*;
+import java.text.ParseException;
+
+import javax.annotation.Resource;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -12,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import es.capgemini.devon.files.FileItem;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.framework.paradise.bulkUpload.api.ExcelRepoApi;
@@ -29,20 +36,26 @@ import es.pfsgroup.framework.paradise.bulkUpload.dto.MSVExcelFileItemDto;
 import es.pfsgroup.framework.paradise.bulkUpload.dto.ResultadoValidacion;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.MSVExcelParser;
+import es.pfsgroup.framework.paradise.utils.JsonViewerException;
+import es.pfsgroup.framework.paradise.bulkUpload.utils.MSVExcelParser;
+import es.capgemini.devon.message.MessageService;
+
+
+
 
 @Component
 public class MSVAgrupacionRestringidoExcelValidator extends MSVExcelValidatorAbstract {
 
-	private static final String SEPARATOR = ", ";
-
-	private static final String CODIGO_TIPO_AGRUPACION_RESTRINGIDA = "02";
-
-	public static final String ACTIVE_NOT_SHARING_PLACE = "Todos los activos no comparten la misma PROVINCIA, MUNICIPIO, CP, CARTERA y PROPIETARIO.";
+	public static final String ACTIVE_NOT_SHARING_PLACE = "Todos los activos no comparten la misma PROVINCIA, MUNICIPIO, CP y CARTERA.";
+	public static final class ACTIVOS_NO_MISMA_LOCALIZACION { static int codigoError = 1; static String mensajeError = "msg.error.masivo.agrupar.activos.restringido.activos.agrupacion.diferente.localizacion";};
+	public static final String ACTIVO_NO_EXISTE = "msg.error.masivo.agrupar.activos.restringida.activo.noExiste";
+	public static final String ACTIVO_EN_AGRUPACION = "msg.error.masivo.agrupar.activos.restringida.activo.enAgrupacion";
+	public static final String ACTIVO_EN_OTRA_AGRUPACION = "msg.error.masivo.agrupar.activos.restringida.activo.enOtraAgrupacion";
+	public static final String ERROR_ACTIVO_DISTINTO_PROPIETARIO = "msg.error.masivo.agrupar.activos.propietarios.no.coinciden";
+	public static final String ACTIVO_ESTADO_PUBLICACION_DISTINTO = "msg.error.masivo.agrupar.activos.restringida.activos.agrupacion.destino.comercial";
+	public static final String ACTIVO_SITUACION_PUBLICACION_DISTINTO = "msg.error.masivo.agrupar.activos.restringida.activos.agrupacion.situacion.comercial";
 	
-	public static final String ACTIVE_IN_AGRUPACION_RESTRINGIDA = "Los siguientes activos pertenecen ya a una agrupación restringida: ";
 	
-	public static final String ERROR_ACTIVO_DISTINTO_PROPIETARIO = "El propietario del activo es distinto al propietario de la agrupación";
-
 	@Autowired
 	private MSVExcelParser excelParser;
 	
@@ -61,7 +74,11 @@ public class MSVAgrupacionRestringidoExcelValidator extends MSVExcelValidatorAbs
 	@Autowired
 	private MSVProcesoApi msvProcesoApi;
 	
+	@Resource
+    MessageService messageServices;
+	
 	protected final Log logger = LogFactory.getLog(getClass());
+	
 	private Integer numFilasHoja;
 
 	@Override
@@ -83,56 +100,40 @@ public class MSVAgrupacionRestringidoExcelValidator extends MSVExcelValidatorAbs
 		try {
 			this.numFilasHoja = exc.getNumeroFilasByHoja(0, operacionMasiva);
 		} catch (Exception e) {
-			logger.error(e.getMessage(), e);
+			logger.error(e.getMessage());
+			e.printStackTrace();
 		}
-		if (!dtoValidacionContenido.getFicheroTieneErrores()) {
-			List<String> listaErrores = new ArrayList<String>();
-			if (!isActiveSharingPlace(exc)) {
+				
+		if (!dtoValidacionContenido.getFicheroTieneErrores()) {	
+			Map<String,List<Integer>> mapaErrores = new HashMap<String,List<Integer>>();
+			// Validaciones de grupo, para todos los activos de una agrupacion en el excel:
+			mapaErrores.put(messageServices.getMessage(ACTIVO_NO_EXISTE), activesNotExistsRows(exc));
+			mapaErrores.put(messageServices.getMessage(ACTIVO_EN_AGRUPACION), activosEnAgrupacionRows(exc));
+			mapaErrores.put(messageServices.getMessage(ACTIVO_EN_OTRA_AGRUPACION), activosEnOtraAgrupacionRows(exc));
+			mapaErrores.put(messageServices.getMessage(ACTIVO_ESTADO_PUBLICACION_DISTINTO), comprobarEstadoPublicacionActivoAgrupacion(exc));
+			mapaErrores.put(messageServices.getMessage(ACTIVO_SITUACION_PUBLICACION_DISTINTO), comprobarSituacionActivoAgrupacion(exc));
+			mapaErrores.put(messageServices.getMessage(ACTIVOS_NO_MISMA_LOCALIZACION.mensajeError), activosAgrupMultipleValidacionRows(exc, ACTIVOS_NO_MISMA_LOCALIZACION.codigoError));
+			//mapaErrores.put(messageServices.getMessage(ERROR_ACTIVO_DISTINTO_PROPIETARIO), comprobarDistintoPropietario(exc));
+			
+			
+			if (!mapaErrores.get(messageServices.getMessage(ACTIVO_NO_EXISTE)).isEmpty()
+					|| !mapaErrores.get(messageServices.getMessage(ACTIVO_EN_AGRUPACION)).isEmpty()
+					|| !mapaErrores.get(messageServices.getMessage(ACTIVO_EN_OTRA_AGRUPACION)).isEmpty() 
+					|| !mapaErrores.get(messageServices.getMessage(ACTIVOS_NO_MISMA_LOCALIZACION.mensajeError)).isEmpty()
+					|| !mapaErrores.get(messageServices.getMessage(ACTIVO_ESTADO_PUBLICACION_DISTINTO)).isEmpty()
+					|| !mapaErrores.get(messageServices.getMessage(ACTIVO_SITUACION_PUBLICACION_DISTINTO)).isEmpty() ) {
+
 				dtoValidacionContenido.setFicheroTieneErrores(true);
-				listaErrores.add(ACTIVE_NOT_SHARING_PLACE);
-			}
-			
-			/*if (!comprobarDistintoPropietario(exc)) {
-				dtoValidacionContenido.setFicheroTieneErrores(true);
-				listaErrores.add(ERROR_ACTIVO_DISTINTO_PROPIETARIO);
-			}*/
-			
-			String[] activosEnAgrupacion = isActiveInAgrupacionRestringida(exc);
-			if (activosEnAgrupacion != null) {
-				String errorString = buildMsgWithData(ACTIVE_IN_AGRUPACION_RESTRINGIDA, activosEnAgrupacion);
-				if (errorString != null) {
-					dtoValidacionContenido.setFicheroTieneErrores(true);
-					listaErrores.add(errorString);
-				}
-			}
-			
-			if (dtoValidacionContenido.getFicheroTieneErrores()) {
 				exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
-				String nomFicheroErrores = exc.crearExcelErrores(listaErrores);
+				String nomFicheroErrores = exc.crearExcelErroresMejorado(mapaErrores);
 				FileItem fileItemErrores = new FileItem(new File(nomFicheroErrores));
 				dtoValidacionContenido.setExcelErroresFormato(fileItemErrores);
 			}
+
 		}
-		exc.cerrar();
-		
+		exc.cerrar();		
 		
 		return dtoValidacionContenido;
-	}
-
-	private String buildMsgWithData(String msg, String[] data) {
-		if (data == null) {
-			return null;
-		}
-		
-		StringBuilder b = null;
-		for (String num : data) {
-			if (b != null) {
-				b.append(SEPARATOR + num);
-			} else {
-				b = new StringBuilder(msg + num);
-			}
-		}
-		return (b != null) ? b.toString() : null;
 	}
 
 	protected ResultadoValidacion validaContenidoCelda(String nombreColumna, String contenidoCelda, MSVBusinessValidators contentValidators) {
@@ -177,56 +178,255 @@ public class MSVAgrupacionRestringidoExcelValidator extends MSVExcelValidatorAbs
 			FileItem fileItem = proxyFactory.proxy(ExcelRepoApi.class).dameExcelByTipoOperacion(idTipoOperacion);
 			return fileItem.getFile();
 		} catch (FileNotFoundException e) {
-			logger.error("No se ha podido recuperar la plantilla", e);
+			e.printStackTrace();
 		}
 		return null;
 	}
 	
-	private boolean isActiveSharingPlace(MSVHojaExcel exc) {
-		try {
-			if (this.numFilasHoja<3) return true;
-			int i = 1;
-			String numAgr = exc.dameCelda(i, 0);
-			String location = particularValidator.getCarteraLocationByNumAgr(numAgr);
-			boolean isFound = false;
-			String tmp = null;
-			while (!isFound && i < this.numFilasHoja ) {				
-				tmp = particularValidator.getCarteraLocationTipPatrimByNumAct(exc.dameCelda(i, 1));
-				if (location == null) {
-					location = tmp;
+	// Comprobaciones para todos los activos de una misma agrupacion indicada en el excel (no existente en BBDD todavia): ---
+	
+		/**
+		 * Recorre la lista excel para validar los grupos de activos que conforman cada agrupacion
+		 * La validacion que ejecuta la que se indique por parametro y devolvera una lista de erores
+		 * con las agrupaciones que tengan algun activo que no cumpla con la validacion
+		 * @param exc Una hoja excel con datos, del tipo MSVHojaExcel
+		 * @return
+		 */
+		private List<Integer> activosAgrupMultipleValidacionRows(MSVHojaExcel exc, int codigoValidacionMultiple) {
+			List<Integer> listaFilasError = new ArrayList<Integer>();
+			List<Long> listaNumAgrupaciones = new ArrayList<Long>();
+
+			String inSqlGrupoActivos = new String();
+
+			try{
+				
+				
+				// Se recorre todo el excel para extraer las distintas agrupaciones en una lista
+				for(int a=1; a<this.numFilasHoja; a++){
+					listaNumAgrupaciones.add(Long.parseLong(exc.dameCelda(a, 0)));
 				}
-				if (tmp==null || !tmp.equals(location)) return false;
-				i++;
+				// Se toman precauciones para crear una lista con agrupaciones unicas,
+				Set<Long> uniqueSetNumAgrupaciones =  new HashSet<Long>(listaNumAgrupaciones); 
+				List<Long> uniqueListNumAgrupaciones = new ArrayList<Long>(uniqueSetNumAgrupaciones);
+				
+				// Se recorre todo el excel para crear un Hashmap clave: numAgrup, valores: List<Long> numActivo
+				// Se recorre varias veces, 1 vez por cada numAgrup, para buscar en todo el excel, todos los numActivo relacionados
+				HashMap<Long,List<Long>> numActivosNumAgrup = new HashMap<Long,List<Long>>();
+				// Por cada agrupacion
+				for(Long numAgrupacion : uniqueListNumAgrupaciones){
+					// Se recorre el excel en busca de activos
+					List<Long> numActivos = new ArrayList<Long>();
+					for(int a=1; a<this.numFilasHoja; a++){
+						// Si es una fila de la agrupacion que se esta evaluando, se anota el activo
+						if(numAgrupacion.equals(Long.parseLong(exc.dameCelda(a, 0))))
+							numActivos.add(Long.parseLong(exc.dameCelda(a, 1)));				
+					}
+					numActivosNumAgrup.put(numAgrupacion, numActivos);
+				}
+
+				// Se recorre toda la lista de agrupaciones unica, para procesar por la validacion los activos de cada agrup.
+				for(Long numAgrupacion : uniqueListNumAgrupaciones){
+					if(!Checks.esNulo(numActivosNumAgrup.get(numAgrupacion))){
+						
+						//Genera en un String separados por comas, los num activos encontrados para la agrupacion
+						inSqlGrupoActivos = serializaFiltroInListaSql(numActivosNumAgrup.get(numAgrupacion));
+
+						// Busca en BBDD si la agrupacion pudiera ya tener activos asociados y extrae 1 de ellos
+						String inSqlActivosEnAgrupacion = particularValidator.getOneNumActivoAgrupacionRaw(String.valueOf(numAgrupacion));
+						if(!Checks.esNulo(inSqlActivosEnAgrupacion)) 
+							inSqlGrupoActivos = inSqlGrupoActivos.concat(",").concat(inSqlActivosEnAgrupacion);
+						
+						// Lanza la validacion para el grupo completo de num activos de la agrupacion (BBDD+excel), con un filtro IN de SQL
+						// La validacion que se lanza es la que se ha indicado por parametro, solo se lanza 1 de ellas.						
+						
+						// Validacion misma localizacion
+						if(codigoValidacionMultiple == ACTIVOS_NO_MISMA_LOCALIZACION.codigoError &&
+								!particularValidator.esActivosMismaLocalizacion(inSqlGrupoActivos))
+							listaFilasError.add(getNumPrimeraFilaAgrupacionError(exc, numAgrupacion));
+
+					}
+				}
+
+			} catch (Exception e) {
+				listaFilasError.add(0);
+				logger.error(e.getMessage());
+				e.printStackTrace();
 			}
-		} catch (Exception e) {
-			logger.error("No se ha podido comprobar la dirección de los activos", e);
-			return false;
-		}
+			
+			return listaFilasError;
+	}
 		
-		return true;
+	private String serializaFiltroInListaSql(List<Long> listaNumeros){
+		String listaSerializadaFiltroSql = new String();
+		
+		int i=0;
+		while(i<(listaNumeros.size()-1)){
+			listaSerializadaFiltroSql = listaSerializadaFiltroSql.concat(String.valueOf(listaNumeros.get(i))).concat(", ");
+			i++;
+		}
+		if (i <= listaNumeros.size()){
+			listaSerializadaFiltroSql = listaSerializadaFiltroSql.concat(String.valueOf(listaNumeros.get(i)));
+		}
+		return listaSerializadaFiltroSql;
 	}
 	
-	private String[] isActiveInAgrupacionRestringida(MSVHojaExcel exc) {
-		ArrayList<String> activos = new ArrayList<String>();
+	private Integer getNumPrimeraFilaAgrupacionError(MSVHojaExcel exc, Long numAgrupacion){
+		Integer numFilaError = null;
+		
+		// Recorre de nuevo el excel, en busca de la fila en la que se encuentra el primer caso de la agrupacion
+		// para agregar el texto
+		int a=1;
+		Boolean filaEncontrada = false;
 		try {
-			if (this.numFilasHoja<3) return null;
-			int i = 1;
-			
-			while (i < this.numFilasHoja ) {				
-				String numActivo = exc.dameCelda(i, 1);
-				if (particularValidator.esActivoEnAgrupacionPorTipo(Long.parseLong(numActivo), CODIGO_TIPO_AGRUPACION_RESTRINGIDA)) {
-					activos.add(numActivo);
+			while (a<this.numFilasHoja && !filaEncontrada){
+				if(numAgrupacion.equals(Long.parseLong(exc.dameCelda(a, 0)))){
+					// En el excel, Agrega un texto de validacion en la primera fila de cada agrupacion
+					numFilaError = a;
+					filaEncontrada = true;
 				}
-				i++;
+				a++;
 			}
-		} catch (Exception e) {
-			throw new RuntimeException("No se ha podido comprobar si los activos están en otras agrupaciones restringidas", e);
+		} catch (NumberFormatException e) {
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		} catch (IOException e) {
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		} catch (ParseException e) {
+			logger.error(e.getMessage());
+			e.printStackTrace();
 		}
 		
-		return activos.isEmpty() ? null : activos.toArray(new String[]{});
-	}
+		return numFilaError;
+	}	
+	
+	// Validaciones para activos de la lista excel	
+	private List<Integer> activesNotExistsRows(MSVHojaExcel exc){
+		List<Integer> listaFilas = new ArrayList<Integer>();
 
-	private boolean comprobarDistintoPropietario(MSVHojaExcel exc) {
+		int i = 0;
+		try{
+			for(i=1; i<this.numFilasHoja;i++){
+				if(!particularValidator.existeActivo(exc.dameCelda(i, 1)))
+					listaFilas.add(i);
+			}
+		} catch (Exception e) {
+			if (i != 0) listaFilas.add(i);
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		}
+		
+		return listaFilas;
+	}
+	
+	private List<Integer> activosEnAgrupacionRows(MSVHojaExcel exc) {
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		
+		Long numActivo;
+		Long numAgrupacion;
+		int i = 0;
+		try {
+			for(i=1; i<this.numFilasHoja;i++){
+				numAgrupacion = Long.parseLong(exc.dameCelda(i, 0));
+				numActivo = Long.parseLong(exc.dameCelda(i, 1));
+				if(particularValidator.esActivoEnAgrupacion(numActivo, numAgrupacion))
+					listaFilas.add(i);
+			}
+		} catch (Exception e) {
+			if (i != 0) listaFilas.add(i);
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		}
+		
+		return listaFilas;
+	}
+	
+	private List<Integer> comprobarEstadoPublicacionActivoAgrupacion(MSVHojaExcel exc) {
+		
+		
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		
+		String numActivo;
+		String numAgrupacion;
+		int i = 0;
+		try {
+			for(i=1; i<this.numFilasHoja;i++){
+				numAgrupacion = exc.dameCelda(i, 0);
+				numActivo = exc.dameCelda(i, 1);
+				if(particularValidator.isMismoTipoComercializacionActivoPrincipalAgrupacion(numActivo, numAgrupacion))
+					listaFilas.add(i);
+				
+			}
+		} catch (Exception e) {
+			if (i != 0) listaFilas.add(i);
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		}
+		
+		return listaFilas;
+		
+		
+	}
+	
+	
+	private List<Integer> comprobarSituacionActivoAgrupacion(MSVHojaExcel exc) {
+		
+		
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		
+		String numActivo;
+		String numAgrupacion;
+		int i = 0;
+		try {
+			for(i=1; i<this.numFilasHoja;i++){
+				numAgrupacion = exc.dameCelda(i, 0);
+				numActivo = exc.dameCelda(i, 1);
+				if(particularValidator.isMismoEpuActivoPrincipalAgrupacion(numActivo, numAgrupacion))
+					listaFilas.add(i);
+				
+			}
+		} catch (Exception e) {
+			if (i != 0) listaFilas.add(i);
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		}
+		
+		return listaFilas;
+		
+		
+	}
+	
+
+
+	private List<Integer> activosEnOtraAgrupacionRows(MSVHojaExcel exc) {
+		
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		Long numActivo;
+		Long numAgrupacion;
+		
+		int i = 0;
+		try {
+			for(i=1; i<this.numFilasHoja;i++){
+				numAgrupacion = Long.parseLong(exc.dameCelda(i, 0));
+				numActivo = Long.parseLong(exc.dameCelda(i, 1));
+				//Valida que el activo no este en una agrupacion de restringida
+				if(particularValidator.esActivoEnOtraAgrupacionNoCompatible(numActivo, numAgrupacion, "02"))
+					listaFilas.add(i);
+			}
+		} catch (Exception e) {
+			if (i != 0) listaFilas.add(i);
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		}
+		
+		return listaFilas;
+	}		
+
+	private List<Integer> comprobarDistintoPropietario(MSVHojaExcel exc) {
+		List<Integer> listaFilas = new ArrayList<Integer>();
 
 		int i = 0;
 		try {
@@ -234,16 +434,16 @@ public class MSVAgrupacionRestringidoExcelValidator extends MSVExcelValidatorAbs
 				String numAgrupacion = String.valueOf(Long.parseLong(exc.dameCelda(i, 0)));
 				String numActivo = String.valueOf(Long.parseLong(exc.dameCelda(i, 1)));
 				if (particularValidator.comprobarDistintoPropietario(numActivo, numAgrupacion))
-					return false;
+					listaFilas.add(i);
 			}
 		} catch (Exception e) {
 			if (i != 0)
-			return false;
+				listaFilas.add(i);
 			logger.error(e.getMessage());
 			e.printStackTrace();
 		}
 
-		return true;
-	}
+		return listaFilas;
+	}	
 	
 }

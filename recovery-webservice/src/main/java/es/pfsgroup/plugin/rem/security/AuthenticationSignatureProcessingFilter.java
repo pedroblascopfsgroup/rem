@@ -68,7 +68,7 @@ public class AuthenticationSignatureProcessingFilter extends AuthenticationProce
             eventPublisher.publishEvent(new InteractiveAuthenticationSuccessEvent(authResult, this.getClass()));
         }
 
-    	if(authHasSignature(authResult)) {
+    	if(authHasToken(authResult)) {
     		
     		sendRedirect(request, response, getDefaultTargetUrl());
     		
@@ -156,6 +156,23 @@ public class AuthenticationSignatureProcessingFilter extends AuthenticationProce
         }
         
         return authHasSignature;	
+		
+	}
+	
+	private boolean authHasToken (Authentication auth) {
+		
+        Boolean authHasToken = false;
+        
+        if(auth.getDetails() instanceof HayaWebAuthenticationDetails) {
+        	
+        	String token = ((HayaWebAuthenticationDetails) auth.getDetails()).getIdToken();
+        	
+        	if(!Checks.esNulo(token)) {
+        		authHasToken = true;
+        	}
+        }
+        
+        return authHasToken;	
 		
 	}
     

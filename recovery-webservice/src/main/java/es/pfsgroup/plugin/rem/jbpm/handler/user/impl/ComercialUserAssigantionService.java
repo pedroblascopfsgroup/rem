@@ -523,7 +523,7 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 		
 		if(!Checks.esNulo(tareaActivo.getTramite().getTrabajo())) {
 			
-			ExpedienteComercial expediente = expedienteComercialDao.getExpedienteComercialByTrabajo(tareaActivo.getTramite().getTrabajo().getId());
+			ExpedienteComercial expediente = expedienteComercialDao.getExpedienteComercialByIdTrabajo(tareaActivo.getTramite().getTrabajo().getId());
 			return gestorExpedienteComercialApi.getGestorByExpedienteComercialYTipo(expediente, codigo);
 		}
 		

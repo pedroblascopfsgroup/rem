@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.updaterstate;
 
 import java.util.ArrayList;
 import java.util.List;
+import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import org.apache.commons.lang.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -38,10 +39,13 @@ public class UpdaterStateManager implements UpdaterStateApi{
 	public static final String CODIGO_CHECKING_GESTION = "T001_CheckingDocumentacionGestion";
 	
 	@Autowired
-	ActivoTareaExternaApi activoTareaExternaApi;
+	private ActivoTareaExternaApi activoTareaExternaApi;
 	
 	@Autowired
 	private GenericABMDao genericDao;
+
+	@Autowired
+	private ActivoAdapter activoAdapterApi;
 	
 	@Autowired
 	private UtilDiccionarioApi utilDiccionarioApi;
@@ -102,7 +106,11 @@ public class UpdaterStateManager implements UpdaterStateApi{
 	}
 	
 	@Override
+	@Transactional(readOnly = false)
 	public void updaterStateDisponibilidadComercialAndSave(Activo activo) {
+		this.updaterStateDisponibilidadComercial(activo);
+		activoApi.saveOrUpdate(activo);
+		activoAdapterApi.actualizarEstadoPublicacionActivo(activo.getId());
 		this.updaterStateDisponibilidadComercialAndSave(activo,false);
 	}
 
@@ -113,10 +121,10 @@ public class UpdaterStateManager implements UpdaterStateApi{
 			activo.setSituacionComercial((DDSituacionComercial)utilDiccionarioApi.dameValorDiccionarioByCod(DDSituacionComercial.class,codigo));
 		}else{
 			this.updaterStateDisponibilidadComercial(activo);
-			//genericDao.update(Activo.class, activo);	
 			activoApi.saveOrUpdate(activo);
 		}
-		
+
+		activoAdapterApi.actualizarEstadoPublicacionActivo(activo.getId());
 	}
 	
 	@Override
@@ -151,9 +159,12 @@ public class UpdaterStateManager implements UpdaterStateApi{
 		}
 		else if(activoApi.getCondicionantesDisponibilidad(activo.getId()).getIsCondicionado()) {
 			codigo = DDSituacionComercial.CODIGO_DISPONIBLE_CONDICIONADO;
-		}
-		else if (!Checks.esNulo(activo.getTipoComercializacion())) {
-			switch(Integer.parseInt(activo.getTipoComercializacion().getCodigo())) {
+		}					
+		else if (!Checks.esNulo(activo.getActivoPublicacion())) {
+			
+			int indexAux = Integer.parseInt(activo.getActivoPublicacion().getTipoComercializacion().getCodigo());
+			
+			switch(indexAux) {
 				case 1:
 					codigo = DDSituacionComercial.CODIGO_DISPONIBLE_VENTA;
 					break;

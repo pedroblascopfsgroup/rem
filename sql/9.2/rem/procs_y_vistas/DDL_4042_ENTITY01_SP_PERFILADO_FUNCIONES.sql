@@ -1,18 +1,17 @@
 --/*
 --######################################### 
---## AUTOR=Vicente Martinez Cifre
---## FECHA_CREACION=20181106
+--## AUTOR=Ivan Rubio
+--## FECHA_CREACION=20181011
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=REMVIP-2455
+--## INCIDENCIA_LINK=HREOS-4574
 --## PRODUCTO=NO
 --## 
---## Finalidad: Procedimiento encargado de perfilar las funciones
+--## Finalidad: Procedimiento encargado de perfilar las funciones.
 --##      
 --## INSTRUCCIONES:  
 --## VERSIONES:
 --##        0.1 Versión inicial
---##		0.2 Resolución conflictos
 --#########################################
 --*/
 
@@ -20,7 +19,7 @@ WHENEVER SQLERROR EXIT SQL.SQLCODE;
 SET SERVEROUTPUT ON; 
 SET DEFINE OFF;
 
-create or replace PROCEDURE SP_PERFILADO_FUNCIONES (
+CREATE OR REPLACE PROCEDURE SP_PERFILADO_FUNCIONES (
   V_USUARIO   VARCHAR2 DEFAULT 'SP_PEF_FUN'
 )
 AS
@@ -39,6 +38,7 @@ AS
   V_FUN T_ARRAY := T_ARRAY(
     ------    FUNCION   --------------------------------------  1- -2---3---4---5---6---7---8---9--10--11--12--13--14--15--16--17--18--19--20--21--22--23--24--25--26--27--28--29--31--31--32--33--34--35--36--37--38--39--40--41--42--43--44--45--46--47--48--49--50--51--
 
+T_VAR( 'TAB_BUSQUEDA_ACTIVOS','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','N','N','S'),
 T_VAR( 'TAB_BUSQUEDA_ACTIVOS','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','N','N','S','N'),
 
 T_VAR( 'TAB_ACTIVO_DATOS_GENERALES','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','N','N','S','N'),
@@ -112,7 +112,7 @@ T_VAR( 'BOTON_ANULAR_TRAMITE','N','N','N','N','N','N','S','S','S','S','N','S','S
 T_VAR( 'EDITAR_LIST_AGRUPACIONES','S','S','S','S','S','S','S','S','S','S','N','S','S','S','S','S','S','S','S','N','N','N','N','N','N','N','N','N','N','N','N','N','S','N','N','N','S','S','S','S','S','S','S','S','S','S','S','S','N','N','N','N','N'),
 T_VAR( 'EDITAR_AGRUPACION','S','S','S','S','N','N','S','S','S','S','N','S','S','S','S','S','S','S','S','S','S','N','N','N','N','N','N','N','N','N','N','N','S','N','N','N','S','S','S','S','S','S','S','S','N','N','N','N','N','N','N','N','N'),
 T_VAR( 'TAB_AGRUPACION','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','N','N','S','N'),
-T_VAR( 'EDITAR_TAB_LISTA_ACTIVOS_AGRUPACION','S','S','S','S','N','N','N','N','N','N','N','S','S','S','S','S','S','S','S','S','S','N','N','N','N','N','N','N','N','N','N','N','S','N','N','N','S','S','S','S','S','S','S','S','N','N','N','N','N','N','N','N','N'),
+T_VAR( 'EDITAR_TAB_LISTA_ACTIVOS_AGRUPACION','S','S','S','S','N','N','N','N','S','S','N','S','S','S','S','S','S','S','S','S','S','N','N','N','N','N','N','N','N','N','N','N','S','N','N','N','S','S','S','S','S','S','S','S','N','N','N','N','N','N','N','N','N'),
 T_VAR( 'TAB_LISTA_ACTIVOS_AGRUPACION','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','N','N','S','N'),
 T_VAR( 'EDITAR_TAB_PUBLICACION_LISTA_ACTIVOS_AGRUPACION','N','N','N','N','N','N','S','S','S','S','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N'),
 T_VAR( 'TAB_FOTOS_AGRUPACION','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','N','N','S','N'),
@@ -302,55 +302,54 @@ BEGIN
 
         V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TABLA_TMP||' WHERE FUNCION = '''||V_TMP_VAR(1)||'''';
         EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
-        
+
         IF V_NUM_TABLAS = 0 THEN
 
           DBMS_OUTPUT.PUT_LINE('    [INFO] INSERTANDO PERFILADO PARA LA FUNCION '||V_TMP_VAR(1)||'...');
 
           V_SQL := '
             INSERT INTO '||V_ESQUEMA||'.'||V_TABLA_TMP||' (
-
-			FUNCION                
-			,HAYAGESTADM	
-			,HAYASUPADM	
-			,HAYAGESACT	
-			,HAYASUPACT	
-			,HAYACAL	
-			,HAYASUPCAL	
-			,HAYAGESTPREC	
-			,HAYASUPPREC	
-			,HAYAGESTPUBL	
-			,HAYASUPPUBL	
-			,HAYAFSV	
-			,HAYAGBOINM	
-			,HAYASBOINM	
-			,HAYAGBOFIN	
-			,HAYASBOFIN	
-			,HAYAGESTCOMRET	
-			,HAYASUPCOMRET	
-			,HAYAGESTCOMSIN	
-			,HAYASUPCOMSIN	
-			,HAYAGESTFORM	
-			,HAYASUPFORM	
-			,HAYAADM	
-			,HAYASADM	
-			,HAYALLA	
-			,HAYASLLA	
+			FUNCION
+			,HAYAGESTADM
+			,HAYASUPADM
+			,HAYAGESACT
+			,HAYASUPACT
+			,HAYACAL
+			,HAYASUPCAL
+			,HAYAGESTPREC
+			,HAYASUPPREC
+			,HAYAGESTPUBL
+			,HAYASUPPUBL
+			,HAYAFSV
+			,HAYAGBOINM
+			,HAYASBOINM
+			,HAYAGBOFIN
+			,HAYASBOFIN
+			,HAYAGESTCOMRET
+			,HAYASUPCOMRET
+			,HAYAGESTCOMSIN
+			,HAYASUPCOMSIN
+			,HAYAGESTFORM
+			,HAYASUPFORM
+			,HAYAADM
+			,HAYASADM
+			,HAYALLA
+			,HAYASLLA
 			,PERFGCCBANKIA
-			,PERFGCCLIBERBANK	
-			,GESTOADM	
-			,GESTIAFORM	
-			,HAYAGESTADMT	
-			,GESTOCED	
-			,GESTOPLUS	
-			,GESTOPDV	
-			,HAYAPROV	
-			,HAYACERTI	
-			,HAYACONSU	
-			,HAYASUPER	
-			,HAYAGESTCOM	
+			,PERFGCCLIBERBANK
+			,GESTOADM
+			,GESTIAFORM
+			,HAYAGESTADMT
+			,GESTOCED
+			,GESTOPLUS
+			,GESTOPDV
+			,HAYAPROV
+			,HAYACERTI
+			,HAYACONSU
+			,HAYASUPER
+			,HAYAGESTCOM
 			,HAYASUPCOM
-      		,HAYAGOLDTREE
+            ,HAYAGOLDTREE
 			,FVDNEGOCIO
 			,FVDBACKOFERTA
 			,FVDBACKVENTA
@@ -418,8 +417,8 @@ BEGIN
         	  , '''||V_TMP_VAR(50)||'''
         	  , '''||V_TMP_VAR(51)||'''
 			  , '''||V_TMP_VAR(52)||'''
-        , '''||V_TMP_VAR(53)||'''
-        , '''||V_TMP_VAR(54)||'''
+              , '''||V_TMP_VAR(53)||'''
+              , '''||V_TMP_VAR(54)||'''
             FROM DUAL
           '
           ;
@@ -455,46 +454,46 @@ BEGIN
                 FOR
                 PERFIL
                 IN (
-             HAYAGESTADM	
-			,HAYASUPADM	
-			,HAYAGESACT	
-			,HAYASUPACT	
-			,HAYACAL	
-			,HAYASUPCAL	
-			,HAYAGESTPREC	
-			,HAYASUPPREC	
-			,HAYAGESTPUBL	
-			,HAYASUPPUBL	
-			,HAYAFSV	
-			,HAYAGBOINM	
-			,HAYASBOINM	
-			,HAYAGBOFIN	
-			,HAYASBOFIN	
-			,HAYAGESTCOMRET	
-			,HAYASUPCOMRET	
-			,HAYAGESTCOMSIN	
-			,HAYASUPCOMSIN	
-			,HAYAGESTFORM	
-			,HAYASUPFORM	
-			,HAYAADM	
-			,HAYASADM	
-			,HAYALLA	
-			,HAYASLLA	
+             HAYAGESTADM
+			,HAYASUPADM
+			,HAYAGESACT
+			,HAYASUPACT
+			,HAYACAL
+			,HAYASUPCAL
+			,HAYAGESTPREC
+			,HAYASUPPREC
+			,HAYAGESTPUBL
+			,HAYASUPPUBL
+			,HAYAFSV
+			,HAYAGBOINM
+			,HAYASBOINM
+			,HAYAGBOFIN
+			,HAYASBOFIN
+			,HAYAGESTCOMRET
+			,HAYASUPCOMRET
+			,HAYAGESTCOMSIN
+			,HAYASUPCOMSIN
+			,HAYAGESTFORM
+			,HAYASUPFORM
+			,HAYAADM
+			,HAYASADM
+			,HAYALLA
+			,HAYASLLA
 			,PERFGCCBANKIA
-			,PERFGCCLIBERBANK	
-			,GESTOADM	
-			,GESTIAFORM	
-			,HAYAGESTADMT	
-			,GESTOCED	
-			,GESTOPLUS	
-			,GESTOPDV	
-			,HAYAPROV	
-			,HAYACERTI	
-			,HAYACONSU	
-			,HAYASUPER	
-			,HAYAGESTCOM	
+			,PERFGCCLIBERBANK
+			,GESTOADM
+			,GESTIAFORM
+			,HAYAGESTADMT
+			,GESTOCED
+			,GESTOPLUS
+			,GESTOPDV
+			,HAYAPROV
+			,HAYACERTI
+			,HAYACONSU
+			,HAYASUPER
+			,HAYAGESTCOM
 			,HAYASUPCOM
-      		,HAYAGOLDTREE
+            ,HAYAGOLDTREE
 			,FVDNEGOCIO
 			,FVDBACKOFERTA
 			,FVDBACKVENTA
@@ -557,46 +556,46 @@ BEGIN
                   PERFIL
                IN
                (
-                HAYAGESTADM	
-			,HAYASUPADM	
-			,HAYAGESACT	
-			,HAYASUPACT	
-			,HAYACAL	
-			,HAYASUPCAL	
-			,HAYAGESTPREC	
-			,HAYASUPPREC	
-			,HAYAGESTPUBL	
-			,HAYASUPPUBL	
-			,HAYAFSV	
-			,HAYAGBOINM	
-			,HAYASBOINM	
-			,HAYAGBOFIN	
-			,HAYASBOFIN	
-			,HAYAGESTCOMRET	
-			,HAYASUPCOMRET	
-			,HAYAGESTCOMSIN	
-			,HAYASUPCOMSIN	
-			,HAYAGESTFORM	
-			,HAYASUPFORM	
-			,HAYAADM	
-			,HAYASADM	
-			,HAYALLA	
-			,HAYASLLA	
+             HAYAGESTADM
+			,HAYASUPADM
+			,HAYAGESACT
+			,HAYASUPACT
+			,HAYACAL
+			,HAYASUPCAL
+			,HAYAGESTPREC
+			,HAYASUPPREC
+			,HAYAGESTPUBL
+			,HAYASUPPUBL
+			,HAYAFSV
+			,HAYAGBOINM
+			,HAYASBOINM
+			,HAYAGBOFIN
+			,HAYASBOFIN
+			,HAYAGESTCOMRET
+			,HAYASUPCOMRET
+			,HAYAGESTCOMSIN
+			,HAYASUPCOMSIN
+			,HAYAGESTFORM
+			,HAYASUPFORM
+			,HAYAADM
+			,HAYASADM
+			,HAYALLA
+			,HAYASLLA
 			,PERFGCCBANKIA
-			,PERFGCCLIBERBANK	
-			,GESTOADM	
-			,GESTIAFORM	
-			,HAYAGESTADMT	
-			,GESTOCED	
-			,GESTOPLUS	
-			,GESTOPDV	
-			,HAYAPROV	
-			,HAYACERTI	
-			,HAYACONSU	
-			,HAYASUPER	
-			,HAYAGESTCOM	
+			,PERFGCCLIBERBANK
+			,GESTOADM
+			,GESTIAFORM
+			,HAYAGESTADMT
+			,GESTOCED
+			,GESTOPLUS
+			,GESTOPDV
+			,HAYAPROV
+			,HAYACERTI
+			,HAYACONSU
+			,HAYASUPER
+			,HAYAGESTCOM
 			,HAYASUPCOM
-     		,HAYAGOLDTREE
+            ,HAYAGOLDTREE
 			,FVDNEGOCIO
 			,FVDBACKOFERTA
 			,FVDBACKVENTA
@@ -644,7 +643,6 @@ EXCEPTION
     RAISE;
 
 END;
-
 
 /
 

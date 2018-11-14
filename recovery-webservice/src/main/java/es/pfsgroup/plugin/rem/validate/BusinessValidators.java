@@ -27,7 +27,8 @@ public interface BusinessValidators {
 	public static final String ERROR_CARTERA_NULL = "La cartera esta vacia y no se puede comparar con la agrupación.";
 	public static final String ERROR_CARTERA_NOT_EQUAL = "La cartera del activo y la agrupación no coinciden.";	
 	public static final String ERROR_TIPO_NULL = "El tipo (alquiler/venta) esta vacio y no se puede comparar con la agrupación.";
-	public static final String ERROR_TIPO_NOT_EQUAL = "El tipo (alquiler/venta) del activo y la agrupación no coinciden.";	
+	public static final String ERROR_TIPO_NOT_EQUAL = "El tipo (alquiler/venta) del activo y la agrupación no coinciden.";
+	public static final String ERROR_ESTADO_PUBLICACION_NOT_EQUAL = "El activo tiene un estado de publicación distinto al de la agrupación.";
 	
 	/**
 	 * C�digo de tipo de operaci�n para el que aplica este validador.

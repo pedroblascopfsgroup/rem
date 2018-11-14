@@ -1069,14 +1069,12 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
         var me = this;
 
         me.deshabilitarCampo(me.down('[name=motivoDenegacion]'));
-        me.deshabilitarCampo(me.down('[name=comboDatosIguales]'));
+        me.ocultarCampo(me.down('[name=comboDatosIguales]'));
 
         me.down('[name=comboAceptacion]').addListener('change', function(combo) {
             if (combo.value == '01') {
-                me.habilitarCampo(me.down('[name=comboDatosIguales]'));
                 me.deshabilitarCampo(me.down('[name=motivoDenegacion]'));
             } else {
-                me.deshabilitarCampo(me.down('[name=comboDatosIguales]'));
                 me.habilitarCampo(me.down('[name=motivoDenegacion]'));
             }
         })

@@ -7,7 +7,7 @@
 --## INCIDENCIA_LINK=HREOS-4758
 --## PRODUCTO=NO
 --## 
---## Finalidad: Creación de tabla 'AUX_MMC_NO_COMERCIALIZABLES'
+--## Finalidad: Creación de tabla 'AUX_MMC_NO_COMERCIALIZABLES' y merges parte 2.
 --##			
 --## INSTRUCCIONES:  
 --## VERSIONES:
@@ -18,6 +18,9 @@
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
 
 
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON; 
+SET DEFINE OFF;
 
 DECLARE
 

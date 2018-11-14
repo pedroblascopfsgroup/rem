@@ -4,6 +4,12 @@ import java.util.HashMap;
 
 public class GestorDocumentalConstants {
 
+	public enum Contenedor {
+		Activo,
+		ExpedienteComercial,
+		Gasto
+	}
+
 	public static final String CODIGO_TIPO_EXPEDIENTE_REO = "AI";
 	public static final String CODIGO_TIPO_EXPEDIENTE_ACTIVOS_FINANCIEROS = "AF";
 	public static final String CODIGO_TIPO_EXPEDIENTE_ENTIDADES = "EN";

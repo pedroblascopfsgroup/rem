@@ -5,9 +5,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
     'HreRem.model.AdmisionDocumento', 'HreRem.model.AdjuntoActivo', 'HreRem.model.BusquedaTrabajo',
     'HreRem.model.IncrementoPresupuesto', 'HreRem.model.Distribuciones', 'HreRem.model.Observaciones',
     'HreRem.model.Carga', 'HreRem.model.Llaves', 'HreRem.model.PreciosVigentes','HreRem.model.VisitasActivo',
-    'HreRem.model.OfertaActivo', 'HreRem.model.PropuestaActivosVinculados', 'HreRem.model.HistoricoMediadorModel',
-    'HreRem.model.MediadorModel', 'HreRem.model.MovimientosLlave','HreRem.model.ActivoPatrimonio',
-    'HreRem.model.HistoricoAdecuacionesPatrimonioModel', 'HreRem.model.ImpuestosActivo'],
+    'HreRem.model.OfertaActivo', 'HreRem.model.PropuestaActivosVinculados', 'HreRem.model.HistoricoMediadorModel','HreRem.model.AdjuntoActivoPromocion',
+    'HreRem.model.MediadorModel', 'HreRem.model.MovimientosLlave', 'HreRem.model.ActivoPatrimonio', 'HreRem.model.HistoricoAdecuacionesPatrimonioModel', 'HreRem.model.ImpuestosActivo'],
     
     data: {
     	activo: null,
@@ -324,7 +323,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			 var estadoVentaCodigo = get('activo.estadoVentaCodigo');
 			 var incluyeDestinoComercialAlquiler = get('activo.incluyeDestinoComercialAlquiler');
 			 var incluyeDestinoComercialVenta = get('activo.incluyeDestinoComercialVenta');
-			 
+
 			 if(incluyeDestinoComercialVenta && incluyeDestinoComercialAlquiler) {
 				 return estadoAlquilerCodigo === CONST.ESTADO_PUBLICACION_ALQUILER['PUBLICADO'] || estadoVentaCodigo === CONST.ESTADO_PUBLICACION_VENTA['PUBLICADO'];
 			 } else if(incluyeDestinoComercialVenta) {
@@ -442,48 +441,48 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
             var precioRentaWeb = !Ext.isEmpty(get('datospublicacionactivo.precioWebAlquiler'));
             return (informeComercialAprobado || !informeComercialAprobado) && (publicarSinPrecioAlquiler || precioRentaWeb);
         },
-        
+
         esReadonlyChkbxPublicar: function(get){
 			var activoVendido = get('activo.isVendido');
-			
+
 			var ponerPublicarAReadonly = false;
 			if(activoVendido) {
 				ponerPublicarAReadonly = true;
 			}
-			
+
 			return ponerPublicarAReadonly;
 		},
-	
+
 		esEditableChkbxComercializar: function(get){
 			var activoVendido = get('activo.isVendido');
-			
+
 			return activoVendido;
 		},
-		
+
 		esVisibleTipoPublicacionVenta: function(get){
 			var estadoVenta = get('datospublicacionactivo.estadoPublicacionVenta');
 			var tipoPublicacionVenta = get('datospublicacionactivo.tipoPublicacionVentaDescripcion');
-			
+
 			if(!Ext.isEmpty(estadoVenta) && estadoVenta != CONST.DESCRIPCION_PUBLICACION['OCULTO_VENTA']){
 				return tipoPublicacionVenta;
 			}else{
 				return null;
 			}
-			
+
 		},
-		
+
 		esVisibleTipoPublicacionAlquiler: function(get){
 			var estadoAlquiler = get('datospublicacionactivo.estadoPublicacionAlquiler');
 			var tipoPublicacionAlquiler = get('datospublicacionactivo.tipoPublicacionAlquilerDescripcion');
-						
+
 			if(!Ext.isEmpty(estadoAlquiler) && estadoAlquiler != CONST.DESCRIPCION_PUBLICACION['OCULTO_ALQUILER']){
 				return tipoPublicacionAlquiler;
 			} else {
 				return null;
 			}
-			
+
 		}
-        
+
 	 },
 
     stores: {
@@ -827,7 +826,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
     		storeGestores: {
     			pageSize: $AC.getDefaultPageSize(),
 				model: 'HreRem.model.GestorActivo',
-				autoLoad: true,
 			   	proxy: {
 			   		type: 'uxproxy',
 			   	    remoteUrl: 'activo/getGestores',
@@ -853,6 +851,19 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				 }
     		},
     		
+    		storeGestoresActivos: {
+    			pageSize: $AC.getDefaultPageSize(),
+				model: 'HreRem.model.GestorActivo',
+			   	proxy: {
+			   		type: 'uxproxy',
+			   	    remoteUrl: 'activo/getGestoresActivos',
+			   	    extraParams: {
+			   	    	idActivo: '{activo.id}',
+			   	    	incluirGestoresInactivos: false
+			   	    }
+			    }
+    		},
+
     		storeDistribuciones: {
 				 model: 'HreRem.model.Distribuciones',
 				 proxy: {
@@ -921,6 +932,18 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 	      	        extraParams: {id: '{activo.id}'}
 	          	 },
 	          	 groupField: 'descripcionTipo'
+    		},
+
+    		storeDocumentosActivoPromocion: {
+   			 pageSize: $AC.getDefaultPageSize(),
+   			 model: 'HreRem.model.AdjuntoActivoPromocion',
+	      	     proxy: {
+	      	        type: 'uxproxy',
+	      	        remoteUrl: 'promocion/getListAdjuntosPromocion',
+	      	        extraParams: {id:'{activo.id}'}
+	          	 },
+	          	 groupField: 'descripcionTipo',
+	          	 autoLoad: false
     		},
 
     		historicoTrabajos: {

@@ -49,13 +49,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
         		me.getStore().remove(me.getStore().getAt(me.editPosition));
         		editor.isNew = false;
         	}
-	    },
-    	/*afterbind: function(grid) {
-    		var me = this;
-			if (me.loadAfterBind) {
-				grid.getStore().load();
-			}
-		}*/
+	    }
     },
 
     initComponent: function () {

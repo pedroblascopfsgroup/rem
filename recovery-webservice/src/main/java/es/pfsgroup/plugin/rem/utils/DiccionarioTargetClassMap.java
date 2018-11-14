@@ -197,6 +197,7 @@ public class DiccionarioTargetClassMap{
 		mapa.put("tareaDestinoSalto", DDTareaDestinoSalto.class);
 		mapa.put("countries", DDCicCodigoIsoCirbeBKP.class);
 		mapa.put("calculoImpuesto", DDCalculoImpuesto.class);
+		mapa.put("tiposDocumentoPromocion", DDTipoDocumentoPromocion.class);
 		mapa.put("estadosReserva", DDEstadosReserva.class);
 		
 		return Collections.unmodifiableMap(mapa);

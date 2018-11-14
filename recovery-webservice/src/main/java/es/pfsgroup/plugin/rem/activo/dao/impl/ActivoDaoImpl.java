@@ -10,16 +10,16 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import javax.annotation.Resource;
-
+import es.pfsgroup.commons.utils.hibernate.HibernateUtils;
 import org.apache.commons.lang.BooleanUtils;
+import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import es.capgemini.devon.dto.WebDto;
-import es.capgemini.devon.hibernate.pagination.PaginationManager;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.dao.AbstractEntityDao;
 import es.capgemini.pfs.users.domain.Usuario;
@@ -62,9 +62,6 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 	
 	@Autowired
 	private GenericABMDao genericDao;
-	
-	@Resource
-	private PaginationManager paginationManager;
 
     @Override
 	public Page getListActivos(DtoActivoFilter dto, Usuario usuLogado) {
@@ -378,7 +375,7 @@ HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.provinciaCodigo", dto.getProvinci
     
     @SuppressWarnings("unchecked")
 	@Override
-    public List<DDUnidadPoblacional> getComboInferiorMunicipio(String codigoMunicipio) {	
+    public List<DDUnidadPoblacional> getComboInferiorMunicipio(String codigoMunicipio) {
 		 String hql = "from DDUnidadPoblacional where localidad.codigo= ? and codigo NOT LIKE '%0000'";
 		
 		 List<DDUnidadPoblacional> list = getHibernateTemplate().find(hql, new Object[] { codigoMunicipio });
@@ -767,10 +764,14 @@ HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.provinciaCodigo", dto.getProvinci
 
 	@Override
 	public Activo getActivoByNumActivo(Long activoVinculado) {
-		HQLBuilder hb = new HQLBuilder(" from Activo act");
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.numActivo", activoVinculado);
-		
-		return HibernateQueryUtils.uniqueResult(this, hb);
+    	Session session = getSession();
+		Criteria criteria = session.createCriteria(Activo.class);
+		criteria.add(Restrictions.eq("numActivo", activoVinculado));
+
+		Activo activo =  HibernateUtils.castObject(Activo.class, criteria.uniqueResult());
+		session.disconnect();
+
+		return activo;
 	}
 
 	@Override
@@ -989,18 +990,18 @@ HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.provinciaCodigo", dto.getProvinci
 		String sql = "SELECT S_ACT_NUM_ACTIVO_REM.NEXTVAL FROM DUAL ";
 		return ((BigDecimal) this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult()).longValue();
 	}
-    
+
     private void agregarFiltroFecha(HQLBuilder hb, String fechaD, String fechaH, String tipoFecha) {
     	try {
-   			
+
 			if (fechaD != null) {
 				Date fechaDesde = DateFormat.toDate(fechaD);
 				HQLBuilder.addFiltroBetweenSiNotNull(hb, tipoFecha, fechaDesde, null);
 			}
-			
+
 			if (fechaH != null) {
 				Date fechaHasta = DateFormat.toDate(fechaH);
-		
+
 				// Se le añade un día para que encuentre las fechas del día anterior hasta las 23:59
 				Calendar calendar = Calendar.getInstance();
 				if (fechaHasta != null) {
@@ -1010,7 +1011,7 @@ HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.provinciaCodigo", dto.getProvinci
 
 				HQLBuilder.addFiltroBetweenSiNotNull(hb, tipoFecha, null, calendar.getTime());
 			}
-			
+
    		} catch (ParseException e) {
 			e.printStackTrace();
 		}
@@ -1045,6 +1046,6 @@ HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.provinciaCodigo", dto.getProvinci
 				+ "	)");
 		query.executeUpdate();
 		
-		
+
 	}
 }

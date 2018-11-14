@@ -101,7 +101,9 @@ public class MSVActualizadorPreciosFSVActivoImporte extends AbstractMSVActualiza
 		dtoActivoValoracion.setCodigoTipoPrecio(codigoTipoPrecio);
 		dtoActivoValoracion.setImporte(importe);
 		dtoActivoValoracion.setFechaVentaHaya(simpleDate.parse(fechaVentaHaya));
-		dtoActivoValoracion.setLiquidez(liquidez.toUpperCase());
+		if(!Checks.esNulo(liquidez)) {
+			dtoActivoValoracion.setLiquidez(liquidez.toUpperCase());
+		}
 		if(!Checks.esNulo(fechaFinExcel)){
 			Date fechaFin = simpleDate.parse(fechaFinExcel);
 			dtoActivoValoracion.setFechaFin(fechaFin);

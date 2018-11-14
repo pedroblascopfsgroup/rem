@@ -16,6 +16,9 @@ public class StockDto implements WebcomRESTDto{
 	private DateDataType fechaAccion;
 	@WebcomRequired
 	private LongDataType idActivoHaya;
+	private LongDataType idActivoSareb;
+	private LongDataType idActivoPrinex;
+	private LongDataType idActivoRem;
 	private StringDataType codTipoVia;
 	private StringDataType nombreCalle;
 	private StringDataType numeroCalle;
@@ -153,6 +156,24 @@ public class StockDto implements WebcomRESTDto{
 	}
 	public void setIdActivoHaya(LongDataType idActivoHaya) {
 		this.idActivoHaya = idActivoHaya;
+	}
+	public LongDataType getIdActivoSareb() {
+		return idActivoSareb;
+	}
+	public void setIdActivoSareb(LongDataType idActivoSareb) {
+		this.idActivoSareb = idActivoSareb;
+	}
+	public LongDataType getIdActivoPrinex() {
+		return idActivoPrinex;
+	}
+	public void setIdActivoPrinex(LongDataType idActivoPrinex) {
+		this.idActivoPrinex = idActivoPrinex;
+	}
+	public LongDataType getIdActivoRem() {
+		return idActivoRem;
+	}
+	public void setIdActivoRem(LongDataType idActivoRem) {
+		this.idActivoRem = idActivoRem;
 	}
 	public StringDataType getCodTipoVia() {
 		return codTipoVia;

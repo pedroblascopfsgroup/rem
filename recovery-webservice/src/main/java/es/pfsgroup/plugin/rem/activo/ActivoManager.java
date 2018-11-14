@@ -355,11 +355,11 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		if (!Checks.esNulo(expediente)) {
 			ofertaApi.resetPBC(expediente, false);
 		}
-		
+
 		ActivoPublicacion actPubli = activoPublicacionDao.get(dto.getIdActivo());
-		
+
 		activoAdapter.actualizarEstadoPublicacionActivo(activo.getId());
-		
+
 		updateActivoPublicacion(dto, actPubli);
 
 		return true;
@@ -371,29 +371,29 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	 */
 	@Transactional(readOnly = false)
 	private void updateActivoPublicacion(DtoPrecioVigente dto, ActivoPublicacion actPubli) {
-		
+
 		if(!Checks.esNulo(actPubli)) {
-			
+
 			if(DDTipoComercializacion.CODIGO_VENTA.equals(actPubli.getTipoComercializacion().getCodigo())) {
 				actPubli.setCheckSinPrecioVenta(false);
 			}
-			
+
 			if(DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(actPubli.getTipoComercializacion().getCodigo())) {
 				actPubli.setCheckSinPrecioAlquiler(false);
 			}
-			
+
 			if(DDTipoComercializacion.CODIGO_ALQUILER_VENTA.equals(actPubli.getTipoComercializacion().getCodigo())) {
-				
+
 				if(DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA.equals(dto.getCodigoTipoPrecio())) {
 					actPubli.setCheckSinPrecioVenta(false);
 				}
-				
+
 				if(DDTipoPrecio.CODIGO_TPC_APROBADO_RENTA.equals(dto.getCodigoTipoPrecio())) {
 					actPubli.setCheckSinPrecioAlquiler(false);
 				}
-				
+
 			}
-			
+
 			activoPublicacionDao.save(actPubli);
 		}
 	}
@@ -476,7 +476,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		return resultado;
 	}
 
-	
+
 	@Override
 	public boolean crearExpediente(Oferta oferta, Trabajo trabajo) {
 
@@ -653,10 +653,10 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		nuevoExpediente.setFechaAlta(new Date());
 
 		//HREOS-2511 El combo "Comité seleccionado" vendrá informado para cartera Sareb
-		if(oferta.getActivoPrincipal().getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_SAREB)
-				|| oferta.getActivoPrincipal().getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_TANGO)
-				|| oferta.getActivoPrincipal().getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_GIANTS)
-				|| oferta.getActivoPrincipal().getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_CERBERUS)) {
+		if(DDCartera.CODIGO_CARTERA_SAREB.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
+				|| DDCartera.CODIGO_CARTERA_TANGO.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
+				|| DDCartera.CODIGO_CARTERA_GIANTS.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
+				|| DDCartera.CODIGO_CARTERA_CERBERUS.equals(oferta.getActivoPrincipal().getCartera().getCodigo())) {
 			Double precioMinimoAutorizado = 0.0;
 			ActivoBancario activoBancario = getActivoBancarioByIdActivo(oferta.getActivoPrincipal().getId());
 			if (Checks.esNulo(oferta.getAgrupacion())) {
@@ -692,11 +692,12 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				if (!Checks.esNulo(activoBancario.getClaseActivo()) && activoBancario.getClaseActivo().getCodigo().equals(DDClaseActivoBancario.CODIGO_FINANCIERO)) {
 					esFinanciero = true;
 				}
-				if (oferta.getActivoPrincipal().getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_TANGO)) {
+
+				if (DDCartera.CODIGO_CARTERA_TANGO.equals(oferta.getActivoPrincipal().getCartera().getCodigo())){
 					nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_HAYA_TANGO)));
-				} else if (oferta.getActivoPrincipal().getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_GIANTS)) {
+				} else if(DDCartera.CODIGO_CARTERA_GIANTS.equals(oferta.getActivoPrincipal().getCartera().getCodigo())){
 					nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_HAYA_GIANTS)));
-				}else if(oferta.getActivoPrincipal().getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_CERBERUS)) {
+				} else if(DDCartera.CODIGO_CARTERA_CERBERUS.equals(oferta.getActivoPrincipal().getCartera().getCodigo())) {
 					nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_HAYA_CERBERUS)));
 				} else {
 					// 1º Clase de activo (financiero/inmobiliario) y sin formalización.
@@ -1027,11 +1028,11 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			genericDao.deleteById(ActivoValoraciones.class, id);
 		}
 
-		if(activoValoracion != null && activoValoracion.getActivo() != null){ 
+		if(activoValoracion != null && activoValoracion.getActivo() != null){
 			restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO, activoValoracion.getActivo());
 			activoAdapter.actualizarEstadoPublicacionActivo(activoValoracion.getActivo().getId());
 		}
-		
+
 		return true;
 	}
 
@@ -1720,7 +1721,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				}
 				if(historico.getAuditoria() != null){
 					beanUtilNotNull.copyProperty(dtoHistoricoMediador, "responsableCambio", historico.getAuditoria().getUsuarioCrear());
-				}			
+				}
 			} catch (IllegalAccessException e) {
 				logger.error("Error en activoManager", e);
 
@@ -4230,7 +4231,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	public List<?> getAllActivosAgrupacionRestringida(Activo activo) {
 		if (activo != null) {
 			for (ActivoAgrupacionActivo activoAgrupacionActivo : activo.getAgrupaciones()) {
-				if (activoAgrupacionActivo.getAgrupacion() != null 
+				if (activoAgrupacionActivo.getAgrupacion() != null
 						&& isActivoAgrupacionTipo(activoAgrupacionActivo, DDTipoAgrupacion.AGRUPACION_RESTRINGIDA)) {
 					DtoAgrupacionFilter filter = new DtoAgrupacionFilter();
 					filter.setLimit(1000);

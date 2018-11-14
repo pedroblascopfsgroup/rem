@@ -3,18 +3,16 @@
 --## AUTOR=RLB
 --## FECHA_CREACION=20181113
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=2.0.17
+--## VERSION_ARTEFACTO=2.1.0
 --## INCIDENCIA_LINK=HREOS-4072
 --## PRODUCTO=NO
---## Finalidad: Tabla para almacentar el historico del stock de activos enviados a webcom. Se añaden campos HREOS-1551. Se amplia campo CondicionesEspecificas HREOS-1930.
+--## Finalidad: Tabla para almacentar el historico del stock de activos enviados a webcom.
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
 --##########################################
 --*/
-
---Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
 
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
 SET SERVEROUTPUT ON; 
@@ -39,7 +37,7 @@ DECLARE
     CUENTA NUMBER;
     
 BEGIN
-	
+
 
 	DBMS_OUTPUT.PUT_LINE('********' ||V_TEXT_VISTA|| '********'); 
 	DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_VISTA||'... Comprobaciones previas');
@@ -88,6 +86,9 @@ BEGIN
 		SELECT DISTINCT
 		CAST(ACT.ACT_NUM_ACTIVO AS NUMBER(16,0)) 											AS ID_ACTIVO_HAYA,
 		CAST(ACT.ACT_NUM_ACTIVO_UVEM AS NUMBER(16,0)) 										AS ID_ACTIVO_UVEM,
+		CAST(ACT.ACT_NUM_ACTIVO_SAREB AS VARCHAR2(55 CHAR)) 								AS ID_ACTIVO_SAREB,
+        CAST(ACT.ACT_NUM_ACTIVO_PRINEX AS NUMBER(16,0)) 									AS ID_ACTIVO_PRINEX,
+        CAST(ACT.ACT_NUM_ACTIVO_REM AS NUMBER(16,0)) 										AS ID_ACTIVO_REM,
 		CAST(DDTVI.DD_TVI_CODIGO AS VARCHAR2(20 CHAR)) 										AS COD_TIPO_VIA,
 		CAST(BLOC.BIE_LOC_NOMBRE_VIA AS VARCHAR2(100 CHAR)) 								AS NOMBRE_CALLE,
 		CAST(BLOC.BIE_LOC_NUMERO_DOMICILIO AS VARCHAR2(100 CHAR)) 							AS NUMERO_CALLE,
@@ -321,7 +322,7 @@ BEGIN
             JOIN '||V_ESQUEMA||'.ACT_CFD_CONFIG_DOCUMENTO CFD ON CFD.CFD_ID = ADO.CFD_ID
             WHERE ADO.DD_TCE_ID IS NOT NULL AND ADO.BORRADO = 0 AND DDTCE.BORRADO = 0 AND CFD.BORRADO = 0
             ) DDTCE ON DDTCE.ACT_ID = ACT.ACT_ID AND DDTPA.DD_TPA_ID = DDTCE.DD_TPA_ID AND DDTCE.RN = 1
-            
+
 		where act.borrado = 0 and sps.borrado = 0';
 
 		DBMS_OUTPUT.PUT_LINE('[INFO] Vista materializada : '|| V_ESQUEMA ||'.'|| V_TEXT_VISTA ||'... creada');

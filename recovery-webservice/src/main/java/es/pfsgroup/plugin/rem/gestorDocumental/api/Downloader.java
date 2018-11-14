@@ -6,6 +6,8 @@ public interface Downloader {
 	
 	FileItem getFileItem(Long id, String nombreDocumento) throws Exception;
 	
+	FileItem getFileItemPromocion(Long id, String nombreDocumento) throws Exception;
+	
 	String[] getKeys();
 
 }

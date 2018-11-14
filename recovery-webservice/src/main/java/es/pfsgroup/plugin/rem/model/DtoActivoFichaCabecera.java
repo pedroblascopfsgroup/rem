@@ -5,9 +5,6 @@ import java.util.List;
 
 /**
  * Dto para la pestaña cabecera de la ficha de Activo
- * 
- * @author Benjamín Guerrero
- *
  */
 public class DtoActivoFichaCabecera extends DtoTabActivo {
 
@@ -120,6 +117,7 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private Boolean pertenceAgrupacionComercial;
 	private Boolean pertenceAgrupacionAsistida;
 	private Boolean pertenceAgrupacionObraNueva;
+	private Boolean pertenceAgrupacionProyecto;
 	private String situacionComercialCodigo;
 	private String situacionComercialDescripcion;
 	
@@ -149,7 +147,6 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private String tipoAlquilerDescripcion;
 	private Boolean bloqueoTipoComercializacionAutomatico;
 	private String numInmovilizadoBankia;
-	//HREOS-3890
 	private Boolean aplicaPublicar;
 	private Date fechaAplicaPublicar;
 	private String motivoAplicaPublicar;
@@ -175,13 +172,11 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	
 	//Tipo Activo del mediador
 	private String tipoActivoMediadorCodigo;
-	
-	//HREOS-1983
+
 	private Boolean selloCalidad;
 	private String nombreGestorSelloCalidad;
 	private Date fechaRevisionSelloCalidad;
-	
-	//HREOS-2684
+
 	private String minimoAutorizado;
 	private String aprobadoVentaWeb;
 	private String aprobadoRentaWeb;
@@ -190,36 +185,31 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private String valorNetoContable;
 	private String costeAdquisicion;
 	private String valorUltimaTasacion;
-	
-	//HREOS-2716
+
 	private String codigoPromocionPrinex;
 
-	// HREOS-2761
 	private List<?> activosPropagables;
-	
-	//REMVIP-969
+
 	private Boolean tienePosibleInformeMediador;
+
+	private String idAgrupacion;
+	private Boolean tienePromocion;
 
 	private int page;
 	private int start;
 	private int limit;
-	
-	//HREOS-3415
+
 	private String acbCoreaeTexto;
 
-	//HREOS-4470
 	private Boolean asignaGestPorCambioDeProv;
 
-	//REMVIP-REMVIP-2193
 	private Boolean isLogUsuGestComerSupComerSupAdmin;
-	
-	//HREOS-4634
+
 	private Boolean activoChkPerimetroAlquiler;
 	private List<?> activosAgrupacionRestringida;
-	
+
 	private Boolean tieneOkTecnico;
-	
-	//HREOS-4767
+
 	private Long activoPrincipalRestringida;
 
 	public Boolean getTieneOkTecnico() {
@@ -1509,7 +1499,32 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 		this.acreedorNumExp = acreedorNumExp;
 	}
 
-	public Boolean getTienePosibleInformeMediador() {
+
+	public Boolean getPertenceAgrupacionProyecto() {
+		return pertenceAgrupacionProyecto;
+	}
+
+	public void setPertenceAgrupacionProyecto(Boolean pertenceAgrupacionProyecto) {
+		this.pertenceAgrupacionProyecto = pertenceAgrupacionProyecto;
+	}
+
+	public String getIdAgrupacion() {
+		return idAgrupacion;
+	}
+
+	public void setIdAgrupacion(String idAgrupacion) {
+		this.idAgrupacion = idAgrupacion;
+	}
+
+	public Boolean getTienePromocion() {
+		return tienePromocion;
+	}
+
+	public void setTienePromocion(Boolean tienePromocion) {
+		this.tienePromocion = tienePromocion;
+	}
+
+public Boolean getTienePosibleInformeMediador() {
 		return tienePosibleInformeMediador;
 	}
 

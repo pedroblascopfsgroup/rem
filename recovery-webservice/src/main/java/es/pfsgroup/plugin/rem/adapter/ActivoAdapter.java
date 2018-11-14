@@ -21,7 +21,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.beans.Service;
 import es.capgemini.devon.dto.WebDto;
-import es.capgemini.devon.exception.UserException;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.message.MessageService;
@@ -191,7 +190,7 @@ import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi.ENTIDADES;
 import es.pfsgroup.plugin.rem.rest.dto.FileListResponse;
 import es.pfsgroup.plugin.rem.rest.dto.FileResponse;
-import es.pfsgroup.plugin.rem.rest.dto.OperationResultResponse;
+import es.pfsgroup.plugin.rem.restclient.exception.UnknownIdException;
 import es.pfsgroup.plugin.rem.service.TabActivoDatosBasicos;
 import es.pfsgroup.plugin.rem.service.TabActivoDatosRegistrales;
 import es.pfsgroup.plugin.rem.service.TabActivoService;
@@ -2294,7 +2293,7 @@ public class ActivoAdapter {
 		}
 		return listaAdjuntos;
 	}
-
+	
 	private List<DtoAdjunto> getAdjuntosActivo(Long id, List<DtoAdjunto> listaAdjuntos)
 			throws IllegalAccessException, InvocationTargetException {
 		Activo activo = activoApi.get(id);
@@ -2311,7 +2310,7 @@ public class ActivoAdapter {
 		}
 		return listaAdjuntos;
 	}
-
+	
 	public String uploadDocumento(WebFileItem webFileItem, Activo activoEntrada, String matricula) throws Exception {
 
 		if (Checks.esNulo(activoEntrada)) {
@@ -2427,15 +2426,15 @@ public class ActivoAdapter {
 		
 		for (int i = 0; i < id.length; i++) {
 			ActivoFoto actvFoto = this.getFotoActivoById(id[i]);
+			genericDao.deleteById(ActivoFoto.class, actvFoto.getId());
 			if (actvFoto.getRemoteId() != null) {
-				OperationResultResponse reponseDelete = gestorDocumentalFotos.delete(actvFoto.getRemoteId());
-				if (reponseDelete.getError() != null && !reponseDelete.getError().isEmpty()
-						&& !reponseDelete.getError().equals(ERROR_CRM_UNKNOWN_ID)) {
-					genericDao.deleteById(ActivoFoto.class, actvFoto.getId());
-					throw new UserException(reponseDelete.getError());
+				try{
+					gestorDocumentalFotos.delete(actvFoto.getRemoteId());
+				}catch(UnknownIdException e){
+					logger.error("la foto no existe en el gestor documental");
 				}
 			}
-			genericDao.deleteById(ActivoFoto.class, actvFoto.getId());
+			
 		}		
 
 		return resultado;
@@ -2448,8 +2447,6 @@ public class ActivoAdapter {
 			ActivoFoto actvFoto = this.getFotoActivoByRemoteId(remoteId);
 			if (actvFoto != null) {
 				genericDao.deleteById(ActivoFoto.class, actvFoto.getId());
-			} else {
-				throw new Exception("La foto con id remoto ".concat(remoteId.toString()).concat(" no existe"));
 			}
 		} catch (Exception e) {
 			logger.error("Error borrando la foto", e);

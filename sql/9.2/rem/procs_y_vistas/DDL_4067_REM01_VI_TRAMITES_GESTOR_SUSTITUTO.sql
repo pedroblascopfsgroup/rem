@@ -11,6 +11,7 @@
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##		0.2 REMVIP-2494 - Se corrige un IN NULL por un IS NULL
 --##########################################
 --*/
 
@@ -87,7 +88,7 @@ BEGIN
   JOIN REMMASTER.USU_USUARIOS USU ON SGS.USU_ID_ORI = USU.USU_ID
   JOIN REM01.ACT_ACTIVO ACT ON TAC.ACT_ID = ACT.ACT_ID
   WHERE SGS.FECHA_INICIO <= SYSDATE
-  AND (SGS.FECHA_FIN >= SYSDATE OR SGS.FECHA_FIN IN NULL)';
+  AND (SGS.FECHA_FIN >= SYSDATE OR SGS.FECHA_FIN IS NULL)';
 
 
   DBMS_OUTPUT.PUT_LINE('CREATE VIEW '|| V_ESQUEMA ||'.'||V_TEXT_VISTA||'...Creada OK');

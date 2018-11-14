@@ -60,7 +60,7 @@ public class AgendaMultifuncionCorreoUtils {
 		// Preparamos la sesion
 		Session session = Session.getDefaultInstance(props);
 		session.setDebugOut(System.out);
-		session.setDebug(true);
+		session.setDebug(false);
 
 		MimeMessage message = new MimeMessage(session);
 

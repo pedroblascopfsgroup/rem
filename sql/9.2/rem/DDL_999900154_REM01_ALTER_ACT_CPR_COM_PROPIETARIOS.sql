@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=HECTOR GOMEZ
---## FECHA_CREACION=20181107
+--## FECHA_CREACION=20181114
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=0
+--## INCIDENCIA_LINK=HREOS-4707
 --## PRODUCTO=NO
 --## Finalidad: Añadir columna DD_SACT_ID en tabla ACT_CPR_COM_PROPIETARIOS.
 --##           

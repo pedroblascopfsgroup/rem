@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=HECTOR GOMEZ
---## FECHA_CREACION=20181106
+--## FECHA_CREACION=20181114
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-4712
+--## INCIDENCIA_LINK=HREOS-4711
 --## PRODUCTO=NO
 --##
 --## Finalidad: Script que añade en DD_OPM_OPERACION_MASIVA los datos añadidos en T_ARRAY_DATA.
@@ -64,7 +64,7 @@ BEGIN
 							' SELECT '||V_ESQUEMA||'.S_DD_OPM_OPERACION_MASIVA.NEXTVAL,' ||
 							' '''||V_TMP_FUNCION(1)||''','''||V_TMP_FUNCION(2)||''','''||V_TMP_FUNCION(3)||''','||
 							' (SELECT FUN_ID FROM '||V_ESQUEMA_M||'.FUN_FUNCIONES WHERE FUN_DESCRIPCION = '''||V_TMP_FUNCION(4)||'''), '||
-							' 0, ''HREOS-4712'', SYSDATE, 0, '''||V_TMP_FUNCION(5)||''' FROM DUAL';
+							' 0, ''HREOS-4711'', SYSDATE, 0, '''||V_TMP_FUNCION(5)||''' FROM DUAL';
 		    	
 				EXECUTE IMMEDIATE V_MSQL_1;
 				DBMS_OUTPUT.PUT_LINE('[INFO] Datos de la tabla '||V_ESQUEMA||'.DD_OPM_OPERACION_MASIVA insertados correctamente.');

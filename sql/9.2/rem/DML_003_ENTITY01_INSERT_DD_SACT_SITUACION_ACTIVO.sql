@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=HECTOR GOMEZ
---## FECHA_CREACION=20181105
+--## FECHA_CREACION=20181115
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-4706

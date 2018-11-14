@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Héctor Gomez
---## FECHA_CREACION=20180322
+--## FECHA_CREACION=20181114
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-4710
+--## INCIDENCIA_LINK=HREOS-4711
 --## PRODUCTO=NO
 --##
 --## Finalidad: Script que añade en POP_PLANTILLAS_OPERACION los datos añadidos en T_ARRAY_DATA

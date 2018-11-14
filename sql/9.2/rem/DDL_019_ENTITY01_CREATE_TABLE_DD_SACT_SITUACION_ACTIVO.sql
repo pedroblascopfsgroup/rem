@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=HECTOR GOMEZ
---## FECHA_CREACION=20180511
+--## FECHA_CREACION=20181115
 --## ARTEFACTO=web
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-4706
+--## INCIDENCIA_LINK=HREOS-4707
 --## PRODUCTO=No
 --## Finalidad: DDL Creación de la tabla DD_SACT_SINONOAPLICA
 --##           

@@ -247,7 +247,7 @@ public class ComunidadesPropietariosAdapter {
 			
 			DDSituacionActivo ddSituacionActivo = genericDao.get(DDSituacionActivo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", situacion));
 			
-			if (!Checks.esNulo(ddSituacionActivo)) {
+			if (!Checks.esNulo(ddSituacionActivo)  ) {
 				
 				 activoComunidadPropietarios = genericDao.get(ActivoComunidadPropietarios.class, genericDao.createFilter(FilterType.EQUALS,"id",activo.getComunidadPropietarios().getId()),
 						genericDao.createFilter(FilterType.EQUALS,"codigoComPropUvem", idComunidadPropietarios));
@@ -260,6 +260,7 @@ public class ComunidadesPropietariosAdapter {
 
 				activoComunidadPropietarios.setFechaEnvioCarta(date1);
 			}
+
 			
 			
 			

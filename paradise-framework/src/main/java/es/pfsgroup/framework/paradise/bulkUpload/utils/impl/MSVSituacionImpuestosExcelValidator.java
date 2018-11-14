@@ -52,8 +52,7 @@ public class MSVSituacionImpuestosExcelValidator extends MSVExcelValidatorAbstra
 
 	// Textos con errores de validacion
 	public static final String ACTIVE_EXISTS = "No se ha encontrado ningun activo para el identificado = ";
-	public static final String IMPUESTOS = "EL tipo de impuesto no es correcto = ";
-
+	public static final String CATASTRO_EXISTS =  "No se ha encontrado ningun catastro para el identificado = ";
 	public static final String FECHA_EMVIO = "EL formato de la fecha solicitud901 no es correcto ";
 
 
@@ -63,9 +62,10 @@ public class MSVSituacionImpuestosExcelValidator extends MSVExcelValidatorAbstra
 		static final int DATOS_PRIMERA_FILA = 1;
 
 		static final int NUM_ACTIVO_HAYA = 0;
-		static final int fecha901 = 1;
-		static final int resultado = 2;
-		static final int observaciones = 3;
+		static final int CATASTRO = 1;
+		static final int FECHA901 = 2;
+		static final int RESULTADO = 3;
+		static final int OBERVACIONES = 4;
 		
 	}
 	@Autowired
@@ -90,8 +90,7 @@ public class MSVSituacionImpuestosExcelValidator extends MSVExcelValidatorAbstra
 
 	private Integer numFilasHoja;
 	
-	@Autowired
-	private GenericABMDao genericDao;
+
 	
 	@Override
 	public MSVDtoValidacion validarContenidoFichero(MSVExcelFileItemDto dtoFile) throws RowsExceededException, IllegalArgumentException, WriteException, IOException {
@@ -120,13 +119,19 @@ public class MSVSituacionImpuestosExcelValidator extends MSVExcelValidatorAbstra
 
 
 			mapaErrores.put(ACTIVE_EXISTS , noExisteActivo(exc));
-			mapaValores.put(ACTIVE_EXISTS , noExisteActivo3(exc));
+			mapaValores.put(ACTIVE_EXISTS , dameValorActivo(exc));
+			
+			
+			
+			mapaErrores.put(CATASTRO_EXISTS , noExisteCatastro(exc));
+			mapaValores.put(CATASTRO_EXISTS , dameValorCatastro(exc));
 
 
-			mapaErrores.put(FECHA_EMVIO, isColumnNotDateByRows(exc, COL_NUM.fecha901));
+
+			mapaErrores.put(FECHA_EMVIO, isColumnNotDateByRows(exc, COL_NUM.FECHA901));
 
 			
-				if (mapaErrores.get(ACTIVE_EXISTS).isEmpty() || !mapaErrores.get(FECHA_EMVIO).isEmpty()) 
+				if (!mapaErrores.get(ACTIVE_EXISTS).isEmpty() || !mapaErrores.get(FECHA_EMVIO).isEmpty()) 
 			 {
 
 					dtoValidacionContenido.setFicheroTieneErrores(true);
@@ -236,8 +241,7 @@ public class MSVSituacionImpuestosExcelValidator extends MSVExcelValidatorAbstra
 			for (i = COL_NUM.DATOS_PRIMERA_FILA; i < numFilasHoja; i++) {
 				if (!particularValidator.existeActivo(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA)))
 					listaFilas.add(i);
-				else
-					listaFilas.add(null);
+		;
 				
 			}
 		} catch (IllegalArgumentException e) {
@@ -257,7 +261,35 @@ public class MSVSituacionImpuestosExcelValidator extends MSVExcelValidatorAbstra
 
 		return listaFilas;
 	}
-	private List<String> noExisteActivo3(MSVHojaExcel exc) {
+	private List<Integer> noExisteCatastro(MSVHojaExcel exc) {
+		List<Integer> listaFilas = new ArrayList<Integer>();
+
+		int i = 0;
+		try {
+			for (i = COL_NUM.DATOS_PRIMERA_FILA; i < numFilasHoja; i++) {
+				if (!particularValidator.existeCatastro(exc.dameCelda(i, COL_NUM.CATASTRO)))
+					listaFilas.add(i);
+		
+				
+			}
+		} catch (IllegalArgumentException e) {
+			logger.error(e.getMessage(),e);
+			e.printStackTrace();
+		} catch (IOException e) {
+			logger.error(e.getMessage(),e);
+			e.printStackTrace();
+		} catch (ParseException e) {
+			logger.error(e.getMessage(),e);
+			listaFilas.add(i);
+		}
+		
+		
+	
+		
+
+		return listaFilas;
+	}
+	private List<String> dameValorActivo(MSVHojaExcel exc) {
 		List<String> listaFilas = new ArrayList<String>();
 
 		int i = 0;
@@ -265,9 +297,35 @@ public class MSVSituacionImpuestosExcelValidator extends MSVExcelValidatorAbstra
 			for (i = COL_NUM.DATOS_PRIMERA_FILA; i < numFilasHoja; i++) {
 				if (!particularValidator.existeActivo(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA)))
 					listaFilas.add(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA));
-				else
-					listaFilas.add("0");
-					
+				
+				
+			}
+		} catch (IllegalArgumentException e) {
+			logger.error(e.getMessage(),e);
+			e.printStackTrace();
+		} catch (IOException e) {
+			logger.error(e.getMessage(),e);
+			e.printStackTrace();
+		} catch (ParseException e) {
+			logger.error(e.getMessage(),e);
+			listaFilas.add("0");
+		}
+		
+		
+	
+		
+
+		return listaFilas;
+	}
+	private List<String> dameValorCatastro(MSVHojaExcel exc) {
+		List<String> listaFilas = new ArrayList<String>();
+
+		int i = 0;
+		try {
+			for (i = COL_NUM.DATOS_PRIMERA_FILA; i < numFilasHoja; i++) {
+				if (!particularValidator.existeCatastro(exc.dameCelda(i, COL_NUM.CATASTRO)))
+					listaFilas.add(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA));
+				
 				
 			}
 		} catch (IllegalArgumentException e) {

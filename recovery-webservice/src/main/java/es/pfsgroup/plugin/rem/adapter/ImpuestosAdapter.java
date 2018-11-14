@@ -233,15 +233,17 @@ public class ImpuestosAdapter
 	private static final Integer NO_ES_FORMALIZABLE = new Integer(0);
 	private static final Integer ES_FORMALIZABLE = new Integer(1);
 	private static final String TIPO_AGRUPACION_RESTRINGIDA = "02";
+	private static final String valorSi= "1";
+	private static final String valorNo= "0";
+	
 
 
 	@Transactional(readOnly = false)
-	public void updateImpuesto(Long idActivo,String fechaSolicitud901, String resultado,String observaciones)
+	public void updateImpuesto(Long idActivo,String catastro,String fechaSolicitud901, String resultado,String observaciones)
 			throws JsonViewerException {
 
 		Filter filter = genericDao.createFilter(FilterType.EQUALS, "numActivo", idActivo);
 		Activo activo = genericDao.get(Activo.class, filter);
-		GastoDetalleEconomico  gastoDeTalleEconomico = new GastoDetalleEconomico(); 
 		List<ActivoCatastro>  lista =  new ArrayList<ActivoCatastro>();
 		
 		
@@ -254,7 +256,7 @@ public class ImpuestosAdapter
 				throw new JsonViewerException("El activo no existe");
 			}
 			
-			lista = genericDao.getList(ActivoCatastro.class, genericDao.createFilter(FilterType.EQUALS,"activo",activo));
+			lista = genericDao.getList(ActivoCatastro.class, genericDao.createFilter(FilterType.EQUALS,"activo",activo),genericDao.createFilter(FilterType.EQUALS,"refCatastral",catastro));
 			
 			
 			if (!Checks.estaVacio(lista)) {
@@ -263,7 +265,10 @@ public class ImpuestosAdapter
 			    for (ActivoCatastro actCat : lista) {
 					actCat.setFechaSolicitud901(date1);
 					actCat.setObservaciones(observaciones);
-					actCat.setResultado(resultado);
+					if (resultado.contains("S") ||resultado.contains("s")  )
+						actCat.setResultado(valorSi);
+					else
+						actCat.setResultado(valorNo);
 					genericDao.save(ActivoCatastro.class, actCat);
 
 			    	
@@ -274,20 +279,7 @@ public class ImpuestosAdapter
 			}
 			
 			
-			/*
-			DDSituacionActivo ddSituacionActivo = genericDao.get(DDSituacionActivo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", situacion));
 			
-			if (!Checks.esNulo(ddSituacionActivo)) {
-				
-				gastoDeTalleEconomico = genericDao.get(GastoDetalleEconomico.class, genericDao.createFilter(FilterType.EQUALS,"id",activo.getComunidadPropietarios().getId()),
-						genericDao.createFilter(FilterType.EQUALS,"codigoComPropUvem", idComunidadPropietarios));
-			} 
-			
-			if (!Checks.esNulo(gastoDeTalleEconomico)) 
-			{
-			
-			}
-			*/
 			
 			
 		

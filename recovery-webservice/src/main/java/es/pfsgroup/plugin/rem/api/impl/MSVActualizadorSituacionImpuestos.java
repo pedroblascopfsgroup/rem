@@ -68,7 +68,7 @@ public class MSVActualizadorSituacionImpuestos extends AbstractMSVActualizador i
 		MSVHojaExcel exc = proxyFactory.proxy(ExcelManagerApi.class).getHojaExcel(file);		
 		
 		for (int fila = 1; fila < exc.getNumeroFilas(); fila++) {
-			impuestosAdapter.updateImpuesto(new Long(exc.dameCelda(fila, 0)),  new String(exc.dameCelda(fila, 1)), new String(exc.dameCelda(fila, 2)),new String(exc.dameCelda(fila, 3)));
+			impuestosAdapter.updateImpuesto(new Long(exc.dameCelda(fila, 0)),  new String(exc.dameCelda(fila, 1)), new String(exc.dameCelda(fila, 2)),new String(exc.dameCelda(fila, 3)),new String(exc.dameCelda(fila, 4)));
 			//comunidadesPropietariosAdapter.updateComunidad(new Long(exc.dameCelda(fila, 0)), new String(exc.dameCelda(fila, 1)), new String(exc.dameCelda(fila, 2)),new String(exc.dameCelda(fila, 3)));	
 	
 		}

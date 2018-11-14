@@ -35,7 +35,7 @@ DECLARE
     TYPE T_FUNCION IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_FUNCION IS TABLE OF T_FUNCION;
     V_FUNCION T_ARRAY_FUNCION := T_ARRAY_FUNCION(
-	  T_FUNCION('SIMP', 'Situacion de impuestos', 'Situacion de impuestos','MASIVO_OK_TECNICO','n*,n,f,s,s')
+	  T_FUNCION('SIMP', 'Situacion de impuestos', 'Situacion de impuestos','MASIVO_OK_TECNICO','n*,s,f,s,s')
     ); 
     V_TMP_FUNCION T_FUNCION;
     V_PERFILES VARCHAR2(100 CHAR) := '%';  -- Cambiar por ALGÚN PERFIL para otorgar permisos a ese perfil.

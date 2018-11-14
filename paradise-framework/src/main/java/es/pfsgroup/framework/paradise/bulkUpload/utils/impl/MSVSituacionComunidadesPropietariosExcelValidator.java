@@ -22,7 +22,6 @@ import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.message.MessageService;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.framework.paradise.bulkUpload.adapter.ProcessAdapter;
 import es.pfsgroup.framework.paradise.bulkUpload.api.ExcelManagerApi;
 import es.pfsgroup.framework.paradise.bulkUpload.api.MSVProcesoApi;
@@ -51,7 +50,8 @@ public class MSVSituacionComunidadesPropietariosExcelValidator extends MSVExcelV
 	
 
 	// Textos con errores de validacion
-	public static final String ACTIVE_EXISTS = "No se ha encontrado ningun activo para el identificado = ";
+	public static final String ACTIVE_EXISTS = "El activo propuesto no existe = ";
+	public static final String ACTIVE_CPR_ID = "No se ha encontrado ninguna COMUNIDAD DE PROPIETARIOS asociada al activo = ";
 	public static final String PROPIETARIOS_EXISTS = "No se ha encontrado ninguna comunidad de propietarios para el identificador = ";
 	public static final String SITUACION_EXISTS = "No se ha encontrado ninguna situacion para el idendificador = ";
 
@@ -91,8 +91,7 @@ public class MSVSituacionComunidadesPropietariosExcelValidator extends MSVExcelV
 
 	private Integer numFilasHoja;
 	
-	@Autowired
-	private GenericABMDao genericDao;
+
 	
 	@Override
 	public MSVDtoValidacion validarContenidoFichero(MSVExcelFileItemDto dtoFile) throws RowsExceededException, IllegalArgumentException, WriteException, IOException {
@@ -120,8 +119,12 @@ public class MSVSituacionComunidadesPropietariosExcelValidator extends MSVExcelV
 			Map<String, List<String>> mapaValores= new HashMap<String, List<String>>();
 
 
-			mapaErrores.put(ACTIVE_EXISTS , noExisteActivo(exc));
+			mapaErrores.put(ACTIVE_CPR_ID , noExisteActivoEnPropietarios(exc));
+			mapaErrores.put(ACTIVE_EXISTS , isActiveExistsRows(exc));
+
 			mapaValores.put(ACTIVE_EXISTS , dameValorActivo(exc));
+			mapaValores.put(ACTIVE_CPR_ID , dameValorActivoPropietario(exc));
+
 
 			mapaErrores.put(PROPIETARIOS_EXISTS, isComunidadPropietariosExists(exc));
 			mapaValores.put(PROPIETARIOS_EXISTS, dameValorPropietarios(exc));
@@ -132,7 +135,7 @@ public class MSVSituacionComunidadesPropietariosExcelValidator extends MSVExcelV
 			
 				if (!mapaErrores.get(ACTIVE_EXISTS).isEmpty() || !mapaErrores.get(PROPIETARIOS_EXISTS).isEmpty()
 						|| !mapaErrores.get(FECHA_EMVIO).isEmpty()
-						|| !mapaErrores.get(SITUACION_EXISTS).isEmpty()) 
+						|| !mapaErrores.get(SITUACION_EXISTS).isEmpty() ||!mapaErrores.get(ACTIVE_CPR_ID).isEmpty() ) 
 			 {
 
 					dtoValidacionContenido.setFicheroTieneErrores(true);
@@ -312,7 +315,7 @@ public class MSVSituacionComunidadesPropietariosExcelValidator extends MSVExcelV
 		int i = 0;
 		try {
 			for (i = COL_NUM.DATOS_PRIMERA_FILA; i < numFilasHoja; i++) {
-				if (particularValidator.existeActivo(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA)))
+				if (!particularValidator.existeActivo(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA)))
 					listaFilas.add(i);
 			}
 		} catch (IllegalArgumentException e) {
@@ -329,13 +332,13 @@ public class MSVSituacionComunidadesPropietariosExcelValidator extends MSVExcelV
 		return listaFilas;
 	}
 	
-	private List<Integer> noExisteActivo(MSVHojaExcel exc) {
+	private List<Integer> noExisteActivoEnPropietarios(MSVHojaExcel exc) {
 		List<Integer> listaFilas = new ArrayList<Integer>();
 
 		int i = 0;
 		try {
 			for (i = COL_NUM.DATOS_PRIMERA_FILA; i < numFilasHoja; i++) {
-				if (!particularValidator.existeActivo(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA)))
+				if (!particularValidator.existeActivoEnPropietarios(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA),exc.dameCelda(i, COL_NUM.ID_COMUNIDAD_PROPIETARIOS)))
 					listaFilas.add(i);
 			}
 		} catch (IllegalArgumentException e) {
@@ -382,6 +385,38 @@ public class MSVSituacionComunidadesPropietariosExcelValidator extends MSVExcelV
 
 		return listaFilas;
 	}
+	private List<String> dameValorActivoPropietario(MSVHojaExcel exc) {
+		List<String> listaFilas = new ArrayList<String>();
+
+		int i = 0;
+		try {
+			for (i = COL_NUM.DATOS_PRIMERA_FILA; i < numFilasHoja; i++) {
+				if (!particularValidator.existeActivoEnPropietarios(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA),exc.dameCelda(i, COL_NUM.ID_COMUNIDAD_PROPIETARIOS)))
+					listaFilas.add(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA));
+			
+					
+				
+			}
+		} catch (IllegalArgumentException e) {
+			logger.error(e.getMessage(),e);
+			e.printStackTrace();
+		} catch (IOException e) {
+			logger.error(e.getMessage(),e);
+			e.printStackTrace();
+		} catch (ParseException e) {
+			logger.error(e.getMessage(),e);
+			listaFilas.add("0");
+		}
+		
+		
+	
+		
+
+		return listaFilas;
+	}
+	
+	
+	//existeActivoEnPropietarios
 	/**
 	 * Método genérico para comprobar si el valor de una columna está informado
 	 * o no.

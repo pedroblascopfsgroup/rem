@@ -18,6 +18,12 @@ public class DtoComunidadpropietariosActivo extends DtoTabActivo {
 	private Integer contactoTel;
 	private Integer visita;
 	private Integer burofax;
+	private Long situacionId;
+	private String situacion;
+	private Date fechaEnvioCarta;
+	private String situacionDescripcion;
+	private String situacionCodigo;
+	
 	
 
 	public Date getFechaComunicacionComunidad() {
@@ -56,5 +62,38 @@ public class DtoComunidadpropietariosActivo extends DtoTabActivo {
 	public void setBurofax(Integer burofax) {
 		this.burofax = burofax;
 	}
+	public Long getSituacionId() {
+		return situacionId;
+	}
+	public void setSituacionId(Long situacionId) {
+		this.situacionId = situacionId;
+	}
+	public Date getFechaEnvioCarta() {
+		return fechaEnvioCarta;
+	}
+	public void setFechaEnvioCarta(Date fechaEnvioCarta) {
+		this.fechaEnvioCarta = fechaEnvioCarta;
+	}
+	public String getSituacion() {
+		return situacion;
+	}
+	public void setSituacion(String situacion) {
+		this.situacion = situacion;
+	}
+	public String getSituacionDescripcion() {
+		return situacionDescripcion;
+	}
+	public void setSituacionDescripcion(String situacionDescripcion) {
+		this.situacionDescripcion = situacionDescripcion;
+	}
+	public String getSituacionCodigo() {
+		return situacionCodigo;
+	}
+	public void setSituacionCodigo(String situacionCodigo) {
+		this.situacionCodigo = situacionCodigo;
+	}
+	
+	
+	
 	
 }

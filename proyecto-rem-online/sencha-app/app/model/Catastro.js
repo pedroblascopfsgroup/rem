@@ -65,6 +65,14 @@ Ext.define('HreRem.model.Catastro', {
     		},
     		{
     			name:'observaciones' 			
+    		},
+    		{
+    			name:'fechaSolicitud901',
+    			type:'date',
+    			dateFormat: 'c'    			
+    		},
+    		{
+    			name:'resultadoSiNO'
     		}
     		
     ],

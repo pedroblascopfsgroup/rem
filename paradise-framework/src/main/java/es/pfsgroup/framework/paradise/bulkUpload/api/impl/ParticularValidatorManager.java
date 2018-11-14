@@ -214,6 +214,87 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		else
 			return true;
 	}
+	
+	@Override
+	public Boolean existeCatastro(String catastro){
+		if(Checks.esNulo(catastro) || !StringUtils.isAlphanumeric(catastro))
+			return false;
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "		 FROM ACT_CAT_CATASTRO WHERE"
+				+ "		 	CAT_REF_CATASTRAL ='"+catastro+"' "
+				+ "		 	AND BORRADO = 0");
+		if("0".equals(resultado))
+			return false;
+		else
+			return true;
+	}
+	//*existeActivoEnPropietarios 
+	@Override
+	public Boolean existeActivoEnPropietarios(String numActivo, String idPropietarios){
+		if(Checks.esNulo(numActivo) || !StringUtils.isNumeric(numActivo) && Checks.esNulo(idPropietarios) || !StringUtils.isAlphanumeric(idPropietarios))
+			return false;
+		String cpr_id = rawDao.getExecuteSQL("SELECT CPR_ID "
+				+ "		 FROM ACT_ACTIVO WHERE"
+				+ "		 	ACT_NUM_ACTIVO ="+numActivo+" "
+				+ "		 	AND BORRADO = 0");
+
+		if(Checks.esNulo(cpr_id))
+			return false;
+		else
+			return true;
+	}
+	
+	@Override
+	public Boolean existeComunidadPropietarios(String idPropietarios){
+		if(Checks.esNulo(idPropietarios) || !StringUtils.isAlphanumeric(idPropietarios))
+			return false;
+		
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "		 FROM ACT_CPR_COM_PROPIETARIOS WHERE" 
+				+ "		 CPR_COD_COM_PROP_UVEM ='"+idPropietarios+"' "
+				+ "		 	AND BORRADO = 0");
+		if("0".equals(resultado))
+			return false;
+		else
+			return true;
+	}
+	
+	@Override
+	public Boolean existeImpuesto(String idImpuesto){
+		if(Checks.esNulo(idImpuesto) || !StringUtils.isAlphanumeric(idImpuesto))
+			return false;
+		
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "		 FROM DD_TIT_TIPOS_IMPUESTO WHERE" 
+				+ "		 DD_TIT_CODIGO ='0"+idImpuesto+"' "
+				+ "		 	AND BORRADO = 0");
+		if("0".equals(resultado))
+			return false;
+		else
+			return true;
+	}
+	
+	
+	@Override
+	public Boolean existeSituacion(String idSituacion){
+		if(Checks.esNulo(idSituacion) || !StringUtils.isAlphanumeric(idSituacion))
+			return false;
+		
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "		 FROM DD_SACT_SITUACION_ACTIVO WHERE" 
+				+ "		 DD_SACT_CODIGO ='"+idSituacion+"' "
+				+ "		 	AND BORRADO = 0");
+		if("0".equals(resultado))
+			return false;
+		else
+			return true;
+	}
+	
+	
+	
+	
+	
+	
 
 	@Override
 	public Boolean isActivoPrePublicable(String numActivo){

@@ -358,6 +358,7 @@ public class ActivoAdapter {
 		try {
 
 			beanUtilNotNull.copyProperties(activoCatastro, dtoCatastro);
+			activoCatastro.setResultado(dtoCatastro.getResultadoSiNO());
 			genericDao.save(ActivoCatastro.class, activoCatastro);
 			restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO, activoCatastro.getActivo());
 
@@ -616,7 +617,10 @@ public class ActivoAdapter {
 		try {
 
 			beanUtilNotNull.copyProperties(activoCatastro, dtoCatastro);
+			BeanUtils.copyProperty(activoCatastro, "resultadoSiNO", dtoCatastro.getResultadoSiNO());
+
 			activoCatastro.setActivo(activo);
+			activoCatastro.setResultado(dtoCatastro.getResultadoSiNO());
 			ActivoCatastro catastroNuevo = genericDao.save(ActivoCatastro.class, activoCatastro);
 
 			activo.getCatastro().add(catastroNuevo);
@@ -1195,6 +1199,7 @@ public class ActivoAdapter {
 				try {
 					BeanUtils.copyProperties(catastroDto, activo.getCatastro().get(i));
 					BeanUtils.copyProperty(catastroDto, "idCatastro", activo.getCatastro().get(i).getId());
+					BeanUtils.copyProperty(catastroDto, "resultadoSiNO", activo.getCatastro().get(i).getResultado());
 
 				} catch (IllegalAccessException e) {
 					e.printStackTrace();

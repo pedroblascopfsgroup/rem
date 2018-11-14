@@ -321,6 +321,8 @@ public interface ParticularValidatorApi {
 	public Boolean distintosTiposImpuestoAgrupacionVacia(List<String> activosList);
 
 	Boolean subcarteraPerteneceCartera(String subcartera, String cartera);
+	
+	Boolean subtipoPerteneceTipoTitulo(String subtipo, String tipoTitulo);
 
 	Boolean esGastoDeLiberbank(String numGasto);
 

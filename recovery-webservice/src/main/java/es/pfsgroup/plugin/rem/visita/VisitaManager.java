@@ -604,8 +604,14 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 				if(visita == null || visita.getId() == null){
 					visita = this.getVisitaByIdVisitaWebcom(visitaDto.getIdVisitaWebcom());
 				}
-				map.put("idVisitaWebcom", visita.getIdVisitaWebcom());
-				map.put("idVisitaRem", visita.getNumVisitaRem());
+				if(visita != null){
+					map.put("idVisitaWebcom", visita.getIdVisitaWebcom());
+					map.put("idVisitaRem", visita.getNumVisitaRem());
+				}else{
+					map.put("idVisitaWebcom", "");
+					map.put("idVisitaRem", "");
+				}
+				
 				map.put("success", true);
 			} else {
 				map.put("idVisitaWebcom", visitaDto.getIdVisitaWebcom());

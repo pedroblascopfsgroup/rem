@@ -42,7 +42,6 @@ import es.capgemini.pfs.tareaNotificacion.model.EXTTareaNotificacion;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
-import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.agendaMultifuncion.api.AgendaMultifuncionCustomTemplate;
@@ -176,142 +175,6 @@ public class RecoveryAnotacionManager implements RecoveryAnotacionApi,
 
 		boolean isComentario = true;
 
-		// TODO ESTO SE HA QUEDADO A MEDIAS PARA EXPEDIENTES Y CLIENTES
-		// for (DtoCrearAnotacionUsuarioInfo user : dto.getUsuarios()) {
-		// try {
-		// if (!user.isOficina()){//USUARIOS NORMALES
-		// if (user.isIncorporar()) {
-		// isComentario = false;
-		// if (user.getFecha() != null) {
-		// if (user.getId().equals(usuarioLogado.getId())) {
-		// //autotarea: crear tarea y dejar traza
-		// Long idTarea = crearTarea(idUg, codUg,dto.getAsuntoMail(),
-		// usuarioLogado.getId(), false, SUBTIPO_ANOTACION_AUTOTAREA,
-		// user.getFecha());
-		// dejarTraza(
-		// usuarioLogado.getId(),
-		// AgendaMultifuncionTipoEventoRegistro.TIPO_EVENTO_TAREA,
-		// idUg,
-		// codUg,
-		// createInfoEventoTarea(idTarea, usuarioLogado.getId(), new Date(),
-		// user.getFecha(), user.getId(), dto.getAsuntoMail(),
-		// dto.getCuerpoEmail(),
-		// user.isEmail(), dto.getTipoAnotacion()));
-		// } else {
-		// //tarea: crear tarea para el destinatario y tarea en espera para el
-		// creador y dejar traza
-		// Long idTarea = crearTarea(idUg, codUg,dto.getAsuntoMail(),
-		// user.getId(), true, SUBTIPO_ANOTACION_TAREA, user.getFecha());
-		// dejarTraza(
-		// usuarioLogado.getId(),
-		// AgendaMultifuncionTipoEventoRegistro.TIPO_EVENTO_TAREA,
-		// idUg,
-		// codUg,
-		// createInfoEventoTarea(idTarea, usuarioLogado.getId(), new Date(),
-		// user.getFecha(), user.getId(), dto.getAsuntoMail(),
-		// dto.getCuerpoEmail(),
-		// user.isEmail(), dto.getTipoAnotacion()));
-		// }
-		// } else {
-		// //notificacion, se la modificaciï¿½n y se deja una traza
-		// Long idTarea = crearTarea(idUg, codUg,dto.getAsuntoMail(),
-		// user.getId(), false, SUBTIPO_ANOTACION_NOTIFICACION,
-		// user.getFecha());
-		// dejarTraza(
-		// usuarioLogado.getId(),
-		// AgendaMultifuncionTipoEventoRegistro.TIPO_EVENTO_NOTIFICACION,
-		// idUg,
-		// codUg,
-		// createInfoEventoNotificacion(idTarea, usuarioLogado.getId(), new
-		// Date(), user.getId(), dto.getAsuntoMail(), dto.getCuerpoEmail(),
-		// user.isEmail(),
-		// dto.getTipoAnotacion()));
-		// }
-		// }
-		// }else{ //USUARIOS POR OFICINAS
-		// if(user.getId() < 0){
-		// if (user.isIncorporar()) {
-		// isComentario = false;
-		// if (user.getFecha() != null) {
-		// if (user.getId().equals(usuarioLogado.getId())) {
-		// // autotarea: crear tarea y dejar traza
-		// Long idTarea = crearTareaOficina(idUg, codUg,dto.getAsuntoMail(),
-		// user.getId() , false, SUBTIPO_ANOTACION_AUTOTAREA, user.getFecha());
-		// dejarTraza(
-		// usuarioLogado.getId(),
-		// AgendaMultifuncionTipoEventoRegistro.TIPO_EVENTO_TAREA,
-		// idUg,
-		// codUg,
-		// createInfoEventoTarea(idTarea,usuarioLogado.getId(), new Date(),
-		// user.getFecha(), user.getId(), dto.getAsuntoMail(),
-		// dto.getCuerpoEmail(),
-		// user.isEmail(), dto.getTipoAnotacion()));
-		// }
-		//
-		// }
-		// }
-		// }else{ //VIENE DE EXPEDIENTES CARACTERIZADOS
-		// if (user.isIncorporar()) {
-		// isComentario = false;
-		// if (user.getFecha() != null) {
-		// if (user.getId().equals(usuarioLogado.getId())) {
-		// //autotarea: crear tarea y dejar traza
-		// Long idTarea = crearTarea(idUg, codUg,dto.getAsuntoMail(),
-		// usuarioLogado.getId(), false, SUBTIPO_ANOTACION_AUTOTAREA,
-		// user.getFecha());
-		// dejarTraza(
-		// usuarioLogado.getId(),
-		// AgendaMultifuncionTipoEventoRegistro.TIPO_EVENTO_TAREA,
-		// idUg,
-		// codUg,
-		// createInfoEventoTarea(idTarea, usuarioLogado.getId(), new Date(),
-		// user.getFecha(), user.getId(), dto.getAsuntoMail(),
-		// dto.getCuerpoEmail(),
-		// user.isEmail(), dto.getTipoAnotacion()));
-		// } else {
-		// //tarea: crear tarea para el destinatario y tarea en espera para el
-		// creador y dejar traza
-		// Long idTarea = crearTarea(idUg, codUg,dto.getAsuntoMail(),
-		// user.getId(), true, SUBTIPO_ANOTACION_TAREA, user.getFecha());
-		// dejarTraza(
-		// usuarioLogado.getId(),
-		// AgendaMultifuncionTipoEventoRegistro.TIPO_EVENTO_TAREA,
-		// idUg,
-		// codUg,
-		// createInfoEventoTarea(idTarea, usuarioLogado.getId(), new Date(),
-		// user.getFecha(), user.getId(), dto.getAsuntoMail(),
-		// dto.getCuerpoEmail(),
-		// user.isEmail(), dto.getTipoAnotacion()));
-		// }
-		// }else {
-		// //notificacion, se la modificaciï¿½n y se deja una traza
-		// Long idTarea = crearTarea(idUg, codUg,dto.getAsuntoMail(),
-		// user.getId(), false, SUBTIPO_ANOTACION_NOTIFICACION,
-		// user.getFecha());
-		// dejarTraza(
-		// usuarioLogado.getId(),
-		// AgendaMultifuncionTipoEventoRegistro.TIPO_EVENTO_NOTIFICACION,
-		// idUg,
-		// codUg,
-		// createInfoEventoNotificacion(idTarea, usuarioLogado.getId(), new
-		// Date(), user.getId(), dto.getAsuntoMail(), dto.getCuerpoEmail(),
-		// user.isEmail(),
-		// dto.getTipoAnotacion()));
-		// }
-		// }
-		// }
-		// }
-		// } catch (EXTCrearTareaException e) {
-		// logger.error("Error creando tarea");
-		// e.printStackTrace();
-		// throw new FrameworkException("Error creando la tarea");
-		// }
-		//
-		// if (user.isEmail()) {
-		// mailsPara.add(getMailUsuario(user.getId()));
-		// }
-		//
-		// }
 		for (DtoCrearAnotacionUsuarioInfo user : dto.getUsuarios()) {
 			try {
 				if (user.isIncorporar()) {
@@ -380,8 +243,7 @@ public class RecoveryAnotacionManager implements RecoveryAnotacionApi,
 					}
 				}
 			} catch (EXTCrearTareaException e) {
-				logger.error("Error creando tarea");
-				e.printStackTrace();
+				logger.error("Error creando tarea",e);
 				throw new FrameworkException("Error creando la tarea");
 			}
 
@@ -443,8 +305,7 @@ public class RecoveryAnotacionManager implements RecoveryAnotacionApi,
 										HtmlUtils.htmlUnescape(cuerpoEmail),
 								dto.getAdjuntosList()));
 			} catch (Exception e) {
-				logger.error("Error enviando los mails de una nueva anotaciï¿½n");
-				e.printStackTrace();
+				logger.error("Error enviando los mails de una nueva anotacion",e);
 				throw new FrameworkException(
 						"Error enviando los mails de una nueva anotaciï¿½n");
 			}
@@ -487,7 +348,7 @@ public class RecoveryAnotacionManager implements RecoveryAnotacionApi,
 								dto.getRespuesta(), null));
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("error creando respuesta",e);
 		}
 
 	}
@@ -510,19 +371,6 @@ public class RecoveryAnotacionManager implements RecoveryAnotacionApi,
 		return info;
 	}
 
-	private void enviarMail(List<String> para, String from, List<String> cc,
-			String asunto, String cuerpo) throws javax.mail.MessagingException {
-		MimeMessageHelper helper = mailManager.createMimeMessageHelper();
-		helper.setFrom(from);
-		helper.setTo(para.toArray(new String[para.size()]));
-		if (cc != null && cc.size() > 0) {
-			helper.setCc(para.toArray(new String[cc.size()]));
-		}
-		helper.setSubject(asunto);
-		helper.setText(cuerpo, true);
-		mailManager.send(helper);
-	}
-	
 	/*
 	 * Este mï¿½todo es protected para poder hacer un spy durante el testeo
 	 */
@@ -676,18 +524,6 @@ public class RecoveryAnotacionManager implements RecoveryAnotacionApi,
 		return info;
 	}
 
-	private Map<String, Object> createInfoEventoMail(String asunto,
-			String from, String destino, String cc, String cuerpo) {
-		HashMap<String, Object> info = new HashMap<String, Object>();
-
-		info.put(MEJDDTipoRegistro.RegistroEmail.CLAVE_EMAIL_ORIGEN, from);
-		info.put(MEJDDTipoRegistro.RegistroEmail.CLAVE_ASUNTO, asunto);
-		info.put(MEJDDTipoRegistro.RegistroEmail.CLAVE_EMAIL_DESTINO, destino);
-		info.put(MEJDDTipoRegistro.RegistroEmail.CLAVE_EMAIL_CC, cc);
-		info.put(MEJDDTipoRegistro.RegistroEmail.CLAVE_CUERPO, cuerpo);
-
-		return info;
-	}
 	
 	private Map<String, Object> createInfoEventoMailConAdjunto(
 			String asunto, String from,
@@ -777,28 +613,7 @@ public class RecoveryAnotacionManager implements RecoveryAnotacionApi,
 
 	}
 
-	// private Long crearTareaOficina(Long idUg,String codUg, String asuntoMail,
-	// Long idUsuarioCaracterizadoOficina, boolean enEspera, String
-	// codigoSubtarea, Date fechaVencimiento)
-	// throws EXTCrearTareaException {
-	//
-	// EXTDtoGenerarTareaOficinaImpl tareaOfiDto = new
-	// EXTDtoGenerarTareaOficinaImpl();
-	// DtoGenerarTarea tareaDto = new DtoGenerarTarea();
-	//
-	// tareaDto.setSubtipoTarea(codigoSubtarea);
-	// tareaDto.setEnEspera(enEspera);
-	// tareaDto.setFecha(fechaVencimiento);
-	// tareaDto.setDescripcion(asuntoMail);
-	// tareaDto.setIdEntidad(idUg);
-	// tareaDto.setCodigoTipoEntidad(codUg);
-	// tareaOfiDto.setTarea(tareaDto);
-	// tareaOfiDto.setOficina(idUsuarioCaracterizadoOficina);
-	// return
-	// proxyFactory.proxy(EXTTareasApi.class).crearTareaNotificacionOficina(tareaOfiDto);
-	//
-	// }
-
+	
 	private Long crearTareaRespuesta(Long idUg, String codUg, String respuesta,
 			Long idUsuarioDestinatarioTarea, String codigoSubtarea,
 			Date fechaVencimiento) throws EXTCrearTareaException {
@@ -978,16 +793,6 @@ public class RecoveryAnotacionManager implements RecoveryAnotacionApi,
 		return dto;
 	}
 
-	private String obtenerDireccionEmailUsuarioLogado() {
-		String email = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado().getEmail();
-		
-		if (email == null || email.length() == 0) {
-			email = appProperties.getProperty("agendaMultifuncion.mail.from");
-		}
-		
-		return email;
-	}
-
 	
 	@BusinessOperation(AMF_GET_CODIGO_LITIGIO)
 	public String getCodigoLitigioAsu(Long id) {
@@ -1014,7 +819,7 @@ public class RecoveryAnotacionManager implements RecoveryAnotacionApi,
 		            ConfiguracionBusinessOperation.BO_PARAMETRIZACION_MGR_BUSCAR_PARAMETRO_POR_NOMBRE, parametroCreacionTareaUnicaAnotacion);
 		    return Boolean.valueOf(param.getValor());
 		} catch (Exception e) {
-		    logger.warn("No esta parametrizado el la configuraciÃ³n de la ventana Crear AnotaciÃ³n, se toma un valor por defecto 'false'");
+		    logger.warn("No esta parametrizado el la configuración de la ventana Crear Anotación, se toma un valor por defecto 'false'");
 		    return false;
 		}
 		

@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=CARLOS LOPEZ
---## FECHA_CREACION=20181027
+--## AUTOR=Maria Presencia
+--## FECHA_CREACION=20181115
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=2.0.19
 --## INCIDENCIA_LINK=HREOS-4674
@@ -11,6 +11,7 @@
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial 
+--##		0.2 Modificaciones del SP_CAMBIO_ESTADO_PUBLICACION
 --##########################################
 --*/
 
@@ -238,6 +239,8 @@ DECLARE
 		  	  
 		  IF pDD_MTO_CODIGO = '06' THEN /*Revisión Publicación*/
 		    vACTUALIZAR_COND := 'N';
+		    REM01.SP_CREAR_AVISO (nACT_ID, 'GPUBL', pUSUARIOMODIFICAR, 'Se ha situado en Oculto Alquiler con motivo Revisión Publicación el activo: ', 0);
+
 		  END IF; 
 		  	  
 		END IF;
@@ -369,6 +372,7 @@ DECLARE
 		
 		IF pDD_MTO_CODIGO = '06' THEN /*Revisión Publicación*/
 		  vACTUALIZAR_COND := 'N';
+		  REM01.SP_CREAR_AVISO (nACT_ID, 'GPUBL', pUSUARIOMODIFICAR, 'Se ha situado en Oculto Venta con motivo Revisión Publicación el activo: ', 0);
 		END IF; 		
 		
 	  END IF;	  		  
@@ -506,27 +510,71 @@ DECLARE
             vACTUALIZADO := 'S';
           END IF;
         ELSIF pCEE_VIGENTE = 1 AND pADECUADO = 1 THEN
-          /*PUBLICADO FORZADO*/
-          V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION
-                        SET DD_EPA_ID = (SELECT DD_EPA_ID
-                                           FROM '|| V_ESQUEMA ||'.DD_EPA_ESTADO_PUB_ALQUILER
-                                          WHERE BORRADO = 0
-                                            AND DD_EPA_CODIGO = ''03'')
-                          , DD_TPU_A_ID = (SELECT DD_TPU_ID
-                                           FROM '|| V_ESQUEMA ||'.DD_TPU_TIPO_PUBLICACION
-                                          WHERE BORRADO = 0
-                                            AND DD_TPU_CODIGO = ''02'')
-                          , USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
-                          , FECHAMODIFICAR = SYSDATE
-                      WHERE ACT_ID = '||nACT_ID||'
-                        AND BORRADO = 0
-                    ';
+			/*PUBLICADO FORZADO*/
+			V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION
+							SET DD_EPA_ID = (SELECT DD_EPA_ID
+											FROM '|| V_ESQUEMA ||'.DD_EPA_ESTADO_PUB_ALQUILER
+											WHERE BORRADO = 0
+												AND DD_EPA_CODIGO = ''03'')
+							, DD_TPU_A_ID = (SELECT DD_TPU_ID
+											FROM '|| V_ESQUEMA ||'.DD_TPU_TIPO_PUBLICACION
+											WHERE BORRADO = 0
+												AND DD_TPU_CODIGO = ''02'')
+							, USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
+							, FECHAMODIFICAR = SYSDATE
+						WHERE ACT_ID = '||nACT_ID||'
+							AND BORRADO = 0
+						';
+		
+			EXECUTE IMMEDIATE V_MSQL;
+				IF SQL%ROWCOUNT > 0 THEN
+					vACTUALIZADO := 'S';
+				END IF;
+				
+		ELSIF pCondAlquiler = 0 THEN
+			/*PRE PUBLICADO ORDINARIO*/
+			V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION
+						  SET DD_EPA_ID = (SELECT DD_EPA_ID
+											 FROM '|| V_ESQUEMA ||'.DD_EPA_ESTADO_PUB_ALQUILER
+											WHERE BORRADO = 0
+											  AND DD_EPA_CODIGO = ''02'')
+							, DD_TPU_A_ID = (SELECT DD_TPU_ID
+											 FROM '|| V_ESQUEMA ||'.DD_TPU_TIPO_PUBLICACION
+											WHERE BORRADO = 0
+											  AND DD_TPU_CODIGO = ''01'')
+							, USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
+							, FECHAMODIFICAR = SYSDATE
+						WHERE ACT_ID = '||nACT_ID||'
+						  AND BORRADO = 0
+					  ';
 
-          EXECUTE IMMEDIATE V_MSQL;
-          IF SQL%ROWCOUNT > 0 THEN
-            vACTUALIZADO := 'S';
-          END IF;
-        END IF;
+			EXECUTE IMMEDIATE V_MSQL;
+				IF SQL%ROWCOUNT > 0 THEN
+				vACTUALIZADO := 'S';
+				END IF;  		
+
+		ELSIF pCondAlquiler = 1 THEN
+				/*PUBLICADO FORZADO*/
+				V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION
+							SET DD_EPA_ID = (SELECT DD_EPA_ID
+												FROM '|| V_ESQUEMA ||'.DD_EPA_ESTADO_PUB_ALQUILER
+												WHERE BORRADO = 0
+												AND DD_EPA_CODIGO = ''03'')
+								, DD_TPU_A_ID = (SELECT DD_TPU_ID
+												FROM '|| V_ESQUEMA ||'.DD_TPU_TIPO_PUBLICACION
+												WHERE BORRADO = 0
+												AND DD_TPU_CODIGO = ''02'')
+								, USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
+								, FECHAMODIFICAR = SYSDATE
+							WHERE ACT_ID = '||nACT_ID||'
+							AND BORRADO = 0
+						';
+	
+				EXECUTE IMMEDIATE V_MSQL;
+					IF SQL%ROWCOUNT > 0 THEN
+					vACTUALIZADO := 'S';
+					END IF;   
+		END IF;
       ELSE
         /*PRE PUBLICADO ORDINARIO*/
         V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION
@@ -692,7 +740,7 @@ DECLARE
               PLP$LIMPIAR_ALQUILER(nACT_ID, vUSUARIOMODIFICAR);
             END IF;
   
-            IF vCHECK_PUBLICAR_A = 1 AND pCondAlquiler IS NOT NULL THEN
+            IF vCHECK_PUBLICAR_A = 1 AND vCondAlquiler IS NOT NULL THEN
               PLP$CONDICIONANTE_ALQUILER(nACT_ID, nADMISION, nGESTION, nINFORME_COMERCIAL,nPRECIO_A, nCEE_VIGENTE, nADECUADO, vUSUARIOMODIFICAR, vCondAlquiler);
             END IF;
   
@@ -733,7 +781,9 @@ DECLARE
                 PLP$CAMBIO_ESTADO_ALQUILER(nACT_ID, '04', vUSUARIOMODIFICAR);
                 IF vDD_MTO_MANUAL_A = 0 THEN
                   PLP$CAMBIO_OCULTO_MOTIVO(nACT_ID, 'A', vDD_TCO_CODIGO, OutOCULTAR, OutMOTIVO, vUSUARIOMODIFICAR);
-                END IF;  
+                END IF; 
+              ELSE
+               PLP$CONDICIONANTE_ALQUILER(nACT_ID, nADMISION, nGESTION, nINFORME_COMERCIAL,nPRECIO_A, nCEE_VIGENTE, nADECUADO, vUSUARIOMODIFICAR, vCondAlquiler);
               END IF;
             END IF;
           END IF;
@@ -773,6 +823,8 @@ DECLARE
                 IF vDD_MTO_MANUAL_V = 0 THEN
                   PLP$CAMBIO_OCULTO_MOTIVO(nACT_ID, 'V', vDD_TCO_CODIGO, OutOCULTAR, OutMOTIVO, vUSUARIOMODIFICAR);
                 END IF;
+              ELSE
+				PLP$CONDICIONANTE_VENTA(nACT_ID, nADMISION, nGESTION, nINFORME_COMERCIAL,nPRECIO_V, vUSUARIOMODIFICAR);
               END IF;
             END IF;
           END IF;     
@@ -787,7 +839,8 @@ DECLARE
             REM01.SP_MOTIVO_OCULTACION_A (nACT_ID, 'A', OutOCULTAR, OutMOTIVO);
     
             IF OutOCULTAR = 0 AND vDD_MTO_MANUAL_A = 0 THEN
-              PLP$CAMBIO_ESTADO_ALQUILER(nACT_ID, '03', vUSUARIOMODIFICAR);
+              --PLP$CAMBIO_ESTADO_ALQUILER(nACT_ID, '03', vUSUARIOMODIFICAR);
+              PLP$CONDICIONANTE_ALQUILER(nACT_ID, nADMISION, nGESTION, nINFORME_COMERCIAL,nPRECIO_A, nCEE_VIGENTE, nADECUADO, vUSUARIOMODIFICAR, vCondAlquiler);
               PLP$LIMPIAR_ALQUILER(nACT_ID, vUSUARIOMODIFICAR);
             END IF;
     
@@ -809,7 +862,8 @@ DECLARE
             REM01.SP_MOTIVO_OCULTACION_V (nACT_ID, 'V', OutOCULTAR, OutMOTIVO);
     
             IF OutOCULTAR = 0 AND vDD_MTO_MANUAL_V = 0 THEN
-              PLP$CAMBIO_ESTADO_VENTA(nACT_ID, '03', vUSUARIOMODIFICAR);
+              --PLP$CAMBIO_ESTADO_VENTA(nACT_ID, '03', vUSUARIOMODIFICAR);
+               PLP$CONDICIONANTE_VENTA(nACT_ID, nADMISION, nGESTION, nINFORME_COMERCIAL,nPRECIO_V, vUSUARIOMODIFICAR);
               PLP$LIMPIAR_VENTA(nACT_ID, vUSUARIOMODIFICAR);
             END IF;
     
@@ -818,7 +872,8 @@ DECLARE
                 IF vDD_MTO_MANUAL_V = 1 THEN /*MOTIVO MANUAL*/
                   NULL;
                 ELSE
-                  PLP$CAMBIO_ESTADO_VENTA(nACT_ID, '03', vUSUARIOMODIFICAR);
+                  --PLP$CAMBIO_ESTADO_VENTA(nACT_ID, '03', vUSUARIOMODIFICAR);
+                   PLP$CONDICIONANTE_VENTA(nACT_ID, nADMISION, nGESTION, nINFORME_COMERCIAL,nPRECIO_V, vUSUARIOMODIFICAR);
                 END IF;
               ELSE
                 PLP$CAMBIO_OCULTO_MOTIVO(nACT_ID, 'V', vDD_TCO_CODIGO, OutOCULTAR, OutMOTIVO, vUSUARIOMODIFICAR);

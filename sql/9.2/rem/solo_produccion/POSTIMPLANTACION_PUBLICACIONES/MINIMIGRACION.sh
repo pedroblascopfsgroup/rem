@@ -122,6 +122,37 @@ let total_min=$total_seg/60
 echo ""
 echo "-----------------------------------------------------------------"
 echo ""
+echo "[INICIO] INICIO EJECUCION CARPETA 004"
+hora=`date +%H:%M:%S`
+fecha_ini=`date +%Y%m%d_%H%M%S`
+echo "[INFO] $hora"
+
+fichero="List/003.list"
+ls --format=single-column 004_*/*.sql > $fichero
+
+while read line
+do
+	if [ -f "$line" ] ; then
+		echo ""
+		echo "[INFO] Inicio creación $line"
+		$ORACLE_HOME/bin/sqlplus "$1" @"$line" > Logs/004_$line_$fecha_ini.log
+		if [ $? != 0 ] ; then 
+		   echo -e "\n\n======>>> "Error en @"$line"
+		   exit 1
+		fi
+		echo "[INFO] Fin ejecución $line"
+		echo ""
+	fi
+done < $fichero
+echo "[FIN] FIN 004"
+echo ""
+fin=`date +%s`
+hora=`date +%H:%M:%S`
+let total_seg=($fin-$inicio)
+let total_min=$total_seg/60
+echo ""
+echo "-----------------------------------------------------------------"
+echo ""
 echo "[RESUMEN]"
 echo "[INFO] $hora"
 echo "[FIN] Script ejecutado por completo en [$total_min] minutos / [$total_seg] segundos"

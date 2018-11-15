@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=Carlos López
---## FECHA_CREACION=20181103
+--## AUTOR=Maria Presencia
+--## FECHA_CREACION=20181115
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=2.2.20
 --## INCIDENCIA_LINK=HREOS-4716
@@ -11,6 +11,7 @@
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##		0.2 Moficado agragacion comentario.
 --##########################################
 --*/
 
@@ -163,7 +164,7 @@ BEGIN
     EXECUTE IMMEDIATE V_MSQL;  
       
     -- Creamos comentarios     
-    V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.V_CAMBIO_ESTADO_HPUBLI.ACT_ID IS ''Identificador único del activo'' ';      
+    V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.V_CAMBIO_ESTADO_HPUBLI.AHP_ID IS ''Identificador único del activo'' ';      
     EXECUTE IMMEDIATE V_MSQL;
  
     V_MSQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.V_CAMBIO_ESTADO_HPUBLI.DD_TCO_CODIGO IS ''Código del tipo de comercializacion (DD_TCO_TIPO_COMERCIALIZACION)'' ';      

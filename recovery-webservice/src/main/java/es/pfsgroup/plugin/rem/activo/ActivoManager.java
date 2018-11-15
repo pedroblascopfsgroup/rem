@@ -88,6 +88,7 @@ import es.pfsgroup.plugin.rem.model.ActivoAdjuntoActivo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoBancario;
+import es.pfsgroup.plugin.rem.model.ActivoCalificacionNegativa;
 import es.pfsgroup.plugin.rem.model.ActivoCargas;
 import es.pfsgroup.plugin.rem.model.ActivoCatastro;
 import es.pfsgroup.plugin.rem.model.ActivoComunidadPropietarios;
@@ -2457,6 +2458,14 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 		return activoBancario;
 
+	}
+	
+	@Override
+	public List<ActivoCalificacionNegativa> getActivoCalificacionNegativaByIdActivo(Long idActivo){
+		// Obtiene el registro de ActivoCalificacionNegativa para el activo dado
+		List<ActivoCalificacionNegativa> activoCNList = activoDao.getListActivoCalificacionNegativaByIdActivo(idActivo);
+		
+		return activoCNList;
 	}
 
 	@Override

@@ -346,6 +346,10 @@ Ext.define('HreRem.ux.util.Constants', {
 	
 	EXPORTADOR:{
 		LIMITE: '1000'
+	},
+	
+	MOTIVOS_CAL_NEGATIVA:{
+		OTROS: '21'
 	}
 
 });

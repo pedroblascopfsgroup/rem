@@ -198,6 +198,8 @@ public class DiccionarioTargetClassMap{
 		mapa.put("tiposDocumentoPromocion", DDTipoDocumentoPromocion.class);
 		mapa.put("estadosReserva", DDEstadosReserva.class);
 		mapa.put("situacionActivo", DDSituacionActivo.class);
+		mapa.put("calificacionNegativa", DDCalificacionNegativa.class);
+		mapa.put("motivosCalificacionNegativa", DDMotivoCalificacionNegativa.class);
 		
 		return Collections.unmodifiableMap(mapa);
 	}

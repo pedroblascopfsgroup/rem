@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Maria Presencia
---## FECHA_CREACION=20181103
+--## FECHA_CREACION=20181115
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-4702
@@ -264,8 +264,7 @@ BEGIN
 		ACT_ID        				NUMBER(16)                  NOT NULL,
 		DD_MCN_ID					NUMBER(16)                  NOT NULL,		
 		DD_CAN_ID					NUMBER(16)                  NOT NULL,
-		CAN_FECHA_INI				DATE, 
-		CAN_FECHA_FIN 				DATE, 
+		CAN_DESCRIPCION				VARCHAR2(500 CHAR),
 		VERSION 					NUMBER(38,0) 				DEFAULT 0 NOT NULL ENABLE, 
 		USUARIOCREAR 				VARCHAR2(50 CHAR) 			NOT NULL ENABLE, 
 		FECHACREAR 					TIMESTAMP (6) 				NOT NULL ENABLE, 
@@ -290,8 +289,7 @@ BEGIN
 	EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TABLA3||'.ACT_ID IS ''Codigo identificador unico del activo.''';
 	EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TABLA3||'.DD_MCN_ID IS ''Código identificador único del motivo de calificacion negativa''';
 	EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TABLA3||'.DD_CAN_ID IS ''Código identificador único de la calificacion negativa.''';
-	EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TABLA3||'.CAN_FECHA_INI IS ''Fecha inicio de la calificacion negativa''';
-	EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TABLA3||'.CAN_FECHA_FIN IS ''Fecha fin de la calificacion negativa.''';
+	EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TABLA3||'.CAN_DESCRIPCION IS ''Descripción del motivo de la calificacion negativa''';
 	EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TABLA3||'.VERSION IS ''Indica la versión del registro.''';
 	EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TABLA3||'.USUARIOCREAR IS ''Indica el usuario que creó el registro.''';
 	EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TABLA3||'.FECHACREAR IS ''Indica la fecha en la que se creó el registro.''';
@@ -308,7 +306,7 @@ BEGIN
 	
 	
 	-- Creamos primary key
-	V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TABLA3||' ADD (CONSTRAINT '||V_TABLA3||'_PK PRIMARY KEY (ACT_CAN_ID) USING INDEX , CONSTRAINT UK_'||V_TABLA3||' UNIQUE (ACT_ID,DD_MCN_ID,DD_CAN_ID,CAN_FECHA_FIN,BORRADO))';
+	V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TABLA3||' ADD (CONSTRAINT '||V_TABLA3||'_PK PRIMARY KEY (ACT_CAN_ID) USING INDEX , CONSTRAINT UK_'||V_TABLA3||' UNIQUE (ACT_ID,DD_MCN_ID,DD_CAN_ID,BORRADO))';
 	EXECUTE IMMEDIATE V_MSQL;
 	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TABLA3||'_PK... PK creada.');
 		DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.UK_'||V_TABLA3||'... UK creada.');

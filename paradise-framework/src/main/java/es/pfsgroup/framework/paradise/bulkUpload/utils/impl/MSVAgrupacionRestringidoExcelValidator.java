@@ -54,6 +54,7 @@ public class MSVAgrupacionRestringidoExcelValidator extends MSVExcelValidatorAbs
 	public static final String ERROR_ACTIVO_DISTINTO_PROPIETARIO = "msg.error.masivo.agrupar.activos.propietarios.no.coinciden";
 	public static final String ACTIVO_ESTADO_PUBLICACION_DISTINTO = "msg.error.masivo.agrupar.activos.restringida.activos.agrupacion.destino.comercial";
 	public static final String ACTIVO_SITUACION_PUBLICACION_DISTINTO = "msg.error.masivo.agrupar.activos.restringida.activos.agrupacion.situacion.comercial";
+	public static final String AGRUPACION_NO_EXISTE = "msg.error.masivo.agrupar.activos.restringida.agrupacion.noExiste";
 	
 	
 	@Autowired
@@ -108,6 +109,7 @@ public class MSVAgrupacionRestringidoExcelValidator extends MSVExcelValidatorAbs
 			Map<String,List<Integer>> mapaErrores = new HashMap<String,List<Integer>>();
 			// Validaciones de grupo, para todos los activos de una agrupacion en el excel:
 			mapaErrores.put(messageServices.getMessage(ACTIVO_NO_EXISTE), activesNotExistsRows(exc));
+			mapaErrores.put(messageServices.getMessage(AGRUPACION_NO_EXISTE), agrupacionNotExistsRows(exc));
 			mapaErrores.put(messageServices.getMessage(ACTIVO_EN_AGRUPACION), activosEnAgrupacionRows(exc));
 			mapaErrores.put(messageServices.getMessage(ACTIVO_EN_OTRA_AGRUPACION), activosEnOtraAgrupacionRows(exc));
 			mapaErrores.put(messageServices.getMessage(ACTIVO_ESTADO_PUBLICACION_DISTINTO), comprobarEstadoPublicacionActivoAgrupacion(exc));
@@ -117,6 +119,7 @@ public class MSVAgrupacionRestringidoExcelValidator extends MSVExcelValidatorAbs
 			
 			
 			if (!mapaErrores.get(messageServices.getMessage(ACTIVO_NO_EXISTE)).isEmpty()
+					|| !mapaErrores.get(messageServices.getMessage(AGRUPACION_NO_EXISTE)).isEmpty()
 					|| !mapaErrores.get(messageServices.getMessage(ACTIVO_EN_AGRUPACION)).isEmpty()
 					|| !mapaErrores.get(messageServices.getMessage(ACTIVO_EN_OTRA_AGRUPACION)).isEmpty() 
 					|| !mapaErrores.get(messageServices.getMessage(ACTIVOS_NO_MISMA_LOCALIZACION.mensajeError)).isEmpty()
@@ -322,6 +325,25 @@ public class MSVAgrupacionRestringidoExcelValidator extends MSVExcelValidatorAbs
 		return listaFilas;
 	}
 	
+	// Validaciones para agrupacion de la lista excel	
+	private List<Integer> agrupacionNotExistsRows(MSVHojaExcel exc){
+		List<Integer> listaFilas = new ArrayList<Integer>();
+
+		int i = 0;
+		try{
+			for(i=1; i<this.numFilasHoja;i++){
+				if(!particularValidator.existeAgrupacion(exc.dameCelda(i, 0)))
+					listaFilas.add(i);
+			}
+		} catch (Exception e) {
+			if (i != 0) listaFilas.add(i);
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		}
+		
+		return listaFilas;
+	}
+	
 	private List<Integer> activosEnAgrupacionRows(MSVHojaExcel exc) {
 		List<Integer> listaFilas = new ArrayList<Integer>();
 		
@@ -356,7 +378,7 @@ public class MSVAgrupacionRestringidoExcelValidator extends MSVExcelValidatorAbs
 			for(i=1; i<this.numFilasHoja;i++){
 				numAgrupacion = exc.dameCelda(i, 0);
 				numActivo = exc.dameCelda(i, 1);
-				if(particularValidator.isMismoTipoComercializacionActivoPrincipalAgrupacion(numActivo, numAgrupacion))
+				if(!particularValidator.isMismoTipoComercializacionActivoPrincipalAgrupacion(numActivo, numAgrupacion))
 					listaFilas.add(i);
 				
 			}
@@ -384,7 +406,7 @@ public class MSVAgrupacionRestringidoExcelValidator extends MSVExcelValidatorAbs
 			for(i=1; i<this.numFilasHoja;i++){
 				numAgrupacion = exc.dameCelda(i, 0);
 				numActivo = exc.dameCelda(i, 1);
-				if(particularValidator.isMismoEpuActivoPrincipalAgrupacion(numActivo, numAgrupacion))
+				if(!particularValidator.isMismoEpuActivoPrincipalAgrupacion(numActivo, numAgrupacion))
 					listaFilas.add(i);
 				
 			}

@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=JIN LI, HU
---## FECHA_CREACION=20181026
+--## AUTOR=Carles Molins
+--## FECHA_CREACION=20181115
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-4525
@@ -11,6 +11,8 @@
 --## INSTRUCCIONES:
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##		0.2 Modificacion del SP
+--##		0.3 Añadido truncate inicial
 --##########################################
 --*/
 
@@ -32,7 +34,17 @@ DECLARE
     V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar
     V_USR VARCHAR2(30 CHAR) := 'HREOS-4525'; -- USUARIOCREAR/USUARIOMODIFICAR
     
-BEGIN	
+BEGIN
+	DBMS_OUTPUT.PUT_LINE('[INICIO] ');
+	
+	--Vaciar tabla
+	DBMS_OUTPUT.PUT_LINE('[INFO]: INICIO TRUNCATE');
+	EXECUTE IMMEDIATE '
+		TRUNCATE TABLE '||V_ESQUEMA||'.'||V_TABLA||'';
+	DBMS_OUTPUT.PUT_LINE('[INFO]: FIN TRUNCATE');
+		
+	--Insertar datos
+	DBMS_OUTPUT.PUT_LINE('[INFO]: INSERTAMOS EL REGISTRO');	
 	EXECUTE IMMEDIATE '
 	INSERT INTO '||V_ESQUEMA||'.'||V_TABLA||' (OCULTO, DD_MTO_CODIGO, ACT_ID) (
 	SELECT OCULTO, DD_MTO_CODIGO, ACT_ID
@@ -118,7 +130,7 @@ BEGIN
                                           AND DDTCO.DD_TCO_CODIGO IN (''02'',''03'',''04'')
                                           AND DDTCO.BORRADO = 0
                                     LEFT JOIN '||V_ESQUEMA||'.DD_MTO_MOTIVOS_OCULTACION MTO ON MTO.DD_MTO_CODIGO = ''03'' AND MTO.BORRADO = 0 /*Alquilado*/
-                                   WHERE APU.BORRADO = 0.
+                                   WHERE APU.BORRADO = 0
                                      AND SPS.SPS_OCUPADO = 1
                                      AND SPS.SPS_CON_TITULO = 1
                                      AND ((TRUNC(SPS.SPS_FECHA_TITULO) <= TRUNC(SYSDATE) AND TRUNC(SPS.SPS_FECHA_VENC_TITULO) >= TRUNC(sysdate)) OR (TRUNC(SPS.SPS_FECHA_TITULO) <= TRUNC(SYSDATE) AND SPS.SPS_FECHA_VENC_TITULO IS NULL))
@@ -131,7 +143,7 @@ BEGIN
                                     JOIN '||V_ESQUEMA||'.V_COND_DISPONIBILIDAD V ON V.ACT_ID = APU.ACT_ID AND V.ES_CONDICIONADO = 0
                                     JOIN '||V_ESQUEMA||'.V_CAMBIO_ESTADO_PUBLI EST ON EST.ACT_ID = APU.ACT_ID AND EST.INFORME_COMERCIAL = 0
                                     LEFT JOIN '||V_ESQUEMA||'.DD_MTO_MOTIVOS_OCULTACION MTO ON MTO.DD_MTO_CODIGO = ''06'' AND MTO.BORRADO = 0 /*Revisión Publicación*/
-                                   WHERE APU.BORRADO = 0.
+                                   WHERE APU.BORRADO = 0
                                      AND APU.ES_CONDICONADO_ANTERIOR = 1
                            
                           UNION
@@ -193,6 +205,19 @@ BEGIN
                                                         AND PTA.CHECK_HPM = 1
                                                         AND PTA.ACT_ID = APU.ACT_ID)
                                           ))
+                                          
+                                                UNION
+                        SELECT ACT.ACT_ID
+                               , 1 OCULTO
+                               , MTO.DD_MTO_CODIGO
+                               , MTO.DD_MTO_ORDEN ORDEN
+									FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT
+                                    JOIN '||V_ESQUEMA||'.ACT_OFR AO ON AO.ACT_ID = ACT.ACT_ID
+                                    JOIN '||V_ESQUEMA||'.OFR_OFERTAS OFR ON OFR.OFR_ID = AO.OFR_ID AND OFR.OFR_OFERTA_EXPRESS = 1 AND OFR.BORRADO = 0
+                                    JOIN '||V_ESQUEMA||'.DD_EOF_ESTADOS_OFERTA EOF ON EOF.DD_EOF_ID = OFR.DD_EOF_ID AND EOF.DD_EOF_CODIGO = ''01'' AND EOF.BORRADO = 0
+                                    LEFT JOIN '||V_ESQUEMA||'.DD_MTO_MOTIVOS_OCULTACION MTO ON MTO.DD_MTO_CODIGO = ''15'' AND MTO.BORRADO = 0
+                                    WHERE ACT.BORRADO = 0
+
                                 
                        )
                     )AUX WHERE AUX.ROWNUMBER = 1

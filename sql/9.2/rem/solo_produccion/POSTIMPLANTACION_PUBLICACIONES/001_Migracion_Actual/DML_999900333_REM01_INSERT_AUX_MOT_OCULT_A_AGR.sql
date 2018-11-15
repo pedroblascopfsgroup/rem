@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=JIN LI, HU
---## FECHA_CREACION=20181026
+--## AUTOR=Carles Molins
+--## FECHA_CREACION=20181115
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-4525
@@ -11,6 +11,8 @@
 --## INSTRUCCIONES:
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##		0.2 Modificado el DML con los cambios del SP
+--##		0.3 Añadido truncate inicial
 --##########################################
 --*/
 
@@ -32,7 +34,17 @@ DECLARE
     V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar
     V_USR VARCHAR2(30 CHAR) := 'HREOS-4525'; -- USUARIOCREAR/USUARIOMODIFICAR
     
-BEGIN	
+BEGIN
+	DBMS_OUTPUT.PUT_LINE('[INICIO] ');
+	
+	--Vaciar tabla
+	DBMS_OUTPUT.PUT_LINE('[INFO]: INICIO TRUNCATE');
+	EXECUTE IMMEDIATE '
+		TRUNCATE TABLE '||V_ESQUEMA||'.'||V_TABLA||'';
+	DBMS_OUTPUT.PUT_LINE('[INFO]: FIN TRUNCATE');
+		
+	--Insertar datos
+	DBMS_OUTPUT.PUT_LINE('[INFO]: INSERTAMOS EL REGISTRO');	
 	EXECUTE IMMEDIATE '
 	INSERT INTO '||V_ESQUEMA||'.'||V_TABLA||' (OCULTO, DD_MTO_CODIGO, AGR_ID) (
 		SELECT DISTINCT
@@ -425,7 +437,30 @@ BEGIN
 											AND   pta.act_id = act.act_id
 									)
 								)
-							)                                         
+							)
+					UNION
+					SELECT
+							aga.agr_id,
+							1 oculto,
+							mto.dd_mto_codigo,
+							mto.dd_mto_orden orden
+						FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT
+							JOIN '||V_ESQUEMA||'.act_aga_agrupacion_activo aga ON aga.act_id = act.act_id
+																		AND aga.borrado = 0
+							JOIN '||V_ESQUEMA||'.act_agr_agrupacion agr ON agr.agr_id = aga.agr_id
+																 AND agr.borrado = 0
+							JOIN '||V_ESQUEMA||'.dd_tag_tipo_agrupacion tag ON tag.dd_tag_id = agr.dd_tag_id
+																	 AND tag.borrado = 0
+																	 AND tag.dd_tag_codigo = ''02''	/*Restringida*/
+																	 AND (
+								agr.agr_fin_vigencia IS NULL
+								OR trunc(agr.agr_fin_vigencia) >= trunc(SYSDATE)
+							)
+							JOIN '||V_ESQUEMA||'.ACT_OFR AO on AO.ACT_ID = ACT.ACT_ID
+							JOIN '||V_ESQUEMA||'.OFR_OFERTAS OFR ON OFR.OFR_ID = AO.OFR_ID and OFR.OFR_OFERTA_EXPRESS = 1 AND OFR.BORRADO=0
+							JOIN '||V_ESQUEMA||'.DD_EOF_ESTADOS_OFERTA EOF on EOF.DD_EOF_ID = OFR.DD_EOF_ID and EOF.DD_EOF_CODIGO = ''01'' and eof.BORRADO = 0
+							LEFT JOIN '||V_ESQUEMA||'.DD_MTO_MOTIVOS_OCULTACION MTO ON MTO.DD_MTO_CODIGO = ''15'' and mto.BORRADO = 0
+							where act.BORRADO = 0                                         
 					)
 			) aux
 		WHERE

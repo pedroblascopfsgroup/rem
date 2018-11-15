@@ -212,11 +212,9 @@ COMMIT;
 
 EXCEPTION
   WHEN OTHERS THEN
-    err_num := SQLCODE;
-    err_msg := SQLERRM;
-    DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(err_num));
+    DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(SQLCODE));
     DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
-    DBMS_OUTPUT.put_line(err_msg);
+    DBMS_OUTPUT.put_line(SQLERRM);
     ROLLBACK;
     RAISE;          
 END;

@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=JIN LI, HU
---## FECHA_CREACION=20181026
+--## AUTOR=Carles Molins
+--## FECHA_CREACION=20181115
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-4525
@@ -11,6 +11,7 @@
 --## INSTRUCCIONES:
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##		0.2 Añadido truncate inicial
 --##########################################
 --*/
 
@@ -36,6 +37,12 @@ BEGIN
 	
     DBMS_OUTPUT.PUT_LINE('[INICIO] ');
          
+			--Vaciar tabla
+			DBMS_OUTPUT.PUT_LINE('[INFO]: INICIO TRUNCATE');
+			EXECUTE IMMEDIATE '
+				TRUNCATE TABLE '||V_ESQUEMA||'.'||V_TABLA||'';
+			DBMS_OUTPUT.PUT_LINE('[INFO]: FIN TRUNCATE');
+			
 			--Insertar datos
 			DBMS_OUTPUT.PUT_LINE('[INFO]: INSERTAMOS EL REGISTRO');
 			EXECUTE IMMEDIATE '

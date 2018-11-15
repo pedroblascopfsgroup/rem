@@ -22,6 +22,18 @@ echo ""
 export NLS_LANG=SPANISH_SPAIN.WE8ISO8859P1
 echo "[INFO] Se ha establecido la variable de entorno NLS_LANG=SPANISH_SPAIN.WE8ISO8859P1"
 
+if [ -d Loader/logs/ ] ; then
+	echo "[INFO] Ya existe el directorio Loader/logs/"
+else 
+	mkdir Loader/logs/
+fi
+
+if [ -d Loader/bad/ ] ; then
+	echo "[INFO] Ya existe el directorio Loader/bad/"
+else 
+	mkdir Loader/bad/
+fi
+
 if [ -d Logs/ ] ; then
 	echo "[INFO] Ya existe el directorio Logs/"
 else 
@@ -39,113 +51,95 @@ echo "[FIN] FIN CONFIGURACION $0"
 echo ""
 echo "-----------------------------------------------------------------"
 echo ""
-echo "[INICIO] INICIO EJECUCION CARPETA 001"
+echo "[INICIO] INICIO CREACIÓN DE TABLAS AUXILIARES"
 hora=`date +%H:%M:%S`
 fecha_ini=`date +%Y%m%d_%H%M%S`
 echo "[INFO] $hora"
 
-fichero="List/001.list"
-ls --format=single-column 001_*/*.sql > $fichero
+fichero="List/DDLs.list"
+ls --format=single-column DDL/DDL_*.sql > $fichero
 
 while read line
 do
 	if [ -f "$line" ] ; then
 		echo ""
 		echo "[INFO] Inicio creación $line"
-		$ORACLE_HOME/bin/sqlplus "$1" @"$line" > Logs/001_$line_$fecha_ini.log
+		$ORACLE_HOME/bin/sqlplus "$1" @"$line" > Logs/DDL_$line_$fecha_ini.log
 		if [ $? != 0 ] ; then 
 		   echo -e "\n\n======>>> "Error en @"$line"
 		   exit 1
 		fi
-		echo "[INFO] Fin ejecución $line"
+		echo "[INFO] Fin creación $line"
 		echo ""
 	fi
 done < $fichero
-echo "[FIN] FIN 001"
+echo "[FIN] FIN CARGA DE TABLAS AUXILIARES"
 echo ""
 echo "-----------------------------------------------------------------"
 echo ""
-echo "[INICIO] INICIO EJECUCION CARPETA 002"
+echo "[INICIO] INICIO CARGA DE TABLAS AUXILIARES"
 hora=`date +%H:%M:%S`
 fecha_ini=`date +%Y%m%d_%H%M%S`
 echo "[INFO] $hora"
 
-fichero="List/002.list"
-ls --format=single-column 002_*/*.sql > $fichero
+fichero="List/CTLs.list"
+ls --format=single-column Loader/*.ctl | sed 's/.ctl//g' > $fichero
+if [ ! -f $fichero ] ; then
+	echo "[INFO] No existe lista de ficheros CTL"
+	exit 1
+fi
 
 while read line
 do
-	if [ -f "$line" ] ; then
-		echo ""
-		echo "[INFO] Inicio creación $line"
-		$ORACLE_HOME/bin/sqlplus "$1" @"$line" > Logs/002_$line_$fecha_ini.log
-		if [ $? != 0 ] ; then 
-		   echo -e "\n\n======>>> "Error en @"$line"
-		   exit 1
+	if [ -f $line.zip ] ; then
+		unzip -oq $line.zip -d Loader/
+	fi
+	if [ -f $line.ctl ] ; then
+		if [ -s $line.dat ] ; then
+			echo ""
+			auxiliar=`basename $line`
+			echo "[INFO] Inicio carga auxiliar $auxiliar"
+			$ORACLE_HOME/bin/sqlldr $1 control=./$line.ctl data= ./$line.dat log=./Loader/logs/$auxiliar.log bad=./Loader/bad/$auxiliar.bad > Logs/CTL_$line_$fecha_ini.log
+			if [ $? != 0 ] ; then 
+			   echo -e "\n\n======>>> "[ERROR] Error en @$line
+			   #exit 1
+			fi
+			echo "[INFO] Fin carga auxiliar $auxiliar"
+			echo ""
+			rm -f $line.dat
 		fi
-		echo "[INFO] Fin ejecución $line"
-		echo ""
 	fi
 done < $fichero
-echo "[FIN] FIN 002"
+
+echo "[FIN] FIN CARGA DE TABLAS AUXILIARES"
 echo ""
 echo "-----------------------------------------------------------------"
 echo ""
-echo "[INICIO] INICIO EJECUCION CARPETA 003"
+echo "[INICIO] INICIO CARGA DE TABLAS FINALES"
 hora=`date +%H:%M:%S`
 fecha_ini=`date +%Y%m%d_%H%M%S`
 echo "[INFO] $hora"
 
-fichero="List/003.list"
-ls --format=single-column 003_*/*.sql > $fichero
+fichero="List/DMLs.list"
+ls --format=single-column DML/DML_*.sql > $fichero
 
 while read line
 do
-	if [ -f "$line" ] ; then
+	if [ -f $line ] ; then
 		echo ""
-		echo "[INFO] Inicio creación $line"
-		$ORACLE_HOME/bin/sqlplus "$1" @"$line" > Logs/003_$line_$fecha_ini.log
+		echo "[INFO] Inicio carga final $line"
+		$ORACLE_HOME/bin/sqlplus "$1" @"$line" > Logs/DML_$line_$fecha_ini.log
 		if [ $? != 0 ] ; then 
-		   echo -e "\n\n======>>> "Error en @"$line"
+		   echo -e "\n\n======>>> "[ERROR] Error en @$line
 		   exit 1
 		fi
-		echo "[INFO] Fin ejecución $line"
+		echo "[INFO] Fin carga final $line"
 		echo ""
 	fi
 done < $fichero
-echo "[FIN] FIN 003"
-echo ""
-fin=`date +%s`
-hora=`date +%H:%M:%S`
-let total_seg=($fin-$inicio)
-let total_min=$total_seg/60
-echo ""
-echo "-----------------------------------------------------------------"
-echo ""
-echo "[INICIO] INICIO EJECUCION CARPETA 004"
-hora=`date +%H:%M:%S`
-fecha_ini=`date +%Y%m%d_%H%M%S`
-echo "[INFO] $hora"
 
-fichero="List/003.list"
-ls --format=single-column 004_*/*.sql > $fichero
+echo "[FIN] FIN CARGA DE TABLAS FINALES"
 
-while read line
-do
-	if [ -f "$line" ] ; then
-		echo ""
-		echo "[INFO] Inicio creación $line"
-		$ORACLE_HOME/bin/sqlplus "$1" @"$line" > Logs/004_$line_$fecha_ini.log
-		if [ $? != 0 ] ; then 
-		   echo -e "\n\n======>>> "Error en @"$line"
-		   exit 1
-		fi
-		echo "[INFO] Fin ejecución $line"
-		echo ""
-	fi
-done < $fichero
-echo "[FIN] FIN 004"
-echo ""
 fin=`date +%s`
 hora=`date +%H:%M:%S`
 let total_seg=($fin-$inicio)

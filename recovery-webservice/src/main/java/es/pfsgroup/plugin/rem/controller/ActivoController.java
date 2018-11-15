@@ -1169,12 +1169,6 @@ public class ActivoController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-
-	public ModelAndView getListOfertasActivos(Long id, WebDto webDto, ModelMap model) {
-		model.put(RESPONSE_DATA_KEY, adapter.getListOfertasActivos(id));
-		return createModelAndViewJson(model);
-	}
-	
 	public ModelAndView getListOfertasActivos(Long id, Boolean incluirOfertasAnuladas, WebDto webDto, ModelMap model) {
 		if (incluirOfertasAnuladas) {
 			model.put("data", adapter.getListOfertasActivos(id));
@@ -1301,7 +1295,6 @@ public class ActivoController extends ParadiseJsonController {
 			adapter.upload(webFileItem);
 			model.put(RESPONSE_SUCCESS_KEY, true);
 		} catch (GestorDocumentalException e) {
-			logger.error("error en activoController", e);
 			model.put(RESPONSE_SUCCESS_KEY, false);
 			model.put("errorMessage", "Ha habido un problema con la subida del fichero al gestor documental.");
 

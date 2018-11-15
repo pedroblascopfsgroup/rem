@@ -2117,9 +2117,13 @@ public class AgrupacionAdapter {
 					Boolean ofertaViva = false;
 					Boolean ofertaVivaVenta = false;
 					Boolean ofertaVivaAlquiler = false;
+					String codigo = null;
 	
 					DDTipoComercializacion tipoComercializacion = (DDTipoComercializacion) utilDiccionarioApi
 							.dameValorDiccionarioByCod(DDTipoComercializacion.class, dto.getTipoComercializacionCodigo());
+
+					
+					
 					if(!Checks.estaVacio(ofertasAgr)) {
 						for(Oferta oferta : ofertasAgr) {
 							if(DDEstadoOferta.CODIGO_ACEPTADA.equals(oferta.getEstadoOferta().getCodigo())) {
@@ -2143,6 +2147,7 @@ public class AgrupacionAdapter {
 							for (ActivoAgrupacionActivo activoAgrupacionActivo : listaActivos) {
 								ActivoPatrimonio activoPatrimonio = activoPatrimonioDao.getActivoPatrimonioByActivo(activoAgrupacionActivo.getActivo().getId());
 								ActivoPublicacion activoPublicacion = activoAgrupacionActivo.getActivo().getActivoPublicacion();
+								Activo activo = activoPublicacion.getActivo();
 	
 								if(!ofertaVivaAlquiler || !ofertaVivaVenta) {
 									ActivoHistoricoPatrimonio newActiHistPatrimonio = new ActivoHistoricoPatrimonio();
@@ -2175,21 +2180,48 @@ public class AgrupacionAdapter {
 								}
 	
 								activoPublicacion.setTipoComercializacion(tipoComercializacion);
-	
+								
+								
+								
 								if(!ofertaVivaAlquiler && DDTipoComercializacion.CODIGO_VENTA.equals(dto.getTipoComercializacionCodigo())) {
 									activoPatrimonio.setCheckHPM(false);
 								}
 	
 								if(!ofertaVivaVenta && DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(dto.getTipoComercializacionCodigo())) {
 									activoPatrimonio.setCheckHPM(true);
+									
 								}
 	
 								if(DDTipoComercializacion.CODIGO_ALQUILER_VENTA.equals(dto.getTipoComercializacionCodigo())) {
 									activoPatrimonio.setCheckHPM(true);
 								}
-	
+								
+								
+								if (!Checks.esNulo(activoPublicacion.getTipoComercializacion())) {
+									switch(Integer.parseInt(activoPublicacion.getTipoComercializacion().getCodigo())) {
+										case 1:
+											codigo = DDSituacionComercial.CODIGO_DISPONIBLE_VENTA;
+											break;
+										case 2:
+											codigo = DDSituacionComercial.CODIGO_DISPONIBLE_VENTA_ALQUILER;
+											break;
+										case 3:
+											codigo = DDSituacionComercial.CODIGO_DISPONIBLE_ALQUILER;
+											break;
+										default:
+											break;
+									}
+								}
+								
+									
+								String codigoSituacion = codigo;
+									
+								if(!Checks.esNulo(codigoSituacion)) {
+									activo.setSituacionComercial((DDSituacionComercial)utilDiccionarioApi.dameValorDiccionarioByCod(DDSituacionComercial.class,codigoSituacion));
+								}
 								activoPatrimonioDao.saveOrUpdate(activoPatrimonio);
 								activoPublicacionDao.saveOrUpdate(activoPublicacion);
+								
 							}
 						}
 					}

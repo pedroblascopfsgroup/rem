@@ -279,7 +279,116 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			 var isLiberbank = get('activo.isCarteraLiberbank');
 			 if(isGestorActivos && isLiberbank) return true;
 			 else return false;
-		 }
+		 },
+
+		 enableComboTipoAlquiler: function(get){
+			var chkPerimetroAlquiler = get('patrimonio.chkPerimetroAlquiler');
+			var tipoComercializacion = get('activo.tipoComercializacionCodigo');
+			if((chkPerimetroAlquiler == true || chkPerimetroAlquiler == "true" ) && CONST.TIPOS_COMERCIALIZACION['VENTA'] != tipoComercializacion){
+				return false;
+			}else{
+				return true;
+			}
+		},
+
+		enableComboAdecuacion: function(get){
+			var chkPerimetroAlquiler = get('patrimonio.chkPerimetroAlquiler');
+			if((chkPerimetroAlquiler == true || chkPerimetroAlquiler == "true" )){
+				return false;
+			}else{
+				return true;
+			}
+		},
+
+		filtrarComboMotivosOcultacionVenta: function(get) {
+			var bloqueoCheckOcultar = get('datospublicacionactivo.deshabilitarCheckOcultarVenta');
+
+			if(!Ext.isEmpty(bloqueoCheckOcultar) && !bloqueoCheckOcultar) {
+				 this.getData().comboMotivosOcultacionVenta.filter([{
+                     filterFn: function(rec){
+                         return rec.getData().esMotivoManual === 'true';
+                     }
+                 }]);
+			} else {
+				this.getData().comboMotivosOcultacionVenta.clearFilter();
+			}
+		},
+
+		filtrarComboMotivosOcultacionAlquiler: function(get) {
+            var bloqueoCheckOcultar = get('datospublicacionactivo.deshabilitarCheckOcultarAlquiler');
+
+            if(!Ext.isEmpty(bloqueoCheckOcultar) && !bloqueoCheckOcultar) {
+                 this.getData().comboMotivosOcultacionAlquiler.filter([{
+                     filterFn: function(rec){
+                         return rec.getData().esMotivoManual === 'true';
+                     }
+                 }]);
+            } else {
+                this.getData().comboMotivosOcultacionAlquiler.clearFilter();
+            }
+        },
+
+        debePreguntarPorTipoPublicacionAlquiler: function(get) {
+            var publicarSinPrecioAlquiler = get('datospublicacionactivo.publicarSinPrecioAlquiler');
+            var informeComercialAprobado = get('activo.informeComercialAceptado');
+            var precioRentaWeb = !Ext.isEmpty(get('datospublicacionactivo.precioWebAlquiler'));
+            return (informeComercialAprobado || !informeComercialAprobado) && (publicarSinPrecioAlquiler || precioRentaWeb);
+        },
+
+        esReadonlyChkbxPublicar: function(get){
+			var activoVendido = get('activo.isVendido');
+
+			var ponerPublicarAReadonly = false;
+			if(activoVendido) {
+				ponerPublicarAReadonly = true;
+			}
+
+			return ponerPublicarAReadonly;
+		},
+
+		esEditableChkbxComercializar: function(get){
+			var activoVendido = get('activo.isVendido');
+
+			return activoVendido;
+		},
+
+		esVisibleTipoPublicacionVenta: function(get){
+			var estadoVenta = get('datospublicacionactivo.estadoPublicacionVenta');
+			var tipoPublicacionVenta = get('datospublicacionactivo.tipoPublicacionVentaDescripcion');
+
+			if(!Ext.isEmpty(estadoVenta) && estadoVenta != CONST.DESCRIPCION_PUBLICACION['OCULTO_VENTA']){
+				return tipoPublicacionVenta;
+			}else{
+				return null;
+			}
+
+		},
+
+		esVisibleTipoPublicacionAlquiler: function(get){
+			var estadoAlquiler = get('datospublicacionactivo.estadoPublicacionAlquiler');
+			var tipoPublicacionAlquiler = get('datospublicacionactivo.tipoPublicacionAlquilerDescripcion');
+
+			if(!Ext.isEmpty(estadoAlquiler) && estadoAlquiler != CONST.DESCRIPCION_PUBLICACION['OCULTO_ALQUILER']){
+				return tipoPublicacionAlquiler;
+			} else {
+				return null;
+			}
+
+		},
+		
+		isReadOnlyFechaRealizacionPosesion: function(get){
+			var me = this;
+			
+			var isSareb = get('activo.isCarteraSareb');
+	    	var isCerberus = get('activo.isCarteraCerberus');
+			
+			if(isSareb || isCerberus){
+				return true;
+			}  
+			
+			return false;
+		}
+
 	 },
 
     stores: {

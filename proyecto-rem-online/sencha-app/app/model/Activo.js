@@ -51,6 +51,20 @@ Ext.define('HreRem.model.Activo', {
     			depends: 'entidadPropietariaCodigo'
     		},
     		{
+    			name: 'isCarteraSareb',
+    			calculate: function(data) { 
+    				return data.entidadPropietariaCodigo == CONST.CARTERA['SAREB'];
+    			},
+    			depends: 'entidadPropietariaCodigo'
+    		},
+    		{
+    			name: 'isCarteraCerberus',
+    			calculate: function(data) { 
+    				return data.entidadPropietariaCodigo == CONST.CARTERA['CERBERUS'];
+    			},
+    			depends: 'entidadPropietariaCodigo'
+    		},
+    		{
     			name: 'subcarteraCodigo'
     		},
     		{

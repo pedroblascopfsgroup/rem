@@ -332,7 +332,7 @@ public class MSVAgrupacionRestringidoExcelValidator extends MSVExcelValidatorAbs
 		int i = 0;
 		try{
 			for(i=1; i<this.numFilasHoja;i++){
-				if(!particularValidator.existeAgrupacion(exc.dameCelda(i, 0)));
+				if(!particularValidator.existeAgrupacion(exc.dameCelda(i, 0)))
 					listaFilas.add(i);
 			}
 		} catch (Exception e) {
@@ -378,7 +378,7 @@ public class MSVAgrupacionRestringidoExcelValidator extends MSVExcelValidatorAbs
 			for(i=1; i<this.numFilasHoja;i++){
 				numAgrupacion = exc.dameCelda(i, 0);
 				numActivo = exc.dameCelda(i, 1);
-				if(particularValidator.isMismoTipoComercializacionActivoPrincipalAgrupacion(numActivo, numAgrupacion))
+				if(!particularValidator.isMismoTipoComercializacionActivoPrincipalAgrupacion(numActivo, numAgrupacion))
 					listaFilas.add(i);
 				
 			}
@@ -406,7 +406,7 @@ public class MSVAgrupacionRestringidoExcelValidator extends MSVExcelValidatorAbs
 			for(i=1; i<this.numFilasHoja;i++){
 				numAgrupacion = exc.dameCelda(i, 0);
 				numActivo = exc.dameCelda(i, 1);
-				if(particularValidator.isMismoEpuActivoPrincipalAgrupacion(numActivo, numAgrupacion))
+				if(!particularValidator.isMismoEpuActivoPrincipalAgrupacion(numActivo, numAgrupacion))
 					listaFilas.add(i);
 				
 			}

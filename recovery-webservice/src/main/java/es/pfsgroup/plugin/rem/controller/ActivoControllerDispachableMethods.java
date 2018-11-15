@@ -309,7 +309,25 @@ class ActivoControllerDispachableMethods {
 				}
 			}
 		});
+		
+		
+		dispachableMethods.put(ActivoPropagacionFieldTabMap.TAB_PLUSVALIA_VENTA, new DispachableMethod<DtoPlusvaliaVenta>() {
+
+			@Override
+			public Class<DtoPlusvaliaVenta> getArgumentType() {
+				return DtoPlusvaliaVenta.class;
+			}
+
+			@Override
+			public void execute(Long id, DtoPlusvaliaVenta dto) {
+				if (dto != null ){
+					this.controller.saveActivoPlusvaliaVenta(dto, id, new ModelMap());
+
+				}
+			}
+		});
 	}
+	
 	
 	
 	private ActivoController controller;

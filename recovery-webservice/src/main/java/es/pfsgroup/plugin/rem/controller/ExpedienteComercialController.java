@@ -57,6 +57,7 @@ import es.pfsgroup.plugin.rem.model.DtoModificarCompradores;
 import es.pfsgroup.plugin.rem.model.DtoNotarioContacto;
 import es.pfsgroup.plugin.rem.model.DtoObservacion;
 import es.pfsgroup.plugin.rem.model.DtoObtencionDatosFinanciacion;
+import es.pfsgroup.plugin.rem.model.DtoPlusvaliaVenta;
 import es.pfsgroup.plugin.rem.model.DtoPosicionamiento;
 import es.pfsgroup.plugin.rem.model.DtoReserva;
 import es.pfsgroup.plugin.rem.model.DtoTanteoActivoExpediente;
@@ -307,6 +308,22 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 		try {		
 			
 			model.put("success", expedienteComercialApi.saveCondicionesExpediente(dto, id));
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}	
+		
+		return createModelAndViewJson(model);
+		
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView savePlusvaliaVenta(DtoPlusvaliaVenta dto, @RequestParam Long id, ModelMap model) {
+		try {		
+			
+			model.put("success", expedienteComercialApi.savePlusvaliaVenta(dto, id));
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -1230,6 +1247,8 @@ public class ExpedienteComercialController extends ParadiseJsonController{
 
 		return createModelAndViewJson(model);
 	}
+	
+
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)

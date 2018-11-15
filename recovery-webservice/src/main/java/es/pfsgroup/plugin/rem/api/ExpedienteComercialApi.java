@@ -29,6 +29,7 @@ import es.pfsgroup.plugin.rem.model.DtoModificarCompradores;
 import es.pfsgroup.plugin.rem.model.DtoNotarioContacto;
 import es.pfsgroup.plugin.rem.model.DtoObservacion;
 import es.pfsgroup.plugin.rem.model.DtoObtencionDatosFinanciacion;
+import es.pfsgroup.plugin.rem.model.DtoPlusvaliaVenta;
 import es.pfsgroup.plugin.rem.model.DtoPosicionamiento;
 import es.pfsgroup.plugin.rem.model.DtoReserva;
 import es.pfsgroup.plugin.rem.model.DtoTanteoActivoExpediente;
@@ -956,6 +957,9 @@ public interface ExpedienteComercialApi {
 
 	public String getCodigoCarteraExpediente(String idExpediente);
 
-	DtoPage getActivosExpedienteVista(Long idExpediente);	
+	DtoPage getActivosExpedienteVista(Long idExpediente);
+
+	boolean savePlusvaliaVenta(DtoPlusvaliaVenta dto, Long idExpediente);
+
 	
 }

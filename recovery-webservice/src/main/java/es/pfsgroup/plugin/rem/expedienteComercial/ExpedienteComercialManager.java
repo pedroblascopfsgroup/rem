@@ -113,6 +113,7 @@ import es.pfsgroup.plugin.rem.model.DtoModificarCompradores;
 import es.pfsgroup.plugin.rem.model.DtoNotarioContacto;
 import es.pfsgroup.plugin.rem.model.DtoObservacion;
 import es.pfsgroup.plugin.rem.model.DtoObtencionDatosFinanciacion;
+import es.pfsgroup.plugin.rem.model.DtoPlusvaliaVenta;
 import es.pfsgroup.plugin.rem.model.DtoPosicionamiento;
 import es.pfsgroup.plugin.rem.model.DtoReserva;
 import es.pfsgroup.plugin.rem.model.DtoSubsanacion;
@@ -130,6 +131,7 @@ import es.pfsgroup.plugin.rem.model.InformeJuridico;
 import es.pfsgroup.plugin.rem.model.ObservacionesExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
+import es.pfsgroup.plugin.rem.model.PlusvaliaVentaExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Posicionamiento;
 import es.pfsgroup.plugin.rem.model.Reserva;
 import es.pfsgroup.plugin.rem.model.Subsanaciones;
@@ -203,6 +205,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	public final String PESTANA_RESERVA = "reserva";
 	public final String PESTANA_CONDICIONES = "condiciones";
 	public final String PESTANA_FORMALIZACION = "formalizacion";
+	public final String PESTAÑA_PLUSVALIA = "plusvalia";
 
 	// Textos a mostrar por defecto
 	public static final String TANTEO_CONDICIONES_TRANSMISION = "msg.defecto.oferta.tanteo.condiciones.transmision";
@@ -358,6 +361,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				dto = expedienteToDtoCondiciones(expediente);
 			} else if (PESTANA_FORMALIZACION.equals(tab)) {
 				dto = expedienteToDtoFormalizacion(expediente);
+			}
+			else if (PESTAÑA_PLUSVALIA.equals(tab)) {
+				dto = expedienteToDtoPlusvaliaVenta(expediente);
 			}
 
 		} catch (Exception e) {
@@ -1841,6 +1847,43 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 		return true;
 	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public boolean savePlusvaliaVenta(DtoPlusvaliaVenta dto, Long idExpediente) {
+
+		ExpedienteComercial expedienteComercial = findOne(idExpediente);
+		PlusvaliaVentaExpedienteComercial plusvalia = new PlusvaliaVentaExpedienteComercial();
+		plusvalia = (PlusvaliaVentaExpedienteComercial) genericDao.get(PlusvaliaVentaExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "expediente.id", expedienteComercial.getId()));
+
+
+		if (!Checks.esNulo(plusvalia)) {
+			plusvalia = dtoPlusvaliToPlusvalia(plusvalia, dto);
+			genericDao.save(PlusvaliaVentaExpedienteComercial.class, plusvalia);
+
+			//expedienteComercial.setCondicionante(condiciones);
+		} else {
+			PlusvaliaVentaExpedienteComercial plusvaliaNueva = new PlusvaliaVentaExpedienteComercial();
+			plusvaliaNueva.setExpediente(expedienteComercial);
+			plusvaliaNueva.setExento(dto.getExento());
+			plusvaliaNueva.setAutoliquidacion(dto.getAutoliquidacion());
+			plusvaliaNueva.setFechaEscritoAyt(dto.getFechaEscritoAyt());
+			plusvaliaNueva.setObservaciones(dto.getObservaciones());
+			genericDao.save(PlusvaliaVentaExpedienteComercial.class, plusvaliaNueva);
+
+			
+
+			//condiciones = new CondicionanteExpediente();
+			//condiciones.setExpediente(expedienteComercial);
+			//condiciones = dtoCondicionantestoCondicionante(condiciones, dto);
+			//expedienteComercial.setCondicionante(condiciones);
+		}
+
+		
+		createReservaExpediente(expedienteComercial);
+
+		return true;
+	}
 
 	@Override
 	@Transactional(readOnly = false)
@@ -2092,6 +2135,20 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			if (!Checks.esNulo(dto.getSujetoTramiteTanteo())) {
 				condiciones.setSujetoTanteoRetracto(dto.getSujetoTramiteTanteo() == true ? 1 : 0);
 			}
+		} catch (Exception ex) {
+			logger.error("error en expedienteComercialManager", ex);
+			return condiciones;
+		}
+
+		return condiciones;
+	}
+	
+	
+	public PlusvaliaVentaExpedienteComercial dtoPlusvaliToPlusvalia(PlusvaliaVentaExpedienteComercial condiciones,
+			DtoPlusvaliaVenta dto) {
+		try {
+			beanUtilNotNull.copyProperties(condiciones, dto);
+
 		} catch (Exception ex) {
 			logger.error("error en expedienteComercialManager", ex);
 			return condiciones;
@@ -2392,6 +2449,31 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		formalizacionDto.setGeneracionHojaDatos(permitirGenerarHoja);
 
 		return formalizacionDto;
+	}
+	
+	
+
+	
+
+	public DtoPlusvaliaVenta expedienteToDtoPlusvaliaVenta(ExpedienteComercial expediente) {
+
+		DtoPlusvaliaVenta dto= new DtoPlusvaliaVenta();
+		PlusvaliaVentaExpedienteComercial plusvalia = new PlusvaliaVentaExpedienteComercial();
+		
+		plusvalia = (PlusvaliaVentaExpedienteComercial) genericDao.get(PlusvaliaVentaExpedienteComercial.class,	genericDao.createFilter(FilterType.EQUALS, "expediente.id", expediente.getId()));
+		
+		if (!Checks.esNulo(plusvalia)) {
+		dto.setAutoliquidacion(plusvalia.getAutoliquidacion());
+		dto.setExento(plusvalia.getExento());
+		dto.setFechaEscritoAyt(plusvalia.getFechaEscritoAyt());
+		dto.setObservaciones(plusvalia.getObservaciones());
+		}
+
+		// Un expediente de venta solo puede tener una resolucion, en el extraño
+		// caso que tenga más
+	
+
+		return dto;
 	}
 
 	public DtoFormalizacionResolucion formalizacionToDto(Formalizacion formalizacion) {
@@ -5239,6 +5321,12 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		 */
 		return resultado;
 	}
+	
+	
+	
+	
+
+
 
 	@Override
 	@Transactional(readOnly = false)

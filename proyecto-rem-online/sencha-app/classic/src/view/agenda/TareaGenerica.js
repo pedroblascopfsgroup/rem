@@ -1593,6 +1593,7 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
     			
     			me.down('[name=nMesesFianza]').noObligatorio=false;
     			me.down('[name=importeFianza]').noObligatorio=false;
+    			me.down('[name=nExpediente]').noObligatorio=false;
     			
     			me.habilitarCampo(me.down('[name=nMesesFianza]'));
     			me.habilitarCampo(me.down('[name=importeFianza]'));
@@ -1600,6 +1601,7 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
     			
     			me.campoObligatorio(me.down('[name=nMesesFianza]'));
     			me.campoObligatorio(me.down('[name=importeFianza]'));
+    			me.campoObligatorio(me.down('[name=nExpediente]'));
     			
     			me.down('[name=motivoRechazo]').noObligatorio=true;
             	me.deshabilitarCampo(me.down('[name=motivoRechazo]'));
@@ -1611,6 +1613,7 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
     			me.down('[name=nMesesFianza]').noObligatorio=true;
     			me.down('[name=importeFianza]').noObligatorio=true;
     			me.down('[name=motivoRechazo]').noObligatorio=false;
+    			me.down('[name=nExpediente]').noObligatorio=true;
 
             	me.deshabilitarCampo(me.down('[name=nMesesFianza]'));
             	me.deshabilitarCampo(me.down('[name=importeFianza]'));
@@ -1622,6 +1625,7 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
     			
             	me.campoNoObligatorio(me.down('[name=nMesesFianza]'));
             	me.campoNoObligatorio(me.down('[name=importeFianza]'));
+            	me.campoNoObligatorio(me.down('[name=nExpediente]'));
             	
     			me.campoObligatorio(me.down('[name=motivoRechazo]'));
 
@@ -1684,6 +1688,21 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
             	me.campoNoObligatorio(me.down('[name=nombreFS]'));
             	me.campoNoObligatorio(me.down('[name=documento]'));
     		}        	
+    	});
+    	
+    	me.down('[name=tipoImpuesto]').addListener('change', function(){
+    		var tipoImpuesto = me.down('[name=tipoImpuesto]');
+    		
+    		if(tipoImpuesto.value){
+    			me.down('[name=porcentajeImpuesto]').noObligatorio=false;
+            	
+            	me.campoObligatorio(me.down('[name=porcentajeImpuesto]'));
+    		}else{
+    			me.down('[name=porcentajeImpuesto]').noObligatorio=true;
+            	
+            	me.campoNoObligatorio(me.down('[name=porcentajeImpuesto]'));
+
+    		}	
     	});
 
     },

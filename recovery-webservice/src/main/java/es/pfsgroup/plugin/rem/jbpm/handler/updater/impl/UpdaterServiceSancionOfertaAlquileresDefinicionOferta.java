@@ -20,6 +20,7 @@ import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoInquilino;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTratamiento;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposImpuesto;
@@ -63,12 +64,22 @@ public class UpdaterServiceSancionOfertaAlquileresDefinicionOferta implements Up
 		Boolean tipoTratamientoNinguna = false;
 		Boolean checkDepositoMarcado = false;
 		Boolean checkFiadorSolidarioMarcado = false;
-		
+		DDEstadosExpedienteComercial estadoExpedienteComercial = null;
+
 		for(TareaExternaValor valor :  valores){
 			
 			if(TIPO_TRATAMIENTO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
-				if(DDTipoTratamiento.TIPO_TRATAMIENTO_NINGUNA.equals(valor.getValor()))
+				if(DDTipoTratamiento.TIPO_TRATAMIENTO_NINGUNA.equals(valor.getValor())){
 					tipoTratamientoNinguna = true;
+					estadoExpedienteComercial = genericDao.get(DDEstadosExpedienteComercial.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadosExpedienteComercial.PTE_ELEVAR_SANCION));
+					expedienteComercial.setEstado(estadoExpedienteComercial);
+				} else if (DDTipoTratamiento.TIPO_TRATAMIENTO_SCORING.equals(valor.getValor())){
+					estadoExpedienteComercial = genericDao.get(DDEstadosExpedienteComercial.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadosExpedienteComercial.PTE_SCORING));
+					expedienteComercial.setEstado(estadoExpedienteComercial);
+				} else if (DDTipoTratamiento.TIPO_TRATAMIENTO_SEGURO_DE_RENTAS.equals(valor.getValor())){
+					estadoExpedienteComercial = genericDao.get(DDEstadosExpedienteComercial.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadosExpedienteComercial.PTE_SEGURO_RENTAS));
+					expedienteComercial.setEstado(estadoExpedienteComercial);
+				}
 			}
 			
 			if(TIPO_INQUILINO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
@@ -156,10 +167,7 @@ public class UpdaterServiceSancionOfertaAlquileresDefinicionOferta implements Up
 			}else{
 				if(FECHA_TRATAMIENTO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 					try {
-						if(!Checks.esNulo(expedienteComercial))
-							if(!Checks.esNulo(expedienteComercial.getReserva()))
-								
-								expedienteComercial.getReserva().setFechaFirma(ft.parse(valor.getValor()));
+						condiciones.setFechaFirma(ft.parse(valor.getValor()));
 					} catch (ParseException e) {
 						logger.error("Error insertando Fecha Tratamiento.", e);
 					}

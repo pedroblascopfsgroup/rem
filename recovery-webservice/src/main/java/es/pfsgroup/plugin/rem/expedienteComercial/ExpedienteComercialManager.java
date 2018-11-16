@@ -1155,6 +1155,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 					Integer ocultar = expediente.getCondicionante().getSujetoTanteoRetracto();
 					dto.setOcultarPestTanteoRetracto(!Checks.esNulo(ocultar) && ocultar == 1 ? false : true);
+					
+					if (Checks.esNulo(expediente.getReserva())) {
+						dto.setFechaReserva(expediente.getCondicionante().getFechaFirma());
+					} 
 				}
 
 				if (!Checks.esNulo(expediente.getFechaInicioAlquiler())) {

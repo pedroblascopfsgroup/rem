@@ -280,8 +280,11 @@ public class CondicionanteExpediente implements Serializable, Auditable {
     
     @Column(name="ALQ_ENTIDAD_COMMENTS")
     private String entidadComments;
-           
-    @Version   
+    
+    @Column(name="ALQ_FECHA_FIRMA")
+    private Date fechaFirma;
+
+	@Version   
 	private Long version;
 
 	@Embedded
@@ -868,6 +871,14 @@ public class CondicionanteExpediente implements Serializable, Auditable {
 
 	public void setEntidadComments(String entidadComments) {
 		this.entidadComments = entidadComments;
+	}
+	
+	 public Date getFechaFirma() {
+		return fechaFirma;
+	}
+
+	public void setFechaFirma(Date fechaFirma) {
+		this.fechaFirma = fechaFirma;
 	}
 	  
 }

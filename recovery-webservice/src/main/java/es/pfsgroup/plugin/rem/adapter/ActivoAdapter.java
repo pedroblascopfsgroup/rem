@@ -2750,19 +2750,32 @@ public class ActivoAdapter {
 	public boolean saveTabActivoTransactional(WebDto dto, Long id, String tab) {
 		TabActivoService tabActivoService = tabActivoFactory.getService(tab);
 		Activo activo = activoApi.get(id);
-		DtoActivoFichaCabecera dtofichacabecera = (DtoActivoFichaCabecera) dto;
-		boolean tieneAgrupVenta=false;
-		if(dtofichacabecera.getTipoComercializacionCodigo().equals(DDTipoComercializacion.CODIGO_SOLO_ALQUILER)){
-			List<ActivoAgrupacionActivo> agrupaciones = activo.getAgrupaciones();
-			for(ActivoAgrupacionActivo agrupActivo : agrupaciones) {
-				ActivoAgrupacion agrup= agrupActivo.getAgrupacion();
-				if(agrup.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_VENTA)) {
-					tieneAgrupVenta=true;
-					break;
+		if(dto instanceof DtoActivoFichaCabecera){
+			DtoActivoFichaCabecera dtofichacabecera = (DtoActivoFichaCabecera) dto;
+			boolean tieneAgrupVenta=false;
+			if(dtofichacabecera.getTipoComercializacionCodigo().equals(DDTipoComercializacion.CODIGO_SOLO_ALQUILER)){
+				List<ActivoAgrupacionActivo> agrupaciones = activo.getAgrupaciones();
+				for(ActivoAgrupacionActivo agrupActivo : agrupaciones) {
+					ActivoAgrupacion agrup= agrupActivo.getAgrupacion();
+					if(agrup.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_VENTA)) {
+						tieneAgrupVenta=true;
+						break;
+					}
 				}
 			}
-		}
-		if(!tieneAgrupVenta) {
+			if(!tieneAgrupVenta) {
+				activo = tabActivoService.saveTabActivo(activo, dto);
+				activoApi.saveOrUpdate(activo);
+				
+				// Metodo que recoge funciones que requieren el guardado previo de los
+				// datos
+				afterSaveTabActivo(dto, activo, tabActivoService);
+	
+				return true;
+			}else {
+				throw new JsonViewerException("El activo pertenece a una agrupación comercial-venta, no se puede cambiar el destino comercial a alquiler del activo");
+			}
+		} else {
 			activo = tabActivoService.saveTabActivo(activo, dto);
 			activoApi.saveOrUpdate(activo);
 			
@@ -2771,8 +2784,6 @@ public class ActivoAdapter {
 			afterSaveTabActivo(dto, activo, tabActivoService);
 
 			return true;
-		}else {
-			throw new JsonViewerException("El activo pertenece a una agrupación comercial-venta, no se puede cambiar el destino comercial a alquiler del activo");
 		}
 		
 	}

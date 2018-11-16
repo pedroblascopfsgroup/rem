@@ -1,16 +1,17 @@
 --/*
 --#########################################
---## AUTOR=Carlos López
---## FECHA_CREACION=20180924
+--## AUTOR=NOELIA LAPERA
+--## FECHA_CREACION=20181114
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=2.0.18
---## INCIDENCIA_LINK=HREOS-4530
+--## INCIDENCIA_LINK=HREOS-4790
 --## PRODUCTO=NO
 --## 
 --## Finalidad: 
 --## INSTRUCCIONES:  
 --## VERSIONES:
 --##        0.1 CARLOS LÓPEZ HREOS-4530 Versión inicial
+--##        0.2 NOELIA LAPERA HREOS-4790 Se update la tabla OKU_DEMANDA_OCUPACION_ILEGAL si los activos y los asuntos ya existen
 --#########################################
 --*/
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
@@ -36,15 +37,18 @@ AS
 	err_msg VARCHAR2(2048);
 	V_NUM NUMBER(16);
 	V_COUNT NUMBER(16) := 0;
+	V_SQL VARCHAR2(4000 CHAR);
 	V_MSQL VARCHAR2(4000 CHAR);
   ErrorControlado VARCHAR2(2000);
 
 	V_SEC VARCHAR2(30 CHAR) := '';
+	V_NUM_TABLAS NUMBER(20);
 	V_TABLA_HLP VARCHAR2(30 CHAR) := 'HLP_HISTORICO_LANZA_PERIODICO';
 	V_TABLA_HLD VARCHAR2(30 CHAR) := 'HLD_HISTORICO_LANZA_PER_DETA';
 	V_TABLA_OKU VARCHAR2(30 CHAR) := 'OKU_DEMANDA_OCUPACION_ILEGAL';
 	V_TABLA_ACT VARCHAR2(30 CHAR) := 'ACT_ACTIVO';
   V_SP VARCHAR2(30 CHAR) := 'SP_EXT_DEMANDA_OCUPACION';
+  
   
   nACT_ID    #ESQUEMA#.ACT_ACTIVO.ACT_ID%type;
   nDD_TAO_ID #ESQUEMA#.DD_TAO_OKU_TIPO_ASUNTO.DD_TAO_ID%type;
@@ -124,8 +128,27 @@ BEGIN
        ';
        EXECUTE IMMEDIATE V_MSQL;
        
+	--Comprobar el dato a insertar.
+       V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TABLA_OKU||' WHERE ACT_ID = '||nACT_ID||' AND OKU_NUM_ASUNTO ='''||NUMERO_ASUNTO||'''';
+       EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
        
-       V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.'||V_TABLA_OKU||' OKU (OKU_ID
+	IF V_NUM_TABLAS > 0 THEN				
+          -- Si existe se modifica.
+	V_MSQL := 'UPDATE '||V_ESQUEMA ||'.'||V_TABLA_OKU||' '||
+                    'SET OKU_FECHA_INICIO_ASUNTO = to_date('''||FECHA_INI_ASUNTO||''',''yyyyMMdd'')  '|| 
+					', OKU_FECHA_FIN_ASUNTO = to_date('''||FECHA_FIN_ASUNTO||''',''yyyyMMdd'')  '||
+					', OKU_FECHA_LANZAMIENTO = to_date('''||FECHA_LANZAMIENTO||''',''yyyyMMdd'') '||
+					', DD_TAO_ID = '||nDD_TAO_ID||''||
+					', DD_TCO_ID = '||nDD_TCO_ID||''||
+					', USUARIOMODIFICAR = '''||V_SP||''''||
+					', FECHAMODIFICAR = SYSDATE '||
+					'WHERE ACT_ID = '||nACT_ID||' AND OKU_NUM_ASUNTO ='''||NUMERO_ASUNTO||''' ';
+	EXECUTE IMMEDIATE V_MSQL;
+
+	-- Si no existe se inserta.
+	 ELSE
+       	
+       	V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.'||V_TABLA_OKU||' OKU (OKU_ID
                                                                       ,ACT_ID
                                                                       ,OKU_NUM_ASUNTO
                                                                       ,OKU_FECHA_INICIO_ASUNTO
@@ -154,7 +177,8 @@ BEGIN
        ';
 DBMS_OUTPUT.PUT(V_MSQL);
        EXECUTE IMMEDIATE V_MSQL;
-  
+  END IF;
+
        V_COUNT := SQL%ROWCOUNT;
   
        V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.'||V_TABLA_HLP||' (

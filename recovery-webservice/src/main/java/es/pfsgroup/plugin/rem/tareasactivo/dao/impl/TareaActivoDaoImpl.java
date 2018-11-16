@@ -43,5 +43,15 @@ public class TareaActivoDaoImpl extends AbstractEntityDao<TareaActivo, Long> imp
 
 		return HibernateQueryUtils.list(this, hb).get(0);
 	}
+	
+	@Override
+	public List<TareaActivo> getTareasActivoPorIdActivo(Long idActivo) {
+		HQLBuilder hb = new HQLBuilder(" from TareaActivo tac");
+
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tac.activo.id", idActivo);
+		hb.orderBy("tac.id", HQLBuilder.ORDER_DESC);
+
+		return HibernateQueryUtils.list(this, hb);
+	}
 
 }

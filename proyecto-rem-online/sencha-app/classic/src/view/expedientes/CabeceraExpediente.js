@@ -165,13 +165,17 @@ Ext.define('HreRem.view.expedientes.CabeceraExpediente', {
 										                	
 										                },
 										                { 
-															labelWidth: 190,
-															cls: 'cabecera-info-field',
-										                	bind:{
-										                		fieldLabel:	'{reservaTipoEsAlquiler}',
+										                	xtype:'datefieldbase',
+															formatter: 'date("d/m/Y")',
+															bind:	{
+																fieldLabel:	'{reservaTipoEsAlquiler}',
 										                		value: '{expediente.fechaReserva}'
-										                	},		
-										                renderer: Ext.util.Format.dateRenderer('d/m/Y')
+										                		
+										                	},
+										                	listeners: {
+																render: 'tareaDefinicionDeOferta'
+															}		
+										                
 										                }
 										               
 										                

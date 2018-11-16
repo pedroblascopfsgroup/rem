@@ -319,7 +319,7 @@ Ext.define('HreRem.view.expedientes.DatosBasicosOferta', {
         		                	reference: 'btnSendAprobacion',
         		        		    bind: {
         		        		    	hidden: '{!esTipoAlquiler}',
-        		        		    	disabled: '{!expedienteEstaAprobado}'
+        		        		    	disabled: '{!esOfertaTramitada}'
         		        		    },
         		                	text: HreRem.i18n('btn.enviar.mail.aprobacion'),
         		                	handler: 'onClickEnviarMailAprobacion'

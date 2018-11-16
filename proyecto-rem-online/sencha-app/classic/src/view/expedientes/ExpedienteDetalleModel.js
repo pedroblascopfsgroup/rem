@@ -248,7 +248,8 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 		     		return true;
 		     	}
 	     	}
-	     	return false;
+	     	//se oculta el bloque por HREOS-4775 por el tercer puntito
+	     	return true;
 	     },
 	     
 	     esAlquilerConOpcionCompra: function(get){
@@ -308,6 +309,13 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 			 }else{
 				 return false;
 			 }
+		 },
+		 esOfertaTramitada: function(get){
+			 var tipoOfertaDesc = get('datosbasicosoferta.estadoDescripcion');
+			 
+			 if(tipoOfertaDesc == "Tramitada"){
+				 return true;
+			 }else return false;
 		 }
 	 },
 

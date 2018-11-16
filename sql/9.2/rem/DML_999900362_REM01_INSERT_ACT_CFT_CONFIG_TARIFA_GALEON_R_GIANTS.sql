@@ -82,7 +82,7 @@ BEGIN
 		TAC.DD_CRA_ID = (SELECT DD.DD_CRA_ID FROM '|| V_ESQUEMA ||'.'|| V_TABLA_CRA ||' DD WHERE DD.DD_CRA_CODIGO=''15'') AND TA.DD_TTF_ID= TAC.DD_TTF_ID AND TAC.DD_STR_ID=TA.DD_STR_ID )';
 
 		EXECUTE IMMEDIATE V_MSQL;
-		DBMS_OUTPUT.PUT_LINE('[INFO] Insertados '||sql%rowcount||' en la tabla '||V_TABLA_CFT);
+		DBMS_OUTPUT.PUT_LINE('[INFO] Insertados '||sql%rowcount||' en la tabla  '||V_TABLA_CFT);
 
 		DBMS_OUTPUT.PUT_LINE('');
 		

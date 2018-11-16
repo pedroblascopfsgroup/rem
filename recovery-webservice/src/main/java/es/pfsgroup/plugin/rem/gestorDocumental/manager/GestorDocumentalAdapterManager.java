@@ -12,6 +12,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.security.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
@@ -123,10 +124,10 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 		DocumentosExpedienteDto docExpDto = recoveryToGestorDocAssembler.getDocumentosExpedienteDto(userLogin.getUsername());
 		RespuestaDocumentosExpedientes respuesta = gestorDocumentalApi.documentosExpediente(cabecera, docExpDto);
 
-		if (!Checks.esNulo(respuesta.getDocumentos())) {
-			ConsistenciaAdjuntosRunnableUtils caru = new ConsistenciaAdjuntosRunnableUtils(respuesta.getDocumentos(), GestorDocumentalConstants.Contenedor.Activo);
+		/* if (!Checks.esNulo(respuesta.getDocumentos())) {
+			ConsistenciaAdjuntosRunnableUtils caru = new ConsistenciaAdjuntosRunnableUtils(respuesta.getDocumentos(), GestorDocumentalConstants.Contenedor.Activo,userLogin.getUsername());
 			launchNewTasker(caru);
-		}
+		}*/
 
 		List<DtoAdjunto> list = GestorDocToRecoveryAssembler.getListDtoAdjunto(respuesta);
 
@@ -173,10 +174,10 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 		DocumentosExpedienteDto docExpDto = recoveryToGestorDocAssembler.getDocumentosExpedienteDto(userLogin.getUsername());
 		RespuestaDocumentosExpedientes respuesta = gestorDocumentalApi.documentosExpediente(cabecera, docExpDto);
 
-		if (!Checks.esNulo(respuesta.getDocumentos())) {
-			ConsistenciaAdjuntosRunnableUtils caru = new ConsistenciaAdjuntosRunnableUtils(respuesta.getDocumentos(), GestorDocumentalConstants.Contenedor.Gasto);
+		/* if (!Checks.esNulo(respuesta.getDocumentos())) {
+			ConsistenciaAdjuntosRunnableUtils caru = new ConsistenciaAdjuntosRunnableUtils(respuesta.getDocumentos(), GestorDocumentalConstants.Contenedor.Gasto,userLogin.getUsername());
 			launchNewTasker(caru);
-		}
+		}*/
 
 		list = GestorDocToRecoveryAssembler.getListDtoAdjunto(respuesta);
 
@@ -305,10 +306,10 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 		DocumentosExpedienteDto docExpDto = recoveryToGestorDocAssembler.getDocumentosExpedienteDto(userLogin.getUsername());
 		RespuestaDocumentosExpedientes respuesta = gestorDocumentalApi.documentosExpediente(cabecera, docExpDto);
 
-		if (!Checks.esNulo(respuesta.getDocumentos())) {
-			ConsistenciaAdjuntosRunnableUtils caru = new ConsistenciaAdjuntosRunnableUtils(respuesta.getDocumentos(), GestorDocumentalConstants.Contenedor.ExpedienteComercial);
+		/*if (!Checks.esNulo(respuesta.getDocumentos())) {
+			ConsistenciaAdjuntosRunnableUtils caru = new ConsistenciaAdjuntosRunnableUtils(respuesta.getDocumentos(), GestorDocumentalConstants.Contenedor.ExpedienteComercial,userLogin.getUsername());
 			launchNewTasker(caru);
-		}
+		}*/
 
 		list = GestorDocToRecoveryAssembler.getListDtoAdjunto(respuesta);
 		for (DtoAdjunto adjunto : list) {
@@ -518,13 +519,16 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 	/**
 	 * Este método lanza un nuevo hilo de ejecución con una clase runnable pasada por parámetro para llevar a cabo labores de
 	 * consistencia entre las relaciones de los documentos adjuntos en las bases de REM y los documentos localizados en el
-	 * gestor documental.
+	 * gestor documental. Establece el contexto de seguridad para la sesión en el nuevo hilo así como inicializar los autowired.
 	 *
 	 * @param caru: clase runnable para llevar a cabo labores de consistencia de documentos.
 	 */
 	private void launchNewTasker(final ConsistenciaAdjuntosRunnableUtils caru) {
 		// Inicializa los elementos Autowired de la clase runnable.
 		applicationContext.getAutowireCapableBeanFactory().autowireBean(caru);
+
+		// Traslada el contexto de seguridad de Spring hacia el nuevo hilo.
+		caru.setSpringSecurityContext(SecurityContextHolder.getContext());
 
 		Thread thread = new Thread(caru);
 		thread.setName("GD-CONSISTENCY-TASKER-");
@@ -535,5 +539,10 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 			}
 		});
 		thread.start();
+	}
+
+	@Override
+	public FileItem getFileItemPromocion(Long idDocumento, String nombreDocumento) throws Exception {
+		return this.getFileItem(idDocumento, nombreDocumento);
 	}
 }

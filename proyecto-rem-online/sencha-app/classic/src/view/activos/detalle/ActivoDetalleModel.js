@@ -635,6 +635,19 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				 }
     		},
     		
+    		storeGestoresActivos: {
+    			pageSize: $AC.getDefaultPageSize(),
+				model: 'HreRem.model.GestorActivo',
+			   	proxy: {
+			   		type: 'uxproxy',
+			   	    remoteUrl: 'activo/getGestoresActivos',
+			   	    extraParams: {
+			   	    	idActivo: '{activo.id}',
+			   	    	incluirGestoresInactivos: false
+			   	    }
+			    }
+    		},
+    		
     		storeDistribuciones: {
 				 model: 'HreRem.model.Distribuciones',
 				 proxy: {
@@ -713,7 +726,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 	      	        remoteUrl: 'promocion/getListAdjuntosPromocion',
 	      	        extraParams: {id:'{activo.id}'}
 	          	 },
-	          	 groupField: 'descripcionTipo'
+	          	 groupField: 'descripcionTipo',
+	          	 autoLoad: false
     		},
 
     		historicoTrabajos: {
@@ -1344,6 +1358,14 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				type: 'uxproxy',
 				remoteUrl: 'activo/getHistoricoAdecuacionesAlquilerByActivo',
 				extraParams: {id: '{activo.id}'}
+			}
+		},
+		  	comboSituacionActivo: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'situacionActivo'}
 			}
 		}
 		

@@ -16,7 +16,7 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 	
 	recordClass: "HreRem.model.ActivoDatosRegistrales",
 
-    requires: ['HreRem.model.ActivoDatosRegistrales', 'HreRem.view.common.FieldSetTable', 'HreRem.view.common.TextFieldBase', 'HreRem.view.common.ComboBoxFieldBase', 'HreRem.model.ActivoPropietario'],
+    requires: ['HreRem.model.ActivoDatosRegistrales', 'HreRem.view.common.FieldSetTable', 'HreRem.view.common.TextFieldBase', 'HreRem.view.common.ComboBoxFieldBase', 'HreRem.view.common.ItemSelectorBase','HreRem.model.ActivoPropietario'],
 
     initComponent: function () {
     	    	
@@ -810,7 +810,69 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 							xtype:'datefieldbase',
 		                	fieldLabel: HreRem.i18n('fieldlabel.fecha.nota.simple'),
 					 		bind: '{datosRegistrales.fechaNotaSimple}'		            	
-						}					
+						},
+						{    
+							xtype:'fieldsettable',
+							defaultType: 'textfieldbase',
+							colspan: 4,
+							reference:'judicial',
+							hidden: false,
+							title: HreRem.i18n("title.calificacion.negativa"),
+							items :
+							[
+								{ 
+						        	xtype: 'comboboxfieldbase',				        	
+							 		fieldLabel: HreRem.i18n('fieldlabel.calificacion.negativa'),
+						        	bind: {
+					            		store: '{comboCalificacionNegativa}',
+					            		value: '{datosRegistrales.calificacionNegativa}'
+					            	}
+						        },
+						        {
+									xtype:'itemselectorbase',
+									reference: 'itemselMotivo',
+									fieldLabel: HreRem.i18n('fieldlabel.calificacion.motivo'),
+            						store: {
+            							model: 'HreRem.model.ComboBase',
+										proxy: {
+										type: 'uxproxy',
+										remoteUrl: 'generic/getDiccionario',
+										extraParams: {diccionario: 'motivosCalificacionNegativa'}
+										},
+										autoLoad: true
+									},
+            						bind: {
+					            		value: '{datosRegistrales.motivoCalificacionNegativa}'
+					            	},
+									            listeners:{
+									            	change: function(){
+									            		var me = this;									            		
+									            		var campoDesc = me.lookupController('activodetalle').lookupReference('descMotivo');
+									            		if(me.getValue().includes(CONST.MOTIVOS_CAL_NEGATIVA["OTROS"])){									            			
+									            			campoDesc.allowBlank = false;
+									            			campoDesc.setReadOnly(false);
+									            			if(me.up('activosdetallemain').getViewModel().get("editing")){
+									            				campoDesc.fireEvent('edit');
+									            			}else{
+									            				campoDesc.fireEvent('cancel');
+									            			}
+									            		}else{									            			
+									            			campoDesc.allowBlank = true;
+									            			campoDesc.setReadOnly(true);
+									            			campoDesc.fireEvent('cancel');
+									            		}
+									            	}
+									            }
+								},
+								{
+									reference: 'descMotivo',
+									allowBlank: true,
+							 		fieldLabel: HreRem.i18n('fieldlabel.calificacion.descripcion'),
+							 		bind: '{datosRegistrales.descripcionCalificacionNegativa}'
+					            	
+								}				
+							]
+		           		}
 					
 					]
                 

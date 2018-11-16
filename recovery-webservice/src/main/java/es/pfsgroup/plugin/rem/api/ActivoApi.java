@@ -570,6 +570,14 @@ public interface ActivoApi {
 	 * @return ActivoBancario
 	 */
 	public ActivoBancario getActivoBancarioByIdActivo(Long idActivo);
+	
+	/**
+	 * Devuelve la calificacion negativa del ID de un activo dado
+	 * 
+	 * @param idActivo
+	 * @return ActivoCalificacionNegativa
+	 */
+	public List<ActivoCalificacionNegativa> getActivoCalificacionNegativaByIdActivo(Long idActivo);
 
 	public PerimetroActivo saveOrUpdatePerimetroActivo(PerimetroActivo perimetroActivo);
 

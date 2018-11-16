@@ -147,7 +147,8 @@ Ext.define('HreRem.ux.util.Constants', {
 		TRAMITES:			'tramitestareasexpediente',
 		DOCU:				'documentosexpediente',
 		FORMA:				'formalizacionexpediente',
-		GESECO:				'gestioneconomicaexpediente'		
+		GESECO:				'gestioneconomicaexpediente',
+		PLUVTA:             'plusvaliaventaexpedediente'
 //		INVISIBLE:		Si creamos un registro-enlace-expediente en TFI y como codigo (en TFI_NOMBRE) damos este valor, ocultara el enlace
 	},
 
@@ -346,6 +347,10 @@ Ext.define('HreRem.ux.util.Constants', {
 	
 	EXPORTADOR:{
 		LIMITE: '1000'
+	},
+	
+	MOTIVOS_CAL_NEGATIVA:{
+		OTROS: '21'
 	}
 
 });

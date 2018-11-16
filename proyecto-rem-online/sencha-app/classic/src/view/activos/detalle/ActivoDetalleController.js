@@ -22,7 +22,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
          'documentosactivopromocion gridBase': {
              abrirFormulario: 'abrirFormularioAdjuntarDocPromo',
              //onClickRemove: 'borrarDocumentoAdjunto',
-             //download: 'downloadDocumentoAdjunto',
+             download: 'downloadDocumentoAdjuntoPromocion',
              afterupload: function(grid) {
              	grid.getStore().load();
              }
@@ -59,7 +59,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		models = null,
 		nameModels = null,
 		id = me.getViewModel().get("activo.id");
-
 		form.mask(HreRem.i18n("msg.mask.loading"));
 		if(!form.saveMultiple) {	
 			model = form.getModelInstance(),
@@ -183,7 +182,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		//disableValidation: Atributo para indicar si el guardado del formulario debe aplicar o no, las validaciones.
 		if(form.isFormValid() || form.disableValidation) {
 			
-			Ext.Array.each(form.query('field[isReadOnlyEdit]'),
+			Ext.Array.each(form.query('component[isReadOnlyEdit]'),
 				function (field, index){field.fireEvent('update'); field.fireEvent('save');}
 			);
 			
@@ -694,23 +693,21 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     },
 	
 	onClickBotonEditar: function(btn) {
-		
-		var me = this;
-		btn.hide();
-		btn.up('tabbar').down('button[itemId=botonguardar]').show();
-		btn.up('tabbar').down('button[itemId=botoncancelar]').show();
-
-		Ext.Array.each(btn.up('tabpanel').getActiveTab().query('field[isReadOnlyEdit]'),
-						function (field, index) 
-							{ 
-								field.fireEvent('edit');});
-								
-		btn.up('tabpanel').getActiveTab().query('field[isReadOnlyEdit]')[0].focus();
+		var me = this;	
 		if(Ext.isDefined(btn.name) && btn.name === 'firstLevel') {
  			me.getViewModel().set("editingFirstLevel", true);
  		} else {
  			me.getViewModel().set("editing", true);
  		}
+
+		Ext.Array.each(btn.up('tabpanel').getActiveTab().query('component[isReadOnlyEdit]'),
+						function (field, index) 
+							{ 
+								field.fireEvent('edit');
+							});
+		btn.hide();
+		btn.up('tabbar').down('button[itemId=botonguardar]').show();
+		btn.up('tabbar').down('button[itemId=botoncancelar]').show();
 	},
 
 	onSaveFormularioCompletoTabComercial: function(btn, form){
@@ -776,7 +773,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		btn.up('tabbar').down('button[itemId=botonguardar]').hide();
 		btn.up('tabbar').down('button[itemId=botoneditar]').show();
 		
-		Ext.Array.each(activeTab.query('field[isReadOnlyEdit]'),
+		Ext.Array.each(activeTab.query('component[isReadOnlyEdit]'),
 						function (field, index) 
 							{ 
 								field.fireEvent('save');
@@ -1025,6 +1022,19 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		config = {};
 		
 		config.url=$AC.getWebPath()+"activo/bajarAdjuntoActivo."+$AC.getUrlPattern();
+		config.params = {};
+		config.params.id=record.get('id');
+		config.params.idActivo=record.get("idActivo");
+		config.params.nombreDocumento=record.get("nombre");
+		me.fireEvent("downloadFile", config);
+	},
+	
+	downloadDocumentoAdjuntoPromocion: function(grid, record) {
+		
+		var me = this,
+		config = {};
+		
+		config.url=$AC.getWebPath()+"promocion/bajarAdjuntoActivoPromocion."+$AC.getUrlPattern();
 		config.params = {};
 		config.params.id=record.get('id');
 		config.params.idActivo=record.get("idActivo");

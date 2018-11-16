@@ -297,6 +297,46 @@ Ext.define('HreRem.view.activos.detalle.InformacionAdministrativaActivo', {
 			        		maxLength : 400
 			        	},
 			        	flex: 1
+			        },
+			        {
+			        	text: HreRem.i18n('fieldlabel.resultadoSiNO'),
+			        	dataIndex: 'resultadoSiNO', 
+			        	renderer: function(value, metaData, record, rowIndex, colIndex, gridStore, view) {
+				            var foundedRecord = this.up('activosdetallemain').getViewModel().getStore('comboSiNoRem').findRecord('codigo', value);
+				            var descripcion;
+				        	if(!Ext.isEmpty(foundedRecord)) {
+				        		descripcion = foundedRecord.getData().descripcion;
+				        	}
+				            return descripcion;
+				        },
+			        	editor: {
+			        		xtype:'combobox',
+			        		   labelWidth: '25%',
+					            width: '15%',
+				        	
+			        		bind: {
+			            		store: '{comboSiNoRem}',
+			            		value: '{infoAdministrativa.resultadoSiNO}'
+			            	},
+			            	displayField: 'descripcion',
+							valueField: 'codigo',
+			            	allowBlank: false
+			        	},
+			        	
+			        	
+			        	flex: 1
+			        
+			        	       
+			        },
+			        {   
+			        	text: HreRem.i18n('fieldlabel.fechaSoliciud901'),
+			        	dataIndex: 'fechaSolicitud901',
+			        	formatter: 'date("d/m/Y")',
+			        	
+			        	editor: {
+			        		xtype:'datefield'
+			        	},
+			        	flex: 1
 			        }
 			       	        
 			    ],

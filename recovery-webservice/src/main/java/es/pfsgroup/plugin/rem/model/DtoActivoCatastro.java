@@ -33,7 +33,8 @@ public class DtoActivoCatastro extends WebDto {
 	private Date fechaBajaCatastro;
 	private String observaciones;
 	private String idCatastro;
-	
+	private Date fechaSolicitud901;
+	private String resultadoSiNO;
 	
 	public String getNumeroActivo() {
 		return numeroActivo;
@@ -137,6 +138,18 @@ public class DtoActivoCatastro extends WebDto {
 	}
 	public void setObservaciones(String observaciones) {
 		this.observaciones = observaciones;
+	}
+	public Date getFechaSolicitud901() {
+		return fechaSolicitud901;
+	}
+	public void setFechaSolicitud901(Date fechaSolicitud901) {
+		this.fechaSolicitud901 = fechaSolicitud901;
+	}
+	public String getResultadoSiNO() {
+		return resultadoSiNO;
+	}
+	public void setResultadoSiNO(String resultadoSiNO) {
+		this.resultadoSiNO = resultadoSiNO;
 	}
 	
 	

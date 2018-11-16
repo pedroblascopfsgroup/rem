@@ -19,6 +19,7 @@ public class ActivoPropagacionFieldTabMap {
     public static final String TAB_MEDIADOR_ACTIVO = "mediadoractivo";
     public static final String TAB_CONDICIONES_ESPECIFICAS = "condicionesespecificas";
 	public static final String TAB_COMUNIDAD_PROPIETARIOS = "datosComunidad";
+	public static final String TAB_PLUSVALIA_VENTA = "plusvaliaVenta";
 
 
     public static final String TAB_DATOS_PUBLICACION = "datospublicacion";
@@ -38,18 +39,13 @@ public class ActivoPropagacionFieldTabMap {
 	    			"tipoActivoCodigo", 
 	    			"subtipoActivoCodigo", 
 	    			"estadoActivoCodigo", 
-
 	    			// direccion
 	    			"tipoUsoDestinoCodigo",
 	    			"longitud",
 	    			"latitud",
-	    			"piso",
 	    			"inferiorMunicipioCodigo",
 	    			"municipioCodigo",
 	    			"provinciaCodigo",
-	    			"puerta",
-	    			"escalera",
-	    			"numeroDomicilio",
 	    			"selloCalidad",
 	    			"tipoViaCodigo",
 	    			"codPostal",
@@ -335,9 +331,6 @@ public class ActivoPropagacionFieldTabMap {
 					"tipoViaCodigo",
 					"nombreVia",
 					"numeroVia",
-					"escalera",
-					"planta",
-					"puerta",
 					"latitud",
 					"longitud",
 					"zona",
@@ -519,7 +512,19 @@ public class ActivoPropagacionFieldTabMap {
     				"numCartas",
     				"contactoTel",
     				"visita",
-    				"burofax"
+    				"burofax",
+    				"situacion",
+    				"situacionId",
+    				"fechaEnvioCarta",
+    				"situacionDescripcion"
+    			));
+      	pmap.put(TAB_PLUSVALIA_VENTA,
+    			Arrays.asList(
+    				"exento",
+    				"autoliquidacion",
+    				"fechaEscritoAyt",
+    				"observaciones"
+    			
     			));
     	
         map = Collections.unmodifiableMap(pmap);

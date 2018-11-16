@@ -82,6 +82,14 @@ public class GenericController extends ParadiseJsonController{
 		return createModelAndViewJson(new ModelMap("data", adapter.getDiccionario(diccionario)));
 		
 	}
+	
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getDiccionarioDeGastos(String diccionario) {	
+		
+		return createModelAndViewJson(new ModelMap("data", adapter.getDiccionarioDeGastos(diccionario)));
+		
+	}
+
 
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getDiccionarioTiposDocumento(String diccionario) {	

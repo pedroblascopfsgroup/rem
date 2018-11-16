@@ -247,7 +247,8 @@ Ext.define('HreRem.view.expedientes.ActivosExpediente', {
 			            align: 'center',
 			            bind: {
 			            	hidden: '{esTipoAlquiler}'
-			            }
+			            },
+			            hideable: false
 			       },
 			       {   
 			       		text: HreRem.i18n("title.bloqueos"),
@@ -257,7 +258,8 @@ Ext.define('HreRem.view.expedientes.ActivosExpediente', {
 			            align: 'center',
 			            bind: {
 			            	hidden: '{esTipoAlquiler}'
-			            }
+			            },
+			            hideable: false
 			       },
 			       {   
 			       		text: HreRem.i18n("title.tanteo"),
@@ -267,7 +269,8 @@ Ext.define('HreRem.view.expedientes.ActivosExpediente', {
 			            align: 'center',
 			            bind: {
 			            	hidden: '{esTipoAlquiler}'
-			            }
+			            },
+			            hideable: false
 			       }
 			       	        
 			    ],

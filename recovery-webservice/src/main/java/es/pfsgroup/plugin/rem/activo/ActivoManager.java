@@ -637,7 +637,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		// cuando creamos el expediente, si procede, creamos el repositorio
 		// en el gestor documental
 		if (resultado) {
-			if (Checks.esNulo(appProperties
+			if (!Checks.esNulo(appProperties
 					.getProperty(GestorDocumentalExpedientesManager.URL_REST_CLIENT_GESTOR_DOCUMENTAL_EXPEDIENTES))) {
 				Thread hiloReactivar = new Thread(new ContenedorExpComercial(
 						genericAdapter.getUsuarioLogado().getUsername(), expedienteComercial.getId()));

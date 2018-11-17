@@ -75,9 +75,9 @@ import es.pfsgroup.plugin.rem.oferta.OfertaManager;
 public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
 
 	public static final String TIPO_CAMPO_INFORMATIVO = "textinf";
-	public static final String TIPO_CAMPO_FECHA = "date";
+	public static final String TIPO_CAMPO_FECHA = "datefield";
 	public static final String TIPO_CAMPO_FECHA_MAX_TO_DAY = "datemaxtod";
-	public static final String TIPO_CAMPO_HORA = "time";
+	public static final String TIPO_CAMPO_HORA = "timefield";
 	public static final String TIPO_COMBOBOX_INICIAL = "comboini";
 	public static final String TIPO_COMBOBOX_INICIAL_ED = "comboinied";
 	public static final String TIPO_CAMPO_NUMBER = "number";

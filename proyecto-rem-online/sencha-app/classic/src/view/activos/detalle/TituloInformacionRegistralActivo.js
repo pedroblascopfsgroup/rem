@@ -524,7 +524,11 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 			                	reference: 'fechaRealizacionPosesion',
 			                	fieldLabel: HreRem.i18n('fieldlabel.fecha.realizacion.posesion'),			                	
 								bind: '{datosRegistrales.fechaRealizacionPosesion}',
-                                readOnly: true
+                                readOnly: true,
+								bind: {
+									value: '{datosRegistrales.fechaRealizacionPosesion}',
+									readOnly: '{isReadOnlyFechaRealizacionPosesion}'
+								}
 			                },
 			                {
 								xtype: 'comboboxfieldbase',
@@ -862,4 +866,8 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 		me.lookupController().cargarTabData(me);
 		me.down('grid').getStore().load();
    }
+<<<<<<< HEAD
+=======
+
+>>>>>>> origin/p2.0.18-181115-rem
 });

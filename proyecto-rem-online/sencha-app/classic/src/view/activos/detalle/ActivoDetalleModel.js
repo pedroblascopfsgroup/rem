@@ -481,6 +481,19 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				return null;
 			}
 
+		},
+		
+		isReadOnlyFechaRealizacionPosesion: function(get){
+			var me = this;
+			
+			var isSareb = get('activo.isCarteraSareb');
+	    	var isCerberus = get('activo.isCarteraCerberus');
+			
+			if(isSareb || isCerberus){
+				return true;
+			}  
+			
+			return false;
 		}
 
 	 },

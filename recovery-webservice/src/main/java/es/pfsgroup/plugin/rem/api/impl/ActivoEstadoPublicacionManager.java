@@ -161,8 +161,16 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	 * @return Devuelve True si el check de publicar activo para la venta debe estar deshabilitado.
 	 */
 	private Boolean deshabilitarCheckPublicarVenta(Long idActivo) {
-		return !isPublicable(idActivo) || !isComercializable(idActivo) || isVendido(idActivo) || isReservado(idActivo) || isPublicadoVenta(idActivo) || isOcultoVenta(idActivo) ||
-				isFueraDePerimetro(idActivo) || (!isInformeAprobado(idActivo) && (!tienePrecioVenta(idActivo) && !isPublicarSinPrecioVentaActivado(idActivo)));
+		Boolean resultado = false;
+		try{
+			resultado = !isPublicable(idActivo) || !isComercializable(idActivo) || isVendido(idActivo) || isReservado(idActivo) || isPublicadoVenta(idActivo) || isOcultoVenta(idActivo) ||
+					isFueraDePerimetro(idActivo) || (!isInformeAprobado(idActivo) && (!tienePrecioVenta(idActivo) && !isPublicarSinPrecioVentaActivado(idActivo)));
+		}catch(Exception e){
+			logger.error(e);
+		}
+		
+		
+		return resultado;	
 	}
 	
 	/**
@@ -172,7 +180,15 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	 * @return Devuelve True si el check de publicar sin precio venta debe estar deshabilitado.
 	 */
 	private Boolean deshabilitarCheckPublicarSinPrecioVenta(Long idActivo) {
-		return isPublicadoVenta(idActivo) || isOcultoVenta(idActivo) || tienePrecioVenta(idActivo);
+		Boolean resultado = false;
+		try{
+			resultado = isPublicadoVenta(idActivo) || isOcultoVenta(idActivo) || tienePrecioVenta(idActivo);
+		}catch(Exception e){
+			logger.error(e);
+		}
+		
+		
+		return resultado;	
 	}
 	
 
@@ -183,7 +199,14 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	 * @return Devuelve True si el check de publicar sin precio venta debe estar deshabilitado.
 	 */
 	private Boolean deshabilitarCheckPublicarSinPrecioAlquiler(Long idActivo) {
-		return isPublicadoAlquiler(idActivo) || isOcultoAlquiler(idActivo) || tienePrecioRenta(idActivo);
+		Boolean resultado = false;
+		try{
+			resultado = isPublicadoAlquiler(idActivo) || isOcultoAlquiler(idActivo) || tienePrecioRenta(idActivo);
+		}catch(Exception e){
+			logger.error(e);
+		}
+		
+		return resultado;
 	}
 
 	/**
@@ -193,7 +216,14 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	 * @return Devuelve True si el check de ocultar activo para la venta debe estar deshabilitado.
 	 */
 	private Boolean deshabilitarCheckOcultarVenta(Long idActivo) {
-		return !isPublicable(idActivo) || !isComercializable(idActivo) || isVendido(idActivo) || !isPublicadoVenta(idActivo) || isOcultoAutomaticoVenta(idActivo) || isFueraDePerimetro(idActivo);
+		Boolean resultado = false;
+		try{
+			resultado = !isPublicable(idActivo) || !isComercializable(idActivo) || isVendido(idActivo) || !isPublicadoVenta(idActivo) || isOcultoAutomaticoVenta(idActivo) || isFueraDePerimetro(idActivo);
+		}catch(Exception e){
+			logger.error(e);
+		}
+		
+		return resultado;
 	}
 
 	/**
@@ -203,8 +233,15 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	 * @return Devuelve True si el check de publicar activo para el alquiler debe estar deshabilitado.
 	 */
 	private Boolean deshabilitarCheckPublicarAlquiler(Long idActivo) {
-		return !isPublicable(idActivo) || !isComercializable(idActivo) || isVendido(idActivo) || isReservado(idActivo) || isPublicadoAlquiler(idActivo) || isOcultoAlquiler(idActivo) ||
-				!isAdecuacionAlquilerNotNull(idActivo) || isFueraDePerimetro(idActivo) || (!isInformeAprobado(idActivo) && (!tienePrecioRenta(idActivo) && !isPublicarSinPrecioAlquilerActivado(idActivo)));
+		Boolean resultado = false;
+		try{
+			resultado =!isPublicable(idActivo) || !isComercializable(idActivo) || isVendido(idActivo) || isReservado(idActivo) || isPublicadoAlquiler(idActivo) || isOcultoAlquiler(idActivo) ||
+			!isAdecuacionAlquilerNotNull(idActivo) || isFueraDePerimetro(idActivo) || (!isInformeAprobado(idActivo) && (!tienePrecioRenta(idActivo) && !isPublicarSinPrecioAlquilerActivado(idActivo)));
+		}catch(Exception e){
+			logger.error(e);
+		}
+		
+		return resultado;
 	}
 
 	/**
@@ -214,7 +251,14 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	 * @return Devuelve True si el check de ocultar activo para el alquiler debe estar deshabilitado.
 	 */
 	private Boolean deshabilitarCheckOcultarAlquiler(Long idActivo) {
-		return !isPublicable(idActivo) || !isComercializable(idActivo) || isVendido(idActivo) || !isPublicadoAlquiler(idActivo) || isOcultoAutomaticoAlquiler(idActivo) || isFueraDePerimetro(idActivo);
+		Boolean resultado = false;
+		try{
+			resultado =!isPublicable(idActivo) || !isComercializable(idActivo) || isVendido(idActivo) || !isPublicadoAlquiler(idActivo) || isOcultoAutomaticoAlquiler(idActivo) || isFueraDePerimetro(idActivo);
+		}catch(Exception e){
+			logger.error(e);
+		}
+		
+		return resultado;
 	}
 
 	// Comprobación mínima.

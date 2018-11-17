@@ -4854,11 +4854,24 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getPeriodicidad());
 				impuesto.setPeriodicidad(genericDao.get(DDTipoPeriocidad.class, filtro));
 			}
-			if(!Checks.esNulo(dto.getCalculo())){
+			
+			Date fechaActual = new Date();
+	        SimpleDateFormat formateador = new SimpleDateFormat("dd/MM/yyyy");
+	        String fechaSistema=formateador.format(fechaActual);
+			
+	    	if(!Checks.esNulo(dto.getCalculo())){
 				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getCalculo());
 				impuesto.setCalculoImpuesto(genericDao.get(DDCalculoImpuesto.class, filtro));
+			}else{
+				 if (impuesto.getFechaFin().equals(fechaActual) || impuesto.getFechaFin().after(fechaActual)){
+						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDCalculoImpuesto.CODIGO_VENCIDO);
+						impuesto.setCalculoImpuesto(genericDao.get(DDCalculoImpuesto.class, filtro));	
+					}else{
+						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDCalculoImpuesto.CODIGO_EN_VOLUNTARIA);
+						impuesto.setCalculoImpuesto(genericDao.get(DDCalculoImpuesto.class, filtro));	
+					}
 			}
-			
+	       
 			genericDao.save(ImpuestosActivo.class, impuesto);
 			
 			return true;

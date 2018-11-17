@@ -219,11 +219,7 @@ public class ActivoController extends ParadiseJsonController {
 	public ModelAndView saveDatosBasicos(DtoActivoFichaCabecera activoDto, @RequestParam Long id, ModelMap model) {
 		try {
 			boolean success = adapter.saveTabActivo(activoDto, id, TabActivoService.TAB_DATOS_BASICOS);
-			if (success){
-				adapter.actualizarEstadoPublicacionActivo(id);
-				adapter.updateGestoresTabActivoTransactional(activoDto, id);
-			}
-
+			
 			model.put(RESPONSE_SUCCESS_KEY, success);
 
 		} catch (JsonViewerException jvex) {

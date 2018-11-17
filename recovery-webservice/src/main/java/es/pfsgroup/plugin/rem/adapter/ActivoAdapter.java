@@ -2695,9 +2695,13 @@ public class ActivoAdapter {
 
 	@Transactional(readOnly = false)
 	public boolean saveTabActivo(WebDto dto, Long id, String tab) {
-		
-		if (this.saveTabActivoTransactional(dto, id, tab)){
-			//this.actualizarEstadoPublicacionActivo(dto, id);
+
+		if (this.saveTabActivoTransactional(dto, id, tab)) {
+			if(tab != null && tab.equals("datosbasicos")){
+				this.actualizarEstadoPublicacionActivo(id);
+				this.updateGestoresTabActivoTransactional(dto, id);
+			}
+			
 		}
 		return true;
 	}

@@ -866,8 +866,4 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 		me.lookupController().cargarTabData(me);
 		me.down('grid').getStore().load();
    }
-<<<<<<< HEAD
-=======
-
->>>>>>> origin/p2.0.18-181115-rem
 });

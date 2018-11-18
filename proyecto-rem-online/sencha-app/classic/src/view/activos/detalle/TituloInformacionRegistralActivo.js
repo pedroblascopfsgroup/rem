@@ -821,12 +821,16 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 							items :
 							[
 								{ 
-						        	xtype: 'comboboxfieldbase',				        	
+						        	xtype: 'comboboxfieldbase',
 							 		fieldLabel: HreRem.i18n('fieldlabel.calificacion.negativa'),
+						        	name: 'comboCalificacionNegativa',
 						        	bind: {
 					            		store: '{comboCalificacionNegativa}',
 					            		value: '{datosRegistrales.calificacionNegativa}'
-					            	}
+					            	},
+						        	listeners : {
+						        		change: 'onChangeCalificacionNegativa'
+						        	} 
 						        },
 						        {
 									xtype:'itemselectorbase',

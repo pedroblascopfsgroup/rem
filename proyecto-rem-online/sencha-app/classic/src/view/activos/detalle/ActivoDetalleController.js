@@ -3459,6 +3459,18 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		    }
     	});
 		
+	},
+	
+	onChangeCalificacionNegativa: function(me, oValue, nValue){
+		
+		var comboCalificacion = me.value;
+		var comboMotivo = me.up('tituloinformacionregistralactivo').down('[reference="itemselMotivo"]');
+		
+		if(comboCalificacion == "01"){
+			comboMotivo.setDisabled(false);
+		}else{
+			comboMotivo.setDisabled(true); 
+		}
 	}
     
 });

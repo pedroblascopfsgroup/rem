@@ -45,31 +45,14 @@ public class MSVActualizadorSituacionComunidadesPropietarios extends AbstractMSV
 	@Override
 	@Transactional(readOnly = false)
 	public ResultadoProcesarFila procesaFila(MSVHojaExcel exc, int fila, Long prmToken) throws IOException, ParseException, JsonViewerException, SQLException {
-		
 
-		comunidadesPropietariosAdapter.updateComunidad(new Long(exc.dameCelda(fila, 1)), new String(exc.dameCelda(fila, 2)), new String(exc.dameCelda(fila, 3)),new String(exc.dameCelda(fila, 4)));	
+		comunidadesPropietariosAdapter.updateComunidad(new Long(exc.dameCelda(fila, 0)), new String(exc.dameCelda(fila, 1)), new String(exc.dameCelda(fila, 2)),new String(exc.dameCelda(fila, 3)));	
 		return new ResultadoProcesarFila();
 	}
 	
 	@Override
 	public int getFilaInicial() {
 		return 1;
-	}
-
-	@Override
-	public Boolean liberaFichero(MSVDocumentoMasivo file) throws IllegalArgumentException, IOException, ParseException {
-		
-		processAdapter.setStateProcessing(file.getProcesoMasivo().getId());
-		
-		MSVHojaExcel exc = proxyFactory.proxy(ExcelManagerApi.class).getHojaExcel(file);		
-		
-		for (int fila = 1; fila < exc.getNumeroFilas(); fila++) {
-			
-			comunidadesPropietariosAdapter.updateComunidad(new Long(exc.dameCelda(fila, 0)), new String(exc.dameCelda(fila, 1)), new String(exc.dameCelda(fila, 2)),new String(exc.dameCelda(fila, 3)));	
-	
-		}
-
-		return true;
 	}
 
 }

@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=DAP
---## FECHA_CREACION=20181111
+--## FECHA_CREACION=20181118
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-4686
@@ -90,7 +90,7 @@ DECLARE
   -- Creamos comentario de columnas.
   EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TABLA||'.EEU_ID IS ''ID de la ejecución del ETL de alta de activos de UVEM.''';
   EXECUTE IMMEDIATE	'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TABLA||'.NOMBRE_FICHERO IS ''Nombre del fichero que se procesó en esa iteración de la ejecución del ETL de alta de activos de UVEM.''';		
-  EXECUTE IMMEDIATE	'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TABLA||'.LECTURA_FICHERO IS ''Si la lectura fue correcta o no (existía, era erróneo, etc)''';		
+  EXECUTE IMMEDIATE	'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TABLA||'.LECTURA_FICHERO IS ''Estados de proceso de fichero de lectura -> Inicio: 0, Existe: 1, No Existe: 2, Procesado: 3''';		
   EXECUTE IMMEDIATE	'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TABLA||'.NOMBRE_ETL IS ''El nombre del ETL haciendo uso de esta tabla.''';		
   EXECUTE IMMEDIATE	'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TABLA||'.VERSION_ETL IS ''La versión del ETL que controló la ejecución.''';	
   EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_TABLA||'.VERSION IS ''Indica la version del registro.''';

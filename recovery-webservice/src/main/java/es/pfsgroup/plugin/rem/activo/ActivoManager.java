@@ -4868,7 +4868,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					Date fechaFinImpuesto = impuesto.getFechaFin();
 					String FechaFFormat = formateador.format(fechaFinImpuesto);
 					
-					if (fechaAFormat.equals(FechaFFormat) || fechaActual.after(fechaFinImpuesto)){
+					if (fechaAFormat.equals(FechaFFormat) || fechaActual.before(fechaFinImpuesto)){
 						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDCalculoImpuesto.CODIGO_VENCIDO);
 						impuesto.setCalculoImpuesto(genericDao.get(DDCalculoImpuesto.class, filtro));	
 					}else{

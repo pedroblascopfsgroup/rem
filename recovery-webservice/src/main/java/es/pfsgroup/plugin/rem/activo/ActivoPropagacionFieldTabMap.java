@@ -513,7 +513,7 @@ public class ActivoPropagacionFieldTabMap {
     				"contactoTel",
     				"visita",
     				"burofax",
-    				"situacion",
+    				"situacionCodigo",
     				"situacionId",
     				"fechaEnvioCarta",
     				"situacionDescripcion"

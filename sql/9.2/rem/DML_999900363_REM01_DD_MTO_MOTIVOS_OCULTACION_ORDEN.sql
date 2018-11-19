@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=CARLOS LOPEZ
---## FECHA_CREACION=20181027
+--## AUTOR=Carles Molins
+--## FECHA_CREACION=20181119
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=2.0.19
 --## INCIDENCIA_LINK=HREOS-4674
@@ -82,6 +82,7 @@ BEGIN
                       WHERE DD_MTO_CODIGO = '''|| TRIM(V_TMP_TIPO_DATA(1)) ||'''     
                    ';
           
+          EXECUTE IMMEDIATE V_MSQL; 
           DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO ACTUALIZADO');
           
        --Si no existe   
@@ -92,7 +93,7 @@ BEGIN
        END IF;
       END LOOP;
     COMMIT;
-    DBMS_OUTPUT.PUT_LINE('[FIN]: TABLA DUS_DIRECTOR_USUARIO ACTUALIZADA CORRECTAMENTE ');
+    DBMS_OUTPUT.PUT_LINE('[FIN]: TABLA DD_MTO_MOTIVOS_OCULTACION ACTUALIZADA CORRECTAMENTE ');
    
 
 EXCEPTION

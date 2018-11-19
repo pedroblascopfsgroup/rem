@@ -652,6 +652,33 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 						enviarCorreoAdecuacion(activoPublicacion);		
 					}
 				}
+			}else if(Checks.esNulo(eleccionUsuarioTipoPublicacionAlquiler)){
+				ActivoPublicacion activoPublicacion = genericDao.get(ActivoPublicacion.class, filterActivo, filterAuditoria);
+				ActivoPatrimonio activoPatrimonio = genericDao.get(ActivoPatrimonio.class, filterActivo, filterAuditoria);
+				Double aprobadoVentaWeb = null;
+				Double aprobadoRentaWeb = null;
+				if (!Checks.esNulo(activoPatrimonio) && !Checks.esNulo(activoPublicacion)){
+					List<VPreciosVigentes> listaPrecios = activoApi.getPreciosVigentesById(idActivo);
+					for (VPreciosVigentes listaPrecio : listaPrecios) {
+						if (listaPrecio.getCodigoTipoPrecio().equals(DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA)) {
+							aprobadoVentaWeb = listaPrecio.getImporte();
+						} else if (listaPrecio.getCodigoTipoPrecio().equals(DDTipoPrecio.CODIGO_TPC_APROBADO_RENTA)) {
+							aprobadoRentaWeb = listaPrecio.getImporte();
+						}
+					}
+
+			     	if(Checks.esNulo(aprobadoVentaWeb) && Checks.esNulo(aprobadoRentaWeb)) {
+			     		if (this.isInformeAprobado(idActivo)){
+			     			if (Checks.esNulo(activoPatrimonio.getAdecuacionAlquiler())){
+								enviarCorreoAdecuacion(activoPublicacion);
+							} else if (DDAdecuacionAlquiler.CODIGO_ADA_NO.equals(activoPatrimonio.getAdecuacionAlquiler().getCodigo()) || DDAdecuacionAlquiler.CODIGO_ADA_NULO.equals(activoPatrimonio.getAdecuacionAlquiler().getCodigo())){
+								enviarCorreoAdecuacion(activoPublicacion);		
+							}
+						}
+			     	}
+					
+					
+				}
 			}
 			
 			logger.info(messageServices.getMessage("activo.publicacion.OK.publicar.ordinario.server").concat(" ").concat(String.valueOf(idActivo)));
@@ -886,9 +913,8 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 			ArrayList<String> mailsPara = new ArrayList<String>();
 			mailsPara.add(usuarioManager.getByUsername("vhernandezi").getEmail());
 			String asunto = "Adecuación del activo "+ activo.getNumActivo() +" por publicación en www.haya.es";
-			String cuerpo = "Se ha pre-publicado en alquiler el activo "
-			+ activo.getNumActivo() +" que NO está adecuado, por favor revíselo y actualice el dato correspondiente para que se pueda publicar el activo en la web"
-			+"Muchas gracias y un saludo";
+			String cuerpo = "<p>Se ha pre-publicado en alquiler el activo "
+			+ activo.getNumActivo() +" que NO está adecuado, por favor revíselo y actualice el dato correspondiente para que se pueda publicar el activo en la web</p> Muchas gracias y un saludo";
 
 			genericAdapter.sendMail(mailsPara, new ArrayList<String>(),asunto,cuerpo);
 			resultado = true;

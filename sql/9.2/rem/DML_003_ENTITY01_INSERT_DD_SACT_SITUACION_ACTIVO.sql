@@ -45,7 +45,7 @@ DBMS_OUTPUT.PUT('[INFO] Nuevo valor en el diccionario fichero adjunto '||V_DDNAM
 --/**
 -- * Nuevo valor en el diccionario DD_TFA_FICHERO_ADJUNTO
 -- */
-V_SQL := 'SELECT COUNT(*) FROM '||V_ESQUEMA||'.'||V_DDNAME||' WHERE DD_SACT_CODIGO= ''NC''';
+V_SQL := 'SELECT COUNT(*) FROM '||V_ESQUEMA||'.'||V_DDNAME||' WHERE DD_SACT_CODIGO= ''1''';
 
 EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
 
@@ -57,14 +57,14 @@ ELSE
 
   execute immediate 'Insert into '||V_ESQUEMA||'.'||V_DDNAME||' '||
   '(DD_SACT_ID,DD_SACT_CODIGO,DD_SACT_DESCRIPCION,DD_SACT_DESCRIPCION_LARGA,VERSION,USUARIOCREAR,FECHACREAR,BORRADO) values '||
-  '('||V_ESQUEMA||'.S_DD_SACT_SITUACION_ACTIVO.nextval,''NC'',''No construida'',''No construida'',''0'',''HREOS-4706'',sysdate,''0'')';
+  '('||V_ESQUEMA||'.S_DD_SACT_SITUACION_ACTIVO.nextval,''1'',''No construida'',''No construida'',''0'',''HREOS-4706'',sysdate,''0'')';
 
   DBMS_OUTPUT.PUT_LINE('OK modificado');
 
 END IF;
 
 
-V_SQL := 'SELECT COUNT(*) FROM '||V_ESQUEMA||'.'||V_DDNAME||' WHERE DD_SACT_CODIGO= ''NE''';
+V_SQL := 'SELECT COUNT(*) FROM '||V_ESQUEMA||'.'||V_DDNAME||' WHERE DD_SACT_CODIGO= ''2''';
 
 EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
 
@@ -76,13 +76,13 @@ ELSE
 
   execute immediate 'Insert into '||V_ESQUEMA||'.'||V_DDNAME||' '||
   '(DD_SACT_ID,DD_SACT_CODIGO,DD_SACT_DESCRIPCION,DD_SACT_DESCRIPCION_LARGA,VERSION,USUARIOCREAR,FECHACREAR,BORRADO) values '||
-  '('||V_ESQUEMA||'.S_DD_SACT_SITUACION_ACTIVO.nextval,''NE'',''No corresponde por tipología'',''No corresponde por tipología'',''0'',''HREOS-4706'',sysdate,''0'')';
+  '('||V_ESQUEMA||'.S_DD_SACT_SITUACION_ACTIVO.nextval,''2'',''No corresponde por tipología'',''No corresponde por tipología'',''0'',''HREOS-4706'',sysdate,''0'')';
 
   DBMS_OUTPUT.PUT_LINE('OK modificado');
 
 END IF;
 
-V_SQL := 'SELECT COUNT(*) FROM '||V_ESQUEMA||'.'||V_DDNAME||' WHERE DD_SACT_CODIGO= ''CP''';
+V_SQL := 'SELECT COUNT(*) FROM '||V_ESQUEMA||'.'||V_DDNAME||' WHERE DD_SACT_CODIGO= ''3''';
 
 EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
 
@@ -94,7 +94,7 @@ ELSE
 
   execute immediate 'Insert into '||V_ESQUEMA||'.'||V_DDNAME||' '||
   '(DD_SACT_ID,DD_SACT_CODIGO,DD_SACT_DESCRIPCION,DD_SACT_DESCRIPCION_LARGA,VERSION,USUARIOCREAR,FECHACREAR,BORRADO) values '||
-  '('||V_ESQUEMA||'.S_DD_SACT_SITUACION_ACTIVO.nextval,''CP'','' Cerrado proceso'','' Cerrado proceso localización sin resultado positivo'',''0'',''HREOS-4706'',sysdate,''0'')';
+  '('||V_ESQUEMA||'.S_DD_SACT_SITUACION_ACTIVO.nextval,''3'','' Cerrado proceso'','' Cerrado proceso localización sin resultado positivo'',''0'',''HREOS-4706'',sysdate,''0'')';
 
   DBMS_OUTPUT.PUT_LINE('OK modificado');
 

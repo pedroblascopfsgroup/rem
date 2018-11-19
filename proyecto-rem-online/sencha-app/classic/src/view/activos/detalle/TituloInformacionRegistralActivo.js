@@ -3,7 +3,7 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
     xtype: 'tituloinformacionregistralactivo',
     cls	: 'panel-base shadow-panel',
     collapsed: false,
-    disableValidation: true,
+    disableValidation: false,
     reference: 'tituloinformacionregistralactivo',
     scrollable	: 'y',
     recargar: false,
@@ -891,7 +891,7 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
    },
    
    getErrorsExtendedFormBase: function() {
-   		
+
    		var me = this,
    		errores = [],
    		error,   		
@@ -908,6 +908,7 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
    		fechaFirmezaAutoAdjudicacion = me.down("[reference=fechaFirmezaAutoAdjudicacion]"),
    		fechaTomaPosesion = me.down("[reference=fechaTomaPosesionJudicial]"),
    		fechaAutoAdjudicacion = me.down("[reference=fechaAutoAdjudicacion]");
+   		motivoCalNegativa = me.down("[reference=itemselMotivo]");
    		
    		
    		
@@ -915,6 +916,12 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
    			error = HreRem.i18n("txt.validacion.provincia.diferente.registro");
    			errores.push(error);
    			provinciaRegistro.markInvalid(error); 
+   		}
+   		
+   		if(motivoCalNegativa.getValue().length == 0) {
+   			error = HreRem.i18n("txt.validacion.motivo.obligatorio");
+   			errores.push(error);
+   			motivoCalNegativa.markInvalid(error); 
    		}
    		
    		if(superficieUtil.getValue() > superficieConstruida.getValue()) {

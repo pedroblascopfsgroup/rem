@@ -2945,7 +2945,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			}
 			seguroRentasDto.setMotivoRechazo(seguroRentas.getMotivoRechazo());
 			if(!Checks.esNulo(seguroRentas.getResultadoSeguroRentas())) {
-				seguroRentasDto.setEstado(seguroRentas.getResultadoSeguroRentas().getCodigo());
+				seguroRentasDto.setEstado(seguroRentas.getResultadoSeguroRentas().getDescripcion());
 			}
 			seguroRentasDto.setAseguradoras(seguroRentas.getAseguradoras());
 			seguroRentasDto.setEmailPoliza(seguroRentas.getEmailPolizaAseguradora());

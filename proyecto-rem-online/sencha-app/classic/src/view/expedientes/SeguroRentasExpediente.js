@@ -34,18 +34,12 @@ Ext.define('HreRem.view.expedientes.SeguroRentasExpediente', {
                     title: HreRem.i18n('title.detalle'),
                     items: [
 	        			{
-	        				xtype: 'comboboxfieldbase',
+	        				xtype: 'textfieldbase',
 	                        fieldLabel: HreRem.i18n('fieldlabel.estado.rentas'),
-	                        reference: 'comboboxfieldEstado',
 		                	bind: {
-								store: '{comboEstadoSeguroRentas}',
 								value: '{segurorentasexpediente.estado}'
 		                	},
-            				displayField: 'descripcion',
-							valueField: 'codigo',
-	        			 	listeners: {
-	        			 			change:	'habilitarcheckrevisionOnChange'			
-	        			 	}
+		                	readOnly: true
 	        			},
 	        			{
 	                        

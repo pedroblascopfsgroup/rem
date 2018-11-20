@@ -2974,6 +2974,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		        	aux.setDocSco(hist.getDocumentoScoring());
 		        	aux.setMesesFianza(hist.getMesesFianza()); 
 		        	aux.setImporteFianza(hist.getImportFianza());
+		        	aux.setProveedor(hist.getResultadoSeguroRentas().getDescripcion());
 		        	listaHstco.add(aux);
 	        }
 		}

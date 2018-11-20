@@ -56,6 +56,9 @@ Ext.define('HreRem.model.HstcoSeguroRentas', {
     		},
     		{
     			name: 'borrado'
+    		},
+    		{
+    			name: 'proveedor'
     		}
     ]
     

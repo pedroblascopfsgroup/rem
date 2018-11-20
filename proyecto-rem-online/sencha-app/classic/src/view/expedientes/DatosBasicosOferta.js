@@ -91,7 +91,8 @@ Ext.define('HreRem.view.expedientes.DatosBasicosOferta', {
 		                	fieldLabel:  HreRem.i18n('fieldlabel.venta.cartera'),
 		                	bind:		{
 		                		value: '{datosbasicosoferta.ventaCartera}'
-		                		,readOnly: 'true'
+		                		,readOnly: 'true',
+		                		hidden: '{esTipoAlquiler}'
 		                	}		                	
 		                },
 		                {	
@@ -273,7 +274,8 @@ Ext.define('HreRem.view.expedientes.DatosBasicosOferta', {
 										xtype: "textfield",
 										fieldLabel: HreRem.i18n('fieldlabel.comerical.oferta.detalle.cajamar.ofertaExpress'),
 										bind: {
-											value: '{datosbasicosoferta.ofertaExpress}'
+											value: '{datosbasicosoferta.ofertaExpress}',
+												hidden: '{esTipoAlquiler}'
 										},
 					    				readOnly: true,
 					    				width: 410

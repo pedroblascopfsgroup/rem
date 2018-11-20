@@ -3187,6 +3187,8 @@ public class ActivoAdapter {
 
 			oferta.setPrescriptor((ActivoProveedor) proveedoresApi.searchProveedorCodigo(dto.getCodigoPrescriptor()));
 			
+			oferta.setTipoAlquiler(activo.getTipoAlquiler());
+			
 			if(!Checks.esNulo(dto.getIntencionFinanciar()))
 				oferta.setIntencionFinanciar(dto.getIntencionFinanciar()? 1 : 0);
 			if(!Checks.esNulo(dto.getCodigoSucursal())) {

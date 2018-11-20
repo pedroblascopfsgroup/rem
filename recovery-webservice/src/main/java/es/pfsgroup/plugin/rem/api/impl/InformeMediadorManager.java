@@ -29,7 +29,6 @@ import es.pfsgroup.plugin.rem.model.ActivoDistribucion;
 import es.pfsgroup.plugin.rem.model.ActivoEdificio;
 import es.pfsgroup.plugin.rem.model.ActivoEstadosInformeComercialHistorico;
 import es.pfsgroup.plugin.rem.model.ActivoInfoComercial;
-import es.pfsgroup.plugin.rem.model.ActivoInformeComercialHistoricoMediador;
 import es.pfsgroup.plugin.rem.model.ActivoInfraestructura;
 import es.pfsgroup.plugin.rem.model.ActivoInstalacion;
 import es.pfsgroup.plugin.rem.model.ActivoLocalComercial;
@@ -1228,7 +1227,8 @@ public class InformeMediadorManager implements InformeMediadorApi {
 	 * @param informe
 	 * @throws Exception
 	 */
-	private void parcheEspecificacionTablas(Object objeto, InformeMediadorDto informe) throws Exception {
+	private Long parcheEspecificacionTablas(Object objeto, InformeMediadorDto informe) throws Exception {
+		Long idProveedor = null;
 		if (objeto instanceof ActivoLocalComercial || objeto instanceof ActivoPlazaAparcamiento
 				|| objeto instanceof ActivoVivienda) {
 
@@ -1240,12 +1240,17 @@ public class InformeMediadorManager implements InformeMediadorApi {
 						&& !infoAux.getTipoActivo().getCodigo().equals(informe.getCodTipoActivo()))
 						|| (infoAux.getId() != null && infoAux.getTipoActivo() == null)
 						|| ((ActivoInfoComercial) objeto).getId() == null) {
+					if(infoAux.getMediadorInforme() != null){
+						idProveedor = infoAux.getMediadorInforme().getId();
+					}
+					
 					genericaRestDaoImp.deleteInformeMediador(infoAux);
 					//((ActivoInfoComercial) objeto).setAuditoria(null);
 					//((ActivoInfoComercial) objeto).setId(null);
 				}
 			}
 		}
+		return idProveedor;
 	}
 
 	@Override
@@ -1301,6 +1306,14 @@ public class InformeMediadorManager implements InformeMediadorApi {
 				}
 			}
 			
+			if (informe.getFechaRecepcionLlavesApi() != null) {
+				
+				if (informe.getFechaRecepcionLlavesApi().compareTo(new Date()) > 0) {
+					
+					errorsList.put("fechaRecepcionLlavesApi", RestApi.REST_MSG_UNKNOWN_KEY);
+				}
+			}
+			
 			
 
 			if (informe.getIdProveedorRem() != null) {
@@ -1316,6 +1329,7 @@ public class InformeMediadorManager implements InformeMediadorApi {
 
 			if (errorsList.size() == 0) {
 				boolean tieneInformeComercialAceptado = false;
+				Long idProveedorParche = null;
 				tieneInformeComercialAceptado = activoApi.isInformeComercialAceptado(activo);
 				ActivoInfoComercial informeEntity = null;
 				if (!tieneInformeComercialAceptado || autorizacionWebProveedor) {
@@ -1323,7 +1337,7 @@ public class InformeMediadorManager implements InformeMediadorApi {
 					if (informe.getCodTipoActivo().equals(DDTipoActivo.COD_COMERCIAL)) {
 						informeEntity = (ActivoLocalComercial) dtoToEntity.obtenerObjetoEntity(
 								informe.getIdActivoHaya(), ActivoLocalComercial.class, "activo.numActivo");
-						parcheEspecificacionTablas(informeEntity, informe);
+						idProveedorParche =  parcheEspecificacionTablas(informeEntity, informe);
 						informeEntity = (ActivoLocalComercial) dtoToEntity.obtenerObjetoEntity(
 								informe.getIdActivoHaya(), ActivoLocalComercial.class, "activo.numActivo");
 						((ActivoLocalComercial)informeEntity).setMtsAlturaLibre(informe.getAltura());
@@ -1340,7 +1354,7 @@ public class InformeMediadorManager implements InformeMediadorApi {
 					} else if (informe.getCodTipoActivo().equals(DDTipoActivo.COD_OTROS)) {
 						informeEntity = (ActivoPlazaAparcamiento) dtoToEntity.obtenerObjetoEntity(
 								informe.getIdActivoHaya(), ActivoPlazaAparcamiento.class, "activo.numActivo");
-						parcheEspecificacionTablas(informeEntity, informe);
+						idProveedorParche = parcheEspecificacionTablas(informeEntity, informe);
 						informeEntity = (ActivoPlazaAparcamiento) dtoToEntity.obtenerObjetoEntity(
 								informe.getIdActivoHaya(), ActivoPlazaAparcamiento.class, "activo.numActivo");
 						((ActivoPlazaAparcamiento)informeEntity).setAparcamientoAltura(informe.getAltura());
@@ -1352,9 +1366,11 @@ public class InformeMediadorManager implements InformeMediadorApi {
 					} else if (informe.getCodTipoActivo().equals(DDTipoActivo.COD_VIVIENDA)) {
 						informeEntity = (ActivoVivienda) dtoToEntity.obtenerObjetoEntity(informe.getIdActivoHaya(),
 								ActivoVivienda.class, "activo.numActivo");
-						parcheEspecificacionTablas(informeEntity, informe);
-						informeEntity = (ActivoVivienda) dtoToEntity.obtenerObjetoEntity(informe.getIdActivoHaya(),
-								ActivoVivienda.class, "activo.numActivo");
+						if (informe.getDistribucionInterior() != null) {
+							((ActivoVivienda)informeEntity).setDistribucionTxt(informe.getDistribucionInterior());	
+						}
+						idProveedorParche = parcheEspecificacionTablas(informeEntity, informe);
+				
 
 						ActivoInfraestructura activoInfraestructura = (ActivoInfraestructura) dtoToEntity
 								.obtenerObjetoEntity(informe.getIdActivoHaya(), ActivoInfraestructura.class,
@@ -1423,6 +1439,14 @@ public class InformeMediadorManager implements InformeMediadorApi {
 
 					if (informeEntity.getActivo() == null) {
 						informeEntity.setActivo(activo);
+					}
+					
+					if (!Checks.esNulo(idProveedorParche)){
+						Filter filterPve = genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem", idProveedorParche);
+						ActivoProveedor proveedor = genericDao.get(ActivoProveedor.class, filterPve);
+						if (!Checks.esNulo(proveedor)){
+							informeEntity.setMediadorInforme(proveedor);
+						}
 					}
 					
 					//Se comenta porque no se quiere guardar en REM el mediador venga como venga informado desde WEBCOM.

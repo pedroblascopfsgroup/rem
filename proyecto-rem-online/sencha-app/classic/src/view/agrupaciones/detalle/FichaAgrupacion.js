@@ -94,15 +94,6 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
 			            		value: '{agrupacionficha.fechaAlta}'
 			            	}		
 						},
-						{
-		                	xtype		: 'displayfieldbase',
-		                	fieldLabel	:  HreRem.i18n('fieldlabel.numero.agrupacion.uvem'),
-		                	bind		: {
-			            		value: '{agrupacionficha.numAgrupUvem}',
-			            		hidden:'{esAgrupacionProyecto}'
-
-			            	}		
-						},
 		                {
 							xtype		: 'comboboxfieldbase',
 							fieldLabel	: HreRem.i18n('fieldlabel.tipo.alquiler'),
@@ -113,8 +104,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
 			            	    disabled:'{!esComercialAlquiler}',
 			            	    readOnly:'{agrupacionTieneActivos}'
 			            	}
-						},
-						
+						}, 
 		                { 
 							fieldLabel	: HreRem.i18n('fieldlabel.direccion'),
 							bind		: {

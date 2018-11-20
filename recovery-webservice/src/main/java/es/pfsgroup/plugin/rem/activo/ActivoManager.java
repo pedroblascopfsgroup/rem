@@ -930,6 +930,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		
 		crearCompradores(oferta, nuevoExpediente);
 		
+		nuevoExpediente.setTipoAlquiler(oferta.getActivoPrincipal().getTipoAlquiler());
+		
 		nuevoExpediente = genericDao.save(ExpedienteComercial.class, nuevoExpediente);
 		genericDao.save(Oferta.class, oferta);
 		
@@ -938,7 +940,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		// Se asigna un gestor de Formalización al crear un nuevo
 		// expediente.
 		asignarGestorYSupervisorFormalizacionToExpediente(nuevoExpediente);
-		
 		
 		return nuevoExpediente;		
 	}

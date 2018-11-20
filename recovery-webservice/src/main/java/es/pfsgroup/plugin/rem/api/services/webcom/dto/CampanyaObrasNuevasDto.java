@@ -18,7 +18,6 @@ public class CampanyaObrasNuevasDto implements WebcomRESTDto{
 	private LongDataType idAgrupacionRem;
 	private StringDataType codCartera;
 	private StringDataType nombre;
-	private DateDataType fechaAlta;
 	private DateDataType desde;
 	private DateDataType hasta;
 	private StringDataType codEstadoAgrupacion;
@@ -70,12 +69,6 @@ public class CampanyaObrasNuevasDto implements WebcomRESTDto{
 	}
 	public void setNombre(StringDataType nombre) {
 		this.nombre = nombre;
-	}
-	public DateDataType getFechaAlta() {
-		return fechaAlta;
-	}
-	public void setFechaAlta(DateDataType fechaAlta) {
-		this.fechaAlta = fechaAlta;
 	}
 	public DateDataType getDesde() {
 		return desde;

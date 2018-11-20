@@ -13,6 +13,7 @@
 --##        0.1 Versión inicial
 --##        0.2 Se añaden datos de entrada del SP CARGA_TASACIONES
 --##		1.02 Se modifica el tamaño de los campos de observaciones de 100 a 250
+--##		1.03 Se añade el campo TAS_ID_EXTERNO y pasa a ser la clave de la tasación
 --##########################################
 --*/
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -64,6 +65,7 @@ create or replace PROCEDURE       #ESQUEMA#.SP_EXT_ACTUALIZA_TASACION (
        ,  COSTE_REPO_NETO_ACTUAL 		IN  #ESQUEMA#.ACT_TAS_TASACION.TAS_COSTE_REPO_NETO_ACTUAL%TYPE
        ,  CODIGO_FIRMA 					IN  #ESQUEMA#.ACT_TAS_TASACION.TAS_CODIGO_FIRMA%TYPE
        ,  FECHA_RECEPCION_TASACION 		IN  VARCHAR2
+       ,  ID_EXTERNO 					IN  #ESQUEMA#.ACT_TAS_TASACION.TAS_ID_EXTERNO%TYPE
        ,  COD_RETORNO    	   OUT NUMBER
 ) AS
 
@@ -135,7 +137,8 @@ V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
 	T_TIPO_DATA(''''||COSTE_REPO_NETO_FINALIZADO||'''','TAS_COSTE_REPO_NETO_FINALIZADO'),
 	T_TIPO_DATA(''''||COSTE_REPO_NETO_ACTUAL||'''','TAS_COSTE_REPO_NETO_ACTUAL'),
 	T_TIPO_DATA(''''||CODIGO_FIRMA||'''','TAS_CODIGO_FIRMA'),
-	T_TIPO_DATA(''''||FECHA_RECEPCION_TASACION||'''','TAS_FECHA_RECEPCION_TASACION')
+	T_TIPO_DATA(''''||FECHA_RECEPCION_TASACION||'''','TAS_FECHA_RECEPCION_TASACION'),
+    T_TIPO_DATA(''''||ID_EXTERNO||'''','TAS_ID_EXTERNO')
 
 );
 V_TMP_TIPO_DATA T_TIPO_DATA;
@@ -146,14 +149,14 @@ BEGIN
    COD_RETORNO := 0;
 
    /**************************************************************************************************************************************************************
-   1.- Miramos que los parámetros obligatorios (ID_ACTIVO_HAYA y COD_EXPEDIENTE) del SP vengan informados.
+   1.- Miramos que los parámetros obligatorios (ID_ACTIVO_HAYA Y ID_EXTERNO) del SP vengan informados.
    ***************************************************************************************************************************************************************/
    IF COD_RETORNO = 0 AND ID_ACTIVO_HAYA IS NULL THEN
 		HLP_REGISTRO_EJEC := '[ERROR] El ID_ACTIVO_HAYA indicado como parámetro de entrada no se ha ingresado. Por favor ingrese un valor para este campo.';
 		COD_RETORNO := 1;
    END IF;
-   IF COD_RETORNO = 0 AND TRIM(COD_EXPEDIENTE) IS NULL THEN
-		HLP_REGISTRO_EJEC := '[ERROR] El COD_EXPEDIENTE indicado como parámetro de entrada no se ha ingresado. Por favor ingrese un valor para este campo.';
+   IF COD_RETORNO = 0 AND ID_EXTERNO IS NULL THEN
+		HLP_REGISTRO_EJEC := '[ERROR] El ID_EXTERNO indicado como parámetro de entrada no se ha ingresado. Por favor ingrese un valor para este campo.';
 		COD_RETORNO := 1;
    END IF;
 
@@ -204,12 +207,12 @@ BEGIN
                     JOIN '||V_ESQUEMA||'.ACT_ACTIVO       ACT
                       ON TAS.ACT_ID = ACT.ACT_ID
                      AND ACT.ACT_NUM_ACTIVO = '||ID_ACTIVO_HAYA||'
-                     AND TAS.TAS_EXPEDIENTE_EXTERNO = TRIM('''||COD_EXPEDIENTE||''') ';
+                     AND TAS.TAS_ID_EXTERNO = TRIM('''||ID_EXTERNO||''') ';
         EXECUTE IMMEDIATE V_MSQL INTO V_COUNT;
 
       
       /**************************************************************************************************************************************************************
-       4.1.- Si la dupla (ID_ACTIVO_HAYA + COD_EXPEDIENTE) 
+       4.1.- Si la dupla (ID_ACTIVO_HAYA + ID_EXTERNO) 
              existe, actualizamos la tasación.
        ***************************************************************************************************************************************************************/
        IF V_COUNT = 1 THEN
@@ -219,7 +222,7 @@ BEGIN
                         JOIN '||V_ESQUEMA||'.ACT_ACTIVO       ACT
                         ON TAS.ACT_ID = ACT.ACT_ID
                         AND ACT.ACT_NUM_ACTIVO = '||ID_ACTIVO_HAYA||'
-                        AND TAS.TAS_EXPEDIENTE_EXTERNO = TRIM('''||COD_EXPEDIENTE||''') ';
+                        AND TAS.TAS_ID_EXTERNO = TRIM('''||ID_EXTERNO||''') ';
             EXECUTE IMMEDIATE V_MSQL INTO TAS_ID;
             
             FOR I IN V_TIPO_DATA.FIRST .. V_TIPO_DATA.LAST
@@ -236,7 +239,7 @@ BEGIN
                                                                     ELSE '||V_TMP_TIPO_DATA(1)||' END,
                                 TAS.USUARIOMODIFICAR = '''||V_NOMBRESP||''',
                                 TAS.FECHAMODIFICAR = '''||FECHA_HOY||'''
-                            WHERE TRIM(TAS.TAS_EXPEDIENTE_EXTERNO) = TRIM('''||COD_EXPEDIENTE||''')
+                            WHERE TRIM(TAS.TAS_ID_EXTERNO) = TRIM('''||ID_EXTERNO||''')
                           ';
                 EXECUTE IMMEDIATE V_MSQL;
                 --DBMS_OUTPUT.PUT_LINE(V_MSQL);
@@ -276,7 +279,7 @@ BEGIN
        
        
        /**************************************************************************************************************************************************************
-       4.2.- Si la dupla (ID_ACTIVO_HAYA + COD_EXPEDIENTE) 
+       4.2.- Si la dupla (ID_ACTIVO_HAYA + ID_EXTERNO) 
              No existe, insertamos la tasación (Siempre y cuando la tasación no exista ya en BD.)
        ***************************************************************************************************************************************************************/
        ELSIF V_COUNT = 0 THEN
@@ -286,13 +289,13 @@ BEGIN
                         JOIN '||V_ESQUEMA||'.ACT_ACTIVO       ACT
                         ON TAS.ACT_ID = ACT.ACT_ID
                         WHERE ACT.ACT_NUM_ACTIVO = '||ID_ACTIVO_HAYA||'
-                        AND TRIM(TAS.TAS_EXPEDIENTE_EXTERNO) = TRIM('''||COD_EXPEDIENTE||''')';
+                        AND TRIM(TAS.TAS_ID_EXTERNO) = TRIM('''||ID_EXTERNO||''')';
                         
            EXECUTE IMMEDIATE V_MSQL INTO V_COUNT;
            
            IF V_COUNT > 1 THEN
                 
-                HLP_REGISTRO_EJEC := '[ERROR] La tasación ['||COD_EXPEDIENTE||'] existe para otro activo que no es el indicado por parámetro.';
+                HLP_REGISTRO_EJEC := '[ERROR] La tasación ['||ID_EXTERNO||'] existe para otro activo que no es el indicado por parámetro.';
                 COD_RETORNO := 1;
            
            ELSE
@@ -402,6 +405,7 @@ BEGIN
                               ,  TAS_COSTE_REPO_NETO_ACTUAL
                               ,  TAS_CODIGO_FIRMA
                               ,  TAS_FECHA_RECEPCION_TASACION
+							  ,  TAS_ID_EXTERNO
                             )
                             SELECT '||ACT_ID||',
                                    '||TAS_ID||',
@@ -450,7 +454,8 @@ BEGIN
                                    '''||COSTE_REPO_NETO_FINALIZADO||''', 
                                    '''||COSTE_REPO_NETO_ACTUAL||''',     
                                    '''||CODIGO_FIRMA||''',          
-                                   TO_DATE('''||FECHA_RECEPCION_TASACION||''' ,''yyyymmdd'')  
+                                   TO_DATE('''||FECHA_RECEPCION_TASACION||''' ,''yyyymmdd''),
+								   '''||ID_EXTERNO||'''  
                             FROM DUAL
                 ';
                 EXECUTE IMMEDIATE V_MSQL;
@@ -497,12 +502,12 @@ BEGIN
            END IF;
        
       /**************************************************************************************************************************************************************
-       4.3.- Si la dupla (ID_ACTIVO_HAYA + COD_EXPEDIENTE) 
+       4.3.- Si la dupla (ID_ACTIVO_HAYA + ID_EXTERNO) 
              existe más de una vez, informamos el error.
        ***************************************************************************************************************************************************************/
        ELSIF V_COUNT > 1 THEN
 
-            HLP_REGISTRO_EJEC := '[ERROR] Existe más de una tasación para el par activo/tasación ['||ID_ACTIVO_HAYA||','||COD_EXPEDIENTE||'].';
+            HLP_REGISTRO_EJEC := '[ERROR] Existe más de una tasación para el par activo/tasación ['||ID_ACTIVO_HAYA||','||ID_EXTERNO||'].';
             COD_RETORNO := 1;
 
        END IF;

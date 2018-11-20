@@ -1758,16 +1758,28 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 
 	borrarComprador: function(grid, record) {
 		var me = this;
-		idExpediente = me.getViewModel().get("expediente.id"),
-		codigoEstado= me.getViewModel().get("expediente.codigoEstado"),
+		idExpediente = me.getViewModel().get("expediente.id");
+		codigoEstado= me.getViewModel().get("expediente.codigoEstado");
 		idComprador= record.get('id');
+		tipoExpedienteCodigo = me.getViewModel().get("expediente.tipoExpedienteCodigo");
+		origen = me.getViewModel().get("expediente.origen");
 		bloqueado = me.getViewModel().get("expediente.bloqueado");
+		fechaSancion = me.getViewModel().get('expediente.fechaSancion');
+		tipoOrigenWCOM = CONST.TIPOS_ORIGEN["WCOM"];
 		if(!bloqueado){
 				if(CONST.ESTADOS_EXPEDIENTE['VENDIDO']!=codigoEstado){
 					record.erase({
 						params: {idExpediente: idExpediente, idComprador: idComprador},
 			            success: function(record, operation) {
-			           		 me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+			            	if(CONST.TIPOS_EXPEDIENTE_COMERCIAL['ALQUILER'] == tipoExpedienteCodigo && tipoOrigenWCOM != origen){
+				            	if(Ext.isEmpty(fechaSancion)){
+				            		me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+								} else {
+									me.fireEvent("errorToast","Expediente sancionado");
+								}
+				            }else{
+				            	me.fireEvent("errorToast","Expediente con origen WCOM");
+				            }
 			           		 grid.fireEvent("afterdelete", grid);
 			           		 me.onClickBotonRefrescar();
 			            },

@@ -167,8 +167,8 @@ Ext.define('HreRem.view.expedientes.CabeceraExpediente', {
 										                { 
 										                	xtype:'datefieldbase',
 															formatter: 'date("d/m/Y")',
+															fieldLabel:	HreRem.i18n('fieldlabel.fecha.reserva'),
 															bind:	{
-																fieldLabel:	'{reservaTipoEsAlquiler}',
 										                		value: '{expediente.fechaReserva}'
 										                		
 										                	},

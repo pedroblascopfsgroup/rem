@@ -127,11 +127,6 @@ Ext.define('HreRem.view.expedientes.SeguroRentasExpediente', {
                                     flex: 1
                                 },
                                 {
-                                    text: HreRem.i18n('fieldlabel.solicitud'),
-                                    dataIndex: 'solicitud',
-                                    flex: 1
-                                },
-                                {
                                     text: HreRem.i18n('header.documento'),
                                     dataIndex: 'docSco',
                                     flex: 1

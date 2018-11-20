@@ -28,6 +28,7 @@ import es.pfsgroup.plugin.rem.model.DtoDatosPublicacionActivo;
 public class MSVAgruparActivosRestringido extends AbstractMSVActualizador implements MSVLiberator {
 
 	private static final Integer COL_ID_ACTIVO_PRINC_AGRUP = 2;
+	private static final Integer COL_ID_ACTIVO_AUX = 1;
 
 	@Autowired
 	private ActivoApi activoApi;
@@ -65,10 +66,12 @@ public class MSVAgruparActivosRestringido extends AbstractMSVActualizador implem
 			Integer numFilas = exc.getNumeroFilas();
 
 			for (int fila = this.getFilaInicial(); fila < numFilas; fila++) {
+				Activo activoAux = activoApi.getByNumActivo(Long.parseLong(exc.dameCelda(fila, COL_ID_ACTIVO_AUX)));
 				Activo activo = activoApi.getByNumActivo(Long.parseLong(exc.dameCelda(fila, COL_ID_ACTIVO_PRINC_AGRUP)));
+				
 
 				DtoDatosPublicacionAgrupacion dto = new DtoDatosPublicacionAgrupacion();
-				dto.setIdActivo(activo.getId());
+				dto.setIdActivo(activoAux.getId());
 
 				if (activoApi.isActivoIntegradoAgrupacionRestringida(activo.getId())) {
 					if (activoApi.isActivoPrincipalAgrupacionRestringida(activo.getId())) {

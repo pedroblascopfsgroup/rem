@@ -55,6 +55,7 @@ public class MSVAgrupacionRestringidoExcelValidator extends MSVExcelValidatorAbs
 	public static final String ACTIVO_ESTADO_PUBLICACION_DISTINTO = "msg.error.masivo.agrupar.activos.restringida.activos.agrupacion.destino.comercial";
 	public static final String ACTIVO_SITUACION_PUBLICACION_DISTINTO = "msg.error.masivo.agrupar.activos.restringida.activos.agrupacion.situacion.comercial";
 	public static final String AGRUPACION_NO_EXISTE = "msg.error.masivo.agrupar.activos.restringida.agrupacion.noExiste";
+	public static final String AGRUPACION_PROPIETARIO = "msg.error.masivo.agrupar.activos.restringida.agrupacion.propietario";
 	
 	
 	@Autowired
@@ -114,6 +115,7 @@ public class MSVAgrupacionRestringidoExcelValidator extends MSVExcelValidatorAbs
 			mapaErrores.put(messageServices.getMessage(ACTIVO_EN_OTRA_AGRUPACION), activosEnOtraAgrupacionRows(exc));
 			mapaErrores.put(messageServices.getMessage(ACTIVO_ESTADO_PUBLICACION_DISTINTO), comprobarEstadoPublicacionActivoAgrupacion(exc));
 			mapaErrores.put(messageServices.getMessage(ACTIVO_SITUACION_PUBLICACION_DISTINTO), comprobarSituacionActivoAgrupacion(exc));
+			mapaErrores.put(messageServices.getMessage(AGRUPACION_PROPIETARIO), comprobarDistintoPropietario(exc));
 			mapaErrores.put(messageServices.getMessage(ACTIVOS_NO_MISMA_LOCALIZACION.mensajeError), activosAgrupMultipleValidacionRows(exc, ACTIVOS_NO_MISMA_LOCALIZACION.codigoError));
 			//mapaErrores.put(messageServices.getMessage(ERROR_ACTIVO_DISTINTO_PROPIETARIO), comprobarDistintoPropietario(exc));
 			
@@ -122,6 +124,7 @@ public class MSVAgrupacionRestringidoExcelValidator extends MSVExcelValidatorAbs
 					|| !mapaErrores.get(messageServices.getMessage(AGRUPACION_NO_EXISTE)).isEmpty()
 					|| !mapaErrores.get(messageServices.getMessage(ACTIVO_EN_AGRUPACION)).isEmpty()
 					|| !mapaErrores.get(messageServices.getMessage(ACTIVO_EN_OTRA_AGRUPACION)).isEmpty() 
+					|| !mapaErrores.get(messageServices.getMessage(AGRUPACION_PROPIETARIO)).isEmpty() 
 					|| !mapaErrores.get(messageServices.getMessage(ACTIVOS_NO_MISMA_LOCALIZACION.mensajeError)).isEmpty()
 					|| !mapaErrores.get(messageServices.getMessage(ACTIVO_ESTADO_PUBLICACION_DISTINTO)).isEmpty()
 					|| !mapaErrores.get(messageServices.getMessage(ACTIVO_SITUACION_PUBLICACION_DISTINTO)).isEmpty() ) {
@@ -420,6 +423,7 @@ public class MSVAgrupacionRestringidoExcelValidator extends MSVExcelValidatorAbs
 		
 		
 	}
+	
 	
 
 

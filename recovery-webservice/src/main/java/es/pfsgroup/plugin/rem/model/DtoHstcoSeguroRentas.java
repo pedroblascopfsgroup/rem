@@ -28,6 +28,7 @@ public class DtoHstcoSeguroRentas extends WebDto  {
 	private String usuarioBorrar;
 	private Date fechaBorrar;
 	private int borrado;
+	private String proveedor;
 	
 	public Long getId() {
 		return id;
@@ -126,6 +127,12 @@ public class DtoHstcoSeguroRentas extends WebDto  {
 	}
 	public void setBorrado(int borrado) {
 		this.borrado = borrado;
+	}
+	public String getProveedor() {
+		return proveedor;
+	}
+	public void setProveedor(String proveedor) {
+		this.proveedor = proveedor;
 	}
 	
 

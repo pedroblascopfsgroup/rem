@@ -2753,7 +2753,7 @@ public class ActivoAdapter {
 		if(dto instanceof DtoActivoFichaCabecera){
 			DtoActivoFichaCabecera dtofichacabecera = (DtoActivoFichaCabecera) dto;
 			boolean tieneAgrupVenta=false;
-			if(dtofichacabecera.getTipoComercializacionCodigo().equals(DDTipoComercializacion.CODIGO_SOLO_ALQUILER)){
+			if(DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(dtofichacabecera.getTipoComercializacionCodigo())){
 				List<ActivoAgrupacionActivo> agrupaciones = activo.getAgrupaciones();
 				for(ActivoAgrupacionActivo agrupActivo : agrupaciones) {
 					ActivoAgrupacion agrup= agrupActivo.getAgrupacion();

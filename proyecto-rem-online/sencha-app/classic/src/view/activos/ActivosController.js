@@ -128,7 +128,6 @@ Ext.define('HreRem.view.activos.ActivosController', {
 		},
 		    
 		onClickCrearTrabajo: function (btn) {
-			debugger;
 			var me = this;
 			var idActivo = null;
 			var codCartera = null;

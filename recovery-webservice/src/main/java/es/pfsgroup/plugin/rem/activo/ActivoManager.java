@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Resource;
 
@@ -2654,19 +2655,36 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 			if(!Checks.estaVacio(listAdjuntos))
 			{
-				Integer countDocs = 0;
-				for(ActivoAdjuntoActivo adjunto : listAdjuntos)
-				{
-					if(DDTipoDocumentoActivo.CODIGO_INFORME_OCUPACION_DESOCUPACION.equals(adjunto.getTipoDocumentoActivo().getCodigo()))
-					{
-						tieneAdjunto = false;
-						tieneInforme = true;
+				// Buscamos el adjunto de tipo ocupacionDesocupacion mas reciente
+				ActivoAdjuntoActivo adjuntoAux = null;
+				for (ActivoAdjuntoActivo adjunto : listAdjuntos) {
+					
+					boolean esOcupacionDesocupacion = DDTipoDocumentoActivo.CODIGO_INFORME_OCUPACION_DESOCUPACION.equals(adjunto.getTipoDocumentoActivo().getCodigo());
+					Date adjuntoFecha = adjunto.getFechaDocumento();
+					
+					if ((Checks.esNulo(adjuntoAux) && esOcupacionDesocupacion) || (!Checks.esNulo(adjuntoAux) && adjuntoFecha.after(adjuntoAux.getFechaDocumento()))) {
+						adjuntoAux = adjunto;
 					}
-					else if(!tieneInforme)
-					{
-						tieneAdjunto = true;
-					}
+					
 				}
+				
+				long diffInMillies = 0;
+				int diff = 0;
+				
+				if (!Checks.esNulo(adjuntoAux)) {
+					diffInMillies = Math.abs(System.currentTimeMillis() - adjuntoAux.getFechaDocumento().getTime());
+				    diff = (int)TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
+				}
+				
+				// Si no existe ningun adjunto de tipo ocupacionDesocupacion o si lo hay y tiene una fecha superior a los 30 dias se ha de mostrar el disclaimer
+				if (Checks.esNulo(adjuntoAux)) {
+					tieneAdjunto = true;
+				} else if (diff >= 30) {
+					tieneAdjunto = true;
+				} else {
+					tieneAdjunto = false;
+				}
+
 			}
 			else
 			{
@@ -5001,18 +5019,27 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					if(val)
 						{
 						//falta enviar el mensaje
+						ActivoAdjuntoActivo adjuntoAux = null;
 						List<DtoAdjuntoMail> sendAdj = new ArrayList<DtoAdjuntoMail>();
 						for(ActivoAdjuntoActivo adjunto : activo.getAdjuntos())
 						{
 							if(!Checks.esNulo(adjunto.getTipoDocumentoActivo()) && 
 								DDTipoDocumentoActivo.CODIGO_INFORME_OCUPACION_DESOCUPACION.equals(adjunto.getTipoDocumentoActivo().getCodigo()))
 							{
-								DtoAdjuntoMail adj = new DtoAdjuntoMail();
-								adj.setNombre(adjunto.getNombre());
-								adj.setAdjunto(adjunto.getAdjunto());
-								sendAdj.add(adj);
+								Date adjuntoFecha = adjunto.getFechaDocumento();
+								if (Checks.esNulo(adjuntoAux) || adjuntoFecha.after(adjuntoAux.getFechaDocumento())) {
+									adjuntoAux = adjunto;
+								}
 							}
 						}
+						
+						if (!Checks.esNulo(adjuntoAux)) {
+							DtoAdjuntoMail adj = new DtoAdjuntoMail();
+							adj.setNombre(adjuntoAux.getNombre());
+							adj.setAdjunto(adjuntoAux.getAdjunto());
+							sendAdj.add(adj);
+						}
+						
 						Usuario usu = usuarioApi.getByUsername(EMAIL_OCUPACIONES);
 						if(!Checks.esNulo(usu) && !Checks.esNulo(usu.getEmail()))
 						{

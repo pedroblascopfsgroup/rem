@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Sergio Beleña
---## FECHA_CREACION=20180928
+--## FECHA_CREACION=20181120
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=0

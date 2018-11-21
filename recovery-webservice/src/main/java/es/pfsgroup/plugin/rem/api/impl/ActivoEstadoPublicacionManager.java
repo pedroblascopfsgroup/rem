@@ -295,7 +295,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	private Boolean isPublicable(Long idActivo) {
     	PerimetroActivo perimetro = perimetroDao.getPerimetroActivoByIdActivo(idActivo);
 
-    	return !Checks.esNulo(perimetro) && perimetro.getAplicaPublicar();
+    	return !Checks.esNulo(perimetro) && !Checks.esNulo(perimetro.getAplicaPublicar());
 	}
 
 	// Comprobación mínima.
@@ -308,9 +308,10 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	// Comprobación mínima.
 	private Boolean isComercializable(Long idActivo) {
 		PerimetroActivo perimetro = perimetroDao.getPerimetroActivoByIdActivo(idActivo);
-
-		return !Checks.esNulo(perimetro) && perimetro.getAplicaComercializar() == 1;
-
+		if (!Checks.esNulo(perimetro) && !Checks.esNulo(perimetro.getAplicaComercializar())){
+			return perimetro.getAplicaComercializar() == 1;
+		}
+		return false;
 	}
 
 	// Comprobación mínima.
@@ -334,7 +335,12 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 
 		if(!Checks.esNulo(ofertaAceptada)) {
 			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
-			return !Checks.esNulo(expediente.getReserva()) && DDEstadosReserva.CODIGO_FIRMADA.equals(expediente.getReserva().getEstadoReserva().getCodigo());
+			
+			
+			if (!Checks.esNulo(expediente.getReserva()) && !Checks.esNulo(expediente.getReserva().getEstadoReserva().getCodigo())){
+				
+				return DDEstadosReserva.CODIGO_FIRMADA.equals(expediente.getReserva().getEstadoReserva().getCodigo());
+			}
 		}
 
 		return false;
@@ -344,7 +350,11 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	private Boolean isPublicarSinPrecioVentaActivado(Long idActivo) {
 		ActivoPublicacion activoPublicacion = activoPublicacionDao.getActivoPublicacionPorIdActivo(idActivo);
 
-		return !Checks.esNulo(activoPublicacion) && activoPublicacion.getCheckSinPrecioVenta();
+		if (!Checks.esNulo(activoPublicacion) && !Checks.esNulo(activoPublicacion.getCheckSinPrecioVenta())){
+			return activoPublicacion.getCheckSinPrecioVenta();
+		}
+		
+		return false;
 	}
 
 	// Comprobación mínima.

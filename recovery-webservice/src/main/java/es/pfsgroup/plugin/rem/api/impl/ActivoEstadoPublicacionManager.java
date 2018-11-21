@@ -166,7 +166,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 			resultado = !isPublicable(idActivo) || !isComercializable(idActivo) || isVendido(idActivo) || isReservado(idActivo) || isPublicadoVenta(idActivo) || isOcultoVenta(idActivo) ||
 					isFueraDePerimetro(idActivo) || (!isInformeAprobado(idActivo) && (!tienePrecioVenta(idActivo) && !isPublicarSinPrecioVentaActivado(idActivo)));
 		}catch(Exception e){
-			logger.error("Error en el método deshabilitarCheckPublicarVenta" + e);
+			logger.error("Error en el método deshabilitarCheckPublicarVenta" , e);
 		}
 		
 		
@@ -184,7 +184,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		try{
 			resultado = isPublicadoVenta(idActivo) || isOcultoVenta(idActivo) || tienePrecioVenta(idActivo);
 		}catch(Exception e){
-			logger.error("Error en el método deshabilitarCheckPublicarSinPrecioVenta" + e);
+			logger.error("Error en el método deshabilitarCheckPublicarSinPrecioVenta" , e);
 		}
 		
 		
@@ -203,7 +203,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		try{
 			resultado = isPublicadoAlquiler(idActivo) || isOcultoAlquiler(idActivo) || tienePrecioRenta(idActivo);
 		}catch(Exception e){
-			logger.error("Error en el método deshabilitarCheckPublicarSinPrecioAlquiler" + e);
+			logger.error("Error en el método deshabilitarCheckPublicarSinPrecioAlquiler" , e);
 		}
 		
 		return resultado;
@@ -220,7 +220,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		try{
 			resultado = !isPublicable(idActivo) || !isComercializable(idActivo) || isVendido(idActivo) || !isPublicadoVenta(idActivo) || isOcultoAutomaticoVenta(idActivo) || isFueraDePerimetro(idActivo);
 		}catch(Exception e){
-			logger.error("Error en el método deshabilitarCheckOcultarVenta" + e);
+			logger.error("Error en el método deshabilitarCheckOcultarVenta",e);
 		}
 		
 		return resultado;
@@ -238,7 +238,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 			resultado =!isPublicable(idActivo) || !isComercializable(idActivo) || isVendido(idActivo) || isReservado(idActivo) || isPublicadoAlquiler(idActivo) || isOcultoAlquiler(idActivo) ||
 			!isAdecuacionAlquilerNotNull(idActivo) || isFueraDePerimetro(idActivo) || (!isInformeAprobado(idActivo) && (!tienePrecioRenta(idActivo) && !isPublicarSinPrecioAlquilerActivado(idActivo)));
 		}catch(Exception e){
-			logger.error("Error en el método deshabilitarCheckPublicarAlquiler" + e);
+			logger.error("Error en el método deshabilitarCheckPublicarAlquiler",e);
 		}
 		
 		return resultado;
@@ -255,7 +255,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		try{
 			resultado =!isPublicable(idActivo) || !isComercializable(idActivo) || isVendido(idActivo) || !isPublicadoAlquiler(idActivo) || isOcultoAutomaticoAlquiler(idActivo) || isFueraDePerimetro(idActivo);
 		}catch(Exception e){
-			logger.error("Error en el método deshabilitarCheckOcultarAlquiler" + e);
+			logger.error("Error en el método deshabilitarCheckOcultarAlquiler" ,e);
 		}
 		
 		return resultado;

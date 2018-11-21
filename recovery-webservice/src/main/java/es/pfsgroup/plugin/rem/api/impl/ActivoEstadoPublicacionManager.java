@@ -440,13 +440,13 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	@Override
 	@Transactional
 	public Boolean setDatosPublicacionActivo(DtoDatosPublicacionActivo dto) throws JsonViewerException{
-		//ActivoPublicacion activoPublicacion = activoPublicacionDao.getActivoPublicacionPorIdActivo(dto.getIdActivo());
+		ActivoPublicacion activoPublicacion = activoPublicacionDao.getActivoPublicacionPorIdActivo(dto.getIdActivo());
 
-		//if(this.registrarHistoricoPublicacion(activoPublicacion, dto)) {
-			//if(this.actualizarDatosEstadoActualPublicacion(dto, activoPublicacion)) {
+		if(this.registrarHistoricoPublicacion(activoPublicacion, dto)) {
+			if(this.actualizarDatosEstadoActualPublicacion(dto, activoPublicacion)) {
 				this.publicarActivoProcedure(dto.getIdActivo(), genericAdapter.getUsuarioLogado().getUsername(), dto.getEleccionUsuarioTipoPublicacionAlquiler());
-			//}
-		//}
+			}
+		}
 
 		return false;
 	}
@@ -648,7 +648,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	 * este modo, se informa hacia la interfaz.
 	 */
 	private Boolean publicarActivoProcedure(Long idActivo, String username, String eleccionUsuarioTipoPublicacionAlquiler) throws JsonViewerException{
-		if(activoDao.publicarActivoConHistorico(idActivo, username)) {
+		if(activoDao.publicarActivoSinHistorico(idActivo, username, eleccionUsuarioTipoPublicacionAlquiler)) {
 			Filter filterActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
 			Filter filterAuditoria = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
 			if (!Checks.esNulo(eleccionUsuarioTipoPublicacionAlquiler) && "0".equals(eleccionUsuarioTipoPublicacionAlquiler)){

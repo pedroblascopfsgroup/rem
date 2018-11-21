@@ -678,7 +678,9 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 
 			Ext.create("HreRem.view.expedientes.DatosComprador", {idComprador: idCliente, modoEdicion: edicion, storeGrid:storeGrid, expediente: expediente }).show();
 		}
-		me.fireEvent("errorToast", "Se ha avanzado la tarea Posicionamiento, no se puede editar los inquilinos");
+		if (!(me.getViewModel().get('expediente.tipoExpedienteCodigo') === tipoExpedienteAlquiler && Ext.isEmpty(fechaPosicionamiento))){
+			me.fireEvent("errorToast", "Se ha avanzado la tarea Posicionamiento, no se puede editar los inquilinos");
+		}
 	},
 	esEditableCompradores : function(field){
 		var me = this;

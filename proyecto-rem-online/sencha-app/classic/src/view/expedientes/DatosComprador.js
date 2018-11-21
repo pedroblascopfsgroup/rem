@@ -178,7 +178,8 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 													reference: 'tipoDocumento',
 										        	bind: {
 									            		store: '{comboTipoDocumento}',
-									            		value: '{comprador.codTipoDocumento}'
+									            		value: '{comprador.codTipoDocumento}',
+									            		readOnly: !Ext.isEmpty(me.idComprador)
 									            	},
 									            	allowBlank: false
 										        },
@@ -186,7 +187,8 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 										        	fieldLabel: HreRem.i18n('fieldlabel.numero.documento'),
 													reference: 'numeroDocumento',
 										        	bind: {
-									            		value: '{comprador.numDocumento}'
+									            		value: '{comprador.numDocumento}',
+									            		readOnly: !Ext.isEmpty(me.idComprador)
 									            	},
 									            	listeners: {
 									            		change: 'onNumeroDocumentoChange'

@@ -14,6 +14,7 @@
 --##    0.2 Cambio de GCBO a HAYAGBOINM / HAYASBOFIN SOG
 --##    0.3 Cambio de GESRES y SUPRES.
 --##    0.4 Cambio de SFORM
+--##    0.5 HREOS-4844- SHG - AÑADIMOS GESTCOMALQ y SUPCOMALQ
 --##########################################
 --*/
 
@@ -49,6 +50,7 @@ BEGIN
 
   V_MSQL := 'CREATE OR REPLACE FORCE VIEW '||V_ESQUEMA||'.' || V_TEXT_VISTA || ' ("ACT_ID", "DD_CRA_CODIGO", "DD_EAC_CODIGO", "DD_TCR_CODIGO", "DD_PRV_CODIGO", "DD_LOC_CODIGO", "COD_POSTAL", "TIPO_GESTOR", "USERNAME", "NOMBRE") AS 
   SELECT "ACT_ID", "DD_CRA_CODIGO", "DD_EAC_CODIGO", "DD_TCR_CODIGO", "DD_PRV_CODIGO", "DD_LOC_CODIGO", "COD_POSTAL", "TIPO_GESTOR", "USERNAME", "NOMBRE"
+/* ---VERSION 0.5 -----*/
      FROM (
 /*Gestores de grupo*/
 SELECT act.act_id, NULL dd_cra_codigo, NULL dd_eac_codigo, NULL dd_tcr_codigo, NULL dd_prv_codigo, NULL dd_loc_codigo, NULL cod_postal, dist1.tipo_gestor, dist1.username username,
@@ -759,6 +761,26 @@ V_MSQL3 := '
                FROM act_activo act JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist1 ON dist1.tipo_gestor IN (''GALQ'', ''SUALQ'')
          JOIN '||V_ESQUEMA||'.ACT_PTA_PATRIMONIO_ACTIVO ACT_PTA ON ACT_PTA.ACT_ID = ACT.ACT_ID 
              where act.borrado = 0 AND ACT_PTA.CHECK_HPM = 1
+           UNION ALL           
+
+  /*Gestor comercial alquiler - Obligatorio cartera, no mira por más campos*/
+    SELECT act.act_id, TO_NUMBER(cra.dd_cra_codigo), NULL dd_eac_codigo, NULL dd_tcr_codigo, NULL dd_prv_codigo, NULL dd_loc_codigo, NULL cod_postal, dist1.tipo_gestor, dist1.username username,
+                  dist1.nombre_usuario nombre
+             FROM '||V_ESQUEMA||'.act_activo act JOIN act_ges_dist_gestores dist1 ON dist1.tipo_gestor = ''GESTCOMALQ''
+             INNER JOIN '||V_ESQUEMA||'.dd_cra_cartera cra on TO_NUMBER(cra.dd_cra_codigo) = dist1.cod_cartera 
+         where act.borrado = 0 AND cra.dd_cra_id = act.dd_cra_id
+             AND act.DD_TCO_ID in (SELECT DD_TCO_ID FROM '||V_ESQUEMA||'.DD_TCO_TIPO_COMERCIALIZACION WHERE DD_TCO_CODIGO IN (''02'',''03'',''04''))
+      
+      UNION ALL
+
+  /*Supervisor comercial alquiler - Admite cartera nula*/
+    SELECT act.act_id, TO_NUMBER(cra.dd_cra_codigo), NULL dd_eac_codigo, NULL dd_tcr_codigo, NULL dd_prv_codigo, NULL dd_loc_codigo, NULL cod_postal, dist1.tipo_gestor, dist1.username username,
+                  dist1.nombre_usuario nombre
+             FROM '||V_ESQUEMA||'.act_activo act JOIN act_ges_dist_gestores dist1 ON dist1.tipo_gestor = ''SUPCOMALQ''
+             INNER JOIN '||V_ESQUEMA||'.dd_cra_cartera cra on cra.dd_cra_ID = ACT.DD_CRA_ID
+         where act.borrado = 0 AND (cra.dd_cra_codigo = dist1.cod_cartera OR dist1.cod_cartera IS NULL)
+              AND act.DD_TCO_ID in (SELECT DD_TCO_ID FROM '||V_ESQUEMA||'.DD_TCO_TIPO_COMERCIALIZACION WHERE DD_TCO_CODIGO IN (''02'',''03'',''04''))   
+
 
 ';
 

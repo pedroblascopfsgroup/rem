@@ -116,6 +116,8 @@ Ext.define('HreRem.view.expedientes.FormalizacionAlquilerExpediente', {
                                 text : HreRem.i18n('fieldlabel.hora.firma'),
                                 dataIndex : 'horaPosicionamiento',
                                 // formatter: 'date("H:i")',
+                                hidden : true,
+								hideable: false,
                                 flex : 0.5,
                                 editor : {
                                     xtype : 'timefieldbase',

@@ -94,6 +94,9 @@ public class MSVExcelValidatorFactoryImpl {
 	@Autowired
 	private MSVSituacionImpuestosExcelValidator situacionImpuestos;
 	
+	@Autowired
+	private MSVSituacionPlusvaliaExcelValidator situacionPlusvalia;
+	
 	
 	public MSVExcelValidator getForTipoValidador(String codTipoOperacion) {
 		
@@ -169,6 +172,8 @@ public class MSVExcelValidatorFactoryImpl {
 			}
 			else if (MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_SITUACION_IMPUESTOS.equals(codTipoOperacion)) {
 				return situacionImpuestos;
+			}else if (MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_SITUACION_PLUSVALIA.equals(codTipoOperacion)){
+				return situacionPlusvalia;
 			}
 		return null;
 	}

@@ -668,6 +668,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		fechaPosicionamiento = me.getViewModel().get("expediente.fechaPosicionamiento"),
 		tipoExpedienteAlquiler = CONST.TIPOS_EXPEDIENTE_COMERCIAL["ALQUILER"],
 		tipoExpedienteVenta = CONST.TIPOS_EXPEDIENTE_COMERCIAL["VENTA"];
+		me.getView().fireEvent("refrescarExpediente", me.getView());
 		if((codigoEstado!=CONST.ESTADOS_EXPEDIENTE['VENDIDO'] && me.getViewModel().get('expediente.tipoExpedienteCodigo') === tipoExpedienteVenta)
 				||  (me.getViewModel().get('expediente.tipoExpedienteCodigo') === tipoExpedienteAlquiler && Ext.isEmpty(fechaPosicionamiento))){
 			var idCliente = record.get("id"),

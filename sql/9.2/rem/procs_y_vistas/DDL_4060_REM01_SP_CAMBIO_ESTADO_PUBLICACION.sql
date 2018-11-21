@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=Maria Presencia
---## FECHA_CREACION=20181108
+--## AUTOR=Carles Molins
+--## FECHA_CREACION=20181120
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=2.0.19
 --## INCIDENCIA_LINK=HREOS-4683
@@ -14,6 +14,7 @@
 --##		0.2 Actualizar tipo de publicacion
 --##		0.3 Llamada SP_CREAR_AVISO
 --##		0.4 Modificado CONDICIONANTE_ALQUIER
+--##		0.5 Añade insert en la tabla AHP del estado actual (APU)
 --##########################################
 --*/
 
@@ -946,6 +947,53 @@ END IF;
                                                   ,USUARIOMODIFICAR,FECHAMODIFICAR
                                                   ,USUARIOBORRAR,FECHABORRAR,BORRADO
                                                   ,'''||nES_CONDICONADO||''' ES_CONDICONADO_ANTERIOR
+              FROM '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION
+             WHERE BORRADO = 0
+               AND ACT_ID = '||nACT_ID||'
+                    ';
+          EXECUTE IMMEDIATE V_MSQL;
+          
+          V_MSQL := '
+            DELETE FROM '|| V_ESQUEMA ||'.ACT_AHP_HIST_PUBLICACION 
+            WHERE (AHP_FECHA_FIN_VENTA IS NULL AND AHP_FECHA_FIN_ALQUILER IS NULL)
+                AND ACT_ID = '||nACT_ID||' 
+                    ';
+          EXECUTE IMMEDIATE V_MSQL;
+          
+          V_MSQL := '
+            INSERT INTO '|| V_ESQUEMA ||'.ACT_AHP_HIST_PUBLICACION(AHP_ID,ACT_ID
+                                                  ,DD_TPU_A_ID,DD_TPU_V_ID,DD_EPV_ID,DD_EPA_ID,DD_TCO_ID,DD_MTO_V_ID
+                                                  ,AHP_MOT_OCULTACION_MANUAL_V,AHP_CHECK_PUBLICAR_V,AHP_CHECK_OCULTAR_V
+                                                  ,AHP_CHECK_OCULTAR_PRECIO_V,AHP_CHECK_PUB_SIN_PRECIO_V
+                                                  ,DD_MTO_A_ID
+                                                  ,AHP_MOT_OCULTACION_MANUAL_A,AHP_CHECK_PUBLICAR_A
+                                                  ,AHP_CHECK_OCULTAR_A,AHP_CHECK_OCULTAR_PRECIO_A
+                                                  ,AHP_CHECK_PUB_SIN_PRECIO_A
+                                                  ,AHP_FECHA_INI_VENTA,AHP_FECHA_INI_ALQUILER
+                                                  ,VERSION
+                                                  ,USUARIOCREAR,FECHACREAR
+                                                  ,USUARIOMODIFICAR,FECHAMODIFICAR
+                                                  ,USUARIOBORRAR,FECHABORRAR,BORRADO
+                                                  ,ES_CONDICONADO_ANTERIOR)
+            SELECT  '|| V_ESQUEMA ||'.S_ACT_AHP_HIST_PUBLICACION.NEXTVAL, ACT_ID
+                                                  ,DD_TPU_A_ID
+                                                  ,DD_TPU_V_ID
+                                                  ,DD_EPV_ID
+                                                  ,DD_EPA_ID
+                                                  ,DD_TCO_ID
+                                                  ,DD_MTO_V_ID
+                                                  ,APU_MOT_OCULTACION_MANUAL_V,APU_CHECK_PUBLICAR_V,APU_CHECK_OCULTAR_V
+                                                  ,APU_CHECK_OCULTAR_PRECIO_V,APU_CHECK_PUB_SIN_PRECIO_V
+                                                  ,DD_MTO_A_ID
+                                                  ,APU_MOT_OCULTACION_MANUAL_A,APU_CHECK_PUBLICAR_A
+                                                  ,APU_CHECK_OCULTAR_A,APU_CHECK_OCULTAR_PRECIO_A
+                                                  ,APU_CHECK_PUB_SIN_PRECIO_A
+                                                  ,FECHAMODIFICAR,FECHAMODIFICAR
+                                                  ,VERSION
+                                                  ,'''||pUSUARIOMODIFICAR||''' USUARIOCREAR, SYSDATE FECHACREAR
+                                                  ,USUARIOMODIFICAR,FECHAMODIFICAR
+                                                  ,USUARIOBORRAR,FECHABORRAR,BORRADO
+                                                  ,ES_CONDICONADO_ANTERIOR
               FROM '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION
              WHERE BORRADO = 0
                AND ACT_ID = '||nACT_ID||'

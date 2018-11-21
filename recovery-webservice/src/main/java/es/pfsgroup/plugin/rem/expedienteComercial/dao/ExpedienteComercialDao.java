@@ -15,7 +15,7 @@ public interface ExpedienteComercialDao extends AbstractDao<ExpedienteComercial,
 	 * @param webDto
 	 * @return
 	 */
-	public Page getCompradoresByExpediente(Long idExpediente, WebDto webDto);
+	public Page getCompradoresByExpediente(Long idExpediente, WebDto webDto, boolean activoBankia);
 	
 	/**
 	 * Recupera una lista de observaciones de un expediente comercial

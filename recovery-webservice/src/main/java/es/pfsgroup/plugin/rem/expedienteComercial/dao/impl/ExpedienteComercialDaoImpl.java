@@ -17,13 +17,21 @@ import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 public  class ExpedienteComercialDaoImpl extends AbstractEntityDao<ExpedienteComercial, Long> implements ExpedienteComercialDao {
 
 	@Override
-	public Page getCompradoresByExpediente(Long idExpediente, WebDto webDto) {
+	public Page getCompradoresByExpediente(Long idExpediente, WebDto webDto, boolean activoBankia) {
+		if(activoBankia) {
+			HQLBuilder hql = new HQLBuilder("Select bce, bdc from VBusquedaCompradoresExpediente bce, VBusquedaDatosCompradorExpediente bdc where bce.idExpediente=bdc.idExpedienteComercial and "
+					+ "bce.idExpediente=" + idExpediente.toString());
+			hql.orderBy("borrado", HQLBuilder.ORDER_ASC);
+			return HibernateQueryUtils.page(this, hql, webDto);
+		}else {
+			HQLBuilder hql = new HQLBuilder("from VBusquedaCompradoresExpediente");
+			HQLBuilder.addFiltroIgualQueSiNotNull(hql, "idExpediente", idExpediente.toString());
+			hql.orderBy("borrado", HQLBuilder.ORDER_ASC);
+			return HibernateQueryUtils.page(this, hql, webDto);
+		}
+		
 
-		HQLBuilder hql = new HQLBuilder("from VBusquedaCompradoresExpediente");
-		HQLBuilder.addFiltroIgualQueSiNotNull(hql, "idExpediente", idExpediente.toString());
-		hql.orderBy("borrado", HQLBuilder.ORDER_ASC);
-
-		return HibernateQueryUtils.page(this, hql, webDto);
+		
 	}
 
 	@Override

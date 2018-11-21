@@ -1944,11 +1944,15 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		campoHora = me.lookupReference(referencia);
 		
 		if(campoFecha.getValue() != null) {
-			campoHora.setDisabled(false);
-			campoHora.allowBlank = false;
-			if(campoHora.getValue() == null) {//De esta forma se marca en rojo como obligatorio sin tener que pinchar en el campo
+			if (campoHora.isVisible()) {
+				campoHora.setDisabled(false);
+				campoHora.allowBlank = false;
+				if(campoHora.getValue() == null) {//De esta forma se marca en rojo como obligatorio sin tener que pinchar en el campo
+					campoHora.setValue('00:00');
+					campoHora.setValue();
+				}
+			} else {
 				campoHora.setValue('00:00');
-				campoHora.setValue();
 			}
 		}
 		else {

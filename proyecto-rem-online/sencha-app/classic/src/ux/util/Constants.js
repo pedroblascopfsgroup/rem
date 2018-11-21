@@ -158,6 +158,7 @@ Ext.define('HreRem.ux.util.Constants', {
 		BANKIA: '03',
 		TERCEROS: '04',
 		HYT: '06',
+		CERBERUS: '07',
 		LIBERBANK: '08',
 		TANGO: '10',
 		GIANTS: '12'
@@ -173,6 +174,7 @@ Ext.define('HreRem.ux.util.Constants', {
 		'03': 'BANKIA',
 		'04': 'TERCEROS',
 		'06': 'HYT',
+		'07': 'CERBERUS',
 		'08': 'LIBERBANK',
 		'10': 'TANGO',
 		'12': 'GIANTS'
@@ -181,6 +183,7 @@ Ext.define('HreRem.ux.util.Constants', {
 	NOMBRE_CARTERA2: {
 		CAJAMAR: 'CAJAMAR',
 		SAREB: 'SAREB',
+		CERBERUS: 'CERBERUS',
 		BANKIA: 'BANKIA',
 		TANGO: 'TANGO',
 		GIANTS: 'GIANTS',

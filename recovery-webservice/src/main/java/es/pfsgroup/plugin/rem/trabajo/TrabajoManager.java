@@ -790,7 +790,9 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			} else {
 				trabajo.setResponsableTrabajo(genericAdapter.getUsuarioLogado());
 			}
-			
+			if(dtoTrabajo.getRequerimiento() != null){
+				trabajo.setRequerimiento(dtoTrabajo.getRequerimiento());
+			}
 
 			trabajoDao.saveOrUpdate(trabajo);
 
@@ -945,12 +947,18 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				}
 
 				if(!dtoTrabajo.getEsSolicitudConjunta()) {
+					if(dtoTrabajo.getRequerimiento() != null){
+						trabajo.setRequerimiento(dtoTrabajo.getRequerimiento());
+					}
 					trabajoDao.saveOrUpdate(trabajo);
 					listaTrabajos.add(trabajo);
 				}
 			}
 
 			if(dtoTrabajo.getEsSolicitudConjunta()) {
+				if(dtoTrabajo.getRequerimiento() != null){
+					trabajo.setRequerimiento(dtoTrabajo.getRequerimiento());
+				}
 				trabajoDao.saveOrUpdate(trabajo);
 				listaTrabajos.add(trabajo);
 				ficheroMasivoToTrabajo(dtoTrabajo.getIdProceso(), trabajo);
@@ -1041,6 +1049,9 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			if (DDSubtipoTrabajo.CODIGO_CEDULA_HABITABILIDAD.equals(trabajo.getSubtipoTrabajo().getCodigo())) {
 				trabajo.setFechaAprobacion(new Date());
 			}
+			if(dtoTrabajo.getRequerimiento() != null){
+				trabajo.setRequerimiento(dtoTrabajo.getRequerimiento());
+			}			
 
 			trabajoDao.saveOrUpdate(trabajo);
 

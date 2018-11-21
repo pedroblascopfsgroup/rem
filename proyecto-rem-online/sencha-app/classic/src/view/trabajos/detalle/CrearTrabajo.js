@@ -18,6 +18,10 @@ Ext.define('HreRem.view.trabajos.detalle.CrearTrabajo', {
     
     idProceso: null,
     
+    codCartera: null,
+    
+    logadoGestorMantenimiento: null,
+    
 	listeners: {
 
 		boxready: function(window) {
@@ -33,9 +37,14 @@ Ext.define('HreRem.view.trabajos.detalle.CrearTrabajo', {
 			);
 		},
 		
-		show: function() {			
+		show: function() {	
 			var me = this;
-			me.resetWindow();			
+			me.resetWindow();
+			if(CONST.CARTERA['SAREB'] == this.codCartera){
+        		me.down("[reference=checkRequerimiento]").setVisible(true);        	
+        	}else{
+        		me.down("[reference=checkRequerimiento]").setVisible(false);
+       		}
 		}
 		
 	},
@@ -46,7 +55,7 @@ Ext.define('HreRem.view.trabajos.detalle.CrearTrabajo', {
 
     	me.setTitle(HreRem.i18n("title.peticion.trabajo"));
     	
-    	me.buttonAlign = 'left';    	
+    	me.buttonAlign = 'left'; 
     	
     	me.buttons = [ { itemId: 'btnGuardar', text: 'Crear', handler: 'onClickBotonCrearTrabajo'},{ itemId: 'btnCancelar', text: 'Cancelar', handler: 'hideWindowPeticionTrabajo'}];
 
@@ -459,6 +468,15 @@ Ext.define('HreRem.view.trabajos.detalle.CrearTrabajo', {
 																}
 															},	
 															{
+																xtype: 'checkboxfieldbase',
+																boxLabel:  HreRem.i18n('fieldlabel.requerimiento'),												
+																reference: 'checkRequerimiento',
+																readOnly: !this.logadoGestorMantenimiento,
+																bind:{
+																	value: '{trabajo.requerimiento}'													
+																}
+															},
+															{
 																xtype: 'datefieldbase',
 																reference: 'datefieldFechaTope',
 																minValue: $AC.getCurrentDate(),
@@ -639,8 +657,12 @@ Ext.define('HreRem.view.trabajos.detalle.CrearTrabajo', {
         				]
     			}
     	]
-    	
-    	me.callParent();    	
+    	me.callParent();  
+    	if(CONST.CARTERA['SAREB'] == this.codCartera){
+        	me.down("[reference=checkRequerimiento]").setVisible(true);        	
+        }else{
+        	me.down("[reference=checkRequerimiento]").setVisible(false);
+        }
     
     },
     

@@ -493,6 +493,7 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 				            		store: '{comboEntidadesEjecutantes}',
 				            		value: '{datosRegistrales.entidadEjecutanteCodigo}'
 				            	}
+
 							},
 
 			                {
@@ -633,7 +634,7 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 			                	bind: '{datosRegistrales.defectosTestimonio}'
 			                }
 						]
-                
+
             		},
             		{
 						xtype:'fieldsettable',
@@ -686,7 +687,7 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
                                 bind: '{datosRegistrales.defectosTestimonio}'
                             }
 						]
-            
+
         			},
         			{
 						xtype:'fieldsettable',
@@ -726,12 +727,10 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 						 		bind: '{datosRegistrales.acreedorNumExp}'
 
 							}
-	
-						
 						]
         			}
 				]
-                
+
             },
 			{
 				xtype:'fieldsettable',
@@ -745,7 +744,9 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 				        	bind: {
 			            		store: '{comboEstadoTitulo}',
 			            		value: '{datosRegistrales.estadoTitulo}'
+
 			            	},
+
 			            	reference: 'estadoTitulo'
                         },
 				        {
@@ -757,7 +758,7 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 							xtype:'datefieldbase',
 					 		fieldLabel: HreRem.i18n('fieldlabel.fecha.presentacion.hacienda'),
 					 		bind: '{datosRegistrales.fechaPresHacienda}'
-			            	
+
 						},
 						{
 							xtype:'datefieldbase',
@@ -787,6 +788,7 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 						{
 							xtype:'datefieldbase',
 		                	fieldLabel: HreRem.i18n('fieldlabel.fecha.nota.simple'),
+
 					 		bind: '{datosRegistrales.fechaNotaSimple}'		            	
 						},
 						{    
@@ -856,6 +858,7 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 							]
 		           		}
 					
+
 					]
 			}
 		];
@@ -863,9 +866,9 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 		me.addPlugin({ptype: 'lazyitems', items: items });
     	me.callParent();
 
-   },
-   
-   getErrorsExtendedFormBase: function() {
+	},
+
+	getErrorsExtendedFormBase: function() {
 
    		var me = this,
    		errores = [],
@@ -883,15 +886,15 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
    		fechaFirmezaAutoAdjudicacion = me.down("[reference=fechaFirmezaAutoAdjudicacion]"),
    		fechaTomaPosesion = me.down("[reference=fechaTomaPosesionJudicial]"),
    		fechaAutoAdjudicacion = me.down("[reference=fechaAutoAdjudicacion]");
+
    		motivoCalNegativa = me.down("[reference=itemselMotivo]");
-   		
-   		
    		
    		if(provinciaRegistro.getValue() != codigoProvinciaDomicilio) {
    			error = HreRem.i18n("txt.validacion.provincia.diferente.registro");
    			errores.push(error);
    			provinciaRegistro.markInvalid(error); 
    		}
+
    		
    		if(motivoCalNegativa.getValue().length == 0) {
    			error = HreRem.i18n("txt.validacion.motivo.obligatorio");
@@ -899,6 +902,7 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
    			motivoCalNegativa.markInvalid(error); 
    		}
    		
+
    		if(superficieUtil.getValue() > superficieConstruida.getValue()) {
    			error = HreRem.i18n("txt.validacion.suputil.mayor.supconstruida");
    			errores.push(error);
@@ -923,10 +927,8 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
    				error = HreRem.i18n("txt.validacion.fechaAutoAdjudicacion.mayor.fechaFirmezaAutoAdjudicacion");
 	   			errores.push(error);
 	   			fechaFirmezaAutoAdjudicacion.markInvalid(error);
-   				
+
    			}
-   			
-   			
    		}
 
    		me.addExternalErrors(errores);

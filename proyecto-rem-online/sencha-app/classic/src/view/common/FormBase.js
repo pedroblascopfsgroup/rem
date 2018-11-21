@@ -76,7 +76,7 @@
     refreshAfterSave: false,
     
     initComponent: function() {
-    	
+    	var esEditable = $AU.userHasFunction('EDITAR_BTN_EXPORT_FACTURAS_TASAS_IMPUESTOS');
     	var me = this; 
     	
     	me.addCls('panel-base shadow-panel');
@@ -139,7 +139,7 @@
     		me.collapsible= true;
     		me.collapsed= false;    		
     		me.buttonAlign = 'left';
-    		me.buttons = [{ text: HreRem.i18n('btn.buscar'), handler: 'onClickGastosSearch', reference: 'btnSearchGastos' },{ text: HreRem.i18n('btn.limpiar'), handler: 'onCleanFiltersClick'}, { text: HreRem.i18n('btn.exportar'), handler: 'onClickDescargarExcelGestionGastos'}];
+    		me.buttons = [{ text: HreRem.i18n('btn.buscar'), handler: 'onClickGastosSearch', reference: 'btnSearchGastos' },{ text: HreRem.i18n('btn.limpiar'), handler: 'onCleanFiltersClick'}, { text: HreRem.i18n('btn.exportar'), handler: 'onClickDescargarExcelGestionGastos'}, {text: HreRem.i18n('fieldlabel.activo.administracion.extraer.facturas'), handler: 'onExportClickFacturas', hidden: !esEditable}, {text: HreRem.i18n('fieldlabel.activo.administracion.extraer.impuestos'), handler: 'onExportClickTasasImpuestos', hidden: !esEditable}];
     	}
     	
     	if (me.isSearchFormProvisiones) {

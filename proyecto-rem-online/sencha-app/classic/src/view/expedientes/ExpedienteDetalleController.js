@@ -668,7 +668,6 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		fechaPosicionamiento = me.getViewModel().get("expediente.fechaPosicionamiento"),
 		tipoExpedienteAlquiler = CONST.TIPOS_EXPEDIENTE_COMERCIAL["ALQUILER"],
 		tipoExpedienteVenta = CONST.TIPOS_EXPEDIENTE_COMERCIAL["VENTA"];
-		
 		if((codigoEstado!=CONST.ESTADOS_EXPEDIENTE['VENDIDO'] && me.getViewModel().get('expediente.tipoExpedienteCodigo') === tipoExpedienteVenta)
 				||  (me.getViewModel().get('expediente.tipoExpedienteCodigo') === tipoExpedienteAlquiler && Ext.isEmpty(fechaPosicionamiento))){
 			var idCliente = record.get("id"),
@@ -678,6 +677,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 
 			Ext.create("HreRem.view.expedientes.DatosComprador", {idComprador: idCliente, modoEdicion: edicion, storeGrid:storeGrid, expediente: expediente }).show();
 		}
+		me.fireEvent("errorToast", "Se ha avanzado la tarea Posicionamiento, no se puede editar los inquilinos");
 	},
 	esEditableCompradores : function(field){
 		var me = this;

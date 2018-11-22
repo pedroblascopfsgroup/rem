@@ -717,21 +717,22 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	onClickBotonEditar: function(btn) {
 		
 		var me = this;
-		btn.hide();
-		btn.up('tabbar').down('button[itemId=botonguardar]').show();
-		btn.up('tabbar').down('button[itemId=botoncancelar]').show();
+		
 
-		Ext.Array.each(btn.up('tabpanel').getActiveTab().query('field[isReadOnlyEdit]'),
+		Ext.Array.each(btn.up('tabpanel').getActiveTab().query('component[isReadOnlyEdit]'),
 						function (field, index) 
 							{ 
 								field.fireEvent('edit');});
 								
-		btn.up('tabpanel').getActiveTab().query('field[isReadOnlyEdit]')[0].focus();
+		btn.up('tabpanel').getActiveTab().query('component[isReadOnlyEdit]')[0].focus();
 		if(Ext.isDefined(btn.name) && btn.name === 'firstLevel') {
  			me.getViewModel().set("editingFirstLevel", true);
  		} else {
  			me.getViewModel().set("editing", true);
  		}
+ 		btn.hide();
+		btn.up('tabbar').down('button[itemId=botonguardar]').show();
+		btn.up('tabbar').down('button[itemId=botoncancelar]').show();
 	},
 
 	onSaveFormularioCompletoTabComercial: function(btn, form){

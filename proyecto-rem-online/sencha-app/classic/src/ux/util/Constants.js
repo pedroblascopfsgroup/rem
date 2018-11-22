@@ -350,7 +350,6 @@ Ext.define('HreRem.ux.util.Constants', {
 	EXPORTADOR:{
 		LIMITE: '1000'
 	},
-
 	MOTIVO_OCULTACION: {
         OTROS: '12'
     },

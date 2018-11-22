@@ -2931,7 +2931,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 				success: successFn,
 			 	failure: function(response, opts) {
 			 		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-			    }			    
+			 		}
+			    			    
 			});
 		}
 	},
@@ -2987,6 +2988,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 
 	onClickGuardarPropagarCambios: function(btn) {
     	var me = this,
+    	
     	window = btn.up("window"),
     	grid = me.lookupReference("listaActivos"),
     	radioGroup = me.lookupReference("opcionesPropagacion"),
@@ -2995,17 +2997,15 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	opcionPropagacion = radioGroup.getValue().seleccion,
     	cambios =  window.propagableData,
     	targetGrid = window.targetGrid;
-
+    	
 		me.fireEvent("log", cambios);
 		
     	if (opcionPropagacion == "4" &&  activosSeleccionados.length == 0) {
 	    	me.fireEvent("errorToast", HreRem.i18n("msg.no.activos.seleccionados"));
 	    	return false;
     	}
-    	
 	    // Si estamos modificando una pestaña con formulario
-	    if (Ext.isEmpty(targetGrid)) {
-	    	
+	    if (Ext.isEmpty(targetGrid)) {  
 	      if (!Ext.isEmpty(formActivo)) {	
 	        var successFn = function(record, operation) {
 	          if (activosSeleccionados.length > 0) {
@@ -3018,6 +3018,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	            /*me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));*/
 	            me.getView().unmask();
 	            me.refrescarActivo(formActivo.refreshAfterSave);
+
 	            me.getView().fireEvent("refreshComponentOnActivate", "container[reference=tabBuscadorActivos]");
 	          }
 	        };
@@ -3531,6 +3532,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 					me.getView().unmask();
 					me.refrescarActivo(form.refreshAfterSave);
 					me.getView().fireEvent("refreshComponentOnActivate", "container[reference=tabBuscadorActivos]");
+
 				}
 
 				if(restringida == true){

@@ -2,7 +2,6 @@ package es.pfsgroup.plugin.rem.api;
 
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
-import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,9 +18,51 @@ import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
-import es.pfsgroup.plugin.rem.model.*;
+import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
+import es.pfsgroup.plugin.rem.model.ActivoBancario;
+import es.pfsgroup.plugin.rem.model.ActivoProveedor;
+import es.pfsgroup.plugin.rem.model.ActivoTasacion;
+import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
+import es.pfsgroup.plugin.rem.model.DtoActivoCargas;
+import es.pfsgroup.plugin.rem.model.DtoActivoCargasTab;
+import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
+import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
+import es.pfsgroup.plugin.rem.model.DtoActivoIntegrado;
+import es.pfsgroup.plugin.rem.model.DtoActivoPatrimonio;
+import es.pfsgroup.plugin.rem.model.DtoActivoSituacionPosesoria;
+import es.pfsgroup.plugin.rem.model.DtoActivosPublicacion;
+import es.pfsgroup.plugin.rem.model.DtoAdjunto;
+import es.pfsgroup.plugin.rem.model.DtoComercialActivo;
+import es.pfsgroup.plugin.rem.model.DtoComunidadpropietariosActivo;
+import es.pfsgroup.plugin.rem.model.DtoCondicionEspecifica;
+import es.pfsgroup.plugin.rem.model.DtoCondicionantesDisponibilidad;
+import es.pfsgroup.plugin.rem.model.DtoEstadosInformeComercialHistorico;
+import es.pfsgroup.plugin.rem.model.DtoHistoricoMediador;
+import es.pfsgroup.plugin.rem.model.DtoHistoricoPreciosFilter;
+import es.pfsgroup.plugin.rem.model.DtoHistoricoPresupuestosFilter;
+import es.pfsgroup.plugin.rem.model.DtoImpuestosActivo;
+import es.pfsgroup.plugin.rem.model.DtoLlaves;
+import es.pfsgroup.plugin.rem.model.DtoOfertaActivo;
+import es.pfsgroup.plugin.rem.model.DtoPrecioVigente;
+import es.pfsgroup.plugin.rem.model.DtoPropietario;
+import es.pfsgroup.plugin.rem.model.DtoPropuestaActivosVinculados;
+import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
+import es.pfsgroup.plugin.rem.model.DtoReglasPublicacionAutomatica;
+import es.pfsgroup.plugin.rem.model.DtoTasacion;
+import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.PerimetroActivo;
+import es.pfsgroup.plugin.rem.model.Reserva;
+import es.pfsgroup.plugin.rem.model.Trabajo;
+import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
+import es.pfsgroup.plugin.rem.model.VCondicionantesDisponibilidad;
+import es.pfsgroup.plugin.rem.model.VPreciosVigentes;
+import es.pfsgroup.plugin.rem.model.VTasacionCalculoLBK;
+import es.pfsgroup.plugin.rem.model.Visita;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 import es.pfsgroup.plugin.rem.rest.dto.File;
 import es.pfsgroup.plugin.rem.rest.dto.PortalesDto;
+import net.sf.json.JSONObject;
 
 public interface ActivoApi {
 
@@ -101,7 +142,10 @@ public interface ActivoApi {
 	@BusinessOperationDefinition("activoManager.isIntegradoAgrupacionObraNueva")
 	boolean isIntegradoAgrupacionObraNueva(Long id, Usuario usuarioLogado);
 
-	boolean isIntegradoAgrupacionComercial(Activo activo);
+	
+	public boolean isIntegradoAgrupacionComercial(Activo activo);
+
+	public boolean necesitaDocumentoInformeOcupacion(Activo activo);
 
 	/**
 	 * Elimina un adjunto
@@ -436,6 +480,17 @@ public interface ActivoApi {
 	boolean isActivoConReservaByEstado(Activo activo, String codEstado);
 
 	/**
+	 * Comprueba que el Activo modificado cumple ciertas condiciones para mandar un correo
+	 */
+	public void checkAndSendMailAvisoOcupacion(JSONObject json, Activo activo, DDTipoDocumentoActivo tipoAdjunto);
+
+	/**
+	 * Comprueba que el Activo cumple ciertas condiciones para mandar un correo
+	 * @param activo
+	 */
+	public void checkMailAvisoOcupacion(Activo activo);
+
+	/**
 	 * Devuelve una lista de reservas asociadas al activo pasado por parametro
 	 *
 	 * @param activo
@@ -684,6 +739,14 @@ public interface ActivoApi {
 	 * @return devuelve true si es VPO, false en caso contrario
 	 */
 	boolean checkVPO(TareaExterna tareaExterna);
+
+	/**
+	 * Método que devuelve una lista de ocupaciones ilegales de un activo
+	 *
+	 * @param dto
+	 * @return
+	 */
+	public DtoPage getListHistoricoOcupacionesIlegales(WebDto dto, Long idActivo);
 
 	/**
 	 * Método que devuelve la lista de llaves asociadas a un activo
@@ -936,4 +999,21 @@ public interface ActivoApi {
 
 	public Long getIdByNumActivo(Long numActivo);
 
+	public Integer getGeolocalizacion(Activo activo);
+
+	/**
+	 * Devuelve true or false en funcion de si tiene un adjunto el activo y cumple ciertas caracteristicas
+	 *
+	 * @param idActivo
+	 * @return 
+	 */
+	public boolean compruebaParaEnviarEmailAvisoOcupacion(DtoActivoSituacionPosesoria activoDto, Long id) ; 
+	
+	/**
+	 * Devuelve true or false en funcion de lo que devuelve el GD y existe el adjunto con la matricula que le pasamos por parametro
+	 *
+	 * @param idActivo, matriculaActivo
+	 * @return 
+	 */
+	public boolean compruebaSiExisteActivoBienPorMatricula(Long idActivo, String matriculaActivo);
 }

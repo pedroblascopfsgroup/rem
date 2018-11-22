@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=RLB
---## FECHA_CREACION=20181113
+--## FECHA_CREACION=20181121
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=2.1.0
 --## INCIDENCIA_LINK=HREOS-4072

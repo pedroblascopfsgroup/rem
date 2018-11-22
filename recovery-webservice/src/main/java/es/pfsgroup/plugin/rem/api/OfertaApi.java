@@ -559,5 +559,7 @@ public interface OfertaApi {
 	 * Método que comprueba que la oferta está activa, es decir, el estado de la oferta es: Tramitada, Congelada o Pendiente.
 	 */
 	boolean estaViva(Oferta oferta);
+	
+	public List<Oferta> getListaOfertasByActivo(Activo activo);
 }
 

@@ -1579,7 +1579,6 @@ public Boolean getTienePosibleInformeMediador() {
 	public void setCatContableDescripcion(String catContableDescripcion) {
 		this.catContableDescripcion = catContableDescripcion;
 	}
-
 	public Boolean getAsignaGestPorCambioDeProv() {
 		return asignaGestPorCambioDeProv;
 	}

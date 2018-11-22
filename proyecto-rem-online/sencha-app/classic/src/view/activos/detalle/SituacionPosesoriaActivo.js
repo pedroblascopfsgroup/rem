@@ -490,4 +490,5 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
   		});
    }
 
+
 });

@@ -56,7 +56,9 @@ import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
+import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.gestorDocumental.manager.GestorDocumentalExpedientesManager;
+import es.pfsgroup.plugin.recovery.agendaMultifuncion.impl.dto.DtoAdjuntoMail;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDSituacionCarga;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDTipoCarga;
@@ -83,8 +85,10 @@ import es.pfsgroup.plugin.rem.api.UvemManagerApi;
 import es.pfsgroup.plugin.rem.condiciontanteo.CondicionTanteoApi;
 import es.pfsgroup.plugin.rem.factory.TabActivoFactoryApi;
 import es.pfsgroup.plugin.rem.gestor.dao.GestorExpedienteComercialDao;
+import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.notificator.impl.NotificatorServiceSancionOfertaAceptacionYRechazo;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoAdjudicacionNoJudicial;
 import es.pfsgroup.plugin.rem.model.ActivoAdjuntoActivo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
@@ -104,6 +108,7 @@ import es.pfsgroup.plugin.rem.model.ActivoInformeComercialHistoricoMediador;
 import es.pfsgroup.plugin.rem.model.ActivoIntegrado;
 import es.pfsgroup.plugin.rem.model.ActivoLlave;
 import es.pfsgroup.plugin.rem.model.ActivoMovimientoLlave;
+import es.pfsgroup.plugin.rem.model.ActivoOcupacionIlegal;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoPropietarioActivo;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
@@ -125,6 +130,7 @@ import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoActivoIntegrado;
 import es.pfsgroup.plugin.rem.model.DtoActivoPatrimonio;
+import es.pfsgroup.plugin.rem.model.DtoActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.DtoActivosPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
@@ -140,6 +146,7 @@ import es.pfsgroup.plugin.rem.model.DtoHistoricoPresupuestosFilter;
 import es.pfsgroup.plugin.rem.model.DtoImpuestosActivo;
 import es.pfsgroup.plugin.rem.model.DtoLlaves;
 import es.pfsgroup.plugin.rem.model.DtoMovimientoLlave;
+import es.pfsgroup.plugin.rem.model.DtoOcupacionIlegal;
 import es.pfsgroup.plugin.rem.model.DtoOfertaActivo;
 import es.pfsgroup.plugin.rem.model.DtoPrecioVigente;
 import es.pfsgroup.plugin.rem.model.DtoPropietario;
@@ -207,6 +214,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoUsoDestino;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposArras;
+import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PRINCIPAL;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PROPIEDAD;
@@ -225,6 +233,8 @@ import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 import es.pfsgroup.plugin.rem.utils.DiccionarioTargetClassMap;
 import es.pfsgroup.plugin.rem.visita.dao.VisitaDao;
 import es.pfsgroup.recovery.ext.api.multigestor.EXTGrupoUsuariosApi;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 
 @Service("activoManager")
 public class ActivoManager extends BusinessOperationOverrider<ActivoApi> implements ActivoApi {
@@ -235,6 +245,13 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	private static final String AVISO_MENSAJE_CLIENTE_OBLIGATORIO = "activo.motivo.oferta.cliente";
 	private static final String AVISO_MEDIADOR_NO_EXISTE = "activo.aviso.mediador.no.existe";
 	private static final String AVISO_MEDIADOR_BAJA = "activo.aviso.mediador.baja";
+	private static final String EMAIL_OCUPACIONES = "emailOcupaciones";
+	
+	
+	
+	
+	
+	
 	private SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 	private BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 
@@ -344,8 +361,16 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	@Autowired
 	private AgrupacionAdapter agrupacionAdapter;
 
+		
+	@Autowired
+    private OfertaDao ofertaDao;
+	
 	@Resource(name = "entityTransactionManager")
-	private PlatformTransactionManager transactionManager;
+    private PlatformTransactionManager transactionManager;
+	
+	@Autowired
+	private GestorDocumentalAdapterApi gestorDocumentalAdapterApi;
+
 
 	@Autowired
 	private ActivoPublicacionDao activoPublicacionDao;
@@ -354,7 +379,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	public String managerName() {
 		return "activoManager";
 	}
-
+	
+	
 	@Override
 	@BusinessOperation(overrides = "activoManager.get")
 	public Activo get(Long id) {
@@ -1293,7 +1319,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				activo.getAdjuntos().add(adjuntoActivo);
 
 				activoDao.save(activo);
-
+				checkAndSendMailAvisoOcupacion(null, activo, tipoDocumento);
 			} else {
 				throw new Exception("No se ha encontrado activo o tipo para relacionar adjunto");
 			}
@@ -2449,6 +2475,76 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		return false;
 	}
 
+	public void checkAndSendMailAvisoOcupacion(JSONObject json, Activo activo, DDTipoDocumentoActivo tipoAdjunto)
+	{
+		if((json != null) && !json.isEmpty())
+		{
+			if(json.containsKey("id") && json.containsKey("models"))
+			{
+				Long id = json.getLong("id");
+				JSONArray modelsArray = json.getJSONArray("models");
+				if(modelsArray.toString().contains("ocupado") || modelsArray.toString().contains("conTitulo"))
+				{
+					activo = this.get(id);
+					if(!Checks.esNulo(activo))
+					{
+						checkMailAvisoOcupacion(activo);
+					}
+				}
+			}
+		}
+		else if(!Checks.esNulo(activo) && !Checks.esNulo(tipoAdjunto))
+		{
+			if(DDTipoDocumentoActivo.CODIGO_INFORME_OCUPACION_DESOCUPACION.equals(tipoAdjunto.getCodigo()))
+			{
+				checkMailAvisoOcupacion(activo);
+			}
+		}
+	}
+
+	public void checkMailAvisoOcupacion(Activo activo)
+	{
+		if(!Checks.esNulo(activo))
+		{
+			ActivoSituacionPosesoria posesoria = activo.getSituacionPosesoria();
+			ActivoAdjudicacionNoJudicial judicial = activo.getAdjNoJudicial();
+			if(!Checks.esNulo(posesoria) && !Checks.esNulo(judicial))
+			{
+				if((!Checks.esNulo(posesoria.getOcupado()) && !Checks.esNulo(posesoria.getConTitulo())) &&
+					(!Checks.esNulo(judicial.getFechaTitulo()) && activo.hasAdjunto(DDTipoDocumentoActivo.CODIGO_INFORME_OCUPACION_DESOCUPACION)))
+				{
+					List<DtoAdjuntoMail> sendAdj = new ArrayList<DtoAdjuntoMail>();
+					for(ActivoAdjuntoActivo adjunto : activo.getAdjuntos())
+					{
+						if(!Checks.esNulo(adjunto.getTipoDocumentoActivo()) &&
+							DDTipoDocumentoActivo.CODIGO_INFORME_OCUPACION_DESOCUPACION.equals(adjunto.getTipoDocumentoActivo().getCodigo()))
+						{
+							DtoAdjuntoMail adj = new DtoAdjuntoMail();
+							adj.setNombre(adjunto.getNombre());
+							adj.setAdjunto(adjunto.getAdjunto());
+							sendAdj.add(adj);
+						}
+					}
+					Usuario usu = usuarioApi.getByUsername(EMAIL_OCUPACIONES);
+					if(!Checks.esNulo(usu) && !Checks.esNulo(usu.getEmail()))
+					{
+						List<String> para = new ArrayList<String>();
+						para.add(usu.getEmail());
+						String activoS = activo.getId()+"";
+						String carteraS = activo.getCartera().getDescripcion();
+						StringBuilder cuerpo = new StringBuilder("<!DOCTYPE HTML PUBLIC '-//W3C//DTD HTML 4.01 Transitional//EN'><html><head><META http-equiv='Content-Type' content='text/html; charset=utf-8'></head><body>");
+						cuerpo.append("<div><p>Se ha marcado en REM una ocupación ilegal del activo ");
+						cuerpo.append(activoS);
+						cuerpo.append("de la cartera ");
+						cuerpo.append(carteraS);
+						cuerpo.append("</p><p>Se anexa el informe de ocupación remitido por el API custodio</p><p>Un saludo</p></div></body></html>");
+						genericAdapter.sendMail(para, null, "Ocupación ilegal del activo: " + activoS + ", de la cartera " + carteraS, cuerpo.toString(), sendAdj);
+					}
+				}
+			}
+		}
+	}
+
 	@Override
 	public List<Reserva> getReservasByActivoOfertaAceptada(Activo activo) {
 		List<Reserva> reservas = new ArrayList<Reserva>();
@@ -2544,6 +2640,40 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 
 		return false;
+	}
+
+	@Override
+	public boolean necesitaDocumentoInformeOcupacion(Activo activo)
+	{
+		ActivoSituacionPosesoria activoSitPos = activo.getSituacionPosesoria();
+		boolean tieneAdjunto = false;
+		boolean tieneInforme = false;
+		if(!Checks.esNulo(activoSitPos) && (!Checks.esNulo(activoSitPos.getOcupado()) && !Checks.esNulo(activoSitPos.getConTitulo()) && (1 == activoSitPos.getOcupado() && 0 == activoSitPos.getConTitulo())))
+		{
+			List<ActivoAdjuntoActivo> listAdjuntos = activo.getAdjuntos();
+
+			if(!Checks.estaVacio(listAdjuntos))
+			{
+				Integer countDocs = 0;
+				for(ActivoAdjuntoActivo adjunto : listAdjuntos)
+				{
+					if(DDTipoDocumentoActivo.CODIGO_INFORME_OCUPACION_DESOCUPACION.equals(adjunto.getTipoDocumentoActivo().getCodigo()))
+					{
+						tieneAdjunto = false;
+						tieneInforme = true;
+					}
+					else if(!tieneInforme)
+					{
+						tieneAdjunto = true;
+					}
+				}
+			}
+			else
+			{
+				tieneAdjunto = true;
+			}
+		}
+		return tieneAdjunto;
 	}
 
 	@Override
@@ -3259,6 +3389,50 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	public boolean checkVPO(TareaExterna tareaExterna) {
 		Activo activo = tareaExternaToActivo(tareaExterna);
 		return (1 == activo.getVpo());
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public DtoPage getListHistoricoOcupacionesIlegales(WebDto dto, Long idActivo) {
+
+		Page page;
+
+		page = activoDao.getListHistoricoOcupacionesIlegalesByActivo(dto, idActivo);
+
+		List<DtoOcupacionIlegal> listaOcupacionesIlegales = new ArrayList<DtoOcupacionIlegal>();
+
+		for (ActivoOcupacionIlegal ocupacionIlegal : (List<ActivoOcupacionIlegal>) page.getResults()) {
+
+			DtoOcupacionIlegal dtoOcu = this.ocupacionToDto(ocupacionIlegal);
+
+			listaOcupacionesIlegales.add(dtoOcu);
+		}
+
+		return new DtoPage(listaOcupacionesIlegales, page.getTotalCount());
+	}
+
+	private DtoOcupacionIlegal ocupacionToDto(ActivoOcupacionIlegal ocupacion) {
+
+		DtoOcupacionIlegal dtoOcu = new DtoOcupacionIlegal();
+
+		try {
+			BeanUtils.copyProperties(dtoOcu, ocupacion);
+
+			if (!Checks.esNulo(ocupacion.getTipoAsunto())) {
+				BeanUtils.copyProperty(dtoOcu, "tipoAsunto", ocupacion.getTipoAsunto().getDescripcion());
+			}
+
+			if (!Checks.esNulo(ocupacion.getTipoActuacion())) {
+				BeanUtils.copyProperty(dtoOcu, "tipoActuacion", ocupacion.getTipoActuacion().getDescripcion());
+			}
+
+		} catch (IllegalAccessException ex) {
+			logger.error("Error en activoManager", ex);
+		} catch (InvocationTargetException ex) {
+			logger.error("Error en activoManager", ex);
+		}
+
+		return dtoOcu;
 	}
 
 	@Override
@@ -4781,6 +4955,118 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 
 		return idActivo;
+	}
+
+	@Override
+	public Integer getGeolocalizacion(Activo activo) {
+		if(activo.getLocalizacion() != null && activo.getLocalizacion().getLocalizacionBien() != null
+					&& activo.getLocalizacion().getLocalizacionBien().getProvincia() != null) {
+			String codigo = activo.getLocalizacion().getLocalizacionBien().getProvincia().getCodigo();
+			if (codigo.equals("0")
+					|| codigo.equals("98")
+					|| codigo.equals("99")) {
+				return 0;
+			} else if (codigo.equals("35")
+					|| codigo.equals("38")) {
+				return 1; // Islas Canarias
+			} else {
+				return 2; // Península
+			}
+		} else {
+			return 0;
+		}
+	}
+	
+	@Override
+	public boolean compruebaParaEnviarEmailAvisoOcupacion(DtoActivoSituacionPosesoria activoDto, Long id) 
+	{		
+		Activo activo= this.get(id);
+		ActivoSituacionPosesoria posesoria=activo.getSituacionPosesoria();
+		Integer ocupado;
+		Integer conTitulo;
+		if(activoDto.getConTitulo() != null) {
+			conTitulo=activoDto.getConTitulo();
+		}else conTitulo=posesoria.getConTitulo();
+		if(activoDto.getOcupado() != null) {
+			ocupado=activoDto.getOcupado();
+		}else ocupado=posesoria.getOcupado();
+		if(!Checks.esNulo(id)) 
+		{
+			if(!Checks.esNulo(posesoria) && (!Checks.esNulo(posesoria.getFechaRevisionEstado())
+					|| !Checks.esNulo(posesoria.getFechaTomaPosesion()))) 
+			{
+				if(!Checks.esNulo(posesoria.getOcupado()) && (1 == ocupado && 0 == conTitulo))
+				{
+					boolean val = compruebaSiExisteActivoBienPorMatricula(id, DDTipoDocumentoActivo.CODIGO_INFORME_OCUPACION_DESOCUPACION);
+					if(val)
+						{
+						//falta enviar el mensaje
+						List<DtoAdjuntoMail> sendAdj = new ArrayList<DtoAdjuntoMail>();
+						for(ActivoAdjuntoActivo adjunto : activo.getAdjuntos())
+						{
+							if(!Checks.esNulo(adjunto.getTipoDocumentoActivo()) && 
+								DDTipoDocumentoActivo.CODIGO_INFORME_OCUPACION_DESOCUPACION.equals(adjunto.getTipoDocumentoActivo().getCodigo()))
+							{
+								DtoAdjuntoMail adj = new DtoAdjuntoMail();
+								adj.setNombre(adjunto.getNombre());
+								adj.setAdjunto(adjunto.getAdjunto());
+								sendAdj.add(adj);
+							}
+						}
+						Usuario usu = usuarioApi.getByUsername(EMAIL_OCUPACIONES);
+						if(!Checks.esNulo(usu) && !Checks.esNulo(usu.getEmail()))
+						{
+							List<String> para = new ArrayList<String>();
+							para.add(usu.getEmail());
+							String activoS = activo.getNumActivo()+"";
+							String carteraS = activo.getCartera().getDescripcion();
+							StringBuilder cuerpo = new StringBuilder("<!DOCTYPE HTML PUBLIC '-//W3C//DTD HTML 4.01 Transitional//EN'><html><head><META http-equiv='Content-Type' content='text/html; charset=utf-8'></head><body>");
+							cuerpo.append("<div><p>Se ha marcado en REM una ocupación ilegal del activo ");
+							cuerpo.append(activoS);
+							cuerpo.append(" de la cartera ");
+							cuerpo.append(carteraS);
+							cuerpo.append("</p><p>Se anexa el informe de ocupación remitido por el API custodio</p><p>Un saludo</p></div></body></html>");
+							genericAdapter.sendMail(para, null, "Ocupación ilegal del activo: " + activoS + ", de la cartera " + carteraS, cuerpo.toString(), sendAdj);
+						}
+						//se envia un true, por que ya hemos mandado el correo y tiene que guardar los cambios
+						return true;
+						}else return false;
+							//devolvemos un false por que no esta adjuntado el archivo y no se pueden guardar los cambios
+				}
+				//se envia un true, por que tiene que guardar los datos modificados del activo, ya que no se cumple la condicion
+				else return true;
+			}
+		}
+		
+		return true;
+		
+	}
+	
+	@Override
+	public boolean compruebaSiExisteActivoBienPorMatricula(Long idActivo, String matriculaActivo) {
+		DDTipoDocumentoActivo tipoDocu=null;
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", matriculaActivo);
+		tipoDocu = (DDTipoDocumentoActivo) genericDao.get(DDTipoDocumentoActivo.class, filtro);
+		List<DtoAdjunto> listaAdjuntos = new ArrayList<DtoAdjunto>();
+		if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
+			Activo activo= this.get(idActivo);
+			try { 
+				listaAdjuntos = gestorDocumentalAdapterApi.getAdjuntosActivo(activo);
+				if(!Checks.esNulo(listaAdjuntos)) {
+					for (DtoAdjunto adj : listaAdjuntos) {
+						String matricula =adj.getMatricula();
+						if(!Checks.esNulo(matricula)) {
+							if(matricula.equals(tipoDocu.getMatricula())) {
+								return true;
+							}
+						}
+					}
+				}
+			}catch (GestorDocumentalException e) {
+				e.printStackTrace();
+			}
+		}
+		return false;
 	}
 
 }

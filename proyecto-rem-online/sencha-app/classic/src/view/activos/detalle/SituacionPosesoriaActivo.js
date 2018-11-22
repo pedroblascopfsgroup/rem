@@ -349,6 +349,22 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 	                }
 				]
             },
+            {    
+                
+				xtype:'fieldsettable',
+				title:HreRem.i18n('title.historico.ocupaciones.ilegales'),
+				reference: 'fieldHistoricoOcupacionesIlegales',
+				defaultType: 'textfieldbase',
+				items :
+					[
+						{
+		                	xtype: 'historicoocupacionesilegalesgrid',
+		                	colspan: 3
+    				    }
+					
+					]
+                
+            },
             {
 				xtype:'fieldsettable',
 				title:'Llaves',

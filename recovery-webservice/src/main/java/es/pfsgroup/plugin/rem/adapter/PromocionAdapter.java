@@ -34,7 +34,6 @@ import es.pfsgroup.plugin.rem.api.ActivoPromocionApi;
 @Service
 public class PromocionAdapter {
 	
-	private final Log logger = LogFactory.getLog(getClass());
 	
 	@Autowired
 	private GestorDocumentalAdapterApi gestorDocumentalAdapterApi;
@@ -89,33 +88,28 @@ public class PromocionAdapter {
 		return listaAdjuntos;
 	}
 	
-	public List<DtoAdjuntoPromocion> getAdjuntosPromocion(Long id, List<DtoAdjuntoPromocion> listaAdjuntos) {
-		try {
-			
-			Activo activo = activoApi.get(id);
-			
-			if (activo.getCodigoPromocionPrinex() != null && !activo.getCodigoPromocionPrinex().isEmpty()) {
-				String codPromo =activo.getCodigoPromocionPrinex()+"_"+activo.getCartera().getCodigo().toString();
-				
-				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codPromo", codPromo);
-				List<AdjuntosPromocion> adjuntosPromocion = (List<AdjuntosPromocion>) genericDao
-						.getList(AdjuntosPromocion.class, filtro);
-	
-				for (AdjuntosPromocion adjuntoPromocion: adjuntosPromocion) {
-					DtoAdjuntoPromocion dto = new DtoAdjuntoPromocion();
-					BeanUtils.copyProperties(dto, adjuntoPromocion);
-					dto.setIdEntidad(codPromo);
-					dto.setDescripcionTipo(adjuntoPromocion.getTipoDocumentoPromocion().getDescripcion());
-					dto.setGestor(adjuntoPromocion.getAuditoria().getUsuarioCrear());
-					dto.setCodPromo(codPromo);
-					
-					listaAdjuntos.add(dto);
-				}
-			}
+	public List<DtoAdjuntoPromocion> getAdjuntosPromocion(Long id, List<DtoAdjuntoPromocion> listaAdjuntos) throws IllegalAccessException, InvocationTargetException {
+		Activo activo = activoApi.get(id);
 
-		} catch (Exception ex) {
-			logger.error("error en PromocionAdapter", ex);
+		if (activo.getCodigoPromocionPrinex() != null && !activo.getCodigoPromocionPrinex().isEmpty()) {
+			String codPromo = activo.getCodigoPromocionPrinex() + "_" + activo.getCartera().getCodigo().toString();
+
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codPromo", codPromo);
+			List<AdjuntosPromocion> adjuntosPromocion = (List<AdjuntosPromocion>) genericDao
+					.getList(AdjuntosPromocion.class, filtro);
+
+			for (AdjuntosPromocion adjuntoPromocion : adjuntosPromocion) {
+				DtoAdjuntoPromocion dto = new DtoAdjuntoPromocion();
+				BeanUtils.copyProperties(dto, adjuntoPromocion);
+				dto.setIdEntidad(codPromo);
+				dto.setDescripcionTipo(adjuntoPromocion.getTipoDocumentoPromocion().getDescripcion());
+				dto.setGestor(adjuntoPromocion.getAuditoria().getUsuarioCrear());
+				dto.setCodPromo(codPromo);
+
+				listaAdjuntos.add(dto);
+			}
 		}
+
 		return listaAdjuntos;
 	}
 	

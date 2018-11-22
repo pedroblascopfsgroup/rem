@@ -1351,6 +1351,9 @@ public class ActivoController extends ParadiseJsonController {
 		try {
 			model.put(RESPONSE_DATA_KEY, adapter.getAdjuntosActivo(id));
 
+		} catch (GestorDocumentalException e) {
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put("errorMessage", e.getMessage());
 		} catch (Exception e) {
 			logger.error("error en activoController", e);
 			model.put(RESPONSE_SUCCESS_KEY, false);

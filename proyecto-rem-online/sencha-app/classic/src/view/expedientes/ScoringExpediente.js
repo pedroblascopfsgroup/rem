@@ -35,25 +35,32 @@ Ext.define('HreRem.view.expedientes.ScoringExpediente', {
 							fieldLabel:HreRem.i18n('fieldlabel.estadoScoring'),
 							cls: 'cabecera-info-field',
 							readOnly: true,
-							bind :'{scoring.comboEstadoScoring}' 
+							bind :'{scoring.comboEstadoScoring}',
+				        	listeners: {
+				        		change: 'onDisableMotivoRechazo'
+				        	}
 		                },
 		                { 
 							xtype: 'textfieldbase',
 		                	fieldLabel:HreRem.i18n('fieldlabel.motivo.rechazo'),
 				        	readOnly: true,
+				        	disabled: true,
+				        	reference:'scoringMotivoRechazo',
 				        	bind : '{scoring.motivoRechazo}' 
 				        },
 				        { 
 							xtype: 'textfieldbase',
 		                	fieldLabel: HreRem.i18n('fieldlabel.numero.solicitud'),
 				        	readOnly: false,
-				        	bind : '{scoring.idSolicitud}'
+				        	bind : '{scoring.nSolicitud}'
 				        },
 				        { 
 							xtype: 'checkboxfieldbase',
 		                	name : HreRem.i18n('fieldlabel.revision'),
 		                	fieldLabel: HreRem.i18n('fieldlabel.revision'),
+                            reference: 'scoringCheckEnRevision',
 				        	readOnly: false,
+				        	disabled: false,
 				        	bind : '{scoring.revision}',
 				        	listeners: {
 				        		change: 'onChangeRevision'
@@ -70,20 +77,7 @@ Ext.define('HreRem.view.expedientes.ScoringExpediente', {
 	     					},	
 	                        maxWidth: 500,
 	                        maxLength: 200
-				        },
-				        { 
-							xtype: 'textfieldbase',
-		                	fieldLabel:HreRem.i18n('fieldlabel.aseguradoras'),
-				        	readOnly: true,
-				        	bind : '{scoring.aseguradoras}' 
-				        },
-				        { 
-							xtype: 'textfieldbase',
-		                	fieldLabel:HreRem.i18n('fieldlabel.email.poliza.segura'),
-				        	readOnly: true,
-				        	bind : '{scoring.emailPolizaSegura}' 
 				        }
-						
 					]
            },
            {   
@@ -119,7 +113,6 @@ Ext.define('HreRem.view.expedientes.ScoringExpediente', {
 							        { 
 							        	text:HreRem.i18n('fieldlabel.numero.solicitud'),
 					                	dataIndex: 'nSolicitud',
-					                	
 				                        flex: 1
 							        },
 							        {	

@@ -127,6 +127,7 @@ public class UpdaterServiceSancionOfertaAlquileresVerificarScoring implements Up
 			
 			if(N_EXPEDIENTE.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 				scoringAlquiler.setIdSolicitud(valor.getValor());
+				histScoringAlquiler.setIdSolicitud("" + valor.getValor()); 
 			}
 			
 			if(N_MESES_FIANZA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {

@@ -364,7 +364,7 @@ BEGIN
 			,GESTEDI
 			,VALORACIONES
 			,PMSVVC
-			,TFI
+			,FTI
             )
             SELECT
               '''||V_TMP_VAR(1)||'''
@@ -510,7 +510,7 @@ BEGIN
 			,GESTEDI
             ,VALORACIONES
 			,PMSVVC
-			,TFI
+			,FTI
                 )
               )
             )
@@ -613,7 +613,7 @@ BEGIN
 			,GESTEDI
             ,VALORACIONES
 			,PMSVVC
-			,TFI
+			,FTI
                )
             )
           )

@@ -1068,7 +1068,7 @@ ELSE
           EXECUTE IMMEDIATE V_MSQL;
           
           V_MSQL := '
-            DELETE FROM '|| V_ESQUEMA ||'.ACT_AHP_HIST_PUBLICACION
+            DELETE FROM '|| V_ESQUEMA ||'.ACT_AHP_HIST_PUBLICACION ACT
             WHERE (AHP_FECHA_FIN_VENTA IS NULL AND AHP_FECHA_FIN_ALQUILER IS NULL)
                 AND EXISTS '|| replace(vQUERY,'AUX','')
                     ;
@@ -1108,14 +1108,14 @@ ELSE
                                                   ,USUARIOMODIFICAR,FECHAMODIFICAR
                                                   ,USUARIOBORRAR,FECHABORRAR,BORRADO
                                                   ,ES_CONDICONADO_ANTERIOR
-              FROM '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION
-             WHERE BORRADO = 0
+              FROM '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION ACT
+             WHERE ACT.BORRADO = 0
                AND EXISTS '|| replace(vQUERY,'AUX','')
                     ;
           EXECUTE IMMEDIATE V_MSQL;
         ELSIF vACTUALIZADO = 'S' AND pHISTORIFICAR = 'N' THEN
           V_MSQL := '
-            DELETE FROM '|| V_ESQUEMA ||'.ACT_AHP_HIST_PUBLICACION
+            DELETE FROM '|| V_ESQUEMA ||'.ACT_AHP_HIST_PUBLICACION ACT
             WHERE (AHP_FECHA_FIN_VENTA IS NULL AND AHP_FECHA_FIN_ALQUILER IS NULL)
                 AND EXISTS '|| replace(vQUERY,'AUX','')
                     ;
@@ -1155,8 +1155,8 @@ ELSE
                                                   ,USUARIOMODIFICAR,FECHAMODIFICAR
                                                   ,USUARIOBORRAR,FECHABORRAR,BORRADO
                                                   ,ES_CONDICONADO_ANTERIOR
-              FROM '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION
-             WHERE BORRADO = 0
+              FROM '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION ACT
+             WHERE ACT.BORRADO = 0
                AND EXISTS '|| replace(vQUERY,'AUX','')
                     ;
           EXECUTE IMMEDIATE V_MSQL;

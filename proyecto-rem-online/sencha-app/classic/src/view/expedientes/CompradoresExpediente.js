@@ -41,6 +41,12 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
 	    		return '-';
 	    	}
     	};
+    	
+    	var cartera= function(){
+    		if(me.lookupViewModel().get('expediente.entidadPropietariaDescripcion') == 'Bankia'){
+    			return false;
+    		}else return true;
+    	};
 		
 		
         var items= [
@@ -199,6 +205,14 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
 					            flex: 1,
 					            formatter: 'date("d/m/Y")',
 					            renderer: coloredRender
+						   },
+						   {
+							   text: HreRem.i18n('header.numero.ursus'),
+							   dataIndex: 'numeroClienteUrsus',
+							   flex: 1,
+					           renderer: coloredRender,
+					           hidden: cartera(),
+					           hideable: !cartera()
 						   }
 					    ],
 					    dockedItems : [

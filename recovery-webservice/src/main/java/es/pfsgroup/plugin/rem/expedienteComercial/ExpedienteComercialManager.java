@@ -37,6 +37,7 @@ import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.message.MessageService;
 import es.capgemini.devon.pagination.Page;
+import es.capgemini.devon.pagination.PageImpl;
 import es.capgemini.pfs.adjunto.model.Adjunto;
 import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
 import es.capgemini.pfs.auditoria.model.Auditoria;
@@ -157,6 +158,8 @@ import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.TextosOferta;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VActivoOfertaImporte;
+import es.pfsgroup.plugin.rem.model.VBusquedaCompradoresExpedienteDecorator;
+import es.pfsgroup.plugin.rem.model.VBusquedaCompradoresExpedienteDecoratorException;
 import es.pfsgroup.plugin.rem.model.VBusquedaDatosCompradorExpediente;
 import es.pfsgroup.plugin.rem.model.VListadoActivosExpediente;
 import es.pfsgroup.plugin.rem.model.Visita;
@@ -1959,8 +1962,35 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 	@Override
 	public Page getCompradoresByExpediente(Long idExpediente, WebDto dto) {
-
-		return expedienteComercialDao.getCompradoresByExpediente(idExpediente, dto);
+		
+		ExpedienteComercial expedienteComercial = findOne(idExpediente);
+		if(DDCartera.CODIGO_CARTERA_BANKIA.equals(expedienteComercial.getOferta().getActivoPrincipal().getCartera().getCodigo())){
+			PageImpl page= (PageImpl) expedienteComercialDao.getCompradoresByExpediente(idExpediente, dto, true);
+			try {
+				decorarPagina(page);
+			} catch (VBusquedaCompradoresExpedienteDecoratorException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			return page; 
+		}else {
+			return expedienteComercialDao.getCompradoresByExpediente(idExpediente, dto, false);
+		}
+		
+	}
+	
+	private void decorarPagina(PageImpl pagina) throws VBusquedaCompradoresExpedienteDecoratorException {
+		List results=pagina.getResults();
+		pagina.setResults(decorarLista(results));
+	}
+	
+	private List<?> decorarLista(List<Object[]> results) throws VBusquedaCompradoresExpedienteDecoratorException{
+		List<VBusquedaCompradoresExpedienteDecorator> decorada= new ArrayList<VBusquedaCompradoresExpedienteDecorator>();
+		for(Object[] item: results) {
+			decorada.add(VBusquedaCompradoresExpedienteDecorator.buildFrom(item));
+		}
+		return decorada;
 	}
 
 	@Override

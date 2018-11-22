@@ -75,7 +75,7 @@ Ext.define('HreRem.view.expedientes.FormalizacionAlquilerExpediente', {
                 collapsible : true,
                 defaultType : 'displayfieldbase',
                 cls : 'panel-base shadow-panel',
-                title : HreRem.i18n('title.posicionamiento.firma'),
+                title : HreRem.i18n('title.publicaciones.alquiler'),
                 items : [{
                     xtype : 'gridBaseEditableRow',
                     title : HreRem.i18n('title.posicionamiento'),

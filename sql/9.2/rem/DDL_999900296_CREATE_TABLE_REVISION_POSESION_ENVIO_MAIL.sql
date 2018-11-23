@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=MARIA PRESENCIA
---## FECHA_CREACION=20181010
+--## FECHA_CREACION=20181123
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-4578

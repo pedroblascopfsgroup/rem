@@ -44,6 +44,11 @@ public class MSVSituacionPlusvaliaExcelValidator extends MSVExcelValidatorAbstra
 	public static final String ACTIVE_EXISTS = "El activo propuesto no existe = ";
 
 	public static final String FECHA_ESCRITO= "EL formato de la fecha de escrito del ayuntamiento no es correcto ";
+	public static final String AUTOLIQUIDACION= "Los unicos valores validos  para la autoliquidacion son 0 y 1 =";
+	public static final String EXENTO= "Los unicos valores validos para el exento son 0 y 1 =";
+
+
+	
 
 
 	// Posicion fija de Columnas excel, para cualquier referencia por posicion
@@ -110,10 +115,22 @@ public class MSVSituacionPlusvaliaExcelValidator extends MSVExcelValidatorAbstra
 			mapaErrores.put(ACTIVE_EXISTS , isActiveExistsRows(exc));
 
 			mapaValores.put(ACTIVE_EXISTS , dameValorActivo(exc));
+			
+			
+			mapaErrores.put(AUTOLIQUIDACION, isColumnAceptable(exc, COL_NUM.AUTOLIQUIDACION));
+			
+			mapaValores.put(AUTOLIQUIDACION, dameValoresAceptables(exc, COL_NUM.AUTOLIQUIDACION));
+			
+			mapaErrores.put(EXENTO, isColumnAceptable(exc, COL_NUM.AUTOLIQUIDACION));
+			
+			mapaValores.put(EXENTO, dameValoresAceptables(exc, COL_NUM.EXENTO));
+
+			
+			
 
 			mapaErrores.put(FECHA_ESCRITO, isColumnNotDateByRows(exc, COL_NUM.FECHA_ESCRITO_AYTO));
 			
-				if (!mapaErrores.get(ACTIVE_EXISTS).isEmpty() || !mapaErrores.get(FECHA_ESCRITO).isEmpty()) 
+				if (!mapaErrores.get(ACTIVE_EXISTS).isEmpty() || !mapaErrores.get(FECHA_ESCRITO).isEmpty() || !mapaErrores.get(AUTOLIQUIDACION).isEmpty() || !mapaErrores.get(AUTOLIQUIDACION).isEmpty()) 
 			 {
 
 					dtoValidacionContenido.setFicheroTieneErrores(true);
@@ -258,6 +275,62 @@ public class MSVSituacionPlusvaliaExcelValidator extends MSVExcelValidatorAbstra
 
 		return listaFilas;
 	}
+	
+	private List<Integer> isColumnAceptable(MSVHojaExcel exc, int columnNumber) {
+		List<Integer> listaFilas = new ArrayList<Integer>();
+
+		for (int i = COL_NUM.DATOS_PRIMERA_FILA; i < numFilasHoja; i++) {
+			try {
+				if (Checks.esNulo(exc.dameCelda(i, columnNumber)) || !(exc.dameCelda(i, columnNumber).equals("1")  || exc.dameCelda(i, columnNumber).equals("0") ))
+					listaFilas.add(i);
+			} catch (IllegalArgumentException e) {
+				logger.error(e.getMessage(),e);
+				e.printStackTrace();
+			} catch (IOException e) {
+				logger.error(e.getMessage(),e);
+				e.printStackTrace();
+			} catch (ParseException e) {
+				logger.error(e.getMessage(),e);
+				listaFilas.add(i);
+			}
+		}
+
+		return listaFilas;
+	}
+	
+
+	private List<String> dameValoresAceptables(MSVHojaExcel exc,int columnNumber) {
+		List<String> listaFilas = new ArrayList<String>();
+
+		int i = 0;
+		try {
+			for (i = COL_NUM.DATOS_PRIMERA_FILA; i < numFilasHoja; i++) {
+				if (Checks.esNulo(exc.dameCelda(i, columnNumber)) || !(exc.dameCelda(i, columnNumber).equals("1")  || exc.dameCelda(i, columnNumber).equals("0") ))
+
+				listaFilas.add(exc.dameCelda(i, columnNumber));
+			
+					
+				
+			}
+		} catch (IllegalArgumentException e) {
+			logger.error(e.getMessage(),e);
+			e.printStackTrace();
+		} catch (IOException e) {
+			logger.error(e.getMessage(),e);
+			e.printStackTrace();
+		} catch (ParseException e) {
+			logger.error(e.getMessage(),e);
+			listaFilas.add("0");
+		}
+		
+		
+	
+		
+
+		return listaFilas;
+	}
+	
+
 
 	
 

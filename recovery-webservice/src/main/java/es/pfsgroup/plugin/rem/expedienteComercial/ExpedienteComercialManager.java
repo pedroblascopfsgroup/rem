@@ -7071,7 +7071,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			if(DDResultadoCampo.RESULTADO_APROBADO.equals(scoringAlquiler.getResultadoScoring().getCodigo())) {
 				resultadoCampo = (DDResultadoCampo) utilDiccionarioApi.dameValorDiccionarioByCod(DDResultadoCampo.class, DDResultadoCampo.RESULTADO_APROBADO);
 				scoringDto.setComboEstadoScoring(resultadoCampo.getDescripcion());
-			}else {
+			} else {
 				resultadoCampo = (DDResultadoCampo) utilDiccionarioApi.dameValorDiccionarioByCod(DDResultadoCampo.class, DDResultadoCampo.RESULTADO_RECHAZADO);
 				scoringDto.setComboEstadoScoring(resultadoCampo.getDescripcion());
 			}
@@ -7088,6 +7088,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			
 			scoringDto.setComentarios(scoringAlquiler.getComentarios());
 			
+		} else {
+			scoringDto.setComboEstadoScoring("En trámite");
 		}
 				
 		return scoringDto;

@@ -20,15 +20,15 @@ public class FacturasProveedoresExcelReport extends AbstractExcelReport implemen
 		listaCabeceras.add("ORDEN");
 		listaCabeceras.add("CIF");
 		listaCabeceras.add("CODIGO");
-		listaCabeceras.add("NUM_FRA");
-		listaCabeceras.add("FECHA_FRA");
-		listaCabeceras.add("FECHA_CONTABLE");
+		listaCabeceras.add("NUM.FRA");
+		listaCabeceras.add("FECHA.FRA");
+		listaCabeceras.add("FECHA.CONTABLE");
 		listaCabeceras.add("DIARIO_CONTB");
-		listaCabeceras.add("IMP_BRUTO");
+		listaCabeceras.add("IMP.BRUTO");
 		listaCabeceras.add("TOTAL");
-		listaCabeceras.add("OP_ALQ");
+		listaCabeceras.add("OP.ALQ");
 		listaCabeceras.add("D347");
-		listaCabeceras.add("TIPO_FRA");
+		listaCabeceras.add("TIPO.FRA");
 		listaCabeceras.add("SUJ_RECC");
 		listaCabeceras.add("DELEGACION");
 		listaCabeceras.add("BASE_RETENCION");
@@ -96,11 +96,9 @@ public class FacturasProveedoresExcelReport extends AbstractExcelReport implemen
 		listaCabeceras.add("CODI_DIAR_IVA_V");
 		listaCabeceras.add("PCTJE_IVA_V");
 		listaCabeceras.add("NOMBRE");
-		listaCabeceras.add("CARACTERISTICA");
+		listaCabeceras.add("CARACTERÍSTICA");
 		listaCabeceras.add("RUTA");
 		listaCabeceras.add("ETAPA");
-		listaCabeceras.add("TIPO_GASTO");
-		listaCabeceras.add("SUBTIPO_GASTO");
 		
 		return listaCabeceras;
 	}
@@ -612,18 +610,6 @@ public class FacturasProveedoresExcelReport extends AbstractExcelReport implemen
 			
 			if(!Checks.esNulo(factura.getEtapa())) {
 				fila.add(factura.getEtapa());
-			}else {
-				fila.add("");
-			}
-			
-			if(!Checks.esNulo(factura.getTipoGasto())) {
-				fila.add(factura.getTipoGasto());
-			}else {
-				fila.add("");
-			}
-			
-			if(!Checks.esNulo(factura.getSubTipoGasto())) {
-				fila.add(factura.getSubTipoGasto());
 			}else {
 				fila.add("");
 			}

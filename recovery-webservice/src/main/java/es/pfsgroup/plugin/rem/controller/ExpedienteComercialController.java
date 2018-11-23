@@ -76,7 +76,7 @@ import es.pfsgroup.plugin.rem.model.VBusquedaDatosCompradorExpediente;
 public class ExpedienteComercialController extends ParadiseJsonController{
 
 	protected static final Log logger = LogFactory.getLog(ActivoController.class);
-	private static final String CONSTANTE_REST_CLIENT = "rest.client.gestor.documental.constante";
+	public static final String CONSTANTE_REST_CLIENT = "rest.client.gestor.documental.constante";
 	
 	@Autowired
 	private ExpedienteComercialApi expedienteComercialApi;

@@ -1,7 +1,7 @@
 --/*
 --#########################################
 --## AUTOR=NOELIA LAPERA
---## FECHA_CREACION=20181114
+--## FECHA_CREACION=20181123
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=2.0.18
 --## INCIDENCIA_LINK=HREOS-4790

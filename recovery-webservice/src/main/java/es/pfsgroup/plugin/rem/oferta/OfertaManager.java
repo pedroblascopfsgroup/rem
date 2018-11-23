@@ -14,6 +14,7 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
+import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,7 +56,6 @@ import es.pfsgroup.plugin.rem.gestor.GestorExpedienteComercialManager;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
-import es.pfsgroup.plugin.rem.model.ActivoHistoricoEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.ActivoInfoLiberbank;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoOferta.ActivoOfertaPk;
@@ -70,7 +70,6 @@ import es.pfsgroup.plugin.rem.model.CompradorExpediente;
 import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
 import es.pfsgroup.plugin.rem.model.DtoActivosExpediente;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
-import es.pfsgroup.plugin.rem.model.DtoCambioEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoDetalleOferta;
 import es.pfsgroup.plugin.rem.model.DtoGastoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoHonorariosOferta;
@@ -92,7 +91,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDCategoriaContable;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
@@ -120,7 +118,6 @@ import es.pfsgroup.plugin.rem.rest.dto.OfertaDto;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaTitularAdicionalDto;
 import es.pfsgroup.plugin.rem.rest.dto.ResultadoInstanciaDecisionDto;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
-import es.pfsgroup.plugin.rem.validate.validator.DtoPublicacionValidaciones;
 import net.sf.json.JSONObject;
 
 @Service("ofertaManager")
@@ -198,6 +195,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 	@Autowired
 	private ActivoApi activoApi;
+
+	@Autowired
+	private ActivoAdapter activoAdapter;
 
 	@Autowired
 	private AgendaAdapter adapter;
@@ -605,8 +605,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 			if (!Checks.esNulo(ofertaDto.getIsExpress())) {
 				oferta.setOfertaExpress(ofertaDto.getIsExpress());
-
-				
 			}
 
 			Long idOferta = this.saveOferta(oferta);
@@ -616,14 +614,14 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			oferta = updateEstadoOferta(idOferta, ofertaDto.getFechaAccion());
 			this.updateStateDispComercialActivosByOferta(oferta);
 
-			if (ofertaDto.getIsExpress())
+			if (ofertaDto.getIsExpress()) {
 				congelarExpedientesPorOfertaExpress(oferta);
-			
+			}
+
 			notificationOfertaManager.sendNotification(oferta);
-
 		}
-		return errorsList;
 
+		return errorsList;
 	}
 	
 	@Transactional(readOnly = false)
@@ -766,8 +764,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					}*/ 
 
 					// HREOS-1669 - Validar el tipo destino comercial
-					if (!Checks.esNulo(act.getTipoComercializacion()) && !Checks.esNulo(oferta.getTipoOferta())) {
-						String comercializacion = act.getTipoComercializacion().getCodigo();
+					if (!Checks.esNulo(act.getActivoPublicacion()) && !Checks.esNulo(act.getActivoPublicacion().getTipoComercializacion()) && !Checks.esNulo(oferta.getTipoOferta())) {
+						String comercializacion = act.getActivoPublicacion().getTipoComercializacion().getCodigo();
 
 						if ((DDTipoOferta.CODIGO_VENTA.equals(oferta.getTipoOferta().getCodigo())
 								&& (!DDTipoComercializacion.CODIGO_VENTA.equals(comercializacion)
@@ -793,7 +791,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			}
 		} else {
 			if (oferta.getOfertaExpress()) {
-				
 				oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class,
 						genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_ACEPTADA)));
 
@@ -840,14 +837,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				expComercial.setEstado(estadoExpCom);
 				
 				genericDao.update(ExpedienteComercial.class, expComercial);
-				
-				//genericDao.update(CondicionanteExpediente.class, coe);
-				
-				//Se ocultará el activo con el motivo “Oferta Express Cajamar”
-				Activo activo = oferta.getActivoPrincipal();			
-				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoPublicacion.CODIGO_PUBLICADO_OCULTO);
-				activoEstadoPublicacionApi.cambiarEstadoPublicacionAndRegistrarHistorico(activo, ActivoHistoricoEstadoPublicacion.MOTIVO_OFERTA_EXPRES, filtro,activo.getEstadoPublicacion(), null, null);
-				
+
 			}else{
 				oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_PENDIENTE)));	
 			}
@@ -878,8 +868,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			oferta.setFechaRechazoOferta(fechaAccion);
 		}
 		ofertaDao.saveOrUpdate(oferta);
-		//usuarioSecurity = usuarioSecurityManager.getByUsername(RestApi.REST_LOGGED_USER_USERNAME);
-		//restApi.doLogin(usuarioSecurity);
 		return oferta;
 	}
 
@@ -973,7 +961,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				}else{
 					updaterState.updaterStateDisponibilidadComercialAndSave(activo,false);
 				}
-				
 			}
 		}
 	}
@@ -1189,7 +1176,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 							return oferta;
 						}
 					}
-
 			}
 		}
 
@@ -1602,7 +1588,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					}
 				}
 			}
-			
+
 			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(oferta.getId());
 			if (!Checks.esNulo(expediente)) {
 				if (!Checks.esNulo(expediente.getComiteSancion())) {
@@ -1629,11 +1615,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					}
 				}
 			}
-			
-			
+
+
 		}
-		
-		
+
+
 		return false;
 	}
 
@@ -1707,7 +1693,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			DDComiteSancion comite = expedienteComercialApi.comiteSancionadorByCodigo(codigoComite);
 			expediente.setComiteSancion(comite);
 			expediente.setComiteSuperior(comite);
-			
+
 			if(!Checks.esNulo(resultadoDto.getCodigoOfertaUvem())){
 				if(!Checks.esNulo(expediente.getOferta())){
 					expediente.getOferta().setIdUvem(resultadoDto.getCodigoOfertaUvem().longValue());
@@ -2536,57 +2522,14 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	}
 
 	@Override
-	public void ocultarActivoOferta(Oferta oferta) throws Exception {
-
-		if (oferta.getActivosOferta() != null && !oferta.getActivosOferta().isEmpty()) {
-			for (ActivoOferta activoOferta : oferta.getActivosOferta()) {
-				Activo activo = activoOferta.getPrimaryKey().getActivo();
-				if (DDCartera.CODIGO_CARTERA_CAJAMAR.equals(activo.getCartera().getCodigo())
-						&& DDSituacionComercial.CODIGO_DISPONIBLE_VENTA_RESERVA
-								.equals(activo.getSituacionComercial().getCodigo())) {
-
-					DtoCambioEstadoPublicacion dtoCambioEstadoPublicacion = activoEstadoPublicacionApi
-							.getState(activo.getId());
-					dtoCambioEstadoPublicacion.setOcultacionForzada(true);
-					dtoCambioEstadoPublicacion
-							.setMotivoPublicacion(ActivoHistoricoEstadoPublicacion.MOTIVO_OCULTACION_AUTOMATICA);
-					DtoPublicacionValidaciones dtoPublicacionValidaciones = new DtoPublicacionValidaciones();
-					dtoPublicacionValidaciones.setValidacionesNinguna();
-
-					activoEstadoPublicacionApi.publicacionChangeState(dtoCambioEstadoPublicacion,
-							dtoPublicacionValidaciones);
-				}
-			}
-		}
-	}
-
-	@Override
 	public void desocultarActivoOferta(Oferta oferta) throws Exception {
-
 		if (oferta.getActivosOferta() != null && !oferta.getActivosOferta().isEmpty()) {
 			for (ActivoOferta activoOferta : oferta.getActivosOferta()) {
 				Activo activo = activoOferta.getPrimaryKey().getActivo();
-				if (DDCartera.CODIGO_CARTERA_CAJAMAR.equals(activo.getCartera().getCodigo())
-						&& (DDSituacionComercial.CODIGO_DISPONIBLE_VENTA
-								.equals(activo.getSituacionComercial().getCodigo())
-								|| DDSituacionComercial.CODIGO_DISPONIBLE_VENTA_OFERTA
-										.equals(activo.getSituacionComercial().getCodigo())
-								|| DDSituacionComercial.CODIGO_DISPONIBLE_CONDICIONADO
-										.equals(activo.getSituacionComercial().getCodigo()))) {
-
-					DtoCambioEstadoPublicacion dtoCambioEstadoPublicacion = activoEstadoPublicacionApi
-							.getState(activo.getId());
-
-					dtoCambioEstadoPublicacion.setPublicacionOrdinaria(true);
-					dtoCambioEstadoPublicacion.setOcultacionForzada(false);
-					dtoCambioEstadoPublicacion
-							.setMotivoPublicacion(ActivoHistoricoEstadoPublicacion.MOTIVO_DESOCULTACION_AUTOMATICA);
-					DtoPublicacionValidaciones dtoPublicacionValidaciones = new DtoPublicacionValidaciones();
-					dtoPublicacionValidaciones.setValidacionesNinguna();
-					dtoPublicacionValidaciones.setActivo(activo);
-
-					activoEstadoPublicacionApi.publicacionChangeState(dtoCambioEstadoPublicacion,
-							dtoPublicacionValidaciones);
+				if (DDCartera.CODIGO_CARTERA_CAJAMAR.equals(activo.getCartera().getCodigo()) && (DDSituacionComercial.CODIGO_DISPONIBLE_VENTA.equals(activo.getSituacionComercial().getCodigo())
+						|| DDSituacionComercial.CODIGO_DISPONIBLE_VENTA_OFERTA.equals(activo.getSituacionComercial().getCodigo())
+						|| DDSituacionComercial.CODIGO_DISPONIBLE_CONDICIONADO.equals(activo.getSituacionComercial().getCodigo()))) {
+					activoAdapter.actualizarEstadoPublicacionActivo(activo.getId());
 				}
 			}
 		}
@@ -2623,7 +2566,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					return false;
 				}
 			}
-				
+
 		}
 		return false;
 	}
@@ -2749,6 +2692,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	}
 	@Override
 	public DDComiteSancion calculoComiteLiberbank(Oferta ofertaAceptada) {
+		if(!Checks.esNulo(ofertaAceptada)){
 		ActivoAgrupacion agrupacion = ofertaAceptada.getAgrupacion();
 		Double importeOferta = this.getImporteOferta(ofertaAceptada);
 		Double importeUmbral = 500000.0;
@@ -2772,11 +2716,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						precioAprobadoVenta = p.getImporte();
 					} else if(DDTipoPrecio.CODIGO_TPC_MIN_AUTORIZADO.equals(p.getCodigoTipoPrecio())) {
 						precioMinimoAutorizado = p.getImporte();
-					}  else if(DDTipoPrecio.CODIGO_TPC_DESC_PUBLICADO.equals(p.getCodigoTipoPrecio())) {
+					}  else if(DDTipoPrecio.CODIGO_TPC_DESC_APROBADO.equals(p.getCodigoTipoPrecio())) {
 						precioDescuentoPublicado = p.getImporte();
 					}
 				}
-				
+
 				Filter filterInfLiber = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
 				ActivoInfoLiberbank activoInfoLiberbank = genericDao.get(ActivoInfoLiberbank.class, filterInfLiber);
 				
@@ -2787,20 +2731,20 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					
 					return comiteSancion;
 				}
-				
+
 				if (!Checks.esNulo(activoInfoLiberbank) && !Checks.esNulo(activoInfoLiberbank.getCodPromocion()) && !Checks.esNulo(activoInfoLiberbank.getCategoriaContable()) &&
 						DDCategoriaContable.COD_INMOVILIZADO.equals(activoInfoLiberbank.getCategoriaContable().getCodigo())){
-					
+
 					Filter filterComite = genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_HAYA_LIBERBANK);
 					DDComiteSancion comiteSancion = genericDao.get(DDComiteSancion.class, filterComite);
-					
+
 					return comiteSancion;
-					
-				}else if(((!Checks.esNulo(importeTasacion) && importeTasacion < importeUmbral) 
+
+				}else if(((!Checks.esNulo(importeTasacion) && importeTasacion < importeUmbral)
 						&& (!Checks.esNulo(importeOferta) && !Checks.esNulo(precioMinimoAutorizado) && importeOferta >= precioMinimoAutorizado))
-				|| ((!Checks.esNulo(importeTasacion) && importeTasacion < importeUmbral) 
+				|| ((!Checks.esNulo(importeTasacion) && importeTasacion < importeUmbral)
 						&& (!Checks.esNulo(importeOferta) && !Checks.esNulo(precioDescuentoPublicado) && importeOferta >= precioDescuentoPublicado))
-				|| ((!Checks.esNulo(precioAprobadoVenta) && precioAprobadoVenta < importeUmbral) 
+				|| ((!Checks.esNulo(precioAprobadoVenta) && precioAprobadoVenta < importeUmbral)
 						&& (!Checks.esNulo(importeOferta) && !Checks.esNulo(precioMinimoAutorizado) && importeOferta >= precioMinimoAutorizado))) {
 					Filter filterComite = genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_HAYA_LIBERBANK);
 					DDComiteSancion comiteSancion = genericDao.get(DDComiteSancion.class, filterComite);
@@ -2839,25 +2783,25 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			Double sumaPreciosMinimosAutorizados = 0.0;
 			
 			List<VTasacionCalculoLBK> vista = activoApi.getVistaTasacion(agrupacion.getId());
-			
+
 			for(VTasacionCalculoLBK reg: vista) {
 				Double importeTasacion = reg.getImporteTasacion();
 				Double precioAprobadoVenta = 0.0;	
 				Double precioMinimoAutorizado = 0.0;
 				Boolean esPrecioAprobadoVenta = false;
-				
+
 				if(DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA.equals(reg.getCodigoTipoPrecio())) {
 					precioAprobadoVenta = (!Checks.esNulo(reg.getImporteTipoPrecio())) ? reg.getImporteTipoPrecio() : 0.0;
 					esPrecioAprobadoVenta = true;
 				}else {
 					precioMinimoAutorizado = (!Checks.esNulo(reg.getImporteTipoPrecio())) ? reg.getImporteTipoPrecio() : 0.0;
 				}
-				
+
 				if(esPrecioAprobadoVenta) {
 					sumaTasaciones += (!Checks.esNulo(importeTasacion)) ? importeTasacion : precioAprobadoVenta;
 				}
 				sumaPreciosMinimosAutorizados += precioMinimoAutorizado;
-				
+
 			}
 			
 			Integer tipoResidencial = 0;
@@ -2920,5 +2864,18 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		}
 		
 		return null;
+		
+		}else{
+			return null;
+		}
+	}
+
+	public boolean estaViva(Oferta oferta)
+	{
+		if(DDEstadoOferta.CODIGO_ACEPTADA.equals(oferta.getEstadoOferta().getCodigo()) || DDEstadoOferta.CODIGO_PENDIENTE.equals(oferta.getEstadoOferta().getCodigo()))
+		{
+			return true;
+		}
+		return false;
 	}
 }

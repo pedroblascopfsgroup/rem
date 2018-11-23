@@ -6,7 +6,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
     'HreRem.model.IncrementoPresupuesto', 'HreRem.model.Distribuciones', 'HreRem.model.Observaciones',
     'HreRem.model.Carga', 'HreRem.model.Llaves', 'HreRem.model.PreciosVigentes','HreRem.model.VisitasActivo',
     'HreRem.model.OfertaActivo', 'HreRem.model.PropuestaActivosVinculados', 'HreRem.model.HistoricoMediadorModel','HreRem.model.AdjuntoActivoPromocion',
-    'HreRem.model.MediadorModel', 'HreRem.model.MovimientosLlave', 'HreRem.model.ActivoPatrimonio', 'HreRem.model.HistoricoAdecuacionesPatrimonioModel','HreRem.model.ImpuestosActivo'],
+    'HreRem.model.MediadorModel', 'HreRem.model.MovimientosLlave', 'HreRem.model.ActivoPatrimonio', 'HreRem.model.HistoricoAdecuacionesPatrimonioModel', 'HreRem.model.ImpuestosActivo'],
     
     data: {
     	activo: null,
@@ -21,8 +21,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
     	 * @param {} get
     	 * @return {}
     	 */
-	     geoCodeAddr: function (get) {   	
-	     	
+	     geoCodeAddr: function (get) {
 	     	 var tipoVia = Ext.isEmpty(get('activo.tipoViaDescripcion')) ? "" : get('activo.tipoViaDescripcion'),
 	     	 nombreVia = Ext.isEmpty(get('activo.nombreVia')) ? "" : get('activo.nombreVia'),
 	     	 numero = Ext.isEmpty(get('activo.numeroDomicilio')) ? "" : get('activo.numeroDomicilio'),
@@ -33,9 +32,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 
 	     	 return geoCodeAddr;
 	     },
-	     
-	     tieneDivisionHorizontal: function(get) {	  
 
+	     tieneDivisionHorizontal: function(get) {
 	     	var tieneDivision = Ext.isEmpty(get('activo.divHorizontal')) ? false : get('activo.divHorizontal') === "1";	 
 	     	
 	     	if(!Ext.isEmpty(get('datosRegistrales.divHorizontal'))) {	     		
@@ -47,181 +45,246 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 	     	}
 
 	     	return tieneDivision;
-	     	
 	     },
-	     
+
 	     esOcupacionLegal: function(get) {
-	     	
 	     	var ocupado = get('situacionPosesoria.ocupado') == "1";
 	     	var conTitulo = get('situacionPosesoria.conTitulo') == "1";
 	     	
 	     	return ocupado && conTitulo
-	     	
 	     },
-	     
+
 	     esSituacionJudicial: function(get){
-	     	var judicial= Ext.isEmpty(get('activo.tipoTituloCodigo')) ? false : get('activo.tipoTituloCodigo') === CONST.TIPO_TITULO_ACTIVO['JUDICIAL'];
-	     	return judicial;
-	     	
+	     	return Ext.isEmpty(get('activo.tipoTituloCodigo')) ? false : get('activo.tipoTituloCodigo') === CONST.TIPO_TITULO_ACTIVO['JUDICIAL'];
 	     },
-	     
+
 	     esOcupacionIlegal: function(get) {
-	     	
 	     	var ocupado = get('situacionPosesoria.ocupado') == "1";
 	     	var conTitulo = get('situacionPosesoria.conTitulo') == "1";
 	     	
 	     	return ocupado && !conTitulo;
-	     	
 	     },
-	     
+
 	     getIconClsEstadoAdmision: function(get) {
-	     	
 	     	var estadoAdmision = get('activo.admision');
 	     	
 	     	if(estadoAdmision) {
-	     		return 'app-tbfiedset-ico icono-ok'
+	     		return 'app-tbfiedset-ico icono-ok';
 	     	} else {
-	     		return 'app-tbfiedset-ico icono-ko'
+	     		return 'app-tbfiedset-ico icono-ko';
 	     	}
 	     },
-	     
+
+	     getIconClsEstadoSituacionComercial: function(get){
+			var estadoSituacionComercial= get('estadoSituacionComercial');
+
+			if(estadoSituacionComercial) {
+				return 'app-tbfiedset-ico icono-ok';
+	        } else {
+	            return 'app-tbfiedset-ico icono-ko';
+	        }
+	     },
+
+	     getIconClsEstadoVenta: function(get) {
+			var estadoVenta = get('activo.estadoVenta');
+
+	        if(estadoVenta == 0) {
+	            return 'app-tbfiedset-ico icono-ko';
+	        } else if (estadoVenta == 1){
+	            return 'app-tbfiedset-ico icono-ok';
+	        }else if (estadoVenta == 2){
+	            return 'app-tbfiedset-ico icono-okn';
+	        }
+		 },
+
+		 getIconClsestadoAlquiler : function(get) {
+			var estadoAlquiler = get('activo.estadoAlquiler');
+
+			if (estadoAlquiler == 0) {
+				return 'app-tbfiedset-ico icono-ko';
+			} else if (estadoAlquiler == 1) {
+				return 'app-tbfiedset-ico icono-ok';
+			} else if (estadoAlquiler == 2) {
+				return 'app-tbfiedset-ico icono-okn';
+			}
+		 },
+
 	     getIconClsEstadoGestion: function(get) {
-	     	
-	     	var estadoAdmision = get('activo.gestion');
-	     	
+	     	var estadoAdmision = get('activo.tieneOkTecnico');
+
 	     	if(estadoAdmision) {
-	     		return 'app-tbfiedset-ico icono-ok'
+	     		return 'app-tbfiedset-ico icono-ok';
 	     	} else {
-	     		return 'app-tbfiedset-ico icono-ko'
+	     		return 'app-tbfiedset-ico icono-ko';
 	     	}
 	     },
-	     
+
 	     getIconClsPrecioAprobadoVentaRenta: function(get) {
 	     	var me = this;
 	     	var aprobadoVentaWeb= get('activo.aprobadoVentaWeb');
 	     	var aprobadoRentaWeb= get('activo.aprobadoRentaWeb');
-	     	if(!Ext.isEmpty(aprobadoVentaWeb) || !Ext.isEmpty(aprobadoRentaWeb)) {
-	     		return 'app-tbfiedset-ico icono-ok'
+
+	     	if(!Ext.isEmpty(aprobadoVentaWeb) && aprobadoVentaWeb>0 || !Ext.isEmpty(aprobadoRentaWeb) && aprobadoRentaWeb>0) {
+	     		return 'app-tbfiedset-ico icono-ok';
 	     	} else {
-	     		return 'app-tbfiedset-ico icono-ko'
+	     		return 'app-tbfiedset-ico icono-ko';
 	     	}
 	     },
-	    
+
 	     //Condicionantes
 	     getIconClsCondicionantesRuina: function(get) {
-	    	 var condicion = get('activoCondicionantesDisponibilidad.ruina');
-		     	if(!eval(condicion)) {
-		     		return 'app-tbfiedset-ico'
-		     	} else {
-		     		return 'app-tbfiedset-ico icono-ko'
-		     	}
-		     },
-		     
+	    	var condicion = get('activoCondicionantesDisponibilidad.ruina');
+
+	        if(!eval(condicion)) {
+	            return 'app-tbfiedset-ico icono-ok';
+	        } else {
+	            return 'app-tbfiedset-ico icono-ko';
+	        }
+		 },
+
 		 getIconClsCondicionantesPendiente: function(get) {
 		 	var claseActivo= get('activo.claseActivoCodigo');
+
 			if(CONST.CLASE_ACTIVO['FINANCIERO'] != claseActivo){
 				var condicion = get('activoCondicionantesDisponibilidad.pendienteInscripcion');
 			   	if(!eval(condicion)) {
-			   		return 'app-tbfiedset-ico'
+			   		return 'app-tbfiedset-ico icono-ok';
 			   	} else {
-			   		return 'app-tbfiedset-ico icono-ko'
+			   		return 'app-tbfiedset-ico icono-ko';
 			   	}
 			}
-			return 'app-tbfiedset-ico'
-		},		 
+
+			return 'app-tbfiedset-ico';
+		},
+
 		getIconClsCondicionantesObraTerminada: function(get) {
 			var condicion = get('activoCondicionantesDisponibilidad.obraNuevaSinDeclarar');
-			   	if(!eval(condicion)) {
-			   		return 'app-tbfiedset-ico'
-			   	} else {
-			   		return 'app-tbfiedset-ico icono-ko'
-			   	}
-			 },			     
+
+		    if(!eval(condicion)) {
+		        return 'app-tbfiedset-ico icono-ok';
+		    } else {
+		        return 'app-tbfiedset-ico icono-ko';
+		    }
+		},
+
 		getIconClsCondicionantesSinPosesion: function(get) {
 			var claseActivo= get('activo.claseActivoCodigo');
+
 			if(CONST.CLASE_ACTIVO['FINANCIERO'] != claseActivo){
 				var condicion = get('activoCondicionantesDisponibilidad.sinTomaPosesionInicial');
 				if(!eval(condicion)) {
-					return 'app-tbfiedset-ico'
+					return 'app-tbfiedset-ico icono-ok';
 				} else {
-					return 'app-tbfiedset-ico icono-ko'
+					return 'app-tbfiedset-ico icono-ko';
 				}
 			}
+
 			return 'app-tbfiedset-ico'
 		},
+
 		getIconClsCondicionantesProindiviso: function(get) {
 			var condicion = get('activoCondicionantesDisponibilidad.proindiviso');
-			   	if(!eval(condicion)) {
-			   		return 'app-tbfiedset-ico'
-			   	} else {
-			   		return 'app-tbfiedset-ico icono-ko'
-			   	}
-			 },
+
+		    if(!eval(condicion)) {
+		        return 'app-tbfiedset-ico icono-ok';
+		    } else {
+		        return 'app-tbfiedset-ico icono-ko';
+		    }
+		 },
+
 		getIconClsCondicionantesObraNueva: function(get) {
 			var condicion = get('activoCondicionantesDisponibilidad.obraNuevaEnConstruccion');
-			   	if(!eval(condicion)) {
-			   		return 'app-tbfiedset-ico'
-			   	} else {
-			   		return 'app-tbfiedset-ico icono-ko'
-			   	}
-			 },					 
+
+		    if(!eval(condicion)) {
+		        return 'app-tbfiedset-ico icono-ok';
+		    } else {
+		        return 'app-tbfiedset-ico icono-ko';
+		    }
+		},
+
 		getIconClsCondicionantesOcupadoConTitulo: function(get) {
 			var condicion = get('activoCondicionantesDisponibilidad.ocupadoConTitulo');
-			   	if(!eval(condicion)) {
-			   		return 'app-tbfiedset-ico'
-			   	} else {
-			   		return 'app-tbfiedset-ico icono-ko'
-			   	}
-			 },							 
+
+		    if(!eval(condicion)) {
+		        return 'app-tbfiedset-ico icono-ok';
+		    } else {
+		        return 'app-tbfiedset-ico icono-ko';
+		    }
+		},
+
 		getIconClsCondicionantesTapiado: function(get) {
 			var condicion = get('activoCondicionantesDisponibilidad.tapiado');
-			   	if(!eval(condicion)) {
-			   		return 'app-tbfiedset-ico'
-			   	} else {
-			   		return 'app-tbfiedset-ico icono-ko'
-			   	}
-			 },
+
+		    if(!eval(condicion)) {
+		        return 'app-tbfiedset-ico icono-ok';
+		    } else {
+		        return 'app-tbfiedset-ico icono-ko';
+		    }
+		 },
 		getIconClsCondicionantesOcupadoSinTitulo: function(get) {
 			var condicion = get('activoCondicionantesDisponibilidad.ocupadoSinTitulo');
-			   	if(!eval(condicion)) {
-			   		return 'app-tbfiedset-ico'
-			   	} else {
-			   		return 'app-tbfiedset-ico icono-ko'
-			   	}
-			 },	
+
+		    if(!eval(condicion)) {
+		        return 'app-tbfiedset-ico icono-ok';
+		    } else {
+		        return 'app-tbfiedset-ico icono-ko';
+		    }
+		 },
+
 		getIconClsCondicionantesDivHorizontal: function(get) {
 			var condicion = get('activoCondicionantesDisponibilidad.divHorizontalNoInscrita');
-			   	if(!eval(condicion)) {
-			   		return 'app-tbfiedset-ico'
-			   	} else {
-			   		return 'app-tbfiedset-ico icono-ko'
-			   	}
-			 },
-			 getIconClsCondicionantesConCargas: function(get) {
-			var condicion = get('activoCondicionantesDisponibilidad.conCargas');
-			   	if(!eval(condicion)) {
-			   		return 'app-tbfiedset-ico'
-			   	} else {
-			   		return 'app-tbfiedset-ico icono-ko'
-			   	}
-			 },
-			 getIconClsCondicionantesSinInformeAprobado: function(get) {
-			var condicion = get('activoCondicionantesDisponibilidad.sinInformeAprobado');
-			   	if(!eval(condicion)) {
-			   		return 'app-tbfiedset-ico'
-			   	} else {
-			   		return 'app-tbfiedset-ico icono-ko'
-			   	}
-			 },
-		 getSiNoFromOtro: function(get) {
-				var condicion = get('activoCondicionantesDisponibilidad.otro');
 
-			   	if(Ext.isEmpty(condicion)) {
-			   		return '0';
-			   	} else {
-			   		return '1';
-			   	}
-			 },
+		    if(!eval(condicion)) {
+		        return 'app-tbfiedset-ico icono-ok';
+		    } else {
+		        return 'app-tbfiedset-ico icono-ko';
+		    }
+		 },
+		 getIconClsCondicionantesConCargas: function(get) {
+			var condicion = get('activoCondicionantesDisponibilidad.conCargas');
+
+		    if(!eval(condicion)) {
+		        return 'app-tbfiedset-ico icono-ok';
+		    } else {
+		        return 'app-tbfiedset-ico icono-ko';
+		    }
+		 },
+		 getIconClsCondicionantesSinInformeAprobado: function(get) {
+			var condicion = get('activoCondicionantesDisponibilidad.sinInformeAprobado');
+
+		    if(!eval(condicion)) {
+		        return 'app-tbfiedset-ico icono-ok';
+		    } else {
+		        return 'app-tbfiedset-ico icono-ko';
+		    }
+		 },
+		 getIconClsCondicionantesVandalizado: function(get) {
+			var condicion = get('activoCondicionantesDisponibilidad.vandalizado');
+
+		    if(!eval(condicion)) {
+		        return 'app-tbfiedset-ico icono-ok';
+		    } else {
+		        return 'app-tbfiedset-ico icono-ko';
+		    }
+		},
+		getIconClsCondicionantesSinAcceso: function(get) {
+	        var condicion = get('activoCondicionantesDisponibilidad.sinAcceso');
+
+            if(!eval(condicion)) {
+                return 'app-tbfiedset-ico icono-ok';
+            } else {
+                return 'app-tbfiedset-ico icono-ko';
+            }
+         },
+		getSiNoFromOtro: function(get) {
+			var condicion = get('activoCondicionantesDisponibilidad.otro');
+
+		    if(Ext.isEmpty(condicion)) {
+		        return '0';
+		    } else {
+		        return '1';
+		    }
+		 },
 		 //FinCondicionantes
 	     
 	     getSrcSelloCalidad: function(get) {
@@ -255,6 +318,23 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			return codigo;
 		 },
 
+		 estaPublicadoVentaOAlquiler: function(get) {
+			 var estadoAlquilerCodigo = get('activo.estadoAlquilerCodigo');
+			 var estadoVentaCodigo = get('activo.estadoVentaCodigo');
+			 var incluyeDestinoComercialAlquiler = get('activo.incluyeDestinoComercialAlquiler');
+			 var incluyeDestinoComercialVenta = get('activo.incluyeDestinoComercialVenta');
+
+			 if(incluyeDestinoComercialVenta && incluyeDestinoComercialAlquiler) {
+				 return estadoAlquilerCodigo === CONST.ESTADO_PUBLICACION_ALQUILER['PUBLICADO'] || estadoVentaCodigo === CONST.ESTADO_PUBLICACION_VENTA['PUBLICADO'];
+			 } else if(incluyeDestinoComercialVenta) {
+				 return estadoVentaCodigo === CONST.ESTADO_PUBLICACION_VENTA['PUBLICADO'];
+			 } else if (incluyeDestinoComercialAlquiler){
+				 return estadoAlquilerCodigo === CONST.ESTADO_PUBLICACION_ALQUILER['PUBLICADO'];
+			 } else {
+				 return false;
+			 }
+		 },
+
 		 activoPertenceAgrupacionComercialOrRestringida: function(get) {
 			 var restringida = get('activo.pertenceAgrupacionRestringida');
 			 var comercial = get('activo.pertenceAgrupacionComercial');
@@ -269,11 +349,38 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		 activoPerteneceAgrupacionComercial: function(get){
 		 	 return get('activo.pertenceAgrupacionComercial');
 		 },
-		 
+
 		 activoPerteneceAgrupacionRestringida: function(get){
 		 	 return get('activo.pertenceAgrupacionRestringida');
 		 },
 		 
+		 getLinkHayaActivo: function(get) {
+			 if(get('activo.perteneceAgrupacionRestringidaVigente')) {
+				 return get('activo.activoPrincipalRestringida');
+			 } else {
+				 return get('activo.numActivo');
+			 }
+		 },
+
+		 enableComboTipoAlquiler: function(get){
+			var chkPerimetroAlquiler = get('patrimonio.chkPerimetroAlquiler');
+			var tipoComercializacion = get('activo.tipoComercializacionCodigo');
+			if((chkPerimetroAlquiler == true || chkPerimetroAlquiler == "true" ) && CONST.TIPOS_COMERCIALIZACION['VENTA'] != tipoComercializacion){
+				return false;
+			}else{
+				return true;
+			}
+		 },
+
+		 enableComboAdecuacion: function(get){
+			var chkPerimetroAlquiler = get('patrimonio.chkPerimetroAlquiler');
+			if((chkPerimetroAlquiler == true || chkPerimetroAlquiler == "true" )){
+				return false;
+			}else{
+				return true;
+			}
+		 },
+
 		 esEditableCodigoPromocion: function(get){
 			 var isGestorActivos = $AU.userIsRol('HAYAGESACT') || $AU.userIsRol('HAYAGESTADM');
 			 var isLiberbank = get('activo.isCarteraLiberbank');
@@ -716,6 +823,19 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 	    	 }
     		},
 
+    		storeGestoresActivos: {
+    			pageSize: $AC.getDefaultPageSize(),
+				model: 'HreRem.model.GestorActivo',
+			   	proxy: {
+			   		type: 'uxproxy',
+			   	    remoteUrl: 'activo/getGestoresActivos',
+			   	    extraParams: {
+			   	    	idActivo: '{activo.id}',
+			   	    	incluirGestoresInactivos: false
+			   	    }
+			    }
+    		},
+
     		storeGestores: {
     			pageSize: $AC.getDefaultPageSize(),
 				model: 'HreRem.model.GestorActivo',
@@ -756,7 +876,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			   	    }
 			    }
     		},
-    		
+
     		storeDistribuciones: {
 				 model: 'HreRem.model.Distribuciones',
 				 proxy: {
@@ -826,7 +946,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 	          	 },
 	          	 groupField: 'descripcionTipo'
     		},
-    		
+
     		storeDocumentosActivoPromocion: {
    			 pageSize: $AC.getDefaultPageSize(),
    			 model: 'HreRem.model.AdjuntoActivoPromocion',
@@ -1083,16 +1203,44 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
     			}
     		},
     		
-    		historicoEstados:{
+    		historicoEstadosPublicacionVenta: {
     			pageSize: $AC.getDefaultPageSize(),
-    			model: 'HreRem.model.EstadoPublicacion',
+    			model: 'HreRem.model.HistoricoEstadosPublicacion',
     			proxy: {
     				type: 'uxproxy',
-    				remoteUrl: 'activo/getEstadoPublicacionByActivo',
-    				extraParams: {id: '{activo.id}'}
+    				remoteUrl: 'activo/getHistoricoEstadosPublicacionVentaByIdActivo',
+    				extraParams: {idActivo: '{activo.id}'}
     			}
     		},
-    		
+
+    		historicoEstadosPublicacionAlquiler: {
+    			pageSize: $AC.getDefaultPageSize(),
+    			model: 'HreRem.model.HistoricoEstadosPublicacion',
+    			proxy: {
+    				type: 'uxproxy',
+    				remoteUrl: 'activo/getHistoricoEstadosPublicacionAlquilerByIdActivo',
+    				extraParams: {idActivo: '{activo.id}'}
+    			}
+    		},
+
+    		comboMotivosOcultacionVenta: {
+    			model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDiccionario',
+					extraParams: {diccionario: 'motivosOcultacion'}
+				}
+    		},
+
+    		comboMotivosOcultacionAlquiler: {
+                model: 'HreRem.model.ComboBase',
+                proxy: {
+                    type: 'uxproxy',
+                    remoteUrl: 'generic/getDiccionario',
+                    extraParams: {diccionario: 'motivosOcultacion'}
+                }
+            },
+
     		historicoInformeComercial:{
     			pageSize: $AC.getDefaultPageSize(),
     			model: 'HreRem.model.InformeComercial',
@@ -1175,7 +1323,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				type: 'uxproxy',
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'estadosOfertas'}
-			}   	
+			},
+			autoLoad: true
 	    },
 
 	    comboTipoOferta: {
@@ -1452,6 +1601,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 
 				}
 		},
+
 		comboAdecuacionAlquiler: {
 			model: 'HreRem.model.ComboBase',
 			proxy: {
@@ -1460,6 +1610,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				extraParams: {diccionario: 'comboAdecuacionAlquiler'}
 			}
 		},
+
 		storeHistoricoAdecuacionesAlquiler:{
 			pageSize: $AC.getDefaultPageSize(),
 			model: 'HreRem.model.HistoricoAdecuacionesPatrimonioModel',
@@ -1477,25 +1628,5 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				extraParams: {diccionario: 'situacionActivo'}
 			}
 		}
-		
-
-//		
-//		filtroComboPrescriptor: {
-//			//pageSize: $AC.getDefaultPageSize(),
-//   		 	model: 'HreRem.model.ComboBase',
-//       		proxy: {
-//		        type: 'uxproxy',
-//		        remoteUrl: 'proveedores/getProveedores',
-//		        actionMethods: {read: 'POST'},
-//		        extraParams: {codigoTipoProveedor: '03', codigoSubtipoProveedor: '{tipoProveedorCodigo.selection.codigo}'}
-//	    	},	    	
-//	    autoLoad: true/*,
-//	    	session: true,
-//	    	remoteSort: true,
-//	    	remoteFilter: true,
-//	    	listeners : {
-//	            beforeload : 'paramLoading'
-//	        }*/
-//		}
      }    
 });

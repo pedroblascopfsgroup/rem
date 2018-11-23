@@ -30,8 +30,7 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 				defaultType: 'textfieldbase',
 				title: HreRem.i18n('title.datos.inscripcion'),
 				items :
-					[				
-									
+					[
 						{
 							xtype: 'comboboxfieldbase',
 							fieldLabel: HreRem.i18n('fieldlabel.provincia.registro'),
@@ -46,13 +45,11 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 								select: 'onChangeChainedCombo'
 			            	},
 			            	allowBlank: false
-		                	
-
-						},						
+						},
 						{ 
 		                	fieldLabel: HreRem.i18n('fieldlabel.finca'),
 		                	bind: '{datosRegistrales.numFinca}',
-		                	allowBlank: false
+                            readOnly: true
 		                },	
 		                { 
 				        	xtype: 'comboboxfieldbase',				        	
@@ -76,8 +73,7 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 			            		value: '{datosRegistrales.poblacionRegistro}',
 			            		disabled: '{!datosRegistrales.provinciaRegistro}'
 			            	},
-    						allowBlank: false
-		                	
+                            readOnly: true
 						},
 		                { 
 		                	fieldLabel: HreRem.i18n('fieldlabel.idufir'),
@@ -85,7 +81,8 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 		                	bind: '{datosRegistrales.idufir}',
 		                	maskRe: /^\d*$/, 
 		                	vtype: 'idufir',
-		                	maxLength: 14
+		                	maxLength: 14,
+                            readOnly: true
 		                },		                
 		                {
 				        	xtype:'fieldset',
@@ -135,12 +132,11 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 		                { 
 							fieldLabel: HreRem.i18n('fieldlabel.numero.registro'),
 		                	bind:		'{datosRegistrales.numRegistro}',
-		                	allowBlank: false,
-		                	maskRe: /^\d*$/
+		                	maskRe: /^\d*$/,
+                            readOnly: true
 		                },
 		                { 
 		                	fieldLabel: HreRem.i18n('fieldlabel.num.departamento'),
-		                	//rowspan: 5,
 		                	bind: '{datosRegistrales.numDepartamento}',
 		                	maskRe: /^\d*$/
 		                },
@@ -148,26 +144,23 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 		                	fieldLabel: HreRem.i18n('fieldlabel.tomo'),
 		                	colspan: 2,
 		                	bind: '{datosRegistrales.tomo}',
-		                	allowBlank: false
+                            readOnly: true
 		                },
 		                { 
 					 		fieldLabel: HreRem.i18n('fieldlabel.libro'),
 					 		colspan: 2,
 					 		bind: '{datosRegistrales.libro}',
-					 		allowBlank: false
+                            readOnly: true
 						},
 						{ 
 							fieldLabel: HreRem.i18n('fieldlabel.folio'),
 							colspan: 2,
 							bind: '{datosRegistrales.folio}',
-							allowBlank: false
+                            readOnly: true
 		                }
-				        
 					]
-                
-           },
-           
-           {    
+			},
+			{
                 
 				xtype:'fieldsettable',
 				defaultType: 'textfieldbase',
@@ -192,27 +185,31 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 								 		reference: 'superficieConstruida',
 								 		symbol: HreRem.i18n("symbol.m2"),
 								 		fieldLabel: HreRem.i18n('fieldlabel.construida'),								 		
-								 		bind: '{datosRegistrales.superficieConstruida}'
+								 		bind: '{datosRegistrales.superficieConstruida}',
+                                        readOnly: true
 									},
 									{ 
 										xtype: 'numberfieldbase',
 										reference: 'superficieUtil',
 								 		symbol: HreRem.i18n("symbol.m2"),
 										fieldLabel: HreRem.i18n('fieldlabel.util'),
-		                				bind: '{datosRegistrales.superficieUtil}'
+		                				bind: '{datosRegistrales.superficieUtil}',
+                                        readOnly: true
 					                },
 					                { 
 					                	xtype: 'numberfieldbase',
 					                	reference: 'superficieElementosComunes',
 								 		symbol: HreRem.i18n("symbol.m2"),
 					                	fieldLabel: HreRem.i18n('fieldlabel.repercusion.elementos.comunes'),
-					                	bind: '{datosRegistrales.superficieElementosComunes}'
+					                	bind: '{datosRegistrales.superficieElementosComunes}',
+                                        readOnly: true
 					                },
 					                { 
 					                	xtype: 'numberfieldbase',
 								 		symbol: HreRem.i18n("symbol.m2"),
 								 		fieldLabel: HreRem.i18n('fieldlabel.parcela.no.ocupada.edificacion'),
-								 		bind: '{datosRegistrales.superficieParcela}'
+								 		bind: '{datosRegistrales.superficieParcela}',
+                                        readOnly: true
 									}
 		
 								]
@@ -277,28 +274,25 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 				        	},
 							defaultType: 'textfieldbase',
 							items :[									
-									{
-										xtype: 'comboboxfieldbase',
-										fieldLabel: HreRem.i18n('fieldlabel.estado'),
-						            	bind: {
-						            		store: '{comboEstadoObraNueva}',
-						            		value: '{datosRegistrales.estadoObraNuevaCodigo}'
-						            	}
-									},
-					                { 
-										xtype:'datefieldbase',
-										formatter: 'date("d/m/Y")',
-								 		fieldLabel: HreRem.i18n('fieldlabel.fecha.cfo'),
-								 		bind: '{datosRegistrales.fechaCfo}'			            	
-									}
+								{
+									xtype: 'comboboxfieldbase',
+									fieldLabel: HreRem.i18n('fieldlabel.estado'),
+					                bind: {
+					                    store: '{comboEstadoObraNueva}',
+					                    value: '{datosRegistrales.estadoObraNuevaCodigo}'
+					                }
+								},
+				                {
+									xtype:'datefieldbase',
+									formatter: 'date("d/m/Y")',
+							        fieldLabel: HreRem.i18n('fieldlabel.fecha.cfo'),
+							        bind: '{datosRegistrales.fechaCfo}'
+								}
 							]
 				        }
 					]
-                
-           },
-           
-           {    
-                
+			},
+			{
 				xtype:'fieldset',
 				defaultType: 'textfieldbase',
 				title: HreRem.i18n('title.titulo'),
@@ -529,12 +523,12 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 			                	xtype: 'datefieldbase',
 			                	reference: 'fechaRealizacionPosesion',
 			                	fieldLabel: HreRem.i18n('fieldlabel.fecha.realizacion.posesion'),			                	
+								bind: '{datosRegistrales.fechaRealizacionPosesion}',
+                                readOnly: true,
 								bind: {
 									value: '{datosRegistrales.fechaRealizacionPosesion}',
 									readOnly: '{isReadOnlyFechaRealizacionPosesion}'
 								}
-								
-								
 			                },
 			                {
 								xtype: 'comboboxfieldbase',
@@ -789,9 +783,9 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 							xtype:'datefieldbase',
 		                	fieldLabel: HreRem.i18n('fieldlabel.fecha.nota.simple'),
 
-					 		bind: '{datosRegistrales.fechaNotaSimple}'		            	
+					 		bind: '{datosRegistrales.fechaNotaSimple}'
 						},
-						{    
+						{
 							xtype:'fieldsettable',
 							defaultType: 'textfieldbase',
 							colspan: 4,
@@ -800,7 +794,7 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 							title: HreRem.i18n("title.calificacion.negativa"),
 							items :
 							[
-								{ 
+								{
 						        	xtype: 'comboboxfieldbase',
 							 		fieldLabel: HreRem.i18n('fieldlabel.calificacion.negativa'),
 						        	name: 'comboCalificacionNegativa',
@@ -810,7 +804,7 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 					            	},
 						        	listeners : {
 						        		change: 'onChangeCalificacionNegativa'
-						        	} 
+						        	}
 						        },
 						        {
 									xtype:'itemselectorbase',
@@ -830,9 +824,9 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 					            	},
 									            listeners:{
 									            	change: function(){
-									            		var me = this;									            		
+									            		var me = this;
 									            		var campoDesc = me.lookupController('activodetalle').lookupReference('descMotivo');
-									            		if(me.getValue().includes(CONST.MOTIVOS_CAL_NEGATIVA["OTROS"])){									            			
+									            		if(me.getValue().includes(CONST.MOTIVOS_CAL_NEGATIVA["OTROS"])){
 									            			campoDesc.allowBlank = false;
 									            			campoDesc.setReadOnly(false);
 									            			if(me.up('activosdetallemain').getViewModel().get("editing")){
@@ -840,7 +834,7 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 									            			}else{
 									            				campoDesc.fireEvent('cancel');
 									            			}
-									            		}else{									            			
+									            		}else{
 									            			campoDesc.allowBlank = true;
 									            			campoDesc.setReadOnly(true);
 									            			campoDesc.fireEvent('cancel');
@@ -853,11 +847,11 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 									allowBlank: true,
 							 		fieldLabel: HreRem.i18n('fieldlabel.calificacion.descripcion'),
 							 		bind: '{datosRegistrales.descripcionCalificacionNegativa}'
-					            	
-								}				
+
+								}
 							]
 		           		}
-					
+
 
 					]
 			}
@@ -888,20 +882,20 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
    		fechaAutoAdjudicacion = me.down("[reference=fechaAutoAdjudicacion]");
 
    		motivoCalNegativa = me.down("[reference=itemselMotivo]");
-   		
+
    		if(provinciaRegistro.getValue() != codigoProvinciaDomicilio) {
    			error = HreRem.i18n("txt.validacion.provincia.diferente.registro");
    			errores.push(error);
    			provinciaRegistro.markInvalid(error); 
    		}
 
-   		
+
    		if(motivoCalNegativa.getValue().length == 0) {
    			error = HreRem.i18n("txt.validacion.motivo.obligatorio");
    			errores.push(error);
-   			motivoCalNegativa.markInvalid(error); 
+   			motivoCalNegativa.markInvalid(error);
    		}
-   		
+
 
    		if(superficieUtil.getValue() > superficieConstruida.getValue()) {
    			error = HreRem.i18n("txt.validacion.suputil.mayor.supconstruida");
@@ -940,5 +934,4 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 		me.lookupController().cargarTabData(me);
 		me.down('grid').getStore().load();
    }
-
 });

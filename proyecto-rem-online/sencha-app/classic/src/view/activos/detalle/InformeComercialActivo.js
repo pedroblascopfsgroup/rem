@@ -150,8 +150,8 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 						}						
 				]
 			},
-
-// Estado del informe comercial			
+			
+//Estado informe comercial
 			{
 				xtype:'fieldsettable',
 				title:HreRem.i18n('fieldlabel.estado.informe.comercial'),
@@ -159,6 +159,18 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 				items :
 					[
 						{xtype: "historicoestadosinformecomercial", reference: "historicoestadosinformecomercial"}
+					]
+			},
+			
+// Historico de mediadores			
+			{
+				xtype:'fieldsettable',
+				title:HreRem.i18n('title.grid.historico.mediador.info.comercial'),
+				defaultType: 'textfieldbase',
+				colspan: 3,
+				items :
+					[
+						{xtype: "historicomediadorgrid", reference: "historicomediadorgrid", colspan: 3}
 					]
 			},
 

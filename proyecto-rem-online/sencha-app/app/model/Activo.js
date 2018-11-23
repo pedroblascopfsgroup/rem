@@ -332,7 +332,14 @@ Ext.define('HreRem.model.Activo', {
     			type: 'boolean'
     		},
     		{
+    			name: 'estadoVenta'
+    		},
+    		{
     			name: 'gestion',
+    			type: 'boolean'
+    		},
+    		{
+    			name: 'tieneOkTecnico',
     			type: 'boolean'
     		},
     		{
@@ -478,6 +485,18 @@ Ext.define('HreRem.model.Activo', {
     		{
     			name: 'estadoPublicacionCodigo'
     		},
+    		{
+    			name: 'estadoVentaDescripcion'
+    		},
+    		{
+    			name: 'estadoAlquilerDescripcion'
+    		},
+    		{
+                name: 'estadoAlquilerCodigo'
+            },
+            {
+                name: 'estadoVentaCodigo'
+            },
 			{
 				name: 'incluidoEnPerimetro'
 			},
@@ -541,6 +560,20 @@ Ext.define('HreRem.model.Activo', {
     			depends: 'tipoComercializacionCodigo'
 			},
 			{
+                name: 'incluyeDestinoComercialAlquiler',
+                calculate: function(data) {
+                    return data.tipoComercializacionCodigo ===  CONST.TIPOS_COMERCIALIZACION['SOLO_ALQUILER'] || data.tipoComercializacionCodigo ===  CONST.TIPOS_COMERCIALIZACION['ALQUILER_VENTA'];
+                },
+                depends: 'tipoComercializacionCodigo'
+            },
+            {
+                name: 'incluyeDestinoComercialVenta',
+                calculate: function(data) {
+                    return data.tipoComercializacionCodigo ===  CONST.TIPOS_COMERCIALIZACION['VENTA'] || data.tipoComercializacionCodigo ===  CONST.TIPOS_COMERCIALIZACION['ALQUILER_VENTA'];
+                },
+                depends: 'tipoComercializacionCodigo'
+            },
+			{
 				name: 'fechaAplicaComercializar',
     			type:'date',
     			dateFormat: 'c'
@@ -563,6 +596,19 @@ Ext.define('HreRem.model.Activo', {
 			{
 				name: 'motivoAplicaFormalizar'
 			},
+			{
+				name: 'aplicaPublicar',
+				type: 'boolean'
+			},
+			{
+				name: 'fechaAplicaPublicar',
+    			type:'date',
+    			dateFormat: 'c'
+			},
+			{
+				name: 'motivoAplicaPublicar'
+			},
+
 			{
 				name: 'claseActivoCodigo'
 			},
@@ -589,6 +635,10 @@ Ext.define('HreRem.model.Activo', {
 			},
 			{
 				name: 'pertenceAgrupacionRestringida',
+				type: 'boolean'
+			},
+			{
+				name: 'perteneceAgrupacionRestringidaVigente',
 				type: 'boolean'
 			},
 			{
@@ -658,7 +708,7 @@ Ext.define('HreRem.model.Activo', {
 			{
     			name: 'isVisibleCodPrinex',
     			calculate: function(data) { 
-    				return (data.entidadPropietariaCodigo == CONST.CARTERA['CAJAMAR'] || data.entidadPropietariaCodigo == CONST.CARTERA['LIBERBANK']) 
+    				return (data.entidadPropietariaCodigo == CONST.CARTERA['CAJAMAR'] || data.entidadPropietariaCodigo == CONST.CARTERA['LIBERBANK'])
     					&& data.codigoPromocionPrinex != '';
     			},
     			depends: 'entidadPropietariaCodigo'
@@ -670,6 +720,13 @@ Ext.define('HreRem.model.Activo', {
 			{
     			name: 'isLogUsuGestComerSupComerSupAdmin',
     			type: 'boolean'
+    		},
+    		{
+    			name: 'activoChkPerimetroAlquiler',
+    			type: 'boolean'
+    		},
+    		{
+    			name: 'activoPrincipalRestringida'
     		}
     ],
     

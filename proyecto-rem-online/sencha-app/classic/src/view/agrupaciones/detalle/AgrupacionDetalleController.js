@@ -53,6 +53,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
     },
     
     onClickCrearTrabajo: function (btn) {
+    	
     	var me = this;
     	var idActivo = me.getViewModel().get("activo.id");
 	  	var idAgrupacion = me.getViewModel().get("agrupacionficha.id");
@@ -144,8 +145,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 	
     onChangeChainedCombo: function(combo) {
     	
-    	var me = this,
-    	chainedCombo = me.lookupReference(combo.chainedReference);
+    	var me = this, chainedCombo = me.lookupReference(combo.chainedReference);
     	me.getViewModel().notify();
 		chainedCombo.clearValue("");
 		chainedCombo.getStore().load(); 	
@@ -396,11 +396,69 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
     	me.getView().fireEvent('abrirDetalleActivo', id, titulo);
     },
     
+    updateInformeComercial: function(me,activosObjects,i){
+    	var aprobado = 0;
+    	var url =  $AC.getRemoteUrl('activo/updateInformeComercialMSV');
+    	Ext.Ajax.request({
+    		 async: false,
+		     url: url,
+		     params: {idActivo:activosObjects[i].id},
+		     success: function (result, operation) {
+		    	var success = Ext.decode(result.responseText);
+		    	if(success.success == "true"){
+		    		aprobado = 0;
+		    	}else{
+		    		aprobado = 1;
+		    	}
+           },
+           failure: function (a, operation, context) {
+           	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+           	me.getView().unmask();
+           }
+		});
+    	return aprobado;
+    	
+    },
+
+	 aprobarInformeComercialMSV:function(btn, row, col){
+		 
+		 var grid = this.getView().down('[reference=listaActivosSubdivisionGrid]');
+		 grid.mask(HreRem.i18n("msg.mask.loading"));
+		 
+		 var activosObjects = grid.getPersistedSelection();
+		 var aprobados = 0;
+		 var noAprobados = 0;
+		 var resultado = 0;
+		 
+		 setTimeout(function(){
+			 for (var i in activosObjects) {
+				 resultado= grid.lookupController().updateInformeComercial(grid,activosObjects,i);
+				 if(resultado == 0){
+					 aprobados++;
+				 }else if(resultado == 1){
+					 noAprobados++;
+				 }
+			 }
+			 
+			 if(aprobados > 0 && noAprobados == 0){
+				 grid.fireEvent("infoToast", HreRem.i18n("msg.aprobarInforme.ok"));
+			 }
+			 if(aprobados > 0 && noAprobados > 0){
+				 grid.fireEvent("warnToast", HreRem.i18n("msg.aprobarInforme.ko"));
+			 }
+			 if(aprobados == 0 && noAprobados > 0){
+				 grid.fireEvent("errorToast", HreRem.i18n("msg.aprobarInforme.error"));
+			 }
+			 grid.unmask();
+		}, 250);
+			 
+	},
+
     onSubdivisionesAgrupacionListClick: function(grid,record) {
 		var me = this;		
 		me.getViewModel().set("subdivision", record);
 		me.getViewModel().notify();
-		grid.up('form').down('[reference=listaActivosSubdivision]').getStore().loadPage(1);
+		grid.up('form').down('[reference=listaActivosSubdivisionGrid]').getStore().loadPage(1);
 	},
 	
 	updateOrdenFotosInterno: function(data, record, store) {
@@ -687,49 +745,6 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 		}
 	},
 
-	onClickPublicarActivosSeleccionadosSubmenuGrid: function(menuItem) {
-		var me = this;
-
-		menuItem.up('activosagrupacionlist').mask();
-
-		var arraySelection = menuItem.up('activosagrupacionlist').getActivoIDPersistedSelection();
-		var url = $AC.getRemoteUrl('agrupacion/publicarActivosAgrupacion');
-		var params = {
-					'agrupacionID': me.getViewModel().get("agrupacionficha.id"),
-					'activosID': arraySelection
-				};
-
-		me.genericAJAXController(menuItem, url, params);
-	},
-
-	onClickPublicarSubdivisionesActivosSeleccioandosSubmenuGrid: function(menuItem) {
-		var me = this;
-
-		menuItem.up('activosagrupacionlist').mask();
-
-		var arraySelection = menuItem.up('activosagrupacionlist').getActivoIDPersistedSelection();
-		var url = $AC.getRemoteUrl('agrupacion/publicarSubdivisionesActivosAgrupacion');
-		var params = {
-					'agrupacionID': me.getViewModel().get("agrupacionficha.id"),
-					'activosID': arraySelection
-				};
-
-		me.genericAJAXController(menuItem, url, params);
-	},
-
-	onClickPublicarAgrupacionSubmenuGrid: function(menuItem) {
-		var me = this;
-
-		menuItem.up('activosagrupacionlist').mask();
-
-		var url = $AC.getRemoteUrl('agrupacion/publicarAgrupacion');
-		var params = {
-				'agrupacionID': me.getViewModel().get("agrupacionficha.id")
-			};
-
-		me.genericAJAXController(menuItem, url, params);
-	},
-
 	genericAJAXController: function(menuItem, url, params) {
 		var me = this;
 		Ext.Ajax.request({
@@ -916,5 +931,181 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
     		fechaFinVigenciaActual: me.getViewModel().get("agrupacionficha.fechaFinVigencia"),
     		parent: btn
     	}).show();  	
+    },
+    
+    onChangeCheckboxPublicarVenta: function(checkbox, isDirty){
+    	var me = this;
+    	var chkbxPublicarSinPrecioVenta = checkbox.up('agrupacionesdetallemain').lookupReference('chkbxpublicarsinprecioventa').getValue();
+    	if (!chkbxPublicarSinPrecioVenta &&
+    			(Ext.isEmpty(me.getViewModel().get('datospublicacionagrupacion').getData().precioWebVenta) || 
+    					me.getViewModel().get('datospublicacionagrupacion').getData().precioWebVenta==="0.00")) {
+    		checkbox.setValue(false);
+    		checkbox.setReadOnly(true); 		
+    	} else {
+    		checkbox.setReadOnly(false); 
+    	} 
+    },
+    
+    onChangeCheckboxOcultar: function(checkbox, isDirty) {
+        var me = this;
+        var combobox = me.lookupReference(checkbox.comboRefChained);
+        var textarea = me.lookupReference(combobox.textareaRefChained);
+
+        if(checkbox.getValue()) {
+            combobox.setDisabled(false);
+            textarea.setReadOnly(false);
+        } else {
+            combobox.setDisabled(true);
+            combobox.clearValue();
+            textarea.setReadOnly(true);
+            textarea.reset();
+        }
+
+		if (isDirty) {
+	        combobox.getStore().clearFilter();
+	        combobox.getStore().filter([{
+	            filterFn: function(rec){
+	                return rec.getData().esMotivoManual === 'true';
+	            }
+	        }]);
+        }
+    },
+    
+    onChangeCheckboxPublicarSinPrecioVenta: function(checkbox, isDirty) {
+    	
+	    var me = this;
+	    var checkboxPublicarVenta = checkbox.up('agrupacionesdetallemain').lookupReference('chkbxpublicarventa');
+	    var estadoPubVentaPublicado = me.getViewModel().get('datospublicacionagrupacion').getData().codigoEstadoPublicacionVenta === CONST.ESTADO_PUBLICACION_VENTA['PUBLICADO'] ||
+	        me.getViewModel().get('datospublicacionagrupacion').getData().codigoEstadoPublicacionVenta === CONST.ESTADO_PUBLICACION_VENTA['PRE_PUBLICADO'] ||
+	        me.getViewModel().get('datospublicacionagrupacion').getData().codigoEstadoPublicacionVenta === CONST.ESTADO_PUBLICACION_VENTA['OCULTO'];
+
+	    if(isDirty && !estadoPubVentaPublicado) {
+	        var readOnly = Ext.isEmpty(me.getViewModel().get('datospublicacionagrupacion').getData().precioWebVenta) && !checkbox.getValue();
+	          checkboxPublicarVenta.setReadOnly(readOnly);
+	    }
+
+	    if (!isDirty && !estadoPubVentaPublicado) {
+	        var readOnly = Ext.isEmpty(me.getViewModel().get('datospublicacionagrupacion').getData().precioWebVenta) && !checkbox.getValue();
+	        checkboxPublicarVenta.setReadOnly(readOnly);
+	        checkboxPublicarVenta.setValue(false);
+	    }
+	},
+	
+	onChangeComboMotivoOcultacion: function(combo) {
+    	var me = this;
+    	var record = combo.findRecord(combo.valueField, combo.getValue());
+    	var textArea = me.lookupReference(combo.textareaRefChained);
+
+    	if(record && record.data.esMotivoManual === 'true') {
+    		textArea.setReadOnly(false);
+    	} else {
+    		textArea.setReadOnly(true);
+    	}
+    },
+    
+    onChangeCheckboxPublicarAlquiler: function(checkbox, isDirty) {
+        var me = this;
+
+        if (checkbox.getValue() && me.getViewModel().get('debePreguntarPorTipoPublicacionAlquiler')) {
+			Ext.create('HreRem.view.activos.detalle.VentanaEleccionTipoPublicacion').show();
+        }
+        
+    	var me = this;
+    	var chkbxPublicarSinPrecioAlquiler = checkbox.up('agrupacionesdetallemain').lookupReference('chkbxpublicarsinprecioalquiler').getValue();
+    	if (!chkbxPublicarSinPrecioAlquiler && 
+    			(Ext.isEmpty(me.getViewModel().get('datospublicacionagrupacion').getData().precioWebAlquiler) || 
+    				me.getViewModel().get('datospublicacionagrupacion').getData().precioWebAlquiler==="0.00")) {
+    		checkbox.setValue(false);
+    		checkbox.setReadOnly(true);
+    	} else {
+    		checkbox.setReadOnly(false); 
+    	} 
+    },
+    
+    onChangeCheckboxOcultar: function(checkbox, isDirty) {
+        var me = this;
+        var combobox = me.lookupReference(checkbox.comboRefChained);
+        var textarea = me.lookupReference(combobox.textareaRefChained);
+
+        if(checkbox.getValue()) {
+            combobox.setDisabled(false);
+            textarea.setReadOnly(false);
+        } else {
+            combobox.setDisabled(true);
+            combobox.clearValue();
+            textarea.setReadOnly(true);
+            textarea.reset();
+        }
+
+		if (isDirty) {
+	        combobox.getStore().clearFilter();
+	        combobox.getStore().filter([{
+	            filterFn: function(rec){
+	                return rec.getData().esMotivoManual === 'true';
+	            }
+	        }]);
+        }
+    },
+    
+    onChangeCheckboxPublicarSinPrecioAlquiler: function(checkbox, isDirty) {
+    	
+        var me = this;
+		var checkboxPublicarAlquiler = checkbox.up('agrupacionesdetallemain').lookupReference('chkbxpublicaralquiler');
+		var estadoPubAlquilerPublicado = me.getViewModel().get('datospublicacionagrupacion').getData().codigoEstadoPublicacionAlquiler === CONST.ESTADO_PUBLICACION_ALQUILER['PUBLICADO'] ||
+			me.getViewModel().get('datospublicacionagrupacion').getData().codigoEstadoPublicacionAlquiler === CONST.ESTADO_PUBLICACION_ALQUILER['PRE_PUBLICADO'] ||
+			me.getViewModel().get('datospublicacionagrupacion').getData().codigoEstadoPublicacionAlquiler === CONST.ESTADO_PUBLICACION_ALQUILER['OCULTO'];
+
+		if(isDirty && !estadoPubAlquilerPublicado) {
+			var readOnly = Ext.isEmpty(me.getViewModel().get('datospublicacionagrupacion').getData().precioWebAlquiler) && !checkbox.getValue();
+            checkboxPublicarAlquiler.setReadOnly(readOnly);
+		}
+
+		if (!isDirty && !estadoPubAlquilerPublicado) {
+			var readOnly = Ext.isEmpty(me.getViewModel().get('datospublicacionagrupacion').getData().precioWebAlquiler) && !checkbox.getValue();
+			checkboxPublicarAlquiler.setReadOnly(readOnly);
+			checkbox.up('agrupacionesdetallemain').getViewModel().get('datospublicacionagrupacion').set('eleccionUsuarioTipoPublicacionAlquiler', null);
+			checkboxPublicarAlquiler.setValue(false);
+		}
+    },
+    
+    onChangeComboMotivoOcultacion: function(combo) {
+    	var me = this;
+    	var record = combo.findRecord(combo.valueField, combo.getValue());
+    	var textArea = me.lookupReference(combo.textareaRefChained);
+
+    	if(record && record.data.esMotivoManual === 'true') {
+    		textArea.setReadOnly(false);
+    	} else {
+    		textArea.setReadOnly(true);
+    	}
+    },
+    
+    onChangeComboOtro: function(combo) {
+    	var me = this;
+    	var view = me.getView();
+
+    	if(combo.getValue() === '0'){
+    		view.lookupReference('fieldtextCondicionanteOtro').allowBlank=true;
+    		view.lookupReference('fieldtextCondicionanteOtro').setValue('');
+    		view.lookupReference('fieldtextCondicionanteOtro').hide();
+    	} else {
+    		view.lookupReference('fieldtextCondicionanteOtro').show();
+    		view.lookupReference('fieldtextCondicionanteOtro').allowBlank=false;
+    		view.lookupReference('fieldtextCondicionanteOtro').isValid();
+    	}
+    },
+    
+    onGridCondicionesEspecificasRowClick: function(grid , record , tr , rowIndex) {
+		if(!Ext.isEmpty(record.getData().fechaHasta) || !Ext.isEmpty(record.getData().usuarioBaja)){
+			grid.up().disableRemoveButton(true);
+		}
+	},
+	
+	onActivateTabDatosPublicacion: function(tab, eOpts) {
+        var me = this;
+
+        me.getViewModel().get('filtrarComboMotivosOcultacionVenta');
+        me.getViewModel().get('filtrarComboMotivosOcultacionAlquiler');
+        
     }
 });

@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.activo;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -9,6 +10,7 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,10 +24,14 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionDao;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
+import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
+import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.model.Activo;
@@ -38,11 +44,18 @@ import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.AgrupacionesVigencias;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionesCreateDelete;
+import es.pfsgroup.plugin.rem.model.DtoCondicionEspecifica;
+import es.pfsgroup.plugin.rem.model.DtoCondicionEspecificaAgrupacion;
+import es.pfsgroup.plugin.rem.model.DtoEstadoDisponibilidadComercial;
 import es.pfsgroup.plugin.rem.model.DtoSubdivisiones;
+import es.pfsgroup.plugin.rem.model.DtoVActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.DtoVigenciaAgrupacion;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.VActivosAgrupacion;
+import es.pfsgroup.plugin.rem.model.VListaActivosAgrupacionVSCondicionantes;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoFoto;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PRINCIPAL;
@@ -86,6 +99,9 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 	
 	@Autowired
 	private RestApi restApi;
+	
+	@Autowired
+	private ActivoEstadoPublicacionApi activoEstadoPublicacionApi;
 
 	// @Override
 	// public String managerName() {
@@ -94,6 +110,8 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 
 	@Autowired
 	private ActivoAgrupacionFactoryApi activoAgrupacionFactoryApi;
+	
+	BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 
 	@Override
 	@BusinessOperation(overrides = "activoAgrupacionManager.get")
@@ -138,6 +156,57 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 	@BusinessOperation(overrides = "activoAgrupacionManager.getListActivosAgrupacionById")
 	public Page getListActivosAgrupacionById(DtoAgrupacionFilter dto, Usuario usuarioLogado) {
 		return activoAgrupacionDao.getListActivosAgrupacionById(dto, usuarioLogado);
+	}
+	
+
+	public DtoEstadoDisponibilidadComercial getListActivosAgrupacionByIdActivo(DtoAgrupacionFilter dto, Usuario usuarioLogado) {
+		
+		DtoEstadoDisponibilidadComercial dtoEstadoDispcom = new DtoEstadoDisponibilidadComercial();
+		List<DtoVActivosAgrupacion> listaDto = new ArrayList<DtoVActivosAgrupacion>();
+		List<VActivosAgrupacion> lAgrupaActivos =  (List<VActivosAgrupacion>) activoAgrupacionDao.getListActivosAgrupacionById(dto, usuarioLogado).getResults();
+		 
+		for(VActivosAgrupacion actAgrup : lAgrupaActivos) {
+			DtoVActivosAgrupacion dtoVActAgrup = new DtoVActivosAgrupacion();	
+			VListaActivosAgrupacionVSCondicionantes vCondicionante = genericDao.get(VListaActivosAgrupacionVSCondicionantes.class, genericDao.createFilter(FilterType.EQUALS, "activoId",actAgrup.getActivoId()), genericDao.createFilter(FilterType.EQUALS, "agrId", actAgrup.getAgrId()));
+			if(!Checks.esNulo(vCondicionante)) {
+				if(vCondicionante.getConCargas() || vCondicionante.getDivHorizontalNoInscrita() || vCondicionante.getIsCondicionado() || vCondicionante.getObraNuevaEnConstruccion() ||
+						vCondicionante.getObraNuevaSinDeclarar() || vCondicionante.getOcupadoConTitulo() || vCondicionante.getOcupadoSinTitulo() || vCondicionante.getPendienteInscripcion() ||
+						vCondicionante.getPortalesExternos() || vCondicionante.getProindiviso() || vCondicionante.getRuina() || vCondicionante.getSinInformeAprobado() ||
+						vCondicionante.getSinTomaPosesionInicial() || vCondicionante.getTapiado() || vCondicionante.getVandalizado()) {
+					
+					dtoVActAgrup.setEstadoSituacionComercial(true);
+					
+				}else {
+					dtoVActAgrup.setEstadoSituacionComercial(false);
+				}
+			}
+			
+			BeanUtils.copyProperties(actAgrup,dtoVActAgrup);
+			if(!Checks.esNulo(actAgrup.getSubtipoActivo())) {
+				dtoVActAgrup.setCodigoSubtipoActivo(actAgrup.getSubtipoActivo().getCodigo());
+				dtoVActAgrup.setSubtipoActivoDesc(actAgrup.getSubtipoActivo().getDescripcion());
+			}
+			
+			Activo activo = activoApi.get(actAgrup.getActivoId());
+			String codigoTCO = activo.getActivoPublicacion().getTipoComercializacion().getCodigo();
+			if(DDTipoComercializacion.CODIGO_VENTA.equals(codigoTCO) 
+					|| DDTipoComercializacion.CODIGO_ALQUILER_VENTA.equals(codigoTCO)
+					|| DDTipoComercializacion.CODIGO_ALQUILER_OPCION_COMPRA.equals(codigoTCO)) {
+				dtoVActAgrup.setEstadoVenta(activoEstadoPublicacionApi.getEstadoIndicadorPublicacionVenta(activo));
+			}
+			if(DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(codigoTCO) 
+					|| DDTipoComercializacion.CODIGO_ALQUILER_VENTA.equals(codigoTCO)
+					|| DDTipoComercializacion.CODIGO_ALQUILER_OPCION_COMPRA.equals(codigoTCO)) {
+				dtoVActAgrup.setEstadoAlquiler(activoEstadoPublicacionApi.getEstadoIndicadorPublicacionAlquiler(activo));
+			}
+			
+			listaDto.add(dtoVActAgrup);
+		}
+		 
+		dtoEstadoDispcom.setListado(listaDto);
+		dtoEstadoDispcom.setTotalCount(lAgrupaActivos.size());
+		
+		return  dtoEstadoDispcom;
 	}
 
 	@Override
@@ -625,6 +694,49 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 	public Boolean estaActivoEnOtraAgrupacionVigente(ActivoAgrupacion agrupacion,Activo activo) {
 		
 		return activoAgrupacionDao.estaActivoEnOtraAgrupacionVigente(agrupacion,activo);
+	}
+	
+	public List<DtoCondicionEspecifica> getCondicionEspecificaByAgrupacion(Long id) {
+		ActivoAgrupacion agrupacion = activoAgrupacionDao.get(id);
+		Activo activoPrincipal = agrupacion.getActivoPrincipal();
+		
+		return activoApi.getCondicionEspecificaByActivo(activoPrincipal.getId());
+	}
+	
+	public Boolean createCondicionEspecifica(DtoCondicionEspecificaAgrupacion dto) {
+		ActivoAgrupacion agrupacion = activoAgrupacionDao.get(dto.getIdAgrupacion());
+		List<ActivoAgrupacionActivo> activos = agrupacion.getActivos();
+		
+		for(ActivoAgrupacionActivo aga : activos) {
+			dto.setIdActivo(aga.getActivo().getId());
+			activoApi.createCondicionEspecifica(dto);			
+		}
+		
+		return true;
+	}
+	
+	public Boolean saveCondicionEspecifica(DtoCondicionEspecificaAgrupacion dto) {
+		ActivoAgrupacion agrupacion = activoAgrupacionDao.get(dto.getIdAgrupacion());
+		List<ActivoAgrupacionActivo> activos = agrupacion.getActivos();
+		
+		for(ActivoAgrupacionActivo aga : activos) {
+			dto.setIdActivo(aga.getActivo().getId());
+			if(!activoApi.saveCondicionEspecifica(dto)) return false;			
+		}
+		
+		return true;
+	}
+	
+	public Boolean darDeBajaCondicionEspecifica(DtoCondicionEspecificaAgrupacion dto) {
+		ActivoAgrupacion agrupacion = activoAgrupacionDao.get(dto.getIdAgrupacion());
+		List<ActivoAgrupacionActivo> activos = agrupacion.getActivos();
+		
+		for(ActivoAgrupacionActivo aga : activos) {
+			dto.setIdActivo(aga.getActivo().getId());
+			if(!activoApi.darDeBajaCondicionEspecifica(dto)) return false;			
+		}
+		
+		return true;
 	}
 
 }

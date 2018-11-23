@@ -27,7 +27,7 @@ public class MSVBusinessValidationSQLRunnerImpl implements MSVBusinessValidation
 	public MSVValidationResult runValidation(MSVColumnValidator validator, String value) {
 		if (validator instanceof MSVColumnSQLValidator) {
 			if (Checks.esNulo(value) && validator.isRequired()) {
-				// Si el valor es nulo y es requerido falla la validaci髇
+				// Si el valor es nulo y es requerido falla la validaci贸n
 				return new MSVValidationResult(false, "Valor requerido");
 			} else if (!Checks.esNulo(value)) {
 
@@ -40,7 +40,7 @@ public class MSVBusinessValidationSQLRunnerImpl implements MSVBusinessValidation
 					return runValidacionConfigurable(validator, value);
 				}
 			} else {
-				// Si el valor es nulo pero no es requerido pasa la validaci髇
+				// Si el valor es nulo pero no es requerido pasa la validaci贸n
 				return new MSVValidationResult(true, null);
 			}
 		} else {
@@ -49,9 +49,9 @@ public class MSVBusinessValidationSQLRunnerImpl implements MSVBusinessValidation
 	}
 
 	/**
-	 * Realiza una validaci髇 de tipo configurable, para ello ejecuta la SQL
+	 * Realiza una validaci贸n de tipo configurable, para ello ejecuta la SQL
 	 * contenida en el validador talcual y compara el resultado con la
-	 * configruaci髇 que contiene el mismo validador
+	 * configruaci贸n que contiene el mismo validador
 	 * 
 	 * @param validator
 	 * @param value
@@ -120,8 +120,8 @@ public class MSVBusinessValidationSQLRunnerImpl implements MSVBusinessValidation
 	}
 
 	/**
-	 * Ejecuta una validaci髇 compuesta de negocio usando un validador proporcionado.
-	 * @param validatores Lista de validadores que se quieren usar.
+	 * Ejecuta una validaci贸n compuesta de negocio usando un validador proporcionado.
+	 * @param validadores Lista de validadores que se quieren usar.
 	 * @param mapaDatos valores que hemos de validar
 	 * @return
 	 */

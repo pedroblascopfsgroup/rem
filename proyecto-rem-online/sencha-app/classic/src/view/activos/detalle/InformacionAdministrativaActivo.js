@@ -25,12 +25,11 @@ Ext.define('HreRem.view.activos.detalle.InformacionAdministrativaActivo', {
         var me = this;
         me.setTitle(HreRem.i18n('title.informacion.administrativa'));
         var items= [
-        
        	 	{
 				title:HreRem.i18n('title.catastro'),
 			    xtype: 'gridBaseEditableRow',
 			    idPrincipal: 'activo.id',
-			    topBar: true,
+			    topBar: false,
 				cls	: 'panel-base shadow-panel',
 				bind: {
 					store: '{storeCatastro}'
@@ -50,45 +49,9 @@ Ext.define('HreRem.view.activos.detalle.InformacionAdministrativaActivo', {
 				},
 
 				columns: [
-				
 				    {   
 						text: HreRem.i18n('fieldlabel.referencia.catastral'),
 			        	dataIndex: 'refCatastral',
-			        	editor: {
-			        		xtype:'textfield', 
-			        		minLength : 20, 
-			        		maxLength : 20, 
-			        		enforceMaxLength: true,
-			        		allowBlank: false,
-			        		msgTarget: 'side',
-			        		listeners : {
-			                    change : function (field, newValue, oldValue, eOpts) {
-			                    	    var grid = field.up('grid');
-			                    		var parcelaValue = grid.getPlugin("rowEditingPlugin").editor.down('textfield[dataIndex=parcela]').value;
-			                    		var poligonoValue = grid.getPlugin("rowEditingPlugin").editor.down('textfield[dataIndex=poligono]').value;
-			                    		if (newValue)
-			                    		{
-			                    			var parcelaRef = grid.getPlugin("rowEditingPlugin").editor.down('textfield[dataIndex=parcela]');
-			                    			var poligonoRef = grid.getPlugin("rowEditingPlugin").editor.down('textfield[dataIndex=poligono]');
-			                    			parcelaRef.allowBlank = true;
-			                    			parcelaRef.clearInvalid();
-			                    			poligonoRef.allowBlank = true;
-			                    			poligonoRef.clearInvalid();
-			                    			field.clearInvalid();
-			                    		}
-			                    		else
-			                    		{
-				                    		if (poligonoValue && parcelaValue)
-				                    		{
-				                    			field.allowBlank = true;
-				                    			field.clearInvalid();
-				                    		}
-				                    		else
-				                    			field.allowBlank = false;
-			                    		}
-			                        }
-			                    }
-			                },
 			        	flex: 2
 			        },
 			        {
@@ -564,8 +527,7 @@ Ext.define('HreRem.view.activos.detalle.InformacionAdministrativaActivo', {
     
     onAddClick: function(){
     	
-    	//debugger;
-        // Create a model instance
+    	// Create a model instance
         var rec = new HreRem.model.Catastro({
             /*common: '',
             light: 'Mostly Shady',

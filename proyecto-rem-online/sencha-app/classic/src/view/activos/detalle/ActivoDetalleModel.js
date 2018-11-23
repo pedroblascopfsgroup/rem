@@ -275,10 +275,10 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			 if(!Ext.isEmpty(condicion)) {
 				 src = CONST.ESTADO_ACTIVO.OBRA_NUEVA_VANDALIZADO['08'];
 			 }
-				 if(condicion == src) {
-					 return 'app-tbfiedset-ico icono-ko';
-				 } 
-			 }else {
+			 if(condicion == src) {
+				 return 'app-tbfiedset-ico icono-ko';
+			 } 
+			else {
 				 return 'app-tbfiedset-ico icono-ok';
 			 }
 		},

@@ -27,7 +27,15 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
              	grid.getStore().load();
              }
          },
-         
+         'documentosactivoofertacomercial textfieldbase': {
+             //abrirFormulario: 'abrirFormularioAdjuntarDocPromo',
+             onClickRemove: 'borrarDocumentoAdjunto',
+             //download: 'downloadDocumentoAdjuntoPromocion',
+             afterupload: function(grid) {
+            	 debugger;
+             	//grid.getStore().load();
+             }
+         },
          'fotoswebactivo': {
          	updateOrdenFotos: 'updateOrdenFotosInterno'
          },

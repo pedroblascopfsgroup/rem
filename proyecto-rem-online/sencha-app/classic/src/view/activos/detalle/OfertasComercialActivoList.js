@@ -227,7 +227,7 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 		var activo = me.lookupController().getViewModel().get('activo'),
 		idActivo= activo.get('id'),
 		numActivo= activo.get('numActivo');
-		debugger;
+		
 		var parent= me.up('ofertascomercialactivo'),
 		oferta = Ext.create('HreRem.model.OfertaComercialActivo', {idActivo: idActivo, numActivo: numActivo});
 		/*

@@ -13,7 +13,6 @@ import es.pfsgroup.plugin.rem.gasto.dao.AdjuntoGastoDao;
 import es.pfsgroup.plugin.rem.gasto.dao.DDTipoDocumentoGastoDao;
 import es.pfsgroup.plugin.rem.gasto.dao.GastoDao;
 import es.pfsgroup.plugin.rem.model.*;
-import es.pfsgroup.plugin.rem.rest.api.RestApi;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -32,6 +31,7 @@ public class ConsistenciaAdjuntosRunnableUtils implements Runnable {
     protected static final Log logger = LogFactory.getLog(ConsistenciaAdjuntosRunnableUtils.class);
     private static final String ENCODING_UTF8 = "UTF-8";
     private final SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+    private static final String THREAD_NAME = "GD-CONSISTENCY-TASKER-";
     private final IdentificacionDocumento[] documentos;
     private final GestorDocumentalConstants.Contenedor contenedor;
 
@@ -61,17 +61,13 @@ public class ConsistenciaAdjuntosRunnableUtils implements Runnable {
 
     @Autowired
     private DDTipoDocumentoGastoDao ddTipoDocumentoGastoDao;
-    
-    @Autowired
-	private RestApi restApi;
-    
-    private String usuarioLogado;
+
+    private SecurityContext springSecurityContext;
 
 
-    public ConsistenciaAdjuntosRunnableUtils(IdentificacionDocumento[] documentos, GestorDocumentalConstants.Contenedor contenedor,String usuarioLogado) {
+    ConsistenciaAdjuntosRunnableUtils(IdentificacionDocumento[] documentos, GestorDocumentalConstants.Contenedor contenedor) {
         this.documentos = documentos;
         this.contenedor = contenedor;
-        this.usuarioLogado = usuarioLogado;
     }
 
 	/**
@@ -79,30 +75,30 @@ public class ConsistenciaAdjuntosRunnableUtils implements Runnable {
 	 * gestor documental.
 	 */
 	public void run() {
-		try {
-			restApi.doSessionConfig(this.usuarioLogado);
-			switch (contenedor) {
-			case Activo:
-				comprobarDocumentosAdjuntosEnActivo();
-				// FUTURE: limpiarDocumentosAdjuntosEnDesusoEnActivo();
-				break;
-			case ExpedienteComercial:
-				comprobarDocumentosAdjuntosEnExpedientes();
-				// FUTURE: limpiarDocumentosAdjuntosEnDesusoEnExpedientes();
-				break;
-			case Gasto:
-				comprobarDocumentosAdjuntosEnGastos();
-				// FUTURE: limpiarDocumentosAdjuntosEnDesusoEnGastos();
-				break;
-			default:
-				logger.error(
-						"Error en ConsistenciaAdjuntosRunnableUtils en el tipo de contenedor a comprobar del gestor documental");
-				break;
-			}
-		} catch (Exception e) {
-			logger.error(
-					"Error en ConsistenciaAdjuntosRunnableUtils en el tipo de contenedor a comprobar del gestor documental",
-					e);
+		if(this.springSecurityContext == null) {
+			logger.error("ConsistenciaAdjuntosRunnableUtils - No se ha especificado un contexto de seguridad de spring");
+			return;
+		}
+
+		// Establecer el contexto de seguridad de Spring en el hilo.
+		SecurityContextHolder.setContext(this.springSecurityContext);
+
+		switch (contenedor) {
+		case Activo:
+			comprobarDocumentosAdjuntosEnActivo();
+			// FUTURE: limpiarDocumentosAdjuntosEnDesusoEnActivo();
+			break;
+		case ExpedienteComercial:
+			comprobarDocumentosAdjuntosEnExpedientes();
+			// FUTURE: limpiarDocumentosAdjuntosEnDesusoEnExpedientes();
+			break;
+		case Gasto:
+			comprobarDocumentosAdjuntosEnGastos();
+			// FUTURE: limpiarDocumentosAdjuntosEnDesusoEnGastos();
+			break;
+		default:
+			logger.error("Error en ConsistenciaAdjuntosRunnableUtils en el tipo de contenedor a comprobar del gestor documental");
+			break;
 		}
 	}
 
@@ -238,14 +234,33 @@ public class ConsistenciaAdjuntosRunnableUtils implements Runnable {
         return this.contenedor;
     }
 
+	/**
+	 * Este método instancia un nuevo hilo con ésta misma clase runnable y acto seguido inicia el trabajo.
+	 *
+	 * Se ha encapsulado la definición del hilo en esta misma clase runnable por que va todo en un lote y
+	 * lo hace mucho más sencillo de entender, portar a otros sitios encapsulado y define pocas líneas para
+	 * llevar a cabo la instanciación y ejecución de la misma.
+	 */
+	void iniciar() {
+	    Thread thread = new Thread(this);
+	    thread.setName(THREAD_NAME);
+	    thread.setPriority(Thread.NORM_PRIORITY);
+	    thread.setUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+		    public void uncaughtException(Thread t, Throwable e) {
+			    logger.error("Error al llevar a cabo la consistencia de los documentos adjuntos para la entidad " + ConsistenciaAdjuntosRunnableUtils.this.getContenedor().toString(), e);
+		    }
+	    });
+	    thread.start();
+    }
+
     /**
-     * Este método establece el contexto de seguridad de Spring, entre lo que se eincluye el usuario logueado que está realizando
+     * Este método establece el contexto de seguridad de Spring, entre lo que se incluye el usuario logueado que está realizando
      * la petición, para que se permita ejecutar en el entorno las peticiones de la clase runnable.
      *
-     * @param context: contexto de seguridad de Spring con los recursos de seguridad de la sesión en Spring.
+     * @param context: contexto de seguridad de Spring con los recursos de seguridad de la sesión en Spring. Se obtiene con 'SecurityContextHolder.getContext()'.
      */
     void setSpringSecurityContext(SecurityContext context) {
-        SecurityContextHolder.setContext(context);
+		this.springSecurityContext = context;
     }
 
 }

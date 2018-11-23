@@ -84,7 +84,8 @@
  				EXTDDTipoGestor tipoGestor = genericDao.get(EXTDDTipoGestor.class, genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdTipoGestor()));
  				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", dto.getIdEntidad());
  				Filter filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "tipoGestor.id", dto.getIdTipoGestor());
- 				GestorActivo gac =  genericDao.get(GestorActivo.class, filtro, filtroTipoGestor);
+ 				Filter borrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+ 				GestorActivo gac =  genericDao.get(GestorActivo.class, filtro, filtroTipoGestor, borrado);
  
  				Usuario usu = genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdUsuario()));
  				Activo act = activoApi.get(dto.getIdEntidad());

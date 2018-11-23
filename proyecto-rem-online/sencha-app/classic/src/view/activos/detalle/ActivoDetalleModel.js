@@ -269,13 +269,18 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		    }
 		 },
 		 getIconClsCondicionantesVandalizado: function(get) {
-			var condicion = get('activoCondicionantesDisponibilidad.vandalizado');
-
-		    if(!eval(condicion)) {
-		        return 'app-tbfiedset-ico icono-ok';
-		    } else {
-		        return 'app-tbfiedset-ico icono-ko';
-		    }
+			 var condicion = get('activo.estadoActivo.codigo');
+			 var src = null;
+			 
+			 if(!Ext.isEmpty(condicion)) {
+				 src = CONST.ESTADO_ACTIVO.OBRA_NUEVA_VANDALIZADO['08'];
+			 }
+				 if(condicion == src) {
+					 return 'app-tbfiedset-ico icono-ko';
+				 } 
+			 }else {
+				 return 'app-tbfiedset-ico icono-ok';
+			 }
 		},
 		getIconClsCondicionantesSinAcceso: function(get) {
 	        var condicion = get('activoCondicionantesDisponibilidad.sinAcceso');

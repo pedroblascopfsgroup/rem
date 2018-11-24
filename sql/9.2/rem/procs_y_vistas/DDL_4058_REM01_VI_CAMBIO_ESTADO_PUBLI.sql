@@ -1,16 +1,17 @@
 --/*
 --##########################################
---## AUTOR=Carlos López
---## FECHA_CREACION=20180927
+--## AUTOR=Maria Presencia Herrero
+--## FECHA_CREACION=20181124
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-4540
+--## INCIDENCIA_LINK=REMVIP-2638
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##		0.2 Modificado precio_v y precio_a
 --##########################################
 --*/
 
@@ -121,7 +122,7 @@ BEGIN
                               FROM '|| V_ESQUEMA ||'.ACT_ACTIVO ACT2
                               JOIN '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION APU ON APU.ACT_ID = ACT2.ACT_ID AND APU.BORRADO = 0
                               JOIN '|| V_ESQUEMA ||'.act_val_valoraciones val ON val.act_id = ACT2.act_id AND val.borrado = 0
-                              JOIN '|| V_ESQUEMA ||'.DD_TPC_TIPO_PRECIO tpc ON tpc.dd_tpc_id = val.dd_tpc_id AND tpc.dd_tpc_codigo IN (''02'', ''03'') AND TPC.BORRADO = 0 
+                              LEFT JOIN '|| V_ESQUEMA ||'.DD_TPC_TIPO_PRECIO tpc ON tpc.dd_tpc_id = val.dd_tpc_id AND tpc.dd_tpc_codigo IN (''02'', ''03'') AND TPC.BORRADO = 0 
                               JOIN '|| V_ESQUEMA ||'.DD_TCO_TIPO_COMERCIALIZACION tco ON tco.dd_tco_id = ACT2.dd_tco_id AND TCO.BORRADO = 0 AND tco.dd_tco_codigo IN (''01'', ''02'', ''03'', ''04'')
                              WHERE ACT2.borrado = 0
                               )
@@ -142,7 +143,7 @@ BEGIN
                               FROM '|| V_ESQUEMA ||'.ACT_ACTIVO ACT2
                               JOIN '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION APU ON APU.ACT_ID = ACT2.ACT_ID AND APU.BORRADO = 0
                               JOIN '|| V_ESQUEMA ||'.act_val_valoraciones val ON val.act_id = ACT2.act_id AND val.borrado = 0
-                              JOIN '|| V_ESQUEMA ||'.DD_TPC_TIPO_PRECIO tpc ON tpc.dd_tpc_id = val.dd_tpc_id AND tpc.dd_tpc_codigo IN (''02'', ''03'') AND TPC.BORRADO = 0 
+                              LEFT JOIN '|| V_ESQUEMA ||'.DD_TPC_TIPO_PRECIO tpc ON tpc.dd_tpc_id = val.dd_tpc_id AND tpc.dd_tpc_codigo IN (''02'', ''03'') AND TPC.BORRADO = 0 
                               JOIN '|| V_ESQUEMA ||'.DD_TCO_TIPO_COMERCIALIZACION tco ON tco.dd_tco_id = ACT2.dd_tco_id AND TCO.BORRADO = 0 AND tco.dd_tco_codigo IN (''01'', ''02'', ''03'', ''04'')
                              WHERE ACT2.borrado = 0
                               )

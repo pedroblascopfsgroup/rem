@@ -1,7 +1,7 @@
 --/*
 --###########################################
 --## AUTOR=Guillermo Llidó Parra
---## FECHA_CREACION=20181126
+--## FECHA_CREACION=20181127
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=REMVIP-2651
@@ -33,6 +33,7 @@ DECLARE
   V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar
   V_ENTIDAD_ID NUMBER(16);
   V_ID NUMBER(16);
+  V_COUNT NUMBER(16);
     
   TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
   TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
@@ -164,28 +165,37 @@ BEGIN
      
         DBMS_OUTPUT.PUT_LINE('[INFO]: INSERTAMOS EL REGISTRO '''|| TRIM(V_TMP_TIPO_DATA(1)) ||''' EN ACT_SPS_SIT_POSESORIA');   
         
-        V_MSQL := 'SELECT '||V_ESQUEMA||'.S_ACT_SPS_SIT_POSESORIA.NEXTVAL FROM DUAL';
-        EXECUTE IMMEDIATE V_MSQL INTO V_ID;	
+        V_MSQL := 'SELECT COUNT(1) FROM '|| V_ESQUEMA ||'.ACT_SPS_SIT_POSESORIA WHERE ACT_ID = '|| TRIM(V_TMP_TIPO_DATA(1)) ||'';
         
-        V_MSQL := 'INSERT INTO '|| V_ESQUEMA ||'.ACT_SPS_SIT_POSESORIA (' ||
-                      'SPS_ID
-                      ,ACT_ID
-                      ,VERSION
-                      ,FECHACREAR
-                      ,USUARIOCREAR
-					  ,BORRADO) ' ||
-                      'SELECT '|| V_ID || ',
-                      '|| TRIM(V_TMP_TIPO_DATA(1)) ||',
-                      ''0'',
-                      SYSDATE,
-                      ''REMVIP-2651'',
-                      0 
-                      FROM DUAL';
-                                            
-          EXECUTE IMMEDIATE V_MSQL;
-          
-    DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO '''|| TRIM(V_TMP_TIPO_DATA(1)) ||''' INSERTADO CORRECTAMENTE');        
-		
+        EXECUTE IMMEDIATE V_MSQL INTO V_COUNT;
+        
+        IF V_COUNT = 0 THEN
+        
+			V_MSQL := 'SELECT '||V_ESQUEMA||'.S_ACT_SPS_SIT_POSESORIA.NEXTVAL FROM DUAL';
+			
+			EXECUTE IMMEDIATE V_MSQL INTO V_ID;	
+			
+			V_MSQL := 'INSERT INTO '|| V_ESQUEMA ||'.ACT_SPS_SIT_POSESORIA (' ||
+						  'SPS_ID
+						  ,ACT_ID
+						  ,VERSION
+						  ,FECHACREAR
+						  ,USUARIOCREAR
+						  ,BORRADO) ' ||
+						  'SELECT '|| V_ID || ',
+						  '|| TRIM(V_TMP_TIPO_DATA(1)) ||',
+						  ''0'',
+						  SYSDATE,
+						  ''REMVIP-2651'',
+						  0 
+						  FROM DUAL';
+												
+			  EXECUTE IMMEDIATE V_MSQL;
+			  
+			DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO '''|| TRIM(V_TMP_TIPO_DATA(1)) ||''' INSERTADO CORRECTAMENTE');        
+			
+		END IF;
+    
     END LOOP;
     
     

@@ -40,6 +40,28 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
 
   EXECUTE IMMEDIATE V_MSQL;
 
+  V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.PEF_PERFILES 
+          (PEF_ID, 
+          PEF_CODIGO, 
+          PEF_DESCRIPCION, 
+          PEF_DESCRIPCION_LARGA,
+          VERSION, 
+          USUARIOCREAR, 
+          FECHACREAR,
+          BORRADO 
+          )VALUES(
+          '||V_ESQUEMA||'.S_PEF_PERFILES.NEXTVAL,
+          ''FTI'',
+          ''Visualizar los botones'',
+          ''Visualizar los botones para exportar facturas tasas e impuestos'',
+          0,
+          ''REMVIP-2604'',
+          SYSDATE,
+          0
+          )';
+
+  EXECUTE IMMEDIATE V_MSQL;
+
 	#ESQUEMA#.SP_PERFILADO_FUNCIONES('REMVIP-2455');
     
    COMMIT;

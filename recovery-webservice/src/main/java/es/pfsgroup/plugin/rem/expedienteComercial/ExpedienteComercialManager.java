@@ -58,6 +58,7 @@ import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVRawSQLDao;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
@@ -6752,27 +6753,28 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			String cuerpo = "Comunicamos que se ha firmado el contrato de arrendamiento del inmueble " + activo.getNumActivo() + "."
 					+ "<br><br> Adjunto copia del contrato suscrito para el alta para la gestión del alta en cobertura de la póliza de seguro de rentas."
 					+ "<br><br> Rogamos confirmación del alta.";
+			
+			List<AdjuntoExpedienteComercial> adjuntosRecuperados = genericDao.getListOrdered(AdjuntoExpedienteComercial.class, new Order(OrderType.DESC,"auditoria.fechaCrear"), 
+					genericDao.createFilter(FilterType.EQUALS, "expediente.id", idExpediente), 
+					genericDao.createFilter(FilterType.EQUALS, "adjuntos.subtipoDocumentoExpediente.codigo", DDSubtipoDocumentoExpediente.CODIGO_CONTRATO_ALQUILER));
 
-			List<AdjuntoExpedienteComercial> adjuntosRecuperados = new ArrayList<AdjuntoExpedienteComercial>();
-			adjuntosRecuperados = expediente.getAdjuntos();
-			String nombreDocumento = null;
-
-			for (AdjuntoExpedienteComercial adjunto : adjuntosRecuperados) {
-
-				if (DDSubtipoDocumentoExpediente.CODIGO_CONTRATO.equals(adjunto.getSubtipoDocumentoExpediente().getCodigo())) {
-					nombreDocumento = adjunto.getNombre();
-					break;
-				}
-			}
-
-			String key = appProperties.getProperty(ExpedienteComercialController.CONSTANTE_REST_CLIENT);
-			Downloader dl = downloaderFactoryApi.getDownloader(key);
-
-			FileItem fileItem = dl.getFileItem(idExpediente,nombreDocumento);
-
+			Adjunto adjuntoLocal = adjuntosRecuperados.get(0).getAdjunto();
+			
+			String nombreDocumento = adjuntosRecuperados.get(0).getNombre();			
+			
 			Adjunto adjuntoMail = new Adjunto();
-			adjuntoMail.setFileItem(fileItem);
-
+			
+			if(gestorDocumentalAdapterApi.modoRestClientActivado()) {
+				String key = appProperties.getProperty(ExpedienteComercialController.CONSTANTE_REST_CLIENT);
+				Downloader dl = downloaderFactoryApi.getDownloader(key);
+				
+				FileItem fileItem = dl.getFileItem(idExpediente,nombreDocumento);
+				
+				adjuntoMail.setFileItem(fileItem);
+			} else {
+				adjuntoMail = adjuntoLocal;
+			}
+			
 			DtoAdjuntoMail dto = new DtoAdjuntoMail();
 			dto.setNombre(nombreDocumento);
 			dto.setAdjunto(adjuntoMail);

@@ -169,7 +169,14 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 	     },
 	     
 	     esAgrupacionLiberbank: function(get) {
-	    	 return get('agrupacionficha.codigoCartera') == CONST.CARTERA['LIBERBANK'];
+	    	 var codigoCartera=get('agrupacionficha.codigoCartera');
+	    	 var tipoAgrup= get('agrupacionficha.tipoAgrupacionCodigo');
+	    	 if(codigoCartera == CONST.CARTERA['LIBERBANK'] && tipoAgrup == CONST.TIPOS_AGRUPACION['LOTE_COMERCIAL']){
+	    		 return true;
+	    	 }else{
+	    		 return false;
+	    	 }
+	    	 
 	     }
     },
     

@@ -23,6 +23,7 @@ public class DtoCondicionantesDisponibilidad extends DtoTabActivo {
 	private Boolean ocupadoSinTitulo;
 	private Boolean divHorizontalNoInscrita;
 	private Boolean sinInformeAprobado;
+	private Boolean sinInformeAprobadoREM;
 	private Boolean portalesExternos;
 	private String estadoCondicionadoCodigo;
 	private Boolean conCargas;
@@ -147,6 +148,14 @@ public class DtoCondicionantesDisponibilidad extends DtoTabActivo {
 
 	public void setSinInformeAprobado(Boolean sinInformeAprobado) {
 		this.sinInformeAprobado = sinInformeAprobado;
+	}
+	
+	public Boolean getSinInformeAprobadoREM() {
+		return sinInformeAprobadoREM;
+	}
+
+	public void setSinInformeAprobadoREM(Boolean sinInformeAprobadoREM) {
+		this.sinInformeAprobadoREM = sinInformeAprobadoREM;
 	}
 
 	public Boolean getPortalesExternos() {

@@ -71,7 +71,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 	     },
 	     
 	     esComercialAlquiler: function(get) {
-
+	    	 
 	     	var tipoComercialAlquiler = get('agrupacionficha.tipoAgrupacionCodigo');
 	     	if((tipoComercialAlquiler == CONST.TIPOS_AGRUPACION['COMERCIAL_ALQUILER'])) {
 	     		return true;
@@ -79,7 +79,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 	     		return false;
 	     	}
 		 },
-
+		 
 		 esComercialVentaOAlquiler: function(get) {
 		     	var tipoComercialAlquiler = get('agrupacionficha.tipoAgrupacionCodigo');
 		     	if((tipoComercialAlquiler == CONST.TIPOS_AGRUPACION['COMERCIAL_ALQUILER']) || (tipoComercialAlquiler == CONST.TIPOS_AGRUPACION['LOTE_COMERCIAL'])) {
@@ -122,7 +122,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 	     },
 
 	     esAgrupacionLoteComercial: function(get) {
-	    	 
+
 		     	var tipoAgrupacion = get('agrupacionficha.tipoAgrupacionCodigo');
 		     	if((tipoAgrupacion == CONST.TIPOS_AGRUPACION['LOTE_COMERCIAL'])) {
 		     		return true;
@@ -201,7 +201,13 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 	     },
 
 	     esAgrupacionLiberbank: function(get) {
-			return get('agrupacionficha.codigoCartera') == CONST.CARTERA['LIBERBANK'];
+			var codigoCartera=get('agrupacionficha.codigoCartera');
+	         var tipoAgrup= get('agrupacionficha.tipoAgrupacionCodigo');
+	         if(codigoCartera == CONST.CARTERA['LIBERBANK'] && tipoAgrup == CONST.TIPOS_AGRUPACION['LOTE_COMERCIAL']){
+	             return true;
+	         }else{
+	             return false;
+	         }
 	     },
 
 	     getIconClsEstadoVenta: function(get) {

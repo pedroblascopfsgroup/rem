@@ -586,6 +586,23 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getEstadoCodigo());
 			DDEstadoOferta estado = genericDao.get(DDEstadoOferta.class, filtro);
 			oferta.setEstadoOferta(estado);
+			if(DDEstadoOferta.CODIGO_RECHAZADA.equals(dto.getEstadoCodigo())) {
+				Activo act=expedienteComercial.getOferta().getActivoPrincipal();
+				List<ActivoOferta> ofertasActivo=act.getOfertas();
+				for(ActivoOferta ofer : ofertasActivo) {
+					Long idOferta= ofer.getOferta();
+					if(!idOferta.equals(oferta.getId())) {	
+						Oferta o = ofertaApi.getOfertaById(idOferta);
+						DDEstadoOferta estOferta= o.getEstadoOferta();
+						if(DDEstadoOferta.CODIGO_CONGELADA.equals(estOferta.getCodigo())) {
+							Filter fil = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_PENDIENTE);
+							DDEstadoOferta est = genericDao.get(DDEstadoOferta.class, fil);
+							o.setEstadoOferta(est); 
+							genericDao.save(Oferta.class, o);
+						}
+					}
+				}
+			}
 		}
 
 		if (!Checks.esNulo(dto.getTipoOfertaCodigo())) {

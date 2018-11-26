@@ -163,6 +163,7 @@ public class DiccionarioTargetClassMap{
 		mapa.put("accionesGasto", DDAccionGastos.class);
 		mapa.put("estadosDevolucion", DDEstadoDevolucion.class);
 		mapa.put("motivoAnulacionExpediente", DDMotivoAnulacionExpediente.class);
+		mapa.put("motivoAnulacionOferta", DDMotivoAnulacionOferta.class);
 		mapa.put("operativa", DDOperativa.class);
 		mapa.put("tiposComercializacionActivo", DDTipoComercializacion.class);
 		mapa.put("tiposComercializarActivo", DDTipoComercializar.class);

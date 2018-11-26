@@ -556,7 +556,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 										fieldLabel: HreRem.i18n('fieldlabel.perimetro.tipo.alquiler'),
 										bind: {
 											store: '{comboTipoAlquiler}',
-											disabled: '{!activo.isDestinoComercialAlquiler}',
+											hidden: '{!activo.isDestinoComercialAlquiler}',
 											value: '{activo.tipoAlquilerCodigo}'
 										}
 									},

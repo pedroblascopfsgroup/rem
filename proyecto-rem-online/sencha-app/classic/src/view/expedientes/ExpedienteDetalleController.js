@@ -2640,17 +2640,22 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		var scoringMotivoRechazo = me.lookupReference('scoringMotivoRechazo');
 		var scoringCheckEnRevision = me.lookupReference('scoringCheckEnRevision');
 				
-		if(estado == "Aprobado" ) {
+		if(estado == "Rechazado" ) {
+			scoringMotivoRechazo.setDisabled(false);
+			scoringMotivoRechazo.setReadOnly(true);
+			scoringCheckEnRevision.setDisabled(true);
+			scoringCheckEnRevision.setReadOnly(true);
+		} else if (estado == "Aprobado"){ //	estado == "Aprobado || estado == En tramite"
 			scoringMotivoRechazo.setDisabled(true);
 			scoringMotivoRechazo.setReadOnly(true);
-		} else { //	estado == "Rechazado"
-			scoringMotivoRechazo.setDisabled(false);
-			scoringMotivoRechazo.setReadOnly(false);
+			scoringCheckEnRevision.setDisabled(true);
+			scoringCheckEnRevision.setReadOnly(true);
+		} else {
+			scoringMotivoRechazo.setDisabled(true);
 		}
-		
-		// Si entra a esta funcion es porque estado scoring tiene algun valor, se da por hecho que se ha completado la tarea "Verificar scoring" HREOS-4871
-		scoringCheckEnRevision.setDisabled(true);
-		scoringCheckEnRevision.setReadOnly(true);
+//		// Si entra a esta funcion es porque estado scoring tiene algun valor, se da por hecho que se ha completado la tarea "Verificar scoring" HREOS-4871
+//		scoringCheckEnRevision.setDisabled(true);
+//		scoringCheckEnRevision.setReadOnly(true);
 	},
 	
 	sinContraoferta: function(checkbox, newVal, oldVal){

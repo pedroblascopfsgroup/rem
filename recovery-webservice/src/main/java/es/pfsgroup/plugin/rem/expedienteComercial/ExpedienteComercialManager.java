@@ -14,6 +14,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 import javax.annotation.Resource;
@@ -81,7 +82,10 @@ import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.TareaActivoApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
+import es.pfsgroup.plugin.rem.controller.ExpedienteComercialController;
 import es.pfsgroup.plugin.rem.expedienteComercial.dao.ExpedienteComercialDao;
+import es.pfsgroup.plugin.rem.gestorDocumental.api.Downloader;
+import es.pfsgroup.plugin.rem.gestorDocumental.api.DownloaderFactoryApi;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionService;
 import es.pfsgroup.plugin.rem.model.Activo;
@@ -91,7 +95,6 @@ import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
-import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.AdjuntoExpedienteComercial;
@@ -218,7 +221,6 @@ import es.pfsgroup.plugin.rem.rest.dto.ResolucionComiteDto;
 import es.pfsgroup.plugin.rem.rest.dto.ResultadoInstanciaDecisionDto;
 import es.pfsgroup.plugin.rem.rest.dto.TitularDto;
 import es.pfsgroup.plugin.rem.rest.dto.TitularUVEMDto;
-import es.pfsgroup.plugin.rem.tareasactivo.dao.TareaActivoDao;
 
 @Service("expedienteComercialManager")
 public class ExpedienteComercialManager extends BusinessOperationOverrider<ExpedienteComercialApi>
@@ -316,6 +318,12 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
     @Autowired
 	private TrabajoApi trabajoApi;
+    
+	@Resource
+	private Properties appProperties;
+	
+	@Autowired
+	private DownloaderFactoryApi downloaderFactoryApi;
     
 	@Override
 	public String managerName() {
@@ -991,10 +999,18 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				
 				dto.setOrigen(oferta.getOrigen());
 
-				if (!Checks.esNulo(expediente.getMotivoAnulacion())) {
-					dto.setCodMotivoAnulacion(expediente.getMotivoAnulacion().getCodigo());
-					dto.setDescMotivoAnulacion(expediente.getMotivoAnulacion().getDescripcion());
+				if (DDTipoOferta.CODIGO_VENTA.equals(oferta.getTipoOferta().getCodigo())) {
+					if (!Checks.esNulo(expediente.getMotivoAnulacion())) {
+						dto.setCodMotivoAnulacion(expediente.getMotivoAnulacion().getCodigo());
+						dto.setDescMotivoAnulacion(expediente.getMotivoAnulacion().getDescripcion());
+					}
+				} else {	// Alquiler
+					if (!Checks.esNulo(expediente.getMotivoAnulacionAlquiler())) {
+						dto.setCodMotivoAnulacion(expediente.getMotivoAnulacionAlquiler().getCodigo());
+						dto.setDescMotivoAnulacion(expediente.getMotivoAnulacionAlquiler().getDescripcion());
+					}
 				}
+				
 				dto.setNumExpediente(expediente.getNumExpediente());
 				if(!Checks.esNulo(expediente.getTrabajo())) {
 					dto.setIdTrabajo(expediente.getTrabajo().getId());
@@ -7151,7 +7167,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			if(DDResultadoCampo.RESULTADO_APROBADO.equals(scoringAlquiler.getResultadoScoring().getCodigo())) {
 				resultadoCampo = (DDResultadoCampo) utilDiccionarioApi.dameValorDiccionarioByCod(DDResultadoCampo.class, DDResultadoCampo.RESULTADO_APROBADO);
 				scoringDto.setComboEstadoScoring(resultadoCampo.getDescripcion());
-			}else {
+			} else {
 				resultadoCampo = (DDResultadoCampo) utilDiccionarioApi.dameValorDiccionarioByCod(DDResultadoCampo.class, DDResultadoCampo.RESULTADO_RECHAZADO);
 				scoringDto.setComboEstadoScoring(resultadoCampo.getDescripcion());
 			}
@@ -7168,6 +7184,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			
 			scoringDto.setComentarios(scoringAlquiler.getComentarios());
 			
+		} else {
+			scoringDto.setComboEstadoScoring("En trámite");
 		}
 				
 		return scoringDto;
@@ -7352,19 +7370,32 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					+ "<br><br> Adjunto copia del contrato suscrito para el alta para la gestión del alta en cobertura de la póliza de seguro de rentas."
 					+ "<br><br> Rogamos confirmación del alta.";
 			
-			List<AdjuntoExpedienteComercial> adjuntosRecuperados = new ArrayList<AdjuntoExpedienteComercial>();	
-			List<DtoAdjuntoMail> adjuntosParaEnviarAsegurador = new ArrayList<DtoAdjuntoMail>();	
+			List<AdjuntoExpedienteComercial> adjuntosRecuperados = new ArrayList<AdjuntoExpedienteComercial>();
 			adjuntosRecuperados = expediente.getAdjuntos();
+			String nombreDocumento = null;
 			
 			for (AdjuntoExpedienteComercial adjunto : adjuntosRecuperados) {
 				
 				if (DDSubtipoDocumentoExpediente.CODIGO_CONTRATO.equals(adjunto.getSubtipoDocumentoExpediente().getCodigo())) {
-				DtoAdjuntoMail dtoAdjuntoMail = new DtoAdjuntoMail();
-				dtoAdjuntoMail.setAdjunto(adjunto.getAdjunto());
-				dtoAdjuntoMail.setNombre(adjunto.getNombre());
-				adjuntosParaEnviarAsegurador.add(dtoAdjuntoMail);
+					nombreDocumento = adjunto.getNombre();
+					break;
 				}
 			}
+			
+			String key = appProperties.getProperty(ExpedienteComercialController.CONSTANTE_REST_CLIENT);
+			Downloader dl = downloaderFactoryApi.getDownloader(key);
+			
+			FileItem fileItem = dl.getFileItem(idExpediente,nombreDocumento);
+			
+			Adjunto adjuntoMail = new Adjunto();
+			adjuntoMail.setFileItem(fileItem);
+			
+			DtoAdjuntoMail dto = new DtoAdjuntoMail();
+			dto.setNombre(nombreDocumento);
+			dto.setAdjunto(adjuntoMail);
+			
+			List<DtoAdjuntoMail> adjuntosParaEnviarAsegurador = new ArrayList<DtoAdjuntoMail>();
+			adjuntosParaEnviarAsegurador.add(dto);
 			
 			genericAdapter.sendMail(mailsParaEnviarAsegurador, new ArrayList<String>(),asunto,cuerpo,adjuntosParaEnviarAsegurador);
 			resultado = true;

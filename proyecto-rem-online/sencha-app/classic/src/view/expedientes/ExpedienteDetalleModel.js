@@ -189,6 +189,14 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	     	}
 	     	return false;
 	     },
+	     getStoreMotivoAnulacionByTipoExpediente: function(get){
+			var tipoExpedienteCodigo = get('expediente.tipoExpedienteCodigo');
+			if (tipoExpedienteCodigo == CONST.TIPOS_EXPEDIENTE_COMERCIAL["VENTA"]) {
+	     		return this.data.storeMotivoAnulacion;
+	     	} else {
+	     		return this.data.storeMotivoAnulacionAlquiler;
+	     	}
+		 },
 	     compradorTipoEsAlquiler: function(get){
 
 			var tipoOferta= get('expediente.tipoExpedienteCodigo');
@@ -808,6 +816,15 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 		        type: 'uxproxy',
 		        remoteUrl: 'generic/getDiccionario',
 		        extraParams: {diccionario: 'motivoAnulacionExpediente'}
+	    	}	    	
+	    },
+	    
+	    storeMotivoAnulacionAlquiler: {
+	    	model: 'HreRem.model.ComboBase',
+	    	proxy: {
+		        type: 'uxproxy',
+		        remoteUrl: 'generic/getDiccionario',
+		        extraParams: {diccionario: 'motivoAnulacionOferta'}
 	    	}	    	
 	    },
 	    

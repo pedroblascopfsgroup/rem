@@ -292,7 +292,7 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 		                	reference: 'comboMotivoAnulacion',
 		                	editable: true,
 				        	bind: {
-				        		store: '{storeMotivoAnulacion}',
+				        		store: '{getStoreMotivoAnulacionByTipoExpediente}',
 			            		value: '{expediente.codMotivoAnulacion}'
 			            	}
 				        },

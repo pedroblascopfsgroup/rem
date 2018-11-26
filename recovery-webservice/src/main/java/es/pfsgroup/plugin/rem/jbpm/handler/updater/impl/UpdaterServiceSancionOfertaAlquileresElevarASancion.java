@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.jbpm.handler.updater.impl;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -9,7 +10,9 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
+import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
@@ -22,7 +25,7 @@ import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDResolucionOferta;
 
 @Component
@@ -54,6 +57,7 @@ public class UpdaterServiceSancionOfertaAlquileresElevarASancion implements Upda
 
 		ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByTrabajo(tramite.getTrabajo());
 		Oferta oferta = expedienteComercial.getOferta();
+		String peticionario = null;
 		
 		for(TareaExternaValor valor :  valores){
 
@@ -83,8 +87,18 @@ public class UpdaterServiceSancionOfertaAlquileresElevarASancion implements Upda
 			}
 			
 			if(MOTIVO_ANULACION.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
-				DDMotivoAnulacionExpediente motivoAnulacion = genericDao.get(DDMotivoAnulacionExpediente.class, genericDao.createFilter(FilterType.EQUALS,"codigo", valor.getValor()));
-				expedienteComercial.setMotivoAnulacion(motivoAnulacion);
+				DDMotivoAnulacionOferta motivoAnulacion = genericDao.get(DDMotivoAnulacionOferta.class, genericDao.createFilter(FilterType.EQUALS,"codigo", valor.getValor()));
+				expedienteComercial.setMotivoAnulacionAlquiler(motivoAnulacion);
+				
+				// Guardamos el usuario que realiza la tarea
+				TareaExterna tex = valor.getTareaExterna();
+				if (!Checks.esNulo(tex)) {
+					TareaNotificacion tar = tex.getTareaPadre();
+					peticionario = tar.getAuditoria().getUsuarioBorrar();
+				}
+				
+				expedienteComercial.setFechaAnulacion(new Date());
+				expedienteComercial.setPeticionarioAnulacion(peticionario);
 			}
 			
 			if(COMITE.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) { 
@@ -105,9 +119,10 @@ public class UpdaterServiceSancionOfertaAlquileresElevarASancion implements Upda
 				}
 			}
 		}
-		expedienteComercial.setOferta(oferta);
-		expedienteComercialApi.update(expedienteComercial);
 		
+		expedienteComercial.setOferta(oferta);
+		
+		expedienteComercialApi.update(expedienteComercial);
 	}
 
 	public String[] getCodigoTarea() {

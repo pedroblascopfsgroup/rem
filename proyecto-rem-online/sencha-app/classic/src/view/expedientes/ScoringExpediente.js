@@ -44,14 +44,14 @@ Ext.define('HreRem.view.expedientes.ScoringExpediente', {
 							xtype: 'textfieldbase',
 		                	fieldLabel:HreRem.i18n('fieldlabel.motivo.rechazo'),
 				        	readOnly: true,
-				        	disabled: true,
+				        	disabled: false,
 				        	reference:'scoringMotivoRechazo',
 				        	bind : '{scoring.motivoRechazo}' 
 				        },
 				        { 
 							xtype: 'textfieldbase',
 		                	fieldLabel: HreRem.i18n('fieldlabel.numero.solicitud'),
-				        	readOnly: false,
+				        	readOnly: true,
 				        	bind : '{scoring.nSolicitud}'
 				        },
 				        { 

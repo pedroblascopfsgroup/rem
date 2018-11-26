@@ -31,10 +31,12 @@ import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.GastoAvisadorApi;
 import es.pfsgroup.plugin.rem.api.GastoProveedorApi;
 import es.pfsgroup.plugin.rem.api.ProveedoresApi;
+import es.pfsgroup.plugin.rem.excel.FacturasProveedoresExcelReport;
 import es.pfsgroup.plugin.rem.excel.ActivosGastoExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
 import es.pfsgroup.plugin.rem.excel.GestionGastosExcelReport;
+import es.pfsgroup.plugin.rem.excel.TasasImpuestosExcelReport;
 import es.pfsgroup.plugin.rem.excel.TrabajosGastoExcelReport;
 import es.pfsgroup.plugin.rem.gasto.dao.GastoDao;
 import es.pfsgroup.plugin.rem.model.DtoActivoGasto;
@@ -50,8 +52,10 @@ import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.VBusquedaGastoActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaGastoTrabajos;
+import es.pfsgroup.plugin.rem.model.VFacturasProveedores;
 import es.pfsgroup.plugin.rem.model.VGastosProveedor;
 import es.pfsgroup.plugin.rem.model.VGastosProveedorExcel;
+import es.pfsgroup.plugin.rem.model.VTasasImpuestos;
 
 
 
@@ -964,4 +968,25 @@ public class GastosProveedorController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public void generateExcelFacturas(HttpServletRequest request, HttpServletResponse response) throws IOException{
+
+		List<VFacturasProveedores> listaFacturas = gastoProveedorApi.getListFacturas();
+
+		ExcelReport report = new FacturasProveedoresExcelReport(listaFacturas);
+
+		excelReportGeneratorApi.generateAndSend(report, response);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public void generateExcelTasasImpuestos(HttpServletRequest request, HttpServletResponse response) throws IOException{
+		
+		List<VTasasImpuestos> listaTasasImpuestos = gastoProveedorApi.getListTasasImpuestos();
+		
+		ExcelReport report = new TasasImpuestosExcelReport(listaTasasImpuestos);
+		
+		excelReportGeneratorApi.generateAndSend(report, response);
+	}
 }

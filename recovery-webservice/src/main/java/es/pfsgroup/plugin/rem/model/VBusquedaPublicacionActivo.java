@@ -41,6 +41,12 @@ public class VBusquedaPublicacionActivo implements Serializable {
     
     @Column(name="ESTADO_PUBLICACION_DESCRIPCION")
     private String estadoPublicacionDescripcion;
+
+	@Column(name="TIPO_COMERCIALIZACION_CODIGO")
+    private String tipoComercializacionCodigo;
+    
+    @Column(name="TIPO_COMERCIALIZACION_DESC")
+    private String tipoComercializacionDescripcion;
 	
     @Column(name="ADMISION")
     private Boolean admision;
@@ -130,6 +136,22 @@ public class VBusquedaPublicacionActivo implements Serializable {
 
 	public void setEstadoPublicacionDescripcion(String estadoPublicacionDescripcion) {
 		this.estadoPublicacionDescripcion = estadoPublicacionDescripcion;
+	}
+	
+	public String getTipoComercializacionCodigo() {
+		return tipoComercializacionCodigo;
+	}
+
+	public void setTipoComercializacionCodigo(String tipoComercializacionCodigo) {
+		this.tipoComercializacionCodigo = tipoComercializacionCodigo;
+	}
+
+	public String getTipoComercializacionDescripcion() {
+		return tipoComercializacionDescripcion;
+	}
+
+	public void setTipoComercializacionDescripcion(String tipoComercializacionDescripcion) {
+		this.tipoComercializacionDescripcion = tipoComercializacionDescripcion;
 	}
 
 	public Boolean getAdmision() {

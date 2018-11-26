@@ -40,7 +40,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadOrigen;
 import es.pfsgroup.plugin.rem.model.dd.DDEntradaActivoBankia;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDRatingActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
@@ -54,11 +53,8 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoPublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoUsoDestino;
 
-
 /**
  * Modelo que gestiona los activos.
- * 
- * @author Anahuac de Vicente
  */
 @Entity
 @Table(name = "ACT_ACTIVO", schema = "${entity.schema}")
@@ -298,6 +294,10 @@ public class Activo implements Serializable, Auditable {
     @Where(clause = Auditoria.UNDELETED_RESTICTION)
     private List<ActivoAgrupacionActivo> agrupaciones;
     
+    @OneToOne(mappedBy = "activo", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "ACT_ID")
+    private ActivoPublicacion activoPublicacion;
+
     @OneToMany(mappedBy = "activo", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "ACT_ID")
     @Where(clause = Auditoria.UNDELETED_RESTICTION)
@@ -306,7 +306,7 @@ public class Activo implements Serializable, Auditable {
     @OneToMany(mappedBy = "activo", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "ACT_ID")
     @Cascade({org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
-    private List<ActivoAdjuntoActivo> adjuntos;    
+    private List<ActivoAdjuntoActivo> adjuntos;
     
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "ACT_BLOQUEO_PRECIO_USU_ID")
@@ -315,11 +315,7 @@ public class Activo implements Serializable, Auditable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_TPU_ID")
     private DDTipoPublicacion tipoPublicacion;
-    
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "DD_EPU_ID")
-    private DDEstadoPublicacion estadoPublicacion;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_TCO_ID")
     private DDTipoComercializacion tipoComercializacion;
@@ -338,7 +334,12 @@ public class Activo implements Serializable, Auditable {
     @JoinColumn(name = "ACT_ID")
     private List<ActivoIntegrado> integraciones;
     
-    
+    @OneToMany(mappedBy = "activo", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "ACT_ID")
+    @Cascade({org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
+    private List<AdjuntosPromocion> adjuntosPromocion;
+
+
     // Indicadores de precios del activo y de activo publicable
     @Column(name = "ACT_FECHA_IND_PRECIAR")
     private Date fechaPreciar;
@@ -412,19 +413,20 @@ public class Activo implements Serializable, Auditable {
     
     @Column(name = "OK_TECNICO")
     private Boolean tieneOkTecnico;
-    
+
+    @Column(name = "ACT_ACTIVO_DEMANDA_AFECT_COM")
+    private Integer tieneDemandaAfecCom;
+
     @Column(name = "ACT_EN_TRAMITE")
     private Boolean enTramite;
 
     @Column(name = "ACT_PUJA")
     private Boolean estaEnPuja;
-    
+
     @Column(name = "ACT_MOTIVO")
     private String motivoActivo;
-	
-	
-    // Getters del activo --------------------------------------------
-    
+
+
     public Long getId() {
 		return id;
 	}
@@ -1341,7 +1343,7 @@ public class Activo implements Serializable, Auditable {
     
 	/**
      * devuelve el adjunto por Id.
-     * @param id id
+     * @param idDocRestClient: id
      * @return adjunto
      */
     public ActivoAdjuntoActivo getAdjuntoGD(Long idDocRestClient) {
@@ -1350,6 +1352,60 @@ public class Activo implements Serializable, Auditable {
         }
         return null;
     }
+
+
+	/**
+     * Agrega un adjuntos de promocion al activo
+     */
+    public void addAdjuntoPromocion(FileItem fileItem) {
+		AdjuntosPromocion adjuntosPromocion = new AdjuntosPromocion(fileItem);
+		adjuntosPromocion.setActivo(this);
+        Auditoria.save(adjuntosPromocion);
+        getAdjuntosPromocion().add(adjuntosPromocion);
+
+    }
+
+    /**
+     * devuelve el adjunto de promocion por Id.
+     * @param id id
+     * @return adjunto
+     */
+    public AdjuntosPromocion getAdjuntoPromocion(Long id) {
+        for (AdjuntosPromocion adj : getAdjuntosPromocion()) {
+            if (adj.getId().equals(id)) { return adj; }
+        }
+        return null;
+    }
+
+	/**
+     * devuelve el adjunto por Id.
+     * @param id id
+     * @return adjunto
+     */
+    public AdjuntosPromocion getAdjuntoPromocionGD(Long idDocRestClient) {
+    	for (AdjuntosPromocion adj : getAdjuntosPromocion()) {
+    		if(!Checks.esNulo(adj.getIdDocRestClient()) && adj.getIdDocRestClient().equals(idDocRestClient)) { return adj; }
+        }
+        return null;
+    }
+
+    /**
+	 * Comprueba que tiene un documento adjuntado del
+	 * @param activo
+	 * @param codigoDocumento
+	 * @return
+	 */
+	public boolean hasAdjunto(String codigoDocumento)
+	{
+		for(ActivoAdjuntoActivo adjunto : getAdjuntos())
+		{
+			if(!Checks.esNulo(adjunto.getTipoDocumentoActivo()) && codigoDocumento.equals(adjunto.getTipoDocumentoActivo().getCodigo()))
+			{
+				return true;
+			}
+		}
+		return false;
+	}
 
 	public Integer getLlavesHre() {
 		return llavesHre;
@@ -1397,14 +1453,6 @@ public class Activo implements Serializable, Auditable {
 
 	public void setTipoPublicacion(DDTipoPublicacion tipoPublicacion) {
 		this.tipoPublicacion = tipoPublicacion;
-	}
-	
-	public DDEstadoPublicacion getEstadoPublicacion() {
-		return estadoPublicacion;
-	}
-
-	public void setEstadoPublicacion(DDEstadoPublicacion estadoPublicacion) {
-		this.estadoPublicacion = estadoPublicacion;
 	}
 
 	public DDTipoComercializacion getTipoComercializacion() {
@@ -1619,6 +1667,14 @@ public class Activo implements Serializable, Auditable {
 		this.activoBNK = activoBNK;
 	}
 
+	public ActivoPublicacion getActivoPublicacion() {
+		return activoPublicacion;
+	}
+
+	public void setActivoPublicacion(ActivoPublicacion activoPublicacion) {
+		this.activoPublicacion = activoPublicacion;
+	}
+
 	public Boolean getTieneOkTecnico() {
 		return tieneOkTecnico;
 	}
@@ -1634,7 +1690,24 @@ public class Activo implements Serializable, Auditable {
 	public void setEnTramite(Boolean enTramite) {
 		this.enTramite = enTramite;
 	}
-	
+
+
+	public List<AdjuntosPromocion> getAdjuntosPromocion() {
+		return adjuntosPromocion;
+	}
+
+	public void setAdjuntosPromocion(List<AdjuntosPromocion> adjuntosPromocion) {
+		this.adjuntosPromocion = adjuntosPromocion;
+	}
+
+	public Integer getTieneDemandaAfecCom() {
+		return tieneDemandaAfecCom;
+	}
+
+	public void setTieneDemandaAfecCom(Integer tieneDemandaAfecCom) {
+		this.tieneDemandaAfecCom = tieneDemandaAfecCom;
+	}
+
 	public Boolean getEstaEnPuja() {
 		return estaEnPuja;
 	}
@@ -1650,9 +1723,4 @@ public class Activo implements Serializable, Auditable {
 	public void setMotivoActivo(String motivoActivo) {
 		this.motivoActivo = motivoActivo;
 	}
-
-	
-	
-	
-	
 }

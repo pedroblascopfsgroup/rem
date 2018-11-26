@@ -1,5 +1,9 @@
 package es.pfsgroup.plugin.gestorDocumental.model.documentos;
 
+import es.pfsgroup.commons.utils.Checks;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.NumberUtils;
+
 public class IdentificacionDocumento {
 
 	/**
@@ -79,7 +83,7 @@ public class IdentificacionDocumento {
 	private String tdn2_desc;
 	
 	/**
-	 * Nombre del activo donde está el documento (equivale a idExpedienteHaya)
+	 * Número identificativo Haya del activo (ACT_NUM_ACTIVO).
 	 */
 	private String id_activo;
 
@@ -183,6 +187,18 @@ public class IdentificacionDocumento {
 		return fileSize;
 	}
 
+	public Long getFileSizeInLongBytes() {
+		Long valor = null;
+		if(!Checks.esNulo(this.fileSize)) {
+			String kb = StringUtils.substringBefore(this.fileSize," ");
+			if(NumberUtils.isNumber(kb)) {
+				int bytes = Math.round(Float.parseFloat(kb)*1024);
+				valor = Long.parseLong(String.valueOf(bytes));
+			}
+		}
+		return valor;
+	}
+
 	public void setFileSize(String fileSize) {
 		this.fileSize = fileSize;
 	}
@@ -211,4 +227,7 @@ public class IdentificacionDocumento {
 		this.id_activo = id_activo;
 	}
 
+	public String getMatriculaCompleta() {
+		return tipoExpediente +"-"+ serieDocumental +"-"+ tdn1 +"-"+ tdn2;
+	}
 }

@@ -1,20 +1,18 @@
 --/*
 --##########################################
---## AUTOR=Isidro Sotoca
---## FECHA_CREACION=20171023
+--## AUTOR=JAVI LOPEZ
+--## FECHA_CREACION=20181121
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-4500
+--## VERSION_ARTEFACTO=2.1.0
+--## INCIDENCIA_LINK=HREOS-4072
 --## PRODUCTO=NO
---## Finalidad: Tabla para almacentar el historico del stock de activos enviados a webcom. Se añaden campos HREOS-1551. Se amplia campo CondicionesEspecificas HREOS-1930.
+--## Finalidad: Tabla para almacentar el historico del stock de activos enviados a webcom.
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
 --##########################################
 --*/
-
---Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
 
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
 SET SERVEROUTPUT ON; 
@@ -39,7 +37,7 @@ DECLARE
     CUENTA NUMBER;
     
 BEGIN
-	--V1.1 DAP Se añade rownumber a proveedor tecnico para evitar duplicados por este motivo
+
 
 	DBMS_OUTPUT.PUT_LINE('********' ||V_TEXT_VISTA|| '********'); 
 	DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_VISTA||'... Comprobaciones previas');
@@ -88,6 +86,9 @@ BEGIN
 		SELECT DISTINCT
 		CAST(ACT.ACT_NUM_ACTIVO AS NUMBER(16,0)) 											AS ID_ACTIVO_HAYA,
 		CAST(ACT.ACT_NUM_ACTIVO_UVEM AS NUMBER(16,0)) 										AS ID_ACTIVO_UVEM,
+		CAST(ACT.ACT_NUM_ACTIVO_SAREB AS VARCHAR2(55 CHAR)) 								AS ID_ACTIVO_SAREB,
+        CAST(ACT.ACT_NUM_ACTIVO_PRINEX AS NUMBER(16,0)) 									AS ID_ACTIVO_PRINEX,
+        CAST(ACT.ACT_NUM_ACTIVO_REM AS NUMBER(16,0)) 										AS ID_ACTIVO_REM,
 		CAST(DDTVI.DD_TVI_CODIGO AS VARCHAR2(20 CHAR)) 										AS COD_TIPO_VIA,
 		CAST(BLOC.BIE_LOC_NOMBRE_VIA AS VARCHAR2(100 CHAR)) 								AS NOMBRE_CALLE,
 		CAST(BLOC.BIE_LOC_NUMERO_DOMICILIO AS VARCHAR2(100 CHAR)) 							AS NUMERO_CALLE,
@@ -123,7 +124,6 @@ BEGIN
 		CAST(LOC.LOC_LONGITUD AS NUMBER(21,15)) 											AS LNG,
 		CAST(DDECT.DD_ECT_CODIGO AS VARCHAR2(5 CHAR))										AS COD_ESTADO_CONSTRUCCION,
 		CAST(NVL(VPD.TERRAZAS_CUBIERTAS, 0) + NVL(VPD.TERRAZAS_DESCUBIERTAS, 0) AS NUMBER(5,0)) 	AS TERRAZAS,
-		CAST(DDEPU.DD_EPU_CODIGO AS VARCHAR2(5 CHAR)) 										AS COD_ESTADO_PUBLICACION,	   	
 		CASE WHEN (VIV.VIV_REFORMA_CARP_INT =1 OR VIV.VIV_REFORMA_CARP_EXT = 1 
 				OR VIV.VIV_REFORMA_COCINA =1 OR VIV.VIV_REFORMA_BANYO =1 
 				OR VIV.VIV_REFORMA_SUELO=1 OR VIV.VIV_REFORMA_PINTURA=1 
@@ -138,7 +138,7 @@ BEGIN
 		END 																				AS PUBLICADO_DESDE,
 		CAST(VPO.DD_TVP_CODIGO AS VARCHAR2(5 CHAR)) 										AS COD_REGIMEN_PROTECCION,
 		CAST(EDI.EDI_DESCRIPCION AS VARCHAR2(3000 CHAR))									AS DESCRIPCION,
-		CAST(NVL(VIV.VIV_DISTRIBUCION_TXT, ICO.ICO_INFO_DISTRIBUCION_INTERIOR) AS VARCHAR2(500 CHAR))						AS DISTRIBUCION,
+		CAST(NVL(VIV.VIV_DISTRIBUCION_TXT, ICO.ICO_INFO_DISTRIBUCION_INTERIOR) AS VARCHAR2(3000 CHAR))						AS DISTRIBUCION,
 		CAST(COE.COE_TEXTO AS VARCHAR2(3000 CHAR))                            				AS CONDICIONES_ESPECIFICAS,
 		CAST(VCOND.ESTADO AS VARCHAR2(5 CHAR))                       						AS COD_DETALLE_PUBLICACION, 
 		CAST(PIVOT_AGR.OBRA_NUEVA_NUM_REM AS NUMBER(16,0))	                                AS CODIGO_AGRUPACION_OBRA_NUEVA,
@@ -214,11 +214,15 @@ BEGIN
 					WHERE USU.USU_USERNAME = ''REM-USER'')) AS NUMBER (16, 0)) 				AS ID_USUARIO_REM_ACCION,
 		CAST(DDSTA.DD_STA_CODIGO AS VARCHAR2(5 CHAR))										AS COD_SUBTIPO_TITULO,
 		CAST(DDSCR.DD_SCR_CODIGO AS VARCHAR2(5 CHAR))										AS COD_SUB_CARTERA,
-		PVEPRV.PVE_COD_REM 																	AS ACTIVO_PROVEEDOR_TECNICO,
-		CASE WHEN (ACT_PTA.CHECK_HPM = 1) 
-			THEN DD_TAL.DD_TAL_CODIGO
-			ELSE NULL
-		END 																				AS TIPO_ALQUILER
+       CAST(epv.dd_epv_codigo AS VARCHAR2(5 CHAR)) 											AS cod_estado_publicacion,
+       CAST(epa.dd_epa_codigo AS VARCHAR2(5 CHAR)) 											AS cod_estado_pub_alquiler,
+       CAST(tpu.dd_tpu_codigo AS VARCHAR2(5 CHAR)) 											AS cod_subestado_pub_venta,
+       CAST(tpu.dd_tpu_codigo AS VARCHAR2(5 CHAR)) 											AS cod_subestado_pub_alquiler,
+       actpub.apu_check_ocultar_precio_v 													AS ind_ocultar_precio_venta,
+       actpub.apu_check_ocultar_precio_a 													AS ind_ocultar_precio_alquiler,
+       v.condicionantes 																	AS arr_cod_detalle_publicacion,
+       v.descripcion_otros																	AS descripcion_otros,
+		PVEPRV.PVE_COD_REM 																	AS ACTIVO_PROVEEDOR_TECNICO
     	FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT
 		INNER JOIN '||V_ESQUEMA||'.ACT_LOC_LOCALIZACION LOC ON LOC.ACT_ID = ACT.ACT_ID
 		INNER JOIN '||V_ESQUEMA||'.BIE_LOCALIZACION BLOC ON BLOC.BIE_LOC_ID = LOC.BIE_LOC_ID
@@ -228,62 +232,98 @@ BEGIN
 		LEFT JOIN '||V_ESQUEMA_M||'.DD_LOC_LOCALIDAD DDLOC ON DDLOC.DD_LOC_ID = BLOC.DD_LOC_ID
 		LEFT JOIN '||V_ESQUEMA||'.DD_TPA_TIPO_ACTIVO DDTPA ON DDTPA.DD_TPA_ID = ACT.DD_TPA_ID
 		LEFT JOIN '||V_ESQUEMA||'.DD_SAC_SUBTIPO_ACTIVO DDSAC ON DDSAC.DD_SAC_ID = ACT.DD_SAC_ID
+
 		INNER JOIN '||V_ESQUEMA||'.ACT_REG_INFO_REGISTRAL REG ON REG.ACT_ID = ACT.ACT_ID
 		INNER JOIN '||V_ESQUEMA||'.BIE_DATOS_REGISTRALES BREG ON BREG.BIE_DREG_ID = REG.BIE_DREG_ID
 		LEFT JOIN '||V_ESQUEMA_M||'.DD_LOC_LOCALIDAD DDBRLOC ON DDBRLOC.DD_LOC_ID = BREG.DD_LOC_ID
-		LEFT JOIN '||V_ESQUEMA||'.ACT_ICO_INFO_COMERCIAL ICO ON ICO.ACT_ID = ACT.ACT_ID    
+
+		LEFT JOIN '||V_ESQUEMA||'.ACT_ICO_INFO_COMERCIAL ICO ON ICO.ACT_ID = ACT.ACT_ID	
 		LEFT JOIN '||V_ESQUEMA||'.ACT_EDI_EDIFICIO EDI ON EDI.ICO_ID = ICO.ICO_ID
 		LEFT JOIN '||V_ESQUEMA||'.VI_PIVOT_DISTRIBUCION VPD ON VPD.ICO_ID = ICO.ICO_ID
 		LEFT JOIN '||V_ESQUEMA||'.DD_EAC_ESTADO_ACTIVO DDEAC ON DDEAC.DD_EAC_ID = ACT.DD_EAC_ID
 		LEFT JOIN '||V_ESQUEMA||'.DD_SCM_SITUACION_COMERCIAL DDSCM ON DDSCM.DD_SCM_ID = ACT.DD_SCM_ID
 		LEFT JOIN '||V_ESQUEMA||'.DD_TCO_TIPO_COMERCIALIZACION DDTCO ON DDTCO.DD_TCO_ID = ACT.DD_TCO_ID
 		LEFT JOIN '||V_ESQUEMA||'.DD_ECT_ESTADO_CONSTRUCCION DDECT ON DDECT.DD_ECT_ID = ICO.DD_ECT_ID
-		LEFT JOIN '||V_ESQUEMA||'.DD_EPU_ESTADO_PUBLICACION DDEPU ON DDEPU.DD_EPU_ID = ACT.DD_EPU_ID
 		LEFT JOIN '||V_ESQUEMA||'.DD_STA_SUBTIPO_TITULO_ACTIVO DDSTA ON DDSTA.DD_STA_ID = ACT.DD_STA_ID
 		LEFT JOIN '||V_ESQUEMA||'.DD_SCR_SUBCARTERA DDSCR ON DDSCR.DD_SCR_ID = ACT.DD_SCR_ID
+
 		LEFT JOIN '||V_ESQUEMA||'.ACT_VIV_VIVIENDA VIV ON VIV.ICO_ID = ICO.ICO_ID
-		LEFT JOIN '||V_ESQUEMA||'.ACT_ADM_INF_ADMINISTRATIVA ADM ON ADM.ACT_ID = ACT.ACT_ID    
-		LEFT JOIN '||V_ESQUEMA||'.DD_TVP_TIPO_VPO VPO ON VPO.DD_TVP_ID = ADM.DD_TVP_ID    
+		LEFT JOIN '||V_ESQUEMA||'.ACT_ADM_INF_ADMINISTRATIVA ADM ON ADM.ACT_ID = ACT.ACT_ID	
+		LEFT JOIN '||V_ESQUEMA||'.DD_TVP_TIPO_VPO VPO ON VPO.DD_TVP_ID = ADM.DD_TVP_ID	
 		LEFT JOIN '||V_ESQUEMA||'.DD_RTG_RATING_ACTIVO DDRTG ON DDRTG.DD_RTG_ID = ACT.DD_RTG_ID
 		LEFT JOIN '||V_ESQUEMA||'.DD_CRA_CARTERA DDCRA ON DDCRA.DD_CRA_ID = ACT.DD_CRA_ID
+
 		LEFT JOIN '||V_ESQUEMA||'.ACT_SPS_SIT_POSESORIA SPS ON SPS.ACT_ID = ACT.ACT_ID
 		LEFT JOIN '||V_ESQUEMA||'.ACT_ZCO_ZONA_COMUN ZCO ON ZCO.ICO_ID = ICO.ICO_ID
 		LEFT JOIN '||V_ESQUEMA||'.VI_STOCK_ACTIVO_GCOM GCO ON GCO.ACT_ID = ACT.ACT_ID
 		LEFT JOIN '||V_ESQUEMA||'.ACT_PVE_PROVEEDOR PVE ON PVE.PVE_ID = ICO.ICO_MEDIADOR_ID
-		LEFT JOIN '||V_ESQUEMA||'.VI_STOCK_PIVOT_AGRUP_ACTIVO PIVOT_AGR ON PIVOT_AGR.ACT_ID = ACT.ACT_ID --V_PIVOT_AGRUPACIONES_ACTIVO
+		
+		LEFT JOIN '||V_ESQUEMA||'.VI_STOCK_PIVOT_AGRUP_ACTIVO PIVOT_AGR ON PIVOT_AGR.ACT_ID = ACT.ACT_ID -- V_PIVOT_AGRUPACIONES_ACTIVO
 		LEFT JOIN '||V_ESQUEMA||'.VI_STOCK_ACTIVOS_SUBDIVISON SUBD_ACT ON SUBD_ACT.ACT_ID = ACT.ACT_ID --v_activos_lite
 		LEFT JOIN '||V_ESQUEMA||'.VI_STOCK_PIVOT_PRECIOS VAL1 ON VAL1.ACT_ID = ACT.ACT_ID --v_stock_pivot_precios
 		LEFT JOIN '||V_ESQUEMA||'.VI_STOCK_PIVOT_PRECIOS_ANT VANT ON VANT.ACT_ID = ACT.ACT_ID --v_new_pivot_precios_ant
+
 		INNER JOIN '||V_ESQUEMA||'.VI_STOCK_ACTIVO_CONDICIONANTE VCOND ON VCOND.ACT_ID = ACT.ACT_ID --v_stock_activo_condicionantes
 		LEFT JOIN '||V_ESQUEMA||'.VI_STOCK_ACTIVO_REFCATASTRAL CAT ON CAT.ACT_ID = ACT.ACT_ID
 		LEFT JOIN '||V_ESQUEMA||'.VI_STOCK_ACTIVO_PROV_ANT PVE_ANT ON PVE_ANT.ACT_ID = ACT.ACT_ID
 		LEFT JOIN '||V_ESQUEMA||'.VI_STOCK_ACTIVO_FECHAPUBLICA PUB ON PUB.ACT_ID = ACT.ACT_ID
-		JOIN '||V_ESQUEMA||'.DD_TPA_TIPO_ACTIVO TPA ON TPA.DD_TPA_ID = ACT.DD_TPA_ID
-		LEFT JOIN ( 
-		    SELECT COE.ACT_ID, COE.COE_TEXTO
-		    FROM '||V_ESQUEMA||'.ACT_COE_CONDICION_ESPECIFICA COE
-		    WHERE COE.COE_FECHA_HASTA IS NULL AND COE.BORRADO = 0 AND COE.COE_FECHA_DESDE <= SYSDATE) COE ON COE.ACT_ID = ACT.ACT_ID
-		LEFT JOIN (  
-		    SELECT PVE.PVE_COD_REM, GAC.ACT_ID, ROW_NUMBER() OVER(PARTITION BY GAC.ACT_ID ORDER BY PVE.FECHACREAR DESC) RN
-		    FROM '||V_ESQUEMA||'.GAC_GESTOR_ADD_ACTIVO GAC INNER JOIN '||V_ESQUEMA||'.GEE_GESTOR_ENTIDAD GEE ON GEE.GEE_ID = GAC.GEE_ID
-		    INNER JOIN '||V_ESQUEMA||'.ACT_PVC_PROVEEDOR_CONTACTO PVC ON PVC.USU_ID = GEE.USU_ID
-		    INNER JOIN '||V_ESQUEMA||'.ACT_PVE_PROVEEDOR PVE ON PVE.PVE_ID = PVC.PVE_ID
-		    INNER JOIN '||V_ESQUEMA||'.DD_EPR_ESTADO_PROVEEDOR EPR ON EPR.DD_EPR_ID = PVE.DD_EPR_ID AND EPR.DD_EPR_CODIGO = ''04''                                                                  
-		    INNER JOIN '||V_ESQUEMA||'.DD_TPR_TIPO_PROVEEDOR TPR ON TPR.DD_TPR_ID = PVE.DD_TPR_ID AND TPR.DD_TPR_CODIGO = ''05''
-		    INNER JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_ID = GAC.ACT_ID
-		    INNER JOIN '||V_ESQUEMA_M||'.DD_TGE_TIPO_GESTOR TGE ON TGE.DD_TGE_ID = GEE.DD_TGE_ID
-		    INNER JOIN '||V_ESQUEMA||'.ACT_ETP_ENTIDAD_PROVEEDOR ETP ON ETP.DD_CRA_ID = ACT.DD_CRA_ID AND ETP.PVE_ID = PVE.PVE_ID
-		    WHERE TGE.DD_TGE_CODIGO = ''PTEC'') PVEPRV ON PVEPRV.ACT_ID = ACT.ACT_ID AND PVEPRV.RN = 1
+		left join ( SELECT COE.ACT_ID, COE.COE_TEXTO
+					FROM '||V_ESQUEMA||'.ACT_COE_CONDICION_ESPECIFICA COE
+					WHERE COE.COE_FECHA_HASTA IS NULL AND COE.BORRADO = 0 AND COE.COE_FECHA_DESDE <= SYSDATE ) COE on COE.ACT_ID = ACT.ACT_ID
+
+		LEFT JOIN '||V_ESQUEMA||'.act_apu_activo_publicacion actpub ON actpub.ACT_ID = ACT.ACT_ID
+        LEFT JOIN '||V_ESQUEMA||'.dd_epv_estado_pub_venta epv ON epv.dd_epv_id = actpub.dd_epv_id
+        LEFT JOIN '||V_ESQUEMA||'.dd_epa_estado_pub_alquiler epa ON epa.dd_epa_id = actpub.dd_epa_id
+        LEFT JOIN '||V_ESQUEMA||'.dd_tpu_tipo_publicacion tpu ON tpu.dd_tpu_id = actpub.DD_TPU_V_ID
+        LEFT JOIN '||V_ESQUEMA||'.dd_tpu_tipo_publicacion tpu ON tpu.dd_tpu_id = actpub.DD_TPU_A_ID
+        LEFT JOIN
+           (SELECT vi.act_id,
+                      pac.pac_check_comercializar --Disponible
+                   || vi.sin_toma_posesion_inicial --Sin Posesión
+                   || vi.ocupado_contitulo --Alquilado
+                   || vi.ocupado_sintitulo --Ocupado
+                   || vi.pendiente_inscripcion --Pendiente inscripción
+                   || vi.proindiviso --Proindiviso
+                   || vi.tapiado --Tapiado
+                   || vi.obranueva_sindeclarar --Sin declarar obra nueva
+                   || vi.obranueva_enconstruccion --En construcción obra nueva
+                   || vi.divhorizontal_noinscrita --División horizontal no inscrita
+                   || vi.ruina --Ruina
+				   || NVL2 (vi.otro, 1, 0) --Inmueble en Situación Especial
+                   || vi.sin_informe_aprobado --Inmueble en Precomercialización
+                   || vi.revision --Inmueble en Revisión
+                   || vi.procedimiento_judicial --Procedimiento Judicial
+                   || vi.con_cargas --Inmueble con Cargas
+                   || 0 --Inmueble sin Título
+                   || 0 --Pendiente de adjudicación
+                   || vi.vandalizado --Vandalizado
+                   || vi.sin_acceso --Sin Acceso
+                   condicionantes,
+                   vi.otro descripcion_otros
+              FROM rem01.v_cond_disponibilidad vi
+              join rem01.ACT_PAC_PERIMETRO_ACTIVO pac on pac.act_id = vi.act_id) v ON v.act_id = actpub.act_id
+
+    	LEFT JOIN(  SELECT DISTINCT pve.PVE_COD_REM, gac.ACT_ID, row_number() over(partition by gac.act_id order by pve.fechacrear desc) rn
+    	    FROM '||V_ESQUEMA||'.GAC_GESTOR_ADD_ACTIVO gac
+                inner join '||V_ESQUEMA||'.GEE_GESTOR_ENTIDAD gee ON gee.GEE_ID = gac.GEE_ID
+                inner join '||V_ESQUEMA||'.ACT_PVC_PROVEEDOR_CONTACTO pvc ON pvc.USU_ID = gee.USU_ID
+                inner join '||V_ESQUEMA||'.ACT_PVE_PROVEEDOR pve ON pve.PVE_ID = pvc.PVE_ID
+                inner join '||V_ESQUEMA||'.DD_EPR_ESTADO_PROVEEDOR epr ON epr.DD_EPR_ID = pve.DD_EPR_ID AND epr.DD_EPR_CODIGO = ''04''
+                inner join '||V_ESQUEMA||'.DD_TPR_TIPO_PROVEEDOR tpr ON tpr.DD_TPR_ID = pve.DD_TPR_ID AND tpr.DD_TPR_CODIGO =''05''
+                INNER join '||V_ESQUEMA||'.act_activo act on act.act_id = gac.ACT_ID
+		        INNER join '||V_ESQUEMA_M||'.dd_tge_tipo_gestor tge on tge.DD_TGE_ID = gee.DD_TGE_ID
+		        INNER join '||V_ESQUEMA||'.ACT_ETP_ENTIDAD_PROVEEDOR etp on etp.DD_CRA_ID = act.DD_CRA_ID and etp.PVE_ID = pve.PVE_ID
+		    WHERE tge.DD_TGE_CODIGO = ''PTEC'') PVEPRV ON PVEPRV.ACT_ID = act.ACT_ID and PVEPRV.RN = 1
+
 		LEFT JOIN (
-		    SELECT DDTCE.DD_TCE_CODIGO, CFD.DD_TPA_ID, ADO.ACT_ID, ROW_NUMBER() OVER(PARTITION BY ADO.ACT_ID ORDER BY CFD.FECHACREAR DESC) RN
-		    FROM '||V_ESQUEMA||'.ACT_ADO_ADMISION_DOCUMENTO ADO
-		    JOIN '||V_ESQUEMA||'.DD_TCE_TIPO_CALIF_ENERGETICA DDTCE ON ADO.DD_TCE_ID = DDTCE.DD_TCE_ID
-		    JOIN '||V_ESQUEMA||'.ACT_CFD_CONFIG_DOCUMENTO CFD ON CFD.CFD_ID = ADO.CFD_ID
-		    WHERE ADO.DD_TCE_ID IS NOT NULL AND ADO.BORRADO = 0 AND DDTCE.BORRADO = 0 AND CFD.BORRADO = 0
-		    ) DDTCE ON DDTCE.ACT_ID = ACT.ACT_ID AND TPA.DD_TPA_ID = DDTCE.DD_TPA_ID AND DDTCE.RN = 1
-		LEFT JOIN '||V_ESQUEMA||'.ACT_PTA_PATRIMONIO_ACTIVO ACT_PTA ON ACT_PTA.ACT_ID = ACT.ACT_ID AND ACT_PTA.BORRADO = 0
-		LEFT JOIN '||V_ESQUEMA||'.DD_TAL_TIPO_ALQUILER DD_TAL ON DD_TAL.DD_TAL_ID = ACT.DD_TAL_ID
-		WHERE ACT.BORRADO = 0 AND SPS.BORRADO = 0';
+            SELECT DDTCE.DD_TCE_CODIGO, CFD.DD_TPA_ID, ADO.ACT_ID, ROW_NUMBER() OVER(PARTITION BY ADO.ACT_ID ORDER BY CFD.FECHACREAR DESC) RN
+            FROM '||V_ESQUEMA||'.ACT_ADO_ADMISION_DOCUMENTO ADO
+            JOIN '||V_ESQUEMA||'.DD_TCE_TIPO_CALIF_ENERGETICA DDTCE ON ADO.DD_TCE_ID = DDTCE.DD_TCE_ID
+            JOIN '||V_ESQUEMA||'.ACT_CFD_CONFIG_DOCUMENTO CFD ON CFD.CFD_ID = ADO.CFD_ID
+            WHERE ADO.DD_TCE_ID IS NOT NULL AND ADO.BORRADO = 0 AND DDTCE.BORRADO = 0 AND CFD.BORRADO = 0
+            ) DDTCE ON DDTCE.ACT_ID = ACT.ACT_ID AND DDTPA.DD_TPA_ID = DDTCE.DD_TPA_ID AND DDTCE.RN = 1
+
+		where act.borrado = 0 and sps.borrado = 0';
 
 		DBMS_OUTPUT.PUT_LINE('[INFO] Vista materializada : '|| V_ESQUEMA ||'.'|| V_TEXT_VISTA ||'... creada');
 		

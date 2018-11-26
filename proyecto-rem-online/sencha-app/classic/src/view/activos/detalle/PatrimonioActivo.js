@@ -23,7 +23,7 @@ Ext.define('HreRem.view.activos.detalle.PatrimonioActivo', {
 		var me = this;
 		me.recargar = false;
 		me.down('tabpanel').getActiveTab().funcionRecargar();
-    }    
+    }
 });
 
 

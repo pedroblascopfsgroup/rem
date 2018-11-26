@@ -35,7 +35,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializar;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
-import es.pfsgroup.recovery.api.ExpedienteApi;
 
 @Component
 public class ComercialUserAssigantionService implements UserAssigantionService  {
@@ -109,7 +108,10 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 				codigoGestor = this.getMapCodigoTipoGestorActivoAndLoteRestEntidad01(isActivoFinanciero).get(codigoTarea);
 			} else {
 				// Si es un lote comercial comprobar si aplica formalizar.
-				Boolean formalizacion = (1 == loteComercial.getIsFormalizacion()) ? true : false;
+				Boolean formalizacion = false;
+				if(!Checks.esNulo(loteComercial) && !Checks.esNulo(loteComercial.getIsFormalizacion())) {
+					formalizacion = (1 == loteComercial.getIsFormalizacion()) ? true : false;
+				}
 				codigoGestor = this.getMapCodigoTipoGestorActivoAndLoteRestEntidad01Formalizacion(formalizacion).get(codigoTarea);
 			}
 		} else if(this.isActivoGiants(tareaActivo)){
@@ -172,7 +174,11 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 				codigoSupervisor = this.getMapCodigoTipoSupervisorActivoAndLoteRestEntidad01(isActivoFinanciero).get(codigoTarea);
 			} else {
 				// Si es un lote comercial comprobar si aplica formalizar.
-				Boolean formalizacion = (1 == loteComercial.getIsFormalizacion()) ? true : false;
+				Boolean formalizacion = false;
+				if(!Checks.esNulo(loteComercial) && !Checks.esNulo(loteComercial.getIsFormalizacion())) {
+					formalizacion = (1 == loteComercial.getIsFormalizacion()) ? true : false;
+				}
+				
 				codigoSupervisor = this.getMapCodigoTipoSupervisorActivoAndLoteRestEntidad01Formalizacion(formalizacion).get(codigoTarea);
 			}
 		}else {
@@ -516,7 +522,7 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 		
 		if(!Checks.esNulo(tareaActivo.getTramite().getTrabajo())) {
 			
-			ExpedienteComercial expediente = expedienteComercialDao.getExpedienteComercialByTrabajo(tareaActivo.getTramite().getTrabajo().getId());
+			ExpedienteComercial expediente = expedienteComercialDao.getExpedienteComercialByIdTrabajo(tareaActivo.getTramite().getTrabajo().getId());
 			return gestorExpedienteComercialApi.getGestorByExpedienteComercialYTipo(expediente, codigo);
 		}
 		

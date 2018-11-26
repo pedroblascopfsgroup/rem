@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=RAMON LLINARES
---## FECHA_CREACION=20161104
+--## AUTOR=RLB
+--## FECHA_CREACION=20181114
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-1077

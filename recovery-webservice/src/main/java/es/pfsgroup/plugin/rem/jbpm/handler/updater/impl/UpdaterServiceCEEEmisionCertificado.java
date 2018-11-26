@@ -16,6 +16,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
+import es.pfsgroup.plugin.rem.exception.RemUserException;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdmisionDocumento;
@@ -76,7 +77,11 @@ public class UpdaterServiceCEEEmisionCertificado implements UpdaterService {
 			//TODO: Pendiente de concretar si ha de ser SI aplica o NO aplica, cuando el documento se crea automáticamente por crear el trámite desde el trabajo.
 			dtoDocumento.setAplica(0);
 			
-			activoAdapter.saveAdmisionDocumento(dtoDocumento);
+			try {
+				activoAdapter.saveAdmisionDocumento(dtoDocumento);
+			} catch (RemUserException e) {
+				e.printStackTrace();
+			}
 			documentoCEE = genericDao.get(ActivoAdmisionDocumento.class, filtroTipo, filtroActivo);
 		}
 		

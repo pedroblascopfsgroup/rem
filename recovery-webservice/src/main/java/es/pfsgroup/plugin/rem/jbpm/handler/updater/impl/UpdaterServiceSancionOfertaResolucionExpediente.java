@@ -1,15 +1,5 @@
 package es.pfsgroup.plugin.rem.jbpm.handler.updater.impl;
 
-import java.sql.SQLException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import es.capgemini.devon.exception.UserException;
 import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
@@ -19,29 +9,23 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
-import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
-import es.pfsgroup.plugin.rem.api.ActivoApi;
-import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
+import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
-import es.pfsgroup.plugin.rem.model.Activo;
-import es.pfsgroup.plugin.rem.model.ActivoHistoricoEstadoPublicacion;
-import es.pfsgroup.plugin.rem.model.ActivoTramite;
-import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.Oferta;
-import es.pfsgroup.plugin.rem.model.PerimetroActivo;
-import es.pfsgroup.plugin.rem.model.dd.DDCartera;
-import es.pfsgroup.plugin.rem.model.dd.DDDevolucionReserva;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacion;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
-import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
-import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoRechazoOferta;
+import es.pfsgroup.plugin.rem.model.*;
+import es.pfsgroup.plugin.rem.model.dd.*;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateOfertaApi;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
 
 @Component
 public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterService {
@@ -53,6 +37,9 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
     private OfertaApi ofertaApi;
 
     @Autowired
+    private ActivoAdapter activoAdapter;
+
+    @Autowired
     private UvemManagerApi uvemManagerApi;
 
     @Autowired
@@ -60,12 +47,6 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 
     @Autowired
     private UtilDiccionarioApi utilDiccionarioApi;
-    
-    @Autowired
-    private ActivoApi activoApi;
-    
-	@Autowired
-	private ActivoEstadoPublicacionApi activoEstadoPublicacionApi;
 	
 	@Autowired
 	private UpdaterStateOfertaApi updaterStateOfertaApi;
@@ -92,15 +73,15 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 			String valorComboMotivoAnularReserva= null;
 			String peticionario = null;
 			Activo activo = expediente.getOferta().getActivoPrincipal();
-			Boolean checkFormalizar = false;
+			boolean checkFormalizar = false;
 			if(!Checks.esNulo(activo)){
 				PerimetroActivo pac = genericDao.get(PerimetroActivo.class, genericDao.createFilter(FilterType.EQUALS, "activo", activo));
-				checkFormalizar = pac.getAplicaFormalizar() == 0 ? false : true;
+				checkFormalizar = pac.getAplicaFormalizar() != 0;
 			}
 
 			if(!Checks.esNulo(expediente)) {
 
-				Boolean tieneReserva = false;
+				boolean tieneReserva = false;
 				if(valores != null && !valores.isEmpty()){
 					tieneReserva = ofertaApi.checkReserva(valores.get(0).getTareaExterna()) && !Checks.esNulo(expediente.getReserva()) && 
 							!Checks.esNulo(expediente.getReserva().getEstadoReserva()) &&
@@ -136,8 +117,8 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 						}
 						expediente.setPeticionarioAnulacion(peticionario);
 
-						if(!tieneReserva && DDCartera.CODIGO_CARTERA_BANKIA.equals(ofertaAceptada.getActivoPrincipal().getCartera().getCodigo()) && !DDEstadosExpedienteComercial.EN_TRAMITACION.equals(estadoOriginal)
-								&& checkFormalizar) {
+						if(!tieneReserva && DDCartera.CODIGO_CARTERA_BANKIA.equals(ofertaAceptada.getActivoPrincipal().getCartera().getCodigo()) &&
+								!DDEstadosExpedienteComercial.EN_TRAMITACION.equals(estadoOriginal) && checkFormalizar) {
 							// Notificar del rechazo de la oferta a Bankia.
 							try {
 								uvemManagerApi.anularOferta(ofertaAceptada.getNumOferta().toString(), uvemManagerApi.obtenerMotivoAnulacionOfertaPorCodigoMotivoAnulacion(valor.getValor()));
@@ -146,35 +127,10 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 								throw new UserException(e.getMessage());
 							}
 						}
-						
-						Activo activoPrincipal = expediente.getOferta().getActivoPrincipal();
-						ActivoHistoricoEstadoPublicacion histEstado = activoApi.getUltimoHistoricoEstadoPublicacion(activoPrincipal.getId());
-						ActivoHistoricoEstadoPublicacion histEstadoAnterior = activoApi.getPenultimoHistoricoEstadoPublicacion(activoPrincipal.getId());
-						
-						if(!Checks.esNulo(histEstado) && !Checks.esNulo(histEstado.getEstadoPublicacion()) && expediente.getOferta().getOfertaExpress() != null && expediente.getOferta().getOfertaExpress() && DDEstadoPublicacion.CODIGO_PUBLICADO_OCULTO.equals(histEstado.getEstadoPublicacion().getCodigo()) && ActivoHistoricoEstadoPublicacion.MOTIVO_OFERTA_EXPRES.equals(histEstado.getMotivo())){
-							
-							String antEstadoPublicacion = null;
-							String antMotivo = null;
-							
-							if(!Checks.esNulo(histEstadoAnterior) && !Checks.esNulo(histEstadoAnterior.getEstadoPublicacion())){
-								antEstadoPublicacion = histEstadoAnterior.getEstadoPublicacion().getCodigo();
-							}else{
-								antEstadoPublicacion = DDEstadoPublicacion.CODIGO_PUBLICADO;
-							}
-							
-							if(!Checks.esNulo(histEstadoAnterior) && !Checks.esNulo(histEstadoAnterior.getMotivo())){
-								antMotivo = histEstadoAnterior.getMotivo();
-							}
-							
-							Filter filtroMostrar = genericDao.createFilter(FilterType.EQUALS, "codigo",antEstadoPublicacion);
-							try {
-								activoEstadoPublicacionApi.cambiarEstadoPublicacionAndRegistrarHistorico(activoPrincipal, antMotivo, filtroMostrar,histEstado.getEstadoPublicacion(), null, null);
-							} catch (JsonViewerException e) {
-								logger.error("Error al cambiar el estado de publicación ", e);
-							} catch (SQLException e) {
-								logger.error("Error al cambiar el estado de publicación ", e);
-							}
-						}
+
+						// TODO: Publicaciones - Implementar en el SP de publicación la siguiente condición:
+						// Si la oferta es express, el activo se encuentra en estado publicado oculto y su motivo del estado es "Oferta Express Cajamar".
+						activoAdapter.actualizarEstadoPublicacionActivo(activo.getId());
 
 						//Tipo rechazo y motivo rechazo ofertas cajamar
 						DDTipoRechazoOferta tipoRechazo = (DDTipoRechazoOferta) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoRechazoOferta.class, DDTipoRechazoOferta.CODIGO_ANULADA);

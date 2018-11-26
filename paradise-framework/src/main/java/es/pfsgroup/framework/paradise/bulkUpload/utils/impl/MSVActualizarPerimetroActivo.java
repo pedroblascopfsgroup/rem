@@ -57,7 +57,7 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 	public static final String VALID_PERIMETRO_FORMALIZACION_EXPEDIENTE_VIVO = "msg.error.masivo.actualizar.perimetro.activo.expediente.vivo";
 	public static final String VALID_DESTINO_COMERCIAL_OFERTAS_VENTA_VIVAS = "msg.error.tipo.comercializacion.ofertas.vivas.venta";
 	public static final String VALID_DESTINO_COMERCIAL_OFERTAS_ALQUILER_VIVAS = "msg.error.tipo.comercializacion.ofertas.vivas.alquiler";
-	
+
 	//Posicion fija de Columnas excel, para validaciones especiales de diccionario
 	public static final int COL_NUM_ACTIVO_HAYA = 0;
 	public static final int COL_NUM_EN_PERIMETRO_SN = 1;
@@ -69,9 +69,9 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 	public static final int COL_NUM_DESTINO_COMERCIAL = 8;
 	public static final int COL_NUM_TIPO_ALQUILER = 9;
 	public static final int COL_NUM_CON_FORMALIZAR_SN = 10;
-	
+	public static final int COL_NUM_CON_PUBLICAR_SN = 12;
+
 	// Codigos tipo comercializacion
-	
 	public static final String CODIGO_VENTA = "01";
     public static final String CODIGO_ALQUILER_VENTA = "02";
     public static final String CODIGO_SOLO_ALQUILER = "03";
@@ -361,10 +361,11 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 			String valorConGestion = "-";
 			String valorConComercial = "-";
 			String valorConFormalizar = "-";
-			
+			String valorConPublicar = "-";
+
 			for(int i=1; i<this.numFilasHoja;i++){
 				
-				//Columnas EN_PERIMETRO, CON_GESTION, CON_COMERCIAL
+				//Columnas EN_PERIMETRO, CON_GESTION, CON_COMERCIAL, CON_FORMALIZAR, CON_PUBLICAR
 				// Si la celda no tiene valor, debe validarse correctamente
 				// Si la S o la N van en minusculas, deben ser valores validos
 				// No deben tenerse en cuenta espacios en blanco
@@ -373,12 +374,14 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 					valorConGestion = exc.dameCelda(i, COL_NUM_CON_GESTION_SN).isEmpty() ? "-" : exc.dameCelda(i, COL_NUM_CON_GESTION_SN).trim().toUpperCase();
 					valorConComercial = exc.dameCelda(i, COL_NUM_CON_COMERCIAL_SN).isEmpty() ? "-" : exc.dameCelda(i, COL_NUM_CON_COMERCIAL_SN).trim().toUpperCase();
 					valorConFormalizar = exc.dameCelda(i, COL_NUM_CON_FORMALIZAR_SN).isEmpty() ? "-" : exc.dameCelda(i, COL_NUM_CON_FORMALIZAR_SN).trim().toUpperCase();
-					
+					valorConPublicar = exc.dameCelda(i, COL_NUM_CON_PUBLICAR_SN).isEmpty() ? "-" : exc.dameCelda(i, COL_NUM_CON_PUBLICAR_SN).trim().toUpperCase();
+
 					// Valida valores correctos de los campos S/N/<nulo>
 					if(!("S".equals(valorEnPerimetro) || "N".equals(valorEnPerimetro) || "-".equals(valorEnPerimetro))
 							|| !("S".equals(valorConGestion) || "N".equals(valorConGestion) || "-".equals(valorConGestion))
 							|| !("S".equals(valorConComercial) || "N".equals(valorConComercial) || "-".equals(valorConComercial))
 							|| !("S".equals(valorConFormalizar) || "N".equals(valorConFormalizar) || "-".equals(valorConFormalizar))
+							|| !("S".equals(valorConPublicar) || "N".equals(valorConPublicar) || "-".equals(valorConPublicar))
 							)
 						listaFilas.add(i);
 				} catch (ParseException e) {
@@ -408,8 +411,9 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 						String valorConGestion = exc.dameCelda(i, COL_NUM_CON_GESTION_SN).isEmpty() ? "-" : exc.dameCelda(i, COL_NUM_CON_GESTION_SN).trim().toUpperCase();
 						String valorConComercial = exc.dameCelda(i, COL_NUM_CON_COMERCIAL_SN).isEmpty() ? "-" : exc.dameCelda(i, COL_NUM_CON_COMERCIAL_SN).trim().toUpperCase();
 						String valorConFormalizar = exc.dameCelda(i, COL_NUM_CON_FORMALIZAR_SN).isEmpty() ? "-" : exc.dameCelda(i, COL_NUM_CON_FORMALIZAR_SN).trim().toUpperCase();
-					
-						if("S".equals(valorConGestion) || "S".equals(valorConComercial) || "S".equals(valorConFormalizar) )
+						String valorConPublicar = exc.dameCelda(i, COL_NUM_CON_PUBLICAR_SN).isEmpty() ? "-" : exc.dameCelda(i, COL_NUM_CON_PUBLICAR_SN).trim().toUpperCase();
+
+						if("S".equals(valorConGestion) || "S".equals(valorConComercial) || "S".equals(valorConFormalizar) || "S".equals(valorConPublicar))
 							listaFilas.add(i);
 					}
 				} catch (ParseException e) {
@@ -466,21 +470,21 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 			for(int i=1; i<this.numFilasHoja;i++){
 
 				try {
-					
+
 					if(!Checks.esNulo(exc.dameCelda(i, COL_NUM_DESTINO_COMERCIAL))) {
 						codigoDestinoComercial = exc.dameCelda(i, COL_NUM_DESTINO_COMERCIAL).substring(0, 2);
 					} else {
 						codigoDestinoComercial = null;
 					}
-					
+
 					if(!(Checks.esNulo(codigoDestinoComercial) || "01".equals(codigoDestinoComercial) || "02".equals(codigoDestinoComercial) || "03".equals(codigoDestinoComercial) ) ) {
 						listaFilas.add(i);
 					}
-						
+
 				} catch (ParseException e) {
 					listaFilas.add(i);
 				}
-					
+
 			}
 		} catch (Exception e) {
 			listaFilas.add(0);
@@ -608,12 +612,12 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 		}
 		return listaFilas;
 	}
-	
-	
+
+
 	private List<Integer> getOfertasVentaVivasRows(MSVHojaExcel exc) {
 		List<Integer> listaFilas = new ArrayList<Integer>();
-		
-		/** 
+
+		/**
 		 * 		Validará que no se intenté cambiar de venta a alquiler un activo que tenga ofertas
 		 *		de tipo venta vivas
 		 */
@@ -623,27 +627,27 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 			for(int i=1; i<this.numFilasHoja;i++){
 
 				try {
-					
+
 					if(!Checks.esNulo(exc.dameCelda(i, COL_NUM_DESTINO_COMERCIAL))) {
 						codigoDestinoComercial = exc.dameCelda(i, COL_NUM_DESTINO_COMERCIAL).substring(0, 2);
 					} else {
 						codigoDestinoComercial = null;
 					}
-					
+
 				  	codigoDestinoComercialActual = particularValidator.getCodigoDestinoComercialByNumActivo(exc.dameCelda(i, COL_NUM_ACTIVO_HAYA));
-					
+
 					if (!Checks.esNulo(codigoDestinoComercialActual) && !Checks.esNulo(codigoDestinoComercial)
 							&& CODIGO_SOLO_ALQUILER.equals(codigoDestinoComercial)
-							&& (CODIGO_VENTA.equals(codigoDestinoComercialActual) 
-									|| CODIGO_ALQUILER_VENTA.equals(codigoDestinoComercialActual)) 
+							&& (CODIGO_VENTA.equals(codigoDestinoComercialActual)
+									|| CODIGO_ALQUILER_VENTA.equals(codigoDestinoComercialActual))
 							&& particularValidator.existeActivoConOfertaVentaViva("" + exc.dameCelda(i, COL_NUM_ACTIVO_HAYA))) {
 						listaFilas.add(i);
 					}
-					
+
 				} catch (ParseException e) {
 					listaFilas.add(i);
 				}
-					
+
 			}
 		} catch (Exception e) {
 			listaFilas.add(0);
@@ -652,12 +656,12 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 		}
 		return listaFilas;
 	}
-	
-	
+
+
 	private List<Integer> getOfertasAlquilerVivasRows(MSVHojaExcel exc) {
 		List<Integer> listaFilas = new ArrayList<Integer>();
-		
-		/** 
+
+		/**
 		 * 		Validará que no se intenté cambiar de alquiler a venta un activo que tenga ofertas
 		 *		de tipo alquiler vivas
 		 */
@@ -667,27 +671,27 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 			for(int i=1; i<this.numFilasHoja;i++){
 
 				try {
-					
+
 					if(!Checks.esNulo(exc.dameCelda(i, COL_NUM_DESTINO_COMERCIAL))) {
 						codigoDestinoComercial = exc.dameCelda(i, COL_NUM_DESTINO_COMERCIAL).substring(0, 2);
 					} else {
 						codigoDestinoComercial = null;
 					}
-					
+
 				  	codigoDestinoComercialActual = particularValidator.getCodigoDestinoComercialByNumActivo(exc.dameCelda(i, COL_NUM_ACTIVO_HAYA));
-					
+
 					if (!Checks.esNulo(codigoDestinoComercialActual) && !Checks.esNulo(codigoDestinoComercial)
 							&& CODIGO_VENTA.equals(codigoDestinoComercial)
-							&& (CODIGO_SOLO_ALQUILER.equals(codigoDestinoComercialActual) 
-									|| CODIGO_ALQUILER_VENTA.equals(codigoDestinoComercialActual)) 
+							&& (CODIGO_SOLO_ALQUILER.equals(codigoDestinoComercialActual)
+									|| CODIGO_ALQUILER_VENTA.equals(codigoDestinoComercialActual))
 							&& particularValidator.existeActivoConOfertaAlquilerViva("" + exc.dameCelda(i, COL_NUM_ACTIVO_HAYA))) {
 						listaFilas.add(i);
 					}
-					
+
 				} catch (ParseException e) {
 					listaFilas.add(i);
 				}
-					
+
 			}
 		} catch (Exception e) {
 			listaFilas.add(0);
@@ -696,5 +700,5 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 		}
 		return listaFilas;
 	}
-	
+
 }

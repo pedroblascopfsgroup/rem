@@ -35,7 +35,7 @@
 		</repository>
 		<repository>
 			<id>Framework</id>
-			<url>http://192.168.0.143:8458/nexus/content/repositories/Framework</url>
+			<url>http://192.168.0.143:8458/nexus/service/rest/repository/Framework</url>
 		</repository>
 		<repository>
 			<id>com.springsource.repository.bundles.release</id>

@@ -161,7 +161,7 @@ public class UvemManager implements UvemManagerApi {
 			llamada = servicio.getInParams().toXMLGeneric(true);
 			respuesta = servicio.getOutParams().toXMLGeneric(true);
 		} catch (Exception e) {
-			logger.error("Error obteniendo los datos del ws", e);
+			logger.info("Error obteniendo los datos del ws", e);
 		}
 		this.registrarLlamada(servicio.getClass().getName(), llamada, respuesta, errorDesc);
 	}
@@ -366,15 +366,12 @@ public class UvemManager implements UvemManagerApi {
 			numeroIdentificadorTasacion = servicioGMPETS07_INS.getNumeroIdentificadorDeTasacionlnuita2();
 
 		} catch (WIMetaServiceException e) {
-			logger.error("error en UvemManager", e);
 			errorDesc = e.getMessage();
 			throw new JsonViewerException("Error solicitud tasaciones (UVEM): " + e.getMessage());
 		} catch (WIException e) {
-			logger.error("error en UvemManager", e);
 			errorDesc = e.getMessage();
 			throw new JsonViewerException("Error solicitud tasaciones (UVEM): " + e.getMessage());
 		} catch (TipoDeDatoException e) {
-			logger.error("error en UvemManager", e);
 			errorDesc = e.getMessage();
 			throw new JsonViewerException(e.getMessage());
 		} finally {
@@ -548,7 +545,6 @@ public class UvemManager implements UvemManagerApi {
 			clienteUrsusDto.setData(resultado);
 
 		} catch (WIException e) {
-			logger.error("error en UvemManager", e);
 			errorDesc = e.getMessage();
 			throw new JsonViewerException("Error consulta URSUS (UVEM): " + e.getMessage());
 		} finally {
@@ -693,7 +689,6 @@ public class UvemManager implements UvemManagerApi {
 			}
 
 		} catch (WIException e) {
-			logger.error("error en UvemManager", e);
 			errorDesc = e.getMessage();
 			throw new JsonViewerException("Error consulta URSUS (UVEM): " + e.getMessage());
 		} finally {
@@ -739,7 +734,6 @@ public class UvemManager implements UvemManagerApi {
 			}
 			instancia = instanciaDecision(instanciaDecisionDto, INSTANCIA_DECISION_ALTA);
 		} catch (WIException e) {
-			logger.error("error en UvemManager", e);
 			throw new JsonViewerException("Error alta comité (UVEM): " + e.getMessage());
 		}
 		return instancia;
@@ -789,7 +783,6 @@ public class UvemManager implements UvemManagerApi {
 		try {
 			instancia = instanciaDecision(instanciaDecisionDto, INSTANCIA_DECISION_MODIFICACION);
 		} catch (WIException e) {
-			logger.error("error en UvemManager", e);
 			throw new JsonViewerException("Error ratificación comité (UVEM): " + e.getMessage());
 		}
 		return instancia;
@@ -828,7 +821,6 @@ public class UvemManager implements UvemManagerApi {
 
 			instancia = instanciaDecision(instanciaDecisionDtoCopia, INSTANCIA_DECISION_MODIFICACION_3);
 		} catch (WIException e) {
-			logger.error("error en UvemManager", e);
 			throw new JsonViewerException("Error servicio de facultades (UVEM): " + e.getMessage());
 		}
 		return instancia;
@@ -1191,7 +1183,6 @@ public class UvemManager implements UvemManagerApi {
 			result.setCodigoAgrupacionInmueble(servicioGMPDJB13_INS.getCodigoDeAgrupacionDeInmueblecoagiw2());
 			result.setCodigoOfertaUvem(servicioGMPDJB13_INS.getCodigoDeOfertacoofew());
 		} catch (WIException e) {
-			logger.error("error en UvemManager", e);
 			errorDesc = e.getMessage();
 			throw new JsonViewerException("Error servicio de facultades (UVEM): " + e.getMessage());
 		} finally {
@@ -1582,7 +1573,6 @@ public class UvemManager implements UvemManagerApi {
 			executeService(servicioGMPAJC29_INS);
 
 		} catch (WIException wie) {
-			logger.error("error en UvemManager", wie);
 			errorDesc = wie.getMessage();
 			throw new JsonViewerException("Error anulación oferta (UVEM): " + wie.getMessage());
 		} finally {

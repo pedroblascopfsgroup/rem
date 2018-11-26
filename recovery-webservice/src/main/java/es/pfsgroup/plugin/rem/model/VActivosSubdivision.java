@@ -43,6 +43,10 @@ public class VActivosSubdivision implements Serializable {
 	@Column(name = "DD_AIC_DESCRIPCION")
 	private String estadoDisposicionInforme;
 	
+	@Column(name = "ESTADOPUBLICACION")
+	private String estadoPublicacionS;
+	
+	
 
 	public Long getIdSubdivision() {
 		return idSubdivision;
@@ -106,11 +110,15 @@ public class VActivosSubdivision implements Serializable {
 
 	public void setEstadoDisposicionInforme(String estadoDisposicionInforme) {
 		this.estadoDisposicionInforme = estadoDisposicionInforme;
+	}
+
+	public String getEstadoPublicacionS() {
+		return estadoPublicacionS;
+	}
+
+	public void setEstadoPublicacionS(String estadoPublicacionS) {
+		this.estadoPublicacionS = estadoPublicacionS;
 	}	
-
-
-
-	
 
 
 }

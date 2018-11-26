@@ -150,8 +150,8 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 						}						
 				]
 			},
-
-// Estado del informe comercial			
+			
+//Estado informe comercial
 			{
 				xtype:'fieldsettable',
 				title:HreRem.i18n('fieldlabel.estado.informe.comercial'),
@@ -161,7 +161,7 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 						{xtype: "historicoestadosinformecomercial", reference: "historicoestadosinformecomercial"}
 					]
 			},
-
+			
 // Datos Básicos
 			{
 				xtype:'fieldsettable',

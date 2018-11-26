@@ -844,7 +844,7 @@ ELSE
                            AND (AGR.AGR_FIN_VIGENCIA IS NULL OR TRUNC(AGR.AGR_FIN_VIGENCIA) >= TRUNC(SYSDATE))
                       WHERE AGA.BORRADO = 0
                         AND AGR.AGR_ID = '||nAGR_ID||'
-                        AND AGA.AGA_PRINCIPAL = 1
+                        AND (AGA.AGA_PRINCIPAL = 1 OR AGR.AGR_ACT_PRINCIPAL = AGA.ACT_ID)
                    )AUX';
           
         /**************/

@@ -42,6 +42,7 @@ public interface GestorActivoApi extends GestorEntidadApi {
 	public static final String CODIGO_SUPERVISOR_RESERVA_CAJAMAR = "SUPRES";
 	public static final String CODIGO_SUPERVISOR_MINUTA_CAJAMAR = "SUPMIN";
 	public static final String CIF_PROVEEDOR_BANKIA_SAREB_TINSA = "B86689494";
+	public static final String CIF_PROVEEDOR_HOMESERVE = "A82451410";
 	public static final String CODIGO_TIPO_PROVEEDOR_TECNICO="PTEC";
 	public static final String CODIGO_GESTOR_GOLDEN_TREE = "GTREE";
 	public static final String CODIGO_GESTOR_COMITE_DIRECCION_LIBERBANK = "GCODI";

@@ -151,7 +151,7 @@ public class AltaActivoFinanciero implements AltaActivoService {
 
 		beanUtilNotNull.copyProperty(activo, "numActivo", dtoAAF.getNumActivoHaya());
 		activo.setNumActivoRem(activoApi.getNextNumActivoRem());
-		beanUtilNotNull.copyProperty(activo, "tipoTitulo", utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoTituloActivo.class, DDTipoTituloActivo.tipoTituloPDV));
+		beanUtilNotNull.copyProperty(activo, "tipoTitulo", utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoTituloActivo.class, dtoAAF.getTipoTituloCodigo()));
 		beanUtilNotNull.copyProperty(activo, "subtipoTitulo", utilDiccionarioApi.dameValorDiccionarioByCod(DDSubtipoTituloActivo.class, dtoAAF.getSubtipoTituloCodigo()));
 		beanUtilNotNull.copyProperty(activo, "cartera", utilDiccionarioApi.dameValorDiccionarioByCod(DDCartera.class, dtoAAF.getCarteraCodigo()));
 		beanUtilNotNull.copyProperty(activo, "subcartera", utilDiccionarioApi.dameValorDiccionarioByCod(DDSubcartera.class, dtoAAF.getSubcarteraCodigo()));

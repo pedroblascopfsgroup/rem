@@ -391,11 +391,16 @@ public class MSVActualizarPreciosFSVActivoImporte extends MSVExcelValidatorAbstr
 		for(int i=1; i<this.numFilasHoja;i++){
 			
 			try {
-				if(!A.equals(exc.dameCelda(i, 4).toUpperCase()) && !B.equals(exc.dameCelda(i, 4).toUpperCase())
-						&& !C.equals(exc.dameCelda(i, 4).toUpperCase()) && !D.equals(exc.dameCelda(i, 4).toUpperCase())
-						&& !E.equals(exc.dameCelda(i, 4).toUpperCase())) {
-					listaFilas.add(i);
+				String letra = exc.dameCelda(i, 4).toUpperCase();
+				
+				if(!Checks.esNulo(letra)) {
+					if(!A.equals(letra) && !B.equals(letra)
+							&& !C.equals(letra) && !D.equals(letra)
+							&& !E.equals(letra)) {
+						listaFilas.add(i);
+					}
 				}
+				
 			} catch (IllegalArgumentException e) {
 				listaFilas.add(i);
 				e.printStackTrace();

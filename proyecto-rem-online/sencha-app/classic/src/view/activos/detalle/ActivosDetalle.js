@@ -7,7 +7,8 @@ Ext.define('HreRem.view.activos.detalle.ActivosDetalle', {
     			'HreRem.view.activos.detalle.ObservacionesActivo', 'HreRem.view.activos.detalle.AgrupacionesActivo', 'HreRem.view.activos.detalle.GestoresActivo', 
     			'HreRem.view.activos.detalle.FotosActivo','HreRem.view.activos.detalle.DocumentosActivo','HreRem.view.activos.detalle.GestionActivo',
     			'HreRem.view.activos.detalle.PreciosActivo','HreRem.view.activos.detalle.Publicacion','HreRem.view.activos.detalle.ComercialActivo',
-    			'HreRem.view.activos.detalle.AdministracionActivo','HreRem.view.activos.detalle.PatrimonioActivo'],
+    			'HreRem.view.activos.detalle.AdministracionActivo', 'HreRem.view.activos.detalle.DocumentosActivoPromocion','HreRem.view.activos.detalle.DocumentosActivoSimple',
+			'HreRem.view.activos.detalle.PatrimonioActivo'],
 
 	listeners: {
     	boxready: function (tabPanel) {

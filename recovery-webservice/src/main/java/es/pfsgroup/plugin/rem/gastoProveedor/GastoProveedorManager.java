@@ -95,8 +95,10 @@ import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.VBusquedaGastoActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaGastoTrabajos;
+import es.pfsgroup.plugin.rem.model.VFacturasProveedores;
 import es.pfsgroup.plugin.rem.model.VGastosProveedor;
 import es.pfsgroup.plugin.rem.model.VGastosProvision;
+import es.pfsgroup.plugin.rem.model.VTasasImpuestos;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDDestinatarioGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDDestinatarioPago;
@@ -3157,5 +3159,19 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		
 		return genericDao.getList(VGastosProveedor.class, filter);
 
+	}
+	
+	@Override
+	public List<VFacturasProveedores> getListFacturas(){
+		List<VFacturasProveedores> listFacturas = new ArrayList<VFacturasProveedores>();
+		listFacturas = genericDao.getList(VFacturasProveedores.class);
+		return listFacturas;
+	}
+	
+	@Override
+	public List<VTasasImpuestos> getListTasasImpuestos(){
+		List<VTasasImpuestos>  listTasasImpuestos = new ArrayList<VTasasImpuestos>();
+		listTasasImpuestos = genericDao.getList(VTasasImpuestos.class);
+		return listTasasImpuestos;
 	}
 }

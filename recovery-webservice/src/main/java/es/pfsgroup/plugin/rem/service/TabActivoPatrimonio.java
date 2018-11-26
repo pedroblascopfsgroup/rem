@@ -31,16 +31,16 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoInquilino;
 
 @Component
 public class TabActivoPatrimonio implements TabActivoService {
-	
+
 	@Autowired
 	private GenericABMDao genericDao;
-	
+
 	@Autowired
 	private ActivoPatrimonioDao activoPatrimonioDao;
-	
+
 	@Autowired
 	private ActivoHistoricoPatrimonioDao activoHistoricoPatrimonioDao;
-	
+
 	@Autowired
 	private ActivoDao activoDao;
 
@@ -59,11 +59,10 @@ public class TabActivoPatrimonio implements TabActivoService {
 	public String[] getCodigoTab() {
 		return new String[]{TabActivoService.TAB_PATRIMONIO};
 	}
-	
+
 	public DtoActivoPatrimonio getTabData(Activo activo) throws IllegalAccessException, InvocationTargetException {
-		
 		DtoActivoPatrimonio activoPatrimonioDto = new DtoActivoPatrimonio();
-		
+
 		ActivoPatrimonio activoP = activoPatrimonioDao.getActivoPatrimonioByActivo(activo.getId());
 		if(!Checks.esNulo(activoP)) {
 			BeanUtils.copyProperties(activoPatrimonioDto, activoP);
@@ -81,20 +80,20 @@ public class TabActivoPatrimonio implements TabActivoService {
 				activoPatrimonioDto.setDescripcionAdecuacion(activoP.getAdecuacionAlquiler().getDescripcion());
 				activoPatrimonioDto.setDescripcionAdecuacionLarga(activoP.getAdecuacionAlquiler().getDescripcionLarga());
 			}
-			
+
 			if(!Checks.esNulo(activoP.getTipoEstadoAlquiler())) {
 				activoPatrimonioDto.setEstadoAlquiler(activoP.getTipoEstadoAlquiler().getCodigo());
 			}
-			
+
 			if(!Checks.esNulo(activoP.getTipoInquilino())) {
 				activoPatrimonioDto.setTipoInquilino(activoP.getTipoInquilino().getCodigo());
 			}
 		}
-		
+
 		if(!Checks.esNulo(activo.getTipoAlquiler())) {
 			activoPatrimonioDto.setTipoAlquilerCodigo(activo.getTipoAlquiler().getCodigo());
 		}
-		
+
 		return activoPatrimonioDto;
 	}
 
@@ -102,11 +101,11 @@ public class TabActivoPatrimonio implements TabActivoService {
 	@Override
 	public Activo saveTabActivo(Activo activo, WebDto dto) {
 		List<ActivoHistoricoPatrimonio> listHistPatrimonio = activoHistoricoPatrimonioDao.getHistoricoAdecuacionesAlquilerByActivo(activo.getId());
-		
+
 		DtoActivoPatrimonio activoPatrimonioDto = (DtoActivoPatrimonio) dto;
 		ActivoPatrimonio activoPatrimonio = genericDao.get(ActivoPatrimonio.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId()));
 		ActivoSituacionPosesoria activoSituacionPosesoria = genericDao.get(ActivoSituacionPosesoria.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId()));
-		
+
 		if(Checks.esNulo(activoPatrimonio)) {
 			activoPatrimonio = new ActivoPatrimonio();
 			activoPatrimonio.setActivo(activo);
@@ -120,20 +119,24 @@ public class TabActivoPatrimonio implements TabActivoService {
 				if(!DDAdecuacionAlquiler.CODIGO_ADA_NULO.equals(activoPatrimonioDto.getCodigoAdecuacion())) {
 					DDAdecuacionAlquiler adecuacionAlquiler = genericDao.get(DDAdecuacionAlquiler.class, genericDao.createFilter(FilterType.EQUALS, "codigo",activoPatrimonioDto.getCodigoAdecuacion()));
 					activoPatrimonio.setAdecuacionAlquiler(adecuacionAlquiler);
+
 				} else {
 					activoPatrimonio.setAdecuacionAlquiler(null);
 				}
 			}
+
 		} else {
 			ActivoHistoricoPatrimonio activoHistPatrimonio = new ActivoHistoricoPatrimonio();
 			if(!Checks.esNulo(activoPatrimonioDto.getCodigoAdecuacion())) {
 				if(!Checks.esNulo(activoPatrimonio.getAdecuacionAlquiler())) {
 					activoHistPatrimonio.setAdecuacionAlquiler(activoPatrimonio.getAdecuacionAlquiler());
 				}
+
 				if(!Checks.esNulo(activoPatrimonioDto.getCodigoAdecuacion())) {
 					if(!DDAdecuacionAlquiler.CODIGO_ADA_NULO.equals(activoPatrimonioDto.getCodigoAdecuacion())) {
 						DDAdecuacionAlquiler adecuacionAlquiler = genericDao.get(DDAdecuacionAlquiler.class, genericDao.createFilter(FilterType.EQUALS, "codigo",activoPatrimonioDto.getCodigoAdecuacion()));
 						activoPatrimonio.setAdecuacionAlquiler(adecuacionAlquiler);
+
 					} else {
 						activoPatrimonio.setAdecuacionAlquiler(null);
 					}
@@ -156,100 +159,102 @@ public class TabActivoPatrimonio implements TabActivoService {
 			activoHistPatrimonio.setCheckSubrogado(activoPatrimonio.getCheckSubrogado());
 			activoHistPatrimonio.setTipoEstadoAlquiler(activoPatrimonio.getTipoEstadoAlquiler());
 			activoHistPatrimonio.setTipoInquilino(activoPatrimonio.getTipoInquilino());
-			
-			
+
+
 			if(!Checks.esNulo(activoPatrimonioDto.getChkPerimetroAlquiler())) {
 				activoPatrimonio.setCheckHPM(activoPatrimonioDto.getChkPerimetroAlquiler());
 			}
-			
+
 			if (!Checks.esNulo(activoPatrimonioDto.getComboRentaAntigua())){
 				activoPatrimonio.setComboRentaAntigua(activoPatrimonioDto.getComboRentaAntigua());
 			}
-			
+
 			if (!Checks.esNulo(activoPatrimonioDto.getChkSubrogado())){
 				activoPatrimonio.setCheckSubrogado(activoPatrimonioDto.getChkSubrogado());
 			}
-			
+
 			if (!Checks.esNulo(activoPatrimonioDto.getEstadoAlquiler())){
-				
+
 				DDTipoEstadoAlquiler tipoEstadoAlquiler = genericDao.get(DDTipoEstadoAlquiler.class, genericDao.createFilter(FilterType.EQUALS, "codigo", activoPatrimonioDto.getEstadoAlquiler()));
-				
+
 				if (!Checks.esNulo(tipoEstadoAlquiler)) {
 					activoPatrimonio.setTipoEstadoAlquiler(tipoEstadoAlquiler);
 				}
-				
+
 			}
-			
+
 			if (!Checks.esNulo(activoPatrimonioDto.getTipoInquilino())){
-				
+
 				DDTipoInquilino tipoInquilino = genericDao.get(DDTipoInquilino.class, genericDao.createFilter(FilterType.EQUALS, "codigo", activoPatrimonioDto.getTipoInquilino()));
-				
+
 				if (!Checks.esNulo(tipoInquilino)) {
 					activoPatrimonio.setTipoInquilino(tipoInquilino);
 				}
-				
+
 			}
-			
+
 			activoHistoricoPatrimonioDao.save(activoHistPatrimonio);
 		}
-		
+
 		if(!Checks.esNulo(activoPatrimonioDto.getTipoAlquilerCodigo())){
-			
-			DDTipoAlquiler tipoAlquiler = genericDao.get(DDTipoAlquiler.class, genericDao.createFilter(FilterType.EQUALS, "codigo", activoPatrimonioDto.getTipoAlquilerCodigo())); 
-			
+
+			DDTipoAlquiler tipoAlquiler = genericDao.get(DDTipoAlquiler.class, genericDao.createFilter(FilterType.EQUALS, "codigo", activoPatrimonioDto.getTipoAlquilerCodigo()));
+
 			if (!Checks.esNulo(tipoAlquiler)) {
-				
+
 				activo.setTipoAlquiler(tipoAlquiler);
-				
+
 			}
-			
+
 			activoDao.save(activo);
-			
+
 		}
-		
-		
+
+
 		if(!Checks.esNulo(activoPatrimonioDto.getEstadoAlquiler())) {
 			Filter filtroActivoId = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
 			Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "borrado", false);
 			activoSituacionPosesoria = genericDao.get(ActivoSituacionPosesoria.class, filtroActivoId, filtroBorrado);
-			
-			if(activoPatrimonioDto.getEstadoAlquiler().equals(DDTipoEstadoAlquiler.ESTADO_ALQUILER_ALQUILADO) 
+
+			if(activoPatrimonioDto.getEstadoAlquiler().equals(DDTipoEstadoAlquiler.ESTADO_ALQUILER_ALQUILADO)
 					|| activoPatrimonioDto.getEstadoAlquiler().equals(DDTipoEstadoAlquiler.ESTADO_ALQUILER_CON_DEMANDAS)) {
-							
-				
-				if (Checks.esNulo(activoSituacionPosesoria)) {					
-					activoSituacionPosesoria = new ActivoSituacionPosesoria();					
-					activoSituacionPosesoria.setActivo(activo);					
+
+
+				if (Checks.esNulo(activoSituacionPosesoria)) {
+					activoSituacionPosesoria = new ActivoSituacionPosesoria();
+					activoSituacionPosesoria.setActivo(activo);
 				}
-				
+
 				if(activoSituacionPosesoria.getOcupado() != null && activoSituacionPosesoria.getOcupado() == 0) {
 					activoSituacionPosesoria.setOcupado(1);
 				}
-				
+
 				activoSituacionPosesoria.setConTitulo(1);
-				
+
 				genericDao.save(ActivoSituacionPosesoria.class, activoSituacionPosesoria);
 			} else if(activoPatrimonioDto.getEstadoAlquiler().equals(DDTipoEstadoAlquiler.ESTADO_ALQUILER_LIBRE)) {
 
-				if (Checks.esNulo(activoSituacionPosesoria)) {					
-					activoSituacionPosesoria = new ActivoSituacionPosesoria();					
+				if (Checks.esNulo(activoSituacionPosesoria)) {
+					activoSituacionPosesoria = new ActivoSituacionPosesoria();
 					activoSituacionPosesoria.setActivo(activo);
 				}
-				
+
 				activoSituacionPosesoria.setOcupado(0);
 				activoSituacionPosesoria.setConTitulo(null);
 				activoPatrimonio.setTipoInquilino(null);
-				
+
 				genericDao.save(ActivoSituacionPosesoria.class, activoSituacionPosesoria);
-				
+
 			}
 		}
-		
+
 		activoPatrimonioDao.save(activoPatrimonio);
-		
+
 		activoAdapterApi.updateGestoresTabActivoTransactional(activoPatrimonioDto,activo.getId());
-		
+
+		// Actualizar estado publicación activo a través del procedure.
+		activoAdapterApi.actualizarEstadoPublicacionActivo(activo.getId());
+
 		return activo;
 	}
-
 }

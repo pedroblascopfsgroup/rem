@@ -51,7 +51,7 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 
 	@Autowired
 	private VisitaDao visitaDao;
-	
+
 	@Autowired
 	private ApiProxyFactory proxyFactory;
 
@@ -184,11 +184,12 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 				hashErrores.put("idUsuarioRemAccion", RestApi.REST_MSG_UNKNOWN_KEY);
 			}
 		}
-		
-		
-		if(Checks.esNulo(visitaDto.getCodDetalleEstadoVisita()) && !Checks.esNulo(visitaDto.getCodEstadoVisita()) && 
-				(visitaDto.getCodEstadoVisita().equalsIgnoreCase(DDEstadosVisita.CODIGO_REALIZADA) || visitaDto.getCodEstadoVisita().equalsIgnoreCase(DDEstadosVisita.CODIGO_NO_REALIZADA))){
-			//El codDetalleEstadoVisita solo es obligatorio si la visita está completada, es decir, estados "Realizada" y "No realizada".
+
+		if (Checks.esNulo(visitaDto.getCodDetalleEstadoVisita()) && !Checks.esNulo(visitaDto.getCodEstadoVisita())
+				&& (visitaDto.getCodEstadoVisita().equalsIgnoreCase(DDEstadosVisita.CODIGO_REALIZADA)
+						|| visitaDto.getCodEstadoVisita().equalsIgnoreCase(DDEstadosVisita.CODIGO_NO_REALIZADA))) {
+			// El codDetalleEstadoVisita solo es obligatorio si la visita está
+			// completada, es decir, estados "Realizada" y "No realizada".
 			hashErrores.put("codDetalleEstadoVisita", RestApi.REST_MSG_MISSING_REQUIRED);
 		}
 
@@ -197,9 +198,9 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 					genericDao.createFilter(FilterType.EQUALS, "codigo", visitaDto.getCodDetalleEstadoVisita()));
 			if (Checks.esNulo(subEstVis)) {
 				hashErrores.put("codDetalleEstadoVisita", RestApi.REST_MSG_UNKNOWN_KEY);
-			}else{
-				if(Checks.esNulo(subEstVis.getEstadoVisita()) || 
-				  (!Checks.esNulo(subEstVis.getEstadoVisita()) && !subEstVis.getEstadoVisita().getCodigo().equalsIgnoreCase(visitaDto.getCodEstadoVisita()))){
+			} else {
+				if (Checks.esNulo(subEstVis.getEstadoVisita()) || (!Checks.esNulo(subEstVis.getEstadoVisita())
+						&& !subEstVis.getEstadoVisita().getCodigo().equalsIgnoreCase(visitaDto.getCodEstadoVisita()))) {
 					hashErrores.put("codDetalleEstadoVisita", RestApi.REST_MSG_UNKNOWN_KEY);
 				}
 			}
@@ -209,20 +210,20 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 					genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem", visitaDto.getIdProveedorRemFdv()));
 			if (Checks.esNulo(fdv)) {
 				hashErrores.put("idProveedorRemFdv", RestApi.REST_MSG_UNKNOWN_KEY);
-			}else {
-				if(fdv.getTipoProveedor()==null || !fdv.getTipoProveedor().getCodigo().equals(DDTipoProveedor.COD_FUERZA_VENTA_DIRECTA)){
+			} else {
+				if (fdv.getTipoProveedor() == null
+						|| !fdv.getTipoProveedor().getCodigo().equals(DDTipoProveedor.COD_FUERZA_VENTA_DIRECTA)) {
 					hashErrores.put("idProveedorRemFdv", RestApi.REST_MSG_UNKNOWN_KEY);
 				}
 			}
 		}
 		if (!Checks.esNulo(visitaDto.getIdProveedorRemCustodio())) {
-			ActivoProveedor cust = (ActivoProveedor) genericDao.get(ActivoProveedor.class,
-					genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem", visitaDto.getIdProveedorRemCustodio()));
+			ActivoProveedor cust = (ActivoProveedor) genericDao.get(ActivoProveedor.class, genericDao
+					.createFilter(FilterType.EQUALS, "codigoProveedorRem", visitaDto.getIdProveedorRemCustodio()));
 			if (Checks.esNulo(cust)) {
 				hashErrores.put("idProveedorRemCustodio", RestApi.REST_MSG_UNKNOWN_KEY);
 			}
 		}
-	
 
 		return hashErrores;
 	}
@@ -278,7 +279,8 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 			}
 			if (!Checks.esNulo(visitaDto.getIdProveedorRemPrescriptor())) {
 				ActivoProveedor prescriptor = (ActivoProveedor) genericDao.get(ActivoProveedor.class,
-						genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem", visitaDto.getIdProveedorRemPrescriptor()));
+						genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem",
+								visitaDto.getIdProveedorRemPrescriptor()));
 				if (!Checks.esNulo(prescriptor)) {
 					visita.setPrescriptor(prescriptor);
 				}
@@ -286,29 +288,30 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 
 			if (!Checks.esNulo(visitaDto.getIdProveedorRemResponsable())) {
 				ActivoProveedor apiResp = (ActivoProveedor) genericDao.get(ActivoProveedor.class,
-						genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem", visitaDto.getIdProveedorRemResponsable()));
+						genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem",
+								visitaDto.getIdProveedorRemResponsable()));
 				if (!Checks.esNulo(apiResp)) {
 					visita.setApiResponsable(apiResp);
 				}
 			}
 
 			if (!Checks.esNulo(visitaDto.getIdProveedorRemCustodio())) {
-				ActivoProveedor apiCust = (ActivoProveedor) genericDao.get(ActivoProveedor.class,
-						genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem", visitaDto.getIdProveedorRemCustodio()));
+				ActivoProveedor apiCust = (ActivoProveedor) genericDao.get(ActivoProveedor.class, genericDao
+						.createFilter(FilterType.EQUALS, "codigoProveedorRem", visitaDto.getIdProveedorRemCustodio()));
 				if (!Checks.esNulo(apiCust)) {
 					visita.setApiCustodio(apiCust);
 				}
 			}
 			if (!Checks.esNulo(visitaDto.getIdProveedorRemFdv())) {
-				ActivoProveedor fdv = (ActivoProveedor) genericDao.get(ActivoProveedor.class,
-						genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem", visitaDto.getIdProveedorRemFdv()));
+				ActivoProveedor fdv = (ActivoProveedor) genericDao.get(ActivoProveedor.class, genericDao
+						.createFilter(FilterType.EQUALS, "codigoProveedorRem", visitaDto.getIdProveedorRemFdv()));
 				if (!Checks.esNulo(fdv)) {
 					visita.setFdv(fdv);
 				}
 			}
 			if (!Checks.esNulo(visitaDto.getIdProveedorRemVisita())) {
-				ActivoProveedor pveVisita = (ActivoProveedor) genericDao.get(ActivoProveedor.class,
-						genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem", visitaDto.getIdProveedorRemVisita()));
+				ActivoProveedor pveVisita = (ActivoProveedor) genericDao.get(ActivoProveedor.class, genericDao
+						.createFilter(FilterType.EQUALS, "codigoProveedorRem", visitaDto.getIdProveedorRemVisita()));
 				if (!Checks.esNulo(pveVisita)) {
 					visita.setProveedorVisita(pveVisita);
 				}
@@ -403,7 +406,8 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 			if (((JSONObject) jsonFields).containsKey("idProveedorRemPrescriptor")) {
 				if (!Checks.esNulo(visitaDto.getIdProveedorRemPrescriptor())) {
 					ActivoProveedor prescriptor = (ActivoProveedor) genericDao.get(ActivoProveedor.class,
-							genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem", visitaDto.getIdProveedorRemPrescriptor()));
+							genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem",
+									visitaDto.getIdProveedorRemPrescriptor()));
 					if (!Checks.esNulo(prescriptor)) {
 						visita.setPrescriptor(prescriptor);
 					}
@@ -415,7 +419,8 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 			if (((JSONObject) jsonFields).containsKey("idProveedorRemResponsable")) {
 				if (!Checks.esNulo(visitaDto.getIdProveedorRemResponsable())) {
 					ActivoProveedor apiResp = (ActivoProveedor) genericDao.get(ActivoProveedor.class,
-							genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem", visitaDto.getIdProveedorRemResponsable()));
+							genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem",
+									visitaDto.getIdProveedorRemResponsable()));
 					if (!Checks.esNulo(apiResp)) {
 						visita.setApiResponsable(apiResp);
 					}
@@ -427,7 +432,8 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 			if (((JSONObject) jsonFields).containsKey("idProveedorRemCustodio")) {
 				if (!Checks.esNulo(visitaDto.getIdProveedorRemCustodio())) {
 					ActivoProveedor apiCust = (ActivoProveedor) genericDao.get(ActivoProveedor.class,
-							genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem", visitaDto.getIdProveedorRemCustodio()));
+							genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem",
+									visitaDto.getIdProveedorRemCustodio()));
 					if (!Checks.esNulo(apiCust)) {
 						visita.setApiCustodio(apiCust);
 					}
@@ -438,8 +444,8 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 
 			if (((JSONObject) jsonFields).containsKey("idProveedorRemFdv")) {
 				if (!Checks.esNulo(visitaDto.getIdProveedorRemFdv())) {
-					ActivoProveedor fdv = (ActivoProveedor) genericDao.get(ActivoProveedor.class,
-							genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem", visitaDto.getIdProveedorRemFdv()));
+					ActivoProveedor fdv = (ActivoProveedor) genericDao.get(ActivoProveedor.class, genericDao
+							.createFilter(FilterType.EQUALS, "codigoProveedorRem", visitaDto.getIdProveedorRemFdv()));
 					if (!Checks.esNulo(fdv)) {
 						visita.setFdv(fdv);
 					}
@@ -451,7 +457,8 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 			if (((JSONObject) jsonFields).containsKey("idProveedorRemVisita")) {
 				if (!Checks.esNulo(visitaDto.getIdProveedorRemVisita())) {
 					ActivoProveedor pveVisita = (ActivoProveedor) genericDao.get(ActivoProveedor.class,
-							genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem", visitaDto.getIdProveedorRemVisita()));
+							genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem",
+									visitaDto.getIdProveedorRemVisita()));
 					if (!Checks.esNulo(pveVisita)) {
 						visita.setProveedorVisita(pveVisita);
 					}
@@ -462,7 +469,7 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 
 			if (((JSONObject) jsonFields).containsKey("observaciones")) {
 				visita.setObservaciones(visitaDto.getObservaciones());
-			}		
+			}
 
 			if (((JSONObject) jsonFields).containsKey("fecha")) {
 				if (!Checks.esNulo(visitaDto.getCodEstadoVisita()) && !Checks.esNulo(visitaDto.getFecha())) {
@@ -479,10 +486,10 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 					}
 				}
 			}
-			
+
 			if (((JSONObject) jsonFields).containsKey("telefonoContactoVisitas")) {
 				visita.setTelefonoContactoVisitas(visitaDto.getTelefonoContactoVisitas());
-			}	
+			}
 
 			visitaDao.saveOrUpdate(visita);
 		}
@@ -513,7 +520,7 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 			}
 
 		} catch (Exception e) {
-			logger.error("error en validateVisitaDeleteRequestData",e);
+			logger.error("error en validateVisitaDeleteRequestData", e);
 			listaErrores.add("Ha ocurrido un error al validar los parámetros de la visita idVisitaWebcom: "
 					+ visitaDto.getIdVisitaWebcom() + ". Traza: " + e.getMessage());
 			return listaErrores;
@@ -558,22 +565,24 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 	public DtoPage getListVisitasDetalle(DtoVisitasFilter dtoVisitasFilter) {
 
 		Usuario usuarioLogeado = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
-		UsuarioCartera usuarioCartera = genericDao.get(UsuarioCartera.class, genericDao.createFilter(FilterType.EQUALS,"usuario.id", usuarioLogeado.getId()));
-		if(!Checks.esNulo(usuarioCartera)){;
+		UsuarioCartera usuarioCartera = genericDao.get(UsuarioCartera.class,
+				genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioLogeado.getId()));
+		if (!Checks.esNulo(usuarioCartera)) {
+			;
 			dtoVisitasFilter.setCarteraCodigo(usuarioCartera.getCartera().getCodigo());
 		}
 
 		return visitaDao.getListVisitasDetalle(dtoVisitasFilter);
 
 	}
-	
+
 	@Override
 	public List<Visita> getListaVisitasOrdenada(DtoVisitasFilter dtoVisitasFilter) {
-		 List<Visita> lvisita = null;
-		
-		 lvisita = visitaDao.getListaVisitasOrdenada(dtoVisitasFilter);
+		List<Visita> lvisita = null;
 
-		 return lvisita;
+		lvisita = visitaDao.getListaVisitasOrdenada(dtoVisitasFilter);
+
+		return lvisita;
 	}
 
 	@Override
@@ -601,11 +610,17 @@ public class VisitaManager extends BusinessOperationOverrider<VisitaApi> impleme
 			}
 
 			if (!Checks.esNulo(errorsList) && errorsList.isEmpty()) {
-				if(visita == null || visita.getId() == null){
+				if (visita == null || visita.getId() == null) {
 					visita = this.getVisitaByIdVisitaWebcom(visitaDto.getIdVisitaWebcom());
 				}
-				map.put("idVisitaWebcom", visita.getIdVisitaWebcom());
-				map.put("idVisitaRem", visita.getNumVisitaRem());
+				if (visita != null) {
+					map.put("idVisitaWebcom", visita.getIdVisitaWebcom());
+					map.put("idVisitaRem", visita.getNumVisitaRem());
+				} else {
+					map.put("idVisitaWebcom", "");
+					map.put("idVisitaRem", "");
+				}
+
 				map.put("success", true);
 			} else {
 				map.put("idVisitaWebcom", visitaDto.getIdVisitaWebcom());

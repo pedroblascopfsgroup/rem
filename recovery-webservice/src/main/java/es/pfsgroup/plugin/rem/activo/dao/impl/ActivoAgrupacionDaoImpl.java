@@ -440,5 +440,21 @@ public class ActivoAgrupacionDaoImpl extends AbstractEntityDao<ActivoAgrupacion,
 
 		return resultado;
 	}
+	
+	/*@Override
+	public Page getListActivosAgrupacionByIdAgrupacion(DtoAgrupacionFilter dto, Usuario usuLogado) {
 
+		HQLBuilder hb = new HQLBuilder(" from VActivosAgrupacion agr");
+
+		if (dto.getAgrupacionId() != null) {
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "agr.agrId", Long.valueOf(dto.getAgrupacionId()));
+		}
+
+		if (dto.getSort() == null || dto.getSort().isEmpty()) {
+			hb.orderBy("activoPrincipal", HQLBuilder.ORDER_DESC);
+		}
+
+		return HibernateQueryUtils.page(this, hb, dto);
+
+	}*/
 }

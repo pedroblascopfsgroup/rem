@@ -16,6 +16,9 @@ public class StockDto implements WebcomRESTDto{
 	private DateDataType fechaAccion;
 	@WebcomRequired
 	private LongDataType idActivoHaya;
+	private LongDataType idActivoSareb;
+	private LongDataType idActivoPrinex;
+	private LongDataType idActivoRem;
 	private StringDataType codTipoVia;
 	private StringDataType nombreCalle;
 	private StringDataType numeroCalle;
@@ -128,6 +131,24 @@ public class StockDto implements WebcomRESTDto{
 	private StringDataType condicionesEspecificas;
 	private StringDataType descripcion;
 	
+	//HREOS-3955
+	@MappedColumn("cod_estado_pub_alquiler")
+	private StringDataType codEstadoPublicacionAlquiler;
+	
+	@MappedColumn("cod_subestado_pub_venta")
+	private StringDataType codSubEstadoPublicacionVenta;
+    
+	@MappedColumn("cod_subestado_pub_alquiler")
+	private StringDataType codSubEstadoPublicacionAlquiler;
+
+	private BooleanDataType indOcultarPrecioVenta;
+	
+	private BooleanDataType indOcultarPrecioAlquiler;
+    
+	private StringDataType arrCodDetallePublicacion;
+	
+	private StringDataType descripcionOtros;
+
 	private LongDataType activoProveedorTecnico;
 	
 	//HREOS-4500 - Modificaciones WS Stock
@@ -138,6 +159,24 @@ public class StockDto implements WebcomRESTDto{
 	}
 	public void setIdActivoHaya(LongDataType idActivoHaya) {
 		this.idActivoHaya = idActivoHaya;
+	}
+	public LongDataType getIdActivoSareb() {
+		return idActivoSareb;
+	}
+	public void setIdActivoSareb(LongDataType idActivoSareb) {
+		this.idActivoSareb = idActivoSareb;
+	}
+	public LongDataType getIdActivoPrinex() {
+		return idActivoPrinex;
+	}
+	public void setIdActivoPrinex(LongDataType idActivoPrinex) {
+		this.idActivoPrinex = idActivoPrinex;
+	}
+	public LongDataType getIdActivoRem() {
+		return idActivoRem;
+	}
+	public void setIdActivoRem(LongDataType idActivoRem) {
+		this.idActivoRem = idActivoRem;
 	}
 	public StringDataType getCodTipoVia() {
 		return codTipoVia;
@@ -628,6 +667,51 @@ public class StockDto implements WebcomRESTDto{
 	}
 	public void setCodSubCartera(StringDataType codSubCartera) {
 		this.codSubCartera = codSubCartera;
+	}
+	public StringDataType getCodEstadoPublicacionAlquiler() {
+		return codEstadoPublicacionAlquiler;
+	}
+	public void setCodEstadoPublicacionAlquiler(
+			StringDataType codEstadoPublicacionAlquiler) {
+		this.codEstadoPublicacionAlquiler = codEstadoPublicacionAlquiler;
+	}
+	public StringDataType getCodSubEstadoPublicacionVenta() {
+		return codSubEstadoPublicacionVenta;
+	}
+	public void setCodSubEstadoPublicacionVenta(
+			StringDataType codSubEstadoPublicacionVenta) {
+		this.codSubEstadoPublicacionVenta = codSubEstadoPublicacionVenta;
+	}
+	public StringDataType getCodSubEstadoPublicacionAlquiler() {
+		return codSubEstadoPublicacionAlquiler;
+	}
+	public void setCodSubEstadoPublicacionAlquiler(
+			StringDataType codSubEstadoPublicacionAlquiler) {
+		this.codSubEstadoPublicacionAlquiler = codSubEstadoPublicacionAlquiler;
+	}
+	public BooleanDataType getIndOcultarPrecioVenta() {
+		return indOcultarPrecioVenta;
+	}
+	public void setIndOcultarPrecioVenta(BooleanDataType indOcultarPrecioVenta) {
+		this.indOcultarPrecioVenta = indOcultarPrecioVenta;
+	}
+	public BooleanDataType getIndOcultarPrecioAlquiler() {
+		return indOcultarPrecioAlquiler;
+	}
+	public void setIndOcultarPrecioAlquiler(BooleanDataType indOcultarPrecioAlquiler) {
+		this.indOcultarPrecioAlquiler = indOcultarPrecioAlquiler;
+	}
+	public StringDataType getArrCodDetallePublicacion() {
+		return arrCodDetallePublicacion;
+	}
+	public void setArrCodDetallePublicacion(StringDataType arrCodDetallePublicacion) {
+		this.arrCodDetallePublicacion = arrCodDetallePublicacion;
+	}
+	public StringDataType getDescripcionOtros() {
+		return descripcionOtros;
+	}
+	public void setDescripcionOtros(StringDataType descripcionOtros) {
+		this.descripcionOtros = descripcionOtros;
 	}
 	public LongDataType getActivoProveedorTecnico() {
 		return activoProveedorTecnico;

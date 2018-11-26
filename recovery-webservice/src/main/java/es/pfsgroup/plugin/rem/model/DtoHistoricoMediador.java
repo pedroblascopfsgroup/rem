@@ -15,6 +15,7 @@ public class DtoHistoricoMediador {
 	private String mediador;
 	private String telefono;
 	private String email;
+	private String responsableCambio;
 	
 	
 	public String getId() {
@@ -68,5 +69,12 @@ public class DtoHistoricoMediador {
 	public void setIdEntidad(Long idEntidad) {
 		this.idActivo = idEntidad;
 	}
+	public String getResponsableCambio() {
+		return responsableCambio;
+	}
+	public void setResponsableCambio(String responsableCambio) {
+		this.responsableCambio = responsableCambio;
+	}
+	
 	
 }

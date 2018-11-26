@@ -20,7 +20,7 @@ Ext.define('HreRem.model.Activo', {
     			name:'entidadPropietaria'
     		},
     		{
-    			name:'entidadPropietariaCodigo' 
+    			name:'entidadPropietariaCodigo'
     		},
     		{
     			name: 'isCarteraBankia',
@@ -47,6 +47,20 @@ Ext.define('HreRem.model.Activo', {
     			name: 'isCarteraLiberbank',
     			calculate: function(data) { 
     				return data.entidadPropietariaCodigo == CONST.CARTERA['LIBERBANK'];
+    			},
+    			depends: 'entidadPropietariaCodigo'
+    		},
+    		{
+    			name: 'isCarteraSareb',
+    			calculate: function(data) {
+    				return data.entidadPropietariaCodigo == CONST.CARTERA['SAREB'];
+    			},
+    			depends: 'entidadPropietariaCodigo'
+    		},
+    		{
+    			name: 'isCarteraCerberus',
+    			calculate: function(data) {
+    				return data.entidadPropietariaCodigo == CONST.CARTERA['CERBERUS'];
     			},
     			depends: 'entidadPropietariaCodigo'
     		},
@@ -318,7 +332,14 @@ Ext.define('HreRem.model.Activo', {
     			type: 'boolean'
     		},
     		{
+    			name: 'estadoVenta'
+    		},
+    		{
     			name: 'gestion',
+    			type: 'boolean'
+    		},
+    		{
+    			name: 'tieneOkTecnico',
     			type: 'boolean'
     		},
     		{
@@ -464,6 +485,18 @@ Ext.define('HreRem.model.Activo', {
     		{
     			name: 'estadoPublicacionCodigo'
     		},
+    		{
+    			name: 'estadoVentaDescripcion'
+    		},
+    		{
+    			name: 'estadoAlquilerDescripcion'
+    		},
+    		{
+                name: 'estadoAlquilerCodigo'
+            },
+            {
+                name: 'estadoVentaCodigo'
+            },
 			{
 				name: 'incluidoEnPerimetro'
 			},
@@ -517,6 +550,10 @@ Ext.define('HreRem.model.Activo', {
 				type: 'boolean'
 			},
 			{
+				name: 'enTramite',
+				type: 'boolean'
+			},
+			{
 				name: 'tipoComercializacionCodigo'
 			},
 			{
@@ -526,6 +563,20 @@ Ext.define('HreRem.model.Activo', {
     			},
     			depends: 'tipoComercializacionCodigo'
 			},
+			{
+                name: 'incluyeDestinoComercialAlquiler',
+                calculate: function(data) {
+                    return data.tipoComercializacionCodigo ===  CONST.TIPOS_COMERCIALIZACION['SOLO_ALQUILER'] || data.tipoComercializacionCodigo ===  CONST.TIPOS_COMERCIALIZACION['ALQUILER_VENTA'];
+                },
+                depends: 'tipoComercializacionCodigo'
+            },
+            {
+                name: 'incluyeDestinoComercialVenta',
+                calculate: function(data) {
+                    return data.tipoComercializacionCodigo ===  CONST.TIPOS_COMERCIALIZACION['VENTA'] || data.tipoComercializacionCodigo ===  CONST.TIPOS_COMERCIALIZACION['ALQUILER_VENTA'];
+                },
+                depends: 'tipoComercializacionCodigo'
+            },
 			{
 				name: 'fechaAplicaComercializar',
     			type:'date',
@@ -549,6 +600,19 @@ Ext.define('HreRem.model.Activo', {
 			{
 				name: 'motivoAplicaFormalizar'
 			},
+			{
+				name: 'aplicaPublicar',
+				type: 'boolean'
+			},
+			{
+				name: 'fechaAplicaPublicar',
+    			type:'date',
+    			dateFormat: 'c'
+			},
+			{
+				name: 'motivoAplicaPublicar'
+			},
+
 			{
 				name: 'claseActivoCodigo'
 			},
@@ -578,6 +642,10 @@ Ext.define('HreRem.model.Activo', {
 				type: 'boolean'
 			},
 			{
+				name: 'perteneceAgrupacionRestringidaVigente',
+				type: 'boolean'
+			},
+			{
 				name: 'pertenceAgrupacionComercial',
 				type: 'boolean'
 			},
@@ -587,6 +655,10 @@ Ext.define('HreRem.model.Activo', {
 			},
 			{
 				name: 'pertenceAgrupacionObraNueva',
+				type: 'boolean'
+			},
+			{
+				name: 'pertenceAgrupacionProyecto',
 				type: 'boolean'
 			},
 			{
@@ -631,6 +703,9 @@ Ext.define('HreRem.model.Activo', {
 				name: 'activoBNK'
 			},
 			{
+				name: 'idAgrupacion'
+			},
+			{
 				name: 'ocupado'
 			},
 			{
@@ -651,7 +726,8 @@ Ext.define('HreRem.model.Activo', {
 			{
     			name: 'isVisibleCodPrinex',
     			calculate: function(data) { 
-    				return data.entidadPropietariaCodigo == CONST.CARTERA['CAJAMAR'] || data.entidadPropietariaCodigo == CONST.CARTERA['LIBERBANK'];
+    				return (data.entidadPropietariaCodigo == CONST.CARTERA['CAJAMAR'] || data.entidadPropietariaCodigo == CONST.CARTERA['LIBERBANK'])
+    					&& data.codigoPromocionPrinex != '';
     			},
     			depends: 'entidadPropietariaCodigo'
     		},
@@ -662,6 +738,13 @@ Ext.define('HreRem.model.Activo', {
 			{
     			name: 'isLogUsuGestComerSupComerSupAdmin',
     			type: 'boolean'
+    		},
+    		{
+    			name: 'activoChkPerimetroAlquiler',
+    			type: 'boolean'
+    		},
+    		{
+    			name: 'activoPrincipalRestringida'
     		},
     		{
     			name: 'motivoActivo'

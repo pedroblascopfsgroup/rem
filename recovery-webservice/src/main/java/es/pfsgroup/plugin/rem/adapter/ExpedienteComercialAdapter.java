@@ -35,7 +35,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDSubtipoDocumentoExpediente;
 @Service
 public class ExpedienteComercialAdapter {
 
-	private static final String EXCEPTION_EXPEDIENT_NOT_FOUND_COD = "ExceptionExp";
 	private static final String EXCEPTION_ACTIVO_NOT_FOUND_COD = "Error al obtener el activo, no existe";
 	private static final String EXCEPTION_DOCUMENTO_SUBTIPO = "Error, solo se puede insertar 1 documento de este subtipo";
 
@@ -98,8 +97,7 @@ public class ExpedienteComercialAdapter {
 						idExpediente = gestorDocumentalAdapterApi.crearExpedienteComercial(expedienteComercial,usuario.getUsername());
 						logger.debug("GESTOR DOCUMENTAL [ crearExpediente para " + expedienteComercial.getNumExpediente() + "]: ID EXPEDIENTE RECIBIDO " + idExpediente);
 					} catch (GestorDocumentalException gexc) {
-						gexc.printStackTrace();
-						logger.debug(gexc.getMessage());
+						logger.error(gexc.getMessage());
 					}
 					
 				}

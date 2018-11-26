@@ -9,7 +9,7 @@ package es.pfsgroup.framework.paradise.bulkUpload.bvfactory.types;
 public interface MSVColumnSQLValidator extends MSVColumnValidator{
 	
 	/**
-	 * Devuelve la SQL de comprobación que define este validador
+	 * Devuelve la SQL de comprobaciÃ³n que define este validador
 	 * @param cellValue Valor de la celda del Excel que queremos validar
 	 * @return
 	 */

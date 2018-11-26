@@ -3,7 +3,7 @@ package es.pfsgroup.framework.paradise.bulkUpload.bvfactory;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
 
 /**
- * Esta interfaz representa una factoría que devuelve validadores de negocio para una determinada operación masiva.
+ * Esta interfaz representa una factorÃ­a que devuelve validadores de negocio para una determinada operaciÃ³n masiva.
  * 
  * @author bruno
  *
@@ -11,14 +11,14 @@ import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
 public interface MSVBusinessValidationFactory {
 
 	/**
-	 * Devuelve los validadores para un tipo de operación. 
+	 * Devuelve los validadores para un tipo de operaciÃ³n. 
 	 * @param tipoOperacion
 	 * @return Si no existen validadores definidos puede devolver NULL
 	 */
 	MSVBusinessValidators getValidators(MSVDDOperacionMasiva tipoOperacion);
 
 	/**
-	 * Devuelve los validadores compuestos para un tipo de operación. 
+	 * Devuelve los validadores compuestos para un tipo de operaciÃ³n. 
 	 * @param tipoOperacion
 	 * @return Si no existen validadores compuestos definidos puede devolver NULL
 	 */

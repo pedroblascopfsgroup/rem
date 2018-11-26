@@ -6,7 +6,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionesDetalle', {
 	layout		: 'fit',
     requires 	: ['HreRem.view.agrupaciones.detalle.FichaAgrupacion','HreRem.view.agrupaciones.detalle.ObservacionesAgrupacion',
     				'HreRem.view.agrupaciones.detalle.DocumentosAgrupacion', 'HreRem.view.agrupaciones.detalle.SeguimientoAgrupacion',
-        			'HreRem.view.agrupaciones.detalle.SubdivisionesAgrupacionMain','HreRem.view.agrupaciones.detalle.FotosAgrupacion', 
+        			'HreRem.view.agrupaciones.detalle.SubdivisionesAgrupacionMain','HreRem.view.agrupaciones.detalle.FotosAgrupacion',
         			'HreRem.view.agrupaciones.detalle.ActivosAgrupacion','HreRem.view.agrupaciones.detalle.ObservacionesAgrupacion',
         			'Ext.ux.TabReorderer','HreRem.view.agrupacion.detalle.ComercialAgrupacion', 'HreRem.model.AgrupacionFicha'],
     listeners: {
@@ -102,6 +102,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionesDetalle', {
 		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'documentosagrupacion', ocultarBotonesEdicion: true, bind: {disabled:'{!esAgrupacionProyecto}'},tabConfig: { bind: { hidden: '{esAgrupacionProyecto}' }}})}, ['TAB_DOCUMENTOS_AGRUPACION']),
 		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'seguimientoagrupacion', ocultarBotonesEdicion: true, bind: {disabled:'{!esAgrupacionProyecto}'}})}, ['TAB_SEGUIMIENTO_AGRUPACION']),
 		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'subdivisionesagrupacionmain', ocultarBotonesEdicion: true, bind: {disabled:'{!esAgrupacionObraNuevaOrAsistida}'},tabConfig: { bind: { hidden: '{esAgrupacionProyecto}' }}})}, ['TAB_SUBDIVISIONES_AGRUPACION']),
+		items.push({xtype: 'datospublicacionagrupacion', ocultarBotonesEdicion: false, bind: {disabled:'{!esAgrupacionRestringida}'}});
 		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'comercialagrupacion', ocultarBotonesEdicion: true, bind: {disabled:'{esAgrupacionObraNuevaOrAsistidaOrProyecto}'},tabConfig: { bind: { hidden: '{esAgrupacionProyecto}' }}})}, ['TAB_COMERCIAL_AGRUPACION'])
 
         me.addPlugin({ptype: 'lazyitems', items: items});
@@ -130,13 +131,13 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionesDetalle', {
 
 		//Si la agrupación es editable
 		if(esEditable) {
-			//Se comprueba si es de tipo proyecto 
+			//Se comprueba si es de tipo proyecto
 			var Agrupacionproyecto = false;
 			var tipoAgrupacion =  me.lookupController().getViewModel().get('agrupacionficha.tipoAgrupacionCodigo');
 	     	if((tipoAgrupacion == CONST.TIPOS_AGRUPACION['PROYECTO'])) {
 	     		Agrupacionproyecto= true;
 	     	}
-				// Si la pestaña recibida no tiene asignadas funciones de edicion 
+				// Si la pestaña recibida no tiene asignadas funciones de edicion
 				if(Ext.isEmpty(tab.funPermEdition)) {
 		    		editionEnabled();
 		    		} else {
@@ -150,12 +151,12 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionesDetalle', {
 				    		}else{
 					    		$AU.confirmFunToFunctionExecution(editionDisabled, tab.funPermEdition);
 							}
-				    		
+
 			    		}else{
 			    			$AU.confirmFunToFunctionExecution(editionEnabled, tab.funPermEdition);
 			    		}
 		    		}
-			
+
     	}
     }
 });

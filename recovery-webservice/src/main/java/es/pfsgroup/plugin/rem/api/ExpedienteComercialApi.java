@@ -115,12 +115,12 @@ public interface ExpedienteComercialApi {
 	 * @return resultado de la operacion
 	 */
 	public boolean saveTextoOferta(DtoTextosOferta dto, Long idEntidad);
-	
-	
+
+
 	/**
 	 * Método que guarda un Seguro de rentas del expediente comercial
 	 * y en el historico de rentas
-	 * 
+	 *
 	 * @param dto
 	 * @param idEntidad
 	 *            id del expediente
@@ -246,13 +246,13 @@ public interface ExpedienteComercialApi {
 	 */
 
 	public DtoPage getActivosExpediente(Long idExpediente);
-	
+
 	/**
 	 * Método que recupera los tipos de documento del expediente comercial
-	 * 
+	 *
 	 * @return
 	 */
-	
+
 	public List <DtoTipoDocExpedientes> getTipoDocumentoExpediente(String tipoExpediente);
 
 	/**
@@ -356,12 +356,12 @@ public interface ExpedienteComercialApi {
 	 * @param idExpediente
 	 * @return
 	 */
-	
+
 	String getTareaDefinicionDeOferta(Long idExpedienteComercial, WebDto webDto);
 
 	/**
 	 * Método que obtiene la tarea de definición oferta
-	 * 
+	 *
 	 * @param dto
 	 * @param idExpediente
 	 * @return
@@ -411,16 +411,16 @@ public interface ExpedienteComercialApi {
 	 * @return
 	 */
 	public List<DtoGastoExpediente> getHonorariosActivoByOfertaAceptada(Oferta oferta, Activo activo);
-	
+
 	/**
 	 * Método que obtiene los honorarios(gastos) del expediente
-	 * 
+	 *
 	 * @param idExpediente
 	 * @return
 	 */
-	
+
 	public List<DtoHstcoSeguroRentas> getHstcoSeguroRentas(Long idExpediente);
-	
+
 	/**
 	 * Método que obtiene los honorarios(gastos) del expediente
 	 * 
@@ -1007,33 +1007,33 @@ public interface ExpedienteComercialApi {
 	/**
 	 * Este método envia un correo a los receptores Gestor comercial alquiler, Supervisor comercial alquiler y Prescriptor
 	 * con el suerpo del mensaje que se recibe por parametro.
-	 * 
+	 *
 	 * @param cuerpoEmail: Contenido del cuerpo del mensaje.
 	 * @param idExpediente: Id del expediente al que hace referencia.
 	 * @return Devuelve True si el mensaje ha sido enviado y false si no ha sido asi.
 	 */
-	boolean enviarCorreoComercializadora(String cuerpoEmail, Long idExpediente);	
-	
+	boolean enviarCorreoComercializadora(String cuerpoEmail, Long idExpediente);
+
 	public List<DDTipoCalculo> getComboTipoCalculo(Long idExpediente);
-	
+
 	/**
 	 * Este método comprueba si el expediente ya contiene un documento del tipo y subtipo indicado
-	 * 
+	 *
 	 * @param WebFileItem: Datos del documento.
 	 * @param ExpedienteComercial: Expediente Comercial al que hace referencia.
 	 * @return Devuelve True si existe el documento.
 	 */
-	
+
 	public Boolean existeDocSubtipo(WebFileItem fileItem, ExpedienteComercial expedienteComercialEntrada) throws Exception;
-	
+
 	/**
 	 * Método que obtiene el histórico de scoring del expediente comercial de alquiler.
-	 * 
+	 *
 	 * @param idExpediente
 	 * @return
 	 */
 	public List<DtoExpedienteHistScoring> getHistoricoScoring(Long idScoring);
-	
+
 	/**
 	 * Método que guarda la pestaña Scoring el bloque detalle.
 	 * @param dto
@@ -1048,8 +1048,8 @@ public interface ExpedienteComercialApi {
 	 * @return
 	 */
 	public boolean enviarCorreoAsegurador(Long idExpediente);
-	
-	
+
+
 	/**
 	 * Método que envía un correo para avisar de la fecha prevista para la entrega de llaves del alquiler
 	 * @param idExpediente
@@ -1058,7 +1058,7 @@ public interface ExpedienteComercialApi {
 	 * @return
 	 */
 	public boolean enviarCorreoGestionLlaves(Long idExpediente, Posicionamiento posicionamiento, int envio);
-	
+
 	/**
 	 * Método que saca una lista de estados del expediente segun si es de tipo venta o de tipo alquiler
 	 * @param idEstado
@@ -1080,9 +1080,9 @@ public interface ExpedienteComercialApi {
 	 * @return
 	 */
 	public boolean enviarCorreoSubidaDeContrato(Long idExpediente);
-	
+
 	/**
-	 * Metodo que comprueba si el documento Precontrato está subido al expediente 
+	 * Metodo que comprueba si el documento Precontrato está subido al expediente
 	 * @param tareaExterna
 	 * @return
 	 */
@@ -1090,7 +1090,7 @@ public interface ExpedienteComercialApi {
 
 	/**
 	 * Método que saca el expediente comercial a partir de una tarea externa
-	 * 
+	 *
 	 * @param tareaExterna
 	 * @return ExpedienteComercial
 	 */
@@ -1099,13 +1099,17 @@ public interface ExpedienteComercialApi {
 	public String getCodigoCarteraExpediente(String idExpediente);
 
 	DtoPage getActivosExpedienteVista(Long idExpediente);
+
+	Long getIdByNumExpOrNumOfr(Long numBusqueda, String campo);
+
+	Long getNumExpByNumOfr(Long numBusqueda);
 	
 	/**
-	 * Metodo que comprueba si el documento Contrato está subido al expediente 
+	 * Metodo que comprueba si el documento Contrato está subido al expediente
 	 * @param tareaExterna
 	 * @return
 	 */
 	public boolean checkContratoSubido(TareaExterna tareaExterna);
 
-	
+
 }

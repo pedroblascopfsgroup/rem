@@ -23,8 +23,10 @@ import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.GastoProveedorActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaGastoActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaGastoTrabajos;
+import es.pfsgroup.plugin.rem.model.VFacturasProveedores;
 import es.pfsgroup.plugin.rem.model.VGastosProveedor;
 import es.pfsgroup.plugin.rem.model.VGastosProvision;
+import es.pfsgroup.plugin.rem.model.VTasasImpuestos;
 
 
 public interface GastoProveedorApi {
@@ -344,7 +346,13 @@ public interface GastoProveedorApi {
 		 * @return
 		 */
 		List<VGastosProveedor> getListGastosProvisionAgrupGastos(Long idProvision);
+
 		
+		List<VFacturasProveedores> getListFacturas();
+
+
+		List<VTasasImpuestos> getListTasasImpuestos();
+
 
 }
 

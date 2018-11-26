@@ -19,10 +19,20 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
     initComponent: function () {
     	
         var me = this;
+        var storeConTituloPosesionNo = Ext.create('Ext.data.Store', {
+					data : [{
+						"codigo" : "01",
+						"descripcion" : eval(String.fromCharCode(34, 83, 237,
+								34))
+					}, {
+						"codigo" : "0",
+						"descripcion" : "No, con indicios"
+					}]
+				});
         me.setTitle(HreRem.i18n('title.situacion.posesoria.llaves'));
-        
+
         var tipoComercializacionCodigo = me.lookupViewModel().get('activo.tipoComercializacionCodigo');
-        
+
         var items= [
 
 			{    
@@ -39,7 +49,7 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 							// TODO Investigar porqu� al quitar este campo, el valor del siguiente campo se manda siempre al guardar, aunque no se haya modificado.
 			            	hidden: true
 						},
-				        { 
+				        {
 							xtype: 'comboboxfieldbase',
 							reference: 'conPosesion',
 							fieldLabel: HreRem.i18n('fieldlabel.con.posesion'),
@@ -47,15 +57,23 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 				        	bind: {				        		
 				        		store: '{comboSiNoRem}',
 			            		value: '{situacionPosesoria.indicaPosesion}'
+			            	},
+			            	listeners: {
+			            		change: function(combo, value) {
+			            			var me = this;
+			            			if(value=='0') {
+			            				me.up('formBase').down('[reference=comboSituacionPosesoriaConTitulo]').setStore(storeConTituloPosesionNo);
+			            			}
+
+			            		}
 			            	}
 				        },
-						
 		                { 
 							xtype:'datefieldbase',
 							reference: 'fechaRevisionEstadoPosesorio',
-							allowBlank: false,
 					 		fieldLabel: HreRem.i18n('fieldlabel.fecha.revision.estado.posesorio'),
-			            	bind:		'{situacionPosesoria.fechaRevisionEstado}'						
+			            	bind:		'{situacionPosesoria.fechaRevisionEstado}',
+                            readOnly: true
 						},
 						{
 				        	xtype:'fieldset',
@@ -184,20 +202,27 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 			            				me.up('formBase').down('[reference=comboSituacionPosesoriaConTitulo]').setValue(CONST.COMBO_CON_TITULO['NO']);
 			            				me.up('formBase').down('[reference=comboSituacionPosesoriaConTitulo]').setDisabled(true);
 			            			} else if (value == CONST.COMBO_OCUPACION['NO']){
-			            				me.up('formBase').down('[reference=comboSituacionPosesoriaConTitulo]').setDisabled(true); 
+			            				me.up('formBase').down('[reference=comboSituacionPosesoriaConTitulo]').setDisabled(true);
 			            			}
 			            		}
 			            	}
 				        },				      
 				        { 
 				        	xtype: 'comboboxfieldbase',
-				        	//rowspan: 2,
-				        	allowBlank: false,
 				        	fieldLabel: HreRem.i18n('fieldlabel.riesgo.ocupacion'),
 				        	bind: {
 			            		store: '{comboSiNoRem}',
 			            		value: '{situacionPosesoria.riesgoOcupacion}'
-			            	}
+			            	},
+			            	listeners: {
+			            		afterbind: function(combo){
+			            			var me=this;
+			            			if(!me.up('activosdetallemain').getViewModel().get('activo.isCarteraBankia')){
+			            				me.rowspan = 2;
+			            			}
+			            		}
+			            	},
+                            readOnly: true
 				        },
 				        { 
 				        	xtype: 'comboboxfieldbase',
@@ -247,7 +272,7 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 							reference: 'datefieldFechaTitulo',
 							maxValue: null,
 							fieldLabel: HreRem.i18n('fieldlabel.fecha.titulo.posesorio'),
-							bind:		'{situacionPosesoria.fechaTitulo}'
+							bind: '{situacionPosesoria.fechaTitulo}'
 		                },
 		                { 
 		                	xtype:'datefieldbase',
@@ -315,46 +340,56 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 		    			            }
 		    			        }
 		    			    ]
-		    				
 		    			}
-					
 					]
-                
-            }, 
-            
-            {    
-                
+            },
+            {
 				xtype:'fieldsettable',
 				title:HreRem.i18n('title.ocupante.ilegal'),
 				bind: {hidden:'{!esOcupacionIlegal}'},
 				defaultType: 'textfieldbase',
+				items : [
+					{
+						xtype:'datefieldbase',
+						reference: 'fechaSolDesahucio',
+				        fieldLabel: HreRem.i18n('fieldlabel.fecha.tratamiento.ocupacion'),
+		                bind:		'{situacionPosesoria.fechaSolDesahucio}',
+				        readOnly: true
+					},
+					{
+						xtype:'datefieldbase',
+						hidden: true,
+						reference: 'fechaLanzamiento',
+						fieldLabel: HreRem.i18n('fieldlabel.fecha.senyalamiento.lanzamiento'),
+	                    bind: '{situacionPosesoria.fechalanzamiento}',
+                        readOnly: true
+	                },
+	                {
+	                    xtype:'datefieldbase',
+						reference: 'fechaLanzamientoEfectivo',
+	                    fieldLabel: HreRem.i18n('fieldlabel.fecha.recuperacion.posesion'),
+	                    bind:		'{situacionPosesoria.fechaLanzamientoEfectivo}',
+	                    readOnly: true
+	                }
+				]
+            },
+            {
+
+				xtype:'fieldsettable',
+				title:HreRem.i18n('title.historico.ocupaciones.ilegales'),
+				reference: 'fieldHistoricoOcupacionesIlegales',
+				defaultType: 'textfieldbase',
 				items :
 					[
-						{ 
-							xtype:'datefieldbase',
-							reference: 'fechaSolDesahucio',
-					 		fieldLabel: HreRem.i18n('fieldlabel.fecha.tratamiento.ocupacion'),
-			            	bind:		'{situacionPosesoria.fechaSolDesahucio}'
-						},
-						{ 
-							xtype:'datefieldbase',
-							hidden: true,
-							reference: 'fechaLanzamiento',
-							fieldLabel: HreRem.i18n('fieldlabel.fecha.senyalamiento.lanzamiento'),
-		                	bind:		'{situacionPosesoria.fechalanzamiento}'
-		                },
-		                { 
-		                	xtype:'datefieldbase',
-							reference: 'fechaLanzamientoEfectivo',
-		                	fieldLabel: HreRem.i18n('fieldlabel.fecha.recuperacion.posesion'),
-		                	bind:		'{situacionPosesoria.fechaLanzamientoEfectivo}'
-		                }
+						{
+		                	xtype: 'historicoocupacionesilegalesgrid',
+		                	colspan: 3
+    				    }
 					
 					]
                 
             },
-            {    
-                
+            {
 				xtype:'fieldsettable',
 				title:'Llaves',
 				defaultType: 'textfieldbase',
@@ -447,7 +482,6 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
     },
 
     getErrorsExtendedFormBase: function() {
-
    		var me = this,
    		errores = [],
    		error,
@@ -464,30 +498,29 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
    			errores.push(error);
    			fechaTomaPosesion.markInvalid(error);   			
    		}  		
-   		
+
    		if(!Ext.isEmpty(fechaLanzamiento.getValue()) && fechaLanzamiento.getValue() < fechaSolDesahucio.getValue()) {
 		    error = HreRem.i18n("txt.validacion.fechaLanzamiento.menor.fechaSolDesahucio");
    			errores.push(error);
    			fechaLanzamiento.markInvalid(error);   			
-   		}  	
-   		
+   		}
+
    		if(!Ext.isEmpty(fechaLanzamientoEfectivo.getValue()) && fechaLanzamientoEfectivo.getValue() < fechaLanzamiento.getValue()) {
 		    error = HreRem.i18n("txt.validacion.fechaLanzamientoEfectivo.menor.fechaLanzamiento");
    			errores.push(error);
    			fechaLanzamientoEfectivo.markInvalid(error);   			
    		}  	
-   		
+
    		//La fecha de t�tulo posesorio debe ser anterior a la fecha de vencimiento
    		if(!Ext.isEmpty(datefieldFechaTitulo.getValue()) && datefieldFechaTitulo.getValue() >= datefieldFechaVencTitulo.getValue()) {
 		    error = HreRem.i18n("txt.validacion.datefieldFechaTitulo.mayor.datefieldFechaVencTitulo");
    			errores.push(error);
    			datefieldFechaTitulo.markInvalid(error);   			
    		}  	
-   		
+
    		me.addExternalErrors(errores);
-   		
-   },     
-    
+   },
+
     funcionRecargar: function() {
 		var me = this; 
 		me.recargar = false;
@@ -496,5 +529,6 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 			grid.getStore().load();
   		});
    }
-    
+
+
 });

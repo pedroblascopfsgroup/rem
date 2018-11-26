@@ -6,7 +6,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
     'HreRem.model.IncrementoPresupuesto', 'HreRem.model.Distribuciones', 'HreRem.model.Observaciones',
     'HreRem.model.Carga', 'HreRem.model.Llaves', 'HreRem.model.PreciosVigentes','HreRem.model.VisitasActivo',
     'HreRem.model.OfertaActivo', 'HreRem.model.PropuestaActivosVinculados', 'HreRem.model.HistoricoMediadorModel','HreRem.model.AdjuntoActivoPromocion',
-    'HreRem.model.MediadorModel', 'HreRem.model.MovimientosLlave', 'HreRem.model.ActivoPatrimonio', 'HreRem.model.HistoricoAdecuacionesPatrimonioModel', 'HreRem.model.ImpuestosActivo'],
+    'HreRem.model.MediadorModel', 'HreRem.model.MovimientosLlave', 'HreRem.model.ActivoPatrimonio', 'HreRem.model.HistoricoAdecuacionesPatrimonioModel', 'HreRem.model.ImpuestosActivo','HreRem.model.OcupacionIlegal'],
+
     
     data: {
     	activo: null,
@@ -61,7 +62,16 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 	     esOcupacionIlegal: function(get) {
 	     	var ocupado = get('situacionPosesoria.ocupado') == "1";
 	     	var conTitulo = get('situacionPosesoria.conTitulo') == "1";
-	     	
+	     	var gridHistoricoOcupacionesIlegales = this.getView().lookupReference('historicoocupacionesilegalesgridref');
+			var fieldHistoricoOcupacionesIlegales = this.getView().lookupReference('fieldHistoricoOcupacionesIlegales');
+			
+			var hayDatosEnStore = gridHistoricoOcupacionesIlegales.store.data.length>0
+			if(hayDatosEnStore  || ocupado){
+				fieldHistoricoOcupacionesIlegales.show();
+			}else {
+				fieldHistoricoOcupacionesIlegales.hide();
+			}
+
 	     	return ocupado && !conTitulo;
 	     },
 
@@ -259,13 +269,13 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		    }
 		 },
 		 getIconClsCondicionantesVandalizado: function(get) {
-			var condicion = get('activoCondicionantesDisponibilidad.vandalizado');
+			 var condicion = get('activoCondicionantesDisponibilidad.vandalizado');
 
-		    if(!eval(condicion)) {
-		        return 'app-tbfiedset-ico icono-ok';
-		    } else {
-		        return 'app-tbfiedset-ico icono-ko';
-		    }
+            if(!eval(condicion)) {
+                return 'app-tbfiedset-ico icono-ok';
+            } else {
+                return 'app-tbfiedset-ico icono-ko';
+            }
 		},
 		getIconClsCondicionantesSinAcceso: function(get) {
 	        var condicion = get('activoCondicionantesDisponibilidad.sinAcceso');
@@ -764,6 +774,20 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
    		        extraParams: {id: '{activo.id}'}
    	    	 }
        		},
+       		
+       		storeHistoricoOcupacionesIlegales: {
+         		pageSize: 10,
+         		model: 'HreRem.model.OcupacionIlegal',
+         		sorters: [{ property: 'numAsunto', direction: 'DESC' }],
+         		proxy: {
+         			type: 'uxproxy',
+         			remoteUrl: 'activo/getListHistoricoOcupacionesIlegales',
+			        actionMethods: {create: 'POST', read: 'POST', update: 'POST', destroy: 'POST'},
+			        extraParams: {idActivo: '{activo.id}'}
+		    	},
+	         	remoteSort: true,
+		    	remoteFilter: true 
+        	},
        		
     		storeLlaves: {
 	    		pageSize: 10,
@@ -1325,6 +1349,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				extraParams: {diccionario: 'estadosOfertas'}
 			},
 			autoLoad: true
+
 	    },
 
 	    comboTipoOferta: {

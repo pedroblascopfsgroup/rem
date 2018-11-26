@@ -10,16 +10,11 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import es.capgemini.devon.bo.Executor;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.pfs.auditoria.model.Auditoria;
-import es.capgemini.pfs.users.FuncionManager;
 import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
-import es.pfsgroup.commons.utils.api.ApiProxyFactory;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
-import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoAvisadorApi;
 import es.pfsgroup.plugin.rem.model.Activo;
@@ -27,13 +22,6 @@ import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.DtoAviso;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
-import org.apache.commons.lang.BooleanUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import java.util.ArrayList;
-import java.util.List;
 
 @Service("activoAvisadorManager")
 public class ActivoAvisadorManager implements ActivoAvisadorApi {
@@ -42,23 +30,11 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 	
 	protected static final Log logger = LogFactory.getLog(ActivoAvisadorManager.class);
 	
-	@Autowired
-	private Executor executor;
-
-	@Autowired
-	private GenericABMDao genericDao;
-
-	@Autowired
-	private ActivoDao activoDao;
-
-	@Autowired
-	private ApiProxyFactory proxyFactory;
 	
 	@Autowired 
     private ActivoApi activoApi;
 
-	@Autowired
-	private FuncionManager funcionManager;
+
 
 	@Override
 	@BusinessOperation(overrides = "activoAvisadorManager.get")
@@ -75,13 +51,13 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 		
 		List<DtoAviso> listaAvisos = new ArrayList<DtoAviso>();
 		Activo activo = activoApi.get(id);
-		activoApi.calcularFechaTomaPosesion(activo);
 		List<Perfil> perfilesUsuario = usuarioLogado.getPerfiles();
 		
 		boolean restringida = false;
 		boolean obraNueva = false;
 		boolean asistida = false;
 		boolean lote = false;
+		boolean conTitulo = false;
 		boolean enPuja = false;
 		
 		try {
@@ -91,6 +67,7 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 			obraNueva = activoApi.isIntegradoAgrupacionObraNueva(id, usuarioLogado);
 			asistida = activoApi.isIntegradoAgrupacionAsistida(activo);
 			lote = activoApi.isIntegradoAgrupacionComercial(activo);
+			conTitulo = activoApi.necesitaDocumentoInformeOcupacion(activo);
 			enPuja = activoApi.isActivoEnPuja(activo);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -127,6 +104,13 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 		if(lote) {
 			DtoAviso dtoAviso = new DtoAviso();
 			dtoAviso.setDescripcion("Incluido en agrupación comercial");
+			dtoAviso.setId(String.valueOf(id));
+			listaAvisos.add(dtoAviso);
+		}
+		
+		if(conTitulo) {
+			DtoAviso dtoAviso = new DtoAviso();
+			dtoAviso.setDescripcion("Es necesario adjuntar el documento “Informe ocupación”");
 			dtoAviso.setId(String.valueOf(id));
 			listaAvisos.add(dtoAviso);
 		}
@@ -263,7 +247,13 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 			}
 		}
 		
+		if(!(Checks.esNulo(activo.getTieneDemandaAfecCom())) && activo.getTieneDemandaAfecCom()==1) {
+			DtoAviso dtoAviso = new DtoAviso();
+			dtoAviso.setDescripcion("Activo con demanda con afectación comercial");
+			dtoAviso.setId(String.valueOf(id));
+			listaAvisos.add(dtoAviso);			
+		}
 		return listaAvisos;
-		//activoDao.getListActivos(id, usuarioLogado);
 	}
+
 }

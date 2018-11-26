@@ -48,8 +48,7 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 						},
 						{ 
 		                	fieldLabel: HreRem.i18n('fieldlabel.finca'),
-		                	bind: '{datosRegistrales.numFinca}',
-                            readOnly: true
+		                	bind: '{datosRegistrales.numFinca}'
 		                },	
 		                { 
 				        	xtype: 'comboboxfieldbase',				        	
@@ -72,18 +71,16 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 			            		store: '{comboMunicipioRegistro}',
 			            		value: '{datosRegistrales.poblacionRegistro}',
 			            		disabled: '{!datosRegistrales.provinciaRegistro}'
-			            	},
-                            readOnly: true
-						},
+			            	}
+                      },
 		                { 
 		                	fieldLabel: HreRem.i18n('fieldlabel.idufir'),
 		                	reference: 'idufir',
 		                	bind: '{datosRegistrales.idufir}',
 		                	maskRe: /^\d*$/, 
 		                	vtype: 'idufir',
-		                	maxLength: 14,
-                            readOnly: true
-		                },		                
+		                	maxLength: 14
+                        },		                
 		                {
 				        	xtype:'fieldset',
 				        	layout: {
@@ -132,8 +129,7 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 		                { 
 							fieldLabel: HreRem.i18n('fieldlabel.numero.registro'),
 		                	bind:		'{datosRegistrales.numRegistro}',
-		                	maskRe: /^\d*$/,
-                            readOnly: true
+		                	maskRe: /^\d*$/
 		                },
 		                { 
 		                	fieldLabel: HreRem.i18n('fieldlabel.num.departamento'),
@@ -143,20 +139,17 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 		                { 
 		                	fieldLabel: HreRem.i18n('fieldlabel.tomo'),
 		                	colspan: 2,
-		                	bind: '{datosRegistrales.tomo}',
-                            readOnly: true
-		                },
+		                	bind: '{datosRegistrales.tomo}'
+                        },
 		                { 
 					 		fieldLabel: HreRem.i18n('fieldlabel.libro'),
 					 		colspan: 2,
-					 		bind: '{datosRegistrales.libro}',
-                            readOnly: true
+					 		bind: '{datosRegistrales.libro}'
 						},
 						{ 
 							fieldLabel: HreRem.i18n('fieldlabel.folio'),
 							colspan: 2,
-							bind: '{datosRegistrales.folio}',
-                            readOnly: true
+							bind: '{datosRegistrales.folio}'
 		                }
 					]
 			},
@@ -185,31 +178,27 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 								 		reference: 'superficieConstruida',
 								 		symbol: HreRem.i18n("symbol.m2"),
 								 		fieldLabel: HreRem.i18n('fieldlabel.construida'),								 		
-								 		bind: '{datosRegistrales.superficieConstruida}',
-                                        readOnly: true
+								 		bind: '{datosRegistrales.superficieConstruida}'
 									},
 									{ 
 										xtype: 'numberfieldbase',
 										reference: 'superficieUtil',
 								 		symbol: HreRem.i18n("symbol.m2"),
 										fieldLabel: HreRem.i18n('fieldlabel.util'),
-		                				bind: '{datosRegistrales.superficieUtil}',
-                                        readOnly: true
+		                				bind: '{datosRegistrales.superficieUtil}'
 					                },
 					                { 
 					                	xtype: 'numberfieldbase',
 					                	reference: 'superficieElementosComunes',
 								 		symbol: HreRem.i18n("symbol.m2"),
 					                	fieldLabel: HreRem.i18n('fieldlabel.repercusion.elementos.comunes'),
-					                	bind: '{datosRegistrales.superficieElementosComunes}',
-                                        readOnly: true
+					                	bind: '{datosRegistrales.superficieElementosComunes}'
 					                },
 					                { 
 					                	xtype: 'numberfieldbase',
 								 		symbol: HreRem.i18n("symbol.m2"),
 								 		fieldLabel: HreRem.i18n('fieldlabel.parcela.no.ocupada.edificacion'),
-								 		bind: '{datosRegistrales.superficieParcela}',
-                                        readOnly: true
+								 		bind: '{datosRegistrales.superficieParcela}'
 									}
 		
 								]
@@ -524,7 +513,6 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 			                	reference: 'fechaRealizacionPosesion',
 			                	fieldLabel: HreRem.i18n('fieldlabel.fecha.realizacion.posesion'),			                	
 								bind: '{datosRegistrales.fechaRealizacionPosesion}',
-                                readOnly: true,
 								bind: {
 									value: '{datosRegistrales.fechaRealizacionPosesion}',
 									readOnly: '{isReadOnlyFechaRealizacionPosesion}'

@@ -12,6 +12,7 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.log4j.lf5.viewer.LogTableColumnFormatException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -118,6 +119,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
 import es.pfsgroup.plugin.rem.oferta.NotificationOfertaManager;
+import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi.ENTIDADES;
 import es.pfsgroup.plugin.rem.thread.LiberarFichero;
@@ -216,6 +218,9 @@ public class AgrupacionAdapter {
 	
 	@Autowired
 	private MSVProcesoApi msvProcesoApi;
+	
+	@Autowired
+    private OfertaDao ofertaDao;
 
 	@Autowired
 	private ParticularValidatorApi particularValidator;
@@ -669,7 +674,7 @@ public class AgrupacionAdapter {
 	}
 
 	@Transactional(readOnly = false)
-	public void createActivoAgrupacion(Long numActivo, Long idAgrupacion, Integer activoPrincipal,boolean ventaCartera)
+	public void createActivoAgrupacion(Long numActivo, Long idAgrupacion, Integer activoPrincipal, boolean ventaCartera)
 			throws JsonViewerException {
 
 		Filter filter = genericDao.createFilter(FilterType.EQUALS, "numActivo", numActivo);
@@ -1291,7 +1296,7 @@ public class AgrupacionAdapter {
 	}
 
 	@Transactional(readOnly = false)
-	public boolean createAgrupacion(DtoAgrupacionesCreateDelete dtoAgrupacion) throws Exception {
+	public Long createAgrupacion(DtoAgrupacionesCreateDelete dtoAgrupacion) throws Exception {
 
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dtoAgrupacion.getTipoAgrupacion());
 		DDTipoAgrupacion tipoAgrupacion = (DDTipoAgrupacion) genericDao.get(DDTipoAgrupacion.class, filtro);
@@ -1361,14 +1366,12 @@ public class AgrupacionAdapter {
 			loteComercial.setTipoAgrupacion(tipoAgrupacion);
 			loteComercial.setFechaAlta(new Date());
 			loteComercial.setNumAgrupRem(numAgrupacionRem);
+			loteComercial.setUsuarioGestorComercial(dtoAgrupacion.getGestorComercial());
 
 			genericDao.save(ActivoLoteComercial.class, loteComercial);
 		}
-		
-		
-		
 
-		return true;
+		return numAgrupacionRem;
 	}
 
 	@Transactional(readOnly = false)
@@ -1622,7 +1625,18 @@ public class AgrupacionAdapter {
 						.dameValorDiccionarioByCod(DDMotivoRechazoOferta.class, dto.getMotivoRechazoCodigo());
 				oferta.setMotivoRechazo(motivoRechazoOferta);
 			}
-
+			
+			if (!Checks.esNulo(oferta.getAgrupacion())) {
+				ActivoAgrupacion agrupacion = oferta.getAgrupacion();
+				
+				List<Oferta> ofertasVivasAgrupacion = ofertaDao.getListOtrasOfertasVivasAgr(oferta.getId(), agrupacion.getId());
+				
+				if (!Checks.esNulo(ofertasVivasAgrupacion) && ofertasVivasAgrupacion.isEmpty()) {
+					agrupacion.setFechaBaja(new Date());
+					activoAgrupacionApi.saveOrUpdate(agrupacion);
+				}
+			}
+			
 			notificatorServiceSancionOfertaAceptacionYRechazo.notificatorFinSinTramite(oferta.getId());
 		}
 
@@ -2583,18 +2597,20 @@ public class AgrupacionAdapter {
 
 		String codProvinciasCanarias[] = {"35", "38"};
 		
-		if(lista.isEmpty() && Arrays.asList(codProvinciasCanarias).contains(activo.getProvincia())){
-			canarias = true;
-		}else{
-			for (int i = 0; i < lista.size(); i++) {
-				ActivoAgrupacionActivo aga = lista.get(i);
-
-				for (int j = 0; j < lista.size(); j++) {
-					Activo act = aga.getActivo();
-					String codProvincia = act.getProvincia();
-
-					if (Arrays.asList(codProvinciasCanarias).contains(codProvincia)) {
-						canarias = true;
+		if(!Checks.esNulo(lista)) {
+			if(lista.isEmpty() && Arrays.asList(codProvinciasCanarias).contains(activo.getProvincia())){
+				canarias = true;
+			}else{
+				for (int i = 0; i < lista.size(); i++) {
+					ActivoAgrupacionActivo aga = lista.get(i);
+	
+					for (int j = 0; j < lista.size(); j++) {
+						Activo act = aga.getActivo();
+						String codProvincia = act.getProvincia();
+	
+						if (Arrays.asList(codProvinciasCanarias).contains(codProvincia)) {
+							canarias = true;
+						}
 					}
 				}
 			}

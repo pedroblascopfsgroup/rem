@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=Sergio Belenguer Gadea
---## FECHA_CREACION=20181024
+--## AUTOR=rlb
+--## FECHA_CREACION=20181124
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-4606
@@ -100,9 +100,12 @@ AS
                 CASE WHEN (eac1.dd_eac_codigo = ''02''  OR   eac1.dd_eac_codigo = ''06'') THEN 1 ELSE 0 END as obranueva_enconstruccion, 
                 NVL2 (reg2.reg_id, 1, 0) AS divhorizontal_noinscrita, 
                 CASE WHEN eac1.dd_eac_codigo = ''05'' THEN 1 ELSE 0 END as ruina,
-				CASE WHEN (eac1.dd_eac_codigo = ''07'' ) THEN 1 ELSE 0 END as VANDALIZADO,
+				CASE WHEN (eac1.dd_eac_codigo = ''08'' ) THEN 1 ELSE 0 END as VANDALIZADO,
                 sps1.sps_otro AS otro,
-                DECODE (vei.dd_aic_codigo, ''02'', 0, 1) AS sin_informe_aprobado,
+				CASE WHEN (cra.dd_cra_codigo in (''01'', ''08'' )) 
+                    THEN DECODE (vei.dd_aic_codigo, ''02'', 0, 1)
+                    ELSE 0	
+				END AS sin_informe_aprobado,
                 0 AS revision,                                                                                      --NO EXISTE EN REM
 				0 AS procedimiento_judicial,                                                          --NO EXISTE EN REM
 				NVL2 (vcg.con_cargas, vcg.con_cargas, 0) AS con_cargas,
@@ -130,7 +133,8 @@ AS
                   END AS est_disp_com_codigo,
                   0 AS borrado
              FROM '||V_ESQUEMA||'.act_activo act LEFT JOIN '||V_ESQUEMA||'.act_aba_activo_bancario aba2 ON aba2.act_id = act.act_id 
-
+				  
+				  LEFT JOIN '||V_ESQUEMA||'.DD_CRA_CARTERA cra ON cra.dd_cra_id = act.dd_cra_id 	
 				  LEFT JOIN '||V_ESQUEMA||'.dd_eac_estado_activo eac1 ON eac1.dd_eac_id = act.dd_eac_id                  
                   LEFT JOIN '||V_ESQUEMA||'.act_sps_sit_posesoria sps1 ON sps1.act_id = act.act_id                  
 				  LEFT JOIN '||V_ESQUEMA||'.DD_SIJ_SITUACION_JURIDICA sij on  sij.dd_sij_id =sps1.dd_sij_id                   

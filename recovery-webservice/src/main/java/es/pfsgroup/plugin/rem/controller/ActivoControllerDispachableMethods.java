@@ -4,14 +4,28 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import es.pfsgroup.plugin.rem.model.*;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.servlet.ModelAndView;
 
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.rem.activo.ActivoPropagacionFieldTabMap;
-
+import es.pfsgroup.plugin.rem.api.ActivoApi;
+import es.pfsgroup.plugin.rem.model.DtoActivoAdministracion;
+import es.pfsgroup.plugin.rem.model.DtoActivoCargasTab;
+import es.pfsgroup.plugin.rem.model.DtoActivoDatosRegistrales;
+import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
+import es.pfsgroup.plugin.rem.model.DtoActivoInformacionAdministrativa;
+import es.pfsgroup.plugin.rem.model.DtoActivoInformeComercial;
+import es.pfsgroup.plugin.rem.model.DtoActivoPatrimonio;
+import es.pfsgroup.plugin.rem.model.DtoActivoSituacionPosesoria;
+import es.pfsgroup.plugin.rem.model.DtoComercialActivo;
+import es.pfsgroup.plugin.rem.model.DtoComunidadpropietariosActivo;
+import es.pfsgroup.plugin.rem.model.DtoCondicionEspecifica;
+import es.pfsgroup.plugin.rem.model.DtoCondicionantesDisponibilidad;
+import es.pfsgroup.plugin.rem.model.DtoDatosPublicacionActivo;
+import es.pfsgroup.plugin.rem.model.DtoHistoricoMediador;
+import es.pfsgroup.plugin.rem.model.DtoTasacion;
 
 @SuppressWarnings("rawtypes")
 class ActivoControllerDispachableMethods {
@@ -31,6 +45,7 @@ class ActivoControllerDispachableMethods {
 
 	private static Map<String, DispachableMethod> dispachableMethods;
 	
+
 	static {
 		dispachableMethods = new HashMap<String, DispachableMethod>();
 		
@@ -73,7 +88,13 @@ class ActivoControllerDispachableMethods {
 			@Override
 			public void execute(Long id, DtoActivoSituacionPosesoria dto) {
 				if (dto != null ){
-					this.controller.saveActivoSituacionPosesoria(dto, id, new ModelMap());
+					ActivoApi activoApi=controller.getActivoApi();
+					if(activoApi.compruebaParaEnviarEmailAvisoOcupacion(dto, id)) {
+						this.controller.saveActivoSituacionPosesoria(dto, id, new ModelMap());
+					}else {
+						throw new JsonViewerException("Informe okupación y/o desokupación no adjunto. Se necesita para poder guardar el activo como ocupado SI y con título NO");
+					}
+					
 				}
 				
 			}

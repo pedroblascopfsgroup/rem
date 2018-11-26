@@ -117,10 +117,12 @@ import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaPublicacionActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDRatingActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoHabitaculo;
+import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi;
 import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
 import es.pfsgroup.plugin.rem.service.TabActivoService;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoActivosTrabajoFilter;
 import net.sf.json.JSONObject;
+
 
 @Controller
 public class ActivoController extends ParadiseJsonController {
@@ -147,8 +149,7 @@ public class ActivoController extends ParadiseJsonController {
 	@Autowired
 	private GenericABMDao genericDao;
 
-	@Autowired
-	private ActivoDao activoDao;
+	
 
 	@Autowired
 	private ActivoApi activoApi;
@@ -177,8 +178,14 @@ public class ActivoController extends ParadiseJsonController {
 	@Autowired
 	private GenericAdapter genericAdapter;
 
-	public ActivoApi getActivoApi()
-	{
+	
+	@Autowired
+	private ActivoDao activoDao;
+	
+	@Autowired
+	GestorDocumentalFotosApi gestorDocumentalFotos;
+	
+	public ActivoApi getActivoApi() {
 		return activoApi;
 	}
 
@@ -1351,6 +1358,9 @@ public class ActivoController extends ParadiseJsonController {
 		try {
 			model.put(RESPONSE_DATA_KEY, adapter.getAdjuntosActivo(id));
 
+		} catch (GestorDocumentalException e) {
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put("errorMessage", e.getMessage());
 		} catch (Exception e) {
 			logger.error("error en activoController", e);
 			model.put(RESPONSE_SUCCESS_KEY, false);
@@ -2028,6 +2038,26 @@ public class ActivoController extends ParadiseJsonController {
 
 		return createModelAndViewJson(model);
 	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView getListHistoricoOcupacionesIlegales(ModelMap model, WebDto dto, Long idActivo) {
+
+		try {
+
+			DtoPage page = activoApi.getListHistoricoOcupacionesIlegales(dto, idActivo);
+
+			model.put("data", page.getResults());
+			model.put("totalCount", page.getTotalCount());
+			model.put("success", true);
+
+		} catch (Exception e) {
+			logger.error("error en activoController", e);
+			model.put("success", false);
+		}
+
+		return createModelAndViewJson(model);
+	}
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
@@ -2211,7 +2241,17 @@ public class ActivoController extends ParadiseJsonController {
 
 		return new ModelAndView("jsonView", model);
 	}
-	
+
+	/**
+	 * Método que comprueba y envía un correo si el Activo está ocupado.
+	 */
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView checkAndSendMailAvisoOcupacion(HttpServletRequest request, ModelMap model)
+	{
+		
+		return new ModelAndView("jsonView", new ModelMap());
+	}
+
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView saveActivosAgrRestringida(HttpServletRequest request, ModelMap model) {

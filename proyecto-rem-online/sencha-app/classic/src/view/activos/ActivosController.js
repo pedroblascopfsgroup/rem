@@ -96,34 +96,29 @@ Ext.define('HreRem.view.activos.ActivosController', {
 		
     	var me = this,
 		config = {};
-    	var count = me.getViewModel().data.activos.totalCount;
 		
-		if(count < CONST.EXPORTADOR['LIMITE']){
-			
-			var initialData = {};
+		
+		
+		var initialData = {};
 
-			var searchForm = btn.up('formBase');
-			if (searchForm.isValid()) {
-				var params = Ext.apply(initialData, searchForm ? searchForm.getValues() : {});
-				
-				Ext.Object.each(params, function(key, val) {
-					if (Ext.isEmpty(val)) {
-						delete params[key];
-					}
-				});
-	        }
+		var searchForm = btn.up('formBase');
+		if (searchForm.isValid()) {
+			var params = Ext.apply(initialData, searchForm ? searchForm.getValues() : {});
 			
-			config.params = params;
-			config.url= $AC.getRemoteUrl("activo/generateExcel");
-			//config.params = {};
-			//config.params.idProcess = this.getView().down('grid').selection.data.id;
-			
-			me.fireEvent("downloadFile", config);	
-			
-		} else{
-        	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.exportar.activos"));
-		}
-	
+			Ext.Object.each(params, function(key, val) {
+				if (Ext.isEmpty(val)) {
+					delete params[key];
+				}
+			});
+        }
+		
+		config.params = params;
+		config.url= $AC.getRemoteUrl("activo/generateExcel");
+		//config.params = {};
+		//config.params.idProcess = this.getView().down('grid').selection.data.id;
+		
+		me.fireEvent("downloadFile", config);		
+    	
     	
 		},
 		    

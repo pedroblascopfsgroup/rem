@@ -14,7 +14,6 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
-import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,12 +40,11 @@ import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
-import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
+import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.AgendaAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoAgrupacionActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
-import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
@@ -178,18 +176,14 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	@Autowired
 	private NotificacionAdapter notificacionAdapter;
 
-	@Autowired
-	private ActivoAgrupacionActivoDao activoAgrupacionActivoDao;
-
+	
 	@Autowired
 	private ProveedoresDao proveedoresDao;
 
 	@Autowired
 	private NotificationOfertaManager notificationOfertaManager;
 
-	@Autowired
-	private ActivoEstadoPublicacionApi activoEstadoPublicacionApi;
-
+	
 	@Autowired
 	private ApiProxyFactory proxyFactory;
 
@@ -2520,7 +2514,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	public ActivoProveedor getPreescriptor(Oferta oferta) {
 		return oferta.getPrescriptor();
 	}
-
+	
 	@Override
 	public void desocultarActivoOferta(Oferta oferta) throws Exception {
 		if (oferta.getActivosOferta() != null && !oferta.getActivosOferta().isEmpty()) {
@@ -2870,12 +2864,26 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		}
 	}
 
-	public boolean estaViva(Oferta oferta)
-	{
-		if(DDEstadoOferta.CODIGO_ACEPTADA.equals(oferta.getEstadoOferta().getCodigo()) || DDEstadoOferta.CODIGO_PENDIENTE.equals(oferta.getEstadoOferta().getCodigo()))
-		{
+	public boolean estaViva(Oferta oferta){
+		if(DDEstadoOferta.CODIGO_ACEPTADA.equals(oferta.getEstadoOferta().getCodigo()) || DDEstadoOferta.CODIGO_PENDIENTE.equals(oferta.getEstadoOferta().getCodigo()))		{
 			return true;
 		}
 		return false;
 	}
+	
+	@Override
+	public List<Oferta> getListaOfertasByActivo(Activo activo) {
+		List<Oferta> ofertas = new ArrayList<Oferta>();
+		
+		if (!Checks.esNulo(activo)) {
+			for (ActivoOferta activoOferta : activo.getOfertas()) {
+				Oferta o = activoOferta.getPrimaryKey().getOferta();
+				if (!Checks.esNulo(o)) {
+					ofertas.add(o);
+				}
+			}
+		}
+		return ofertas;
+	}
+	
 }

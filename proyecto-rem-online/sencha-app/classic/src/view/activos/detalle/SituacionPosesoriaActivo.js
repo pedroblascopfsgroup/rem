@@ -19,6 +19,16 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
     initComponent: function () {
     	
         var me = this;
+        var storeConTituloPosesionNo = Ext.create('Ext.data.Store', {
+					data : [{
+						"codigo" : "01",
+						"descripcion" : eval(String.fromCharCode(34, 83, 237,
+								34))
+					}, {
+						"codigo" : "0",
+						"descripcion" : "No, con indicios"
+					}]
+				});
         me.setTitle(HreRem.i18n('title.situacion.posesoria.llaves'));
         var items= [
 
@@ -44,6 +54,15 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 				        	bind: {				        		
 				        		store: '{comboSiNoRem}',
 			            		value: '{situacionPosesoria.indicaPosesion}'
+			            	},
+			            	listeners: {
+			            		change: function(combo, value) {
+			            			var me = this;
+			            			if(value=='0') {
+			            				me.up('formBase').down('[reference=comboSituacionPosesoriaConTitulo]').setStore(storeConTituloPosesionNo);
+			            			}
+			            			
+			            		}
 			            	}
 				        },
 		                { 
@@ -349,6 +368,22 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 	                }
 				]
             },
+            {    
+                
+				xtype:'fieldsettable',
+				title:HreRem.i18n('title.historico.ocupaciones.ilegales'),
+				reference: 'fieldHistoricoOcupacionesIlegales',
+				defaultType: 'textfieldbase',
+				items :
+					[
+						{
+		                	xtype: 'historicoocupacionesilegalesgrid',
+		                	colspan: 3
+    				    }
+					
+					]
+                
+            },
             {
 				xtype:'fieldsettable',
 				title:'Llaves',
@@ -489,5 +524,6 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 			grid.getStore().load();
   		});
    }
+
 
 });

@@ -1058,5 +1058,17 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		hb.appendWhere(" acn.auditoria.borrado IS NOT NULL ");
 
 		return (List<ActivoCalificacionNegativa>) this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).list();
+
+	}
+	
+	@Override
+	public Page getListHistoricoOcupacionesIlegalesByActivo(WebDto dto, Long idActivo) {
+		//También se puede usar el genericDao en REM, pero hay que ver como devolver un Page porque no he encontrado casos así.
+		//List<ActivoOcupacionIlegal> listaOcupacionesIlegales = genericDao.getList(ActivoOcupacionIlegal.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo));
+		HQLBuilder hb = new HQLBuilder("select ocu from ActivoOcupacionIlegal ocu ");
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activo.id", idActivo);
+		
+		return HibernateQueryUtils.page(this, hb, dto);
+
 	}
 }

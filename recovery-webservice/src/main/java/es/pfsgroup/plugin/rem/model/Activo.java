@@ -414,6 +414,10 @@ public class Activo implements Serializable, Auditable {
     @Column(name = "OK_TECNICO")
     private Boolean tieneOkTecnico;
 
+    
+    @Column(name = "ACT_ACTIVO_DEMANDA_AFECT_COM")
+    private Integer tieneDemandaAfecCom; 
+    
     @Column(name = "ACT_PUJA")
     private Boolean estaEnPuja;
 
@@ -1383,6 +1387,24 @@ public class Activo implements Serializable, Auditable {
         return null;
     }
 
+    /**
+	 * Comprueba que tiene un documento adjuntado del 
+	 * @param activo
+	 * @param codigoDocumento
+	 * @return
+	 */
+	public boolean hasAdjunto(String codigoDocumento)
+	{
+		for(ActivoAdjuntoActivo adjunto : getAdjuntos())
+		{
+			if(!Checks.esNulo(adjunto.getTipoDocumentoActivo()) && codigoDocumento.equals(adjunto.getTipoDocumentoActivo().getCodigo()))
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+
 	public Integer getLlavesHre() {
 		return llavesHre;
 	}
@@ -1668,6 +1690,14 @@ public class Activo implements Serializable, Auditable {
 		this.adjuntosPromocion = adjuntosPromocion;
 	}
 
+	public Integer getTieneDemandaAfecCom() {
+		return tieneDemandaAfecCom;
+	}
+	
+	public void setTieneDemandaAfecCom(Integer tieneDemandaAfecCom) {
+		this.tieneDemandaAfecCom = tieneDemandaAfecCom;
+	}
+	
 	public Boolean getEstaEnPuja() {
 		return estaEnPuja;
 	}

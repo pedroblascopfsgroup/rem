@@ -162,18 +162,6 @@ Ext.define('HreRem.view.activos.detalle.InformeComercialActivo', {
 					]
 			},
 			
-// Historico de mediadores			
-			{
-				xtype:'fieldsettable',
-				title:HreRem.i18n('title.grid.historico.mediador.info.comercial'),
-				defaultType: 'textfieldbase',
-				colspan: 3,
-				items :
-					[
-						{xtype: "historicomediadorgrid", reference: "historicomediadorgrid", colspan: 3}
-					]
-			},
-
 // Datos Básicos
 			{
 				xtype:'fieldsettable',

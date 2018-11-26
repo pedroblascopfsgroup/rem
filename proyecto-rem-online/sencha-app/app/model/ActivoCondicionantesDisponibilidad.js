@@ -70,7 +70,7 @@ Ext.define('HreRem.model.ActivoCondicionantesDisponibilidad', {
     			name: 'estadoCondicionadoCodigo'
     		},
     		{
-    			name: 'sinInformeAprobado',
+    			name: 'sinInformeAprobadoREM',
     			type: 'boolean'
     		},
     		{

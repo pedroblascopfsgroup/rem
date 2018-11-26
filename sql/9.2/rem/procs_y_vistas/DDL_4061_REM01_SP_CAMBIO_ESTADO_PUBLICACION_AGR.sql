@@ -1,6 +1,6 @@
 --/*
 --##########################################
---## AUTOR=Ramon Llinares
+--## AUTOR=Carles Molins
 --## FECHA_CREACION=20181126
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=2.0.19
@@ -98,6 +98,7 @@ create or replace PROCEDURE SP_CAMBIO_ESTADO_PUBLI_AGR (pAGR_ID IN NUMBER DEFAUL
     
     vQUERY            VARCHAR2(4000 CHAR);
     vQUERY_SINACT     VARCHAR2(4000 CHAR);
+    vQUERY_ACTPRIN    VARCHAR2(4000 CHAR);
     
   PROCEDURE PLP$LIMPIAR_ALQUILER(nAGR_ID NUMBER, pUSUARIOMODIFICAR VARCHAR2) IS
 
@@ -834,6 +835,17 @@ ELSE
                       WHERE AGA.BORRADO = 0
                         AND AGR.AGR_ID = '||nAGR_ID||'
                    )AUX';
+                   
+        vQUERY_ACTPRIN :=
+                  ' (SELECT AGA.ACT_ID
+                       FROM  '|| V_ESQUEMA ||'.ACT_AGA_AGRUPACION_ACTIVO AGA
+                       JOIN '|| V_ESQUEMA ||'.ACT_AGR_AGRUPACION AGR ON AGR.AGR_ID = AGA.AGR_ID AND AGR.BORRADO = 0
+                       JOIN '|| V_ESQUEMA ||'.DD_TAG_TIPO_AGRUPACION TAG ON TAG.DD_TAG_ID = AGR.DD_TAG_ID AND TAG.BORRADO = 0 AND TAG.DD_TAG_CODIGO = ''02''	/*Restringida*/
+                           AND (AGR.AGR_FIN_VIGENCIA IS NULL OR TRUNC(AGR.AGR_FIN_VIGENCIA) >= TRUNC(SYSDATE))
+                      WHERE AGA.BORRADO = 0
+                        AND AGR.AGR_ID = '||nAGR_ID||'
+                        AND AGA.AGA_PRINCIPAL = 1
+                   )AUX';
           
         /**************/
         /*No Publicado*/
@@ -1069,7 +1081,7 @@ ELSE
                 LEFT JOIN '|| V_ESQUEMA ||'.DD_MTO_MOTIVOS_OCULTACION MTO_A ON MTO_A.DD_MTO_ID = ACT.DD_MTO_A_ID
                 LEFT JOIN '|| V_ESQUEMA ||'.DD_TPU_TIPO_PUBLICACION TPU_V ON TPU_V.DD_TPU_ID = ACT.DD_TPU_V_ID
                 LEFT JOIN '|| V_ESQUEMA ||'.DD_TPU_TIPO_PUBLICACION TPU_A ON TPU_A.DD_TPU_ID = ACT.DD_TPU_A_ID
-                WHERE EXISTS '|| replace(vQUERY,'AUX','')||'
+                WHERE ACT.ACT_ID = '|| replace(vQUERY_ACTPRIN,'AUX','')||'
                     AND ACT.BORRADO = 0) SS
             WHERE RN = 1';
         EXECUTE IMMEDIATE V_MSQL INTO hDD_TCO_CODIGO, hDD_TPU_CODIGO_V, hDD_TPU_CODIGO_A, hCODIGO_ESTADO_V, hCODIGO_ESTADO_A
@@ -1085,7 +1097,7 @@ ELSE
             LEFT JOIN '|| V_ESQUEMA ||'.DD_MTO_MOTIVOS_OCULTACION MTO_A ON MTO_A.DD_MTO_ID = ACT.DD_MTO_A_ID
             LEFT JOIN '|| V_ESQUEMA ||'.DD_TPU_TIPO_PUBLICACION TPU_V ON TPU_V.DD_TPU_ID = ACT.DD_TPU_V_ID
             LEFT JOIN '|| V_ESQUEMA ||'.DD_TPU_TIPO_PUBLICACION TPU_A ON TPU_A.DD_TPU_ID = ACT.DD_TPU_A_ID
-            WHERE EXISTS '|| replace(vQUERY,'AUX','')||'
+            WHERE ACT.ACT_ID = '|| replace(vQUERY_ACTPRIN,'AUX','')||'
                 AND ACT.BORRADO = 0';
         EXECUTE IMMEDIATE V_MSQL INTO fDD_TCO_CODIGO, fDD_TPU_CODIGO_V, fDD_TPU_CODIGO_A, fCODIGO_ESTADO_V, fCODIGO_ESTADO_A
             , fDD_MTO_CODIGO_V, fDD_MTO_CODIGO_A, fCHECK_OCULTAR_V, fCHECK_OCULTAR_A, fES_CONDICONADO;

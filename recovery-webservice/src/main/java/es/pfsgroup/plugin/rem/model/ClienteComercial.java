@@ -178,9 +178,17 @@ public class ClienteComercial implements Serializable, Auditable {
 	@JoinColumn(name = "DD_REM_ID")
 	private DDRegimenesMatrimoniales regimenMatrimonial;
     
+	//Se añaden nuevos atributos. HREOS-4851
+    @Column(name = "CLC_CESION_DATOS")
+    private Boolean cesionDatos;
+    
+    @Column(name = "CLC_COMUNICACION_TERCEROS")
+    private Boolean comunicacionTerceros;
+    
+    @Column(name = "CLC_TRANSFER_INTERNACIONALES")
+    private Boolean transferenciasInternacionales;
 	
-	
-	
+
 	@Version   
 	private Long version;
 
@@ -507,6 +515,30 @@ public class ClienteComercial implements Serializable, Auditable {
 
 	public void setRegimenMatrimonial(DDRegimenesMatrimoniales regimenMatrimonial) {
 		this.regimenMatrimonial = regimenMatrimonial;
+	}
+	
+	public Boolean getCesionDatos() {
+		return cesionDatos;
+	}
+//Get and Set de los objetos creados en HREOS-4851
+	public void setCesionDatos(Boolean cesionDatos) {
+		this.cesionDatos = cesionDatos;
+	}
+
+	public Boolean getComunicacionTerceros() {
+		return comunicacionTerceros;
+	}
+
+	public void setComunicacionTerceros(Boolean comunicacionTerceros) {
+		this.comunicacionTerceros = comunicacionTerceros;
+	}
+
+	public Boolean getTransferenciasInternacionales() {
+		return transferenciasInternacionales;
+	}
+
+	public void setTransferenciasInternacionales(Boolean transferenciasInternacionales) {
+		this.transferenciasInternacionales = transferenciasInternacionales;
 	}
 
    

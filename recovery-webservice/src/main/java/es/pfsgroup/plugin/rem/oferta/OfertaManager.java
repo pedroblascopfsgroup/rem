@@ -2921,4 +2921,16 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		
 		return null;
 	}
+	
+	//Comporbamos si hace falta pedir documentación a la hora de crear una nueva oferta
+	//APG - HREOS-4851
+	public boolean checkPedirDoc(Long idActivo, Comprador comprador) {
+		Filter filterCliente = genericDao.createFilter(FilterType.EQUALS, "id", comprador.getClienteComercial().getId());
+		ClienteComercial clienteCom = genericDao.get(ClienteComercial.class,filterCliente);
+			if (clienteCom.getTipoDocumento() == comprador.getTipoDocumento() && clienteCom.getDocumento() == comprador.getDocumento()) {
+				return true,
+				}else {
+				return false;
+			}
+	}
 }

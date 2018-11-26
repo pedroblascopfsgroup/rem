@@ -12,6 +12,7 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
+import es.pfsgroup.plugin.rem.model.Comprador;
 import es.pfsgroup.plugin.rem.model.DtoDetalleOferta;
 import es.pfsgroup.plugin.rem.model.DtoGastoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoHonorariosOferta;
@@ -556,5 +557,15 @@ public interface OfertaApi {
 	Boolean checkProvinciaCompradores(TareaExterna tareaExterna);
 
 	Boolean checkNifConyugueLBB(TareaExterna tareaExterna);
+	
+	
+	/**
+	 * @author albert.pastor@pfsgroup.es - HREOS-4851
+	 * @
+	 * @param idActivo
+	 * @param comprador
+	 * @return TRUE ->NO hace falta pedir documentación. FALSE ->Sí hace falta.
+	 */
+	boolean checkPedirDoc(Long idActivo, Comprador comprador);
 }
 

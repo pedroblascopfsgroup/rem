@@ -24,6 +24,7 @@ import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
 import es.pfsgroup.plugin.rem.excel.OfertasExcelReport;
+import es.pfsgroup.plugin.rem.model.Comprador;
 import es.pfsgroup.plugin.rem.model.DtoHonorariosOferta;
 import es.pfsgroup.plugin.rem.model.DtoOfertantesOferta;
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
@@ -226,4 +227,18 @@ public class OfertasController {
 		return createModelAndViewJson(new ModelMap("data", ofertaApi.getDiccionarioSubtipoProveedorCanal()));
 	}
 	
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView checkPedirDoc(Long idActivo, Comprador comprador, ModelMap model) {
+		
+
+		try {
+			model.put("data", ofertaApi.checkPedirDoc(idActivo, comprador));
+			model.put("success", true);
+		} catch (Exception e) {
+			logger.error("Error en ofertasController", e);
+			model.put("success", false);
+		}
+
+		return createModelAndViewJson(model);
+	}
 }

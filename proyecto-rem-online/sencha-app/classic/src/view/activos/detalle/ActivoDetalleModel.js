@@ -260,7 +260,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		    }
 		 },
 		 getIconClsCondicionantesSinInformeAprobado: function(get) {
-			var condicion = get('activoCondicionantesDisponibilidad.sinInformeAprobado');
+			var condicion = get('activoCondicionantesDisponibilidad.sinInformeAprobadoREM');
 
 		    if(!eval(condicion)) {
 		        return 'app-tbfiedset-ico icono-ok';

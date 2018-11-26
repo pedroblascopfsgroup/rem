@@ -20,15 +20,15 @@ public class TasasImpuestosExcelReport extends AbstractExcelReport implements Ex
 		listaCabeceras.add("ORDEN");
 		listaCabeceras.add("CIF");
 		listaCabeceras.add("CODIGO");
-		listaCabeceras.add("NUM_FRA");
-		listaCabeceras.add("FECHA_FRA");
-		listaCabeceras.add("FECHA_CONTABLE");
+		listaCabeceras.add("NUM.FRA");
+		listaCabeceras.add("FECHA.FRA");
+		listaCabeceras.add("FECHA.CONTABLE");
 		listaCabeceras.add("DIARIO_CONTB");
-		listaCabeceras.add("IMP_BRUTO");
+		listaCabeceras.add("IMP.BRUTO");
 		listaCabeceras.add("TOTAL");
-		listaCabeceras.add("OP_ALQ");
+		listaCabeceras.add("OP.ALQ");
 		listaCabeceras.add("D347");
-		listaCabeceras.add("TIPO_FRA");
+		listaCabeceras.add("TIPO.FRA");
 		listaCabeceras.add("SUJ_RECC");
 		listaCabeceras.add("DELEGACION");
 		listaCabeceras.add("BASE_RETENCION");
@@ -58,6 +58,9 @@ public class TasasImpuestosExcelReport extends AbstractExcelReport implements Ex
 		listaCabeceras.add("SCTA_EFECTOS");
 		listaCabeceras.add("APUNTE");
 		listaCabeceras.add("CENTRODESTINO");
+		listaCabeceras.add("AUTOREPE_INVE_SUJE_PASI");
+		listaCabeceras.add("SERIE_AUTOREPE");
+		listaCabeceras.add("DIARIO_AUTOREPE");
 		listaCabeceras.add("TIPO_FRA_SII");
 		listaCabeceras.add("CLAVE_RE");
 		listaCabeceras.add("CLAVE_RE_AD1");
@@ -75,6 +78,18 @@ public class TasasImpuestosExcelReport extends AbstractExcelReport implements Ex
 		listaCabeceras.add("BASE2");
 		listaCabeceras.add("IVA2");
 		listaCabeceras.add("CUOTA2");
+		listaCabeceras.add("DIARIO3");
+		listaCabeceras.add("BASE3");
+		listaCabeceras.add("IVA3");
+		listaCabeceras.add("CUOTA3");
+		listaCabeceras.add("DIARIO4");
+		listaCabeceras.add("BASE4");
+		listaCabeceras.add("IVA4");
+		listaCabeceras.add("CUOTA4");
+		listaCabeceras.add("DIARIO5");
+		listaCabeceras.add("BASE5");
+		listaCabeceras.add("IVA5");
+		listaCabeceras.add("CUOTA5");
 		listaCabeceras.add("PROYECTO");
 		listaCabeceras.add("TIPO_INMUEBLE");
 		listaCabeceras.add("CLAVE1");
@@ -82,6 +97,7 @@ public class TasasImpuestosExcelReport extends AbstractExcelReport implements Ex
 		listaCabeceras.add("CLAVE3");
 		listaCabeceras.add("CLAVE4");
 		listaCabeceras.add("ID_ACTIVO");
+		listaCabeceras.add("CONCEPTO_GTO_CTE");
 		listaCabeceras.add("IMPORTE_GASTO");
 		listaCabeceras.add("TIPO_PARTIDA");
 		listaCabeceras.add("APARTADO");
@@ -93,14 +109,10 @@ public class TasasImpuestosExcelReport extends AbstractExcelReport implements Ex
 		listaCabeceras.add("CONCEPTO_FAC");
 		listaCabeceras.add("FECHA_FAC");
 		listaCabeceras.add("COD_COEF");
+		listaCabeceras.add("NOMBRE");
+		listaCabeceras.add("CARACTERÍSTICA");
 		listaCabeceras.add("CODI_DIAR_IVA_V");
 		listaCabeceras.add("PCTJE_IVA_V");
-		listaCabeceras.add("NOMBRE");
-		listaCabeceras.add("CARACTERISTICA");
-		listaCabeceras.add("RUTA");
-		listaCabeceras.add("ETAPA");
-		listaCabeceras.add("TIPO_GASTO");
-		listaCabeceras.add("SUBTIPO_GASTO");
 		
 		return listaCabeceras;
 	}
@@ -370,6 +382,12 @@ public class TasasImpuestosExcelReport extends AbstractExcelReport implements Ex
 				fila.add("");
 			}
 			
+			fila.add("");
+			
+			fila.add("");
+			
+			fila.add("");
+			
 			if(!Checks.esNulo(tasaImpuesto.getTipoFraSii())) {
 				fila.add(tasaImpuesto.getTipoFraSii());
 			}else {
@@ -472,6 +490,30 @@ public class TasasImpuestosExcelReport extends AbstractExcelReport implements Ex
 				fila.add("");
 			}
 			
+			fila.add("");
+			
+			fila.add("");
+			
+			fila.add("");
+			
+			fila.add("");
+			
+			fila.add("");
+			
+			fila.add("");
+			
+			fila.add("");
+			
+			fila.add("");
+			
+			fila.add("");
+			
+			fila.add("");
+			
+			fila.add("");
+			
+			fila.add("");
+			
 			if(!Checks.esNulo(tasaImpuesto.getProyecto())) {
 				fila.add(tasaImpuesto.getProyecto().toString());
 			}else {
@@ -513,6 +555,8 @@ public class TasasImpuestosExcelReport extends AbstractExcelReport implements Ex
 			}else {
 				fila.add("");
 			}
+			
+			fila.add("");
 			
 			if(!Checks.esNulo(tasaImpuesto.getImporteGasto())) {
 				fila.add(tasaImpuesto.getImporteGasto().toString());
@@ -580,18 +624,6 @@ public class TasasImpuestosExcelReport extends AbstractExcelReport implements Ex
 				fila.add("");
 			}
 			
-			if(!Checks.esNulo(tasaImpuesto.getCodiDiarIvaV())) {
-				fila.add(tasaImpuesto.getCodiDiarIvaV());
-			}else {
-				fila.add("");
-			}
-			
-			if(!Checks.esNulo(tasaImpuesto.getPctjeIvaV())) {
-				fila.add(tasaImpuesto.getPctjeIvaV().toString());
-			}else {
-				fila.add("");
-			}
-			
 			if(!Checks.esNulo(tasaImpuesto.getNombre())) {
 				fila.add(tasaImpuesto.getNombre());
 			}else {
@@ -604,26 +636,14 @@ public class TasasImpuestosExcelReport extends AbstractExcelReport implements Ex
 				fila.add("");
 			}
 			
-			if(!Checks.esNulo(tasaImpuesto.getRuta())) {
-				fila.add(tasaImpuesto.getRuta());
+			if(!Checks.esNulo(tasaImpuesto.getCodiDiarIvaV())) {
+				fila.add(tasaImpuesto.getCodiDiarIvaV());
 			}else {
 				fila.add("");
 			}
 			
-			if(!Checks.esNulo(tasaImpuesto.getEtapa())) {
-				fila.add(tasaImpuesto.getEtapa());
-			}else {
-				fila.add("");
-			}
-			
-			if(!Checks.esNulo(tasaImpuesto.getTipoGasto())) {
-				fila.add(tasaImpuesto.getTipoGasto());
-			}else {
-				fila.add("");
-			}
-			
-			if(!Checks.esNulo(tasaImpuesto.getSubTipoGasto())) {
-				fila.add(tasaImpuesto.getSubTipoGasto());
+			if(!Checks.esNulo(tasaImpuesto.getPctjeIvaV())) {
+				fila.add(tasaImpuesto.getPctjeIvaV().toString());
 			}else {
 				fila.add("");
 			}

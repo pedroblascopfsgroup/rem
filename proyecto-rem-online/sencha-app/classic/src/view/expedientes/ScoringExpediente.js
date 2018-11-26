@@ -69,7 +69,6 @@ Ext.define('HreRem.view.expedientes.ScoringExpediente', {
 				        { 
 							xtype: 'textareafieldbase',
 		                	fieldLabel: HreRem.i18n('fieldlabel.comentario'),
-				        	readOnly: true,
 				        	disabled: true,
 				        	reference:'scoringComentarios',
 				        	bind:{

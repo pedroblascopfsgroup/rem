@@ -7150,14 +7150,14 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	@Transactional(readOnly = false)
 	public boolean saveExpedienteScoring(DtoExpedienteScoring dto, Long idEntidad) {
 		
-		ScoringAlquiler scoring;
+		ScoringAlquiler scoring = null;
 		
 		if (!Checks.esNulo(dto.getId())) {
-			Filter filtroSeg = genericDao.createFilter(FilterType.EQUALS, "id", dto.getId());
+			Filter filtroSeg = genericDao.createFilter(FilterType.EQUALS, "expediente.id", dto.getId()); 
 			scoring= genericDao.get(ScoringAlquiler.class, filtroSeg);	
 		}
 		
-		else {
+		if (Checks.esNulo(scoring)) {
 			scoring = new ScoringAlquiler();
 		}
 		

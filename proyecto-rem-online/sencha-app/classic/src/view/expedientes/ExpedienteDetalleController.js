@@ -2625,13 +2625,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		var scoringComentarios= me.lookupReference('scoringComentarios');
 		if(checkbox.checked){
 			scoringComentarios.setDisabled(false);
-			scoringComentarios.setReadOnly(false);
-			scoringComentarios.setValue("");
-		}else{
-			scoringComentarios.setDisabled(true);
-			scoringComentarios.setReadOnly(true);
-			
-		}
+		} 
 	},
 	
 	onDisableMotivoRechazo: function(checkbox, newVal, oldVal) {
@@ -2653,9 +2647,6 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		} else {
 			scoringMotivoRechazo.setDisabled(true);
 		}
-//		// Si entra a esta funcion es porque estado scoring tiene algun valor, se da por hecho que se ha completado la tarea "Verificar scoring" HREOS-4871
-//		scoringCheckEnRevision.setDisabled(true);
-//		scoringCheckEnRevision.setReadOnly(true);
 	},
 	
 	sinContraoferta: function(checkbox, newVal, oldVal){

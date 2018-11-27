@@ -19,15 +19,15 @@ LOCAL_PATH=`pwd`
 BASE_DIR=/recovery/rem/app-server
 
 if [ "$1" == "val03" ] ; then
-    BASE_DIR=/home/map017/
+    BASE_DIR=/home/map017
 fi
 
 if [ "$1" == "val04" ] ; then
-    BASE_DIR=/home/map019/	
+    BASE_DIR=/home/map019	
 fi
 
 if [ "$1" == "val06" ] ; then
-    BASE_DIR=/recovery/map023/app-server	
+    BASE_DIR=/home/map023
 fi
 
 if [ "$1" == "formacion" ] ; then

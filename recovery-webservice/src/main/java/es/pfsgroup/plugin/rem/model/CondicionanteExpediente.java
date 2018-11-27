@@ -248,6 +248,9 @@ public class CondicionanteExpediente implements Serializable, Auditable {
     @Column(name="ALQ_IMPORTE_AVAL")
     private Double importeAval;
     
+    @Column(name="ALQ_NUMERO_AVAL")
+    private Integer numeroAval;
+    
     @Column(name="ALQ_RENUNCIA_TANTEO")
     private Boolean renunciaTanteo;
     
@@ -281,8 +284,35 @@ public class CondicionanteExpediente implements Serializable, Auditable {
     @Column(name="ALQ_ENTIDAD_COMMENTS")
     private String entidadComments;
     
-    @Column(name="ALQ_FECHA_FIRMA")
+    @Column(name="ALQ_FECHA_FIRMA") 
     private Date fechaFirma;
+    
+    @Column(name="ALQ_RENTA_FIJO")
+    private Boolean checkFijo;
+    
+    @Column(name="ALQ_FECHA_FIJO")
+    private Date fechaFijo;
+    
+    @Column(name="ALQ_FECHA_INC_RENTA")
+    private Date fechaIncrementoRentaFijo;
+    
+    @Column(name="ALQ_RENTA_PORCENTUAL")
+    private Boolean checkPorcentual;
+    
+    @Column(name="ALQ_RENTA_IPC")
+    private Boolean checkIPC;
+
+    @Column(name="ALQ_RENTA_PORC_IMPUESTOS")
+    private Integer porcentaje;
+    
+    @Column(name="ALQ_RENTA_REVISION_MERCADO")
+    private Boolean checkRevisionMercado;
+	
+	@Column(name = "ALQ_RENTA_MERCADO_FECHA")
+	private Date revisionMercadoFecha;
+	
+    @Column(name="ALQ_RENTA_MERCADO_CADA")
+    private Integer revisionMercadoMeses;
 
 	@Version   
 	private Long version;
@@ -785,6 +815,14 @@ public class CondicionanteExpediente implements Serializable, Auditable {
 		this.importeAval = importeAval;
 	}
 
+	public Integer getNumeroAval() {
+		return numeroAval;
+	}
+
+	public void setNumeroAval(Integer numeroAval) {
+		this.numeroAval = numeroAval;
+	}
+
 	public Boolean getRenunciaTanteo() {
 		return renunciaTanteo;
 	}
@@ -879,6 +917,81 @@ public class CondicionanteExpediente implements Serializable, Auditable {
 
 	public void setFechaFirma(Date fechaFirma) {
 		this.fechaFirma = fechaFirma;
+	} 
+
+	public Boolean getCheckFijo() {
+		return checkFijo;
 	}
+
+	public void setCheckFijo(Boolean checkFijo) {
+		this.checkFijo = checkFijo;
+	}
+	
+
+	public Date getFechaFijo() {
+		return fechaFijo;
+	}
+
+	public void setFechaFijo(Date fechaFijo) {
+		this.fechaFijo = fechaFijo;
+	}
+
+	public Date getFechaIncrementoRentaFijo() {
+		return fechaIncrementoRentaFijo;
+	}
+
+	public void setFechaIncrementoRentaFijo(Date fechaIncrementoRentaFijo) {
+		this.fechaIncrementoRentaFijo = fechaIncrementoRentaFijo;
+	}
+
+	public Boolean getCheckPorcentual() {
+		return checkPorcentual;
+	}
+
+	public void setCheckPorcentual(Boolean checkPorcentual) {
+		this.checkPorcentual = checkPorcentual;
+	}
+
+	public Boolean getCheckIPC() {
+		return checkIPC;
+	}
+
+	public void setCheckIPC(Boolean checkIPC) {
+		this.checkIPC = checkIPC;
+	}
+
+	public Integer getPorcentaje() {
+		return porcentaje;
+	}
+
+	public void setPorcentaje(Integer porcentaje) {
+		this.porcentaje = porcentaje;
+	}
+
+	public Boolean getCheckRevisionMercado() {
+		return checkRevisionMercado;
+	}
+
+	public void setCheckRevisionMercado(Boolean checkRevisionMercado) {
+		this.checkRevisionMercado = checkRevisionMercado;
+	}
+
+	public Date getRevisionMercadoFecha() {
+		return revisionMercadoFecha;
+	}
+
+	public void setRevisionMercadoFecha(Date revisionMercadoFecha) {
+		this.revisionMercadoFecha = revisionMercadoFecha;
+	}
+
+	public Integer getRevisionMercadoMeses() {
+		return revisionMercadoMeses;
+	}
+
+	public void setRevisionMercadoMeses(Integer revisionMercadoMeses) {
+		this.revisionMercadoMeses = revisionMercadoMeses;
+	}
+	
+	
 	  
 }

@@ -234,6 +234,9 @@ Ext.define('HreRem.model.CondicionesExpediente', {
 	    	name: 'codigoEntidad'
 	    },
 	    {
+	    	name: 'numeroAval'
+	    },
+	    {
 	    	name: 'importeAval'
 	    },
 	    {
@@ -298,6 +301,60 @@ Ext.define('HreRem.model.CondicionesExpediente', {
 				return data.gastosRepercutibles == 'true';
 			},
 			depends: 'gastosRepercutibles'
+		},
+		{
+			name: 'checkFijo'
+		},
+		{
+			name: 'fechaFijo',
+			convert: function(value) {
+				if (!Ext.isEmpty(value)) {
+					if  ((typeof value) == 'string') {
+    					return value.substr(8,2) + '/' + value.substr(5,2) + '/' + value.substr(0,4);
+    				} else {
+    					return value;
+    				}
+				}
+			}
+		},
+		{
+			name: 'fechaIncrementoRentaFijo',
+			convert: function(value) {
+				if (!Ext.isEmpty(value)) {
+					if  ((typeof value) == 'string') {
+    					return value.substr(8,2) + '/' + value.substr(5,2) + '/' + value.substr(0,4);
+    				} else {
+    					return value;
+    				}
+				}
+			}
+		},
+		{
+			name: 'checkPorcentual'
+		},
+		{
+			name: 'checkIPC'
+		},
+		{
+			name: 'porcentaje'  
+		},
+		{
+			name: 'checkRevisionMercado'  
+		},
+		{
+			name: 'revisionMercadoFecha',
+			convert: function(value) {
+				if (!Ext.isEmpty(value)) {
+					if  ((typeof value) == 'string') {
+    					return value.substr(8,2) + '/' + value.substr(5,2) + '/' + value.substr(0,4);
+    				} else {
+    					return value;
+    				}
+				}
+			}
+		},
+		{
+			name: 'revisionMercadoMeses'  
 		}
 	    
     ],

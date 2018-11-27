@@ -539,7 +539,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 									title: HreRem.i18n("fieldlabel.fianza"),
 									items :
 										[
-											{ 
+											{
 												xtype: 'numberfieldbase',
 												reference: 'mesesDeposito',
 										 		fieldLabel: HreRem.i18n('fieldlabel.meses'),
@@ -566,7 +566,16 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 							                }
 				
 										]
-								}, 
+								},
+//								{
+//
+//									xtype:'fieldsettable',
+//									collapsible: false,
+//									border: false,
+//										defaultType: 'displayfieldbase',				
+//										items : [
+																
+
 								{
 									xtype:'fieldset',
 									height: 100,
@@ -651,6 +660,14 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 						                         }
 					    						
 									        },
+									        {},
+									       {
+									        	xtype: 'numberfieldbase',
+												reference: 'numeroDeposito',
+										 		fieldLabel: HreRem.i18n('fieldlabel.numero.aval'),
+				                				bind: '{condiciones.numeroAval}',
+				                				readOnly: false
+									        },
 											{ 
 												xtype: 'numberfieldbase',
 												reference: 'importeDeposito',
@@ -660,21 +677,11 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 				                				readOnly: false
 				                				
 							                },
-							                {
-					                             xtype: 'textareafieldbase',
-					                             fieldLabel: HreRem.i18n('fieldlabel.comentarios'),
-					                             reference: 'textareafieldcondicioncomentarios',
-					     						 bind:{
-					     							 value:  '{condiciones.entidadComments}',
-					     							 disabled: '{!condiciones.esOtros}'
-					     						 },	
-					                             maxWidth: 500,
-					                             maxLength: 200
-						                    }
+							                
 										]
 						        	}
-						        ]
-					},
+								 ]
+					},				
 					{
 						xtype:'fieldsettable',
 						collapsible: false,
@@ -754,7 +761,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 							                    { 
 													xtype: 'numberfieldbase',
 													reference: 'mesesBonificacion',
-											 		fieldLabel: HreRem.i18n('fieldlabel.meses'),
+											 		fieldLabel: HreRem.i18n('fieldlabel.duracion.meses'),
 											 		bind: {
 											 			value: '{condiciones.mesesBonificacion}',
 											 			disabled: '{!condiciones.siBonificacion}'
@@ -820,7 +827,6 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 		        ]
 			
 			},
-			
 			{
 				
 				xtype:'fieldset',
@@ -859,25 +865,26 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 							                	reference: 'checkboxEscaladoFijo',
 							                	fieldLabel:  HreRem.i18n('fieldlabel.fijo'),
 							                	bind: {
-							                		value: '{condiciones.reservaConImpuesto4}'										             
+							                		value: '{condiciones.checkFijo}'										             
 							                	},
 							                	listeners: {
 				                					change: 'onCambioCheckEscaladoFijo'
 				                				}
 		                					},
 		                					{	
-											 	xtype:'datefieldbase',
+		                						xtype:'datefieldbase',
 											 	reference: 'tipoEscaladoFecha',
 											 	fieldLabel:  HreRem.i18n('fieldlabel.fecha'),
-					        					bind: '{condiciones.fechaUltimaActualizacion5}',
-					        					readOnly: true
+					        					bind:'{condiciones.fechaFijo}'
+					        					
+					        					
 									        },
 									        {	
 											 	xtype:'datefieldbase',
 											 	reference: 'tipoEscaladoIncremento',
 											 	fieldLabel:  HreRem.i18n('fieldlabel.incremento.renta'),
-					        					bind: '{condiciones.fechaUltimaActualizacion2}',
-					        					readOnly: true
+					        					bind: '{condiciones.fechaIncrementoRentaFijo}',
+					        					
 									        }
 				
 										]
@@ -900,7 +907,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 							                	reference: 'chekboxPorcentual',
 							                	fieldLabel:  HreRem.i18n('fieldlabel.porcentual'),
 							                	bind: {
-							                		value: '{condiciones.reservaConImpuesto3}'									   
+							                		value: '{condiciones.checkPorcentual}'									   
 							                	},
 							                	listeners: {
 					                					change: 'onCambioCheckPorcentual'
@@ -912,15 +919,18 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 							                	reference: 'checkboxIPC',
 							                	fieldLabel:  HreRem.i18n('fieldlabel.ipc'),
 							                	bind: {
-							                		value: '{condiciones.reservaConImpuesto1}'										             
+							                		value: '{condiciones.checkIPC}'										             
 							                	}
 		                					},
-		                					{ 
-												xtype: 'displayfieldbase',
+		                					{
+												xtype: 'textfieldbase',
 												reference: 'escaladoRentaPorcentaje',
 										 		symbol: HreRem.i18n('symbol.porcentaje'),
 												fieldLabel: HreRem.i18n('fieldlabel.porcentaje'),
-				                				bind: '{condiciones.impuestos}'
+				                				bind:
+				                				{
+							                		value: '{condiciones.porcentaje}'									             
+							                	}
 							                }
 											
 										]
@@ -941,7 +951,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 								                	reference: 'chekboxRevisionMercado',
 								                	fieldLabel:  HreRem.i18n('fieldlabel.revision.mercado'),
 								                	bind: {
-								                		value: '{}'										             
+								                		value: '{condiciones.checkRevisionMercado}'										             
 								                	},
 								                	listeners: {
 					                					change: 'onCambioCheckRevMercado'
@@ -951,16 +961,16 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 												 	xtype:'datefieldbase',
 												 	reference: 'revisionMercadoFecha',
 												 	fieldLabel:  HreRem.i18n('fieldlabel.fecha'),
-						        					bind: '{}',
-						        					readOnly: true
+						        					bind: '{condiciones.revisionMercadoFecha}'
+						        					
 										        },												        								                
 								                { 
-													xtype: 'displayfieldbase',
+													xtype: 'textfieldbase',
 													reference: 'escaladoRentasMeses',
 											 		symbol: HreRem.i18n('symbol.meses'),
 											 		labelSeparator: "",
 													fieldLabel: HreRem.i18n('fieldlabel.cada'),
-					                				bind: ' meses'
+					                				bind: '{condiciones.revisionMercadoMeses}',
 								                }
 										        
 										        

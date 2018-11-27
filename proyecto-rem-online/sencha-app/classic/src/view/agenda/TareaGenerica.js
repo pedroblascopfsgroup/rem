@@ -1600,6 +1600,7 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
     	me.deshabilitarCampo(me.down('[name=nombreFS]'));
     	me.deshabilitarCampo(me.down('[name=documento]'));
     	
+    	
     	me.down('[name=resultadoScoring]').addListener('change', function() {
     		var resultadoScoring = me.down('[name=resultadoScoring]');
     		if(resultadoScoring.value == '01'){
@@ -1685,6 +1686,9 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
     			
     			me.habilitarCampo(me.down('[name=nombreFS]'));
             	me.habilitarCampo(me.down('[name=documento]'));
+            	me.down('[name=documento]').maskre=/[A-Za-z0-9]/;
+            	me.down('[name=documento]').regex=/^[A-Za-z0-9]{1}[0-9]{7}[A-Za-z]{1}$/;
+            	
             	
             	me.campoObligatorio(me.down('[name=nombreFS]'));
             	me.campoObligatorio(me.down('[name=documento]'));
@@ -1801,6 +1805,8 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
     			
     			me.habilitarCampo(me.down('[name=nombreFS]'));
             	me.habilitarCampo(me.down('[name=documento]'));
+            	me.down('[name=documento]').maskre=/[A-Za-z0-9]/;
+            	me.down('[name=documento]').regex=/^[A-Za-z0-9]{1}[0-9]{7}[A-Za-z]{1}$/;
             	
             	me.campoObligatorio(me.down('[name=nombreFS]'));
             	me.campoObligatorio(me.down('[name=documento]'));

@@ -33,6 +33,7 @@ public class AgendaMultifuncionCorreoUtils {
 	private static final String MAIL_SMTP_PORT = "mail.smtp.port";
 	private static final String MAIL_SMTP_STARTTLS_ENABLE = "mail.smtp.starttls.enable";
 	private static final String MAIL_SMTP_HOST = "mail.smtp.host";
+	private static final String MAIL_SMTP_DEBUG = "false";
 	private static final String TRANSPORT_SMTP = "smtp";
 
 	
@@ -54,9 +55,10 @@ public class AgendaMultifuncionCorreoUtils {
 	public void enviarCorreoConAdjuntos(String emailFrom, List<String> mailsPara, List<String> direccionesMailCc,
 			String asuntoMail, String cuerpoEmail, List<DtoAdjuntoMail> list) throws Exception {
 
-		// Propiedades de la conexión
+		// Propiedades de la conexion
 		Properties props = getPropiedades();
 
+		
 		// Preparamos la sesion
 		Session session = Session.getDefaultInstance(props);
 		session.setDebugOut(System.out);
@@ -213,6 +215,8 @@ public class AgendaMultifuncionCorreoUtils {
 		}
 		
 		props.setProperty(MAIL_SMTP_USER, appProperties.getProperty(USUARIO_CORREO));
+		
+		props.setProperty(MAIL_SMTP_DEBUG, "false");
 		
 		return props;
 	}

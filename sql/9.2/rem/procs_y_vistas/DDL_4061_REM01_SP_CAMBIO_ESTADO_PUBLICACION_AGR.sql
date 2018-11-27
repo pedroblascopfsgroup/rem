@@ -22,7 +22,7 @@
 
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
 SET SERVEROUTPUT ON; 
-create or replace PROCEDURE SP_CAMBIO_ESTADO_PUBLI_AGR (pAGR_ID IN NUMBER DEFAULT NULL
+create or replace PROCEDURE #ESQUEMA#.SP_CAMBIO_ESTADO_PUBLI_AGR (pAGR_ID IN NUMBER DEFAULT NULL
 														, pCondAlquiler VARCHAR2 DEFAULT 1
                                                         , pUSUARIOMODIFICAR IN VARCHAR2 DEFAULT 'SP_CAMBIO_EST_PUB_AGR'
                                                         , pHISTORIFICAR IN VARCHAR2 DEFAULT 'N') IS
@@ -844,7 +844,7 @@ ELSE
                            AND (AGR.AGR_FIN_VIGENCIA IS NULL OR TRUNC(AGR.AGR_FIN_VIGENCIA) >= TRUNC(SYSDATE))
                       WHERE AGA.BORRADO = 0
                         AND AGR.AGR_ID = '||nAGR_ID||'
-                        AND AGA.AGA_PRINCIPAL = 1
+                        AND (AGA.AGA_PRINCIPAL = 1 OR AGR.AGR_ACT_PRINCIPAL = AGA.ACT_ID)
                    )AUX';
           
         /**************/

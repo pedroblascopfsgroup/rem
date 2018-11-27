@@ -192,8 +192,8 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 												xtype: 'textareafieldbase',
 												reference: 'textareaMotivoPublicacionVenta',
 												textareaRefChained: 'chkbxpublicarventa',
+												disabled: true,
 												bind: {
-													readOnly: '{!datospublicacionactivo.publicarVenta}',
 													value: '{datospublicacionactivo.motivoPublicacion}'
 												},
 												maxLength: 200,

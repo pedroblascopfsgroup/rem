@@ -2199,9 +2199,12 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	}
 
 	public List<DtoGastoExpediente> getHonorariosActivoByOfertaAceptada(Oferta oferta, Activo activo) {
+		List<DtoGastoExpediente> resultado = new ArrayList<DtoGastoExpediente>();
 		ExpedienteComercial expediente = findOneByOferta(oferta);
-
-		return getHonorarios(expediente.getId(), activo.getId());
+		if(expediente != null && activo != null){
+			resultado = getHonorarios(expediente.getId(), activo.getId());
+		}		
+		return resultado;
 	}
 
 	public List<DtoGastoExpediente> getHonorarios(Long idExpediente, Long idActivo) {

@@ -262,13 +262,19 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
 	        	dataIndex: 'estadoVenta',
 	            text: HreRem.i18n('header.condicionantes.publicacion.venta'),
 	            flex: 1,
-	            renderer: condPublRenderer
+	            renderer: condPublRenderer,
+	            bind: {
+		        	hidden: true
+		        }
 	        },
 	        {
 	            dataIndex: 'estadoAlquiler',
 	            text: HreRem.i18n('header.condicionantes.publicacion.alquiler'),
 	            flex: 1,
-	            renderer: condPublRenderer
+	            renderer: condPublRenderer,
+	            bind: {
+		        	hidden: true
+		        }
 	        },
 	        {
 	            dataIndex: 'situacionComercial',

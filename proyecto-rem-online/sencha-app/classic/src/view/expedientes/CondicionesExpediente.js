@@ -694,7 +694,6 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 								        type: 'table',
 						        		columns: 2
 						        	},
-//									defaultType: 'textfieldbase',
 									title: HreRem.i18n("fieldlabel.fiscales"),
 									items :
 										[

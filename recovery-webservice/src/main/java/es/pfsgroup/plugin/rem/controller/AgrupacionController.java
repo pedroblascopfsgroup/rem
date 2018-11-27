@@ -143,9 +143,10 @@ public class AgrupacionController extends ParadiseJsonController {
 	public ModelAndView getListActivosAgrupacionById(DtoAgrupacionFilter filtro, Long id, ModelMap model) {
 
 		//TODO cambiar Page por el nuevo dto.
-		DtoEstadoDisponibilidadComercial page = adapter.getListActivosAgrupacion(filtro, id);
+		//DtoEstadoDisponibilidadComercial page = adapter.getListActivosAgrupacion(filtro, id);
+		Page page = adapter.getListActivosAgrupacionById(filtro, id);
 		if(!Checks.esNulo(page)) {
-			model.put("data", page.getListado());
+			model.put("data", page.getResults());
 			model.put("totalCount", page.getTotalCount());
 			model.put("success", true);
 		} else {

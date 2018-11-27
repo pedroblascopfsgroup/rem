@@ -6594,7 +6594,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		listaHistoricoScoring = genericDao.getList(HistoricoScoringAlquiler.class, filtro);
 		ExpedienteComercial exp=null;
 		DtoAdjunto adjFinal = new DtoAdjunto();
-		if(!Checks.esNulo(listaHistoricoScoring)) {
+		if(!Checks.estaVacio(listaHistoricoScoring)) {
 			exp=listaHistoricoScoring.get(0).getScoringAlquiler().getExpediente();
 		}
 		if(!Checks.esNulo(exp)) {
@@ -6689,15 +6689,15 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	@Override
 	@Transactional(readOnly = false)
 	public boolean saveExpedienteScoring(DtoExpedienteScoring dto, Long idEntidad) {
-
-		ScoringAlquiler scoring;
-
+		
+		ScoringAlquiler scoring = null;
+		
 		if (!Checks.esNulo(dto.getId())) {
-			Filter filtroSeg = genericDao.createFilter(FilterType.EQUALS, "id", dto.getId());
-			scoring= genericDao.get(ScoringAlquiler.class, filtroSeg);
+			Filter filtroSeg = genericDao.createFilter(FilterType.EQUALS, "expediente.id", dto.getId()); 
+			scoring= genericDao.get(ScoringAlquiler.class, filtroSeg);	
 		}
-
-		else {
+		
+		if (Checks.esNulo(scoring)) {
 			scoring = new ScoringAlquiler();
 		}
 

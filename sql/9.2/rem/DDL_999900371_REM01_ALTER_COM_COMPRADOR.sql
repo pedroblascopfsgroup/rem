@@ -33,17 +33,16 @@ DECLARE
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
 
     V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar
-    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'CLC_CLIENTE_COMERCIAL'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
+    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'COM_COMPRADOR'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
 
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(256);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-        T_TIPO_DATA('CLC_CESION_DATOS', 'NUMBER','(1)', 'bool datos del comprador'),
-        T_TIPO_DATA('CLC_COMUNI_TERCEROS', 'NUMBER','(1)', 'bool Transferencias internacionales'),
-        T_TIPO_DATA('CLC_TRANSF_INTER', 'NUMBER','(1)', 'bool comunicación terceros')
+        T_TIPO_DATA('COM_CESION_DATOS', 'NUMBER','(1)', 'bool datos del comprador'),
+        T_TIPO_DATA('COM_COMUNI_TERCEROS', 'NUMBER','(1)', 'bool Transferencias internacionales'),
+        T_TIPO_DATA('COM_TRANSF_INTER', 'NUMBER','(1)', 'bool comunicación terceros')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
-    
     
 BEGIN
 	

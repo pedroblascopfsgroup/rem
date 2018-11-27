@@ -21,6 +21,7 @@ import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
@@ -28,6 +29,7 @@ import es.pfsgroup.plugin.rem.api.ClienteComercialApi;
 import es.pfsgroup.plugin.rem.clienteComercial.dao.ClienteComercialDao;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ClienteComercial;
+import es.pfsgroup.plugin.rem.model.Comprador;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
@@ -476,7 +478,32 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 					cliente.setRegimenMatrimonial(null);
 				}
 			}
+			
+			ClienteComercial clienteCom = genericDao.get(ClienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "idClienteWebcom",clienteDto.getIdClienteWebcom()));
+			Comprador comprador = genericDao.get(Comprador.class, genericDao.createFilter(FilterType.EQUALS, "clienteComercial.id", clienteCom.getId()));
 
+			if (((JSONObject) jsonFields).containsKey("cesionDatos")) {
+				if (!Checks.esNulo(comprador)) {
+					comprador.setCesionDatos(clienteDto.getCesionDatos());
+				}
+				cliente.setCesionDatos(clienteDto.getCesionDatos());
+			}
+			
+			if (((JSONObject) jsonFields).containsKey("comunicacionTerceros")) {
+				if (!Checks.esNulo(comprador)) {
+					comprador.setComunicacionTerceros(clienteDto.getComunicacionTerceros());
+				}
+				cliente.setComunicacionTerceros(clienteDto.getComunicacionTerceros());
+			}
+			
+			if (((JSONObject) jsonFields).containsKey("transferenciasInternacionales")) {
+				if (!Checks.esNulo(comprador)) {
+					comprador.setTransferenciasInternacionales(clienteDto.getTransferenciasInternacionales());
+				}
+				cliente.setTransferenciasInternacionales(clienteDto.getTransferenciasInternacionales());
+			}
+			
+			genericDao.update(Comprador.class, comprador);
 
 			clienteComercialDao.saveOrUpdate(cliente);
 			

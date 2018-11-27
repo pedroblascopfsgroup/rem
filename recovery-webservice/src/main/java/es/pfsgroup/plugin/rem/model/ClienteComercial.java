@@ -182,10 +182,10 @@ public class ClienteComercial implements Serializable, Auditable {
     @Column(name = "CLC_CESION_DATOS")
     private Boolean cesionDatos;
     
-    @Column(name = "CLC_COMUNICACION_TERCEROS")
+    @Column(name = "CLC_COMUNI_TERCEROS")
     private Boolean comunicacionTerceros;
     
-    @Column(name = "CLC_TRANSFER_INTERNACIONALES")
+    @Column(name = "CLC_TRANSF_INTER")
     private Boolean transferenciasInternacionales;
 	
 

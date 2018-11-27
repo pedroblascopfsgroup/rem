@@ -120,6 +120,11 @@ public class ClienteDto implements Serializable{
 			Update.class })
 	private String codRegimenMatrimonial;
 	
+	//HREOS-4851
+	private Boolean cesionDatos;
+	private Boolean comunicacionTerceros;
+	private Boolean transferenciasInternacionales;
+	
 	public String getCodTipoPersona() {
 		return codTipoPersona;
 	}
@@ -319,7 +324,22 @@ public class ClienteDto implements Serializable{
 	public void setTelefonoContactoVisitas(String telefonoContactoVisitas) {
 		this.telefonoContactoVisitas = telefonoContactoVisitas;
 	}
-	
-	
-	
+	public Boolean getCesionDatos() {
+		return cesionDatos;
+	}
+	public void setCesionDatos(Boolean cesionDatos) {
+		this.cesionDatos = cesionDatos;
+	}
+	public Boolean getComunicacionTerceros() {
+		return comunicacionTerceros;
+	}
+	public void setComunicacionTerceros(Boolean comunicacionTerceros) {
+		this.comunicacionTerceros = comunicacionTerceros;
+	}
+	public Boolean getTransferenciasInternacionales() {
+		return transferenciasInternacionales;
+	}
+	public void setTransferenciasInternacionales(Boolean transferenciasInternacionales) {
+		this.transferenciasInternacionales = transferenciasInternacionales;
+	}
 }

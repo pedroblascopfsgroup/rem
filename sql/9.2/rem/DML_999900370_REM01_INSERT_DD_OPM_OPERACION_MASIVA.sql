@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Juanjo Arbona
---## FECHA_CREACION=20181120
+--## FECHA_CREACION=20181123
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-4712
@@ -35,7 +35,7 @@ DECLARE
     TYPE T_FUNCION IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_FUNCION IS TABLE OF T_FUNCION;
     V_FUNCION T_ARRAY_FUNCION := T_ARRAY_FUNCION(
-	  T_FUNCION('SPL', 'Situación de plusvalía', 'Situación de plusvalía','MASIVO_PLUSVALIA','n*,n,n,f,s')
+	  T_FUNCION('SPL', 'Situación de plusvalía', 'Situación de plusvalía','MASIVO_PLUSVALIA','n*,s,s,f,s')
     ); 
     V_TMP_FUNCION T_FUNCION;
     V_PERFILES VARCHAR2(100 CHAR) := '%';  -- Cambiar por ALGÚN PERFIL para otorgar permisos a ese perfil.
@@ -56,7 +56,13 @@ BEGIN
 			
 			-- Si existe la FUNCION
 			IF V_NUM_TABLAS > 0 THEN	  
-				DBMS_OUTPUT.PUT_LINE('[INFO] Ya existen los datos en la tabla '||V_ESQUEMA||'.DD_OPM_OPERACION_MASIVA...no se modifica nada.');
+				DBMS_OUTPUT.PUT_LINE('[INFO]: MODIFICAMOS EL REGISTRO '''|| TRIM(V_TMP_FUNCION(1)) ||'''');
+       	  V_MSQL := 'UPDATE '||V_ESQUEMA||'.DD_OPM_OPERACION_MASIVA' ||
+                    ' SET DD_OPM_VALIDACION_FORMATO = '''||TRIM(V_TMP_FUNCION(5))||''''||
+					', USUARIOMODIFICAR = ''HREOS-4712'' , FECHAMODIFICAR = SYSDATE '||
+					'WHERE DD_OPM_CODIGO = '''||TRIM(V_TMP_FUNCION(1))||'''';
+          EXECUTE IMMEDIATE V_MSQL;
+          DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO MODIFICADO CORRECTAMENTE');
 				
 			ELSE
 				V_MSQL_1 := 'INSERT INTO '||V_ESQUEMA||'.DD_OPM_OPERACION_MASIVA' ||

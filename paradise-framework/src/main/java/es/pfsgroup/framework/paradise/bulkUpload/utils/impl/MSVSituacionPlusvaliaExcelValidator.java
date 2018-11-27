@@ -18,6 +18,7 @@ import org.springframework.stereotype.Component;
 
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.message.MessageService;
+import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.framework.paradise.bulkUpload.adapter.ProcessAdapter;
 import es.pfsgroup.framework.paradise.bulkUpload.api.MSVProcesoApi;
@@ -42,6 +43,10 @@ public class MSVSituacionPlusvaliaExcelValidator extends MSVExcelValidatorAbstra
 
 	// Textos con errores de validacion
 	public static final String ACTIVE_EXISTS = "El activo propuesto no existe = ";
+	
+	public static final String EXENTO_FORMAT = "La columna exento no tiene el formato correcto";
+	
+	public static final String AUTOLIQUIDACION_FORMAT = "La columna autoliquidación no tiene el formato correcto";
 
 	public static final String FECHA_ESCRITO= "EL formato de la fecha de escrito del ayuntamiento no es correcto ";
 	public static final String AUTOLIQUIDACION= "Los unicos valores validos  para la autoliquidacion son 0 y 1 =";
@@ -116,17 +121,9 @@ public class MSVSituacionPlusvaliaExcelValidator extends MSVExcelValidatorAbstra
 
 			mapaValores.put(ACTIVE_EXISTS , dameValorActivo(exc));
 			
+			mapaErrores.put(EXENTO_FORMAT, isBooleanFormatoCorrecto(exc, COL_NUM.EXENTO));
 			
-			mapaErrores.put(AUTOLIQUIDACION, isColumnAceptable(exc, COL_NUM.AUTOLIQUIDACION));
-			
-			mapaValores.put(AUTOLIQUIDACION, dameValoresAceptables(exc, COL_NUM.AUTOLIQUIDACION));
-			
-			mapaErrores.put(EXENTO, isColumnAceptable(exc, COL_NUM.AUTOLIQUIDACION));
-			
-			mapaValores.put(EXENTO, dameValoresAceptables(exc, COL_NUM.EXENTO));
-
-			
-			
+			mapaErrores.put(AUTOLIQUIDACION_FORMAT, isBooleanFormatoCorrecto(exc, COL_NUM.AUTOLIQUIDACION));
 
 			mapaErrores.put(FECHA_ESCRITO, isColumnNotDateByRows(exc, COL_NUM.FECHA_ESCRITO_AYTO));
 			
@@ -208,8 +205,30 @@ public class MSVSituacionPlusvaliaExcelValidator extends MSVExcelValidatorAbstra
 		}
 
 		return listaFilas;
-	}
+	}	
 	
+	private List<Integer> isBooleanFormatoCorrecto(MSVHojaExcel exc, int columnNumber) {
+		List<Integer> listaFilas = new ArrayList<Integer>();
+
+		int i = 0;
+		try {
+			for (i = COL_NUM.DATOS_PRIMERA_FILA; i < numFilasHoja; i++) {
+				if (!"SI".equals(exc.dameCelda(i, columnNumber).toUpperCase()) && !"NO".equals(exc.dameCelda(i, columnNumber).toUpperCase()))
+					listaFilas.add(i);
+			}
+		} catch (IllegalArgumentException e) {
+			logger.error(e.getMessage(),e);
+			e.printStackTrace();
+		} catch (IOException e) {
+			logger.error(e.getMessage(),e);
+			e.printStackTrace();
+		} catch (ParseException e) {
+			logger.error(e.getMessage(),e);
+			listaFilas.add(i);
+		}
+
+		return listaFilas;
+	}
 	
 	private List<String> dameValorActivo(MSVHojaExcel exc) {
 		List<String> listaFilas = new ArrayList<String>();

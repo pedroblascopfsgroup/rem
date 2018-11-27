@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import es.capgemini.devon.beans.Service;
 import es.capgemini.devon.message.MessageService;
 import es.capgemini.pfs.procesosJudiciales.TipoProcedimientoManager;
+import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
@@ -67,7 +68,7 @@ public class PlusvaliaAdapter {
 
 
 	@Transactional(readOnly = false)
-	public void updatePlusvalia(Long numActivo, Long exento,  Long autoLiquidacion, String fechaEscritoAyto, String observaciones)
+	public void updatePlusvalia(Long numActivo, String exento,  String autoLiquidacion, String fechaEscritoAyto, String observaciones)
 			throws JsonViewerException {
 
 		Filter filter = genericDao.createFilter(FilterType.EQUALS, "numActivo", numActivo);
@@ -101,10 +102,19 @@ public class PlusvaliaAdapter {
 								throw new JsonViewerException("La plusvalia de este activo ya está informada");
 							} else {
 								if (!Checks.esNulo(exento) && Checks.esNulo(plusvalia.getExento())){
-									plusvalia.setExento(exento);
+									if ("SI".equals(exento.toUpperCase())) {
+										plusvalia.setExento(1);
+									}else if ("NO".equals(exento.toUpperCase())){
+										plusvalia.setExento(0);
+									}
 								}
 								if (!Checks.esNulo(autoLiquidacion) && Checks.esNulo(plusvalia.getAutoliquidacion())){
-									plusvalia.setAutoliquidacion(autoLiquidacion);
+									if ("SI".equals(autoLiquidacion.toUpperCase())) {
+										plusvalia.setAutoliquidacion(1);
+									}else if ("NO".equals(autoLiquidacion.toUpperCase())){
+										plusvalia.setAutoliquidacion(0);
+									}
+									
 								}
 								if (!Checks.esNulo(fechaEscritoAyto) && Checks.esNulo(plusvalia.getFechaEscritoAyt())){
 									Date date1=new SimpleDateFormat("dd/MM/yyyy").parse(fechaEscritoAyto);  
@@ -118,10 +128,18 @@ public class PlusvaliaAdapter {
 						} else {
 							PlusvaliaVentaExpedienteComercial plusvaliaNew = new PlusvaliaVentaExpedienteComercial();
 							if (!Checks.esNulo(exento)){
-								plusvaliaNew.setExento(exento);
+								if ("SI".equals(exento.toUpperCase())) {
+									plusvalia.setExento(1);
+								}else if ("NO".equals(exento.toUpperCase())){
+									plusvalia.setExento(0);
+								}
 							}
 							if (!Checks.esNulo(autoLiquidacion)){
-								plusvaliaNew.setAutoliquidacion(autoLiquidacion);
+								if ("SI".equals(autoLiquidacion.toUpperCase())) {
+									plusvalia.setAutoliquidacion(1);
+								}else if ("NO".equals(autoLiquidacion.toUpperCase())){
+									plusvalia.setAutoliquidacion(0);
+								}
 							}
 							if (!Checks.esNulo(fechaEscritoAyto)){
 								Date date1=new SimpleDateFormat("dd/MM/yyyy").parse(fechaEscritoAyto);  

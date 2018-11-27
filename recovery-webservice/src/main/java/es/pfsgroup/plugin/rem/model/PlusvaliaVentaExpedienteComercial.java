@@ -52,10 +52,10 @@ public class PlusvaliaVentaExpedienteComercial implements Serializable, Auditabl
     private ExpedienteComercial expediente;   	
 	
 	@Column(name = "EPV_EXENTO")
-	private Long exento;
+	private Integer exento;
 	
 	@Column(name = "EPV_AUTOLIQUIDACION")
-	private Long autoliquidacion;
+	private Integer autoliquidacion;
 	
 	@Column(name = "EPV_FECHA_ESCRITO_AYTO")
 	private Date fechaEscritoAyt;
@@ -85,19 +85,19 @@ public class PlusvaliaVentaExpedienteComercial implements Serializable, Auditabl
 		this.expediente = expediente;
 	}
 
-	public Long getExento() {
+	public Integer getExento() {
 		return exento;
 	}
 
-	public void setExento(Long exento) {
+	public void setExento(Integer exento) {
 		this.exento = exento;
 	}
 
-	public Long getAutoliquidacion() {
+	public Integer getAutoliquidacion() {
 		return autoliquidacion;
 	}
 
-	public void setAutoliquidacion(Long autoliquidacion) {
+	public void setAutoliquidacion(Integer autoliquidacion) {
 		this.autoliquidacion = autoliquidacion;
 	}
 

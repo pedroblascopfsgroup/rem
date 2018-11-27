@@ -13,8 +13,8 @@ public class DtoPlusvaliaVenta extends DtoTabActivo {
 	private static final long serialVersionUID = 0L;
 	
 	private Long ecoId;
-	private Long exento;
-	private Long autoliquidacion;
+	private Integer exento;
+	private Integer autoliquidacion;
 	private Date fechaEscritoAyt;
 	private String observaciones;
 	
@@ -26,16 +26,16 @@ public class DtoPlusvaliaVenta extends DtoTabActivo {
 	public void setEcoId(Long ecoId) {
 		this.ecoId = ecoId;
 	}
-	public Long getExento() {
+	public Integer getExento() {
 		return exento;
 	}
-	public void setExento(Long exento) {
+	public void setExento(Integer exento) {
 		this.exento = exento;
 	}
-	public Long getAutoliquidacion() {
+	public Integer getAutoliquidacion() {
 		return autoliquidacion;
 	}
-	public void setAutoliquidacion(Long autoliquidacion) {
+	public void setAutoliquidacion(Integer autoliquidacion) {
 		this.autoliquidacion = autoliquidacion;
 	}
 	public Date getFechaEscritoAyt() {

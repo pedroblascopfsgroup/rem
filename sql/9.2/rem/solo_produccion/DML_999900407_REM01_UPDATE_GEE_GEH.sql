@@ -1,0 +1,160 @@
+--/*
+--##########################################
+--## AUTOR=PIER GOTTA
+--## FECHA_CREACION=201801114
+--## ARTEFACTO=online
+--## VERSION_ARTEFACTO=9.2
+--## INCIDENCIA_LINK=REMVIP-2477
+--## PRODUCTO=NO
+--##
+--## Finalidad: Actualización de gestores de mantenimiento
+--## INSTRUCCIONES:
+--## VERSIONES:
+--##        0.1 Versión inicial
+--##########################################
+--*/
+
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON; 
+SET DEFINE OFF;
+
+
+DECLARE
+    V_MSQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar     
+    V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
+    V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
+    V_SQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
+    V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.   
+    ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
+    ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
+	
+    V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar
+    V_ENTIDAD_ID NUMBER(16);
+    V_ID NUMBER(16);
+    V_SEQ_GEH NUMBER(16);
+	V_TIPO_ID NUMBER(16); --Vle para el id DD_TTR_TIPO_TRABAJO
+    
+    
+    TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
+    TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
+    V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
+    	--			ACT_ID	
+    	T_TIPO_DATA('320102')
+	); 
+    V_TMP_TIPO_DATA T_TIPO_DATA;
+    
+BEGIN	
+	
+	DBMS_OUTPUT.PUT_LINE('[INICIO] ');
+
+	 
+    -- LOOP para insertar los valores en DD_STR_SUBTIPO_TRABAJO -----------------------------------------------------------------
+    DBMS_OUTPUT.PUT_LINE('[INFO]: UPDATE GEE_GESTOR_ENTIDAD] ');
+    FOR I IN V_TIPO_DATA.FIRST .. V_TIPO_DATA.LAST
+      LOOP
+      
+        V_TMP_TIPO_DATA := V_TIPO_DATA(I);
+    
+        --Comprobamos el dato a insertar
+        V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.ACT_ACTIVO WHERE ACT_ID = '||TRIM(V_TMP_TIPO_DATA(1))||'';
+        EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+        
+        --Si existe realizamos otra comprobacion
+        IF V_NUM_TABLAS > 0 THEN		
+
+			DBMS_OUTPUT.PUT_LINE('[INFO]: MODIFICAMOS EL GESTOR COMERCIAL EN LA GEE PARA EL ACTIVO '''|| TRIM(V_TMP_TIPO_DATA(1)) ||''' ');
+			V_MSQL := 'MERGE INTO '||V_ESQUEMA||'.GEE_GESTOR_ENTIDAD GEE
+						USING (
+							SELECT DISTINCT GEE.GEE_ID FROM REM01.GAC_GESTOR_ADD_ACTIVO GAC 
+							INNER JOIN '||V_ESQUEMA||'.GEE_GESTOR_ENTIDAD GEE ON GEE.GEE_ID = GAC.GEE_ID
+							INNER JOIN '||V_ESQUEMA_M||'.DD_TGE_TIPO_GESTOR TGE ON TGE.DD_TGE_ID = GEE.DD_TGE_ID
+							WHERE TGE.DD_TGE_CODIGO = ''GACT''
+							AND GAC.ACT_ID = '||TRIM(V_TMP_TIPO_DATA(1))||'
+						) AUX
+						ON (GEE.GEE_ID = AUX.GEE_ID)
+						WHEN MATCHED THEN UPDATE SET
+						GEE.USU_ID = (SELECT USU.USU_ID FROM '||V_ESQUEMA_M||'.USU_USUARIOS USU WHERE USU.USU_USERNAME = ''lfabe''),
+						GEE.USUARIOMODIFICAR = ''REMVIP-2477'',
+						GEE.FECHAMODIFICAR = SYSDATE
+						';
+			EXECUTE IMMEDIATE V_MSQL;
+			
+			
+			DBMS_OUTPUT.PUT_LINE('[INFO]: MODIFICAMOS LA FECHA_HASTA EN LA GEH PARA EL ACTIVO '''|| TRIM(V_TMP_TIPO_DATA(1)) ||''' ');
+			V_MSQL := 'MERGE INTO '||V_ESQUEMA||'.GEH_GESTOR_ENTIDAD_HIST GEH
+						USING (
+							SELECT DISTINCT GEH.GEH_ID FROM REM01.GAH_GESTOR_ACTIVO_HISTORICO GAH 
+							INNER JOIN '||V_ESQUEMA||'.GEH_GESTOR_ENTIDAD_HIST GEH ON GEH.GEH_ID = GAH.GEH_ID
+							INNER JOIN '||V_ESQUEMA_M||'.DD_TGE_TIPO_GESTOR TGE ON TGE.DD_TGE_ID = GEH.DD_TGE_ID
+							WHERE TGE.DD_TGE_CODIGO = ''GACT''
+							AND GAH.ACT_ID = '||TRIM(V_TMP_TIPO_DATA(1))||'
+							AND GEH.GEH_FECHA_HASTA IS NULL							
+						) AUX
+						ON (GEH.GEH_ID = AUX.GEH_ID)
+						WHEN MATCHED THEN UPDATE SET
+						GEH.GEH_FECHA_HASTA = SYSDATE,
+						GEH.USUARIOMODIFICAR = ''REMVIP-2477'',
+						GEH.FECHAMODIFICAR = SYSDATE
+						';
+			EXECUTE IMMEDIATE V_MSQL;
+			
+			DBMS_OUTPUT.PUT_LINE('[INFO]: INICIAMOS EL PROCESO PARA REALIZAR LOS NUEVOS INSERTS EN GEH Y GAH ');
+			V_MSQL := 'SELECT '||V_ESQUEMA||'.S_GEH_GESTOR_ENTIDAD_HIST.NEXTVAL FROM DUAL';
+			EXECUTE IMMEDIATE V_MSQL INTO V_SEQ_GEH;
+			
+			V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.GEH_GESTOR_ENTIDAD_HIST(GEH_ID, USU_ID, DD_TGE_ID, GEH_FECHA_DESDE, VERSION, USUARIOCREAR, FECHACREAR, BORRADO)
+						(SELECT
+						'||V_SEQ_GEH||',
+						(SELECT USU.USU_ID FROM '||V_ESQUEMA_M||'.USU_USUARIOS USU WHERE USU.USU_USERNAME = ''lfabe''),
+						(SELECT TGE.DD_TGE_ID FROM '||V_ESQUEMA_M||'.DD_TGE_TIPO_GESTOR TGE WHERE TGE.DD_TGE_CODIGO = ''GACT''),
+						SYSDATE,
+						0,
+						''REMVIP-2477'',
+						SYSDATE,
+						0
+						FROM DUAL
+						)
+			'		;
+			EXECUTE IMMEDIATE V_MSQL;
+			DBMS_OUTPUT.PUT_LINE('[INFO]: INSERTADO CORRECTAMENTE EN GEH ');
+			
+			V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.GAH_GESTOR_ACTIVO_HISTORICO(GEH_ID, ACT_ID)
+						(SELECT
+						'||V_SEQ_GEH||',
+						'||TRIM(V_TMP_TIPO_DATA(1))||'
+						FROM DUAL
+						)
+			'		;
+			EXECUTE IMMEDIATE V_MSQL;
+			DBMS_OUTPUT.PUT_LINE('[INFO]: INSERTADO CORRECTAMENTE EN GAH ');
+			
+		--El activo no existe
+		ELSE
+			  DBMS_OUTPUT.PUT_LINE('[INFO]: EL ACT_ID '''||TRIM(V_TMP_TIPO_DATA(1))||''' NO EXISTE');
+		END IF;
+		
+    END LOOP;
+    COMMIT;
+    DBMS_OUTPUT.PUT_LINE('[FIN]: TABLA GEE_GESTOR_ENTIDAD ACTUALIZADA CORRECTAMENTE ');
+   
+
+EXCEPTION
+     WHEN OTHERS THEN
+          err_num := SQLCODE;
+          err_msg := SQLERRM;
+
+          DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(err_num));
+          DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
+          DBMS_OUTPUT.put_line(err_msg);
+
+          ROLLBACK;
+          RAISE;          
+
+END;
+
+/
+
+EXIT
+
+

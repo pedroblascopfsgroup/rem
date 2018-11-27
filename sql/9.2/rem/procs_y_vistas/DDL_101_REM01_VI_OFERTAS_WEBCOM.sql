@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Isidro Sotoca
---## FECHA_CREACION=20171018
+--## AUTOR=RLB
+--## FECHA_CREACION=20181114
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-4502
+--## INCIDENCIA_LINK=0
 --## PRODUCTO=NO
 --## Finalidad: Tabla para almacentar el historico de las ofertas enviadas a webcom
 --##           

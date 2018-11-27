@@ -831,4 +831,8 @@ public interface TrabajoApi {
 
 	Boolean trabajoEsTarificado(Long idTramite);
 
+	boolean checkJaipur(Trabajo trabajo);
+
+	boolean checkGaleon(Trabajo trabajo);
+
 }

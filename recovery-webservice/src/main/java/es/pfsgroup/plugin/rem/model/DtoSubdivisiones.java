@@ -15,11 +15,12 @@ public class DtoSubdivisiones extends WebDto {
 	private Long id;
 	private Long agrId;
 	private String nombre;
-	private Integer numHabitaciones;;
+	private Integer numHabitaciones;
 	private Integer numPlantas;
 	private String tipoSubdivisionCodigo;
 	private String tipoSubdivisionDescripcion;
 	private Long incluidos;
+	private Boolean estadoPublicacionS;
 
 	public Long getId() {
 		return id;
@@ -69,5 +70,12 @@ public class DtoSubdivisiones extends WebDto {
 	public void setAgrId(Long agrId) {
 		this.agrId = agrId;
 	}
+	public Boolean getEstadoPublicacionS() {
+		return estadoPublicacionS;
+	}
+	public void setEstadoPublicacionS(Boolean estadoPublicacionS) {
+		this.estadoPublicacionS = estadoPublicacionS;
+	}
+
 
 }

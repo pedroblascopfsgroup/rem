@@ -39,6 +39,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDComiteAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivosDesbloqueo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
 
@@ -120,6 +121,10 @@ public class ExpedienteComercial implements Serializable, Auditable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_MAN_ID")
     private DDMotivoAnulacionExpediente motivoAnulacion;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_MAO_ID")
+    private DDMotivoAnulacionOferta motivoAnulacionAlquiler;
     
     @Column(name="ECO_FECHA_CONT_PROPIETARIO")
     private Date fechaContabilizacionPropietario;
@@ -364,7 +369,15 @@ public class ExpedienteComercial implements Serializable, Auditable {
 		this.motivoAnulacion = motivoAnulacion;
 	}
 	
-    public List<Posicionamiento> getPosicionamientos() {
+    public DDMotivoAnulacionOferta getMotivoAnulacionAlquiler() {
+		return motivoAnulacionAlquiler;
+	}
+
+	public void setMotivoAnulacionAlquiler(DDMotivoAnulacionOferta motivoAnulacionAlquiler) {
+		this.motivoAnulacionAlquiler = motivoAnulacionAlquiler;
+	}
+
+	public List<Posicionamiento> getPosicionamientos() {
 		return posicionamientos;
 	}
 

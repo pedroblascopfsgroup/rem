@@ -24,6 +24,8 @@ public class DtoExpedienteHistScoring extends WebDto {
 	private String docScoring;
 	private Integer nMesesFianza;
 	private Long importeFianza;
+	private Long identificador;
+	private String idActivo;
 	
 	
 	public Date getFechaSancion() {
@@ -61,6 +63,18 @@ public class DtoExpedienteHistScoring extends WebDto {
 	}
 	public void setImporteFianza(Long importeFianza) {
 		this.importeFianza = importeFianza;
+	}
+	public Long getIdentificador() {
+		return identificador;
+	}
+	public void setIdentificador(Long identificador) {
+		this.identificador = identificador;
+	}
+	public String getIdActivo() {
+		return idActivo;
+	}
+	public void setIdActivo(String idActivo) {
+		this.idActivo = idActivo;
 	}
 	
 	

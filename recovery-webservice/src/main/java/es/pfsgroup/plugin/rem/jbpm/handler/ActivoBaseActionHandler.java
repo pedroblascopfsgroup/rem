@@ -25,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import es.capgemini.devon.bpm.ProcessManager;
+import es.capgemini.devon.exception.UserException;
 import es.capgemini.devon.utils.BPMUtils;
 import es.capgemini.devon.utils.DbIdContextHolder;
 import es.capgemini.pfs.BPMContants;
@@ -83,6 +84,7 @@ public abstract class ActivoBaseActionHandler implements ActionHandler {
     private static final String CODIGO_T004_AUTORIZACION_BANKIA = "T004_AutorizacionBankia";
     private static final String CODIGO_T004_AUTORIZACION_PROPIETARIO = "T004_AutorizacionPropietario";
     private static final String CODIGO_T004_RESULTADO_TARIFICADA = "T004_ResultadoTarificada";
+    private static final String CODIGO_T004_RESULTADO_NOTARIFICADA = "T004_ResultadoNoTarificada";
     
     protected final Log logger = LogFactory.getLog(getClass());
 
@@ -560,7 +562,10 @@ public abstract class ActivoBaseActionHandler implements ActionHandler {
         try {
             run(executionContext);
             transactionManager.commit(transaction);
-        } catch (Exception e) {
+        } catch (UserException e) {
+        	transactionManager.rollback(transaction);
+            throw e;
+		}catch (Exception e) {
             logger.error(e);
             transactionManager.rollback(transaction);
             throw e;
@@ -696,7 +701,8 @@ public abstract class ActivoBaseActionHandler implements ActionHandler {
 
 		if(!Checks.esNulo(tareaExterna) && !Checks.esNulo(tareaExterna.getTareaProcedimiento()) && 
 				(!tareaExterna.getTareaProcedimiento().getTipoProcedimiento().getCodigo().equals("T004") ||
-				(CODIGO_T004_RESULTADO_TARIFICADA.equals(tareaExterna.getTareaProcedimiento().getCodigo()))||		
+				(CODIGO_T004_RESULTADO_TARIFICADA.equals(tareaExterna.getTareaProcedimiento().getCodigo()))||
+				(CODIGO_T004_RESULTADO_NOTARIFICADA.equals(tareaExterna.getTareaProcedimiento().getCodigo()))||
 				(CODIGO_T004_AUTORIZACION_PROPIETARIO.equals(tareaExterna.getTareaProcedimiento().getCodigo()) && DDCartera.CODIGO_CARTERA_LIBERBANK.equals(activo.getCartera().getCodigo())))){
 			supervisor = userAssigantionService.getSupervisor(tareaExterna);
 			Usuario gestor = userAssigantionService.getUser(tareaExterna); 

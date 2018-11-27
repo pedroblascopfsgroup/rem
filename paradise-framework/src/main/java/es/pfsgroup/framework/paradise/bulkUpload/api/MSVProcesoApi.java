@@ -41,7 +41,7 @@ public interface MSVProcesoApi {
 	List<DtoMSVProcesoMasivo> mostrarProcesos();
 
     /**
-     * Esta operación de negocio devuelve una lista de procesos de operaciones masivas.
+     * Esta operaciÃ³n de negocio devuelve una lista de procesos de operaciones masivas.
      * 
      * @param dto
      * @return Devuelve un objeto Page 

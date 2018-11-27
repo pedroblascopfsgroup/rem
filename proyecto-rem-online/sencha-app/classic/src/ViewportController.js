@@ -20,7 +20,7 @@ Ext.define('HreRem.view.ViewportController', {
     },
 
     setCurrentView: function(hashTag) {
-    	hashTag = (hashTag || '').toLowerCase();
+        hashTag = (hashTag || '').toLowerCase();
         var me = this,
         refs = me.getReferences(),
         mainCard = refs.mainCardPanel,
@@ -342,7 +342,7 @@ Ext.define('HreRem.view.ViewportController', {
         Ext.Ajax.request({
 	        url : urlLogout,
 	        success : function(response) {
-	                window.location = urlLogout;
+	        		window.location = $AC.getWebPath() + 'js/plugin/rem/index.jsp?logout';
 	        }
         });
     }

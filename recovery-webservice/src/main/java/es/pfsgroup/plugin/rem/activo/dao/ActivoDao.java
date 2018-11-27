@@ -187,6 +187,8 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	 */
 	Boolean publicarActivoSinHistorico(Long idActivo, String username, String eleccionUsuarioTipoPublicacionAlquiler);
 
+	Page getListHistoricoOcupacionesIlegalesByActivo(WebDto dto, Long idActivo);
+
 
 
 }

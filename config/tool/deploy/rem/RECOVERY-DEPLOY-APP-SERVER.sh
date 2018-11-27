@@ -26,8 +26,12 @@ if [ "$1" == "val04" ] ; then
     BASE_DIR=/home/map019/	
 fi
 
+if [ "$1" == "val06" ] ; then
+    BASE_DIR=/recovery/map023/app-server	
+fi
+
 if [ "$1" == "formacion" ] ; then
-    BASE_DIR=/recovery/map018/app-server/
+    BASE_DIR=/recovery/map018/app-server
 fi
 
 echo "Copiando fichero de configuración ..."

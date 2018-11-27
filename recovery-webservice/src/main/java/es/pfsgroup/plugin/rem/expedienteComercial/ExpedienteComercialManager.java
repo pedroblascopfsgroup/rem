@@ -6594,7 +6594,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		listaHistoricoScoring = genericDao.getList(HistoricoScoringAlquiler.class, filtro);
 		ExpedienteComercial exp=null;
 		DtoAdjunto adjFinal = new DtoAdjunto();
-		if(!Checks.esNulo(listaHistoricoScoring)) {
+		if(!Checks.estaVacio(listaHistoricoScoring)) {
 			exp=listaHistoricoScoring.get(0).getScoringAlquiler().getExpediente();
 		}
 		if(!Checks.esNulo(exp)) {

@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=JOSEVI JIMENEZ
---## FECHA_CREACION=20170728
+--## AUTOR=pier gotta
+--## FECHA_CREACION=20181126
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-2551

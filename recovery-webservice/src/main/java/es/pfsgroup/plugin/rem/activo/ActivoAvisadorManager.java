@@ -234,6 +234,21 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 			}
 		}
 		
+
+		// Aviso 13: Estado activo afecto por GENCAT / bloqueado GENCAT
+		if(!Checks.esNulo(activo)) {
+			DtoAviso dtoAviso = new DtoAviso();
+			if (activoDao.isActivoBloqueadoGENCAT(activo.getId())) {
+				dtoAviso.setDescripcion("Activo bloqueado por GENCAT");
+				dtoAviso.setId(String.valueOf(id));
+				listaAvisos.add(dtoAviso);
+			} else if(activoDao.isActivoAfectoGENCAT(activo.getId())) {
+				dtoAviso.setDescripcion("Activo afecto por GENCAT");
+				dtoAviso.setId(String.valueOf(id));
+				listaAvisos.add(dtoAviso);
+			}
+		}
+		
 		return listaAvisos;
 		//activoDao.getListActivos(id, usuarioLogado);
 	}

@@ -241,10 +241,10 @@ public class AgrupacionAdapter {
 				.getListAgrupaciones(dtoAgrupacionFilter, usuarioLogado).getResults().get(0);
 
 		try {
-
 			BeanUtils.copyProperties(dtoAgrupacion, agrupacion);
 			BeanUtils.copyProperty(dtoAgrupacion, "numeroPublicados", agrupacionVista.getPublicados());
 			BeanUtils.copyProperty(dtoAgrupacion, "numeroActivos", agrupacionVista.getActivos());
+			
 
 			if (agrupacion.getTipoAgrupacion() != null) {
 
@@ -287,6 +287,8 @@ public class AgrupacionAdapter {
 						BeanUtils.copyProperty(dtoAgrupacion, "codigoGestorComercialBackOffice",
 								agrupacionTemp.getUsuarioGestorComercialBackOffice().getId());
 					}
+					
+					BeanUtils.copyProperty(dtoAgrupacion, "activosGencat", activoDao.countActivosAfectoGENCAT(agrupacion.getId()));
 				}
 
 				// Si es de tipo 'Asistida'.
@@ -360,6 +362,8 @@ public class AgrupacionAdapter {
 						BeanUtils.copyProperty(dtoAgrupacion, "provinciaCodigo",
 								agrupacionTemp.getProvincia().getCodigo());
 					}
+					
+					BeanUtils.copyProperty(dtoAgrupacion, "activosGencat", activoDao.countActivosAfectoGENCAT(agrupacion.getId()));
 
 					// SI ES TIPO PROYECTO
 				} else if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_PROYECTO)) {

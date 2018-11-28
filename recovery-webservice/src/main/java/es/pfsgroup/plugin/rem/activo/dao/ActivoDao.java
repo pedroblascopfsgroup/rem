@@ -185,6 +185,33 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	Boolean publicarAgrupacionSinHistorico(Long idAgrupacion, String username, String eleccionUsuarioTipoPublicacionAlquiler);
 
 	public List<VOfertasTramitadasPendientesActivosAgrupacion> getListOfertasTramitadasPendientesActivo(Long idActivo);
+	
+	/**
+	 * Comprueba pasando el id del activo si el activo esta afecto por GENCAT
+	 * @param idActivo
+	 * @return boolean true or false
+	 */
+	Boolean isActivoAfectoGENCAT(Long idActivo);
+	
+	/**
+	 * Comprueba pasando el id del activo si el activo esta bloqueado por GENCAT
+	 * @param idActivo
+	 * @return boolean true or false
+	 */
+	Boolean isActivoBloqueadoGENCAT(Long idActivo);
+	
+	/**
+	 * Cuenta el numero de activos afecto Gencat que estan presentes en una agrupacion
+	 * @param idAgrupacion
+	 * @return int n de activos
+	 */
+	int countActivosAfectoGENCAT(Long idAgrupacion);
 
+	/**
+	 * Comprueba en un activo si tiene ofertas de venta.
+	 * @param idActivo
+	 * @return boolean true or false
+	 */
+	Boolean existenOfertasVentaActivo(Long idActivo);
 
 }

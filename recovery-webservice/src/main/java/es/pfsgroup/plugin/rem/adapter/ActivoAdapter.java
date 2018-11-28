@@ -2710,6 +2710,16 @@ public class ActivoAdapter {
 	public boolean actualizarEstadoPublicacionActivo(Long idActivo) {
 		return activoEstadoPublicacionApi.actualizarEstadoPublicacionDelActivoOrAgrupacionRestringidaSiPertenece(idActivo);
 	}
+	
+	@Transactional(readOnly = false)
+	public boolean actualizarEstadoPublicacionActivo(Long idActivo, Boolean asincrono) {
+		if(asincrono){
+			return false;
+		}else{
+			return activoEstadoPublicacionApi.actualizarEstadoPublicacionDelActivoOrAgrupacionRestringidaSiPertenece(idActivo);
+		}
+		
+	}
 
 	@Transactional(readOnly = false)
 	public boolean guardarCondicionantesDisponibilidad(Long idActivo, DtoCondicionantesDisponibilidad dto) {

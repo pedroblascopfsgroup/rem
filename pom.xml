@@ -647,7 +647,6 @@
 		<module>recovery-mejoras-plugin</module>
 		<module>recovery-calendario-plugin</module>
 		<module>recovery-nuevoModeloBienesCommon-plugin</module>
-		<module>recovery-nuevoModeloBienes-plugin</module>
 		<module>recovery-plazasJuzgados-plugin</module>
 		<module>recovery-plazosExterna-plugin</module>
 		<module>recovery-procedimientos-bpm</module>
@@ -731,6 +730,8 @@
 				<activeByDefault>false</activeByDefault>
 			</activation>
 			<modules>
+				<module>recovery-coreextension-plugin</module>
+				<module>recovery-agendaMultifuncion-plugin</module>
 				<module>proyecto-rem-online</module>
 				<module>recovery-webservice</module>
 				<module>paradise-framework</module>

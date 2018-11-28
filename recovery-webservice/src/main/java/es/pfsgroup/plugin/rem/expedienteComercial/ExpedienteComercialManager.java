@@ -1269,7 +1269,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 	@Override
 	@Transactional(readOnly = false)
-	public String uploadDocumento(WebFileItem fileItem, Long idDocRestClient, ExpedienteComercial expedienteComercialEntrada, String matricula) throws Exception {
+	public String uploadDocumento(WebFileItem fileItem, Long idDocRestClient,
+			ExpedienteComercial expedienteComercialEntrada, String matricula) throws Exception {
 		ExpedienteComercial expedienteComercial;
 		DDTipoDocumentoExpediente tipoDocumento = null;
 
@@ -1292,54 +1293,52 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 
 		// Subida de adjunto al Expediente Comercial
-		try {
-			ActivoAdjuntoActivo adjuntoActivo = null;
+		ActivoAdjuntoActivo adjuntoActivo = null;
 
-			if (fileItem.getFileItem().getLength() == 0) {
-				throw new JsonViewerException("Está intentando adjuntar un fichero vacio");
-			}
+		if (fileItem.getFileItem().getLength() == 0) {
+			throw new JsonViewerException("Está intentando adjuntar un fichero vacio");
+		}
 
-			Adjunto adj = uploadAdapter.saveBLOB(fileItem.getFileItem());
+		Adjunto adj = uploadAdapter.saveBLOB(fileItem.getFileItem());
 
-			AdjuntoExpedienteComercial adjuntoExpediente = new AdjuntoExpedienteComercial();
-			adjuntoExpediente.setAdjunto(adj);
+		AdjuntoExpedienteComercial adjuntoExpediente = new AdjuntoExpedienteComercial();
+		adjuntoExpediente.setAdjunto(adj);
 
-			adjuntoExpediente.setExpediente(expedienteComercial);
+		adjuntoExpediente.setExpediente(expedienteComercial);
 
-			// Establecer tipo y subtipo del adjunto a subir.
-			adjuntoExpediente.setTipoDocumentoExpediente(tipoDocumento);
+		// Establecer tipo y subtipo del adjunto a subir.
+		adjuntoExpediente.setTipoDocumentoExpediente(tipoDocumento);
 
-			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("subtipo"));
-			adjuntoExpediente.setSubtipoDocumentoExpediente(genericDao.get(DDSubtipoDocumentoExpediente.class, filtro));
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("subtipo"));
+		adjuntoExpediente.setSubtipoDocumentoExpediente(genericDao.get(DDSubtipoDocumentoExpediente.class, filtro));
 
-			adjuntoExpediente.setContentType(fileItem.getFileItem().getContentType());
-			adjuntoExpediente.setTamanyo(fileItem.getFileItem().getLength());
-			adjuntoExpediente.setNombre(fileItem.getFileItem().getFileName());
-			adjuntoExpediente.setDescripcion(fileItem.getParameter("descripcion"));
-			adjuntoExpediente.setFechaDocumento(new Date());
-			adjuntoExpediente.setIdDocRestClient(idDocRestClient);
-			Auditoria.save(adjuntoExpediente);
+		adjuntoExpediente.setContentType(fileItem.getFileItem().getContentType());
+		adjuntoExpediente.setTamanyo(fileItem.getFileItem().getLength());
+		adjuntoExpediente.setNombre(fileItem.getFileItem().getFileName());
+		adjuntoExpediente.setDescripcion(fileItem.getParameter("descripcion"));
+		adjuntoExpediente.setFechaDocumento(new Date());
+		adjuntoExpediente.setIdDocRestClient(idDocRestClient);
+		Auditoria.save(adjuntoExpediente);
 
-			expedienteComercial.getAdjuntos().add(adjuntoExpediente);
+		expedienteComercial.getAdjuntos().add(adjuntoExpediente);
 
-			genericDao.save(ExpedienteComercial.class, expedienteComercial);
+		genericDao.save(ExpedienteComercial.class, expedienteComercial);
 
-			for (ActivoOferta activoOferta : expedienteComercial.getOferta().getActivosOferta()) {
-				if (!Checks.esNulo(adjuntoExpediente) && !Checks.esNulo(adjuntoExpediente.getSubtipoDocumentoExpediente()) && !Checks.esNulo(adjuntoExpediente.getSubtipoDocumentoExpediente()
-						.getMatricula())) {
-					Activo activo = activoOferta.getPrimaryKey().getActivo();
-					activoAdapter.uploadDocumento(fileItem, activo, adjuntoExpediente.getSubtipoDocumentoExpediente().getMatricula());
+		for (ActivoOferta activoOferta : expedienteComercial.getOferta().getActivosOferta()) {
+			if (!Checks.esNulo(adjuntoExpediente) && !Checks.esNulo(adjuntoExpediente.getSubtipoDocumentoExpediente())
+					&& !Checks.esNulo(adjuntoExpediente.getSubtipoDocumentoExpediente().getMatricula())) {
+				Activo activo = activoOferta.getPrimaryKey().getActivo();
+				activoAdapter.uploadDocumento(fileItem, activo,
+						adjuntoExpediente.getSubtipoDocumentoExpediente().getMatricula());
+				if (activo.getAdjuntos() != null && activo.getAdjuntos().size() > 0) {
 					adjuntoActivo = activo.getAdjuntos().get(activo.getAdjuntos().size() - 1);
 				}
 			}
+		}
 
-			if (!Checks.esNulo(adjuntoActivo)) {
-				adjuntoExpediente.setIdDocRestClient(adjuntoActivo.getIdDocRestClient());
-				genericDao.update(AdjuntoExpedienteComercial.class, adjuntoExpediente);
-			}
-
-		} catch (Exception e) {
-			logger.error("Error en ExpedienteComercialManager", e);
+		if (!Checks.esNulo(adjuntoActivo)) {
+			adjuntoExpediente.setIdDocRestClient(adjuntoActivo.getIdDocRestClient());
+			genericDao.update(AdjuntoExpedienteComercial.class, adjuntoExpediente);
 		}
 
 		return null;

@@ -2,9 +2,11 @@ package es.capgemini.pfs.dsm;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.SQLFeatureNotSupportedException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.logging.Logger;
 
 import javax.annotation.Resource;
 
@@ -88,6 +90,12 @@ public class EntityDataSource extends AbstractRoutingDataSource {
             // transaccionales si aplica
             log.debug("***&*** Ha llamado a EntityDataSource.getConnection() ");
             return transactionalBasicDataSourceWrapper.getConnectionTx(super.getConnection(username, password));
+	}
+
+	@Override
+	public Logger getParentLogger() throws SQLFeatureNotSupportedException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 }

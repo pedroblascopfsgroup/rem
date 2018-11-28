@@ -554,21 +554,10 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			return (Ext.isEmpty(comboEstadoAlquiler) && comboEstadoAlquiler == CONST.COMBO_ESTADO_ALQUILER["LIBRE"]);
 		},
 
-		esEditableComboOcupacion: function(get){
+		esTipoEstadoAlquilerAlquilado: function(get){
 			var estadoAlquilerCodigo = get('situacionPosesoria.tipoEstadoAlquiler');
 
-			if(!Ext.isEmpty(estadoAlquilerCodigo)){
-				 return (CONST.COMBO_ESTADO_ALQUILER["LIBRE"] == estadoAlquilerCodigo);
-			}
-		},
-
-		enableComboEstadoAlquiler: function(get){
-			var estadoComboOcupacion = get('situacionPosesoria.ocupado');
-			var estadoComboConTitulo = get('situacionPosesoria.conTitulo');
-
-			if(!Ext.isEmpty(estadoComboOcupacion) && !Ext.isEmpty(estadoComboConTitulo)){
-				return (CONST.COMBO_OCUPACION["SI"] == estadoComboOcupacion && CONST.COMBO_CON_TITULO["SI"] == estadoComboConTitulo);
-			}
+			return (CONST.COMBO_ESTADO_ALQUILER["ALQUILADO"] == estadoAlquilerCodigo);
 		}
 
 	 },

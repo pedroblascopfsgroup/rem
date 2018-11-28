@@ -242,7 +242,7 @@ DECLARE
 		T_TFI('T015_VerificarSeguroRentas'				,'11'		,'textfield'	,'documento'			,'Documento'									,''																			,''															,''					),
 		T_TFI('T015_VerificarSeguroRentas'				,'12'		,'combobox'		,'tipoImpuesto'			,'Tipo impuesto'								,''																			,''															,'DDTiposImpuesto'	),
 		T_TFI('T015_VerificarSeguroRentas'				,'13'		,'numberfield'		,'porcentajeImpuesto'	,'% impuesto'									,''																			,''															,''					),
-		T_TFI('T015_VerificarSeguroRentas'				,'14'		,'combobox'		,'aseguradora'			,'Aseguradora'									,'tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio'				,'valor != null && valor != '''''''' ? true : false'		,'DDSegurosVigentes'),
+		T_TFI('T015_VerificarSeguroRentas'				,'14'		,'comboboxespecial'		,'aseguradora'			,'Aseguradora'									,'tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio'				,'valor != null && valor != '''''''' ? true : false'		,'DDSegurosVigentes'),
 		T_TFI('T015_VerificarSeguroRentas'				,'15'		,'textfield'	,'envioEmail'			,'Envío email póliza seguro'					,''																			,''															,''					),
 		T_TFI('T015_VerificarSeguroRentas'				,'16'		,'textarea'		,'observaciones'		,'Observaciones'								,''																			,''															,''					),
 		

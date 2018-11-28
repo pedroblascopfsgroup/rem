@@ -6794,8 +6794,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					+ "<br><br> Rogamos confirmación del alta.";
 			
 			List<AdjuntoExpedienteComercial> adjuntosRecuperados = genericDao.getListOrdered(AdjuntoExpedienteComercial.class, new Order(OrderType.DESC,"auditoria.fechaCrear"), 
-					genericDao.createFilter(FilterType.EQUALS, "expediente.id", idExpediente), 
-					genericDao.createFilter(FilterType.EQUALS, "adjuntos.subtipoDocumentoExpediente.codigo", DDSubtipoDocumentoExpediente.CODIGO_CONTRATO_ALQUILER));
+					genericDao.createFilter(FilterType.EQUALS, "expediente", expediente), 
+					genericDao.createFilter(FilterType.EQUALS, "subtipoDocumentoExpediente.codigo", DDSubtipoDocumentoExpediente.CODIGO_CONTRATO));
 
 			Adjunto adjuntoLocal = adjuntosRecuperados.get(0).getAdjunto();
 			

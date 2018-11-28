@@ -85,7 +85,7 @@ Ext.define('HreRem.view.activos.detalle.DatosPatrimonio', {
 							bind: {
 								store: '{comboEstadoAlquiler}',
 								value: '{patrimonio.estadoAlquiler}',
-								disabled: '{enableComboEstadoAlquiler}'
+								disabled: false
 							},
 							listeners: {
 								change:'esEditableChkYcombo'

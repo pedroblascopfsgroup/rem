@@ -109,10 +109,26 @@ public class TabActivoPatrimonio implements TabActivoService {
 		if(Checks.esNulo(activoPatrimonio)) {
 			activoPatrimonio = new ActivoPatrimonio();
 			activoPatrimonio.setActivo(activo);
-			activoPatrimonio.setCheckHPM(activoPatrimonioDto.getChkPerimetroAlquiler());
+			if(!Checks.esNulo(activoPatrimonioDto.getChkPerimetroAlquiler())) {
+				activoPatrimonio.setCheckHPM(activoPatrimonioDto.getChkPerimetroAlquiler());
+			}
 
 			if (!Checks.esNulo(activoPatrimonioDto.getComboRentaAntigua())){
 				activoPatrimonio.setComboRentaAntigua(activoPatrimonioDto.getComboRentaAntigua());
+			}
+
+			if (!Checks.esNulo(activoPatrimonioDto.getChkSubrogado())){
+				activoPatrimonio.setCheckSubrogado(activoPatrimonioDto.getChkSubrogado());
+			}
+
+			if (!Checks.esNulo(activoPatrimonioDto.getEstadoAlquiler())){
+
+				DDTipoEstadoAlquiler tipoEstadoAlquiler = genericDao.get(DDTipoEstadoAlquiler.class, genericDao.createFilter(FilterType.EQUALS, "codigo", activoPatrimonioDto.getEstadoAlquiler()));
+
+				if (!Checks.esNulo(tipoEstadoAlquiler)) {
+					activoPatrimonio.setTipoEstadoAlquiler(tipoEstadoAlquiler);
+				}
+
 			}
 
 			if(!Checks.esNulo(activoPatrimonioDto.getCodigoAdecuacion())) {

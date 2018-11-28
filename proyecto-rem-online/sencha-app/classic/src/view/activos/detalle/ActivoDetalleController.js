@@ -3648,7 +3648,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
         var comboTipoInquilino = me.lookupReference('comboTipoInquilinoRef');
         var comboTipoAlquiler = me.lookupReference('comboTipoAlquilerRef');
         var comboAdecuacion = me.lookupReference('comboAdecuacionRef');
-        var comboOcupacion = me.getViewModel().get('activo.ocupado');
 
         var comboValue = comboEstadoAlquiler.value;
         chkPerimetroAlquiler.setDisabled(true);
@@ -3658,10 +3657,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
                 chkPerimetroAlquiler.setValue(true);
                 chkPerimetroAlquiler.setDisabled(true);
                 comboTipoInquilino.setDisabled(false);
-
-                if(!Ext.isEmpty(comboOcupacion) && CONST.COMBO_SI_NO["SI"]== comboOcupacion){
-                    comboEstadoAlquiler.setDisabled(true);
-                }
             } else {
                 chkPerimetroAlquiler.setValue(false);
                 chkPerimetroAlquiler.setDisabled(false);
@@ -3673,5 +3668,14 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
             comboTipoAlquiler.reset();
             comboAdecuacion.reset();
         }
-    }
+    },
+    
+    onChangeComboOcupado: function(combo, newValue, oldValue, eOpts) {
+    	var me = this;
+    	var tipoEstadoAlquiler = me.getViewModel().get('situacionPosesoria.tipoEstadoAlquiler');
+    	
+		if (tipoEstadoAlquiler != CONST.COMBO_ESTADO_ALQUILER['ALQUILADO'] && newValue == CONST.COMBO_OCUPACION['SI']) {
+			combo.up('formBase').down('[reference=comboSituacionPosesoriaConTitulo]').setValue(CONST.COMBO_CON_TITULO['NO']);
+		}
+	}
 });

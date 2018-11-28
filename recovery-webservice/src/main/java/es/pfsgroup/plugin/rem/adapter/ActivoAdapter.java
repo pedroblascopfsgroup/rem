@@ -3047,9 +3047,10 @@ public class ActivoAdapter {
 
 		Filter f1 = genericDao.createFilter(FilterType.EQUALS, "codigo", tipoGestorCodigo);
 		EXTDDTipoGestor tipoGestor = genericDao.get(EXTDDTipoGestor.class, f1);
-		Filter f2 = genericDao.createFilter(FilterType.EQUALS, "activo", activo);
+		Filter f2 = genericDao.createFilter(FilterType.EQUALS, "activo", activo); 
 		Filter f3 = genericDao.createFilter(FilterType.EQUALS, "tipoGestor",tipoGestor);
-		GestorActivo actGest = genericDao.get(GestorActivo.class, f2,f3);
+		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+		GestorActivo actGest = genericDao.get(GestorActivo.class, f2,f3, filtroBorrado);
 
 		if(!Checks.esNulo(actGest) && !Checks.esNulo(activo) && !Checks.esNulo(tipoGestor)){
 			GestorEntidadDto dtoGestor = new GestorEntidadDto();

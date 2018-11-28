@@ -2218,4 +2218,64 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		return resultado;
 		
 	}
+	
+	@Override
+	public Boolean isActivoPublicadoVenta(String numActivo) {
+		if(Checks.esNulo(numActivo))
+			return false;
+
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1)"
+				+ "			FROM ACT_ACTIVO ACT, ACT_APU_ACTIVO_PUBLICACION APU, DD_EPV_ESTADO_PUB_VENTA EPV"
+				+ "   		WHERE ACT.ACT_ID = APU.ACT_ID"
+				+ "			AND APU.DD_EPV_ID = EPV.DD_EPV_ID"
+				+ "			AND EPV.DD_EPV_CODIGO = '03'"
+				+ "         AND ACT.ACT_NUM_ACTIVO = " + numActivo + " ");
+
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean isActivoOcultoVentaPorMotivosManuales(String numActivo) {
+		if(Checks.esNulo(numActivo))
+			return false;
+		
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1)"
+				+ "			FROM ACT_ACTIVO ACT, ACT_APU_ACTIVO_PUBLICACION APU, DD_MTO_MOTIVOS_OCULTACION MTO"
+				+ "			WHERE ACT.ACT_ID = APU.ACT_ID"
+				+ "			AND APU.DD_MTO_V_ID = MTO.DD_MTO_ID"
+				+ "			AND MTO.DD_MTO_CODIGO IN ('09','10','11','12')"
+				+ "			AND ACT.ACT_NUM_ACTIVO = " + numActivo + " ");
+		
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean isActivoPublicadoAlquiler(String numActivo) {
+		if(Checks.esNulo(numActivo))
+			return false;
+
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1)"
+				+ "			FROM ACT_ACTIVO ACT, ACT_APU_ACTIVO_PUBLICACION APU, DD_EPA_ESTADO_PUB_ALQUILER EPA"
+				+ "   		WHERE ACT.ACT_ID = APU.ACT_ID"
+				+ "			AND APU.DD_EPA_ID = EPA.DD_EPA_ID"
+				+ "			AND EPA.DD_EPA_CODIGO = '03'"
+				+ "         AND ACT.ACT_NUM_ACTIVO = " + numActivo + " ");
+
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean isActivoOcultoAlquilerPorMotivosManuales(String numActivo) {
+		if(Checks.esNulo(numActivo))
+			return false;
+		
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1)"
+				+ "			FROM ACT_ACTIVO ACT, ACT_APU_ACTIVO_PUBLICACION APU, DD_MTO_MOTIVOS_OCULTACION MTO"
+				+ "			WHERE ACT.ACT_ID = APU.ACT_ID"
+				+ "			AND APU.DD_MTO_A_ID = MTO.DD_MTO_ID"
+				+ "			AND MTO.DD_MTO_CODIGO IN ('09','10','11','12')"
+				+ "			AND ACT.ACT_NUM_ACTIVO = " + numActivo + " ");
+		
+		return !"0".equals(resultado);
+	}
 }

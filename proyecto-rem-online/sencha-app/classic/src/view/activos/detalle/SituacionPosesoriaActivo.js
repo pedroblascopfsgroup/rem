@@ -183,28 +183,20 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 								readOnly: '{!activo.aplicaGestion}'
 							}
 						},
-		                { 
+		                {
 
 				        	xtype: 'comboboxfieldbase',
 				        	allowBlank: false,
-				        	reference: "comboOcupadoRef",
+				        	reference: "comboOcupadoRef", 
 							fieldLabel: HreRem.i18n('fieldlabel.ocupado'),
 				        	bind: {
 			            		store: '{comboSiNoRem}',
 			            		value : '{situacionPosesoria.ocupado}',
-			            		disabled: '{esEditableComboOcupacion}'
+			            		disabled: '{esTipoEstadoAlquilerAlquilado}', 
+			            		readOnly: '{esTipoEstadoAlquilerAlquilado}'
 			            	},
 			            	listeners: {
-			            		change: function(combo, value) {
-			            			var me = this;
-
-			            			if(value == CONST.COMBO_OCUPACION['SI']) {
-			            				me.up('formBase').down('[reference=comboSituacionPosesoriaConTitulo]').setValue(CONST.COMBO_CON_TITULO['NO']);
-			            				me.up('formBase').down('[reference=comboSituacionPosesoriaConTitulo]').setDisabled(true);
-			            			} else if (value == CONST.COMBO_OCUPACION['NO']){
-			            				me.up('formBase').down('[reference=comboSituacionPosesoriaConTitulo]').setDisabled(true);
-			            			}
-			            		}
+			            		change: 'onChangeComboOcupado'
 			            	}
 				        },				      
 				        { 
@@ -230,7 +222,9 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 							fieldLabel: HreRem.i18n('fieldlabel.con.titulo'),
 				        	bind: {
 			            		store: '{comboSiNoRem}',
-			            		value: '{situacionPosesoria.conTitulo}'
+			            		value: '{situacionPosesoria.conTitulo}',
+			            		disabled: '{esTipoEstadoAlquilerAlquilado}',
+			            		readOnly: '{esTipoEstadoAlquilerAlquilado}'  
 			            	}
 				        },
 				        {

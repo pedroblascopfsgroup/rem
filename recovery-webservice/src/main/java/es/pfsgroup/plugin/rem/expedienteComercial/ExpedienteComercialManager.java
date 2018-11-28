@@ -203,6 +203,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	private static final String PROVEDOR_NO_EXISTE_O_DISTINTO_TIPO = "El proveedor indicado no existe, o no es del tipo indicado";
 	private static final int NUMERO_DIAS_VENCIMIENTO = 45;
 	private static final String PERFIL_GESTOR_FORMALIZACION = "HAYAGESTFORM";
+	private static final String PERFIL_GESTORIA_FORMALIZACION = "GESTIAFORM";
 	private static final String PERFIL_SUPERVISOR_FORMALIZACION = "HAYASUPFORM";
 	private static final String PERFIL_GESTOR_MINUTAS = "GESMIN";
 	private static final String PERFIL_SUPERVISOR_MINUTAS = "SUPMIN";
@@ -5111,7 +5112,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 							if (DDCartera.CODIGO_CARTERA_CAJAMAR.equals(expediente.getOferta().getActivoPrincipal().getCartera().getCodigo())) {
 								if (!genericAdapter.tienePerfil(PERFIL_GESTOR_MINUTAS, usuarioLogado) && !genericAdapter.tienePerfil(PERFIL_SUPERVISOR_MINUTAS, usuarioLogado) && !genericAdapter
-								.isSuper(usuarioLogado) && !genericAdapter.tienePerfil(PERFIL_GESTOR_FORMALIZACION, usuarioLogado)) {
+								.isSuper(usuarioLogado) && !genericAdapter.tienePerfil(PERFIL_GESTOR_FORMALIZACION, usuarioLogado)
+								&& !genericAdapter.tienePerfil(PERFIL_GESTORIA_FORMALIZACION, usuarioLogado)) {
 									codigoError = "imposible.bloquear.expediente.cajamar";
 
 								} else {

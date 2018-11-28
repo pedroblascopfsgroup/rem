@@ -49,8 +49,6 @@ public class MSVSituacionPlusvaliaExcelValidator extends MSVExcelValidatorAbstra
 	public static final String AUTOLIQUIDACION_FORMAT = "La columna autoliquidación no tiene el formato correcto";
 
 	public static final String FECHA_ESCRITO= "EL formato de la fecha de escrito del ayuntamiento no es correcto ";
-	public static final String AUTOLIQUIDACION= "Los unicos valores validos  para la autoliquidacion son 0 y 1 =";
-	public static final String EXENTO= "Los unicos valores validos para el exento son 0 y 1 =";
 
 
 	
@@ -127,7 +125,7 @@ public class MSVSituacionPlusvaliaExcelValidator extends MSVExcelValidatorAbstra
 
 			mapaErrores.put(FECHA_ESCRITO, isColumnNotDateByRows(exc, COL_NUM.FECHA_ESCRITO_AYTO));
 			
-				if (!mapaErrores.get(ACTIVE_EXISTS).isEmpty() || !mapaErrores.get(FECHA_ESCRITO).isEmpty() || !mapaErrores.get(AUTOLIQUIDACION).isEmpty() || !mapaErrores.get(AUTOLIQUIDACION).isEmpty()) 
+				if (!mapaErrores.get(ACTIVE_EXISTS).isEmpty() || !mapaErrores.get(FECHA_ESCRITO).isEmpty() || !mapaErrores.get(AUTOLIQUIDACION_FORMAT).isEmpty() || !mapaErrores.get(EXENTO_FORMAT).isEmpty()) 
 			 {
 
 					dtoValidacionContenido.setFicheroTieneErrores(true);

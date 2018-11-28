@@ -990,7 +990,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 																	 	xtype:'datefieldbase',
 																	 	reference: 'tipoEscaladoIncremento',
 																	 	fieldLabel:  HreRem.i18n('fieldlabel.incremento.renta'),
-											        					bind: '{condiciones.fechaIncrementoRentaFijo}',
+											        					bind: '{condiciones.fechaIncrementoRentaFijo}'
 															        }
 														]
 													

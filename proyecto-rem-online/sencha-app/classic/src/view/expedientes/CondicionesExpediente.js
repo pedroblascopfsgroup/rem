@@ -20,7 +20,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 
         var me = this;
 		me.setTitle(HreRem.i18n('title.condiciones'));
-        var items= [
+        var items = [
 						{   
 							xtype:'fieldset',
 							collapsible: true,
@@ -506,6 +506,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 														{
 												        	xtype:'fieldset',
 												        	height: 100,
+												        	width: 825,
 												        	margin: '0 10 10 0',
 												        	layout: {
 														        type: 'table',
@@ -537,13 +538,13 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 																	 		symbol: HreRem.i18n('symbol.euro'),				
 											                				bind: '{condiciones.importeFianza}',
 											                				readOnly: false
-											                				
 														                }
 															]
 														},	
 														{
 															xtype:'fieldset',
 															height: 100,
+												        	width: 825,
 												        	margin: '0 10 10 0',
 												        	layout: {
 														        type: 'table',
@@ -576,13 +577,25 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 											                				bind: '{condiciones.importeDeposito}',
 											                				symbol: HreRem.i18n('symbol.euro'),	
 											                				readOnly: false
-											                				
 														                }
 															]
-														},
-												        {
+														}
+											]
+										},				
+										{
+											xtype:'fieldsettable',
+											collapsible: false,
+											border: false,
+					                		layout: {
+										        type: 'table',
+								        		columns: 1
+								        	},
+											defaultType: 'displayfieldbase',				
+											items : [
+														{
 												        	xtype:'fieldset',
-												        	height: 150,
+												        	height: 210,
+												        	width: 825,
 												        	margin: '0 10 10 0',
 												        	layout: {
 														        type: 'table',
@@ -643,145 +656,6 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 														                }
 															]
 												        }
-											]
-										},				
-										{
-											xtype:'fieldsettable',
-											collapsible: false,
-											border: false,
-					                		layout: {
-										        type: 'table',
-								        		columns: 1
-								        	},
-											defaultType: 'displayfieldbase',				
-											items : [
-														{
-												        	xtype:'fieldset',
-												        	height: 370,
-												        	margin: '0 10 10 0',
-												        	layout: {
-														        type: 'table',
-												        		columns: 2
-												        	},
-															title: HreRem.i18n("fieldlabel.fiscales"),
-															items : [
-																	 	{
-																        	xtype: 'comboboxfieldbase',							        	
-																        	fieldLabel:  HreRem.i18n('fieldlabel.tipo.impuesto'),
-																        	bind: {
-															            		store: '{comboTiposImpuesto}',
-															            		value: '{condiciones.tipoImpuestoCodigo}'
-															            	},
-												            				displayField: 'descripcion',
-									    									valueField: 'codigo'
-																        },	
-																        {
-																			xtype: 'numberfieldbase',
-																			reference: 'tipoAplicable',
-																	 		symbol: HreRem.i18n("symbol.porcentaje"),
-																			fieldLabel: HreRem.i18n('fieldlabel.tipo.aplicable'),
-											                				bind: {
-											                					value: '{condiciones.tipoAplicable}'
-											                				}
-														                },
-														                {
-														                	xtype: 'checkboxfieldbase',
-														                	reference: 'renunciaTanteoRetracto',
-														                	fieldLabel:  HreRem.i18n('fieldlabel.renuncia.tanteo.retracto'),
-														                	bind: {
-												        						value: '{condiciones.renunciaTanteo}'
-										            						}
-										            						
-									                					},
-									                					{
-																        	// Esto es un espacio en blanco en el panel ocupando el lugar de un item
-									                					},
-									                					{
-									                						xtype: 'checkboxfieldbase',
-														                	reference: 'carencias',
-														                	fieldLabel:  HreRem.i18n('fieldlabel.carencia'),
-														                	bind: {
-												        						value: '{condiciones.carencia}'
-										            						},
-										            						listeners: {
-										       	                             change: 'onChangeCarencia'
-										       	                         	}
-									                					},
-									                					{		                
-									                						xtype: 'checkboxfieldbase',
-														                	reference: 'bonificacion',
-														                	fieldLabel:  HreRem.i18n('fieldlabel.bonificacion'),
-														                	bind: {
-												        						value: '{condiciones.bonificacion}'							             
-										            						},
-										            						listeners: {
-										            							change: 'onChangeBonificacion'
-										            						}
-										            						
-									                					},
-													                    { 
-																			xtype: 'numberfieldbase',
-																			reference: 'mesesBonificacion',
-																	 		fieldLabel: HreRem.i18n('fieldlabel.duracion.meses'),
-																	 		bind: {
-																	 			value: '{condiciones.mesesBonificacion}',
-																	 			disabled: '{!condiciones.siBonificacion}'
-																	 		}
-														                },
-														                { 
-																			xtype: 'numberfieldbase',
-																			reference: 'mesesCarencia',
-																	 		fieldLabel: HreRem.i18n('fieldlabel.meses'),
-																	 		bind: {
-																	 			value: '{condiciones.mesesCarencia}',
-																	 			disabled: '{!condiciones.siCarencia}'
-																	 		}
-														                },
-														                { 
-																			xtype: 'numberfieldbase',
-																			reference: 'importeBonificacion',
-																	 		fieldLabel: HreRem.i18n('fieldlabel.importe'),
-																	 		symbol: HreRem.i18n('symbol.euro'),				
-											                				bind: {
-											                					value: '{condiciones.importeBonificacion}',
-											                					disabled: '{!condiciones.siBonificacion}'
-											                				}
-														                },
-														                { 
-																			xtype: 'numberfieldbase',
-																			reference: 'importeCarencia',
-																	 		fieldLabel: HreRem.i18n('fieldlabel.importe'),
-																	 		symbol: HreRem.i18n('symbol.euro'),				
-											                				bind: { 
-											                					value: '{condiciones.importeCarencia}',
-											                					disabled: '{!condiciones.siCarencia}'
-											                				}
-														                },
-									                					{
-									                						xtype: 'checkboxfieldbase',
-														                	reference: 'gastosRepercutibles',
-														                	fieldLabel:  HreRem.i18n('fieldlabel.gastos.repercutibles'),
-														                	bind: {
-														                		value: '{condiciones.gastosRepercutibles}'
-														                	},
-														                	listeners: {
-														                		change: 'onChangeRepercutibles'
-														                	}
-									                					},
-									                					{
-												                             xtype: 'textareafieldbase',
-												                             fieldLabel: HreRem.i18n('fieldlabel.comentarios'),
-												                             reference: 'textareafieldcondicioncomentariosgastos',
-												     						 bind:{
-												     							 value:  '{condiciones.repercutiblesComments}',
-												     							 disabled: '{!condiciones.esRepercutible}'
-												     						 },	
-												                             maxWidth: 500,
-												                             maxLength: 200
-													                    }
-									                					
-															]
-												        }
 										    ]
 										}
 								
@@ -793,133 +667,336 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 							xtype:'fieldset',
 							collapsible: true,
 							defaultType: 'displayfieldbase',				
-							title: HreRem.i18n('title.escalado.rentas'),
+							title: HreRem.i18n('fieldlabel.fiscales'),
 							bind: {
 									  hidden: '{esOfertaVenta}'
 							},
+							layout: {
+						        type: 'table',
+				        		columns: 1
+				        	},
 							items : [
 										{
 											xtype:'fieldsettable',
 											collapsible: false,
 											border: false,
-											defaultType: 'displayfieldbase',				
+											defaultType: 'displayfieldbase',
+								        	layout: {
+										        type: 'table',
+								        		columns: 3
+								        	},
 											items : [
 														{
-												        	xtype:'fieldset',
-												        	height: 100,
-												        	margin: '0 10 10 0',
-												        	layout: {
-														        type: 'table',
-												        		columns: 1
-												        	},
-															defaultType: 'textfieldbase',
-															items : [
-																		{
-													        	           	xtype: 'checkboxfieldbase',
-														                	reference: 'checkboxEscaladoFijo',
-														                	fieldLabel:  HreRem.i18n('fieldlabel.fijo'),
-														                	bind: {
-														                		value: '{condiciones.checkFijo}'										             
-														                	},
-														                	listeners: {
-											                					change: 'onCambioCheckEscaladoFijo'
-											                				}
-									                					},
-									                					{	
-									                						xtype:'datefieldbase',
-																		 	reference: 'tipoEscaladoFecha',
-																		 	fieldLabel:  HreRem.i18n('fieldlabel.fecha'),
-												        					bind:'{condiciones.fechaFijo}'
-																        },
-																        {	
-																		 	xtype:'datefieldbase',
-																		 	reference: 'tipoEscaladoIncremento',
-																		 	fieldLabel:  HreRem.i18n('fieldlabel.incremento.renta'),
-												        					bind: '{condiciones.fechaIncrementoRentaFijo}',
-												        					
-																        }
-															]
-														},
+												        	xtype: 'comboboxfieldbase',							        	
+												        	fieldLabel:  HreRem.i18n('fieldlabel.tipo.impuesto'),
+												        	bind: {
+											            		store: '{comboTiposImpuesto}',
+											            		value: '{condiciones.tipoImpuestoCodigo}'
+											            	},
+								            				displayField: 'descripcion',
+															valueField: 'codigo'
+												        },	
 												        {
-												        	xtype:'fieldset',
-												        	height: 100,
-												        	margin: '0 10 10 0',
-												        	layout: {
-														        type: 'table',
-												        		columns: 1
-												        	},
-															defaultType: 'textfieldbase',
-															items : [
-																		{
-													        	           	xtype: 'checkboxfieldbase',
-														                	reference: 'chekboxPorcentual',
-														                	fieldLabel:  HreRem.i18n('fieldlabel.porcentual'),
-														                	bind: {
-														                		value: '{condiciones.checkPorcentual}'									   
-														                	},
-														                	listeners: {
-												                					change: 'onCambioCheckPorcentual'
-												                				}
-									                					},
-									                					{
-													        	           	xtype: 'checkboxfieldbase',
-														                	reference: 'checkboxIPC',
-														                	fieldLabel:  HreRem.i18n('fieldlabel.ipc'),
-														                	bind: {
-														                		value: '{condiciones.checkIPC}'										             
-														                	}
-									                					},
-									                					{
-																			xtype: 'textfieldbase',
-																			reference: 'escaladoRentaPorcentaje',
-																	 		symbol: HreRem.i18n('symbol.porcentaje'),
-																			fieldLabel: HreRem.i18n('fieldlabel.porcentaje'),
-											                				bind:
-											                				{
-														                		value: '{condiciones.porcentaje}'									             
-														                	}
-														                }
-															]
-												        },
-											        	{
-												        	xtype:'fieldset',
-												        	height: 100,
-												        	margin: '0 10 10 0',
-												        	layout: {
-														        type: 'table',
-												        		columns: 1
-												        	},
-															defaultType: 'textfieldbase',
-															items : [
-																		{
-													        	           	xtype: 'checkboxfieldbase',
-														                	reference: 'chekboxRevisionMercado',
-														                	fieldLabel:  HreRem.i18n('fieldlabel.revision.mercado'),
-														                	bind: {
-														                		value: '{condiciones.checkRevisionMercado}'										             
-														                	},
-														                	listeners: {
-											                					change: 'onCambioCheckRevMercado'
-											                				}
-									                					},
-									                					{	
-																		 	xtype:'datefieldbase',
-																		 	reference: 'revisionMercadoFecha',
-																		 	fieldLabel:  HreRem.i18n('fieldlabel.fecha'),
-												        					bind: '{condiciones.revisionMercadoFecha}'
-																        },												        								                
-														                { 
-																			xtype: 'textfieldbase',
-																			reference: 'escaladoRentasMeses',
-																	 		symbol: HreRem.i18n('symbol.meses'),
-																	 		labelSeparator: "",
-																			fieldLabel: HreRem.i18n('fieldlabel.cada'),
-											                				bind: '{condiciones.revisionMercadoMeses}',
-														                }
-															]					        		
-											        	}	
-										    ]
-										}
+															xtype: 'numberfieldbase',
+															reference: 'tipoAplicable',
+													 		symbol: HreRem.i18n("symbol.porcentaje"),
+															fieldLabel: HreRem.i18n('fieldlabel.tipo.aplicable'),
+							                				bind: {
+							                					value: '{condiciones.tipoAplicable}'
+							                				}
+										                },
+										                {
+										                	xtype: 'checkboxfieldbase',
+										                	reference: 'renunciaTanteoRetracto',
+										                	fieldLabel:  HreRem.i18n('fieldlabel.renuncia.tanteo.retracto'),
+										                	bind: {
+								        						value: '{condiciones.renunciaTanteo}'
+						            						}
+						            						
+						            					}
+											]
+									},
+									{
+										xtype:'fieldsettable',
+										collapsible: false,
+										border: false,
+										defaultType: 'displayfieldbase',
+							        	layout: {
+									        type: 'table',
+							        		columns: 3
+							        	},
+										items : [
+													{
+														xtype:'fieldset',
+											        	height: 100,
+											        	width: 550,
+											        	margin: '0 10 10 0',
+											        	layout: {
+													        type: 'table',
+											        		columns: 2
+											        	},
+														defaultType: 'textfieldbase',
+														items : [
+									            					{
+								                						xtype: 'checkboxfieldbase',
+													                	reference: 'carencias',
+													                	fieldLabel:  HreRem.i18n('fieldlabel.carencia'),
+													                	bind: {
+											        						value: '{condiciones.carencia}'
+									            						},
+									            						listeners: {
+									       	                             change: 'onChangeCarencia'
+									       	                         	}
+								                					},
+								                					{ 
+																		xtype: 'numberfieldbase',
+																		reference: 'mesesCarencia',
+																 		fieldLabel: HreRem.i18n('fieldlabel.meses'),
+																 		bind: {
+																 			value: '{condiciones.mesesCarencia}',
+																 			disabled: '{!condiciones.siCarencia}'
+																 		}
+													                },
+													                {
+															        	// Esto es un espacio en blanco en el panel ocupando el lugar de un item
+													                },
+													                { 
+																		xtype: 'numberfieldbase',
+																		reference: 'importeCarencia',
+																 		fieldLabel: HreRem.i18n('fieldlabel.importe'),
+																 		symbol: HreRem.i18n('symbol.euro'),				
+										                				bind: { 
+										                					value: '{condiciones.importeCarencia}',
+										                					disabled: '{!condiciones.siCarencia}'
+										                				}
+													                }
+														]
+													},
+													{
+														xtype:'fieldset',
+											        	height: 100,
+											        	width: 550,
+											        	margin: '0 10 10 0',
+											        	layout: {
+													        type: 'table',
+											        		columns: 2
+											        	},
+														defaultType: 'textfieldbase',
+														items : [
+																	{		                
+								                						xtype: 'checkboxfieldbase',
+													                	reference: 'bonificacion',
+													                	fieldLabel:  HreRem.i18n('fieldlabel.bonificacion'),
+													                	bind: {
+											        						value: '{condiciones.bonificacion}'							             
+									            						},
+									            						listeners: {
+									            							change: 'onChangeBonificacion'
+									            						}
+									            						
+								                					},
+								                					{ 
+																		xtype: 'numberfieldbase',
+																		reference: 'mesesBonificacion',
+																 		fieldLabel: HreRem.i18n('fieldlabel.duracion.meses'),
+																 		bind: {
+																 			value: '{condiciones.mesesBonificacion}',
+																 			disabled: '{!condiciones.siBonificacion}'
+																 		}
+													                },
+													                {
+															        	// Esto es un espacio en blanco en el panel ocupando el lugar de un item
+													                },
+													                { 
+																		xtype: 'numberfieldbase',
+																		reference: 'importeBonificacion',
+																 		fieldLabel: HreRem.i18n('fieldlabel.importe'),
+																 		symbol: HreRem.i18n('symbol.euro'),				
+										                				bind: {
+										                					value: '{condiciones.importeBonificacion}',
+										                					disabled: '{!condiciones.siBonificacion}'
+										                				}
+													                }
+														]
+													
+													},
+													{
+											        	xtype:'fieldset',
+											        	height: 100,
+											        	width: 550,
+											        	margin: '0 10 10 0',
+											        	layout: {
+													        type: 'table',
+											        		columns: 2
+											        	},
+														defaultType: 'textfieldbase',
+														items : [
+																	{
+								                						xtype: 'checkboxfieldbase',
+													                	reference: 'gastosRepercutibles',
+													                	fieldLabel:  HreRem.i18n('fieldlabel.gastos.repercutibles'),
+													                	bind: {
+													                		value: '{condiciones.gastosRepercutibles}'
+													                	},
+													                	listeners: {
+													                		change: 'onChangeRepercutibles'
+													                	}
+								                					},
+								                					{
+											                             xtype: 'textareafieldbase',
+											                             fieldLabel: HreRem.i18n('fieldlabel.comentarios'),
+											                             reference: 'textareafieldcondicioncomentariosgastos',
+											     						 bind:{
+											     							 value:  '{condiciones.repercutiblesComments}',
+											     							 disabled: '{!condiciones.esRepercutible}'
+											     						 },	
+											                             maxWidth: 500,
+											                             maxLength: 200
+												                    }
+														]
+													}
+										]
+	            					},
+									{
+										xtype:'fieldsettable',
+										collapsible: false,
+										border: false,
+										defaultType: 'displayfieldbase',
+										layout: {
+									        type: 'table',
+							        		columns: 2
+							        	},
+										items : [
+											        {
+											        	xtype:'fieldset',
+											        	height: 100,
+											        	width: 830,
+											        	margin: '0 10 10 0',
+											        	layout: {
+													        type: 'table',
+											        		columns: 1
+											        	},
+														defaultType: 'textfieldbase',
+														items : [
+																	{
+												        	           	xtype: 'checkboxfieldbase',
+													                	reference: 'chekboxPorcentual',
+													                	fieldLabel:  HreRem.i18n('fieldlabel.porcentual'),
+													                	bind: {
+													                		value: '{condiciones.checkPorcentual}'									   
+													                	},
+													                	listeners: {
+											                					change: 'onCambioCheckPorcentual'
+											                			}
+								                					},
+								                					{
+												        	           	xtype: 'checkboxfieldbase',
+													                	reference: 'checkboxIPC',
+													                	fieldLabel:  HreRem.i18n('fieldlabel.ipc'),
+													                	bind: {
+													                		value: '{condiciones.checkIPC}'										             
+													                	}
+								                					},
+								                					{
+																		xtype: 'textfieldbase',
+																		reference: 'escaladoRentaPorcentaje',
+																 		symbol: HreRem.i18n('symbol.porcentaje'),
+																		fieldLabel: HreRem.i18n('fieldlabel.porcentaje'),
+										                				bind: {
+													                		value: '{condiciones.porcentaje}'									             
+													                	}
+													                }
+														]
+											        },
+										        	{
+											        	xtype:'fieldset',
+											        	height: 100,
+											        	width: 830,
+											        	margin: '0 10 10 0',
+											        	layout: {
+													        type: 'table',
+											        		columns: 1
+											        	},
+														defaultType: 'textfieldbase',
+														items : [
+																	{
+												        	           	xtype: 'checkboxfieldbase',
+													                	reference: 'chekboxRevisionMercado',
+													                	fieldLabel:  HreRem.i18n('fieldlabel.revision.mercado'),
+													                	bind: {
+													                		value: '{condiciones.checkRevisionMercado}'										             
+													                	},
+													                	listeners: {
+										                					change: 'onCambioCheckRevMercado'
+										                				}
+								                					},
+								                					{	
+																	 	xtype:'datefieldbase',
+																	 	reference: 'revisionMercadoFecha',
+																	 	fieldLabel:  HreRem.i18n('fieldlabel.fecha'),
+											        					bind: '{condiciones.revisionMercadoFecha}'
+															        },												        								                
+													                { 
+																		xtype: 'textfieldbase',
+																		reference: 'escaladoRentasMeses',
+																 		symbol: HreRem.i18n('symbol.meses'),
+																 		labelSeparator: "",
+																		fieldLabel: HreRem.i18n('fieldlabel.cada'),
+										                				bind: '{condiciones.revisionMercadoMeses}'
+													                }
+														]					        		
+										        	}
+										]
+									},
+									{
+										xtype:'fieldsettable',
+										collapsible: false,
+										border: false,
+										defaultType: 'displayfieldbase',
+							        	layout: {
+									        type: 'table',
+							        		columns: 1
+							        	},
+										items : [
+										        	{
+											        	xtype:'fieldset',
+											        	height: 100,
+											        	width: 1670,
+											        	margin: '0 10 10 0',
+											        	layout: {
+													        type: 'table',
+											        		columns: 1
+											        	},
+														defaultType: 'textfieldbase',
+														items : [
+																	{
+												        	           	xtype: 'checkboxfieldbase',
+													                	reference: 'checkboxEscaladoFijo',
+													                	fieldLabel:  HreRem.i18n('fieldlabel.fijo'),
+													                	bind: {
+													                		value: '{condiciones.checkFijo}'										             
+													                	},
+													                	listeners: {
+										                					change: 'onCambioCheckEscaladoFijo'
+										                				}
+								                					},
+								                					{	
+								                						xtype:'datefieldbase',
+																	 	reference: 'tipoEscaladoFecha',
+																	 	fieldLabel:  HreRem.i18n('fieldlabel.fecha'),
+											        					bind:'{condiciones.fechaFijo}'
+															        },
+															        {	
+																	 	xtype:'datefieldbase',
+																	 	reference: 'tipoEscaladoIncremento',
+																	 	fieldLabel:  HreRem.i18n('fieldlabel.incremento.renta'),
+											        					bind: '{condiciones.fechaIncrementoRentaFijo}',
+															        }
+														]
+													
+													}
+									    ]
+									}
 							]
 						}
     	];

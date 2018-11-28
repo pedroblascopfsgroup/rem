@@ -1943,8 +1943,12 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				String importeAval = String.valueOf(aux);
 				dto.setImporteAval(importeAval);
 			}
-
-			if (!Checks.esNulo(condiciones.getRenunciaTanteo())) {
+			
+			if (!Checks.esNulo(condiciones.getNumeroAval())) {
+				Integer aux = condiciones.getNumeroAval();
+				dto.setNumeroAval(aux);
+			}			
+			if (!Checks.esNulo(condiciones.getRenunciaTanteo())) { 
 				dto.setRenunciaTanteo(condiciones.getRenunciaTanteo());
 			}
 
@@ -1997,6 +2001,41 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			if (!Checks.esNulo(condiciones.getEntidadComments())) {
 				dto.setEntidadComments(condiciones.getEntidadComments());
 			}
+			
+			if (!Checks.esNulo(condiciones.getEntidadComments())) {
+				dto.setEntidadComments(condiciones.getEntidadComments());
+			}
+			
+			if (!Checks.esNulo(condiciones.getCheckFijo())) {
+				dto.setCheckFijo(condiciones.getCheckFijo()); 
+			}
+			if (!Checks.esNulo(condiciones.getFechaFijo())) {
+				dto.setFechaFijo(condiciones.getFechaFijo()); 
+			}
+			if (!Checks.esNulo(condiciones.getFechaIncrementoRentaFijo())) {
+				dto.setFechaIncrementoRentaFijo(condiciones.getFechaIncrementoRentaFijo()); 
+			}
+			
+			if (!Checks.esNulo(condiciones.getCheckPorcentual())) {
+				dto.setCheckPorcentual(condiciones.getCheckPorcentual()); 
+			}
+
+			if (!Checks.esNulo(condiciones.getCheckIPC())) {
+				dto.setCheckIPC(condiciones.getCheckIPC()); 
+			}
+			if (!Checks.esNulo(condiciones.getPorcentaje())) {
+				dto.setPorcentaje(condiciones.getPorcentaje()); 
+			}
+			if (!Checks.esNulo(condiciones.getCheckRevisionMercado())) {
+				dto.setCheckRevisionMercado(condiciones.getCheckRevisionMercado()); 
+			}
+			if (!Checks.esNulo(condiciones.getRevisionMercadoFecha())) {
+				dto.setRevisionMercadoFecha(condiciones.getRevisionMercadoFecha()); 
+			}
+			if (!Checks.esNulo(condiciones.getRevisionMercadoMeses())) {
+				dto.setRevisionMercadoMeses(condiciones.getRevisionMercadoMeses()); 
+			}
+			
 		}
 
 		return dto;

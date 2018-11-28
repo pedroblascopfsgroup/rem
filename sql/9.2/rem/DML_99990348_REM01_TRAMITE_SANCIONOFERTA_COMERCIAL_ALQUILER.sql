@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Ivan Rubio
---## FECHA_CREACION=20180806
+--## FECHA_CREACION=20180807
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-4311
@@ -190,95 +190,95 @@ DECLARE
     V_TMP_T_TAP T_TAP;
 
     
-    /* TABLA: TFI_TAREAS_FOR_ITEMS */
+     /* TABLA: TFI_TAREAS_FOR_ITEMS */
     TYPE T_TFI IS TABLE OF VARCHAR2(4000);
     TYPE T_ARRAY_TFI IS TABLE OF T_TFI;
     V_TFI T_ARRAY_TFI := T_ARRAY_TFI(
     --		   TAP_CODIGO							TFI_ORDEN		TFI_TIPO		TFI_NOMBRE				TFI_LABEL										TFI_ERROR_VALIDACION													TFI_VALIDACION													TFI_BUSINESS_OPERATION			
 		T_TFI('T015_DefinicionOferta'					,'0'		,'label'		,'titulo'				,'<p style="margin-bottom: 10px"></p>'			,''																			,''															,''					),
-		T_TFI('T015_DefinicionOferta'					,'1'		,'combo'		,'tipoTratamiento'		,'Tipo de tratamiento'							,'tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio'				,'valor != null && valor != '''''''' ? true : false'		,'DDTipoTratamiento'),
-		T_TFI('T015_DefinicionOferta'					,'2'		,'date'			,'fechaTratamiento'		,'Fecha de tratamiento'							,''																			,''															,''					),
-		T_TFI('T015_DefinicionOferta'					,'3'		,'combo'		,'tipoInquilino'		,'Tipo inquilino'								,'tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio'				,'valor != null && valor != '''''''' ? true : false'		,'DDTipoInquilino'	),
-		T_TFI('T015_DefinicionOferta'					,'4'		,'number'		,'nMesesFianza'			,'Nº meses fianza'								,'tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio'				,'valor != null && valor != '''''''' ? true : false'		,''					),
-		T_TFI('T015_DefinicionOferta'					,'5'		,'number'		,'importeFianza'		,'Importe fianza'								,'tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio'				,'valor != null && valor != '''''''' ? true : false'		,''					),
+		T_TFI('T015_DefinicionOferta'					,'1'		,'combobox'		,'tipoTratamiento'		,'Tipo de tratamiento'							,'tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio'				,'valor != null && valor != '''''''' ? true : false'		,'DDTipoTratamiento'),
+		T_TFI('T015_DefinicionOferta'					,'2'		,'datefield'			,'fechaTratamiento'		,'Fecha de tratamiento'							,''																			,''															,''					),
+		T_TFI('T015_DefinicionOferta'					,'3'		,'combobox'		,'tipoInquilino'		,'Tipo inquilino'								,'tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio'				,'valor != null && valor != '''''''' ? true : false'		,'DDTipoInquilino'	),
+		T_TFI('T015_DefinicionOferta'					,'4'		,'numberfield'		,'nMesesFianza'			,'Nº meses fianza'								,'tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio'				,'valor != null && valor != '''''''' ? true : false'		,''					),
+		T_TFI('T015_DefinicionOferta'					,'5'		,'numberfield'		,'importeFianza'		,'Importe fianza'								,'tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio'				,'valor != null && valor != '''''''' ? true : false'		,''					),
 		T_TFI('T015_DefinicionOferta'					,'6'		,'checkbox'		,'deposito'				,'Depósito'										,''																			,''															,''					),
 		T_TFI('T015_DefinicionOferta'					,'7'		,'textfield'	,'nMeses'				,'Nº meses'										,''																			,''															,''					),
-		T_TFI('T015_DefinicionOferta'					,'8'		,'number'		,'importeDeposito'		,'Importe'										,''																			,''															,''					),
+		T_TFI('T015_DefinicionOferta'					,'8'		,'numberfield'		,'importeDeposito'		,'Importe'										,''																			,''															,''					),
 		T_TFI('T015_DefinicionOferta'					,'9'		,'checkbox'		,'fiadorSolidario'		,'Fiador solidario'								,''																			,''															,''					),
 		T_TFI('T015_DefinicionOferta'					,'10'		,'textfield'	,'nombreFS'				,'Nombre'										,''																			,''															,''					),
 		T_TFI('T015_DefinicionOferta'					,'11'		,'textfield'	,'documento'			,'Documento'									,''																			,''															,''					),
-		T_TFI('T015_DefinicionOferta'					,'12'		,'combo'		,'tipoImpuesto'			,'Tipo impuesto'								,''																			,''															,'DDTiposImpuesto'	),
-		T_TFI('T015_DefinicionOferta'					,'13'		,'number'		,'porcentajeImpuesto'	,'% impuesto'									,''																			,''															,''					),
+		T_TFI('T015_DefinicionOferta'					,'12'		,'combobox'		,'tipoImpuesto'			,'Tipo impuesto'								,''																			,''															,'DDTiposImpuesto'	),
+		T_TFI('T015_DefinicionOferta'					,'13'		,'numberfield'		,'porcentajeImpuesto'	,'% impuesto'									,''																			,''															,''					),
 		T_TFI('T015_DefinicionOferta'					,'14'		,'textarea'		,'observaciones'		,'Observaciones'								,''																			,''															,''					),
 		
 		T_TFI('T015_VerificarScoring'					,'0'		,'label'		,'titulo'				,'<p style="margin-bottom: 10px"></p>'			,''																			,''															,''					),
-		T_TFI('T015_VerificarScoring'					,'1'		,'combo'		,'resultadoScoring'		,'Resultado scoring'							,''																			,''															,'DDResultadoCampo'	),
-		T_TFI('T015_VerificarScoring'					,'2'		,'date'			,'fechaSancScoring'		,'Fecha sanción scoring'						,''																			,''															,''					),
-		T_TFI('T015_VerificarScoring'					,'3'		,'combo'		,'motivoRechazo'		,'Motivo rechazo'								,''																			,''															,'DDMotivoRechazoAlquiler'	),
-		T_TFI('T015_VerificarScoring'					,'4'		,'number'		,'nExpediente'			,'Nº Expediente'								,''																			,''															,''					),
-		T_TFI('T015_VerificarScoring'					,'5'		,'number'		,'nMesesFianza'			,'Nº meses fianza'								,''																			,''															,''					),
-		T_TFI('T015_VerificarScoring'					,'6'		,'number'		,'importeFianza'		,'Importe fianza'								,'tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio'				,'valor != null && valor != '''''''' ? true : false'		,''					),
+		T_TFI('T015_VerificarScoring'					,'1'		,'combobox'		,'resultadoScoring'		,'Resultado scoring'							,''																			,''															,'DDResultadoCampo'	),
+		T_TFI('T015_VerificarScoring'					,'2'		,'datefield'			,'fechaSancScoring'		,'Fecha sanción scoring'						,''																			,''															,''					),
+		T_TFI('T015_VerificarScoring'					,'3'		,'combobox'		,'motivoRechazo'		,'Motivo rechazo'								,''																			,''															,'DDMotivoRechazoAlquiler'	),
+		T_TFI('T015_VerificarScoring'					,'4'		,'numberfield'		,'nExpediente'			,'Nº Expediente'								,''																			,''															,''					),
+		T_TFI('T015_VerificarScoring'					,'5'		,'numberfield'		,'nMesesFianza'			,'Nº meses fianza'								,''																			,''															,''					),
+		T_TFI('T015_VerificarScoring'					,'6'		,'numberfield'		,'importeFianza'		,'Importe fianza'								,'tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio'				,'valor != null && valor != '''''''' ? true : false'		,''					),
 		T_TFI('T015_VerificarScoring'					,'7'		,'checkbox'		,'deposito'				,'Depósito'										,''																			,''															,''					),
 		T_TFI('T015_VerificarScoring'					,'8'		,'textfield'	,'nMeses'				,'Nº meses'										,''																			,''															,''					),
-		T_TFI('T015_VerificarScoring'					,'9'		,'number'		,'importeDeposito'		,'Importe'										,''																			,''															,''					),
+		T_TFI('T015_VerificarScoring'					,'9'		,'numberfield'		,'importeDeposito'		,'Importe'										,''																			,''															,''					),
 		T_TFI('T015_VerificarScoring'					,'10'		,'checkbox'		,'fiadorSolidario'		,'Fiador solidario'								,''																			,''															,''					),
 		T_TFI('T015_VerificarScoring'					,'11'		,'textfield'	,'nombreFS'				,'Nombre'										,''																			,''															,''					),
 		T_TFI('T015_VerificarScoring'					,'12'		,'textfield'	,'documento'			,'Documento'									,''																			,''															,''					),
-		T_TFI('T015_VerificarScoring'					,'13'		,'combo'		,'tipoImpuesto'			,'Tipo impuesto'								,''																			,''															,'DDTiposImpuesto'	),
-		T_TFI('T015_VerificarScoring'					,'14'		,'number'		,'porcentajeImpuesto'	,'% impuesto'									,''																			,''															,''					),
+		T_TFI('T015_VerificarScoring'					,'13'		,'combobox'		,'tipoImpuesto'			,'Tipo impuesto'								,''																			,''															,'DDTiposImpuesto'	),
+		T_TFI('T015_VerificarScoring'					,'14'		,'numberfield'		,'porcentajeImpuesto'	,'% impuesto'									,''																			,''															,''					),
 		T_TFI('T015_VerificarScoring'					,'15'		,'textarea'		,'observaciones'		,'Observaciones'								,''																			,''															,''					),
 		
 		T_TFI('T015_VerificarSeguroRentas'				,'0'		,'label'		,'titulo'				,'<p style="margin-bottom: 10px"></p>'			,''																			,''															,''					),
-		T_TFI('T015_VerificarSeguroRentas'				,'1'		,'combo'		,'resultadoRentas'		,'Resultado seguro de rentas'					,''																			,''															,'DDResultadoCampo'	),
-		T_TFI('T015_VerificarSeguroRentas'				,'2'		,'date'			,'fechaSancRentas'		,'Fecha sanción seguro de rentas'				,''																			,''															,''					),
-		T_TFI('T015_VerificarSeguroRentas'				,'3'		,'combo'		,'motivoRechazo'		,'Motivo rechazo'								,''																			,''															,'DDMotivoRechazoAlquiler'	),
-		T_TFI('T015_VerificarSeguroRentas'				,'4'		,'number'		,'nMesesFianza'			,'Nº meses fianza'								,'tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio'				,'valor != null && valor != '''''''' ? true : false'		,''					),
-		T_TFI('T015_VerificarSeguroRentas'				,'5'		,'number'		,'importeFianza'		,'Importe fianza'								,'tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio'				,'valor != null && valor != '''''''' ? true : false'		,''					),
+		T_TFI('T015_VerificarSeguroRentas'				,'1'		,'combobox'		,'resultadoRentas'		,'Resultado seguro de rentas'					,''																			,''															,'DDResultadoCampo'	),
+		T_TFI('T015_VerificarSeguroRentas'				,'2'		,'datefield'			,'fechaSancRentas'		,'Fecha sanción seguro de rentas'				,''																			,''															,''					),
+		T_TFI('T015_VerificarSeguroRentas'				,'3'		,'combobox'		,'motivoRechazo'		,'Motivo rechazo'								,''																			,''															,'DDMotivoRechazoAlquiler'	),
+		T_TFI('T015_VerificarSeguroRentas'				,'4'		,'numberfield'		,'nMesesFianza'			,'Nº meses fianza'								,'tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio'				,'valor != null && valor != '''''''' ? true : false'		,''					),
+		T_TFI('T015_VerificarSeguroRentas'				,'5'		,'numberfield'		,'importeFianza'		,'Importe fianza'								,'tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio'				,'valor != null && valor != '''''''' ? true : false'		,''					),
 		T_TFI('T015_VerificarSeguroRentas'				,'6'		,'checkbox'		,'deposito'				,'Depósito'										,''																			,''															,''					),
 		T_TFI('T015_VerificarSeguroRentas'				,'7'		,'textfield'	,'nMeses'				,'Nº meses'										,''																			,''															,''					),
-		T_TFI('T015_VerificarSeguroRentas'				,'8'		,'number'		,'importeDeposito'		,'Importe'										,''																			,''															,''					),
+		T_TFI('T015_VerificarSeguroRentas'				,'8'		,'numberfield'		,'importeDeposito'		,'Importe'										,''																			,''															,''					),
 		T_TFI('T015_VerificarSeguroRentas'				,'9'		,'checkbox'		,'fiadorSolidario'		,'Fiador solidario'								,''																			,''															,''					),
 		T_TFI('T015_VerificarSeguroRentas'				,'10'		,'textfield'	,'nombreFS'				,'Nombre'										,''																			,''															,''					),
 		T_TFI('T015_VerificarSeguroRentas'				,'11'		,'textfield'	,'documento'			,'Documento'									,''																			,''															,''					),
-		T_TFI('T015_VerificarSeguroRentas'				,'12'		,'combo'		,'tipoImpuesto'			,'Tipo impuesto'								,''																			,''															,'DDTiposImpuesto'	),
-		T_TFI('T015_VerificarSeguroRentas'				,'13'		,'number'		,'porcentajeImpuesto'	,'% impuesto'									,''																			,''															,''					),
-		T_TFI('T015_VerificarSeguroRentas'				,'14'		,'comboesp'		,'aseguradora'			,'Aseguradora'									,'tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio'				,'valor != null && valor != '''''''' ? true : false'		,'DDSegurosVigentes'),
+		T_TFI('T015_VerificarSeguroRentas'				,'12'		,'combobox'		,'tipoImpuesto'			,'Tipo impuesto'								,''																			,''															,'DDTiposImpuesto'	),
+		T_TFI('T015_VerificarSeguroRentas'				,'13'		,'numberfield'		,'porcentajeImpuesto'	,'% impuesto'									,''																			,''															,''					),
+		T_TFI('T015_VerificarSeguroRentas'				,'14'		,'comboboxespecial'		,'aseguradora'			,'Aseguradora'									,'tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio'				,'valor != null && valor != '''''''' ? true : false'		,'DDSegurosVigentes'),
 		T_TFI('T015_VerificarSeguroRentas'				,'15'		,'textfield'	,'envioEmail'			,'Envío email póliza seguro'					,''																			,''															,''					),
 		T_TFI('T015_VerificarSeguroRentas'				,'16'		,'textarea'		,'observaciones'		,'Observaciones'								,''																			,''															,''					),
 		
 		T_TFI('T015_ElevarASancion'						,'0'		,'label'		,'titulo'				,'<p style="margin-bottom: 10px"></p>'			,''																			,''															,''					),
-		T_TFI('T015_ElevarASancion'						,'1'		,'combo'		,'resolucionOferta'		,'Resolución de la oferta'						,''																			,''															,'DDResolucionOferta'	),
-		T_TFI('T015_ElevarASancion'						,'2'		,'date'			,'fechaSancion'			,'Fecha sanción'								,''																			,''															,''					),
+		T_TFI('T015_ElevarASancion'						,'1'		,'combobox'		,'resolucionOferta'		,'Resolución de la oferta'						,''																			,''															,'DDResolucionOferta'	),
+		T_TFI('T015_ElevarASancion'						,'2'		,'datefield'			,'fechaSancion'			,'Fecha sanción'								,''																			,''															,''					),
 		T_TFI('T015_ElevarASancion'						,'3'		,'textfield'	,'motivoAnulacion'		,'Motivo de anulación'							,''																			,''															,''					),
-		T_TFI('T015_ElevarASancion'						,'4'		,'combo'		,'comite'				,'Comité'										,''																			,''															,''					),
+		T_TFI('T015_ElevarASancion'						,'4'		,'combobox'		,'comite'				,'Comité'										,''																			,''															,''					),
 		T_TFI('T015_ElevarASancion'						,'6'		,'textfield'	,'refCircuitoCliente'	,'Ref. circuito cliente'						,''																			,''															,''					),
-		T_TFI('T015_ElevarASancion'						,'5'		,'date'			,'fechaElevacion'		,'Fecha elevación'								,''																			,''															,''					),
+		T_TFI('T015_ElevarASancion'						,'5'		,'datefield'			,'fechaElevacion'		,'Fecha elevación'								,''																			,''															,''					),
 		
 		T_TFI('T015_ResolucionExpediente'				,'0'		,'label'		,'titulo'				,'<p style="margin-bottom: 10px"></p>'			,''																			,''															,''					),
-		T_TFI('T015_ResolucionExpediente'				,'1'		,'combo'		,'resolucionExpediente'	,'Resolución expediente'						,''																			,''															,'DDResolucionComite'	),
-		T_TFI('T015_ResolucionExpediente'				,'2'		,'date'			,'fechaResolucion'		,'Fecha resolución'								,''																			,''															,''					),
+		T_TFI('T015_ResolucionExpediente'				,'1'		,'combobox'		,'resolucionExpediente'	,'Resolución expediente'						,''																			,''															,'DDResolucionComite'	),
+		T_TFI('T015_ResolucionExpediente'				,'2'		,'datefield'			,'fechaResolucion'		,'Fecha resolución'								,''																			,''															,''					),
 		T_TFI('T015_ResolucionExpediente'				,'3'		,'textfield'	,'motivo'				,'Motivo'										,''																			,''															,''					),
-		T_TFI('T015_ResolucionExpediente'				,'4'		,'number'		,'importeContraoferta'	,'Importe contraoferta'							,''																			,''															,''					),
+		T_TFI('T015_ResolucionExpediente'				,'4'		,'numberfield'		,'importeContraoferta'	,'Importe contraoferta'							,''																			,''															,''					),
 	   	
 		T_TFI('T015_AceptacionCliente'					,'0'		,'label'		,'titulo'					,'<p style="margin-bottom: 10px"></p>'		,''																			,''															,''					),
-		T_TFI('T015_AceptacionCliente'					,'1'		,'combo'		,'aceptacionContraoferta'	,'Aceptación contraoferta'					,''																			,''															,'DDSiNo'			),
-		T_TFI('T015_AceptacionCliente'					,'2'		,'date'			,'fechaAceptaDenega'	,'Fecha Aceptación/Denegación'					,''																			,''															,''					),
+		T_TFI('T015_AceptacionCliente'					,'1'		,'combobox'		,'aceptacionContraoferta'	,'Aceptación contraoferta'					,''																			,''															,'DDSiNo'			),
+		T_TFI('T015_AceptacionCliente'					,'2'		,'datefield'			,'fechaAceptaDenega'	,'Fecha Aceptación/Denegación'					,''																			,''															,''					),
 		T_TFI('T015_AceptacionCliente'					,'3'		,'textfield'	,'motivoAC'				,'Motivo'										,''																			,''															,''					),
 		
 		T_TFI('T015_ResolucionPBC'						,'0'		,'label'		,'titulo'				,'<p style="margin-bottom: 10px"></p>'			,''																			,''															,''					),
-		T_TFI('T015_ResolucionPBC'						,'1'		,'combo'		,'resultadoPBC'			,'Resultado PBC'								,''																			,''															,'DDResultadoCampo'	),
-		T_TFI('T015_ResolucionPBC'						,'2'		,'date'			,'fechaPBC'				,'Fecha'										,''																			,''															,''					),
+		T_TFI('T015_ResolucionPBC'						,'1'		,'combobox'		,'resultadoPBC'			,'Resultado PBC'								,''																			,''															,'DDResultadoCampo'	),
+		T_TFI('T015_ResolucionPBC'						,'2'		,'datefield'			,'fechaPBC'				,'Fecha'										,''																			,''															,''					),
 		
 		T_TFI('T015_Posicionamiento'					,'0'		,'label'		,'titulo'				,'<p style="margin-bottom: 10px"></p>'			,''																			,''															,''					),
-		T_TFI('T015_Posicionamiento'					,'1'		,'date'			,'fechaFirmaContrato'	,'Fecha prevista firma de contrato'				,''																			,''															,''					),
+		T_TFI('T015_Posicionamiento'					,'1'		,'datefield'			,'fechaFirmaContrato'	,'Fecha prevista firma de contrato'				,''																			,''															,''					),
 		T_TFI('T015_Posicionamiento'					,'2'		,'textfield'	,'lugarFirma'			,'Lugar de firma'								,'tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio'				,'valor != null && valor != '''''''' ? true : false'		,''					),
 		
 		T_TFI('T015_Firma'								,'0'		,'label'		,'titulo'				,'<p style="margin-bottom: 10px"></p>'			,''																			,''															,''					),
-		T_TFI('T015_Firma'								,'1'		,'date'			,'fechaFirma'			,'Fecha firma'									,''																			,''															,''					),
+		T_TFI('T015_Firma'								,'1'		,'datefield'			,'fechaFirma'			,'Fecha firma'									,''																			,''															,''					),
 		
 		T_TFI('T015_CierreContrato'						,'0'		,'label'		,'titulo'				,'<p style="margin-bottom: 10px"></p>'			,''																			,''															,''					),
 		T_TFI('T015_CierreContrato'						,'1'		,'checkbox'		,'docOK'				,'Documentación OK'								,'tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio'				,'valor != null && valor != '''''''' ? true : false'		,''					),
-		T_TFI('T015_CierreContrato'						,'2'		,'date'			,'fechaValidacion'		,'Fecha validación'								,''																			,''															,''					),
+		T_TFI('T015_CierreContrato'						,'2'		,'datefield'			,'fechaValidacion'		,'Fecha validación'								,''																			,''															,''					),
 		T_TFI('T015_CierreContrato'						,'3'		,'textfield'	,'ncontratoPrinex'		,'Nº contrato Prinex'							,'tareaExterna.error.PGENERICO_TareaGenerica.campoObligatorio'				,'valor != null && valor != '''''''' ? true : false'		,''					)
     	
     	);

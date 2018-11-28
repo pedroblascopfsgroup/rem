@@ -81,6 +81,7 @@ public class DtoCondiciones extends WebDto {
 	private String documentoFiador;
 	private String codigoEntidad;
 	private String importeAval;
+	private Integer numeroAval;
 	private Boolean renunciaTanteo;
 	private Boolean carencia;
 	private String mesesCarencia;
@@ -92,6 +93,16 @@ public class DtoCondiciones extends WebDto {
 	private Boolean gastosRepercutibles;
 	private String repercutiblesComments;
 	private String entidadComments;
+	private Boolean checkFijo;
+	private Date fechaFijo;
+	private Date fechaIncrementoRentaFijo;
+	
+	private Boolean checkPorcentual;
+	private Boolean checkIPC;
+	private Integer porcentaje;
+	private Boolean checkRevisionMercado;
+	private Date revisionMercadoFecha;
+	private Integer revisionMercadoMeses;
 
 	//********Datos que vienen del activos (no se editan)********
 	private Date fechaUltimaActualizacion;
@@ -180,6 +191,14 @@ public class DtoCondiciones extends WebDto {
 
 	public void setImporteAval(String importeAval) {
 		this.importeAval = importeAval;
+	}
+
+	public Integer getNumeroAval() {
+		return numeroAval;
+	}
+
+	public void setNumeroAval(Integer numeroAval) {
+		this.numeroAval = numeroAval;
 	}
 
 	public Long getIdCondiciones() {
@@ -720,6 +739,80 @@ public class DtoCondiciones extends WebDto {
 
 	public void setEntidadComments(String entidadComments) {
 		this.entidadComments = entidadComments;
-	}    	
+	}
+
+	public Boolean getCheckFijo() {
+		return checkFijo;
+	}
+
+	public void setCheckFijo(Boolean checkFijo) {
+		this.checkFijo = checkFijo;
+	}
+
+	public Date getFechaFijo() {
+		return fechaFijo;
+	}
+
+	public void setFechaFijo(Date fechaFijo) {
+		this.fechaFijo = fechaFijo;
+	}
+
+	public Date getFechaIncrementoRentaFijo() {
+		return fechaIncrementoRentaFijo;
+	}
+
+	public void setFechaIncrementoRentaFijo(Date fechaIncrementoRentaFijo) {
+		this.fechaIncrementoRentaFijo = fechaIncrementoRentaFijo;
+	}
+
+	public Boolean getCheckPorcentual() {
+		return checkPorcentual;
+	}
+
+	public void setCheckPorcentual(Boolean checkPorcentual) {
+		this.checkPorcentual = checkPorcentual;
+	}
+
+	public Boolean getCheckIPC() {
+		return checkIPC;
+	}
+
+	public void setCheckIPC(Boolean checkIPC) {
+		this.checkIPC = checkIPC;
+	}
+
+	public Integer getPorcentaje() {
+		return porcentaje;
+	}
+
+	public void setPorcentaje(Integer porcentaje) {
+		this.porcentaje = porcentaje;
+	}
+
+	public Boolean getCheckRevisionMercado() {
+		return checkRevisionMercado;
+	}
+
+	public void setCheckRevisionMercado(Boolean checkRevisionMercado) {
+		this.checkRevisionMercado = checkRevisionMercado;
+	}
+
+	public Date getRevisionMercadoFecha() {
+		return revisionMercadoFecha;
+	}
+
+	public void setRevisionMercadoFecha(Date revisionMercadoFecha) {
+		this.revisionMercadoFecha = revisionMercadoFecha;
+	}
+
+	public Integer getRevisionMercadoMeses() {
+		return revisionMercadoMeses;
+	}
+
+	public void setRevisionMercadoMeses(Integer revisionMercadoMeses) {
+		this.revisionMercadoMeses = revisionMercadoMeses;
+	}
+
+	
 	
 }

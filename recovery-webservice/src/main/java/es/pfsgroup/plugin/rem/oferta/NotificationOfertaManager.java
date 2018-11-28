@@ -411,6 +411,54 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 		return errorCode;
 	}
 	
+	public void enviarPropuestaOfertaTipoAlquiler(Oferta oferta) {
+		
+		Activo activo = oferta.getActivoPrincipal();
+		
+		ArrayList<String> para = new ArrayList<String>();
+		Usuario gest_com = gestorActivoManager.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
+		Usuario gest_com_alq = gestorActivoManager.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_ALQUILERES);
+		Usuario sup_com_alq = gestorActivoManager.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL_ALQUILERES);
+		
+		if(!Checks.esNulo(gest_com_alq)) {
+			para.add(gest_com_alq.getEmail());
+		}
+		if(!Checks.esNulo(sup_com_alq)) {
+			para.add(sup_com_alq.getEmail());
+		}
+		if(!Checks.esNulo(gest_com)) {
+			para.add(gest_com.getEmail());
+		}
+		
+		String tipoDocIndentificacion= oferta.getCliente().getTipoDocumento().getDescripcion();
+		String docIdentificacion= oferta.getCliente().getDocumento();
+		String codigoPrescriptor= oferta.getPrescriptor().getCodigoProveedorRem().toString();
+		String nombrePrescriptor= oferta.getPrescriptor().getNombre();
+		List<DtoAdjuntoMail> adjuntos = new ArrayList<DtoAdjuntoMail>();
+		if(!para.isEmpty()) {
+		
+			String asunto = "Solicitud de oferta para alquiler del inmueble con referencia: " + oferta.getNumOferta();
+			String cuerpo = 
+					String.format("<p>Ha recibido una nueva oferta con número identificador %s, a nombre de %s con identificador %s %s, por importe de %s €. Prescriptor: %s %s.</p>", 
+							oferta.getNumOferta().toString(), oferta.getCliente().getNombreCompleto(),tipoDocIndentificacion,docIdentificacion, NumberFormat.getNumberInstance(new Locale("es", "ES")).format(oferta.getImporteOferta()),codigoPrescriptor,nombrePrescriptor );
+			
+			DtoSendNotificator dtoSendNotificator = new DtoSendNotificator();
+
+			dtoSendNotificator.setNumActivo(activo.getNumActivo());
+			dtoSendNotificator.setDireccion(generateDireccion(activo));
+			dtoSendNotificator.setTitulo(asunto);
+
+			if(!Checks.esNulo(oferta.getAgrupacion())) {
+				dtoSendNotificator.setNumAgrupacion(oferta.getAgrupacion().getNumAgrupRem());	
+			}			
+			String cuerpoCorreo = this.generateCuerpo(dtoSendNotificator, cuerpo);
+			
+			genericAdapter.sendMail(para, null, asunto, cuerpoCorreo, adjuntos);
+			
+		}
+	
+	}
+	
 	private DtoAdjuntoMail createAdjunto(FileItem fileitem, String name) {
 		DtoAdjuntoMail adjMail = new DtoAdjuntoMail();
 		Adjunto adjunto = new Adjunto(fileitem);

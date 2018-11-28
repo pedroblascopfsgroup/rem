@@ -3200,7 +3200,11 @@ public class ActivoAdapter {
 			// Actualizamos la situacion comercial del activo
 			updaterState.updaterStateDisponibilidadComercialAndSave(activo,false);
 
-			notificationOfertaManager.sendNotification(oferta);
+			if(DDTipoOferta.CODIGO_ALQUILER.equals(oferta.getTipoOferta().getCodigo())) {
+				notificationOfertaManager.enviarPropuestaOfertaTipoAlquiler(oferta);
+			}else {
+				notificationOfertaManager.sendNotification(oferta);
+			}
 		} catch (Exception ex) {
 			logger.error("error en activoAdapter", ex);
 			ex.printStackTrace();

@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Oscar Diestre
---## FECHA_CREACION=20181122
+--## FECHA_CREACION=20181129
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=func-rem-alquileres
 --## INCIDENCIA_LINK=HREOS-4844
@@ -11,6 +11,7 @@
 --## INSTRUCCIONES:
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##        0.2 Cambios en usuario 'ralvarez'
 --##########################################
 --*/
 
@@ -43,16 +44,8 @@ DECLARE
          T_TIPO_DATA('GESTCOMALQ', 'mvillamor', '03'   ),  
          T_TIPO_DATA('GESTCOMALQ', 'jxerri'   , '01'   ), 
          T_TIPO_DATA('GESTCOMALQ', 'ralvarez' , '02'   ), 
-         T_TIPO_DATA('GESTCOMALQ', 'ralvarez' , '05'   ), 
          T_TIPO_DATA('GESTCOMALQ', 'ralvarez' , '04'   ), 
-         T_TIPO_DATA('GESTCOMALQ', 'ralvarez' , '10'   ), 
-         T_TIPO_DATA('GESTCOMALQ', 'ralvarez' , '09'   ), 
-         T_TIPO_DATA('GESTCOMALQ', 'ralvarez' , '06'   ), 
-         T_TIPO_DATA('GESTCOMALQ', 'ralvarez' , '07'   ), 
-         T_TIPO_DATA('GESTCOMALQ', 'ralvarez' , '11'   ), 
-         T_TIPO_DATA('GESTCOMALQ', 'ralvarez' , '12'   ), 
-         T_TIPO_DATA('GESTCOMALQ', 'ralvarez' , '13'   ), 
-         T_TIPO_DATA('GESTCOMALQ', 'ralvarez' , '15'   ), 
+
          T_TIPO_DATA('SUPCOMALQ' , 'sbejarano', 'null' )
 
     ); 
@@ -104,8 +97,6 @@ BEGIN
 			 ( SELECT USU.USU_NOMBRE ||'' ''|| USU.USU_APELLIDO1 ||'' ''|| USU.USU_APELLIDO2 FROM '|| V_ESQUEMA_M ||'.USU_USUARIOS USU 
 			   WHERE USU.USU_USERNAME = '''||TRIM(V_TMP_TIPO_DATA(2))||''') '||
 			', 0, ''HREOS-4844'',SYSDATE,0 FROM DUAL';
-
-          DBMS_OUTPUT.PUT_LINE( V_MSQL );
 
           EXECUTE IMMEDIATE V_MSQL;
 

@@ -6793,24 +6793,29 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					+ "<br><br> Adjunto copia del contrato suscrito para el alta para la gestión del alta en cobertura de la póliza de seguro de rentas."
 					+ "<br><br> Rogamos confirmación del alta.";
 			
-			List<AdjuntoExpedienteComercial> adjuntosRecuperados = genericDao.getListOrdered(AdjuntoExpedienteComercial.class, new Order(OrderType.DESC,"auditoria.fechaCrear"), 
-					genericDao.createFilter(FilterType.EQUALS, "expediente", expediente), 
-					genericDao.createFilter(FilterType.EQUALS, "subtipoDocumentoExpediente.codigo", DDSubtipoDocumentoExpediente.CODIGO_CONTRATO));
-
-			Adjunto adjuntoLocal = adjuntosRecuperados.get(0).getAdjunto();
-			
-			String nombreDocumento = adjuntosRecuperados.get(0).getNombre();			
-			
-			Adjunto adjuntoMail = new Adjunto();
+			Adjunto adjuntoMail = null;
+			String nombreDocumento = null;
 			
 			if(gestorDocumentalAdapterApi.modoRestClientActivado()) {
-				String key = appProperties.getProperty(ExpedienteComercialController.CONSTANTE_REST_CLIENT);
-				Downloader dl = downloaderFactoryApi.getDownloader(key);
+				List<DtoAdjunto> adjuntosExpediente = gestorDocumentalAdapterApi.getAdjuntosExpedienteComercial(expediente);
 				
-				FileItem fileItem = dl.getFileItem(idExpediente,nombreDocumento);
-				
-				adjuntoMail.setFileItem(fileItem);
+				for (DtoAdjunto adjunto : adjuntosExpediente) {
+					if(DDSubtipoDocumentoExpediente.MATRICULA_CONTRATO.equals(adjunto.getMatricula())) {
+						AdjuntoExpedienteComercial adjuntoGD = expediente.getAdjuntoGD(adjunto.getId());
+						adjuntoMail = adjuntoGD.getAdjunto();
+						nombreDocumento = adjuntoGD.getNombre();
+						break;
+					}
+				}
 			} else {
+				List<AdjuntoExpedienteComercial> adjuntosRecuperados = genericDao.getListOrdered(AdjuntoExpedienteComercial.class, new Order(OrderType.DESC,"auditoria.fechaCrear"), 
+						genericDao.createFilter(FilterType.EQUALS, "expediente", expediente), 
+						genericDao.createFilter(FilterType.EQUALS, "subtipoDocumentoExpediente.codigo", DDSubtipoDocumentoExpediente.CODIGO_CONTRATO));
+
+				Adjunto adjuntoLocal = adjuntosRecuperados.get(0).getAdjunto();
+				
+				nombreDocumento = adjuntosRecuperados.get(0).getNombre();			
+								
 				adjuntoMail = adjuntoLocal;
 			}
 			

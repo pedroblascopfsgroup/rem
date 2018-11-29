@@ -129,16 +129,16 @@ public class PlusvaliaAdapter {
 							PlusvaliaVentaExpedienteComercial plusvaliaNew = new PlusvaliaVentaExpedienteComercial();
 							if (!Checks.esNulo(exento)){
 								if ("SI".equals(exento.toUpperCase())) {
-									plusvalia.setExento(1);
+									plusvaliaNew.setExento(1);
 								}else if ("NO".equals(exento.toUpperCase())){
-									plusvalia.setExento(0);
+									plusvaliaNew.setExento(0);
 								}
 							}
 							if (!Checks.esNulo(autoLiquidacion)){
 								if ("SI".equals(autoLiquidacion.toUpperCase())) {
-									plusvalia.setAutoliquidacion(1);
+									plusvaliaNew.setAutoliquidacion(1);
 								}else if ("NO".equals(autoLiquidacion.toUpperCase())){
-									plusvalia.setAutoliquidacion(0);
+									plusvaliaNew.setAutoliquidacion(0);
 								}
 							}
 							if (!Checks.esNulo(fechaEscritoAyto)){

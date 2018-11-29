@@ -60,7 +60,7 @@ ENV RECOVERY_CFG_TAG intereos.ibd01
 ENV RECOVERY_VERSION 1.0.8-16080502-rem
 
 # URL de descarga para el WAR de Recovery
-ENV WEB_ZIP_URL http://nexus.pfsgroup.es/nexus/service/local/repositories/releases/content/REM/recovery/web/pfs/$RECOVERY_VERSION/pfs-$RECOVERY_VERSION.war
+ENV WEB_ZIP_URL http://nexus.pfsgroup.es/nexus/service/rest/repository/releases/content/REM/recovery/web/pfs/$RECOVERY_VERSION/pfs-$RECOVERY_VERSION.war
 
 # 
 # Configuración de la conexión a BBDD

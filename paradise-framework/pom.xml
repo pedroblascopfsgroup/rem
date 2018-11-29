@@ -181,7 +181,18 @@
 			<artifactId>com.springsource.javax.servlet.jsp.jstl</artifactId>
 			<version>UNKNOWN</version>
 		</dependency>
-	</dependencies>
+
+        <dependency>
+            <groupId>es.pfsgroup.recovery.framework.spring.v2_5</groupId>
+            <artifactId>org.springframework.context</artifactId>
+            <version>UNKNOWN</version>
+        </dependency>
+        <dependency>
+            <groupId>es.pfsgroup.recovery.framework.spring.v2_5</groupId>
+            <artifactId>com.springsource.org.apache.commons.beanutils</artifactId>
+            <version>UNKNOWN</version>
+        </dependency>
+    </dependencies>
 
 	<build>
 		<resources>

@@ -6,7 +6,6 @@ Ext.define('HreRem.view.activos.ActivosList', {
     bind: {
         store: '{activos}'
     },
-    loadAfterBind: false,
     
     initComponent: function () {
      	

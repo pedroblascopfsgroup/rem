@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=DAP
---## FECHA_CREACION=20170907
---## ARTEFACTO=online
---## VERSION_ARTEFACTO=2.0.7
---## INCIDENCIA_LINK=HREOS-2766
+--## AUTOR=Carlos López
+--## FECHA_CREACION=20181003
+--## ARTEFACTO=batch
+--## VERSION_ARTEFACTO=2.0.19
+--## INCIDENCIA_LINK=HREOS-4525
 --## PRODUCTO=NO
 --## Finalidad: Modificar el procedure para procesar lo necesario despues de que una agrupación de tipo asistida finalice.
 --##           
@@ -24,6 +24,7 @@ CREATE OR REPLACE PROCEDURE REM01.AGR_ASISTIDA_PROCESO_FIN IS
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
     USUARIO VARCHAR2(50 CHAR) := 'AGR_ASISTIDA_PROCESO_FIN';
+    V_MSQL VARCHAR2(20000 CHAR);
 
 BEGIN
 
@@ -114,18 +115,85 @@ BEGIN
         WHERE ACT.DD_EPU_ID <> (SELECT EPU.DD_EPU_ID FROM DD_EPU_ESTADO_PUBLICACION EPU WHERE EPU.DD_EPU_CODIGO = ''06'')';
 
     --Caducar el histórico de publicación de todos los activos relacionados con una PDV caducada que no estén actualmente despublicados:
+          V_MSQL := '
+            INSERT INTO '|| V_ESQUEMA ||'.ACT_AHP_HIST_PUBLICACION(AHP_ID,ACT_ID
+                                                  ,DD_TPU_A_ID,DD_TPU_V_ID,DD_EPV_ID,DD_EPA_ID,DD_TCO_ID,DD_MTO_V_ID
+                                                  ,AHP_MOT_OCULTACION_MANUAL_V,AHP_CHECK_PUBLICAR_V,AHP_CHECK_OCULTAR_V
+                                                  ,AHP_CHECK_OCULTAR_PRECIO_V,AHP_CHECK_PUB_SIN_PRECIO_V
+                                                  ,DD_MTO_A_ID
+                                                  ,AHP_MOT_OCULTACION_MANUAL_A,AHP_CHECK_PUBLICAR_A
+                                                  ,AHP_CHECK_OCULTAR_A,AHP_CHECK_OCULTAR_PRECIO_A
+                                                  ,AHP_CHECK_PUB_SIN_PRECIO_A
+                                                  ,AHP_FECHA_INI_VENTA,AHP_FECHA_INI_ALQUILER
+                                                  ,AHP_FECHA_FIN_VENTA,AHP_FECHA_FIN_ALQUILER
+                                                  ,VERSION
+                                                  ,USUARIOCREAR,FECHACREAR
+                                                  ,USUARIOMODIFICAR,FECHAMODIFICAR
+                                                  ,USUARIOBORRAR,FECHABORRAR,BORRADO
+                                                  ,ES_CONDICONADO_ANTERIOR)
+            SELECT  '|| V_ESQUEMA ||'.S_ACT_AHP_HIST_PUBLICACION.NEXTVAL, ACT_ID
+                                                  ,DD_TPU_A_ID
+                                                  ,DD_TPU_V_ID
+                                                  ,(SELECT EPV.DD_EPV_ID FROM '||V_ESQUEMA||'.DD_EPV_ESTADO_PUB_VENTA EPV WHERE EPV.DD_EPV_CODIGO = ''01'') DD_EPV_ID
+                                                  ,(SELECT EPA.DD_EPA_ID FROM '||V_ESQUEMA||'.DD_EPA_ESTADO_PUB_ALQUILER EPA WHERE EPA.DD_EPA_CODIGO = ''01'') DD_EPA_ID
+                                                  ,DD_TCO_ID
+                                                  ,DD_MTO_V_ID
+                                                  ,APU_MOT_OCULTACION_MANUAL_V,APU_CHECK_PUBLICAR_V,APU_CHECK_OCULTAR_V
+                                                  ,APU_CHECK_OCULTAR_PRECIO_V,APU_CHECK_PUB_SIN_PRECIO_V
+                                                  ,DD_MTO_A_ID
+                                                  ,APU_MOT_OCULTACION_MANUAL_A,APU_CHECK_PUBLICAR_A
+                                                  ,APU_CHECK_OCULTAR_A,APU_CHECK_OCULTAR_PRECIO_A
+                                                  ,APU_CHECK_PUB_SIN_PRECIO_A
+                                                  ,FECHAMODIFICAR,FECHAMODIFICAR
+                                                  ,SYSDATE APU_FECHA_FIN_VENTA
+                                                  ,SYSDATE APU_FECHA_FIN_ALQUILER
+                                                  ,VERSION
+                                                  ,'''||USUARIO||''' USUARIOCREAR, SYSDATE FECHACREAR
+                                                  ,USUARIOMODIFICAR,FECHAMODIFICAR
+                                                  ,USUARIOBORRAR,FECHABORRAR,BORRADO
+                                                  , ES_CONDICONADO_ANTERIOR
+              FROM '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION APU
+             WHERE APU.BORRADO = 0
+               AND EXISTS (SELECT 1 FROM '||V_ESQUEMA||'.AUX_ACTIVOS_PDV_CADUCADA AUX WHERE AUX.ACT_ID = APU.ACT_ID)
+               AND (APU.DD_EPV_ID <> (SELECT EPV.DD_EPV_ID FROM '||V_ESQUEMA||'.DD_EPV_ESTADO_PUB_VENTA EPV WHERE EPV.DD_EPV_CODIGO = ''01'')
+                 OR APU.DD_EPA_ID <> (SELECT EPA.DD_EPA_ID FROM '||V_ESQUEMA||'.DD_EPA_ESTADO_PUB_ALQUILER EPA WHERE EPA.DD_EPA_CODIGO = ''01'')
+                   )
+                    ';
+          EXECUTE IMMEDIATE V_MSQL;
+/*
     EXECUTE IMMEDIATE 'MERGE INTO '||V_ESQUEMA||'.ACT_HEP_HIST_EST_PUBLICACION HEP
         USING (SELECT DISTINCT ACT_ID
             FROM '||V_ESQUEMA||'.AUX_ACTIVOS_PDV_CADUCADA) T2
         ON (HEP.ACT_ID = T2.ACT_ID)
         WHEN MATCHED THEN UPDATE SET
-            HEP.HEP_FECHA_HASTA = SYSDATE, HEP.USUARIOMODIFICAR = '''||USUARIO||'''
-            , HEP.FECHAMODIFICAR = SYSDATE
+            HEP.HEP_FECHA_HASTA = SYSDATE
+          , HEP.USUARIOMODIFICAR = '''||USUARIO||'''
+          , HEP.FECHAMODIFICAR = SYSDATE
         WHERE HEP.HEP_FECHA_HASTA IS NULL
-            AND HEP.DD_EPU_ID <> (SELECT EPU.DD_EPU_ID FROM DD_EPU_ESTADO_PUBLICACION EPU WHERE EPU.DD_EPU_CODIGO = ''06'')';
-
+          AND HEP.DD_EPU_ID <> (SELECT EPU.DD_EPU_ID FROM DD_EPU_ESTADO_PUBLICACION EPU WHERE EPU.DD_EPU_CODIGO = ''06'')';
+*/
     --Insertar una linea en el histórico de publicaciones como despublicado con la fecha del día a todos los que no estén actualmente despublicados
-    EXECUTE IMMEDIATE 'INSERT INTO '||V_ESQUEMA||'.ACT_HEP_HIST_EST_PUBLICACION
+    EXECUTE IMMEDIATE 'MERGE INTO '||V_ESQUEMA||'.ACT_APU_ACTIVO_PUBLICACION APU
+        USING (SELECT DISTINCT ACT_ID
+                 FROM '||V_ESQUEMA||'.AUX_ACTIVOS_PDV_CADUCADA) T2
+        ON (APU.ACT_ID = T2.ACT_ID)
+        WHEN MATCHED THEN UPDATE SET
+            APU.DD_EPV_ID = (SELECT EPV.DD_EPV_ID FROM '||V_ESQUEMA||'.DD_EPV_ESTADO_PUB_VENTA EPV WHERE EPV.DD_EPV_CODIGO = ''01'')
+          , APU.DD_EPA_ID = (SELECT EPA.DD_EPA_ID FROM '||V_ESQUEMA||'.DD_EPA_ESTADO_PUB_ALQUILER EPA WHERE EPA.DD_EPA_CODIGO = ''01'')
+          , APU.APU_MOT_OCULTACION_MANUAL_A = ''Fin vigencia asistida''
+          , APU.APU_MOT_OCULTACION_MANUAL_V = ''Fin vigencia asistida''
+          , APU.DD_MTO_V_ID = (select dd_mto_id from '||V_ESQUEMA||'.DD_MTO_MOTIVOS_OCULTACION where DD_MTO_CODIGO = ''12'' and borrado = 0)
+		  , APU.DD_MTO_A_ID = (select dd_mto_id from '||V_ESQUEMA||'.DD_MTO_MOTIVOS_OCULTACION where DD_MTO_CODIGO = ''12'' and borrado = 0)
+		  , APU.APU_CHECK_OCULTAR_V = 1
+		  , APU.APU_CHECK_OCULTAR_A = 1
+          , APU.USUARIOMODIFICAR = '''||USUARIO||'''
+          , APU.FECHAMODIFICAR = SYSDATE
+        WHERE (APU.DD_EPV_ID <> (SELECT EPV.DD_EPV_ID FROM '||V_ESQUEMA||'.DD_EPV_ESTADO_PUB_VENTA EPV WHERE EPV.DD_EPV_CODIGO = ''01'')
+            OR APU.DD_EPA_ID <> (SELECT EPA.DD_EPA_ID FROM '||V_ESQUEMA||'.DD_EPA_ESTADO_PUB_ALQUILER EPA WHERE EPA.DD_EPA_CODIGO = ''01'')
+              ) 
+        ';
+        
+/*    EXECUTE IMMEDIATE 'INSERT INTO '||V_ESQUEMA||'.ACT_HEP_HIST_EST_PUBLICACION
             (HEP_ID, ACT_ID, HEP_FECHA_DESDE, DD_POR_ID, DD_TPU_ID
             , DD_EPU_ID, HEP_MOTIVO, VERSION, USUARIOCREAR, FECHACREAR, BORRADO)
         WITH ACTIVOS AS (
@@ -136,7 +204,7 @@ BEGIN
         FROM ACTIVOS T1
         JOIN '||V_ESQUEMA||'.DD_EPU_ESTADO_PUBLICACION T2 ON T2.DD_EPU_ID = ''06''
         WHERE NOT EXISTS (SELECT 1 FROM '||V_ESQUEMA||'.ACT_HEP_HIST_EST_PUBLICACION AUX WHERE AUX.ACT_ID = T1.ACT_ID AND AUX.HEP_FECHA_HASTA IS NULL AND AUX.DD_EPU_ID = T2.DD_EPU_ID)';
-
+*/
     COMMIT;
 
 EXCEPTION

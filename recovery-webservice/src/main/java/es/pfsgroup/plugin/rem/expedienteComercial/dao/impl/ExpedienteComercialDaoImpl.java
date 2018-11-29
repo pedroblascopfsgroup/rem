@@ -2,6 +2,10 @@ package es.pfsgroup.plugin.rem.expedienteComercial.dao.impl;
 
 import java.util.List;
 
+import es.pfsgroup.commons.utils.hibernate.HibernateUtils;
+import org.hibernate.Criteria;
+import org.hibernate.criterion.Restrictions;
+import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
 
 import es.capgemini.devon.dto.WebDto;
@@ -58,23 +62,57 @@ public  class ExpedienteComercialDaoImpl extends AbstractEntityDao<ExpedienteCom
 
 	@Override
 	public void deleteCompradorExpediente(Long idExpediente, Long idComprador) {
-
-		//StringBuilder sb = new StringBuilder("delete from CompradorExpediente ce where ce.primaryKey.comprador = "+idComprador+" and ce.primaryKey.expediente= "+idExpediente);	
-		StringBuilder sb = new StringBuilder("update CompradorExpediente ce set ce.borrado = 1, ce.porcionCompra= 0, ce.fechaBaja= SYSDATE where ce.primaryKey.comprador = "+idComprador+" and ce.primaryKey.expediente= "+idExpediente);
+		StringBuilder sb = new StringBuilder("update CompradorExpediente ce set ce.borrado = 1, ce.porcionCompra= 0, ce.fechaBaja= SYSDATE where ce.primaryKey.comprador = " + idComprador
+				+ " and ce.primaryKey.expediente= " + idExpediente);
 		this.getSessionFactory().getCurrentSession().createQuery(sb.toString()).executeUpdate();
 	}
 	
 	@Override
+	public ExpedienteComercial getExpedienteComercialByIdTrabajo(Long idTrabajo) {
+		Criteria criteria = getSession().createCriteria(ExpedienteComercial.class);
+		criteria.add(Restrictions.eq("trabajo.id", idTrabajo));
+
+		return HibernateUtils.castObject(ExpedienteComercial.class, criteria.uniqueResult());
+	}
+
+	@Override
+	public ExpedienteComercial getExpedienteComercialByNumeroExpediente(Long numeroExpediente) {
+		Criteria criteria = getSession().createCriteria(ExpedienteComercial.class);
+		criteria.add(Restrictions.eq("numExpediente", numeroExpediente));
+
+		return HibernateUtils.castObject(ExpedienteComercial.class, criteria.uniqueResult());
+	}
+
+	@Override
+	public ExpedienteComercial getExpedienteComercialByIdOferta(Long idOferta) {
+		Criteria criteria = getSession().createCriteria(ExpedienteComercial.class);
+		criteria.add(Restrictions.eq("oferta.id", idOferta));
+
+		return HibernateUtils.castObject(ExpedienteComercial.class, criteria.uniqueResult());
+	}
+
+	@Override
 	public ExpedienteComercial getExpedienteComercialByTrabajo(Long idTrabajo) {
-		
 		HQLBuilder hql = new HQLBuilder("from ExpedienteComercial exp");
 		HQLBuilder.addFiltroIgualQueSiNotNull(hql, "exp.trabajo.id", idTrabajo);
-		
+
 		List<ExpedienteComercial> listaExpedientes = HibernateQueryUtils.list(this, hql);
 
 		if(!Checks.estaVacio(listaExpedientes))
 			return listaExpedientes.get(0);
 		else
 			return null;
+	}
+
+	@Override
+	public ExpedienteComercial getExpedienteComercialByNumExpediente(Long numeroExpediente) {
+		Session session = getSession();
+		Criteria criteria = session.createCriteria(ExpedienteComercial.class);
+		criteria.add(Restrictions.eq("numExpediente", numeroExpediente));
+
+		ExpedienteComercial expedienteComercial = HibernateUtils.castObject(ExpedienteComercial.class, criteria.uniqueResult());
+		session.disconnect();
+
+		return expedienteComercial;
 	}
 }

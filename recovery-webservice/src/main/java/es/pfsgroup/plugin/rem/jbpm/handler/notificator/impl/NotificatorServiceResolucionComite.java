@@ -14,6 +14,8 @@ import org.springframework.stereotype.Component;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.agenda.model.Notificacion;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
@@ -57,6 +59,12 @@ public class NotificatorServiceResolucionComite extends AbstractNotificatorServi
 	
 	@Autowired
 	private NotificatorServiceSancionOfertaAceptacionYRechazo notificatorServiceSancionOfertaAceptacionYRechazo;
+	
+	@Autowired
+	private GenericABMDao genericDao;
+	
+	private static final String BUZON_REM = "buzonrem";
+	private static final String BUZON_PFS = "buzonpfs";
 	
 
 	List<String> mailsPara = new ArrayList<String>();
@@ -102,6 +110,8 @@ public class NotificatorServiceResolucionComite extends AbstractNotificatorServi
 			
 			Usuario gestor = null;
 			Usuario supervisor = null;
+			Usuario buzonRem = genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "username", BUZON_REM));
+			Usuario buzonPfs = genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "username", BUZON_PFS));
 			
 			for (TareaActivo tareaActivo : tramite.getTareas()) {				
 				if (CODIGO_T013_DEFINICION_OFERTA.equals(tareaActivo.getTareaExterna().getTareaProcedimiento().getCodigo())) {
@@ -116,6 +126,12 @@ public class NotificatorServiceResolucionComite extends AbstractNotificatorServi
 			List<Usuario> usuarios = new ArrayList<Usuario>();
 			usuarios.add(gestor);
 			usuarios.add(supervisor);
+			if(!Checks.esNulo(buzonRem)) {
+				usuarios.add(buzonRem);
+			}
+			if(!Checks.esNulo(buzonPfs)) {
+				usuarios.add(buzonPfs);
+			}
 			
 		    mailsPara = getEmailsNotificacionContraoferta(usuarios);
 		    if(!Checks.esNulo(preescriptor) && !Checks.esNulo(preescriptor.getEmail())){
@@ -327,7 +343,7 @@ public class NotificatorServiceResolucionComite extends AbstractNotificatorServi
 			return null;
 		}
 
-		ExpedienteComercial expediente = expedienteComercialDao.getExpedienteComercialByTrabajo(trabajo.getId());
+		ExpedienteComercial expediente = expedienteComercialDao.getExpedienteComercialByIdTrabajo(trabajo.getId());
 
 		if (expediente == null) {
 			return null;

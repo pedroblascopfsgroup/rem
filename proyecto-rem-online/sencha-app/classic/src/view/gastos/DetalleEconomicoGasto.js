@@ -741,6 +741,7 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 															                {		                
 																			    xtype: 'textfieldbase',
 																			    fieldLabel:  HreRem.i18n('fieldlabel.detalle.economico.nif.titular.cuenta'),
+																				maxLength: 10,
 																			    bind: {
 																			       	value: '{detalleeconomico.nifTitularCuenta}',
 																			       	disabled: '{!seleccionadoAbonar}',

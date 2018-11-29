@@ -70,7 +70,11 @@ Ext.define('HreRem.model.ActivoCondicionantesDisponibilidad', {
     			name: 'estadoCondicionadoCodigo'
     		},
     		{
-    			name: 'sinInformeAprobado',
+    			name: 'sinInformeAprobadoREM',
+    			type: 'boolean'
+    		},
+    		{
+    			name: 'vandalizado',
     			type: 'boolean'
     		},
     		{
@@ -89,7 +93,6 @@ Ext.define('HreRem.model.ActivoCondicionantesDisponibilidad', {
 		extraParams:{
 			tab: 'activocondicionantesdisponibilidad'
 		},
-		writeAll: true,
 		api: {
 			read: 'activo/getTabActivo',
             update: 'activo/saveCondicionantesDisponibilidad',

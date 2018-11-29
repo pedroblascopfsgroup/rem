@@ -1,0 +1,215 @@
+--/*
+--###########################################
+--## AUTOR=Marco Munoz
+--## FECHA_CREACION=20181024
+--## ARTEFACTO=online
+--## VERSION_ARTEFACTO=9.2
+--## INCIDENCIA_LINK=REMVIP-2330
+--## PRODUCTO=NO
+--## 
+--## Finalidad: Actualizaciones de activos en agrupacion asistida.
+--##			
+--## INSTRUCCIONES:  
+--## VERSIONES:
+--##        0.1 Versión inicial
+--###########################################
+----*/
+
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON; 
+SET DEFINE OFF;
+
+
+DECLARE
+  V_MSQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar     
+  V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
+  V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
+  V_SQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
+  V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.   
+  ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
+  ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
+  
+  TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
+  TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
+  
+  
+BEGIN		
+	
+	DBMS_OUTPUT.PUT_LINE('[INICIO] Comienza el proceso...');
+
+	V_MSQL :=  'UPDATE REM01.ACT_REG_INFO_REGISTRAL REG1
+				SET 
+					REG1.REG_SUPERFICIE_UTIL = 12,
+					REG1.USUARIOMODIFICAR = ''REMVIP-2330'',
+					REG1.FECHAMODIFICAR = SYSDATE
+				WHERE REG1.ACT_ID IN (
+					SELECT ACT.ACT_ID
+					FROM REM01.ACT_ACTIVO ACT
+					JOIN REM01.ACT_REG_INFO_REGISTRAL CAT
+					ON CAT.ACT_ID = ACT.ACT_ID
+					WHERE ACT.ACT_NUM_ACTIVO IN (
+					7030516,
+					7030517,
+					7030518,
+					7030519,
+					7030520,
+					7030521,
+					7030522,
+					7030523,
+					7030524,
+					7030525,
+					7030526,
+					7030527,
+					7030528
+					)
+				)
+	';
+	EXECUTE IMMEDIATE V_MSQL; 
+	DBMS_OUTPUT.PUT_LINE('[INFO] Se actualiza la superficie util de '||SQL%ROWCOUNT||' activos.');  
+	
+	V_MSQL :=  'UPDATE REM01.BIE_DATOS_REGISTRALES REG2
+				SET 
+					REG2.BIE_DREG_SUPERFICIE_CONSTRUIDA = 28,
+					REG2.USUARIOMODIFICAR = ''REMVIP-2330'',
+					REG2.FECHAMODIFICAR = SYSDATE
+				WHERE REG2.BIE_DREG_ID IN (
+					SELECT reg.BIE_DREG_ID
+					FROM REM01.ACT_ACTIVO act
+					join REM01.BIE_BIEN bie
+					on bie.bie_id = act.bie_id
+					join REM01.BIE_DATOS_REGISTRALES reg
+					on reg.bie_id = bie.bie_id
+					 WHERE ACT.ACT_NUM_ACTIVO IN (
+						7030516,
+						7030517,
+						7030518,
+						7030519,
+						7030520,
+						7030521,
+						7030522,
+						7030523,
+						7030524,
+						7030525,
+						7030526,
+						7030527,
+						7030528
+					)
+				)
+	';
+	EXECUTE IMMEDIATE V_MSQL; 
+	DBMS_OUTPUT.PUT_LINE('[INFO] Se actualiza la superficie de '||SQL%ROWCOUNT||' activos.');  
+	
+	V_MSQL :=  'UPDATE REM01.ACT_ACTIVO ACT
+				SET
+					ACT.DD_SCR_ID = (SELECT DD_SCR_ID FROM REM01.DD_SCR_SUBCARTERA WHERE DD_SCR_CODIGO = ''20''),
+					ACT.DD_TCR_ID = (SELECT DD_TCR_ID FROM REM01.DD_TCR_TIPO_COMERCIALIZAR WHERE DD_TCR_CODIGO = ''02''),
+					ACT.DD_TCO_ID = (SELECT DD_TCO_ID FROM REM01.DD_TCO_TIPO_COMERCIALIZACION WHERE DD_TCO_CODIGO = ''01''),
+					ACT.ACT_BLOQUEO_PRECIO_FECHA_INI = SYSDATE,
+					ACT.ACT_BLOQUEO_PRECIO_USU_ID = (SELECT USU_ID FROM REMMASTER.USU_USUARIOS WHERE USU_USERNAME = ''SUPER''),
+					ACT.USUARIOMODIFICAR = ''REMVIP-2330'',
+					ACT.FECHAMODIFICAR = SYSDATE
+				WHERE ACT.ACT_NUM_ACTIVO IN (
+				7030516,
+				7030517,
+				7030518,
+				7030519,
+				7030520,
+				7030521,
+				7030522,
+				7030523,
+				7030524,
+				7030525,
+				7030526,
+				7030527,
+				7030528
+				)
+	';
+	EXECUTE IMMEDIATE V_MSQL; 
+	DBMS_OUTPUT.PUT_LINE('[INFO] Se actualiza la subcartera de '||SQL%ROWCOUNT||' activos.');  
+	
+	V_MSQL :=  'UPDATE REM01.ACT_PAC_PERIMETRO_ACTIVO PAC
+				SET
+					PAC.PAC_INCLUIDO = 1,
+					PAC.DD_MCO_ID = (SELECT DD_MCO_ID FROM REM01.DD_MCO_MOTIVO_COMERCIALIZACION WHERE DD_MCO_CODIGO = ''02''),
+					PAC.PAC_CHECK_ASIGNAR_MEDIADOR = 1,
+					PAC.PAC_FECHA_ASIGNAR_MEDIADOR = SYSDATE,
+					PAC.PAC_CHECK_COMERCIALIZAR = 1,
+					PAC.PAC_FECHA_COMERCIALIZAR = SYSDATE,
+					PAC.PAC_CHECK_FORMALIZAR = 1,
+					PAC.PAC_FECHA_FORMALIZAR = SYSDATE,
+					PAC.USUARIOMODIFICAR = ''REMVIP-2330'',
+					PAC.FECHAMODIFICAR = SYSDATE
+				WHERE PAC.ACT_ID IN (
+				SELECT ACT_ID FROM REM01.ACT_ACTIVO WHERE 
+				ACT_NUM_ACTIVO IN (
+				7030516,
+				7030517,
+				7030518,
+				7030519,
+				7030520,
+				7030521,
+				7030522,
+				7030523,
+				7030524,
+				7030525,
+				7030526,
+				7030527,
+				7030528
+				))
+	';
+	EXECUTE IMMEDIATE V_MSQL; 
+	DBMS_OUTPUT.PUT_LINE('[INFO] Se actualiza el perímetro de '||SQL%ROWCOUNT||' activos.');  
+	
+	V_MSQL :=  'INSERT INTO REM01.ACT_AGA_AGRUPACION_ACTIVO AGA
+				(AGA_ID, AGR_ID, ACT_ID, AGA_FECHA_INCLUSION,USUARIOCREAR, FECHACREAR, BORRADO)
+				SELECT 
+					REM01.S_ACT_AGA_AGRUPACION_ACTIVO.NEXTVAL,
+					(SELECT AGR_ID FROM REM01.ACT_AGR_AGRUPACION WHERE AGR_NUM_AGRUP_REM = 9110145),
+					ACT.ACT_ID,
+					SYSDATE,
+					''REMVIP-2330'',
+					SYSDATE,
+					0
+				FROM REM01.ACT_ACTIVO ACT
+				WHERE ACT.ACT_NUM_ACTIVO IN (
+				7030516,
+				7030517,
+				7030518,
+				7030519,
+				7030520,
+				7030521,
+				7030522,
+				7030523,
+				7030524,
+				7030525,
+				7030526,
+				7030527,
+				7030528
+				)
+	';
+	EXECUTE IMMEDIATE V_MSQL; 
+	DBMS_OUTPUT.PUT_LINE('[INFO] Se insertan '||SQL%ROWCOUNT||' activos en la agrupación 9110145.');  
+	
+	
+	
+	COMMIT;  
+	DBMS_OUTPUT.PUT_LINE('[FIN]: Fin del proceso.');
+ 
+
+EXCEPTION
+
+   WHEN OTHERS THEN
+        err_num := SQLCODE;
+        err_msg := SQLERRM;
+
+        DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(err_num));
+        DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
+        DBMS_OUTPUT.put_line(err_msg);
+
+        ROLLBACK;
+        RAISE;          
+
+END;
+/
+EXIT

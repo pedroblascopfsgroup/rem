@@ -24,7 +24,47 @@ Ext.define('HreRem.view.activos.ActivosController', {
 		var me = this;
 		this.lookupReference('activoslist').getStore().loadPage(1);
         
-	},	
+	},
+	
+	onSearchBusquedaDirectaActivos: function(btn){
+		var me = this;
+		var numActivo = btn.up('activossearch').down('[name="numActivo"]').value;
+		
+		if(numActivo != ""){
+		  	var url= $AC.getRemoteUrl('activo/getActivoExists');
+        	var data;
+    		Ext.Ajax.request({
+    		     url: url,
+    		     params: {numActivo : numActivo},
+    		     success: function(response, opts) {
+    		    	 data = Ext.decode(response.responseText);
+    		    	 if(data.success == "true"){
+    		    		 var titulo = "Activo " + numActivo;
+        		    	 me.getView().fireEvent('abrirDetalleActivoById', data.data, titulo);
+    		    	 }else{
+        		    	 me.fireEvent("errorToast", data.error);
+    		    	 }
+    		         
+    		     },
+    		     failure: function(response) {
+    		    	 me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+    		     }
+    		 });    
+			
+		}
+	},
+	
+	onChangeNumActivo: function(me, oValue, nValue){
+		
+		var numActivo = me.value;
+		var btn = me.up('activossearch').down('[reference="btnActivo"]');
+		
+		if(numActivo != ""){
+			btn.setDisabled(false);
+		}else{
+			btn.setDisabled(true); 
+		}
+	},
 	
 	paramLoading: function(store, operation, opts) {
 		
@@ -56,56 +96,48 @@ Ext.define('HreRem.view.activos.ActivosController', {
 		
     	var me = this,
 		config = {};
-    	var count = me.getViewModel().data.activos.totalCount;
 		
-		if(count < CONST.EXPORTADOR['LIMITE']){
-			
-			var initialData = {};
+		
+		
+		var initialData = {};
 
-			var searchForm = btn.up('formBase');
-			if (searchForm.isValid()) {
-				var params = Ext.apply(initialData, searchForm ? searchForm.getValues() : {});
-				
-				Ext.Object.each(params, function(key, val) {
-					if (Ext.isEmpty(val)) {
-						delete params[key];
-					}
-				});
-	        }
+		var searchForm = btn.up('formBase');
+		if (searchForm.isValid()) {
+			var params = Ext.apply(initialData, searchForm ? searchForm.getValues() : {});
 			
-			config.params = params;
-			config.url= $AC.getRemoteUrl("activo/generateExcel");
-			//config.params = {};
-			//config.params.idProcess = this.getView().down('grid').selection.data.id;
-			
-			me.fireEvent("downloadFile", config);	
-			
-		} else{
-        	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.exportar.activos"));
-		}
-	
+			Ext.Object.each(params, function(key, val) {
+				if (Ext.isEmpty(val)) {
+					delete params[key];
+				}
+			});
+        }
+		
+		config.params = params;
+		config.url= $AC.getRemoteUrl("activo/generateExcel");
+		//config.params = {};
+		//config.params.idProcess = this.getView().down('grid').selection.data.id;
+		
+		me.fireEvent("downloadFile", config);		
+    	
     	
 		},
 		    
 		onClickCrearTrabajo: function (btn) {
+			var me = this;
+			var idActivo = null;
+			var codCartera = null;
+			var grid = me.getView().down('grid');
+			if(Ext.isEmpty(grid)){ 
+				return true;
+			}
+			var selected = grid.getSelectionModel().getSelection();
+		
+			if(!Ext.isEmpty(selected)) {
 			
-		  	var me = this;
-		  	var idActivo = me.getViewModel().get("activo.id");
-		  	var idAgrupacion = me.getViewModel().get("agrupacionficha.id");
-		  	var url= $AC.getRemoteUrl('trabajo/getSupervisorGestorTrabajo');
-        	var data;
-    		Ext.Ajax.request({
-    		     url: url,
-    		     params: {idActivo : idActivo, idAgrupacion : idAgrupacion},
-    		     success: function(response, opts) {
-    		    	 data = Ext.decode(response.responseText);
-    		    	 me.getView().fireEvent('openModalWindow',"HreRem.view.trabajos.detalle.CrearTrabajo",{idActivo: null, idAgrupacion: null, idGestor: null, idSupervisor: data.data.id});
-    		         
-    		     },
-    		     failure: function(response) {
-    		    	 me.getView().fireEvent('openModalWindow',"HreRem.view.trabajos.detalle.CrearTrabajo",{idActivo: null, idAgrupacion: null, idUsuario: null});
-    		     }
-    		 });    	
+				idActivo = selected[0].getData().id;
+		  		codCartera = selected[0].getData().entidadPropietariaCodigo;
+		  	}
+			 me.getView().fireEvent('openModalWindow',"HreRem.view.trabajos.detalle.CrearTrabajo",{idActivo: idActivo, codCartera: codCartera,logadoGestorMantenimiento: true,idAgrupacion: null, idGestor: null});    	
 		},
 
 	onChangeChainedCombo: function(combo) {

@@ -43,6 +43,7 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 
 	private static final String USUARIO_FICTICIO_OFERTA_CAJAMAR = "ficticioOfertaCajamar";
 	private static final String BUZON_REM = "buzonrem";
+	private static final String BUZON_PFS = "buzonpfs";
 
 	@Autowired
 	private GenericAdapter genericAdapter;
@@ -84,7 +85,7 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 
 		} else {
 			// por activo
-			usuario = gestorActivoManager.getGestorByActivoYTipo(activo, "GCOM");
+			usuario = gestorActivoManager.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
 			supervisor = gestorActivoManager.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL);
 		}
 
@@ -118,16 +119,19 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 				}
 				
 				List<GestorSustituto> sustitutos = genericDao.getList(GestorSustituto.class, genericDao.createFilter(FilterType.EQUALS, "usuarioGestorOriginal.id", usuario.getId()));
-				if (!Checks.esNulo(sustitutos)){
+				if (!Checks.esNulo(sustitutos)) {
 					for (GestorSustituto gestorSustituto : sustitutos) {
-						if (!Checks.esNulo(gestorSustituto)){
-							if ((gestorSustituto.getFechaFin().after(new Date()) || gestorSustituto.getFechaFin().equals(new Date())) && (gestorSustituto.getFechaInicio().before(new Date()) || gestorSustituto.getFechaInicio().equals(new Date())) && !gestorSustituto.getAuditoria().isBorrado()){
+						if (!Checks.esNulo(gestorSustituto)) {
+							if ((gestorSustituto.getFechaFin() == null || gestorSustituto.getFechaFin().after(new Date())
+									|| gestorSustituto.getFechaFin().equals(new Date()))
+									&& (gestorSustituto.getFechaInicio().before(new Date())
+											|| gestorSustituto.getFechaInicio().equals(new Date()))
+									&& !gestorSustituto.getAuditoria().isBorrado()) {
 								mailsPara.add(gestorSustituto.getUsuarioGestorSustituto().getEmail());
 							}
 						}
 					}
-				}
-				
+				}				
 			}
 			
 			if(!Checks.esNulo(supervisor)){
@@ -135,6 +139,9 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 			}
 			
 			if(!Checks.esNulo(activo.getCartera()) && DDCartera.CODIGO_CARTERA_CAJAMAR.equals(activo.getCartera().getCodigo())){
+				if(!Checks.esNulo(usuarioManager.getByUsername(USUARIO_FICTICIO_OFERTA_CAJAMAR))){
+					mailsPara.add(usuarioManager.getByUsername(USUARIO_FICTICIO_OFERTA_CAJAMAR).getEmail());
+				}				
 				
 				Usuario ficticioCajamar = usuarioManager.getByUsername(USUARIO_FICTICIO_OFERTA_CAJAMAR);
 				
@@ -142,13 +149,13 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 					mailsPara.add(ficticioCajamar.getEmail());
 				}
 				
-				Usuario gesRes = gestorActivoManager.getGestorByActivoYTipo(activo, "GESRES");
+				Usuario gesRes = gestorActivoManager.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_RESERVA_CAJAMAR);
 				
 				if(!Checks.esNulo(gesRes)) {
 					mailsPara.add(gesRes.getEmail());
 				}
 				
-				Usuario supRes = gestorActivoManager.getGestorByActivoYTipo(activo, "SUPRES");
+				Usuario supRes = gestorActivoManager.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_SUPERVISOR_RESERVA_CAJAMAR);
 				
 				if(!Checks.esNulo(supRes)){
 					mailsPara.add(supRes.getEmail());
@@ -156,9 +163,13 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 			}
 			
 			Usuario buzonRem = usuarioManager.getByUsername(BUZON_REM);
+			Usuario buzonPfs = usuarioManager.getByUsername(BUZON_PFS);
 			
 			if(!Checks.esNulo(buzonRem)) {
 				mailsPara.add(buzonRem.getEmail());
+			}
+			if(!Checks.esNulo(buzonPfs)) {
+				mailsPara.add(buzonPfs.getEmail());
 			}
 
 			

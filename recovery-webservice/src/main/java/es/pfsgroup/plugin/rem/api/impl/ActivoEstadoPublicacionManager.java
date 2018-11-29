@@ -182,7 +182,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	private Boolean deshabilitarCheckPublicarSinPrecioVenta(Long idActivo) {
 		Boolean resultado = false;
 		try{
-			resultado = isPublicadoVenta(idActivo) || isOcultoVenta(idActivo) || tienePrecioVenta(idActivo);
+			resultado = isPublicadoVenta(idActivo) || tienePrecioVenta(idActivo);
 		}catch(Exception e){
 			logger.error("Error en el método deshabilitarCheckPublicarSinPrecioVenta" , e);
 		}
@@ -369,8 +369,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		ActivoPublicacion activoPublicacion = activoPublicacionDao.getActivoPublicacionPorIdActivo(idActivo);
 
 		return !Checks.esNulo(activoPublicacion) && !Checks.esNulo(activoPublicacion.getEstadoPublicacionVenta()) &&
-				(DDEstadoPublicacionVenta.CODIGO_PUBLICADO_VENTA.equals(activoPublicacion.getEstadoPublicacionVenta().getCodigo())
-						|| DDEstadoPublicacionVenta.CODIGO_OCULTO_VENTA.equals(activoPublicacion.getEstadoPublicacionVenta().getCodigo()));
+				(DDEstadoPublicacionVenta.CODIGO_PUBLICADO_VENTA.equals(activoPublicacion.getEstadoPublicacionVenta().getCodigo()));
 	}
 
 	// Comprobación mínima.

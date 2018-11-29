@@ -480,6 +480,13 @@ public class AgrupacionAdapter {
 						BeanUtils.copyProperty(dtoAgrupacion, "cartera", proyectoTemp.getCartera().getDescripcion());
 						BeanUtils.copyProperty(dtoAgrupacion, "codigoCartera", proyectoTemp.getCartera().getCodigo());
 					}
+				}else if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_ALQUILER)) {
+					
+					if(!Checks.estaVacio(agrupacion.getActivos())){
+						Activo activo = agrupacion.getActivos().get(0).getActivo();
+						BeanUtils.copyProperty(dtoAgrupacion, "cartera", activo.getCartera().getDescripcion());
+					}
+
 				}
 
 				// TODO: Hacer cuando esté listo el activo principal dentro de

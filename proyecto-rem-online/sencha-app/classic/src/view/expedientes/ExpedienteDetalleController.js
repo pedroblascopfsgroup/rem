@@ -920,7 +920,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			porCuentaDe.setValue("");
 		}
 	},
-	
+	//Forma antigua de datos comprador
 	cargarDatosComprador: function (window) {
 		var me = this,
 		model = null,
@@ -928,7 +928,6 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		nameModels = null,
 		id = window.idComprador,
 		idExpediente = window.expediente.get("id");
-
 		if(!Ext.isEmpty(id)){
 			var form= window.down('formBase');
 			form.mask(HreRem.i18n("msg.mask.loading"));
@@ -954,6 +953,51 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			var form= window.down('formBase');
 			form.setBindRecord(Ext.create('HreRem.model.FichaComprador'));		
 		}
+	},
+	
+	cargarDatosCompradorWizard: function(window){ 
+		var me = this;
+		//carga datos comprador
+		var model = null,
+		models = null,
+		nameModels = null,
+		id = window.idComprador,
+		idExpediente = window.up().expediente.get("id");
+		if(!Ext.isEmpty(id)){
+			var form= window.down('formBase');
+			form.mask(HreRem.i18n("msg.mask.loading"));
+			if(!form.saveMultiple) {	
+				model = form.getModelInstance(),
+				model.setId(id);
+				if(Ext.isDefined(model.getProxy().getApi().read)) {
+					// Si la API tiene metodo de lectura (read).
+					model.load({
+						params: {idExpedienteComercial: idExpediente},
+					    success: function(record) {
+					    	form.setBindRecord(record);			    	
+					    	form.unmask();
+					    	if(Ext.isFunction(form.afterLoad)) {
+					    		form.afterLoad();
+					    	}
+					    }
+					});
+				}
+			}
+		}else{
+			window.setBindRecord(Ext.create('HreRem.model.FichaComprador'));		
+		}
+		//Funcionalidad que permite editar los campos
+		Ext.Array.each(window.query('field[isReadOnlyEdit]'),
+				function (field, index) 
+					{ 								
+						field.fireEvent('edit');
+						if(index == 0) field.focus();
+						field.setReadOnly(!window.modoEdicion)
+						
+					}
+			);
+		
+
 	},
 	
 	onClickBotonModificarComprador: function(btn){
@@ -1375,7 +1419,9 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			if(CONST.ESTADOS_EXPEDIENTE['VENDIDO']!=codigoEstado){
 				var ventanaCompradores= grid.up().up();
 				var expediente= me.getViewModel().get("expediente");
-				Ext.create('HreRem.view.expedientes.DatosComprador',{idExpediente: idExpediente, parent: ventanaCompradores, expediente: expediente}).show();
+				//Esta es la forma antigua que se ha sustituido por el wizard
+				//Ext.create('HreRem.view.expedientes.DatosComprador',{idExpediente: idExpediente, parent: ventanaCompradores, expediente: expediente}).show();
+				Ext.create('HreRem.view.expedientes.WizardAltaComprador',{idExpediente: idExpediente, parent: ventanaCompradores, expediente: expediente}).show();
 				me.onClickBotonRefrescar();
 			}
 			else{

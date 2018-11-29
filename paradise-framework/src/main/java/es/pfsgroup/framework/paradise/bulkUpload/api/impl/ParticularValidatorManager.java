@@ -210,6 +210,27 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 	
 	@Override
+	public Boolean existePlusvalia(String numActivo){
+		if(Checks.esNulo(numActivo) || !StringUtils.isNumeric(numActivo))
+			return false;
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "		 FROM EPV_ECO_PLUSVALIAVENTA EPV"
+				+ " INNER JOIN ECO_EXPEDIENTE_COMERCIAL ECO ON ECO.ECO_ID = EPV.ECO_ID"
+				+ " INNER JOIN OFR_OFERTAS OFR ON ECO.OFR_ID = OFR.OFR_ID "
+				+ " INNER JOIN ACT_OFR AO ON AO.OFR_ID = OFR.OFR_ID"
+				+ " INNER JOIN ACT_ACTIVO ACT ON ACT.ACT_ID = AO.ACT_ID "
+				+ " INNER JOIN DD_EOF_ESTADOS_OFERTA EOF ON EOF.DD_EOF_ID = OFR.DD_EOF_ID"
+				+ "	WHERE ACT_NUM_ACTIVO ="+numActivo+" "
+				+ " AND EOF.DD_EOF_CODIGO = '01'"
+				+ " AND EPV.EPV_EXENTO IS NOT NULL"
+				+ " AND EPV.EPV_AUTOLIQUIDACION IS NOT NULL"
+				+ " AND EPV.EPV_FECHA_ESCRITO_AYTO IS NOT NULL"
+				+ " AND EPV.EPV_OBSERVACIONES IS NOT NULL"
+				+ "		 	AND EPV.BORRADO = 0");
+		return !"0".equals(resultado);
+	}
+	
+	@Override
 	public Boolean existeCatastro(String catastro){
 		if(Checks.esNulo(catastro) || !StringUtils.isAlphanumeric(catastro))
 			return false;

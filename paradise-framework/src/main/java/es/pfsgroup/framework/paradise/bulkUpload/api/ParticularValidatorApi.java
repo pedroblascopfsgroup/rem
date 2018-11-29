@@ -29,6 +29,8 @@ public interface ParticularValidatorApi {
 	Boolean esActivoEnOtraAgrupacion(Long numActivo, Long numAgrupacion);
 
 	Boolean existeActivo(String numActivo);
+	
+	Boolean existePlusvalia(String numActivo);
 
 	Boolean isActivoPrePublicable(String numActivo);
 

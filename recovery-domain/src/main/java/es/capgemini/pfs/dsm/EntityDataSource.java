@@ -80,10 +80,4 @@ public class EntityDataSource extends AbstractRoutingDataSource {
             return transactionalBasicDataSourceWrapper.getConnectionTx(super.getConnection(username, password));
 	}
 
-	@Override
-	public Logger getParentLogger() throws SQLFeatureNotSupportedException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 }

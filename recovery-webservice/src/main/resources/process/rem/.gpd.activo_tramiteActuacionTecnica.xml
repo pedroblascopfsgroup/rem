@@ -156,14 +156,11 @@
     <edge>
       <label x="-16" y="-63"/>
     </edge>
-<<<<<<< Updated upstream
-=======
     <edge>
       <label x="5" y="-10"/>
     </edge>
   </node>
   <node name="T004_AutorizacionBankia" x="6" y="558" width="234" height="36">
->>>>>>> Stashed changes
     <edge>
       <label x="-48" y="-15"/>
     </edge>

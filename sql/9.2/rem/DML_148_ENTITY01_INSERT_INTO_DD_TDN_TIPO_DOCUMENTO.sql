@@ -1,7 +1,7 @@
 --/* 
 --##########################################
 --## AUTOR=Sonia Garcia
---## FECHA_CREACION=20181122
+--## FECHA_CREACION=20181130
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=func-rem-GENCAT
 --## INCIDENCIA_LINK=HREOS-4835
@@ -51,7 +51,7 @@ V_SQL := 'INSERT INTO '||V_ESQUEMA||'.DD_TDN_TIPO_DOCUMENTO(
  		 '|| V_ESQUEMA || '.S_DD_TDN_TIPO_DOCUMENTO.nextval,
 				 ''GENC-01'',
 				 ''GENCAT: Anulación de la comunicación'',
-				 '''',
+				 ''GENCAT: Anulación de la comunicación'',
 				 1,
 				''DML'',
 				 SYSDATE,

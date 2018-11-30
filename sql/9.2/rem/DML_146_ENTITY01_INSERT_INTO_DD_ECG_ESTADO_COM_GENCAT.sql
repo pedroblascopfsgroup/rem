@@ -1,7 +1,7 @@
 --/* 
 --##########################################
 --## AUTOR=Sonia Garcia
---## FECHA_CREACION=20181122
+--## FECHA_CREACION=20181130
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=func-rem-GENCAT
 --## INCIDENCIA_LINK=HREOS-4835
@@ -52,7 +52,7 @@ V_SQL := 'INSERT INTO '||V_ESQUEMA||'.DD_ECG_ESTADO_COM_GENCAT(
  		 '|| V_ESQUEMA || '.S_DD_ECG_ESTADO_COM_GENCAT.nextval,
 				 ''CREADO'',
 				 ''Creado'',
-				 '''',
+				 ''Creado'',
 				 1,
 				''DML'',
 				 SYSDATE,
@@ -86,7 +86,7 @@ V_SQL := 'INSERT INTO '||V_ESQUEMA||'.DD_ECG_ESTADO_COM_GENCAT(
  		 '|| V_ESQUEMA || '.S_DD_ECG_ESTADO_COM_GENCAT.nextval,
 				 ''RECHAZADO'',
 				 ''Rechazado'',
-				 '''',
+				 ''Rechazado'',
 				 1,
 				''DML'',
 				 SYSDATE,
@@ -121,7 +121,7 @@ V_SQL := 'INSERT INTO '||V_ESQUEMA||'.DD_ECG_ESTADO_COM_GENCAT(
  		 '|| V_ESQUEMA || '.S_DD_ECG_ESTADO_COM_GENCAT.nextval,
 				 ''COMUNICADO'',
 				 ''Comunicado'',
-				 '''',
+				 ''Comunicado'',
 				 1,
 				''DML'',
 				 SYSDATE,
@@ -155,7 +155,7 @@ V_SQL := 'INSERT INTO '||V_ESQUEMA||'.DD_ECG_ESTADO_COM_GENCAT(
  		 '|| V_ESQUEMA || '.S_DD_ECG_ESTADO_COM_GENCAT.nextval,
 				 ''SANCIONADO'',
 				 ''Sancionado'',
-				 '''',
+				 ''Sancionado'',
 				 1,
 				''DML'',
 				 SYSDATE,
@@ -189,7 +189,7 @@ V_SQL := 'INSERT INTO '||V_ESQUEMA||'.DD_ECG_ESTADO_COM_GENCAT(
  		 '|| V_ESQUEMA || '.S_DD_ECG_ESTADO_COM_GENCAT.nextval,
 				 ''ANULADO'',
 				 ''Anulado'',
-				 '''',
+				 ''Anulado'',
 				 1,
 				''DML'',
 				 SYSDATE,

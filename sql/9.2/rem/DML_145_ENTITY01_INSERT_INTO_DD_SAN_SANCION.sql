@@ -1,7 +1,7 @@
 --/* 
 --##########################################
 --## AUTOR=Sonia Garcia
---## FECHA_CREACION=20181122
+--## FECHA_CREACION=20181130
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=func-rem-GENCAT
 --## INCIDENCIA_LINK=HREOS-4835
@@ -52,7 +52,7 @@ V_SQL := 'INSERT INTO '||V_ESQUEMA||'.DD_SAN_SANCION(
  		 '|| V_ESQUEMA || '.S_DD_SAN_SANCION.nextval,
 				 ''EJERCE'',
 				 ''Ejerce sanción.'',
-				 '''',
+				 ''Ejerce sanción.'',
 				 1,
 				''DML'',
 				 SYSDATE,
@@ -83,7 +83,7 @@ V_SQL := 'INSERT INTO '||V_ESQUEMA||'.DD_SAN_SANCION(
  		 '|| V_ESQUEMA || '.S_DD_SAN_SANCION.nextval,
 				 ''NO_EJERCE'',
 				 ''No Ejerce sanción.'',
-				 '''',
+				 ''No Ejerce sanción.'',
 				 1,
 				''DML'',
 				 SYSDATE,

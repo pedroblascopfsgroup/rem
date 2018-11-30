@@ -1,7 +1,7 @@
 --/* 
 --##########################################
 --## AUTOR=Sonia Garcia
---## FECHA_CREACION=20181122
+--## FECHA_CREACION=20181130
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=func-rem-GENCAT
 --## INCIDENCIA_LINK=HREOS-4835
@@ -52,7 +52,7 @@ V_SQL := 'INSERT INTO '||V_ESQUEMA||'.DD_NOG_NOTIFICACION_GENCAT(
  		 '|| V_ESQUEMA || '.S_DD_NOG_NOTIFICACION_GENCAT.nextval,
 				 ''DIRECCION'',
 				 ''Direccion'',
-				 '''',
+				 ''Direccion'',
 				 1,
 				''DML'',
 				 SYSDATE,
@@ -86,7 +86,7 @@ V_SQL := 'INSERT INTO '||V_ESQUEMA||'.DD_NOG_NOTIFICACION_GENCAT(
  		 '|| V_ESQUEMA || '.S_DD_NOG_NOTIFICACION_GENCAT.nextval,
 				 ''DATOS_REGISTRALES'',
 				 ''Datos registrales'',
-				 '''',
+				 ''Datos registrales'',
 				 1,
 				''DML'',
 				 SYSDATE,
@@ -121,7 +121,7 @@ V_SQL := 'INSERT INTO '||V_ESQUEMA||'.DD_NOG_NOTIFICACION_GENCAT(
  		 '|| V_ESQUEMA || '.S_DD_NOG_NOTIFICACION_GENCAT.nextval,
 				 ''REF_CATASTRAL'',
 				 ''Referencia Catastral'',
-				 '''',
+				 ''Referencia Catastral'',
 				 1,
 				''DML'',
 				 SYSDATE,
@@ -155,7 +155,7 @@ V_SQL := 'INSERT INTO '||V_ESQUEMA||'.DD_NOG_NOTIFICACION_GENCAT(
  		 '|| V_ESQUEMA || '.S_DD_NOG_NOTIFICACION_GENCAT.nextval,
 				 ''PODERES'',
 				 ''Poderes'',
-				 '''',
+				 ''Poderes'',
 				 1,
 				''DML'',
 				 SYSDATE,

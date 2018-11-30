@@ -201,7 +201,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	private Boolean deshabilitarCheckPublicarSinPrecioAlquiler(Long idActivo) {
 		Boolean resultado = false;
 		try{
-			resultado = isPublicadoAlquiler(idActivo) || isOcultoAlquiler(idActivo) || tienePrecioRenta(idActivo);
+			resultado = isPublicadoAlquiler(idActivo) || tienePrecioRenta(idActivo);
 		}catch(Exception e){
 			logger.error("Error en el método deshabilitarCheckPublicarSinPrecioAlquiler" , e);
 		}

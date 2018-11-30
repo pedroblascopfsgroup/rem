@@ -246,8 +246,10 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 											{
 												xtype: 'checkboxfieldbase',
 												boxLabel:  HreRem.i18n('title.fecha.tope'),												
-												bind: '{trabajo.checkFechaTope}',
 												reference: 'checkFechaTope',
+												bind:{
+													value: '{trabajo.checkFechaTope}'													
+												},
 												listeners: {
 													change: function(check, checked) {																		
 														var form = check.up("form");

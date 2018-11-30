@@ -1,16 +1,18 @@
 Ext.define('HreRem.view.activos.detalle.WizardAltaOferta', {
     extend		: 'HreRem.view.common.WindowBase',
     xtype		: 'wizardaltaoferta',
-    title		: HreRem.i18n('title.nueva.oferta'),
+    title		: 'Asistente - A&ntilde;adir nueva oferta',//HreRem.i18n('title.nueva.oferta'),
     layout		: 'card',
     bodyStyle	: 'padding:10px',
     width		: Ext.Element.getViewportWidth() / 2,    
-    height		: Ext.Element.getViewportHeight() > 500 ? 500 : Ext.Element.getViewportHeight() - 50 ,
+    height		: Ext.Element.getViewportHeight() > 500 ? 500 : Ext.Element.getViewportHeight() -50 ,
+    x: 150,
+    y: 50,
     closable	: true,	
     defaults: {
         border: true
     },
-    bbar: [
+   /*bbar: [
         {
             id: 'move-prev',
             text: 'Back',
@@ -27,25 +29,24 @@ Ext.define('HreRem.view.activos.detalle.WizardAltaOferta', {
                 navigate(btn.up("panel"), "next");
             }
         }
-    ],
+    ],*/
 
     items: [{
-        id: 'card-0',
-        html: '<h1>Bienvenidos al Mago de PFS!</h1><p>Paso 1 de 3</p>'
+        xtype: 'anyadirnuevaofertadocumento'
+        	
     },{
-    	id: 'card-1',
-        html: '<h1>Bienvenidos al Mago de PFS!</h1><p>Paso 2 de 3</p>'
-    	 //xtype: 'anyadirnuevaofertaactivo'
+    	xtype: 'anyadirnuevaofertadetalle'
+
     },{
     	xtype: 'anyadirnuevaofertaactivoadjuntardocumento'
     }],
     renderTo: Ext.getBody()
 });
-
+/*
 var navigate = function(panel, direction){
 
     var layout = panel.getLayout();
     layout[direction]();
     Ext.getCmp('move-prev').setDisabled(!layout.getPrev());
     Ext.getCmp('move-next').setDisabled(!layout.getNext());
-};
+};*/

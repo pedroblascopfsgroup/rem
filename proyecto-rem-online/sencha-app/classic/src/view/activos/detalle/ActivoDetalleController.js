@@ -27,15 +27,12 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
              	grid.getStore().load();
              }
          },
+
          'documentosactivoofertacomercial textfieldbase': {
-             //abrirFormulario: 'abrirFormularioAdjuntarDocPromo',
-             onClickRemove: 'borrarDocumentoAdjunto',
-             //download: 'downloadDocumentoAdjuntoPromocion',
-             afterupload: function(grid) {
-            	 debugger;
-             	//grid.getStore().load();
-             }
+             abrirFormulario: 'abrirFormularioAdjuntarDocumentoOferta',
+             onClickRemove: 'borrarDocumentoAdjuntoOferta',
          },
+
          'fotoswebactivo': {
          	updateOrdenFotos: 'updateOrdenFotosInterno'
          },
@@ -999,6 +996,12 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		
 	},
 	
+	abrirFormularioAdjuntarDocumentoOferta: function(grid) {
+		var me = this,
+		idActivo = me.getViewModel().get("activo.id");
+    	Ext.create("HreRem.view.common.adjuntos.AdjuntarDocumentoOfertacomercial", {entidad: 'activo', idEntidad: idActivo, parent: grid}).show();
+	},
+	
 	abrirFormularioAdjuntarDocPromo: function(grid) {
 		
 		var me = this,
@@ -1025,6 +1028,44 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
             }
             
         });	
+	},
+	
+	borrarDocumentoAdjuntoOferta: function(grid, record) {
+		var me = this,
+		idActivo = me.getViewModel().get("activo.id");
+		me.getView().mask(HreRem.i18n("msg.mask.loading"));
+		
+		if(grid.handler == "borrarDocumentoAdjuntoOferta"){
+			var url =  $AC.getRemoteUrl('activooferta/eliminarDocumentoAdjuntoOferta');
+			Ext.Ajax.request({
+				url: url,
+				params: {id: 0}
+   		    	,success: function (a, operation, context) {
+   		    		var data = Ext.decode(a.responseText);
+   		    		if(data.data){
+   		    			grid.up().down('textfieldbase').setValue('');
+   		    		}
+   		    		me.getView().unmask();
+   		    		grid.hide();
+   		    		Ext.toast({
+   		    			html: 'Operaci&oacute;n relizada con &eacute;xito',
+   		    			width: 360,
+						height: 100,
+						align: 't'									     
+					});
+   		    	},
+   		    	failure: function (a, operation, context) {
+   		    		Ext.toast({
+   		    			html: 'NO HA SIDO POSIBLE REALIZAR LA OPERACIÃN',
+   		    			width: 360,
+						height: 100,
+						align: 't'									     
+					});
+	            	me.unmask();
+	            }
+			});
+			
+		}
 	},
 	
 	downloadDocumentoAdjunto: function(grid, record) {

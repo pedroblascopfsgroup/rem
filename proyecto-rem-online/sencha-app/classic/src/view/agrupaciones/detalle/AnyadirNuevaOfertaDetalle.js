@@ -3,22 +3,52 @@ Ext.define('HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaDetalle', {
     xtype		: 'anyadirnuevaofertadetalle',
     reference	: 'anyadirNuevaOfertaDetalle',
     collapsed: false,
-	scrollable	: 'y',
-	cls:'',	  				
-	recordName: "oferta",						
+	scrollable	: 'y',	  				
+	recordName: "oferta",
+	bodyStyle	: 'padding:20px',
 	recordClass: "HreRem.model.OfertaComercial",
+	
+	listeners: {    
+		boxready: function(window) {
+			var me = this;
+			
+			Ext.Array.each(me.down('fieldset').query('field[isReadOnlyEdit]'),
+				function (field, index) 
+					{ 								
+						field.fireEvent('edit');
+						if(index == 0) field.focus();
+					}
+			);
+		},
+		
+		show: function() {
+			var me = this;
+			me.resetWindow();			
+		}
+	},
 
     
 	initComponent: function() {
     	
     	var me = this;
-    	
-    	
+    	    	
+    	me.buttons = [ {
+    		itemId: 'btnGuardar',
+    		text: 'Crear',
+    		handler: /*'onClickBotonGuardarOferta'*/ //TODO CAMBIAR ANTES DE SUBIR POR ULTIMA VEZ Y CAMBIAR LOS ALLOWBLANK DE TRUE A FALSE DE LOS CAMPOS
+    			function(btn){
+	    			var wizard = btn.up().up().up();
+	    			var layout = wizard.getLayout();
+	    			layout["next"]();
+    			}
+    	},  { itemId: 'btnCancelar', text: 'Cancelar', handler: 'onClickBotonCancelarOferta'}];
+
     	me.items = [
 					{
 						
 								xtype:'fieldset',
 								cls	: 'panel-base shadow-panel',
+								title: HreRem.i18n('title.nueva.oferta'),
 								layout: {
 							        type: 'table',
 							        // The total column count must be specified here
@@ -27,7 +57,8 @@ Ext.define('HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaDetalle', {
 							        tdAttrs: {width: '100%'},
 							        tableAttrs: {
 							            style: {
-							                width: '100%'
+							                width: '100%',
+							                margin: '10px 0 0 150px'
 										}
 							        }
 								},
@@ -227,15 +258,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaDetalle', {
 								        		if (e.getKey() === e.ENTER) {
 								        			field.lookupController().buscarPrescriptor(field);											        			
 								        		}
-								        	}/*,
-								        	
-								        	blur: function(field, e) {											        		
-								        		if(!Ext.isEmpty(field.getValue())) {
-								        			field.lookupController().buscarPrescriptor(field);
-								        		}
-								        	}*/
-								        	
-								        	
+								        	}
 								        }
 				                	},
 				                	{
@@ -280,15 +303,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaDetalle', {
 								        		if (e.getKey() === e.ENTER) {
 								        			field.lookupController().buscarSucursal(field);											        			
 								        		}
-								        	}/*,
-								        	
-								        	blur: function(field, e) {											        		
-								        		if(!Ext.isEmpty(field.getValue())) {
-								        			field.lookupController().buscarPrescriptor(field);
-								        		}
-								        	}*/
-								        	
-								        	
+								        	}
 								        }
 				                	},
 				                	{
@@ -299,16 +314,18 @@ Ext.define('HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaDetalle', {
 										readOnly: true,
 										allowBlank: true
 									}
-									
 
 				            	]
-		    			   
 		    		
 				}
     	];
     	
     	me.callParent();
-    	//me.setTitle(HreRem.i18n('title.nueva.oferta'));
+    },
+    
+    resetWindow: function() {
+    	var me = this;	
+		me.setBindRecord(me.oferta);
     }
     
 });

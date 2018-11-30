@@ -230,7 +230,7 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 		
 		var parent= me.up('ofertascomercialactivo'),
 		oferta = Ext.create('HreRem.model.OfertaComercialActivo', {idActivo: idActivo, numActivo: numActivo});
-		/*
+		/* FUNCIONALIDAD ANTIGUA ANTES DE INSERTAR EL WIZARD.
 		// HREOS-2930 Permitir acceso menú lateral con ventana Alta de oferta abierta
 		var ventana = Ext.create('HreRem.view.activos.detalle.AnyadirNuevaOfertaActivo',{oferta: oferta, parent: parent});
 		me.up('activosdetallemain').add(ventana);

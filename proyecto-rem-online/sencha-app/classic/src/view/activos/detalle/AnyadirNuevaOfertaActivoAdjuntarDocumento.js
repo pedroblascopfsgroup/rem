@@ -2,20 +2,13 @@ Ext.define('HreRem.view.activos.detalle.AnyadirNuevaOfertaActivoAdjuntarDocument
     extend		: 'HreRem.view.common.FormBase',
     xtype		: 'anyadirnuevaofertaactivoadjuntardocumento',
     layout		: 'fit',
-    //closable	: true,		
-    //closeAction	: 'hide',
-    bodyStyle	: 'padding:10px',
-    
+    bodyStyle	: 'padding:20px',
     controller: 'activodetalle',
     viewModel: {
         type: 'activodetalle'
     },
-    
     recordName	: "oferta",						
     recordClass	: "HreRem.model.OfertaComercial",
-    
-    requires: ['HreRem.view.activos.detalle.DocumentosActivoOfertaComercial'],
-    
     listeners: {    
 		boxready: function(window) {
 			var me = this;
@@ -38,11 +31,17 @@ Ext.define('HreRem.view.activos.detalle.AnyadirNuevaOfertaActivoAdjuntarDocument
     	
     	var me = this;
     	
-    	//me.setTitle(HreRem.i18n('title.nueva.oferta'));
-    	
-    	me.buttons = [ {itemId: 'btnAtras', text: 'Volver', handler: 'onClickBotonCancelarOferta'},
+    	me.buttons = [ {
+    		itemId: 'btnAtras',
+    		text: 'Volver',
+    		handler: function(btn){
+    			var wizard = btn.up().up().up();
+    			var layout = wizard.getLayout();
+    			layout["prev"]();
+    		}
+    	},
     		{ itemId: 'btnGenerarDoc', text: 'Generar Documento', handler: 'onClickBotonCancelarOferta'},
-    		{ itemId: 'btnSubirDoc', text: 'Subir Documento', handler: 'abrirFormularioAdjuntarDocumentos'},
+    		{ itemId: 'btnSubirDoc', text: 'Subir Documento', handler: 'abrirFormularioAdjuntarDocumentoOferta'},
     		{ itemId: 'btnFinalizar', text: 'Finalizar', handler: 'onClickBotonCancelarOferta'}];
     	
     	me.items = [
@@ -50,44 +49,92 @@ Ext.define('HreRem.view.activos.detalle.AnyadirNuevaOfertaActivoAdjuntarDocument
     			xtype:'fieldsettable',
 				layout:'vbox',
 				defaultType: 'container',
-		        //title: HreRem.i18n('title.informacion.general'),
+				collapsible: false,
+				title: HreRem.i18n('fieldset.title.doc'),
 				items :
 					[
 						{
 							xtype:'checkboxfieldbase',
-							fieldLabel: 'Cesi&oacute;n datos a haya',//HreRem.i18n('fieldlabel.perimetro.check.admision'),
+							fieldLabel: HreRem.i18n('wizard.oferta.documento.cesionDatos'),
 							bind:		'{oferta.cesionDatosHaya}',
+							margin: '50px 0 0 200px',
 							reference: 'chkbxCesionDatosHaya',
 							readOnly: false
 						},
 						{
 							xtype:'checkboxfieldbase',
-							fieldLabel: 'Comuncacion a terceros',//HreRem.i18n('fieldlabel.perimetro.check.admision'),
+							fieldLabel: HreRem.i18n('wizard.oferta.documento.comunicacionTerceros'),
 							bind:		'{oferta.comunicacionTerceros}',
+							margin: '10px 0 0 200px',
 							reference: 'chkbxcComunicacionTerceros',
 							readOnly: false
 						},
 						{
 							xtype:'checkboxfieldbase',
-							fieldLabel: 'Transferencias internacionales',//HreRem.i18n('fieldlabel.perimetro.check.admision'),
+							fieldLabel: HreRem.i18n('wizard.oferta.documento.transferenciasInternacionales'),
 							bind:		'{oferta.transferenciasInternacionales}',
+							margin: '10px 0 0 200px',
 							reference: 'chkbxTransferenciasInternacionales',
 							readOnly: false
 						},
 			    		{
-			    			xtype: 'documentosactivoofertacomercial'
+							xtype: 'panel',
+							layout: 'hbox',
+							name : 'panelDocumentoOferta',
+							margin: '10px 0 0 200px',
+							style : 'background-color: transparent; border: none;',
+							title: HreRem.i18n('title.documentos'),
+							cls: 'panel-base',
+							items: [
+				    	         {
+				    	        	 xtype: 'textfieldbase',
+				    	        	 name: 'docOfertaComercial',
+				    	        	 id: 'docOfertaComercial',
+				    	        	 readOnly: true,
+				    	        	 padding: 10,
+				    	        	 style: 'overflow: hidden',
+				    	        	 listeners: {
+				    	        		 render: function(text){
+				    	        			 
+				    	        			var tip = Ext.create('Ext.tip.Tip', {
+				    	        		    	    html: ''
+				    	        		    });
+				    	        			 
+				    	        			 text.getEl().on('mouseover', function(){
+				    	        				 tip.setHtml(text.value);
+				    	        				 if(!Ext.isEmpty(tip.html)){
+				    	        					 tip.showAt(text.getEl().getX()-10,text.getEl().getY()+45);
+				    	        				 }
+				    	        	         });
+				    	        			 
+				    	        			 text.getEl().on('mouseleave', function(){
+				    	        				 tip.hide();
+				    	        	         });
+				    	        			 
+				    	        		 }
+				    	        	 }
+				    	         },{
+				    	        	 xtype:'button',
+				    	        	 iconCls: 'fa fa-trash',
+				    	        	 margin: '10px 0 0 0',
+				    	        	 itemId: 'btnBorrarDoc',
+				    	        	 style:'bodyBackground: transparent',
+				    	        	 hidden : true,
+					        		 handler: 'borrarDocumentoAdjuntoOferta'
+				    	         }
+				    	    ]
 			    		}
 					]
     		}
     	];
     	
     	me.callParent();
+
     },
     
     resetWindow: function() {
-    	var me = this,    	
-    	form = me.down('formBase');
-		//form.setBindRecord(me.oferta);
+    	var me = this;   	
+		me.setBindRecord(me.oferta);
 	
     }
     

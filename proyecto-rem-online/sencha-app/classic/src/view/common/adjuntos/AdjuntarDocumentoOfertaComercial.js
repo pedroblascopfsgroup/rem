@@ -6,26 +6,26 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoOfertacomercial', {
    /* height	: Ext.Element.getViewportHeight() > 700 ? 700 : Ext.Element.getViewportHeight() - 50 ,*/
 	reference: 'adjuntarDocumentoWindowOfertacomercialRef',
     /**
-     * Parámetro para construir la url que sibirá el documento
+     * ParÃ¡metro para construir la url que sibirÃ¡ el documento
      * @type
      */
     entidad: null,
     /**
-     * Parámetro para enviar el id de la entidad a la que se adjunta el documento. Debe darse valor al
+     * ParÃ¡metro para enviar el id de la entidad a la que se adjunta el documento. Debe darse valor al
      * crear/abrir la ventana.
      * @type
      */
     idEntidad: null,
 
 	/**
-	 * Parámetro para enviar el codigo del tipo de trabajo para realizar un filtrado de los tipos de documento.
-	 * si no se envia no se realizará ningun filtrado sobre los tipos de documento
+	 * ParÃ¡metro para enviar el codigo del tipo de trabajo para realizar un filtrado de los tipos de documento.
+	 * si no se envia no se realizarÃ¡ ningun filtrado sobre los tipos de documento
 	 * @type
 	 */
 	tipoTrabajoCodigo: null,
 
     /**
-     * Párametro para saber que componente abre la ventana, y poder refrescarlo después.
+     * PÃ¡rametro para saber que componente abre la ventana, y poder refrescarlo despuÃ©s.
      * @type
      */
     parent: null,
@@ -55,7 +55,7 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoOfertacomercial', {
 		    scope: this
 		  }
 		]);
-
+		
     	me.buttons = [ { formBind: true, itemId: 'btnGuardar', text: 'Adjuntar', handler: 'onClickBotonAdjuntarDocumento', scope: this},{ itemId: 'btnCancelar', text: 'Cancelar', handler: 'closeWindow', scope: this}];
 
     	me.items = [
@@ -98,17 +98,17 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoOfertacomercial', {
 				                    }
 					    		},
 					    		{
-									xtype: 'combobox',
+					    			xtype: 'combobox',
 						        	fieldLabel:  HreRem.i18n('fieldlabel.tipo'),
 						        	name: 'tipo',
 						        	editable: false,
 						        	msgTarget: 'side',
 					            	store: comboTipoDocumento,
 					            	displayField	: 'descripcion',
-
 								    valueField		: 'codigo',
-									allowBlank: false,
-									width: '100%'
+									allowBlank: true,
+									width: '100%',
+									disabled: true
 						        },
 						        {
 				                	xtype: 'textarea',
@@ -126,33 +126,33 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoOfertacomercial', {
     },
 
     onClickBotonAdjuntarDocumento: function(btn) {
-    	debugger;
     	var me = this,
     	form = me.down("form");
+    	var nomDoc= form.getForm().findField('fileUpload').value;;
     	if(form.isValid()){
-
-            form.submit({
-                waitMsg: HreRem.i18n('msg.mask.loading'),
-                params: {idEntidad: me.idEntidad},
-                success: function(fp, o) {
-
-                	if(o.result.success == "false") {
-                		me.fireEvent("errorToast", o.result.errorMessage);
-                	}else{
-                		me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-                	}
-                	if(!Ext.isEmpty(me.parent)) {
-                		me.parent.fireEvent("afterupload", me.parent);
-                	}
-                    me.close();
-                },
-                failure: function(fp, o) {
-                	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-                }
-            });
+    		var url =  $AC.getRemoteUrl('activooferta/saveDocumentoAdjuntoOferta');
+        	var data;
+    		Ext.Ajax.request({
+    			url: url,
+    		    params: {id : 0},
+    		    success: function(response, opts) {
+    		    	data = Ext.decode(response.responseText);
+    		    	if(data.data){
+    		    		me.up('anyadirnuevaofertaactivoadjuntardocumento').getForm().findField('docOfertaComercial').setValue(nomDoc);
+    		    		me.up('anyadirnuevaofertaactivoadjuntardocumento').down().down('panel').down('button').show();
+    		    		me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+    		    	}else{
+    		    		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+    		    	}
+    		    },
+    		    failure: function(response, opts){
+    		    	
+    		    	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+    		    }
+    		 });
+    		
+    		me.close();
         }
-
-
 
     }
 });

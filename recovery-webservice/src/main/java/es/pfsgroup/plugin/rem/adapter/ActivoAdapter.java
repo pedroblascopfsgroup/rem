@@ -3409,13 +3409,24 @@ public class ActivoAdapter {
 
 	private String getEstadoNuevaOferta(Activo activo) {
 		String codigoEstado = DDEstadoOferta.CODIGO_PENDIENTE;
-
+		List<ActivoOferta> ofertasActivo=activo.getOfertas();
 		// Comprobar si el activo se encuentra en una agrupación de tipo 'lote
 		// comercial'.
 		// Y que tenga oferta aceptada de expediente con estasdo (aprobado,
 		// reservado, en devolución)
+		Boolean ofertaAceptada = false;
+		for(ActivoOferta ofer : ofertasActivo) {
+			Long ofId = ofer.getOferta();
+			Oferta of = ofertaApi.getOfertaById(ofId);
+			DDEstadoOferta estOferta= of.getEstadoOferta();
+			if(DDEstadoOferta.CODIGO_ACEPTADA.equals(estOferta.getCodigo())){
+				ofertaAceptada = true;
+			}
+		}
+		
 		if (activoAgrupacionActivoDao.activoEnAgrupacionLoteComercial(activo.getId())
-				|| ofertaApi.isActivoConOfertaYExpedienteBlocked(activo)) {
+				|| ofertaApi.isActivoConOfertaYExpedienteBlocked(activo) || ofertaAceptada
+				) { 
 			codigoEstado = DDEstadoOferta.CODIGO_CONGELADA;
 		}
 

@@ -16,11 +16,15 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
+import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoOferta;
+import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoEstadoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoInquilino;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTratamiento;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposImpuesto;
@@ -60,6 +64,7 @@ public class UpdaterServiceSancionOfertaAlquileresDefinicionOferta implements Up
 		ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByTrabajo(tramite.getTrabajo());
 		Oferta oferta = expedienteComercial.getOferta();
 		CondicionanteExpediente condiciones = expedienteComercial.getCondicionante();
+		List<ActivoOferta> activosOferta = oferta.getActivosOferta();
 		
 		Boolean tipoTratamientoNinguna = false;
 		Boolean checkDepositoMarcado = false;
@@ -98,6 +103,25 @@ public class UpdaterServiceSancionOfertaAlquileresDefinicionOferta implements Up
 				if(!Checks.esNulo(filtro)) {
 					DDTipoInquilino tipoInquilino = genericDao.get(DDTipoInquilino.class, filtro);
 					oferta.setTipoInquilino(tipoInquilino);
+					Filter filtroTipoEstadoAlquiler = genericDao.createFilter(FilterType.EQUALS, "codigo",DDTipoEstadoAlquiler.ESTADO_ALQUILER_LIBRE);
+					DDTipoEstadoAlquiler tipoEstadoAlquiler = genericDao.get(DDTipoEstadoAlquiler.class, filtroTipoEstadoAlquiler);
+					for(ActivoOferta activoOferta : activosOferta){
+						Activo activo = activoOferta.getPrimaryKey().getActivo();
+						Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+						ActivoPatrimonio activoPatrimonio = genericDao.get(ActivoPatrimonio.class, filtroActivo);
+						if(!Checks.esNulo(activoPatrimonio)){
+							activoPatrimonio.setTipoInquilino(tipoInquilino);
+						}else{
+							activoPatrimonio = new ActivoPatrimonio();
+							activoPatrimonio.setActivo(activo);
+							activoPatrimonio.setTipoInquilino(tipoInquilino);
+							if (!Checks.esNulo(tipoEstadoAlquiler)){
+								activoPatrimonio.setTipoEstadoAlquiler(tipoEstadoAlquiler);
+							}
+						}
+						genericDao.save(ActivoPatrimonio.class, activoPatrimonio);
+						
+					}
 				}
 			}
 			

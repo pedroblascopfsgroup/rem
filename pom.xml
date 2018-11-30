@@ -473,23 +473,13 @@
 				<artifactId>recovery-message-broker</artifactId>
 				<version>${project.version}</version>
 			</dependency>
-			<!-- dependency>
-				<groupId>es.pfsgroup.plugin</groupId>
-				<artifactId>recovery-agendaMultifuncion-plugin</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>es.pfsgroup.plugin</groupId>
-				<artifactId>recovery-coreextension-plugin</artifactId>
-				<version>${project.version}</version>
-			</dependency -->
 			<!-- REM: GESTOR DOCUMENTAL LIBRARIES -->
 			<dependency>
 				<groupId>es.pfsgroup.plugin</groupId>
 				<artifactId>recovery-gestordocumentalREM-plugin</artifactId>
 				<version>${project.version}</version>
 			</dependency>
-			<!-- EVOLUTION -->
+		    <!-- EVOLUTION -->
 			<dependency>
 				<groupId>es.pfsgroup.plugin.evolution</groupId>
 				<artifactId>recovery-coreextension-plugin-evol</artifactId>
@@ -498,6 +488,11 @@
 			<dependency>
 				<groupId>es.pfsgroup.plugin.evolution</groupId>
 				<artifactId>recovery-mejoras-plugin-evol</artifactId>
+				<version>${evolution.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>es.pfsgroup.plugin.evolution</groupId>
+				<artifactId>recovery-agendaMultifuncion-plugin-evol</artifactId>
 				<version>${evolution.version}</version>
 			</dependency>
 			<dependency>

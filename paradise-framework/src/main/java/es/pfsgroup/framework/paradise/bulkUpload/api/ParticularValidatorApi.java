@@ -459,4 +459,8 @@ public interface ParticularValidatorApi {
 		Boolean isActivoPublicadoAlquiler(String numActivo);
 
 		Boolean isActivoOcultoAlquilerPorMotivosManuales(String numActivo);
+		
+		Boolean isActivoOcultoVenta(String numActivo);
+
+		Boolean isActivoOcultoAlquiler(String numActivo);
 }

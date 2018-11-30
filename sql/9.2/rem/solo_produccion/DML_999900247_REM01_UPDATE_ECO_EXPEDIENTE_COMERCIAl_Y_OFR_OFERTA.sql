@@ -31,14 +31,23 @@ DECLARE
 
  BEGIN
   
-  REPOSICIONAMIENTO_TRAMITE('17451','T013_PosicionamientoYFirma');
-  
-  EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA||'.'||V_TABLA||' SET
-	  					   DD_EEC_ID = (SELECT DD_EEC_ID FROM '||V_ESQUEMA||'.DD_EEC_EST_EXP_COMERCIAL WHERE DD_EEC_CODIGO = ''06'')
-						 , USUARIOMODIFICAR = '''||V_USUARIO||'''
-						 , FECHAMODIFICAR = SYSDATE
-					 WHERE ECO_NUM_EXPEDIENTE = 17451
-  					';
+  EXECUTE IMMEDIATE 'UPDATE empleados
+                        SET orden = CASE id_empleado
+                            WHEN 12 THEN 1
+                            WHEN 254 THEN 4
+                            WHEN 87 THEN 8
+                            WHEN 23 THEN 14
+                        END,
+                        edad = CASE id_empleado
+                            WHEN 12 THEN 32
+                            WHEN 254 THEN 19
+                            WHEN 87 THEN 43
+                            WHEN 23 THEN 51
+                        END
+                            WHERE id_empleado IN (12, 254, 87, 23)
+';
+
+
   					
   EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA||'.OFR_OFERTAS SET
 	  					   DD_EOF_ID = (SELECT DD_EOF_ID FROM '||V_ESQUEMA||'.DD_EOF_ESTADOS_OFERTA WHERE DD_EOF_CODIGO = ''01'')

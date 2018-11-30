@@ -13,6 +13,7 @@
 --##        0.1 Versión inicial
 --##      	0.2 HREOS-2302_GUILLEM REY
 --##        0.3 HREOS-2625 Correcciones honorarios
+--##        0.4 (20181129)Juan Ruiz - HREOS-4859 Revisión funcionalidad honorarios alquiler
 --##########################################
 --*/
 
@@ -83,12 +84,6 @@ BEGIN
       and rownum = 1; --FVD es el mismo para cualquier clase/subclase/llaves
 
   END IF; 
-
-  IF prc_honorario = 00000 THEN -- Sin honorarios.
-    RETURN null;
-  ELSE
-      RETURN prc_honorario;
-  END IF;
 
   RETURN PRC_HONORARIO;
 

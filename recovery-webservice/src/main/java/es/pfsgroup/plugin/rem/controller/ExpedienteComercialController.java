@@ -38,6 +38,7 @@ import es.pfsgroup.plugin.rem.model.DtoFichaExpediente;
 import es.pfsgroup.plugin.rem.model.DtoHstcoSeguroRentas;
 import es.pfsgroup.plugin.rem.model.DtoFormalizacionFinanciacion;
 import es.pfsgroup.plugin.rem.model.DtoGastoExpediente;
+import es.pfsgroup.plugin.rem.model.DtoHistoricoCondiciones;
 import es.pfsgroup.plugin.rem.model.DtoInformeJuridico;
 import es.pfsgroup.plugin.rem.model.DtoListadoTramites;
 import es.pfsgroup.plugin.rem.model.DtoModificarCompradores;
@@ -572,6 +573,22 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 
 		return createModelAndViewJson(model);
 	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getHistoricoCondiciones(ModelMap model, Long idExpediente) {
+		try {
+			List<DtoHistoricoCondiciones> list = expedienteComercialApi.getHistoricoCondiciones(idExpediente);
+			model.put(RESPONSE_DATA_KEY, list);
+			model.put(RESPONSE_SUCCESS_KEY, true);
+
+		} catch (Exception e) {
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.error("Error en ExpedienteComercialController", e);
+		}
+
+		return createModelAndViewJson(model);
+	}
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
@@ -919,6 +936,32 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 		try {
 			boolean success = expedienteComercialApi.createHonorario(dto, idEntidad);
 			model.put(RESPONSE_SUCCESS_KEY, success);
+
+		} catch (JsonViewerException e) {
+			model.put(RESPONSE_MESSAGE_KEY, e.getMessage());
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.warn("Error controlado en ExpedienteComercialController", e);
+
+		} catch (Exception e) {
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.error("Error en ExpedienteComercialController", e);
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView createHistoricoCondiciones(ModelMap model, DtoHistoricoCondiciones dto, Long idEntidad, Boolean idEntidadPk) {
+		try {
+			if(idEntidadPk) {
+				boolean success = expedienteComercialApi.createHistoricoCondiciones(dto, idEntidad);
+				model.put(RESPONSE_SUCCESS_KEY, success);
+			}else {
+				model.put(RESPONSE_MESSAGE_KEY, "Hay 10 registros insertados");
+				model.put(RESPONSE_SUCCESS_KEY, false);
+			}
+			
 
 		} catch (JsonViewerException e) {
 			model.put(RESPONSE_MESSAGE_KEY, e.getMessage());

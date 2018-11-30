@@ -113,6 +113,10 @@ public class DtoCondiciones extends WebDto {
 	private Integer vpo;
 	//********-------------------------------------------********
 	
+	//Datos para el historico de condiciones, que se utilizan en el grid
+	private Date fechaMinima;
+	private Boolean insertarHistorico;
+	
 	public Integer getMesesFianza() {
 		return mesesFianza;
 	}
@@ -811,6 +815,22 @@ public class DtoCondiciones extends WebDto {
 
 	public void setRevisionMercadoMeses(Integer revisionMercadoMeses) {
 		this.revisionMercadoMeses = revisionMercadoMeses;
+	}
+
+	public Date getFechaMinima() {
+		return fechaMinima;
+	}
+
+	public void setFechaMinima(Date fechaMinima) {
+		this.fechaMinima = fechaMinima;
+	}
+
+	public Boolean getInsertarHistorico() {
+		return insertarHistorico;
+	}
+
+	public void setInsertarHistorico(Boolean insertarHistorico) {
+		this.insertarHistorico = insertarHistorico;
 	}
 
 	

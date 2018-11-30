@@ -6,7 +6,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
                 'HreRem.model.Posicionamiento', 'HreRem.model.ComparecienteVendedor', 'HreRem.model.Subsanacion', 'HreRem.model.Notario',
                 'HreRem.model.ComparecienteBusqueda', 'HreRem.model.Honorario','HreRem.model.HstcoSeguroRentas','HreRem.model.TipoDocumentoExpediente',
 				'HreRem.model.CompradorExpediente', 'HreRem.model.FichaComprador','HreRem.model.BloqueoActivo','HreRem.model.TanteoActivo',
-				'HreRem.model.ExpedienteScoring', 'HreRem.model.HistoricoExpedienteScoring', 'HreRem.model.SeguroRentasExpediente'],
+				'HreRem.model.ExpedienteScoring', 'HreRem.model.HistoricoExpedienteScoring', 'HreRem.model.SeguroRentasExpediente', 'HreRem.model.HistoricoCondiciones'],
     
     data: {
     },
@@ -324,6 +324,13 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 			 if(tipoOfertaDesc == "Tramitada"){
 				 return true;
 			 }else return false;
+		 },
+		 fechaMinima: function(get){
+			 var fechaMinima = get('condiciones.fechaMinima');
+			 fechaMinima= fechaMinima.split('T',1);
+			 fechaFinal= fechaMinima.toString();
+			 return fechaFinal;
+			 
 		 }
 	 },
 
@@ -966,6 +973,15 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 		        remoteUrl: 'generic/getComitesAlquilerByCarteraCodigo',
 		        extraParams: {carteraCodigo: '{expediente.entidadPropietariaCodigo}'}
 	    	}	    	
-	    }
+	    },
+	    storeHistoricoCondiciones: {
+			pageSize: $AC.getDefaultPageSize(),
+	    	model: 'HreRem.model.HistoricoCondiciones',
+	    	proxy: {
+		        type: 'uxproxy',
+		        remoteUrl: 'expedientecomercial/getHistoricoCondiciones',
+		        extraParams: {idExpediente: '{expediente.id}'}
+	    	}
+		}
     }
 });

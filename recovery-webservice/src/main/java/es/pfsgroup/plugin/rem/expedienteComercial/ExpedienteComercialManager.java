@@ -124,6 +124,7 @@ import es.pfsgroup.plugin.rem.model.DtoFichaExpediente;
 import es.pfsgroup.plugin.rem.model.DtoFormalizacionFinanciacion;
 import es.pfsgroup.plugin.rem.model.DtoFormalizacionResolucion;
 import es.pfsgroup.plugin.rem.model.DtoGastoExpediente;
+import es.pfsgroup.plugin.rem.model.DtoHistoricoCondiciones;
 import es.pfsgroup.plugin.rem.model.DtoHstcoSeguroRentas;
 import es.pfsgroup.plugin.rem.model.DtoInformeJuridico;
 import es.pfsgroup.plugin.rem.model.DtoListadoGestores;
@@ -146,6 +147,7 @@ import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Formalizacion;
 import es.pfsgroup.plugin.rem.model.GastosExpediente;
 import es.pfsgroup.plugin.rem.model.GestorSustituto;
+import es.pfsgroup.plugin.rem.model.HistoricoCondicionanteExpediente;
 import es.pfsgroup.plugin.rem.model.HistoricoScoringAlquiler;
 import es.pfsgroup.plugin.rem.model.HistoricoSeguroRentasAlquiler;
 import es.pfsgroup.plugin.rem.model.InformeJuridico;
@@ -2035,6 +2037,20 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			if (!Checks.esNulo(condiciones.getRevisionMercadoMeses())) {
 				dto.setRevisionMercadoMeses(condiciones.getRevisionMercadoMeses()); 
 			}
+			List<HistoricoCondicionanteExpediente> listaHistorico= condiciones.getListHistoricoCondiciones();
+			if(!Checks.esNulo(listaHistorico)) {
+				int numero_historico=0;
+				Date fechaMinima= new Date();
+				for(HistoricoCondicionanteExpediente histC : listaHistorico) {
+					if(histC.getFecha().compareTo(fechaMinima) >0) {
+						fechaMinima=histC.getFecha();
+					}
+					numero_historico++;
+				}
+				dto.setFechaMinima(fechaMinima);
+				if(numero_historico>=10) dto.setInsertarHistorico(false);
+				else dto.setInsertarHistorico(true);
+			}
 			
 		}
 
@@ -3034,6 +3050,42 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 
 		return honorarios;
+	}
+	
+	
+	//getHistoricoHonorarios
+	public List<DtoHistoricoCondiciones> getHistoricoCondiciones(Long idExpediente) {
+		List<DtoHistoricoCondiciones> dto= new ArrayList<DtoHistoricoCondiciones>();
+		ExpedienteComercial expediente = findOne(idExpediente);
+		if(!Checks.esNulo(expediente)) {
+			CondicionanteExpediente condicion=expediente.getCondicionante();
+			if(!Checks.esNulo(condicion)) {
+				if(!Checks.esNulo(condicion.getFechaFijo()) && !Checks.esNulo(condicion.getFechaIncrementoRentaFijo())){
+					DtoHistoricoCondiciones d1= new DtoHistoricoCondiciones();
+					d1.setFecha(condicion.getFechaFijo());
+					d1.setFechaIncrementoRenta(condicion.getFechaIncrementoRentaFijo());
+					dto.add(d1);
+				}
+				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "condicionante.id", condicion.getId());
+				Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+				Order order = new Order(GenericABMDao.OrderType.ASC, "fecha");
+				List<HistoricoCondicionanteExpediente> listaHistorico = genericDao.getListOrdered(HistoricoCondicionanteExpediente.class,order, filtro, filtro2);
+				if(!Checks.esNulo(listaHistorico)) {
+					for(HistoricoCondicionanteExpediente historico : listaHistorico) {
+						DtoHistoricoCondiciones d= new DtoHistoricoCondiciones();
+						d.setCondicionante(historico.getCondicionante().getId());
+						d.setId(historico.getId().toString());
+						d.setFecha(historico.getFecha());
+						d.setFechaIncrementoRenta(historico.getFechaIncrementoRenta());
+						dto.add(d);
+					}
+				}
+				
+			}
+		}
+		
+		return dto;
+		
 	}
 
 	@Override
@@ -4547,6 +4599,31 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 		return true;
 	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public boolean createHistoricoCondiciones(DtoHistoricoCondiciones dto, Long idEntidad) {
+		ExpedienteComercial expediente = findOne(idEntidad);
+		HistoricoCondicionanteExpediente hisCE= new HistoricoCondicionanteExpediente();
+		
+		if(!Checks.esNulo(dto)) {
+			if(!Checks.esNulo(expediente)) {
+				hisCE.setCondicionante(expediente.getCondicionante());
+				hisCE.setFecha(dto.getFecha());
+				hisCE.setFechaIncrementoRenta(dto.getFechaIncrementoRenta());
+				Auditoria a= new Auditoria();
+				Usuario usuario = genericAdapter.getUsuarioLogado();
+				a.setUsuarioCrear(usuario.getUsername());
+				a.setFechaCrear(new Date());
+				hisCE.setAuditoria(a);
+			}
+			
+		}
+		genericDao.save(HistoricoCondicionanteExpediente.class, hisCE);
+		return true;
+	}
+	
+	
 
 	@Transactional(readOnly = false)
 	public boolean deleteHonorario(Long idHonorario) {

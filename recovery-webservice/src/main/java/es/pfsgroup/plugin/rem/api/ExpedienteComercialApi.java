@@ -28,6 +28,7 @@ import es.pfsgroup.plugin.rem.model.DtoExpedienteScoring;
 import es.pfsgroup.plugin.rem.model.DtoFichaExpediente;
 import es.pfsgroup.plugin.rem.model.DtoFormalizacionFinanciacion;
 import es.pfsgroup.plugin.rem.model.DtoGastoExpediente;
+import es.pfsgroup.plugin.rem.model.DtoHistoricoCondiciones;
 import es.pfsgroup.plugin.rem.model.DtoHstcoSeguroRentas;
 import es.pfsgroup.plugin.rem.model.DtoInformeJuridico;
 import es.pfsgroup.plugin.rem.model.DtoListadoGestores;
@@ -428,6 +429,14 @@ public interface ExpedienteComercialApi {
 	 * @return
 	 */
 	public List<DtoGastoExpediente> getHonorarios(Long idExpediente, Long idActivo);
+	
+	/**
+	 * Método que obtiene el historico de condiciones de un expediente comercial
+	 * 
+	 * @param idExpediente
+	 * @return
+	 */
+	public List<DtoHistoricoCondiciones> getHistoricoCondiciones(Long idExpediente);
 
 	/**
 	 * Método que guarda los honorarios(gastos) del expediente
@@ -572,6 +581,13 @@ public interface ExpedienteComercialApi {
 	 * @return
 	 */
 	public boolean createHonorario(DtoGastoExpediente dto, Long idEntidad);
+	
+	/**
+	 * Crea un registro de historicoCondiciones
+	 * @param dto
+	 * @return
+	 */
+	public boolean createHistoricoCondiciones(DtoHistoricoCondiciones dto, Long idEntidad);
 	
 	/**
 	 * Elimina un registro de honorario (gasto_expediente)

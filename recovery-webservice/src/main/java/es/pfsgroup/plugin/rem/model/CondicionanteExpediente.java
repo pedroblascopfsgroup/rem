@@ -2,7 +2,9 @@ package es.pfsgroup.plugin.rem.model;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -14,6 +16,7 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -313,6 +316,11 @@ public class CondicionanteExpediente implements Serializable, Auditable {
 	
     @Column(name="ALQ_RENTA_MERCADO_CADA")
     private Integer revisionMercadoMeses;
+    
+    @OneToMany(mappedBy = "condicionante", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "COE_ID")
+    @Where(clause = Auditoria.UNDELETED_RESTICTION)
+    private List<HistoricoCondicionanteExpediente> listHistoricoCondiciones;
 
 	@Version   
 	private Long version;
@@ -990,6 +998,14 @@ public class CondicionanteExpediente implements Serializable, Auditable {
 
 	public void setRevisionMercadoMeses(Integer revisionMercadoMeses) {
 		this.revisionMercadoMeses = revisionMercadoMeses;
+	}
+
+	public List<HistoricoCondicionanteExpediente> getListHistoricoCondiciones() {
+		return listHistoricoCondiciones;
+	}
+
+	public void setListHistoricoCondiciones(List<HistoricoCondicionanteExpediente> listHistoricoCondiciones) {
+		this.listHistoricoCondiciones = listHistoricoCondiciones;
 	}
 	
 	

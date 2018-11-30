@@ -1,7 +1,7 @@
 Ext.define('HreRem.view.expedientes.WizardAltaComprador', {
 	extend : 'HreRem.view.common.WindowBase',
 	xtype : 'wizardaltacomprador',
-	 title : HreRem.i18n('wizard.comprador.title'),
+	title : 'Asistente nuevo comprador',//HreRem.i18n('wizard.comprador.title'),
 	layout : 'card',
 	bodyStyle : 'padding:10px',
 	width : Ext.Element.getViewportWidth() / 2,

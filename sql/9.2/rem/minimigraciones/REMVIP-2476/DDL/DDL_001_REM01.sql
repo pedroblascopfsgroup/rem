@@ -60,20 +60,12 @@ IF V_ESQUEMA_2 != V_ESQUEMA_1 THEN
 
 END IF;
 
-<<<<<<< Updated upstream
-/*IF V_ESQUEMA_3 != V_ESQUEMA_1 THEN
-=======
 IF V_ESQUEMA_3 != V_ESQUEMA_1 THEN
->>>>>>> Stashed changes
 
 	EXECUTE IMMEDIATE 'GRANT ALL ON "'||V_ESQUEMA_1||'"."'||V_TABLA||'" TO "'||V_ESQUEMA_3||'" WITH GRANT OPTION';
 	DBMS_OUTPUT.PUT_LINE('[INFO] PERMISOS SOBRE LA TABLA '||V_ESQUEMA_1||'.'||V_TABLA||' OTORGADOS A '||V_ESQUEMA_3||''); 
 
-<<<<<<< Updated upstream
-END IF;*/
-=======
 END IF;
->>>>>>> Stashed changes
 
 /*IF V_ESQUEMA_4 != V_ESQUEMA_1 THEN
 EXECUTE IMMEDIATE 'GRANT ALL ON "'||V_ESQUEMA_1||'"."'||V_TABLA||'" TO "'||V_ESQUEMA_4||'" WITH GRANT OPTION';

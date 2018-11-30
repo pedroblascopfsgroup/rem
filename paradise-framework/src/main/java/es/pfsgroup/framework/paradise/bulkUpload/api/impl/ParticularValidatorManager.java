@@ -210,6 +210,20 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 	
 	@Override
+	public Boolean isActivoVendido(String numActivo){
+		if(Checks.esNulo(numActivo) || !StringUtils.isNumeric(numActivo))
+			return false;
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "		 FROM ACT_ACTIVO ACT "
+				+ " INNER JOIN DD_SCM_SITUACION_COMERCIAL SCM ON ACT.DD_SCM_ID = SCM.DD_SCM_ID"
+				+ "	WHERE"
+				+ "		 	ACT.ACT_NUM_ACTIVO ="+numActivo+" "
+				+ "		 	AND ACT.BORRADO = 0"
+				+ " AND DD_SCM_DESCRIPCION LIKE 'Vendido'");
+		return !"0".equals(resultado);
+	}
+	
+	@Override
 	public Boolean existePlusvalia(String numActivo){
 		if(Checks.esNulo(numActivo) || !StringUtils.isNumeric(numActivo))
 			return false;

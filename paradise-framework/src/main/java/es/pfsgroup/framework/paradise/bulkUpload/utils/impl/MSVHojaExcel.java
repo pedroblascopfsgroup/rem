@@ -292,10 +292,10 @@ public class MSVHojaExcel {
 				for (int i = 0; i < mapaErrores.get(error).size(); i++) {
 					if (!Checks.esNulo(mapaValres.get(error))) {
 						if (!mapaValres.get(error).isEmpty()){
-					if (!Checks.esNulo(mapaValres.get(error).get(i))) {
-						nuevoValor  = mapaValres.get(error).get(i);
-
-					}
+							if (!Checks.esNulo(mapaValres.get(error).get(i))) {
+								nuevoValor  = mapaValres.get(error).get(i);
+		
+							}
 						}
 				 }
 					else {

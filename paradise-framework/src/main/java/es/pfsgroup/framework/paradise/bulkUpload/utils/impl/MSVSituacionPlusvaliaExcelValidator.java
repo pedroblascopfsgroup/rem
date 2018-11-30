@@ -43,6 +43,8 @@ public class MSVSituacionPlusvaliaExcelValidator extends MSVExcelValidatorAbstra
 	// Textos con errores de validacion
 	public static final String ACTIVE_EXISTS = "El activo propuesto no existe = ";
 	
+	public static final String ACTIVO_VENDIDO = "El activo propuesto no está vendido = ";
+	
 	public static final String EXENTO_FORMAT = "La columna exento no tiene el formato correcto";
 	
 	public static final String PLUSVALIA_EXISTS = "La plusvalia de este activo ya está informada";
@@ -118,6 +120,10 @@ public class MSVSituacionPlusvaliaExcelValidator extends MSVExcelValidatorAbstra
 
 			mapaErrores.put(ACTIVE_EXISTS , isActiveExistsRows(exc));
 			
+			mapaErrores.put(ACTIVO_VENDIDO , isActivoVendidoRows(exc));
+				
+			mapaValores.put(ACTIVO_VENDIDO , dameValorActivoNoVendido(exc));
+			
 			mapaErrores.put(PLUSVALIA_EXISTS, isPlusvaliaExistsRows(exc));
 
 			mapaValores.put(ACTIVE_EXISTS , dameValorActivo(exc));
@@ -129,7 +135,7 @@ public class MSVSituacionPlusvaliaExcelValidator extends MSVExcelValidatorAbstra
 			mapaErrores.put(FECHA_ESCRITO, isColumnNotDateByRows(exc, COL_NUM.FECHA_ESCRITO_AYTO));
 			
 				if (!mapaErrores.get(ACTIVE_EXISTS).isEmpty() || !mapaErrores.get(FECHA_ESCRITO).isEmpty() || !mapaErrores.get(AUTOLIQUIDACION_FORMAT).isEmpty() || !mapaErrores.get(EXENTO_FORMAT).isEmpty() ||
-						!mapaErrores.get(PLUSVALIA_EXISTS).isEmpty()) 
+						!mapaErrores.get(PLUSVALIA_EXISTS).isEmpty() || !mapaErrores.get(ACTIVO_VENDIDO).isEmpty()) 
 			 {
 
 					dtoValidacionContenido.setFicheroTieneErrores(true);
@@ -207,7 +213,30 @@ public class MSVSituacionPlusvaliaExcelValidator extends MSVExcelValidatorAbstra
 		}
 
 		return listaFilas;
-	}	
+	}
+	
+	private List<Integer> isActivoVendidoRows(MSVHojaExcel exc) {
+		List<Integer> listaFilas = new ArrayList<Integer>();
+
+		int i = 0;
+		try {
+			for (i = COL_NUM.DATOS_PRIMERA_FILA; i < numFilasHoja; i++) {
+				if (!particularValidator.isActivoVendido(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA)) && particularValidator.existeActivo(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA)))
+					listaFilas.add(i);
+			}
+		} catch (IllegalArgumentException e) {
+			logger.error(e.getMessage(),e);
+			e.printStackTrace();
+		} catch (IOException e) {
+			logger.error(e.getMessage(),e);
+			e.printStackTrace();
+		} catch (ParseException e) {
+			logger.error(e.getMessage(),e);
+			listaFilas.add(i);
+		}
+
+		return listaFilas;
+	}
 	
 	private List<Integer> isPlusvaliaExistsRows(MSVHojaExcel exc) {
 		
@@ -267,6 +296,33 @@ public class MSVSituacionPlusvaliaExcelValidator extends MSVExcelValidatorAbstra
 			
 					
 				
+			}
+		} catch (IllegalArgumentException e) {
+			logger.error(e.getMessage(),e);
+			e.printStackTrace();
+		} catch (IOException e) {
+			logger.error(e.getMessage(),e);
+			e.printStackTrace();
+		} catch (ParseException e) {
+			logger.error(e.getMessage(),e);
+			listaFilas.add("0");
+		}
+		
+		
+	
+		
+
+		return listaFilas;
+	}
+	
+	private List<String> dameValorActivoNoVendido(MSVHojaExcel exc) {
+		List<String> listaFilas = new ArrayList<String>();
+
+		int i = 0;
+		try {
+			for (i = COL_NUM.DATOS_PRIMERA_FILA; i < numFilasHoja; i++) {
+				if (!particularValidator.isActivoVendido(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA)) && particularValidator.existeActivo(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA)))
+					listaFilas.add(exc.dameCelda(i, COL_NUM.NUM_ACTIVO_HAYA));				
 			}
 		} catch (IllegalArgumentException e) {
 			logger.error(e.getMessage(),e);

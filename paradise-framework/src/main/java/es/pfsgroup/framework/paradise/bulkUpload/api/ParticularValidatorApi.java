@@ -30,6 +30,8 @@ public interface ParticularValidatorApi {
 
 	Boolean existeActivo(String numActivo);
 	
+	Boolean isActivoVendido(String numActivo);
+	
 	Boolean existePlusvalia(String numActivo);
 
 	Boolean isActivoPrePublicable(String numActivo);

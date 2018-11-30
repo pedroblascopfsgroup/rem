@@ -15,17 +15,22 @@ import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.gestorDocumental.dto.PersonaInputDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.PersonaOutputDto;
 import es.pfsgroup.plugin.gestorDocumental.manager.GestorDocumentalMaestroManager;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
+import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoOferta;
+import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.CompradorExpediente;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoEstadoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.thread.MaestroDePersonas;
 
@@ -68,7 +73,6 @@ public class UpdaterServiceSancionOfertaAlquileresCierreContrato implements Upda
 				estadoExpedienteComercial = genericDao.get(DDEstadosExpedienteComercial.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadosExpedienteComercial.FIRMADO_AQLUILER));
 				expedienteComercial.setEstado(estadoExpedienteComercial);
 				expedienteComercial.setDocumentacionOk(true);
-
 			}
 			
 			if(FECHA_VALIDACION.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
@@ -76,6 +80,32 @@ public class UpdaterServiceSancionOfertaAlquileresCierreContrato implements Upda
 					expedienteComercial.setFechaValidacion(ft.parse(valor.getValor()));
 				} catch (ParseException e) {
 					logger.error("Error insertando Fecha validación.", e);
+				}
+			}
+			
+			
+			if (!Checks.esNulo(expedienteComercial.getFechaValidacion()) && !Checks.esNulo(expedienteComercial.getDocumentacionOk()) && expedienteComercial.getDocumentacionOk().equals(true)){
+				
+				List<ActivoOferta> activosOferta = oferta.getActivosOferta();
+				
+				Filter filtroTipoEstadoAlquiler = genericDao.createFilter(FilterType.EQUALS, "codigo",DDTipoEstadoAlquiler.ESTADO_ALQUILER_ALQUILADO);
+				DDTipoEstadoAlquiler tipoEstadoAlquiler = genericDao.get(DDTipoEstadoAlquiler.class, filtroTipoEstadoAlquiler);
+				
+				for(ActivoOferta activoOferta : activosOferta){
+					Activo activo = activoOferta.getPrimaryKey().getActivo();
+					Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+					ActivoPatrimonio activoPatrimonio = genericDao.get(ActivoPatrimonio.class, filtroActivo);
+					
+					if(!Checks.esNulo(activoPatrimonio)){
+						activoPatrimonio.setTipoEstadoAlquiler(tipoEstadoAlquiler);
+					} else{
+						activoPatrimonio = new ActivoPatrimonio();
+						activoPatrimonio.setActivo(activo);
+						if (!Checks.esNulo(tipoEstadoAlquiler)){
+							activoPatrimonio.setTipoEstadoAlquiler(tipoEstadoAlquiler);
+						}
+					}
+					genericDao.save(ActivoPatrimonio.class, activoPatrimonio);
 				}
 			}
 			

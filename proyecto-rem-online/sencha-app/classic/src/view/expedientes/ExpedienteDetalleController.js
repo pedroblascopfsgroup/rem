@@ -2370,12 +2370,8 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		fijoIncremento = me.lookupReference('tipoEscaladoIncremento');
 		grid= me.lookupReference('historicoCondicones');
 		if(newValue) {
-			fijoIncremento.show();
-			fijoFecha.show();
 			grid.disableAddButton(false);
 		} else {
-			fijoIncremento.hide();
-			fijoFecha.hide();
 			grid.disableAddButton(true);
 		}
 	},

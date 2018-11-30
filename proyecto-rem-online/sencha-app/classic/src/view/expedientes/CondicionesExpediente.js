@@ -900,12 +900,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 						items : [
 							{
 								xtype : 'fieldset',
-								height : 100,
 								margin : '0 10 10 0',
-								layout : {
-									type : 'table',
-									columns : 1
-								},
 								defaultType : 'textfieldbase',
 								items : [
 									{
@@ -920,17 +915,14 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 										}
 									},
 									{
-										xtype : 'datefieldbase',
-										reference : 'tipoEscaladoFecha',
-										fieldLabel : HreRem.i18n('fieldlabel.fecha'),
-										bind : '{condiciones.fechaFijo}'
-									},
-									{
-										xtype : 'datefieldbase',
-										reference : 'tipoEscaladoIncremento',
-										fieldLabel : HreRem.i18n('fieldlabel.incremento.renta'),
-										bind : '{condiciones.fechaIncrementoRentaFijo}'
-									} 
+										xtype:'fieldsettable',
+										title:HreRem.i18n('title.administracion.activo.tipo.impuesto'),
+										defaultType: 'textfieldbase',
+										items :
+											[
+												{xtype: "historicoCondicones", reference: "historicoCondicones"}
+											]
+									}  
 								]
 
 							} 

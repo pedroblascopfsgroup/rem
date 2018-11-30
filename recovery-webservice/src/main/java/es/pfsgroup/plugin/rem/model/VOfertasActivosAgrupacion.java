@@ -40,8 +40,8 @@ public class VOfertasActivosAgrupacion implements Serializable {
 	@Column(name = "OFERTANTE")
 	private String ofertante;
 	
-	@Column(name = "PRECIO_PUBLICADO")
-	private String precioPublicado;
+	/*@Column(name = "PRECIO_PUBLICADO")
+	private String precioPublicado;*/
 	
 	@Column(name = "OFR_IMPORTE")
 	private String importeOferta;
@@ -189,13 +189,13 @@ public class VOfertasActivosAgrupacion implements Serializable {
 		this.ofertante = ofertante;
 	}
 
-	public String getPrecioPublicado() {
+/*	public String getPrecioPublicado() {
 		return precioPublicado;
 	}
 
 	public void setPrecioPublicado(String precioPublicado) {
 		this.precioPublicado = precioPublicado;
-	}
+	}*/
 
 	public String getImporteOferta() {
 		return importeOferta;

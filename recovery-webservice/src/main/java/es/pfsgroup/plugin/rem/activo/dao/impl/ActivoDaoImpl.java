@@ -12,6 +12,7 @@ import java.util.List;
 
 import es.pfsgroup.commons.utils.hibernate.HibernateUtils;
 import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -95,7 +96,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
    		if (dto.getIdSareb() != null)
    			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.numActivoSareb", dto.getIdSareb());
    		
-   		if (dto.getIdProp() != null)
+   		if (dto.getIdProp() != null && StringUtils.isNumeric(dto.getIdProp()))
    			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.numActivoPrinex", Long.valueOf(dto.getIdProp()));
    		
    		if (dto.getIdRecovery() != null)

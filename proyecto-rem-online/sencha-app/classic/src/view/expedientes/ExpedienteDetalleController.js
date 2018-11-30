@@ -2628,7 +2628,9 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		var scoringComentarios= me.lookupReference('scoringComentarios');
 		if(checkbox.checked){
 			scoringComentarios.setDisabled(false);
-		} 
+		} else {
+			scoringComentarios.setDisabled(true);
+		}
 	},
 	
 	onDisableMotivoRechazo: function(checkbox, newVal, oldVal) {

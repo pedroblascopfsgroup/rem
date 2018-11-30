@@ -491,7 +491,8 @@ public class AgrupacionAdapter {
 					}
 
 				}else if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_ALQUILER)) {
-					if(!Checks.esNulo(agrupacion.getActivos().get(0).getActivo())) {
+					
+					if(!Checks.estaVacio(agrupacion.getActivos())){
 						Activo activo = agrupacion.getActivos().get(0).getActivo();
 						BeanUtils.copyProperty(dtoAgrupacion, "cartera", activo.getCartera().getDescripcion());
 					}

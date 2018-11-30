@@ -1,17 +1,16 @@
 --/*
 --##########################################
 --## AUTOR=Oscar Diestre
---## FECHA_CREACION=20181129
+--## FECHA_CREACION=2018113029
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=func-rem-alquileres
 --## INCIDENCIA_LINK=HREOS-4844
 --## PRODUCTO=NO
 --##
---## Finalidad: Añadir registros en ACT_GES_DIST_GESTORES
+--## Finalidad: Añadir registros en USD_USUARIOS_DESPACHOS
 --## INSTRUCCIONES:
 --## VERSIONES:
 --##        0.1 Versión inicial
---##        0.2 Cambios en usuario 'ralvarez'
 --##########################################
 --*/
 
@@ -31,7 +30,7 @@ DECLARE
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
 	
     V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar
-    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'ACT_GES_DIST_GESTORES'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
+    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'USD_USUARIOS_DESPACHOS'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
     V_ENTIDAD_ID NUMBER(16);
     V_ID NUMBER(16);
 
@@ -40,13 +39,13 @@ DECLARE
     
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
     		
-         T_TIPO_DATA('GESTCOMALQ', 'fmartin'  , '08'   ), 
-         T_TIPO_DATA('GESTCOMALQ', 'mvillamor', '03'   ),  
-         T_TIPO_DATA('GESTCOMALQ', 'jxerri'   , '01'   ), 
-         T_TIPO_DATA('GESTCOMALQ', 'ralvarez' , '02'   ), 
-         T_TIPO_DATA('GESTCOMALQ', 'ralvarez' , '04'   ), 
+         T_TIPO_DATA('GESTCOMALQ', 'fmartin'   ), 
+         T_TIPO_DATA('GESTCOMALQ', 'mvillamor' ),  
+         T_TIPO_DATA('GESTCOMALQ', 'jxerri'    ), 
+         T_TIPO_DATA('GESTCOMALQ', 'ralvarez'  ), 
+         T_TIPO_DATA('GESTCOMALQ', 'ralvarez'  ), 
 
-         T_TIPO_DATA('SUPCOMALQ' , 'sbejarano', 'null' )
+         T_TIPO_DATA('SUPCOMALQ' , 'sbejarano' )
 
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
@@ -64,10 +63,12 @@ BEGIN
         V_TMP_TIPO_DATA := V_TIPO_DATA(I);
         
         --Comprobamos el dato a insertar
-        V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TEXT_TABLA||' '||
-        			' WHERE TIPO_GESTOR = '''||TRIM(V_TMP_TIPO_DATA(1))||''' '||	
-					' AND USERNAME = '''||TRIM(V_TMP_TIPO_DATA(2))||''' '|| 
-					CASE WHEN ( NOT V_TMP_TIPO_DATA(3) = 'null' ) THEN ' AND COD_CARTERA = ''' || V_TMP_TIPO_DATA(3) || '''' ELSE ' AND COD_CARTERA IS NULL ' END ;
+        V_SQL := 'SELECT COUNT(1) 
+		  FROM '||V_ESQUEMA||'.DES_DESPACHO_EXTERNO, ' ||V_ESQUEMA||'.USD_USUARIOS_DESPACHOS, ' ||V_ESQUEMA_M||'.USU_USUARIOS 
+        	  WHERE DES_DESPACHO_EXTERNO.DES_DESPACHO = '''||TRIM(V_TMP_TIPO_DATA(1))||''' '||	
+		' AND USU_USERNAME = '''||TRIM(V_TMP_TIPO_DATA(2))||''' '|| 
+		' AND DES_DESPACHO_EXTERNO.DES_ID = USD_USUARIOS_DESPACHOS.DES_ID
+		  AND USD_USUARIOS_DESPACHOS.USU_ID = USU_USUARIOS.USU_ID ' ;	
 
         EXECUTE IMMEDIATE V_SQL INTO V_NUM_REG;
         
@@ -80,23 +81,22 @@ BEGIN
           EXECUTE IMMEDIATE V_MSQL INTO V_ID;	
           
           V_MSQL := 'INSERT INTO '|| V_ESQUEMA ||'.'||V_TEXT_TABLA||' (' ||
-                      	'ID, 
-			 TIPO_GESTOR, ' ||
-			 CASE WHEN ( NOT V_TMP_TIPO_DATA(3) = 'null' ) THEN 'COD_CARTERA, ' ELSE '' END || '
-			 USERNAME,
-			 NOMBRE_USUARIO,
+                      	'USD_ID, 
+			 USU_ID,
+			 DES_ID,
+			 USD_GESTOR_DEFECTO,
+			 USD_SUPERVISOR,
 			 VERSION,
 			 USUARIOCREAR,
 			 FECHACREAR,
 			 BORRADO
 			 )
                       	SELECT '|| V_ID || ', 
-			 ''' || TRIM(V_TMP_TIPO_DATA(1) )|| ''' , 
-			' || CASE WHEN ( NOT V_TMP_TIPO_DATA(3) = 'null' ) THEN '''' || V_TMP_TIPO_DATA(3) || ''',' ELSE '' END || '
-			 ''' || TRIM(V_TMP_TIPO_DATA(2) )|| ''' , 
-			 ( SELECT USU.USU_NOMBRE ||'' ''|| USU.USU_APELLIDO1 ||'' ''|| USU.USU_APELLIDO2 FROM '|| V_ESQUEMA_M ||'.USU_USUARIOS USU 
-			   WHERE USU.USU_USERNAME = '''||TRIM(V_TMP_TIPO_DATA(2))||''') '||
-			', 0, ''HREOS-4844'',SYSDATE,0 FROM DUAL';
+			 ( SELECT USU.USU_ID FROM '|| V_ESQUEMA_M ||'.USU_USUARIOS USU 
+			   WHERE USU.USU_USERNAME = '''||TRIM(V_TMP_TIPO_DATA(2))||'''), '||'
+			 ( SELECT DES.DES_ID FROM '|| V_ESQUEMA ||'.DES_DESPACHO_EXTERNO DES 
+			   WHERE DES.DES_DESPACHO = '''||TRIM(V_TMP_TIPO_DATA(1))||''') '||
+			', 1, 1, 0, ''HREOS-4844'',SYSDATE, 0 FROM DUAL';
 
           EXECUTE IMMEDIATE V_MSQL;
 

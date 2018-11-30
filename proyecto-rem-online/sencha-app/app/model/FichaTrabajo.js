@@ -189,7 +189,7 @@ Ext.define('HreRem.model.FichaTrabajo', {
     		{
     			name: 'checkFechaTope',
     			calculate: function(data) {
-    				return !Ext.isEmpty(data.fechaTope);
+    				return !Ext.isEmpty(data.fechaTope); 
     			}
     		},
     		{

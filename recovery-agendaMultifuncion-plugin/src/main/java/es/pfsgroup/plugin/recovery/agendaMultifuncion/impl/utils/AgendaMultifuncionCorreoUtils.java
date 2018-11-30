@@ -77,12 +77,18 @@ public class AgendaMultifuncionCorreoUtils {
 		}
 
 		for (String emailPara : mailsPara) {
-			message.addRecipient(Message.RecipientType.TO, new InternetAddress(emailPara));
+			if(emailPara != null){
+				message.addRecipient(Message.RecipientType.TO, new InternetAddress(emailPara));
+			}
+			
 		}
 
 		if (direccionesMailCc != null && direccionesMailCc.size() > 0) {
 			for (String emailCC : direccionesMailCc) {
-				message.addRecipient(Message.RecipientType.CC, new InternetAddress(emailCC));
+				if(emailCC != null){
+					message.addRecipient(Message.RecipientType.CC, new InternetAddress(emailCC));
+				}
+				
 			}
 		}
 

@@ -23,6 +23,7 @@ import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.SeguroRentasAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoEstadoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoInquilino;
@@ -70,7 +71,7 @@ public class UpdaterServiceSancionOfertaAlquileresDefinicionOferta implements Up
 		Boolean checkDepositoMarcado = false;
 		Boolean checkFiadorSolidarioMarcado = false;
 		DDEstadosExpedienteComercial estadoExpedienteComercial = null;
-
+		
 		for(TareaExternaValor valor :  valores){
 			
 			if(TIPO_TRATAMIENTO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
@@ -84,6 +85,13 @@ public class UpdaterServiceSancionOfertaAlquileresDefinicionOferta implements Up
 				} else if (DDTipoTratamiento.TIPO_TRATAMIENTO_SEGURO_DE_RENTAS.equals(valor.getValor())){
 					estadoExpedienteComercial = genericDao.get(DDEstadosExpedienteComercial.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadosExpedienteComercial.PTE_SEGURO_RENTAS));
 					expedienteComercial.setEstado(estadoExpedienteComercial);
+					Filter filter = genericDao.createFilter(FilterType.EQUALS, "expediente.id", expedienteComercial.getId());
+					SeguroRentasAlquiler seguroRentasAlquiler = genericDao.get(SeguroRentasAlquiler.class, filter);
+					if(Checks.esNulo(seguroRentasAlquiler)) {
+						seguroRentasAlquiler = new SeguroRentasAlquiler();
+						seguroRentasAlquiler.setExpediente(expedienteComercial);
+						genericDao.save(SeguroRentasAlquiler.class, seguroRentasAlquiler);
+					}
 				}
 			}
 			

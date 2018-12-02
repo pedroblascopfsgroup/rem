@@ -245,9 +245,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	private static final String PESTANA_RESERVA = "reserva";
 	private static final String PESTANA_CONDICIONES = "condiciones";
 	private static final String PESTANA_FORMALIZACION = "formalizacion";
-	private final String PESTANA_SEGURO_RENTAS= "segurorentasexpediente";
-	private final String PESTANA_SCORING = "scoring";
-	private final String PESTANA_DOCUMENTOS = "documentos";
+	private static final String PESTANA_SEGURO_RENTAS= "segurorentasexpediente";
+	private static final String PESTANA_SCORING = "scoring";
+	private static final String PESTANA_DOCUMENTOS = "documentos";
 	private static final String FECHA_SEGURO_RENTA = "Fecha seguro de renta";
 	private static final String FECHA_SCORING = "Fecha Scoring";
 	public static final String ESTADO_PROCEDIMIENTO_FINALIZADO = "11";
@@ -2638,8 +2638,14 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			seguroRentasDto.setMotivoRechazo(seguroRentas.getMotivoRechazo());
 			if(!Checks.esNulo(seguroRentas.getResultadoSeguroRentas())) {
 				seguroRentasDto.setEstado(seguroRentas.getResultadoSeguroRentas().getDescripcion());
+			} else {
+				seguroRentasDto.setEstado("En trámite");
 			}
-			seguroRentasDto.setAseguradoras(seguroRentas.getAseguradoras());
+			if(!Checks.esNulo(seguroRentas.getAseguradoras())) {
+				ActivoProveedor aseguradora = genericDao.get(ActivoProveedor.class, 
+						genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(seguroRentas.getAseguradoras())));
+				seguroRentasDto.setAseguradoras(aseguradora.getNombre());
+			}
 			seguroRentasDto.setEmailPoliza(seguroRentas.getEmailPolizaAseguradora());
 			seguroRentasDto.setComentarios(seguroRentas.getComentarios());
 		}

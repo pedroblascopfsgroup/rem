@@ -55,14 +55,16 @@ Ext.define('HreRem.view.expedientes.SeguroRentasExpediente', {
 	                         fieldLabel: HreRem.i18n('fieldlabel.aseguradoras'),
 	                         reference: 'extfieldaseguradoras',
 	                         bind: '{segurorentasexpediente.aseguradoras}',
-	                         maxLength: 50
+	                         maxLength: 50,
+	                         readOnly: true
 
 	                     },
 	                     {
 	                    	 xtype: 'textfieldbase',
 	                         fieldLabel: HreRem.i18n('fieldlabel.emailPoliza'),
 	                         bind: '{segurorentasexpediente.emailPoliza}',
-	                         maxLength: 50
+	                         maxLength: 50,
+	                         readOnly: true
 
 	                     },
 	                     {
@@ -71,7 +73,7 @@ Ext.define('HreRem.view.expedientes.SeguroRentasExpediente', {
 	                         reference: 'chkboxEnRevision',
 	 						 bind:{
 	 							 value:'{segurorentasexpediente.revision}',
-	 							 readOnly: '{!esExpedienteBloqueado}'
+	 							 readOnly: '{!estaEnTramite}'
 	 						 },
 	                         listeners: {
 	                             change: 'onchkbxEnRevisionChange'

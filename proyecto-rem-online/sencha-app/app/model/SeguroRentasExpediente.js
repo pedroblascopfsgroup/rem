@@ -64,6 +64,13 @@ Ext.define('HreRem.model.SeguroRentasExpediente', {
     				return data.revision == 'true'
     			},
     			depends: 'revision'
+    		},
+    		{
+    			name:'estaEnTramite',
+    			calculate: function(data) {
+    				return data.estado == 'En trámite'
+    			},
+    			depends: 'estado'
     		}
     ],
     

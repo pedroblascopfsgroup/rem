@@ -206,7 +206,7 @@ public class UpdaterServiceSancionOfertaAlquileresVerificarSeguroRentas implemen
 		}
 		expedienteComercial.setOferta(oferta);
 		expedienteComercialApi.update(expedienteComercial);
-		genericDao.save(SeguroRentasAlquiler.class, seguroRentasAlquiler);
+		genericDao.update(SeguroRentasAlquiler.class, seguroRentasAlquiler);
 		historicoSeguroRentasAlquiler.setSeguroRentasAlquiler(seguroRentasAlquiler);
 		genericDao.save(HistoricoSeguroRentasAlquiler.class, historicoSeguroRentasAlquiler);
 	}

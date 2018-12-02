@@ -3414,7 +3414,7 @@ public class ActivoAdapter {
 		// comercial'.
 		// Y que tenga oferta aceptada de expediente con estasdo (aprobado,
 		// reservado, en devolución)
-		Boolean ofertaAceptada = false;
+		/*Boolean ofertaAceptada = false;
 		for(ActivoOferta ofer : ofertasActivo) {
 			Long ofId = ofer.getOferta();
 			Oferta of = ofertaApi.getOfertaById(ofId);
@@ -3422,11 +3422,10 @@ public class ActivoAdapter {
 			if(DDEstadoOferta.CODIGO_ACEPTADA.equals(estOferta.getCodigo())){
 				ofertaAceptada = true;
 			}
-		}
+		}*/
 		
 		if (activoAgrupacionActivoDao.activoEnAgrupacionLoteComercial(activo.getId())
-				|| ofertaApi.isActivoConOfertaYExpedienteBlocked(activo) || ofertaAceptada
-				) { 
+				|| ofertaApi.isActivoConOfertaYExpedienteBlocked(activo)) { 
 			codigoEstado = DDEstadoOferta.CODIGO_CONGELADA;
 		}
 

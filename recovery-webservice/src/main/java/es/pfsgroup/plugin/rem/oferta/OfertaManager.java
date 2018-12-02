@@ -2544,16 +2544,29 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			// con alguno de los siguientes estados..., para pasar la nueva
 			// oferta a Congelada.
 			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(of.getId());
-			if (!Checks.esNulo(expediente) && !Checks.esNulo(expediente.getEstado())
-					&& (DDEstadosExpedienteComercial.APROBADO.equals(expediente.getEstado().getCodigo())
-							|| DDEstadosExpedienteComercial.RESERVADO.equals(expediente.getEstado().getCodigo())
-							|| DDEstadosExpedienteComercial.EN_DEVOLUCION.equals(expediente.getEstado().getCodigo())
-							|| DDEstadosExpedienteComercial.FIRMADO.equals(expediente.getEstado().getCodigo())
-							|| DDEstadosExpedienteComercial.VENDIDO.equals(expediente.getEstado().getCodigo())
-							|| DDEstadosExpedienteComercial.BLOQUEO_ADM.equals(expediente.getEstado().getCodigo()))) {
+			if(!Checks.esNulo(of.getTipoOferta()) && DDTipoOferta.CODIGO_VENTA.equals(of.getTipoOferta().getCodigo())) {
+				if (!Checks.esNulo(expediente) && !Checks.esNulo(expediente.getEstado())
+						&& (DDEstadosExpedienteComercial.APROBADO.equals(expediente.getEstado().getCodigo())
+								|| DDEstadosExpedienteComercial.RESERVADO.equals(expediente.getEstado().getCodigo())
+								|| DDEstadosExpedienteComercial.EN_DEVOLUCION.equals(expediente.getEstado().getCodigo())
+								|| DDEstadosExpedienteComercial.FIRMADO.equals(expediente.getEstado().getCodigo())
+								|| DDEstadosExpedienteComercial.VENDIDO.equals(expediente.getEstado().getCodigo())
+								|| DDEstadosExpedienteComercial.BLOQUEO_ADM.equals(expediente.getEstado().getCodigo()))) {
 
-				return true;
+					return true;
+				}
+			}else {
+				if (!Checks.esNulo(expediente) && !Checks.esNulo(expediente.getEstado())
+						&& (DDEstadosExpedienteComercial.PTE_PBC.equals(expediente.getEstado().getCodigo())
+								|| DDEstadosExpedienteComercial.PTE_POSICIONAMIENTO.equals(expediente.getEstado().getCodigo())
+								|| DDEstadosExpedienteComercial.PTE_FIRMA.equals(expediente.getEstado().getCodigo())
+								|| DDEstadosExpedienteComercial.PTE_CIERRE.equals(expediente.getEstado().getCodigo())
+								|| DDEstadosExpedienteComercial.FIRMADO_AQLUILER.equals(expediente.getEstado().getCodigo()))) {
+
+					return true;
+				}
 			}
+			
 		}
 		return false;
 	}

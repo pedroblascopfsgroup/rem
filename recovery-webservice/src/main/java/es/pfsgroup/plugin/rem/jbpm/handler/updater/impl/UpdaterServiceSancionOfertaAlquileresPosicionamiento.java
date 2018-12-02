@@ -20,6 +20,7 @@ import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
+import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.Activo;
@@ -28,7 +29,9 @@ import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoFichaTrabajo;
 import es.pfsgroup.plugin.rem.model.DtoListadoGestores;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.Posicionamiento;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
@@ -55,6 +58,9 @@ public class UpdaterServiceSancionOfertaAlquileresPosicionamiento implements Upd
     
     @Autowired
     private MessageService messageService;
+    
+	@Autowired
+	private OfertaApi ofertaApi;
     
     @Autowired
 	private ActivoAdapter activoAdapter;
@@ -94,6 +100,17 @@ public class UpdaterServiceSancionOfertaAlquileresPosicionamiento implements Upd
 				posicionamiento.setLugarFirma(valor.getValor());
 			}
 				
+		}
+		Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());
+		
+		// Una vez aprobado el expediente, se congelan el resto de
+		// ofertas que no estén rechazadas (aceptadas y pendientes)
+		List<Oferta> listaOfertas = ofertaApi.trabajoToOfertas(tramite.getTrabajo());
+		for (Oferta oferta : listaOfertas) {
+			if (!oferta.getId().equals(ofertaAceptada.getId())
+					&& !DDEstadoOferta.CODIGO_RECHAZADA.equals(oferta.getEstadoOferta().getCodigo())) {
+				ofertaApi.congelarOferta(oferta);
+			}
 		}
 		
 		// Crear trabajo de Adecuacion técnica tipo limpieza 

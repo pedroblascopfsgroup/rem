@@ -30,7 +30,7 @@ Ext.define('HreRem.view.expedientes.SeguroRentasExpediente', {
         
         var items = [
         		{
-                    xtype: 'fieldset',
+                    xtype: 'fieldsettable',
                     title: HreRem.i18n('title.detalle'),
                     items: [
 	        			{

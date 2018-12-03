@@ -3646,8 +3646,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
         var comboEstadoAlquiler = me.lookupReference('comboEstadoAlquilerRef');
         var chkPerimetroAlquiler = me.lookupReference('chkPerimetroAlquilerRef');
         var comboTipoInquilino = me.lookupReference('comboTipoInquilinoRef');
-        var comboTipoAlquiler = me.lookupReference('comboTipoAlquilerRef');
-        var comboAdecuacion = me.lookupReference('comboAdecuacionRef');
 
         var comboValue = comboEstadoAlquiler.value;
         chkPerimetroAlquiler.setDisabled(true);
@@ -3663,11 +3661,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
                 comboTipoInquilino.setDisabled(true);
             }
         }
-
-        if(!me.checked){
-            comboTipoAlquiler.reset();
-            comboAdecuacion.reset();
-        }
     },
     
     onChangeComboOcupado: function(combo, newValue, oldValue, eOpts) {
@@ -3677,5 +3670,33 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		if (tipoEstadoAlquiler != CONST.COMBO_ESTADO_ALQUILER['ALQUILADO'] && newValue == CONST.COMBO_OCUPACION['SI']) {
 			combo.up('formBase').down('[reference=comboSituacionPosesoriaConTitulo]').setValue(CONST.COMBO_CON_TITULO['NO']);
 		}
-	}
+	},
+	
+	enableChkPerimetroAlquiler: function(get){
+		var me = this;
+		 var esGestorAlquiler = me.getViewModel().get('activo.esGestorAlquiler');
+		 var estadoAlquiler = me.getViewModel().get('patrimonio.estadoAlquiler');
+		 var tieneOfertaAlquilerViva = me.getViewModel().get('activo.tieneOfertaAlquilerViva');
+		 if($AU.userIsRol(CONST.PERFILES['HAYASUPER']) || (esGestorAlquiler == true || esGestorAlquiler == "true")){
+			if(tieneOfertaAlquilerViva === true && (estadoAlquiler == CONST.COMBO_ESTADO_ALQUILER["ALQUILADO"] || estadoAlquiler == CONST.COMBO_ESTADO_ALQUILER["CON_DEMANDAS"])){
+				return true;
+			} else {
+				return undefined;
+			}
+		 }else{
+			 return true;
+		 }
+	 },
+	 
+	 onChangeCheckPerimetroAlquiler: function(checkbox, newValue, oldValue, eOpts) {
+		 var me = this;
+		 var comboTipoAlquiler = me.lookupReference('comboTipoAlquilerRef');
+		 var comboAdecuacion = me.lookupReference('comboAdecuacionRef');
+
+	   	 if (!checkbox.checked) {
+		    		comboTipoAlquiler.setValue("");
+		            comboAdecuacion.setValue("");
+	   	 }
+	   	 checkbox.setReadOnly(this.enableChkPerimetroAlquiler()); 
+    }
 });

@@ -581,13 +581,16 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				activoDto.setTipoInquilino(activoP.getTipoInquilino().getCodigo());
 			}
 		}
-
+		
+		boolean tieneOfertaAlquilerViva = false;
 		for(ActivoOferta activoOferta : activo.getOfertas()) {
 			Oferta oferta = ofertaApi.getOfertaById(activoOferta.getOferta());
 			if(!DDEstadoOferta.CODIGO_RECHAZADA.equals(oferta.getEstadoOferta().getCodigo())) {
-				BeanUtils.copyProperty(activoDto, "tieneOfertaAlquilerViva", true);
+				tieneOfertaAlquilerViva = true;
 			}
 		}
+		
+		BeanUtils.copyProperty(activoDto, "tieneOfertaAlquilerViva", tieneOfertaAlquilerViva);
 
 		Usuario gestorComercial = gestorActivoApi.getGestorComercialActual(activo, "GCOM");
 		Usuario supervisorComercial = gestorActivoApi.getGestorComercialActual(activo, "SCOM");

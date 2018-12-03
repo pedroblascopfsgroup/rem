@@ -34,9 +34,12 @@ Ext.define('HreRem.view.activos.detalle.DatosPatrimonio', {
 							xtype: 'checkboxfieldbase',
 							fieldLabel: HreRem.i18n('title.patrimonio.perimetroAlquiler'),
 							reference: 'chkPerimetroAlquilerRef',
-							disabled: '{enableChkPerimetroAlquiler}',
 							bind: {
+								readOnly: '{enableChkPerimetroAlquiler}',
 								value: '{patrimonio.chkPerimetroAlquiler}'
+							},
+							listeners: {
+								change:'onChangeCheckPerimetroAlquiler'
 							}
 						},
 						{
@@ -71,7 +74,6 @@ Ext.define('HreRem.view.activos.detalle.DatosPatrimonio', {
 							xtype: 'comboboxfieldbase',
 							fieldLabel: HreRem.i18n('combolabel.patrimonio.combo.tipo.inquilino'),
 							reference: 'comboTipoInquilinoRef',
-							allowBlank: false, 
 							bind: {
 								store: '{comboTipoInquilino}',
 								value: '{patrimonio.tipoInquilino}',

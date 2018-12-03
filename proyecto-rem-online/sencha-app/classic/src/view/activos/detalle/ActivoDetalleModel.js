@@ -366,21 +366,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		 activoPerteneceAgrupacionRestringida: function(get){
 		 	 return get('activo.pertenceAgrupacionRestringida');
 		 },
-		 
-		 enableChkPerimetroAlquiler: function(get){
-			 var esGestorAlquiler = get('activo.esGestorAlquiler');
-			 var estadoAlquiler = get('patrimonio.estadoAlquiler');
-
-			 if(esGestorAlquiler == true || esGestorAlquiler == "true" ){
-				if(estadoAlquiler == CONST.COMBO_ESTADO_ALQUILER["ALQUILADO"] || estadoAlquiler == CONST.COMBO_ESTADO_ALQUILER["CON_DEMANDAS"]){
-					return true;
-				} else {
-					return false;
-				}
-			 }else{
-				 return true;
-			 }
-		 },
 
 		 getLinkHayaActivo: function(get) {
 			 if(get('activo.perteneceAgrupacionRestringidaVigente')) {
@@ -436,16 +421,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			 if(isGestorActivos && isLiberbank) return true;
 			 else return false;
 		 },
-
-		 enableComboTipoAlquiler: function(get){
-			var chkPerimetroAlquiler = get('patrimonio.chkPerimetroAlquiler');
-			var tipoComercializacion = get('activo.tipoComercializacionCodigo');
-			if((chkPerimetroAlquiler == true || chkPerimetroAlquiler == "true" ) && CONST.TIPOS_COMERCIALIZACION['VENTA'] != tipoComercializacion){
-				return false;
-			}else{
-				return true;
-			}
-		},
 
 		enableComboAdecuacion: function(get){
 			var chkPerimetroAlquiler = get('patrimonio.chkPerimetroAlquiler');

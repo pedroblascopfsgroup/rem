@@ -216,14 +216,9 @@ public class TabActivoPatrimonio implements TabActivoService {
 
 			DDTipoAlquiler tipoAlquiler = genericDao.get(DDTipoAlquiler.class, genericDao.createFilter(FilterType.EQUALS, "codigo", activoPatrimonioDto.getTipoAlquilerCodigo()));
 
-			if (!Checks.esNulo(tipoAlquiler)) {
-
-				activo.setTipoAlquiler(tipoAlquiler);
-
-			}
+			activo.setTipoAlquiler(tipoAlquiler);
 
 			activoDao.save(activo);
-
 		}
 
 

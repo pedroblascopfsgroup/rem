@@ -907,5 +907,17 @@ public class Trabajo implements Serializable, Auditable {
 	public void setRequerimiento(Boolean requerimiento) {
 		this.requerimiento = requerimiento;
 	}
+	
+	/**
+     * devuelve el adjunto por Id.
+     * @param id id
+     * @return adjunto
+     */
+    public AdjuntoTrabajo getAdjuntoGD(Long idDoc) {
+    	for (AdjuntoTrabajo adj : getAdjuntos()) {
+    		if(!Checks.esNulo(adj.getAdjunto().getId()) && adj.getAdjunto().getId().equals(idDoc)) { return adj; }
+        }
+        return null;
+    }
 
 }

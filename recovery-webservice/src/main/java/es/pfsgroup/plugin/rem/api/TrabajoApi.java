@@ -835,4 +835,11 @@ public interface TrabajoApi {
 
 	boolean checkGaleon(Trabajo trabajo);
 
+	/**
+	 * Este método crea un contenedor cuando se crea un trabajo de tipo actuacion técnica
+	 * @param trabajo
+	 * @param nombreUsuario
+	 */
+	public void crearContenedorActuacionesTecnicasGD(Trabajo trabajo, String nombreUsuario);
+
 }

@@ -118,6 +118,7 @@ Ext.define('HreRem.ux.util.Constants', {
 		PUBLICACION_DATOS:		'publicacionactivo.datospublicacionactivo',
 		OFERTAS:		'comercialactivo.ofertascomercialactivo',
 		VISITAS:		'comercialactivo.visitascomercialactivo',
+		GENCAT:			'comercialactivo.gencatactivo',
 		OFERTASAGRU:	'comercialagrupacion.ofertascomercialagrupacion',
 		PROPUESTAS:		'preciosactivo.propuestaspreciosactivo'
 //		INVISIBLE:		Si creamos un registro-enlace-activo en TFI y como codigo (en TFI_NOMBRE) damos este valor, ocultara el enlace		
@@ -346,6 +347,19 @@ Ext.define('HreRem.ux.util.Constants', {
 	
 	EXPORTADOR:{
 		LIMITE: '1000'
+	},
+	
+	SANCION_GENCAT: {
+		EJERCE: 'EJERCE',
+		NO_EJERCE: 'NO_EJERCE'
+	},
+	
+	ESTADO_COMUNICACION_GENCAT: {
+		CREADO: 'CREADO',
+		RECHAZADO: 'RECHAZADO',
+		COMUNICADO: 'COMUNICADO',
+		SANCIONADO: 'SANCIONADO',
+		ANULADO: 'ANULADO'
 	}
 
 });

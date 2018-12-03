@@ -103,6 +103,7 @@ public class DiccionarioTargetClassMap{
 		mapa.put("estadosOfertas", DDEstadoOferta.class);
 		mapa.put("tiposOfertas", DDTipoOferta.class);
 		mapa.put("tiposTextoOferta", DDTiposTextoOferta.class);
+		mapa.put("estadosVisita", DDEstadosVisita.class);
 		mapa.put("estadosVisitaOferta", DDEstadosVisitaOferta.class);
 		mapa.put("estadosInformeComercial", DDEstadoInformeComercial.class);
 		mapa.put("tiposArras", DDTiposArras.class);
@@ -197,6 +198,10 @@ public class DiccionarioTargetClassMap{
 		mapa.put("calculoImpuesto", DDCalculoImpuesto.class);
 		mapa.put("tiposDocumentoPromocion", DDTipoDocumentoPromocion.class);
 		mapa.put("estadosReserva", DDEstadosReserva.class);
+		mapa.put("sancionGencat", DDSancionGencat.class);
+		mapa.put("estadoComunicacionGencat", DDEstadoComunicacionGencat.class);
+		mapa.put("tipoDocumentoGencat", DDTipoDocumentoGencat.class);
+		mapa.put("tipoNotificacionGencat", DDTipoNotificacionGencat.class);
 		
 		return Collections.unmodifiableMap(mapa);
 	}

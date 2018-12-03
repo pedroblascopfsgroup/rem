@@ -206,6 +206,9 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 
 	//REMVIP-REMVIP-2193
 	private Boolean isLogUsuGestComerSupComerSupAdmin;
+	
+	//HREOS-4836 (GENCAT)
+	private Boolean afectoAGencat;
 
 	public int getPage() {
 		return page;
@@ -1506,6 +1509,14 @@ public Boolean getTienePosibleInformeMediador() {
 
 	public void setIsLogUsuGestComerSupComerSupAdmin(Boolean isLogUsuGestComerSupComerSupAdmin) {
 		this.isLogUsuGestComerSupComerSupAdmin = isLogUsuGestComerSupComerSupAdmin;
+	}
+
+	public Boolean getAfectoAGencat() {
+		return afectoAGencat;
+	}
+
+	public void setAfectoAGencat(Boolean afectoAGencat) {
+		this.afectoAGencat = afectoAGencat;
 	}
 	
 }

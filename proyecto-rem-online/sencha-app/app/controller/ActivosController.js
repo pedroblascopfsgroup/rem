@@ -177,6 +177,10 @@ Ext.define('HreRem.controller.ActivosController', {
 			abrirDetalleActivo: 'abrirDetalleActivoComercialVisitas'
     	},
     	
+    	'gencatcomercialactivo': {    		
+			abrirDetalleActivo: 'abrirDetalleActivoComercialGencat'
+    	},
+    	
     	'ofertascomercialmain': {
     		abrirDetalleActivo: 'abrirDetalleActivoComercialOfertas',
 			abrirDetalleAgrupacion : 'abrirDetalleAgrupacionComercialOfertas',
@@ -976,6 +980,14 @@ Ext.define('HreRem.controller.ActivosController', {
     	id = record.get("idActivo");
 		me.redirectTo('activos', true);
     	me.abrirDetalleActivoPrincipal(id, CONST.MAP_TAB_ACTIVO_XTYPE['VISITAS'])
+    },
+    
+    abrirDetalleActivoComercialGencat: function(record) {
+    	var me = this,
+    	titulo = "Activo " + record.get("numActivo"),
+    	id = record.get("idActivo");
+		me.redirectTo('activos', true);
+    	me.abrirDetalleActivoPrincipal(id, CONST.MAP_TAB_ACTIVO_XTYPE['GENCAT'])
     },
     
     abrirDetalleActivoGastosActivos: function(record) {

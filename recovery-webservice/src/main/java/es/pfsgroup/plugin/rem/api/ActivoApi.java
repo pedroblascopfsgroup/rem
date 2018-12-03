@@ -637,6 +637,14 @@ public interface ActivoApi {
 	 * @return
 	 */
 	public boolean isIntegradoAgrupacionAsistida(Activo activo);
+	
+	/**
+	 * Comprueba si el activo esta afecto a GENCAT
+	 * 
+	 * @param activo
+	 * @return boolean
+	 */
+	public boolean isAfectoGencat(Activo activo) throws ParseException;
 
 	/**
 	 * Este método da de baja un condicionante por su ID.

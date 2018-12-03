@@ -519,6 +519,16 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			activoDto.setIsLogUsuGestComerSupComerSupAdmin(false);
 		}
 		
+		//HREOS-4836 (GENCAT)
+		Boolean afectoAGencat = false;
+		try {
+			afectoAGencat = activoApi.isAfectoGencat(activo);
+		}
+		catch (ParseException e) {
+			e.printStackTrace();
+		}
+		activoDto.setAfectoAGencat(afectoAGencat);
+		
 		return activoDto;	
 	}
 

@@ -4,7 +4,11 @@ Ext.define('HreRem.view.activos.detalle.ComercialActivoTabPanel', {
     xtype		: 'comercialactivotabpanel',
     reference	: 'comercialactivotabpanelref',
     layout		: 'fit',
-    requires	: ['HreRem.view.activos.detalle.VisitasComercialActivo', 'HreRem.view.activos.detalle.OfertasComercialActivo'],    
+    requires	: [
+    				'HreRem.view.activos.detalle.VisitasComercialActivo', 
+    				'HreRem.view.activos.detalle.OfertasComercialActivo',
+    				'HreRem.view.activos.detalle.GencatComercialActivo'
+    			  ],    
 
 	listeners	: {
     	boxready: function (tabPanel) {   		
@@ -22,6 +26,10 @@ Ext.define('HreRem.view.activos.detalle.ComercialActivoTabPanel', {
 
 		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'ofertascomercialactivo'})}, ['TAB_COMERCIAL_OFERTAS']);
 		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'visitascomercialactivo'})}, ['TAB_COMERCIAL_VISITAS']);
+		
+		if (me.lookupViewModel().get('activo.afectoAGencat')) {
+			items.push({xtype: 'gencatcomercialactivo'});
+		}
 
     	me.addPlugin({ptype: 'lazyitems', items: items });
     	me.callParent();

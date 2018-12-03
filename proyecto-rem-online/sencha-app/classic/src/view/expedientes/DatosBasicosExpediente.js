@@ -40,7 +40,12 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 							fieldLabel:  HreRem.i18n('fieldlabel.propietario'),
 			                bind:		'{expediente.propietario}'
 						},
-						  {  
+						{ 
+							xtype: 'displayfieldbase',
+							fieldLabel:  HreRem.i18n('fieldlabel.tipo'),
+		                	bind:		'{expediente.tipoExpedienteDescripcion}'
+		                },
+		                {  
 							xtype:'comboboxfieldbase',
 							fieldLabel: HreRem.i18n('fieldlabel.tipo.alquiler'),
 							cls: 'cabecera-info-field',
@@ -50,11 +55,6 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 								store: '{comboTipoAlquiler}'
 							}
 		                },
-						{ 
-							xtype: 'displayfieldbase',
-							fieldLabel:  HreRem.i18n('fieldlabel.tipo'),
-		                	bind:		'{expediente.tipoExpedienteDescripcion}'
-		                },		                
 		                { 
 							xtype: 'displayfieldbase',
 							fieldLabel:  HreRem.i18n('fiedlabel.numero.activo.agrupacion'),

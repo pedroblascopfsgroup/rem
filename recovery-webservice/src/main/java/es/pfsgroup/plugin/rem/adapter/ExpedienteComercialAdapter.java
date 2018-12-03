@@ -96,7 +96,7 @@ public class ExpedienteComercialAdapter {
 						idExpediente = gestorDocumentalAdapterApi.crearExpedienteComercial(expedienteComercial,usuario.getUsername());
 						logger.debug("GESTOR DOCUMENTAL [ crearExpediente para " + expedienteComercial.getNumExpediente() + "]: ID EXPEDIENTE RECIBIDO " + idExpediente);
 					} catch (GestorDocumentalException gexc) {
-						logger.error(gexc.getMessage());
+						logger.error(gexc.getMessage(),gexc);
 					}
 					
 				}

@@ -433,36 +433,49 @@ public interface ParticularValidatorApi {
 
 	Boolean esMismaProvincia(Long numActivo, Long numAgrupacion);
 
-	Boolean esMismaLocalidad(Long numActivo, Long numAgrupacion);
+	public Boolean esMismaLocalidad(Long numActivo, Long numAgrupacion);
+	
+		/**
+		 * Devuelve true si un activo tiene ofertas vivas de tipo venta
+		 * @param numActivo
+		 * @return
+		 */
+		public Boolean existeActivoConOfertaVentaViva(String numActivo);
+		
+		/**
+		 * Devuelve true si un activo tiene ofertas vivas de tipo alquiler
+		 * @param numActivo
+		 * @return
+		 */
+		public Boolean existeActivoConOfertaAlquilerViva(String numActivo);
+		
+		/**
+		 * Devuelve el codigo del destino comercial de un activo
+		 * @param numActivo
+		 * @return
+		 */
+		public String getCodigoDestinoComercialByNumActivo(String numActivo);
 
-	/**
-	 * Devuelve true si un activo tiene ofertas vivas de tipo venta
-	 * @param numActivo
-	 * @return
-	 */
-	Boolean existeActivoConOfertaVentaViva(String numActivo);
+		Boolean isActivoPublicadoVenta(String numActivo);
 
-	/**
-	 * Devuelve true si un activo tiene ofertas vivas de tipo alquiler
-	 * @param numActivo
-	 * @return
-	 */
-	Boolean existeActivoConOfertaAlquilerViva(String numActivo);
+		Boolean isActivoOcultoVentaPorMotivosManuales(String numActivo);
 
-	/**
-	 * Devuelve el codigo del destino comercial de un activo
-	 * @param numActivo
-	 * @return
-	 */
-	String getCodigoDestinoComercialByNumActivo(String numActivo);
+		Boolean isActivoPublicadoAlquiler(String numActivo);
 
-	Boolean existeComunidadPropietarios(String idPropietarios);
+		Boolean isActivoOcultoAlquilerPorMotivosManuales(String numActivo);
+		
+		Boolean isActivoOcultoVenta(String numActivo);
 
-	Boolean existeSituacion(String idSituacion);
+		Boolean isActivoOcultoAlquiler(String numActivo);
 
-	Boolean existeImpuesto(String idImpuesto);
+		Boolean existeComunidadPropietarios(String idPropietarios);
 
-	Boolean existeActivoEnPropietarios(String numActivo, String idPropietarios);
+		Boolean existeSituacion(String idSituacion);
 
-	Boolean existeCatastro(String catastro);
+		Boolean existeImpuesto(String idImpuesto);
+
+		Boolean existeActivoEnPropietarios(String numActivo, String idPropietarios);
+
+		Boolean existeCatastro(String catastro);	
+
 }

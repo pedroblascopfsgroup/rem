@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=PIER GOTTA
---## FECHA_CREACION=20181019
+--## AUTOR=RLB
+--## FECHA_CREACION=20181130
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=REMVIP-2296
@@ -56,7 +56,7 @@ BEGIN
 
 	AS
 		SELECT 
-				ROWNUM AS ID,
+				OFR.OFR_ID AS ID,
 		    OFR.OFR_NUM_OFERTA,
 		    OFR.OFR_FECHA_ACCION,
 				OFR.OFR_FECHA_ALTA,

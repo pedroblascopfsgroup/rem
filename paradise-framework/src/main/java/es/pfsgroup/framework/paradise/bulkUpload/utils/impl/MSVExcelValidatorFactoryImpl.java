@@ -95,6 +95,12 @@ public class MSVExcelValidatorFactoryImpl {
 
 	@Autowired
 	private MSVInfoDetallePrinexLbkExcelValidator infoDetallePrinexLbk;
+	
+	@Autowired
+	private MSVDesocultacionVenta desocultacionVenta;
+	
+	@Autowired
+	private MSVDesocultacionAlquiler desocultarAlquiler;
 
 	@Autowired
 	private MSVSituacionComunidadesPropietariosExcelValidator situacionComunidadesPropietarios;
@@ -216,6 +222,12 @@ public class MSVExcelValidatorFactoryImpl {
 			return situacionImpuestos;
 		} else if (MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_SITUACION_PLUSVALIA.equals(codTipoOperacion)) {
 			return situacionPlusvalia;
+		}
+		else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_DESOCULTACION_VENTA.equals(codTipoOperacion)){
+			return desocultacionVenta;
+		}
+		else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_DESOCULTACION_ALQUILER.equals(codTipoOperacion)){
+			return desocultarAlquiler;
 		}
 
 		return null;

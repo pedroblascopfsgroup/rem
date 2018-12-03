@@ -22,6 +22,7 @@ Ext.define('HreRem.view.activos.ActivosModel', {
 			    	session: true,
 			    	remoteSort: true,
 			    	remoteFilter: true,
+			    	autoLoad:false,
 			    	listeners : {
 			            beforeload : 'paramLoading'
 			        }

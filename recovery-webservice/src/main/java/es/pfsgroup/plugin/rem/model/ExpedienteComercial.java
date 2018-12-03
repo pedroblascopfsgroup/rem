@@ -24,6 +24,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Version;
 
 import org.apache.commons.lang.BooleanUtils;
 import org.hibernate.annotations.Cache;
@@ -219,6 +220,7 @@ public class ExpedienteComercial implements Serializable, Auditable {
     @Column(name="ECO_NECESITA_FINANCIACION")
     private Boolean necesitaFinanciacion;
     
+    @Version
 	private Long version;
 
 	@Embedded

@@ -11,6 +11,7 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.model.UsuarioCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 
 class LogTrust {
 	protected Log logTrustLogger;
@@ -55,6 +56,23 @@ class LogTrust {
 			return usuarioCartera.getCartera().getCodigo();
 		}
 
+		return "";
+	}
+	
+	/**
+	* Este método obtiene el nombre de la cartera del usuario logueado (si el usuario está carterizado).
+	*
+	* @return Devuelve un literal con el nombre de cartera del usuario logueado, o vacío si el usuario no está carterizado.
+	*/
+	protected String getDescripcionCarteraUsuarioLogueado() {
+		String codigoCartera = getCodigoCarteraUsuarioLogueado();
+		
+		DDCartera cartera = genericDao.get(DDCartera.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigoCartera));
+		
+		if(!Checks.esNulo(cartera)){
+			return cartera.getDescripcion();
+		}
+	
 		return "";
 	}
 }

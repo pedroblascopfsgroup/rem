@@ -113,9 +113,10 @@ public class LogTrustEvento extends LogTrust {
 	 */
 	private void obtenerInformacionDelEvento(HttpServletRequest peticion, ENTIDAD_CODIGO entidad, Long idEntidad, ACCION_CODIGO accion, REQUEST_STATUS_CODE codigoEstadoPeticion, String tabOrEvento) {
 
+		long time = System.currentTimeMillis();
+		
 		Activo activo = null;
-		String codigoCarteraActivo = "";
-		String numActivo = "";
+		String carteraActivo = "";
 		
 		StringBuilder builder = new StringBuilder();
 		builder.append(sdf.format(new Date()));
@@ -126,7 +127,7 @@ public class LogTrustEvento extends LogTrust {
 		builder.append(SEPARADOR);
 		builder.append(getUsernameUsuarioLogueado());
 		builder.append(SEPARADOR);
-		builder.append(getCodigoCarteraUsuarioLogueado());
+		builder.append(getDescripcionCarteraUsuarioLogueado());
 		builder.append(SEPARADOR);
 		builder.append(this.obtenerStringCodigoEstado(codigoEstadoPeticion));
 		builder.append(SEPARADOR);
@@ -134,10 +135,12 @@ public class LogTrustEvento extends LogTrust {
 		switch(entidad){
 			case CODIGO_ACTIVO:
 				activo = activoApi.get(idEntidad);
+				builder.append(ENTIDAD_CODIGO.CODIGO_ACTIVO);
 				break;
 			case CODIGO_TRABAJO:
 				Trabajo trabajo = trabajoApi.findOne(idEntidad);
 				activo = trabajo.getActivo();
+				builder.append(ENTIDAD_CODIGO.CODIGO_TRABAJO);
 				break;
 			case CODIGO_AGRUPACION:
 				ActivoAgrupacionActivo activoAgrupacion;
@@ -148,35 +151,40 @@ public class LogTrustEvento extends LogTrust {
 				}
 				
 				activo = activoAgrupacion.getActivo();
+				builder.append(ENTIDAD_CODIGO.CODIGO_AGRUPACION);
 				break;
 			case CODIGO_EXPEDIENTE_COMERCIAL:
 				ExpedienteComercial expediente = expedienteComercialApi.findOne(idEntidad);
 				activo = expediente.getOferta().getActivoPrincipal();
+				builder.append(ENTIDAD_CODIGO.CODIGO_EXPEDIENTE_COMERCIAL);
 				break;
 			case CODIGO_PROVEEDOR:
 				activo = activoApi.getActivoByIdProveedor(idEntidad);
+				builder.append(ENTIDAD_CODIGO.CODIGO_PROVEEDOR);
 				break;
 			case CODIGO_GASTOS_PROVEEDOR:
 				activo = activoApi.getActivoByIdGastoProveedor(idEntidad);
+				builder.append(ENTIDAD_CODIGO.CODIGO_GASTOS_PROVEEDOR);
 				break;
 			case CODIGO_TRAMITE:
 				ActivoTramite activoTramite = activoTramiteApi.get(idEntidad);
 				activo = activoTramite.getActivo();
+				builder.append(ENTIDAD_CODIGO.CODIGO_TRAMITE);
 				break;
 			default:
 				break;
 		}
 		
-		if(!Checks.esNulo(activo)) {
-			numActivo = activo.getNumActivo().toString();
-			if(!Checks.esNulo(activo.getCartera())) {
-				codigoCarteraActivo = activo.getCartera().getCodigo();
-			}
+		if(!Checks.esNulo(activo) && !Checks.esNulo(activo.getCartera())) {
+			carteraActivo = activo.getCartera().getDescripcion();
 		}
 		
-		builder.append(numActivo);
 		builder.append(SEPARADOR);		
-		builder.append(codigoCarteraActivo);
+		builder.append(carteraActivo);
+		builder.append(SEPARADOR);
+		builder.append(peticion.getServerName());
+		builder.append(SEPARADOR);
+		builder.append(System.currentTimeMillis() - time);
 		
 		registrarMensaje(builder.toString());
 	}
@@ -191,11 +199,11 @@ public class LogTrustEvento extends LogTrust {
 	private String obtenerStringCodigoEstado(REQUEST_STATUS_CODE codigoEstadoPeticion) {
 		switch(codigoEstadoPeticion) {
 			case CODIGO_ESTADO_OK:
-				return "200";
+				return "OK";
 			case CODIGO_ESTADO_KO:
-				return "500";
+				return "KO";
 			case CODIGO_ESTADO_USUARIO_SIN_ACCESO:
-				return "403";
+				return "USUARIO SIN ACCESO";
 			default:
 				return "ERR";
 		}

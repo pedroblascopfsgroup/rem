@@ -1872,8 +1872,7 @@ public class ActivoAdapter {
 				
 				Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 				Boolean isProveedor = genericAdapter.isProveedor(usuarioLogado);
-				if (!ActivoTramiteApi.CODIGO_TRAMITE_ACTUACION_TECNICA.equals(tramite.getTipoTramite().getCodigo())
-						&& !ActivoTramiteApi.CODIGO_TRAMITE_OBTENCION_DOC.equals(tramite.getTipoTramite().getCodigo()) || isProveedor) {
+				if (!ActivoTramiteApi.CODIGO_TRAMITE_ACTUACION_TECNICA.equals(tramite.getTipoTramite().getCodigo()) || isProveedor) {
 					beanUtilNotNull.copyProperty(dtoTramite, "ocultarBotonCierre", true);
 				}
 				if (!ActivoTramiteApi.CODIGO_TRAMITE_COMERCIAL_VENTA.equals(tramite.getTipoTramite().getCodigo())) {
@@ -3032,7 +3031,8 @@ public class ActivoAdapter {
 		EXTDDTipoGestor tipoGestor = genericDao.get(EXTDDTipoGestor.class, f1);
 		Filter f2 = genericDao.createFilter(FilterType.EQUALS, "activo", activo);
 		Filter f3 = genericDao.createFilter(FilterType.EQUALS, "tipoGestor",tipoGestor);
-		GestorActivo actGest = genericDao.get(GestorActivo.class, f2,f3);
+		Filter f4 = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+		GestorActivo actGest = genericDao.get(GestorActivo.class, f2,f3, f4);
 
 		if(!Checks.esNulo(actGest) && !Checks.esNulo(activo) && !Checks.esNulo(tipoGestor)){
 			GestorEntidadDto dtoGestor = new GestorEntidadDto();

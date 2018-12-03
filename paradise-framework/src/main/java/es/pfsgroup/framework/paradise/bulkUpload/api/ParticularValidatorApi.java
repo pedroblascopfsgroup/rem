@@ -451,4 +451,16 @@ public interface ParticularValidatorApi {
 		 * @return
 		 */
 		public String getCodigoDestinoComercialByNumActivo(String numActivo);
+
+		Boolean isActivoPublicadoVenta(String numActivo);
+
+		Boolean isActivoOcultoVentaPorMotivosManuales(String numActivo);
+
+		Boolean isActivoPublicadoAlquiler(String numActivo);
+
+		Boolean isActivoOcultoAlquilerPorMotivosManuales(String numActivo);
+		
+		Boolean isActivoOcultoVenta(String numActivo);
+
+		Boolean isActivoOcultoAlquiler(String numActivo);
 }

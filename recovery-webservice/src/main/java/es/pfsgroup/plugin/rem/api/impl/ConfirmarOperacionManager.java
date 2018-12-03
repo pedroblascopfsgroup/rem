@@ -227,47 +227,40 @@ public class ConfirmarOperacionManager extends BusinessOperationOverrider<Confir
 			throw new Exception("No existe expediente comercial para esta activo.");
 		}
 		
-		/*if (!Checks.esNulo(expedienteComercial.getFechaContabilizacionPropietario())) {
-			tieneFechaIngresoChequeVenta = true;
-		}
-		
-		if(!tieneFechaIngresoChequeVenta && oferta.getVentaDirecta()){
-			throw new Exception("No esta registrado la fecha de ingreso del cheque de venta.");
-		}*/
-
 		Reserva reserva = expedienteComercial.getReserva();
-		// Importe Reserva:
-		CondicionanteExpediente condExp = expedienteComercial.getCondicionante();
-		if (!Checks.esNulo(condExp)) {
-			importeReserva = condExp.getImporteReserva();
+		
+		if(reserva != null){
+			// Importe Reserva:
+			CondicionanteExpediente condExp = expedienteComercial.getCondicionante();
+			if (!Checks.esNulo(condExp)) {
+				importeReserva = condExp.getImporteReserva();
+			}
+	
+			if (Checks.esNulo(reserva) || importeReserva == null) {
+				importeTotal = Checks.esNulo(oferta.getImporteContraOferta()) ? oferta.getImporteOferta()
+						: oferta.getImporteContraOferta();
+			} else {
+				importeTotal = Checks.esNulo(oferta.getImporteContraOferta()) ? oferta.getImporteOferta() - importeReserva
+						: oferta.getImporteContraOferta() - importeReserva;
+			}
+	
+			// Insertar en entregas a cuentas en positivo,
+			EntregaReserva entregaReserva = new EntregaReserva();
+			entregaReserva.setImporte(importeTotal);
+			Date fechaEntrega = new Date();
+			entregaReserva.setFechaEntrega(fechaEntrega);
+			entregaReserva.setReserva(reserva);
+			if (!expedienteComercialApi.addEntregaReserva(entregaReserva, expedienteComercial.getId())) {
+				throw new Exception("No se ha podido guardar el cobro de la venta.");
+			}
 		}
 
-		if (Checks.esNulo(reserva) || importeReserva == null) {
-			importeTotal = Checks.esNulo(oferta.getImporteContraOferta()) ? oferta.getImporteOferta()
-					: oferta.getImporteContraOferta();
-		} else {
-			importeTotal = Checks.esNulo(oferta.getImporteContraOferta()) ? oferta.getImporteOferta() - importeReserva
-					: oferta.getImporteContraOferta() - importeReserva;
-		}
-
-		// Insertar en entregas a cuentas en positivo,
-		EntregaReserva entregaReserva = new EntregaReserva();
-		entregaReserva.setImporte(importeTotal);
-		Date fechaEntrega = new Date();
-		entregaReserva.setFechaEntrega(fechaEntrega);
-		entregaReserva.setReserva(expedienteComercial.getReserva());
-		if (!expedienteComercialApi.addEntregaReserva(entregaReserva, expedienteComercial.getId())) {
-			throw new Exception("No se ha podido guardar el cobro de la venta.");
-		}
-
-		// Actualizar fecha contabilizacionPropietario, fecha venta,
 		expedienteComercial.setFechaContabilizacionPropietario(fechaActual);
 		
 		if (!Checks.esNulo(expedienteComercial.getFechaVenta())){
 			DDEstadosExpedienteComercial estadoExpCom = expedienteComercialApi.getDDEstadosExpedienteComercialByCodigo(DDEstadosExpedienteComercial.VENDIDO);
 			expedienteComercial.setEstado(estadoExpCom);
 		}
-		//expedienteComercial.setFechaVenta(fechaActual);
 		if (!expedienteComercialApi.update(expedienteComercial)) {
 			throw new Exception("Error al actualizar el expediente comercial.");
 		}

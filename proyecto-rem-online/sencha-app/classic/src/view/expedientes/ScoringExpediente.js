@@ -99,23 +99,22 @@ Ext.define('HreRem.view.expedientes.ScoringExpediente', {
 								[
 									{
 	        					        xtype: 'actioncolumn',
-	        					        width: 30,	
-	        					        hidden: '{tieneIdActivo}',
-	        					        hideable: '{hideableTieneIdActivo}',
+	        					        width: 30,
+	        					        hideable: false,
 	        					        items: [{
 	        					           	iconCls: 'ico-download',
-	        					           	tooltip: HreRem.i18n("tooltip.download"),
+	        					           	tooltip: HreRem.i18n('tooltip.download'),
 	        					            handler: function(grid, rowIndex, colIndex) {
 	        					                var record = grid.getRecord(rowIndex);
-	        					                var idActivo=record.get("idActivo");
+	        					                var idActivo=record.get('idActivo');
 	        					                if(!Ext.isEmpty(idActivo)){
 		        					               //Todo lo que viene a continuación, es para descargar el fichero
 		        					                config = {};
-													config.url=$AC.getWebPath()+"activo/bajarAdjuntoActivo."+$AC.getUrlPattern();
+													config.url=$AC.getWebPath()+'activo/bajarAdjuntoActivo.'+$AC.getUrlPattern();
 													config.params = {};
 													config.params.id=record.get('identificador');
-													config.params.idActivo=record.get("idActivo");
-													config.params.nombreDocumento=record.get("docScoring"); 
+													config.params.idActivo=record.get('idActivo');
+													config.params.nombreDocumento=record.get('docScoring'); 
 													
 													config = config || {};
 			    

@@ -35,8 +35,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDSubtipoDocumentoExpediente;
 @Service
 public class ExpedienteComercialAdapter {
 
-	private static final String EXCEPTION_ACTIVO_NOT_FOUND_COD = "Error al obtener el activo, no existe";
-
+	
 	private static final String RELACION_TIPO_DOCUMENTO_EXPEDIENTE = "d-e";	
 	private static final String OPERACION_ALTA = "Alta";	
 
@@ -88,8 +87,8 @@ public class ExpedienteComercialAdapter {
 					}
 				}
 			} catch (GestorDocumentalException gex) {
-				String[] error = gex.getMessage().split("-");
-				if (error.length > 0 &&  (error[2].trim().contains(EXCEPTION_ACTIVO_NOT_FOUND_COD))) {
+				//if (error.length > 0 &&  (error[2].trim().contains(EXCEPTION_ACTIVO_NOT_FOUND_COD))) {
+				if (GestorDocumentalException.CODIGO_ERROR_CONTENEDOR_NO_EXISTE.equals(gex.getCodigoError())) {
 					
 					Integer idExpediente;
 					try{

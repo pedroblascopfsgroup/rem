@@ -64,15 +64,18 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 	     	var conTitulo = get('situacionPosesoria.conTitulo') == "1";
 	     	var gridHistoricoOcupacionesIlegales = this.getView().lookupReference('historicoocupacionesilegalesgridref');
 			var fieldHistoricoOcupacionesIlegales = this.getView().lookupReference('fieldHistoricoOcupacionesIlegales');
+			if(gridHistoricoOcupacionesIlegales != null && fieldHistoricoOcupacionesIlegales != null){
+				var hayDatosEnStore = gridHistoricoOcupacionesIlegales.store.data.length>0
+				if(hayDatosEnStore  || ocupado){
+					fieldHistoricoOcupacionesIlegales.show();
+				}else {
+					fieldHistoricoOcupacionesIlegales.hide();
+				}
 
-			var hayDatosEnStore = gridHistoricoOcupacionesIlegales.store.data.length>0
-			if(hayDatosEnStore  || ocupado){
-				fieldHistoricoOcupacionesIlegales.show();
-			}else {
-				fieldHistoricoOcupacionesIlegales.hide();
+		     	return ocupado && !conTitulo;
+			}else{
+				return ocupado && !conTitulo;
 			}
-
-	     	return ocupado && !conTitulo;
 	     },
 
 	     getIconClsEstadoAdmision: function(get) {

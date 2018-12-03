@@ -43,7 +43,7 @@ BEGIN
 
 		EXECUTE IMMEDIATE V_MSQL INTO V_RES;
 
-		DBMS_OUTPUT.PUT_LINE('[VALIDACION] Para ACT_ACTIVO = 6818326, NUM_EXPEDIENTE es '||V_RES||' Debería actualizarse a 2229585758 | 110.000,00');	
+		DBMS_OUTPUT.PUT_LINE('[VALIDACION] Para ACT_ACTIVO = 6818326, NUM_EXPEDIENTE es '||V_RES||' Debería actualizarse a 2229585758 | 110.000');	
 
 			EXECUTE IMMEDIATE 'MERGE INTO '||V_ESQUEMA||'.FOR_FORMALIZACION T1
 										USING (
@@ -66,14 +66,14 @@ BEGIN
 										ON (T1.FOR_ID = T2.FOR_ID)
 										WHEN MATCHED THEN UPDATE SET
 										T1.FOR_NUMEXPEDIENTE = T2.num_expediente,
-										T1.FOR_CAPITALCONCEDIDO = TO_NUMBER(REPLACE(REPLACE(T2.capital_concedido,''.'',''''),'','','''')),
+										T1.FOR_CAPITALCONCEDIDO = TO_NUMBER(T2.capital_concedido),
 										T1.USUARIOMODIFICAR = ''REMVIP-2476'',
 										T1.FECHAMODIFICAR = SYSDATE';
 				
     	
 	COMMIT;
 
-	DBMS_OUTPUT.PUT_LINE('[INFO]'||SQL%ROWCOUNT||' Activos a los que actualizamos el num de expediente y el capital concedido.');  
+	DBMS_OUTPUT.PUT_LINE('[INFO]'||SQL%ROWCOUNT||' Activos de FOR_FORMALIZACION a los que actualizamos el num de expediente y el capital concedido.');  
 
 		  V_MSQL := 'SELECT FOR_NUMEXPEDIENTE 
 							FROM '||V_ESQUEMA||'.'||V_TABLA||' FFF
@@ -84,7 +84,7 @@ BEGIN
 
 		EXECUTE IMMEDIATE V_MSQL INTO V_RES;
 
-		DBMS_OUTPUT.PUT_LINE('[VALIDACION] Para ACT_ACTIVO = 6818326, NUM_EXPEDIENTE es '||V_RES||'');	
+		DBMS_OUTPUT.PUT_LINE('[VALIDACION] Para ACT_ACTIVO = 6818326, NUM_EXPEDIENTE es '||V_RES||'');
 
 
 EXCEPTION

@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import es.capgemini.devon.beans.Service;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.api.ActivoAgrupacionActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
@@ -19,14 +21,26 @@ import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Trabajo;
+import es.pfsgroup.plugin.rem.model.dd.DDCodigoEstadoPeticion;
 
 @Service
 public class LogTrustEvento extends LogTrust {
 
 	public enum REQUEST_STATUS_CODE {
-		CODIGO_ESTADO_OK,
-		CODIGO_ESTADO_KO,
-		CODIGO_ESTADO_USUARIO_SIN_ACCESO
+		CODIGO_ESTADO_OK("200"),
+		CODIGO_ESTADO_KO("500"),
+		CODIGO_ESTADO_USUARIO_SIN_ACCESO("403");
+		
+		private final String text;
+
+		REQUEST_STATUS_CODE(final String text) {
+	        this.text = text;
+	    }
+
+	    @Override
+	    public String toString() {
+	        return text;
+	    }
 	}
 
 	public enum ACCION_CODIGO {
@@ -190,22 +204,20 @@ public class LogTrustEvento extends LogTrust {
 	}
 
 	/**
-	 * Este método recibe la variable constante del código de error y devuelve un literal con el número de
-	 * estado de error.
+	 * Este método recibe la variable constante del código de error y devuelve un literal con el estado de error.
 	 *
 	 * @param codigoEstado: enum de los códigos de estado.
 	 * @return Devuelve un literal con el string del código de estado.
 	 */
 	private String obtenerStringCodigoEstado(REQUEST_STATUS_CODE codigoEstadoPeticion) {
-		switch(codigoEstadoPeticion) {
-			case CODIGO_ESTADO_OK:
-				return "OK";
-			case CODIGO_ESTADO_KO:
-				return "KO";
-			case CODIGO_ESTADO_USUARIO_SIN_ACCESO:
-				return "USUARIO SIN ACCESO";
-			default:
-				return "ERR";
+		
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", codigoEstadoPeticion.toString());
+		DDCodigoEstadoPeticion codEstadoPeticion = genericDao.get(DDCodigoEstadoPeticion.class, filtro);
+		
+		if(!Checks.esNulo(codEstadoPeticion)) {
+			return codEstadoPeticion.getDescripcion();
+		} else {
+			return "ERR";
 		}
 	}
 	

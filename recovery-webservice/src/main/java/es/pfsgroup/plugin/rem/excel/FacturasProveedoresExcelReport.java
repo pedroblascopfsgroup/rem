@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.excel;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -105,6 +106,8 @@ public class FacturasProveedoresExcelReport extends AbstractExcelReport implemen
 	
 	public List<List<String>> getData(){
 		List<List<String>> valores = new ArrayList<List<String>>();
+		String pattern = "dd/MM/yyyy";
+		SimpleDateFormat SimpleDateFormat = new SimpleDateFormat(pattern);
 		
 		for(VFacturasProveedores factura:listaFacturas){
 			if(!Checks.esNulo(factura)){
@@ -147,13 +150,13 @@ public class FacturasProveedoresExcelReport extends AbstractExcelReport implemen
 			}
 			
 			if(!Checks.esNulo(factura.getFechaFra())) {
-				fila.add(factura.getFechaFra().toString());
+				fila.add(SimpleDateFormat.format(factura.getFechaFra()));
 			}else {
 				fila.add("");
 			}
 			
 			if(!Checks.esNulo(factura.getFechaContable())) {
-				fila.add(factura.getFechaContable().toString());
+				fila.add(SimpleDateFormat.format(factura.getFechaContable()));
 			}else {
 				fila.add("");
 			}
@@ -567,7 +570,7 @@ public class FacturasProveedoresExcelReport extends AbstractExcelReport implemen
 			}
 			
 			if(!Checks.esNulo(factura.getFechaFac())) {
-				fila.add(factura.getFechaFac().toString());
+				fila.add(SimpleDateFormat.format(factura.getFechaFac()));
 			}else {
 				fila.add("");
 			}

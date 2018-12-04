@@ -41,22 +41,7 @@ public class ActivoControllerDispatcher {
 			if (json.containsKey("id") && json.containsKey("models")) {
 				Long id = json.getLong("id");
 				JSONArray modelsArray = json.getJSONArray("models");
-				if(!modelsArray.isEmpty())
-				{
-					if(modelsArray.toString().contains("tipoComercializacionCodigo"))
-					{
-						String codigo = (String) ((JSONObject) modelsArray.getJSONObject(0).get("data")).get("tipoComercializacionCodigo");
-						Activo activo = controller.getActivoApi().get(id);
-						List<Oferta> ofertas = new ArrayList<Oferta>();
-						for(ActivoOferta oferta : activo.getOfertas())
-						{
-							ofertas.add(oferta.getPrimaryKey().getOferta());
-						}
-						if(controller.activoTieneOfertaByTipoOfertaCodigo(ofertas, codigo))
-						{
-							throw new IllegalArgumentException(AgrupacionAdapter.OFERTA_INCOMPATIBLE_AGR_MSG);
-						}
-					}
+				if (!modelsArray.isEmpty()) {
 					saveModels(id, modelsArray);
 				}
 				

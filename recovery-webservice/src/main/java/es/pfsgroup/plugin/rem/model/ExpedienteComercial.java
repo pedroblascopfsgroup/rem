@@ -220,7 +220,7 @@ public class ExpedienteComercial implements Serializable, Auditable {
     @Column(name="ECO_NECESITA_FINANCIACION")
     private Boolean necesitaFinanciacion;
     
-	@Version   
+    @Version
 	private Long version;
 
 	@Embedded

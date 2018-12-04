@@ -2942,11 +2942,17 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		//Si fecha adjudicacion es > que 07/04/2018
 		Filter filtroActivoId = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
 		ActivoAdjudicacionJudicial activoAdjudicacionJudicial = genericDao.get(ActivoAdjudicacionJudicial.class, filtroActivoId, filtroBorrado);
-		Date fechaAdjudicacion = activoAdjudicacionJudicial.getFechaAdjudicacion();
-		SimpleDateFormat dateformat3 = new SimpleDateFormat("dd/MM/yyyy");
-		if (fechaAdjudicacion.after(dateformat3.parse("07/04/2018"))) {
+		if (!Checks.esNulo(activoAdjudicacionJudicial)) {
+			Date fechaAdjudicacion = activoAdjudicacionJudicial.getFechaAdjudicacion();
+			SimpleDateFormat dateformat3 = new SimpleDateFormat("dd/MM/yyyy");
+			if (!fechaAdjudicacion.after(dateformat3.parse("07/04/2018"))) {
+				return false;
+			}
+		}
+		else {
 			return false;
 		}
+		
 		
 		boolean isAfectoAGencat = true;
 		//Comprobar que el activo sea de las carteras/subcarteras que se indican en el HREOS-4836

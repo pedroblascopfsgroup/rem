@@ -3667,7 +3667,7 @@ public class ActivoAdapter {
 					activoApi.saveOrUpdate(activo);
 					
 					if(!Checks.esNulo(activo.getTipoPublicacion())) {
-						if(!DDTipoPublicacion.CODIGO_FORZADA.equals(activo.getTipoPublicacion().getCodigo())) {
+						if(DDTipoPublicacion.CODIGO_FORZADA.equals(activo.getTipoPublicacion().getCodigo())) {
 							aprobado = publicarActivoConHistorico(success, username, activo);
 							if(aprobado) {
 								aprobado = updateTramitesActivo(activo.getId());

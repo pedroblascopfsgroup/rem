@@ -220,7 +220,13 @@ public class ExpedienteComercial implements Serializable, Auditable {
     @Column(name="ECO_NECESITA_FINANCIACION")
     private Boolean necesitaFinanciacion;
     
-    @Version
+    @Column(name="ECO_ASISTENCIA_PBC")
+    private Boolean asistenciaPbc;
+    
+    @Column(name="ECO_ASISTENCIA_PBC_DESCRIPCION")
+    private String obsAsisPbc;
+    
+	@Version   
 	private Long version;
 
 	@Embedded
@@ -663,5 +669,20 @@ public class ExpedienteComercial implements Serializable, Auditable {
 	public void setNecesitaFinanciacion(Boolean necesitaFinanciacion) {
 		this.necesitaFinanciacion = necesitaFinanciacion;
 	}
-   
+
+	public Boolean getAsistenciaPbc() {
+		return asistenciaPbc;
+	}
+
+	public void setAsistenciaPbc(Boolean asistenciaPbc) {
+		this.asistenciaPbc = asistenciaPbc;
+	}
+
+	public String getObsAsisPbc() {
+		return obsAsisPbc;
+	}
+
+	public void setObsAsisPbc(String obsAsisPbc) {
+		this.obsAsisPbc = obsAsisPbc;
+	}
 }

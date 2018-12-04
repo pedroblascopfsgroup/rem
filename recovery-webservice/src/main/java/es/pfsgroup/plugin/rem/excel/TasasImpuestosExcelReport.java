@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.excel;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -119,6 +120,8 @@ public class TasasImpuestosExcelReport extends AbstractExcelReport implements Ex
 	
 	public List<List<String>> getData(){
 		List<List<String>> valores = new ArrayList<List<String>>();
+		String pattern = "dd/MM/yyyy";
+		SimpleDateFormat SimpleDateFormat = new SimpleDateFormat(pattern);
 		
 		for(VTasasImpuestos tasaImpuesto:listaTasasImpuestos){
 			if (!Checks.esNulo(tasaImpuesto)){
@@ -161,13 +164,13 @@ public class TasasImpuestosExcelReport extends AbstractExcelReport implements Ex
 			}
 			
 			if(!Checks.esNulo(tasaImpuesto.getFechaFra())) {
-				fila.add(tasaImpuesto.getFechaFra().toString());
+				fila.add(SimpleDateFormat.format(tasaImpuesto.getFechaFra()));
 			}else {
 				fila.add("");
 			}
 			
 			if(!Checks.esNulo(tasaImpuesto.getFechaContable())) {
-				fila.add(tasaImpuesto.getFechaContable().toString());
+				fila.add(SimpleDateFormat.format(tasaImpuesto.getFechaContable()));
 			}else {
 				fila.add("");
 			}
@@ -613,7 +616,7 @@ public class TasasImpuestosExcelReport extends AbstractExcelReport implements Ex
 			}
 			
 			if(!Checks.esNulo(tasaImpuesto.getFechaFac())) {
-				fila.add(tasaImpuesto.getFechaFac().toString());
+				fila.add(SimpleDateFormat.format(tasaImpuesto.getFechaFac()));
 			}else {
 				fila.add("");
 			}

@@ -931,6 +931,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 						// 2º Si es inmobiliario: Tipo de comercialización
 						// (singular/retail).
 					} else if (!Checks.esNulo(activoBancario) && !Checks.esNulo(activoBancario.getActivo())
+							&& activoBancario.getActivo().getTipoComercializar() != null
 							&& activoBancario.getActivo().getTipoComercializar().getCodigo()
 									.equals(DDTipoComercializar.CODIGO_SINGULAR)) {
 						nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class,

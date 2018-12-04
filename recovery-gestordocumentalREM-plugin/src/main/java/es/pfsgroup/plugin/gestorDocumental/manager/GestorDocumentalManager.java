@@ -78,7 +78,7 @@ public class GestorDocumentalManager implements GestorDocumentalApi {
 			throw new GestorDocumentalException(ERROR_SERVER_NOT_RESPONDING);
 		}
 		if(!Checks.esNulo(respuesta.getCodigoError())) {
-			throw new GestorDocumentalException(respuesta.getCodigoError() + " - " + respuesta.getMensajeError());
+			throw new GestorDocumentalException(respuesta.getCodigoError() + " - " + respuesta.getMensajeError(),respuesta.getCodigoError());
 		}
 		return respuesta;
 	}
@@ -111,7 +111,7 @@ public class GestorDocumentalManager implements GestorDocumentalApi {
 		}
 		if(!Checks.esNulo(respuesta.getCodigoError())) {
 			logger.debug(respuesta.getCodigoError() + "-" + respuesta.getMensajeError());
-			throw new GestorDocumentalException(respuesta.getCodigoError() + "-" + respuesta.getMensajeError());
+			throw new GestorDocumentalException(respuesta.getCodigoError() + "-" + respuesta.getMensajeError(),respuesta.getCodigoError());
 		}
 		return respuesta;
 	}
@@ -197,7 +197,7 @@ public class GestorDocumentalManager implements GestorDocumentalApi {
 		}
 		if(!Checks.esNulo(respuesta.getCodigoError())) {
 			logger.debug(respuesta.getCodigoError() + "-" + respuesta.getMensajeError());
-			throw new GestorDocumentalException(respuesta.getMensajeError());
+			throw new GestorDocumentalException(respuesta.getMensajeError(),respuesta.getCodigoError());
 		}
 		return respuesta;
 	}
@@ -231,7 +231,7 @@ public class GestorDocumentalManager implements GestorDocumentalApi {
 		}
 		if(!Checks.esNulo(respuesta.getCodigoError())) {
 			logger.debug(respuesta.getCodigoError() + "-" + respuesta.getMensajeError());
-			throw new GestorDocumentalException(respuesta.getMensajeError());
+			throw new GestorDocumentalException(respuesta.getMensajeError(),respuesta.getCodigoError());
 		}
 		return respuesta;
 	}
@@ -258,7 +258,7 @@ public class GestorDocumentalManager implements GestorDocumentalApi {
 		}
 		if(!Checks.esNulo(respuesta.getCodigoError())) {
 			logger.debug(respuesta.getCodigoError() + "-" + respuesta.getMensajeError());
-			throw new GestorDocumentalException(respuesta.getMensajeError());
+			throw new GestorDocumentalException(respuesta.getMensajeError(),respuesta.getCodigoError());
 		}
 		return respuesta;
 	}
@@ -284,7 +284,7 @@ public class GestorDocumentalManager implements GestorDocumentalApi {
 		}
 		if(!Checks.esNulo(respuesta.getCodigoError())) {
 			logger.debug(respuesta.getCodigoError() + "-" + respuesta.getMensajeError());
-			throw new GestorDocumentalException(respuesta.getMensajeError());
+			throw new GestorDocumentalException(respuesta.getMensajeError(),respuesta.getCodigoError());
 		}
 		return respuesta;
 	}
@@ -309,7 +309,7 @@ public class GestorDocumentalManager implements GestorDocumentalApi {
 		}
 		if(!Checks.esNulo(respuesta.getCodigoError())) {
 			logger.debug(respuesta.getCodigoError() + "-" + respuesta.getMensajeError());
-			throw new GestorDocumentalException(respuesta.getMensajeError());
+			throw new GestorDocumentalException(respuesta.getMensajeError(),respuesta.getCodigoError());
 		}
 		return respuesta;
 	}	
@@ -346,7 +346,7 @@ public class GestorDocumentalManager implements GestorDocumentalApi {
 		}
 		if(!Checks.esNulo(respuesta.getCodigoError())) {
 			logger.debug(respuesta.getCodigoError() + "-" + respuesta.getMensajeError());
-			throw new GestorDocumentalException(respuesta.getMensajeError());
+			throw new GestorDocumentalException(respuesta.getMensajeError(),respuesta.getCodigoError());
 		}
 		return respuesta;
 	}
@@ -378,7 +378,7 @@ public class GestorDocumentalManager implements GestorDocumentalApi {
 		}
 		if(!Checks.esNulo(respuesta.getCodigoError())) {
 			logger.debug(respuesta.getCodigoError() + "-" + respuesta.getMensajeError());
-			throw new GestorDocumentalException(respuesta.getMensajeError());
+			throw new GestorDocumentalException(respuesta.getMensajeError(),respuesta.getCodigoError());
 		}
 		return respuesta;
 	}

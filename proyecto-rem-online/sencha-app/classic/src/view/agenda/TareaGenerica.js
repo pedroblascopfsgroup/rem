@@ -1293,6 +1293,7 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 
         me.deshabilitarCampo(me.down('[name=fechaFirma]'));
         me.deshabilitarCampo(me.down('[name=motivoNoFirma]'));
+        me.deshabilitarCampo(me.down('[name=obsAsisPBC]'));
         me.down('[name=tieneReserva]').hide();
 
         me.down('[name=comboFirma]').addListener('change', function(combo) {
@@ -1322,6 +1323,14 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
                 me.down('[name=numProtocolo]').reset();
                 me.down('[name=comboCondiciones]').reset();
                 me.down('[name=condiciones]').reset();
+            }
+        });
+        
+        me.down('[name=asistenciaPBC]').addListener('change', function(combo) {
+            if (combo.value == '01') {
+                me.deshabilitarCampo(me.down('[name=obsAsisPBC]'));
+            } else {
+            	me.habilitarCampo(me.down('[name=obsAsisPBC]'));
             }
         });
     },

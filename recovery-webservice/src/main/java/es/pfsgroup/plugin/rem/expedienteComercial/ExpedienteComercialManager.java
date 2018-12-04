@@ -894,7 +894,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					Trabajo trabajo = expediente.getTrabajo();
 					Activo act=trabajo.getActivo();
 					String valor=tareaActivoApi.getValorFechaSeguroRentaPorIdActivo(act.getId());
-					if(!valor.equals("")) {
+					if(valor != null && !valor.equals("")) {
 						SimpleDateFormat sdf1=new SimpleDateFormat("yyyy-MM-dd");
 						try {
 							dto.setFechaReserva(sdf1.parse(valor));

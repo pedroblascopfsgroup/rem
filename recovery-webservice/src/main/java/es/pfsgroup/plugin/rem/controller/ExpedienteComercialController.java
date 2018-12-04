@@ -366,6 +366,8 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 		} catch (GestorDocumentalException e) {
 			model.put(RESPONSE_SUCCESS_KEY, false);
 			model.put("errorMessage", e.getMessage());
+		}
+		catch (Exception e) {
 			logger.error("Error en ExpedienteComercialController", e);
 		}
 

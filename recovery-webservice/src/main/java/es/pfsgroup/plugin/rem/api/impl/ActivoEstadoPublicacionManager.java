@@ -791,40 +791,31 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	}
 
 	@Override
-	public Integer getEstadoIndicadorPublicacionAgrupacionVenta(List<ActivoAgrupacionActivo> listaActivos) {
+	public Integer getEstadoIndicadorPublicacionAgrupacionVenta(Activo activoPrincipal) {
 		Integer estado = 0;
 
-		for (ActivoAgrupacionActivo listaActivo : listaActivos) {
-			Activo activo = listaActivo.getActivo();
-
-			if (getEstadoIndicadorPublicacionVenta(activo) == 0) {
-				estado = ESTADO_PUBLICACION_NARANJA;
-				break;
-			} else if (getEstadoIndicadorPublicacionVenta(activo) == 2) {
-				estado = ESTADO_PUBLICACION_AMARILLO;
-			} else if (getEstadoIndicadorPublicacionVenta(activo) == 1 && !ESTADO_PUBLICACION_AMARILLO.equals(estado)) {
-				estado = ESTADO_PUBLICACION_AZUL;
-			}
+		if (getEstadoIndicadorPublicacionVenta(activoPrincipal) == 0) {
+			estado = ESTADO_PUBLICACION_NARANJA;
+		} else if (getEstadoIndicadorPublicacionVenta(activoPrincipal) == 2) {
+			estado = ESTADO_PUBLICACION_AMARILLO;
+		} else if (getEstadoIndicadorPublicacionVenta(activoPrincipal) == 1 && !ESTADO_PUBLICACION_AMARILLO.equals(estado)) {
+			estado = ESTADO_PUBLICACION_AZUL;
 		}
 
 		return estado;
 	}
 
 	@Override
-	public Integer getEstadoIndicadorPublicacionAgrupacionAlquiler(List<ActivoAgrupacionActivo> listaActivos) {
+	public Integer getEstadoIndicadorPublicacionAgrupacionAlquiler(Activo activoPrincipal) {
 		Integer estado = 0;
 
-		for (ActivoAgrupacionActivo listaActivo : listaActivos) {
-			Activo activo = listaActivo.getActivo();
-
-			if (getEstadoIndicadorPublicacionAlquiler(activo) == 0) {
-				estado = ESTADO_PUBLICACION_NARANJA;
-				break;
-			} else if (getEstadoIndicadorPublicacionAlquiler(activo) == 2) {
-				estado = ESTADO_PUBLICACION_AMARILLO;
-			} else if (getEstadoIndicadorPublicacionAlquiler(activo) == 1 && !ESTADO_PUBLICACION_AMARILLO.equals(estado)) {
-				estado = ESTADO_PUBLICACION_AZUL;
-			}
+		
+		if (getEstadoIndicadorPublicacionAlquiler(activoPrincipal) == 0) {
+			estado = ESTADO_PUBLICACION_NARANJA;
+		} else if (getEstadoIndicadorPublicacionAlquiler(activoPrincipal) == 2) {
+			estado = ESTADO_PUBLICACION_AMARILLO;
+		} else if (getEstadoIndicadorPublicacionAlquiler(activoPrincipal) == 1 && !ESTADO_PUBLICACION_AMARILLO.equals(estado)) {
+			estado = ESTADO_PUBLICACION_AZUL;
 		}
 
 		return estado;

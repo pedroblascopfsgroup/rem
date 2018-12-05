@@ -1,20 +1,32 @@
 #!/bin/bash +x
 
-modified_files="git diff --cached --name-only --diff-filter=ACMRTUXB"
-patron="^D[D|M]L_[0-9]{3,5}_(ENTITY0[0-9]|BANK01|HAYA0[0-9]|REM01|CM01|HAYAMASTER|REMMASTER|MASTER|BANKMASTER|CMMASTER|MINIREC|DWH|DS)_.*\.sql"
+DIRECTORIO=$1
+if [[ "$DIRECTORIO" == "" ]] ; then
+	echo "Uso: $0 <directorio-git>"
+	exit 1
+fi
+
+if [[ ! -d "$DIRECTORIO" ]] ; then
+	echo "'$DIRECTORIO' no es un directorio."
+	exit 1
+fi
+
+if [[ ! -d "${DIRECTORIO}/.git" ]] ; then
+	echo "'$DIRECTORIO' no es un directorio que albergue un repositorio git."
+	exit 1
+fi
+
+GREEN='\033[1;32m'
+RED='\033[1;31m'
+NC='\033[0m'
 
 function paint_error() {
 	declare -n error_data=$1
-	echo ""
-	echo "**********************************************************"
-	echo "Control código PFS: ${error_data[name]}"
-	echo "Commit no permitido!!!"
-	echo "Fichero afectado: ${error_data[file]}"
-	echo ""
+	echo -e "Control código PFS: ${RED}${error_data[name]}${NC}"
+	echo -e "Fichero afectado: ${RED}${error_data[file]}${NC}"
 	echo "Problema: ${error_data[problem]}"
 	echo "Solución: ${error_data[solution]}"
 	echo "**********************************************************"
-	echo ""
 }
 
 
@@ -28,7 +40,6 @@ function check_RIA_RULE_R1() {
 	r=$(echo $file_content | grep "debugger")
 	if [[ "x" != "x$r" ]]; then
 		paint_error rule
-		exit 1
 	fi
 }
 
@@ -42,7 +53,6 @@ function check_RIA_RULE_R2() {
 	r=$(echo $file_content | grep "<\!--.*-->")
 	if [[ "x" != "x$r" ]]; then
 		paint_error rule
-		exit 1
 	fi
 }
 
@@ -63,7 +73,6 @@ Expresion regular para detectar comas furtivas: $regexp" )
 
 	if [[ "x" != "x$r" ]]; then
 		paint_error rule
-		exit 1
 	fi
 }
 
@@ -77,7 +86,6 @@ function check_RIA_RULE_R4() {
 	r=$(echo $file_content | grep -E "border(\s*):(\s*)false")
 	if [[ "x" != "x$r" ]]; then
 		paint_error rule
-		exit 1
 	fi
 }
 
@@ -91,7 +99,6 @@ function check_RIA_RULE_R5() {
 	r=$(echo $file_content | grep -E "renderer(\s*):(\s*)app.format.dateRenderer,")
 	if [[ "x" != "x$r" ]]; then
 		paint_error rule
-		exit 1
 	fi
 }
 
@@ -105,7 +112,6 @@ function check_UTF8() {
 	encoding=`file -i $file | cut -f 2 -d";" | cut -f 2 -d=`
 	if [ $encoding != "utf-8" ] &&  [ $encoding != "us-ascii" ]; then
 		paint_error rule
-	    exit 1
 	fi
 
 }
@@ -121,30 +127,18 @@ function check_pitertul_format() {
 	r=$(cat $f | tr '\n' ' ' | grep -E -i "WHENEVER\sSQLERROR\sEXIT\sSQL\.SQLCODE(;|)\sSET\sSERVEROUTPUT\sON(;|)(\s*SET\sDEFINE\sOFF(;|)|)\s*(DECLARE(.*)\s*BEGIN|)\s*(.*)(END(.*);\s*|)\/\s*EXIT(;|)\s*$")
 	if [[ "x" == "x$r" ]]; then
 		paint_error rule
-		exit 1
 	fi
 
-}
-
-function check_pitertul_name() {
-	file=$1
-	declare -A rule=(	[name]="Pitertul nombre"
-						[file]=$file
-						[problem]="El fichero no tiene un nombre correcto para PITERTUL."
-						[solution]="Patrón válido: $patron"
-					)
-	fsinpath=${file##*/}
-	if [[ ! $fsinpath =~ $patron ]] ; then 
-		paint_error rule
-		exit 1
-	fi
 }
 
 # ***************************
 # Control en RIA
 # ***************************
 function JSP_rules() {
-	for f in `eval $modified_files | grep .jsp$`; do
+	echo -e "${GREEN}REVISANDO FICHEROS jsp${NC}\n**********************************************************"
+	ficheros_jsp=`find $DIRECTORIO -regex ".*\.jsp"`
+	
+	for f in $ficheros_jsp; do
 		
 		file_content=$(cat $f);
 
@@ -165,7 +159,9 @@ function JSP_rules() {
 # Control en JS y SQL
 # ***************************
 function JS_rules() {
-	for f in `eval $modified_files | grep .js$`; do
+	echo -e "${GREEN}REVISANDO FICHEROS js${NC}\n**********************************************************"
+	ficheros_js=`find $DIRECTORIO -regex ".*\.js"`
+	for f in $ficheros_js ; do
 		
 		file_content=$(cat $f);
 
@@ -177,9 +173,9 @@ function JS_rules() {
 }
 
 function SQL_rules() {
-	for f in `eval $modified_files | grep  -E \/D.*\.sql$ | grep -v ^reports/ | grep -v migracion | grep -v scripts | grep -v templates | grep -v rutinas`; do
-		check_pitertul_name $f
-		
+	echo -e "${GREEN}REVISANDO FICHEROS sql${NC}\n**********************************************************"
+	ficheros_sql=`find $DIRECTORIO -regex ".*\.sql" | grep -e "$DIRECTORIO\/sql/" | grep  -E \/D.*\.sql$ | grep -v ^reports/ | grep -v migracion | grep -v scripts | grep -v templates | grep -v rutinas  | grep -v produccion`
+	for f in $ficheros_sql ; do
 		file_content=$(cat $f);
 		check_UTF8 $f
 
@@ -189,7 +185,9 @@ function SQL_rules() {
 }
 
 function PROPERTIES_rules() {
-	for f in `eval $modified_files | grep  -E '.properties$'`; do
+	echo -e "${GREEN}REVISANDO FICHEROS properties${NC}\n**********************************************************"
+	ficheros_properties=`find $DIRECTORIO -regex ".*\.properties"`
+	for f in $ficheros_properties ; do
 		check_UTF8 $f
 	done
 }
@@ -201,5 +199,6 @@ function PROPERTIES_rules() {
 JSP_rules
 JS_rules
 SQL_rules
+PROPERTIES_rules
 
 exit 0;

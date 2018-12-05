@@ -2669,8 +2669,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						if (!Checks.esNulo(dtoAgrupActivo)) {
 							for (ActivoAgrupacionActivo activo : activos) {
 								if(activo != null && activo.getActivo() != null){
-									minimoAutorizado += activoApi.getImporteValoracionActivoByCodigo(activo.getActivo(),
-											DDTipoPrecio.CODIGO_TPC_MIN_AUTORIZADO);	
+									Double minimoAutorizadoAux = activoApi.getImporteValoracionActivoByCodigo(activo.getActivo(),
+											DDTipoPrecio.CODIGO_TPC_MIN_AUTORIZADO);
+									if(minimoAutorizadoAux != null){
+										minimoAutorizado += minimoAutorizadoAux;
+									}										
 								}								
 							}
 						}

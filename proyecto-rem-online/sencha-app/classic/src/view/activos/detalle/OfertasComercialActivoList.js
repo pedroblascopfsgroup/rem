@@ -240,39 +240,35 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 	
 	editFuncion: function(editor, context){
 		var me= this;
-		
-			var estado = context.record.get("codigoEstadoOferta");	
-			if(CONST.ESTADOS_OFERTA['ACEPTADA'] == estado){
-				
-				Ext.Msg.show({
-				   title: HreRem.i18n('title.confirmar.oferta.aceptacion'),
-				   msg: HreRem.i18n('msg.desea.aceptar.oferta'),
-				   buttons: Ext.MessageBox.YESNO,
-				   fn: function(buttonId) {
-				        if (buttonId == 'yes') {
-				        	
-				        	me.saveFn(editor, me, context);
-
-						} else{
-				    		me.getStore().load(); 	
-				    	}
-					}
-				});
+		var estado = context.record.get("codigoEstadoOferta");
+		var gencat = context.record.get("gencat");
+		if(CONST.ESTADOS_OFERTA['ACEPTADA'] == estado){
+			debugger;
+			if (gencat == "true") {
+				var msg = HreRem.i18n('msg.desea.aceptar.oferta.activos.gencat');
+			} else {
+				var msg = HreRem.i18n('msg.desea.aceptar.oferta');
 			}
-			else{
-				
-	            // HREOS-2814 El cambio a anulada/denegada (rechazada) abre el formulario de motivos de rechazo
-	            if (CONST.ESTADOS_OFERTA['RECHAZADA'] == estado){
-	            	
-	            	me.onCambioARechazoOfertaList(me, context.record);
-
-	            } else {
-	            	
-	            	me.saveFn(editor, me, context);
-	            	
-	            }
+			Ext.Msg.show({
+			   title: HreRem.i18n('title.confirmar.oferta.aceptacion'),
+			   msg: msg,
+			   buttons: Ext.MessageBox.YESNO,
+			   fn: function(buttonId) {
+			        if (buttonId == 'yes') {
+			        	me.saveFn(editor, me, context);
+					} else{
+			    		me.getStore().load(); 	
+			    	}
+				}
+			});
+		} else {
+			// HREOS-2814 El cambio a anulada/denegada (rechazada) abre el formulario de motivos de rechazo
+			if (CONST.ESTADOS_OFERTA['RECHAZADA'] == estado){
+				me.onCambioARechazoOfertaList(me, context.record);
+			} else {
+				me.saveFn(editor, me, context);
 			}
-					
+		}
 	},
 	
 	saveFn: function (editor, grid, context) {

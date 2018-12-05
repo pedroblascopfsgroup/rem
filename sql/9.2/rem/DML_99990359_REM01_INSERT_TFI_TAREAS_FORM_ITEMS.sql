@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Ivan Rubio
---## FECHA_CREACION=20180912
+--## AUTOR=Matias Garcia-Argudo
+--## FECHA_CREACION=20181202
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-4493
+--## INCIDENCIA_LINK=HREOS-4962
 --## PRODUCTO=NO
 --##
 --## Finalidad: Script que actualiza el trámite T015 comercial de alquiler TFI_TAREAS_FORM_ITEMS tarea Aceptación cliente insertando un campo hueco al final.

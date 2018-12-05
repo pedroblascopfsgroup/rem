@@ -68,6 +68,8 @@ public class UpdaterServiceSancionOfertaPosicionamientoYFirma implements Updater
     private static final String COMBO_FIRMA = "comboFirma";
     private static final String FECHA_FIRMA = "fechaFirma";
     private static final String MOTIVO_NO_FIRMA = "motivoNoFirma";
+    private static final String ASISTENCIA_PBC = "asistenciaPBC";
+    private static final String ASISTENCIA_PBC_OBSERVACIONES = "obsAsisPBC";
     private static final String CODIGO_T013_POSICIONAMIENTOYFIRMA = "T013_PosicionamientoYFirma";
 
 	private SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
@@ -183,6 +185,18 @@ public class UpdaterServiceSancionOfertaPosicionamientoYFirma implements Updater
 						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", valor.getValor());
 						DDMotivoAnulacionExpediente motivoAnulacion = genericDao.get(DDMotivoAnulacionExpediente.class, filtro);
 						expediente.setMotivoAnulacion(motivoAnulacion);
+					}
+					
+					if(ASISTENCIA_PBC.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())){
+						if(DDSiNo.SI.equals(valor.getValor())){
+							expediente.setAsistenciaPbc(true);
+						}else{
+							expediente.setAsistenciaPbc(false);
+						}
+					}
+					
+					if(ASISTENCIA_PBC_OBSERVACIONES.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())){
+						expediente.setObsAsisPbc(valor.getValor());
 					}
 				}
 			}

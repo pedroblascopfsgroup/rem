@@ -124,13 +124,16 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 
 	protected void generaNotificacion(ActivoTramite tramite, boolean permieRechazar, boolean permiteNotificarAprobacion) {
 
-		Activo activo = tramite.getActivo();
-		Oferta oferta = ofertaApi.trabajoToOferta(trabajoManager.findOne(tramite.getTrabajo().getId()));
+		if(tramite.getActivo() != null && tramite.getTrabajo() != null){
+			Activo activo = tramite.getActivo();
+			Oferta oferta = ofertaApi.trabajoToOferta(trabajoManager.findOne(tramite.getTrabajo().getId()));
 
-		ActivoTramite tramiteSimulado = new ActivoTramite();
-		tramiteSimulado.setActivo(activo);
+			ActivoTramite tramiteSimulado = new ActivoTramite();
+			tramiteSimulado.setActivo(activo);
 
-		sendNotification(tramiteSimulado, permieRechazar, activo, oferta, permiteNotificarAprobacion);
+			sendNotification(tramiteSimulado, permieRechazar, activo, oferta, permiteNotificarAprobacion);
+		}
+		
 	}
 
 	private void sendNotification(ActivoTramite tramite, boolean permiteRechazar, Activo activo, Oferta oferta, boolean permiteNotificarAprobacion) {

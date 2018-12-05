@@ -25,7 +25,6 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.plugin.recovery.agendaMultifuncion.impl.dto.DtoAdjuntoMail;
-import es.pfsgroup.plugin.recovery.agendaMultifuncion.impl.utils.AgendaMultifuncionCorreoUtils;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
@@ -47,7 +46,7 @@ public class GenericAdapter {
 	private DictionaryManager diccionarioManager;
 
 	@Autowired
-	private AgendaMultifuncionCorreoUtils agendaMultifuncionCorreoUtils;
+	private RemCorreoUtils remCorreoUtils;
 
 	@Autowired
 	EXTControlAccesoApi controlAccesoApi;
@@ -187,7 +186,7 @@ public class GenericAdapter {
 			String puertoCorreo =appProperties.getProperty(PUERTO_CORREO);
 			logger.info(puertoCorreo);
 			if(!Checks.esNulo(servidorCorreo) && !Checks.esNulo(puertoCorreo)){
-				agendaMultifuncionCorreoUtils.enviarCorreoConAdjuntos(null, mailsPara, mailsCC, asunto, cuerpo, adjuntos);
+				remCorreoUtils.enviarCorreoConAdjuntos(null, mailsPara, mailsCC, asunto, cuerpo, adjuntos);
 			}
 		} catch (Exception e) {
 			//Sacamos log de los receptores y el asunto del mail para trazar los errores

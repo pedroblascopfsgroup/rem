@@ -67,7 +67,8 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 									        	fieldLabel: HreRem.i18n('fieldlabel.reserva.necesaria'),
 									        	bind: {
 								            		store: '{comboSiNoRem}',
-								            		value: '{condiciones.solicitaReserva}'			            		
+								            		value: '{condiciones.solicitaReserva}',
+								            		readOnly: '{esCarteraGaleonOZeus}'
 								            	},
 								            	listeners: {
 								            		change: 'onHaCambiadoSolicitaReserva'
@@ -82,7 +83,8 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 							                	reference: 'tipoCalculo',
 									        	bind: {
 								            		store: '{comboTipoCalculo}',
-								            		value: '{condiciones.tipoCalculo}'
+								            		value: '{condiciones.tipoCalculo}',
+								            		readOnly: '{esCarteraGaleonOZeus}'
 								            	},
 					            				displayField: 'descripcion',
 		    									valueField: 'codigo',
@@ -97,7 +99,8 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 										 		symbol: HreRem.i18n("symbol.porcentaje"),
 												fieldLabel: HreRem.i18n('fieldlabel.portencaje.reserva'),
 				                				bind: {
-				                					value: '{condiciones.porcentajeReserva}'
+				                					value: '{condiciones.porcentajeReserva}',
+				                					readOnly: '{esCarteraGaleonOZeus}'
 				                				},
 				                				reference: 'porcentajeReserva',
 				                				listeners: {

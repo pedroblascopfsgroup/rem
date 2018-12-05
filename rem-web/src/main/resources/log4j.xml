@@ -157,7 +157,7 @@
 		<appender-ref ref="syslog" />
 		<appender-ref ref="email" />
 	</logger>
-	<logger name="org.jbpm" additivity="false">
+	<logger name="org.jbpm.graph.def.GraphElement" additivity="false">
 		<level value="fatal" />
 		<appender-ref ref="console" />
 		<appender-ref ref="file" />

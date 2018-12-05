@@ -120,9 +120,6 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 	     		return false;
 	     	}
 	     },
-<<<<<<< HEAD
-		 
-=======
 
 	     esAgrupacionLoteComercial: function(get) {
 	    	 
@@ -133,8 +130,6 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 		     		return false;
 		     	}
 		 },
-
->>>>>>> bau_rem
 		 esAgrupacionProyecto: function(get) {
 
 		     	var tipoAgrupacion = get('agrupacionficha.tipoAgrupacionCodigo');
@@ -684,26 +679,23 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 			},
 			autoLoad: true   	
 	    },
-<<<<<<< HEAD
-	    
 	    comboTipoAlquiler: {
-=======
+	    	model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tiposAlquilerActivo'}
+			}
+	    },
 
 	    comboMotivosOcultacionVenta: {
->>>>>>> bau_rem
 			model: 'HreRem.model.ComboBase',
 			proxy: {
 				type: 'uxproxy',
 				remoteUrl: 'generic/getDiccionario',
-<<<<<<< HEAD
-				extraParams: {diccionario: 'tiposAlquilerActivo'}
-			}
-	    }
-	 
-=======
 				extraParams: {diccionario: 'motivosOcultacion'}
 			}
-		},
+	    },
 
 		comboAdecuacionAlquiler: {
 			model: 'HreRem.model.ComboBase',
@@ -776,6 +768,5 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 				remoteUrl: 'generic/getComboTipoDestinoComercialCreaFiltered'
 			}
 		}
->>>>>>> bau_rem
      }
 });

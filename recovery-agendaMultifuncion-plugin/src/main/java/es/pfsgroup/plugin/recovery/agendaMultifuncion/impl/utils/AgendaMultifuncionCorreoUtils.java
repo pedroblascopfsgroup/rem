@@ -33,6 +33,7 @@ public class AgendaMultifuncionCorreoUtils {
 	private static final String MAIL_SMTP_PORT = "mail.smtp.port";
 	private static final String MAIL_SMTP_STARTTLS_ENABLE = "mail.smtp.starttls.enable";
 	private static final String MAIL_SMTP_HOST = "mail.smtp.host";
+	private static final String MAIL_SMTP_DEBUG = "mail.smtp.debug";
 	private static final String TRANSPORT_SMTP = "smtp";
 
 	
@@ -53,10 +54,15 @@ public class AgendaMultifuncionCorreoUtils {
 	
 	public void enviarCorreoConAdjuntos(String emailFrom, List<String> mailsPara, List<String> direccionesMailCc,
 			String asuntoMail, String cuerpoEmail, List<DtoAdjuntoMail> list) throws Exception {
+		
+		if(mailsPara == null || mailsPara.isEmpty()){
+			return;
+		}
 
-		// Propiedades de la conexión
+		// Propiedades de la conexion
 		Properties props = getPropiedades();
 
+		
 		// Preparamos la sesion
 		Session session = Session.getDefaultInstance(props);
 		session.setDebugOut(System.out);
@@ -71,12 +77,18 @@ public class AgendaMultifuncionCorreoUtils {
 		}
 
 		for (String emailPara : mailsPara) {
-			message.addRecipient(Message.RecipientType.TO, new InternetAddress(emailPara));
+			if(emailPara != null){
+				message.addRecipient(Message.RecipientType.TO, new InternetAddress(emailPara));
+			}
+			
 		}
 
 		if (direccionesMailCc != null && direccionesMailCc.size() > 0) {
 			for (String emailCC : direccionesMailCc) {
-				message.addRecipient(Message.RecipientType.CC, new InternetAddress(emailCC));
+				if(emailCC != null){
+					message.addRecipient(Message.RecipientType.CC, new InternetAddress(emailCC));
+				}
+				
 			}
 		}
 
@@ -213,6 +225,8 @@ public class AgendaMultifuncionCorreoUtils {
 		}
 		
 		props.setProperty(MAIL_SMTP_USER, appProperties.getProperty(USUARIO_CORREO));
+		
+		props.setProperty(MAIL_SMTP_DEBUG, "false");
 		
 		return props;
 	}

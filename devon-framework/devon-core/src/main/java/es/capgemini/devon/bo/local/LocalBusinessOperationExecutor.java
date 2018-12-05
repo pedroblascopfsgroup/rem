@@ -64,9 +64,6 @@ public class LocalBusinessOperationExecutor implements BusinessOperationExecutor
         try {
             result = ReflectionUtils.invokeMethod(definition.getMethod(), getCachedTarget(definition), args);
         } catch (UserException e) {
-            if (logger.isDebugEnabled()) {
-                logger.debug(ExceptionUtils.getStackTraceAsString(e));
-            }
             throw e;
         } catch (Exception e) {
             if (logger.isDebugEnabled()) {

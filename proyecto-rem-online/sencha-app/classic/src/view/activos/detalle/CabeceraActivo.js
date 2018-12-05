@@ -194,7 +194,6 @@ Ext.define('HreRem.view.activos.detalle.CabeceraActivo', {
 								layout: {
 									type: 'table',
 									columns: 2,
-									trAttrs: {width: '100%', pading: 0},
 									tdAttrs: {width: '50%',  pading: 0},
 									tableAttrs: {
 										style: {

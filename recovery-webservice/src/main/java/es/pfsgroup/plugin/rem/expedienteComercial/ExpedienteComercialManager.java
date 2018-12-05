@@ -85,8 +85,6 @@ import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
 import es.pfsgroup.plugin.rem.controller.ExpedienteComercialController;
 import es.pfsgroup.plugin.rem.expedienteComercial.dao.ExpedienteComercialDao;
-import es.pfsgroup.plugin.rem.gestorDocumental.api.Downloader;
-import es.pfsgroup.plugin.rem.gestorDocumental.api.DownloaderFactoryApi;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionService;
 import es.pfsgroup.plugin.rem.model.Activo;
@@ -235,6 +233,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	private static final String PROVEDOR_NO_EXISTE_O_DISTINTO_TIPO = "El proveedor indicado no existe, o no es del tipo indicado";
 	private static final int NUMERO_DIAS_VENCIMIENTO = 45;
 	private static final String PERFIL_GESTOR_FORMALIZACION = "HAYAGESTFORM";
+	private static final String PERFIL_GESTORIA_FORMALIZACION = "GESTIAFORM";
 	private static final String PERFIL_SUPERVISOR_FORMALIZACION = "HAYASUPFORM";
 	private static final String PERFIL_GESTOR_MINUTAS = "GESMIN";
 	private static final String PERFIL_SUPERVISOR_MINUTAS = "SUPMIN";
@@ -319,9 +318,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	@Resource
 	private Properties appProperties;
 
-	@Autowired
-	private DownloaderFactoryApi downloaderFactoryApi;
-
+	
 	@Override
 	public String managerName() {
 		return "expedienteComercialManager";
@@ -894,7 +891,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					Trabajo trabajo = expediente.getTrabajo();
 					Activo act=trabajo.getActivo();
 					String valor=tareaActivoApi.getValorFechaSeguroRentaPorIdActivo(act.getId());
-					if(!valor.equals("")) {
+					if(valor != null && !valor.equals("")) {
 						SimpleDateFormat sdf1=new SimpleDateFormat("yyyy-MM-dd");
 						try {
 							dto.setFechaReserva(sdf1.parse(valor));
@@ -1590,7 +1587,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 	@Override
 	@Transactional(readOnly = false)
-	public String uploadDocumento(WebFileItem fileItem, Long idDocRestClient, ExpedienteComercial expedienteComercialEntrada, String matricula) throws Exception {
+	public String uploadDocumento(WebFileItem fileItem, Long idDocRestClient,
+			ExpedienteComercial expedienteComercialEntrada, String matricula) throws Exception {
 		ExpedienteComercial expedienteComercial;
 		DDTipoDocumentoExpediente tipoDocumento = null;
 
@@ -1613,64 +1611,66 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 
 		// Subida de adjunto al Expediente Comercial
-		try {
-			ActivoAdjuntoActivo adjuntoActivo = null;
+		ActivoAdjuntoActivo adjuntoActivo = null;
 
-			if (fileItem.getFileItem().getLength() == 0) {
-				throw new JsonViewerException("Está intentando adjuntar un fichero vacio");
+		if (fileItem.getFileItem().getLength() == 0) {
+			throw new JsonViewerException("Está intentando adjuntar un fichero vacio");
+		}
+
+		Adjunto adj = uploadAdapter.saveBLOB(fileItem.getFileItem());
+
+		AdjuntoExpedienteComercial adjuntoExpediente = new AdjuntoExpedienteComercial();
+		adjuntoExpediente.setAdjunto(adj);
+
+		adjuntoExpediente.setExpediente(expedienteComercial);
+
+		// Establecer tipo y subtipo del adjunto a subir.
+		adjuntoExpediente.setTipoDocumentoExpediente(tipoDocumento);
+
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("subtipo"));
+		adjuntoExpediente.setSubtipoDocumentoExpediente(genericDao.get(DDSubtipoDocumentoExpediente.class, filtro));
+
+		adjuntoExpediente.setContentType(fileItem.getFileItem().getContentType());
+		adjuntoExpediente.setTamanyo(fileItem.getFileItem().getLength());
+		adjuntoExpediente.setNombre(fileItem.getFileItem().getFileName());
+		adjuntoExpediente.setDescripcion(fileItem.getParameter("descripcion"));
+		adjuntoExpediente.setFechaDocumento(new Date());
+		adjuntoExpediente.setIdDocRestClient(idDocRestClient);
+		Auditoria.save(adjuntoExpediente);
+
+		for (AdjuntoExpedienteComercial adjuntoExpedienteAux : expedienteComercial.getAdjuntos()) {
+			if (DDSubtipoDocumentoExpediente.CODIGO_PRE_LIQUIDACION_ITP
+					.equals(adjuntoExpedienteAux.getSubtipoDocumentoExpediente().getCodigo())
+					&& DDSubtipoDocumentoExpediente.CODIGO_PRE_CONTRATO
+							.equals(adjuntoExpediente.getSubtipoDocumentoExpediente().getCodigo())) {
+				this.enviarCorreoSubidaDeContrato(expedienteComercial.getId());
+			} else if (DDSubtipoDocumentoExpediente.CODIGO_PRE_CONTRATO
+					.equals(adjuntoExpedienteAux.getSubtipoDocumentoExpediente().getCodigo())
+					&& DDSubtipoDocumentoExpediente.CODIGO_PRE_LIQUIDACION_ITP
+							.equals(adjuntoExpediente.getSubtipoDocumentoExpediente().getCodigo())) {
+				this.enviarCorreoSubidaDeContrato(expedienteComercial.getId());
 			}
+		}
 
-			Adjunto adj = uploadAdapter.saveBLOB(fileItem.getFileItem());
+		expedienteComercial.getAdjuntos().add(adjuntoExpediente);
 
-			AdjuntoExpedienteComercial adjuntoExpediente = new AdjuntoExpedienteComercial();
-			adjuntoExpediente.setAdjunto(adj);
+		genericDao.save(ExpedienteComercial.class, expedienteComercial);
 
-			adjuntoExpediente.setExpediente(expedienteComercial);
-
-			// Establecer tipo y subtipo del adjunto a subir.
-			adjuntoExpediente.setTipoDocumentoExpediente(tipoDocumento);
-
-			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("subtipo"));
-			adjuntoExpediente.setSubtipoDocumentoExpediente(genericDao.get(DDSubtipoDocumentoExpediente.class, filtro));
-
-			adjuntoExpediente.setContentType(fileItem.getFileItem().getContentType());
-			adjuntoExpediente.setTamanyo(fileItem.getFileItem().getLength());
-			adjuntoExpediente.setNombre(fileItem.getFileItem().getFileName());
-			adjuntoExpediente.setDescripcion(fileItem.getParameter("descripcion"));
-			adjuntoExpediente.setFechaDocumento(new Date());
-			adjuntoExpediente.setIdDocRestClient(idDocRestClient);
-			Auditoria.save(adjuntoExpediente);
-
-			for (AdjuntoExpedienteComercial adjuntoExpedienteAux : expedienteComercial.getAdjuntos()) {
-				if(DDSubtipoDocumentoExpediente.CODIGO_PRE_LIQUIDACION_ITP.equals(adjuntoExpedienteAux.getSubtipoDocumentoExpediente().getCodigo())
-						&& DDSubtipoDocumentoExpediente.CODIGO_PRE_CONTRATO.equals(adjuntoExpediente.getSubtipoDocumentoExpediente().getCodigo())) {
-					this.enviarCorreoSubidaDeContrato(expedienteComercial.getId());
-				} else if(DDSubtipoDocumentoExpediente.CODIGO_PRE_CONTRATO.equals(adjuntoExpedienteAux.getSubtipoDocumentoExpediente().getCodigo())
-						&& DDSubtipoDocumentoExpediente.CODIGO_PRE_LIQUIDACION_ITP.equals(adjuntoExpediente.getSubtipoDocumentoExpediente().getCodigo())) {
-					this.enviarCorreoSubidaDeContrato(expedienteComercial.getId());
-				}
-			}
-
-			expedienteComercial.getAdjuntos().add(adjuntoExpediente);
-
-			genericDao.save(ExpedienteComercial.class, expedienteComercial);
-
-			for (ActivoOferta activoOferta : expedienteComercial.getOferta().getActivosOferta()) {
-				if (!Checks.esNulo(adjuntoExpediente) && !Checks.esNulo(adjuntoExpediente.getSubtipoDocumentoExpediente()) && !Checks.esNulo(adjuntoExpediente.getSubtipoDocumentoExpediente()
-						.getMatricula())) {
-					Activo activo = activoOferta.getPrimaryKey().getActivo();
-					activoAdapter.uploadDocumento(fileItem, activo, adjuntoExpediente.getSubtipoDocumentoExpediente().getMatricula());
+		for (ActivoOferta activoOferta : expedienteComercial.getOferta().getActivosOferta()) {
+			if (!Checks.esNulo(adjuntoExpediente) && !Checks.esNulo(adjuntoExpediente.getSubtipoDocumentoExpediente())
+					&& !Checks.esNulo(adjuntoExpediente.getSubtipoDocumentoExpediente().getMatricula())) {
+				Activo activo = activoOferta.getPrimaryKey().getActivo();
+				activoAdapter.uploadDocumento(fileItem, activo,
+						adjuntoExpediente.getSubtipoDocumentoExpediente().getMatricula());
+				if (activo.getAdjuntos() != null && activo.getAdjuntos().size() > 0) {
 					adjuntoActivo = activo.getAdjuntos().get(activo.getAdjuntos().size() - 1);
 				}
 			}
+		}
 
-			if (!Checks.esNulo(adjuntoActivo) && !Checks.esNulo(adjuntoActivo.getIdDocRestClient())) {
-				adjuntoExpediente.setIdDocRestClient(adjuntoActivo.getIdDocRestClient());
-				genericDao.update(AdjuntoExpedienteComercial.class, adjuntoExpediente);
-			}
-
-		} catch (Exception e) {
-			logger.error("Error en ExpedienteComercialManager", e);
+		if (!Checks.esNulo(adjuntoActivo)&& !Checks.esNulo(adjuntoActivo.getIdDocRestClient())) {
+			adjuntoExpediente.setIdDocRestClient(adjuntoActivo.getIdDocRestClient());
+			genericDao.update(AdjuntoExpedienteComercial.class, adjuntoExpediente);
 		}
 
 		return null;
@@ -1733,6 +1733,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private void decorarPagina(PageImpl pagina) throws VBusquedaCompradoresExpedienteDecoratorException {
 		List results=pagina.getResults();
 		pagina.setResults(decorarLista(results));
@@ -2991,9 +2992,12 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	}
 
 	public List<DtoGastoExpediente> getHonorariosActivoByOfertaAceptada(Oferta oferta, Activo activo) {
+		List<DtoGastoExpediente> resultado = new ArrayList<DtoGastoExpediente>();
 		ExpedienteComercial expediente = findOneByOferta(oferta);
-
-		return getHonorarios(expediente.getId(), activo.getId());
+		if(expediente != null && activo != null){
+			resultado = getHonorarios(expediente.getId(), activo.getId());
+		}		
+		return resultado;
 	}
 
 	public List<DtoGastoExpediente> getHonorarios(Long idExpediente, Long idActivo) {
@@ -3306,41 +3310,44 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	@Override
 	@Transactional(readOnly = false)
 	public String getTareaDefinicionDeOferta(Long idExpedienteComercial, WebDto webDto) {
-		Oferta	oferta = null;
+		Oferta oferta = null;
 		ExpedienteComercial expediente = findOne(idExpedienteComercial);
 		List<ActivoTramite> listaTramites = null;
 		listaTramites = activoTramiteApi.getTramitesActivoTrabajoList(expediente.getTrabajo().getId());
-		String reultadoTramite="null";
+		String reultadoTramite = "null";
 		try {
-			if(!Checks.esNulo(expediente)) {
+			if (!Checks.esNulo(expediente)) {
 				oferta = expediente.getOferta();
-				if(!Checks.esNulo(oferta)) {
+				if (!Checks.esNulo(oferta)) {
 					if (DDTipoOferta.CODIGO_ALQUILER.equals(oferta.getTipoOferta().getCodigo())) {
-						if(!Checks.estaVacio(listaTramites)) {
+						if (!Checks.estaVacio(listaTramites)) {
 
-								ActivoTramite tramite = listaTramites.get(0);
-								Set<TareaActivo> listaTareas = listaTramites.get(0).getTareas();
-
-								if(!Checks.estaVacio(listaTareas)  && listaTareas.size() >= 2) {
+							ActivoTramite tramite = listaTramites.get(0);
+							
+							if(tramite != null){
+								Set<TareaActivo> listaTareas = tramite.getTareas();
+	
+								if (!Checks.estaVacio(listaTareas) && listaTareas.size() >= 2) {
 									for (TareaActivo tarea : listaTareas) {
-										if(!Checks.esNulo(tarea.getTarea())) {
-											if(tarea.getTarea().equals("Verificar seguro de rentas")) {
+										if (!Checks.esNulo(tarea.getTarea())) {
+											if (tarea.getTarea().equals("Verificar seguro de rentas")) {
 												reultadoTramite = FECHA_SEGURO_RENTA;
 												return reultadoTramite;
-
-											} else if(tarea.getTarea().equals("Verificar scoring")) {
+	
+											} else if (tarea.getTarea().equals("Verificar scoring")) {
 												reultadoTramite = FECHA_SCORING;
 												return reultadoTramite;
 											}
+										}
+	
 									}
-
-									}
-
+	
 								}
+							}
 
-			}
-		}
-		}
+						}
+					}
+				}
 			}
 
 		} catch (Exception e) {
@@ -6086,7 +6093,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 							if (DDCartera.CODIGO_CARTERA_CAJAMAR.equals(expediente.getOferta().getActivoPrincipal().getCartera().getCodigo())) {
 								if (!genericAdapter.tienePerfil(PERFIL_GESTOR_MINUTAS, usuarioLogado) && !genericAdapter.tienePerfil(PERFIL_SUPERVISOR_MINUTAS, usuarioLogado) && !genericAdapter
-								.isSuper(usuarioLogado) && !genericAdapter.tienePerfil(PERFIL_GESTOR_FORMALIZACION, usuarioLogado)) {
+								.isSuper(usuarioLogado) && !genericAdapter.tienePerfil(PERFIL_GESTOR_FORMALIZACION, usuarioLogado)
+								&& !genericAdapter.tienePerfil(PERFIL_GESTORIA_FORMALIZACION, usuarioLogado)) {
 									codigoError = "imposible.bloquear.expediente.cajamar";
 
 								} else {

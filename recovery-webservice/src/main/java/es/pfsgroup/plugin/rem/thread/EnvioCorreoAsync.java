@@ -9,7 +9,7 @@ import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.recovery.agendaMultifuncion.impl.dto.DtoAdjuntoMail;
-import es.pfsgroup.plugin.recovery.agendaMultifuncion.impl.utils.AgendaMultifuncionCorreoUtils;
+import es.pfsgroup.plugin.rem.adapter.RemCorreoUtils;
 
 public class EnvioCorreoAsync implements Runnable {
 	
@@ -23,7 +23,7 @@ public class EnvioCorreoAsync implements Runnable {
 	
 	private Properties appProperties;
 	
-	private AgendaMultifuncionCorreoUtils agendaMultifuncionCorreoUtils = new AgendaMultifuncionCorreoUtils();
+	private RemCorreoUtils remCorreoUtils = new RemCorreoUtils();
 	
 	private static final String SERVIDOR_CORREO = "agendaMultifuncion.mail.server";
 	private static final String PUERTO_CORREO = "agendaMultifuncion.mail.port";
@@ -60,7 +60,7 @@ public class EnvioCorreoAsync implements Runnable {
 			String puertoCorreo = appProperties.getProperty(PUERTO_CORREO);
 			logger.info(puertoCorreo);
 			if (!Checks.esNulo(servidorCorreo) && !Checks.esNulo(puertoCorreo)) {
-				agendaMultifuncionCorreoUtils.enviarCorreoConAdjuntos(null, mailsPara, mailsCC, asunto, cuerpo,
+				remCorreoUtils.enviarCorreoConAdjuntos(null, mailsPara, mailsCC, asunto, cuerpo,
 						adjuntos);
 			}
 		} catch (Exception e) {

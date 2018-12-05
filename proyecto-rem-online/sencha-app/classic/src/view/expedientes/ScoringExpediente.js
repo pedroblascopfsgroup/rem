@@ -113,8 +113,7 @@ Ext.define('HreRem.view.expedientes.ScoringExpediente', {
 													config.url=$AC.getWebPath()+'activo/bajarAdjuntoActivo.'+$AC.getUrlPattern();
 													config.params = {};
 													config.params.id=record.get('identificador');
-													config.params.idActivo=record.get('idActivo');
-													config.params.nombreDocumento=record.get('docScoring'); 
+													config.params.idActivo=record.get("idActivo");
 													
 													config = config || {};
 			    
@@ -157,11 +156,11 @@ Ext.define('HreRem.view.expedientes.ScoringExpediente', {
 					                	dataIndex: 'nSolicitud',
 				                        flex: 1
 							        },
-							        {	
+							        /*{	
 							            text:HreRem.i18n('fieldlabel.documento.scoring'),
 							            dataIndex: 'docScoring',
 							            flex: 1
-							        },
+							        },*/
 							        { 
 					                	text:HreRem.i18n('fieldlabel.meses.fianza'),
 					                	dataIndex: 'nMesesFianza',

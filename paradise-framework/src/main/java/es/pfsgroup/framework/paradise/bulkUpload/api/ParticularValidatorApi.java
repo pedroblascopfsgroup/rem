@@ -563,4 +563,6 @@ public interface ParticularValidatorApi {
 	public Boolean isActivoOcultoVenta(String numActivo);
 
 	public Boolean isActivoOcultoAlquiler(String numActivo);
+	
+	public Boolean existeActivoConOfertaVentaViva(String numActivo);
 }

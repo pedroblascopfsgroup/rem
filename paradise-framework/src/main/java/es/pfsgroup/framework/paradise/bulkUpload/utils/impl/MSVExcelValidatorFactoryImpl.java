@@ -87,6 +87,9 @@ public class MSVExcelValidatorFactoryImpl {
 	@Autowired
 	private MSVInfoDetallePrinexLbkExcelValidator infoDetallePrinexLbk;
 	
+	@Autowired
+	private MSVCargaMasivaSancionExcelValidator cargaMasivaSancionValidator;
+	
 	public MSVExcelValidator getForTipoValidador(String codTipoOperacion) {
 		
 		if (MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_AGRUPATION_RESTRICTED.equals(codTipoOperacion)) {
@@ -155,6 +158,9 @@ public class MSVExcelValidatorFactoryImpl {
 			}
 			else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_INFO_DETALLE_PRINEX_LBK.equals(codTipoOperacion)){
 				return infoDetallePrinexLbk;
+			}
+			else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_MASIVA_SANCIONES.equals(codTipoOperacion)) {
+				return cargaMasivaSancionValidator;
 			}
 		return null;
 	}

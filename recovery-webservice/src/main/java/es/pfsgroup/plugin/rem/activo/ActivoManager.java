@@ -881,6 +881,16 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				nuevoCondicionante.setImporteReserva(oferta.getImporteOferta() * (new Double(3) / 100));
 				nuevoCondicionante.setPlazoFirmaReserva(5);
 			}
+			
+			if (DDCartera.CODIGO_CARTERA_CERBERUS.equals(oferta.getActivoPrincipal().getCartera().getCodigo()) 
+					&& DDSubcartera.CODIGO_ZEUS_INMOBILIARIO.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo())) {
+				nuevoCondicionante.setSolicitaReserva(1);
+				DDTipoCalculo tipoCalculo = (DDTipoCalculo) utilDiccionarioApi
+						.dameValorDiccionarioByCod(DDTipoCalculo.class, DDTipoCalculo.TIPO_CALCULO_PORCENTAJE);
+				nuevoCondicionante.setTipoCalculoReserva(tipoCalculo);
+				nuevoCondicionante.setPorcentajeReserva(new Double(5));
+				nuevoCondicionante.setImporteReserva(oferta.getImporteOferta() * (new Double(5) / 100));
+			}
 		}
 
 		Activo activo = oferta.getActivoPrincipal();

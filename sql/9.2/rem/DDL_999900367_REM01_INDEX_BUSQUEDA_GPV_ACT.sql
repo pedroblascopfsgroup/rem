@@ -3,7 +3,7 @@
 --## AUTOR=PIER GOTTA
 --## FECHA_CREACION=20181205
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.1
+--## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=0
 --## PRODUCTO=NO
 --## Finalidad: Indices para la busqueda de la GPV_ACT
@@ -11,7 +11,6 @@
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
---## 		HREOS-3072 - Mejora rendimiento
 --##########################################
 --*/
 

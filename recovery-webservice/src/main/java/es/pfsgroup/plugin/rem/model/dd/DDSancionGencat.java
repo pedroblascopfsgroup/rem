@@ -105,3 +105,4 @@ public class DDSancionGencat implements Auditable, Dictionary {
 	}
 
 }
+

@@ -339,4 +339,11 @@ public interface ParticularValidatorApi {
 	public Boolean esMismaProvincia(Long numActivo, Long numAgrupacion);
 
 	public Boolean esMismaLocalidad(Long numActivo, Long numAgrupacion);
+	
+	public Boolean esActivoConComunicacionComunicada(Long numActivoHaya);
+	
+	public Boolean esActivoConComunicacionViva(Long numActivoHaya);
+	
+	public Boolean esNIFValido(String nif);
+	
 }

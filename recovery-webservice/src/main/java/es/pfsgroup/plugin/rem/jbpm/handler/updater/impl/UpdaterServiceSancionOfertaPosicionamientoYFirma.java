@@ -1,6 +1,5 @@
 package es.pfsgroup.plugin.rem.jbpm.handler.updater.impl;
 
-import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -8,6 +7,8 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDSituacionPosesoria;
+import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,31 +17,30 @@ import org.springframework.stereotype.Component;
 import es.capgemini.devon.message.MessageService;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
-import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
-import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
-import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
-import es.pfsgroup.plugin.rem.api.TareaActivoApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
+import es.pfsgroup.plugin.rem.model.ActivoPublicacion;
 import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
+import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
+import es.pfsgroup.plugin.rem.model.CondicionesActivo;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
-import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDSituacionesPosesoria;
 
 @Component
 public class UpdaterServiceSancionOfertaPosicionamientoYFirma implements UpdaterService {
@@ -55,18 +55,22 @@ public class UpdaterServiceSancionOfertaPosicionamientoYFirma implements Updater
     private ActivoApi activoApi;
 
     @Autowired
+    private ActivoAdapter activoAdapter;
+
+    @Autowired
     private ExpedienteComercialApi expedienteComercialApi;
 
     @Resource
-    MessageService messageServices;
+    private MessageService messageServices;
 
     protected final Log logger = LogFactory.getLog(getClass());
 
     private static final String COMBO_FIRMA = "comboFirma";
     private static final String FECHA_FIRMA = "fechaFirma";
     private static final String MOTIVO_NO_FIRMA = "motivoNoFirma";
+    private static final String ASISTENCIA_PBC = "asistenciaPBC";
+    private static final String ASISTENCIA_PBC_OBSERVACIONES = "obsAsisPBC";
     private static final String CODIGO_T013_POSICIONAMIENTOYFIRMA = "T013_PosicionamientoYFirma";
-    private static final String MOTIVO_ESTADO_PUBLICACION_ACTIVO_VENDIDO = "activo.motivo.tramite.vendido.no.publicar";
 
 	private SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -95,6 +99,8 @@ public class UpdaterServiceSancionOfertaPosicionamientoYFirma implements Updater
 	
 								PerimetroActivo perimetro = activoApi.getPerimetroByIdActivo(activo.getId());
 								perimetro.setAplicaComercializar(0);
+								perimetro.setAplicaFormalizar(0);
+								perimetro.setAplicaPublicar(false);
 								//TODO: Cuando esté el motivo de no comercialización como texto libre, poner el texto: "Vendido".
 								genericDao.save(PerimetroActivo.class, perimetro);
 	
@@ -103,21 +109,12 @@ public class UpdaterServiceSancionOfertaPosicionamientoYFirma implements Updater
 								activo.setSituacionComercial(genericDao.get(DDSituacionComercial.class, filtroSituacionComercial));
 	
 								activo.setBloqueoPrecioFechaIni(new Date());
-	
-								//Al venderse el activo, actualizamos el estado de publicación a 'No publicado'.
-								String[] numTrabajoMotivo = {String.valueOf(tramite.getTrabajo().getNumTrabajo())};
-								try {
-									activoApi.setActivoToNoPublicado(activo, messageServices.getMessage(MOTIVO_ESTADO_PUBLICACION_ACTIVO_VENDIDO, numTrabajoMotivo));
-								} catch (JsonViewerException e) {
-									logger.error("Error en la tarea '" + CODIGO_T013_POSICIONAMIENTOYFIRMA + "', mensaje: " + e.getMessage());
-									e.printStackTrace();
-								} catch (SQLException e) {
-									logger.error("Error en la tarea '" + CODIGO_T013_POSICIONAMIENTOYFIRMA + "', mensaje: " + e.getMessage());
-									e.printStackTrace();
-								}
+
+								activoAdapter.actualizarEstadoPublicacionActivo(activo.getId());
 	
 								activoApi.saveOrUpdate(activo);
 							}
+
 							List<Oferta> listaOfertas = ofertaApi.trabajoToOfertas(tramite.getTrabajo());
 	
 							//Rechazamos el resto de ofertas
@@ -154,13 +151,18 @@ public class UpdaterServiceSancionOfertaPosicionamientoYFirma implements Updater
 							}
 
 							activo.setBloqueoPrecioFechaIni(new Date());
-
-							//Al venderse el activo, actualizamos el estado de publicación a 'No publicado'.
-							String[] numTrabajoMotivo = {String.valueOf(tramite.getTrabajo().getNumTrabajo())};
-	
+							
+														
 							ActivoSituacionPosesoria situacionPosesoria = activo.getSituacionPosesoria();
-							situacionPosesoria.setConTitulo(1);
-							situacionPosesoria.setOcupado(1);
+							
+							if((situacionPosesoria.getConTitulo() == 1) && (situacionPosesoria.getOcupado() == 1)){
+								situacionPosesoria.setConTitulo(1);
+								situacionPosesoria.setOcupado(1);
+							}else{
+								situacionPosesoria.setConTitulo(0);
+								situacionPosesoria.setOcupado(0);
+							}
+							
 							try {
 								situacionPosesoria.setFechaTomaPosesion(ft.parse(valor.getValor()));
 							} catch (ParseException e) {
@@ -169,6 +171,7 @@ public class UpdaterServiceSancionOfertaPosicionamientoYFirma implements Updater
 							}
 							activo.setSituacionPosesoria(situacionPosesoria);
 						}
+
 						try {
 							expediente.setFechaVenta(ft.parse(valor.getValor()));
 						} catch (ParseException e) {
@@ -182,6 +185,18 @@ public class UpdaterServiceSancionOfertaPosicionamientoYFirma implements Updater
 						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", valor.getValor());
 						DDMotivoAnulacionExpediente motivoAnulacion = genericDao.get(DDMotivoAnulacionExpediente.class, filtro);
 						expediente.setMotivoAnulacion(motivoAnulacion);
+					}
+					
+					if(ASISTENCIA_PBC.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())){
+						if(DDSiNo.SI.equals(valor.getValor())){
+							expediente.setAsistenciaPbc(true);
+						}else{
+							expediente.setAsistenciaPbc(false);
+						}
+					}
+					
+					if(ASISTENCIA_PBC_OBSERVACIONES.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())){
+						expediente.setObsAsisPbc(valor.getValor());
 					}
 				}
 			}

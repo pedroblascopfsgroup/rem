@@ -2,6 +2,8 @@ package es.pfsgroup.plugin.rem.model;
 
 import java.util.Date;
 
+import es.capgemini.pfs.users.domain.Usuario;
+
 /**
  * Dto para la creacion o eliminación de la busqueda de agrupaciones.
  * @author Benjamín Guerrero
@@ -16,6 +18,8 @@ public class DtoAgrupacionesCreateDelete {
 	private Date fechaFinVigencia;
 	private Long numAgrupacionRem;
 
+	private Usuario gestorComercial;
+	
 	public String getNombre() {
 		return nombre;
 	}
@@ -52,13 +56,20 @@ public class DtoAgrupacionesCreateDelete {
 	public void setFechaFinVigencia(Date fechaFinVigencia) {
 		this.fechaFinVigencia = fechaFinVigencia;
 	}
+
 	public Long getNumAgrupacionRem() {
 		return numAgrupacionRem;
 	}
 	public void setNumAgrupacionRem(Long numAgrupacionRem) {
 		this.numAgrupacionRem = numAgrupacionRem;
 	}
-	
-	
+
+	public Usuario getGestorComercial() {
+		return gestorComercial;
+	}
+	public void setGestorComercial(Usuario gestorComercial) {
+		this.gestorComercial = gestorComercial;
+	}
+
 	
 }

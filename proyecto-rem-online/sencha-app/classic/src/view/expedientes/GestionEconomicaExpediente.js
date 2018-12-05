@@ -37,12 +37,16 @@ Ext.define('HreRem.view.expedientes.GestionEconomicaExpediente', {
 					    reference: 'listadohoronarios',
 					    idPrincipal : 'expediente.id',
 						cls	: 'panel-base shadow-panel',
-						secFunToEdit: 'EDITAR_GRID_GESTION_ECONOMICA_EXPEDIENTE',
+						//secFunToEdit: 'EDITAR_GRID_GESTION_ECONOMICA_EXPEDIENTE',
 						bind: {
 							store: '{storeHoronarios}'
 						},									
 						listeners: {
 							beforeedit: function(editor){
+								
+								if(!$AU.userHasFunction('EDITAR_GRID_GESTION_ECONOMICA_EXPEDIENTE')){
+									return false;
+								}
 								// Siempre que se vaya a entrar en modo edición filtrar o limpiar el combo 'Tipo proveedor'.
 								if (editor.editing) {
 					        		// Si se está editando impedir filtrar erroneamente.

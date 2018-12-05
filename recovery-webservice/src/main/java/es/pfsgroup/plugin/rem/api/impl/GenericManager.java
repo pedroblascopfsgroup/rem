@@ -22,7 +22,6 @@ import org.springframework.ui.ModelMap;
 
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.utils.MessageUtils;
-import es.capgemini.pfs.despachoExterno.model.DespachoExterno;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.procesosJudiciales.model.TipoJuzgado;
@@ -30,7 +29,6 @@ import es.capgemini.pfs.users.domain.Funcion;
 import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
-import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -39,7 +37,6 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
-import es.pfsgroup.plugin.recovery.coreextension.api.coreextensionApi;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.rem.activo.dao.impl.ActivoPatrimonioDaoImpl;
@@ -47,8 +44,8 @@ import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.GenericApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
-import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.gestor.GestorActivoManager;
+import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.ActivoPropietario;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
@@ -96,8 +93,6 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 	@Autowired
 	private GenericAdapter adapter;
 	
-	@Autowired
-	private ApiProxyFactory proxyFactory;
 
 	@Autowired
 	private ActivoApi activoApi;
@@ -126,8 +121,6 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 	public String managerName() {
 		return "genericManager";
 	}
-
-	private static final String PROPIEDAD_ACTIVAR_REST_CLIENT = "rest.client.gestor.documental.activar";
 
 	@Override
 	@BusinessOperationDefinition("genericManager.getAuthenticationData")
@@ -515,17 +508,17 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		Activo act = activoApi.get(Long.parseLong(idActivo));
 		if (!Checks.esNulo(idActivo)) {
 			Long activo = Long.parseLong(idActivo);
-			
+
 			for (DDTipoTrabajo tipoTrabajo : tiposTrabajo) {
 				// No se pueden crear tipos de trabajo ACTUACION TECNICA ni
 				// OBTENCION DOCUMENTAL
 				// cuando el activo no tiene condicion de gestion en el
 				// perimetro (check gestion = false)
-				if (act.getEnTramite()){
-					if(!Checks.esNulo(tipoTrabajo.getFiltroEnTramite()) && tipoTrabajo.getFiltroEnTramite()) {
+				if (act.getEnTramite()) {
+					if (!Checks.esNulo(tipoTrabajo.getFiltroEnTramite()) && tipoTrabajo.getFiltroEnTramite()) {
 						tiposTrabajoFiltered.add(tipoTrabajo);
 					}
-				}else {
+				} else {
 					if (DDTipoTrabajo.CODIGO_ACTUACION_TECNICA.equals(tipoTrabajo.getCodigo())
 							|| DDTipoTrabajo.CODIGO_OBTENCION_DOCUMENTAL.equals(tipoTrabajo.getCodigo())) {
 						// Si no hay registro en BBDD de perimetro, el get nos
@@ -533,34 +526,31 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 						// con todas las condiciones de perimetro activas
 						PerimetroActivo perimetroActivo = activoApi.getPerimetroByIdActivo(activo);
 
-						if (!Checks.esNulo(perimetroActivo.getAplicaGestion()) && perimetroActivo.getAplicaGestion() == 1) {
+						if (!Checks.esNulo(perimetroActivo.getAplicaGestion())
+								&& perimetroActivo.getAplicaGestion() == 1) {
 							// Activo con Gestion en perimetro
 							tiposTrabajoFiltered.add(tipoTrabajo);
 						}
 					} else if (!DDTipoTrabajo.CODIGO_COMERCIALIZACION.equals(tipoTrabajo.getCodigo())
 							&& !DDTipoTrabajo.CODIGO_TASACION.equals(tipoTrabajo.getCodigo())) {
-						// El resto de tipos, si no es comercialización o tasación,
+						// El resto de tipos, si no es comercialización o
+						// tasación,
+						// se pueden generar.
+						tiposTrabajoFiltered.add(tipoTrabajo);
+
+					} else if (!DDTipoTrabajo.CODIGO_COMERCIALIZACION.equals(tipoTrabajo.getCodigo())
+							&& !DDTipoTrabajo.CODIGO_TASACION.equals(tipoTrabajo.getCodigo())
+							&& !DDTipoTrabajo.CODIGO_PUBLICACIONES.equals(tipoTrabajo.getCodigo())) {
+						// El resto de tipos, si no es comercialización o
+						// tasación,
 						// se pueden generar.
 						tiposTrabajoFiltered.add(tipoTrabajo);
 					}
 				}
 			}
-
-			return tiposTrabajoFiltered;
-		} else {
-
-			for (DDTipoTrabajo tipoTrabajo : tiposTrabajo) {
-				// No se generan los tipos de trabajo tasación o
-				// comercialización.
-				if (!DDTipoTrabajo.CODIGO_COMERCIALIZACION.equals(tipoTrabajo.getCodigo())
-						&& !DDTipoTrabajo.CODIGO_TASACION.equals(tipoTrabajo.getCodigo())) {
-					// El resto de tipos, si no es comercialización o tasación,
-					// se pueden generar.
-					tiposTrabajoFiltered.add(tipoTrabajo);
-				}
-			}
-			return tiposTrabajoFiltered;
 		}
+		return tiposTrabajoFiltered;
+
 	}
 
 	@Override
@@ -746,7 +736,6 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
 		
 		ExpedienteComercial expComercial = genericDao.get(ExpedienteComercial.class, filter, filtroBorrado);
-		Order order = new Order(GenericABMDao.OrderType.ASC, "descripcion");
 		
 		if(!Checks.esNulo(expComercial.getOferta().getActivoPrincipal().getCartera().getCodigo())) {
 			return getComitesByCartera(expComercial.getOferta().getActivoPrincipal().getCartera().getCodigo());
@@ -898,16 +887,16 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 	@Override
 	public List<DDTipoAgrupacion> getComboTipoAgrupacion() {
 		//Se obtiene el tipo de gestor "Gestor de mantenimiento"
-		Filter filtroTipoAgrupacionBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
-		Filter filtroCodigoTipoAgrupacion = genericDao.createFilter(FilterType.EQUALS, "codigo", "GACT");
-		EXTDDTipoGestor tipoGestor = genericDao.get(EXTDDTipoGestor.class, filtroTipoAgrupacionBorrado, filtroCodigoTipoAgrupacion);
+		//Filter filtroTipoAgrupacionBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+		//Filter filtroCodigoTipoAgrupacion = genericDao.createFilter(FilterType.EQUALS, "codigo", "GACT");
+		//EXTDDTipoGestor tipoGestor = genericDao.get(EXTDDTipoGestor.class, filtroTipoAgrupacionBorrado, filtroCodigoTipoAgrupacion);
 		
 		// Se obtiene el listado completo de tipos de agrupacion.
-		List<DDTipoAgrupacion> listaTipoAgrupacionesFiltrado = new ArrayList<DDTipoAgrupacion>();
+		//List<DDTipoAgrupacion> listaTipoAgrupacionesFiltrado = new ArrayList<DDTipoAgrupacion>();
 		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
 		List<DDTipoAgrupacion> listaTipoAgrupaciones = genericDao.getList(DDTipoAgrupacion.class, filtroBorrado, filtroBorrado);
 		
-		// Se mira si el usuario logueado e s de tipo gestor mantenimiento.
+		/*// Se mira si el usuario logueado e s de tipo gestor mantenimiento.
 		Usuario usuario = adapter.getUsuarioLogado();
 		List<DespachoExterno> despachos = proxyFactory.proxy(coreextensionApi.class).getListDespachosDeUsuario(tipoGestor.getId(), usuario.getId(), false, false);
 		
@@ -921,7 +910,8 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 			return listaTipoAgrupacionesFiltrado;
 		} else {
 			return listaTipoAgrupaciones;
-		}
+		}*/ //REMVIP-2289
+		return listaTipoAgrupaciones;
 	}
 	
 	@Override

@@ -20,15 +20,11 @@ public interface TabActivoService extends GenericService{
 	public static final String TAB_INFORME_COMERCIAL = "informecomercial";
 	public static final String TAB_ADMINISTRACION = "administracion";
 	public static final String TAB_COMUNIDAD_PROPIETARIOS = "datosComunidad";
-
 	public static final String TAB_DATOS_PUBLICACION = "datospublicacion";
     public static final String TAB_ACTIVO_HISTORICO_ESTADO_PUBLICACION = "activohistoricoestadopublicacion";
     public static final String TAB_ACTIVO_CONDICIONANTES_DISPONIBILIDAD = "activocondicionantesdisponibilidad";
-
 	public static final String TAB_COMERCIAL = "comercial";
-	
 	public static final String TAB_PATRIMONIO = "patrimonio";
-
 	
     BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 	
@@ -55,7 +51,4 @@ public interface TabActivoService extends GenericService{
 	 * @return Activo
 	 */
 	public Activo saveTabActivo(Activo activo, WebDto dto);
-	
-
-
 }

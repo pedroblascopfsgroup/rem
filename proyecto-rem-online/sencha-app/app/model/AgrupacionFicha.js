@@ -79,6 +79,13 @@ Ext.define('HreRem.model.AgrupacionFicha', {
 	            	},
 	            	depends: 'tipoAgrupacionCodigo'
 	            },
+	            {
+	            	name: 'isRestringida',
+	            	calculate: function(data) {
+	            		return data.tipoAgrupacionCodigo == CONST.TIPOS_AGRUPACION['RESTRINGIDA'];
+	            	},
+	            	depends: 'tipoAgrupacionCodigo'
+	            },
 		    	{
 		    		name : 'acreedorPDV'
 		    	},
@@ -137,27 +144,78 @@ Ext.define('HreRem.model.AgrupacionFicha', {
 		    		name: 'cartera'
 		    	},
 		    	{
-		    		name: 'subTipoComercial'
+                    name: 'codigoCartera'
+                },
+                {
+                    name: 'estadoActivoCodigo'
+                },
+                {
+                    name:'tipoActivoCodigo'
+                },
+                {
+                    name:'subtipoActivoCodigo'
+                },
+		    	{
+		    		name: 'estadoVenta'
 		    	},
 		    	{
-		    		name: 'tipoAlquilerCodigo'
-		    	},    	
-		    	{
-		    		name: 'codigoCartera'
+		    		name: 'estadoAlquiler'
 		    	},
 		    	{
-		    		name: 'estadoActivoCodigo'
+		    		name: 'tipoComercializacionCodigo'
 		    	},
 		    	{
-		    		name:'tipoActivoCodigo'
-		    	},
-		    	{
-		    		name:'subtipoActivoCodigo'
-		    	}
+					name: 'tipoComercializacionDescripcion'
+				},
+			    {
+	                name: 'incluyeDestinoComercialAlquiler',
+	                calculate: function(data) {
+	                    return data.tipoComercializacionCodigo ===  CONST.TIPOS_COMERCIALIZACION['SOLO_ALQUILER'] || data.tipoComercializacionCodigo ===  CONST.TIPOS_COMERCIALIZACION['ALQUILER_VENTA'];
+	                },
+	                depends: 'tipoComercializacionCodigo'
+	            },
+	            {
+	                name: 'incluyeDestinoComercialVenta',
+	                calculate: function(data) {
+	                    return data.tipoComercializacionCodigo ===  CONST.TIPOS_COMERCIALIZACION['VENTA'] || data.tipoComercializacionCodigo ===  CONST.TIPOS_COMERCIALIZACION['ALQUILER_VENTA'];
+	                },
+	                depends: 'tipoComercializacionCodigo'
+	            },
+	            {
+	                name: 'incluyeDestinoComercialAlquilerYIsRestringida',
+	                calculate: function(data) {
+	                    return data.isRestringida && data.tipoComercializacionCodigo ===  CONST.TIPOS_COMERCIALIZACION['SOLO_ALQUILER'] || data.isRestringida && data.tipoComercializacionCodigo ===  CONST.TIPOS_COMERCIALIZACION['ALQUILER_VENTA'];
+	                },
+	                depends: ['tipoComercializacionCodigo', 'isRestringida']
+	            },
+	            {
+	                name: 'incluyeDestinoComercialVentaYIsRestringida',
+	                calculate: function(data) {
+	                    return data.isRestringida && data.tipoComercializacionCodigo ===  CONST.TIPOS_COMERCIALIZACION['VENTA'] || data.isRestringida && data.tipoComercializacionCodigo ===  CONST.TIPOS_COMERCIALIZACION['ALQUILER_VENTA'];
+	                },
+	                depends: ['tipoComercializacionCodigo', 'isRestringida']
+	            },
+	            {
+	            	name: 'incluidoEnPerimetro',
+	            	type: 'boolean'
+	            },
+	            {
+	            	name: 'estadoAlquilerDescripcion'
+	            },
+	            {
+	            	name: 'estadoVentaDescripcion'
+	            },
+	            {
+	            	name: 'estadoAlquilerCodigo'
+	            },
+	            {
+	            	name: 'estadoVentaCodigo'
+	            }
     ],
     
 	proxy: {
 		type: 'uxproxy',
+		timeout: 60000,
 		api: {
             read: 'agrupacion/getAgrupacionById',
             create: 'agrupacion/saveAgrupacion',

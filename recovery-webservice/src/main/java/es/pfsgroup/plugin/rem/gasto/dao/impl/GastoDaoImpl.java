@@ -7,6 +7,10 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import es.pfsgroup.commons.utils.hibernate.HibernateUtils;
+import org.hibernate.Criteria;
+import org.hibernate.Session;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -351,4 +355,15 @@ public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implem
 		return new DtoPage(gastos, page.getTotalCount());
 	}
 
+	@Override
+	public GastoProveedor getGastoPorNumeroGastoHaya(Long numeroGastoHaya) {
+		Session session = getSession();
+		Criteria criteria = session.createCriteria(GastoProveedor.class);
+		criteria.add(Restrictions.eq("numGastoHaya", numeroGastoHaya));
+
+		GastoProveedor gastoProveedor = HibernateUtils.castObject(GastoProveedor.class, criteria.uniqueResult());
+		session.disconnect();
+
+		return gastoProveedor;
+	}
 }

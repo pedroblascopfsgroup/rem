@@ -1,7 +1,7 @@
 package es.pfsgroup.framework.paradise.bulkUpload.bvfactory.types;
 
 /**
- * Resultado devuelto por una SQL de valiación. Esta interfaz se usa en las validaciones de negocio de tipo Multi Result SQL
+ * Resultado devuelto por una SQL de valiaciÃ³n. Esta interfaz se usa en las validaciones de negocio de tipo Multi Result SQL
  * @author bruno
  *
  */

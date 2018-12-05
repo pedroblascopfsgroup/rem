@@ -55,7 +55,7 @@ function procesos-descarga-etls() {
     version=`echo "${version}" | sed -e "s/ //g"` 
     etl=`echo "${etl}" | sed -e "s/ //g"` 
     repo=`echo "${repo}" | sed -e "s/ //g"` 
-    URL="http://nexus.pfsgroup.es/nexus/service/local/repositories/etls/content/$repo/build/$etl/$version/$etl-$version.zip"
+    URL="http://nexus.pfsgroup.es/nexus/repository/etls/$repo/build/$etl/$version/$etl-$version.zip"
   	echo "Downloading ETL [$URL]"
     curl -X GET --fail -u $credentials -o $directorio_salida/$etl-$version.zip $URL
     RESPUESTA=$?

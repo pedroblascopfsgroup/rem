@@ -1,6 +1,7 @@
 #!/bin/bash +x
 
 modified_files="git diff --cached --name-only --diff-filter=ACMRTUXB"
+patron="^D[D|M]L_[0-9]{3,5}_(ENTITY0[0-9]|BANK01|HAYA0[0-9]|REM01|CM01|HAYAMASTER|REMMASTER|MASTER|BANKMASTER|CMMASTER|MINIREC|DWH|DS)_.*\.sql"
 
 function paint_error() {
 	declare -n error_data=$1
@@ -70,10 +71,24 @@ function check_RIA_RULE_R4() {
 	file_content=$1
 	declare -A rule=(	[name]="RIA_RULE_R4"
 						[file]=$f 
-						[problem]="Estás expresión problemática para IExplorer 'border:false'."
+						[problem]="Esta expresión es problemática para IExplorer 'border:false'."
 						[solution]="Reemplaza esta expresión por 'border:0px'." )
 
 	r=$(echo $file_content | grep -E "border(\s*):(\s*)false")
+	if [[ "x" != "x$r" ]]; then
+		paint_error rule
+		exit 1
+	fi
+}
+
+function check_RIA_RULE_R5() {
+	file_content=$1
+	declare -A rule=(	[name]="RIA_RULE_R5"
+						[file]=$f 
+						[problem]="Esta expresión es problemática para IExplorer 'renderer:app.format.dateRenderer,'."
+						[solution]="Reemplaza esta expresión por su equivalente en el JSON o Dto original." )
+
+	r=$(echo $file_content | grep -E "renderer(\s*):(\s*)app.format.dateRenderer,")
 	if [[ "x" != "x$r" ]]; then
 		paint_error rule
 		exit 1
@@ -111,6 +126,20 @@ function check_pitertul_format() {
 
 }
 
+function check_pitertul_name() {
+	file=$1
+	declare -A rule=(	[name]="Pitertul nombre"
+						[file]=$file
+						[problem]="El fichero no tiene un nombre correcto para PITERTUL."
+						[solution]="Patrón válido: $patron"
+					)
+	fsinpath=${file##*/}
+	if [[ ! $fsinpath =~ $patron ]] ; then 
+		paint_error rule
+		exit 1
+	fi
+}
+
 # ***************************
 # Control en RIA
 # ***************************
@@ -127,11 +156,13 @@ function JSP_rules() {
 		check_RIA_RULE_R3 "$file_content"
 		# R4-RIA.  Control de reglas border:false (desactivada)
 		#check_RIA_RULE_R4 "$file_content"
+		# R5-RIA.  Control de reglas dateRenderer()
+		check_RIA_RULE_R5 "$file_content"
 	done
 }
 
 # ***************************
-# Control en RIA
+# Control en JS y SQL
 # ***************************
 function JS_rules() {
 	for f in `eval $modified_files | grep .js$`; do
@@ -146,7 +177,9 @@ function JS_rules() {
 }
 
 function SQL_rules() {
-	for f in `eval $modified_files | grep  -E .sql$ | grep -v ^reports/`; do
+	for f in `eval $modified_files | grep  -E \/D.*\.sql$ | grep -v ^reports/ | grep -v migracion | grep -v scripts | grep -v templates | grep -v rutinas`; do
+		check_pitertul_name $f
+		
 		file_content=$(cat $f);
 		check_UTF8 $f
 

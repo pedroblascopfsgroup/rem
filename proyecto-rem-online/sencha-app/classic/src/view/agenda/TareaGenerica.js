@@ -438,13 +438,28 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 
         var parametros = me.down("form").getValues();
         parametros.idTarea = me.idTarea;
+        
+        var urlTipoTitulo =  $AC.getRemoteUrl('agenda/getTipoTituloActivoByIdTarea');
+		Ext.Ajax.request({
+			
+			url: urlTipoTitulo,
+		     params: parametros,
+		
+		     success: function(response, opts) {
+		    	 var data = Ext.decode(response.responseText);
+		    	 var tipoTituloActivoCodigo = data.tipoTituloActivo;
+		    	 if ("04" == tipoTituloActivoCodigo) {
+		    		 Ext.MessageBox.alert(' ',HreRem.i18n('tarea.aviso.liquidacion.colaterales'));
+		    	 }
+		     }
+		});
 
         //var url = $AC.getRemoteUrl('tarea/saveFormAndAdvance');
         var url = $AC.getRemoteUrl('agenda/save');
         Ext.Ajax.request({
             url: url,
             params: parametros,
-            success: function(response, opts) {
+            success: function(response, opts) {            	
                 //me.parent.fireEvent('aftersaveTarea', me.parent);
                 me.json = Ext.decode(response.responseText);
 
@@ -1054,14 +1069,12 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
         var me = this;
 
         me.deshabilitarCampo(me.down('[name=motivoDenegacion]'));
-        me.deshabilitarCampo(me.down('[name=comboDatosIguales]'));
+        me.ocultarCampo(me.down('[name=comboDatosIguales]'));
 
         me.down('[name=comboAceptacion]').addListener('change', function(combo) {
             if (combo.value == '01') {
-                me.habilitarCampo(me.down('[name=comboDatosIguales]'));
                 me.deshabilitarCampo(me.down('[name=motivoDenegacion]'));
             } else {
-                me.deshabilitarCampo(me.down('[name=comboDatosIguales]'));
                 me.habilitarCampo(me.down('[name=motivoDenegacion]'));
             }
         })
@@ -1117,16 +1130,16 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 		var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
 		fechaIngreso.setMaxValue($AC.getCurrentDate());
 
-		if(!Ext.isEmpty(fechaIngreso.getValue())) {
+		if(!Ext.isEmpty(fechaIngreso.getValue()) && CONST.CARTERA['CAJAMAR'] != codigoCartera) {
 			me.deshabilitarCampo(me.down('[name=checkboxVentaDirecta]'));
 			me.bloquearCampo(me.down('[name=fechaIngreso]'));
-		} else {
+		} else if(Ext.isEmpty(fechaIngreso.getValue()) && CONST.CARTERA['CAJAMAR'] != codigoCartera) {
 			me.habilitarCampo(me.down('[name=checkboxVentaDirecta]'));
 			me.deshabilitarCampo(me.down('[name=fechaIngreso]'));
 		}
 
 		me.down('[name=checkboxVentaDirecta]').addListener('change', function(checkbox, newValue, oldValue, eOpts) {
-			if(CONST.CARTERA['LIBERBANK'] != codigoCartera){
+			if(CONST.CARTERA['LIBERBANK'] != codigoCartera || CONST.CARTERA['CAJAMAR'] != codigoCartera){
 				if (newValue) {
 	            	me.habilitarCampo(me.down('[name=fechaIngreso]'));
 	            	me.down('[name=fechaIngreso]').allowBlank = false;
@@ -1280,6 +1293,7 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 
         me.deshabilitarCampo(me.down('[name=fechaFirma]'));
         me.deshabilitarCampo(me.down('[name=motivoNoFirma]'));
+        me.deshabilitarCampo(me.down('[name=obsAsisPBC]'));
         me.down('[name=tieneReserva]').hide();
 
         me.down('[name=comboFirma]').addListener('change', function(combo) {
@@ -1309,6 +1323,14 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
                 me.down('[name=numProtocolo]').reset();
                 me.down('[name=comboCondiciones]').reset();
                 me.down('[name=condiciones]').reset();
+            }
+        });
+        
+        me.down('[name=asistenciaPBC]').addListener('change', function(combo) {
+            if (combo.value == '01') {
+                me.deshabilitarCampo(me.down('[name=obsAsisPBC]'));
+            } else {
+            	me.habilitarCampo(me.down('[name=obsAsisPBC]'));
             }
         });
     },

@@ -1,7 +1,7 @@
 package es.pfsgroup.framework.paradise.bulkUpload.bvfactory;
 
 /**
- * Resultado de una validación de negocio
+ * Resultado de una validaciÃ³n de negocio
  * @author bruno
  *
  */

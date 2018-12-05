@@ -6,7 +6,6 @@ import es.capgemini.devon.dto.WebDto;
 
 /**
  * Dto para la pestaña cabecera de la ficha de Agrupación.
- * @author Benjamín Guerrero
  */
 public class DtoAgrupaciones extends WebDto {
 
@@ -49,9 +48,19 @@ public class DtoAgrupaciones extends WebDto {
 	private Boolean agrupacionEliminada;
 	private String subTipoComercial; 
 	private String tipoAlquilerCodigo;
+	private Integer estadoVenta;
+	private Integer estadoAlquiler;
+	private String tipoComercializacionCodigo;
+	private String tipoComercializacionDescripcion;
+	private Boolean incluidoEnPerimetro;
+	private String estadoAlquilerDescripcion;
+	private String estadoVentaDescripcion;
+	private String estadoAlquilerCodigo;
+	private String estadoVentaCodigo;
 	private String tipoActivoCodigo;
 	private String estadoActivoCodigo;
 	private String subtipoActivoCodigo;
+	private Long idNumActivoPrincipal;
 
 
 	public Boolean getEstaCaducada() {
@@ -262,6 +271,60 @@ public class DtoAgrupaciones extends WebDto {
 	public void setTipoAlquilerCodigo(String tipoAlquilerCodigo) {
 		this.tipoAlquilerCodigo = tipoAlquilerCodigo;
 	}
+	public Integer getEstadoVenta() {
+		return estadoVenta;
+	}
+	public void setEstadoVenta(Integer estadoVenta) {
+		this.estadoVenta = estadoVenta;
+	}
+	public Integer getEstadoAlquiler() {
+		return estadoAlquiler;
+	}
+	public void setEstadoAlquiler(Integer estadoAlquiler) {
+		this.estadoAlquiler = estadoAlquiler;
+	}
+	public String getTipoComercializacionDescripcion() {
+		return tipoComercializacionDescripcion;
+	}
+	public void setTipoComercializacionDescripcion(String tipoComercializacionDescripcion) {
+		this.tipoComercializacionDescripcion = tipoComercializacionDescripcion;
+	}
+	public String getTipoComercializacionCodigo() {
+		return tipoComercializacionCodigo;
+	}
+	public void setTipoComercializacionCodigo(String tipoComercializacionCodigo) {
+		this.tipoComercializacionCodigo = tipoComercializacionCodigo;
+	}
+	public Boolean getIncluidoEnPerimetro() {
+		return incluidoEnPerimetro;
+	}
+	public void setIncluidoEnPerimetro(Boolean incluidoEnPerimetro) {
+		this.incluidoEnPerimetro = incluidoEnPerimetro;
+	}
+	public String getEstadoAlquilerDescripcion() {
+		return estadoAlquilerDescripcion;
+	}
+	public void setEstadoAlquilerDescripcion(String estadoAlquilerDescripcion) {
+		this.estadoAlquilerDescripcion = estadoAlquilerDescripcion;
+	}
+	public String getEstadoVentaDescripcion() {
+		return estadoVentaDescripcion;
+	}
+	public void setEstadoVentaDescripcion(String estadoVentaDescripcion) {
+		this.estadoVentaDescripcion = estadoVentaDescripcion;
+	}
+	public String getEstadoAlquilerCodigo() {
+		return estadoAlquilerCodigo;
+	}
+	public void setEstadoAlquilerCodigo(String estadoAlquilerCodigo) {
+		this.estadoAlquilerCodigo = estadoAlquilerCodigo;
+	}
+	public String getEstadoVentaCodigo() {
+		return estadoVentaCodigo;
+	}
+	public void setEstadoVentaCodigo(String estadoVentaCodigo) {
+		this.estadoVentaCodigo = estadoVentaCodigo;
+	}
 	public Long getCodigoGestorActivo() {
 		return codigoGestorActivo;
 	}
@@ -291,5 +354,12 @@ public class DtoAgrupaciones extends WebDto {
 	}
 	public void setSubtipoActivoCodigo(String subtipoActivoCodigo) {
 		this.subtipoActivoCodigo = subtipoActivoCodigo;
+	}
+
+	public Long getIdNumActivoPrincipal() {
+		return idNumActivoPrincipal;
+	}
+	public void setIdNumActivoPrincipal(Long idNumActivoPrincipal) {
+		this.idNumActivoPrincipal = idNumActivoPrincipal;
 	}
 }

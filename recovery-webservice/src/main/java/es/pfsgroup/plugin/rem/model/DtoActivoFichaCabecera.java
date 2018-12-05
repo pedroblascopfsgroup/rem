@@ -5,9 +5,6 @@ import java.util.List;
 
 /**
  * Dto para la pestaña cabecera de la ficha de Activo
- * 
- * @author Benjamín Guerrero
- *
  */
 public class DtoActivoFichaCabecera extends DtoTabActivo {
 
@@ -66,7 +63,7 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private String tipoUsoDestinoDescripcion;
 	private String codPromocionFinal;
 	private String catContableDescripcion;
-	
+
 	// Comunidad de propietarios
 	private String tipoCuotaCodigo;
 	private String direccionComunidad;
@@ -103,6 +100,12 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private Boolean certificadoIte;
 	private String observaciones;
 	private Boolean admision;
+	private Integer estadoVenta;
+	private Integer estadoAlquiler;
+	private String estadoVentaDescripcion;
+	private String estadoAlquilerDescripcion;
+	private String estadoAlquilerCodigo;
+	private String estadoVentaCodigo;
 	private Boolean gestion;
 	private String tipoInfoComercialCodigo;
 	private String estadoPublicacionDescripcion;
@@ -110,9 +113,11 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private String tipoComercializarCodigo;
 	private String tipoComercializarDescripcion;
 	private Boolean pertenceAgrupacionRestringida;
+	private Boolean perteneceAgrupacionRestringidaVigente;
 	private Boolean pertenceAgrupacionComercial;
 	private Boolean pertenceAgrupacionAsistida;
 	private Boolean pertenceAgrupacionObraNueva;
+	private Boolean pertenceAgrupacionProyecto;
 	private String situacionComercialCodigo;
 	private String situacionComercialDescripcion;
 	
@@ -143,9 +148,9 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private Boolean bloqueoTipoComercializacionAutomatico;
 	private String numInmovilizadoBankia;
 	private Boolean enTramite;
-
-
-
+	private Boolean aplicaPublicar;
+	private Date fechaAplicaPublicar;
+	private String motivoAplicaPublicar;
 	//Activo Bancario datos:
 	private String claseActivoCodigo;
 	private String claseActivoDescripcion;
@@ -167,13 +172,11 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	
 	//Tipo Activo del mediador
 	private String tipoActivoMediadorCodigo;
-	
-	//HREOS-1983
+
 	private Boolean selloCalidad;
 	private String nombreGestorSelloCalidad;
 	private Date fechaRevisionSelloCalidad;
-	
-	//HREOS-2684
+
 	private String minimoAutorizado;
 	private String aprobadoVentaWeb;
 	private String aprobadoRentaWeb;
@@ -182,28 +185,40 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private String valorNetoContable;
 	private String costeAdquisicion;
 	private String valorUltimaTasacion;
-	
-	//HREOS-2716
+
 	private String codigoPromocionPrinex;
 
-	// HREOS-2761
 	private List<?> activosPropagables;
-	
-	//REMVIP-969
+
 	private Boolean tienePosibleInformeMediador;
-	
+
+	private String idAgrupacion;
+	private Boolean tienePromocion;
+
 	private int page;
 	private int start;
 	private int limit;
-	
-	//HREOS-3415
+
 	private String acbCoreaeTexto;
-	
-	//HREOS-4470
+
 	private Boolean asignaGestPorCambioDeProv;
 
-	//REMVIP-REMVIP-2193
 	private Boolean isLogUsuGestComerSupComerSupAdmin;
+
+	private Boolean activoChkPerimetroAlquiler;
+	private List<?> activosAgrupacionRestringida;
+
+	private Boolean tieneOkTecnico;
+
+	private Long activoPrincipalRestringida;
+
+	public Boolean getTieneOkTecnico() {
+		return tieneOkTecnico;
+	}
+
+	public void setTieneOkTecnico(Boolean tieneOkTecnico) {
+		this.tieneOkTecnico = tieneOkTecnico;
+	}
 
 	public int getPage() {
 		return page;
@@ -280,12 +295,23 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 
 	public void setFechaDueD(Date fechaDueD) {
 		this.fechaDueD = fechaDueD;
-	}/*
-	 * public NMBLocalizacionesBienInfo getLocalizacionActual() { return
-	 * localizacionActual; } public void
-	 * setLocalizacionActual(NMBLocalizacionesBienInfo localizacionActual) {
-	 * this.localizacionActual = localizacionActual; }
-	 */
+	}
+
+	public String getEstadoAlquilerCodigo() {
+		return estadoAlquilerCodigo;
+	}
+
+	public void setEstadoAlquilerCodigo(String estadoAlquilerCodigo) {
+		this.estadoAlquilerCodigo = estadoAlquilerCodigo;
+	}
+
+	public String getEstadoVentaCodigo() {
+		return estadoVentaCodigo;
+	}
+
+	public void setEstadoVentaCodigo(String estadoVentaCodigo) {
+		this.estadoVentaCodigo = estadoVentaCodigo;
+	}
 
 	public String getRating() {
 		return rating;
@@ -852,6 +878,38 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 		this.admision = admision;
 	}
 
+	public Integer getEstadoVenta() {
+		return estadoVenta;
+	}
+
+	public void setEstadoVenta(Integer estadoVenta) {
+		this.estadoVenta = estadoVenta;
+	}
+
+	public Integer getEstadoAlquiler() {
+		return estadoAlquiler;
+	}
+
+	public void setEstadoAlquiler(Integer estadoAlquiler) {
+		this.estadoAlquiler = estadoAlquiler;
+	}
+
+	public String getEstadoVentaDescripcion() {
+		return estadoVentaDescripcion;
+	}
+
+	public void setEstadoVentaDescripcion(String estadoVentaDescripcion) {
+		this.estadoVentaDescripcion = estadoVentaDescripcion;
+	}
+
+	public String getEstadoAlquilerDescripcion() {
+		return estadoAlquilerDescripcion;
+	}
+
+	public void setEstadoAlquilerDescripcion(String estadoAlquilerDescripcion) {
+		this.estadoAlquilerDescripcion = estadoAlquilerDescripcion;
+	}
+
 	public Boolean getGestion() {
 		return gestion;
 	}
@@ -915,6 +973,14 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	public void setPertenceAgrupacionRestringida(
 			Boolean pertenceAgrupacionRestringida) {
 		this.pertenceAgrupacionRestringida = pertenceAgrupacionRestringida;
+	}
+
+	public Boolean getPerteneceAgrupacionRestringidaVigente() {
+		return perteneceAgrupacionRestringidaVigente;
+	}
+
+	public void setPerteneceAgrupacionRestringidaVigente(Boolean perteneceAgrupacionRestringidaVigente) {
+		this.perteneceAgrupacionRestringidaVigente = perteneceAgrupacionRestringidaVigente;
 	}
 
 	public Boolean getIncluidoEnPerimetro() {
@@ -1401,6 +1467,30 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 		this.acbCoreaeTexto = acbCoreaeTexto;
 	}
 
+	public Boolean getAplicaPublicar() {
+		return aplicaPublicar;
+	}
+
+	public void setAplicaPublicar(Boolean aplicaPublicar) {
+		this.aplicaPublicar = aplicaPublicar;
+	}
+
+	public Date getFechaAplicaPublicar() {
+		return fechaAplicaPublicar;
+	}
+
+	public void setFechaAplicaPublicar(Date fechaAplicaPublicar) {
+		this.fechaAplicaPublicar = fechaAplicaPublicar;
+	}
+
+	public String getMotivoAplicaPublicar() {
+		return motivoAplicaPublicar;
+	}
+
+	public void setMotivoAplicaPublicar(String motivoAplicaPublicar) {
+		this.motivoAplicaPublicar = motivoAplicaPublicar;
+	}
+
 	public String getAcreedorNumExp() {
 		return acreedorNumExp;
 	}
@@ -1417,7 +1507,32 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 		this.enTramite = enTramite;
 	}
 
-	public Boolean getTienePosibleInformeMediador() {
+
+	public Boolean getPertenceAgrupacionProyecto() {
+		return pertenceAgrupacionProyecto;
+	}
+
+	public void setPertenceAgrupacionProyecto(Boolean pertenceAgrupacionProyecto) {
+		this.pertenceAgrupacionProyecto = pertenceAgrupacionProyecto;
+	}
+
+	public String getIdAgrupacion() {
+		return idAgrupacion;
+	}
+
+	public void setIdAgrupacion(String idAgrupacion) {
+		this.idAgrupacion = idAgrupacion;
+	}
+
+	public Boolean getTienePromocion() {
+		return tienePromocion;
+	}
+
+	public void setTienePromocion(Boolean tienePromocion) {
+		this.tienePromocion = tienePromocion;
+	}
+
+public Boolean getTienePosibleInformeMediador() {
 		return tienePosibleInformeMediador;
 	}
 
@@ -1472,7 +1587,6 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	public void setCatContableDescripcion(String catContableDescripcion) {
 		this.catContableDescripcion = catContableDescripcion;
 	}
-
 	public Boolean getAsignaGestPorCambioDeProv() {
 		return asignaGestPorCambioDeProv;
 	}
@@ -1489,4 +1603,27 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 		this.isLogUsuGestComerSupComerSupAdmin = isLogUsuGestComerSupComerSupAdmin;
 	}
 
+	public Boolean getActivoChkPerimetroAlquiler() {
+		return activoChkPerimetroAlquiler;
+	}
+
+	public void setActivoChkPerimetroAlquiler(Boolean activoChkPerimetroAlquiler) {
+		this.activoChkPerimetroAlquiler = activoChkPerimetroAlquiler;
+	}
+
+	public List<?> getActivosAgrupacionRestringida() {
+		return activosAgrupacionRestringida;
+	}
+
+	public void setActivosAgrupacionRestringida(List<?> activosAgrupacionRestringida) {
+		this.activosAgrupacionRestringida = activosAgrupacionRestringida;
+	}
+
+	public Long getActivoPrincipalRestringida() {
+		return activoPrincipalRestringida;
+	}
+
+	public void setActivoPrincipalRestringida(Long activoPrincipalRestringida) {
+		this.activoPrincipalRestringida = activoPrincipalRestringida;
+	}
 }

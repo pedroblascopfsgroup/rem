@@ -134,12 +134,14 @@ public class RestSecurityFilter implements Filter {
 		} catch (Exception e) {
 			peticion.setResult(RestApi.CODE_ERROR);
 			peticion.setErrorDesc(e.getMessage());
+			logger.error("ERROR WS: -> "+peticion.getData());
 			logger.error(e.getMessage(),e);
 			restApi.throwRestException(response, RestApi.REST_MSG_UNEXPECTED_ERROR, jsonFields, restRequest);
 
 		} catch (Throwable t) {
 			peticion.setResult(RestApi.CODE_ERROR);
 			peticion.setErrorDesc(t.getMessage());
+			logger.error("ERROR WS: -> "+peticion.getData());
 			logger.error(t.getMessage(),t);
 			restApi.throwRestException(response, RestApi.REST_MSG_UNEXPECTED_ERROR, jsonFields, restRequest);
 		} finally {

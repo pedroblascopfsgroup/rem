@@ -147,7 +147,7 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 				}
 			}
 			
-			if(!Checks.esNulo(gasto.getPropietario()) && !DDCartera.CODIGO_CARTERA_LIBERBANK.equals(gasto.getPropietario().getCartera().getCodigo())){
+			if(!Checks.esNulo(gasto.getPropietario()) && !DDCartera.CODIGO_CARTERA_LIBERBANK.equals(gasto.getPropietario().getCartera().getCodigo()) && !"100".equals(gasto.getSubtipoGasto().getCodigo())){
 				if(Checks.esNulo(gasto.getGastoInfoContabilidad()) || Checks.esNulo(gasto.getGastoInfoContabilidad().getPartidaPresupuestaria())) {
 					error = messageServices.getMessage(VALIDACION_PARTIDA_PRESUPUESTARIA); 
 					return error;

@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="batch-monitor" />
+        <module name="batch-shell" />
+        <module name="devon-batch" />
+        <module name="devon-birt" />
+        <module name="devon-bpm" />
+        <module name="devon-core" />
+        <module name="devon-hibernate" />
+        <module name="devon-web" />
+        <module name="devon-webflow" />
+        <module name="paradise-framework" />
+        <module name="pfs-commons-java" />
+        <module name="pfs-testfwk" />
+        <module name="plugins" />
+        <module name="proyecto-rem-online" />
+        <module name="rec-common" />
+        <module name="rec-encrypt" />
+        <module name="recovery-agendaMultifuncion-plugin" />
+        <module name="recovery-api-plugin" />
+        <module name="recovery-arquetipos-plugin" />
+        <module name="recovery-ayuda-plugin" />
+        <module name="recovery-bi-plugin" />
+        <module name="recovery-bpmframework-plugin" />
+        <module name="recovery-burofax-plugin" />
+        <module name="recovery-busquedaProcedimientos-plugin" />
+        <module name="recovery-busquedaTareas-plugin" />
+        <module name="recovery-calendario-plugin" />
+        <module name="recovery-cambiosMasivosAsunto-plugin" />
+        <module name="recovery-comites-plugin" />
+        <module name="recovery-config-plugin" />
+        <module name="recovery-controlcalidad-plugin" />
+        <module name="recovery-coreextension-plugin" />
+        <module name="recovery-diccionarios-plugin" />
+        <module name="recovery-domain" />
+        <module name="recovery-editor-plugin" />
+        <module name="recovery-expediente-plugin" />
+        <module name="recovery-geninformes-plugin" />
+        <module name="recovery-gestordocumental-plugin" />
+        <module name="recovery-gestordocumentalREM-plugin" />
+        <module name="recovery-instruccionesExterna-plugin" />
+        <module name="recovery-itinerarios-plugin" />
+        <module name="recovery-liquidaciones-plugin" />
+        <module name="recovery-liquidacionesWeb-plugin" />
+        <module name="recovery-masivo-common" />
+        <module name="recovery-masivo-plugin" />
+        <module name="recovery-mejoras-plugin" />
+        <module name="recovery-nuevoModeloBienes-plugin" />
+        <module name="recovery-nuevoModeloBienesCommon-plugin" />
+        <module name="recovery-panelcontrol-plugin" />
+        <module name="recovery-plazasJuzgados-plugin" />
+        <module name="recovery-plazosExterna-plugin" />
+        <module name="recovery-precontencioso-plugin" />
+        <module name="recovery-procedimientos-bpm" />
+        <module name="recovery-procedimientos-plugin" />
+        <module name="recovery-procuradores-common" />
+        <module name="recovery-procuradores-plugin" />
+        <module name="recovery-recobro-bpm" />
+        <module name="recovery-recobroBatch-plugin" />
+        <module name="recovery-recobroCommon-plugin" />
+        <module name="recovery-recobroConfig-plugin" />
+        <module name="recovery-recobroWeb-plugin" />
+        <module name="recovery-sidhi-api" />
+        <module name="recovery-sidhiweb-plugin" />
+        <module name="recovery-webservice" />
+        <module name="rem-web" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="batch-monitor" target="1.6" />
+      <module name="batch-shell" target="1.6" />
+      <module name="devon-batch" target="1.6" />
+      <module name="devon-birt" target="1.6" />
+      <module name="devon-bpm" target="1.6" />
+      <module name="devon-core" target="1.6" />
+      <module name="devon-hibernate" target="1.6" />
+      <module name="devon-parent" target="1.5" />
+      <module name="devon-web" target="1.6" />
+      <module name="devon-webflow" target="1.6" />
+      <module name="paradise-framework" target="1.6" />
+      <module name="pfs-commons-java" target="1.6" />
+      <module name="pfs-testfwk" target="1.6" />
+      <module name="plugins" target="1.6" />
+      <module name="proyecto-bankia-online" target="1.6" />
+      <module name="proyecto-rem-online" target="1.6" />
+      <module name="rec-batch" target="1.6" />
+      <module name="rec-common" target="1.6" />
+      <module name="rec-encrypt" target="1.6" />
+      <module name="rec-web" target="1.6" />
+      <module name="recovery" target="1.5" />
+      <module name="recovery-agendaMultifuncion-plugin" target="1.6" />
+      <module name="recovery-api-plugin" target="1.6" />
+      <module name="recovery-arquetipos-plugin" target="1.6" />
+      <module name="recovery-ayuda-plugin" target="1.6" />
+      <module name="recovery-bi-plugin" target="1.6" />
+      <module name="recovery-bpmframework-plugin" target="1.6" />
+      <module name="recovery-burofax-plugin" target="1.6" />
+      <module name="recovery-busquedaProcedimientos-plugin" target="1.6" />
+      <module name="recovery-busquedaTareas-plugin" target="1.6" />
+      <module name="recovery-calendario-plugin" target="1.6" />
+      <module name="recovery-cambiosMasivosAsunto-plugin" target="1.6" />
+      <module name="recovery-comites-plugin" target="1.6" />
+      <module name="recovery-config-plugin" target="1.6" />
+      <module name="recovery-controlcalidad-plugin" target="1.6" />
+      <module name="recovery-coreextension-plugin" target="1.6" />
+      <module name="recovery-diccionarios-plugin" target="1.6" />
+      <module name="recovery-domain" target="1.6" />
+      <module name="recovery-editor-plugin" target="1.6" />
+      <module name="recovery-expediente-plugin" target="1.6" />
+      <module name="recovery-geninformes-plugin" target="1.6" />
+      <module name="recovery-gestordocumental-plugin" target="1.6" />
+      <module name="recovery-gestordocumentalREM-plugin" target="1.6" />
+      <module name="recovery-instruccionesExterna-plugin" target="1.6" />
+      <module name="recovery-integracionuvem-plugin" target="1.6" />
+      <module name="recovery-iplus-plugin" target="1.6" />
+      <module name="recovery-itinerarios-plugin" target="1.6" />
+      <module name="recovery-liquidaciones-plugin" target="1.6" />
+      <module name="recovery-liquidacionesWeb-plugin" target="1.6" />
+      <module name="recovery-masivo-common" target="1.6" />
+      <module name="recovery-masivo-plugin" target="1.6" />
+      <module name="recovery-mejoras-plugin" target="1.6" />
+      <module name="recovery-nuevoModeloBienes-plugin" target="1.6" />
+      <module name="recovery-nuevoModeloBienesCommon-plugin" target="1.6" />
+      <module name="recovery-panelcontrol-plugin" target="1.6" />
+      <module name="recovery-plazasJuzgados-plugin" target="1.6" />
+      <module name="recovery-plazosExterna-plugin" target="1.6" />
+      <module name="recovery-precontencioso-plugin" target="1.6" />
+      <module name="recovery-procedimientos-bpm" target="1.6" />
+      <module name="recovery-procedimientos-plugin" target="1.6" />
+      <module name="recovery-procuradores-common" target="1.6" />
+      <module name="recovery-procuradores-plugin" target="1.6" />
+      <module name="recovery-recobro-bpm" target="1.6" />
+      <module name="recovery-recobroBatch-plugin" target="1.6" />
+      <module name="recovery-recobroCommon-plugin" target="1.6" />
+      <module name="recovery-recobroConfig-plugin" target="1.6" />
+      <module name="recovery-recobroWeb-plugin" target="1.6" />
+      <module name="recovery-sidhi-api" target="1.6" />
+      <module name="recovery-sidhiweb-plugin" target="1.6" />
+      <module name="recovery-webservice" target="1.6" />
+      <module name="rem-web" target="1.6" />
+    </bytecodeTargetLevel>
+  </component>
+</project>

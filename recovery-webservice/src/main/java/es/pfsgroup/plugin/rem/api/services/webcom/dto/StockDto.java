@@ -151,6 +151,12 @@ public class StockDto implements WebcomRESTDto{
 
 	private LongDataType activoProveedorTecnico;
 	
+	//HREOS-4920
+	//@MappedColumn("COD_ESTADO_FIS_ACTIVO")
+	private StringDataType codEstadoFisico;
+	
+	private StringDataType codTipoUsoDestino;
+	
 	public LongDataType getIdActivoHaya() {
 		return idActivoHaya;
 	}
@@ -715,5 +721,17 @@ public class StockDto implements WebcomRESTDto{
 	}
 	public void setActivoProveedorTecnico(LongDataType activoProveedorTecnico) {
 		this.activoProveedorTecnico = activoProveedorTecnico;
-	}	
+	}
+	public StringDataType getCodEstadoFisico() {
+		return codEstadoFisico;
+	}
+	public void setCodEstadoFisico(StringDataType codEstadoFisico) {
+		this.codEstadoFisico = codEstadoFisico;
+	}
+	public StringDataType getCodTipoUsoDestino() {
+		return codTipoUsoDestino;
+	}
+	public void setCodTipoUsoDestino(StringDataType codTipoUsoDestino) {
+		this.codTipoUsoDestino = codTipoUsoDestino;
+	}
 }

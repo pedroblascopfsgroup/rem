@@ -47,10 +47,86 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 								layout : {
 									type : 'table',
 									columns : 2
+						        	},
+						        	bind: {
+								    	disabled: '{!esOfertaVenta}'
+						            },
+									defaultType: 'textfieldbase',
+									title: HreRem.i18n("fieldlabel.reserva"),
+									items :
+										[
+										
+											{ 
+									        	xtype: 'comboboxfieldbase',
+									        	fieldLabel: HreRem.i18n('fieldlabel.reserva.necesaria'),
+									        	bind: {
+								            		store: '{comboSiNoRem}',
+								            		value: '{condiciones.solicitaReserva}',
+								            		readOnly: '{esCarteraGaleonOZeus}'
+								            	},
+								            	listeners: {
+								            		change: 'onHaCambiadoSolicitaReserva'
+								            	},
+								            	displayField: 'descripcion',
+					    						valueField: 'codigo',
+					    						colspan: 2
+									        },
+											{ 
+												xtype: 'comboboxfieldbase',
+							                	fieldLabel:  HreRem.i18n('fieldlabel.calculo.reserva'),
+							                	reference: 'tipoCalculo',
+									        	bind: {
+								            		store: '{comboTipoCalculo}',
+								            		value: '{condiciones.tipoCalculo}',
+								            		readOnly: '{esCarteraGaleonOZeus}'
+								            	},
+					            				displayField: 'descripcion',
+		    									valueField: 'codigo',
+		    									listeners: {
+			                						change:  'onHaCambiadoTipoCalculo'
+			            						},
+			            						editable: true
+									        },
+											{ 
+												xtype: 'numberfieldbase',
+												reference: 'porcentajeReserva',
+										 		symbol: HreRem.i18n("symbol.porcentaje"),
+												fieldLabel: HreRem.i18n('fieldlabel.portencaje.reserva'),
+				                				bind: {
+				                					value: '{condiciones.porcentajeReserva}',
+				                					readOnly: '{esCarteraGaleonOZeus}'
+				                				},
+				                				reference: 'porcentajeReserva',
+				                				listeners: {
+							                		change:  'onHaCambiadoPorcentajeReserva'
+							            		},
+				                				disabled: true
+							                },
+							                { 
+							                	xtype: 'numberfieldbase',
+							                	reference: 'plazoParaFirmar',
+										 		symbol: HreRem.i18n("symbol.dias"),
+							                	fieldLabel: HreRem.i18n('fieldlabel.plazo.firmar'),
+							                	bind: {
+							                		value: '{condiciones.plazoFirmaReserva}'
+							                	},
+							                	reference: 'plazoFirmaReserva',
+							                	disabled: true
+							                },
+							                { 
+							                	xtype: 'numberfieldbase',
+										 		symbol: HreRem.i18n("symbol.euro"),
+										 		fieldLabel: HreRem.i18n('fieldlabel.importe.reserva'),
+										 		bind: {
+										 			value: '{condiciones.importeReserva}'
+										 		},
+										 		reference: 'importeReserva',
+										 		disabled: true
+											}
+				
+										]
 								},
-								bind : {
-									disabled : '{!esOfertaVenta}'
-								},
+								{
 								defaultType : 'textfieldbase',
 								title : HreRem.i18n("fieldlabel.reserva"),
 								items : [

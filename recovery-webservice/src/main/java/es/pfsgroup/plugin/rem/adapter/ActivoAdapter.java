@@ -202,7 +202,6 @@ import es.pfsgroup.plugin.rem.service.TabActivoSitPosesoriaLlaves;
 import es.pfsgroup.plugin.rem.trabajo.dao.TrabajoDao;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoActivosTrabajoFilter;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
-import net.sf.json.JSONException;
 
 @Service
 public class ActivoAdapter {
@@ -1870,8 +1869,7 @@ public class ActivoAdapter {
 				
 				Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 				Boolean isProveedor = genericAdapter.isProveedor(usuarioLogado);
-				if (!ActivoTramiteApi.CODIGO_TRAMITE_ACTUACION_TECNICA.equals(tramite.getTipoTramite().getCodigo())
-						&& !ActivoTramiteApi.CODIGO_TRAMITE_OBTENCION_DOC.equals(tramite.getTipoTramite().getCodigo()) || isProveedor) {
+				if (!ActivoTramiteApi.CODIGO_TRAMITE_ACTUACION_TECNICA.equals(tramite.getTipoTramite().getCodigo()) || isProveedor) {
 					beanUtilNotNull.copyProperty(dtoTramite, "ocultarBotonCierre", true);
 				}
 				if (!ActivoTramiteApi.CODIGO_TRAMITE_COMERCIAL_VENTA.equals(tramite.getTipoTramite().getCodigo())) {
@@ -2713,6 +2711,16 @@ public class ActivoAdapter {
 	public boolean actualizarEstadoPublicacionActivo(Long idActivo) {
 		return activoEstadoPublicacionApi.actualizarEstadoPublicacionDelActivoOrAgrupacionRestringidaSiPertenece(idActivo);
 	}
+	
+	@Transactional(readOnly = false)
+	public boolean actualizarEstadoPublicacionActivo(Long idActivo, Boolean asincrono) {
+		if(asincrono){
+			return false;
+		}else{
+			return activoEstadoPublicacionApi.actualizarEstadoPublicacionDelActivoOrAgrupacionRestringidaSiPertenece(idActivo);
+		}
+		
+	}
 
 	@Transactional(readOnly = false)
 	public boolean guardarCondicionantesDisponibilidad(Long idActivo, DtoCondicionantesDisponibilidad dto) {
@@ -3049,8 +3057,10 @@ public class ActivoAdapter {
 		EXTDDTipoGestor tipoGestor = genericDao.get(EXTDDTipoGestor.class, f1);
 		Filter f2 = genericDao.createFilter(FilterType.EQUALS, "activo", activo); 
 		Filter f3 = genericDao.createFilter(FilterType.EQUALS, "tipoGestor",tipoGestor);
+
 		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
 		GestorActivo actGest = genericDao.get(GestorActivo.class, f2,f3, filtroBorrado);
+		
 
 		if(!Checks.esNulo(actGest) && !Checks.esNulo(activo) && !Checks.esNulo(tipoGestor)){
 			GestorEntidadDto dtoGestor = new GestorEntidadDto();
@@ -3409,21 +3419,6 @@ public class ActivoAdapter {
 
 	private String getEstadoNuevaOferta(Activo activo) {
 		String codigoEstado = DDEstadoOferta.CODIGO_PENDIENTE;
-		List<ActivoOferta> ofertasActivo=activo.getOfertas();
-		// Comprobar si el activo se encuentra en una agrupación de tipo 'lote
-		// comercial'.
-		// Y que tenga oferta aceptada de expediente con estasdo (aprobado,
-		// reservado, en devolución)
-		/*Boolean ofertaAceptada = false;
-		for(ActivoOferta ofer : ofertasActivo) {
-			Long ofId = ofer.getOferta();
-			Oferta of = ofertaApi.getOfertaById(ofId);
-			DDEstadoOferta estOferta= of.getEstadoOferta();
-			if(DDEstadoOferta.CODIGO_ACEPTADA.equals(estOferta.getCodigo())){
-				ofertaAceptada = true;
-			}
-		}*/
-		
 		if (activoAgrupacionActivoDao.activoEnAgrupacionLoteComercial(activo.getId())
 				|| ofertaApi.isActivoConOfertaYExpedienteBlocked(activo)) { 
 			codigoEstado = DDEstadoOferta.CODIGO_CONGELADA;
@@ -3701,7 +3696,7 @@ public class ActivoAdapter {
 					activoApi.saveOrUpdate(activo);
 
 					if(!Checks.esNulo(activo.getTipoPublicacion())) {
-						if(!DDTipoPublicacion.CODIGO_FORZADA.equals(activo.getTipoPublicacion().getCodigo())) {
+						if(DDTipoPublicacion.CODIGO_FORZADA.equals(activo.getTipoPublicacion().getCodigo())) {
 							aprobado = publicarActivoConHistorico(success, username, activo);
 							if(aprobado) {
 								aprobado = updateTramitesActivo(activo.getId());

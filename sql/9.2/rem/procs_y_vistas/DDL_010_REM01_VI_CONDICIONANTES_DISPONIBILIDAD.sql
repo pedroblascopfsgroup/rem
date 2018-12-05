@@ -68,6 +68,7 @@ BEGIN
                                                           vandalizado,
                                                           otro,
                                                           sin_informe_aprobado,
+														  sin_informe_aprobado_REM,
                                                           revision,
                                                           procedimiento_judicial,
                                                           con_cargas,
@@ -80,7 +81,7 @@ BEGIN
                                                          )
 AS
    SELECT act_id, sin_toma_posesion_inicial, ocupado_contitulo, pendiente_inscripcion, proindiviso, tapiado, obranueva_sindeclarar, obranueva_enconstruccion, divhorizontal_noinscrita, ruina, vandalizado, otro,
-          sin_informe_aprobado, revision, procedimiento_judicial, con_cargas, sin_acceso, ocupado_sintitulo, estado_portal_externo, DECODE (est_disp_com_codigo, ''01'', 1, 0) AS es_condicionado,
+          sin_informe_aprobado, sin_informe_aprobado_REM, revision, procedimiento_judicial, con_cargas, sin_acceso, ocupado_sintitulo, estado_portal_externo, DECODE (est_disp_com_codigo, ''01'', 1, 0) AS es_condicionado,
           est_disp_com_codigo, borrado
 
      FROM (SELECT act.act_id, 
@@ -106,6 +107,7 @@ AS
                     THEN DECODE (vei.dd_aic_codigo, ''02'', 0, 1)
                     ELSE 0	
 				END AS sin_informe_aprobado,
+				DECODE (vei.dd_aic_codigo, ''02'', 0, 1) AS sin_informe_aprobado_REM,
                 0 AS revision,                                                                                      --NO EXISTE EN REM
 				0 AS procedimiento_judicial,                                                          --NO EXISTE EN REM
 				NVL2 (vcg.con_cargas, vcg.con_cargas, 0) AS con_cargas,

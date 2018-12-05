@@ -136,7 +136,6 @@ Ext.define('HreRem.view.agrupaciones.detalle.CabeceraAgrupacion', {
 											layout: {
 											    type: 'table',
 										        columns: 2,
-										        trAttrs: {width: '100%', pading: 0},
 										        tdAttrs: {width: '50%',  pading: 0},
 										        tableAttrs: {
 										            style: {

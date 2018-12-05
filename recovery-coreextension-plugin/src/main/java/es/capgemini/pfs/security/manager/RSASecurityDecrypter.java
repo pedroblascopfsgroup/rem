@@ -2,6 +2,8 @@ package es.capgemini.pfs.security.manager;
 
 import java.io.IOException;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -12,6 +14,8 @@ public class RSASecurityDecrypter {
 
 	@Autowired
 	private RSASecurityManager securityManager;
+	
+	private final Log logger = LogFactory.getLog(getClass());
 	
 	public byte[] encriptar(String cadena){
 		
@@ -41,11 +45,11 @@ public class RSASecurityDecrypter {
 				timestamp = vector[1];
 			}
 		} catch (IOException e1) {
-			e1.printStackTrace();
+			logger.error(e1.getMessage());
 			ok = false;
 		}
 		catch(Exception e){
-			e.printStackTrace();
+			logger.error(e.getMessage());
 			ok = false;
 		}
 		
@@ -71,7 +75,7 @@ public class RSASecurityDecrypter {
 				System.out.println("Timestamp "+timestamp);
 			}
 		}catch(Exception e){
-			e.printStackTrace();
+			logger.error(e.getMessage());
 			ok = false;
 		}
 		

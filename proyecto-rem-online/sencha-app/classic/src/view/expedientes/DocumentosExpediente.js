@@ -135,6 +135,7 @@ Ext.define('HreRem.view.expedientes.DocumentosExpediente', {
 		Ext.Array.each(me.query('grid'), function(grid) {
   			grid.getStore().load();
   		});
+		me.lookupController().cargarTabData(me);
     }
 
 });

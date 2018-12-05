@@ -1129,16 +1129,16 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 		var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
 		fechaIngreso.setMaxValue($AC.getCurrentDate());
 
-		if(!Ext.isEmpty(fechaIngreso.getValue())) {
+		if(!Ext.isEmpty(fechaIngreso.getValue()) && CONST.CARTERA['CAJAMAR'] != codigoCartera) {
 			me.deshabilitarCampo(me.down('[name=checkboxVentaDirecta]'));
 			me.bloquearCampo(me.down('[name=fechaIngreso]'));
-		} else {
+		} else if(Ext.isEmpty(fechaIngreso.getValue()) && CONST.CARTERA['CAJAMAR'] != codigoCartera) {
 			me.habilitarCampo(me.down('[name=checkboxVentaDirecta]'));
 			me.deshabilitarCampo(me.down('[name=fechaIngreso]'));
 		}
 
 		me.down('[name=checkboxVentaDirecta]').addListener('change', function(checkbox, newValue, oldValue, eOpts) {
-			if(CONST.CARTERA['LIBERBANK'] != codigoCartera){
+			if(CONST.CARTERA['LIBERBANK'] != codigoCartera || CONST.CARTERA['CAJAMAR'] != codigoCartera){
 				if (newValue) {
 	            	me.habilitarCampo(me.down('[name=fechaIngreso]'));
 	            	me.down('[name=fechaIngreso]').allowBlank = false;
@@ -1292,6 +1292,7 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 
         me.deshabilitarCampo(me.down('[name=fechaFirma]'));
         me.deshabilitarCampo(me.down('[name=motivoNoFirma]'));
+        me.deshabilitarCampo(me.down('[name=obsAsisPBC]'));
         me.down('[name=tieneReserva]').hide();
 
         me.down('[name=comboFirma]').addListener('change', function(combo) {
@@ -1321,6 +1322,14 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
                 me.down('[name=numProtocolo]').reset();
                 me.down('[name=comboCondiciones]').reset();
                 me.down('[name=condiciones]').reset();
+            }
+        });
+        
+        me.down('[name=asistenciaPBC]').addListener('change', function(combo) {
+            if (combo.value == '01') {
+                me.deshabilitarCampo(me.down('[name=obsAsisPBC]'));
+            } else {
+            	me.habilitarCampo(me.down('[name=obsAsisPBC]'));
             }
         });
     },
@@ -1593,13 +1602,13 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
     
     T015_VerificarScoringValidacion: function(){
     	var me = this;
-    	
     	me.campoObligatorio(me.down('[name=resultadoScoring]'));
     	me.deshabilitarCampo(me.down('[name=nMeses]'));
     	me.deshabilitarCampo(me.down('[name=importeDeposito]'));
     	me.deshabilitarCampo(me.down('[name=nombreFS]'));
     	me.deshabilitarCampo(me.down('[name=documento]'));
     	
+    	me.down('[name=tipoImpuesto]').noObligatorio=true;
     	
     	me.down('[name=resultadoScoring]').addListener('change', function() {
     		var resultadoScoring = me.down('[name=resultadoScoring]');
@@ -1621,7 +1630,18 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
             	me.deshabilitarCampo(me.down('[name=motivoRechazo]'));
             	me.borrarCampo(me.down('[name=motivoRechazo]'));
             	me.campoNoObligatorio(me.down('[name=motivoRechazo]'));
-
+            	
+            	//
+            	me.habilitarCampo(me.down('[name=nExpediente]'));
+            	me.habilitarCampo(me.down('[name=deposito]'));
+            	me.habilitarCampo(me.down('[name=porcentajeImpuesto]'));
+            	me.habilitarCampo(me.down('[name=tipoImpuesto]'));
+            	me.habilitarCampo(me.down('[name=fiadorSolidario]'));
+            	me.down('[name=deposito]').noObligatorio=true;
+            	me.down('[name=fiadorSolidario]').noObligatorio=true;
+            	me.down('[name=porcentajeImpuesto]').noObligatorio=true;
+            	me.down('[name=tipoImpuesto]').noObligatorio=true;
+            	
     			
     		}else{
     			me.down('[name=nMesesFianza]').noObligatorio=true;
@@ -1642,7 +1662,13 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
             	me.campoNoObligatorio(me.down('[name=nExpediente]'));
             	
     			me.campoObligatorio(me.down('[name=motivoRechazo]'));
-
+    			
+    			//
+    			me.deshabilitarCampo(me.down('[name=nExpediente]'));
+            	me.deshabilitarCampo(me.down('[name=deposito]'));
+            	me.deshabilitarCampo(me.down('[name=fiadorSolidario]'));
+            	me.deshabilitarCampo(me.down('[name=tipoImpuesto]'));
+            	me.deshabilitarCampo(me.down('[name=porcentajeImpuesto]'));
     		}
         });
     	
@@ -1726,7 +1752,6 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
     
     T015_VerificarSeguroRentasValidacion: function(){
     	var me = this;
-    	
     	me.campoObligatorio(me.down('[name=resultadoRentas]'));
     	me.campoObligatorio(me.down('[name=aseguradora]'));
     	
@@ -1736,6 +1761,8 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
     	me.deshabilitarCampo(me.down('[name=documento]'));
     	me.deshabilitarCampo(me.down('[name=nMesesFianza]'));
     	me.deshabilitarCampo(me.down('[name=importeFianza]'));
+    	
+    	me.down('[name=tipoImpuesto]').noObligatorio=true;
     	
     	me.down('[name=resultadoRentas]').addListener('change', function() {
     		var resultadoRentas = me.down('[name=resultadoRentas]');
@@ -1750,6 +1777,18 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
     			
     			me.campoObligatorio(me.down('[name=nMesesFianza]'));
     			me.campoObligatorio(me.down('[name=importeFianza]'));
+    			
+    			//
+    			me.habilitarCampo(me.down('[name=tipoImpuesto]'));
+    			me.habilitarCampo(me.down('[name=porcentajeImpuesto]'));
+    			me.habilitarCampo(me.down('[name=tipoImpuesto]'));
+    			me.down('[name=tipoImpuesto]').noObligatorio=true;
+            	me.habilitarCampo(me.down('[name=porcentajeImpuesto]'));
+            	me.habilitarCampo(me.down('[name=aseguradora]'));
+            	me.down('[name=aseguradora]').noObligatorio=false;
+            	me.campoObligatorio(me.down('[name=aseguradora]'));
+            	me.habilitarCampo(me.down('[name=envioEmail]'));
+            	me.habilitarCampo(me.down('[name=fiadorSolidario]'));
     		}else{
     			me.down('[name=nMesesFianza]').noObligatorio=true;
     			me.down('[name=importeFianza]').noObligatorio=true;
@@ -1762,6 +1801,20 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
     			
             	me.campoNoObligatorio(me.down('[name=nMesesFianza]'));
             	me.campoNoObligatorio(me.down('[name=importeFianza]'));
+            	//
+            	me.deshabilitarCampo(me.down('[name=deposito]'));
+            	me.deshabilitarCampo(me.down('[name=fiadorSolidario]'));
+            	me.deshabilitarCampo(me.down('[name=tipoImpuesto]'));
+            	me.deshabilitarCampo(me.down('[name=porcentajeImpuesto]'));
+            	me.deshabilitarCampo(me.down('[name=aseguradora]'));
+            	me.deshabilitarCampo(me.down('[name=envioEmail]'));
+            	
+            	me.down('[name=deposito]').noObligatorio=true;
+            	me.down('[name=fiadorSolidario]').noObligatorio=true;
+            	me.down('[name=tipoImpuesto]').noObligatorio=true;
+            	me.down('[name=porcentajeImpuesto]').noObligatorio=true;
+            	me.down('[name=aseguradora]').noObligatorio=true;
+            	me.down('[name=envioEmail]').noObligatorio=true;
     		}
         });
     	

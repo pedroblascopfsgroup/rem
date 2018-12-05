@@ -73,9 +73,7 @@ else
 	
 	    sed -i 's/ //g' $ficheroSem
 	    mv $ficheroZip $DIR_DESTINO
-	if [ $1 -eq 1 ]; then
 	    mv $ficheroSem $DIR_DESTINO
-	fi
    done
    echo "$(basename $0) Ficheros encontrados"
    exit 0

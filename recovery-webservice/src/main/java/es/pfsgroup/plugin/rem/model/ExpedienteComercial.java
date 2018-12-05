@@ -246,8 +246,15 @@ public class ExpedienteComercial implements Serializable, Auditable {
     
     @Column(name="ECO_FECHA_VALIDACION")
     private Date fechaValidacion;
+
+
+    @Column(name="ECO_ASISTENCIA_PBC")
+    private Boolean asistenciaPbc;
     
-	@Version   
+    @Column(name="ECO_ASISTENCIA_PBC_DESCRIPCION")
+    private String obsAsisPbc;
+
+    @Version   
 	private Long version;
 
 	@Embedded
@@ -739,5 +746,20 @@ public class ExpedienteComercial implements Serializable, Auditable {
 		this.fechaValidacion = fechaValidacion;
 	}
 	
-   
+
+	public Boolean getAsistenciaPbc() {
+		return asistenciaPbc;
+	}
+
+	public void setAsistenciaPbc(Boolean asistenciaPbc) {
+		this.asistenciaPbc = asistenciaPbc;
+	}
+
+	public String getObsAsisPbc() {
+		return obsAsisPbc;
+	}
+
+	public void setObsAsisPbc(String obsAsisPbc) {
+		this.obsAsisPbc = obsAsisPbc;
+	}
 }

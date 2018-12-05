@@ -124,10 +124,10 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 		DocumentosExpedienteDto docExpDto = recoveryToGestorDocAssembler.getDocumentosExpedienteDto(userLogin.getUsername());
 		RespuestaDocumentosExpedientes respuesta = gestorDocumentalApi.documentosExpediente(cabecera, docExpDto);
 
-		if (!Checks.esNulo(respuesta.getDocumentos())) {
+	  /*if (!Checks.esNulo(respuesta.getDocumentos())) {
 			ConsistenciaAdjuntosRunnableUtils caru = new ConsistenciaAdjuntosRunnableUtils(respuesta.getDocumentos(), GestorDocumentalConstants.Contenedor.Activo);
 			launchNewTasker(caru);
-		}
+		}*/
 
 		List<DtoAdjunto> list = GestorDocToRecoveryAssembler.getListDtoAdjunto(respuesta);
 
@@ -174,10 +174,10 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 		DocumentosExpedienteDto docExpDto = recoveryToGestorDocAssembler.getDocumentosExpedienteDto(userLogin.getUsername());
 		RespuestaDocumentosExpedientes respuesta = gestorDocumentalApi.documentosExpediente(cabecera, docExpDto);
 
-		if (!Checks.esNulo(respuesta.getDocumentos())) {
+		/*if (!Checks.esNulo(respuesta.getDocumentos())) {
 			ConsistenciaAdjuntosRunnableUtils caru = new ConsistenciaAdjuntosRunnableUtils(respuesta.getDocumentos(), GestorDocumentalConstants.Contenedor.Gasto);
 			launchNewTasker(caru);
-		}
+		}*/
 
 		list = GestorDocToRecoveryAssembler.getListDtoAdjunto(respuesta);
 
@@ -306,10 +306,10 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 		DocumentosExpedienteDto docExpDto = recoveryToGestorDocAssembler.getDocumentosExpedienteDto(userLogin.getUsername());
 		RespuestaDocumentosExpedientes respuesta = gestorDocumentalApi.documentosExpediente(cabecera, docExpDto);
 
-		if (!Checks.esNulo(respuesta.getDocumentos())) {
+		/*if (!Checks.esNulo(respuesta.getDocumentos())) {
 			ConsistenciaAdjuntosRunnableUtils caru = new ConsistenciaAdjuntosRunnableUtils(respuesta.getDocumentos(), GestorDocumentalConstants.Contenedor.ExpedienteComercial);
 			launchNewTasker(caru);
-		}
+		}*/
 
 		list = GestorDocToRecoveryAssembler.getListDtoAdjunto(respuesta);
 		for (DtoAdjunto adjunto : list) {

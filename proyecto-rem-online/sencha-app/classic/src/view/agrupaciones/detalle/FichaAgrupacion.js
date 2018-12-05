@@ -297,8 +297,6 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
 								disabled: '{!agrupacionficha.existeFechaBaja}'
 								
 							}
-<<<<<<< HEAD
-=======
 						},
 						{
 		                    xtype		: 'comboboxfieldbase',                    
@@ -340,7 +338,6 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
 								store: '{comboTipoDestinoComercialCreaFiltered}',
 								value: '{agrupacionficha.tipoComercializacionCodigo}'
 							}
->>>>>>> bau_rem
 						}
 
 				]

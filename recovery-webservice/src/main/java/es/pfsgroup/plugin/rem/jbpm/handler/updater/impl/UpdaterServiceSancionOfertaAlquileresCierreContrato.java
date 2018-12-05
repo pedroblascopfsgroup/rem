@@ -111,6 +111,7 @@ public class UpdaterServiceSancionOfertaAlquileresCierreContrato implements Upda
 			
 			if(N_CONTRATO_PRINEX.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 				oferta.setNumContratoPrinex(valor.getValor());
+				expedienteComercial.setNumContratoAlquiler(valor.getValor());
 			}
 		}
 		

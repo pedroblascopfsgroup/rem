@@ -38,7 +38,7 @@ V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.TFI_TAREAS_FORM_ITEMS
 			S_TFI_TAREAS_FORM_ITEMS.NEXTVAL,
 			TAP.TAP_ID, 
 			4, 
-			''emptyField'', 
+			''label'', 
 			''hueco'', 
 			'''', 
 			0, 

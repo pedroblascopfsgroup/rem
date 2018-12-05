@@ -133,8 +133,7 @@ Ext.define('HreRem.view.expedientes.SeguroRentasExpediente', {
 												config.url=$AC.getWebPath()+"activo/bajarAdjuntoActivo."+$AC.getUrlPattern();
 												config.params = {};
 												config.params.id=record.get('identificador');
-												config.params.idActivo=record.get("idActivo");
-												config.params.nombreDocumento=record.get("docSco");
+												config.params.idActivo=record.get("idActivo"); 
 												
 												config = config || {};
 		    
@@ -169,11 +168,6 @@ Ext.define('HreRem.view.expedientes.SeguroRentasExpediente', {
                                 {
                                     text: HreRem.i18n('fieldlabel.proveedor.resultado'),
                                     dataIndex: 'proveedor',
-                                    flex: 1
-                                },
-                                {
-                                    text: HreRem.i18n('header.documento'),
-                                    dataIndex: 'docSco',
                                     flex: 1
                                 },
                                 {

@@ -422,23 +422,19 @@ public class AgrupacionAdapter {
 								agrupacion.getActivoPrincipal().getNumActivo());
 					}
 
-					Activo activo = agrupacion.getActivoPrincipal();
-					if(!Checks.esNulo(activo)) {
-						dtoAgrupacion.setTipoComercializacionCodigo(activo.getActivoPublicacion().getTipoComercializacion().getCodigo());
-					}
-					List<ActivoAgrupacionActivo> listaActivos = agrupacion.getActivos();
-
-					//Cálculo color de los indicadores
-					if(!Checks.estaVacio(listaActivos)){
+					Activo activoPrincipal = agrupacion.getActivoPrincipal();
+					if(!Checks.esNulo(activoPrincipal)) {
+						dtoAgrupacion.setTipoComercializacionCodigo(activoPrincipal.getActivoPublicacion().getTipoComercializacion().getCodigo());
+						
+						//Cálculo color de los indicadores para activo principal.
 						if(dtoAgrupacion.getTipoComercializacionCodigo().equals(DDTipoComercializacion.CODIGO_VENTA)){
-							dtoAgrupacion.setEstadoVenta(activoEstadoPublicacionApi.getEstadoIndicadorPublicacionAgrupacionVenta(listaActivos));
+							dtoAgrupacion.setEstadoVenta(activoEstadoPublicacionApi.getEstadoIndicadorPublicacionAgrupacionVenta(activoPrincipal));
 						}else if(dtoAgrupacion.getTipoComercializacionCodigo().equals(DDTipoComercializacion.CODIGO_SOLO_ALQUILER)){
-							dtoAgrupacion.setEstadoAlquiler(activoEstadoPublicacionApi.getEstadoIndicadorPublicacionAgrupacionAlquiler(listaActivos));
+							dtoAgrupacion.setEstadoAlquiler(activoEstadoPublicacionApi.getEstadoIndicadorPublicacionAgrupacionAlquiler(activoPrincipal));
 						}else if(dtoAgrupacion.getTipoComercializacionCodigo().equals(DDTipoComercializacion.CODIGO_ALQUILER_VENTA)){
-							dtoAgrupacion.setEstadoVenta(activoEstadoPublicacionApi.getEstadoIndicadorPublicacionAgrupacionVenta(listaActivos));
-							dtoAgrupacion.setEstadoAlquiler(activoEstadoPublicacionApi.getEstadoIndicadorPublicacionAgrupacionAlquiler(listaActivos));
+							dtoAgrupacion.setEstadoVenta(activoEstadoPublicacionApi.getEstadoIndicadorPublicacionAgrupacionVenta(activoPrincipal));
+							dtoAgrupacion.setEstadoAlquiler(activoEstadoPublicacionApi.getEstadoIndicadorPublicacionAgrupacionAlquiler(activoPrincipal));
 						}
-
 					}
 
 				// SI ES TIPO PROYECTO

@@ -73,6 +73,9 @@ public class VCondicionantesDisponibilidad  implements Serializable {
 
 	@Column(name = "SIN_INFORME_APROBADO")
 	private Boolean sinInformeAprobado;
+	
+	@Column(name = "SIN_INFORME_APROBADO_REM")
+	private Boolean sinInformeAprobadoREM;
 
 	@Column(name = "CON_CARGAS")
 	private Boolean conCargas;
@@ -210,6 +213,14 @@ public class VCondicionantesDisponibilidad  implements Serializable {
 
 	public void setSinInformeAprobado(Boolean sinInformeAprobado) {
 		this.sinInformeAprobado = sinInformeAprobado;
+	}
+	
+	public Boolean getSinInformeAprobadoREM() {
+		return sinInformeAprobadoREM;
+	}
+
+	public void setSinInformeAprobadoREM(Boolean sinInformeAprobadoREM) {
+		this.sinInformeAprobadoREM = sinInformeAprobadoREM;
 	}
 
 	public Boolean getConCargas() {

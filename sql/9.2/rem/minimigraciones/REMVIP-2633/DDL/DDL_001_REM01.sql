@@ -1,7 +1,7 @@
 --/*
 --#########################################
 --## AUTOR=Javier Pons
---## FECHA_CREACION=20181123
+--## FECHA_CREACION=20181126
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=2.0.20
 --## INCIDENCIA_LINK=REMVIP-2633

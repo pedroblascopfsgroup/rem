@@ -7,7 +7,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -52,7 +51,6 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.commons.utils.dao.abm.Order;
-import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDEstadoProceso;
 import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVRawSQLDao;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
@@ -219,7 +217,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoUsoDestino;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposArras;
-import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PRINCIPAL;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PROPIEDAD;
@@ -233,9 +230,8 @@ import es.pfsgroup.plugin.rem.rest.dto.FileResponse;
 import es.pfsgroup.plugin.rem.rest.dto.PortalesDto;
 import es.pfsgroup.plugin.rem.service.TabActivoService;
 import es.pfsgroup.plugin.rem.tareasactivo.TareaActivoManager;
-import es.pfsgroup.plugin.rem.thread.MaestroDePersonas;
-import es.pfsgroup.plugin.rem.thread.ReactivarActivosAgrupacion;
 import es.pfsgroup.plugin.rem.thread.ContenedorExpComercial;
+import es.pfsgroup.plugin.rem.thread.MaestroDePersonas;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 import es.pfsgroup.plugin.rem.utils.DiccionarioTargetClassMap;
 import es.pfsgroup.plugin.rem.visita.dao.VisitaDao;
@@ -253,7 +249,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	private static final String AVISO_MEDIADOR_NO_EXISTE = "activo.aviso.mediador.no.existe";
 	private static final String AVISO_MEDIADOR_BAJA = "activo.aviso.mediador.baja";
 	private static final String EMAIL_OCUPACIONES = "emailOcupaciones";
-	private static final String MOTIVO_NO_PUBLICADO_POR_ACTIVO_VENDIDO = "activo.motivo.vendido.no.publicar";
 	private static final String AVISO_MENSAJE_EXISTEN_OFERTAS_VENTA = "activo.motivo.oferta.existe.venta";
 	private static final String AVISO_MENSAJE_ACITVO_ALQUILADO_O_OCUPADO = "activo.motivo.oferta.alquilado.ocupado";
 	private static final String MAESTRO_ORIGEN_WCOM="WCOM";
@@ -365,10 +360,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 	@Autowired
 	private AgrupacionAdapter agrupacionAdapter;
-
-
-	@Autowired
-    private OfertaDao ofertaDao;
 
 	@Resource(name = "entityTransactionManager")
     private PlatformTransactionManager transactionManager;
@@ -735,25 +726,41 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		return resultado;
 	}
 
+		
+	@Transactional(readOnly = false)
 	private ExpedienteComercial crearExpedienteReserva(ExpedienteComercial expedienteComercial) {
 		// HREOS-2799
 		// Activos de Cajamar, debe tener en Reserva - tipo de Arras por
 		// defecto: Confirmatorias
 		Oferta oferta = expedienteComercial.getOferta();
-
-		if (!Checks.esNulo(oferta.getActivoPrincipal()) && !Checks.esNulo(oferta.getActivoPrincipal().getCartera())
-				&& DDCartera.CODIGO_CARTERA_CAJAMAR.equals(oferta.getActivoPrincipal().getCartera().getCodigo())) {
-
-			DDTiposArras tipoArrasConfirmatorias = (DDTiposArras) utilDiccionarioApi
-					.dameValorDiccionarioByCod(DDTiposArras.class, DDTiposArras.CONFIRMATORIAS);
-			if (Checks.esNulo(expedienteComercial.getReserva())) {
-				Reserva reservaExpediente = expedienteComercialApi.createReservaExpediente(expedienteComercial);
-				reservaExpediente.setTipoArras(tipoArrasConfirmatorias);
-
-				genericDao.save(Reserva.class, reservaExpediente);
-
-			} else {
-				expedienteComercial.getReserva().setTipoArras(tipoArrasConfirmatorias);
+		DDTiposArras tipoArras = null;
+		if(!Checks.esNulo(oferta.getActivoPrincipal()) && !Checks.esNulo(oferta.getActivoPrincipal().getCartera())){
+			if (!Checks.esNulo(oferta.getActivoPrincipal()) && !Checks.esNulo(oferta.getActivoPrincipal().getCartera())
+					&& DDCartera.CODIGO_CARTERA_CAJAMAR.equals(oferta.getActivoPrincipal().getCartera().getCodigo())) {
+				
+				if(DDCartera.CODIGO_CARTERA_CAJAMAR.equals(oferta.getActivoPrincipal().getCartera().getCodigo())){
+					tipoArras = (DDTiposArras) utilDiccionarioApi
+							.dameValorDiccionarioByCod(DDTiposArras.class, DDTiposArras.CONFIRMATORIAS);
+				}
+				if(DDCartera.CODIGO_CARTERA_CAJAMAR.equals(oferta.getActivoPrincipal().getCartera().getCodigo())) {
+					tipoArras = (DDTiposArras) utilDiccionarioApi.dameValorDiccionarioByCod(DDTiposArras.class, DDTiposArras.CONFIRMATORIAS);					
+				}
+				if(DDCartera.CODIGO_CARTERA_GALEON.equals(oferta.getActivoPrincipal().getCartera().getCodigo()) 
+					|| DDCartera.CODIGO_CARTERA_ZEUS.equals(oferta.getActivoPrincipal().getCartera().getCodigo())) {
+		            tipoArras = (DDTiposArras) utilDiccionarioApi.dameValorDiccionarioByCod(DDTiposArras.class, DDTiposArras.PENITENCIALES);
+				}
+	
+				if(tipoArras != null){
+					if (Checks.esNulo(expedienteComercial.getReserva()) ) {
+						Reserva reservaExpediente = expedienteComercialApi.createReservaExpediente(expedienteComercial);
+						reservaExpediente.setTipoArras(tipoArras);
+		
+						genericDao.save(Reserva.class, reservaExpediente);
+		
+					} else {
+						expedienteComercial.getReserva().setTipoArras(tipoArras);
+					}
+				}
 			}
 		}
 
@@ -787,8 +794,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		// Creación de formalización y condicionantes. Evita errores en los
 		// trámites al preguntar por datos de algunos de estos objetos y aún
 		// no esten creados. Para ello creamos los objetos vacios con el
-		// unico
-		// fin que se cree la fila.
+		// unico fin que se cree la fila.
 		Formalizacion nuevaFormalizacion = new Formalizacion();
 		nuevaFormalizacion.setAuditoria(Auditoria.getNewInstance());
 		nuevaFormalizacion.setExpediente(nuevoExpediente);
@@ -798,63 +804,81 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		nuevoCondicionante.setAuditoria(Auditoria.getNewInstance());
 		nuevoCondicionante.setExpediente(nuevoExpediente);
 
-		// HREOS-2799
-		// Activos de Cajamar, debe haber reserva necesaria con un importe fijo
-		// de 1.000 euros y
-		// plazo 5 dias
-		// Activos de Cajamar, deben copiar las condiciones informadas del
-		// activo en las condiciones
-		// al comprador
-		if (!Checks.esNulo(oferta.getActivoPrincipal()) && !Checks.esNulo(oferta.getActivoPrincipal().getCartera())
-				&& DDCartera.CODIGO_CARTERA_CAJAMAR.equals(oferta.getActivoPrincipal().getCartera().getCodigo())) {
-			nuevoCondicionante.setSolicitaReserva(1);
-			DDTipoCalculo tipoCalculo = (DDTipoCalculo) utilDiccionarioApi
-					.dameValorDiccionarioByCod(DDTipoCalculo.class, DDTipoCalculo.TIPO_CALCULO_PORCENTAJE);
-			nuevoCondicionante.setTipoCalculoReserva(tipoCalculo);
-			nuevoCondicionante.setPorcentajeReserva(new Double(3));
-			nuevoCondicionante.setImporteReserva(oferta.getImporteOferta() * (new Double(3) / 100));
-			nuevoCondicionante.setPlazoFirmaReserva(5);
-
-			// Obtiene las condiciones del activo con la misma logica que se
-			// aplica para calcularlas
-			// y mostrarlas en pantalla, para copiarlas en las condiciones al
-			// comprador
-			Activo activo = oferta.getActivoPrincipal();
-
-			if (activo.getSituacionPosesoria() != null
-					&& activo.getSituacionPosesoria().getFechaTomaPosesion() != null) {
-				nuevoCondicionante.setPosesionInicial(1);
-			} else {
-				nuevoCondicionante.setPosesionInicial(0);
+		if (!Checks.esNulo(oferta.getActivoPrincipal()) && !Checks.esNulo(oferta.getActivoPrincipal().getCartera())) {
+			// HREOS-2799
+			// Activos de Cajamar, debe haber reserva necesaria con un importe
+			// fijo de 1.000 euros y plazo 5 dias
+			// Activos de Cajamar, deben copiar las condiciones informadas del
+			// activo en las condiciones al comprador
+			if (DDCartera.CODIGO_CARTERA_CAJAMAR.equals(oferta.getActivoPrincipal().getCartera().getCodigo())) {
+				nuevoCondicionante.setSolicitaReserva(1);
+				DDTipoCalculo tipoCalculo = (DDTipoCalculo) utilDiccionarioApi
+						.dameValorDiccionarioByCod(DDTipoCalculo.class, DDTipoCalculo.TIPO_CALCULO_PORCENTAJE);
+				nuevoCondicionante.setTipoCalculoReserva(tipoCalculo);
+				nuevoCondicionante.setPorcentajeReserva(new Double(3));
+				nuevoCondicionante.setImporteReserva(oferta.getImporteOferta() * (new Double(3) / 100));
+				nuevoCondicionante.setPlazoFirmaReserva(5);
+			}
+			// HREOS-4450
+			// Activos de Galeon, debe haber reserva necesaria con un importe
+			// fijo del 5%
+			if (DDCartera.CODIGO_CARTERA_GALEON.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
+					|| DDCartera.CODIGO_CARTERA_ZEUS.equals(oferta.getActivoPrincipal().getCartera().getCodigo())) {
+				nuevoCondicionante.setSolicitaReserva(1);
+				DDTipoCalculo tipoCalculo = (DDTipoCalculo) utilDiccionarioApi
+						.dameValorDiccionarioByCod(DDTipoCalculo.class, DDTipoCalculo.TIPO_CALCULO_PORCENTAJE);
+				nuevoCondicionante.setTipoCalculoReserva(tipoCalculo);
+				nuevoCondicionante.setPorcentajeReserva(new Double(5));
+				nuevoCondicionante.setImporteReserva(oferta.getImporteOferta() * (new Double(5) / 100));
 			}
 
-			if (activo.getTitulo() != null && activo.getTitulo().getEstado() != null) {
-				nuevoCondicionante.setEstadoTitulo(activo.getTitulo().getEstado());
+			if (!Checks.esNulo(oferta.getActivoPrincipal()) && !Checks.esNulo(oferta.getActivoPrincipal().getCartera())
+					&& DDCartera.CODIGO_CARTERA_CAJAMAR.equals(oferta.getActivoPrincipal().getCartera().getCodigo())) {
+				nuevoCondicionante.setSolicitaReserva(1);
+				DDTipoCalculo tipoCalculo = (DDTipoCalculo) utilDiccionarioApi
+						.dameValorDiccionarioByCod(DDTipoCalculo.class, DDTipoCalculo.TIPO_CALCULO_PORCENTAJE);
+				nuevoCondicionante.setTipoCalculoReserva(tipoCalculo);
+				nuevoCondicionante.setPorcentajeReserva(new Double(3));
+				nuevoCondicionante.setImporteReserva(oferta.getImporteOferta() * (new Double(3) / 100));
+				nuevoCondicionante.setPlazoFirmaReserva(5);
 			}
-			if (activo.getSituacionPosesoria() != null) {
-				if (activo.getSituacionPosesoria().getOcupado() != null
-						&& activo.getSituacionPosesoria().getOcupado().equals(Integer.valueOf(0))) {
-					DDSituacionesPosesoria situacionPosesoriaLibre = (DDSituacionesPosesoria) utilDiccionarioApi
-							.dameValorDiccionarioByCod(DDSituacionesPosesoria.class,
-									DDSituacionesPosesoria.SITUACION_POSESORIA_LIBRE);
-					nuevoCondicionante.setSituacionPosesoria(situacionPosesoriaLibre);
-				} else if (activo.getSituacionPosesoria().getOcupado() != null
-						&& activo.getSituacionPosesoria().getOcupado().equals(Integer.valueOf(1))
-						&& activo.getSituacionPosesoria().getConTitulo() != null
-						&& activo.getSituacionPosesoria().getConTitulo().equals(Integer.valueOf(1))) {
-					DDSituacionesPosesoria situacionPosesoriaOcupadoTitulo = (DDSituacionesPosesoria) utilDiccionarioApi
-							.dameValorDiccionarioByCod(DDSituacionesPosesoria.class,
-									DDSituacionesPosesoria.SITUACION_POSESORIA_OCUPADO_CON_TITULO);
-					nuevoCondicionante.setSituacionPosesoria(situacionPosesoriaOcupadoTitulo);
-				} else if (activo.getSituacionPosesoria().getOcupado() != null
-						&& activo.getSituacionPosesoria().getOcupado().equals(Integer.valueOf(1))
-						&& activo.getSituacionPosesoria().getConTitulo() != null
-						&& activo.getSituacionPosesoria().getConTitulo().equals(Integer.valueOf(0))) {
-					DDSituacionesPosesoria situacionPosesoriaOcupadoSinTitulo = (DDSituacionesPosesoria) utilDiccionarioApi
-							.dameValorDiccionarioByCod(DDSituacionesPosesoria.class,
-									DDSituacionesPosesoria.SITUACION_POSESORIA_OCUPADO_SIN_TITULO);
-					nuevoCondicionante.setSituacionPosesoria(situacionPosesoriaOcupadoSinTitulo);
-				}
+		}
+
+		Activo activo = oferta.getActivoPrincipal();
+
+		if (activo.getSituacionPosesoria() != null && activo.getSituacionPosesoria().getFechaTomaPosesion() != null) {
+			nuevoCondicionante.setPosesionInicial(1);
+		} else {
+			nuevoCondicionante.setPosesionInicial(0);
+		}
+
+		if (activo.getTitulo() != null && activo.getTitulo().getEstado() != null) {
+			nuevoCondicionante.setEstadoTitulo(activo.getTitulo().getEstado());
+		}
+
+		if (activo.getSituacionPosesoria() != null) {
+			if (activo.getSituacionPosesoria().getOcupado() != null
+					&& activo.getSituacionPosesoria().getOcupado().equals(Integer.valueOf(0))) {
+				DDSituacionesPosesoria situacionPosesoriaLibre = (DDSituacionesPosesoria) utilDiccionarioApi
+						.dameValorDiccionarioByCod(DDSituacionesPosesoria.class,
+								DDSituacionesPosesoria.SITUACION_POSESORIA_LIBRE);
+				nuevoCondicionante.setSituacionPosesoria(situacionPosesoriaLibre);
+			} else if (activo.getSituacionPosesoria().getOcupado() != null
+					&& activo.getSituacionPosesoria().getOcupado().equals(Integer.valueOf(1))
+					&& activo.getSituacionPosesoria().getConTitulo() != null
+					&& activo.getSituacionPosesoria().getConTitulo().equals(Integer.valueOf(1))) {
+				DDSituacionesPosesoria situacionPosesoriaOcupadoTitulo = (DDSituacionesPosesoria) utilDiccionarioApi
+						.dameValorDiccionarioByCod(DDSituacionesPosesoria.class,
+								DDSituacionesPosesoria.SITUACION_POSESORIA_OCUPADO_CON_TITULO);
+				nuevoCondicionante.setSituacionPosesoria(situacionPosesoriaOcupadoTitulo);
+			} else if (activo.getSituacionPosesoria().getOcupado() != null
+					&& activo.getSituacionPosesoria().getOcupado().equals(Integer.valueOf(1))
+					&& activo.getSituacionPosesoria().getConTitulo() != null
+					&& activo.getSituacionPosesoria().getConTitulo().equals(Integer.valueOf(0))) {
+				DDSituacionesPosesoria situacionPosesoriaOcupadoSinTitulo = (DDSituacionesPosesoria) utilDiccionarioApi
+						.dameValorDiccionarioByCod(DDSituacionesPosesoria.class,
+								DDSituacionesPosesoria.SITUACION_POSESORIA_OCUPADO_SIN_TITULO);
+				nuevoCondicionante.setSituacionPosesoria(situacionPosesoriaOcupadoSinTitulo);
 			}
 		}
 
@@ -863,14 +887,13 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		List<TanteoActivoExpediente> tanteosExpediente = new ArrayList<TanteoActivoExpediente>();
 		for (ActivoOferta activoOferta : activoOfertaList) {
 			noCumple = false;
-			Activo activo = activoOferta.getPrimaryKey().getActivo();
 			for (CondicionTanteoApi condicion : condiciones) {
 				if (!condicion.checkCondicion(activo))
 					noCumple = true;
 			}
 			if (!noCumple) {
 				TanteoActivoExpediente tanteoActivo = new TanteoActivoExpediente();
-				tanteoActivo.setActivo(activo);
+				tanteoActivo.setActivo(activoOferta.getPrimaryKey().getActivo());
 				tanteoActivo.setExpediente(nuevoExpediente);
 
 				Auditoria auditoria = new Auditoria();
@@ -918,8 +941,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				ActivoAgrupacion agrupacion = oferta.getAgrupacion();
 				List<ActivoAgrupacionActivo> activos = agrupacion.getActivos();
 				if (!Checks.estaVacio(activos)) {
-					for (ActivoAgrupacionActivo activo : activos) {
-						List<VPreciosVigentes> vPreciosVigentes = activoAdapter.getPreciosVigentesById(activo.getId());
+					for (ActivoAgrupacionActivo activoOferta : activos) {
+						List<VPreciosVigentes> vPreciosVigentes = activoAdapter
+								.getPreciosVigentesById(activoOferta.getId());
 						if (!Checks.estaVacio(vPreciosVigentes)) {
 							for (VPreciosVigentes precio : vPreciosVigentes) {
 								if (DDTipoPrecio.CODIGO_TPC_MIN_AUTORIZADO.equals(precio.getCodigoTipoPrecio())
@@ -946,15 +970,26 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				} else if (DDCartera.CODIGO_CARTERA_CERBERUS.equals(oferta.getActivoPrincipal().getCartera().getCodigo())) {
 					nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_HAYA_CERBERUS)));
 				} else {
-					// 1º Clase de activo (financiero/inmobiliario) y sin formalización.
-					if (esFinanciero && !Checks.esNulo(activoBancario) && !Checks.esNulo(activoBancario.getActivo()) && getPerimetroByIdActivo(activoBancario.getActivo().getId()).getAplicaFormalizar() == 0) {
-						nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_HAYA_SAREB)));
-						// 2º Si es inmobiliario: Tipo de comercialización (singular/retail).
-					} else if (!Checks.esNulo(activoBancario) && !Checks.esNulo(activoBancario.getActivo()) && !Checks.esNulo(activoBancario.getActivo().getTipoComercializar()) && DDTipoComercializar.CODIGO_SINGULAR.equals(activoBancario.getActivo().getTipoComercializar().getCodigo())) {
-						nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_SAREB)));
-						// 3º Si es retail: Comparamos precio mínimo e importe oferta.
-					} else if (!Checks.esNulo(precioMinimoAutorizado) && precioMinimoAutorizado > oferta.getImporteOferta()) {
-						nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_SAREB)));
+					// 1º Clase de activo (financiero/inmobiliario) y sin
+					// formalización.
+					if (esFinanciero && !Checks.esNulo(activoBancario) && !Checks.esNulo(activoBancario.getActivo())
+							&& getPerimetroByIdActivo(activoBancario.getActivo().getId()).getAplicaFormalizar() == 0) {
+						nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao
+								.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_HAYA_SAREB)));
+						// 2º Si es inmobiliario: Tipo de comercialización
+						// (singular/retail).
+					} else if (!Checks.esNulo(activoBancario) && !Checks.esNulo(activoBancario.getActivo())
+							&& activoBancario.getActivo().getTipoComercializar() != null
+							&& activoBancario.getActivo().getTipoComercializar().getCodigo()
+									.equals(DDTipoComercializar.CODIGO_SINGULAR)) {
+						nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class,
+								genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_SAREB)));
+						// 3º Si es retail: Comparamos precio mínimo e importe
+						// oferta.
+					} else if (!Checks.esNulo(precioMinimoAutorizado)
+							&& precioMinimoAutorizado > oferta.getImporteOferta()) {
+						nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class,
+								genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_SAREB)));
 					} else {
 						nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_HAYA_SAREB)));
 					}
@@ -2713,7 +2748,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	{
 		ActivoSituacionPosesoria activoSitPos = activo.getSituacionPosesoria();
 		boolean tieneAdjunto = false;
-		boolean tieneInforme = false;
 		if(!Checks.esNulo(activoSitPos) && (!Checks.esNulo(activoSitPos.getOcupado()) && !Checks.esNulo(activoSitPos.getConTitulo()) && (1 == activoSitPos.getOcupado() && 0 == activoSitPos.getConTitulo())))
 		{
 			List<ActivoAdjuntoActivo> listAdjuntos = activo.getAdjuntos();
@@ -4301,7 +4335,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		Usuario usuarioGestoriaFormalizacion = null;
 		Usuario usuarioGestorComercial = null;
 		Usuario usuarioSupervisorComercial = null;
-		Usuario usuarioGestorComercialBack = null;
 		Usuario usuarioSupervisorFormalizacion = null;
 		Usuario usuarioGestorReserva = null;
 		Usuario usuarioSupervisorReserva = null;
@@ -4455,10 +4488,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_GESTOR_COMERCIAL,
 					usuarioGestorComercial.getUsername(), dto);
 
-		if (!Checks.esNulo(usuarioGestorComercialBack))
-			this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE,
-					usuarioGestorComercialBack.getUsername(), dto);
-		// HREOS-2827
+
 		if (activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_CAJAMAR)) {
 			if (!Checks.esNulo(usuarioGestorReserva))
 				this.agregarTipoGestorYUsuarioEnDto(gestorExpedienteComercialApi.CODIGO_GESTOR_RESERVA_CAJAMAR,

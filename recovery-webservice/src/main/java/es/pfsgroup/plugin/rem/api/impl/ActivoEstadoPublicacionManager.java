@@ -182,7 +182,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	private Boolean deshabilitarCheckPublicarSinPrecioVenta(Long idActivo) {
 		Boolean resultado = false;
 		try{
-			resultado = isPublicadoVenta(idActivo) || isOcultoVenta(idActivo) || tienePrecioVenta(idActivo);
+			resultado = isPublicadoVenta(idActivo) || tienePrecioVenta(idActivo);
 		}catch(Exception e){
 			logger.error("Error en el método deshabilitarCheckPublicarSinPrecioVenta" , e);
 		}
@@ -201,7 +201,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	private Boolean deshabilitarCheckPublicarSinPrecioAlquiler(Long idActivo) {
 		Boolean resultado = false;
 		try{
-			resultado = isPublicadoAlquiler(idActivo) || isOcultoAlquiler(idActivo) || tienePrecioRenta(idActivo);
+			resultado = isPublicadoAlquiler(idActivo) || tienePrecioRenta(idActivo);
 		}catch(Exception e){
 			logger.error("Error en el método deshabilitarCheckPublicarSinPrecioAlquiler" , e);
 		}
@@ -369,8 +369,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		ActivoPublicacion activoPublicacion = activoPublicacionDao.getActivoPublicacionPorIdActivo(idActivo);
 
 		return !Checks.esNulo(activoPublicacion) && !Checks.esNulo(activoPublicacion.getEstadoPublicacionVenta()) &&
-				(DDEstadoPublicacionVenta.CODIGO_PUBLICADO_VENTA.equals(activoPublicacion.getEstadoPublicacionVenta().getCodigo())
-						|| DDEstadoPublicacionVenta.CODIGO_OCULTO_VENTA.equals(activoPublicacion.getEstadoPublicacionVenta().getCodigo()));
+				(DDEstadoPublicacionVenta.CODIGO_PUBLICADO_VENTA.equals(activoPublicacion.getEstadoPublicacionVenta().getCodigo()));
 	}
 
 	// Comprobación mínima.
@@ -395,8 +394,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		ActivoPublicacion activoPublicacion = activoPublicacionDao.getActivoPublicacionPorIdActivo(idActivo);
 
 		return !Checks.esNulo(activoPublicacion) && !Checks.esNulo(activoPublicacion.getEstadoPublicacionAlquiler()) &&
-				(DDEstadoPublicacionAlquiler.CODIGO_PUBLICADO_ALQUILER.equals(activoPublicacion.getEstadoPublicacionAlquiler().getCodigo())
-				|| DDEstadoPublicacionAlquiler.CODIGO_OCULTO_ALQUILER.equals(activoPublicacion.getEstadoPublicacionAlquiler().getCodigo()));
+				(DDEstadoPublicacionAlquiler.CODIGO_PUBLICADO_ALQUILER.equals(activoPublicacion.getEstadoPublicacionAlquiler().getCodigo()));
 	}
 
 	// Comprobación mínima.
@@ -793,40 +791,31 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	}
 
 	@Override
-	public Integer getEstadoIndicadorPublicacionAgrupacionVenta(List<ActivoAgrupacionActivo> listaActivos) {
+	public Integer getEstadoIndicadorPublicacionAgrupacionVenta(Activo activoPrincipal) {
 		Integer estado = 0;
 
-		for (ActivoAgrupacionActivo listaActivo : listaActivos) {
-			Activo activo = listaActivo.getActivo();
-
-			if (getEstadoIndicadorPublicacionVenta(activo) == 0) {
-				estado = ESTADO_PUBLICACION_NARANJA;
-				break;
-			} else if (getEstadoIndicadorPublicacionVenta(activo) == 2) {
-				estado = ESTADO_PUBLICACION_AMARILLO;
-			} else if (getEstadoIndicadorPublicacionVenta(activo) == 1 && !ESTADO_PUBLICACION_AMARILLO.equals(estado)) {
-				estado = ESTADO_PUBLICACION_AZUL;
-			}
+		if (getEstadoIndicadorPublicacionVenta(activoPrincipal) == 0) {
+			estado = ESTADO_PUBLICACION_NARANJA;
+		} else if (getEstadoIndicadorPublicacionVenta(activoPrincipal) == 2) {
+			estado = ESTADO_PUBLICACION_AMARILLO;
+		} else if (getEstadoIndicadorPublicacionVenta(activoPrincipal) == 1 && !ESTADO_PUBLICACION_AMARILLO.equals(estado)) {
+			estado = ESTADO_PUBLICACION_AZUL;
 		}
 
 		return estado;
 	}
 
 	@Override
-	public Integer getEstadoIndicadorPublicacionAgrupacionAlquiler(List<ActivoAgrupacionActivo> listaActivos) {
+	public Integer getEstadoIndicadorPublicacionAgrupacionAlquiler(Activo activoPrincipal) {
 		Integer estado = 0;
 
-		for (ActivoAgrupacionActivo listaActivo : listaActivos) {
-			Activo activo = listaActivo.getActivo();
-
-			if (getEstadoIndicadorPublicacionAlquiler(activo) == 0) {
-				estado = ESTADO_PUBLICACION_NARANJA;
-				break;
-			} else if (getEstadoIndicadorPublicacionAlquiler(activo) == 2) {
-				estado = ESTADO_PUBLICACION_AMARILLO;
-			} else if (getEstadoIndicadorPublicacionAlquiler(activo) == 1 && !ESTADO_PUBLICACION_AMARILLO.equals(estado)) {
-				estado = ESTADO_PUBLICACION_AZUL;
-			}
+		
+		if (getEstadoIndicadorPublicacionAlquiler(activoPrincipal) == 0) {
+			estado = ESTADO_PUBLICACION_NARANJA;
+		} else if (getEstadoIndicadorPublicacionAlquiler(activoPrincipal) == 2) {
+			estado = ESTADO_PUBLICACION_AMARILLO;
+		} else if (getEstadoIndicadorPublicacionAlquiler(activoPrincipal) == 1 && !ESTADO_PUBLICACION_AMARILLO.equals(estado)) {
+			estado = ESTADO_PUBLICACION_AZUL;
 		}
 
 		return estado;

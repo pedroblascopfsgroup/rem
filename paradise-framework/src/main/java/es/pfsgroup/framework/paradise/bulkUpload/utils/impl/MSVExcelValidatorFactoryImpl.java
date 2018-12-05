@@ -98,6 +98,12 @@ public class MSVExcelValidatorFactoryImpl {
 
 	@Autowired
 	private MSVInfoDetallePrinexLbkExcelValidator infoDetallePrinexLbk;
+	
+	@Autowired
+	private MSVDesocultacionVenta desocultacionVenta;
+	
+	@Autowired
+	private MSVDesocultacionAlquiler desocultarAlquiler;
 
 
 	public MSVExcelValidator getForTipoValidador(String codTipoOperacion) {
@@ -215,6 +221,12 @@ public class MSVExcelValidatorFactoryImpl {
 			return ventaDeCartera;
 		} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_AGRUPACION_LOTE_COMERCIAL_ALQUILER.equals(codTipoOperacion)) {
 			return agrupacionLoteComercialAlquilerExcelValidator;
+		}
+		else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_DESOCULTACION_VENTA.equals(codTipoOperacion)){
+			return desocultacionVenta;
+		}
+		else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_DESOCULTACION_ALQUILER.equals(codTipoOperacion)){
+			return desocultarAlquiler;
 		}
 
 		return null;

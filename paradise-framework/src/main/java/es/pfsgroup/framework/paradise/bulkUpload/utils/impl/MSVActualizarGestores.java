@@ -48,6 +48,7 @@ public class MSVActualizarGestores extends MSVExcelValidatorAbstract {
 	public static final String USUARIO_NO_ES_TIPO_GESTOR= "El usuario no corresponde con el Tipo de gestor";
 	public static final String COMBINACION_GESTOR_CARTERA_ACAGEX_INVALIDA= "Combinación tipo de gestor- cartera - agrupación/activo/expediente invalida";
 	public static final String MEDIADOR_NO_EXISTE = "El mediador introducido no existe o esta dado de baja en REM";
+	public static final String CODIGO_MEDIADOR = "MED";
 	
 	@Autowired
 	private MSVExcelParser excelParser;
@@ -250,8 +251,11 @@ public class MSVActualizarGestores extends MSVExcelValidatorAbstract {
 		try{
 			for(int i=1; i<this.numFilasHoja;i++){
 				try {
-					if(!particularValidator.existeTipoGestor(exc.dameCelda(i, 0)))
-						listaFilas.add(i);
+					if(!CODIGO_MEDIADOR.equals(exc.dameCelda(i, 0))) {
+						if(!particularValidator.existeTipoGestor(exc.dameCelda(i, 0)))
+							listaFilas.add(i);
+					}
+					
 				} catch (ParseException e) {
 					listaFilas.add(i);
 				}
@@ -272,8 +276,11 @@ public class MSVActualizarGestores extends MSVExcelValidatorAbstract {
 		try{
 			for(int i=1; i<this.numFilasHoja;i++){
 				try {
-					if(!particularValidator.existeUsuario(exc.dameCelda(i, 1)))
-						listaFilas.add(i);
+					String username = exc.dameCelda(i, 1);
+					if(!CODIGO_MEDIADOR.equals(exc.dameCelda(i, 0))) {
+						if(!particularValidator.existeUsuario(username))
+							listaFilas.add(i);
+					}
 				} catch (ParseException e) {
 					listaFilas.add(i);
 				}
@@ -329,13 +336,13 @@ public class MSVActualizarGestores extends MSVExcelValidatorAbstract {
 				try {
 					String codigoTipoGestor= exc.dameCelda(i, 0);
 					String username= exc.dameCelda(i, 1);
-					
-					if(!Checks.esNulo(codigoTipoGestor) || !Checks.esNulo(username)){
-						if(!particularValidator.usuarioEsTipoGestor(username, codigoTipoGestor)){
-							listaFilas.add(i);
+					if(!CODIGO_MEDIADOR.equals(codigoTipoGestor)) {
+						if(!Checks.esNulo(codigoTipoGestor) || !Checks.esNulo(username)){
+							if(!particularValidator.usuarioEsTipoGestor(username, codigoTipoGestor)){
+								listaFilas.add(i);
+							}
 						}
 					}
-					
 					
 				} catch (ParseException e) {
 					listaFilas.add(i);

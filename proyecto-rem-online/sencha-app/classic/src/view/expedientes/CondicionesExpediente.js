@@ -688,10 +688,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 										},
 										displayField : 'descripcion',
 										valueField : 'codigo',
-										reference : 'entidadBancariaFiador',
-										listeners : {
-											change : 'onChangeEntidadBancaria'
-										}
+										reference : 'entidadBancariaFiador'
 									},
 									{
 										// Esto es un espacio en blanco en el panel 

@@ -2701,16 +2701,6 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			}			
 		);		
 	},
-	
-    onChangeEntidadBancaria: function(combo, newValue, oldValue, eOpts){
-    	var me = this;
-    	condicionComentario = me.lookupReference('textareafieldcondicioncomentarios');
-    	if(newValue == '19'){
-    		condicionComentario.setDisabled(false);
-    	}else{
-    		condicionComentario.setDisabled(true);
-    	}
-    },
     
     onChangeCarencia: function(checkbox, newValue, oldValue, eOpts) {
 		if(!Ext.isEmpty(oldValue)){
@@ -2732,17 +2722,14 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		if(!Ext.isEmpty(oldValue)){
 			var me = this,
 			meses = me.lookupReference('mesesBonificacion'),
-			importe = me.lookupReference('importeBonificacion'),
-			duracion = me.lookupReference('duracionBonificacion');
+			importe = me.lookupReference('importeBonificacion');
 	
 			if(newValue == true) {
 				meses.setDisabled(false);
 				importe.setDisabled(false);
-				duracion.setDisabled(false);
 			} else {
 				meses.setDisabled(true);
 				importe.setDisabled(true);
-				duracion.setDisabled(true);
 			}
 		}
 	},

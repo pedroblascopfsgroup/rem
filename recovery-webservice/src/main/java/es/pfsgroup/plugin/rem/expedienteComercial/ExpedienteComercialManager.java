@@ -2422,14 +2422,14 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				Double importeBonificacion = Double.parseDouble(aux);
 				condiciones.setImporteBonificacion(importeBonificacion);
 			}
-
+/*
 			if (("").equals(dto.getDuracionBonificacion())){
 				condiciones.setDuracionBonificacion(null);
 			}else if (!Checks.esNulo(dto.getDuracionBonificacion())) {
 				String aux = dto.getDuracionBonificacion();
 				Integer	duracionBonificacion = Integer.parseInt(aux);
 				condiciones.setDuracionBonificacion(duracionBonificacion);
-			}
+			}*/
 
 			if (!Checks.esNulo(dto.getRenunciaTanteo())) {
 				condiciones.setRenunciaTanteo(dto.getRenunciaTanteo());

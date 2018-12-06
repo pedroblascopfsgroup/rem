@@ -248,11 +248,10 @@ DECLARE
 		
 		T_TFI('T015_ElevarASancion'						,'0'		,'label'		,'titulo'				,'<p style="margin-bottom: 10px"></p>'			,''																			,''															,''					),
 		T_TFI('T015_ElevarASancion'						,'1'		,'combobox'		,'resolucionOferta'		,'Resolución de la oferta'						,''																			,''															,'DDResolucionOferta'	),
-		T_TFI('T015_ElevarASancion'						,'2'		,'datefield'			,'fechaSancion'			,'Fecha sanción'								,''																			,''															,''					),
-		T_TFI('T015_ElevarASancion'						,'3'		,'textfield'	,'motivoAnulacion'		,'Motivo de anulación'							,''																			,''															,''					),
+		T_TFI('T015_ElevarASancion'						,'3'		,'combobox'	    ,'motivoAnulacion'		,'Motivo de anulación'							,''																			,''															,''					),
 		T_TFI('T015_ElevarASancion'						,'4'		,'combobox'		,'comite'				,'Comité'										,''																			,''															,''					),
 		T_TFI('T015_ElevarASancion'						,'6'		,'textfield'	,'refCircuitoCliente'	,'Ref. circuito cliente'						,''																			,''															,''					),
-		T_TFI('T015_ElevarASancion'						,'5'		,'datefield'			,'fechaElevacion'		,'Fecha elevación'								,''																			,''															,''					),
+		T_TFI('T015_ElevarASancion'						,'2'		,'datefield'			,'fechaElevacion'		,'Fecha elevación'								,''																			,''															,''					),
 		
 		T_TFI('T015_ResolucionExpediente'				,'0'		,'label'		,'titulo'				,'<p style="margin-bottom: 10px"></p>'			,''																			,''															,''					),
 		T_TFI('T015_ResolucionExpediente'				,'1'		,'combobox'		,'resolucionExpediente'	,'Resolución expediente'						,''																			,''															,'DDResolucionComite'	),

@@ -422,15 +422,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			 else return false;
 		 },
 
-		enableComboAdecuacion: function(get){
-			var chkPerimetroAlquiler = get('patrimonio.chkPerimetroAlquiler');
-			if((chkPerimetroAlquiler == true || chkPerimetroAlquiler == "true" )){
-				return false;
-			}else{
-				return true;
-			}
-		},
-
 		filtrarComboMotivosOcultacionVenta: function(get) {
 			var bloqueoCheckOcultar = get('datospublicacionactivo.deshabilitarCheckOcultarVenta');
 

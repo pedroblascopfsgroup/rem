@@ -22,10 +22,13 @@ import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoHistoricoPatrimonio;
 import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
+import es.pfsgroup.plugin.rem.model.ActivoPublicacion;
 import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.DtoActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.dd.DDAdecuacionAlquiler;
+import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoEstadoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoInquilino;
 
@@ -220,6 +223,25 @@ public class TabActivoPatrimonio implements TabActivoService {
 
 			activoDao.save(activo);
 		}
+		
+		//comprobamos si hay que modificar el tipo de comercializacion del activo
+		if(!Checks.esNulo(activoPatrimonioDto) 
+				&& (!Checks.esNulo(activoPatrimonioDto.getChkPerimetroAlquiler())
+				&& (!activoPatrimonioDto.getChkPerimetroAlquiler()))){
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoComercializacion.CODIGO_VENTA);
+			DDTipoComercializacion comercializacionVenta= genericDao.get(DDTipoComercializacion.class, filtro);
+			Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "codigo", DDSituacionComercial.CODIGO_DISPONIBLE_VENTA);
+			DDSituacionComercial scm= genericDao.get(DDSituacionComercial.class, filtro2);
+			if(DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(activo.getTipoComercializacion().getCodigo())){
+				activo.setTipoComercializacion(comercializacionVenta);
+				ActivoPublicacion activoPubli = activo.getActivoPublicacion();
+				activoPubli.setTipoComercializacion(comercializacionVenta);
+				activo.setSituacionComercial(scm);
+				activo.setActivoPublicacion(activoPubli);
+				activoDao.save(activo);
+			}
+		}
+		//-----------------------------------------------------
 
 
 		if(!Checks.esNulo(activoPatrimonioDto.getEstadoAlquiler())) {

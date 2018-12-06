@@ -177,6 +177,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoCalificacionEnergetica;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCargaActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoEstadoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoHabitaculo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoObservacionActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
@@ -2767,8 +2768,12 @@ public class ActivoAdapter {
 					}
 				}
 			}
-
+			
 			if (!tieneAgrupVenta) {
+				//si el activo viene de destino comercial = venta y pasa a "alquiler" o "alquiler y venta"
+				//en la pestaña patromonio, se desmarca el check de perimetro y el estado alquiler, pasa a libre
+				guardamosPatrimonio(activo);
+				//-----------------------------------------------------------
 				activo = tabActivoService.saveTabActivo(activo, dto);
 				activoApi.saveOrUpdate(activo);
 
@@ -2790,6 +2795,34 @@ public class ActivoAdapter {
 			afterSaveTabActivo(dto, activo, tabActivoService);
 
 			return true;
+		}
+	}
+
+	private void guardamosPatrimonio(Activo activo) {
+		if(DDTipoComercializacion.CODIGO_VENTA.equals(activo.getTipoComercializacion().getCodigo())){
+			ActivoPatrimonio actPatrimonio = activoPatrimonio.getActivoPatrimonioByActivo(activo.getId());
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoEstadoAlquiler.ESTADO_ALQUILER_LIBRE);
+			DDTipoEstadoAlquiler estadoAlquiler= genericDao.get(DDTipoEstadoAlquiler.class, filtro);
+			if(!Checks.esNulo(actPatrimonio)){
+				actPatrimonio.setCheckHPM(true);
+				actPatrimonio.setTipoEstadoAlquiler(estadoAlquiler);
+				activoPatrimonio.save(actPatrimonio);
+			}else{
+				//creamos el registro en la tabla si no existe.
+				String username = genericAdapter.getUsuarioLogado().getUsername();
+				Date fecha = new Date();
+				actPatrimonio = new ActivoPatrimonio();
+				actPatrimonio.setActivo(activo);
+				actPatrimonio.setCheckHPM(true);
+				actPatrimonio.setTipoEstadoAlquiler(estadoAlquiler);
+				Auditoria auditoria = new Auditoria();
+				auditoria.setUsuarioCrear(username);
+				auditoria.setFechaCrear(fecha);
+				auditoria.setBorrado(false);
+				actPatrimonio.setAuditoria(auditoria);
+				activoPatrimonio.save(actPatrimonio);
+			}
+			
 		}
 	}
 

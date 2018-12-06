@@ -1148,18 +1148,22 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		    		
 		    	};
 		    	 	var label = data.codigo;
-		    	 	if(label != "null"){
+		    	 	if(label != "venta" && label != "null"){
+		    	 		rec.setVisible(true);
 		    	 		rec.setFieldLabel(data.codigo)
+		    	 	} else if (label == "null"){
+		    	 		rec.setVisible(false);
+		    	 	} else if(label == "venta"){
+		    	 		rec.setFieldLabel(HreRem.i18n('fieldlabel.fecha.reserva'));
 		    	 	}
             },
             
             failure: function (a, operation, context) {
-            	rec.labelEl.update(HreRem.i18n('fieldlabel.fecha.reserva'));
+            	rec.setFieldLabel(HreRem.i18n('fieldlabel.fecha.reserva'));
             }
 	     
 		});
-	}
-	,
+	},
 	onMarcarPrincipalClick: function(grid, rowIndex, colIndex, item, e, rec){
 		var me = this;
     	me.gridOrigen = grid;

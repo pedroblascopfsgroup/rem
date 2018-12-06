@@ -249,6 +249,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	private static final String PESTANA_DOCUMENTOS = "documentos";
 	private static final String FECHA_SEGURO_RENTA = "Fecha seguro de renta";
 	private static final String FECHA_SCORING = "Fecha Scoring";
+	private static final String NO_MOSTRAR = "null";
 	public static final String ESTADO_PROCEDIMIENTO_FINALIZADO = "11";
 	private static final String STR_MISSING_VALUE = "---";
 
@@ -3314,7 +3315,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		ExpedienteComercial expediente = findOne(idExpedienteComercial);
 		List<ActivoTramite> listaTramites = null;
 		listaTramites = activoTramiteApi.getTramitesActivoTrabajoList(expediente.getTrabajo().getId());
-		String reultadoTramite = "null";
+		String reultadoTramite = "venta";
 		try {
 			if (!Checks.esNulo(expediente)) {
 				oferta = expediente.getOferta();
@@ -3342,6 +3343,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	
 									}
 	
+								}else {
+									reultadoTramite = NO_MOSTRAR;
 								}
 							}
 

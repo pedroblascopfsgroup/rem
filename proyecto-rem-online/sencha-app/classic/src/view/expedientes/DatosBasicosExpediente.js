@@ -198,7 +198,6 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 						fieldLabel: HreRem.i18n('fieldlabel.fecha.reserva'),
 	                	bind:		{
 	                		value: '{expediente.fechaReserva}'
-	                		
 	                	},
 	                	listeners: {
 							render: 'tareaDefinicionDeOferta'

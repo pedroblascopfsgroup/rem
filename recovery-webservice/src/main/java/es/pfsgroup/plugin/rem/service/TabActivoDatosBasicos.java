@@ -585,7 +585,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		boolean tieneOfertaAlquilerViva = false;
 		for(ActivoOferta activoOferta : activo.getOfertas()) {
 			Oferta oferta = ofertaApi.getOfertaById(activoOferta.getOferta());
-			if(!DDEstadoOferta.CODIGO_RECHAZADA.equals(oferta.getEstadoOferta().getCodigo())) {
+			if(DDEstadoOferta.CODIGO_ACEPTADA.equals(oferta.getEstadoOferta().getCodigo())) {
 				tieneOfertaAlquilerViva = true;
 			}
 		}

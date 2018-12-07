@@ -243,7 +243,6 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 		var estado = context.record.get("codigoEstadoOferta");
 		var gencat = context.record.get("gencat");
 		if(CONST.ESTADOS_OFERTA['ACEPTADA'] == estado){
-			debugger;
 			if (gencat == "true") {
 				var msg = HreRem.i18n('msg.desea.aceptar.oferta.activos.gencat');
 			} else {

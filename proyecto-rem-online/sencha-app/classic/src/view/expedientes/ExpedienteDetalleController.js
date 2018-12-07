@@ -1148,18 +1148,22 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		    		
 		    	};
 		    	 	var label = data.codigo;
-		    	 	if(label != "null"){
+		    	 	if(label != "venta" && label != "null"){
+		    	 		rec.setVisible(true);
 		    	 		rec.setFieldLabel(data.codigo)
+		    	 	} else if (label == "null"){
+		    	 		rec.setVisible(false);
+		    	 	} else if(label == "venta"){
+		    	 		rec.setFieldLabel(HreRem.i18n('fieldlabel.fecha.reserva'));
 		    	 	}
             },
             
             failure: function (a, operation, context) {
-            	rec.labelEl.update(HreRem.i18n('fieldlabel.fecha.reserva'));
+            	rec.setFieldLabel(HreRem.i18n('fieldlabel.fecha.reserva'));
             }
 	     
 		});
-	}
-	,
+	},
 	onMarcarPrincipalClick: function(grid, rowIndex, colIndex, item, e, rec){
 		var me = this;
     	me.gridOrigen = grid;
@@ -2701,16 +2705,6 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			}			
 		);		
 	},
-	
-    onChangeEntidadBancaria: function(combo, newValue, oldValue, eOpts){
-    	var me = this;
-    	condicionComentario = me.lookupReference('textareafieldcondicioncomentarios');
-    	if(newValue == '19'){
-    		condicionComentario.setDisabled(false);
-    	}else{
-    		condicionComentario.setDisabled(true);
-    	}
-    },
     
     onChangeCarencia: function(checkbox, newValue, oldValue, eOpts) {
 		if(!Ext.isEmpty(oldValue)){
@@ -2732,17 +2726,14 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		if(!Ext.isEmpty(oldValue)){
 			var me = this,
 			meses = me.lookupReference('mesesBonificacion'),
-			importe = me.lookupReference('importeBonificacion'),
-			duracion = me.lookupReference('duracionBonificacion');
+			importe = me.lookupReference('importeBonificacion');
 	
 			if(newValue == true) {
 				meses.setDisabled(false);
 				importe.setDisabled(false);
-				duracion.setDisabled(false);
 			} else {
 				meses.setDisabled(true);
 				importe.setDisabled(true);
-				duracion.setDisabled(true);
 			}
 		}
 	},

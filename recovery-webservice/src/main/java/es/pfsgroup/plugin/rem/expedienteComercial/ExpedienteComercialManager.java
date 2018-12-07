@@ -185,6 +185,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisitaOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivosDesbloqueo;
 import es.pfsgroup.plugin.rem.model.dd.DDPaises;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
@@ -249,6 +250,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	private static final String PESTANA_DOCUMENTOS = "documentos";
 	private static final String FECHA_SEGURO_RENTA = "Fecha seguro de renta";
 	private static final String FECHA_SCORING = "Fecha Scoring";
+	private static final String NO_MOSTRAR = "null";
 	public static final String ESTADO_PROCEDIMIENTO_FINALIZADO = "11";
 	private static final String STR_MISSING_VALUE = "---";
 
@@ -805,9 +807,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 						dto.setDescMotivoAnulacion(expediente.getMotivoAnulacion().getDescripcion());
 					}
 				} else {	// Alquiler
-					if (!Checks.esNulo(expediente.getMotivoAnulacionAlquiler())) {
-						dto.setCodMotivoAnulacion(expediente.getMotivoAnulacionAlquiler().getCodigo());
-						dto.setDescMotivoAnulacion(expediente.getMotivoAnulacionAlquiler().getDescripcion());
+					if (!Checks.esNulo(expediente.getMotivoRechazo())) {
+						dto.setCodMotivoRechazoExp(expediente.getMotivoRechazo().getCodigo());
+						dto.setDescMotivoRechazoExp(expediente.getMotivoRechazo().getDescripcion());
 					}
 				}
 
@@ -942,7 +944,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				dto.setImporteDevolucionEntregas(expediente.getImporteDevolucionEntregas());
 				dto.setDefinicionOfertaFinalizada(false);
 
-				if (!Checks.esNulo(expediente.getTrabajo().getId())) {
+				if (!Checks.esNulo(expediente.getTrabajo()) && !Checks.esNulo(expediente.getTrabajo().getId())) {
 
 					List<ActivoTramite> tramitesActivo = tramiteDao.getTramitesActivoTrabajoList(expediente.getTrabajo().getId());
 					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", "T015_DefinicionOferta");
@@ -1045,7 +1047,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 				dto.setDefinicionOfertaScoring(false);
 
-				if (!Checks.esNulo(expediente.getTrabajo().getId())) {
+				if (!Checks.esNulo(expediente.getTrabajo()) && !Checks.esNulo(expediente.getTrabajo().getId())) {
 
 					List<ActivoTramite> tramitesActivo = tramiteDao.getTramitesActivoTrabajoList(expediente.getTrabajo().getId());
 					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", "T015_DefinicionOferta");
@@ -2422,14 +2424,14 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				Double importeBonificacion = Double.parseDouble(aux);
 				condiciones.setImporteBonificacion(importeBonificacion);
 			}
-
+/*
 			if (("").equals(dto.getDuracionBonificacion())){
 				condiciones.setDuracionBonificacion(null);
 			}else if (!Checks.esNulo(dto.getDuracionBonificacion())) {
 				String aux = dto.getDuracionBonificacion();
 				Integer	duracionBonificacion = Integer.parseInt(aux);
 				condiciones.setDuracionBonificacion(duracionBonificacion);
-			}
+			}*/
 
 			if (!Checks.esNulo(dto.getRenunciaTanteo())) {
 				condiciones.setRenunciaTanteo(dto.getRenunciaTanteo());
@@ -3314,7 +3316,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		ExpedienteComercial expediente = findOne(idExpedienteComercial);
 		List<ActivoTramite> listaTramites = null;
 		listaTramites = activoTramiteApi.getTramitesActivoTrabajoList(expediente.getTrabajo().getId());
-		String reultadoTramite = "null";
+		String reultadoTramite = "venta";
 		try {
 			if (!Checks.esNulo(expediente)) {
 				oferta = expediente.getOferta();
@@ -3342,6 +3344,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	
 									}
 	
+								}else {
+									reultadoTramite = NO_MOSTRAR;
 								}
 							}
 
@@ -3514,13 +3518,21 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					expedienteComercial.setPeticionarioAnulacion(dto.getPeticionarioAnulacion());
 					}
 
-				if (!Checks.esNulo(dto.getCodMotivoAnulacion())) {
+				if (!Checks.esNulo(dto.getCodMotivoAnulacion()) && DDTipoOferta.CODIGO_VENTA.equals(expedienteComercial.getOferta().getTipoOferta().getCodigo())) {
 					DDMotivoAnulacionExpediente motivoAnulacionExpediente = (DDMotivoAnulacionExpediente) utilDiccionarioApi.dameValorDiccionarioByCod(DDMotivoAnulacionExpediente.class, dto
-					.getCodMotivoAnulacion());
+							.getCodMotivoAnulacion());
 					expedienteComercial.setMotivoAnulacion(motivoAnulacionExpediente);
+					
 					actualizarEstadoPublicacion = true;
 				}
-
+				
+				if (!Checks.esNulo(dto.getCodMotivoRechazoExp()) && DDTipoOferta.CODIGO_ALQUILER.equals(expedienteComercial.getOferta().getTipoOferta().getCodigo())) {
+					DDMotivoRechazoExpediente motivoRechazoExpediente = (DDMotivoRechazoExpediente) utilDiccionarioApi.dameValorDiccionarioByCod(DDMotivoRechazoExpediente.class, dto
+							.getCodMotivoRechazoExp());
+					expedienteComercial.setMotivoRechazo(motivoRechazoExpediente);
+					
+					actualizarEstadoPublicacion = true;
+				}
 
 				if (!Checks.esNulo(expedienteComercial.getReserva())) {
 					if (!Checks.esNulo(dto.getEstadoDevolucionCodigo())) {

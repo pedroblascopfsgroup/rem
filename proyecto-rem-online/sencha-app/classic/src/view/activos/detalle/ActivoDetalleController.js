@@ -3628,7 +3628,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
                 me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
             } else if(destinoComercialAlquiler == false && chkPerimetroAlquiler == true){
                 me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.destino.comercial"));
-            } else if(tieneOfertaAlquilerViva == true && chkPerimetroAlquiler == false) {
+            } else if(tieneOfertaAlquilerViva == true && comboEstadoAlquiler.value == CONST.COMBO_ESTADO_ALQUILER['LIBRE']) {
                 me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.oferta.alquiler"));
             }else if(comboEstadoAlquiler.value == CONST.COMBO_ESTADO_ALQUILER['LIBRE']){
                 comboTipoInquilino.setValue(null);
@@ -3640,25 +3640,21 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 
     },
 
-    esEditableChkYcombo: function(){
+    esEditableChkYcombo: function(change, newValue, oldValue, eOpts){
         var me = this;
-
         var comboEstadoAlquiler = me.lookupReference('comboEstadoAlquilerRef');
         var chkPerimetroAlquiler = me.lookupReference('chkPerimetroAlquilerRef');
         var comboTipoInquilino = me.lookupReference('comboTipoInquilinoRef');
 
         var comboValue = comboEstadoAlquiler.value;
         chkPerimetroAlquiler.setDisabled(true);
-
         if(!Ext.isEmpty(comboEstadoAlquiler)){
             if(comboValue == CONST.COMBO_ESTADO_ALQUILER["ALQUILADO"] || comboValue == CONST.COMBO_ESTADO_ALQUILER["CON_DEMANDAS"]){
                 chkPerimetroAlquiler.setValue(true);
                 chkPerimetroAlquiler.setDisabled(true);
                 comboTipoInquilino.setDisabled(false);
             } else {
-                chkPerimetroAlquiler.setValue(false);
-                chkPerimetroAlquiler.setDisabled(false);
-                comboTipoInquilino.setDisabled(true);
+            	chkPerimetroAlquiler.setDisabled(false);
             }
         }
     },

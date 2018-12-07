@@ -580,16 +580,6 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 										}
 									},
 									{
-										xtype: 'comboboxfieldbase',
-										fieldLabel: HreRem.i18n('fieldlabel.perimetro.tipo.alquiler'),
-										readOnly: true,
-										bind: {
-											store: '{comboTipoAlquiler}',
-											hidden: '{!activo.isDestinoComercialAlquiler}',
-											value: '{activo.tipoAlquilerCodigo}'
-										}
-									},
-									{
 										xtype : 'comboboxfieldbase',
 										fieldLabel: HreRem.i18n('fieldlabel.perimetro.check.bloqueo.tipo.comercializacion'),
 										labelWidth: 200,
@@ -597,8 +587,17 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 											store : '{comboSiNoBoolean}',
 											value: '{activo.bloqueoTipoComercializacionAutomatico}'
 										}
+									},
+									{
+										xtype: 'comboboxfieldbase',
+										fieldLabel: HreRem.i18n('fieldlabel.perimetro.tipo.alquiler'),
+										readOnly: true,
+										bind: {
+											store: '{comboTipoAlquiler}',
+											disabled: '{!activo.isDestinoComercialAlquiler}',
+											value: '{activo.tipoAlquilerCodigo}'
+										}
 									}
-									
 									]
 							},
 							//Bloque Comercialización

@@ -198,7 +198,6 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 						fieldLabel: HreRem.i18n('fieldlabel.fecha.reserva'),
 	                	bind:		{
 	                		value: '{expediente.fechaReserva}'
-	                		
 	                	},
 	                	listeners: {
 							render: 'tareaDefinicionDeOferta'
@@ -288,12 +287,12 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 						},
 						{ 
 							xtype: 'comboboxfieldbase',
-		                	fieldLabel:  HreRem.i18n('fieldlabel.motivo.anulacion'),
+							fieldLabel:  HreRem.i18n('fieldlabel.motivo.anulacion'),
 		                	reference: 'comboMotivoAnulacion',
 		                	editable: true,
 				        	bind: {
-				        		store: '{getStoreMotivoAnulacionByTipoExpediente}',
-			            		value: '{expediente.codMotivoAnulacion}'
+				        		store: '{getStoreMotivoAnulacionOrRechazoByTipoExpediente}',
+			            		value: '{getMotivoAnulacionOrRechazo}'
 			            	}
 				        },
 						{    

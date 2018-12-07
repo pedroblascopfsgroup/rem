@@ -18,6 +18,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
+import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
@@ -63,6 +64,22 @@ public class UpdaterServiceSancionOfertaAlquileresAceptacionCliente implements U
 					aceptacionContraoferta = true;
 					estadoExpedienteComercial = genericDao.get(DDEstadosExpedienteComercial.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadosExpedienteComercial.CONTRAOFERTADO_ALQUILER));
 					expedienteComercial.setEstado(estadoExpedienteComercial);
+					
+					List<ActivoOferta> activosOferta = oferta.getActivosOferta();
+					
+					Double importeContraoferta = oferta.getImporteContraOferta();
+					
+					if(!Checks.estaVacio(activosOferta)) {
+						if(activosOferta.size() == 1) {
+							activosOferta.get(0).setImporteActivoOferta(importeContraoferta);
+						}else {
+							for(ActivoOferta actOfr: activosOferta) {
+								Double porcentaje = actOfr.getPorcentajeParticipacion();
+								Double importeActivo = importeContraoferta * (porcentaje / 100);
+								actOfr.setImporteActivoOferta(importeActivo);
+							}
+						}
+					}
 				}else {
 					estadoExpedienteComercial = genericDao.get(DDEstadosExpedienteComercial.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadosExpedienteComercial.ANULADO));
 					expedienteComercial.setEstado(estadoExpedienteComercial);

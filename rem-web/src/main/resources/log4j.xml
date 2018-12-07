@@ -73,7 +73,7 @@
 
 	<!-- DEVON -->
 	<logger name="es.capgemini.devon" additivity="false">
-		<level value="info" />
+		<level value="fatal" />
 		<appender-ref ref="console" />
 		<appender-ref ref="file" />
 		<appender-ref ref="syslog" />
@@ -81,7 +81,7 @@
 	</logger>
 	<!-- PFS -->
 	<logger name="es.capgemini.pfs" additivity="false">
-		<level value="info" />
+		<level value="error" />
 		<appender-ref ref="console" />
 		<appender-ref ref="file" />
 		<appender-ref ref="syslog" />

@@ -3,14 +3,13 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
     alias: 'viewmodel.trabajodetalle',
 
     requires : ['HreRem.ux.data.Proxy', 'HreRem.model.ComboBase', 'HreRem.model.ActivoTrabajo', 'HreRem.model.ActivoTrabajoSubida',
-    'HreRem.model.AdjuntoTrabajo', 'HreRem.model.TareaList', 'HreRem.model.ObservacionesTrabajo', 'HreRem.model.Llaves'],
+    'HreRem.model.AdjuntoTrabajo', 'HreRem.model.TareaList', 'HreRem.model.ObservacionesTrabajo', 'HreRem.model.Llaves', 'HreRem.model.FichaTrabajo'],
     
     data: {
     	trabajo: null
     },
     
     formulas: {
-    	
     	tituloActivosTrabajo: function (get) {   	
 	     	
 	     	 var numAgrupacion = get('trabajo.numAgrupacion');
@@ -300,7 +299,9 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
 				proxy: {
 					type: 'uxproxy',
 					remoteUrl: 'generic/getComboTipoTrabajoCreaFiltered',
-					extraParams: {idActivo: '{idActivo}'}
+					extraParams: {
+						idActivo: '{idActivo}'
+					}
 				}
     		},
     		

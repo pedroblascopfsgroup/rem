@@ -35,6 +35,7 @@ public class DtoAgrupacionFilter extends WebDto {
 	private Long numActSareb;
 	private Long numActUVEM;
 	private Long numActReco;
+	private Long idNumActivoPrincipal;
 	private String nif;
 
 	public String getNombre() {
@@ -235,6 +236,14 @@ public class DtoAgrupacionFilter extends WebDto {
 
 	public void setNif(String nif) {
 		this.nif = nif;
+	}
+
+	public Long getIdNumActivoPrincipal() {
+		return idNumActivoPrincipal;
+	}
+
+	public void setIdNumActivoPrincipal(Long idNumActivoPrincipal) {
+		this.idNumActivoPrincipal = idNumActivoPrincipal;
 	}
 	
 	

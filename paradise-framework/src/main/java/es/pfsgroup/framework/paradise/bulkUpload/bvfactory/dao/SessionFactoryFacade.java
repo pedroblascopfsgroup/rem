@@ -4,8 +4,8 @@ import org.hibernate.Session;
 import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 
 /**
- * Factor韆 para obtener las sesiones de Hibernate. Se pone esta funcionalidad
- * en una factor韆 a parte para poder mockearla en los tests
+ * Factor铆a para obtener las sesiones de Hibernate. Se pone esta funcionalidad
+ * en una factor铆a a parte para poder mockearla en los tests
  * 
  * @author bruno
  * 
@@ -13,13 +13,13 @@ import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 public interface SessionFactoryFacade {
 
 	/**
-	 * Devuelve la sesi髇 actual del DAO
+	 * Devuelve la sesi贸n actual del DAO
 	 * 
 	 * @param currentDao
-	 *            Dao del que se quiere devolver la sesi髇 En la implementaci髇
-	 *            normal este m閠odo invoca el m閠odo getSession() del dao que
-	 *            se pasa como par醡etro. Durante los tests se deber韆 devolver
-	 *            un mock de la sesi髇.
+	 *            Dao del que se quiere devolver la sesi贸n En la implementaci贸n
+	 *            normal este m茅todo invoca el m茅todo getSession() del dao que
+	 *            se pasa como par谩metro. Durante los tests se deber铆a devolver
+	 *            un mock de la sesi贸n.
 	 * @return
 	 */
 	Session getSession(HibernateDaoSupport currentDao);

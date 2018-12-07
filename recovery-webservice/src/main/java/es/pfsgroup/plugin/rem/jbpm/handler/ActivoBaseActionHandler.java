@@ -25,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import es.capgemini.devon.bpm.ProcessManager;
+import es.capgemini.devon.exception.UserException;
 import es.capgemini.devon.utils.BPMUtils;
 import es.capgemini.devon.utils.DbIdContextHolder;
 import es.capgemini.pfs.BPMContants;
@@ -561,7 +562,10 @@ public abstract class ActivoBaseActionHandler implements ActionHandler {
         try {
             run(executionContext);
             transactionManager.commit(transaction);
-        } catch (Exception e) {
+        } catch (UserException e) {
+        	transactionManager.rollback(transaction);
+            throw e;
+		}catch (Exception e) {
             logger.error(e);
             transactionManager.rollback(transaction);
             throw e;

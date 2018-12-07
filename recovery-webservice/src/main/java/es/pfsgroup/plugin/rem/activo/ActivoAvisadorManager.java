@@ -10,16 +10,11 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import es.capgemini.devon.bo.Executor;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.pfs.auditoria.model.Auditoria;
-import es.capgemini.pfs.users.FuncionManager;
 import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
-import es.pfsgroup.commons.utils.api.ApiProxyFactory;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
-import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoAvisadorApi;
 import es.pfsgroup.plugin.rem.model.Activo;
@@ -27,9 +22,6 @@ import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.DtoAviso;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacion;
-import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
-
 
 @Service("activoAvisadorManager")
 public class ActivoAvisadorManager implements ActivoAvisadorApi {
@@ -38,23 +30,11 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 	
 	protected static final Log logger = LogFactory.getLog(ActivoAvisadorManager.class);
 	
-	@Autowired
-	private Executor executor;
-
-	@Autowired
-	private GenericABMDao genericDao;
-
-	@Autowired
-	private ActivoDao activoDao;
-
-	@Autowired
-	private ApiProxyFactory proxyFactory;
 	
 	@Autowired 
     private ActivoApi activoApi;
 
-	@Autowired
-	private FuncionManager funcionManager;
+
 
 	@Override
 	@BusinessOperation(overrides = "activoAvisadorManager.get")
@@ -71,13 +51,13 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 		
 		List<DtoAviso> listaAvisos = new ArrayList<DtoAviso>();
 		Activo activo = activoApi.get(id);
-		activoApi.calcularFechaTomaPosesion(activo);
 		List<Perfil> perfilesUsuario = usuarioLogado.getPerfiles();
 		
 		boolean restringida = false;
 		boolean obraNueva = false;
 		boolean asistida = false;
 		boolean lote = false;
+		boolean conTitulo = false;
 		boolean enPuja = false;
 		
 		try {
@@ -87,6 +67,7 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 			obraNueva = activoApi.isIntegradoAgrupacionObraNueva(id, usuarioLogado);
 			asistida = activoApi.isIntegradoAgrupacionAsistida(activo);
 			lote = activoApi.isIntegradoAgrupacionComercial(activo);
+			conTitulo = activoApi.necesitaDocumentoInformeOcupacion(activo);
 			enPuja = activoApi.isActivoEnPuja(activo);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -127,9 +108,15 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 			listaAvisos.add(dtoAviso);
 		}
 		
+		if(conTitulo) {
+			DtoAviso dtoAviso = new DtoAviso();
+			dtoAviso.setDescripcion("Es necesario adjuntar el documento “Informe ocupación”");
+			dtoAviso.setId(String.valueOf(id));
+			listaAvisos.add(dtoAviso);
+		}
+		
 		if (Checks.esNulo(activo.getSituacionPosesoria())) {
 			Auditoria auditoria = Auditoria.getNewInstance();
-
 			ActivoSituacionPosesoria actSit = new ActivoSituacionPosesoria();
 			actSit.setActivo(activo);
 			actSit.setVersion(new Long(0));
@@ -141,7 +128,6 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 		// Aviso 3 / 4: Situación posesoria OCUPADO + Con o sín título
 		if (!Checks.esNulo(activo.getSituacionPosesoria().getOcupado())) {
 			if (activo.getSituacionPosesoria().getOcupado() == 1) {
-
 				if (activo.getSituacionPosesoria().getConTitulo() == 1) {
 					DtoAviso dtoAviso = new DtoAviso();
 					dtoAviso.setDescripcion("Situación posesoria ocupado con título");
@@ -153,7 +139,6 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 					dtoAviso.setId(String.valueOf(id));
 					listaAvisos.add(dtoAviso);
 				}
-
 			}
 		}
 		
@@ -164,7 +149,6 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 				dtoAviso.setDescripcion("Situación de acceso tapiado");
 				dtoAviso.setId(String.valueOf(id));
 				listaAvisos.add(dtoAviso);
-
 			}
 		}
 
@@ -175,7 +159,6 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 				dtoAviso.setDescripcion("Situación de acceso con puerta antiocupa");
 				dtoAviso.setId(String.valueOf(id));
 				listaAvisos.add(dtoAviso);
-
 			}
 		}
 				
@@ -224,9 +207,27 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 			listaAvisos.add(dtoAviso);	
 		}
 		
-		// Aviso 12: Estado activo vandalizado
+		PerimetroActivo perimetroActivo = activoApi.getPerimetroByIdActivo(activo.getId());
+		
+		// Aviso 12: Activo no publicable
+		if(!Checks.esNulo(perimetroActivo) && !Checks.esNulo(perimetroActivo.getAplicaPublicar()) && !perimetroActivo.getAplicaPublicar()) {
+			DtoAviso dtoAviso = new DtoAviso();
+			dtoAviso.setDescripcion("No publicable");
+			dtoAviso.setId(String.valueOf(id));
+			listaAvisos.add(dtoAviso);
+		}
+		
+		// Aviso 13: Activo publicable
+		if(!Checks.esNulo(perimetroActivo) && !Checks.esNulo(perimetroActivo.getAplicaPublicar()) && perimetroActivo.getAplicaPublicar()) {
+			DtoAviso dtoAviso = new DtoAviso();
+			dtoAviso.setDescripcion("Publicable");
+			dtoAviso.setId(String.valueOf(id));
+			listaAvisos.add(dtoAviso);
+		}
+		
+		// Aviso 14: Estado activo vandalizado
 		if(!Checks.esNulo(activo.getEstadoActivo())) {
-			if(DDEstadoActivo.ESTADO_ACTIVO_VANDALIZADO.equals(activo.getEstadoActivo().getCodigo())) {
+			if (DDEstadoActivo.ESTADO_ACTIVO_VANDALIZADO.equals(activo.getEstadoActivo().getCodigo())) {
 				DtoAviso dtoAviso = new DtoAviso();
 				dtoAviso.setDescripcion(activo.getEstadoActivo().getDescripcion());
 				dtoAviso.setId(String.valueOf(id));
@@ -234,7 +235,25 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 			}
 		}
 		
+		// Aviso 15: Estado activo vandalizado
+		if(!Checks.esNulo(activo.getEstadoActivo())) {
+			if (DDEstadoActivo.ESTADO_ACTIVO_NO_OBRA_NUEVA_VANDALIZADO.equals(activo.getEstadoActivo().getCodigo())) {
+				
+				DtoAviso dtoAviso = new DtoAviso();
+				dtoAviso.setDescripcion(activo.getEstadoActivo().getDescripcion());
+				dtoAviso.setId(String.valueOf(id));
+				listaAvisos.add(dtoAviso);
+				
+			}
+		}
+		
+		if(!(Checks.esNulo(activo.getTieneDemandaAfecCom())) && activo.getTieneDemandaAfecCom()==1) {
+			DtoAviso dtoAviso = new DtoAviso();
+			dtoAviso.setDescripcion("Activo con demanda con afectación comercial");
+			dtoAviso.setId(String.valueOf(id));
+			listaAvisos.add(dtoAviso);			
+		}
 		return listaAvisos;
-		//activoDao.getListActivos(id, usuarioLogado);
 	}
+
 }

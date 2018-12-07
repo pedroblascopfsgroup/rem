@@ -35,8 +35,6 @@ import es.capgemini.pfs.adjunto.model.Adjunto;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
-import es.pfsgroup.commons.utils.HQLBuilder;
-import es.pfsgroup.commons.utils.HibernateQueryUtils;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
@@ -95,8 +93,9 @@ import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.VBusquedaGastoActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaGastoTrabajos;
+import es.pfsgroup.plugin.rem.model.VFacturasProveedores;
 import es.pfsgroup.plugin.rem.model.VGastosProveedor;
-import es.pfsgroup.plugin.rem.model.VGastosProvision;
+import es.pfsgroup.plugin.rem.model.VTasasImpuestos;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDDestinatarioGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDDestinatarioPago;
@@ -133,7 +132,6 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	private static final String PESTANA_IMPUGNACION = "impugnacion";
 
 	private static final String EXCEPTION_EXPEDIENT_NOT_FOUND_COD = "ExceptionExp";
-	private static final String EXCEPTION_ACTIVO_NOT_FOUND_COD = "Error al obtener el activo, no existe";
 	private static final String COD_PEF_GESTORIA_ADMINISTRACION = "HAYAGESTADMT";
 	private static final String COD_PEF_GESTORIA_PLUSVALIA = "GESTOPLUS";
 	private static final String COD_PEF_USUARIO_CERTIFICADOR = "HAYACERTI";
@@ -168,8 +166,6 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	@Autowired
 	private ActivoApi activoApi;
 	
-	@Autowired
-	private ActivoDao ActivoDao;
 	
 	@Autowired
 	private ActivoAgrupacionApi activoAgrupacionApi;
@@ -2076,15 +2072,14 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				String[] error = gex.getMessage().split("-");
 
 				// Si no existe el expediente lo creamos
-				if (error.length > 0 &&  (error[2].trim().contains(EXCEPTION_ACTIVO_NOT_FOUND_COD))) {
+				if (GestorDocumentalException.CODIGO_ERROR_CONTENEDOR_NO_EXISTE.equals(gex.getCodigoError())) {
 
 					Integer idExpediente;
 					try {
 						idExpediente = gestorDocumentalAdapterApi.crearGasto(gasto, usuario.getUsername());
 						logger.debug("GESTOR DOCUMENTAL [ crearGasto para " + gasto.getNumGastoHaya() + "]: ID EXPEDIENTE RECIBIDO " + idExpediente);
 					} catch (GestorDocumentalException gexc) {
-						gexc.printStackTrace();
-						logger.debug(gexc.getMessage());
+						logger.debug(gexc.getMessage(),gexc);
 					}
 				}
 
@@ -2135,9 +2130,8 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				try {
 					gestorDocumentalAdapterApi.uploadDocumentoGasto(gasto, fileItem, usuarioLogado.getUsername(), tipoDocumento.getMatricula());
 				} catch (GestorDocumentalException gex) {
-					String[] error = gex.getMessage().split("-");
 					// Si no existe el expediente lo creamos
-					if (EXCEPTION_EXPEDIENT_NOT_FOUND_COD.equals(error[0])) {
+					if (GestorDocumentalException.CODIGO_ERROR_CONTENEDOR_NO_EXISTE.equals(gex.getCodigoError())) {
 						return "No existe el expediente en el gestor documental";
 					} else {
 						logger.error(gex.getMessage());
@@ -3122,5 +3116,19 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		
 		return genericDao.getList(VGastosProveedor.class, filter);
 
+	}
+	
+	@Override
+	public List<VFacturasProveedores> getListFacturas(){
+		List<VFacturasProveedores> listFacturas = new ArrayList<VFacturasProveedores>();
+		listFacturas = genericDao.getList(VFacturasProveedores.class);
+		return listFacturas;
+	}
+	
+	@Override
+	public List<VTasasImpuestos> getListTasasImpuestos(){
+		List<VTasasImpuestos>  listTasasImpuestos = new ArrayList<VTasasImpuestos>();
+		listTasasImpuestos = genericDao.getList(VTasasImpuestos.class);
+		return listTasasImpuestos;
 	}
 }

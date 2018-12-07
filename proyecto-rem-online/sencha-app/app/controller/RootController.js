@@ -171,6 +171,7 @@ Ext.define('HreRem.controller.RootController', {
         return this.session;
     },
     
+    
     /**
      * Configuración global de peticiones Ajax
      */

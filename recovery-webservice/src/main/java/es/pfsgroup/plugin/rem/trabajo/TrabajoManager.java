@@ -57,6 +57,7 @@ import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
+import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
@@ -73,6 +74,7 @@ import es.pfsgroup.plugin.rem.api.TareaActivoApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.gestor.GestorActivoManager;
 import es.pfsgroup.plugin.rem.gestor.dao.GestorActivoDao;
+import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
 import es.pfsgroup.plugin.rem.historicotarifaplana.dao.HistoricoTarifaPlanaDao;
 import es.pfsgroup.plugin.rem.jbpm.activo.JBPMActivoTramiteManager;
 import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ActuacionTecnicaUserAssignationService;
@@ -84,6 +86,7 @@ import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
 import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
 import es.pfsgroup.plugin.rem.model.ActivoTrabajo.ActivoTrabajoPk;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
+import es.pfsgroup.plugin.rem.model.AdjuntoGasto;
 import es.pfsgroup.plugin.rem.model.AdjuntoTrabajo;
 import es.pfsgroup.plugin.rem.model.ConfiguracionTarifa;
 import es.pfsgroup.plugin.rem.model.DtoActivoTrabajo;
@@ -101,6 +104,7 @@ import es.pfsgroup.plugin.rem.model.DtoProvisionSuplido;
 import es.pfsgroup.plugin.rem.model.DtoRecargoProveedor;
 import es.pfsgroup.plugin.rem.model.DtoTarifaTrabajo;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.PresupuestoTrabajo;
 import es.pfsgroup.plugin.rem.model.PropuestaPrecio;
@@ -239,6 +243,9 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	
 	@Autowired
 	private TareaActivoApi tareaActivoApi;
+	
+	@Autowired
+	private GestorDocumentalAdapterApi gestorDocumentalAdapterApi;
 
 	private BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 	
@@ -465,6 +472,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		 * trabajo-tramite.
 		 */
 		Trabajo trabajo = new Trabajo();
+		
+		Usuario usuario = genericAdapter.getUsuarioLogado();
 
 		try {
 			trabajo.setFechaSolicitud(new Date());
@@ -669,6 +678,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	private Trabajo crearTrabajoPorAgrupacion(DtoFichaTrabajo dtoTrabajo, List<Long> idsActivosSelecionados) {
 
 		ActivoAgrupacion agrupacion = activoAgrupacionDao.get(dtoTrabajo.getIdAgrupacion());
+		
+		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "agrId", Long.valueOf(dtoTrabajo.getIdAgrupacion()));
 		List<VActivosAgrupacionTrabajo> activosAgrupacionTrabajoTem = genericDao.getList(VActivosAgrupacionTrabajo.class, filtro);
@@ -790,14 +801,21 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			} else {
 				trabajo.setResponsableTrabajo(genericAdapter.getUsuarioLogado());
 			}
-			
+			if(dtoTrabajo.getRequerimiento() != null){
+				trabajo.setRequerimiento(dtoTrabajo.getRequerimiento());
+			}
 
 			trabajoDao.saveOrUpdate(trabajo);
+			
+			//creamos el contenedor en el gestor documental
+			if(DDTipoTrabajo.CODIGO_ACTUACION_TECNICA.equals(trabajo.getTipoTrabajo().getCodigo())){
+				crearContenedorActuacionesTecnicasGD(trabajo, usuarioLogado.getUsername());
+			}
 
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 		}
-
+		
 		return trabajo;
 
 	}
@@ -945,15 +963,26 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				}
 
 				if(!dtoTrabajo.getEsSolicitudConjunta()) {
+					if(dtoTrabajo.getRequerimiento() != null){
+						trabajo.setRequerimiento(dtoTrabajo.getRequerimiento());
+					}
 					trabajoDao.saveOrUpdate(trabajo);
 					listaTrabajos.add(trabajo);
 				}
 			}
 
 			if(dtoTrabajo.getEsSolicitudConjunta()) {
+				if(dtoTrabajo.getRequerimiento() != null){
+					trabajo.setRequerimiento(dtoTrabajo.getRequerimiento());
+				}
 				trabajoDao.saveOrUpdate(trabajo);
 				listaTrabajos.add(trabajo);
 				ficheroMasivoToTrabajo(dtoTrabajo.getIdProceso(), trabajo);
+			}
+			
+			//creamos el contenedor en el gestor documental
+			if(DDTipoTrabajo.CODIGO_ACTUACION_TECNICA.equals(trabajo.getTipoTrabajo().getCodigo())){
+				crearContenedorActuacionesTecnicasGD(trabajo, usuarioLogado.getUsername());
 			}
 
 		} catch (IllegalAccessException e) {
@@ -968,6 +997,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	private Trabajo crearTrabajoPorActivo(Activo activo, DtoFichaTrabajo dtoTrabajo) {
 
 		Trabajo trabajo = new Trabajo();
+		
+		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 
 		Usuario galq = gestorActivoApi.getGestorByActivoYTipo(activo, "GALQ");
 		Usuario gsue = gestorActivoApi.getGestorByActivoYTipo(activo, "GSUE");
@@ -1041,8 +1072,16 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			if (DDSubtipoTrabajo.CODIGO_CEDULA_HABITABILIDAD.equals(trabajo.getSubtipoTrabajo().getCodigo())) {
 				trabajo.setFechaAprobacion(new Date());
 			}
+			if(dtoTrabajo.getRequerimiento() != null){
+				trabajo.setRequerimiento(dtoTrabajo.getRequerimiento());
+			}			
 
 			trabajoDao.saveOrUpdate(trabajo);
+			
+			//creamos el contenedor en el gestor documental
+			if(DDTipoTrabajo.CODIGO_ACTUACION_TECNICA.equals(trabajo.getTipoTrabajo().getCodigo())){
+				crearContenedorActuacionesTecnicasGD(trabajo, usuarioLogado.getUsername());
+			}
 
 		} catch (Exception e) {
 			logger.error(e.getMessage());
@@ -1227,8 +1266,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 																			// obtención
 																			// documental
 																			// CEE
-				//Si el trabajo es Bankia/Sareb/Tango/Giants asignamos proveedorContacto
-				if(this.checkBankia(trabajo) || this.checkSareb(trabajo) || this.checkTango(trabajo) || this.checkGiants(trabajo)) {
+				//Si el trabajo es Bankia/Sareb/Tango asignamos proveedorContacto
+				if(this.checkBankia(trabajo) || this.checkSareb(trabajo) || this.checkTango(trabajo)) {
 					Filter filtroUsuProveedorBankiaSareb = genericDao.createFilter(FilterType.EQUALS, "username", GestorActivoApi.CIF_PROVEEDOR_BANKIA_SAREB_TINSA);
 					Usuario usuProveedorBankiaSareb = genericDao.get(Usuario.class, filtroUsuProveedorBankiaSareb);
 					if(!Checks.esNulo(usuProveedorBankiaSareb)) {
@@ -1238,6 +1277,20 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 						if(!Checks.estaVacio(listaPVC)){
 							
 							trabajo.setProveedorContacto(listaPVC.get(0));
+							trabajo = genericDao.save(Trabajo.class, trabajo);
+						}
+					}
+				//Si el trabajo es de JAIPUR/GIANTS/GALEON
+				}else if(this.checkGiants(trabajo) || this.checkGaleon(trabajo) || this.checkJaipur(trabajo)){
+					Filter filtroPVE = genericDao.createFilter(FilterType.EQUALS, "docIdentificativo", GestorActivoApi.CIF_PROVEEDOR_HOMESERVE);
+					Filter filtroPVE2 = genericDao.createFilter(FilterType.NULL, "fechaBaja");
+					ActivoProveedor pve = genericDao.get(ActivoProveedor.class, filtroPVE, filtroPVE2);
+					if(!Checks.esNulo(pve)) {
+						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "proveedor", pve);
+						Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "docIdentificativo", GestorActivoApi.CIF_PROVEEDOR_HOMESERVE);
+						ActivoProveedorContacto pvc = genericDao.get(ActivoProveedorContacto.class,filtro, filtro2);
+						if(!Checks.esNulo(pvc)){
+							trabajo.setProveedorContacto(pvc);
 							trabajo = genericDao.save(Trabajo.class, trabajo);
 						}
 					}
@@ -1610,16 +1663,30 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	@Transactional(readOnly = false)
 	public boolean deleteAdjunto(DtoAdjunto dtoAdjunto) {
 
+		boolean borrado = false;
 		Trabajo trabajo = trabajoDao.get(dtoAdjunto.getIdEntidad());
 		AdjuntoTrabajo adjunto = trabajo.getAdjunto(dtoAdjunto.getId());
 
-		if (adjunto == null) {
-			return false;
-		}
-		trabajo.getAdjuntos().remove(adjunto);
-		trabajoDao.save(trabajo);
+		try {
+			// Borramos en el gestor documental si hay
+			if (DDTipoTrabajo.CODIGO_ACTUACION_TECNICA.equals(trabajo.getTipoTrabajo().getCodigo()) && gestorDocumentalAdapterApi.modoRestClientActivado()) {
+				Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+				borrado = gestorDocumentalAdapterApi.borrarAdjunto(dtoAdjunto.getId(), usuarioLogado.getUsername());
 
-		return true;
+			} else {
+				if (adjunto == null) {
+					borrado = false;
+				}
+				trabajo.getAdjuntos().remove(adjunto);
+				trabajoDao.save(trabajo);
+			}
+			borrado = true;
+		} catch (Exception ex) {
+			logger.debug(ex.getMessage());
+			borrado = false;
+		}
+		
+		return borrado;
 	}
 
 	@Override
@@ -1823,53 +1890,65 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	@Transactional(readOnly = false)
 	public String upload(WebFileItem fileItem) throws Exception {
 
+		Trabajo trabajo = trabajoDao.get(Long.parseLong(fileItem.getParameter("idEntidad")));
+		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+		
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("tipo"));
 		DDTipoDocumentoActivo tipoDocumento = genericDao.get(DDTipoDocumentoActivo.class,
 				filtro);
 		
-		if(!Checks.esNulo(tipoDocumento)) {
-			// Subida de adjunto al Trabajo
-			Trabajo trabajo = trabajoDao.get(Long.parseLong(fileItem.getParameter("idEntidad")));
-
-			Adjunto adj = uploadAdapter.saveBLOB(fileItem.getFileItem());
-
-			AdjuntoTrabajo adjuntoTrabajo = new AdjuntoTrabajo();
-			adjuntoTrabajo.setAdjunto(adj);
-
-			adjuntoTrabajo.setTrabajo(trabajo);
-
-			adjuntoTrabajo.setTipoDocumentoActivo(tipoDocumento);
-
-			adjuntoTrabajo.setContentType(fileItem.getFileItem().getContentType());
-
-			adjuntoTrabajo.setTamanyo(fileItem.getFileItem().getLength());
-
-			adjuntoTrabajo.setNombre(fileItem.getFileItem().getFileName());
-
-			adjuntoTrabajo.setDescripcion(fileItem.getParameter("descripcion"));
-
-			adjuntoTrabajo.setFechaDocumento(new Date());
-
-			Auditoria.save(adjuntoTrabajo);
-
-			trabajo.getAdjuntos().add(adjuntoTrabajo);
-
-			trabajoDao.save(trabajo);
-
-			// Copia de adjunto al Activo
-			ActivoAdjuntoActivo adjuntoActivo = new ActivoAdjuntoActivo();
-
-			adjuntoActivo.setAdjunto(adj);
-			adjuntoActivo.setActivo(trabajo.getActivo());
-			adjuntoActivo.setTipoDocumentoActivo(tipoDocumento);
-			adjuntoActivo.setContentType(fileItem.getFileItem().getContentType());
-			adjuntoActivo.setTamanyo(fileItem.getFileItem().getLength());
-			adjuntoActivo.setNombre(fileItem.getFileItem().getFileName());
-			adjuntoActivo.setDescripcion(fileItem.getParameter("descripcion"));
-			adjuntoActivo.setFechaDocumento(new Date());
-			Auditoria.save(adjuntoActivo);
-			trabajo.getActivo().getAdjuntos().add(adjuntoActivo);
-		}
+		if(DDTipoTrabajo.CODIGO_ACTUACION_TECNICA.equals(trabajo.getTipoTrabajo().getCodigo()) && gestorDocumentalAdapterApi.modoRestClientActivado()){
+			try {
+				gestorDocumentalAdapterApi.uploadDocumentoActuacionesTecnicas(trabajo, fileItem, usuarioLogado.getUsername(), tipoDocumento.getMatricula());
+			} catch (GestorDocumentalException gex) {
+				logger.error(gex.getMessage());
+				return gex.getMessage();
+			}
+		} else {		
+			if(!Checks.esNulo(tipoDocumento)) {
+				
+				// Subida de adjunto al Trabajo
+				AdjuntoTrabajo adjuntoTrabajo = new AdjuntoTrabajo();
+				
+				Adjunto adj = uploadAdapter.saveBLOB(fileItem.getFileItem());
+				adjuntoTrabajo.setAdjunto(adj);
+				
+				adjuntoTrabajo.setTrabajo(trabajo);
+	
+				adjuntoTrabajo.setTipoDocumentoActivo(tipoDocumento);
+	
+				adjuntoTrabajo.setContentType(fileItem.getFileItem().getContentType());
+	
+				adjuntoTrabajo.setTamanyo(fileItem.getFileItem().getLength());
+	
+				adjuntoTrabajo.setNombre(fileItem.getFileItem().getFileName());
+	
+				adjuntoTrabajo.setDescripcion(fileItem.getParameter("descripcion"));
+	
+				adjuntoTrabajo.setFechaDocumento(new Date());
+	
+				Auditoria.save(adjuntoTrabajo);
+	
+				trabajo.getAdjuntos().add(adjuntoTrabajo);
+	
+				trabajoDao.save(trabajo);
+				
+				// Copia de adjunto al Activo
+				ActivoAdjuntoActivo adjuntoActivo = new ActivoAdjuntoActivo();
+				adjuntoActivo.setAdjunto(adj);
+				adjuntoActivo.setActivo(trabajo.getActivo());
+				adjuntoActivo.setTipoDocumentoActivo(tipoDocumento);
+				adjuntoActivo.setContentType(fileItem.getFileItem().getContentType());
+				adjuntoActivo.setTamanyo(fileItem.getFileItem().getLength());
+				adjuntoActivo.setNombre(fileItem.getFileItem().getFileName());
+				adjuntoActivo.setDescripcion(fileItem.getParameter("descripcion"));
+				adjuntoActivo.setFechaDocumento(new Date());
+				Auditoria.save(adjuntoActivo);
+				trabajo.getActivo().getAdjuntos().add(adjuntoActivo);
+				
+			}
+			
+	}
 
 		return null;
 
@@ -1880,13 +1959,22 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	public FileItem getFileItemAdjunto(DtoAdjunto dtoAdjunto) {
 
 		Trabajo trabajo = trabajoDao.get(dtoAdjunto.getIdEntidad());
-		AdjuntoTrabajo adjuntoTrabajo = trabajo.getAdjunto(dtoAdjunto.getId());
+		AdjuntoTrabajo adjuntoTrabajo = null;
+		FileItem fileItem = null;
+		if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
+			try {
+				fileItem = gestorDocumentalAdapterApi.getFileItem(dtoAdjunto.getId(),dtoAdjunto.getNombre());
+			} catch (Exception e) {
+				logger.error(e.getMessage());
+			}
+		} else {
+			adjuntoTrabajo = trabajo.getAdjunto(dtoAdjunto.getId());
+			fileItem = adjuntoTrabajo.getAdjunto().getFileItem();
+			fileItem.setContentType(adjuntoTrabajo.getContentType());
+			fileItem.setFileName(adjuntoTrabajo.getNombre());
+		}
 
-		FileItem fileItem = adjuntoTrabajo.getAdjunto().getFileItem();
-		fileItem.setContentType(adjuntoTrabajo.getContentType());
-		fileItem.setFileName(adjuntoTrabajo.getNombre());
-
-		return adjuntoTrabajo.getAdjunto().getFileItem();
+		return fileItem;
 	}
 
 	@Override
@@ -1894,25 +1982,43 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	public List<DtoAdjunto> getAdjuntos(Long id) {
 
 		List<DtoAdjunto> listaAdjuntos = new ArrayList<DtoAdjunto>();
+		
+		Trabajo trabajo = trabajoDao.get(id);
 
-		try {
-
-			Trabajo trabajo = trabajoDao.get(id);
-
-			for (AdjuntoTrabajo adjunto : trabajo.getAdjuntos()) {
-				DtoAdjunto dto = new DtoAdjunto();
-
-				BeanUtils.copyProperties(dto, adjunto);
-				dto.setIdEntidad(trabajo.getId());
-				dto.setDescripcionTipo(adjunto.getTipoDocumentoActivo().getDescripcion());
-				dto.setGestor(adjunto.getAuditoria().getUsuarioCrear());
-
-				listaAdjuntos.add(dto);
-
+		if(DDTipoTrabajo.CODIGO_ACTUACION_TECNICA.equals(trabajo.getTipoTrabajo().getCodigo()) && gestorDocumentalAdapterApi.modoRestClientActivado()) {
+			try {
+				listaAdjuntos = gestorDocumentalAdapterApi.getAdjuntosActuacionesTecnicas(trabajo);
+				for (DtoAdjunto adj : listaAdjuntos) {
+					AdjuntoTrabajo adjuntoTrabajo = trabajo.getAdjuntoGD(adj.getId());
+					if (!Checks.esNulo(adjuntoTrabajo)) {
+						if (!Checks.esNulo(adjuntoTrabajo.getTipoDocumentoActivo())) {
+							adj.setDescripcionTipo(adjuntoTrabajo.getTipoDocumentoActivo().getDescripcion());
+						}
+						adj.setContentType(adjuntoTrabajo.getContentType());
+						if (!Checks.esNulo(adjuntoTrabajo.getAuditoria())) {
+							adj.setGestor(adjuntoTrabajo.getAuditoria().getUsuarioCrear());
+						}
+						adj.setTamanyo(adjuntoTrabajo.getTamanyo());
+					}
+				}
+			} catch (GestorDocumentalException gex) {
+				logger.error(gex.getMessage());
 			}
+		} else {
+			try {
+				for (AdjuntoTrabajo adjunto : trabajo.getAdjuntos()) {
+					DtoAdjunto dto = new DtoAdjunto();
 
-		} catch (Exception ex) {
-			logger.error(ex.getMessage());
+					BeanUtils.copyProperties(dto, adjunto);
+					dto.setIdEntidad(trabajo.getId());
+					dto.setDescripcionTipo(adjunto.getTipoDocumentoActivo().getDescripcion());
+					dto.setGestor(adjunto.getAuditoria().getUsuarioCrear());
+
+					listaAdjuntos.add(dto);
+				}
+			} catch (Exception ex) {
+				logger.error(ex.getMessage());
+			}
 		}
 
 		return listaAdjuntos;
@@ -3374,6 +3480,28 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	}
 	
 	@Override
+	public boolean checkJaipur(Trabajo trabajo){
+		if(!Checks.esNulo(trabajo)){
+			Activo primerActivo = trabajo.getActivo();
+			if(!Checks.esNulo(primerActivo)){
+				return (DDCartera.CODIGO_CARTERA_JAIPUR.equals(primerActivo.getCartera().getCodigo()));
+			}
+		}
+		return false;
+	}
+	
+	@Override
+	public boolean checkGaleon(Trabajo trabajo){
+		if(!Checks.esNulo(trabajo)){
+			Activo primerActivo = trabajo.getActivo();
+			if(!Checks.esNulo(primerActivo)){
+				return (DDCartera.CODIGO_CARTERA_GALEON.equals(primerActivo.getCartera().getCodigo()));
+			}
+		}
+		return false;
+	}
+	
+	@Override
 	public boolean checkBankia(TareaExterna tareaExterna) {
 		Trabajo trabajo = tareaExternaToTrabajo(tareaExterna);
 		if (!Checks.esNulo(trabajo)) {
@@ -3680,5 +3808,19 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		}
 		return false;
 	}
+	
+	@Override
+	public void crearContenedorActuacionesTecnicasGD(Trabajo trabajo, String nombreUsuario) {
+		if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
+			Integer idTrabajo;
+			try {
+				idTrabajo = gestorDocumentalAdapterApi.crearActuacionTecnica(trabajo, nombreUsuario);
+				logger.debug("GESTOR DOCUMENTAL [ crearActuacionTecnica para " + trabajo.getNumTrabajo() + "]: ID TRABAJO RECIBIDO " + idTrabajo);
+			} catch (GestorDocumentalException gexc) {
+				logger.error("error creando el contenedor del trabajo ",gexc);
+			}
+		}
+	}
+	
 }
 

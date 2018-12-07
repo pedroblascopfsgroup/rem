@@ -19,6 +19,7 @@ Ext.define('HreRem.view.publicacion.PublicacionController', {
 		form.findField('admision').setValue(false);
 		form.findField('gestion').setValue(false);
 		form.findField('estadoPublicacionCodigo').setValue(null);
+		form.findField('estadoPublicacionAlquilerCodigo').setValue(null);
 		
 	},
 	

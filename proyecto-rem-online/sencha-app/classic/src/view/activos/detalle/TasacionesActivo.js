@@ -1,16 +1,14 @@
 Ext.define('HreRem.view.activos.detalle.TasacionesActivo', {
     extend: 'HreRem.view.common.FormBase',
     xtype: 'tasacionesactivo',    
-    scrollable	: 'y',
-    requires: ['HreRem.model.TasacionBankiaModel'],
-    recordName: "tasacionBankia",
-	recordClass: "HreRem.model.TasacionBankiaModel",
+    scrollable: 'y',
+    saveMultiple: true,
+    records: ['tasacionBankia', 'tasacion'],
+	recordsClass: ['HreRem.model.TasacionBankiaModel', 'HreRem.model.ActivoTasacion'],
+	requires: ['HreRem.model.TasacionBankiaModel', 'HreRem.model.ActivoTasacion'],
 
 	listeners: {
-    	boxready: function() {
-    		var me = this;
-    		me.lookupController().cargarTabData(me);
-    	}
+    	boxready:'cargarTabData'
     },
 	
     initComponent: function () {

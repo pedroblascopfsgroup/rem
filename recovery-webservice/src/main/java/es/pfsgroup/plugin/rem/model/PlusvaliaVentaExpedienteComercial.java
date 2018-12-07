@@ -3,17 +3,14 @@ package es.pfsgroup.plugin.rem.model;
 import java.io.Serializable;
 import java.util.Date;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
@@ -22,12 +19,8 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Where;
 
-import es.capgemini.devon.files.FileItem;
-import es.capgemini.pfs.adjunto.model.Adjunto;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
-import es.pfsgroup.plugin.rem.model.dd.DDSubtipoDocumentoExpediente;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoExpediente;
 
 
 
@@ -59,10 +52,10 @@ public class PlusvaliaVentaExpedienteComercial implements Serializable, Auditabl
     private ExpedienteComercial expediente;   	
 	
 	@Column(name = "EPV_EXENTO")
-	private Long exento;
+	private Integer exento;
 	
 	@Column(name = "EPV_AUTOLIQUIDACION")
-	private Long autoliquidacion;
+	private Integer autoliquidacion;
 	
 	@Column(name = "EPV_FECHA_ESCRITO_AYTO")
 	private Date fechaEscritoAyt;
@@ -92,19 +85,19 @@ public class PlusvaliaVentaExpedienteComercial implements Serializable, Auditabl
 		this.expediente = expediente;
 	}
 
-	public Long getExento() {
+	public Integer getExento() {
 		return exento;
 	}
 
-	public void setExento(Long exento) {
+	public void setExento(Integer exento) {
 		this.exento = exento;
 	}
 
-	public Long getAutoliquidacion() {
+	public Integer getAutoliquidacion() {
 		return autoliquidacion;
 	}
 
-	public void setAutoliquidacion(Long autoliquidacion) {
+	public void setAutoliquidacion(Integer autoliquidacion) {
 		this.autoliquidacion = autoliquidacion;
 	}
 

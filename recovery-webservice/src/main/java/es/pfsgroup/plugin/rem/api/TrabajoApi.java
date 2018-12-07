@@ -831,4 +831,15 @@ public interface TrabajoApi {
 
 	Boolean trabajoEsTarificado(Long idTramite);
 
+	boolean checkJaipur(Trabajo trabajo);
+
+	boolean checkGaleon(Trabajo trabajo);
+
+	/**
+	 * Este método crea un contenedor cuando se crea un trabajo de tipo actuacion técnica
+	 * @param trabajo
+	 * @param nombreUsuario
+	 */
+	public void crearContenedorActuacionesTecnicasGD(Trabajo trabajo, String nombreUsuario);
+
 }

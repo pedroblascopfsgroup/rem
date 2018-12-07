@@ -9,7 +9,8 @@ Ext.define('HreRem.model.ActivoPatrimonio', {
     fields: [    
      		
     		{
-    			name:'chkPerimetroAlquiler'
+    			name:'chkPerimetroAlquiler',
+    			type: 'boolean'
     		},
     		{
     			name:'tipoAlquilerCodigo'

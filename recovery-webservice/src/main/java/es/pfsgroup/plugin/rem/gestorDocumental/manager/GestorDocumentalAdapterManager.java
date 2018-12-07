@@ -33,6 +33,7 @@ import es.pfsgroup.plugin.gestorDocumental.dto.documentos.CrearRelacionExpedient
 import es.pfsgroup.plugin.gestorDocumental.dto.documentos.CredencialesUsuarioDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.documentos.DocumentosExpedienteDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.documentos.RecoveryToGestorDocAssembler;
+import es.pfsgroup.plugin.gestorDocumental.dto.servicios.CrearActuacionTecnicaDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.servicios.CrearExpedienteComercialDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.servicios.CrearGastoDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.servicios.RecoveryToGestorExpAssembler;
@@ -60,6 +61,7 @@ import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.MapeoGestorDocumental;
 import es.pfsgroup.plugin.rem.model.MapeoPropietarioGestorDocumental;
+import es.pfsgroup.plugin.rem.model.Trabajo;
 
 @Service("gestorDocumentalAdapterManager")
 public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterApi, Downloader {
@@ -124,8 +126,8 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 		DocumentosExpedienteDto docExpDto = recoveryToGestorDocAssembler.getDocumentosExpedienteDto(userLogin.getUsername());
 		RespuestaDocumentosExpedientes respuesta = gestorDocumentalApi.documentosExpediente(cabecera, docExpDto);
 
-		/* if (!Checks.esNulo(respuesta.getDocumentos())) {
-			ConsistenciaAdjuntosRunnableUtils caru = new ConsistenciaAdjuntosRunnableUtils(respuesta.getDocumentos(), GestorDocumentalConstants.Contenedor.Activo,userLogin.getUsername());
+	  /*if (!Checks.esNulo(respuesta.getDocumentos())) {
+			ConsistenciaAdjuntosRunnableUtils caru = new ConsistenciaAdjuntosRunnableUtils(respuesta.getDocumentos(), GestorDocumentalConstants.Contenedor.Activo);
 			launchNewTasker(caru);
 		}*/
 
@@ -133,6 +135,36 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 
 		for (DtoAdjunto adjunto : list) {
 			DDTdnTipoDocumento tipoDoc = (DDTdnTipoDocumento) diccionarioApi.dameValorDiccionarioByCod(DDTdnTipoDocumento.class, adjunto.getCodigoTipo());
+			if (tipoDoc == null) {
+				adjunto.setDescripcionTipo("");
+			} else {
+				adjunto.setDescripcionTipo(tipoDoc.getDescripcion());
+			}
+		}
+
+		return list;
+	}
+	
+	@Override
+	public List<DtoAdjunto> getAdjuntosActuacionesTecnicas(Trabajo trabajo) throws GestorDocumentalException {
+		RecoveryToGestorDocAssembler recoveryToGestorDocAssembler = new RecoveryToGestorDocAssembler(appProperties);
+		List<DtoAdjunto> list;
+
+		CabeceraPeticionRestClientDto cabecera = recoveryToGestorDocAssembler.getCabeceraPeticionRestClient(
+				trabajo.getNumTrabajo().toString(), GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_OPERACIONES, GestorDocumentalConstants.CODIGO_CLASE_ACTUACION_TECNICA);
+		Usuario userLogin = genericAdapter.getUsuarioLogado();
+		DocumentosExpedienteDto docExpDto = recoveryToGestorDocAssembler.getDocumentosExpedienteDto(userLogin.getUsername());
+		RespuestaDocumentosExpedientes respuesta = gestorDocumentalApi.documentosExpediente(cabecera, docExpDto);
+
+		/*if (!Checks.esNulo(respuesta.getDocumentos())) {
+			ConsistenciaAdjuntosRunnableUtils caru = new ConsistenciaAdjuntosRunnableUtils(respuesta.getDocumentos(), GestorDocumentalConstants.Contenedor.ExpedienteComercial);
+			launchNewTasker(caru);
+		}*/
+
+		list = GestorDocToRecoveryAssembler.getListDtoAdjunto(respuesta);
+		for (DtoAdjunto adjunto : list) {
+			DDTdnTipoDocumento tipoDoc = (DDTdnTipoDocumento) diccionarioApi
+					.dameValorDiccionarioByCod(DDTdnTipoDocumento.class, adjunto.getCodigoTipo());
 			if (tipoDoc == null) {
 				adjunto.setDescripcionTipo("");
 			} else {
@@ -174,8 +206,8 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 		DocumentosExpedienteDto docExpDto = recoveryToGestorDocAssembler.getDocumentosExpedienteDto(userLogin.getUsername());
 		RespuestaDocumentosExpedientes respuesta = gestorDocumentalApi.documentosExpediente(cabecera, docExpDto);
 
-		/* if (!Checks.esNulo(respuesta.getDocumentos())) {
-			ConsistenciaAdjuntosRunnableUtils caru = new ConsistenciaAdjuntosRunnableUtils(respuesta.getDocumentos(), GestorDocumentalConstants.Contenedor.Gasto,userLogin.getUsername());
+		/*if (!Checks.esNulo(respuesta.getDocumentos())) {
+			ConsistenciaAdjuntosRunnableUtils caru = new ConsistenciaAdjuntosRunnableUtils(respuesta.getDocumentos(), GestorDocumentalConstants.Contenedor.Gasto);
 			launchNewTasker(caru);
 		}*/
 
@@ -198,6 +230,29 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 		}
 
 		return new Long(respuestaCrearDocumento.getIdDocumento());
+	}
+	
+	@Override
+	public Long uploadDocumentoActuacionesTecnicas(Trabajo trabajo,
+			WebFileItem webFileItem, String userLogin, String matricula) throws GestorDocumentalException {
+		RecoveryToGestorDocAssembler recoveryToGestorDocAssembler = new RecoveryToGestorDocAssembler(appProperties);
+		Long respuesta;	
+		
+		CabeceraPeticionRestClientDto cabecera = recoveryToGestorDocAssembler.getCabeceraPeticionRestClient(
+				trabajo.getNumTrabajo().toString(), GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_OPERACIONES, GestorDocumentalConstants.CODIGO_CLASE_ACTUACION_TECNICA);
+		CrearDocumentoDto crearDoc = recoveryToGestorDocAssembler.getCrearDocumentoDto(webFileItem, userLogin, matricula);
+		
+		RespuestaCrearDocumento respuestaCrearDocumento;
+
+		try {
+			respuestaCrearDocumento = gestorDocumentalApi.crearDocumento(cabecera, crearDoc);
+			respuesta = new Long(respuestaCrearDocumento.getIdDocumento());
+		} catch (GestorDocumentalException gex) {
+			logger.debug(gex.getMessage());
+			throw gex;
+		}
+
+		return respuesta;
 	}
 
 	@Override
@@ -266,6 +321,41 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 
 		return idExpediente;	
 	}
+	
+	public Integer crearActuacionTecnica(Trabajo trabajo, String username) throws GestorDocumentalException {		
+		String idTrabajo = trabajo.getNumTrabajo().toString();
+		
+		String idSistemaOrigen = "";
+		String cliente = "";
+		
+		idSistemaOrigen = trabajo.getActivo().getNumActivo().toString();
+		DDCartera cartera = trabajo.getActivo().getCartera();
+		DDSubcartera subcartera = trabajo.getActivo().getSubcartera();
+		cliente = getClienteByCarteraySubcartera(cartera, subcartera);
+				
+		String estadoTrabajo = Checks.esNulo(trabajo.getEstado()) ? null : trabajo.getEstado().getCodigo();
+		String codClase = GestorDocumentalConstants.CODIGO_CLASE_ACTUACION_TECNICA;
+		
+		String descripcionActuacion = "";
+		RecoveryToGestorExpAssembler recoveryToGestorAssembler =  new RecoveryToGestorExpAssembler(appProperties);
+		CrearActuacionTecnicaDto crearActuacionTecnicaDto = recoveryToGestorAssembler.getCrearActuacionTecnicaDto(idTrabajo, descripcionActuacion, username, cliente, estadoTrabajo, idSistemaOrigen, codClase, TIPO_EXPEDIENTE);
+		RespuestaCrearExpediente respuesta;
+		
+		try {
+			respuesta = gestorDocumentalExpedientesApi.crearActuacionTecnica(crearActuacionTecnicaDto);
+		} catch (GestorDocumentalException gex) {
+			logger.debug(gex.getMessage());
+			throw gex;
+		}
+		
+		Integer id_Trabajo = null;
+		
+		if(!Checks.esNulo(respuesta)) {
+			id_Trabajo = respuesta.getIdExpediente();
+		}
+		
+		return id_Trabajo;	
+	}
 
 	private String getClienteByMGP(ActivoPropietario propietario) {
 		
@@ -307,7 +397,7 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 		RespuestaDocumentosExpedientes respuesta = gestorDocumentalApi.documentosExpediente(cabecera, docExpDto);
 
 		/*if (!Checks.esNulo(respuesta.getDocumentos())) {
-			ConsistenciaAdjuntosRunnableUtils caru = new ConsistenciaAdjuntosRunnableUtils(respuesta.getDocumentos(), GestorDocumentalConstants.Contenedor.ExpedienteComercial,userLogin.getUsername());
+			ConsistenciaAdjuntosRunnableUtils caru = new ConsistenciaAdjuntosRunnableUtils(respuesta.getDocumentos(), GestorDocumentalConstants.Contenedor.ExpedienteComercial);
 			launchNewTasker(caru);
 		}*/
 
@@ -523,22 +613,14 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 	 *
 	 * @param caru: clase runnable para llevar a cabo labores de consistencia de documentos.
 	 */
-	private void launchNewTasker(final ConsistenciaAdjuntosRunnableUtils caru) {
+	private void launchNewTasker(ConsistenciaAdjuntosRunnableUtils caru) {
 		// Inicializa los elementos Autowired de la clase runnable.
 		applicationContext.getAutowireCapableBeanFactory().autowireBean(caru);
 
 		// Traslada el contexto de seguridad de Spring hacia el nuevo hilo.
 		caru.setSpringSecurityContext(SecurityContextHolder.getContext());
 
-		Thread thread = new Thread(caru);
-		thread.setName("GD-CONSISTENCY-TASKER-");
-		thread.setPriority(Thread.NORM_PRIORITY);
-		thread.setUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
-			public void uncaughtException(Thread t, Throwable e) {
-				logger.error("Error al llevar a cabo la consistencia de los documentos adjuntos para la entidad " + caru.getContenedor().toString(), e);
-			}
-		});
-		thread.start();
+		caru.iniciar();
 	}
 
 	@Override

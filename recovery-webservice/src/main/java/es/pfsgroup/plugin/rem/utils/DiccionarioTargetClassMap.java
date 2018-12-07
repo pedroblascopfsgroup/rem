@@ -157,7 +157,8 @@ public class DiccionarioTargetClassMap{
 		mapa.put("tiposColaborador", DDTiposColaborador.class);
 		mapa.put("canalesPrescripcion", DDCanalPrescripcion.class);
 		mapa.put("estadoGasto", DDEstadoGasto.class);
-		mapa.put("estadosPublicacion", DDEstadoPublicacion.class);
+		mapa.put("estadosPublicacion", DDEstadoPublicacionVenta.class);
+		mapa.put("estadosPublicacionAlquiler", DDEstadoPublicacionAlquiler.class);
 		mapa.put("comitesSancion", DDComiteSancion.class);
 		mapa.put("tiposProveedorHonorario", DDTipoProveedorHonorario.class);
 		mapa.put("accionesGasto", DDAccionGastos.class);
@@ -191,6 +192,7 @@ public class DiccionarioTargetClassMap{
 		mapa.put("entradaActivoBankia", DDEntradaActivoBankia.class);
 		mapa.put("favorableDesfavorable", DDFavorable.class);
 		mapa.put("calificacionEnergetica", DDTipoCalificacionEnergetica.class);
+		mapa.put("motivosOcultacion", DDMotivosOcultacion.class);
 		mapa.put("comboAdecuacionAlquiler", DDAdecuacionAlquiler.class);
 		mapa.put("tareaDestinoSalto", DDTareaDestinoSalto.class);
 		mapa.put("countries", DDCicCodigoIsoCirbeBKP.class);

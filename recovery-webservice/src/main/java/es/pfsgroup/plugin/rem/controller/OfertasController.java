@@ -95,8 +95,9 @@ public class OfertasController {
 	 * Inserta o actualiza una lista de Ofertas Ejem: IP:8080/pfs/rest/ofertas
 	 * HEADERS: Content-Type - application/json signature - sdgsdgsdgsdg
 	 * 
-	 * BODY: {"id":"111111114111","data": [{"idOfertaWebcom": "1000",
-	 * "idVisitaRem": "1", "idClienteRem": "1", "idActivoHaya": "6346320",
+	 * BODY: {"id":"111111114111","data": [{
+	 * "idOfertaWebcom": "1000", "idVisitaRem": "1", "idClienteRem": "1", 
+	 * "activosLote": ["6346320", "6346321", "6346322"],
 	 * "codEstadoOferta": "04","codTipoOferta": "01", "fechaAccion":
 	 * "2016-01-01T10:10:10", "idUsuarioRemAccion": "29468",
 	 * "importeContraoferta": null, "idProveedorRemPrescriptor": "1000",

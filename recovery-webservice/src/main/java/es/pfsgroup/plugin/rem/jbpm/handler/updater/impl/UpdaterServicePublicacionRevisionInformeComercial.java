@@ -19,6 +19,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
@@ -41,6 +42,9 @@ public class UpdaterServicePublicacionRevisionInformeComercial implements Update
     
     @Autowired
     private ActivoApi activoApi;
+    
+    @Autowired
+    private ActivoDao activoDao;
     
     @Autowired
     private ActivoEstadoPublicacionApi activoEstadoPublicacionApi;
@@ -88,12 +92,8 @@ public class UpdaterServicePublicacionRevisionInformeComercial implements Update
 				if(!Checks.esNulo(valor.getValor()))
 					motivoDenegacion = valor.getValor();
 			}
-			
-
 		}
-		
 
-				
 		// Acepta / Rechaza el I.C.
 		if(checkAcepta){
 			
@@ -115,42 +115,21 @@ public class UpdaterServicePublicacionRevisionInformeComercial implements Update
 					//     Si esta publicado, NO se vuelven a realizar las operaciones de publicacion.
 					//     Se deja todo como esta y se avanza la tarea normalmente. 
 					//     Esto evita provocar la excepcion al llamar al procedure y por tanto bloquear la tarea por estar publicado.
-					DtoCambioEstadoPublicacion estadoPublicacion = activoEstadoPublicacionApi.getState(activo.getId());
 					
-					if(!estadoPublicacion.getPublicacionOrdinaria()){
-						// Activo NO publicado ordinario
-
+					if(!activoEstadoPublicacionApi.isPublicadoVentaByIdActivo(activo.getId())) {
 						// 3.) Se marca activo como publicable, porque en el tramite se han cumplido todos los requisitos
 						activo.setFechaPublicable(new Date());
 						activoApi.saveOrUpdate(activo);
-						
-						
+
 						//Comprobamos que tenga precio para publicar
 						if(activoApi.getDptoPrecio(activo)){
 							// 3.) Se publica el activo, quitando la validacion de Informe Comercial, puesto que se ha aceptado antes
-							try {
-								DtoPublicacionValidaciones dtoPublicacionValidaciones = new DtoPublicacionValidaciones();
-								dtoPublicacionValidaciones.setActivo(activo);
-								dtoPublicacionValidaciones.setValidacionesTramite();
-								
-								activoApi.publicarActivo(
-										activo.getId(),
-										messageService.getMessage("tramite.publicacion.publicar.sin.correccion.datos.IC"),
-										dtoPublicacionValidaciones);
-							} catch (SQLException e) {
-								e.printStackTrace();
-							} catch (JsonViewerException jViewEx){
-								jViewEx.printStackTrace();
-							} catch (Exception e) {
-								e.printStackTrace();
-							}
+							//activoEstadoPublicacionApi.validarPublicacionTramiteYPublicar(activo.getId());
 						}
 					}
-					
 				} else {
 					// Si NO continua con proceso publicacion, no se cambian datos
 				}
-				
 			} else {
 				// Distintos :----------
 				// No se cambian datos, se lanza siguiente tarea de correccion I.C.
@@ -200,7 +179,7 @@ public class UpdaterServicePublicacionRevisionInformeComercial implements Update
 			activoApi.saveOrUpdate(activo);
 		}
 		
-		
+		activoDao.publicarActivoConHistorico(activo.getId(), genericAdapter.getUsuarioLogado().getUsername());
 
 	}
 

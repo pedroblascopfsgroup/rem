@@ -1,7 +1,7 @@
 package es.pfsgroup.framework.paradise.bulkUpload.utils.filecolumns;
 
 /**
- * Contiene constantes con los nombre de las columnas del fichero "Carga documentación"
+ * Contiene constantes con los nombre de las columnas del fichero "Carga documentaciÃ³n"
  * @author Carlos
  *
  */

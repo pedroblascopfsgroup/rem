@@ -1,29 +1,31 @@
 package es.pfsgroup.plugin.rem.controller;
 
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.ui.ModelMap;
+import org.springframework.web.servlet.ModelAndView;
 
-import es.pfsgroup.plugin.rem.model.*;
+import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.rem.activo.ActivoPropagacionFieldTabMap;
+import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.model.DtoActivoAdministracion;
 import es.pfsgroup.plugin.rem.model.DtoActivoCargasTab;
 import es.pfsgroup.plugin.rem.model.DtoActivoDatosRegistrales;
 import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
 import es.pfsgroup.plugin.rem.model.DtoActivoInformacionAdministrativa;
 import es.pfsgroup.plugin.rem.model.DtoActivoInformeComercial;
+import es.pfsgroup.plugin.rem.model.DtoActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.DtoActivoSituacionPosesoria;
-
-import es.pfsgroup.plugin.rem.model.DtoCambioEstadoPublicacion;
-import es.pfsgroup.plugin.rem.model.DtoCondicionantesDisponibilidad;
-
 import es.pfsgroup.plugin.rem.model.DtoComercialActivo;
 import es.pfsgroup.plugin.rem.model.DtoComunidadpropietariosActivo;
 import es.pfsgroup.plugin.rem.model.DtoCondicionEspecifica;
+import es.pfsgroup.plugin.rem.model.DtoCondicionantesDisponibilidad;
+import es.pfsgroup.plugin.rem.model.DtoDatosPublicacionActivo;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoMediador;
+import es.pfsgroup.plugin.rem.model.DtoTasacion;
 
 @SuppressWarnings("rawtypes")
 class ActivoControllerDispachableMethods {
@@ -43,6 +45,7 @@ class ActivoControllerDispachableMethods {
 
 	private static Map<String, DispachableMethod> dispachableMethods;
 	
+
 	static {
 		dispachableMethods = new HashMap<String, DispachableMethod>();
 		
@@ -59,7 +62,14 @@ class ActivoControllerDispachableMethods {
 			@Override
 			public void execute(Long id, DtoActivoFichaCabecera dto) {
 				if (dto != null ){
-					this.controller.saveDatosBasicos(dto, id, new ModelMap());
+							ModelAndView mm = this.controller.saveDatosBasicos(dto, id, new ModelMap());
+
+							if ("false".equals(mm.getModel().get("success").toString())
+								&& !Checks.esNulo(mm.getModel().get("msgError"))) {
+
+								throw new JsonViewerException(mm.getModel().get("msgError").toString());
+							}
+
 				}
 				
 			}
@@ -78,7 +88,13 @@ class ActivoControllerDispachableMethods {
 			@Override
 			public void execute(Long id, DtoActivoSituacionPosesoria dto) {
 				if (dto != null ){
-					this.controller.saveActivoSituacionPosesoria(dto, id, new ModelMap());
+					ActivoApi activoApi=controller.getActivoApi();
+					if(activoApi.compruebaParaEnviarEmailAvisoOcupacion(dto, id)) {
+						this.controller.saveActivoSituacionPosesoria(dto, id, new ModelMap());
+					}else {
+						throw new JsonViewerException("Informe okupación y/o desokupación no adjunto. Se necesita para poder guardar el activo como ocupado SI y con título NO");
+					}
+					
 				}
 				
 			}
@@ -199,25 +215,6 @@ class ActivoControllerDispachableMethods {
 		});
 
 		/*
-		 * TAB_ACTIVO_HISTORICO_ESTADO_PUBLICACION
-		 */
-		dispachableMethods.put(ActivoPropagacionFieldTabMap.TAB_ACTIVO_HISTORICO_ESTADO_PUBLICACION, new DispachableMethod<DtoCambioEstadoPublicacion>() {
-
-			@Override
-			public Class<DtoCambioEstadoPublicacion> getArgumentType() {
-				return DtoCambioEstadoPublicacion.class;
-			}
-
-			@Override
-			public void execute(Long id, DtoCambioEstadoPublicacion dto) {
-				if (dto != null ){
-					dto.setIdActivo(id);
-					this.controller.setHistoricoEstadoPublicacion(dto, new ModelMap());
-				}
-			}
-		});
-		
-		/*
 		 * TAB_ACTIVO_CONDICIONANTES_DISPONIBILIDAD
 		 */
 		dispachableMethods.put(ActivoPropagacionFieldTabMap.TAB_ACTIVO_CONDICIONANTES_DISPONIBILIDAD, new DispachableMethod<DtoCondicionantesDisponibilidad>() {
@@ -234,6 +231,7 @@ class ActivoControllerDispachableMethods {
 				}
 			}
 		});
+
 		/*
 		 * TAB_COMERCIAL
 		 */
@@ -253,7 +251,7 @@ class ActivoControllerDispachableMethods {
 				}
 			}
 		});
-		
+
 		/*
 		 * TAB_ADMINISTRACION
 		 */
@@ -272,7 +270,44 @@ class ActivoControllerDispachableMethods {
 				}
 			}
 		});
-			
+
+		/*
+		 * TAB_DATOS_PUBLICACION
+		 */
+		dispachableMethods.put(ActivoPropagacionFieldTabMap.TAB_DATOS_PUBLICACION, new DispachableMethod<DtoDatosPublicacionActivo>() {
+
+			@Override
+			public Class<DtoDatosPublicacionActivo> getArgumentType() {
+				return DtoDatosPublicacionActivo.class;
+			}
+
+			@Override
+			public void execute(Long id, DtoDatosPublicacionActivo dto) {
+				if (dto != null ){
+					dto.setIdActivo(id);
+					this.controller.setDatosPublicacionActivo(dto, new ModelMap());
+				}
+			}
+		});
+
+		/*
+		 * TAB_TASACIONES
+		 */
+		dispachableMethods.put(ActivoPropagacionFieldTabMap.TAB_TASACION, new DispachableMethod<DtoTasacion>() {
+
+			@Override
+			public Class<DtoTasacion> getArgumentType() {
+				return DtoTasacion.class;
+			}
+
+			@Override
+			public void execute(Long id, DtoTasacion dto) {
+				if (dto != null ){
+					this.controller.saveTasacionActivo(dto, new ModelMap());
+				}
+			}
+		});
+
 		/*
 		 * TAB_PATRIMONIO
 		 */
@@ -309,19 +344,14 @@ class ActivoControllerDispachableMethods {
 				}
 			}
 		});
-		
-		
-	
 	}
-	
-	
-	
+
 	private ActivoController controller;
-	
+
 	public ActivoControllerDispachableMethods(ActivoController c) {
 		this.controller = c;
 	}
-	
+
 	public DispachableMethod findDispachableMethod(String modelName) {
 		return configure(dispachableMethods.get(modelName));
 	}

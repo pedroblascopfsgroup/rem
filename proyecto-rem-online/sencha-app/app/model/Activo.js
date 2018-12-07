@@ -748,6 +748,9 @@ Ext.define('HreRem.model.Activo', {
     		},
     		{
     			name: 'motivoActivo'
+    		},
+    		{
+    			name: 'tipoAlquilerCodigo'
     		}
     ],
     

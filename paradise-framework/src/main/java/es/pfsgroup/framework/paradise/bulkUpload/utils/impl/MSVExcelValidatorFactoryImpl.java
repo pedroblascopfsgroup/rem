@@ -110,6 +110,12 @@ public class MSVExcelValidatorFactoryImpl {
 
 	@Autowired
 	private MSVSituacionPlusvaliaExcelValidator situacionPlusvalia;
+	
+	@Autowired
+	private MSVValidatorIndicadorActivoVenta indicadorActivoVenta;
+	
+	@Autowired
+	private MSVValidatorIndicadorActivoAlquiler indicadorActivoAlquiler;
 
 
 	public MSVExcelValidator getForTipoValidador(String codTipoOperacion) {
@@ -228,6 +234,12 @@ public class MSVExcelValidatorFactoryImpl {
 		}
 		else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_DESOCULTACION_ALQUILER.equals(codTipoOperacion)){
 			return desocultarAlquiler;
+		}
+		else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_INDICADOR_ACTIVO_VENTA.equals(codTipoOperacion)){
+			return indicadorActivoVenta;
+		}
+		else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_INDICADOR_ACTIVO_ALQUILER.equals(codTipoOperacion)){
+			return indicadorActivoAlquiler;
 		}
 
 		return null;

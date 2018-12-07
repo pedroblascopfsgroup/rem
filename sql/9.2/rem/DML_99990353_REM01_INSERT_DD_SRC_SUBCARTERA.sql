@@ -1,7 +1,7 @@
 --/*
 --#########################################
 --## AUTOR=Isidro Sotoca
---## FECHA_CREACION=20180827
+--## FECHA_CREACION=20181206
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-4446
@@ -69,14 +69,14 @@ BEGIN
           DBMS_OUTPUT.PUT_LINE('[INFO]: MODIFICAMOS EL REGISTRO '''|| TRIM(V_TMP_TIPO_DATA(3)) ||'''');
           V_MSQL := 'UPDATE '||V_ESQUEMA||'.'||V_TABLA||' 
                     	SET 
-							DD_CRA_ID = (SELECT DD_CRA_ID FROM '||V_ESQUEMA||'.DD_CRA_CARTERA WHERE DD_CRA_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||''' ),
-							DD_SCR_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(2))||''', 
 							DD_SCR_DESCRIPCION = '''||TRIM(V_TMP_TIPO_DATA(3))||''', 
 							DD_SCR_DESCRIPCION_LARGA = '''||TRIM(V_TMP_TIPO_DATA(4))||''', 
 							USUARIOMODIFICAR = '''||V_USUARIO||''', 
 							FECHAMODIFICAR = SYSDATE
                       	WHERE 
-							DD_CRA_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||''' ';
+							DD_CRA_ID = (SELECT DD_CRA_ID FROM '||V_ESQUEMA||'.DD_CRA_CARTERA WHERE DD_CRA_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||''' )
+							AND DD_SCR_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(2))||'''
+						';
           EXECUTE IMMEDIATE V_MSQL;
           DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO MODIFICADO CORRECTAMENTE');
           

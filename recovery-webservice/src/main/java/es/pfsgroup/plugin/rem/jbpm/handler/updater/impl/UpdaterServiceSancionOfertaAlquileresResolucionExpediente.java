@@ -9,7 +9,9 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
+import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
@@ -23,6 +25,7 @@ import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDResolucionComite;
 import es.pfsgroup.plugin.rem.oferta.NotificationOfertaManager;
 
@@ -93,9 +96,19 @@ public class UpdaterServiceSancionOfertaAlquileresResolucionExpediente implement
 			}
 			
 			if(MOTIVO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+				String peticionario = null;
+			
 				Filter filtroMotivo = genericDao.createFilter(FilterType.EQUALS, "codigo", valor.getValor());
-				DDMotivoAnulacionExpediente motivoAnulacion = genericDao.get(DDMotivoAnulacionExpediente.class, filtroMotivo);
-				expedienteComercial.setMotivoAnulacion(motivoAnulacion);
+				DDMotivoRechazoExpediente motivoAnulacion = genericDao.get(DDMotivoRechazoExpediente.class, filtroMotivo);
+				expedienteComercial.setMotivoRechazo(motivoAnulacion);
+				
+				// Guardamos el usuario que realiza la tarea
+				TareaExterna tex = valor.getTareaExterna();
+				if (!Checks.esNulo(tex)) {
+					TareaNotificacion tar = tex.getTareaPadre();
+					peticionario = tar.getAuditoria().getUsuarioBorrar();
+				}
+				expedienteComercial.setPeticionarioAnulacion(peticionario);
 			}
 			
 			if(IMPORTE_CONTRAOFERTA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {

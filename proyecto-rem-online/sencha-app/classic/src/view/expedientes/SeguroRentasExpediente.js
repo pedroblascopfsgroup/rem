@@ -41,16 +41,7 @@ Ext.define('HreRem.view.expedientes.SeguroRentasExpediente', {
 		                	},
 		                	readOnly: true
 	        			},
-	        			{
-	                        
-	                    	xtype: 'textfieldbase',
-	                        fieldLabel: HreRem.i18n('fieldlabel.motivo.rechazo'),
-	                        reference: 'textfieldmotivo',
-	                        bind: '{segurorentasexpediente.motivoRechazo}',
-	                        readOnly: true
-
-	                     },
-	                     {
+	                    {
 	                    	 xtype: 'textfieldbase',
 	                         fieldLabel: HreRem.i18n('fieldlabel.aseguradoras'),
 	                         reference: 'extfieldaseguradoras',

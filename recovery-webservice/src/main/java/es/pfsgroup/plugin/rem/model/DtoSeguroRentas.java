@@ -22,7 +22,6 @@ public class DtoSeguroRentas extends WebDto {
 	
 
 	private Long id;
-	private String motivoRechazo;
 	private Boolean revision;
 	private String estado;
 	private String aseguradoras;
@@ -45,13 +44,7 @@ public class DtoSeguroRentas extends WebDto {
 	public void setComentarios(String comentarios) {
 		this.comentarios = comentarios;
 	}
-	public String getMotivoRechazo() {
-		return motivoRechazo;
-	}
-	public void setMotivoRechazo(String motivoRechazo) {
-		this.motivoRechazo = motivoRechazo;
-	}
-	
+
 	public Long getId() {
 		return id;
 	}

@@ -32,6 +32,8 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 
     initComponent: function() {
     	var me = this;
+    
+    	var modoEdicion = false;
 
     	me.setTitle(HreRem.i18n("title.windows.datos.comprador"));
 
@@ -40,6 +42,8 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
     	if(!Ext.isEmpty(me.idComprador)){
 			me.buttons = [ { itemId: 'btnModificar', text: HreRem.i18n('btn.modificar'), handler: 'onClickBotonModificarComprador', bind:{disabled: !me.esEditable()}},
     					   { itemId: 'btnCancelar', text: HreRem.i18n('btn.cancelBtnText'), handler: 'onClickBotonCerrarComprador'}];
+			modoEdicion = true;
+		
     	} else {
     		me.buttons = [ { itemId: 'btnCrear', text: HreRem.i18n('btn.crear'), handler: 'onClickBotonCrearComprador'},
     					   { itemId: 'btnCancelar', text: HreRem.i18n('btn.cancelBtnText'), handler: 'onClickBotonCerrarComprador'}];
@@ -179,7 +183,7 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 										        	bind: {
 									            		store: '{comboTipoDocumento}',
 									            		value: '{comprador.codTipoDocumento}',
-									            		readOnly: !Ext.isEmpty(me.idComprador)
+									            		disabled: modoEdicion
 									            	},
 									            	allowBlank: false
 										        },
@@ -188,7 +192,7 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 													reference: 'numeroDocumento',
 										        	bind: {
 									            		value: '{comprador.numDocumento}',
-									            		readOnly: !Ext.isEmpty(me.idComprador)
+									            		disabled: modoEdicion
 									            	},
 									            	listeners: {
 									            		change: 'onNumeroDocumentoChange'

@@ -14,6 +14,7 @@ Ext.define('HreRem.view.common.TareaController', {
         	var me = this,
         	tarea = button.up("tareabase"),
         	record;
+        	var panelExpediente = null;
 
 //        	Ext.Msg.show({
 //			    title:'Guardar solicitud',
@@ -24,13 +25,21 @@ Ext.define('HreRem.view.common.TareaController', {
 //	        		if (btn === 'yes') { 
 	        			
 	        			if(tarea.down('form').getForm().isValid()) {
-	        				
 		        			tarea.mask("Guardando....");
-		        			
+		        			if(tarea.getInitialConfig().codigoTarea == CONST.TAREAS['T015_DEFINICIONOFERTA']){
+		        				panelExpediente = button.up('activosmain').down('panel[title=Expediente '+tarea.numExpediente+']')
+		        				if(!Ext.isEmpty(panelExpediente)){
+		        					if(tarea.down('form').down('genericcombo[name=tipoTratamiento]').getValue() == CONST.TIPO_INQUILINO['SCORING']){
+		        						panelExpediente.down('scoringexpediente').tab.setVisible(true);
+		        					} else if(tarea.down('form').down('genericcombo[name=tipoTratamiento]').getValue() == CONST.TIPO_INQUILINO['SEGURO_RENTAS']){
+		        						panelExpediente.down('segurorentasexpediente').tab.setVisible(true);
+		        					}
+		        				}
+		        			}
 			        		var task = new Ext.util.DelayedTask(function(){    			
 			        			
 			        			var siguienteTarea = tarea.evaluar();
-			        			//debugger;
+			        			
 //			        			if(Ext.isEmpty(siguienteTarea)) {
 //			        				tarea.unmask();
 //			        				tarea.mostrarValidacionesPost();

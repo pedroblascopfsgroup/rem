@@ -611,5 +611,16 @@ Ext.define('HreRem.ux.util.Constants', {
         OCULTO_VENTA: 'Oculto Venta',
         PUBLICADO_ALQUILER: 'Publicado Alquiler',
         OCULTO_ALQUILER: 'Oculto Alquiler'
-    }
+    },
+    
+    TAREAS:{
+    	T015_DEFINICIONOFERTA : 'T015_DefinicionOferta'
+    },
+    
+    TIPO_INQUILINO: {
+		SCORING: '01',
+		SEGURO_RENTAS: '02',
+		NINGUNA: '03'
+	}
+    
 });

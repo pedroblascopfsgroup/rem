@@ -2584,6 +2584,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	@Transactional(readOnly = false)
 	public boolean saveFichaExpediente(DtoFichaExpediente dto, Long idExpediente) {
 		ExpedienteComercial expedienteComercial = findOne(idExpediente);
+		ArrayList<Long> idActivoActualizarPublicacion = new ArrayList<Long>();
 
 		if (!Checks.esNulo(expedienteComercial)) {
 			boolean actualizarEstadoPublicacion = false;
@@ -2652,10 +2653,12 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 				if (actualizarEstadoPublicacion) {
 					for (ActivoOferta activoOferta : expedienteComercial.getOferta().getActivosOferta()) {
-						activoAdapter.actualizarEstadoPublicacionActivo(activoOferta.getPrimaryKey().getActivo().getId());
+						idActivoActualizarPublicacion.add(activoOferta.getPrimaryKey().getActivo().getId());
+						//activoAdapter.actualizarEstadoPublicacionActivo(activoOferta.getPrimaryKey().getActivo().getId());
 					}
 				}
 
+				activoAdapter.actualizarEstadoPublicacionActivo(idActivoActualizarPublicacion,true);
 			} catch (IllegalAccessException e) {
 				logger.error("error en expedienteComercialManager", e);
 

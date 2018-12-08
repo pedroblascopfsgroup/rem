@@ -667,32 +667,38 @@ HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.provinciaCodigo", dto.getProvinci
 		return busquedaActivo.getPrecio();
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public Boolean publicarActivoConHistorico(Long idActivo, String username) {
+	public Boolean publicarActivoConHistorico(Long idActivo, String username,boolean doFlush) {
     	// Antes de realizar la llamada al SP realizar las operaciones previas con los datos.
-		getHibernateTemplate().flush();
+		if(doFlush){
+			getHibernateTemplate().flush();
+		}
+		
 		return this.publicarActivo(idActivo, username, true, null);
 	}
 	
-	@SuppressWarnings("unchecked")
 	@Override
-	public Boolean publicarActivoSinHistorico(Long idActivo, String username, String eleccionUsuarioTipoPublicacionAlquiler) {
+	public Boolean publicarActivoSinHistorico(Long idActivo, String username, String eleccionUsuarioTipoPublicacionAlquiler,boolean doFlush) {
 		// Antes de realizar la llamada al SP realizar las operaciones previas con los datos.
-		getHibernateTemplate().flush();
+		if(doFlush){
+			getHibernateTemplate().flush();
+		}
 		return this.publicarActivo(idActivo, username, false, eleccionUsuarioTipoPublicacionAlquiler);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public Boolean publicarAgrupacionSinHistorico(Long idAgrupacion, String username, String eleccionUsuarioTipoPublicacionAlquiler) {
-		getHibernateTemplate().flush();
+	public Boolean publicarAgrupacionSinHistorico(Long idAgrupacion, String username, String eleccionUsuarioTipoPublicacionAlquiler,boolean doFlush) {
+		if(doFlush){
+			getHibernateTemplate().flush();
+		}
 		return this.publicarAgrupacion(idAgrupacion, username, false, eleccionUsuarioTipoPublicacionAlquiler);
 	}
 	
 	@Override
-	public Boolean publicarAgrupacionConHistorico(Long idAgrupacion, String username) {
-		getHibernateTemplate().flush();
+	public Boolean publicarAgrupacionConHistorico(Long idAgrupacion, String username,boolean doFlush) {
+		if(doFlush){
+			getHibernateTemplate().flush();
+		}
 		return this.publicarAgrupacion(idAgrupacion, username, true, null);
 	}
 
@@ -1058,5 +1064,11 @@ HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.provinciaCodigo", dto.getProvinci
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activo.id", idActivo);
 		
 		return HibernateQueryUtils.page(this, hb, dto);
+	}
+
+	@Override
+	public void hibernateFlush() {
+		getHibernateTemplate().flush();
+		
 	}
 }

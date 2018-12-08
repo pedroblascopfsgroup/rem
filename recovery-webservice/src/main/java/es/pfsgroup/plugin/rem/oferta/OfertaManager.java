@@ -2517,16 +2517,19 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	
 	@Override
 	public void desocultarActivoOferta(Oferta oferta) throws Exception {
+		ArrayList<Long> idActivoActualizarPublicacion = new ArrayList<Long>();
 		if (oferta.getActivosOferta() != null && !oferta.getActivosOferta().isEmpty()) {
 			for (ActivoOferta activoOferta : oferta.getActivosOferta()) {
 				Activo activo = activoOferta.getPrimaryKey().getActivo();
 				if (DDCartera.CODIGO_CARTERA_CAJAMAR.equals(activo.getCartera().getCodigo()) && (DDSituacionComercial.CODIGO_DISPONIBLE_VENTA.equals(activo.getSituacionComercial().getCodigo())
 						|| DDSituacionComercial.CODIGO_DISPONIBLE_VENTA_OFERTA.equals(activo.getSituacionComercial().getCodigo())
 						|| DDSituacionComercial.CODIGO_DISPONIBLE_CONDICIONADO.equals(activo.getSituacionComercial().getCodigo()))) {
-					activoAdapter.actualizarEstadoPublicacionActivo(activo.getId());
+					idActivoActualizarPublicacion.add(activo.getId());
+					//activoAdapter.actualizarEstadoPublicacionActivo(activo.getId());
 				}
 			}
 		}
+		activoAdapter.actualizarEstadoPublicacionActivo(idActivoActualizarPublicacion,true);
 	}
 
 	@Override

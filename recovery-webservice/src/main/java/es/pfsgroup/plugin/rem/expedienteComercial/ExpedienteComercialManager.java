@@ -2017,9 +2017,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			if (!Checks.esNulo(condiciones.getFechaFijo())) {
 				dto.setFechaFijo(condiciones.getFechaFijo()); 
 			}
-			if (!Checks.esNulo(condiciones.getFechaIncrementoRentaFijo())) {
-				dto.setFechaIncrementoRentaFijo(condiciones.getFechaIncrementoRentaFijo()); 
-			}
+			
+			dto.setIncrementoRentaFijo(condiciones.getIncrementoRentaFijo());
 			
 			if (!Checks.esNulo(condiciones.getCheckPorcentual())) {
 				dto.setCheckPorcentual(condiciones.getCheckPorcentual()); 
@@ -3071,10 +3070,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		if(!Checks.esNulo(expediente)) {
 			CondicionanteExpediente condicion=expediente.getCondicionante();
 			if(!Checks.esNulo(condicion)) {
-				if(!Checks.esNulo(condicion.getFechaFijo()) && !Checks.esNulo(condicion.getFechaIncrementoRentaFijo())){
+				if(!Checks.esNulo(condicion.getFechaFijo()) && !Checks.esNulo(condicion.getIncrementoRentaFijo())){
 					DtoHistoricoCondiciones d1= new DtoHistoricoCondiciones();
 					d1.setFecha(condicion.getFechaFijo());
-					d1.setFechaIncrementoRenta(condicion.getFechaIncrementoRentaFijo());
+					d1.setIncrementoRenta(condicion.getIncrementoRentaFijo());
 					dto.add(d1);
 				}
 				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "condicionante.id", condicion.getId());
@@ -3087,7 +3086,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 						d.setCondicionante(historico.getCondicionante().getId());
 						d.setId(historico.getId().toString());
 						d.setFecha(historico.getFecha());
-						d.setFechaIncrementoRenta(historico.getFechaIncrementoRenta());
+						d.setIncrementoRenta(historico.getIncrementoRenta());
 						dto.add(d);
 					}
 				}
@@ -4634,7 +4633,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			if(!Checks.esNulo(expediente)) {
 				hisCE.setCondicionante(expediente.getCondicionante());
 				hisCE.setFecha(dto.getFecha());
-				hisCE.setFechaIncrementoRenta(dto.getFechaIncrementoRenta());
+				hisCE.setIncrementoRenta(dto.getIncrementoRenta());
 				Auditoria a= new Auditoria();
 				Usuario usuario = genericAdapter.getUsuarioLogado();
 				a.setUsuarioCrear(usuario.getUsername());

@@ -57,7 +57,7 @@ public class HistoricoCondicionanteExpediente implements Serializable, Auditable
 	private Date fecha;
 	
 	@Column(name = "HIC_INCREMENTO_RENTA")
-	private Date fechaIncrementoRenta;
+	private Double incrementoRenta;
 	
 	@Version   
 	private Long version;
@@ -89,12 +89,12 @@ public class HistoricoCondicionanteExpediente implements Serializable, Auditable
 		this.fecha = fecha;
 	}
 
-	public Date getFechaIncrementoRenta() {
-		return fechaIncrementoRenta;
+	public Double getIncrementoRenta() {
+		return incrementoRenta;
 	}
 
-	public void setFechaIncrementoRenta(Date fechaIncrementoRenta) {
-		this.fechaIncrementoRenta = fechaIncrementoRenta;
+	public void setIncrementoRenta(Double incrementoRenta) {
+		this.incrementoRenta = incrementoRenta;
 	}
 
 	public Long getVersion() {

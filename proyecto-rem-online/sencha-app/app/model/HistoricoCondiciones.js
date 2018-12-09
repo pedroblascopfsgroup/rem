@@ -19,9 +19,7 @@ Ext.define('HreRem.model.HistoricoCondiciones', {
             	dateFormat: 'c'
     		},
     		{
-    			name:'fechaIncrementoRenta',
-    			type : 'date',
-        		dateFormat: 'c'
+    			name:'incrementoRenta'
     		}
     ],
     

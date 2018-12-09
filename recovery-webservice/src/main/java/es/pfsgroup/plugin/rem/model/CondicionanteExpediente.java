@@ -297,7 +297,7 @@ public class CondicionanteExpediente implements Serializable, Auditable {
     private Date fechaFijo;
     
     @Column(name="ALQ_FECHA_INC_RENTA")
-    private Date fechaIncrementoRentaFijo;
+    private Double incrementoRentaFijo;
     
     @Column(name="ALQ_RENTA_PORCENTUAL")
     private Boolean checkPorcentual;
@@ -944,12 +944,12 @@ public class CondicionanteExpediente implements Serializable, Auditable {
 		this.fechaFijo = fechaFijo;
 	}
 
-	public Date getFechaIncrementoRentaFijo() {
-		return fechaIncrementoRentaFijo;
+	public Double getIncrementoRentaFijo() {
+		return incrementoRentaFijo;
 	}
 
-	public void setFechaIncrementoRentaFijo(Date fechaIncrementoRentaFijo) {
-		this.fechaIncrementoRentaFijo = fechaIncrementoRentaFijo;
+	public void setIncrementoRentaFijo(Double incrementoRentaFijo) {
+		this.incrementoRentaFijo = incrementoRentaFijo;
 	}
 
 	public Boolean getCheckPorcentual() {

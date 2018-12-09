@@ -40,6 +40,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivosDesbloqueo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
 
@@ -123,6 +124,10 @@ public class ExpedienteComercial implements Serializable, Auditable {
     private DDMotivoAnulacionExpediente motivoAnulacion;
     
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_MRE_ID")
+    private DDMotivoRechazoExpediente motivoRechazo;
+
+	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_MAO_ID")
     private DDMotivoAnulacionOferta motivoAnulacionAlquiler;
     
@@ -374,6 +379,14 @@ public class ExpedienteComercial implements Serializable, Auditable {
 
 	public void setMotivoAnulacion(DDMotivoAnulacionExpediente motivoAnulacion) {
 		this.motivoAnulacion = motivoAnulacion;
+	}
+    
+    public DDMotivoRechazoExpediente getMotivoRechazo() {
+		return motivoRechazo;
+	}
+
+	public void setMotivoRechazo(DDMotivoRechazoExpediente motivoRechazo) {
+		this.motivoRechazo = motivoRechazo;
 	}
 	
     public DDMotivoAnulacionOferta getMotivoAnulacionAlquiler() {

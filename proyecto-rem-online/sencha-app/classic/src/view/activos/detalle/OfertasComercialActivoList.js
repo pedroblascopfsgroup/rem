@@ -387,12 +387,24 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
    //HREOS-846 Si NO esta dentro del perimetro, ocultamos del grid las opciones de agregar/elminar y las acciones editables por fila
    //HREOS-1001 Si está en el perimetro pero no es comercializable tampoco se puede editar
    //HREOS-1971 Si el usuario no tiene la funcion de editar el listado tampoco se puede editar
-   evaluarEdicion: function() {    	
+   //HREOS-4963 Si el activo es de alquiler o venta y no tiene tipo de alquiler asignado no se podra editar
+   evaluarEdicion: function() {
+	    
 		var me = this;
 		var activo = me.lookupController().getViewModel().get('activo');
-
+		
+		var noContieneTipoAlquiler = false;
+		 
+		if (activo.get('incluyeDestinoComercialAlquiler')) {
+			var codigoTipoAlquiler = activo.get('tipoAlquilerCodigo');
+			if (codigoTipoAlquiler == null || codigoTipoAlquiler == '') {
+				noContieneTipoAlquiler = true;
+			}
+		}
+		
+		
 		if(activo.get('incluidoEnPerimetro')=="false" || !activo.get('aplicaComercializar') || activo.get('pertenceAgrupacionRestringida')
-			|| activo.get('isVendido') || !$AU.userHasFunction('EDITAR_LIST_OFERTAS_ACTIVO')) {
+			|| activo.get('isVendido') || !$AU.userHasFunction('EDITAR_LIST_OFERTAS_ACTIVO') || noContieneTipoAlquiler) {
 			me.setTopBar(false);
 			me.rowEditing.clearListeners();
 		}

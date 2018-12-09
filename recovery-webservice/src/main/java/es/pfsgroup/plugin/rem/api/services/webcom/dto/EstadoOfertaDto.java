@@ -25,6 +25,7 @@ public class EstadoOfertaDto implements WebcomRESTDto{
 	private LongDataType idActivoHaya;
 	private StringDataType motivoRechazo;
 	private LongDataType importeContraoferta;
+	private LongDataType idExpedienteRem;
 	
 	public LongDataType getIdUsuarioRemAccion() {
 		return idUsuarioRemAccion;
@@ -91,6 +92,12 @@ public class EstadoOfertaDto implements WebcomRESTDto{
 	}
 	public void setImporteContraoferta(LongDataType importeContraoferta) {
 		this.importeContraoferta = importeContraoferta;
+	}
+	public LongDataType getIdExpedienteRem() {
+		return idExpedienteRem;
+	}
+	public void setIdExpedienteRem(LongDataType idExpedienteRem) {
+		this.idExpedienteRem = idExpedienteRem;
 	}
 
 }

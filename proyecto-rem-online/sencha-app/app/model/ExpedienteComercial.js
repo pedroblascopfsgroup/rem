@@ -44,6 +44,12 @@ Ext.define('HreRem.model.ExpedienteComercial', {
 		    	name: 'descMotivoAnulacion'
 		    },
 		    {
+		    	name: 'codMotivoRechazoExp'
+		    },
+		    {
+		    	name: 'descMotivoRechazoExp'
+		    },
+		    {
 		    	name: 'fechaDevolucionEntregas',
     			type:'date',
     			dateFormat: 'c'

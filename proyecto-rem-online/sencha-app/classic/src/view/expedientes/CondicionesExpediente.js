@@ -615,7 +615,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 								title : HreRem.i18n("fieldlabel.deposito"),
 								items : [
 									{
-										xtype : 'textfieldbase',
+										xtype : 'numberfieldbase',
 										fieldLabel : HreRem.i18n('fieldlabel.meses'),
 										bind : {
 											value : '{condiciones.mesesDeposito}'
@@ -917,7 +917,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 										}
 									},
 									{
-										xtype : 'textfieldbase',
+										xtype : 'numberfieldbase',
 										reference : 'escaladoRentaPorcentaje',
 										symbol : HreRem.i18n('symbol.porcentaje'),
 										fieldLabel : HreRem.i18n('fieldlabel.porcentaje'),
@@ -955,7 +955,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 										bind : '{condiciones.revisionMercadoFecha}'
 									},
 									{
-										xtype : 'textfieldbase',
+										xtype : 'numberfieldbase',
 										reference : 'escaladoRentasMeses',
 										symbol : HreRem.i18n('symbol.meses'),
 										labelSeparator : "",

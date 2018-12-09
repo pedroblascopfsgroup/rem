@@ -17,7 +17,7 @@ public class DtoHistoricoCondiciones extends WebDto {
 	private String id;
 	private Long condicionante;
 	private Date fecha;
-	private Date fechaIncrementoRenta;
+	private Double incrementoRenta;
 	
 	
 	public String getId() {
@@ -38,11 +38,11 @@ public class DtoHistoricoCondiciones extends WebDto {
 	public void setFecha(Date fecha) {
 		this.fecha = fecha;
 	}
-	public Date getFechaIncrementoRenta() {
-		return fechaIncrementoRenta;
+	public Double getIncrementoRenta() {
+		return incrementoRenta;
 	}
-	public void setFechaIncrementoRenta(Date fechaIncrementoRenta) {
-		this.fechaIncrementoRenta = fechaIncrementoRenta;
+	public void setIncrementoRenta(Double incrementoRenta) {
+		this.incrementoRenta = incrementoRenta;
 	}
 	
 	

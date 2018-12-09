@@ -95,7 +95,7 @@ public class DtoCondiciones extends WebDto {
 	private String entidadComments;
 	private Boolean checkFijo;
 	private Date fechaFijo;
-	private Date fechaIncrementoRentaFijo;
+	private Double incrementoRentaFijo;
 	
 	private Boolean checkPorcentual;
 	private Boolean checkIPC;
@@ -761,12 +761,12 @@ public class DtoCondiciones extends WebDto {
 		this.fechaFijo = fechaFijo;
 	}
 
-	public Date getFechaIncrementoRentaFijo() {
-		return fechaIncrementoRentaFijo;
+	public Double getIncrementoRentaFijo() {
+		return incrementoRentaFijo;
 	}
 
-	public void setFechaIncrementoRentaFijo(Date fechaIncrementoRentaFijo) {
-		this.fechaIncrementoRentaFijo = fechaIncrementoRentaFijo;
+	public void setIncrementoRentaFijo(Double incrementoRentaFijo) {
+		this.incrementoRentaFijo = incrementoRentaFijo;
 	}
 
 	public Boolean getCheckPorcentual() {

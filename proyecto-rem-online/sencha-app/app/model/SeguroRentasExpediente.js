@@ -10,9 +10,6 @@ Ext.define('HreRem.model.SeguroRentasExpediente', {
 		    	name: 'id'
 		    },
     		{
-    			name:'motivoRechazo'
-    		},
-    		{
     			name:'revision'
     		},
     		{

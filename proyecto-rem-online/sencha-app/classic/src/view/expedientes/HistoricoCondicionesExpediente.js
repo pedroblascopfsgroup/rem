@@ -66,14 +66,12 @@ Ext.define('HreRem.view.expedientes.HistoricoCondicionesExpediente', {
 		        	flex: 1
 				},
 				{   text: HreRem.i18n('fieldlabel.incremento.renta'),
-		        	dataIndex: 'fechaIncrementoRenta',
-		        	formatter: 'date("d/m/Y")',
+		        	dataIndex: 'incrementoRenta',
+		        	flex: 1,
 		        	editor: {
-		        		xtype: 'datefield',
-		        		allowBlank: false,
-		        		cls: 'grid-no-seleccionable-field-editor'
-		        	},
-		        	flex: 1
+		            	xtype: 'numberfield',
+		            	allowBlank: false
+		            }
 				}
 		    ];
 

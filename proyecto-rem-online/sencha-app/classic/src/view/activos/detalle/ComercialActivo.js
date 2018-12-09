@@ -133,5 +133,31 @@ Ext.define('HreRem.view.activos.detalle.ComercialActivo', {
 		me.recargar = false;
 		me.lookupController().cargarTabData(me);
 		me.up('activosdetallemain').lookupReference('comercialactivotabpanelref').funcionRecargar();
-    }
+		me.evaluarEdicion();
+    },
+    
+   evaluarEdicion: function() {
+		var me = this;
+		var activo = me.lookupController().getViewModel().get('activo');
+		
+		var noContieneTipoAlquiler = false;
+		
+		 
+		if (activo.get('incluyeDestinoComercialAlquiler')) {
+			var codigoTipoAlquiler = activo.get('tipoAlquilerCodigo');
+			if (codigoTipoAlquiler == null || codigoTipoAlquiler == '') {
+				noContieneTipoAlquiler = true;
+			}
+		}
+		
+		
+		if(activo.get('incluidoEnPerimetro')=="false" || !activo.get('aplicaComercializar') || activo.get('pertenceAgrupacionRestringida')
+			|| activo.get('isVendido') || !$AU.userHasFunction('EDITAR_LIST_OFERTAS_ACTIVO') || noContieneTipoAlquiler) {
+			me.up('activosdetallemain').lookupReference('ofertascomercialactivolistref').setTopBar(false);
+		}
+		else{
+			me.up('activosdetallemain').lookupReference('ofertascomercialactivolistref').setTopBar(true);
+		}
+		
+   }
 });

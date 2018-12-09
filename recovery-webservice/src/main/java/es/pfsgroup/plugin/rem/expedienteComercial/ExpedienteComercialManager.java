@@ -802,7 +802,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					//DDTipoAlquiler tipoAlquiler = (DDTipoAlquiler) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoAlquiler.class, DDTipoAlquiler.CODIGO_ALQUILER_OPCION_COMPRA);
 					
 					
-					if (DDTipoAlquiler.CODIGO_ALQUILER_OPCION_COMPRA.equals(activo.getTipoAlquiler().getCodigo())) {
+					if (activo.getTipoAlquiler() != null && DDTipoAlquiler.CODIGO_ALQUILER_OPCION_COMPRA.equals(activo.getTipoAlquiler().getCodigo())) {
 						dto.setAlquilerOpcionCompra(1);
 					} else {
 						dto.setAlquilerOpcionCompra(0);

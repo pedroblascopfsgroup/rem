@@ -67,6 +67,9 @@ Ext.define('HreRem.view.expedientes.DiarioGestionesExpediente', {
 			           },
 			           bind: {
 			            	hidden: '{esOfertaVenta}'
+			           },
+			           editRenderer: function(){
+			        	   return '&#160;';
 			           }
 			       }			       
 			    ],

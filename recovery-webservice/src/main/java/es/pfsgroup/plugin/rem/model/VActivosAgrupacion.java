@@ -99,6 +99,12 @@ public class VActivosAgrupacion implements Serializable {
 	
 	@Column(name="PUBLICADO")
 	private String publicado;
+	
+	@Column(name = "COND_PUBL_VENTA")
+	private String condPublVenta;
+	
+	@Column(name = "COND_PUBL_ALQUILER")
+	private String condPublAlquiler;
 
 
 	public Long getId() {
@@ -293,6 +299,21 @@ public class VActivosAgrupacion implements Serializable {
 		this.publicado = publicado;
 	}
 	
+	public String getCondPublVenta() {
+		return condPublVenta;
+	}
+
+	public void setCondPublVenta(String condPublVenta) {
+		this.condPublVenta = condPublVenta;
+	}
+
+	public String getCondPublAlquiler() {
+		return condPublAlquiler;
+	}
+
+	public void setCondPublAlquiler(String condPublAlquiler) {
+		this.condPublAlquiler = condPublAlquiler;
+	}	
 	
 
 

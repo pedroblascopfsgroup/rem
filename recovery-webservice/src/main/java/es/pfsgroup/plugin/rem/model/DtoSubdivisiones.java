@@ -21,6 +21,7 @@ public class DtoSubdivisiones extends WebDto {
 	private String tipoSubdivisionDescripcion;
 	private Long incluidos;
 	private Boolean estadoPublicacionS;
+	private String publicaciones;
 
 	public Long getId() {
 		return id;
@@ -75,6 +76,12 @@ public class DtoSubdivisiones extends WebDto {
 	}
 	public void setEstadoPublicacionS(Boolean estadoPublicacionS) {
 		this.estadoPublicacionS = estadoPublicacionS;
+	}
+	public String getPublicaciones() {
+		return publicaciones;
+	}
+	public void setPublicaciones(String publicaciones) {
+		this.publicaciones = publicaciones;
 	}
 
 

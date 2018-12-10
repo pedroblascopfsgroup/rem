@@ -1,17 +1,18 @@
 --/*
 --##########################################
---## AUTOR=Carles Molins
---## FECHA_CREACION=20181017
+--## AUTOR=Sergio Beleña
+--## FECHA_CREACION=20181210
 --## ARTEFACTO=batch
---## VERSION_ARTEFACTO=2.0.19
---## INCIDENCIA_LINK=HREOS-4563
+--## VERSION_ARTEFACTO=2.0.3
+--## INCIDENCIA_LINK=HREOS-4931
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
---##        0.1 Versión inicial
---##		0.2 Versión con ofertas express
+--##        	0.1 Versión inicial
+--##		0.2 Versión con ofertas express Carles Molins - HREOS-4563
+--##		0.3 Sergio Beleña - HREOS-4931 - Optimización de tiempos
 --##########################################
 --*/
 
@@ -138,8 +139,8 @@ create or replace PROCEDURE SP_MOTIVO_OCULTACION (pACT_ID IN NUMBER
                                , MTO.DD_MTO_CODIGO
                                , MTO.DD_MTO_ORDEN ORDEN
                                     FROM '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION APU
-                                    JOIN '|| V_ESQUEMA ||'.V_COND_DISPONIBILIDAD V ON V.ACT_ID = APU.ACT_ID AND V.ES_CONDICIONADO = 0
-                                    JOIN '|| V_ESQUEMA ||'.V_CAMBIO_ESTADO_PUBLI EST ON EST.ACT_ID = APU.ACT_ID AND EST.INFORME_COMERCIAL = 0
+                                    JOIN '|| V_ESQUEMA ||'.V_COND_DISPONIBILIDAD V ON V.ACT_ID = APU.ACT_ID AND V.ES_CONDICIONADO = 0 and V.BORRADO=0
+                                    JOIN '|| V_ESQUEMA ||'.TMP_PUBL_ACT EST ON EST.ACT_ID = APU.ACT_ID AND EST.INFORME_COMERCIAL = 0
                                     LEFT JOIN '|| V_ESQUEMA ||'.DD_MTO_MOTIVOS_OCULTACION MTO ON MTO.DD_MTO_CODIGO = ''06'' AND MTO.BORRADO = 0 /*Revisión Publicación*/
                                    WHERE APU.BORRADO = 0.
                                      AND APU.ES_CONDICONADO_ANTERIOR = 1 

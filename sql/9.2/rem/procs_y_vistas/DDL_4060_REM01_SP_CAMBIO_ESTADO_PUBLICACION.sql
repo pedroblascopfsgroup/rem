@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Carles Molins
---## FECHA_CREACION=20181120
+--## AUTOR=Sergio Beleña
+--## FECHA_CREACION=20181210
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=2.0.19
---## INCIDENCIA_LINK=HREOS-4683
+--## VERSION_ARTEFACTO=2.0.3
+--## INCIDENCIA_LINK=HREOS-4931
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -14,7 +14,8 @@
 --##		0.2 Actualizar tipo de publicacion
 --##		0.3 Llamada SP_CREAR_AVISO
 --##		0.4 Modificado CONDICIONANTE_ALQUIER
---##		0.5 Añade insert en la tabla AHP del estado actual (APU)
+--##		0.5 Añade insert en la tabla AHP del estado actual (APU) Carles Molins HREOS-4683
+--##		0.6 Sergio B HREOS-4931 - Optmización de tiempos
 --##########################################
 --*/
 
@@ -97,6 +98,7 @@ create or replace PROCEDURE REM01.SP_CAMBIO_ESTADO_PUBLICACION (pACT_ID IN NUMBE
 
     nCONTADOR         NUMBER := 0;
     nCONTADORMax      NUMBER := 10000;
+    V_TABLA_TMP_V VARCHAR2(30 CHAR):='TMP_PUBL_ACT';
   PROCEDURE PLP$LIMPIAR_ALQUILER(nACT_ID NUMBER, pUSUARIOMODIFICAR VARCHAR2) IS
 
   BEGIN
@@ -678,6 +680,9 @@ END IF;
       /**************************************/
       /********** FUNCION PRINCIPAL *********/
       /**************************************/
+
+	REM01.OPERACION_DDL.DDL_TABLE('TRUNCATE',''||V_TABLA_TMP_V||'');
+
       nCONTADOR    := 0;
 
       IF pACT_ID IS NOT NULL THEN
@@ -696,6 +701,70 @@ END IF;
 	    vCondAlquiler := pCondAlquiler;
 	  END IF;
 
+
+
+	V_MSQL := '
+	INSERT INTO '|| V_ESQUEMA ||'.'|| V_TABLA_TMP_V ||' (
+	ACT_ID,
+	DD_TCO_CODIGO,
+	CODIGO_ESTADO_A,
+	DESC_ESTADO_A,
+	CHECK_PUBLICAR_A,
+	CHECK_OCULTAR_A,
+	DD_MTO_CODIGO_A,
+	DD_MTO_MANUAL_A,
+	CODIGO_ESTADO_V,
+	DESC_ESTADO_V,
+	CHECK_PUBLICAR_V,
+	CHECK_OCULTAR_V,
+	DD_MTO_CODIGO_V,
+	DD_MTO_MANUAL_V,
+	DD_TPU_CODIGO_A,
+	DD_TPU_CODIGO_V,
+	DD_TAL_CODIGO,
+	ADMISION,
+	GESTION,
+	INFORME_COMERCIAL,
+	PRECIO_A,
+	PRECIO_V,
+	CEE_VIGENTE,
+	ADECUADO,
+	ES_CONDICONADO
+	) 
+	SELECT
+		V.ACT_ID				ACT_ID,
+		V.DD_TCO_CODIGO				DD_TCO_CODIGO,
+		V.CODIGO_ESTADO_A			CODIGO_ESTADO_A,
+		V.DESC_ESTADO_A				DESC_ESTADO_A,
+		V.CHECK_PUBLICAR_A			CHECK_PUBLICAR_A,
+		V.CHECK_OCULTAR_A			CHECK_OCULTAR_A,
+		V.DD_MTO_CODIGO_A			DD_MTO_CODIGO_A,
+		V.DD_MTO_MANUAL_A			DD_MTO_MANUAL_A,
+		V.CODIGO_ESTADO_V			CODIGO_ESTADO_V,
+		V.DESC_ESTADO_V				DESC_ESTADO_V,
+		V.CHECK_PUBLICAR_V			CHECK_PUBLICAR_V,
+		V.CHECK_OCULTAR_V			CHECK_OCULTAR_V,
+		V.DD_MTO_CODIGO_V			DD_MTO_CODIGO_V,
+		V.DD_MTO_MANUAL_V			DD_MTO_MANUAL_V,
+		V.DD_TPU_CODIGO_A			DD_TPU_CODIGO_A,
+		V.DD_TPU_CODIGO_V			DD_TPU_CODIGO_V,
+		V.DD_TAL_CODIGO				DD_TAL_CODIGO,
+		V.ADMISION				ADMISION,
+		V.GESTION				GESTION,
+		V.INFORME_COMERCIAL			INFORME_COMERCIAL,
+		V.PRECIO_A				PRECIO_A,
+		V.PRECIO_V				PRECIO_V,
+		V.CEE_VIGENTE				CEE_VIGENTE,
+		V.ADECUADO				ADECUADO,
+		V.ES_CONDICONADO			ES_CONDICONADO
+																	
+     	  FROM '|| V_ESQUEMA ||'.V_CAMBIO_ESTADO_PUBLI V'
+          ||vWHERE;
+
+
+		EXECUTE IMMEDIATE V_MSQL;
+		DBMS_OUTPUT.PUT_LINE('[INFO] Insertados '||sql%rowcount||' en la tabla '||V_TABLA_TMP_V);
+
       V_MSQL := '
         SELECT 
                V.ACT_ID, V.DD_TCO_CODIGO
@@ -705,8 +774,7 @@ END IF;
              , V.ADMISION, V.GESTION
              , V.INFORME_COMERCIAL, V.PRECIO_A, V.PRECIO_V
              , V.CEE_VIGENTE, V.ADECUADO, V.ES_CONDICONADO
-          FROM '|| V_ESQUEMA ||'.V_CAMBIO_ESTADO_PUBLI V'
-          ||vWHERE
+          FROM '|| V_ESQUEMA ||'.'||V_TABLA_TMP_V ||' V'
        ;
 
      OPEN v_cursor FOR V_MSQL;

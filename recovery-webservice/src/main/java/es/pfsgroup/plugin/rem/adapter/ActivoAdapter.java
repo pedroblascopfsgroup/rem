@@ -3660,19 +3660,10 @@ public class ActivoAdapter {
 					}
 					
 					activoApi.saveOrUpdate(activo);
-					
-					if(!Checks.esNulo(activo.getTipoPublicacion())) {
-						if(DDTipoPublicacion.CODIGO_FORZADA.equals(activo.getTipoPublicacion().getCodigo())) {
-							aprobado = publicarActivoConHistorico(success, username, activo);
-							if(aprobado) {
-								aprobado = updateTramitesActivo(activo.getId());
-							}
-						}
-					}else {
-						aprobado = publicarActivoConHistorico(success, username, activo);
-						if(aprobado) {
-							aprobado = updateTramitesActivo(activo.getId());
-						}
+
+					aprobado = publicarActivoConHistorico(username, activo);
+					if (aprobado) {
+						aprobado = updateTramitesActivo(activo.getId());
 					}
 				}
 			}
@@ -3686,17 +3677,13 @@ public class ActivoAdapter {
 
 	/** 
 	 * Publica un activo
-	 * @param success
 	 * @param username
 	 * @param activo
 	 * @return
 	 */
-	private Boolean publicarActivoConHistorico(Boolean success, String username, Activo activo) {
+	private Boolean publicarActivoConHistorico(String username, Activo activo) {
 
-		activoDao.publicarActivoConHistorico(activo.getId(),username);
-		success=true;
-		
-		return success;
+		return activoDao.publicarActivoConHistorico(activo.getId(),username);
 	}
 	
 	/**

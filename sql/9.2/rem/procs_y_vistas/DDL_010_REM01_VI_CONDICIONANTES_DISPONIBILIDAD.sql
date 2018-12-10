@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=rlb
---## FECHA_CREACION=20181124
+--## AUTOR=Daniel Algaba
+--## FECHA_CREACION=20181210
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-4606
+--## INCIDENCIA_LINK=HREOS-5003
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -24,6 +24,7 @@
 --##		0.11 REMVIP-448 - Añadir condicion de poner nulos a 0
 --##		0.12 REMVIP-969 - Añadir condicionante "Sin acceso"
 --##		0.13 HREOS-4565 -SBG- Optimizar vista: evito hacer 7 LEFT con la tabla act_sps_sit_posesoria y 2 LEFT con la tabla dd_eac_estado_activo añadiendo CASE con las distintas opciones
+--##    0.14 HREOS-5003 - Añadimos Obra nueva (Vandalizado) a VANDALIZADO
 --##########################################
 --*/
 
@@ -101,7 +102,7 @@ AS
                 CASE WHEN (eac1.dd_eac_codigo = ''02''  OR   eac1.dd_eac_codigo = ''06'') THEN 1 ELSE 0 END as obranueva_enconstruccion, 
                 NVL2 (reg2.reg_id, 1, 0) AS divhorizontal_noinscrita, 
                 CASE WHEN eac1.dd_eac_codigo = ''05'' THEN 1 ELSE 0 END as ruina,
-				CASE WHEN (eac1.dd_eac_codigo = ''08'' ) THEN 1 ELSE 0 END as VANDALIZADO,
+				CASE WHEN (eac1.dd_eac_codigo IN (''08'',''07'')) THEN 1 ELSE 0 END as VANDALIZADO,
                 sps1.sps_otro AS otro,
 				CASE WHEN (cra.dd_cra_codigo in (''01'', ''08'' )) 
                     THEN DECODE (vei.dd_aic_codigo, ''02'', 0, 1)

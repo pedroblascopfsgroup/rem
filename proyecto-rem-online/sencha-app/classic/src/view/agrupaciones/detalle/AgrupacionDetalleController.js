@@ -603,18 +603,28 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 			    success: success,
 			 	failure: function(record, operation) {
 			 		
-			 		var response = Ext.decode(operation.getResponse().responseText);
-			 		if(response.success === "false" && Ext.isDefined(response.msg)) {
-						me.fireEvent("errorToast", Ext.decode(operation.getResponse().responseText).msg);
-						form.unmask();
-					} else {
-						me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-				 		form.unmask();
+			 		try {
+  						var response = Ext.decode(operation.getResponse().responseText);
+				 		if(response.success === "false" && Ext.isDefined(response.msg)) {
+							me.fireEvent("errorToast", Ext.decode(operation.getResponse().responseText).msg);
+							form.unmask();
+						} else {
+							me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+					 		form.unmask();
+						}					
+						if(Ext.isDefined(form.funcionRefrescar)) {
+							form.funcionRefrescar();
+						}
+					}catch(err) {
+						if(Ext.isDefined(err.message)){
+							me.fireEvent("errorToast", err.message);
+						}else{
+							me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+						}
+					  	
+					 	form.unmask();
 					}
-					
-					if(Ext.isDefined(form.funcionRefrescar)) {
-						form.funcionRefrescar();
-					}
+			 		
 			    }
 			});
 		} else {

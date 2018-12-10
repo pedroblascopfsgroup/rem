@@ -1584,16 +1584,24 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			record.save({
 			    success: success,
 			 	failure: function(record, operation) {
-			 		var response = Ext.decode(operation.getResponse().responseText);
-			 		if(response.success === "false" && Ext.isDefined(response.msg)) {
-						me.fireEvent("errorToast", Ext.decode(operation.getResponse().responseText).msg);
-						form.unmask();
-					} else {
-						me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-				 		form.unmask();
+			 		try {
+  						var response = Ext.decode(operation.getResponse().responseText);
+				 		if(response.success === "false" && Ext.isDefined(response.msg)) {
+							me.fireEvent("errorToast", Ext.decode(operation.getResponse().responseText).msg);
+							form.unmask();
+						} else {
+							me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+					 		form.unmask();
+						}
+					}catch(err) {
+					  if(Ext.isDefined(err.message)){
+							me.fireEvent("errorToast", err.message);
+					  }else{
+							me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+					  }
+					  form.unmask();
 					}
 			    }
-
 			});
 		} else {
 		

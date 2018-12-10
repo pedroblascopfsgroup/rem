@@ -218,7 +218,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	private Boolean deshabilitarCheckOcultarVenta(Long idActivo) {
 		Boolean resultado = false;
 		try{
-			resultado = !isPublicable(idActivo) || !isComercializable(idActivo) || isVendido(idActivo) || !isPublicadoVenta(idActivo) || isOcultoAutomaticoVenta(idActivo) || isFueraDePerimetro(idActivo);
+			resultado = !isPublicable(idActivo) || !isComercializable(idActivo) || isVendido(idActivo) || (!isPublicadoVenta(idActivo) && !isOcultoVenta(idActivo)) || isOcultoAutomaticoVenta(idActivo) || isFueraDePerimetro(idActivo);
 		}catch(Exception e){
 			logger.error("Error en el método deshabilitarCheckOcultarVenta",e);
 		}

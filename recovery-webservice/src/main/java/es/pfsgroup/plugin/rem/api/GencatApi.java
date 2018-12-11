@@ -60,4 +60,20 @@ public interface GencatApi {
 	 */
 	public DtoGencat getDetalleHistoricoByIdComunicacionHistorico(Long idComunicacionHistorico);
 	
+	/**
+	 * Devuelve el historico de ofertas de la comunicación del historico de un activo.
+	 * 
+	 * @param id de la comunicacion
+	 * @return DtoOfertasAsociadasActivo
+	 */
+	public List<DtoOfertasAsociadasActivo> getHistoricoOfertasAsociadasIdComunicacionHistorico(Long idComunicacionHistorico);
+	
+	/**
+	 * Devuelve las reclamaciones de la comunicación del histórico de un activo.
+	 * 
+	 * @param id de la comunicacion
+	 * @return DtoReclamacionActivo
+	 */
+	public List<DtoReclamacionActivo> getHistoricoReclamacionesByIdComunicacionHistorico(Long idComunicacionHistorico);
+	
 }

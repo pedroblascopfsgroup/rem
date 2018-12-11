@@ -481,7 +481,9 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
                     if (!Ext.isEmpty(me.idActivo)) {
                         me.fireEvent("refreshEntityOnActivate", CONST.ENTITY_TYPES['ACTIVO'], me.idActivo);
                     }
-
+                    if (!Ext.isEmpty(me.idExpediente)) {
+                        me.fireEvent("refreshEntityOnActivate", CONST.ENTITY_TYPES['EXPEDIENTE'], me.idExpediente);
+                    }
                     me.destroy();
                 }
 

@@ -129,6 +129,7 @@ public class DtoFichaExpediente extends WebDto {
 	private Boolean definicionOfertaScoring;
 
 	private String subcarteraCodigo;
+	private Boolean estaFirmado;
 
 	public Long getId() {
 		return id;
@@ -643,6 +644,14 @@ public class DtoFichaExpediente extends WebDto {
 	public void setSubcarteraCodigo(String subcarteraCodigo) {
 		this.subcarteraCodigo = subcarteraCodigo;
 
+	}
+
+	public Boolean getEstaFirmado() {
+		return estaFirmado;
+	}
+
+	public void setEstaFirmado(Boolean estaFirmado) {
+		this.estaFirmado = estaFirmado;
 	}
 	
 	

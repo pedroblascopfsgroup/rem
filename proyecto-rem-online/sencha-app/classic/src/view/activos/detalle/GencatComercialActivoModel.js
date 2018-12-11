@@ -113,6 +113,16 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoModel', {
 				remoteUrl: 'gencat/getHistoricoComunicacionesByIdActivo',
 				extraParams: {id: '{activo.id}'}
 			}
+		},
+		
+		storeHistoricoOfertasAsociadasActivo: {    	
+			pageSize: $AC.getDefaultPageSize(),
+			model: 'HreRem.model.VisitasActivo',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'gencat/getHistoricoOfertasAsociadasIdComunicacionHistorico'/*,
+				extraParams: {id: '{activo.id}'}*/
+			}
 		}
 		
     }

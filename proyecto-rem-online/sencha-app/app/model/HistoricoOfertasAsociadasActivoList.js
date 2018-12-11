@@ -1,14 +1,29 @@
-Ext.define('HreRem.view.activos.detalle.OfertasAsociadasActivoList', {
+Ext.define('HreRem.view.activos.detalle.HistoricoOfertasAsociadasActivoList', {
 	extend: 'HreRem.view.common.GridBase',
-    xtype: 'ofertasasociadasactivolist',
+    xtype: 'historicoofertasasociadasactivolist',
     
-    bind: {
-        store: '{storeOfertasAsociadasActivo}'
+    store: Ext.create('Ext.data.Store', {
+		pageSize: $AC.getDefaultPageSize(),
+		model: 'HreRem.model.VisitasActivo',
+		proxy: {
+			type: 'uxproxy',
+			remoteUrl: 'gencat/getHistoricoOfertasAsociadasIdComunicacionHistorico',
+			extraParams: {
+				idHComunicacion: null
+			}
+		}
+	}),
+	
+	data: {
+        idHComunicacion: -1
     },
         
     initComponent: function () {
         
         var me = this;
+        
+        me.store.getProxy().setExtraParam('idHComunicacion', me.idHComunicacion);
+        me.store.load();
         
         me.columns = [
 		        {
@@ -50,9 +65,7 @@ Ext.define('HreRem.view.activos.detalle.OfertasAsociadasActivoList', {
 		            itemId: 'ofertasAsociadasPaginationToolbar',
 		            inputItemWidth: 100,
 		            displayInfo: true,
-		            bind: {
-		                store: '{storeOfertasAsociadasActivo}'
-		            }
+		            store: me.store
 		        }
 		];
 		    

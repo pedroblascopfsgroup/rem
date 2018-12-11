@@ -1978,5 +1978,21 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		return nif == null || nif.matches("^[A-Za-z0-9]{1}[0-9]{7}[A-Za-z]{1}$");
 		
 	}
+
+	@Override
+	public boolean esActivoConComunicacionReclamada(Long numActivoHaya) {
+		
+		String resultado = "0";
+		if(numActivoHaya != null) {
+			resultado = rawDao.getExecuteSQL("SELECT count(1) FROM ACT_RCG_RECLAMACION_GENCAT rec " +
+						" WHERE REC.CMG_ID = (SELECT CMG_ID FROM ACT_CMG_COMUNICACION_GENCAT com " +
+						" WHERE com.ACT_ID = (SELECT ACT_ID FROM ACT_ACTIVO " +
+						" WHERE ACT_NUM_ACTIVO = '"+numActivoHaya+"')) " +
+						" AND RCG_FECHA_RECLAMACION IS NULL " +
+						" AND RCG_FECHA_AVISO IS NOT NULL");
+		}
+
+		return !"0".equals(resultado);
+	}
 	
 }

@@ -66,6 +66,7 @@ public class MSVDDOperacionMasiva implements Serializable, Auditable, Dictionary
 	public static final String CODE_FILE_BULKUPLOAD_CARGA_ACTIVOS_GASTOS_PORCENTAJE="AGP";
 	public static final String CODE_FILE_BULKUPLOAD_INFO_DETALLE_PRINEX_LBK = "PRINEX";
 	public static final String CODE_FILE_BULKUPLOAD_CARGA_MASIVA_SANCIONES = "CMSAN";
+	public static final String CODE_FILE_BULKUPLOAD_CARGA_MASIVA_RECLAMACIONES = "CMRE";
 		  
 	private static final long serialVersionUID = 5938440720826995243L;
 

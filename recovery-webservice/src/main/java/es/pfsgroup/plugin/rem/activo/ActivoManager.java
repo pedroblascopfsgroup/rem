@@ -510,9 +510,10 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 		ActivoPublicacion actPubli = activoPublicacionDao.get(dto.getIdActivo());
 
-		activoAdapter.actualizarEstadoPublicacionActivo(activo.getId());
-
+		
 		updateActivoPublicacion(dto, actPubli);
+		
+		activoAdapter.actualizarEstadoPublicacionActivo(activo.getId());
 
 		return true;
 	}

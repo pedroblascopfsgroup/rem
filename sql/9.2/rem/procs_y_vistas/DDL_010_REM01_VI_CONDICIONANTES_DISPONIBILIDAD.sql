@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=rlb
---## FECHA_CREACION=20181124
+--## FECHA_CREACION=20181211
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-4606
@@ -103,7 +103,7 @@ AS
                 CASE WHEN eac1.dd_eac_codigo = ''05'' THEN 1 ELSE 0 END as ruina,
 				CASE WHEN (eac1.dd_eac_codigo = ''08'' ) THEN 1 ELSE 0 END as VANDALIZADO,
                 sps1.sps_otro AS otro,
-				CASE WHEN (cra.dd_cra_codigo in (''01'', ''08'' )) 
+				CASE WHEN (cra.dd_cra_codigo in (''01'', ''08'', ''02'' )) 
                     THEN DECODE (vei.dd_aic_codigo, ''02'', 0, 1)
                     ELSE 0	
 				END AS sin_informe_aprobado,

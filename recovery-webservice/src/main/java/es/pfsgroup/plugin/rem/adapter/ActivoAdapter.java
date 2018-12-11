@@ -179,7 +179,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoHabitaculo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoObservacionActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoPublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTasacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTenedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
@@ -197,6 +196,7 @@ import es.pfsgroup.plugin.rem.service.TabActivoDatosBasicos;
 import es.pfsgroup.plugin.rem.service.TabActivoDatosRegistrales;
 import es.pfsgroup.plugin.rem.service.TabActivoService;
 import es.pfsgroup.plugin.rem.service.TabActivoSitPosesoriaLlaves;
+import es.pfsgroup.plugin.rem.thread.EjecutarSPPublicacionAsincrono;
 import es.pfsgroup.plugin.rem.trabajo.dao.TrabajoDao;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoActivosTrabajoFilter;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
@@ -311,7 +311,7 @@ public class ActivoAdapter {
 
 	@Autowired
 	private UsuarioManager usuarioManager;
-
+	
 	private static final String CONSTANTE_REST_CLIENT = "rest.client.gestor.documental.constante";
 	public static final String OFERTA_INCOMPATIBLE_MSG = "El tipo de oferta es incompatible con el destino comercial del activo";
 	private static final String AVISO_TITULO_MODIFICADAS_CONDICIONES_JURIDICAS = "activo.aviso.titulo.modificadas.condiciones.juridicas";
@@ -2697,8 +2697,8 @@ public class ActivoAdapter {
 
 		if (this.saveTabActivoTransactional(dto, id, tab)) {
 			if(tab != null && tab.equals("datosbasicos")){
-				this.actualizarEstadoPublicacionActivo(id);
 				this.updateGestoresTabActivoTransactional(dto, id);
+				this.actualizarEstadoPublicacionActivo(id);
 			}
 			
 		}
@@ -2707,15 +2707,31 @@ public class ActivoAdapter {
 	
 	@Transactional(readOnly = false)
 	public boolean actualizarEstadoPublicacionActivo(Long idActivo) {
-		return activoEstadoPublicacionApi.actualizarEstadoPublicacionDelActivoOrAgrupacionRestringidaSiPertenece(idActivo);
+		ArrayList<Long> listaIdActivo = new ArrayList<Long>();
+		listaIdActivo.add(idActivo);
+		return this.actualizarEstadoPublicacionActivo(listaIdActivo,false);
+	}
+	
+	@Transactional(readOnly = false)
+	public boolean actualizarEstadoPublicacionActivo(ArrayList<Long> listaIdActivo,Boolean asincrono){
+		boolean resultado = true;
+		if(listaIdActivo != null && listaIdActivo.size() > 0){
+			for(Long idActivo : listaIdActivo){
+				resultado = resultado && this.actualizarEstadoPublicacionActivo(idActivo,asincrono);
+			}
+		}
+		return resultado;
 	}
 	
 	@Transactional(readOnly = false)
 	public boolean actualizarEstadoPublicacionActivo(Long idActivo, Boolean asincrono) {
 		if(asincrono){
-			return false;
+			activoDao.hibernateFlush();
+			Thread hilo = new Thread(new EjecutarSPPublicacionAsincrono(genericAdapter.getUsuarioLogado().getUsername(), idActivo));
+			hilo.start();
+			return true;
 		}else{
-			return activoEstadoPublicacionApi.actualizarEstadoPublicacionDelActivoOrAgrupacionRestringidaSiPertenece(idActivo);
+			return activoEstadoPublicacionApi.actualizarEstadoPublicacionDelActivoOrAgrupacionRestringidaSiPertenece(idActivo,true);
 		}
 		
 	}
@@ -3613,7 +3629,6 @@ public class ActivoAdapter {
 	 */
 	@Transactional(readOnly = false)
 	public Boolean updateInformeComercialMSV(Long idActivo) throws JsonViewerException {
-		Boolean success=false;
 		Boolean aprobado=false;
 		ActivoEstadosInformeComercialHistorico activoEstadosInformeComercialHistorico = new ActivoEstadosInformeComercialHistorico();
 		Filter estadoInformeComercialFilter = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoInformeComercial.ESTADO_INFORME_COMERCIAL_ACEPTACION);
@@ -3683,7 +3698,7 @@ public class ActivoAdapter {
 	 */
 	private Boolean publicarActivoConHistorico(String username, Activo activo) {
 
-		return activoDao.publicarActivoConHistorico(activo.getId(),username);
+		return activoDao.publicarActivoConHistorico(activo.getId(),username,true);
 	}
 	
 	/**

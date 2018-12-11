@@ -2517,16 +2517,19 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	
 	@Override
 	public void desocultarActivoOferta(Oferta oferta) throws Exception {
+		ArrayList<Long> idActivoActualizarPublicacion = new ArrayList<Long>();
 		if (oferta.getActivosOferta() != null && !oferta.getActivosOferta().isEmpty()) {
 			for (ActivoOferta activoOferta : oferta.getActivosOferta()) {
 				Activo activo = activoOferta.getPrimaryKey().getActivo();
 				if (DDCartera.CODIGO_CARTERA_CAJAMAR.equals(activo.getCartera().getCodigo()) && (DDSituacionComercial.CODIGO_DISPONIBLE_VENTA.equals(activo.getSituacionComercial().getCodigo())
 						|| DDSituacionComercial.CODIGO_DISPONIBLE_VENTA_OFERTA.equals(activo.getSituacionComercial().getCodigo())
 						|| DDSituacionComercial.CODIGO_DISPONIBLE_CONDICIONADO.equals(activo.getSituacionComercial().getCodigo()))) {
-					activoAdapter.actualizarEstadoPublicacionActivo(activo.getId());
+					idActivoActualizarPublicacion.add(activo.getId());
+					//activoAdapter.actualizarEstadoPublicacionActivo(activo.getId());
 				}
 			}
 		}
+		activoAdapter.actualizarEstadoPublicacionActivo(idActivoActualizarPublicacion,true);
 	}
 
 	@Override
@@ -2780,6 +2783,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			List<ActivoAgrupacionActivo> activos = agrupacion.getActivos();
 			Double sumaTasaciones = 0.0;
 			Double sumaPreciosMinimosAutorizados = 0.0;
+			Double sumaPreciosDescuentoPublicado = 0.0;
 			
 			List<VTasacionCalculoLBK> vista = activoApi.getVistaTasacion(agrupacion.getId());
 
@@ -2787,20 +2791,23 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				Double importeTasacion = reg.getImporteTasacion();
 				Double precioAprobadoVenta = 0.0;	
 				Double precioMinimoAutorizado = 0.0;
+				Double precioDescuentoPublicado = 0.0;
 				Boolean esPrecioAprobadoVenta = false;
 
 				if(DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA.equals(reg.getCodigoTipoPrecio())) {
 					precioAprobadoVenta = (!Checks.esNulo(reg.getImporteTipoPrecio())) ? reg.getImporteTipoPrecio() : 0.0;
 					esPrecioAprobadoVenta = true;
-				}else {
+				}else if(DDTipoPrecio.CODIGO_TPC_MIN_AUTORIZADO.equals(reg.getCodigoTipoPrecio())){
 					precioMinimoAutorizado = (!Checks.esNulo(reg.getImporteTipoPrecio())) ? reg.getImporteTipoPrecio() : 0.0;
+				} else if(DDTipoPrecio.CODIGO_TPC_DESC_APROBADO.equals(reg.getCodigoTipoPrecio())) {
+					precioDescuentoPublicado = (!Checks.esNulo(reg.getImporteTipoPrecio())) ? reg.getImporteTipoPrecio() : 0.0;
 				}
 
 				if(esPrecioAprobadoVenta) {
 					sumaTasaciones += (!Checks.esNulo(importeTasacion)) ? importeTasacion : precioAprobadoVenta;
 				}
 				sumaPreciosMinimosAutorizados += precioMinimoAutorizado;
-
+				sumaPreciosDescuentoPublicado += precioDescuentoPublicado;
 			}
 			
 			Integer tipoResidencial = 0;
@@ -2832,8 +2839,10 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				}
 			}
 			
-			if((!Checks.esNulo(sumaTasaciones) && sumaTasaciones < importeUmbral) 
-					&& (!Checks.esNulo(importeOferta) && !Checks.esNulo(sumaPreciosMinimosAutorizados) && importeOferta >= sumaPreciosMinimosAutorizados)) {
+			if(((!Checks.esNulo(sumaTasaciones) && sumaTasaciones < importeUmbral) 
+					&& (!Checks.esNulo(importeOferta) && !Checks.esNulo(sumaPreciosMinimosAutorizados) && importeOferta >= sumaPreciosMinimosAutorizados))
+			|| ((!Checks.esNulo(sumaTasaciones) && sumaTasaciones < importeUmbral) 
+					&& (!Checks.esNulo(importeOferta) && !Checks.esNulo(sumaPreciosDescuentoPublicado) && importeOferta >= sumaPreciosDescuentoPublicado))) {
 				Filter filterComite = genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_HAYA_LIBERBANK);
 				DDComiteSancion comiteSancion = genericDao.get(DDComiteSancion.class, filterComite);
 				

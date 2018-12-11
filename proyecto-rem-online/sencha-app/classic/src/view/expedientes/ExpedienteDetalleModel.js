@@ -354,8 +354,12 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 		 },
 		 fechaMinima: function(get){
 			 var fechaMinima = get('condiciones.fechaMinima');
-			 fechaMinima= fechaMinima.split('T',1);
-			 fechaFinal= fechaMinima.toString();
+			 if(!Ext.isEmpty(fechaMinima)) {
+				 fechaMinima= fechaMinima.split('T',1);
+				 fechaFinal= fechaMinima.toString();
+			 } else {
+				 fechaFinal = '';
+			 }
 			 return fechaFinal;
 			 
 		 }

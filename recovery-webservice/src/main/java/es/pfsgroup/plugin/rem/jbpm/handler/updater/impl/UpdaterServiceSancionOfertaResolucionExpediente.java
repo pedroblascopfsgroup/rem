@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -60,6 +61,7 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 
 	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {
 
+		ArrayList<Long> idActivoActualizarPublicacion = new ArrayList<Long>();
 		Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());
 		if(!Checks.esNulo(ofertaAceptada)) {
 			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
@@ -120,7 +122,8 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 
 						// TODO: Publicaciones - Implementar en el SP de publicación la siguiente condición:
 						// Si la oferta es express, el activo se encuentra en estado publicado oculto y su motivo del estado es "Oferta Express Cajamar".
-						activoAdapter.actualizarEstadoPublicacionActivo(activo.getId());
+						//activoAdapter.actualizarEstadoPublicacionActivo(activo.getId());
+						idActivoActualizarPublicacion.add(activo.getId());
 
 						//Tipo rechazo y motivo rechazo ofertas cajamar
 						DDTipoRechazoOferta tipoRechazo = (DDTipoRechazoOferta) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoRechazoOferta.class, DDTipoRechazoOferta.CODIGO_ANULADA);
@@ -202,6 +205,8 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 				logger.error("Error al ocultar activos de la oferta.", e);
 			}
 		}
+		
+		activoAdapter.actualizarEstadoPublicacionActivo(idActivoActualizarPublicacion,true);
 	}
 
 	public String[] getCodigoTarea() {

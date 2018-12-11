@@ -32,7 +32,7 @@ public class ActivoPropagacionManager implements ActivoPropagacionApi {
 
 			for (ActivoAgrupacionActivo activoAgrupacionActivo : activo.getAgrupaciones()) {
 				if (activoAgrupacionActivo.getAgrupacion() != null 
-						&& isActivoAgrupacionTipo(activoAgrupacionActivo, DDTipoAgrupacion.AGRUPACION_OBRA_NUEVA, DDTipoAgrupacion.AGRUPACION_ASISTIDA)) {
+						&& isActivoAgrupacionTipo(activoAgrupacionActivo)) {
 					DtoAgrupacionFilter filter = new DtoAgrupacionFilter();
 					filter.setLimit(1000);
 					filter.setStart(0);

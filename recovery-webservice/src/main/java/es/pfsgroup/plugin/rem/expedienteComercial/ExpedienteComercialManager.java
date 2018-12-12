@@ -722,6 +722,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		} catch (InvocationTargetException e) {
 			logger.error("error en expedienteComercialManager", e);
 		}
+		
+		if(!Checks.esNulo(dto.getNecesitaFinanciacion())) {
+			oferta.setNecesitaFinanciacion(dto.getNecesitaFinanciacion().equals("01") ? true : false);
+		}
 
 		expedienteComercial.setOferta(oferta);
 		

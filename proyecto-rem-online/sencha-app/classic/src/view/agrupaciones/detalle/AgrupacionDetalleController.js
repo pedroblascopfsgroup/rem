@@ -946,14 +946,22 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
     onChangeCheckboxPublicarVenta: function(checkbox, isDirty){
     	var me = this;
     	var chkbxPublicarSinPrecioVenta = checkbox.up('agrupacionesdetallemain').lookupReference('chkbxpublicarsinprecioventa').getValue();
-    	if (!chkbxPublicarSinPrecioVenta &&
-    			(Ext.isEmpty(me.getViewModel().get('datospublicacionagrupacion').getData().precioWebVenta) || 
-    					me.getViewModel().get('datospublicacionagrupacion').getData().precioWebVenta==="0.00")) {
+    	var textarea = me.lookupReference(checkbox.textareaRefChained);
+    	if (!chkbxPublicarSinPrecioVenta
+    			&& (Ext.isEmpty(me.getViewModel().get('datospublicacionagrupacion').getData().precioWebVenta) 
+    					|| me.getViewModel().get('datospublicacionagrupacion').getData().precioWebVenta==="0.00")) {
     		checkbox.setValue(false);
-    		checkbox.setReadOnly(true); 		
+    		checkbox.setReadOnly(true); 
     	} else {
-    		checkbox.setReadOnly(false); 
-    	} 
+    		checkbox.setReadOnly(false);
+    	}
+    	
+    	if (checkbox.getValue()) {
+        	textarea.setDisabled(false);
+        } else {
+        	textarea.setDisabled(true);
+        	textarea.setValue("");
+        }
     },
     
     onChangeCheckboxOcultar: function(checkbox, isDirty) {

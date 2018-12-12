@@ -750,10 +750,10 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 										fieldLabel : HreRem.i18n('fieldlabel.bonificacion'),
 										bind : {
 											value : '{condiciones.bonificacion}'
-										},
+										}/*,
 										listeners : {
 											change : 'onChangeBonificacion'
-										}
+										}*/
 									},
 									{
 										xtype : 'numberfieldbase',

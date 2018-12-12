@@ -1,6 +1,5 @@
 package es.pfsgroup.plugin.rem.jbpm.handler.updater.impl;
 
-import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -18,8 +17,7 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
-import es.pfsgroup.framework.paradise.utils.JsonViewerException;
-import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
+import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
@@ -27,9 +25,7 @@ import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoEstadosInformeComercialHistorico;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
-import es.pfsgroup.plugin.rem.model.DtoCambioEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoInformeComercial;
-import es.pfsgroup.plugin.rem.validate.validator.DtoPublicacionValidaciones;
 
 @Component
 public class UpdaterServiceAprobacionInformeComercialRevisionInformeComercial implements UpdaterService {
@@ -44,7 +40,7 @@ public class UpdaterServiceAprobacionInformeComercialRevisionInformeComercial im
     private ActivoApi activoApi;
     
     @Autowired
-    private ActivoDao activoDao;
+	private ActivoAdapter activoAdapter;
     
     @Autowired
     private ActivoEstadoPublicacionApi activoEstadoPublicacionApi;
@@ -173,7 +169,8 @@ public class UpdaterServiceAprobacionInformeComercialRevisionInformeComercial im
 			activoApi.saveOrUpdate(activo);
 		}
 		
-		activoDao.publicarActivoConHistorico(activo.getId(), genericAdapter.getUsuarioLogado().getUsername());
+		
+		activoAdapter.actualizarEstadoPublicacionActivo(activo.getId());
 
 	}
 

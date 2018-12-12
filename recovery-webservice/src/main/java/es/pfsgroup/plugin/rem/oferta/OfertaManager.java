@@ -2810,6 +2810,10 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				sumaPreciosDescuentoPublicado += precioDescuentoPublicado;
 			}
 			
+			if(sumaPreciosDescuentoPublicado == 0.0) {
+				sumaPreciosDescuentoPublicado = null;
+			}
+			
 			Integer tipoResidencial = 0;
 			Integer tipoSingularTerciario = 0;
 			

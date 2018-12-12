@@ -57,8 +57,14 @@ Ext.define('HreRem.view.publicacion.activos.ActivosPublicacionSearch', {
 					        },
 				       		{ 
 					        	xtype: 'checkboxfield',
-					        	boxLabel: HreRem.i18n('boxlabel.publicaciones.activos.search.check.publicacion'),
-					        	name: 'publicacion',
+					        	boxLabel: HreRem.i18n('boxlabel.publicaciones.activos.search.check.venta'),
+					        	name: 'okventa',
+					        	inputValue: true					        	
+					        },
+					        { 
+					        	xtype: 'checkboxfield',
+					        	boxLabel: HreRem.i18n('boxlabel.publicaciones.activos.search.check.alquiler'),
+					        	name: 'okalquiler',
 					        	inputValue: true					        	
 					        }
 						]

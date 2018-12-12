@@ -34,6 +34,12 @@ Ext.define('HreRem.model.BusquedaActivosPublicacion', {
     		},
     		{
     			name: 'precio'
+    		},
+    		{
+    			name: 'okventa'
+    		},
+    		{
+    			name: 'okalquiler'
     		}
     ] 
     

@@ -65,6 +65,12 @@ public class VBusquedaPublicacionActivo implements Serializable {
     
     @Column(name="CARTERA_CODIGO")
     private String cartera;
+    
+    @Column(name="OKALQUILER")
+    private Boolean okalquiler;
+    
+    @Column(name="OKVENTA")
+    private Boolean okventa;
 
 	public Long getId() {
 		return id;
@@ -192,6 +198,22 @@ public class VBusquedaPublicacionActivo implements Serializable {
 
 	public void setCartera(String cartera) {
 		this.cartera = cartera;
+	}
+
+	public Boolean getOkalquiler() {
+		return okalquiler;
+	}
+
+	public void setOkalquiler(Boolean okalquiler) {
+		this.okalquiler = okalquiler;
+	}
+
+	public Boolean getOkventa() {
+		return okventa;
+	}
+
+	public void setOkventa(Boolean okventa) {
+		this.okventa = okventa;
 	}
     
 }

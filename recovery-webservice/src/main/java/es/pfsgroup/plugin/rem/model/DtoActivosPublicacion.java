@@ -17,6 +17,8 @@ public class DtoActivosPublicacion extends WebDto {
 	private Boolean publicacion;
 	private Boolean precio;
 	private Boolean informeComercial;
+	private Boolean okventa;
+	private Boolean okalquiler;
 
 
 	public String getNumActivo() {
@@ -113,6 +115,22 @@ public class DtoActivosPublicacion extends WebDto {
 
 	public void setTipoComercializacionCodigo(String[] tipoComercializacionCodigo) {
 		this.tipoComercializacionCodigo = tipoComercializacionCodigo;
+	}
+
+	public Boolean getOkventa() {
+		return okventa;
+	}
+
+	public void setOkventa(Boolean okventa) {
+		this.okventa = okventa;
+	}
+
+	public Boolean getOkalquiler() {
+		return okalquiler;
+	}
+
+	public void setOkalquiler(Boolean okalquiler) {
+		this.okalquiler = okalquiler;
 	}
 	
 }

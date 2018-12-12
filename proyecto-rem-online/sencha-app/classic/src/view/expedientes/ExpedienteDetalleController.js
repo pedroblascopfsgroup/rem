@@ -2728,7 +2728,6 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	},
 	
 	onChangeBonificacion: function(checkbox, newValue, oldValue, eOpts) {
-		if(!Ext.isEmpty(oldValue)){
 			var me = this,
 			meses = me.lookupReference('mesesBonificacion'),
 			importe = me.lookupReference('importeBonificacion');
@@ -2740,7 +2739,6 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 				meses.setDisabled(true);
 				importe.setDisabled(true);
 			}
-		}
 	},
 	
 	onChangeRepercutibles: function(checkbox, newValue, oldValue, eOpts){

@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.gestorDocumental.dto.documentos;
 import java.util.Properties;
 
 import es.capgemini.devon.files.WebFileItem;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.gestorDocumental.model.GestorDocumentalConstants;
 
 public class RecoveryToGestorDocAssembler {
@@ -36,7 +37,13 @@ public class RecoveryToGestorDocAssembler {
 		doc.setTipoConsulta(TIPO_EXPEDIENTE);//HREOS-2296
 		doc.setVinculoDocumento(true);//HREOS-2296
 		doc.setVinculoExpediente(false);
-		doc.setUsuarioOperacional(userLogin);
+		
+		if(!Checks.esNulo(userLogin) && userLogin == "REST_USER" ) {
+			doc.setUsuarioOperacional("srv.crmofiymed");
+		} else {
+			doc.setUsuarioOperacional(userLogin);
+		}
+		
 		return doc;
 	}
 	
@@ -44,7 +51,13 @@ public class RecoveryToGestorDocAssembler {
 		BajaDocumentoDto login = new BajaDocumentoDto();
 		login.setUsuario(USUARIO);
 		login.setPassword(PASSWORD);
-		login.setUsuarioOperacional(userLogin);
+		
+		if(!Checks.esNulo(userLogin) && userLogin == "REST_USER" ) {
+			login.setUsuarioOperacional("srv.crmofiymed");
+		} else {
+			login.setUsuarioOperacional(userLogin);
+		}
+		
 		return login;
 	}
 	
@@ -57,7 +70,13 @@ public class RecoveryToGestorDocAssembler {
 		}
 		doc.setUsuario(USUARIO);
 		doc.setPassword(PASSWORD);
-		doc.setUsuarioOperacional(userLogin);
+		
+		if(!Checks.esNulo(userLogin) && userLogin == "REST_USER" ) {
+			doc.setUsuarioOperacional("srv.crmofiymed");
+		} else {
+			doc.setUsuarioOperacional(userLogin);
+		}
+		
 		doc.setDocumento(webFileItem.getFileItem().getFile());
 		doc.setNombreDocumento(webFileItem.getFileItem().getFileName());
 		doc.setDescripcionDocumento(webFileItem.getParameter("descripcion"));
@@ -113,7 +132,13 @@ public class RecoveryToGestorDocAssembler {
 		
 		dto.setUsuario(USUARIO);
 		dto.setPassword(PASSWORD);
-		dto.setUsuarioOperacional(login);
+		
+		if(!Checks.esNulo(login) && login == "REST_USER" ) {
+			dto.setUsuarioOperacional("srv.crmofiymed");
+		} else {
+			dto.setUsuarioOperacional(login);
+		}
+		
 		dto.setDocumento(null);
 		
 		return dto;
@@ -125,7 +150,13 @@ public class RecoveryToGestorDocAssembler {
 		
 		dto.setUsuario(USUARIO);
 		dto.setPassword(PASSWORD);
-		dto.setUsuarioOperacional(login);
+		
+		if(!Checks.esNulo(login) && login == "REST_USER" ) {
+			dto.setUsuarioOperacional("srv.crmofiymed");
+		} else {
+			dto.setUsuarioOperacional(login);
+		}
+		
 		dto.setGeneralDocumentoModif(rellenarGeneralDocumentoModif());
 		dto.setDocumento(null);
 		dto.setArchivoFisico(rellenarArchivoFisico());
@@ -139,7 +170,13 @@ public class RecoveryToGestorDocAssembler {
 		
 		dto.setUsuario(USUARIO);
 		dto.setPassword(PASSWORD);
-		dto.setUsuarioOperacional(login);
+		
+		if(!Checks.esNulo(login) && login == "REST_USER" ) {
+			dto.setUsuarioOperacional("srv.crmofiymed");
+		} else {
+			dto.setUsuarioOperacional(login);
+		}
+		
 		dto.setGeneralDocumentoModif(rellenarGeneralDocumentoModif());
 		dto.setArchivoFisico(rellenarArchivoFisico());
 		
@@ -151,7 +188,13 @@ public class RecoveryToGestorDocAssembler {
 		
 		baja.setUsuario(USUARIO);
 		baja.setPassword(PASSWORD);
-		baja.setUsuarioOperacional(login);
+
+		if(!Checks.esNulo(login) && login == "REST_USER" ) {
+			baja.setUsuarioOperacional("srv.crmofiymed");
+		} else {
+			baja.setUsuarioOperacional(login);
+		}
+		
 		return baja;
 	}
 	
@@ -161,7 +204,13 @@ public class RecoveryToGestorDocAssembler {
 		
 		credUsu.setUsuario(USUARIO);
 		credUsu.setPassword(PASSWORD);
-		credUsu.setUsuarioOperacional(login);
+		
+		if(!Checks.esNulo(login) && login == "REST_USER" ) {
+			credUsu.setUsuarioOperacional("srv.crmofiymed");
+		} else {
+			credUsu.setUsuarioOperacional(login);
+		}
+		
 		return credUsu;
 	}
 	
@@ -171,7 +220,13 @@ public class RecoveryToGestorDocAssembler {
 		doc.setUsuario(USUARIO);
 		doc.setPassword(PASSWORD);
 		doc.setCodClase(codClase);
-		doc.setUsuarioOperacional(username);
+		
+		if(!Checks.esNulo(username) && username == "REST_USER" ) {
+			doc.setUsuarioOperacional("srv.crmofiymed");
+		} else {
+			doc.setUsuarioOperacional(username);
+		}
+		
 		doc.setMetadata(rellenarEntidadMetadata(idEntidad, idEntidad, idSistemaOrigen, cliente));
 		
 		return doc;

@@ -500,6 +500,10 @@ public class AgrupacionAdapter {
 							BeanUtils.copyProperty(dtoAgrupacion, "estadoAlquilerCodigo", !Checks.esNulo(activoPrincipal.getActivoPublicacion().getEstadoPublicacionAlquiler()) ? activoPrincipal.getActivoPublicacion().getEstadoPublicacionAlquiler().getCodigo() : "");
 							BeanUtils.copyProperty(dtoAgrupacion, "estadoVentaCodigo", !Checks.esNulo(activoPrincipal.getActivoPublicacion().getEstadoPublicacionVenta()) ? activoPrincipal.getActivoPublicacion().getEstadoPublicacionVenta().getCodigo() : "");
 						}
+						
+						if (!Checks.esNulo(activoPrincipal.getTipoActivo())){
+							BeanUtils.copyProperty(dtoAgrupacion, "tipoActivoPrincipalCodigo", activoPrincipal.getTipoActivo().getCodigo());
+						}
 					} else {
 						if (activoPrincipal.getActivoPublicacion().getTipoComercializacion() != null) {
 							BeanUtils.copyProperty(dtoAgrupacion, "tipoComercializacionDescripcion", activoPrincipal.getActivoPublicacion().getTipoComercializacion().getDescripcion());

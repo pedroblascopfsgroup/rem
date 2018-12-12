@@ -208,7 +208,7 @@ Ext.define('HreRem.view.activos.detalle.CabeceraActivo', {
 										cls: 'cabecera-info-field',
 										bind: {
 											hidden: '{!activo.incluyeDestinoComercialVenta}',
-											value: '{activo.estadoVentaDescripcion}'
+											value: '{getValuePublicacionVenta}'
 										}
 									},
 									{
@@ -216,15 +216,7 @@ Ext.define('HreRem.view.activos.detalle.CabeceraActivo', {
 										cls: 'cabecera-info-field',
 										bind: {
 											hidden: '{!activo.incluyeDestinoComercialAlquiler}',
-											value: '{activo.estadoAlquilerDescripcion}'
-										}
-									},
-									{
-										fieldLabel: HreRem.i18n('fieldlabel.enlace.externo'),
-										cls: 'cabecera-info-field',
-										bind: {
-											hidden: '{!estaPublicadoVentaOAlquiler}',
-											value: '<a href="' + HreRem.i18n('fieldlabel.link.web.haya') + '{getLinkHayaActivo}" target="_blank">' + HreRem.i18n('fieldlabel.web.haya') + '</a>'
+											value: '{getValuePublicacionAlquiler}'
 										}
 									},
 									{

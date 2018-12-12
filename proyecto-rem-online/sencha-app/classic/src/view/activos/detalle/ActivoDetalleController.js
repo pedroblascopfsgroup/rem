@@ -388,11 +388,11 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	});
     },
     
-    onTramitePublicacionClick: function(btn){
+    onTramiteAprobacionInformeComercialClick: function(btn){
     	
     	var me = this;
     	var idActivo = me.getViewModel().get("activo.id");
-    	var url = $AC.getRemoteUrl('activo/crearTramitePublicacion');
+    	var url = $AC.getRemoteUrl('activo/crearTramiteAprobacionInformeComercial');
 
 		me.getView().mask(HreRem.i18n("msg.mask.loading"));	    	
 		

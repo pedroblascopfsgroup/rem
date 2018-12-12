@@ -20,7 +20,7 @@ import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoSendNotificator;
 
 @Component
-public class NotificatorServicePublicacionRevisionInformeComercial extends AbstractNotificatorService implements NotificatorService {
+public class NotificatorServiceAprobacionInformeComercialRevisionInformeComercial extends AbstractNotificatorService implements NotificatorService {
 	
 	private static final String CODIGO_T011_REVISION_IC = "T011_RevisionInformeComercial";
 

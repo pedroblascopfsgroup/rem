@@ -60,6 +60,7 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBien;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBValoracionesBien;
 import es.pfsgroup.plugin.rem.activo.ActivoManager;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoTramiteDao;
 import es.pfsgroup.plugin.rem.activo.dao.impl.ActivoPatrimonioDaoImpl;
@@ -171,6 +172,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalificacionEnergetica;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCargaActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
@@ -311,13 +313,16 @@ public class ActivoAdapter {
 
 	@Autowired
 	private UsuarioManager usuarioManager;
+	
+	@Autowired 
+    private ActivoAgrupacionDao activoAgrupacionDao;
 
 	private static final String CONSTANTE_REST_CLIENT = "rest.client.gestor.documental.constante";
 	public static final String OFERTA_INCOMPATIBLE_MSG = "El tipo de oferta es incompatible con el destino comercial del activo";
 	private static final String AVISO_TITULO_MODIFICADAS_CONDICIONES_JURIDICAS = "activo.aviso.titulo.modificadas.condiciones.juridicas";
 	private static final String AVISO_DESCRIPCION_MODIFICADAS_CONDICIONES_JURIDICAS = "activo.aviso.descripcion.modificadas.condiciones.juridicas";
 	private static final String UPDATE_ERROR_TRAMITES_PUBLI_ACTIVO ="No se han podido cerrar automaticamente los tr&aacute;mites asociados a los activos.";
-	public static final String T_PUBLICACION= "T011";
+	public static final String T_APROBACION_INFORME_COMERCIAL= "T011";
 	public static final String CODIGO_ESTADO_PROCEDIMIENTO_EN_TRAMITE = "10";
 	public static final String ERROR_CRM_UNKNOWN_ID = "UNKNOWN_ID";
 
@@ -2123,19 +2128,58 @@ public class ActivoAdapter {
 	}
 
 	@Transactional(readOnly = false)
-	public Long crearTramitePublicacion(Long idActivo) {
+	public Long crearTramiteAprobacionInformeComercial(Long idActivo) {
 
-		TipoProcedimiento tprc = tipoProcedimiento.getByCodigo(ActivoTramiteApi.CODIGO_TRAMITE_PUBLICACION);// Trámite
-		Activo activo =	activoApi.get(idActivo);															// de
-																		// publicación
+		TipoProcedimiento tprc = tipoProcedimiento.getByCodigo(ActivoTramiteApi.CODIGO_TRAMITE_APROBACION_INFORME_COMERCIAL);
+		Activo activo =	activoApi.get(idActivo);
 		Long idBpm = 0L;
 		Boolean tieneTramiteVigente = activoTramiteApi.tieneTramiteVigenteByActivoYProcedimiento(activo.getId(), tprc.getCodigo());
 		
 		if(!tieneTramiteVigente){
-			ActivoTramite tramite = jbpmActivoTramiteManagerApi.creaActivoTramite(tprc, activoApi.get(idActivo));
-			idBpm = jbpmActivoTramiteManagerApi.lanzaBPMAsociadoATramite(tramite.getId());
+			boolean activoEnAgrupacionObraNuevaOAsistida = activoApi.isIntegradoAgrupacionObraNuevaOrAsistida(activo);
+			ActivoTramite tramite;
+			
+			if (activoEnAgrupacionObraNuevaOAsistida) {
+				Long idSubdivision  = activoAgrupacionDao.getIdSubdivisionByIdActivo(idActivo);
+				List<ActivoAgrupacionActivo> agrupaciones = activo.getAgrupaciones();
+				String listaIdAgrupacion = "";
+				
+				for (ActivoAgrupacionActivo aga : agrupaciones) {
+					
+					if (DDTipoAgrupacion.AGRUPACION_OBRA_NUEVA.equals(aga.getAgrupacion().getTipoAgrupacion().getCodigo()) 
+								|| DDTipoAgrupacion.AGRUPACION_ASISTIDA.equals(aga.getAgrupacion().getTipoAgrupacion().getCodigo())) {
+						if (Checks.esNulo(listaIdAgrupacion)) {
+							listaIdAgrupacion += aga.getAgrupacion().getId();
+						} else {
+							listaIdAgrupacion += ", " + aga.getAgrupacion().getId();
+						}
+					}
+				}
+				
+				List<Long> listaIdActivo = activoAgrupacionDao.getListIdActivoByIdSubdivisionAndIdsAgrupacion(idSubdivision, listaIdAgrupacion);
+				
+				for (Long id : listaIdActivo) {
+					tieneTramiteVigente = activoTramiteApi.tieneTramiteVigenteByActivoYProcedimiento(id, tprc.getCodigo());
+					
+					if (!tieneTramiteVigente) {
+						tramite = jbpmActivoTramiteManagerApi.creaActivoTramite(tprc, activoApi.get(id));
+						if (id.equals(idActivo)) {
+							idBpm = jbpmActivoTramiteManagerApi.lanzaBPMAsociadoATramite(tramite.getId());
+						} else {
+							jbpmActivoTramiteManagerApi.lanzaBPMAsociadoATramite(tramite.getId());
+						}
+						
+						crearRegistroHistorialComercialConCodigoEstado(activoApi.get(id), DDEstadoInformeComercial.ESTADO_INFORME_COMERCIAL_EMISION);
+					}
+				}
+				
+			} else {
+				tramite = jbpmActivoTramiteManagerApi.creaActivoTramite(tprc, activoApi.get(idActivo));
+				idBpm = jbpmActivoTramiteManagerApi.lanzaBPMAsociadoATramite(tramite.getId());
+				
+				crearRegistroHistorialComercialConCodigoEstado(activo, DDEstadoInformeComercial.ESTADO_INFORME_COMERCIAL_EMISION);
+			}
 		}
-		crearRegistroHistorialComercialConCodigoEstado(activo, DDEstadoInformeComercial.ESTADO_INFORME_COMERCIAL_EMISION);
 
 		return idBpm;
 	}
@@ -3721,7 +3765,7 @@ public class ActivoAdapter {
 	}
 	
 	/**
-	 * Comprueba si existen tramites de tipo publicacion en el activo y si estan en tramitacion los cerrara automaticamente
+	 * Comprueba si existen tramites de tipo aprobacion informe comercial en el activo y si estan en tramitacion los cerrara automaticamente
 	 * @param activosId
 	 * @return booleano true o false
 	 */
@@ -3733,7 +3777,7 @@ public class ActivoAdapter {
 		
 		if(!Checks.estaVacio(listActTramites)) {
 			for (ActivoTramite activoTramite : listActTramites) {
-				if(T_PUBLICACION.equals(activoTramite.getTipoTramite().getCodigo()) && CODIGO_ESTADO_PROCEDIMIENTO_EN_TRAMITE.equals(activoTramite.getEstadoTramite().getCodigo())) {
+				if(T_APROBACION_INFORME_COMERCIAL.equals(activoTramite.getTipoTramite().getCodigo()) && CODIGO_ESTADO_PROCEDIMIENTO_EN_TRAMITE.equals(activoTramite.getEstadoTramite().getCodigo())) {
 					try {
 						borradoLogicoTareaExternaByIdTramite(activoTramite, usuarioLogado);
 						borradoLogicoActivoTramite(usuarioLogado, activoTramite);

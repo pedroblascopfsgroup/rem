@@ -1069,7 +1069,6 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
         var me = this;
 
         me.deshabilitarCampo(me.down('[name=motivoDenegacion]'));
-        me.ocultarCampo(me.down('[name=comboDatosIguales]'));
 
         me.down('[name=comboAceptacion]').addListener('change', function(combo) {
             if (combo.value == '01') {

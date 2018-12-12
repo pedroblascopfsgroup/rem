@@ -8,7 +8,7 @@ Ext.define('HreRem.view.activos.detalle.CabeceraActivo', {
 		var me = this;
 
 		me.menu = Ext.create("Ext.menu.Menu", {
-			width: 150,
+			width: 240,
 			cls: 'menu-favoritos',
 			plain: true,
 			floating: true,
@@ -34,8 +34,8 @@ Ext.define('HreRem.view.activos.detalle.CabeceraActivo', {
 					hidden: (me.lookupController().getViewModel().get('activo').get('incluidoEnPerimetro')=="false")
 				},
 				{
-					text: 'Lanzar T. de Publicacion',
-					handler: 'onTramitePublicacionClick',
+					text: HreRem.i18n('btn.nuevo.tramiteAprovacionInformeComercial'),
+					handler: 'onTramiteAprobacionInformeComercialClick',
 					hidden: (me.lookupController().getViewModel().get('activo').get('incluidoEnPerimetro')=="false")
 				}
 			]

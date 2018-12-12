@@ -32,7 +32,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoInformeComercial;
 import es.pfsgroup.plugin.rem.validate.validator.DtoPublicacionValidaciones;
 
 @Component
-public class UpdaterServicePublicacionRevisionInformeComercial implements UpdaterService {
+public class UpdaterServiceAprobacionInformeComercialRevisionInformeComercial implements UpdaterService {
 
     @Autowired
     private GenericABMDao genericDao;
@@ -56,7 +56,6 @@ public class UpdaterServicePublicacionRevisionInformeComercial implements Update
     
     
     private static final String COMBO_ACEPTACION = "comboAceptacion";
-    private static final String COMBO_DATOS_IGUALES = "comboDatosIguales";
 	private static final String MOTIVO_DENEGACION = "motivoDenegacion";
 	
 	private static final String CODIGO_T011_REVISION_IC = "T011_RevisionInformeComercial";
@@ -80,11 +79,6 @@ public class UpdaterServicePublicacionRevisionInformeComercial implements Update
 			if(COMBO_ACEPTACION.equals(valor.getNombre())){				
 				if(DDSiNo.SI.equals(valor.getValor()))
 					checkAcepta = true;				
-			}
-			
-			if(COMBO_DATOS_IGUALES.equals(valor.getNombre())){				
-				if(DDSiNo.SI.equals(valor.getValor()))
-					checkContinuaProceso = true;				
 			}
 			
 			if(MOTIVO_DENEGACION.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())){

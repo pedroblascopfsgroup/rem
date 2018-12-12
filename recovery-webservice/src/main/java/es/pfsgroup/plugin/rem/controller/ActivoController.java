@@ -1251,9 +1251,14 @@ public class ActivoController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView crearTramitePublicacion(Long idActivo, ModelMap model) {
+	public ModelAndView crearTramiteAprobacionInformeComercial(Long idActivo, ModelMap model) {
 		try {
-			model.put(RESPONSE_DATA_KEY, adapter.crearTramitePublicacion(idActivo));
+			Long idBpm = adapter.crearTramiteAprobacionInformeComercial(idActivo);
+			if (new Long(0).equals(idBpm)) {
+				model.put("errorCreacion", "El activo ya tiene un trámite de Aprobación Informe Comercial en trámite");
+				model.put(RESPONSE_SUCCESS_KEY, false);
+			}
+			model.put(RESPONSE_DATA_KEY, idBpm);
 
 		} catch (Exception e) {
 			logger.error("error en activoController", e);

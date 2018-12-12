@@ -125,11 +125,11 @@ public class GencatManager extends BusinessOperationOverrider<GencatApi> impleme
 				}
 				
 			}
-			catch (IllegalAccessException iae) {
-				logger.error("aaa");
+			catch (IllegalAccessException e) {
+				logger.error("Error en gencatManager", e);
 			}
-			catch (InvocationTargetException ite) {
-				logger.error("eee");
+			catch (InvocationTargetException e) {
+				logger.error("Error en gencatManager", e);
 			}
 		}
 		
@@ -213,11 +213,11 @@ public class GencatManager extends BusinessOperationOverrider<GencatApi> impleme
 					listaReclamacion.add(dtoReclamacionActivo);
 				}
 			}
-			catch (IllegalAccessException iae) {
-				logger.error("aaa");
+			catch (IllegalAccessException e) {
+				logger.error("Error en gencatManager", e);
 			}
-			catch (InvocationTargetException ite) {
-				logger.error("eee");
+			catch (InvocationTargetException e) {
+				logger.error("Error en gencatManager", e);
 			}
 		}
 		
@@ -229,7 +229,12 @@ public class GencatManager extends BusinessOperationOverrider<GencatApi> impleme
 		
 		List<DtoAdjunto> listaAdjuntos = new ArrayList<DtoAdjunto>();
 		
-		//TODO: filtrar los documentos que se obtienen para que sólo suba los documentos de los 7 tipos especificados en el HREOS-4836
+		/*TODO: filtrar los documentos que se obtienen para que sólo suba los documentos de los 7 tipos especificados en el HREOS-4836 y HREOS-4927
+		 * (pendiente informar). De momento este listado está funcionando igual que el listado de documentos de la pestaña Documentos del activo.
+		 * 
+		 * Nota: de momento ambos listados de documentos (tanto el de la comunicación como el de histórico) tiran de este método y cargan la misma
+		 * información, lo suyo sería crear 2 métodos para que carguen los documentos de la comunicación y histórico respectivamente por separado 
+		 * filtrando por los 7 tipos de documentos que están pendientes de informar.*/
 		if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
 			Activo activo = activoApi.get(id);
 			listaAdjuntos = gestorDocumentalAdapterApi.getAdjuntosActivo(activo);
@@ -296,11 +301,11 @@ public class GencatManager extends BusinessOperationOverrider<GencatApi> impleme
 				listaHistoricoComunicaciones.add(dtoHistoricoComunicacion);
 			}
 		}
-		catch (IllegalAccessException iae) {
-			logger.error("aaa");
+		catch (IllegalAccessException e) {
+			logger.error("Error en gencatManager", e);
 		}
-		catch (InvocationTargetException ite) {
-			logger.error("eee");
+		catch (InvocationTargetException e) {
+			logger.error("Error en gencatManager", e);
 		}
 		
 		return listaHistoricoComunicaciones;
@@ -369,11 +374,11 @@ public class GencatManager extends BusinessOperationOverrider<GencatApi> impleme
 				}
 				
 			}
-			catch (IllegalAccessException iae) {
-				logger.error("aaa");
+			catch (IllegalAccessException e) {
+				logger.error("Error en gencatManager", e);
 			}
-			catch (InvocationTargetException ite) {
-				logger.error("eee");
+			catch (InvocationTargetException e) {
+				logger.error("Error en gencatManager", e);
 			}
 		}
 		
@@ -442,11 +447,11 @@ public class GencatManager extends BusinessOperationOverrider<GencatApi> impleme
 					listaReclamacion.add(dtoReclamacionActivo);
 				}
 			}
-			catch (IllegalAccessException iae) {
-				logger.error("aaa");
+			catch (IllegalAccessException e) {
+				logger.error("Error en gencatManager", e);
 			}
-			catch (InvocationTargetException ite) {
-				logger.error("eee");
+			catch (InvocationTargetException e) {
+				logger.error("Error en gencatManager", e);
 			}
 		}
 		

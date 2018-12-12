@@ -358,7 +358,8 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoForm', {
 								bind: {
 									//value: '{gencat.documentoNotificion}'
 								}
-			    				/*será un buscador de documento donde el nuevo gestor de formalización-administración 
+			    				/* TODO: funcionalidad de documento notificacion:
+			    				 * Será un buscador de documento donde el nuevo gestor de formalización-administración 
 			    				 * tendrá OBLIGATORIAMENTE que subir, si no lo sube no se grabará la notificación*/
 			    			},
 			    			{

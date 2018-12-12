@@ -37,6 +37,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		var viewModel = me.getViewModel();
 		var idExpediente = me.getViewModel().get("expediente.id");
 		var idActivo = record.data.idActivo;
+		var expedienteDeAlquiler = me.getViewModel().get('expediente.tipoExpedienteDescripcion');
 		
 		viewModel.set("activoExpedienteSeleccionado", record);
 		viewModel.notify();
@@ -51,8 +52,12 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		}
 	
 		var tabPanel = me.lookupReference('activoExpedienteMain');
-		tabPanel.setHidden(false);
-		tabPanel.mask();
+		if(expedienteDeAlquiler == 'Alquiler'){
+			tabPanel.setHidden(true);
+		} else {
+			tabPanel.setHidden(false);
+			tabPanel.mask();
+		}
 
 		HreRem.model.ActivoExpedienteCondicionesModel.load(idExpediente, {
 			params: {idActivo:idActivo,idExpediente:idExpediente},

@@ -858,6 +858,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 								}
 							}
 						}
+						
+						if (!Checks.esNulo(expediente.getEstado().getCodigo())) {
+							dto.setEstaFirmado(DDEstadosExpedienteComercial.FIRMADO_AQLUILER.equals(expediente.getEstado().getCodigo()));
+						}
 					}
 				}
 
@@ -2649,6 +2653,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			}
 			seguroRentasDto.setEmailPoliza(seguroRentas.getEmailPolizaAseguradora());
 			seguroRentasDto.setComentarios(seguroRentas.getComentarios());
+			
 		}
 		return seguroRentasDto;
 	}
@@ -7241,7 +7246,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 	@Override
 	public boolean checkContratoSubido(TareaExterna tareaExterna) {
-
+		
 		ExpedienteComercial expedienteComercial = tareaExternaToExpedienteComercial(tareaExterna);
 		try {
 			List<DtoAdjunto> adjuntosExpediente = gestorDocumentalAdapterApi.getAdjuntosExpedienteComercial(expedienteComercial);

@@ -101,6 +101,9 @@ public class MSVExcelValidatorFactoryImpl {
 	
 	@Autowired
 	private MSVDesocultacionAlquiler desocultarAlquiler;
+	
+	@Autowired
+	private MSVExclusionDwh excluirDwh;
 
 
 	public MSVExcelValidator getForTipoValidador(String codTipoOperacion) {
@@ -217,6 +220,9 @@ public class MSVExcelValidatorFactoryImpl {
 		}
 		else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_DESOCULTACION_ALQUILER.equals(codTipoOperacion)){
 			return desocultarAlquiler;
+		}
+		else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_EXCLUSION_DWH.equals(codTipoOperacion)){
+			return excluirDwh;
 		}
 
 		return null;

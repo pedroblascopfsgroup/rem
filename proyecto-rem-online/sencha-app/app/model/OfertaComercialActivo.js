@@ -29,7 +29,19 @@ Ext.define('HreRem.model.OfertaComercialActivo', {
     		},
     		{
     			name:'importeOferta'
-    		}
+    		},
+            {
+            	name: 'cesionDatosHaya',
+            	type : 'boolean'
+            },
+            {
+            	name: 'comunicacionTerceros',
+            	type : 'boolean'
+            },
+            {
+            	name: 'transferenciasInternacionales',
+            	type : 'boolean'
+            }
     ],
     
 	proxy: {

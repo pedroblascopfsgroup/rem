@@ -22,6 +22,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -59,6 +60,7 @@ public class UpdaterServicePublicacionAPCorreccionDatos implements UpdaterServic
 		ActivoEstadosInformeComercialHistorico activoEstadosInformeComercialHistorico = new ActivoEstadosInformeComercialHistorico();
 		Filter estadoInformeComercialFilter;
 		Activo activo = tramite.getActivo();
+		ArrayList<Long> idActivoActualizarPublicacion = new ArrayList<Long>();
 
 		//Se asocia el activo al historico
 		if(!Checks.esNulo(activo))
@@ -88,7 +90,8 @@ public class UpdaterServicePublicacionAPCorreccionDatos implements UpdaterServic
 						activoApi.saveOrUpdate(activo);
 
 						// 3.) Actualizar estado publicación del activo.
-						activoAdapter.actualizarEstadoPublicacionActivo(activo.getId());
+						//activoAdapter.actualizarEstadoPublicacionActivo(activo.getId());
+						idActivoActualizarPublicacion.add(activo.getId());
 					}
 				}
 			}
@@ -120,6 +123,7 @@ public class UpdaterServicePublicacionAPCorreccionDatos implements UpdaterServic
 		if(!Checks.esNulo(activo)) {
 			activoApi.saveOrUpdate(activo);
 		}
+		activoAdapter.actualizarEstadoPublicacionActivo(idActivoActualizarPublicacion,true);
 	}
 
 

@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.service;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -18,7 +19,6 @@ import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoHistoricoPatrimonioDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoPatrimonioDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
-import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoHistoricoPatrimonio;
 import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
@@ -50,8 +50,6 @@ public class TabActivoPatrimonio implements TabActivoService {
 	@Autowired
 	private ActivoAdapter activoAdapterApi;
 
-	@Autowired
-	private GenericAdapter genericAdapter;
 
 	@Override
 	public String[] getKeys() {
@@ -105,6 +103,7 @@ public class TabActivoPatrimonio implements TabActivoService {
 	@Override
 	public Activo saveTabActivo(Activo activo, WebDto dto) {
 		List<ActivoHistoricoPatrimonio> listHistPatrimonio = activoHistoricoPatrimonioDao.getHistoricoAdecuacionesAlquilerByActivo(activo.getId());
+		ArrayList<Long> idActivoActualizarPublicacion = new ArrayList<Long>();
 
 		DtoActivoPatrimonio activoPatrimonioDto = (DtoActivoPatrimonio) dto;
 		ActivoPatrimonio activoPatrimonio = genericDao.get(ActivoPatrimonio.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId()));
@@ -287,7 +286,9 @@ public class TabActivoPatrimonio implements TabActivoService {
 		activoAdapterApi.updateGestoresTabActivoTransactional(activoPatrimonioDto,activo.getId());
 
 		// Actualizar estado publicación activo a través del procedure.
-		activoAdapterApi.actualizarEstadoPublicacionActivo(activo.getId());
+		idActivoActualizarPublicacion.add(activo.getId());
+		//activoAdapterApi.actualizarEstadoPublicacionActivo(activo.getId());
+		activoAdapterApi.actualizarEstadoPublicacionActivo(idActivoActualizarPublicacion,false);
 
 		return activo;
 	}

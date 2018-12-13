@@ -1038,8 +1038,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				}
 
 				if (!Checks.esNulo(activo.getTipoComercializacion())) {
-					DDTipoAlquiler tipoAlquiler = (DDTipoAlquiler) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoAlquiler.class, DDTipoAlquiler.CODIGO_ALQUILER_OPCION_COMPRA);
-					if (tipoAlquiler.equals(activo.getTipoAlquiler())) {
+					//DDTipoAlquiler tipoAlquiler = (DDTipoAlquiler) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoAlquiler.class, DDTipoAlquiler.CODIGO_ALQUILER_OPCION_COMPRA);
+					
+					
+					if (activo.getTipoAlquiler() != null && DDTipoAlquiler.CODIGO_ALQUILER_OPCION_COMPRA.equals(activo.getTipoAlquiler().getCodigo())) {
 						dto.setAlquilerOpcionCompra(1);
 					} else {
 						dto.setAlquilerOpcionCompra(0);
@@ -3474,7 +3476,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	@Transactional(readOnly = false)
 	public boolean saveFichaExpediente(DtoFichaExpediente dto, Long idExpediente) {
 		ExpedienteComercial expedienteComercial = findOne(idExpediente);
-		CompradorExpediente compradorExpediente  = null;
+		CompradorExpediente compradorExpediente = null;
+		ArrayList<Long> idActivoActualizarPublicacion = new ArrayList<Long>();
+
 
 		if (!Checks.esNulo(expedienteComercial)) {
 			boolean actualizarEstadoPublicacion = false;
@@ -3612,10 +3616,12 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 				if (actualizarEstadoPublicacion) {
 					for (ActivoOferta activoOferta : expedienteComercial.getOferta().getActivosOferta()) {
-						activoAdapter.actualizarEstadoPublicacionActivo(activoOferta.getPrimaryKey().getActivo().getId());
+						idActivoActualizarPublicacion.add(activoOferta.getPrimaryKey().getActivo().getId());
+						//activoAdapter.actualizarEstadoPublicacionActivo(activoOferta.getPrimaryKey().getActivo().getId());
 					}
 				}
 
+				activoAdapter.actualizarEstadoPublicacionActivo(idActivoActualizarPublicacion,true);
 			} catch (IllegalAccessException e) {
 				logger.error("error en expedienteComercialManager", e);
 

@@ -3,6 +3,7 @@ Ext.define('HreRem.view.publicacion.activos.ActivosPublicacionSearch', {
     xtype		: 'activospublicacionsearch',
     isSearchForm: true,
     cls			: 'panel-base shadow-panel',
+	recordName	: "publicacionesSearch",
 
     initComponent: function () {
         var me = this;
@@ -86,9 +87,24 @@ Ext.define('HreRem.view.publicacion.activos.ActivosPublicacionSearch', {
 					        	addUxReadOnlyEditFieldPlugin: false,
 					        	fieldLabel: HreRem.i18n('combolabel.publicaciones.combo.estado.venta'),
 					        	name: 'estadoPublicacionCodigo',
+					        	reference: 'estadoPublicacionVenta',
 					        	//value: CONST.ESTADO_PUBLICACION_VENTA['NO_PUBLICADO'], // Establecido por defecto.
 					        	bind: {
 				            		store: '{comboEstadoPublicacion}'
+				            	},
+								listeners: {
+									change: 'hiddenMotivosOcultacionVenta'
+								}
+					        },
+					        { 
+					        	xtype: 'comboboxfieldbase',
+					        	addUxReadOnlyEditFieldPlugin: false,
+					        	fieldLabel: HreRem.i18n('combolabel.publicaciones.combo.motivos.ocultacion'),
+					        	name: 'motivosOcultacionCodigo',
+					        	hidden: true,
+					        	reference: 'motivosOcultacionVenta',
+					        	bind: {
+				            		store: '{comboMotivoOcultacion}'
 				            	}
 					        }
 						]
@@ -126,10 +142,25 @@ Ext.define('HreRem.view.publicacion.activos.ActivosPublicacionSearch', {
 								addUxReadOnlyEditFieldPlugin : false,
 								fieldLabel : HreRem.i18n('combolabel.publicaciones.combo.estado.alquiler'),
 								name : 'estadoPublicacionAlquilerCodigo',
-								//value : CONST.ESTADO_PUBLICACION_ALQUILER['NO_PUBLICADO'], // Establecido por defecto.
+								reference: 'estadoPublicacionAlquiler',
+								//value : CONST.ESTADO_PUBLICACION_ALQUILER['NO_PUBLICADO'], // Establecido por defecto.								
 								bind : {
 									store : '{comboEstadoPublicacionAlquiler}'
+								},
+								listeners: {
+									change: 'hiddenMotivosOcultacionAlquiler'
 								}
+					        },
+					        { 
+					        	xtype: 'comboboxfieldbase',
+					        	addUxReadOnlyEditFieldPlugin: false,
+					        	fieldLabel: HreRem.i18n('combolabel.publicaciones.combo.motivos.ocultacion'),
+					        	name: 'motivosOcultacionAlquilerCodigo',
+					        	hidden: true,
+					        	reference: 'motivosOcultacionAlquiler',
+					        	bind: {
+				            		store: '{comboMotivoOcultacion}'
+				            	}
 					        }
 						]
 			    	}

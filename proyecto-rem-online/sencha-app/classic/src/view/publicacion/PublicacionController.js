@@ -74,5 +74,35 @@ Ext.define('HreRem.view.publicacion.PublicacionController', {
 		config.url= $AC.getRemoteUrl("activo/generateExcelPublicaciones");
 		
 		me.fireEvent("downloadFile", config);		
-    } 
+    },
+    
+	// Función para que el combo "Motivos de ocultación" del "Estado publicación Venta" 
+	// se oculte cuando se selecciona "Oculto Venta".
+    hiddenMotivosOcultacionVenta: function() {
+
+		var me = this;
+		var estadoPublicacionVenta = me.getViewModel().get('estadoPublicacionVenta');
+		var motivosOcultacionVenta = me.lookupReference('motivosOcultacionVenta');
+		
+    	if (estadoPublicacionVenta.selection.data.codigo == CONST.ESTADO_PUBLICACION_VENTA['OCULTO']){
+    		motivosOcultacionVenta.setHidden(false);
+    	} else {
+    		motivosOcultacionVenta.setHidden(true);
+	    }
+	},
+	
+	// Función para que el combo "Motivos de ocultación" del "Estado publicación Alquiler" 
+	// se oculte cuando se selecciona "Oculto Alquiler".
+	hiddenMotivosOcultacionAlquiler: function() {
+
+		var me = this;
+		var estadoPublicacionAlquiler = me.getViewModel().get('estadoPublicacionAlquiler');
+		var motivosOcultacionAlquiler = me.lookupReference('motivosOcultacionAlquiler');
+
+    	if (estadoPublicacionAlquiler.selection.data.codigo == CONST.ESTADO_PUBLICACION_ALQUILER['OCULTO']){
+    		motivosOcultacionAlquiler.setHidden(false);
+    	} else {
+    		motivosOcultacionAlquiler.setHidden(true);
+	    }	
+    }
 });

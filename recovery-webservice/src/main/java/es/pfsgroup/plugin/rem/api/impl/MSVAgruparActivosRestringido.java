@@ -3,6 +3,8 @@ package es.pfsgroup.plugin.rem.api.impl;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.List;
 
 import es.pfsgroup.plugin.rem.model.DtoDatosPublicacionAgrupacion;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +17,9 @@ import es.pfsgroup.framework.paradise.bulkUpload.liberators.MSVLiberator;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVHojaExcel;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.adapter.AgrupacionAdapter;
+import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
 import es.pfsgroup.framework.paradise.bulkUpload.model.ResultadoProcesarFila;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
@@ -45,6 +49,12 @@ public class MSVAgruparActivosRestringido extends AbstractMSVActualizador implem
 	@Autowired
 	ActivoAgrupacionApi activoAgrupacionApi;
 	
+	@Autowired 
+	private ActivoDao activoDao;
+	
+	@Autowired
+	private GenericAdapter genericAdapter;
+	
 	@Override
 	public String getValidOperation() {
 		return MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_AGRUPATION_RESTRICTED;
@@ -54,7 +64,7 @@ public class MSVAgruparActivosRestringido extends AbstractMSVActualizador implem
 	@Transactional(readOnly = false)
 	public ResultadoProcesarFila procesaFila(MSVHojaExcel exc, int fila, Long prmToken) throws IOException, ParseException, JsonViewerException, SQLException {
 		Long agrupationId = activoAgrupacionApi.getAgrupacionIdByNumAgrupRem(new Long(exc.dameCelda(fila, 0)));
-		agrupacionAdapter.createActivoAgrupacion(new Long(exc.dameCelda(fila, 1)), agrupationId, new Integer(exc.dameCelda(fila, 2)),false);
+		agrupacionAdapter.createActivoAgrupacionMasivo(new Long(exc.dameCelda(fila, 1)), agrupationId, new Integer(exc.dameCelda(fila, 2)),false);
 
 		return new ResultadoProcesarFila();
 	}
@@ -64,11 +74,11 @@ public class MSVAgruparActivosRestringido extends AbstractMSVActualizador implem
 	public void postProcesado(MSVHojaExcel exc) throws NumberFormatException, IllegalArgumentException, IOException, ParseException {
 		if (this.getValidOperation().equals(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_AGRUPATION_RESTRICTED)) {
 			Integer numFilas = exc.getNumeroFilas();
+			Long idAgr = activoAgrupacionApi.getAgrupacionIdByNumAgrupRem(new Long(exc.dameCelda(this.getFilaInicial(), 0)));
 
 			for (int fila = this.getFilaInicial(); fila < numFilas; fila++) {
 				Activo activoAux = activoApi.getByNumActivo(Long.parseLong(exc.dameCelda(fila, COL_ID_ACTIVO_AUX)));
 				Activo activo = activoApi.getByNumActivo(Long.parseLong(exc.dameCelda(fila, COL_ID_ACTIVO_PRINC_AGRUP)));
-				
 
 				DtoDatosPublicacionAgrupacion dto = new DtoDatosPublicacionAgrupacion();
 				dto.setIdActivo(activoAux.getId());
@@ -82,6 +92,7 @@ public class MSVAgruparActivosRestringido extends AbstractMSVActualizador implem
 					}
 				}
 			}
+			activoDao.publicarAgrupacionSinHistorico(idAgr, genericAdapter.getUsuarioLogado().getUsername(), null, true);
 		}
 	}
 

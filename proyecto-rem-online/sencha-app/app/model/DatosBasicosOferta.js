@@ -98,6 +98,9 @@ Ext.define('HreRem.model.DatosBasicosOferta', {
     			name: 'comiteSancionadorCodigoAlquiler'
     		},
     		{
+    			name:'necesitaFinanciacion'
+    		},
+    		{
     			name: 'permiteProponer',
     			convert: function(value) {
     				if (!Ext.isEmpty(value)) {

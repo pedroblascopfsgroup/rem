@@ -11,7 +11,7 @@ Ext.define('HreRem.view.expedientes.DatosBasicosOferta', {
 	
 	recordClass: "HreRem.model.DatosBasicosOferta",
     
-    requires: ['HreRem.model.DatosBasicosOferta'],
+    requires: ['HreRem.model.DatosBasicosOferta','HreRem.view.activos.detalle.ActivoDetalleModel'],
     
     listeners: {
 			boxready:'cargarTabData',
@@ -21,6 +21,14 @@ Ext.define('HreRem.view.expedientes.DatosBasicosOferta', {
     initComponent: function () {
 
         var me = this;
+        
+        /*var storeNecesitaFinanciacion = Ext.create('Ext.data.Store', {
+			data : [
+				{"codigo":"1", "descripcion":eval(String.fromCharCode(34,83,237,34))},
+		        {"codigo":"0", "descripcion":"No"}
+			]
+		});*/
+        
 		me.setTitle(HreRem.i18n('title.datos.basicos'));
         var items= [
 
@@ -281,24 +289,22 @@ Ext.define('HreRem.view.expedientes.DatosBasicosOferta', {
 					    				width: 410
 					    			},
 					    			{
-										xtype: "textarea",
+										xtype: "textareafieldbase",
 										fieldLabel: HreRem.i18n('fieldlabel.comerical.oferta.detalle.cajamar.observaciones'),
 										bind: {
 											value: '{datosbasicosoferta.observaciones}'
 										},
 										height: 30,
-					    				readOnly: true,
 					    				width: 410,
 					    				colspan: 2
 					    			},
 					    			{
-										xtype: "textfield",
-										fieldLabel: HreRem.i18n('fieldlabel.comerical.oferta.detalle.cajamar.necesitaFinanciacion'),
-										bind: {
-											value: '{datosbasicosoferta.necesitaFinanciacion}'
+					    				xtype: 'comboboxfieldbase',
+					                	bind: {
+								            store: '{comboSiNo}',
+								            value: '{datosbasicosoferta.necesitaFinanciacion}'
 										},
-					    				readOnly: true,
-					    				width: 410
+										fieldLabel: HreRem.i18n('fieldlabel.comerical.oferta.detalle.cajamar.necesitaFinanciacion')
 					    			}
 					    			
 					    			

@@ -1750,11 +1750,11 @@ public class AgrupacionAdapter {
 
 		// Comprobar tipo oferta compatible con tipo agrupacion
 		if (!Checks.esNulo(agrupacion) && !Checks.esNulo(agrupacion.getTipoAgrupacion())) {
-
+			
 				if (DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_ALQUILER.equals(agrupacion.getTipoAgrupacion().getCodigo())
 					&& DDTipoOferta.CODIGO_VENTA.equals(dto.getTipoOferta())) {
 
-				throw new JsonViewerException(messageServices.getMessage(OFERTA_INCOMPATIBLE_TIPO_AGR_MSG));
+					throw new JsonViewerException(messageServices.getMessage(OFERTA_INCOMPATIBLE_TIPO_AGR_MSG));
 
 				}
 

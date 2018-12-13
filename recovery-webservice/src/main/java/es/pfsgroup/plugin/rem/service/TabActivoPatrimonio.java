@@ -65,6 +65,7 @@ public class TabActivoPatrimonio implements TabActivoService {
 
 	public DtoActivoPatrimonio getTabData(Activo activo) throws IllegalAccessException, InvocationTargetException {
 		DtoActivoPatrimonio activoPatrimonioDto = new DtoActivoPatrimonio();
+		activoPatrimonioDto.setEstadoAlquiler(DDTipoEstadoAlquiler.ESTADO_ALQUILER_LIBRE);
 
 		ActivoPatrimonio activoP = activoPatrimonioDao.getActivoPatrimonioByActivo(activo.getId());
 		if(!Checks.esNulo(activoP)) {

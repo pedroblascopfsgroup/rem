@@ -1351,10 +1351,10 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			} else {				
 				importeParticipacion = parseFloat(importeParticipacion).toFixed(2);
 				honorario = (importeParticipacion*importeCalculoHonorario)/100;
-				honorarios.setValue(honorario);
+				honorarios.setValue(Math.round(honorario * 100) / 100);
 				importeField.setMaxValue(100);
 			}
-			me.fireEvent("log" , "[HONORARIOS: Tipo: "+tipoCalculo+" | Calculo: "+importeCalculoHonorario+" | Participacion: "+importeParticipacion+" | Importe: "+honorario+"]");
+			me.fireEvent("log" , "[HONORARIOS: Tipo: "+tipoCalculo+" | Calculo: "+importeCalculoHonorario+" | Participacion: "+importeParticipacion+" | Importe: "+Math.round(honorario * 100) / 100+"]");
 		}
 		
 		else if(CONST.TIPOS_CALCULO['FIJO_ALQ'] == tipoCalculo){//Importe fijo Alquiler
@@ -1374,10 +1374,10 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			} else {				
 				importeParticipacion = parseFloat(importeParticipacion).toFixed(2);
 				honorario = ((importeParticipacion*importeCalculoHonorario)/100)*12;
-				honorarios.setValue(honorario);
+				honorarios.setValue(Math.round(honorario * 100) / 100);
 				importeField.setMaxValue(100);
 			}
-			me.fireEvent("log" , "[HONORARIOS: Tipo: "+tipoCalculo+" | Calculo: "+importeCalculoHonorario+" | Participacion: "+importeParticipacion+" | Importe: "+honorario+"]");
+			me.fireEvent("log" , "[HONORARIOS: Tipo: "+tipoCalculo+" | Calculo: "+importeCalculoHonorario+" | Participacion: "+importeParticipacion+" | Importe: "+Math.round(honorario * 100) / 100+"]");
 		}
 		
 		else if(CONST.TIPOS_CALCULO['MENSUALIDAD_ALQ'] == tipoCalculo){//Mensualidad Alquiler
@@ -1390,10 +1390,10 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			} else {				
 				importeParticipacion = parseFloat(importeParticipacion).toFixed(2);
 				honorario = importeParticipacion*importeCalculoHonorario;
-				honorarios.setValue(honorario);
+				honorarios.setValue(Math.round(honorario * 100) / 100);
 				importeField.setMaxValue(100);
 			}
-			me.fireEvent("log" , "[HONORARIOS: Tipo: "+tipoCalculo+" | Calculo: "+importeCalculoHonorario+" | Participacion: "+importeParticipacion+" | Importe: "+honorario+"]");
+			me.fireEvent("log" , "[HONORARIOS: Tipo: "+tipoCalculo+" | Calculo: "+importeCalculoHonorario+" | Participacion: "+importeParticipacion+" | Importe: "+Math.round(honorario * 100) / 100+"]");
 		}/*
 		
 		else if(tipoCalculo=='Importe fijo'){

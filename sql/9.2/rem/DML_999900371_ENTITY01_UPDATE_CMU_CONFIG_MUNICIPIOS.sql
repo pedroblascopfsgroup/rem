@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Matias Garcia-Argudo
---## FECHA_CREACION=20181228
+--## FECHA_CREACION=20171227
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-4940
@@ -85,7 +85,21 @@ BEGIN
 
   execute immediate V_SQL;
   -- LOOP Insertando valores en la tabla del diccionario
-  
+  DBMS_OUTPUT.PUT_LINE('[INICIO] '||V_ESQUEMA||'.'|| V_TABLE ||'... Empezando a insertar datos en la tabla');
+  FOR I IN V_TIPO.FIRST .. V_TIPO.LAST
+  LOOP
+    V_TMP_TIPO := V_TIPO(I);
+    V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TABLE||' WHERE DD_LOC_ID = (SELECT DD_LOC_ID FROM '||V_ESQUEMA_M||'.'||V_DDNAME||' WHERE DD_LOC_CODIGO = '||V_TMP_TIPO(1)||')';
+
+    execute immediate V_SQL into V_MSQL;
+
+    IF V_MSQL < 1 THEN
+      V_SQL := 'INSERT INTO '||V_ESQUEMA||'.'||V_TABLE||' (CMU_ID, DD_LOC_ID, USUARIOCREAR, FECHACREAR)
+      SELECT '||V_ESQUEMA||'.S_CMU_CONFIG_MUNICIPIOS.NEXTVAL, DD_LOC_ID, ''HREOS-4940'', SYSDATE FROM '||V_ESQUEMA_M||'.'||V_DDNAME||' WHERE DD_LOC_CODIGO = '||V_TMP_TIPO(1)||' ';
+
+      execute immediate V_SQL;
+    END IF;
+  END LOOP;
 
   END IF;
 

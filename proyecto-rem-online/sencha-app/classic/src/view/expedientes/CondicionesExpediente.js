@@ -885,7 +885,6 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 										xtype : 'numberfieldbase',
 										reference : 'escaladoRentasMeses',
 										symbol : HreRem.i18n('symbol.meses'),
-										labelSeparator : "",
 										fieldLabel : HreRem.i18n('fieldlabel.cada'),
 										bind : '{condiciones.revisionMercadoMeses}'
 									} 

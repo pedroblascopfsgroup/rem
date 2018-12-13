@@ -73,8 +73,12 @@ public class MaestroDePersonas  implements Runnable{
 							personaDto.setIdIntervinienteOrigen(PersonaInputDto.ID_INTERVINIENTE_ORIGEN);
 							personaDto.setIdIntervinienteHaya(PersonaInputDto.ID_INTERVINIENTE_HAYA);
 							personaDto.setIdCliente(compradorExpediente.getPrimaryKey().getComprador().getDocumento());
-											
+							
+							logger.info("[MAESTRO DE PERSONAS] LLAMAMOS A EJECUTAR PERSONA");
 							PersonaOutputDto personaOutputDto = gestorDocumentalMaestroManager.ejecutarPersona(personaDto);
+							logger.info("[MAESTRO DE PERSONAS] VOLVEMOS DE EJECUTAR PERSONA");
+							
+							logger.info("[MAESTRO DE PERSONAS] EL ID RECUPERADO ES " + personaOutputDto.getIdIntervinienteHaya());
 							if(!Checks.esNulo(personaOutputDto)) {
 								if(!Checks.esNulo(personaOutputDto.getIdIntervinienteHaya())) {
 									compradorExpediente.setIdPersonaHaya(personaOutputDto.getIdIntervinienteHaya());

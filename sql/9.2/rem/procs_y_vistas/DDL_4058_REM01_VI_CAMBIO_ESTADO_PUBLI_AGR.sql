@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Sergio Beleña
---## FECHA_CREACION=20181210
+--## FECHA_CREACION=20181213
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=2.0.3
 --## INCIDENCIA_LINK=HREOS-4931

@@ -1352,10 +1352,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			Long idUsuario = observacion.getUsuario().getId();
 
 			if (observacion.getUsuario().getApellido1() != null) {
-				nombreCompleto += observacion.getUsuario().getApellido1();
+				nombreCompleto += " " + observacion.getUsuario().getApellido1();
 
 				if (observacion.getUsuario().getApellido2() != null) {
-					nombreCompleto += observacion.getUsuario().getApellido2();
+					nombreCompleto += " " + observacion.getUsuario().getApellido2();
 				}
 			}
 

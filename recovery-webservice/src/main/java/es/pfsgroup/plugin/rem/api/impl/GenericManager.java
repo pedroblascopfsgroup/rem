@@ -401,10 +401,19 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 			EXTDDTipoGestor tipoSupervisorEdificaciones = (EXTDDTipoGestor) utilDiccionarioApi.dameValorDiccionarioByCod(EXTDDTipoGestor.class,"SUPEDI"); // Gestor de Edificaciones
 			EXTDDTipoGestor tipoSupervisorSuelo = (EXTDDTipoGestor) utilDiccionarioApi.dameValorDiccionarioByCod(EXTDDTipoGestor.class,"SUPSUE"); // Gestor de Suelos
 			EXTDDTipoGestor tipoSupervisorAlquileres = (EXTDDTipoGestor) utilDiccionarioApi.dameValorDiccionarioByCod(EXTDDTipoGestor.class,"SUALQ"); // Gestor de Alquileres
+			
+			//HREOS-5012 - Tipo gestores Solo de Alquiler o Solo de Compra
+			EXTDDTipoGestor tipoGestorComercial = (EXTDDTipoGestor) utilDiccionarioApi.dameValorDiccionarioByCod(EXTDDTipoGestor.class,"GCOM"); // Gestor comercial
+			EXTDDTipoGestor tipoSupervisorComercial = (EXTDDTipoGestor) utilDiccionarioApi.dameValorDiccionarioByCod(EXTDDTipoGestor.class,"SCOM"); // Supervisor comercial
+			EXTDDTipoGestor tipoGestorComercialAlquileres = (EXTDDTipoGestor) utilDiccionarioApi.dameValorDiccionarioByCod(EXTDDTipoGestor.class,"GESTCOMALQ"); // Gestor comercial alquiler
+			EXTDDTipoGestor tipoSupervisorComercialAlquileres = (EXTDDTipoGestor) utilDiccionarioApi.dameValorDiccionarioByCod(EXTDDTipoGestor.class,"SUPCOMALQ"); // Supervisor comercial alquiler
+			
 			Activo activo = activoApi.get(Long.parseLong(idActivo));
 			String codigoTipoActivo = activo.getTipoActivo().getCodigo();
 			ActivoPatrimonio actPatrimonio = activoPatrimonio.getActivoPatrimonioByActivo(activo.getId());
-
+			String tipoComercializacion = activo.getTipoComercializacion().getCodigo();
+					
+			
 			if (!Checks.esNulo(activo) && !Checks.esNulo(activo.getTipoActivo()) && (!Checks.esNulo(actPatrimonio) && !Checks.esNulo(actPatrimonio.getCheckHPM()))) {
 				// Si el Activo NO es de tipo Suelo eliminamos el gestor de Suelos de la lista
 			
@@ -472,12 +481,25 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 
 				}
 			}
+			//Filtramos los gestores dependiendo del tipo de comercialización del activo
+			if(!Checks.esNulo(activo) && !Checks.esNulo(tipoComercializacion) && !tipoComercializacion.isEmpty()) {
+				if(DDTipoComercializacion.CODIGO_VENTA.equals(tipoComercializacion)) {
+					listaTiposGestor.remove(tipoGestorComercialAlquileres);
+					listaTiposGestor.remove(tipoSupervisorComercialAlquileres);
+				}
+			 if (DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(tipoComercializacion)) {
+				 	listaTiposGestor.remove(tipoGestorComercial);
+					listaTiposGestor.remove(tipoSupervisorComercial);
+				}
+			} 
 		} catch (NumberFormatException e) {
 			e.printStackTrace();
 		}
 
 		return listaTiposGestor;
 	}
+
+
 
 	@Override
 	public List<EXTDDTipoGestor> getComboTipoGestorFiltrado(Set<String> tipoGestorCodigos) {

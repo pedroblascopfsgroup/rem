@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.bulkUpload.liberators.MSVLiberator;
@@ -22,12 +21,8 @@ import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVHojaExcel;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.rem.activo.ActivoManager;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
-import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
 import es.pfsgroup.plugin.rem.model.Activo;
-import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
-import es.pfsgroup.plugin.rem.model.DtoDatosPublicacionAgrupacion;
-import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 
 @Component
 public class MSVActualizadorExlusionActivos extends AbstractMSVActualizador implements MSVLiberator{
@@ -60,12 +55,20 @@ protected static final Log logger = LogFactory.getLog(ActivoManager.class);
 		Date fechaVenta = sdf.parse(exc.dameCelda(fila, COL_NUM.FECHA_VENTA));
 		Integer exluirDwh = Integer.parseInt(exc.dameCelda(fila, COL_NUM.EXCLUIR_DWH));
 		
+		activo.setFechaVentaExterna(fechaVenta);
+		activo.setImporteVentaExterna(importeVenta);
+		
 		if(exluirDwh == 1){
-			activo.setExcluirDwh(true);
-			activo.setFechaVentaExterna(fechaVenta);
-			activo.setImporteVentaExterna(importeVenta);
-			genericDao.save(Activo.class, activo);
+			activo.setExcluirDwh(true);	
+		}else{
+			activo.setExcluirDwh(false);
 		}
+		
+		DDSituacionComercial situacionComercial = genericDao.get(DDSituacionComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDSituacionComercial.CODIGO_VENDIDO));
+		
+		activo.setSituacionComercial(situacionComercial);
+		
+		genericDao.save(Activo.class, activo);
 		
 		return new ResultadoProcesarFila();
 	}

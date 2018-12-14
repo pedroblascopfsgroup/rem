@@ -53,14 +53,11 @@ public class DDEstadosExpedienteComercial implements Auditable, Dictionary {
 	public final static String PTE_SEGURO_RENTAS = "19";
 	public final static String PTE_ELEVAR_SANCION = "20";
 	public final static String ELEVAR_A_SANCION = "21";
-	public final static String ANULADA = "22";
 	public final static String PTE_SANCION_COMITE = "23";
 	public final static String PTE_PBC = "24";
 	public final static String PTE_POSICIONAMIENTO = "25";
-	public final static String CONTRAOFERTADO_ALQUILER = "26";
 	public final static String PTE_FIRMA = "27";
 	public final static String PTE_CIERRE = "28";
-	public final static String FIRMADO_AQLUILER = "29";
 	public final static String VENTA = "1";
 	public final static String ALQUILER = "0";
 	public final static String ANULADO_PDTE_DEVOLUCION = "17";
@@ -82,6 +79,9 @@ public class DDEstadosExpedienteComercial implements Auditable, Dictionary {
 	
 	@Column(name = "DD_EEC_VENTA")   
 	private boolean estadoVenta;
+	
+	@Column(name = "DD_EEC_ALQUILER")   
+	private boolean estadoAlquiler;
 
 	@Version   
 	private Long version;
@@ -143,6 +143,14 @@ public class DDEstadosExpedienteComercial implements Auditable, Dictionary {
 
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
+	}
+
+	public boolean isEstadoAlquiler() {
+		return estadoAlquiler;
+	}
+
+	public void setEstadoAlquiler(boolean estadoAlquiler) {
+		this.estadoAlquiler = estadoAlquiler;
 	}
 
 }

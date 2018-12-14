@@ -68,7 +68,7 @@ public class UpdaterServiceSancionOfertaAlquileresElevarASancion implements Upda
 					expedienteComercial.setEstado(estadoExpComercial);
 				}else if(DDResolucionOferta.CODIGO_ANULAR.equals(valor.getValor())) {
 					DDEstadosExpedienteComercial estadoExpComercial =  (DDEstadosExpedienteComercial) utilDiccionarioApi.dameValorDiccionarioByCod(
-							DDEstadosExpedienteComercial.class, DDEstadosExpedienteComercial.ANULADA);
+							DDEstadosExpedienteComercial.class, DDEstadosExpedienteComercial.ANULADO);
 					expedienteComercial.setEstado(estadoExpComercial);
 					DDEstadoOferta estadoOferta = (DDEstadoOferta) utilDiccionarioApi.dameValorDiccionarioByCod(
 							DDEstadoOferta.class, DDEstadoOferta.CODIGO_RECHAZADA);

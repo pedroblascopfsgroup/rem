@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Sergio Beleña Boix
+--## AUTOR=Daniel Algaba
 --## FECHA_CREACION=20180731
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-4351
+--## INCIDENCIA_LINK=HREOS-5032
 --## PRODUCTO=NO
 --## Finalidad: Script que añade en DD_EEC_EST_EXP_COMERCIAL los datos añadidos en T_ARRAY_DATA
 --##
@@ -42,14 +42,14 @@ DECLARE
         T_TIPO_DATA('19'	,'Pendiente de Seguro de rentas'		,'Pendiente de Seguro de rentas'),
         T_TIPO_DATA('20'	,'Pendiente elevar a sanción'		,'Pendiente elevar a sanción'),
         T_TIPO_DATA('21'	,'Elevar a sanción'		,'Elevar a sanción'),
-        T_TIPO_DATA('22'	,'Anulada'		,'Anulada'),
+        --T_TIPO_DATA('22'	,'Anulada'		,'Anulada'),
         T_TIPO_DATA('23'	,'Pendiente de sanción comité'		,'Pendiente de sanción comité'),
         T_TIPO_DATA('24'	,'Pendiente de PBC'		,'Pendiente de PBC'),
         T_TIPO_DATA('25'	,'Pendiente de Posicionamiento'		,'Pendiente de Posicionamiento'),
-        T_TIPO_DATA('26'	,'Contraofertado'		,'Contraofertado'),
+        --T_TIPO_DATA('26'	,'Contraofertado'		,'Contraofertado'),
         T_TIPO_DATA('27'	,'Pendiente firma'		,'Pendiente firma'),
         T_TIPO_DATA('28'	,'Pendiente cierre'		,'Pendiente cierre'),
-        T_TIPO_DATA('29'	,'Firmado'		,'Firmado')
+        --T_TIPO_DATA('29'	,'Firmado'		,'Firmado')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     

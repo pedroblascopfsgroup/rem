@@ -70,7 +70,7 @@ public class UpdaterServiceSancionOfertaAlquileresCierreContrato implements Upda
 		for(TareaExternaValor valor :  valores){
 			
 			if(DOCUMENTO_OK.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
-				estadoExpedienteComercial = genericDao.get(DDEstadosExpedienteComercial.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadosExpedienteComercial.FIRMADO_AQLUILER));
+				estadoExpedienteComercial = genericDao.get(DDEstadosExpedienteComercial.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadosExpedienteComercial.FIRMADO));
 				expedienteComercial.setEstado(estadoExpedienteComercial);
 				expedienteComercial.setDocumentacionOk(true);
 			}

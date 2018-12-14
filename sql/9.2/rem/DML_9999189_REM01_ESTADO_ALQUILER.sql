@@ -1,6 +1,6 @@
 --/*
 --##########################################
---## AUTOR: CARLOS SALMERON
+--## AUTOR=CARLOS SALMERON
 --## FECHA_CREACION=20181213
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2

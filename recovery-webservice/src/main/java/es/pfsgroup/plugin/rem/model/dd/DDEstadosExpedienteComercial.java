@@ -32,38 +32,34 @@ public class DDEstadosExpedienteComercial implements Auditable, Dictionary {
 	
 	private static final long serialVersionUID = -5820108531500198730L;
 	
-	public final static String EN_TRAMITACION = "01";
-	public final static String ANULADO = "02";
-	public final static String FIRMADO = "03";
-	public final static String CONTRAOFERTADO = "04";
-	public final static String BLOQUEO_ADM = "05";
-	public final static String RESERVADO = "06";
-	public final static String POSICIONADO = "07";
-	public final static String VENDIDO = "08";
-	public final static String RESUELTO = "09";
-	public final static String PTE_SANCION = "10";
-	public final static String APROBADO = "11";
-	public final static String DENEGADO = "12";
-	public final static String DOBLE_FIRMA = "13";
-	public final static String RPTA_OFERTANTE = "14";
-	public final static String ALQUILADO = "15";
-	public final static String EN_DEVOLUCION = "16";
-	public final static String ANULADO_PTE_DEVOLUCION = "17";
-	public final static String PTE_SCORING = "18";
-	public final static String PTE_SEGURO_RENTAS = "19";
-	public final static String PTE_ELEVAR_SANCION = "20";
-	public final static String ELEVAR_A_SANCION = "21";
-	public final static String ANULADA = "22";
-	public final static String PTE_SANCION_COMITE = "23";
-	public final static String PTE_PBC = "24";
-	public final static String PTE_POSICIONAMIENTO = "25";
-	public final static String CONTRAOFERTADO_ALQUILER = "26";
-	public final static String PTE_FIRMA = "27";
-	public final static String PTE_CIERRE = "28";
-	public final static String FIRMADO_AQLUILER = "29";
-	public final static String VENTA = "1";
-	public final static String ALQUILER = "0";
-	public final static String ANULADO_PDTE_DEVOLUCION = "17";
+	public static final String ALQUILER = "0";
+	public static final String VENTA = "1";
+	public static final String EN_TRAMITACION = "01";
+	public static final String ANULADO = "02";
+	public static final String FIRMADO = "03";
+	public static final String CONTRAOFERTADO = "04";
+	public static final String BLOQUEO_ADM = "05";
+	public static final String RESERVADO = "06";
+	public static final String POSICIONADO = "07";
+	public static final String VENDIDO = "08";
+	public static final String RESUELTO = "09";
+	public static final String PTE_SANCION = "10";
+	public static final String APROBADO = "11";
+	public static final String DENEGADO = "12";
+	public static final String DOBLE_FIRMA = "13";
+	public static final String RPTA_OFERTANTE = "14";
+	public static final String ALQUILADO = "15";
+	public static final String EN_DEVOLUCION = "16";
+	public static final String ANULADO_PDTE_DEVOLUCION = "17";
+	public static final String PTE_SCORING = "18";
+	public static final String PTE_SEGURO_RENTAS = "19";
+	public static final String PTE_ELEVAR_SANCION = "20";
+	public static final String ELEVAR_A_SANCION = "21";
+	public static final String PTE_SANCION_COMITE = "23";
+	public static final String PTE_PBC = "24";
+	public static final String PTE_POSICIONAMIENTO = "25";
+	public static final String PTE_FIRMA = "27";
+	public static final String PTE_CIERRE = "28";
 
 	@Id
 	@Column(name = "DD_EEC_ID")
@@ -81,7 +77,10 @@ public class DDEstadosExpedienteComercial implements Auditable, Dictionary {
 	private String descripcionLarga;
 	
 	@Column(name = "DD_EEC_VENTA")   
-	private boolean estadoVenta;
+	private Boolean estadoVenta;
+	
+	@Column(name = "DD_EEC_ALQUILER")   
+	private Boolean estadoAlquiler;
 
 	@Version   
 	private Long version;
@@ -121,11 +120,11 @@ public class DDEstadosExpedienteComercial implements Auditable, Dictionary {
 		this.descripcionLarga = descripcionLarga;
 	}
 	
-	public boolean getEstadoVenta() {
+	public Boolean getEstadoVenta() {
 		return estadoVenta;
 	}
 
-	public void setEstadoVenta(boolean estadoVenta) {
+	public void setEstadoVenta(Boolean estadoVenta) {
 		this.estadoVenta = estadoVenta;
 	}
 
@@ -143,6 +142,14 @@ public class DDEstadosExpedienteComercial implements Auditable, Dictionary {
 
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
+	}
+
+	public Boolean isEstadoAlquiler() {
+		return estadoAlquiler;
+	}
+
+	public void setEstadoAlquiler(Boolean estadoAlquiler) {
+		this.estadoAlquiler = estadoAlquiler;
 	}
 
 }

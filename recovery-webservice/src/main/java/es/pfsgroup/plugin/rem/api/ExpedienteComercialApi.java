@@ -1126,6 +1126,13 @@ public interface ExpedienteComercialApi {
 	 * @return
 	 */
 	public boolean checkContratoSubido(TareaExterna tareaExterna);
+	
+	/**
+	 * 
+	 * @param idExpediente
+	 * @return bool con el estado Ocupado SI/NO del tramite comercial de alquiler
+	 */
+	public boolean checkEstadoOcupadoTramite(Long idExpediente);
 
 
 }

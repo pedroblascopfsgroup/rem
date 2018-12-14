@@ -104,6 +104,7 @@ import es.pfsgroup.plugin.rem.model.CompradorExpediente;
 import es.pfsgroup.plugin.rem.model.CompradorExpediente.CompradorExpedientePk;
 import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
 import es.pfsgroup.plugin.rem.model.CondicionesActivo;
+import es.pfsgroup.plugin.rem.model.DtoActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.DtoActivosExpediente;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoAdjuntoExpediente;
@@ -7292,6 +7293,35 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 		return idExpediente;
 
+	}
+
+	@Override
+	public boolean checkEstadoOcupadoTramite(Long idTramite) {
+		boolean ocupado = true;
+		try {
+		ActivoTramite activoTramite = activoTramiteApi.get(idTramite);
+		
+		Activo activo = activoTramite.getActivo();
+		DtoActivoSituacionPosesoria activoDto = new DtoActivoSituacionPosesoria();
+		if (activo != null){
+			BeanUtils.copyProperty(activoDto, "ocupado", activo.getSituacionPosesoria().getOcupado());
+		}
+		
+		if(!Checks.esNulo(activoDto) && activoDto.getOcupado() == 0) {
+			ocupado = false;
+		}
+		
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NullPointerException e) {
+			e.printStackTrace();
+		}
+		
+		return ocupado;
 	}
 
 	@Override

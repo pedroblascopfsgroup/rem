@@ -1,4 +1,4 @@
-export DB_PRODUCTO=ibd03:1521/ibd031
+export DB_PRODUCTO=ibd01:1527/ibd017
 export DB_BI=***
 export BASE_DIR_APP=/recovery/iap018/app-server
 export BASE_DIR_BATCH=/recovery/iba018/batch-server

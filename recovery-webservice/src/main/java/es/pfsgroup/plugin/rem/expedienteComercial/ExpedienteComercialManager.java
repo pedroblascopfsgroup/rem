@@ -6746,7 +6746,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 		List <DtoExpedienteHistScoring> listaHstco = new ArrayList<DtoExpedienteHistScoring>();
 		List<HistoricoScoringAlquiler> listaHistoricoScoring = new ArrayList<HistoricoScoringAlquiler>();
-		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "scoringAlquiler.id", idScoring);
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "scoringAlquiler.expediente.id", idScoring); //126464
 		listaHistoricoScoring = genericDao.getList(HistoricoScoringAlquiler.class, filtro);
 		ExpedienteComercial exp=null;
 		DtoAdjunto adjFinal = new DtoAdjunto();

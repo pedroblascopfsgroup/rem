@@ -1003,7 +1003,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	    	proxy: {
 		        type: 'uxproxy',
 		        remoteUrl: 'expedientecomercial/getHistoricoScoring',
-		        extraParams: {idScoring: '{scoring.id}'}
+		        extraParams: {idScoring: '{expediente.id}'}
 	    	}
 		},
 		comboComitesAlquiler: {

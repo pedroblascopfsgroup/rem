@@ -865,7 +865,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 						}
 						
 						if (!Checks.esNulo(expediente.getEstado().getCodigo())) {
-							dto.setEstaFirmado(DDEstadosExpedienteComercial.FIRMADO_AQLUILER.equals(expediente.getEstado().getCodigo()));
+							dto.setEstaFirmado(DDEstadosExpedienteComercial.FIRMADO.equals(expediente.getEstado().getCodigo()));
 						}
 					}
 				}
@@ -7106,7 +7106,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				Filter filtroVenta = genericDao.createFilter(FilterType.EQUALS, "estadoVenta", true);
 				listaEstados = genericDao.getList(DDEstadosExpedienteComercial.class, filtroVenta, filtroBorrado);
 			} else if(DDEstadosExpedienteComercial.ALQUILER.equals(idEstado)) {
-				Filter filtroAlquiler = genericDao.createFilter(FilterType.EQUALS, "estadoVenta", false);
+				Filter filtroAlquiler = genericDao.createFilter(FilterType.EQUALS, "estadoAlquiler", true);
 				listaEstados = genericDao.getList(DDEstadosExpedienteComercial.class, filtroAlquiler, filtroBorrado);
 			}
 		}

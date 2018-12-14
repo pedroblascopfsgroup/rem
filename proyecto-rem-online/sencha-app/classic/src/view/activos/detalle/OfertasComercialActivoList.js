@@ -223,19 +223,36 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
     },
 	
 	onAddClick: function (btn) {
+		
 		var me = this;
 		var activo = me.lookupController().getViewModel().get('activo'),
 		idActivo= activo.get('id'),
 		numActivo= activo.get('numActivo');
+		 
+		// Aquí metemos la funcion del fondo
 		
-		var parent= me.up('ofertascomercialactivo'),
-		oferta = Ext.create('HreRem.model.OfertaComercialActivo', {idActivo: idActivo, numActivo: numActivo});
+		var noContieneTipoAlquiler = false;
+		 
+		if (activo.get('incluyeDestinoComercialAlquiler')) {
+			var codigoTipoAlquiler = activo.get('tipoAlquilerCodigo');
+			if (codigoTipoAlquiler == null || codigoTipoAlquiler == '') {
+				noContieneTipoAlquiler = true;
+			}
+		}
 		
-		// HREOS-2930 Permitir acceso menú lateral con ventana Alta de oferta abierta
-		var ventana = Ext.create('HreRem.view.activos.detalle.AnyadirNuevaOfertaActivo',{oferta: oferta, parent: parent});
-		me.up('activosdetallemain').add(ventana);
-		ventana.show();
-	    				    	
+		// HREOS-4963 Comprueba que exista un campo de tipo alquiler antes de anyadir  una oferta
+		if (!noContieneTipoAlquiler) {
+			var parent= me.up('ofertascomercialactivo'),
+			oferta = Ext.create('HreRem.model.OfertaComercialActivo', {idActivo: idActivo, numActivo: numActivo});
+			
+			// HREOS-2930 Permitir acceso menú lateral con ventana Alta de oferta abierta
+			var ventana = Ext.create('HreRem.view.activos.detalle.AnyadirNuevaOfertaActivo',{oferta: oferta, parent: parent});
+			me.up('activosdetallemain').add(ventana);
+			ventana.show();
+		} else {
+			me.fireEvent("errorToast", HreRem.i18n("msg.comercialAnyadirTipoAlquiler.error"));
+		}
+				    	
 	},
 	
 	editFuncion: function(editor, context){
@@ -393,18 +410,8 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 		var me = this;
 		var activo = me.lookupController().getViewModel().get('activo');
 		
-		var noContieneTipoAlquiler = false;
-		 
-		if (activo.get('incluyeDestinoComercialAlquiler')) {
-			var codigoTipoAlquiler = activo.get('tipoAlquilerCodigo');
-			if (codigoTipoAlquiler == null || codigoTipoAlquiler == '') {
-				noContieneTipoAlquiler = true;
-			}
-		}
-		
-		
 		if(activo.get('incluidoEnPerimetro')=="false" || !activo.get('aplicaComercializar') || activo.get('pertenceAgrupacionRestringida')
-			|| activo.get('isVendido') || !$AU.userHasFunction('EDITAR_LIST_OFERTAS_ACTIVO') || noContieneTipoAlquiler) {
+			|| activo.get('isVendido') || !$AU.userHasFunction('EDITAR_LIST_OFERTAS_ACTIVO')) {
 			me.setTopBar(false);
 			me.rowEditing.clearListeners();
 		}

@@ -1,9 +1,12 @@
 --/*
 --##########################################
---## Author: CARLOS SALMERON
---## Finalidad: DML Para eliminar estado alquiler con demandas 
---## INCIDENCIA_LINK=HREOS-5015
+--## AUTOR: CARLOS SALMERON
 --## FECHA_CREACION=20181213
+--## ARTEFACTO=online
+--## VERSION_ARTEFACTO=9.2
+--## INCIDENCIA_LINK=HREOS-5015
+--## PRODUCTO=NO
+--## Finalidad: DML Para eliminar estado alquiler con demandas 
 --## VERSIONES:
 --##        0.1 Versión inicial
 --##########################################

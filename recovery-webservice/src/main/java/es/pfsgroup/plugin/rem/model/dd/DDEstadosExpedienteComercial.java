@@ -120,11 +120,11 @@ public class DDEstadosExpedienteComercial implements Auditable, Dictionary {
 		this.descripcionLarga = descripcionLarga;
 	}
 	
-	public boolean getEstadoVenta() {
+	public Boolean getEstadoVenta() {
 		return estadoVenta;
 	}
 
-	public void setEstadoVenta(boolean estadoVenta) {
+	public void setEstadoVenta(Boolean estadoVenta) {
 		this.estadoVenta = estadoVenta;
 	}
 
@@ -144,11 +144,11 @@ public class DDEstadosExpedienteComercial implements Auditable, Dictionary {
 		this.auditoria = auditoria;
 	}
 
-	public boolean isEstadoAlquiler() {
+	public Boolean isEstadoAlquiler() {
 		return estadoAlquiler;
 	}
 
-	public void setEstadoAlquiler(boolean estadoAlquiler) {
+	public void setEstadoAlquiler(Boolean estadoAlquiler) {
 		this.estadoAlquiler = estadoAlquiler;
 	}
 

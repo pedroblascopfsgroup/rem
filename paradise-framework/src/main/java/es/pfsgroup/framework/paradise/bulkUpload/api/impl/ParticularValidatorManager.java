@@ -520,7 +520,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "		LEFT JOIN ACT_PAC_PERIMETRO_ACTIVO pac "
 				+ "		ON act.ACT_ID            = pac.ACT_ID "
 				+ "		WHERE " 
-				+ "		(pac.PAC_INCLUIDO = 1 or pac.PAC_ID is null)"
+				+ "		(pac.PAC_INCLUIDO = 1 or pac.PAC_ID is null)"		
 				+ "		AND act.ACT_NUM_ACTIVO = "+numActivo+" ");
 		return !Checks.esNulo(resultado);
 	}
@@ -2424,4 +2424,16 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		
 		return !"0".equals(resultado);
 	}
+
+	@Override
+	public boolean isActivoIncluidoPerimetroAlquiler(String numActivo) {
+			String resultado = rawDao.getExecuteSQL( "SELECT COUNT(1)"
+				+"			FROM ACT_PTA_PATRIMONIO_ACTIVO acpt"
+                +"			INNER JOIN ACT_ACTIVO act ON act.ACT_ID = acpt.ACT_ID AND act.ACT_NUM_ACTIVO = " + numActivo + ""
+                +"			WHERE acpt.CHECK_HPM = 1"
+			);
+			
+		return !"0".equals(resultado);
+	}
+
 }

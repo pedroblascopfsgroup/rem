@@ -324,6 +324,12 @@ public class ActivoAdapter {
 	public static final String T_PUBLICACION= "T011";
 	public static final String CODIGO_ESTADO_PROCEDIMIENTO_EN_TRAMITE = "10";
 	public static final String ERROR_CRM_UNKNOWN_ID = "UNKNOWN_ID";
+	
+	//Se añaden aqui tambien, ya que no se por que esta cogiendo el diccionario de gestores de un .class que no es editable, en vez del .java que si que lo es
+	public static final String CODIGO_TIPO_GESTOR_COMERCIAL = "GCOM";
+	public static final String CODIGO_SUPERVISOR_COMERCIAL = "SCOM";
+	public static final String CODIGO_GESTOR_COMERCIAL_ALQUILER = "GESTCOMALQ";
+	public static final String CODIGO_SUPERVISOR_COMERCIAL_ALQUILER = "SUPCOMALQ";
 
 	private BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 
@@ -1477,24 +1483,54 @@ public class ActivoAdapter {
 		gestorEntidadDto.setTipoEntidad(GestorEntidadDto.TIPO_ENTIDAD_ACTIVO);
 		List<GestorEntidadHistorico> gestoresEntidad = gestorActivoApi
 				.getListGestoresActivosAdicionalesHistoricoData(gestorEntidadDto);
+		
+		Boolean incluirVenta;
+		Boolean incluirAlquiler;
+		
+		String tipoComercializacion = activoApi.get(idActivo).getTipoComercializacion().getCodigo();
+		
+		if(DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(tipoComercializacion) || DDTipoComercializacion.CODIGO_ALQUILER_OPCION_COMPRA.equals(tipoComercializacion)) {
+			incluirVenta = false;
+			incluirAlquiler = true;
+		}else if(DDTipoComercializacion.CODIGO_VENTA.equals(tipoComercializacion)) {
+			incluirVenta = true;
+			incluirAlquiler = false;
+		}else {
+			incluirVenta = true;
+			incluirAlquiler = true;
+		}
 
 		List<DtoListadoGestores> listadoGestoresDto = new ArrayList<DtoListadoGestores>();
 
 		for (GestorEntidadHistorico gestor : gestoresEntidad) {
-			DtoListadoGestores dtoGestor = new DtoListadoGestores();
-			try {
-				BeanUtils.copyProperties(dtoGestor, gestor);
-				BeanUtils.copyProperties(dtoGestor, gestor.getUsuario());
-				BeanUtils.copyProperties(dtoGestor, gestor.getTipoGestor());
-				BeanUtils.copyProperty(dtoGestor, "id", gestor.getId());
-				BeanUtils.copyProperty(dtoGestor, "idUsuario", gestor.getUsuario().getId());
-			} catch (IllegalAccessException e) {
-				e.printStackTrace();
-			} catch (InvocationTargetException e) {
-				e.printStackTrace();
-			}
+			if((incluirAlquiler && !incluirVenta && 
+					(CODIGO_TIPO_GESTOR_COMERCIAL.equals(gestor.getTipoGestor().getCodigo()) || CODIGO_SUPERVISOR_COMERCIAL.equals(gestor.getTipoGestor().getCodigo()))
+				) || (!incluirAlquiler && incluirVenta && 
+					(CODIGO_GESTOR_COMERCIAL_ALQUILER.equals(gestor.getTipoGestor().getCodigo()) || CODIGO_SUPERVISOR_COMERCIAL_ALQUILER.equals(gestor.getTipoGestor().getCodigo())))) {
+				
+			} else {
+				DtoListadoGestores dtoGestor = new DtoListadoGestores();
+				try {
+					BeanUtils.copyProperties(dtoGestor, gestor);
+					BeanUtils.copyProperties(dtoGestor, gestor.getUsuario());
+					BeanUtils.copyProperties(dtoGestor, gestor.getTipoGestor());
+					BeanUtils.copyProperty(dtoGestor, "id", gestor.getId());
+					BeanUtils.copyProperty(dtoGestor, "idUsuario", gestor.getUsuario().getId());
+					
+					GestorSustituto gestorSustituto = getGestorSustitutoVigente(gestor);
 
-			listadoGestoresDto.add(dtoGestor);
+					if (!Checks.esNulo(gestorSustituto)) {
+						dtoGestor.setApellidoNombre(dtoGestor.getApellidoNombre().concat(" (")
+								.concat(gestorSustituto.getUsuarioGestorSustituto().getApellidoNombre()).concat(")"));
+					}
+				} catch (IllegalAccessException e) {
+					e.printStackTrace();
+				} catch (InvocationTargetException e) {
+					e.printStackTrace();
+				}
+
+				listadoGestoresDto.add(dtoGestor);
+			}
 		}
 
 		return listadoGestoresDto;
@@ -1507,33 +1543,54 @@ public class ActivoAdapter {
 		gestorEntidadDto.setTipoEntidad(GestorEntidadDto.TIPO_ENTIDAD_ACTIVO);
 		List<GestorEntidadHistorico> gestoresEntidad = gestorActivoApi
 				.getListGestoresAdicionalesHistoricoData(gestorEntidadDto);
+		
+		Boolean incluirVenta;
+		Boolean incluirAlquiler;
+		
+		String tipoComercializacion = activoApi.get(idActivo).getTipoComercializacion().getCodigo();
+		
+		if(DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(tipoComercializacion) || DDTipoComercializacion.CODIGO_ALQUILER_OPCION_COMPRA.equals(tipoComercializacion)) {
+			incluirVenta = false;
+			incluirAlquiler = true;
+		}else if(DDTipoComercializacion.CODIGO_VENTA.equals(tipoComercializacion)) {
+			incluirVenta = true;
+			incluirAlquiler = false;
+		}else {
+			incluirVenta = true;
+			incluirAlquiler = true;
+		}
 
 		List<DtoListadoGestores> listadoGestoresDto = new ArrayList<DtoListadoGestores>();
 
 		for (GestorEntidadHistorico gestor : gestoresEntidad) {
-			
-			DtoListadoGestores dtoGestor = new DtoListadoGestores();
-			try {
-				BeanUtils.copyProperties(dtoGestor, gestor);
-				BeanUtils.copyProperties(dtoGestor, gestor.getUsuario());
-				BeanUtils.copyProperties(dtoGestor, gestor.getTipoGestor());
-				BeanUtils.copyProperty(dtoGestor, "id", gestor.getId());
-				BeanUtils.copyProperty(dtoGestor, "idUsuario", gestor.getUsuario().getId());
+			if((incluirAlquiler && !incluirVenta && 
+					(CODIGO_TIPO_GESTOR_COMERCIAL.equals(gestor.getTipoGestor().getCodigo()) || CODIGO_SUPERVISOR_COMERCIAL.equals(gestor.getTipoGestor().getCodigo()))
+				) || (!incluirAlquiler && incluirVenta && 
+					(CODIGO_GESTOR_COMERCIAL_ALQUILER.equals(gestor.getTipoGestor().getCodigo()) || CODIGO_SUPERVISOR_COMERCIAL_ALQUILER.equals(gestor.getTipoGestor().getCodigo())))) {
+				
+			} else {
+				DtoListadoGestores dtoGestor = new DtoListadoGestores();
+				try {
+					BeanUtils.copyProperties(dtoGestor, gestor);
+					BeanUtils.copyProperties(dtoGestor, gestor.getUsuario());
+					BeanUtils.copyProperties(dtoGestor, gestor.getTipoGestor());
+					BeanUtils.copyProperty(dtoGestor, "id", gestor.getId());
+					BeanUtils.copyProperty(dtoGestor, "idUsuario", gestor.getUsuario().getId());
+					
+					GestorSustituto gestorSustituto = getGestorSustitutoVigente(gestor);
 
-				GestorSustituto gestorSustituto = getGestorSustitutoVigente(gestor);
-
-				if (!Checks.esNulo(gestorSustituto)) {
-					dtoGestor.setApellidoNombre(dtoGestor.getApellidoNombre().concat(" (")
-							.concat(gestorSustituto.getUsuarioGestorSustituto().getApellidoNombre()).concat(")"));
+					if (!Checks.esNulo(gestorSustituto)) {
+						dtoGestor.setApellidoNombre(dtoGestor.getApellidoNombre().concat(" (")
+								.concat(gestorSustituto.getUsuarioGestorSustituto().getApellidoNombre()).concat(")"));
+					}
+				} catch (IllegalAccessException e) {
+					e.printStackTrace();
+				} catch (InvocationTargetException e) {
+					e.printStackTrace();
 				}
 
-			} catch (IllegalAccessException e) {
-				e.printStackTrace();
-			} catch (InvocationTargetException e) {
-				e.printStackTrace();
+				listadoGestoresDto.add(dtoGestor);
 			}
-
-			listadoGestoresDto.add(dtoGestor);
 		}
 
 		return listadoGestoresDto;

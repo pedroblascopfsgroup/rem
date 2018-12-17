@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.jbpm.handler.updater.impl;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -197,9 +198,14 @@ public class UpdaterServiceSancionOfertaAlquileresDefinicionOferta implements Up
 					//TODO El funcional no indica donde se guarda el campo.
 				}
 			}else{
-				if(FECHA_TRATAMIENTO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+				if(FECHA_TRATAMIENTO.equals(valor.getNombre())) {
 					try {
-						condiciones.setFechaFirma(ft.parse(valor.getValor()));
+						if (!Checks.esNulo(valor.getValor())) {
+							condiciones.setFechaFirma(ft.parse(valor.getValor()));
+						} else {
+							condiciones.setFechaFirma(new Date());
+						}
+						
 					} catch (ParseException e) {
 						logger.error("Error insertando Fecha Tratamiento.", e);
 					}

@@ -38,7 +38,7 @@ public class RecoveryToGestorDocAssembler {
 		doc.setVinculoDocumento(true);//HREOS-2296
 		doc.setVinculoExpediente(false);
 		
-		if(!Checks.esNulo(userLogin) && userLogin == "REST_USER" ) {
+		if(!Checks.esNulo(userLogin) && userLogin.equals("REST_USER") ) {
 			doc.setUsuarioOperacional("srv.crmofiymed");
 		} else {
 			doc.setUsuarioOperacional(userLogin);
@@ -52,7 +52,7 @@ public class RecoveryToGestorDocAssembler {
 		login.setUsuario(USUARIO);
 		login.setPassword(PASSWORD);
 		
-		if(!Checks.esNulo(userLogin) && userLogin == "REST_USER" ) {
+		if(!Checks.esNulo(userLogin) && userLogin.equals("REST_USER") ) {
 			login.setUsuarioOperacional("srv.crmofiymed");
 		} else {
 			login.setUsuarioOperacional(userLogin);
@@ -71,7 +71,7 @@ public class RecoveryToGestorDocAssembler {
 		doc.setUsuario(USUARIO);
 		doc.setPassword(PASSWORD);
 		
-		if(!Checks.esNulo(userLogin) && userLogin == "REST_USER" ) {
+		if(!Checks.esNulo(userLogin) && userLogin.equals("REST_USER") ) {
 			doc.setUsuarioOperacional("srv.crmofiymed");
 		} else {
 			doc.setUsuarioOperacional(userLogin);
@@ -133,7 +133,7 @@ public class RecoveryToGestorDocAssembler {
 		dto.setUsuario(USUARIO);
 		dto.setPassword(PASSWORD);
 		
-		if(!Checks.esNulo(login) && login == "REST_USER" ) {
+		if(!Checks.esNulo(login) && login.equals("REST_USER") ) {
 			dto.setUsuarioOperacional("srv.crmofiymed");
 		} else {
 			dto.setUsuarioOperacional(login);
@@ -151,7 +151,7 @@ public class RecoveryToGestorDocAssembler {
 		dto.setUsuario(USUARIO);
 		dto.setPassword(PASSWORD);
 		
-		if(!Checks.esNulo(login) && login == "REST_USER" ) {
+		if(!Checks.esNulo(login) && login.equals("REST_USER") ) {
 			dto.setUsuarioOperacional("srv.crmofiymed");
 		} else {
 			dto.setUsuarioOperacional(login);
@@ -171,7 +171,7 @@ public class RecoveryToGestorDocAssembler {
 		dto.setUsuario(USUARIO);
 		dto.setPassword(PASSWORD);
 		
-		if(!Checks.esNulo(login) && login == "REST_USER" ) {
+		if(!Checks.esNulo(login) && login.equals("REST_USER") ) {
 			dto.setUsuarioOperacional("srv.crmofiymed");
 		} else {
 			dto.setUsuarioOperacional(login);
@@ -189,7 +189,7 @@ public class RecoveryToGestorDocAssembler {
 		baja.setUsuario(USUARIO);
 		baja.setPassword(PASSWORD);
 
-		if(!Checks.esNulo(login) && login == "REST_USER" ) {
+		if(!Checks.esNulo(login) && login.equals("REST_USER") ) {
 			baja.setUsuarioOperacional("srv.crmofiymed");
 		} else {
 			baja.setUsuarioOperacional(login);
@@ -205,7 +205,7 @@ public class RecoveryToGestorDocAssembler {
 		credUsu.setUsuario(USUARIO);
 		credUsu.setPassword(PASSWORD);
 		
-		if(!Checks.esNulo(login) && login == "REST_USER" ) {
+		if(!Checks.esNulo(login) && login.equals("REST_USER") ) {
 			credUsu.setUsuarioOperacional("srv.crmofiymed");
 		} else {
 			credUsu.setUsuarioOperacional(login);
@@ -221,7 +221,7 @@ public class RecoveryToGestorDocAssembler {
 		doc.setPassword(PASSWORD);
 		doc.setCodClase(codClase);
 		
-		if(!Checks.esNulo(username) && username == "REST_USER" ) {
+		if(!Checks.esNulo(username) && username.equals("REST_USER") ) {
 			doc.setUsuarioOperacional("srv.crmofiymed");
 		} else {
 			doc.setUsuarioOperacional(username);

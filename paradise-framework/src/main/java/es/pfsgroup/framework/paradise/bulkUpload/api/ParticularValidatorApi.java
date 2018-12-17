@@ -345,5 +345,15 @@ public interface ParticularValidatorApi {
 	public Boolean esActivoConComunicacionViva(Long numActivoHaya);
 	
 	public Boolean esNIFValido(String nif);
+
+	/**
+	 * 
+	 * El método indica si el activo tiene una comunicación ya reclamada
+	 * 
+	 * @param MSVHojaExcel : Excel con las reclamaciones
+	 * @return Devuelve un boolean. Si es TRUE la comunicación viva ya esta reclamada.
+	 * 
+	 */
+	public boolean esActivoConComunicacionReclamada(Long numActivoHaya);
 	
 }

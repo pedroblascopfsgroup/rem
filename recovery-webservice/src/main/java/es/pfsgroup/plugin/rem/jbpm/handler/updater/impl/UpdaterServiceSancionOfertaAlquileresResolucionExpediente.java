@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.jbpm.handler.updater.impl;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -87,9 +88,13 @@ public class UpdaterServiceSancionOfertaAlquileresResolucionExpediente implement
 				}
 			}
 			
-			if(FECHA_RESOLUCION.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+			if(FECHA_RESOLUCION.equals(valor.getNombre())) {
 				try {
-					expedienteComercial.setFechaSancion(ft.parse(valor.getValor()));
+					if (!Checks.esNulo(valor.getValor())) {
+						expedienteComercial.setFechaSancion(ft.parse(valor.getValor()));
+					} else {
+						expedienteComercial.setFechaSancion(new Date());
+					}
 				} catch (ParseException e) {
 					logger.error("Error insertando Fecha Sancion Comite.", e);
 				}

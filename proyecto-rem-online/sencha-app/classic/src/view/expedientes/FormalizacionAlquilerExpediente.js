@@ -253,11 +253,23 @@ Ext.define('HreRem.view.expedientes.FormalizacionAlquilerExpediente', {
                     },
                     items :[
                         {
-                            xtype : 'button',
-                            html: '<div style="color: #26607c">' + HreRem.i18n('fieldlabel.numero.trabajo') + '</div>',
+                        	xtype : 'textfieldbase',
+                            fieldLabel : HreRem.i18n('fieldlabel.numero.trabajo'),
+                            bind: {
+                            	value: '<div style="color: #26607c">' + '{expediente.numTrabajo}' + '</div>'
+                            },
                             colspan : 2,
-                            style: 'background: transparent; border: none;',                            
-                            handler: 'enlaceAbrirTrabajo' 
+                            style: 'background: transparent; border: none;',
+                            handleMouseEvents: true,
+							listeners: {
+   								'render': function() { 
+   									this.getEl().on('mousedown', 'enlaceAbrirTrabajo');
+   									new Ext.tip.ToolTip({
+    								target: this.getEl(),
+    								html: HreRem.i18n('fieldlabel.numero.trabajo.click')
+									});
+   								}
+							}
                         },{
                             xtype : 'textfieldbase',
                             width : '100%',

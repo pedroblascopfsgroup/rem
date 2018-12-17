@@ -484,8 +484,11 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
     		model: 'HreRem.model.ComboBase',
 			proxy: {
 				type: 'uxproxy',
-				remoteUrl: 'generic/getDiccionario',
-				extraParams: {diccionario: 'tiposCalculo'}
+				remoteUrl: 'generic/getDiccionarioByTipoOferta',
+				extraParams: {
+					diccionario: 'tiposCalculo',
+					codTipoOferta : '{expediente.tipoExpedienteCodigo}'
+				}
 			}   
     	},
 

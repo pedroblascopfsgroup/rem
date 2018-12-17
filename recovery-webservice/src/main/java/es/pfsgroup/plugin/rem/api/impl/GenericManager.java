@@ -23,6 +23,7 @@ import org.springframework.ui.ModelMap;
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.utils.MessageUtils;
 import es.capgemini.pfs.despachoExterno.model.DespachoExterno;
+import es.capgemini.pfs.diccionarios.Dictionary;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.procesosJudiciales.model.TipoJuzgado;
@@ -78,6 +79,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoBloqueo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTrabajo;
@@ -868,6 +870,13 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		}
 
 		return listaTiposPorCuenta;
+	}
+	
+	@Override
+	public List<DDTipoCalculo> getDiccionarioByTipoOferta(String diccionario, String codTipoOferta) {
+		Filter filtroTipoOferta = genericDao.createFilter(FilterType.EQUALS, "tipoOferta.codigo", codTipoOferta);
+		
+		return genericDao.getList(DDTipoCalculo.class, filtroTipoOferta); 
 	}
 
 	@Override

@@ -1,10 +1,10 @@
  --/*
 --##########################################
---## AUTOR=PIER GOTTA
---## FECHA_CREACION=20180315
+--## AUTOR=ADRIAN DANIEL CASIEAN
+--## FECHA_CREACION=20181210
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-3890
+--## INCIDENCIA_LINK=HREOS-4906
 --## PRODUCTO=NO
 --## Finalidad: DDL creación de la vista busqueda publicación activo con correccion al filtrar con historico de inf comercial
 --## Comentario1: Se adapta la vista para filtrar por valoracion sin borrar y que diferencie entre el destino comercial del activo.
@@ -12,6 +12,7 @@
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##	    0.2 Se ha añadido las columnas OKALQUILER y OKVENTA
 --##########################################
 --*/
 
@@ -65,7 +66,9 @@ EXECUTE IMMEDIATE 'CREATE OR REPLACE FORCE VIEW ' || V_ESQUEMA || '.' || V_TEXT_
                                                                   gestion,
                                                                   informe_comercial,
                                                                   publicacion,
-                                                                  precio
+                                                                  precio,
+								  okalquiler,
+								  okventa
                                                                  )
 AS 
   WITH VISTA_ACT_PUB AS (
@@ -94,6 +97,21 @@ AS
         WHEN NVL(TPC.DD_TPC_CODIGO,''00'') = ''03'' AND NVL(TCO.DD_TCO_CODIGO,''00'') IN (''02'',''03'',''04'') THEN 1
         ELSE 0 
       END AS PRECIO
+    , CASE 
+        WHEN TPA.DD_TPA_CODIGO = ''02'' 
+        THEN 
+            CASE
+                WHEN ACT.ACT_ADMISION = 1 AND ACT.ACT_GESTION = 1 AND COND.SIN_INFORME_APROBADO = 0 AND ADEC.DD_ADA_CODIGO = ''01'' OR ADEC.DD_ADA_CODIGO = ''03'' AND TPD.DD_TPD_CODIGO = ''11'' AND (TPC.DD_TPC_CODIGO = ''03'' OR ACT_APU.APU_CHECK_PUB_SIN_PRECIO_A = 1)
+                THEN 1
+                ELSE 0
+            END
+        ELSE 0
+      END AS OKALQUILER
+    , CASE
+        WHEN ACT.ACT_ADMISION = 1 AND ACT.ACT_GESTION = 1 AND COND.SIN_INFORME_APROBADO = 0 AND (ADEC.DD_ADA_CODIGO = ''02'' OR ACT_APU.APU_CHECK_PUB_SIN_PRECIO_V = 1)
+        THEN 1
+        ELSE 0
+    END AS OKVENTA
     , TPC.DD_TPC_CODIGO
     , TCO.DD_TCO_CODIGO
     , HIC.HIC_FECHA
@@ -117,10 +135,15 @@ AS
   LEFT JOIN '||V_ESQUEMA||'.DD_EPA_ESTADO_PUB_ALQUILER EPA ON ACT_APU.DD_EPA_ID = EPA.DD_EPA_ID AND EPA.BORRADO = 0
   LEFT JOIN '||V_ESQUEMA||'.DD_EPV_ESTADO_PUB_VENTA EPV ON ACT_APU.DD_EPV_ID = EPV.DD_EPV_ID AND EPV.BORRADO = 0
   LEFT JOIN '||V_ESQUEMA||'.DD_TCO_TIPO_COMERCIALIZACION TCO ON TCO.DD_TCO_ID = ACT_APU.DD_TCO_ID AND TCO.BORRADO = 0
+  LEFT JOIN '||V_ESQUEMA||'.V_COND_DISPONIBILIDAD COND ON COND.ACT_ID=ACT.ACT_ID AND COND.BORRADO = 0
+  LEFT JOIN '||V_ESQUEMA||'.ACT_PTA_PATRIMONIO_ACTIVO PTA ON PTA.ACT_ID= ACT.ACT_ID AND PTA.BORRADO = 0
+  LEFT JOIN '||V_ESQUEMA||'.DD_ADA_ADECUACION_ALQUILER ADEC ON ADEC.DD_ADA_ID=PTA.DD_ADA_ID AND ADEC.BORRADO = 0
+  LEFT JOIN '||V_ESQUEMA||'.ACT_ADA_ADJUNTO_ACTIVO ADA ON ADA.ACT_ID=ACT.ACT_ID AND ADA.BORRADO = 0
+  LEFT JOIN '||V_ESQUEMA||'.DD_TPD_TIPO_DOCUMENTO TPD ON TPD.DD_TPD_ID = ADA.DD_TPD_ID AND TPD.BORRADO = 0
   WHERE (PAC.PAC_ID IS NULL OR PAC.PAC_CHECK_COMERCIALIZAR = 1) AND ACT.BORRADO = 0)
   SELECT ACT_ID, ACT_NUM_ACTIVO, TIPO_ACTIVO_CODIGO, TIPO_ACTIVO_DESCRIPCION, SUBTIPO_ACTIVO_CODIGO, SUBTIPO_ACTIVO_DESCRIPCION
     , DIRECCION, CARTERA_CODIGO, ESTADO_PUBLICACION_CODIGO, ESTADO_PUBLICACION_DESCRIPCION, TIPO_COMERCIALIZACION_CODIGO, TIPO_COMERCIALIZACION_DESC, ADMISION, GESTION, INFORME_COMERCIAL
-    , PUBLICACION, PRECIO
+    , PUBLICACION, PRECIO, OKALQUILER, OKVENTA
   FROM VISTA_ACT_PUB
   WHERE RN = 1';
 

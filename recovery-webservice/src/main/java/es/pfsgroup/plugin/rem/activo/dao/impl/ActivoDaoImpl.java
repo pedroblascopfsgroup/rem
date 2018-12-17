@@ -652,6 +652,8 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.publicacion", dto.getPublicacion());
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.precio", dto.getPrecio());
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.informeComercial", dto.getInformeComercial());
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.okventa", dto.getOkventa());
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.okalquiler", dto.getOkalquiler());
    		if (!Checks.esNulo(dto.getTipoComercializacionCodigo()))HQLBuilder.addFiltroWhereInSiNotNull(hb, "activopubli.tipoComercializacionCodigo", Arrays.asList(dto.getTipoComercializacionCodigo()));
 
 		return HibernateQueryUtils.page(this, hb, dto);

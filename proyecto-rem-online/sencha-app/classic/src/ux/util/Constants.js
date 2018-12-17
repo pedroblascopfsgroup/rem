@@ -39,7 +39,8 @@ Ext.define('HreRem.ux.util.Constants', {
 		PROYECTO: '04',
 		ASISTIDA: '13',
 		LOTE_COMERCIAL: '14',
-		COMERCIAL_ALQUILER:'15'
+		COMERCIAL_ALQUILER:'15',
+		COMERCIAL_VENTA:'14'
 	},
 
 	TIPOS_INFO_COMERCIAL: {

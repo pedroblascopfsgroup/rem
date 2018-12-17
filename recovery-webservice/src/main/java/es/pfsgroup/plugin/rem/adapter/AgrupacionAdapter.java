@@ -300,6 +300,7 @@ public class AgrupacionAdapter {
 						|| agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_COMERCIAL_ALQUILER) ) {
 					ActivoLoteComercial agrupacionTemp = (ActivoLoteComercial) agrupacion;
 
+					BeanUtils.copyProperties(dtoAgrupacion, agrupacionTemp);
 
 					if (agrupacionTemp.getLocalidad() != null) {
 						BeanUtils.copyProperty(dtoAgrupacion, "municipioDescripcion",
@@ -307,6 +308,7 @@ public class AgrupacionAdapter {
 						BeanUtils.copyProperty(dtoAgrupacion, "municipioCodigo",
 								agrupacionTemp.getLocalidad().getCodigo());
 					}
+					
 
 					if (agrupacionTemp.getProvincia() != null) {
 						BeanUtils.copyProperty(dtoAgrupacion, "provinciaDescripcion",

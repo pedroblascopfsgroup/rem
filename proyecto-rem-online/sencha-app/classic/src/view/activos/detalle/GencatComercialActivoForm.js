@@ -9,8 +9,10 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoForm', {
     	'HreRem.model.Gencat',
     	'HreRem.model.GencatHistorico',
     	'HreRem.view.activos.detalle.OfertasAsociadasActivoList',
+    	'HreRem.view.activos.detalle.HistoricoOfertasAsociadasActivoList',
     	'HreRem.view.activos.detalle.DocumentosActivoGencatList',
-    	'HreRem.view.activos.detalle.ReclamacionesActivoList'
+    	'HreRem.view.activos.detalle.ReclamacionesActivoList',
+    	'HreRem.view.activos.detalle.HistoricoReclamacionesActivoList'
     ],
     
     listeners: { 
@@ -27,13 +29,45 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoForm', {
         var me = this;
         
         var title;
+        var ofertasasociadasactivolist;
+        var reclamacionesactivolist;
         if (me.formDeHistorico) {
+        	
         	title = HreRem.i18n('title.comunicacion.historico');
         	me.recordClass = 'HreRem.model.GencatHistorico';
         	me.getModelInstance().getProxy().setExtraParam('idHComunicacion', me.idHComunicacion);
+        	
+        	ofertasasociadasactivolist = {	
+				xtype: 'historicoofertasasociadasactivolist',
+				reference: 'historicoofertasasociadasactivolistref',
+				width: '100%',
+				idHComunicacion: me.idHComunicacion
+			}
+        	
+        	reclamacionesactivolist = {	
+				xtype: 'historicoreclamacionesactivolist',
+				reference: 'historicoreclamacionesactivolistref',
+				idHComunicacion: me.idHComunicacion,
+				width: '100%'
+    		}
+        	
         }
         else {
+        	
         	title = HreRem.i18n('title.comunicacion.actual');
+        	
+        	ofertasasociadasactivolist = {	
+				xtype: 'ofertasasociadasactivolist',
+				reference: 'ofertasasociadasactivolistref',
+				width: '100%'
+        	}
+        	
+        	reclamacionesactivolist = {	
+				xtype: 'reclamacionesactivolist',
+				reference: 'reclamacionesactivolistref',
+				width: '100%'
+    		}
+        	
         }
         
         var items = [
@@ -227,11 +261,7 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoForm', {
 					    },
 						items:
 							[
-								{	
-				    				xtype: 'ofertasasociadasactivolist',
-				    				reference: 'ofertasasociadasactivolistref',
-				    				width: '100%'
-				    			}
+								ofertasasociadasactivolist
 							]
 		        	},
 		        	{
@@ -328,7 +358,8 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoForm', {
 								bind: {
 									//value: '{gencat.documentoNotificion}'
 								}
-			    				/*será un buscador de documento donde el nuevo gestor de formalización-administración 
+			    				/* TODO: funcionalidad de documento notificacion:
+			    				 * Será un buscador de documento donde el nuevo gestor de formalización-administración 
 			    				 * tendrá OBLIGATORIAMENTE que subir, si no lo sube no se grabará la notificación*/
 			    			},
 			    			{
@@ -376,11 +407,7 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoForm', {
 					    },
 						items:
 							[
-								{	
-				    				xtype: 'reclamacionesactivolist',
-				    				reference: 'reclamacionesactivolistref',
-				    				width: '100%'
-				    			}
+								reclamacionesactivolist
 							]
 		        	}
 					

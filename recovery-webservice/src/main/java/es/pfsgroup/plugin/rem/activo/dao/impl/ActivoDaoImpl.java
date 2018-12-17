@@ -187,6 +187,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.flagRating", dto.getRatingCodigo());
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.conCargas", dto.getConCargas());
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "gausu.id", dto.getUsuarioGestor());
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.estadoComunicacionGencat", dto.getEstadoComunicacionGencatCodigo());
 
 		return HibernateQueryUtils.page(this, hb, dto);
 

@@ -6,32 +6,20 @@ Ext.define('HreRem.view.activos.detalle.DocumentosActivoGencatList', {
         store: '{storeDocumentosActivoGencat}'
     },
     features: [{ftype:'grouping'}],
+    topBar		:  true,
+    removeButton: false,
         
     initComponent: function () {
         
         var me = this;  
+        
+        //me.topBar = $AU.userHasFunction('EDITAR_TAB_ACTIVO_DOCUMENTOS');
         
         /*me.listeners = {	    	
 			rowdblclick: 'onVisitasListDobleClick'
 	    }*/
         
         me.columns = [
-	        	/*{
-			        xtype: 'actioncolumn',
-			        width: 30,	
-			        hideable: false,
-			        items: [{
-			           	iconCls: 'ico-download',
-			           	tooltip: HreRem.i18n("tooltip.download"),
-			            handler: function(grid, rowIndex, colIndex) {
-	
-			                /*var record = grid.getRecord(rowIndex);
-			                var grid = me.down('gridBase');
-			                
-			                grid.fireEvent("download", grid, record);*/				                
-	            		/*}
-			        }]
-	    		},*/
 	    		{
 			        xtype: 'actioncolumn',
 			        width: 30,	
@@ -42,20 +30,21 @@ Ext.define('HreRem.view.activos.detalle.DocumentosActivoGencatList', {
 			            handler: function(grid, rowIndex, colIndex) {
 			            	
 			                var record = grid.getRecord(rowIndex);
-			                var grid = me.down('gridBase');
+			                me.fireEvent("download", me, record);
 			                
-			                grid.fireEvent("download", grid, record); 				                
 	            		}
 			        }]
 	    		},
 	    		{
 		            dataIndex: 'nombre',
 		            text: HreRem.i18n('header.nombre.documento'),
-		            flex: 2
+		            flex: 1,
+		            hidden: true
 		        },
 		        {   text: HreRem.i18n('header.tipo'),
 		        	dataIndex: 'descripcionTipo',
-		        	flex: 1
+		        	flex: 1,
+		        	hidden: true
 		        },
 		        {
 		            dataIndex: 'fechaDocumento',
@@ -66,7 +55,7 @@ Ext.define('HreRem.view.activos.detalle.DocumentosActivoGencatList', {
 		        {
 		            dataIndex: 'gestor',
 		            text: HreRem.i18n('header.usuario.subida'),
-		            flex: 2
+		            flex: 1
 		        }
         ];
         

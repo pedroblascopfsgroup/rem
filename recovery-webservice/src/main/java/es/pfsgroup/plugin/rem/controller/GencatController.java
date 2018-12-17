@@ -120,4 +120,36 @@ public class GencatController {
 		return createModelAndViewJson(model);
 	}
 	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getHistoricoOfertasAsociadasIdComunicacionHistorico(Long idHComunicacion, ModelMap model) {
+		
+		try {
+			model.put("data", gencatApi.getHistoricoOfertasAsociadasIdComunicacionHistorico(idHComunicacion));
+			model.put("success", true);
+		} 
+		catch (Exception e) {
+			logger.error("Error en gencatController", e);
+			model.put("success", false);
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getHistoricoReclamacionesByIdComunicacionHistorico(Long idHComunicacion, ModelMap model) {
+		
+		try {
+			model.put("data", gencatApi.getHistoricoReclamacionesByIdComunicacionHistorico(idHComunicacion));
+			model.put("success", true);
+		} 
+		catch (Exception e) {
+			logger.error("Error en gencatController", e);
+			model.put("success", false);
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
 }

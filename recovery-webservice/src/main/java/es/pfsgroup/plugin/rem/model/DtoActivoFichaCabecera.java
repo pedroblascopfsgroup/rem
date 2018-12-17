@@ -20,6 +20,7 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private String poblacion;
 	private Date fechaDueD;
 	private String rating;
+	private String estadoComunicacionGencatCodigo;
 	private String numActivo;
 	private String numActivoRem;
 	private String idSareb;
@@ -1518,5 +1519,12 @@ public Boolean getTienePosibleInformeMediador() {
 	public void setAfectoAGencat(Boolean afectoAGencat) {
 		this.afectoAGencat = afectoAGencat;
 	}
-	
+
+	public String getEstadoComunicacionGencatCodigo() {
+		return estadoComunicacionGencatCodigo;
+	}
+
+	public void setEstadoComunicacionGencatCodigo(String estadoComunicacionGencatCodigo) {
+		this.estadoComunicacionGencatCodigo = estadoComunicacionGencatCodigo;
+	}
 }

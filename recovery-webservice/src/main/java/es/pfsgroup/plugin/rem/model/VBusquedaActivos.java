@@ -268,6 +268,9 @@ public class VBusquedaActivos implements Serializable {
 	@Column(name="DD_TPO_CODIGO")
 	private String tipoTituloPosesorio;
 	
+	@Column(name = "DD_ECG_CODIGO")
+	private String estadoComunicacionGencat;
+		
 	public Long getId() {
 		return id;
 	}
@@ -349,46 +352,6 @@ public class VBusquedaActivos implements Serializable {
 		this.gestion = gestion;
 	}
 
-	/*public String getFlagAdmision() {
-		return flagAdmision;
-	}
-
-	public void setFlagAdmision(String flagAdmision) {
-		this.flagAdmision = flagAdmision;
-	}
-
-	public String getFlagGestion() {
-		return flagGestion;
-	}
-
-	public void setFlagGestion(String flagGestion) {
-		this.flagGestion = flagGestion;
-	}
-
-	public String getFlagPrecio() {
-		return flagPrecio;
-	}
-
-	public void setFlagPrecio(String flagPrecio) {
-		this.flagPrecio = flagPrecio;
-	}
-
-	public String getFlagPublicaciones() {
-		return flagPublicaciones;
-	}
-
-	public void setFlagPublicaciones(String flagPublicaciones) {
-		this.flagPublicaciones = flagPublicaciones;
-	}
-
-	public String getFlagComercializar() {
-		return flagComercializar;
-	}
-
-	public void setFlagComercializar(String flagComercializar) {
-		this.flagComercializar = flagComercializar;
-	}
-*/
 	public String getFlagRating() {
 		return flagRating;
 	}
@@ -646,6 +609,12 @@ public class VBusquedaActivos implements Serializable {
 		this.tipoTituloPosesorio = tipoTituloPosesorio;
 	}
 
+	public String getEstadoComunicacionGencat() {
+		return estadoComunicacionGencat;
+	}
 
-
+	public void setEstadoComunicacionGencat(String estadoComunicacionGencat) {
+		this.estadoComunicacionGencat = estadoComunicacionGencat;
+	}
+	
 }

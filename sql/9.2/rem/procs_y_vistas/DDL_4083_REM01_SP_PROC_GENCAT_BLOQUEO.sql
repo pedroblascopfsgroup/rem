@@ -1,7 +1,7 @@
 ﻿--/*
 --##########################################
 --## AUTOR=Sergio Beleña Boix
---## FECHA_CREACION=20181127
+--## FECHA_CREACION=20181128
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-4841
@@ -38,8 +38,8 @@ create or replace PROCEDURE PROC_GENCAT_BLOQUEO(SP_OUTPUT OUT VARCHAR2) AS
     V_FROM 			VARCHAR2(100 CHAR) := 'noreply.rem@pfsgroup.es';
     V_TO 			VARCHAR2(100 CHAR) := 'jpoyatos@haya.es';
     V_BODY 			VARCHAR2(1000 CHAR) := 'Las ofertas de los siguientes activos se han bloqueado por exceso de días de formalización.' || chr(10);
-    V_ASUNTO 		VARCHAR2(250 CHAR) := 'Informe - Oferta bloqueadas por excesos de formalización -';
-    V_ADJUNTO 		VARCHAR2(250 CHAR) := 'ofertar_bloqueadas.xlsx';
+    V_ASUNTO 		VARCHAR2(250 CHAR) := 'Informe - Oferta bloqueadas por excesos de formalización';
+    V_ADJUNTO 		VARCHAR2(250 CHAR) := 'ofertas_bloqueadas.xlsx';
 
 BEGIN
 

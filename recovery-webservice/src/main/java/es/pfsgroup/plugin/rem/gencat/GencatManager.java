@@ -32,7 +32,12 @@ import es.pfsgroup.plugin.rem.model.DtoGencat;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoComunicacionGencat;
 import es.pfsgroup.plugin.rem.model.DtoOfertasAsociadasActivo;
 import es.pfsgroup.plugin.rem.model.DtoReclamacionActivo;
+import es.pfsgroup.plugin.rem.model.HistoricoAdecuacionGencat;
 import es.pfsgroup.plugin.rem.model.HistoricoComunicacionGencat;
+import es.pfsgroup.plugin.rem.model.HistoricoNotificacionGencat;
+import es.pfsgroup.plugin.rem.model.HistoricoOfertaGencat;
+import es.pfsgroup.plugin.rem.model.HistoricoReclamacionGencat;
+import es.pfsgroup.plugin.rem.model.HistoricoVisitaGencat;
 import es.pfsgroup.plugin.rem.model.NotificacionGencat;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.OfertaGencat;
@@ -120,11 +125,11 @@ public class GencatManager extends BusinessOperationOverrider<GencatApi> impleme
 				}
 				
 			}
-			catch (IllegalAccessException iae) {
-				logger.error("aaa");
+			catch (IllegalAccessException e) {
+				logger.error("Error en gencatManager", e);
 			}
-			catch (InvocationTargetException ite) {
-				logger.error("eee");
+			catch (InvocationTargetException e) {
+				logger.error("Error en gencatManager", e);
 			}
 		}
 		
@@ -208,11 +213,11 @@ public class GencatManager extends BusinessOperationOverrider<GencatApi> impleme
 					listaReclamacion.add(dtoReclamacionActivo);
 				}
 			}
-			catch (IllegalAccessException iae) {
-				logger.error("aaa");
+			catch (IllegalAccessException e) {
+				logger.error("Error en gencatManager", e);
 			}
-			catch (InvocationTargetException ite) {
-				logger.error("eee");
+			catch (InvocationTargetException e) {
+				logger.error("Error en gencatManager", e);
 			}
 		}
 		
@@ -224,7 +229,12 @@ public class GencatManager extends BusinessOperationOverrider<GencatApi> impleme
 		
 		List<DtoAdjunto> listaAdjuntos = new ArrayList<DtoAdjunto>();
 		
-		//TODO: filtrar los documentos que se obtienen para que sólo suba los documentos de los 7 tipos especificados en el HREOS-4836
+		/*TODO: filtrar los documentos que se obtienen para que sólo suba los documentos de los 7 tipos especificados en el HREOS-4836 y HREOS-4927
+		 * (pendiente informar). De momento este listado está funcionando igual que el listado de documentos de la pestaña Documentos del activo.
+		 * 
+		 * Nota: de momento ambos listados de documentos (tanto el de la comunicación como el de histórico) tiran de este método y cargan la misma
+		 * información, lo suyo sería crear 2 métodos para que carguen los documentos de la comunicación y histórico respectivamente por separado 
+		 * filtrando por los 7 tipos de documentos que están pendientes de informar.*/
 		if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
 			Activo activo = activoApi.get(id);
 			listaAdjuntos = gestorDocumentalAdapterApi.getAdjuntosActivo(activo);
@@ -291,11 +301,11 @@ public class GencatManager extends BusinessOperationOverrider<GencatApi> impleme
 				listaHistoricoComunicaciones.add(dtoHistoricoComunicacion);
 			}
 		}
-		catch (IllegalAccessException iae) {
-			logger.error("aaa");
+		catch (IllegalAccessException e) {
+			logger.error("Error en gencatManager", e);
 		}
-		catch (InvocationTargetException ite) {
-			logger.error("eee");
+		catch (InvocationTargetException e) {
+			logger.error("Error en gencatManager", e);
 		}
 		
 		return listaHistoricoComunicaciones;
@@ -312,21 +322,141 @@ public class GencatManager extends BusinessOperationOverrider<GencatApi> impleme
 		//Datos historico de la comunicación
 		HistoricoComunicacionGencat hComunicacionGencat = genericDao.get(HistoricoComunicacionGencat.class, filtroHComunicacionId, filtroBorrado);
 		
-		try {
-			if (hComunicacionGencat != null) {
+		if (hComunicacionGencat != null) {
+			try {
 				BeanUtils.copyProperties(gencatDto, hComunicacionGencat);
 				gencatDto.setSancion(hComunicacionGencat.getSancion() != null ? hComunicacionGencat.getSancion().getCodigo() : null);
 				gencatDto.setEstadoComunicacion(hComunicacionGencat.getEstadoComunicacion() != null ? hComunicacionGencat.getEstadoComunicacion().getCodigo() : null);
+				
+				Filter filtroIdComunicacion = genericDao.createFilter(FilterType.EQUALS, "historicoComunicacion.id", hComunicacionGencat.getId());
+				Order orderByFechaCrear = new Order(OrderType.DESC, "auditoria.fechaCrear");
+				
+				//Adecuacion
+				List <HistoricoAdecuacionGencat> resultAdecuacion = genericDao.getListOrdered(HistoricoAdecuacionGencat.class, orderByFechaCrear, filtroIdComunicacion, filtroBorrado);
+				if (resultAdecuacion != null && !resultAdecuacion.isEmpty()) {
+					HistoricoAdecuacionGencat adecuacionGencat = resultAdecuacion.get(0);
+					BeanUtils.copyProperties(gencatDto, adecuacionGencat);
+				}
+				
+				//Visita
+				List <HistoricoVisitaGencat> resultVisitaGencat = genericDao.getListOrdered(HistoricoVisitaGencat.class, orderByFechaCrear, filtroIdComunicacion, filtroBorrado);
+				if (resultVisitaGencat != null && !resultVisitaGencat.isEmpty()) {
+					HistoricoVisitaGencat visitaGencat = resultVisitaGencat.get(0);
+					Visita visita = visitaGencat.getVisita();
+					if (visita != null) {
+						gencatDto.setIdVisita(visita.getNumVisitaRem());
+						gencatDto.setEstadoVisita(visita.getEstadoVisita() != null ? visita.getEstadoVisita().getCodigo() : null);
+						gencatDto.setFechaRealizacionVisita(visita.getFechaVisita());
+						
+						Usuario mediador = visita.getUsuarioAccion();
+						if (mediador != null) {
+							gencatDto.setApiRealizaLaVisita(mediador.getApellidoNombre());
+						}
+					}
+				}
+				
+				//Notificacion
+				List <HistoricoNotificacionGencat> resultNotificacionGencat = genericDao.getListOrdered(HistoricoNotificacionGencat.class, orderByFechaCrear, filtroIdComunicacion, filtroBorrado);
+				if (resultNotificacionGencat != null && !resultNotificacionGencat.isEmpty()) {
+					HistoricoNotificacionGencat notificacionGencat = resultNotificacionGencat.get(0);
+					BeanUtils.copyProperties(gencatDto, notificacionGencat);
+					gencatDto.setMotivoNotificacion(notificacionGencat.getTipoNotificacion() != null ? notificacionGencat.getTipoNotificacion().getCodigo() : null);
+				}
+				
+				//Oferta
+				List <HistoricoOfertaGencat> resultOfertaGencatGencat = genericDao.getListOrdered(HistoricoOfertaGencat.class, orderByFechaCrear, filtroIdComunicacion, filtroBorrado);
+				if (resultOfertaGencatGencat != null && !resultOfertaGencatGencat.isEmpty()) {
+					HistoricoOfertaGencat ofertaGencat = resultOfertaGencatGencat.get(0);
+					Oferta oferta = ofertaGencat.getOferta();
+					if (oferta != null) {
+						gencatDto.setOfertaGencat(oferta.getNumOferta());
+					}
+				}
+				
 			}
-		}
-		catch (IllegalAccessException iae) {
-			logger.error("aaa");
-		}
-		catch (InvocationTargetException ite) {
-			logger.error("eee");
+			catch (IllegalAccessException e) {
+				logger.error("Error en gencatManager", e);
+			}
+			catch (InvocationTargetException e) {
+				logger.error("Error en gencatManager", e);
+			}
 		}
 		
 		return gencatDto;
+	}
+	
+	@Override
+	public List<DtoOfertasAsociadasActivo> getHistoricoOfertasAsociadasIdComunicacionHistorico(Long idComunicacionHistorico) {
+
+		List<DtoOfertasAsociadasActivo> listaDtoOfertasAsociadasActivo = new ArrayList<DtoOfertasAsociadasActivo>();
+		
+		Filter filtroHComunicacionId = genericDao.createFilter(FilterType.EQUALS, "id", idComunicacionHistorico);
+		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+		
+		//Datos historico de la comunicación
+		HistoricoComunicacionGencat hComunicacionGencat = genericDao.get(HistoricoComunicacionGencat.class, filtroHComunicacionId, filtroBorrado);
+		
+		if (hComunicacionGencat != null) {
+			Filter filtroIdComunicacion = genericDao.createFilter(FilterType.EQUALS, "historicoComunicacion.id", hComunicacionGencat.getId());
+			
+			//Oferta
+			List<HistoricoOfertaGencat> listaOfertasGencat = genericDao.getList(HistoricoOfertaGencat.class, filtroIdComunicacion, filtroBorrado);
+			DtoOfertasAsociadasActivo dtoOfertasAsociadasActivo;
+			for (int i = 0; i < listaOfertasGencat.size(); i++) {
+				dtoOfertasAsociadasActivo = new DtoOfertasAsociadasActivo();
+				
+				HistoricoOfertaGencat ofertaGencat = listaOfertasGencat.get(i);
+				Oferta oferta = ofertaGencat.getOferta();
+				
+				dtoOfertasAsociadasActivo.setFechaPreBloqueo(hComunicacionGencat.getFechaPreBloqueo());
+				dtoOfertasAsociadasActivo.setNumOferta(oferta.getNumOferta());
+				dtoOfertasAsociadasActivo.setImporteOferta(ofertaGencat.getImporte());
+				dtoOfertasAsociadasActivo.setTipoComprador(ofertaGencat.getTipoPeriocidad().getDescripcion());
+				dtoOfertasAsociadasActivo.setSituacionOcupacional(ofertaGencat.getSituacionPosesoria().getDescripcion());
+				
+				listaDtoOfertasAsociadasActivo.add(dtoOfertasAsociadasActivo);
+			}
+		}
+		
+		return listaDtoOfertasAsociadasActivo;
+
+	}
+	
+	@Override
+	public List<DtoReclamacionActivo> getHistoricoReclamacionesByIdComunicacionHistorico(Long idComunicacionHistorico) {
+		
+		List<DtoReclamacionActivo> listaReclamacion = new ArrayList<DtoReclamacionActivo>();
+		
+		Filter filtroHComunicacionId = genericDao.createFilter(FilterType.EQUALS, "id", idComunicacionHistorico);
+		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+		
+		//Datos historico de la comunicación
+		HistoricoComunicacionGencat hComunicacionGencat = genericDao.get(HistoricoComunicacionGencat.class, filtroHComunicacionId, filtroBorrado);
+		
+		if (hComunicacionGencat != null) {
+			try {
+				Filter filtroIdComunicacion = genericDao.createFilter(FilterType.EQUALS, "historicoComunicacion.id", hComunicacionGencat.getId());
+				Order orderByFechaAviso = new Order(OrderType.DESC, "fechaAviso");
+				
+				//Reclamacion
+				List<HistoricoReclamacionGencat> listaReclamacionGencat = genericDao.getListOrdered(HistoricoReclamacionGencat.class, orderByFechaAviso, filtroIdComunicacion, filtroBorrado);
+				DtoReclamacionActivo dtoReclamacionActivo;
+				for (int i = 0; i < listaReclamacionGencat.size(); i++) {
+					dtoReclamacionActivo = new DtoReclamacionActivo();
+					BeanUtils.copyProperties(dtoReclamacionActivo, listaReclamacionGencat.get(i));
+					listaReclamacion.add(dtoReclamacionActivo);
+				}
+			}
+			catch (IllegalAccessException e) {
+				logger.error("Error en gencatManager", e);
+			}
+			catch (InvocationTargetException e) {
+				logger.error("Error en gencatManager", e);
+			}
+		}
+		
+		return listaReclamacion;
+		
 	}
 	
 }

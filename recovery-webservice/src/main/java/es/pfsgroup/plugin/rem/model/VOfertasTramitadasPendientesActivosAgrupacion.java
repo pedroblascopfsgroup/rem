@@ -146,7 +146,10 @@ public class VOfertasTramitadasPendientesActivosAgrupacion implements Serializab
 	private Boolean necesitaFinanciacion;	
     
     @Column(name="OBSERVACIONES")
-	private String observaciones;	
+	private String observaciones;
+    
+    @Column(name="GENCAT")
+	private Boolean gencat;	
 	
 
 	public Date getFechaModificar() {
@@ -491,5 +494,14 @@ public class VOfertasTramitadasPendientesActivosAgrupacion implements Serializab
 
 	public void setObservaciones(String observaciones) {
 		this.observaciones = observaciones;
-	} 
+	}
+
+	public Boolean getGencat() {
+		return gencat;
+	}
+
+	public void setGencat(Boolean gencat) {
+		this.gencat = gencat;
+	}
+	
 }

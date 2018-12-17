@@ -683,7 +683,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 
 			Ext.create("HreRem.view.expedientes.DatosComprador", {idComprador: idCliente, modoEdicion: edicion, storeGrid:storeGrid, expediente: expediente }).show();
 		}
-		if (!(me.getViewModel().get('expediente.tipoExpedienteCodigo') === tipoExpedienteAlquiler && Ext.isEmpty(fechaPosicionamiento))){
+		if (me.getViewModel().get('expediente.tipoExpedienteCodigo') === tipoExpedienteAlquiler && !Ext.isEmpty(fechaPosicionamiento)){
 			me.fireEvent("errorToast", "Se ha avanzado la tarea Posicionamiento, no se puede editar los inquilinos");
 		}
 	},
@@ -1475,7 +1475,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 
 		if(!bloqueado){
 			if(CONST.ESTADOS_EXPEDIENTE['VENDIDO'] != codigoEstado){
-				if(CONST.TIPOS_EXPEDIENTE_COMERCIAL['ALQUILER'] == tipoExpedienteCodigo && tipoOrigenWCOM != origen){
+				if((CONST.TIPOS_EXPEDIENTE_COMERCIAL['ALQUILER'] == tipoExpedienteCodigo && tipoOrigenWCOM != origen) || CONST.TIPOS_EXPEDIENTE_COMERCIAL['VENTA'] == tipoExpedienteCodigo){
 					if(Ext.isEmpty(fechaSancion)){
 						var ventanaCompradores= grid.up().up();
 						var expediente= me.getViewModel().get("expediente");

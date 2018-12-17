@@ -24,6 +24,9 @@ Ext.define('HreRem.view.expedientes.DocumentosExpediente', {
 			{
             	xtype: 'fieldsettable',
             	title:  HreRem.i18n('fieldset.title.doc'),
+            	bind: {
+            		hidden: '{!esTipoAlquiler}'
+            		},
             	items : [
             		{
 	                	xtype: 'checkboxfieldbase',

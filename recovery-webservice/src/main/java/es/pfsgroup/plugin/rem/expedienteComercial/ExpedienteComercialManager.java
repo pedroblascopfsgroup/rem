@@ -823,6 +823,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					dto.setIdTrabajo(expediente.getTrabajo().getId());
 					dto.setEstadoTrabajo(expediente.getTrabajo().getEstado().getDescripcion());
 					dto.setMotivoAnulacionTrabajo(expediente.getTrabajo().getMotivoRechazo());
+					dto.setNumTrabajo(expediente.getTrabajo().getNumTrabajo());
 				}
 
 				if (!Checks.esNulo(activo.getCartera())) {

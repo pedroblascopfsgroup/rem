@@ -483,7 +483,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		}
 		if (!Checks.esNulo(ofertaDto.getCodTarea())) {
 			if (alta) {
-				errorsList.put("codTarea", RestApi.REST_MSG_TAREA_INVALIDA);
+				errorsList.put("codTarea", RestApi.REST_MSG_UNKNOWN_KEY);
 			} else {
 				if (ofertaDto.getCodTarea().equals("01") && Checks.esNulo(ofertaDto.getAceptacionContraoferta())) {
 					errorsList.put("aceptacionContraoferta", RestApi.REST_MSG_MISSING_REQUIRED);
@@ -3136,9 +3136,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		boolean avanzar = true;
 
 		if (ofertaDto.getCodTarea().equals("01")  && DDEstadosExpedienteComercial.CONTRAOFERTADO.equals(expedienteComercial.getEstado().getCodigo())) {
-			if (ofertaDto.getAceptacionContraoferta().equals("Si")) {
+			if (ofertaDto.getAceptacionContraoferta()) {
 				valoresTarea.put("aceptacionContraoferta", new String[] { DDSiNo.SI });
-			} else if (ofertaDto.getAceptacionContraoferta().equals("No")) {
+			} else if (!ofertaDto.getAceptacionContraoferta()) {
 				valoresTarea.put("aceptacionContraoferta", new String[] { DDSiNo.NO });
 			} else {
 				avanzar = false;
@@ -3162,7 +3162,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				ofertaDto.setError(e.getMessage());
 			}
 		} else {
-			errorsList.put("codTarea", RestApi.REST_MSG_TAREA_INVALIDA);
+			errorsList.put("codTarea", RestApi.REST_MSG_INVALID_WORKINGCODE);
 		}
 		return errorsList;
 	}

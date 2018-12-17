@@ -57,7 +57,7 @@ public class OfertaDto implements Serializable {
 	@NotNull(groups = {Insert.class})
 	private Boolean isExpress;
 	private String codTarea;
-	private String aceptacionContraoferta;
+	private Boolean aceptacionContraoferta;
 	private Date fechaPrevistaFirma;
 	private String lugarFirma;
 	private Date fechaFirma;
@@ -191,10 +191,10 @@ public class OfertaDto implements Serializable {
 	public void setCodTarea(String codTarea) {
 		this.codTarea = codTarea;
 	}
-	public String getAceptacionContraoferta() {
+	public Boolean getAceptacionContraoferta() {
 		return aceptacionContraoferta;
 	}
-	public void setAceptacionContraoferta(String aceptacionContraoferta) {
+	public void setAceptacionContraoferta(Boolean aceptacionContraoferta) {
 		this.aceptacionContraoferta = aceptacionContraoferta;
 	}
 	public Date getFechaPrevistaFirma() {

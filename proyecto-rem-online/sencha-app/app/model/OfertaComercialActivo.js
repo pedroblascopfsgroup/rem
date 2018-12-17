@@ -30,6 +30,33 @@ Ext.define('HreRem.model.OfertaComercialActivo', {
     		{
     			name:'importeOferta'
     		},
+    		{
+    			name:'nombreCliente'
+    		},
+    		{
+    			name:'razonSocialCliente'
+    		},
+    		{
+    			name:'apellidosCliente'
+    		},
+    		{
+    			name:'numDocumentoCliente'
+    		},
+    		{
+    			name:'tipoDocumento'
+    		},
+    		{
+    			name:'deDerechoTanteo'
+    		},
+    		{
+            	name: 'tipoPersona'
+            },
+            {
+            	name: 'estadoCivil'
+            },
+            {
+            	name: 'regimenMatrimonial'
+            },
             {
             	name: 'cesionDatosHaya',
             	type : 'boolean'

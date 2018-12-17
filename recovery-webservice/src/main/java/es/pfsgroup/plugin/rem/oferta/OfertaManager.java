@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.oferta;
 
+import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
@@ -65,12 +66,15 @@ import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.ClienteComercial;
+import es.pfsgroup.plugin.rem.model.ClienteGDPR;
 import es.pfsgroup.plugin.rem.model.Comprador;
 import es.pfsgroup.plugin.rem.model.CompradorExpediente;
 import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
 import es.pfsgroup.plugin.rem.model.DtoActivosExpediente;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
 import es.pfsgroup.plugin.rem.model.DtoCambioEstadoPublicacion;
+import es.pfsgroup.plugin.rem.model.DtoClienteComercial;
+import es.pfsgroup.plugin.rem.model.DtoComprador;
 import es.pfsgroup.plugin.rem.model.DtoDetalleOferta;
 import es.pfsgroup.plugin.rem.model.DtoGastoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoHonorariosOferta;
@@ -2924,31 +2928,159 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	
 	//Comporbamos si hace falta pedir documentación a la hora de crear una nueva oferta
 	//APG - HREOS-4851
-	public boolean checkPedirDoc(Long idActivo, Comprador comprador) {
-		Filter filterCliente = genericDao.createFilter(FilterType.EQUALS, "id",
-				comprador.getClienteComercial().getId());
-		ClienteComercial clienteCom = genericDao.get(ClienteComercial.class, filterCliente);
-
+	public boolean checkPedirDoc(Long idActivo,String dniComprador, String codtipoDoc) {
+		ClienteGDPR clienteGDPR = null;
+		ClienteComercial clienteCom = null;
+		
+		if(!Checks.esNulo(dniComprador) && !Checks.esNulo(codtipoDoc)) {
+			Filter filterComprador = genericDao.createFilter(FilterType.EQUALS, "numDocumento",
+					dniComprador);
+			
+			Filter filterCodigoTpoDoc = genericDao.createFilter(FilterType.EQUALS, "tipoDocumento.codigo",
+					codtipoDoc);
+			
+			clienteGDPR = genericDao.get(ClienteGDPR.class, filterComprador,filterCodigoTpoDoc);
+		}
+		if(!Checks.esNulo(clienteGDPR)) {
+			 clienteCom = clienteGDPR.getCliente();	
+		}
+		
 		Activo activo = genericDao.get(Activo.class, genericDao.createFilter(FilterType.EQUALS, "id", idActivo));
-
-		if (!Checks.esNulo(comprador.getDocumento()) && !Checks.esNulo(clienteCom.getDocumento()) && clienteCom.getDocumento().equals(comprador.getDocumento())) {
-			if (!Checks.esNulo(clienteCom.getCesionDatos()) && clienteCom.getCesionDatos()) {
-				if (!Checks.esNulo(clienteCom.getTransferenciasInternacionales()) && clienteCom.getTransferenciasInternacionales()) {
-					return true;
-				} else if (!Checks.esNulo(clienteCom.getTransferenciasInternacionales()) && !clienteCom.getTransferenciasInternacionales()) {
+		
+		if(!Checks.esNulo(clienteGDPR) && !Checks.esNulo(clienteCom)) {
+			if (!Checks.esNulo(clienteGDPR.getNumDocumento()) && !Checks.esNulo(clienteCom.getDocumento()) && clienteCom.getDocumento().equals(clienteGDPR.getNumDocumento())) {
+				if (!Checks.esNulo(clienteCom.getCesionDatos()) && clienteCom.getCesionDatos()) {
+					if (!Checks.esNulo(clienteCom.getTransferenciasInternacionales()) && clienteCom.getTransferenciasInternacionales()) {
+						return true;
+					} else if (!Checks.esNulo(clienteCom.getTransferenciasInternacionales()) && !clienteCom.getTransferenciasInternacionales()) {
+						return false;
+					} else if (Checks.esNulo(clienteCom.getTransferenciasInternacionales())) {
+						return  DDCartera.CODIGO_CARTERA_CERBERUS.equals(activo.getCartera())
+								|| DDCartera.CODIGO_CARTERA_GIANTS.equals(activo.getCartera())
+								|| DDCartera.CODIGO_CARTERA_TANGO.equals(activo.getCartera())
+								|| DDCartera.CODIGO_CARTERA_GALEON.equals(activo.getCartera());
+					}
+				} else {
 					return false;
-				} else if (Checks.esNulo(clienteCom.getTransferenciasInternacionales())) {
-					return  DDCartera.CODIGO_CARTERA_CERBERUS.equals(activo.getCartera())
-							|| DDCartera.CODIGO_CARTERA_GIANTS.equals(activo.getCartera())
-							|| DDCartera.CODIGO_CARTERA_TANGO.equals(activo.getCartera())
-							|| DDCartera.CODIGO_CARTERA_GALEON.equals(activo.getCartera());
 				}
 			} else {
 				return false;
 			}
-		} else {
+		}else {
 			return false;
 		}
+		
 		return false;
 	}
+
+	@Override
+	public DtoClienteComercial getClienteComercialByTipoDoc(String dniComprador, String codtipoDoc) {
+		Comprador comprador = null;
+		ClienteComercial clienteCom = null;
+		DtoClienteComercial clienteComercialDto = new DtoClienteComercial();
+		
+		if(!Checks.esNulo(dniComprador) && !Checks.esNulo(codtipoDoc)) {
+			Filter filterComprador = genericDao.createFilter(FilterType.EQUALS, "documento",
+					dniComprador);
+			
+			Filter filterCodigoTpoDoc = genericDao.createFilter(FilterType.EQUALS, "tipoDocumento.codigo",
+					codtipoDoc);
+			
+			comprador = genericDao.get(Comprador.class, filterComprador,filterCodigoTpoDoc);
+		}
+		if(!Checks.esNulo(comprador)) {
+			 clienteCom = comprador.getClienteComercial();	
+		}
+		
+		try {
+			if(!Checks.esNulo(clienteCom)) {
+				beanUtilNotNull.copyProperties(clienteCom,clienteComercialDto);
+				clienteComercialDto.setApellidosCliente(clienteCom.getApellidos());
+				clienteComercialDto.setNombreCliente(clienteCom.getNombre());
+				clienteComercialDto.setId(clienteCom.getId());
+				clienteComercialDto.setRazonSocial(clienteCom.getRazonSocial());
+				clienteComercialDto.setCesionDatos(clienteCom.getCesionDatos());
+				clienteComercialDto.setComunicacionTerceros(clienteCom.getComunicacionTerceros());
+				clienteComercialDto.setTransferenciasInternacionales(clienteCom.getTransferenciasInternacionales());
+				if(!Checks.esNulo(clienteCom.getEstadoCivil())) {
+					clienteComercialDto.setEstadoCivilCodigo(clienteCom.getEstadoCivil().getCodigo());
+					clienteComercialDto.setEstadoCivilDescripcion(clienteCom.getEstadoCivil().getDescripcion());
+				}
+				if(!Checks.esNulo(clienteCom.getRegimenMatrimonial())) {
+					clienteComercialDto.setRegimenMatrimonialCodigo(clienteCom.getRegimenMatrimonial().getCodigo());
+					clienteComercialDto.setRegimenMatrimonialDescripcion(clienteCom.getRegimenMatrimonial().getDescripcion());
+				}
+				
+				if(!Checks.esNulo(comprador.getTipoPersona())) {
+					clienteComercialDto.setTipoPersonaCodigo(comprador.getTipoPersona().getCodigo());
+					clienteComercialDto.setTipoPersonaDescripcion(comprador.getTipoPersona().getDescripcion());
+				}
+			}
+			
+			
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			e.printStackTrace();
+		}
+		
+		return clienteComercialDto; 
+	}
+	
+	@Override
+	public DtoClienteComercial getClienteGDPRByTipoDoc(String dniComprador, String codtipoDoc) {
+		ClienteGDPR clienteGDPR = null;
+		ClienteComercial clienteCom = null;
+		DtoClienteComercial clienteComercialDto = new DtoClienteComercial();
+		
+		if(!Checks.esNulo(dniComprador) && !Checks.esNulo(codtipoDoc)) {
+			Filter filterComprador = genericDao.createFilter(FilterType.EQUALS, "numDocumento",
+					dniComprador);
+			
+			Filter filterCodigoTpoDoc = genericDao.createFilter(FilterType.EQUALS, "tipoDocumento.codigo",
+					codtipoDoc);
+			
+			clienteGDPR = genericDao.get(ClienteGDPR.class, filterComprador,filterCodigoTpoDoc);
+		}
+		if(!Checks.esNulo(clienteGDPR)) {
+			 clienteCom = clienteGDPR.getCliente();	
+		}
+		
+		try {
+			if(!Checks.esNulo(clienteCom)) {
+				beanUtilNotNull.copyProperties(clienteCom,clienteComercialDto);
+				clienteComercialDto.setApellidosCliente(clienteCom.getApellidos());
+				clienteComercialDto.setNombreCliente(clienteCom.getNombre());
+				clienteComercialDto.setId(clienteCom.getId());
+				clienteComercialDto.setRazonSocial(clienteCom.getRazonSocial());
+				clienteComercialDto.setCesionDatos(clienteCom.getCesionDatos());
+				clienteComercialDto.setComunicacionTerceros(clienteCom.getComunicacionTerceros());
+				clienteComercialDto.setTransferenciasInternacionales(clienteCom.getTransferenciasInternacionales());
+				if(!Checks.esNulo(clienteCom.getEstadoCivil())) {
+					clienteComercialDto.setEstadoCivilCodigo(clienteCom.getEstadoCivil().getCodigo());
+					clienteComercialDto.setEstadoCivilDescripcion(clienteCom.getEstadoCivil().getDescripcion());
+				}
+				if(!Checks.esNulo(clienteCom.getRegimenMatrimonial())) {
+					clienteComercialDto.setRegimenMatrimonialCodigo(clienteCom.getRegimenMatrimonial().getCodigo());
+					clienteComercialDto.setRegimenMatrimonialDescripcion(clienteCom.getRegimenMatrimonial().getDescripcion());
+				}
+				
+				if(!Checks.esNulo(clienteCom.getTipoPersona())) {
+					clienteComercialDto.setTipoPersonaCodigo(clienteCom.getTipoPersona().getCodigo());
+					clienteComercialDto.setTipoPersonaDescripcion(clienteCom.getTipoPersona().getDescripcion());
+				}
+			}
+			
+			
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			e.printStackTrace();
+		}
+		
+		return clienteComercialDto; 
+	}
+	
+	
+	
 }

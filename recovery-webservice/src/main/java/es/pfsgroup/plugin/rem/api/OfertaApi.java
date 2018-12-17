@@ -12,7 +12,8 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
-import es.pfsgroup.plugin.rem.model.Comprador;
+import es.pfsgroup.plugin.rem.model.DtoClienteComercial;
+import es.pfsgroup.plugin.rem.model.DtoComprador;
 import es.pfsgroup.plugin.rem.model.DtoDetalleOferta;
 import es.pfsgroup.plugin.rem.model.DtoGastoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoHonorariosOferta;
@@ -566,6 +567,10 @@ public interface OfertaApi {
 	 * @param comprador
 	 * @return TRUE ->NO hace falta pedir documentación. FALSE ->Sí hace falta.
 	 */
-	boolean checkPedirDoc(Long idActivo, Comprador comprador);
+	boolean checkPedirDoc(Long idActivo, String dniComprador, String codtipoDoc);
+	
+	DtoClienteComercial getClienteComercialByTipoDoc(String dniComprador, String codtipoDoc);
+
+	DtoClienteComercial getClienteGDPRByTipoDoc(String dniComprador, String codtipoDoc);
 }
 

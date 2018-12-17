@@ -36,12 +36,13 @@ Ext.define('HreRem.view.activos.detalle.AnyadirNuevaOfertaDocumento', {
 		me.buttons = [ {
 			itemId : 'btnAvanza',
 			text : 'Continuar',
-			handler : function(btn){
-				var wizard = btn.up().up().up();
-				var layout = wizard.getLayout();
-				layout["next"]();
-			}
-		} ],
+			handler : 'existeCliente'
+		},
+		{
+			itemId : 'btnCancelar',
+			text : 'Cancelar',
+			handler : 'onClickBotonCancelarWizard'	
+		}],
 
 		me.items = [ {
 			xtype : 'fieldsettable',
@@ -53,6 +54,7 @@ Ext.define('HreRem.view.activos.detalle.AnyadirNuevaOfertaDocumento', {
 				xtype: 'comboboxfieldbase',
 	        	fieldLabel:  HreRem.i18n('fieldlabel.tipoDocumento'),
 	        	itemId: 'comboTipoDocumento',
+	        	name: 'comboTipoDocumento',
 	        	allowBlank: false,
 	        	docked: 'top',
 	        	margin: '100px 0 0 150px',

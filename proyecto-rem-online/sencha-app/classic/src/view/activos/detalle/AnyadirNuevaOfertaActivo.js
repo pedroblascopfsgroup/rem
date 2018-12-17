@@ -3,9 +3,6 @@ Ext.define('HreRem.view.activos.detalle.AnyadirNuevaOfertaActivo', {
     xtype		: 'anyadirnuevaofertaactivo',
     layout	: 'fit',
     width	: Ext.Element.getViewportWidth() / 3,    
-    //height	: Ext.Element.getViewportHeight() > 500 ? 500 : Ext.Element.getViewportHeight() - 50 ,
-    //closable: true,		
-    //closeAction: 'hide',
     
     idTrabajo: null,
     

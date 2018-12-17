@@ -7,6 +7,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaDetalle', {
 	recordName: "oferta",
 	bodyStyle	: 'padding:20px',
 	recordClass: "HreRem.model.OfertaComercial",
+	requires: ['HreRem.model.OfertaComercialActivo'],
 	
 	listeners: {    
 		boxready: function(window) {
@@ -35,13 +36,8 @@ Ext.define('HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaDetalle', {
     	me.buttons = [ {
     		itemId: 'btnGuardar',
     		text: 'Crear',
-    		handler: /*'onClickBotonGuardarOferta'*/ //TODO CAMBIAR ANTES DE SUBIR POR ULTIMA VEZ Y CAMBIAR LOS ALLOWBLANK DE TRUE A FALSE DE LOS CAMPOS
-    			function(btn){
-	    			var wizard = btn.up().up().up();
-	    			var layout = wizard.getLayout();
-	    			layout["next"]();
-    			}
-    	},  { itemId: 'btnCancelar', text: 'Cancelar', handler: 'onClickBotonCancelarOferta'}];
+    		handler: 'onClickCrearOferta' /*'onClickBotonGuardarOferta'*/
+    	},  { itemId: 'btnCancelar', text: 'Cancelar', handler: 'onClickBotonCancelarWizard'}];
 
     	me.items = [
 					{
@@ -70,6 +66,26 @@ Ext.define('HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaDetalle', {
 				            	    {
 				            	    	name:		'id',
 										bind:		'{oferta.idAgrupacion}',
+										hidden:		true
+				            	    },
+				            	    {
+				            	    	name:		'cesionDatos',
+										bind:		'{oferta.cesionDatosHaya}',
+										hidden:		true
+				            	    },
+				            	    {
+				            	    	name:		'comunicacionTerceros',
+										bind:		'{oferta.comunicacionTerceros}',
+										hidden:		true
+				            	    },
+				            	    {
+				            	    	name:		'transferenciasInternacionales',
+										bind:		'{oferta.transferenciasInternacionales}',
+										hidden:		true
+				            	    },
+				            	    {
+				            	    	name:		'pedirDoc',
+										bind:		'{oferta.pedirDoc}',
 										hidden:		true
 				            	    },
 									{
@@ -154,6 +170,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaDetalle', {
 										xtype: 'comboboxfieldbase',
 	    					        	fieldLabel:  HreRem.i18n('fieldlabel.tipo.persona'),
 	    					        	itemId: 'comboTipoPersona',
+	    					        	name: 'comboTipoPersona',
 	    					        	flex:	1,
 	    					        	allowBlank: true,
 	    					        	bind: {

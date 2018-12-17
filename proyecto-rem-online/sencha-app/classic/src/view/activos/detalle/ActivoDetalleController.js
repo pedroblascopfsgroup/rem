@@ -1678,6 +1678,27 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	window.close();
 	},
 	
+	onClickBotonCancelarWizard: function(btn) {	
+		var me = this,
+		window = btn.up('window');
+		var form1= window.down('anyadirnuevaofertadocumento');
+		var form2= window.down('anyadirnuevaofertadetalle');
+		var form3= window.down('anyadirnuevaofertaactivoadjuntardocumento');
+		Ext.Msg.show({
+			   title: HreRem.i18n('wizard.msg.show.title'),
+			   msg: HreRem.i18n('wizard.msh.show.text'),
+			   buttons: Ext.MessageBox.YESNO,
+			   fn: function(buttonId) {
+			        if (buttonId == 'yes') {
+			        	form1.reset();
+			        	form2.reset();
+			        	form3.reset();
+			        	window.close();
+			        }
+			   }
+		});
+	},
+	
 	onClickBotonGuardarOferta: function(btn){
 		var me =this;
 		var window= btn.up('window'),
@@ -3511,6 +3532,103 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		    }
     	});
 		
+	},
+	
+	existeCliente: function(btn){
+		
+		var me = this;
+		url =  $AC.getRemoteUrl('ofertas/checkPedirDoc');
+		var datosForm = btn.up('anyadirnuevaofertadocumento').getForm().getValues();
+		var idActivo = btn.up('wizardaltaoferta').oferta.data.idActivo;
+		var codtipoDoc= datosForm.comboTipoDocumento;
+		var dniComprador= datosForm.numDocumentoCliente;
+		Ext.Ajax.request({
+    		url: url,
+			method : 'POST',
+    		params: {idActivo: idActivo,dniComprador:dniComprador,codtipoDoc:codtipoDoc},
+    		success: function(response, opts){
+    			var datos = Ext.decode(response.responseText);
+    			var pedirDoc = Ext.decode(response.responseText).data;
+    			var comprador=datos.comprador;
+    			
+    			// TODO DIFERENCIAR ENTRE VENTANA OFERTA Y COMPRADOR PORQUE ES COMUN PARA TODOS LOS WIZARD
+    			var ventanaAnyadirOferta = btn.up('wizardaltaoferta').down('anyadirnuevaofertadetalle');
+    			
+    			if(!Ext.isEmpty(pedirDoc)){
+    				ventanaAnyadirOferta.getForm().findField('pedirDoc').setValue(pedirDoc);
+    				if(pedirDoc == "true"){
+    					btn.up('wizardaltaoferta').down('anyadirnuevaofertadetalle').down('button[itemId=btnGuardar]').setText("Crear");
+    				}else{
+    					btn.up('wizardaltaoferta').down('anyadirnuevaofertadetalle').down('button[itemId=btnGuardar]').setText("Continuar");
+    				}
+    			}
+    			
+    			if(!Ext.isEmpty(comprador)){
+    				if(!Ext.isEmpty(comprador.nombreCliente)){
+        				ventanaAnyadirOferta.getForm().findField('nombreCliente').setValue(comprador.nombreCliente);
+            			ventanaAnyadirOferta.getForm().findField('nombreCliente').setDisabled('disabled');
+        			}
+        			if(!Ext.isEmpty(comprador.apellidosCliente)){
+        				ventanaAnyadirOferta.getForm().findField('apellidosCliente').setValue(comprador.apellidosCliente);
+        				ventanaAnyadirOferta.getForm().findField('apellidosCliente').setDisabled('disabled');
+        			}
+        			
+        			if(!Ext.isEmpty(comprador.razonSocial)){
+        				ventanaAnyadirOferta.getForm().findField('razonSocialCliente').setValue(comprador.razonSocial);
+        				ventanaAnyadirOferta.getForm().findField('razonSocialCliente').setDisabled('disabled');
+        			}
+        			
+        			if(!Ext.isEmpty(comprador.tipoPersonaCodigo)){
+        				ventanaAnyadirOferta.getForm().findField('comboTipoPersona').setValue(ventanaAnyadirOferta.getForm().findField('comboTipoPersona').getStore().getData().find('id',comprador.tipoPersonaCodigo));
+        			}
+        			if(!Ext.isEmpty(comprador.estadoCivilCodigo)){
+        				ventanaAnyadirOferta.getForm().findField('comboEstadoCivil').setValue(ventanaAnyadirOferta.getForm().findField('comboEstadoCivil').getStore().getData().find('id',comprador.estadoCivilCodigo));
+        			}
+        			if(!Ext.isEmpty(comprador.regimenMatrimonialCodigo)){
+        				ventanaAnyadirOferta.getForm().findField('comboRegimenMatrimonial').setValue(ventanaAnyadirOferta.getForm().findField('comboRegimenMatrimonial').getStore().getData().find('id',comprador.regimenMatrimonialCodigo));
+        			}
+        			if(!Ext.isEmpty(comprador.cesionDatos)){
+        				ventanaAnyadirOferta.getForm().findField('cesionDatos').setValue(comprador.cesionDatos);
+        			}
+        			if(!Ext.isEmpty(comprador.comunicacionTerceros)){
+        				ventanaAnyadirOferta.getForm().findField('comunicacionTerceros').setValue(comprador.comunicacionTerceros);
+        			}
+        			if(!Ext.isEmpty(comprador.transferenciasInternacionales)){
+        				ventanaAnyadirOferta.getForm().findField('transferenciasInternacionales').setValue(comprador.transferenciasInternacionales);
+        			}
+    			}
+    			
+    			var wizard = btn.up().up().up();
+    			var layout = wizard.getLayout();
+    			layout["next"]();
+    		},
+		 	failure: function(record, operation) {
+		 		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko")); 
+		    }
+    		
+    	});
+		
+	},
+	
+	onClickCrearOferta: function(btn){
+		var me =this;
+		var window= btn.up('window'),
+		ventana= window.down('anyadirnuevaofertadetalle');
+		var form = ventana.getForm();
+		debugger;
+		if(form.isValid()){
+			var cesionDatos = ventana.getForm().findField('cesionDatos').value;
+			var transIntern = ventana.getForm().findField('transferenciasInternacionales').value;
+			if(cesionDatos == "true" && transIntern == "false"){
+				var wizard = btn.up().up().up();
+				var layout = wizard.getLayout();
+				layout["next"]();
+			}else{
+				//onClickBotonGuardarOferta(btn);
+			}
+
+		}
+		
 	}
-    
+
 });

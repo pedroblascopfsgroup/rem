@@ -68,6 +68,10 @@ Ext.define('HreRem.model.OfertaComercial', {
             {
             	name: 'transferenciasInternacionales',
             	type : 'boolean'
+            },
+            {
+            	name: 'pedirDoc',
+            	type : 'boolean'
             }
             
     ],

@@ -2451,9 +2451,10 @@ public class AgrupacionAdapter {
 									activoPublicacion = new ActivoPublicacion();
 									activoPublicacion.setActivo(activoAgrupacionActivo.getActivo());
 								}
-	
-								activoPublicacion.setTipoComercializacion(tipoComercializacion);
 								
+								if(!Checks.esNulo(tipoComercializacion)) {
+									activoPublicacion.setTipoComercializacion(tipoComercializacion);
+								}
 								
 								
 								if(!ofertaVivaAlquiler && DDTipoComercializacion.CODIGO_VENTA.equals(dto.getTipoComercializacionCodigo())) {

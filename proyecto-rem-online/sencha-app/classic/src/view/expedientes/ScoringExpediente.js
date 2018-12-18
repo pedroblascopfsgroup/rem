@@ -92,6 +92,7 @@ Ext.define('HreRem.view.expedientes.ScoringExpediente', {
 				        	   xtype: 'gridBaseEditableRow',
 				               idPrincipal: 'id',
 				               cls: 'panel-base shadow-panel',
+				               reference: 'gridHistorico',
 				               bind: {
 				            	   store: '{storeHistoricoScoring}'  
 				               },
@@ -198,6 +199,8 @@ Ext.define('HreRem.view.expedientes.ScoringExpediente', {
     	var me = this; 
 		me.recargar = false;
 		me.lookupController().cargarTabData(me);
-    	
+		Ext.Array.each(me.query('grid'), function(grid) {
+  			grid.getStore().load();
+  		});
     }
 });

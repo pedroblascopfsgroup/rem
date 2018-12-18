@@ -28,7 +28,13 @@ public class EjecutarSPPublicacionAsincrono implements Runnable{
 
 	@Override
 	public void run() {
-		activoEstadoPublicacionApi.actualizarEstadoPublicacionDelActivoOrAgrupacionRestringidaSiPertenece(idActivo);
+		try{
+			restApi.doSessionConfig(this.userName);
+			activoEstadoPublicacionApi.actualizarEstadoPublicacionDelActivoOrAgrupacionRestringidaSiPertenece(idActivo,false);
+		}catch(Exception e){
+			logger.error("error ejecutando SP de publicaciones", e);
+		}
+		
 		
 	}
 

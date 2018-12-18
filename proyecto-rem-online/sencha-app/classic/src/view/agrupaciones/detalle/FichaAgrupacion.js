@@ -71,7 +71,8 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
 			            	bind		: {
 			            		value: '{agrupacionficha.subTipoComercial}',
 			            		readOnly: true,
-			            		disabled:'{!esAgrupacionLoteComercial}'
+			            		hidden: '{!esComercialVentaOAlquiler}',
+			            		disabled:'{esComercialVenta}'
 			            	}
 		                },
 						{
@@ -101,8 +102,8 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
 			            	bind		: {
 			            		store: '{comboTipoAlquiler}',
 			            	    value: '{agrupacionficha.tipoAlquilerCodigo}',
-			            	    disabled:'{!esComercialAlquiler}',
-			            	    readOnly:'{agrupacionTieneActivos}'
+			            	    hidden: '{!esComercialVentaOAlquiler}',
+			            	    readOnly:'{esComercialVenta}'
 			            	}
 						},
 		                { 
@@ -124,16 +125,6 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
 			            		readOnly: '{agrupacionficha.existeFechaBaja}',
 			            		disabled: '{esAgrupacionAsistida}'
 			            	}
-						},
-						{
-							xtype		: 'comboboxfieldbase',
-							fieldLabel	: HreRem.i18n('fieldlabel.entidad.propietaria'),
-							bind		: {
-								store: '{comboCartera}',
-								value: '{agrupacionficha.cartera}',
-								readOnly: '{agrupacionTieneActivosOrExisteFechaBaja}',
-								allowBlank	:'{esAgrupacionLoteComercial}'	
-							}	
 						},
 		                {
 		                	fieldLabel	:  HreRem.i18n('fieldlabel.descripcion'),
@@ -192,22 +183,12 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
 		                        }
 		                    }
 						},  
-						{ 
-		                	xtype		:'datefieldbase',
-		                	fieldLabel	:  HreRem.i18n('fieldlabel.fecha.baja'),
-			            	bind		: {
-			            		value: 	'{agrupacionficha.fechaBaja}',
-			            		minValue: '{agrupacionficha.fechaAlta}',
-			            		readOnly: '{agrupacionficha.existeFechaBaja}',
-			            		disabled: '{esAgrupacionAsistida}'
-			            	}
-
-						},
+						
 						{ 
 							xtype		: 'displayfieldbase',
 							fieldLabel	: HreRem.i18n('fieldlabel.entidad.propietaria'),
 							bind		: {
-								value: '{agrupacionficha.codigoCartera}',
+								value: '{agrupacionficha.cartera}',
 								readOnly: '{agrupacionficha.existeFechaBaja}'
 							}
 						},

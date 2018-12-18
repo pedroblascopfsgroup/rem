@@ -606,19 +606,24 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 			 		
 			 		var response = Ext.decode(operation.success);
 			 		
+			 		if(operation.getResponse() != null){
+				 		var msg =  Ext.decode(operation.getResponse().responseText).msg;
+			 		}
+			 		
 			 		/* TODO 
 			 		 * Eliminar "communication failure" cuando createOfertaAgrupacion este bien optimizada 
 			 		 * y no salte timeout de bbdd 
 			 		 */
-			 		if("communication failure" === operation.error.statusText){
+//			 		
+			 		if((response === "false" || !response) && msg != null) {
+						me.fireEvent("errorToast", Ext.decode(operation.getResponse().responseText).msg);
+						form.unmask();
+					} else if(operation.error != null && "communication failure" === operation.error.statusText){
 			 			form.unmask();
 				    	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
 				    	window.parent.funcionRecargar();
 				    	window.destroy();
-			 		} else if(response === "false" && Ext.isDefined(response.msg)) {
-						me.fireEvent("errorToast", Ext.decode(operation.getResponse().responseText).msg);
-						form.unmask();
-					} else {
+			 		} else {
 						me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
 				 		form.unmask();
 					}

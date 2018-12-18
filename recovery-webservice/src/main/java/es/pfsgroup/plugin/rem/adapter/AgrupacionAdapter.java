@@ -302,6 +302,7 @@ public class AgrupacionAdapter {
 						|| agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_COMERCIAL_ALQUILER) ) {
 					ActivoLoteComercial agrupacionTemp = (ActivoLoteComercial) agrupacion;
 
+					BeanUtils.copyProperties(dtoAgrupacion, agrupacionTemp);
 
 					if (agrupacionTemp.getLocalidad() != null) {
 						BeanUtils.copyProperty(dtoAgrupacion, "municipioDescripcion",
@@ -309,6 +310,7 @@ public class AgrupacionAdapter {
 						BeanUtils.copyProperty(dtoAgrupacion, "municipioCodigo",
 								agrupacionTemp.getLocalidad().getCodigo());
 					}
+					
 
 					if (agrupacionTemp.getProvincia() != null) {
 						BeanUtils.copyProperty(dtoAgrupacion, "provinciaDescripcion",
@@ -1752,11 +1754,11 @@ public class AgrupacionAdapter {
 
 		// Comprobar tipo oferta compatible con tipo agrupacion
 		if (!Checks.esNulo(agrupacion) && !Checks.esNulo(agrupacion.getTipoAgrupacion())) {
-
+			
 				if (DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_ALQUILER.equals(agrupacion.getTipoAgrupacion().getCodigo())
 					&& DDTipoOferta.CODIGO_VENTA.equals(dto.getTipoOferta())) {
 
-				throw new JsonViewerException(messageServices.getMessage(OFERTA_INCOMPATIBLE_TIPO_AGR_MSG));
+					throw new JsonViewerException(messageServices.getMessage(OFERTA_INCOMPATIBLE_TIPO_AGR_MSG));
 
 				}
 

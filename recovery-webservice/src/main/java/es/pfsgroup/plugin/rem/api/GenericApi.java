@@ -28,6 +28,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDSubtipoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoBloqueo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTrabajo;
@@ -186,6 +187,8 @@ public interface GenericApi {
 
 	
 	public List<DDTiposPorCuenta> getDiccionarioPorCuenta(String tipoCodigo);
+	
+	public List<DDTipoCalculo> getDiccionarioByTipoOferta(String diccionario, String codTipoOferta);
 
 	/**
 	 * Devuelve una lista de todos aquellos proveedores que dan de alta gastos de forma masiva.

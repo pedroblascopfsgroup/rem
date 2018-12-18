@@ -1598,5 +1598,20 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 
 	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView checkEstadoOcupadoTramite(ModelMap model, Long idTramite) {
+		try {
+			boolean success = expedienteComercialApi.checkEstadoOcupadoTramite(idTramite);
+			
+			model.put("success", success);
+		} catch (Exception e) {
+			model.put("success", false);
+			logger.error("Error en ExpedienteComercialController", e);
+		}
+
+		return createModelAndViewJson(model);
+	}	
 
 }

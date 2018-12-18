@@ -465,7 +465,29 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
                 if (me.json.errorValidacionGuardado) {
                     me.getViewModel().set("errorValidacionGuardado", me.json.errorValidacionGuardado);
                     me.unmask();
-                } else {
+                } else { 
+                	var codigoTarea= me.codigoTarea;
+                	// en este if actualizamos el grid de la pestaña Scoring o Seguro rentas, una vez finalizada las tareas Verificar... de cada uno.
+                    if(!Ext.isEmpty(codigoTarea)){
+                    	panelExpediente = me.up('activosmain').down('panel[title=Expediente '+me.numExpediente+']');
+                    	if(!Ext.isEmpty(panelExpediente)){
+	                    	if(CONST.TAREAS['T015_VERIFICARSCORING'] == codigoTarea){
+	                    		var tabScoring = panelExpediente.down('scoringexpediente');
+	                    		var grid = tabScoring.down('gridBaseEditableRow');
+	                    		if(!Ext.isEmpty(grid)) {
+	                    			store = grid.getStore();
+	                    			store.load();
+	                    		}
+	                    	} else if(CONST.TAREAS['T015_VERIFICARSEGURORENTAS'] == codigoTarea){
+	                    		var tabScoring = panelExpediente.down('segurorentasexpediente');
+	                    		var grid = tabScoring.down('gridBaseEditableRow');
+	                    		if(!Ext.isEmpty(grid)) {
+	                    			store = grid.getStore();
+	                    			store.load();
+	                    		}
+	                    	}
+                    	}
+                    }
                     me.unmask();
                     //me.mostrarValidacionesPost();
                     me.fireEvent("refreshComponentOnActivate", "trabajosmain");
@@ -481,7 +503,11 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
                     if (!Ext.isEmpty(me.idActivo)) {
                         me.fireEvent("refreshEntityOnActivate", CONST.ENTITY_TYPES['ACTIVO'], me.idActivo);
                     }
-
+                    if (!Ext.isEmpty(me.idExpediente)) {
+                        me.fireEvent("refreshEntityOnActivate", CONST.ENTITY_TYPES['EXPEDIENTE'], me.idExpediente);
+                    }
+                    
+                    
                     me.destroy();
                 }
 

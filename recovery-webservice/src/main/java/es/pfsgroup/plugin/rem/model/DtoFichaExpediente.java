@@ -91,6 +91,8 @@ public class DtoFichaExpediente extends WebDto {
 	private String estadoTrabajo;
 	
 	private String motivoAnulacionTrabajo;
+	
+	private Long numTrabajo;
 
 	private boolean tieneReserva;
 
@@ -129,6 +131,7 @@ public class DtoFichaExpediente extends WebDto {
 	private Boolean definicionOfertaScoring;
 
 	private String subcarteraCodigo;
+	private Boolean estaFirmado;
 
 	public Long getId() {
 		return id;
@@ -644,6 +647,21 @@ public class DtoFichaExpediente extends WebDto {
 		this.subcarteraCodigo = subcarteraCodigo;
 
 	}
-	
+
+	public Boolean getEstaFirmado() {
+		return estaFirmado;
+	}
+
+	public void setEstaFirmado(Boolean estaFirmado) {
+		this.estaFirmado = estaFirmado;
+	}
+
+	public Long getNumTrabajo() {
+		return numTrabajo;
+	}
+
+	public void setNumTrabajo(Long numTrabajo) {
+		this.numTrabajo = numTrabajo;
+	}	
 	
 }

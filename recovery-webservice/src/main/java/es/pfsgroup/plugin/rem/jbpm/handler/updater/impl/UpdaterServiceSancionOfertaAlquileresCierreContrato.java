@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.jbpm.handler.updater.impl;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -70,14 +71,18 @@ public class UpdaterServiceSancionOfertaAlquileresCierreContrato implements Upda
 		for(TareaExternaValor valor :  valores){
 			
 			if(DOCUMENTO_OK.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
-				estadoExpedienteComercial = genericDao.get(DDEstadosExpedienteComercial.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadosExpedienteComercial.FIRMADO_AQLUILER));
+				estadoExpedienteComercial = genericDao.get(DDEstadosExpedienteComercial.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadosExpedienteComercial.FIRMADO));
 				expedienteComercial.setEstado(estadoExpedienteComercial);
 				expedienteComercial.setDocumentacionOk(true);
 			}
 			
-			if(FECHA_VALIDACION.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+			if(FECHA_VALIDACION.equals(valor.getNombre())) {
 				try {
-					expedienteComercial.setFechaValidacion(ft.parse(valor.getValor()));
+					if (!Checks.esNulo(valor.getValor())) {
+						expedienteComercial.setFechaValidacion(ft.parse(valor.getValor()));
+					} else {
+						expedienteComercial.setFechaValidacion(new Date());
+					}
 				} catch (ParseException e) {
 					logger.error("Error insertando Fecha validación.", e);
 				}
@@ -129,6 +134,7 @@ public class UpdaterServiceSancionOfertaAlquileresCierreContrato implements Upda
 		if (!Checks.esNulo(expedienteComercial.getSeguroRentasAlquiler())) {
 			expedienteComercialApi.enviarCorreoAsegurador(expedienteComercial.getId());
 		}
+		expedienteComercialApi.bloquearExpediente(expedienteComercial.getId());
 	}
 
 	public String[] getCodigoTarea() {

@@ -166,7 +166,7 @@ public interface ActivoEstadoPublicacionApi {
 	 * restringida y actualizar el estado de publicación de todos los activos de la agrupación.
 	 * @return Devuelve True si la operación se ha llevado a cabo.
 	 */
-	Boolean actualizarEstadoPublicacionDelActivoOrAgrupacionRestringidaSiPertenece(Long idActivo);
+	Boolean actualizarEstadoPublicacionDelActivoOrAgrupacionRestringidaSiPertenece(Long idActivo,boolean doFlush);
 
 	/**
 	 * Este método obtiene la fecha de inicio del estado de publicación venta en el que se encuentra el activo.

@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.service;
 
 import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -975,10 +976,12 @@ public class TabActivoDatosBasicos implements TabActivoService {
 	 * @param activo: activo sobre el que se desmarca comercializar.
 	 */
 	private void accionesDesmarcarComercializar(Activo activo) {
+		ArrayList<Long> idActivoActualizarPublicacion = new ArrayList<Long>();
+		idActivoActualizarPublicacion.add(activo.getId());
 		this.validarPerimetroActivo(activo,1);
 		this.validarPerimetroActivo(activo,3);
-
-		activoAdapter.actualizarEstadoPublicacionActivo(activo.getId());
+		activoAdapter.actualizarEstadoPublicacionActivo(idActivoActualizarPublicacion,false);
+		//activoAdapter.actualizarEstadoPublicacionActivo(activo.getId());
 	}
 	
 	/**

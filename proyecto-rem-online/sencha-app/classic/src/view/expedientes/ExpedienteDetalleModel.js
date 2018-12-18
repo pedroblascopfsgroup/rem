@@ -354,8 +354,12 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 		 },
 		 fechaMinima: function(get){
 			 var fechaMinima = get('condiciones.fechaMinima');
-			 fechaMinima= fechaMinima.split('T',1);
-			 fechaFinal= fechaMinima.toString();
+			 if(!Ext.isEmpty(fechaMinima)) {
+				 fechaMinima= fechaMinima.split('T',1);
+				 fechaFinal= fechaMinima.toString();
+			 } else {
+				 fechaFinal = '';
+			 }
 			 return fechaFinal;
 			 
 		 }
@@ -480,8 +484,11 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
     		model: 'HreRem.model.ComboBase',
 			proxy: {
 				type: 'uxproxy',
-				remoteUrl: 'generic/getDiccionario',
-				extraParams: {diccionario: 'tiposCalculo'}
+				remoteUrl: 'generic/getDiccionarioByTipoOferta',
+				extraParams: {
+					diccionario: 'tiposCalculo',
+					codTipoOferta : '{expediente.tipoExpedienteCodigo}'
+				}
 			}   
     	},
 
@@ -999,7 +1006,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	    	proxy: {
 		        type: 'uxproxy',
 		        remoteUrl: 'expedientecomercial/getHistoricoScoring',
-		        extraParams: {idScoring: '{scoring.id}'}
+		        extraParams: {idScoring: '{expediente.id}'}
 	    	}
 		},
 		comboComitesAlquiler: {

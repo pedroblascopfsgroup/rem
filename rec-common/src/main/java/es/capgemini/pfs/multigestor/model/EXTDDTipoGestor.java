@@ -11,7 +11,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
@@ -52,6 +51,9 @@ public class EXTDDTipoGestor implements Dictionary, Auditable{
 	public static String CODIGO_TIPO_LETRADO = "LETR";
 	public static final String CODIGO_TIPO_PREPARADOR_DOCUMENTAL_PCO = "PREDOC";
 	public static final String CODIGO_TIPO_GESTOR_COMERCIAL = "GCOM";
+	public static final String CODIGO_SUPERVISOR_COMERCIAL = "SCOM";
+	public static final String CODIGO_GESTOR_COMERCIAL_ALQUILER = "GESTCOMALQ";
+	public static final String CODIGO_SUPERVISOR_COMERCIAL_ALQUILER = "SUPCOMALQ";
 	 // CAJAMAR
     public static final String CODIGO_TIPO_GESTOR_DOCUMENTAL_PCO = "CM_GD_PCO";
 	

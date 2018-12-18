@@ -211,6 +211,10 @@ Ext.define('HreRem.model.ExpedienteComercial', {
     		},
     		{
     			name: 'subcarteraCodigo'
+    		},
+    		{
+    			name:'estaFirmado',
+    			type: 'boolean'
     		}
     		 
     ],

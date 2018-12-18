@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.jbpm.handler.updater.impl;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -18,7 +19,10 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
+import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
@@ -43,6 +47,9 @@ public class UpdaterServiceSancionOfertaAlquileresResolucionExpediente implement
     
     @Autowired
     private NotificationOfertaManager notificatorOfertaManager;
+    
+    @Autowired
+	private OfertaApi ofertaApi;
         
     protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaAlquileresResolucionExpediente.class);
 			
@@ -61,6 +68,7 @@ public class UpdaterServiceSancionOfertaAlquileresResolucionExpediente implement
 		Oferta oferta = expedienteComercial.getOferta();
 		DDEstadosExpedienteComercial estadoExpedienteComercial = null;
 		DDEstadoOferta estadoOferta = null;
+	
 		for(TareaExternaValor valor :  valores){
 
 			if(RESOLUCION_EXPEDIENTE.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
@@ -73,6 +81,14 @@ public class UpdaterServiceSancionOfertaAlquileresResolucionExpediente implement
 					oferta.setEstadoOferta(estadoOferta);
 					
 					notificatorOfertaManager.enviarMailAprobacion(oferta);
+					
+					//comprobamos si existen más ofertas para ese activo en estado pendiente. Si es así, las pasamos a congeladas
+					List<Oferta> listaOfertas = ofertaApi.trabajoToOfertas(tramite.getTrabajo());
+					for (Oferta ofertaB : listaOfertas) {
+						if (!ofertaB.getId().equals(oferta.getId()) && !DDEstadoOferta.CODIGO_RECHAZADA.equals(ofertaB.getEstadoOferta().getCodigo())) {
+							ofertaApi.congelarOferta(ofertaB);
+						}
+					}
 
 				}else if(DDResolucionComite.CODIGO_RECHAZA.equals(valor.getValor())) {
 					estadoExpedienteComercial = genericDao.get(DDEstadosExpedienteComercial.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadosExpedienteComercial.ANULADO));
@@ -87,9 +103,13 @@ public class UpdaterServiceSancionOfertaAlquileresResolucionExpediente implement
 				}
 			}
 			
-			if(FECHA_RESOLUCION.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+			if(FECHA_RESOLUCION.equals(valor.getNombre())) {
 				try {
-					expedienteComercial.setFechaSancion(ft.parse(valor.getValor()));
+					if (!Checks.esNulo(valor.getValor())) {
+						expedienteComercial.setFechaSancion(ft.parse(valor.getValor()));
+					} else {
+						expedienteComercial.setFechaSancion(new Date());
+					}
 				} catch (ParseException e) {
 					logger.error("Error insertando Fecha Sancion Comite.", e);
 				}

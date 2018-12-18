@@ -77,15 +77,14 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 							                	reference: 'tipoCalculo',
 									        	bind: {
 								            		store: '{comboTipoCalculo}',
-								            		value: '{condiciones.tipoCalculo}',
-								            		readOnly: '{esCarteraGaleonOZeus}'
+								            		value: '{condiciones.tipoCalculo}'
 								            	},
 					            				displayField: 'descripcion',
 		    									valueField: 'codigo',
 		    									listeners: {
 			                						change:  'onHaCambiadoTipoCalculo'
 			            						},
-			            						editable: true
+			            						disabled: true
 									        },
 											{ 
 												xtype: 'numberfieldbase',
@@ -126,76 +125,6 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 				
 										]
 								},
-								{
-								defaultType : 'textfieldbase',
-								title : HreRem.i18n("fieldlabel.reserva"),
-								items : [
-									{
-										xtype : 'comboboxfieldbase',
-										fieldLabel : HreRem.i18n('fieldlabel.reserva.necesaria'),
-										bind : {
-											store : '{comboSiNoRem}',
-											value : '{condiciones.solicitaReserva}'
-										},
-										listeners : {
-											change : 'onHaCambiadoSolicitaReserva'
-										},
-										displayField : 'descripcion',
-										valueField : 'codigo',
-										colspan : 2
-									},
-									{
-										xtype : 'comboboxfieldbase',
-										fieldLabel : HreRem.i18n('fieldlabel.calculo.reserva'),
-										reference : 'tipoCalculo',
-										bind : {
-											store : '{comboTipoCalculo}',
-											value : '{condiciones.tipoCalculo}'
-										},
-										displayField : 'descripcion',
-										valueField : 'codigo',
-										listeners : {
-											change : 'onHaCambiadoTipoCalculo'
-										},
-										editable : true
-									},
-									{
-										xtype : 'numberfieldbase',
-										reference : 'porcentajeReserva',
-										symbol : HreRem.i18n("symbol.porcentaje"),
-										fieldLabel : HreRem.i18n('fieldlabel.portencaje.reserva'),
-										bind : {
-											value : '{condiciones.porcentajeReserva}'
-										},
-										reference : 'porcentajeReserva',
-										listeners : {
-											change : 'onHaCambiadoPorcentajeReserva'
-										},
-										disabled : true
-									},
-									{
-										xtype : 'numberfieldbase',
-										reference : 'plazoParaFirmar',
-										symbol : HreRem.i18n("symbol.dias"),
-										fieldLabel : HreRem.i18n('fieldlabel.plazo.firmar'),
-										bind : {
-											value : '{condiciones.plazoFirmaReserva}'
-										},
-										reference : 'plazoFirmaReserva',
-										disabled : true
-									},
-									{
-										xtype : 'numberfieldbase',
-										symbol : HreRem.i18n("symbol.euro"),
-										fieldLabel : HreRem.i18n('fieldlabel.importe.reserva'),
-										bind : {
-											value : '{condiciones.importeReserva}'
-										},
-										reference : 'importeReserva',
-										disabled : true
-									}
-								]
-							},
 							{
 								xtype : 'fieldset',
 								height : 140,
@@ -830,8 +759,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 										reference : 'mesesBonificacion',
 										fieldLabel : HreRem.i18n('fieldlabel.duracion.meses'),
 										bind : {
-											value : '{condiciones.mesesBonificacion}',
-											disabled : '{!condiciones.siBonificacion}'
+											value : '{condiciones.mesesBonificacion}'
 										}
 									},
 									{
@@ -840,8 +768,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 										fieldLabel : HreRem.i18n('fieldlabel.importe'),
 										symbol : HreRem.i18n('symbol.euro'),
 										bind : {
-											value : '{condiciones.importeBonificacion}',
-											disabled : '{!condiciones.siBonificacion}'
+											value : '{condiciones.importeBonificacion}'
 										}
 									} 
 								]
@@ -958,7 +885,6 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 										xtype : 'numberfieldbase',
 										reference : 'escaladoRentasMeses',
 										symbol : HreRem.i18n('symbol.meses'),
-										labelSeparator : "",
 										fieldLabel : HreRem.i18n('fieldlabel.cada'),
 										bind : '{condiciones.revisionMercadoMeses}'
 									} 

@@ -259,7 +259,7 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 			if(!Checks.esNulo(activo.getActivoPublicacion())) {
 				if(activo.getActivoPublicacion().getCheckPublicarVenta() && activo.getActivoPublicacion().getCheckOcultarPrecioVenta()){
 					DtoAviso dtoAviso = new DtoAviso();
-					dtoAviso.setDescripcion("No mostrar precio");
+					dtoAviso.setDescripcion("Publicado con precio oculto");
 					dtoAviso.setId(String.valueOf(id));
 					listaAvisos.add(dtoAviso);
 				}

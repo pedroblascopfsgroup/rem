@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.capgemini.pfs.users.domain.Usuario;
@@ -13,6 +14,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.expedienteComercial.dao.ExpedienteComercialDao;
+import es.pfsgroup.plugin.rem.jbpm.handler.notificator.AbstractNotificatorService;
 import es.pfsgroup.plugin.rem.jbpm.handler.notificator.NotificatorService;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoSendNotificator;
@@ -21,7 +23,8 @@ import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 
-public class NotificatorServiceGtam extends NotificatorServiceSancionOfertaGenerico implements NotificatorService {
+@Component
+public class NotificatorServiceGtam extends AbstractNotificatorService implements NotificatorService{
 
 	private static final String CODIGO_T013_DEFINICION_OFERTA = "T013_DefinicionOferta";
 	private static final String NPLREO_SUPPORT = "NPLREOSupport";
@@ -38,6 +41,8 @@ public class NotificatorServiceGtam extends NotificatorServiceSancionOfertaGener
 
 	@Autowired
 	private ExpedienteComercialDao expedienteComercialDao;
+	
+	List<TareaExternaValor> valores = null;
 
 	@Override
 	public String[] getKeys() {
@@ -48,14 +53,15 @@ public class NotificatorServiceGtam extends NotificatorServiceSancionOfertaGener
 	public String[] getCodigoTarea() {
 		return new String[] { CODIGO_T013_DEFINICION_OFERTA};
 	}
-
+	
+	
 	@Override
-	public void notificatorFinTareaConValores(ActivoTramite tramite, List<TareaExternaValor> valores) {
+	public void notificator(ActivoTramite tramite) {
 		ExpedienteComercial expediente = getExpedienteComercial(tramite);
 		Oferta oferta = expediente.getOferta();
 
 		if (oferta != null && oferta.getActivoPrincipal() != null
-				&& DDCartera.CODIGO_CARTERA_GIANTS.equals(oferta.getActivoPrincipal().getCartera())) {
+				&& DDCartera.CODIGO_CARTERA_GIANTS.equals(oferta.getActivoPrincipal().getCartera().getCodigo())) {
 			Usuario nPLREOSupport = genericDao.get(Usuario.class,
 					genericDao.createFilter(FilterType.EQUALS, "username", NPLREO_SUPPORT));
 			Usuario mailTracker = genericDao.get(Usuario.class,
@@ -119,5 +125,14 @@ public class NotificatorServiceGtam extends NotificatorServiceSancionOfertaGener
 
 		return expediente;
 	}
+
+	@Override
+	public void notificatorFinTareaConValores(ActivoTramite tramite, List<TareaExternaValor> valores) {
+		this.valores = valores;
+		this.notificator(tramite);
+		
+	}
+
+	
 
 }

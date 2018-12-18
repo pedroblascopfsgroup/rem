@@ -423,7 +423,9 @@ public class Activo implements Serializable, Auditable {
 
     @Column(name = "ACT_PUJA")
     private Boolean estaEnPuja;
-
+    
+    @Column(name = "ACT_EXCLUIR_DWH")
+    private Boolean excluirDwh;
 	
     // Getters del activo --------------------------------------------
     
@@ -1716,4 +1718,12 @@ public class Activo implements Serializable, Auditable {
 		this.estaEnPuja = estaEnPuja;
 	}
 
+	public Boolean getExcluirDwh() {
+		return excluirDwh;
+	}
+
+	public void setExcluirDwh(Boolean excluirDwh) {
+		this.excluirDwh = excluirDwh;
+	}
+	
 }

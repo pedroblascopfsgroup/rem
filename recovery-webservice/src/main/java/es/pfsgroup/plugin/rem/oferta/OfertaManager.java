@@ -1489,12 +1489,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				map.put("idOfertaRem", ofertaDto.getIdOfertaRem());
 				map.put("success", false);
 
-				if (!Checks.esNulo(ofertaDto.getError())) {
-					map.put("error", ofertaDto.getError());
-					error = true;
-				} else {
-					map.put("invalidFields", errorsList);
-				}
+				map.put("invalidFields", errorsList);
 			}
 			listaRespuesta.add(map);
 		}
@@ -3158,11 +3153,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			try {
 				adapter.save(valoresTarea);
 			} catch (Exception e) {
-				errorsList.put("codTarea", e.getMessage());
-				ofertaDto.setError(e.getMessage());
+				errorsList.put("codTarea", RestApi.REST_MSG_UNKNOWN_KEY);
+				logger.error("error en OfertasManager", e);
 			}
 		} else {
-			errorsList.put("codTarea", RestApi.REST_MSG_INVALID_WORKINGCODE);
+			errorsList.put("codTarea", RestApi.REST_MSG_UNKNOWN_KEY);
 		}
 		return errorsList;
 	}

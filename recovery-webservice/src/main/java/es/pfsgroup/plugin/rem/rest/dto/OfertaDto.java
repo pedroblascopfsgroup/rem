@@ -61,7 +61,6 @@ public class OfertaDto implements Serializable {
 	private Date fechaPrevistaFirma;
 	private String lugarFirma;
 	private Date fechaFirma;
-	private String error;
 	private Boolean firmado;
 	
 	public Long getIdOfertaWebcom() {
@@ -214,12 +213,6 @@ public class OfertaDto implements Serializable {
 	}
 	public void setFechaFirma(Date fechaFirma) {
 		this.fechaFirma = fechaFirma;
-	}
-	public String getError() {
-		return error;
-	}
-	public void setError(String error) {
-		this.error = error;
 	}
 	public Boolean getFirmado() {
 		return firmado;

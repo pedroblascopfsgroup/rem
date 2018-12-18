@@ -119,6 +119,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoEstadoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
 import es.pfsgroup.plugin.rem.oferta.NotificationOfertaManager;
@@ -263,6 +264,7 @@ public class AgrupacionAdapter {
 	private static final String TIPO_COMERCIAL_ALQUILER = "Alquiler";
 	private static final String TIPO_GESTOR_COMERCIAL_VENTA = "GCOM";
 	private static final String TIPO_GESTOR_COMERCIAL_ALQUILER = "GESTCOMALQ";
+	public static final String AGRUPACION_CAMBIO_DEST_COMERCIAL_A_VENTA_CON_ALQUILADOS = "No se puede realizar el cambio de destino comercial debido a que la agrupación tiene activos alquilados con título";
 
 	public static final String SPLIT_VALUE = ";s;";
 
@@ -2267,6 +2269,25 @@ public class AgrupacionAdapter {
 
 			try
 			{
+				// Si el destino comercial = Alquiler y venta, no permitirá cambiar el destino comercial = venta
+				Activo activoPrincipal = agrupacion.getActivoPrincipal();
+				String codigoDestinoComercial = activoPrincipal.getActivoPublicacion().getTipoComercializacion().getCodigo();
+				
+				if (DDTipoComercializacion.CODIGO_ALQUILER_VENTA.equals(codigoDestinoComercial) 
+						&& DDTipoComercializacion.CODIGO_VENTA.equals(dto.getTipoComercializacionCodigo())) {
+					List<ActivoAgrupacionActivo> listaActivos = restringida.getActivos();
+
+					if(!Checks.estaVacio(listaActivos)) {
+						ActivoPatrimonio activoPatrimonio;
+						for (ActivoAgrupacionActivo activoAgrupacionActivo : listaActivos) {
+							activoPatrimonio = activoPatrimonioDao.getActivoPatrimonioByActivo(activoAgrupacionActivo.getActivo().getId());
+							if (!Checks.esNulo(activoPatrimonio) && DDTipoEstadoAlquiler.ESTADO_ALQUILER_ALQUILADO.equals(activoPatrimonio.getTipoEstadoAlquiler().getCodigo())) {
+								return "false"+SPLIT_VALUE+AGRUPACION_CAMBIO_DEST_COMERCIAL_A_VENTA_CON_ALQUILADOS;
+							}
+						}
+					}
+				}
+				
 				if(!permiteCambiarDestinoComercial(restringida))
 				{
 					return "false"+SPLIT_VALUE+OFERTA_INCOMPATIBLE_AGR_MSG;

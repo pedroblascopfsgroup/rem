@@ -101,6 +101,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisitaOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
 import es.pfsgroup.plugin.rem.model.dd.DDResultadoTanteo;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
@@ -758,8 +759,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					expedienteComercialApi.actualizarHonorariosPorExpediente(expedienteComercial.getId());
 				}
 			}
-
-			oferta = updateEstadoOferta(oferta.getId(), ofertaDto.getFechaAccion());
+			if(DDTipoOferta.CODIGO_VENTA.equals(oferta.getTipoOferta().getCodigo())) {
+				oferta = updateEstadoOferta(oferta.getId(), ofertaDto.getFechaAccion());
+			}
 			this.updateStateDispComercialActivosByOferta(oferta);
 
 			if (!Checks.esNulo(ofertaDto.getCodTarea())) {
@@ -1489,12 +1491,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				map.put("idOfertaRem", ofertaDto.getIdOfertaRem());
 				map.put("success", false);
 
-				if (!Checks.esNulo(ofertaDto.getError())) {
-					map.put("error", ofertaDto.getError());
-					error = true;
-				} else {
-					map.put("invalidFields", errorsList);
-				}
+				map.put("invalidFields", errorsList);
 			}
 			listaRespuesta.add(map);
 		}
@@ -3158,11 +3155,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			try {
 				adapter.save(valoresTarea);
 			} catch (Exception e) {
-				errorsList.put("codTarea", e.getMessage());
-				ofertaDto.setError(e.getMessage());
+				errorsList.put("codTarea", RestApi.REST_MSG_UNKNOWN_KEY);
+				logger.error("error en OfertasManager", e);
 			}
 		} else {
-			errorsList.put("codTarea", RestApi.REST_MSG_INVALID_WORKINGCODE);
+			errorsList.put("codTarea", RestApi.REST_MSG_UNKNOWN_KEY);
 		}
 		return errorsList;
 	}

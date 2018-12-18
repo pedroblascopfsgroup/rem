@@ -39,7 +39,8 @@ Ext.define('HreRem.ux.util.Constants', {
 		PROYECTO: '04',
 		ASISTIDA: '13',
 		LOTE_COMERCIAL: '14',
-		COMERCIAL_ALQUILER:'15'
+		COMERCIAL_ALQUILER:'15',
+		COMERCIAL_VENTA:'14'
 	},
 
 	TIPOS_INFO_COMERCIAL: {
@@ -236,7 +237,9 @@ Ext.define('HreRem.ux.util.Constants', {
     
     ESTADOS_OFERTA: {
     	ACEPTADA : '01',
-    	RECHAZADA: '02'
+    	RECHAZADA: '02',
+    	CONGELADA: '03',
+    	PENDIENTE: '04'
     },
     
     ESTADOS_EXPEDIENTE: {
@@ -427,7 +430,9 @@ Ext.define('HreRem.ux.util.Constants', {
 
 	ESTADOS_OFERTA: {
 		ACEPTADA : '01',
-		RECHAZADA: '02'
+		RECHAZADA: '02',
+		CONGELADA: '03',
+	    PENDIENTE: '04'
 	},
 
 	ESTADOS_EXPEDIENTE: {

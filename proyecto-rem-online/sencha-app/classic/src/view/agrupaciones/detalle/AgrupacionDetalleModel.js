@@ -80,6 +80,17 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 	     	}
 		 },
 		 
+		 esComercialVenta: function(get) {
+			var tipoComercialVenta = get('agrupacionficha.tipoAgrupacionCodigo');
+			
+			if (tipoComercialVenta == CONST.TIPOS_AGRUPACION['COMERCIAL_VENTA']) {
+				return true;
+			} else {
+				return false;
+			} 
+				
+		 },
+		 
 		 esComercialVentaOAlquiler: function(get) {
 		     	var tipoComercialAlquiler = get('agrupacionficha.tipoAgrupacionCodigo');
 		     	if((tipoComercialAlquiler == CONST.TIPOS_AGRUPACION['COMERCIAL_ALQUILER']) || (tipoComercialAlquiler == CONST.TIPOS_AGRUPACION['LOTE_COMERCIAL'])) {

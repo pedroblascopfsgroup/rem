@@ -2959,9 +2959,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		if (DDCartera.CODIGO_CARTERA_BANKIA.equals(activo.getCartera().getCodigo())) {
 			
 			if (	!DDSubcartera.CODIGO_BAN_BK.equals(activo.getSubcartera().getCodigo())
-					|| !DDSubcartera.CODIGO_BAN_BH.equals(activo.getSubcartera().getCodigo())
-					|| !DDSubcartera.CODIGO_BAN_TITULIZADA.equals(activo.getSubcartera().getCodigo())
-					|| !DDSubcartera.CODIGO_BAN_BFA.equals(activo.getSubcartera().getCodigo()) 
+					&& !DDSubcartera.CODIGO_BAN_BH.equals(activo.getSubcartera().getCodigo())
+					&& !DDSubcartera.CODIGO_BAN_TITULIZADA.equals(activo.getSubcartera().getCodigo())
+					&& !DDSubcartera.CODIGO_BAN_BFA.equals(activo.getSubcartera().getCodigo()) 
 				) {
 				isAfectoAGencat = false;
 			}

@@ -1313,11 +1313,13 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	
 	onHaCambiadoSolicitaReserva: function(combo, value){
 		var me= this;
-		if(value==1){
+		var carteraCodigo = me.getViewModel().get('expediente.entidadPropietariaCodigo');
+		var esCarteraGaleonOZeus =  ('15' == carteraCodigo || '14' == carteraCodigo);
+		if(!esCarteraGaleonOZeus && value==1){
 			me.lookupReference('tipoCalculo').setDisabled(false);
 		}else{
 			
-			me.lookupReference('tipoCalculo').setDisabled(true);			
+			me.lookupReference('tipoCalculo').setDisabled(true);		
 			me.lookupReference('tipoCalculo').setValue(null);
 		
 		}

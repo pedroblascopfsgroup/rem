@@ -306,7 +306,7 @@ public class AgrupacionAdapter {
 				if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL)
 						|| agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_COMERCIAL_ALQUILER) ) {
 					ActivoLoteComercial agrupacionTemp = (ActivoLoteComercial) agrupacion;
-
+					
 					BeanUtils.copyProperties(dtoAgrupacion, agrupacionTemp);
 
 					if (agrupacionTemp.getLocalidad() != null) {
@@ -351,9 +351,25 @@ public class AgrupacionAdapter {
 					if(agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL)) {
 						BeanUtils.copyProperty(dtoAgrupacion, "subTipoComercial", TIPO_COMERCIAL_VENTA);
 					}
-					else
+					else 
 					{
 						BeanUtils.copyProperty(dtoAgrupacion, "subTipoComercial", TIPO_COMERCIAL_ALQUILER);
+					}
+					
+					//cogemos el tipo de comercializacion y la cartera del activo principal
+					Activo act = agrupacion.getActivoPrincipal();
+					if(Checks.esNulo(act)){
+						List<ActivoAgrupacionActivo> activos = agrupacion.getActivos();
+						if(!Checks.estaVacio(activos)){
+							act = activos.get(0).getActivo();
+							if(!Checks.esNulo(act.getCartera())){
+								BeanUtils.copyProperty(dtoAgrupacion, "codigoCartera", act.getCartera().getCodigo());
+							}
+							if(!Checks.esNulo(act.getTipoComercializacion())){
+								BeanUtils.copyProperty(dtoAgrupacion, "tipoComercializacionCodigo", act.getTipoComercializacion().getCodigo());
+								BeanUtils.copyProperty(dtoAgrupacion, "tipoComercializacionDescripcion", act.getTipoComercializacion().getDescripcion());
+							}
+						}
 					}
 				}
 
@@ -1065,9 +1081,14 @@ public class AgrupacionAdapter {
 			asistida.setCodigoPostal(pobl.getCodPostal());
 			return asistida;
 
-		} else if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL)) {
+		} else if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL)
+				|| DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_ALQUILER.equals(agrupacion.getTipoAgrupacion().getCodigo())
+				|| DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_VENTA.equals(agrupacion.getTipoAgrupacion().getCodigo())) {
 			ActivoLoteComercial loteComercial = (ActivoLoteComercial) agrupacion;
-			// Sin copiar datos por el momento.
+			// Copiamos "Municipio", "Código Postal", "Cartera", "Destino Comercial" y "Provincia"
+			loteComercial.setLocalidad(pobl.getLocalidad());
+			loteComercial.setProvincia(pobl.getProvincia());
+			loteComercial.setCodigoPostal(pobl.getCodPostal());
 			return loteComercial;
 		}
 

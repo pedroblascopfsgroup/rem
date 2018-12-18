@@ -23,6 +23,7 @@ import org.springframework.ui.ModelMap;
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.utils.MessageUtils;
 import es.capgemini.pfs.despachoExterno.model.DespachoExterno;
+import es.capgemini.pfs.diccionarios.Dictionary;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.procesosJudiciales.model.TipoJuzgado;
@@ -78,6 +79,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoBloqueo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTrabajo;
@@ -401,10 +403,19 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 			EXTDDTipoGestor tipoSupervisorEdificaciones = (EXTDDTipoGestor) utilDiccionarioApi.dameValorDiccionarioByCod(EXTDDTipoGestor.class,"SUPEDI"); // Gestor de Edificaciones
 			EXTDDTipoGestor tipoSupervisorSuelo = (EXTDDTipoGestor) utilDiccionarioApi.dameValorDiccionarioByCod(EXTDDTipoGestor.class,"SUPSUE"); // Gestor de Suelos
 			EXTDDTipoGestor tipoSupervisorAlquileres = (EXTDDTipoGestor) utilDiccionarioApi.dameValorDiccionarioByCod(EXTDDTipoGestor.class,"SUALQ"); // Gestor de Alquileres
+			
+			//HREOS-5012 - Tipo gestores Solo de Alquiler o Solo de Compra
+			EXTDDTipoGestor tipoGestorComercial = (EXTDDTipoGestor) utilDiccionarioApi.dameValorDiccionarioByCod(EXTDDTipoGestor.class,"GCOM"); // Gestor comercial
+			EXTDDTipoGestor tipoSupervisorComercial = (EXTDDTipoGestor) utilDiccionarioApi.dameValorDiccionarioByCod(EXTDDTipoGestor.class,"SCOM"); // Supervisor comercial
+			EXTDDTipoGestor tipoGestorComercialAlquileres = (EXTDDTipoGestor) utilDiccionarioApi.dameValorDiccionarioByCod(EXTDDTipoGestor.class,"GESTCOMALQ"); // Gestor comercial alquiler
+			EXTDDTipoGestor tipoSupervisorComercialAlquileres = (EXTDDTipoGestor) utilDiccionarioApi.dameValorDiccionarioByCod(EXTDDTipoGestor.class,"SUPCOMALQ"); // Supervisor comercial alquiler
+			
 			Activo activo = activoApi.get(Long.parseLong(idActivo));
 			String codigoTipoActivo = activo.getTipoActivo().getCodigo();
 			ActivoPatrimonio actPatrimonio = activoPatrimonio.getActivoPatrimonioByActivo(activo.getId());
-
+			String tipoComercializacion = activo.getTipoComercializacion().getCodigo();
+					
+			
 			if (!Checks.esNulo(activo) && !Checks.esNulo(activo.getTipoActivo()) && (!Checks.esNulo(actPatrimonio) && !Checks.esNulo(actPatrimonio.getCheckHPM()))) {
 				// Si el Activo NO es de tipo Suelo eliminamos el gestor de Suelos de la lista
 			
@@ -472,12 +483,25 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 
 				}
 			}
+			//Filtramos los gestores dependiendo del tipo de comercialización del activo
+			if(!Checks.esNulo(activo) && !Checks.esNulo(tipoComercializacion) && !tipoComercializacion.isEmpty()) {
+				if(DDTipoComercializacion.CODIGO_VENTA.equals(tipoComercializacion)) {
+					listaTiposGestor.remove(tipoGestorComercialAlquileres);
+					listaTiposGestor.remove(tipoSupervisorComercialAlquileres);
+				}
+			 if (DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(tipoComercializacion)) {
+				 	listaTiposGestor.remove(tipoGestorComercial);
+					listaTiposGestor.remove(tipoSupervisorComercial);
+				}
+			} 
 		} catch (NumberFormatException e) {
 			e.printStackTrace();
 		}
 
 		return listaTiposGestor;
 	}
+
+
 
 	@Override
 	public List<EXTDDTipoGestor> getComboTipoGestorFiltrado(Set<String> tipoGestorCodigos) {
@@ -846,6 +870,13 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		}
 
 		return listaTiposPorCuenta;
+	}
+	
+	@Override
+	public List<DDTipoCalculo> getDiccionarioByTipoOferta(String diccionario, String codTipoOferta) {
+		Filter filtroTipoOferta = genericDao.createFilter(FilterType.EQUALS, "tipoOferta.codigo", codTipoOferta);
+		
+		return genericDao.getList(DDTipoCalculo.class, filtroTipoOferta); 
 	}
 
 	@Override

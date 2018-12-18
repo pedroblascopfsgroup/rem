@@ -39,7 +39,8 @@ Ext.define('HreRem.ux.util.Constants', {
 		PROYECTO: '04',
 		ASISTIDA: '13',
 		LOTE_COMERCIAL: '14',
-		COMERCIAL_ALQUILER:'15'
+		COMERCIAL_ALQUILER:'15',
+		COMERCIAL_VENTA:'14'
 	},
 
 	TIPOS_INFO_COMERCIAL: {
@@ -614,7 +615,9 @@ Ext.define('HreRem.ux.util.Constants', {
     },
     
     TAREAS:{
-    	T015_DEFINICIONOFERTA : 'T015_DefinicionOferta'
+    	T015_DEFINICIONOFERTA : 'T015_DefinicionOferta',
+    	T015_VERIFICARSCORING : 'T015_VerificarScoring',
+    	T015_VERIFICARSEGURORENTAS : 'T015_VerificarSeguroRentas'
     },
     
     TIPO_INQUILINO: {

@@ -484,8 +484,11 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
     		model: 'HreRem.model.ComboBase',
 			proxy: {
 				type: 'uxproxy',
-				remoteUrl: 'generic/getDiccionario',
-				extraParams: {diccionario: 'tiposCalculo'}
+				remoteUrl: 'generic/getDiccionarioByTipoOferta',
+				extraParams: {
+					diccionario: 'tiposCalculo',
+					codTipoOferta : '{expediente.tipoExpedienteCodigo}'
+				}
 			}   
     	},
 
@@ -1003,7 +1006,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	    	proxy: {
 		        type: 'uxproxy',
 		        remoteUrl: 'expedientecomercial/getHistoricoScoring',
-		        extraParams: {idScoring: '{scoring.id}'}
+		        extraParams: {idScoring: '{expediente.id}'}
 	    	}
 		},
 		comboComitesAlquiler: {

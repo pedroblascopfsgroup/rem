@@ -30,9 +30,13 @@ Ext.define('HreRem.view.common.TareaController', {
 		        				panelExpediente = button.up('activosmain').down('panel[title=Expediente '+tarea.numExpediente+']')
 		        				if(!Ext.isEmpty(panelExpediente)){
 		        					if(tarea.down('form').down('genericcombo[name=tipoTratamiento]').getValue() == CONST.TIPO_INQUILINO['SCORING']){
-		        						panelExpediente.down('scoringexpediente').tab.setVisible(true);
+		        						panelExpediente.down('scoringexpediente').tab.setVisible(true); 
+		        						panelExpediente.lookupReference("fechaReserva").setFieldLabel(HreRem.i18n('fieldlabel.fecha.scoring'));
+		        						panelExpediente.lookupReference("fechaReserva").setVisible(true);
 		        					} else if(tarea.down('form').down('genericcombo[name=tipoTratamiento]').getValue() == CONST.TIPO_INQUILINO['SEGURO_RENTAS']){
 		        						panelExpediente.down('segurorentasexpediente').tab.setVisible(true);
+		        						panelExpediente.lookupReference("fechaReserva").setFieldLabel(HreRem.i18n('fieldlabel.fecha.segurorentas'));
+		        						panelExpediente.lookupReference("fechaReserva").setVisible(true);
 		        					}
 		        				}
 		        			}
@@ -58,7 +62,7 @@ Ext.define('HreRem.view.common.TareaController', {
 	        			}
 	
 //	        		}
-//	        		//debugger;
+//	        		
 //			    }
 //			});
         	
@@ -148,7 +152,7 @@ Ext.define('HreRem.view.common.TareaController', {
        },
        
        getAdvertenciaTarea: function(window) {
-			//debugger;    	
+			 	
 			var me = this;
 			var codigoProcedimientoAdvertencia = [
 				'T002_AnalisisPeticion', 'T002_SolicitudDocumentoGestoria', // 1as tareas T. Obtenci�n documental
@@ -199,7 +203,7 @@ Ext.define('HreRem.view.common.TareaController', {
 
 		verBotonEnlaceTrabajo: function(window, invisible) {
 		
-			//debugger;    	
+			  	
 			var me = this;
 			
 			//INVisibilizar boton enlace a Trabajo
@@ -236,7 +240,7 @@ Ext.define('HreRem.view.common.TareaController', {
 		
 		verBotonEnlaceActivo: function(window, invisible) {
 		
-			//debugger;    	
+			   	
 			var me = this;
 			
 			//INVisibilizar boton enlace a Activo
@@ -248,7 +252,7 @@ Ext.define('HreRem.view.common.TareaController', {
 
 		verBotonEnlaceExpediente: function(window, invisible) {
 		
-			//debugger;    	
+			    	
 			var me = this;
 			
 			//INVisibilizar boton enlace a Expediente
@@ -306,8 +310,7 @@ Ext.define('HreRem.view.common.TareaController', {
 			  params:  {idTarea : me.getView().idTarea},
 			  success: function(response,opts){
 				  idExpediente = Ext.JSON.decode(response.responseText).idExpediente;
-				  numExpediente = Ext.JSON.decode(response.responseText).numExpediente;		
-				  //debugger;			  
+				  numExpediente = Ext.JSON.decode(response.responseText).numExpediente;					  
 				  titulo = "Expediente " + numExpediente;
 				  me.getView().fireEvent('abrirDetalleExpedienteById', idExpediente, titulo, button.reflinks);
 			  },

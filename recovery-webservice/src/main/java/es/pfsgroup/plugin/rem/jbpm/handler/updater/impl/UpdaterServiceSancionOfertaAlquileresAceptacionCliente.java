@@ -62,7 +62,7 @@ public class UpdaterServiceSancionOfertaAlquileresAceptacionCliente implements U
 				
 				if(DDSiNo.SI.equals(valor.getValor())) {
 					aceptacionContraoferta = true;
-					estadoExpedienteComercial = genericDao.get(DDEstadosExpedienteComercial.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadosExpedienteComercial.CONTRAOFERTADO_ALQUILER));
+					estadoExpedienteComercial = genericDao.get(DDEstadosExpedienteComercial.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadosExpedienteComercial.CONTRAOFERTADO));
 					expedienteComercial.setEstado(estadoExpedienteComercial);
 					
 					List<ActivoOferta> activosOferta = oferta.getActivosOferta();

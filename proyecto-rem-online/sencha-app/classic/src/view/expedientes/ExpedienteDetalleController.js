@@ -683,7 +683,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 
 			Ext.create("HreRem.view.expedientes.DatosComprador", {idComprador: idCliente, modoEdicion: edicion, storeGrid:storeGrid, expediente: expediente }).show();
 		}
-		if (!(me.getViewModel().get('expediente.tipoExpedienteCodigo') === tipoExpedienteAlquiler && Ext.isEmpty(fechaPosicionamiento))){
+		if (me.getViewModel().get('expediente.tipoExpedienteCodigo') === tipoExpedienteAlquiler && !Ext.isEmpty(fechaPosicionamiento)){
 			me.fireEvent("errorToast", "Se ha avanzado la tarea Posicionamiento, no se puede editar los inquilinos");
 		}
 	},
@@ -1351,10 +1351,10 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			} else {				
 				importeParticipacion = parseFloat(importeParticipacion).toFixed(2);
 				honorario = (importeParticipacion*importeCalculoHonorario)/100;
-				honorarios.setValue(honorario);
+				honorarios.setValue(Math.round(honorario * 100) / 100);
 				importeField.setMaxValue(100);
 			}
-			me.fireEvent("log" , "[HONORARIOS: Tipo: "+tipoCalculo+" | Calculo: "+importeCalculoHonorario+" | Participacion: "+importeParticipacion+" | Importe: "+honorario+"]");
+			me.fireEvent("log" , "[HONORARIOS: Tipo: "+tipoCalculo+" | Calculo: "+importeCalculoHonorario+" | Participacion: "+importeParticipacion+" | Importe: "+Math.round(honorario * 100) / 100+"]");
 		}
 		
 		else if(CONST.TIPOS_CALCULO['FIJO_ALQ'] == tipoCalculo){//Importe fijo Alquiler
@@ -1374,10 +1374,10 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			} else {				
 				importeParticipacion = parseFloat(importeParticipacion).toFixed(2);
 				honorario = ((importeParticipacion*importeCalculoHonorario)/100)*12;
-				honorarios.setValue(honorario);
+				honorarios.setValue(Math.round(honorario * 100) / 100);
 				importeField.setMaxValue(100);
 			}
-			me.fireEvent("log" , "[HONORARIOS: Tipo: "+tipoCalculo+" | Calculo: "+importeCalculoHonorario+" | Participacion: "+importeParticipacion+" | Importe: "+honorario+"]");
+			me.fireEvent("log" , "[HONORARIOS: Tipo: "+tipoCalculo+" | Calculo: "+importeCalculoHonorario+" | Participacion: "+importeParticipacion+" | Importe: "+Math.round(honorario * 100) / 100+"]");
 		}
 		
 		else if(CONST.TIPOS_CALCULO['MENSUALIDAD_ALQ'] == tipoCalculo){//Mensualidad Alquiler
@@ -1390,10 +1390,10 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			} else {				
 				importeParticipacion = parseFloat(importeParticipacion).toFixed(2);
 				honorario = importeParticipacion*importeCalculoHonorario;
-				honorarios.setValue(honorario);
+				honorarios.setValue(Math.round(honorario * 100) / 100);
 				importeField.setMaxValue(100);
 			}
-			me.fireEvent("log" , "[HONORARIOS: Tipo: "+tipoCalculo+" | Calculo: "+importeCalculoHonorario+" | Participacion: "+importeParticipacion+" | Importe: "+honorario+"]");
+			me.fireEvent("log" , "[HONORARIOS: Tipo: "+tipoCalculo+" | Calculo: "+importeCalculoHonorario+" | Participacion: "+importeParticipacion+" | Importe: "+Math.round(honorario * 100) / 100+"]");
 		}/*
 		
 		else if(tipoCalculo=='Importe fijo'){
@@ -1407,11 +1407,13 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	
 	onHaCambiadoSolicitaReserva: function(combo, value){
 		var me= this;
-		if(value==1){
+		var carteraCodigo = me.getViewModel().get('expediente.entidadPropietariaCodigo');
+		var esCarteraGaleonOZeus =  ('15' == carteraCodigo || '14' == carteraCodigo);
+		if(!esCarteraGaleonOZeus && value==1){
 			me.lookupReference('tipoCalculo').setDisabled(false);
 		}else{
 			
-			me.lookupReference('tipoCalculo').setDisabled(true);			
+			me.lookupReference('tipoCalculo').setDisabled(true);		
 			me.lookupReference('tipoCalculo').setValue(null);
 		
 		}
@@ -1473,7 +1475,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 
 		if(!bloqueado){
 			if(CONST.ESTADOS_EXPEDIENTE['VENDIDO'] != codigoEstado){
-				if(CONST.TIPOS_EXPEDIENTE_COMERCIAL['ALQUILER'] == tipoExpedienteCodigo && tipoOrigenWCOM != origen){
+				if((CONST.TIPOS_EXPEDIENTE_COMERCIAL['ALQUILER'] == tipoExpedienteCodigo && tipoOrigenWCOM != origen) || CONST.TIPOS_EXPEDIENTE_COMERCIAL['VENTA'] == tipoExpedienteCodigo){
 					if(Ext.isEmpty(fechaSancion)){
 						var ventanaCompradores= grid.up().up();
 						var expediente= me.getViewModel().get("expediente");
@@ -2728,7 +2730,6 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	},
 	
 	onChangeBonificacion: function(checkbox, newValue, oldValue, eOpts) {
-		if(!Ext.isEmpty(oldValue)){
 			var me = this,
 			meses = me.lookupReference('mesesBonificacion'),
 			importe = me.lookupReference('importeBonificacion');
@@ -2740,7 +2741,6 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 				meses.setDisabled(true);
 				importe.setDisabled(true);
 			}
-		}
 	},
 	
 	onChangeRepercutibles: function(checkbox, newValue, oldValue, eOpts){

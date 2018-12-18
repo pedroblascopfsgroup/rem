@@ -10,7 +10,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import es.pfsgroup.commons.utils.hibernate.HibernateUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Criteria;
@@ -31,6 +30,7 @@ import es.pfsgroup.commons.utils.HibernateQueryUtils;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.commons.utils.hibernate.HibernateUtils;
 import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVRawSQLDao;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
@@ -57,8 +57,6 @@ import es.pfsgroup.plugin.rem.model.VOfertasTramitadasPendientesActivosAgrupacio
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.utils.MSVREMUtils;
-
-import javax.annotation.Resource;
 
 @Repository("ActivoDao")
 public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements ActivoDao {
@@ -678,32 +676,38 @@ HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.provinciaCodigo", dto.getProvinci
 		return busquedaActivo.getPrecio();
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public Boolean publicarActivoConHistorico(Long idActivo, String username) {
+	public Boolean publicarActivoConHistorico(Long idActivo, String username,boolean doFlush) {
     	// Antes de realizar la llamada al SP realizar las operaciones previas con los datos.
-		getHibernateTemplate().flush();
+		if(doFlush){
+			getHibernateTemplate().flush();
+		}
+		
 		return this.publicarActivo(idActivo, username, true, null);
 	}
 	
-	@SuppressWarnings("unchecked")
 	@Override
-	public Boolean publicarActivoSinHistorico(Long idActivo, String username, String eleccionUsuarioTipoPublicacionAlquiler) {
+	public Boolean publicarActivoSinHistorico(Long idActivo, String username, String eleccionUsuarioTipoPublicacionAlquiler,boolean doFlush) {
 		// Antes de realizar la llamada al SP realizar las operaciones previas con los datos.
-		getHibernateTemplate().flush();
+		if(doFlush){
+			getHibernateTemplate().flush();
+		}
 		return this.publicarActivo(idActivo, username, false, eleccionUsuarioTipoPublicacionAlquiler);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public Boolean publicarAgrupacionSinHistorico(Long idAgrupacion, String username, String eleccionUsuarioTipoPublicacionAlquiler) {
-		getHibernateTemplate().flush();
+	public Boolean publicarAgrupacionSinHistorico(Long idAgrupacion, String username, String eleccionUsuarioTipoPublicacionAlquiler,boolean doFlush) {
+		if(doFlush){
+			getHibernateTemplate().flush();
+		}
 		return this.publicarAgrupacion(idAgrupacion, username, false, eleccionUsuarioTipoPublicacionAlquiler);
 	}
 	
 	@Override
-	public Boolean publicarAgrupacionConHistorico(Long idAgrupacion, String username) {
-		getHibernateTemplate().flush();
+	public Boolean publicarAgrupacionConHistorico(Long idAgrupacion, String username,boolean doFlush) {
+		if(doFlush){
+			getHibernateTemplate().flush();
+		}
 		return this.publicarAgrupacion(idAgrupacion, username, true, null);
 	}
 
@@ -1137,5 +1141,10 @@ HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.provinciaCodigo", dto.getProvinci
 		}
 
 		return usuarioActualizacion;
+	}
+	
+	@Override
+	public void hibernateFlush() {
+		getHibernateTemplate().flush();
 	}
 }

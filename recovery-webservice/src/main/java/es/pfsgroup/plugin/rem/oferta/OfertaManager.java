@@ -395,7 +395,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			// oferta si ha pasado al comité
 			if (!Checks.esNulo(oferta) && !Checks.esNulo(oferta.getEstadoOferta())
 					&& !oferta.getEstadoOferta().getCodigo().equalsIgnoreCase(DDEstadoOferta.CODIGO_PENDIENTE)
-					&& Checks.esNulo(ofertaDto.getTarea())) {
+					&& Checks.esNulo(ofertaDto.getCodTarea())) {
 				errorsList.put("idOfertaWebcom", RestApi.REST_MSG_UNKNOWN_KEY);
 			}
 		}
@@ -481,20 +481,20 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				}
 			}
 		}
-		if (!Checks.esNulo(ofertaDto.getTarea())) {
+		if (!Checks.esNulo(ofertaDto.getCodTarea())) {
 			if (alta) {
-				errorsList.put("tarea", RestApi.REST_MSG_TAREA_INVALIDA);
+				errorsList.put("codTarea", RestApi.REST_MSG_UNKNOWN_KEY);
 			} else {
-				if (ofertaDto.getTarea().equals("01") && Checks.esNulo(ofertaDto.getSancionContraoferta())) {
-					errorsList.put("sancionContraoferta", RestApi.REST_MSG_MISSING_REQUIRED);
-				} else if (ofertaDto.getTarea().equals("02")) {
+				if (ofertaDto.getCodTarea().equals("01") && Checks.esNulo(ofertaDto.getAceptacionContraoferta())) {
+					errorsList.put("aceptacionContraoferta", RestApi.REST_MSG_MISSING_REQUIRED);
+				} else if (ofertaDto.getCodTarea().equals("02")) {
 					if(Checks.esNulo(ofertaDto.getFechaPrevistaFirma())) {
 						errorsList.put("fechaPrevistaFirma", RestApi.REST_MSG_MISSING_REQUIRED);
 					}
 					if(Checks.esNulo(ofertaDto.getLugarFirma())) {
 						errorsList.put("lugarFirma", RestApi.REST_MSG_MISSING_REQUIRED);
 					}
-				} else if (ofertaDto.getTarea().equals("03") && Checks.esNulo(ofertaDto.getFechaFirma())) {
+				} else if (ofertaDto.getCodTarea().equals("03") && Checks.esNulo(ofertaDto.getFechaFirma())) {
 					errorsList.put("fechaFirma", RestApi.REST_MSG_MISSING_REQUIRED);
 				}
 			}
@@ -646,7 +646,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				congelarExpedientesPorOfertaExpress(oferta);
 			}
 
-			if (!Checks.esNulo(ofertaDto.getTarea())) {
+			if (!Checks.esNulo(ofertaDto.getCodTarea())) {
 				errorsList = avanzaTarea(oferta, ofertaDto, errorsList);
 			}
 
@@ -762,7 +762,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			oferta = updateEstadoOferta(oferta.getId(), ofertaDto.getFechaAccion());
 			this.updateStateDispComercialActivosByOferta(oferta);
 
-			if (!Checks.esNulo(ofertaDto.getTarea())) {
+			if (!Checks.esNulo(ofertaDto.getCodTarea())) {
 				errorsList = avanzaTarea(oferta, ofertaDto, errorsList);
 			}
 		}
@@ -1489,12 +1489,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				map.put("idOfertaRem", ofertaDto.getIdOfertaRem());
 				map.put("success", false);
 
-				if (!Checks.esNulo(ofertaDto.getError())) {
-					map.put("error", ofertaDto.getError());
-					error = true;
-				} else {
-					map.put("invalidFields", errorsList);
-				}
+				map.put("invalidFields", errorsList);
 			}
 			listaRespuesta.add(map);
 		}
@@ -2561,7 +2556,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 								|| DDEstadosExpedienteComercial.PTE_POSICIONAMIENTO.equals(expediente.getEstado().getCodigo())
 								|| DDEstadosExpedienteComercial.PTE_FIRMA.equals(expediente.getEstado().getCodigo())
 								|| DDEstadosExpedienteComercial.PTE_CIERRE.equals(expediente.getEstado().getCodigo())
-								|| DDEstadosExpedienteComercial.FIRMADO_AQLUILER.equals(expediente.getEstado().getCodigo()))) {
+								|| DDEstadosExpedienteComercial.FIRMADO.equals(expediente.getEstado().getCodigo()))) {
 
 					return true;
 				}
@@ -2757,16 +2752,19 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 	@Override
 	public void desocultarActivoOferta(Oferta oferta) throws Exception {
+		ArrayList<Long> idActivoActualizarPublicacion = new ArrayList<Long>();
 		if (oferta.getActivosOferta() != null && !oferta.getActivosOferta().isEmpty()) {
 			for (ActivoOferta activoOferta : oferta.getActivosOferta()) {
 				Activo activo = activoOferta.getPrimaryKey().getActivo();
 				if (DDCartera.CODIGO_CARTERA_CAJAMAR.equals(activo.getCartera().getCodigo()) && (DDSituacionComercial.CODIGO_DISPONIBLE_VENTA.equals(activo.getSituacionComercial().getCodigo())
 						|| DDSituacionComercial.CODIGO_DISPONIBLE_VENTA_OFERTA.equals(activo.getSituacionComercial().getCodigo())
 						|| DDSituacionComercial.CODIGO_DISPONIBLE_CONDICIONADO.equals(activo.getSituacionComercial().getCodigo()))) {
-					activoAdapter.actualizarEstadoPublicacionActivo(activo.getId());
+					idActivoActualizarPublicacion.add(activo.getId());
+					//activoAdapter.actualizarEstadoPublicacionActivo(activo.getId());
 				}
 			}
 		}
+		activoAdapter.actualizarEstadoPublicacionActivo(idActivoActualizarPublicacion,true);
 	}
 
 	@Override
@@ -3017,6 +3015,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			List<ActivoAgrupacionActivo> activos = agrupacion.getActivos();
 			Double sumaTasaciones = 0.0;
 			Double sumaPreciosMinimosAutorizados = 0.0;
+			Double sumaPreciosDescuentoPublicado = 0.0;
 			
 			List<VTasacionCalculoLBK> vista = activoApi.getVistaTasacion(agrupacion.getId());
 
@@ -3024,20 +3023,27 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				Double importeTasacion = reg.getImporteTasacion();
 				Double precioAprobadoVenta = 0.0;	
 				Double precioMinimoAutorizado = 0.0;
+				Double precioDescuentoPublicado = 0.0;
 				Boolean esPrecioAprobadoVenta = false;
 
 				if(DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA.equals(reg.getCodigoTipoPrecio())) {
 					precioAprobadoVenta = (!Checks.esNulo(reg.getImporteTipoPrecio())) ? reg.getImporteTipoPrecio() : 0.0;
 					esPrecioAprobadoVenta = true;
-				}else {
+				}else if(DDTipoPrecio.CODIGO_TPC_MIN_AUTORIZADO.equals(reg.getCodigoTipoPrecio())){
 					precioMinimoAutorizado = (!Checks.esNulo(reg.getImporteTipoPrecio())) ? reg.getImporteTipoPrecio() : 0.0;
+				} else if(DDTipoPrecio.CODIGO_TPC_DESC_APROBADO.equals(reg.getCodigoTipoPrecio())) {
+					precioDescuentoPublicado = (!Checks.esNulo(reg.getImporteTipoPrecio())) ? reg.getImporteTipoPrecio() : 0.0;
 				}
 
 				if(esPrecioAprobadoVenta) {
 					sumaTasaciones += (!Checks.esNulo(importeTasacion)) ? importeTasacion : precioAprobadoVenta;
 				}
 				sumaPreciosMinimosAutorizados += precioMinimoAutorizado;
-
+				sumaPreciosDescuentoPublicado += precioDescuentoPublicado;
+			}
+			
+			if(sumaPreciosDescuentoPublicado == 0.0) {
+				sumaPreciosDescuentoPublicado = null;
 			}
 
 			Integer tipoResidencial = 0;
@@ -3068,9 +3074,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					tipoSingularTerciario++;
 				}
 			}
-
-			if((!Checks.esNulo(sumaTasaciones) && sumaTasaciones < importeUmbral)
-					&& (!Checks.esNulo(importeOferta) && !Checks.esNulo(sumaPreciosMinimosAutorizados) && importeOferta >= sumaPreciosMinimosAutorizados)) {
+	
+			if(((!Checks.esNulo(sumaTasaciones) && sumaTasaciones < importeUmbral) 
+					&& (!Checks.esNulo(importeOferta) && !Checks.esNulo(sumaPreciosMinimosAutorizados) && importeOferta >= sumaPreciosMinimosAutorizados))
+			|| ((!Checks.esNulo(sumaTasaciones) && sumaTasaciones < importeUmbral) 
+					&& (!Checks.esNulo(importeOferta) && !Checks.esNulo(sumaPreciosDescuentoPublicado) && importeOferta >= sumaPreciosDescuentoPublicado))) {
 				Filter filterComite = genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_HAYA_LIBERBANK);
 				DDComiteSancion comiteSancion = genericDao.get(DDComiteSancion.class, filterComite);
 				
@@ -3096,7 +3104,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					
 					return comiteSancion;
 				}							
-			}			
+			}
+			
 		}
 		
 		return null;
@@ -3121,18 +3130,18 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		DateFormat format = new SimpleDateFormat("dd/MM/yyyy");
 		boolean avanzar = true;
 
-		if (ofertaDto.getTarea().equals("01")  && DDEstadosExpedienteComercial.CONTRAOFERTADO.equals(expedienteComercial.getEstado().getCodigo())) {
-			if (ofertaDto.getSancionContraoferta().equals("Si")) {
+		if (ofertaDto.getCodTarea().equals("01")  && DDEstadosExpedienteComercial.CONTRAOFERTADO.equals(expedienteComercial.getEstado().getCodigo())) {
+			if (ofertaDto.getAceptacionContraoferta()) {
 				valoresTarea.put("aceptacionContraoferta", new String[] { DDSiNo.SI });
-			} else if (ofertaDto.getSancionContraoferta().equals("No")) {
+			} else if (!ofertaDto.getAceptacionContraoferta()) {
 				valoresTarea.put("aceptacionContraoferta", new String[] { DDSiNo.NO });
 			} else {
 				avanzar = false;
 			}
-		} else if (ofertaDto.getTarea().equals("02") && DDEstadosExpedienteComercial.PTE_POSICIONAMIENTO.equals(expedienteComercial.getEstado().getCodigo())) {
+		} else if (ofertaDto.getCodTarea().equals("02") && DDEstadosExpedienteComercial.PTE_POSICIONAMIENTO.equals(expedienteComercial.getEstado().getCodigo())) {
 			valoresTarea.put("fechaFirmaContrato", new String[] { format.format(ofertaDto.getFechaPrevistaFirma()) });
 			valoresTarea.put("lugarFirma", new String[] { ofertaDto.getLugarFirma() });
-		} else if (ofertaDto.getTarea().equals("03") && DDEstadosExpedienteComercial.PTE_FIRMA.equals(expedienteComercial.getEstado().getCodigo())) {
+		} else if (ofertaDto.getCodTarea().equals("03") && DDEstadosExpedienteComercial.PTE_FIRMA.equals(expedienteComercial.getEstado().getCodigo())) {
 			valoresTarea.put("fechaFirma", new String[] { format.format(ofertaDto.getFechaFirma()) });
 		} else {
 			avanzar = false;
@@ -3144,11 +3153,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			try {
 				adapter.save(valoresTarea);
 			} catch (Exception e) {
-				errorsList.put("tarea", e.getMessage());
-				ofertaDto.setError(e.getMessage());
+				errorsList.put("codTarea", RestApi.REST_MSG_UNKNOWN_KEY);
+				logger.error("error en OfertasManager", e);
 			}
 		} else {
-			errorsList.put("tarea", RestApi.REST_MSG_TAREA_INVALIDA);
+			errorsList.put("codTarea", RestApi.REST_MSG_UNKNOWN_KEY);
 		}
 		return errorsList;
 	}

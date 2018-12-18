@@ -8,6 +8,7 @@ public class PersonaInputDto {
 	public static final String ID_ORIGEN = "NOS";
 	//public static final String ID_TIPO_PERSONA = "ID_TIPO_PERSONA";
 	public static final String ID_INTERVINIENTE_HAYA = "ID_INTERVINIENTE_HAYA";
+	public static final String ID_PERSONA_HAYA = "ID_PERSONA_HAYA";
 	public static final String FORMATO_STRING = "STRING";
 	//public static final String EVENTO_IDENTIFICADOR_INTERVINIENTE_CLIENTE = "ConsultaIdIntervinientePorCliente";
 	public static final String EVENTO_IDENTIFICADOR_INTERVINIENTE_ORIGEN = "ConsultaIdIntervinientePorOrigen";

@@ -78,7 +78,7 @@ public class UpdaterServiceSancionOfertaAlquileresAceptacionCliente implements U
 					
 					if(Checks.esNulo(estadoExpedienteComercial)) {
 						estadoExpedienteComercial = genericDao.get(DDEstadosExpedienteComercial.class,
-								genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadosExpedienteComercial.CONTRAOFERTADO));
+								genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadosExpedienteComercial.PTE_SANCION));
 					}					
 					
 					expedienteComercial.setEstado(estadoExpedienteComercial);

@@ -7324,6 +7324,35 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		
 		return ocupado;
 	}
+	
+	@Override
+	public boolean checkConTituloTramite(Long idTramite) {
+		boolean ocupado = true;
+		try {
+		ActivoTramite activoTramite = activoTramiteApi.get(idTramite);
+		
+		Activo activo = activoTramite.getActivo();
+		DtoActivoSituacionPosesoria activoDto = new DtoActivoSituacionPosesoria();
+		if (activo != null){
+			BeanUtils.copyProperty(activoDto, "conTitulo", activo.getSituacionPosesoria().getConTitulo());
+		}
+		
+		if(!Checks.esNulo(activoDto) && activoDto.getConTitulo() == 0) {
+			ocupado = false;
+		}
+		
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NullPointerException e) {
+			e.printStackTrace();
+		}
+		
+		return ocupado;
+	}
 
 	@Override
 	public Long getNumExpByNumOfr(Long numBusqueda) {

@@ -1134,5 +1134,7 @@ public interface ExpedienteComercialApi {
 	 */
 	public boolean checkEstadoOcupadoTramite(Long idExpediente);
 
+	public boolean checkConTituloTramite(Long idTramite);
+
 
 }

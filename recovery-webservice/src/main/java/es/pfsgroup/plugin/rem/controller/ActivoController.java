@@ -47,7 +47,6 @@ import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.activo.ActivoPropagacionFieldTabMap;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
-import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoPropagacionApi;
@@ -174,9 +173,6 @@ public class ActivoController extends ParadiseJsonController {
 	@Autowired
 	private ActivoPropagacionApi activoPropagacionApi;
 	
-	@Autowired
-	private GenericAdapter genericAdapter;
-
 	@Autowired
 	GestorDocumentalFotosApi gestorDocumentalFotos;
 	
@@ -2439,6 +2435,7 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView getActivoExists(String numActivo, ModelMap model) {
 

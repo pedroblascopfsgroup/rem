@@ -3159,7 +3159,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				adapter.save(valoresTarea);
 			} catch (Exception e) {
 				errorsList.put("codTarea", RestApi.REST_MSG_UNKNOWN_KEY);
-				errorsList.put("info", e.getMessage());
 				logger.error("error en OfertasManager", e);
 			}
 		} else {

@@ -4,11 +4,11 @@
 --## FECHA_CREACION=20181204
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-4840
+--## INCIDENCIA_LINK=HREOS-5084
 --## PRODUCTO=NO
 --## 
 --## Finalidad: DDL
---## INSTRUCCIONES: Crear tabla para mandar correos MAIL_ADECUACION_GENCAT
+--## INSTRUCCIONES: Crear tabla para mandar correos MAIL_COMUNICACION_GENCAT
 --## VERSIONES:
 --##        0.1 Versión inicial 
 --##########################################
@@ -28,7 +28,7 @@ DECLARE
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
 
-    V_TABLA VARCHAR2(32 CHAR) := 'MAIL_ADECUACION_GENCAT'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
+    V_TABLA VARCHAR2(32 CHAR) := 'MAIL_COMUNICACION_GENCAT'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
 
     BEGIN
 

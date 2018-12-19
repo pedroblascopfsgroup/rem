@@ -463,4 +463,11 @@ public interface ParticularValidatorApi {
 		Boolean isActivoOcultoVenta(String numActivo);
 
 		Boolean isActivoOcultoAlquiler(String numActivo);
+		
+		/**
+		 * @param numActivo
+		 * @return devuelve true si el activo se encuentra incluido en una
+		 *         agrupacion viva de tipo comercial
+		 */
+		public Boolean activoEnAgrupacionComercialViva(String numActivo);
 }

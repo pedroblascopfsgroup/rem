@@ -90,8 +90,7 @@ Ext.define('HreRem.view.expedientes.HistoricoCondicionesExpediente', {
 		    
 		    me.saveSuccessFn = function() {
 		    	var me = this;
-		    	tabCond=me.up('condicionesexpediente');
-		    	tabCond.lookupController().cargarTabData(tabCond);	
+		    	me.getView().refresh() 
 		    	return true;
 		    },
 

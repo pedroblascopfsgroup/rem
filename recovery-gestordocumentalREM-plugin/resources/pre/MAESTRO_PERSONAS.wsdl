@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?><wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ws="http://alamo.haya.es/IntegracionSOA/schemas" targetNamespace="http://alamo.haya.es/IntegracionSOA/schemas">
+	
+	<wsdl:documentation>
+		Alamo Consulting
+		Version: 25-05-2016
+	</wsdl:documentation>
+
+	<wsdl:types>
+		<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+			<xsd:import namespace="http://alamo.haya.es/MIntervinientesSOA/schemas" schemaLocation="./MAESTRO_PERSONAS.xsd"/>
+		</xsd:schema>
+	</wsdl:types>
+
+	<wsdl:message name="processEventMsgRequest">
+		<wsdl:part name="processEventRequest" element="ws:processEventRequest"/>
+	</wsdl:message>
+
+	<wsdl:message name="processEventMsgResponse">
+		<wsdl:part name="processEventResponse" element="ws:processEventResponse"/>
+	</wsdl:message>
+
+
+	<wsdl:portType name="wsPort">
+		<wsdl:operation name="processEvent">
+			<wsdl:input name="processEventRequest" message="ws:processEventMsgRequest"/>
+			<wsdl:output name="processEventResponse" message="ws:processEventMsgResponse"/>
+		</wsdl:operation>
+
+	</wsdl:portType>
+
+
+
+	<wsdl:binding name="wsBinding" type="ws:wsPort">
+		<soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+		<wsdl:operation name="processEvent">
+			<soap:operation soapAction="http://alamo.haya.es/processEvent"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+
+	</wsdl:binding>
+
+
+	<wsdl:service name="wsWS">
+		<wsdl:port binding="ws:wsBinding" name="ws">
+		<soap:address location="http://192.168.126.132:8080/WSMaestroPersonas/ws"/>
+		</wsdl:port>
+	</wsdl:service>
+
+</wsdl:definitions>

@@ -17,6 +17,16 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoExpedienteModel', {
 	    	autoLoad: false
     	},
     	
+    	comboTipoDoc: {
+			model: 'HreRem.model.TipoDocumentoExpediente',
+	    	proxy: {
+	    		type: 'uxproxy', 
+	    		remoteUrl: 'expedientecomercial/getTipoDocumentoExpediente',
+	    		extraParams: {tipoExpediente: '{expediente.tipoExpedienteCodigo}'}
+	    	},
+	    	autoLoad: true,
+    		sorters: 'descripcion'
+    	},
     	
     	comboTipoDocumento : {
 			model: 'HreRem.model.ComboBase',

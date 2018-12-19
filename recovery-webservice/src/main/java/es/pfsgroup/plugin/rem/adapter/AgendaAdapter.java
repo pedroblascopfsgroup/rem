@@ -190,7 +190,7 @@ public class AgendaAdapter {
 	public String getTipoTituloActivoByIdTarea(Long id){
 		TareaNotificacion tar = proxyFactory.proxy(TareaNotificacionApi.class).get(id);
 		TareaActivo tareaActivo = tareaActivoApi.getByIdTareaExterna(tar.getTareaExterna().getId());
-		
+
 		return tareaActivo.getActivo().getTipoTitulo().getCodigo().toString();
 	}
 
@@ -268,20 +268,21 @@ public class AgendaAdapter {
 		return handler.getModel(idTarea);
 	}
 
-	public Boolean save(Map<String,String[]> valores) {
-		long idTarea = 0L;
+	public Boolean save(Map<String,String[]> valores) throws Exception{
+		DtoGenericForm dto = new DtoGenericForm();
+		Long idTarea = 0L;
 
 		Map<String, String> camposFormulario = new HashMap<String,String>();
 		for (Map.Entry<String, String[]> entry : valores.entrySet()) {
 			String key = entry.getKey();
 			if (!key.equals("idTarea")){
-				camposFormulario.put(key, entry.getValue()[0]);
+				camposFormulario.put(key, (String)entry.getValue()[0]);
 			}else{
-				idTarea = Long.parseLong(entry.getValue()[0]);
+				idTarea = Long.parseLong((String)entry.getValue()[0]);
 			}
 		}
 
-		DtoGenericForm dto = this.rellenaDTO(idTarea,camposFormulario);
+		dto = this.rellenaDTO(idTarea,camposFormulario);
 
 		actGenericFormManager.saveValues(dto);
 

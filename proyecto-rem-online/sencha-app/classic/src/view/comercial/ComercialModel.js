@@ -48,7 +48,7 @@ Ext.define('HreRem.view.comercial.ComercialModel', {
 	    	proxy: {
 		        type: 'uxproxy',
 		        localUrl: '/ofertas.json',
-		        remoteUrl: 'ofertas/getListOfertas'
+		        remoteUrl: 'ofertas/getListOfertas' 
 	    	},
 	    	session: true,
 	    	remoteSort: true,
@@ -81,6 +81,22 @@ Ext.define('HreRem.view.comercial.ComercialModel', {
 				type: 'uxproxy',
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'estadosExpediente'}
+			}
+    	},
+    	comboEstadoExpedienteVentas: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'expedientecomercial/getEstadoExpedienteComercial',
+				extraParams: {esVenta: CONST.ES_VENTA["SI"]}
+			}
+    	},
+    	comboEstadoExpedienteAlquileres: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'expedientecomercial/getEstadoExpedienteComercial',
+				extraParams: {esVenta: CONST.ES_VENTA["NO"]}
 			}
     	},
     	comboTiposComercializarActivo: {

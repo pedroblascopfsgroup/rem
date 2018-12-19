@@ -50,15 +50,22 @@ public class MSVActualizadorPerimetroActivo extends AbstractMSVActualizador impl
 	
 	@Autowired
 	private UpdaterStateApi updaterState;
-	
+
 	@Override
 	public String getValidOperation() {
 		return MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_PERIMETRO_ACTIVO;
 	}
 	
-	@Override
+
 	@Transactional(readOnly = false)
-	public ResultadoProcesarFila procesaFila(MSVHojaExcel exc, int fila, Long prmToken) throws IOException, ParseException, JsonViewerException, SQLException {
+	public ResultadoProcesarFila procesaFila(MSVHojaExcel exc, int fila, Long prmToken)
+			throws JsonViewerException, IOException, ParseException, SQLException, Exception {
+		return procesaFila(exc, fila, prmToken, new Object[0]);
+	}
+
+	@Transactional(readOnly = false)
+	public ResultadoProcesarFila procesaFila(MSVHojaExcel exc, int fila, Long prmToken, Object[] extraArgs) throws IOException, ParseException, JsonViewerException, SQLException {
+		
 		Activo activo = activoApi.getByNumActivo(Long.parseLong(exc.dameCelda(fila, 0)));
 		
 		//Evalua si ha encontrado un registro de perimetro para el activo dado. 
@@ -164,6 +171,10 @@ public class MSVActualizadorPerimetroActivo extends AbstractMSVActualizador impl
 		
 		//Actualizar disponibilidad comercial del activo
 		updaterState.updaterStateDisponibilidadComercial(activo);
+
+		//Actualizar registro historico destino comercial del activo
+		activoApi.updateHistoricoDestinoComercial(activo, extraArgs);
+
 		activoApi.saveOrUpdate(activo);
 
 		activoAdapter.actualizarEstadoPublicacionActivo(activo.getId());

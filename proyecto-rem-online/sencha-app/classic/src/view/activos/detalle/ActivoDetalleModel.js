@@ -6,15 +6,15 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
     'HreRem.model.IncrementoPresupuesto', 'HreRem.model.Distribuciones', 'HreRem.model.Observaciones',
     'HreRem.model.Carga', 'HreRem.model.Llaves', 'HreRem.model.PreciosVigentes','HreRem.model.VisitasActivo',
     'HreRem.model.OfertaActivo', 'HreRem.model.PropuestaActivosVinculados', 'HreRem.model.HistoricoMediadorModel','HreRem.model.AdjuntoActivoPromocion',
-    'HreRem.model.MediadorModel', 'HreRem.model.MovimientosLlave', 'HreRem.model.ActivoPatrimonio', 'HreRem.model.HistoricoAdecuacionesPatrimonioModel', 'HreRem.model.ImpuestosActivo','HreRem.model.OcupacionIlegal'],
+    'HreRem.model.MediadorModel', 'HreRem.model.MovimientosLlave', 'HreRem.model.ActivoPatrimonio', 'HreRem.model.HistoricoAdecuacionesPatrimonioModel',
+    'HreRem.model.ImpuestosActivo','HreRem.model.OcupacionIlegal','HreRem.model.HistoricoDestinoComercialModel'],
 
-    
     data: {
     	activo: null,
     	ofertaRecord: null,
     	activoCondicionantesDisponibilidad: null
     },
-    
+
     formulas: {
 	     
     	/**
@@ -52,7 +52,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 	     	var ocupado = get('situacionPosesoria.ocupado') == "1";
 	     	var conTitulo = get('situacionPosesoria.conTitulo') == "1";
 	     	
-	     	return ocupado && conTitulo
+	     	return ocupado && conTitulo;
 	     },
 
 	     esSituacionJudicial: function(get){
@@ -366,7 +366,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		 activoPerteneceAgrupacionRestringida: function(get){
 		 	 return get('activo.pertenceAgrupacionRestringida');
 		 },
-		 
+
 		 getLinkHayaActivo: function(get) {
 			 if(get('activo.perteneceAgrupacionRestringidaVigente')) {
 				 return get('activo.activoPrincipalRestringida');
@@ -394,31 +394,33 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			}
 		 },
 
+		 enableComboRentaAntigua: function(get){
+			var chkPerimetroAlquiler = get('patrimonio.chkPerimetroAlquiler');
+			var situacionActivo = get('activo.situacionComercialCodigo');
+			if((chkPerimetroAlquiler == true || chkPerimetroAlquiler == "true" ) && CONST.SITUACION_COMERCIAL['ALQUILADO'] == situacionActivo){
+				return false;
+			}else{
+				return true;
+			}
+		 },
+
+		 enableCheckPerimetroAlquiler: function(get){
+		 	var comboEstadoAlquiler = get('patrimonio.estadoAlquiler');
+
+		 	if(comboEstadoAlquiler != null){
+		 		if(comboEstadoAlquiler.value == CONST.COMBO_ESTADO_ALQUILER["ALQUILADO"] || comboEstadoAlquiler.value == CONST.COMBO_ESTADO_ALQUILER["CON_DEMANDAS"]){
+			 		return true;
+		 		}
+		 	}
+		 	return false;
+		 },
+
 		 esEditableCodigoPromocion: function(get){
 			 var isGestorActivos = $AU.userIsRol('HAYAGESACT') || $AU.userIsRol('HAYAGESTADM');
 			 var isLiberbank = get('activo.isCarteraLiberbank');
 			 if(isGestorActivos && isLiberbank) return true;
 			 else return false;
 		 },
-
-		 enableComboTipoAlquiler: function(get){
-			var chkPerimetroAlquiler = get('patrimonio.chkPerimetroAlquiler');
-			var tipoComercializacion = get('activo.tipoComercializacionCodigo');
-			if((chkPerimetroAlquiler == true || chkPerimetroAlquiler == "true" ) && CONST.TIPOS_COMERCIALIZACION['VENTA'] != tipoComercializacion){
-				return false;
-			}else{
-				return true;
-			}
-		},
-
-		enableComboAdecuacion: function(get){
-			var chkPerimetroAlquiler = get('patrimonio.chkPerimetroAlquiler');
-			if((chkPerimetroAlquiler == true || chkPerimetroAlquiler == "true" )){
-				return false;
-			}else{
-				return true;
-			}
-		},
 
 		filtrarComboMotivosOcultacionVenta: function(get) {
 			var bloqueoCheckOcultar = get('datospublicacionactivo.deshabilitarCheckOcultarVenta');
@@ -495,21 +497,41 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			}
 
 		},
-		
+
 		isReadOnlyFechaRealizacionPosesion: function(get){
 			var me = this;
-			
+
 			var isSareb = get('activo.isCarteraSareb');
 	    	var isCerberus = get('activo.isCarteraCerberus');
-			
+
 			if(isSareb || isCerberus){
 				return true;
-			}  
-			
+			}
+
 			return false;
+		 },
+
+		 esEditableComboEstadoAlquiler: function(get){
+			var comboOcupacion = get('activo.ocupado');
+
+			return comboOcupacion == CONST.COMBO_OCUPACION["SI"];
+		},
+
+		enableComboTipoInquilino: function(get){
+			var comboEstadoAlquiler = get('patrimonio.estadoAlquiler');
+
+			return (Ext.isEmpty(comboEstadoAlquiler) && comboEstadoAlquiler == CONST.COMBO_ESTADO_ALQUILER["LIBRE"]);
+		},
+
+		esTipoEstadoAlquilerAlquilado: function(get){
+			var estadoAlquilerCodigo = get('situacionPosesoria.tipoEstadoAlquiler');
+
+			return (CONST.COMBO_ESTADO_ALQUILER["ALQUILADO"] == estadoAlquilerCodigo);
 		}
 
 	 },
+
+
 
     stores: {
     		
@@ -789,9 +811,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			        extraParams: {idActivo: '{activo.id}'}
 		    	},
 	         	remoteSort: true,
-		    	remoteFilter: true 
+		    	remoteFilter: true
         	},
-       		
+
     		storeLlaves: {
 	    		pageSize: 10,
 	     		model: 'HreRem.model.Llaves',
@@ -1524,6 +1546,25 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			}
 		},
 
+    	comboTipoInquilino: {
+    		model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tiposInquilino'}
+			}
+    	},
+
+
+    	comboEstadoAlquiler: {
+    		model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tiposEstadoAlquiler'}
+			}
+    	},
+
 		comboTipoTenedor: {
 			model: 'HreRem.model.ComboBase',
 			proxy: {
@@ -1647,6 +1688,16 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				remoteUrl: 'activo/getHistoricoAdecuacionesAlquilerByActivo',
 				extraParams: {id: '{activo.id}'}
 			}
-		}
+		},
+
+		storeHistoricoDestinoComercial: {
+			 pageSize: 10,
+	   		 model: 'HreRem.model.HistoricoDestinoComercialModel',
+	   		 proxy: {
+		        type: 'uxproxy',
+		        remoteUrl: 'activo/getHistoricoDestinoComercialByActivo',
+		        extraParams: {id: '{activo.id}'}
+	    	 }
+   		}
      }    
 });

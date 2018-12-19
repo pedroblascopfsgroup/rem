@@ -52,6 +52,30 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
 			            	}
 						},
 						{
+		                	fieldLabel	: HreRem.i18n('fieldlabel.nombre'),
+			            	bind		: {
+			            		value: '{agrupacionficha.nombre}',
+			            		readOnly: '{agrupacionficha.existeFechaBaja}'
+			            	},
+							allowBlank	:	false
+		                },
+		                {
+		                	xtype		: 'displayfieldbase',
+		                	fieldLabel	:  HreRem.i18n('fieldlabel.numero.agrupacion.uvem'),
+		                	bind		: {
+			            		value: '{agrupacionficha.numAgrupUvem}'
+			            	}
+		                },
+		                {
+		                	fieldLabel	: HreRem.i18n('fieldlabel.subtipo'),
+			            	bind		: {
+			            		value: '{agrupacionficha.subTipoComercial}',
+			            		readOnly: true,
+			            		hidden: '{!esComercialVentaOAlquiler}',
+			            		disabled:'{esComercialVenta}'
+			            	}
+		                },
+						{
 							xtype		: 'comboboxfieldbase',
 							fieldLabel	: HreRem.i18n('fieldlabel.municipio'),
 							reference	: 'municipioCombo',
@@ -64,20 +88,24 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
 
 						},
 		                { 
-		                	xtype		: 'displayfieldbase',
-		                	fieldLabel	:  HreRem.i18n('fieldlabel.numero.agrupacion.uvem'),
-		                	bind		: {
-			            		value: '{agrupacionficha.numAgrupUvem}',
-			            		hidden:'{esAgrupacionProyecto}'
-			            	}		
-		                },
-		                { 
-		                	fieldLabel	:  HreRem.i18n('fieldlabel.descripcion'),
+		                	xtype		: 'datefieldbase',
+		                	readOnly	:	true,
+		                	fieldLabel	: HreRem.i18n('fieldlabel.fecha.alta'),
 			            	bind		: {
-			            		value: '{agrupacionficha.descripcion}',
-			            		readOnly: '{agrupacionficha.existeFechaBaja}'
+			            		value: '{agrupacionficha.fechaAlta}'
+			            	}		
+						},
+		                {
+							xtype		: 'comboboxfieldbase',
+							fieldLabel	: HreRem.i18n('fieldlabel.tipo.alquiler'),
+							reference	: 'tipoAlquilerCombo',
+			            	bind		: {
+			            		store: '{comboTipoAlquiler}',
+			            	    value: '{agrupacionficha.tipoAlquilerCodigo}',
+			            	    hidden: '{!esComercialVentaOAlquiler}',
+			            	    readOnly:'{esComercialVenta}'
 			            	}
-		                },
+						},
 		                { 
 							fieldLabel	: HreRem.i18n('fieldlabel.direccion'),
 							bind		: {
@@ -87,25 +115,26 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
 							},
 							allowBlank	:	'{esAgrupacionLoteComercial}'
 						},
-		                { 
-		                	xtype		: 'datefieldbase',
-		                	readOnly	:	true,
-		                	fieldLabel	: HreRem.i18n('fieldlabel.fecha.alta'),
-			            	bind		: {
-			            		value: '{agrupacionficha.fechaAlta}'
-			            	}		
-						},
-						{ 
-							xtype		: 'comboboxfieldbase',
-							fieldLabel	: HreRem.i18n('fieldlabel.entidad.propietaria'),
-							bind		: {
-								store: '{comboCartera}',
-								value: '{agrupacionficha.codigoCartera}',
-								readOnly: '{agrupacionTieneActivosOrExisteFechaBaja}',
-								allowBlank	:'{esAgrupacionLoteComercial}'	
-							}	
-						},
+
 						{
+		                	xtype		:'datefieldbase',
+		                	fieldLabel	:  HreRem.i18n('fieldlabel.fecha.baja'),
+			            	bind		: {
+			            		value: 	'{agrupacionficha.fechaBaja}',
+			            		minValue: '{agrupacionficha.fechaAlta}',
+			            		readOnly: '{agrupacionficha.existeFechaBaja}',
+			            		disabled: '{esAgrupacionAsistida}'
+			            	}
+						},
+		                {
+		                	fieldLabel	:  HreRem.i18n('fieldlabel.descripcion'),
+			            	bind		: {
+			            		value: '{agrupacionficha.descripcion}',
+			            		readOnly: '{agrupacionficha.existeFechaBaja}'
+			            	}
+		                },
+						{
+
 							xtype		: 'comboboxfieldbase',
 							fieldLabel	: HreRem.i18n('fieldlabel.provincia'),
 							reference	: 'provinciaCombo',
@@ -120,26 +149,50 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
     						listeners	: {
 								select: 'onChangeChainedCombo'
     						}
-			            	
-						},  
-						{ 
-		                	xtype		:'datefieldbase',
-		                	fieldLabel	:  HreRem.i18n('fieldlabel.fecha.baja'),
-			            	bind		: {
-			            		value: 	'{agrupacionficha.fechaBaja}',
-			            		minValue: '{agrupacionficha.fechaAlta}',
-			            		readOnly: '{agrupacionficha.existeFechaBaja}',
-			            		disabled: '{esAgrupacionAsistida}'
-			            	}
 						},
+						{
+		                    xtype		: 'comboboxfieldbase',
+		                    reference	: 'comboFormalizacion',
+		                    fieldLabel	: HreRem.i18n('fieldlabel.agrupacion.con.formalizacion'),
+		                    bind		: {
+		                    		store: '{comboSiNoRem}',
+		                    		value: '{agrupacionficha.isFormalizacion}',
+		                    		hidden: '{!esAgrupacionLoteComercial}',
+		                        	readOnly: '{agrupacionTieneActivos}'
+		                    },
+		                    listeners	: {
+		                        change: function(combo, value) {
+		                          var me = this;
+		                          if(value=='1') {
+		                            me.up('formBase').down('[reference=cbGestoriaFormalizacion]').setDisabled(false);
+		                            me.up('formBase').down('[reference=cbGestoriaFormalizacion]').validate();
+		                            me.up('formBase').down('[reference=cbGestorFormalizacion]').setDisabled(false);
+		                            me.up('formBase').down('[reference=cbGestorFormalizacion]').validate();
+		                            me.up('formBase').down('[reference=cbGestorFormalizacion]').allowBlank = '{!esAgrupacionLoteComercial}';
+		                            me.up('formBase').down('[reference=cbGestoriaFormalizacion]').allowBlank = '{!esAgrupacionLoteComercial}';
+		                          } else {
+		                            me.up('formBase').down('[reference=cbGestoriaFormalizacion]').allowBlank = true;
+		                            me.up('formBase').down('[reference=cbGestoriaFormalizacion]').setValue("");
+		                            me.up('formBase').down('[reference=cbGestoriaFormalizacion]').setDisabled(true);
+		                            me.up('formBase').down('[reference=cbGestoriaFormalizacion]').validate();
+		                            me.up('formBase').down('[reference=cbGestorFormalizacion]').allowBlank = true;
+		                            me.up('formBase').down('[reference=cbGestorFormalizacion]').setValue("");
+		                            me.up('formBase').down('[reference=cbGestorFormalizacion]').setDisabled(true);
+		                            me.up('formBase').down('[reference=cbGestorFormalizacion]').validate();
+		                          }
+		                        }
+		                    }
+						},  
+						
 						{ 
-		                	fieldLabel	: HreRem.i18n('fieldlabel.nombre'),
-			            	bind		: {
-			            		value: '{agrupacionficha.nombre}',
-			            		readOnly: '{agrupacionficha.existeFechaBaja}'
-			            	},
-							allowBlank	:	false
-		                },
+							xtype		: 'displayfieldbase',
+							fieldLabel	: HreRem.i18n('fieldlabel.entidad.propietaria'),
+							bind		: {
+								value: '{agrupacionficha.cartera}',
+								readOnly: '{agrupacionficha.existeFechaBaja}'
+							}
+						},
+
 						{ 
 							fieldLabel	: HreRem.i18n('fieldlabel.codigo.postal'),
 							bind		: {
@@ -217,46 +270,14 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
 							}
 						},
 						{
-		                    xtype		: 'comboboxfieldbase',                    
-		                    reference	: 'comboFormalizacion',
-		                    fieldLabel	: HreRem.i18n('fieldlabel.agrupacion.con.formalizacion'),
-		                    bind		: {
-		                    		store: '{comboSiNoRem}',
-		                    		value: '{agrupacionficha.isFormalizacion}',
-		                    		hidden: '{!esAgrupacionLoteComercial}',
-		                        	readOnly: '{agrupacionTieneActivos}'                       
-		                    },
-		                    listeners	: {
-		                        change: function(combo, value) {
-		                          var me = this;
-		                          if(value=='1') {                            
-		                            me.up('formBase').down('[reference=cbGestoriaFormalizacion]').setDisabled(false);
-		                            me.up('formBase').down('[reference=cbGestoriaFormalizacion]').validate();
-		                            me.up('formBase').down('[reference=cbGestorFormalizacion]').setDisabled(false);
-		                            me.up('formBase').down('[reference=cbGestorFormalizacion]').validate();
-		                            me.up('formBase').down('[reference=cbGestorFormalizacion]').allowBlank = '{!esAgrupacionLoteComercial}';
-		                            me.up('formBase').down('[reference=cbGestoriaFormalizacion]').allowBlank = '{!esAgrupacionLoteComercial}';
-		                          } else {
-		                            me.up('formBase').down('[reference=cbGestoriaFormalizacion]').allowBlank = true;
-		                            me.up('formBase').down('[reference=cbGestoriaFormalizacion]').setValue("");
-		                            me.up('formBase').down('[reference=cbGestoriaFormalizacion]').setDisabled(true);
-		                            me.up('formBase').down('[reference=cbGestoriaFormalizacion]').validate();
-		                            me.up('formBase').down('[reference=cbGestorFormalizacion]').allowBlank = true;
-		                            me.up('formBase').down('[reference=cbGestorFormalizacion]').setValue("");
-		                            me.up('formBase').down('[reference=cbGestorFormalizacion]').setDisabled(true);
-		                            me.up('formBase').down('[reference=cbGestorFormalizacion]').validate();                            
-		                          }
-		                        }
-		                    }
-						},
-						{
-							xtype: 'comboboxfieldbase',
-							fieldLabel: HreRem.i18n('fieldlabel.perimetro.destino.comercial'),
-							bind: {
-								store: '{comboTipoDestinoComercialCreaFiltered}',
-								value: '{agrupacionficha.tipoComercializacionCodigo}'
-							}
-						}
+                            xtype: 'comboboxfieldbase',
+                            fieldLabel: HreRem.i18n('fieldlabel.perimetro.destino.comercial'),
+                            bind: {
+                                store: '{comboTipoDestinoComercialCreaFiltered}',
+                                value: '{agrupacionficha.tipoComercializacionCodigo}'
+                            }
+                        }
+
 				]
           },
           {
@@ -344,7 +365,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
 				        	valueField	: 'id',
 		            		
 				        	bind		: {
-			            		store: '{comboGestorComercial}',
+			            		store: '{comboGestorComercialTipo}',
 			            		value: '{agrupacionficha.codigoGestorComercial}',
 			            		hidden: '{esAgrupacionLiberbank}',
 			            		readOnly:'{agrupacionProyectoTieneActivos}'

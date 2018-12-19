@@ -1741,7 +1741,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
 				+ "			FROM ACT_ACTIVO ACT"
-				+ "			JOIN ACT_APU_ACTIVO_PUBLICACION APU ON ACT.ACT_ID = APU.ACT_ID AND APU.BORRADO = 0 "	
+				+ "			JOIN ACT_APU_ACTIVO_PUBLICACION APU ON ACT.ACT_ID = APU.ACT_ID AND APU.BORRADO = 0 "
 				+ "			JOIN  ACT_AGA_AGRUPACION_ACTIVO AGA ON ACT.ACT_ID = AGA.ACT_ID AND AGA.BORRADO = 0"
 				+ "			JOIN  ACT_AGR_AGRUPACION AGR ON AGR.AGR_ID = AGA.AGR_ID AND AGR.BORRADO = 0"
 				+ "			JOIN  DD_TCO_TIPO_COMERCIALIZACION TCO ON TCO.DD_TCO_ID = APU.DD_TCO_ID AND TCO.BORRADO = 0 AND TCO.DD_TCO_CODIGO NOT IN ('02', '03')"
@@ -1999,9 +1999,9 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean subtipoPerteneceTipoTitulo(String subtipo, String tipoTitulo){
-		
+
 		String resultado;
-		
+
 		if(!Checks.esNulo(tipoTitulo) && !Checks.esNulo(subtipo)){
 			if(!StringUtils.isNumeric(tipoTitulo) || !StringUtils.isNumeric(subtipo)) {
 				return false;
@@ -2010,14 +2010,15 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 					+ "JOIN REM01.DD_TTA_TIPO_TITULO_ACTIVO TTA ON STA.DD_TTA_ID = TTA.DD_TTA_ID AND TTA.DD_TTA_CODIGO = "+tipoTitulo+" "
 					+ "WHERE STA.DD_STA_CODIGO = "+subtipo+"");
 			}
-			
+
 			if ((Integer.valueOf(resultado) > 0)) {
 				return true;
 			}
 		}
 		return false;
 	}
-	
+
+
 	@Override
 	public Boolean esParGastoActivo(String numGasto, String numActivo){
 		if(!StringUtils.isNumeric(numGasto) || !StringUtils.isNumeric(numActivo))
@@ -2154,6 +2155,137 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		} else {
 			return false;
 		}
+	}
+
+	/**
+	 *
+	 * @param numActivo
+	 * @return devuelve true si un activo tiene un destino comercial de tipo venta (no confundir con venta y alquiler)
+	 */
+	@Override
+	public Boolean activoConDestinoComercialVenta(String numActivo) {
+
+		if(!Checks.esNulo(numActivo)){
+			String resultado = rawDao.getExecuteSQL("select DD_TCO_CODIGO from ACT_ACTIVO act "
+					 + " inner join DD_TCO_TIPO_COMERCIALIZACION tco on tco.DD_TCO_ID = act.DD_TCO_ID"
+					 + " where act.ACT_NUM_ACTIVO = "+numActivo);
+
+			if(resultado != null && "01".equals(resultado)) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 *
+	 * @param numActivo
+	 * @return devuelve true si un activo tiene un destino comercial de tipo alquiler (no confundir con venta y alquiler)
+	 */
+	@Override
+	public Boolean activoConDestinoComercialAlquiler(String numActivo) {
+
+		if(!Checks.esNulo(numActivo)){
+			String resultado = rawDao.getExecuteSQL("select DD_TCO_CODIGO from ACT_ACTIVO act "
+					 + " inner join DD_TCO_TIPO_COMERCIALIZACION tco on tco.DD_TCO_ID = act.DD_TCO_ID"
+					 + " where act.ACT_NUM_ACTIVO = "+numActivo);
+
+			if(resultado != null && "03".equals(resultado)) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	@Override
+	public Boolean esActivoAlquilado(String numActivo) {
+
+		String Hola = "";
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(act.act_id) "
+				+ "			FROM ACT_PTA_PATRIMONIO_ACTIVO pta, "
+				+ "			  ACT_ACTIVO act, DD_EAL_ESTADO_ALQUILER eal "
+				+ "			WHERE pta.act_id   = act.act_id "
+				+ "			  AND pta.dd_eal_id = eal.dd_eal_id"
+				+ "			  AND eal.dd_eal_codigo = '02' "
+				+ "			  AND act.ACT_NUM_ACTIVO = "+numActivo+" "
+				+ "			  AND act.borrado       = 0");
+
+		return Integer.valueOf(resultado) > 0;
+
+	}
+
+
+	@Override
+	public Boolean esAgrupacionTipoAlquiler(String numAgrupacion) {
+		if(Checks.esNulo(numAgrupacion) || !StringUtils.isNumeric(numAgrupacion))
+			return false;
+
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) FROM ACT_AGR_AGRUPACION agr " +
+				" INNER JOIN DD_TAG_TIPO_AGRUPACION tipo ON tipo.DD_TAG_ID = agr.DD_TAG_ID AND DD_TAG_CODIGO = '15'" +
+				" WHERE agr.AGR_NUM_AGRUP_REM = '" + numAgrupacion + "'" +
+				" AND agr.BORRADO = 0");
+
+		return !"0".equals(resultado);
+	}
+
+
+	@Override
+	public Boolean mismoTipoAlquilerActivoAgrupacion(String numAgrupacion, String numActivo) {
+		if(Checks.esNulo(numAgrupacion) || !StringUtils.isNumeric(numAgrupacion))
+			return false;
+
+		String tipoAlquilerAgrupacion = rawDao.getExecuteSQL("SELECT DD_TAL_ID FROM ACT_AGR_AGRUPACION agr WHERE agr.AGR_NUM_AGRUP_REM = '" + numAgrupacion + "'" +
+				" AND agr.BORRADO = 0");
+
+		String tipoAlquilerActivo = rawDao.getExecuteSQL("SELECT DD_TAL_ID FROM ACT_ACTIVO act WHERE act.ACT_NUM_ACTIVO = '" + numActivo + "'" +
+				" AND act.BORRADO = 0");
+
+		if (!Checks.esNulo(tipoAlquilerAgrupacion) && tipoAlquilerAgrupacion != "") {
+
+			return tipoAlquilerAgrupacion.equals(tipoAlquilerActivo);
+
+		} else {
+
+			try {
+
+				return tipoAlquilerActivo.equals(tipoAlquilerAgrupacion);
+
+			} catch (Exception e) {
+				return false;
+			}
+
+		}
+
+	}
+
+
+	@Override
+	public Boolean esAgrupacionTipoComercialVenta(String numAgrupacion) {
+		if(Checks.esNulo(numAgrupacion) || !StringUtils.isNumeric(numAgrupacion))
+			return false;
+
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) FROM ACT_AGR_AGRUPACION agr " +
+				" INNER JOIN DD_TAG_TIPO_AGRUPACION tipo ON tipo.DD_TAG_ID = agr.DD_TAG_ID AND DD_TAG_CODIGO = '14'" +
+				" WHERE agr.AGR_NUM_AGRUP_REM = '" + numAgrupacion + "'" +
+				" AND agr.BORRADO = 0");
+
+		return !"0".equals(resultado);
+	}
+
+	@Override
+	public String getCodigoSubcarteraAgrupacion(String numAgrupacion) {
+		String resultado = "";
+		if(numAgrupacion != null && !numAgrupacion.isEmpty()){
+			 resultado = rawDao.getExecuteSQL("SELECT scr.DD_SCR_CODIGO " +
+			 		" FROM ACT_ACTIVO act  " +
+			 		" INNER JOIN ACT_AGR_AGRUPACION agr ON agr.AGR_NUM_AGRUP_REM = '" + numAgrupacion + "'" +
+			 		" INNER JOIN ACT_AGA_AGRUPACION_ACTIVO aga ON agr.AGR_ID = aga.AGR_ID AND aga.AGA_PRINCIPAL = 1 " +
+			 		" INNER JOIN DD_SCR_SUBCARTERA scr ON act.DD_SCR_ID = scr.DD_SCR_ID  " +
+			 		" WHERE act.ACT_ID = aga.ACT_ID");
+		}
+		return resultado;
 	}
 
 	@Override
@@ -2325,3 +2457,4 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		return !"0".equals(resultado);
 	}
 }
+

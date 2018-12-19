@@ -82,6 +82,12 @@ public class GenericController extends ParadiseJsonController{
 		return createModelAndViewJson(new ModelMap("data", adapter.getDiccionario(diccionario)));
 		
 	}
+	
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getDiccionarioByTipoOferta(String diccionario, String codTipoOferta) { 	
+		
+		return createModelAndViewJson(new ModelMap("data", genericApi.getDiccionarioByTipoOferta(diccionario, codTipoOferta)));
+	}
 
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getDiccionarioTiposDocumento(String diccionario) {	
@@ -268,8 +274,8 @@ public class GenericController extends ParadiseJsonController{
 	}
 	
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getComboSubtipoTrabajo(String tipoTrabajoCodigo){
-		return createModelAndViewJson(new ModelMap("data", genericApi.getComboSubtipoTrabajo(tipoTrabajoCodigo)));	
+	public ModelAndView getComboSubtipoTrabajo(String tipoTrabajoCodigo, Long idActivo){
+		return createModelAndViewJson(new ModelMap("data", genericApi.getComboSubtipoTrabajo(tipoTrabajoCodigo, idActivo)));	
 	}
 	
 	@RequestMapping(method = RequestMethod.GET)
@@ -351,6 +357,16 @@ public class GenericController extends ParadiseJsonController{
 	}
 	
 	@RequestMapping(method= RequestMethod.GET)
+	public ModelAndView getComitesAlquilerByCartera(Long idActivo, ModelMap model){
+		return createModelAndViewJson(new ModelMap("data", genericApi.getComitesAlquilerByCartera(idActivo)));	
+	}
+	
+	@RequestMapping(method= RequestMethod.GET)
+	public ModelAndView getComitesAlquilerByCarteraCodigo(String carteraCodigo, ModelMap model){
+		return createModelAndViewJson(new ModelMap("data", genericApi.getComitesAlquilerByCarteraCodigo(carteraCodigo)));	
+	}
+
+	@RequestMapping(method= RequestMethod.GET)
 	public ModelAndView getComboTipoAgrupacion() {
 		return createModelAndViewJson(new ModelMap("data", genericApi.getComboTipoAgrupacion()));
 	}
@@ -360,4 +376,5 @@ public class GenericController extends ParadiseJsonController{
 	{
 		return createModelAndViewJson(new ModelMap("data", genericApi.getTodosComboTipoAgrupacion()));
 	}
+
 }

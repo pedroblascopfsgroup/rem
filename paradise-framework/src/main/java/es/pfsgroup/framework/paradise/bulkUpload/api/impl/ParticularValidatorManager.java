@@ -2252,11 +2252,13 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	@Override
 	public Boolean esActivoAlquilado(String numActivo) {
 
+		String Hola = "";
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(act.act_id) "
-				+ "			FROM DD_SCM_SITUACION_COMERCIAL scm, "
-				+ "			  ACT_ACTIVO act "
-				+ "			WHERE scm.dd_scm_id   = act.dd_scm_id "
-				+ "			  AND scm.dd_scm_codigo = '10' "
+				+ "			FROM ACT_PTA_PATRIMONIO_ACTIVO pta, "
+				+ "			  ACT_ACTIVO act, DD_EAL_ESTADO_ALQUILER eal "
+				+ "			WHERE pta.act_id   = act.act_id "
+				+ "			  AND pta.dd_eal_id = eal.dd_eal_id"
+				+ "			  AND eal.dd_eal_codigo = '02' "
 				+ "			  AND act.ACT_NUM_ACTIVO = "+numActivo+" "
 				+ "			  AND act.borrado       = 0");
 

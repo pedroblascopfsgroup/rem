@@ -257,6 +257,7 @@ public class AgrupacionAdapter {
 	public static final String PUBLICACION_MOTIVO_MSG = "Publicado desde agrupación";
 	public static final String PUBLICACION_AGRUPACION_BAJA_ERROR_MSG = "No ha sido posible publicar. La agrupación está dada de baja";
 	public static final String AGRUPACION_BAJA_ERROR_OFERTAS_VIVAS = "No ha sido posible dar de baja la agrupación. Existen ofertas vivas";
+	public static final String AGRUPACION_CAMBIO_DEST_COMERCIAL_CON_OFERTAS_VIVAS = "No se puede cambiar el destino comercial por tener ofertas vivas";
 	private static final String AVISO_MENSAJE_TIPO_NUMERO_DOCUMENTO = "activo.motivo.oferta.tipo.numero.documento";
 	private static final String AVISO_MENSAJE_CLIENTE_OBLIGATORIO = "activo.motivo.oferta.cliente";
 	private static final Integer NO_ES_FORMALIZABLE = new Integer(0);
@@ -589,6 +590,10 @@ public class AgrupacionAdapter {
 						BeanUtils.copyProperty(dtoAgrupacion, "cartera", agrupacion.getActivos().get(0).getActivo().getCartera().getDescripcion());
 						BeanUtils.copyProperty(dtoAgrupacion, "codigoCartera", agrupacion.getActivos().get(0).getActivo().getCartera().getCodigo());
 					}
+					 if (!agrupacion.getActivos().isEmpty() && !Checks.esNulo(agrupacion.getActivos().get(0)) && agrupacion.getActivos().get(0).getActivo().getActivoPublicacion().getTipoComercializacion() != null) {
+						BeanUtils.copyProperty(dtoAgrupacion, "tipoComercializacionDescripcion", agrupacion.getActivos().get(0).getActivo().getActivoPublicacion().getTipoComercializacion().getDescripcion());
+						BeanUtils.copyProperty(dtoAgrupacion, "tipoComercializacionCodigo", agrupacion.getActivos().get(0).getActivo().getActivoPublicacion().getTipoComercializacion().getCodigo());
+					}
 				}
 
 
@@ -767,6 +772,15 @@ public class AgrupacionAdapter {
 						throw new JsonViewerException("El destino comercial del activo no coincide con el de la agrupación");
 					}
 				}else if(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_ALQUILER.equals(agrupacion.getTipoAgrupacion().getCodigo())){
+					if (!Checks.esNulo(numActivo)){
+						if(particularValidator.activoEnAgrupacionComercialViva(Long.toString(numActivo))){
+							throw new JsonViewerException("El activo está incluido en otro lote comercial vivo");
+						} else {
+							if(particularValidator.existeActivoConOfertaViva(Long.toString(numActivo))){
+								throw new JsonViewerException("El activo tiene ofertas individuales vivas");
+							}
+						}
+					}
 					if(DDTipoComercializacion.CODIGO_VENTA.equals(activo.getTipoComercializacion().getCodigo())){
 						throw new JsonViewerException("El destino comercial del activo no coincide con el de la agrupación");
 					}else if(!Checks.esNulo(activo.getTipoAlquiler()) && !Checks.esNulo(agrupacion.getTipoAlquiler())){
@@ -776,18 +790,6 @@ public class AgrupacionAdapter {
 					}else if(particularValidator.esActivoAlquilado(Long.toString(numActivo))){
 						throw new JsonViewerException("El activo está alquilado");
 					}
-				}
-			}
-
-			if (!Checks.esNulo(numActivo)){
-				if(particularValidator.existeActivoConOfertaViva(Long.toString(numActivo))){
-					throw new JsonViewerException("El activo tiene ofertas individuales vivas");
-				}
-			}
-
-			if (!Checks.esNulo(numActivo)){
-				if(particularValidator.activoEnAgrupacionComercialViva(Long.toString(numActivo))){
-					throw new JsonViewerException("El activo está incluido en otro lote comercial vivo");
 				}
 			}
 
@@ -2212,6 +2214,35 @@ public class AgrupacionAdapter {
 
 				activoAgrupacionApi.saveOrUpdate(loteComercial);
 
+				List <Oferta> ofertasAgr = loteComercial.getOfertas();
+
+				Boolean ofertaViva = false;
+
+				DDTipoComercializacion tipoComercializacion = (DDTipoComercializacion) utilDiccionarioApi
+						.dameValorDiccionarioByCod(DDTipoComercializacion.class, dto.getTipoComercializacionCodigo());
+
+				if(!Checks.estaVacio(ofertasAgr)) {
+					for(Oferta oferta : ofertasAgr) {
+						if(DDEstadoOferta.CODIGO_ACEPTADA.equals(oferta.getEstadoOferta().getCodigo())) {
+							ofertaViva = true;
+							throw new JsonViewerException(AGRUPACION_CAMBIO_DEST_COMERCIAL_CON_OFERTAS_VIVAS);
+						}
+					}
+				}
+
+				if(!ofertaViva) {
+					List<ActivoAgrupacionActivo> listaActivos = loteComercial.getActivos();
+
+					if(!Checks.estaVacio(listaActivos)) {
+						for (ActivoAgrupacionActivo activoAgrupacionActivo : listaActivos) {
+							ActivoPublicacion activoPublicacion = activoAgrupacionActivo.getActivo().getActivoPublicacion();
+							activoPublicacion.setTipoComercializacion(tipoComercializacion);
+							activoPublicacionDao.saveOrUpdate(activoPublicacion);
+						}
+					}
+				}
+			}  catch (JsonViewerException jve) {
+				return "false"+SPLIT_VALUE+jve.getMessage();
 			} catch (Exception e) {
 				logger.error("error en agrupacionAdapter", e);
 				return "false";
@@ -2253,8 +2284,38 @@ public class AgrupacionAdapter {
 					loteComercial.setUsuarioGestorComercial(usuario);
 				}
 
+				List <Oferta> ofertasAgr = loteComercial.getOfertas();
+
+				Boolean ofertaViva = false;
+
+				DDTipoComercializacion tipoComercializacion = (DDTipoComercializacion) utilDiccionarioApi
+						.dameValorDiccionarioByCod(DDTipoComercializacion.class, dto.getTipoComercializacionCodigo());
+
+				if(!Checks.estaVacio(ofertasAgr)) {
+					for(Oferta oferta : ofertasAgr) {
+						if(DDEstadoOferta.CODIGO_ACEPTADA.equals(oferta.getEstadoOferta().getCodigo())) {
+							ofertaViva = true;
+							throw new JsonViewerException(AGRUPACION_CAMBIO_DEST_COMERCIAL_CON_OFERTAS_VIVAS);
+						}
+					}
+				}
+
+				if(!ofertaViva) {
+					List<ActivoAgrupacionActivo> listaActivos = loteComercial.getActivos();
+
+					if(!Checks.estaVacio(listaActivos)) {
+						for (ActivoAgrupacionActivo activoAgrupacionActivo : listaActivos) {
+							ActivoPublicacion activoPublicacion = activoAgrupacionActivo.getActivo().getActivoPublicacion();
+							activoPublicacion.setTipoComercializacion(tipoComercializacion);
+							activoPublicacionDao.saveOrUpdate(activoPublicacion);
+						}
+					}
+				}
+				
 				activoAgrupacionApi.saveOrUpdate(loteComercial);
 
+			}  catch (JsonViewerException jve) {
+				return "false"+SPLIT_VALUE+jve.getMessage();
 			} catch (Exception e) {
 				logger.error("error en agrupacionAdapter", e);
 				return null;
@@ -2312,7 +2373,7 @@ public class AgrupacionAdapter {
 						ActivoPatrimonio activoPatrimonio;
 						for (ActivoAgrupacionActivo activoAgrupacionActivo : listaActivos) {
 							activoPatrimonio = activoPatrimonioDao.getActivoPatrimonioByActivo(activoAgrupacionActivo.getActivo().getId());
-							if (!Checks.esNulo(activoPatrimonio) && DDTipoEstadoAlquiler.ESTADO_ALQUILER_ALQUILADO.equals(activoPatrimonio.getTipoEstadoAlquiler().getCodigo())) {
+							if (!Checks.esNulo(activoPatrimonio) && !Checks.esNulo(activoPatrimonio.getTipoEstadoAlquiler()) && DDTipoEstadoAlquiler.ESTADO_ALQUILER_ALQUILADO.equals(activoPatrimonio.getTipoEstadoAlquiler().getCodigo())) {
 								return "false"+SPLIT_VALUE+AGRUPACION_CAMBIO_DEST_COMERCIAL_A_VENTA_CON_ALQUILADOS;
 							}
 						}
@@ -2362,7 +2423,7 @@ public class AgrupacionAdapter {
 									ofertaVivaVenta = true;
 								}
 
-								if(DDTipoOferta.CODIGO_VENTA.equals(oferta.getTipoOferta().getCodigo())) {
+								if(DDTipoOferta.CODIGO_ALQUILER.equals(oferta.getTipoOferta().getCodigo())) {
 									ofertaVivaAlquiler = true;
 								}
 								break;
@@ -2398,7 +2459,7 @@ public class AgrupacionAdapter {
 										newActiHistPatrimonio.setActivo(activoAgrupacionActivo.getActivo());
 									}
 									activoHistoricoPatrimonioDao.saveOrUpdate(newActiHistPatrimonio);
-								}
+								} 
 
 								if(Checks.esNulo(activoPatrimonio)) {
 									activoPatrimonio = new ActivoPatrimonio();
@@ -2494,13 +2555,19 @@ public class AgrupacionAdapter {
 								
 							}
 						}
+					} else {
+						if (ofertaVivaAlquiler && DDTipoComercializacion.CODIGO_VENTA.equals(tipoComercializacion.getCodigo())) {
+							throw new JsonViewerException(AGRUPACION_CAMBIO_DEST_COMERCIAL_CON_OFERTAS_VIVAS);
+						} else if (ofertaVivaVenta && DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(tipoComercializacion.getCodigo())) {
+							throw new JsonViewerException(AGRUPACION_CAMBIO_DEST_COMERCIAL_CON_OFERTAS_VIVAS);
+						}
 					}
 				}
-			}
-			catch(Exception e)
-			{
+			} catch (JsonViewerException jve) {
+				return "false"+SPLIT_VALUE+jve.getMessage();
+			} catch (Exception e) {
 				logger.error("error en agrupacionAdapter", e);
-				return "false";
+				return null;
 			}
 		}
 

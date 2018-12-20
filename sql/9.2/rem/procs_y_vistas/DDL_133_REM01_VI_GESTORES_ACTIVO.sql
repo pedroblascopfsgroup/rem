@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Alejandro Valverde Herrera
---## FECHA_CREACION=20181105
+--## AUTOR=Adrian Daniel Casiean
+--## FECHA_CREACION=20181220
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-4704
+--## INCIDENCIA_LINK=HREOS-5090
 --## PRODUCTO=NO
 --## Finalidad: Crear vista gestores activo
 --##           
@@ -16,6 +16,7 @@
 --##    0.4 Cambio de SFORM
 --##    0.5 HREOS-4844- SHG - AÑADIMOS GESTCOMALQ y SUPCOMALQ
 --##	0.6 Se añade GPUBL y SPUBL.
+--##	0.7 Se quita las restricción de filtrar por el tipo de destino comercial para los gestores GESTCOMALQ y SUPCOMALQ (HREOS-5090)
 --##########################################
 --*/
 
@@ -770,7 +771,6 @@ V_MSQL3 := '
              FROM '||V_ESQUEMA||'.act_activo act JOIN act_ges_dist_gestores dist1 ON dist1.tipo_gestor = ''GESTCOMALQ''
              INNER JOIN '||V_ESQUEMA||'.dd_cra_cartera cra on TO_NUMBER(cra.dd_cra_codigo) = dist1.cod_cartera
          where act.borrado = 0 AND cra.dd_cra_id = act.dd_cra_id
-             AND act.DD_TCO_ID in (SELECT DD_TCO_ID FROM '||V_ESQUEMA||'.DD_TCO_TIPO_COMERCIALIZACION WHERE DD_TCO_CODIGO IN (''02'',''03'',''04''))
 
       UNION ALL
 
@@ -780,7 +780,6 @@ V_MSQL3 := '
              FROM '||V_ESQUEMA||'.act_activo act JOIN act_ges_dist_gestores dist1 ON dist1.tipo_gestor = ''SUPCOMALQ''
              INNER JOIN '||V_ESQUEMA||'.dd_cra_cartera cra on cra.dd_cra_ID = ACT.DD_CRA_ID
          where act.borrado = 0 AND (cra.dd_cra_codigo = dist1.cod_cartera OR dist1.cod_cartera IS NULL)
-              AND act.DD_TCO_ID in (SELECT DD_TCO_ID FROM '||V_ESQUEMA||'.DD_TCO_TIPO_COMERCIALIZACION WHERE DD_TCO_CODIGO IN (''02'',''03'',''04''))
 
 
 UNION ALL

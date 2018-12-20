@@ -2237,7 +2237,10 @@ public class AgrupacionAdapter {
 						for (ActivoAgrupacionActivo activoAgrupacionActivo : listaActivos) {
 							ActivoPublicacion activoPublicacion = activoAgrupacionActivo.getActivo().getActivoPublicacion();
 							activoPublicacion.setTipoComercializacion(tipoComercializacion);
+							Activo activo=activoAgrupacionActivo.getActivo();
+							activo.setTipoComercializacion(tipoComercializacion);
 							activoPublicacionDao.saveOrUpdate(activoPublicacion);
+							genericDao.save(Activo.class, activo); 
 						}
 					}
 				}
@@ -2515,7 +2518,8 @@ public class AgrupacionAdapter {
 								
 								//HREOS-5090 Punto 93
 								//Asignar Gestores al cambiar el destino comercial de la agrupación si pasamos de 'alquiler y venta' a 'alquiler'
-								if(DDTipoComercializacion.CODIGO_ALQUILER_VENTA.equals(destino_comercial) && DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(tipoComercializacion.getCodigo())) {
+								//Se descartan los cambios por que es lo que me han indicado desde producto, pero no lo borro por si en un futuro se utiliza
+								/*if(DDTipoComercializacion.CODIGO_ALQUILER_VENTA.equals(destino_comercial) && DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(tipoComercializacion.getCodigo())) {
 									
 									Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "activo", activoAgrupacionActivo.getActivo());
 									List<GestorActivo> gestores_activo  = (List<GestorActivo>) genericDao.getList(GestorActivo.class, filtro2);
@@ -2551,7 +2555,7 @@ public class AgrupacionAdapter {
 										
 									}
 									
-								}
+								}*/
 								
 							}
 						}

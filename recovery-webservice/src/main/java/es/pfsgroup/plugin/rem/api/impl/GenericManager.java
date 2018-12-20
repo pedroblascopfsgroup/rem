@@ -22,8 +22,6 @@ import org.springframework.ui.ModelMap;
 
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.utils.MessageUtils;
-import es.capgemini.pfs.despachoExterno.model.DespachoExterno;
-import es.capgemini.pfs.diccionarios.Dictionary;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.procesosJudiciales.model.TipoJuzgado;
@@ -31,7 +29,6 @@ import es.capgemini.pfs.users.domain.Funcion;
 import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
-import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -40,7 +37,6 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
-import es.pfsgroup.plugin.recovery.coreextension.api.coreextensionApi;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.rem.activo.dao.impl.ActivoPatrimonioDaoImpl;
@@ -50,8 +46,6 @@ import es.pfsgroup.plugin.rem.api.GenericApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.gestor.GestorActivoManager;
 import es.pfsgroup.plugin.rem.model.Activo;
-import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
-import es.pfsgroup.plugin.rem.gestor.GestorActivoManager;
 import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.ActivoPropietario;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
@@ -101,16 +95,13 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 
 	@Autowired
 	private GenericAdapter adapter;
-	
-	@Autowired
-	private ApiProxyFactory proxyFactory;
 
 	@Autowired
 	private ActivoApi activoApi;
-	
+
 	@Autowired
 	private ActivoPatrimonioDaoImpl activoPatrimonio;
-	
+
 	@Autowired
 	private UtilDiccionarioApi utilDiccionarioApi;
 
@@ -127,13 +118,11 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 
 	@Autowired
 	private GestorActivoManager gestorEntidad;
-	
+
 	@Override
 	public String managerName() {
 		return "genericManager";
 	}
-
-	private static final String PROPIEDAD_ACTIVAR_REST_CLIENT = "rest.client.gestor.documental.activar";
 
 	@Override
 	@BusinessOperationDefinition("genericManager.getAuthenticationData")
@@ -155,30 +144,32 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 
 		authData.setUserName(usuario.getApellidoNombre());
 		authData.setAuthorities(authorities);
-		
+
 		Long id = usuario.getId();
-		
+
 		authData.setUserId(id);
 		authData.setRoles(roles);
-		
-		authData.setCodigoGestor(gestorEntidad.getCodigoGestorPorUsuario(id)); 
-		
+
+		authData.setCodigoGestor(gestorEntidad.getCodigoGestorPorUsuario(id));
+
 		authData.setEsGestorSustituto(esGestorSustituto(usuario));
 
 		return authData;
 
 	}
-	
-	public Integer esGestorSustituto(Usuario usuarioLogado){
+
+	public Integer esGestorSustituto(Usuario usuarioLogado) {
 		List<GestorSustituto> ges = new ArrayList<GestorSustituto>();
-		ges = genericDao.getList(GestorSustituto.class, genericDao.createFilter(FilterType.EQUALS, "usuarioGestorSustituto", usuarioLogado));
+		ges = genericDao.getList(GestorSustituto.class,
+				genericDao.createFilter(FilterType.EQUALS, "usuarioGestorSustituto", usuarioLogado));
 		Date fechaHoy = new Date();
-		
-		if(Checks.estaVacio(ges)){
+
+		if (Checks.estaVacio(ges)) {
 			return 0;
-		}else{
-			for(GestorSustituto gestor: ges){
-				if(fechaHoy.compareTo(gestor.getFechaInicio()) >= 0 && (Checks.esNulo(gestor.getFechaFin()) || fechaHoy.compareTo(gestor.getFechaFin()) <= 0)){
+		} else {
+			for (GestorSustituto gestor : ges) {
+				if (fechaHoy.compareTo(gestor.getFechaInicio()) >= 0
+						&& (Checks.esNulo(gestor.getFechaFin()) || fechaHoy.compareTo(gestor.getFechaFin()) <= 0)) {
 					return 1;
 				}
 			}
@@ -346,12 +337,12 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 					DDTipoProveedor.COD_ASEGURADORA);
 			List<ActivoProveedor> listaSeguros = null;
 			Order order = new Order(OrderType.ASC, "nombre");
-			if(diccionario.equals("DDSegurosVigentes")) {
+			if (diccionario.equals("DDSegurosVigentes")) {
 				Filter filtroVigente = genericDao.createFilter(FilterType.EQUALS, "estadoProveedor.codigo",
 						DDEstadoProveedor.ESTADO_BIGENTE);
-				listaSeguros = genericDao.getListOrdered(ActivoProveedor.class, order, filtroBorrado,
-						filtroAseguradora,filtroVigente );
-			}else {
+				listaSeguros = genericDao.getListOrdered(ActivoProveedor.class, order, filtroBorrado, filtroAseguradora,
+						filtroVigente);
+			} else {
 				listaSeguros = genericDao.getListOrdered(ActivoProveedor.class, order, filtroBorrado,
 						filtroAseguradora);
 			}
@@ -372,7 +363,8 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		} else if (diccionario.equals("DDPropietario")) {
 			listaDD = this.getListDtoPropietarioDiccionario();
 		} else if (diccionario.equals("DDComiteCartera")) {
-			//TODO Conseguir la cartera del tramite/expediente para poder sacar los comites de DDComiteSancion.
+			// TODO Conseguir la cartera del tramite/expediente para poder sacar
+			// los comites de DDComiteSancion.
 		}
 
 		return listaDD;
@@ -387,58 +379,83 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		return (List<EXTDDTipoGestor>) genericDao.getListOrdered(EXTDDTipoGestor.class, order,
 				genericDao.createFilter(FilterType.EQUALS, "borrado", false));
 	}
-	
+
 	@Override
 	@BusinessOperationDefinition("genericManager.getComboTipoGestorActivo")
 	public List<EXTDDTipoGestor> getComboTipoGestorByActivo(WebDto webDto, ModelMap model, String idActivo) {
 		Order order = new Order(GenericABMDao.OrderType.ASC, "descripcion");
-		List<EXTDDTipoGestor> listaTiposGestor  = genericDao.getListOrdered(EXTDDTipoGestor.class, order, 
-																			genericDao.createFilter(FilterType.EQUALS, "borrado", false));
-				
+		List<EXTDDTipoGestor> listaTiposGestor = genericDao.getListOrdered(EXTDDTipoGestor.class, order,
+				genericDao.createFilter(FilterType.EQUALS, "borrado", false));
+
 		try {
-		
-			EXTDDTipoGestor tipoGestorEdificaciones = (EXTDDTipoGestor) utilDiccionarioApi.dameValorDiccionarioByCod(EXTDDTipoGestor.class,"GEDI"); // Gestor de Edificaciones
-			EXTDDTipoGestor tipoGestorSuelo = (EXTDDTipoGestor) utilDiccionarioApi.dameValorDiccionarioByCod(EXTDDTipoGestor.class,"GSUE"); // Gestor de Suelos
-			EXTDDTipoGestor tipoGestorAlquileres = (EXTDDTipoGestor) utilDiccionarioApi.dameValorDiccionarioByCod(EXTDDTipoGestor.class,"GALQ"); // Gestor de Alquileres
-			EXTDDTipoGestor tipoSupervisorEdificaciones = (EXTDDTipoGestor) utilDiccionarioApi.dameValorDiccionarioByCod(EXTDDTipoGestor.class,"SUPEDI"); // Gestor de Edificaciones
-			EXTDDTipoGestor tipoSupervisorSuelo = (EXTDDTipoGestor) utilDiccionarioApi.dameValorDiccionarioByCod(EXTDDTipoGestor.class,"SUPSUE"); // Gestor de Suelos
-			EXTDDTipoGestor tipoSupervisorAlquileres = (EXTDDTipoGestor) utilDiccionarioApi.dameValorDiccionarioByCod(EXTDDTipoGestor.class,"SUALQ"); // Gestor de Alquileres
-			
-			//HREOS-5012 - Tipo gestores Solo de Alquiler o Solo de Compra
-			EXTDDTipoGestor tipoGestorComercial = (EXTDDTipoGestor) utilDiccionarioApi.dameValorDiccionarioByCod(EXTDDTipoGestor.class,"GCOM"); // Gestor comercial
-			EXTDDTipoGestor tipoSupervisorComercial = (EXTDDTipoGestor) utilDiccionarioApi.dameValorDiccionarioByCod(EXTDDTipoGestor.class,"SCOM"); // Supervisor comercial
-			EXTDDTipoGestor tipoGestorComercialAlquileres = (EXTDDTipoGestor) utilDiccionarioApi.dameValorDiccionarioByCod(EXTDDTipoGestor.class,"GESTCOMALQ"); // Gestor comercial alquiler
-			EXTDDTipoGestor tipoSupervisorComercialAlquileres = (EXTDDTipoGestor) utilDiccionarioApi.dameValorDiccionarioByCod(EXTDDTipoGestor.class,"SUPCOMALQ"); // Supervisor comercial alquiler
-			
+
+			EXTDDTipoGestor tipoGestorEdificaciones = (EXTDDTipoGestor) utilDiccionarioApi
+					.dameValorDiccionarioByCod(EXTDDTipoGestor.class, "GEDI"); // Gestor
+																				// de
+																				// Edificaciones
+			EXTDDTipoGestor tipoGestorSuelo = (EXTDDTipoGestor) utilDiccionarioApi
+					.dameValorDiccionarioByCod(EXTDDTipoGestor.class, "GSUE"); // Gestor
+																				// de
+																				// Suelos
+			EXTDDTipoGestor tipoGestorAlquileres = (EXTDDTipoGestor) utilDiccionarioApi
+					.dameValorDiccionarioByCod(EXTDDTipoGestor.class, "GALQ"); // Gestor
+																				// de
+																				// Alquileres
+			EXTDDTipoGestor tipoSupervisorEdificaciones = (EXTDDTipoGestor) utilDiccionarioApi
+					.dameValorDiccionarioByCod(EXTDDTipoGestor.class, "SUPEDI"); // Gestor
+																					// de
+																					// Edificaciones
+			EXTDDTipoGestor tipoSupervisorSuelo = (EXTDDTipoGestor) utilDiccionarioApi
+					.dameValorDiccionarioByCod(EXTDDTipoGestor.class, "SUPSUE"); // Gestor
+																					// de
+																					// Suelos
+			EXTDDTipoGestor tipoSupervisorAlquileres = (EXTDDTipoGestor) utilDiccionarioApi
+					.dameValorDiccionarioByCod(EXTDDTipoGestor.class, "SUALQ"); // Gestor
+																				// de
+																				// Alquileres
+
+			// HREOS-5012 - Tipo gestores Solo de Alquiler o Solo de Compra
+			EXTDDTipoGestor tipoGestorComercial = (EXTDDTipoGestor) utilDiccionarioApi
+					.dameValorDiccionarioByCod(EXTDDTipoGestor.class, "GCOM"); // Gestor
+																				// comercial
+			EXTDDTipoGestor tipoSupervisorComercial = (EXTDDTipoGestor) utilDiccionarioApi
+					.dameValorDiccionarioByCod(EXTDDTipoGestor.class, "SCOM"); // Supervisor
+																				// comercial
+			EXTDDTipoGestor tipoGestorComercialAlquileres = (EXTDDTipoGestor) utilDiccionarioApi
+					.dameValorDiccionarioByCod(EXTDDTipoGestor.class, "GESTCOMALQ"); // Gestor
+																						// comercial
+																						// alquiler
+			EXTDDTipoGestor tipoSupervisorComercialAlquileres = (EXTDDTipoGestor) utilDiccionarioApi
+					.dameValorDiccionarioByCod(EXTDDTipoGestor.class, "SUPCOMALQ"); // Supervisor
+																					// comercial
+																					// alquiler
+
 			Activo activo = activoApi.get(Long.parseLong(idActivo));
 			String codigoTipoActivo = activo.getTipoActivo().getCodigo();
 			ActivoPatrimonio actPatrimonio = activoPatrimonio.getActivoPatrimonioByActivo(activo.getId());
 			String tipoComercializacion = activo.getTipoComercializacion().getCodigo();
-					
-			
-			if (!Checks.esNulo(activo) && !Checks.esNulo(activo.getTipoActivo()) && (!Checks.esNulo(actPatrimonio) && !Checks.esNulo(actPatrimonio.getCheckHPM()))) {
-				// Si el Activo NO es de tipo Suelo eliminamos el gestor de Suelos de la lista
-			
+
+			if (!Checks.esNulo(activo) && !Checks.esNulo(activo.getTipoActivo())
+					&& (!Checks.esNulo(actPatrimonio) && !Checks.esNulo(actPatrimonio.getCheckHPM()))) {
+				// Si el Activo NO es de tipo Suelo eliminamos el gestor de
+				// Suelos de la lista
+
 				if (actPatrimonio.getCheckHPM()) {
 					listaTiposGestor.remove(tipoGestorSuelo);
 					listaTiposGestor.remove(tipoSupervisorSuelo);
 					listaTiposGestor.remove(tipoGestorEdificaciones);
 					listaTiposGestor.remove(tipoSupervisorEdificaciones);
-					
-
 
 				}
-				
-				
+
 				else if (!DDTipoActivo.COD_SUELO.equals(codigoTipoActivo)) {
 					listaTiposGestor.remove(tipoGestorSuelo);
 					listaTiposGestor.remove(tipoSupervisorSuelo);
 					listaTiposGestor.remove(tipoGestorAlquileres);
 					listaTiposGestor.remove(tipoSupervisorAlquileres);
-					
 
-					
-					// Si el Activo NO es de tipo Suelo y el Estado físico del activo esta vacio eliminamos el gestor de edificacionnes
+					// Si el Activo NO es de tipo Suelo y el Estado físico del
+					// activo esta vacio eliminamos el gestor de edificacionnes
 					if (Checks.esNulo(activo.getEstadoActivo())) {
 						listaTiposGestor.remove(tipoGestorEdificaciones);
 						listaTiposGestor.remove(tipoSupervisorEdificaciones);
@@ -447,7 +464,8 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 
 					}
 				} else {
-					// Si el Activo es de tipo Suelo eliminamos el gestor de edificacionnes y gestor de alquileres
+					// Si el Activo es de tipo Suelo eliminamos el gestor de
+					// edificacionnes y gestor de alquileres
 					listaTiposGestor.remove(tipoGestorEdificaciones);
 					listaTiposGestor.remove(tipoSupervisorEdificaciones);
 					listaTiposGestor.remove(tipoGestorAlquileres);
@@ -455,18 +473,16 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 
 				}
 			}
-			
-			
+
 			else {
 				if (!DDTipoActivo.COD_SUELO.equals(codigoTipoActivo)) {
 					listaTiposGestor.remove(tipoGestorSuelo);
 					listaTiposGestor.remove(tipoSupervisorSuelo);
 					listaTiposGestor.remove(tipoGestorAlquileres);
 					listaTiposGestor.remove(tipoSupervisorAlquileres);
-					
 
-					
-					// Si el Activo NO es de tipo Suelo y el Estado físico del activo esta vacio eliminamos el gestor de edificacionnes
+					// Si el Activo NO es de tipo Suelo y el Estado físico del
+					// activo esta vacio eliminamos el gestor de edificacionnes
 					if (Checks.esNulo(activo.getEstadoActivo())) {
 						listaTiposGestor.remove(tipoGestorEdificaciones);
 						listaTiposGestor.remove(tipoSupervisorEdificaciones);
@@ -475,7 +491,8 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 
 					}
 				} else {
-					// Si el Activo es de tipo Suelo eliminamos el gestor de edificacionnes
+					// Si el Activo es de tipo Suelo eliminamos el gestor de
+					// edificacionnes
 					listaTiposGestor.remove(tipoGestorEdificaciones);
 					listaTiposGestor.remove(tipoSupervisorEdificaciones);
 					listaTiposGestor.remove(tipoGestorAlquileres);
@@ -483,17 +500,18 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 
 				}
 			}
-			//Filtramos los gestores dependiendo del tipo de comercialización del activo
-			if(!Checks.esNulo(activo) && !Checks.esNulo(tipoComercializacion) && !tipoComercializacion.isEmpty()) {
-				if(DDTipoComercializacion.CODIGO_VENTA.equals(tipoComercializacion)) {
+			// Filtramos los gestores dependiendo del tipo de comercialización
+			// del activo
+			if (!Checks.esNulo(activo) && !Checks.esNulo(tipoComercializacion) && !tipoComercializacion.isEmpty()) {
+				if (DDTipoComercializacion.CODIGO_VENTA.equals(tipoComercializacion)) {
 					listaTiposGestor.remove(tipoGestorComercialAlquileres);
 					listaTiposGestor.remove(tipoSupervisorComercialAlquileres);
 				}
-			 if (DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(tipoComercializacion)) {
-				 	listaTiposGestor.remove(tipoGestorComercial);
+				if (DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(tipoComercializacion)) {
+					listaTiposGestor.remove(tipoGestorComercial);
 					listaTiposGestor.remove(tipoSupervisorComercial);
 				}
-			} 
+			}
 		} catch (NumberFormatException e) {
 			e.printStackTrace();
 		}
@@ -501,13 +519,12 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		return listaTiposGestor;
 	}
 
-
-
 	@Override
 	public List<EXTDDTipoGestor> getComboTipoGestorFiltrado(Set<String> tipoGestorCodigos) {
 
 		Order order = new Order(GenericABMDao.OrderType.ASC, "descripcion");
-		List<EXTDDTipoGestor> lista = genericDao.getListOrdered(EXTDDTipoGestor.class, order, genericDao.createFilter(FilterType.EQUALS, "borrado", false));
+		List<EXTDDTipoGestor> lista = genericDao.getListOrdered(EXTDDTipoGestor.class, order,
+				genericDao.createFilter(FilterType.EQUALS, "borrado", false));
 
 		List<EXTDDTipoGestor> listaResultado = new ArrayList<EXTDDTipoGestor>();
 
@@ -533,8 +550,9 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 			if (tipoGestor.getCodigo().equals("GCOM") || tipoGestor.getCodigo().equals("GCBO")
 					|| tipoGestor.getCodigo().equals("GFORM") || tipoGestor.getCodigo().equals("FVDNEG")
 					|| tipoGestor.getCodigo().equals("FVDBACKOFR") || tipoGestor.getCodigo().equals("FVDBACKVNT")
-					|| tipoGestor.getCodigo().equals("HAYAGBOINM") || tipoGestor.getCodigo().equals("SBACKOFFICEINMLIBER") 
-					|| tipoGestor.getCodigo().equals("GESRES") || tipoGestor.getCodigo().equals("SUPRES")) {
+					|| tipoGestor.getCodigo().equals("HAYAGBOINM")
+					|| tipoGestor.getCodigo().equals("SBACKOFFICEINMLIBER") || tipoGestor.getCodigo().equals("GESRES")
+					|| tipoGestor.getCodigo().equals("SUPRES")) {
 				listaResultado.add(tipoGestor);
 			}
 		}
@@ -550,10 +568,8 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		List<DDTipoTrabajo> tiposTrabajo = new ArrayList<DDTipoTrabajo>();
 		List<DDTipoTrabajo> tiposTrabajoFiltered = new ArrayList<DDTipoTrabajo>();
 		tiposTrabajo.addAll((List<DDTipoTrabajo>) (List) adapter.getDiccionario("tiposTrabajo"));
-		Activo act = activoApi.get(Long.parseLong(idActivo));
 		if (!Checks.esNulo(idActivo)) {
-			Long activo = Long.parseLong(idActivo);
-
+			Activo act = activoApi.get(Long.parseLong(idActivo));
 			for (DDTipoTrabajo tipoTrabajo : tiposTrabajo) {
 				// No se pueden crear tipos de trabajo ACTUACION TECNICA ni
 				// OBTENCION DOCUMENTAL
@@ -564,45 +580,49 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 						tiposTrabajoFiltered.add(tipoTrabajo);
 					}
 				} else {
-					if (DDTipoTrabajo.CODIGO_ACTUACION_TECNICA.equals(tipoTrabajo.getCodigo()) || DDTipoTrabajo.CODIGO_OBTENCION_DOCUMENTAL.equals(tipoTrabajo.getCodigo())) {
+					if (DDTipoTrabajo.CODIGO_ACTUACION_TECNICA.equals(tipoTrabajo.getCodigo())
+							|| DDTipoTrabajo.CODIGO_OBTENCION_DOCUMENTAL.equals(tipoTrabajo.getCodigo())) {
 						// Si no hay registro en BBDD de perimetro, el get nos
 						// devuelve un PerimetroActivo nuevo
 						// con todas las condiciones de perimetro activas
-						PerimetroActivo perimetroActivo = activoApi.getPerimetroByIdActivo(activo);
+						PerimetroActivo perimetroActivo = activoApi.getPerimetroByIdActivo(act.getId());
 
-						if (!Checks.esNulo(perimetroActivo.getAplicaGestion()) && perimetroActivo.getAplicaGestion() == 1) {
+						if (!Checks.esNulo(perimetroActivo.getAplicaGestion())
+								&& perimetroActivo.getAplicaGestion() == 1) {
 							// Activo con Gestion en perimetro
 							tiposTrabajoFiltered.add(tipoTrabajo);
 						}
-					} else if (!DDTipoTrabajo.CODIGO_COMERCIALIZACION.equals(tipoTrabajo.getCodigo()) && !DDTipoTrabajo.CODIGO_TASACION.equals(tipoTrabajo.getCodigo()) && !DDTipoTrabajo.CODIGO_PUBLICACIONES.equals(tipoTrabajo.getCodigo())) {
-						// El resto de tipos, si no es comercialización o tasación,
+					} else if (!DDTipoTrabajo.CODIGO_COMERCIALIZACION.equals(tipoTrabajo.getCodigo())
+							&& !DDTipoTrabajo.CODIGO_TASACION.equals(tipoTrabajo.getCodigo())
+							&& !DDTipoTrabajo.CODIGO_PUBLICACIONES.equals(tipoTrabajo.getCodigo())) {
+						// El resto de tipos, si no es comercialización o
+						// tasación,
 						// se pueden generar.
 						tiposTrabajoFiltered.add(tipoTrabajo);
 					}
 				}
-
-				return tiposTrabajoFiltered;
 			}
 		} else {
 
 			for (DDTipoTrabajo tipoTrabajo : tiposTrabajo) {
 				// No se generan los tipos de trabajo tasación o
 				// comercialización.
-				if (!DDTipoTrabajo.CODIGO_COMERCIALIZACION.equals(tipoTrabajo.getCodigo()) && !DDTipoTrabajo.CODIGO_TASACION.equals(tipoTrabajo.getCodigo()) && !DDTipoTrabajo.CODIGO_PUBLICACIONES.equals(tipoTrabajo.getCodigo())) {
+				if (!DDTipoTrabajo.CODIGO_COMERCIALIZACION.equals(tipoTrabajo.getCodigo())
+						&& !DDTipoTrabajo.CODIGO_TASACION.equals(tipoTrabajo.getCodigo())
+						&& !DDTipoTrabajo.CODIGO_PUBLICACIONES.equals(tipoTrabajo.getCodigo())) {
 					// El resto de tipos, si no es comercialización o tasación,
 					// se pueden generar.
 
-
-					//Excluiremos los trabajos del tipo publicacion para las agrupaciones de tipo asistida o de tipo obra nueva
+					// Excluiremos los trabajos del tipo publicacion para las
+					// agrupaciones de tipo asistida o de tipo obra nueva
 
 					tiposTrabajoFiltered.add(tipoTrabajo);
 
 				}
 			}
-			return tiposTrabajoFiltered;
 		}
 
-		return null;
+		return tiposTrabajoFiltered;
 	}
 
 	@Override
@@ -610,19 +630,20 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 	public List<DDSubtipoTrabajo> getComboSubtipoTrabajo(String tipoTrabajoCodigo, Long idActivo) {
 		Activo activo = activoApi.get(idActivo);
 		List<DDSubtipoTrabajo> lista = new ArrayList<DDSubtipoTrabajo>();
-		DDTipoTrabajo tipoTrabajo =  genericDao.get(DDTipoTrabajo.class, genericDao.createFilter(FilterType.EQUALS,"codigo", tipoTrabajoCodigo));
+		DDTipoTrabajo tipoTrabajo = genericDao.get(DDTipoTrabajo.class,
+				genericDao.createFilter(FilterType.EQUALS, "codigo", tipoTrabajoCodigo));
 
-		if(activo.getEnTramite()) {
+		if (activo.getEnTramite()) {
 			Usuario gestorProveedorTecnico = gestorActivoApi.getGestorByActivoYTipo(activo, "PTEC");
-			if(!Checks.esNulo(gestorProveedorTecnico)){
+			if (!Checks.esNulo(gestorProveedorTecnico)) {
 
 				lista = ddSubtipoTrabajoDao.getSubtipoTrabajoconTarifaPlana(tipoTrabajo.getId(), new Date());
-			}else {
+			} else {
 				Order order = new Order(GenericABMDao.OrderType.ASC, "descripcion");
 				Filter filter = genericDao.createFilter(FilterType.EQUALS, "tipoTrabajo.codigo", tipoTrabajoCodigo);
 				lista = genericDao.getListOrdered(DDSubtipoTrabajo.class, order, filter);
 			}
-		}else {
+		} else {
 			Order order = new Order(GenericABMDao.OrderType.ASC, "descripcion");
 			Filter filter = genericDao.createFilter(FilterType.EQUALS, "tipoTrabajo.codigo", tipoTrabajoCodigo);
 			lista = genericDao.getListOrdered(DDSubtipoTrabajo.class, order, filter);
@@ -694,7 +715,7 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 				filter);
 
 	}
-	
+
 	@Override
 	@BusinessOperationDefinition("genericManager.getComboMotivoRechazoOferta")
 	public List<DDMotivoRechazoOferta> getComboMotivoRechazoOferta(String tipoRechazoOfertaCodigo) {
@@ -704,8 +725,7 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		Order order = new Order(GenericABMDao.OrderType.ASC, "descripcion");
 		Filter filter = genericDao.createFilter(FilterType.EQUALS, "tipoRechazo.codigo", tipoRechazoOfertaCodigo);
 
-		return (List<DDMotivoRechazoOferta>) genericDao.getListOrdered(DDMotivoRechazoOferta.class, order,
-				filter);
+		return (List<DDMotivoRechazoOferta>) genericDao.getListOrdered(DDMotivoRechazoOferta.class, order, filter);
 
 	}
 
@@ -781,18 +801,19 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		return (List<DDComiteSancion>) genericDao.getListOrdered(DDComiteSancion.class, order, filter);
 
 	}
-	
+
 	@Override
 	public List<DDComiteSancion> getComitesByIdExpediente(String expediente) {
 		Filter filter = genericDao.createFilter(FilterType.EQUALS, "id", Long.valueOf(expediente));
 		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
-		
+
 		ExpedienteComercial expComercial = genericDao.get(ExpedienteComercial.class, filter, filtroBorrado);
-		Order order = new Order(GenericABMDao.OrderType.ASC, "descripcion");
 		
-		if(!Checks.esNulo(expComercial.getOferta().getActivoPrincipal().getCartera().getCodigo())) {
+		if (!Checks.esNulo(expComercial.getOferta().getActivoPrincipal().getCartera().getCodigo())) {
 			return getComitesByCartera(expComercial.getOferta().getActivoPrincipal().getCartera().getCodigo());
-			//return (List<DDComiteSancion>) genericDao.getListOrdered(DDComiteSancion.class, order, filter, filtroBorrado);
+			// return (List<DDComiteSancion>)
+			// genericDao.getListOrdered(DDComiteSancion.class, order, filter,
+			// filtroBorrado);
 		} else {
 			return new ArrayList<DDComiteSancion>();
 		}
@@ -804,10 +825,12 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		List<DtoDiccionario> listaDD = new ArrayList<DtoDiccionario>();
 
 		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
-		Filter filtroSubtipo = genericDao.createFilter(FilterType.EQUALS, "tipoProveedor.codigo", subtipoProveedorCodigo);
-		Filter filtroVigente = genericDao.createFilter(FilterType.NULL, "fechaBaja"); 
+		Filter filtroSubtipo = genericDao.createFilter(FilterType.EQUALS, "tipoProveedor.codigo",
+				subtipoProveedorCodigo);
+		Filter filtroVigente = genericDao.createFilter(FilterType.NULL, "fechaBaja");
 		Order order = new Order(OrderType.ASC, "nombre");
-		List<ActivoProveedor> lista = genericDao.getListOrdered(ActivoProveedor.class, order, filtroBorrado, filtroSubtipo, filtroVigente);
+		List<ActivoProveedor> lista = genericDao.getListOrdered(ActivoProveedor.class, order, filtroBorrado,
+				filtroSubtipo, filtroVigente);
 
 		for (ActivoProveedor proveedor : lista) {
 			DtoDiccionario dto = new DtoDiccionario();
@@ -871,12 +894,12 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 
 		return listaTiposPorCuenta;
 	}
-	
+
 	@Override
 	public List<DDTipoCalculo> getDiccionarioByTipoOferta(String diccionario, String codTipoOferta) {
 		Filter filtroTipoOferta = genericDao.createFilter(FilterType.EQUALS, "tipoOferta.codigo", codTipoOferta);
-		
-		return genericDao.getList(DDTipoCalculo.class, filtroTipoOferta); 
+
+		return genericDao.getList(DDTipoCalculo.class, filtroTipoOferta);
 	}
 
 	@Override
@@ -932,18 +955,17 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 
 		return listaTipoPropuestas;
 	}
-	
+
 	@Override
-	public List<DDSubcartera> getComboSubcartera(String codCartera){
-		
+	public List<DDSubcartera> getComboSubcartera(String codCartera) {
+
 		Filter filtroCartera = genericDao.createFilter(FilterType.EQUALS, "cartera.codigo", codCartera);
-		
-		List<DDSubcartera> listaSubcartera= genericDao.getList(DDSubcartera.class, filtroCartera);
-		
+
+		List<DDSubcartera> listaSubcartera = genericDao.getList(DDSubcartera.class, filtroCartera);
+
 		return listaSubcartera;
 
 	}
-
 
 	@Override
 	public List<DDComiteAlquiler> getComitesAlquilerByCartera(Long idActivo) {
@@ -961,47 +983,53 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 	public List<DDComiteAlquiler> getComitesAlquilerByCarteraCodigo(String carteraCodigo) {
 		Filter filtroCartera = genericDao.createFilter(FilterType.EQUALS, "cartera.codigo", carteraCodigo);
 
-		List<DDComiteAlquiler> listaSubcartera= genericDao.getList(DDComiteAlquiler.class, filtroCartera);
+		List<DDComiteAlquiler> listaSubcartera = genericDao.getList(DDComiteAlquiler.class, filtroCartera);
 
 		return listaSubcartera;
 
 	}
-	
+
 	@Override
 	public List<DDTipoAgrupacion> getComboTipoAgrupacion() {
-		//Se obtiene el tipo de gestor "Gestor de mantenimiento"
-		//Filter filtroTipoAgrupacionBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
-		//Filter filtroCodigoTipoAgrupacion = genericDao.createFilter(FilterType.EQUALS, "codigo", "GACT");
-		//EXTDDTipoGestor tipoGestor = genericDao.get(EXTDDTipoGestor.class, filtroTipoAgrupacionBorrado, filtroCodigoTipoAgrupacion);
-		
+		// Se obtiene el tipo de gestor "Gestor de mantenimiento"
+		// Filter filtroTipoAgrupacionBorrado =
+		// genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado",
+		// false);
+		// Filter filtroCodigoTipoAgrupacion =
+		// genericDao.createFilter(FilterType.EQUALS, "codigo", "GACT");
+		// EXTDDTipoGestor tipoGestor = genericDao.get(EXTDDTipoGestor.class,
+		// filtroTipoAgrupacionBorrado, filtroCodigoTipoAgrupacion);
+
 		// Se obtiene el listado completo de tipos de agrupacion.
-		//List<DDTipoAgrupacion> listaTipoAgrupacionesFiltrado = new ArrayList<DDTipoAgrupacion>();
+		// List<DDTipoAgrupacion> listaTipoAgrupacionesFiltrado = new
+		// ArrayList<DDTipoAgrupacion>();
 		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
-		List<DDTipoAgrupacion> listaTipoAgrupaciones = genericDao.getList(DDTipoAgrupacion.class, filtroBorrado, filtroBorrado);
-		
-		/*// Se mira si el usuario logueado e s de tipo gestor mantenimiento.
-		Usuario usuario = adapter.getUsuarioLogado();
-		List<DespachoExterno> despachos = proxyFactory.proxy(coreextensionApi.class).getListDespachosDeUsuario(tipoGestor.getId(), usuario.getId(), false, false);
-		
-		
-		if (!despachos.isEmpty()) {
-			for(DDTipoAgrupacion tipoAgr: listaTipoAgrupaciones) {
-				if (!DDTipoAgrupacion.AGRUPACION_PROYECTO.equals(tipoAgr.getCodigo())) {
-					listaTipoAgrupacionesFiltrado.add(tipoAgr);
-				}
-			}
-			return listaTipoAgrupacionesFiltrado;
-		} else {
-			return listaTipoAgrupaciones;
-		}*/ //REMVIP-2289
+		List<DDTipoAgrupacion> listaTipoAgrupaciones = genericDao.getList(DDTipoAgrupacion.class, filtroBorrado,
+				filtroBorrado);
+
+		/*
+		 * // Se mira si el usuario logueado e s de tipo gestor mantenimiento.
+		 * Usuario usuario = adapter.getUsuarioLogado(); List<DespachoExterno>
+		 * despachos =
+		 * proxyFactory.proxy(coreextensionApi.class).getListDespachosDeUsuario(
+		 * tipoGestor.getId(), usuario.getId(), false, false);
+		 * 
+		 * 
+		 * if (!despachos.isEmpty()) { for(DDTipoAgrupacion tipoAgr:
+		 * listaTipoAgrupaciones) { if
+		 * (!DDTipoAgrupacion.AGRUPACION_PROYECTO.equals(tipoAgr.getCodigo())) {
+		 * listaTipoAgrupacionesFiltrado.add(tipoAgr); } } return
+		 * listaTipoAgrupacionesFiltrado; } else { return listaTipoAgrupaciones;
+		 * }
+		 */ // REMVIP-2289
 		return listaTipoAgrupaciones;
 	}
-	
+
 	@Override
-	public List<DDTipoAgrupacion> getTodosComboTipoAgrupacion()
-	{
+	public List<DDTipoAgrupacion> getTodosComboTipoAgrupacion() {
 		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
-		List<DDTipoAgrupacion> listaTipoAgrupaciones = genericDao.getList(DDTipoAgrupacion.class, filtroBorrado, filtroBorrado);
+		List<DDTipoAgrupacion> listaTipoAgrupaciones = genericDao.getList(DDTipoAgrupacion.class, filtroBorrado,
+				filtroBorrado);
 		return listaTipoAgrupaciones;
 
 	}

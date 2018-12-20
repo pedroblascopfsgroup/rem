@@ -2340,9 +2340,12 @@ public class AgrupacionAdapter {
 
 					if(!Checks.estaVacio(listaActivos)) {
 						for (ActivoAgrupacionActivo activoAgrupacionActivo : listaActivos) {
-							ActivoPublicacion activoPublicacion = activoAgrupacionActivo.getActivo().getActivoPublicacion();
-							activoPublicacion.setTipoComercializacion(tipoComercializacion);
-							activoPublicacionDao.saveOrUpdate(activoPublicacion);
+							if(activoAgrupacionActivo.getActivo() != null && activoAgrupacionActivo.getActivo().getActivoPublicacion()!= null && tipoComercializacion != null){
+								ActivoPublicacion activoPublicacion = activoAgrupacionActivo.getActivo().getActivoPublicacion();
+								activoPublicacion.setTipoComercializacion(tipoComercializacion);
+								activoPublicacionDao.saveOrUpdate(activoPublicacion);
+							}
+							
 						}
 					}
 				}

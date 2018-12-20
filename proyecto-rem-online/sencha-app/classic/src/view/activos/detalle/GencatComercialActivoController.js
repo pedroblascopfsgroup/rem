@@ -12,7 +12,7 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoController', {
             /*afterupload: function(grid) {
             	grid.getStore().load();
             }*/
-        },
+        }
     	
     },
     

@@ -764,5 +764,14 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 		}
 		return gestorComercial;
 	}
-
+	
+	@Override
+	public Boolean arrayComparer(Long idAgr, List<Long> agrupaciones) {
+		for (int i = 0; i < agrupaciones.size(); i++) {
+			if (agrupaciones.get(i).equals(idAgr)) {
+				return true;
+			}
+		}
+		return false;
+	}
 }

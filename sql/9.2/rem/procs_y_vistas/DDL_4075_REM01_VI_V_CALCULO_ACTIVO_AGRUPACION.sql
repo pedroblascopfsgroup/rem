@@ -11,6 +11,7 @@
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##		0.2 Corrección activos publicados (módulo de publicaciones)
 --##########################################
 --*/
 
@@ -63,7 +64,10 @@ BEGIN
           FROM '|| V_ESQUEMA ||'.ACT_AGR_AGRUPACION AGR
           JOIN '|| V_ESQUEMA ||'.ACT_AGA_AGRUPACION_ACTIVO AGA ON AGR.AGR_ID = AGA.AGR_ID
           JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT ON AGA.ACT_ID = ACT.ACT_ID
-          JOIN '|| V_ESQUEMA ||'.DD_EPU_ESTADO_PUBLICACION EPU ON ACT.DD_EPU_ID = EPU.DD_EPU_ID AND EPU.DD_EPU_CODIGO IN (''01'', ''02'', ''04'', ''07'')
+          JOIN '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION APU ON APU.ACT_ID = ACT.ACT_ID
+          LEFT JOIN '|| V_ESQUEMA ||'.DD_EPV_ESTADO_PUB_VENTA EPV ON EPV.DD_EPV_ID = APU.DD_EPV_ID
+          LEFT JOIN '|| V_ESQUEMA ||'.DD_EPA_ESTADO_PUB_ALQUILER EPA ON EPA.DD_EPA_ID = APU.DD_EPA_ID
+          WHERE (EPV.DD_EPV_CODIGO = ''03'' OR EPA.DD_EPA_CODIGO = ''03'')
           GROUP BY AGR.AGR_ID
       )
       SELECT DISTINCT AGR.AGR_ID AS AGR_ID, NVL(ANUM.NUM_ACTIVOS, 0) AS NUM_ACTIVOS,

@@ -582,9 +582,11 @@ public class ActivoAdapter {
 			activoDistribucion.setInfoComercial(infoComercial);
 			ActivoDistribucion distribucionNueva = genericDao.save(ActivoDistribucion.class, activoDistribucion);
 
-			ActivoVivienda viviendaTemp = (ActivoVivienda) activo.getInfoComercial();
-			viviendaTemp.getDistribucion().add(distribucionNueva);
-			activo.setInfoComercial(viviendaTemp);
+			if(activo.getInfoComercial() != null && activo.getInfoComercial() instanceof ActivoVivienda) {
+				ActivoVivienda viviendaTemp = (ActivoVivienda) activo.getInfoComercial();
+				viviendaTemp.getDistribucion().add(distribucionNueva);
+				activo.setInfoComercial(viviendaTemp);
+			}			
 			activoApi.saveOrUpdate(activo);
 			restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO, activo);
 
@@ -968,8 +970,10 @@ public class ActivoAdapter {
 		Activo activo = activoApi.get(Long.valueOf(idActivo));
 		
 		if (activo.getInfoComercial().getTipoActivo().getCodigo().equals(DDTipoActivo.COD_VIVIENDA)) {
-			ActivoVivienda vivienda = (ActivoVivienda) activo.getInfoComercial();
-
+			if(activo.getInfoComercial() != null && activo.getInfoComercial() instanceof ActivoVivienda) {
+				
+			ActivoVivienda vivienda = (ActivoVivienda) activo.getInfoComercial();		
+			
 				DtoNumPlantas dtoSotano = new DtoNumPlantas();
 				dtoSotano.setNumPlanta(-1L);
 				dtoSotano.setDescripcionPlanta("Planta - 1");
@@ -984,6 +988,7 @@ public class ActivoAdapter {
 				listaPlantas.add(dto);
 			}
 
+		  }
 		}
 		return listaPlantas;
 	}

@@ -3516,8 +3516,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 						}
 					}
 				}
-
-				if(activosPropagables.length > 0) {
+				
+				if(activosPropagables.length > 0 && tabData.models[0].name != "datospublicacion") {
 					tabPropagableData = me.createFormPropagableData(form, tabData);
 					if (!Ext.isEmpty(tabPropagableData)) {
 						// sacamos el activo actual del listado

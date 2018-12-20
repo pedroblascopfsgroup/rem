@@ -156,21 +156,7 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 		DocumentosExpedienteDto docExpDto = recoveryToGestorDocAssembler.getDocumentosExpedienteDto(userLogin.getUsername());
 		RespuestaDocumentosExpedientes respuesta = gestorDocumentalApi.documentosExpediente(cabecera, docExpDto);
 
-		/*if (!Checks.esNulo(respuesta.getDocumentos())) {
-			ConsistenciaAdjuntosRunnableUtils caru = new ConsistenciaAdjuntosRunnableUtils(respuesta.getDocumentos(), GestorDocumentalConstants.Contenedor.ExpedienteComercial);
-			launchNewTasker(caru);
-		}*/
-
 		list = GestorDocToRecoveryAssembler.getListDtoAdjunto(respuesta);
-		for (DtoAdjunto adjunto : list) {
-			DDTdnTipoDocumento tipoDoc = (DDTdnTipoDocumento) diccionarioApi
-					.dameValorDiccionarioByCod(DDTdnTipoDocumento.class, adjunto.getCodigoTipo());
-			if (tipoDoc == null) {
-				adjunto.setDescripcionTipo("");
-			} else {
-				adjunto.setDescripcionTipo(tipoDoc.getDescripcion());
-			}
-		}
 
 		return list;
 	}

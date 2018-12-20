@@ -705,8 +705,10 @@ public class TabActivoInformeComercial implements TabActivoService {
 				case 1:
 					break;
 				case 2:
+					if(activo.getInfoComercial() != null && activo.getInfoComercial() instanceof ActivoVivienda) {
 					ActivoVivienda vivienda = (ActivoVivienda) activo.getInfoComercial();
 					beanUtilNotNull.copyProperties(activoInformeDto, vivienda);
+					}
 					break;
 				case 3:
 					ActivoLocalComercial local = (ActivoLocalComercial) activo.getInfoComercial();
@@ -737,11 +739,11 @@ public class TabActivoInformeComercial implements TabActivoService {
 			}
 
 		} catch (ClassCastException e) {
-			logger.error(e.getMessage());
+			logger.error(e.getMessage(), e);
 		} catch (IllegalAccessException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage(), e);
 		} catch (InvocationTargetException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage(), e);
 		}
 	}
 	

@@ -2007,7 +2007,6 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	},
 
 	comprobarObligatoriedadCamposNexos: function() {
-		
 		var me = this,
 		
 		campoEstadoCivil = me.lookupReference('estadoCivil'),
@@ -2015,9 +2014,9 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		campoNumConyuge = me.lookupReference('numRegConyuge'),
 		campoApellidos = me.lookupReference('apellidos');
 		
-		if(me.getViewModel().get('comprador.codTipoPersona')){
+		/*if(me.getViewModel().get('comprador.codTipoPersona')){
 			me.lookupReference('tipoPersona').setValue(me.getViewModel().get('comprador.codTipoPersona'));
-		}
+		}*/
 		// Si el tipo de persona es FÍSICA, entonces el campos Estado civil es obligatorio y se habilitan campos dependientes.
 		if(me.lookupReference('tipoPersona').getValue() === "1" ) {
 			//campoEstadoCivil.setDisabled(false);

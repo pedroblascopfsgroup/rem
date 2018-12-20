@@ -6,7 +6,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
-import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
@@ -38,8 +37,6 @@ public class MaestroDePersonas  implements Runnable{
 
 	private Long expedienteComercial = null;
 	
-	private ExpedienteComercial expedienteC = new ExpedienteComercial();
-
 	private String userName = null;
 
 	private String cartera = null;
@@ -75,8 +72,10 @@ public class MaestroDePersonas  implements Runnable{
 							personaDto.setIdCliente(compradorExpediente.getPrimaryKey().getComprador().getDocumento());
 							
 							logger.error("[MAESTRO DE PERSONAS] LLAMAMOS A EJECUTAR PERSONA");
+							logger.error("[MAESTRO DE PERSONAS] Datos de la llamada: ".concat(personaDto.toString()));
 							PersonaOutputDto personaOutputDto = gestorDocumentalMaestroManager.ejecutarPersona(personaDto);
 							logger.error("[MAESTRO DE PERSONAS] VOLVEMOS DE EJECUTAR PERSONA");
+							logger.error("[MAESTRO DE PERSONAS] Datos de la respuesta: ".concat(personaOutputDto.toString()));
 							
 							if (Checks.esNulo(personaOutputDto)) {
 								logger.error("[MAESTRO DE PERSONAS] personaOutputDto ES NULO");

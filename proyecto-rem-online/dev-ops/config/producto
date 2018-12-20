@@ -1,5 +1,5 @@
 export DB_PRODUCTO=ibd01:1527/ibd017
 export DB_BI=***
-export BASE_DIR_APP=/recovery/iap018/app-server
-export BASE_DIR_BATCH=/recovery/iba018/batch-server
-export BASE_DIR_TRANSFERENCIA=/recovery/iba018/transferencia
+export BASE_DIR_APP=/recovery/app-server
+export BASE_DIR_BATCH=/recovery/batch-server
+export BASE_DIR_TRANSFERENCIA=/recovery/transferencia

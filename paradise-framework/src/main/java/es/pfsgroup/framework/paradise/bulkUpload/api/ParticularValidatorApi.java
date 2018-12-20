@@ -468,12 +468,6 @@ public interface ParticularValidatorApi {
 	 */
 	public Boolean esActivoAlquilado(String numActivo);
 
-	/**
-	 * @param numActivo
-	 * @return devuelve true si el activo se encuentra incluido en una
-	 *         agrupacion viva de tipo comercial
-	 */
-	public Boolean activoEnAgrupacionComercialViva(String numActivo);
 
 	/**
 	 * 
@@ -552,14 +546,7 @@ public interface ParticularValidatorApi {
 	 */
 	public Boolean existeActivoConOfertaAlquilerViva(String numActivo);
 
-	/**
-	 * Devuelve el codigo del destino comercial de un activo
-	 * 
-	 * @param numActivo
-	 * @return
-	 */
-	public String getCodigoDestinoComercialByNumActivo(String numActivo);
-
+	
 	Boolean isActivoPublicadoVenta(String numActivo);
 
 	Boolean isActivoOcultoVentaPorMotivosManuales(String numActivo);
@@ -571,4 +558,22 @@ public interface ParticularValidatorApi {
 	Boolean isActivoOcultoVenta(String numActivo);
 
 	Boolean isActivoOcultoAlquiler(String numActivo);
+
+	
+	/**
+	 * Devuelve el codigo del destino comercial de un activo
+	 * 
+	 * @param numActivo
+	 * @return
+	 */
+	public String getCodigoDestinoComercialByNumActivo(String numActivo);
+
+	
+	/**
+	 * @param numActivo
+	 * @return devuelve true si el activo se encuentra incluido en una
+	 *         agrupacion viva de tipo comercial
+	 */
+	public Boolean activoEnAgrupacionComercialViva(String numActivo);
+
 }

@@ -477,5 +477,11 @@ public interface ParticularValidatorApi {
 		Boolean existeActivoEnPropietarios(String numActivo, String idPropietarios);
 
 		Boolean existeCatastro(String catastro);	
-
+		
+		/**
+		 * @param numActivo
+		 * @return devuelve true si el activo se encuentra incluido en una
+		 *         agrupacion viva de tipo comercial
+		 */
+		public Boolean activoEnAgrupacionComercialViva(String numActivo);
 }

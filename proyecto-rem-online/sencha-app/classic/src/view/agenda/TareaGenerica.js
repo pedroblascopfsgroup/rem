@@ -1437,6 +1437,27 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
             me.habilitarCampo(me.down('[name=fechaEnvio]'));
         }
     },
+    
+    T016_ProcesoAdecuacion: function() {
+        var me = this;
+        var comboReforma = me.down('[name=necesitaReforma]');
+        var fechaRevision = me.down('[name=fechaRevision]');
+        var importeReforma = me.down('[name=importeReforma]');
+        comboReforma.allowBlank = false;
+        fechaRevision.allowBlank = false;
+        importeReforma.allowBlank = false;
+        
+    },
+    
+    T016_ComunicarGENCAT: function() {
+        var me = this;
+        var fecha = me.down('[name=fechaTarea]');
+        var fechaComunicacion = me.down('[name=fechaComunicacion]');
+        fecha.setValue($AC.getCurrentDate());
+        me.deshabilitarCampo(fecha);
+        fecha.setReadOnly(true);
+        fechaComunicacion.allowBlank = false;
+    },
 
     habilitarCampo: function(campo) {
         var me = this;

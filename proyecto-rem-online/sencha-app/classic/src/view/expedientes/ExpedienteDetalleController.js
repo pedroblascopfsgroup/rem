@@ -2286,31 +2286,35 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	},
 
 	onCambioTipoImpuesto: function(combo, value,oldValue, eOpts){
-		if(!Ext.isEmpty(oldValue)){
-			var me = this,
-	    	tipoAplicable = me.lookupReference('tipoAplicable'),
-	    	operacionExenta = me.lookupReference('chkboxOperacionExenta'),
-	    	inversionSujetoPasivo = me.lookupReference('chkboxInversionSujetoPasivo'),
-	    	renunciaExencion = me.lookupReference('chkboxRenunciaExencion');
-	
-	
-	    	if(CONST.TIPO_IMPUESTO['ITP'] == value) {
-	    		tipoAplicable.reset();
-	    		tipoAplicable.setDisabled(true);
-	    		tipoAplicable.allowBlank = true;
-	    		tipoAplicable.setValue(0);
-	    		operacionExenta.reset();
-	    		operacionExenta.setReadOnly(true);
-	    		inversionSujetoPasivo.reset();
-	    		inversionSujetoPasivo.setReadOnly(true);
-	    		renunciaExencion.reset();
-	    		renunciaExencion.setReadOnly(true);
-	    	} else {
-	    		tipoAplicable.setDisabled(false);
-	        	tipoAplicable.allowBlank = false;
-	    		operacionExenta.setReadOnly(false);
-	    		inversionSujetoPasivo.setReadOnly(false);
-	    	}
+		try{
+			if(!Ext.isEmpty(oldValue)){
+				var me = this,
+		    	tipoAplicable = me.lookupReference('tipoAplicable'),
+		    	operacionExenta = me.lookupReference('chkboxOperacionExenta'),
+		    	inversionSujetoPasivo = me.lookupReference('chkboxInversionSujetoPasivo'),
+		    	renunciaExencion = me.lookupReference('chkboxRenunciaExencion');
+		
+		
+		    	if(CONST.TIPO_IMPUESTO['ITP'] == value) {
+		    		tipoAplicable.reset();
+		    		tipoAplicable.setDisabled(true);
+		    		tipoAplicable.allowBlank = true;
+		    		tipoAplicable.setValue(0);
+		    		operacionExenta.reset();
+		    		operacionExenta.setReadOnly(true);
+		    		inversionSujetoPasivo.reset();
+		    		inversionSujetoPasivo.setReadOnly(true);
+		    		renunciaExencion.reset();
+		    		renunciaExencion.setReadOnly(true);
+		    	} else {
+		    		tipoAplicable.setDisabled(false);
+		        	tipoAplicable.allowBlank = false;
+		    		operacionExenta.setReadOnly(false);
+		    		inversionSujetoPasivo.setReadOnly(false);
+		    	}
+			}
+		}catch(err) {
+  			Ext.global.console.log('Error en onCambioTipoImpuesto: '+err)
 		}
 	},
 

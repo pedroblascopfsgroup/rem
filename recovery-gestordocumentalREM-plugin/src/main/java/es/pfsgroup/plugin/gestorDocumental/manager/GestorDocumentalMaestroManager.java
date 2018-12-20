@@ -83,7 +83,7 @@ public class GestorDocumentalMaestroManager extends BaseWS implements GestorDocu
 				logger.info("WS invocado! Valores de respuesta del MAESTRO: ");					
 				if (!Checks.esNulo(output) 
 						&& !Checks.esNulo(output.getParameters()) 
-						&& !Checks.esNulo(output.getParameters().getParameter()) 
+						&& !Checks.estaVacio(output.getParameters().getParameter()) 
 						&& !Checks.esNulo(output.getParameters().getParameter().get(0)) 
 						&& !Checks.esNulo(output.getParameters().getParameter().get(0).getCode())
 						&& output.getParameters().getParameter().get(0).getCode().equals("ERROR")) {

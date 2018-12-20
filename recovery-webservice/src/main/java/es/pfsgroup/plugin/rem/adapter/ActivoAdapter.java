@@ -63,6 +63,7 @@ import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoTramiteDao;
 import es.pfsgroup.plugin.rem.activo.dao.impl.ActivoPatrimonioDaoImpl;
+import es.pfsgroup.plugin.rem.activo.publicacion.dao.ActivoPublicacionDao;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoAvisadorApi;
 import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
@@ -1490,9 +1491,9 @@ public class ActivoAdapter {
 				.getListGestoresActivosAdicionalesHistoricoData(gestorEntidadDto);
 		
 		Boolean incluirVenta;
-		Boolean incluirAlquiler;
+		Boolean incluirAlquiler; 
 		
-		String tipoComercializacion = activoApi.get(idActivo).getTipoComercializacion().getCodigo();
+		String tipoComercializacion = activoApi.get(idActivo).getActivoPublicacion().getTipoComercializacion().getCodigo();
 		
 		if(DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(tipoComercializacion) || DDTipoComercializacion.CODIGO_ALQUILER_OPCION_COMPRA.equals(tipoComercializacion)) {
 			incluirVenta = false;

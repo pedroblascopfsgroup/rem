@@ -257,7 +257,7 @@ public class AgrupacionAdapter {
 	public static final String PUBLICACION_MOTIVO_MSG = "Publicado desde agrupación";
 	public static final String PUBLICACION_AGRUPACION_BAJA_ERROR_MSG = "No ha sido posible publicar. La agrupación está dada de baja";
 	public static final String AGRUPACION_BAJA_ERROR_OFERTAS_VIVAS = "No ha sido posible dar de baja la agrupación. Existen ofertas vivas";
-	public static final String AGRUPACION_CAMBIO_DEST_COMERCIAL_CON_OFERTAS_VIVAS = "No se puede cambiar el destino comercial por tener ofertas vivas";
+	public static final String AGRUPACION_CAMBIO_DEST_COMERCIAL_CON_OFERTAS_VIVAS = "No se puede cambiar el destino comercial de la agrupación porque tiene ofertas vivas";
 	private static final String AVISO_MENSAJE_TIPO_NUMERO_DOCUMENTO = "activo.motivo.oferta.tipo.numero.documento";
 	private static final String AVISO_MENSAJE_CLIENTE_OBLIGATORIO = "activo.motivo.oferta.cliente";
 	private static final Integer NO_ES_FORMALIZABLE = new Integer(0);
@@ -766,21 +766,55 @@ public class AgrupacionAdapter {
 				}
 			}
 
-			if (!Checks.esNulo(agrupacion) && !Checks.esNulo(numActivo) && !Checks.esNulo(activo)){
+			if (!Checks.esNulo(agrupacion) && !Checks.esNulo(numActivo) && !Checks.esNulo(activo)) {
+				
+				// Agrupacion Comercial
+				if (DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_VENTA.equals(agrupacion.getTipoAgrupacion().getCodigo())
+						|| DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_ALQUILER.equals(agrupacion.getTipoAgrupacion().getCodigo())) {
+					
+						
+					// El activo ya esta en una agrupacion comercial viva
+					if (particularValidator.activoEnAgrupacionComercialViva(Long.toString(numActivo))) {
+						throw new JsonViewerException("El activo está incluido en otro lote comercial vivo");
+					}
+					
+					// El activo tiene ofertas vivas
+					if (particularValidator.existeActivoConExpedienteComercialVivo(Long.toString(numActivo))) {
+						throw new JsonViewerException("El activo tiene ofertas individuales vivas");
+					}
+					
+					// Agrupacion Comercial - Alquiler
+					if (DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_ALQUILER.equals(agrupacion.getTipoAgrupacion().getCodigo())) {
+						
+						// El activo es de alquiler
+						if (DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(activo.getTipoComercializacion().getCodigo())
+								|| DDTipoComercializacion.CODIGO_ALQUILER_VENTA.equals(activo.getTipoComercializacion().getCodigo())) {
+							
+							// El activo esta alquilado
+							if (particularValidator.esActivoAlquilado(Long.toString(numActivo))) {
+								throw new JsonViewerException("El activo está alquilado");
+							}
+							
+							// El tipo de alquiler de la agrupacion es null    OR
+							// El tipo de alquiler del activo es distinto al de la agrupacion(Comercial - Alquiler)
+							if (Checks.esNulo(agrupacion.getTipoAlquiler()) || 
+									(!Checks.esNulo(activo.getTipoAlquiler()) && !Checks.esNulo(agrupacion.getTipoAlquiler()) 
+									&& !activo.getTipoAlquiler().getCodigo().equals(agrupacion.getTipoAlquiler().getCodigo()))) {
+								throw new JsonViewerException("El tipo de alquiler del activo es distinto al de la agrupación");
+							}
+						}
+					}
+
+				}
+				
+				
 				if(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_VENTA.equals(agrupacion.getTipoAgrupacion().getCodigo())){
 					if(DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(activo.getTipoComercializacion().getCodigo())){
 						throw new JsonViewerException("El destino comercial del activo no coincide con el de la agrupación");
 					}
+					
 				}else if(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_ALQUILER.equals(agrupacion.getTipoAgrupacion().getCodigo())){
-					if (!Checks.esNulo(numActivo)){
-						if(particularValidator.activoEnAgrupacionComercialViva(Long.toString(numActivo))){
-							throw new JsonViewerException("El activo está incluido en otro lote comercial vivo");
-						} else {
-							if(particularValidator.existeActivoConOfertaViva(Long.toString(numActivo))){
-								throw new JsonViewerException("El activo tiene ofertas individuales vivas");
-							}
-						}
-					}
+					
 					if(DDTipoComercializacion.CODIGO_VENTA.equals(activo.getTipoComercializacion().getCodigo())){
 						throw new JsonViewerException("El destino comercial del activo no coincide con el de la agrupación");
 					}else if(!Checks.esNulo(activo.getTipoAlquiler()) && !Checks.esNulo(agrupacion.getTipoAlquiler())){
@@ -790,6 +824,18 @@ public class AgrupacionAdapter {
 					}else if(particularValidator.esActivoAlquilado(Long.toString(numActivo))){
 						throw new JsonViewerException("El activo está alquilado");
 					}
+				}
+			}
+			
+			if (!Checks.esNulo(numActivo)){
+				if(particularValidator.existeActivoConOfertaViva(Long.toString(numActivo))){
+					throw new JsonViewerException("El activo tiene ofertas individuales vivas");
+				}
+			}
+
+			if (!Checks.esNulo(numActivo)){
+				if(particularValidator.activoEnAgrupacionComercialViva(Long.toString(numActivo))){
+					throw new JsonViewerException("El activo está incluido en otro lote comercial vivo");
 				}
 			}
 

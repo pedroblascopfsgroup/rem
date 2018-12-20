@@ -3853,7 +3853,7 @@ public class ActivoAdapter {
 		Boolean check = true;
 		VCondicionantesDisponibilidad vCondicionante = activoApi.getCondicionantesDisponibilidad(activo.getId());
 		if(!Checks.esNulo(vCondicionante)) {
-			if(vCondicionante.getSinInformeAprobado()) {
+			if(vCondicionante.getSinInformeAprobadoREM()) {
 				check = false;
 			}
 		}

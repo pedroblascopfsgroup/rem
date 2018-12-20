@@ -628,11 +628,12 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 	@Override
 	@BusinessOperationDefinition("genericManager.getComboSubtipoTrabajo")
 	public List<DDSubtipoTrabajo> getComboSubtipoTrabajo(String tipoTrabajoCodigo, Long idActivo) {
-		Activo activo = activoApi.get(idActivo);
 		List<DDSubtipoTrabajo> lista = new ArrayList<DDSubtipoTrabajo>();
 		DDTipoTrabajo tipoTrabajo = genericDao.get(DDTipoTrabajo.class,
 				genericDao.createFilter(FilterType.EQUALS, "codigo", tipoTrabajoCodigo));
-
+		
+		if(!Checks.esNulo(idActivo)){
+		Activo activo = activoApi.get(idActivo);
 		if (activo.getEnTramite()) {
 			Usuario gestorProveedorTecnico = gestorActivoApi.getGestorByActivoYTipo(activo, "PTEC");
 			if (!Checks.esNulo(gestorProveedorTecnico)) {
@@ -644,6 +645,11 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 				lista = genericDao.getListOrdered(DDSubtipoTrabajo.class, order, filter);
 			}
 		} else {
+			Order order = new Order(GenericABMDao.OrderType.ASC, "descripcion");
+			Filter filter = genericDao.createFilter(FilterType.EQUALS, "tipoTrabajo.codigo", tipoTrabajoCodigo);
+			lista = genericDao.getListOrdered(DDSubtipoTrabajo.class, order, filter);
+		}
+		}else{
 			Order order = new Order(GenericABMDao.OrderType.ASC, "descripcion");
 			Filter filter = genericDao.createFilter(FilterType.EQUALS, "tipoTrabajo.codigo", tipoTrabajoCodigo);
 			lista = genericDao.getListOrdered(DDSubtipoTrabajo.class, order, filter);

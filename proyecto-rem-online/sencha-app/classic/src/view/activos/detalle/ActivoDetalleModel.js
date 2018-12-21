@@ -458,10 +458,10 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
             var precioRentaWeb = !Ext.isEmpty(get('datospublicacionactivo.precioWebAlquiler'));
             var admisionOk = get('activo.admision');
             var gestionOk = get('activo.tieneOkTecnico');
-            var adecuacionOk = get('patrimonio.codigoAdecuacion');
+            var adecuacionOk = get('datospublicacionactivo.adecuacionAlquilerCodigo');
             var ceeOk = get('activo.tieneCEE');
             
-            return admisionOk && gestionOk && informeComercialAprobado && ceeOk && adecuacionOk && (publicarSinPrecioAlquiler || precioRentaWeb);
+            return !(admisionOk && gestionOk && informeComercialAprobado && ceeOk && adecuacionOk=="01" && (publicarSinPrecioAlquiler || precioRentaWeb));
         },
 
         esReadonlyChkbxPublicar: function(get){

@@ -149,7 +149,19 @@ public class UpdaterServiceSancionOfertaAlquileresPosicionamiento implements Upd
 
 		// El responsable del trabajo se asigna al Gestor de Mantenimiento en trabajoManager.create
 		// Cuando se detecte que el responsable del trabajo es este
-		dto.setResponsableTrabajo(GestorActivoApi.CODIGO_GESTOR_ACTIVO);
+		
+		//HREOS-5061
+		Activo act=tramite.getActivo();
+		Usuario gestor_activo_alquiler = gestorActivoApi.getGestorByActivoYTipo(act, GestorActivoApi.CODIGO_GESTOR_ALQUILERES);
+		Usuario gestor_mantenimiento= gestorActivoApi.getGestorByActivoYTipo(act, GestorActivoApi.CODIGO_GESTOR_ACTIVO);
+		
+		if(!Checks.esNulo(gestor_mantenimiento)) { 
+			if(!Checks.esNulo(gestor_activo_alquiler)) {
+				dto.setResponsableTrabajo(GestorActivoApi.CODIGO_GESTOR_ALQUILERES);
+			}else {
+				dto.setResponsableTrabajo(GestorActivoApi.CODIGO_GESTOR_ACTIVO);
+			} 
+		}
 
 		// Si el expediente contiene más de un activo se crea un único trabajo englobando todos los activos.
 		

@@ -1007,8 +1007,16 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		Usuario gact = gestorActivoApi.getGestorByActivoYTipo(activo, "GACT");
 		
 		Usuario solicitante = genericAdapter.getUsuarioLogado();
-		
-		if (GestorActivoApi.CODIGO_GESTOR_ACTIVO.equals(dtoTrabajo.getResponsableTrabajo())
+		//Si el trabajo es de limpieza se asigna el usuario responsable del dto,
+		//ya que en UpdaterServicePosicionamiento en crearTrabajoLimpieza()
+		//se calcula si existe doble gestor o no.
+		//HREOS-5061
+		if(DDTipoTrabajo.CODIGO_ACTUACION_TECNICA.equals(dtoTrabajo.getTipoTrabajoCodigo()) && DDSubtipoTrabajo.CODIGO_AT_LIMPIEZA.equals(dtoTrabajo.getSubtipoTrabajoCodigo()) 
+				&& !Checks.esNulo(dtoTrabajo.getResponsableTrabajo())) {
+			Usuario responsable= gestorActivoApi.getGestorByActivoYTipo(activo, dtoTrabajo.getResponsableTrabajo());
+			trabajo.setUsuarioResponsableTrabajo(responsable);
+		}
+		else if (GestorActivoApi.CODIGO_GESTOR_ACTIVO.equals(dtoTrabajo.getResponsableTrabajo())
 				&& !Checks.esNulo(gact)) {
 
 			trabajo.setUsuarioResponsableTrabajo(gact);

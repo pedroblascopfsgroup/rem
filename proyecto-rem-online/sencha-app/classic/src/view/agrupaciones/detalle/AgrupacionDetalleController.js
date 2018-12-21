@@ -1029,11 +1029,10 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
     
     onChangeCheckboxPublicarAlquiler: function(checkbox, isDirty) {
         var me = this;
-
         if (checkbox.getValue() && me.getViewModel().get('debePreguntarPorTipoPublicacionAlquiler')) {
 			Ext.create('HreRem.view.activos.detalle.VentanaEleccionTipoPublicacion').show();
         }
-        
+               
     	var me = this;
     	var chkbxPublicarSinPrecioAlquiler = checkbox.up('agrupacionesdetallemain').lookupReference('chkbxpublicarsinprecioalquiler').getValue();
     	if (!chkbxPublicarSinPrecioAlquiler && 

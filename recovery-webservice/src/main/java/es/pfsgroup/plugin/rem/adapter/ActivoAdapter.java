@@ -2801,7 +2801,11 @@ public class ActivoAdapter {
 
 	@Transactional(readOnly = false)
 	public boolean guardarCondicionantesDisponibilidad(Long idActivo, DtoCondicionantesDisponibilidad dto) {
-		if(!Checks.esNulo(dto.getOtro())) {
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
+		ActivoSituacionPosesoria condicionantesDisponibilidad = genericDao.get(ActivoSituacionPosesoria.class, filtro);
+		
+		if((!Checks.esNulo(dto.getOtro()) && Checks.esNulo(condicionantesDisponibilidad.getOtro()))
+				|| (Checks.esNulo(dto.getOtro()) && !Checks.esNulo(condicionantesDisponibilidad.getOtro()))) {
 			boolean success = activoApi.saveCondicionantesDisponibilidad(idActivo, dto);
 			activoApi.updateCondicionantesDisponibilidad(idActivo);
 			if (success)

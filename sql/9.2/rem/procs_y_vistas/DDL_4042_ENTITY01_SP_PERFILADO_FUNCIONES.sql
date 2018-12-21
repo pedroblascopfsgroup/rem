@@ -1,10 +1,10 @@
 --/*
 --######################################### 
---## AUTOR=TALENT XII
---## FECHA_CREACION=20181205
+--## AUTOR=LUIS ADELANTADO
+--## FECHA_CREACION=20181220
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=REMVIP-2455
+--## INCIDENCIA_LINK=HREOS-4914
 --## PRODUCTO=NO
 --## 
 --## Finalidad: Procedimiento encargado de perfilar las funciones
@@ -263,7 +263,8 @@ T_VAR( 'MENU_ACTIVOS','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S
 T_VAR( 'MENU_TOP_ALERTAS','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','N','N','S','N','N'),
 T_VAR( 'MENU_TOP_TAREAS','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','N','N','S','N','N'),
 T_VAR( 'MENU_TOP_AVISOS','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','N','N','S','N','N'),
-T_VAR( 'OPTIMIZACION_BUZON_TAREAS','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','N','N','S','N','N')
+T_VAR( 'OPTIMIZACION_BUZON_TAREAS','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','N','N','S','N','N'),
+T_VAR( 'MASIVO_COMUNICACIONES','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','S','N','N','N','N','N','N','N','S','N','N','N','N','N','N','N','S','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N')
 
 );
 V_TMP_VAR T_VAR;

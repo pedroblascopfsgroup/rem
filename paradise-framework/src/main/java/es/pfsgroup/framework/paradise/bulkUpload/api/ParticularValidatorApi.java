@@ -345,6 +345,7 @@ public interface ParticularValidatorApi {
 	public Boolean esActivoConComunicacionViva(Long numActivoHaya);
 	
 	public Boolean esNIFValido(String nif);
+	
 
 	/**
 	 * 
@@ -355,5 +356,7 @@ public interface ParticularValidatorApi {
 	 * 
 	 */
 	public boolean esActivoConComunicacionReclamada(Long numActivoHaya);
+	
+	public Boolean esActivoConComunicacionGenerada(Long numActivoHaya);
 	
 }

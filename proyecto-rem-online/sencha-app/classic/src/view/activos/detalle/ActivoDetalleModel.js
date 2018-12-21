@@ -132,12 +132,14 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 	     	}
 	     },
 
-	     getIconClsPrecioAprobadoVentaRenta: function(get) {
-	     	var me = this;
+	     getIconClsPrecio: function(get) {
 	     	var aprobadoVentaWeb= get('activo.aprobadoVentaWeb');
 	     	var aprobadoRentaWeb= get('activo.aprobadoRentaWeb');
+	     	var incluyeDestinoComercialVenta= get('activo.incluyeDestinoComercialVenta');
+	     	var incluyeDestinoComercialAlquiler= get('activo.incluyeDestinoComercialAlquiler');
 
-	     	if(!Ext.isEmpty(aprobadoVentaWeb) && aprobadoVentaWeb>0 || !Ext.isEmpty(aprobadoRentaWeb) && aprobadoRentaWeb>0) {
+	     	if((!Ext.isEmpty(aprobadoVentaWeb) && aprobadoVentaWeb>0 && incluyeDestinoComercialVenta) 
+	     			|| (!Ext.isEmpty(aprobadoRentaWeb) && aprobadoRentaWeb>0 && incluyeDestinoComercialAlquiler)) {
 	     		return 'app-tbfiedset-ico icono-ok';
 	     	} else {
 	     		return 'app-tbfiedset-ico icono-ko';

@@ -45,4 +45,9 @@ public interface GestorDocumentalAdapterApi {
 	Long uploadDocumentoPromociones(String codPromo, WebFileItem webFileItem, String userLogin, String matricula) throws Exception;
 	
 	List<DtoAdjuntoPromocion> getAdjuntosPromociones (String codPromo) throws GestorDocumentalException;
+
+	Long uploadDocumentoActivoOferta(String idIntervinienteHaya, WebFileItem webFileItem, String userLogin,
+			String matricula) throws GestorDocumentalException;
+
+	List<DtoAdjunto> getAdjuntosActivoOferta(String idIntervinienteHaya) throws GestorDocumentalException;
 }

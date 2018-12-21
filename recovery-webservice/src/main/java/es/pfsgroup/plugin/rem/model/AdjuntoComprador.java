@@ -76,7 +76,10 @@ public class AdjuntoComprador implements Serializable, Auditable {
     
     @Column(name = "ADC_NAME")
     private String nombreAdjunto;
-	
+    
+    @Column(name = "ADC_ID_DOCUMENTO_REST")
+    private Long idDocRestClient;
+
 
 	@Version   
 	private Long version;
@@ -139,6 +142,14 @@ public class AdjuntoComprador implements Serializable, Auditable {
 
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
+	}
+	
+	public Long getIdDocRestClient() {
+		return idDocRestClient;
+	}
+
+	public void setIdDocRestClient(Long idDocRestClient) {
+		this.idDocRestClient = idDocRestClient;
 	}
 
 	

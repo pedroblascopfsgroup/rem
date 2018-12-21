@@ -16,6 +16,8 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoOfertacomercial', {
      * @type
      */
     idEntidad: null,
+    
+    docCliente: null,
 
 	/**
 	 * ParÃ¡metro para enviar el codigo del tipo de trabajo para realizar un filtrado de los tipos de documento.
@@ -128,13 +130,13 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoOfertacomercial', {
     onClickBotonAdjuntarDocumento: function(btn) {
     	var me = this,
     	form = me.down("form");
-    	var nomDoc= form.getForm().findField('fileUpload').value;;
+    	var nomDoc= form.getForm().findField('fileUpload').value;
     	if(form.isValid()){
     		var url =  $AC.getRemoteUrl('activooferta/saveDocumentoAdjuntoOferta');
         	var data;
     		Ext.Ajax.request({
     			url: url,
-    		    params: {id : 0},
+    		    params: {docCliente : me.docCliente, idActivo: me.idEntidad},
     		    success: function(response, opts) {
     		    	data = Ext.decode(response.responseText);
     		    	if(data.data){

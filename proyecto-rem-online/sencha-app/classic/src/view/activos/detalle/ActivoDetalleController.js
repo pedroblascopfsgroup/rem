@@ -30,7 +30,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 
          'documentosactivoofertacomercial textfieldbase': {
              abrirFormulario: 'abrirFormularioAdjuntarDocumentoOferta',
-             onClickRemove: 'borrarDocumentoAdjuntoOferta',
+             onClickRemove: 'borrarDocumentoAdjuntoOferta'
          },
 
          'fotoswebactivo': {
@@ -998,8 +998,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	
 	abrirFormularioAdjuntarDocumentoOferta: function(grid) {
 		var me = this,
-		idActivo = me.getViewModel().get("activo.id");
-    	Ext.create("HreRem.view.common.adjuntos.AdjuntarDocumentoOfertacomercial", {entidad: 'activo', idEntidad: idActivo, parent: grid}).show();
+		idActivo = grid.up('wizardaltaoferta').oferta.data.idActivo,
+		docCliente = me.getViewModel().get("oferta.numDocumentoCliente");
+    	Ext.create("HreRem.view.common.adjuntos.AdjuntarDocumentoOfertacomercial", {entidad: 'activo', idEntidad: idActivo, docCliente: docCliente, parent: grid}).show();
 	},
 	
 	abrirFormularioAdjuntarDocPromo: function(grid) {

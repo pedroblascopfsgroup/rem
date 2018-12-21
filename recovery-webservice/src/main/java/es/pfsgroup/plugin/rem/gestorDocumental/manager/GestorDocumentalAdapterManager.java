@@ -285,6 +285,22 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 	public boolean modoRestClientActivado() {
 		return gestorDocumentalApi.modoRestClientActivado();
 	}
+	
+	@Override
+	public List<DtoAdjunto> getAdjuntosActivoOferta(String idIntervinienteHaya) throws GestorDocumentalException {
+		RecoveryToGestorDocAssembler recoveryToGestorDocAssembler = new RecoveryToGestorDocAssembler(appProperties);
+		List<DtoAdjunto> list;
+
+		//Hay que mirar como se debe de formar la cabecera correctamente (dos parametros finales)
+		CabeceraPeticionRestClientDto cabecera = recoveryToGestorDocAssembler.getCabeceraPeticionRestClient(idIntervinienteHaya, "Haya", "Haya");
+		Usuario userLogin = genericAdapter.getUsuarioLogado();
+		DocumentosExpedienteDto docExpDto = recoveryToGestorDocAssembler.getDocumentosExpedienteDto(userLogin.getUsername());
+		RespuestaDocumentosExpedientes respuesta = gestorDocumentalApi.documentosExpediente(cabecera, docExpDto);
+
+		list = GestorDocToRecoveryAssembler.getListDtoAdjunto(respuesta);
+
+		return list;
+	}
 
 	@Override
 	public List<DtoAdjunto> getAdjuntosExpedienteComercial(ExpedienteComercial expedienteComercial) throws GestorDocumentalException {
@@ -323,6 +339,29 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 		}
 
 		return list;
+	}
+	
+	@Override
+	public Long uploadDocumentoActivoOferta(String idIntervinienteHaya,
+			WebFileItem webFileItem, String userLogin, String matricula) throws GestorDocumentalException {
+		RecoveryToGestorDocAssembler recoveryToGestorDocAssembler = new RecoveryToGestorDocAssembler(appProperties);
+		Long respuesta;
+		
+		//Hay que mirar como se debe de formar la cabecera correctamente (dos parametros finales)
+		CabeceraPeticionRestClientDto cabecera = recoveryToGestorDocAssembler.getCabeceraPeticionRestClient(idIntervinienteHaya, "Haya", "Haya");
+		CrearDocumentoDto crearDoc = recoveryToGestorDocAssembler.getCrearDocumentoDto(webFileItem, userLogin, matricula);
+		
+		RespuestaCrearDocumento respuestaCrearDocumento;
+
+		try {
+			respuestaCrearDocumento = gestorDocumentalApi.crearDocumento(cabecera, crearDoc);
+			respuesta = new Long(respuestaCrearDocumento.getIdDocumento());
+		} catch (GestorDocumentalException gex) {
+			logger.debug(gex.getMessage());
+			throw gex;
+		}
+
+		return respuesta;
 	}
 
 	@Override

@@ -60,7 +60,6 @@ import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.ProveedoresApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
-import es.pfsgroup.plugin.rem.gestor.dao.GestorActivoDao;
 import es.pfsgroup.plugin.rem.jbpm.handler.notificator.impl.NotificatorServiceSancionOfertaAceptacionYRechazo;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
@@ -94,8 +93,6 @@ import es.pfsgroup.plugin.rem.model.DtoOfertaActivo;
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
 import es.pfsgroup.plugin.rem.model.DtoUsuario;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.GestorActivo;
-import es.pfsgroup.plugin.rem.model.GestorActivoHistorico;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.Trabajo;
@@ -243,9 +240,6 @@ public class AgrupacionAdapter {
 	private ActivoPublicacionDao activoPublicacionDao;
 	
 	@Autowired
-	private GestorActivoDao gestorActivoDao;
-
-	@Autowired
 	private ActivoHistoricoPatrimonioDao activoHistoricoPatrimonioDao;
 
 	private final Log logger = LogFactory.getLog(getClass());
@@ -257,7 +251,7 @@ public class AgrupacionAdapter {
 	public static final String PUBLICACION_MOTIVO_MSG = "Publicado desde agrupación";
 	public static final String PUBLICACION_AGRUPACION_BAJA_ERROR_MSG = "No ha sido posible publicar. La agrupación está dada de baja";
 	public static final String AGRUPACION_BAJA_ERROR_OFERTAS_VIVAS = "No ha sido posible dar de baja la agrupación. Existen ofertas vivas";
-	public static final String AGRUPACION_CAMBIO_DEST_COMERCIAL_CON_OFERTAS_VIVAS = "No se puede cambiar el destino comercial por tener ofertas vivas";
+	public static final String AGRUPACION_CAMBIO_DEST_COMERCIAL_CON_OFERTAS_VIVAS = "No se puede cambiar el destino comercial de la agrupación porque tiene ofertas vivas";
 	private static final String AVISO_MENSAJE_TIPO_NUMERO_DOCUMENTO = "activo.motivo.oferta.tipo.numero.documento";
 	private static final String AVISO_MENSAJE_CLIENTE_OBLIGATORIO = "activo.motivo.oferta.cliente";
 	private static final Integer NO_ES_FORMALIZABLE = new Integer(0);
@@ -268,7 +262,6 @@ public class AgrupacionAdapter {
 	private static final String TIPO_COMERCIAL_ALQUILER = "Alquiler";
 	private static final String TIPO_GESTOR_COMERCIAL_VENTA = "GCOM";
 	private static final String TIPO_GESTOR_COMERCIAL_ALQUILER = "GESTCOMALQ";
-	private static final String TIPO_SUPERVISOR_COMERCIAL_VENTA = "SCOM";
 	public static final String AGRUPACION_CAMBIO_DEST_COMERCIAL_A_VENTA_CON_ALQUILADOS = "No se puede realizar el cambio de destino comercial debido a que la agrupación tiene activos alquilados con título";
 
 
@@ -766,21 +759,55 @@ public class AgrupacionAdapter {
 				}
 			}
 
-			if (!Checks.esNulo(agrupacion) && !Checks.esNulo(numActivo) && !Checks.esNulo(activo)){
+			if (!Checks.esNulo(agrupacion) && !Checks.esNulo(numActivo) && !Checks.esNulo(activo)) {
+				
+				// Agrupacion Comercial
+				if (DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_VENTA.equals(agrupacion.getTipoAgrupacion().getCodigo())
+						|| DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_ALQUILER.equals(agrupacion.getTipoAgrupacion().getCodigo())) {
+					
+						
+					// El activo ya esta en una agrupacion comercial viva
+					if (particularValidator.activoEnAgrupacionComercialViva(Long.toString(numActivo))) {
+						throw new JsonViewerException("El activo está incluido en otro lote comercial vivo");
+					}
+					
+					// El activo tiene ofertas vivas
+					if (particularValidator.existeActivoConExpedienteComercialVivo(Long.toString(numActivo))) {
+						throw new JsonViewerException("El activo tiene ofertas individuales vivas");
+					}
+					
+					// Agrupacion Comercial - Alquiler
+					if (DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_ALQUILER.equals(agrupacion.getTipoAgrupacion().getCodigo())) {
+						
+						// El activo es de alquiler
+						if (DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(activo.getTipoComercializacion().getCodigo())
+								|| DDTipoComercializacion.CODIGO_ALQUILER_VENTA.equals(activo.getTipoComercializacion().getCodigo())) {
+							
+							// El activo esta alquilado
+							if (particularValidator.esActivoAlquilado(Long.toString(numActivo))) {
+								throw new JsonViewerException("El activo está alquilado");
+							}
+							
+							// El tipo de alquiler de la agrupacion es null    OR
+							// El tipo de alquiler del activo es distinto al de la agrupacion(Comercial - Alquiler)
+							if (Checks.esNulo(agrupacion.getTipoAlquiler()) || 
+									(!Checks.esNulo(activo.getTipoAlquiler()) && !Checks.esNulo(agrupacion.getTipoAlquiler()) 
+									&& !activo.getTipoAlquiler().getCodigo().equals(agrupacion.getTipoAlquiler().getCodigo()))) {
+								throw new JsonViewerException("El tipo de alquiler del activo es distinto al de la agrupación");
+							}
+						}
+					}
+
+				}
+				
+				
 				if(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_VENTA.equals(agrupacion.getTipoAgrupacion().getCodigo())){
 					if(DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(activo.getTipoComercializacion().getCodigo())){
 						throw new JsonViewerException("El destino comercial del activo no coincide con el de la agrupación");
 					}
+					
 				}else if(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_ALQUILER.equals(agrupacion.getTipoAgrupacion().getCodigo())){
-					if (!Checks.esNulo(numActivo)){
-						if(particularValidator.activoEnAgrupacionComercialViva(Long.toString(numActivo))){
-							throw new JsonViewerException("El activo está incluido en otro lote comercial vivo");
-						} else {
-							if(particularValidator.existeActivoConOfertaViva(Long.toString(numActivo))){
-								throw new JsonViewerException("El activo tiene ofertas individuales vivas");
-							}
-						}
-					}
+					
 					if(DDTipoComercializacion.CODIGO_VENTA.equals(activo.getTipoComercializacion().getCodigo())){
 						throw new JsonViewerException("El destino comercial del activo no coincide con el de la agrupación");
 					}else if(!Checks.esNulo(activo.getTipoAlquiler()) && !Checks.esNulo(agrupacion.getTipoAlquiler())){
@@ -790,6 +817,18 @@ public class AgrupacionAdapter {
 					}else if(particularValidator.esActivoAlquilado(Long.toString(numActivo))){
 						throw new JsonViewerException("El activo está alquilado");
 					}
+				}
+			}
+			
+			if (!Checks.esNulo(numActivo)){
+				if(particularValidator.existeActivoConOfertaViva(Long.toString(numActivo))){
+					throw new JsonViewerException("El activo tiene ofertas individuales vivas");
+				}
+			}
+
+			if (!Checks.esNulo(numActivo)){
+				if(particularValidator.activoEnAgrupacionComercialViva(Long.toString(numActivo))){
+					throw new JsonViewerException("El activo está incluido en otro lote comercial vivo");
 				}
 			}
 
@@ -2340,12 +2379,15 @@ public class AgrupacionAdapter {
 
 					if(!Checks.estaVacio(listaActivos)) {
 						for (ActivoAgrupacionActivo activoAgrupacionActivo : listaActivos) {
-							if(activoAgrupacionActivo.getActivo() != null && activoAgrupacionActivo.getActivo().getActivoPublicacion()!= null && tipoComercializacion != null){
+
+						if(activoAgrupacionActivo.getActivo() != null && activoAgrupacionActivo.getActivo().getActivoPublicacion()!= null && tipoComercializacion != null){
 								ActivoPublicacion activoPublicacion = activoAgrupacionActivo.getActivo().getActivoPublicacion();
 								activoPublicacion.setTipoComercializacion(tipoComercializacion);
+								Activo activo=activoAgrupacionActivo.getActivo();
+								activo.setTipoComercializacion(tipoComercializacion);
 								activoPublicacionDao.saveOrUpdate(activoPublicacion);
+								genericDao.save(Activo.class, activo); 
 							}
-							
 						}
 					}
 				}
@@ -2623,7 +2665,8 @@ public class AgrupacionAdapter {
 								
 								//HREOS-5090 Punto 93
 								//Asignar Gestores al cambiar el destino comercial de la agrupación si pasamos de 'alquiler y venta' a 'alquiler'
-								if(DDTipoComercializacion.CODIGO_ALQUILER_VENTA.equals(destino_comercial) && DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(tipoComercializacion.getCodigo())) {
+								//Se descartan los cambios por que es lo que me han indicado desde producto, pero no lo borro por si en un futuro se utiliza
+								/*if(DDTipoComercializacion.CODIGO_ALQUILER_VENTA.equals(destino_comercial) && DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(tipoComercializacion.getCodigo())) {
 									
 									Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "activo", activoAgrupacionActivo.getActivo());
 									List<GestorActivo> gestores_activo  = (List<GestorActivo>) genericDao.getList(GestorActivo.class, filtro2);
@@ -2659,7 +2702,7 @@ public class AgrupacionAdapter {
 										
 									}
 									
-								}
+								}*/
 								
 							}
 						}

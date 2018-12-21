@@ -456,7 +456,12 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
             var publicarSinPrecioAlquiler = get('datospublicacionactivo.publicarSinPrecioAlquiler');
             var informeComercialAprobado = get('activo.informeComercialAceptado');
             var precioRentaWeb = !Ext.isEmpty(get('datospublicacionactivo.precioWebAlquiler'));
-            return (informeComercialAprobado || !informeComercialAprobado) && (publicarSinPrecioAlquiler || precioRentaWeb);
+            var admisionOk = get('activo.admision');
+            var gestionOk = get('activo.tieneOkTecnico');
+            var adecuacionOk = get('patrimonio.codigoAdecuacion');
+            var ceeOk = get('activo.tieneCEE');
+            
+            return admisionOk && gestionOk && informeComercialAprobado && ceeOk && adecuacionOk && (publicarSinPrecioAlquiler || precioRentaWeb);
         },
 
         esReadonlyChkbxPublicar: function(get){

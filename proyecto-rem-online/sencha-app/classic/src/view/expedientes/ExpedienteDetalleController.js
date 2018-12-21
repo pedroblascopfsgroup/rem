@@ -2007,51 +2007,79 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	},
 
 	comprobarObligatoriedadCamposNexos: function() {
-		
 		var me = this,
+		
 		campoEstadoCivil = me.lookupReference('estadoCivil'),
 		campoRegEconomico = me.lookupReference('regimenMatrimonial'),
 		campoNumConyuge = me.lookupReference('numRegConyuge'),
 		campoApellidos = me.lookupReference('apellidos');
+		
+		/*if(me.getViewModel().get('comprador.codTipoPersona')){
+			me.lookupReference('tipoPersona').setValue(me.getViewModel().get('comprador.codTipoPersona'));
+		}*/
 		// Si el tipo de persona es FÍSICA, entonces el campos Estado civil es obligatorio y se habilitan campos dependientes.
 		if(me.lookupReference('tipoPersona').getValue() === "1" ) {
 			//campoEstadoCivil.setDisabled(false);
 			//campoRegEconomico.setDisabled(false);
 			//campoNumConyuge.setDisabled(false);
-			campoApellidos.setDisabled(false);
-			campoEstadoCivil.allowBlank = false;
-			campoEstadoCivil.validate();
-			if(campoEstadoCivil.getValue() === "02") {
-				// Si el Estado civil es 'Casado', entonces Reg. económico es obligatorio.
-				campoRegEconomico.allowBlank = false;
-				campoRegEconomico.validate();
-				if(me.getViewModel().get('esCarteraLiberbank')|| me.getViewModel().get('comprador.entidadPropietariaCodigo') == CONST.CARTERA['LIBERBANK']){
-					campoNumConyuge.allowBlank = false;
-					campoNumConyuge.validate();
-					if(campoRegEconomico.getValue() === "01" || campoRegEconomico.getValue() === "03"){
-						campoNumConyuge.allowBlank = false;
-						campoNumConyuge.validate();
-					}else if(campoRegEconomico.getValue() === "02" ){
+			if(!Ext.isEmpty(campoApellidos)){
+				campoApellidos.setDisabled(false);
+			}
+			if(!Ext.isEmpty(campoEstadoCivil)){
+				campoEstadoCivil.allowBlank = false;
+				campoEstadoCivil.validate();
+				if(campoEstadoCivil.getValue() === "02") {
+					// Si el Estado civil es 'Casado', entonces Reg. económico es obligatorio.
+					if(!Ext.isEmpty(campoRegEconomico)){
+						campoRegEconomico.allowBlank = false;
+						campoRegEconomico.validate();
+					}
+					if(me.getViewModel().get('esCarteraLiberbank')|| me.getViewModel().get('comprador.entidadPropietariaCodigo') == CONST.CARTERA['LIBERBANK']){
+						if(!Ext.isEmpty(campoNumConyuge)){
+							campoNumConyuge.allowBlank = false;
+							campoNumConyuge.validate();
+						}
+						if(!Ext.isEmpty(campoRegEconomico) && !Ext.isEmpty(campoNumConyuge)){
+							if(campoRegEconomico.getValue() === "01" || campoRegEconomico.getValue() === "03"){
+								campoNumConyuge.allowBlank = false;
+								campoNumConyuge.validate();
+							}else if(campoRegEconomico.getValue() === "02" ){
+								campoNumConyuge.allowBlank = true;
+							}
+						}
+					}else{
+						if(!Ext.isEmpty(campoNumConyuge)){
+							campoNumConyuge.allowBlank = true;
+						}
+					}
+					//campoRegEconomico.setDisabled(false);
+					//campoNumConyuge.setDisabled(false);
+				} else {
+					if(!Ext.isEmpty(campoRegEconomico)){
+						campoRegEconomico.allowBlank = true;
+					}
+					if(!Ext.isEmpty(campoNumConyuge)){
 						campoNumConyuge.allowBlank = true;
 					}
-				}else{
-					campoNumConyuge.allowBlank = true;
+					//campoRegEconomico.reset();
+					//campoNumConyuge.reset();
+					//campoRegEconomico.setDisabled(true);
+					//campoNumConyuge.setDisabled(true);
 				}
-				//campoRegEconomico.setDisabled(false);
-				//campoNumConyuge.setDisabled(false);
-			} else {
-				campoRegEconomico.allowBlank = true;
-				campoNumConyuge.allowBlank = true;
-				//campoRegEconomico.reset();
-				//campoNumConyuge.reset();
-				//campoRegEconomico.setDisabled(true);
-				//campoNumConyuge.setDisabled(true);
 			}
+			
+			
 		} else {
 			//  Si el tipo de persona es 'Jurídica' entonces desactivar los campos dependientes del otro estado.
-			campoEstadoCivil.allowBlank = true;
-			campoRegEconomico.allowBlank = true;
-			campoApellidos.setDisabled(true);
+			if(!Ext.isEmpty(campoEstadoCivil)){
+				campoEstadoCivil.allowBlank = true;
+			}
+			if(!Ext.isEmpty(campoRegEconomico)){
+				campoRegEconomico.allowBlank = true;
+			}
+			if(!Ext.isEmpty(campoApellidos)){
+				campoApellidos.setDisabled(true);
+			}
 			//campoEstadoCivil.reset();
 			//campoRegEconomico.reset();
 			//campoNumConyuge.reset();
@@ -2061,9 +2089,15 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		}
 
 		// Validar campos para que se muestre o desaparezca la visual roja.
-		campoEstadoCivil.validate();
-		campoRegEconomico.validate();
-		campoNumConyuge.validate();
+		if(!Ext.isEmpty(campoEstadoCivil)){
+			campoEstadoCivil.validate();
+		}
+		if(!Ext.isEmpty(campoRegEconomico)){
+			campoRegEconomico.validate();
+		}
+		if(!Ext.isEmpty(campoNumConyuge)){
+			campoNumConyuge.validate();
+		}
 	},
 
 	onClickGenerarHojaExcel: function(btn) {
@@ -2286,31 +2320,35 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	},
 
 	onCambioTipoImpuesto: function(combo, value,oldValue, eOpts){
-		if(!Ext.isEmpty(oldValue)){
-			var me = this,
-	    	tipoAplicable = me.lookupReference('tipoAplicable'),
-	    	operacionExenta = me.lookupReference('chkboxOperacionExenta'),
-	    	inversionSujetoPasivo = me.lookupReference('chkboxInversionSujetoPasivo'),
-	    	renunciaExencion = me.lookupReference('chkboxRenunciaExencion');
-	
-	
-	    	if(CONST.TIPO_IMPUESTO['ITP'] == value) {
-	    		tipoAplicable.reset();
-	    		tipoAplicable.setDisabled(true);
-	    		tipoAplicable.allowBlank = true;
-	    		tipoAplicable.setValue(0);
-	    		operacionExenta.reset();
-	    		operacionExenta.setReadOnly(true);
-	    		inversionSujetoPasivo.reset();
-	    		inversionSujetoPasivo.setReadOnly(true);
-	    		renunciaExencion.reset();
-	    		renunciaExencion.setReadOnly(true);
-	    	} else {
-	    		tipoAplicable.setDisabled(false);
-	        	tipoAplicable.allowBlank = false;
-	    		operacionExenta.setReadOnly(false);
-	    		inversionSujetoPasivo.setReadOnly(false);
-	    	}
+		try{
+			if(!Ext.isEmpty(oldValue)){
+				var me = this,
+		    	tipoAplicable = me.lookupReference('tipoAplicable'),
+		    	operacionExenta = me.lookupReference('chkboxOperacionExenta'),
+		    	inversionSujetoPasivo = me.lookupReference('chkboxInversionSujetoPasivo'),
+		    	renunciaExencion = me.lookupReference('chkboxRenunciaExencion');
+		
+		
+		    	if(CONST.TIPO_IMPUESTO['ITP'] == value) {
+		    		tipoAplicable.reset();
+		    		tipoAplicable.setDisabled(true);
+		    		tipoAplicable.allowBlank = true;
+		    		tipoAplicable.setValue(0);
+		    		operacionExenta.reset();
+		    		operacionExenta.setReadOnly(true);
+		    		inversionSujetoPasivo.reset();
+		    		inversionSujetoPasivo.setReadOnly(true);
+		    		renunciaExencion.reset();
+		    		renunciaExencion.setReadOnly(true);
+		    	} else {
+		    		tipoAplicable.setDisabled(false);
+		        	tipoAplicable.allowBlank = false;
+		    		operacionExenta.setReadOnly(false);
+		    		inversionSujetoPasivo.setReadOnly(false);
+		    	}
+			}
+		}catch(err) {
+  			Ext.global.console.log('Error en onCambioTipoImpuesto: '+err)
 		}
 	},
 

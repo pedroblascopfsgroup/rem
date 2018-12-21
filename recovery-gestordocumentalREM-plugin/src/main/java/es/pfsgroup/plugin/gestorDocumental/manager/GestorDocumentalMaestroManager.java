@@ -80,13 +80,20 @@ public class GestorDocumentalMaestroManager extends BaseWS implements GestorDocu
 				es.pfsgroup.plugin.gestorDocumental.ws.MAESTRO_PERSONAS.WsPort servicePort = service.getWs();
 				output = servicePort.processEvent(input);
 				
-				logger.info("WS invocado! Valores de respuesta del MAESTRO: ");
-				if (output.getParameters().getParameter().get(0).getCode().equals("ERROR")) {
+				logger.info("WS invocado! Valores de respuesta del MAESTRO: ");					
+				if (!Checks.esNulo(output) 
+						&& !Checks.esNulo(output.getParameters()) 
+						&& !Checks.estaVacio(output.getParameters().getParameter()) 
+						&& !Checks.esNulo(output.getParameters().getParameter().get(0)) 
+						&& !Checks.esNulo(output.getParameters().getParameter().get(0).getCode())
+						&& output.getParameters().getParameter().get(0).getCode().equals("ERROR")) {
 					logger.info("RESULTADO_COD_MAESTRO: Servicio inactivo");
 				} else {
 					logger.info("RESULTADO_COD_MAESTRO: " + output.getResultCode());
 					logger.info("RESULTADO_DESCRIPCION_MAESTRO: " + output.getResultDescription());
 				}
+				
+				
 			}else {
 				return null;
 			}

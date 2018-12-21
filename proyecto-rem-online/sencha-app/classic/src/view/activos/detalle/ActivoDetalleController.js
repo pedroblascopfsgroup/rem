@@ -3599,11 +3599,16 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     onChangeCalificacionNegativa: function(me, oValue, nValue){
         var comboCalificacion = me.value;
         var comboMotivo = me.up('tituloinformacionregistralactivo').down('[reference="itemselMotivo"]');
+        var campoDescripcion = me.up('tituloinformacionregistralactivo').down('[reference="descMotivo"]');
 
         if (comboCalificacion == "01") {
             comboMotivo.setDisabled(false);
+            if (comboMotivo.getValue().includes(CONST.MOTIVOS_CAL_NEGATIVA["OTROS"])) {
+            	campoDescripcion.setDisabled(false);
+            }
         } else {
             comboMotivo.setDisabled(true);
+            campoDescripcion.setDisabled(true);
         }
     }
 });

@@ -199,7 +199,7 @@ pipeline {
                     deployFrontal("recovecp@iap01", 2228)
                 }
                 timeout (time:2, unit:'MINUTES') {
-                    deployProcesos("recovecb@ap01", 2228)
+                    deployProcesos("recovecb@iap01", 2228)
                 }
             }
             

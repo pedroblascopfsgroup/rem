@@ -2852,7 +2852,7 @@ public class ActivoAdapter {
 			if (!tieneAgrupVenta) {
 				//si el activo viene de destino comercial = venta y pasa a "alquiler" o "alquiler y venta"
 				//en la pestaña patromonio, se desmarca el check de perimetro y el estado alquiler, pasa a libre
-				guardamosPatrimonio(activo);
+				guardamosPatrimonio(activo, dto);
 				//-----------------------------------------------------------
 				activo = tabActivoService.saveTabActivo(activo, dto);
 				activoApi.saveOrUpdate(activo);
@@ -2878,8 +2878,11 @@ public class ActivoAdapter {
 		}
 	}
 
-	private void guardamosPatrimonio(Activo activo) {
-		if(DDTipoComercializacion.CODIGO_VENTA.equals(activo.getTipoComercializacion().getCodigo())){
+	private void guardamosPatrimonio(Activo activo, WebDto dto) {
+		if(DDTipoComercializacion.CODIGO_VENTA.equals(activo.getActivoPublicacion().getTipoComercializacion().getCodigo())
+				&& ((DDTipoComercializacion.CODIGO_SOLO_ALQUILER).equals(((DtoActivoFichaCabecera)dto).getTipoComercializacionCodigo()) 
+						|| (DDTipoComercializacion.CODIGO_ALQUILER_VENTA).equals(((DtoActivoFichaCabecera)dto).getTipoComercializacionCodigo()))){
+			
 			ActivoPatrimonio actPatrimonio = activoPatrimonio.getActivoPatrimonioByActivo(activo.getId());
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoEstadoAlquiler.ESTADO_ALQUILER_LIBRE);
 			DDTipoEstadoAlquiler estadoAlquiler= genericDao.get(DDTipoEstadoAlquiler.class, filtro);
@@ -2903,6 +2906,15 @@ public class ActivoAdapter {
 				activoPatrimonio.save(actPatrimonio);
 			}
 			
+		}else if((DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(activo.getActivoPublicacion().getTipoComercializacion().getCodigo()) 
+					|| DDTipoComercializacion.CODIGO_ALQUILER_VENTA.equals(activo.getActivoPublicacion().getTipoComercializacion().getCodigo())) 
+				&& (DDTipoComercializacion.CODIGO_VENTA).equals(((DtoActivoFichaCabecera)dto).getTipoComercializacionCodigo())){
+			
+			ActivoPatrimonio actPatrimonio = activoPatrimonio.getActivoPatrimonioByActivo(activo.getId());
+			if(!Checks.esNulo(actPatrimonio)){
+				actPatrimonio.setCheckHPM(false);
+				activoPatrimonio.save(actPatrimonio);
+			}
 		}
 	}
 
@@ -2971,8 +2983,77 @@ public class ActivoAdapter {
 				}
 			}	//fin 	if(!Checks.esNulo(((DtoActivoPatrimonio)dto).getChkPerimetroAlquiler())  ) {
 
-
+		//Ampliación de [HREOS-4985]
+		//Al cambiar el destino comercial de Venta a Alquiler/Alquiler y Venta
+		}else if(dto instanceof DtoActivoFichaCabecera && !Checks.esNulo(((DtoActivoFichaCabecera)dto).getTipoComercializacionCodigo()) 
+				&& ((((DtoActivoFichaCabecera)dto).getTipoComercializacionCodigo().equals(DDTipoComercializacion.CODIGO_SOLO_ALQUILER)
+						&& !Checks.esNulo(activo) && !Checks.esNulo(activo.getActivoPublicacion()) && !Checks.esNulo(activo.getActivoPublicacion().getTipoComercializacion())
+						&& activo.getActivoPublicacion().getTipoComercializacion().getCodigo().equals(DDTipoComercializacion.CODIGO_SOLO_ALQUILER))	
+					|| (((DtoActivoFichaCabecera)dto).getTipoComercializacionCodigo().equals(DDTipoComercializacion.CODIGO_ALQUILER_VENTA))
+						&& !Checks.esNulo(activo) && !Checks.esNulo(activo.getActivoPublicacion()) && !Checks.esNulo(activo.getActivoPublicacion().getTipoComercializacion())
+						&& activo.getActivoPublicacion().getTipoComercializacion().getCodigo().equals(DDTipoComercializacion.CODIGO_ALQUILER_VENTA))){
+			
+			//anyadimos el nuevo gestor
+ 			if(Checks.esNulo(gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_ALQUILERES))){
+ 				if(!this.anyadirGestor(activo, GestorActivoApi.CODIGO_GESTOR_ALQUILERES)){
+ 					logger.error("Error en ActivoAdpter [saveTabActivoTransactional]: No se ha podido guardar el "+GestorActivoApi.CODIGO_GESTOR_ALQUILERES);
+ 				}
+ 			}
+ 			if(Checks.esNulo(gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_ALQUILERES))){
+ 				if(!this.anyadirGestor(activo, GestorActivoApi.CODIGO_SUPERVISOR_ALQUILERES)){
+ 					logger.error("Error en ActivoAdpter [saveTabActivoTransactional]: No se ha podido guardar el "+GestorActivoApi.CODIGO_SUPERVISOR_ALQUILERES);
+ 				}
+ 			} 
+ 			
+			//si el codigo del tipo de actvo no es nulo, comprabamos si es de tipo de suelo borramos el gestor/supervisor de suelos en caso contrario el de alquileres.
+			if (!Checks.esNulo(activo.getTipoActivo().getCodigo())) {
+				if (activo.getTipoActivo().getCodigo().equals(DDTipoActivo.COD_SUELO)) {
+					this.borrarGestor(activo,GestorActivoApi.CODIGO_GESTOR_SUELOS);
+					this.borrarGestor(activo,GestorActivoApi.CODIGO_SUPERVISOR_SUELOS);
+				}
+				else {
+					this.borrarGestor(activo,GestorActivoApi.CODIGO_GESTOR_EDIFICACIONES);
+					this.borrarGestor(activo,GestorActivoApi.CODIGO_SUPERVISOR_EDIFICACIONES);
+				}
+			}
+		//Al cambiar el destino comercial a Venta de Alquiler/Alquiler y Venta
+		}else if(dto instanceof DtoActivoFichaCabecera && !Checks.esNulo(((DtoActivoFichaCabecera)dto).getTipoComercializacionCodigo()) 
+				&& (((DtoActivoFichaCabecera)dto).getTipoComercializacionCodigo().equals(DDTipoComercializacion.CODIGO_VENTA)
+						&& !Checks.esNulo(activo) && !Checks.esNulo(activo.getActivoPublicacion()) && !Checks.esNulo(activo.getActivoPublicacion().getTipoComercializacion())
+						&& activo.getActivoPublicacion().getTipoComercializacion().getCodigo().equals(DDTipoComercializacion.CODIGO_VENTA))){
+			
+			this.cambiarTrabajosActivosAGestorActivo(activo,GestorActivoApi.CODIGO_GESTOR_ALQUILERES);
+			this.borrarGestor(activo,GestorActivoApi.CODIGO_GESTOR_ALQUILERES);
+			this.borrarGestor(activo,GestorActivoApi.CODIGO_SUPERVISOR_ALQUILERES);
+			//si el codigo del tipo de actvo no es nulo, comprabamos si es de tipo de suelo anyadimos el gestor/supervisor de suelos en caso contrario el de alquileres.
+			if (!Checks.esNulo(activo.getTipoActivo().getCodigo())) {
+				if (activo.getTipoActivo().getCodigo().equals(DDTipoActivo.COD_SUELO)) {
+					if(Checks.esNulo(gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_SUELOS))){
+						if(!this.anyadirGestor(activo, GestorActivoApi.CODIGO_GESTOR_SUELOS)){
+							logger.error("Error en ActivoAdpter [saveTabActivoTransactional]: No se ha podido guardar el "+GestorActivoApi.CODIGO_GESTOR_SUELOS);
+						}
+					}
+					if(Checks.esNulo(gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_SUPERVISOR_SUELOS))){
+						if(!this.anyadirGestor(activo, GestorActivoApi.CODIGO_SUPERVISOR_SUELOS)){
+							logger.error("Error en ActivoAdpter [saveTabActivoTransactional]: No se ha podido guardar el "+GestorActivoApi.CODIGO_SUPERVISOR_SUELOS);
+						}
+					}
+				}
+				else {
+					if(Checks.esNulo(gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_EDIFICACIONES))){
+						if(!this.anyadirGestor(activo, GestorActivoApi.CODIGO_GESTOR_EDIFICACIONES)){
+							logger.error("Error en ActivoAdpter [saveTabActivoTransactional]: No se ha podido guardar el "+GestorActivoApi.CODIGO_GESTOR_EDIFICACIONES);
+						}
+					}
+					if(Checks.esNulo(gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_SUPERVISOR_EDIFICACIONES))){
+						if(!this.anyadirGestor(activo, GestorActivoApi.CODIGO_SUPERVISOR_EDIFICACIONES)){
+							logger.error("Error en ActivoAdpter [saveTabActivoTransactional]: No se ha podido guardar el "+GestorActivoApi.CODIGO_SUPERVISOR_EDIFICACIONES);
+						}
+					}
+				}
+			}
 		}
+		
 		//todos los activos existentes en REM que no estén dentro del perímetro de alquiler pero que alguna vez si que lo han estado, en este caso es posible que en algun momento el activo haya estado
 		//dentro del perimetro de alquiler por lo que hacemos la siguiente comprobación
 		else if (!Checks.esNulo(actPatrimonio)  && !Checks.esNulo(actPatrimonio.getCheckHPM())) {

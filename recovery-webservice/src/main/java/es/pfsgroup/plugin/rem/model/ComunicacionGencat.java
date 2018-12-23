@@ -2,7 +2,9 @@ package es.pfsgroup.plugin.rem.model;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -12,15 +14,19 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
+import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Where;
 
+import es.capgemini.devon.files.FileItem;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoComunicacionGencat;
 import es.pfsgroup.plugin.rem.model.dd.DDSancionGencat;
 
@@ -89,6 +95,11 @@ public class ComunicacionGencat implements Serializable, Auditable {
 
 	@Embedded
 	private Auditoria auditoria;
+	
+	@OneToMany(mappedBy = "comunicacionGencat", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "CMG_ID")
+    @Cascade({org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
+    private List<ComunicacionGencatAdjunto> adjuntos;
 
 	public Long getId() {
 		return id;
@@ -217,5 +228,49 @@ public class ComunicacionGencat implements Serializable, Auditable {
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
 	}
+
+	public List<ComunicacionGencatAdjunto> getAdjuntos() {
+		return adjuntos;
+	}
+
+	public void setAdjuntos(List<ComunicacionGencatAdjunto> adjuntos) {
+		this.adjuntos = adjuntos;
+	}
+	
+	/**
+     * Agrega un adjunto a la comunicacion
+     * @param id id
+     */
+    /*public void addAdjunto(FileItem fileItem) {
+		ActivoAdjuntoActivo adjuntoActivo = new ActivoAdjuntoActivo(fileItem);
+		adjuntoActivo.setActivo(this);
+        Auditoria.save(adjuntoActivo);
+        getAdjuntos().add(adjuntoActivo);
+
+    }*/
+    
+    /**
+     * devuelve el adjunto por Id.
+     * @param id ComunicacionGencat
+     * @return adjunto
+     */
+    /*public ComunicacionGencatAdjunto getAdjunto(Long id) {
+        for (ActivoAdjuntoActivo adj : getAdjuntos()) {
+            if (adj.getId().equals(id)) { return adj; }
+        }
+        return null;
+    }*/
+    
+	/**
+     * devuelve el adjunto por Id.
+     * @param id id
+     * @return adjunto
+     */
+    /*public ActivoAdjuntoActivo getAdjuntoGD(Long idDocRestClient) {
+    	for (ActivoAdjuntoActivo adj : getAdjuntos()) {
+    		if(!Checks.esNulo(adj.getIdDocRestClient()) && adj.getIdDocRestClient().equals(idDocRestClient)) { return adj; }
+        }
+        return null;
+    }*/
 
 }

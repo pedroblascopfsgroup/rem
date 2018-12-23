@@ -2,17 +2,22 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoForm', {
 	extend: 'HreRem.view.common.FormBase',
     xtype: 'gencatcomercialactivoform',
     
+    cls: 'panel-base shadow-panel',
     refreshAfterSave: true,
     recordName: "gencat",
 	recordClass: "HreRem.model.Gencat",
     requires	: [
     	'HreRem.model.Gencat',
     	'HreRem.model.GencatHistorico',
+    	'HreRem.model.NotificacionGencat',
     	'HreRem.view.activos.detalle.OfertasAsociadasActivoList',
     	'HreRem.view.activos.detalle.HistoricoOfertasAsociadasActivoList',
-    	'HreRem.view.activos.detalle.DocumentosActivoGencatList',
+    	'HreRem.view.activos.detalle.DocumentosComunicacionGencatList',
+    	'HreRem.view.activos.detalle.DocumentosComunicacionHistoricoGencatList',
     	'HreRem.view.activos.detalle.ReclamacionesActivoList',
-    	'HreRem.view.activos.detalle.HistoricoReclamacionesActivoList'
+    	'HreRem.view.activos.detalle.HistoricoReclamacionesActivoList',
+    	'HreRem.view.activos.detalle.NotificacionesActivoList',
+    	'HreRem.view.activos.detalle.HistoricoNotificacionesActivoList'
     ],
     
     listeners: { 
@@ -31,6 +36,8 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoForm', {
         var title;
         var ofertasasociadasactivolist;
         var reclamacionesactivolist;
+        var documentoscomunicaciongencatlist;
+        var notificacionactivolist;
         if (me.formDeHistorico) {
         	
         	title = HreRem.i18n('title.comunicacion.historico');
@@ -51,6 +58,20 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoForm', {
 				width: '100%'
     		}
         	
+        	documentoscomunicaciongencatlist = {	
+				xtype: 'documentoscomunicacionhistoricogencatlist',
+				reference: 'documentoscomunicacionhistoricogencatlistref',
+				idHComunicacion: me.idHComunicacion,
+				width: '100%'
+    		}
+        	
+        	notificacionactivolist = {	
+				xtype: 'historiconotificacionesactivolist',
+				reference: 'historiconotificacionesactivolistref',
+				idHComunicacion: me.idHComunicacion,
+				width: '100%'
+    		}
+        	
         }
         else {
         	
@@ -65,6 +86,18 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoForm', {
         	reclamacionesactivolist = {	
 				xtype: 'reclamacionesactivolist',
 				reference: 'reclamacionesactivolistref',
+				width: '100%'
+    		}
+        	
+        	documentoscomunicaciongencatlist = {	
+				xtype: 'documentoscomunicaciongencatlist',
+				reference: 'documentoscomunicaciongencatlistref',
+				width: '100%'
+    		}
+        	
+        	notificacionactivolist = {	
+				xtype: 'notificacionesactivolist',
+				reference: 'notificacionesactivolistref',
 				width: '100%'
     		}
         	
@@ -322,64 +355,7 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoForm', {
 							width: 410
 					    },
 						items: [
-							{
-			    				xtype: "checkboxfieldbase",
-			    				fieldLabel: HreRem.i18n('fieldlabel.check.notificacion'),
-								bind: {
-									readOnly: me.formDeHistorico || '{!gencat.estaComunicado}',
-									value: '{gencat.checkNotificacion}'
-								}/*,
-								listeners: {
-									change: 'onChkbxNotificacion'
-								}*/
-			    			},
-			    			{
-			    				xtype: "datefieldbase",
-			    				fieldLabel: HreRem.i18n('fieldlabel.fecha.notificacion'),
-								bind: {
-									readOnly: me.formDeHistorico,
-									disabled: '{!gencat.checkNotificacion}',
-									value: '{gencat.fechaNotificacion}'
-								}
-			    			},
-			    			{
-			    				xtype: "comboboxfieldbase",
-			    				fieldLabel: HreRem.i18n('fieldlabel.motivo'),
-								bind: {
-									readOnly: me.formDeHistorico,
-									disabled: '{!gencat.checkNotificacion}',
-									store: '{comboNotificacionGencat}',
-									value: '{gencat.motivoNotificacion}'
-								}
-			    			},
-			    			{
-			    				fieldLabel: HreRem.i18n('fieldlabel.documento.notificacion'),
-			    				readOnly: true,
-								bind: {
-									//value: '{gencat.documentoNotificion}'
-								}
-			    				/* TODO: funcionalidad de documento notificacion:
-			    				 * Será un buscador de documento donde el nuevo gestor de formalización-administración 
-			    				 * tendrá OBLIGATORIAMENTE que subir, si no lo sube no se grabará la notificación*/
-			    			},
-			    			{
-			    				xtype: "datefieldbase",
-			    				fieldLabel: HreRem.i18n('fieldlabel.fecha.sancion.notificacion'),
-								bind: {
-									readOnly: me.formDeHistorico,
-									disabled: '{!gencat.checkNotificacion}',
-									value: '{gencat.fechaSancionNotificacion}'
-								}
-			    			},
-			    			{
-			    				xtype: "datefieldbase",
-			    				fieldLabel: HreRem.i18n('fieldlabel.cierre.notificacion'),
-								bind: {
-									readOnly: me.formDeHistorico,
-									disabled: '{!gencat.checkNotificacion}',
-									value: '{gencat.cierreNotificacion}'
-								}
-			    			}
+							notificacionactivolist
 						]
 		        	},
 		        	{
@@ -391,11 +367,7 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoForm', {
 					    },
 						items:
 							[
-								{	
-				    				xtype: 'documentosactivogencatlist',
-				    				reference: 'documentosactivogencatlistref',
-				    				width: '100%'
-				    			}
+								documentoscomunicaciongencatlist
 							]
 		        	},
 		        	{

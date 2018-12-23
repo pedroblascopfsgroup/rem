@@ -1,5 +1,9 @@
 package es.pfsgroup.plugin.rem.controller;
 
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +13,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
+import es.capgemini.devon.files.FileItem;
+import es.capgemini.devon.files.WebFileItem;
+import es.capgemini.devon.utils.FileUtils;
+import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
+import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
+import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
+import es.pfsgroup.plugin.rem.adapter.GencatAdapter;
 import es.pfsgroup.plugin.rem.api.GencatApi;
+import es.pfsgroup.plugin.rem.model.DtoNotificacionActivo;
 
 @Controller
 public class GencatController {
@@ -18,6 +31,15 @@ public class GencatController {
 	
 	@Autowired
 	private GencatApi gencatApi;
+	
+	@Autowired
+	private ActivoAdapter activoAdapter;
+	
+	@Autowired
+	private GencatAdapter gencatAdapter;
+	
+	@Autowired
+	private UploadAdapter uploadAdapter;
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
@@ -73,10 +95,10 @@ public class GencatController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getListAdjuntos(Long id, ModelMap model) {
+	public ModelAndView getListAdjuntosComunicacionByIdActivo(Long id, ModelMap model) {
 		
 		try {
-			model.put("data", gencatApi.getAdjuntosActivo(id));
+			model.put("data", gencatApi.getListAdjuntosComunicacionByIdActivo(id));
 			model.put("success", true);
 		} 
 		catch (Exception e) {
@@ -85,7 +107,6 @@ public class GencatController {
 		}
 
 		return createModelAndViewJson(model);
-		
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -149,6 +170,151 @@ public class GencatController {
 			model.put("success", false);
 		}
 
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getListAdjuntosComunicacionHistoricoByIdComunicacionHistorico(Long idHComunicacion, ModelMap model) {
+		
+		try {
+			model.put("data", gencatApi.getListAdjuntosComunicacionHistoricoByIdComunicacionHistorico(idHComunicacion));
+			model.put("success", true);
+		} 
+		catch (Exception e) {
+			logger.error("Error en gencatController", e);
+			model.put("success", false);
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
+	/**
+	 * Descarga un adjunto de una comunicacion o de una comunicacion del historico
+	 * 
+	 * @param request
+	 * @param response
+	 */
+	@RequestMapping(method = RequestMethod.GET)
+	public void bajarAdjuntoComunicacion(HttpServletRequest request, HttpServletResponse response) {
+
+		Long id = null;
+		try {
+			id = Long.parseLong(request.getParameter("id"));
+			String nombreDocumento = request.getParameter("nombreDocumento");
+			ServletOutputStream salida = response.getOutputStream();
+			FileItem fileItem = activoAdapter.download(id,nombreDocumento);
+			response.setHeader("Content-disposition", "attachment; filename=" + fileItem.getFileName());
+			response.setHeader("Cache-Control", "must-revalidate, post-check=0,pre-check=0");
+			response.setHeader("Cache-Control", "max-age=0");
+			response.setHeader("Expires", "0");
+			response.setHeader("Pragma", "public");
+			response.setDateHeader("Expires", 0); // prevents caching at the
+													// proxy
+			if(!Checks.esNulo(fileItem.getContentType())) {
+				response.setContentType(fileItem.getContentType());
+			}
+			
+			// Write
+			FileUtils.copy(fileItem.getInputStream(), salida);
+			salida.flush();
+			salida.close();
+		} 
+		catch (Exception e) {
+			logger.error("Error en gencatController", e);
+		}
+
+	}
+	
+	/**
+	 * Recibe y guarda un adjunto de una comunicacion
+	 * 
+	 * @param request
+	 * @param response
+	 * @return
+	 * @throws Exception
+	 */
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView uploadAdjuntoComunicacion(HttpServletRequest request) {
+
+		ModelMap model = new ModelMap();
+		
+		try {
+			WebFileItem webFileItem = uploadAdapter.getWebFileItem(request);
+			gencatAdapter.upload(webFileItem);
+			model.put("success", true);
+		} 
+		catch (GestorDocumentalException e) {
+			logger.error("error en gencatController", e);
+			model.put("success", false);
+			model.put("errorMessage", "Ha habido un problema con la subida del fichero al gestor documental.");
+		}
+		catch (Exception e) {
+			logger.error("error en gencatController", e);
+			model.put("success", false);
+			model.put("errorMessage", "Ha habido un problema con la subida del fichero.");
+		}
+		
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getNotificacionesByIdActivo(Long id, ModelMap model) {
+		
+		try {
+			model.put("data", gencatApi.getNotificacionesByIdActivo(id));
+			model.put("success", true);
+		} 
+		catch (Exception e) {
+			logger.error("Error en gencatController", e);
+			model.put("success", false);
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getNotificacionesHistoricoByIdComunicacionHistorico(Long idHComunicacion, ModelMap model) {
+		
+		try {
+			model.put("data", gencatApi.getNotificacionesHistoricoByIdComunicacionHistorico(idHComunicacion));
+			model.put("success", true);
+		} 
+		catch (Exception e) {
+			logger.error("Error en gencatController", e);
+			model.put("success", false);
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
+	/**
+	 * Recibe y inserta una notificación en una comunicación
+	 * 
+	 * @param request
+	 * @param response
+	 * @return
+	 * @throws Exception
+	 */
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView crearNotificacionComunicacion(DtoNotificacionActivo notificacionActivo) {
+
+		ModelMap model = new ModelMap();
+		
+		try {
+			model.put("data", gencatApi.createNotificacionComunicacion(notificacionActivo));
+			model.put("success", true);
+		}
+		catch (Exception e) {
+			logger.error("error en gencatController", e);
+			model.put("success", false);
+			model.put("errorMessage", "Ha habido un problema durante la creación de la notificación.");
+		}
+		
 		return createModelAndViewJson(model);
 	}
 	

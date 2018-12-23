@@ -49,7 +49,7 @@ Ext.define('HreRem.view.activos.detalle.HistoricoReclamacionesActivoList', {
 		        {
 		            xtype: 'pagingtoolbar',
 		            dock: 'bottom',
-		            itemId: 'reclamacionesactivolistPaginationToolbar',
+		            itemId: 'historicoreclamacionesactivolistPaginationToolbar',
 		            inputItemWidth: 100,
 		            displayInfo: true,
 		            store: me.store

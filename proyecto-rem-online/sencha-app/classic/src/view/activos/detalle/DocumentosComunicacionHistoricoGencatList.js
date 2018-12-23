@@ -1,13 +1,27 @@
-Ext.define('HreRem.view.activos.detalle.DocumentosActivoGencatList', {
+Ext.define('HreRem.view.activos.detalle.DocumentosComunicacionHistoricoGencatList', {
 	extend		: 'HreRem.view.common.GridBase',
-    xtype		: 'documentosactivogencatlist',
+    xtype		: 'documentoscomunicacionhistoricogencatlist',
     
-    bind: {
-        store: '{storeDocumentosActivoGencat}'
-    },
-    features: [{ftype:'grouping'}],
+    store: Ext.create('Ext.data.Store', {
+		pageSize: $AC.getDefaultPageSize(),
+		model: 'HreRem.model.DocumentoActivoGencat',
+		proxy: {
+			type: 'uxproxy',
+			remoteUrl: 'gencat/getListAdjuntosComunicacionHistoricoByIdComunicacionHistorico',
+			extraParams: {
+				idHComunicacion: null
+			}
+		},
+		groupField: 'descripcionTipo' 
+	}),
+	
+	features: [{ftype:'grouping'}],
     topBar		:  true,
     removeButton: false,
+	
+    data: {
+        idHComunicacion: -1
+    },
         
     initComponent: function () {
         
@@ -18,6 +32,9 @@ Ext.define('HreRem.view.activos.detalle.DocumentosActivoGencatList', {
         /*me.listeners = {	    	
 			rowdblclick: 'onVisitasListDobleClick'
 	    }*/
+        
+        me.store.getProxy().setExtraParam('idHComunicacion', me.idHComunicacion);
+        me.store.load();
         
         me.columns = [
 	    		{
@@ -64,12 +81,10 @@ Ext.define('HreRem.view.activos.detalle.DocumentosActivoGencatList', {
 		        {
 		            xtype: 'pagingtoolbar',
 		            dock: 'bottom',
-		            itemId: 'documentosactivolistPaginationToolbar',
+		            itemId: 'documentoscomunicacioneshistoricolistPaginationToolbar',
 		            inputItemWidth: 100,
 		            displayInfo: true,
-		            bind: {
-		                store: '{storeDocumentosActivoGencat}'
-		            }
+		            store: me.store
 		        }
 		];
 		    

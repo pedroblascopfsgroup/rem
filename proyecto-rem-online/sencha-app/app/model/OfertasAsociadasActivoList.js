@@ -2,6 +2,7 @@ Ext.define('HreRem.view.activos.detalle.OfertasAsociadasActivoList', {
 	extend: 'HreRem.view.common.GridBase',
     xtype: 'ofertasasociadasactivolist',
     
+    cls: 'panel-base shadow-panel',
     bind: {
         store: '{storeOfertasAsociadasActivo}'
     },

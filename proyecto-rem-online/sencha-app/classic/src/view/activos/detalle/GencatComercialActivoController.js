@@ -5,14 +5,31 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoController', {
     
     control: {
 
-    	'documentosactivogencatlist': {
-            abrirFormulario: 'abrirFormularioAdjuntarComunicacionActivo',
-            //onClickRemove: 'borrarDocumentoAdjunto',
-            download: 'downloadDocumentoComunicacionActivo'//,
-            /*afterupload: function(grid) {
-            	grid.getStore().load();
-            }*/
-        }
+    	'documentoscomunicaciongencatlist': {
+		abrirFormulario: 'abrirFormularioAdjuntarDocumentoComunicacion',
+		//onClickRemove: 'borrarDocumentoAdjunto',
+		download: 'downloadDocumentoComunicacionActivo',
+		afterupload: function(grid) {
+		grid.getStore().load(); 
+		}
+        },
+
+	'documentoscomunicacionhistoricogencatlist': {
+		abrirFormulario: 'abrirFormularioAdjuntarComunicacionHistoricoActivo',
+		//onClickRemove: 'borrarDocumentoAdjunto',
+		download: 'downloadDocumentoComunicacionActivo',
+		afterupload: function(grid) {
+		grid.getStore().load();
+		}
+	},
+		
+	'notificacionesactivolist': { 
+		abrirFormulario: 'abrirFormularioCrearNotificacion',
+		//onClickRemove: 'borrarDocumentoAdjunto',
+		aftercreate: function(grid) {
+			grid.getStore().load(); 
+		}
+    	}
     	
     },
     
@@ -50,12 +67,30 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoController', {
     	
     },
     
-    abrirFormularioAdjuntarComunicacionActivo: function(grid) {
-    	console.log("salu3");
-    	//TODO: Adjuntar documentos en la comunicacion o en el histórico de una comunicación
-		var me = this/*,
-		idActivo = me.getViewModel().get("activo.id");
-    	Ext.create("HreRem.view.common.adjuntos.AdjuntarDocumentoActivoProyecto", {entidad: 'promocion', idEntidad: idActivo, parent: grid}).show();*/
+    abrirFormularioAdjuntarDocumentoComunicacion: function(grid) {
+    	
+		var me = this;
+		var idActivo = me.getViewModel().get("activo.id");
+		var data = {
+			entidad: 'gencat', 
+			idEntidad: idActivo, 
+			parent: grid
+		};
+		Ext.create("HreRem.view.common.adjuntos.AdjuntarDocumentoComunicacionGencat", data).show();
+		
+	},
+	
+	abrirFormularioAdjuntarComunicacionHistoricoActivo: function(grid) {
+    	
+		var me = this;
+		var idActivo = me.getViewModel().get("activo.id");
+		var data = {
+			entidad: 'gencat', 
+			idEntidad: idActivo, 
+			parent: grid,
+			idHComunicacion: grid.up("gencatcomercialactivoform").idHComunicacion
+		};
+		Ext.create("HreRem.view.common.adjuntos.AdjuntarDocumentoComunicacionHistoricoGencat", data).show();
 		
 	},
     
@@ -63,14 +98,73 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoController', {
 		
 		var me = this,
 		config = {};
-		console.log("salu2");
-		//TODO: Descargar documento del listado pasado por parámetro
-		/*config.url=$AC.getWebPath()+"promocion/bajarAdjuntoActivoPromocion."+$AC.getUrlPattern();
+		
+		config.url= $AC.getWebPath() + "gencat/bajarAdjuntoComunicacion." + $AC.getUrlPattern();
 		config.params = {};
 		config.params.id=record.get('id');
-		config.params.idActivo=record.get("idActivo");
 		config.params.nombreDocumento=record.get("nombre");
-		me.fireEvent("downloadFile", config);*/
+		
+		me.fireEvent("downloadFile", config);
+	},
+	
+	abrirFormularioCrearNotificacion: function(grid) {
+		
+		var me = this;
+		
+		var idActivo = me.getViewModel().get("activo.id");
+		var data = {
+			idActivo: idActivo, 
+			parent: grid
+		};
+		Ext.create("HreRem.view.common.adjuntos.VentanaCrearNotificacion", data).show();
+		
+	},
+	
+	onClickAdjuntarDocumentoNotificaciones: function(btn) {
+		
+		var me = this;
+		var idActivo = me.getViewModel().get("activo.id");
+		var data = {
+			entidad: 'gencat', 
+			idEntidad: idActivo
+		};
+		Ext.create("HreRem.view.common.adjuntos.AdjuntarDocumentoNotificacionGencat", data).show();
+	},
+	
+	onClickGuardarNotificacion: function(btn) {
+		
+		var me = this;
+		
+		var window = btn.up('[reference=ventanacrearnotificacionRef]');
+		
+		var form = window.down('[reference=crearNotificacionFormRef]');
+		
+		if(form.isValid()){
+    		
+            form.submit({
+                waitMsg: HreRem.i18n('msg.mask.loading'),
+                params: {
+                	idActivo: window.idActivo
+                },
+                success: function(fp, o) {
+
+                	if(o.result.success == "false") {
+                		window.fireEvent("errorToast", o.result.errorMessage);
+                	}
+                	else {
+                		window.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+                	}
+                	
+                	if(!Ext.isEmpty(window.parent)) {
+                		window.parent.fireEvent("aftercreate", window.parent);
+                	}
+                	window.close();
+                },
+                failure: function(fp, o) {
+                	window.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+                }
+            });
+        }
 	}
     
 });

@@ -8,7 +8,8 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoModel', {
     	'HreRem.model.OfertasAsociadasActivo',
     	'HreRem.model.ReclamacionActivo',
     	'HreRem.model.DocumentoActivoGencat',
-    	'HreRem.model.HistoricoComunicacionGencat'
+    	'HreRem.model.HistoricoComunicacionGencat',
+    	'HreRem.model.NotificacionActivo'
     ],
     
     data: {
@@ -99,7 +100,7 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoModel', {
 			 model: 'HreRem.model.DocumentoActivoGencat',
      	     proxy: {
      	        type: 'uxproxy',
-     	        remoteUrl: 'gencat/getListAdjuntos',
+     	        remoteUrl: 'gencat/getListAdjuntosComunicacionByIdActivo',
      	        extraParams: {id: '{activo.id}'}
          	 },
          	 groupField: 'descripcionTipo'
@@ -122,6 +123,16 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoModel', {
 				type: 'uxproxy',
 				remoteUrl: 'gencat/getHistoricoOfertasAsociadasIdComunicacionHistorico'/*,
 				extraParams: {id: '{activo.id}'}*/
+			}
+		},
+		
+		storeNotificacionesActivo: {    	
+			pageSize: $AC.getDefaultPageSize(),
+			model: 'HreRem.model.NotificacionActivo',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'gencat/getNotificacionesByIdActivo',
+				extraParams: {id: '{activo.id}'}
 			}
 		}
 		

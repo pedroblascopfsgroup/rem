@@ -1476,7 +1476,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		if(!bloqueado){
 			if(CONST.ESTADOS_EXPEDIENTE['VENDIDO'] != codigoEstado){
 				if(CONST.TIPOS_EXPEDIENTE_COMERCIAL['ALQUILER'] == tipoExpedienteCodigo){
-					if(tipoOrigenWCOM == origen){
+					if(tipoOrigenWCOM == origen && !Ext.isEmpty(fechaSancion)){
 						me.fireEvent("errorToast","Expediente con origen WCOM");
 						return;
 					}

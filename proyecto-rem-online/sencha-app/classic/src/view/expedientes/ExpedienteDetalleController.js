@@ -1475,7 +1475,11 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 
 		if(!bloqueado){
 			if(CONST.ESTADOS_EXPEDIENTE['VENDIDO'] != codigoEstado){
-				if((CONST.TIPOS_EXPEDIENTE_COMERCIAL['ALQUILER'] == tipoExpedienteCodigo && tipoOrigenWCOM != origen) || CONST.TIPOS_EXPEDIENTE_COMERCIAL['VENTA'] == tipoExpedienteCodigo){
+				if(CONST.TIPOS_EXPEDIENTE_COMERCIAL['ALQUILER'] == tipoExpedienteCodigo){
+					if(tipoOrigenWCOM == origen){
+						me.fireEvent("errorToast","Expediente con origen WCOM");
+						return;
+					}
 					if(Ext.isEmpty(fechaSancion)){
 						var ventanaCompradores= grid.up().up();
 						var expediente= me.getViewModel().get("expediente");
@@ -1484,8 +1488,14 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 					} else {
 						me.fireEvent("errorToast","Expediente sancionado");
 					}
-				} else {
-					me.fireEvent("errorToast","Expediente con origen WCOM");
+					return;
+				}
+				if(CONST.TIPOS_EXPEDIENTE_COMERCIAL['VENTA'] == tipoExpedienteCodigo){
+					var ventanaCompradores= grid.up().up();
+					var expediente= me.getViewModel().get("expediente");
+					Ext.create('HreRem.view.expedientes.DatosComprador',{idExpediente: idExpediente, parent: ventanaCompradores, expediente: expediente}).show();
+					me.onClickBotonRefrescar();
+					return;
 				}
 			} else{
 				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.expediente.vendido"));

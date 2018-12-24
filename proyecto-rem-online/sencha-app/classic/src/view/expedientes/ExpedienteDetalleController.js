@@ -680,8 +680,12 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			expediente= me.getViewModel().get("expediente");
 			var storeGrid= gridView.store;
 			var edicion = me.getViewModel().get("puedeModificarCompradores");
+			var deshabilitarCamposDoc = false;
+			if(me.getViewModel().get('expediente.tipoExpedienteCodigo') === tipoExpedienteAlquiler){
+				deshabilitarCamposDoc = true;
+			}
 
-			Ext.create("HreRem.view.expedientes.DatosComprador", {idComprador: idCliente, modoEdicion: edicion, storeGrid:storeGrid, expediente: expediente }).show();
+			Ext.create("HreRem.view.expedientes.DatosComprador", {idComprador: idCliente, modoEdicion: edicion, storeGrid:storeGrid, expediente: expediente,deshabilitarCamposDoc: deshabilitarCamposDoc }).show();
 		}
 		if (me.getViewModel().get('expediente.tipoExpedienteCodigo') === tipoExpedienteAlquiler && !Ext.isEmpty(fechaPosicionamiento)){
 			me.fireEvent("errorToast", "Se ha avanzado la tarea Posicionamiento, no se puede editar los inquilinos");
@@ -1483,7 +1487,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 					if(Ext.isEmpty(fechaSancion)){
 						var ventanaCompradores= grid.up().up();
 						var expediente= me.getViewModel().get("expediente");
-						Ext.create('HreRem.view.expedientes.DatosComprador',{idExpediente: idExpediente, parent: ventanaCompradores, expediente: expediente}).show();
+						Ext.create('HreRem.view.expedientes.DatosComprador',{idExpediente: idExpediente, parent: ventanaCompradores, expediente: expediente, deshabilitarCamposDoc: false}).show();
 						me.onClickBotonRefrescar();
 					} else {
 						me.fireEvent("errorToast","Expediente sancionado");
@@ -1493,7 +1497,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 				if(CONST.TIPOS_EXPEDIENTE_COMERCIAL['VENTA'] == tipoExpedienteCodigo){
 					var ventanaCompradores= grid.up().up();
 					var expediente= me.getViewModel().get("expediente");
-					Ext.create('HreRem.view.expedientes.DatosComprador',{idExpediente: idExpediente, parent: ventanaCompradores, expediente: expediente}).show();
+					Ext.create('HreRem.view.expedientes.DatosComprador',{idExpediente: idExpediente, parent: ventanaCompradores, expediente: expediente,deshabilitarCamposDoc: false}).show();
 					me.onClickBotonRefrescar();
 					return;
 				}

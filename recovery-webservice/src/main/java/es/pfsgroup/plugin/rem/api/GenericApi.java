@@ -16,6 +16,7 @@ import es.pfsgroup.plugin.rem.model.DtoDiccionario;
 import es.pfsgroup.plugin.rem.model.DtoLocalidadSimple;
 import es.pfsgroup.plugin.rem.model.DtoMenuItem;
 import es.pfsgroup.plugin.rem.model.Ejercicio;
+import es.pfsgroup.plugin.rem.model.dd.DDComiteAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDCondicionIndicadorPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
@@ -27,6 +28,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDSubtipoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoBloqueo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTrabajo;
@@ -185,6 +187,8 @@ public interface GenericApi {
 
 	
 	public List<DDTiposPorCuenta> getDiccionarioPorCuenta(String tipoCodigo);
+	
+	public List<DDTipoCalculo> getDiccionarioByTipoOferta(String diccionario, String codTipoOferta);
 
 	/**
 	 * Devuelve una lista de todos aquellos proveedores que dan de alta gastos de forma masiva.
@@ -224,7 +228,16 @@ public interface GenericApi {
 	List<DDMotivoRechazoOferta> getComboMotivoRechazoOferta(String tipoRechazoOfertaCodigo);
 
 	List<DDComiteSancion> getComitesByIdExpediente(String expediente);
+		
 	
+	public List<DDComiteAlquiler> getComitesAlquilerByCartera(Long idActivo);
+	
+	/**
+	 * Devuelve una lista de comites alquiler por el código de cartera.
+	 * @param carteraCodigo
+	 * @return
+	 */
+	public List<DDComiteAlquiler> getComitesAlquilerByCarteraCodigo(String carteraCodigo);
 	/**
 	 * Este método obtiene una lista con los tipos de agrupaciones. 
 	 * Filtrará los resultados dependiendo del tipo de gestor del usuario logado

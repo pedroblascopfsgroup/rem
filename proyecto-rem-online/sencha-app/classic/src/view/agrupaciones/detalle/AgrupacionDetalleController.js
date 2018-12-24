@@ -588,34 +588,45 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 	    	window.parent.funcionRecargar();
 	    	window.destroy();
 		};
-
 		me.onSaveFormularioCompleto(form, success);	
 	},
 	
 	onSaveFormularioCompleto: function(form, success) {
 		var me = this;
+		var window= form.up('window');
 		record = form.getBindRecord();
+
 		success = success || function() {me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));};  
 
-		if(form.isFormValid()) {
+		if(form.isFormValid()) {			
 			form.mask(HreRem.i18n("msg.mask.espere"));
 			record.save({
 			    success: success,
 			 	failure: function(record, operation) {
-			 		
 			 		try {
-  						var response = Ext.decode(operation.getResponse().responseText);
-				 		if(response.success === "false" && Ext.isDefined(response.msg)) {
+				 		var response = Ext.decode(operation.success);
+				 		
+				 		if(operation.getResponse() != null){
+					 		var msg =  Ext.decode(operation.getResponse().responseText).msg;
+				 		}
+				 		
+				 		if((response === "false" || !response) && msg != null) {
 							me.fireEvent("errorToast", Ext.decode(operation.getResponse().responseText).msg);
 							form.unmask();
-						} else {
+						} else if(operation.error != null && "communication failure" === operation.error.statusText){
+				 			form.unmask();
+					    	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+					    	window.parent.funcionRecargar();
+					    	window.destroy();
+				 		} else {
 							me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
 					 		form.unmask();
-						}					
+						}
+						
 						if(Ext.isDefined(form.funcionRefrescar)) {
 							form.funcionRefrescar();
 						}
-					}catch(err) {
+			 		}catch(err) {
 						if(Ext.isDefined(err.message)){
 							me.fireEvent("errorToast", err.message);
 						}else{
@@ -623,8 +634,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 						}
 					  	
 					 	form.unmask();
-					}
-			 		
+			 		}
 			    }
 			});
 		} else {
@@ -1023,11 +1033,10 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
     
     onChangeCheckboxPublicarAlquiler: function(checkbox, isDirty) {
         var me = this;
-
         if (checkbox.getValue() && me.getViewModel().get('debePreguntarPorTipoPublicacionAlquiler')) {
 			Ext.create('HreRem.view.activos.detalle.VentanaEleccionTipoPublicacion').show();
         }
-        
+               
     	var me = this;
     	var chkbxPublicarSinPrecioAlquiler = checkbox.up('agrupacionesdetallemain').lookupReference('chkbxpublicarsinprecioalquiler').getValue();
     	if (!chkbxPublicarSinPrecioAlquiler && 

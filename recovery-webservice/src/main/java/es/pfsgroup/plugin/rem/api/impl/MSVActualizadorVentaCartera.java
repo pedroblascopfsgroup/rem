@@ -155,7 +155,7 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 	@Transactional(readOnly = false)
 	public ResultadoProcesarFila procesaFila(MSVHojaExcel exc, int fila, Long prmToken)
 			throws JsonViewerException, IOException, ParseException, SQLException, Exception {
-		return procesaFila(exc, fila, prmToken, null);
+		return procesaFila(exc, fila, prmToken, new ProcesoMasivoContext());
 	}
 
 	@Transactional(readOnly = false)

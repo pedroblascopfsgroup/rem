@@ -47,7 +47,7 @@ public class AgrupacionController extends ParadiseJsonController {
 
 	@Autowired
 	private ActivoAgrupacionApi activoAgrupacionApi;
-	
+
 	@Autowired
 	private ActivoEstadoPublicacionApi activoEstadoPublicacionApi;
 
@@ -285,8 +285,9 @@ public class AgrupacionController extends ParadiseJsonController {
 	public ModelAndView createAgrupacion(DtoAgrupacionesCreateDelete dtoAgrupacion, ModelMap model) {
 
 		try {
-
 		    adapter.createAgrupacion(dtoAgrupacion);
+			DtoAgrupacionesCreateDelete agrupDto = adapter.createAgrupacion(dtoAgrupacion);
+			model.put("data", agrupDto);
 			model.put("success", true);
 
 		} catch (Exception e) {
@@ -741,6 +742,7 @@ public class AgrupacionController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getDobleGestorActivo(@RequestParam Long agrId, @RequestParam String codigoGestorEdi,@RequestParam String codigoGestorSu,
 			ModelMap model) {
 
@@ -781,7 +783,7 @@ public class AgrupacionController extends ParadiseJsonController {
 
 		List<VActivosAgrupacion> listaActivosPorAgrupacion = (List<VActivosAgrupacion>) adapter
 				.getListActivosAgrupacionById(dtoAgrupacionFilter, agrID).getResults();
-		
+
 		DtoAgrupaciones agruDto = adapter.getAgrupacionById(agrID);
 
 		ExcelReport report = new AgrupacionListadoActivosExcelReport(listaActivosPorAgrupacion,agruDto);
@@ -886,10 +888,10 @@ public class AgrupacionController extends ParadiseJsonController {
 	public ModelAndView getDatosPublicacionAgrupacion(Long id, ModelMap model) {
 		model.put("data", adapter.getDatosPublicacionAgrupacion(id));
 		model.put("success", true);
-		
+
 		return createModelAndViewJson(model);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView setDatosPublicacionAgrupacion(Long id, DtoDatosPublicacionAgrupacion dto, ModelMap model) {
@@ -903,7 +905,7 @@ public class AgrupacionController extends ParadiseJsonController {
 
 		return createModelAndViewJson(model);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getCondicionEspecificaByAgrupacion(Long id, ModelMap model) {
@@ -911,7 +913,7 @@ public class AgrupacionController extends ParadiseJsonController {
 		model.put("data", activoAgrupacionApi.getCondicionEspecificaByAgrupacion(id));
 		return createModelAndViewJson(model);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView createCondicionEspecifica(DtoCondicionEspecificaAgrupacion dto, ModelMap model) {
@@ -919,7 +921,7 @@ public class AgrupacionController extends ParadiseJsonController {
 		model.put("data", activoAgrupacionApi.createCondicionEspecifica(dto));
 		return createModelAndViewJson(model);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView saveCondicionEspecifica(DtoCondicionEspecificaAgrupacion dto, ModelMap model) {
@@ -927,7 +929,7 @@ public class AgrupacionController extends ParadiseJsonController {
 		model.put("data", activoAgrupacionApi.saveCondicionEspecifica(dto));
 		return createModelAndViewJson(model);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView darDeBajaCondicionEspecifica(DtoCondicionEspecificaAgrupacion dto, ModelMap model) {

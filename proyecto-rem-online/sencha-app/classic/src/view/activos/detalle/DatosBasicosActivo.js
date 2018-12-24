@@ -11,7 +11,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 	
 	recordClass: "HreRem.model.Activo",
     
-    requires: ['HreRem.model.Activo'],
+    requires: ['HreRem.model.Activo','HreRem.view.activos.detalle.HistoricoDestinoComercialActivo'],
 
     initComponent: function () {
 
@@ -152,6 +152,15 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 				            		store: '{comboTipoUsoDestino}',
 				            		value: '{activo.tipoUsoDestinoCodigo}'
 				            	}
+			                },
+			                {
+			                	xtype: 'textfieldbase',
+			                	fieldLabel: HreRem.i18n('fieldlabel.motivorechazoform.motivo'),
+			                	name: 'motivoActivo',
+			                	bind: {
+			                		value: '{activo.motivoActivo}'
+			                	},
+			                	maxLength: 50
 			                }
 						]
 					},{ // Columna 3
@@ -473,11 +482,15 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 							{
 								xtype:'checkboxfieldbase',
 								fieldLabel: HreRem.i18n('fieldlabel.perimetro.check.comercial'),
+								bind:	{
+									value: '{activo.aplicaComercializar}',
+									readOnly: '{activo.enTramite}'
+								},
 								reference: 'chkbxPerimetroComercializar',
 								bind: {
 									readOnly: '{activo.isVendido}',
 									value: '{activo.aplicaComercializar}'
-									
+
 								},
 								listeners: {
 									change: 'onChkbxPerimetroChange'
@@ -514,9 +527,11 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								xtype:'checkboxfieldbase',
 								fieldLabel: HreRem.i18n('fieldlabel.perimetro.check.formalizar'),
 								reference: 'chkbxPerimetroFormalizar',
+
 								bind: {
-									readOnly: '{activo.isVendido}',
-									value: '{activo.aplicaFormalizar}'
+									value: '{activo.aplicaFormalizar}',
+									readOnly: '{activo.enTramite}'
+									
 								},
 								listeners: {
 									change: 'onChkbxPerimetroChange'
@@ -533,6 +548,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								reference: 'textFieldPerimetroFormalizar',
 								bind: {
 									value: '{activo.motivoAplicaFormalizar}'
+
 								}
 							},
 							//Bloque Comercialización
@@ -560,8 +576,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 										fieldLabel: HreRem.i18n('fieldlabel.perimetro.destino.comercial'),
 										bind: {
 											store: '{comboTipoDestinoComercialCreaFiltered}',
-											value: '{activo.tipoComercializacionCodigo}',
-											readOnly: '{activoPerteneceAgrupacionRestringida}'
+											value: '{activo.tipoComercializacionCodigo}'
 										}
 									},
 									{
@@ -572,8 +587,17 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 											store : '{comboSiNoBoolean}',
 											value: '{activo.bloqueoTipoComercializacionAutomatico}'
 										}
+									},
+									{
+										xtype: 'comboboxfieldbase',
+										fieldLabel: HreRem.i18n('fieldlabel.perimetro.tipo.alquiler'),
+										readOnly: true,
+										bind: {
+											store: '{comboTipoAlquiler}',
+											disabled: '{!activo.isDestinoComercialAlquiler}',
+											value: '{activo.tipoAlquilerCodigo}'
+										}
 									}
-									
 									]
 							},
 							//Bloque Comercialización
@@ -702,18 +726,29 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 						
 					} //Fin activo bancario
 				]
-			} //Fin perimetros
+			}, //Fin perimetros
+			{	// Histórico Destino Comercial ---------------------------------------------------------
+				xtype:'fieldsettable',
+				defaultType: 'textfieldbase',
+				title: HreRem.i18n('title.historico.destino.comercial'),
+				items :
+					[
+					{
+						xtype: 'historicodestinocomercialactivoform'
+					}
+					]
+			} // Fin Histórico Destino Comercial
             
      ];
 	me.addPlugin({ptype: 'lazyitems', items: items });
     me.callParent();    	
-    	
+
     },
     
     funcionRecargar: function() {
     	var me = this; 
 		me.recargar = false;
-		me.lookupController().cargarTabData(me);    	
+		me.lookupController().cargarTabData(me);
     },
     
     actualizarCoordenadas: function(latitud, longitud) {
@@ -723,5 +758,4 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
     	me.getBindRecord().set("latitud", latitud);
     	
     }
-
 });

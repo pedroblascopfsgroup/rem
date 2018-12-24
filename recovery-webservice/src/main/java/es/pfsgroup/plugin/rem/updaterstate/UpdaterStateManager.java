@@ -150,6 +150,8 @@ public class UpdaterStateManager implements UpdaterStateApi{
 		
 		if(activoApi.isActivoVendido(activo)) {
 			codigo = DDSituacionComercial.CODIGO_VENDIDO;
+		}else if (activoApi.isActivoAlquilado(activo)) {
+			codigo = DDSituacionComercial.CODIGO_ALQUILADO;
 		}
 		else if(!Checks.esNulo(perimetro) && !Checks.esNulo(perimetro.getAplicaComercializar()) && perimetro.getAplicaComercializar() == 0) {
 			codigo = DDSituacionComercial.CODIGO_NO_COMERCIALIZABLE;
@@ -158,7 +160,24 @@ public class UpdaterStateManager implements UpdaterStateApi{
 			codigo = DDSituacionComercial.CODIGO_DISPONIBLE_VENTA_RESERVA;
 		}
 		else if(activoApi.isActivoConOfertaByEstado(activo,DDEstadoOferta.CODIGO_ACEPTADA)) {
-			codigo = DDSituacionComercial.CODIGO_DISPONIBLE_VENTA_OFERTA;
+			if (!Checks.esNulo(activo.getTipoComercializacion())) {
+				switch(Integer.parseInt(activo.getTipoComercializacion().getCodigo())) {
+					case 1:
+						codigo = DDSituacionComercial.CODIGO_DISPONIBLE_VENTA_OFERTA;
+						break;
+					case 2:
+						codigo = DDSituacionComercial.CODIGO_DISPONIBLE_VENTA_ALQUILER_OFERTA;
+						break;
+					case 3:
+						codigo = DDSituacionComercial.CODIGO_DISPONIBLE_ALQUILER_OFERTA;
+						break;
+					default:
+						codigo = DDSituacionComercial.CODIGO_DISPONIBLE_VENTA_OFERTA;
+						break;
+					}
+			} else {
+				codigo = DDSituacionComercial.CODIGO_DISPONIBLE_VENTA_OFERTA;
+			}			
 		}
 		else if(activoApi.getCondicionantesDisponibilidad(activo.getId()).getIsCondicionado()) {
 			codigo = DDSituacionComercial.CODIGO_DISPONIBLE_CONDICIONADO;

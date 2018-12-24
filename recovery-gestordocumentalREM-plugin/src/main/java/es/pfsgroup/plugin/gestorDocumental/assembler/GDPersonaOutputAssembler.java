@@ -7,8 +7,11 @@ import es.pfsgroup.plugin.gestorDocumental.dto.PersonaOutputDto;
 import es.pfsgroup.plugin.gestorDocumental.ws.MAESTRO_PERSONAS.KeyValuePair;
 import es.pfsgroup.plugin.gestorDocumental.ws.MAESTRO_PERSONAS.ProcessEventResponseType;
 
+
+
 public class GDPersonaOutputAssembler {
 
+	
 	public static ActivoOutputDto outputToDtoActivo(
 			ProcessEventResponseType output) {
 
@@ -47,8 +50,10 @@ public class GDPersonaOutputAssembler {
 
 		if (output.getParameters() != null) {
 			for (KeyValuePair param : output.getParameters().getParameter()) {
-				if (PersonaInputDto.ID_INTERVINIENTE_HAYA.equals(param.getCode())) {
+				if (PersonaInputDto.ID_INTERVINIENTE_HAYA.equals(param.getCode()) || PersonaInputDto.ID_PERSONA_HAYA.equals(param.getCode())) {
 					dto.setIdIntervinienteHaya(param.getValue());
+				} else {
+					dto.setIdIntervinienteHaya(null);
 				}
 			}
 		}

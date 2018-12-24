@@ -180,6 +180,10 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 		if (!Checks.esNulo(dtoOfertasFilter.getEstadosExpediente())) {
 			addFiltroWhereInSiNotNullConStrings(hb, "voferta.codigoEstadoExpediente", Arrays.asList(dtoOfertasFilter.getEstadosExpediente()));
 		}
+		
+		if (!Checks.esNulo(dtoOfertasFilter.getEstadosExpedienteAlquiler())) {
+			addFiltroWhereInSiNotNullConStrings(hb, "voferta.codigoEstadoExpediente", Arrays.asList(dtoOfertasFilter.getEstadosExpedienteAlquiler()));
+		}
 
 		if (!Checks.esNulo(dtoOfertasFilter.getTipoComercializacion())) {
 			addFiltroWhereInSiNotNullConStrings(hb, "voferta.tipoComercializacion", Arrays.asList(dtoOfertasFilter.getTipoComercializacion()));
@@ -344,6 +348,22 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 
 		callFunctionSql.setParameter("OFR_ID", idOferta);
 		callFunctionSql.setParameter("ACT_ID", idActivo);
+		callFunctionSql.setParameter("PVE_ID", idProveedor);
+		callFunctionSql.setParameter("TIPO_COMISION", tipoComision);
+
+		return (BigDecimal) callFunctionSql.uniqueResult();
+	}
+	
+	@Override
+	public BigDecimal getImporteCalculoAlquiler(Long idOferta, String tipoComision, Long idProveedor) {
+		StringBuilder functionHQL = new StringBuilder(
+				"SELECT CALCULAR_HONORARIO_ALQUILER(:OFR_ID, :PVE_ID, :TIPO_COMISION) FROM DUAL");
+		if (Checks.esNulo(idProveedor)) {
+			idProveedor = -1L;
+		}
+		Query callFunctionSql = this.getSessionFactory().getCurrentSession().createSQLQuery(functionHQL.toString());
+
+		callFunctionSql.setParameter("OFR_ID", idOferta);
 		callFunctionSql.setParameter("PVE_ID", idProveedor);
 		callFunctionSql.setParameter("TIPO_COMISION", tipoComision);
 

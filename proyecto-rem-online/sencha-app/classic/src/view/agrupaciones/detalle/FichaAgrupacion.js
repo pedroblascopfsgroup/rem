@@ -71,7 +71,8 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
 			            	bind		: {
 			            		value: '{agrupacionficha.subTipoComercial}',
 			            		readOnly: true,
-			            		disabled:'{!esAgrupacionLoteComercial}'
+			            		hidden: '{!esComercialVentaOAlquiler}',
+			            		disabled:'{esComercialVenta}'
 			            	}
 		                },
 						{
@@ -110,8 +111,8 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
 			            	bind		: {
 			            		store: '{comboTipoAlquiler}',
 			            	    value: '{agrupacionficha.tipoAlquilerCodigo}',
-			            	    disabled:'{!esComercialAlquiler}',
-			            	    readOnly:'{agrupacionTieneActivos}'
+			            	    hidden: '{!esComercialVentaOAlquiler}',
+			            	    readOnly:'{esComercialVenta}'
 			            	}
 						},
 						
@@ -333,11 +334,11 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
 						},
 						{
 							xtype: 'comboboxfieldbase',
-							fieldLabel: HreRem.i18n('fieldlabel.perimetro.destino.comercial'),
-							bind: {
-								store: '{comboTipoDestinoComercialCreaFiltered}',
-								value: '{agrupacionficha.tipoComercializacionCodigo}'
-							}
+                            fieldLabel: HreRem.i18n('fieldlabel.perimetro.destino.comercial'),
+                            bind: {
+                                store: '{comboTipoDestinoComercialCreaFiltered}',
+                                value: '{agrupacionficha.tipoComercializacionCodigo}'
+                            }
 						}
 
 				]

@@ -16,9 +16,11 @@ public class DtoAgrupacionesCreateDelete {
 	private String tipoAgrupacion;
 	private Date fechaInicioVigencia;
 	private Date fechaFinVigencia;
-	private Long numAgrupacionRem;
-
 	private Usuario gestorComercial;
+	private Long numAgrupacionRem;
+	private String direccion;
+
+
 	
 	public String getNombre() {
 		return nombre;
@@ -56,7 +58,12 @@ public class DtoAgrupacionesCreateDelete {
 	public void setFechaFinVigencia(Date fechaFinVigencia) {
 		this.fechaFinVigencia = fechaFinVigencia;
 	}
-
+	public Usuario getGestorComercial() {
+		return gestorComercial;
+	}
+	public void setGestorComercial(Usuario gestorComercial) {
+		this.gestorComercial = gestorComercial;
+	}
 	public Long getNumAgrupacionRem() {
 		return numAgrupacionRem;
 	}
@@ -64,12 +71,10 @@ public class DtoAgrupacionesCreateDelete {
 		this.numAgrupacionRem = numAgrupacionRem;
 	}
 
-	public Usuario getGestorComercial() {
-		return gestorComercial;
+	public String getDireccion() {
+		return direccion;
 	}
-	public void setGestorComercial(Usuario gestorComercial) {
-		this.gestorComercial = gestorComercial;
+	public void setDireccion(String direccion) {
+		this.direccion = direccion;
 	}
-
-	
 }

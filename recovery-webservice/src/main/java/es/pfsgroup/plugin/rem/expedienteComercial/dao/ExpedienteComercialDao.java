@@ -16,7 +16,7 @@ public interface ExpedienteComercialDao extends AbstractDao<ExpedienteComercial,
 	 * @param webDto: dto con los datos a filtrar.
 	 * @return Devuelve los compradores paginados.
 	 */
-	Page getCompradoresByExpediente(Long idExpediente, WebDto webDto);
+	Page getCompradoresByExpediente(Long idExpediente, WebDto webDto, boolean activoBankia);
 
 	/**
 	 * Recupera una lista de observaciones de un expediente comercial.
@@ -76,6 +76,15 @@ public interface ExpedienteComercialDao extends AbstractDao<ExpedienteComercial,
 	 * @return
 	 */
 	ExpedienteComercial getExpedienteComercialByTrabajo(Long idTrabajo);
+
+	/**
+	 * Devuelve los documentos de tipo y subtipo del expediente
+	 * @param idExp
+	 * @param idTipo
+	 * @param idSubtipo
+	 * @return
+	 */
+	Long hayDocumentoSubtipo(Long idExp, Long idTipo, Long idSubtipo);
 
 	/**
 	 * Este método obtiene un expediente comercial por el número de expediente comercial asociado.

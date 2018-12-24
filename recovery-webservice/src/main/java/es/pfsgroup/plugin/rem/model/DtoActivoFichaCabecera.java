@@ -63,6 +63,7 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private String tipoUsoDestinoDescripcion;
 	private String codPromocionFinal;
 	private String catContableDescripcion;
+	private String motivoActivo;
 
 	// Comunidad de propietarios
 	private String tipoCuotaCodigo;
@@ -147,10 +148,10 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private String tipoAlquilerDescripcion;
 	private Boolean bloqueoTipoComercializacionAutomatico;
 	private String numInmovilizadoBankia;
-	private Boolean enTramite;
 	private Boolean aplicaPublicar;
 	private Date fechaAplicaPublicar;
 	private String motivoAplicaPublicar;
+	private Boolean enTramite;
 	//Activo Bancario datos:
 	private String claseActivoCodigo;
 	private String claseActivoDescripcion;
@@ -194,6 +195,8 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 
 	private String idAgrupacion;
 	private Boolean tienePromocion;
+	
+	private Boolean tieneCEE;
 
 	private int page;
 	private int start;
@@ -204,6 +207,63 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private Boolean asignaGestPorCambioDeProv;
 
 	private Boolean isLogUsuGestComerSupComerSupAdmin;
+
+	private int ocupado;
+	private int conTitulo;
+	private String tipoInquilino;
+	private String tipoEstadoAlquiler;
+
+	//HREOS-4545
+	private Boolean tieneOfertaAlquilerViva;
+	private Boolean esGestorAlquiler;
+
+	public Boolean getTieneOfertaAlquilerViva() {
+		return tieneOfertaAlquilerViva;
+	}
+
+	public void setTieneOfertaAlquilerViva(Boolean tieneOfertaAlquilerViva) {
+		this.tieneOfertaAlquilerViva = tieneOfertaAlquilerViva;
+	}
+
+	public Boolean getEsGestorAlquiler() {
+		return esGestorAlquiler;
+	}
+
+	public void setEsGestorAlquiler(Boolean esGestorAlquiler) {
+		this.esGestorAlquiler = esGestorAlquiler;
+	}
+
+	public int getConTitulo() {
+		return conTitulo;
+	}
+
+	public void setConTitulo(int conTitulo) {
+		this.conTitulo = conTitulo;
+	}
+
+	public String getTipoInquilino() {
+		return tipoInquilino;
+	}
+
+	public void setTipoInquilino(String tipoInquilino) {
+		this.tipoInquilino = tipoInquilino;
+	}
+
+	public String getTipoEstadoAlquiler() {
+		return tipoEstadoAlquiler;
+	}
+
+	public void setTipoEstadoAlquiler(String tipoEstadoAlquiler) {
+		this.tipoEstadoAlquiler = tipoEstadoAlquiler;
+	}
+
+	public int getOcupado() {
+		return ocupado;
+	}
+
+	public void setOcupado(int ocupado) {
+		this.ocupado = ocupado;
+	}
 
 	private Boolean activoChkPerimetroAlquiler;
 	private List<?> activosAgrupacionRestringida;
@@ -1498,13 +1558,9 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	public void setAcreedorNumExp(String acreedorNumExp) {
 		this.acreedorNumExp = acreedorNumExp;
 	}
-	
+
 	public Boolean getEnTramite() {
 		return enTramite;
-	}
-
-	public void setEnTramite(Boolean enTramite) {
-		this.enTramite = enTramite;
 	}
 
 
@@ -1532,7 +1588,11 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 		this.tienePromocion = tienePromocion;
 	}
 
-public Boolean getTienePosibleInformeMediador() {
+	public void setEnTramite(Boolean enTramite) {
+		this.enTramite = enTramite;
+	}
+
+	public Boolean getTienePosibleInformeMediador() {
 		return tienePosibleInformeMediador;
 	}
 
@@ -1626,4 +1686,25 @@ public Boolean getTienePosibleInformeMediador() {
 	public void setActivoPrincipalRestringida(Long activoPrincipalRestringida) {
 		this.activoPrincipalRestringida = activoPrincipalRestringida;
 	}
+
+	public String getMotivoActivo() {
+		return motivoActivo;
+	}
+
+	public void setMotivoActivo(String motivoActivo) {
+		this.motivoActivo = motivoActivo;
+	}
+
+	public Boolean getTieneCEE() {
+		return tieneCEE;
+	}
+
+	public void setTieneCEE(Boolean tieneCEE) {
+		this.tieneCEE = tieneCEE;
+	}
+
+	public Boolean isTieneCEE() {
+		return tieneCEE;
+	}
+	
 }

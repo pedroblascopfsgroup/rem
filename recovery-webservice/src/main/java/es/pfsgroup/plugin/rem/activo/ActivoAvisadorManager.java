@@ -48,7 +48,7 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 		
 		List<DtoAviso> listaAvisos = new ArrayList<DtoAviso>();
 		Activo activo = activoApi.get(id);
-			
+		
 		boolean restringida = false;
 		boolean obraNueva = false;
 		boolean asistida = false;

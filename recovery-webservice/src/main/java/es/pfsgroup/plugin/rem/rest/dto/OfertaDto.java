@@ -56,7 +56,12 @@ public class OfertaDto implements Serializable {
 	private Boolean financiacion;
 	@NotNull(groups = {Insert.class})
 	private Boolean isExpress;
-	
+	private String codTarea;
+	private Boolean aceptacionContraoferta;
+	private Date fechaPrevistaFirma;
+	private String lugarFirma;
+	private Date fechaFirma;
+	private Boolean firmado;
 	
 	public Long getIdOfertaWebcom() {
 		return idOfertaWebcom;
@@ -178,5 +183,41 @@ public class OfertaDto implements Serializable {
 	}
 	public void setIsExpress(Boolean isExpress) {
 		this.isExpress = isExpress;
+	}
+	public String getCodTarea() {
+		return codTarea;
+	}
+	public void setCodTarea(String codTarea) {
+		this.codTarea = codTarea;
+	}
+	public Boolean getAceptacionContraoferta() {
+		return aceptacionContraoferta;
+	}
+	public void setAceptacionContraoferta(Boolean aceptacionContraoferta) {
+		this.aceptacionContraoferta = aceptacionContraoferta;
+	}
+	public Date getFechaPrevistaFirma() {
+		return fechaPrevistaFirma;
+	}
+	public void setFechaPrevistaFirma(Date fechaPrevistaFirma) {
+		this.fechaPrevistaFirma = fechaPrevistaFirma;
+	}
+	public String getLugarFirma() {
+		return lugarFirma;
+	}
+	public void setLugarFirma(String lugarFirma) {
+		this.lugarFirma = lugarFirma;
+	}
+	public Date getFechaFirma() {
+		return fechaFirma;
+	}
+	public void setFechaFirma(Date fechaFirma) {
+		this.fechaFirma = fechaFirma;
+	}
+	public Boolean getFirmado() {
+		return firmado;
+	}
+	public void setFirmado(Boolean firmado) {
+		this.firmado = firmado;
 	}
 }

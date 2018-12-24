@@ -52,14 +52,14 @@ Ext.define('HreRem.model.Activo', {
     		},
     		{
     			name: 'isCarteraSareb',
-    			calculate: function(data) { 
+    			calculate: function(data) {
     				return data.entidadPropietariaCodigo == CONST.CARTERA['SAREB'];
     			},
     			depends: 'entidadPropietariaCodigo'
     		},
     		{
     			name: 'isCarteraCerberus',
-    			calculate: function(data) { 
+    			calculate: function(data) {
     				return data.entidadPropietariaCodigo == CONST.CARTERA['CERBERUS'];
     			},
     			depends: 'entidadPropietariaCodigo'
@@ -550,6 +550,10 @@ Ext.define('HreRem.model.Activo', {
 				type: 'boolean'
 			},
 			{
+				name: 'enTramite',
+				type: 'boolean'
+			},
+			{
 				name: 'tipoComercializacionCodigo'
 			},
 			{
@@ -702,6 +706,20 @@ Ext.define('HreRem.model.Activo', {
 				name: 'idAgrupacion'
 			},
 			{
+				name: 'ocupado'
+			},
+			{
+				name: 'tipoEstadoAlquiler'
+			},
+			{
+				name: 'tieneOfertaAlquilerViva',
+				type: 'boolean'
+			},
+			{
+				name: 'esGestorAlquiler',
+				type: 'boolean'
+			},
+			{
 				name: 'tienePosibleInformeMediador',
 				type: 'boolean'
 			},
@@ -727,6 +745,16 @@ Ext.define('HreRem.model.Activo', {
     		},
     		{
     			name: 'activoPrincipalRestringida'
+    		},
+    		{
+    			name: 'motivoActivo'
+    		},
+    		{
+    			name: 'tipoAlquilerCodigo'
+    		},
+    		{
+    			name: 'tieneCEE',
+    			type: 'boolean'
     		}
     ],
     

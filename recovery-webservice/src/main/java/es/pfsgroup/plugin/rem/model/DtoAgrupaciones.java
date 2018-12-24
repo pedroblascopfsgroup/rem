@@ -61,7 +61,7 @@ public class DtoAgrupaciones extends WebDto {
 	private String estadoActivoCodigo;
 	private String subtipoActivoCodigo;
 	private Long idNumActivoPrincipal;
-
+	private String cartera;
 
 	public Boolean getEstaCaducada() {
 		return estaCaducada;
@@ -355,11 +355,17 @@ public class DtoAgrupaciones extends WebDto {
 	public void setSubtipoActivoCodigo(String subtipoActivoCodigo) {
 		this.subtipoActivoCodigo = subtipoActivoCodigo;
 	}
-
 	public Long getIdNumActivoPrincipal() {
 		return idNumActivoPrincipal;
 	}
 	public void setIdNumActivoPrincipal(Long idNumActivoPrincipal) {
 		this.idNumActivoPrincipal = idNumActivoPrincipal;
+	}
+
+	public String getCartera() {
+		return cartera;
+	}
+	public void setCartera(String cartera) {
+		this.cartera = cartera;
 	}
 }

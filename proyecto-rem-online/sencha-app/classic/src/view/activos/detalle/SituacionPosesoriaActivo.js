@@ -30,6 +30,9 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 					}]
 				});
         me.setTitle(HreRem.i18n('title.situacion.posesoria.llaves'));
+
+        var tipoComercializacionCodigo = me.lookupViewModel().get('activo.tipoComercializacionCodigo');
+
         var items= [
 
 			{    
@@ -61,7 +64,7 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 			            			if(value=='0') {
 			            				me.up('formBase').down('[reference=comboSituacionPosesoriaConTitulo]').setStore(storeConTituloPosesionNo);
 			            			}
-			            			
+
 			            		}
 			            	}
 				        },
@@ -180,26 +183,20 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 								readOnly: '{!activo.aplicaGestion}'
 							}
 						},
-		                { 
+		                {
 
 				        	xtype: 'comboboxfieldbase',
 				        	allowBlank: false,
+				        	reference: "comboOcupadoRef", 
 							fieldLabel: HreRem.i18n('fieldlabel.ocupado'),
 				        	bind: {
 			            		store: '{comboSiNoRem}',
-			            		value: '{situacionPosesoria.ocupado}'
+			            		value : '{situacionPosesoria.ocupado}',
+			            		disabled: '{esTipoEstadoAlquilerAlquilado}', 
+			            		readOnly: '{esTipoEstadoAlquilerAlquilado}'
 			            	},
 			            	listeners: {
-			            		change: function(combo, value) {
-			            			var me = this;
-			            			if(value=='0') {
-			            				me.up('formBase').down('[reference=comboSituacionPosesoriaConTitulo]').setValue(null);
-			            				me.up('formBase').down('[reference=comboSituacionPosesoriaConTitulo]').setDisabled(true);
-			            			} else {
-			            				me.up('formBase').down('[reference=comboSituacionPosesoriaConTitulo]').setDisabled(false);
-			            			}
-			            			
-			            		}
+			            		change: 'onChangeComboOcupado'
 			            	}
 				        },				      
 				        { 
@@ -225,10 +222,12 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 							fieldLabel: HreRem.i18n('fieldlabel.con.titulo'),
 				        	bind: {
 			            		store: '{comboSiNoRem}',
-			            		value: '{situacionPosesoria.conTitulo}'
+			            		value: '{situacionPosesoria.conTitulo}',
+			            		disabled: '{esTipoEstadoAlquilerAlquilado}',
+			            		readOnly: '{esTipoEstadoAlquilerAlquilado}'  
 			            	}
 				        },
-				        { 
+				        {
 							xtype: 'textfieldbase',
 							reference: 'disponibilidadJuridicaRef',
 							fieldLabel: HreRem.i18n('fieldlabel.disponibilidad.juridica.bankia'),
@@ -368,8 +367,8 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 	                }
 				]
             },
-            {    
-                
+            {
+
 				xtype:'fieldsettable',
 				title:HreRem.i18n('title.historico.ocupaciones.ilegales'),
 				reference: 'fieldHistoricoOcupacionesIlegales',

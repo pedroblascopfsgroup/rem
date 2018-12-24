@@ -28,6 +28,8 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoForm', {
     	formDeHistorico: false,
         idHComunicacion: -1
     },
+    
+    url: $AC.getRemoteUrl("gencat/URL_GENCAT_GUARDAR_FORM"),
         
     initComponent: function () {
         
@@ -223,7 +225,8 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoForm', {
 				    				xtype: "comboboxfieldbase",
 				    				fieldLabel: HreRem.i18n('fieldlabel.estado.comunicacion'),
 				    				readOnly: true,
-				    				dataIndex: 'estadoComunicacion',
+				    				dataIndex: 'estadoComunicacion', // No borrar, aunque no es necesario para el modelo se usa en el calculo del boton anyadir notifiacion
+				    				name : 'estadoComunicacion',
 									bind: {
 										store: '{comboEstadoComunicacionGencat}',
 										value: '{gencat.estadoComunicacion}'

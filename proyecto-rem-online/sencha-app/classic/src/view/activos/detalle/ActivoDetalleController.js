@@ -3462,6 +3462,45 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		    }
     	});
 		
+	},
+	onClickGuardarComercial: function(btn) {
+		var me = this;
+
+		var genericSave = false;
+		var form;
+		var idActivo = me.getViewModel().getData().activo.id;
+		
+		var tab = btn.up().up().getActiveTab();
+		
+		if (tab.xtype === "gencatcomercialactivo") {
+			// GUARDAR PESTANYA GENCAT
+			form = tab.down('gencatcomercialactivoform');
+			genericSave = true;
+		}
+		
+		if(genericSave && form && form.isValid()) {
+    		
+            form.submit({
+                waitMsg: HreRem.i18n('msg.mask.loading'),
+                params: {
+                	idActivo: idActivo
+                },
+                success: function(fp, o) {
+
+                	if(o.result.success == "false") {
+                		me.fireEvent("errorToast", o.result.errorMessage);
+                	}
+                	else {
+                		me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+                	}
+                	
+                },
+                failure: function(fp, o) {
+                	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+                }
+            });
+        }
+
 	}
     
 });

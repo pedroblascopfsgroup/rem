@@ -239,14 +239,15 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 	},
 	
 	editFuncion: function(editor, context){
+		
 		var me= this;
 		var estado = context.record.get("codigoEstadoOferta");
 		var gencat = context.record.get("gencat");
+		var msg = HreRem.i18n('msg.desea.aceptar.oferta');
+		
 		if(CONST.ESTADOS_OFERTA['ACEPTADA'] == estado){
 			if (gencat == "true") {
-				var msg = HreRem.i18n('msg.desea.aceptar.oferta.activos.gencat');
-			} else {
-				var msg = HreRem.i18n('msg.desea.aceptar.oferta');
+				msg = HreRem.i18n('msg.desea.aceptar.oferta.activos.gencat');
 			}
 			Ext.Msg.show({
 			   title: HreRem.i18n('title.confirmar.oferta.aceptacion'),

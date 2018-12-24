@@ -184,7 +184,7 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 										        	bind: {
 									            		store: '{comboTipoDocumento}',
 									            		value: '{comprador.codTipoDocumento}',
-									            		disabled: deshabilitarCamposDoc
+									            		disabled: me.deshabilitarCamposDoc
 									            	},
 									            	allowBlank: false
 										        },
@@ -193,7 +193,7 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 													reference: 'numeroDocumento',
 										        	bind: {
 									            		value: '{comprador.numDocumento}',
-									            		disabled: deshabilitarCamposDoc
+									            		disabled: me.deshabilitarCamposDoc
 									            	},
 									            	listeners: {
 									            		change: 'onNumeroDocumentoChange'

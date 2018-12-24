@@ -223,6 +223,7 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoForm', {
 				    				xtype: "comboboxfieldbase",
 				    				fieldLabel: HreRem.i18n('fieldlabel.estado.comunicacion'),
 				    				readOnly: true,
+				    				dataIndex: 'estadoComunicacion',
 									bind: {
 										store: '{comboEstadoComunicacionGencat}',
 										value: '{gencat.estadoComunicacion}'

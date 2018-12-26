@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=SERGIO SALT
---## FECHA_CREACION=20181219
+--## FECHA_CREACION=20181222
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-4887
@@ -34,9 +34,9 @@ DECLARE
     TYPE T_ARRAY_DATA_2 IS TABLE OF T_TIPO_DATA_2;
     V_TIPO_DATA_2 T_ARRAY_DATA_2 := T_ARRAY_DATA_2(
 	
-	T_TIPO_DATA_2('01','SI'),
-	T_TIPO_DATA_2('02','NO'),
-	T_TIPO_DATA_2('03','NO, CON INDICIOS')		
+	T_TIPO_DATA_2('01','Si'),
+	T_TIPO_DATA_2('02','No'),
+	T_TIPO_DATA_2('03','No, con indicios')		
 	); 
     V_TMP_TIPO_DATA_2 T_TIPO_DATA_2;
 

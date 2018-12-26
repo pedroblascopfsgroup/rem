@@ -2264,7 +2264,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	},
 	
 	validarFechaPosicionamiento: function(value){
-		var hoy= new Date();
+		/*var hoy= new Date();
 		hoy.setHours(0,0,0,0);
 		var from = value.split("/");
 		var fechaPosiString = new Date(from[2], from[1] - 1, from[0]);
@@ -2275,7 +2275,8 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		}
 		else{
 			return true;
-		}
+		}*/
+		return true;
 	
 	},
 	buscarSucursal: function(field, e){

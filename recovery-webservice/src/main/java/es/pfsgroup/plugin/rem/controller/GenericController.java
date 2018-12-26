@@ -15,7 +15,6 @@ import org.springframework.web.bind.ServletRequestDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.json.JsonWriterConfiguratorTemplateRegistry;
 import org.springframework.web.servlet.view.json.writer.sojo.SojoConfig;
@@ -23,16 +22,12 @@ import org.springframework.web.servlet.view.json.writer.sojo.SojoJsonWriterConfi
 
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.pfs.diccionarios.Dictionary;
-import es.capgemini.pfs.users.domain.Perfil;
-import es.capgemini.pfs.users.domain.Usuario;
-import es.capgemini.pfs.zona.model.ZonaUsuarioPerfil;
 import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.GenericApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.model.AuthenticationData;
 import es.pfsgroup.plugin.rem.model.DtoMenuItem;
-import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.rest.dto.DDTipoDocumentoActivoDto;
@@ -84,12 +79,17 @@ public class GenericController extends ParadiseJsonController{
 	}
 	
 	@RequestMapping(method = RequestMethod.GET)
+
 	public ModelAndView getDiccionarioDeGastos(String diccionario) {	
 		
 		return createModelAndViewJson(new ModelMap("data", adapter.getDiccionarioDeGastos(diccionario)));
 		
 	}
 
+	public ModelAndView getDiccionarioByTipoOferta(String diccionario, String codTipoOferta) { 	
+		
+		return createModelAndViewJson(new ModelMap("data", genericApi.getDiccionarioByTipoOferta(diccionario, codTipoOferta)));
+	}
 
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getDiccionarioTiposDocumento(String diccionario) {	
@@ -234,6 +234,7 @@ public class GenericController extends ParadiseJsonController{
 		return new ModelAndView("jsonView", model);
 	}
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getComboTipoGestorByActivo(WebDto webDto, ModelMap model, String idActivo){
 		model.put("data", genericApi.getComboTipoGestorByActivo(webDto, model, idActivo));
@@ -276,8 +277,8 @@ public class GenericController extends ParadiseJsonController{
 	}
 	
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getComboSubtipoTrabajo(String tipoTrabajoCodigo){
-		return createModelAndViewJson(new ModelMap("data", genericApi.getComboSubtipoTrabajo(tipoTrabajoCodigo)));	
+	public ModelAndView getComboSubtipoTrabajo(String tipoTrabajoCodigo, Long idActivo){
+		return createModelAndViewJson(new ModelMap("data", genericApi.getComboSubtipoTrabajo(tipoTrabajoCodigo, idActivo)));	
 	}
 	
 	@RequestMapping(method = RequestMethod.GET)
@@ -359,6 +360,16 @@ public class GenericController extends ParadiseJsonController{
 	}
 	
 	@RequestMapping(method= RequestMethod.GET)
+	public ModelAndView getComitesAlquilerByCartera(Long idActivo, ModelMap model){
+		return createModelAndViewJson(new ModelMap("data", genericApi.getComitesAlquilerByCartera(idActivo)));	
+	}
+	
+	@RequestMapping(method= RequestMethod.GET)
+	public ModelAndView getComitesAlquilerByCarteraCodigo(String carteraCodigo, ModelMap model){
+		return createModelAndViewJson(new ModelMap("data", genericApi.getComitesAlquilerByCarteraCodigo(carteraCodigo)));	
+	}
+
+	@RequestMapping(method= RequestMethod.GET)
 	public ModelAndView getComboTipoAgrupacion() {
 		return createModelAndViewJson(new ModelMap("data", genericApi.getComboTipoAgrupacion()));
 	}
@@ -368,4 +379,5 @@ public class GenericController extends ParadiseJsonController{
 	{
 		return createModelAndViewJson(new ModelMap("data", genericApi.getTodosComboTipoAgrupacion()));
 	}
+
 }

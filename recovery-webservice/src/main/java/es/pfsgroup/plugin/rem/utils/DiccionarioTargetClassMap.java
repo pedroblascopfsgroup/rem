@@ -164,10 +164,13 @@ public class DiccionarioTargetClassMap{
 		mapa.put("accionesGasto", DDAccionGastos.class);
 		mapa.put("estadosDevolucion", DDEstadoDevolucion.class);
 		mapa.put("motivoAnulacionExpediente", DDMotivoAnulacionExpediente.class);
+		mapa.put("motivoRechazoExpediente", DDMotivoRechazoExpediente.class);
+		mapa.put("motivoAnulacionOferta", DDMotivoAnulacionOferta.class);
 		mapa.put("operativa", DDOperativa.class);
 		mapa.put("tiposComercializacionActivo", DDTipoComercializacion.class);
 		mapa.put("tiposComercializarActivo", DDTipoComercializar.class);
 		mapa.put("tiposAlquilerActivo", DDTipoAlquiler.class);
+		mapa.put("tiposEstadoAlquiler", DDTipoEstadoAlquiler.class);
 		mapa.put("resultadoTanteo", DDResultadoTanteo.class);
 		mapa.put("tipoTenedor", DDTipoTenedor.class);
 		mapa.put("tipoOperacionGasto", DDTipoOperacionGasto.class);
@@ -197,6 +200,10 @@ public class DiccionarioTargetClassMap{
 		mapa.put("tareaDestinoSalto", DDTareaDestinoSalto.class);
 		mapa.put("countries", DDCicCodigoIsoCirbeBKP.class);
 		mapa.put("calculoImpuesto", DDCalculoImpuesto.class);
+		mapa.put("tiposInquilino", DDTipoInquilino.class);
+		mapa.put("estadoScoring", DDEstadoScoring.class);
+		mapa.put("estadoSeguroRentas", DDEstadoSeguroRentas.class);
+		mapa.put("entidadesAvalistas", DDEntidadesAvalistas.class);
 		mapa.put("tiposDocumentoPromocion", DDTipoDocumentoPromocion.class);
 		mapa.put("estadosReserva", DDEstadosReserva.class);
 		mapa.put("situacionActivo", DDSituacionActivo.class);

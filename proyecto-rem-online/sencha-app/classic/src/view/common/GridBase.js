@@ -55,6 +55,7 @@ Ext.define('HreRem.view.common.GridBase', {
 		me.addCls('panel-base shadow-panel grid-base');
 		
 		me.emptyText = HreRem.i18n("grid.empty.text");
+
 		
 		if(me.topBar) {
 
@@ -73,14 +74,13 @@ Ext.define('HreRem.view.common.GridBase', {
 					// ^- HREOS-2775 Este item se queda es standby
 				}
 			}
-			
-			me.tbar = {
-	    		xtype: 'toolbar',
-	    		dock: 'top',
-	    		tipo: 'toolbarañadireliminar',
-	    		items: [configAddButton, configRemoveButton] //, configPropagationButton] <- HREOS-2775 Este item se queda es standby
-    		};
 
+			me.tbar = {
+				xtype: 'toolbar',
+				dock: 'top',
+				tipo: 'toolbarañadireliminar',
+				items: [configAddButton, configRemoveButton] //, configPropagationButton] <- HREOS-2775 Este item se queda es standby
+			};
 		};
 		
 		me.addListener('selectionchange', function(grid, records) {

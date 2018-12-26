@@ -96,7 +96,7 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoExpediente', {
 						        	reference: 'filtroComboTipoDocumentoExpediente',
 						        	name: 'tipo',
 					            	bind: {
-					            		store: '{comboTipoDocumento}'
+					            		store: '{comboTipoDoc}'
 					            	},
 									allowBlank: false,
 									publishes: 'value'

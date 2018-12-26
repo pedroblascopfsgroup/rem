@@ -249,11 +249,19 @@ public class Trabajo implements Serializable, Auditable {
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="TBJ_RESPONSABLE_TRABAJO")
-    private Usuario responsableTrabajo;
+    private Usuario usuarioResponsableTrabajo;
     
+    public Usuario getUsuarioResponsableTrabajo() {
+		return usuarioResponsableTrabajo;
+	}
+
+	public void setUsuarioResponsableTrabajo(Usuario usuarioResponsableTrabajo) {
+		this.usuarioResponsableTrabajo = usuarioResponsableTrabajo;
+	}
+
     @Column(name="TBJ_REQUERIMIENTO")
     private Boolean requerimiento;
-    
+
    	@Column(name="STR_TARIFA_PLANA")
     private Boolean esTarifaPlana = false;
     
@@ -273,14 +281,6 @@ public class Trabajo implements Serializable, Auditable {
 	public Long getId() {
 		return id;
 	}
-	
-	 public Usuario getResponsableTrabajo() {
-			return responsableTrabajo;
-		}
-
-		public void setResponsableTrabajo(Usuario responsableTrabajo) {
-			this.responsableTrabajo = responsableTrabajo;
-		}
 
 	public void setId(Long id) {
 		this.id = id;

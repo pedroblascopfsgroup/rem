@@ -23,6 +23,7 @@ public class DtoOfertasFilter extends WebDto {
 	private String fechaAltaHasta;
 	private Long numExpediente;
 	private String estadoExpediente;
+	private String[] estadosExpedienteAlquiler;
 	private String[] estadosExpediente;
 	private String subtipoActivo;
 	private String importeOferta;
@@ -138,6 +139,12 @@ public class DtoOfertasFilter extends WebDto {
 	}
 	public void setEstadosExpediente(String[] estadosExpediente) {
 		this.estadosExpediente = estadosExpediente;
+	}
+	public String[] getEstadosExpedienteAlquiler() {
+		return estadosExpedienteAlquiler;
+	}
+	public void setEstadosExpedienteAlquiler(String[] estadosExpedienteAlquiler) {
+		this.estadosExpedienteAlquiler = estadosExpedienteAlquiler;
 	}
 	public String getSubtipoActivo() {
 		return subtipoActivo;

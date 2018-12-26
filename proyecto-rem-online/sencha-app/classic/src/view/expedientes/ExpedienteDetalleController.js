@@ -1786,53 +1786,65 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 
 	borrarComprador: function(grid, record) {
 		var me = this;
-		idExpediente = me.getViewModel().get("expediente.id");
-		codigoEstado= me.getViewModel().get("expediente.codigoEstado");
-		idComprador= record.get('id');
-		tipoExpedienteCodigo = me.getViewModel().get("expediente.tipoExpedienteCodigo");
-		origen = me.getViewModel().get("expediente.origen");
-		bloqueado = me.getViewModel().get("expediente.bloqueado");
-		fechaSancion = me.getViewModel().get('expediente.fechaSancion');
-		tipoOrigenWCOM = CONST.TIPOS_ORIGEN["WCOM"];
-		if(!bloqueado){
-				if(CONST.ESTADOS_EXPEDIENTE['VENDIDO']!=codigoEstado){
-					record.erase({
-						params: {idExpediente: idExpediente, idComprador: idComprador},
-			            success: function(record, operation) {
-			            	if(CONST.TIPOS_EXPEDIENTE_COMERCIAL['ALQUILER'] == tipoExpedienteCodigo && tipoOrigenWCOM != origen){
-				            	if(Ext.isEmpty(fechaSancion)){
-				            		me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-								} else {
-									me.fireEvent("errorToast","Expediente sancionado");
-								}
-				            }else{
-				            	me.fireEvent("errorToast","Expediente con origen WCOM");
-				            }
-			           		 grid.fireEvent("afterdelete", grid);
-			           		 me.onClickBotonRefrescar();
-			            },
-			            failure: function(record, operation) {
-			            	var data = {};
-						    try {
-						    	data = Ext.decode(operation._response.responseText);
-						    }
-						    catch (e){ };
-						    	if (!Ext.isEmpty(data.msg)) {
-						        	me.fireEvent("errorToast", data.msg);
-						        } 
-						        else {
-						        	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-						        }
-			                  grid.fireEvent("afterdelete", grid);
-			            }
-			            
-			        });	
-				}
-				else{
+		var idExpediente = me.getViewModel().get("expediente.id");
+		var codigoEstado= me.getViewModel().get("expediente.codigoEstado");
+		var idComprador= record.get('id');
+		var tipoExpedienteCodigo = me.getViewModel().get("expediente.tipoExpedienteCodigo");
+		var origen = me.getViewModel().get("expediente.origen");
+		var bloqueado = me.getViewModel().get("expediente.bloqueado");
+		var fechaSancion = me.getViewModel().get('expediente.fechaSancion');
+		var tipoOrigenWCOM = CONST.TIPOS_ORIGEN["WCOM"];
+		var llamada = false;
+		
+		if(CONST.TIPOS_EXPEDIENTE_COMERCIAL['VENTA'] == tipoExpedienteCodigo) {
+			if(!bloqueado) {
+				if(CONST.ESTADOS_EXPEDIENTE['VENDIDO']!=codigoEstado) {
+					if(tipoOrigenWCOM != origen) {
+						llamada = true;
+					} else {
+		            	me.fireEvent("errorToast","Expediente con origen WCOM");
+		            }
+				} else {
 					me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.expediente.vendido"));
 				}
-		}else{
-			me.fireEvent("errorToast", "Expediente bloqueado");
+			} else {
+				me.fireEvent("errorToast", "Expediente bloqueado");
+			}
+		} else if(CONST.TIPOS_EXPEDIENTE_COMERCIAL['ALQUILER'] == tipoExpedienteCodigo) {
+			if(tipoOrigenWCOM != origen) {
+				if(Ext.isEmpty(fechaSancion)) {
+					llamada = true;
+				} else {
+					me.fireEvent("errorToast","Expediente sancionado");
+				}
+			} else {
+            	me.fireEvent("errorToast","Expediente con origen WCOM");
+            }
+		}
+		
+		if(llamada == true) {
+			record.erase({
+				params: {idExpediente: idExpediente, idComprador: idComprador},
+	            success: function(record, operation) {
+	            	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+	            	grid.fireEvent("afterdelete", grid);
+	           		me.onClickBotonRefrescar();
+	            },
+				failure: function(record, operation) {
+	            	var data = {};
+				    try {
+				    	data = Ext.decode(operation._response.responseText);
+				    }
+				    catch (e){ };
+			    	if (!Ext.isEmpty(data.msg)) {
+			        	me.fireEvent("errorToast", data.msg);
+			        } 
+			        else {
+			        	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+			        }
+	                grid.fireEvent("afterdelete", grid);
+	            }
+			});
 		}
 	},
 

@@ -4837,13 +4837,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			CompradorExpediente compradorExpediente = genericDao.get(CompradorExpediente.class, filtroExpediente, filtroComprador);
 
 			if (!Checks.esNulo(compradorExpediente)) {
-				if (!Checks.esNulo(compradorExpediente.getTitularContratacion())) {
-					if (compradorExpediente.getTitularContratacion() == 0) {
+				if (!Checks.esNulo(compradorExpediente.getTitularContratacion()) && compradorExpediente.getTitularContratacion() == 0) {
 						expedienteComercialDao.deleteCompradorExpediente(idExpediente, idComprador);
 						ExpedienteComercial expediente = genericDao.get(ExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "id", idExpediente));
 						ofertaApi.resetPBC(expediente, true);
-					}
-
 				} else {
 					throw new JsonViewerException("Operación no permitida, por ser el titular de la contratación");
 				}

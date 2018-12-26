@@ -3326,7 +3326,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		Oferta oferta = null;
 		ExpedienteComercial expediente = findOne(idExpedienteComercial);
 		List<ActivoTramite> listaTramites = null;
-		listaTramites = activoTramiteApi.getTramitesActivoTrabajoList(expediente.getTrabajo().getId());
+		if(expediente.getTrabajo() != null){
+			listaTramites = activoTramiteApi.getTramitesActivoTrabajoList(expediente.getTrabajo().getId());
+		}
+		
 		String reultadoTramite = "venta";
 		try {
 			if (!Checks.esNulo(expediente)) {

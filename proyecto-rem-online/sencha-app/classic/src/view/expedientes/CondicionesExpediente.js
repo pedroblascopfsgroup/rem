@@ -928,7 +928,80 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 						]
 					}
 				]
-			} 
+			},
+			{   
+				xtype:'fieldsettable',
+				defaultType: 'displayfieldbase',
+				bind: {
+					hidden: '{!esOfertaVenta}',
+					disabled: '{!esOfertaVenta}'
+				},
+				title: HreRem.i18n('title.condicionantes.administrativos'),
+				items : [
+				
+							{ 
+								xtype:'comboboxfieldbase',
+			                	fieldLabel:  HreRem.i18n('fieldlabel.vpo'),
+								reference: 'comboVpo',
+								bind: {
+			            			store: '{comboSiNoRem}',
+			            			value: '{condiciones.vpo}'
+			            		},
+		    					listeners: {
+		    						edit:  'cargaValorVpo'
+			            		}
+					        },
+					        { 
+								xtype: 'comboboxfieldbase',
+			                	fieldLabel:  HreRem.i18n('fieldlabel.procede.descalificacion'),
+			                	reference: 'procedeDescalificacionRef',
+					        	bind: {
+				            		store: '{comboSiNoRem}',
+				            		value: '{condiciones.procedeDescalificacion}'
+				            	},
+				            	listeners: {
+				            		change: 'onHaCambiadoProcedeDescalificacion'
+				            	},
+		    					disabled: true
+					        },
+					        { 
+								xtype: 'comboboxfieldbase',
+							    fieldLabel:  HreRem.i18n('fieldlabel.por.cuenta.de'),
+								bind: {
+									store: '{comboTiposPorCuenta}',
+								    value: '{condiciones.procedeDescalificacionPorCuentaDe}'
+								},
+								reference: 'procedeDescalificacionPorCuentaDe',
+								disabled: true
+					        },	
+					        { 
+								xtype: 'textfieldbase',
+			                	fieldLabel:  HreRem.i18n('fieldlabel.licencia'),
+					        	bind: {
+				            		value: '{condiciones.licencia}'
+				            	},
+				            	listeners: {
+				            		change: 'onHaCambiadoLicencia'
+				            	}
+					        },
+					        
+					        {
+					        					        						        	
+					        },
+					        { 
+								xtype: 'comboboxfieldbase',
+							    fieldLabel:  HreRem.i18n('fieldlabel.por.cuenta.de'),
+								bind: {
+									store: '{comboTiposPorCuenta}',
+								    value: '{condiciones.licenciaPorCuentaDe}'
+								},
+								reference: 'licenciaPorCuentaDe',
+								disabled: true
+					        }
+				
+				
+		        ]
+			}
 		];
 		me.addPlugin({
 			ptype : 'lazyitems',

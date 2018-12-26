@@ -5,43 +5,52 @@ Ext.define('HreRem.view.activos.detalle.NotificacionesActivoList', {
     bind: {
         store: '{storeNotificacionesActivo}'
     },
-    topBar:  true,
+    topBar:  false,
     removeButton: false,
     
     estaComunicado: false,
+    addButton:  false,
+    hideButton : function(me) {
+
+    	var parent = me.up().up().up();
+    	var estado = parent.form.findField('estadoComunicacion');
+    	if (estado) { 
+    		estado = estado.value;
+    	}
+    	var hide = estado === CONST.ESTADO_COMUNICACION_GENCAT['COMUNICADO'] ? false : true;
+    	if (me.down('toolbar')) {
+    		me.down('toolbar').setHidden(hide);
+    	}
+    	
+    },
         
     initComponent: function () {
         
         var me = this; 
         
-        //me.estaComunicado = me.up("gencatcomercialactivoform").estaComunicado;
-        //debugger;
-        //TODO: Evitar que se muestre o esté activado este botón dependiendo del estado de la comunicación
-        //me.addButton = '{!gencat.estaComunicado}'; 
-        
         me.columns= [
 		        {
 		            dataIndex: 'fechaNotificacion',
-		            text: HreRem.i18n('fieldlabel.motivo'), 
+		            text: HreRem.i18n('fieldlabel.fecha.notificacion'),
 		            formatter: 'date("d/m/Y")',
 		            flex: 1
 		        },
 		        {
 		            dataIndex: 'motivoNotificacion',
 		            text: HreRem.i18n('fieldlabel.motivo'),
-		            flex: 1
+		            flex: 2
 		        },
 		        {
 		            dataIndex: 'fechaSancionNotificacion',
-		            text: HreRem.i18n('fieldlabel.motivo'),
+		            text: HreRem.i18n('fieldlabel.fecha.sancion.notificacion'),
 		            formatter: 'date("d/m/Y")',
 		            flex: 1
 		        },
 		        {
 		            dataIndex: 'cierreNotificacion',
-		            text: HreRem.i18n('fieldlabel.motivo'),
+		            text: HreRem.i18n('fieldlabel.cierre.notificacion'),
 		            formatter: 'date("d/m/Y")',
-		            flex: 1
+		            flex: 2
 		        }
         ];
         
@@ -58,9 +67,23 @@ Ext.define('HreRem.view.activos.detalle.NotificacionesActivoList', {
 		            }
 		        }
 		];
-		    
-        me.callParent(); 
         
+        me.tbar =  {
+    			xtype: 'toolbar',
+    			dock: 'top',
+    			hidden: true,
+    			items: [
+    					{itemId: 'addButton', iconCls:'x-fa fa-plus', handler: 'onAddClick', hidden: false, scope: this}
+    			]
+		};
+        
+        me.callParent();
+        setTimeout(function(){me.hideButton(me)}, 4000);
+        
+    },
+    onAddClick: function(btn) {
+    	var me = this;
+    	me.lookupController().abrirFormularioCrearNotificacion(me);
     }
 
 

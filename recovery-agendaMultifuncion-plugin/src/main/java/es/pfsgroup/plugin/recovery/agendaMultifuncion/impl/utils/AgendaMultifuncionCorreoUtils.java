@@ -14,8 +14,6 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -29,13 +27,13 @@ import es.pfsgroup.recovery.Encriptador;
 @Component
 public class AgendaMultifuncionCorreoUtils {	
 
-	private final Log logger = LogFactory.getLog(getClass());
-
+	
 	private static final String MAIL_SMTP_USER = "mail.smtp.user";
 	private static final String MAIL_SMTP_AUTH = "mail.smtp.auth";
 	private static final String MAIL_SMTP_PORT = "mail.smtp.port";
 	private static final String MAIL_SMTP_STARTTLS_ENABLE = "mail.smtp.starttls.enable";
 	private static final String MAIL_SMTP_HOST = "mail.smtp.host";
+	private static final String MAIL_SMTP_DEBUG = "mail.smtp.debug";
 	private static final String TRANSPORT_SMTP = "smtp";
 
 	
@@ -54,134 +52,145 @@ public class AgendaMultifuncionCorreoUtils {
 	@Autowired
 	private Executor executor;
 	
-	public void enviarCorreoConAdjuntos(String emailFrom, List<String> mailsPara
-			,List<String> direccionesMailCc, String asuntoMail, String cuerpoEmail, List<DtoAdjuntoMail> list) throws Exception {
+	public void enviarCorreoConAdjuntos(String emailFrom, List<String> mailsPara, List<String> direccionesMailCc,
+			String asuntoMail, String cuerpoEmail, List<DtoAdjuntoMail> list) throws Exception {
+		
+		if(mailsPara == null || mailsPara.isEmpty()){
+			return;
+		}
 
-		try {
-			
-			// Propiedades de la conexión
-			Properties props = getPropiedades();
-			
-			// Preparamos la sesion
-			Session session = Session.getDefaultInstance(props);
-			session.setDebugOut(System.out);
-			session.setDebug(true);
-			
-			MimeMessage message = new MimeMessage(session);
-			
-            //Carga el email FROM directamente del DEVON.PROP, si existe el parametro
-			if(Checks.esNulo(emailFrom)) {
-				emailFrom = appProperties.getProperty(FROM);
-			}
-			
-			for (String emailPara: mailsPara) {				
+		// Propiedades de la conexion
+		Properties props = getPropiedades();
+
+		
+		// Preparamos la sesion
+		Session session = Session.getDefaultInstance(props);
+		session.setDebugOut(System.out);
+		session.setDebug(false);
+
+		MimeMessage message = new MimeMessage(session);
+
+		// Carga el email FROM directamente del DEVON.PROP, si existe el
+		// parametro
+		if (Checks.esNulo(emailFrom)) {
+			emailFrom = appProperties.getProperty(FROM);
+		}
+
+		for (String emailPara : mailsPara) {
+			if(emailPara != null){
 				message.addRecipient(Message.RecipientType.TO, new InternetAddress(emailPara));
 			}
+			
+		}
 
-			if (direccionesMailCc != null && direccionesMailCc.size() > 0) {				
-				for (String emailCC: direccionesMailCc) {					
-					message.addRecipient(Message.RecipientType.CC, new InternetAddress(emailCC));	
+		if (direccionesMailCc != null && direccionesMailCc.size() > 0) {
+			for (String emailCC : direccionesMailCc) {
+				if(emailCC != null){
+					message.addRecipient(Message.RecipientType.CC, new InternetAddress(emailCC));
+				}
+				
+			}
+		}
+
+		message.setSubject(asuntoMail);
+
+		// Si hay adjuntos los añadimos
+		if (!Checks.esNulo(list) && !Checks.estaVacio(list)) {
+			Multipart multipart = new MimeMultipart("mixed");
+			for (DtoAdjuntoMail adj : list) {
+
+				MimeBodyPart messageAttachment = new MimeBodyPart();
+				messageAttachment.attachFile(adj.getAdjunto().getFileItem().getFile());
+				messageAttachment.setFileName(adj.getNombre());
+				multipart.addBodyPart(messageAttachment);
+			}
+
+			MimeBodyPart htmlPart = new MimeBodyPart();
+			htmlPart.setContent(cuerpoEmail, "text/html; charset=utf-8");
+			multipart.addBodyPart(htmlPart);
+			message.setContent(multipart);
+
+		} else {
+
+			message.setText(cuerpoEmail, "UTF-8", "html");
+		}
+
+		// Lo enviamos.
+		Transport t = session.getTransport(TRANSPORT_SMTP);
+
+		// validacion de usuario que envia
+		String usuario = null;
+		String passValueProp = null;
+		String pass = null;
+
+		String usuarioBD = null;
+		String passValuePropBD = null;
+		String passBB = null;
+
+		// Variables desde el DEVON
+		usuario = props.getProperty(MAIL_SMTP_USER);
+		passValueProp = appProperties.getProperty(PWD_CORREO);
+
+		try {
+
+			// Obtenemos desde BBDD en primera instancia
+			Parametrizacion usuarioBBDD = (Parametrizacion) executor.execute(
+					ConfiguracionBusinessOperation.BO_PARAMETRIZACION_MGR_BUSCAR_PARAMETRO_POR_NOMBRE,
+					Parametrizacion.ANOTACIONES_MAIL_SMTP_USER);
+			Parametrizacion passValuePropBBDD = (Parametrizacion) executor.execute(
+					ConfiguracionBusinessOperation.BO_PARAMETRIZACION_MGR_BUSCAR_PARAMETRO_POR_NOMBRE,
+					Parametrizacion.ANOTACIONES_PWD_CORREO);
+			Parametrizacion mailFromPropBBDD = (Parametrizacion) executor.execute(
+					ConfiguracionBusinessOperation.BO_PARAMETRIZACION_MGR_BUSCAR_PARAMETRO_POR_NOMBRE,
+					Parametrizacion.ANOTACIONES_EMAIL_FROM);
+
+			// Variables desde BBDD
+			usuarioBD = usuarioBBDD.getValor();
+			passValuePropBD = passValuePropBBDD.getValor().trim();
+
+			// Si existe el parametro FROM en BBDD, sobreescribe el valor tomado
+			// del DEVON.PROP
+			if (!Checks.esNulo(mailFromPropBBDD)) {
+				if (!Checks.esNulo(mailFromPropBBDD.getValor())) {
+					emailFrom = mailFromPropBBDD.getValor().trim();
 				}
 			}
-			
-			message.setSubject(asuntoMail);
 
-			// Si hay adjuntos los añadimos	
-			if(!Checks.esNulo(list) && !Checks.estaVacio(list)){
-				 Multipart multipart = new MimeMultipart("mixed");
-				 for(DtoAdjuntoMail adj : list){
-					 	
-						MimeBodyPart messageAttachment = new MimeBodyPart();    
-			            messageAttachment.attachFile(adj.getAdjunto().getFileItem().getFile());
-				        messageAttachment.setFileName(adj.getNombre());
-				        multipart.addBodyPart(messageAttachment);
-				 }	
-				 
-				 MimeBodyPart htmlPart = new MimeBodyPart();
-				 htmlPart.setContent(cuerpoEmail, "text/html; charset=utf-8");			     
-				 multipart.addBodyPart(htmlPart);
-				 message.setContent(multipart);
+			String passValueParsed = passValueProp.replaceAll("\\\\", "");
+			pass = Encriptador.desencriptarPw(passValueParsed);
+		} catch (Exception ee) {
+			// Si da error la desencriptación o el parseo lo intentaremos
+			// con el valor obtenido del properties directamente.
+			pass = passValueProp;
+			// logger.error("[AgendaMultifuncionCorreoUtils.enviarCorreoConAdjuntos]
+			// ee="+ ee.getMessage());
+		}
 
-			} else {
-				
-				message.setText(cuerpoEmail, "UTF-8", "html");
-			}
+		// Settea Email From cargado de BBDD o del devon.prop, con esa prioridad
+		// en el origen del valor
+		message.setFrom(new InternetAddress(emailFrom));
 
-			// Lo enviamos.
-			Transport t = session.getTransport(TRANSPORT_SMTP);
-
-			// validacion de usuario que envia
-			String usuario = null;
-			String passValueProp = null;
-			String pass = null;
-			
-			String usuarioBD = null;
-			String passValuePropBD = null;
-			String passBB = null;
-			
-			//Variables desde el DEVON
-			usuario = props.getProperty(MAIL_SMTP_USER);
-			passValueProp = appProperties.getProperty(PWD_CORREO);
-			
+		if (!Checks.esNulo(usuarioBD)) {
 			try {
-				
-				// Obtenemos desde BBDD en primera instancia
-				Parametrizacion usuarioBBDD = (Parametrizacion) executor.execute(ConfiguracionBusinessOperation.BO_PARAMETRIZACION_MGR_BUSCAR_PARAMETRO_POR_NOMBRE,
-						Parametrizacion.ANOTACIONES_MAIL_SMTP_USER);
-				Parametrizacion passValuePropBBDD = (Parametrizacion) executor.execute(ConfiguracionBusinessOperation.BO_PARAMETRIZACION_MGR_BUSCAR_PARAMETRO_POR_NOMBRE,
-						Parametrizacion.ANOTACIONES_PWD_CORREO);
-				Parametrizacion mailFromPropBBDD = (Parametrizacion) executor.execute(ConfiguracionBusinessOperation.BO_PARAMETRIZACION_MGR_BUSCAR_PARAMETRO_POR_NOMBRE,
-						Parametrizacion.ANOTACIONES_EMAIL_FROM);
-	
-				//Variables desde BBDD
-				usuarioBD = usuarioBBDD.getValor();
-				passValuePropBD = passValuePropBBDD.getValor().trim();
-                                
-                                //Si existe el parametro FROM en BBDD, sobreescribe el valor tomado del DEVON.PROP
-                                if(!Checks.esNulo(mailFromPropBBDD)) {
-                                    if(!Checks.esNulo(mailFromPropBBDD.getValor())){
-                                        emailFrom = mailFromPropBBDD.getValor().trim();
-                                    }
-                                }
-			
-				String passValueParsed = passValueProp.replaceAll("\\\\", "");
-				pass = Encriptador.desencriptarPw(passValueParsed);
+				String passValueParsed = passValuePropBD.replaceAll("\\\\", "");
+				passBB = Encriptador.desencriptarPw(passValueParsed);
 			} catch (Exception ee) {
-				// Si da error la desencriptación o el parseo lo intentaremos
-				// con el valor obtenido del properties directamente.
-				pass = passValueProp;
-			//	logger.error("[AgendaMultifuncionCorreoUtils.enviarCorreoConAdjuntos] ee="+ ee.getMessage());
+				// Si da error la desencriptación o el parseo lo
+				// intentaremos con el valor obtenido del properties
+				// directamente.
+				passBB = passValuePropBD;
+				// logger.error("[AgendaMultifuncionCorreoUtils.enviarCorreoConAdjuntos]
+				// ee="+ ee.getMessage());
 			}
-
-                        //Settea Email From cargado de BBDD o del devon.prop, con esa prioridad en el origen del valor
-                        message.setFrom(new InternetAddress(emailFrom));
-                        
-			if (!Checks.esNulo(usuarioBD)) {
-				try {
-					String passValueParsed = passValuePropBD.replaceAll("\\\\", "");
-					passBB = Encriptador.desencriptarPw(passValueParsed);
-				} catch (Exception ee) {
-					// Si da error la desencriptación o el parseo lo
-					// intentaremos con el valor obtenido del properties
-					// directamente.
-					passBB = passValuePropBD;
-					//logger.error("[AgendaMultifuncionCorreoUtils.enviarCorreoConAdjuntos] ee="+ ee.getMessage());
-				}
-				try {
-					envioCorreoGenerico(message, t, usuarioBD, passBB);
-				} 
-				catch (Exception e) {
-					envioCorreoGenerico(message, t, usuario, pass);
-				}
-			} else {
+			try {
+				envioCorreoGenerico(message, t, usuarioBD, passBB);
+			} catch (Exception e) {
 				envioCorreoGenerico(message, t, usuario, pass);
 			}
+		} else {
+			envioCorreoGenerico(message, t, usuario, pass);
 		}
 
-		catch (Exception e) {
-			logger.error("\n" + e.getMessage() + "\n");
-			throw new Exception(e);
-		}
 	}
 
 	private void envioCorreoGenerico(MimeMessage message, Transport t,
@@ -216,6 +225,8 @@ public class AgendaMultifuncionCorreoUtils {
 		}
 		
 		props.setProperty(MAIL_SMTP_USER, appProperties.getProperty(USUARIO_CORREO));
+		
+		props.setProperty(MAIL_SMTP_DEBUG, "false");
 		
 		return props;
 	}

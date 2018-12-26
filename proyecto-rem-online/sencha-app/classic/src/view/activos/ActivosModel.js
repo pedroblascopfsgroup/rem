@@ -22,6 +22,7 @@ Ext.define('HreRem.view.activos.ActivosModel', {
 			    	session: true,
 			    	remoteSort: true,
 			    	remoteFilter: true,
+			    	autoLoad:false,
 			    	listeners : {
 			            beforeload : 'paramLoading'
 			        }
@@ -189,7 +190,16 @@ Ext.define('HreRem.view.activos.ActivosModel', {
 					}
 				}
 			},
-			
+
+			comboAdecuaciones: {
+				model: 'HreRem.model.ComboBase',
+					proxy: {
+						type: 'uxproxy',
+						remoteUrl: 'generic/getDiccionario',
+						extraParams: {diccionario: 'adecuaciones'}
+					}
+			},
+
 			comboTipoTituloPosesorio: {
 				model: 'HreRem.model.ComboBase',
 				proxy: {

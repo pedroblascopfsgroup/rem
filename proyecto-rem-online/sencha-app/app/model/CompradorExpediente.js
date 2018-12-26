@@ -66,6 +66,9 @@ Ext.define('HreRem.model.CompradorExpediente', {
     		},
     		{
     			name:'descripcionGradoPropiedad'
+    		},
+    		{
+    			name:'numeroClienteUrsus'
     		}
     		
     ],

@@ -42,6 +42,7 @@ public interface GestorActivoApi extends GestorEntidadApi {
 	public static final String CODIGO_SUPERVISOR_RESERVA_CAJAMAR = "SUPRES";
 	public static final String CODIGO_SUPERVISOR_MINUTA_CAJAMAR = "SUPMIN";
 	public static final String CIF_PROVEEDOR_BANKIA_SAREB_TINSA = "B86689494";
+	public static final String CIF_PROVEEDOR_HOMESERVE = "A82451410";
 	public static final String CODIGO_TIPO_PROVEEDOR_TECNICO="PTEC";
 	public static final String CODIGO_GESTOR_GOLDEN_TREE = "GTREE";
 	public static final String CODIGO_GESTOR_COMITE_DIRECCION_LIBERBANK = "GCODI";
@@ -50,6 +51,8 @@ public interface GestorActivoApi extends GestorEntidadApi {
 	public static final String CODIGO_GESTOR_COMITE_INVERSION_INMOBILIARIA_LIBERBANK = "GCOIN";
 	public static final String CODIGO_GESTOR_COMITE_INMOBILIARIO_LIBERBANK = "GCOINM";
 	public static final String CODIGO_GESTOR_LIBERBANK_RESIDENCIAL = "GLIBRES";
+	public static final String CODIGO_GESTOR_COMERCIAL_ALQUILERES = "GESTCOMALQ";
+	public static final String CODIGO_SUPERVISOR_COMERCIAL_ALQUILERES = "SUPCOMALQ";
 	public static final String CODIGO_SUPERVISOR_COMERCIAL_BACKOFFICE_INMOBILIARIO_LIBERBANK= "SBACKOFFICEINMLIBER";
 	public static final String CODIGO_SUPERVISOR_ALQUILERES = "SUALQ";
 	public static final String CODIGO_GESTOR_ALQUILERES = "GALQ";
@@ -57,6 +60,8 @@ public interface GestorActivoApi extends GestorEntidadApi {
 	public static final String CODIGO_SUPERVISOR_SUELOS = "SUPSUE";
 	public static final String CODIGO_GESTOR_EDIFICACIONES = "GEDI";
 	public static final String CODIGO_SUPERVISOR_EDIFICACIONES = "SUPEDI";
+	public static final String CODIGO_GESTOR_LLAVES = "GLLA";
+	public static final String CODIGO_GESTOR_HPM = "GALQ";
 	public static final String CODIGO_GESTOR_PUBLICACION= "GPUBL";
 	public static final String CODIGO_SUPERVISOR_PUBLICACION = "SPUBL";
 	

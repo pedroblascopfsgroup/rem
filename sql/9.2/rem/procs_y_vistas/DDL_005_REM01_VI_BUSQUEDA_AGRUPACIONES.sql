@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Sergio Ortuño
---## FECHA_CREACION=20171129
+--## AUTOR=Carles Molins
+--## FECHA_CREACION=20181219
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-3302
+--## INCIDENCIA_LINK=HREOS-4403
 --## PRODUCTO=NO
 --## Finalidad: Vista para la búsqueda de agrupaciones.
 --##  
@@ -15,6 +15,8 @@
 --##		0.3 Modificación.
 --##		0.4 Corrección activos publicados.
 --##		0.5 Nuevo campo en select
+--##		0.6 Nuevo campo en select (código e id del tipo de alquiler)
+--##		0.7 Corrección activos publicados (módulo publicaciones)
 --##########################################
 --*/
 
@@ -68,12 +70,14 @@ BEGIN
 			COALESCE (obr.dd_loc_id, res.dd_loc_id, lco.dd_loc_id, asi.dd_loc_id, pry.dd_loc_id) AS localidad, 
 			COALESCE (obr.onv_direccion, res.res_direccion, lco.lco_direccion, asi.asi_direccion, pry.PRY_DIRECCION) AS direccion,
 			agr_p.dd_cra_codigo cartera, 
-			agr.agr_is_formalizacion
+			agr.agr_is_formalizacion,
+			alq.dd_tal_id AS idTipoAlquiler,
+			alq.dd_tal_codigo AS codTipoAlquiler
 		FROM '||V_ESQUEMA||'.act_agr_agrupacion agr 
 		JOIN '||V_ESQUEMA||'.dd_tag_tipo_agrupacion tag ON tag.dd_tag_id = agr.dd_tag_id
 		LEFT JOIN
 			(SELECT SUM (1) activos, SUM (CASE
-			WHEN dd_epu.dd_epu_codigo NOT IN (''03'', ''05'', ''06'')
+			WHEN (epv.dd_epv_codigo = ''03'' OR epa.dd_epa_codigo = ''03'')
 			THEN 1
 			ELSE 0
 			END) publicados, 
@@ -81,7 +85,9 @@ BEGIN
 			cra.dd_cra_codigo
 			FROM '||V_ESQUEMA||'.act_aga_agrupacion_activo aga 
 			LEFT JOIN '||V_ESQUEMA||'.act_activo act ON act.act_id = aga.act_id
-			LEFT JOIN '||V_ESQUEMA||'.dd_epu_estado_publicacion dd_epu ON act.dd_epu_id = dd_epu.dd_epu_id
+			JOIN '||V_ESQUEMA||'.act_apu_activo_publicacion apu ON apu.act_id = act.act_id
+            LEFT JOIN '||V_ESQUEMA||'.dd_epv_estado_pub_venta epv ON epv.dd_epv_id = apu.dd_epv_id
+            LEFT JOIN '||V_ESQUEMA||'.dd_epa_estado_pub_alquiler epa ON epa.dd_epa_id = apu.dd_epa_id
 			LEFT JOIN '||V_ESQUEMA||'.dd_cra_cartera cra ON cra.dd_cra_id = act.dd_cra_id
 			WHERE aga.borrado = 0 AND act.borrado = 0
 			GROUP BY aga.agr_id, cra.dd_cra_codigo) agr_p ON agr_p.agr_id = agr.agr_id
@@ -89,6 +95,7 @@ BEGIN
 		LEFT JOIN '||V_ESQUEMA||'.act_res_restringida res ON (agr.agr_id = res.agr_id)
 		LEFT JOIN '||V_ESQUEMA||'.act_lco_lote_comercial lco ON (agr.agr_id = lco.agr_id)
 		LEFT JOIN '||V_ESQUEMA||'.act_asi_asistida asi ON (agr.agr_id = asi.agr_id)
+		LEFT JOIN '||V_ESQUEMA||'.dd_tal_tipo_alquiler alq ON (agr.dd_tal_id = alq.dd_tal_id)
 		LEFT JOIN '||V_ESQUEMA||'.ACT_PRY_PROYECTO PRY ON (agr.agr_id = PRY.agr_id)
 		WHERE agr.borrado = 0 AND tag.borrado = 0';
 

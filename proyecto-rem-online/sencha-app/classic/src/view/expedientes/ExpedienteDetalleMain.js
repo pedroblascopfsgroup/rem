@@ -35,15 +35,49 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleMain', {
     	 * La formula que desactiva la pestaña de reserva no actua cuando se renderiza por primera vez el expediente
     	 */
     	var reservaDisabled;
-    	var bloqueado;
-    	reservaDisabled = !me.getViewModel().get('expediente.tieneReserva') || me.getViewModel().get('expediente.tipoExpedienteCodigo') === "02";
+		var bloqueado;
+		var tipoExpedienteAlquiler = CONST.TIPOS_EXPEDIENTE_COMERCIAL["ALQUILER"];
+		var tipoExpedienteVenta = CONST.TIPOS_EXPEDIENTE_COMERCIAL["VENTA"];
+		
+    	reservaDisabled = !me.getViewModel().get('expediente.tieneReserva') || me.getViewModel().get('expediente.tipoExpedienteCodigo') === tipoExpedienteAlquiler;
 		reservaDisabled = Ext.isDefined(reservaDisabled)? reservaDisabled : true;
 		bloqueado = me.getViewModel().get('expediente.bloqueado');
     	me.down('reservaexpediente').setDisabled(reservaDisabled);
 		me.down('expedientedetalle').bloquearExpediente(me.down('datosbasicosexpediente'),bloqueado);
 		me.down('ofertaexpediente').bloquearExpediente(me.down('ofertaexpediente'),bloqueado);
+
+		// HREOS-4366 - HREOS 4374
+		if(me.getViewModel().get('expediente.tipoExpedienteCodigo') === tipoExpedienteAlquiler){				
+			var tabReserva = me.down('reservaexpediente'),
+			tabFormalizacionVenta = me.down('formalizacionexpediente');
+
+			tabReserva.tab.setVisible(false);
+			tabFormalizacionVenta.tab.setVisible(false);
+		}
+		
+		if (me.getViewModel().get('expediente.tipoExpedienteCodigo') === tipoExpedienteVenta){
+			var tabFormalizacionAlquiler = me.down('formalizacionalquilerexpediente');
+
+			tabFormalizacionAlquiler.tab.setVisible(false);
+		}
+
 		if(me.down('activoExpedienteTabPanel') != undefined){
 			me.down('activoExpedienteTabPanel').bloquearExpediente(me.down('activoExpedienteTabPanel'),bloqueado);
 		}
+
+		if(!me.getViewModel().get('expediente.definicionOfertaFinalizada')){				
+			var tabSeguro= me.down('segurorentasexpediente');
+			var tabScoring= me.down('scoringexpediente');
+			tabSeguro.tab.setVisible(false);
+			tabScoring.tab.setVisible(false);
+		}
+		
+		var tabScoring= me.down('scoringexpediente');
+		if(!me.getViewModel().get('expediente.definicionOfertaScoring')){				
+			tabScoring.tab.setVisible(false);
+		}else{
+			tabScoring.tab.setVisible(true);
+		}
+		
     }
 });

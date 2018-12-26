@@ -18,26 +18,23 @@ public class ActivoPropagacionFieldTabMap {
     public static final String TAB_CARGAS_ACTIVO = "cargasactivo";
     public static final String TAB_MEDIADOR_ACTIVO = "mediadoractivo";
     public static final String TAB_CONDICIONES_ESPECIFICAS = "condicionesespecificas";
+    public static final String TAB_TASACION = "tasacion";
 	public static final String TAB_COMUNIDAD_PROPIETARIOS = "datosComunidad";
-
-
     public static final String TAB_DATOS_PUBLICACION = "datospublicacion";
-    public static final String TAB_ACTIVO_HISTORICO_ESTADO_PUBLICACION = "activohistoricoestadopublicacion";
     public static final String TAB_ACTIVO_CONDICIONANTES_DISPONIBILIDAD = "activocondicionantesdisponibilidad";
-
     public static final String TAB_COMERCIAL = "comercial";
     public static final String TAB_ADMINISTRACION = "administracion";
     public static final String TAB_PATRIMONIO = "patrimonio";
-    
+
     static {
     	Map<String, List<String>> pmap = new HashMap<String, List<String>>();
 
-    	pmap.put(TAB_DATOS_BASICOS, 
+    	pmap.put(TAB_DATOS_BASICOS,
     			Arrays.asList(
    	    			// identificacion
-	    			"tipoActivoCodigo", 
-	    			"subtipoActivoCodigo", 
-	    			"estadoActivoCodigo", 
+	    			"tipoActivoCodigo",
+	    			"subtipoActivoCodigo",
+	    			"estadoActivoCodigo",
 	    			// direccion
 	    			"tipoUsoDestinoCodigo",
 	    			"longitud",
@@ -53,9 +50,12 @@ public class ActivoPropagacionFieldTabMap {
 
 	    			// perimetro
 	    			"motivoAplicaGestion",
+	    			"motivoAplicaPublicar",
 	    			"motivoAplicaComercializarCodigo",
+					"motivoNoAplicaComercializar",
 	    			"motivoAplicaFormalizar",
 	    			"aplicaGestion",
+	    			"aplicaPublicar",
 	    			"aplicaFormalizar",
 	    			"aplicaComercializar",
 
@@ -74,7 +74,7 @@ public class ActivoPropagacionFieldTabMap {
     				"estadoExpIncorrienteCodigo"
     			));
 
-    	pmap.put(TAB_SIT_POSESORIA, 
+    	pmap.put(TAB_SIT_POSESORIA,
     			Arrays.asList(
 			    	"fechaRevisionEstado",
 			    	"ocupado",
@@ -87,7 +87,7 @@ public class ActivoPropagacionFieldTabMap {
 			    	"tieneOkTecnico"
     			));
 
-    	pmap.put(TAB_INFORME_COMERCIAL, 
+    	pmap.put(TAB_INFORME_COMERCIAL,
     			Arrays.asList(
 					"descripcionComercial",
 					"anyoConstruccion",
@@ -362,7 +362,7 @@ public class ActivoPropagacionFieldTabMap {
 					"descOtras"
     			));
 
-    	pmap.put(TAB_DATOS_REGISTRALES, 
+    	pmap.put(TAB_DATOS_REGISTRALES,
     			Arrays.asList(
    					// Esto es un copy&paste del DTO DtoActivoDatosRegistrales
 					"numeroActivo",
@@ -438,41 +438,61 @@ public class ActivoPropagacionFieldTabMap {
 					"entidadEjecutanteCodigo"
     			));
 
-    	pmap.put(TAB_INFO_ADMINISTRATIVA, 
+    	pmap.put(TAB_INFO_ADMINISTRATIVA,
     			Arrays.asList(
     				"sujetoAExpediente",
     				"promocionVpo"
     			));
 
-    	pmap.put(TAB_CARGAS_ACTIVO, 
+    	pmap.put(TAB_CARGAS_ACTIVO,
     			Arrays.asList(
     				"fechaRevisionCarga",
     				"conCargas"
     			));
-    	
 
-    	pmap.put(TAB_DATOS_PUBLICACION, 
+    	pmap.put(TAB_DATOS_PUBLICACION,
     			Arrays.asList(
     				"idActivo",
-    				"totalDiasPublicado",
-    				"portalesExternos"
+    				"estadoPublicacionVenta",
+    				"estadoPublicacionAlquiler",
+    				"precioWebVenta",
+    				"precioWebAlquiler",
+				    "adecuacionAlquilerCodigo",
+    				"totalDiasPublicadoVenta",
+    				"totalDiasPublicadoAlquiler",
+				    "publicarVenta",
+				    "ocultarVenta",
+				    "publicarSinPrecioVenta",
+				    "noMostrarPrecioVenta",
+				    "motivoOcultacionVentaCodigo",
+				    "motivoOcultacionManualVenta",
+				    "publicarAlquiler",
+				    "ocultarAlquiler",
+				    "publicarSinPrecioAlquiler",
+				    "noMostrarPrecioAlquiler",
+				    "motivoOcultacionAlquilerCodigo",
+				    "motivoOcultacionManualAlquiler",
+				    "deshabilitarCheckPublicarVenta",
+				    "deshabilitarCheckOcultarVenta",
+				    "deshabilitarCheckPublicarSinPrecioVenta",
+				    "deshabilitarCheckNoMostrarPrecioVenta",
+				    "deshabilitarCheckPublicarAlquiler",
+				    "deshabilitarCheckOcultarAlquiler",
+				    "deshabilitarCheckPublicarSinPrecioAlquiler",
+				    "deshabilitarCheckNoMostrarPrecioAlquiler"
     			));
-    	pmap.put(TAB_ACTIVO_HISTORICO_ESTADO_PUBLICACION, 
-    			Arrays.asList(
-    				"idActivo",
-    				"publicacionOrdinaria",
-    				"publicacionForzada",
-    				"ocultacionForzada",
-					"ocultacionPrecio",
-					"despublicacionForzada",
-					"motivoPublicacion",
-					"motivoOcultacionPrecio",
-					"motivoDespublicacionForzada",
-					"motivoOcultacionForzada",
-					"observaciones"
-    			));
-    	
-    	pmap.put(TAB_ACTIVO_CONDICIONANTES_DISPONIBILIDAD, 
+
+	    pmap.put(TAB_TASACION,
+			    Arrays.asList(
+					    "id",
+					    "fechaValorTasacion",
+					    "fechaSolicitudTasacion",
+					    "fechaRecepcionTasacion",
+					    "nomTasador",
+					    "importeTasacionFin"
+			    ));
+
+    	pmap.put(TAB_ACTIVO_CONDICIONANTES_DISPONIBILIDAD,
     			Arrays.asList(
     					"idActivo",
     					"ruina",
@@ -486,7 +506,7 @@ public class ActivoPropagacionFieldTabMap {
     					"otro",
     					"ocupadoSinTitulo",
     					"divHorizontalNoInscrita"
-    					));
+			    ));
 
     	pmap.put(TAB_COMERCIAL,
     			Arrays.asList(
@@ -498,6 +518,7 @@ public class ActivoPropagacionFieldTabMap {
 					"importeVenta",
 					"puja"
     			));
+
     	pmap.put(TAB_ADMINISTRACION,
     			Arrays.asList(
     				"numActivo",

@@ -40,6 +40,10 @@ public class PromocionController extends ParadiseJsonController {
 
 		try {
 			model.put("data", promocionAdapter.getAdjuntosPromocion(id));
+		} catch (GestorDocumentalException e) {
+			model.put("success", false);
+			model.put("errorMessage",
+					"Ha habido un problema con la subida del fichero de promociones al gestor documental.");
 		} catch (Exception e) {
 			logger.error("error en activoController", e);
 			model.put("success", false);

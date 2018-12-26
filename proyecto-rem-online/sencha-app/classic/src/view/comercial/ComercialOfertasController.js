@@ -19,6 +19,69 @@ Ext.define('HreRem.view.comercial.ComercialOfertasController', {
         }
 	},
 	
+	onSearchBusquedaDirectaExpediente: function(btn) {
+
+		var me = this;
+		
+		var numOferta = btn.up('ofertascomercialsearch').down('[name="numOferta"]').value;
+		var numExpediente = btn.up('ofertascomercialsearch').down('[name="numExpediente"]').value;
+		
+		var url= $AC.getRemoteUrl('expedientecomercial/getExpedienteExists');
+		var data;
+		
+		if(numExpediente != ""){
+			Ext.Ajax.request({
+				url: url,
+			    params: {numBusqueda : numExpediente, campo : "E"},
+			    success: function(response, opts) {
+			    	data = Ext.decode(response.responseText);
+			    	if(data.success == "true"){
+			    		var titulo = "Expediente " + data.numExpediente;
+			    		me.getView().fireEvent('abrirDetalleExpedienteDirecto', data.data, titulo);
+			    	}else{
+			    		me.fireEvent("errorToast", data.error);
+			    	}
+			    		         
+			    },
+			    failure: function(response) {
+			    	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+			    }
+			});    
+		}else{
+			Ext.Ajax.request({
+				url: url,
+			    params: {numBusqueda : numOferta, campo : "O"},
+			    success: function(response, opts) {
+			    	data = Ext.decode(response.responseText);
+			    	if(data.success == "true"){
+			    		var titulo = "Expediente " + data.numExpediente;
+			    		me.getView().fireEvent('abrirDetalleExpedienteDirecto', data.data, titulo);
+			    	}else{
+			    		me.fireEvent("errorToast", data.error);
+			    	}
+			    		         
+			    },
+			    failure: function(response) {
+			    	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+			    }
+			});    
+		}
+		
+    	
+    },
+	
+	onChangeNumOfertaOExpediente: function(me, oValue, nValue){
+		var numOferta = me.up('ofertascomercialsearch').down('[name="numOferta"]').value;
+		var numExpediente = me.up('ofertascomercialsearch').down('[name="numExpediente"]').value;
+		var btn = me.up('ofertascomercialsearch').down('[reference="btnExp"]');
+		
+		if(numExpediente != "" || numOferta != ""){
+			btn.setDisabled(false);
+		}else{
+			btn.setDisabled(true);
+		}
+	},
+	
 	paramLoading: function(store, operation, opts) {
 		var initialData = {};
 		var searchForm = this.lookupReference('ofertasComercialSearch');
@@ -52,8 +115,15 @@ Ext.define('HreRem.view.comercial.ComercialOfertasController', {
 	},
 	
 		// Funcion que se ejecuta al hacer click en el botón limpiar
-	onCleanFiltersClick: function(btn) {			
-		btn.up('form').getForm().reset();				
+	onCleanFiltersClick: function(btn) {
+		btn.up('form').getForm().reset();
+		var form = btn.up('form');
+		
+		var comboboxTipoAlquiler = form.up().lookupReference('comboExpedienteAlquiler');
+		var comboboxTipoVenta = form.up().lookupReference('comboExpedienteVenta'); 
+		
+		comboboxTipoAlquiler.setDisabled(true);
+		comboboxTipoVenta.setDisabled(true);
 	},
 	
 	onClickDescargarExcel: function(btn) {
@@ -208,6 +278,22 @@ Ext.define('HreRem.view.comercial.ComercialOfertasController', {
     		agrupacionesVinculadas.setDisabled(true);
     		agrupacionesVinculadas.setValue("");
     	}
+    },
+    
+    activarComboEstadoExpediente: function(field, newValue, oldValue, eOpts){
+    	var me= this;
+    	var tipoOferta = me.lookupReference('tipoOfertaComercial');
+    	var comboVenta = me.lookupReference('comboExpedienteVenta');
+    	var comboAlquiler = me.lookupReference('comboExpedienteAlquiler');
+    	
+    	if(!Ext.isEmpty(tipoOferta) && tipoOferta.value == CONST.TIPOS_EXPEDIENTE_COMERCIAL["VENTA"]){
+    		comboVenta.setDisabled(false);
+    		comboAlquiler.setDisabled(true);
+    	} else if(!Ext.isEmpty(tipoOferta) && tipoOferta.value == CONST.TIPOS_EXPEDIENTE_COMERCIAL["ALQUILER"]){
+    		comboAlquiler.setDisabled(false);
+    		comboVenta.setDisabled(true);
+    	}
+    	
     }
 
 });

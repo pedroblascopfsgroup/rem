@@ -41,9 +41,9 @@ public class MSVActualizadorAutorizarEdicion extends AbstractMSVActualizador imp
 	public ResultadoProcesarFila procesaFila(MSVHojaExcel exc, int fila, Long prmToken) throws IOException, ParseException, JsonViewerException, SQLException {
 		
 		Activo activo = activoApi.getByNumActivo(Long.parseLong(exc.dameCelda(fila, 0)));
-		DtoCambioEstadoPublicacion dtoCambioEstadoPublicacion = activoEstadoPublicacionApi.getState(activo.getId());
-		//TODO: Pendiente de saber que rellenar en el DTO. Probablemente no se use el mismo actualizador.
-		activoEstadoPublicacionApi.publicacionChangeState(dtoCambioEstadoPublicacion);
+		// TODO: Llamar al nuevo publicacion o bien, si no se sabe que hace este msv, eliminarlo.
+		/*DtoCambioEstadoPublicacion dtoCambioEstadoPublicacion = activoEstadoPublicacionApi.getState(activo.getId());
+		activoEstadoPublicacionApi.publicacionChangeState(dtoCambioEstadoPublicacion);*/
 		return new ResultadoProcesarFila();
 	}
 	

@@ -2,7 +2,9 @@ package es.pfsgroup.plugin.rem.model;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -14,6 +16,7 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -25,6 +28,7 @@ import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.pfsgroup.plugin.rem.model.dd.DDEntidadesAvalistas;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoFinanciacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTitulo;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionesPosesoria;
@@ -216,13 +220,115 @@ public class CondicionanteExpediente implements Serializable, Auditable {
     @Column(name="COE_INVERSION_SUJETO_PASIVO")
     private Boolean inversionDeSujetoPasivo;
     
-    @Version   
+	@Column(name="ALQ_FIANZA_MESES")
+    private Integer mesesFianza;
+    
+    @Column(name="ALQ_FIANZA_IMPORTE")
+    private Double importeFianza;
+    
+    @Column(name="ALQ_FIANZA_ACTUALIZABLE")
+    private Boolean fianzaActualizable;
+    
+    @Column(name="ALQ_DEPOSITO_MESES")
+    private Integer mesesDeposito;
+    
+    @Column(name="ALQ_DEPOSITO_IMPORTE")
+    private Double importeDeposito;
+    
+    @Column(name="ALQ_DEPOSITO_ACTUALIZABLE")
+    private Boolean depositoActualizable;
+    
+    @Column(name="ALQ_AVALISTA")
+    private String avalista;
+    
+    @Column(name="ALQ_FIADOR_DOCUMENTO")
+    private String documentoFiador;
+        
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ALQ_FIADOR_ENTIDAD_BANCARIA")
+	private DDEntidadesAvalistas entidadBancariaFiador;
+    
+    @Column(name="ALQ_IMPORTE_AVAL")
+    private Double importeAval;
+    
+    @Column(name="ALQ_NUMERO_AVAL")
+    private Integer numeroAval;
+    
+    @Column(name="ALQ_RENUNCIA_TANTEO")
+    private Boolean renunciaTanteo;
+    
+    @Column(name="ALQ_CARENCIA")
+    private Boolean carencia;
+    
+    @Column(name="ALQ_CARENCIA_MESES")
+    private Integer mesesCarencia;
+    
+    @Column(name="ALQ_CARENCIA_IMPORTE")
+    private Double importeCarencia;
+    
+    @Column(name="ALQ_BONIFICACION")
+    private Boolean bonificacion;
+    
+    @Column(name="ALQ_BONIFICACION_MESES")
+    private Integer mesesBonificacion;
+    
+    @Column(name="ALQ_BONIFICACION_IMPORTE")
+    private Double importeBonificacion;
+    
+    @Column(name="ALQ_BONIFICACION_DURACION")
+    private Integer duracionBonificacion;
+    
+    @Column(name="ALQ_GASTOS_REPERCUTIBLES")
+    private Boolean gastosRepercutibles;
+    
+    @Column(name="ALQ_REPERCUTIBLES_COMMENTS")
+    private String repercutiblesComments;
+    
+    @Column(name="ALQ_ENTIDAD_COMMENTS")
+    private String entidadComments;
+    
+    @Column(name="ALQ_FECHA_FIRMA") 
+    private Date fechaFirma;
+    
+    @Column(name="ALQ_RENTA_FIJO")
+    private Boolean checkFijo;
+    
+    @Column(name="ALQ_FECHA_FIJO")
+    private Date fechaFijo;
+    
+    @Column(name="ALQ_FECHA_INC_RENTA")
+    private Double incrementoRentaFijo;
+    
+    @Column(name="ALQ_RENTA_PORCENTUAL")
+    private Boolean checkPorcentual;
+    
+    @Column(name="ALQ_RENTA_IPC")
+    private Boolean checkIPC;
+
+    @Column(name="ALQ_RENTA_PORC_IMPUESTOS")
+    private Integer porcentaje;
+    
+    @Column(name="ALQ_RENTA_REVISION_MERCADO")
+    private Boolean checkRevisionMercado;
+	
+	@Column(name = "ALQ_RENTA_MERCADO_FECHA")
+	private Date revisionMercadoFecha;
+	
+    @Column(name="ALQ_RENTA_MERCADO_CADA")
+    private Integer revisionMercadoMeses;
+    
+    @OneToMany(mappedBy = "condicionante", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "COE_ID")
+    @Where(clause = Auditoria.UNDELETED_RESTICTION)
+    private List<HistoricoCondicionanteExpediente> listHistoricoCondiciones;
+
+	@Version   
 	private Long version;
 
 	@Embedded
 	private Auditoria auditoria;
-    
-    
+	   
+	
 
 	public Long getId() {
 		return id;
@@ -637,6 +743,271 @@ public class CondicionanteExpediente implements Serializable, Auditable {
 		this.inversionDeSujetoPasivo = inversionDeSujetoPasivo;
 	}
 	
+	public Integer getMesesFianza() {
+		return mesesFianza;
+	}
 
-   
+	public void setMesesFianza(Integer mesesFianza) {
+		this.mesesFianza = mesesFianza;
+	}
+
+	public Double getImporteFianza() {
+		return importeFianza;
+	}
+
+	public void setImporteFianza(Double importeFianza) {
+		this.importeFianza = importeFianza;
+	}
+
+	public Boolean getFianzaActualizable() {
+		return fianzaActualizable;
+	}
+
+	public void setFianzaActualizable(Boolean fianzaActualizable) {
+		this.fianzaActualizable = fianzaActualizable;
+	}
+
+	public Integer getMesesDeposito() {
+		return mesesDeposito;
+	}
+
+	public void setMesesDeposito(Integer mesesDeposito) {
+		this.mesesDeposito = mesesDeposito;
+	}
+
+	public Double getImporteDeposito() {
+		return importeDeposito;
+	}
+
+	public void setImporteDeposito(Double importeDeposito) {
+		this.importeDeposito = importeDeposito;
+	}
+
+	public Boolean getDepositoActualizable() {
+		return depositoActualizable;
+	}
+
+	public void setDepositoActualizable(Boolean depositoActualizable) {
+		this.depositoActualizable = depositoActualizable;
+	}
+
+	public String getAvalista() {
+		return avalista;
+	}
+
+	public void setAvalista(String avalista) {
+		this.avalista = avalista;
+	}
+
+	public String getDocumentoFiador() {
+		return documentoFiador;
+	}
+
+	public void setDocumentoFiador(String documentoFiador) {
+		this.documentoFiador = documentoFiador;
+	}
+
+	public DDEntidadesAvalistas getEntidadBancariaFiador() {
+		return entidadBancariaFiador;
+	}
+
+	public void setEntidadBancariaFiador(DDEntidadesAvalistas entidadBancariaFiador) {
+		this.entidadBancariaFiador = entidadBancariaFiador;
+	}
+
+	public Double getImporteAval() {
+		return importeAval;
+	}
+
+	public void setImporteAval(Double importeAval) {
+		this.importeAval = importeAval;
+	}
+
+	public Integer getNumeroAval() {
+		return numeroAval;
+	}
+
+	public void setNumeroAval(Integer numeroAval) {
+		this.numeroAval = numeroAval;
+	}
+
+	public Boolean getRenunciaTanteo() {
+		return renunciaTanteo;
+	}
+
+	public void setRenunciaTanteo(Boolean renunciaTanteo) {
+		this.renunciaTanteo = renunciaTanteo;
+	}
+
+	public Boolean getCarencia() {
+		return carencia;
+	}
+
+	public void setCarencia(Boolean carencia) {
+		this.carencia = carencia;
+	}
+
+	public Boolean getBonificacion() {
+		return bonificacion;
+	}
+
+	public void setBonificacion(Boolean bonificacion) {
+		this.bonificacion = bonificacion;
+	}
+
+	public Boolean getGastosRepercutibles() {
+		return gastosRepercutibles;
+	}
+
+	public void setGastosRepercutibles(Boolean gastosRepercutibles) {
+		this.gastosRepercutibles = gastosRepercutibles;
+	}
+
+	public Integer getMesesCarencia() {
+		return mesesCarencia;
+	}
+
+	public void setMesesCarencia(Integer mesesCarencia) {
+		this.mesesCarencia = mesesCarencia;
+	}
+
+	public Double getImporteCarencia() {
+		return importeCarencia;
+	}
+
+	public void setImporteCarencia(Double importeCarencia) {
+		this.importeCarencia = importeCarencia;
+	}
+
+	public Integer getMesesBonificacion() {
+		return mesesBonificacion;
+	}
+
+	public void setMesesBonificacion(Integer mesesBonificacion) {
+		this.mesesBonificacion = mesesBonificacion;
+	}
+
+	public Double getImporteBonificacion() {
+		return importeBonificacion;
+	}
+
+	public void setImporteBonificacion(Double importeBonificacion) {
+		this.importeBonificacion = importeBonificacion;
+	}
+
+	public Integer getDuracionBonificacion() {
+		return duracionBonificacion;
+	}
+
+	public void setDuracionBonificacion(Integer duracionBonificacion) {
+		this.duracionBonificacion = duracionBonificacion;
+	}
+
+	public String getRepercutiblesComments() {
+		return repercutiblesComments;
+	}
+
+	public void setRepercutiblesComments(String repercutiblesComments) {
+		this.repercutiblesComments = repercutiblesComments;
+	}
+
+	public String getEntidadComments() {
+		return entidadComments;
+	}
+
+	public void setEntidadComments(String entidadComments) {
+		this.entidadComments = entidadComments;
+	}
+	
+	 public Date getFechaFirma() {
+		return fechaFirma;
+	}
+
+	public void setFechaFirma(Date fechaFirma) {
+		this.fechaFirma = fechaFirma;
+	} 
+
+	public Boolean getCheckFijo() {
+		return checkFijo;
+	}
+
+	public void setCheckFijo(Boolean checkFijo) {
+		this.checkFijo = checkFijo;
+	}
+	
+
+	public Date getFechaFijo() {
+		return fechaFijo;
+	}
+
+	public void setFechaFijo(Date fechaFijo) {
+		this.fechaFijo = fechaFijo;
+	}
+
+	public Double getIncrementoRentaFijo() {
+		return incrementoRentaFijo;
+	}
+
+	public void setIncrementoRentaFijo(Double incrementoRentaFijo) {
+		this.incrementoRentaFijo = incrementoRentaFijo;
+	}
+
+	public Boolean getCheckPorcentual() {
+		return checkPorcentual;
+	}
+
+	public void setCheckPorcentual(Boolean checkPorcentual) {
+		this.checkPorcentual = checkPorcentual;
+	}
+
+	public Boolean getCheckIPC() {
+		return checkIPC;
+	}
+
+	public void setCheckIPC(Boolean checkIPC) {
+		this.checkIPC = checkIPC;
+	}
+
+	public Integer getPorcentaje() {
+		return porcentaje;
+	}
+
+	public void setPorcentaje(Integer porcentaje) {
+		this.porcentaje = porcentaje;
+	}
+
+	public Boolean getCheckRevisionMercado() {
+		return checkRevisionMercado;
+	}
+
+	public void setCheckRevisionMercado(Boolean checkRevisionMercado) {
+		this.checkRevisionMercado = checkRevisionMercado;
+	}
+
+	public Date getRevisionMercadoFecha() {
+		return revisionMercadoFecha;
+	}
+
+	public void setRevisionMercadoFecha(Date revisionMercadoFecha) {
+		this.revisionMercadoFecha = revisionMercadoFecha;
+	}
+
+	public Integer getRevisionMercadoMeses() {
+		return revisionMercadoMeses;
+	}
+
+	public void setRevisionMercadoMeses(Integer revisionMercadoMeses) {
+		this.revisionMercadoMeses = revisionMercadoMeses;
+	}
+
+	public List<HistoricoCondicionanteExpediente> getListHistoricoCondiciones() {
+		return listHistoricoCondiciones;
+	}
+
+	public void setListHistoricoCondiciones(List<HistoricoCondicionanteExpediente> listHistoricoCondiciones) {
+		this.listHistoricoCondiciones = listHistoricoCondiciones;
+	}
+	
+	
+	  
 }

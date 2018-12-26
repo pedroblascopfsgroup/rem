@@ -18,6 +18,7 @@ import es.capgemini.pfs.BPMContants;
 import es.capgemini.pfs.core.api.procesosJudiciales.TareaExternaApi;
 import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.eventfactory.EventFactory;
+import es.capgemini.pfs.procesosJudiciales.dao.TareaExternaDao;
 import es.capgemini.pfs.procesosJudiciales.dao.TareaExternaValorDao;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.EXTTareaExterna;
@@ -41,6 +42,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.web.dto.dynamic.DynamicDtoUtils;
 import es.pfsgroup.framework.paradise.jbpm.JBPMProcessManagerApi;
+import es.pfsgroup.plugin.recovery.calendario.impl.dao.TareaExternaDaoImpl;
 import es.pfsgroup.plugin.recovery.mejoras.api.registro.MEJRegistroApi;
 import es.pfsgroup.plugin.recovery.mejoras.api.registro.MEJTrazaDto;
 import es.pfsgroup.plugin.recovery.mejoras.registro.model.MEJDDTipoRegistro;
@@ -54,6 +56,7 @@ import es.pfsgroup.plugin.rem.model.VTareaActivoCount;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoResolucion;
 import es.pfsgroup.plugin.rem.tareasactivo.dao.TareaActivoDao;
 import es.pfsgroup.plugin.rem.tareasactivo.dao.VTareaActivoCountDao;
+import es.pfsgroup.recovery.api.TareaNotificacionApi;
 import es.pfsgroup.recovery.ext.impl.multigestor.model.EXTGrupoUsuarios;
 
 
@@ -415,6 +418,31 @@ public class TareaActivoManager implements TareaActivoApi {
         
 	    tareaExternaValorDao.saveOrUpdate(valorFecha);
 	    tareaExternaValorDao.saveOrUpdate(valorResolucion);
+	}
+	
+	@Override
+	public String getValorFechaSeguroRentaPorIdActivo(Long idActivo) {
+		
+		List<TareaActivo> tareasActivo=tareaActivoDao.getTareasActivoPorIdActivo(idActivo);
+		if(!Checks.esNulo(tareasActivo)) {
+			for(TareaActivo tarea : tareasActivo) {
+				if(!Checks.esNulo(tarea)) {
+					TareaExterna tex = tarea.getTareaExterna();
+						if(!Checks.esNulo(tex)) { 
+							List<TareaExternaValor> valores= tex.getValores();
+							if(!Checks.esNulo(valores)) {
+								for(TareaExternaValor valor : valores) {
+									if(!Checks.esNulo(valor)) {
+										if(valor.getNombre().equals("fechaTratamiento")) {
+											return valor.getValor();
+										}
+									}
+								}
+							}
+						}
+				}
+			}
+		} return "";
 	}
 }
 

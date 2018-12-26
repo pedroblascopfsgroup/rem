@@ -43,6 +43,15 @@ Ext.define('HreRem.view.agrupaciones.AgrupacionesModel', {
 	    	autoLoad: true
     	},
     	
+    	comboTipoAlquilerAgrupaciones: {
+			model: 'HreRem.model.ComboBase',
+	    	proxy: {
+		        type: 'uxproxy',
+		        remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tiposAlquilerActivo'}
+	    	}
+    	},
+    	
     	comboSubcarteraFiltered: {
 			model: 'HreRem.model.ComboBase',
 				proxy: {

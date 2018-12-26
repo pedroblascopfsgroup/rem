@@ -281,8 +281,13 @@ public String creaCuerpoOfertaExpress(Oferta oferta){
 			cuerpo = cuerpo + " hasta la formalización de las arras/reserva";
 		}
 		
-		cuerpo = cuerpo + ". Adjunto a este correo encontrará el documento con las instrucciones a seguir para la reserva y formalización.</p>";
-
+		cuerpo = cuerpo + ". Adjunto a este correo encontrará el documento con las instrucciones a seguir para la reserva y formalización";
+		
+		if (DDCartera.CODIGO_CARTERA_CAJAMAR.equals(codigoCartera)) {
+			cuerpo = cuerpo + ", así como la Ficha cliente a cumplimentar</p>";
+		}else {
+			cuerpo = cuerpo + ".</p>";
+		}
 		ActivoBancario activoBancario = genericDao.get(ActivoBancario.class,
 
 				genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId()));
@@ -351,6 +356,45 @@ public String creaCuerpoOfertaExpress(Oferta oferta){
 		return cuerpoCorreo;
 		
 	}
+
+
+public String creaCuerpoPropuestaOferta(Oferta oferta){
+	
+	
+	Activo activo = oferta.getActivoPrincipal();
+	
+	Filter filterAct = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+	List<ActivoTramite> tramites = genericDao.getList(ActivoTramite.class, filterAct);
+	
+	Integer numTramites = tramites.size();
+	
+	ActivoTramite tramite = tramites.get(numTramites-1);
+	
+	String asunto = "Notificación de propuesta de la oferta " + oferta.getNumOferta();
+	String cuerpo = "<p>Nos complace mandarle la información de la propuesta de oferta " + oferta.getNumOferta();
+	
+	cuerpo = cuerpo + ". Adjunto a este correo encontrará el documento con las información de la propuesta";
+	
+	cuerpo = cuerpo + ".</p>";
+	
+
+	cuerpo = cuerpo + "<p>Quedamos a su disposición para cualquier consulta o aclaración. Saludos cordiales.</p>";
+
+	Usuario gestorComercial = null;
+
+	gestorComercial = gestorActivoManager.getGestorByActivoYTipo(activo, "GESTCOMALQ");
+
+	cuerpo = cuerpo + String.format("<p>Gestor comercial: %s </p>", (gestorComercial != null) ? gestorComercial.getApellidoNombre() : STR_MISSING_VALUE );
+	cuerpo = cuerpo + String.format("<p>%s</p>", (gestorComercial != null) ? gestorComercial.getEmail() : STR_MISSING_VALUE);
+
+	DtoSendNotificator dtoSendNotificator = this.rellenaDtoSendNotificator(tramite);
+	dtoSendNotificator.setTitulo(asunto);
+
+	String cuerpoCorreo = this.generateCuerpo(dtoSendNotificator, cuerpo);
+	
+	return cuerpoCorreo;
+	
+}
 
 protected String computeKey(String key) {
 

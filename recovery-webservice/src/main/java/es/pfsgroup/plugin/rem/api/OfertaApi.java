@@ -150,10 +150,11 @@ public interface OfertaApi {
 	 * 
 	 * @param listaOfertaDto
 	 * @param jsonFields
+	 * @param listaRespuesta
 	 * @return
 	 * @throws Exception
 	 */
-	public ArrayList<Map<String, Object>> saveOrUpdateOfertas(List<OfertaDto> listaOfertaDto,JSONObject jsonFields)throws Exception;
+	public void saveOrUpdateOfertas(List<OfertaDto> listaOfertaDto,JSONObject jsonFields, ArrayList<Map<String, Object>> listaRespuesta)throws Exception;
 
 	/**
 	 * Actualizar el estado de disponibilidad comercial en los activos
@@ -325,6 +326,14 @@ public interface OfertaApi {
 	 * @return
 	 */
 	public boolean checkComiteSancionador(TareaExterna tareaExterna);
+	
+	
+	/**
+	 * Metodo que comprueba si la oferta tiene el comite sancionador alquiler HAYA
+	 * @param tareaExterna
+	 * @return
+	 */
+	public boolean checkComiteSancionadorAlquilerHaya(TareaExterna tareaExterna);
 	
 	/**
 	 * Método que comprueba si el activo tiene atribuciones para sancionar el
@@ -534,8 +543,6 @@ public interface OfertaApi {
 	 */
 	public ActivoProveedor getPreescriptor(Oferta oferta);
 	
-	public void ocultarActivoOferta(Oferta oferta) throws Exception;
-	
 	public void desocultarActivoOferta(Oferta oferta) throws Exception;
 	
 	/**
@@ -556,5 +563,12 @@ public interface OfertaApi {
 	Boolean checkProvinciaCompradores(TareaExterna tareaExterna);
 
 	Boolean checkNifConyugueLBB(TareaExterna tareaExterna);
+
+	/*
+	 * Método que comprueba que la oferta está activa, es decir, el estado de la oferta es: Tramitada, Congelada o Pendiente.
+	 */
+	boolean estaViva(Oferta oferta);
+	
+	public List<Oferta> getListaOfertasByActivo(Activo activo);
 }
 

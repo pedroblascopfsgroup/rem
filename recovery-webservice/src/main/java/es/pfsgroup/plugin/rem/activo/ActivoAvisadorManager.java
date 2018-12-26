@@ -34,8 +34,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 @Service("activoAvisadorManager")
 public class ActivoAvisadorManager implements ActivoAvisadorApi {
 
-	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-	
+	private SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 	protected static final Log logger = LogFactory.getLog(ActivoAvisadorManager.class);
 	
 	@Autowired
@@ -60,10 +59,8 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 	@BusinessOperation(overrides = "activoAvisadorManager.get")
 	public String get(Long id) {
 		return "";
-		//return activoDao.get(id);
 	}
-	
-	
+
 
 	@Override
 	@BusinessOperation(overrides = "activoAvisadorManager.getListActivoAvisador")
@@ -78,6 +75,7 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 		boolean obraNueva = false;
 		boolean asistida = false;
 		boolean lote = false;
+		boolean conTitulo = false;
 		boolean enPuja = false;
 		
 		try {
@@ -87,6 +85,7 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 			obraNueva = activoApi.isIntegradoAgrupacionObraNueva(id, usuarioLogado);
 			asistida = activoApi.isIntegradoAgrupacionAsistida(activo);
 			lote = activoApi.isIntegradoAgrupacionComercial(activo);
+			conTitulo = activoApi.necesitaDocumentoInformeOcupacion(activo);
 			enPuja = activoApi.isActivoEnPuja(activo);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -127,6 +126,13 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 			listaAvisos.add(dtoAviso);
 		}
 		
+		if(conTitulo) {
+			DtoAviso dtoAviso = new DtoAviso();
+			dtoAviso.setDescripcion("Es necesario adjuntar el documento “Informe ocupación”");
+			dtoAviso.setId(String.valueOf(id));
+			listaAvisos.add(dtoAviso);
+		}
+
 		if (Checks.esNulo(activo.getSituacionPosesoria())) {
 			Auditoria auditoria = Auditoria.getNewInstance();
 
@@ -153,7 +159,6 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 					dtoAviso.setId(String.valueOf(id));
 					listaAvisos.add(dtoAviso);
 				}
-
 			}
 		}
 		
@@ -164,7 +169,6 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 				dtoAviso.setDescripcion("Situación de acceso tapiado");
 				dtoAviso.setId(String.valueOf(id));
 				listaAvisos.add(dtoAviso);
-
 			}
 		}
 
@@ -175,7 +179,6 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 				dtoAviso.setDescripcion("Situación de acceso con puerta antiocupa");
 				dtoAviso.setId(String.valueOf(id));
 				listaAvisos.add(dtoAviso);
-
 			}
 		}
 				
@@ -223,10 +226,35 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 			dtoAviso.setId(String.valueOf(id));
 			listaAvisos.add(dtoAviso);	
 		}
-		
-		// Aviso 12: Estado activo vandalizado
+
+		// Aviso 11: Activo en trámite
+		if(activo.getEnTramite()) {
+			DtoAviso dtoAviso = new DtoAviso();
+			dtoAviso.setDescripcion("Activo en trámite");
+			dtoAviso.setId(String.valueOf(id));
+			listaAvisos.add(dtoAviso);
+		}
+
+		// Aviso 12: Activo no publicable
+		PerimetroActivo perimetroActivo = activoApi.getPerimetroByIdActivo(activo.getId());
+		if(!Checks.esNulo(perimetroActivo) && !Checks.esNulo(perimetroActivo.getAplicaPublicar()) && !perimetroActivo.getAplicaPublicar()) {
+			DtoAviso dtoAviso = new DtoAviso();
+			dtoAviso.setDescripcion("No publicable");
+			dtoAviso.setId(String.valueOf(id));
+			listaAvisos.add(dtoAviso);
+		}
+
+		// Aviso 13: Activo publicable
+		if(!Checks.esNulo(perimetroActivo) && !Checks.esNulo(perimetroActivo.getAplicaPublicar()) && perimetroActivo.getAplicaPublicar()) {
+			DtoAviso dtoAviso = new DtoAviso();
+			dtoAviso.setDescripcion("Publicable");
+			dtoAviso.setId(String.valueOf(id));
+			listaAvisos.add(dtoAviso);
+		}
+
+		// Aviso 14: Estado activo vandalizado
 		if(!Checks.esNulo(activo.getEstadoActivo())) {
-			if(DDEstadoActivo.ESTADO_ACTIVO_VANDALIZADO.equals(activo.getEstadoActivo().getCodigo())) {
+			if (DDEstadoActivo.ESTADO_ACTIVO_VANDALIZADO.equals(activo.getEstadoActivo().getCodigo())) {
 				DtoAviso dtoAviso = new DtoAviso();
 				dtoAviso.setDescripcion(activo.getEstadoActivo().getDescripcion());
 				dtoAviso.setId(String.valueOf(id));
@@ -234,8 +262,19 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 			}
 		}
 		
+		// Aviso 15: Estado activo vandalizado
+		if(!Checks.esNulo(activo.getEstadoActivo())) {
+			if (DDEstadoActivo.ESTADO_ACTIVO_NO_OBRA_NUEVA_VANDALIZADO.equals(activo.getEstadoActivo().getCodigo())) {
 
-		// Aviso 13: Estado activo afecto por GENCAT / bloqueado GENCAT
+				DtoAviso dtoAviso = new DtoAviso();
+				dtoAviso.setDescripcion(activo.getEstadoActivo().getDescripcion());
+				dtoAviso.setId(String.valueOf(id));
+				listaAvisos.add(dtoAviso);
+
+			}
+		}
+
+		// Aviso 16: Estado activo afecto por GENCAT / bloqueado GENCAT
 		if(!Checks.esNulo(activo)) {
 			DtoAviso dtoAviso = new DtoAviso();
 			if (activoDao.isActivoBloqueadoGENCAT(activo.getId())) {
@@ -248,8 +287,13 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 				listaAvisos.add(dtoAviso);
 			}
 		}
-		
+
+		if(!(Checks.esNulo(activo.getTieneDemandaAfecCom())) && activo.getTieneDemandaAfecCom()==1) {
+			DtoAviso dtoAviso = new DtoAviso();
+			dtoAviso.setDescripcion("Activo con demanda con afectación comercial");
+			dtoAviso.setId(String.valueOf(id));
+			listaAvisos.add(dtoAviso);
+		}
 		return listaAvisos;
-		//activoDao.getListActivos(id, usuarioLogado);
 	}
 }

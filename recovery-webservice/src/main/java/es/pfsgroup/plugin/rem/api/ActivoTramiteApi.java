@@ -40,7 +40,7 @@ public interface ActivoTramiteApi {
 	public static final String CODIGO_TRAMITE_COMERCIAL_VENTA = "T013";
 	public static final String CODIGO_TRAMITE_SANCION_OFERTA_ALQUILER = "T014";
 	public static final String CODIGO_TRAMITE_COMUNICACION_GENCAT = "T016";
-	
+	public static final String CODIGO_TRAMITE_COMERCIAL_ALQUILER = "T015";
 	public static final String CODIGO_TAREA_RESOLUCION_EXPEDIENTE = "T013_ResolucionExpediente";
 	
 	/**

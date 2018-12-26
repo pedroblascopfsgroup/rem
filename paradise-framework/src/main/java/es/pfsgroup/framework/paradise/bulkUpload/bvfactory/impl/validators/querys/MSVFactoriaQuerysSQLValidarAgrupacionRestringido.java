@@ -5,7 +5,7 @@ import es.pfsgroup.framework.paradise.bulkUpload.utils.filecolumns.MSVAgrupacion
 
 
 /**
- * Factoría que recupera las querys necesarias para la validación del excel de alta de asuntos.
+ * FactorÃ­a que recupera las querys necesarias para la validaciÃ³n del excel de alta de asuntos.
  * Las querys se encuentran en un xml que inicializa este bean.
  *   
  * @author manuel
@@ -14,7 +14,7 @@ import es.pfsgroup.framework.paradise.bulkUpload.utils.filecolumns.MSVAgrupacion
 public class MSVFactoriaQuerysSQLValidarAgrupacionRestringido extends MSVFactoriaQuerysSQLGenericAlta {
 
 	/**
-	 * Inicializamos el el mapa para poder obtener las query en función del valor de la constante y no al revés.
+	 * Inicializamos el el mapa para poder obtener las query en funciÃ³n del valor de la constante y no al revÃ©s.
 	 */	
 	public void init(){
 		super.init(MSVAgrupacionColumns.class);

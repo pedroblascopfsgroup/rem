@@ -63,4 +63,19 @@ public interface OfertaDao extends AbstractDao<Oferta, Long>{
 	 * @return
 	 */
 	public Oferta getOfertaByIdRem(Long idRem);
+
+	/**
+	 * Este método obtiene automaticamente el importe cálculo para los honorarios según la
+	 * oferta de alquiler, el activo y el tipo de comisión.
+	 *
+	 * @param idOferta : ID de la oferta.
+	 * @param tipoComision: Especifica la letra para el tipo de cálculo. 'C' para colaboración
+	 * y 'P' para tipo prescripción.
+	 * @param idActivo ID del activo
+	 * @param idProveedor ID del proveedor correspondiente
+	 * @return Devuelve el porcentaje si está asignado o null si no se aplican honorarios.
+	 **/
+	public BigDecimal getImporteCalculoAlquiler(Long idOferta, String tipoComision, Long idProveedor);
+
+	public List<Oferta> getListOtrasOfertasVivasAgr(Long idOferta, Long idAgr);
 }

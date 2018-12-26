@@ -38,6 +38,28 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 		     	}
 		 },
 
+		 esAgrupacionRestringidaIncluyeDestinoComercialVenta: function(get) {
+
+			 var tipoAgrupacion = get('agrupacionficha.tipoAgrupacionCodigo');
+			 var incluyeDestinoComercialVenta = get('agrupacionficha.incluyeDestinoComercialVenta');
+		     	if((tipoAgrupacion == CONST.TIPOS_AGRUPACION['RESTRINGIDA']) && incluyeDestinoComercialVenta) {
+		     		return true;
+		     	} else {
+		     		return false;
+		     	}
+		 },
+
+		 esAgrupacionRestringidaIncluyeDestinoComercialAlquiler: function(get) {
+
+			 var tipoAgrupacion = get('agrupacionficha.tipoAgrupacionCodigo');
+			 var incluyeDestinoComercialAlquiler = get('agrupacionficha.incluyeDestinoComercialAlquiler');
+		     	if((tipoAgrupacion == CONST.TIPOS_AGRUPACION['RESTRINGIDA']) && incluyeDestinoComercialAlquiler) {
+		     		return true;
+		     	} else {
+		     		return false;
+		     	}
+		 },
+
 	     esAgrupacionAsistida: function(get) {
 	    	 
 	     	var tipoAgrupacion = get('agrupacionficha.tipoAgrupacionCodigo');
@@ -48,6 +70,46 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 	     	}
 	     },
 	     
+	     esComercialAlquiler: function(get) {
+	    	 
+	     	var tipoComercialAlquiler = get('agrupacionficha.tipoAgrupacionCodigo');
+	     	if((tipoComercialAlquiler == CONST.TIPOS_AGRUPACION['COMERCIAL_ALQUILER'])) {
+	     		return true;
+	     	} else {
+	     		return false;
+	     	}
+		 },
+		 
+		 esComercialVenta: function(get) {
+			var tipoComercialVenta = get('agrupacionficha.tipoAgrupacionCodigo');
+			
+			if (tipoComercialVenta == CONST.TIPOS_AGRUPACION['COMERCIAL_VENTA']) {
+				return true;
+			} else {
+				return false;
+			} 
+				
+		 },
+		 
+		 esComercialVentaOAlquiler: function(get) {
+		     	var tipoComercialAlquiler = get('agrupacionficha.tipoAgrupacionCodigo');
+		     	if((tipoComercialAlquiler == CONST.TIPOS_AGRUPACION['COMERCIAL_ALQUILER']) || (tipoComercialAlquiler == CONST.TIPOS_AGRUPACION['LOTE_COMERCIAL'])) {
+		     		return true;
+		     	} else {
+		     		return false;
+		     	}
+		 },
+
+		 esAgrupacionLoteComercial: function(get) {
+
+	     	var tipoComercial = get('agrupacionficha.tipoAgrupacionCodigo');
+	     	if((tipoComercial == CONST.TIPOS_AGRUPACION['COMERCIAL_ALQUILER']) || (tipoComercial == CONST.TIPOS_AGRUPACION['LOTE_COMERCIAL'])) {
+	     		return true;
+	     	} else {
+	     		return false;
+	     	}
+		 },
+
 	     esAgrupacionAsistidaAndFechaVigenciaNotNull: function(get) {
 	    	 
 	     	var tipoAgrupacion = get('agrupacionficha.tipoAgrupacionCodigo');
@@ -71,7 +133,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 	     },
 
 	     esAgrupacionLoteComercial: function(get) {
-	    	 
+
 		     	var tipoAgrupacion = get('agrupacionficha.tipoAgrupacionCodigo');
 		     	if((tipoAgrupacion == CONST.TIPOS_AGRUPACION['LOTE_COMERCIAL'])) {
 		     		return true;
@@ -79,9 +141,9 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 		     		return false;
 		     	}
 		 },
-		 
+
 		 esAgrupacionProyecto: function(get) {
-	    	 
+
 		     	var tipoAgrupacion = get('agrupacionficha.tipoAgrupacionCodigo');
 		     	if((tipoAgrupacion == CONST.TIPOS_AGRUPACION['PROYECTO'])) {
 		     		return true;
@@ -90,7 +152,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 		     	}
 		 },
 		 agrupacionProyectoTieneActivos: function(get) {
-	    	 
+
 		     	var tipoAgrupacion = get('agrupacionficha.tipoAgrupacionCodigo');
 		     	var numeroActivos = get('agrupacionficha.numeroActivos');
 		     	if((tipoAgrupacion == CONST.TIPOS_AGRUPACION['PROYECTO']) && numeroActivos > 0) {
@@ -109,7 +171,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 		     		}else{
 		     			return false;
 		     		}
-		     		
+
 		     	} else {
 		     		return existeFechaBaja;
 		     	}
@@ -121,15 +183,15 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 	     },
 	     
 	     esAgrupacionObraNuevaOrAsistidaOrProyecto: function(get) {
-	    	 
+
 		   	return get('esAgrupacionObraNueva') || get('esAgrupacionAsistida') || get('esAgrupacionProyecto');
 		 },
-	     
+
 	     esAgrupacionLoteComercialOrProyecto: function(get) {
-	    	 
+
 		  	return get('esAgrupacionLoteComercial') || get('esAgrupacionProyecto');
 		 },
-     
+
 	     existeFechaBaja : function(get) {
 	    	var existeFechaBaja = get('agrupacionficha.existeFechaBaja');
 	    	return existeFechaBaja;
@@ -148,12 +210,239 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 	     agrupacionTieneActivos: function(get) {
 	     		return (get('agrupacionficha.numeroActivos')>0);
 	     },
-	     
+
 	     esAgrupacionLiberbank: function(get) {
-	    	 return get('agrupacionficha.codigoCartera') == CONST.CARTERA['LIBERBANK'];
+			var codigoCartera=get('agrupacionficha.codigoCartera');
+	         var tipoAgrup= get('agrupacionficha.tipoAgrupacionCodigo');
+	         if(codigoCartera == CONST.CARTERA['LIBERBANK'] && tipoAgrup == CONST.TIPOS_AGRUPACION['LOTE_COMERCIAL']){
+	             return true;
+	         }else{
+	             return false;
+	         }
+	     },
+
+	     getIconClsEstadoVenta: function(get) {
+	        var estadoVenta = get('agrupacionficha.estadoVenta');
+
+	        if(estadoVenta == 0) {
+	            return 'app-tbfiedset-ico icono-ko'
+	        } else if (estadoVenta == 1){
+	            return 'app-tbfiedset-ico icono-ok'
+	        }else if (estadoVenta == 2){
+	            return 'app-tbfiedset-ico icono-okn'
+	        }
+		 },
+
+		 getIconClsestadoAlquiler : function(get) {
+			var estadoAlquiler = get('agrupacionficha.estadoAlquiler');
+
+			if (estadoAlquiler == 0) {
+				return 'app-tbfiedset-ico icono-ko'
+			} else if (estadoAlquiler == 1) {
+				return 'app-tbfiedset-ico icono-ok'
+			} else if (estadoAlquiler == 2) {
+				return 'app-tbfiedset-ico icono-okn'
+			}
+		 },
+
+	     getIconClsCondicionantesRuina: function(get) {
+	        var condicion = get('datospublicacionagrupacion.ruina');
+
+	     	if(!eval(condicion)) {
+	     		return 'app-tbfiedset-ico icono-ok'
+	     	} else {
+	     		return 'app-tbfiedset-ico icono-ko'
+	     	}
+	     },
+
+		 getIconClsCondicionantesPendiente: function(get) {
+		 	var claseActivo= get('datospublicacionagrupacion.claseActivoCodigo');
+
+			if(CONST.CLASE_ACTIVO['FINANCIERO'] != claseActivo){
+				var condicion = get('datospublicacionagrupacion.pendienteInscripcion');
+			   	if(!eval(condicion)) {
+			   		return 'app-tbfiedset-ico icono-ok'
+			   	} else {
+			   		return 'app-tbfiedset-ico icono-ko'
+			   	}
+			}
+
+			return 'app-tbfiedset-ico'
+		},
+
+		getIconClsCondicionantesObraTerminada: function(get) {
+			var condicion = get('datospublicacionagrupacion.obraNuevaSinDeclarar');
+
+		   	if(!eval(condicion)) {
+		   		return 'app-tbfiedset-ico icono-ok'
+		   	} else {
+		   		return 'app-tbfiedset-ico icono-ko'
+		   	}
+		 },
+
+		getIconClsCondicionantesSinPosesion: function(get) {
+			var claseActivo= get('datospublicacionagrupacion.claseActivoCodigo');
+
+			if(CONST.CLASE_ACTIVO['FINANCIERO'] != claseActivo){
+				var condicion = get('datospublicacionagrupacion.sinTomaPosesionInicial');
+				if(!eval(condicion)) {
+					return 'app-tbfiedset-ico icono-ok'
+				} else {
+					return 'app-tbfiedset-ico icono-ko'
+				}
+			}
+
+			return 'app-tbfiedset-ico'
+		},
+
+		getIconClsCondicionantesProindiviso: function(get) {
+			var condicion = get('datospublicacionagrupacion.proindiviso');
+
+		   	if(!eval(condicion)) {
+		   		return 'app-tbfiedset-ico icono-ok'
+		   	} else {
+		   		return 'app-tbfiedset-ico icono-ko'
+		   	}
+		},
+
+		getIconClsCondicionantesObraNueva: function(get) {
+			var condicion = get('datospublicacionagrupacion.obraNuevaEnConstruccion');
+
+		   	if(!eval(condicion)) {
+		   		return 'app-tbfiedset-ico icono-ok'
+		   	} else {
+		   		return 'app-tbfiedset-ico icono-ko'
+		   	}
+		},
+
+		getIconClsCondicionantesOcupadoConTitulo: function(get) {
+			var condicion = get('datospublicacionagrupacion.ocupadoConTitulo');
+
+		   	if(!eval(condicion)) {
+		   		return 'app-tbfiedset-ico icono-ok'
+		   	} else {
+		   		return 'app-tbfiedset-ico icono-ko'
+		   	}
+		},
+
+		getIconClsCondicionantesTapiado: function(get) {
+			var condicion = get('datospublicacionagrupacion.tapiado');
+
+		   	if(!eval(condicion)) {
+		   		return 'app-tbfiedset-ico icono-ok'
+		   	} else {
+		   		return 'app-tbfiedset-ico icono-ko'
+		   	}
+		},
+
+		getIconClsCondicionantesOcupadoSinTitulo: function(get) {
+			var condicion = get('datospublicacionagrupacion.ocupadoSinTitulo');
+
+		   	if(!eval(condicion)) {
+		   		return 'app-tbfiedset-ico icono-ok'
+		   	} else {
+		   		return 'app-tbfiedset-ico icono-ko'
+		   	}
+		},
+
+		getIconClsCondicionantesDivHorizontal: function(get) {
+			var condicion = get('datospublicacionagrupacion.divHorizontalNoInscrita');
+
+		    if(!eval(condicion)) {
+		        return 'app-tbfiedset-ico icono-ok'
+		    } else {
+		        return 'app-tbfiedset-ico icono-ko'
+		    }
+		},
+
+		getIconClsCondicionantesConCargas: function(get) {
+			var condicion = get('datospublicacionagrupacion.conCargas');
+
+		    if(!eval(condicion)) {
+		        return 'app-tbfiedset-ico icono-ok'
+		    } else {
+		        return 'app-tbfiedset-ico icono-ko'
+		    }
+		},
+
+		getIconClsCondicionantesSinInformeAprobado: function(get) {
+			var condicion = get('datospublicacionagrupacion.sinInformeAprobado');
+
+		    if(!eval(condicion)) {
+		        return 'app-tbfiedset-ico icono-ok'
+		    } else {
+		        return 'app-tbfiedset-ico icono-ko'
+		    }
+		},
+
+		getIconClsCondicionantesVandalizado: function(get) {
+			var condicion = get('datospublicacionagrupacion.vandalizado');
+
+		    if(!eval(condicion)) {
+		        return 'app-tbfiedset-ico icono-ok'
+		    } else {
+		        return 'app-tbfiedset-ico icono-ko'
+		    }
+		},
+
+		getSiNoFromOtro: function(get) {
+			var condicion = get('datospublicacionagrupacion.otro');
+
+		   	if(Ext.isEmpty(condicion)) {
+		   		return '0';
+		   	} else {
+		   		return '1';
+		   	}
+		},
+
+		filtrarComboMotivosOcultacionVenta: function(get) {
+			var bloqueoCheckOcultar = get('datospublicacionagrupacion.deshabilitarCheckOcultarVenta');
+
+			if(!Ext.isEmpty(bloqueoCheckOcultar) && !bloqueoCheckOcultar) {
+				 this.getData().comboMotivosOcultacionVenta.filter([{
+                     filterFn: function(rec){
+                         return rec.getData().esMotivoManual === 'true';
+                     }
+                 }]);
+			} else {
+				this.getData().comboMotivosOcultacionVenta.clearFilter();
+			}
+		},
+
+		filtrarComboMotivosOcultacionAlquiler: function(get) {
+            var bloqueoCheckOcultar = get('datospublicacionagrupacion.deshabilitarCheckOcultarAlquiler');
+
+            if(!Ext.isEmpty(bloqueoCheckOcultar) && !bloqueoCheckOcultar) {
+                 this.getData().comboMotivosOcultacionAlquiler.filter([{
+                     filterFn: function(rec){
+                         return rec.getData().esMotivoManual === 'true';
+                     }
+                 }]);
+            } else {
+                this.getData().comboMotivosOcultacionAlquiler.clearFilter();
+            }
+        },
+	     agrupacionRestringidaYPublicada: function(get) {
+	    	 var tipoAgrupacion = get('agrupacionficha.tipoAgrupacionCodigo');
+		     	if((tipoAgrupacion == CONST.TIPOS_AGRUPACION['RESTRINGIDA'])) {
+		     		 var estadoAlquilerCodigo = get('agrupacionficha.estadoAlquilerCodigo');
+					 var estadoVentaCodigo = get('agrupacionficha.estadoVentaCodigo');
+					 var incluyeDestinoComercialAlquiler = get('agrupacionficha.incluyeDestinoComercialAlquiler');
+					 var incluyeDestinoComercialVenta = get('agrupacionficha.incluyeDestinoComercialVenta');
+
+					 if(incluyeDestinoComercialVenta && incluyeDestinoComercialAlquiler) {
+						 return estadoAlquilerCodigo === CONST.ESTADO_PUBLICACION_ALQUILER['PUBLICADO'] || estadoVentaCodigo === CONST.ESTADO_PUBLICACION_VENTA['PUBLICADO'];
+					 } else if(incluyeDestinoComercialVenta) {
+						 return estadoVentaCodigo === CONST.ESTADO_PUBLICACION_VENTA['PUBLICADO'];
+					 } else if (incluyeDestinoComercialAlquiler){
+						 return estadoAlquilerCodigo === CONST.ESTADO_PUBLICACION_ALQUILER['PUBLICADO'];
+					 } else {
+						 return false;
+					 }
+		     	}else return false;
 	     }
     },
-    
+
     stores: {
     	comboCartera: {
 			model: 'HreRem.model.ComboBase',
@@ -161,9 +450,9 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 				type: 'uxproxy',
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'entidadesPropietarias'}
-			}   	
+			}
 	    },
-    	
+
     	comboProvincia: {
 			model: 'HreRem.model.ComboBase',
 			proxy: {
@@ -201,6 +490,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 			 model: 'HreRem.model.ActivoAgrupacionActivo',
 			 proxy: {
 			    type: 'uxproxy',
+			    timeout: 60000,
 				remoteUrl: 'agrupacion/getListActivosAgrupacionById',
 				extraParams: {id: '{agrupacionficha.id}'}
 			 },
@@ -335,13 +625,22 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 			}   	
 	    },
 
+	    comboGestorComercialTipo: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'agrupacion/getGestoresLoteComercialPorTipo',
+				extraParams: {agrId: '{agrupacionficha.id}'}
+			}
+	    },
+
 	    comboGestorComercialBackoffice: {
 	    	model: 'HreRem.model.ComboBase',
 			proxy: {
 				type: 'uxproxy',
 				remoteUrl: 'agrupacion/getGestoresLoteComercial',
 				extraParams: {agrId: '{agrupacionficha.id}', codigoGestor: 'HAYAGBOINM'}
-			}   	
+			}
 	    },
 
 	    comboDobleGestorActivo: {
@@ -350,7 +649,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 				type: 'uxproxy',
 				remoteUrl: 'agrupacion/getDobleGestorActivo',
 				extraParams: {agrId: '{agrupacionficha.id}', codigoGestorEdi: 'GEDI', codigoGestorSu: 'GSUE'}
-			}   	
+			}
 	    },
 
 	    comboGestorActivos: {
@@ -359,7 +658,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 				type: 'uxproxy',
 				remoteUrl: 'agrupacion/getGestoresLoteComercial',
 				extraParams: {agrId: '{agrupacionficha.id}', codigoGestor: 'GACT'}
-			}   	
+			}
 	    },
 
 	    comboGestorFormalizacion: {
@@ -397,6 +696,96 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 				extraParams: {diccionario: 'regimenesMatrimoniales'}
 			},
 			autoLoad: true   	
-	    }
+	    },
+
+	    comboMotivosOcultacionVenta: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'motivosOcultacion'}
+			}
+		},
+
+		comboAdecuacionAlquiler: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'comboAdecuacionAlquiler'}
+			}
+		},
+
+		comboMotivosOcultacionAlquiler: {
+            model: 'HreRem.model.ComboBase',
+            proxy: {
+                type: 'uxproxy',
+                remoteUrl: 'generic/getDiccionario',
+                extraParams: {diccionario: 'motivosOcultacion'}
+            }
+        },
+
+        comboSiNoRemActivo: {
+			data : [
+		        {"codigo":"1", "descripcion":eval(String.fromCharCode(34,83,237,34))},
+		        {"codigo":"0", "descripcion":"No"}
+		    ]
+		},
+
+		storeEstadoDisponibilidadComercial: {
+			model: 'HreRem.model.DDBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'estadoDisponibilidadComercial'}
+			},
+			autoLoad: true
+		},
+
+		historicoEstadosPublicacionVenta: {
+			pageSize: $AC.getDefaultPageSize(),
+			model: 'HreRem.model.HistoricoEstadosPublicacion',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'activo/getHistoricoEstadosPublicacionVentaByIdActivo',
+				extraParams: {idActivo: '{datospublicacionagrupacion.idActivoPrincipal}'}
+			}
+		},
+
+		historicoEstadosPublicacionAlquiler: {
+			pageSize: $AC.getDefaultPageSize(),
+			model: 'HreRem.model.HistoricoEstadosPublicacion',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'activo/getHistoricoEstadosPublicacionAlquilerByIdActivo',
+				extraParams: {idActivo: '{datospublicacionagrupacion.idActivoPrincipal}'}
+			}
+		},
+
+		historicocondicionesagrupacion: {
+			pageSize: $AC.getDefaultPageSize(),
+			model: 'HreRem.model.CondicionEspecificaAgrupacion',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'activo/getCondicionEspecificaByActivo',
+				extraParams: {id: '{datospublicacionagrupacion.idActivoPrincipal}'}
+			}
+		},
+		comboTipoDestinoComercialCreaFiltered: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getComboTipoDestinoComercialCreaFiltered'
+			}
+		},
+
+        comboTipoAlquiler: {
+            model: 'HreRem.model.ComboBase',
+            proxy: {
+                type: 'uxproxy',
+                remoteUrl: 'generic/getDiccionario',
+                extraParams: {diccionario: 'tiposAlquilerActivo'}
+            }
+        }
      }
 });

@@ -4,7 +4,7 @@ import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.types.MSVColumnValida
 
 /**
  * Esta interfaz representa un conjunto de validadores para una determinada
- * operación masiva. Estas validaciones se obtienen usando la factoría
+ * operaciÃ³n masiva. Estas validaciones se obtienen usando la factorÃ­a
  * {@link MSVBusinessValidationFactory}
  * 
  * @author bruno

@@ -37,6 +37,7 @@ import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.TitularesAdicionalesOferta;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivos;
 import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaDto;
 
@@ -178,6 +179,10 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 		
 		if (!Checks.esNulo(dtoOfertasFilter.getEstadosExpediente())) {
 			addFiltroWhereInSiNotNullConStrings(hb, "voferta.codigoEstadoExpediente", Arrays.asList(dtoOfertasFilter.getEstadosExpediente()));
+		}
+		
+		if (!Checks.esNulo(dtoOfertasFilter.getEstadosExpedienteAlquiler())) {
+			addFiltroWhereInSiNotNullConStrings(hb, "voferta.codigoEstadoExpediente", Arrays.asList(dtoOfertasFilter.getEstadosExpedienteAlquiler()));
 		}
 
 		if (!Checks.esNulo(dtoOfertasFilter.getTipoComercializacion())) {
@@ -349,6 +354,22 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 		return (BigDecimal) callFunctionSql.uniqueResult();
 	}
 	
+	@Override
+	public BigDecimal getImporteCalculoAlquiler(Long idOferta, String tipoComision, Long idProveedor) {
+		StringBuilder functionHQL = new StringBuilder(
+				"SELECT CALCULAR_HONORARIO_ALQUILER(:OFR_ID, :PVE_ID, :TIPO_COMISION) FROM DUAL");
+		if (Checks.esNulo(idProveedor)) {
+			idProveedor = -1L;
+		}
+		Query callFunctionSql = this.getSessionFactory().getCurrentSession().createSQLQuery(functionHQL.toString());
+
+		callFunctionSql.setParameter("OFR_ID", idOferta);
+		callFunctionSql.setParameter("PVE_ID", idProveedor);
+		callFunctionSql.setParameter("TIPO_COMISION", tipoComision);
+
+		return (BigDecimal) callFunctionSql.uniqueResult();
+	}
+	
 	/**
 	 * Sustituye el método "HQLBuilder.addFiltroWhereInSiNotNull" que presenta
 	 * un comportamiento extraño cuando los valores son Strings.
@@ -415,5 +436,25 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 			}
 		}
 		return resultado;
+	}
+	
+	@Override
+	public List<Oferta> getListOtrasOfertasVivasAgr(Long idOferta, Long idAgr) {
+		List<Oferta> ofertasVivas = new ArrayList<Oferta>();
+		HQLBuilder hql = new HQLBuilder("from Oferta ");
+		DDEstadoOferta estado = genericDao.get(DDEstadoOferta.class
+				,genericDao.createFilter(FilterType.EQUALS, "DD_EOF_CODIGO", DDEstadoOferta.CODIGO_RECHAZADA));
+		
+		if (!Checks.esNulo(idOferta) && !Checks.esNulo(idAgr)) {
+			hql.appendWhere(" id != " + idOferta
+					+ " and agrupacion.id = " + idAgr
+					+ " and estadoOferta.codigo != '" + estado.getCodigo() + "'");
+			try {
+				ofertasVivas = HibernateQueryUtils.list(this, hql);
+			} catch (Exception e) {
+				logger.error("error obtienendo las ofertas vivas",e);
+			}
+		}
+		return ofertasVivas;
 	}
 }

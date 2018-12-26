@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Guillermo Llidó Parra
---## FECHA_CREACION=20181003
+--## AUTOR=Vicente Martinez Cifre
+--## FECHA_CREACION=20181215
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=REMVIP-2129
+--## INCIDENCIA_LINK=HREOS-5064
 --## PRODUCTO=NO
 --## Finalidad: Procedimiento almacenado que asigna Gestores de todos los tipos.
 --##           
@@ -13,7 +13,8 @@
 --##        0.1 Versión inicial Pau Serrano
 --##		0.2 Añadidos gestor comercial backoffice liberbank SOG
 --##		0.3 Modificación para que los grestores de la tabla ACT_GES_DIST_GESTORES que no tengan cartera también los asigne al activo
---##		0.4 Añadidos gestor de reserva para Cajamar
+--##		0.4 Añadidos gestor de reserva para Cajamar - REMVIP-2129
+--##		0.5 Añadidos los nuevos gestores comerciales de alquiler (gestor y supervisor) - HREOS-5064
 --##########################################
 --*/
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
@@ -27,7 +28,7 @@ CREATE OR REPLACE PROCEDURE #ESQUEMA#.SP_AGA_ASIGNA_GESTOR_ACTIVO_V3 (
     P_ACT_ID        IN #ESQUEMA#.act_activo.act_id%TYPE,
     P_ALL_ACTIVOS   IN NUMBER,
     P_CLASE_ACTIVO  IN VARCHAR2) AS
---v0.4
+--v0.2
 
     V_ESQUEMA VARCHAR2(15 CHAR) := '#ESQUEMA#';
     V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := '#ESQUEMA_MASTER#';
@@ -41,7 +42,7 @@ CREATE OR REPLACE PROCEDURE #ESQUEMA#.SP_AGA_ASIGNA_GESTOR_ACTIVO_V3 (
     TYPE T_GESTOR IS TABLE OF VARCHAR2(250 CHAR);
 
     V_GESTOR_FINANCIERO T_GESTOR := T_GESTOR('GPUBL','SPUBL','GCOM','SCOM','FVDNEG','FVDBACKOFR','FVDBACKVNT','SUPFVD','SFORM','GCODI','GCOINM','GCOIN','GLIBINVINM','GLIBSINTER','GLIBRES','GESRES','SUPRES');
-    V_GESTOR_INMOBILIAR T_GESTOR := T_GESTOR('GADM','SUPADM','GACT','SUPACT','GPREC','SPREC','GPUBL','SPUBL','GCOM','SCOM','FVDNEG','FVDBACKOFR','FVDBACKVNT','SUPFVD','SFORM','GGADM','GIAFORM','GTOCED','CERT','GIAADMT','PTEC', 'GTREE','GCODI','GCOINM','GCOIN','GLIBINVINM','GLIBSINTER','GLIBRES','HAYAGBOINM','SBACKOFFICEINMLIBER','GEDI', 'SUPEDI', 'GSUE', 'SUPSUE','GALQ','SUALQ');
+    V_GESTOR_INMOBILIAR T_GESTOR := T_GESTOR('GADM','SUPADM','GACT','SUPACT','GPREC','SPREC','GPUBL','SPUBL','GCOM','SCOM','FVDNEG','FVDBACKOFR','FVDBACKVNT','SUPFVD','SFORM','GGADM','GIAFORM','GTOCED','CERT','GIAADMT','PTEC', 'GTREE','GCODI','GCOINM','GCOIN','GLIBINVINM','GLIBSINTER','GLIBRES','HAYAGBOINM','SBACKOFFICEINMLIBER','GEDI', 'SUPEDI', 'GSUE', 'SUPSUE','GALQ','SUALQ', 'GESTCOMALQ', 'SUPCOMALQ');
     V_GESTOR T_GESTOR;
 
 BEGIN

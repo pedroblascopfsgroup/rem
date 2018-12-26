@@ -35,6 +35,8 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisitaOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDResultadoTanteo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoInquilino;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 
 
@@ -218,13 +220,22 @@ public class Oferta implements Serializable, Auditable {
     private Long idUvem;
     
     @Column(name = "OFR_VENTA_DIRECTA")
-    private Boolean ventaDirecta = false; 
-     
+    private Boolean ventaDirecta = false;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_TAL_ID")
+	private DDTipoAlquiler tipoAlquiler;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_TPI_ID")
+	private DDTipoInquilino tipoInquilino;
+	
+	@Column(name="OFR_CONTRATO_PRINEX")
+	private String numContratoPrinex;
+	
+	@Column(name="OFR_REF_CIRCUITO_CLIENTE")
+	private String refCircuitoCliente;
     
-	
-
-	
-
 	public Date getFechaAlta() {
 		return fechaAlta;
 	}
@@ -647,6 +658,38 @@ public class Oferta implements Serializable, Auditable {
 
 	public void setVentaDirecta(Boolean ventaDirecta) {
 		this.ventaDirecta = ventaDirecta;
+	}
+
+	public DDTipoAlquiler getTipoAlquiler() {
+		return tipoAlquiler;
+	}
+
+	public void setTipoAlquiler(DDTipoAlquiler tipoAlquiler) {
+		this.tipoAlquiler = tipoAlquiler;
+	}
+
+	public DDTipoInquilino getTipoInquilino() {
+		return tipoInquilino;
+	}
+
+	public void setTipoInquilino(DDTipoInquilino tipoInquilino) {
+		this.tipoInquilino = tipoInquilino;
+	}
+
+	public String getNumContratoPrinex() {
+		return numContratoPrinex;
+	}
+
+	public void setNumContratoPrinex(String numContratoPrinex) {
+		this.numContratoPrinex = numContratoPrinex;
+	}
+
+	public String getRefCircuitoCliente() {
+		return refCircuitoCliente;
+	}
+
+	public void setRefCircuitoCliente(String refCircuitoCliente) {
+		this.refCircuitoCliente = refCircuitoCliente;
 	}
 
 }

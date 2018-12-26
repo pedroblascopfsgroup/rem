@@ -26,7 +26,7 @@ public interface MSVRawSQLDao {
 	/**
 	 * Ejecuta una SQL y devuelve el resultado.
 	 * <p>
-	 * Como restricci�n la SQL tiene que devolver una �nica fila y una �nica columna con un resultado num�rico que quepa en Integer
+	 * Como restricción la SQL tiene que devolver una única fila y una única columna con un resultado numérico que quepa en Integer
 	 * </p>
 	 * @param sqlValidacion
 	 * @return
@@ -43,7 +43,7 @@ public interface MSVRawSQLDao {
 
 	/**
 	 * Ejecuta una SQL y devuelve el resultado como List de objetos.
-	 * 
+	 *
 	 * @param sqlValidacion
 	 * @return
 	 */

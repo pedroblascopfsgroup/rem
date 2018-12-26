@@ -79,6 +79,13 @@ Ext.define('HreRem.model.AgrupacionFicha', {
 	            	},
 	            	depends: 'tipoAgrupacionCodigo'
 	            },
+	            {
+	            	name: 'isRestringida',
+	            	calculate: function(data) {
+	            		return data.tipoAgrupacionCodigo == CONST.TIPOS_AGRUPACION['RESTRINGIDA'];
+	            	},
+	            	depends: 'tipoAgrupacionCodigo'
+	            },
 		    	{
 		    		name : 'acreedorPDV'
 		    	},
@@ -134,21 +141,99 @@ Ext.define('HreRem.model.AgrupacionFicha', {
 		    		name: 'codigoGestorComercialBackOffice'
 		    	},
 		    	{
-		    		name: 'codigoCartera'
+		    		name: 'cartera'
 		    	},
 		    	{
-		    		name: 'estadoActivoCodigo'
+                    name: 'codigoCartera'
+                },
+                {
+                    name: 'estadoActivoCodigo'
+                },
+                {
+                    name:'tipoActivoCodigo'
+                },
+                {
+                    name:'subtipoActivoCodigo'
+                },
+		    	{
+		    		name: 'estadoVenta'
 		    	},
 		    	{
-		    		name:'tipoActivoCodigo'
+		    		name: 'estadoAlquiler'
 		    	},
 		    	{
-		    		name:'subtipoActivoCodigo'
-		    	}
+		    		name: 'tipoComercializacionCodigo'
+		    	},
+		    	{
+					name: 'tipoComercializacionDescripcion'
+				},
+			    {
+	                name: 'incluyeDestinoComercialAlquiler',
+	                calculate: function(data) {
+	                    return data.tipoComercializacionCodigo ===  CONST.TIPOS_COMERCIALIZACION['SOLO_ALQUILER'] || data.tipoComercializacionCodigo ===  CONST.TIPOS_COMERCIALIZACION['ALQUILER_VENTA'];
+	                },
+	                depends: 'tipoComercializacionCodigo'
+	            },
+	            {
+	                name: 'incluyeDestinoComercialVenta',
+	                calculate: function(data) {
+	                    return data.tipoComercializacionCodigo ===  CONST.TIPOS_COMERCIALIZACION['VENTA'] || data.tipoComercializacionCodigo ===  CONST.TIPOS_COMERCIALIZACION['ALQUILER_VENTA'];
+	                },
+	                depends: 'tipoComercializacionCodigo'
+	            },
+	            {
+	                name: 'incluyeDestinoComercialAlquilerYIsRestringida',
+	                calculate: function(data) {
+	                    return data.isRestringida && data.tipoComercializacionCodigo ===  CONST.TIPOS_COMERCIALIZACION['SOLO_ALQUILER'] || data.isRestringida && data.tipoComercializacionCodigo ===  CONST.TIPOS_COMERCIALIZACION['ALQUILER_VENTA'];
+	                },
+	                depends: ['tipoComercializacionCodigo', 'isRestringida']
+	            },
+	            {
+	                name: 'incluyeDestinoComercialVentaYIsRestringida',
+	                calculate: function(data) {
+	                    return data.isRestringida && data.tipoComercializacionCodigo ===  CONST.TIPOS_COMERCIALIZACION['VENTA'] || data.isRestringida && data.tipoComercializacionCodigo ===  CONST.TIPOS_COMERCIALIZACION['ALQUILER_VENTA'];
+	                },
+	                depends: ['tipoComercializacionCodigo', 'isRestringida']
+	            },
+	            {
+	            	name: 'incluidoEnPerimetro',
+	            	type: 'boolean'
+	            },
+	            {
+	            	name: 'estadoAlquilerDescripcion'
+	            },
+	            {
+	            	name: 'estadoVentaDescripcion'
+	            },
+	            {
+	            	name: 'estadoAlquilerCodigo'
+	            },
+	            {
+	            	name: 'estadoVentaCodigo'
+	            },
+	            {
+                    name: 'subTipoComercial'
+                },
+                {
+                    name: 'tipoAlquilerCodigo'
+                },
+                {
+                    name: 'codigoCartera'
+                },
+                {
+                    name: 'estadoActivoCodigo'
+                },
+                {
+                    name:'tipoActivoCodigo'
+                },
+                {
+                    name:'subtipoActivoCodigo'
+                }
     ],
     
 	proxy: {
 		type: 'uxproxy',
+		timeout: 60000,
 		api: {
             read: 'agrupacion/getAgrupacionById',
             create: 'agrupacion/saveAgrupacion',

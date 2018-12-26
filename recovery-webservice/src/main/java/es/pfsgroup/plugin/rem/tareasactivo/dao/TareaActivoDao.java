@@ -16,4 +16,6 @@ public interface TareaActivoDao extends AbstractDao<TareaActivo, Long>{
 
 	TareaActivo getUltimaTareaActivoPorIdTramite(Long idTramite);
 
+	public List<TareaActivo> getTareasActivoPorIdActivo(Long idActivo);
+
 }

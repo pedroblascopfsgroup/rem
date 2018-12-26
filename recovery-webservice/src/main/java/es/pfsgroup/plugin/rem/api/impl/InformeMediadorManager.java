@@ -29,7 +29,6 @@ import es.pfsgroup.plugin.rem.model.ActivoDistribucion;
 import es.pfsgroup.plugin.rem.model.ActivoEdificio;
 import es.pfsgroup.plugin.rem.model.ActivoEstadosInformeComercialHistorico;
 import es.pfsgroup.plugin.rem.model.ActivoInfoComercial;
-import es.pfsgroup.plugin.rem.model.ActivoInformeComercialHistoricoMediador;
 import es.pfsgroup.plugin.rem.model.ActivoInfraestructura;
 import es.pfsgroup.plugin.rem.model.ActivoInstalacion;
 import es.pfsgroup.plugin.rem.model.ActivoLocalComercial;
@@ -1307,6 +1306,14 @@ public class InformeMediadorManager implements InformeMediadorApi {
 				}
 			}
 			
+			if (informe.getFechaRecepcionLlavesApi() != null) {
+				
+				if (informe.getFechaRecepcionLlavesApi().compareTo(new Date()) > 0) {
+					
+					errorsList.put("fechaRecepcionLlavesApi", RestApi.REST_MSG_UNKNOWN_KEY);
+				}
+			}
+			
 			
 
 			if (informe.getIdProveedorRem() != null) {
@@ -1322,15 +1329,15 @@ public class InformeMediadorManager implements InformeMediadorApi {
 
 			if (errorsList.size() == 0) {
 				boolean tieneInformeComercialAceptado = false;
+				Long idProveedorParche = null;
 				tieneInformeComercialAceptado = activoApi.isInformeComercialAceptado(activo);
 				ActivoInfoComercial informeEntity = null;
 				if (!tieneInformeComercialAceptado || autorizacionWebProveedor) {
 					ArrayList<Serializable> entitys = new ArrayList<Serializable>();
-					Long idProveedorParche = null;
 					if (informe.getCodTipoActivo().equals(DDTipoActivo.COD_COMERCIAL)) {
 						informeEntity = (ActivoLocalComercial) dtoToEntity.obtenerObjetoEntity(
 								informe.getIdActivoHaya(), ActivoLocalComercial.class, "activo.numActivo");
-						idProveedorParche = parcheEspecificacionTablas(informeEntity, informe);
+						idProveedorParche =  parcheEspecificacionTablas(informeEntity, informe);
 						informeEntity = (ActivoLocalComercial) dtoToEntity.obtenerObjetoEntity(
 								informe.getIdActivoHaya(), ActivoLocalComercial.class, "activo.numActivo");
 						((ActivoLocalComercial)informeEntity).setMtsAlturaLibre(informe.getAltura());
@@ -1359,9 +1366,11 @@ public class InformeMediadorManager implements InformeMediadorApi {
 					} else if (informe.getCodTipoActivo().equals(DDTipoActivo.COD_VIVIENDA)) {
 						informeEntity = (ActivoVivienda) dtoToEntity.obtenerObjetoEntity(informe.getIdActivoHaya(),
 								ActivoVivienda.class, "activo.numActivo");
+						if (informe.getDistribucionInterior() != null) {
+							((ActivoVivienda)informeEntity).setDistribucionTxt(informe.getDistribucionInterior());	
+						}
 						idProveedorParche = parcheEspecificacionTablas(informeEntity, informe);
-						informeEntity = (ActivoVivienda) dtoToEntity.obtenerObjetoEntity(informe.getIdActivoHaya(),
-								ActivoVivienda.class, "activo.numActivo");
+				
 
 						ActivoInfraestructura activoInfraestructura = (ActivoInfraestructura) dtoToEntity
 								.obtenerObjetoEntity(informe.getIdActivoHaya(), ActivoInfraestructura.class,
@@ -1432,7 +1441,6 @@ public class InformeMediadorManager implements InformeMediadorApi {
 						informeEntity.setActivo(activo);
 					}
 					
-					
 					if (!Checks.esNulo(idProveedorParche)){
 						Filter filterPve = genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem", idProveedorParche);
 						ActivoProveedor proveedor = genericDao.get(ActivoProveedor.class, filterPve);
@@ -1441,6 +1449,16 @@ public class InformeMediadorManager implements InformeMediadorApi {
 						}
 					}
 					
+					//Se comenta porque no se quiere guardar en REM el mediador venga como venga informado desde WEBCOM.
+					
+					/*if (Checks.esNulo(informeEntity.getMediadorInforme())){
+					*	Filter filterPve = genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem", informe.getIdProveedorRem());
+					*	ActivoProveedor proveedor = genericDao.get(ActivoProveedor.class, filterPve);
+					*	if (!Checks.esNulo(proveedor)){
+					*		informeEntity.setMediadorInforme(proveedor);
+					*	}
+					*}
+					*/
 					
 					informeEntity = (ActivoInfoComercial) dtoToEntity.saveDtoToBbdd(informe, entitys,
 							(JSONObject) jsonFields.getJSONArray("data").get(i));

@@ -40,6 +40,7 @@
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteSancionOfertaAlquiler.xml" p:version="-1"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteSancionOferta.xml" p:version="-1"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteComunicacionGENCAT.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteComercialAlquiler.xml" p:version="-1"/>
 
 	<bean id="jbpmActivoScriptExecutor" class="es.pfsgroup.plugin.rem.jbpm.activo.JBPMActivoScriptExecutor" >
   	<property name="contextScripts">
@@ -289,6 +290,10 @@
             	def ofertaManager = ctx.getBean("ofertaManager");
             	return ofertaManager.checkComiteSancionador(tareaExterna);
             }
+            def checkComiteSancionadorAlquilerHaya = {
+            	def ofertaManager = ctx.getBean("ofertaManager");
+            	return ofertaManager.checkComiteSancionadorAlquilerHaya(tareaExterna);
+            }
             def checkAtribuciones = {
             	def ofertaManager = ctx.getBean("ofertaManager");
             	return ofertaManager.checkAtribuciones(tareaExterna);
@@ -498,10 +503,30 @@
 				def ofertaManager = ctx.getBean("ofertaManager");
 				return ofertaManager.checkProvinciaCompradores(tareaExterna);
 			}
+			def checkPrecontratoSubido = {
+				def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
+            	return expedienteComercialManager.checkPrecontratoSubido(tareaExterna);
+			}
 			def checkNifConyugueLBB = {
 				def ofertaManager = ctx.getBean("ofertaManager");
 				return ofertaManager.checkNifConyugueLBB(tareaExterna);
 			}
+			def activoEnTramite = {
+				def trabajoManager = ctx.getBean("trabajoManager");
+            	return trabajoManager.activoEnTramite(idActivo);
+			}
+			def checkContratoSubido = {
+				def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
+            	return expedienteComercialManager.checkContratoSubido(tareaExterna);
+			}
+			def checkEstadoOcupadoTramite = {
+            	def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
+            	return expedienteComercialManager.checkEstadoOcupadoTramite(idTramite);
+            }
+            def checkConTituloTramite = {
+            	def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
+            	return expedienteComercialManager.checkConTituloTramite(idTramite);
+            }
   			 ]]></value>
   		</list>
   	</property>

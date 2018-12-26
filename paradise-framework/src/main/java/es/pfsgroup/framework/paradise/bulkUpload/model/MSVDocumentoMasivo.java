@@ -12,6 +12,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.persistence.Version;
 
 import org.hibernate.annotations.Cache;
@@ -70,6 +71,9 @@ public class MSVDocumentoMasivo implements Serializable, Auditable{
 
     @Version
     private Integer version;
+    
+    @Transient
+    private Object[] extraArgs;
 
 	public Long getId() {
 		return id;
@@ -151,5 +155,14 @@ public class MSVDocumentoMasivo implements Serializable, Auditable{
 		this.resultadoFich = resultadoFich;
 	}
 
+	public Object[] getExtraArgs() {
+		return extraArgs;
+	}
+
+	public void setExtraArgs(Object[] extraArgs) {
+		this.extraArgs = extraArgs;
+	}
+
+	
 	
 }

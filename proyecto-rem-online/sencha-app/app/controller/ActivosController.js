@@ -85,8 +85,8 @@ Ext.define('HreRem.controller.ActivosController', {
 			abrirDetalleTrabajoById: 'abrirDetalleTrabajoById',
 			abrirDetalleActivoPrincipal: 'abrirDetalleActivoPrincipal',
         	abrirDetalleExpedienteById: 'abrirDetalleExpedienteById'
-    	},
-    	
+		},
+		    	
     	'tareaNotificacion' : {
         	actualizarGridTareas: 'actualizarGridTareas',
 			abrirDetalleTrabajoById: 'abrirDetalleTrabajoById',
@@ -184,14 +184,16 @@ Ext.define('HreRem.controller.ActivosController', {
     	'ofertascomercialmain': {
     		abrirDetalleActivo: 'abrirDetalleActivoComercialOfertas',
 			abrirDetalleAgrupacion : 'abrirDetalleAgrupacionComercialOfertas',
-			abrirDetalleExpediente: 'abrirDetalleExpediente'
+			abrirDetalleExpediente: 'abrirDetalleExpediente',
+			abrirDetalleExpedienteDirecto: 'abrirDetalleExpedienteDirecto'
     	},
     	
     	'expedientedetallemain': {
     		abrirDetalleActivoPrincipal: 'abrirDetalleActivoPrincipal',
     		abrirDetalleTramiteTarea : 'abrirDetalleTramiteTarea',
     		abrirDetalleTramiteHistoricoTarea : 'abrirDetalleTramiteHistoricoTarea',
-    		refrescarExpediente: 'refrescarExpedienteComercial'
+			refrescarExpediente: 'refrescarExpedienteComercial',
+			abrirDetalleTrabajoById: 'abrirDetalleTrabajoById'
     	},
     	
     	'configuracionmain': {
@@ -209,29 +211,30 @@ Ext.define('HreRem.controller.ActivosController', {
     },
 
     refrescarDetalleActivo: function (detalle) {
-    	
     	var me = this,
-    	id = detalle.getViewModel().get("activo.id");	
-    	
+    	id = detalle.getViewModel().get("activo.id");
+
     	HreRem.model.Activo.load(id, {
     		scope: this,
 		    success: function(activo) {
-		    	detalle.getViewModel().getStore('comboTipoGestorByActivo').load();
-		    	detalle.getViewModel().set("activo", activo);		    	
-		    	detalle.configCmp(activo);
-		    	
-		    	HreRem.model.ActivoAviso.load(id, {
-		    		scope: this,
-				    success: function(avisos) {
-				    	detalle.getViewModel().set("avisos", avisos);
-				    }
-				});
-		    	me.logTime("Fin Set values"); 
+				if(!Ext.isEmpty(detalle.getViewModel())) {
+					// Continuar si el activo sigue abierto en el tabpanel y su modelo existe.
+					detalle.getViewModel().getStore('comboTipoGestorByActivo').load();
+					detalle.getViewModel().set("activo", activo);
+					detalle.configCmp(activo);
+
+			        HreRem.model.ActivoAviso.load(id, {
+			            scope: this,
+						success: function(avisos) {
+							detalle.getViewModel().set("avisos", avisos);
+					    }
+					});
+			        me.logTime("Fin Set values");
+			       }
 		    }
 		});
-    	
     },
-    
+
     abrirDetalleActivo: function(record) {
     	var me = this,
     	id = record.get("id");    	
@@ -511,7 +514,7 @@ Ext.define('HreRem.controller.ActivosController', {
     	me.abrirDetalleAgrupacionActivoById(id, titulo);    	
     	
     },
-        
+
     abrirDetalleAgrupacionActivoById: function(id, titulo) {
     	var me = this,    	
     	cfg = {}, 
@@ -584,6 +587,7 @@ Ext.define('HreRem.controller.ActivosController', {
     },
     
     abrirDetalleTrabajo: function(record, refLinks) {
+		
     	var me = this,
     	titulo = "Trabajo " + record.get("numTrabajo"),
     	id = record.get("id");
@@ -593,7 +597,7 @@ Ext.define('HreRem.controller.ActivosController', {
     },
     
     abrirDetalleTrabajoById: function(id, titulo, refLinks) {
-
+		
     	var me = this,
     	cfg = {}, 
     	tab=null;
@@ -680,8 +684,13 @@ Ext.define('HreRem.controller.ActivosController', {
     	
     },
     
+    abrirDetalleExpedienteDirecto: function(id, titulo, refLinks) {
+    	var me = this;
+    	me.redirectTo('activos', true);    	
+    	me.abrirDetalleExpedienteById(id, titulo, refLinks);
+    },
+    
     abrirDetalleExpedienteById: function(id, titulo, refLinks) {
-
     	var me = this,
     	cfg = {}, 
     	tab=null;
@@ -699,7 +708,8 @@ Ext.define('HreRem.controller.ActivosController', {
 		    	if(Ext.isEmpty(titulo)) {		    		
 		    		titulo = "Expediente " + expediente.get("numExpediente");
 		    		tab.setTitle(titulo);
-		    	}
+				}
+				
 		    	tab.getViewModel().set("expediente", expediente);
 		    	tab.configCmp(expediente);
 		    	
@@ -849,7 +859,10 @@ Ext.define('HreRem.controller.ActivosController', {
     	HreRem.model.Tramite.load(id, {
     		scope: this,
 		    success: function(tramite) {
-		    	detalle.getViewModel().set("tramite", tramite);
+		        if(!Ext.isEmpty(detalle.getViewModel())) {
+		            // Continuar si el trámite sigue abierto en el tabpanel y su modelo existe.
+		            detalle.getViewModel().set("tramite", tramite);
+		        }
 		    }
 		});
     	

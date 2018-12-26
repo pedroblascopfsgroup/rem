@@ -29,7 +29,6 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBLocalizacionesBien
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBValoracionesBien;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
-import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjudicacionJudicial;
 import es.pfsgroup.plugin.rem.model.ActivoAdjudicacionNoJudicial;
@@ -104,8 +103,6 @@ public class AltaActivoThirdParty implements AltaActivoThirdPartyService {
 	@Autowired
 	private RestApi restApi;
 	
-	@Autowired
-	private GestorActivoApi gestorActivoManager;
 	
 	@Override
 	public String[] getKeys() {
@@ -702,18 +699,6 @@ private void dtoToEntitiesOtras(DtoAltaActivoThirdParty dtoAATP, Activo activo) 
 				
 		activo.setBien(bien);
 		genericDao.save(Activo.class, activo);		
-	}
-
-	private ActivoProveedor obtenerMediador(String nifMediador, Long idActivo) {
-		ActivoProveedor mediador = null;
-		mediador = gestorActivoManager.obtenerProveedorTecnico(idActivo);
-		if (!Checks.esNulo(nifMediador) && Checks.esNulo(mediador)) {
-			Filter f1 = genericDao.createFilter(FilterType.EQUALS, "docIdentificativo", nifMediador);
-			Filter f2 = genericDao.createFilter(FilterType.EQUALS, "tipoProveedor.codigo",
-					DDTipoProveedor.COD_MEDIADOR);
-			mediador = genericDao.get(ActivoProveedor.class, f1, f2);
-		}
-		return mediador;
 	}
 
 }

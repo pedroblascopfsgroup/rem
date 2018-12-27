@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Daniel Algaba
---## FECHA_CREACION=20181208
+--## AUTOR=Mariam Lliso
+--## FECHA_CREACION=20181227
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=2.1.0
---## INCIDENCIA_LINK=HREOS-4994
+--## INCIDENCIA_LINK=HREOS-5065
 --## PRODUCTO=NO
 --## Finalidad: Tabla para almacentar el historico de las ofertas enviadas a webcom
 --##           
@@ -104,10 +104,7 @@ BEGIN
 					WHERE USU.USU_USERNAME = ''REM-USER'')) AS NUMBER (16, 0)) 					AS ID_USUARIO_REM_ACCION,
 		CAST(AGR.AGR_NUM_AGRUP_REM AS NUMBER(16,0)) 												AS ID_AGRUPACION_REM,
         MRO.DD_MRO_DESCRIPCION AS MOTIVO_RECHAZO,
-		CASE WHEN (DD_TOF.DD_TOF_CODIGO = ''02'')
-		      THEN OFR.OFR_IMPORTE_CONTRAOFERTA
-		      ELSE NULL
-	    END 																					AS IMPORTE_CONTRAOFERTA,
+		OFR.OFR_IMPORTE_CONTRAOFERTA															AS IMPORTE_CONTRAOFERTA,
 	    CASE WHEN (DD_TOF.DD_TOF_CODIGO = ''02'')
 		      THEN CAST(ECO.ECO_NUM_EXPEDIENTE AS NUMBER(16,0))
 		      ELSE NULL

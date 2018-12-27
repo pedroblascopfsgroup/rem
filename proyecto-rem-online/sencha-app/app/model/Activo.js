@@ -774,7 +774,7 @@ Ext.define('HreRem.model.Activo', {
         },
         
 		extraParams: {tab: 'datosbasicos'}
-
+ 
     }
 
 });

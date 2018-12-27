@@ -49,6 +49,7 @@ import es.pfsgroup.plugin.recovery.mejoras.registro.model.MEJDDTipoRegistro;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.TareaActivoApi;
+import es.pfsgroup.plugin.rem.jbpm.handler.ActivoBaseActionHandler;
 import es.pfsgroup.plugin.rem.jbpm.handler.listener.ActivoGenerarSaltoImpl;
 import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionService;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
@@ -253,8 +254,13 @@ public class TareaActivoManager implements TareaActivoApi {
 				variables.put("saltando", true);
 				jbpmManager.addVariablesToProcess(tareaAsociada.getTramite().getProcessBPM(), variables);
 			}
-			jbpmManager.generaTransicionesSalto(tareaAsociada.getTareaExterna().getTokenIdBpm(), tareaDestino);
-			jbpmManager.signalToken(tareaAsociada.getTareaExterna().getTokenIdBpm(), "salto"+tareaDestino);
+			if(ActivoBaseActionHandler.CODIGO_FIN.equals(tareaDestino)) {
+				jbpmManager.generaTransicionesSalto(tareaAsociada.getTareaExterna().getTokenIdBpm(), tareaDestino);
+				jbpmManager.signalToken(tareaAsociada.getTareaExterna().getTokenIdBpm(), tareaDestino);
+			}else {
+				jbpmManager.generaTransicionesSalto(tareaAsociada.getTareaExterna().getTokenIdBpm(), tareaDestino);
+				jbpmManager.signalToken(tareaAsociada.getTareaExterna().getTokenIdBpm(), "salto"+tareaDestino);
+			}
 			saltoTarea(tareaAsociada.getTareaExterna().getTokenIdBpm(), tareaDestino);
 
 		}

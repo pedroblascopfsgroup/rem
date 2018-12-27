@@ -106,7 +106,15 @@ Ext.define('HreRem.view.activos.tramites.TramiteDetalleModel', {
 			remoteUrl: 'activo/getComboUsuarios',
 			extraParams: {idTipoGestor: '{tipoGestorSupervisor.selection.id}'}
 			}
+		},
+		
+		comboMotivoAnulacionAlquiler: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'motivoRechazoExpediente'}
+			}
 		}
-	
      }    
 });

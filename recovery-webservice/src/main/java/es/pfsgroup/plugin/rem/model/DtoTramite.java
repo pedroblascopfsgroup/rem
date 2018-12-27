@@ -55,6 +55,8 @@ public class DtoTramite extends WebDto {
 
 	private Boolean ocultarBotonCierre;
 	
+	private Boolean ocultarBotonResolucionAlquiler;
+	
 	private Boolean ocultarBotonResolucion;
 	
 	private Boolean ocultarBotonAnular;
@@ -389,6 +391,14 @@ public class DtoTramite extends WebDto {
 
 	public void setEsTareaAutorizacionBankia(Boolean esTareaAutorizacionBankia) {
 		this.esTareaAutorizacionBankia = esTareaAutorizacionBankia;
+	}
+	
+	public Boolean getOcultarBotonResolucionAlquiler() {
+		return ocultarBotonResolucionAlquiler;
+	}
+
+	public void setOcultarBotonResolucionAlquiler(Boolean ocultarBotonResolucionAlquiler) {
+		this.ocultarBotonResolucionAlquiler = ocultarBotonResolucionAlquiler;
 	}
 	
 }

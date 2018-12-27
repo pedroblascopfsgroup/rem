@@ -1,6 +1,5 @@
 package es.pfsgroup.plugin.rem.activo;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,15 +9,10 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import es.capgemini.devon.bo.Executor;
 import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.pfs.auditoria.model.Auditoria;
-import es.capgemini.pfs.users.FuncionManager;
-import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
-import es.pfsgroup.commons.utils.api.ApiProxyFactory;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoAvisadorApi;
@@ -27,34 +21,23 @@ import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.DtoAviso;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacion;
-import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 
 
 @Service("activoAvisadorManager")
 public class ActivoAvisadorManager implements ActivoAvisadorApi {
 
-	private SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+	//private SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 	protected static final Log logger = LogFactory.getLog(ActivoAvisadorManager.class);
 	
-	@Autowired
-	private Executor executor;
-
-	@Autowired
-	private GenericABMDao genericDao;
-
+	
 	@Autowired
 	private ActivoDao activoDao;
 
-	@Autowired
-	private ApiProxyFactory proxyFactory;
 	
 	@Autowired 
     private ActivoApi activoApi;
 
-	@Autowired
-	private FuncionManager funcionManager;
-
+	
 	@Override
 	@BusinessOperation(overrides = "activoAvisadorManager.get")
 	public String get(Long id) {
@@ -69,7 +52,6 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 		List<DtoAviso> listaAvisos = new ArrayList<DtoAviso>();
 		Activo activo = activoApi.get(id);
 		activoApi.calcularFechaTomaPosesion(activo);
-		List<Perfil> perfilesUsuario = usuarioLogado.getPerfiles();
 		
 		boolean restringida = false;
 		boolean obraNueva = false;

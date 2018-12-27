@@ -631,8 +631,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		}
 		activoDto.setAfectoAGencat(afectoAGencat);
 		
-		return activoDto;	
-
+	
 		List<VAdmisionDocumentos> admisionDocumentos = adapter.getListAdmisionCheckDocumentos(activo.getId());
 		
 		for (VAdmisionDocumentos doc : admisionDocumentos) {

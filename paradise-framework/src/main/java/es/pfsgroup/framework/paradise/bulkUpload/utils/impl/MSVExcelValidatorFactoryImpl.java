@@ -107,6 +107,15 @@ public class MSVExcelValidatorFactoryImpl {
 	
 	@Autowired
 	private MSVExclusionDwh excluirDwh;
+	
+	@Autowired
+	private MSVCargaMasivaSancionExcelValidator cargaMasivaSancionValidator;
+
+	@Autowired
+	private MSVValidatorCargaMasivaReclamacion ValidatorNombreCargaMasiva;
+	
+	@Autowired
+	private MSVValidatorCargaMasivaComunicaciones validatorCargaMasivaComunicaciones;
 
 
 	public MSVExcelValidator getForTipoValidador(String codTipoOperacion) {
@@ -246,3 +255,4 @@ public class MSVExcelValidatorFactoryImpl {
 
 		return null;
 	}
+}

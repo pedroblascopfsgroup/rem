@@ -534,7 +534,15 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			var estadoAlquilerCodigo = get('situacionPosesoria.tipoEstadoAlquiler');
 
 			return (CONST.COMBO_ESTADO_ALQUILER["ALQUILADO"] == estadoAlquilerCodigo);
-		}
+		},
+		isCarteraLiberbank: function(get){
+			 var isLiberbank = get('activo.isCarteraLiberbank');
+			 if(isLiberbank){
+				 return true;
+			 }
+			 return false;
+		 }
+
 
 	 },
 

@@ -13,7 +13,7 @@ public interface ComunicacionGencatApi {
 	 * @param idActivo
 	 * @return
 	 */
-	public List<ComunicacionGencat> getByIdActivo(Long idActivo);
+	public ComunicacionGencat getByIdActivo(Long idActivo);
 	
 	/**
 	 * Método que devuelve los registros relacionados con un idActivo y un nif
@@ -31,7 +31,7 @@ public interface ComunicacionGencatApi {
 	 * @param numActivoHaya
 	 * @return
 	 */
-	public List<ComunicacionGencat> getByNumActivoHaya(Long numActivoHaya);
+	public ComunicacionGencat getByNumActivoHaya(Long numActivoHaya);
 	
 	
 	/**
@@ -44,10 +44,17 @@ public interface ComunicacionGencatApi {
 	public List<ComunicacionGencat> getByNumActivoHayaAndNif(Long numActivoHaya, String nif);
 	
 	/**
+	 * Método que devuelve los registros relacionados con un idActivo que está en estado creado
+	 * 
+	 * @param idActivo
+	 * @return
+	 */
+	public ComunicacionGencat getByIdActivoCreado(Long idActivo);
+	
+	/**
 	 * Método que realiza la persistencia de datos de un objecto de tipo ComunicacionGencat
 	 * 
 	 * @param comunicacionGencat
 	 */
 	public void saveOrUpdate(ComunicacionGencat comunicacionGencat);
-
 }

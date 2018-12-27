@@ -2059,7 +2059,7 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
     	
     },
 
-    T016_ProcesoAdecuacion: function() {
+    T016_ProcesoAdecuacionValidacion: function() {
         var me = this;
         var comboReforma = me.down('[name=necesitaReforma]');
         var fechaRevision = me.down('[name=fechaRevision]');
@@ -2067,10 +2067,9 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
         comboReforma.allowBlank = false;
         fechaRevision.allowBlank = false;
         importeReforma.allowBlank = false;
-        
     },
     
-    T016_ComunicarGENCAT: function() {
+    T016_ComunicarGENCATValidacion: function() {
         var me = this;
         var fecha = me.down('[name=fechaTarea]');
         var fechaComunicacion = me.down('[name=fechaComunicacion]');

@@ -63,7 +63,9 @@ public class MSVActualizadorCargaMasivaSancion extends AbstractMSVActualizador i
 			
 		} else if (COD_NO_EJERCE.equals(exc.dameCelda(fila, POSICION_COLUMNA_RESULTADO_SANCION))) {
 			
-			list = comunicacionGencatApi.getByNumActivoHaya(Long.valueOf(exc.dameCelda(fila, POSICION_COLUMNA_NUMERO_ACTIVO)));
+			ComunicacionGencat comunicacionGencat = comunicacionGencatApi.getByNumActivoHaya(Long.valueOf(exc.dameCelda(fila, POSICION_COLUMNA_NUMERO_ACTIVO)));
+			
+			list.add(comunicacionGencat);
 			
 			if (Checks.esNulo(list) || list.isEmpty()) {
 				return getNotFound(fila, false);

@@ -7,14 +7,25 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import es.capgemini.pfs.dao.AbstractEntityDao;
+import es.capgemini.pfs.procesosJudiciales.model.EXTTareaProcedimiento;
+import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
+import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
+import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ComunicacionGencatApi;
+import es.pfsgroup.plugin.rem.jbpm.handler.user.UserAssigantionService;
+import es.pfsgroup.plugin.rem.jbpm.handler.user.UserAssigantionServiceFactoryApi;
+import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.TrabajoUserAssigantionService;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ComunicacionGencat;
+import es.pfsgroup.plugin.rem.model.TareaActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoComunicacionGencat;
 
 @Service("comunicacionGencatManager")
 public class ComunicacionGencatManager extends AbstractEntityDao<ComunicacionGencat, Long> implements ComunicacionGencatApi {
@@ -24,19 +35,29 @@ public class ComunicacionGencatManager extends AbstractEntityDao<ComunicacionGen
 	
 	@Autowired
 	private ActivoApi activoApi;
-
+	
+	@Autowired
+	private ActivoTramiteApi activoTramiteApi;
+	
+	@Autowired
+	private ActivoTareaExternaApi activoTareaExternaApi;
+	
+	@Autowired
+	private UserAssigantionServiceFactoryApi userAssigantionServiceFactoryApi;
+	
+	
 	@Override
-	public List<ComunicacionGencat> getByIdActivo(Long idActivo) {
+	public ComunicacionGencat getByIdActivo(Long idActivo) {
 		
 		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
 		Filter filtroIdActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
 
-		return genericDao.getList(ComunicacionGencat.class, filtroBorrado, filtroIdActivo);
+		return genericDao.getList(ComunicacionGencat.class, filtroBorrado, filtroIdActivo).get(0);
 		
 	}
 
 	@Override
-	public List<ComunicacionGencat> getByNumActivoHaya(Long numActivoHaya) {
+	public ComunicacionGencat getByNumActivoHaya(Long numActivoHaya) {
 		
 		Activo activo = activoApi.getByNumActivo(numActivoHaya);
 		
@@ -44,7 +65,7 @@ public class ComunicacionGencatManager extends AbstractEntityDao<ComunicacionGen
 			return this.getByIdActivo(activo.getId());		
 		}
 		
-		return new ArrayList<ComunicacionGencat>();
+		return null;
 	}
 
 	@Override
@@ -69,5 +90,15 @@ public class ComunicacionGencatManager extends AbstractEntityDao<ComunicacionGen
 		
 		return new ArrayList<ComunicacionGencat>();
 	}
-
+	
+	@Override
+	public ComunicacionGencat getByIdActivoCreado(Long idActivo) {
+		
+		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+		Filter filtroIdActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
+		Filter filtroEstadoTramite = genericDao.createFilter(FilterType.EQUALS, "estadoComunicacion.codigo", DDEstadoComunicacionGencat.COD_CREADO);
+		
+		return genericDao.getList(ComunicacionGencat.class, filtroBorrado, filtroIdActivo, filtroEstadoTramite).get(0);
+		
+	}
 }

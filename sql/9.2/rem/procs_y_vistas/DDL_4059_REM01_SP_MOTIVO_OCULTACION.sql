@@ -1,18 +1,17 @@
 --/*
 --##########################################
---## AUTOR=Sergio Beleña
---## FECHA_CREACION=20181210
+--## AUTOR=Matias Garcia-Argudo
+--## FECHA_CREACION=20181027
 --## ARTEFACTO=batch
---## VERSION_ARTEFACTO=2.0.3
---## INCIDENCIA_LINK=HREOS-4931
+--## VERSION_ARTEFACTO=2.0.19
+--## INCIDENCIA_LINK=HREOS-4908
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
---##        	0.1 Versión inicial
---##		0.2 Versión con ofertas express Carles Molins - HREOS-4563
---##		0.3 Sergio Beleña - HREOS-4931 - Optimización de tiempos
+--##        0.1 Versión inicial
+--##		0.2 Versión con ofertas express
 --##########################################
 --*/
 
@@ -84,15 +83,23 @@ create or replace PROCEDURE SP_MOTIVO_OCULTACION (pACT_ID IN NUMBER
                                      AND ''A'' = '''||pTIPO||'''
                                      AND PTA.ACT_ID= '||pACT_ID||                                                                  
                          ' UNION
-                          SELECT PAC.ACT_ID
+                          SSELECT PAC.ACT_ID
                                , 1 OCULTO
                                , MTO.DD_MTO_CODIGO
                                , MTO.DD_MTO_ORDEN ORDEN
                                     FROM '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO PAC
-                                    LEFT JOIN '|| V_ESQUEMA ||'.DD_MTO_MOTIVOS_OCULTACION MTO ON MTO.DD_MTO_CODIGO = ''01'' AND MTO.BORRADO = 0 /*No Publicable*/
-                                   WHERE PAC.BORRADO = 0
-                                     AND PAC.PAC_CHECK_PUBLICAR = 0
-                                     AND PAC.ACT_ID= '||pACT_ID||                                     
+                                    JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT ON ACT.ACT_ID = PAC.ACT_ID
+                                    JOIN '|| V_ESQUEMA ||'.ACT_AGA_AGRUPACION_ACTIVO AGA ON AGA.ACT_ID = ACT.ACT_ID
+                                    JOIN '|| V_ESQUEMA ||'.ACT_AGR_AGRUPACION AGR ON AGR.AGR_ID = AGA.AGR_ID
+                                    JOIN '|| V_ESQUEMA ||'.DD_EPU_ESTADO_PUBLICACION EPU ON EPU.DD_EPU_ID = ACT.DD_EPU_ID
+                                    JOIN '|| V_ESQUEMA ||'.DD_TAG_TIPO_AGRUPACION TAG ON TAG.DD_TAG_ID = AGR.DD_TAG_ID
+                                    LEFT JOIN '|| V_ESQUEMA ||'.DD_MTO_MOTIVOS_OCULTACION MTO ON MTO.DD_MTO_CODIGO = ''01'' AND MTO.BORRADO = 0 /*NO publicable*/
+                                    WHERE 
+                                        (
+                                        (PAC.BORRADO = 0 AND PAC.PAC_CHECK_PUBLICAR = 0)
+                                        OR (TAG.DD_TAG_CODIGO = ''13'' AND AGR.AGR_FIN_VIGENCIA < SYSDATE))
+                                        AND PAC.ACT_ID = '||pACT_ID||
+                                                                         
                          ' UNION
                           SELECT ACT.ACT_ID
                                /*, DECODE(SCM.DD_SCM_CODIGO,''01'',1,0)OCULTO*/ /*No comercializable*/
@@ -139,8 +146,8 @@ create or replace PROCEDURE SP_MOTIVO_OCULTACION (pACT_ID IN NUMBER
                                , MTO.DD_MTO_CODIGO
                                , MTO.DD_MTO_ORDEN ORDEN
                                     FROM '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION APU
-                                    JOIN '|| V_ESQUEMA ||'.V_COND_DISPONIBILIDAD V ON V.ACT_ID = APU.ACT_ID AND V.ES_CONDICIONADO = 0 and V.BORRADO=0
-                                    JOIN '|| V_ESQUEMA ||'.TMP_PUBL_ACT EST ON EST.ACT_ID = APU.ACT_ID AND EST.INFORME_COMERCIAL = 0
+                                    JOIN '|| V_ESQUEMA ||'.V_COND_DISPONIBILIDAD V ON V.ACT_ID = APU.ACT_ID AND V.ES_CONDICIONADO = 0
+                                    JOIN '|| V_ESQUEMA ||'.V_CAMBIO_ESTADO_PUBLI EST ON EST.ACT_ID = APU.ACT_ID AND EST.INFORME_COMERCIAL = 0
                                     LEFT JOIN '|| V_ESQUEMA ||'.DD_MTO_MOTIVOS_OCULTACION MTO ON MTO.DD_MTO_CODIGO = ''06'' AND MTO.BORRADO = 0 /*Revisión Publicación*/
                                    WHERE APU.BORRADO = 0.
                                      AND APU.ES_CONDICONADO_ANTERIOR = 1 

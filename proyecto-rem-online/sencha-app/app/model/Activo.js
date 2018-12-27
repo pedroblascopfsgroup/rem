@@ -741,6 +741,7 @@ Ext.define('HreRem.model.Activo', {
     		},
     		{
     			name: 'afectoAGencat',
+    			type: 'boolean'
     		},
     		{
     			name: 'activoChkPerimetroAlquiler',

@@ -17,7 +17,6 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
     requires: ['HreRem.model.ActivoSituacionPosesoria', 'HreRem.model.OcupantesLegales', 'HreRem.view.activos.detalle.LlavesList', 'HreRem.view.activos.detalle.MovimientosLlaveList'],
 	
     initComponent: function () {
-    	
         var me = this;
         var storeConTituloPosesionNo = Ext.create('Ext.data.Store', {
 					data : [{
@@ -25,10 +24,20 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 						"descripcion" : eval(String.fromCharCode(34, 83, 237,
 								34))
 					}, {
-						"codigo" : "0",
+						"codigo" : "03",
 						"descripcion" : "No, con indicios"
 					}]
 				});
+        var storeConTituloPosesionSi = Ext.create('Ext.data.Store', {
+			data : [{
+				"codigo" : "01",
+				"descripcion" : eval(String.fromCharCode(34, 83, 237,
+						34))
+			}, {
+				"codigo" : "02",
+				"descripcion" : "No"
+			}]
+		});
         me.setTitle(HreRem.i18n('title.situacion.posesoria.llaves'));
         var items= [
 
@@ -60,6 +69,8 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 			            			var me = this;
 			            			if(value=='0') {
 			            				me.up('formBase').down('[reference=comboSituacionPosesoriaConTitulo]').setStore(storeConTituloPosesionNo);
+			            			} else {
+			            				me.up('formBase').down('[reference=comboSituacionPosesoriaConTitulo]').setStore(storeConTituloPosesionSi);
 			            			}
 			            			
 			            		}
@@ -180,8 +191,7 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 								readOnly: '{!activo.aplicaGestion}'
 							}
 						},
-		                { 
-
+		                {
 				        	xtype: 'comboboxfieldbase',
 				        	allowBlank: false,
 							fieldLabel: HreRem.i18n('fieldlabel.ocupado'),
@@ -197,6 +207,7 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 			            				me.up('formBase').down('[reference=comboSituacionPosesoriaConTitulo]').setDisabled(true);
 			            			} else {
 			            				me.up('formBase').down('[reference=comboSituacionPosesoriaConTitulo]').setDisabled(false);
+			            				me.up('formBase').down('[reference=comboSituacionPosesoriaConTitulo]').value;
 			            			}
 			            			
 			            		}
@@ -224,8 +235,8 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 				        	reference: 'comboSituacionPosesoriaConTitulo',
 							fieldLabel: HreRem.i18n('fieldlabel.con.titulo'),
 				        	bind: {
-			            		store: '{comboSiNoRem}',
-			            		value: '{situacionPosesoria.conTitulo}'
+			            		store: '{comboDDTipoTituloActivoTPA}',
+			            		value: '{situacionPosesoria.conTitulo}' 
 			            	}
 				        },
 				        { 

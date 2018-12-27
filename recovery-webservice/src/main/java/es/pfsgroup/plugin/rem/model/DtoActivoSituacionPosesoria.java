@@ -20,7 +20,7 @@ public class DtoActivoSituacionPosesoria extends DtoTabActivo {
     private Date fechaRevisionEstado;
 	private Date fechaTomaPosesion;
 	private Integer ocupado;
-	private Integer conTitulo;
+	private String conTitulo;
 	private Integer riesgoOcupacion;
 	private Date fechaAccesoTapiado;
 	private Date fechaAccesoAntiocupa;
@@ -70,10 +70,10 @@ public class DtoActivoSituacionPosesoria extends DtoTabActivo {
 	public void setOcupado(Integer ocupado) {
 		this.ocupado = ocupado;
 	}
-	public Integer getConTitulo() {
+	public String getConTitulo() {
 		return conTitulo;
 	}
-	public void setConTitulo(Integer conTitulo) {
+	public void setConTitulo(String conTitulo) {
 		this.conTitulo = conTitulo;
 	}
 	public Integer getRiesgoOcupacion() {

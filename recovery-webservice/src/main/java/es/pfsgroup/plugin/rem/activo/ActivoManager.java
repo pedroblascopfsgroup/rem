@@ -214,6 +214,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPeriocidad;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoUsoDestino;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposArras;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi;
@@ -2687,7 +2688,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	{
 		ActivoSituacionPosesoria activoSitPos = activo.getSituacionPosesoria();
 		boolean tieneAdjunto = false;
-		if(!Checks.esNulo(activoSitPos) && (!Checks.esNulo(activoSitPos.getOcupado()) && !Checks.esNulo(activoSitPos.getConTitulo()) && (1 == activoSitPos.getOcupado() && 0 == activoSitPos.getConTitulo())))
+		if(!Checks.esNulo(activoSitPos) && (!Checks.esNulo(activoSitPos.getOcupado()) && !Checks.esNulo(activoSitPos.getConTitulo()) && (1 == activoSitPos.getOcupado() && activoSitPos.getConTitulo().equals(DDTipoTituloActivoTPA.tipoTituloNo))))
 		{
 			List<ActivoAdjuntoActivo> listAdjuntos = activo.getAdjuntos();
 
@@ -5053,10 +5054,10 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		Activo activo= this.get(id);
 		ActivoSituacionPosesoria posesoria=activo.getSituacionPosesoria();
 		Integer ocupado;
-		Integer conTitulo;
+		String conTitulo;
 		if(activoDto.getConTitulo() != null) {
 			conTitulo=activoDto.getConTitulo();
-		}else conTitulo=posesoria.getConTitulo();
+		}else conTitulo=posesoria.getConTitulo().getCodigo();
 		if(activoDto.getOcupado() != null) {
 			ocupado=activoDto.getOcupado();
 		}else ocupado=posesoria.getOcupado();
@@ -5065,7 +5066,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			if(!Checks.esNulo(posesoria) && (!Checks.esNulo(posesoria.getFechaRevisionEstado())
 					|| !Checks.esNulo(posesoria.getFechaTomaPosesion()))) 
 			{
-				if(!Checks.esNulo(posesoria.getOcupado()) && (1 == ocupado && 0 == conTitulo))
+				if(!Checks.esNulo(posesoria.getOcupado()) && (1 == ocupado && conTitulo.equals(DDTipoTituloActivoTPA.tipoTituloNo)))
 				{
 					boolean val = compruebaSiExisteActivoBienPorMatricula(id, DDTipoDocumentoActivo.CODIGO_INFORME_OCUPACION_DESOCUPACION);
 					if(val)

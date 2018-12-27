@@ -152,7 +152,9 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 			}
 			
 			if(!Checks.esNulo(dto.getOcupado()) && !BooleanUtils.toBoolean(dto.getOcupado())) {				
-				dto.setConTitulo(null);				
+				if (dto.getOcupado() == 0) {
+					dto.setConTitulo(null);
+				}
 			}
 				
 			beanUtilNotNull.copyProperties(activo.getSituacionPosesoria(), dto);

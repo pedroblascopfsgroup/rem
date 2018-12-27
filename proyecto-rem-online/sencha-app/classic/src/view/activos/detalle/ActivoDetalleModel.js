@@ -50,7 +50,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 
 	     esOcupacionLegal: function(get) {
 	     	var ocupado = get('situacionPosesoria.ocupado') == "1";
-	     	var conTitulo = get('situacionPosesoria.conTitulo') == "1";
+	     	var conTitulo = get('situacionPosesoria.conTitulo') == "01";
 	     	
 	     	return ocupado && conTitulo
 	     },
@@ -61,7 +61,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 
 	     esOcupacionIlegal: function(get) {
 	     	var ocupado = get('situacionPosesoria.ocupado') == "1";
-	     	var conTitulo = get('situacionPosesoria.conTitulo') == "1";
+	     	var conTitulo = get('situacionPosesoria.conTitulo') == "01";
 	     	var gridHistoricoOcupacionesIlegales = this.getView().lookupReference('historicoocupacionesilegalesgridref');
 			var fieldHistoricoOcupacionesIlegales = this.getView().lookupReference('fieldHistoricoOcupacionesIlegales');
 			if(gridHistoricoOcupacionesIlegales != null && fieldHistoricoOcupacionesIlegales != null){

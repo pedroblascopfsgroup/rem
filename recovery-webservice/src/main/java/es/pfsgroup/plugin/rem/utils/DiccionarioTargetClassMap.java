@@ -202,6 +202,7 @@ public class DiccionarioTargetClassMap{
 		mapa.put("situacionActivo", DDSituacionActivo.class);
 		mapa.put("calificacionNegativa", DDCalificacionNegativa.class);
 		mapa.put("motivosCalificacionNegativa", DDMotivoCalificacionNegativa.class);
+		mapa.put("tipoTituloActivoTPA", DDTipoTituloActivoTPA.class);
 		
 		return Collections.unmodifiableMap(mapa);
 	}

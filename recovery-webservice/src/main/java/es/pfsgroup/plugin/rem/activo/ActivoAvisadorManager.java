@@ -22,6 +22,7 @@ import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.DtoAviso;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
 
 @Service("activoAvisadorManager")
 public class ActivoAvisadorManager implements ActivoAvisadorApi {
@@ -128,7 +129,7 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 		// Aviso 3 / 4: Situación posesoria OCUPADO + Con o sín título
 		if (!Checks.esNulo(activo.getSituacionPosesoria().getOcupado())) {
 			if (activo.getSituacionPosesoria().getOcupado() == 1) {
-				if (activo.getSituacionPosesoria().getConTitulo() == 1) {
+				if (activo.getSituacionPosesoria().getConTitulo().equals(DDTipoTituloActivoTPA.tipoTituloSi)) {
 					DtoAviso dtoAviso = new DtoAviso();
 					dtoAviso.setDescripcion("Situación posesoria ocupado con título");
 					dtoAviso.setId(String.valueOf(id));

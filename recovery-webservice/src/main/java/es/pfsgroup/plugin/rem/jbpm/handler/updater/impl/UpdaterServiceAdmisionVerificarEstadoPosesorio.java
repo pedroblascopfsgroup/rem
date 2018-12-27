@@ -11,9 +11,12 @@ import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi.ENTIDADES;
 
@@ -37,6 +40,8 @@ public class UpdaterServiceAdmisionVerificarEstadoPosesorio implements UpdaterSe
 		// TODO Código que guarda las tareas.
 		
 		ActivoSituacionPosesoria sitpos = tramite.getActivo().getSituacionPosesoria();
+		Filter tituloActivo;
+		DDTipoTituloActivoTPA tipoTitulo;
 		
 		
 		//Valores trasladados a pestaña "Situación Posesoria"
@@ -57,9 +62,11 @@ public class UpdaterServiceAdmisionVerificarEstadoPosesorio implements UpdaterSe
 			
 			// Ocupante con titulo xa activo
 			if(COMBO_TITULO.equals(valor.getNombre()))
-				if(!Checks.esNulo(valor.getValor()))
-					sitpos.setConTitulo((DDSiNo.NO.equals(valor.getValor()))? 0 : 1);
-				else //En el caso de que no se haya rellenado el campo título lo nuleamos por si tuviese algún valor anteriormente.
+				if(!Checks.esNulo(valor.getValor())) {
+					tituloActivo = genericDao.createFilter(FilterType.EQUALS, "codigo", valor.getValor());
+					tipoTitulo = genericDao.get(DDTipoTituloActivoTPA.class, tituloActivo);
+					sitpos.setConTitulo(tipoTitulo);
+				} else //En el caso de que no se haya rellenado el campo título lo nuleamos por si tuviese algún valor anteriormente.
 					sitpos.setConTitulo(null);
 		}
 		genericDao.save(ActivoSituacionPosesoria.class, sitpos);

@@ -35,6 +35,10 @@ public class DDTipoTituloActivoTPA implements Serializable, Auditable {
 	 * 
 	 */
 	private static final long serialVersionUID = -5951311407094004799L;
+	
+	public static final String tipoTituloSi = "01";
+	public static final String tipoTituloNo = "02";
+	public static final String tipoTituloNoConIndicios = "03";
 
 	@Id
     @Column(name = "DD_TPA_ID")

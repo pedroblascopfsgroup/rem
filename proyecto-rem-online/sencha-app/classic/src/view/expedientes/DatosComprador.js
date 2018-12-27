@@ -353,48 +353,7 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 										            	hidden: '{!esBankiaHabitat}'
 										            },
 										            editable: true
-					                            }
-										        
-//										        {
-//													xtype: 'textfieldbase',
-//													fieldLabel:  HreRem.i18n('header.numero.ursus'),
-//													name: 'buscadorNumUrsus',
-//													reference: 'numeroClienteUrsusRef',
-//													flex: 2,
-//													colspan: 2,
-//													bind: {
-//														value: '{comprador.numeroClienteUrsus}',
-//														hidden: '{!esCarteraBankia}'
-//													},
-//													triggers: {
-//														
-//															buscarEmisor: {
-//													            cls: Ext.baseCSSPrefix + 'form-search-trigger',
-//													             handler: 'buscarNumeroUrsus'
-//													        }
-//													},
-//													cls: 'searchfield-input sf-con-borde',
-//													emptyText:  HreRem.i18n('txt.buscar.numero.ursus'),
-//													enableKeyEvents: true,
-//											        listeners: {
-//												        	specialKey: function(field, e) {
-//												        		if (e.getKey() === e.ENTER) {
-//												        			field.lookupController().buscarNumeroUrsus(field);											        			
-//												        		}
-//												        	}
-//												        }
-//								                }
-//								                {
-//								                	xtype: 'box'
-//							                	},
-//								                {
-//								                	xtype:'displayfieldbase',
-//								                	fieldLabel:  HreRem.i18n('fieldlabel.respuesta.numero.cliente.ursus'),
-//										        	reference: 'numeroClienteUrsusRef',
-//										        	bind: {
-//									            		value: '{comprador.numeroClienteUrsus}'
-//									            	}
-//								                }
+					                            }										        
 											]
 						           },
 						           {

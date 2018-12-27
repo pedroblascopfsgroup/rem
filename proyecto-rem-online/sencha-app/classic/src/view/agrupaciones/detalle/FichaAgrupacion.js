@@ -204,26 +204,6 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
 		                    }
 						},  
 						{ 
-		                	xtype		:'datefieldbase',
-		                	fieldLabel	:  HreRem.i18n('fieldlabel.fecha.baja'),
-			            	bind		: {
-			            		value: 	'{agrupacionficha.fechaBaja}',
-			            		minValue: '{agrupacionficha.fechaAlta}',
-			            		readOnly: '{agrupacionficha.existeFechaBaja}',
-			            		disabled: '{esAgrupacionAsistida}'
-			            	}
-
-						},
-						{ 
-							xtype		: 'displayfieldbase',
-							fieldLabel	: HreRem.i18n('fieldlabel.entidad.propietaria'),
-							bind		: {
-								value: '{agrupacionficha.cartera}',
-								readOnly: '{agrupacionficha.existeFechaBaja}'
-							}	
-						},
-						  
-						{ 
 							fieldLabel	: HreRem.i18n('fieldlabel.codigo.postal'),
 							bind		: {
 								value: '{agrupacionficha.codigoPostal}',

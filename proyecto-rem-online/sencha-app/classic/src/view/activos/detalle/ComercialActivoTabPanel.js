@@ -81,7 +81,7 @@ Ext.define('HreRem.view.activos.detalle.ComercialActivoTabPanel', {
         		{
         			xtype: 'buttontab',
         			itemId: 'botoncancelar',
-        		    handler	: 'onClickBotonCancelar', 
+        		    handler	: 'onClickBotonCancelarComercial', 
         		    iconCls: 'cancel-button-color',
         		    hidden: true,
         		    bind: {hidden: '{!editing}'}
@@ -119,6 +119,5 @@ Ext.define('HreRem.view.activos.detalle.ComercialActivoTabPanel', {
 			me.down("[itemId=botoneditar]").setVisible(true);
 		}
 
-	}
-	
+    }
 });

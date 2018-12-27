@@ -8,6 +8,7 @@ import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.rem.model.DtoNotificacionActivo;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ComunicacionGencat;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoGencat;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoComunicacionGencat;
@@ -122,5 +123,29 @@ public interface GencatApi {
 	 * @return DtoReclamacionActivo
 	 */
 	public DtoNotificacionActivo createNotificacionComunicacion(DtoNotificacionActivo notificacionActivo);
+	
+	/**
+	 * Guarda el DtoGencat en la BBDD
+	 * 
+	 * @param gencatDto
+	 * @return Boolean
+	 */
+	public Boolean saveDatosComunicacion(DtoGencat gencatDto);
+	
+	/**
+	 * Convierte un DtoGencat en un objeto ComunicacionGencat
+	 * 
+	 * @param cg
+	 * @param gencatDto
+	 */
+	public void dtoToBeanPreSave(ComunicacionGencat cg , DtoGencat gencatDto);
+	
+	/**
+	 * Obtienes un ObjetoComunicacionGencat a partir del IdActivo
+	 * 
+	 * @param idActivo
+	 * @return ComunicacionGencat
+	 */
+	public ComunicacionGencat getComunicacionGencatByIdActivo(Long idActivo);
 	
 }

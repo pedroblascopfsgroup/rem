@@ -11,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import es.capgemini.devon.files.FileItem;
@@ -22,7 +23,9 @@ import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.GencatAdapter;
 import es.pfsgroup.plugin.rem.api.GencatApi;
+import es.pfsgroup.plugin.rem.model.DtoGencat;
 import es.pfsgroup.plugin.rem.model.DtoNotificacionActivo;
+
 
 @Controller
 public class GencatController {
@@ -313,6 +316,32 @@ public class GencatController {
 			logger.error("error en gencatController", e);
 			model.put("success", false);
 			model.put("errorMessage", "Ha habido un problema durante la creación de la notificación.");
+		}
+		
+		return createModelAndViewJson(model);
+	}
+
+	/**
+	 * Guarda los datos del apartado saveDatosComunicacion
+	 * 
+	 * @param gencatDto
+	 * @param id
+	 * @param model
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView saveDatosComunicacion(DtoGencat gencatDto, ModelMap model) {
+
+		if( gencatApi.saveDatosComunicacion(gencatDto) )
+		{
+			model.put("success", true);			
+		}
+		else
+		{
+			logger.warn("error en gencatController");
+			model.put("success", false);
+			model.put("errorMessage", "Ha habido un problema en el guardado del formulario.");
 		}
 		
 		return createModelAndViewJson(model);

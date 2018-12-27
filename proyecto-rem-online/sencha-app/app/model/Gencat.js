@@ -135,8 +135,13 @@ Ext.define('HreRem.model.Gencat', {
     
 	proxy: {
 		type: 'uxproxy',
+		//localUrl: 'gencat.json',
+		remoteUrl: 'gencat/getDetalleGencatByIdActivo',
 		api: {
-            read: 'gencat/getDetalleGencatByIdActivo'
+            read: 'gencat/getDetalleGencatByIdActivo',
+            create: 'gencat/saveDatosComunicacion',
+            update: 'gencat/saveDatosComunicacion',
+            destroy: 'gencat/getDetalleGencatByIdActivo'
         }
     }
 

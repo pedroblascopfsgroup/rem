@@ -181,7 +181,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		var me = this;
 		me.getView().mask(HreRem.i18n("msg.mask.loading"));
 		//disableValidation: Atributo para indicar si el guardado del formulario debe aplicar o no, las validaciones.
-		if(form.isFormValid() || form.disableValidation) {
+		if(form.isFormValid || form.disableValidation) {
 			
 			Ext.Array.each(form.query('field[isReadOnlyEdit]'),
 				function (field, index){field.fireEvent('update'); field.fireEvent('save');}
@@ -252,7 +252,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		var me = this;
 		me.getView().mask(HreRem.i18n("msg.mask.loading"));
 		//disableValidation: Atributo para indicar si el guardado del formulario debe aplicar o no, las validaciones.
-		if(form.isFormValid() || form.disableValidation) {
+		if(form.isFormValid || form.disableValidation) {
 	
 			Ext.Array.each(form.query('field[isReadOnlyEdit]'),
 				function (field, index){field.fireEvent('update'); field.fireEvent('save');}
@@ -2149,7 +2149,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		var me = this;
 		var window = form.up('window');
 		//disableValidation: Atributo para indicar si el guardado del formulario debe aplicar o no, las validaciones.
-		if(form.isFormValid() || form.disableValidation) {
+		if(form.isFormValid || form.disableValidation) {
 			
 			Ext.Array.each(form.query('field[isReadOnlyEdit]'),
 				function (field, index){field.fireEvent('update'); field.fireEvent('save');}
@@ -3551,40 +3551,47 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		})
 
 	},
+	
 	onClickGuardarComercial: function(btn) {
-		var me = this;
+        var me = this;
 
-		var genericSave = false;
-		var form;
-		var idActivo = me.getViewModel().getData().activo.id;
-		
-		var tab = btn.up().up().getActiveTab();
-		
-		if (tab.xtype === "gencatcomercialactivo") {
-			// GUARDAR PESTANYA GENCAT
-			form = tab.down('gencatcomercialactivoform');
-			genericSave = true;
-		}
-		
-		if(genericSave && form && form.isValid()) {
-    		
+        var genericSave = false;
+        var form;
+        var idActivo = me.getViewModel().getData().activo.id;
+        var mask;
+        var afterSave;
+        
+        var tab = btn.up('tabpanel').getActiveTab();
+        
+        if (tab.xtype === "gencatcomercialactivo") {
+            // GUARDAR PESTANYA GENCAT
+        	afterSave = function(btn){
+        		btn.up().up().funcionRecargar();
+        	}
+            form = tab.down('gencatcomercialactivoform').getForm();
+            mask = btn.up().up().down("gencatcomercialactivo");
+            genericSave = true;
+        }
+        
+        if(genericSave && form && form.isValid()) {       	
+        	    
+            mask.mask(HreRem.i18n('msg.mask.loading'))            
+            
             form.submit({
                 waitMsg: HreRem.i18n('msg.mask.loading'),
                 params: {
-                	idActivo: idActivo
+                    idActivo: idActivo
                 },
                 success: function(fp, o) {
-
-                	if(o.result.success == "false") {
-                		me.fireEvent("errorToast", o.result.errorMessage);
-                	}
-                	else {
-                		me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-                	}
-                	
+                    mask.unmask();
+                    me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+                    afterSave(btn);
+                    me.limpiarBotonesGuardado(btn,tab);
                 },
                 failure: function(fp, o) {
-                	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+                    mask.unmask();
+                    me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+                    me.onClickBotonCancelarComercial(btn);
                 }
             });
         }
@@ -3620,7 +3627,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 				scope = Ext.GlobalEvents;
 			}
 		}
-
+		
 		if (!Ext.isEmpty(jsonData)) {
 			var data = JSON.parse(jsonData);
 
@@ -3696,6 +3703,42 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
             	chkPerimetroAlquiler.setDisabled(false);
             }
         }
+    },    
+    
+    onClickBotonCancelarComercial: function(btn) {
+        var me = this;
+        var activeTab = btn.up('tabpanel').getActiveTab();
+        
+        if (activeTab.xtype === "gencatcomercialactivo") {
+            
+            setTimeout(function(){
+                activeTab.down('gencatcomercialactivoform').getBindRecord().reject();
+            }, 300);
+
+        }
+        
+        me.limpiarBotonesGuardado(btn,activeTab);
+    },
+    
+    limpiarBotonesGuardado: function(btn, activeTab) {
+    	var me = this;
+    	
+    	 
+        btn.hide();
+        btn.up('tabbar').down('button[itemId=botonguardar]').hide();
+        btn.up('tabbar').down('button[itemId=botoneditar]').show();
+        
+        Ext.Array.each(activeTab.query('field[isReadOnlyEdit]'),
+                        function (field, index) 
+                            { 
+                                field.fireEvent('save');
+                                field.fireEvent('update');});
+
+        if(Ext.isDefined(btn.name) && btn.name === 'firstLevel') {
+             me.getViewModel().set("editingFirstLevel", false);
+         } else {
+             me.getViewModel().set("editing", false);
+         }
     },
     
     onChangeComboOcupado: function(combo, newValue, oldValue, eOpts) {

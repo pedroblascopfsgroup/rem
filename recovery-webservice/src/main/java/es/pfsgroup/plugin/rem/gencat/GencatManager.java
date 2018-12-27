@@ -16,18 +16,21 @@ import org.springframework.transaction.annotation.Transactional;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.pfs.adjunto.model.Adjunto;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
-import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
+import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
+import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ComunicacionGencatAdjuntoDao;
+import es.pfsgroup.plugin.rem.activo.dao.ComunicacionGencatDao;
 import es.pfsgroup.plugin.rem.activo.dao.HistoricoComunicacionGencatAdjuntoDao;
 import es.pfsgroup.plugin.rem.activo.dao.NotificacionGencatDao;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
@@ -58,6 +61,8 @@ import es.pfsgroup.plugin.rem.model.OfertaGencat;
 import es.pfsgroup.plugin.rem.model.ReclamacionGencat;
 import es.pfsgroup.plugin.rem.model.Visita;
 import es.pfsgroup.plugin.rem.model.VisitaGencat;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoComunicacionGencat;
+import es.pfsgroup.plugin.rem.model.dd.DDSancionGencat;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoNotificacionGencat;
 
@@ -92,7 +97,16 @@ public class GencatManager extends BusinessOperationOverrider<GencatApi> impleme
 	
 	@Autowired
 	private NotificacionGencatDao motificacionGencatDao;
+	
+	@Autowired
+	private UtilDiccionarioApi utilDiccionarioApi;
+	
+	@Autowired
+	private ComunicacionGencatDao comunicacionGencatDao;
 
+	@Autowired
+	private UsuarioManager usuarioManager;
+	
 	@Override
 	public DtoGencat getDetalleGencatByIdActivo(Long idActivo) {
 		DtoGencat gencatDto = new DtoGencat();
@@ -131,7 +145,7 @@ public class GencatManager extends BusinessOperationOverrider<GencatApi> impleme
 					if (visita != null) {
 						gencatDto.setIdVisita(visita.getNumVisitaRem());
 						gencatDto.setEstadoVisita(visita.getEstadoVisita() != null ? visita.getEstadoVisita().getCodigo() : null);
-						gencatDto.setFechaRealizacionVisita(visita.getFechaVisita());
+						gencatDto.setRealizacionVisita(visita.getFechaVisita());
 						
 						Usuario mediador = visita.getUsuarioAccion();
 						if (mediador != null) {
@@ -408,7 +422,7 @@ public class GencatManager extends BusinessOperationOverrider<GencatApi> impleme
 					if (visita != null) {
 						gencatDto.setIdVisita(visita.getNumVisitaRem());
 						gencatDto.setEstadoVisita(visita.getEstadoVisita() != null ? visita.getEstadoVisita().getCodigo() : null);
-						gencatDto.setFechaRealizacionVisita(visita.getFechaVisita());
+						gencatDto.setRealizacionVisita(visita.getFechaVisita());
 						
 						Usuario mediador = visita.getUsuarioAccion();
 						if (mediador != null) {
@@ -874,6 +888,86 @@ public class GencatManager extends BusinessOperationOverrider<GencatApi> impleme
 		
 		return dtoNotificacion;
 		
+	}
+	
+	@Transactional(readOnly = false)
+	public Boolean saveDatosComunicacion(DtoGencat gencatDto)
+	{
+		if( gencatDto.getIdActivo() != null)
+		{
+			ComunicacionGencat cg = getComunicacionGencatByIdActivo( gencatDto.getIdActivo() );
+			if( cg != null)
+			{
+				dtoToBeanPreSave( cg , gencatDto );
+				cg.getAuditoria().setFechaModificar(new Date());
+				cg.getAuditoria().setUsuarioModificar( usuarioManager.getUsuarioLogado().getUsername() );				
+				comunicacionGencatDao.saveOrUpdate(cg);			
+				return true;
+			}
+			else
+			{
+				cg = new ComunicacionGencat();
+				dtoToBeanPreSave( cg , gencatDto );
+				cg.setAuditoria( new Auditoria() );
+				cg.getAuditoria().setFechaCrear(new Date());
+				cg.getAuditoria().setUsuarioCrear( usuarioManager.getUsuarioLogado().getUsername() );
+				cg.getAuditoria().setBorrado( false );
+				Activo activo = activoApi.get( gencatDto.getIdActivo() );
+				if( activo != null )
+				{
+					cg.setActivo( activo );
+					comunicacionGencatDao.saveOrUpdate(cg);			
+					return true;
+				}
+			}
+		}
+		
+		return false;
+	}
+	
+	public void dtoToBeanPreSave(ComunicacionGencat cg , DtoGencat gencatDto)
+	{		
+		DDSancionGencat sancion = (DDSancionGencat) utilDiccionarioApi.dameValorDiccionarioByCod( DDSancionGencat.class , gencatDto.getSancion() );
+		cg.setSancion( sancion );		
+		cg.setFechaSancion(	gencatDto.getDateFechaSancion() );
+		
+		if( gencatDto.getComunicadoAnulacionAGencat() == null)
+		{
+			cg.setComunicadoAnulacionAGencat( false );
+		}
+		else
+		{
+			cg.setComunicadoAnulacionAGencat( gencatDto.getComunicadoAnulacionAGencat() );
+		}
+		
+		
+		if( DDSancionGencat.COD_EJERCE.equals(sancion.getCodigo()) )
+		{
+			cg.setNuevoCompradorNif( gencatDto.getNuevoCompradorNif() );
+			cg.setNuevoCompradorNombre( gencatDto.getNuevoCompradorNombre() );
+			cg.setNuevoCompradorApellido1( gencatDto.getNuevoCompradorApellido1() );
+			cg.setNuevoCompradorApellido2( gencatDto.getNuevoCompradorApellido2() );
+		}
+		
+	}
+	
+	public ComunicacionGencat getComunicacionGencatByIdActivo(Long idActivo) {
+		
+		if( idActivo != null)
+		{
+			Filter filtroComunicacionIdActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
+			Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+			Order orderByFechaCrear = new Order(OrderType.DESC, "auditoria.fechaCrear");
+			
+			//Datos comunicación
+			List <ComunicacionGencat> resultComunicacion = genericDao.getListOrdered(ComunicacionGencat.class, orderByFechaCrear, filtroComunicacionIdActivo, filtroBorrado);
+			ComunicacionGencat comunicacionGencat = null;
+			if (resultComunicacion != null && !resultComunicacion.isEmpty()) {
+				comunicacionGencat = resultComunicacion.get(0);
+			}
+			return comunicacionGencat;
+		}
+		return null;	
 	}
 	
 }

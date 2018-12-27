@@ -62,1346 +62,1346 @@ import es.pfsgroup.plugin.rem.utils.MSVREMUtils;
 @Repository("ActivoDao")
 public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements ActivoDao {
 
-	private static final String REST_USER_USERNAME = "REST-USER";
-	private static final String REST_USER_HDC_NAME = "Proceso Excel Masivo";
+  private static final String REST_USER_USERNAME = "REST-USER";
+  private static final String REST_USER_HDC_NAME = "Proceso Excel Masivo";
 
-	@Autowired
-	private MSVRawSQLDao rawDao;
-	
-	@Autowired
-	private GenericABMDao genericDao;
+  @Autowired
+  private MSVRawSQLDao rawDao;
+  
+  @Autowired
+  private GenericABMDao genericDao;
 
-	@Autowired
-	private GenericAdapter adapter;
+  @Autowired
+  private GenericAdapter adapter;
 
     @Override
-	public Page getListActivos(DtoActivoFilter dto, Usuario usuLogado) {
+  public Page getListActivos(DtoActivoFilter dto, Usuario usuLogado) {
 
-		HQLBuilder hb = new HQLBuilder(buildFrom(dto));
+    HQLBuilder hb = new HQLBuilder(buildFrom(dto));
 
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.numActivo", dto.getNumActivo());
-		
-   		if (dto.getEntidadPropietariaCodigo() != null)
-   			HQLBuilder.addFiltroLikeSiNotNull(hb, "act.entidadPropietariaCodigo", dto.getEntidadPropietariaCodigo(), true);
+    HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.numActivo", dto.getNumActivo());
+    
+      if (dto.getEntidadPropietariaCodigo() != null)
+        HQLBuilder.addFiltroLikeSiNotNull(hb, "act.entidadPropietariaCodigo", dto.getEntidadPropietariaCodigo(), true);
 
-   		HQLBuilder.addFiltroLikeSiNotNull(hb, "act.entidadPropietariaCodigo", dto.getEntidadPropietariaCodigoAvanzado(), true);
-   		
-   		if (dto.getTipoTituloActivoCodigo() != null)
-   			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.tipoTituloActivoCodigo", dto.getTipoTituloActivoCodigo());
+      HQLBuilder.addFiltroLikeSiNotNull(hb, "act.entidadPropietariaCodigo", dto.getEntidadPropietariaCodigoAvanzado(), true);
+      
+      if (dto.getTipoTituloActivoCodigo() != null)
+        HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.tipoTituloActivoCodigo", dto.getTipoTituloActivoCodigo());
 
-   		if (dto.getSubtipoActivoCodigo() != null)
-   			HQLBuilder.addFiltroLikeSiNotNull(hb, "act.subtipoActivoCodigo", dto.getSubtipoActivoCodigo(), true);
-   		HQLBuilder.addFiltroLikeSiNotNull(hb, "act.refCatastral", dto.getRefCatastral(), true);
-   		HQLBuilder.addFiltroLikeSiNotNull(hb, "act.finca", dto.getFinca(), true);
-   		if (dto.getProvinciaCodigo() != null)
-   			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.provinciaCodigo", dto.getProvinciaCodigo());
-   		
-   		HQLBuilder.addFiltroLikeSiNotNull(hb, "act.localidadDescripcion", dto.getLocalidadDescripcion(), true);
-   		if(dto.getCodigoPromocionPrinex() != null) {
-   			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.codigoPromocionPrinex", dto.getCodigoPromocionPrinex());
-   		}
-   		
-   		//Parámteros para la búsqueda avanzada
-   		if (dto.getIdSareb() != null)
-   			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.numActivoSareb", dto.getIdSareb());
-   		
-   		if (dto.getIdProp() != null && StringUtils.isNumeric(dto.getIdProp()))
-   			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.numActivoPrinex", Long.valueOf(dto.getIdProp()));
-   		
-   		if (dto.getIdRecovery() != null)
-   			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.idRecovery", Long.valueOf(dto.getIdRecovery()));
-   		
-   		if (dto.getIdUvem() != null)
-   			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.numActivoUvem", Long.valueOf(dto.getIdUvem()));
-   		
-   		if (dto.getEstadoActivoCodigo() != null)
-   			HQLBuilder.addFiltroLikeSiNotNull(hb, "act.estadoActivoCodigo", dto.getEstadoActivoCodigo());
-   		
-   		if (dto.getTipoViaCodigo() != null)
-   			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.tipoViaCodigo", dto.getTipoViaCodigo());
-   		
-   		if (dto.getNombreVia() != null)
-   			HQLBuilder.addFiltroLikeSiNotNull(hb, "act.nombreVia", dto.getNombreVia(), true);
-   		
-   		if (dto.getCodPostal() != null)
-   			HQLBuilder.addFiltroLikeSiNotNull(hb, "act.codPostal", dto.getCodPostal(), true);
-   		
-   		if (dto.getProvinciaAvanzada() != null)
-   			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.provinciaCodigo", dto.getProvinciaAvanzada());
-   		
-   		if (dto.getMunicipio() != null)
-   			HQLBuilder.addFiltroLikeSiNotNull(hb, "act.localidadDescripcion", dto.getMunicipio(), true);
+      if (dto.getSubtipoActivoCodigo() != null)
+        HQLBuilder.addFiltroLikeSiNotNull(hb, "act.subtipoActivoCodigo", dto.getSubtipoActivoCodigo(), true);
+      HQLBuilder.addFiltroLikeSiNotNull(hb, "act.refCatastral", dto.getRefCatastral(), true);
+      HQLBuilder.addFiltroLikeSiNotNull(hb, "act.finca", dto.getFinca(), true);
+      if (dto.getProvinciaCodigo() != null)
+        HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.provinciaCodigo", dto.getProvinciaCodigo());
+      
+      HQLBuilder.addFiltroLikeSiNotNull(hb, "act.localidadDescripcion", dto.getLocalidadDescripcion(), true);
+      if(dto.getCodigoPromocionPrinex() != null) {
+        HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.codigoPromocionPrinex", dto.getCodigoPromocionPrinex());
+      }
+      
+      //Parámteros para la búsqueda avanzada
+      if (dto.getIdSareb() != null)
+        HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.numActivoSareb", dto.getIdSareb());
+      
+      if (dto.getIdProp() != null && StringUtils.isNumeric(dto.getIdProp()))
+        HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.numActivoPrinex", Long.valueOf(dto.getIdProp()));
+      
+      if (dto.getIdRecovery() != null)
+        HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.idRecovery", Long.valueOf(dto.getIdRecovery()));
+      
+      if (dto.getIdUvem() != null)
+        HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.numActivoUvem", Long.valueOf(dto.getIdUvem()));
+      
+      if (dto.getEstadoActivoCodigo() != null)
+        HQLBuilder.addFiltroLikeSiNotNull(hb, "act.estadoActivoCodigo", dto.getEstadoActivoCodigo());
+      
+      if (dto.getTipoViaCodigo() != null)
+        HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.tipoViaCodigo", dto.getTipoViaCodigo());
+      
+      if (dto.getNombreVia() != null)
+        HQLBuilder.addFiltroLikeSiNotNull(hb, "act.nombreVia", dto.getNombreVia(), true);
+      
+      if (dto.getCodPostal() != null)
+        HQLBuilder.addFiltroLikeSiNotNull(hb, "act.codPostal", dto.getCodPostal(), true);
+      
+      if (dto.getProvinciaAvanzada() != null)
+        HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.provinciaCodigo", dto.getProvinciaAvanzada());
+      
+      if (dto.getMunicipio() != null)
+        HQLBuilder.addFiltroLikeSiNotNull(hb, "act.localidadDescripcion", dto.getMunicipio(), true);
 
-   		if (dto.getPaisCodigo() != null)
-   			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.paisCodigo", dto.getPaisCodigo());
-   		
-   		if (dto.getNumRegistro() != null)
-   			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.numRegistro", dto.getNumRegistro());
-   		
-   		if (dto.getLocalidadRegistroDescripcion() != null)
-   			HQLBuilder.addFiltroLikeSiNotNull(hb, "act.localidadRegistroDescripcion", dto.getLocalidadRegistroDescripcion(), true);
-   		
-   		if (dto.getIdufir() != null)
-   			HQLBuilder.addFiltroLikeSiNotNull(hb, "act.idufir", dto.getIdufir(), true);
-   		
-   		if (dto.getFincaAvanzada() != null)
-   			HQLBuilder.addFiltroLikeSiNotNull(hb, "act.finca", dto.getFincaAvanzada(), true);
-   		
-   		if (dto.getOcupado() != null)
-   			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.ocupado", dto.getOcupado());
-   		
-   		if (dto.getConTitulo() != null)
-   			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.conTitulo", dto.getConTitulo());
+      if (dto.getPaisCodigo() != null)
+        HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.paisCodigo", dto.getPaisCodigo());
+      
+      if (dto.getNumRegistro() != null)
+        HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.numRegistro", dto.getNumRegistro());
+      
+      if (dto.getLocalidadRegistroDescripcion() != null)
+        HQLBuilder.addFiltroLikeSiNotNull(hb, "act.localidadRegistroDescripcion", dto.getLocalidadRegistroDescripcion(), true);
+      
+      if (dto.getIdufir() != null)
+        HQLBuilder.addFiltroLikeSiNotNull(hb, "act.idufir", dto.getIdufir(), true);
+      
+      if (dto.getFincaAvanzada() != null)
+        HQLBuilder.addFiltroLikeSiNotNull(hb, "act.finca", dto.getFincaAvanzada(), true);
+      
+      if (dto.getOcupado() != null)
+        HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.ocupado", dto.getOcupado());
+      
+      if (dto.getConTitulo() != null)
+        HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.conTitulo", dto.getConTitulo());
 
-   		if (dto.getComboSelloCalidad() != null){
-   			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.selloCalidad", dto.getComboSelloCalidad().equals(Integer.valueOf(1)) ? true : false);
-   		}
+      if (dto.getComboSelloCalidad() != null){
+        HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.selloCalidad", dto.getComboSelloCalidad().equals(Integer.valueOf(1)) ? true : false);
+      }
 
-   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "scr.codigo", dto.getSubcarteraCodigo());
-   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "scr.codigo", dto.getSubcarteraCodigoAvanzado());
-   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.tipoActivoCodigo", dto.getTipoActivoCodigo());
-   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tud.codigo", dto.getTipoUsoDestinoCodigo());
-   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "ca.codigo", dto.getClaseActivoBancarioCodigo());
-   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "subca.codigo", dto.getSubClaseActivoBancarioCodigo());
-   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "subtipotitulo.codigo", dto.getSubtipoTituloActivoCodigo());
-   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.divHorizontal", dto.getDivisionHorizontal());
+      HQLBuilder.addFiltroIgualQueSiNotNull(hb, "scr.codigo", dto.getSubcarteraCodigo());
+      HQLBuilder.addFiltroIgualQueSiNotNull(hb, "scr.codigo", dto.getSubcarteraCodigoAvanzado());
+      HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.tipoActivoCodigo", dto.getTipoActivoCodigo());
+      HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tud.codigo", dto.getTipoUsoDestinoCodigo());
+      HQLBuilder.addFiltroIgualQueSiNotNull(hb, "ca.codigo", dto.getClaseActivoBancarioCodigo());
+      HQLBuilder.addFiltroIgualQueSiNotNull(hb, "subca.codigo", dto.getSubClaseActivoBancarioCodigo());
+      HQLBuilder.addFiltroIgualQueSiNotNull(hb, "subtipotitulo.codigo", dto.getSubtipoTituloActivoCodigo());
+      HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.divHorizontal", dto.getDivisionHorizontal());
 
-   		if (dto.getInscrito() != null) {
-   	   		if (dto.getInscrito() == 0) {
-   	   			hb.appendWhere(" tit.fechaInscripcionReg IS NULL ");	
-   	   		} else {
-   	   			hb.appendWhere(" tit.fechaInscripcionReg IS NOT NULL");
-   	   		}
-   		}
+      if (dto.getInscrito() != null) {
+          if (dto.getInscrito() == 0) {
+            hb.appendWhere(" tit.fechaInscripcionReg IS NULL ");  
+          } else {
+            hb.appendWhere(" tit.fechaInscripcionReg IS NOT NULL");
+          }
+      }
 
-   		HQLBuilder.addFiltroLikeSiNotNull(hb, "pro.nombre", dto.getPropietarioNombre(), true);
-   		HQLBuilder.addFiltroLikeSiNotNull(hb, "pro.docIdentificativo", dto.getPropietarioNIF(), true);
+      HQLBuilder.addFiltroLikeSiNotNull(hb, "pro.nombre", dto.getPropietarioNombre(), true);
+      HQLBuilder.addFiltroLikeSiNotNull(hb, "pro.docIdentificativo", dto.getPropietarioNIF(), true);
 
-   		if (dto.getConPosesion() != null) {
-   	   		if (dto.getConPosesion() == 0) {
-   	   			hb.appendWhere(" act.fechaTomaPosesion IS NULL ");	
-   	   		} else {
-   	   			hb.appendWhere(" act.fechaTomaPosesion IS NOT NULL");
-   	   		}
-   		}
+      if (dto.getConPosesion() != null) {
+          if (dto.getConPosesion() == 0) {
+            hb.appendWhere(" act.fechaTomaPosesion IS NULL ");  
+          } else {
+            hb.appendWhere(" act.fechaTomaPosesion IS NOT NULL");
+          }
+      }
 
-   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.accesoTapiado", dto.getAccesoTapiado());
-   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.accesoAntiocupa", dto.getAccesoAntiocupa());
-   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.situacionComercialCodigo", dto.getSituacionComercialCodigo());
-   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.tipoTituloPosesorio", dto.getTipoTituloPosesorio());
-   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tco.codigo", dto.getTipoComercializacionCodigo());
-   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "perac.aplicaGestion", dto.getPerimetroGestion());
-   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.flagRating", dto.getRatingCodigo());
-   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.conCargas", dto.getConCargas());
-   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "gausu.id", dto.getUsuarioGestor());
-   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.estadoComunicacionGencat", dto.getEstadoComunicacionGencatCodigo());
+      HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.accesoTapiado", dto.getAccesoTapiado());
+      HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.accesoAntiocupa", dto.getAccesoAntiocupa());
+      HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.situacionComercialCodigo", dto.getSituacionComercialCodigo());
+      HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.tipoTituloPosesorio", dto.getTipoTituloPosesorio());
+      HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tco.codigo", dto.getTipoComercializacionCodigo());
+      HQLBuilder.addFiltroIgualQueSiNotNull(hb, "perac.aplicaGestion", dto.getPerimetroGestion());
+      HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.flagRating", dto.getRatingCodigo());
+      HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.conCargas", dto.getConCargas());
+      HQLBuilder.addFiltroIgualQueSiNotNull(hb, "gausu.id", dto.getUsuarioGestor());
+      HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.estadoComunicacionGencat", dto.getEstadoComunicacionGencatCodigo());
 
-		return HibernateQueryUtils.page(this, hb, dto);
+    return HibernateQueryUtils.page(this, hb, dto);
 
-	}
+  }
 
     private String buildFrom(DtoActivoFilter dto) {
-    	StringBuilder sb = new StringBuilder("select act from VBusquedaActivos act ");
+      StringBuilder sb = new StringBuilder("select act from VBusquedaActivos act ");
 
-    	if (!Checks.esNulo(dto.getSubcarteraCodigo()) || !Checks.esNulo(dto.getSubcarteraCodigoAvanzado())) {
-    		sb.append(" join act.subcartera scr ");
-    	}
+      if (!Checks.esNulo(dto.getSubcarteraCodigo()) || !Checks.esNulo(dto.getSubcarteraCodigoAvanzado())) {
+        sb.append(" join act.subcartera scr ");
+      }
 
-    	if (!Checks.esNulo(dto.getTipoUsoDestinoCodigo())) {
-    		sb.append(" join act.tipoUsoDestino tud ");
-    	}
+      if (!Checks.esNulo(dto.getTipoUsoDestinoCodigo())) {
+        sb.append(" join act.tipoUsoDestino tud ");
+      }
 
-    	if (!Checks.esNulo(dto.getClaseActivoBancarioCodigo()) || !Checks.esNulo(dto.getSubClaseActivoBancarioCodigo())) {
-    		sb.append(" join act.activoBancario ab");
+      if (!Checks.esNulo(dto.getClaseActivoBancarioCodigo()) || !Checks.esNulo(dto.getSubClaseActivoBancarioCodigo())) {
+        sb.append(" join act.activoBancario ab");
 
-    		if (!Checks.esNulo(dto.getClaseActivoBancarioCodigo())) {
-    			sb.append(" join ab.claseActivo ca ");
-    		}
+        if (!Checks.esNulo(dto.getClaseActivoBancarioCodigo())) {
+          sb.append(" join ab.claseActivo ca ");
+        }
 
-    		if (!Checks.esNulo(dto.getSubClaseActivoBancarioCodigo())) {
-    			sb.append(" join ab.subtipoClaseActivo subca ");
-    		}
-    	}
+        if (!Checks.esNulo(dto.getSubClaseActivoBancarioCodigo())) {
+          sb.append(" join ab.subtipoClaseActivo subca ");
+        }
+      }
 
-    	if (!Checks.esNulo(dto.getSubtipoTituloActivoCodigo())) {
-    		sb.append(" join act.subtipoTitulo subtipotitulo ");
-    	}
+      if (!Checks.esNulo(dto.getSubtipoTituloActivoCodigo())) {
+        sb.append(" join act.subtipoTitulo subtipotitulo ");
+      }
 
-    	if (dto.getInscrito() != null) {
-    		sb.append(" join act.titulo tit ");
-    	}
+      if (dto.getInscrito() != null) {
+        sb.append(" join act.titulo tit ");
+      }
 
-    	if (!Checks.esNulo(dto.getPropietarioNIF()) || !Checks.esNulo(dto.getPropietarioNombre())) {
-    		sb.append(" join act.propietariosActivo pac ");
-    		sb.append(" join pac.propietario pro ");
-    	}
+      if (!Checks.esNulo(dto.getPropietarioNIF()) || !Checks.esNulo(dto.getPropietarioNombre())) {
+        sb.append(" join act.propietariosActivo pac ");
+        sb.append(" join pac.propietario pro ");
+      }
 
-    	if (!Checks.esNulo(dto.getTipoComercializacionCodigo())) {
-    		sb.append(" join act.tipoComercializacion tco ");
-    	}
+      if (!Checks.esNulo(dto.getTipoComercializacionCodigo())) {
+        sb.append(" join act.tipoComercializacion tco ");
+      }
 
-    	if (dto.getPerimetroGestion() != null) {
-    		sb.append(" join act.perimetroActivo perac ");
-    	}
+      if (dto.getPerimetroGestion() != null) {
+        sb.append(" join act.perimetroActivo perac ");
+      }
 
-    	if (dto.getUsuarioGestor() != null) {
-    		sb.append(" join act.gestoresActivo ga ");
-    		sb.append(" join ga.usuario gausu ");
-    	}
-    	
-    	return sb.toString();
+      if (dto.getUsuarioGestor() != null) {
+        sb.append(" join act.gestoresActivo ga ");
+        sb.append(" join ga.usuario gausu ");
+      }
+      
+      return sb.toString();
     }
     
     @Override
-	public List<Activo> getListActivosLista(DtoActivoFilter dto, Usuario usuLogado) {
+  public List<Activo> getListActivosLista(DtoActivoFilter dto, Usuario usuLogado) {
 
-		HQLBuilder hb = new HQLBuilder(" from VBusquedaActivos act");
-		
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.numActivo", dto.getNumActivo());
-		
-   		if (dto.getEntidadPropietariaCodigo() != null)
-   			HQLBuilder.addFiltroLikeSiNotNull(hb, "act.entidadPropietariaCodigo", dto.getEntidadPropietariaCodigo(), true);
+    HQLBuilder hb = new HQLBuilder(" from VBusquedaActivos act");
+    
+    HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.numActivo", dto.getNumActivo());
+    
+      if (dto.getEntidadPropietariaCodigo() != null)
+        HQLBuilder.addFiltroLikeSiNotNull(hb, "act.entidadPropietariaCodigo", dto.getEntidadPropietariaCodigo(), true);
 
-   		if (dto.getTipoTituloActivoCodigo() != null)
-   			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.tipoTituloActivoCodigo", dto.getTipoTituloActivoCodigo());
+      if (dto.getTipoTituloActivoCodigo() != null)
+        HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.tipoTituloActivoCodigo", dto.getTipoTituloActivoCodigo());
 
-   		if (dto.getSubtipoActivoCodigo() != null)
-   			HQLBuilder.addFiltroLikeSiNotNull(hb, "act.subtipoActivoCodigo", dto.getSubtipoActivoCodigo(), true);
-   		HQLBuilder.addFiltroLikeSiNotNull(hb, "act.refCatastral", dto.getRefCatastral(), true);
-   		HQLBuilder.addFiltroLikeSiNotNull(hb, "act.finca", dto.getFinca(), true);
-   		if (dto.getProvinciaCodigo() != null)
-   			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.provinciaCodigo", dto.getProvinciaCodigo());
-   		
-   		HQLBuilder.addFiltroLikeSiNotNull(hb, "act.localidadDescripcion", dto.getLocalidadDescripcion(), true);
-   		if(dto.getCodigoPromocionPrinex() != null) {
-   			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.codigoPromocionPrinex", dto.getCodigoPromocionPrinex());
-   		}
-   		//Parámteros para la búsqueda avanzada
-   		if (dto.getNumActivoRem() != null)
-   			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.numActivoRem", dto.getNumActivoRem());
-   		
-   		if (dto.getIdProp() != null)
-   			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.numActivoPrinex", Long.valueOf(dto.getIdProp()));
-   		
-   		if (dto.getIdRecovery() != null)
-   			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.idRecovery", Long.valueOf(dto.getIdRecovery()));
-   		
-   		if (dto.getIdUvem() != null)
-   			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.numActivoUvem", Long.valueOf(dto.getIdUvem()));
-   		
-   		if (dto.getEstadoActivoCodigo() != null)
-   			HQLBuilder.addFiltroLikeSiNotNull(hb, "act.estadoActivoCodigo", dto.getEstadoActivoCodigo());
-   		
-   		if (dto.getTipoViaCodigo() != null)
-   			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.tipoViaCodigo", dto.getTipoViaCodigo());
-   		
-   		if (dto.getNombreVia() != null)
-   			HQLBuilder.addFiltroLikeSiNotNull(hb, "act.nombreVia", dto.getNombreVia(), true);
-   		
-   		if (dto.getCodPostal() != null)
-   			HQLBuilder.addFiltroLikeSiNotNull(hb, "act.codPostal", dto.getCodPostal(), true);
-   		
-   		if (dto.getProvinciaAvanzada() != null)
-   			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.provinciaCodigo", dto.getProvinciaAvanzada());
-   		
-   		if (dto.getMunicipio() != null)
-   			HQLBuilder.addFiltroLikeSiNotNull(hb, "act.localidadDescripcion", dto.getMunicipio(), true);
-   		
-   		/*if (dto.getUnidadInferior() != null)
-   			HQLBuilder.addFiltroLikeSiNotNull(hb, "act.unidadPoblacional.descripcion", dto.getUnidadInferior(), true);*/
-   		
-   		if (dto.getPaisCodigo() != null)
-   			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.paisCodigo", dto.getPaisCodigo());
-   		
-   		if (dto.getNumRegistro() != null)
-   			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.numRegistro", dto.getNumRegistro());
-   		
-   		if (dto.getLocalidadRegistroDescripcion() != null)
-   			HQLBuilder.addFiltroLikeSiNotNull(hb, "act.localidadRegistroDescripcion", dto.getLocalidadRegistroDescripcion(), true);
-   		
-   		if (dto.getIdufir() != null)
-   			HQLBuilder.addFiltroLikeSiNotNull(hb, "act.idufir", dto.getIdufir(), true);
-   		
-   		if (dto.getFincaAvanzada() != null)
-   			HQLBuilder.addFiltroLikeSiNotNull(hb, "act.finca", dto.getFincaAvanzada(), true);
-   		
-   		if (dto.getOcupado() != null)
-   			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.ocupado", dto.getOcupado());
-   		
-   		if (dto.getConTitulo() != null)
-   			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.conTitulo", dto.getConTitulo());
+      if (dto.getSubtipoActivoCodigo() != null)
+        HQLBuilder.addFiltroLikeSiNotNull(hb, "act.subtipoActivoCodigo", dto.getSubtipoActivoCodigo(), true);
+      HQLBuilder.addFiltroLikeSiNotNull(hb, "act.refCatastral", dto.getRefCatastral(), true);
+      HQLBuilder.addFiltroLikeSiNotNull(hb, "act.finca", dto.getFinca(), true);
+      if (dto.getProvinciaCodigo() != null)
+        HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.provinciaCodigo", dto.getProvinciaCodigo());
+      
+      HQLBuilder.addFiltroLikeSiNotNull(hb, "act.localidadDescripcion", dto.getLocalidadDescripcion(), true);
+      if(dto.getCodigoPromocionPrinex() != null) {
+        HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.codigoPromocionPrinex", dto.getCodigoPromocionPrinex());
+      }
+      //Parámteros para la búsqueda avanzada
+      if (dto.getNumActivoRem() != null)
+        HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.numActivoRem", dto.getNumActivoRem());
+      
+      if (dto.getIdProp() != null)
+        HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.numActivoPrinex", Long.valueOf(dto.getIdProp()));
+      
+      if (dto.getIdRecovery() != null)
+        HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.idRecovery", Long.valueOf(dto.getIdRecovery()));
+      
+      if (dto.getIdUvem() != null)
+        HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.numActivoUvem", Long.valueOf(dto.getIdUvem()));
+      
+      if (dto.getEstadoActivoCodigo() != null)
+        HQLBuilder.addFiltroLikeSiNotNull(hb, "act.estadoActivoCodigo", dto.getEstadoActivoCodigo());
+      
+      if (dto.getTipoViaCodigo() != null)
+        HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.tipoViaCodigo", dto.getTipoViaCodigo());
+      
+      if (dto.getNombreVia() != null)
+        HQLBuilder.addFiltroLikeSiNotNull(hb, "act.nombreVia", dto.getNombreVia(), true);
+      
+      if (dto.getCodPostal() != null)
+        HQLBuilder.addFiltroLikeSiNotNull(hb, "act.codPostal", dto.getCodPostal(), true);
+      
+      if (dto.getProvinciaAvanzada() != null)
+        HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.provinciaCodigo", dto.getProvinciaAvanzada());
+      
+      if (dto.getMunicipio() != null)
+        HQLBuilder.addFiltroLikeSiNotNull(hb, "act.localidadDescripcion", dto.getMunicipio(), true);
+      
+      /*if (dto.getUnidadInferior() != null)
+        HQLBuilder.addFiltroLikeSiNotNull(hb, "act.unidadPoblacional.descripcion", dto.getUnidadInferior(), true);*/
+      
+      if (dto.getPaisCodigo() != null)
+        HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.paisCodigo", dto.getPaisCodigo());
+      
+      if (dto.getNumRegistro() != null)
+        HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.numRegistro", dto.getNumRegistro());
+      
+      if (dto.getLocalidadRegistroDescripcion() != null)
+        HQLBuilder.addFiltroLikeSiNotNull(hb, "act.localidadRegistroDescripcion", dto.getLocalidadRegistroDescripcion(), true);
+      
+      if (dto.getIdufir() != null)
+        HQLBuilder.addFiltroLikeSiNotNull(hb, "act.idufir", dto.getIdufir(), true);
+      
+      if (dto.getFincaAvanzada() != null)
+        HQLBuilder.addFiltroLikeSiNotNull(hb, "act.finca", dto.getFincaAvanzada(), true);
+      
+      if (dto.getOcupado() != null)
+        HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.ocupado", dto.getOcupado());
+      
+      if (dto.getConTitulo() != null)
+        HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.conTitulo", dto.getConTitulo());
 
-   		if (dto.getComboSelloCalidad() != null)
-   			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.selloCalidad", dto.getComboSelloCalidad());
-   		
-		return HibernateQueryUtils.list(this, hb);
+      if (dto.getComboSelloCalidad() != null)
+        HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.selloCalidad", dto.getComboSelloCalidad());
+      
+    return HibernateQueryUtils.list(this, hb);
 
-	}
+  }
     
     @Override
-	public Page getListHistoricoPresupuestos(DtoHistoricoPresupuestosFilter dto, Usuario usuLogado) {
+  public Page getListHistoricoPresupuestos(DtoHistoricoPresupuestosFilter dto, Usuario usuLogado) {
 
-		HQLBuilder hb = new HQLBuilder(" from VBusquedaPresupuestosActivo pre");
-		
-   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "pre.idActivo", dto.getIdActivo());
-   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "pre.id", dto.getIdPresupuesto());
-   		
-		
-   		return HibernateQueryUtils.page(this, hb, dto);
+    HQLBuilder hb = new HQLBuilder(" from VBusquedaPresupuestosActivo pre");
+    
+      HQLBuilder.addFiltroIgualQueSiNotNull(hb, "pre.idActivo", dto.getIdActivo());
+      HQLBuilder.addFiltroIgualQueSiNotNull(hb, "pre.id", dto.getIdPresupuesto());
+      
+    
+      return HibernateQueryUtils.page(this, hb, dto);
 
-	}
+  }
     
     @Override
-	public Integer isIntegradoAgrupacionRestringida(Long id, Usuario usuLogado) {
-    	HQLBuilder hb = new HQLBuilder("select count(*) from ActivoAgrupacionActivo act where act.agrupacion.fechaBaja is null and act.activo.id = " + id + " and act.agrupacion.tipoAgrupacion.codigo = " + DDTipoAgrupacion.AGRUPACION_RESTRINGIDA);
+  public Integer isIntegradoAgrupacionRestringida(Long id, Usuario usuLogado) {
+      HQLBuilder hb = new HQLBuilder("select count(*) from ActivoAgrupacionActivo act where act.agrupacion.fechaBaja is null and act.activo.id = " + id + " and act.agrupacion.tipoAgrupacion.codigo = " + DDTipoAgrupacion.AGRUPACION_RESTRINGIDA);
 
-   		return ((Long) getHibernateTemplate().find(hb.toString()).get(0)).intValue();
-	}
+      return ((Long) getHibernateTemplate().find(hb.toString()).get(0)).intValue();
+  }
 
     @Override
     public Integer isIntegradoAgrupacionComercial(Long idActivo) {
-    	HQLBuilder hb = new HQLBuilder("select count(*) from ActivoAgrupacionActivo act where act.agrupacion.fechaBaja is null and act.activo.id = " + idActivo + " and act.agrupacion.tipoAgrupacion.codigo = " + DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL);
+      HQLBuilder hb = new HQLBuilder("select count(*) from ActivoAgrupacionActivo act where act.agrupacion.fechaBaja is null and act.activo.id = " + idActivo + " and act.agrupacion.tipoAgrupacion.codigo = " + DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL);
 
-   		return ((Long) getHibernateTemplate().find(hb.toString()).get(0)).intValue();
+      return ((Long) getHibernateTemplate().find(hb.toString()).get(0)).intValue();
     }
 
     @Override
-	public Integer isActivoPrincipalAgrupacionRestringida(Long id) {
-    	HQLBuilder hb = new HQLBuilder("select count(*) from ActivoAgrupacionActivo act where act.agrupacion.fechaBaja is null and act.agrupacion.activoPrincipal.id = " + id + " and act.agrupacion.tipoAgrupacion.codigo = " + DDTipoAgrupacion.AGRUPACION_RESTRINGIDA);
+  public Integer isActivoPrincipalAgrupacionRestringida(Long id) {
+      HQLBuilder hb = new HQLBuilder("select count(*) from ActivoAgrupacionActivo act where act.agrupacion.fechaBaja is null and act.agrupacion.activoPrincipal.id = " + id + " and act.agrupacion.tipoAgrupacion.codigo = " + DDTipoAgrupacion.AGRUPACION_RESTRINGIDA);
 
-    	return ((Long) getHibernateTemplate().find(hb.toString()).get(0)).intValue();
-	}
+      return ((Long) getHibernateTemplate().find(hb.toString()).get(0)).intValue();
+  }
 
     @Override
     public ActivoAgrupacionActivo getActivoAgrupacionActivoAgrRestringidaPorActivoID(Long id) {
-    	HQLBuilder hb = new HQLBuilder("select act from ActivoAgrupacionActivo act where act.agrupacion.fechaBaja is null and act.activo.id = " + id + " and act.agrupacion.tipoAgrupacion.codigo = " + DDTipoAgrupacion.AGRUPACION_RESTRINGIDA);
+      HQLBuilder hb = new HQLBuilder("select act from ActivoAgrupacionActivo act where act.agrupacion.fechaBaja is null and act.activo.id = " + id + " and act.agrupacion.tipoAgrupacion.codigo = " + DDTipoAgrupacion.AGRUPACION_RESTRINGIDA);
 
-    	return ((ActivoAgrupacionActivo) getHibernateTemplate().find(hb.toString()).get(0));
-	}
+      return ((ActivoAgrupacionActivo) getHibernateTemplate().find(hb.toString()).get(0));
+  }
 
     @Override
-	public Integer isIntegradoAgrupacionObraNueva(Long id, Usuario usuLogado) {
-    	HQLBuilder hb = new HQLBuilder("select count(*) from ActivoAgrupacionActivo act where act.agrupacion.fechaBaja is null and act.activo.id = " + id + " and act.agrupacion.tipoAgrupacion.codigo = " + DDTipoAgrupacion.AGRUPACION_OBRA_NUEVA);
+  public Integer isIntegradoAgrupacionObraNueva(Long id, Usuario usuLogado) {
+      HQLBuilder hb = new HQLBuilder("select count(*) from ActivoAgrupacionActivo act where act.agrupacion.fechaBaja is null and act.activo.id = " + id + " and act.agrupacion.tipoAgrupacion.codigo = " + DDTipoAgrupacion.AGRUPACION_OBRA_NUEVA);
 
-   		return ((Long) getHibernateTemplate().find(hb.toString()).get(0)).intValue();
+      return ((Long) getHibernateTemplate().find(hb.toString()).get(0)).intValue();
 
-	}
+  }
     
     @SuppressWarnings("unchecked")
-	@Override
+  @Override
     public List<DDUnidadPoblacional> getComboInferiorMunicipio(String codigoMunicipio) {
-    	
-		 String hql = "from DDUnidadPoblacional where localidad.codigo= ? and codigo NOT LIKE '%0000'";
-		
-		 List<DDUnidadPoblacional> list = getHibernateTemplate().find(hql, new Object[] { codigoMunicipio });
-		 return list;
-	 
+      
+     String hql = "from DDUnidadPoblacional where localidad.codigo= ? and codigo NOT LIKE '%0000'";
+    
+     List<DDUnidadPoblacional> list = getHibernateTemplate().find(hql, new Object[] { codigoMunicipio });
+     return list;
+   
     }
     
     @Override
-	public Integer getMaxOrdenFotoById(Long id) {
-	    	HQLBuilder hb = new HQLBuilder("select max(orden) from ActivoFoto foto where foto.activo.id = " + id);
-	    	try {
-	    		//Integer cont = ((Integer) getHibernateTemplate().find(hb.toString()).get(0)).intValue();
-	    		return ((Integer) getHibernateTemplate().find(hb.toString()).get(0)).intValue();
-	    	} catch (Exception e) {
-	    		return 0;
-	    	}
-	}
+  public Integer getMaxOrdenFotoById(Long id) {
+        HQLBuilder hb = new HQLBuilder("select max(orden) from ActivoFoto foto where foto.activo.id = " + id);
+        try {
+          //Integer cont = ((Integer) getHibernateTemplate().find(hb.toString()).get(0)).intValue();
+          return ((Integer) getHibernateTemplate().find(hb.toString()).get(0)).intValue();
+        } catch (Exception e) {
+          return 0;
+        }
+  }
     
     @Override
-	public Integer getMaxOrdenFotoByIdSubdivision(Long idEntidad, BigDecimal hashSdv) {
-	   	HQLBuilder hb = new HQLBuilder("select max(orden) from ActivoFoto foto where foto.agrupacion.id = " 
-	    	+ idEntidad
-	    	+ " and foto.subdivision = "
-	    	+ hashSdv);
-	    	try {
-	    		//Integer cont = ((Integer) getHibernateTemplate().find(hb.toString()).get(0)).intValue();
-	    		return ((Integer) getHibernateTemplate().find(hb.toString()).get(0)).intValue();
-	    	} catch (Exception e) {
-	    		return 0;
-	    	}
-	}
+  public Integer getMaxOrdenFotoByIdSubdivision(Long idEntidad, BigDecimal hashSdv) {
+      HQLBuilder hb = new HQLBuilder("select max(orden) from ActivoFoto foto where foto.agrupacion.id = " 
+        + idEntidad
+        + " and foto.subdivision = "
+        + hashSdv);
+        try {
+          //Integer cont = ((Integer) getHibernateTemplate().find(hb.toString()).get(0)).intValue();
+          return ((Integer) getHibernateTemplate().find(hb.toString()).get(0)).intValue();
+        } catch (Exception e) {
+          return 0;
+        }
+  }
     
     @Override
-   	public Long getPresupuestoActual(Long id) {
-	    	SimpleDateFormat df = new SimpleDateFormat("yyyy");
-	    	String yearNow = df.format(new Date());
-	    	
-	       	HQLBuilder hb = new HQLBuilder("select presupuesto.id from PresupuestoActivo presupuesto "
-	       			+ " where presupuesto.activo.id = " + id 
-	       			+ " and presupuesto.ejercicio.anyo = " + yearNow);
+    public Long getPresupuestoActual(Long id) {
+        SimpleDateFormat df = new SimpleDateFormat("yyyy");
+        String yearNow = df.format(new Date());
+        
+          HQLBuilder hb = new HQLBuilder("select presupuesto.id from PresupuestoActivo presupuesto "
+              + " where presupuesto.activo.id = " + id 
+              + " and presupuesto.ejercicio.anyo = " + yearNow);
 
-	       	try {
-	       		if (getHibernateTemplate().find(hb.toString()).size() > 0)
-		       		return ((Long) getHibernateTemplate().find(hb.toString()).get(0));
-	       		else return null;
-	       	} catch (Exception e) {
-	       		e.printStackTrace();
-	       		return null;
-	       	}
-   	}
+          try {
+            if (getHibernateTemplate().find(hb.toString()).size() > 0)
+              return ((Long) getHibernateTemplate().find(hb.toString()).get(0));
+            else return null;
+          } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+          }
+    }
     
     @Override
-   	public Long getUltimoHistoricoPresupuesto(Long id) {
-	       	HQLBuilder hb = new HQLBuilder("select presupuesto.id from PresupuestoActivo presupuesto "
-	       			+ " where presupuesto.activo.id = " + id 
-	       			+ " order by presupuesto.ejercicio.anyo desc ");
+    public Long getUltimoHistoricoPresupuesto(Long id) {
+          HQLBuilder hb = new HQLBuilder("select presupuesto.id from PresupuestoActivo presupuesto "
+              + " where presupuesto.activo.id = " + id 
+              + " order by presupuesto.ejercicio.anyo desc ");
 
-	       	try {
-	       		if (getHibernateTemplate().find(hb.toString()).size() > 0)
-		       		return ((Long) getHibernateTemplate().find(hb.toString()).get(0));
-	       		else return null;
-	       	} catch (Exception e) {
-	       		e.printStackTrace();
-	       		return null;
-	       	}
-   	}
+          try {
+            if (getHibernateTemplate().find(hb.toString()).size() > 0)
+              return ((Long) getHibernateTemplate().find(hb.toString()).get(0));
+            else return null;
+          } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+          }
+    }
     
     @Override
-	public Page getListActivosPrecios(DtoActivoFilter dto) {
-		HQLBuilder hb = new HQLBuilder(" from VBusquedaActivosPrecios act");
-	
-   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.entidadPropietariaCodigo", dto.getEntidadPropietariaCodigo());
-   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.tipoTituloActivoCodigo", dto.getTipoTituloActivoCodigo());
-   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.subTipoTituloActivoCodigo", dto.getSubtipoTituloActivoCodigo());
-   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.inscrito", dto.getInscrito());
-   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.conPosesion", dto.getConPosesion());
-   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.conCargas", dto.getConCargas());
-   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.destinoComercialCodigo", dto.getDestinoComercialCodigo());
-   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.conOfertaAprobada", dto.getConOfertaAprobada());
-   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.conReserva", dto.getConReserva());
-   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.tieneMediador", dto.getTieneMediador());
-   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.tieneLLavesMediador", dto.getTieneLLavesMediador());
-   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.estadoInformeComercial", dto.getEstadoInformeComercial());
-   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.conTasacion", dto.getConTasacion());
-   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.codigoProvincia", dto.getProvinciaCodigo());
-   		HQLBuilder.addFiltroLikeSiNotNull(hb, "act.municipio", dto.getMunicipio(), true);
-   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.codigoPostal", dto.getCodPostal());
-   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.subcarteraCodigo", dto.getSubcarteraCodigo());
-   		
-   		//caso multiseleccion propietarios
-   		if(dto.getPropietario() != null && !dto.getPropietario().isEmpty() && dto.getPropietario().contains(",")){
-   			ArrayList<String> valores = new ArrayList<String>();
-   			for(String token : dto.getPropietario().split(",")){
-   				valores.add(token);
-   			}
-   			HQLBuilder.addFiltroWhereInSiNotNull(hb, "act.idPropietario", valores);
-   			
-   		}else{
-   			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.idPropietario", dto.getPropietario());
-   		}
+  public Page getListActivosPrecios(DtoActivoFilter dto) {
+    HQLBuilder hb = new HQLBuilder(" from VBusquedaActivosPrecios act");
+  
+      HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.entidadPropietariaCodigo", dto.getEntidadPropietariaCodigo());
+      HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.tipoTituloActivoCodigo", dto.getTipoTituloActivoCodigo());
+      HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.subTipoTituloActivoCodigo", dto.getSubtipoTituloActivoCodigo());
+      HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.inscrito", dto.getInscrito());
+      HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.conPosesion", dto.getConPosesion());
+      HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.conCargas", dto.getConCargas());
+      HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.destinoComercialCodigo", dto.getDestinoComercialCodigo());
+      HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.conOfertaAprobada", dto.getConOfertaAprobada());
+      HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.conReserva", dto.getConReserva());
+      HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.tieneMediador", dto.getTieneMediador());
+      HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.tieneLLavesMediador", dto.getTieneLLavesMediador());
+      HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.estadoInformeComercial", dto.getEstadoInformeComercial());
+      HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.conTasacion", dto.getConTasacion());
+      HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.codigoProvincia", dto.getProvinciaCodigo());
+      HQLBuilder.addFiltroLikeSiNotNull(hb, "act.municipio", dto.getMunicipio(), true);
+      HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.codigoPostal", dto.getCodPostal());
+      HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.subcarteraCodigo", dto.getSubcarteraCodigo());
+      
+      //caso multiseleccion propietarios
+      if(dto.getPropietario() != null && !dto.getPropietario().isEmpty() && dto.getPropietario().contains(",")){
+        ArrayList<String> valores = new ArrayList<String>();
+        for(String token : dto.getPropietario().split(",")){
+          valores.add(token);
+        }
+        HQLBuilder.addFiltroWhereInSiNotNull(hb, "act.idPropietario", valores);
+        
+      }else{
+        HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.idPropietario", dto.getPropietario());
+      }
 
-   		if (dto.getSubcarteraCodigo() != null) {
-   			if("00".equals(dto.getSubcarteraCodigo())) {
-   				List<String> lista = new ArrayList<String>();
-   				Collections.addAll(lista, "'"+DDSubcartera.CODIGO_BAN_BFA+"'", "'"+DDSubcartera.CODIGO_BAN_BH+"'", "'"+DDSubcartera.CODIGO_BAN_BK+"'");
-   				HQLBuilder.addFiltroWhereInSiNotNull(hb, "act.subcarteraCodigo", lista);
-   			} else {
-   				HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.subcarteraCodigo", dto.getSubcarteraCodigo());
-   			}
-   		}
-   		
-   		if (dto.getEstadoActivoCodigo() != null)
-   			HQLBuilder.addFiltroLikeSiNotNull(hb, "act.estadoActivoCodigo", dto.getEstadoActivoCodigo());
-   		
-   		if(!Checks.esNulo(dto.getConFsvVenta())) {
-   			if(BooleanUtils.toBoolean(dto.getConFsvVenta())) {
-   				hb.appendWhere("act.fsvVenta is not null");
-   			} else {
-   				hb.appendWhere("act.fsvVenta is null");
-   			}
-   		}
-   		
-   		if(!Checks.esNulo(dto.getConFsvRenta())) {
-   			if(BooleanUtils.toBoolean(dto.getConFsvRenta())) {
-   				hb.appendWhere("act.fsvRenta is not null");
-   			} else {
-   				hb.appendWhere("act.fsvRenta is null");
-   			}
-   		}
-   		if(!Checks.esNulo(dto.getMinimoVigente())) {
-   			if(BooleanUtils.toBoolean(dto.getMinimoVigente())) {
-   				hb.appendWhere("act.precioMinimoAutorizado is not null");
-   			} else {
-   				hb.appendWhere("act.precioMinimoAutorizado is null");
-   			} 			
-   		}
-   		if(!Checks.esNulo(dto.getVentaWebVigente())) {
-   			if(BooleanUtils.toBoolean(dto.getVentaWebVigente())) {
-   				hb.appendWhere("act.precioAprobadoVenta is not null");
-   			} else {
-   				hb.appendWhere("act.precioAprobadoVenta is null");
-   			} 			
-   		}
-   		if(!Checks.esNulo(dto.getMinimoHistorico())) {
-   			if(BooleanUtils.toBoolean(dto.getMinimoHistorico())) {
-   				hb.appendWhere("act.precioHistoricoMinimoAutorizado is not null");
-   			} else {
-   				hb.appendWhere("act.precioHistoricoMinimoAutorizado is null");
-   			} 			
-   		}
-   		if(!Checks.esNulo(dto.getWebHistorico())) {
-   			if(BooleanUtils.toBoolean(dto.getWebHistorico())) {
-   				hb.appendWhere("act.precioHistoricoAprobadoVenta is not null");
-   			} else {
-   				hb.appendWhere("act.precioHistoricoAprobadoVenta is null");
-   			} 			
-   		}
-   		
-   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.conBloqueo", dto.getConBloqueo());
-   		
-   		//HREOS-639 - Indicador de activos para preciar/repreciar/descuento
-   		if(Checks.esNulo(dto.getCheckTodosActivos()) || !dto.getCheckTodosActivos()) {
-	   		if(!Checks.esNulo(dto.getTipoPropuestaCodigo())) {
-		   		if(dto.getTipoPropuestaCodigo().equals("01")) {
-		   			hb.appendWhere("act.fechaPreciar is not null");
-		   			hb.appendWhere("act.fechaRepreciar is null");
-		   			} else if(dto.getTipoPropuestaCodigo().equals("02")) {
-		   				hb.appendWhere("act.fechaRepreciar is not null");
-		   				} 
-		   			else  if(dto.getTipoPropuestaCodigo().equals("03")){
-		   					hb.appendWhere("act.fechaDescuento is not null");
-		   		}
-	   		}
-   		}
-		return HibernateQueryUtils.page(this, hb, dto);
+      if (dto.getSubcarteraCodigo() != null) {
+        if("00".equals(dto.getSubcarteraCodigo())) {
+          List<String> lista = new ArrayList<String>();
+          Collections.addAll(lista, "'"+DDSubcartera.CODIGO_BAN_BFA+"'", "'"+DDSubcartera.CODIGO_BAN_BH+"'", "'"+DDSubcartera.CODIGO_BAN_BK+"'");
+          HQLBuilder.addFiltroWhereInSiNotNull(hb, "act.subcarteraCodigo", lista);
+        } else {
+          HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.subcarteraCodigo", dto.getSubcarteraCodigo());
+        }
+      }
+      
+      if (dto.getEstadoActivoCodigo() != null)
+        HQLBuilder.addFiltroLikeSiNotNull(hb, "act.estadoActivoCodigo", dto.getEstadoActivoCodigo());
+      
+      if(!Checks.esNulo(dto.getConFsvVenta())) {
+        if(BooleanUtils.toBoolean(dto.getConFsvVenta())) {
+          hb.appendWhere("act.fsvVenta is not null");
+        } else {
+          hb.appendWhere("act.fsvVenta is null");
+        }
+      }
+      
+      if(!Checks.esNulo(dto.getConFsvRenta())) {
+        if(BooleanUtils.toBoolean(dto.getConFsvRenta())) {
+          hb.appendWhere("act.fsvRenta is not null");
+        } else {
+          hb.appendWhere("act.fsvRenta is null");
+        }
+      }
+      if(!Checks.esNulo(dto.getMinimoVigente())) {
+        if(BooleanUtils.toBoolean(dto.getMinimoVigente())) {
+          hb.appendWhere("act.precioMinimoAutorizado is not null");
+        } else {
+          hb.appendWhere("act.precioMinimoAutorizado is null");
+        }       
+      }
+      if(!Checks.esNulo(dto.getVentaWebVigente())) {
+        if(BooleanUtils.toBoolean(dto.getVentaWebVigente())) {
+          hb.appendWhere("act.precioAprobadoVenta is not null");
+        } else {
+          hb.appendWhere("act.precioAprobadoVenta is null");
+        }       
+      }
+      if(!Checks.esNulo(dto.getMinimoHistorico())) {
+        if(BooleanUtils.toBoolean(dto.getMinimoHistorico())) {
+          hb.appendWhere("act.precioHistoricoMinimoAutorizado is not null");
+        } else {
+          hb.appendWhere("act.precioHistoricoMinimoAutorizado is null");
+        }       
+      }
+      if(!Checks.esNulo(dto.getWebHistorico())) {
+        if(BooleanUtils.toBoolean(dto.getWebHistorico())) {
+          hb.appendWhere("act.precioHistoricoAprobadoVenta is not null");
+        } else {
+          hb.appendWhere("act.precioHistoricoAprobadoVenta is null");
+        }       
+      }
+      
+      HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.conBloqueo", dto.getConBloqueo());
+      
+      //HREOS-639 - Indicador de activos para preciar/repreciar/descuento
+      if(Checks.esNulo(dto.getCheckTodosActivos()) || !dto.getCheckTodosActivos()) {
+        if(!Checks.esNulo(dto.getTipoPropuestaCodigo())) {
+          if(dto.getTipoPropuestaCodigo().equals("01")) {
+            hb.appendWhere("act.fechaPreciar is not null");
+            hb.appendWhere("act.fechaRepreciar is null");
+            } else if(dto.getTipoPropuestaCodigo().equals("02")) {
+              hb.appendWhere("act.fechaRepreciar is not null");
+              } 
+            else  if(dto.getTipoPropuestaCodigo().equals("03")){
+                hb.appendWhere("act.fechaDescuento is not null");
+          }
+        }
+      }
+    return HibernateQueryUtils.page(this, hb, dto);
 
-	}
+  }
     
     @Override
-	public Page getHistoricoValoresPrecios(DtoHistoricoPreciosFilter dto) {
+  public Page getHistoricoValoresPrecios(DtoHistoricoPreciosFilter dto) {
 
-		HQLBuilder hb = new HQLBuilder(" from ActivoHistoricoValoraciones hist");
-	
-   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "hist.activo.id", Long.parseLong(dto.getIdActivo()));   		
-   		
-		return HibernateQueryUtils.page(this, hb, dto);
+    HQLBuilder hb = new HQLBuilder(" from ActivoHistoricoValoraciones hist");
+  
+      HQLBuilder.addFiltroIgualQueSiNotNull(hb, "hist.activo.id", Long.parseLong(dto.getIdActivo()));       
+      
+    return HibernateQueryUtils.page(this, hb, dto);
 
-	}
+  }
 
-	@Override
-	public void deleteValoracionById(Long id) {
-	
-		StringBuilder sb = new StringBuilder("delete from ActivoValoraciones val where val.id = "+id);		
-		this.getSessionFactory().getCurrentSession().createQuery(sb.toString()).executeUpdate();
-		
-	}
-	
-	@Override
-	public boolean deleteValoracionSinDuplicarById(Long id) {
+  @Override
+  public void deleteValoracionById(Long id) {
+  
+    StringBuilder sb = new StringBuilder("delete from ActivoValoraciones val where val.id = "+id);    
+    this.getSessionFactory().getCurrentSession().createQuery(sb.toString()).executeUpdate();
+    
+  }
+  
+  @Override
+  public boolean deleteValoracionSinDuplicarById(Long id) {
 
-		StringBuilder sb = new StringBuilder("delete from ActivoValoraciones val where val.id = " + id);
-		Query query = this.getSessionFactory().getCurrentSession().createQuery(sb.toString());
-		int afectado = query.executeUpdate();
+    StringBuilder sb = new StringBuilder("delete from ActivoValoraciones val where val.id = " + id);
+    Query query = this.getSessionFactory().getCurrentSession().createQuery(sb.toString());
+    int afectado = query.executeUpdate();
 
-		return (afectado > 0) ? true : false;
-			
-	}
+    return (afectado > 0) ? true : false;
+      
+  }
 
     @SuppressWarnings("unchecked")
-	@Override
+  @Override
     public ActivoCondicionEspecifica getUltimaCondicion(Long idActivo) {
-    	
-		 String hql = "from ActivoCondicionEspecifica where activo.id = ? and fechaHasta IS NULL";
-		
-		 List<ActivoCondicionEspecifica> listaCondiciones = getHibernateTemplate().find(hql, new Object[] { idActivo });
-		 
-		 return !Checks.estaVacio(listaCondiciones)?listaCondiciones.get(0):null;			
-	 
+      
+     String hql = "from ActivoCondicionEspecifica where activo.id = ? and fechaHasta IS NULL";
+    
+     List<ActivoCondicionEspecifica> listaCondiciones = getHibernateTemplate().find(hql, new Object[] { idActivo });
+     
+     return !Checks.estaVacio(listaCondiciones)?listaCondiciones.get(0):null;     
+   
     }
 
-	@Override
-	public Page getPropuestas(DtoPropuestaFilter dto) {
-		
-		HQLBuilder hb = new HQLBuilder(" from VBusquedaPropuestasActivo propact");
-		
-   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "propact.entidadPropietariaCodigo", dto.getEntidadPropietariaCodigo());
-   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "propact.numPropuesta", dto.getNumPropuesta());
-   		HQLBuilder.addFiltroLikeSiNotNull(hb, "propact.nombrePropuesta", dto.getNombrePropuesta());
-   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "propact.estadoCodigo", dto.getEstadoCodigo());
-   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "propact.estadoActivoCodigo", dto.getEstadoActivoCodigo());
-   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "propact.idActivo", dto.getIdActivo());
-   		HQLBuilder.addFiltroLikeSiNotNull(hb,"propact.gestor", dto.getGestorPrecios(),true);
-   		HQLBuilder.addFiltroIgualQueSiNotNull(hb,"propact.tipoPropuesta", dto.getTipoPropuesta());
-   		
-   		if(!Checks.esNulo(dto.getTipoDeFecha())) {
-   			switch(Integer.parseInt(dto.getTipoDeFecha())) {
-	   			case 1:
-	   				agregarFiltroFecha(hb,dto.getFechaDesde().toString(),dto.getFechaHasta(),"propact.fechaEmision");	
-	   				break;
-	   			case 2:
-	   				agregarFiltroFecha(hb,dto.getFechaDesde().toString(),dto.getFechaHasta(),"propact.fechaEnvio");	
-	   				break;
-	   			case 3:
-	   				agregarFiltroFecha(hb,dto.getFechaDesde().toString(),dto.getFechaHasta(),"propact.fechaSancion");	
-	   				break;
-	   			case 4:
-	   				agregarFiltroFecha(hb,dto.getFechaDesde().toString(),dto.getFechaHasta(),"propact.fechaCarga");	
-	   				break;
-   				default:
-   					break;
-   			}
-   		}
-   		
-		return HibernateQueryUtils.page(this, hb, dto);
+  @Override
+  public Page getPropuestas(DtoPropuestaFilter dto) {
+    
+    HQLBuilder hb = new HQLBuilder(" from VBusquedaPropuestasActivo propact");
+    
+      HQLBuilder.addFiltroIgualQueSiNotNull(hb, "propact.entidadPropietariaCodigo", dto.getEntidadPropietariaCodigo());
+      HQLBuilder.addFiltroIgualQueSiNotNull(hb, "propact.numPropuesta", dto.getNumPropuesta());
+      HQLBuilder.addFiltroLikeSiNotNull(hb, "propact.nombrePropuesta", dto.getNombrePropuesta());
+      HQLBuilder.addFiltroIgualQueSiNotNull(hb, "propact.estadoCodigo", dto.getEstadoCodigo());
+      HQLBuilder.addFiltroIgualQueSiNotNull(hb, "propact.estadoActivoCodigo", dto.getEstadoActivoCodigo());
+      HQLBuilder.addFiltroIgualQueSiNotNull(hb, "propact.idActivo", dto.getIdActivo());
+      HQLBuilder.addFiltroLikeSiNotNull(hb,"propact.gestor", dto.getGestorPrecios(),true);
+      HQLBuilder.addFiltroIgualQueSiNotNull(hb,"propact.tipoPropuesta", dto.getTipoPropuesta());
+      
+      if(!Checks.esNulo(dto.getTipoDeFecha())) {
+        switch(Integer.parseInt(dto.getTipoDeFecha())) {
+          case 1:
+            agregarFiltroFecha(hb,dto.getFechaDesde().toString(),dto.getFechaHasta(),"propact.fechaEmision"); 
+            break;
+          case 2:
+            agregarFiltroFecha(hb,dto.getFechaDesde().toString(),dto.getFechaHasta(),"propact.fechaEnvio"); 
+            break;
+          case 3:
+            agregarFiltroFecha(hb,dto.getFechaDesde().toString(),dto.getFechaHasta(),"propact.fechaSancion"); 
+            break;
+          case 4:
+            agregarFiltroFecha(hb,dto.getFechaDesde().toString(),dto.getFechaHasta(),"propact.fechaCarga"); 
+            break;
+          default:
+            break;
+        }
+      }
+      
+    return HibernateQueryUtils.page(this, hb, dto);
 
-	}
+  }
 
-	@Override
-	public Page getActivosPublicacion(DtoActivosPublicacion dto) {
+  @Override
+  public Page getActivosPublicacion(DtoActivosPublicacion dto) {
 
-		HQLBuilder hb = new HQLBuilder(" from VBusquedaPublicacionActivo activopubli");
+    HQLBuilder hb = new HQLBuilder(" from VBusquedaPublicacionActivo activopubli");
 
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.numActivo", dto.getNumActivo());
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.tipoActivoCodigo", dto.getTipoActivo());
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.subtipoActivoCodigo", dto.getSubtipoActivo());
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.cartera", dto.getCartera());
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.estadoPublicacionCodigo", dto.getEstadoPublicacionCodigo());
-   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.admision", dto.getAdmision());
-   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.gestion", dto.getGestion());
-   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.publicacion", dto.getPublicacion());
-   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.precio", dto.getPrecio());
-   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.informeComercial", dto.getInformeComercial());
-   		if (!Checks.esNulo(dto.getTipoComercializacionCodigo()))HQLBuilder.addFiltroWhereInSiNotNull(hb, "activopubli.tipoComercializacionCodigo", Arrays.asList(dto.getTipoComercializacionCodigo()));
+    HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.numActivo", dto.getNumActivo());
+    HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.tipoActivoCodigo", dto.getTipoActivo());
+    HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.subtipoActivoCodigo", dto.getSubtipoActivo());
+    HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.cartera", dto.getCartera());
+    HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.estadoPublicacionCodigo", dto.getEstadoPublicacionCodigo());
+      HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.admision", dto.getAdmision());
+      HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.gestion", dto.getGestion());
+      HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.publicacion", dto.getPublicacion());
+      HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.precio", dto.getPrecio());
+      HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.informeComercial", dto.getInformeComercial());
+      if (!Checks.esNulo(dto.getTipoComercializacionCodigo()))HQLBuilder.addFiltroWhereInSiNotNull(hb, "activopubli.tipoComercializacionCodigo", Arrays.asList(dto.getTipoComercializacionCodigo()));
 
-		return HibernateQueryUtils.page(this, hb, dto);
-	}
+    return HibernateQueryUtils.page(this, hb, dto);
+  }
 
-	@Override
-	public Boolean getDptoPrecio(Activo activo) {
-		HQLBuilder hb = new HQLBuilder(" from VBusquedaPublicacionActivo activopubli");
-		hb.appendWhere("activopubli.numActivo = " + activo.getNumActivo());
-		
-		VBusquedaPublicacionActivo busquedaActivo = (VBusquedaPublicacionActivo) this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).uniqueResult();
-		if(Checks.esNulo(busquedaActivo))
-			return null;
-		return busquedaActivo.getPrecio();
-	}
-	
-	@SuppressWarnings("unchecked")
-	@Override
-	public ActivoHistoricoEstadoPublicacion getUltimoHistoricoEstadoPublicacion(Long activoID) {
-		
-		String hql = "from ActivoHistoricoEstadoPublicacion historico where historico.activo.id = ? and auditoria.borrado = false order by historico.id desc";
-		
-		 List<ActivoHistoricoEstadoPublicacion> historicoLista = getHibernateTemplate().find(hql, new Object[] { activoID });
-		 
-		 return !Checks.estaVacio(historicoLista)?historicoLista.get(0):null;
-	}
-	
-	@SuppressWarnings("unchecked")
-	@Override
-	public ActivoHistoricoEstadoPublicacion getPenultimoHistoricoEstadoPublicacion(Long activoID) {
-		
-		String hql = "from ActivoHistoricoEstadoPublicacion historico where historico.activo.id = ? and auditoria.borrado = false order by historico.id desc";
-		
-		List<ActivoHistoricoEstadoPublicacion> historicoLista = getHibernateTemplate().find(hql, new Object[] { activoID });
-		 
-		return (!Checks.estaVacio(historicoLista) && historicoLista.size() > 1)?historicoLista.get(1):null;
-	}
+  @Override
+  public Boolean getDptoPrecio(Activo activo) {
+    HQLBuilder hb = new HQLBuilder(" from VBusquedaPublicacionActivo activopubli");
+    hb.appendWhere("activopubli.numActivo = " + activo.getNumActivo());
+    
+    VBusquedaPublicacionActivo busquedaActivo = (VBusquedaPublicacionActivo) this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).uniqueResult();
+    if(Checks.esNulo(busquedaActivo))
+      return null;
+    return busquedaActivo.getPrecio();
+  }
+  
+  @SuppressWarnings("unchecked")
+  @Override
+  public ActivoHistoricoEstadoPublicacion getUltimoHistoricoEstadoPublicacion(Long activoID) {
+    
+    String hql = "from ActivoHistoricoEstadoPublicacion historico where historico.activo.id = ? and auditoria.borrado = false order by historico.id desc";
+    
+     List<ActivoHistoricoEstadoPublicacion> historicoLista = getHibernateTemplate().find(hql, new Object[] { activoID });
+     
+     return !Checks.estaVacio(historicoLista)?historicoLista.get(0):null;
+  }
+  
+  @SuppressWarnings("unchecked")
+  @Override
+  public ActivoHistoricoEstadoPublicacion getPenultimoHistoricoEstadoPublicacion(Long activoID) {
+    
+    String hql = "from ActivoHistoricoEstadoPublicacion historico where historico.activo.id = ? and auditoria.borrado = false order by historico.id desc";
+    
+    List<ActivoHistoricoEstadoPublicacion> historicoLista = getHibernateTemplate().find(hql, new Object[] { activoID });
+     
+    return (!Checks.estaVacio(historicoLista) && historicoLista.size() > 1)?historicoLista.get(1):null;
+  }
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public ActivoHistoricoEstadoPublicacion getUltimoHistoricoEstadoPublicado(Long activoID) {
-		
-		String hql = "from ActivoHistoricoEstadoPublicacion historico where historico.activo.id = ? " +
-				" and historico.estadoPublicacion.codigo in ("+DDEstadoPublicacion.CODIGO_PUBLICADO + ","
-				+ DDEstadoPublicacion.CODIGO_PUBLICADO_OCULTO + ","
-				+ DDEstadoPublicacion.CODIGO_PUBLICADO_PRECIOOCULTO +") " +
-				" and auditoria.borrado = false order by historico.id desc";
-		
-		 List<ActivoHistoricoEstadoPublicacion> historicoLista = getHibernateTemplate().find(hql, new Object[] { activoID });
-		 
-		 return !Checks.estaVacio(historicoLista)?historicoLista.get(0):null;
-	}
-	
-	/**
-	 * Este método lanza el procedimiento de cambio de estado de publicación
-	 *
-	 * @param idActivo: ID del activo para el cual se desea realizar la operación.
-	 * @param username: nombre del usuario, si la llamada es desde la web, que realiza la operación.
-	 * @param historificar: indica si la operación ha de realizar un histórico de los movimientos realizados.
-	 * @return Devuelve True si la operación ha sido satisfactoria, False si no ha sido satisfactoria.
-	 */
-	private Boolean publicarActivo(Long idActivo, String username, Boolean historificar, String eleccionUsuarioTipoPublicacionAlquiler) {
-		String procedureHQL = "BEGIN SP_CAMBIO_ESTADO_PUBLICACION(:idActivoParam, :eleccionUsuarioParam, :usernameParam, :historificarParam);  END;";
+  @SuppressWarnings("unchecked")
+  @Override
+  public ActivoHistoricoEstadoPublicacion getUltimoHistoricoEstadoPublicado(Long activoID) {
+    
+    String hql = "from ActivoHistoricoEstadoPublicacion historico where historico.activo.id = ? " +
+        " and historico.estadoPublicacion.codigo in ("+DDEstadoPublicacion.CODIGO_PUBLICADO + ","
+        + DDEstadoPublicacion.CODIGO_PUBLICADO_OCULTO + ","
+        + DDEstadoPublicacion.CODIGO_PUBLICADO_PRECIOOCULTO +") " +
+        " and auditoria.borrado = false order by historico.id desc";
+    
+     List<ActivoHistoricoEstadoPublicacion> historicoLista = getHibernateTemplate().find(hql, new Object[] { activoID });
+     
+     return !Checks.estaVacio(historicoLista)?historicoLista.get(0):null;
+  }
+  
+  /**
+   * Este método lanza el procedimiento de cambio de estado de publicación
+   *
+   * @param idActivo: ID del activo para el cual se desea realizar la operación.
+   * @param username: nombre del usuario, si la llamada es desde la web, que realiza la operación.
+   * @param historificar: indica si la operación ha de realizar un histórico de los movimientos realizados.
+   * @return Devuelve True si la operación ha sido satisfactoria, False si no ha sido satisfactoria.
+   */
+  private Boolean publicarActivo(Long idActivo, String username, Boolean historificar, String eleccionUsuarioTipoPublicacionAlquiler) {
+    String procedureHQL = "BEGIN SP_CAMBIO_ESTADO_PUBLICACION(:idActivoParam, :eleccionUsuarioParam, :usernameParam, :historificarParam);  END;";
 
-		Query callProcedureSql = this.getSessionFactory().getCurrentSession().createSQLQuery(procedureHQL);
-		callProcedureSql.setParameter("idActivoParam", idActivo);
-		callProcedureSql.setParameter("eleccionUsuarioParam", eleccionUsuarioTipoPublicacionAlquiler);
-		callProcedureSql.setParameter("usernameParam", username);
-		callProcedureSql.setParameter("historificarParam", historificar ? "S" : "N");
+    Query callProcedureSql = this.getSessionFactory().getCurrentSession().createSQLQuery(procedureHQL);
+    callProcedureSql.setParameter("idActivoParam", idActivo);
+    callProcedureSql.setParameter("eleccionUsuarioParam", eleccionUsuarioTipoPublicacionAlquiler);
+    callProcedureSql.setParameter("usernameParam", username);
+    callProcedureSql.setParameter("historificarParam", historificar ? "S" : "N");
 
-		int resultado = callProcedureSql.executeUpdate();
+    int resultado = callProcedureSql.executeUpdate();
 
-    		return resultado == 1;
-	}
-	
-	@Override
-	public int publicarActivoPortal(Long idActivo, String username){
-		StringBuilder procedureHQL = new StringBuilder(
-							" BEGIN ");
-		procedureHQL.append("   ACTIVO_PUBLICACION_PORTAL(:idActivoParam, :usernameParam); ");
-		procedureHQL.append(" END; ");
-		
-		Query callProcedureSql = this.getSessionFactory().getCurrentSession().createSQLQuery(procedureHQL.toString());
-		callProcedureSql.setParameter("idActivoParam", idActivo);
-		callProcedureSql.setParameter("usernameParam", username);
-		
-		return callProcedureSql.executeUpdate();
-	}
-	
+        return resultado == 1;
+  }
+  
+  @Override
+  public int publicarActivoPortal(Long idActivo, String username){
+    StringBuilder procedureHQL = new StringBuilder(
+              " BEGIN ");
+    procedureHQL.append("   ACTIVO_PUBLICACION_PORTAL(:idActivoParam, :usernameParam); ");
+    procedureHQL.append(" END; ");
+    
+    Query callProcedureSql = this.getSessionFactory().getCurrentSession().createSQLQuery(procedureHQL.toString());
+    callProcedureSql.setParameter("idActivoParam", idActivo);
+    callProcedureSql.setParameter("usernameParam", username);
+    
+    return callProcedureSql.executeUpdate();
+  }
+  
     public Long getNextNumExpedienteComercial() {
-		String sql = "SELECT S_ECO_NUM_EXPEDIENTE.NEXTVAL FROM DUAL ";
-		return ((BigDecimal) this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult()).longValue();
-	}
+    String sql = "SELECT S_ECO_NUM_EXPEDIENTE.NEXTVAL FROM DUAL ";
+    return ((BigDecimal) this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult()).longValue();
+  }
     
     public Long getNextNumOferta() {
-		String sql = "SELECT S_OFR_NUM_OFERTA.NEXTVAL FROM DUAL ";
-		return ((BigDecimal) this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult()).longValue();
-	}
+    String sql = "SELECT S_OFR_NUM_OFERTA.NEXTVAL FROM DUAL ";
+    return ((BigDecimal) this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult()).longValue();
+  }
     
     public Long getNextClienteRemId() {
-		String sql = "SELECT S_CLC_REM_ID.NEXTVAL FROM DUAL ";
-		return ((BigDecimal) this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult()).longValue();
-	}
+    String sql = "SELECT S_CLC_REM_ID.NEXTVAL FROM DUAL ";
+    return ((BigDecimal) this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult()).longValue();
+  }
     
     private void agregarFiltroFecha(HQLBuilder hb, String fechaD, String fechaH, String tipoFecha) {
-    	try {
-   			
-			if (fechaD != null) {
-				Date fechaDesde = DateFormat.toDate(fechaD);
-				HQLBuilder.addFiltroBetweenSiNotNull(hb, tipoFecha, fechaDesde, null);
-			}
-			
-			if (fechaH != null) {
-				Date fechaHasta = DateFormat.toDate(fechaH);
-		
-				// Se le añade un día para que encuentre las fechas del día anterior hasta las 23:59
-				Calendar calendar = Calendar.getInstance();
-				calendar.setTime(fechaHasta); // Configuramos la fecha que se recibe
-				calendar.add(Calendar.DAY_OF_YEAR, 1);  // numero de días a añadir, o restar en caso de días<0
+      try {
+        
+      if (fechaD != null) {
+        Date fechaDesde = DateFormat.toDate(fechaD);
+        HQLBuilder.addFiltroBetweenSiNotNull(hb, tipoFecha, fechaDesde, null);
+      }
+      
+      if (fechaH != null) {
+        Date fechaHasta = DateFormat.toDate(fechaH);
+    
+        // Se le añade un día para que encuentre las fechas del día anterior hasta las 23:59
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(fechaHasta); // Configuramos la fecha que se recibe
+        calendar.add(Calendar.DAY_OF_YEAR, 1);  // numero de días a añadir, o restar en caso de días<0
 
-				HQLBuilder.addFiltroBetweenSiNotNull(hb, tipoFecha, null, calendar.getTime());
-			}
-			
-   		} catch (ParseException e) {
-			e.printStackTrace();
-		}
+        HQLBuilder.addFiltroBetweenSiNotNull(hb, tipoFecha, null, calendar.getTime());
+      }
+      
+      } catch (ParseException e) {
+      e.printStackTrace();
+    }
     }
 
-	@Override
-	public Page getPropuestaActivosVinculadosByActivo(DtoPropuestaActivosVinculados dto) {
-		HQLBuilder hb = new HQLBuilder(" from PropuestaActivosVinculados activosVinculados");
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activosVinculados.activoOrigen.id", dto.getActivoOrigenID());
-		
-		return HibernateQueryUtils.page(this, hb, dto);
-	}
+  @Override
+  public Page getPropuestaActivosVinculadosByActivo(DtoPropuestaActivosVinculados dto) {
+    HQLBuilder hb = new HQLBuilder(" from PropuestaActivosVinculados activosVinculados");
+    HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activosVinculados.activoOrigen.id", dto.getActivoOrigenID());
+    
+    return HibernateQueryUtils.page(this, hb, dto);
+  }
 
-	@Override
-	public Activo getActivoByNumActivo(Long activoVinculado) {
-    	Session session = getSession();
-		Criteria criteria = session.createCriteria(Activo.class);
-		criteria.add(Restrictions.eq("numActivo", activoVinculado));
+  @Override
+  public Activo getActivoByNumActivo(Long activoVinculado) {
+      Session session = getSession();
+    Criteria criteria = session.createCriteria(Activo.class);
+    criteria.add(Restrictions.eq("numActivo", activoVinculado));
 
-		Activo activo =  HibernateUtils.castObject(Activo.class, criteria.uniqueResult());
-		session.disconnect();
+    Activo activo =  HibernateUtils.castObject(Activo.class, criteria.uniqueResult());
+    session.disconnect();
 
-		return activo;
-	}
+    return activo;
+  }
 
-	@Override
-	public PropuestaActivosVinculados getPropuestaActivosVinculadosByID(Long id) {
-		HQLBuilder hb = new HQLBuilder(" from PropuestaActivosVinculados activosVinculados");
-		hb.appendWhere("activosVinculados.id = " + id);
-		
-		return (PropuestaActivosVinculados) this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).uniqueResult();
-	}
-	
-	@SuppressWarnings("unchecked")
-	@Override
-	public ActivoTasacion getActivoTasacion(Long id){
-		HQLBuilder hb = new HQLBuilder(" from ActivoTasacion tas");
-		hb.appendWhere(" tas.activo.id = " + id);
-		hb.appendWhere(" tas.fechaRecepcionTasacion is null");
-		hb.orderBy("tas.id", HQLBuilder.ORDER_DESC);
-		
-		List<ActivoTasacion> activoTasacionList = (List<ActivoTasacion>) this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).list();
-		
-		if(!Checks.estaVacio(activoTasacionList)) {
-			return activoTasacionList.get(0);
-		}
-		
-		return null;
-	}
-	
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<ActivoTasacion> getListActivoTasacionByIdActivo(Long idActivo){
-		HQLBuilder hb = new HQLBuilder(" from ActivoTasacion tas");
-		hb.appendWhere(" tas.activo.id = " + idActivo);
-		hb.orderBy("tas.valoracionBien.fechaValorTasacion", HQLBuilder.ORDER_DESC);
-		List<ActivoTasacion> activoTasacionList = (List<ActivoTasacion>) this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).list();
-		return activoTasacionList;
-	}
-	
-	@Override
-	public Page getActivosFromCrearTrabajo(List<String> listIdActivos, DtoTrabajoListActivos dto) {
-		
-		HQLBuilder hb = new HQLBuilder(" from VBusquedaActivosCrearTrabajo act");
-		HQLBuilder.addFiltroWhereInSiNotNull(hb, "numActivoHaya", listIdActivos);
-		
-		return HibernateQueryUtils.page(this, hb, dto);
-	}
-	
-	@Override
-	public Page getLlavesByActivo(DtoLlaves dto) {
-		
-		HQLBuilder hb = new HQLBuilder(" from ActivoLlave lla");
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activo.id", Long.parseLong(dto.getIdActivo()));
-		
-		return HibernateQueryUtils.page(this, hb, dto);
-	}
-	
-	@Override
-	public Page getListMovimientosLlaveByLlave(WebDto dto, Long idLlave) {
-		
-		HQLBuilder hb = new HQLBuilder("select mov from ActivoMovimientoLlave mov, ActivoLlave lla ");
-		hb.appendWhere("lla.id = mov.activoLlave.id");
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "lla.id", idLlave);
-		
-		this.ordenarMovimientos(dto,hb);
-		
-		return HibernateQueryUtils.page(this, hb, dto);
-	}
-	
-	@Override
-	public Page getListMovimientosLlaveByActivo(WebDto dto, Long idActivo) {
-		
-		HQLBuilder hb = new HQLBuilder("select mov from ActivoMovimientoLlave mov, ActivoLlave lla " );
-		hb.appendWhere("lla.id = mov.activoLlave.id");
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "lla.activo.id", idActivo);
-		
-		this.ordenarMovimientos(dto,hb);
-		
-		return HibernateQueryUtils.page(this, hb, dto);
-	}
-	
-	/**
-	 * Inserta un orderBy en la consulta, para los movimientos, ya que al ser una consulta de dos tablas, 
-	 * no las ordena por defecto desde sencha.
-	 * @param dto
-	 * @param hb
-	 */
-	private void ordenarMovimientos(WebDto dto, HQLBuilder hb) {
-		
-		if(!Checks.esNulo(dto.getSort())) {
-			String numLlave = "numLlave", codigoTipoTenedor = "codigoTipoTenedor";
-			if(numLlave.equalsIgnoreCase(dto.getSort())) {
-				hb.orderBy("lla.numLlave", dto.getDir().toLowerCase());
-			}
-			else if(codigoTipoTenedor.equalsIgnoreCase(dto.getSort())) {
-				hb.orderBy("mov.codTenedor", dto.getDir().toLowerCase());
-			}
-			else {
-				hb.orderBy("mov."+dto.getSort(), dto.getDir().toLowerCase());
-			}
-				
-		}
-	}
-	
-	@Override
-	public Integer isIntegradoAgrupacionObraNuevaOrAsistida(Long id) {
+  @Override
+  public PropuestaActivosVinculados getPropuestaActivosVinculadosByID(Long id) {
+    HQLBuilder hb = new HQLBuilder(" from PropuestaActivosVinculados activosVinculados");
+    hb.appendWhere("activosVinculados.id = " + id);
+    
+    return (PropuestaActivosVinculados) this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).uniqueResult();
+  }
+  
+  @SuppressWarnings("unchecked")
+  @Override
+  public ActivoTasacion getActivoTasacion(Long id){
+    HQLBuilder hb = new HQLBuilder(" from ActivoTasacion tas");
+    hb.appendWhere(" tas.activo.id = " + id);
+    hb.appendWhere(" tas.fechaRecepcionTasacion is null");
+    hb.orderBy("tas.id", HQLBuilder.ORDER_DESC);
+    
+    List<ActivoTasacion> activoTasacionList = (List<ActivoTasacion>) this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).list();
+    
+    if(!Checks.estaVacio(activoTasacionList)) {
+      return activoTasacionList.get(0);
+    }
+    
+    return null;
+  }
+  
+  @SuppressWarnings("unchecked")
+  @Override
+  public List<ActivoTasacion> getListActivoTasacionByIdActivo(Long idActivo){
+    HQLBuilder hb = new HQLBuilder(" from ActivoTasacion tas");
+    hb.appendWhere(" tas.activo.id = " + idActivo);
+    hb.orderBy("tas.valoracionBien.fechaValorTasacion", HQLBuilder.ORDER_DESC);
+    List<ActivoTasacion> activoTasacionList = (List<ActivoTasacion>) this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).list();
+    return activoTasacionList;
+  }
+  
+  @Override
+  public Page getActivosFromCrearTrabajo(List<String> listIdActivos, DtoTrabajoListActivos dto) {
+    
+    HQLBuilder hb = new HQLBuilder(" from VBusquedaActivosCrearTrabajo act");
+    HQLBuilder.addFiltroWhereInSiNotNull(hb, "numActivoHaya", listIdActivos);
+    
+    return HibernateQueryUtils.page(this, hb, dto);
+  }
+  
+  @Override
+  public Page getLlavesByActivo(DtoLlaves dto) {
+    
+    HQLBuilder hb = new HQLBuilder(" from ActivoLlave lla");
+    HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activo.id", Long.parseLong(dto.getIdActivo()));
+    
+    return HibernateQueryUtils.page(this, hb, dto);
+  }
+  
+  @Override
+  public Page getListMovimientosLlaveByLlave(WebDto dto, Long idLlave) {
+    
+    HQLBuilder hb = new HQLBuilder("select mov from ActivoMovimientoLlave mov, ActivoLlave lla ");
+    hb.appendWhere("lla.id = mov.activoLlave.id");
+    HQLBuilder.addFiltroIgualQueSiNotNull(hb, "lla.id", idLlave);
+    
+    this.ordenarMovimientos(dto,hb);
+    
+    return HibernateQueryUtils.page(this, hb, dto);
+  }
+  
+  @Override
+  public Page getListMovimientosLlaveByActivo(WebDto dto, Long idActivo) {
+    
+    HQLBuilder hb = new HQLBuilder("select mov from ActivoMovimientoLlave mov, ActivoLlave lla " );
+    hb.appendWhere("lla.id = mov.activoLlave.id");
+    HQLBuilder.addFiltroIgualQueSiNotNull(hb, "lla.activo.id", idActivo);
+    
+    this.ordenarMovimientos(dto,hb);
+    
+    return HibernateQueryUtils.page(this, hb, dto);
+  }
+  
+  /**
+   * Inserta un orderBy en la consulta, para los movimientos, ya que al ser una consulta de dos tablas, 
+   * no las ordena por defecto desde sencha.
+   * @param dto
+   * @param hb
+   */
+  private void ordenarMovimientos(WebDto dto, HQLBuilder hb) {
+    
+    if(!Checks.esNulo(dto.getSort())) {
+      String numLlave = "numLlave", codigoTipoTenedor = "codigoTipoTenedor";
+      if(numLlave.equalsIgnoreCase(dto.getSort())) {
+        hb.orderBy("lla.numLlave", dto.getDir().toLowerCase());
+      }
+      else if(codigoTipoTenedor.equalsIgnoreCase(dto.getSort())) {
+        hb.orderBy("mov.codTenedor", dto.getDir().toLowerCase());
+      }
+      else {
+        hb.orderBy("mov."+dto.getSort(), dto.getDir().toLowerCase());
+      }
+        
+    }
+  }
+  
+  @Override
+  public Integer isIntegradoAgrupacionObraNuevaOrAsistida(Long id) {
 
-    	HQLBuilder hb = new HQLBuilder("select count(*) from ActivoAgrupacionActivo act where act.agrupacion.fechaBaja is null and act.activo.id = " + id + " and act.agrupacion.tipoAgrupacion.codigo in ('01','13')");
+      HQLBuilder hb = new HQLBuilder("select count(*) from ActivoAgrupacionActivo act where act.agrupacion.fechaBaja is null and act.activo.id = " + id + " and act.agrupacion.tipoAgrupacion.codigo in ('01','13')");
 
-   		return ((Long) getHibernateTemplate().find(hb.toString()).get(0)).intValue();
-	}
+      return ((Long) getHibernateTemplate().find(hb.toString()).get(0)).intValue();
+  }
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<VOfertasActivosAgrupacion> getListOfertasActivo(Long idActivo) {
-		
-		String hql = " from VOfertasActivosAgrupacion voa ";
-		String listaIdsOfertas = "";
-		
-		HQLBuilder hb = new HQLBuilder(hql);
+  @SuppressWarnings("unchecked")
+  @Override
+  public List<VOfertasActivosAgrupacion> getListOfertasActivo(Long idActivo) {
+    
+    String hql = " from VOfertasActivosAgrupacion voa ";
+    String listaIdsOfertas = "";
+    
+    HQLBuilder hb = new HQLBuilder(hql);
 
-		if (!Checks.esNulo(idActivo)) {
-			Filter filtroIdActivo = genericDao.createFilter(FilterType.EQUALS, "id", idActivo);
-			Activo activo = genericDao.get(Activo.class, filtroIdActivo);
-			
-			List<ActivoOferta> listaActivoOfertas = activo.getOfertas();
+    if (!Checks.esNulo(idActivo)) {
+      Filter filtroIdActivo = genericDao.createFilter(FilterType.EQUALS, "id", idActivo);
+      Activo activo = genericDao.get(Activo.class, filtroIdActivo);
+      
+      List<ActivoOferta> listaActivoOfertas = activo.getOfertas();
 
-			
-			for (ActivoOferta activoOferta : listaActivoOfertas){
-				listaIdsOfertas = listaIdsOfertas.concat(activoOferta.getPrimaryKey().getOferta().getId().toString()).concat(",");
-			}
-			listaIdsOfertas = listaIdsOfertas.concat("-1");
-			
-			hb.appendWhere(" voa.idOferta in (" + listaIdsOfertas + ") ");
-		}
-		
-		return (List<VOfertasActivosAgrupacion>) this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).list();
-				
-		
-	}
-	
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<VOfertasTramitadasPendientesActivosAgrupacion> getListOfertasTramitadasPendientesActivo(Long idActivo) {
-		
-		String hql = " from VOfertasTramitadasPendientesActivosAgrupacion voa2 ";
-		String listaIdsOfertas = "";
-		
-		HQLBuilder hb = new HQLBuilder(hql);
+      
+      for (ActivoOferta activoOferta : listaActivoOfertas){
+        listaIdsOfertas = listaIdsOfertas.concat(activoOferta.getPrimaryKey().getOferta().getId().toString()).concat(",");
+      }
+      listaIdsOfertas = listaIdsOfertas.concat("-1");
+      
+      hb.appendWhere(" voa.idOferta in (" + listaIdsOfertas + ") ");
+    }
+    
+    return (List<VOfertasActivosAgrupacion>) this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).list();
+        
+    
+  }
+  
+  @SuppressWarnings("unchecked")
+  @Override
+  public List<VOfertasTramitadasPendientesActivosAgrupacion> getListOfertasTramitadasPendientesActivo(Long idActivo) {
+    
+    String hql = " from VOfertasTramitadasPendientesActivosAgrupacion voa2 ";
+    String listaIdsOfertas = "";
+    
+    HQLBuilder hb = new HQLBuilder(hql);
 
-		if (!Checks.esNulo(idActivo)) {
-			Filter filtroIdActivo = genericDao.createFilter(FilterType.EQUALS, "id", idActivo);
-			Activo activo = genericDao.get(Activo.class, filtroIdActivo);
-			
-			List<ActivoOferta> listaActivoOfertas = activo.getOfertas();
+    if (!Checks.esNulo(idActivo)) {
+      Filter filtroIdActivo = genericDao.createFilter(FilterType.EQUALS, "id", idActivo);
+      Activo activo = genericDao.get(Activo.class, filtroIdActivo);
+      
+      List<ActivoOferta> listaActivoOfertas = activo.getOfertas();
 
-			
-			for (ActivoOferta activoOferta : listaActivoOfertas){
-				listaIdsOfertas = listaIdsOfertas.concat(activoOferta.getPrimaryKey().getOferta().getId().toString()).concat(",");
-			}
-			listaIdsOfertas = listaIdsOfertas.concat("-1");
-			
-			hb.appendWhere(" voa2.idOferta in (" + listaIdsOfertas + ") ");
-		}
-		
-		return (List<VOfertasTramitadasPendientesActivosAgrupacion>) this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).list();
-				
-		
-	}
-	
-	@Override
-	public void actualizarRatingActivo(Long idActivo, String username) {	
-		Session session = this.getSessionFactory().getCurrentSession();
-		Query query = session.createSQLQuery(
-		"CALL CALCULO_RATING_ACTIVO_AUTO(:idActivo, :username)")
-		.setParameter("idActivo", idActivo)
-		.setParameter("username", username);
+      
+      for (ActivoOferta activoOferta : listaActivoOfertas){
+        listaIdsOfertas = listaIdsOfertas.concat(activoOferta.getPrimaryKey().getOferta().getId().toString()).concat(",");
+      }
+      listaIdsOfertas = listaIdsOfertas.concat("-1");
+      
+      hb.appendWhere(" voa2.idOferta in (" + listaIdsOfertas + ") ");
+    }
+    
+    return (List<VOfertasTramitadasPendientesActivosAgrupacion>) this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).list();
+        
+    
+  }
+  
+  @Override
+  public void actualizarRatingActivo(Long idActivo, String username) {  
+    Session session = this.getSessionFactory().getCurrentSession();
+    Query query = session.createSQLQuery(
+    "CALL CALCULO_RATING_ACTIVO_AUTO(:idActivo, :username)")
+    .setParameter("idActivo", idActivo)
+    .setParameter("username", username);
 
-		query.executeUpdate();
-	}
-	
-	@Override
-	public void actualizarSingularRetailActivo(Long idActivo, String username, Integer all_activos, Integer ingore_block) {
-		Session session = this.getSessionFactory().getCurrentSession();
-		Query query = session.createSQLQuery(
-		"CALL CALCULO_SINGULAR_RETAIL_AUTO(:idActivo, :username, :all_activos, :ingore_block)")
-		.setParameter("idActivo", idActivo)
-		.setParameter("username", username)
-		.setParameter("all_activos", all_activos)
-		.setParameter("ingore_block", ingore_block);
+    query.executeUpdate();
+  }
+  
+  @Override
+  public void actualizarSingularRetailActivo(Long idActivo, String username, Integer all_activos, Integer ingore_block) {
+    Session session = this.getSessionFactory().getCurrentSession();
+    Query query = session.createSQLQuery(
+    "CALL CALCULO_SINGULAR_RETAIL_AUTO(:idActivo, :username, :all_activos, :ingore_block)")
+    .setParameter("idActivo", idActivo)
+    .setParameter("username", username)
+    .setParameter("all_activos", all_activos)
+    .setParameter("ingore_block", ingore_block);
 
-		query.executeUpdate();
-	}
-	
-	@Override
-	public String getCodigoTipoComercializarByActivo(Long idActivo) {
-		String codComercializar = rawDao.getExecuteSQL("SELECT tcr.DD_TCR_CODIGO "
-				+ "		  FROM ACT_ACTIVO act"
-				+ "			INNER JOIN DD_TCR_TIPO_COMERCIALIZAR tcr ON act.dd_tcr_id = tcr.dd_tcr_id"
-				+ "			WHERE act.ACT_ID = "+idActivo
-				+ "			AND act.BORRADO = 0"				
-				+ "         AND ROWNUM = 1 ");
-		
-		return codComercializar;
-	}
-	
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<VBusquedaActivosPrecios> getListActivosPreciosFromListId(String cadenaId) {
-		
-    	HQLBuilder hb = new HQLBuilder("select act from VBusquedaActivosPrecios act where act.id in ("+cadenaId+")");
+    query.executeUpdate();
+  }
+  
+  @Override
+  public String getCodigoTipoComercializarByActivo(Long idActivo) {
+    String codComercializar = rawDao.getExecuteSQL("SELECT tcr.DD_TCR_CODIGO "
+        + "     FROM ACT_ACTIVO act"
+        + "     INNER JOIN DD_TCR_TIPO_COMERCIALIZAR tcr ON act.dd_tcr_id = tcr.dd_tcr_id"
+        + "     WHERE act.ACT_ID = "+idActivo
+        + "     AND act.BORRADO = 0"        
+        + "         AND ROWNUM = 1 ");
+    
+    return codComercializar;
+  }
+  
+  @SuppressWarnings("unchecked")
+  @Override
+  public List<VBusquedaActivosPrecios> getListActivosPreciosFromListId(String cadenaId) {
+    
+      HQLBuilder hb = new HQLBuilder("select act from VBusquedaActivosPrecios act where act.id in ("+cadenaId+")");
 
-    	return this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).list();
-	}
+      return this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).list();
+  }
 
-	@Override
-	public Long getNextNumActivoRem() {
-		String sql = "SELECT S_ACT_NUM_ACTIVO_REM.NEXTVAL FROM DUAL ";
-		return ((BigDecimal) this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult()).longValue();
-	}
+  @Override
+  public Long getNextNumActivoRem() {
+    String sql = "SELECT S_ACT_NUM_ACTIVO_REM.NEXTVAL FROM DUAL ";
+    return ((BigDecimal) this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult()).longValue();
+  }
 
     private void agregarFiltroFecha(HQLBuilder hb, String fechaD, String fechaH, String tipoFecha) {
-    	try {
+      try {
 
-			if (fechaD != null) {
-				Date fechaDesde = DateFormat.toDate(fechaD);
-				HQLBuilder.addFiltroBetweenSiNotNull(hb, tipoFecha, fechaDesde, null);
-			}
+      if (fechaD != null) {
+        Date fechaDesde = DateFormat.toDate(fechaD);
+        HQLBuilder.addFiltroBetweenSiNotNull(hb, tipoFecha, fechaDesde, null);
+      }
 
-			if (fechaH != null) {
-				Date fechaHasta = DateFormat.toDate(fechaH);
+      if (fechaH != null) {
+        Date fechaHasta = DateFormat.toDate(fechaH);
 
-				// Se le añade un día para que encuentre las fechas del día anterior hasta las 23:59
-				Calendar calendar = Calendar.getInstance();
-				if (fechaHasta != null) {
-					calendar.setTime(fechaHasta); // Configuramos la fecha que se recibe
-				}
-				calendar.add(Calendar.DAY_OF_YEAR, 1);  // numero de días a añadir, o restar en caso de días<0
+        // Se le añade un día para que encuentre las fechas del día anterior hasta las 23:59
+        Calendar calendar = Calendar.getInstance();
+        if (fechaHasta != null) {
+          calendar.setTime(fechaHasta); // Configuramos la fecha que se recibe
+        }
+        calendar.add(Calendar.DAY_OF_YEAR, 1);  // numero de días a añadir, o restar en caso de días<0
 
-				HQLBuilder.addFiltroBetweenSiNotNull(hb, tipoFecha, null, calendar.getTime());
-			}
+        HQLBuilder.addFiltroBetweenSiNotNull(hb, tipoFecha, null, calendar.getTime());
+      }
 
-   		} catch (ParseException e) {
-			e.printStackTrace();
-		}
+      } catch (ParseException e) {
+      e.printStackTrace();
+    }
     }
 
-	@Override
-	public List<Activo> getListActivosPorID(List<Long> activosID) {
-		HQLBuilder hb = new HQLBuilder("from Activo act" );
+  @Override
+  public List<Activo> getListActivosPorID(List<Long> activosID) {
+    HQLBuilder hb = new HQLBuilder("from Activo act" );
 
-		HQLBuilder.addFiltroWhereInSiNotNull(hb, "id", activosID);
-		
-		return HibernateQueryUtils.list(this, hb);
-	}
-	
-	@Override
-	public Activo getActivoById(Long activoId) {
-		HQLBuilder hb = new HQLBuilder("from Activo act" );
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "id", activoId);
-		
-		return HibernateQueryUtils.uniqueResult(this, hb);
-	}
-	
+    HQLBuilder.addFiltroWhereInSiNotNull(hb, "id", activosID);
+    
+    return HibernateQueryUtils.list(this, hb);
+  }
+  
+  @Override
+  public Activo getActivoById(Long activoId) {
+    HQLBuilder hb = new HQLBuilder("from Activo act" );
+    HQLBuilder.addFiltroIgualQueSiNotNull(hb, "id", activoId);
+    
+    return HibernateQueryUtils.uniqueResult(this, hb);
+  }
+  
 
-	/*Borra todos las distribuciones excelto las de tipo garaje y trastero*/
-	public void deleteActivoDistribucion(Long idActivoInfoComercial){
-		Session session = this.getSessionFactory().getCurrentSession();
-		Query query= session.createSQLQuery("DELETE FROM ACT_DIS_DISTRIBUCION dis1 where dis1.DIS_ID IN"
-				+ " ( select dis2.DIS_ID from ACT_DIS_DISTRIBUCION dis2"
-				+ "	INNER JOIN DD_TPH_TIPO_HABITACULO tph ON dis2.dd_tph_id = tph.dd_tph_id"
-				+ "	WHERE dis2.ICO_ID = "+idActivoInfoComercial
-				//+ "	AND tph.DD_TPH_CODIGO NOT IN ('"+DDTipoHabitaculo.TIPO_HABITACULO_TRASTERO + "','"+ DDTipoHabitaculo.TIPO_HABITACULO_GARAJE +"')"
-				+ "	)");
-		query.executeUpdate();
-		
-		
-	}
+  /*Borra todos las distribuciones excelto las de tipo garaje y trastero*/
+  public void deleteActivoDistribucion(Long idActivoInfoComercial){
+    Session session = this.getSessionFactory().getCurrentSession();
+    Query query= session.createSQLQuery("DELETE FROM ACT_DIS_DISTRIBUCION dis1 where dis1.DIS_ID IN"
+        + " ( select dis2.DIS_ID from ACT_DIS_DISTRIBUCION dis2"
+        + " INNER JOIN DD_TPH_TIPO_HABITACULO tph ON dis2.dd_tph_id = tph.dd_tph_id"
+        + " WHERE dis2.ICO_ID = "+idActivoInfoComercial
+        //+ " AND tph.DD_TPH_CODIGO NOT IN ('"+DDTipoHabitaculo.TIPO_HABITACULO_TRASTERO + "','"+ DDTipoHabitaculo.TIPO_HABITACULO_GARAJE +"')"
+        + " )");
+    query.executeUpdate();
+    
+    
+  }
 
-	@Override
-	public Page getListHistoricoOcupacionesIlegalesByActivo(WebDto dto, Long idActivo) {
-		//También se puede usar el genericDao en REM, pero hay que ver como devolver un Page porque no he encontrado casos así.
-		//List<ActivoOcupacionIlegal> listaOcupacionesIlegales = genericDao.getList(ActivoOcupacionIlegal.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo));
-		HQLBuilder hb = new HQLBuilder("select ocu from ActivoOcupacionIlegal ocu ");
-		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activo.id", idActivo);
-		
-		return HibernateQueryUtils.page(this, hb, dto);
-	}
+  @Override
+  public Page getListHistoricoOcupacionesIlegalesByActivo(WebDto dto, Long idActivo) {
+    //También se puede usar el genericDao en REM, pero hay que ver como devolver un Page porque no he encontrado casos así.
+    //List<ActivoOcupacionIlegal> listaOcupacionesIlegales = genericDao.getList(ActivoOcupacionIlegal.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo));
+    HQLBuilder hb = new HQLBuilder("select ocu from ActivoOcupacionIlegal ocu ");
+    HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activo.id", idActivo);
+    
+    return HibernateQueryUtils.page(this, hb, dto);
+  }
 
-	public void finHistoricoDestinoComercial(Activo activo, Object[] extraArgs) {
+  public void finHistoricoDestinoComercial(Activo activo, Object[] extraArgs) {
 
-		Session session = this.getSessionFactory().getCurrentSession();
-		Query query= session.createQuery("UPDATE HistoricoDestinoComercial hdc "
-				+ " SET hdc.fechaFin = sysdate, hdc.gestorActualizacion = :gestorActualizacion "
-				+ " WHERE hdc.activo.id = :idActivo AND hdc.fechaFin IS NULL");
+    Session session = this.getSessionFactory().getCurrentSession();
+    Query query= session.createQuery("UPDATE HistoricoDestinoComercial hdc "
+        + " SET hdc.fechaFin = sysdate, hdc.gestorActualizacion = :gestorActualizacion "
+        + " WHERE hdc.activo.id = :idActivo AND hdc.fechaFin IS NULL");
 
-		query.setParameter("idActivo", activo.getId());
+    query.setParameter("idActivo", activo.getId());
 
-		query.setParameter("gestorActualizacion", getGestorActualizacionHistoricoDestinoComercial(extraArgs));
+    query.setParameter("gestorActualizacion", getGestorActualizacionHistoricoDestinoComercial(extraArgs));
 
-		query.executeUpdate();
+    query.executeUpdate();
 
-	}
+  }
 
-	/**
-	 * Este método lanza el procedimiento de cambio de estado de publicación
-	 *
-	 * @param idActivo: ID del activo para el cual se desea realizar la operación.
-	 * @param username: nombre del usuario, si la llamada es desde la web, que realiza la operación.
-	 * @param historificar: indica si la operación ha de realizar un histórico de los movimientos realizados.
-	 * @return Devuelve True si la operación ha sido satisfactorio, False si no ha sido satisfactoria.
-	 */
-	private Boolean publicarActivo(Long idActivo, String username, Boolean historificar, String eleccionUsuarioTipoPublicacionAlquiler) {
-		String procedureHQL = "BEGIN SP_CAMBIO_ESTADO_PUBLICACION(:idActivoParam, :eleccionUsuarioParam, :usernameParam, :historificarParam);  END;";
+  /**
+   * Este método lanza el procedimiento de cambio de estado de publicación
+   *
+   * @param idActivo: ID del activo para el cual se desea realizar la operación.
+   * @param username: nombre del usuario, si la llamada es desde la web, que realiza la operación.
+   * @param historificar: indica si la operación ha de realizar un histórico de los movimientos realizados.
+   * @return Devuelve True si la operación ha sido satisfactorio, False si no ha sido satisfactoria.
+   */
+  private Boolean publicarActivo(Long idActivo, String username, Boolean historificar, String eleccionUsuarioTipoPublicacionAlquiler) {
+    String procedureHQL = "BEGIN SP_CAMBIO_ESTADO_PUBLICACION(:idActivoParam, :eleccionUsuarioParam, :usernameParam, :historificarParam);  END;";
 
-		Query callProcedureSql = this.getSessionFactory().getCurrentSession().createSQLQuery(procedureHQL);
-		callProcedureSql.setParameter("idActivoParam", idActivo);
-		callProcedureSql.setParameter("eleccionUsuarioParam", eleccionUsuarioTipoPublicacionAlquiler);
-		callProcedureSql.setParameter("usernameParam", username);
-		callProcedureSql.setParameter("historificarParam", historificar ? "S" : "N");
+    Query callProcedureSql = this.getSessionFactory().getCurrentSession().createSQLQuery(procedureHQL);
+    callProcedureSql.setParameter("idActivoParam", idActivo);
+    callProcedureSql.setParameter("eleccionUsuarioParam", eleccionUsuarioTipoPublicacionAlquiler);
+    callProcedureSql.setParameter("usernameParam", username);
+    callProcedureSql.setParameter("historificarParam", historificar ? "S" : "N");
 
-		Integer resultado = callProcedureSql.executeUpdate();
+    Integer resultado = callProcedureSql.executeUpdate();
 
-    	return resultado == 1;
-	}
-	
-	@Override
-	public Boolean publicarActivoConHistorico(Long idActivo, String username,boolean doFlush) {
-    	// Antes de realizar la llamada al SP realizar las operaciones previas con los datos.
-		if(doFlush){
-			getHibernateTemplate().flush();
-		}
-		
-		return this.publicarActivo(idActivo, username, true, null);
-	}
-	
-	@Override
-	public Boolean publicarActivoSinHistorico(Long idActivo, String username, String eleccionUsuarioTipoPublicacionAlquiler,boolean doFlush) {
-		// Antes de realizar la llamada al SP realizar las operaciones previas con los datos.
-		if(doFlush){
-			getHibernateTemplate().flush();
-		}
-		return this.publicarActivo(idActivo, username, false, eleccionUsuarioTipoPublicacionAlquiler);
-	}
-	
-	/**
-	 * Este metodo lanza el procedimiento de cambio de estado de publicación de agrupaciones
-	 * 
-	 * @param idAgrupacion: ID del activo para el cual se desea realizar la operación.
-	 * @param username: nombre del usuario, si la llamada es desde la web, que realiza la operación.
-	 * @param historificar: indica si la operación ha de realizar un histórico de los movimientos realizados.
-	 * @return Devuelve True si la operacion ha sido satisfactoria, False si no ha sido satisfactoria.
-	 */
-	private Boolean publicarAgrupacion(Long idAgrupacion, String username, Boolean historificar, String eleccionUsuarioTipoPublicacionAlquiler) {
-		String procedureHQL = "BEGIN SP_CAMBIO_ESTADO_PUBLI_AGR(:idAgrupacionParam, :eleccionUsusarioParam, :usernameParam, :historificarParam); END;";
-	
-		Query callProcedureSql = this.getSessionFactory().getCurrentSession().createSQLQuery(procedureHQL);
-		callProcedureSql.setParameter("idAgrupacionParam", idAgrupacion);
-		callProcedureSql.setParameter("eleccionUsusarioParam", eleccionUsuarioTipoPublicacionAlquiler);
-		callProcedureSql.setParameter("usernameParam", username);
-		callProcedureSql.setParameter("historificarParam", historificar ? "S" : "N");
-		
-		Integer resultado = callProcedureSql.executeUpdate();
-		
-		return resultado == 1;
-		
-	}
-	
-	@Override
-	public Boolean publicarAgrupacionSinHistorico(Long idAgrupacion, String username, String eleccionUsuarioTipoPublicacionAlquiler,boolean doFlush) {
-		if(doFlush){
-			getHibernateTemplate().flush();
-		}
-		return this.publicarAgrupacion(idAgrupacion, username, false, eleccionUsuarioTipoPublicacionAlquiler);
-	}
+      return resultado == 1;
+  }
+  
+  @Override
+  public Boolean publicarActivoConHistorico(Long idActivo, String username,boolean doFlush) {
+      // Antes de realizar la llamada al SP realizar las operaciones previas con los datos.
+    if(doFlush){
+      getHibernateTemplate().flush();
+    }
+    
+    return this.publicarActivo(idActivo, username, true, null);
+  }
+  
+  @Override
+  public Boolean publicarActivoSinHistorico(Long idActivo, String username, String eleccionUsuarioTipoPublicacionAlquiler,boolean doFlush) {
+    // Antes de realizar la llamada al SP realizar las operaciones previas con los datos.
+    if(doFlush){
+      getHibernateTemplate().flush();
+    }
+    return this.publicarActivo(idActivo, username, false, eleccionUsuarioTipoPublicacionAlquiler);
+  }
+  
+  /**
+   * Este metodo lanza el procedimiento de cambio de estado de publicación de agrupaciones
+   * 
+   * @param idAgrupacion: ID del activo para el cual se desea realizar la operación.
+   * @param username: nombre del usuario, si la llamada es desde la web, que realiza la operación.
+   * @param historificar: indica si la operación ha de realizar un histórico de los movimientos realizados.
+   * @return Devuelve True si la operacion ha sido satisfactoria, False si no ha sido satisfactoria.
+   */
+  private Boolean publicarAgrupacion(Long idAgrupacion, String username, Boolean historificar, String eleccionUsuarioTipoPublicacionAlquiler) {
+    String procedureHQL = "BEGIN SP_CAMBIO_ESTADO_PUBLI_AGR(:idAgrupacionParam, :eleccionUsusarioParam, :usernameParam, :historificarParam); END;";
+  
+    Query callProcedureSql = this.getSessionFactory().getCurrentSession().createSQLQuery(procedureHQL);
+    callProcedureSql.setParameter("idAgrupacionParam", idAgrupacion);
+    callProcedureSql.setParameter("eleccionUsusarioParam", eleccionUsuarioTipoPublicacionAlquiler);
+    callProcedureSql.setParameter("usernameParam", username);
+    callProcedureSql.setParameter("historificarParam", historificar ? "S" : "N");
+    
+    Integer resultado = callProcedureSql.executeUpdate();
+    
+    return resultado == 1;
+    
+  }
+  
+  @Override
+  public Boolean publicarAgrupacionSinHistorico(Long idAgrupacion, String username, String eleccionUsuarioTipoPublicacionAlquiler,boolean doFlush) {
+    if(doFlush){
+      getHibernateTemplate().flush();
+    }
+    return this.publicarAgrupacion(idAgrupacion, username, false, eleccionUsuarioTipoPublicacionAlquiler);
+  }
 
-	@Override
-	public void hibernateFlush() {
-		getHibernateTemplate().flush();
-	}
+  @Override
+  public void hibernateFlush() {
+    getHibernateTemplate().flush();
+  }
 
-	private String getGestorActualizacionHistoricoDestinoComercial(Object[] extraArgs) {
+  private String getGestorActualizacionHistoricoDestinoComercial(Object[] extraArgs) {
 
-		Usuario usuario = adapter.getUsuarioLogado();
+    Usuario usuario = adapter.getUsuarioLogado();
 
-		String usuarioActualizacion = HistoricoDestinoComercial.GESTOR_ACTUALIZACION_DESCONOCIDO;
+    String usuarioActualizacion = HistoricoDestinoComercial.GESTOR_ACTUALIZACION_DESCONOCIDO;
 
-		if (!Checks.esNulo(usuario.getNombre())) {
+    if (!Checks.esNulo(usuario.getNombre())) {
 
-			usuarioActualizacion = usuario.getNombre() + " " + usuario.getApellidos();
+      usuarioActualizacion = usuario.getNombre() + " " + usuario.getApellidos();
 
-		} else if (!Checks.esNulo(usuario.getUsername())) {
+    } else if (!Checks.esNulo(usuario.getUsername())) {
 
-			if (REST_USER_USERNAME.equals(usuario.getUsername())) {
+      if (REST_USER_USERNAME.equals(usuario.getUsername())) {
 
-				try {
+        try {
 
-					usuario = (Usuario) extraArgs[MSVREMUtils.MASIVE_PROCES_USER_STARTER_INDEX];
+          usuario = (Usuario) extraArgs[MSVREMUtils.MASIVE_PROCES_USER_STARTER_INDEX];
 
-					if (!Checks.esNulo(usuario.getNombre())) {
-						usuarioActualizacion = usuario.getNombre() + " " + usuario.getApellidos();
-					} else {
-						usuarioActualizacion = REST_USER_HDC_NAME;
-					}
+          if (!Checks.esNulo(usuario.getNombre())) {
+            usuarioActualizacion = usuario.getNombre() + " " + usuario.getApellidos();
+          } else {
+            usuarioActualizacion = REST_USER_HDC_NAME;
+          }
 
-				} catch (Exception e) {
-					usuarioActualizacion = REST_USER_HDC_NAME;
-				}
+        } catch (Exception e) {
+          usuarioActualizacion = REST_USER_HDC_NAME;
+        }
 
-			} else {
-				usuarioActualizacion = usuario.getUsername();
-			}
+      } else {
+        usuarioActualizacion = usuario.getUsername();
+      }
 
-		}
+    }
 
-		return usuarioActualizacion;
-	}
-	
-	public void crearHistoricoDestinoComercial(Activo activo, Object[] extraArgs) {
+    return usuarioActualizacion;
+  }
+  
+  public void crearHistoricoDestinoComercial(Activo activo, Object[] extraArgs) {
 
-		HistoricoDestinoComercial hdc = new HistoricoDestinoComercial();
+    HistoricoDestinoComercial hdc = new HistoricoDestinoComercial();
 
-		hdc.setActivo(activo);
-		hdc.setFechaFin(null);
-		hdc.setFechaInicio(new Date());
+    hdc.setActivo(activo);
+    hdc.setFechaFin(null);
+    hdc.setFechaInicio(new Date());
 
-		hdc.setGestorActualizacion(getGestorActualizacionHistoricoDestinoComercial(extraArgs));
+    hdc.setGestorActualizacion(getGestorActualizacionHistoricoDestinoComercial(extraArgs));
 
-		hdc.setTipoComercializacion(activo.getTipoComercializacion());
+    hdc.setTipoComercializacion(activo.getTipoComercializacion());
 
-		genericDao.save(HistoricoDestinoComercial.class, hdc);
+    genericDao.save(HistoricoDestinoComercial.class, hdc);
 
-	
-	}
+  
+  }
 
-	@Override
-	public Boolean publicarAgrupacionConHistorico(Long idAgrupacion, String username,boolean doFlush) {
-		if(doFlush){
-			getHibernateTemplate().flush();
-		}
-		return this.publicarAgrupacion(idAgrupacion, username, true, null);
-	}
-	
-	 @Override
-	 public Boolean isActivoAfectoGENCAT(Long idActivo) {
-		 try {
-			 BigDecimal num = new BigDecimal(1);
-			 Session session = this.getSessionFactory().getCurrentSession();
-			 Query query= session.createSQLQuery("SELECT count(act.ACT_ID) FROM act_activo act JOIN bie_localizacion bil ON bil.bie_id = act.bie_id JOIN remmaster.dd_loc_localidad loc ON loc.dd_loc_id = bil.dd_loc_id JOIN CMU_CONFIG_MUNICIPIOS CMU ON CMU.DD_LOC_ID = loc.DD_LOC_ID JOIN DD_TPA_TIPO_ACTIVO tpa on tpa.DD_TPA_ID = act.DD_TPA_ID join BIE_ADJ_ADJUDICACION bad on bad.BIE_ID = act.BIE_ID join DD_CRA_CARTERA cra on cra.DD_CRA_ID = act.DD_CRA_ID join DD_SCR_SUBCARTERA scr on scr.DD_CRA_ID = cra.DD_CRA_ID WHERE act.act_id ="+idActivo+" and tpa.DD_TPA_CODIGO = '02' and bad.BIE_ADJ_F_DECRETO_FIRME > to_date('07/04/18','DD/MM/YYYY') and cra.DD_CRA_CODIGO in ('01','02','03','06','08')  and scr.DD_SCR_CODIGO in ('09','08','07','04','18','02','16','06') and loc.dd_loc_codigo IN ('08001','08003','08006','08007','08009','08011','08015','08019','08020','08022','08029','08030','08031','08032','08033','08035','08037','08040','08041','08041','08046','08047','08051','08054','08056','08067','08068','08072','08073','08074','08076','08077','08086','08088','08089','08091','08092','08096','08098','08100','08101','08102','08105','08106','08107','08108','08110','08112','08112','08113','08114','08115','08117','08118','08120','08121','08123','08124','08125','08126','08135','08136','08141','08143','08147','08155','08156','08157','08158','08159','08161','08163','08167','08169','08172','08180','08181','08184','08187','08191','08194','08196','08197','08200','08202','08204','08205','08208','08209','08211','08211','08213','08214','08217','08218','08219','08221','08230','08231','08235','08238','08240','08244','08245','08246','08250','08251','08252','08260','08261','08262','08263','08264','08266','08267','08270','08270','08274','08279','08281','08282','08283','08284','08285','08289','08295','08298','08300','08301','08302','08305','08307','08904','08905','017015','017015','017019','017022','017023','017034','017047','017048','017056','017062','017066','017073','017079','017089','017092','017095','017110','017114','017117','017118','017137','017141','017147','017152','017155','017160','017163','017167','017169','017180','017181','017182','017185','017186','017199','017202','017215','017221','017226','025003','025011','025012','025016','025019','025021','025027','025034','025040','025050','025051','025058','025072','025093','025099','025110','025120','025135','025137','025158','025171','025172','025173','025203','025207','025209','025217','025234','025243','025244','043004','043011','043012','043014','043016','043037','043038','043042','043044','043047','043051','043055','043060','043064','043086','043092','043093','043094','043100','043104','043123','043131','043133','043136','043136','043138','043139','043145','043148','043153','043155','043156','043161','043163','043163','043171','043171','043904','043905','043905','043907')");
-			 
-			 BigDecimal contador = (BigDecimal) query.uniqueResult();
+  @Override
+  public Boolean publicarAgrupacionConHistorico(Long idAgrupacion, String username,boolean doFlush) {
+    if(doFlush){
+      getHibernateTemplate().flush();
+    }
+    return this.publicarAgrupacion(idAgrupacion, username, true, null);
+  }
+  
+   @Override
+   public Boolean isActivoAfectoGENCAT(Long idActivo) {
+     try {
+       BigDecimal num = new BigDecimal(1);
+       Session session = this.getSessionFactory().getCurrentSession();
+       Query query= session.createSQLQuery("SELECT count(act.ACT_ID) FROM act_activo act JOIN bie_localizacion bil ON bil.bie_id = act.bie_id JOIN remmaster.dd_loc_localidad loc ON loc.dd_loc_id = bil.dd_loc_id JOIN CMU_CONFIG_MUNICIPIOS CMU ON CMU.DD_LOC_ID = loc.DD_LOC_ID JOIN DD_TPA_TIPO_ACTIVO tpa on tpa.DD_TPA_ID = act.DD_TPA_ID join BIE_ADJ_ADJUDICACION bad on bad.BIE_ID = act.BIE_ID join DD_CRA_CARTERA cra on cra.DD_CRA_ID = act.DD_CRA_ID join DD_SCR_SUBCARTERA scr on scr.DD_CRA_ID = cra.DD_CRA_ID WHERE act.act_id ="+idActivo+" and tpa.DD_TPA_CODIGO = '02' and bad.BIE_ADJ_F_DECRETO_FIRME > to_date('07/04/18','DD/MM/YYYY') and cra.DD_CRA_CODIGO in ('01','02','03','06','08')  and scr.DD_SCR_CODIGO in ('09','08','07','04','18','02','16','06') and loc.dd_loc_codigo IN ('08001','08003','08006','08007','08009','08011','08015','08019','08020','08022','08029','08030','08031','08032','08033','08035','08037','08040','08041','08041','08046','08047','08051','08054','08056','08067','08068','08072','08073','08074','08076','08077','08086','08088','08089','08091','08092','08096','08098','08100','08101','08102','08105','08106','08107','08108','08110','08112','08112','08113','08114','08115','08117','08118','08120','08121','08123','08124','08125','08126','08135','08136','08141','08143','08147','08155','08156','08157','08158','08159','08161','08163','08167','08169','08172','08180','08181','08184','08187','08191','08194','08196','08197','08200','08202','08204','08205','08208','08209','08211','08211','08213','08214','08217','08218','08219','08221','08230','08231','08235','08238','08240','08244','08245','08246','08250','08251','08252','08260','08261','08262','08263','08264','08266','08267','08270','08270','08274','08279','08281','08282','08283','08284','08285','08289','08295','08298','08300','08301','08302','08305','08307','08904','08905','017015','017015','017019','017022','017023','017034','017047','017048','017056','017062','017066','017073','017079','017089','017092','017095','017110','017114','017117','017118','017137','017141','017147','017152','017155','017160','017163','017167','017169','017180','017181','017182','017185','017186','017199','017202','017215','017221','017226','025003','025011','025012','025016','025019','025021','025027','025034','025040','025050','025051','025058','025072','025093','025099','025110','025120','025135','025137','025158','025171','025172','025173','025203','025207','025209','025217','025234','025243','025244','043004','043011','043012','043014','043016','043037','043038','043042','043044','043047','043051','043055','043060','043064','043086','043092','043093','043094','043100','043104','043123','043131','043133','043136','043136','043138','043139','043145','043148','043153','043155','043156','043161','043163','043163','043171','043171','043904','043905','043905','043907')");
+       
+       BigDecimal contador = (BigDecimal) query.uniqueResult();
 
-			 if(num.equals(contador)) {
-				 return true;
-			 }else {
-				 return false;
-			 }
+       if(num.equals(contador)) {
+         return true;
+       }else {
+         return false;
+       }
 
-	       	} catch (Exception e) {
-	       		e.printStackTrace();
-	       		return false;
-	       	}
-	   	}
-	 
-	 @Override
-	 public Boolean isActivoBloqueadoGENCAT(Long idActivo) {
-		 
-		 try {
-			 
-			 BigDecimal num = new BigDecimal(0);
-			 Session session = this.getSessionFactory().getCurrentSession();
-			 
-			 Query query = session.createSQLQuery("SELECT\r\n" + 
-			 		"    COUNT (DISTINCT act.ACT_ID)\r\n" + 
-			 		"FROM\r\n" + 
-			 		"    act_activo act\r\n" + 
-			 		"    JOIN bie_localizacion bil ON bil.bie_id = act.bie_id\r\n" + 
-			 		"    JOIN remmaster.dd_loc_localidad loc ON loc.dd_loc_id = bil.dd_loc_id\r\n" + 
-			 		"    JOIN CMU_CONFIG_MUNICIPIOS CMU ON CMU.DD_LOC_ID = loc.DD_LOC_ID\r\n" + 
-			 		"    join DD_TPA_TIPO_ACTIVO tpa on tpa.DD_TPA_ID = act.DD_TPA_ID\r\n" + 
-			 		"    join BIE_ADJ_ADJUDICACION bad on bad.BIE_ID = act.BIE_ID\r\n" + 
-			 		"    join DD_CRA_CARTERA cra on cra.DD_CRA_ID = act.DD_CRA_ID\r\n" + 
-			 		"    join DD_SCR_SUBCARTERA scr on scr.DD_CRA_ID = cra.DD_CRA_ID\r\n" + 
-			 		"    join ACT_AGA_AGRUPACION_ACTIVO aga on aga.ACT_ID = act.ACT_ID\r\n" + 
-			 		"    join ACT_CMG_COMUNICACION_GENCAT cmg on act.ACT_ID = cmg.ACT_ID\r\n" + 
-			 		"WHERE\r\n" + 
-			 		"    act.ACT_ID = "+ idActivo +"and\r\n" + 
-			 		"    tpa.DD_TPA_CODIGO = '02' and\r\n" + 
-			 		"    bad.BIE_ADJ_F_DECRETO_FIRME > to_date('07/04/18','DD/MM/YYYY') and\r\n" + 
-			 		"    cra.DD_CRA_CODIGO IN ('01','02','03','06','08')  and\r\n" + 
-			 		"    scr.DD_SCR_CODIGO IN ('09','08','07','04','18','02','16','06') and\r\n" + 
-			 		"    cmg.CMG_CHECK_ANULACION = '0' and\r\n" + 
-			 		"    cmg.CMG_FECHA_ANULACION IS NULL and\r\n" + 
-			 		"    cmg.DD_ECG_ID = '3' and\r\n" + 
-			 		"    loc.dd_loc_codigo IN ('08001','08003','08006','08007','08009','08011','08015','08019','08020','08022','08029','08030','08031','08032','08033','08035','08037','08040\r\n" + 
-			 		"	','08041','08041','08046','08047','08051','08054','08056','08067','08068','08072','08073','08074','08076','08077','08086','08088','08089','08091','\r\n" + 
-			 		"	08092','08096','08098','08100','08101','08102','08105','08106','08107','08108','08110','08112','08112','08113','08114','08115','08117','08118','\r\n" + 
-			 		"	08120','08121','08123','08124','08125','08126','08135','08136','08141','08143','08147','08155','08156','08157','08158','08159','08161','08163','\r\n" + 
-			 		"	08167','08169','08172','08180','08181','08184','08187','08191','08194','08196','08197','08200','08202','08204','08205','08208','08209','08211','\r\n" + 
-			 		"	08211','08213','08214','08217','08218','08219','08221','08230','08231','08235','08238','08240','08244','08245','08246','08250','08251','08252','\r\n" + 
-			 		"	08260','08261','08262','08263','08264','08266','08267','08270','08270','08274','08279','08281','08282','08283','08284','08285','08289','08295','\r\n" + 
-			 		"	08298','08300','08301','08302','08305','08307','08904','08905','017015','017015','017019','017022','017023','017034','017047','017048','017056','\r\n" + 
-			 		"	017062','017066','017073','017079','017089','017092','017095','017110','017114','017117','017118','017137','017141','017147','017152','017155','\r\n" + 
-			 		"	017160','017163','017167','017169','017180','017181','017182','017185','017186','017199','017202','017215','017221','017226','025003','025011','\r\n" + 
-			 		"	025012','025016','025019','025021','025027','025034','025040','025050','025051','025058','025072','025093','025099','025110','025120','025135','\r\n" + 
-			 		"	025137','025158','025171','025172','025173','025203','025207','025209','025217','025234','025243','025244','043004','043011','043012','043014','\r\n" + 
-			 		"	043016','043037','043038','043042','043044','043047','043051','043055','043060','043064','043086','043092','043093','043094','043100','043104','\r\n" + 
-			 		"	043123','043131','043133','043136','043136','043138','043139','043145','043148','043153','043155','043156','043161','043163','043163','043171','\r\n" + 
-			 		"	043171','043904','043905','043905','043907'\r\n" + 
-			 		"    )");
-			 
-			 num = (BigDecimal) query.uniqueResult();
-			 return num.intValueExact() > 0;
-			 
-		 } catch (Exception e) {
-			 e.printStackTrace();
-			 return false;
-		 } 
-		 	 
-		 
-		 
-	 }
-	 
-	 @Override
-	 public int countActivosAfectoGENCAT(Long idAgrupacion) {
-		 try {
-			 BigDecimal nActivos = new BigDecimal(0);
-			 Session session = this.getSessionFactory().getCurrentSession();
-			 Query query = session.createSQLQuery("SELECT\r\n" + 
-			 		"    count(DISTINCT act.ACT_ID)\r\n" + 
-			 		"FROM\r\n" + 
-			 		"    act_activo act\r\n" + 
-			 		"    JOIN bie_localizacion bil ON bil.bie_id = act.bie_id\r\n" + 
-			 		"    JOIN remmaster.dd_loc_localidad loc ON loc.dd_loc_id = bil.dd_loc_id\r\n" + 
-			 		"    JOIN CMU_CONFIG_MUNICIPIOS CMU ON CMU.DD_LOC_ID = loc.DD_LOC_ID\r\n" + 
-			 		"    join DD_TPA_TIPO_ACTIVO tpa on tpa.DD_TPA_ID = act.DD_TPA_ID\r\n" + 
-			 		"    join BIE_ADJ_ADJUDICACION bad on bad.BIE_ID = act.BIE_ID\r\n" + 
-			 		"    join DD_CRA_CARTERA cra on cra.DD_CRA_ID = act.DD_CRA_ID\r\n" + 
-			 		"    join DD_SCR_SUBCARTERA scr on scr.DD_CRA_ID = cra.DD_CRA_ID\r\n" + 
-			 		"    join ACT_AGA_AGRUPACION_ACTIVO aga on aga.ACT_ID = act.ACT_ID\r\n" + 
-			 		"WHERE\r\n" + 
-			 		"    aga.AGR_ID = "+ idAgrupacion +" and\r\n" + 
-			 		"    tpa.DD_TPA_CODIGO = '02' and\r\n" + 
-			 		"    bad.BIE_ADJ_F_DECRETO_FIRME > to_date('07/04/18','DD/MM/YYYY') and\r\n" + 
-			 		"    cra.DD_CRA_CODIGO IN ('01','02','03','06','08')  and\r\n" + 
-			 		"    scr.DD_SCR_CODIGO IN ('09','08','07','04','18','02','16','06') and\r\n" + 
-			 		"    loc.dd_loc_codigo IN ('08001','08003','08006','08007','08009','08011','08015','08019','08020','08022','08029','08030','08031','08032','08033','08035','08037','08040\r\n" + 
-			 		"	','08041','08041','08046','08047','08051','08054','08056','08067','08068','08072','08073','08074','08076','08077','08086','08088','08089','08091','\r\n" + 
-			 		"	08092','08096','08098','08100','08101','08102','08105','08106','08107','08108','08110','08112','08112','08113','08114','08115','08117','08118','\r\n" + 
-			 		"	08120','08121','08123','08124','08125','08126','08135','08136','08141','08143','08147','08155','08156','08157','08158','08159','08161','08163','\r\n" + 
-			 		"	08167','08169','08172','08180','08181','08184','08187','08191','08194','08196','08197','08200','08202','08204','08205','08208','08209','08211','\r\n" + 
-			 		"	08211','08213','08214','08217','08218','08219','08221','08230','08231','08235','08238','08240','08244','08245','08246','08250','08251','08252','\r\n" + 
-			 		"	08260','08261','08262','08263','08264','08266','08267','08270','08270','08274','08279','08281','08282','08283','08284','08285','08289','08295','\r\n" + 
-			 		"	08298','08300','08301','08302','08305','08307','08904','08905','017015','017015','017019','017022','017023','017034','017047','017048','017056','\r\n" + 
-			 		"	017062','017066','017073','017079','017089','017092','017095','017110','017114','017117','017118','017137','017141','017147','017152','017155','\r\n" + 
-			 		"	017160','017163','017167','017169','017180','017181','017182','017185','017186','017199','017202','017215','017221','017226','025003','025011','\r\n" + 
-			 		"	025012','025016','025019','025021','025027','025034','025040','025050','025051','025058','025072','025093','025099','025110','025120','025135','\r\n" + 
-			 		"	025137','025158','025171','025172','025173','025203','025207','025209','025217','025234','025243','025244','043004','043011','043012','043014','\r\n" + 
-			 		"	043016','043037','043038','043042','043044','043047','043051','043055','043060','043064','043086','043092','043093','043094','043100','043104','\r\n" + 
-			 		"	043123','043131','043133','043136','043136','043138','043139','043145','043148','043153','043155','043156','043161','043163','043163','043171','\r\n" + 
-			 		"	043171','043904','043905','043905','043907'\r\n" + 
-			 		"    )");
-			 
-			 nActivos = (BigDecimal) query.uniqueResult();
-			 return nActivos.intValueExact();
-		 } catch (Exception e) {
-			 e.printStackTrace();
-			 return 0;
-		 }
-	 }
-	 
-	
-	 @Override
-	 public Boolean existenOfertasVentaActivo(Long idActivo) {
-		 try {
-			 BigDecimal num = new BigDecimal(1);
-			 Session session = this.getSessionFactory().getCurrentSession();
-			 Query query= session.createSQLQuery("SELECT count(ofr.*) FROM OFR_OFERTAS ofr " + 
-			 		"JOIN ACT_OFR afr ON  afr.ofr_id = ofr.ofr_id " + 
-			 		"JOIN DD_TOF_TIPOS_OFERTA tof ON tof.dd_tof_id = ofr.dd_tof_id " + 
-			 		"JOIN DD_EOF_ESTADOS_OFERTA eof ON eof.DD_EOF_ID = ofr.DD_EOF_ID " + 
-			 		"where afr.act_id = 110055 and tof.dd_tof_codigo = '01'");
-			 
-			 String contador =  (String) query.uniqueResult();
-			 
-			 if(num.equals(contador)) {
-				 return true;
-			 }else {
-				 return false;
-			 }
+          } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+          }
+      }
+   
+   @Override
+   public Boolean isActivoBloqueadoGENCAT(Long idActivo) {
+     
+     try {
+       
+       BigDecimal num = new BigDecimal(0);
+       Session session = this.getSessionFactory().getCurrentSession();
+       
+       Query query = session.createSQLQuery("SELECT\r\n" + 
+          "    COUNT (DISTINCT act.ACT_ID)\r\n" + 
+          "FROM\r\n" + 
+          "    act_activo act\r\n" + 
+          "    JOIN bie_localizacion bil ON bil.bie_id = act.bie_id\r\n" + 
+          "    JOIN remmaster.dd_loc_localidad loc ON loc.dd_loc_id = bil.dd_loc_id\r\n" + 
+          "    JOIN CMU_CONFIG_MUNICIPIOS CMU ON CMU.DD_LOC_ID = loc.DD_LOC_ID\r\n" + 
+          "    join DD_TPA_TIPO_ACTIVO tpa on tpa.DD_TPA_ID = act.DD_TPA_ID\r\n" + 
+          "    join BIE_ADJ_ADJUDICACION bad on bad.BIE_ID = act.BIE_ID\r\n" + 
+          "    join DD_CRA_CARTERA cra on cra.DD_CRA_ID = act.DD_CRA_ID\r\n" + 
+          "    join DD_SCR_SUBCARTERA scr on scr.DD_CRA_ID = cra.DD_CRA_ID\r\n" + 
+          "    join ACT_AGA_AGRUPACION_ACTIVO aga on aga.ACT_ID = act.ACT_ID\r\n" + 
+          "    join ACT_CMG_COMUNICACION_GENCAT cmg on act.ACT_ID = cmg.ACT_ID\r\n" + 
+          "WHERE\r\n" + 
+          "    act.ACT_ID = "+ idActivo +"and\r\n" + 
+          "    tpa.DD_TPA_CODIGO = '02' and\r\n" + 
+          "    bad.BIE_ADJ_F_DECRETO_FIRME > to_date('07/04/18','DD/MM/YYYY') and\r\n" + 
+          "    cra.DD_CRA_CODIGO IN ('01','02','03','06','08')  and\r\n" + 
+          "    scr.DD_SCR_CODIGO IN ('09','08','07','04','18','02','16','06') and\r\n" + 
+          "    cmg.CMG_CHECK_ANULACION = '0' and\r\n" + 
+          "    cmg.CMG_FECHA_ANULACION IS NULL and\r\n" + 
+          "    cmg.DD_ECG_ID = '3' and\r\n" + 
+          "    loc.dd_loc_codigo IN ('08001','08003','08006','08007','08009','08011','08015','08019','08020','08022','08029','08030','08031','08032','08033','08035','08037','08040\r\n" + 
+          " ','08041','08041','08046','08047','08051','08054','08056','08067','08068','08072','08073','08074','08076','08077','08086','08088','08089','08091','\r\n" + 
+          " 08092','08096','08098','08100','08101','08102','08105','08106','08107','08108','08110','08112','08112','08113','08114','08115','08117','08118','\r\n" + 
+          " 08120','08121','08123','08124','08125','08126','08135','08136','08141','08143','08147','08155','08156','08157','08158','08159','08161','08163','\r\n" + 
+          " 08167','08169','08172','08180','08181','08184','08187','08191','08194','08196','08197','08200','08202','08204','08205','08208','08209','08211','\r\n" + 
+          " 08211','08213','08214','08217','08218','08219','08221','08230','08231','08235','08238','08240','08244','08245','08246','08250','08251','08252','\r\n" + 
+          " 08260','08261','08262','08263','08264','08266','08267','08270','08270','08274','08279','08281','08282','08283','08284','08285','08289','08295','\r\n" + 
+          " 08298','08300','08301','08302','08305','08307','08904','08905','017015','017015','017019','017022','017023','017034','017047','017048','017056','\r\n" + 
+          " 017062','017066','017073','017079','017089','017092','017095','017110','017114','017117','017118','017137','017141','017147','017152','017155','\r\n" + 
+          " 017160','017163','017167','017169','017180','017181','017182','017185','017186','017199','017202','017215','017221','017226','025003','025011','\r\n" + 
+          " 025012','025016','025019','025021','025027','025034','025040','025050','025051','025058','025072','025093','025099','025110','025120','025135','\r\n" + 
+          " 025137','025158','025171','025172','025173','025203','025207','025209','025217','025234','025243','025244','043004','043011','043012','043014','\r\n" + 
+          " 043016','043037','043038','043042','043044','043047','043051','043055','043060','043064','043086','043092','043093','043094','043100','043104','\r\n" + 
+          " 043123','043131','043133','043136','043136','043138','043139','043145','043148','043153','043155','043156','043161','043163','043163','043171','\r\n" + 
+          " 043171','043904','043905','043905','043907'\r\n" + 
+          "    )");
+       
+       num = (BigDecimal) query.uniqueResult();
+       return num.intValueExact() > 0;
+       
+     } catch (Exception e) {
+       e.printStackTrace();
+       return false;
+     } 
+       
+     
+     
+   }
+   
+   @Override
+   public int countActivosAfectoGENCAT(Long idAgrupacion) {
+     try {
+       BigDecimal nActivos = new BigDecimal(0);
+       Session session = this.getSessionFactory().getCurrentSession();
+       Query query = session.createSQLQuery("SELECT\r\n" + 
+          "    count(DISTINCT act.ACT_ID)\r\n" + 
+          "FROM\r\n" + 
+          "    act_activo act\r\n" + 
+          "    JOIN bie_localizacion bil ON bil.bie_id = act.bie_id\r\n" + 
+          "    JOIN remmaster.dd_loc_localidad loc ON loc.dd_loc_id = bil.dd_loc_id\r\n" + 
+          "    JOIN CMU_CONFIG_MUNICIPIOS CMU ON CMU.DD_LOC_ID = loc.DD_LOC_ID\r\n" + 
+          "    join DD_TPA_TIPO_ACTIVO tpa on tpa.DD_TPA_ID = act.DD_TPA_ID\r\n" + 
+          "    join BIE_ADJ_ADJUDICACION bad on bad.BIE_ID = act.BIE_ID\r\n" + 
+          "    join DD_CRA_CARTERA cra on cra.DD_CRA_ID = act.DD_CRA_ID\r\n" + 
+          "    join DD_SCR_SUBCARTERA scr on scr.DD_CRA_ID = cra.DD_CRA_ID\r\n" + 
+          "    join ACT_AGA_AGRUPACION_ACTIVO aga on aga.ACT_ID = act.ACT_ID\r\n" + 
+          "WHERE\r\n" + 
+          "    aga.AGR_ID = "+ idAgrupacion +" and\r\n" + 
+          "    tpa.DD_TPA_CODIGO = '02' and\r\n" + 
+          "    bad.BIE_ADJ_F_DECRETO_FIRME > to_date('07/04/18','DD/MM/YYYY') and\r\n" + 
+          "    cra.DD_CRA_CODIGO IN ('01','02','03','06','08')  and\r\n" + 
+          "    scr.DD_SCR_CODIGO IN ('09','08','07','04','18','02','16','06') and\r\n" + 
+          "    loc.dd_loc_codigo IN ('08001','08003','08006','08007','08009','08011','08015','08019','08020','08022','08029','08030','08031','08032','08033','08035','08037','08040\r\n" + 
+          " ','08041','08041','08046','08047','08051','08054','08056','08067','08068','08072','08073','08074','08076','08077','08086','08088','08089','08091','\r\n" + 
+          " 08092','08096','08098','08100','08101','08102','08105','08106','08107','08108','08110','08112','08112','08113','08114','08115','08117','08118','\r\n" + 
+          " 08120','08121','08123','08124','08125','08126','08135','08136','08141','08143','08147','08155','08156','08157','08158','08159','08161','08163','\r\n" + 
+          " 08167','08169','08172','08180','08181','08184','08187','08191','08194','08196','08197','08200','08202','08204','08205','08208','08209','08211','\r\n" + 
+          " 08211','08213','08214','08217','08218','08219','08221','08230','08231','08235','08238','08240','08244','08245','08246','08250','08251','08252','\r\n" + 
+          " 08260','08261','08262','08263','08264','08266','08267','08270','08270','08274','08279','08281','08282','08283','08284','08285','08289','08295','\r\n" + 
+          " 08298','08300','08301','08302','08305','08307','08904','08905','017015','017015','017019','017022','017023','017034','017047','017048','017056','\r\n" + 
+          " 017062','017066','017073','017079','017089','017092','017095','017110','017114','017117','017118','017137','017141','017147','017152','017155','\r\n" + 
+          " 017160','017163','017167','017169','017180','017181','017182','017185','017186','017199','017202','017215','017221','017226','025003','025011','\r\n" + 
+          " 025012','025016','025019','025021','025027','025034','025040','025050','025051','025058','025072','025093','025099','025110','025120','025135','\r\n" + 
+          " 025137','025158','025171','025172','025173','025203','025207','025209','025217','025234','025243','025244','043004','043011','043012','043014','\r\n" + 
+          " 043016','043037','043038','043042','043044','043047','043051','043055','043060','043064','043086','043092','043093','043094','043100','043104','\r\n" + 
+          " 043123','043131','043133','043136','043136','043138','043139','043145','043148','043153','043155','043156','043161','043163','043163','043171','\r\n" + 
+          " 043171','043904','043905','043905','043907'\r\n" + 
+          "    )");
+       
+       nActivos = (BigDecimal) query.uniqueResult();
+       return nActivos.intValueExact();
+     } catch (Exception e) {
+       e.printStackTrace();
+       return 0;
+     }
+   }
+   
+  
+   @Override
+   public Boolean existenOfertasVentaActivo(Long idActivo) {
+     try {
+       BigDecimal num = new BigDecimal(1);
+       Session session = this.getSessionFactory().getCurrentSession();
+       Query query= session.createSQLQuery("SELECT count(ofr.*) FROM OFR_OFERTAS ofr " + 
+          "JOIN ACT_OFR afr ON  afr.ofr_id = ofr.ofr_id " + 
+          "JOIN DD_TOF_TIPOS_OFERTA tof ON tof.dd_tof_id = ofr.dd_tof_id " + 
+          "JOIN DD_EOF_ESTADOS_OFERTA eof ON eof.DD_EOF_ID = ofr.DD_EOF_ID " + 
+          "where afr.act_id = 110055 and tof.dd_tof_codigo = '01'");
+       
+       String contador =  (String) query.uniqueResult();
+       
+       if(num.equals(contador)) {
+         return true;
+       }else {
+         return false;
+       }
 
-	       	} catch (Exception e) {
-	       		e.printStackTrace();
-	       		return false;
-	       	}
-	   	}
+          } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+          }
+      }
 
 }

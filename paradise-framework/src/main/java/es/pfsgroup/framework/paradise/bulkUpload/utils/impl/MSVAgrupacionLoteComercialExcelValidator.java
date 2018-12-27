@@ -553,6 +553,13 @@ public class MSVAgrupacionLoteComercialExcelValidator extends MSVExcelValidatorA
 						listaFilasError.add(getNumPrimeraFilaAgrupacionError(exc, numAgrupacion));
 
 					// Validacion agrupacion y activos sin ofertas aceptadas
+					
+					// Esta validación peta para los casos de más de 1000 activos, la solución alternativa es hacer la carga
+					// de 1000 en 1000, ya que si modificamos la función esActivosOfertasAceptadas por un bucle que recorriera 
+					// la lista de activos para evitar el limite de 1000 de la clausura IN(), se bajaría la eficiencia/velocidad
+					// de ejecución y posiblemente provoque un timeout.
+					// Tampoco se puede cambiar la clausura IN() por EXIST(), porque el número de los activos vienen en una lista 
+					// de tipo String.
 					if(codigoValidacionMultiple == AGRUPACION_ACTIVOS_SIN_OFERTAS_ACEPTADAS.codigoError &&
 							particularValidator.esActivosOfertasAceptadas(inSqlGrupoActivos, String.valueOf(numAgrupacion)))
 						listaFilasError.add(getNumPrimeraFilaAgrupacionError(exc, numAgrupacion));

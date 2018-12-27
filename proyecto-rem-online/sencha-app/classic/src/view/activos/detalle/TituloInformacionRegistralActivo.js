@@ -515,7 +515,8 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 								bind: '{datosRegistrales.fechaRealizacionPosesion}',
 								bind: {
 									value: '{datosRegistrales.fechaRealizacionPosesion}',
-									readOnly: '{isReadOnlyFechaRealizacionPosesion}'
+									readOnly: '{isReadOnlyFechaRealizacionPosesion}',
+									disabled: '{isCarteraLiberbank}'
 								}
 			                },
 			                {

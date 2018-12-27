@@ -1495,21 +1495,20 @@ public class ActivoAdapter {
 		List<GestorEntidadHistorico> gestoresEntidad = gestorActivoApi
 				.getListGestoresActivosAdicionalesHistoricoData(gestorEntidadDto);
 		
-		Boolean incluirVenta;
-		Boolean incluirAlquiler; 
-		
-		String tipoComercializacion = activoApi.get(idActivo).getActivoPublicacion().getTipoComercializacion().getCodigo();
-		
-		if(DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(tipoComercializacion) || DDTipoComercializacion.CODIGO_ALQUILER_OPCION_COMPRA.equals(tipoComercializacion)) {
-			incluirVenta = false;
-			incluirAlquiler = true;
-		}else if(DDTipoComercializacion.CODIGO_VENTA.equals(tipoComercializacion)) {
-			incluirVenta = true;
-			incluirAlquiler = false;
-		}else {
-			incluirVenta = true;
-			incluirAlquiler = true;
+		Boolean incluirVenta = true;
+		Boolean incluirAlquiler = true; 
+		Activo activo = activoApi.get(idActivo);
+		if(activo != null && activo.getActivoPublicacion() != null && activo.getActivoPublicacion().getTipoComercializacion() != null){
+			String tipoComercializacion = activoApi.get(idActivo).getActivoPublicacion().getTipoComercializacion().getCodigo();
+			if(DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(tipoComercializacion) || DDTipoComercializacion.CODIGO_ALQUILER_OPCION_COMPRA.equals(tipoComercializacion)) {
+				incluirVenta = false;
+				incluirAlquiler = true;
+			}else if(DDTipoComercializacion.CODIGO_VENTA.equals(tipoComercializacion)) {
+				incluirVenta = true;
+				incluirAlquiler = false;
+			}
 		}
+		
 
 		List<DtoListadoGestores> listadoGestoresDto = new ArrayList<DtoListadoGestores>();
 

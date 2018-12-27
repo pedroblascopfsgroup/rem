@@ -6,7 +6,7 @@ import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.types.MSVColumnSQLVal
 import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.types.MSVResultadoValidacionSQL;
 
 /**
- * Implementación del validador de columna vía SQL
+ * ImplementaciÃ³n del validador de columna vÃ­a SQL
  * @author bruno
  *
  */
@@ -41,13 +41,13 @@ public class MSVColumnSQLValidatorImpl extends  MSVGenericColumnValidator implem
 
 	@Override
 	public boolean isRequired() {
-		// Gestionamos si el valor es requerido o no durante la validación de formato
+		// Gestionamos si el valor es requerido o no durante la validaciÃ³n de formato
 		return false;
 	}
 
 	@Override
 	public Map<Integer, MSVResultadoValidacionSQL> getResultConfig() {
-		// Como esto es de tipo DEBE_EXISTIR no hace falta devolver configuración
+		// Como esto es de tipo DEBE_EXISTIR no hace falta devolver configuraciÃ³n
 		return null;
 	}
 

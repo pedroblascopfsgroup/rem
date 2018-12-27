@@ -1,7 +1,10 @@
 package es.pfsgroup.framework.paradise.bulkUpload.utils.impl;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -20,6 +23,8 @@ import org.springframework.stereotype.Component;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.message.MessageService;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.api.ApiProxyFactory;
+import es.pfsgroup.framework.paradise.bulkUpload.api.ExcelRepoApi;
 import es.pfsgroup.framework.paradise.bulkUpload.api.MSVProcesoApi;
 import es.pfsgroup.framework.paradise.bulkUpload.api.ParticularValidatorApi;
 import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVBusinessCompositeValidators;
@@ -31,6 +36,7 @@ import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.types.MSVMultiColumnV
 import es.pfsgroup.framework.paradise.bulkUpload.dto.MSVDtoValidacion;
 import es.pfsgroup.framework.paradise.bulkUpload.dto.MSVExcelFileItemDto;
 import es.pfsgroup.framework.paradise.bulkUpload.dto.ResultadoValidacion;
+import es.pfsgroup.framework.paradise.bulkUpload.model.ExcelFileBean;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.MSVExcelParser;
 import jxl.write.WriteException;
@@ -43,13 +49,18 @@ public class MSVAltaActivosExcelValidator extends MSVExcelValidatorAbstract {
 	public static final String DESTINO_COMERCIAL_CODIGO_ALQUILER_VENTA = "02";
 	public static final String DESTINO_COMERCIAL_CODIGO_SOLO_ALQUILER = "03";
 	public static final String DESTINO_COMERCIAL_CODIGO_ALQUILER_OPCION_COMPRA = "04";
+	public static final String CODIGO_CARTERA_SAREB = "02";
+	public static final String TIPO_TITULO_COLATERAL_LIQUIDACION_COLATERALES = "04";
 
 	// Textos con errores de validacion
 	public static final String ACTIVE_EXISTS = "El activo existe.";
 	public static final String CARTERA_IS_NULL = "La cartera del activo no puede estar vacío.";
 	public static final String SUBCARTERA_IS_NULL = "La subcartera del activo no puede estar vacia";
 	public static final String SUBCARTERA_CARTERA_INCORRECTA = "La subcartera no pertenece a la cartera indicada";
+	public static final String TIPO_TITULO_IS_NULL = "El tipo de título del activo no puede estar vacío.";
+	public static final String TIPO_TITULO_CARTERA_INCORRECTA = "No de puede dar de alta dicho tipo de activo para la cartera indicada";
 	public static final String SUBTIPO_TITULO_IS_NULL = "El subtipo de título del activo no puede estar vacío.";
+	public static final String SUBTIPO_TITULO_INCORRECTO = "El subtipo de título no coincide con el tipo de título.";
 	public static final String TIPO_ACTIVO_IS_NULL = "El tipo de activo no puede estar vacío.";
 	public static final String SUBTIPO_ACTIVO_IS_NULL = "El subtipo de activo no puede estar vacío.";
 	public static final String ESTADO_FISICO_ACTIVO_IS_NULL = "El estado físico del activo no puede estar vacío.";
@@ -88,6 +99,7 @@ public class MSVAltaActivosExcelValidator extends MSVExcelValidatorAbstract {
 	public static final String MEDIADOR_NOT_EXISTS = "El NIF indicado para el mediador no se encuentra dado de alta";
 	public static final String CODIGO_SOCIEDAD_ACREEDORA_IS_NAN = "El código de la sociedad acreedora no tiene un formato numérico válido";
 	public static final String NUM_ACTIVO_HAYA_IS_NAN = "El código haya del activo no tiene un formato numérico válido";
+	public static final String TIPO_TITULO_IS_NAN = "El tipo de título del activo no tiene un formato numérico válido";
 	public static final String NUM_ACTIVO_CARTERA_IS_NAN = "El número de activo por cartera no tiene un formato numérico válido";
 	public static final String NUM_BIEN_RECOVERY_IS_NAN = "El número del bien en recovery no tiene un formato numérico válido";
 	public static final String ID_ASUNTO_RECOVERY_IS_NAN = "El ID del asunto en recovery no tiene un formato numérico válido";
@@ -113,73 +125,74 @@ public class MSVAltaActivosExcelValidator extends MSVExcelValidatorAbstract {
 		static final int NUM_ACTIVO_HAYA = 0;
 		static final int COD_CARTERA = 1;
 		static final int COD_SUBCARTERA = 2;
-		static final int COD_SUBTIPO_TITULO = 3;
-		static final int NUM_ACTIVO_CARTERA = 4; // (UVEM, PRINEX, SAREB)
-		static final int NUM_BIEN_RECOVERY = 5;
-		static final int ID_ASUNTO_RECOVERY = 6;
-		static final int COD_TIPO_ACTIVO = 7;
-		static final int COD_SUBTIPO_ACTIVO = 8;
-		static final int COD_ESTADO_FISICO = 9;
-		static final int COD_USO_DOMINANTE = 10;
-		static final int DESC_ACTIVO = 11;
+		static final int COD_TIPO_TITULO = 3;
+		static final int COD_SUBTIPO_TITULO = 4;
+		static final int NUM_ACTIVO_CARTERA = 5; // (UVEM, PRINEX, SAREB)
+		static final int NUM_BIEN_RECOVERY = 6;
+		static final int ID_ASUNTO_RECOVERY = 7;
+		static final int COD_TIPO_ACTIVO = 8;
+		static final int COD_SUBTIPO_ACTIVO = 9;
+		static final int COD_ESTADO_FISICO = 10;
+		static final int COD_USO_DOMINANTE = 11;
+		static final int DESC_ACTIVO = 12;
 
-		static final int COD_TIPO_VIA = 12;
-		static final int NOMBRE_VIA = 13;
-		static final int NUM_VIA = 14;
-		static final int ESCALERA = 15;
-		static final int PLANTA = 16;
-		static final int PUERTA = 17;
-		static final int COD_PROVINCIA = 18;
-		static final int COD_MUNICIPIO = 19;
-		static final int COD_UNIDAD_MUNICIPIO = 20;
-		static final int CODPOSTAL = 21;
+		static final int COD_TIPO_VIA = 13;
+		static final int NOMBRE_VIA = 14;
+		static final int NUM_VIA = 15;
+		static final int ESCALERA = 16;
+		static final int PLANTA = 17;
+		static final int PUERTA = 18;
+		static final int COD_PROVINCIA = 19;
+		static final int COD_MUNICIPIO = 20;
+		static final int COD_UNIDAD_MUNICIPIO = 21;
+		static final int CODPOSTAL = 22;
 
-		static final int COD_DESTINO_COMER = 22;
-		static final int COD_TIPO_ALQUILER = 23;
+		static final int COD_DESTINO_COMER = 23;
+		static final int COD_TIPO_ALQUILER = 24;
 
-		static final int NUM_PRESTAMO = 24; // (MATRIZ, DIVIDIDO)
-		static final int ESTADO_EXP_RIESGO = 25;
-		static final int NIF_SOCIEDAD_ACREEDORA = 26;
-		static final int CODIGO_SOCIEDAD_ACREEDORA = 27;
-		static final int NOMBRE_SOCIEDAD_ACREEDORA = 28;
-		static final int DIRECCION_SOCIEDAD_ACREEDORA = 29;
-		static final int IMPORTE_DEUDA = 30;
-		static final int ID_GARANTIA = 31;
+		static final int NUM_PRESTAMO = 25; // (MATRIZ, DIVIDIDO)
+		static final int ESTADO_EXP_RIESGO = 26;
+		static final int NIF_SOCIEDAD_ACREEDORA = 27;
+		static final int CODIGO_SOCIEDAD_ACREEDORA = 28;
+		static final int NOMBRE_SOCIEDAD_ACREEDORA = 29;
+		static final int DIRECCION_SOCIEDAD_ACREEDORA = 30;
+		static final int IMPORTE_DEUDA = 31;
+		static final int ID_GARANTIA = 32;
 
-		static final int POBL_REGISTRO = 32;
-		static final int NUM_REGISTRO = 33;
-		static final int TOMO = 34;
-		static final int LIBRO = 35;
-		static final int FOLIO = 36;
-		static final int FINCA = 37;
-		static final int IDUFIR_CRU = 38;
-		static final int SUPERFICIE_CONSTRUIDA_M2 = 39;
-		static final int SUPERFICIE_UTIL_M2 = 40;
-		static final int SUPERFICIE_REPERCUSION_EE_CC = 41;
-		static final int PARCELA = 42; // (INCLUIDA OCUPADA EDIFICACION)
-		static final int ES_INTEGRADO_DIV_HORIZONTAL = 43;
+		static final int POBL_REGISTRO = 33;
+		static final int NUM_REGISTRO = 34;
+		static final int TOMO = 35;
+		static final int LIBRO = 36;
+		static final int FOLIO = 37;
+		static final int FINCA = 38;
+		static final int IDUFIR_CRU = 39;
+		static final int SUPERFICIE_CONSTRUIDA_M2 = 40;
+		static final int SUPERFICIE_UTIL_M2 = 41;
+		static final int SUPERFICIE_REPERCUSION_EE_CC = 42;
+		static final int PARCELA = 43; // (INCLUIDA OCUPADA EDIFICACION)
+		static final int ES_INTEGRADO_DIV_HORIZONTAL = 44;
 
-		static final int NIF_PROPIETARIO = 44;
-		static final int GRADO_PROPIEDAD = 45;
-		static final int PERCENT_PROPIEDAD = 46;
+		static final int NIF_PROPIETARIO = 45;
+		static final int GRADO_PROPIEDAD = 46;
+		static final int PERCENT_PROPIEDAD = 47;
 
-		static final int REF_CATASTRAL = 47;
-		static final int VPO = 48;
-		static final int CALIFICACION_CEE = 49;
+		static final int REF_CATASTRAL = 48;
+		static final int VPO = 49;
+		static final int CALIFICACION_CEE = 50;
 
-		static final int NIF_MEDIADOR = 50;
-		static final int VIVIENDA_NUM_PLANTAS = 51;
-		static final int VIVIENDA_NUM_BANYOS = 52;
-		static final int VIVIENDA_NUM_ASEOS = 53;
-		static final int VIVIENDA_NUM_DORMITORIOS = 54;
-		static final int TRASTERO_ANEJO = 55;
-		static final int GARAJE_ANEJO = 56;
-		static final int ASCENSOR = 57;
+		static final int NIF_MEDIADOR = 51;
+		static final int VIVIENDA_NUM_PLANTAS = 52;
+		static final int VIVIENDA_NUM_BANYOS = 53;
+		static final int VIVIENDA_NUM_ASEOS = 54;
+		static final int VIVIENDA_NUM_DORMITORIOS = 55;
+		static final int TRASTERO_ANEJO = 56;
+		static final int GARAJE_ANEJO = 57;
+		static final int ASCENSOR = 58;
 
-		static final int PRECIO_MINIMO = 58;
-		static final int PRECIO_VENTA_WEB = 59;
-		static final int VALOR_TASACION = 60;
-		static final int FECHA_TASACION = 61;
+		static final int PRECIO_MINIMO = 59;
+		static final int PRECIO_VENTA_WEB = 60;
+		static final int VALOR_TASACION = 61;
+		static final int FECHA_TASACION = 62;
 	};
 
 	protected final Log logger = LogFactory.getLog(getClass());
@@ -192,6 +205,9 @@ public class MSVAltaActivosExcelValidator extends MSVExcelValidatorAbstract {
 
 	@Autowired
 	private ParticularValidatorApi particularValidator;
+	
+	@Autowired
+	private ApiProxyFactory proxyFactory;
 
 	@Resource
 	MessageService messageServices;
@@ -200,6 +216,8 @@ public class MSVAltaActivosExcelValidator extends MSVExcelValidatorAbstract {
 	private MSVProcesoApi msvProcesoApi;
 
 	private Integer numFilasHoja;
+	
+	private DecimalFormat format;
 
 	@Override
 	public MSVDtoValidacion validarContenidoFichero(MSVExcelFileItemDto dtoFile)
@@ -229,7 +247,10 @@ public class MSVAltaActivosExcelValidator extends MSVExcelValidatorAbstract {
 			mapaErrores.put(CARTERA_IS_NULL, isColumnNullByRows(exc, COL_NUM.COD_CARTERA));
 			mapaErrores.put(SUBCARTERA_IS_NULL, isColumnNullByRows(exc, COL_NUM.COD_SUBCARTERA));
 			mapaErrores.put(SUBCARTERA_CARTERA_INCORRECTA, isCarteraCorrecta(exc, COL_NUM.COD_SUBCARTERA));
+			mapaErrores.put(TIPO_TITULO_IS_NULL, isColumnNullByRows(exc, COL_NUM.COD_TIPO_TITULO));
+			mapaErrores.put(TIPO_TITULO_CARTERA_INCORRECTA, isTituloCarteraCorrecta(exc, COL_NUM.COD_TIPO_TITULO));
 			mapaErrores.put(SUBTIPO_TITULO_IS_NULL, isColumnNullByRows(exc, COL_NUM.COD_SUBTIPO_TITULO));
+			mapaErrores.put(SUBTIPO_TITULO_INCORRECTO, isTituloCorrecto(exc, COL_NUM.COD_SUBTIPO_TITULO));
 			mapaErrores.put(TIPO_ACTIVO_IS_NULL, isColumnNullByRows(exc, COL_NUM.COD_TIPO_ACTIVO));
 			mapaErrores.put(SUBTIPO_ACTIVO_IS_NULL, isColumnNullByRows(exc, COL_NUM.COD_SUBTIPO_ACTIVO));
 			mapaErrores.put(ESTADO_FISICO_ACTIVO_IS_NULL, isColumnNullByRows(exc, COL_NUM.COD_ESTADO_FISICO));
@@ -273,6 +294,7 @@ public class MSVAltaActivosExcelValidator extends MSVExcelValidatorAbstract {
 					sociedadAcreedoraNotExistsByRows(exc, COL_NUM.NIF_SOCIEDAD_ACREEDORA));
 			mapaErrores.put(MEDIADOR_NOT_EXISTS, mediadorNotExistsByRows(exc, COL_NUM.NIF_MEDIADOR));
 			mapaErrores.put(NUM_ACTIVO_HAYA_IS_NAN, isColumnNANByRows(exc, COL_NUM.NUM_ACTIVO_HAYA));
+			mapaErrores.put(TIPO_TITULO_IS_NAN, isColumnNANByRows(exc, COL_NUM.COD_TIPO_TITULO));
 			mapaErrores.put(NUM_ACTIVO_CARTERA_IS_NAN, isColumnNANByRows(exc, COL_NUM.NUM_ACTIVO_CARTERA));
 			mapaErrores.put(NUM_BIEN_RECOVERY_IS_NAN, isColumnNANByRows(exc, COL_NUM.NUM_BIEN_RECOVERY));
 			mapaErrores.put(ID_ASUNTO_RECOVERY_IS_NAN, isColumnNANByRows(exc, COL_NUM.ID_ASUNTO_RECOVERY));
@@ -297,7 +319,9 @@ public class MSVAltaActivosExcelValidator extends MSVExcelValidatorAbstract {
 
 			if (!mapaErrores.get(ACTIVE_EXISTS).isEmpty() || !mapaErrores.get(CARTERA_IS_NULL).isEmpty()
 					|| !mapaErrores.get(SUBCARTERA_IS_NULL).isEmpty()
-					|| !mapaErrores.get(SUBCARTERA_CARTERA_INCORRECTA).isEmpty()
+					|| !mapaErrores.get(TIPO_TITULO_IS_NULL).isEmpty()
+					|| !mapaErrores.get(TIPO_TITULO_CARTERA_INCORRECTA).isEmpty()
+					|| !mapaErrores.get(SUBTIPO_TITULO_INCORRECTO).isEmpty()
 					|| !mapaErrores.get(SUBTIPO_TITULO_IS_NULL).isEmpty()
 					|| !mapaErrores.get(TIPO_ACTIVO_IS_NULL).isEmpty()
 					|| !mapaErrores.get(SUBTIPO_ACTIVO_IS_NULL).isEmpty()
@@ -914,6 +938,52 @@ public class MSVAltaActivosExcelValidator extends MSVExcelValidatorAbstract {
 			}
 		}
 		
+		return listaFilas;
+	}
+	
+	private List<Integer> isTituloCorrecto(MSVHojaExcel exc, int columnNumber){
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		
+		for (int i = COL_NUM.DATOS_PRIMERA_FILA; i < numFilasHoja; i++) {
+			try {
+				if (!particularValidator.subtipoPerteneceTipoTitulo(exc.dameCelda(i, columnNumber), exc.dameCelda(i, columnNumber-1))){
+					listaFilas.add(i);
+				}
+			} catch (IllegalArgumentException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+		return listaFilas;
+	}
+	
+	private List<Integer> isTituloCarteraCorrecta(MSVHojaExcel exc, int columnNumber){
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		
+		for (int i = COL_NUM.DATOS_PRIMERA_FILA; i < numFilasHoja; i++) {
+			try {
+				if(TIPO_TITULO_COLATERAL_LIQUIDACION_COLATERALES.equals(exc.dameCelda(i, columnNumber)) && 
+						!CODIGO_CARTERA_SAREB.equals(exc.dameCelda(i, columnNumber-2))){
+						listaFilas.add(i);
+				}
+			} catch (IllegalArgumentException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		return listaFilas;
 	}
 }

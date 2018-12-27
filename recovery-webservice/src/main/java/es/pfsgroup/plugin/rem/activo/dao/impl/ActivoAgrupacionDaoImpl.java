@@ -40,6 +40,9 @@ public class ActivoAgrupacionDaoImpl extends AbstractEntityDao<ActivoAgrupacion,
 		boolean activos = dto.getNif() != null || dto.getSubcarteraCodigo() != null || dto.getNumActHaya() != null
 				|| dto.getNumActPrinex() != null || dto.getNumActReco() != null || dto.getNumActSareb() != null
 				|| dto.getNumActUVEM() != null;
+		
+		
+		
 		if (activos) {
 			from = from + ActivoAgrupacionHqlHelper.getFromActivos();
 		}
@@ -64,6 +67,11 @@ public class ActivoAgrupacionDaoImpl extends AbstractEntityDao<ActivoAgrupacion,
 		// HQLBuilder.addFiltroLikeSiNotNull(hb, "agr.publicado",
 		// dto.getPublicado(), true);
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "agr.tipoAgrupacion.codigo", dto.getTipoAgrupacion());
+
+		if(dto.getTipoAlquiler() != null) {
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "agr.codTipoAlquiler", dto.getTipoAlquiler());
+		}
+
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "agr.numAgrupacionRem", dto.getNumAgrupacionRem());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "agr.cartera", dto.getCodCartera());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "agr.provincia.codigo", dto.getCodProvincia());
@@ -432,5 +440,21 @@ public class ActivoAgrupacionDaoImpl extends AbstractEntityDao<ActivoAgrupacion,
 
 		return resultado;
 	}
+	
+	/*@Override
+	public Page getListActivosAgrupacionByIdAgrupacion(DtoAgrupacionFilter dto, Usuario usuLogado) {
 
+		HQLBuilder hb = new HQLBuilder(" from VActivosAgrupacion agr");
+
+		if (dto.getAgrupacionId() != null) {
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "agr.agrId", Long.valueOf(dto.getAgrupacionId()));
+		}
+
+		if (dto.getSort() == null || dto.getSort().isEmpty()) {
+			hb.orderBy("activoPrincipal", HQLBuilder.ORDER_DESC);
+		}
+
+		return HibernateQueryUtils.page(this, hb, dto);
+
+	}*/
 }

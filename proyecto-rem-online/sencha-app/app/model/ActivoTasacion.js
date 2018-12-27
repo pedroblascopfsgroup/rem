@@ -64,7 +64,6 @@ Ext.define('HreRem.model.ActivoTasacion', {
     				}
     			}
     		},
-
     		{
     			name:'fechaSolicitudTasacion',
     			convert: function(value) {
@@ -146,8 +145,6 @@ Ext.define('HreRem.model.ActivoTasacion', {
     		{
     			name:'observaciones'
     		}
-    		
-    		
     ],
     
 	proxy: {
@@ -159,11 +156,6 @@ Ext.define('HreRem.model.ActivoTasacion', {
             create: 'activo/createTasacionActivo',
             update: 'activo/saveTasacionActivo'
         },
-		extraParams: {pestana: '6'}
-		
-		
+		extraParams: {tab: 'tasacion', pestana: '6'}
     }
-    
-    
-
 });

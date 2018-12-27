@@ -34,6 +34,8 @@ public class DDTipoComercializacion implements Auditable, Dictionary {
     public static final String CODIGO_ALQUILER_VENTA = "02";
     public static final String CODIGO_SOLO_ALQUILER = "03";
     public static final String CODIGO_ALQUILER_OPCION_COMPRA = "04";
+    public static final String[] CODIGOS_ALQUILER = {CODIGO_ALQUILER_VENTA, CODIGO_SOLO_ALQUILER, CODIGO_ALQUILER_OPCION_COMPRA};
+    public static final String[] CODIGOS_VENTA = {CODIGO_VENTA, CODIGO_ALQUILER_VENTA, CODIGO_ALQUILER_OPCION_COMPRA};
 
 	private static final long serialVersionUID = 1L;
 

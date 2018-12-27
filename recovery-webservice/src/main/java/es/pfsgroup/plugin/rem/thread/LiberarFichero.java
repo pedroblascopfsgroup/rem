@@ -38,12 +38,14 @@ public class LiberarFichero implements Runnable{
 	private String userName = null;
 	private Long idOperation;
 	private Long idProcess;
+	private Object[] extraArgs;
 	
-	public LiberarFichero(Long idProcess, Long idOperation,String userName) {
+	public LiberarFichero(Long idProcess, Long idOperation,String userName, Object[] extraArgs) {
 		SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
 		this.userName = userName;
 		this.idOperation = idOperation;
 		this.idProcess = idProcess;
+		this.extraArgs = extraArgs;
 	}
 
 	@Override
@@ -57,6 +59,9 @@ public class LiberarFichero implements Runnable{
 			MSVLiberator lib = factoriaLiberators.dameLiberator(tipoOperacion);
 			if (!Checks.esNulo(lib)) {
 				MSVDocumentoMasivo document = ficheroDao.findByIdProceso(idProcess);
+				
+				document.setExtraArgs(this.extraArgs);
+				
 				resultado = lib.liberaFichero(document);
 			}
 				

@@ -14,15 +14,15 @@ import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVBusinessValidators
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
 
 /**
- * Factoría de validadores de negocio con soporte de Spring.
+ * FactorÃ­a de validadores de negocio con soporte de Spring.
  * <p>
- * Este bean no necesia ninguna configuración ni inicialización mediante XML. En
- * él se dan de alta los validadores disponibles mediante el autowiring de
+ * Este bean no necesia ninguna configuraciÃ³n ni inicializaciÃ³n mediante XML. En
+ * Ã©l se dan de alta los validadores disponibles mediante el autowiring de
  * Spring.
  * 
  * @author bruno
  * 
- * PBO: Modificaciones para añadir las capacidades de validadores compuestos.
+ * PBO: Modificaciones para aÃ±adir las capacidades de validadores compuestos.
  */
 @Component
 public class MSVBusinessValidationSpringAutowiredFactoryImpl implements MSVBusinessValidationFactory {

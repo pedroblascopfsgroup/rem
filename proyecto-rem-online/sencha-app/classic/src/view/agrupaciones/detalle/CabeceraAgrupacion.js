@@ -1,7 +1,7 @@
 Ext.define('HreRem.view.agrupaciones.detalle.CabeceraAgrupacion', {
     extend: 'Ext.container.Container',
     xtype: 'cabeceraagrupacion',
-    requires: ['HreRem.view.common.ToolFieldSet'],
+    requires: ['HreRem.view.common.ToolFieldSet', 'HreRem.ux.button.BotonFavorito'],
     layout: 'fit',    
    
     initComponent: function () {
@@ -54,8 +54,29 @@ Ext.define('HreRem.view.agrupaciones.detalle.CabeceraAgrupacion', {
 						        type: 'hbox'
 						    },
 						    tools: [
-						    
-						   		{	xtype: 'tbfill'},
+						    	{
+									xtype: 'button',
+									cls: 'btn-tbfieldset delete-focus-bg no-pointer',
+									bind: {
+										iconCls: '{getIconClsEstadoVenta}',
+										hidden: '{!esAgrupacionRestringidaIncluyeDestinoComercialVenta}'
+									},
+									iconAlign: 'right',
+									text: HreRem.i18n('title.agrupaciones.indicador.venta')
+								},
+								{
+									xtype: 'button',
+									cls: 'btn-tbfieldset delete-focus-bg no-pointer',
+									bind: {
+										iconCls: '{getIconClsestadoAlquiler}',
+										hidden: '{!esAgrupacionRestringidaIncluyeDestinoComercialAlquiler}'
+									},
+									iconAlign: 'right',
+									text: HreRem.i18n('title.agrupaciones.indicador.alquiler')
+								},
+						   		{	
+									xtype: 'tbfill'
+								},
 						   		{
 						    		xtype: 'button',
 									cls: 'boton-cabecera',
@@ -115,7 +136,6 @@ Ext.define('HreRem.view.agrupaciones.detalle.CabeceraAgrupacion', {
 											layout: {
 											    type: 'table',
 										        columns: 2,
-										        trAttrs: {width: '100%', pading: 0},
 										        tdAttrs: {width: '50%',  pading: 0},
 										        tableAttrs: {
 										            style: {
@@ -125,6 +145,29 @@ Ext.define('HreRem.view.agrupaciones.detalle.CabeceraAgrupacion', {
 											},
 											cls: 'cabecera-apartado cabecera-info',
 											items: [
+														{
+															fieldLabel: HreRem.i18n('title.publicaciones.venta'),
+															cls: 'cabecera-info-field',
+															bind: {
+																hidden: '{!agrupacionficha.incluyeDestinoComercialVentaYIsRestringida}',
+																value: '{agrupacionficha.estadoVentaDescripcion}'
+															}
+														},
+														{
+															fieldLabel: HreRem.i18n('title.publicaciones.alquiler'),
+															cls: 'cabecera-info-field',
+															bind: {
+																hidden: '{!agrupacionficha.incluyeDestinoComercialAlquilerYIsRestringida}',
+																value: '{agrupacionficha.estadoAlquilerDescripcion}'
+															}
+														},
+														{
+									                   		fieldLabel: HreRem.i18n('fieldlabel.enlace.externo'),
+									                   		bind: {
+									                   			hidden: '{!agrupacionRestringidaYPublicada}',
+									                   			value: '<a href="' + HreRem.i18n('fieldlabel.link.web.haya') + '{agrupacionficha.idNumActivoPrincipal}" target="_blank">' + HreRem.i18n('fieldlabel.web.haya') + '</a>'
+									                   		}
+									                   	},
 									                   	{
 									                   		fieldLabel: HreRem.i18n('fieldlabel.numero.agrupacion'),
 															bind:		'{agrupacionficha.numAgrupRem}'
@@ -132,7 +175,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.CabeceraAgrupacion', {
 									                   	{
 									                   		fieldLabel: HreRem.i18n('fieldlabel.numero.agrupacion.uvem'),
 															bind:		'{agrupacionficha.numAgrupUvem}'
-									                   	},	   
+									                   	},									                   
 										                { 
 															fieldLabel: HreRem.i18n('fieldlabel.nombre'),
 										                	bind: 		'{agrupacionficha.nombre}'

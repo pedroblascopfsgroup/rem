@@ -46,7 +46,8 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionesDetalleMain', {
     	
      	
 		var tabSeguimientoAgrupacion= me.down('seguimientoagrupacion');
-		tabSeguimientoAgrupacion.tab.setVisible(false);
-		
+		if(tabSeguimientoAgrupacion != null) {
+			tabSeguimientoAgrupacion.tab.setVisible(false);
+		}
     }
 });

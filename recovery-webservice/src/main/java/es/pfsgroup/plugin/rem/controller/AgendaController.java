@@ -126,6 +126,12 @@ public class AgendaController extends TareaController {
 		model.put("numExpediente", adapter.getNumExpediente(idTarea));
 		return createModelAndViewJson(model);
 	}
+	
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView getTipoTituloActivoByIdTarea(Long idTarea, ModelMap model) {
+		model.put("tipoTituloActivo", adapter.getTipoTituloActivoByIdTarea(idTarea));
+		return createModelAndViewJson(model);
+	}
 
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView getCodigoTramiteTarea(Long idTarea, ModelMap model) {
@@ -265,6 +271,7 @@ public class AgendaController extends TareaController {
 		return createModelAndViewJson(model);
 	}
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView saltoCierreEconomico(Long idTareaExterna, ModelMap model) {
 		model.put("success", adapter.saltoCierreEconomico(idTareaExterna));
@@ -272,6 +279,7 @@ public class AgendaController extends TareaController {
 		return createModelAndViewJson(model);
 	}
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView saltoResolucionExpediente(Long idTareaExterna, ModelMap model) {
 		model.put("success", adapter.saltoResolucionExpediente(idTareaExterna));
@@ -279,6 +287,7 @@ public class AgendaController extends TareaController {
 		return createModelAndViewJson(model);
 	}
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView saltoResolucionExpedienteByIdExp(Long idExpediente, ModelMap model) {
 
@@ -317,11 +326,12 @@ public class AgendaController extends TareaController {
 			model.put("success", salto);
 
 		} catch (JsonViewerException e) {
-			logger.error("Error al saltar a resolución expediente", e);
+			
 			model.put("success", salto);
 			model.put("msgError", e.getMessage());
 
 		} catch (Exception e) {
+			logger.error("Error al saltar a resolución expediente", e);
 			model.put("success", salto);
 		}
 

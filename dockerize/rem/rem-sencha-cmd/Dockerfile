@@ -22,7 +22,7 @@ RUN apt-get update && apt-get install -y ruby rubygems fontconfig
 # ENV INSTALL_DIR -> Variable que heredamos de rem/base
 
 ENV SENCHA_VERSION 6.0.1.76
-ENV SENCHA_CMD_URL http://nexus.pfsgroup.es/nexus/content/repositories/thirdparty/sencha/sencha-cmd/$SENCHA_VERSION/sencha-cmd-$SENCHA_VERSION.zip
+ENV SENCHA_CMD_URL http://nexus.pfsgroup.es/nexus/repository/thirdparty/sencha/sencha-cmd/$SENCHA_VERSION/sencha-cmd-$SENCHA_VERSION.zip
 ENV ART_REPO_USER queryman@pfsgroup.es
 ENV ART_REPO_PASSWD "4'Nz^Ojf~v"
 

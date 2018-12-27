@@ -223,22 +223,34 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
     },
 	
 	onAddClick: function (btn) {
+
 		var me = this;
 		var activo = me.lookupController().getViewModel().get('activo'),
 		idActivo= activo.get('id'),
 		numActivo= activo.get('numActivo');
-		
-		var parent= me.up('ofertascomercialactivo'),
-		oferta = Ext.create('HreRem.model.OfertaComercialActivo', {idActivo: idActivo, numActivo: numActivo});
-		/* FUNCIONALIDAD ANTIGUA ANTES DE INSERTAR EL WIZARD.
-		// HREOS-2930 Permitir acceso menú lateral con ventana Alta de oferta abierta
-		var ventana = Ext.create('HreRem.view.activos.detalle.AnyadirNuevaOfertaActivo',{oferta: oferta, parent: parent});
-		me.up('activosdetallemain').add(ventana);
-		*/
-		var ventana = Ext.create('HreRem.view.activos.detalle.WizardAltaOferta',{oferta: oferta, parent: parent});
-		me.up('activosdetallemain').add(ventana);
-		ventana.show();
-	    				    	
+
+		var noContieneTipoAlquiler = false;
+
+		if (activo.get('incluyeDestinoComercialAlquiler')) {
+			var codigoTipoAlquiler = activo.get('tipoAlquilerCodigo');
+			if (codigoTipoAlquiler == null || codigoTipoAlquiler == '') {
+				noContieneTipoAlquiler = true;
+			}
+		}
+
+		// Comprueba que exista un campo de tipo alquiler antes de anyadir  una oferta
+		if (!noContieneTipoAlquiler) {
+			var parent= me.up('ofertascomercialactivo'),
+			oferta = Ext.create('HreRem.model.OfertaComercialActivo', {idActivo: idActivo, numActivo: numActivo});
+
+			// HREOS-2930 Permitir acceso menú lateral con ventana Alta de oferta abierta
+			var ventana = Ext.create('HreRem.view.activos.detalle.WizardAltaOferta',{oferta: oferta, parent: parent});
+			me.up('activosdetallemain').add(ventana);
+			ventana.show();
+		} else {
+			me.fireEvent("errorToast", HreRem.i18n("msg.comercialAnyadirTipoAlquiler.error"));
+		}
+
 	},
 	
 	editFuncion: function(editor, context){
@@ -390,7 +402,9 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
    //HREOS-846 Si NO esta dentro del perimetro, ocultamos del grid las opciones de agregar/elminar y las acciones editables por fila
    //HREOS-1001 Si está en el perimetro pero no es comercializable tampoco se puede editar
    //HREOS-1971 Si el usuario no tiene la funcion de editar el listado tampoco se puede editar
-   evaluarEdicion: function() {    	
+   //HREOS-4963 Si el activo es de alquiler o venta y no tiene tipo de alquiler asignado no se podra editar
+   evaluarEdicion: function() {
+
 		var me = this;
 		var activo = me.lookupController().getViewModel().get('activo');
 

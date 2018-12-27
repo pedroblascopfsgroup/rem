@@ -48,9 +48,7 @@ public class MSVActualizarGestores extends MSVExcelValidatorAbstract {
 	public static final String USUARIO_NO_ES_TIPO_GESTOR= "El usuario no corresponde con el Tipo de gestor";
 	public static final String COMBINACION_GESTOR_CARTERA_ACAGEX_INVALIDA= "Combinación tipo de gestor- cartera - agrupación/activo/expediente invalida";
 	public static final String MEDIADOR_NO_EXISTE = "El mediador introducido no existe o esta dado de baja en REM";
-	public static final String EXPEDIENTE_MEDIADOR_NO_ACTUALIZA = "El mediador solo se puede actualizar en caso de activo o agrupación";
-	
-	public static final String GESTOR_MEDIADOR = "MED";
+	public static final String CODIGO_MEDIADOR = "MED";
 	
 	@Autowired
 	private MSVExcelParser excelParser;
@@ -112,7 +110,6 @@ public class MSVActualizarGestores extends MSVExcelValidatorAbstract {
 			mapaErrores.put(USUARIO_NO_ES_TIPO_GESTOR, usuarioEsTipoGestor(exc));
 			mapaErrores.put(COMBINACION_GESTOR_CARTERA_ACAGEX_INVALIDA, combinacionGestorCarteraAcagexValida(exc));
 			mapaErrores.put(MEDIADOR_NO_EXISTE, mediadorExiste(exc));
-			mapaErrores.put(EXPEDIENTE_MEDIADOR_NO_ACTUALIZA, expedienteMediadorNoActualiza(exc));
 
 			if (!mapaErrores.get(ACTIVO_NO_EXISTE).isEmpty() || !mapaErrores.get(AGRUPACION_NO_EXISTE).isEmpty()
 					|| !mapaErrores.get(EXPEDIENTE_COMERCIAL_NO_EXISTE).isEmpty()
@@ -121,8 +118,7 @@ public class MSVActualizarGestores extends MSVExcelValidatorAbstract {
 					|| !mapaErrores.get(SOLO_UN_CAMPO_RELLENO).isEmpty()
 					|| !mapaErrores.get(USUARIO_NO_ES_TIPO_GESTOR).isEmpty()
 					|| !mapaErrores.get(COMBINACION_GESTOR_CARTERA_ACAGEX_INVALIDA).isEmpty()
-					|| !mapaErrores.get(MEDIADOR_NO_EXISTE).isEmpty()
-					|| !mapaErrores.get(EXPEDIENTE_MEDIADOR_NO_ACTUALIZA).isEmpty()) {
+					|| !mapaErrores.get(MEDIADOR_NO_EXISTE).isEmpty()) {
 				dtoValidacionContenido.setFicheroTieneErrores(true);
 				exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
 				String nomFicheroErrores = exc.crearExcelErroresMejorado(mapaErrores);
@@ -255,9 +251,11 @@ public class MSVActualizarGestores extends MSVExcelValidatorAbstract {
 		try{
 			for(int i=1; i<this.numFilasHoja;i++){
 				try {
-					if(!GESTOR_MEDIADOR.equals(exc.dameCelda(i, 0).toUpperCase()) && !particularValidator.existeTipoGestor(exc.dameCelda(i, 0))) {
-						listaFilas.add(i);
+					if(!CODIGO_MEDIADOR.equals(exc.dameCelda(i, 0))) {
+						if(!particularValidator.existeTipoGestor(exc.dameCelda(i, 0)))
+							listaFilas.add(i);
 					}
+					
 				} catch (ParseException e) {
 					listaFilas.add(i);
 				}
@@ -278,8 +276,10 @@ public class MSVActualizarGestores extends MSVExcelValidatorAbstract {
 		try{
 			for(int i=1; i<this.numFilasHoja;i++){
 				try {
-					if(!Checks.esNulo(exc.dameCelda(i, 1)) && !particularValidator.existeUsuario(exc.dameCelda(i, 1))) {
-						listaFilas.add(i);
+					String username = exc.dameCelda(i, 1);
+					if(!CODIGO_MEDIADOR.equals(exc.dameCelda(i, 0))) {
+						if(!particularValidator.existeUsuario(username))
+							listaFilas.add(i);
 					}
 				} catch (ParseException e) {
 					listaFilas.add(i);
@@ -336,13 +336,13 @@ public class MSVActualizarGestores extends MSVExcelValidatorAbstract {
 				try {
 					String codigoTipoGestor= exc.dameCelda(i, 0);
 					String username= exc.dameCelda(i, 1);
-					
-					if(!GESTOR_MEDIADOR.equals(exc.dameCelda(i, 0).toUpperCase()) && (!Checks.esNulo(codigoTipoGestor) || !Checks.esNulo(username))){
-						if(!particularValidator.usuarioEsTipoGestor(username, codigoTipoGestor)){
-							listaFilas.add(i);
+					if(!CODIGO_MEDIADOR.equals(codigoTipoGestor)) {
+						if(!Checks.esNulo(codigoTipoGestor) || !Checks.esNulo(username)){
+							if(!particularValidator.usuarioEsTipoGestor(username, codigoTipoGestor)){
+								listaFilas.add(i);
+							}
 						}
 					}
-					
 					
 				} catch (ParseException e) {
 					listaFilas.add(i);
@@ -371,7 +371,7 @@ public class MSVActualizarGestores extends MSVExcelValidatorAbstract {
 					String codigoTipoGestor= exc.dameCelda(i, 0);
 					String username= exc.dameCelda(i, 1);
 					
-					if(!GESTOR_MEDIADOR.equals(codigoTipoGestor.toUpperCase()) && (!Checks.esNulo(numAgrupacion) || !Checks.esNulo(numExpediente))){
+					if(!Checks.esNulo(numAgrupacion) || !Checks.esNulo(numExpediente)){
 						if(!particularValidator.combinacionGestorCarteraAcagexValida(codigoTipoGestor,numActivo,numAgrupacion,numExpediente)){
 							listaFilas.add(i);
 						}
@@ -422,34 +422,8 @@ public class MSVActualizarGestores extends MSVExcelValidatorAbstract {
 		
 		return listaFilas;
 		
-	}
-	
-	private List<Integer> expedienteMediadorNoActualiza(MSVHojaExcel exc) {
-		List<Integer> listaFilas = new ArrayList<Integer>();
 		
-		try{
-			for(int i=1; i<this.numFilasHoja;i++){
-				try {
-					String codMediador = exc.dameCelda(i, 5);
-					String numExpediente = exc.dameCelda(i, 4);
-					
-					if(!Checks.esNulo(codMediador) && !Checks.esNulo(numExpediente)) {
-						listaFilas.add(i);
-					}
-					
-				} catch (ParseException e) {
-					listaFilas.add(i);
-				}
-			}
-		}catch (IllegalArgumentException e) {
-			listaFilas.add(0);
-			e.printStackTrace();
-		} catch (IOException e) {
-			listaFilas.add(0);
-			e.printStackTrace();
-		}
 		
-		return listaFilas;
 	}
 	
 }

@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.updaterstate;
 
 import java.util.ArrayList;
 import java.util.List;
+import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import org.apache.commons.lang.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -38,10 +39,13 @@ public class UpdaterStateManager implements UpdaterStateApi{
 	public static final String CODIGO_CHECKING_GESTION = "T001_CheckingDocumentacionGestion";
 	
 	@Autowired
-	ActivoTareaExternaApi activoTareaExternaApi;
+	private ActivoTareaExternaApi activoTareaExternaApi;
 	
 	@Autowired
 	private GenericABMDao genericDao;
+
+	@Autowired
+	private ActivoAdapter activoAdapterApi;
 	
 	@Autowired
 	private UtilDiccionarioApi utilDiccionarioApi;
@@ -102,21 +106,28 @@ public class UpdaterStateManager implements UpdaterStateApi{
 	}
 	
 	@Override
+	@Transactional(readOnly = false)
 	public void updaterStateDisponibilidadComercialAndSave(Activo activo) {
+		this.updaterStateDisponibilidadComercial(activo);
+		activoApi.saveOrUpdate(activo);
+		//activoAdapterApi.actualizarEstadoPublicacionActivo(activo.getId());
 		this.updaterStateDisponibilidadComercialAndSave(activo,false);
 	}
 
 	@Override
 	public void updaterStateDisponibilidadComercialAndSave(Activo activo, Boolean express) {
+		ArrayList<Long> idActivoActualizarPublicacion = new ArrayList<Long>();
 		if(express){
 			String codigo = DDSituacionComercial.CODIGO_DISPONIBLE_VENTA_OFERTA;
 			activo.setSituacionComercial((DDSituacionComercial)utilDiccionarioApi.dameValorDiccionarioByCod(DDSituacionComercial.class,codigo));
 		}else{
 			this.updaterStateDisponibilidadComercial(activo);
-			//genericDao.update(Activo.class, activo);	
 			activoApi.saveOrUpdate(activo);
 		}
-		
+
+		idActivoActualizarPublicacion.add(activo.getId());
+		//activoAdapterApi.actualizarEstadoPublicacionActivo(activo.getId());
+		activoAdapterApi.actualizarEstadoPublicacionActivo(idActivoActualizarPublicacion,false);
 	}
 	
 	@Override
@@ -139,6 +150,8 @@ public class UpdaterStateManager implements UpdaterStateApi{
 		
 		if(activoApi.isActivoVendido(activo)) {
 			codigo = DDSituacionComercial.CODIGO_VENDIDO;
+		}else if (activoApi.isActivoAlquilado(activo)) {
+			codigo = DDSituacionComercial.CODIGO_ALQUILADO;
 		}
 		else if(!Checks.esNulo(perimetro) && !Checks.esNulo(perimetro.getAplicaComercializar()) && perimetro.getAplicaComercializar() == 0) {
 			codigo = DDSituacionComercial.CODIGO_NO_COMERCIALIZABLE;
@@ -147,13 +160,33 @@ public class UpdaterStateManager implements UpdaterStateApi{
 			codigo = DDSituacionComercial.CODIGO_DISPONIBLE_VENTA_RESERVA;
 		}
 		else if(activoApi.isActivoConOfertaByEstado(activo,DDEstadoOferta.CODIGO_ACEPTADA)) {
-			codigo = DDSituacionComercial.CODIGO_DISPONIBLE_VENTA_OFERTA;
+			if (!Checks.esNulo(activo.getTipoComercializacion())) {
+				switch(Integer.parseInt(activo.getTipoComercializacion().getCodigo())) {
+					case 1:
+						codigo = DDSituacionComercial.CODIGO_DISPONIBLE_VENTA_OFERTA;
+						break;
+					case 2:
+						codigo = DDSituacionComercial.CODIGO_DISPONIBLE_VENTA_ALQUILER_OFERTA;
+						break;
+					case 3:
+						codigo = DDSituacionComercial.CODIGO_DISPONIBLE_ALQUILER_OFERTA;
+						break;
+					default:
+						codigo = DDSituacionComercial.CODIGO_DISPONIBLE_VENTA_OFERTA;
+						break;
+					}
+			} else {
+				codigo = DDSituacionComercial.CODIGO_DISPONIBLE_VENTA_OFERTA;
+			}			
 		}
 		else if(activoApi.getCondicionantesDisponibilidad(activo.getId()).getIsCondicionado()) {
 			codigo = DDSituacionComercial.CODIGO_DISPONIBLE_CONDICIONADO;
-		}
-		else if (!Checks.esNulo(activo.getTipoComercializacion())) {
-			switch(Integer.parseInt(activo.getTipoComercializacion().getCodigo())) {
+		}					
+		else if (!Checks.esNulo(activo.getActivoPublicacion())) {
+			
+			int indexAux = Integer.parseInt(activo.getActivoPublicacion().getTipoComercializacion().getCodigo());
+			
+			switch(indexAux) {
 				case 1:
 					codigo = DDSituacionComercial.CODIGO_DISPONIBLE_VENTA;
 					break;

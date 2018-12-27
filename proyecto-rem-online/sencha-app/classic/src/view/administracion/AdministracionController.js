@@ -1278,6 +1278,26 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
 	    } else {
 	    	return true;	
 	    }
-    }
+    },
+    
+    onExportClickFacturas: function(btn){
+		var me = this;
+		var url =  $AC.getRemoteUrl('gastosproveedor/generateExcelFacturas');
+		var config = {};
+
+		config.url= url;
+		
+		me.fireEvent("downloadFile", config);		
+	},
+	
+	onExportClickTasasImpuestos: function(btn){
+		var me = this;
+		var url =  $AC.getRemoteUrl('gastosproveedor/generateExcelTasasImpuestos');
+		var config = {};
+
+		config.url= url;
+		
+		me.fireEvent("downloadFile", config);		
+	}
 
 });

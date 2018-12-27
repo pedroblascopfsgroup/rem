@@ -72,6 +72,12 @@ public class GestorExpedienteComercialManager implements GestorExpedienteComerci
 	}
 	
 	@Override
+	public String[] getCodigosTipoGestorExpedienteComercialAlquiler() {
+		
+		return new String[]{CODIGO_GESTORIA_FORMALIZACION,CODIGO_GESTOR_FORMALIZACION};
+	}
+	
+	@Override
 	@Transactional(readOnly = false)
 	public Boolean insertarGestorAdicionalExpedienteComercial(GestorEntidadDto dto) {
 		Boolean inserccionOK = true;

@@ -58,6 +58,8 @@ public class DtoDatosBasicosOferta extends WebDto {
     
     private String comiteSancionadorCodigo;
     
+    private String comiteSancionadorCodigoAlquiler;
+    
     private String comitePropuestoDescripcion;
     
     private String comitePropuestoCodigo;
@@ -69,6 +71,16 @@ public class DtoDatosBasicosOferta extends WebDto {
 	private String observaciones;
 	
 	private String ventaCartera;
+	
+	private String tipoAlquilerCodigo;
+	
+	private String tipoInquilinoCodigo;
+
+	private String numContratoPrinex;
+	
+	private String refCircuitoCliente;
+	
+	private Boolean permiteProponer;
 
 	public Long getIdOferta() {
 		return idOferta;
@@ -263,7 +275,52 @@ public class DtoDatosBasicosOferta extends WebDto {
 		this.ventaCartera = ventaCartera;
 	}
 
-	    	
-   	
-   	
+	public Boolean getPermiteProponer() {
+		return permiteProponer;
+	}
+
+	public void setPermiteProponer(Boolean permiteProponer) {
+		this.permiteProponer = permiteProponer;
+	}
+	
+	public String getTipoAlquilerCodigo() {
+		return tipoAlquilerCodigo;
+	}
+
+	public void setTipoAlquilerCodigo(String tipoAlquilerDescripcion) {
+		this.tipoAlquilerCodigo = tipoAlquilerDescripcion;
+	}
+
+	public String getTipoInquilinoCodigo() {
+		return tipoInquilinoCodigo;
+	}
+
+	public void setTipoInquilinoCodigo(String tipoInquilinoDescripcion) {
+		this.tipoInquilinoCodigo = tipoInquilinoDescripcion;
+	}
+
+	public String getNumContratoPrinex() {
+		return numContratoPrinex;
+	}
+
+	public void setNumContratoPrinex(String numContratoPrinex) {
+		this.numContratoPrinex = numContratoPrinex;
+	}
+
+	public String getRefCircuitoCliente() {
+		return refCircuitoCliente;
+	}
+
+	public void setRefCircuitoCliente(String refCircuitoCliente) {
+		this.refCircuitoCliente = refCircuitoCliente;
+	}
+
+	public String getComiteSancionadorCodigoAlquiler() {
+		return comiteSancionadorCodigoAlquiler;
+	}
+
+	public void setComiteSancionadorCodigoAlquiler(String comiteSancionadorCodigoAlquiler) {
+		this.comiteSancionadorCodigoAlquiler = comiteSancionadorCodigoAlquiler;
+	}
+
 }

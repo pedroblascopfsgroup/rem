@@ -11,6 +11,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -23,6 +24,8 @@ import org.hibernate.annotations.Where;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.pfsgroup.plugin.rem.model.dd.DDAdecuacionAlquiler;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoEstadoAlquiler;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoInquilino;
 
 /**
  * Modelo que gestiona el patrimonio de un activo.
@@ -52,7 +55,7 @@ public class ActivoHistoricoPatrimonio implements Serializable, Auditable {
 
 	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "DD_ADA_ID")
-	private DDAdecuacionAlquiler AdecuacionAlquiler;
+	private DDAdecuacionAlquiler adecuacionAlquiler;
 
 	@Column(name = "CHECK_HPM")
 	private Boolean checkHPM;
@@ -68,6 +71,20 @@ public class ActivoHistoricoPatrimonio implements Serializable, Auditable {
 
 	@Column(name = "FECHA_FIN_HPM")
 	private Date fechaFinHPM;
+	
+	@Column(name = "PTA_RENTA_ANTIGUA")
+	private String comboRentaAntigua;
+	
+	@ManyToOne
+	@JoinColumn(name = "DD_EAL_ID")
+	private DDTipoEstadoAlquiler tipoEstadoAlquiler;
+
+	@ManyToOne
+	@JoinColumn(name = "DD_TPI_ID")
+	private DDTipoInquilino tipoInquilino;
+	
+	@Column(name = "CHECK_SUBROGADO")
+	private Boolean checkSubrogado;
 
 	@Version
 	private Long version;
@@ -92,11 +109,11 @@ public class ActivoHistoricoPatrimonio implements Serializable, Auditable {
 	}
 
 	public DDAdecuacionAlquiler getAdecuacionAlquiler() {
-		return AdecuacionAlquiler;
+		return adecuacionAlquiler;
 	}
 
 	public void setAdecuacionAlquiler(DDAdecuacionAlquiler adecuacionAlquiler) {
-		AdecuacionAlquiler = adecuacionAlquiler;
+		this.adecuacionAlquiler = adecuacionAlquiler;
 	}
 
 	public Boolean getCheckHPM() {
@@ -154,4 +171,37 @@ public class ActivoHistoricoPatrimonio implements Serializable, Auditable {
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
 	}
+
+	public String getComboRentaAntigua() {
+		return comboRentaAntigua;
+	}
+
+	public void setComboRentaAntigua(String comboRentaAntigua) {
+		this.comboRentaAntigua = comboRentaAntigua;
+	}
+
+	public DDTipoEstadoAlquiler getTipoEstadoAlquiler() {
+		return tipoEstadoAlquiler;
+	}
+
+	public void setTipoEstadoAlquiler(DDTipoEstadoAlquiler tipoEstadoAlquiler) {
+		this.tipoEstadoAlquiler = tipoEstadoAlquiler;
+	}
+
+	public DDTipoInquilino getTipoInquilino() {
+		return tipoInquilino;
+	}
+
+	public void setTipoInquilino(DDTipoInquilino tipoInquilino) {
+		this.tipoInquilino = tipoInquilino;
+	}
+
+	public Boolean getCheckSubrogado() {
+		return checkSubrogado;
+	}
+
+	public void setCheckSubrogado(Boolean checkSubrogado) {
+		this.checkSubrogado = checkSubrogado;
+	}	
+	
 }

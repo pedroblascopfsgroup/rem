@@ -44,6 +44,12 @@ Ext.define('HreRem.model.ExpedienteComercial', {
 		    	name: 'descMotivoAnulacion'
 		    },
 		    {
+		    	name: 'codMotivoRechazoExp'
+		    },
+		    {
+		    	name: 'descMotivoRechazoExp'
+		    },
+		    {
 		    	name: 'fechaDevolucionEntregas',
     			type:'date',
     			dateFormat: 'c'
@@ -123,6 +129,10 @@ Ext.define('HreRem.model.ExpedienteComercial', {
        			type: 'boolean'
     		},
     		{
+    			name: 'definicionOfertaFinalizada',
+       			type: 'boolean'
+    		},
+    		{
     			name: 'fechaInicioAlquiler',
     			type:'date',
     			dateFormat: 'c'
@@ -150,6 +160,11 @@ Ext.define('HreRem.model.ExpedienteComercial', {
     			name: 'primaOpcionCompraAlquiler'	
     		},
     		{
+    			name: 'fechaSancionComite',
+    			type:'date', 
+        		dateFormat: 'c'
+    		},
+    		{
     			name: 'precioOpcionCompraAlquiler'	
     		},
     		{
@@ -160,6 +175,12 @@ Ext.define('HreRem.model.ExpedienteComercial', {
     		},
     		{
     			name: 'riesgoReputacional'	
+    		},
+    		{
+    			name:'tipoAlquiler'
+    		},
+    		{
+    			name:'tipoInquilino'
     		},
     		{
     			name: 'alquilerOpcionCompra'
@@ -182,10 +203,18 @@ Ext.define('HreRem.model.ExpedienteComercial', {
     			type: 'boolean'
     		},
     		{
-    			name: 'codigoEstado'
+    			name: 'definicionOfertaScoring',
+       			type: 'boolean'
+    		},
+       		{
+       			name: 'codigoEstado'
     		},
     		{
     			name: 'subcarteraCodigo'
+    		},
+    		{
+    			name:'estaFirmado',
+    			type: 'boolean'
     		}
     		 
     ],

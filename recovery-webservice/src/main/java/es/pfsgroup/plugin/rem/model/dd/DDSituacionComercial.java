@@ -39,6 +39,9 @@ public class DDSituacionComercial implements Auditable, Dictionary {
 	public static final String CODIGO_DISPONIBLE_ALQUILER = "07";
 	public static final String CODIGO_DISPONIBLE_VENTA_ALQUILER = "08";
 	public static final String CODIGO_DISPONIBLE_CONDICIONADO = "09";
+	public static final String CODIGO_ALQUILADO = "10";
+	public static final String CODIGO_DISPONIBLE_ALQUILER_OFERTA = "11";
+	public static final String CODIGO_DISPONIBLE_VENTA_ALQUILER_OFERTA = "12";
 
 	/**
 	 * 

@@ -14,6 +14,7 @@ import es.capgemini.devon.dto.WebDto;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoPatrimonioDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
@@ -21,6 +22,7 @@ import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.notificator.impl.NotificatorServiceDesbloqExpCambioSitJuridica;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
+import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoActivoSituacionPosesoria;
@@ -39,7 +41,9 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 	@Autowired
 	private UtilDiccionarioApi diccionarioApi;
 	
-		
+	@Autowired
+	private ActivoPatrimonioDao activoPatrimonioDao;
+	
 	@Autowired
 	private ExpedienteComercialApi expedienteComercialApi;    
     
@@ -87,7 +91,7 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 		if (activo.getSituacionPosesoria() != null) {
 			
 			//fecha toma posesion
-			//activoApi.calcularFechaTomaPosesion(activo); se ha trasladado a la clase ActivoAvisadorManager antes de calcular los disclaimers
+			activoApi.calcularFechaTomaPosesion(activo);
 			beanUtilNotNull.copyProperties(activoDto, activo.getSituacionPosesoria());
 			
 			if (activo.getSituacionPosesoria().getTipoTituloPosesorio() != null) {
@@ -109,6 +113,15 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 					}
 				}
 			}
+			
+			ActivoPatrimonio activoP = activoPatrimonioDao.getActivoPatrimonioByActivo(activo.getId());
+			 
+			 if(!Checks.esNulo(activoP)) {
+				 if (!Checks.esNulo(activoP.getTipoEstadoAlquiler())) {
+					 activoDto.setTipoEstadoAlquiler(activoP.getTipoEstadoAlquiler().getCodigo());
+					 
+				 }
+			 }
 		}
 		/*
 		//Añadir al DTO los atributos de llaves también

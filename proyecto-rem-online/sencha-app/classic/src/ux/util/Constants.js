@@ -595,7 +595,7 @@ Ext.define('HreRem.ux.util.Constants', {
 		COMUNICADO: 'COMUNICADO',
 		SANCIONADO: 'SANCIONADO',
 		ANULADO: 'ANULADO'
-	}
+	},
 
     MOTIVO_OCULTACION: {
          OTROS: '12'

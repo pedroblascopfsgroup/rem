@@ -150,6 +150,10 @@ Ext.define('HreRem.model.Tramite', {
     	{
     		name: 'esTareaAutorizacionBankia',
     		type: 'boolean'
+    	},
+    	{
+    		name: 'ocultarBotonResolucionAlquiler',
+    		type: 'boolean'
     	}
     ],
 

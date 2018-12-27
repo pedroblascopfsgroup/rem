@@ -4,6 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -65,6 +66,8 @@ import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoExpediente;
 import es.pfsgroup.plugin.rem.service.UpdaterTransitionService;
 import es.pfsgroup.plugin.rem.tareasactivo.dao.VTareasGestorSustitutoDao;
 import es.pfsgroup.recovery.api.UsuarioApi;
@@ -563,7 +566,38 @@ public class AgendaAdapter {
 
 		return false;
 	}
+	@Transactional
+	public Boolean anularTramiteAlquiler(Long idTramite, String motivo) {
+		
+		if (idTramite != null) {
+			ActivoTramite tramite = activoTramiteApi.get(idTramite);
+			finalizarTramiteYTareas(tramite);
 
+			DDEstadoTrabajo anulado = genericDao.get(DDEstadoTrabajo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoTrabajo.ESTADO_ANULADO));
+			DDEstadosExpedienteComercial anuladoExpedienteComercial = genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.ANULADO));
+			DDMotivoRechazoExpediente motivoRechazoAlquiler = genericDao.get(DDMotivoRechazoExpediente.class, genericDao.createFilter(FilterType.EQUALS, "codigo", motivo));
+			if ((anulado != null) && (tramite != null)  && (tramite.getTrabajo() != null)) {
+				Trabajo trabajo = tramite.getTrabajo();
+				trabajo.setEstado(anulado);
+				genericDao.save(Trabajo.class, trabajo);
+				ExpedienteComercial eco = genericDao.get(ExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "trabajo.id", trabajo.getId()));
+				if(! Checks.esNulo(eco)) {
+					eco.setEstado(anuladoExpedienteComercial);
+					Usuario usuarioLogado = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();					
+					eco.setPeticionarioAnulacion(usuarioLogado.getUsername());
+					eco.setFechaAnulacion(new Date());
+					//eco.setMo
+					eco.setMotivoRechazo(motivoRechazoAlquiler);
+					genericDao.update(ExpedienteComercial.class, eco);
+				}
+			}
+
+			return true;
+		}
+
+		return false;
+	}
+	
 	private void finalizarTramiteYTareas(ActivoTramite tramite) {
 		if (tramite != null) {
 			List<TareaExterna> tareas = activoTramiteApi.getListaTareaExternaActivasByIdTramite(tramite.getId());

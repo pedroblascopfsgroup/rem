@@ -28,16 +28,31 @@ Ext.define('HreRem.view.expedientes.DatosCompradorWizard', {
     	me.buttonAlign = 'right';
     	if(!Ext.isEmpty(me.idComprador)){
 			me.buttons = [ { itemId: 'btnModificar', text: HreRem.i18n('btn.modificar'), handler: 'onClickBotonModificarComprador', bind:{disabled: !me.esEditable()}},
-    					   { itemId: 'btnCancelar', text: HreRem.i18n('btn.cancelBtnText'), handler: 'onClickBotonCerrarComprador'}];
+    					   { itemId: 'btnCancelar', text: HreRem.i18n('btn.cancelBtnText'), handler: 'onClickBotonCancelarWizardComprador'}];
     	} else {
-    		me.buttons = [ { itemId: 'btnCrear', text: HreRem.i18n('btn.crear'), handler: function(btn){
-				var wizard = btn.up().up().up();
-				var layout = wizard.getLayout();
-				layout["next"]();
-			}},
-    					   { itemId: 'btnCancelar', text: HreRem.i18n('btn.cancelBtnText'), handler: 'onClickBotonCerrarComprador'}];
+    		me.buttons = [ { itemId: 'btnCrear', text: HreRem.i18n('btn.crear.comprador'), handler: 'onClickBotonCrearComprador'},
+    					   { itemId: 'btnCancelar', text: HreRem.i18n('btn.cancelBtnText'), handler: 'onClickBotonCancelarWizardComprador'}];
     	}
     	 me.items = [{
+ 	    	name:		'cesionDatos',
+			bind:		'{comprador.cesionDatosHaya}',
+			hidden:		true
+	    },
+	    {
+	    	name:		'comunicacionTerceros',
+			bind:		'{comprador.comunicacionTerceros}',
+			hidden:		true
+	    },
+	    {
+	    	name:		'transferenciasInternacionales',
+			bind:		'{comprador.transferenciasInternacionales}',
+			hidden:		true
+	    },
+	    {
+	    	name:		'pedirDoc',
+			bind:		'{comprador.pedirDoc}',
+			hidden:		true
+	    },{
 			xtype:'fieldsettable',
 			collapsible: false,
 			hidden: me.esEditable(),

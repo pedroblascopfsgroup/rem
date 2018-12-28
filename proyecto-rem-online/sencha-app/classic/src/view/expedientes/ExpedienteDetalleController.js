@@ -1027,6 +1027,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	},
 
 	onClickBotonModificarComprador: function(btn){
+		debugger;
 		var me = this,
 		window = btn.up("window"),
 		form = window.down("form");
@@ -1475,7 +1476,29 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		window.destroy();
 	},
 	
+	onClickBotonCancelarWizardComprador: function(btn) {	
+		var me = this
+		window = btn.up('window');
+		var form1= window.down('anyadirnuevaofertadocumento');
+		var form2= window.down('datoscompradorwizard');
+		var form3= window.down('anyadirnuevaofertaactivoadjuntardocumento');
+		Ext.Msg.show({
+			   title: HreRem.i18n('wizard.msg.show.title'),
+			   msg: HreRem.i18n('wizard.msh.show.text'),
+			   buttons: Ext.MessageBox.YESNO,
+			   fn: function(buttonId) {
+			        if (buttonId == 'yes') {
+			        	form1.reset();
+			        	form2.reset();
+			        	form3.reset();
+			        	window.close();
+			        }
+			   }
+		});
+	},
+	
 	onClickBotonCrearComprador: function(btn){
+		debugger;
 		var me = this;	
 		var idExpediente = btn.up('datoscompradorwindow').idExpediente;
 		var window = btn.up().up();

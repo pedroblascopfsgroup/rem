@@ -8,7 +8,7 @@ Ext.define('HreRem.view.expedientes.WizardAltaComprador', {
 	height : Ext.Element.getViewportHeight() > 500 ? 500 : Ext.Element.getViewportHeight() - 100,
 	x : 50,
 	y : 50,
-	closable : true,
+	closable : false,
 	requires: ['HreRem.view.expedientes.DatosCompradorWizard'],
 	defaults : {
 		border : true

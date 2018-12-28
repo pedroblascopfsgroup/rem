@@ -3310,9 +3310,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				clienteComercialDto.setNombreCliente(clienteCom.getNombre());
 				clienteComercialDto.setId(clienteCom.getId());
 				clienteComercialDto.setRazonSocial(clienteCom.getRazonSocial());
-				clienteComercialDto.setCesionDatos(clienteCom.getCesionDatos());
-				clienteComercialDto.setComunicacionTerceros(clienteCom.getComunicacionTerceros());
-				clienteComercialDto.setTransferenciasInternacionales(clienteCom.getTransferenciasInternacionales());
+				clienteComercialDto.setCesionDatos(clienteGDPR.getCesionDatos());
+				clienteComercialDto.setComunicacionTerceros(clienteGDPR.getComunicacionTerceros());
+				clienteComercialDto.setTransferenciasInternacionales(clienteGDPR.getTransferenciasInternacionales());
 				if(!Checks.esNulo(clienteCom.getEstadoCivil())) {
 					clienteComercialDto.setEstadoCivilCodigo(clienteCom.getEstadoCivil().getCodigo());
 					clienteComercialDto.setEstadoCivilDescripcion(clienteCom.getEstadoCivil().getDescripcion());

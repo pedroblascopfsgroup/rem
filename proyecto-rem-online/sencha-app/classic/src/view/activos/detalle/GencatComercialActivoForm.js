@@ -233,8 +233,35 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoForm', {
 				    				fieldLabel: HreRem.i18n('fieldlabel.oferta.gencat'),
 				    				readOnly: true,
 									bind: {
-										value: '{gencat.ofertaGencat}'
-									}
+										value: '{gencat.ofertaGencat}',
+										visible: '{gencat.estaActivadoCompradorNuevo}'
+										
+									},
+									listeners: {
+								        click: {
+								            element: 'el', 
+								            fn: 'onClickAbrirExpedienteComercial'
+								        },
+								        render: function(p) {
+								            var elemento = p.getEl();
+								            var tip = Ext.create('Ext.tip.Tip', {
+								                html: HreRem.i18n('tooltip.ver.expediente'),
+								                margin: '0 0 0 220'
+								            });
+								           
+								            elemento.on('mouseover', function(){
+								                tip.showAt(elemento.getX(), elemento.getY());
+								            });
+								           
+								            elemento.on('mouseleave', function(){
+								                tip.hide();
+								            });
+								        }
+								       
+								    },
+								    style:{
+								    	cursor: 'pointer'
+								    }
 				    			},
 				    			{
 				    				xtype: "comboboxfieldbase",

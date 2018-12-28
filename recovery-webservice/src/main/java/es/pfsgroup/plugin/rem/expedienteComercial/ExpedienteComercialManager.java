@@ -119,6 +119,7 @@ import es.pfsgroup.plugin.rem.model.DtoEntregaReserva;
 import es.pfsgroup.plugin.rem.model.DtoExpedienteDocumentos;
 import es.pfsgroup.plugin.rem.model.DtoExpedienteHistScoring;
 import es.pfsgroup.plugin.rem.model.DtoExpedienteScoring;
+import es.pfsgroup.plugin.rem.model.DtoExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.DtoFichaExpediente;
 import es.pfsgroup.plugin.rem.model.DtoFormalizacionFinanciacion;
 import es.pfsgroup.plugin.rem.model.DtoFormalizacionResolucion;
@@ -7366,5 +7367,16 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		return numExpediente;
 
 	}
-}
 
+	
+	
+	@Override
+	public DtoExpedienteComercial getExpedienteComercialByOferta(Long numOferta) {
+		Oferta oferta = ofertaApi.getOfertaByNumOfertaRem(numOferta);
+		ExpedienteComercial expediente = genericDao.get(ExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "oferta.id", oferta.getId()));
+		DtoExpedienteComercial dtoExp = new DtoExpedienteComercial();
+		dtoExp.setId(expediente.getId());
+		dtoExp.setNumExpediente(expediente.getNumExpediente());
+		return dtoExp;
+	}
+}

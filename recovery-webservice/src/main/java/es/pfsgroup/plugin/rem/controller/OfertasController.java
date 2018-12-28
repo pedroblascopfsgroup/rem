@@ -285,4 +285,19 @@ public class OfertasController {
 		
 	}
 	
+	@SuppressWarnings("unchecked") 
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView getOfertaOrigenByIdExpediente(Long numExpediente, ModelMap model){
+		try {
+			model.put("data", ofertaApi.getOfertaOrigenByIdExpediente(numExpediente));
+			model.put("success", true);
+		} catch (Exception e) {
+			model.put("success", false);
+			model.put("error", e.getMessage());
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
+	
 }

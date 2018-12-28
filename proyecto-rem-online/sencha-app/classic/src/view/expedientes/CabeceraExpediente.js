@@ -162,7 +162,6 @@ Ext.define('HreRem.view.expedientes.CabeceraExpediente', {
 															fieldLabel: HreRem.i18n('fieldlabel.estado'),
 															cls: 'cabecera-info-field',
 										                	bind:		'{expediente.estado}'
-										                	
 										                },
 										                { 
 										                	xtype:'datefieldbase',
@@ -176,7 +175,26 @@ Ext.define('HreRem.view.expedientes.CabeceraExpediente', {
 										                	listeners: {
 																render: 'tareaDefinicionDeOferta'
 															}		
-										                
+										                },
+										                {
+										                	xtype: 'textfieldbase',
+															fieldLabel: HreRem.i18n('fieldlabel.oferta.origen'),
+															readOnly: true,
+															cls: 'cabecera-info-field',
+										                	bind: {
+										                		value: '{expediente.ofertaOrigen}',
+										                		visible: ''
+										                	},
+										                	listeners: {
+										                		click: {
+										                	            element: 'el',
+										                	            fn: 'onClickAbrirExpedienteComercial'
+										                	    },
+										                		render: 'onRenderCargaOfertaOrigen'
+										                	},
+														    style:{
+														    	cursor: 'pointer'
+														    }
 										                }
 										               
 										                

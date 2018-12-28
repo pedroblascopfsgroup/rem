@@ -215,6 +215,9 @@ Ext.define('HreRem.model.ExpedienteComercial', {
     		{
     			name:'estaFirmado',
     			type: 'boolean'
+    		},
+    		{
+    			name: 'ofertaOrigen'
     		}
     		 
     ],

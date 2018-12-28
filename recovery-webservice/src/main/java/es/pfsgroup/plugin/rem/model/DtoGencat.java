@@ -64,6 +64,7 @@ public class DtoGencat extends DtoTabActivo {
 	
 	//Oferta
 	private Long ofertaGencat;
+	private Long idOfertaAnterior;
 	
 	public Date getDateFechaPreBloqueo() {
 		return dateFechaPreBloqueo;
@@ -108,6 +109,42 @@ public class DtoGencat extends DtoTabActivo {
 				this.dateFechaSancion = dateformat.parse( fechaSancion );
 			}
 		}   catch (ParseException e) { e.printStackTrace(); }
+	}
+	public SimpleDateFormat getDateformat() {
+		return dateformat;
+	}
+	public void setDateformat(SimpleDateFormat dateformat) {
+		this.dateformat = dateformat;
+	}
+	public void setDateFechaPreBloqueo(Date dateFechaPreBloqueo) {
+		this.dateFechaPreBloqueo = dateFechaPreBloqueo;
+	}
+	public void setDateFechaComunicacion(Date dateFechaComunicacion) {
+		this.dateFechaComunicacion = dateFechaComunicacion;
+	}
+	public void setDateFechaPrevistaSancion(Date dateFechaPrevistaSancion) {
+		this.dateFechaPrevistaSancion = dateFechaPrevistaSancion;
+	}
+	public void setDateFechaSancion(Date dateFechaSancion) {
+		this.dateFechaSancion = dateFechaSancion;
+	}
+	public void setDateFechaAnulacion(Date dateFechaAnulacion) {
+		this.dateFechaAnulacion = dateFechaAnulacion;
+	}
+	public void setDateFechaRevision(Date dateFechaRevision) {
+		this.dateFechaRevision = dateFechaRevision;
+	}
+	public void setDateFechaRealizacionVisita(Date dateFechaRealizacionVisita) {
+		this.dateFechaRealizacionVisita = dateFechaRealizacionVisita;
+	}
+	public void setDateFechaNotificacion(Date dateFechaNotificacion) {
+		this.dateFechaNotificacion = dateFechaNotificacion;
+	}
+	public void setDateFechaSancionNotificacion(Date dateFechaSancionNotificacion) {
+		this.dateFechaSancionNotificacion = dateFechaSancionNotificacion;
+	}
+	public void setDateCierreNotificacion(Date dateCierreNotificacion) {
+		this.dateCierreNotificacion = dateCierreNotificacion;
 	}
 	public String getSancion() {
 		return sancion;
@@ -249,6 +286,7 @@ public class DtoGencat extends DtoTabActivo {
 	public void setDocumentoNotificion(String documentoNotificion) {
 		this.documentoNotificion = documentoNotificion;
 	}
+
 	public Date getDateFechaSancionNotificacion() {
 		return dateFechaSancionNotificacion;
 	}
@@ -318,4 +356,11 @@ public class DtoGencat extends DtoTabActivo {
 	public void setIdActivo(Long idActivo) {
 		this.idActivo = idActivo;
 	}
+	public Long getIdOfertaAnterior() {
+		return idOfertaAnterior;
+	}
+	public void setIdOfertaAnterior(Long idOfertaAnterior) {
+		this.idOfertaAnterior = idOfertaAnterior;
+	}
+
 }

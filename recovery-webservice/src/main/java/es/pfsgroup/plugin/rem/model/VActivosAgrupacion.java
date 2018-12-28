@@ -43,9 +43,8 @@ public class VActivosAgrupacion implements Serializable {
     @Column(name = "AGA_FECHA_INCLUSION")
    	private Date fechaInclusion;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "DD_SAC_ID")
-    private DDSubtipoActivo subtipoActivo;
+    @Column(name = "DD_SAC_DESCRIPCION")
+    private String subtipoActivoDescripcion;
 	
 	@Column(name = "AGR_ID")
 	private Long agrId;
@@ -100,6 +99,11 @@ public class VActivosAgrupacion implements Serializable {
 	@Column(name="PUBLICADO")
 	private String publicado;
 
+	@Column(name="COND_PUBL_VENTA")
+	private Integer condPublVenta;
+	
+	@Column(name="COND_PUBL_ALQUILER")
+	private Integer condPublAlquiler;
 
 	public Long getId() {
 		return id;
@@ -137,12 +141,12 @@ public class VActivosAgrupacion implements Serializable {
 		this.agrId = agrId;
 	}
 
-	public DDSubtipoActivo getSubtipoActivo() {
-		return subtipoActivo;
+	public String getSubtipoActivoDescripcion() {
+		return subtipoActivoDescripcion;
 	}
 
-	public void setSubtipoActivo(DDSubtipoActivo subtipoActivo) {
-		this.subtipoActivo = subtipoActivo;
+	public void setSubtipoActivoDescripcion(String subtipoActivoDescripcion) {
+		this.subtipoActivoDescripcion = subtipoActivoDescripcion;
 	}
 
 	public Float getSuperficieConstruida() {
@@ -292,8 +296,21 @@ public class VActivosAgrupacion implements Serializable {
 	public void setPublicado(String publicado) {
 		this.publicado = publicado;
 	}
-	
-	
 
+	public Integer getCondPublVenta() {
+		return condPublVenta;
+	}
 
+	public void setCondPublVenta(Integer condPublVenta) {
+		this.condPublVenta = condPublVenta;
+	}
+
+	public Integer getCondPublAlquiler() {
+		return condPublAlquiler;
+	}
+
+	public void setCondPublAlquiler(Integer condPublAlquiler) {
+		this.condPublAlquiler = condPublAlquiler;
+	}
+	
 }

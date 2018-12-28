@@ -20,7 +20,7 @@ Ext.define('HreRem.model.ActivoAgrupacionActivo', {
     			name:'tipoActivoDescripcion'
     		},
     		{
-    			name:'subtipoActivoDesc'
+    			name:'subtipoActivoDescripcion'
     		},
     		{
     			name:'agrId'
@@ -57,12 +57,11 @@ Ext.define('HreRem.model.ActivoAgrupacionActivo', {
     			type: 'boolean'
     		},
     		{
-    			name: 'estadoVenta'
+    			name:'condPublVenta'
     		},
     		{
-    			name: 'estadoAlquiler'
+    			name:'condPublAlquiler'
     		}
-    		
     ],
     
 	proxy: {

@@ -2517,7 +2517,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			beanUtilNotNull.copyProperty(posicionamiento, "motivoAplazamiento", dto.getMotivoAplazamiento());
 			beanUtilNotNull.copyProperty(posicionamiento, "fechaAviso", dto.getFechaHoraAviso());
 
-			if(!Checks.esNulo(dto.getFechaHoraFirma())) {
+			if(!Checks.esNulo(dto.getFechaHoraFirma()) && (!(new Date(0)).equals(dto.getFechaHoraFirma()))) {
 				beanUtilNotNull.copyProperty(posicionamiento, "fechaPosicionamiento", dto.getFechaHoraFirma());
 			} else if(!Checks.esNulo(dto.getFechaHoraPosicionamiento())) {
 				beanUtilNotNull.copyProperty(posicionamiento, "fechaPosicionamiento", dto.getFechaHoraPosicionamiento());

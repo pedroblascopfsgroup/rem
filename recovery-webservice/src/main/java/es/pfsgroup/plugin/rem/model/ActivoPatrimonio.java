@@ -56,6 +56,11 @@ public class ActivoPatrimonio implements Serializable, Auditable {
 	@JoinColumn(name = "DD_ADA_ID")
 	private DDAdecuacionAlquiler adecuacionAlquiler;
 
+	
+	@OneToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "DD_ADA_ID_ANTERIOR")
+	private DDAdecuacionAlquiler adecuacionAlquilerAnterior;
+
 	@Column(name = "CHECK_HPM")
 	private Boolean checkHPM;
 	
@@ -125,6 +130,14 @@ public class ActivoPatrimonio implements Serializable, Auditable {
 
 	public void setAdecuacionAlquiler(DDAdecuacionAlquiler adecuacionAlquiler) {
 		this.adecuacionAlquiler = adecuacionAlquiler;
+	}
+
+	public DDAdecuacionAlquiler getAdecuacionAlquilerAnterior() {
+		return adecuacionAlquilerAnterior;
+	}
+
+	public void setAdecuacionAlquilerAnterior(DDAdecuacionAlquiler adecuacionAlquilerAnterior) {
+		this.adecuacionAlquilerAnterior = adecuacionAlquilerAnterior;
 	}
 
 	public Boolean getCheckHPM() {

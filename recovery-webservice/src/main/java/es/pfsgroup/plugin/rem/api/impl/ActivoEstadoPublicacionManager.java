@@ -469,8 +469,12 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		List<ActivoAgrupacionActivo> activos = agrupacion.getActivos();
 
 		for(ActivoAgrupacionActivo aga : activos) {
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", aga.getActivo().getId());
+			ActivoSituacionPosesoria condicionantesDisponibilidad = genericDao.get(ActivoSituacionPosesoria.class, filtro);
+			
 			// Registrar el condicionante de disponibilidad 'otros' si se ha modificado.
-			if(!Checks.esNulo(dto.getOtro())) {
+			if((!Checks.esNulo(dto.getOtro()) && Checks.esNulo(condicionantesDisponibilidad.getOtro()))
+					|| (Checks.esNulo(dto.getOtro()) && !Checks.esNulo(condicionantesDisponibilidad.getOtro()))) {
 				DtoCondicionantesDisponibilidad dtoCondicionateDisponibilidad = new DtoCondicionantesDisponibilidad();
 				dtoCondicionateDisponibilidad.setOtro(dto.getOtro());
 				activoApi.saveCondicionantesDisponibilidad(aga.getActivo().getId(), dtoCondicionateDisponibilidad);

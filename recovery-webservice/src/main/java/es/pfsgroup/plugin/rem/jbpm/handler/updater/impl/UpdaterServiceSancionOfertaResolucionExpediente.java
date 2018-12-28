@@ -1,32 +1,58 @@
 package es.pfsgroup.plugin.rem.jbpm.handler.updater.impl;
 
-import es.capgemini.devon.exception.UserException;
-import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
-import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
-import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
-import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
-import es.pfsgroup.commons.utils.Checks;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
-import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
-import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
-import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
-import es.pfsgroup.plugin.rem.api.OfertaApi;
-import es.pfsgroup.plugin.rem.api.UvemManagerApi;
-import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
-import es.pfsgroup.plugin.rem.model.*;
-import es.pfsgroup.plugin.rem.model.dd.*;
-import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateOfertaApi;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import es.capgemini.devon.exception.UserException;
+import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
+import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
+import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
+import es.capgemini.pfs.tareaNotificacion.model.EXTTareaNotificacion;
+import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
+import es.capgemini.pfs.users.domain.Usuario;
+import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
+import es.pfsgroup.framework.paradise.gestorEntidad.model.GestorEntidadHistorico;
+import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoTramiteDao;
+import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
+import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
+import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
+import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
+import es.pfsgroup.plugin.rem.api.ComunicacionGencatApi;
+import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.api.GestorActivoApi;
+import es.pfsgroup.plugin.rem.api.OfertaApi;
+import es.pfsgroup.plugin.rem.api.UvemManagerApi;
+import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
+import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoOferta;
+import es.pfsgroup.plugin.rem.model.ActivoOferta.ActivoOfertaPk;
+import es.pfsgroup.plugin.rem.model.ActivoTramite;
+import es.pfsgroup.plugin.rem.model.ComunicacionGencat;
+import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.PerimetroActivo;
+import es.pfsgroup.plugin.rem.model.VBusquedaTramitesActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDDevolucionReserva;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoComunicacionGencat;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoRechazoOferta;
+import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateOfertaApi;
 
 @Component
 public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterService {
@@ -52,6 +78,21 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 	@Autowired
 	private UpdaterStateOfertaApi updaterStateOfertaApi;
 
+	@Autowired
+	private ComunicacionGencatApi comunicacionGencatApi;
+	
+	@Autowired
+	private ActivoTareaExternaApi activoTareaExternaApi;
+	
+	@Autowired
+	private ActivoTramiteDao activoTramiteDao;
+	
+	@Autowired
+	private GenericAdapter genericAdapter;
+	
+	@Autowired
+	private GestorActivoApi gestorActivoApi;
+	
     protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaResolucionExpediente.class);
 
     private static final String COMBO_PROCEDE = "comboProcede";
@@ -195,6 +236,66 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 
 						//Rechaza la oferta y descongela el resto
 						ofertaApi.rechazarOferta(ofertaAceptada);
+						
+						// --- INICIO --- HREOS-5052 ---
+						// Si un expediente esta bloqueado por Gencat(lo sabemos mirando si tiene comuncacionesGencat)
+						for (ActivoOferta actOfr : ofertaAceptada.getActivosOferta()) {
+							ActivoOfertaPk actOfrePk = actOfr.getPrimaryKey();
+							Activo act = actOfrePk.getActivo();
+							ComunicacionGencat comunicacionGencat = comunicacionGencatApi.getByIdActivo(act.getId());
+							if (Checks.esNulo(comunicacionGencat)) {
+								DDEstadoComunicacionGencat estadoComunicacion = comunicacionGencat.getEstadoComunicacion();
+								if (DDEstadoComunicacionGencat.COD_CREADO.equals(estadoComunicacion.getCodigo())) {
+									
+									Filter filtroActivoId = genericDao.createFilter(FilterType.EQUALS, "idActivo", act.getId());
+									Filter filtroCodTipoTramite = genericDao.createFilter(FilterType.EQUALS, "codigoTipoTramite", ActivoTramiteApi.CODIGO_TRAMITE_COMUNICACION_GENCAT);
+									Filter filtroFechaFinalizacionIsNull = genericDao.createFilter(FilterType.NULL, "fechaFinalizacion");
+									List<VBusquedaTramitesActivo> tramitesActivo = genericDao.getList(VBusquedaTramitesActivo.class, filtroActivoId, filtroCodTipoTramite, filtroFechaFinalizacionIsNull);
+									
+									if (Checks.estaVacio(tramitesActivo)) {
+										Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+										VBusquedaTramitesActivo vBusquedaTramitesActivo = tramitesActivo.get(0);
+										ActivoTramite activoTramite = activoTramiteDao.get(vBusquedaTramitesActivo.getIdTramite());
+										List<TareaExterna> listaTareas = activoTareaExternaApi.getActivasByIdTramiteTodas(vBusquedaTramitesActivo.getIdTramite());
+										for (TareaExterna tex : listaTareas) {
+											EXTTareaNotificacion tar = genericDao.get(EXTTareaNotificacion.class, genericDao.createFilter(FilterType.EQUALS,"id", tex.getTareaPadre().getId()),genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
+											// finalizamos la tarea
+											activoAdapter.borradoLogicoTareaExternaByIdTramite(activoTramite, usuarioLogado);
+										}
+										
+										//Finaliza el trámite
+										activoAdapter.borradoLogicoActivoTramite(usuarioLogado, activoTramite);
+									}
+									
+									Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoComunicacionGencat.COD_RECHAZADO);
+									DDEstadoComunicacionGencat estado = genericDao.get(DDEstadoComunicacionGencat.class, filtro);
+									comunicacionGencat.setEstadoComunicacion(estado);
+									comunicacionGencat.setFechaAnulacion(new Date());
+									
+								} else if (DDEstadoComunicacionGencat.COD_COMUNICADO.equals(estadoComunicacion.getCodigo())) {
+									Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoComunicacionGencat.COD_ANULADO);
+									DDEstadoComunicacionGencat estado = genericDao.get(DDEstadoComunicacionGencat.class, filtro);
+									comunicacionGencat.setEstadoComunicacion(estado);
+									comunicacionGencat.setFechaAnulacion(new Date());
+									
+									GestorEntidadDto gestorEntidadDto = new GestorEntidadDto();
+									gestorEntidadDto.setIdEntidad(act.getId());
+									gestorEntidadDto.setTipoEntidad(GestorEntidadDto.TIPO_ENTIDAD_ACTIVO);
+									List<GestorEntidadHistorico> listaGestores = gestorActivoApi.getListGestoresActivosAdicionalesHistoricoData(gestorEntidadDto);
+									for (GestorEntidadHistorico gestor : listaGestores) {
+										if ((GestorActivoApi.CODIGO_GESTORIA_FORMALIZACION.equals(gestor.getTipoGestor().getCodigo())
+												|| GestorActivoApi.CODIGO_GESTOR_FORMALIZACION.equals(gestor.getTipoGestor().getCodigo())
+												|| GestorActivoApi.CODIGO_GESTOR_DE_ADMINISTRACION.equals(gestor.getTipoGestor().getCodigo()))
+												&& Checks.esNulo(gestor.getUsuario().getEmail())) {
+											
+												enviarCorreoAnularOfertaActivoBloqueadoPorGencat(act,gestor.getUsuario().getEmail());
+										}
+									}
+								}
+							}
+						}
+						// --- FIN --- HREOS-5052 ---
+						
 						try {
 							ofertaApi.descongelarOfertas(expediente);
 						} catch (Exception e) {
@@ -225,5 +326,24 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 
 	public String[] getKeys() {
 		return this.getCodigoTarea();
+	}
+	
+	private Boolean enviarCorreoAnularOfertaActivoBloqueadoPorGencat(Activo activo, String email) {
+		boolean resultado = false;
+
+		try {
+			ArrayList<String> mailsPara = new ArrayList<String>();
+			mailsPara.add(email);
+			String asunto = "Oferta sobre el activo "+ activo.getNumActivo() +" anulada";
+			String cuerpo = "<p>A DEFINIR  ....  Activo numero "
+			+ activo.getNumActivo() +" A DEFINIR";
+
+			genericAdapter.sendMail(mailsPara, new ArrayList<String>(),asunto,cuerpo);
+			resultado = true;
+		} catch (Exception e) {
+			logger.error("No se ha podido notificar la anulación de la oferta del activo.", e);
+		}
+		
+		return resultado;
 	}
 }

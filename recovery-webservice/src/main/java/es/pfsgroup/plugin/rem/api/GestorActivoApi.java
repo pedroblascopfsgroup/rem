@@ -64,6 +64,7 @@ public interface GestorActivoApi extends GestorEntidadApi {
 	public static final String CODIGO_GESTOR_HPM = "GALQ";
 	public static final String CODIGO_GESTOR_PUBLICACION= "GPUBL";
 	public static final String CODIGO_SUPERVISOR_PUBLICACION = "SPUBL";
+	public static final String CODIGO_GESTOR_DE_ADMINISTRACION = "GADMT";
 	
 	Boolean insertarGestorAdicionalActivo(GestorEntidadDto dto);
 

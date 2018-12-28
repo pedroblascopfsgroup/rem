@@ -64,5 +64,13 @@ public interface ComunicacionGencatApi {
 	 * @param idTrabajo
 	 */
 	public void actualizarTareas(Long idTrabajo);
+	
+	/**
+	 * Método que devuelve la comunicacion en estado creada relacionada con un idActivo
+	 * 
+	 * @param idActivo
+	 * @return ComunicacionGencat
+	 */
+	public ComunicacionGencat getByIdActivoCreado(Long idActivo);
 
 }

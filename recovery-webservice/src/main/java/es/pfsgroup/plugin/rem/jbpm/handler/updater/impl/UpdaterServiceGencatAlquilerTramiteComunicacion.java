@@ -26,7 +26,7 @@ public class UpdaterServiceGencatAlquilerTramiteComunicacion implements UpdaterS
     
     private static final String FECHA_COMUNICACION = "fechaComunicacion";
     
-	private static final String CODIGO_T016_COMUNICAR_GENCAT = "T016_ComunicarGENCAT";
+	public static final String CODIGO_T016_COMUNICAR_GENCAT = "T016_ComunicarGENCAT";
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 	

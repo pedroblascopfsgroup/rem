@@ -7,9 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import es.capgemini.pfs.dao.AbstractEntityDao;
-import es.capgemini.pfs.procesosJudiciales.model.EXTTareaProcedimiento;
-import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
-import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
@@ -18,13 +15,9 @@ import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ComunicacionGencatApi;
-import es.pfsgroup.plugin.rem.jbpm.handler.user.UserAssigantionService;
 import es.pfsgroup.plugin.rem.jbpm.handler.user.UserAssigantionServiceFactoryApi;
-import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.TrabajoUserAssigantionService;
 import es.pfsgroup.plugin.rem.model.Activo;
-import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ComunicacionGencat;
-import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoComunicacionGencat;
 
 @Service("comunicacionGencatManager")
@@ -99,6 +92,18 @@ public class ComunicacionGencatManager extends AbstractEntityDao<ComunicacionGen
 		Filter filtroEstadoTramite = genericDao.createFilter(FilterType.EQUALS, "estadoComunicacion.codigo", DDEstadoComunicacionGencat.COD_CREADO);
 		
 		return genericDao.getList(ComunicacionGencat.class, filtroBorrado, filtroIdActivo, filtroEstadoTramite).get(0);
+		
+	}
+
+	@Override
+	public ComunicacionGencat getByIdActivoEstadoCreado(Long idActivo) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void actualizarTareas(Long idTrabajo) {
+		// TODO Auto-generated method stub
 		
 	}
 }

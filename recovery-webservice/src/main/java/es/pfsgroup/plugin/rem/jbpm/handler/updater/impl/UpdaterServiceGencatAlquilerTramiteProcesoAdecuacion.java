@@ -29,7 +29,7 @@ public class UpdaterServiceGencatAlquilerTramiteProcesoAdecuacion implements Upd
     private static final String IMPORTE = "importe";
     private static final String OBSERVACIONES = "observaciones";
     
-	private static final String CODIGO_T016_PROCESO_ADECUACION = "T016_ProcesoAdecuacion";
+	public static final String CODIGO_T016_PROCESO_ADECUACION = "T016_ProcesoAdecuacion";
 	
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 

@@ -2274,5 +2274,5 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		    	 me.getView().unmask();
 		     }
 		});		
-	},
+	}
 });

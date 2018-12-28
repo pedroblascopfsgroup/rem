@@ -62,6 +62,9 @@ public class OfertaGencat implements Serializable, Auditable {
     
     @Embedded
 	private Auditoria auditoria;
+    
+    @Column(name = "OFR_ID_ANT")
+    private Long idOfertaAnterior;
 
 	public Long getId() {
 		return id;
@@ -125,6 +128,14 @@ public class OfertaGencat implements Serializable, Auditable {
 
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
+	}
+
+	public Long getIdOfertaAnterior() {
+		return idOfertaAnterior;
+	}
+
+	public void setIdOfertaAnterior(Long idOfertaAnterior) {
+		this.idOfertaAnterior = idOfertaAnterior;
 	}
 
 }

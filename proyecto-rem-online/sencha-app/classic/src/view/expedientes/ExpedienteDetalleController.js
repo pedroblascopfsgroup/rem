@@ -2,9 +2,8 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
     extend: 'Ext.app.ViewController',
     alias: 'controller.expedientedetalle',  
     requires: ['HreRem.view.expedientes.NotarioSeleccionado', 'HreRem.view.expedientes.DatosComprador', 
-    'HreRem.view.expedientes.DatosClienteUrsus',"HreRem.model.ActivoExpedienteCondicionesModel",
-    "HreRem.view.common.adjuntos.AdjuntarDocumentoExpediente"],
-    
+    'HreRem.view.expedientes.DatosClienteUrsus','HreRem.model.ActivoExpedienteCondicionesModel',
+    'HreRem.view.common.adjuntos.AdjuntarDocumentoExpediente'],
     control: {
     	'documentosexpediente gridBase': {
             abrirFormulario: 'abrirFormularioAdjuntarDocumentos',
@@ -2805,5 +2804,86 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 				comentarios.setDisabled(true);
 			}
 		}
-	}
+	},
+	
+    onRenderCargaOfertaOrigen: function(campo) { 
+    	
+    	this.onMouseHoverOfertaOrigen(campo);
+	
+		var url =  $AC.getRemoteUrl('ofertas/getOfertaOrigenByIdExpediente');
+		var me = this;
+		var expediente = me.getViewModel().data.expediente; 
+		var numExpediente = expediente.data.numExpediente;
+		var data = {};
+		
+		Ext.Ajax.request({
+		     url: url,
+		     method: 'POST',
+		     params:  {numExpediente: numExpediente},
+		     success: function(response, opts) {
+		    	 data = Ext.decode(response.responseText);
+		    	 
+		    	 if(data.data.numOferta){
+		    		 campo.setVisible(true);
+		    		 campo.setValue(data.data.numOferta);
+		    	 }
+		    	 else {
+		    		 campo.setVisible(false);
+		    	 }
+		    	
+		     },
+		     failure: function(response) {
+					Utils.defaultRequestFailure(response, opts);
+					me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+		     }
+   	  });
+	},
+	
+	onMouseHoverOfertaOrigen: function(campo) {
+		var elemento = campo.getEl();
+        var tip = Ext.create('Ext.tip.Tip', {
+            html: HreRem.i18n('tooltip.ver.expediente'),
+            margin: '0 0 0 150'
+        });
+       
+        elemento.on('mouseover', function(){
+            tip.showAt(elemento.getX(), elemento.getY());
+        });
+       
+        elemento.on('mouseleave', function(){
+            tip.hide();
+        });
+	},
+	
+	onClickAbrirExpedienteComercial: function() { 
+		
+    	var me = this;
+    	var expediente = me.getViewModel().data.expediente; 
+    	var numOfertaOrigen = expediente.data.ofertaOrigen;
+    	var data;
+    	var url =  $AC.getRemoteUrl('expedientecomercial/getExpedienteByIdOferta');
+    	console.log("PRINT: ",numOfertaOrigen);
+    	
+    	Ext.Ajax.request({
+		     url: url,
+		     method: 'POST',
+		     params: {numOferta: numOfertaOrigen},
+		     success: function(response, opts) {
+		    	data = Ext.decode(response.responseText);
+		    	if(data.data){
+		    		me.getView().up('activosmain').fireEvent('abrirDetalleExpedienteOferta', data.data);
+		    	}
+		    	else {
+		    		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+		    	}
+		    	    	 
+		    },
+		    
+		     failure: function (a, operation) {
+		 				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+		 	}
+	 });
+    		    	     
+  }
+	
 });

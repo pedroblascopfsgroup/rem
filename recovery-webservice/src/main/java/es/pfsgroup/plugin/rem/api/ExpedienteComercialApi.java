@@ -25,6 +25,7 @@ import es.pfsgroup.plugin.rem.model.DtoDiccionario;
 import es.pfsgroup.plugin.rem.model.DtoEntregaReserva;
 import es.pfsgroup.plugin.rem.model.DtoExpedienteHistScoring;
 import es.pfsgroup.plugin.rem.model.DtoExpedienteScoring;
+import es.pfsgroup.plugin.rem.model.DtoExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.DtoFichaExpediente;
 import es.pfsgroup.plugin.rem.model.DtoFormalizacionFinanciacion;
 import es.pfsgroup.plugin.rem.model.DtoGastoExpediente;
@@ -1119,6 +1120,8 @@ public interface ExpedienteComercialApi {
 	Long getIdByNumExpOrNumOfr(Long numBusqueda, String campo);
 
 	Long getNumExpByNumOfr(Long numBusqueda);
+
+	DtoExpedienteComercial getExpedienteComercialByOferta(Long numOferta);	
 	
 	/**
 	 * Metodo que comprueba si el documento Contrato está subido al expediente

@@ -99,6 +99,8 @@ public class UpdaterServiceSancionOfertaRatificacionComite implements UpdaterSer
 							// Se comprueba si cada activo tiene KO de admisión o de gestión
 							// y se envía una notificación
 							notificacionApi.enviarNotificacionPorActivosAdmisionGestion(expediente);
+							
+							//TODO COMPROBACION PRE BLOQUEO GENCAT gencatApi.bloqueoExpedienteGENCAT(expediente);
 
 						} else if(DDResolucionComite.CODIGO_RECHAZA.equals(valor.getValor())) {
 							//Resuelve el expediente

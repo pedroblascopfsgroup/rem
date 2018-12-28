@@ -1,6 +1,7 @@
 Ext.define('HreRem.view.activos.detalle.GencatComercialActivoController', {
     extend: 'Ext.app.ViewController',
     alias: 'controller.gencatcomercialactivo', 
+    requires: ['HreRem.controller.ActivosController'],
     
     
     control: {
@@ -29,8 +30,17 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoController', {
 		aftercreate: function(grid) {
 			grid.getStore().load(); 
 		}
-    	}
+    	},
     	
+    	'documentosactivogencatlist': {
+            abrirFormulario: 'abrirFormularioAdjuntarComunicacionActivo',
+            //onClickRemove: 'borrarDocumentoAdjunto',
+            download: 'downloadDocumentoComunicacionActivo'//,
+            /*afterupload: function(grid) {
+            	grid.getStore().load();
+            }*/
+        }
+
     },
     
     cargarTabData: function (form) {
@@ -165,6 +175,41 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoController', {
                 }
             });
         }
-	}
+	
+		me.fireEvent("downloadFile", config);
+	},
+	
+    onClickAbrirExpedienteComercial: function() { 
+    	
+    	var me = this;
+    	var gencat = me.getViewModel().data.gencat;
+    	var numOfertaGencat = gencat.data.ofertaGencat;
+    	var data; 
+    	
+    	var url =  $AC.getRemoteUrl('expedientecomercial/getExpedienteByIdOferta');
+  
+    	Ext.Ajax.request({
+		     url: url,
+		     method: 'POST',
+		     params: {numOferta : numOfertaGencat},
+		     success: function(response, opts) {
+		    	data = Ext.decode(response.responseText);
+		    	if(data.data){
+		 		   me.getView().fireEvent('abrirDetalleExpedienteOferta', data.data);
+		    	}
+		    	else {
+		    		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+		    	}
+		    },
+		    
+		     failure: function (a, operation) {
+		 				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+		 	}
+	 });
+    		    	     
+  }
+    	
+    	
+    
     
 });

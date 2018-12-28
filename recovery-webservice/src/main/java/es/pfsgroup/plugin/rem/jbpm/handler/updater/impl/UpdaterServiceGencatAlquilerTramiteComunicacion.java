@@ -32,7 +32,7 @@ public class UpdaterServiceGencatAlquilerTramiteComunicacion implements UpdaterS
 	
 	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {
 		
-		ComunicacionGencat comunicacionGencat = comunicacionGencatApi.getByIdActivoCreado(tramite.getActivo().getNumActivo());
+		ComunicacionGencat comunicacionGencat = comunicacionGencatApi.getByIdActivoEstadoCreado(tramite.getActivo().getNumActivo());
 						
 		if(!Checks.esNulo(tramite)) {
 			

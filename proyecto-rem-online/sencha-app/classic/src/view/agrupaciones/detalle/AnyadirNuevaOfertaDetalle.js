@@ -195,14 +195,6 @@ Ext.define('HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaDetalle', {
 	    	    						disabled: true
 									},
 				            	    {
-				            	    	xtype: 		'checkboxfieldbase',
-				            	    	fieldLabel:	HreRem.i18n('fieldlabel.dederechotanteo'),
-				            	    	name:		'dederechotanteo',
-				            	    	allowBlank:	false,
-				            	    	bind:		'{oferta.deDerechoTanteo}',
-							        	inputValue: true
-				            	    },
-				            	    {
 										xtype: 'textfieldbase',
 										fieldLabel: HreRem.i18n('header.visita.detalle.proveedor.presriptor.codigo.rem'),
 										name: 'buscadorPrescriptores',

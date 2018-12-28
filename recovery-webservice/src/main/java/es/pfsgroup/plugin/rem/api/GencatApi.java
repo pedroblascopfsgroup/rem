@@ -6,14 +6,15 @@ import java.util.List;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
-import es.pfsgroup.plugin.rem.model.DtoNotificacionActivo;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ComunicacionGencat;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoGencat;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoComunicacionGencat;
+import es.pfsgroup.plugin.rem.model.DtoNotificacionActivo;
 import es.pfsgroup.plugin.rem.model.DtoOfertasAsociadasActivo;
 import es.pfsgroup.plugin.rem.model.DtoReclamacionActivo;
+import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 
 public interface GencatApi {
 
@@ -148,4 +149,10 @@ public interface GencatApi {
 	 */
 	public ComunicacionGencat getComunicacionGencatByIdActivo(Long idActivo);
 	
+	/**
+	 * Comprueba si el expediente comercial del activo afecto por GENCAT se tiene que bloquear.
+	 */
+	void bloqueoExpedienteGENCAT(ExpedienteComercial expComercial);
+
+
 }

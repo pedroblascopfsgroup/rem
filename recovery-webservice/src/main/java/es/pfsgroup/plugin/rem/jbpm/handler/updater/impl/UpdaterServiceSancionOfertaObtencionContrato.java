@@ -169,6 +169,8 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 			
 			//Actualizar el estado comercial de los activos de la oferta
 			ofertaApi.updateStateDispComercialActivosByOferta(ofertaAceptada);
+			
+			//TODO COMPROBACION PRE BLOQUEO GENCAT gencatApi.bloqueoExpedienteGENCAT(expediente);
 		}
 
 	}

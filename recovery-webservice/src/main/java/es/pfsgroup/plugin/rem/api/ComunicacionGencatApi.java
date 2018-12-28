@@ -49,7 +49,7 @@ public interface ComunicacionGencatApi {
 	 * @param idActivo
 	 * @return
 	 */
-	public ComunicacionGencat getByIdActivoCreado(Long idActivo);
+	public ComunicacionGencat getByIdActivoEstadoCreado(Long idActivo);
 	
 	/**
 	 * Método que realiza la persistencia de datos de un objecto de tipo ComunicacionGencat
@@ -57,4 +57,12 @@ public interface ComunicacionGencatApi {
 	 * @param comunicacionGencat
 	 */
 	public void saveOrUpdate(ComunicacionGencat comunicacionGencat);
+	
+
+	/**
+	 * Actualiza las tareas del trámite de un expediente comercial
+	 * @param idTrabajo
+	 */
+	public void actualizarTareas(Long idTrabajo);
+
 }

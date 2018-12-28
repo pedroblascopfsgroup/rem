@@ -178,6 +178,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedorHonorario;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoRiesgoClase;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposArras;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposDocumentos;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposImpuesto;
@@ -1396,7 +1397,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				if (!Checks.esNulo(activoPrincipal.getSituacionPosesoria())) {
 					dto.setFechaTomaPosesion(activoPrincipal.getSituacionPosesoria().getFechaTomaPosesion());
 					dto.setOcupado(activoPrincipal.getSituacionPosesoria().getOcupado());
-					dto.setConTitulo(activoPrincipal.getSituacionPosesoria().getConTitulo());
+					dto.setConTitulo(activoPrincipal.getSituacionPosesoria().getConTitulo().getCodigo());
 					if (!Checks.esNulo(activoPrincipal.getSituacionPosesoria().getTipoTituloPosesorio())) {
 						dto.setTipoTitulo(activoPrincipal.getSituacionPosesoria().getTipoTituloPosesorio().getDescripcion());
 					}
@@ -1413,7 +1414,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				if (!Checks.esNulo(activo.getSituacionPosesoria())) {
 					dto.setFechaTomaPosesion(activo.getSituacionPosesoria().getFechaTomaPosesion());
 					dto.setOcupado(activo.getSituacionPosesoria().getOcupado());
-					dto.setConTitulo(activo.getSituacionPosesoria().getConTitulo());
+					dto.setConTitulo(activo.getSituacionPosesoria().getConTitulo().getCodigo());
 					if (!Checks.esNulo(activo.getSituacionPosesoria().getTipoTituloPosesorio())) {
 						dto.setTipoTitulo(activo.getSituacionPosesoria().getTipoTituloPosesorio().getDescripcion());
 					}
@@ -4635,7 +4636,14 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	}
 
 	public DtoCondicionesActivoExpediente getCondicionesActivoExpediete(Long idExpediente, Long idActivo) {
+		
+		DDTipoTituloActivoTPA tipoTitulo;
+		
+		Filter tituloActivo;
 		Activo activo = activoAdapter.getActivoById(idActivo);
+		
+		tituloActivo = genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoTituloActivoTPA.tipoTituloNo);
+		tipoTitulo = genericDao.get(DDTipoTituloActivoTPA.class, tituloActivo);
 
 		DtoCondicionesActivoExpediente resultado = new DtoCondicionesActivoExpediente();
 		resultado.setEcoId(idExpediente);
@@ -4653,7 +4661,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 		if (activo.getSituacionPosesoria() != null) {
 			if (Checks.esNulo(activo.getSituacionPosesoria().getOcupado())) activo.getSituacionPosesoria().setOcupado(0);
-			if (Checks.esNulo(activo.getSituacionPosesoria().getConTitulo())) activo.getSituacionPosesoria().setConTitulo(0);
+			if (Checks.esNulo(activo.getSituacionPosesoria().getConTitulo())) activo.getSituacionPosesoria().setConTitulo(tipoTitulo);
 			if (activo.getSituacionPosesoria().getOcupado() != null
 					&& activo.getSituacionPosesoria().getOcupado().equals(Integer.valueOf(0))) {
 				resultado.setSituacionPosesoriaCodigoInformada("01");

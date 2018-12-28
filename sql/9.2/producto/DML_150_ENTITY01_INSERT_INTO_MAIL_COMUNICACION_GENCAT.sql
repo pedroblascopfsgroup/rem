@@ -1,7 +1,7 @@
 --/* 
 --##########################################
---## AUTOR=Oscar Diestre
---## FECHA_CREACION=20181204
+--## AUTOR=Sonia Garcia
+--## FECHA_CREACION=20181228
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-5084
@@ -49,7 +49,7 @@ V_SQL := 'INSERT INTO '||V_ESQUEMA||'.MAIL_COMUNICACION_GENCAT	(
 					ADJUNTO
 					) 
 		values ( 
-				 ''GENCAT_Proceso_Comunicacion'',
+				 ''noreply.rem@haya.es'',
 				 ''jpoyatos@haya.es'',
 				 '''',
 				 ''Comunicaciones generadas a día de hoy.'',

@@ -20,7 +20,7 @@ SET DEFINE OFF;
 
 
 DECLARE
-    V_MSQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar     
+  --  V_MSQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar     
     V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
     V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
     V_SQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de un registro.
@@ -34,11 +34,19 @@ BEGIN
      DBMS_OUTPUT.PUT_LINE('[INICIO]');
 	
 	V_SQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME = ''MAIL_COMUNICACION_GENCAT'' and owner = '''||V_ESQUEMA||'''';
-	DBMS_OUTPUT.PUT_LINE(V_SQL);
 	EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
 	
-	
+
 	IF V_NUM_TABLAS = 1 THEN
+
+	 V_SQL:= 'DELETE FROM '||V_ESQUEMA||'.MAIL_COMUNICACION_GENCAT WHERE DE = ''GENCAT_Proceso_Comunicacion''';
+	DBMS_OUTPUT.PUT_LINE(V_SQL);
+	  EXECUTE IMMEDIATE V_SQL;
+	  DBMS_OUTPUT.PUT_LINE(V_NUM_TABLAS || 'registros borrados');
+
+
+ELSE
+
 	
 V_SQL := 'INSERT INTO '||V_ESQUEMA||'.MAIL_COMUNICACION_GENCAT	(
 					DE, 

@@ -1365,5 +1365,18 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 	
+	/*
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView getExpedienteComercialPropagables(String idExpediente, ModelMap model){
+		try{
+			model.put(RESPONSE_DATA_KEY, expedienteComercialApi.getExpedienteComercialPropagables(Long.valueOf(idExpediente)));
+		} catch (Exception e) {
+			logger.error("error en expedienteComercialController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put(RESPONSE_ERROR_KEY, e.getMessage());
+		}
 
+		return createModelAndViewJson(model);
+	}*/
 }

@@ -254,6 +254,8 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 				var contador = 0;
 				me.saveMultipleRecords(contador, records);
 			}
+			
+			
 		} else {
 		
 			me.fireEvent("errorToast", HreRem.i18n("msg.form.invalido"));
@@ -2272,5 +2274,5 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		    	 me.getView().unmask();
 		     }
 		});		
-	}
+	},
 });

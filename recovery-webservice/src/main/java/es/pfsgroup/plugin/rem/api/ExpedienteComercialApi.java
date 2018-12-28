@@ -964,4 +964,13 @@ public interface ExpedienteComercialApi {
 	Long getNumExpByNumOfr(Long numBusqueda);
 
 	boolean savePlusvaliaVenta(DtoPlusvaliaVenta dto, Long idExpediente);
+	
+	/**
+	 * 
+	 * Método para obtener todos los expedientes a los que se propaga un cambio realizado
+	 * 
+	 * @param idExpediente
+	 * @return 
+	 */
+	DtoFichaExpediente getExpedienteComercialPropagables(Long idExpediente);
 }

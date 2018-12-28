@@ -39,7 +39,10 @@ import es.pfsgroup.plugin.rem.api.GencatApi;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjuntoActivo;
+import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.AdecuacionGencat;
+import es.pfsgroup.plugin.rem.model.Comprador;
+import es.pfsgroup.plugin.rem.model.CompradorExpediente;
 import es.pfsgroup.plugin.rem.model.ComunicacionGencat;
 import es.pfsgroup.plugin.rem.model.ComunicacionGencatAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
@@ -48,6 +51,7 @@ import es.pfsgroup.plugin.rem.model.DtoHistoricoComunicacionGencat;
 import es.pfsgroup.plugin.rem.model.DtoNotificacionActivo;
 import es.pfsgroup.plugin.rem.model.DtoOfertasAsociadasActivo;
 import es.pfsgroup.plugin.rem.model.DtoReclamacionActivo;
+import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.HistoricoAdecuacionGencat;
 import es.pfsgroup.plugin.rem.model.HistoricoComunicacionGencat;
 import es.pfsgroup.plugin.rem.model.HistoricoComunicacionGencatAdjunto;
@@ -59,6 +63,7 @@ import es.pfsgroup.plugin.rem.model.NotificacionGencat;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.OfertaGencat;
 import es.pfsgroup.plugin.rem.model.ReclamacionGencat;
+import es.pfsgroup.plugin.rem.model.VExpPreBloqueoGencat;
 import es.pfsgroup.plugin.rem.model.Visita;
 import es.pfsgroup.plugin.rem.model.VisitaGencat;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoComunicacionGencat;
@@ -103,6 +108,8 @@ public class GencatManager extends BusinessOperationOverrider<GencatApi> impleme
 	
 	@Autowired
 	private ComunicacionGencatDao comunicacionGencatDao;
+
+	private static final Long MIN_MESES = 60L;
 
 	@Autowired
 	private UsuarioManager usuarioManager;
@@ -888,6 +895,107 @@ public class GencatManager extends BusinessOperationOverrider<GencatApi> impleme
 		
 		return dtoNotificacion;
 		
+	}
+
+	@Override
+	public void bloqueoExpedienteGENCAT(ExpedienteComercial expComercial) {
+		Date fechaActual = new Date();
+		Oferta oferta = expComercial.getOferta();
+		Comprador comprador = new Comprador();
+		CompradorExpediente compradorExp = genericDao.get(CompradorExpediente.class, genericDao.createFilter(FilterType.EQUALS,"expediente",expComercial.getId()));
+		if(!Checks.esNulo(compradorExp)) {
+			comprador = genericDao.get(Comprador.class, genericDao.createFilter(FilterType.EQUALS,"id",compradorExp.getComprador()));
+		}
+		List<ActivoOferta> listActivosOferta = expComercial.getOferta().getActivosOferta();
+		Activo activo = new Activo();
+		String codSitPos = "0";
+		String codTipoPer = "0";
+		ComunicacionGencat comGencat = new ComunicacionGencat();
+		for (ActivoOferta activoOferta : listActivosOferta) {
+			activo = activoOferta.getPrimaryKey().getActivo();
+			
+			List<VExpPreBloqueoGencat> listDatosVista = genericDao.getList(VExpPreBloqueoGencat.class, 
+					genericDao.createFilter(FilterType.EQUALS,"idActivo", activo.getId()));
+
+			if(!Checks.estaVacio(listDatosVista)) {
+				//Pillar 1º registro que es el mas reciente para comparar los condicionantes
+				VExpPreBloqueoGencat datoVista = listDatosVista.get(0);
+				//COMPROBACION SI HAY COMUNICACION GENCAT CREADA
+				
+				if(!Checks.esNulo(datoVista.getFecha_comunicacion())) {
+					//TODO REVISAR CONDICIONES DE ULTIMA OFERTA QUE PROVOCO LA COMUNICACION CON LOS DATOS DEL EXPEDIENTE QUE SE RECOGEN
+					comGencat = genericDao.get(ComunicacionGencat.class, genericDao.createFilter(FilterType.EQUALS,"activo.id", activo.getId()));
+					if(!Checks.esNulo(expComercial.getCondicionante())) {
+						if(!Checks.esNulo(expComercial.getCondicionante().getSituacionPosesoria())){
+							codSitPos = expComercial.getCondicionante().getSituacionPosesoria().getCodigo();
+							
+							if(!Checks.esNulo(comprador) && !Checks.esNulo(comprador.getTipoPersona())) {
+								codTipoPer = comprador.getTipoPersona().getCodigo();
+							}
+							
+							//TODO COMPROBACION CONDICIONANTES
+							if(codSitPos.equals(datoVista.getSituacionPosesoria()) 
+									&& codTipoPer.equals(datoVista.getTipoPersona())
+									&& (!Checks.esNulo(oferta.getImporteOferta()) ? oferta.getImporteOferta() : new Double(0)).equals(datoVista.getImporteOferta())) {
+								
+								//COMPROBACION OFERTA ULTIMA SANCION:
+									//SI DD_ECG_CODIGO SANCIONADA SE COMPARA TIEMPO SANCION AL TIEMPO ACTUAL:
+										//SI TIEMPO > 2 MESES LANZAR TRAMITE GENCAT
+										//SI TIEMPO < 2 MESES NO HACER NADA.
+								if(!Checks.esNulo(comGencat.getEstadoComunicacion())
+										&& DDEstadoComunicacionGencat.COD_SANCIONADO.equals(comGencat.getEstadoComunicacion().getCodigo())
+										&& !Checks.esNulo(datoVista.getFecha_sancion())) {
+									
+									if(MIN_MESES > calculoDiferenciaFechasEnDias(fechaActual,datoVista.getFecha_sancion())){
+										//TODO LANZAR TRAMITE GENCAT
+									}
+									
+								}
+									//SI DD_ECG_CODIGO ANULADA Y CMG_FECHA_ANULACION RELLENA LANZA TRAMITE GENCAT
+								if(!Checks.esNulo(comGencat.getEstadoComunicacion())
+										&& DDEstadoComunicacionGencat.COD_ANULADO.equals(comGencat.getEstadoComunicacion().getCodigo())
+										&& !Checks.esNulo(datoVista.getFecha_anulacion())) {
+									//TODO LANZAR TRAMITE GENCAT
+								}
+									//SI DD_ECG_CODIGO ANULADA Y CMG_FECHA_ANULACION NULL SE COMPARA TIEMPO SANCION AL TIEMPO ACTUAL:
+										//SI TIEMPO < 2 MESES NO HACER NADA.
+								if(!Checks.esNulo(comGencat.getEstadoComunicacion())
+										&& DDEstadoComunicacionGencat.COD_ANULADO.equals(comGencat.getEstadoComunicacion().getCodigo())
+										&& Checks.esNulo(datoVista.getFecha_anulacion())) {
+									if(MIN_MESES > calculoDiferenciaFechasEnDias(fechaActual,datoVista.getFecha_sancion())){
+										//TODO LANZAR TRAMITE GENCAT
+									}
+									
+								}
+								
+							}else {
+								//TODO LANZAR TRAMITE GENCAT
+							}
+							
+						}
+						
+					}
+					
+				}else {
+					//TODO LANZAR TRAMITE GENCAT
+				}
+				
+			}else {
+				//TODO LANZAR TRAMITE GENCAT
+			}
+		}
+	}
+
+	/**
+	 * Diferencia en dias entre 2 fechas.
+	 * @param fechaActual normalmente la fecha de ahora
+	 * @param fechaComparar normalmente la fecha a comparar
+	 * @return nº de dias de diferencia entre las 2 fechas.
+	 */
+	public Long calculoDiferenciaFechasEnDias(Date fechaActual, Date fechaComparar) {
+		Long diferenciaEn_ms = fechaActual.getTime() - fechaComparar.getTime();
+		Long dias = diferenciaEn_ms / (1000 * 60 * 60 * 24);
+		return dias;
 	}
 	
 	@Transactional(readOnly = false)

@@ -111,6 +111,9 @@ public class UpdaterServiceSancionOfertaRespuestaOfertante implements UpdaterSer
 							// Se comprueba si cada activo tiene KO de admisión o de gestión
 							// y se envía una notificación
 							notificacionApi.enviarNotificacionPorActivosAdmisionGestion(expediente);
+							
+							//TODO COMPROBACION PRE BLOQUEO GENCAT gencatApi.bloqueoExpedienteGENCAT(expediente);
+							
 						}else {
 							//Resuelve el expediente
 							filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.ANULADO);

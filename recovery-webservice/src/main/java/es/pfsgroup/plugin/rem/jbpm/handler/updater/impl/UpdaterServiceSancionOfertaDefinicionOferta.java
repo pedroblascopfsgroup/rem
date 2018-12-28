@@ -17,6 +17,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.api.GencatApi;
 import es.pfsgroup.plugin.rem.api.NotificacionApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
@@ -45,6 +46,9 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 	
 	@Autowired
 	private ActivoApi activoApi;
+	
+	@Autowired
+	private GencatApi gencatApi;
 
 	protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaDefinicionOferta.class);
 
@@ -87,7 +91,8 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 				// Se comprueba si cada activo tiene KO de admisión o de gestión
 				// y se envía una notificación
 				notificacionApi.enviarNotificacionPorActivosAdmisionGestion(expediente);
-
+				//TODO COMPROBACION PRE BLOQUEO GENCAT 
+				gencatApi.bloqueoExpedienteGENCAT(expediente);
 			}
 		} else {
 			Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());
@@ -110,6 +115,8 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 				}
 				 
 				expediente.setEstado(estado);
+				//TODO COMPROBACION PRE BLOQUEO GENCAT 
+				gencatApi.bloqueoExpedienteGENCAT(expediente);
 			}
 		}
 		
@@ -147,10 +154,9 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 						
 					}
 				}
+				
 			}
 		}
-		
-		
 
 	}
 

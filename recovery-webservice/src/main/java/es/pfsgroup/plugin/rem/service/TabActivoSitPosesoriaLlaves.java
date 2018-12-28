@@ -13,6 +13,8 @@ import org.springframework.stereotype.Component;
 import es.capgemini.devon.dto.WebDto;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
@@ -26,6 +28,7 @@ import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloPosesorio;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi.ENTIDADES;
@@ -94,6 +97,10 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 				BeanUtils.copyProperty(activoDto, "tipoTituloPosesorioCodigo", activo.getSituacionPosesoria().getTipoTituloPosesorio().getCodigo());
 			}
 			
+			if (activo.getSituacionPosesoria().getConTitulo() != null) {
+				BeanUtils.copyProperty(activoDto, "conTituloTPA", activo.getSituacionPosesoria().getConTitulo().getCodigo());
+			}
+			
 			if(!Checks.esNulo(activo.getCartera())) {
 				if(DDCartera.CODIGO_CARTERA_BANKIA.equals(activo.getCartera().getCodigo())) {
 					if(!Checks.esNulo(activo.getSituacionPosesoria().getSitaucionJuridica())) {
@@ -151,12 +158,16 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 				
 			}
 			
-			if(!Checks.esNulo(dto.getOcupado()) && !BooleanUtils.toBoolean(dto.getOcupado())) {				
-				if (dto.getOcupado() == 0) {
-					dto.setConTitulo(null);
+			if (!Checks.esNulo(dto.getOcupado()) && !BooleanUtils.toBoolean(dto.getOcupado()) && dto.getOcupado() == 0) {
+				activo.getSituacionPosesoria().setConTitulo(null);
+			} else  if (Checks.esNulo(dto.getOcupado()) && !Checks.esNulo(dto.getConTituloTPA())) {
+				if (!Checks.esNulo(activo.getSituacionPosesoria().getOcupado()) && activo.getSituacionPosesoria().getOcupado() == 1) {
+					Filter tituloActivo = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getConTituloTPA());
+					DDTipoTituloActivoTPA tituloActivoTPA = genericDao.get(DDTipoTituloActivoTPA.class, tituloActivo);
+					activo.getSituacionPosesoria().setConTitulo(tituloActivoTPA);
 				}
 			}
-				
+			
 			beanUtilNotNull.copyProperties(activo.getSituacionPosesoria(), dto);
 			if(!Checks.esNulo(dto.getFechaTomaPosesion())){
 				activo.getSituacionPosesoria().setEditadoFechaTomaPosesion(true);
@@ -164,6 +175,7 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 //			if(!Checks.esNulo(dto.getIndicaPosesion())){
 //				activo.getSituacionPosesoria().getSitaucionJuridica().setIndicaPosesion(dto.getIndicaPosesion());
 //			}
+			
 			activo.setSituacionPosesoria(genericDao.save(ActivoSituacionPosesoria.class, activo.getSituacionPosesoria()));
 			
 			if (dto.getTipoTituloPosesorioCodigo() != null) {
@@ -213,7 +225,7 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 
 		// Si ha cambiado la situacion juridica
 		if (!Checks.esNulo(dtoSitPos.getFechaTomaPosesion()) 
-					|| (!Checks.esNulo(dtoSitPos.getConTitulo()) &&	BooleanUtils.toBoolean(dtoSitPos.getConTitulo()))) {
+					|| (!Checks.esNulo(dtoSitPos.getConTituloTPA()) &&	BooleanUtils.toBoolean(dtoSitPos.getConTituloTPA()))) {
 		
 			for(ActivoOferta oferta : ofertas){
 				// Si tiene expediente 

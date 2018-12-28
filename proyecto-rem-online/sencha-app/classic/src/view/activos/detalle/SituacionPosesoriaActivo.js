@@ -207,7 +207,6 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 			            				me.up('formBase').down('[reference=comboSituacionPosesoriaConTitulo]').setDisabled(true);
 			            			} else {
 			            				me.up('formBase').down('[reference=comboSituacionPosesoriaConTitulo]').setDisabled(false);
-			            				me.up('formBase').down('[reference=comboSituacionPosesoriaConTitulo]').value;
 			            			}
 			            			
 			            		}
@@ -236,7 +235,7 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 							fieldLabel: HreRem.i18n('fieldlabel.con.titulo'),
 				        	bind: {
 			            		store: '{comboDDTipoTituloActivoTPA}',
-			            		value: '{situacionPosesoria.conTitulo}' 
+			            		value: '{situacionPosesoria.conTituloTPA}' 
 			            	}
 				        },
 				        { 

@@ -37,6 +37,10 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 		     		return false;
 		     	}
 		 },
+		 
+		 esAgrupacionLoteComercialOrRestringida: function(get) {
+			 return !(get('esAgrupacionRestringida') || get('esAgrupacionLoteComercial'));
+		 },
 
 		 esAgrupacionRestringidaIncluyeDestinoComercialVenta: function(get) {
 

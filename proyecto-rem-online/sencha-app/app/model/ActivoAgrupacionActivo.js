@@ -61,6 +61,9 @@ Ext.define('HreRem.model.ActivoAgrupacionActivo', {
     		},
     		{
     			name: 'estadoAlquiler'
+    		},
+    		{
+    			name: 'activoGencat'
     		}
     		
     ],

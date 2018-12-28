@@ -321,6 +321,19 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
 	            flex: 1,
 	            renderer: Ext.util.Format.numberRenderer('0,000.00'),
 	            sortable: false      
+	        },
+	        {
+	        	 dataIndex: 'activoGencat',
+		            hideable: false,
+		            bind: {
+			        	hidden: '{esAgrupacionLoteComercialOrRestringida}'
+			        },
+		            renderer: function(value) {
+		            	return Ext.isEmpty(value) ? "No" : value=='1' ? "Si"  : "No";
+		            },
+		            text: HreRem.i18n('header.listaActivos.GENCAT'),
+		            flex: 0.5,
+		            sortable: false
 	        }
         ];
 

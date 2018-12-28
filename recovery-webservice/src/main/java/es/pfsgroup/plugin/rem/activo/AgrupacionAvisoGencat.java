@@ -10,6 +10,7 @@ import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.api.AgrupacionAvisadorApi;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.DtoAviso;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 
 @Service("AgrupacionAvisoGencat")
 public class AgrupacionAvisoGencat implements AgrupacionAvisadorApi {
@@ -22,10 +23,13 @@ public class AgrupacionAvisoGencat implements AgrupacionAvisadorApi {
 	@Override
 	public DtoAviso getAviso(ActivoAgrupacion agrupacion, Usuario usuarioLogado) {
 		DtoAviso dtoAviso = new DtoAviso();
-
-			if (activoDao.countActivosAfectoGENCAT(agrupacion.getId()) > 0) {
+			
+			if (activoDao.countActivosAfectoGENCAT(agrupacion.getId()) > 0 && (DDTipoAgrupacion.AGRUPACION_RESTRINGIDA.equals(agrupacion.getTipoAgrupacion().getCodigo())
+					|| DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL.equals(agrupacion.getTipoAgrupacion().getCodigo()))) {
+				
 				dtoAviso.setDescripcion("Agrupación con activos afectos GENCAT");
 				dtoAviso.setId(String.valueOf(agrupacion.getId()));
+				
 			}
 			
 		return dtoAviso;

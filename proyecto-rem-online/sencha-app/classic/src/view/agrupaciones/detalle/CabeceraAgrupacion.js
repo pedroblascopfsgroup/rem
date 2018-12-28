@@ -193,6 +193,13 @@ Ext.define('HreRem.view.agrupaciones.detalle.CabeceraAgrupacion', {
 															bind:		'{agrupacionficha.numeroPublicados}'
 														},
 														{ 
+															fieldLabel: "Activos GENCAT:",
+															bind: {
+																value : '{agrupacionficha.activosGencat}',
+																hidden : '{agrupacionficha.isAgrupacionGencat}'
+															}
+														},
+														{ 
 															xtype: 'imagefield',
 															fieldLabel: HreRem.i18n('fieldlabel.entidad.propietaria'),
 															cls: 'cabecera-info-field',

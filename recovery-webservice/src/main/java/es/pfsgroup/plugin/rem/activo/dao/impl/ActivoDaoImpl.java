@@ -1118,135 +1118,6 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
   }
   
    @Override
-   public Boolean isActivoAfectoGENCAT(Long idActivo) {
-     try {
-       BigDecimal num = new BigDecimal(1);
-       Session session = this.getSessionFactory().getCurrentSession();
-       Query query= session.createSQLQuery("SELECT count(act.ACT_ID) FROM act_activo act JOIN bie_localizacion bil ON bil.bie_id = act.bie_id JOIN remmaster.dd_loc_localidad loc ON loc.dd_loc_id = bil.dd_loc_id JOIN CMU_CONFIG_MUNICIPIOS CMU ON CMU.DD_LOC_ID = loc.DD_LOC_ID JOIN DD_TPA_TIPO_ACTIVO tpa on tpa.DD_TPA_ID = act.DD_TPA_ID join BIE_ADJ_ADJUDICACION bad on bad.BIE_ID = act.BIE_ID join DD_CRA_CARTERA cra on cra.DD_CRA_ID = act.DD_CRA_ID join DD_SCR_SUBCARTERA scr on scr.DD_CRA_ID = cra.DD_CRA_ID WHERE act.act_id ="+idActivo+" and tpa.DD_TPA_CODIGO = '02' and bad.BIE_ADJ_F_DECRETO_FIRME > to_date('07/04/18','DD/MM/YYYY') and cra.DD_CRA_CODIGO in ('01','02','03','06','08')  and scr.DD_SCR_CODIGO in ('09','08','07','04','18','02','16','06') and loc.dd_loc_codigo IN ('08001','08003','08006','08007','08009','08011','08015','08019','08020','08022','08029','08030','08031','08032','08033','08035','08037','08040','08041','08041','08046','08047','08051','08054','08056','08067','08068','08072','08073','08074','08076','08077','08086','08088','08089','08091','08092','08096','08098','08100','08101','08102','08105','08106','08107','08108','08110','08112','08112','08113','08114','08115','08117','08118','08120','08121','08123','08124','08125','08126','08135','08136','08141','08143','08147','08155','08156','08157','08158','08159','08161','08163','08167','08169','08172','08180','08181','08184','08187','08191','08194','08196','08197','08200','08202','08204','08205','08208','08209','08211','08211','08213','08214','08217','08218','08219','08221','08230','08231','08235','08238','08240','08244','08245','08246','08250','08251','08252','08260','08261','08262','08263','08264','08266','08267','08270','08270','08274','08279','08281','08282','08283','08284','08285','08289','08295','08298','08300','08301','08302','08305','08307','08904','08905','017015','017015','017019','017022','017023','017034','017047','017048','017056','017062','017066','017073','017079','017089','017092','017095','017110','017114','017117','017118','017137','017141','017147','017152','017155','017160','017163','017167','017169','017180','017181','017182','017185','017186','017199','017202','017215','017221','017226','025003','025011','025012','025016','025019','025021','025027','025034','025040','025050','025051','025058','025072','025093','025099','025110','025120','025135','025137','025158','025171','025172','025173','025203','025207','025209','025217','025234','025243','025244','043004','043011','043012','043014','043016','043037','043038','043042','043044','043047','043051','043055','043060','043064','043086','043092','043093','043094','043100','043104','043123','043131','043133','043136','043136','043138','043139','043145','043148','043153','043155','043156','043161','043163','043163','043171','043171','043904','043905','043905','043907')");
-       
-       BigDecimal contador = (BigDecimal) query.uniqueResult();
-
-       if(num.equals(contador)) {
-         return true;
-       }else {
-         return false;
-       }
-
-          } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-          }
-      }
-   
-   @Override
-   public Boolean isActivoBloqueadoGENCAT(Long idActivo) {
-     
-     try {
-       
-       BigDecimal num = new BigDecimal(0);
-       Session session = this.getSessionFactory().getCurrentSession();
-       
-       Query query = session.createSQLQuery("SELECT\r\n" + 
-          "    COUNT (DISTINCT act.ACT_ID)\r\n" + 
-          "FROM\r\n" + 
-          "    act_activo act\r\n" + 
-          "    JOIN bie_localizacion bil ON bil.bie_id = act.bie_id\r\n" + 
-          "    JOIN remmaster.dd_loc_localidad loc ON loc.dd_loc_id = bil.dd_loc_id\r\n" + 
-          "    JOIN CMU_CONFIG_MUNICIPIOS CMU ON CMU.DD_LOC_ID = loc.DD_LOC_ID\r\n" + 
-          "    join DD_TPA_TIPO_ACTIVO tpa on tpa.DD_TPA_ID = act.DD_TPA_ID\r\n" + 
-          "    join BIE_ADJ_ADJUDICACION bad on bad.BIE_ID = act.BIE_ID\r\n" + 
-          "    join DD_CRA_CARTERA cra on cra.DD_CRA_ID = act.DD_CRA_ID\r\n" + 
-          "    join DD_SCR_SUBCARTERA scr on scr.DD_CRA_ID = cra.DD_CRA_ID\r\n" + 
-          "    join ACT_AGA_AGRUPACION_ACTIVO aga on aga.ACT_ID = act.ACT_ID\r\n" + 
-          "    join ACT_CMG_COMUNICACION_GENCAT cmg on act.ACT_ID = cmg.ACT_ID\r\n" + 
-          "WHERE\r\n" + 
-          "    act.ACT_ID = "+ idActivo +"and\r\n" + 
-          "    tpa.DD_TPA_CODIGO = '02' and\r\n" + 
-          "    bad.BIE_ADJ_F_DECRETO_FIRME > to_date('07/04/18','DD/MM/YYYY') and\r\n" + 
-          "    cra.DD_CRA_CODIGO IN ('01','02','03','06','08')  and\r\n" + 
-          "    scr.DD_SCR_CODIGO IN ('09','08','07','04','18','02','16','06') and\r\n" + 
-          "    cmg.CMG_CHECK_ANULACION = '0' and\r\n" + 
-          "    cmg.CMG_FECHA_ANULACION IS NULL and\r\n" + 
-          "    cmg.DD_ECG_ID = '3' and\r\n" + 
-          "    loc.dd_loc_codigo IN ('08001','08003','08006','08007','08009','08011','08015','08019','08020','08022','08029','08030','08031','08032','08033','08035','08037','08040\r\n" + 
-          " ','08041','08041','08046','08047','08051','08054','08056','08067','08068','08072','08073','08074','08076','08077','08086','08088','08089','08091','\r\n" + 
-          " 08092','08096','08098','08100','08101','08102','08105','08106','08107','08108','08110','08112','08112','08113','08114','08115','08117','08118','\r\n" + 
-          " 08120','08121','08123','08124','08125','08126','08135','08136','08141','08143','08147','08155','08156','08157','08158','08159','08161','08163','\r\n" + 
-          " 08167','08169','08172','08180','08181','08184','08187','08191','08194','08196','08197','08200','08202','08204','08205','08208','08209','08211','\r\n" + 
-          " 08211','08213','08214','08217','08218','08219','08221','08230','08231','08235','08238','08240','08244','08245','08246','08250','08251','08252','\r\n" + 
-          " 08260','08261','08262','08263','08264','08266','08267','08270','08270','08274','08279','08281','08282','08283','08284','08285','08289','08295','\r\n" + 
-          " 08298','08300','08301','08302','08305','08307','08904','08905','017015','017015','017019','017022','017023','017034','017047','017048','017056','\r\n" + 
-          " 017062','017066','017073','017079','017089','017092','017095','017110','017114','017117','017118','017137','017141','017147','017152','017155','\r\n" + 
-          " 017160','017163','017167','017169','017180','017181','017182','017185','017186','017199','017202','017215','017221','017226','025003','025011','\r\n" + 
-          " 025012','025016','025019','025021','025027','025034','025040','025050','025051','025058','025072','025093','025099','025110','025120','025135','\r\n" + 
-          " 025137','025158','025171','025172','025173','025203','025207','025209','025217','025234','025243','025244','043004','043011','043012','043014','\r\n" + 
-          " 043016','043037','043038','043042','043044','043047','043051','043055','043060','043064','043086','043092','043093','043094','043100','043104','\r\n" + 
-          " 043123','043131','043133','043136','043136','043138','043139','043145','043148','043153','043155','043156','043161','043163','043163','043171','\r\n" + 
-          " 043171','043904','043905','043905','043907'\r\n" + 
-          "    )");
-       
-       num = (BigDecimal) query.uniqueResult();
-       return num.intValueExact() > 0;
-       
-     } catch (Exception e) {
-       e.printStackTrace();
-       return false;
-     } 
-       
-     
-     
-   }
-   
-   @Override
-   public int countActivosAfectoGENCAT(Long idAgrupacion) {
-     try {
-       BigDecimal nActivos = new BigDecimal(0);
-       Session session = this.getSessionFactory().getCurrentSession();
-       Query query = session.createSQLQuery("SELECT\r\n" + 
-          "    count(DISTINCT act.ACT_ID)\r\n" + 
-          "FROM\r\n" + 
-          "    act_activo act\r\n" + 
-          "    JOIN bie_localizacion bil ON bil.bie_id = act.bie_id\r\n" + 
-          "    JOIN remmaster.dd_loc_localidad loc ON loc.dd_loc_id = bil.dd_loc_id\r\n" + 
-          "    JOIN CMU_CONFIG_MUNICIPIOS CMU ON CMU.DD_LOC_ID = loc.DD_LOC_ID\r\n" + 
-          "    join DD_TPA_TIPO_ACTIVO tpa on tpa.DD_TPA_ID = act.DD_TPA_ID\r\n" + 
-          "    join BIE_ADJ_ADJUDICACION bad on bad.BIE_ID = act.BIE_ID\r\n" + 
-          "    join DD_CRA_CARTERA cra on cra.DD_CRA_ID = act.DD_CRA_ID\r\n" + 
-          "    join DD_SCR_SUBCARTERA scr on scr.DD_CRA_ID = cra.DD_CRA_ID\r\n" + 
-          "    join ACT_AGA_AGRUPACION_ACTIVO aga on aga.ACT_ID = act.ACT_ID\r\n" + 
-          "WHERE\r\n" + 
-          "    aga.AGR_ID = "+ idAgrupacion +" and\r\n" + 
-          "    tpa.DD_TPA_CODIGO = '02' and\r\n" + 
-          "    bad.BIE_ADJ_F_DECRETO_FIRME > to_date('07/04/18','DD/MM/YYYY') and\r\n" + 
-          "    cra.DD_CRA_CODIGO IN ('01','02','03','06','08')  and\r\n" + 
-          "    scr.DD_SCR_CODIGO IN ('09','08','07','04','18','02','16','06') and\r\n" + 
-          "    loc.dd_loc_codigo IN ('08001','08003','08006','08007','08009','08011','08015','08019','08020','08022','08029','08030','08031','08032','08033','08035','08037','08040\r\n" + 
-          " ','08041','08041','08046','08047','08051','08054','08056','08067','08068','08072','08073','08074','08076','08077','08086','08088','08089','08091','\r\n" + 
-          " 08092','08096','08098','08100','08101','08102','08105','08106','08107','08108','08110','08112','08112','08113','08114','08115','08117','08118','\r\n" + 
-          " 08120','08121','08123','08124','08125','08126','08135','08136','08141','08143','08147','08155','08156','08157','08158','08159','08161','08163','\r\n" + 
-          " 08167','08169','08172','08180','08181','08184','08187','08191','08194','08196','08197','08200','08202','08204','08205','08208','08209','08211','\r\n" + 
-          " 08211','08213','08214','08217','08218','08219','08221','08230','08231','08235','08238','08240','08244','08245','08246','08250','08251','08252','\r\n" + 
-          " 08260','08261','08262','08263','08264','08266','08267','08270','08270','08274','08279','08281','08282','08283','08284','08285','08289','08295','\r\n" + 
-          " 08298','08300','08301','08302','08305','08307','08904','08905','017015','017015','017019','017022','017023','017034','017047','017048','017056','\r\n" + 
-          " 017062','017066','017073','017079','017089','017092','017095','017110','017114','017117','017118','017137','017141','017147','017152','017155','\r\n" + 
-          " 017160','017163','017167','017169','017180','017181','017182','017185','017186','017199','017202','017215','017221','017226','025003','025011','\r\n" + 
-          " 025012','025016','025019','025021','025027','025034','025040','025050','025051','025058','025072','025093','025099','025110','025120','025135','\r\n" + 
-          " 025137','025158','025171','025172','025173','025203','025207','025209','025217','025234','025243','025244','043004','043011','043012','043014','\r\n" + 
-          " 043016','043037','043038','043042','043044','043047','043051','043055','043060','043064','043086','043092','043093','043094','043100','043104','\r\n" + 
-          " 043123','043131','043133','043136','043136','043138','043139','043145','043148','043153','043155','043156','043161','043163','043163','043171','\r\n" + 
-          " 043171','043904','043905','043905','043907'\r\n" + 
-          "    )");
-       
-       nActivos = (BigDecimal) query.uniqueResult();
-       return nActivos.intValueExact();
-     } catch (Exception e) {
-       e.printStackTrace();
-       return 0;
-     }
-   }
-   
-  
-   @Override
    public Boolean existenOfertasVentaActivo(Long idActivo) {
      try {
        BigDecimal num = new BigDecimal(1);
@@ -1320,5 +1191,112 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		return HibernateQueryUtils.list(this, hb);
 	}
 	
+	
+	 @Override
+	 public Boolean isActivoAfectoGENCAT(Long idActivo) {
+		 try {
+			 BigDecimal num = new BigDecimal(1);
+			 Session session = this.getSessionFactory().getCurrentSession();
+			 Query query= session.createSQLQuery("SELECT COUNT (DISTINCT ACT.ACT_ID)\r\n" + 
+			 		"    FROM ACT_ACTIVO ACT\r\n" + 
+			 		"    INNER JOIN REM01.BIE_LOCALIZACION BIE ON ACT.BIE_ID = BIE.BIE_ID\r\n" + 
+			 		"    INNER JOIN REM01.CMU_CONFIG_MUNICIPIOS CMU ON CMU.DD_LOC_ID = BIE.DD_LOC_ID\r\n" + 
+			 		"    INNER JOIN REM01.DD_TPA_TIPO_ACTIVO TPA ON TPA.DD_TPA_ID = ACT.DD_TPA_ID AND DD_TPA_CODIGO = '02'\r\n" + 
+			 		"    INNER JOIN REM01.ACT_AJD_ADJJUDICIAL AJD ON AJD.ACT_ID = ACT.ACT_ID AND TRUNC(AJD.AJD_FECHA_ADJUDICACION) > TO_DATE('07/04/2018', 'DD/MM/YYYY')\r\n" + 
+			 		"    INNER JOIN REM01.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = ACT.DD_CRA_ID\r\n" + 
+			 		"    INNER JOIN REM01.DD_SCR_SUBCARTERA SCR ON SCR.DD_SCR_ID = ACT.DD_SCR_ID\r\n" + 
+			 		"WHERE\r\n" + 
+			 		"    ACT.ACT_ID = "+ idActivo +" AND (\r\n" + 
+			 		"        (CRA.DD_CRA_CODIGO = '03' AND (SCR.DD_SCR_CODIGO = '08' OR SCR.DD_SCR_CODIGO = '06' OR SCR.DD_SCR_CODIGO = '09' OR SCR.DD_SCR_CODIGO = '07'))\r\n" + 
+			 		"        OR (CRA.DD_CRA_CODIGO = '02' AND SCR.DD_SCR_CODIGO = '04')\r\n" + 
+			 		"        OR (CRA.DD_CRA_CODIGO = '01' AND SCR.DD_SCR_CODIGO = '02')\r\n" + 
+			 		"        OR (CRA.DD_CRA_CODIGO = '08' AND SCR.DD_SCR_CODIGO = '18')\r\n" + 
+			 		"        OR (CRA.DD_CRA_CODIGO = '06' AND SCR.DD_SCR_CODIGO = '16')\r\n" + 
+			 		"    )");
+			 
+			 BigDecimal contador = (BigDecimal) query.uniqueResult();
+			 
+			 if(num.equals(contador)) {
+				 return true;
+			 }else {
+				 return false;
+			 }
 
+	       	} catch (Exception e) {
+	       		e.printStackTrace();
+	       		return false;
+	       	}
+	   	}
+	 
+	 @Override
+	 public Boolean isActivoBloqueadoGENCAT(Long idActivo) {
+		 
+		 try {
+			 
+			 BigDecimal num = new BigDecimal(0);
+			 Session session = this.getSessionFactory().getCurrentSession();
+			 
+			 Query query = session.createSQLQuery("SELECT COUNT (DISTINCT ACT.ACT_ID)\r\n" + 
+			 		"    FROM ACT_ACTIVO ACT\r\n" + 
+			 		"    INNER JOIN REM01.BIE_LOCALIZACION BIE ON ACT.BIE_ID = BIE.BIE_ID\r\n" + 
+			 		"    INNER JOIN REM01.CMU_CONFIG_MUNICIPIOS CMU ON CMU.DD_LOC_ID = BIE.DD_LOC_ID\r\n" + 
+			 		"    INNER JOIN REM01.DD_TPA_TIPO_ACTIVO TPA ON TPA.DD_TPA_ID = ACT.DD_TPA_ID AND DD_TPA_CODIGO = '02'\r\n" + 
+			 		"    INNER JOIN REM01.ACT_AJD_ADJJUDICIAL AJD ON AJD.ACT_ID = ACT.ACT_ID AND TRUNC(AJD.AJD_FECHA_ADJUDICACION) > TO_DATE('07/04/2018', 'DD/MM/YYYY')\r\n" + 
+			 		"    INNER JOIN REM01.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = ACT.DD_CRA_ID\r\n" + 
+			 		"    INNER JOIN REM01.DD_SCR_SUBCARTERA SCR ON SCR.DD_SCR_ID = ACT.DD_SCR_ID\r\n" + 
+			 		"    INNER JOIN REM01.ACT_OFR AOFR ON AOFR.ACT_ID = ACT.ACT_ID\r\n" + 
+			 		"    INNER JOIN REM01.OFR_OFERTAS OFR ON OFR.OFR_ID = AOFR.OFR_ID\r\n" + 
+			 		"    INNER JOIN REM01.DD_EOF_ESTADOS_OFERTA EOF ON EOF.DD_EOF_ID = OFR.DD_EOF_ID\r\n" + 
+			 		"    INNER JOIN REM01.DD_TOF_TIPOS_OFERTA TOF ON TOF.DD_TOF_ID = OFR.DD_TOF_ID \r\n" + 
+			 		"WHERE\r\n" + 
+			 		"      ACT.ACT_ID = "+ idActivo +" AND (\r\n" + 
+			 		"        (CRA.DD_CRA_CODIGO = '03' AND ( SCR.DD_SCR_CODIGO = '08' OR SCR.DD_SCR_CODIGO = '06' OR SCR.DD_SCR_CODIGO = '09' OR SCR.DD_SCR_CODIGO = '07'))\r\n" + 
+			 		"        OR (CRA.DD_CRA_CODIGO = '02' AND SCR.DD_SCR_CODIGO = '04')\r\n" + 
+			 		"        OR (CRA.DD_CRA_CODIGO = '01' AND SCR.DD_SCR_CODIGO = '02')\r\n" + 
+			 		"        OR (CRA.DD_CRA_CODIGO = '08' AND SCR.DD_SCR_CODIGO = '18')\r\n" + 
+			 		"        OR (CRA.DD_CRA_CODIGO = '06' AND SCR.DD_SCR_CODIGO = '16')\r\n" + 
+			 		"     )  \r\n" + 
+			 		"     AND TOF.DD_TOF_CODIGO = '01'\r\n" + 
+			 		"     AND EOF.DD_EOF_CODIGO <> '02'");
+			 
+			 num = (BigDecimal) query.uniqueResult();
+			 return num.intValueExact() > 0;
+			 
+		 } catch (Exception e) {
+			 e.printStackTrace();
+			 return false;
+		 } 
+		 	 
+		 
+		 
+	 }
+	 
+	 @Override
+	 public int countActivosAfectoGENCAT(Long idAgrupacion) {
+		 try {
+			 BigDecimal nActivos = new BigDecimal(0);
+			 Session session = this.getSessionFactory().getCurrentSession();
+			 Query query = session.createSQLQuery("SELECT COUNT (DISTINCT ACT.ACT_ID) FROM ACT_ACTIVO ACT\r\n" + 
+			 		"    INNER JOIN REM01.BIE_LOCALIZACION BIE ON ACT.BIE_ID = BIE.BIE_ID\r\n" + 
+			 		"    INNER JOIN REM01.CMU_CONFIG_MUNICIPIOS CMU ON CMU.DD_LOC_ID = BIE.DD_LOC_ID\r\n" + 
+			 		"    INNER JOIN REM01.DD_TPA_TIPO_ACTIVO TPA ON TPA.DD_TPA_ID = ACT.DD_TPA_ID AND DD_TPA_CODIGO = '02'\r\n" + 
+			 		"    INNER JOIN REM01.ACT_AJD_ADJJUDICIAL AJD ON AJD.ACT_ID = ACT.ACT_ID AND TRUNC(AJD.AJD_FECHA_ADJUDICACION) > to_date('07/04/18','DD/MM/YYYY')\r\n" + 
+			 		"    INNER JOIN REM01.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = ACT.DD_CRA_ID\r\n" + 
+			 		"    INNER JOIN REM01.DD_SCR_SUBCARTERA SCR ON SCR.DD_SCR_ID = ACT.DD_SCR_ID\r\n" + 
+			 		"    INNER JOIN REM01.ACT_AGA_AGRUPACION_ACTIVO AGA ON AGA.ACT_ID = ACT.ACT_ID\r\n" + 
+			 		"WHERE AGA.AGR_ID = " + idAgrupacion + " AND (\r\n" + 
+			 		"    (CRA.DD_CRA_CODIGO = '03' AND (SCR.DD_SCR_CODIGO = '08' OR SCR.DD_SCR_CODIGO = '06' OR SCR.DD_SCR_CODIGO = '09' OR SCR.DD_SCR_CODIGO = '07'))\r\n" + 
+			 		"    OR (CRA.DD_CRA_CODIGO = '02' AND SCR.DD_SCR_CODIGO = '04')\r\n" + 
+			 		"    OR (CRA.DD_CRA_CODIGO = '01' AND SCR.DD_SCR_CODIGO = '02')\r\n" + 
+			 		"    OR (CRA.DD_CRA_CODIGO = '08' AND SCR.DD_SCR_CODIGO = '18')\r\n" + 
+			 		"    OR (CRA.DD_CRA_CODIGO = '06' AND SCR.DD_SCR_CODIGO = '16')\r\n" + 
+			 		"    )");
+			 
+			 nActivos = (BigDecimal) query.uniqueResult();
+			 return nActivos.intValueExact();
+		 } catch (Exception e) {
+			 e.printStackTrace();
+			 return 0;
+		 }
+	 }
 }

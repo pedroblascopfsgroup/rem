@@ -1365,7 +1365,7 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 	
-	/*
+	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView getExpedienteComercialPropagables(String idExpediente, ModelMap model){
@@ -1378,5 +1378,5 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 		}
 
 		return createModelAndViewJson(model);
-	}*/
+	}
 }

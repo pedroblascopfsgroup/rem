@@ -972,5 +972,5 @@ public interface ExpedienteComercialApi {
 	 * @param idExpediente
 	 * @return 
 	 */
-	DtoFichaExpediente getExpedienteComercialPropagables(Long idExpediente);
+	 DtoFichaExpediente getExpedienteComercialPropagables(Long idExpediente);
 }

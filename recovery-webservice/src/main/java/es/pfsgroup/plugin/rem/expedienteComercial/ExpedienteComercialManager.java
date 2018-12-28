@@ -5746,5 +5746,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		return numExpediente;
 
 	}
+
+	@Override
+	public DtoFichaExpediente getExpedienteComercialPropagables(Long idExpediente) {
+		// TODO Auto-generated method stub
+		return null;
+	}	
 }
 

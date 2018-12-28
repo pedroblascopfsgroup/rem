@@ -197,6 +197,12 @@ public class VBusquedaDatosCompradorExpediente implements Serializable {
 	
 	@Column(name = "DESC_PAIS_RTE")
 	private String descripcionPaisRte;
+	
+	// HREOS-4937
+	private Boolean cesionDatos;
+	private Boolean comunicacionTerceros;
+	private Boolean transferenciasInternacionales;
+	private Long idDocAdjunto;
     
 
 	public String getId() {
@@ -678,6 +684,39 @@ public class VBusquedaDatosCompradorExpediente implements Serializable {
 
 	public void setDescripcionPaisRte(String descripcionPaisRte) {
 		this.descripcionPaisRte = descripcionPaisRte;
+	}
+
+	//HREOS-4937
+	public Boolean getCesionDatos() {
+		return cesionDatos;
+	}
+
+	public void setCesionDatos(Boolean cesionDatos) {
+		this.cesionDatos = cesionDatos;
+	}
+
+	public Boolean getComunicacionTerceros() {
+		return comunicacionTerceros;
+	}
+
+	public void setComunicacionTerceros(Boolean comunicacionTerceros) {
+		this.comunicacionTerceros = comunicacionTerceros;
+	}
+
+	public Boolean getTransferenciasInternacionales() {
+		return transferenciasInternacionales;
+	}
+
+	public void setTransferenciasInternacionales(Boolean transferenciasInternacionales) {
+		this.transferenciasInternacionales = transferenciasInternacionales;
+	}
+
+	public Long getIdDocAdjunto() {
+		return idDocAdjunto;
+	}
+
+	public void setIdDocAdjunto(Long idDocAdjunto) {
+		this.idDocAdjunto = idDocAdjunto;
 	}
 
 

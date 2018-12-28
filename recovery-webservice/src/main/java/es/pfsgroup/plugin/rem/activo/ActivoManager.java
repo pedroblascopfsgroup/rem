@@ -119,6 +119,8 @@ import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
+import es.pfsgroup.plugin.rem.model.ClienteCompradorGDPR;
+import es.pfsgroup.plugin.rem.model.ClienteGDPR;
 import es.pfsgroup.plugin.rem.model.Comprador;
 import es.pfsgroup.plugin.rem.model.CompradorExpediente;
 import es.pfsgroup.plugin.rem.model.CompradorExpediente.CompradorExpedientePk;
@@ -1122,6 +1124,21 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				if (!Checks.esNulo(oferta.getCliente().getTipoPersona())) {
 					nuevoComprador.setTipoPersona(oferta.getCliente().getTipoPersona());
 				}
+								
+				// HREOS - 4937
+				ClienteGDPR clienteGDPR = genericDao.get(ClienteGDPR.class,
+						genericDao.createFilter(FilterType.EQUALS, "cliente.id", oferta.getCliente().getId()));
+				if (!Checks.esNulo(clienteGDPR)) {
+					if (!Checks.esNulo(clienteGDPR.getCesionDatos())) {
+						nuevoComprador.setCesionDatos(clienteGDPR.getCesionDatos());
+					}
+					if (!Checks.esNulo(clienteGDPR.getComunicacionTerceros())) {
+						nuevoComprador.setComunicacionTerceros(clienteGDPR.getComunicacionTerceros());
+					}
+					if (!Checks.esNulo(clienteGDPR.getTransferenciasInternacionales())) {
+						nuevoComprador.setTransferenciasInternacionales(clienteGDPR.getTransferenciasInternacionales());
+					}
+				}
 
 				genericDao.save(Comprador.class, nuevoComprador);
 
@@ -1142,6 +1159,28 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				}
 
 				listaCompradoresExpediente.add(compradorExpedienteNuevo);
+				
+				
+				// HREOS - 4937 - Historificando				
+				ClienteCompradorGDPR clienteCompradorGDPR = new ClienteCompradorGDPR();
+				clienteCompradorGDPR.setTipoDocumento(nuevoComprador.getTipoDocumento());
+				clienteCompradorGDPR.setNumDocumento(nuevoComprador.getDocumento());
+				if (!Checks.esNulo(clienteGDPR)) {
+					if (!Checks.esNulo(clienteGDPR.getCesionDatos())) {
+						clienteCompradorGDPR.setCesionDatos(clienteGDPR.getCesionDatos());
+					}
+					if (!Checks.esNulo(clienteGDPR.getComunicacionTerceros())) {
+						clienteCompradorGDPR.setComunicacionTerceros(clienteGDPR.getComunicacionTerceros());
+					}
+					if (!Checks.esNulo(clienteGDPR.getTransferenciasInternacionales())) {
+						clienteCompradorGDPR.setTransferenciasInternacionales(clienteGDPR.getTransferenciasInternacionales());								
+					}
+					if (!Checks.esNulo(clienteGDPR.getAdjuntoComprador())) {
+						clienteCompradorGDPR.setAdjuntoComprador(clienteGDPR.getAdjuntoComprador());
+					}
+				}				
+				genericDao.save(ClienteCompradorGDPR.class, clienteCompradorGDPR);				
+				
 			}
 
 			// Se recorre todos los titulares adicionales, estos tambien se
@@ -1173,6 +1212,10 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 						listaCompradoresExpediente.add(compradorExpedienteAdicionalNuevo);
 
 					} else {
+						ClienteGDPR cliGDPR = genericDao.get(ClienteGDPR.class,
+								genericDao.createFilter(FilterType.EQUALS, "tipoDocumento.id", titularAdicional.getTipoDocumento().getId()),
+								genericDao.createFilter(FilterType.EQUALS, "numDocumento", titularAdicional.getDocumento()));
+						
 						Comprador nuevoCompradorAdicional = new Comprador();
 						CompradorExpediente compradorExpedienteAdicionalNuevo = new CompradorExpediente();
 						compradorExpedienteAdicionalNuevo.setBorrado(false);
@@ -1183,6 +1226,17 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 						nuevoCompradorAdicional.setDocumento(titularAdicional.getDocumento());
 						nuevoCompradorAdicional.setNombre(titularAdicional.getNombre());
 						nuevoCompradorAdicional.setTipoDocumento(titularAdicional.getTipoDocumento());
+						if (!Checks.esNulo(cliGDPR)) {
+							if (!Checks.esNulo(cliGDPR.getCesionDatos())) {
+								nuevoCompradorAdicional.setCesionDatos(cliGDPR.getCesionDatos());
+							}
+							if (!Checks.esNulo(cliGDPR.getComunicacionTerceros())) {
+								nuevoCompradorAdicional.setComunicacionTerceros(cliGDPR.getComunicacionTerceros());
+							}
+							if (!Checks.esNulo(cliGDPR.getTransferenciasInternacionales())) {
+								nuevoCompradorAdicional.setTransferenciasInternacionales(cliGDPR.getTransferenciasInternacionales());
+							}
+						}
 						genericDao.save(Comprador.class, nuevoCompradorAdicional);
 
 						CompradorExpedientePk pk = new CompradorExpedientePk();
@@ -1195,6 +1249,27 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 						compradorExpedienteAdicionalNuevo.setPorcionCompra(parteCompraAdicionales);
 
 						listaCompradoresExpediente.add(compradorExpedienteAdicionalNuevo);
+						
+						// HREOS - 4937 - Historificando				
+						ClienteCompradorGDPR clienteCompradorGDPR = new ClienteCompradorGDPR();
+						clienteCompradorGDPR.setTipoDocumento(nuevoCompradorAdicional.getTipoDocumento());
+						clienteCompradorGDPR.setNumDocumento(nuevoCompradorAdicional.getDocumento());
+						if (!Checks.esNulo(cliGDPR)) {
+							if (!Checks.esNulo(cliGDPR.getCesionDatos())) {
+								clienteCompradorGDPR.setCesionDatos(cliGDPR.getCesionDatos());
+							}
+							if (!Checks.esNulo(cliGDPR.getComunicacionTerceros())) {
+								clienteCompradorGDPR.setComunicacionTerceros(cliGDPR.getComunicacionTerceros());
+							}
+							if (!Checks.esNulo(cliGDPR.getTransferenciasInternacionales())) {
+								clienteCompradorGDPR.setTransferenciasInternacionales(cliGDPR.getTransferenciasInternacionales());								
+							}
+							if (!Checks.esNulo(cliGDPR.getAdjuntoComprador())) {
+								clienteCompradorGDPR.setAdjuntoComprador(cliGDPR.getAdjuntoComprador());
+							}
+						}						
+						genericDao.save(ClienteCompradorGDPR.class, clienteCompradorGDPR);
+
 					}
 				}
 			}

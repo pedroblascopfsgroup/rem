@@ -112,7 +112,10 @@ import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ActivoVivienda;
+import es.pfsgroup.plugin.rem.model.AdjuntoComprador;
 import es.pfsgroup.plugin.rem.model.ClienteComercial;
+import es.pfsgroup.plugin.rem.model.ClienteCompradorGDPR;
+import es.pfsgroup.plugin.rem.model.ClienteGDPR;
 import es.pfsgroup.plugin.rem.model.DtoActivoCargas;
 import es.pfsgroup.plugin.rem.model.DtoActivoCatastro;
 import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
@@ -3316,9 +3319,7 @@ public class ActivoAdapter {
 		}
 
 		try {
-			Oferta oferta = new Oferta();
-			oferta.setVentaDirecta(dto.getVentaDirecta());
-			oferta.setOrigen(OfertaApi.ORIGEN_REM);
+			
 			ClienteComercial clienteComercial = new ClienteComercial();
 
 			/*
@@ -3370,10 +3371,14 @@ public class ActivoAdapter {
 				if (!Checks.esNulo(regimen)) {
 					clienteComercial.setRegimenMatrimonial(regimen);
 				}
-			}
-
+			}						
+					
 			genericDao.save(ClienteComercial.class, clienteComercial);
-
+			
+			Oferta oferta = new Oferta();
+			oferta.setVentaDirecta(dto.getVentaDirecta());
+			oferta.setOrigen(OfertaApi.ORIGEN_REM);
+			
 			oferta.setNumOferta(numOferta);
 			oferta.setImporteOferta(Double.valueOf(dto.getImporteOferta()));
 			oferta.setEstadoOferta(estadoOferta);
@@ -3408,6 +3413,64 @@ public class ActivoAdapter {
 			}else {
 				notificationOfertaManager.sendNotification(oferta);
 			}
+					
+			// HREOS-4937 -- 'General Data Protection Regulation'
+
+			// Comprobamos si existe en la tabla CGD_CLIENTE_GDPR un registro con el mismo
+			// número y tipo de documento
+			ClienteGDPR cliGDPR = genericDao.get(ClienteGDPR.class,
+					genericDao.createFilter(FilterType.EQUALS, "tipoDocumento.id", tipoDocumento.getId()),
+					genericDao.createFilter(FilterType.EQUALS, "numDocumento", dto.getNumDocumentoCliente()));
+
+			AdjuntoComprador docAdjunto = null;
+			if (!Checks.esNulo(dto.getIdDocAdjunto())) {
+				docAdjunto = genericDao.get(AdjuntoComprador.class,
+						genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdDocAdjunto()));
+			}
+			// Si existe pasamos la información al histórico y actualizamos el objeto con
+			// los nuevos datos
+			if (!Checks.esNulo(cliGDPR)) {
+
+				// Primero historificamos los datos de ClienteGDPR en ClienteCompradorGDPR
+				ClienteCompradorGDPR clienteCompradorGDPR = new ClienteCompradorGDPR();
+				clienteCompradorGDPR.setTipoDocumento(cliGDPR.getTipoDocumento());
+				clienteCompradorGDPR.setNumDocumento(cliGDPR.getNumDocumento());
+				clienteCompradorGDPR.setCesionDatos(cliGDPR.getCesionDatos());
+				clienteCompradorGDPR.setComunicacionTerceros(cliGDPR.getComunicacionTerceros());
+				clienteCompradorGDPR.setTransferenciasInternacionales(cliGDPR.getTransferenciasInternacionales());
+				if (!Checks.esNulo(cliGDPR.getAdjuntoComprador())) {
+					clienteCompradorGDPR.setAdjuntoComprador(cliGDPR.getAdjuntoComprador());
+				}
+
+				genericDao.save(ClienteCompradorGDPR.class, clienteCompradorGDPR);
+
+				// Despues se hace el update en ClienteGDPR
+				cliGDPR.setCliente(clienteComercial);
+				cliGDPR.setCesionDatos(dto.getCesionDatos());
+				cliGDPR.setComunicacionTerceros(dto.getComunicacionTerceros());
+				cliGDPR.setTransferenciasInternacionales(dto.getTransferenciasInternacionales());
+
+				if (!Checks.esNulo(docAdjunto)) {
+					cliGDPR.setAdjuntoComprador(docAdjunto);
+				}
+				genericDao.update(ClienteGDPR.class, cliGDPR);
+
+				// Si no existe simplemente creamos e insertamos un nuevo objeto ClienteGDPR
+			} else {
+				ClienteGDPR clienteGDPR = new ClienteGDPR();
+				clienteGDPR.setCliente(clienteComercial);
+				clienteGDPR.setTipoDocumento(tipoDocumento);
+				clienteGDPR.setNumDocumento(dto.getNumDocumentoCliente());
+				clienteGDPR.setCesionDatos(dto.getCesionDatos());
+				clienteGDPR.setComunicacionTerceros(dto.getComunicacionTerceros());
+				clienteGDPR.setTransferenciasInternacionales(dto.getTransferenciasInternacionales());
+
+				if (!Checks.esNulo(docAdjunto)) {
+					clienteGDPR.setAdjuntoComprador(docAdjunto);
+				}
+				genericDao.save(ClienteGDPR.class, clienteGDPR);
+			}			
+			
 		} catch (Exception ex) {
 			logger.error("error en activoAdapter", ex);
 			ex.printStackTrace();

@@ -637,6 +637,16 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	public ModelAndView getCompradorById(VBusquedaDatosCompradorExpediente dto, ModelMap model) {
 		try {
 			VBusquedaDatosCompradorExpediente vista = expedienteComercialApi.getDatosCompradorById(dto.getId(), dto.getIdExpedienteComercial());
+			//HREOS-4937
+			if (!Checks.esNulo(dto.getCesionDatos())) {
+				vista.setCesionDatos(dto.getCesionDatos());
+			}
+			if (!Checks.esNulo(dto.getComunicacionTerceros())) {
+				vista.setComunicacionTerceros(dto.getComunicacionTerceros());
+			}
+			if (!Checks.esNulo(dto.getTransferenciasInternacionales())) {
+				vista.setTransferenciasInternacionales(dto.getTransferenciasInternacionales());
+			}
 			DtoModificarCompradores comprador = expedienteComercialApi.vistaADtoModCompradores(vista);
 			model.put(RESPONSE_DATA_KEY, comprador);
 			model.put(RESPONSE_SUCCESS_KEY, true);

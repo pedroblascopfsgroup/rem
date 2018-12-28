@@ -186,6 +186,18 @@ Ext.define('HreRem.model.FichaComprador', {
 		},
 		{
 			name: 'esBH'
+		},
+		{
+			name: 'cesionDatos'
+		},
+		{
+			name: 'comunicacionTerceros'
+		},
+		{
+			name: 'transferenciasInternacionales'
+		},
+		{
+			name: 'idDocAdjunto'
 		}
 		
     ],

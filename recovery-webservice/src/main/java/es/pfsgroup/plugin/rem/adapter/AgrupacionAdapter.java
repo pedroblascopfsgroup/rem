@@ -79,8 +79,11 @@ import es.pfsgroup.plugin.rem.model.ActivoProyecto;
 import es.pfsgroup.plugin.rem.model.ActivoPublicacion;
 import es.pfsgroup.plugin.rem.model.ActivoRestringida;
 import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
+import es.pfsgroup.plugin.rem.model.AdjuntoComprador;
 import es.pfsgroup.plugin.rem.model.AgrupacionesVigencias;
 import es.pfsgroup.plugin.rem.model.ClienteComercial;
+import es.pfsgroup.plugin.rem.model.ClienteCompradorGDPR;
+import es.pfsgroup.plugin.rem.model.ClienteGDPR;
 import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
 import es.pfsgroup.plugin.rem.model.DtoAgrupaciones;
@@ -2065,6 +2068,63 @@ public class AgrupacionAdapter {
 						}
 					}
 				}
+			}
+			
+			// HREOS-4937 -- 'General Data Protection Regulation'
+
+			// Comprobamos si existe en la tabla CGD_CLIENTE_GDPR un registro con el mismo
+			// número y tipo de documento
+			ClienteGDPR cliGDPR = genericDao.get(ClienteGDPR.class,
+					genericDao.createFilter(FilterType.EQUALS, "tipoDocumento.id", tipoDocumento.getId()),
+					genericDao.createFilter(FilterType.EQUALS, "numDocumento", dto.getNumDocumentoCliente()));
+
+			AdjuntoComprador docAdjunto = null;
+			if (!Checks.esNulo(dto.getIdDocAdjunto())) {
+				docAdjunto = genericDao.get(AdjuntoComprador.class,
+						genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdDocAdjunto()));
+			}
+			// Si existe pasamos la información al histórico y actualizamos el objeto con
+			// los nuevos datos
+			if (!Checks.esNulo(cliGDPR)) {
+
+				// Primero historificamos los datos de ClienteGDPR en ClienteCompradorGDPR
+				ClienteCompradorGDPR clienteCompradorGDPR = new ClienteCompradorGDPR();
+				clienteCompradorGDPR.setTipoDocumento(cliGDPR.getTipoDocumento());
+				clienteCompradorGDPR.setNumDocumento(cliGDPR.getNumDocumento());
+				clienteCompradorGDPR.setCesionDatos(cliGDPR.getCesionDatos());
+				clienteCompradorGDPR.setComunicacionTerceros(cliGDPR.getComunicacionTerceros());
+				clienteCompradorGDPR.setTransferenciasInternacionales(cliGDPR.getTransferenciasInternacionales());
+				if (!Checks.esNulo(cliGDPR.getAdjuntoComprador())) {
+					clienteCompradorGDPR.setAdjuntoComprador(cliGDPR.getAdjuntoComprador());
+				}
+
+				genericDao.save(ClienteCompradorGDPR.class, clienteCompradorGDPR);
+
+				// Despues se hace el update en ClienteGDPR
+				cliGDPR.setCliente(clienteComercial);
+				cliGDPR.setCesionDatos(dto.getCesionDatos());
+				cliGDPR.setComunicacionTerceros(dto.getComunicacionTerceros());
+				cliGDPR.setTransferenciasInternacionales(dto.getTransferenciasInternacionales());
+
+				if (!Checks.esNulo(docAdjunto)) {
+					cliGDPR.setAdjuntoComprador(docAdjunto);
+				}
+				genericDao.update(ClienteGDPR.class, cliGDPR);
+
+				// Si no existe simplemente creamos e insertamos un nuevo objeto ClienteGDPR
+			} else {
+				ClienteGDPR clienteGDPR = new ClienteGDPR();
+				clienteGDPR.setCliente(clienteComercial);
+				clienteGDPR.setTipoDocumento(tipoDocumento);
+				clienteGDPR.setNumDocumento(dto.getNumDocumentoCliente());
+				clienteGDPR.setCesionDatos(dto.getCesionDatos());
+				clienteGDPR.setComunicacionTerceros(dto.getComunicacionTerceros());
+				clienteGDPR.setTransferenciasInternacionales(dto.getTransferenciasInternacionales());
+
+				if (!Checks.esNulo(docAdjunto)) {
+					clienteGDPR.setAdjuntoComprador(docAdjunto);
+				}
+				genericDao.save(ClienteGDPR.class, clienteGDPR);
 			}
 
 		} catch (Exception ex) {

@@ -96,8 +96,11 @@ import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
+import es.pfsgroup.plugin.rem.model.AdjuntoComprador;
 import es.pfsgroup.plugin.rem.model.AdjuntoExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.BloqueoActivoFormalizacion;
+import es.pfsgroup.plugin.rem.model.ClienteCompradorGDPR;
+import es.pfsgroup.plugin.rem.model.ClienteGDPR;
 import es.pfsgroup.plugin.rem.model.ComparecienteVendedor;
 import es.pfsgroup.plugin.rem.model.Comprador;
 import es.pfsgroup.plugin.rem.model.CompradorExpediente;
@@ -3188,9 +3191,52 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				if (!Checks.esNulo(dto.getEmail())) {
 					comprador.setEmail(dto.getEmail());
 				}
-
-				Filter filtroExpedienteComercial = genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(dto.getIdExpedienteComercial()));
-				ExpedienteComercial expedienteComercial = genericDao.get(ExpedienteComercial.class, filtroExpedienteComercial);
+							
+				// HREOS-4937 -- GDPR
+				//Actualizamos datos GDPR del comprador
+				if (!Checks.esNulo(dto.getCesionDatos())) {
+					comprador.setCesionDatos(dto.getCesionDatos());
+				}
+				if (!Checks.esNulo(dto.getComunicacionTerceros())) {
+					comprador.setComunicacionTerceros(dto.getComunicacionTerceros());
+				}
+				if (!Checks.esNulo(dto.getTransferenciasInternacionales())) {
+					comprador.setTransferenciasInternacionales(dto.getTransferenciasInternacionales());
+				}
+				//Historificamos despues del update
+				AdjuntoComprador docAdjunto = null;
+				if (!Checks.esNulo(dto.getIdDocAdjunto())) {
+					docAdjunto = genericDao.get(AdjuntoComprador.class,
+							genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdDocAdjunto()));
+				}
+				ClienteCompradorGDPR clienteCompradorGDPR = new ClienteCompradorGDPR();
+				
+				if (!Checks.esNulo(comprador.getTipoDocumento())) {
+					clienteCompradorGDPR.setTipoDocumento(comprador.getTipoDocumento());
+				}
+				if (!Checks.esNulo(comprador.getDocumento())) {
+					clienteCompradorGDPR.setNumDocumento(comprador.getDocumento());
+				}
+				if (!Checks.esNulo(comprador.getCesionDatos())) {
+					clienteCompradorGDPR.setCesionDatos(comprador.getCesionDatos());
+				}
+				if (!Checks.esNulo(comprador.getComunicacionTerceros())) {
+					clienteCompradorGDPR.setComunicacionTerceros(comprador.getComunicacionTerceros());
+				}
+				if (!Checks.esNulo(comprador.getTransferenciasInternacionales())) {
+					clienteCompradorGDPR.setTransferenciasInternacionales(comprador.getTransferenciasInternacionales());
+				}				
+				if (!Checks.esNulo(docAdjunto)) {
+					clienteCompradorGDPR.setAdjuntoComprador(docAdjunto);
+				}
+				
+				genericDao.save(ClienteCompradorGDPR.class, clienteCompradorGDPR);
+				
+				
+				Filter filtroExpedienteComercial = genericDao.createFilter(FilterType.EQUALS, "id",
+						Long.parseLong(dto.getIdExpedienteComercial()));
+				ExpedienteComercial expedienteComercial = genericDao.get(ExpedienteComercial.class,
+						filtroExpedienteComercial);
 
 				for (CompradorExpediente compradorExpediente : expedienteComercial.getCompradores()) {
 					if (compradorExpediente.getPrimaryKey().getComprador().getId().equals(Long.parseLong(dto.getId())) && compradorExpediente.getPrimaryKey().getExpediente().getId().equals(Long
@@ -3839,7 +3885,16 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				if (!Checks.esNulo(dto.getEmail())) {
 					comprador.setEmail(dto.getEmail());
 				}
-
+				// HREOS - 4937 -- GDPR
+				if (!Checks.esNulo(dto.getCesionDatos())) {
+					comprador.setCesionDatos(dto.getCesionDatos());
+				}
+				if (!Checks.esNulo(dto.getComunicacionTerceros())) {
+					comprador.setComunicacionTerceros(dto.getComunicacionTerceros());
+				}
+				if (!Checks.esNulo(dto.getTransferenciasInternacionales())) {
+					comprador.setTransferenciasInternacionales(dto.getTransferenciasInternacionales());
+				}				
 				if (!Checks.esNulo(dto.getTitularReserva())) {
 					compradorExpediente.setTitularReserva(dto.getTitularReserva());
 				}
@@ -3952,6 +4007,38 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				pk.setComprador(comprador);
 				pk.setExpediente(expediente);
 				compradorExpediente.setPrimaryKey(pk);
+				
+				
+				// HREOS - 4937
+				//Historificamos
+				AdjuntoComprador docAdjunto = null;
+				if (!Checks.esNulo(dto.getIdDocAdjunto())) {
+					docAdjunto = genericDao.get(AdjuntoComprador.class,
+							genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdDocAdjunto()));
+				}
+				ClienteCompradorGDPR clienteCompradorGDPR = new ClienteCompradorGDPR();
+
+				if (!Checks.esNulo(dto.getCodTipoDocumento())) {
+					DDTipoDocumento tipoDocumentoComprador = (DDTipoDocumento) utilDiccionarioApi
+							.dameValorDiccionarioByCod(DDTipoDocumento.class, dto.getCodTipoDocumento());
+					clienteCompradorGDPR.setTipoDocumento(tipoDocumentoComprador);
+				}
+				if (!Checks.esNulo(dto.getNumDocumento())) {
+					clienteCompradorGDPR.setNumDocumento(dto.getNumDocumento());
+				}
+				if (!Checks.esNulo(dto.getCesionDatos())) {
+					clienteCompradorGDPR.setCesionDatos(dto.getCesionDatos());
+				}
+				if (!Checks.esNulo(dto.getComunicacionTerceros())) {
+					clienteCompradorGDPR.setComunicacionTerceros(dto.getComunicacionTerceros());
+				}
+				if (!Checks.esNulo(dto.getTransferenciasInternacionales())) {
+					clienteCompradorGDPR.setTransferenciasInternacionales(dto.getTransferenciasInternacionales());
+				}				
+				if (!Checks.esNulo(docAdjunto)) {
+					clienteCompradorGDPR.setAdjuntoComprador(docAdjunto);
+				}
+				genericDao.save(ClienteCompradorGDPR.class, clienteCompradorGDPR);				
 
 				genericDao.save(Comprador.class, comprador);
 				expediente.getCompradores().add(compradorExpediente);

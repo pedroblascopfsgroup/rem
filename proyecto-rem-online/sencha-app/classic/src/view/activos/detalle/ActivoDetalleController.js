@@ -772,8 +772,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			me.onSaveFormularioCompletoTabComercial(btn, form);
 		} else if("datospatrimonio" == form.getXType()){
 			me.onSaveFormularioCompletoTabPatrimonio(btn, form);
-		} else if("datosbasicosactivo" == form.getXType()){
-			me.onSaveFormularioCompletoTabDatosBasicosActivo(btn, form);
 		} else {
 			me.onSaveFormularioCompleto(btn, form, false);
 		}
@@ -3704,24 +3702,5 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		            comboAdecuacion.setValue("");
 	   	 }
 	   	 checkbox.setReadOnly(this.enableChkPerimetroAlquiler()); 
-    },
-    
-    onSaveFormularioCompletoTabDatosBasicosActivo: function(btn, form){
-    	var me = this;
-    	var isRestringida = me.getViewModel().get('activo.pertenceAgrupacionRestringida');
-    	
-    	if(isRestringida == true){
-    		Ext.Msg.confirm(
-    			HreRem.i18n("title.agrupacion.restringida"),
-    			HreRem.i18n("msg.confirm.agrupacion.restringida"),
-    			function(btnConfirm){
-    				if (btnConfirm == "yes"){
-    					me.onSaveFormularioCompleto(btn, form, true);
-    				}
-    			}
-    		);
-    	}else{
-    		me.onSaveFormularioCompleto(btn, form, false);
-    	}
     }
 });

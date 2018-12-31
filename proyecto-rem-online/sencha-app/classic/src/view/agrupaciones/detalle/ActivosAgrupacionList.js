@@ -221,7 +221,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
 	            flex: 1
 	        },
 	        {
-	            dataIndex: 'subtipoActivoDesc',
+	            dataIndex: 'subtipoActivoDescripcion',
 	            text: HreRem.i18n('header.subtipo'),
 	            flex: 0.5
 	        },
@@ -262,22 +262,16 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
 	            flex: 0.5
 	        },
 	        {   
-	        	dataIndex: 'estadoVenta',
+	        	dataIndex: 'condPublVenta',
 	            text: HreRem.i18n('header.condicionantes.publicacion.venta'),
 	            flex: 1,
-	            renderer: condPublRenderer,
-	            bind: {
-		        	hidden: true
-		        }
+	            renderer: condPublRenderer
 	        },
 	        {
-	            dataIndex: 'estadoAlquiler',
+	            dataIndex: 'condPublAlquiler',
 	            text: HreRem.i18n('header.condicionantes.publicacion.alquiler'),
 	            flex: 1,
-	            renderer: condPublRenderer,
-	            bind: {
-		        	hidden: true
-		        }
+	            renderer: condPublRenderer
 	        },
 	        {
 	            dataIndex: 'situacionComercial',

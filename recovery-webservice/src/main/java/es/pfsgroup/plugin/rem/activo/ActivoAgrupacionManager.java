@@ -187,25 +187,6 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 				}
 			}
 			
-			BeanUtils.copyProperties(actAgrup,dtoVActAgrup);
-			if(!Checks.esNulo(actAgrup.getSubtipoActivo())) {
-				dtoVActAgrup.setCodigoSubtipoActivo(actAgrup.getSubtipoActivo().getCodigo());
-				dtoVActAgrup.setSubtipoActivoDesc(actAgrup.getSubtipoActivo().getDescripcion());
-			}
-			
-			Activo activo = activoApi.get(actAgrup.getActivoId());
-			String codigoTCO = activo.getActivoPublicacion().getTipoComercializacion().getCodigo();
-			if(DDTipoComercializacion.CODIGO_VENTA.equals(codigoTCO) 
-					|| DDTipoComercializacion.CODIGO_ALQUILER_VENTA.equals(codigoTCO)
-					|| DDTipoComercializacion.CODIGO_ALQUILER_OPCION_COMPRA.equals(codigoTCO)) {
-				dtoVActAgrup.setEstadoVenta(activoEstadoPublicacionApi.getEstadoIndicadorPublicacionVenta(activo));
-			}
-			if(DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(codigoTCO) 
-					|| DDTipoComercializacion.CODIGO_ALQUILER_VENTA.equals(codigoTCO)
-					|| DDTipoComercializacion.CODIGO_ALQUILER_OPCION_COMPRA.equals(codigoTCO)) {
-				dtoVActAgrup.setEstadoAlquiler(activoEstadoPublicacionApi.getEstadoIndicadorPublicacionAlquiler(activo));
-			}
-			
 			listaDto.add(dtoVActAgrup);
 		}
 		 

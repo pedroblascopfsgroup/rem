@@ -12,6 +12,7 @@
 --## VERSIONES:
 --##        0.1 Versión inicial
 --##		0.2 Versión con ofertas express
+--##		0.3 Modificaciones motivo "No adecuado" y "Revisión publicación"
 --##########################################
 --*/
 
@@ -73,11 +74,27 @@ create or replace PROCEDURE SP_MOTIVO_OCULTACION (pACT_ID IN NUMBER
                                     FROM '|| V_ESQUEMA ||'.ACT_PTA_PATRIMONIO_ACTIVO PTA
                                     LEFT JOIN '|| V_ESQUEMA ||'.DD_MTO_MOTIVOS_OCULTACION MTO ON MTO.DD_MTO_CODIGO = ''05'' AND MTO.BORRADO = 0 /*No adecuado*/
                                    WHERE (PTA.DD_ADA_ID = (SELECT DDADA.DD_ADA_ID
-                                                             FROM '|| V_ESQUEMA ||'.DD_ADA_ADECUACION_ALQUILER DDADA 
-                                                            WHERE DDADA.BORRADO = 0
-                                                              AND DDADA.DD_ADA_CODIGO = ''02''
-                                                           )
-                                          OR PTA.DD_ADA_ID IS NULL)
+								                             FROM REM01.DD_ADA_ADECUACION_ALQUILER DDADA
+								                            WHERE DDADA.BORRADO = 0
+								                              AND DDADA.DD_ADA_CODIGO = ''02''
+								                           )
+								          OR PTA.DD_ADA_ID = (SELECT DDADA.DD_ADA_ID
+								                             FROM REM01.DD_ADA_ADECUACION_ALQUILER DDADA
+								                            WHERE DDADA.BORRADO = 0
+								                              AND DDADA.DD_ADA_CODIGO = ''04''
+								                           )
+								          OR PTA.DD_ADA_ID IS NULL)
+								          AND (PTA.DD_ADA_ID_ANTERIOR = (SELECT DDADA.DD_ADA_ID
+								                             FROM REM01.DD_ADA_ADECUACION_ALQUILER DDADA
+								                            WHERE DDADA.BORRADO = 0
+								                              AND DDADA.DD_ADA_CODIGO = ''01''
+								                           )
+								          OR PTA.DD_ADA_ID_ANTERIOR = (SELECT DDADA.DD_ADA_ID
+								                             FROM REM01.DD_ADA_ADECUACION_ALQUILER DDADA
+								                            WHERE DDADA.BORRADO = 0
+								                              AND DDADA.DD_ADA_CODIGO = ''03''
+								                           )
+								         )
                                      AND PTA.BORRADO = 0
                                      AND PTA.CHECK_HPM = 1
                                      AND ''A'' = '''||pTIPO||'''
@@ -138,12 +155,15 @@ create or replace PROCEDURE SP_MOTIVO_OCULTACION (pACT_ID IN NUMBER
                                , MTO.DD_MTO_CODIGO
                                , MTO.DD_MTO_ORDEN ORDEN
                                     FROM '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION APU
-                                    JOIN '|| V_ESQUEMA ||'.V_COND_DISPONIBILIDAD V ON V.ACT_ID = APU.ACT_ID AND V.ES_CONDICIONADO = 0
+                                    JOIN '|| V_ESQUEMA ||'.V_COND_DISPONIBILIDAD V ON V.ACT_ID = APU.ACT_ID
                                     JOIN '|| V_ESQUEMA ||'.V_CAMBIO_ESTADO_PUBLI EST ON EST.ACT_ID = APU.ACT_ID AND EST.INFORME_COMERCIAL = 0
                                     LEFT JOIN '|| V_ESQUEMA ||'.DD_MTO_MOTIVOS_OCULTACION MTO ON MTO.DD_MTO_CODIGO = ''06'' AND MTO.BORRADO = 0 /*Revisión Publicación*/
                                    WHERE APU.BORRADO = 0.
-                                     AND APU.ES_CONDICONADO_ANTERIOR = 1 
-                                     AND APU.ACT_ID= '||pACT_ID||                                          
+                                     AND ((APU.ES_CONDICONADO_ANTERIOR = 1 AND V.ES_CONDICIONADO = 0) 
+                                        OR (APU.ES_CONDICONADO_ANTERIOR = 1 AND V.ES_CONDICIONADO = 1 
+                                            AND (MTO.DD_MTO_ID = (SELECT DD_MTO_V_ID FROM REM01.ACT_APU_ACTIVO_PUBLICACION WHERE ACT_ID = '||pACT_ID||')
+                                                OR MTO.DD_MTO_ID = (SELECT DD_MTO_A_ID FROM REM01.ACT_APU_ACTIVO_PUBLICACION WHERE ACT_ID = '||pACT_ID||'))))
+                                     AND APU.ACT_ID= '||pACT_ID||                                 
                          ' UNION                                     
                           SELECT APU.ACT_ID
                                , 1 OCULTO

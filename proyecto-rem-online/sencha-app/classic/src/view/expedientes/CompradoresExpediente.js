@@ -13,9 +13,11 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
 		var me = this;
 		var tipoExpedienteAlquiler = CONST.TIPOS_EXPEDIENTE_COMERCIAL["ALQUILER"];
 		var title = HreRem.i18n('title.compradores');
+		var titlePorcentaje = HreRem.i18n('header.procentaje.compra');
 
 		if(me.lookupViewModel().get('expediente.tipoExpedienteCodigo') === tipoExpedienteAlquiler){
 			title = HreRem.i18n('title.inquilinos');
+			titlePorcentaje = HreRem.i18n('header.procentaje.alquiler');			
 		};
 		
 		me.setTitle(title);
@@ -135,7 +137,7 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
 					        	renderer: coloredRender
 					       },
 						   {
-								text: HreRem.i18n('header.procentaje.compra'),
+								text:  titlePorcentaje,
 								dataIndex: 'porcentajeCompra',
 								flex: 1,
 								renderer: coloredRender,

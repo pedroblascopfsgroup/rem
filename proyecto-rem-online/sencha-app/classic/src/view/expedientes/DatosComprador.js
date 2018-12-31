@@ -31,11 +31,23 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 	},
 
     initComponent: function() {
-    	var me = this;
-    
+    	var me = this;    
     	var modoEdicion = false;
-
-    	me.setTitle(HreRem.i18n("title.windows.datos.comprador"));
+    	
+		var tipoExpedienteAlquiler = CONST.TIPOS_EXPEDIENTE_COMERCIAL["ALQUILER"];
+		var title = HreRem.i18n("title.windows.datos.comprador");
+		var labelTitlePorcentaje = HreRem.i18n('fieldlabel.porcion.compra');
+		var btnCrear = HreRem.i18n('btn.crear');
+		
+		
+		if(me.lookupViewModel().get('expediente.tipoExpedienteCodigo') === tipoExpedienteAlquiler){
+			title = HreRem.i18n("title.windows.datos.inquilino");
+			labelTitlePorcentaje = HreRem.i18n('fieldlabel.porcion.alquiler');
+			btnCrear = HreRem.i18n('btn.crear.Inquilino');
+		};
+		
+		me.setTitle(title);
+		
 
     	me.buttonAlign = 'right';
 
@@ -45,7 +57,7 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 			modoEdicion = true;
 		
     	} else {
-    		me.buttons = [ { itemId: 'btnCrear', text: HreRem.i18n('btn.crear'), handler: 'onClickBotonCrearComprador'},
+    		me.buttons = [ { itemId: 'btnCrear', text: btnCrear, handler: 'onClickBotonCrearComprador'},
     					   { itemId: 'btnCancelar', text: HreRem.i18n('btn.cancelBtnText'), handler: 'onClickBotonCerrarComprador'}];
     	}
 
@@ -134,7 +146,7 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 						                		},
 												{ 
 						                			xtype:'numberfieldbase',
-										        	fieldLabel:  HreRem.i18n('fieldlabel.porcion.compra'),
+										        	fieldLabel:  labelTitlePorcentaje,
 										        	reference: 'porcionCompra',
 										        	bind: '{comprador.porcentajeCompra}',
 										        	maxValue: 100,

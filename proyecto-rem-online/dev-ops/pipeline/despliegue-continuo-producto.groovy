@@ -198,11 +198,11 @@ pipeline {
                 timeout (time:6, unit:'MINUTES') {
                     deploySpringBatch("iba018@ibd03",22)
                 }*/
-                timeout (time:6, unit:'MINUTES') {
-                    deployFrontal("iap018@iap01", 22)
+                timeout (time:10, unit:'MINUTES') {
+                    deployFrontal("recovecp@iap01", 2228)
                 }
-                timeout (time:2, unit:'MINUTES') {
-                    deployProcesos("iba018@ibd03", 22)
+                timeout (time:5, unit:'MINUTES') {
+                    deployProcesos("recovecb@iap01", 2228)
                 }
             }
             

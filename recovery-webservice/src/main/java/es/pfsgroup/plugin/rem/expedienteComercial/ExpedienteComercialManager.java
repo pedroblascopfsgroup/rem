@@ -905,15 +905,18 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					dto.setFechaReserva(expediente.getReserva().getFechaFirma());
 				}else {
 					Trabajo trabajo = expediente.getTrabajo();
-					Activo act=trabajo.getActivo();
-					String valor=tareaActivoApi.getValorFechaSeguroRentaPorIdActivo(act.getId());
-					if(valor != null && !valor.equals("")) {
-						SimpleDateFormat sdf1=new SimpleDateFormat("yyyy-MM-dd");
-						try {
-							dto.setFechaReserva(sdf1.parse(valor));
-						} catch (ParseException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
+					if(trabajo != null){
+						Activo act=trabajo.getActivo();
+						if(act != null){
+							String valor=tareaActivoApi.getValorFechaSeguroRentaPorIdActivo(act.getId());
+							if(valor != null && !valor.equals("")) {
+								SimpleDateFormat sdf1=new SimpleDateFormat("yyyy-MM-dd");
+								try {
+									dto.setFechaReserva(sdf1.parse(valor));
+								} catch (ParseException e) {
+									logger.error("error calculando la fecha de reserva",e);
+								}
+							}
 						}
 					}
 				}

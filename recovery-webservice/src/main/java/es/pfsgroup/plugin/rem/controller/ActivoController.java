@@ -2259,6 +2259,7 @@ public class ActivoController extends ParadiseJsonController {
 				}
 
 			} catch (JsonViewerException jvex) {
+				logger.error("No se ha podido guardar el activo", jvex);
 				model.put(RESPONSE_SUCCESS_KEY, false);
 				model.put(RESPONSE_ERROR_MESSAGE_KEY, jvex.getMessage());
 			} catch (Exception e) {

@@ -2439,7 +2439,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	onCambioInversionSujetoPasivo: function(checkbox, newValue, oldValue, eOpts) {
 		if(!Ext.isEmpty(oldValue)){
 			var me = this,
-			operacionExenta = me.lookupReference('chkboxOperacionExenta'),
+			operacionExenta = me.lookupReference('chckboxOperacionExenta'),
 	    	renunciaExencion = me.lookupReference('chkboxRenunciaExencion'),
 	    	tipoAplicable = me.lookupReference('tipoAplicable');
 	

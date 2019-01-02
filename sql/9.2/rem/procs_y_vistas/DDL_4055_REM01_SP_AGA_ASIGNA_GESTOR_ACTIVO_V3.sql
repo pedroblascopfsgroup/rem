@@ -17,8 +17,6 @@
 --##		0.5 Añadidos los nuevos gestores comerciales de alquiler (gestor y supervisor) - HREOS-5064
 --##		0.6 HREOS-5049 Carlos López: Optimización
 --##		0.7 HREOS-5160 Mariam Lliso: modificada la asignación de gestores
---##		0.4 Añadidos gestor de reserva para Cajamar
---##		0.5 HREOS-5049 Carlos López: Optimización
 --##########################################
 --*/
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE

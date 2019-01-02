@@ -86,6 +86,8 @@ public class DtoTramite extends WebDto {
 	private Boolean activoAplicaGestion;
 	
 	private Boolean esTareaAutorizacionBankia;
+	
+	private String codigoSubcartera;
 
 	public Long getIdTramite() {
 		return idTramite;
@@ -389,6 +391,14 @@ public class DtoTramite extends WebDto {
 
 	public void setEsTareaAutorizacionBankia(Boolean esTareaAutorizacionBankia) {
 		this.esTareaAutorizacionBankia = esTareaAutorizacionBankia;
+	}
+
+	public String getCodigoSubcartera() {
+		return codigoSubcartera;
+	}
+
+	public void setCodigoSubcartera(String codigoSubcartera) {
+		this.codigoSubcartera = codigoSubcartera;
 	}
 	
 }

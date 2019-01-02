@@ -1,10 +1,10 @@
 --/*
 --#########################################
---## AUTOR=Marco Munoz
---## FECHA_CREACION=20180608
+--## AUTOR=Ivan Castelló Cabrelles
+--## FECHA_CREACION=20180102
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=2.0.18
---## INCIDENCIA_LINK=REMVIP-2328s
+--## INCIDENCIA_LINK=REMVIP-2889
 --## PRODUCTO=NO
 --## 
 --## Finalidad:  Creación del SP SP_EXT_ACTUALIZA_PROMOCION
@@ -14,6 +14,7 @@
 --##        0.1-Sergio Ortuño-Versión inicial (20180608) (HREOS-4190)
 --##		0.2-Vicente Martinez Cifre - Modificacion para LBB (REMVIP-1378) (20180608) 
 --##		0.3-Marco Muñoz de Morales - Modificacion para incluir la fecha de toma de posesión. (REMVIP-2328)
+--##		0.4-Ivan Castelló Cabrelles - Modificación al incluir fecha toma posesión, cuando es no judicial no tenesmo en cuenta la BIE_ADJ_ADJUDICACION. (REMVIP-2889)
 --#########################################
 --*/
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
@@ -174,6 +175,7 @@ BEGIN
  						  AND ACT.BORRADO = 0';
 			EXECUTE IMMEDIATE V_MSQL INTO V_COUNT2;
 			
+			/*
 			V_MSQL :=  'SELECT COUNT(1) 
 						FROM '||V_ESQUEMA||'.ACT_ACTIVO 		  ACT
 						JOIN '||V_ESQUEMA||'.BIE_BIEN   		  BIE
@@ -183,9 +185,11 @@ BEGIN
  						WHERE ACT.ACT_NUM_ACTIVO = '||ID_ACTIVO_HAYA||'
  						  AND ACT.BORRADO = 0';
 			EXECUTE IMMEDIATE V_MSQL INTO V_COUNT3;
+			*/
+
 			DBMS_OUTPUT.PUT_LINE('[INFO] FECHA_TOMA_POSESION informado. Se procede a actualizar la fecha de toma de posesión.');
 	  
-			IF V_COUNT2 > 0 AND V_COUNT3 > 0 THEN
+			IF V_COUNT2 > 0 /*AND V_COUNT3 > 0*/ THEN
 					
 				 V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.'||V_TABLA_HLD||' (
 					HLD_SP_CARGA,
@@ -316,8 +320,6 @@ BEGIN
 																					FROM '||V_ESQUEMA||'.ACT_ACTIVO 		  		ACT
 																					JOIN '||V_ESQUEMA||'.BIE_BIEN   		  		BIE
 																					ON ACT.BIE_ID = BIE.BIE_ID
-																					JOIN '||V_ESQUEMA||'.BIE_ADJ_ADJUDICACION 		ADJ
-																					ON ADJ.BIE_ID = BIE.BIE_ID
 																					JOIN '||V_ESQUEMA||'.DD_TTA_TIPO_TITULO_ACTIVO  TTA 
                                                                                     ON TTA.DD_TTA_ID = ACT.DD_TTA_ID
                                                                                     JOIN '||V_ESQUEMA||'.ACT_ADN_ADJNOJUDICIAL 	    ADN
@@ -338,8 +340,6 @@ BEGIN
 														FROM '||V_ESQUEMA||'.ACT_ACTIVO 		  		ACT
 														JOIN '||V_ESQUEMA||'.BIE_BIEN   		  		BIE
 														ON ACT.BIE_ID = BIE.BIE_ID
-														JOIN '||V_ESQUEMA||'.BIE_ADJ_ADJUDICACION 		ADJ
-														ON ADJ.BIE_ID = BIE.BIE_ID
 														JOIN '||V_ESQUEMA||'.DD_TTA_TIPO_TITULO_ACTIVO  TTA 
 														ON TTA.DD_TTA_ID = ACT.DD_TTA_ID
 														JOIN '||V_ESQUEMA||'.ACT_ADN_ADJNOJUDICIAL 	    ADN

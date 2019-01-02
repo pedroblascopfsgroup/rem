@@ -2842,7 +2842,8 @@ public class ActivoAdapter {
 				List<ActivoAgrupacionActivo> agrupaciones = activo.getAgrupaciones();
 				for(ActivoAgrupacionActivo agrupActivo : agrupaciones) {
 					ActivoAgrupacion agrup= agrupActivo.getAgrupacion();
-					if(agrup.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_VENTA)) {
+					if(agrup.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_VENTA) 
+							&& Checks.esNulo(agrup.getFechaBaja())) {
 						tieneAgrupVenta=true;
 						break;
 					}

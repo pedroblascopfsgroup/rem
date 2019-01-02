@@ -69,6 +69,7 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBValoracionesBien;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoHistoricoPatrimonioDao;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoPatrimonioDao;
 import es.pfsgroup.plugin.rem.activo.publicacion.dao.ActivoPublicacionDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.AgrupacionAdapter;
@@ -111,6 +112,7 @@ import es.pfsgroup.plugin.rem.model.ActivoLlave;
 import es.pfsgroup.plugin.rem.model.ActivoMovimientoLlave;
 import es.pfsgroup.plugin.rem.model.ActivoOcupacionIlegal;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
+import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.ActivoPropietarioActivo;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
@@ -370,6 +372,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 	@Autowired
 	private ActivoPublicacionDao activoPublicacionDao;
+	
+	@Autowired
+	private ActivoPatrimonioDao activoPatrimonioDao;
 
 	@Override
 	public String managerName() {
@@ -5277,6 +5282,15 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			}
 		}
 		return false;
+	}
+	@Override
+	public ActivoPatrimonio getActivoPatrimonio(Long idActivo) {
+		ActivoPatrimonio activoPatrimonio = activoPatrimonioDao.getActivoPatrimonioByActivo(idActivo);
+
+
+				return activoPatrimonio;
+
+
 	}
 
 }

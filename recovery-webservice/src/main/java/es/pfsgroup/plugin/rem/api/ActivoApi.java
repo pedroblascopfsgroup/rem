@@ -1002,4 +1002,12 @@ public interface ActivoApi {
 	 * @return
 	 */
 	boolean compruebaSiExisteActivoBienPorMatricula(Long idActivo, String matriculaActivo);
+	
+	/**
+	 * Devuelve el activoPatrimonio a partir de la id de un activo.
+	 *
+	 * @param idActivo
+	 * @return ActivoPatrimonio.
+	 */
+	ActivoPatrimonio getActivoPatrimonio(Long idActivo);
 }

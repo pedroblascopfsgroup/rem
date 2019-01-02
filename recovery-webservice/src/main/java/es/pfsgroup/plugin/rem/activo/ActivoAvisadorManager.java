@@ -18,10 +18,12 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoAvisadorApi;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.DtoAviso;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoEstadoAlquiler;
 
 @Service("activoAvisadorManager")
 public class ActivoAvisadorManager implements ActivoAvisadorApi {
@@ -247,13 +249,29 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 
 			}
 		}
-
+		
+		// Aviso 16: Estado activo con demanda con afectación comercial
 		if(!(Checks.esNulo(activo.getTieneDemandaAfecCom())) && activo.getTieneDemandaAfecCom()==1) {
 			DtoAviso dtoAviso = new DtoAviso();
 			dtoAviso.setDescripcion("Activo con demanda con afectación comercial");
 			dtoAviso.setId(String.valueOf(id));
 			listaAvisos.add(dtoAviso);
 		}
+		
+		// Aviso 17: Estado alquiler o disponible para alquiler
+		ActivoPatrimonio activoPatrimonio= activoApi.getActivoPatrimonio(activo.getId());
+		if(!Checks.esNulo(activoPatrimonio)){
+			DtoAviso dtoAviso = new DtoAviso();
+			if(!Checks.esNulo(activoPatrimonio.getTipoEstadoAlquiler())) {
+				if(DDTipoEstadoAlquiler.ESTADO_ALQUILER_ALQUILADO.equals(activoPatrimonio.getTipoEstadoAlquiler().getCodigo())) {
+					dtoAviso.setDescripcion("Alquilado");
+					dtoAviso.setId(String.valueOf(id));
+					listaAvisos.add(dtoAviso);
+				}
+			}
+		}
+
 		return listaAvisos;
+		
 	}
 }

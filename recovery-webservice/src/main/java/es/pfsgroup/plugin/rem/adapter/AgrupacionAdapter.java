@@ -2033,7 +2033,6 @@ public class AgrupacionAdapter {
 			oferta.setEstadoOferta(estadoOferta);
 			oferta.setTipoOferta(tipoOferta);
 			oferta.setFechaAlta(new Date());
-			oferta.setDesdeTanteo(dto.getDeDerechoTanteo());
 
 			listaActOfr = ofertaApi.buildListaActivoOferta(null, agrupacion, oferta);
 

@@ -24,30 +24,30 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
     
 	listeners: {
 		boxready: 'cargarDatosComprador',
-		show: function() {			
-			var me = this;
+		show: function() {		
+			var me = this;			
 //			me.resetWindow();			
 		}
 	},
 
-    initComponent: function() {
-    	var me = this;    
+    initComponent: function() { 	
+    	var me = this;	
     	var modoEdicion = false;
     	
-		var tipoExpedienteAlquiler = CONST.TIPOS_EXPEDIENTE_COMERCIAL["ALQUILER"];
+	  	var tipoExpedienteAlquiler = CONST.TIPOS_EXPEDIENTE_COMERCIAL["ALQUILER"];
 		var title = HreRem.i18n("title.windows.datos.comprador");
 		var labelTitlePorcentaje = HreRem.i18n('fieldlabel.porcion.compra');
 		var btnCrear = HreRem.i18n('btn.crear');
 		
-		
-		if(me.lookupViewModel().get('expediente.tipoExpedienteCodigo') === tipoExpedienteAlquiler){
+		var tipoExpedienteCodigo = me.expediente.data.tipoExpedienteCodigo;
+	
+		if(tipoExpedienteCodigo === tipoExpedienteAlquiler){
 			title = HreRem.i18n("title.windows.datos.inquilino");
 			labelTitlePorcentaje = HreRem.i18n('fieldlabel.porcion.alquiler');
 			btnCrear = HreRem.i18n('btn.crear.Inquilino');
 		};
-		
+
 		me.setTitle(title);
-		
 
     	me.buttonAlign = 'right';
 

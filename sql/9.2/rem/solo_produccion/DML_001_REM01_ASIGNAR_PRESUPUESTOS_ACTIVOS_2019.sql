@@ -28,6 +28,7 @@ DECLARE
     V_EJE_ID NUMBER(16,0);
     V_ANYO_EJERCICIO NUMBER(16,0):= 2019;
     V_COUNT NUMBER(16):= 0;
+    V_COUNT2 NUMBER(16):= 0;
     
     CURSOR ACTIVOS_SIN_PRESUPUESTO IS  SELECT ACT.ACT_ID FROM REM01.ACT_ACTIVO ACT 
                                         INNER JOIN REM01.DD_SCM_SITUACION_COMERCIAL SCM ON ACT.DD_SCM_ID = SCM.DD_SCM_ID
@@ -84,8 +85,20 @@ BEGIN
   		EXECUTE IMMEDIATE V_MSQL;
   		
   		V_COUNT := V_COUNT + 1 ;
+        V_COUNT2 := V_COUNT2 +1 ;
+        
+        IF V_COUNT2 = 5000 THEN
+            
+            COMMIT;
+            
+            DBMS_OUTPUT.PUT_LINE('[INFO] Se comitean '||V_COUNT2||' registros ');
+            V_COUNT2 := 0;
+            
+        END IF;
   		
 	END LOOP;
+	
+    DBMS_OUTPUT.PUT_LINE('[INFO] Se comitean '||V_COUNT2||' registros ');
     
     DBMS_OUTPUT.PUT_LINE('[INFO] Se han INSERTADO '||V_COUNT||' presupuestos ');
     
@@ -94,6 +107,7 @@ BEGIN
     DBMS_OUTPUT.PUT_LINE('[FIN] Ha finalizado la ejecución');
       
   COMMIT;
+  
 
 EXCEPTION
      WHEN OTHERS THEN

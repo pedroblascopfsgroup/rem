@@ -10,6 +10,7 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ComunicacionGencat;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoGencat;
+import es.pfsgroup.plugin.rem.model.DtoGencatSave;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoComunicacionGencat;
 import es.pfsgroup.plugin.rem.model.DtoNotificacionActivo;
 import es.pfsgroup.plugin.rem.model.DtoOfertasAsociadasActivo;
@@ -126,12 +127,12 @@ public interface GencatApi {
 	public DtoNotificacionActivo createNotificacionComunicacion(DtoNotificacionActivo notificacionActivo);
 	
 	/**
-	 * Guarda el DtoGencat en la BBDD
+	 * Guarda el DtoGencatSave en la BBDD
 	 * 
 	 * @param gencatDto
 	 * @return Boolean
 	 */
-	public Boolean saveDatosComunicacion(DtoGencat gencatDto);
+	public Boolean saveDatosComunicacion(DtoGencatSave gencatDto);
 	
 	/**
 	 * Convierte un DtoGencat en un objeto ComunicacionGencat
@@ -139,7 +140,7 @@ public interface GencatApi {
 	 * @param cg
 	 * @param gencatDto
 	 */
-	public void dtoToBeanPreSave(ComunicacionGencat cg , DtoGencat gencatDto);
+	public void dtoToBeanPreSave(ComunicacionGencat cg , DtoGencatSave gencatDto);
 	
 	/**
 	 * Obtienes un ObjetoComunicacionGencat a partir del IdActivo

@@ -30,16 +30,7 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoController', {
 		aftercreate: function(grid) {
 			grid.getStore().load(); 
 		}
-    	},
-    	
-    	'documentosactivogencatlist': {
-            abrirFormulario: 'abrirFormularioAdjuntarComunicacionActivo',
-            //onClickRemove: 'borrarDocumentoAdjunto',
-            download: 'downloadDocumentoComunicacionActivo'//,
-            /*afterupload: function(grid) {
-            	grid.getStore().load();
-            }*/
-        }
+    	}
 
     },
     

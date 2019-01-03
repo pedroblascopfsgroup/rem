@@ -23,7 +23,7 @@ import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.GencatAdapter;
 import es.pfsgroup.plugin.rem.api.GencatApi;
-import es.pfsgroup.plugin.rem.model.DtoGencat;
+import es.pfsgroup.plugin.rem.model.DtoGencatSave;
 import es.pfsgroup.plugin.rem.model.DtoNotificacionActivo;
 
 
@@ -331,8 +331,9 @@ public class GencatController {
 	 */
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView saveDatosComunicacion(DtoGencat gencatDto, ModelMap model) {
+	public ModelAndView saveDatosComunicacion(DtoGencatSave gencatDto, ModelMap model) {
 
+		model.remove("dtoGencatSave");
 		if( gencatApi.saveDatosComunicacion(gencatDto) )
 		{
 			model.put("success", true);			

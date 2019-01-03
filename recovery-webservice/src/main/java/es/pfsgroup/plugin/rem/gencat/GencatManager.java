@@ -47,6 +47,7 @@ import es.pfsgroup.plugin.rem.model.ComunicacionGencat;
 import es.pfsgroup.plugin.rem.model.ComunicacionGencatAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoGencat;
+import es.pfsgroup.plugin.rem.model.DtoGencatSave;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoComunicacionGencat;
 import es.pfsgroup.plugin.rem.model.DtoNotificacionActivo;
 import es.pfsgroup.plugin.rem.model.DtoOfertasAsociadasActivo;
@@ -152,7 +153,7 @@ public class GencatManager extends BusinessOperationOverrider<GencatApi> impleme
 					if (visita != null) {
 						gencatDto.setIdVisita(visita.getNumVisitaRem());
 						gencatDto.setEstadoVisita(visita.getEstadoVisita() != null ? visita.getEstadoVisita().getCodigo() : null);
-						gencatDto.setRealizacionVisita(visita.getFechaVisita());
+						gencatDto.setFechaRealizacionVisita(visita.getFechaVisita());
 						
 						Usuario mediador = visita.getUsuarioAccion();
 						if (mediador != null) {
@@ -160,14 +161,6 @@ public class GencatManager extends BusinessOperationOverrider<GencatApi> impleme
 						}
 					}
 				}
-				
-				//Notificacion
-				/*List <NotificacionGencat> resultNotificacionGencat = genericDao.getListOrdered(NotificacionGencat.class, orderByFechaCrear, filtroIdComunicacion, filtroBorrado);
-				if (resultNotificacionGencat != null && !resultNotificacionGencat.isEmpty()) {
-					NotificacionGencat notificacionGencat = resultNotificacionGencat.get(0);
-					BeanUtils.copyProperties(gencatDto, notificacionGencat);
-					gencatDto.setMotivoNotificacion(notificacionGencat.getTipoNotificacion() != null ? notificacionGencat.getTipoNotificacion().getCodigo() : null);
-				}*/
 				
 				//Oferta
 				List <OfertaGencat> resultOfertaGencatGencat = genericDao.getListOrdered(OfertaGencat.class, orderByFechaCrear, filtroIdComunicacion, filtroBorrado);
@@ -429,21 +422,13 @@ public class GencatManager extends BusinessOperationOverrider<GencatApi> impleme
 					if (visita != null) {
 						gencatDto.setIdVisita(visita.getNumVisitaRem());
 						gencatDto.setEstadoVisita(visita.getEstadoVisita() != null ? visita.getEstadoVisita().getCodigo() : null);
-						gencatDto.setRealizacionVisita(visita.getFechaVisita());
+						gencatDto.setFechaRealizacionVisita(visita.getFechaVisita());
 						
 						Usuario mediador = visita.getUsuarioAccion();
 						if (mediador != null) {
 							gencatDto.setApiRealizaLaVisita(mediador.getApellidoNombre());
 						}
 					}
-				}
-				
-				//Notificacion
-				List <HistoricoNotificacionGencat> resultNotificacionGencat = genericDao.getListOrdered(HistoricoNotificacionGencat.class, orderByFechaCrear, filtroIdComunicacion, filtroBorrado);
-				if (resultNotificacionGencat != null && !resultNotificacionGencat.isEmpty()) {
-					HistoricoNotificacionGencat notificacionGencat = resultNotificacionGencat.get(0);
-					BeanUtils.copyProperties(gencatDto, notificacionGencat);
-					gencatDto.setMotivoNotificacion(notificacionGencat.getTipoNotificacion() != null ? notificacionGencat.getTipoNotificacion().getCodigo() : null);
 				}
 				
 				//Oferta
@@ -999,7 +984,7 @@ public class GencatManager extends BusinessOperationOverrider<GencatApi> impleme
 	}
 	
 	@Transactional(readOnly = false)
-	public Boolean saveDatosComunicacion(DtoGencat gencatDto)
+	public Boolean saveDatosComunicacion(DtoGencatSave gencatDto)
 	{
 		if( gencatDto.getIdActivo() != null)
 		{
@@ -1033,7 +1018,7 @@ public class GencatManager extends BusinessOperationOverrider<GencatApi> impleme
 		return false;
 	}
 	
-	public void dtoToBeanPreSave(ComunicacionGencat cg , DtoGencat gencatDto)
+	public void dtoToBeanPreSave(ComunicacionGencat cg , DtoGencatSave gencatDto)
 	{		
 		DDSancionGencat sancion = (DDSancionGencat) utilDiccionarioApi.dameValorDiccionarioByCod( DDSancionGencat.class , gencatDto.getSancion() );
 		cg.setSancion( sancion );		

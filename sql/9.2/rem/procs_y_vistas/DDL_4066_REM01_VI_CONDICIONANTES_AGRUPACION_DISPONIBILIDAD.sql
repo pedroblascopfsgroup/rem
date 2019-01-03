@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Pier Gotta
---## FECHA_CREACION=20180614
+--## AUTOR=Javier Pons Ruiz
+--## FECHA_CREACION=20190103
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-4085
+--## INCIDENCIA_LINK=REMVIP-2933
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -55,7 +55,7 @@ BEGIN
 		    max(case when aga_principal = 1 then
 		    otro
 		    end) as otro,
-		    max(sin_informe_aprobado) as sin_informe_aprobado,
+		    max(sin_informe_aprobado_REM) as sin_informe_aprobado,
 		    max(revision) as revision,
 		    max(procedimiento_judicial) as procedimiento_judicial,
 		    max(con_cargas) as con_cargas,

@@ -235,7 +235,7 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 		 
 		if (activo.get('incluyeDestinoComercialAlquiler')) {
 			var codigoTipoAlquiler = activo.get('tipoAlquilerCodigo');
-			if (codigoTipoAlquiler == null || codigoTipoAlquiler == '') {
+			if (codigoTipoAlquiler == null || codigoTipoAlquiler == '' || codigoTipoAlquiler == '05') {
 				noContieneTipoAlquiler = true;
 			}
 		}

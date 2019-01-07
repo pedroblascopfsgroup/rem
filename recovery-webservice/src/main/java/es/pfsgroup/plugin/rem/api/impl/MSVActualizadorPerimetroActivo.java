@@ -161,6 +161,7 @@ public class MSVActualizadorPerimetroActivo extends AbstractMSVActualizador impl
 					auditoria.setBorrado(false);
 					actPatrimonio.setAuditoria(auditoria);
 				}
+				activoPatrimonio.save(actPatrimonio);
 				//Actualizamos los gestores
 				DtoActivoFichaCabecera dto = new DtoActivoFichaCabecera();
 				dto.setTipoComercializacionCodigo(DDTipoComercializacion.CODIGO_VENTA);
@@ -184,12 +185,12 @@ public class MSVActualizadorPerimetroActivo extends AbstractMSVActualizador impl
 					auditoria.setBorrado(false);
 					actPatrimonio.setAuditoria(auditoria);
 				}
+				activoPatrimonio.save(actPatrimonio);
 				//Actualizamos los gestores
 				DtoActivoFichaCabecera dto = new DtoActivoFichaCabecera();
 				dto.setTipoComercializacionCodigo(DDTipoComercializacion.CODIGO_SOLO_ALQUILER);
 				activoAdapter.updateGestoresTabActivoTransactional(dto, activo.getId());
 			}
-			activoPatrimonio.save(actPatrimonio);
 		}
 		
 		//Tipo de Destino comercial en el activo

@@ -7,7 +7,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
     'HreRem.model.Carga', 'HreRem.model.Llaves', 'HreRem.model.PreciosVigentes','HreRem.model.VisitasActivo',
     'HreRem.model.OfertaActivo', 'HreRem.model.PropuestaActivosVinculados', 'HreRem.model.HistoricoMediadorModel','HreRem.model.AdjuntoActivoPromocion',
     'HreRem.model.MediadorModel', 'HreRem.model.MovimientosLlave', 'HreRem.model.ActivoPatrimonio', 'HreRem.model.HistoricoAdecuacionesPatrimonioModel',
-    'HreRem.model.ImpuestosActivo','HreRem.model.OcupacionIlegal','HreRem.model.HistoricoDestinoComercialModel'],
+    'HreRem.model.ImpuestosActivo','HreRem.model.OcupacionIlegal','HreRem.model.HistoricoDestinoComercialModel','HreRem.model.ActivosAsociados'],
 
     data: {
     	activo: null,
@@ -109,6 +109,13 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 	            return 'app-tbfiedset-ico icono-okn';
 	        }
 		 },
+		 
+		 esActivoAlquilado : function(get) {
+			 var comboEstadoAlquiler = get('patrimonio.estadoAlquiler');
+
+			return comboEstadoAlquiler == CONST.COMBO_ESTADO_ALQUILER["ALQUILADO"];
+		 },
+		 
 
 		 getIconClsestadoAlquiler : function(get) {
 			var estadoAlquiler = get('activo.estadoAlquiler');
@@ -1037,6 +1044,19 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		    	remoteSort: true,
 		    	remoteFilter: true,	    	
 		    	autoLoad: false
+	    	},
+	    	
+	    	storeActivosAsociados: {
+	    		pageSize: $AC.getDefaultPageSize(),
+	    		model: 'HreRem.model.ActivosAsociados',
+    			proxy: {
+    				type: 'uxproxy',
+    				remoteUrl: 'activo/getListAsociadosById',
+    				extraParams: {id: '{activo.id}'}
+    			},
+    			remoteSort: false,
+    		    remoteFilter: false,	    	
+    		    autoLoad: true
 	    	},
 	    	
 	    	filtroComboSubtipoTrabajo: {    		

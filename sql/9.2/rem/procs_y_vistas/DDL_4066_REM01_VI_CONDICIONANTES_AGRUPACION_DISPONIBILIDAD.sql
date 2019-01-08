@@ -41,7 +41,7 @@ BEGIN
 		"DIVHORIZONTAL_NOINSCRITA", "RUINA", "VANDALIZADO", "OTRO", "SIN_INFORME_APROBADO", "REVISION", "PROCEDIMIENTO_JUDICIAL", 
 		"CON_CARGAS", "OCUPADO_SINTITULO", "ESTADO_PORTAL_EXTERNO", "ES_CONDICIONADO", "EST_DISP_COM_CODIGO", "BORRADO") AS 
   		SELECT
-		    agr_id,
+		    aga.agr_id,
 		    max(sin_toma_posesion_inicial) as sin_toma_posesion_inicial,
 		    max(ocupado_contitulo) as ocupado_contitulo,
 		    max(pendiente_inscripcion) as pendiente_inscripcion,
@@ -52,7 +52,7 @@ BEGIN
 		    max(divhorizontal_noinscrita) as divhorizontal_noinscrita,
 		    max(ruina) as ruina,
 		    max(vandalizado) as vandalizado,
-		    max(case when aga_principal = 1 then
+		    max(case when agr_act_principal = vcond.act_id then
 		    otro
 		    end) as otro,
 		    max(sin_informe_aprobado_REM) as sin_informe_aprobado,
@@ -65,8 +65,9 @@ BEGIN
 		    max(est_disp_com_codigo)AS est_disp_com_codigo,
 		    min(vcond.borrado) borrado
 		FROM '||V_ESQUEMA||'.V_Cond_Disponibilidad vcond
-		INNER JOIN Act_Aga_Agrupacion_Activo aga on aga.act_id = vcond.act_id
-		GROUP BY agr_id';
+		INNER JOIN '||V_ESQUEMA||'.Act_Aga_Agrupacion_Activo aga on aga.act_id = vcond.act_id
+		INNER JOIN '||V_ESQUEMA||'.Act_Agr_Agrupacion agr on agr.agr_id = aga.agr_id
+		GROUP BY aga.agr_id';
 
     -- Creamos comentarios     
     

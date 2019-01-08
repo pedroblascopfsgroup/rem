@@ -1,16 +1,18 @@
 --/*
 --##########################################
---## AUTOR=DAP
---## FECHA_CREACION=20180418
+--## AUTOR=Sergio Beleña Boix
+--## FECHA_CREACION=20190107
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=2.0.16
---## INCIDENCIA_LINK=REMVIP-536
+--## VERSION_ARTEFACTO=func-rem-activosEnTramite
+--## INCIDENCIA_LINK=HREOS-5150
 --## PRODUCTO=NO
 --## Finalidad: Interfax Stock REM - UVEM. Nuevas columnas. Anula DDL_99900087
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##	    0.2 DAP- Interfax Stock REM - UVEM. Nuevas columnas.
+--##	    0.3 Sergio Beleña - correción ACT_EN_TRAMITE
 --##########################################
 --*/
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
@@ -150,7 +152,7 @@ BEGIN
 		  MERGE INTO '||V_ESQUEMA||'.ACT_ACTIVO ACT 
 			USING (
 				  SELECT DISTINCT
-				  DECODE(ESA.COESEN,''01'', 1, ''02'', 2, 0) AS COESEN, AUX.APR_ID, AUX.ACT_NUMERO_UVEM, AUX.REM
+				  DECODE(ESA.COESEN,''01'', 1, ''02'', 0, 0) AS COESEN, AUX.APR_ID, AUX.ACT_NUMERO_UVEM, AUX.REM
 				  FROM '||V_ESQUEMA||'.APR_AUX_STOCK_UVEM_TO_REM AUX
                   INNER JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_UVEM = AUX.ACT_NUMERO_UVEM
                   INNER JOIN '||V_ESQUEMA||'.ACT_ESA_ESTADOS_ACT_UVEM ESA ON ESA.ACT_ID = ACT.ACT_ID

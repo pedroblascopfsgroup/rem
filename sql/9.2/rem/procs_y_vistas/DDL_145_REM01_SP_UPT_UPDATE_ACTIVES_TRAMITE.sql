@@ -1,16 +1,18 @@
 --/*
 --##########################################
---## AUTOR=DAP
---## FECHA_CREACION=20181117
+--## AUTOR=Sergio Beleña Boix
+--## FECHA_CREACION=20190107
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=2.0.16
---## INCIDENCIA_LINK=HREOS-4686
+--## VERSION_ARTEFACTO=func-rem-activosEnTramite
+--## INCIDENCIA_LINK=HREOS-5150
 --## PRODUCTO=NO
---## Finalidad: Actualiza activos en trámite de UVEM
+--## Finalidad: correción errores ETL
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##	    0.2 DAP Actualiza activos en trámite de UVEM
+--##	    0.3 Sergio Beleña - correción ACT_EN_TRAMITE
 --##########################################
 --*/
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
@@ -157,7 +159,7 @@ BEGIN
 		  MERGE INTO '||V_ESQUEMA||'.ACT_ACTIVO ACT 
 			USING (
 				  SELECT DISTINCT
-				  DECODE(ESA.COESEN,''01'', 1, ''02'', 2, 0) AS COESEN, AUX.APR_ID, ACT.ACT_ID
+				  DECODE(ESA.COESEN,''01'', 1, ''02'', 0, 0) AS COESEN, AUX.APR_ID, ACT.ACT_ID
 				  FROM REM01.ACT_ACTIVO ACT 
                   INNER JOIN REM01.ACT_ESA_ESTADOS_ACT_UVEM ESA ON ESA.ACT_ID = ACT.ACT_ID
                   LEFT JOIN REM01.APR_AUX_STOCK_UVEM_TO_REM AUX ON AUX.ACT_NUMERO_UVEM = ACT.ACT_NUM_ACTIVO_UVEM

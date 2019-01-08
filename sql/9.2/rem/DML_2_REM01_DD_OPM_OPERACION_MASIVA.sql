@@ -1,20 +1,18 @@
 --/*
 --##########################################
---## AUTOR=Sergio Salt
---## FECHA_CREACION=20190103
+--## AUTOR=JINLI HU
+--## FECHA_CREACION=20181127
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=0
+--## VERSION_ARTEFACTO=9.2
+--## INCIDENCIA_LINK=REMVIP-2793
 --## PRODUCTO=NO
 --##
---## Finalidad: Script que añade en DD_OPM_OPERACION_MASIVA los datos añadidos en T_ARRAY_FUNCION
+--## Finalidad: Script que para crear la función o funciones especificadas en el array y las asigna a los perfiles de indicados en la misa línea.
 --## INSTRUCCIONES:
 --## VERSIONES:
 --##        0.1 Versión inicial
 --##########################################
 --*/
-
-
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
 SET SERVEROUTPUT ON; 
 SET DEFINE OFF;
@@ -36,7 +34,7 @@ DECLARE
     TYPE T_FUNCION IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_FUNCION IS TABLE OF T_FUNCION;
     V_FUNCION T_ARRAY_FUNCION := T_ARRAY_FUNCION(
-	  T_FUNCION('AATP', 'Alta de activos third party', 'Alta de activos third party', 'ALTA_ACTIVOS_THIRD_PARTY', 'n*')
+	  T_FUNCION('EXDWH', 'Carga masiva exclusión data warehouse', 'Carga masiva exclusión data warehouse','MASIVO_EXCLUIR_ACTIVOS_DWH','nD*, f*, i*, n*')
     ); 
     V_TMP_FUNCION T_FUNCION;
     V_PERFILES VARCHAR2(100 CHAR) := '%';  -- Cambiar por ALGÚN PERFIL para otorgar permisos a ese perfil.
@@ -65,7 +63,7 @@ BEGIN
 							' SELECT '||V_ESQUEMA||'.S_DD_OPM_OPERACION_MASIVA.NEXTVAL,' ||
 							' '''||V_TMP_FUNCION(1)||''','''||V_TMP_FUNCION(2)||''','''||V_TMP_FUNCION(3)||''','||
 							' (SELECT FUN_ID FROM '||V_ESQUEMA_M||'.FUN_FUNCIONES WHERE FUN_DESCRIPCION = '''||V_TMP_FUNCION(4)||'''), '||
-							' 0, ''DML'', SYSDATE, 0, '''||V_TMP_FUNCION(5)||''' FROM DUAL';
+							' 0, ''REMVIP-2793'', SYSDATE, 0, '''||V_TMP_FUNCION(5)||''' FROM DUAL';
 		    	
 				EXECUTE IMMEDIATE V_MSQL_1;
 				DBMS_OUTPUT.PUT_LINE('[INFO] Datos de la tabla '||V_ESQUEMA||'.DD_OPM_OPERACION_MASIVA insertados correctamente.');

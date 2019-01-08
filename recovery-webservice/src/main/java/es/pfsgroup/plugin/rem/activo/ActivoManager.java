@@ -90,7 +90,6 @@ import es.pfsgroup.plugin.rem.gestor.dao.GestorExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.notificator.impl.NotificatorServiceSancionOfertaAceptacionYRechazo;
 import es.pfsgroup.plugin.rem.model.Activo;
-import es.pfsgroup.plugin.rem.model.ActivoAdjudicacionNoJudicial;
 import es.pfsgroup.plugin.rem.model.ActivoAdjuntoActivo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
@@ -238,8 +237,6 @@ import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 import es.pfsgroup.plugin.rem.utils.DiccionarioTargetClassMap;
 import es.pfsgroup.plugin.rem.visita.dao.VisitaDao;
 import es.pfsgroup.recovery.ext.api.multigestor.EXTGrupoUsuariosApi;
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
 
 @Service("activoManager")
 public class ActivoManager extends BusinessOperationOverrider<ActivoApi> implements ActivoApi {
@@ -1405,7 +1402,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				activo.getAdjuntos().add(adjuntoActivo);
 
 				activoDao.save(activo);
-				checkAndSendMailAvisoOcupacion(null, activo, tipoDocumento);
 			} else {
 				throw new Exception("No se ha encontrado activo o tipo para relacionar adjunto");
 			}
@@ -2412,6 +2408,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			perimetroActivo.setAplicaAsignarMediador(1);
 			perimetroActivo.setAplicaComercializar(1);
 			perimetroActivo.setAplicaFormalizar(1);
+			perimetroActivo.setAplicaPublicar(false);
 		}
 
 		return perimetroActivo;
@@ -2559,76 +2556,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 
 		return false;
-	}
-
-	public void checkAndSendMailAvisoOcupacion(JSONObject json, Activo activo, DDTipoDocumentoActivo tipoAdjunto)
-	{
-		if((json != null) && !json.isEmpty())
-		{
-			if(json.containsKey("id") && json.containsKey("models"))
-			{
-				Long id = json.getLong("id");
-				JSONArray modelsArray = json.getJSONArray("models");
-				if(modelsArray.toString().contains("ocupado") || modelsArray.toString().contains("conTitulo"))
-				{
-					activo = this.get(id);
-					if(!Checks.esNulo(activo))
-					{
-						checkMailAvisoOcupacion(activo);
-					}
-				}
-			}
-		}
-		else if(!Checks.esNulo(activo) && !Checks.esNulo(tipoAdjunto))
-		{
-			if(DDTipoDocumentoActivo.CODIGO_INFORME_OCUPACION_DESOCUPACION.equals(tipoAdjunto.getCodigo()))
-			{
-				checkMailAvisoOcupacion(activo);
-			}
-		}
-	}
-
-	public void checkMailAvisoOcupacion(Activo activo)
-	{
-		if(!Checks.esNulo(activo))
-		{
-			ActivoSituacionPosesoria posesoria = activo.getSituacionPosesoria();
-			ActivoAdjudicacionNoJudicial judicial = activo.getAdjNoJudicial();
-			if(!Checks.esNulo(posesoria) && !Checks.esNulo(judicial))
-			{
-				if((!Checks.esNulo(posesoria.getOcupado()) && !Checks.esNulo(posesoria.getConTitulo())) &&
-					(!Checks.esNulo(judicial.getFechaTitulo()) && activo.hasAdjunto(DDTipoDocumentoActivo.CODIGO_INFORME_OCUPACION_DESOCUPACION)))
-				{
-					List<DtoAdjuntoMail> sendAdj = new ArrayList<DtoAdjuntoMail>();
-					for(ActivoAdjuntoActivo adjunto : activo.getAdjuntos())
-					{
-						if(!Checks.esNulo(adjunto.getTipoDocumentoActivo()) &&
-							DDTipoDocumentoActivo.CODIGO_INFORME_OCUPACION_DESOCUPACION.equals(adjunto.getTipoDocumentoActivo().getCodigo()))
-						{
-							DtoAdjuntoMail adj = new DtoAdjuntoMail();
-							adj.setNombre(adjunto.getNombre());
-							adj.setAdjunto(adjunto.getAdjunto());
-							sendAdj.add(adj);
-						}
-					}
-					Usuario usu = usuarioApi.getByUsername(EMAIL_OCUPACIONES);
-					if(!Checks.esNulo(usu) && !Checks.esNulo(usu.getEmail()))
-					{
-						List<String> para = new ArrayList<String>();
-						para.add(usu.getEmail());
-						String activoS = activo.getId()+"";
-						String carteraS = activo.getCartera().getDescripcion();
-						StringBuilder cuerpo = new StringBuilder("<!DOCTYPE HTML PUBLIC '-//W3C//DTD HTML 4.01 Transitional//EN'><html><head><META http-equiv='Content-Type' content='text/html; charset=utf-8'></head><body>");
-						cuerpo.append("<div><p>Se ha marcado en REM una ocupación ilegal del activo ");
-						cuerpo.append(activoS);
-						cuerpo.append("de la cartera ");
-						cuerpo.append(carteraS);
-						cuerpo.append("</p><p>Se anexa el informe de ocupación remitido por el API custodio</p><p>Un saludo</p></div></body></html>");
-						genericAdapter.sendMail(para, null, "Ocupación ilegal del activo: " + activoS + ", de la cartera " + carteraS, cuerpo.toString(), sendAdj);
-					}
-				}
-			}
-		}
 	}
 
 	@Override

@@ -56,6 +56,7 @@
 			</action>
 		</event>
 		<transition to="T015_VerificarScoringDecision" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
 	</state>
 	
 	<decision name ="T015_VerificarScoringDecision" expression="#{T015_VerificarScoringDecision}">
@@ -84,6 +85,7 @@
 			</action>
 		</event>
 		<transition to="T015_VerificarSeguroRentasDecision" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
 	</state>
 	
 	<decision name ="T015_VerificarSeguroRentasDecision" expression="#{T015_VerificarSeguroRentasDecision}">
@@ -112,6 +114,7 @@
 			</action>
 		</event>
 		<transition to="T015_ElevarASancionDecision" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
 	</state>
 	
 	<decision name ="T015_ElevarASancionDecision" expression="#{T015_ElevarASancionDecision}">
@@ -140,6 +143,7 @@
 			</action>
 		</event>
 		<transition to="T015_ResolucionExpedienteDecision" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
 	</state>
 	
 	<decision name ="T015_ResolucionExpedienteDecision" expression="#{T015_ResolucionExpedienteDecision}">
@@ -169,6 +173,7 @@
 			</action>
 		</event>
 		<transition to="T015_AceptacionClienteDecision" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
 	</state>
 	
 	<decision name ="T015_AceptacionClienteDecision" expression="#{T015_AceptacionClienteDecision}">
@@ -199,6 +204,7 @@
 			</action>
 		</event>
 		<transition to="T015_ResolucionPBCDecision" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
 	</state>
 	
 	<decision name ="T015_ResolucionPBCDecision" expression="#{T015_ResolucionPBCDecision}">

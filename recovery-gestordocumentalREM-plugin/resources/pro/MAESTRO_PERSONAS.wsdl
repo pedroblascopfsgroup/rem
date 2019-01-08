@@ -47,7 +47,7 @@
 
 	<wsdl:service name="wsWS">
 		<wsdl:port binding="ws:wsBinding" name="ws">
-		<soap:address location="http://10.10.14.25:8080/WSMaestroPersonas/ws"/>
+		<soap:address location="http://192.168.126.4:8080/WSMaestroPersonas/ws"/>
 		</wsdl:port>
 	</wsdl:service>
 

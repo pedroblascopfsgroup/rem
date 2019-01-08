@@ -21,4 +21,5 @@ public interface ActivoPatrimonioDao extends AbstractDao<ActivoPatrimonio, Long>
 	 * @return Devuelve la entidad diccionario adecuación alquiler de la entidad patrimonio.
 	 */
 	DDAdecuacionAlquiler getAdecuacionAlquilerFromPatrimonioByIdActivo(Long idActivo);
+	
 }

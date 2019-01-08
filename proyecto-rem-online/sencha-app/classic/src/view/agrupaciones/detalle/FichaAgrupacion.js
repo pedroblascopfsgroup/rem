@@ -317,7 +317,8 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
                             fieldLabel: HreRem.i18n('fieldlabel.perimetro.destino.comercial'),
                             bind: {
                                 store: '{comboTipoDestinoComercialCreaFiltered}',
-                                value: '{agrupacionficha.tipoComercializacionCodigo}'
+                                value: '{agrupacionficha.tipoComercializacionCodigo}',
+                                disabled: '{agrupacionficha.isComercial}'
                             }
 						}
 

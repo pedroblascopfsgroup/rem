@@ -13,9 +13,15 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
 		var me = this;
 		var tipoExpedienteAlquiler = CONST.TIPOS_EXPEDIENTE_COMERCIAL["ALQUILER"];
 		var title = HreRem.i18n('title.compradores');
+		var titlePorcentaje = HreRem.i18n('header.procentaje.compra');
+		var msgPorcentajeTotal = HreRem.i18n("fieldlabel.porcentaje.compra.total");
+		var msgPorcentajeTotalError = HreRem.i18n("fieldlabel.porcentaje.compra.total.error");
 
 		if(me.lookupViewModel().get('expediente.tipoExpedienteCodigo') === tipoExpedienteAlquiler){
 			title = HreRem.i18n('title.inquilinos');
+			titlePorcentaje = HreRem.i18n('header.procentaje.alquiler');
+			msgPorcentajeTotal = HreRem.i18n("fieldlabel.porcentaje.alquiler.total");
+			msgPorcentajeTotalError = HreRem.i18n("fieldlabel.porcentaje.alquiler.total.error");		
 		};
 		
 		me.setTitle(title);
@@ -135,7 +141,7 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
 					        	renderer: coloredRender
 					       },
 						   {
-								text: HreRem.i18n('header.procentaje.compra'),
+								text:  titlePorcentaje,
 								dataIndex: 'porcentajeCompra',
 								flex: 1,
 								renderer: coloredRender,
@@ -151,10 +157,10 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
 					            	}
 					            	suma = Ext.util.Format.number(suma, '0.00');
 					            	
-					            	var msg = HreRem.i18n("fieldlabel.porcentaje.compra.total") + " " + suma + "%";
+					            	var msg = msgPorcentajeTotal + " " + suma + "%";
 					            	var style = "" 
 					            	if(suma != Ext.util.Format.number(100.00,'0.00')) {
-					            		msg = HreRem.i18n("fieldlabel.porcentaje.compra.total.error");		
+					            		msg = msgPorcentajeTotalError;		
 					            		style = "style= 'color: red'" 
 					            	}	
 					            	

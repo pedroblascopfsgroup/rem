@@ -150,6 +150,9 @@ Ext.define('HreRem.model.Tramite', {
     	{
     		name: 'esTareaAutorizacionBankia',
     		type: 'boolean'
+    	},
+    	{
+    		name: 'codigoSubcartera'
     	}
     ],
 

@@ -1913,6 +1913,9 @@ public class ActivoAdapter {
 				beanUtilNotNull.copyProperty(dtoTramite, "cartera", tramite.getActivo().getCartera().getDescripcion());
 				beanUtilNotNull.copyProperty(dtoTramite, "codigoCartera", tramite.getActivo().getCartera().getCodigo());
 			}
+			if(!Checks.esNulo(tramite.getActivo().getSubcartera())){
+				beanUtilNotNull.copyProperty(dtoTramite, "codigoSubcartera", tramite.getActivo().getSubcartera().getCodigo());
+			}
 			if (!Checks.esNulo(tramite.getFechaInicio()))
 				beanUtilNotNull.copyProperty(dtoTramite, "fechaInicio", formato.format(tramite.getFechaInicio()));
 			if (!Checks.esNulo(tramite.getFechaFin()))
@@ -2805,7 +2808,8 @@ public class ActivoAdapter {
 		ActivoSituacionPosesoria condicionantesDisponibilidad = genericDao.get(ActivoSituacionPosesoria.class, filtro);
 		
 		if((!Checks.esNulo(dto.getOtro()) && Checks.esNulo(condicionantesDisponibilidad.getOtro()))
-				|| (Checks.esNulo(dto.getOtro()) && !Checks.esNulo(condicionantesDisponibilidad.getOtro()))) {
+				|| (Checks.esNulo(dto.getOtro()) && !Checks.esNulo(condicionantesDisponibilidad.getOtro()))
+			    || (!Checks.esNulo(dto.getOtro()) && !Checks.esNulo(condicionantesDisponibilidad.getOtro()) && !dto.getOtro().equals(condicionantesDisponibilidad.getOtro()))) {
 			boolean success = activoApi.saveCondicionantesDisponibilidad(idActivo, dto);
 			activoApi.updateCondicionantesDisponibilidad(idActivo);
 			if (success)
@@ -2842,7 +2846,8 @@ public class ActivoAdapter {
 				List<ActivoAgrupacionActivo> agrupaciones = activo.getAgrupaciones();
 				for(ActivoAgrupacionActivo agrupActivo : agrupaciones) {
 					ActivoAgrupacion agrup= agrupActivo.getAgrupacion();
-					if(agrup.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_VENTA)) {
+					if(agrup.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_VENTA) 
+							&& Checks.esNulo(agrup.getFechaBaja())) {
 						tieneAgrupVenta=true;
 						break;
 					}
@@ -2986,12 +2991,8 @@ public class ActivoAdapter {
 		//Ampliación de [HREOS-4985]
 		//Al cambiar el destino comercial de Venta a Alquiler/Alquiler y Venta
 		}else if(dto instanceof DtoActivoFichaCabecera && !Checks.esNulo(((DtoActivoFichaCabecera)dto).getTipoComercializacionCodigo()) 
-					&& ((((DtoActivoFichaCabecera)dto).getTipoComercializacionCodigo().equals(DDTipoComercializacion.CODIGO_SOLO_ALQUILER)
-							&& !Checks.esNulo(activo) && !Checks.esNulo(activo.getActivoPublicacion()) && !Checks.esNulo(activo.getActivoPublicacion().getTipoComercializacion())
-							&& activo.getActivoPublicacion().getTipoComercializacion().getCodigo().equals(DDTipoComercializacion.CODIGO_SOLO_ALQUILER))	
-						|| (((DtoActivoFichaCabecera)dto).getTipoComercializacionCodigo().equals(DDTipoComercializacion.CODIGO_ALQUILER_VENTA)
-								&& !Checks.esNulo(activo) && !Checks.esNulo(activo.getActivoPublicacion()) && !Checks.esNulo(activo.getActivoPublicacion().getTipoComercializacion())
-								&& activo.getActivoPublicacion().getTipoComercializacion().getCodigo().equals(DDTipoComercializacion.CODIGO_ALQUILER_VENTA)))){
+					&& (((DtoActivoFichaCabecera)dto).getTipoComercializacionCodigo().equals(DDTipoComercializacion.CODIGO_SOLO_ALQUILER)	
+						|| ((DtoActivoFichaCabecera)dto).getTipoComercializacionCodigo().equals(DDTipoComercializacion.CODIGO_ALQUILER_VENTA))){
 			
 			//anyadimos el nuevo gestor
  			if(Checks.esNulo(gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_ALQUILERES))){
@@ -3018,9 +3019,7 @@ public class ActivoAdapter {
 			}
 		//Al cambiar el destino comercial a Venta de Alquiler/Alquiler y Venta
 		}else if(dto instanceof DtoActivoFichaCabecera && !Checks.esNulo(((DtoActivoFichaCabecera)dto).getTipoComercializacionCodigo()) 
-				&& (((DtoActivoFichaCabecera)dto).getTipoComercializacionCodigo().equals(DDTipoComercializacion.CODIGO_VENTA)
-						&& !Checks.esNulo(activo) && !Checks.esNulo(activo.getActivoPublicacion()) && !Checks.esNulo(activo.getActivoPublicacion().getTipoComercializacion())
-						&& activo.getActivoPublicacion().getTipoComercializacion().getCodigo().equals(DDTipoComercializacion.CODIGO_VENTA))){
+				&& ((DtoActivoFichaCabecera)dto).getTipoComercializacionCodigo().equals(DDTipoComercializacion.CODIGO_VENTA)){
 			
 			this.cambiarTrabajosActivosAGestorActivo(activo,GestorActivoApi.CODIGO_GESTOR_ALQUILERES);
 			this.borrarGestor(activo,GestorActivoApi.CODIGO_GESTOR_ALQUILERES);

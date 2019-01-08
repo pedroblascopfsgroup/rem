@@ -563,6 +563,14 @@ public interface ParticularValidatorApi {
 	public Boolean isActivoOcultoVenta(String numActivo);
 
 	public Boolean isActivoOcultoAlquiler(String numActivo);
-	
+
+	/**
+	 * Devuelve true si un activo tiene ofertas vivas de tipo venta
+	 * 
+	 * @param numActivo
+	 * @return
+	 */
 	public Boolean existeActivoConOfertaVentaViva(String numActivo);
+
+
 }

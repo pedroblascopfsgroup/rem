@@ -95,7 +95,7 @@ Ext.define('HreRem.view.activos.detalle.CabeceraActivo', {
 								xtype: 'button',
 								cls: 'btn-tbfieldset delete-focus-bg no-pointer',
 								bind: {
-									iconCls: '{getIconClsPrecioAprobadoVentaRenta}'
+									iconCls: '{getIconClsPrecio}'
 								},
 								iconAlign: 'right',
 								text: 'PRECIOS'

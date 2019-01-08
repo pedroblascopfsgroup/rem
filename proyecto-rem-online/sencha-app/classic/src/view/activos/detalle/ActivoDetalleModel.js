@@ -132,12 +132,14 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 	     	}
 	     },
 
-	     getIconClsPrecioAprobadoVentaRenta: function(get) {
-	     	var me = this;
+	     getIconClsPrecio: function(get) {
 	     	var aprobadoVentaWeb= get('activo.aprobadoVentaWeb');
 	     	var aprobadoRentaWeb= get('activo.aprobadoRentaWeb');
+	     	var incluyeDestinoComercialVenta= get('activo.incluyeDestinoComercialVenta');
+	     	var incluyeDestinoComercialAlquiler= get('activo.incluyeDestinoComercialAlquiler');
 
-	     	if(!Ext.isEmpty(aprobadoVentaWeb) && aprobadoVentaWeb>0 || !Ext.isEmpty(aprobadoRentaWeb) && aprobadoRentaWeb>0) {
+	     	if((!Ext.isEmpty(aprobadoVentaWeb) && aprobadoVentaWeb>0 && incluyeDestinoComercialVenta) 
+	     			|| (!Ext.isEmpty(aprobadoRentaWeb) && aprobadoRentaWeb>0 && incluyeDestinoComercialAlquiler)) {
 	     		return 'app-tbfiedset-ico icono-ok';
 	     	} else {
 	     		return 'app-tbfiedset-ico icono-ko';
@@ -454,7 +456,12 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
             var publicarSinPrecioAlquiler = get('datospublicacionactivo.publicarSinPrecioAlquiler');
             var informeComercialAprobado = get('activo.informeComercialAceptado');
             var precioRentaWeb = !Ext.isEmpty(get('datospublicacionactivo.precioWebAlquiler'));
-            return (informeComercialAprobado || !informeComercialAprobado) && (publicarSinPrecioAlquiler || precioRentaWeb);
+            var admisionOk = get('activo.admision');
+            var gestionOk = get('activo.tieneOkTecnico');
+            var adecuacionOk = get('datospublicacionactivo.adecuacionAlquilerCodigo');
+            var ceeOk = get('activo.tieneCEE');
+            
+            return !(admisionOk && gestionOk && informeComercialAprobado && ceeOk && adecuacionOk=="01" && (publicarSinPrecioAlquiler || precioRentaWeb));
         },
 
         esReadonlyChkbxPublicar: function(get){
@@ -527,7 +534,15 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			var estadoAlquilerCodigo = get('situacionPosesoria.tipoEstadoAlquiler');
 
 			return (CONST.COMBO_ESTADO_ALQUILER["ALQUILADO"] == estadoAlquilerCodigo);
-		}
+		},
+		isCarteraLiberbank: function(get){
+			 var isLiberbank = get('activo.isCarteraLiberbank');
+			 if(isLiberbank){
+				 return true;
+			 }
+			 return false;
+		 }
+
 
 	 },
 

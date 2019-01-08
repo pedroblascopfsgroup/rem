@@ -58,6 +58,7 @@ import es.pfsgroup.plugin.rem.model.DtoListadoGestores;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
+import es.pfsgroup.plugin.rem.model.VAdmisionDocumentos;
 import es.pfsgroup.plugin.rem.model.VPreciosVigentes;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDEntradaActivoBankia;
@@ -618,6 +619,14 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			activoDto.setIsLogUsuGestComerSupComerSupAdmin(true);
 		}else{
 			activoDto.setIsLogUsuGestComerSupComerSupAdmin(false);
+		}
+		
+		List<VAdmisionDocumentos> admisionDocumentos = adapter.getListAdmisionCheckDocumentos(activo.getId());
+		
+		for (VAdmisionDocumentos doc : admisionDocumentos) {
+			if ("CEE (Certificado de eficiencia energética)".equals(doc.getDescripcionTipoDoc()) && doc.getAplica().equals("1")) {
+				BeanUtils.copyProperty(activoDto, "tieneCEE", true);
+			}
 		}
 
 		return activoDto;

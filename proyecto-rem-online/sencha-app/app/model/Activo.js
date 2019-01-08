@@ -751,6 +751,10 @@ Ext.define('HreRem.model.Activo', {
     		},
     		{
     			name: 'tipoAlquilerCodigo'
+    		},
+    		{
+    			name: 'tieneCEE',
+    			type: 'boolean'
     		}
     ],
     

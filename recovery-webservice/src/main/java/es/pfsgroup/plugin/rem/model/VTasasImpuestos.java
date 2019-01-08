@@ -199,6 +199,42 @@ public class VTasasImpuestos implements Serializable{
 	@Column(name = "CUOTA2")
 	private Double cuota2;
 	
+	@Column(name = "DIARIO3")
+	private Double diario3;
+	
+	@Column(name = "BASE3")
+	private Double base3;
+	
+	@Column(name = "IVA3")
+	private Double iva3;
+	
+	@Column(name = "CUOTA3")
+	private Double cuota3;
+	
+	@Column(name = "DIARIO4")
+	private Double diario4;
+	
+	@Column(name = "BASE4")
+	private Double base4;
+	
+	@Column(name = "IVA4")
+	private Double iva4;
+	
+	@Column(name = "CUOTA4")
+	private Double cuota4;
+	
+	@Column(name = "DIARIO5")
+	private Double diario5;
+	
+	@Column(name = "BASE5")
+	private Double base5;
+	
+	@Column(name = "IVA5")
+	private Double iva5;
+	
+	@Column(name = "CUOTA5")
+	private Double cuota5;
+	
 	@Column(name = "PROYECTO")
 	private Long proyecto;
 	
@@ -264,18 +300,6 @@ public class VTasasImpuestos implements Serializable{
 	
 	@Column(name = "CARACTERISTICA")
 	private String caracteristica;
-	
-	@Column(name = "RUTA")
-	private String ruta;
-	
-	@Column(name = "ETAPA")
-	private String etapa;
-	
-	@Column(name = "TIPO_GASTO")
-	private String tipoGasto;
-	
-	@Column(name = "SUBTIPO_GASTO")
-	private String subTipoGasto;
 
 	public String getSociedad() {
 		return sociedad;
@@ -933,36 +957,100 @@ public class VTasasImpuestos implements Serializable{
 		this.caracteristica = caracteristica;
 	}
 
-	public String getRuta() {
-		return ruta;
+	public Double getDiario3() {
+		return diario3;
 	}
 
-	public void setRuta(String ruta) {
-		this.ruta = ruta;
+	public void setDiario3(Double diario3) {
+		this.diario3 = diario3;
 	}
 
-	public String getEtapa() {
-		return etapa;
+	public Double getBase3() {
+		return base3;
 	}
 
-	public void setEtapa(String etapa) {
-		this.etapa = etapa;
+	public void setBase3(Double base3) {
+		this.base3 = base3;
 	}
 
-	public String getTipoGasto() {
-		return tipoGasto;
+	public Double getIva3() {
+		return iva3;
 	}
 
-	public void setTipoGasto(String tipoGasto) {
-		this.tipoGasto = tipoGasto;
+	public void setIva3(Double iva3) {
+		this.iva3 = iva3;
 	}
 
-	public String getSubTipoGasto() {
-		return subTipoGasto;
+	public Double getCuota3() {
+		return cuota3;
 	}
 
-	public void setSubTipoGasto(String subTipoGasto) {
-		this.subTipoGasto = subTipoGasto;
+	public void setCuota3(Double cuota3) {
+		this.cuota3 = cuota3;
+	}
+
+	public Double getDiario4() {
+		return diario4;
+	}
+
+	public void setDiario4(Double diario4) {
+		this.diario4 = diario4;
+	}
+
+	public Double getBase4() {
+		return base4;
+	}
+
+	public void setBase4(Double base4) {
+		this.base4 = base4;
+	}
+
+	public Double getIva4() {
+		return iva4;
+	}
+
+	public void setIva4(Double iva4) {
+		this.iva4 = iva4;
+	}
+
+	public Double getCuota4() {
+		return cuota4;
+	}
+
+	public void setCuota4(Double cuota4) {
+		this.cuota4 = cuota4;
+	}
+
+	public Double getDiario5() {
+		return diario5;
+	}
+
+	public void setDiario5(Double diario5) {
+		this.diario5 = diario5;
+	}
+
+	public Double getBase5() {
+		return base5;
+	}
+
+	public void setBase5(Double base5) {
+		this.base5 = base5;
+	}
+
+	public Double getIva5() {
+		return iva5;
+	}
+
+	public void setIva5(Double iva5) {
+		this.iva5 = iva5;
+	}
+
+	public Double getCuota5() {
+		return cuota5;
+	}
+
+	public void setCuota5(Double cuota5) {
+		this.cuota5 = cuota5;
 	}
 }
 

@@ -24,7 +24,7 @@ public  class ExpedienteComercialDaoImpl extends AbstractEntityDao<ExpedienteCom
 	public Page getCompradoresByExpediente(Long idExpediente, WebDto webDto, boolean activoBankia) {
 		if(activoBankia) {
 			HQLBuilder hql = new HQLBuilder("Select bce, bdc from VBusquedaCompradoresExpediente bce, VBusquedaDatosCompradorExpediente bdc where bce.idExpediente=bdc.idExpedienteComercial and "
-					+ "bce.idExpediente=" + idExpediente.toString());
+					+ "bce.idExpediente=" + idExpediente.toString() + " and bce.id = bdc.id");
 			hql.orderBy("borrado", HQLBuilder.ORDER_ASC);
 			return HibernateQueryUtils.page(this, hql, webDto);
 		}else {

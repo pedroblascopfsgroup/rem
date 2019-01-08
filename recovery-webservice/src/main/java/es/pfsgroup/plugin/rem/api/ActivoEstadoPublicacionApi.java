@@ -149,6 +149,8 @@ public interface ActivoEstadoPublicacionApi {
 	 * @return Devuelve True si la operación ha sido satisfactoria.
 	 */
 	Boolean setDatosPublicacionAgrupacion(Long id, DtoDatosPublicacionAgrupacion dto);
+	
+	Boolean setDatosPublicacionAgrupacionMasivo(Long id, DtoDatosPublicacionAgrupacion dto);
 
 	/**
 	 * Este método setea parte del dto de DtoDatosPublicacionAgrupacion.

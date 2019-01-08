@@ -114,7 +114,7 @@ public class ActivoGenericLeaveActionHandler extends ActivoGenericActionHandler 
 		 */
 		String transicion = executionContext.getTransition().getName();
 		boolean transicionSalto = transicion.startsWith("salto") || ActivoBaseActionHandler.SALTO_CIERRE_ECONOMICO.equals(transicion) || ActivoBaseActionHandler.SALTO_RESOLUCION_EXPEDIENTE.equals(transicion);
-		if (!BPMContants.TRANSICION_VUELTA_ATRAS.equals(transicion) && !StringUtils.isBlank(scriptValidacion) && !transicionSalto) {
+		if (!BPMContants.TRANSICION_VUELTA_ATRAS.equals(transicion) && !StringUtils.isBlank(scriptValidacion) && !transicionSalto && !transicion.toLowerCase().equals("fin") && !transicion.toLowerCase().equals("saltofin")) {
 			try {
 				Long activoTramite = getActivoTramite(executionContext).getId();
 				Object result = jbpmMActivoScriptExecutorApi.evaluaScript(activoTramite, tareaExterna.getId(), tareaExterna.getTareaProcedimiento().getId(),

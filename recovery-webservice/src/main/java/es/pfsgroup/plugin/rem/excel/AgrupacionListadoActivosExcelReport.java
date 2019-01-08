@@ -64,7 +64,7 @@ public class AgrupacionListadoActivosExcelReport extends AbstractExcelReport imp
 			fila.add(activoAgrupacion.getNumActivo().toString());
 			fila.add(this.getDateStringValue(activoAgrupacion.getFechaInclusion()));
 			fila.add(activoAgrupacion.getTipoActivoDescripcion());
-			fila.add(this.getDictionaryValue(activoAgrupacion.getSubtipoActivo()));
+			fila.add(activoAgrupacion.getSubtipoActivoDescripcion());
 			fila.add(activoAgrupacion.getDireccion());
 			fila.add(activoAgrupacion.getPublicado());
 			fila.add(activoAgrupacion.getSituacionComercial());

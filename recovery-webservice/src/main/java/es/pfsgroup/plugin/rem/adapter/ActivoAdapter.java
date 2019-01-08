@@ -2808,7 +2808,8 @@ public class ActivoAdapter {
 		ActivoSituacionPosesoria condicionantesDisponibilidad = genericDao.get(ActivoSituacionPosesoria.class, filtro);
 		
 		if((!Checks.esNulo(dto.getOtro()) && Checks.esNulo(condicionantesDisponibilidad.getOtro()))
-				|| (Checks.esNulo(dto.getOtro()) && !Checks.esNulo(condicionantesDisponibilidad.getOtro()))) {
+				|| (Checks.esNulo(dto.getOtro()) && !Checks.esNulo(condicionantesDisponibilidad.getOtro()))
+			    || (!Checks.esNulo(dto.getOtro()) && !Checks.esNulo(condicionantesDisponibilidad.getOtro()) && !dto.getOtro().equals(condicionantesDisponibilidad.getOtro()))) {
 			boolean success = activoApi.saveCondicionantesDisponibilidad(idActivo, dto);
 			activoApi.updateCondicionantesDisponibilidad(idActivo);
 			if (success)

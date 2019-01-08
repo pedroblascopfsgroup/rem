@@ -134,6 +134,8 @@ public class TabActivoPatrimonio implements TabActivoService {
 			}
 
 			if(!Checks.esNulo(activoPatrimonioDto.getCodigoAdecuacion())) {
+				activoPatrimonio.setAdecuacionAlquilerAnterior(activoPatrimonio.getAdecuacionAlquiler());
+				
 				if(!DDAdecuacionAlquiler.CODIGO_ADA_NULO.equals(activoPatrimonioDto.getCodigoAdecuacion())) {
 					DDAdecuacionAlquiler adecuacionAlquiler = genericDao.get(DDAdecuacionAlquiler.class, genericDao.createFilter(FilterType.EQUALS, "codigo",activoPatrimonioDto.getCodigoAdecuacion()));
 					activoPatrimonio.setAdecuacionAlquiler(adecuacionAlquiler);
@@ -151,6 +153,8 @@ public class TabActivoPatrimonio implements TabActivoService {
 				}
 
 				if(!Checks.esNulo(activoPatrimonioDto.getCodigoAdecuacion())) {
+					activoPatrimonio.setAdecuacionAlquilerAnterior(activoPatrimonio.getAdecuacionAlquiler());
+					
 					if(!DDAdecuacionAlquiler.CODIGO_ADA_NULO.equals(activoPatrimonioDto.getCodigoAdecuacion())) {
 						DDAdecuacionAlquiler adecuacionAlquiler = genericDao.get(DDAdecuacionAlquiler.class, genericDao.createFilter(FilterType.EQUALS, "codigo",activoPatrimonioDto.getCodigoAdecuacion()));
 						activoPatrimonio.setAdecuacionAlquiler(adecuacionAlquiler);

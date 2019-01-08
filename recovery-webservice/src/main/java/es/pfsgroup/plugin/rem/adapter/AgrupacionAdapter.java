@@ -60,7 +60,6 @@ import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.ProveedoresApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
-import es.pfsgroup.plugin.rem.gestor.dao.GestorActivoDao;
 import es.pfsgroup.plugin.rem.jbpm.handler.notificator.impl.NotificatorServiceSancionOfertaAceptacionYRechazo;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
@@ -94,8 +93,6 @@ import es.pfsgroup.plugin.rem.model.DtoOfertaActivo;
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
 import es.pfsgroup.plugin.rem.model.DtoUsuario;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.GestorActivo;
-import es.pfsgroup.plugin.rem.model.GestorActivoHistorico;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.Trabajo;
@@ -243,9 +240,6 @@ public class AgrupacionAdapter {
 	private ActivoPublicacionDao activoPublicacionDao;
 	
 	@Autowired
-	private GestorActivoDao gestorActivoDao;
-
-	@Autowired
 	private ActivoHistoricoPatrimonioDao activoHistoricoPatrimonioDao;
 
 	private final Log logger = LogFactory.getLog(getClass());
@@ -268,7 +262,6 @@ public class AgrupacionAdapter {
 	private static final String TIPO_COMERCIAL_ALQUILER = "Alquiler";
 	private static final String TIPO_GESTOR_COMERCIAL_VENTA = "GCOM";
 	private static final String TIPO_GESTOR_COMERCIAL_ALQUILER = "GESTCOMALQ";
-	private static final String TIPO_SUPERVISOR_COMERCIAL_VENTA = "SCOM";
 	public static final String AGRUPACION_CAMBIO_DEST_COMERCIAL_A_VENTA_CON_ALQUILADOS = "No se puede realizar el cambio de destino comercial debido a que la agrupación tiene activos alquilados con título";
 
 
@@ -954,6 +947,111 @@ public class AgrupacionAdapter {
 
 			// Actualizar el activo principal de la agrupación
 			
+			if (!Checks.esNulo(activoPrincipal)) {
+				if (activoPrincipal == 1) {
+					agrupacion.setActivoPrincipal(activo);
+					activoAgrupacionApi.saveOrUpdate(agrupacion);
+				}
+			}
+
+		} catch (JsonViewerException jve) {
+			throw jve;
+		} catch (Exception e) {
+			logger.error(e);
+			e.printStackTrace();
+		}
+	}
+	
+	@Transactional(readOnly = false)
+	public void createActivoAgrupacionMasivo(Long numActivo, Long idAgrupacion, Integer activoPrincipal, boolean ventaCartera)
+			throws JsonViewerException {
+
+		Filter filter = genericDao.createFilter(FilterType.EQUALS, "numActivo", numActivo);
+		Activo activo = genericDao.get(Activo.class, filter);
+		ActivoAgrupacion agrupacion = activoAgrupacionApi.get(idAgrupacion);
+
+		try {
+			// Validaciones
+			if (Checks.esNulo(agrupacion)) {
+				throw new JsonViewerException("La agrupación no existe");
+			}
+			
+			int num = activoAgrupacionActivoApi.numActivosPorActivoAgrupacion(agrupacion.getId());
+
+			if (Checks.esNulo(activo)) {
+				throw new JsonViewerException("El activo no existe");
+			}
+			
+			if (!Checks.esNulo(numActivo)){
+				if(!particularValidator.esActivoIncluidoPerimetro(Long.toString(numActivo))){
+					throw new JsonViewerException("El activo se encuetra fuera del perímetro HAYA");
+				}
+			}
+			
+			if (!Checks.esNulo(numActivo)){
+				if(particularValidator.isActivoNoComercializable(Long.toString(numActivo))){
+					throw new JsonViewerException("El activo no es comercializable");
+				}
+			}
+			
+			if (!Checks.esNulo(numActivo)){
+				if(particularValidator.existeActivoConOfertaViva(Long.toString(numActivo))){
+					throw new JsonViewerException("El activo tiene ofertas individuales vivas");
+				}
+			}
+			
+			if (!Checks.esNulo(numActivo)){
+				if(particularValidator.activoEnAgrupacionComercialViva(Long.toString(numActivo))){
+					throw new JsonViewerException("El activo está incluido en otro lote comercial vivo");
+				}
+			}
+
+			//Si el activo es de Liberbank, además debe ser de la misma subcartera
+			if(DDCartera.CODIGO_CARTERA_LIBERBANK.equals(activo.getCartera().getCodigo()) && !Checks.estaVacio(agrupacion.getActivos())) {
+				if(!Checks.esNulo(activo.getSubcartera())) {
+					if(!agrupacion.getActivos().get(0).getActivo().getSubcartera().equals(activo.getSubcartera())) {
+						throw new JsonViewerException("El activo añadido tiene que tener la misma subcartera que los ya existentes");
+					}
+				}else{
+					throw new JsonViewerException("El activo no se puede añadir por que no tiene subcartera");
+
+				}
+			}
+
+			// Si es el primer activo, validamos si tenemos los datos necesarios
+			// del activo, y modificamos la agrupación con esos datos
+			if (num == 0) {
+				activoAgrupacionValidate(activo, agrupacion);
+				agrupacion = updateAgrupacionPrimerActivo(activo, agrupacion);
+				activoAgrupacionApi.saveOrUpdate(agrupacion);
+			}
+
+			// Validaciones de agrupación
+			agrupacionValidate(activo, agrupacion);
+
+			ActivoAgrupacionActivo activoAgrupacionActivo = new ActivoAgrupacionActivo();
+			activoAgrupacionActivo.setActivo(activo);
+			activoAgrupacionActivo.setAgrupacion(agrupacion);
+			Date today = new Date();
+			activoAgrupacionActivo.setFechaInclusion(today);
+			activoAgrupacionActivoApi.save(activoAgrupacionActivo);
+			
+			if (particularValidator.isMismoEpuActivoPrincipalAgrupacion(String.valueOf(numActivo), String.valueOf(agrupacion.getNumAgrupRem()))) {
+				DtoDatosPublicacionAgrupacion dto = new DtoDatosPublicacionAgrupacion();
+				dto.setIdActivo(activo.getId());
+
+				ActivoAgrupacionActivo aga = activoApi.getActivoAgrupacionActivoAgrRestringidaPorActivoID(agrupacion.getActivoPrincipal().getId());
+				if (!Checks.esNulo(aga)) {
+					activoEstadoPublicacionApi.setDatosPublicacionAgrupacionMasivo(aga.getAgrupacion().getId(), dto);
+				}
+			} else {
+				throw new JsonViewerException(BusinessValidators.ERROR_ESTADO_PUBLICACION_NOT_EQUAL);
+			}
+
+			// Actualizar el tipoComercialización del activo
+			updaterState.updaterStateTipoComercializacion(activo);
+
+			// Actualizar el activo principal de la agrupación
 			if (!Checks.esNulo(activoPrincipal)) {
 				if (activoPrincipal == 1) {
 					agrupacion.setActivoPrincipal(activo);
@@ -2281,12 +2379,15 @@ public class AgrupacionAdapter {
 
 					if(!Checks.estaVacio(listaActivos)) {
 						for (ActivoAgrupacionActivo activoAgrupacionActivo : listaActivos) {
-							ActivoPublicacion activoPublicacion = activoAgrupacionActivo.getActivo().getActivoPublicacion();
-							activoPublicacion.setTipoComercializacion(tipoComercializacion);
-							Activo activo=activoAgrupacionActivo.getActivo();
-							activo.setTipoComercializacion(tipoComercializacion);
-							activoPublicacionDao.saveOrUpdate(activoPublicacion);
-							genericDao.save(Activo.class, activo); 
+
+						if(activoAgrupacionActivo.getActivo() != null && activoAgrupacionActivo.getActivo().getActivoPublicacion()!= null && tipoComercializacion != null){
+								ActivoPublicacion activoPublicacion = activoAgrupacionActivo.getActivo().getActivoPublicacion();
+								activoPublicacion.setTipoComercializacion(tipoComercializacion);
+								Activo activo=activoAgrupacionActivo.getActivo();
+								activo.setTipoComercializacion(tipoComercializacion);
+								activoPublicacionDao.saveOrUpdate(activoPublicacion);
+								genericDao.save(Activo.class, activo); 
+							}
 						}
 					}
 				}

@@ -32,11 +32,14 @@ public class VTasacionCalculoLBK implements Serializable {
 	@Column(name = "TASACION")
 	private Double importeTasacion;
 	
-	@Column(name = "DD_TPC_CODIGO")
-	private String codigoTipoPrecio;
-
-	@Column(name = "VAL_IMPORTE")
-	private Double importeTipoPrecio;
+	@Column(name = "PRECIO_APROBADO")
+	private Double importePrecioAprobado;
+	
+	@Column(name = "PRECIO_MINIMO")
+	private Double importePrecioMinimo;
+	
+	@Column(name = "PRECIO_DESCUENTO")
+	private Double importePrecioDescuento;
 	
 	@Column(name="FECHA_VALOR_TASACION")
 	private Date fechaTasacion;
@@ -73,20 +76,28 @@ public class VTasacionCalculoLBK implements Serializable {
 		this.importeTasacion = importeTasacion;
 	}
 
-	public String getCodigoTipoPrecio() {
-		return codigoTipoPrecio;
+	public Double getImportePrecioAprobado() {
+		return importePrecioAprobado;
 	}
 
-	public void setCodigoTipoPrecio(String codigoTipoPrecio) {
-		this.codigoTipoPrecio = codigoTipoPrecio;
+	public void setImportePrecioAprobado(Double importePrecioAprobado) {
+		this.importePrecioAprobado = importePrecioAprobado;
 	}
 
-	public Double getImporteTipoPrecio() {
-		return importeTipoPrecio;
+	public Double getImportePrecioMinimo() {
+		return importePrecioMinimo;
 	}
 
-	public void setImporteTipoPrecio(Double importeTipoPrecio) {
-		this.importeTipoPrecio = importeTipoPrecio;
+	public void setImportePrecioMinimo(Double importePrecioMinimo) {
+		this.importePrecioMinimo = importePrecioMinimo;
+	}
+
+	public Double getImportePrecioDescuento() {
+		return importePrecioDescuento;
+	}
+
+	public void setImportePrecioDescuento(Double importePrecioDescuento) {
+		this.importePrecioDescuento = importePrecioDescuento;
 	}
 
 	public Date getFechaTasacion() {

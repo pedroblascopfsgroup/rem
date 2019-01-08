@@ -952,14 +952,22 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
     onChangeCheckboxPublicarVenta: function(checkbox, isDirty){
     	var me = this;
     	var chkbxPublicarSinPrecioVenta = checkbox.up('agrupacionesdetallemain').lookupReference('chkbxpublicarsinprecioventa').getValue();
-    	if (!chkbxPublicarSinPrecioVenta &&
-    			(Ext.isEmpty(me.getViewModel().get('datospublicacionagrupacion').getData().precioWebVenta) || 
-    					me.getViewModel().get('datospublicacionagrupacion').getData().precioWebVenta==="0.00")) {
+    	var textarea = me.lookupReference(checkbox.textareaRefChained);
+    	if (!chkbxPublicarSinPrecioVenta
+    			&& (Ext.isEmpty(me.getViewModel().get('datospublicacionagrupacion').getData().precioWebVenta) 
+    					|| me.getViewModel().get('datospublicacionagrupacion').getData().precioWebVenta==="0.00")) {
     		checkbox.setValue(false);
-    		checkbox.setReadOnly(true); 		
+    		checkbox.setReadOnly(true); 
     	} else {
-    		checkbox.setReadOnly(false); 
-    	} 
+    		checkbox.setReadOnly(false);
+    	}
+    	
+    	if (checkbox.getValue()) {
+        	textarea.setDisabled(false);
+        } else {
+        	textarea.setDisabled(true);
+        	textarea.setValue("");
+        }
     },
     
     onChangeCheckboxOcultar: function(checkbox, isDirty) {
@@ -1021,11 +1029,10 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
     
     onChangeCheckboxPublicarAlquiler: function(checkbox, isDirty) {
         var me = this;
-
         if (checkbox.getValue() && me.getViewModel().get('debePreguntarPorTipoPublicacionAlquiler')) {
 			Ext.create('HreRem.view.activos.detalle.VentanaEleccionTipoPublicacion').show();
         }
-        
+               
     	var me = this;
     	var chkbxPublicarSinPrecioAlquiler = checkbox.up('agrupacionesdetallemain').lookupReference('chkbxpublicarsinprecioalquiler').getValue();
     	if (!chkbxPublicarSinPrecioAlquiler && 

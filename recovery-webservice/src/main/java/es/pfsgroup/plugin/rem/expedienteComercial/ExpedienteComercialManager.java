@@ -901,15 +901,18 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					dto.setFechaReserva(expediente.getReserva().getFechaFirma());
 				}else {
 					Trabajo trabajo = expediente.getTrabajo();
-					Activo act=trabajo.getActivo();
-					String valor=tareaActivoApi.getValorFechaSeguroRentaPorIdActivo(act.getId());
-					if(valor != null && !valor.equals("")) {
-						SimpleDateFormat sdf1=new SimpleDateFormat("yyyy-MM-dd");
-						try {
-							dto.setFechaReserva(sdf1.parse(valor));
-						} catch (ParseException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
+					if(trabajo != null){
+						Activo act=trabajo.getActivo();
+						if(act != null){
+							String valor=tareaActivoApi.getValorFechaSeguroRentaPorIdActivo(act.getId());
+							if(valor != null && !valor.equals("")) {
+								SimpleDateFormat sdf1=new SimpleDateFormat("yyyy-MM-dd");
+								try {
+									dto.setFechaReserva(sdf1.parse(valor));
+								} catch (ParseException e) {
+									logger.error("error calculando la fecha de reserva",e);
+								}
+							}
 						}
 					}
 				}
@@ -2517,7 +2520,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			beanUtilNotNull.copyProperty(posicionamiento, "motivoAplazamiento", dto.getMotivoAplazamiento());
 			beanUtilNotNull.copyProperty(posicionamiento, "fechaAviso", dto.getFechaHoraAviso());
 
-			if(!Checks.esNulo(dto.getFechaHoraFirma())) {
+			if(!Checks.esNulo(dto.getFechaHoraFirma()) && (!(new Date(0)).equals(dto.getFechaHoraFirma()))) {
 				beanUtilNotNull.copyProperty(posicionamiento, "fechaPosicionamiento", dto.getFechaHoraFirma());
 			} else if(!Checks.esNulo(dto.getFechaHoraPosicionamiento())) {
 				beanUtilNotNull.copyProperty(posicionamiento, "fechaPosicionamiento", dto.getFechaHoraPosicionamiento());
@@ -3326,7 +3329,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		Oferta oferta = null;
 		ExpedienteComercial expediente = findOne(idExpedienteComercial);
 		List<ActivoTramite> listaTramites = null;
-		listaTramites = activoTramiteApi.getTramitesActivoTrabajoList(expediente.getTrabajo().getId());
+		if(expediente.getTrabajo() != null){
+			listaTramites = activoTramiteApi.getTramitesActivoTrabajoList(expediente.getTrabajo().getId());
+		}
+		
 		String reultadoTramite = "venta";
 		try {
 			if (!Checks.esNulo(expediente)) {
@@ -4844,13 +4850,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			CompradorExpediente compradorExpediente = genericDao.get(CompradorExpediente.class, filtroExpediente, filtroComprador);
 
 			if (!Checks.esNulo(compradorExpediente)) {
-				if (!Checks.esNulo(compradorExpediente.getTitularContratacion())) {
-					if (compradorExpediente.getTitularContratacion() == 0) {
+				if (!Checks.esNulo(compradorExpediente.getTitularContratacion()) && compradorExpediente.getTitularContratacion() == 0) {
 						expedienteComercialDao.deleteCompradorExpediente(idExpediente, idComprador);
 						ExpedienteComercial expediente = genericDao.get(ExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "id", idExpediente));
 						ofertaApi.resetPBC(expediente, true);
-					}
-
 				} else {
 					throw new JsonViewerException("Operación no permitida, por ser el titular de la contratación");
 				}

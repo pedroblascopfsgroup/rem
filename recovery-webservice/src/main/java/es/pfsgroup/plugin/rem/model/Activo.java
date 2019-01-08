@@ -422,6 +422,13 @@ public class Activo implements Serializable, Auditable {
 
     @Column(name = "ACT_PUJA")
     private Boolean estaEnPuja;
+    
+    @Column(name = "ACT_EXCLUIR_DWH")
+    private Boolean excluirDwh;
+	
+	
+    // Getters del activo --------------------------------------------
+    
 
     @Column(name = "ACT_MOTIVO")
     private String motivoActivo;
@@ -1716,6 +1723,14 @@ public class Activo implements Serializable, Auditable {
 		this.estaEnPuja = estaEnPuja;
 	}
 
+	public Boolean getExcluirDwh() {
+		return excluirDwh;
+	}
+
+	public void setExcluirDwh(Boolean excluirDwh) {
+		this.excluirDwh = excluirDwh;
+	}
+	
 	public String getMotivoActivo() {
 		return motivoActivo;
 	}

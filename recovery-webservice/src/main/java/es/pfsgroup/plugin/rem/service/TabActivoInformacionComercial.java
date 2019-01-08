@@ -101,6 +101,10 @@ public class TabActivoInformacionComercial implements TabActivoService {
 				BeanUtils.copyProperty(activoDto, "emailMediador", activo.getInfoComercial().getMediadorInforme().getEmail());
 			}
 			
+			if (!Checks.esNulo(activo.getInfoComercial().getInfoDistribucionInterior())) {
+				BeanUtils.copyProperty(activoDto, "distribucionTxt", (activo.getInfoComercial()).getInfoDistribucionInterior());
+			}
+			
 			if (activo.getInfoComercial() instanceof ActivoVivienda) {	
 				if (!Checks.esNulo(activo.getInfoComercial().getTipoInfoComercial())) {						
 
@@ -114,6 +118,10 @@ public class TabActivoInformacionComercial implements TabActivoService {
 					
 					if (!Checks.esNulo(((ActivoVivienda)activo.getInfoComercial()).getTipoRenta())) {
 						BeanUtils.copyProperty(activoDto, "tipoRentaCodigo", ((ActivoVivienda)activo.getInfoComercial()).getTipoRenta().getCodigo());
+					}
+					
+					if (!Checks.esNulo(((ActivoVivienda)activo.getInfoComercial()).getDistribucionTxt())) {
+						BeanUtils.copyProperty(activoDto, "distribucionTxt", ((ActivoVivienda)activo.getInfoComercial()).getDistribucionTxt());
 					}
 				}
 			}
@@ -245,7 +253,6 @@ public class TabActivoInformacionComercial implements TabActivoService {
 					ActivoVivienda vivienda = (ActivoVivienda) activo.getInfoComercial();
 					vivienda.setTipoOrientacion(tipoOrientacion);
 				}
-				
 			} else if (activo.getInfoComercial() instanceof ActivoPlazaAparcamiento) {
 				ActivoPlazaAparcamiento plazaAparcamiento = (ActivoPlazaAparcamiento) activo.getInfoComercial();
 				
@@ -259,9 +266,9 @@ public class TabActivoInformacionComercial implements TabActivoService {
 				if (!Checks.esNulo(dto.getTipoCalidadCodigo())) {
 					DDTipoCalidad tipoCalidad = (DDTipoCalidad) 
 							diccionarioApi.dameValorDiccionarioByCod(DDTipoCalidad.class, dto.getTipoRentaCodigo());
-
+					
 					plazaAparcamiento.setTipoCalidad(tipoCalidad);
-				}	
+				}
 				
 				activo.setInfoComercial(plazaAparcamiento);
 				

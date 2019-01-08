@@ -142,5 +142,6 @@ public interface ActivoAgrupacionApi {
 	Boolean darDeBajaCondicionEspecifica(DtoCondicionEspecificaAgrupacion dto);
 
 	public Usuario getGestorComercialAgrupacion(List<Long> numActivos);
-		
+	
+	public Boolean arrayComparer(Long idAgr, List<Long> agrupaciones);
 }

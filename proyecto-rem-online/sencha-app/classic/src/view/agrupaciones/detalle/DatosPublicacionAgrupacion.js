@@ -116,6 +116,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.DatosPublicacionAgrupacion', {
 							{
 								fieldLabel: HreRem.i18n('fieldlabel.datos.publicacion.estados.publicar'),
 								reference: 'chkbxpublicarventa',
+								textareaRefChained: 'textareaMotivoPublicacionVenta',
 								bind: {
 									readOnly: '{datospublicacionagrupacion.deshabilitarCheckPublicarVenta}',
 									value: '{datospublicacionagrupacion.publicarVenta}'
@@ -185,8 +186,8 @@ Ext.define('HreRem.view.agrupaciones.detalle.DatosPublicacionAgrupacion', {
 								xtype: 'textareafieldbase',
 								reference: 'textareaMotivoPublicacionVenta',
 								textareaRefChained: 'chkbxpublicarventa',
+								disabled: true,
 								bind: {
-									readOnly: '{!datospublicacionagrupacion.publicarVenta}',
 									value: '{datospublicacionagrupacion.motivoPublicacion}'
 								},
 								maxLength: 200,

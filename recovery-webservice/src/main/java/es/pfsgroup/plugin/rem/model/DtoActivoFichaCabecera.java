@@ -196,6 +196,8 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 
 	private String idAgrupacion;
 	private Boolean tienePromocion;
+	
+	private Boolean tieneCEE;
 
 	private int page;
 	private int start;
@@ -1693,4 +1695,17 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	public void setMotivoActivo(String motivoActivo) {
 		this.motivoActivo = motivoActivo;
 	}
+
+	public Boolean getTieneCEE() {
+		return tieneCEE;
+	}
+
+	public void setTieneCEE(Boolean tieneCEE) {
+		this.tieneCEE = tieneCEE;
+	}
+
+	public Boolean isTieneCEE() {
+		return tieneCEE;
+	}
+	
 }

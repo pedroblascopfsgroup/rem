@@ -2019,56 +2019,6 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 
 
-	public Boolean existeActivoConOfertaVentaViva(String numActivo) {
-		if(Checks.esNulo(numActivo))
-			return false;
-
-		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
-				+ "		FROM ACT_ACTIVO ACT "
-				+ " 	JOIN ACT_OFR ACTOF ON ACT.ACT_ID = ACTOF.ACT_ID "
-				+ " 	JOIN OFR_OFERTAS OFR ON ACTOF.OFR_ID = OFR.OFR_ID "
-				+ " 	JOIN DD_TOF_TIPOS_OFERTA TOF ON OFR.DD_TOF_ID = TOF.DD_TOF_ID "
-				+ " 	JOIN DD_EOF_ESTADOS_OFERTA EOF ON OFR.DD_EOF_ID = EOF.DD_EOF_ID "
-				+ "		WHERE ACT.ACT_NUM_ACTIVO ="+numActivo+" "
-				+ " 	AND EOF.DD_EOF_CODIGO IN ('01','03','04')"
-				+ "		AND TOF.DD_TOF_CODIGO = '01'");
-
-		return !"0".equals(resultado);
-
-	}
-
-	public Boolean existeActivoConOfertaAlquilerViva(String numActivo) {
-		if(Checks.esNulo(numActivo))
-			return false;
-
-		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
-				+ "		FROM ACT_ACTIVO ACT "
-				+ " 	JOIN ACT_OFR ACTOF ON ACT.ACT_ID = ACTOF.ACT_ID "
-				+ " 	JOIN OFR_OFERTAS OFR ON ACTOF.OFR_ID = OFR.OFR_ID "
-				+ " 	JOIN DD_TOF_TIPOS_OFERTA TOF ON OFR.DD_TOF_ID = TOF.DD_TOF_ID "
-				+ " 	JOIN DD_EOF_ESTADOS_OFERTA EOF ON OFR.DD_EOF_ID = EOF.DD_EOF_ID "
-				+ "		WHERE ACT.ACT_NUM_ACTIVO ="+numActivo+" "
-				+ " 	AND EOF.DD_EOF_CODIGO IN ('01','03','04')"
-				+ "		AND TOF.DD_TOF_CODIGO = '02'");
-
-		return !"0".equals(resultado);
-
-	}
-
-
-	public String getCodigoDestinoComercialByNumActivo(String numActivo) {
-
-		if(Checks.esNulo(numActivo))
-			return null;
-
-		String resultado = rawDao.getExecuteSQL("SELECT tco.DD_TCO_CODIGO FROM ACT_ACTIVO act "
-				+ " INNER JOIN DD_TCO_TIPO_COMERCIALIZACION tco ON act.DD_TCO_ID = tco.DD_TCO_ID "
-				+ " WHERE act.ACT_NUM_ACTIVO = '"+numActivo+"'");
-
-		return resultado;
-
-	}
-
 	@Override
 	public Boolean esParGastoActivo(String numGasto, String numActivo){
 		if(!StringUtils.isNumeric(numGasto) || !StringUtils.isNumeric(numActivo))
@@ -2252,7 +2202,6 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	@Override
 	public Boolean esActivoAlquilado(String numActivo) {
 
-		String Hola = "";
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(act.act_id) "
 				+ "			FROM ACT_PTA_PATRIMONIO_ACTIVO pta, "
 				+ "			  ACT_ACTIVO act, DD_EAL_ESTADO_ALQUILER eal "
@@ -2269,17 +2218,17 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	@Override
 	public Boolean activoEnAgrupacionComercialViva(String numActivo) {
-
-		String resultado = rawDao.getExecuteSQL("select count(agr.AGR_ID) from ACT_AGR_AGRUPACION agr " +
-				" inner join DD_TAG_TIPO_AGRUPACION tag on tag.DD_TAG_ID = agr.DD_TAG_ID and (tag.DD_TAG_CODIGO = '14' or tag.DD_TAG_CODIGO = '15') " +
-				" inner join ACT_AGA_AGRUPACION_ACTIVO aga on aga.AGR_ID = agr.AGR_ID " +
-				" inner join ACT_ACTIVO act on act.ACT_ID = aga.ACT_ID and act.ACT_NUM_ACTIVO = " + numActivo +
-				" where agr.AGR_FECHA_BAJA IS NULL  " + 
-				" and act.borrado = 0" +
-				" and agr.borrado = 0" +
-				" and tag.borrado = 0" +
+		
+		String resultado = rawDao.getExecuteSQL("select count(agr.AGR_ID) from ACT_AGR_AGRUPACION agr " + 
+				" inner join DD_TAG_TIPO_AGRUPACION tag on tag.DD_TAG_ID = agr.DD_TAG_ID and (tag.DD_TAG_CODIGO = '14' or tag.DD_TAG_CODIGO = '15') " + 
+				" inner join ACT_AGA_AGRUPACION_ACTIVO aga on aga.AGR_ID = agr.AGR_ID " + 
+				" inner join ACT_ACTIVO act on act.ACT_ID = aga.ACT_ID and act.ACT_NUM_ACTIVO = " + numActivo + 
+				" where agr.AGR_FECHA_BAJA IS NULL AND agr.AGR_FIN_VIGENCIA >= sysdate " + 
+				" and act.borrado = 0" + 
+				" and agr.borrado = 0" + 
+				" and tag.borrado = 0" + 
 				" and aga.borrado = 0");
-
+		
 		return Integer.valueOf(resultado) > 0;
 
 	}
@@ -2388,6 +2337,63 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		} else {
 			return false;
 		}
+	}
+	
+	public Boolean existeActivoConOfertaVentaViva(String numActivo) {
+		if(Checks.esNulo(numActivo))
+			return false;
+		
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "		FROM ACT_ACTIVO ACT "
+				+ " 	JOIN ACT_OFR ACTOF ON ACT.ACT_ID = ACTOF.ACT_ID "
+				+ " 	JOIN OFR_OFERTAS OFR ON ACTOF.OFR_ID = OFR.OFR_ID "
+				+ " 	JOIN DD_TOF_TIPOS_OFERTA TOF ON OFR.DD_TOF_ID = TOF.DD_TOF_ID "
+				+ " 	JOIN DD_EOF_ESTADOS_OFERTA EOF ON OFR.DD_EOF_ID = EOF.DD_EOF_ID "
+				+ "		WHERE ACT.ACT_NUM_ACTIVO ="+numActivo+" "
+				+ " 	AND EOF.DD_EOF_CODIGO IN ('01','03','04')"
+				+ "		AND TOF.DD_TOF_CODIGO = '01'");
+		
+
+		if("0".equals(resultado))
+			return false;
+		else
+			return true;
+
+	}
+	
+	public Boolean existeActivoConOfertaAlquilerViva(String numActivo) {
+		if(Checks.esNulo(numActivo))
+			return false;
+		
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "		FROM ACT_ACTIVO ACT "
+				+ " 	JOIN ACT_OFR ACTOF ON ACT.ACT_ID = ACTOF.ACT_ID "
+				+ " 	JOIN OFR_OFERTAS OFR ON ACTOF.OFR_ID = OFR.OFR_ID "
+				+ " 	JOIN DD_TOF_TIPOS_OFERTA TOF ON OFR.DD_TOF_ID = TOF.DD_TOF_ID "
+				+ " 	JOIN DD_EOF_ESTADOS_OFERTA EOF ON OFR.DD_EOF_ID = EOF.DD_EOF_ID "
+				+ "		WHERE ACT.ACT_NUM_ACTIVO ="+numActivo+" "
+				+ " 	AND EOF.DD_EOF_CODIGO IN ('01','03','04')"
+				+ "		AND TOF.DD_TOF_CODIGO = '02'");
+		
+
+		if("0".equals(resultado))
+			return false;
+		else
+			return true;
+
+	}
+	
+	public String getCodigoDestinoComercialByNumActivo(String numActivo) {
+		
+		if(Checks.esNulo(numActivo))
+			return null;
+		
+		String resultado = rawDao.getExecuteSQL("SELECT tco.DD_TCO_CODIGO FROM ACT_ACTIVO act "
+				+ " INNER JOIN DD_TCO_TIPO_COMERCIALIZACION tco ON act.DD_TCO_ID = tco.DD_TCO_ID " 
+				+ " WHERE act.ACT_NUM_ACTIVO = '"+numActivo+"'");
+		
+		return resultado;
+		
 	}
 	
 	@Override

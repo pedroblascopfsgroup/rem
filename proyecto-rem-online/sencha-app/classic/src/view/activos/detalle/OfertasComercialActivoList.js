@@ -294,14 +294,13 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 	
 	saveFn: function (editor, grid, context) {
 		var me = grid;
-		if (me.isValidRecord(context.record)) {				
+		if (me.isValidRecord(context.record)) {	
 			me.mask(HreRem.i18n("msg.mask.espere"));
     		context.record.save({
-
                 params: {
                     idEntidad: Ext.isEmpty(me.idPrincipal) ? "" : this.up('{viewModel}').getViewModel().get(me.idPrincipal)
                 },
-                success: function (a, operation, c) {																			
+                success: function (a, operation, c) {																	
 					me.saveSuccessFn();
 				},
                 
@@ -349,14 +348,13 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 		}
 		
 		var codigoEstadoNuevo = record.data.codigoEstadoOferta;
-		
 		if(hayOfertaAceptada && CONST.ESTADOS_OFERTA['ACEPTADA'] == codigoEstadoNuevo){
 			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.guardar.oferta.ya.aceptada"));
 			return false;
 		} else if(hayOfertaAceptada && CONST.ESTADOS_OFERTA['RECHAZADA'] != codigoEstadoNuevo){
 			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.guardar.oferta.solo.rechazar"));
 			return false;
-		} else if(!hayOfertaAceptada && CONST.ESTADOS_OFERTA['RECHAZADA'] != codigoEstadoNuevo && CONST.ESTADOS_OFERTA['ACEPTADA'] != codigoEstadoNuevo ){
+		} else if(!hayOfertaAceptada && CONST.ESTADOS_OFERTA['RECHAZADA'] != codigoEstadoNuevo && CONST.ESTADOS_OFERTA['ACEPTADA'] != codigoEstadoNuevo && CONST.ESTADOS_OFERTA['CONGELADA'] != codigoEstadoNuevo){
 			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.guardar.oferta.solo.aceptar.rechazar"));
 			return false;
 		}

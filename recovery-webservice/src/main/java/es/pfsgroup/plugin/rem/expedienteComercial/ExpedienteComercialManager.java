@@ -41,6 +41,7 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.diccionarios.Dictionary;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.Localidad;
+import es.capgemini.pfs.expediente.model.Expediente;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
@@ -5748,9 +5749,19 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	}
 
 	@Override
-	public DtoFichaExpediente getExpedienteComercialPropagables(Long idExpediente) {
-		// TODO Auto-generated method stub
+	public DtoFichaExpediente getExpedienteComercialPropagables(Long idExpediente)
+	{
+		System.out.println("{ EN PROCESO }");			
 		return null;
-	}	
+	}
+	
+	@Override
+	public List<DtoActivosExpediente> getActivosPropagables(Long idExpediente)
+	{
+		System.out.println("ID EXP: " + idExpediente);
+		DtoPage dtopage = getActivosExpediente(idExpediente);
+		List<DtoActivosExpediente> activos = (List<DtoActivosExpediente>) dtopage.getResults();
+		return activos;
+	}
 }
 

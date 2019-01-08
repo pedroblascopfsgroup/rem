@@ -973,4 +973,6 @@ public interface ExpedienteComercialApi {
 	 * @return 
 	 */
 	 DtoFichaExpediente getExpedienteComercialPropagables(Long idExpediente);
+	 
+	 List<DtoActivosExpediente> getActivosPropagables(Long idExpediente);
 }

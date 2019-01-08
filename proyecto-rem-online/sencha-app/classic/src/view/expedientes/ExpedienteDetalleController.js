@@ -2,8 +2,8 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
     extend: 'Ext.app.ViewController',
     alias: 'controller.expedientedetalle',  
     requires: ['HreRem.view.expedientes.NotarioSeleccionado', 'HreRem.view.expedientes.DatosComprador', 
-    'HreRem.view.expedientes.DatosClienteUrsus',"HreRem.model.ActivoExpedienteCondicionesModel",
-    "HreRem.view.common.adjuntos.AdjuntarDocumentoExpediente"],
+    'HreRem.view.expedientes.DatosClienteUrsus','HreRem.model.ActivoExpedienteCondicionesModel',
+    'HreRem.view.common.adjuntos.AdjuntarDocumentoExpediente', 'HreRem.view.activos.detalle.OpcionesPropagacionCambios'],
     
     control: {
     	'documentosexpediente gridBase': {
@@ -411,12 +411,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	
 	onClickBotonGuardarActivoExpediente: function(btn) {
 		var me = this;
-		if(btn.up('tabpanel').getActiveTab().getReference()=="activoexpedientetanteo"){
-			me.onSaveFormularioActivoExpedienteTanteo(btn, btn.up('tabpanel').getActiveTab());
-		}else{
-			me.onSaveFormularioCompletoActivoExpediente(btn, btn.up('tabpanel').getActiveTab());
-		}
-						
+		me.onSaveFormularioCondiciones(btn, btn.up('tabpanel').getActiveTab());					
 	},
 	
 	onSaveFormularioActivoExpedienteTanteo: function(btn, form) {
@@ -2274,5 +2269,211 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		    	 me.getView().unmask();
 		     }
 		});		
-	}
+	},
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	onSaveFormularioCondiciones: function(btn, form) {
+		debugger;
+		var me = this;
+		me.getView().mask(HreRem.i18n("msg.mask.loading"));
+		
+		//disableValidation: Atributo para indicar si el guardado del formulario debe aplicar o no, las validaciones.
+		if(form.isFormValid() || form.disableValidation) {
+	
+			Ext.Array.each(form.query('field[isReadOnlyEdit]'),
+				function (field, index){field.fireEvent('update'); field.fireEvent('save');}
+			);
+			
+			var idExpediente 	= me.getViewModel().get("expediente.id");
+			var url 			= $AC.getRemoteUrl('expedientecomercial/getActivosPropagables');
+			Ext.Ajax.request({
+			
+			    url: url,
+			     
+			    params: { idExpediente: idExpediente },
+				
+			    
+			    success: function (response, opts) {
+			    	
+					// Obtener jsondata para guardar activo	
+					var activo 						=	me.getViewModel().get("activoExpedienteSeleccionado");
+					var idActivo 					=	me.getViewModel().get("activoExpedienteSeleccionado.idActivo");
+					var posesionInicial 			=	me.getViewModel().get("condiciones.posesionInicial");
+					var situacionPosesoriaCodigo 	=	me.getViewModel().get("condiciones.situacionPosesoriaCodigo");
+					var estadoTitulo 				=	me.getViewModel().get("condiciones.estadoTitulo");			
+					
+					var jsonData = {idEntidad: idActivo, posesionInicial: posesionInicial, situacionPosesoriaCodigo: situacionPosesoriaCodigo, estadoTitulo: estadoTitulo};
+			    	    			
+	    			var activosPropagables = [];
+	    			var data = null;
+	                try { 
+	                		data = Ext.decode(response.responseText).data;
+	                		activosPropagables = data;
+	                } catch (e){ };                
+	                
+	    			var tabData = me.createTabData(form);
+	    			var tabPropagableData = null;
+
+	    			if(activosPropagables.length > 0)
+	    			{
+	    				tabPropagableData = me.createFormPropagableData(form, tabData);
+	    				//if (!Ext.isEmpty(tabPropagableData))
+	    				{
+	    					
+	    					// sacamos el activo actual del listado
+	    					//var activo = activosPropagables.splice(activosPropagables.findIndex(function(activo){return activo.activoId == me.getViewModel().get("activoExpedienteSeleccionado.idActivo")}),1)[0];
+
+	    					// Abrimos la ventana de selección de activos
+	    					var ventanaOpcionesPropagacionCambios = Ext.create("HreRem.view.activos.detalle.OpcionesPropagacionCambios", {form: form, activoActual: activo, activos: activosPropagables, tabData: tabData, propagableData: tabPropagableData}).show();
+	       					me.getView().add(ventanaOpcionesPropagacionCambios);
+	       					me.getView().unmask();
+	    				}
+	    			}
+
+	    			me.getView().unmask();
+	            },
+	            
+	            failure: function (a, operation, context) {
+	            	 me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+					 me.getView().unmask();
+	            }
+		     
+			});									
+
+		} else {
+			me.getView().unmask();
+			me.fireEvent("errorToast", HreRem.i18n("msg.form.invalido"));
+			
+		}
+		
+	},
+	
+	createTabData: function(form) {
+
+    	var me = this,
+    	tabData = {};
+    	
+    	tabData.id = me.getViewModel().get("activoExpedienteSeleccionado.idActivo");
+    	tabData.models = [];
+    	
+    	if(form.saveMultiple) {
+    		var types = form.records; 
+    		Ext.Array.each(form.getBindRecords(), function(record, index) {
+    			var model = me.createModelToSave(record, types[index]);
+	    		if(!Ext.isEmpty(model)) {
+	    			tabData.models.push(model);
+	    		}
+    		});
+    		
+    	} else {
+    		var type = form.recordName; 
+    		var model = me.createModelToSave(form.getBindRecord(), type);
+    		if(!Ext.isEmpty(model)) {
+    			tabData.models.push(model);
+    		}
+    	}
+    	
+    	if(tabData.models.length > 0) {
+    		return tabData;
+    			
+    	} else {
+    		return null;
+    	}
+    },
+    
+    createModelToSave: function(record, type) {
+    	
+    	var me = this;
+    	var model = null;
+    	if (Ext.isDefined(record.getProxy().getApi().update)) { 
+    		model = {};
+    		model.name= record.getProxy().getExtraParams().tab;
+    		model.type= type;
+    		model.data= record.getProxy().getWriter().getRecordData(record);
+    	} 
+    	
+    	return model;
+    		
+    },
+	
+	 createFormPropagableData: function(form, tabData) {
+	    	
+    	var me = this,
+    	propagableData=null,
+    	camposPropagables = [],
+    	dirtyFieldsModel =  [],
+    	propagableData = [];
+    	
+    	var records = [],
+    	models = [];
+    	
+    	if(form.saveMultiple) {
+    		records = records.concat(form.getBindRecords()) 
+    	} else {
+    		records.push(form.getBindRecord());
+    	}
+
+    	Ext.Array.each(records, function(record, index) {
+    		var name = record.getProxy().getExtraParams().tab;
+    		camposPropagables[name] = record.get("camposPropagables"); // ¿CAMBIAR?
+    	});
+
+    	Ext.Array.each(tabData.models, function(model, index) {
+    		var data = {},
+    		modelHasData = false;
+    		Ext.Array.each(camposPropagables[model.name], function(campo, index){
+    			if(Ext.isDefined(model.data[campo])) {
+    				data[campo] = model.data[campo];
+    				modelHasData=true;
+    			}
+    		});
+    		
+    		if(modelHasData) {
+    			model.data=data;
+    			models.push(model);	
+    		}
+    		
+    	});	
+    	
+    	if(models.length>0) {
+    		propagableData = {};
+    		propagableData.models = models
+    	}
+	
+    	return propagableData;
+    },
+    
+	onClickGuardarPropagarCambios: function(btn) {	
+		var me = this;
+		// TO DO
+		
+		/*
+		if(btn.up('tabpanel').getActiveTab().getReference()=="activoexpedientetanteo"){
+			me.onSaveFormularioActivoExpedienteTanteo(btn, btn.up('tabpanel').getActiveTab());
+		}else{
+			me.onSaveFormularioCompletoActivoExpediente(btn, btn.up('tabpanel').getActiveTab());
+		}
+		*/	
+		
+		me.onClickCancelarPropagarCambios(btn);
+	},
+    
+    onClickCancelarPropagarCambios: function(btn) {
+    	var me = this,
+    	window = btn.up("window");  	
+    	window.destroy();
+    	me.refrescarActivoExpediente(false);
+    }
+    
 });

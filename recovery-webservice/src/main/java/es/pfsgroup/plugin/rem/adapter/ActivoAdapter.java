@@ -61,6 +61,7 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBValoracionesBien;
 import es.pfsgroup.plugin.rem.activo.ActivoManager;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoPatrimonioContratoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoTramiteDao;
 import es.pfsgroup.plugin.rem.activo.dao.impl.ActivoPatrimonioDaoImpl;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
@@ -103,6 +104,7 @@ import es.pfsgroup.plugin.rem.model.ActivoObservacion;
 import es.pfsgroup.plugin.rem.model.ActivoOcupanteLegal;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
+import es.pfsgroup.plugin.rem.model.ActivoPatrimonioContrato;
 import es.pfsgroup.plugin.rem.model.ActivoPropietarioActivo;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
@@ -152,6 +154,7 @@ import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.UsuarioCartera;
+import es.pfsgroup.plugin.rem.model.VActivoPatrimonioContrato;
 import es.pfsgroup.plugin.rem.model.VAdmisionDocumentos;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivosTrabajoPresupuesto;
 import es.pfsgroup.plugin.rem.model.VBusquedaPresupuestosActivo;
@@ -218,6 +221,9 @@ public class ActivoAdapter {
 
 	@Autowired
 	private GenericABMDao genericDao;
+	
+	@Autowired
+	private ActivoPatrimonioContratoDao actPatrimonioDao;
 
 	@Autowired
 	private coreextensionApi coreextensionApi;
@@ -1096,6 +1102,17 @@ public class ActivoAdapter {
 		return listaDtoObservaciones;
 
 	}
+	
+	public List<VActivoPatrimonioContrato> getListAsociadosById(Long id) {
+		List<VActivoPatrimonioContrato> listaActivoVistaPatrimonioContrato = new ArrayList<VActivoPatrimonioContrato>();
+		List<ActivoPatrimonioContrato> list = actPatrimonioDao.getActivoPatrimonioContratoByActivo(id);
+		if(!Checks.estaVacio(list)) {
+			ActivoPatrimonioContrato a = list.get(0);
+			listaActivoVistaPatrimonioContrato = genericDao.getList(VActivoPatrimonioContrato.class, genericDao.createFilter(FilterType.EQUALS, "idContrato",a.getIdContrato()));
+		}
+		
+		return listaActivoVistaPatrimonioContrato;
+	}
 
 	public List<DtoAgrupacionesActivo> getListAgrupacionesActivoById(Long id) {
 
@@ -1158,6 +1175,23 @@ public class ActivoAdapter {
 
 		return listaCalc;
 	}
+	
+	/*public List<VActivoPatrimonioContrato> getActivosAsociados(Long id) {
+		
+		
+		Activo activo = activoApi.get(id);
+		List<VActivoPatrimonioContrato> listaAsociados = new ArrayList<VActivoPatrimonioContrato>();
+		
+		if(!Checks.esNulo(activo)) {
+			//createFilter(FilterType.EQUALS, "idContrato",a.getIdContrato()
+			Filter filtro = genericDao.createFilter(type, propertyName)
+		}
+		
+		
+		
+		
+		return listaAsociados;
+	}*/
 
 	public List<VBusquedaVisitasDetalle> getListVisitasActivoById(Long id)
 			throws IllegalAccessException, InvocationTargetException {

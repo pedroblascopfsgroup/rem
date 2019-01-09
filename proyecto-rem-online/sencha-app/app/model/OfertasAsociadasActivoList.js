@@ -16,7 +16,7 @@ Ext.define('HreRem.view.activos.detalle.OfertasAsociadasActivoList', {
 		            dataIndex: 'fechaPreBloqueo',
 		            text: HreRem.i18n('header.fecha.prebloqueo'),
 		            formatter: 'date("d/m/Y")',
-		            width: 300
+		            width: 320
 		        },
 		        {
 		            dataIndex: 'numOferta',

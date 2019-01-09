@@ -550,7 +550,7 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 												reference: 'fieldtextCondicionanteOtro',
 												bind: {
 													value: '{activoCondicionantesDisponibilidad.otro}',
-													disabled: '{!activoCondicionantesDisponibilidad.otro}'
+													hidden: '{!activoCondicionantesDisponibilidad.otro}'
 												},
 												maxLength: '255'
 											}

@@ -7370,7 +7370,6 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 	}
 
-
 	@Override
 	@Transactional(readOnly = false)
 	public List<DtoTipoDocExpedientes> getSubtipoDocumentosExpedientes(Long idExpediente, String valorCombo) {	

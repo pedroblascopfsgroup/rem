@@ -28,23 +28,15 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoExpedienteModel', {
     		sorters: 'descripcion'
     	},
     	
-    	comboTipoDocumento : {
-			model: 'HreRem.model.ComboBase',
-			proxy: {
-				type: 'uxproxy',
-				remoteUrl: 'generic/getDiccionario',
-				extraParams: {diccionario: 'tiposDocumentoExpediente'}
-			}
-    	},
-    	
-    	comboSubtipoDocumento : {
-			model: 'HreRem.model.SubtipoDocumento',
-			proxy: {
-				type: 'uxproxy',
-				remoteUrl: 'generic/getDiccionario',
-				extraParams: {diccionario: 'subtiposDocumentoExpediente'}
-			}
+    	comboSubtipoDoc: {
+			model: 'HreRem.model.TipoDocumentoExpediente',
+	    	proxy: {
+	    		type: 'uxproxy', 
+	    		remoteUrl: 'expedientecomercial/getSubtipoDocumentosExpedientes',
+				extraParams: {idExpediente: '{expediente.id}', valorCombo: '{filtroComboTipoDocumentoExpediente.value}'}
+	    	},
+	    	autoLoad: false,
+	    	sorters: 'descripcion'
     	}
-	   
     }
 });

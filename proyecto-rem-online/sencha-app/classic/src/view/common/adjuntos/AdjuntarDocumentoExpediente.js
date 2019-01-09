@@ -7,6 +7,7 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoExpediente', {
     width: Ext.Element.getViewportWidth() / 1.5,
 	reference: 'adjuntarDocumentoExpedienteWindowRef',
 	requires: ['HreRem.view.common.adjuntos.AdjuntarDocumentoExpedienteModel'],
+	controller: 'expedientedetalle',
 	viewModel: {
         type: 'adjuntardocumentoexpediente'
     },
@@ -28,7 +29,7 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoExpediente', {
     parent: null,
 	
     initComponent: function() {
-    	
+
     	var me = this;
 
     	me.setTitle(HreRem.i18n("title.adjuntar.documento"));
@@ -94,33 +95,34 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoExpediente', {
 									xtype: 'comboboxfieldbase',
 						        	fieldLabel:  HreRem.i18n('fieldlabel.tipo'),
 						        	reference: 'filtroComboTipoDocumentoExpediente',
+						        	chainedStore: 'comboSubtipoDoc',
+									chainedReference: 'comboSubtipoDocumentoExpediente',
 						        	name: 'tipo',
 					            	bind: {
 					            		store: '{comboTipoDoc}'
 					            	},
 									allowBlank: false,
-									publishes: 'value'
-						        },
+									publishes: 'value',									
+		    						listeners: {
+										select: 'onChangeChainedCombo'
+		    						}
+					    		},
 						        {
 				                	xtype: 'textareafieldbase',
-				                	fieldLabel: HreRem.i18n('fieldlabel.descripcion'),
+				                	fieldLabel: HreRem.i18n('fieldlabel.descripcion'),				                	
 				                	name: 'descripcion',
 				                	maxLength: 256			                	
 			            		},
 						        { 
 									xtype: 'comboboxfieldbase',
 						        	fieldLabel:  HreRem.i18n('fieldlabel.subtipo'),
+						        	reference: 'comboSubtipoDocumentoExpediente',
 						        	name: 'subtipo',
-						        	queryMode: 'remote',
 						        	editable: false,
 						        	forceSelection: true,
-						        	bind: {
-						        		store: '{comboSubtipoDocumento}',
-					                    disabled: '{!filtroComboTipoDocumentoExpediente.value}',
-						        		filters: {
-					                        property: 'codigoTipoDocExpediente',
-					                        value: '{filtroComboTipoDocumentoExpediente.value}'
-					                    }
+						        	bind: {			        					
+						        		store: '{comboSubtipoDoc}',
+					                    disabled: '{!filtroComboTipoDocumentoExpediente.value}'
 					            	},
 									allowBlank: false,
 									listeners: {

@@ -40,12 +40,7 @@ Ext.define('HreRem.view.trabajos.detalle.CrearTrabajo', {
 		
 		show: function() {	
 			var me = this;
-			me.resetWindow();
-			if(CONST.CARTERA['SAREB'] == this.codCartera){
-        		me.down("[reference=checkRequerimiento]").setVisible(true);        	
-        	}else{
-        		me.down("[reference=checkRequerimiento]").setVisible(false);
-       		}
+			me.resetWindow();			
 		}
 
 	},

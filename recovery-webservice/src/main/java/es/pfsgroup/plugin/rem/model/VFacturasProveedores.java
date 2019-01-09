@@ -269,12 +269,6 @@ public class VFacturasProveedores implements Serializable{
 	
 	@Column(name = "ETAPA")
 	private String etapa;
-	
-	@Column(name = "TIPO_GASTO")
-	private String tipoGasto;
-	
-	@Column(name = "SUBTIPO_GASTO")
-	private String subTipoGasto;
 
 	public String getSociedad() {
 		return sociedad;
@@ -946,21 +940,5 @@ public class VFacturasProveedores implements Serializable{
 
 	public void setEtapa(String etapa) {
 		this.etapa = etapa;
-	}
-
-	public String getTipoGasto() {
-		return tipoGasto;
-	}
-
-	public void setTipoGasto(String tipoGasto) {
-		this.tipoGasto = tipoGasto;
-	}
-
-	public String getSubTipoGasto() {
-		return subTipoGasto;
-	}
-
-	public void setSubTipoGasto(String subTipoGasto) {
-		this.subTipoGasto = subTipoGasto;
 	}
 }

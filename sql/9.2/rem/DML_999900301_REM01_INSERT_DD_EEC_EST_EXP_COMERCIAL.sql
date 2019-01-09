@@ -48,7 +48,7 @@ DECLARE
         T_TIPO_DATA('25'	,'Pendiente de Posicionamiento'		,'Pendiente de Posicionamiento'),
         --T_TIPO_DATA('26'	,'Contraofertado'		,'Contraofertado'),
         T_TIPO_DATA('27'	,'Pendiente firma'		,'Pendiente firma'),
-        T_TIPO_DATA('28'	,'Pendiente cierre'		,'Pendiente cierre'),
+        T_TIPO_DATA('28'	,'Pendiente cierre'		,'Pendiente cierre')
         --T_TIPO_DATA('29'	,'Firmado'		,'Firmado')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;

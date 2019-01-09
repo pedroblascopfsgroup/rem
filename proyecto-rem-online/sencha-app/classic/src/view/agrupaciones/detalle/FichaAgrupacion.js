@@ -183,15 +183,16 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
 		                        }
 		                    }
 						},  
-						
-						{ 
-							xtype		: 'displayfieldbase',
-							fieldLabel	: HreRem.i18n('fieldlabel.entidad.propietaria'),
-							bind		: {
-								value: '{agrupacionficha.cartera}',
-								readOnly: '{agrupacionficha.existeFechaBaja}'
-							}
-						},
+						{
+ 							xtype		: 'comboboxfieldbase',
+ 							fieldLabel	: HreRem.i18n('fieldlabel.entidad.propietaria'),
+ 							bind		: {
+ 								store: '{comboCartera}',
+ 								value: '{agrupacionficha.codigoCartera}',
+ 								readOnly: '{agrupacionTieneActivosOrExisteFechaBaja}',
+ 								allowBlank	:'{esAgrupacionLoteComercial}'	
+ 							}	
+ 						},
 
 						{ 
 							fieldLabel	: HreRem.i18n('fieldlabel.codigo.postal'),

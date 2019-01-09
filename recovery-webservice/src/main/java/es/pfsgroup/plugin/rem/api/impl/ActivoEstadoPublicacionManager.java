@@ -182,7 +182,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	private Boolean deshabilitarCheckPublicarSinPrecioVenta(Long idActivo) {
 		Boolean resultado = false;
 		try{
-			resultado = isPublicadoVenta(idActivo) || tienePrecioVenta(idActivo);
+			resultado = isPublicadoVenta(idActivo) || isOcultoVentaVendidoOSalidaSinperimetro(idActivo) || isVendido(idActivo);
 		}catch(Exception e){
 			logger.error("Error en el método deshabilitarCheckPublicarSinPrecioVenta" , e);
 		}
@@ -201,7 +201,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	private Boolean deshabilitarCheckPublicarSinPrecioAlquiler(Long idActivo) {
 		Boolean resultado = false;
 		try{
-			resultado = isPublicadoAlquiler(idActivo) || tienePrecioRenta(idActivo);
+			resultado = isPublicadoAlquiler(idActivo) || isOcultoAlquilerVendidoOSalidaSinperimetro(idActivo) || isVendido(idActivo);
 		}catch(Exception e){
 			logger.error("Error en el método deshabilitarCheckPublicarSinPrecioAlquiler" , e);
 		}
@@ -363,7 +363,27 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 
 		return !Checks.esNulo(activoPublicacion) && activoPublicacion.getCheckSinPrecioAlquiler();
 	}
-
+	
+	// Comprobación mínima.
+	private Boolean isOcultoVentaVendidoOSalidaSinperimetro(Long idActivo){
+		ActivoPublicacion activoPublicacion = activoPublicacionDao.getActivoPublicacionPorIdActivo(idActivo);
+		
+		return !Checks.esNulo(activoPublicacion) && !Checks.esNulo(activoPublicacion.getEstadoPublicacionVenta()) &&
+			   !Checks.esNulo(activoPublicacion.getMotivoOcultacionVenta()) &&
+			   ((DDMotivosOcultacion.CODIGO_VENDIDO).equals(activoPublicacion.getMotivoOcultacionVenta().getCodigo())
+						|| (DDMotivosOcultacion.CODIGO_SALIDA_PERIMETRO).equals(activoPublicacion.getMotivoOcultacionVenta().getCodigo()));
+	}
+	
+	// Comprobación mínima.
+	private Boolean isOcultoAlquilerVendidoOSalidaSinperimetro(Long idActivo){
+		ActivoPublicacion activoPublicacion = activoPublicacionDao.getActivoPublicacionPorIdActivo(idActivo);
+			
+		return !Checks.esNulo(activoPublicacion) && !Checks.esNulo(activoPublicacion.getEstadoPublicacionAlquiler()) &&
+				  !Checks.esNulo(activoPublicacion.getMotivoOcultacionAlquiler()) &&
+				  ((DDMotivosOcultacion.CODIGO_VENDIDO).equals(activoPublicacion.getMotivoOcultacionAlquiler().getCodigo())
+						|| (DDMotivosOcultacion.CODIGO_SALIDA_PERIMETRO).equals(activoPublicacion.getMotivoOcultacionAlquiler().getCodigo()));
+	}
+	
 	// Comprobación mínima.
 	private Boolean isPublicadoVenta(Long idActivo) {
 		ActivoPublicacion activoPublicacion = activoPublicacionDao.getActivoPublicacionPorIdActivo(idActivo);
@@ -449,8 +469,12 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		List<ActivoAgrupacionActivo> activos = agrupacion.getActivos();
 
 		for(ActivoAgrupacionActivo aga : activos) {
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", aga.getActivo().getId());
+			ActivoSituacionPosesoria condicionantesDisponibilidad = genericDao.get(ActivoSituacionPosesoria.class, filtro);
+			
 			// Registrar el condicionante de disponibilidad 'otros' si se ha modificado.
-			if(!Checks.esNulo(dto.getOtro())) {
+			if((!Checks.esNulo(dto.getOtro()) && Checks.esNulo(condicionantesDisponibilidad.getOtro()))
+					|| (Checks.esNulo(dto.getOtro()) && !Checks.esNulo(condicionantesDisponibilidad.getOtro()))) {
 				DtoCondicionantesDisponibilidad dtoCondicionateDisponibilidad = new DtoCondicionantesDisponibilidad();
 				dtoCondicionateDisponibilidad.setOtro(dto.getOtro());
 				activoApi.saveCondicionantesDisponibilidad(aga.getActivo().getId(), dtoCondicionateDisponibilidad);
@@ -464,6 +488,29 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		}
 
 		activoDao.publicarAgrupacionSinHistorico(id, genericAdapter.getUsuarioLogado().getUsername(), dto.getEleccionUsuarioTipoPublicacionAlquiler(),true);
+		return true;
+	}
+	
+	@Override
+	@Transactional
+	public Boolean setDatosPublicacionAgrupacionMasivo(Long id, DtoDatosPublicacionAgrupacion dto) throws JsonViewerException{
+		ActivoAgrupacion agrupacion = activoAgrupacionApi.get(id);
+		List<ActivoAgrupacionActivo> activos = agrupacion.getActivos();
+
+		for(ActivoAgrupacionActivo aga : activos) {
+			// Registrar el condicionante de disponibilidad 'otros' si se ha modificado.
+			if(!Checks.esNulo(dto.getOtro())) {
+				DtoCondicionantesDisponibilidad dtoCondicionateDisponibilidad = new DtoCondicionantesDisponibilidad();
+				dtoCondicionateDisponibilidad.setOtro(dto.getOtro());
+				activoApi.saveCondicionantesDisponibilidad(aga.getActivo().getId(), dtoCondicionateDisponibilidad);
+			}
+
+			// Registrar los cambios en la publicación.
+			ActivoPublicacion activoPublicacion = activoPublicacionDao.getActivoPublicacionPorIdActivo(aga.getActivo().getId());
+			if(this.registrarHistoricoPublicacion(activoPublicacion, dto)) {
+				this.actualizarDatosEstadoActualPublicacion(dto, activoPublicacion);
+			}
+		}
 		return true;
 	}
 
@@ -519,12 +566,12 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 
 
 			if(!Checks.esNulo(dto.getMotivoOcultacionVentaCodigo()) || !Checks.esNulo(dto.getMotivoOcultacionManualVenta()) || !Checks.esNulo(dto.getPublicarVenta()) ||
-					!Checks.esNulo(dto.getOcultarVenta()) || !Checks.esNulo(dto.getPublicarSinPrecioVenta()) || !Checks.esNulo(dto.getNoMostrarPrecioVenta())) {
+					!Checks.esNulo(dto.getOcultarVenta()) || (!Checks.esNulo(dto.getPublicarSinPrecioVenta()) && ("14").equals(activoPublicacion.getMotivoOcultacionVenta().getCodigo())) || !Checks.esNulo(dto.getNoMostrarPrecioVenta())) {
 				activoPublicacion.setFechaInicioVenta(new Date());
 			}
 
 			if(!Checks.esNulo(dto.getMotivoOcultacionAlquilerCodigo()) || !Checks.esNulo(dto.getMotivoOcultacionManualAlquiler()) || !Checks.esNulo(dto.getPublicarAlquiler()) ||
-					!Checks.esNulo(dto.getOcultarAlquiler()) || !Checks.esNulo(dto.getPublicarSinPrecioAlquiler()) || !Checks.esNulo(dto.getNoMostrarPrecioAlquiler())) {
+					!Checks.esNulo(dto.getOcultarAlquiler()) || (!Checks.esNulo(dto.getPublicarSinPrecioAlquiler()) && ("14").equals(activoPublicacion.getMotivoOcultacionAlquiler().getCodigo())) || !Checks.esNulo(dto.getNoMostrarPrecioAlquiler())) {
 				activoPublicacion.setFechaInicioAlquiler(new Date());
 			}
 			
@@ -558,13 +605,13 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 
 			if(Arrays.asList(DDTipoComercializacion.CODIGOS_VENTA).contains(activoPublicacion.getTipoComercializacion().getCodigo()) &&
 					(!Checks.esNulo(dto.getMotivoOcultacionVentaCodigo()) || !Checks.esNulo(dto.getMotivoOcultacionManualVenta()) || !Checks.esNulo(dto.getPublicarVenta()) ||
-					!Checks.esNulo(dto.getOcultarVenta()) || !Checks.esNulo(dto.getPublicarSinPrecioVenta()) || !Checks.esNulo(dto.getNoMostrarPrecioVenta()))) {
+					!Checks.esNulo(dto.getOcultarVenta()) || (!Checks.esNulo(dto.getPublicarSinPrecioVenta()) && ("14").equals(activoPublicacion.getMotivoOcultacionVenta().getCodigo())) || !Checks.esNulo(dto.getNoMostrarPrecioVenta()))) {
 				activoPublicacionHistorico.setFechaFinVenta(new Date());
 			}
 
 			if(Arrays.asList(DDTipoComercializacion.CODIGOS_ALQUILER).contains(activoPublicacion.getTipoComercializacion().getCodigo()) &&
 					(!Checks.esNulo(dto.getMotivoOcultacionAlquilerCodigo()) || !Checks.esNulo(dto.getMotivoOcultacionManualAlquiler()) || !Checks.esNulo(dto.getPublicarAlquiler()) ||
-					!Checks.esNulo(dto.getOcultarAlquiler()) || !Checks.esNulo(dto.getPublicarSinPrecioAlquiler()) || !Checks.esNulo(dto.getNoMostrarPrecioAlquiler()))) {
+					!Checks.esNulo(dto.getOcultarAlquiler()) || (!Checks.esNulo(dto.getPublicarSinPrecioAlquiler()) && ("14").equals(activoPublicacion.getMotivoOcultacionAlquiler().getCodigo())) || !Checks.esNulo(dto.getNoMostrarPrecioAlquiler()))) {
 				activoPublicacion.setFechaInicioAlquiler(new Date());
 			}
 
@@ -575,8 +622,10 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 			logger.error("Error al registrar en el historico el estado actual de publicacion, error: ", e);
 			return false;
 		}
-
-		activoPublicacionHistoricoDao.save(activoPublicacionHistorico);
+		
+		if(!Checks.esNulo(activoPublicacionHistorico.getFechaFinVenta()) || !Checks.esNulo(activoPublicacionHistorico.getFechaInicioAlquiler())){
+			activoPublicacionHistoricoDao.save(activoPublicacionHistorico);
+		}
 
 		return true;
 	}

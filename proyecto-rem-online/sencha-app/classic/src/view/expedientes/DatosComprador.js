@@ -18,6 +18,7 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
     idComprador: null,
     expediente: null,
     modoEdicion: true, // Inicializado para evitar errores.
+    deshabilitarCamposDoc: false,
     
     
     requires: ['HreRem.model.FichaComprador'],
@@ -195,7 +196,7 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 										        	bind: {
 									            		store: '{comboTipoDocumento}',
 									            		value: '{comprador.codTipoDocumento}',
-									            		disabled: modoEdicion
+									            		disabled: me.deshabilitarCamposDoc
 									            	},
 									            	allowBlank: false
 										        },
@@ -204,7 +205,7 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 													reference: 'numeroDocumento',
 										        	bind: {
 									            		value: '{comprador.numDocumento}',
-									            		disabled: modoEdicion
+									            		disabled: me.deshabilitarCamposDoc
 									            	},
 									            	listeners: {
 									            		change: 'onNumeroDocumentoChange'
@@ -364,48 +365,7 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 										            	hidden: '{!esBankiaHabitat}'
 										            },
 										            editable: true
-					                            }
-										        
-//										        {
-//													xtype: 'textfieldbase',
-//													fieldLabel:  HreRem.i18n('header.numero.ursus'),
-//													name: 'buscadorNumUrsus',
-//													reference: 'numeroClienteUrsusRef',
-//													flex: 2,
-//													colspan: 2,
-//													bind: {
-//														value: '{comprador.numeroClienteUrsus}',
-//														hidden: '{!esCarteraBankia}'
-//													},
-//													triggers: {
-//														
-//															buscarEmisor: {
-//													            cls: Ext.baseCSSPrefix + 'form-search-trigger',
-//													             handler: 'buscarNumeroUrsus'
-//													        }
-//													},
-//													cls: 'searchfield-input sf-con-borde',
-//													emptyText:  HreRem.i18n('txt.buscar.numero.ursus'),
-//													enableKeyEvents: true,
-//											        listeners: {
-//												        	specialKey: function(field, e) {
-//												        		if (e.getKey() === e.ENTER) {
-//												        			field.lookupController().buscarNumeroUrsus(field);											        			
-//												        		}
-//												        	}
-//												        }
-//								                }
-//								                {
-//								                	xtype: 'box'
-//							                	},
-//								                {
-//								                	xtype:'displayfieldbase',
-//								                	fieldLabel:  HreRem.i18n('fieldlabel.respuesta.numero.cliente.ursus'),
-//										        	reference: 'numeroClienteUrsusRef',
-//										        	bind: {
-//									            		value: '{comprador.numeroClienteUrsus}'
-//									            	}
-//								                }
+					                            }										        
 											]
 						           },
 						           {

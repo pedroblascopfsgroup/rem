@@ -482,11 +482,20 @@ public class ActivoController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getListAsociadosById(Long id, ModelMap model) {
+		model.put(RESPONSE_DATA_KEY, adapter.getListAsociadosById(id));
+
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getListObservacionesById(Long id, ModelMap model) {
 		model.put(RESPONSE_DATA_KEY, adapter.getListObservacionesById(id));
 
 		return createModelAndViewJson(model);
 	}
+
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
@@ -2258,6 +2267,10 @@ public class ActivoController extends ParadiseJsonController {
 					dispatcher.dispatchSave(json);
 				}
 
+			} catch (JsonViewerException jvex) {
+				logger.error("No se ha podido guardar el activo", jvex);
+				model.put(RESPONSE_SUCCESS_KEY, false);
+				model.put(RESPONSE_ERROR_MESSAGE_KEY, jvex.getMessage());
 			} catch (Exception e) {
 				logger.error("No se ha podido guardar el activo", e);
 				model.put(RESPONSE_ERROR_KEY, e.getMessage());

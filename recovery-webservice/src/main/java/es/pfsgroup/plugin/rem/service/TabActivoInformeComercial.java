@@ -10,6 +10,7 @@ import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +44,7 @@ import es.pfsgroup.plugin.rem.model.ActivoPlazaAparcamiento;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.ActivoVivienda;
+import es.pfsgroup.plugin.rem.model.DtoActivoInformacionComercial;
 import es.pfsgroup.plugin.rem.model.DtoActivoInformeComercial;
 import es.pfsgroup.plugin.rem.model.DtoSendNotificator;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoConservacion;
@@ -314,6 +316,7 @@ public class TabActivoInformeComercial implements TabActivoService {
 	@Override
 	public Activo saveTabActivo(Activo activo, WebDto webDto) {
 		DtoActivoInformeComercial activoInformeDto = (DtoActivoInformeComercial) webDto;
+		DtoActivoInformacionComercial dto = (DtoActivoInformacionComercial) webDto;
 
 		try {
 			// Se guardan todas las propieades del "Informe Comercial" que son comunes a
@@ -333,6 +336,12 @@ public class TabActivoInformeComercial implements TabActivoService {
 			
 			if (!Checks.esNulo(activo.getInfoComercial())) {
 				beanUtilNotNull.copyProperties(activo.getInfoComercial(), activoInformeDto);
+				
+				if (!Checks.esNulo(dto.getDistribucionTxt())) {
+					
+					ActivoInfoComercial infoComercial = (ActivoInfoComercial) activo.getInfoComercial();
+					infoComercial.setInfoDistribucionInterior(dto.getDistribucionTxt());
+				}
 
 				if (!Checks.esNulo(activoInformeDto.getProvinciaCodigo())) {
 					Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", activoInformeDto.getProvinciaCodigo());
@@ -696,8 +705,10 @@ public class TabActivoInformeComercial implements TabActivoService {
 				case 1:
 					break;
 				case 2:
+					if(activo.getInfoComercial() != null && activo.getInfoComercial() instanceof ActivoVivienda) {
 					ActivoVivienda vivienda = (ActivoVivienda) activo.getInfoComercial();
 					beanUtilNotNull.copyProperties(activoInformeDto, vivienda);
+					}
 					break;
 				case 3:
 					ActivoLocalComercial local = (ActivoLocalComercial) activo.getInfoComercial();
@@ -728,11 +739,11 @@ public class TabActivoInformeComercial implements TabActivoService {
 			}
 
 		} catch (ClassCastException e) {
-			logger.error(e.getMessage());
+			logger.error(e.getMessage(), e);
 		} catch (IllegalAccessException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage(), e);
 		} catch (InvocationTargetException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage(), e);
 		}
 	}
 	

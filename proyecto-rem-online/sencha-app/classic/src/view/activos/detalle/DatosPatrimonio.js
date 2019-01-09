@@ -20,12 +20,11 @@ Ext.define('HreRem.view.activos.detalle.DatosPatrimonio', {
     initComponent: function () {
         var me = this;
         
-        me.setTitle(HreRem.i18n('title.fieldset.datos.basicos'));
 
         var items= [
         	{
 				xtype:'fieldsettable',
-				title: HreRem.i18n('title.fieldset.patrimonio'),
+				title: HreRem.i18n('title.patrimonio.datos.patrimonio.activo'),
 				defaultType: 'textfieldbase',
 				items :
 					[

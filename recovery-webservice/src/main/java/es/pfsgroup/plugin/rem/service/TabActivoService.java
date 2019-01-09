@@ -25,6 +25,7 @@ public interface TabActivoService extends GenericService{
     public static final String TAB_ACTIVO_CONDICIONANTES_DISPONIBILIDAD = "activocondicionantesdisponibilidad";
 	public static final String TAB_COMERCIAL = "comercial";
 	public static final String TAB_PATRIMONIO = "patrimonio";
+	public static final String TAB_PATRIMONIO_CONTRATO = "contratospatrimonio";
 	
     BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 	

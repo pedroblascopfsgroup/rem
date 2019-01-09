@@ -7373,5 +7373,59 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		return numExpediente;
 
 	}
+
+	@Override
+	@Transactional(readOnly = false)
+	public List<DtoTipoDocExpedientes> getSubtipoDocumentosExpedientes(Long idExpediente, String valorCombo) {	
+
+		List <DtoTipoDocExpedientes> listDtoTipoDocExpediente = new ArrayList <DtoTipoDocExpedientes>();
+		List <DDSubtipoDocumentoExpediente> listaDDSubtipoDocExp= new ArrayList <DDSubtipoDocumentoExpediente>();		
+		ExpedienteComercial expediente = findOne(idExpediente);
+		
+		String codigoVenta = DDTipoOferta.CODIGO_VENTA;
+		String codigoAlquiler = DDTipoOferta.CODIGO_ALQUILER;
+		
+		if(!Checks.esNulo(expediente)) {
+			if(expediente.getOferta().getTipoOferta().getCodigo().equals(codigoVenta)) {
+				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "tipoDocumentoExpediente.codigo", valorCombo);
+				listaDDSubtipoDocExp  = genericDao.getList(DDSubtipoDocumentoExpediente.class, filtro);
+				listDtoTipoDocExpediente = generateListSubtipoExpediente(listaDDSubtipoDocExp);					
+			} else {				
+				if(expediente.getOferta().getTipoOferta().getCodigo().equals(codigoAlquiler)) {
+					DDSubtipoDocumentoExpediente codRenovacionContrato =
+							(DDSubtipoDocumentoExpediente) utilDiccionarioApi.dameValorDiccionarioByCod(DDSubtipoDocumentoExpediente.class, DDSubtipoDocumentoExpediente.CODIGO_RENOVACION_CONTRATO);
+					
+					if(DDEstadosExpedienteComercial.FIRMADO.equals(expediente.getEstado().getCodigo())) {
+						listaDDSubtipoDocExp.add(codRenovacionContrato);									
+						listDtoTipoDocExpediente = generateListSubtipoExpediente(listaDDSubtipoDocExp);	
+
+					} else {
+						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "tipoDocumentoExpediente.codigo", valorCombo);
+						listaDDSubtipoDocExp  = genericDao.getList(DDSubtipoDocumentoExpediente.class, filtro);
+						listaDDSubtipoDocExp.remove(codRenovacionContrato);
+						listDtoTipoDocExpediente = generateListSubtipoExpediente(listaDDSubtipoDocExp);	
+					}
+				}
+			}
+		}
+		Collections.sort(listDtoTipoDocExpediente);
+		return listDtoTipoDocExpediente;
+	}
+	
+	private List<DtoTipoDocExpedientes> generateListSubtipoExpediente(List <DDSubtipoDocumentoExpediente> listadoDDSubtipoDoc) {
+		
+		List <DtoTipoDocExpedientes> listDtoTipoDocExpediente = new ArrayList <DtoTipoDocExpedientes>();
+		
+		for (DDSubtipoDocumentoExpediente tipDocExp : listadoDDSubtipoDoc) {
+			DtoTipoDocExpedientes aux= new DtoTipoDocExpedientes();
+			aux.setId(tipDocExp.getId());
+			aux.setCodigo(tipDocExp.getCodigo());
+			aux.setDescripcion(tipDocExp.getDescripcion());
+			aux.setDescripcionLarga(tipDocExp.getDescripcionLarga());
+			listDtoTipoDocExpediente.add(aux);
+		} 
+		
+		return listDtoTipoDocExpediente;
+	}
 }
 

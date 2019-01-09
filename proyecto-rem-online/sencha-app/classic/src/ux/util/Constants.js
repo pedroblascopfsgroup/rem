@@ -153,7 +153,7 @@ Ext.define('HreRem.ux.util.Constants', {
 		DOCU:				'documentosexpediente',
 		FORMA:				'formalizacionexpediente',
 		GESECO:				'gestioneconomicaexpediente',
-		PLUVTA:             'plusvaliaventaexpedediente'
+		PLUVTA:             'plusvaliaventaexpedediente',
 		SEGREN: 			'segurorentasexpediente'
 //		INVISIBLE:		Si creamos un registro-enlace-expediente en TFI y como codigo (en TFI_NOMBRE) damos este valor, ocultara el enlace
     },
@@ -621,7 +621,7 @@ Ext.define('HreRem.ux.util.Constants', {
 
 	MOTIVOS_CAL_NEGATIVA:{
 		OTROS: '21'
-	}
+	},
     
     TAREAS:{
     	T015_DEFINICIONOFERTA : 'T015_DefinicionOferta',
@@ -633,6 +633,15 @@ Ext.define('HreRem.ux.util.Constants', {
 		SCORING: '01',
 		SEGURO_RENTAS: '02',
 		NINGUNA: '03'
+    },
+	
+	SUBTIPO_DOCUMENTO_EXPEDIENTE: {
+		RENOVACION_CONTRATO: '46',
+		CONTRATO: '49',
+		FIANZA: '51',
+		AVAL_BANCARIO: '52',
+		JUSTIFICANTE_INGRESOS: '53',
+		ALQUILER_CON_OPCION_A_COMPRA: '54'
 	}
     
 });

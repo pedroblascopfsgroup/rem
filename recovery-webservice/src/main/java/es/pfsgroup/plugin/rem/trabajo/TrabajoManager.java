@@ -86,7 +86,6 @@ import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
 import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
 import es.pfsgroup.plugin.rem.model.ActivoTrabajo.ActivoTrabajoPk;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
-import es.pfsgroup.plugin.rem.model.AdjuntoExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.AdjuntoTrabajo;
 import es.pfsgroup.plugin.rem.model.ConfiguracionTarifa;
 import es.pfsgroup.plugin.rem.model.DtoActivoTrabajo;
@@ -2079,9 +2078,6 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			} catch (Exception ex) {
 				logger.error(ex.getMessage());
 			}
-
-		} catch (Exception ex) {
-			logger.error(ex.getMessage());
 		}
 
 		return listaAdjuntos;

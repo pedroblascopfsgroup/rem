@@ -1711,7 +1711,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'situacionActivo'}
 			}
-		}
+		},
 
 		storeHistoricoDestinoComercial: {
 			 pageSize: 10,

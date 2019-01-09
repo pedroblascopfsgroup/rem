@@ -472,13 +472,6 @@ public interface ParticularValidatorApi {
 	Boolean esActivoAlquilado(String numActivo);
 
 	/**
-	 * @param numActivo
-	 * @return devuelve true si el activo se encuentra incluido en una
-	 *         agrupacion viva de tipo comercial
-	 */
-	Boolean activoEnAgrupacionComercialViva(String numActivo);
-
-	/**
 	 *
 	 * @param numActivo:
 	 * @return devuelve true si un activo tiene un destino comercial de tipo

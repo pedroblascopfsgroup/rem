@@ -248,7 +248,6 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	private static final String PESTANA_RESERVA = "reserva";
 	private static final String PESTANA_CONDICIONES = "condiciones";
 	private static final String PESTANA_FORMALIZACION = "formalizacion";
-	private static final String TAR_INFORME_JURIDICO = "Informe jurídico";
 	private static final String PESTAÑA_PLUSVALIA = "plusvalia";
 	private static final String PESTANA_SEGURO_RENTAS= "segurorentasexpediente";
 	private static final String PESTANA_SCORING = "scoring";

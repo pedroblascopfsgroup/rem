@@ -678,7 +678,7 @@ public abstract class ActivoBaseActionHandler implements ActionHandler {
 		TareaExterna tareaExterna = activoTareaExternaManagerApi.get(idTarea);
 		TareaActivo tareaActivo = ((TareaActivo)tareaExterna.getTareaPadre());
 		EXTTareaProcedimiento tareaProcedimiento = (EXTTareaProcedimiento) tareaExterna.getTareaProcedimiento();
-		Usuario usuarioLogado = adapter.getUsuarioLogado();;
+		Usuario usuarioLogado = adapter.getUsuarioLogado();
 		String nombreUsuarioWS = RestApi.REST_LOGGED_USER_USERNAME;
 
 		// Factoria asignador gestores por tarea
@@ -687,16 +687,18 @@ public abstract class ActivoBaseActionHandler implements ActionHandler {
 
 		// Asignador de GESTOR por factoria - Gestores encontrados por tarea-Activo
 		Trabajo trabajo = tarea.getTramite().getTrabajo();
+
 		Usuario solicitante = null;
 		Usuario responsableTrabajo = null;
 		if(trabajo != null){
 			 solicitante = trabajo.getSolicitante();
-			 responsableTrabajo = trabajo.getResponsableTrabajo();
+			 responsableTrabajo = trabajo.getUsuarioResponsableTrabajo();
 		}else{
 			solicitante = usuarioLogado;
 			responsableTrabajo = usuarioLogado;
 		}
 		
+
 		if(!Checks.esNulo(tareaExterna) && !Checks.esNulo(tareaExterna.getTareaProcedimiento()) && 
 				(!tareaExterna.getTareaProcedimiento().getTipoProcedimiento().getCodigo().equals("T004") ||
 				(CODIGO_T004_RESULTADO_TARIFICADA.equals(tareaExterna.getTareaProcedimiento().getCodigo()))||

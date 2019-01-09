@@ -35,9 +35,9 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	Integer isIntegradoAgrupacionRestringida(Long id, Usuario usuLogado);
 
 	Integer isIntegradoAgrupacionComercial(Long idActivo);
-	
+
 	List<DDUnidadPoblacional> getComboInferiorMunicipio(String codigoMunicipio);
-	
+
 	Integer isIntegradoAgrupacionObraNueva(Long id, Usuario usuLogado);
 
 	Integer getMaxOrdenFotoById(Long id);
@@ -45,7 +45,7 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	Page getListHistoricoPresupuestos(DtoHistoricoPresupuestosFilter dto, Usuario usuLogado);
 
 	Long getPresupuestoActual(Long id);
-	
+
 	Long getUltimoHistoricoPresupuesto(Long id);
 
 	Integer getMaxOrdenFotoByIdSubdivision(Long idEntidad, BigDecimal hashSdv);
@@ -55,7 +55,7 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	Page getHistoricoValoresPrecios(DtoHistoricoPreciosFilter dto);
 
 	void deleteValoracionById(Long id);
-	
+
 	boolean deleteValoracionSinDuplicarById(Long id);
 
 	ActivoCondicionEspecifica getUltimaCondicion(Long idActivo);
@@ -67,21 +67,21 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
     Long getNextNumOferta();
 
 	Long getNextNumExpedienteComercial();
-    
+
     Long getNextClienteRemId();
 
 	Page getPropuestaActivosVinculadosByActivo(DtoPropuestaActivosVinculados dto);
 
 	Activo getActivoByNumActivo(Long activoVinculado);
-	
+
 	Activo getActivoById(Long activoId);
 
 	PropuestaActivosVinculados getPropuestaActivosVinculadosByID(Long id);
 
 	ActivoTasacion getActivoTasacion(Long id);
-	
+
 	List<ActivoTasacion> getListActivoTasacionByIdActivo(Long idActivo);
-	
+
 	Page getActivosFromCrearTrabajo(List<String> listIdActivos, DtoTrabajoListActivos dto);
 	
 	Page getLlavesByActivo(DtoLlaves dto);
@@ -165,11 +165,27 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	 * @param username: nombre del usuario, si la llamada es desde la web, que realiza la operación.
 	 * @return Devuelve True si la operación ha sido satisfactorio, False si no ha sido satisfactoria.
 	 */
-	Boolean publicarActivoConHistorico(Long idActivo, String username);
+	Boolean publicarActivoConHistorico(Long idActivo, String username, boolean doFlush);
 
-	Boolean publicarAgrupacionConHistorico(Long idAgrupacion, String username);
+	Boolean publicarAgrupacionConHistorico(Long idAgrupacion, String username, boolean doFlush);
 
-	Boolean publicarAgrupacionSinHistorico(Long idAgrupacion, String username, String eleccionUsuarioTipoPublicacionAlquiler);
+	Boolean publicarAgrupacionSinHistorico(Long idAgrupacion, String username, String eleccionUsuarioTipoPublicacionAlquiler, boolean doFlush);
+
+
+	/**
+	 * Establece la fecha fin de los registros de un activo en el Historico de destino comercial
+	 *
+	 * @param activo
+	 */
+	public void finHistoricoDestinoComercial(Activo activo, Object[] extraArgs);
+
+	/**
+	 * Crea un nuevo registro de un activo en el Historico de destino comercial
+	 * con fechaFin a null y fechaInicio a la fecha actual
+	 *
+	 * @param activo
+	 */
+	public void crearHistoricoDestinoComercial(Activo activo, Object[] extraArgs);
 
 	public List<VOfertasTramitadasPendientesActivosAgrupacion> getListOfertasTramitadasPendientesActivo(Long idActivo);
 	
@@ -185,10 +201,11 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	 * @param eleccionUsuarioTipoPublicacionAlquiler: indica si el tipo de publicación de alquiler es pre-publicado o publicado forzado.
 	 * @return Devuelve True si la operación ha sido satisfactorio, False si no ha sido satisfactoria.
 	 */
-	Boolean publicarActivoSinHistorico(Long idActivo, String username, String eleccionUsuarioTipoPublicacionAlquiler);
+	Boolean publicarActivoSinHistorico(Long idActivo, String username, String eleccionUsuarioTipoPublicacionAlquiler,boolean doFlush);
 
-	Page getListHistoricoOcupacionesIlegalesByActivo(WebDto dto, Long idActivo);
+	public Page getListHistoricoOcupacionesIlegalesByActivo(WebDto dto, Long idActivo);
 
-
-
+	public void hibernateFlush();
+	
 }
+

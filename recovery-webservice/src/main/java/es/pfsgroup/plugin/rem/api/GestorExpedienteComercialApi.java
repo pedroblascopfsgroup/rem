@@ -63,4 +63,10 @@ public interface GestorExpedienteComercialApi {
 	 * @return
 	 */
 	public Usuario getGestorByExpedienteComercialYTipo(ExpedienteComercial expediente, String tipo);
+	
+	/**
+	 * Devuelve en un array los tipos de gestor del expediente comercial de alquiler
+	 * @return
+	 */
+	public String[] getCodigosTipoGestorExpedienteComercialAlquiler();
 }

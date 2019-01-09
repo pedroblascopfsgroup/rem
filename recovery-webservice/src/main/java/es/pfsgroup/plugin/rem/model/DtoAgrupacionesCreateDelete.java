@@ -17,7 +17,10 @@ public class DtoAgrupacionesCreateDelete {
 	private Date fechaInicioVigencia;
 	private Date fechaFinVigencia;
 	private Usuario gestorComercial;
-	
+	private Long numAgrupacionRem;
+	private String direccion;
+
+
 	public String getNombre() {
 		return nombre;
 	}
@@ -60,5 +63,19 @@ public class DtoAgrupacionesCreateDelete {
 	public void setGestorComercial(Usuario gestorComercial) {
 		this.gestorComercial = gestorComercial;
 	}
-	
+	public Long getNumAgrupacionRem() {
+		return numAgrupacionRem;
+	}
+	public void setNumAgrupacionRem(Long numAgrupacionRem) {
+		this.numAgrupacionRem = numAgrupacionRem;
+	}
+	public String getDireccion() {
+		return direccion;
+	}
+	public void setDireccion(String direccion) {
+		this.direccion = direccion;
+	}
+
+
+
 }

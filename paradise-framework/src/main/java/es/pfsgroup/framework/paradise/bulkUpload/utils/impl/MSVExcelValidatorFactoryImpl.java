@@ -22,6 +22,9 @@ public class MSVExcelValidatorFactoryImpl {
 	private MSVAgrupacionLoteComercialExcelValidator agrupacionLoteComercialExcelValidator;
 
 	@Autowired
+	private MSVAgrupacionLoteComercialAlquilerExcelValidator agrupacionLoteComercialAlquilerExcelValidator;
+
+	@Autowired
 	private MSVAgrupacionProyectoExcelValidator agrupacionProyectoExcelValidator;
 
 	@Autowired
@@ -101,6 +104,9 @@ public class MSVExcelValidatorFactoryImpl {
 	
 	@Autowired
 	private MSVDesocultacionAlquiler desocultarAlquiler;
+	
+	@Autowired
+	private MSVExclusionDwh excluirDwh;
 
 	@Autowired
 	private MSVSituacionComunidadesPropietariosExcelValidator situacionComunidadesPropietarios;
@@ -222,12 +228,22 @@ public class MSVExcelValidatorFactoryImpl {
 			return situacionImpuestos;
 		} else if (MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_SITUACION_PLUSVALIA.equals(codTipoOperacion)) {
 			return situacionPlusvalia;
+		}else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_ACTIVOS_GASTOS_PORCENTAJE.equals(codTipoOperacion)){
+			return activosGastoPorcentajeValidator;
+		}
+		else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_VENTA_DE_CARTERA.equals(codTipoOperacion)){
+			return ventaDeCartera;
+		} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_AGRUPACION_LOTE_COMERCIAL_ALQUILER.equals(codTipoOperacion)) {
+			return agrupacionLoteComercialAlquilerExcelValidator;
 		}
 		else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_DESOCULTACION_VENTA.equals(codTipoOperacion)){
 			return desocultacionVenta;
 		}
 		else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_DESOCULTACION_ALQUILER.equals(codTipoOperacion)){
 			return desocultarAlquiler;
+		}
+		else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_EXCLUSION_DWH.equals(codTipoOperacion)){
+			return excluirDwh;
 		}
 
 		return null;

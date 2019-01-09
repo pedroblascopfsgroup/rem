@@ -414,17 +414,26 @@ public class Activo implements Serializable, Auditable {
     @Column(name = "OK_TECNICO")
     private Boolean tieneOkTecnico;
 
-    
     @Column(name = "ACT_ACTIVO_DEMANDA_AFECT_COM")
-    private Integer tieneDemandaAfecCom; 
-    
+    private Integer tieneDemandaAfecCom;
+
+    @Column(name = "ACT_EN_TRAMITE")
+    private Boolean enTramite;
+
     @Column(name = "ACT_PUJA")
     private Boolean estaEnPuja;
-
+    
+    @Column(name = "ACT_EXCLUIR_DWH")
+    private Boolean excluirDwh;
 	
 	
     // Getters del activo --------------------------------------------
     
+
+    @Column(name = "ACT_MOTIVO")
+    private String motivoActivo;
+
+
     public Long getId() {
 		return id;
 	}
@@ -1388,7 +1397,7 @@ public class Activo implements Serializable, Auditable {
     }
 
     /**
-	 * Comprueba que tiene un documento adjuntado del 
+	 * Comprueba que tiene un documento adjuntado del
 	 * @param activo
 	 * @param codigoDocumento
 	 * @return
@@ -1680,7 +1689,15 @@ public class Activo implements Serializable, Auditable {
 	public void setTieneOkTecnico(Boolean tieneOkTecnico) {
 		this.tieneOkTecnico = tieneOkTecnico;
 	}
-	
+
+	public Boolean getEnTramite() {
+		return enTramite;
+	}
+
+	public void setEnTramite(Boolean enTramite) {
+		this.enTramite = enTramite;
+	}
+
 
 	public List<AdjuntosPromocion> getAdjuntosPromocion() {
 		return adjuntosPromocion;
@@ -1693,11 +1710,11 @@ public class Activo implements Serializable, Auditable {
 	public Integer getTieneDemandaAfecCom() {
 		return tieneDemandaAfecCom;
 	}
-	
+
 	public void setTieneDemandaAfecCom(Integer tieneDemandaAfecCom) {
 		this.tieneDemandaAfecCom = tieneDemandaAfecCom;
 	}
-	
+
 	public Boolean getEstaEnPuja() {
 		return estaEnPuja;
 	}
@@ -1706,4 +1723,19 @@ public class Activo implements Serializable, Auditable {
 		this.estaEnPuja = estaEnPuja;
 	}
 
+	public Boolean getExcluirDwh() {
+		return excluirDwh;
+	}
+
+	public void setExcluirDwh(Boolean excluirDwh) {
+		this.excluirDwh = excluirDwh;
+	}
+	
+	public String getMotivoActivo() {
+		return motivoActivo;
+	}
+
+	public void setMotivoActivo(String motivoActivo) {
+		this.motivoActivo = motivoActivo;
+	}
 }

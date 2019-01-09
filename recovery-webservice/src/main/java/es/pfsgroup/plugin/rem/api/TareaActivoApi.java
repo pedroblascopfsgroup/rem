@@ -64,4 +64,6 @@ public interface TareaActivoApi {
 		 */
 		TareaActivo getUltimaTareaActivoByIdTramite(Long idTramite);
 
+		public String getValorFechaSeguroRentaPorIdActivo(Long idActivo);
+
     }

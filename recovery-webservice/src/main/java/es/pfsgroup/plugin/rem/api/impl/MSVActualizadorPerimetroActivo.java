@@ -5,9 +5,6 @@ import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.Date;
 
-import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
-
-import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -18,13 +15,14 @@ import org.springframework.transaction.annotation.Transactional;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.framework.paradise.bulkUpload.liberators.MSVLiberator;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
+import es.pfsgroup.framework.paradise.bulkUpload.model.ResultadoProcesarFila;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVHojaExcel;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
+import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
-import es.pfsgroup.framework.paradise.bulkUpload.model.ResultadoProcesarFila;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
@@ -46,23 +44,28 @@ public class MSVActualizadorPerimetroActivo extends AbstractMSVActualizador impl
 	@Autowired
 	private ActivoApi activoApi;
 
-	@Autowired
-	private ActivoDao activoDao;
 
 	@Autowired
 	private UtilDiccionarioApi utilDiccionarioApi;
 	
 	@Autowired
 	private UpdaterStateApi updaterState;
-	
+
 	@Override
 	public String getValidOperation() {
 		return MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_PERIMETRO_ACTIVO;
 	}
 	
-	@Override
+
 	@Transactional(readOnly = false)
-	public ResultadoProcesarFila procesaFila(MSVHojaExcel exc, int fila, Long prmToken) throws IOException, ParseException, JsonViewerException, SQLException {
+	public ResultadoProcesarFila procesaFila(MSVHojaExcel exc, int fila, Long prmToken)
+			throws JsonViewerException, IOException, ParseException, SQLException, Exception {
+		return procesaFila(exc, fila, prmToken, new Object[0]);
+	}
+
+	@Transactional(readOnly = false)
+	public ResultadoProcesarFila procesaFila(MSVHojaExcel exc, int fila, Long prmToken, Object[] extraArgs) throws IOException, ParseException, JsonViewerException, SQLException {
+		
 		Activo activo = activoApi.getByNumActivo(Long.parseLong(exc.dameCelda(fila, 0)));
 		
 		//Evalua si ha encontrado un registro de perimetro para el activo dado. 
@@ -168,10 +171,13 @@ public class MSVActualizadorPerimetroActivo extends AbstractMSVActualizador impl
 		
 		//Actualizar disponibilidad comercial del activo
 		updaterState.updaterStateDisponibilidadComercial(activo);
+
+		//Actualizar registro historico destino comercial del activo
+		activoApi.updateHistoricoDestinoComercial(activo, extraArgs);
+
 		activoApi.saveOrUpdate(activo);
 
-		// Actualizar estado publicación activo a través del procedure.
-		activoDao.publicarActivoConHistorico(activo.getId(), "masivo - perímetro");
+		activoAdapter.actualizarEstadoPublicacionActivo(activo.getId());
 
 		return new ResultadoProcesarFila();
 	}

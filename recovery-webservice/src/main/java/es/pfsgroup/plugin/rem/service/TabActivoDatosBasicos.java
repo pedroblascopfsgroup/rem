@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.service;
 
 import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -31,17 +32,16 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDCicCodigoIsoCirbeBK
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBLocalizacionesBien;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoPatrimonioDao;
-import es.pfsgroup.plugin.rem.activo.publicacion.dao.ActivoPublicacionDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
-import es.pfsgroup.plugin.rem.api.ActivoPropagacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
+import es.pfsgroup.plugin.rem.api.TareaActivoApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoBancario;
@@ -50,10 +50,15 @@ import es.pfsgroup.plugin.rem.model.ActivoInfoLiberbank;
 import es.pfsgroup.plugin.rem.model.ActivoLocalizacion;
 import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
+import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
+import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
 import es.pfsgroup.plugin.rem.model.DtoEstadosInformeComercialHistorico;
+import es.pfsgroup.plugin.rem.model.DtoListadoGestores;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
+import es.pfsgroup.plugin.rem.model.TareaActivo;
+import es.pfsgroup.plugin.rem.model.VAdmisionDocumentos;
 import es.pfsgroup.plugin.rem.model.VPreciosVigentes;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDEntradaActivoBankia;
@@ -127,7 +132,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 	
 	@Autowired
 	private RestApi restApi;
-	
+
 	
 	@Autowired
 	private ActivoPatrimonioDao activoPatrimonioDao;
@@ -137,6 +142,12 @@ public class TabActivoDatosBasicos implements TabActivoService {
 	
 	@Autowired
 	private ParticularValidatorApi particularValidator;
+
+	@Autowired
+	private ActivoAdapter adapter;
+	
+	@Autowired
+	private TareaActivoApi tareaActivoApi;
 
 	@Resource
 	private MessageService messageServices;
@@ -192,6 +203,10 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			
 		}
 		
+		if (activo.getMotivoActivo() != null) {
+			BeanUtils.copyProperty(activoDto, "motivoActivo", activo.getMotivoActivo());
+		}
+
 		if (activo.getCartera() != null) {
 			BeanUtils.copyProperty(activoDto, "entidadPropietariaCodigo", activo.getCartera().getCodigo());
 			BeanUtils.copyProperty(activoDto, "entidadPropietariaDescripcion", activo.getCartera().getDescripcion());
@@ -207,8 +222,8 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		BeanUtils.copyProperty(activoDto, "propietario", activo.getFullNamePropietario());	
 		
 		BeanUtils.copyProperty(activoDto, "tieneOkTecnico", activo.getTieneOkTecnico());
-		
-		if(activo.getTipoActivo() != null ) {					
+
+		if(activo.getTipoActivo() != null ) {
 			BeanUtils.copyProperty(activoDto, "tipoActivoCodigo", activo.getTipoActivo().getCodigo());
 			BeanUtils.copyProperty(activoDto, "tipoActivoDescripcion", activo.getTipoActivo().getDescripcion());
 			
@@ -346,7 +361,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 					break;
 				}
 			}
-			
+
 			Boolean pertenceAgrupacionProyecto = false;
 			for(ActivoAgrupacionActivo agrupaciones: activo.getAgrupaciones()){
 				if(Checks.esNulo(agrupaciones.getAgrupacion().getFechaBaja()) && !Checks.esNulo(agrupaciones.getAgrupacion().getTipoAgrupacion()) &&
@@ -363,7 +378,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			BeanUtils.copyProperty(activoDto, "pertenceAgrupacionObraNueva", pertenceAgrupacionObraNueva);
 			BeanUtils.copyProperty(activoDto, "pertenceAgrupacionProyecto", pertenceAgrupacionProyecto);
 		}
-		
+
 		for(ActivoAgrupacionActivo agrupaciones: activo.getAgrupaciones()){
 			if(Checks.esNulo(agrupaciones.getAgrupacion().getFechaBaja()) && !Checks.esNulo(agrupaciones.getAgrupacion().getId())) {
 				BeanUtils.copyProperty(activoDto,"idAgrupacion", agrupaciones.getAgrupacion().getId());
@@ -423,11 +438,12 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		
 		// Si no exite perimetro en BBDD, se crea una nueva instancia PerimetroActivo, con todas las condiciones marcadas
 		// y por tanto, por defecto se marcan los checkbox.
-		BeanUtils.copyProperty(activoDto,"aplicaTramiteAdmision", new Integer(1).equals(perimetroActivo.getAplicaTramiteAdmision()));
-		BeanUtils.copyProperty(activoDto,"aplicaGestion", new Integer(1).equals(perimetroActivo.getAplicaGestion()));
-		BeanUtils.copyProperty(activoDto,"aplicaAsignarMediador", new Integer(1).equals(perimetroActivo.getAplicaAsignarMediador()));
-		BeanUtils.copyProperty(activoDto,"aplicaComercializar", new Integer(1).equals(perimetroActivo.getAplicaComercializar()));
-		BeanUtils.copyProperty(activoDto,"aplicaFormalizar", new Integer(1).equals(perimetroActivo.getAplicaFormalizar()));
+		BeanUtils.copyProperty(activoDto,"aplicaTramiteAdmision", new Integer(1).equals( perimetroActivo.getAplicaTramiteAdmision())? true: false);
+		BeanUtils.copyProperty(activoDto,"aplicaGestion", new Integer(1).equals( perimetroActivo.getAplicaGestion())? true: false);
+		BeanUtils.copyProperty(activoDto,"aplicaAsignarMediador", new Integer(1).equals(perimetroActivo.getAplicaAsignarMediador())? true: false);
+		BeanUtils.copyProperty(activoDto,"aplicaComercializar", new Integer(1).equals(perimetroActivo.getAplicaComercializar())? true: false);
+		BeanUtils.copyProperty(activoDto,"aplicaFormalizar", new Integer(1).equals(perimetroActivo.getAplicaFormalizar())? true: false);
+		BeanUtils.copyProperty(activoDto,"enTramite", activo.getEnTramite());
 		if(!Checks.esNulo(perimetroActivo.getAplicaPublicar()))
 			BeanUtils.copyProperty(activoDto,"aplicaPublicar", new Integer(1).equals(perimetroActivo.getAplicaPublicar() ? 1 : 0));
 
@@ -530,7 +546,73 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		// Buscamos los campos que pueden ser propagados para esta pestaña
 		activoDto.setCamposPropagables(TabActivoService.TAB_DATOS_BASICOS);
 
+		if (!Checks.esNulo(activo.getSituacionPosesoria()) && !Checks.esNulo(activo.getSituacionPosesoria().getOcupado())) {
+			activoDto.setOcupado(activo.getSituacionPosesoria().getOcupado());
+		} else {
+			activoDto.setOcupado(0);
+		}
+
 		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+		for(DtoListadoGestores gestor : adapter.getGestoresActivos(activo.getId())){
+			if(usuarioLogado.getId().equals(gestor.getIdUsuario())
+					&& (GestorActivoApi.CODIGO_GESTOR_ALQUILERES.equals(gestor.getCodigo())
+					|| GestorActivoApi.CODIGO_SUPERVISOR_ALQUILERES.equals(gestor.getCodigo())
+					|| GestorActivoApi.CODIGO_GESTOR_COMERCIAL_ALQUILERES.equals(gestor.getCodigo())
+					|| GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL_ALQUILERES.equals(gestor.getCodigo()))) {
+				BeanUtils.copyProperty(activoDto, "esGestorAlquiler", true);
+			}
+		}
+
+		ActivoPatrimonio activoP = activoPatrimonioDao.getActivoPatrimonioByActivo(activo.getId());
+		if(!Checks.esNulo(activoP)) {
+			if (!Checks.esNulo(activoP.getTipoEstadoAlquiler())) {
+				activoDto.setTipoEstadoAlquiler(activoP.getTipoEstadoAlquiler().getCodigo());
+
+			}
+
+			if(!Checks.esNulo(activoP.getCheckHPM())) {
+				BeanUtils.copyProperty(activoDto, "activoChkPerimetroAlquiler", activoP.getCheckHPM());
+			}
+
+			if(!Checks.esNulo(activoP.getTipoInquilino())) {
+				activoDto.setTipoInquilino(activoP.getTipoInquilino().getCodigo());
+			}
+		}
+		
+		boolean tieneOfertaAlquilerViva = false;
+		
+		//Cambiamos la forma de obtener si una oferta esta viva, de comprobar si el estado de la oferta es 
+		//Aceptado/tramitada a comprobar si una oferta tiene tareas activas, si tiene alguna tarea activa,
+		//la oferta estara viva, si por el contrario, tiene todas las tareas finalizadas la oferta no estara viva
+		/*for(ActivoOferta activoOferta : activo.getOfertas()) {
+			Oferta oferta = ofertaApi.getOfertaById(activoOferta.getOferta());
+			if(DDEstadoOferta.CODIGO_ACEPTADA.equals(oferta.getEstadoOferta().getCodigo())) {
+				tieneOfertaAlquilerViva = true;
+			}
+		}*/
+		
+		List<ActivoTrabajo> listActivoT =  activo.getActivoTrabajos();
+		if(!Checks.estaVacio(listActivoT)){
+			for (ActivoTrabajo activoT : listActivoT){
+				Long idTrabajo = activoT.getTrabajo().getId();
+				ActivoTramite activoTramite = genericDao.get(ActivoTramite.class, genericDao.createFilter(FilterType.EQUALS, "trabajo.id", idTrabajo),genericDao.createFilter(FilterType.EQUALS, "activo.id",activo.getId()),genericDao.createFilter(FilterType.EQUALS, "tipoTramite.codigo", "T015"));
+				
+				if(!Checks.esNulo(activoTramite)){
+					List<TareaActivo>  listaTareas = tareaActivoApi.getTareasActivoByIdTramite(activoTramite.getId());
+					if(!Checks.estaVacio(listaTareas)){
+						for(TareaActivo tarea : listaTareas){
+							if(!tarea.getTareaFinalizada()){
+								tieneOfertaAlquilerViva = true;
+								break;
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		BeanUtils.copyProperty(activoDto, "tieneOfertaAlquilerViva", tieneOfertaAlquilerViva);
+
 		Usuario gestorComercial = gestorActivoApi.getGestorComercialActual(activo, "GCOM");
 		Usuario supervisorComercial = gestorActivoApi.getGestorComercialActual(activo, "SCOM");
 		if(usuarioLogado.equals(gestorComercial) || usuarioLogado.equals(supervisorComercial) || genericAdapter.isSuper(usuarioLogado)) {
@@ -539,9 +621,12 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			activoDto.setIsLogUsuGestComerSupComerSupAdmin(false);
 		}
 		
-		ActivoPatrimonio activoP = activoPatrimonioDao.getActivoPatrimonioByActivo(activo.getId());
-		if(!Checks.esNulo(activoP) && !Checks.esNulo(activoP.getCheckHPM())) {
-			BeanUtils.copyProperty(activoDto, "activoChkPerimetroAlquiler", activoP.getCheckHPM());
+		List<VAdmisionDocumentos> admisionDocumentos = adapter.getListAdmisionCheckDocumentos(activo.getId());
+		
+		for (VAdmisionDocumentos doc : admisionDocumentos) {
+			if ("CEE (Certificado de eficiencia energética)".equals(doc.getDescripcionTipoDoc()) && doc.getAplica().equals("1")) {
+				BeanUtils.copyProperty(activoDto, "tieneCEE", true);
+			}
 		}
 
 		return activoDto;
@@ -770,11 +855,17 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			}
 			//Hace referencia a Destino Comercial (Si te lía el nombre, habla con Fernando)
 			if (!Checks.esNulo(dto.getTipoComercializacionCodigo()) && !Checks.esNulo(activo.getActivoPublicacion())) {
+
 				// Hace throws en caso de inflingir alguna valdiacion con el cambio de TipoComercializacion a realizar
 				validarCambiosTipoComercializacion(activo,dto);
-				
+
 				DDTipoComercializacion tipoComercializacion = (DDTipoComercializacion) diccionarioApi.dameValorDiccionarioByCod(DDTipoComercializacion.class,  dto.getTipoComercializacionCodigo());
+				activo.setTipoComercializacion(tipoComercializacion);
 				activo.getActivoPublicacion().setTipoComercializacion(tipoComercializacion);
+
+				// Actualizar registros del Historico Destino Comercial
+				activoApi.updateHistoricoDestinoComercial(activo, null);
+
 			}
 			
 			if (!Checks.esNulo(dto.getTipoAlquilerCodigo())) {
@@ -871,8 +962,9 @@ public class TabActivoDatosBasicos implements TabActivoService {
 					ofertaApi.resetPBC(expediente, false);
 				}
 			}
-			
+
 			restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO, activo);
+
 		} catch(JsonViewerException jve) {
 			throw jve;
 		} catch (IllegalAccessException e) {
@@ -893,10 +985,12 @@ public class TabActivoDatosBasicos implements TabActivoService {
 	 * @param activo: activo sobre el que se desmarca comercializar.
 	 */
 	private void accionesDesmarcarComercializar(Activo activo) {
+		ArrayList<Long> idActivoActualizarPublicacion = new ArrayList<Long>();
+		idActivoActualizarPublicacion.add(activo.getId());
 		this.validarPerimetroActivo(activo,1);
 		this.validarPerimetroActivo(activo,3);
-
-		activoAdapter.actualizarEstadoPublicacionActivo(activo.getId());
+		activoAdapter.actualizarEstadoPublicacionActivo(idActivoActualizarPublicacion,false);
+		//activoAdapter.actualizarEstadoPublicacionActivo(activo.getId());
 	}
 	
 	/**
@@ -941,41 +1035,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		if(!Checks.esNulo(error))
 			throw new JsonViewerException(error);
 	}
-	
-	public void validarCambiosTipoComercializacion(Activo activo, DtoActivoFichaCabecera dto) {
-				
-		
-				String error = null;
-				// Si intentamos cambiar de venta a alquiler 
-				// o de Alquiler y venta a alquiler
-				// Se validará que no exista ninguna oferta viva de tipo venta
-				
-				if (DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(dto.getTipoComercializacionCodigo())
-						&& (DDTipoComercializacion.CODIGO_VENTA.equals(activo.getTipoComercializacion().getCodigo())
-								|| DDTipoComercializacion.CODIGO_ALQUILER_VENTA.equals(activo.getTipoComercializacion().getCodigo()))
-						&& particularValidator.existeActivoConOfertaVentaViva("" + activo.getNumActivo())) {
-		
-						error = messageServices.getMessage(MSG_ERROR_DESTINO_COMERCIAL_OFERTAS_VIVAS_VENTA);
-					
-				}
-				
-				// Si intentamos cambiar de alquiler a venta
-				// o de Alquiler y venta a Venta
-				// Se validará que no exista ninguna oferta viva de tipo alquiler
-				
-				if (DDTipoComercializacion.CODIGO_VENTA.equals(dto.getTipoComercializacionCodigo())
-						&& (DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(activo.getTipoComercializacion().getCodigo())
-								|| DDTipoComercializacion.CODIGO_ALQUILER_VENTA.equals(activo.getTipoComercializacion().getCodigo()))
-						&& particularValidator.existeActivoConOfertaAlquilerViva("" + activo.getNumActivo())) {
-		
-					error = messageServices.getMessage(MSG_ERROR_DESTINO_COMERCIAL_OFERTAS_VIVAS_ALQUILER);
-					
-				}
-				
-				if(!Checks.esNulo(error))
-					throw new JsonViewerException(error);
-			}
-	
+
 	/**
 	 * Este método pone la comercialización de todos los activos de una agrupación de tipo restringida
 	 * a NO. Obtiene la agrupación en base a un activo.
@@ -1062,5 +1122,35 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		
 	}
 
+	public void validarCambiosTipoComercializacion(Activo activo, DtoActivoFichaCabecera dto) {
+
+		// Si intentamos cambiar de venta a alquiler
+		// o de Alquiler y venta a alquiler
+		// Se validará que no exista ninguna oferta viva de tipo venta
+
+		if (DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(dto.getTipoComercializacionCodigo())
+				&& (DDTipoComercializacion.CODIGO_VENTA.equals(activo.getTipoComercializacion().getCodigo())
+						|| DDTipoComercializacion.CODIGO_ALQUILER_VENTA.equals(activo.getTipoComercializacion().getCodigo()))
+				&& particularValidator.existeActivoConOfertaVentaViva("" + activo.getNumActivo())) {
+
+				throw new JsonViewerException(messageServices.getMessage(MSG_ERROR_DESTINO_COMERCIAL_OFERTAS_VIVAS_VENTA));
+
+		}
+
+		// Si intentamos cambiar de alquiler a venta
+		// o de Alquiler y venta a Venta
+		// Se validará que no exista ninguna oferta viva de tipo alquiler
+
+		if (DDTipoComercializacion.CODIGO_VENTA.equals(dto.getTipoComercializacionCodigo())
+				&& (DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(activo.getTipoComercializacion().getCodigo())
+						|| DDTipoComercializacion.CODIGO_ALQUILER_VENTA.equals(activo.getTipoComercializacion().getCodigo()))
+				&& particularValidator.existeActivoConOfertaAlquilerViva("" + activo.getNumActivo())) {
+
+				throw new JsonViewerException(messageServices.getMessage(MSG_ERROR_DESTINO_COMERCIAL_OFERTAS_VIVAS_ALQUILER));
+
+		}
+
+
+	}
 
 }

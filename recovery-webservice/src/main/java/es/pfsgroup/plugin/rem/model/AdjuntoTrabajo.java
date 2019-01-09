@@ -80,6 +80,9 @@ public class AdjuntoTrabajo implements Serializable, Auditable {
 	@Column(name = "ADT_FECHA_DOCUMENTO")
 	private Date fechaDocumento;
 	
+	@Column(name = "ADT_ID_DOCUMENTO_REST")
+	private Long idDocRestClient;
+
 	@Version   
 	private Long version;
 	
@@ -193,6 +196,11 @@ public class AdjuntoTrabajo implements Serializable, Auditable {
 		this.auditoria = auditoria;
 	}
 	
-	
+	public Long getIdDocRestClient() {
+		return idDocRestClient;
+	}
 
+	public void setIdDocRestClient(Long idDocRestClient) {
+		this.idDocRestClient = idDocRestClient;
+	}
 }

@@ -346,6 +346,7 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoForm', {
 						defaults: {
 							width: 410
 					    },
+					    layout: 'fit',
 						items:
 							[
 								ofertasasociadasactivolist
@@ -413,6 +414,7 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoForm', {
 						defaults: {
 							width: 410
 					    },
+					    layout: 'fit',
 						items: [
 							notificacionactivolist
 						]
@@ -424,6 +426,7 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoForm', {
 						defaults: {
 							width: 410
 					    },
+					    layout: 'fit',
 						items:
 							[
 								documentoscomunicaciongencatlist
@@ -436,6 +439,7 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoForm', {
 						defaults: {
 							width: 410
 					    },
+					    layout: 'fit',
 						items:
 							[
 								reclamacionesactivolist

@@ -277,6 +277,7 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoForm', {
 				    			{
 				    				xtype: "datefieldbase",
 				    				fieldLabel: HreRem.i18n('fieldlabel.fecha.anulacion'),
+				    				colspan: 2,
 				    				readOnly: true,
 				    				name: 'fechaAnulacion',
 				    				submitFormat:'Y-m-d',

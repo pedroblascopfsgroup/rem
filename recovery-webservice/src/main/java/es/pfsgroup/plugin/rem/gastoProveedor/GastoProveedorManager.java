@@ -1308,12 +1308,12 @@ public class GastoProveedorManager implements GastoProveedorApi {
 									filtroGasto = genericDao.createFilter(FilterType.EQUALS, "id", idGasto);
 									gasto = genericDao.get(GastoProveedor.class, filtroGasto);
 
-									Filter filtroCatastro = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+									Filter filtroCatastro = genericDao.createFilter(FilterType.EQUALS, "activo.id", activoAgrupacion.getActivo().getId());
 									Order order = new Order(OrderType.DESC, "fechaRevValorCatastral");
 									List<ActivoCatastro> activosCatastro = genericDao.getListOrdered(ActivoCatastro.class, order, filtroCatastro);
 
 									GastoProveedorActivo gastoProveedorActivo = new GastoProveedorActivo();
-									gastoProveedorActivo.setActivo(activo);
+									gastoProveedorActivo.setActivo(activoAgrupacion.getActivo());
 									gastoProveedorActivo.setGastoProveedor(gasto);
 									if (!Checks.estaVacio(activosCatastro)) {
 										gastoProveedorActivo.setReferenciaCatastral(activosCatastro.get(0).getRefCatastral());

@@ -1276,21 +1276,17 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		 try {
 			 BigDecimal nActivos = new BigDecimal(0);
 			 Session session = this.getSessionFactory().getCurrentSession();
-			 Query query = session.createSQLQuery("SELECT COUNT (DISTINCT ACT.ACT_ID) FROM ACT_ACTIVO ACT\r\n" + 
-			 		"    INNER JOIN REM01.BIE_LOCALIZACION BIE ON ACT.BIE_ID = BIE.BIE_ID\r\n" + 
-			 		"    INNER JOIN REM01.CMU_CONFIG_MUNICIPIOS CMU ON CMU.DD_LOC_ID = BIE.DD_LOC_ID\r\n" + 
-			 		"    INNER JOIN REM01.DD_TPA_TIPO_ACTIVO TPA ON TPA.DD_TPA_ID = ACT.DD_TPA_ID AND DD_TPA_CODIGO = '02'\r\n" + 
-			 		"    INNER JOIN REM01.ACT_AJD_ADJJUDICIAL AJD ON AJD.ACT_ID = ACT.ACT_ID AND TRUNC(AJD.AJD_FECHA_ADJUDICACION) > to_date('07/04/18','DD/MM/YYYY')\r\n" + 
-			 		"    INNER JOIN REM01.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = ACT.DD_CRA_ID\r\n" + 
-			 		"    INNER JOIN REM01.DD_SCR_SUBCARTERA SCR ON SCR.DD_SCR_ID = ACT.DD_SCR_ID\r\n" + 
-			 		"    INNER JOIN REM01.ACT_AGA_AGRUPACION_ACTIVO AGA ON AGA.ACT_ID = ACT.ACT_ID\r\n" + 
-			 		"WHERE AGA.AGR_ID = " + idAgrupacion + " AND (\r\n" + 
-			 		"    (CRA.DD_CRA_CODIGO = '03' AND (SCR.DD_SCR_CODIGO = '08' OR SCR.DD_SCR_CODIGO = '06' OR SCR.DD_SCR_CODIGO = '09' OR SCR.DD_SCR_CODIGO = '07'))\r\n" + 
-			 		"    OR (CRA.DD_CRA_CODIGO = '02' AND SCR.DD_SCR_CODIGO = '04')\r\n" + 
-			 		"    OR (CRA.DD_CRA_CODIGO = '01' AND SCR.DD_SCR_CODIGO = '02')\r\n" + 
-			 		"    OR (CRA.DD_CRA_CODIGO = '08' AND SCR.DD_SCR_CODIGO = '18')\r\n" + 
-			 		"    OR (CRA.DD_CRA_CODIGO = '06' AND SCR.DD_SCR_CODIGO = '16')\r\n" + 
-			 		"    )");
+			 Query query = session.createSQLQuery("SELECT\r\n" + 
+			 		" COUNT(DISTINCT ACT.ACT_ID)\r\n" + 
+			 		"FROM ACT_ACTIVO ACT\r\n" + 
+			 		"INNER JOIN REM01.BIE_LOCALIZACION BIE ON ACT.BIE_ID = BIE.BIE_ID\r\n" + 
+			 		"INNER JOIN REM01.CMU_CONFIG_MUNICIPIOS CMU ON CMU.DD_LOC_ID = BIE.DD_LOC_ID\r\n" + 
+			 		"INNER JOIN REM01.DD_TPA_TIPO_ACTIVO TPA ON TPA.DD_TPA_ID = ACT.DD_TPA_ID AND DD_TPA_CODIGO = '02'\r\n" + 
+			 		"INNER JOIN REM01.ACT_AJD_ADJJUDICIAL AJD ON AJD.ACT_ID = ACT.ACT_ID AND TRUNC(AJD.AJD_FECHA_ADJUDICACION) > TO_DATE('07/04/2018', 'DD/MM/YYYY')\r\n" + 
+			 		"INNER JOIN REM01.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = ACT.DD_CRA_ID\r\n" + 
+			 		"INNER JOIN REM01.DD_SCR_SUBCARTERA SCR ON SCR.DD_SCR_ID = ACT.DD_SCR_ID\r\n" + 
+			 		"INNER JOIN REM01.ACT_AGA_AGRUPACION_ACTIVO AGA ON AGA.ACT_ID = ACT.ACT_ID\r\n" + 
+			 		"WHERE AGA.AGR_ID =" + idAgrupacion);
 			 
 			 nActivos = (BigDecimal) query.uniqueResult();
 			 return nActivos.intValueExact();

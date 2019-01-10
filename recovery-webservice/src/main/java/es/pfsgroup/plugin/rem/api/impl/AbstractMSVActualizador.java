@@ -148,8 +148,6 @@ abstract public class AbstractMSVActualizador implements MSVLiberator {
 
 			processAdapter.setExcelResultadosProcesado(archivo, fileItemResultados);
 
-			this.postProcesado(exc);
-
 		} catch (Exception e) {
 			logger.error("Error procesando fichero", e);
 			return false;
@@ -172,7 +170,6 @@ abstract public class AbstractMSVActualizador implements MSVLiberator {
 	public void preProcesado(MSVHojaExcel exc, ProcesoMasivoContext context) throws NumberFormatException, IllegalArgumentException, IOException, ParseException {
 	}
 
-	@Transactional(readOnly = false)
 	public void postProcesado(MSVHojaExcel exc) throws NumberFormatException, IllegalArgumentException, IOException, ParseException {
 	}
 

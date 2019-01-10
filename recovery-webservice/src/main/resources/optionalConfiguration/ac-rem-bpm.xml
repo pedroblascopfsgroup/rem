@@ -25,20 +25,20 @@
 
     <bean id="activarProrroga" class="es.pfsgroup.plugin.rem.jbpm.handler.ActivoProrrogarTareasActionHandler"></bean>
 
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteAdmision.xml" p:version="-1"/>	
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteDocumental.xml" p:version="-1"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteDocumentalCEE.xml" p:version="-1"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteActuacionTecnica.xml" p:version="-1"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteTasacion.xml" p:version="-1"/>	
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteInforme.xml" p:version="-1"/>	
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteFacturacion.xml" p:version="-1"/>	
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteDocumentalCedula.xml" p:version="-1"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramitePropuestaPrecios.xml" p:version="-1"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteActualizacionPrecios.xml" p:version="-1"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteActualizacionEstados.xml" p:version="-1"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteAprobacionInformeComercial.xml" p:version="-1"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteSancionOfertaAlquiler.xml" p:version="-1"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteSancionOferta.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteAdmision.xml" p:version="2033"/>	
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteDocumental.xml" p:version="2034"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteDocumentalCEE.xml" p:version="2042"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteActuacionTecnica.xml" p:version="2050"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteTasacion.xml" p:version="2062"/>	
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteInforme.xml" p:version="2066"/>	
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteFacturacion.xml" p:version="2072"/>	
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteDocumentalCedula.xml" p:version="2081"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramitePropuestaPrecios.xml" p:version="2028"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteActualizacionPrecios.xml" p:version="2035"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteActualizacionEstados.xml" p:version="2037"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteAprobacionInformeComercial.xml" p:version="255"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteSancionOfertaAlquiler.xml" p:version="2042"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteSancionOferta.xml" p:version="2049"/>
 
 	<bean id="jbpmActivoScriptExecutor" class="es.pfsgroup.plugin.rem.jbpm.activo.JBPMActivoScriptExecutor" >
   	<property name="contextScripts">

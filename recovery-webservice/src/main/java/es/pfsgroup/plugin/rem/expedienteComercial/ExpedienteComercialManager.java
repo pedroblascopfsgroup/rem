@@ -7276,6 +7276,16 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		return false;
 	}
 
+	
+	@Override
+	public boolean checkConOpcionCompra(TareaExterna tareaExterna) {
+		ExpedienteComercial expedienteComercial = tareaExternaToExpedienteComercial(tareaExterna);
+		if (!Checks.esNulo(expedienteComercial) && DDTipoAlquiler.CODIGO_ALQUILER_OPCION_COMPRA.equals(expedienteComercial.getTipoAlquiler().getCodigo())) {
+			return  true;
+		}
+			return false;
+	}
+
 
 	@Override
 	public Long getIdByNumExpOrNumOfr(Long numBusqueda, String campo) {

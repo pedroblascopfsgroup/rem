@@ -31,14 +31,11 @@ public class NotificacionesGencatManager extends AbstractNotificatorService{
 	
 	
 	public void sendMailNotificacionSancionGencat(DtoGencatSave gencatDto, Activo activo) {
-		logger.warn("ENTRO sendMailNotificacionSancionGencat ");
 		String fechaSancion = gencatDto.getFechaSancion();
 		String sancion = gencatDto.getSancion();
-		String idActivo = Long.toString(gencatDto.getIdActivo());
+		String numActivo = Long.toString(activo.getNumActivo());
 		List<String> mailsCC = new ArrayList<String>();
 		List<DtoAdjuntoMail> adjuntos = new ArrayList<DtoAdjuntoMail>();
-		
-		
 		
 		if(fechaSancion != null && sancion !=null) {
 			ArrayList<String> para = new ArrayList<String>();
@@ -61,9 +58,9 @@ public class NotificacionesGencatManager extends AbstractNotificatorService{
 			   
 			if(!para.isEmpty()) {
 				
-				String asunto = "Sanción GENCAT como " + sancion +" del activo " + idActivo;
+				String asunto = "Sanción GENCAT como " + sancion +" del activo " + numActivo;
 				String cuerpo = 
-						String.format("<p>GENCAT ha sancionado como %s la comunicacion del activo %s de su oferta aprobada. Un saludo</p>", sancion, idActivo);
+						String.format("<p>GENCAT ha sancionado como %s la comunicación del activo %s de su oferta aprobada. Un saludo</p>", sancion, numActivo);
 				String cuerpoCorreo = this.generateCuerpoCorreoNotificacionAutomatica(cuerpo);
 				
 				genericAdapter.sendMail(para, mailsCC, asunto, cuerpoCorreo, adjuntos);

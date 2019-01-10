@@ -17,6 +17,7 @@ public class DtoGencatSave extends DtoTabActivo {
 	
 	//ID Activo
 	private Long idActivo;
+	 
 	
 	//Datos comunicación
 	private Date dateFechaPreBloqueo;
@@ -356,6 +357,7 @@ public class DtoGencatSave extends DtoTabActivo {
 	public void setIdActivo(Long idActivo) {
 		this.idActivo = idActivo;
 	}
+	
 	public Long getIdOfertaAnterior() {
 		return idOfertaAnterior;
 	}

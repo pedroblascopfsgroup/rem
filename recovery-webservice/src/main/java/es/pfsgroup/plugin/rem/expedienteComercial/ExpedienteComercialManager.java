@@ -7266,7 +7266,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		try {
 			List<DtoAdjunto> adjuntosExpediente = gestorDocumentalAdapterApi.getAdjuntosExpedienteComercial(expedienteComercial);
 			for (DtoAdjunto adjunto : adjuntosExpediente) {
-				if(DDSubtipoDocumentoExpediente.MATRICULA_CONTRATO.equals(adjunto.getMatricula())) {
+				if(DDSubtipoDocumentoExpediente.MATRICULA_CONTRATO.equals(adjunto.getMatricula()) || DDSubtipoDocumentoExpediente.MATRICULA_CONTRATO_ALQUILER_CON_OPCION_A_COMPRA.equals(adjunto.getMatricula())) {
 					return true;
 				}
 			}
@@ -7275,8 +7275,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 		return false;
 	}
-
 	
+		
 	@Override
 	public boolean checkConOpcionCompra(TareaExterna tareaExterna) {
 		ExpedienteComercial expedienteComercial = tareaExternaToExpedienteComercial(tareaExterna);
@@ -7415,6 +7415,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 						String tipoTratamientoScoring = DDTipoTratamiento.TIPO_TRATAMIENTO_SCORING;
 						String tipoTratamientoSeguroRentas = DDTipoTratamiento.TIPO_TRATAMIENTO_SEGURO_DE_RENTAS;
 						String tipoTratamientoNinguna = DDTipoTratamiento.TIPO_TRATAMIENTO_NINGUNA;
+						String flagNoDefinido = DDTipoAlquiler.CODIGO_NO_DEFINIDO;
 						
 						if (!Checks.esNulo(expediente.getTipoAlquiler().getCodigo())){
 							DDSubtipoDocumentoExpediente codigoContrato = null;
@@ -7422,7 +7423,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 								codigoContrato =
 										(DDSubtipoDocumentoExpediente) utilDiccionarioApi.dameValorDiccionarioByCod(DDSubtipoDocumentoExpediente.class, DDSubtipoDocumentoExpediente.CODIGO_CONTRATO);
 
-							}else if (!expediente.getTipoAlquiler().getCodigo().equals(tipoAlquilerNoDefinido)){
+							}else if (!expediente.getTipoAlquiler().getCodigo().equals(flagNoDefinido)){
 								codigoContrato =
 										(DDSubtipoDocumentoExpediente) utilDiccionarioApi.dameValorDiccionarioByCod(DDSubtipoDocumentoExpediente.class, DDSubtipoDocumentoExpediente.CODIGO_ALQUILER_CON_OPCION_A_COMPRA);
 							}
@@ -7460,10 +7461,12 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 						
 						
 						listDtoTipoDocExpediente = generateListSubtipoExpediente(listaDDSubtipoDocExp);
+							listDtoTipoDocExpediente = generateListSubtipoExpediente(listaDDSubtipoDocExp);
+						}
 					}
 				}
 			}
-		}
+		
 		Collections.sort(listDtoTipoDocExpediente);
 		return listDtoTipoDocExpediente;
 	}

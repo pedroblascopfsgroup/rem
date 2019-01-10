@@ -125,7 +125,7 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoExpediente', {
 									allowBlank: false,
 									listeners: {
 										select: function(combo, record) {
-											if (record.getData("vinculable")) {
+											if (record.getData().vinculable == 1) {
 												if(combo.value == CONST.SUBTIPO_DOCUMENTO_EXPEDIENTE ['RENOVACION_CONTRATO']
 												|| combo.value == CONST.SUBTIPO_DOCUMENTO_EXPEDIENTE ['CONTRATO']
 												|| combo.value == CONST.SUBTIPO_DOCUMENTO_EXPEDIENTE ['FIANZA']

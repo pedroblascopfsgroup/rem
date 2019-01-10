@@ -17,16 +17,25 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoModel', {
     },
     
     formulas: {
-	     
-	     /*
-	     esOcupacionLegal: function(get) {
-	     	
-	     	var ocupado = get('situacionPosesoria.ocupado') == "1";
-	     	var conTitulo = get('situacionPosesoria.conTitulo') == "1";
-	     	
-	     	return ocupado && conTitulo
-	     	
-	     },*/
+
+    	esSoloLecturaCheckAnularGencat: function(get){
+    		var me = this;
+    		var soloLectura;
+    		var estadoComunicacion= get('gencat.estadoComunicacion');
+    		var estadoSancion= get('gencat.sancion');
+    		if ((estadoComunicacion === CONST.ESTADO_COMUNICACION_GENCAT['COMUNICADO'] ||
+    				estadoComunicacion === CONST.ESTADO_COMUNICACION_GENCAT['RECHAZADO'] || 
+    				estadoComunicacion === CONST.ESTADO_COMUNICACION_GENCAT['ANULADO']) || 
+    				(estadoComunicacion === CONST.ESTADO_COMUNICACION_GENCAT['SANCIONADO'] &&
+    				  estadoSancion === CONST.SANCION_GENCAT['NO_EJERCE'] )){
+    			soloLectura = false
+    			  
+    		}else{
+    			soloLectura = true
+    		}
+    		  
+    		return soloLectura;
+    	 }
 	     
     },
 

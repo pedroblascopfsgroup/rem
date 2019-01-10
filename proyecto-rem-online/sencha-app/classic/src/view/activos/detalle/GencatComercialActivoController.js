@@ -199,8 +199,5 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoController', {
 	 });
     		    	     
   }
-    	
-    	
-    
     
 });

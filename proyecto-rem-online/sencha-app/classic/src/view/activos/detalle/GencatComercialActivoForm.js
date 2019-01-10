@@ -290,12 +290,9 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoForm', {
 				    				fieldLabel: HreRem.i18n('fieldlabel.comunicado.anulacion.gencat'),
 				    				name: 'comunicadoAnulacionAGencat',
 									bind: {
-										readOnly: me.formDeHistorico,
+										readOnly: '{esSoloLecturaCheckAnularGencat}',
 										value: '{gencat.comunicadoAnulacionAGencat}'
-									}/*,
-									listeners: {
-										change: 'onChkbxPerimetroChange'
-									}*/
+									}
 				    			}
 				    		]
 		        	},

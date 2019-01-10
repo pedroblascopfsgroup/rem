@@ -7425,6 +7425,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			aux.setCodigo(tipDocExp.getCodigo());
 			aux.setDescripcion(tipDocExp.getDescripcion());
 			aux.setDescripcionLarga(tipDocExp.getDescripcionLarga());
+			aux.setVinculable(tipDocExp.getVinculable());
 			listDtoTipoDocExpediente.add(aux);
 		} 
 		

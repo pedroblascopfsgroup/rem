@@ -50,6 +50,9 @@ public class AdecuacionGencat implements Serializable, Auditable {
 	@Column(name = "ADG_FECHA_REVISION")
 	private Date fechaRevision;
 	
+	@Column(name = "ADG_FECHA_ENVIO_COMUNICA")
+	private Date fechaEnvioComunica;
+	
 	@Version   
 	private Long version;
     

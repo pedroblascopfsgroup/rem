@@ -41,10 +41,10 @@ public class MSVActualizadorCargaMasivaComunicaciones extends AbstractMSVActuali
 	@Transactional(readOnly = false)
 	public ResultadoProcesarFila procesaFila(MSVHojaExcel exc, int fila, Long prmToken) throws IOException, ParseException, JsonViewerException, SQLException {
 		
-		List<ComunicacionGencat> lcom = new ArrayList<ComunicacionGencat>();
-		lcom.add(comunicacionGencatApi.getByIdActivo(Long.parseLong(exc.dameCelda(fila, POSICION_COLUMNA_NUMERO_ACTIVO))));
+		List<ComunicacionGencat> lcom = new ArrayList<ComunicacionGencat>(); 
+		lcom.add(comunicacionGencatApi.getByNumActivoHaya(Long.parseLong(exc.dameCelda(fila, POSICION_COLUMNA_NUMERO_ACTIVO))));
 		
-		for(ComunicacionGencat  com:lcom) {
+		for(ComunicacionGencat com : lcom) {
 			if(com.getEstadoComunicacion().getCodigo().equals("CREADO")) {
 				Date fecha = (Date) new SimpleDateFormat("dd/MM/yyyy").parse(exc.dameCelda(fila, POSICION_COLUMNA_FECHA_COMUNICACION));  
 				

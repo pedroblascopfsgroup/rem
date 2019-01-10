@@ -73,13 +73,14 @@ public class MSVValidatorCargaMasivaComunicaciones extends MSVExcelValidatorAbst
 	
 	protected final Log logger = LogFactory.getLog(getClass());
 
+	//El activo existe, tiene comunicación viva, no está en estado comunicado y tiene una comunicación generada. Si esto se cumple no hay errores. 
 	@Override
 	public MSVDtoValidacion validarContenidoFichero(MSVExcelFileItemDto dtoFile) throws Exception {
+
 		
 		if (dtoFile.getIdTipoOperacion() == null){
 			throw new IllegalArgumentException("idTipoOperacion no puede ser null");
 		}
-		
 		List<String> lista = recuperarFormato(dtoFile.getIdTipoOperacion());
 		MSVHojaExcel exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
 		MSVHojaExcel excPlantilla = excelParser.getExcel(recuperarPlantilla(dtoFile.getIdTipoOperacion()));
@@ -105,7 +106,7 @@ public class MSVValidatorCargaMasivaComunicaciones extends MSVExcelValidatorAbst
 			mapaErrores.put(messageServices.getMessage(ACTIVO_NO_EXISTE), activesNotExistsRows(exc));
 			mapaErrores.put(messageServices.getMessage(ACTIVO_SIN_COMUNICACION_VIVA), validarActivoComunicacionViva(exc));
 			mapaErrores.put(messageServices.getMessage(ACTIVO_SIN_COMUNICACION_EN_ESTADO_COMUNICADO), esActivoConComunicacionComunicada(exc));
-			mapaErrores.put(messageServices.getMessage(ACTIVO_CON_COMUNICACION_NO_GENERADA), esActivoConComunicacionNoGenerada(exc));
+			mapaErrores.put(messageServices.getMessage(ACTIVO_CON_COMUNICACION_NO_GENERADA), esActivoConComunicacionGenerada(exc));
 			// Validar NIF
 			// Activo sin comunicación viva
 
@@ -128,7 +129,8 @@ public class MSVValidatorCargaMasivaComunicaciones extends MSVExcelValidatorAbst
 		return dtoValidacionContenido;
 	}
 
-	private List<Integer> esActivoConComunicacionNoGenerada(MSVHojaExcel exc) {
+	//No ha generado la comunicación
+	private List<Integer> esActivoConComunicacionGenerada(MSVHojaExcel exc) {
 		
 		List<Integer> listaFilas = new ArrayList<Integer>();
 
@@ -151,6 +153,7 @@ public class MSVValidatorCargaMasivaComunicaciones extends MSVExcelValidatorAbst
 		return listaFilas;
 	}
 
+	//La comunicación no está en estado "comunicado"
 	private List<Integer> esActivoConComunicacionComunicada(MSVHojaExcel exc) {
 		List<Integer> listaFilas = new ArrayList<Integer>();
 
@@ -173,6 +176,7 @@ public class MSVValidatorCargaMasivaComunicaciones extends MSVExcelValidatorAbst
 		return listaFilas;
 	}
 
+	//Tiene una comunicación
 	private List<Integer> validarActivoComunicacionViva(MSVHojaExcel exc) {
 		List<Integer> listaFilas = new ArrayList<Integer>();
 
@@ -195,6 +199,7 @@ public class MSVValidatorCargaMasivaComunicaciones extends MSVExcelValidatorAbst
 		return listaFilas;
 	}
 
+	//El activo existe
 	private List<Integer> activesNotExistsRows(MSVHojaExcel exc) {
 		
 		List<Integer> listaFilas = new ArrayList<Integer>();

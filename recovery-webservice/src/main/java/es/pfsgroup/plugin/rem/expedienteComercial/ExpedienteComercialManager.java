@@ -7400,6 +7400,56 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 						listaDDSubtipoDocExp  = genericDao.getList(DDSubtipoDocumentoExpediente.class, filtro);
 						listaDDSubtipoDocExp.remove(codRenovacionContrato);
 						listDtoTipoDocExpediente = generateListSubtipoExpediente(listaDDSubtipoDocExp);	
+						String tipoAlquilerOpcionCompra = DDTipoAlquiler.CODIGO_ALQUILER_OPCION_COMPRA;
+						String tipoAlquilerNoDefinido = DDTipoAlquiler.CODIGO_NO_DEFINIDO;
+						String tipoTratamientoScoring = DDTipoTratamiento.TIPO_TRATAMIENTO_SCORING;
+						String tipoTratamientoSeguroRentas = DDTipoTratamiento.TIPO_TRATAMIENTO_SEGURO_DE_RENTAS;
+						String tipoTratamientoNinguna = DDTipoTratamiento.TIPO_TRATAMIENTO_NINGUNA;
+						
+						if (!Checks.esNulo(expediente.getTipoAlquiler().getCodigo())){
+							DDSubtipoDocumentoExpediente codigoContrato = null;
+							if (expediente.getTipoAlquiler().getCodigo().equals(tipoAlquilerOpcionCompra)){
+								codigoContrato =
+										(DDSubtipoDocumentoExpediente) utilDiccionarioApi.dameValorDiccionarioByCod(DDSubtipoDocumentoExpediente.class, DDSubtipoDocumentoExpediente.CODIGO_CONTRATO);
+
+							}else if (!expediente.getTipoAlquiler().getCodigo().equals(tipoAlquilerNoDefinido)){
+								codigoContrato =
+										(DDSubtipoDocumentoExpediente) utilDiccionarioApi.dameValorDiccionarioByCod(DDSubtipoDocumentoExpediente.class, DDSubtipoDocumentoExpediente.CODIGO_ALQUILER_CON_OPCION_A_COMPRA);
+							}
+							
+							listaDDSubtipoDocExp.remove(codigoContrato);
+							listaDDSubtipoDocExp.remove(codRenovacionContrato);
+							
+						}
+						
+						List<ActivoTramite> tramitesActivo = tramiteDao.getTramitesActivoTrabajoList(expediente.getTrabajo().getId());
+						Filter filtroTratamiento = genericDao.createFilter(FilterType.EQUALS, "codigo", "T015_DefinicionOferta");
+						Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+						TareaProcedimiento tap = genericDao.get(TareaProcedimiento.class, filtroTratamiento, filtroBorrado);
+						
+						for(ActivoTramite actt : tramitesActivo){
+							List<TareaExterna> tareas = activoTareaExternaApi.getByIdTareaProcedimientoIdTramite(actt.getId(),tap.getId());
+							for(TareaExterna t : tareas){
+								if(t.getTareaPadre().getTareaFinalizada() && t.getTareaPadre().getAuditoria().isBorrado()){
+									List <TareaExternaValor> listaTareaExterna= activoTareaExternaApi.obtenerValoresTarea(t.getId());
+									for (TareaExternaValor te: listaTareaExterna) {
+										if (te.getNombre().equals("tipoTratamiento")) {
+											if(te.getValor().equals(tipoTratamientoScoring)) {
+												listaDDSubtipoDocExp.remove((DDSubtipoDocumentoExpediente) utilDiccionarioApi.dameValorDiccionarioByCod(DDSubtipoDocumentoExpediente.class, DDSubtipoDocumentoExpediente.CODIGO_SEGURO_RENTAS));
+											}else if (te.getValor().equals(tipoTratamientoSeguroRentas)) {
+												listaDDSubtipoDocExp.remove((DDSubtipoDocumentoExpediente) utilDiccionarioApi.dameValorDiccionarioByCod(DDSubtipoDocumentoExpediente.class, DDSubtipoDocumentoExpediente.CODIGO_SCORING));							
+											}else if(te.getValor().equals(tipoTratamientoNinguna)){
+												listaDDSubtipoDocExp.remove((DDSubtipoDocumentoExpediente) utilDiccionarioApi.dameValorDiccionarioByCod(DDSubtipoDocumentoExpediente.class, DDSubtipoDocumentoExpediente.CODIGO_SEGURO_RENTAS));
+												listaDDSubtipoDocExp.remove((DDSubtipoDocumentoExpediente) utilDiccionarioApi.dameValorDiccionarioByCod(DDSubtipoDocumentoExpediente.class, DDSubtipoDocumentoExpediente.CODIGO_SCORING));
+											}
+										}
+									}
+								}
+							}
+						}
+						
+						
+						listDtoTipoDocExpediente = generateListSubtipoExpediente(listaDDSubtipoDocExp);
 					}
 				}
 			}

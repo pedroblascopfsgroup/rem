@@ -374,7 +374,6 @@ Ext.define('HreRem.view.agrupaciones.detalle.DatosPublicacionAgrupacion', {
 				layout: {
 					type: 'table',
 					columns: 1,
-					trAttrs: {height: '30px', width: '100%'},
 					tdAttrs: {width: '100%'},
 					tableAttrs: {
 						style: {

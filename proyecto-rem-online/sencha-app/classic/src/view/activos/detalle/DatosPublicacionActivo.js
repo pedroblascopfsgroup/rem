@@ -384,7 +384,6 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 						layout: {
 							type: 'table',
 							columns: 1,
-							trAttrs: {height: '30px', width: '100%'},
 							tdAttrs: {width: '100%'},
 							tableAttrs: {
 								style: {

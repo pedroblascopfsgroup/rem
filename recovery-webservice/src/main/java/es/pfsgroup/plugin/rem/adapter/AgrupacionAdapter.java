@@ -3141,12 +3141,28 @@ public class AgrupacionAdapter {
 		VCondicionantesAgrDisponibilidad vCondicionantesAgrDisponibilidad = genericDao.get(VCondicionantesAgrDisponibilidad.class, idAgrupacionFilter);
 		Double precioWebVenta = 0.0;
 		Double precioWebAlquiler = 0.0;
-
-		for(ActivoAgrupacionActivo aga : agrupacion.getActivos()) {
-			precioWebVenta += !Checks.esNulo(activoValoracionDao.getImporteValoracionVentaWebPorIdActivo(aga.getActivo().getId()))
-					? activoValoracionDao.getImporteValoracionVentaWebPorIdActivo(aga.getActivo().getId()): 0.0;
-			precioWebAlquiler += !Checks.esNulo(activoValoracionDao.getImporteValoracionRentaWebPorIdActivo(aga.getActivo().getId()))
-					? activoValoracionDao.getImporteValoracionRentaWebPorIdActivo(aga.getActivo().getId()): 0.0;
+		Boolean tienePrecioVenta = true;
+		
+		try {
+			
+			for(ActivoAgrupacionActivo aga : agrupacion.getActivos()) {			
+				if(Checks.esNulo(activoValoracionDao.getImporteValoracionVentaWebPorIdActivo(aga.getActivo().getId()))) {
+					tienePrecioVenta = false;
+					break;
+				}
+			}
+			
+			for(ActivoAgrupacionActivo aga : agrupacion.getActivos()) {
+				if(tienePrecioVenta) {
+				precioWebVenta += !Checks.esNulo(activoValoracionDao.getImporteValoracionVentaWebPorIdActivo(aga.getActivo().getId()))
+						? activoValoracionDao.getImporteValoracionVentaWebPorIdActivo(aga.getActivo().getId()): 0.0;
+				}
+				precioWebAlquiler += !Checks.esNulo(activoValoracionDao.getImporteValoracionRentaWebPorIdActivo(aga.getActivo().getId()))
+						? activoValoracionDao.getImporteValoracionRentaWebPorIdActivo(aga.getActivo().getId()): 0.0;
+			}
+		
+		} catch (Exception e) {	
+			logger.error("error en agrupacionAdapter", e);
 		}
 
 		dto.setPrecioWebVenta(precioWebVenta);

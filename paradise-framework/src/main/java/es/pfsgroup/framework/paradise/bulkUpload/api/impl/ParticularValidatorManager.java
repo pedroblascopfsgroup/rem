@@ -2462,7 +2462,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		if(numActivoHaya != null) {
 			 resultado = rawDao.getExecuteSQL("SELECT count(1) FROM ACT_CMG_COMUNICACION_GENCAT com " + 
 			 		" WHERE com.ACT_ID = (SELECT ACT_ID FROM ACT_ACTIVO WHERE ACT_NUM_ACTIVO = '"+numActivoHaya+"') " + 
-			 		" AND com.DD_ECG_ID IN ( " + 
+			 		" AND com.DD_ECG_ID = ( " + 
 			 		" SELECT DD_ECG_ID FROM DD_ECG_ESTADO_COM_GENCAT WHERE DD_ECG_CODIGO = 'COMUNICADO')");
 		}
 

@@ -253,6 +253,18 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 			dtoAviso.setId(String.valueOf(id));
 			listaAvisos.add(dtoAviso);			
 		}
+		
+		// Aviso 17: Cuando el activo esta publicado para la venta y el precio venta está oculto
+		if(!Checks.esNulo(perimetroActivo) && !Checks.esNulo(perimetroActivo.getAplicaPublicar()) && perimetroActivo.getAplicaPublicar()) { 
+			if(!Checks.esNulo(activo.getActivoPublicacion())) {
+				if(activo.getActivoPublicacion().getCheckPublicarVenta() && activo.getActivoPublicacion().getCheckOcultarPrecioVenta()){
+					DtoAviso dtoAviso = new DtoAviso();
+					dtoAviso.setDescripcion("Publicado con precio oculto");
+					dtoAviso.setId(String.valueOf(id));
+					listaAvisos.add(dtoAviso);
+				}
+			}	
+		}
 		return listaAvisos;
 	}
 

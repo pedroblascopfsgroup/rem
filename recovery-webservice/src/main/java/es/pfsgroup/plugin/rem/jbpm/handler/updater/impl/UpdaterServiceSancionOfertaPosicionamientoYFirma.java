@@ -2,13 +2,12 @@ package es.pfsgroup.plugin.rem.jbpm.handler.updater.impl;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
 
-import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDSituacionPosesoria;
-import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,17 +20,15 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
-import es.pfsgroup.plugin.rem.model.ActivoPublicacion;
 import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
-import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
-import es.pfsgroup.plugin.rem.model.CondicionesActivo;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
@@ -40,7 +37,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
-import es.pfsgroup.plugin.rem.model.dd.DDSituacionesPosesoria;
 
 @Component
 public class UpdaterServiceSancionOfertaPosicionamientoYFirma implements UpdaterService {
@@ -68,12 +64,16 @@ public class UpdaterServiceSancionOfertaPosicionamientoYFirma implements Updater
     private static final String COMBO_FIRMA = "comboFirma";
     private static final String FECHA_FIRMA = "fechaFirma";
     private static final String MOTIVO_NO_FIRMA = "motivoNoFirma";
+    private static final String ASISTENCIA_PBC = "asistenciaPBC";
+    private static final String ASISTENCIA_PBC_OBSERVACIONES = "obsAsisPBC";
     private static final String CODIGO_T013_POSICIONAMIENTOYFIRMA = "T013_PosicionamientoYFirma";
 
+    	
 	private SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 
 	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {
 		
+		    ArrayList<Long> idActivoActualizarPublicacion = new ArrayList<Long>();
 			Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());
 			if(!Checks.esNulo(ofertaAceptada)) {
 				ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
@@ -108,7 +108,8 @@ public class UpdaterServiceSancionOfertaPosicionamientoYFirma implements Updater
 	
 								activo.setBloqueoPrecioFechaIni(new Date());
 
-								activoAdapter.actualizarEstadoPublicacionActivo(activo.getId());
+								//activoAdapter.actualizarEstadoPublicacionActivo(activo.getId());
+								idActivoActualizarPublicacion.add(activo.getId());
 	
 								activoApi.saveOrUpdate(activo);
 							}
@@ -184,8 +185,21 @@ public class UpdaterServiceSancionOfertaPosicionamientoYFirma implements Updater
 						DDMotivoAnulacionExpediente motivoAnulacion = genericDao.get(DDMotivoAnulacionExpediente.class, filtro);
 						expediente.setMotivoAnulacion(motivoAnulacion);
 					}
+					
+					if(ASISTENCIA_PBC.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())){
+						if(DDSiNo.SI.equals(valor.getValor())){
+							expediente.setAsistenciaPbc(true);
+						}else{
+							expediente.setAsistenciaPbc(false);
+						}
+					}
+					
+					if(ASISTENCIA_PBC_OBSERVACIONES.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())){
+						expediente.setObsAsisPbc(valor.getValor());
+					}
 				}
 			}
+			activoAdapter.actualizarEstadoPublicacionActivo(idActivoActualizarPublicacion,true);
 	}
 
 	public String[] getCodigoTarea() {

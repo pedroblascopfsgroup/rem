@@ -36,7 +36,6 @@ import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.devon.utils.FileUtils;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
-import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
@@ -47,9 +46,7 @@ import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.activo.ActivoPropagacionFieldTabMap;
-import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
-import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoPropagacionApi;
@@ -174,16 +171,12 @@ public class ActivoController extends ParadiseJsonController {
 
 	@Autowired
 	private ActivoPropagacionApi activoPropagacionApi;
-
-	@Autowired
-	private GenericAdapter genericAdapter;
-
-	
-	@Autowired
-	private ActivoDao activoDao;
 	
 	@Autowired
 	GestorDocumentalFotosApi gestorDocumentalFotos;
+	
+	@Autowired
+	private ActivoAdapter activoAdapter;
 	
 	public ActivoApi getActivoApi() {
 		return activoApi;
@@ -1251,9 +1244,14 @@ public class ActivoController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView crearTramitePublicacion(Long idActivo, ModelMap model) {
+	public ModelAndView crearTramiteAprobacionInformeComercial(Long idActivo, ModelMap model) {
 		try {
-			model.put(RESPONSE_DATA_KEY, adapter.crearTramitePublicacion(idActivo));
+			Long idBpm = adapter.crearTramiteAprobacionInformeComercial(idActivo);
+			if (new Long(0).equals(idBpm)) {
+				model.put("errorCreacion", "El activo ya tiene un trámite de Aprobación Informe Comercial en trámite");
+				model.put(RESPONSE_SUCCESS_KEY, false);
+			}
+			model.put(RESPONSE_DATA_KEY, idBpm);
 
 		} catch (Exception e) {
 			logger.error("error en activoController", e);
@@ -2431,16 +2429,7 @@ public class ActivoController extends ParadiseJsonController {
 
 	@Transactional()
 	public boolean actualizarEstadoPublicacionActivo(Long id) {
-		Activo activo = activoApi.get(id);
-		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
-
-		if(activoApi.isActivoIntegradoAgrupacionRestringida(id)) {
-			activoDao.publicarAgrupacionConHistorico(activoApi.getActivoAgrupacionActivoAgrRestringidaPorActivoID(id).getAgrupacion().getId(), usuarioLogado.getUsername());
-		} else {
-			activoDao.publicarActivoConHistorico(activo.getId(), usuarioLogado.getUsername());
-		}
-
-		return true;
+		return activoAdapter.actualizarEstadoPublicacionActivo(id);
 
 	}
 	

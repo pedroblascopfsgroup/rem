@@ -76,7 +76,11 @@ public class MSVDDOperacionMasiva implements Serializable, Auditable, Dictionary
 	public static final String CODE_FILE_BULKUPLOAD_SITUACION_COMUNIDADEDES_PROPIETARIOS = "SCOM";
 	public static final String CODE_FILE_BULKUPLOAD_SITUACION_PLUSVALIA = "SPL";
 	public static final String CODE_FILE_BULKUPLOAD_SITUACION_IMPUESTOS = "SIMP";
-
+	public static final String CODE_FILE_BULKUPLOAD_INDICADOR_ACTIVO_VENTA = "MIAV";
+	public static final String CODE_FILE_BULKUPLOAD_INDICADOR_ACTIVO_ALQUILER = "MIAA";
+	public static final String CODE_FILE_BULKUPLOAD_VALIDADOR_CARGA_MASIVA_ADECUACION = "CMAD";
+	public static final String CODE_FILE_BULKUPLOAD_EXCLUSION_DWH = "EXDWH";
+	
 	private static final long serialVersionUID = 5938440720826995243L;
 
 

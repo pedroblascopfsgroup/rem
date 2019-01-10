@@ -73,17 +73,17 @@ public interface ActivoEstadoPublicacionApi {
 	
 	/**
 	 * Este método obtiene el estado del indicador de la agrupación restringida para el estado de venta
-	 * @param listaActivos: listado de activos a comprobar.
+	 * @param activoPrincipal: activo a comprobar.
 	 * @return Devuelve el estado de publicación de la grupación restringida para venta
 	 */
-	Integer getEstadoIndicadorPublicacionAgrupacionVenta(List<ActivoAgrupacionActivo> listaActivos);
+	Integer getEstadoIndicadorPublicacionAgrupacionVenta(Activo activoPrincipal);
 	
 	/**
 	 * Este método obtiene el estado del indicador de la agrupación restringida para el estado de alquiler
-	 * @param listaActivos: listado de activos a comprobar.
+	 * @param activoPrincipal: activo a comprobar.
 	 * @return Devuelve el estado de publicación de la grupación restringida para alquiler
 	 */
-	Integer getEstadoIndicadorPublicacionAgrupacionAlquiler(List<ActivoAgrupacionActivo> listaActivos);
+	Integer getEstadoIndicadorPublicacionAgrupacionAlquiler(Activo activoPrincipal);
 
 	/**
 	 * Este método comprueba si un activo consta de precio de venta web.
@@ -149,6 +149,8 @@ public interface ActivoEstadoPublicacionApi {
 	 * @return Devuelve True si la operación ha sido satisfactoria.
 	 */
 	Boolean setDatosPublicacionAgrupacion(Long id, DtoDatosPublicacionAgrupacion dto);
+	
+	Boolean setDatosPublicacionAgrupacionMasivo(Long id, DtoDatosPublicacionAgrupacion dto);
 
 	/**
 	 * Este método setea parte del dto de DtoDatosPublicacionAgrupacion.
@@ -166,7 +168,7 @@ public interface ActivoEstadoPublicacionApi {
 	 * restringida y actualizar el estado de publicación de todos los activos de la agrupación.
 	 * @return Devuelve True si la operación se ha llevado a cabo.
 	 */
-	Boolean actualizarEstadoPublicacionDelActivoOrAgrupacionRestringidaSiPertenece(Long idActivo);
+	Boolean actualizarEstadoPublicacionDelActivoOrAgrupacionRestringidaSiPertenece(Long idActivo,boolean doFlush);
 
 	/**
 	 * Este método obtiene la fecha de inicio del estado de publicación venta en el que se encuentra el activo.

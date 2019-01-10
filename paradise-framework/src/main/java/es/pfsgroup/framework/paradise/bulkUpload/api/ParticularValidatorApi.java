@@ -476,6 +476,20 @@ public interface ParticularValidatorApi {
 
 		Boolean existeActivoEnPropietarios(String numActivo, String idPropietarios);
 
-		Boolean existeCatastro(String catastro);	
+		Boolean existeCatastro(String catastro);
+		
+		/**
+		 * Este método te comprueba si el campo perimetro de alquiler está activo.
+		 * @param  numActivo número de activo haya.
+		 * @return Devuelve un true si el campo está activo o un false si no.
+		 */
 
+		boolean isActivoIncluidoPerimetroAlquiler(String numActivo);	
+		
+		/**
+		 * @param numActivo
+		 * @return devuelve true si el activo se encuentra incluido en una
+		 *         agrupacion viva de tipo comercial
+		 */
+		public Boolean activoEnAgrupacionComercialViva(String numActivo);
 }

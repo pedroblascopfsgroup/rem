@@ -28,7 +28,13 @@ Ext.define('HreRem.model.ActivoSubdivision', {
     			name:'estadoDisposicionInforme'
     		}, 
     		{
-    			name:'estadoPublicacionS'
+    			name:'publicaciones'
+    		},
+    		{
+    			name:'condPublVenta'
+    		},
+    		{
+    			name:'condPublAlquiler'
     		}
     		
     ],

@@ -347,6 +347,28 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				 return false;
 			 }
 		 },
+		 
+		  estaPublicadoVenta: function(get) {
+			 var estadoVentaCodigo = get('activo.estadoVentaCodigo');
+			 var incluyeDestinoComercialVenta = get('activo.incluyeDestinoComercialVenta');
+
+			 if(incluyeDestinoComercialVenta) {
+				 return estadoVentaCodigo === CONST.ESTADO_PUBLICACION_VENTA['PUBLICADO'];
+			 }else {
+				 return false;
+			 }
+		 },
+		 
+		  estaPublicadoAlquiler: function(get) {
+			 var estadoAlquilerCodigo = get('activo.estadoAlquilerCodigo');
+			 var incluyeDestinoComercialAlquiler = get('activo.incluyeDestinoComercialAlquiler');
+
+			 if (incluyeDestinoComercialAlquiler){
+				 return estadoAlquilerCodigo === CONST.ESTADO_PUBLICACION_ALQUILER['PUBLICADO'];
+			 } else {
+				 return false;
+			 }
+		 },
 
 		 activoPertenceAgrupacionComercialOrRestringida: function(get) {
 			 var restringida = get('activo.pertenceAgrupacionRestringida');
@@ -373,6 +395,64 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			 } else {
 				 return get('activo.numActivo');
 			 }
+		 },
+		 
+		 getValuePublicacionVenta: function(get){
+		 	var linkHaya = get('activo.numActivo');
+		 	
+		 	var tipoActivoCodigo = get('activo.tipoActivoCodigo');
+		 	var tipoActivo = "vivienda";
+		 	if (CONST.TIPOS_ACTIVO['SUELO'] == tipoActivoCodigo){
+		 		tipoActivo = "terreno";
+		 	}else if(CONST.TIPOS_ACTIVO['COMERCIAL_Y_TERCIARIO'] == tipoActivoCodigo){
+		 		tipoActivo = "local-comercial";
+		 	}else if(CONST.TIPOS_ACTIVO['INDUSTRIAL'] == tipoActivoCodigo){
+		 		tipoActivo = "nave-industrial";
+		 	}else if(CONST.TIPOS_ACTIVO['EDIFICIO_COMPLETO'] == tipoActivoCodigo){
+		 		tipoActivo = "edificio";
+		 	}else if(CONST.TIPOS_ACTIVO['EN_CONSTRUCCION'] == tipoActivoCodigo){
+		 		tipoActivo = "en-construccion";
+		 	}else if(CONST.TIPOS_ACTIVO['OTROS'] == tipoActivoCodigo){
+		 		tipoActivo = "garaje-trastero";
+		 	}
+		 	
+		 	if(get('activo.perteneceAgrupacionRestringidaVigente')) {
+				 linkHaya = get('activo.activoPrincipalRestringida');
+			 }
+		 	if(get('estaPublicadoVenta')){
+		 		return '<a href="' + HreRem.i18n('fieldlabel.link.web.haya').replace("vivienda",tipoActivo) + linkHaya +'?utm_source=rem&utm_medium=aplicacion&utm_campaign=activo " target="_blank">' + get('activo.estadoVentaDescripcion') + '</a>'
+		 	}else {
+		 		return get('activo.estadoVentaDescripcion')
+		 	}
+		 },
+		 
+		 getValuePublicacionAlquiler: function(get){
+		 	var linkHaya = get('activo.numActivo');
+		 	
+		 	var tipoActivoCodigo = get('activo.tipoActivoCodigo');
+		 	var tipoActivo = "vivienda";
+		 	if (CONST.TIPOS_ACTIVO['SUELO'] == tipoActivoCodigo){
+		 		tipoActivo = "terreno";
+		 	}else if(CONST.TIPOS_ACTIVO['COMERCIAL_Y_TERCIARIO'] == tipoActivoCodigo){
+		 		tipoActivo = "local-comercial";
+		 	}else if(CONST.TIPOS_ACTIVO['INDUSTRIAL'] == tipoActivoCodigo){
+		 		tipoActivo = "nave-industrial";
+		 	}else if(CONST.TIPOS_ACTIVO['EDIFICIO_COMPLETO'] == tipoActivoCodigo){
+		 		tipoActivo = "edificio";
+		 	}else if(CONST.TIPOS_ACTIVO['EN_CONSTRUCCION'] == tipoActivoCodigo){
+		 		tipoActivo = "en-construccion";
+		 	}else if(CONST.TIPOS_ACTIVO['OTROS'] == tipoActivoCodigo){
+		 		tipoActivo = "garaje-trastero";
+		 	}
+		 	
+		 	if(get('activo.perteneceAgrupacionRestringidaVigente')) {
+				 linkHaya = get('activo.activoPrincipalRestringida');
+			 }
+		 	if(get('estaPublicadoAlquiler')){
+		 		return '<a href="' + HreRem.i18n('fieldlabel.link.web.haya').replace("vivienda",tipoActivo) + linkHaya +'?utm_source=rem&utm_medium=aplicacion&utm_campaign=activo " target="_blank">' + get('activo.estadoAlquilerDescripcion') + '</a>'
+		 	}else {
+		 		return get('activo.estadoAlquilerDescripcion')
+		 	}
 		 },
 
 		 enableComboTipoAlquiler: function(get){

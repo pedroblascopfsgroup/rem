@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<process-definition xmlns="urn:jbpm.org:jpdl-3.2" name="activo_tramiteAprobacionInformeComercial">
+
+	<start-state name="inicio">
+		<transition to="T011_ComprobarDatos"></transition>
+	</start-state>
+
+	<node name="T011_ComprobarDatos">
+		<action name="miTarea" config-type="bean"
+			class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+			<targetBean>
+				activoComprobarDatosActionHandler
+			</targetBean>
+		</action>
+		<transition to="T011_RevisionInformeComercial" name="DatosIguales"></transition>
+		<transition to="T011_AnalisisPeticionCorreccion" name="DatosDistintos"></transition>
+	</node>
+	
+		<state name="T011_RevisionInformeComercial">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="T011_RevisionInformeComercialDecision" name="avanzaBPM"></transition>
+	</state>
+		
+	<decision name="T011_RevisionInformeComercialDecision" expression="#{T011_RevisionInformeComercialDecision}">
+		<transition to="T011_AnalisisPeticionCorreccion" name="Aceptacion"></transition>
+		<transition to="Fin" name="Rechazo"></transition>
+	</decision>
+	
+	<state name="T011_AnalisisPeticionCorreccion">
+		<event type="node-enter">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericEnterActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<event type="node-leave">
+			<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+				<targetBean>
+					activoGenericLeaveActionHandler
+				</targetBean>
+			</action>
+		</event>
+		<transition to="Fin" name="avanzaBPM"></transition>
+	</state>
+		
+	<end-state name="Fin">
+		<event type="node-enter">
+			<action name="myAction" config-type="bean"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy">
+				<targetBean>activoEndProcessActionHandler
+				</targetBean>
+			</action>
+		</event>
+	</end-state>
+
+</process-definition>

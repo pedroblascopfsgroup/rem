@@ -60,10 +60,8 @@ import es.pfsgroup.plugin.rem.model.VCondicionantesDisponibilidad;
 import es.pfsgroup.plugin.rem.model.VPreciosVigentes;
 import es.pfsgroup.plugin.rem.model.VTasacionCalculoLBK;
 import es.pfsgroup.plugin.rem.model.Visita;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 import es.pfsgroup.plugin.rem.rest.dto.File;
 import es.pfsgroup.plugin.rem.rest.dto.PortalesDto;
-import net.sf.json.JSONObject;
 
 public interface ActivoApi {
 
@@ -487,17 +485,6 @@ public interface ActivoApi {
 	 * @return
 	 */
 	boolean isActivoConReservaByEstado(Activo activo, String codEstado);
-
-	/**
-	 * Comprueba que el Activo modificado cumple ciertas condiciones para mandar un correo
-	 */
-	public void checkAndSendMailAvisoOcupacion(JSONObject json, Activo activo, DDTipoDocumentoActivo tipoAdjunto);
-
-	/**
-	 * Comprueba que el Activo cumple ciertas condiciones para mandar un correo
-	 * @param activo
-	 */
-	public void checkMailAvisoOcupacion(Activo activo);
 
 	/**
 	 * Devuelve una lista de reservas asociadas al activo pasado por parametro

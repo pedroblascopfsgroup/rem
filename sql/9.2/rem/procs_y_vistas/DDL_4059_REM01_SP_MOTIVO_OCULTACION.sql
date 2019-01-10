@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Carles Molins
---## FECHA_CREACION=20181017
+--## AUTOR=Matias Garcia-Argudo
+--## FECHA_CREACION=20181027
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=2.0.19
---## INCIDENCIA_LINK=HREOS-4563
+--## INCIDENCIA_LINK=HREOS-4908
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -83,15 +83,23 @@ create or replace PROCEDURE SP_MOTIVO_OCULTACION (pACT_ID IN NUMBER
                                      AND ''A'' = '''||pTIPO||'''
                                      AND PTA.ACT_ID= '||pACT_ID||                                                                  
                          ' UNION
-                          SELECT PAC.ACT_ID
+                          SSELECT PAC.ACT_ID
                                , 1 OCULTO
                                , MTO.DD_MTO_CODIGO
                                , MTO.DD_MTO_ORDEN ORDEN
                                     FROM '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO PAC
-                                    LEFT JOIN '|| V_ESQUEMA ||'.DD_MTO_MOTIVOS_OCULTACION MTO ON MTO.DD_MTO_CODIGO = ''01'' AND MTO.BORRADO = 0 /*No Publicable*/
-                                   WHERE PAC.BORRADO = 0
-                                     AND PAC.PAC_CHECK_PUBLICAR = 0
-                                     AND PAC.ACT_ID= '||pACT_ID||                                     
+                                    JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT ON ACT.ACT_ID = PAC.ACT_ID
+                                    JOIN '|| V_ESQUEMA ||'.ACT_AGA_AGRUPACION_ACTIVO AGA ON AGA.ACT_ID = ACT.ACT_ID
+                                    JOIN '|| V_ESQUEMA ||'.ACT_AGR_AGRUPACION AGR ON AGR.AGR_ID = AGA.AGR_ID
+                                    JOIN '|| V_ESQUEMA ||'.DD_EPU_ESTADO_PUBLICACION EPU ON EPU.DD_EPU_ID = ACT.DD_EPU_ID
+                                    JOIN '|| V_ESQUEMA ||'.DD_TAG_TIPO_AGRUPACION TAG ON TAG.DD_TAG_ID = AGR.DD_TAG_ID
+                                    LEFT JOIN '|| V_ESQUEMA ||'.DD_MTO_MOTIVOS_OCULTACION MTO ON MTO.DD_MTO_CODIGO = ''01'' AND MTO.BORRADO = 0 /*NO publicable*/
+                                    WHERE 
+                                        (
+                                        (PAC.BORRADO = 0 AND PAC.PAC_CHECK_PUBLICAR = 0)
+                                        OR (TAG.DD_TAG_CODIGO = ''13'' AND AGR.AGR_FIN_VIGENCIA < SYSDATE))
+                                        AND PAC.ACT_ID = '||pACT_ID||
+                                                                         
                          ' UNION
                           SELECT ACT.ACT_ID
                                /*, DECODE(SCM.DD_SCM_CODIGO,''01'',1,0)OCULTO*/ /*No comercializable*/

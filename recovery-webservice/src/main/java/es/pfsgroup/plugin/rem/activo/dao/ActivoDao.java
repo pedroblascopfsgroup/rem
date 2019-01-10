@@ -165,11 +165,11 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	 * @param username: nombre del usuario, si la llamada es desde la web, que realiza la operación.
 	 * @return Devuelve True si la operación ha sido satisfactorio, False si no ha sido satisfactoria.
 	 */
-	Boolean publicarActivoConHistorico(Long idActivo, String username);
+	Boolean publicarActivoConHistorico(Long idActivo, String username, boolean doFlush);
 
-	Boolean publicarAgrupacionConHistorico(Long idAgrupacion, String username);
+	Boolean publicarAgrupacionConHistorico(Long idAgrupacion, String username, boolean doFlush);
 
-	Boolean publicarAgrupacionSinHistorico(Long idAgrupacion, String username, String eleccionUsuarioTipoPublicacionAlquiler);
+	Boolean publicarAgrupacionSinHistorico(Long idAgrupacion, String username, String eleccionUsuarioTipoPublicacionAlquiler, boolean doFlush);
 
 	public List<VOfertasTramitadasPendientesActivosAgrupacion> getListOfertasTramitadasPendientesActivo(Long idActivo);
 	
@@ -185,10 +185,11 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	 * @param eleccionUsuarioTipoPublicacionAlquiler: indica si el tipo de publicación de alquiler es pre-publicado o publicado forzado.
 	 * @return Devuelve True si la operación ha sido satisfactorio, False si no ha sido satisfactoria.
 	 */
-	Boolean publicarActivoSinHistorico(Long idActivo, String username, String eleccionUsuarioTipoPublicacionAlquiler);
+	Boolean publicarActivoSinHistorico(Long idActivo, String username, String eleccionUsuarioTipoPublicacionAlquiler,boolean doFlush);
 
-	Page getListHistoricoOcupacionesIlegalesByActivo(WebDto dto, Long idActivo);
-
-
+	public Page getListHistoricoOcupacionesIlegalesByActivo(WebDto dto, Long idActivo);
+	
+	
+	public void hibernateFlush();
 
 }

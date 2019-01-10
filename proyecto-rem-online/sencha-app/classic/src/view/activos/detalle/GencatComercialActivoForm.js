@@ -290,11 +290,14 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoForm', {
 				    				fieldLabel: HreRem.i18n('fieldlabel.comunicado.anulacion.gencat'),
 				    				name: 'comunicadoAnulacionAGencat',
 									bind: {
-										readOnly: me.formDeHistorico,
+										readOnly: '{esSoloLecturaCheckAnularGencat}',
 										value: '{gencat.comunicadoAnulacionAGencat}'
 									}/*,
 									listeners: {
-										change: 'onChkbxPerimetroChange'
+										click:{
+											element: 'el',
+											fn: 'editableCheckAnularGencat'
+										}
 									}*/
 				    			}
 				    		]
@@ -346,7 +349,6 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoForm', {
 						defaults: {
 							width: 410
 					    },
-					    layout: 'fit',
 						items:
 							[
 								ofertasasociadasactivolist
@@ -414,7 +416,6 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoForm', {
 						defaults: {
 							width: 410
 					    },
-					    layout: 'fit',
 						items: [
 							notificacionactivolist
 						]
@@ -426,7 +427,6 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoForm', {
 						defaults: {
 							width: 410
 					    },
-					    layout: 'fit',
 						items:
 							[
 								documentoscomunicaciongencatlist
@@ -439,7 +439,6 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoForm', {
 						defaults: {
 							width: 410
 					    },
-					    layout: 'fit',
 						items:
 							[
 								reclamacionesactivolist

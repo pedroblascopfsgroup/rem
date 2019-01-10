@@ -1038,11 +1038,10 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 	
 	public void dtoToBeanPreSave(ComunicacionGencat cg , DtoGencatSave gencatDto)
 	{		
-		DDSancionGencat sancion = (DDSancionGencat) utilDiccionarioApi.dameValorDiccionarioByCod( DDSancionGencat.class , gencatDto.getSancion() );
-		cg.setSancion( sancion );		
+		DDSancionGencat sancion = (DDSancionGencat) utilDiccionarioApi.dameValorDiccionarioByCod( DDSancionGencat.class , gencatDto.getSancion() );	
 		cg.setFechaSancion(	gencatDto.getDateFechaSancion() );
 		
-		if( gencatDto.getComunicadoAnulacionAGencat() == null)
+		if(Checks.esNulo(gencatDto.getComunicadoAnulacionAGencat()))
 		{
 			cg.setComunicadoAnulacionAGencat( false );
 		}
@@ -1050,14 +1049,15 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 		{
 			cg.setComunicadoAnulacionAGencat( gencatDto.getComunicadoAnulacionAGencat() );
 		}
-		
-		
-		if( DDSancionGencat.COD_EJERCE.equals(sancion.getCodigo()) )
-		{
-			cg.setNuevoCompradorNif( gencatDto.getNuevoCompradorNif() );
-			cg.setNuevoCompradorNombre( gencatDto.getNuevoCompradorNombre() );
-			cg.setNuevoCompradorApellido1( gencatDto.getNuevoCompradorApellido1() );
-			cg.setNuevoCompradorApellido2( gencatDto.getNuevoCompradorApellido2() );
+		if(!Checks.esNulo(sancion)) {
+			cg.setSancion( sancion );
+			if( DDSancionGencat.COD_EJERCE.equals(sancion.getCodigo()) )
+			{
+				cg.setNuevoCompradorNif( gencatDto.getNuevoCompradorNif() );
+				cg.setNuevoCompradorNombre( gencatDto.getNuevoCompradorNombre() );
+				cg.setNuevoCompradorApellido1( gencatDto.getNuevoCompradorApellido1() );
+				cg.setNuevoCompradorApellido2( gencatDto.getNuevoCompradorApellido2() );
+			}
 		}
 		
 	}

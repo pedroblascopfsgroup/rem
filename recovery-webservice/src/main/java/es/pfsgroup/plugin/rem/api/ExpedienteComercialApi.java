@@ -1144,5 +1144,7 @@ public interface ExpedienteComercialApi {
 
 	public boolean checkConTituloTramite(Long idTramite);
 
+	boolean checkConOpcionCompra(TareaExterna tareaExterna);
+
 
 }

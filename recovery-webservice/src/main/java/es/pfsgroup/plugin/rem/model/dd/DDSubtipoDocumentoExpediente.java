@@ -90,6 +90,7 @@ public class DDSubtipoDocumentoExpediente implements Auditable, Dictionary {
     
     public static final String MATRICULA_PRE_CONTRATO = "OP-29-CNCV-86";
     public static final String MATRICULA_CONTRATO = "OP-29-CNCV-04";
+    public static final String MATRICULA_CONTRATO_ALQUILER_CON_OPCION_A_COMPRA = "OP-29-CNCV-05";
 	/**
 	 * 
 	 */

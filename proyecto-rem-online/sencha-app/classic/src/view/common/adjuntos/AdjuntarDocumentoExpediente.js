@@ -127,7 +127,7 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoExpediente', {
 									allowBlank: false,
 									listeners: {
 										select: function(combo, record) {
-											if (record.get("vinculable")) {
+											if (record.getData().vinculable == 1) {
 												if(combo.value == CONST.SUBTIPO_DOCUMENTO_EXPEDIENTE ['RENOVACION_CONTRATO']
 												|| combo.value == CONST.SUBTIPO_DOCUMENTO_EXPEDIENTE ['CONTRATO']
 												|| combo.value == CONST.SUBTIPO_DOCUMENTO_EXPEDIENTE ['FIANZA']
@@ -135,6 +135,7 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoExpediente', {
 												|| combo.value == CONST.SUBTIPO_DOCUMENTO_EXPEDIENTE ['JUSTIFICANTE_INGRESOS']
 												|| combo.value == CONST.SUBTIPO_DOCUMENTO_EXPEDIENTE ['ALQUILER_CON_OPCION_A_COMPRA']){
 												
+													me.down("gridBase").setDisabled(true);
 													me.down("gridBase").getStore().load(function (){
 														me.down("gridBase").getSelectionModel().selectAll();
 													});		

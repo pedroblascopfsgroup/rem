@@ -664,6 +664,11 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 			notificatorServiceSancionOfertaAceptacionYRechazo.notificatorFinSinTramite(oferta.getId());
 		}
+		
+		// HREOS-5146 Si deja crear una nueva oferta, debe dejar pasarla a congelada manualmente.
+		if (DDEstadoOferta.CODIGO_CONGELADA.equals(tipoOferta.getCodigo())) {
+			resultado = this.persistOferta(oferta);
+		}
 
 		return resultado;
 	}

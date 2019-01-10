@@ -68,6 +68,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalificacionEnergetica;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoEstadoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoGradoPropiedad;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoHabitaculo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
@@ -604,12 +605,17 @@ public class AltaActivoFinanciero implements AltaActivoService {
 		return mediador;
 	}
 	private void guardarDatosPatrimonioActivo(DtoAltaActivoFinanciero dtoAAF, Activo activo) throws Exception {
-		
 		if (!Checks.esNulo(activo)) {
-			ActivoPatrimonio activoPatrimonio = activoPatrimonioDao.getActivoPatrimonioByActivo(activo.getId());		
+			ActivoPatrimonio activoPatrimonio = activoPatrimonioDao.getActivoPatrimonioByActivo(activo.getId());
 			if(Checks.esNulo(activoPatrimonio)){
 				activoPatrimonio = new ActivoPatrimonio();
 				activoPatrimonio.setActivo(activo);
+				
+			}
+			if (Checks.esNulo(activoPatrimonio.getTipoEstadoAlquiler())) {
+				Filter f1 = genericDao.createFilter(FilterType.EQUALS, "DD_EAL_CODIGO", DDTipoEstadoAlquiler.ESTADO_ALQUILER_LIBRE);
+				DDTipoEstadoAlquiler estadoAlquiler = genericDao.get(DDTipoEstadoAlquiler.class, f1);
+				activoPatrimonio.setTipoEstadoAlquiler(estadoAlquiler);
 			}
 			genericDao.save(ActivoPatrimonio.class, activoPatrimonio);
 		}

@@ -2778,12 +2778,21 @@ public class ActivoAdapter {
 		return this.actualizarEstadoPublicacionActivo(listaIdActivo,false);
 	}
 	
+	
+	
 	@Transactional(readOnly = false)
 	public boolean actualizarEstadoPublicacionActivo(ArrayList<Long> listaIdActivo,Boolean asincrono){
 		boolean resultado = true;
-		if(listaIdActivo != null && listaIdActivo.size() > 0){
-			for(Long idActivo : listaIdActivo){
-				resultado = resultado && this.actualizarEstadoPublicacionActivo(idActivo,asincrono);
+		if(asincrono){
+			activoDao.hibernateFlush();
+			Thread hilo = new Thread(new EjecutarSPPublicacionAsincrono(genericAdapter.getUsuarioLogado().getUsername(), listaIdActivo));
+			hilo.start();
+			resultado = true;
+		}else{
+			if(listaIdActivo != null && listaIdActivo.size() > 0){
+				for(Long idActivo : listaIdActivo){
+					return activoEstadoPublicacionApi.actualizarEstadoPublicacionDelActivoOrAgrupacionRestringidaSiPertenece(idActivo,true);
+				}
 			}
 		}
 		return resultado;
@@ -2791,14 +2800,9 @@ public class ActivoAdapter {
 	
 	@Transactional(readOnly = false)
 	public boolean actualizarEstadoPublicacionActivo(Long idActivo, Boolean asincrono) {
-		if(asincrono){
-			activoDao.hibernateFlush();
-			Thread hilo = new Thread(new EjecutarSPPublicacionAsincrono(genericAdapter.getUsuarioLogado().getUsername(), idActivo));
-			hilo.start();
-			return true;
-		}else{
-			return activoEstadoPublicacionApi.actualizarEstadoPublicacionDelActivoOrAgrupacionRestringidaSiPertenece(idActivo,true);
-		}
+		ArrayList<Long> listaIdActivo = new ArrayList<Long>();
+		listaIdActivo.add(idActivo);
+		return actualizarEstadoPublicacionActivo(listaIdActivo, asincrono);
 		
 	}
 

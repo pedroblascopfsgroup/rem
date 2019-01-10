@@ -133,6 +133,7 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoExpediente', {
 												|| combo.value == CONST.SUBTIPO_DOCUMENTO_EXPEDIENTE ['JUSTIFICANTE_INGRESOS']
 												|| combo.value == CONST.SUBTIPO_DOCUMENTO_EXPEDIENTE ['ALQUILER_CON_OPCION_A_COMPRA']){
 												
+													me.down("gridBase").setDisabled(true);
 													me.down("gridBase").getStore().load(function (){
 														me.down("gridBase").getSelectionModel().selectAll();
 													});		

@@ -292,13 +292,7 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoForm', {
 									bind: {
 										readOnly: '{esSoloLecturaCheckAnularGencat}',
 										value: '{gencat.comunicadoAnulacionAGencat}'
-									}/*,
-									listeners: {
-										click:{
-											element: 'el',
-											fn: 'editableCheckAnularGencat'
-										}
-									}*/
+									}
 				    			}
 				    		]
 		        	},

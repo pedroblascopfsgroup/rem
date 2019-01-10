@@ -17,20 +17,9 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoModel', {
     },
     
     formulas: {
-	     
-	     /*
-	     esOcupacionLegal: function(get) {
-	     	
-	     	var ocupado = get('situacionPosesoria.ocupado') == "1";
-	     	var conTitulo = get('situacionPosesoria.conTitulo') == "1";
-	     	
-	     	return ocupado && conTitulo
-	     	
-	     },*/
 
     	esSoloLecturaCheckAnularGencat: function(get){
     		var me = this;
-    		debugger;
     		var soloLectura;
     		var estadoComunicacion= get('gencat.estadoComunicacion');
     		var estadoSancion= get('gencat.sancion');

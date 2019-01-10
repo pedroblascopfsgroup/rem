@@ -198,28 +198,6 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoController', {
 		 	}
 	 });
     		    	     
-  },
-  
-  editableCheckAnularGencat: function(){
-	  var me = this;
-
-	  var ventana = me.lookupReference('compradornuevoref').up('gencatcomercialactivoform');	  
-	  var estadoComunicacion= ventana.getForm().findField('estadoComunicacion');
-	  var estadoSancion= ventana.getForm().findField('sancion');
-	  var campoCheckAnulacion = ventana.getForm().findField('comunicadoAnulacionAGencat');
-	  
-	  if ((estadoComunicacion.value === CONST.ESTADO_COMUNICACION_GENCAT['COMUNICADO'] ||
-			  estadoComunicacion.value === CONST.ESTADO_COMUNICACION_GENCAT['RECHAZADO'] || 
-			  estadoComunicacion.value === CONST.ESTADO_COMUNICACION_GENCAT['ANULADO']) || 
-			  (estadoComunicacion.value === CONST.ESTADO_COMUNICACION_GENCAT['SANCIONADO'] &&
-					  estadoSancion.value === CONST.SANCION_GENCAT['NO_EJERCE'] )){
-		  campoCheckAnulacion.setReadOnly(false);
-		  
-	  }else{
-		  campoCheckAnulacion.setReadOnly(true);
-		  
-	  }
   }
- 
     
 });

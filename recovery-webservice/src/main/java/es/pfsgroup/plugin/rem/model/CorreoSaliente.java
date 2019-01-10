@@ -53,6 +53,12 @@ public class CorreoSaliente implements Serializable {
 
     @Column(name = "CPE_PROCESADO")
     private boolean procesado;
+    
+    @Column(name = "CPE_RESULTADO")
+    private boolean resultado;
+    
+    @Column(name = "CPE_ERROR_DESC")
+    private String error;
 
 	public Long getId() {
 		return id;
@@ -125,5 +131,23 @@ public class CorreoSaliente implements Serializable {
 	public void setProcesado(boolean procesado) {
 		this.procesado = procesado;
 	}
+
+	public boolean isResultado() {
+		return resultado;
+	}
+
+	public void setResultado(boolean resultado) {
+		this.resultado = resultado;
+	}
+
+	public String isError() {
+		return error;
+	}
+
+	public void setError(String error) {
+		this.error = error;
+	}
+	
+	
 
 }

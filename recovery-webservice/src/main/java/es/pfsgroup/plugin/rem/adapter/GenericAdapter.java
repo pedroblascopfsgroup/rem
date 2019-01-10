@@ -58,9 +58,7 @@ public class GenericAdapter {
 	
 	protected final Log logger = LogFactory.getLog(getClass());
 	
-	private static final String SERVIDOR_CORREO = "agendaMultifuncion.mail.server";
-	private static final String PUERTO_CORREO = "agendaMultifuncion.mail.port";
-
+	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public List<Dictionary> getDiccionario(String diccionario) {
 		

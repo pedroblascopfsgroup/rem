@@ -1,6 +1,8 @@
 package es.pfsgroup.plugin.rem.adapter;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.List;
 import java.util.Properties;
 
@@ -21,9 +23,6 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import es.capgemini.devon.bo.Executor;
-import es.capgemini.pfs.configuracion.ConfiguracionBusinessOperation;
-import es.capgemini.pfs.parametrizacion.model.Parametrizacion;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.plugin.recovery.agendaMultifuncion.impl.dto.DtoAdjuntoMail;
@@ -54,32 +53,28 @@ public class RemCorreoUtils {
 	private Properties appProperties;
 
 	@Autowired
-	private Executor executor;
-	
-	@Autowired
 	private GenericABMDao genericDao;
 
 	protected final Log logger = LogFactory.getLog(getClass());
 
 	public void enviarCorreoConAdjuntos(String emailFrom, List<String> mailsPara, List<String> direccionesMailCc,
 			String asuntoMail, String cuerpoEmail, List<DtoAdjuntoMail> list) throws Exception {
-
-		emailFrom = emailFrom(emailFrom);
-		CorreoSaliente traza = obtenerTrazaCorreoSaliente(emailFrom, mailsPara, direccionesMailCc, asuntoMail, cuerpoEmail, list);
-
-		for(int i = 0; i < mailsPara.size(); i++) {
-			if(Checks.esNulo(mailsPara.get(i)) || "null".equals(mailsPara.get(i).toLowerCase())) {
-				mailsPara.remove(i);
-			}
-		}
-		if (mailsPara == null || mailsPara.isEmpty()) {
-			return;
-		}
+		
+		CorreoSaliente traza = obtenerTrazaCorreoSaliente(emailFrom, mailsPara, direccionesMailCc, asuntoMail,
+				cuerpoEmail, list);
 
 		try {
-			if (esCorreoActivado()) {
+			
+				emailFrom = emailFrom(emailFrom);
+				for (int i = 0; i < mailsPara.size(); i++) {
+					if (Checks.esNulo(mailsPara.get(i)) || "null".equals(mailsPara.get(i).toLowerCase())) {
+						mailsPara.remove(i);
+					}
+				}
+				if (mailsPara == null || mailsPara.isEmpty()) {
+					throw new Exception("La lista de destinatorios no puede ser null");
+				}
 
-				
 				// Propiedades de la conexion
 				Properties props = getPropiedades();
 
@@ -90,7 +85,6 @@ public class RemCorreoUtils {
 
 				MimeMessage message = new MimeMessage(session);
 
-				
 				prepararDestinatarios(message, mailsPara, direccionesMailCc);
 
 				message.setSubject(asuntoMail);
@@ -100,35 +94,41 @@ public class RemCorreoUtils {
 				message.setFrom(new InternetAddress(emailFrom));
 
 				// Lo enviamos.
-				doSend(message, session, props);
-			}			
+				if (esCorreoActivado()) {
+					doSend(message, session, props);
+				}				
+				traza.setResultado(true);
 		} catch (Exception e) {
-			logger.error("Error enviando correo",e);
-		}finally{
+			StringWriter errors = new StringWriter();
+			e.printStackTrace(new PrintWriter(errors));
+			traza.setResultado(false);
+			traza.setError(errors.toString());
+			logger.error("Error enviando correo", e);
+		} finally {
 			persistirTrazaCorreoSaliente(traza);
 		}
 
 	}
 
-	private CorreoSaliente obtenerTrazaCorreoSaliente(String emailFrom, List<String> mailsPara, List<String> direccionesMailCc,
-			String asuntoMail, String cuerpoEmail, List<DtoAdjuntoMail> list) {
+	private CorreoSaliente obtenerTrazaCorreoSaliente(String emailFrom, List<String> mailsPara,
+			List<String> direccionesMailCc, String asuntoMail, String cuerpoEmail, List<DtoAdjuntoMail> list) {
 		CorreoSaliente traza = new CorreoSaliente();
 		traza.setAsunto(asuntoMail);
 		traza.setCuerpo(cuerpoEmail);
-		if(mailsPara != null && mailsPara.size() > 0){
+		if (mailsPara != null && mailsPara.size() > 0) {
 			String paraAcumulado = "";
-			int i= 0;
-			for(String para : mailsPara){
-				if(i > 0){
+			int i = 0;
+			for (String para : mailsPara) {
+				if (i > 0) {
 					paraAcumulado = paraAcumulado.concat(",");
 				}
-				paraAcumulado = paraAcumulado.concat(para);				
+				paraAcumulado = paraAcumulado.concat(para);
 				i++;
 			}
 			traza.setTo(paraAcumulado);
 		}
 		traza.setFrom(emailFrom);
-		
+
 		return traza;
 	}
 
@@ -141,30 +141,10 @@ public class RemCorreoUtils {
 		Transport t = session.getTransport(TRANSPORT_SMTP);
 
 		// validacion de usuario que envia
-		String usuario = null;
-		String pass = null;
+		String usuario = props.getProperty(MAIL_SMTP_USER);;
+		String pass = obtenerPass();;
 
-		String usuarioBD = null;
-		String passBB = null;
-
-		// Variables desde el DEVON
-		usuario = props.getProperty(MAIL_SMTP_USER);
-
-		usuarioBD = obtenerUsuarioBD();
-
-		// Settea Email From cargado de BBDD o del devon.prop, con esa
-
-		if (!Checks.esNulo(usuarioBD)) {
-			passBB = obtenerPassBd();
-			pass = obtenerPass();
-			try {
-				envioCorreoGenerico(message, t, usuarioBD, passBB);
-			} catch (Exception e) {
-				envioCorreoGenerico(message, t, usuario, pass);
-			}
-		} else {
-			envioCorreoGenerico(message, t, usuario, pass);
-		}
+		envioCorreoGenerico(message, t, usuario, pass);
 	}
 
 	private void prepararDestinatarios(MimeMessage message, List<String> mailsPara, List<String> direccionesMailCc)
@@ -210,19 +190,6 @@ public class RemCorreoUtils {
 		}
 	}
 
-	private String obtenerUsuarioBD() {
-		String usuarioBD = null;
-		try {
-			Parametrizacion usuarioBBDD = (Parametrizacion) executor.execute(
-					ConfiguracionBusinessOperation.BO_PARAMETRIZACION_MGR_BUSCAR_PARAMETRO_POR_NOMBRE,
-					Parametrizacion.ANOTACIONES_MAIL_SMTP_USER);
-			usuarioBD = usuarioBBDD.getValor();
-		} catch (Exception e) {
-			logger.error("error obteniendo el usuarioBd", e);
-		}
-		return usuarioBD;
-	}
-
 	private String obtenerPass() {
 		String pass = null;
 		String passValueProp = appProperties.getProperty(PWD_CORREO);
@@ -239,40 +206,10 @@ public class RemCorreoUtils {
 	}
 
 	private String emailFrom(String emailFrom) {
-		try {
-			Parametrizacion mailFromPropBBDD = (Parametrizacion) executor.execute(
-					ConfiguracionBusinessOperation.BO_PARAMETRIZACION_MGR_BUSCAR_PARAMETRO_POR_NOMBRE,
-					Parametrizacion.ANOTACIONES_EMAIL_FROM);
-			if (!Checks.esNulo(mailFromPropBBDD)) {
-				if (!Checks.esNulo(mailFromPropBBDD.getValor())) {
-					emailFrom = mailFromPropBBDD.getValor().trim();
-				}
-			}
-			// Carga el email FROM directamente del DEVON.PROP, si existe el
-			// parametro
-			if (Checks.esNulo(emailFrom)) {
-				emailFrom = appProperties.getProperty(FROM);
-			}
-		} catch (Exception e) {
-			logger.error("error obteniendo el mail from de properties", e);
+		if (Checks.esNulo(emailFrom)) {
+			emailFrom = appProperties.getProperty(FROM);
 		}
 		return emailFrom;
-	}
-
-	private String obtenerPassBd() {
-		String passBB = null;
-		String passValuePropBD = null;
-		try {
-			Parametrizacion passValuePropBBDD = (Parametrizacion) executor.execute(
-					ConfiguracionBusinessOperation.BO_PARAMETRIZACION_MGR_BUSCAR_PARAMETRO_POR_NOMBRE,
-					Parametrizacion.ANOTACIONES_PWD_CORREO);
-			passValuePropBD = passValuePropBBDD.getValor().trim();
-			String passValueParsed = passValuePropBD.replaceAll("\\\\", "");
-			passBB = Encriptador.desencriptarPw(passValueParsed);
-		} catch (Exception ee) {
-			passBB = passValuePropBD;
-		}
-		return passBB;
 	}
 
 	private boolean esCorreoActivado() {

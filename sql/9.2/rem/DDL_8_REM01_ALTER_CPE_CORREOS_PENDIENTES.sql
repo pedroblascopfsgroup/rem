@@ -34,7 +34,8 @@ DECLARE
     V_COLUMN_NAME_0 VARCHAR2(30):= 'CPE_TO'; -- Vble. para el nombre de las columnas.
     V_COLUMN_NAME_1 VARCHAR2(30):= 'CPE_FROM'; -- Vble. para el nombre de las columnas.
     V_COLUMN_NAME_2 VARCHAR2(30):= 'CPE_ASUNTO'; -- Vble. para el nombre de las columnas.
-    V_COLUMN_NAME_3 VARCHAR2(30):= 'CPE_CUERPO'; -- Vble. para el nombre de las columnas.
+    V_COLUMN_NAME_3 VARCHAR2(30):= 'CPE_RESULTADO'; -- Vble. para el nombre de las columnas.
+    V_COLUMN_NAME_4 VARCHAR2(30):= 'CPE_ERROR_DESC'; -- Vble. para el nombre de las columnas.
     
 BEGIN
 	V_MSQL := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE COLUMN_NAME = '''||V_COLUMN_NAME_0||''' and TABLE_NAME = '''||V_TEXT_TABLA||''' and owner = '''||V_ESQUEMA||'''';

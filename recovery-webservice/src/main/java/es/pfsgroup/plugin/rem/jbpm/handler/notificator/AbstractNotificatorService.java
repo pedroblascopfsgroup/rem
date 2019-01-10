@@ -101,6 +101,23 @@ public abstract class AbstractNotificatorService{
 		return cuerpo;
 	}
 	
+
+		protected String generateCuerpoCorreoNotificacionAutomatica(String contenido){
+			String cuerpo = "<table cellspacing='0' cellpadding='0' border='0' width='100%' style='border-collapse:collapse;border-spacing:0;border-collapse:separate'>"
+				      + "<tbody>"
+				      + "<tr><td style='padding:0px;border-collapse:collapse;border-left:0;border-right:0;border-top:0;border-bottom:0;padding:0 15px 0 16px;background-color:#fff;border-bottom:none;padding-bottom:0'>"
+				      + " <table cellspacing='0' cellpadding='0' border='0' width='100%' style='border-collapse:collapse;font-family:Arial,sans-serif;font-size:14px;line-height:20px'>"
+				      + "<tbody><tr>"
+				      + "<td style='padding:0px;border-collapse:collapse;padding:0 0 10px 0'>"
+					  + contenido + ""
+					  + "</tr>"
+					  + "</tbody></table>"
+					  + "</td>"
+				      + "<tr>"+this.generateTextoNoResponder() + "</tr>"
+					  + "</tr>"
+					  + "</tbody></table>";
+			return cuerpo;
+		}
 	protected String generateCuerpo(DtoSendNotificator dtoSendNotificator, String contenido){
 		String cuerpo = "<html>"
 				+ "<!DOCTYPE HTML PUBLIC '-//W3C//DTD HTML 4.01 Transitional//EN'>"

@@ -1,10 +1,12 @@
 package es.pfsgroup.plugin.rem.gencat;
 
 import java.lang.reflect.InvocationTargetException;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.logging.Log;
@@ -36,7 +38,9 @@ import es.pfsgroup.plugin.rem.activo.dao.NotificacionGencatDao;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.GencatApi;
+import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
+import es.pfsgroup.plugin.rem.jbpm.handler.notificator.AbstractNotificatorService;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjuntoActivo;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
@@ -52,6 +56,7 @@ import es.pfsgroup.plugin.rem.model.DtoHistoricoComunicacionGencat;
 import es.pfsgroup.plugin.rem.model.DtoNotificacionActivo;
 import es.pfsgroup.plugin.rem.model.DtoOfertasAsociadasActivo;
 import es.pfsgroup.plugin.rem.model.DtoReclamacionActivo;
+import es.pfsgroup.plugin.rem.model.DtoSendNotificator;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.HistoricoAdecuacionGencat;
 import es.pfsgroup.plugin.rem.model.HistoricoComunicacionGencat;
@@ -71,17 +76,24 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoComunicacionGencat;
 import es.pfsgroup.plugin.rem.model.dd.DDSancionGencat;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoNotificacionGencat;
+import es.pfsgroup.plugin.rem.oferta.NotificationOfertaManager;
 
 @Service("gencatManager")
-public class GencatManager extends BusinessOperationOverrider<GencatApi> implements GencatApi {
+public class GencatManager extends  BusinessOperationOverrider<GencatApi> implements GencatApi {
 	
 	protected static final Log logger = LogFactory.getLog(GencatManager.class);
+	
+	@Autowired
+	private NotificacionesGencatManager notificacionesGencat;
 	
 	@Autowired
 	private GenericABMDao genericDao;
 	
 	@Autowired
 	private ActivoApi activoApi;
+	
+	@Autowired
+	private GestorActivoApi gestorActivoManager;
 	
 	@Autowired
 	private GestorDocumentalAdapterApi gestorDocumentalAdapterApi;
@@ -986,6 +998,7 @@ public class GencatManager extends BusinessOperationOverrider<GencatApi> impleme
 	@Transactional(readOnly = false)
 	public Boolean saveDatosComunicacion(DtoGencatSave gencatDto)
 	{
+		Activo activo = activoApi.get( gencatDto.getIdActivo() );
 		if( gencatDto.getIdActivo() != null)
 		{
 			ComunicacionGencat cg = getComunicacionGencatByIdActivo( gencatDto.getIdActivo() );
@@ -994,7 +1007,9 @@ public class GencatManager extends BusinessOperationOverrider<GencatApi> impleme
 				dtoToBeanPreSave( cg , gencatDto );
 				cg.getAuditoria().setFechaModificar(new Date());
 				cg.getAuditoria().setUsuarioModificar( usuarioManager.getUsuarioLogado().getUsername() );				
-				comunicacionGencatDao.saveOrUpdate(cg);			
+				comunicacionGencatDao.saveOrUpdate(cg);	
+				notificacionesGencat.sendMailNotificacionSancionGencat(gencatDto, activo);
+				
 				return true;
 			}
 			else
@@ -1005,14 +1020,17 @@ public class GencatManager extends BusinessOperationOverrider<GencatApi> impleme
 				cg.getAuditoria().setFechaCrear(new Date());
 				cg.getAuditoria().setUsuarioCrear( usuarioManager.getUsuarioLogado().getUsername() );
 				cg.getAuditoria().setBorrado( false );
-				Activo activo = activoApi.get( gencatDto.getIdActivo() );
+				
 				if( activo != null )
 				{
 					cg.setActivo( activo );
-					comunicacionGencatDao.saveOrUpdate(cg);			
+					comunicacionGencatDao.saveOrUpdate(cg);	
+					notificacionesGencat.sendMailNotificacionSancionGencat(gencatDto, activo);
 					return true;
 				}
 			}
+			
+			
 		}
 		
 		return false;
@@ -1062,5 +1080,6 @@ public class GencatManager extends BusinessOperationOverrider<GencatApi> impleme
 		}
 		return null;	
 	}
+	
 	
 }

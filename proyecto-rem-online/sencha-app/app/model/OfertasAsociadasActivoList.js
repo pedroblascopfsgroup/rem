@@ -16,12 +16,12 @@ Ext.define('HreRem.view.activos.detalle.OfertasAsociadasActivoList', {
 		            dataIndex: 'fechaPreBloqueo',
 		            text: HreRem.i18n('header.fecha.prebloqueo'),
 		            formatter: 'date("d/m/Y")',
-		            flex: 1
+		            width: '20%'
 		        },
 		        {
 		            dataIndex: 'numOferta',
 		            text: HreRem.i18n('header.oferta'),
-		            flex: 1
+		            width: '20%'
 		        },
 		        {
 		            dataIndex: 'importeOferta',
@@ -29,17 +29,17 @@ Ext.define('HreRem.view.activos.detalle.OfertasAsociadasActivoList', {
 		            renderer: function(value) {
 		        		return Ext.util.Format.currency(value);
 		        	},
-		            flex: 1
+		        	width: '20%'
 		        },
 		        {
 		            dataIndex: 'tipoComprador',
 		            text: HreRem.i18n('header.tipo.comprador'),
-		            flex: 1
+		            width: '20%'
 		        },
 		        {
 		            dataIndex: 'situacionOcupacional',
 		            text: HreRem.i18n('header.situacion.ocupacional'),
-		            flex: 1
+		            width: '20%'
 		        }
         ];
         

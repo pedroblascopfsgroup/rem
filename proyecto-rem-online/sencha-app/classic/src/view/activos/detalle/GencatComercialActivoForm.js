@@ -277,6 +277,7 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoForm', {
 				    			{
 				    				xtype: "datefieldbase",
 				    				fieldLabel: HreRem.i18n('fieldlabel.fecha.anulacion'),
+				    				colspan: 2,
 				    				readOnly: true,
 				    				name: 'fechaAnulacion',
 				    				submitFormat:'Y-m-d',
@@ -345,6 +346,7 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoForm', {
 						defaults: {
 							width: 410
 					    },
+					    layout: 'fit',
 						items:
 							[
 								ofertasasociadasactivolist
@@ -412,6 +414,7 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoForm', {
 						defaults: {
 							width: 410
 					    },
+					    layout: 'fit',
 						items: [
 							notificacionactivolist
 						]
@@ -423,6 +426,7 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoForm', {
 						defaults: {
 							width: 410
 					    },
+					    layout: 'fit',
 						items:
 							[
 								documentoscomunicaciongencatlist
@@ -435,6 +439,7 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoForm', {
 						defaults: {
 							width: 410
 					    },
+					    layout: 'fit',
 						items:
 							[
 								reclamacionesactivolist

@@ -7286,7 +7286,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	@Override
 	public boolean checkConOpcionCompra(TareaExterna tareaExterna) {
 		ExpedienteComercial expedienteComercial = tareaExternaToExpedienteComercial(tareaExterna);
-		if (!Checks.esNulo(expedienteComercial) && expedienteComercial.getTipoAlquiler().equals((DDTipoAlquiler.CODIGO_ALQUILER_OPCION_COMPRA))) {
+		if (!Checks.esNulo(expedienteComercial) && DDTipoAlquiler.CODIGO_ALQUILER_OPCION_COMPRA.equals(expedienteComercial.getTipoAlquiler().getCodigo())) {
 			return  true;
 		}
 			return false;

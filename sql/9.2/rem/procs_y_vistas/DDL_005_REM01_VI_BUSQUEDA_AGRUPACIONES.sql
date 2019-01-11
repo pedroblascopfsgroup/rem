@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Carles Molins
---## FECHA_CREACION=20181219
+--## AUTOR=Sergio Salt
+--## FECHA_CREACION=20190111
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-3302
+--## INCIDENCIA_LINK=HREOS-5175
 --## PRODUCTO=NO
 --## Finalidad: Vista para la búsqueda de agrupaciones.
 --##  
@@ -17,6 +17,7 @@
 --##		0.5 Nuevo campo en select
 --##		0.6 Nuevo campo en select (código e id del tipo de alquiler)
 --##		0.7 Corrección activos publicados (módulo publicaciones)
+--##		0.8 Borrada vista duplicada
 --##########################################
 --*/
 

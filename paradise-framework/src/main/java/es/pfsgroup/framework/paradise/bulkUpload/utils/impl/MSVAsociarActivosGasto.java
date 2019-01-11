@@ -5,6 +5,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,6 +49,7 @@ public class MSVAsociarActivosGasto extends MSVExcelValidatorAbstract {
 	public static final String GASTO_AUTORIZADO = "El gasto esta autorizado";
 	public static final String GASTO_ASOCIADO_TRABAJO = "El gasto esta asociado a un trabajo";
 	public static final String GASTO_FECHA_TRASPASO_ANTERIOR = "La fecha de traspaso del activo o agrupacion no puede ser anterior a la fecha devengo del gasto";
+	public static final String ASOCIACION_ACTIVO_GASTO_REPETIDA = "Esta asociación Activo-Gasto está repetida";
 
 	@Autowired
 	private MSVExcelParser excelParser;
@@ -98,6 +101,7 @@ public class MSVAsociarActivosGasto extends MSVExcelValidatorAbstract {
 		
 		if (!dtoValidacionContenido.getFicheroTieneErrores()) {
 				Map<String,List<Integer>> mapaErrores = new HashMap<String,List<Integer>>();
+				mapaErrores.put(ASOCIACION_ACTIVO_GASTO_REPETIDA, isAsocioacionActivoGastoDuplicada(exc));
 				mapaErrores.put(PROPIETARIO_SIN_DOCUMENTO, isPropietarioGastoSinDocumento(exc));
 				mapaErrores.put(PROPIETARIO_DIFERENTE, isPropietarioGastoDiferenteActivo(exc));
 				mapaErrores.put(GASTO_AUTORIZADO, isGastoAutorizado(exc));
@@ -109,6 +113,7 @@ public class MSVAsociarActivosGasto extends MSVExcelValidatorAbstract {
 				//mapaErrores.put(GASTO_FECHA_TRASPASO_ANTERIOR, isFechaTraspasoPosteriorAFechaDevengo(exc));
 				
 			if (!mapaErrores.get(ACTIVE_NOT_EXISTS).isEmpty() || !mapaErrores.get(GASTO_NOT_EXISTS).isEmpty()
+					|| !mapaErrores.get(ASOCIACION_ACTIVO_GASTO_REPETIDA).isEmpty()
 					|| !mapaErrores.get(PROPIETARIO_SIN_DOCUMENTO).isEmpty()
 					|| !mapaErrores.get(PROPIETARIO_DIFERENTE).isEmpty() || !mapaErrores.get(ACTIVO_ASIGNADO).isEmpty()
 					|| !mapaErrores.get(GASTO_AUTORIZADO).isEmpty()
@@ -375,4 +380,54 @@ public class MSVAsociarActivosGasto extends MSVExcelValidatorAbstract {
 		return listaFilas;
 	}
 	
+	class SortbyActivo implements Comparator<List<Integer>>{
+		@Override
+		public int compare(List<Integer> o1, List<Integer> o2) {
+			if(o1.get(1).equals(o2.get(1))){
+				return o1.get(2)-o2.get(2);
+			}else{
+				return o1.get(1)-o2.get(1);
+			}
+		}
+	}
+	
+	private List<Integer> isAsocioacionActivoGastoDuplicada(MSVHojaExcel exc){
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		List<List<Integer>> asociaciones = new ArrayList<List<Integer>>();
+		
+		for(int i=1; i<this.numFilasHoja; i++){
+			//asociacion[fila, activo, gasto]
+			List<Integer> asociacion = new ArrayList<Integer>();
+			asociacion.add(i);
+			
+			try {
+				asociacion.add(Integer.parseInt(exc.dameCelda(i, 0)));
+				asociacion.add(Integer.parseInt(exc.dameCelda(i, 1)));
+			} catch (NumberFormatException e) {
+				e.printStackTrace();
+			} catch (IllegalArgumentException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+			
+			asociaciones.add(asociacion);
+		}
+		
+		Collections.sort(asociaciones, new SortbyActivo());
+		List<Integer> auxiliar = asociaciones.get(0);
+		
+		for(int i=1; i<asociaciones.size(); i++){
+			if(auxiliar.get(1).equals(asociaciones.get(i).get(1))){
+				if(auxiliar.get(2).equals(asociaciones.get(i).get(2))){
+					listaFilas.add(asociaciones.get(i).get(0));
+				}
+			}
+			auxiliar = asociaciones.get(i);
+		}
+		
+		return listaFilas;
+	}
 }

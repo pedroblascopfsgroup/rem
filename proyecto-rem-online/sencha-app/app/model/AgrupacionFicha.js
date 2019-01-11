@@ -75,7 +75,8 @@ Ext.define('HreRem.model.AgrupacionFicha', {
 	            {
 	            	name: 'isComercial',
 	            	calculate: function(data) {
-	            		return data.tipoAgrupacionCodigo == CONST.TIPOS_AGRUPACION['LOTE_COMERCIAL'];
+	            		return data.tipoAgrupacionCodigo == CONST.TIPOS_AGRUPACION['COMERCIAL_ALQUILER']
+	            			|| data.tipoAgrupacionCodigo == CONST.TIPOS_AGRUPACION['COMERCIAL_VENTA'];
 	            	},
 	            	depends: 'tipoAgrupacionCodigo'
 	            },

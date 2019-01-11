@@ -3679,12 +3679,12 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     },
     
     onChangeComboOcupado: function(combo, newValue, oldValue, eOpts) {
-    	var me = this;
+    	/*var me = this;
     	var tipoEstadoAlquiler = me.getViewModel().get('situacionPosesoria.tipoEstadoAlquiler');
     	
 		if (tipoEstadoAlquiler != CONST.COMBO_ESTADO_ALQUILER['ALQUILADO'] && newValue == CONST.COMBO_OCUPACION['SI']) {
 			combo.up('formBase').down('[reference=comboSituacionPosesoriaConTitulo]').setValue(CONST.COMBO_CON_TITULO['NO']);
-		}
+		}*/
 	},
 	
 	enableChkPerimetroAlquiler: function(get){

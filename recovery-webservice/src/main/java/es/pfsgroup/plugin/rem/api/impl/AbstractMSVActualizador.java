@@ -81,7 +81,6 @@ abstract public class AbstractMSVActualizador implements MSVLiberator {
 	}
 
 	@Override
-	@Transactional(readOnly = false)
 	public Boolean liberaFichero(MSVDocumentoMasivo file) throws IllegalArgumentException, IOException, JsonViewerException, SQLException, Exception {
 
 		MSVHojaExcel exc = proxyFactory.proxy(ExcelManagerApi.class).getHojaExcel(file);
@@ -149,8 +148,6 @@ abstract public class AbstractMSVActualizador implements MSVLiberator {
 
 			processAdapter.setExcelResultadosProcesado(archivo, fileItemResultados);
 
-			this.postProcesado(exc);
-
 		} catch (Exception e) {
 			logger.error("Error procesando fichero", e);
 			return false;
@@ -173,7 +170,6 @@ abstract public class AbstractMSVActualizador implements MSVLiberator {
 	public void preProcesado(MSVHojaExcel exc, ProcesoMasivoContext context) throws NumberFormatException, IllegalArgumentException, IOException, ParseException {
 	}
 
-	@Transactional(readOnly = false)
 	public void postProcesado(MSVHojaExcel exc) throws NumberFormatException, IllegalArgumentException, IOException, ParseException {
 	}
 

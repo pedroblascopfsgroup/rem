@@ -160,7 +160,7 @@ public class MSVValidatorCargaMasivaComunicaciones extends MSVExcelValidatorAbst
 		int i = 0;
 		try{
 			for(i=1; i<this.numFilasHoja;i++){
-				if(!particularValidator.esActivoConComunicacionComunicada(Long.valueOf(exc.dameCelda(i, POSICION_COLUMNA_NUMERO_ACTIVO)))) {
+				if(particularValidator.esActivoConComunicacionComunicada(Long.valueOf(exc.dameCelda(i, POSICION_COLUMNA_NUMERO_ACTIVO)))) {
 					listaFilas.add(i);
 				}
 					

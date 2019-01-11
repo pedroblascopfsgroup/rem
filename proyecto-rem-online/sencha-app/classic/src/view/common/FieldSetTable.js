@@ -8,7 +8,6 @@ Ext.define('HreRem.view.common.FieldSetTable', {
         type: 'table',
         // The total column count must be specified here
         columns: 3,
-        trAttrs: {height: '30px', width: '100%'},
         tdAttrs: {width: '33%'},
         tableAttrs: {
             style: {

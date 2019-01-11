@@ -1153,9 +1153,13 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 		var me = this;
 		var fechaIngreso = me.down('[name=fechaIngreso]');
 		var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
+		var codigoSubcartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoSubcartera');
 		fechaIngreso.setMaxValue($AC.getCurrentDate());
-
-		if(!Ext.isEmpty(fechaIngreso.getValue()) && CONST.CARTERA['CAJAMAR'] != codigoCartera) {
+		
+		if(CONST.CARTERA['BANKIA'] == codigoCartera && CONST.SUBCARTERA['BH'] != codigoSubcartera){
+			me.deshabilitarCampo(me.down('[name=checkboxVentaDirecta]'));
+			me.deshabilitarCampo(me.down('[name=fechaIngreso]'));
+		}else if(!Ext.isEmpty(fechaIngreso.getValue()) && CONST.CARTERA['CAJAMAR'] != codigoCartera) {
 			me.deshabilitarCampo(me.down('[name=checkboxVentaDirecta]'));
 			me.bloquearCampo(me.down('[name=fechaIngreso]'));
 		} else if(Ext.isEmpty(fechaIngreso.getValue()) && CONST.CARTERA['CAJAMAR'] != codigoCartera) {

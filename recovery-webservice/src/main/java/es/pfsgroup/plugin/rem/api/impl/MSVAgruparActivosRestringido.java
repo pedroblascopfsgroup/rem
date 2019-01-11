@@ -6,10 +6,16 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.Resource;
+
 import es.pfsgroup.plugin.rem.model.DtoDatosPublicacionAgrupacion;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
+
 import es.pfsgroup.commons.utils.Checks;
 
 import es.pfsgroup.framework.paradise.bulkUpload.adapter.ProcessAdapter;
@@ -55,6 +61,9 @@ public class MSVAgruparActivosRestringido extends AbstractMSVActualizador implem
 	@Autowired
 	private GenericAdapter genericAdapter;
 	
+	@Resource(name = "entityTransactionManager")
+	private PlatformTransactionManager transactionManager;
+	
 	@Override
 	public String getValidOperation() {
 		return MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_AGRUPATION_RESTRICTED;
@@ -70,30 +79,46 @@ public class MSVAgruparActivosRestringido extends AbstractMSVActualizador implem
 	}
 
 	@Override
-	@Transactional(readOnly = false)
 	public void postProcesado(MSVHojaExcel exc) throws NumberFormatException, IllegalArgumentException, IOException, ParseException {
-		if (this.getValidOperation().equals(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_AGRUPATION_RESTRICTED)) {
-			Integer numFilas = exc.getNumeroFilas();
-			Long idAgr = activoAgrupacionApi.getAgrupacionIdByNumAgrupRem(new Long(exc.dameCelda(this.getFilaInicial(), 0)));
+		TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
+		try{
+			if (this.getValidOperation().equals(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_AGRUPATION_RESTRICTED)) {
+				Integer numFilas = exc.getNumeroFilas();
+				Long idAgr = activoAgrupacionApi.getAgrupacionIdByNumAgrupRem(new Long(exc.dameCelda(this.getFilaInicial(), 0)));
 
-			for (int fila = this.getFilaInicial(); fila < numFilas; fila++) {
-				Activo activoAux = activoApi.getByNumActivo(Long.parseLong(exc.dameCelda(fila, COL_ID_ACTIVO_AUX)));
-				Activo activo = activoApi.getByNumActivo(Long.parseLong(exc.dameCelda(fila, COL_ID_ACTIVO_PRINC_AGRUP)));
+				for (int fila = this.getFilaInicial(); fila < numFilas; fila++) {
+					Activo activoAux = activoApi.getByNumActivo(Long.parseLong(exc.dameCelda(fila, COL_ID_ACTIVO_AUX)));
+					Activo activo = activoApi.getByNumActivo(Long.parseLong(exc.dameCelda(fila, COL_ID_ACTIVO_PRINC_AGRUP)));
 
-				DtoDatosPublicacionAgrupacion dto = new DtoDatosPublicacionAgrupacion();
-				dto.setIdActivo(activoAux.getId());
+					DtoDatosPublicacionAgrupacion dto = new DtoDatosPublicacionAgrupacion();
+					dto.setIdActivo(activoAux.getId());
 
-				if (activoApi.isActivoIntegradoAgrupacionRestringida(activo.getId())) {
-					if (activoApi.isActivoPrincipalAgrupacionRestringida(activo.getId())) {
-						ActivoAgrupacionActivo aga = activoApi.getActivoAgrupacionActivoAgrRestringidaPorActivoID(activo.getId());
-						if (!Checks.esNulo(aga)) {
-							activoEstadoPublicacionApi.setDatosPublicacionAgrupacion(aga.getAgrupacion().getId(), dto);
+					if (activoApi.isActivoIntegradoAgrupacionRestringida(activo.getId())) {
+						if (activoApi.isActivoPrincipalAgrupacionRestringida(activo.getId())) {
+							ActivoAgrupacionActivo aga = activoApi.getActivoAgrupacionActivoAgrRestringidaPorActivoID(activo.getId());
+							if (!Checks.esNulo(aga)) {
+								activoEstadoPublicacionApi.setDatosPublicacionAgrupacion(aga.getAgrupacion().getId(), dto);
+							}
 						}
 					}
 				}
+				activoDao.publicarAgrupacionSinHistorico(idAgr, genericAdapter.getUsuarioLogado().getUsername(), null, true);
+				transactionManager.commit(transaction);
 			}
-			activoDao.publicarAgrupacionSinHistorico(idAgr, genericAdapter.getUsuarioLogado().getUsername(), null, true);
+		}catch(NumberFormatException e){
+			transactionManager.rollback(transaction);
+			throw e;
+		}catch(IllegalArgumentException e){
+			transactionManager.rollback(transaction);
+			throw e;
+		}catch(IOException e){
+			transactionManager.rollback(transaction);
+			throw e;
+		}catch(ParseException e){
+			transactionManager.rollback(transaction);
+			throw e;
 		}
+		
 	}
 
 }

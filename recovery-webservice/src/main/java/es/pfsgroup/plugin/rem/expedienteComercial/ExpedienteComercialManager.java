@@ -7369,5 +7369,110 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		return numExpediente;
 
 	}
+
+	@Override
+	@Transactional(readOnly = false)
+	public List<DtoTipoDocExpedientes> getSubtipoDocumentosExpedientes(Long idExpediente, String valorCombo) {	
+
+		List <DtoTipoDocExpedientes> listDtoTipoDocExpediente = new ArrayList <DtoTipoDocExpedientes>();
+		List <DDSubtipoDocumentoExpediente> listaDDSubtipoDocExp= new ArrayList <DDSubtipoDocumentoExpediente>();		
+		ExpedienteComercial expediente = findOne(idExpediente);
+		
+		String codigoVenta = DDTipoOferta.CODIGO_VENTA;
+		String codigoAlquiler = DDTipoOferta.CODIGO_ALQUILER;
+		
+		if(!Checks.esNulo(expediente)) {
+			if(expediente.getOferta().getTipoOferta().getCodigo().equals(codigoVenta)) {
+				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "tipoDocumentoExpediente.codigo", valorCombo);
+				listaDDSubtipoDocExp  = genericDao.getList(DDSubtipoDocumentoExpediente.class, filtro);
+				listDtoTipoDocExpediente = generateListSubtipoExpediente(listaDDSubtipoDocExp);					
+			} else {				
+				if(expediente.getOferta().getTipoOferta().getCodigo().equals(codigoAlquiler)) {
+					DDSubtipoDocumentoExpediente codRenovacionContrato =
+							(DDSubtipoDocumentoExpediente) utilDiccionarioApi.dameValorDiccionarioByCod(DDSubtipoDocumentoExpediente.class, DDSubtipoDocumentoExpediente.CODIGO_RENOVACION_CONTRATO);
+					
+					if(DDEstadosExpedienteComercial.FIRMADO.equals(expediente.getEstado().getCodigo())) {
+						listaDDSubtipoDocExp.add(codRenovacionContrato);									
+						listDtoTipoDocExpediente = generateListSubtipoExpediente(listaDDSubtipoDocExp);	
+
+					} else {
+						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "tipoDocumentoExpediente.codigo", valorCombo);
+						listaDDSubtipoDocExp  = genericDao.getList(DDSubtipoDocumentoExpediente.class, filtro);
+						listaDDSubtipoDocExp.remove(codRenovacionContrato);
+						listDtoTipoDocExpediente = generateListSubtipoExpediente(listaDDSubtipoDocExp);	
+						String tipoAlquilerOpcionCompra = DDTipoAlquiler.CODIGO_ALQUILER_OPCION_COMPRA;
+						String tipoAlquilerNoDefinido = DDTipoAlquiler.CODIGO_NO_DEFINIDO;
+						String tipoTratamientoScoring = DDTipoTratamiento.TIPO_TRATAMIENTO_SCORING;
+						String tipoTratamientoSeguroRentas = DDTipoTratamiento.TIPO_TRATAMIENTO_SEGURO_DE_RENTAS;
+						String tipoTratamientoNinguna = DDTipoTratamiento.TIPO_TRATAMIENTO_NINGUNA;
+						
+						if (!Checks.esNulo(expediente.getTipoAlquiler().getCodigo())){
+							DDSubtipoDocumentoExpediente codigoContrato = null;
+							if (expediente.getTipoAlquiler().getCodigo().equals(tipoAlquilerOpcionCompra)){
+								codigoContrato =
+										(DDSubtipoDocumentoExpediente) utilDiccionarioApi.dameValorDiccionarioByCod(DDSubtipoDocumentoExpediente.class, DDSubtipoDocumentoExpediente.CODIGO_CONTRATO);
+
+							}else if (!expediente.getTipoAlquiler().getCodigo().equals(tipoAlquilerNoDefinido)){
+								codigoContrato =
+										(DDSubtipoDocumentoExpediente) utilDiccionarioApi.dameValorDiccionarioByCod(DDSubtipoDocumentoExpediente.class, DDSubtipoDocumentoExpediente.CODIGO_ALQUILER_CON_OPCION_A_COMPRA);
+							}
+							
+							listaDDSubtipoDocExp.remove(codigoContrato);
+							listaDDSubtipoDocExp.remove(codRenovacionContrato);
+							
+						}
+						
+						List<ActivoTramite> tramitesActivo = tramiteDao.getTramitesActivoTrabajoList(expediente.getTrabajo().getId());
+						Filter filtroTratamiento = genericDao.createFilter(FilterType.EQUALS, "codigo", "T015_DefinicionOferta");
+						Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+						TareaProcedimiento tap = genericDao.get(TareaProcedimiento.class, filtroTratamiento, filtroBorrado);
+						
+						for(ActivoTramite actt : tramitesActivo){
+							List<TareaExterna> tareas = activoTareaExternaApi.getByIdTareaProcedimientoIdTramite(actt.getId(),tap.getId());
+							for(TareaExterna t : tareas){
+								if(t.getTareaPadre().getTareaFinalizada() && t.getTareaPadre().getAuditoria().isBorrado()){
+									List <TareaExternaValor> listaTareaExterna= activoTareaExternaApi.obtenerValoresTarea(t.getId());
+									for (TareaExternaValor te: listaTareaExterna) {
+										if (te.getNombre().equals("tipoTratamiento")) {
+											if(te.getValor().equals(tipoTratamientoScoring)) {
+												listaDDSubtipoDocExp.remove((DDSubtipoDocumentoExpediente) utilDiccionarioApi.dameValorDiccionarioByCod(DDSubtipoDocumentoExpediente.class, DDSubtipoDocumentoExpediente.CODIGO_SEGURO_RENTAS));
+											}else if (te.getValor().equals(tipoTratamientoSeguroRentas)) {
+												listaDDSubtipoDocExp.remove((DDSubtipoDocumentoExpediente) utilDiccionarioApi.dameValorDiccionarioByCod(DDSubtipoDocumentoExpediente.class, DDSubtipoDocumentoExpediente.CODIGO_SCORING));							
+											}else if(te.getValor().equals(tipoTratamientoNinguna)){
+												listaDDSubtipoDocExp.remove((DDSubtipoDocumentoExpediente) utilDiccionarioApi.dameValorDiccionarioByCod(DDSubtipoDocumentoExpediente.class, DDSubtipoDocumentoExpediente.CODIGO_SEGURO_RENTAS));
+												listaDDSubtipoDocExp.remove((DDSubtipoDocumentoExpediente) utilDiccionarioApi.dameValorDiccionarioByCod(DDSubtipoDocumentoExpediente.class, DDSubtipoDocumentoExpediente.CODIGO_SCORING));
+											}
+										}
+									}
+								}
+							}
+						}
+						
+						
+						listDtoTipoDocExpediente = generateListSubtipoExpediente(listaDDSubtipoDocExp);
+					}
+				}
+			}
+		}
+		Collections.sort(listDtoTipoDocExpediente);
+		return listDtoTipoDocExpediente;
+	}
+	
+	private List<DtoTipoDocExpedientes> generateListSubtipoExpediente(List <DDSubtipoDocumentoExpediente> listadoDDSubtipoDoc) {
+		
+		List <DtoTipoDocExpedientes> listDtoTipoDocExpediente = new ArrayList <DtoTipoDocExpedientes>();
+		
+		for (DDSubtipoDocumentoExpediente tipDocExp : listadoDDSubtipoDoc) {
+			DtoTipoDocExpedientes aux= new DtoTipoDocExpedientes();
+			aux.setId(tipDocExp.getId());
+			aux.setCodigo(tipDocExp.getCodigo());
+			aux.setDescripcion(tipDocExp.getDescripcion());
+			aux.setDescripcionLarga(tipDocExp.getDescripcionLarga());
+			aux.setVinculable(tipDocExp.getVinculable());
+			listDtoTipoDocExpediente.add(aux);
+		} 
+		
+		return listDtoTipoDocExpediente;
+	}
 }
 

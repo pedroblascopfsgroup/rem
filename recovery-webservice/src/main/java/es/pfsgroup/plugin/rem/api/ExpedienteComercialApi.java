@@ -257,6 +257,14 @@ public interface ExpedienteComercialApi {
 	public List <DtoTipoDocExpedientes> getTipoDocumentoExpediente(String tipoExpediente);
 
 	/**
+	 * Método que recupera los subtipos de documento posibles para adjuntar en el Expediente Comercial
+	 * 	
+	 * @param idExpediente, tipoExpediente
+	 * @return listado de archivos adjuntos
+	 */
+	public List <DtoTipoDocExpedientes> getSubtipoDocumentosExpedientes(Long idExpediente, String valorCombo);
+		
+	/**
 	 * Recupera el adjunto del Expediente comercial
 	 * 
 	 * @param dtoAdjunto
@@ -1135,6 +1143,8 @@ public interface ExpedienteComercialApi {
 	public boolean checkEstadoOcupadoTramite(Long idExpediente);
 
 	public boolean checkConTituloTramite(Long idTramite);
+	
+	public List<DtoTipoDocExpedientes> getSubtipoDocumentosExpedientes(Long idExpediente, String valorCombo);
 
 
 }

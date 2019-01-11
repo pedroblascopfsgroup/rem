@@ -28,6 +28,7 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBien;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBInformacionRegistralBien;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBLocalizacionesBien;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBValoracionesBien;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoPatrimonioDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.model.Activo;
@@ -44,6 +45,7 @@ import es.pfsgroup.plugin.rem.model.ActivoInfoComercial;
 import es.pfsgroup.plugin.rem.model.ActivoInfoRegistral;
 import es.pfsgroup.plugin.rem.model.ActivoLocalComercial;
 import es.pfsgroup.plugin.rem.model.ActivoLocalizacion;
+import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.ActivoPlanDinVentas;
 import es.pfsgroup.plugin.rem.model.ActivoPlazaAparcamiento;
 import es.pfsgroup.plugin.rem.model.ActivoPropietario;
@@ -60,6 +62,7 @@ import es.pfsgroup.plugin.rem.model.DtoAltaActivoThirdParty;
 import es.pfsgroup.plugin.rem.model.Ejercicio;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.PresupuestoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDAdecuacionAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
@@ -73,8 +76,10 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalificacionEnergetica;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoEstadoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoGradoPropiedad;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoHabitaculo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoInquilino;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTasacion;
@@ -95,6 +100,9 @@ public class AltaActivoThirdParty implements AltaActivoThirdPartyService {
 
 	@Autowired
 	private GenericABMDao genericDao;
+	
+	@Autowired
+	private ActivoPatrimonioDao activoPatrimonioDao;
 
 	@Autowired
 	private ActivoApi activoApi;
@@ -129,6 +137,7 @@ public class AltaActivoThirdParty implements AltaActivoThirdPartyService {
 		// Si el nuevo activo se ha persistido correctamente, continuar con las demás entidades.
 		if (!Checks.esNulo(activo)) {
 			this.dtoToEntitiesOtras(dtoAATP, activo);
+			this.guardarDatosPatrimonioActivo(dtoAATP, activo);
 			restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO, activo); //repasar
 			
 			Auditoria auditoria = new Auditoria();
@@ -152,6 +161,9 @@ public class AltaActivoThirdParty implements AltaActivoThirdPartyService {
 			}
 			
 			genericDao.save(ActivoTitulo.class, actTit);
+			
+
+			
 		} else {
 			return false;
 		}
@@ -702,6 +714,9 @@ private void dtoToEntitiesOtras(DtoAltaActivoThirdParty dtoAATP, Activo activo) 
 					}
 					genericDao.save(ActivoAdjudicacionNoJudicial.class, activoAdjudicacionNoJudicial);
 				}
+					
+				
+
 				
 		activo.setBien(bien);
 		genericDao.save(Activo.class, activo);	
@@ -734,4 +749,22 @@ private void dtoToEntitiesOtras(DtoAltaActivoThirdParty dtoAATP, Activo activo) 
 		genericDao.save(ActivoPublicacionHistorico.class, activoPublicacionHistorico);
 	}
 
+
+	private void guardarDatosPatrimonioActivo(DtoAltaActivoThirdParty dtoAATP, Activo activo) throws Exception {
+		if (!Checks.esNulo(activo)) {
+			ActivoPatrimonio activoPatrimonio = activoPatrimonioDao.getActivoPatrimonioByActivo(activo.getId());
+			if(Checks.esNulo(activoPatrimonio)){
+				activoPatrimonio = new ActivoPatrimonio();
+				activoPatrimonio.setActivo(activo);
+				
+			}
+			if (Checks.esNulo(activoPatrimonio.getTipoEstadoAlquiler())) {
+				Filter f1 = genericDao.createFilter(FilterType.EQUALS, "DD_EAL_CODIGO", DDTipoEstadoAlquiler.ESTADO_ALQUILER_LIBRE);
+				DDTipoEstadoAlquiler estadoAlquiler = genericDao.get(DDTipoEstadoAlquiler.class, f1);
+				activoPatrimonio.setTipoEstadoAlquiler(estadoAlquiler);
+			}
+			genericDao.save(ActivoPatrimonio.class, activoPatrimonio);
+		}
+	}
+	
 }

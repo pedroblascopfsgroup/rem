@@ -17,7 +17,7 @@ Ext.define('HreRem.view.expedientes.DocumentosExpediente', {
     },
 
     initComponent: function () {
-    	
+   	
         var me = this;
         me.setTitle(HreRem.i18n('title.documentos'));
     	var items= [
@@ -44,7 +44,7 @@ Ext.define('HreRem.view.expedientes.DocumentosExpediente', {
 			        }
             	]
 				},
-				{			
+				{ 
 				    xtype		: 'gridBase',
 				    topBar		: $AU.userHasFunction(['EDITAR_TAB_DOCUMENTOS_EXPEDIENTES']),
 				    features: [{ftype:'grouping'}],

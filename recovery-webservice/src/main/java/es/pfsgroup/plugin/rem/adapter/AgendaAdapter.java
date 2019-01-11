@@ -4,6 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,9 +47,11 @@ import es.pfsgroup.plugin.recovery.mejoras.web.tareas.BuzonTareasViewHandlerFact
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.PreciosApi;
 import es.pfsgroup.plugin.rem.api.TareaActivoApi;
 import es.pfsgroup.plugin.rem.formulario.ActivoGenericFormManager;
+import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoCampo;
@@ -60,11 +63,15 @@ import es.pfsgroup.plugin.rem.model.DtoTarea;
 import es.pfsgroup.plugin.rem.model.DtoTareaFilter;
 import es.pfsgroup.plugin.rem.model.DtoTareaGestorSustitutoFilter;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.Trabajo;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoExpediente;
 import es.pfsgroup.plugin.rem.service.UpdaterTransitionService;
 import es.pfsgroup.plugin.rem.tareasactivo.dao.VTareasGestorSustitutoDao;
 import es.pfsgroup.recovery.api.UsuarioApi;
@@ -117,6 +124,9 @@ public class AgendaAdapter {
 
 	@Autowired
 	private VTareasGestorSustitutoDao tareasGSDao;
+	
+	@Autowired
+	private OfertaApi ofertaApi;
 
 
 	public Page getListTareas(DtoTareaFilter dtoTareaFiltro){
@@ -562,6 +572,56 @@ public class AgendaAdapter {
 		}
 
 		return false;
+	}
+
+	@Transactional
+	public Boolean anularTramiteAlquiler(Long idTramite, String motivo) {
+		
+		if (idTramite != null) {
+			ActivoTramite tramite = activoTramiteApi.get(idTramite);
+			List<ActivoOferta> activoOfertas = tramite.getActivo().getOfertas();
+			finalizarTramiteYTareas(tramite);
+			
+			DDEstadoTrabajo anulado = genericDao.get(DDEstadoTrabajo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoTrabajo.ESTADO_ANULADO));
+			DDEstadoOferta pendiente = genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_PENDIENTE));
+			DDEstadoOferta tramitada = genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_ACEPTADA));
+			DDEstadosExpedienteComercial anuladoExpedienteComercial = genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.ANULADO));
+			DDMotivoRechazoExpediente motivoRechazoAlquiler = genericDao.get(DDMotivoRechazoExpediente.class, genericDao.createFilter(FilterType.EQUALS, "codigo", motivo));
+			
+			if ((anulado != null) && (tramite.getTrabajo() != null)) {
+				Trabajo trabajo = tramite.getTrabajo();
+				trabajo.setEstado(anulado);
+				genericDao.save(Trabajo.class, trabajo);
+				ExpedienteComercial eco = genericDao.get(ExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "trabajo.id", trabajo.getId()));
+				if(! Checks.esNulo(eco)) {
+					eco.setEstado(anuladoExpedienteComercial);
+					Usuario usuarioLogado = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();					
+					eco.setPeticionarioAnulacion(usuarioLogado.getUsername());
+					eco.setFechaAnulacion(new Date());
+					eco.setMotivoRechazo(motivoRechazoAlquiler);
+					genericDao.update(ExpedienteComercial.class, eco);
+					if(!Checks.esNulo(activoOfertas) && !Checks.estaVacio(activoOfertas)) {
+						ActivoOferta activoOferta;
+						Oferta oferta;
+						for(int i = 0; i<activoOfertas.size(); i++) {
+							activoOferta = activoOfertas.get(i);
+							oferta = ofertaApi.getOfertaById(activoOferta.getOferta());
+							if(DDEstadoOferta.CODIGO_CONGELADA.equals(oferta.getEstadoOferta().getCodigo())){
+								ExpedienteComercial expedienteComercial = genericDao.get(ExpedienteComercial.class,  genericDao.createFilter(FilterType.EQUALS, "oferta.id", oferta.getId()));
+								if(!Checks.esNulo(expedienteComercial)) {
+									oferta.setEstadoOferta(tramitada);	
+								}else {
+									oferta.setEstadoOferta(pendiente);
+								}
+								genericDao.save(Oferta.class, oferta);
+								
+							}
+						}
+					}
+				}
+			}
+		}
+		return true;
 	}
 
 	private void finalizarTramiteYTareas(ActivoTramite tramite) {

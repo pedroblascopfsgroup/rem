@@ -582,7 +582,7 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 						// Si no hay registro en BBDD de perimetro, el get nos
 						// devuelve un PerimetroActivo nuevo
 						// con todas las condiciones de perimetro activas
-						PerimetroActivo perimetroActivo = activoApi.getPerimetroByIdActivo(act.getId());
+						PerimetroActivo perimetroActivo = activoApi.getPerimetroByIdActivo(Long.parseLong(idActivo));
 
 						if (!Checks.esNulo(perimetroActivo.getAplicaGestion())
 								&& perimetroActivo.getAplicaGestion() == 1) {

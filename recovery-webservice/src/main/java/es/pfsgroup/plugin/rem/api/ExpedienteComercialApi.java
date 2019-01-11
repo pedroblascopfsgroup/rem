@@ -1135,6 +1135,8 @@ public interface ExpedienteComercialApi {
 	public boolean checkEstadoOcupadoTramite(Long idExpediente);
 
 	public boolean checkConTituloTramite(Long idTramite);
+	
+	public List<DtoTipoDocExpedientes> getSubtipoDocumentosExpedientes(Long idExpediente, String valorCombo);
 
 
 }

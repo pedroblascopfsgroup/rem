@@ -573,6 +573,7 @@ public class AgendaAdapter {
 
 		return false;
 	}
+	
 
 	@Transactional
 	public Boolean anularTramiteAlquiler(Long idTramite, String motivo) {

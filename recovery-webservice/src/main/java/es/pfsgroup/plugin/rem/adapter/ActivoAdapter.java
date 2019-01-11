@@ -1970,7 +1970,9 @@ public class ActivoAdapter {
 				if (!ActivoTramiteApi.CODIGO_TRAMITE_COMERCIAL_VENTA.equals(tramite.getTipoTramite().getCodigo())) {
 					beanUtilNotNull.copyProperty(dtoTramite, "ocultarBotonResolucion", true);
 				}
-				
+				if (!ActivoTramiteApi.CODIGO_TRAMITE_COMERCIAL_ALQUILER.equals(tramite.getTipoTramite().getCodigo())) {
+					beanUtilNotNull.copyProperty(dtoTramite, "ocultarBotonResolucionAlquiler", true);
+				}
 				if (!ActivoTramiteApi.CODIGO_TRAMITE_PROPUESTA_PRECIOS.equals(tramite.getTipoTramite().getCodigo())) {
 					beanUtilNotNull.copyProperty(dtoTramite, "ocultarBotonAnular", true);
 				}

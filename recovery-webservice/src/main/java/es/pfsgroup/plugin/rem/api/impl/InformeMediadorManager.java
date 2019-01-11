@@ -1442,7 +1442,7 @@ public class InformeMediadorManager implements InformeMediadorApi {
 					}
 					
 					if (!Checks.esNulo(idProveedorParche)){
-						Filter filterPve = genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem", idProveedorParche);
+						Filter filterPve = genericDao.createFilter(FilterType.EQUALS, "id", idProveedorParche);
 						ActivoProveedor proveedor = genericDao.get(ActivoProveedor.class, filterPve);
 						if (!Checks.esNulo(proveedor)){
 							informeEntity.setMediadorInforme(proveedor);

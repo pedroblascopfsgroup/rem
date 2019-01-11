@@ -1,11 +1,11 @@
 package es.pfsgroup.plugin.rem.api.impl;
 
 import java.io.IOException;
-import java.sql.Date;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +46,9 @@ public class MSVActualizadorCargaMasivaComunicaciones extends AbstractMSVActuali
 		
 		for(ComunicacionGencat com : lcom) {
 			if(com.getEstadoComunicacion().getCodigo().equals("CREADO")) {
-				Date fecha = (Date) new SimpleDateFormat("dd/MM/yyyy").parse(exc.dameCelda(fila, POSICION_COLUMNA_FECHA_COMUNICACION));  
+				//Date fecha = (Date) new SimpleDateFormat("dd/MM/yyyy").parse(exc.dameCelda(fila, POSICION_COLUMNA_FECHA_COMUNICACION));  
+				Date fecha = new SimpleDateFormat("dd/MM/yyyy").parse(exc.dameCelda(fila, POSICION_COLUMNA_FECHA_COMUNICACION));  
+				
 				
 				com.setFechaComunicacion(fecha);
 			}

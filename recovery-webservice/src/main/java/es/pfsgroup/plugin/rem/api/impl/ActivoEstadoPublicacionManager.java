@@ -474,7 +474,8 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 			
 			// Registrar el condicionante de disponibilidad 'otros' si se ha modificado.
 			if((!Checks.esNulo(dto.getOtro()) && Checks.esNulo(condicionantesDisponibilidad.getOtro()))
-					|| (Checks.esNulo(dto.getOtro()) && !Checks.esNulo(condicionantesDisponibilidad.getOtro()))) {
+					|| (Checks.esNulo(dto.getOtro()) && !Checks.esNulo(condicionantesDisponibilidad.getOtro()))
+					|| (!Checks.esNulo(dto.getOtro()) && !Checks.esNulo(condicionantesDisponibilidad.getOtro()) && !dto.getOtro().equals(condicionantesDisponibilidad.getOtro()))) {
 				DtoCondicionantesDisponibilidad dtoCondicionateDisponibilidad = new DtoCondicionantesDisponibilidad();
 				dtoCondicionateDisponibilidad.setOtro(dto.getOtro());
 				activoApi.saveCondicionantesDisponibilidad(aga.getActivo().getId(), dtoCondicionateDisponibilidad);
@@ -641,7 +642,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	private Integer obtenerTotalDeDiasEnEstadoPublicadoVenta(Long idActivo) {
 		Integer dias = 0;
 
-		dias = dias + activoPublicacionHistoricoDao.getTotalDeDiasEnEstadoPublicadoVentaPorIdActivo(idActivo);
+		//dias = dias + activoPublicacionHistoricoDao.getTotalDeDiasEnEstadoPublicadoVentaPorIdActivo(idActivo);
 		dias = dias + activoPublicacionDao.getDiasEnEstadoActualPublicadoVentaPorIdActivo(idActivo);
 
 		return dias;

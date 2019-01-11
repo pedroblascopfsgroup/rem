@@ -139,8 +139,6 @@ BEGIN
           LEFT JOIN (SELECT act_id, precio_A
                        FROM (SELECT ACT2.act_id,
                                    CASE
-                                      WHEN NVL (tpc.dd_tpc_codigo, ''00'') = ''02'' /*Aprobado de venta (web)*/ AND NVL (tco.dd_tco_codigo, ''00'') IN (''01'', ''02'', ''04'')
-                                         THEN 1
                                       WHEN NVL (tpc.dd_tpc_codigo, ''00'') = ''03'' /*Aprobado de renta (web)*/ AND NVL (tco.dd_tco_codigo, ''00'') IN (''02'', ''03'', ''04'')
                                          THEN 1
                                       WHEN APU.APU_CHECK_PUB_SIN_PRECIO_A = 1
@@ -161,8 +159,6 @@ BEGIN
                        FROM (SELECT ACT2.act_id,
                                    CASE
                                       WHEN NVL (tpc.dd_tpc_codigo, ''00'') = ''02'' /*Aprobado de venta (web)*/ AND NVL (tco.dd_tco_codigo, ''00'') IN (''01'', ''02'', ''04'')
-                                         THEN 1
-                                      WHEN NVL (tpc.dd_tpc_codigo, ''00'') = ''03'' /*Aprobado de renta (web)*/ AND NVL (tco.dd_tco_codigo, ''00'') IN (''02'', ''03'', ''04'')
                                          THEN 1
                                       WHEN APU.APU_CHECK_PUB_SIN_PRECIO_V = 1
                                          THEN 1   

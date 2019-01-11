@@ -556,12 +556,7 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
     		me.down("[reference=checkFechaTope]").setValue(true);
     	}else {
     		me.down("[reference=checkFechaTope]").setValue(false);
-    	}
-    	if(CONST.CARTERA['SAREB'] == cartera){
-        	me.down("[reference=checkRequerimiento]").setVisible(true);        	
-        }else{
-        	me.down("[reference=checkRequerimiento]").setVisible(false);
-        }
+    	}    	
     },
 
     funcionRecargar: function() {

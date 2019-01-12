@@ -153,6 +153,10 @@ Ext.define('HreRem.model.Tramite', {
     	},
     	{
     		name: 'codigoSubcartera'
+    	},
+    	{
+    		name: 'ocultarBotonResolucionAlquiler',
+    		type: 'boolean'
     	}
     ],
 

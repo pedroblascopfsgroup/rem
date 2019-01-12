@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="activo_tramiteComercialAlquiler" width="1368" height="861">
+<root-container name="activo_tramiteComercialAlquiler" width="1560" height="662">
   <node name="inicio" x="11" y="11" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
@@ -10,8 +10,14 @@
     <edge>
       <label x="5" y="-10"/>
     </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
   </node>
   <node name="T015_DefinicionOfertaDecision" x="288" y="10" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -34,6 +40,9 @@
     <edge>
       <label x="5" y="-10"/>
     </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
   </node>
   <node name="T015_VerificarSeguroRentas" x="460" y="194" width="132" height="36">
     <edge>
@@ -41,6 +50,9 @@
     </edge>
   </node>
   <node name="T015_VerificarSeguroRentasDecision" x="505" y="40" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -60,6 +72,9 @@
     <edge>
       <label x="5" y="-10"/>
     </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
   </node>
   <node name="T015_ResolucionExpediente" x="647" y="18" width="132" height="36">
     <edge>
@@ -67,6 +82,9 @@
     </edge>
   </node>
   <node name="T015_ResolucionExpedienteDecision" x="855" y="149" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -95,6 +113,9 @@
     <edge>
       <label x="5" y="-10"/>
     </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
   </node>
   <node name="T015_ResolucionPBC" x="907" y="331" width="132" height="36">
     <edge>
@@ -108,8 +129,14 @@
     <edge>
       <label x="5" y="-10"/>
     </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
   </node>
   <node name="T015_Posicionamiento" x="435" y="624" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -118,8 +145,14 @@
     <edge>
       <label x="5" y="-10"/>
     </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
   </node>
   <node name="T015_CierreContrato" x="322" y="290" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
     <edge>
       <label x="5" y="-10"/>
     </edge>

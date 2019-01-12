@@ -26,12 +26,14 @@
 			</action>
 		</event>
 		<transition to="T015_DefinicionOfertaDecision" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
 	</state>
 
 	<decision name ="T015_DefinicionOfertaDecision" expression="#{T015_DefinicionOfertaDecision}">
 		<transition to="T015_VerificarScoring" name="verificaScoring"></transition>
 		<transition to="T015_VerificarSeguroRentas" name="verificaSeguroRenta"></transition>
 		<transition to="T015_ElevarASancion" name="elevarSancion"></transition>
+		<transition to="Fin" name="Fin"></transition>
 	</decision>
 	
 	<state name="T015_VerificarScoring">
@@ -59,6 +61,7 @@
 	<decision name ="T015_VerificarScoringDecision" expression="#{T015_VerificarScoringDecision}">
 		<transition to="Fin" name="Rechazado"></transition>
 		<transition to="T015_ElevarASancion" name="Aprobado"></transition>
+		<transition to="Fin" name="Fin"></transition>
 	</decision>
 	
 	<state name= "T015_VerificarSeguroRentas">
@@ -86,6 +89,7 @@
 	<decision name ="T015_VerificarSeguroRentasDecision" expression="#{T015_VerificarSeguroRentasDecision}">
 		<transition to="Fin" name="Rechazado"></transition>
 		<transition to="T015_ElevarASancion" name="Aprobado"></transition>
+		<transition to="Fin" name="Fin"></transition>
 	</decision>
 	
 	<state name="T015_ElevarASancion">
@@ -113,6 +117,7 @@
 	<decision name ="T015_ElevarASancionDecision" expression="#{T015_ElevarASancionDecision}">
 		<transition to="Fin" name="Anular"></transition>
 		<transition to="T015_ResolucionExpediente" name="Elevar"></transition>
+		<transition to="Fin" name="Fin"></transition>
 	</decision>
 	
 	<state name="T015_ResolucionExpediente">
@@ -141,6 +146,7 @@
 		<transition to="Fin" name="Anulada"></transition>
 		<transition to="T015_ResolucionPBC" name="Aprobada"></transition>
 		<transition to="T015_AceptacionCliente" name="Contraofertar"></transition>
+		<transition to="Fin" name="Fin"></transition>
 	</decision>
 	
 	<state name="T015_AceptacionCliente">
@@ -170,6 +176,7 @@
 		<transition to="T015_ElevarASancion" name="SiNnguna"></transition>
 		<transition to="T015_VerificarScoring" name="SiScoring"></transition>
 		<transition to="T015_VerificarSeguroRentas" name="SiSeguroRentas"></transition>
+		<transition to="Fin" name="Fin"></transition>
 	</decision>
 	
 	<state name="T015_ResolucionPBC">
@@ -197,6 +204,7 @@
 	<decision name ="T015_ResolucionPBCDecision" expression="#{T015_ResolucionPBCDecision}">
 		<transition to="Fin" name="Denegado"></transition>
 		<transition to="T015_Posicionamiento" name="Aprobado"></transition>
+		<transition to="Fin" name="Fin"></transition>
 	</decision>
 	
 	<state name="T015_Posicionamiento">
@@ -219,6 +227,7 @@
 			</action>
 		</event>
 		<transition to="T015_Firma" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
 	</state>
 	
 	<state name="T015_Firma">
@@ -241,6 +250,7 @@
 			</action>
 		</event>
 		<transition to="T015_CierreContrato" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
 	</state>
 
 	<state name="T015_CierreContrato">
@@ -263,6 +273,7 @@
 			</action>
 		</event>
 		<transition to="Fin" name="avanzaBPM"></transition>
+		<transition to="Fin" name="Fin"></transition>
 	</state>
 	
 	

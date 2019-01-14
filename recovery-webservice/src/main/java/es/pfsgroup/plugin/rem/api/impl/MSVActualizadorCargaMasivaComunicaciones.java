@@ -12,6 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.bulkUpload.liberators.MSVLiberator;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
 import es.pfsgroup.framework.paradise.bulkUpload.model.ResultadoProcesarFila;
@@ -19,6 +22,7 @@ import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVHojaExcel;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.rem.api.ComunicacionGencatApi;
 import es.pfsgroup.plugin.rem.model.ComunicacionGencat;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoComunicacionGencat;
 
 
 @Component
@@ -27,6 +31,8 @@ public class MSVActualizadorCargaMasivaComunicaciones extends AbstractMSVActuali
 	@Autowired
 	private ComunicacionGencatApi comunicacionGencatApi;
 	
+	@Autowired
+	private GenericABMDao genericDao; 
 	
 	
 	@Override
@@ -42,15 +48,15 @@ public class MSVActualizadorCargaMasivaComunicaciones extends AbstractMSVActuali
 	public ResultadoProcesarFila procesaFila(MSVHojaExcel exc, int fila, Long prmToken) throws IOException, ParseException, JsonViewerException, SQLException {
 		
 		List<ComunicacionGencat> lcom = new ArrayList<ComunicacionGencat>(); 
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoComunicacionGencat.COD_COMUNICADO);
+		DDEstadoComunicacionGencat estado = genericDao.get(DDEstadoComunicacionGencat.class, filtro);
 		lcom.add(comunicacionGencatApi.getByNumActivoHaya(Long.parseLong(exc.dameCelda(fila, POSICION_COLUMNA_NUMERO_ACTIVO))));
 		
 		for(ComunicacionGencat com : lcom) {
 			if(com.getEstadoComunicacion().getCodigo().equals("CREADO")) {
-				//Date fecha = (Date) new SimpleDateFormat("dd/MM/yyyy").parse(exc.dameCelda(fila, POSICION_COLUMNA_FECHA_COMUNICACION));  
 				Date fecha = new SimpleDateFormat("dd/MM/yyyy").parse(exc.dameCelda(fila, POSICION_COLUMNA_FECHA_COMUNICACION));  
-				
-				
 				com.setFechaComunicacion(fecha);
+				com.setEstadoComunicacion(estado);
 			}
 		}
 		

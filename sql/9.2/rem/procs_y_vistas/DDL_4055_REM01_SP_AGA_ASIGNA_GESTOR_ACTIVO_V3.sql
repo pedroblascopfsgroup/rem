@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Guillermo Llidó Parra
---## FECHA_CREACION=20181003
+--## AUTOR=Mariam Lliso
+--## FECHA_CREACION=20190102
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=REMVIP-2129
+--## INCIDENCIA_LINK=HREOS-5160
 --## PRODUCTO=NO
 --## Finalidad: Procedimiento almacenado que asigna Gestores de todos los tipos.
 --##           
@@ -13,7 +13,10 @@
 --##        0.1 Versión inicial Pau Serrano
 --##		0.2 Añadidos gestor comercial backoffice liberbank SOG
 --##		0.3 Modificación para que los grestores de la tabla ACT_GES_DIST_GESTORES que no tengan cartera también los asigne al activo
---##		0.4 Añadidos gestor de reserva para Cajamar
+--##		0.4 Añadidos gestor de reserva para Cajamar - REMVIP-2129
+--##		0.5 Añadidos los nuevos gestores comerciales de alquiler (gestor y supervisor) - HREOS-5064
+--##		0.6 HREOS-5049 Carlos López: Optimización
+--##		0.7 HREOS-5160 Mariam Lliso: modificada la asignación de gestores
 --##########################################
 --*/
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
@@ -41,7 +44,7 @@ CREATE OR REPLACE PROCEDURE #ESQUEMA#.SP_AGA_ASIGNA_GESTOR_ACTIVO_V3 (
     TYPE T_GESTOR IS TABLE OF VARCHAR2(250 CHAR);
 
     V_GESTOR_FINANCIERO T_GESTOR := T_GESTOR('GPUBL','SPUBL','GCOM','SCOM','FVDNEG','FVDBACKOFR','FVDBACKVNT','SUPFVD','SFORM','GCODI','GCOINM','GCOIN','GLIBINVINM','GLIBSINTER','GLIBRES','GESRES','SUPRES');
-    V_GESTOR_INMOBILIAR T_GESTOR := T_GESTOR('GADM','SUPADM','GACT','SUPACT','GPREC','SPREC','GPUBL','SPUBL','GCOM','SCOM','FVDNEG','FVDBACKOFR','FVDBACKVNT','SUPFVD','SFORM','GGADM','GIAFORM','GTOCED','CERT','GIAADMT','PTEC', 'GTREE','GCODI','GCOINM','GCOIN','GLIBINVINM','GLIBSINTER','GLIBRES','HAYAGBOINM','SBACKOFFICEINMLIBER','GEDI', 'SUPEDI', 'GSUE', 'SUPSUE','GALQ','SUALQ');
+    V_GESTOR_INMOBILIAR T_GESTOR := T_GESTOR('GADM','SUPADM','GACT','SUPACT','GPREC','SPREC','GPUBL','SPUBL','GCOM','SCOM','FVDNEG','FVDBACKOFR','FVDBACKVNT','SUPFVD','SFORM','GGADM','GIAFORM','GTOCED','CERT','GIAADMT','PTEC', 'GTREE','GCODI','GCOINM','GCOIN','GLIBINVINM','GLIBSINTER','GLIBRES','HAYAGBOINM','SBACKOFFICEINMLIBER','GEDI', 'SUPEDI', 'GSUE', 'SUPSUE','GALQ','SUALQ', 'GESTCOMALQ', 'SUPCOMALQ');
     V_GESTOR T_GESTOR;
 
 BEGIN
@@ -69,7 +72,7 @@ BEGIN
         V_GESTOR := V_GESTOR_FINANCIERO;
         V_CLASE_ACTIVO :=  'JOIN '||V_ESQUEMA||'.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = ACT.DD_CRA_ID
             JOIN '||V_ESQUEMA||'.DD_SCR_SUBCARTERA SCR ON SCR.DD_CRA_ID = CRA.DD_CRA_ID AND SCR.DD_SCR_ID = ACT.DD_SCR_ID
-            WHERE SCR.DD_SCR_CODIGO = DECODE (CRA.DD_CRA_CODIGO, ''01'',''01'',''02'',''03'',''03'',''05'',''04'',''10'',''05'',''12'',''09'',''21'',''00'')';
+            WHERE SCR.DD_SCR_CODIGO = DECODE (CRA.DD_CRA_CODIGO, ''01'',''01'',''02'',''03'',''03'',''05'',''04'',''10'',''05'',''12'',''09'',''21'',''07'',''134'',''07'',''38'',''00'')';
         V_CLASE_ACTIVO_NULL :=  'LEFT JOIN '||V_ESQUEMA||'.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = ACT.DD_CRA_ID
             LEFT JOIN '||V_ESQUEMA||'.DD_SCR_SUBCARTERA SCR ON SCR.DD_CRA_ID = CRA.DD_CRA_ID AND SCR.DD_SCR_ID = ACT.DD_SCR_ID
             WHERE SCR.DD_SCR_CODIGO IS NULL';
@@ -77,7 +80,7 @@ BEGIN
         V_GESTOR := V_GESTOR_INMOBILIAR;
         V_CLASE_ACTIVO := 'JOIN '||V_ESQUEMA||'.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = ACT.DD_CRA_ID
             JOIN '||V_ESQUEMA||'.DD_SCR_SUBCARTERA SCR ON SCR.DD_CRA_ID = CRA.DD_CRA_ID AND SCR.DD_SCR_ID = ACT.DD_SCR_ID
-            WHERE SCR.DD_SCR_CODIGO <> DECODE (CRA.DD_CRA_CODIGO, ''01'',''01'',''02'',''03'',''03'',''05'',''04'',''10'',''05'',''12'',''09'',''21'',''00'')';
+            WHERE SCR.DD_SCR_CODIGO <> DECODE (CRA.DD_CRA_CODIGO, ''01'',''01'',''02'',''03'',''03'',''05'',''04'',''10'',''05'',''12'',''09'',''21'',''07'',''134'',''07'',''38'',''00'')';
         V_CLASE_ACTIVO_NULL := 'LEFT JOIN '||V_ESQUEMA||'.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = ACT.DD_CRA_ID
             LEFT JOIN '||V_ESQUEMA||'.DD_SCR_SUBCARTERA SCR ON SCR.DD_CRA_ID = CRA.DD_CRA_ID AND SCR.DD_SCR_ID = ACT.DD_SCR_ID
             WHERE SCR.DD_SCR_CODIGO IS NULL';

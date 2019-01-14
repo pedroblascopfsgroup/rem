@@ -35,6 +35,7 @@ import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
+import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.adapter.TrabajoAdapter;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
@@ -122,6 +123,7 @@ public class TrabajoController extends ParadiseJsonController {
 	private final Log logger = LogFactory.getLog(getClass());
 	
 	private static final String ERROR_DUPLICADOS_CREAR_TRABAJOS = "El fichero contiene registros duplicados";
+	private static final String ERROR_GD_NO_EXISTE_CONTENEDOR = "No existe contenedor para este trabajo. Se creará uno nuevo.";
 
 		
 	/**
@@ -255,25 +257,29 @@ public class TrabajoController extends ParadiseJsonController {
 		
 		dtoAdjunto.setId(Long.parseLong(request.getParameter("id")));
 		dtoAdjunto.setIdEntidad(Long.parseLong(request.getParameter("idTrabajo")));
-	
+		String nombreDocumento = request.getParameter("nombreDocumento");
+		dtoAdjunto.setNombre(nombreDocumento);
 		
        	FileItem fileItem = trabajoApi.getFileItemAdjunto(dtoAdjunto);
 		
        	try { 
-       		ServletOutputStream salida = response.getOutputStream(); 
-       			
-       		response.setHeader("Content-disposition", "attachment; filename=" + fileItem.getFileName());
-       		response.setHeader("Cache-Control", "must-revalidate, post-check=0,pre-check=0");
-       		response.setHeader("Cache-Control", "max-age=0");
-       		response.setHeader("Expires", "0");
-       		response.setHeader("Pragma", "public");
-       		response.setDateHeader("Expires", 0); //prevents caching at the proxy
-       		response.setContentType(fileItem.getContentType());
        		
-       		// Write
-       		FileUtils.copy(fileItem.getInputStream(), salida);
-       		salida.flush();
-       		salida.close();
+       		if(!Checks.esNulo(fileItem)) {
+	       		ServletOutputStream salida = response.getOutputStream(); 
+	       			
+	       		response.setHeader("Content-disposition", "attachment; filename=" + fileItem.getFileName());
+	       		response.setHeader("Cache-Control", "must-revalidate, post-check=0,pre-check=0");
+	       		response.setHeader("Cache-Control", "max-age=0");
+	       		response.setHeader("Expires", "0");
+	       		response.setHeader("Pragma", "public");
+	       		response.setDateHeader("Expires", 0); //prevents caching at the proxy
+	       		response.setContentType(fileItem.getContentType());
+	       		
+	       		// Write
+	       		FileUtils.copy(fileItem.getInputStream(), salida);
+	       		salida.flush();
+	       		salida.close();
+       		}
        		
        	} catch (Exception e) { 
        		logger.error(e.getMessage());
@@ -305,7 +311,13 @@ public class TrabajoController extends ParadiseJsonController {
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getListAdjuntos(Long id, ModelMap model){
 
-		model.put("data", trabajoApi.getAdjuntos(id));
+		try {
+			model.put("data", trabajoApi.getAdjuntos(id));
+		} catch(GestorDocumentalException gex) {
+			logger.error(ERROR_GD_NO_EXISTE_CONTENEDOR);
+		} catch(Exception ex) {
+			logger.error(ex.getMessage());
+		}
 		
 		return createModelAndViewJson(model);
 		

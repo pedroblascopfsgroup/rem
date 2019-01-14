@@ -110,8 +110,6 @@ BEGIN
           LEFT JOIN (SELECT act_id, precio_A
                        FROM (SELECT APU.act_id,
                                    CASE
-                                      WHEN NVL (tpc.dd_tpc_codigo, ''00'') = ''02'' /*Aprobado de venta (web)*/ AND NVL (tco.dd_tco_codigo, ''00'') IN (''01'', ''02'', ''04'')
-                                         THEN 1
                                       WHEN NVL (tpc.dd_tpc_codigo, ''00'') = ''03'' /*Aprobado de renta (web)*/ AND NVL (tco.dd_tco_codigo, ''00'') IN (''02'', ''03'', ''04'')
                                          THEN 1
                                       WHEN APU.APU_CHECK_PUB_SIN_PRECIO_A = 1
@@ -131,8 +129,6 @@ BEGIN
                        FROM (SELECT APU.act_id,
                                    CASE
                                       WHEN NVL (tpc.dd_tpc_codigo, ''00'') = ''02'' /*Aprobado de venta (web)*/ AND NVL (tco.dd_tco_codigo, ''00'') IN (''01'', ''02'', ''04'')
-                                         THEN 1
-                                      WHEN NVL (tpc.dd_tpc_codigo, ''00'') = ''03'' /*Aprobado de renta (web)*/ AND NVL (tco.dd_tco_codigo, ''00'') IN (''02'', ''03'', ''04'')
                                          THEN 1
                                       WHEN APU.APU_CHECK_PUB_SIN_PRECIO_V = 1
                                          THEN 1   
@@ -163,6 +159,7 @@ BEGIN
                              JOIN '|| V_ESQUEMA ||'.ACT_AGR_AGRUPACION AGR ON AGR.AGR_ID = AGA.AGR_ID AND AGR.BORRADO = 0
                              JOIN '|| V_ESQUEMA ||'.DD_TAG_TIPO_AGRUPACION TAG ON TAG.DD_TAG_ID = AGR.DD_TAG_ID AND TAG.BORRADO = 0 AND TAG.DD_TAG_CODIGO = ''02''/*Restringida*/
                             WHERE AGA.ACT_ID = ACT.ACT_ID 
+							  AND AGR.AGR_FECHA_BAJA IS NULL
                               AND AGA.BORRADO = 0
                           )         
       ';

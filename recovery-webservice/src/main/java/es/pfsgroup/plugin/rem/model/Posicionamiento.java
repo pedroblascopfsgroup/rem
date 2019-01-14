@@ -71,6 +71,9 @@ public class Posicionamiento implements Serializable, Auditable, Comparable<Posi
 	@Column(name = "POS_FECHA_FIN_POSICIONAMIENTO")
 	private Date fechaFinPosicionamiento;
 
+	@Column(name = "LUGAR_FIRMA")
+	private String lugarFirma;
+
 	@Version
 	private Long version;
 
@@ -159,6 +162,14 @@ public class Posicionamiento implements Serializable, Auditable, Comparable<Posi
 
 	public void setFechaFinPosicionamiento(Date fechaFinPosicionamiento) {
 		this.fechaFinPosicionamiento = fechaFinPosicionamiento;
+	}
+
+	public String getLugarFirma() {
+		return lugarFirma;
+	}
+
+	public void setLugarFirma(String lugarFirma) {
+		this.lugarFirma = lugarFirma;
 	}
 
 }

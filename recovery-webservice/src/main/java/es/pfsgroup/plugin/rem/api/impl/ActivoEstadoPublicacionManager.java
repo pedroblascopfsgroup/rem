@@ -183,7 +183,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		boolean resultado = false;
 
 		try{
-			resultado = isPublicadoVenta(idActivo) || isOcultoVentaVendidoOSalidaSinperimetro(idActivo);
+			resultado = isPublicadoVenta(idActivo) || isOcultoVentaVendidoOSalidaSinperimetro(idActivo) || isVendido(idActivo);
 		}catch(Exception e){
 			logger.error("Error en el método deshabilitarCheckPublicarSinPrecioVenta" , e);
 		}
@@ -201,7 +201,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		boolean resultado = false;
 
 		try{
-			resultado = isPublicadoAlquiler(idActivo) || isOcultoAlquilerVendidoOSalidaSinperimetro(idActivo);
+			resultado = isPublicadoAlquiler(idActivo) || isOcultoAlquilerVendidoOSalidaSinperimetro(idActivo) || isVendido(idActivo);
 		}catch(Exception e){
 			logger.error("Error en el método deshabilitarCheckPublicarSinPrecioAlquiler" , e);
 		}
@@ -471,8 +471,13 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		List<ActivoAgrupacionActivo> activos = agrupacion.getActivos();
 
 		for(ActivoAgrupacionActivo aga : activos) {
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", aga.getActivo().getId());
+			ActivoSituacionPosesoria condicionantesDisponibilidad = genericDao.get(ActivoSituacionPosesoria.class, filtro);
+			
 			// Registrar el condicionante de disponibilidad 'otros' si se ha modificado.
-			if(!Checks.esNulo(dto.getOtro())) {
+			if((!Checks.esNulo(dto.getOtro()) && Checks.esNulo(condicionantesDisponibilidad.getOtro()))
+					|| (Checks.esNulo(dto.getOtro()) && !Checks.esNulo(condicionantesDisponibilidad.getOtro()))
+					|| (!Checks.esNulo(dto.getOtro()) && !Checks.esNulo(condicionantesDisponibilidad.getOtro()) && !dto.getOtro().equals(condicionantesDisponibilidad.getOtro()))) {
 				DtoCondicionantesDisponibilidad dtoCondicionateDisponibilidad = new DtoCondicionantesDisponibilidad();
 				dtoCondicionateDisponibilidad.setOtro(dto.getOtro());
 				activoApi.saveCondicionantesDisponibilidad(aga.getActivo().getId(), dtoCondicionateDisponibilidad);
@@ -639,7 +644,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	private Integer obtenerTotalDeDiasEnEstadoPublicadoVenta(Long idActivo) {
 		Integer dias = 0;
 
-		dias = dias + activoPublicacionHistoricoDao.getTotalDeDiasEnEstadoPublicadoVentaPorIdActivo(idActivo);
+		//dias = dias + activoPublicacionHistoricoDao.getTotalDeDiasEnEstadoPublicadoVentaPorIdActivo(idActivo);
 		dias = dias + activoPublicacionDao.getDiasEnEstadoActualPublicadoVentaPorIdActivo(idActivo);
 
 		return dias;

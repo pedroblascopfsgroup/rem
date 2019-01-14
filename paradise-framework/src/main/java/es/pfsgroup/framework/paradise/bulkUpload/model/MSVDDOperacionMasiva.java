@@ -34,6 +34,7 @@ public class MSVDDOperacionMasiva implements Serializable, Auditable, Dictionary
 	public static final String CODE_FILE_BULKUPLOAD_NEW_BUILDING="AGAN";
 	public static final String CODE_FILE_BULKUPLOAD_AGRUPACION_ASISTIDA="AGAA";
 	public static final String CODE_FILE_BULKUPLOAD_AGRUPACION_LOTE_COMERCIAL="AGLC";
+	public static final String CODE_FILE_BULKUPLOAD_AGRUPACION_LOTE_COMERCIAL_ALQUILER="AGAL";
 	public static final String CODE_FILE_BULKUPLOAD_AGRUPACION_PROYECTO="AGAP";
 	public static final String CODE_FILE_BULKUPLOAD_LISTAACTIVOS="LACT";
 	public static final String CODE_FILE_BULKUPLOAD_ACTUALIZAR_PUBLICAR_ORDINARIA="APBO"; //TODO: eliminar.
@@ -80,7 +81,7 @@ public class MSVDDOperacionMasiva implements Serializable, Auditable, Dictionary
 	public static final String CODE_FILE_BULKUPLOAD_INDICADOR_ACTIVO_ALQUILER = "MIAA";
 	public static final String CODE_FILE_BULKUPLOAD_VALIDADOR_CARGA_MASIVA_ADECUACION = "CMAD";
 	public static final String CODE_FILE_BULKUPLOAD_EXCLUSION_DWH = "EXDWH";
-	
+
 	private static final long serialVersionUID = 5938440720826995243L;
 
 

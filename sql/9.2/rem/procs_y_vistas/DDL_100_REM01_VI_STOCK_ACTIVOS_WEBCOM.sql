@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=RLB
---## FECHA_CREACION=20181128
+--## AUTOR=Daniel Algaba
+--## FECHA_CREACION=20181208
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=2.1.0
---## INCIDENCIA_LINK=HREOS-4072
+--## INCIDENCIA_LINK=HREOS-4994
 --## PRODUCTO=NO
 --## Finalidad: Tabla para almacentar el historico del stock de activos enviados a webcom.
 --##           
@@ -223,6 +223,11 @@ BEGIN
        v.condicionantes 																	AS arr_cod_detalle_publicacion,
        v.descripcion_otros																	AS descripcion_otros,
 		PVEPRV.PVE_COD_REM 																	AS ACTIVO_PROVEEDOR_TECNICO,
+		CASE WHEN (ACT_PTA.CHECK_HPM = 1)
+			THEN DD_TAL.DD_TAL_CODIGO
+			ELSE NULL
+		END 																				AS COD_TIPO_ALQUILER
+		PVEPRV.PVE_COD_REM 																	AS ACTIVO_PROVEEDOR_TECNICO,
 		CAST(DDEAC.DD_EAC_CODIGO AS VARCHAR2(5 CHAR))										AS cod_estado_fisico,
 		CAST(TUD.DD_TUD_CODIGO AS VARCHAR2(5 CHAR))											AS cod_tipo_uso_destino
     	FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT
@@ -327,7 +332,8 @@ BEGIN
             JOIN '||V_ESQUEMA||'.ACT_CFD_CONFIG_DOCUMENTO CFD ON CFD.CFD_ID = ADO.CFD_ID
             WHERE ADO.DD_TCE_ID IS NOT NULL AND ADO.BORRADO = 0 AND DDTCE.BORRADO = 0 AND CFD.BORRADO = 0
             ) DDTCE ON DDTCE.ACT_ID = ACT.ACT_ID AND DDTPA.DD_TPA_ID = DDTCE.DD_TPA_ID AND DDTCE.RN = 1
-
+		LEFT JOIN '||V_ESQUEMA||'.ACT_PTA_PATRIMONIO_ACTIVO ACT_PTA ON ACT_PTA.ACT_ID = ACT.ACT_ID AND ACT_PTA.BORRADO = 0
+		LEFT JOIN '||V_ESQUEMA||'.DD_TAL_TIPO_ALQUILER DD_TAL ON DD_TAL.DD_TAL_ID = ACT.DD_TAL_ID
 		where act.borrado = 0 and sps.borrado = 0';
 
 		DBMS_OUTPUT.PUT_LINE('[INFO] Vista materializada : '|| V_ESQUEMA ||'.'|| V_TEXT_VISTA ||'... creada');

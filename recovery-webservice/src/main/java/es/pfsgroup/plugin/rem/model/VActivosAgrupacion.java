@@ -11,16 +11,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
-
-
 @Entity
 @Table(name = "V_ACTIVOS_AGRUPACION", schema = "${entity.schema}")
 public class VActivosAgrupacion implements Serializable {
-
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	
 	
@@ -43,9 +36,8 @@ public class VActivosAgrupacion implements Serializable {
     @Column(name = "AGA_FECHA_INCLUSION")
    	private Date fechaInclusion;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "DD_SAC_ID")
-    private DDSubtipoActivo subtipoActivo;
+    @Column(name = "DD_SAC_DESCRIPCION")
+    private String subtipoActivoDescripcion;
 	
 	@Column(name = "AGR_ID")
 	private Long agrId;
@@ -68,8 +60,7 @@ public class VActivosAgrupacion implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "propietario")
 	private ActivoPropietario propietario;
-    
-    //@OneToOne(fetch = FetchType.LAZY)
+
     @Column(name = "SDV_NOMBRE")
 	private String subdivision;
 	
@@ -99,10 +90,10 @@ public class VActivosAgrupacion implements Serializable {
 	
 	@Column(name="PUBLICADO")
 	private String publicado;
-	
+
 	@Column(name = "COND_PUBL_VENTA")
 	private String condPublVenta;
-	
+
 	@Column(name = "COND_PUBL_ALQUILER")
 	private String condPublAlquiler;
 
@@ -143,12 +134,12 @@ public class VActivosAgrupacion implements Serializable {
 		this.agrId = agrId;
 	}
 
-	public DDSubtipoActivo getSubtipoActivo() {
-		return subtipoActivo;
+	public String getSubtipoActivoDescripcion() {
+		return subtipoActivoDescripcion;
 	}
 
-	public void setSubtipoActivo(DDSubtipoActivo subtipoActivo) {
-		this.subtipoActivo = subtipoActivo;
+	public void setSubtipoActivoDescripcion(String subtipoActivoDescripcion) {
+		this.subtipoActivoDescripcion = subtipoActivoDescripcion;
 	}
 
 	public Float getSuperficieConstruida() {
@@ -313,8 +304,5 @@ public class VActivosAgrupacion implements Serializable {
 
 	public void setCondPublAlquiler(String condPublAlquiler) {
 		this.condPublAlquiler = condPublAlquiler;
-	}	
-	
-
-
+	}
 }

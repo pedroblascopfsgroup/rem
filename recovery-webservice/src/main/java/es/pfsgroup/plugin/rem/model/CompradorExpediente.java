@@ -26,6 +26,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadosPbc;
 import es.pfsgroup.plugin.rem.model.dd.DDPaises;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoGradoPropiedad;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoInquilino;
 import es.pfsgroup.plugin.rem.model.dd.DDUsosActivo;
 
 
@@ -131,6 +132,10 @@ public class CompradorExpediente implements Serializable {
     private String responsableTramitacion;
     
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_TPI_ID")
+    private DDTipoInquilino tipoInquilino;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_EPB_ID")
     private DDEstadosPbc estadosPbc;
     
@@ -167,6 +172,8 @@ public class CompradorExpediente implements Serializable {
     @JoinColumn(name = "DD_PAI_ID_RTE")
     private DDPaises paisRte;
     
+    @Column(name = "CEX_ID_PERSONA_HAYA")
+    private String idPersonaHaya;
     
 	@Version   
 	private Long version;
@@ -441,6 +448,17 @@ public class CompradorExpediente implements Serializable {
 
 
 
+	public String getIdPersonaHaya() {
+		return idPersonaHaya;
+	}
+
+	public void setIdPersonaHaya(String idPersonaHaya) {
+		this.idPersonaHaya = idPersonaHaya;
+	}
+
+
+
+
 	/**
      * clase pk embebida
      */
@@ -553,6 +571,22 @@ public class CompradorExpediente implements Serializable {
 
 	public void setPaisRte(DDPaises paisRte) {
 		this.paisRte = paisRte;
+	}
+
+	public DDTipoInquilino getTipoInquilino() {
+		return tipoInquilino;
+	}
+
+	public void setTipoInquilino(DDTipoInquilino tipoInquilino) {
+		this.tipoInquilino = tipoInquilino;
+	}
+
+	public Long getVersion() {
+		return version;
+	}
+
+	public void setVersion(Long version) {
+		this.version = version;
 	}
     
    

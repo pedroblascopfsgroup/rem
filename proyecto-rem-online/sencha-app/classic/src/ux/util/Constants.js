@@ -38,7 +38,9 @@ Ext.define('HreRem.ux.util.Constants', {
 		RESTRINGIDA: '02',
 		PROYECTO: '04',
 		ASISTIDA: '13',
-		LOTE_COMERCIAL: '14'
+		LOTE_COMERCIAL: '14',
+		COMERCIAL_ALQUILER:'15',
+		COMERCIAL_VENTA:'14'
 	},
 
 	TIPOS_INFO_COMERCIAL: {
@@ -73,7 +75,10 @@ Ext.define('HreRem.ux.util.Constants', {
 
 	TIPOS_CALCULO: {
 		PORCENTAJE: '01',
-		FIJO: '02'
+		FIJO: '02',
+		PORCENTAJE_ALQ: '03',
+		FIJO_ALQ: '04',
+		MENSUALIDAD_ALQ: '05'
 	},
 
 	TIPOS_DESTINATARIO_GASTO: {
@@ -148,7 +153,8 @@ Ext.define('HreRem.ux.util.Constants', {
 		DOCU:				'documentosexpediente',
 		FORMA:				'formalizacionexpediente',
 		GESECO:				'gestioneconomicaexpediente',
-		PLUVTA:             'plusvaliaventaexpedediente'
+		PLUVTA:             'plusvaliaventaexpedediente',
+		SEGREN: 			'segurorentasexpediente'
 //		INVISIBLE:		Si creamos un registro-enlace-expediente en TFI y como codigo (en TFI_NOMBRE) damos este valor, ocultara el enlace
     },
 
@@ -232,7 +238,9 @@ Ext.define('HreRem.ux.util.Constants', {
     
     ESTADOS_OFERTA: {
     	ACEPTADA : '01',
-    	RECHAZADA: '02'
+    	RECHAZADA: '02',
+    	CONGELADA: '03',
+    	PENDIENTE: '04'
     },
     
     ESTADOS_EXPEDIENTE: {
@@ -397,11 +405,16 @@ Ext.define('HreRem.ux.util.Constants', {
 		ALQUILER: '02'
 	},
 
+	TIPOS_ORIGEN: {
+		REM: 'REM',
+		WCOM: 'WCOM'
+	},
+
 	TIPOS_PROVEEDOR_EXPEDIENTE: {
 		CAT : '28',
 		MEDIADOR_OFICINA: '29'
 	},
-	
+
 	ESTADO_ACTIVO: {
 		SUELO : '01',
 		EN_CONSTRUCCION_EN_CURSO : '02',
@@ -415,10 +428,12 @@ Ext.define('HreRem.ux.util.Constants', {
 		OBRA_NUEVA_PDTE_LEGALIZAR : '10',
 		NO_OBRA_NUEVA_PDTE_LEGALIZAR : '11'
 	},
-	
+
 	ESTADOS_OFERTA: {
 		ACEPTADA : '01',
-		RECHAZADA: '02'
+		RECHAZADA: '02',
+		CONGELADA: '03',
+	    PENDIENTE: '04'
 	},
 
 	ESTADOS_EXPEDIENTE: {
@@ -484,7 +499,8 @@ Ext.define('HreRem.ux.util.Constants', {
 		TRASPASADO: '06',
 		DISPONIBLE_ALQUILER: '07',
 		DISPONIBLE_VENTA_ALQUILER: '08',
-		DISPONIBLE_CONDICIONADO: '09'
+		DISPONIBLE_CONDICIONADO: '09',
+		ALQUILADO: '10'
 	},
 
 	ACCION_GASTOS: {
@@ -538,31 +554,58 @@ Ext.define('HreRem.ux.util.Constants', {
 		CONTRAOFERTA: '03'
 	},
 
+	ES_VENTA: {
+    	SI: 1,
+    	NO: 0
+    },
+
+    COMBO_OCUPACION: {
+		SI: 1,
+		NO: 0
+	},
+
+	COMBO_CON_TITULO: {
+		SI: 1,
+		NO: 0
+    },
+
+	COMBO_SI_NO: {
+		SI: 1,
+		NO: 0
+	},
+
+	COMBO_ESTADO_ALQUILER: {
+		LIBRE: '01',
+		ALQUILADO: '02',
+		CON_DEMANDAS: '03'
+	},
+
 	EXPORTADOR:{
 		LIMITE: '1000'
 	},
-	MOTIVO_OCULTACION: {
-        OTROS: '12'
+
+    MOTIVO_OCULTACION: {
+         OTROS: '12'
+     },
+
+    ORIGEN_DATO: {
+        REM: '01',
+        RECOVERY: '02'
     },
 
-	ORIGEN_DATO: {
-		REM: '01',
-		RECOVERY: '02'
-	},
-
-	MODO_PUBLICACION_ALQUILER: {
-		PRE_PUBLICAR: '0',
-		FORZADO: '1'
-	},
-
-	ESTADO_PUBLICACION_ALQUILER: {
-        NO_PUBLICADO: '01',
-        PRE_PUBLICADO: '02',
-        PUBLICADO: '03',
-        OCULTO: '04'
+    MODO_PUBLICACION_ALQUILER: {
+        PRE_PUBLICAR: '0',
+        FORZADO: '1'
     },
 
-    ESTADO_PUBLICACION_VENTA: {
+    ESTADO_PUBLICACION_ALQUILER: {
+         NO_PUBLICADO: '01',
+         PRE_PUBLICADO: '02',
+         PUBLICADO: '03',
+         OCULTO: '04'
+    },
+
+	ESTADO_PUBLICACION_VENTA: {
         NO_PUBLICADO: '01',
         PRE_PUBLICADO: '02',
         PUBLICADO: '03',
@@ -578,5 +621,27 @@ Ext.define('HreRem.ux.util.Constants', {
 
 	MOTIVOS_CAL_NEGATIVA:{
 		OTROS: '21'
+	},
+    
+    TAREAS:{
+    	T015_DEFINICIONOFERTA : 'T015_DefinicionOferta',
+    	T015_VERIFICARSCORING : 'T015_VerificarScoring',
+    	T015_VERIFICARSEGURORENTAS : 'T015_VerificarSeguroRentas'
+    },
+    
+    TIPO_INQUILINO: {
+		SCORING: '01',
+		SEGURO_RENTAS: '02',
+		NINGUNA: '03'
+    },
+	
+	SUBTIPO_DOCUMENTO_EXPEDIENTE: {
+		RENOVACION_CONTRATO: '46',
+		CONTRATO: '49',
+		FIANZA: '51',
+		AVAL_BANCARIO: '52',
+		JUSTIFICANTE_INGRESOS: '53',
+		ALQUILER_CON_OPCION_A_COMPRA: '54'
 	}
+    
 });

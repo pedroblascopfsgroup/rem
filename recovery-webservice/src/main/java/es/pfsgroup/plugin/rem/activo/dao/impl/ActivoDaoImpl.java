@@ -10,7 +10,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import es.pfsgroup.commons.utils.hibernate.HibernateUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Criteria;
@@ -31,9 +30,11 @@ import es.pfsgroup.commons.utils.HibernateQueryUtils;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.commons.utils.hibernate.HibernateUtils;
 import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVRawSQLDao;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
+import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoCalificacionNegativa;
@@ -48,6 +49,7 @@ import es.pfsgroup.plugin.rem.model.DtoLlaves;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaActivosVinculados;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
 import es.pfsgroup.plugin.rem.model.DtoTrabajoListActivos;
+import es.pfsgroup.plugin.rem.model.HistoricoDestinoComercial;
 import es.pfsgroup.plugin.rem.model.PropuestaActivosVinculados;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivosPrecios;
 import es.pfsgroup.plugin.rem.model.VBusquedaPublicacionActivo;
@@ -55,15 +57,22 @@ import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.VOfertasTramitadasPendientesActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
+import es.pfsgroup.plugin.rem.utils.MSVREMUtils;
 
 @Repository("ActivoDao")
-public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements ActivoDao{
+public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements ActivoDao {
+
+	private static final String REST_USER_USERNAME = "REST-USER";
+	private static final String REST_USER_HDC_NAME = "Proceso Excel Masivo";
 
 	@Autowired
 	private MSVRawSQLDao rawDao;
-	
+
 	@Autowired
 	private GenericABMDao genericDao;
+
+	@Autowired
+	private GenericAdapter adapter;
 
     @Override
 	public Page getListActivos(DtoActivoFilter dto, Usuario usuLogado) {
@@ -1083,9 +1092,76 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 
 	}
 
+	public void finHistoricoDestinoComercial(Activo activo, Object[] extraArgs) {
+
+		Session session = this.getSessionFactory().getCurrentSession();
+		Query query= session.createQuery("UPDATE HistoricoDestinoComercial hdc "
+				+ " SET hdc.fechaFin = sysdate, hdc.gestorActualizacion = :gestorActualizacion "
+				+ " WHERE hdc.activo.id = :idActivo AND hdc.fechaFin IS NULL");
+
+		query.setParameter("idActivo", activo.getId());
+
+		query.setParameter("gestorActualizacion", getGestorActualizacionHistoricoDestinoComercial(extraArgs));
+
+		query.executeUpdate();
+
+	}
+
+	public void crearHistoricoDestinoComercial(Activo activo, Object[] extraArgs) {
+
+		HistoricoDestinoComercial hdc = new HistoricoDestinoComercial();
+
+		hdc.setActivo(activo);
+		hdc.setFechaFin(null);
+		hdc.setFechaInicio(new Date());
+
+		hdc.setGestorActualizacion(getGestorActualizacionHistoricoDestinoComercial(extraArgs));
+
+		hdc.setTipoComercializacion(activo.getTipoComercializacion());
+
+		genericDao.save(HistoricoDestinoComercial.class, hdc);
+
+	}
+
+	private String getGestorActualizacionHistoricoDestinoComercial(Object[] extraArgs) {
+
+		Usuario usuario = adapter.getUsuarioLogado();
+
+		String usuarioActualizacion = HistoricoDestinoComercial.GESTOR_ACTUALIZACION_DESCONOCIDO;
+
+		if (!Checks.esNulo(usuario.getNombre())) {
+
+			usuarioActualizacion = usuario.getNombre() + " " + usuario.getApellidos();
+
+		} else if (!Checks.esNulo(usuario.getUsername())) {
+
+			if (REST_USER_USERNAME.equals(usuario.getUsername())) {
+
+				try {
+
+					usuario = (Usuario) extraArgs[MSVREMUtils.MASIVE_PROCES_USER_STARTER_INDEX];
+
+					if (!Checks.esNulo(usuario.getNombre())) {
+						usuarioActualizacion = usuario.getNombre() + " " + usuario.getApellidos();
+					} else {
+						usuarioActualizacion = REST_USER_HDC_NAME;
+					}
+
+				} catch (Exception e) {
+					usuarioActualizacion = REST_USER_HDC_NAME;
+				}
+
+			} else {
+				usuarioActualizacion = usuario.getUsername();
+			}
+
+		}
+
+		return usuarioActualizacion;
+	}
+	
 	@Override
 	public void hibernateFlush() {
 		getHibernateTemplate().flush();
-		
 	}
 }

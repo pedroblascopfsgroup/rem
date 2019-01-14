@@ -17,6 +17,7 @@ import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
+import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
@@ -172,9 +173,10 @@ public interface TrabajoApi {
 	 * 
 	 * @param id
 	 * @return
+	 * @throws GestorDocumentalException 
 	 */
 	@BusinessOperationDefinition("trabajoManager.getAdjuntosTrabajo")
-	public Object getAdjuntos(Long id);
+	public Object getAdjuntos(Long id) throws GestorDocumentalException;
 
 	/**
 	 * 

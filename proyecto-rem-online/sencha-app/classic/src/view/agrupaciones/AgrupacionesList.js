@@ -35,6 +35,7 @@ Ext.define('HreRem.view.agrupaciones.AgrupacionesList', {
         };
 
      	me.listeners = {
+
      			rowdblclick: 'onAgrupacionesListDobleClick',
      			beforeedit: function(editor, gridNfo) {
      				var grid = this;
@@ -187,7 +188,7 @@ Ext.define('HreRem.view.agrupaciones.AgrupacionesList', {
 				        }
 		
 			        ];
-			
+	    	
 			me.onDeleteClick= function (btn) {
 				var me= this;
 				var numAgrupacionRem= me.getSelection()[0].get('numAgrupacionRem');
@@ -252,6 +253,57 @@ Ext.define('HreRem.view.agrupaciones.AgrupacionesList', {
 				    }
 		    	});
 			};
+			
+			me.editFuncion=function(editor, context){
+			   		
+			   		var me= this;
+					me.mask(HreRem.i18n("msg.mask.espere"));
+
+						if (me.isValidRecord(context.record)) {				
+						
+			        		context.record.save({
+
+			                    params: {
+			                        idEntidad: Ext.isEmpty(me.idPrincipal) ? "" : this.up('{viewModel}').getViewModel().get(me.idPrincipal),
+			                        idEntidadPk: Ext.isEmpty(me.idSecundaria) ? "" : this.up('{viewModel}').getViewModel().get(me.idSecundaria)	
+			                    },
+			                    success: function (a, operation, c) {
+			                        if (context.store.load) {
+			                        	context.store.load();
+			                        }
+			                        me.unmask();
+			                        me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));																			
+									me.saveSuccessFn();	
+									
+									me.lookupController().abrirDetalleAgrupacion(context.record);
+									
+									
+			                    },
+			                    
+								failure: function (a, operation) {
+			                    	
+			                    	context.store.load();
+			                    	try {
+			                    		var response = Ext.JSON.decode(operation.getResponse().responseText)
+			                    		
+			                    	}catch(err) {}
+			                    	
+			                    	if(!Ext.isEmpty(response) && !Ext.isEmpty(response.msg)) {
+			                    		me.fireEvent("errorToast", response.msg);
+			                    	} else {
+			                    		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+			                    	}                        	
+									me.unmask();
+			                    }
+			                });	                            
+			        		me.disableAddButton(false);
+			        		me.disablePagingToolBar(false);
+			        		me.getSelectionModel().deselectAll();
+			        		editor.isNew = false;
+			        		
+						}
+			        
+			   };
 			        
 			me.dockedItems = [
 			        {

@@ -1211,24 +1211,32 @@ public class GastoProveedorManager implements GastoProveedorApi {
 						}
 						
 					}
+					
+					Filter filtroNumAct = genericDao.createFilter(FilterType.EQUALS, "numActivo", numActivo);
+					Filter filtroTram = genericDao.createFilter(FilterType.EQUALS, "enTramite", true);
+					Activo actTram = genericDao.get(Activo.class, filtroNumAct, filtroTram);
+					
+					if(!Checks.esNulo(actTram)) {
+						throw new JsonViewerException("Este activo se encuentra en trámite");					
+					}else {
+						Filter filtroCatastro = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+						Order order = new Order(OrderType.DESC, "fechaRevValorCatastral");
+						List<ActivoCatastro> activosCatastro = genericDao.getListOrdered(ActivoCatastro.class, order, filtroCatastro);
 
-					Filter filtroCatastro = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
-					Order order = new Order(OrderType.DESC, "fechaRevValorCatastral");
-					List<ActivoCatastro> activosCatastro = genericDao.getListOrdered(ActivoCatastro.class, order, filtroCatastro);
+						GastoProveedorActivo gastoProveedorActivo = new GastoProveedorActivo();
+						gastoProveedorActivo.setActivo(activo);
+						gastoProveedorActivo.setGastoProveedor(gasto);
+						if (!Checks.estaVacio(activosCatastro)) {
+							gastoProveedorActivo.setReferenciaCatastral(activosCatastro.get(0).getRefCatastral());
+						}
 
-					GastoProveedorActivo gastoProveedorActivo = new GastoProveedorActivo();
-					gastoProveedorActivo.setActivo(activo);
-					gastoProveedorActivo.setGastoProveedor(gasto);
-					if (!Checks.estaVacio(activosCatastro)) {
-						gastoProveedorActivo.setReferenciaCatastral(activosCatastro.get(0).getRefCatastral());
-					}
+						List<GastoProveedorActivo> gastosActivosList = gasto.getGastoProveedorActivos();
+						gastosActivosList.add(gastoProveedorActivo);
 
-					List<GastoProveedorActivo> gastosActivosList = gasto.getGastoProveedorActivos();
-					gastosActivosList.add(gastoProveedorActivo);
+						this.calculaPorcentajeEquitativoGastoActivos(gastosActivosList);
 
-					this.calculaPorcentajeEquitativoGastoActivos(gastosActivosList);
-
-					genericDao.save(GastoProveedorActivo.class, gastoProveedorActivo);
+						genericDao.save(GastoProveedorActivo.class, gastoProveedorActivo);										
+					}				
 				}
 			} else {
 				throw new JsonViewerException("Este activo ya está asignado");
@@ -1242,6 +1250,8 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			if (Checks.esNulo(agrupacion)) {
 				throw new JsonViewerException("Esta agrupación no existe");
 			} else {
+				
+				Integer counter = 0;
 
 				Filter filtroGasto = genericDao.createFilter(FilterType.EQUALS, "id", idGasto);
 				gasto = genericDao.get(GastoProveedor.class, filtroGasto);
@@ -1269,32 +1279,57 @@ public class GastoProveedorManager implements GastoProveedorApi {
 							if (Checks.esNulo(activo)) {
 								throw new JsonViewerException("Este activo no existe");
 							} else {
-
-								filtroGasto = genericDao.createFilter(FilterType.EQUALS, "id", idGasto);
-								gasto = genericDao.get(GastoProveedor.class, filtroGasto);
-
-								Filter filtroCatastro = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
-								Order order = new Order(OrderType.DESC, "fechaRevValorCatastral");
-								List<ActivoCatastro> activosCatastro = genericDao.getListOrdered(ActivoCatastro.class, order, filtroCatastro);
-
-								GastoProveedorActivo gastoProveedorActivo = new GastoProveedorActivo();
-								gastoProveedorActivo.setActivo(activo);
-								gastoProveedorActivo.setGastoProveedor(gasto);
-								if (!Checks.estaVacio(activosCatastro)) {
-									gastoProveedorActivo.setReferenciaCatastral(activosCatastro.get(0).getRefCatastral());
+								
+								
+								Filter filtroNumAct = genericDao.createFilter(FilterType.EQUALS, "numActivo", activoAgrupacion.getActivo().getNumActivo());
+								Filter filtroTram = genericDao.createFilter(FilterType.EQUALS, "enTramite", true);
+								Activo actTram = genericDao.get(Activo.class, filtroNumAct, filtroTram);
+								
+								
+								if(!Checks.esNulo(actTram)) {
+									counter++;
 								}
 
-								List<GastoProveedorActivo> gastosActivosList = gasto.getGastoProveedorActivos();
-								gastosActivosList.add(gastoProveedorActivo);
-
-								this.calculaPorcentajeEquitativoGastoActivos(gastosActivosList);
-
-								genericDao.save(GastoProveedorActivo.class, gastoProveedorActivo);
 							}
 						}
 					}
 					
-					
+					if(counter > 0) {
+						throw new JsonViewerException("Esta agrupación contiene activos en trámite");
+					}else {
+						
+						for (ActivoAgrupacionActivo activoAgrupacion : agrupacion.getActivos()) {
+																
+									Filter filtroNumAct = genericDao.createFilter(FilterType.EQUALS, "numActivo", activoAgrupacion.getActivo().getNumActivo());
+									Filter filtroTram = genericDao.createFilter(FilterType.EQUALS, "enTramite", true);
+									Activo actTram = genericDao.get(Activo.class, filtroNumAct, filtroTram);
+																																
+
+									filtroGasto = genericDao.createFilter(FilterType.EQUALS, "id", idGasto);
+									gasto = genericDao.get(GastoProveedor.class, filtroGasto);
+
+									Filter filtroCatastro = genericDao.createFilter(FilterType.EQUALS, "activo.id", activoAgrupacion.getActivo().getId());
+									Order order = new Order(OrderType.DESC, "fechaRevValorCatastral");
+									List<ActivoCatastro> activosCatastro = genericDao.getListOrdered(ActivoCatastro.class, order, filtroCatastro);
+
+									GastoProveedorActivo gastoProveedorActivo = new GastoProveedorActivo();
+									gastoProveedorActivo.setActivo(activoAgrupacion.getActivo());
+									gastoProveedorActivo.setGastoProveedor(gasto);
+									if (!Checks.estaVacio(activosCatastro)) {
+										gastoProveedorActivo.setReferenciaCatastral(activosCatastro.get(0).getRefCatastral());
+									}
+
+									List<GastoProveedorActivo> gastosActivosList = gasto.getGastoProveedorActivos();
+									gastosActivosList.add(gastoProveedorActivo);
+
+									this.calculaPorcentajeEquitativoGastoActivos(gastosActivosList);
+
+									genericDao.save(GastoProveedorActivo.class, gastoProveedorActivo);
+								
+							
+						}
+	
+					}					
 				}
 			}
 		} else {

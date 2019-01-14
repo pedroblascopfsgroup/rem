@@ -150,13 +150,15 @@ public class StockDto implements WebcomRESTDto{
 	private StringDataType descripcionOtros;
 
 	private LongDataType activoProveedorTecnico;
-	
-	//HREOS-4920
+
 	//@MappedColumn("COD_ESTADO_FIS_ACTIVO")
 	private StringDataType codEstadoFisico;
-	
+
 	private StringDataType codTipoUsoDestino;
-	
+
+	// Modificaciones WS Stock
+	private StringDataType codTipoAlquiler;
+
 	public LongDataType getIdActivoHaya() {
 		return idActivoHaya;
 	}
@@ -734,4 +736,11 @@ public class StockDto implements WebcomRESTDto{
 	public void setCodTipoUsoDestino(StringDataType codTipoUsoDestino) {
 		this.codTipoUsoDestino = codTipoUsoDestino;
 	}
+	public StringDataType getCodTipoAlquiler() {
+		return codTipoAlquiler;
+	}
+	public void setCodTipoAlquiler(StringDataType codTipoAlquiler) {
+		this.codTipoAlquiler = codTipoAlquiler;
+	}
+
 }

@@ -7,7 +7,9 @@ import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.pagination.Page;
+import es.capgemini.pfs.diccionarios.Dictionary;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
+import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.model.Activo;
@@ -19,10 +21,15 @@ import es.pfsgroup.plugin.rem.model.DtoBloqueosFinalizacion;
 import es.pfsgroup.plugin.rem.model.DtoCondiciones;
 import es.pfsgroup.plugin.rem.model.DtoCondicionesActivoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoDatosBasicosOferta;
+import es.pfsgroup.plugin.rem.model.DtoDiccionario;
 import es.pfsgroup.plugin.rem.model.DtoEntregaReserva;
+import es.pfsgroup.plugin.rem.model.DtoExpedienteHistScoring;
+import es.pfsgroup.plugin.rem.model.DtoExpedienteScoring;
 import es.pfsgroup.plugin.rem.model.DtoFichaExpediente;
 import es.pfsgroup.plugin.rem.model.DtoFormalizacionFinanciacion;
 import es.pfsgroup.plugin.rem.model.DtoGastoExpediente;
+import es.pfsgroup.plugin.rem.model.DtoHistoricoCondiciones;
+import es.pfsgroup.plugin.rem.model.DtoHstcoSeguroRentas;
 import es.pfsgroup.plugin.rem.model.DtoInformeJuridico;
 import es.pfsgroup.plugin.rem.model.DtoListadoGestores;
 import es.pfsgroup.plugin.rem.model.DtoModificarCompradores;
@@ -32,14 +39,17 @@ import es.pfsgroup.plugin.rem.model.DtoObtencionDatosFinanciacion;
 import es.pfsgroup.plugin.rem.model.DtoPlusvaliaVenta;
 import es.pfsgroup.plugin.rem.model.DtoPosicionamiento;
 import es.pfsgroup.plugin.rem.model.DtoReserva;
+import es.pfsgroup.plugin.rem.model.DtoSeguroRentas;
 import es.pfsgroup.plugin.rem.model.DtoTanteoActivoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoTanteoYRetractoOferta;
 import es.pfsgroup.plugin.rem.model.DtoTextosOferta;
+import es.pfsgroup.plugin.rem.model.DtoTipoDocExpedientes;
 import es.pfsgroup.plugin.rem.model.DtoUsuario;
 import es.pfsgroup.plugin.rem.model.EntregaReserva;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.GastosExpediente;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.Posicionamiento;
 import es.pfsgroup.plugin.rem.model.Reserva;
 import es.pfsgroup.plugin.rem.model.TanteoActivoExpediente;
 import es.pfsgroup.plugin.rem.model.Trabajo;
@@ -47,6 +57,7 @@ import es.pfsgroup.plugin.rem.model.VBusquedaDatosCompradorExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
 import es.pfsgroup.plugin.rem.rest.dto.DatosClienteDto;
 import es.pfsgroup.plugin.rem.rest.dto.InstanciaDecisionDto;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaUVEMDto;
@@ -106,6 +117,18 @@ public interface ExpedienteComercialApi {
 	 * @return resultado de la operacion
 	 */
 	boolean saveTextoOferta(DtoTextosOferta dto, Long idEntidad);
+
+
+	/**
+	 * Método que guarda un Seguro de rentas del expediente comercial
+	 * y en el historico de rentas
+	 *
+	 * @param dto
+	 * @param idEntidad
+	 *            id del expediente
+	 * @return resultado de la operacion
+	 */
+	public boolean saveSeguroRentasExpediente(DtoSeguroRentas dto, Long idEntidad);
 
 	/**
 	 * Método que guarda la información de la pestaña datos básicos de la oferta
@@ -223,7 +246,14 @@ public interface ExpedienteComercialApi {
 	 * 
 	 * @return
 	 */
-	DtoPage getActivosExpediente(Long idExpediente);
+	public DtoPage getActivosExpediente(Long idExpediente);
+
+	/**
+	 * Método que recupera los tipos de documento del expediente comercial
+	 *
+	 * @return
+	 */
+	public List <DtoTipoDocExpedientes> getTipoDocumentoExpediente(String tipoExpediente);
 
 	/**
 	 * Recupera el adjunto del Expediente comercial
@@ -326,7 +356,11 @@ public interface ExpedienteComercialApi {
 	 * @param idExpediente
 	 * @return
 	 */
-	DtoPage getPosicionamientosExpediente(Long idExpediente);
+	public DtoPage getPosicionamientosExpediente(Long idExpediente);
+
+
+	String getTareaDefinicionDeOferta(Long idExpedienteComercial, WebDto webDto);
+
 
 	/**
 	 * Método que obtiene los comparecientes del expediente
@@ -374,11 +408,29 @@ public interface ExpedienteComercialApi {
 
 	/**
 	 * Método que obtiene los honorarios(gastos) del expediente
+	 *
+	 * @param idExpediente
+	 * @return
+	 */
+
+	public List<DtoHstcoSeguroRentas> getHstcoSeguroRentas(Long idExpediente);
+
+	/**
+	 * Método que obtiene los honorarios(gastos) del expediente
 	 * 
 	 * @param idExpediente
 	 * @return
 	 */
-	List<DtoGastoExpediente> getHonorarios(Long idExpediente, Long idActivo);
+	public List<DtoGastoExpediente> getHonorarios(Long idExpediente, Long idActivo);
+	
+	/**
+	 * Método que obtiene el historico de condiciones de un expediente comercial
+	 * 
+	 * @param idExpediente
+	 * @return
+	 */
+	public List<DtoHistoricoCondiciones> getHistoricoCondiciones(Long idExpediente);
+
 
 	/**
 	 * Método que guarda los honorarios(gastos) del expediente
@@ -525,6 +577,13 @@ public interface ExpedienteComercialApi {
 	boolean createHonorario(DtoGastoExpediente dto, Long idEntidad);
 	
 	/**
+	 * Crea un registro de historicoCondiciones
+	 * @param dto
+	 * @return
+	 */
+	public boolean createHistoricoCondiciones(DtoHistoricoCondiciones dto, Long idEntidad);
+	
+	/**
 	 * Elimina un registro de honorario (gasto_expediente)
 	 * @param idPosicionamiento
 	 * @return
@@ -657,8 +716,8 @@ public interface ExpedienteComercialApi {
 	 * Devuelve una lista de los tipos de gestor correspondientes a los expedientes comerciales
 	 * @return
 	 */
-	List<EXTDDTipoGestor> getComboTipoGestor();
-	
+	public List<EXTDDTipoGestor> getComboTipoGestor(Long idExpediente);
+
 	/**
 	 * Actualiza el importe con el que participa un activo en un expediente
 	 * @param Oferta oferta
@@ -955,7 +1014,99 @@ public interface ExpedienteComercialApi {
 
 	DtoModificarCompradores vistaADtoModCompradores(VBusquedaDatosCompradorExpediente vista);
 
-	String getCodigoCarteraExpediente(String idExpediente);
+	/**
+	 * Este método envia un correo a los receptores Gestor comercial alquiler, Supervisor comercial alquiler y Prescriptor
+	 * con el suerpo del mensaje que se recibe por parametro.
+	 *
+	 * @param cuerpoEmail: Contenido del cuerpo del mensaje.
+	 * @param idExpediente: Id del expediente al que hace referencia.
+	 * @return Devuelve True si el mensaje ha sido enviado y false si no ha sido asi.
+	 */
+	boolean enviarCorreoComercializadora(String cuerpoEmail, Long idExpediente);
+
+	public List<DDTipoCalculo> getComboTipoCalculo(Long idExpediente);
+
+	/**
+	 * Este método comprueba si el expediente ya contiene un documento del tipo y subtipo indicado
+	 *
+	 * @param WebFileItem: Datos del documento.
+	 * @param ExpedienteComercial: Expediente Comercial al que hace referencia.
+	 * @return Devuelve True si existe el documento.
+	 */
+
+	public Boolean existeDocSubtipo(WebFileItem fileItem, ExpedienteComercial expedienteComercialEntrada) throws Exception;
+
+	/**
+	 * Método que obtiene el histórico de scoring del expediente comercial de alquiler.
+	 *
+	 * @param idExpediente
+	 * @return
+	 */
+	public List<DtoExpedienteHistScoring> getHistoricoScoring(Long idScoring);
+
+	/**
+	 * Método que guarda la pestaña Scoring el bloque detalle.
+	 * @param dto
+	 * @param idEntidad
+	 * @return
+	 */
+	public boolean saveExpedienteScoring(DtoExpedienteScoring dto, Long idEntidad);
+
+	/**
+	 * Metodo que envia correo a a el asegurador informando de la firma de contrato de alquiler
+	 * @param idExpediente
+	 * @return
+	 */
+	public boolean enviarCorreoAsegurador(Long idExpediente);
+
+
+	/**
+	 * Método que envía un correo para avisar de la fecha prevista para la entrega de llaves del alquiler
+	 * @param idExpediente
+	 * @param posicionamiento
+	 * @param envio
+	 * @return
+	 */
+	public boolean enviarCorreoGestionLlaves(Long idExpediente, Posicionamiento posicionamiento, int envio);
+
+	/**
+	 * Método que saca una lista de estados del expediente segun si es de tipo venta o de tipo alquiler
+	 * @param idEstado
+	 * @return
+	 */
+	public List<DtoDiccionario> getComboExpedienteComercialByEstado(String idEstado);
+
+	/**
+	 * Metodo que envia correo al gestor comercial notificándole que se ha posicionado una oferta
+	 * @param idExpediente
+	 * @param posicionamiento
+	 * @return
+	 */
+	public boolean enviarCorreoPosicionamientoFirma(Long idExpediente, Posicionamiento posicionamiento);
+
+	/**
+	 * Metodo que envia correo al prescriptor de la oferta notificándole que se han subido a REM los documentos necesarios para la firma del contrato.
+	 * @param idExpediente
+	 * @return
+	 */
+	public boolean enviarCorreoSubidaDeContrato(Long idExpediente);
+
+	/**
+	 * Metodo que comprueba si el documento Precontrato está subido al expediente
+	 * @param tareaExterna
+	 * @return
+	 */
+	public boolean checkPrecontratoSubido(TareaExterna tareaExterna);
+
+	/**
+	 * Método que saca el expediente comercial a partir de una tarea externa
+	 *
+	 * @param tareaExterna
+	 * @return ExpedienteComercial
+	 */
+	public ExpedienteComercial tareaExternaToExpedienteComercial(TareaExterna tareaExterna);
+
+	public String getCodigoCarteraExpediente(String idExpediente);
 
 	DtoPage getActivosExpedienteVista(Long idExpediente);
 
@@ -964,4 +1115,21 @@ public interface ExpedienteComercialApi {
 	Long getNumExpByNumOfr(Long numBusqueda);
 
 	boolean savePlusvaliaVenta(DtoPlusvaliaVenta dto, Long idExpediente);
+
+	/**
+	 * Metodo que comprueba si el documento Contrato está subido al expediente
+	 * @param tareaExterna
+	 * @return
+	 */
+	public boolean checkContratoSubido(TareaExterna tareaExterna);
+	
+	/**
+	 * 
+	 * @param idExpediente
+	 * @return bool con el estado Ocupado SI/NO del tramite comercial de alquiler
+	 */
+	public boolean checkEstadoOcupadoTramite(Long idExpediente);
+
+	public boolean checkConTituloTramite(Long idTramite);
+
 }

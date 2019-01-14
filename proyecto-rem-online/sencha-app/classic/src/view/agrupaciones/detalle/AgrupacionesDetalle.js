@@ -8,7 +8,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionesDetalle', {
     				'HreRem.view.agrupaciones.detalle.DocumentosAgrupacion', 'HreRem.view.agrupaciones.detalle.SeguimientoAgrupacion',
         			'HreRem.view.agrupaciones.detalle.SubdivisionesAgrupacionMain','HreRem.view.agrupaciones.detalle.FotosAgrupacion',
         			'HreRem.view.agrupaciones.detalle.ActivosAgrupacion','HreRem.view.agrupaciones.detalle.ObservacionesAgrupacion',
-        			'Ext.ux.TabReorderer','HreRem.view.agrupacion.detalle.ComercialAgrupacion'],
+        			'Ext.ux.TabReorderer','HreRem.view.agrupacion.detalle.ComercialAgrupacion', 'HreRem.model.AgrupacionFicha'],
     listeners: {
     	boxready: function (tabPanel) {
     		if(tabPanel.items.length > 0 && tabPanel.items.items.length > 0) {
@@ -93,7 +93,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionesDetalle', {
 
     initComponent: function () {
         var me = this;
-
+        
         var items = [];
 		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'fichaagrupacion', funPermEdition: ['EDITAR_AGRUPACION']})}, ['TAB_AGRUPACION']),
 		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'activosagrupacion', ocultarBotonesEdicion: true})}, ['TAB_LISTA_ACTIVOS_AGRUPACION']),

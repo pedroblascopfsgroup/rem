@@ -86,8 +86,30 @@ Ext.define('HreRem.view.expedientes.OfertaExpediente', {
     	me.setTitle(HreRem.i18n('title.oferta'));
 
     	var items = [];
-    	$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'datosbasicosoferta', funPermEdition: ['EDITAR_TAB_DATOS_BASICOS_OFERTA_EXPEDIENTES']})}, ['TAB_DATOS_BASICOS_OFERTA_EXPEDIENTES']);
-    	$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'ofertatanteoyretracto', bind: {disabled: '{esExpedienteNoSujetoTramiteTanteo}'}, funPermEdition: ['EDITAR_TAB_TANTEO_RETRACTO_OFERTA_EXPEDIENTES']})}, ['TAB_TANTEO_RETRACTO_OFERTA_EXPEDIENTES']);
+    	
+    	$AU.confirmFunToFunctionExecution( function(){
+    		items.push(
+    				{
+    					xtype: 'datosbasicosoferta', 
+    					funPermEdition: [
+    						'EDITAR_TAB_DATOS_BASICOS_OFERTA_EXPEDIENTES'
+    					]
+    				}
+    		)
+    	}, ['TAB_DATOS_BASICOS_OFERTA_EXPEDIENTES']);
+    	
+    	if(CONST.TIPOS_EXPEDIENTE_COMERCIAL["ALQUILER"] != me.up("expedientedetallemain").getViewModel().get('expediente.tipoExpedienteCodigo')) {
+	    	$AU.confirmFunToFunctionExecution( function(){
+	    		items.push(
+	    				{
+	    					xtype: 'ofertatanteoyretracto', 
+	    					bind: {
+	    						disabled: '{esExpedienteNoSujetoTramiteTanteo}'}, 
+	    						funPermEdition: ['EDITAR_TAB_TANTEO_RETRACTO_OFERTA_EXPEDIENTES']
+	    					}
+	    		)
+	    	}, ['TAB_TANTEO_RETRACTO_OFERTA_EXPEDIENTES']);
+    	}
     	
     	me.addPlugin({ptype: 'lazyitems', items: items});
 

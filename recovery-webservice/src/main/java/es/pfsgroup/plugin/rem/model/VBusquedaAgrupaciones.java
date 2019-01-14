@@ -79,6 +79,12 @@ public class VBusquedaAgrupaciones implements Serializable {
 	
 	@Column(name = "AGR_IS_FORMALIZACION")
 	private Integer isFormalizacion;
+	
+	@Column(name = "IDTIPOALQUILER")
+	private Integer idTipoAlquiler;
+	
+	@Column(name = "CODTIPOALQUILER")
+	private String codTipoAlquiler;
 
 	public Long getId() {
 		return id;
@@ -222,6 +228,22 @@ public class VBusquedaAgrupaciones implements Serializable {
 
 	public void setIsFormalizacion(Integer isFormalizacion) {
 		this.isFormalizacion = isFormalizacion;
+	}
+
+	public Integer getIdTipoAlquiler() {
+		return idTipoAlquiler;
+	}
+
+	public void setIdTipoAlquiler(Integer idTipoAlquiler) {
+		this.idTipoAlquiler = idTipoAlquiler;
+	}
+
+	public String getCodTipoAlquiler() {
+		return codTipoAlquiler;
+	}
+
+	public void setCodTipoAlquiler(String codTipoAlquiler) {
+		this.codTipoAlquiler = codTipoAlquiler;
 	}
 
 }

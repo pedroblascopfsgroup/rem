@@ -205,8 +205,149 @@ Ext.define('HreRem.model.CondicionesExpediente', {
 	    },
 	    {
 	    	name: 'inversionDeSujetoPasivo'
-	    }
-
+	    },
+	    {
+	    	name: 'mesesFianza'
+	    },
+	    {
+	    	name: 'importeFianza'
+	    },
+	    {
+	    	name: 'fianzaActualizable'
+	    },
+	    {
+	    	name: 'mesesDeposito'
+	    },
+	    {
+	    	name: 'importeDeposito'
+	    },
+	    {
+	    	name: 'depositoActualizable'
+	    },
+	    {
+	    	name: 'avalista'
+	    },
+	    {
+	    	name: 'documentoFiador'
+	    },
+	    {
+	    	name: 'codigoEntidad'
+	    },
+	    {
+	    	name: 'numeroAval'
+	    },
+	    {
+	    	name: 'importeAval'
+	    },
+	    {
+	    	name: 'renunciaTanteo'
+	    },
+	    {
+	    	name: 'carencia'
+	    },
+	    {
+	    	name: 'bonificacion'
+	    },
+	    {
+	    	name: 'gastosRepercutibles'
+	    },
+	    {
+	    	name: 'mesesCarencia'
+	    },
+	    {
+	    	name: 'importeCarencia'
+	    },
+	    {
+	    	name: 'mesesBonificacion'
+	    },
+	    {
+	    	name: 'importeBonificacion'
+	    },
+	    {
+	    	name: 'duracionBonificacion'
+	    },
+	    {
+	    	name: 'repercutiblesComments'
+	    },
+	    {
+	    	name: 'entidadComments'
+	    },
+	    {
+			name: 'siCarencia',
+			calculate: function(data) { 
+				return data.carencia == 'true';
+			},
+			depends: 'carencia'
+			
+		},
+		{
+			name: 'siBonificacion',
+			calculate: function(data) { 
+				return data.bonificacion == 'true';
+			},
+			depends: 'bonificacion'
+			
+		},
+		{
+			name: 'esOtros',
+			calculate: function(data) {
+				return data.codigoEntidad == '19'
+			},
+			depends: 'codigoEntidad'
+		},
+		{
+			name: 'esRepercutible',
+			calculate: function(data) {
+				return data.gastosRepercutibles == 'true';
+			},
+			depends: 'gastosRepercutibles'
+		},
+		{
+			name: 'checkFijo'
+		},
+		{
+			name: 'fechaFijo',
+			convert: function(value) {
+				if (!Ext.isEmpty(value)) {
+					if  ((typeof value) == 'string') {
+    					return value.substr(8,2) + '/' + value.substr(5,2) + '/' + value.substr(0,4);
+    				} else {
+    					return value;
+    				}
+				}
+			}
+		},
+		{
+			name: 'incrementoRentaFijo'
+		},
+		{
+			name: 'checkPorcentual'
+		},
+		{
+			name: 'checkIPC'
+		},
+		{
+			name: 'porcentaje'  
+		},
+		{
+			name: 'checkRevisionMercado'  
+		},
+		{
+			name: 'revisionMercadoFecha',
+			convert: function(value) {
+				if (!Ext.isEmpty(value)) {
+					if  ((typeof value) == 'string') {
+    					return value.substr(8,2) + '/' + value.substr(5,2) + '/' + value.substr(0,4);
+    				} else {
+    					return value;
+    				}
+				}
+			}
+		},
+		{
+			name: 'revisionMercadoMeses'  
+		}
+	    
     ],
     
     proxy: {

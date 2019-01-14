@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:context="http://www.springframework.org/schema/context" 
+    xmlns:context="http://www.springframework.org/schema/context"
     xmlns:p="http://www.springframework.org/schema/p"
     xmlns:tx="http://www.springframework.org/schema/tx"
     xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
@@ -8,30 +8,30 @@
                http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd"
     default-autowire="byName">
 
-    <bean id="activoGenericEnterActionHandler" class="es.pfsgroup.plugin.rem.jbpm.handler.ActivoGenericEnterActionHandler"></bean>
-    <bean id="activoGenericLeaveActionHandler" class="es.pfsgroup.plugin.rem.jbpm.handler.ActivoGenericLeaveActionHandler"></bean>
-    <bean id="activoAdmisionEnterActionHandler" class="es.pfsgroup.plugin.rem.jbpm.handler.ActivoAdmisionEnterActionHandler"></bean>
-    <bean id="activoComprobarGestorActionHandler" class="es.pfsgroup.plugin.rem.jbpm.handler.ActivoComprobarGestorActionHandler"></bean>
-    <bean id="ActivoGenericSaveActionHandler" class="es.pfsgroup.plugin.rem.jbpm.handler.ActivoGenericSaveActionHandler"></bean>
-    <bean id="activoGenericEnterEmailActionHandler" class="es.pfsgroup.plugin.rem.jbpm.handler.ActivoGenericEnterEmailActionHandler"></bean>
-	<bean id="activoComprobarPropuestaPreciosActionHandler" class="es.pfsgroup.plugin.rem.jbpm.handler.ActivoComprobarPropuestaPreciosActionHandler"></bean>
-	<bean id="activoComprobarDatosActionHandler" class="es.pfsgroup.plugin.rem.jbpm.handler.ActivoComprobarDatosActionHandler"></bean>
-	<bean id="resultadoPBCEnterActionHandler" class="es.pfsgroup.plugin.rem.jbpm.handler.ResultadoPBCEnterActionHandler"></bean>
-	<bean id="resolucionExpedienteEnterActionHandler" class="es.pfsgroup.plugin.rem.jbpm.handler.ResolucionExpedienteEnterActionHandler"></bean>
+    <bean id="activoGenericEnterActionHandler" class="es.pfsgroup.plugin.rem.jbpm.handler.ActivoGenericEnterActionHandler"/>
+    <bean id="activoGenericLeaveActionHandler" class="es.pfsgroup.plugin.rem.jbpm.handler.ActivoGenericLeaveActionHandler"/>
+    <bean id="activoAdmisionEnterActionHandler" class="es.pfsgroup.plugin.rem.jbpm.handler.ActivoAdmisionEnterActionHandler"/>
+	<bean id="activoComprobarGestorActionHandler" class="es.pfsgroup.plugin.rem.jbpm.handler.ActivoComprobarGestorActionHandler"/>
+    <bean id="ActivoGenericSaveActionHandler" class="es.pfsgroup.plugin.rem.jbpm.handler.ActivoGenericSaveActionHandler"/>
+    <bean id="activoGenericEnterEmailActionHandler" class="es.pfsgroup.plugin.rem.jbpm.handler.ActivoGenericEnterEmailActionHandler"/>
+	<bean id="activoComprobarPropuestaPreciosActionHandler" class="es.pfsgroup.plugin.rem.jbpm.handler.ActivoComprobarPropuestaPreciosActionHandler"/>
+	<bean id="activoComprobarDatosActionHandler" class="es.pfsgroup.plugin.rem.jbpm.handler.ActivoComprobarDatosActionHandler"/>
+	<bean id="resultadoPBCEnterActionHandler" class="es.pfsgroup.plugin.rem.jbpm.handler.ResultadoPBCEnterActionHandler"/>
+	<bean id="resolucionExpedienteEnterActionHandler" class="es.pfsgroup.plugin.rem.jbpm.handler.ResolucionExpedienteEnterActionHandler"/>
 
-    <bean id="avanzaBPM" class="es.pfsgroup.plugin.rem.jbpm.handler.ActivoAvanzaBPMActionHandler"></bean>
+	<bean id="avanzaBPM" class="es.pfsgroup.plugin.rem.jbpm.handler.ActivoAvanzaBPMActionHandler"/>
 
-    <bean id="activoEndProcessActionHandler" class="es.pfsgroup.plugin.rem.jbpm.handler.ActivoEndProcessActionHandler"></bean>
+	<bean id="activoEndProcessActionHandler" class="es.pfsgroup.plugin.rem.jbpm.handler.ActivoEndProcessActionHandler"/>
 
-    <bean id="activarProrroga" class="es.pfsgroup.plugin.rem.jbpm.handler.ActivoProrrogarTareasActionHandler"></bean>
+	<bean id="activarProrroga" class="es.pfsgroup.plugin.rem.jbpm.handler.ActivoProrrogarTareasActionHandler"/>
 
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteAdmision.xml" p:version="2033"/>	
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteAdmision.xml" p:version="2033"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteDocumental.xml" p:version="2034"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteDocumentalCEE.xml" p:version="2042"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteActuacionTecnica.xml" p:version="2050"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteTasacion.xml" p:version="2062"/>	
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteInforme.xml" p:version="2066"/>	
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteFacturacion.xml" p:version="2072"/>	
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteTasacion.xml" p:version="2062"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteInforme.xml" p:version="2066"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteFacturacion.xml" p:version="2072"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteDocumentalCedula.xml" p:version="2081"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramitePropuestaPrecios.xml" p:version="2028"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteActualizacionPrecios.xml" p:version="2035"/>
@@ -39,6 +39,7 @@
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteAprobacionInformeComercial.xml" p:version="255"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteSancionOfertaAlquiler.xml" p:version="2042"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteSancionOferta.xml" p:version="2049"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteComercialAlquiler.xml" p:version="-1"/>
 
 	<bean id="jbpmActivoScriptExecutor" class="es.pfsgroup.plugin.rem.jbpm.activo.JBPMActivoScriptExecutor" >
   	<property name="contextScripts">
@@ -288,6 +289,10 @@
             	def ofertaManager = ctx.getBean("ofertaManager");
             	return ofertaManager.checkComiteSancionador(tareaExterna);
             }
+            def checkComiteSancionadorAlquilerHaya = {
+            	def ofertaManager = ctx.getBean("ofertaManager");
+            	return ofertaManager.checkComiteSancionadorAlquilerHaya(tareaExterna);
+            }
             def checkAtribuciones = {
             	def ofertaManager = ctx.getBean("ofertaManager");
             	return ofertaManager.checkAtribuciones(tareaExterna);
@@ -497,10 +502,30 @@
 				def ofertaManager = ctx.getBean("ofertaManager");
 				return ofertaManager.checkProvinciaCompradores(tareaExterna);
 			}
+			def checkPrecontratoSubido = {
+				def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
+            	return expedienteComercialManager.checkPrecontratoSubido(tareaExterna);
+			}
 			def checkNifConyugueLBB = {
 				def ofertaManager = ctx.getBean("ofertaManager");
 				return ofertaManager.checkNifConyugueLBB(tareaExterna);
 			}
+			def activoEnTramite = {
+				def trabajoManager = ctx.getBean("trabajoManager");
+            	return trabajoManager.activoEnTramite(idActivo);
+			}
+			def checkContratoSubido = {
+				def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
+            	return expedienteComercialManager.checkContratoSubido(tareaExterna);
+			}
+			def checkEstadoOcupadoTramite = {
+            	def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
+            	return expedienteComercialManager.checkEstadoOcupadoTramite(idTramite);
+            }
+            def checkConTituloTramite = {
+            	def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
+            	return expedienteComercialManager.checkConTituloTramite(idTramite);
+            }
   			 ]]></value>
   		</list>
   	</property>

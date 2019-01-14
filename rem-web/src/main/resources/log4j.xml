@@ -89,6 +89,14 @@
 	</logger>
 
 	<!-- Spring -->
+	<logger name="org.springframework"
+		additivity="false">
+		<level value="fatal" />
+		<appender-ref ref="console" />
+		<appender-ref ref="file" />
+		<appender-ref ref="syslog" />
+		<appender-ref ref="email" />
+	</logger>
 	<logger name="org.springframework.aop.framework.Cglib2AopProxy"
 		additivity="false">
 		<level value="error" />
@@ -149,8 +157,8 @@
 		<appender-ref ref="syslog" />
 		<appender-ref ref="email" />
 	</logger>
-	<logger name="org.jbpm" additivity="false">
-		<level value="warn" />
+	<logger name="org.jbpm.graph.def.GraphElement" additivity="false">
+		<level value="fatal" />
 		<appender-ref ref="console" />
 		<appender-ref ref="file" />
 		<appender-ref ref="syslog" />

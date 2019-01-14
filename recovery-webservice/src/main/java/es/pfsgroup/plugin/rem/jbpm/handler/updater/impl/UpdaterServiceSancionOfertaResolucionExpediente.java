@@ -2,7 +2,9 @@ package es.pfsgroup.plugin.rem.jbpm.handler.updater.impl;
 
 import es.capgemini.devon.exception.UserException;
 import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
+import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
+import es.capgemini.pfs.tareaNotificacion.model.TareaNotificacion;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
@@ -71,7 +73,7 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 			}
 			String valorComboProcede= null;
 			String valorComboMotivoAnularReserva= null;
-			
+			String peticionario = null;
 			Activo activo = expediente.getOferta().getActivoPrincipal();
 			boolean checkFormalizar = false;
 			if(!Checks.esNulo(activo)){
@@ -108,6 +110,14 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", valor.getValor());
 						DDMotivoAnulacionExpediente motivoAnulacion = genericDao.get(DDMotivoAnulacionExpediente.class, filtro);
 						expediente.setMotivoAnulacion(motivoAnulacion);
+						
+						// Guardamos el usuario que realiza la tarea
+						TareaExterna tex = valor.getTareaExterna();
+						if (!Checks.esNulo(tex)) {
+							TareaNotificacion tar = tex.getTareaPadre();
+							peticionario = tar.getAuditoria().getUsuarioBorrar();
+						}
+						expediente.setPeticionarioAnulacion(peticionario);
 
 						if(!tieneReserva && DDCartera.CODIGO_CARTERA_BANKIA.equals(ofertaAceptada.getActivoPrincipal().getCartera().getCodigo()) &&
 								!DDEstadosExpedienteComercial.EN_TRAMITACION.equals(estadoOriginal) && checkFormalizar) {

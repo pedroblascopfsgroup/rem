@@ -16,6 +16,7 @@ import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.notificator.AbstractNotificatorService;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.DtoGencatSave;
+import es.pfsgroup.plugin.rem.model.dd.DDSancionGencat;
 
 
 @Service
@@ -30,14 +31,14 @@ public class NotificacionesGencatManager extends AbstractNotificatorService{
 	
 	
 	
-	public void sendMailNotificacionSancionGencat(DtoGencatSave gencatDto, Activo activo) {
+	public void sendMailNotificacionSancionGencat(DtoGencatSave gencatDto, Activo activo,DDSancionGencat sancion) {
 		String fechaSancion = gencatDto.getFechaSancion();
-		String sancion = gencatDto.getSancion();
+		String sancionDto = gencatDto.getSancion();
 		String numActivo = Long.toString(activo.getNumActivo());
 		List<String> mailsCC = new ArrayList<String>();
 		List<DtoAdjuntoMail> adjuntos = new ArrayList<DtoAdjuntoMail>();
 		
-		if(fechaSancion != null && sancion !=null) {
+		if(fechaSancion != null && sancionDto !=null) {
 			ArrayList<String> para = new ArrayList<String>();
 			Usuario gestorFormalizacion = gestorActivoManager.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_FORMALIZACION);
 			Usuario gestoriaFormalizacion  = gestorActivoManager.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTORIA_FORMALIZACION);
@@ -49,18 +50,13 @@ public class NotificacionesGencatManager extends AbstractNotificatorService{
 				
 				para.add(gestoriaFormalizacion.getEmail());
 			}
-			if(sancion.equals("NO_EJERCE")) {
-				sancion = "No ejerce";				
-			}
-			if(sancion.equals("EJERCE")) {
-	            sancion = "Ejerce";				
-			}
-			   
+			para.add("stefany.moron@pfsgroup.es");
+	
 			if(!para.isEmpty()) {
 				
-				String asunto = "Sanción GENCAT como " + sancion +" del activo " + numActivo;
+				String asunto = "Sanción GENCAT como " + sancion.getDescripcion() +" del activo " + numActivo;
 				String cuerpo = 
-						String.format("<p>GENCAT ha sancionado como %s la comunicación del activo %s de su oferta aprobada. Un saludo</p>", sancion, numActivo);
+						String.format("<p>GENCAT ha sancionado como %s la comunicación del activo %s de su oferta aprobada. Un saludo.</p>", sancion.getDescripcion(), numActivo);
 				String cuerpoCorreo = this.generateCuerpoCorreoNotificacionAutomatica(cuerpo);
 				
 				genericAdapter.sendMail(para, mailsCC, asunto, cuerpoCorreo, adjuntos);

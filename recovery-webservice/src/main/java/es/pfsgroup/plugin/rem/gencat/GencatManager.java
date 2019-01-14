@@ -999,6 +999,7 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 	public Boolean saveDatosComunicacion(DtoGencatSave gencatDto)
 	{
 		Activo activo = activoApi.get( gencatDto.getIdActivo() );
+		DDSancionGencat sancion = (DDSancionGencat) utilDiccionarioApi.dameValorDiccionarioByCod( DDSancionGencat.class , gencatDto.getSancion() );	
 		if( gencatDto.getIdActivo() != null)
 		{
 			ComunicacionGencat cg = getComunicacionGencatByIdActivo( gencatDto.getIdActivo() );
@@ -1008,7 +1009,7 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 				cg.getAuditoria().setFechaModificar(new Date());
 				cg.getAuditoria().setUsuarioModificar( usuarioManager.getUsuarioLogado().getUsername() );				
 				comunicacionGencatDao.saveOrUpdate(cg);	
-				notificacionesGencat.sendMailNotificacionSancionGencat(gencatDto, activo);
+				notificacionesGencat.sendMailNotificacionSancionGencat(gencatDto, activo, sancion);
 				
 				return true;
 			}
@@ -1025,7 +1026,7 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 				{
 					cg.setActivo( activo );
 					comunicacionGencatDao.saveOrUpdate(cg);	
-					notificacionesGencat.sendMailNotificacionSancionGencat(gencatDto, activo);
+					notificacionesGencat.sendMailNotificacionSancionGencat(gencatDto, activo, sancion);
 					return true;
 				}
 			}

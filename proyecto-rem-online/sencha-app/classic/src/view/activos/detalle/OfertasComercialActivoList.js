@@ -222,6 +222,7 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
         
     },
 	
+    
 	onAddClick: function (btn) {
 		
 		var me = this;

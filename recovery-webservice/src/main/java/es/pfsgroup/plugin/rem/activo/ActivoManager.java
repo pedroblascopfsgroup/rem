@@ -253,6 +253,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	private static final String MAESTRO_ORIGEN_WCOM="WCOM";
 	private SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 	private BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
+	
 
 	@Resource
 	private MessageService messageServices;

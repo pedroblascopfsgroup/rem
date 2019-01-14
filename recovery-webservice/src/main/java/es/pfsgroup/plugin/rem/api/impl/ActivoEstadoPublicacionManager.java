@@ -683,10 +683,10 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 			ActivoPublicacionHistorico ultimaPublicacion = listaActivoPublicacionesHistoricas.get(0);
 			if(!Checks.esNulo(ultimaPublicacion.getFechaFinVenta()) && !Checks.esNulo(ultimaPublicacion.getFechaInicioVenta())){
 				Long milisegundos = Math.abs(ultimaPublicacion.getFechaInicioVenta().getTime() - ultimaPublicacion.getFechaFinVenta().getTime());
-				dias = Math.round(TimeUnit.DAYS.convert(milisegundos, TimeUnit.MILLISECONDS));
+				dias = (int) (milisegundos / 1000 / 60 / 60 / 24);
 			}else if(!Checks.esNulo(ultimaPublicacion.getFechaInicioVenta())){
 				Long milisegundos = Math.abs(new Date().getTime() - ultimaPublicacion.getFechaInicioVenta().getTime());
-				dias = Math.round(TimeUnit.DAYS.convert(milisegundos, TimeUnit.MILLISECONDS));
+				dias = (int) Math.round(milisegundos / 1000.0 / 60.0 / 60.0 / 24.0);
 			}
 		}
 		
@@ -716,10 +716,10 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 			ActivoPublicacionHistorico ultimaPublicacion = listaActivoPublicacionesHistoricas.get(0);
 			if(!Checks.esNulo(ultimaPublicacion.getFechaFinAlquiler()) && !Checks.esNulo(ultimaPublicacion.getFechaInicioAlquiler())){
 				Long milisegundos = Math.abs(ultimaPublicacion.getFechaInicioAlquiler().getTime() - ultimaPublicacion.getFechaFinAlquiler().getTime());
-				dias = Math.round(TimeUnit.DAYS.convert(milisegundos, TimeUnit.MILLISECONDS));
+				dias = (int) (milisegundos / 1000 / 60 / 60 / 24);
 			}else if(!Checks.esNulo(ultimaPublicacion.getFechaInicioAlquiler())){
 				Long milisegundos = Math.abs(new Date().getTime() - ultimaPublicacion.getFechaInicioAlquiler().getTime());
-				dias = Math.round(TimeUnit.DAYS.convert(milisegundos, TimeUnit.MILLISECONDS));
+				dias = (int) Math.round(milisegundos / 1000.0 / 60.0 / 60.0 / 24.0);
 			}
 		}
 		

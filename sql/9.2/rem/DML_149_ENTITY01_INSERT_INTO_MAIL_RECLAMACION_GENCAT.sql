@@ -1,7 +1,7 @@
 --/* 
 --##########################################
---## AUTOR=Sonia Garcia Mochales
---## FECHA_CREACION=20181128
+--## AUTOR=Oscar Diestre
+--## FECHA_CREACION=20190114
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-5098
@@ -39,6 +39,11 @@ BEGIN
 	
 	
 	IF V_NUM_TABLAS = 1 THEN
+
+	 V_SQL:= 'DELETE FROM '||V_ESQUEMA||'.MAIL_RECLAMACION_GENCAT WHERE DE IN ( ''GENCAT_Proceso_Comunicacion'', ''GENCAT_Proceso_Reclamacion'' )';
+	DBMS_OUTPUT.PUT_LINE(V_SQL);
+	  EXECUTE IMMEDIATE V_SQL;
+	  DBMS_OUTPUT.PUT_LINE(V_NUM_TABLAS || 'registros borrados');
 	
 V_SQL := 'INSERT INTO '||V_ESQUEMA||'.MAIL_RECLAMACION_GENCAT	(
 					DE, 
@@ -49,7 +54,7 @@ V_SQL := 'INSERT INTO '||V_ESQUEMA||'.MAIL_RECLAMACION_GENCAT	(
 					ADJUNTO
 					) 
 		values ( 
-				 ''GENCAT_Proceso_Reclamacion'',
+				 ''noreply.rem@haya.es'',
 				 ''jpoyatos@haya.es'',
 				 '''',
 				 ''Reclamaciones generadas a día de hoy.'',

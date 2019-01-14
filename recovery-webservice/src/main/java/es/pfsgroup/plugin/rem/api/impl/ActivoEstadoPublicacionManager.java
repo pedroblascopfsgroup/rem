@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.api.impl;
 
 import java.lang.reflect.InvocationTargetException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -681,12 +682,10 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		
 		if(!Checks.estaVacio(listaActivoPublicacionesHistoricas)){
 			ActivoPublicacionHistorico ultimaPublicacion = listaActivoPublicacionesHistoricas.get(0);
-			if(!Checks.esNulo(ultimaPublicacion.getFechaFinVenta()) && !Checks.esNulo(ultimaPublicacion.getFechaInicioVenta())){
-				Long milisegundos = Math.abs(ultimaPublicacion.getFechaInicioVenta().getTime() - ultimaPublicacion.getFechaFinVenta().getTime());
-				dias = (int) (milisegundos / 1000 / 60 / 60 / 24);
-			}else if(!Checks.esNulo(ultimaPublicacion.getFechaInicioVenta())){
-				Long milisegundos = Math.abs(new Date().getTime() - ultimaPublicacion.getFechaInicioVenta().getTime());
-				dias = (int) Math.round(milisegundos / 1000.0 / 60.0 / 60.0 / 24.0);
+			try {
+				dias = (int)(long)activoPublicacionHistoricoDao.obtenerDiasPorEstadoPublicacionVentaActivo(ultimaPublicacion);
+			} catch (ParseException e) {
+				e.printStackTrace();
 			}
 		}
 		
@@ -714,12 +713,10 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		
 		if(!Checks.estaVacio(listaActivoPublicacionesHistoricas)){
 			ActivoPublicacionHistorico ultimaPublicacion = listaActivoPublicacionesHistoricas.get(0);
-			if(!Checks.esNulo(ultimaPublicacion.getFechaFinAlquiler()) && !Checks.esNulo(ultimaPublicacion.getFechaInicioAlquiler())){
-				Long milisegundos = Math.abs(ultimaPublicacion.getFechaInicioAlquiler().getTime() - ultimaPublicacion.getFechaFinAlquiler().getTime());
-				dias = (int) (milisegundos / 1000 / 60 / 60 / 24);
-			}else if(!Checks.esNulo(ultimaPublicacion.getFechaInicioAlquiler())){
-				Long milisegundos = Math.abs(new Date().getTime() - ultimaPublicacion.getFechaInicioAlquiler().getTime());
-				dias = (int) Math.round(milisegundos / 1000.0 / 60.0 / 60.0 / 24.0);
+			try {
+				dias = (int)(long)activoPublicacionHistoricoDao.obtenerDiasPorEstadoPublicacionAlquilerActivo(ultimaPublicacion);
+			} catch (ParseException e) {
+				e.printStackTrace();
 			}
 		}
 		

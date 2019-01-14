@@ -186,15 +186,8 @@ public class ActivoPublicacionHistoricoDaoImpl extends AbstractEntityDao<ActivoP
 		return HibernateUtils.castObject(Integer.class, criteria.uniqueResult());
 	}
 
-	/**
-	 * Este método obtiene el conteo de días que se pasa un activo en un mismo estado de publicación para el tipo destino comercial venta. Se limita al estado de 'Publicado'. Para el resto de estados
-	 * devuelve 0.
-	 *
-	 * @param estadoActivo: estado del activo del cual calcular sus días.
-	 * @return Devuelve el número de días que ha estado un activo en un mismo estado.
-	 * @throws ParseException: Puede lanzar un error al convertir la fecha para los cálculos
-	 */
-	private Long obtenerDiasPorEstadoPublicacionVentaActivo(ActivoPublicacionHistorico estadoActivo) throws ParseException {
+	@Override
+	public Long obtenerDiasPorEstadoPublicacionVentaActivo(ActivoPublicacionHistorico estadoActivo) throws ParseException {
 		Long dias = 0L;
 
 		if (DDEstadoPublicacionVenta.CODIGO_PUBLICADO_VENTA.equals(estadoActivo.getEstadoPublicacionVenta().getCodigo()) && !Checks.esNulo(estadoActivo.getFechaInicioVenta())) {
@@ -210,15 +203,8 @@ public class ActivoPublicacionHistoricoDaoImpl extends AbstractEntityDao<ActivoP
 		return dias;
 	}
 
-	/**
-	 * Este método obtiene el conteo de días que se pasa un activo en un mismo estado de publicación para el tipo destino comercial alquiler. Se limita al estado de 'Publicado'. Para el resto de
-	 * estados devuelve 0.
-	 *
-	 * @param estadoActivo: estado del activo del cual calcular sus días.
-	 * @return Devuelve el número de días que ha estado un activo en un mismo estado.
-	 * @throws ParseException: Puede lanzar un error al convertir la fecha para los cálculos.
-	 */
-	private Long obtenerDiasPorEstadoPublicacionAlquilerActivo(ActivoPublicacionHistorico estadoActivo) throws ParseException {
+	@Override
+	public Long obtenerDiasPorEstadoPublicacionAlquilerActivo(ActivoPublicacionHistorico estadoActivo) throws ParseException {
 		Long dias = 0L;
 
 		if (DDEstadoPublicacionAlquiler.CODIGO_PUBLICADO_ALQUILER.equals(estadoActivo.getEstadoPublicacionAlquiler().getCodigo()) && !Checks.esNulo(estadoActivo.getFechaInicioAlquiler())) {

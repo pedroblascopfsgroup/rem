@@ -2,6 +2,8 @@ package es.pfsgroup.plugin.rem.activo.publicacion.dao;
 
 
 
+import java.text.ParseException;
+
 import es.capgemini.pfs.dao.AbstractDao;
 import es.pfsgroup.plugin.rem.model.ActivoPublicacionHistorico;
 import es.pfsgroup.plugin.rem.model.DtoPaginadoHistoricoEstadoPublicacion;
@@ -40,4 +42,23 @@ public interface ActivoPublicacionHistoricoDao extends AbstractDao<ActivoPublica
 	 */
 	Integer getTotalDeDiasEnEstadoPublicadoAlquilerPorIdActivo(Long idActivo);
 	
+	/**
+	 * Este método obtiene el conteo de días que se pasa un activo en un mismo estado de publicación para el tipo destino comercial venta. Se limita al estado de 'Publicado'. Para el resto de estados
+	 * devuelve 0.
+	 *
+	 * @param estadoActivo: estado del activo del cual calcular sus días.
+	 * @return Devuelve el número de días que ha estado un activo en un mismo estado.
+	 * @throws ParseException: Puede lanzar un error al convertir la fecha para los cálculos
+	 */
+	Long obtenerDiasPorEstadoPublicacionVentaActivo(ActivoPublicacionHistorico estadoActivo) throws ParseException;
+	
+	/**
+	 * Este método obtiene el conteo de días que se pasa un activo en un mismo estado de publicación para el tipo destino comercial alquiler. Se limita al estado de 'Publicado'. Para el resto de
+	 * estados devuelve 0.
+	 *
+	 * @param estadoActivo: estado del activo del cual calcular sus días.
+	 * @return Devuelve el número de días que ha estado un activo en un mismo estado.
+	 * @throws ParseException: Puede lanzar un error al convertir la fecha para los cálculos.
+	 */
+	Long obtenerDiasPorEstadoPublicacionAlquilerActivo(ActivoPublicacionHistorico estadoActivo) throws ParseException;
 }

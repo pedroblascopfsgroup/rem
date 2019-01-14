@@ -10,6 +10,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -17,13 +18,16 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
+import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.Reserva;
 import es.pfsgroup.plugin.rem.model.TanteoActivoExpediente;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
 
@@ -35,20 +39,24 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 
 	@Autowired
 	private OfertaApi ofertaApi;
-	
+
 	@Autowired
 	private ActivoTramiteApi activoTramiteApi;
 
-	private static int NUMERO_DIAS_VENCIMIENTO = 45;
+	private static final Integer NUMERO_DIAS_VENCIMIENTO = 45;
+	private static final Integer NUMERO_DIAS_VENCIMIENTO_SAREB = 40;
 
 	@Autowired
 	private ExpedienteComercialApi expedienteComercialApi;
+
+	@Autowired
+	private GestorActivoApi gestorActivoApi;
 
 	private static final String CODIGO_T013_OBTENCION_CONTRATO_RESERVA = "T013_ObtencionContratoReserva";
 	private static final String FECHA_FIRMA = "fechaFirma";
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
-	
+
 	protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaObtencionContrato.class);
 
 	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {
@@ -56,29 +64,50 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 		Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());
 		ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
 		Filter filtro;
+		Activo activo = null;
 		
-// Se comenta por errores en el merge c9d4164588f764216e0eeaf20836605357cf6b24
-//		for (TareaExternaValor valor : valores) {
-//
-//			if (FECHA_FIRMA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
-//				Reserva reserva = expediente.getReserva();
-//				if (!Checks.esNulo(reserva)) {
-//					//Si hay reserva y firma, se desbloquea la tarea ResultadoPBC
-//					activoTramiteApi.reactivarTareaResultadoPBC(valor.getTareaExterna(), expediente);
-//					try {			
-//						reserva.setFechaFirma(ft.parse(valor.getValor()));
-//						genericDao.save(Reserva.class, reserva);
-//					} catch (ParseException e) {
-//						e.printStackTrace();
-//					}
-//				}
-//			}
+
+		for (TareaExternaValor valor : valores) {
+
+			if (FECHA_FIRMA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
+				Reserva reserva = expediente.getReserva();
+				if (!Checks.esNulo(reserva)) {
+					//Si hay reserva y firma, se desbloquea la tarea ResultadoPBC
+					activoTramiteApi.reactivarTareaResultadoPBC(valor.getTareaExterna(), expediente);
+					try {			
+						reserva.setFechaFirma(ft.parse(valor.getValor()));
+						genericDao.save(Reserva.class, reserva);
+					} catch (ParseException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+			genericDao.save(ExpedienteComercial.class, expediente);
+			
+			
+		}		
 //		}
 //			genericDao.save(ExpedienteComercial.class, expediente);
 //		
 		
 		if (!Checks.esNulo(ofertaAceptada)) {
-			if (ofertaApi.checkDerechoTanteo(tramite.getTrabajo()))
+			
+			Boolean finalizado = false;
+			activo = ofertaAceptada.getActivoPrincipal();
+			
+			List<TareaExterna> listaTareas = activoTramiteApi
+					.getListaTareaExternaByIdTramite(tramite.getId());
+			for (int i = 0; i < listaTareas.size(); i++) {
+				TareaExterna tarea = listaTareas.get(i);
+				if (!Checks.esNulo(tarea)) {
+					if (tarea.getTareaProcedimiento().getCodigo().equalsIgnoreCase("T013_ResolucionTanteo")) {
+						finalizado = !Checks.esNulo(tarea.getTareaPadre().getFechaFin());
+						break;
+					}
+				}
+			}
+			
+			if (ofertaApi.checkDerechoTanteo(tramite.getTrabajo()) && !finalizado)
 				filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.BLOQUEO_ADM);
 			else
 				filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.RESERVADO);
@@ -96,7 +125,11 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 				if(!Checks.esNulo(expediente.getReserva().getFechaFirma()) && !ofertaApi.checkDerechoTanteo(tramite.getTrabajo())){
 					Calendar calendar = Calendar.getInstance();
 					calendar.setTime(expediente.getReserva().getFechaFirma());
-				    calendar.add(Calendar.DAY_OF_YEAR, UpdaterServiceSancionOfertaObtencionContrato.NUMERO_DIAS_VENCIMIENTO);
+					if(!Checks.esNulo(activo) && DDCartera.CODIGO_CARTERA_SAREB.equals(activo.getCartera().getCodigo())) {
+						calendar.add(Calendar.DAY_OF_YEAR, NUMERO_DIAS_VENCIMIENTO_SAREB);
+					}else {
+						calendar.add(Calendar.DAY_OF_YEAR, UpdaterServiceSancionOfertaObtencionContrato.NUMERO_DIAS_VENCIMIENTO);
+					}
 				    expediente.getReserva().setFechaVencimiento(calendar.getTime());
 				}
 				
@@ -108,13 +141,12 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 						expedienteComercialApi.actualizarFVencimientoReservaTanteosRenunciados(null, tanteosExpediente);
 					}
 				}
-				
-				
 			}
-			
-		
+
 			genericDao.save(ExpedienteComercial.class, expediente);
 
+
+			//Actualizar el estado comercial de los activos de la oferta y, consecuentemente, el estado de publicación.
 			for (TareaExternaValor valor : valores) {
 
 				if (FECHA_FIRMA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
@@ -137,12 +169,6 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 			
 			//Actualizar el estado comercial de los activos de la oferta
 			ofertaApi.updateStateDispComercialActivosByOferta(ofertaAceptada);
-			//Actualizar el estado de la publicación de los activos de la oferta (ocultar activos)
-			try {
-				ofertaApi.ocultarActivoOferta(ofertaAceptada);
-			} catch (Exception e) {
-				logger.error("Error descongelando ofertas.", e);
-			} 
 		}
 
 	}
@@ -153,6 +179,6 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 
 	public String[] getKeys() {
 		return this.getCodigoTarea();
-	}    
+	}
 
 }

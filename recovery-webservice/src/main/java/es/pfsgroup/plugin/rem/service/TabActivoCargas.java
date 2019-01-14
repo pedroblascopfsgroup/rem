@@ -33,11 +33,12 @@ public class TabActivoCargas implements TabActivoService {
 		BeanUtils.copyProperties(activoDto, activo);
 		
 		// Establecemos el estado de las cargas manualmente.
-		if(activoCargasApi.esActivoConCargasNoCanceladasRegistral(activo.getId()) || activoCargasApi.esActivoConCargasNoCanceladasEconomica(activo.getId())) {
-			activoDto.setConCargas(1);
-		} else {
-			activoDto.setConCargas(0);
-		}
+		// if(activoCargasApi.esActivoConCargasNoCanceladasRegistral(activo.getId()) || activoCargasApi.esActivoConCargasNoCanceladasEconomica(activo.getId())) {
+			if(activoCargasApi.esActivoConCargasNoCanceladas(activo.getId())) {
+				activoDto.setConCargas(1);
+			} else {
+				activoDto.setConCargas(0);
+			}
 		
 		// HREOS-2761: Buscamos los campos que pueden ser propagados para esta pestaña
 		activoDto.setCamposPropagables(TabActivoService.TAB_CARGAS_ACTIVO);

@@ -3,14 +3,13 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
     alias: 'viewmodel.trabajodetalle',
 
     requires : ['HreRem.ux.data.Proxy', 'HreRem.model.ComboBase', 'HreRem.model.ActivoTrabajo', 'HreRem.model.ActivoTrabajoSubida',
-    'HreRem.model.AdjuntoTrabajo', 'HreRem.model.TareaList', 'HreRem.model.ObservacionesTrabajo', 'HreRem.model.Llaves'],
+    'HreRem.model.AdjuntoTrabajo', 'HreRem.model.TareaList', 'HreRem.model.ObservacionesTrabajo', 'HreRem.model.Llaves', 'HreRem.model.FichaTrabajo'],
     
     data: {
     	trabajo: null
     },
     
     formulas: {
-    	
     	tituloActivosTrabajo: function (get) {   	
 	     	
 	     	 var numAgrupacion = get('trabajo.numAgrupacion');
@@ -111,12 +110,29 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
 	    },
 	    
 	    esVisibleFechaAutorizacionPropietario: function(get){
-			 if(get('trabajo.cartera')=='Liberbank') 
+	    	 me = this;
+			 if(get('trabajo.cartera')=='Liberbank' && CONST.TIPOS_TRABAJO["ACTUACION_TECNICA"] == me.get('trabajo.tipoTrabajoCodigo')) 
+				 return true;
+			 else 
+				 return false;
+		},
+	    
+		esVisibleFechaEjecucionReal: function(get){
+	    	 me = this;
+			 if(CONST.TIPOS_TRABAJO["ACTUACION_TECNICA"] == me.get('trabajo.tipoTrabajoCodigo')) 
+				 return true;
+			 else 
+				 return false;
+		},
+		
+		esVisibleFechaValidacion: function(get){
+	    	 me =  this;
+			 if(CONST.TIPOS_TRABAJO["ACTUACION_TECNICA"] == me.get('trabajo.tipoTrabajoCodigo')) 
 				 return true;
 			 else 
 				 return false;
 		}
-	    
+		
     },
     
     stores: {
@@ -136,7 +152,7 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
 				proxy: {
 					type: 'uxproxy',
 					remoteUrl: 'generic/getComboSubtipoTrabajo',
-					extraParams: {tipoTrabajoCodigo: '{trabajo.tipoTrabajoCodigo}'}
+					extraParams: {tipoTrabajoCodigo: '{trabajo.tipoTrabajoCodigo}',idActivo: '{idActivo}'}
 				}  		
     		},
     		
@@ -283,7 +299,9 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
 				proxy: {
 					type: 'uxproxy',
 					remoteUrl: 'generic/getComboTipoTrabajoCreaFiltered',
-					extraParams: {idActivo: '{idActivo}'}
+					extraParams: {
+						idActivo: '{idActivo}'
+					}
 				}
     		},
     		
@@ -448,8 +466,18 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
 					type: 'uxproxy',
 					remoteUrl: 'activo/getComboSupervisorActivos'
 				}  		
-    		}
+    		},
 
+    		comboResponsableTrabajo: {    		
+				model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'trabajo/getComboResponsableTrabajo',
+					extraParams: {
+						idTrabajo: '{trabajo.id}'
+					}	
+				}
+    		}
     }
-    
+
 });

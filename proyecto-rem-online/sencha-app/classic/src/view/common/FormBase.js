@@ -76,7 +76,7 @@
     refreshAfterSave: false,
     
     initComponent: function() {
-    	
+    	var esEditable = $AU.userHasFunction('EDITAR_BTN_EXPORT_FACTURAS_TASAS_IMPUESTOS');
     	var me = this; 
     	
     	me.addCls('panel-base shadow-panel');
@@ -92,13 +92,12 @@
 
 		// Vista que enlazada con el modelo que contendrá el record de este form.
     	me.viewWithModel = me.up('[viewModel]');
-
     	if (me.isSearchFormTareas) {
     		
     		me.collapsible= true;
     		me.collapsed= false;    		
     		me.buttonAlign = 'left';
-    		me.buttons = [{ text: HreRem.i18n('btn.buscar'), handler: 'onSearchClick' },{ text: HreRem.i18n('btn.limpiar'), handler: 'onCleanFiltersClick'}, { text: HreRem.i18n('btn.exportar'), handler: 'onClickDescargarExcelTareas'}];
+    		me.buttons = [{ text: HreRem.i18n('btn.buscar'), handler: 'onSearchClick' },{ text: HreRem.i18n('btn.limpiar'), handler: 'onCleanFiltersClick'}, { text: HreRem.i18n('btn.exportar'), handler: 'onClickDescargarExcelTareas'}, {text: HreRem.i18n('btn.gesSustituto'), handler: 'onClickCargaTareasGestorSustituto', bind: { hidden: false}, reference: 'btnGestorSustituto'}];
     	}
     	
     	if (me.isSearchFormAlertas) {
@@ -123,7 +122,7 @@
     		me.buttonAlign = 'left';
     		//me.buttons = [{ text: HreRem.i18n('btn.buscar'), handler: 'onSearchClick' },{ text: HreRem.i18n('btn.limpiar'), handler: 'onCleanFiltersClick'}, { text: HreRem.i18n('btn.exportar'), handler: 'onClickDescargarExcel'}, { text: HreRem.i18n('btn.crearTrabajo'), handler: 'onClickCrearTrabajo', hidden: !$AU.userIsRol(CONST.PERFILES['SUPERVISOR_ACTIVO'])}]
     		//El botón de crear trabajo se pone visible para todos en el arranque
-    		me.buttons = [{ text: HreRem.i18n('btn.buscar'), handler: 'onSearchClick' },{ text: HreRem.i18n('btn.limpiar'), handler: 'onCleanFiltersClick'}, { text: HreRem.i18n('btn.exportar'), handler: 'onClickDescargarExcel'}, { text: HreRem.i18n('btn.crearTrabajo'), handler: 'onClickCrearTrabajo'}]
+    		me.buttons = [{ text: HreRem.i18n('btn.buscar'), handler: 'onSearchClick' },{ text: HreRem.i18n('btn.abrir.activo'), handler: 'onSearchBusquedaDirectaActivos', reference: 'btnActivo', disabled: true },{ text: HreRem.i18n('btn.limpiar'), handler: 'onCleanFiltersClick'}, { text: HreRem.i18n('btn.exportar'), handler: 'onClickDescargarExcel'}, { text: HreRem.i18n('btn.crearTrabajo'), handler: 'onClickCrearTrabajo'}]
     	}
     	   		
     	if (me.isSearchForm) {
@@ -133,13 +132,21 @@
     		me.buttonAlign = 'left';
     		me.buttons = [{ text: HreRem.i18n('btn.buscar'), handler: 'onSearchClick' },{ text: HreRem.i18n('btn.limpiar'), handler: 'onCleanFiltersClick'}, { text: HreRem.i18n('btn.exportar'), handler: 'onClickDescargarExcel'}];
     	}
+    	
+    	if (me.isSearchFormOfertas) {
+    		
+    		me.collapsible= true;
+    		me.collapsed= false;    		
+    		me.buttonAlign = 'left';
+    		me.buttons = [{ text: HreRem.i18n('btn.buscar'), handler: 'onSearchClick' },{ text: HreRem.i18n('btn.abrir.expediente'), handler: 'onSearchBusquedaDirectaExpediente', reference: 'btnExp', disabled: true, hidden: true},{ text: HreRem.i18n('btn.limpiar'), handler: 'onCleanFiltersClick'}, { text: HreRem.i18n('btn.exportar'), handler: 'onClickDescargarExcel'}];
+    	}
 
     	if (me.isSearchFormGastos) {
 
     		me.collapsible= true;
     		me.collapsed= false;    		
     		me.buttonAlign = 'left';
-    		me.buttons = [{ text: HreRem.i18n('btn.buscar'), handler: 'onClickGastosSearch', reference: 'btnSearchGastos' },{ text: HreRem.i18n('btn.limpiar'), handler: 'onCleanFiltersClick'}, { text: HreRem.i18n('btn.exportar'), handler: 'onClickDescargarExcelGestionGastos'}];
+    		me.buttons = [{ text: HreRem.i18n('btn.buscar'), handler: 'onClickGastosSearch', reference: 'btnSearchGastos' },{ text: HreRem.i18n('btn.limpiar'), handler: 'onCleanFiltersClick'}, { text: HreRem.i18n('btn.exportar'), handler: 'onClickDescargarExcelGestionGastos'}, {text: HreRem.i18n('fieldlabel.activo.administracion.extraer.facturas'), handler: 'onExportClickFacturas', hidden: !esEditable}, {text: HreRem.i18n('fieldlabel.activo.administracion.extraer.impuestos'), handler: 'onExportClickTasasImpuestos', hidden: !esEditable}];
     	}
     	
     	if (me.isSearchFormProvisiones) {

@@ -1,5 +1,7 @@
 package es.pfsgroup.plugin.rem.model;
 
+import java.util.List;
+
 /**
  * Dto que gestiona la disponibilidad de la publicación de un activo.
  *
@@ -16,10 +18,17 @@ public class DtoCondicionantesDisponibilidad extends DtoTabActivo {
 	private Boolean obraNuevaEnConstruccion;
 	private Boolean ocupadoConTitulo;
 	private Boolean tapiado;
+	private Boolean vandalizado;
 	private String otro;
 	private Boolean ocupadoSinTitulo;
 	private Boolean divHorizontalNoInscrita;
-	
+	private Boolean sinInformeAprobado;
+	private Boolean sinInformeAprobadoREM;
+	private Boolean portalesExternos;
+	private String estadoCondicionadoCodigo;
+	private Boolean conCargas;
+	private Boolean isCondicionado;
+	private List<?> activosPropagables;
 
 	public String getIdActivo() {
 		return idActivo;
@@ -92,6 +101,14 @@ public class DtoCondicionantesDisponibilidad extends DtoTabActivo {
 	public void setTapiado(Boolean tapiado) {
 		this.tapiado = tapiado;
 	}
+	
+	public Boolean getVandalizado() {
+		return vandalizado;
+	}
+
+	public void setVandalizado(Boolean vandalizado) {
+		this.vandalizado = vandalizado;
+	}
 
 	public String getOtro() {
 		return otro;
@@ -115,6 +132,62 @@ public class DtoCondicionantesDisponibilidad extends DtoTabActivo {
 
 	public void setDivHorizontalNoInscrita(Boolean divHorizontalNoInscrita) {
 		this.divHorizontalNoInscrita = divHorizontalNoInscrita;
+	}
+
+	public List<?> getActivosPropagables() {
+		return activosPropagables;
+	}
+
+	public void setActivosPropagables(List<?> activosPropagables) {
+		this.activosPropagables = activosPropagables;
+	}
+
+	public Boolean getSinInformeAprobado() {
+		return sinInformeAprobado;
+	}
+
+	public void setSinInformeAprobado(Boolean sinInformeAprobado) {
+		this.sinInformeAprobado = sinInformeAprobado;
+	}
+	
+	public Boolean getSinInformeAprobadoREM() {
+		return sinInformeAprobadoREM;
+	}
+
+	public void setSinInformeAprobadoREM(Boolean sinInformeAprobadoREM) {
+		this.sinInformeAprobadoREM = sinInformeAprobadoREM;
+	}
+
+	public Boolean getPortalesExternos() {
+		return portalesExternos;
+	}
+
+	public void setPortalesExternos(Boolean portalesExternos) {
+		this.portalesExternos = portalesExternos;
+	}
+
+	public String getEstadoCondicionadoCodigo() {
+		return estadoCondicionadoCodigo;
+	}
+
+	public void setEstadoCondicionadoCodigo(String estadoCondicionadoCodigo) {
+		this.estadoCondicionadoCodigo = estadoCondicionadoCodigo;
+	}
+
+	public Boolean getConCargas() {
+		return conCargas;
+	}
+
+	public void setConCargas(Boolean conCargas) {
+		this.conCargas = conCargas;
+	}
+
+	public Boolean getIsCondicionado() {
+		return isCondicionado;
+	}
+
+	public void setIsCondicionado(Boolean isCondicionado) {
+		this.isCondicionado = isCondicionado;
 	}
 	
 	

@@ -3,6 +3,9 @@ package es.pfsgroup.plugin.rem.api;
 import java.util.List;
 import java.util.Set;
 
+import org.springframework.ui.ModelMap;
+
+import es.capgemini.devon.dto.WebDto;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.procesosJudiciales.model.TipoJuzgado;
@@ -13,6 +16,7 @@ import es.pfsgroup.plugin.rem.model.DtoDiccionario;
 import es.pfsgroup.plugin.rem.model.DtoLocalidadSimple;
 import es.pfsgroup.plugin.rem.model.DtoMenuItem;
 import es.pfsgroup.plugin.rem.model.Ejercicio;
+import es.pfsgroup.plugin.rem.model.dd.DDComiteAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDCondicionIndicadorPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
@@ -22,7 +26,9 @@ import es.pfsgroup.plugin.rem.model.dd.DDSubtipoCarga;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoClaseActivoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoBloqueo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTrabajo;
@@ -81,6 +87,9 @@ public interface GenericApi {
 	
 	@BusinessOperationDefinition("genericManager.getComboTipoGestor")
 	public List<EXTDDTipoGestor> getComboTipoGestor();
+	
+	@BusinessOperationDefinition("genericManager.getComboTipoGestorActivo")
+	public List<EXTDDTipoGestor> getComboTipoGestorByActivo(WebDto webDto, ModelMap model, String idActivo);
 
 	List<EXTDDTipoGestor> getComboTipoGestorFiltrado(Set<String> tipoGestorCodigos);
 
@@ -101,7 +110,7 @@ public interface GenericApi {
 	 * @return
 	 */
 	@BusinessOperationDefinition("genericManager.getComboSubtipoTrabajo")
-	public List<DDSubtipoTrabajo> getComboSubtipoTrabajo(String tipoTrabajoCodigo);
+	public List<DDSubtipoTrabajo> getComboSubtipoTrabajo(String tipoTrabajoCodigo, Long idActivo);
 	
 	/**
 	 * Devuelve los subtipos de trabajo del tipo que recibe, pero no incluye los de tipo Precio (a excepcion 
@@ -178,6 +187,8 @@ public interface GenericApi {
 
 	
 	public List<DDTiposPorCuenta> getDiccionarioPorCuenta(String tipoCodigo);
+	
+	public List<DDTipoCalculo> getDiccionarioByTipoOferta(String diccionario, String codTipoOferta);
 
 	/**
 	 * Devuelve una lista de todos aquellos proveedores que dan de alta gastos de forma masiva.
@@ -217,8 +228,29 @@ public interface GenericApi {
 	List<DDMotivoRechazoOferta> getComboMotivoRechazoOferta(String tipoRechazoOfertaCodigo);
 
 	List<DDComiteSancion> getComitesByIdExpediente(String expediente);
+		
+	
+	public List<DDComiteAlquiler> getComitesAlquilerByCartera(Long idActivo);
+	
+	/**
+	 * Devuelve una lista de comites alquiler por el código de cartera.
+	 * @param carteraCodigo
+	 * @return
+	 */
+	public List<DDComiteAlquiler> getComitesAlquilerByCarteraCodigo(String carteraCodigo);
+	/**
+	 * Este método obtiene una lista con los tipos de agrupaciones. 
+	 * Filtrará los resultados dependiendo del tipo de gestor del usuario logado
+	 * 
+	 * @return Devuelve una lista de tipos de agrupaciones
+	 */
+	public List<DDTipoAgrupacion> getComboTipoAgrupacion();
+	
+	/**
+	 * Este método obtiene una lista con todos los tipos de agrupaciones.
+	 * 
+	 * @return Devuelve una lista de tipos de agrupaciones
+	 */
+	public List<DDTipoAgrupacion> getTodosComboTipoAgrupacion();
 
 }
-
-	  
-	    

@@ -69,17 +69,18 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoResolucion;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposArras;
+import es.pfsgroup.plugin.rem.oferta.OfertaManager;
 
 @Service
 public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
 
 	public static final String TIPO_CAMPO_INFORMATIVO = "textinf";
-	public static final String TIPO_CAMPO_FECHA = "date";
-	public static final String TIPO_CAMPO_FECHA_MAX_TO_DAY = "datemaxtod";
-	public static final String TIPO_CAMPO_HORA = "time";
-	public static final String TIPO_COMBOBOX_INICIAL = "comboini";
-	public static final String TIPO_COMBOBOX_INICIAL_ED = "comboinied";
-	public static final String TIPO_CAMPO_NUMBER = "number";
+	public static final String TIPO_CAMPO_FECHA = "datefield";
+	public static final String TIPO_CAMPO_FECHA_MAX_TO_DAY = "datemaxtoday";
+	public static final String TIPO_CAMPO_HORA = "timefield";
+	public static final String TIPO_COMBOBOX_INICIAL = "comboboxinicial";
+	public static final String TIPO_COMBOBOX_INICIAL_ED = "comboboxinicialedi";
+	public static final String TIPO_CAMPO_NUMBER = "numberfield";
 	public static final String NO_APLICA = "No aplica";
 	public static final String TIPO_CAMPO_TEXTFIELD = "textfield";
 	
@@ -126,6 +127,9 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
     
     @Autowired
     private ResolucionComiteApi resolucionComiteApi;
+    
+    @Autowired
+    private OfertaManager ofertaManager;
 
     
     /**
@@ -297,8 +301,8 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
             				ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
             				if (!Checks.esNulo(expediente)){
             					if(trabajoApi.checkFormalizacion(tareaExterna)){
+            						String codigoComite = null;
 			            			if(trabajoApi.checkBankia(tareaExterna)){
-			            				String codigoComite = null;
 										try {
 											if(!expediente.getOferta().getVentaDirecta()){
 												codigoComite = expedienteComercialApi.consultarComiteSancionador(expediente.getId());
@@ -311,7 +315,15 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
 										}
 										if(!Checks.esNulo(codigoComite))
 											item.setValue(expedienteComercialApi.comiteSancionadorByCodigo(codigoComite).getDescripcion());
-			            			} else {
+			            			} else if(trabajoApi.checkLiberbank(tareaExterna)) {
+			            				DDComiteSancion comite = ofertaManager.calculoComiteLiberbank(ofertaAceptada);
+			            				if(!Checks.esNulo(comite)) {
+			            					codigoComite = comite.getCodigo();
+			            				}
+			            				if(!Checks.esNulo(codigoComite)) {
+											item.setValue(expedienteComercialApi.comiteSancionadorByCodigo(codigoComite).getDescripcion());
+			            				}
+			            			}else {
 			            				if(!Checks.esNulo(expediente.getComiteSancion()))
 			            					item.setValue(expediente.getComiteSancion().getDescripcion());
 				            		}

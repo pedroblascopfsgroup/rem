@@ -49,6 +49,9 @@ public class DtoActivoValoraciones extends WebDto{
     private Boolean incluidoBolsaRepreciar;
     
     private Boolean vpo = false;
+    
+    private Date fechaVentaHaya;
+    private String liquidez;
 	
 	public String getNumeroActivo() {
 		return numeroActivo;
@@ -214,6 +217,18 @@ public class DtoActivoValoraciones extends WebDto{
 	}
 	public void setIncluidoBolsaPreciar(Boolean incluidoBolsaPreciar) {
 		this.incluidoBolsaPreciar = incluidoBolsaPreciar;
+	}
+	public Date getFechaVentaHaya() {
+		return fechaVentaHaya;
+	}
+	public void setFechaVentaHaya(Date fechaVentaHaya) {
+		this.fechaVentaHaya = fechaVentaHaya;
+	}
+	public String getLiquidez() {
+		return liquidez;
+	}
+	public void setLiquidez(String liquidez) {
+		this.liquidez = liquidez;
 	}
 	
 	

@@ -35,9 +35,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDSubtipoDocumentoExpediente;
 @Service
 public class ExpedienteComercialAdapter {
 
-	private static final String EXCEPTION_EXPEDIENT_NOT_FOUND_COD = "ExceptionExp";
-	private static final String EXCEPTION_ACTIVO_NOT_FOUND_COD = "Error al obtener el activo, no existe";
-
+	private static final String EXCEPTION_DOCUMENTO_SUBTIPO = "Error, solo se puede insertar 1 documento de este subtipo";
 	private static final String RELACION_TIPO_DOCUMENTO_EXPEDIENTE = "d-e";	
 	private static final String OPERACION_ALTA = "Alta";	
 
@@ -89,16 +87,15 @@ public class ExpedienteComercialAdapter {
 					}
 				}
 			} catch (GestorDocumentalException gex) {
-				String[] error = gex.getMessage().split("-");
-				if (error.length > 0 &&  (error[2].trim().contains(EXCEPTION_ACTIVO_NOT_FOUND_COD))) {
+				//if (error.length > 0 &&  (error[2].trim().contains(EXCEPTION_ACTIVO_NOT_FOUND_COD))) {
+				if (GestorDocumentalException.CODIGO_ERROR_CONTENEDOR_NO_EXISTE.equals(gex.getCodigoError())) {
 					
 					Integer idExpediente;
 					try{
 						idExpediente = gestorDocumentalAdapterApi.crearExpedienteComercial(expedienteComercial,usuario.getUsername());
 						logger.debug("GESTOR DOCUMENTAL [ crearExpediente para " + expedienteComercial.getNumExpediente() + "]: ID EXPEDIENTE RECIBIDO " + idExpediente);
 					} catch (GestorDocumentalException gexc) {
-						gexc.printStackTrace();
-						logger.debug(gexc.getMessage());
+						logger.error(gexc.getMessage(),gexc);
 					}
 					
 				}
@@ -132,13 +129,27 @@ public class ExpedienteComercialAdapter {
 
 	public String uploadDocumento(WebFileItem webFileItem, ExpedienteComercial expedienteComercialEntrada, String matricula) throws Exception {
 		
+		// Comprobar que el documento sea único para aquellos que así se requiera.
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", webFileItem.getParameter("subtipo"));
+		DDSubtipoDocumentoExpediente subtipoDocumento = (DDSubtipoDocumentoExpediente) genericDao.get(DDSubtipoDocumentoExpediente.class, filtro);
+		if(expedienteComercialApi.existeDocSubtipo(webFileItem,expedienteComercialEntrada) 
+				&& (DDSubtipoDocumentoExpediente.CODIGO_PRE_CONTRATO.equals(subtipoDocumento.getCodigo()) 
+				|| DDSubtipoDocumentoExpediente.CODIGO_PRE_LIQUIDACION_ITP.equals(subtipoDocumento.getCodigo()) 
+				|| DDSubtipoDocumentoExpediente.CODIGO_CONTRATO.equals(subtipoDocumento.getCodigo())
+				|| DDSubtipoDocumentoExpediente.CODIGO_LIQUIDACION_ITP.equals(subtipoDocumento.getCodigo())
+				|| DDSubtipoDocumentoExpediente.CODIGO_FIANZA.equals(subtipoDocumento.getCodigo())
+				|| DDSubtipoDocumentoExpediente.CODIGO_JUSTIFICANTE_INGRESOS.equals(subtipoDocumento.getCodigo())
+				|| DDSubtipoDocumentoExpediente.CODIGO_AVAL_BANCARIO.equals(subtipoDocumento.getCodigo()))) {
+
+			return EXCEPTION_DOCUMENTO_SUBTIPO;
+		}
+		
 		if (Checks.esNulo(expedienteComercialEntrada)) {
 			if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
 								
 				ExpedienteComercial expedienteComercial = expedienteComercialApi.findOne(Long.parseLong(webFileItem.getParameter("idEntidad")));
 				Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
-				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", webFileItem.getParameter("subtipo"));
-				DDSubtipoDocumentoExpediente subtipoDocumento = (DDSubtipoDocumentoExpediente) genericDao.get(DDSubtipoDocumentoExpediente.class, filtro);
+				
 				if (!Checks.esNulo(subtipoDocumento)) {
 					Long idDocRestClient = gestorDocumentalAdapterApi.uploadDocumentoExpedienteComercial(expedienteComercial, webFileItem, usuarioLogado.getUsername(), subtipoDocumento.getMatricula());
 					expedienteComercialApi.uploadDocumento(webFileItem, idDocRestClient,null,null);
@@ -188,8 +199,6 @@ public class ExpedienteComercialAdapter {
 		} else {
 			if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
 				Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
-				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", webFileItem.getParameter("subtipo"));
-				DDSubtipoDocumentoExpediente subtipoDocumento = (DDSubtipoDocumentoExpediente) genericDao.get(DDSubtipoDocumentoExpediente.class, filtro);
 				if (!Checks.esNulo(subtipoDocumento)) {
 					Long idDocRestClient = gestorDocumentalAdapterApi.uploadDocumentoExpedienteComercial(expedienteComercialEntrada, webFileItem,
 							usuarioLogado.getUsername(), subtipoDocumento.getMatricula());

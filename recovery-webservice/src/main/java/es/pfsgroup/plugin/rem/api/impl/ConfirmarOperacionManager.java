@@ -108,6 +108,7 @@ public class ConfirmarOperacionManager extends BusinessOperationOverrider<Confir
 				ReservaDto reservaDto = new ReservaDto();
 				reservaDto.setAccion(confirmacionOpDto.getAccion());
 				reservaDto.setActivo(confirmacionOpDto.getActivo());
+				reservaDto.setOfertaHRE(confirmacionOpDto.getOfertaHRE());
 				errorList = reservaApi.validateReservaPostRequestData(reservaDto, jsonFields);
 				hashErrores.putAll(errorList);
 
@@ -226,47 +227,40 @@ public class ConfirmarOperacionManager extends BusinessOperationOverrider<Confir
 			throw new Exception("No existe expediente comercial para esta activo.");
 		}
 		
-		/*if (!Checks.esNulo(expedienteComercial.getFechaContabilizacionPropietario())) {
-			tieneFechaIngresoChequeVenta = true;
-		}
-		
-		if(!tieneFechaIngresoChequeVenta && oferta.getVentaDirecta()){
-			throw new Exception("No esta registrado la fecha de ingreso del cheque de venta.");
-		}*/
-
 		Reserva reserva = expedienteComercial.getReserva();
-		// Importe Reserva:
-		CondicionanteExpediente condExp = expedienteComercial.getCondicionante();
-		if (!Checks.esNulo(condExp)) {
-			importeReserva = condExp.getImporteReserva();
+		
+		if(reserva != null){
+			// Importe Reserva:
+			CondicionanteExpediente condExp = expedienteComercial.getCondicionante();
+			if (!Checks.esNulo(condExp)) {
+				importeReserva = condExp.getImporteReserva();
+			}
+	
+			if (Checks.esNulo(reserva) || importeReserva == null) {
+				importeTotal = Checks.esNulo(oferta.getImporteContraOferta()) ? oferta.getImporteOferta()
+						: oferta.getImporteContraOferta();
+			} else {
+				importeTotal = Checks.esNulo(oferta.getImporteContraOferta()) ? oferta.getImporteOferta() - importeReserva
+						: oferta.getImporteContraOferta() - importeReserva;
+			}
+	
+			// Insertar en entregas a cuentas en positivo,
+			EntregaReserva entregaReserva = new EntregaReserva();
+			entregaReserva.setImporte(importeTotal);
+			Date fechaEntrega = new Date();
+			entregaReserva.setFechaEntrega(fechaEntrega);
+			entregaReserva.setReserva(reserva);
+			if (!expedienteComercialApi.addEntregaReserva(entregaReserva, expedienteComercial.getId())) {
+				throw new Exception("No se ha podido guardar el cobro de la venta.");
+			}
 		}
 
-		if (Checks.esNulo(reserva) || importeReserva == null) {
-			importeTotal = Checks.esNulo(oferta.getImporteContraOferta()) ? oferta.getImporteOferta()
-					: oferta.getImporteContraOferta();
-		} else {
-			importeTotal = Checks.esNulo(oferta.getImporteContraOferta()) ? oferta.getImporteOferta() - importeReserva
-					: oferta.getImporteContraOferta() - importeReserva;
-		}
-
-		// Insertar en entregas a cuentas en positivo,
-		EntregaReserva entregaReserva = new EntregaReserva();
-		entregaReserva.setImporte(importeTotal);
-		Date fechaEntrega = new Date();
-		entregaReserva.setFechaEntrega(fechaEntrega);
-		entregaReserva.setReserva(expedienteComercial.getReserva());
-		if (!expedienteComercialApi.addEntregaReserva(entregaReserva, expedienteComercial.getId())) {
-			throw new Exception("No se ha podido guardar el cobro de la venta.");
-		}
-
-		// Actualizar fecha contabilizacionPropietario, fecha venta,
 		expedienteComercial.setFechaContabilizacionPropietario(fechaActual);
 		
 		if (!Checks.esNulo(expedienteComercial.getFechaVenta())){
 			DDEstadosExpedienteComercial estadoExpCom = expedienteComercialApi.getDDEstadosExpedienteComercialByCodigo(DDEstadosExpedienteComercial.VENDIDO);
 			expedienteComercial.setEstado(estadoExpCom);
 		}
-		//expedienteComercial.setFechaVenta(fechaActual);
 		if (!expedienteComercialApi.update(expedienteComercial)) {
 			throw new Exception("Error al actualizar el expediente comercial.");
 		}
@@ -608,18 +602,22 @@ public class ConfirmarOperacionManager extends BusinessOperationOverrider<Confir
 			throw new Exception("No existe el activo");
 		}
 
-		// HREOS-1704: Para la ANULACION_DEVOLUCION_RESERVA hay que buscar la
-		// última oferta rechazada.
-		DtoOfertasFilter dtoOfertasFilter = new DtoOfertasFilter();
-		dtoOfertasFilter.setIdActivo(activo.getId());
-		dtoOfertasFilter.setEstadoOferta(DDEstadoOferta.CODIGO_RECHAZADA);
-
-		List<VOfertasActivosAgrupacion> listaOfer = (List<VOfertasActivosAgrupacion>) ofertaApi
-				.getListOfertasFromView(dtoOfertasFilter);
-		if (!Checks.esNulo(listaOfer) && listaOfer.size() > 0) {
-			Long idOferta = Long.valueOf(listaOfer.get(0).getIdOferta());
-			if (!Checks.esNulo(idOferta)) {
-				oferta = ofertaApi.getOfertaById(idOferta);
+		if (!Checks.esNulo(confirmacionOpDto.getOfertaHRE())){
+			oferta = ofertaApi.getOfertaByNumOfertaRem(confirmacionOpDto.getOfertaHRE());
+		} else {
+			// HREOS-1704: Para la ANULACION_DEVOLUCION_RESERVA hay que buscar la
+			// última oferta rechazada.
+			DtoOfertasFilter dtoOfertasFilter = new DtoOfertasFilter();
+			dtoOfertasFilter.setIdActivo(activo.getId());
+			dtoOfertasFilter.setEstadoOferta(DDEstadoOferta.CODIGO_RECHAZADA);
+			
+			List<VOfertasActivosAgrupacion> listaOfer = (List<VOfertasActivosAgrupacion>) ofertaApi
+					.getListOfertasFromView(dtoOfertasFilter);
+			if (!Checks.esNulo(listaOfer) && listaOfer.size() > 0) {
+				Long idOferta = Long.valueOf(listaOfer.get(0).getIdOferta());
+				if (!Checks.esNulo(idOferta)) {
+					oferta = ofertaApi.getOfertaById(idOferta);
+				}
 			}
 		}
 		if (Checks.esNulo(oferta)) {

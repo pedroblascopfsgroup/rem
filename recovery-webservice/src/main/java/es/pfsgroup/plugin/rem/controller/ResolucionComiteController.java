@@ -113,13 +113,15 @@ public class ResolucionComiteController {
 				errorsList = resolucionComiteApi.validateResolucionPostRequestData(resolucionComiteDto, jsonFields);
 
 				if (!Checks.esNulo(errorsList) && errorsList.size() == 0) {
-
 					Oferta ofr = ofertaApi.getOfertaByNumOfertaRem(resolucionComiteDto.getOfertaHRE());
-					if (Checks.esNulo(ofr) || (!Checks.esNulo(ofr)
-							&& !ofr.getEstadoOferta().getCodigo().equalsIgnoreCase(DDEstadoOferta.CODIGO_ACEPTADA))) {
-						throw new Exception("No existe la oferta o no esta aceptada.");
+					
+					if(!ResolucionComiteController.ACCION_RESOLUCION_DEVOLUCION.equals(resolucionComiteDto.getCodigoAccion())){						
+						if (Checks.esNulo(ofr) || (!Checks.esNulo(ofr)
+								&& !ofr.getEstadoOferta().getCodigo().equalsIgnoreCase(DDEstadoOferta.CODIGO_ACEPTADA))) {
+							throw new Exception("No existe la oferta o no esta aceptada.");
+						}
 					}
-
+					
 					ExpedienteComercial eco = expedienteComercialApi.expedienteComercialPorOferta(ofr.getId());
 					if (Checks.esNulo(eco)) {
 						throw new Exception("No existe el expediente comercial de la oferta.");

@@ -56,11 +56,15 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
     			var me = this;
     			var autorizarBtn = grid.down('button[itemId=autorizarBtn]');
     			var rechazarBtn = grid.down('button[itemId=rechazarBtn]');
+    			var rechazarContabilidadBtn = grid.down('button[itemId=rechazarContabilidadBtn]')
+    			var autorizarContBtn = grid.down('button[itemId=autorizarContBtn]')
     			var displaySelection = grid.down('displayfield[itemId=displaySelection]');
     			var disabled = Ext.isEmpty(persistedSelection);
 
     			if (!Ext.isEmpty(autorizarBtn)) autorizarBtn.setDisabled(disabled);    		
     			if (!Ext.isEmpty(rechazarBtn)) rechazarBtn.setDisabled(disabled);
+    			if (!Ext.isEmpty(rechazarContabilidadBtn)) rechazarContabilidadBtn.setDisabled(disabled);
+    			if (!Ext.isEmpty(autorizarContBtn)) autorizarContBtn.setDisabled(disabled);
 
     			if(disabled) {
     				displaySelection.setValue("No seleccionados");
@@ -122,6 +126,27 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
     			displayImporteTotal.setValue(Number(importeTotalAcumulado+importeTotalAgrupacion).toFixed(2));
     		}
     		
+    	},
+    	
+    	'gestionprovisioneslist' : {
+    		
+    		persistedsselectionchange: function (sm, record, e, grid, persistedSelection) {
+    			var me = this;
+    			var autorizarContAgruGastosBtn = grid.down('button[itemId=autorizarContAgruGastosBtn]');
+    			var rechazarContabilidadAgrupGastoBtn = grid.down('button[itemId=rechazarContabilidadAgrupGastoBtn]');
+    			var displaySelection = grid.down('displayfield[itemId=displaySelection]');
+    			var disabled = Ext.isEmpty(persistedSelection);
+
+    			if (!Ext.isEmpty(autorizarContAgruGastosBtn)) autorizarContAgruGastosBtn.setDisabled(disabled);
+    			if (!Ext.isEmpty(rechazarContabilidadAgrupGastoBtn)) rechazarContabilidadAgrupGastoBtn.setDisabled(disabled);
+
+    			if(disabled) {
+    				displaySelection.setValue("No seleccionados");
+    			} else {
+    				displaySelection.setValue("1 agrupacion seleccionado"); 
+    			}
+    			
+    		} 
     	}
 
     },
@@ -324,6 +349,301 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
 		   }
 		});
     },
+     
+    onClickAutorizarContabilidad: function(btn){
+    	
+    	var me = this,
+    	nErrors = 0,
+    	
+    	grid = btn.up('gridBase'),
+    	tabPanel = grid.up(),
+    	gastos = grid.getPersistedSelection();
+    	// Recuperamos todos los ids de los trabajos seleccionados
+		// y validamos que se pueden autorizar
+    	Ext.Array.each(gastos, function(gasto, index) {
+		    error = me.validarSeleccionGastoContabilidad("A", gasto, null);
+		    if(!Ext.isEmpty(error)) {
+		    	nErrors += 1;
+		    	me.fireEvent("errorToast", error);
+		    	return false;
+		    }
+		});
+    	
+    	if(nErrors == 0) {
+    		var win = Ext.create('Ext.window.Window', {
+	    		title: HreRem.i18n('title.mensaje.confirmacion'),
+	    		height: 150,
+	    		width: 700,
+	    		modal: true,
+	    		renderTo: tabPanel.body,
+	    		layout: 'fit',
+	    		items:{
+	    			xtype: 'form',
+	    			id: 'autorizarForm',
+	    			layout: {
+	    				type: 'hbox', 
+	    				pack: 'center', 
+	    				align: 'center' 
+	    			},
+	    			items:[
+	        			{
+	        				xtype: 'datefield',
+	        				id: 'fechaConta',
+	        				name: 'fechaConta',
+	        				reference: 'fechaConta',
+	        				fieldLabel: HreRem.i18n('msg.fecha.contabilizacion'),
+	        				allowBlank: me.fechaContaAllowBlank(gastos),
+	        				disabled: me.fechaContaHidden(gastos)
+	        			},{
+	        				xtype: 'datefield',
+	        				id: 'fechaPago',
+	        				name: 'fechaPago',
+	        				reference: 'fechaPago',
+	        				fieldLabel: HreRem.i18n('msg.fecha.pago'),
+	        				allowBlank: me.fechaPagoAllowBlank(gastos)
+	        			}
+	        		],
+	        		border: false,
+	        		buttonAlign: 'center',
+	        		buttons: [
+	        			  {
+	        				  text: 'Aceptar',
+	        				  formBind: true,
+	        				  handler: function(){
+	        					  me.autorizarGastoContabilidad(btn, "SG");
+	        					  win.close();
+	        				  }
+	        			  },
+	        			  {
+	        				  text: 'Cancelar', 
+	        				  handler: function(){
+	        					  win.close();
+	        				  }
+	        			  }
+	        		]
+	    		}
+	    	});
+
+	    	win.show();
+	    }
+    },
+    
+    onClickAutorizarContabilidadAgrupacion: function(btn, origen){
+    	var me = this,
+    	nErrors = 0,
+    	grid = btn.up('gridBase'),
+    	tabPanel = grid.up(),
+    	agrupacion = grid.getPersistedSelection();
+    	
+    	var idAgrupacion = agrupacion[0].id;
+    	
+    	var urlGastos = $AC.getRemoteUrl('gastosproveedor/getListGastosProvisionAgrupGastos');
+    	Ext.Ajax.request({
+			
+		     url: urlGastos,
+		     params: {id: idAgrupacion},
+		
+		     success: function(response, opts) {
+		     	var result = Ext.decode(response.responseText);
+		     	gastos = result.data;
+		     	
+		     // Recuperamos todos los ids de los gastos de la agrupaci�n
+				// y validamos que se pueden rechazar
+				Ext.Array.each(gastos, function(gasto, index) {
+					var gastoModel = Ext.create('HreRem.model.Gasto');
+					gastoModel.set('entidadPropietariaCodigo', gasto.entidadPropietariaCodigo);
+					gastoModel.set('estadoGastoCodigo', gasto.estadoGastoCodigo);
+				    error = me.validarSeleccionGastoContabilidad("A", gastoModel, origen);
+				    if(!Ext.isEmpty(error)) {
+				    	nErrors += 1;
+				    	me.fireEvent("errorToast", error);
+				    	return false;
+				    } 
+				});
+				
+				if(nErrors == 0) {
+		    		var win = Ext.create('Ext.window.Window', {
+			    		title: HreRem.i18n('title.mensaje.confirmacion'),
+			    		height: 150,
+			    		modal: true,
+			    		renderTo: tabPanel.body,
+			    		width: 700,
+			    		layout: 'fit',
+			    		items:{
+			    			xtype: 'form',
+			    			id: 'autorizarForm',
+			    			layout: {
+			    				type: 'hbox', 
+			    				pack: 'center', 
+			    				align: 'center' 
+			    			},
+			    			items:[
+			        			{
+			        				xtype: 'datefield',
+			        				id: 'fechaConta',
+			        				name: 'fechaConta',
+			        				reference: 'fechaConta',
+			        				fieldLabel: HreRem.i18n('msg.fecha.contabilizacion'),
+			        				allowBlank: me.fechaContaAllowBlankArray(gastos),
+			        				disabled: me.fechaContaHiddenArray(gastos)
+			        			},{
+			        				xtype: 'datefield',
+			        				id: 'fechaPago',
+			        				name: 'fechaPago',
+			        				reference: 'fechaPago',
+			        				fieldLabel: HreRem.i18n('msg.fecha.pago'),
+			        				allowBlank: me.fechaPagoAllowBlankArray(gastos)
+			        			}
+			        		],
+			        		border: false,
+			        		buttonAlign: 'center',
+			        		buttons: [
+			        			  {
+			        				  text: 'Aceptar',
+			        				  formBind: true,
+			        				  handler: function(){
+			        					  me.autorizarGastoContabilidadAgrupacion(btn, "SA");
+			        					  win.close();
+			        				  }
+			        			  },
+			        			  {
+			        				  text: 'Cancelar', 
+			        				  handler: function(){
+			        					  win.close();
+			        				  }
+			        			  }
+			        		]
+			    		}
+			    	});
+
+			    	win.show();
+			    }
+				
+		     },
+		     failure: function(response) {
+		     	me.getView().unmask();
+	     		var data = {};
+               try {
+               	data = Ext.decode(response.responseText);
+               }
+               catch (e){ };
+               if (!Ext.isEmpty(data.msg)) {
+               	me.fireEvent("errorToast", data.msg);
+               } else {
+               	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+               }
+		     }
+	    });
+    },
+    
+    
+    onClickRechazarContabilidadAgrupGastos: function(btn, origen){
+    	
+    	var me = this;
+    	var agrupacion = btn.up('gridBase').getPersistedSelection();
+    	var idAgrupacion = agrupacion[0].id;
+    	var rechazo = "RECHAZADO POR CONTABILIDAD";
+    	var gastos;
+    	var individual = false;
+		idsGasto = [], error=null;
+    	
+    	var urlGastos = $AC.getRemoteUrl('gastosproveedor/getListGastosProvisionAgrupGastos');
+    	Ext.Ajax.request({
+			
+		     url: urlGastos,
+		     params: {id: idAgrupacion},
+		
+		     success: function(response, opts) {
+		     	
+		     	var result = Ext.decode(response.responseText);
+		     	gastos = result.data;
+		     	
+		     // Recuperamos todos los ids de los gastos seleccionados
+				// y validamos que se pueden rechazar
+				Ext.Array.each(gastos, function(gasto, index) {
+					var gastoModel = Ext.create('HreRem.model.Gasto');
+					gastoModel.set('entidadPropietariaCodigo', gasto.entidadPropietariaCodigo);
+					gastoModel.set('estadoGastoCodigo', gasto.estadoGastoCodigo);
+				    error = me.validarSeleccionGastoContabilidad("R", gastoModel, origen);
+				    if(Ext.isEmpty(error)) {
+				    	idsGasto.push(gasto.id);	
+				    } else {
+				    	// Salimos del foreach y mostramos el error
+				    	return false;	
+				    }
+				});
+		    	
+		    	if(Ext.isEmpty(error)) {
+		    		
+			    	url =  $AC.getRemoteUrl('gastosproveedor/rechazarGastosContabilidadAgrupGastos'),	
+					me.getView().mask(HreRem.i18n("msg.mask.loading"));
+			    	
+					Ext.Ajax.request({
+				    			
+					     url: url,
+					     params: {idAgrupGasto: idAgrupacion,idsGasto: idsGasto, motivoRechazo: rechazo, individual: individual},
+					
+					     success: function(response, opts) {
+					    		
+					     	var data = {};
+					     	me.getView().unmask();	
+				            try {
+				                data = Ext.decode(response.responseText);
+				            } catch (e){ };
+				            
+				            if(data.success === "false") {
+					            if (!Ext.isEmpty(data.msg)) {
+					              	me.fireEvent("errorToast", data.msg);
+					            } else {
+					            	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+					            }
+				            } else {							         
+						         me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+
+						         Ext.Array.each(gastos, function(gasto, index) {
+						    		me.getView().fireEvent("refreshEntityOnActivate", CONST.ENTITY_TYPES["GASTO"], gasto.id);
+								 });
+
+						         me.getView().down('gestionprovisiones').funcionRecargar();
+				            }
+					     },
+					     failure: function(response) {
+					     	me.getView().unmask();
+				     		var data = {};
+			                try {
+			                	data = Ext.decode(response.responseText);
+			                }
+			                catch (e){ };
+			                if (!Ext.isEmpty(data.msg)) {
+			                	me.fireEvent("errorToast", data.msg);
+			                } else {
+			                	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+			                }
+					     }
+				    		    
+				    });
+		    	} else {
+					me.fireEvent("errorToast", error);
+				}
+		     	
+		     },
+		     failure: function(response) {
+		     	me.getView().unmask();
+	     		var data = {};
+               try {
+               	data = Ext.decode(response.responseText);
+               }
+               catch (e){ };
+               if (!Ext.isEmpty(data.msg)) {
+               	me.fireEvent("errorToast", data.msg);
+               } else {
+               	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+               }
+		     }
+	    		    
+	    });
+
+    },
     
     onClickAutorizarGastosAgrupados: function(btn) {
     	
@@ -411,6 +731,159 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
     	
     },
     
+    autorizarGastoContabilidad: function(btn, origen) {
+    	
+    	var me = this,
+    	listaGastos = btn.up('gridBase'),
+    	fechaConta = Ext.getCmp('autorizarForm').getForm().findField('fechaConta').rawValue,
+    	fechaPago = Ext.getCmp('autorizarForm').getForm().findField('fechaPago').rawValue,  
+    	gastos = listaGastos.getPersistedSelection(),
+		url =  $AC.getRemoteUrl('gastosproveedor/autorizarGastosContabilidad'),		
+		idsGasto = [], error=null;
+    	var individual = true;
+    	// Recuperamos todos los ids de los trabajos seleccionados
+    	Ext.Array.each(gastos, function(gasto, index) {
+		    error = me.validarSeleccionGastoContabilidad("A", gasto, origen);
+		    if(Ext.isEmpty(error)) {
+		    	idsGasto.push(gasto.get("id"));	
+		    }
+		});
+
+		if(Ext.isEmpty(error)){
+			me.getView().mask(HreRem.i18n("msg.mask.loading"));
+
+			Ext.Ajax.request({
+		    			
+			     url: url,
+			     params: {
+			    	 idsGasto: idsGasto,
+			    	 fechaConta: fechaConta,
+			    	 fechaPago: fechaPago,
+			    	 individual: individual
+			     },
+			
+			     success: function(response, opts) {
+			     	me.getView().unmask();
+			        var data = {};
+		            try {
+		                data = Ext.decode(response.responseText);
+		            } catch (e){ };
+		            
+		            if(data.success === "false") {
+			            if (!Ext.isEmpty(data.msg)) {
+			              	me.fireEvent("errorToast", data.msg);
+			            } else {
+			            	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+			            }
+		            } else {							         
+				         me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+				         listaGastos.deselectAll();
+				         listaGastos.getStore().loadPage(1);
+				         Ext.Array.each(gastos, function(gasto, index) {
+						    me.getView().fireEvent("refreshEntityOnActivate", CONST.ENTITY_TYPES["GASTO"], gasto.get("id"));
+						});
+		            }
+			     },
+			     failure: function(response) {
+			     	me.getView().unmask();
+		     		var data = {};
+	                try {
+	                	data = Ext.decode(response.responseText);
+	                }
+	                catch (e){ };
+	                if (!Ext.isEmpty(data.msg)) {
+	                	me.fireEvent("errorToast", data.msg);
+	                } else {
+	                	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+	                }
+			     }
+		    		    
+		    });
+		} else {
+			me.fireEvent("errorToast", error);
+		}
+    	
+    },
+
+    autorizarGastoContabilidadAgrupacion: function(btn, origen) {
+    	
+    	var me = this,
+    	agrupacion = btn.up('gridBase').getPersistedSelection(),
+    	fechaConta = Ext.getCmp('autorizarForm').getForm().findField('fechaConta').rawValue,
+    	fechaPago = Ext.getCmp('autorizarForm').getForm().findField('fechaPago').rawValue,  
+		url =  $AC.getRemoteUrl('gastosproveedor/autorizarGastosContabilidadAgrupacion'),		
+		idsGasto = [], error=null;
+    	var individual = false;
+    	var idAgrupacion = agrupacion[0].id;
+    	// Recuperamos todos los ids de los gastos de la agrupaci�n seleccionada
+    	Ext.Array.each(gastos, function(gasto, index) {
+    		var gastoModel = Ext.create('HreRem.model.Gasto');
+			gastoModel.set('entidadPropietariaCodigo', gasto.entidadPropietariaCodigo);
+			gastoModel.set('estadoGastoCodigo', gasto.estadoGastoCodigo);
+		    error = me.validarSeleccionGastoContabilidad("A", gastoModel, origen);
+		    if(Ext.isEmpty(error)) {
+		    	idsGasto.push(gasto.id);	   
+		    }
+		});
+
+		if(Ext.isEmpty(error)){
+			me.getView().mask(HreRem.i18n("msg.mask.loading"));
+
+			Ext.Ajax.request({
+		    			
+			     url: url,
+			     params: {
+			    	 idsGasto: idsGasto,
+			    	 idAgrupacion: idAgrupacion, 
+			    	 fechaConta: fechaConta,
+			    	 fechaPago: fechaPago,
+			    	 individual: individual
+			     },
+			
+			     success: function(response, opts) {
+			     	me.getView().unmask();
+			        var data = {};
+		            try {
+		                data = Ext.decode(response.responseText);
+		            } catch (e){ };
+		            
+		            if(data.success === "false") {
+			            if (!Ext.isEmpty(data.msg)) {
+			              	me.fireEvent("errorToast", data.msg);
+			            } else {
+			            	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+			            }
+		            } else {							         
+				         me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+				      
+				         Ext.Array.each(gastos, function(gasto, index) {
+						    me.getView().fireEvent("refreshEntityOnActivate", CONST.ENTITY_TYPES["GASTO"], gasto.id);
+						 });
+
+				         me.getView().down('gestionprovisiones').funcionRecargar();
+		            }
+			     },
+			     failure: function(response) {
+			     	me.getView().unmask();
+		     		var data = {};
+	                try {
+	                	data = Ext.decode(response.responseText);
+	                }
+	                catch (e){ };
+	                if (!Ext.isEmpty(data.msg)) {
+	                	me.fireEvent("errorToast", data.msg);
+	                } else {
+	                	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+	                }
+			     }
+		    		    
+		    });
+		} else {
+			me.fireEvent("errorToast", error);
+		}
+    	
+    },
+    
      onClickRechazar: function(btn) {
     	
     	var me = this;    	
@@ -425,6 +898,21 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
 		   }
 		});
     	
+    },
+    
+    onClickRechazarContabilidad: function(btn) {
+    	
+    	var me = this;
+    	Ext.Msg.show({
+    		title: HreRem.i18n('title.mensaje.confirmacion'),
+    		msg: HreRem.i18n('msg.desea.rechazar.gastos.seleccionados'),
+    		buttons: Ext.MessageBox.YESNO,
+    		fn: function(buttonId){
+    			if(buttonId == 'yes'){
+    				me.rechazarGastoContabilidad(btn, "SG")
+    			}
+    		}
+    	})
     },
     
     onClickRechazarGastosAgrupados: function(btn) {
@@ -526,10 +1014,83 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
     	
     },
     
-    validarSeleccionGasto: function(operacion, gasto, origen) {
+    rechazarGastoContabilidad: function(btn, origen){
     	
+    	var me = this;
+    	var listaGastos = btn.up('gridBase');
+    	var rechazo = "RECHAZADO POR CONTABILIDAD";
+		    	var gastos = listaGastos.getPersistedSelection(),
+				url =  $AC.getRemoteUrl('gastosproveedor/rechazarGastosContabilidad'),		
+				idsGasto = [], error=null;
+		var individual = true;
+		
+				// Recuperamos todos los ids de los gastos seleccionados
+				// y validamos que se pueden rechazar
+				Ext.Array.each(gastos, function(gasto, index) {
+				    error = me.validarSeleccionGastoContabilidad("R", gasto, origen);
+				    if(Ext.isEmpty(error)) {
+				    	idsGasto.push(gasto.get("id"));	
+				    } else {
+				    	// Salimos del foreach y mostramos el error
+				    	return false;	
+				    }
+				});
+
+				if(Ext.isEmpty(error)) {
+					me.getView().mask(HreRem.i18n("msg.mask.loading"));
+	
+					Ext.Ajax.request({
+				    			
+					     url: url,
+					     params: {idsGasto: idsGasto, motivoRechazo: rechazo, individual: individual},
+					
+					     success: function(response, opts) {
+					     	
+					     	var data = {};
+					     	me.getView().unmask();	
+				            try {
+				                data = Ext.decode(response.responseText);
+				            } catch (e){ };
+				            
+				            if(data.success === "false") {
+					            if (!Ext.isEmpty(data.msg)) {
+					              	me.fireEvent("errorToast", data.msg);
+					            } else {
+					            	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+					            }
+				            } else {							         
+						         me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+						         listaGastos.deselectAll();
+						         listaGastos.getStore().loadPage(1);
+						         Ext.Array.each(gastos, function(gasto, index) {
+						    		me.getView().fireEvent("refreshEntityOnActivate", CONST.ENTITY_TYPES["GASTO"], gasto.get("id"));
+								 });
+				            }
+					     },
+					     failure: function(response) {
+					     	me.getView().unmask();
+				     		var data = {};
+			                try {
+			                	data = Ext.decode(response.responseText);
+			                }
+			                catch (e){ };
+			                if (!Ext.isEmpty(data.msg)) {
+			                	me.fireEvent("errorToast", data.msg);
+			                } else {
+			                	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+			                }
+					     }
+				    		    
+				    });
+				} else {
+					me.fireEvent("errorToast", error);								
+				}    	 
+				
+		    
+    },
+    
+    validarSeleccionGasto: function(operacion, gasto, origen) { 
     	var me = this, error = null;
-    	
     	var OPERACION_AUTORIZAR = "A";
     	var OPERACION_RECHAZAR = "R";
     	
@@ -553,7 +1114,190 @@ Ext.define('HreRem.view.administracion.AdministracionController', {
 		
 		return error;
     	
-    }
+    },
+    
+    validarSeleccionGastoContabilidad: function(operacion, gasto, origen) {
     	
+    	var me = this, error = null;
+    	
+    	var OPERACION_AUTORIZAR = "A";
+    	var OPERACION_RECHAZAR = "R";
+    	
+    	var SELECCION_GASTOS = "SG";
+    	var SELECCION_AGRUPACION = "SA";
+    	
+    	if (!((CONST.ESTADOS_GASTO['AUTORIZADO'] == gasto.get("estadoGastoCodigo")) || 
+    			(CONST.ESTADOS_GASTO['SUBSANADO'] == gasto.get("estadoGastoCodigo")) ||
+    			(CONST.ESTADOS_GASTO['CONTABILIZADO'] == gasto.get("estadoGastoCodigo"))) && OPERACION_AUTORIZAR == operacion) {
+    	    		error = ("<span>Alguno de los gastos no se encuentra en el estado pertinente para ejecutar esta acci&oacute;n</span></br>")
+    	}
+    	
+    	if((!(CONST.ESTADOS_GASTO['AUTORIZADO'] == gasto.get("estadoGastoCodigo")) || (CONST.ESTADOS_GASTO['SUBSANADO'] == gasto.get("estadoGastoCodigo"))) && OPERACION_RECHAZAR == operacion){
+       		error = ("<span>Se han seleccionado gastos que no son Autorizados Administraci&oacute;n</span></br>")
+       	} 
+    	
+    	if((OPERACION_RECHAZAR == operacion || OPERACION_AUTORIZAR == operacion) && CONST.ESTADOS_GASTO['RECHAZADO_PROPIETARIO'] == gasto.get("estadoGastoCodigo")) {
+       		error = ("<span>Se han seleccionado gastos ya rechazados</span></br>")
+       	}
+    	
+    	if(!CONST.CARTERA['TANGO'] == gasto.get("entidadPropietariaCodigo")){
+       		error = ("<span>Se han seleccionado gastos que no pertenecen a la cartera Tango</span></br>")
+       	}
+    			
+		return error;
+    	
+    },
+    
+    fechaContaAllowBlank: function(gastos){
+    	var autorizados = 0;
+	    var subsanados = 0;
+	    var contabilizados = 0;
+	    
+	    	Ext.Array.each(gastos, function(gasto){
+	    		if (CONST.ESTADOS_GASTO['AUTORIZADO'] == gasto.get("estadoGastoCodigo")) {
+	    			autorizados += 1;
+	    		} else if (CONST.ESTADOS_GASTO['SUBSANADO'] == gasto.get("estadoGastoCodigo")) {
+	    			subsanados += 1;
+	    		} else if (CONST.ESTADOS_GASTO['CONTABILIZADO'] == gasto.get("estadoGastoCodigo")) {
+	    			contabilizados += 1;
+	    		}
+			});
+    	
+    	if(autorizados != 0 || subsanados != 0) {
+	    	return false;	
+	    } else {
+	    	return true;	
+	    }
+    },
+    
+    fechaContaAllowBlankArray: function(gastos){
+    	var autorizados = 0;
+	    var subsanados = 0;
+	    var contabilizados = 0;
+	    
+	    	Ext.Array.each(gastos, function(gasto){
+	    		if (CONST.ESTADOS_GASTO['AUTORIZADO'] == gasto.estadoGastoCodigo) {
+	    			autorizados += 1;
+	    		} else if (CONST.ESTADOS_GASTO['SUBSANADO'] == gasto.estadoGastoCodigo) {
+	    			subsanados += 1;
+	    		} else if (CONST.ESTADOS_GASTO['CONTABILIZADO'] == gasto.estadoGastoCodigo) {
+	    			contabilizados += 1;
+	    		}
+			});
+    	
+    	if(autorizados != 0 || subsanados != 0) {
+	    	return false;	
+	    } else {
+	    	return true;	
+	    }
+    },
+    
+    fechaContaHidden: function(gastos){
+    	var autorizados = 0;
+	    var subsanados = 0;
+	    var contabilizados = 0;
+	   
+	    Ext.Array.each(gastos, function(gasto){
+	   		if (CONST.ESTADOS_GASTO['AUTORIZADO'] == gasto.get("estadoGastoCodigo")) {
+	   			autorizados += 1;
+	   		} else if (CONST.ESTADOS_GASTO['SUBSANADO'] == gasto.get("estadoGastoCodigo")) {
+	    		subsanados += 1;
+	   		} else if (CONST.ESTADOS_GASTO['CONTABILIZADO'] == gasto.get("estadoGastoCodigo")) {
+	   			contabilizados += 1;
+	   		}
+		}); 
+
+    	if(autorizados == 0 && subsanados == 0 && contabilizados != 0) {
+	    	return true;	
+	    }else{
+	    	return false;
+	    }
+    },
+    
+    fechaContaHiddenArray: function(gastos){
+    	var autorizados = 0;
+	    var subsanados = 0;
+	    var contabilizados = 0;
+	    
+	    Ext.Array.each(gastos, function(gasto){
+	    	if (CONST.ESTADOS_GASTO['AUTORIZADO'] == gasto.estadoGastoCodigo) {
+	    		autorizados += 1;
+	    	} else if (CONST.ESTADOS_GASTO['SUBSANADO'] == gasto.estadoGastoCodigo) {
+	    		subsanados += 1;
+	    	} else if (CONST.ESTADOS_GASTO['CONTABILIZADO'] == gasto.estadoGastoCodigo) {
+	    		contabilizados += 1;
+	    	}
+		}); 
+
+    	if(autorizados == 0 && subsanados == 0 && contabilizados != 0) {
+	    	return true;	
+	    }else{
+	    	return false;
+	    }
+    },
+    
+    fechaPagoAllowBlank: function(gastos){
+    	var autorizados = 0;
+	    var subsanados = 0;
+	    var contabilizados = 0;
+	    
+	    	Ext.Array.each(gastos, function(gasto){
+	    		if (CONST.ESTADOS_GASTO['AUTORIZADO'] == gasto.get("estadoGastoCodigo")) {
+	    			autorizados += 1;
+	    		} else if (CONST.ESTADOS_GASTO['SUBSANADO'] == gasto.get("estadoGastoCodigo")) {
+	    			subsanados += 1;
+	    		} else if (CONST.ESTADOS_GASTO['CONTABILIZADO'] == gasto.get("estadoGastoCodigo")) {
+	    			contabilizados += 1;
+	    		}
+			});
+    	
+    	if(autorizados == 0 && subsanados == 0 && contabilizados != 0) {
+	    	return false;	
+	    } else {
+	    	return true;	
+	    }
+    },
+    
+    fechaPagoAllowBlankArray: function(gastos){
+    	var autorizados = 0;
+	    var subsanados = 0;
+	    var contabilizados = 0;
+
+	    	Ext.Array.each(gastos, function(gasto){
+	    		if (CONST.ESTADOS_GASTO['AUTORIZADO'] == gasto.estadoGastoCodigo) {
+	    			autorizados += 1;
+	    		} else if (CONST.ESTADOS_GASTO['SUBSANADO'] == gasto.estadoGastoCodigo) {
+	    			subsanados += 1;
+	    		} else if (CONST.ESTADOS_GASTO['CONTABILIZADO'] == gasto.estadoGastoCodigo) {
+	    			contabilizados += 1;
+	    		}
+			});
+    	
+    	if(autorizados == 0 && subsanados == 0 && contabilizados != 0) {
+	    	return false;	
+	    } else {
+	    	return true;	
+	    }
+    },
+    
+    onExportClickFacturas: function(btn){
+		var me = this;
+		var url =  $AC.getRemoteUrl('gastosproveedor/generateExcelFacturas');
+		var config = {};
+
+		config.url= url;
+		
+		me.fireEvent("downloadFile", config);		
+	},
+	
+	onExportClickTasasImpuestos: function(btn){
+		var me = this;
+		var url =  $AC.getRemoteUrl('gastosproveedor/generateExcelTasasImpuestos');
+		var config = {};
+
+		config.url= url;
+		
+		me.fireEvent("downloadFile", config);		
+	}
 
 });

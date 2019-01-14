@@ -93,6 +93,7 @@ Ext.define('HreRem.view.expedientes.ActivosExpediente', {
 			    idPrincipal : 'expediente.id',
 			    reference: 'listadoactivosexpediente',
 				cls	: 'panel-base shadow-panel',
+				secFunToEdit: 'EDITAR_GRID_LISTADO_ACTIVOS_EXPEDIENTE',
 				bind: {
 					store: '{storeActivosExpediente}'
 				},
@@ -228,8 +229,9 @@ Ext.define('HreRem.view.expedientes.ActivosExpediente', {
 			            summaryRenderer: function(value, summaryData, dataIndex) {			            	
 			            	var suma= 0;
 			            	var store = this.up('gridBaseEditableRow').getStore();
+			            	console.log(store);
 			            	for(var i=0; i< store.data.length; i++){	            		
-			            		if(store.data.items[i].data.precioMinimo != null){
+			            		if(store.data.items[i].data.precioMinimo != null){			            			
 			            			suma += parseFloat(store.data.items[i].data.precioMinimo);
 			            		}
 		            		}
@@ -242,21 +244,33 @@ Ext.define('HreRem.view.expedientes.ActivosExpediente', {
 			       		renderer: condicionesRenderer,	           
 			            flex: 0.5,
 			            dataIndex: 'condiciones',
-			            align: 'center'
+			            align: 'center',
+			            bind: {
+			            	hidden: '{esTipoAlquiler}'
+			            },
+			            hideable: false
 			       },
 			       {   
 			       		text: HreRem.i18n("title.bloqueos"),
 			       		renderer: bloqueosRenderer,	           
 			            flex: 0.5,
 			            dataIndex: 'bloqueos',
-			            align: 'center'
+			            align: 'center',
+			            bind: {
+			            	hidden: '{esTipoAlquiler}'
+			            },
+			            hideable: false
 			       },
 			       {   
 			       		text: HreRem.i18n("title.tanteo"),
 			       		renderer: tanteosRenderer,	           
 			            flex: 0.5,
 			            dataIndex: 'tanteos',
-			            align: 'center'
+			            align: 'center',
+			            bind: {
+			            	hidden: '{esTipoAlquiler}'
+			            },
+			            hideable: false
 			       }
 			       	        
 			    ],

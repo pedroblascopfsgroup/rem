@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.model;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -106,6 +107,8 @@ public class Comprador implements Serializable, Auditable {
     @Column(name = "ID_COMPRADOR_URSUS_BH")
     private Long idCompradorUrsusBh;
     
+    @Column(name = "COM_ENVIADO")
+    private Date compradorEnviado;    
 
 	@Version   
 	private Long version;
@@ -272,5 +275,13 @@ public class Comprador implements Serializable, Auditable {
 
 	public void setIdCompradorUrsusBh(Long idCompradorUrsusBh) {
 		this.idCompradorUrsusBh = idCompradorUrsusBh;
-	}    
+	}
+
+	public Date getCompradorEnviado() {
+		return compradorEnviado;
+	}
+
+	public void setCompradorEnviado(Date compradorEnviado) {
+		this.compradorEnviado = compradorEnviado;
+	}
 }

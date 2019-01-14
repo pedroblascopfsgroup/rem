@@ -29,7 +29,6 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBLocalizacionesBien
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBValoracionesBien;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
-import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjudicacionJudicial;
 import es.pfsgroup.plugin.rem.model.ActivoAdjudicacionNoJudicial;
@@ -49,6 +48,7 @@ import es.pfsgroup.plugin.rem.model.ActivoPlazaAparcamiento;
 import es.pfsgroup.plugin.rem.model.ActivoPropietario;
 import es.pfsgroup.plugin.rem.model.ActivoPropietarioActivo;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
+import es.pfsgroup.plugin.rem.model.ActivoPublicacion;
 import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.ActivoTitulo;
@@ -61,6 +61,8 @@ import es.pfsgroup.plugin.rem.model.PresupuestoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionAlquiler;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionVenta;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTituloActivo;
@@ -104,8 +106,6 @@ public class AltaActivoThirdParty implements AltaActivoThirdPartyService {
 	@Autowired
 	private RestApi restApi;
 	
-	@Autowired
-	private GestorActivoApi gestorActivoManager;
 	
 	@Override
 	public String[] getKeys() {
@@ -222,11 +222,12 @@ private void dtoToEntitiesOtras(DtoAltaActivoThirdParty dtoAATP, Activo activo) 
 		// PerimetroActivo
 		PerimetroActivo perimetroActivo = new PerimetroActivo();
 		perimetroActivo.setActivo(activo);
-		perimetroActivo.setAplicaGestion(0);
+		perimetroActivo.setAplicaGestion(1);
 		perimetroActivo.setAplicaComercializar(1);
 		if(!Checks.esNulo(dtoAATP.getFormalizacion())){
 			perimetroActivo.setAplicaFormalizar(dtoAATP.getFormalizacion().equalsIgnoreCase("si") ? 1 : 0);
-		}else perimetroActivo.setAplicaFormalizar(0);
+		}else perimetroActivo.setAplicaFormalizar(1);
+		perimetroActivo.setAplicaPublicar(true);
 		perimetroActivo.setIncluidoEnPerimetro(1);
 		genericDao.save(PerimetroActivo.class, perimetroActivo);
 		
@@ -701,19 +702,30 @@ private void dtoToEntitiesOtras(DtoAltaActivoThirdParty dtoAATP, Activo activo) 
 				}
 				
 		activo.setBien(bien);
-		genericDao.save(Activo.class, activo);		
-	}
-
-	private ActivoProveedor obtenerMediador(String nifMediador, Long idActivo) {
-		ActivoProveedor mediador = null;
-		mediador = gestorActivoManager.obtenerProveedorTecnico(idActivo);
-		if (!Checks.esNulo(nifMediador) && Checks.esNulo(mediador)) {
-			Filter f1 = genericDao.createFilter(FilterType.EQUALS, "docIdentificativo", nifMediador);
-			Filter f2 = genericDao.createFilter(FilterType.EQUALS, "tipoProveedor.codigo",
-					DDTipoProveedor.COD_MEDIADOR);
-			mediador = genericDao.get(ActivoProveedor.class, f1, f2);
-		}
-		return mediador;
+		genericDao.save(Activo.class, activo);	
+		
+		ActivoPublicacion activoPublicacion = new ActivoPublicacion();
+		activoPublicacion.setActivo(activo);
+		activoPublicacion.setTipoComercializacion((DDTipoComercializacion) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoComercializacion.class, dtoAATP.getDestinoComercialCodigo()));
+		activoPublicacion.setEstadoPublicacionVenta((DDEstadoPublicacionVenta) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoPublicacionVenta.class, DDEstadoPublicacionVenta.CODIGO_NO_PUBLICADO_VENTA));
+		activoPublicacion.setEstadoPublicacionAlquiler((DDEstadoPublicacionAlquiler) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoPublicacionAlquiler.class, DDEstadoPublicacionAlquiler.CODIGO_NO_PUBLICADO_ALQUILER));
+		activoPublicacion.setCheckPublicarVenta(false);
+		activoPublicacion.setCheckOcultarVenta(false);
+		activoPublicacion.setCheckSinPrecioVenta(false);
+		activoPublicacion.setCheckOcultarPrecioVenta(false);
+		activoPublicacion.setCheckPublicarAlquiler(false);
+		activoPublicacion.setCheckOcultarAlquiler(false);
+		activoPublicacion.setCheckSinPrecioAlquiler(false);
+		activoPublicacion.setCheckOcultarPrecioAlquiler(false);
+		activoPublicacion.setVersion(new Long(0));
+		
+		Auditoria auditoria = new Auditoria();
+		auditoria.setBorrado(false);
+		auditoria.setFechaCrear(new Date());
+		auditoria.setUsuarioCrear("CARGA_MASIVA");
+		activoPublicacion.setAuditoria(auditoria);
+		
+		genericDao.save(ActivoPublicacion.class, activoPublicacion);
 	}
 
 }

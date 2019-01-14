@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=ANAHUAC DE VICENTE
---## FECHA_CREACION=20160920
+--## AUTOR=RLB
+--## FECHA_CREACION=20181116
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=0
@@ -113,7 +113,7 @@ BEGIN
 			WHERE AGR.AGR_NUM_AGRUP_REM IS NOT NULL AND TAG.DD_TAG_CODIGO = ''01'' 
 			AND AGR.BORRADO = 0 AND (AGR.AGR_FECHA_BAJA IS NULL OR AGR.AGR_FECHA_BAJA > TO_DATE(SYSDATE, ''DD/MM/YY''))
 		)
-		SELECT 
+		SELECT DISTINCT
 		CAST(AGA.AGA_ID  AS NUMBER(16,0))                       						          			AS ID_AGRUP_ACTIVO,
 		CAST(AGR.AGR_NUM_AGRUP_REM  AS NUMBER(16,0))                       									AS ID_AGRUPACION_REM,
 		CAST(ACT.ACT_NUM_ACTIVO AS NUMBER(16,0)) 											                AS ID_ACTIVO_HAYA,
@@ -131,7 +131,8 @@ BEGIN
 		INNER JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON AGA.ACT_ID = ACT.ACT_ID		
 		INNER JOIN SUBDIVISION SDV ON SDV.ACT_ID = AGA.ACT_ID
 		where act.borrado = 0
-		and agr.borrado = 0';		   
+		and agr.borrado = 0
+		and aga.borrado = 0';		   
    	 	
  		DBMS_OUTPUT.PUT_LINE('[INFO] Vista materializada : '|| V_ESQUEMA ||'.'|| V_TEXT_VISTA ||'... creada');
 

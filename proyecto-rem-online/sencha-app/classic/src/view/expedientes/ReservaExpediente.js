@@ -37,7 +37,8 @@ Ext.define('HreRem.view.expedientes.ReservaExpediente', {
 		                	fieldLabel:  HreRem.i18n('fieldlabel.tipo.arras'),
 				        	bind: {
 			            		store: '{storeTiposArras}',
-			            		value: '{reserva.tipoArrasCodigo}'
+			            		value: '{reserva.tipoArrasCodigo}',
+			            		readOnly:'{esCarteraGaleonOZeus}'
 			            	}
 				        },		                
 		                {
@@ -50,9 +51,18 @@ Ext.define('HreRem.view.expedientes.ReservaExpediente', {
 		                	fieldLabel:  HreRem.i18n('fieldlabel.importe'),
 		                	bind:		'{reserva.importe}'
 		                },
-		                {
+		                /*{
 		                	fieldLabel:  HreRem.i18n('fieldlabel.estado.reserva'),
 		                	bind:		'{reserva.estadoReservaDescripcion}'
+		                },*/
+		                {
+		                	xtype: 'comboboxfieldbase',
+		                	bind: {
+								store: '{comboEstadoReserva}',
+								value: '{reserva.estadoReservaCodigo}'
+							},
+							readOnly: !$AU.userIsRol("HAYASUPER"),
+		                	fieldLabel:  HreRem.i18n('fieldlabel.estado.reserva')
 		                },
 		                {
 		                	xtype:'datefieldbase',

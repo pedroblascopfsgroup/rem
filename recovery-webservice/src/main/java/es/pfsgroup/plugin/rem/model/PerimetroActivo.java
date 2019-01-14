@@ -99,6 +99,15 @@ public class PerimetroActivo implements Serializable, Auditable {
     @Column(name = "PAC_MOTIVO_FORMALIZAR")
 	private String motivoAplicaFormalizar;
     
+    @Column(name = "PAC_CHECK_PUBLICAR")
+	private Boolean aplicaPublicar; 
+    
+    @Column(name = "PAC_FECHA_PUBLICAR")
+	private Date fechaAplicaPublicar;
+    
+    @Column(name = "PAC_MOTIVO_PUBLICAR")
+	private String motivoAplicaPublicar;
+    
     @Version   
 	private Long version;
 
@@ -274,6 +283,30 @@ public class PerimetroActivo implements Serializable, Auditable {
 
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
+	}
+
+	public Boolean getAplicaPublicar() {
+		return aplicaPublicar;
+	}
+
+	public void setAplicaPublicar(Boolean aplicaPublicar) {
+		this.aplicaPublicar = aplicaPublicar;
+	}
+
+	public Date getFechaAplicaPublicar() {
+		return fechaAplicaPublicar;
+	}
+
+	public void setFechaAplicaPublicar(Date fechaAplicaPublicar) {
+		this.fechaAplicaPublicar = fechaAplicaPublicar;
+	}
+
+	public String getMotivoAplicaPublicar() {
+		return motivoAplicaPublicar;
+	}
+
+	public void setMotivoAplicaPublicar(String motivoAplicaPublicar) {
+		this.motivoAplicaPublicar = motivoAplicaPublicar;
 	}
 	
 

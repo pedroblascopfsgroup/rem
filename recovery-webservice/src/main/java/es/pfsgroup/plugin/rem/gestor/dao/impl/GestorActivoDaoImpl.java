@@ -7,17 +7,25 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import es.capgemini.pfs.users.domain.Usuario;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.HQLBuilder;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVRawSQLDao;
 import es.pfsgroup.framework.paradise.gestorEntidad.dao.impl.GestorEntidadDaoImpl;
 import es.pfsgroup.plugin.rem.gestor.dao.GestorActivoDao;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.Directorusuario;
 
 @Repository("GestorActivoDao")
 public class GestorActivoDaoImpl extends GestorEntidadDaoImpl implements GestorActivoDao{
 	
 	@Autowired
 	private MSVRawSQLDao rawDao;
+	
+	@Autowired
+	private GenericABMDao genericDao;
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -85,6 +93,21 @@ public class GestorActivoDaoImpl extends GestorEntidadDaoImpl implements GestorA
 		} else {
 			return true;
 		}
+	}
+
+	@Override
+	public Usuario getDirectorEquipoByGestor(Usuario gestor) {
+		
+			Usuario director = null;
+			
+			Filter filterDirector = genericDao.createFilter(FilterType.EQUALS, "gestor.id", gestor.getId());
+			Directorusuario directorUsuario = genericDao.get(Directorusuario.class, filterDirector);
+			
+			if (!Checks.esNulo(directorUsuario)){
+				director = directorUsuario.getDirectorEquipo();
+			}
+		
+		return director;
 	}
 
 }

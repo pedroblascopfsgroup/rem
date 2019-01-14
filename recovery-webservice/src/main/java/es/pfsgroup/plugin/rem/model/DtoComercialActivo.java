@@ -15,6 +15,7 @@ public class DtoComercialActivo extends DtoTabActivo{
 	private String observaciones;
 	private Double importeVenta;
 	private Boolean ventaExterna;
+	private Boolean puja;
 
 
 	public String getId() {
@@ -71,6 +72,14 @@ public class DtoComercialActivo extends DtoTabActivo{
 
 	public void setVentaExterna(Boolean ventaExterna) {
 		this.ventaExterna = ventaExterna;
+	}
+	
+	public Boolean getPuja() {
+		return puja;
+	}
+
+	public void setPuja(Boolean puja) {
+		this.puja = puja;
 	}
 
 }

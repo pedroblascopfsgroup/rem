@@ -326,7 +326,8 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 											dock: 'top',
 											items: [
 													{itemId: 'addButton',iconCls:'x-fa fa-plus', handler: 'onClickBotonAsignarTrabajosGasto', bind: {hidden: '{ocultarBotonesTrabajos}'}},
-													{itemId: 'removeButton',iconCls:'x-fa fa-minus', handler: 'onClickBotonDesasignarTrabajosGasto', bind: {hidden: '{ocultarBotonesTrabajos}'}}
+													{itemId: 'removeButton',iconCls:'x-fa fa-minus', handler: 'onClickBotonDesasignarTrabajosGasto', bind: {hidden: '{ocultarBotonesTrabajos}'}},
+													{itemId: 'downloadButton', iconCls:'x-fa fa-download', handler: 'onExportClickTrabajos'}
 											]
 									},
 									columns: [

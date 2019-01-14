@@ -8,6 +8,8 @@ public final class DtoAltaActivoFinanciero {
 	// IDENTIFICACIÓN
 	private Long numActivoHaya;
 	private String carteraCodigo;
+	private String subcarteraCodigo;
+	private String tipoTituloCodigo;
 	private String subtipoTituloCodigo;
 	private Long numActivoCartera; // número activo según cartera.
 	private Long numBienRecovery; // (NMBBIEN - sarebId)'BIE_ENTIDAD_ID'
@@ -100,6 +102,12 @@ public final class DtoAltaActivoFinanciero {
 	}
 	public void setCarteraCodigo(String carteraCodigo) {
 		this.carteraCodigo = carteraCodigo;
+	}
+	public String getSubcarteraCodigo() {
+		return subcarteraCodigo;
+	}
+	public void setSubcarteraCodigo(String subcarteraCodigo) {
+		this.subcarteraCodigo = subcarteraCodigo;
 	}
 	public Long getNumActivoCartera() {
 		return numActivoCartera;
@@ -382,6 +390,12 @@ public final class DtoAltaActivoFinanciero {
 	}
 	public void setNumDormitoriosVivienda(Integer numDormitoriosVivienda) {
 		this.numDormitoriosVivienda = numDormitoriosVivienda;
+	}
+	public String getTipoTituloCodigo() {
+		return tipoTituloCodigo;
+	}
+	public void setTipoTituloCodigo(String tipoTituloCodigo) {
+		this.tipoTituloCodigo = tipoTituloCodigo;
 	}
 	public String getSubtipoTituloCodigo() {
 		return subtipoTituloCodigo;

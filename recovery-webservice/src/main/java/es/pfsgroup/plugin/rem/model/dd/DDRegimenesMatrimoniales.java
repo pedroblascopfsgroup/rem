@@ -32,6 +32,8 @@ public class DDRegimenesMatrimoniales implements Auditable, Dictionary {
 	
 
 	private static final long serialVersionUID = 1L;
+	
+	public static final String COD_GANANCIALES = "01";
 
 	@Id
 	@Column(name = "DD_REM_ID")

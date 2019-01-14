@@ -1,0 +1,90 @@
+--/*
+--#########################################
+--## AUTOR=Pablo Meseguer
+--## FECHA_CREACION=20181008
+--## ARTEFACTO=batch
+--## VERSION_ARTEFACTO=9.2
+--## INCIDENCIA_LINK=HREOS-4591
+--## PRODUCTO=NO
+--## 
+--## Finalidad: Actualizacion gestor de activo en agrupaciones.
+--## INSTRUCCIONES:  
+--## VERSIONES:
+--##        0.1 Versión inicial
+--#########################################
+--*/
+--Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON;
+SET DEFINE OFF;
+
+DECLARE
+
+	V_TABLA VARCHAR2(30 CHAR) := 'AUX_CARGA_CARGAS_REMVIP_1564_2'; -- Variable para tabla de salida para el borrado
+	V_ESQUEMA VARCHAR2(25 CHAR):= 'REM01';-- '#ESQUEMA#'; -- Configuracion Esquema
+	V_ESQUEMA_M VARCHAR2(25 CHAR):= 'REMMASTER';-- '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
+	ERR_NUM NUMBER;-- Numero de errores
+	ERR_MSG VARCHAR2(2048);-- Mensaje de error
+	V_SQL VARCHAR2(4000 CHAR);
+	PL_OUTPUT VARCHAR2(32000 CHAR);
+	V_USUARIO VARCHAR2(50 CHAR) := 'HREOS-4591';
+
+BEGIN
+	
+	DBMS_OUTPUT.PUT_LINE('[INICIO]'||CHR(10));
+	
+	INSERT INTO REM01.ACT_AGA_AGRUPACION_ACTIVO (
+	AGA_ID,
+	AGR_ID,
+	ACT_ID,
+	AGA_FECHA_INCLUSION,
+	AGA_PRINCIPAL,
+	VERSION,
+	USUARIOCREAR,
+	FECHACREAR,
+	BORRADO
+	)
+	WITH ACT_NUMERO_ACTIVO AS (
+		SELECT DISTINCT
+			   ACT.ACT_ID,
+			   AGR.AGR_ID
+		FROM REM01.AUX_AGRUP_PROYECTO_HREOS_4591 AUX
+		JOIN REM01.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO = AUX.ACT_NUM_ACTIVO
+		JOIN REM01.ACT_AGR_AGRUPACION AGR ON AGR.AGR_DESCRIPCION = AUX.ID_PROYECTO
+		LEFT JOIN REM01.ACT_AGA_AGRUPACION_ACTIVO AGA ON AGA.ACT_ID = ACT.ACT_ID AND AGA.AGR_ID = AGR.AGR_ID
+		WHERE AGA.AGA_ID IS NULL 
+		AND AUX.EXISTE_ACTIVO = 1
+		AND CARGAR_AGRUPACION = 1
+		AND AGR.USUARIOCREAR = 'HREOS-4591'
+	)
+	SELECT
+	REM01.S_ACT_AGA_AGRUPACION_ACTIVO.NEXTVAL		AGA_ID,
+	MIG.AGR_ID,
+	MIG.ACT_ID,
+	SYSDATE									        AGA_FECHA_INCLUSION,
+	0									        	AGA_PRINCIPAL,
+	'0'                                             VERSION,
+	'HREOS-4591'                                    USUARIOCREAR,
+	SYSDATE                                         FECHACREAR,
+	0                                               BORRADO
+	FROM ACT_NUMERO_ACTIVO MIG;
+
+	DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||' '||V_ESQUEMA||'.ACT_AGA_AGRUPACION_ACTIVO cargada. '||SQL%ROWCOUNT||' Filas.');
+	
+	COMMIT;
+
+	PL_OUTPUT := PL_OUTPUT || '[FIN]'||CHR(10);
+	DBMS_OUTPUT.PUT_LINE(PL_OUTPUT);
+
+EXCEPTION
+    WHEN OTHERS THEN
+      PL_OUTPUT := PL_OUTPUT ||'[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(SQLCODE)||CHR(10);
+      PL_OUTPUT := PL_OUTPUT ||'-----------------------------------------------------------'||CHR(10);
+      PL_OUTPUT := PL_OUTPUT ||SQLERRM||CHR(10);
+      PL_OUTPUT := PL_OUTPUT ||V_SQL||CHR(10);
+      DBMS_OUTPUT.PUT_LINE(PL_OUTPUT);
+      ROLLBACK;
+      RAISE;
+END;
+/
+EXIT;

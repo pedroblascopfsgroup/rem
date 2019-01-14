@@ -129,16 +129,29 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 				return error;
 			}
 			
-			if (Checks.esNulo(gasto.getGastoInfoContabilidad()) ||
-					(Checks.esNulo(gasto.getGastoInfoContabilidad().getCuentaContable()) &&
-							(!Checks.esNulo(gasto.getPropietario()) && !DDCartera.CODIGO_CARTERA_BANKIA.equals(gasto.getPropietario().getCartera().getCodigo())))) {
-				error = messageServices.getMessage(VALIDACION_CUENTA_CONTABLE);
-				return error;
+			if(!Checks.esNulo(gasto.getPropietario())){
+				if(!DDCartera.CODIGO_CARTERA_LIBERBANK.equals(gasto.getPropietario().getCartera().getCodigo())){
+					if (Checks.esNulo(gasto.getGastoInfoContabilidad()) ||
+							(Checks.esNulo(gasto.getGastoInfoContabilidad().getCuentaContable()) &&
+									(!DDCartera.CODIGO_CARTERA_BANKIA.equals(gasto.getPropietario().getCartera().getCodigo())))) {
+						error = messageServices.getMessage(VALIDACION_CUENTA_CONTABLE);
+						return error;
+					}
+				}
+			}else{
+				if (Checks.esNulo(gasto.getGastoInfoContabilidad()) ||
+						(Checks.esNulo(gasto.getGastoInfoContabilidad().getCuentaContable()) &&
+								(!Checks.esNulo(gasto.getPropietario()) && !DDCartera.CODIGO_CARTERA_BANKIA.equals(gasto.getPropietario().getCartera().getCodigo())))) {
+					error = messageServices.getMessage(VALIDACION_CUENTA_CONTABLE);
+					return error;
+				}
 			}
 			
-			if(Checks.esNulo(gasto.getGastoInfoContabilidad()) || Checks.esNulo(gasto.getGastoInfoContabilidad().getPartidaPresupuestaria())) {
-				error = messageServices.getMessage(VALIDACION_PARTIDA_PRESUPUESTARIA); 
-				return error;
+			if(!Checks.esNulo(gasto.getPropietario()) && !DDCartera.CODIGO_CARTERA_LIBERBANK.equals(gasto.getPropietario().getCartera().getCodigo()) && !"100".equals(gasto.getSubtipoGasto().getCodigo())){
+				if(Checks.esNulo(gasto.getGastoInfoContabilidad()) || Checks.esNulo(gasto.getGastoInfoContabilidad().getPartidaPresupuestaria())) {
+					error = messageServices.getMessage(VALIDACION_PARTIDA_PRESUPUESTARIA); 
+					return error;
+				}
 			}
 			
 			if(Checks.estaVacio(gasto.getGastoProveedorActivos()) && !gasto.esAutorizadoSinActivos()) {

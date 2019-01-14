@@ -117,7 +117,6 @@ Ext.define('HreRem.view.activos.detalle.EditarPropietario', {
 			    					        	fieldLabel: HreRem.i18n('fieldlabel.porcentaje.propiedad'),
 			    					        	name: 'porcPropiedad',
 			    					        	maskRe: /[0-9.]/,
-			    					        	allowBlank: false,
 			    					        	bind: '{propietario.porcPropiedad}'
 			    					        },
 			    					        {

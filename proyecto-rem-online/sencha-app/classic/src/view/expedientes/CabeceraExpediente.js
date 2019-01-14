@@ -7,6 +7,10 @@ Ext.define('HreRem.view.expedientes.CabeceraExpediente', {
     
 	    var me = this;
 	    
+	    var columns = 3;
+	    if(me.lookupViewModel().get('expediente.tipoExpedienteCodigo') == CONST.TIPOS_EXPEDIENTE_COMERCIAL["ALQUILER"]){
+	    	columns=4;
+	    }
 	    me.menu = Ext.create("Ext.menu.Menu", {
 	    	width: 150,
 		    cls: 'menu-favoritos',
@@ -23,9 +27,8 @@ Ext.define('HreRem.view.expedientes.CabeceraExpediente', {
 	    		}	    		
 	    	]
 	    	
-	    });			
-		
-	    
+	    });	
+	 
 	    me.items= [	 
 	    
 				    {
@@ -68,7 +71,7 @@ Ext.define('HreRem.view.expedientes.CabeceraExpediente', {
 								        {								                   		
 					                   		xtype:'container',
 					                   		flex: 4,
-					                   		maxWidth: 800,
+					                   		maxWidth: 900,
 											height: 125,
 					                   		margin: '5 10 10 30 ',
 											defaultType: 'displayfield',
@@ -77,9 +80,9 @@ Ext.define('HreRem.view.expedientes.CabeceraExpediente', {
 											autoScroll: true,
 											layout: {
 											    type: 'table',
-										        columns: 3,
+										        columns: columns,
 										        trAttrs: {width: '100%', pading: 0},
-										        tdAttrs: {width: '33%',  pading: 0},
+										        tdAttrs: {width: '20%',  pading: 0},
 										        tableAttrs: {
 										            style: {
 										                width: '100%'
@@ -110,15 +113,27 @@ Ext.define('HreRem.view.expedientes.CabeceraExpediente', {
 											            	bind:		'{expediente.fechaAlta}',
 											            	renderer: Ext.util.Format.dateRenderer('d/m/Y')
 											            },
+											            {   
+											            	xtype:'comboboxfieldbase',
+															fieldLabel: HreRem.i18n('fieldlabel.tipo.alquiler'),
+															cls: 'cabecera-info-field',
+															bind :{ 
+																value: '{expediente.tipoAlquiler}',
+																store: '{comboTipoAlquiler}',
+																hidden: '{esOfertaVenta}'
+															}
+										                },
 														{ 
 															fieldLabel: HreRem.i18n('fieldlabel.propietario'),
 															cls: 'cabecera-info-field',
 										                	bind:		'{expediente.propietario}'
 										                },
 														{ 
-															fieldLabel: HreRem.i18n('fieldlabel.comprador'),
 															cls: 'cabecera-info-field',
-										                	bind:		'{expediente.comprador}'
+										                	bind:{
+																fieldLabel:'{compradorTipoEsAlquiler}',
+																value: '{expediente.comprador}'
+										                	}		
 										                },
 										                { 
 															fieldLabel: HreRem.i18n('fieldlabel.fecha.sancion'),
@@ -127,11 +142,22 @@ Ext.define('HreRem.view.expedientes.CabeceraExpediente', {
 										                	bind:		'{expediente.fechaSancion}',
 										                	renderer: Ext.util.Format.dateRenderer('d/m/Y')
 										                },
+										                {  
+										                	xtype:'comboboxfieldbase',
+															fieldLabel:HreRem.i18n('fieldlabel.tipo.inquilino'),
+															cls: 'cabecera-info-field',
+															bind :{ 
+																value: '{expediente.tipoInquilino}',
+																store :'{comboTiposInquilino}',
+																hidden: '{esOfertaVenta}'
+															}
+										                },
 										                { 
 															fieldLabel: HreRem.i18n('fieldlabel.mediador'),
 															cls: 'cabecera-info-field',
 										                	bind:		'{expediente.mediador}'
 										                },
+
 										                { 
 															fieldLabel: HreRem.i18n('fieldlabel.estado'),
 															cls: 'cabecera-info-field',
@@ -139,12 +165,22 @@ Ext.define('HreRem.view.expedientes.CabeceraExpediente', {
 										                	
 										                },
 										                { 
-															fieldLabel: HreRem.i18n('fieldlabel.fecha.reserva'),
-															labelWidth: 100,
-															cls: 'cabecera-info-field',
-										                	bind:		'{expediente.fechaReserva}',
-										                	renderer: Ext.util.Format.dateRenderer('d/m/Y')
+										                	xtype:'datefieldbase',
+															formatter: 'date("d/m/Y")',
+															reference: 'fechaReserva',
+															fieldLabel:	HreRem.i18n('fieldlabel.fecha.reserva'),
+															bind:	{
+										                		value: '{expediente.fechaReserva}'
+										                		
+										                	},
+										                	listeners: {
+																render: 'tareaDefinicionDeOferta'
+															}		
+										                
 										                }
+										               
+										                
+										               
 										      ]
 										},
 										{
@@ -176,8 +212,7 @@ Ext.define('HreRem.view.expedientes.CabeceraExpediente', {
 
 				    }
     ];   	
-
-	me.callParent();
     
+	me.callParent();
 	}
 });

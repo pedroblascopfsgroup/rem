@@ -1,7 +1,7 @@
 Ext.define('HreRem.view.configuracion.administracion.proveedores.ConfiguracionProveedoresList', {
     extend			: 'HreRem.view.common.GridBaseEditableRow',
     xtype			: 'configuracionproveedoreslist',
-	topBar			: true,
+	
 	idPrincipal 	: 'proveedor.id',
 	editOnSelect	: false,
 	disabledDeleteBtn: true,
@@ -11,10 +11,10 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.ConfiguracionPr
 
     initComponent: function () {
      	var me = this;
-
      	me.listeners = {
     			rowdblclick: 'abrirPestanyaProveedor'
     	    };
+     	me.topBar = $AU.userHasFunction(['ADD_QUITAR_PROVEEDORES']);
 
 		me.columns = [
 		        {

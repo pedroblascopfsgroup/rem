@@ -3,28 +3,37 @@ package es.pfsgroup.plugin.rem.api.impl;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Date;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
-import es.capgemini.devon.message.MessageService;
+import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.pfsgroup.commons.utils.Checks;
-import es.pfsgroup.framework.paradise.bulkUpload.adapter.ProcessAdapter;
 import es.pfsgroup.framework.paradise.bulkUpload.liberators.MSVLiberator;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
+import es.pfsgroup.framework.paradise.bulkUpload.model.ResultadoProcesarFila;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVHojaExcel;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
+import es.pfsgroup.plugin.rem.activo.dao.impl.ActivoPatrimonioDaoImpl;
+import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
+import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
+import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
-import es.pfsgroup.framework.paradise.bulkUpload.model.ResultadoProcesarFila;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
@@ -39,34 +48,47 @@ public class MSVActualizadorPerimetroActivo extends AbstractMSVActualizador impl
     private static final Integer CHECK_VALOR_SI = 1;
     private static final Integer CHECK_VALOR_NO = 0;
     private static final Integer CHECK_NO_CAMBIAR = -1;
-    
-    private static final String MOTIVO_ACTIVO_NO_PUBLICADO = "activo.motivo.desmarcar.comercializar.no.publicar";
-		
-	@Autowired
-	ProcessAdapter processAdapter;
+
+    @Autowired
+    private ActivoAdapter activoAdapter;
 	
 	@Autowired
 	private ActivoApi activoApi;
-	
+
+
 	@Autowired
 	private UtilDiccionarioApi utilDiccionarioApi;
 	
 	@Autowired
 	private UpdaterStateApi updaterState;
 	
-	@Resource
-    MessageService messageServices;
+	@Autowired
+	private ActivoPatrimonioDaoImpl activoPatrimonio;
 	
+	@Autowired
+	private GenericAdapter genericAdapter;
+	
+	@Resource(name = "entityTransactionManager")
+	private PlatformTransactionManager transactionManager;
+
 	@Override
 	public String getValidOperation() {
 		return MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_PERIMETRO_ACTIVO;
 	}
 	
-	@Override
+
 	@Transactional(readOnly = false)
-	public ResultadoProcesarFila procesaFila(MSVHojaExcel exc, int fila, Long prmToken) throws IOException, ParseException, JsonViewerException, SQLException {
+	public ResultadoProcesarFila procesaFila(MSVHojaExcel exc, int fila, Long prmToken)
+			throws JsonViewerException, IOException, ParseException, SQLException, Exception {
+		return procesaFila(exc, fila, prmToken, new Object[0]);
+	}
+
+	@Transactional(readOnly = false)
+	public ResultadoProcesarFila procesaFila(MSVHojaExcel exc, int fila, Long prmToken, Object[] extraArgs) throws IOException, ParseException, JsonViewerException, SQLException {
 		
 		Activo activo = activoApi.getByNumActivo(Long.parseLong(exc.dameCelda(fila, 0)));
+		
+		ActivoPatrimonio actPatrimonio = activoPatrimonio.getActivoPatrimonioByActivo(activo.getId());
 		
 		//Evalua si ha encontrado un registro de perimetro para el activo dado. 
 		//En caso de que no exista, crea uno nuevo relacionado sin datos
@@ -84,6 +106,8 @@ public class MSVActualizadorPerimetroActivo extends AbstractMSVActualizador impl
 		String	tmpTipoAlquiler = exc.dameCelda(fila, 9);
 		Integer tmpAplicaFormalizar = getCheckValue(exc.dameCelda(fila, 10));
 		String  tmpMotivoAplicaFormalizar = exc.dameCelda(fila,11);
+		Integer tmpAplicaPublicar = getCheckValue(exc.dameCelda(fila, 12));
+		String  tmpMotivoAplicaPublicar = exc.dameCelda(fila,13);
 
 		perimetroActivo.setActivo(activo);
 		//Incluido en perimetro		---------------------------
@@ -121,9 +145,61 @@ public class MSVActualizadorPerimetroActivo extends AbstractMSVActualizador impl
 			activo.setTipoComercializar((DDTipoComercializar)
 				utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoComercializar.class, tmpTipoComercializacion.substring(0, 2)));
 		
+		//Perimetro de alquiler - Double Gestor
+		if(!Checks.esNulo(tmpDestinoComercial)){
+			if(tmpDestinoComercial.substring(0, 2).equals(DDTipoComercializacion.CODIGO_VENTA) && !Checks.esNulo(activo.getActivoPublicacion()) 
+					&& (activo.getActivoPublicacion().getTipoComercializacion().getCodigo().equals(DDTipoComercializacion.CODIGO_SOLO_ALQUILER) 
+							|| activo.getActivoPublicacion().getTipoComercializacion().getCodigo().equals(DDTipoComercializacion.CODIGO_ALQUILER_VENTA))){
+				if(!Checks.esNulo(actPatrimonio)){
+					actPatrimonio.setCheckHPM(false);
+				}else{
+					//creamos el registro en la tabla si no existe.
+					String username = genericAdapter.getUsuarioLogado().getUsername();
+					Date fecha = new Date();
+					actPatrimonio = new ActivoPatrimonio();
+					actPatrimonio.setActivo(activo);
+					actPatrimonio.setCheckHPM(false);
+					Auditoria auditoria = new Auditoria();
+					auditoria.setUsuarioCrear(username);
+					auditoria.setFechaCrear(fecha);
+					auditoria.setBorrado(false);
+					actPatrimonio.setAuditoria(auditoria);
+				}
+				activoPatrimonio.save(actPatrimonio);
+				//Actualizamos los gestores
+				DtoActivoFichaCabecera dto = new DtoActivoFichaCabecera();
+				dto.setTipoComercializacionCodigo(DDTipoComercializacion.CODIGO_VENTA);
+				activoAdapter.updateGestoresTabActivoTransactional(dto, activo.getId());
+			}else if((tmpDestinoComercial.substring(0, 2).equals(DDTipoComercializacion.CODIGO_SOLO_ALQUILER) 
+						|| tmpDestinoComercial.substring(0, 2).equals(DDTipoComercializacion.CODIGO_ALQUILER_VENTA)) 
+						&& !Checks.esNulo(activo.getActivoPublicacion()) 
+						&& activo.getActivoPublicacion().getTipoComercializacion().getCodigo().equals(DDTipoComercializacion.CODIGO_VENTA)){
+				if(!Checks.esNulo(actPatrimonio)){
+					actPatrimonio.setCheckHPM(true);
+				}else{
+					//creamos el registro en la tabla si no existe.
+					String username = genericAdapter.getUsuarioLogado().getUsername();
+					Date fecha = new Date();
+					actPatrimonio = new ActivoPatrimonio();
+					actPatrimonio.setActivo(activo);
+					actPatrimonio.setCheckHPM(true);
+					Auditoria auditoria = new Auditoria();
+					auditoria.setUsuarioCrear(username);
+					auditoria.setFechaCrear(fecha);
+					auditoria.setBorrado(false);
+					actPatrimonio.setAuditoria(auditoria);
+				}
+				activoPatrimonio.save(actPatrimonio);
+				//Actualizamos los gestores
+				DtoActivoFichaCabecera dto = new DtoActivoFichaCabecera();
+				dto.setTipoComercializacionCodigo(DDTipoComercializacion.CODIGO_SOLO_ALQUILER);
+				activoAdapter.updateGestoresTabActivoTransactional(dto, activo.getId());
+			}
+		}
+		
 		//Tipo de Destino comercial en el activo
-		if(!Checks.esNulo(tmpDestinoComercial))
-			activo.setTipoComercializacion((DDTipoComercializacion)
+		if(!Checks.esNulo(tmpDestinoComercial) && !Checks.esNulo(activo.getActivoPublicacion()))
+			activo.getActivoPublicacion().setTipoComercializacion((DDTipoComercializacion)
 					utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoComercializacion.class, tmpDestinoComercial.substring(0, 2)));
 		
 		//Tipo de alquiler del activo
@@ -136,8 +212,8 @@ public class MSVActualizadorPerimetroActivo extends AbstractMSVActualizador impl
 			//Si Comercializar es NO, forzamos también a NO => Formalizar (por si no venía informado)
 			tmpAplicaFormalizar = CHECK_VALOR_NO;
 			
-			//Comrprobamos si es necesario actualizar el estado de publicación del activo, y si lo es, se cambia.
-			activoApi.setActivoToNoPublicado(activo, messageServices.getMessage(MOTIVO_ACTIVO_NO_PUBLICADO));
+			// Comprobamos si es necesario actualizar el estado de publicación del activo.
+			activoAdapter.actualizarEstadoPublicacionActivo(activo.getId());
 		}
 		
 		//Aplica Formalizar			---------------------------
@@ -148,7 +224,15 @@ public class MSVActualizadorPerimetroActivo extends AbstractMSVActualizador impl
 
 		if(!Checks.esNulo(tmpMotivoAplicaFormalizar)) perimetroActivo.setMotivoAplicaFormalizar(tmpMotivoAplicaFormalizar);
 		
-		
+		//Aplica Publicar 		---------------------------
+		if(!CHECK_NO_CAMBIAR.equals(tmpAplicaPublicar)){
+			perimetroActivo.setAplicaPublicar(BooleanUtils.toBooleanObject(tmpAplicaPublicar));
+			perimetroActivo.setFechaAplicaPublicar(new Date());
+		}
+
+		if(!Checks.esNulo(tmpMotivoAplicaPublicar)) perimetroActivo.setMotivoAplicaPublicar(tmpMotivoAplicaPublicar);
+
+
 		// ---------------------------
 		//Persiste los datos, creando el registro de perimetro
 		// Todos los datos son de PerimetroActivo, a excepcion del tipo comercializacion que es del Activo
@@ -161,8 +245,44 @@ public class MSVActualizadorPerimetroActivo extends AbstractMSVActualizador impl
 		
 		//Actualizar disponibilidad comercial del activo
 		updaterState.updaterStateDisponibilidadComercial(activo);
+
+		//Actualizar registro historico destino comercial del activo
+		activoApi.updateHistoricoDestinoComercial(activo, extraArgs);
+
 		activoApi.saveOrUpdate(activo);
+		
+		//postProcesado
+		//activoAdapter.actualizarEstadoPublicacionActivo(activo.getId());
+
 		return new ResultadoProcesarFila();
+	}
+	
+	@Override
+	public void postProcesado(MSVHojaExcel exc) throws NumberFormatException, IllegalArgumentException, IOException, ParseException {
+		TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
+		Integer numFilas = exc.getNumeroFilas();
+		ArrayList<Long> idList = new ArrayList<Long>();
+		try{
+			for (int fila = this.getFilaInicial(); fila < numFilas; fila++) {
+				Activo activo = activoApi.getByNumActivo(Long.parseLong(exc.dameCelda(fila, 0)));
+				idList.add(activo.getId());
+			}
+			activoAdapter.actualizarEstadoPublicacionActivo(idList, false);
+			transactionManager.commit(transaction);
+		}catch(NumberFormatException e){
+			transactionManager.rollback(transaction);
+			throw e;
+		}catch(IllegalArgumentException e){
+			transactionManager.rollback(transaction);
+			throw e;
+		}catch(IOException e){
+			transactionManager.rollback(transaction);
+			throw e;
+		}catch(ParseException e){
+			transactionManager.rollback(transaction);
+			throw e;
+		}
+		
 	}
 	
 	/**
@@ -208,7 +328,10 @@ public class MSVActualizadorPerimetroActivo extends AbstractMSVActualizador impl
 			perimetro.setAplicaTramiteAdmision(CHECK_VALOR_NO);
 			perimetro.setFechaAplicaTramiteAdmision(new Date());
 		}
-		
+		if(perimetro.getAplicaPublicar()) {
+			perimetro.setAplicaPublicar(BooleanUtils.toBooleanObject(CHECK_VALOR_NO));
+			perimetro.setFechaAplicaTramiteAdmision(new Date());
+		}
 	}
 
 

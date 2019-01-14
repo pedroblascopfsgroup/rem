@@ -7,6 +7,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import es.pfsgroup.plugin.rem.model.*;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -28,6 +29,7 @@ import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.rem.adapter.AgrupacionAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
+import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
 import es.pfsgroup.plugin.rem.excel.AgrupacionExcelReport;
 import es.pfsgroup.plugin.rem.excel.AgrupacionListadoActivosExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
@@ -66,8 +68,11 @@ public class AgrupacionController extends ParadiseJsonController {
 	private ActivoAgrupacionApi activoAgrupacionApi;
 
 	@Autowired
+	private ActivoEstadoPublicacionApi activoEstadoPublicacionApi;
+
+	@Autowired
 	private ExcelReportGeneratorApi excelReportGeneratorApi;
-	
+
 	@Autowired
 	private LogTrustEvento trustMe;
 
@@ -160,6 +165,8 @@ public class AgrupacionController extends ParadiseJsonController {
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getListActivosAgrupacionById(DtoAgrupacionFilter filtro, Long id, ModelMap model, HttpServletRequest request) {
 
+		//TODO cambiar Page por el nuevo dto.
+		//DtoEstadoDisponibilidadComercial page = adapter.getListActivosAgrupacion(filtro, id);
 		Page page = adapter.getListActivosAgrupacionById(filtro, id);
 		if(!Checks.esNulo(page)) {
 			model.put("data", page.getResults());
@@ -303,8 +310,9 @@ public class AgrupacionController extends ParadiseJsonController {
 	public ModelAndView createAgrupacion(DtoAgrupacionesCreateDelete dtoAgrupacion, ModelMap model) {
 
 		try {
-			boolean success = adapter.createAgrupacion(dtoAgrupacion);
-			model.put("success", success);
+			DtoAgrupacionesCreateDelete agrupDto = adapter.createAgrupacion(dtoAgrupacion);
+			model.put("data", agrupDto);
+			model.put("success", true);
 
 		} catch (Exception e) {
 			logger.error(e);
@@ -387,13 +395,26 @@ public class AgrupacionController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView saveAgrupacion(DtoAgrupaciones dtoAgrupacion, @RequestParam Long id, ModelMap model, HttpServletRequest request) {
-
-		try {
-			boolean success = adapter.saveAgrupacion(dtoAgrupacion, id);
-			model.put("success", success);
+	public ModelAndView saveAgrupacion(DtoAgrupaciones dtoAgrupacion, @RequestParam Long id, ModelMap model, HttpServletRequest request)
+	{
+		try
+		{
+			String success = adapter.saveAgrupacion(dtoAgrupacion, id);
+			if(success.contains(AgrupacionAdapter.SPLIT_VALUE))
+			{
+				String response[] = success.split(AgrupacionAdapter.SPLIT_VALUE);
+				if(response.length == 2)
+				{
+					model.put("success", response[0]);
+					model.put("msgError", response[1]);
+				}
+			}
+			else
+			{
+				model.put("success", success);
+			}
 			trustMe.registrarSuceso(request, id, ENTIDAD_CODIGO.CODIGO_AGRUPACION, "guardar", ACCION_CODIGO.CODIGO_MODIFICAR);
-			
+
 		} catch (JsonViewerException jvex) {
 			logger.error(jvex);
 			model.put("success", false);
@@ -714,14 +735,12 @@ public class AgrupacionController extends ParadiseJsonController {
 																		// idTrabajo);
 			model.put("success", success);
 
+		} catch (JsonViewerException jvex) {
+			model.put("msg", jvex.getMessage());
+			model.put("success", false);
 		} catch (Exception e) {
-			if (e.getMessage().equals(AgrupacionAdapter.OFERTA_INCOMPATIBLE_AGR_MSG)) {
-				model.put("msg", AgrupacionAdapter.OFERTA_INCOMPATIBLE_AGR_MSG);
-				model.put("success", false);
-			} else {
-				logger.error(e);
-				model.put("success", false);
-			}
+			logger.error(e);
+			model.put("success", false);
 		}
 		return createModelAndViewJson(model);
 	}
@@ -733,6 +752,36 @@ public class AgrupacionController extends ParadiseJsonController {
 
 		try {
 			model.put("data", adapter.getUsuariosPorCodTipoGestor(codigoGestor));
+			model.put("success", true);
+		} catch (Exception e) {
+			logger.error(e);
+			model.put("success", false);
+		}
+
+		return createModelAndViewJson(model);
+	}
+
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getGestoresLoteComercialPorTipo(@RequestParam Long agrId, ModelMap model) {
+
+		try {
+			model.put("data", adapter.getUsuariosPorCodTipoGestor(agrId));
+			model.put("success", true);
+		} catch (Exception e) {
+			logger.error(e);
+			model.put("success", false);
+		}
+
+		return createModelAndViewJson(model);
+	}
+
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getDobleGestorActivo(@RequestParam Long agrId, @RequestParam String codigoGestorEdi,@RequestParam String codigoGestorSu,
+			ModelMap model) {
+
+		try {
+			model.put("data", adapter.getUsuariosPorDobleCodTipoGestor(codigoGestorEdi,codigoGestorSu));
 			model.put("success", true);
 		} catch (Exception e) {
 			logger.error(e);
@@ -769,96 +818,11 @@ public class AgrupacionController extends ParadiseJsonController {
 		List<VActivosAgrupacion> listaActivosPorAgrupacion = (List<VActivosAgrupacion>) adapter
 				.getListActivosAgrupacionById(dtoAgrupacionFilter, agrID).getResults();
 
-		ExcelReport report = new AgrupacionListadoActivosExcelReport(listaActivosPorAgrupacion);
+		DtoAgrupaciones agruDto = adapter.getAgrupacionById(agrID);
+
+		ExcelReport report = new AgrupacionListadoActivosExcelReport(listaActivosPorAgrupacion,agruDto);
 
 		excelReportGeneratorApi.generateAndSend(report, response);
-	}
-
-	@SuppressWarnings("unchecked")
-	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView publicarActivosAgrupacion(Long agrupacionID, String activosID, ModelMap model) {
-
-		try {
-			boolean success = adapter.publicarActivosAgrupacion(agrupacionID, activosID);
-			model.put("success", success);
-			
-		} catch (JsonViewerException jViewEx){
-			logger.error(jViewEx.getMessage());
-			model.put("msg", jViewEx.getMessage());
-			model.put("success", false);
-		}catch(NullPointerException e) {
-			//logger.error(e);
-			model.put("msg", "NO HA SIDO POSIBLE REALIZAR LA OPERACIÓN");
-			model.put("success", false);
-		} catch (Exception e) {			
-			if (e.getMessage().equals(AgrupacionAdapter.PUBLICACION_ACTIVOS_AGRUPACION_ERROR_MSG)) {
-				model.put("msg", AgrupacionAdapter.PUBLICACION_ACTIVOS_AGRUPACION_ERROR_MSG);
-				model.put("success", false);
-			} else if(e.getMessage().equals(AgrupacionAdapter.PUBLICACION_AGRUPACION_BAJA_ERROR_MSG)) {
-				model.put("msg", AgrupacionAdapter.PUBLICACION_AGRUPACION_BAJA_ERROR_MSG);
-				model.put("success", false);
-			} else {
-				logger.error(e);
-				model.put("msg", e.getMessage());
-				model.put("success", false);
-			}
-		}
-
-		return createModelAndViewJson(model);
-	}
-
-	@SuppressWarnings("unchecked")
-	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView publicarSubdivisionesActivosAgrupacion(Long agrupacionID, String activosID, ModelMap model) {
-
-		try {
-			boolean success = adapter.publicarSubdivisionesActivosAgrupacion(agrupacionID, activosID);
-			model.put("success", success);
-			
-		} catch (JsonViewerException jViewEx){
-			logger.error(jViewEx.getMessage());
-			model.put("msg", jViewEx.getMessage());
-			model.put("success", false);
-		} catch (Exception e) {
-			if (e.getMessage().equals(AgrupacionAdapter.PUBLICACION_ACTIVOS_AGRUPACION_ERROR_MSG)) {
-				model.put("msg", AgrupacionAdapter.PUBLICACION_ACTIVOS_AGRUPACION_ERROR_MSG);
-				model.put("success", false);
-			} else if(e.getMessage().equals(AgrupacionAdapter.PUBLICACION_AGRUPACION_BAJA_ERROR_MSG)) {
-				model.put("msg", AgrupacionAdapter.PUBLICACION_AGRUPACION_BAJA_ERROR_MSG);
-				model.put("success", false);
-			} else {
-				logger.error(e);
-				model.put("msg", e.getMessage());
-				model.put("success", false);
-			}
-		}
-
-		return createModelAndViewJson(model);
-	}
-
-	@SuppressWarnings("unchecked")
-	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView publicarAgrupacion(Long agrupacionID, ModelMap model) {
-
-		try {
-			boolean success = adapter.publicarAgrupacion(agrupacionID);
-			model.put("success", success);
-
-		} catch (Exception e) {
-			if (e.getMessage().equals(AgrupacionAdapter.PUBLICACION_ACTIVOS_AGRUPACION_ERROR_MSG)) {
-				model.put("msg", AgrupacionAdapter.PUBLICACION_ACTIVOS_AGRUPACION_ERROR_MSG);
-				model.put("success", false);
-			} else if(e.getMessage().equals(AgrupacionAdapter.PUBLICACION_AGRUPACION_BAJA_ERROR_MSG)) {
-				model.put("msg", AgrupacionAdapter.PUBLICACION_AGRUPACION_BAJA_ERROR_MSG);
-				model.put("success", false);
-			} else {
-				logger.error(e);
-				model.put("msg", e.getMessage());
-				model.put("success", false);
-			}
-		}
-
-		return createModelAndViewJson(model);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -956,4 +920,58 @@ public class AgrupacionController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getDatosPublicacionAgrupacion(Long id, ModelMap model) {
+		model.put("data", adapter.getDatosPublicacionAgrupacion(id));
+		model.put("success", true);
+
+		return createModelAndViewJson(model);
+	}
+
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView setDatosPublicacionAgrupacion(Long id, DtoDatosPublicacionAgrupacion dto, ModelMap model) {
+		try {
+			model.put("success", activoEstadoPublicacionApi.setDatosPublicacionAgrupacion(id, dto));
+		} catch (JsonViewerException e) {
+				model.put("msg", e.getMessage());
+				model.put("success", false);
+				logger.error("Error al guardar los datos de publicacion de la agrupacion", e);
+		}
+
+		return createModelAndViewJson(model);
+	}
+
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getCondicionEspecificaByAgrupacion(Long id, ModelMap model) {
+
+		model.put("data", activoAgrupacionApi.getCondicionEspecificaByAgrupacion(id));
+		return createModelAndViewJson(model);
+	}
+
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView createCondicionEspecifica(DtoCondicionEspecificaAgrupacion dto, ModelMap model) {
+
+		model.put("data", activoAgrupacionApi.createCondicionEspecifica(dto));
+		return createModelAndViewJson(model);
+	}
+
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView saveCondicionEspecifica(DtoCondicionEspecificaAgrupacion dto, ModelMap model) {
+
+		model.put("data", activoAgrupacionApi.saveCondicionEspecifica(dto));
+		return createModelAndViewJson(model);
+	}
+
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView darDeBajaCondicionEspecifica(DtoCondicionEspecificaAgrupacion dto, ModelMap model) {
+
+		model.put("data", activoAgrupacionApi.darDeBajaCondicionEspecifica(dto));
+		return createModelAndViewJson(model);
+	}
 }

@@ -52,6 +52,8 @@ public class DtoFichaExpediente extends WebDto {
 
 	private Date fechaSancion;
 
+	private String origen;
+
 	private Date fechaReserva;
 
 	private Date fechaFin;
@@ -59,10 +61,16 @@ public class DtoFichaExpediente extends WebDto {
 	private Date fechaAltaOferta;
 
 	private Date fechaPosicionamiento;
+	
+	private Date fechaSancionComite;
 
 	private String codMotivoAnulacion;
 
 	private String descMotivoAnulacion;
+
+	private String codMotivoRechazoExp;
+
+	private String descMotivoRechazoExp;
 
 	private Date fechaAnulacion;
 
@@ -73,6 +81,18 @@ public class DtoFichaExpediente extends WebDto {
 	private Double importeDevolucionEntregas;
 
 	private Date fechaDevolucionEntregas;
+	
+	private String tipoAlquiler;
+	
+	private String tipoInquilino;
+
+	private Long idTrabajo;
+	
+	private String estadoTrabajo;
+	
+	private String motivoAnulacionTrabajo;
+	
+	private Long numTrabajo;
 
 	private boolean tieneReserva;
 
@@ -88,6 +108,7 @@ public class DtoFichaExpediente extends WebDto {
 	private Integer riesgoReputacional;
 	private Integer estadoPbc;
 	private Date fechaVenta;
+	
 
 	private Integer alquilerOpcionCompra;
 	private String codigoEstado;
@@ -100,9 +121,17 @@ public class DtoFichaExpediente extends WebDto {
 	
 	private Boolean bloqueado;
 	
+
 	private Integer solicitaReserva; 
 	
 	private String codigoComiteSancionador;
+	
+	private Boolean definicionOfertaFinalizada;
+	
+	private Boolean definicionOfertaScoring;
+
+	private String subcarteraCodigo;
+	private Boolean estaFirmado;
 
 	public Long getId() {
 		return id;
@@ -224,6 +253,14 @@ public class DtoFichaExpediente extends WebDto {
 		this.fechaSancion = fechaSancion;
 	}
 
+	public String getOrigen() {
+		return origen;
+	}
+	
+	public void setOrigen(String origen) {
+		this.origen = origen;
+	}
+
 	public Date getFechaReserva() {
 		return fechaReserva;
 	}
@@ -294,6 +331,22 @@ public class DtoFichaExpediente extends WebDto {
 
 	public void setDescMotivoAnulacion(String descMotivoAnulacion) {
 		this.descMotivoAnulacion = descMotivoAnulacion;
+	}
+
+	public String getCodMotivoRechazoExp() {
+		return codMotivoRechazoExp;
+	}
+
+	public void setCodMotivoRechazoExp(String codMotivoRechazoExp) {
+		this.codMotivoRechazoExp = codMotivoRechazoExp;
+	}
+
+	public String getDescMotivoRechazoExp() {
+		return descMotivoRechazoExp;
+	}
+
+	public void setDescMotivoRechazoExp(String descMotivoRechazoExp) {
+		this.descMotivoRechazoExp = descMotivoRechazoExp;
 	}
 
 	public Date getFechaAnulacion() {
@@ -520,7 +573,95 @@ public class DtoFichaExpediente extends WebDto {
 	public void setCodigoComiteSancionador(String codigoComiteSancionador) {
 		this.codigoComiteSancionador = codigoComiteSancionador;
 	}
+
+	public String getTipoAlquiler() {
+		return tipoAlquiler;
+	}
+
+	public void setTipoAlquiler(String tipoAlquiler) {
+		this.tipoAlquiler = tipoAlquiler;
+	}
+
+	public String getTipoInquilino() {
+		return tipoInquilino;
+	}
+
+	public void setTipoInquilino(String tipoInquilino) {
+		this.tipoInquilino = tipoInquilino;
+	}
+
+	public Long getIdTrabajo() {
+		return idTrabajo;
+	}
+
+	public void setIdTrabajo(Long idTrabajo) {
+		this.idTrabajo = idTrabajo;
+	}
 	
+	public void setEstadoTrabajo(String estadoTrabajo) {
+		this.estadoTrabajo = estadoTrabajo;
+	}
 	
+	public String getEstadoTrabajo() {
+		return estadoTrabajo;
+	}
+	
+	public String getMotivoAnulacionTrabajo() {
+		return motivoAnulacionTrabajo;
+	}
+
+	public void setMotivoAnulacionTrabajo(String motivoAnulacionTrabajo) {
+		this.motivoAnulacionTrabajo = motivoAnulacionTrabajo;
+	}
+
+	public Date getFechaSancionComite() {
+		return fechaSancionComite;
+	}
+
+	public void setFechaSancionComite(Date fechaSancionComite) {
+		this.fechaSancionComite = fechaSancionComite;
+	}
+
+	public Boolean getDefinicionOfertaFinalizada() {
+		return definicionOfertaFinalizada;
+	}
+
+	public void setDefinicionOfertaFinalizada(Boolean definicionOfertaFinalizada) {
+		this.definicionOfertaFinalizada = definicionOfertaFinalizada;
+	}
+
+	public Boolean getDefinicionOfertaScoring() {
+		return definicionOfertaScoring;
+	}
+
+	public void setDefinicionOfertaScoring(Boolean definicionOfertaScoring) {
+		this.definicionOfertaScoring = definicionOfertaScoring;
+
+	}
+
+	public String getSubcarteraCodigo() {
+		return subcarteraCodigo;
+	}
+
+	public void setSubcarteraCodigo(String subcarteraCodigo) {
+		this.subcarteraCodigo = subcarteraCodigo;
+
+	}
+
+	public Boolean getEstaFirmado() {
+		return estaFirmado;
+	}
+
+	public void setEstaFirmado(Boolean estaFirmado) {
+		this.estaFirmado = estaFirmado;
+	}
+
+	public Long getNumTrabajo() {
+		return numTrabajo;
+	}
+
+	public void setNumTrabajo(Long numTrabajo) {
+		this.numTrabajo = numTrabajo;
+	}	
 	
 }

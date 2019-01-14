@@ -226,12 +226,14 @@ public class GenerarFacturaVentaActivosManager extends GenerateJasperPdfServiceM
 		DecimalFormat df = new DecimalFormat("#,##0.00");
 		df.setDecimalFormatSymbols(new DecimalFormatSymbols(Locale.ITALY));
 		
+		String tipoImpuesto = !Checks.esNulo(expediente.getCondicionante().getTipoImpuesto()) ? expediente.getCondicionante().getTipoImpuesto().getDescripcion() : "-";
 		Double iva = !Checks.esNulo(expediente.getCondicionante().getTipoAplicable()) ? expediente.getCondicionante().getTipoAplicable() : 0.0;
 		Double importeOferta = !Checks.esNulo(expediente.getOferta().getImporteContraOferta()) ? 
 									expediente.getOferta().getImporteContraOferta() : (!Checks.esNulo(expediente.getOferta().getImporteOferta()) ? 
 											expediente.getOferta().getImporteOferta() : 0.0);
 		importeOferta = importeOferta * (porcentajeCompra / 100);
 		
+		mapaValores.put("tipoImpuesto", tipoImpuesto + ":");
 		mapaValores.put("iva", FileUtilsREM.stringify(iva)+" %");
 		mapaValores.put("importeVenta", df.format(importeOferta)+" €");
 		

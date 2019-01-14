@@ -77,9 +77,17 @@ Ext.define('HreRem.view.common.GridBaseEditableRow', {
     	markDirty:false
 	},
 	
+	confirmBeforeSave: false,
+	
+	confirmSaveTxt: null,
+	
 	initComponent: function() {
 		
 		var me = this;
+		
+		if(Ext.isEmpty(me.confirmSaveTxt)){
+			me.confirmSaveTxt = HreRem.i18n('msg.agrupacion.guardar.condicion.text');
+		}
 		
 		me.emptyText = HreRem.i18n("grid.empty.text");
 				
@@ -208,7 +216,11 @@ Ext.define('HreRem.view.common.GridBaseEditableRow', {
 
 		};
 		
-		me.callParent();	
+		me.callParent();
+		
+		me.disableAddButton($AU.userIsRol('HAYACONSU'));
+		me.disablePropagationButton($AU.userIsRol('HAYACONSU') || $AU.userIsRol('PERFGCCLIBERBANK'));
+		me.disablePagingToolBar($AU.userIsRol('HAYACONSU') || $AU.userIsRol('PERFGCCLIBERBANK'));
 		
 	},
 	
@@ -283,7 +295,7 @@ Ext.define('HreRem.view.common.GridBaseEditableRow', {
 			//S�lo si no estamos editando, se llamar� a las dos l�neas siguientes
 			//if (!me.getPlugin("rowEditingPlugin").editing || typeof me.getPlugin("rowEditingPlugin").editing != 'undefined')
 			//{
-			me.disableAddButton(false);
+			me.disableAddButton($AU.userIsRol('HAYACONSU') || $AU.userIsRol('PERFGCCLIBERBANK'));
 			me.disablePagingToolBar(false); 
 			//}
 		}
@@ -421,50 +433,65 @@ Ext.define('HreRem.view.common.GridBaseEditableRow', {
    },
    
    editFuncion: function(editor, context){
-   		
    		var me= this;
+   		if(me.confirmBeforeSave){
+   	  		Ext.MessageBox.confirm(HreRem.i18n('title.agrupacion.guardar.condicion.title'), me.confirmSaveTxt, function(btn, value, opt){
+   	  			if(btn === "yes"){
+   	  				me.saveFunction(editor, context);
+   	  			} else{
+	   	  			if (context.store.load) {
+	                	context.store.load();
+	                }
+   	  			}
+   	  		}, me);
+   		}else{
+   			me.saveFunction(editor, context);
+   		}      
+   },
+   
+   saveFunction: function(editor, context){
+	   var me = this;
 		me.mask(HreRem.i18n("msg.mask.espere"));
 
-			if (me.isValidRecord(context.record)) {				
-			
-        		context.record.save({
+		if (me.isValidRecord(context.record)) {				
+		
+    		context.record.save({
 
-                    params: {
-                        idEntidad: Ext.isEmpty(me.idPrincipal) ? "" : this.up('{viewModel}').getViewModel().get(me.idPrincipal),
-                        idEntidadPk: Ext.isEmpty(me.idSecundaria) ? "" : this.up('{viewModel}').getViewModel().get(me.idSecundaria)	
-                    },
-                    success: function (a, operation, c) {
-                        if (context.store.load) {
-                        	context.store.load();
-                        }
-                        me.unmask();
-                        me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));																			
-						me.saveSuccessFn();											
-						
-                    },
-                    
-					failure: function (a, operation) {
-                    	
+                params: {
+                    idEntidad: Ext.isEmpty(me.idPrincipal) ? "" : this.up('{viewModel}').getViewModel().get(me.idPrincipal),
+                    idEntidadPk: Ext.isEmpty(me.idSecundaria) ? "" : this.up('{viewModel}').getViewModel().get(me.idSecundaria)	
+                },
+                success: function (a, operation, c) {
+                    if (context.store.load) {
                     	context.store.load();
-                    	try {
-                    		var response = Ext.JSON.decode(operation.getResponse().responseText)
-                    		
-                    	}catch(err) {}
-                    	
-                    	if(!Ext.isEmpty(response) && !Ext.isEmpty(response.msg)) {
-                    		me.fireEvent("errorToast", response.msg);
-                    	} else {
-                    		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-                    	}                        	
-						me.unmask();
                     }
-                });	                            
-        		me.disableAddButton(false);
-        		me.disablePagingToolBar(false);
-        		me.getSelectionModel().deselectAll();
-        		editor.isNew = false;
-			}
-        
+                    me.unmask();
+                    me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));																			
+					me.saveSuccessFn();											
+					
+                },
+                
+				failure: function (a, operation) {
+                	
+                	context.store.load();
+                	try {
+                		var response = Ext.JSON.decode(operation.getResponse().responseText)
+                		
+                	}catch(err) {}
+                	
+                	if(!Ext.isEmpty(response) && !Ext.isEmpty(response.msg)) {
+                		me.fireEvent("errorToast", response.msg);
+                	} else {
+                		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+                	}                        	
+					me.unmask();
+                }
+            });	                            
+    		me.disableAddButton(false);
+    		me.disablePagingToolBar(false);
+    		me.getSelectionModel().deselectAll();
+    		editor.isNew = false;
+		}
    }
     
 });

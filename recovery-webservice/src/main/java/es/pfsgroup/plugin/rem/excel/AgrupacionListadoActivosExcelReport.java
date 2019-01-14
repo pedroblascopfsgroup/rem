@@ -3,14 +3,25 @@ package es.pfsgroup.plugin.rem.excel;
 import java.util.ArrayList;
 import java.util.List;
 
+import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.plugin.rem.model.DtoAgrupaciones;
 import es.pfsgroup.plugin.rem.model.VActivosAgrupacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 
 public class AgrupacionListadoActivosExcelReport extends AbstractExcelReport implements ExcelReport {
 
 	private List<VActivosAgrupacion> listaActivosAgrupacion;
+	
+	private DtoAgrupaciones agrupacionDto;
 
 	public AgrupacionListadoActivosExcelReport(List<VActivosAgrupacion> listaActivosAgrupacion) {
 		this.listaActivosAgrupacion = listaActivosAgrupacion;
+		this.agrupacionDto = null;
+	}
+	
+	public AgrupacionListadoActivosExcelReport(List<VActivosAgrupacion> listaActivosAgrupacion,DtoAgrupaciones agruDto) {
+		this.listaActivosAgrupacion = listaActivosAgrupacion;
+		this.agrupacionDto = agruDto;
 	}
 
 	public List<String> getCabeceras() {
@@ -27,13 +38,25 @@ public class AgrupacionListadoActivosExcelReport extends AbstractExcelReport imp
 		listaCabeceras.add("Aprobado de venta (web)");
 		listaCabeceras.add("Descuento publicado (web)");
 		listaCabeceras.add("Superficie construida");
-
+		
+		if(!Checks.esNulo(agrupacionDto)) {
+			if(DDTipoAgrupacion.AGRUPACION_OBRA_NUEVA.equals(agrupacionDto.getTipoAgrupacionCodigo()) 
+					|| DDTipoAgrupacion.AGRUPACION_ASISTIDA.equals(agrupacionDto.getTipoAgrupacionCodigo()) ) {
+				
+				listaCabeceras.add("Subdivisión");
+				listaCabeceras.add("Finca registral");
+			}
+			
+		}
+		
 		return listaCabeceras;
 	}
 
 	public List<List<String>> getData() {
 
 		List<List<String>> valores = new ArrayList<List<String>>();
+		
+		
 
 		for(VActivosAgrupacion activoAgrupacion: listaActivosAgrupacion){
 			List<String> fila = new ArrayList<String>();
@@ -41,7 +64,7 @@ public class AgrupacionListadoActivosExcelReport extends AbstractExcelReport imp
 			fila.add(activoAgrupacion.getNumActivo().toString());
 			fila.add(this.getDateStringValue(activoAgrupacion.getFechaInclusion()));
 			fila.add(activoAgrupacion.getTipoActivoDescripcion());
-			fila.add(this.getDictionaryValue(activoAgrupacion.getSubtipoActivo()));
+			fila.add(activoAgrupacion.getSubtipoActivoDescripcion());
 			fila.add(activoAgrupacion.getDireccion());
 			fila.add(activoAgrupacion.getPublicado());
 			fila.add(activoAgrupacion.getSituacionComercial());
@@ -65,7 +88,29 @@ public class AgrupacionListadoActivosExcelReport extends AbstractExcelReport imp
 			} else {
 				fila.add(null);
 			}
-
+			if(!Checks.esNulo(agrupacionDto)) {
+				
+				if(DDTipoAgrupacion.AGRUPACION_OBRA_NUEVA.equals(agrupacionDto.getTipoAgrupacionCodigo())
+						|| DDTipoAgrupacion.AGRUPACION_ASISTIDA.equals(agrupacionDto.getTipoAgrupacionCodigo()) ) {
+					
+					if(!Checks.esNulo(activoAgrupacion.getSubdivision())) {
+						fila.add(activoAgrupacion.getSubdivision());
+					}else {
+						fila.add(null);
+					}
+					
+					if(!Checks.esNulo(activoAgrupacion.getNumFinca())) {
+						fila.add(activoAgrupacion.getNumFinca());
+					}else {
+						fila.add(null);
+					}
+					
+				}else {
+					fila.add(null);
+					fila.add(null);
+				}
+			}
+			
 			valores.add(fila);
 		}
 

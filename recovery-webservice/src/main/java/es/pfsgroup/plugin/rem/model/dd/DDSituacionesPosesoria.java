@@ -30,9 +30,9 @@ import es.capgemini.pfs.diccionarios.Dictionary;
 @Where(clause=Auditoria.UNDELETED_RESTICTION)
 public class DDSituacionesPosesoria implements Auditable, Dictionary {
 	
-	public static String SITUACION_POSESORIA_LIBRE="01";
-	public static String SITUACION_POSESORIA_OCUPADO_SIN_TITULO="03";
-	public static String SITUACION_POSESORIA_OCUPADO_CON_TITULO="02";
+	public static final String SITUACION_POSESORIA_LIBRE="01";
+	public static final String SITUACION_POSESORIA_OCUPADO_SIN_TITULO="03";
+	public static final String SITUACION_POSESORIA_OCUPADO_CON_TITULO="02";
 	
 	private static final long serialVersionUID = 1L;
 

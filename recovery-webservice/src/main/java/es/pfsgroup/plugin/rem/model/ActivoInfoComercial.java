@@ -335,6 +335,12 @@ public class ActivoInfoComercial implements Serializable, Auditable {
 	
 	@Column(name = "ICO_EXIS_COM_PROP")
 	private Integer existeComunidadEdificio;
+	
+	@Column(name = "ICO_POSIBLE_HACER_INF")
+	private Integer posibleInforme;
+	
+	@Column(name = "ICO_MOTIVO_NO_HACER_INF")
+	private String motivoNoPosibleInforme;
 
 	public Float getCuotaOrientativaComunidad() {
 		return cuotaOrientativaComunidad;
@@ -958,6 +964,22 @@ public class ActivoInfoComercial implements Serializable, Auditable {
 
 	public void setLocalidadRegistro(Localidad localidadRegistro) {
 		this.localidadRegistro = localidadRegistro;
+	}
+
+	public Integer getPosibleInforme() {
+		return posibleInforme;
+	}
+
+	public void setPosibleInforme(Integer posibleInforme) {
+		this.posibleInforme = posibleInforme;
+	}
+
+	public String getMotivoNoPosibleInforme() {
+		return motivoNoPosibleInforme;
+	}
+
+	public void setMotivoNoPosibleInforme(String motivoNoPosibleInforme) {
+		this.motivoNoPosibleInforme = motivoNoPosibleInforme;
 	}
 	
 

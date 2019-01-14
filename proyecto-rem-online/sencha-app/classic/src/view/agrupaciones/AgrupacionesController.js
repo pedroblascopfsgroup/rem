@@ -47,7 +47,8 @@ Ext.define('HreRem.view.agrupaciones.AgrupacionesController', {
 
 		btn.up('panel').getForm().reset();
 	},
-
+	
+	
 	// Funcion para cuando hace click en una fila
     onAgrupacionesListDobleClick: function(grid, record) {       
     	var me = this;    	
@@ -144,5 +145,21 @@ Ext.define('HreRem.view.agrupaciones.AgrupacionesController', {
 			}
 		}
 
-    }
+    },
+
+onChangeTipoAgrupacion: function(combo, records) {
+	var me = this,
+	comboTipo = me.lookupReference(combo.reference);   
+	comboTipoAlquiler = me.lookupReference('comboTipoAlquiler');
+	console.log(comboTipo.getValue());
+	
+	if(comboTipo.getValue() == CONST.TIPOS_AGRUPACION['COMERCIAL_ALQUILER'] ){
+		console.log('activada');
+		comboTipoAlquiler.show();
+	}else{
+		console.log('Desactivada');
+		comboTipoAlquiler.hide();
+		comboTipoAlquiler.clearValue();
+	}
+}
 });

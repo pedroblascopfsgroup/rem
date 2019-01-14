@@ -41,14 +41,22 @@ public class MSVActualizarPreciosFSVActivoImporte extends MSVExcelValidatorAbstr
 		
 	public static final String ACTIVE_NOT_EXISTS = "El activo no existe.";
 	public static final String ACTIVE_PRIZE_NAN = "msg.error.masivo.actualizar.precios.fsv.activo.importe.formato.incorrecto";
-	public static final String ACTIVE_PRIZES_VENTA_RENTA_LIMIT_EXCEEDED = "El valor FSV de Renta no puede ser mayor al valor FSV de Renta (FSV Venta >= FSV Renta) o uno de estos valores no tiene un formato correcto";
+	public static final String ACTIVE_PRIZES_VENTA_RENTA_LIMIT_EXCEEDED = "El valor renta Haya no puede ser mayor al valor venta Haya (Valor Venta Haya >= Valor Renta Haya) o uno de estos valores no tiene un formato correcto";
 	public static final String ACTIVE_PRIZES_VENTA_NOT_GREATER_ZERO = "msg.error.masivo.actualizar.precios.FSV.Venta.importe.no.mayor.cero";
 	public static final String ACTIVE_PRIZES_RENTA_NOT_GREATER_ZERO = "msg.error.masivo.actualizar.precios.FSV.Renta.importe.no.mayor.cero";
 	
 	public static final String ACTIVE_NOT_ACTUALIZABLE = "El estado del activo no puede actualizarse al indicado.";
 	public static final String ACTIVE_PRECIOS_BLOQUEO = "El activo tiene habilitado el bloqueo de precios. No se pueden actualizar precios";
 	public static final String ACTIVE_OFERTA_APROBADA = "El activo tiene ofertas aprobadas. No se pueden actualizar precios";
+	public static final String LIQUIDEZ_A_E = "El campo liquidez debe ser una letra entre la A y la E";
 
+	//Definimos constantes para comparar las letras del campo "Liquidez"
+	public static final String A = "A";
+	public static final String B = "B";
+	public static final String C = "C";
+	public static final String D = "D";
+	public static final String E = "E";
+	
 	protected final Log logger = LogFactory.getLog(getClass());
 	
 	@Autowired
@@ -104,12 +112,14 @@ public class MSVActualizarPreciosFSVActivoImporte extends MSVExcelValidatorAbstr
 			mapaErrores.put(ACTIVE_PRIZES_VENTA_RENTA_LIMIT_EXCEEDED, getLimitePreciosVentaRentaIncorrectoRows(exc));
 			mapaErrores.put(messageServices.getMessage(ACTIVE_PRIZES_VENTA_NOT_GREATER_ZERO), isPrecioVentaMayorCero(exc));
 			mapaErrores.put(messageServices.getMessage(ACTIVE_PRIZES_RENTA_NOT_GREATER_ZERO), isPrecioRentaMayorCero(exc));
+			mapaErrores.put(LIQUIDEZ_A_E, isLetraEntreAE(exc));
 
 			if (!mapaErrores.get(ACTIVE_NOT_EXISTS).isEmpty()
 					|| !mapaErrores.get(messageServices.getMessage(ACTIVE_PRIZE_NAN)).isEmpty()
 					|| !mapaErrores.get(ACTIVE_PRIZES_VENTA_RENTA_LIMIT_EXCEEDED).isEmpty()
 					|| !mapaErrores.get(messageServices.getMessage(ACTIVE_PRIZES_VENTA_NOT_GREATER_ZERO)).isEmpty()
-					|| !mapaErrores.get(messageServices.getMessage(ACTIVE_PRIZES_RENTA_NOT_GREATER_ZERO)).isEmpty()) {
+					|| !mapaErrores.get(messageServices.getMessage(ACTIVE_PRIZES_RENTA_NOT_GREATER_ZERO)).isEmpty()
+					|| !mapaErrores.get(LIQUIDEZ_A_E).isEmpty()){
 				dtoValidacionContenido.setFicheroTieneErrores(true);
 				exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
 				String nomFicheroErrores = exc.crearExcelErroresMejorado(mapaErrores);
@@ -374,4 +384,35 @@ public class MSVActualizarPreciosFSVActivoImporte extends MSVExcelValidatorAbstr
 		
 		return listaFilas;
 	}
+	
+	private List<Integer> isLetraEntreAE(MSVHojaExcel exc){
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		
+		for(int i=1; i<this.numFilasHoja;i++){
+			
+			try {
+				String letra = exc.dameCelda(i, 4).toUpperCase();
+				
+				if(!Checks.esNulo(letra)) {
+					if(!A.equals(letra) && !B.equals(letra)
+							&& !C.equals(letra) && !D.equals(letra)
+							&& !E.equals(letra)) {
+						listaFilas.add(i);
+					}
+				}
+				
+			} catch (IllegalArgumentException e) {
+				listaFilas.add(i);
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+			
+		}
+		
+		return listaFilas;
+	}
+	
 }

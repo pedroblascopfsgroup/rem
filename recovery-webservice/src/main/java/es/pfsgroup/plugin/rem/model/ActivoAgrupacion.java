@@ -29,6 +29,7 @@ import org.hibernate.annotations.Where;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
 
 
 /**
@@ -113,7 +114,7 @@ public class ActivoAgrupacion implements Serializable, Auditable {
     
     @OneToMany(mappedBy = "agrupacion", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "AGR_ID")
-    //@Where(clause = Auditoria.UNDELETED_RESTICTION)
+    @Where(clause = Auditoria.UNDELETED_RESTICTION)
     private List<ActivoAgrupacionActivo> activos;
     
     @OneToMany(mappedBy = "agrupacion", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -144,8 +145,10 @@ public class ActivoAgrupacion implements Serializable, Auditable {
 	@Embedded
 	private Auditoria auditoria;
 	
-	
-	
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_TAL_ID")
+    private DDTipoAlquiler tipoAlquiler;
+		
 
 	public Long getId() {
 		return id;
@@ -354,6 +357,16 @@ public class ActivoAgrupacion implements Serializable, Auditable {
 	public void setUvemCodigoAgrupacionInmueble(Integer uvemCodigoAgrupacionInmueble) {
 		this.uvemCodigoAgrupacionInmueble = uvemCodigoAgrupacionInmueble;
 	}
+
+	public DDTipoAlquiler getTipoAlquiler() {
+		return tipoAlquiler;
+	}
+
+	public void setTipoAlquiler(DDTipoAlquiler tipoAlquiler) {
+		this.tipoAlquiler = tipoAlquiler;
+	}
+	
+	
 
 
 }

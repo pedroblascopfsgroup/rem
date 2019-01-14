@@ -35,10 +35,14 @@ import org.hibernate.annotations.Where;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.plugin.rem.model.dd.DDComiteAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivosDesbloqueo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
 
 
 /**
@@ -119,6 +123,14 @@ public class ExpedienteComercial implements Serializable, Auditable {
     @JoinColumn(name = "DD_MAN_ID")
     private DDMotivoAnulacionExpediente motivoAnulacion;
     
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_MRE_ID")
+    private DDMotivoRechazoExpediente motivoRechazo;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_MAO_ID")
+    private DDMotivoAnulacionOferta motivoAnulacionAlquiler;
+    
     @Column(name="ECO_FECHA_CONT_PROPIETARIO")
     private Date fechaContabilizacionPropietario;
     
@@ -152,6 +164,10 @@ public class ExpedienteComercial implements Serializable, Auditable {
     
     @Column(name="ECO_NUMERO_CONTRATO_ALQUILER")
     private String numContratoAlquiler;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_TAL_ID")
+    private DDTipoAlquiler tipoAlquiler;
     
     @Column(name="ECO_PLAZO_OPCION_COMPRA")
     private Date fechaPlazoOpcionCompraAlquiler;
@@ -220,7 +236,30 @@ public class ExpedienteComercial implements Serializable, Auditable {
     @Column(name="ECO_NECESITA_FINANCIACION")
     private Boolean necesitaFinanciacion;
     
-	@Version   
+    @OneToOne(mappedBy = "expediente", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "ECO_ID")
+    @Where(clause = Auditoria.UNDELETED_RESTICTION)
+    private SeguroRentasAlquiler seguroRentasAlquiler;
+    
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_COA_ID")
+	private DDComiteAlquiler comiteAlquiler;
+    
+    @Column(name="ECO_DOCUMENTACION_OK")
+    private Boolean documentacionOk;
+    
+    @Column(name="ECO_FECHA_VALIDACION")
+    private Date fechaValidacion;
+
+
+    @Column(name="ECO_ASISTENCIA_PBC")
+    private Boolean asistenciaPbc;
+    
+    @Column(name="ECO_ASISTENCIA_PBC_DESCRIPCION")
+    private String obsAsisPbc;
+
+    @Version   
 	private Long version;
 
 	@Embedded
@@ -341,8 +380,24 @@ public class ExpedienteComercial implements Serializable, Auditable {
 	public void setMotivoAnulacion(DDMotivoAnulacionExpediente motivoAnulacion) {
 		this.motivoAnulacion = motivoAnulacion;
 	}
+    
+    public DDMotivoRechazoExpediente getMotivoRechazo() {
+		return motivoRechazo;
+	}
+
+	public void setMotivoRechazo(DDMotivoRechazoExpediente motivoRechazo) {
+		this.motivoRechazo = motivoRechazo;
+	}
 	
-    public List<Posicionamiento> getPosicionamientos() {
+    public DDMotivoAnulacionOferta getMotivoAnulacionAlquiler() {
+		return motivoAnulacionAlquiler;
+	}
+
+	public void setMotivoAnulacionAlquiler(DDMotivoAnulacionOferta motivoAnulacionAlquiler) {
+		this.motivoAnulacionAlquiler = motivoAnulacionAlquiler;
+	}
+
+	public List<Posicionamiento> getPosicionamientos() {
 		return posicionamientos;
 	}
 
@@ -663,5 +718,61 @@ public class ExpedienteComercial implements Serializable, Auditable {
 	public void setNecesitaFinanciacion(Boolean necesitaFinanciacion) {
 		this.necesitaFinanciacion = necesitaFinanciacion;
 	}
-   
+
+	public DDTipoAlquiler getTipoAlquiler() {
+		return tipoAlquiler;
+	}
+
+	public void setTipoAlquiler(DDTipoAlquiler tipoAlquiler) {
+		this.tipoAlquiler = tipoAlquiler;
+	}
+
+	public SeguroRentasAlquiler getSeguroRentasAlquiler() {
+		return seguroRentasAlquiler;
+	}
+
+	public void setSeguroRentasAlquiler(SeguroRentasAlquiler seguroRentasAlquiler) {
+		this.seguroRentasAlquiler = seguroRentasAlquiler;
+	}
+
+	public DDComiteAlquiler getComiteAlquiler() {
+		return comiteAlquiler;
+	}
+
+	public void setComiteAlquiler(DDComiteAlquiler comiteAlquiler) {
+		this.comiteAlquiler = comiteAlquiler;
+	}
+
+	public Boolean getDocumentacionOk() {
+		return documentacionOk;
+	}
+
+	public void setDocumentacionOk(Boolean documentacionOk) {
+		this.documentacionOk = documentacionOk;
+	}
+
+	public Date getFechaValidacion() {
+		return fechaValidacion;
+	}
+
+	public void setFechaValidacion(Date fechaValidacion) {
+		this.fechaValidacion = fechaValidacion;
+	}
+	
+
+	public Boolean getAsistenciaPbc() {
+		return asistenciaPbc;
+	}
+
+	public void setAsistenciaPbc(Boolean asistenciaPbc) {
+		this.asistenciaPbc = asistenciaPbc;
+	}
+
+	public String getObsAsisPbc() {
+		return obsAsisPbc;
+	}
+
+	public void setObsAsisPbc(String obsAsisPbc) {
+		this.obsAsisPbc = obsAsisPbc;
+	}
 }

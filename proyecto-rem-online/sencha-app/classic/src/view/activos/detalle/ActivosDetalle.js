@@ -7,7 +7,8 @@ Ext.define('HreRem.view.activos.detalle.ActivosDetalle', {
     			'HreRem.view.activos.detalle.ObservacionesActivo', 'HreRem.view.activos.detalle.AgrupacionesActivo', 'HreRem.view.activos.detalle.GestoresActivo', 
     			'HreRem.view.activos.detalle.FotosActivo','HreRem.view.activos.detalle.DocumentosActivo','HreRem.view.activos.detalle.GestionActivo',
     			'HreRem.view.activos.detalle.PreciosActivo','HreRem.view.activos.detalle.Publicacion','HreRem.view.activos.detalle.ComercialActivo',
-    			'HreRem.view.activos.detalle.AdministracionActivo'],
+    			'HreRem.view.activos.detalle.AdministracionActivo', 'HreRem.view.activos.detalle.DocumentosActivoPromocion','HreRem.view.activos.detalle.DocumentosActivoSimple',
+			'HreRem.view.activos.detalle.PatrimonioActivo'],
 
 	listeners: {
     	boxready: function (tabPanel) {
@@ -97,11 +98,11 @@ Ext.define('HreRem.view.activos.detalle.ActivosDetalle', {
 
     initComponent: function() {
     	var me = this;
-	    me.callParent(); 
-	    
+	    me.callParent();
 	    //HREOS-1964: Restringir los activos financieros (asistidos) para que s�lo puedan ser editables por los perfiles de IT y Gestor�a PDV
-	    var editable = false
-	    if(me.lookupController().getViewModel().get('activo').get('claseActivoCodigo')=='01'){
+	    var editable = false;
+	    
+	    if(me.lookupController().getViewModel().get('activo').get('claseActivoCodigo')=='01'){ 
 	    	editable = !(($AU.userIsRol(CONST.PERFILES['GESTOPDV']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['HAYACAL']) || $AU.userIsRol(CONST.PERFILES['HAYASUPCAL'])) 
 					 && $AU.userHasFunction('EDITAR_TAB_ACTIVO_COMERCIAL'));
 		}else{
@@ -124,9 +125,10 @@ Ext.define('HreRem.view.activos.detalle.ActivosDetalle', {
     	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'preciosactivo', ocultarBotonesEdicion: true})}, 'TAB_ACTIVO_PRECIOS');
     	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'publicacionactivo', ocultarBotonesEdicion: true})}, 'TAB_ACTIVO_PUBLICACION');
     	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'comercialactivo', ocultarBotonesEdicion: editable/*funPermEdition: ['EDITAR_TAB_ACTIVO_COMERCIAL']*/})}, 'TAB_ACTIVO_COMERCIAL');
-    	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'administracionactivo', ocultarBotonesEdicion: false})}, 'TAB_ACTIVO_ADMINISTRACION');
+    	$AU.confirmFunToFunctionExecution(function(){me.add({xtype: 'administracionactivo', ocultarBotonesEdicion: false})}, 'TAB_ACTIVO_ADMINISTRACION'); 
+    	me.add({xtype: 'patrimonioactivo', ocultarBotonesEdicion: true});
     },
-
+   
     evaluarBotonesEdicion: function(tab) {
 		var me = this;
 		me.down("[itemId=botoneditar]").setVisible(false);

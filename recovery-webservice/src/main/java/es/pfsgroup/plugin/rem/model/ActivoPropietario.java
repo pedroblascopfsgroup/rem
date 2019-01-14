@@ -38,6 +38,9 @@ import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 @Where(clause=Auditoria.UNDELETED_RESTICTION)
 public class ActivoPropietario implements Serializable, Auditable {
 
+	public static final String CODIGO_GIVP ="73";
+	public static final String CODIGO_GIVP_II ="74";
+	public static final String CODIGO_FONDOS_TITULIZACION ="5";
 
 	/**
 	 * 

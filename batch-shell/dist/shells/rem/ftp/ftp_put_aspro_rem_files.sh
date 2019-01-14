@@ -1,11 +1,14 @@
-lftp -c "open -u rm02,R@95pr12 sftp://192.168.126.2; ls /$1"
+
+lftp -c "open -u pfs,SwQdLRyFE8A5 sftp://192.168.126.7; ls /Archivos/REM/PFStoHaya/$1"
 if [ $? -ne 0 ]; then
-    lftp -c "open -u rm02,R@95pr12 sftp://192.168.126.2; mkdir /$1"
+   lftp -c "open -u pfs,SwQdLRyFE8A5 sftp://192.168.126.7; mkdir /Archivos/REM/PFStoHaya/$1"
 fi
-lftp -u rm02,R@95pr12 sftp://192.168.126.2 <<EOF
 
-cd /$1/
-mput $DIR_SALIDA/$2.*
 
+lftp -c "open -u pfs,SwQdLRyFE8A5 sftp://192.168.126.7; ls /Archivos/REM/PFStoHaya/$1"
+
+lftp -u pfs,SwQdLRyFE8A5 sftp://192.168.126.7 <<EOF
+cd /Archivos/REM/PFStoHaya/$1
+mput $DIR_SALIDA*$2.*
 bye
 EOF

@@ -94,17 +94,21 @@ public class ReservaManager extends BusinessOperationOverrider<ReservaApi> imple
 				
 				//HREOS-1704: Para la ANULACION_DEVOLUCION_RESERVA hay que buscar la última oferta rechazada.
 				if (reservaDto.getAccion().equalsIgnoreCase(ReservaApi.ANULACION_DEVOLUCION_RESERVA)) {
-					DtoOfertasFilter dtoOfertasFilter = new DtoOfertasFilter();
-					dtoOfertasFilter.setIdActivo(activo.getId());
-					dtoOfertasFilter.setEstadoOferta(DDEstadoOferta.CODIGO_RECHAZADA);
-					
-					List<VOfertasActivosAgrupacion> listaOfer = (List<VOfertasActivosAgrupacion>) ofertaApi.getListOfertasFromView(dtoOfertasFilter);
-					if(!Checks.esNulo(listaOfer) && listaOfer.size()>0){
-						Long idOferta = Long.valueOf(listaOfer.get(0).getIdOferta());
-						if(!Checks.esNulo(idOferta)){
-							oferta = ofertaApi.getOfertaById(idOferta);
+					if (!Checks.esNulo(reservaDto.getOfertaHRE())){
+						oferta = ofertaApi.getOfertaByNumOfertaRem(reservaDto.getOfertaHRE());
+					} else {
+						DtoOfertasFilter dtoOfertasFilter = new DtoOfertasFilter();
+						dtoOfertasFilter.setIdActivo(activo.getId());
+						dtoOfertasFilter.setEstadoOferta(DDEstadoOferta.CODIGO_RECHAZADA);
+						
+						List<VOfertasActivosAgrupacion> listaOfer = (List<VOfertasActivosAgrupacion>) ofertaApi.getListOfertasFromView(dtoOfertasFilter);
+						if(!Checks.esNulo(listaOfer) && listaOfer.size()>0){
+							Long idOferta = Long.valueOf(listaOfer.get(0).getIdOferta());
+							if(!Checks.esNulo(idOferta)){
+								oferta = ofertaApi.getOfertaById(idOferta);
+							}
 						}
-					}					
+					}
 					if(Checks.esNulo(oferta)){
 						hashErrores.put("activo", "No se ha podido obtener la oferta. El activo no tiene ofertas rechazadas.");		
 					}			

@@ -20,7 +20,7 @@ Ext.define('HreRem.model.ActivoAgrupacionActivo', {
     			name:'tipoActivoDescripcion'
     		},
     		{
-    			name:'subtipoActivo'
+    			name:'subtipoActivoDescripcion'
     		},
     		{
     			name:'agrId'
@@ -51,16 +51,23 @@ Ext.define('HreRem.model.ActivoAgrupacionActivo', {
     		},
     		{
     			name:'puerta'
+    		},
+    		{
+    			name:'estadoSituacionComercial',
+    			type: 'boolean'
+    		},
+    		{
+    			name:'condPublVenta'
+    		},
+    		{
+    			name:'condPublAlquiler'
     		}
-    		
-    		
     ],
     
 	proxy: {
 		type: 'uxproxy',
 
 		api: {
-            read: 'agrupacion/getListActivosAgrupacionById',
             create: 'agrupacion/createActivoAgrupacion',
             destroy: 'agrupacion/deleteOneActivoAgrupacionActivo'
         }

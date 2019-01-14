@@ -49,13 +49,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
         		me.getStore().remove(me.getStore().getAt(me.editPosition));
         		editor.isNew = false;
         	}
-	    },
-    	afterbind: function(grid) {
-    		var me = this;
-			if (me.loadAfterBind) {
-				grid.getStore().load();
-			}
-		}
+	    }
     },
 
     initComponent: function () {
@@ -120,7 +114,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
 				me.tbar.items.push(configRemoveBtn);
 			}
 			
-			var tipoAgrupacion = me.up('agrupacionesdetallemain').getViewModel().get('agrupacionficha').get('tipoAgrupacionCodigo');
+			/*var tipoAgrupacion = me.up('agrupacionesdetallemain').getViewModel().get('agrupacionficha').get('tipoAgrupacionCodigo');
 			if($AU.userHasFunction(['EDITAR_TAB_PUBLICACION_LISTA_ACTIVOS_AGRUPACION']) &&
 					(tipoAgrupacion==CONST.TIPOS_AGRUPACION['OBRA_NUEVA'] || tipoAgrupacion==CONST.TIPOS_AGRUPACION['ASISTIDA'])) {
 				// Submenu del Grid.
@@ -131,7 +125,8 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
 			    	items: [
 			    		{
 			    			text: HreRem.i18n('grid.submenu.msg.publicar.agrupacion'),
-			    			handler: 'onClickPublicarAgrupacionSubmenuGrid'
+			    			handler: 'onClickPublicarAgrupacionSubmenuGrid',
+			    			disabled: true
 			    		},
 			    		{
 			    			text: HreRem.i18n('grid.submenu.msg.publicar.activos.seleccionados'),
@@ -148,16 +143,37 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
 			    	]
 			    	
 			    });
-		        
-		        // Botones de submenú de la barra del grid.
+		     // Botones de submenú de la barra del grid.
 		        var configGridMenu = {iconCls:'x-fa fa-bars', cls:'boton-cabecera', itemId:'menuGridBtn', arrowVisible: false, menuAlign: 'tr-br', menu: me.menu};
 		        var separador = {xtype: 'tbfill'};
 				
 				me.tbar.items.push(separador);
 				me.tbar.items.push(configGridMenu);
-			}
-    	}
+			}*/
+		}
 		
+    	var condPublRenderer =  function(condicionado) {
+        	var src = '',
+        	alt = '';
+        	
+        	if (condicionado == 0) {
+        		src = 'icono_KO.svg';
+        		alt = 'KO';
+        	} else if (condicionado == 1) {
+        		src = 'icono_OK.svg';
+        		alt = 'OK';
+        	} else if (condicionado == 2) { 
+        		src = 'icono_OKN.svg';
+        		alt = 'OKN';
+        	}  
+
+        	if(condicionado != null)
+        		return '<div> <img src="resources/images/'+src+'" alt ="'+alt+'" width="15px"></div>';
+        	else
+        		return '<div> - </div>';
+        };
+
+ 
         me.columns= [
         	{
 		        xtype: 'actioncolumn',
@@ -186,7 +202,10 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
 	            dataIndex: 'numActivo',
 	            text: HreRem.i18n('header.numero.activo.haya'),
 	            flex: 0.6,
-				editor: {xtype:'textfield'}
+				editor: {
+					xtype:'textfield',
+					maskRe: /[0-9]/
+				}
 
 	        },
 	        {   
@@ -202,12 +221,9 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
 	            flex: 1
 	        },
 	        {
-	            dataIndex: 'subtipoActivo',
+	            dataIndex: 'subtipoActivoDescripcion',
 	            text: HreRem.i18n('header.subtipo'),
-	            flex: 0.5,
-	            renderer: function (value) {
-	            	return Ext.isEmpty(value) ? "" : value.descripcion;
-	            }
+	            flex: 0.5
 	        },
 	        {
 	            dataIndex: 'subdivision',
@@ -245,11 +261,17 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
 		        },
 	            flex: 0.5
 	        },
+	        {   
+	        	dataIndex: 'condPublVenta',
+	            text: HreRem.i18n('header.condicionantes.publicacion.venta'),
+	            flex: 1,
+	            renderer: condPublRenderer
+	        },
 	        {
-	            dataIndex: 'publicado',
-	            text: HreRem.i18n('header.publicado'),
-	            flex: 1//,
-	            //renderer: Utils.rendererBooleanToSiNo
+	            dataIndex: 'condPublAlquiler',
+	            text: HreRem.i18n('header.condicionantes.publicacion.alquiler'),
+	            flex: 1,
+	            renderer: condPublRenderer
 	        },
 	        {
 	            dataIndex: 'situacionComercial',
@@ -313,6 +335,8 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
 	    		me.lookupController().onClickBotonRefrescar();
 	    	}
 	    };
+	    
+		
 
         me.dockedItems = [
         	{
@@ -388,8 +412,13 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
 	  var me = this;
       var isFormalizacion = me.up('agrupacionesdetallemain').lookupReference('comboFormalizacion').value;
       var isComercial = me.up('agrupacionesdetallemain').getViewModel().get("agrupacionficha.isComercial");
+      var provincia = me.up('agrupacionesdetallemain').getViewModel().get("agrupacionficha.provinciaCodigo");
+      var cartera = me.up('agrupacionesdetallemain').getViewModel().get("agrupacionficha.codigoCartera");
+      var tipoAgrupacion = me.up('agrupacionesdetallemain').getViewModel().get('agrupacionficha').get('tipoAgrupacionCodigo');
       if (isComercial && isFormalizacion==null) {
           Ext.Msg.show({ message: 'No se ha definido el perímetro de formalización.', buttons: Ext.Msg.YES});
+      } else if ((tipoAgrupacion == CONST.TIPOS_AGRUPACION['PROYECTO']) && (provincia == null || cartera == null)){
+    	  Ext.Msg.show({ message: 'No se ha cumplimentado el campo Provincia o Cartera.', buttons: Ext.Msg.YES});
       } else {
           var rec = Ext.create(me.getStore().config.model);
           me.getStore().sorters.clear();
@@ -530,7 +559,6 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
     editFuncion: function(editor, context){
    		var me= this;
 		me.mask(HreRem.i18n("msg.mask.espere"));
-
 			if (me.isValidRecord(context.record)) {			
         		context.record.save({
                     params: {

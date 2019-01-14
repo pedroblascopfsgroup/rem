@@ -13,7 +13,6 @@ Ext.define('HreRem.view.expedientes.GestionEconomicaExpediente', {
         var codigoTipoProveedorFilter= null;
         me.codigoTipoProveedorFilter=null;
         var storeProveedores=null;
-        
 		me.setTitle(HreRem.i18n('title.gestion.economica'));
         var items= [
 
@@ -37,11 +36,16 @@ Ext.define('HreRem.view.expedientes.GestionEconomicaExpediente', {
 					    reference: 'listadohoronarios',
 					    idPrincipal : 'expediente.id',
 						cls	: 'panel-base shadow-panel',
+						//secFunToEdit: 'EDITAR_GRID_GESTION_ECONOMICA_EXPEDIENTE',
 						bind: {
 							store: '{storeHoronarios}'
 						},									
 						listeners: {
 							beforeedit: function(editor){
+								
+								if(!$AU.userHasFunction('EDITAR_GRID_GESTION_ECONOMICA_EXPEDIENTE')){
+									return false;
+								}
 								// Siempre que se vaya a entrar en modo edición filtrar o limpiar el combo 'Tipo proveedor'.
 								if (editor.editing) {
 					        		// Si se está editando impedir filtrar erroneamente.
@@ -224,8 +228,8 @@ Ext.define('HreRem.view.expedientes.GestionEconomicaExpediente', {
 										model: 'HreRem.model.ComboBase',
 										proxy: {
 											type: 'uxproxy',
-											remoteUrl: 'generic/getDiccionario',
-											extraParams: {diccionario: 'tiposCalculo'}
+											remoteUrl: 'expedientecomercial/getComboTipoCalculo',
+											extraParams: {idExpediente: me.lookupController().getViewModel().get("expediente.id")}
 										},
 										autoLoad: true
 									}),

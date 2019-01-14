@@ -31,9 +31,13 @@ import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.GastoAvisadorApi;
 import es.pfsgroup.plugin.rem.api.GastoProveedorApi;
 import es.pfsgroup.plugin.rem.api.ProveedoresApi;
+import es.pfsgroup.plugin.rem.excel.FacturasProveedoresExcelReport;
+import es.pfsgroup.plugin.rem.excel.ActivosGastoExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
 import es.pfsgroup.plugin.rem.excel.GestionGastosExcelReport;
+import es.pfsgroup.plugin.rem.excel.TasasImpuestosExcelReport;
+import es.pfsgroup.plugin.rem.excel.TrabajosGastoExcelReport;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.ACCION_CODIGO;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.ENTIDAD_CODIGO;
@@ -51,8 +55,10 @@ import es.pfsgroup.plugin.rem.model.DtoProveedorFilter;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.VBusquedaGastoActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaGastoTrabajos;
+import es.pfsgroup.plugin.rem.model.VFacturasProveedores;
 import es.pfsgroup.plugin.rem.model.VGastosProveedor;
-
+import es.pfsgroup.plugin.rem.model.VGastosProveedorExcel;
+import es.pfsgroup.plugin.rem.model.VTasasImpuestos;
 
 @Controller
 public class GastosProveedorController extends ParadiseJsonController {
@@ -83,7 +89,7 @@ public class GastosProveedorController extends ParadiseJsonController {
 	/**
 	 * Método que recupera un conjunto de datos del gasto según su id 
 	 * @param id Id del gasto
-	 * @param pestana Pestaña del gasto a cargar
+	 * @param tab Pestaña del gasto a cargar
 	 * @param model
 	 * @return
 	 */
@@ -108,7 +114,6 @@ public class GastosProveedorController extends ParadiseJsonController {
 	/**
 	 * Método que recupera un trabajo según su id y lo mapea a un DTO
 	 * @param id Id del trabajo
-	 * @param pestana Pestaña del trabajo a cargar. Dependiendo de la pestaña recibida, cargará un DTO u otro
 	 * @param model
 	 * @return
 	 */
@@ -141,7 +146,29 @@ public class GastosProveedorController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 	
-	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public void generateExcelTrabajosGasto(Long idGasto, ModelMap model, HttpServletRequest request, HttpServletResponse response) throws IOException{
+
+		List<VBusquedaGastoTrabajos> listaTrabajos = (List<VBusquedaGastoTrabajos>) getListTrabajosGasto(idGasto, model, request).getModel().get("data");
+
+		ExcelReport report = new TrabajosGastoExcelReport(listaTrabajos);
+
+		excelReportGeneratorApi.generateAndSend(report, response);
+	}
+
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public void generateExcelActivosGasto(Long idGasto, ModelMap model, HttpServletRequest request, HttpServletResponse response) throws IOException{
+
+		List<VBusquedaGastoActivo> listaActivos = (List<VBusquedaGastoActivo>) getListActivosGastos(idGasto, model, request).getModel().get("data");
+
+		ExcelReport report = new ActivosGastoExcelReport(listaActivos);
+
+		excelReportGeneratorApi.generateAndSend(report, response);
+	}
+
+
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
@@ -195,7 +222,7 @@ public class GastosProveedorController extends ParadiseJsonController {
 			boolean respuesta = gastoProveedorApi.saveGastosProveedor(dto, id);
 			model.put("success", respuesta );
 			trustMe.registrarSuceso(request, id, ENTIDAD_CODIGO.CODIGO_GASTOS_PROVEEDOR, "gastosProveedor", ACCION_CODIGO.CODIGO_MODIFICAR);
-			
+
 		} catch (JsonViewerException ex) {
 			model.put("msg", ex.getMessage());
 			model.put("success", false);
@@ -204,7 +231,7 @@ public class GastosProveedorController extends ParadiseJsonController {
 			logger.error(e.getMessage());
 			model.put("success", false);
 			trustMe.registrarError(request, id, ENTIDAD_CODIGO.CODIGO_GASTOS_PROVEEDOR, "gastosProveedor", ACCION_CODIGO.CODIGO_MODIFICAR, REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
-		}	
+		}
 		
 		return createModelAndViewJson(model);
 		
@@ -273,7 +300,23 @@ public class GastosProveedorController extends ParadiseJsonController {
 			logger.error(e.getMessage());
 			model.put("success", false);		
 		}
-		
+
+		return createModelAndViewJson(model);
+	}
+
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView searchActivoCarteraAndGastoPrinex(@RequestParam String numGastoHaya) {
+		ModelMap model = new ModelMap();
+
+		try {
+			model.put("data", gastoProveedorApi.searchActivoCarteraAndGastoPrinex(numGastoHaya));
+			model.put("success", true);
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+			model.put("success", false);
+		}
+
 		return createModelAndViewJson(model);
 	}
 	
@@ -285,12 +328,12 @@ public class GastosProveedorController extends ParadiseJsonController {
 			model.put("data", gastoProveedorApi.saveDetalleEconomico(dto, id));
 			model.put("success", true);
 			trustMe.registrarSuceso(request, id, ENTIDAD_CODIGO.CODIGO_GASTOS_PROVEEDOR, "detalleEconomico", ACCION_CODIGO.CODIGO_MODIFICAR);
-			
+
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 			model.put("success", false);
 			trustMe.registrarError(request, id, ENTIDAD_CODIGO.CODIGO_GASTOS_PROVEEDOR, "detalleEconomico", ACCION_CODIGO.CODIGO_MODIFICAR, REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
-		}	
+		}
 		
 		return createModelAndViewJson(model);
 		
@@ -307,7 +350,7 @@ public class GastosProveedorController extends ParadiseJsonController {
 		model.put("data", lista);
 		model.put("success", true);
 		trustMe.registrarSuceso(request, idGasto, ENTIDAD_CODIGO.CODIGO_GASTOS_PROVEEDOR, "activos", ACCION_CODIGO.CODIGO_VER);
-		
+
 	} catch (Exception e) {
 		logger.error(e.getMessage());
 		model.put("success", false);
@@ -403,17 +446,34 @@ public class GastosProveedorController extends ParadiseJsonController {
 			boolean success = gastoProveedorApi.updateGastoContabilidad(dtoContabilidad, id);
 			model.put("success", success);
 			trustMe.registrarSuceso(request, id, ENTIDAD_CODIGO.CODIGO_GASTOS_PROVEEDOR, "contabilidad", ACCION_CODIGO.CODIGO_MODIFICAR);
-			
+
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 			model.put("success", false);
 			trustMe.registrarError(request, id, ENTIDAD_CODIGO.CODIGO_GASTOS_PROVEEDOR, "contabilidad", ACCION_CODIGO.CODIGO_MODIFICAR, REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
-		}	
+		}
 		
 		return createModelAndViewJson(model);
 		
 	}
 	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView updateGastoByPrinexLBK( @RequestParam String idGasto, ModelMap model) {
+		try {
+
+			boolean success = gastoProveedorApi.updateGastoByPrinexLBK(idGasto);
+			model.put("success", success);
+
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+			model.put("success", false);
+		}
+
+		return createModelAndViewJson(model);
+
+	}
+
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView updateGestionGasto(DtoGestionGasto dtoGestion, @RequestParam Long id, ModelMap model, HttpServletRequest request) {
@@ -430,7 +490,7 @@ public class GastosProveedorController extends ParadiseJsonController {
 			logger.error(e.getMessage());
 			model.put("success", false);
 			trustMe.registrarError(request, id, ENTIDAD_CODIGO.CODIGO_GASTOS_PROVEEDOR, "gestion", ACCION_CODIGO.CODIGO_MODIFICAR, REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
-		}	
+		}
 		
 		return createModelAndViewJson(model);
 		
@@ -476,7 +536,7 @@ public class GastosProveedorController extends ParadiseJsonController {
 		try {
 			model.put("data", gastoProveedorApi.getAdjuntos(idGasto));
 			trustMe.registrarSuceso(request, idGasto, ENTIDAD_CODIGO.CODIGO_GASTOS_PROVEEDOR, "adjuntos", ACCION_CODIGO.CODIGO_VER);
-		
+
 		} catch (Exception e) {
 			model.put("msg", e.getMessage());
 			model.put("success", false);
@@ -538,8 +598,7 @@ public class GastosProveedorController extends ParadiseJsonController {
 	
 	/**
      * delete un adjunto.
-     * @param asuntoId long
-     * @param adjuntoId long
+     * @param dtoAdjunto dto
      */
 	@RequestMapping(method = RequestMethod.POST)
     public ModelAndView deleteAdjunto(DtoAdjunto dtoAdjunto) {
@@ -678,6 +737,44 @@ public class GastosProveedorController extends ParadiseJsonController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView autorizarGastosContabilidad(Long[] idsGasto, String fechaConta, String fechaPago, Boolean individual, ModelMap model) {
+		try {
+
+			boolean success = gastoProveedorApi.autorizarGastosContabilidad(idsGasto, fechaConta, fechaPago, individual);
+			model.put("success", success);
+
+		} catch (JsonViewerException ex) {
+			model.put("msg", ex.getMessage());
+			model.put("success", false);
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+			model.put("success", false);
+		}
+
+		return createModelAndViewJson(model);
+	}
+
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView autorizarGastosContabilidadAgrupacion(Long[] idsGasto, Long idAgrupacion, String fechaConta, String fechaPago, Boolean individual, ModelMap model) {
+		try {
+
+			boolean success = gastoProveedorApi.autorizarGastosContabilidadAgrupacion(idsGasto, idAgrupacion, fechaConta, fechaPago, individual);
+			model.put("success", success);
+
+		} catch (JsonViewerException ex) {
+			model.put("msg", ex.getMessage());
+			model.put("success", false);
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+			model.put("success", false);
+		}
+
+		return createModelAndViewJson(model);
+	}
+
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView rechazarGastos(Long[] idsGasto, String motivoRechazo, ModelMap model) {
 		try {		
 			
@@ -734,6 +831,25 @@ public class GastosProveedorController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 	
+	@SuppressWarnings({"unchecked"})
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView rechazarGastosContabilidad(Long[] idsGasto, String motivoRechazo, Boolean individual, ModelMap model) {
+		try {
+
+			boolean success = gastoProveedorApi.rechazarGastosContabilidad(idsGasto, motivoRechazo, individual);
+			model.put("success", success);
+
+		} catch (JsonViewerException ex) {
+			model.put("msg", ex.getMessage());
+			model.put("success", false);
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+			model.put("success", false);
+		}
+
+		return createModelAndViewJson(model);
+	}
+
 	@SuppressWarnings({ "unchecked"})
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getAvisosGastoById(Long id, WebDto webDto, ModelMap model){
@@ -771,8 +887,8 @@ public class GastosProveedorController extends ParadiseJsonController {
 		dtoGastosFilter.setStart(excelReportGeneratorApi.getStart());
 		dtoGastosFilter.setLimit(excelReportGeneratorApi.getLimit());
 
-		DtoPage page = gastoProveedorApi.getListGastos(dtoGastosFilter);
-		List<VGastosProveedor> listaGastosProveedor = (List<VGastosProveedor>) page.getResults();
+		DtoPage page = gastoProveedorApi.getListGastosExcel(dtoGastosFilter);
+		List<VGastosProveedorExcel> listaGastosProveedor = (List<VGastosProveedorExcel>) page.getResults();
 
 		ExcelReport report = new GestionGastosExcelReport(listaGastosProveedor);
 
@@ -780,7 +896,7 @@ public class GastosProveedorController extends ParadiseJsonController {
 	}
 	
 	private String formateaAviso(String descripcion) {
-		return  "<div class='div-aviso'>" + descripcion + "</div>";
+		return  "<div class='div-aviso red'>" + descripcion + "</div>";
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -799,6 +915,25 @@ public class GastosProveedorController extends ParadiseJsonController {
 			model.put("success", false);
 			model.put("exception", e.getMessage());
 		}
+
+		return createModelAndViewJson(model);
+	}
+
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView getListGastosProvisionAgrupGastos(Long id, ModelMap model) {
+		try {
+
+			List<VGastosProveedor> lista = gastoProveedorApi.getListGastosProvisionAgrupGastos(id);
+
+			model.put("data", lista);
+			model.put("success", true);
+
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+			model.put("success", false);
+			model.put("exception", e.getMessage());
+		}
 		
 		return createModelAndViewJson(model);
 	}
@@ -808,9 +943,9 @@ public class GastosProveedorController extends ParadiseJsonController {
 	 * y valida que no haya ningún activo que tenga una fecha de traspaso anterior a la fecha de 
 	 * devengo del gasto.
 	 * 
-	 * @param gasto: Gasto que se asociará con los activos.
-	 * @param activo: El activo que se va a asociar con el gasto anterior.
-	 * @param ActivoAgrupacion: La agrupación de activos que se quiere asociar con el gasto
+	 * @param idGasto: Gasto que se asociará con los activos.
+	 * @param idActivo: El activo que se va a asociar con el gasto anterior.
+	 * @param idAgrupacion: La agrupación de activos que se quiere asociar con el gasto
 	 */
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
@@ -826,5 +961,46 @@ public class GastosProveedorController extends ParadiseJsonController {
 		}
 
 		return createModelAndViewJson(model);
+	}
+
+	@SuppressWarnings({"unchecked"})
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView rechazarGastosContabilidadAgrupGastos(Long idAgrupGasto, Long[] idsGasto, String motivoRechazo, Boolean individual, ModelMap model) {
+		try {
+
+			boolean success = gastoProveedorApi.rechazarGastosContabilidadAgrupGastos(idAgrupGasto,idsGasto, motivoRechazo, individual);
+			model.put("success", success);
+
+		} catch (JsonViewerException ex) {
+			model.put("msg", ex.getMessage());
+			model.put("success", false);
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+			model.put("success", false);
+		}
+
+		return createModelAndViewJson(model);
+	}
+
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public void generateExcelFacturas(HttpServletRequest request, HttpServletResponse response) throws IOException{
+
+		List<VFacturasProveedores> listaFacturas = gastoProveedorApi.getListFacturas();
+
+		ExcelReport report = new FacturasProveedoresExcelReport(listaFacturas);
+
+		excelReportGeneratorApi.generateAndSend(report, response);
+	}
+
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public void generateExcelTasasImpuestos(HttpServletRequest request, HttpServletResponse response) throws IOException{
+
+		List<VTasasImpuestos> listaTasasImpuestos = gastoProveedorApi.getListTasasImpuestos();
+
+		ExcelReport report = new TasasImpuestosExcelReport(listaTasasImpuestos);
+
+		excelReportGeneratorApi.generateAndSend(report, response);
 	}
 }

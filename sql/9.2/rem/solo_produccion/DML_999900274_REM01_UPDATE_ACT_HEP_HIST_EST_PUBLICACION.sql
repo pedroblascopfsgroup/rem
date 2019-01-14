@@ -1,0 +1,226 @@
+--/*
+--##########################################
+--## AUTOR=Juanjo Arbona
+--## FECHA_CREACION=20180620
+--## ARTEFACTO=online
+--## VERSION_ARTEFACTO=9.2
+--## INCIDENCIA_LINK=REMVIP-1103
+--## PRODUCTO=NO
+--##
+--## Finalidad: Script que modifica ACT_HEP_HIST_EST_PUBLICACION
+--## INSTRUCCIONES:
+--## VERSIONES:
+--##        0.1 Versión inicial
+--##########################################
+--*/
+
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON; 
+SET DEFINE OFF;
+
+
+DECLARE
+    V_MSQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar     
+    V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
+    V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
+    V_SQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
+    V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.   
+    ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
+    ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
+	  
+    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'ACT_HEP_HIST_EST_PUBLICACION';
+    V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar
+    V_ENTIDAD_ID NUMBER(16);
+    V_ID_ACTIVO NUMBER(16);
+	V_USUARIO VARCHAR2(100 CHAR) := 'REMVIP-1103';
+	V_MOTIVO VARCHAR2(100 CHAR) := 'Ocultación automática por modificación del estado comercial.';
+    V_ID NUMBER(16);
+    
+    TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
+    TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
+    V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
+		T_TIPO_DATA('136307'),
+		T_TIPO_DATA('136308'),
+		T_TIPO_DATA('136310'),
+		T_TIPO_DATA('136313'),
+		T_TIPO_DATA('136315'),
+		T_TIPO_DATA('136513'),
+		T_TIPO_DATA('136514'),
+		T_TIPO_DATA('136515'),
+		T_TIPO_DATA('136516'),
+		T_TIPO_DATA('136517'),
+		T_TIPO_DATA('136545'),
+		T_TIPO_DATA('136546'),
+		T_TIPO_DATA('136547'),
+		T_TIPO_DATA('136548'),
+		T_TIPO_DATA('136549'),
+		T_TIPO_DATA('136551'),
+		T_TIPO_DATA('136553'),
+		T_TIPO_DATA('136555'),
+		T_TIPO_DATA('136941'),
+		T_TIPO_DATA('148167'),
+		T_TIPO_DATA('148168'),
+		T_TIPO_DATA('148169'),
+		T_TIPO_DATA('148170'),
+		T_TIPO_DATA('148172'),
+		T_TIPO_DATA('148175'),
+		T_TIPO_DATA('148176'),
+		T_TIPO_DATA('148337'),
+		T_TIPO_DATA('148338'),
+		T_TIPO_DATA('148339'),
+		T_TIPO_DATA('148577'),
+		T_TIPO_DATA('148578'),
+		T_TIPO_DATA('148579'),
+		T_TIPO_DATA('148580'),
+		T_TIPO_DATA('148582'),
+		T_TIPO_DATA('148584'),
+		T_TIPO_DATA('148585'),
+		T_TIPO_DATA('148586'),
+		T_TIPO_DATA('148683'),
+		T_TIPO_DATA('148898'),
+		T_TIPO_DATA('148076'),
+		T_TIPO_DATA('150562'),
+		T_TIPO_DATA('150620'),
+		T_TIPO_DATA('150621'),
+		T_TIPO_DATA('150622'),
+		T_TIPO_DATA('150623'),
+		T_TIPO_DATA('150624'),
+		T_TIPO_DATA('150625'),
+		T_TIPO_DATA('150817'),
+		T_TIPO_DATA('150818'),
+		T_TIPO_DATA('150819'),
+		T_TIPO_DATA('150820'),
+		T_TIPO_DATA('150821'),
+		T_TIPO_DATA('151471'),
+		T_TIPO_DATA('150822'),
+		T_TIPO_DATA('150824'),
+		T_TIPO_DATA('150826'),
+		T_TIPO_DATA('150827'),
+		T_TIPO_DATA('150998'),
+		T_TIPO_DATA('150999'),
+		T_TIPO_DATA('151001'),
+		T_TIPO_DATA('151002'),
+		T_TIPO_DATA('151004'),
+		T_TIPO_DATA('151129'),
+		T_TIPO_DATA('151130'),
+		T_TIPO_DATA('151131'),
+		T_TIPO_DATA('151132'),
+		T_TIPO_DATA('160567'),
+		T_TIPO_DATA('151133'),
+		T_TIPO_DATA('151134'),
+		T_TIPO_DATA('151180'),
+		T_TIPO_DATA('151470'),
+		T_TIPO_DATA('151748'),
+		T_TIPO_DATA('159836'),
+		T_TIPO_DATA('159837'),
+		T_TIPO_DATA('159838'),
+		T_TIPO_DATA('159839'),
+		T_TIPO_DATA('159840'),
+		T_TIPO_DATA('159841'),
+		T_TIPO_DATA('159842'),
+		T_TIPO_DATA('159983'),
+		T_TIPO_DATA('159984'),
+		T_TIPO_DATA('159985'),
+		T_TIPO_DATA('160070'),
+		T_TIPO_DATA('160074'),
+		T_TIPO_DATA('160233'),
+		T_TIPO_DATA('160234'),
+		T_TIPO_DATA('160235'),
+		T_TIPO_DATA('160236'),
+		T_TIPO_DATA('160238'),
+		T_TIPO_DATA('160239'),
+		T_TIPO_DATA('160240'),
+		T_TIPO_DATA('160301'),
+		T_TIPO_DATA('160566'),
+		T_TIPO_DATA('160568'),
+		T_TIPO_DATA('160569'),
+		T_TIPO_DATA('160571'),
+		T_TIPO_DATA('160572'),
+		T_TIPO_DATA('160574'),
+		T_TIPO_DATA('151181'),
+		T_TIPO_DATA('148684'),
+		T_TIPO_DATA('160575'),
+		T_TIPO_DATA('177408'),
+		T_TIPO_DATA('177852'),
+		T_TIPO_DATA('177407'),
+		T_TIPO_DATA('177853'),
+		T_TIPO_DATA('177899'),
+		T_TIPO_DATA('178059'),
+		T_TIPO_DATA('188031'),
+		T_TIPO_DATA('188032'),
+		T_TIPO_DATA('188081'),
+		T_TIPO_DATA('188082'),
+		T_TIPO_DATA('189219'),
+		T_TIPO_DATA('189220'),
+		T_TIPO_DATA('189574'),
+		T_TIPO_DATA('189575'),
+		T_TIPO_DATA('189576'),
+		T_TIPO_DATA('189933'),
+		T_TIPO_DATA('192804'),
+		T_TIPO_DATA('192894'),
+		T_TIPO_DATA('192895'),
+		T_TIPO_DATA('193151'),
+		T_TIPO_DATA('193498')
+
+
+    ); 
+    V_TMP_TIPO_DATA T_TIPO_DATA;
+    
+BEGIN	
+    FOR I IN V_TIPO_DATA.FIRST .. V_TIPO_DATA.LAST
+      LOOP
+      
+        V_TMP_TIPO_DATA := V_TIPO_DATA(I);
+        
+        EXECUTE IMMEDIATE 'SELECT COUNT(1) FROM '|| V_ESQUEMA ||'.ACT_ACTIVO WHERE ACT_NUM_ACTIVO  = '''||TRIM(V_TMP_TIPO_DATA(1))||'''' INTO V_ID_ACTIVO;
+        
+        IF V_ID_ACTIVO < 1 THEN
+        
+        	DBMS_OUTPUT.PUT_LINE('[WARNING] NO EXISTE EL ACTIVO '''||TRIM(V_TMP_TIPO_DATA(1))||''' NO SE HACE NADA!');
+        	
+        ELSE
+        
+	    	EXECUTE IMMEDIATE 'SELECT ACT_ID FROM '|| V_ESQUEMA ||'.ACT_ACTIVO WHERE ACT_NUM_ACTIVO  = '''||TRIM(V_TMP_TIPO_DATA(1))||'''' INTO V_ID_ACTIVO;
+	        --Comprobamos el dato a insertar
+	        V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||V_TEXT_TABLA||' 
+	        WHERE ACT_ID = '||V_ID_ACTIVO||' ';
+	        EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+	        
+	        --Si existe lo modificamos
+	        IF V_NUM_TABLAS > 0 THEN				
+	          
+	          DBMS_OUTPUT.PUT_LINE('[INFO]: MODIFICAMOS EL REGISTRO ');
+	       	  V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.'||V_TEXT_TABLA||' '||
+	                    'SET HEP_MOTIVO = '''||V_MOTIVO||''' , USUARIOMODIFICAR = '''||V_USUARIO||''' , FECHAMODIFICAR = SYSDATE '||
+						', USUARIOBORRAR = NULL, FECHABORRAR = NULL, BORRADO = 0 WHERE ACT_ID = '||V_ID_ACTIVO||'';
+	          EXECUTE IMMEDIATE V_MSQL;
+	          DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO MODIFICADO CORRECTAMENTE');
+	          
+	       --Si no existe, mostramos mensaje 
+	       ELSE
+	          DBMS_OUTPUT.PUT_LINE('[INFO]: EL ACTIVO '||V_ID_ACTIVO||' NO EXISTE');
+        END IF;
+       END IF;
+      END LOOP;
+    COMMIT;
+    DBMS_OUTPUT.PUT_LINE('[FIN]: '||V_TEXT_TABLA||' ACTUALIZADO CORRECTAMENTE ');
+   
+
+EXCEPTION
+     WHEN OTHERS THEN
+          err_num := SQLCODE;
+          err_msg := SQLERRM;
+
+          DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(err_num));
+          DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
+          DBMS_OUTPUT.put_line(err_msg);
+
+          ROLLBACK;
+          RAISE;          
+
+END;
+
+/
+
+EXIT

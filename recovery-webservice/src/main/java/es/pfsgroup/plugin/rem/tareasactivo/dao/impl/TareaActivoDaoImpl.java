@@ -5,14 +5,12 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import es.capgemini.devon.hibernate.pagination.PaginationManager;
 import es.capgemini.pfs.dao.AbstractEntityDao;
 import es.pfsgroup.commons.utils.HQLBuilder;
 import es.pfsgroup.commons.utils.HibernateQueryUtils;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.tareasactivo.dao.TareaActivoDao;
 
@@ -21,15 +19,7 @@ public class TareaActivoDaoImpl extends AbstractEntityDao<TareaActivo, Long> imp
 
 	@Resource
 	private PaginationManager paginationManager;
-	
-	@Autowired
-	private GenericABMDao genericDao;
-	
-	/**
-	 * Devuelve las tareas activo asociadas a un trámite
-	 * @param idTramite el id del trámite
-	 * @return la lista de tareas del trámite
-	 */
+
     @Override
 	public List<TareaActivo> getTareasActivoTramiteHistorico(Long idTramite){
 		
@@ -42,6 +32,26 @@ public class TareaActivoDaoImpl extends AbstractEntityDao<TareaActivo, Long> imp
 		listaTareas = HibernateQueryUtils.list(this, hb);
 		
 		return listaTareas;
+	}
+
+	@Override
+	public TareaActivo getUltimaTareaActivoPorIdTramite(Long idTramite) {
+		HQLBuilder hb = new HQLBuilder(" from TareaActivo tac");
+
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tac.tramite.id", idTramite);
+		hb.orderBy("tac.id", HQLBuilder.ORDER_DESC);
+
+		return HibernateQueryUtils.list(this, hb).get(0);
+	}
+	
+	@Override
+	public List<TareaActivo> getTareasActivoPorIdActivo(Long idActivo) {
+		HQLBuilder hb = new HQLBuilder(" from TareaActivo tac");
+
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "tac.activo.id", idActivo);
+		hb.orderBy("tac.id", HQLBuilder.ORDER_DESC);
+
+		return HibernateQueryUtils.list(this, hb);
 	}
 
 }

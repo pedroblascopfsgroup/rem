@@ -1,19 +1,73 @@
+### Eclipse ###
+
+# Modules
 .project
 .settings
 .classpath
 target
 bin
+tmp
+*.tmp
+*.bak
+.loadpath
 .apodo
 .metadata
 /RemoteSystemsTempFiles/
 *.log
-package.sh
 .recommenders
 *~
-tmp
+.gitmodules
+
+
+### Intellij ###
+
+# User-specific stuff:
+.idea/**/workspace.xml
+.idea/**/tasks.xml
+.idea/dictionaries
+.idea/dbnavigator.xml
+.idea/shelf/
+
+# Sensitive or high-churn files:
+.idea/**/dataSources/
+.idea/**/dataSources.ids
+.idea/**/dataSources.xml
+.idea/**/dataSources.local.xml
+.idea/**/sqlDataSources.xml
+.idea/**/dynamic.xml
+.idea/**/uiDesigner.xml
+
+# Modules
+/out/
+*.iml
+modules.xml
+.idea/misc.xml
+*.iml___jb_tmp___
+
+# Project Management
+.idea/**/libraries
+
+# Sonarlint plugin
+.idea/sonarlint
+sonarlint-state.xml
+
+
+### Project specific ###
+
+package.sh
 proyecto-rem-online/sencha-app/classic.json
+proyecto-rem-online/sencha-app/classic.jsonp
+proyecto-rem-online/sencha-app/modern.json
+proyecto-rem-online/sencha-app/modern.jsonp
+proyecto-rem-online/sencha-app/ext/
+proyecto-rem-online/sencha-app/build/
+proyecto-rem-online/sencha-app/bootstrap.css
+proyecto-rem-online/sencha-app/bootstrap.js
+proyecto-rem-online/sencha-app/bootstrap.json
+proyecto-rem-online/sencha-app/bootstrap.jsonp
 proyecto-rem-online/sencha-app/sass/example/bootstrap.js
 proyecto-rem-online/sencha-app/sass/example/example.css
+proyecto-rem-online/sencha-app/resources/sass/.sass-cache/
 sql/9.2/rem/migracion_carterizada/SP/SPs.list
 sql/9.2/rem/migracion_carterizada/PROD/DML_PROD/DMLs.list
 sql/9.2/rem/migracion_carterizada/PROD/DML_PROD/TMP/*.sql
@@ -30,11 +84,17 @@ sql/9.2/rem/migracion_carterizada/INFORMES/CONTRASTE/volumetrias_dat.list
 sql/9.2/rem/migracion_carterizada/INFORMES/CONTRASTE/OUTPUT/REPORT-informe_contraste.csv
 sql/9.2/rem/migracion_carterizada/INFORMES/CONTRASTE/OUTPUT/REPORT-informe_contraste.xlsx
 sql/9.2/rem/migracion_carterizada/Ficheros_entrada/Ficheros_antiguos/
+sql/9.2/rem/migracion_carterizada/Ficheros_entrada/*.csv
+reports/salida/
+reports/*.csv
+reports/salida.zip
+
+
+### SQL ###
+
 package-tags/
 tags-list.txt
-sql/9.2/rem/migracion_carterizada/Ficheros_entrada/*.csv
 SQLs-list.txt
 sql/SQLs-list.txt
 sql/.project
-sql/pitertul
 

@@ -6,7 +6,6 @@ import es.capgemini.devon.dto.WebDto;
 
 /**
  * Dto para la pestaña cabecera de la ficha de Agrupación.
- * @author Benjamín Guerrero
  */
 public class DtoAgrupaciones extends WebDto {
 
@@ -31,7 +30,6 @@ public class DtoAgrupaciones extends WebDto {
 	private String codigoPostal;
 	private String tipoAgrupacionCodigo;
 	private String estadoObraNuevaCodigo;
-	private String cartera;
 	private String codigoCartera;
 	@SuppressWarnings("unused")
 	private Boolean existeFechaBaja;
@@ -40,13 +38,30 @@ public class DtoAgrupaciones extends WebDto {
 	private boolean esEditable;
 	private Boolean existenOfertasVivas;
 	private Long codigoGestoriaFormalizacion;
+	private Long codigoGestorActivo;
 	private Long codigoGestorComercial;
+	private Long codigoGestorDobleActivo;
 	private Long codigoGestorFormalizacion;
 	private Long codigoGestorComercialBackOffice;
 	private Integer isFormalizacion;
 	private Boolean estaCaducada;
 	private Boolean agrupacionEliminada;
-
+	private Integer estadoVenta;
+	private Integer estadoAlquiler;
+	private String tipoComercializacionCodigo;
+	private String tipoComercializacionDescripcion;
+	private Boolean incluidoEnPerimetro;
+	private String estadoAlquilerDescripcion;
+	private String estadoVentaDescripcion;
+	private String estadoAlquilerCodigo;
+	private String estadoVentaCodigo;
+	private String subTipoComercial;
+	private String tipoAlquilerCodigo;
+	private String tipoActivoCodigo;
+	private String estadoActivoCodigo;
+	private String subtipoActivoCodigo;
+	private Long idNumActivoPrincipal;
+	private String cartera;
 
 	public Boolean getEstaCaducada() {
 		return estaCaducada;
@@ -169,12 +184,6 @@ public class DtoAgrupaciones extends WebDto {
 	public void setEstadoObraNuevaCodigo(String estadoObraNuevaCodigo) {
 		this.estadoObraNuevaCodigo = estadoObraNuevaCodigo;
 	}
-	public String getCartera() {
-		return cartera;
-	}
-	public void setCartera(String cartera) {
-		this.cartera = cartera;
-	}
 	public Boolean getExisteFechaBaja() {
 		if (this.fechaBaja != null)
 			return true;
@@ -250,6 +259,113 @@ public class DtoAgrupaciones extends WebDto {
 	public void setAgrupacionEliminada(Boolean agrupacionEliminada) {
 		this.agrupacionEliminada = agrupacionEliminada;
 	}
+	public Integer getEstadoVenta() {
+		return estadoVenta;
+	}
+	public void setEstadoVenta(Integer estadoVenta) {
+		this.estadoVenta = estadoVenta;
+	}
+	public Integer getEstadoAlquiler() {
+		return estadoAlquiler;
+	}
+	public void setEstadoAlquiler(Integer estadoAlquiler) {
+		this.estadoAlquiler = estadoAlquiler;
+	}
+	public String getTipoComercializacionDescripcion() {
+		return tipoComercializacionDescripcion;
+	}
+	public void setTipoComercializacionDescripcion(String tipoComercializacionDescripcion) {
+		this.tipoComercializacionDescripcion = tipoComercializacionDescripcion;
+	}
+	public String getTipoComercializacionCodigo() {
+		return tipoComercializacionCodigo;
+	}
+	public void setTipoComercializacionCodigo(String tipoComercializacionCodigo) {
+		this.tipoComercializacionCodigo = tipoComercializacionCodigo;
+	}
+	public Boolean getIncluidoEnPerimetro() {
+		return incluidoEnPerimetro;
+	}
+	public void setIncluidoEnPerimetro(Boolean incluidoEnPerimetro) {
+		this.incluidoEnPerimetro = incluidoEnPerimetro;
+	}
+	public String getEstadoAlquilerDescripcion() {
+		return estadoAlquilerDescripcion;
+	}
+	public void setEstadoAlquilerDescripcion(String estadoAlquilerDescripcion) {
+		this.estadoAlquilerDescripcion = estadoAlquilerDescripcion;
+	}
+	public String getEstadoVentaDescripcion() {
+		return estadoVentaDescripcion;
+	}
+	public void setEstadoVentaDescripcion(String estadoVentaDescripcion) {
+		this.estadoVentaDescripcion = estadoVentaDescripcion;
+	}
+	public String getEstadoAlquilerCodigo() {
+		return estadoAlquilerCodigo;
+	}
+	public void setEstadoAlquilerCodigo(String estadoAlquilerCodigo) {
+		this.estadoAlquilerCodigo = estadoAlquilerCodigo;
+	}
+	public String getEstadoVentaCodigo() {
+		return estadoVentaCodigo;
+	}
+	public void setEstadoVentaCodigo(String estadoVentaCodigo) {
+		this.estadoVentaCodigo = estadoVentaCodigo;
+	}
+	public String getSubTipoComercial() {
+		return subTipoComercial;
+	}
+	public void setSubTipoComercial(String subTipoComercial) {
+		this.subTipoComercial = subTipoComercial;
+	}
+	public String getTipoAlquilerCodigo() {
+		return tipoAlquilerCodigo;
+	}
+	public void setTipoAlquilerCodigo(String tipoAlquilerCodigo) {
+		this.tipoAlquilerCodigo = tipoAlquilerCodigo;
+	}
+	public Long getCodigoGestorActivo() {
+		return codigoGestorActivo;
+	}
+	public void setCodigoGestorActivo(Long codigoGestorActivo) {
+		this.codigoGestorActivo = codigoGestorActivo;
+	}
+	public Long getCodigoGestorDobleActivo() {
+		return codigoGestorDobleActivo;
+	}
+	public void setCodigoGestorDobleActivo(Long codigoGestorDobleActivo) {
+		this.codigoGestorDobleActivo = codigoGestorDobleActivo;
+	}
+	public String getTipoActivoCodigo() {
+		return tipoActivoCodigo;
+	}
+	public void setTipoActivoCodigo(String tipoActivoCodigo) {
+		this.tipoActivoCodigo = tipoActivoCodigo;
+	}
+	public String getEstadoActivoCodigo() {
+		return estadoActivoCodigo;
+	}
+	public void setEstadoActivoCodigo(String estadoActivoCodigo) {
+		this.estadoActivoCodigo = estadoActivoCodigo;
+	}
+	public String getSubtipoActivoCodigo() {
+		return subtipoActivoCodigo;
+	}
+	public void setSubtipoActivoCodigo(String subtipoActivoCodigo) {
+		this.subtipoActivoCodigo = subtipoActivoCodigo;
+	}
+	public Long getIdNumActivoPrincipal() {
+		return idNumActivoPrincipal;
+	}
+	public void setIdNumActivoPrincipal(Long idNumActivoPrincipal) {
+		this.idNumActivoPrincipal = idNumActivoPrincipal;
+	}
 
-
+	public String getCartera() {
+		return cartera;
+	}
+	public void setCartera(String cartera) {
+		this.cartera = cartera;
+	}
 }

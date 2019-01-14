@@ -45,11 +45,9 @@ import es.pfsgroup.plugin.recovery.mejoras.api.registro.MEJRegistroApi;
 import es.pfsgroup.plugin.recovery.mejoras.api.registro.MEJTrazaDto;
 import es.pfsgroup.plugin.recovery.mejoras.registro.model.MEJDDTipoRegistro;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
-import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.TareaActivoApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.listener.ActivoGenerarSaltoImpl;
 import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionService;
-import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.VTareaActivoCount;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoResolucion;
@@ -72,9 +70,7 @@ public class TareaActivoManager implements TareaActivoApi {
     @Autowired
     private ActivoTareaExternaApi activoTareaExternaManagerApi;	
     
-    @Autowired
-    private ActivoTramiteApi activoTramiteApi;
-	
+    
 	@Autowired
 	private TareaActivoDao tareaActivoDao;
 
@@ -332,6 +328,11 @@ public class TareaActivoManager implements TareaActivoApi {
 	public List<TareaActivo> getTareasActivoByIdTramite(Long idTramite) {
 		return tareaActivoDao.getTareasActivoTramiteHistorico(idTramite);
 	}
+	
+	@Override
+	public TareaActivo getUltimaTareaActivoByIdTramite(Long idTramite) {
+		return tareaActivoDao.getUltimaTareaActivoPorIdTramite(idTramite);
+	}
 
 	@Override
 	public Long getTareasPendientes(Usuario usuario) {
@@ -386,7 +387,7 @@ public class TareaActivoManager implements TareaActivoApi {
 	}
 	
 	private List<VTareaActivoCount> getContadores(Usuario usuario) {
-		List<EXTGrupoUsuarios> grupos = genericDao.getList(EXTGrupoUsuarios.class, genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuario.getId()));
+		List<EXTGrupoUsuarios> grupos = genericDao.getList(EXTGrupoUsuarios.class, genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuario.getId()),genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
 		List<VTareaActivoCount> contadores = vTareaActivoCountDao.getContador(usuario, grupos);
 		return contadores;
 	}
@@ -411,6 +412,31 @@ public class TareaActivoManager implements TareaActivoApi {
         
 	    tareaExternaValorDao.saveOrUpdate(valorFecha);
 	    tareaExternaValorDao.saveOrUpdate(valorResolucion);
+	}
+	
+	@Override
+	public String getValorFechaSeguroRentaPorIdActivo(Long idActivo) {
+		
+		List<TareaActivo> tareasActivo=tareaActivoDao.getTareasActivoPorIdActivo(idActivo);
+		if(!Checks.esNulo(tareasActivo)) {
+			for(TareaActivo tarea : tareasActivo) {
+				if(!Checks.esNulo(tarea)) {
+					TareaExterna tex = tarea.getTareaExterna();
+						if(!Checks.esNulo(tex)) { 
+							List<TareaExternaValor> valores= tex.getValores();
+							if(!Checks.esNulo(valores)) {
+								for(TareaExternaValor valor : valores) {
+									if(!Checks.esNulo(valor)) {
+										if(valor.getNombre().equals("fechaTratamiento")) {
+											return valor.getValor();
+										}
+									}
+								}
+							}
+						}
+				}
+			}
+		} return "";
 	}
 }
 

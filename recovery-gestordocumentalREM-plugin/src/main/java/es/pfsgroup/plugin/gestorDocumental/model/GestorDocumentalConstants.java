@@ -4,6 +4,12 @@ import java.util.HashMap;
 
 public class GestorDocumentalConstants {
 
+	public enum Contenedor {
+		Activo,
+		ExpedienteComercial,
+		Gasto
+	}
+
 	public static final String CODIGO_TIPO_EXPEDIENTE_REO = "AI";
 	public static final String CODIGO_TIPO_EXPEDIENTE_ACTIVOS_FINANCIEROS = "AF";
 	public static final String CODIGO_TIPO_EXPEDIENTE_ENTIDADES = "EN";
@@ -16,6 +22,7 @@ public class GestorDocumentalConstants {
 	public static final String CODIGO_CLASE_EXPEDIENTE_PROMOCION = "02";
 	public static final String CODIGO_CLASE_EXPEDIENTE_ACTIVO = "03";
 	public static final String CODIGO_CLASE_GASTO = "07";
+	public static final String CODIGO_CLASE_PROMOCIONES = "09";
 	
 	public static final String TIPO_CONSULTA_RELACION_EXPEDIENTE = "Tipo Expediente";
 	public static final String TIPO_CONSULTA_RELACION_GLOBAL = "Global";

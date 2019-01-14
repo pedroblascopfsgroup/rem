@@ -11,7 +11,7 @@ Ext.define('HreRem.view.expedientes.DatosBasicosOferta', {
 	
 	recordClass: "HreRem.model.DatosBasicosOferta",
     
-    requires: ['HreRem.model.DatosBasicosOferta'],
+    requires: ['HreRem.model.DatosBasicosOferta','HreRem.view.activos.detalle.ActivoDetalleModel'],
     
     listeners: {
 			boxready:'cargarTabData',
@@ -21,7 +21,15 @@ Ext.define('HreRem.view.expedientes.DatosBasicosOferta', {
     initComponent: function () {
 
         var me = this;
-		me.setTitle(HreRem.i18n('title.datos.basicos.oferta'));
+        
+        /*var storeNecesitaFinanciacion = Ext.create('Ext.data.Store', {
+			data : [
+				{"codigo":"1", "descripcion":eval(String.fromCharCode(34,83,237,34))},
+		        {"codigo":"0", "descripcion":"No"}
+			]
+		});*/
+        
+		me.setTitle(HreRem.i18n('title.datos.basicos'));
         var items= [
 
 			{   
@@ -56,7 +64,7 @@ Ext.define('HreRem.view.expedientes.DatosBasicosOferta', {
 								store: '{comboEstadoOferta}',
 								value: '{datosbasicosoferta.estadoCodigo}'
 							},
-							readOnly: true,
+							readOnly: !$AU.userIsRol("HAYASUPER"),
 		                	fieldLabel:  HreRem.i18n('fieldlabel.estado')
 		                },
 		                {	
@@ -91,10 +99,45 @@ Ext.define('HreRem.view.expedientes.DatosBasicosOferta', {
 		                	fieldLabel:  HreRem.i18n('fieldlabel.venta.cartera'),
 		                	bind:		{
 		                		value: '{datosbasicosoferta.ventaCartera}'
-		                		,readOnly: 'true'
+		                		,readOnly: 'true',
+		                		hidden: '{esTipoAlquiler}'
 		                	}		                	
 		                },
-
+		                {	
+		                	xtype: 'comboboxfieldbase',
+		                	fieldLabel:  HreRem.i18n('fieldlabel.tipo.alquiler'),
+		                	bind: {
+		                		store: '{comboTipoAlquiler}',
+		                		value: '{datosbasicosoferta.tipoAlquilerCodigo}',
+		                		hidden: '{!esTipoAlquiler}'
+		                	}		                	
+		                },
+		                {	
+		                	xtype: 'comboboxfieldbase',
+		                	fieldLabel:  HreRem.i18n('fieldlabel.tipo.inquilino'),
+		                	bind: {
+		                		store: '{comboTiposInquilino}',
+		                		value: '{datosbasicosoferta.tipoInquilinoCodigo}',
+		                		hidden: '{!esTipoAlquiler}'
+		                	}		                	
+		                },
+		                {	
+		                	xtype: 'textfieldbase',
+		                	fieldLabel:  HreRem.i18n('fieldlabel.num.contrato.prinex'),
+		                	bind: {
+		                		value: '{datosbasicosoferta.numContratoPrinex}',
+		                		hidden: '{!esTipoAlquiler}'
+		                	}		                	
+		                },
+		                {	
+		                	xtype: 'textfieldbase',
+		                	fieldLabel:  HreRem.i18n('fieldlabel.ref.circuito.cliente'),
+		                	colspan: 3,
+		                	bind: {
+		                		value: '{datosbasicosoferta.refCircuitoCliente}',
+		                		hidden: '{!esTipoAlquiler}'
+		                	}		                	
+		                },
 		                {
 		                	xtype: 'fieldset',
 		                	title:  HreRem.i18n('title.comite.sancionador'),
@@ -111,7 +154,27 @@ Ext.define('HreRem.view.expedientes.DatosBasicosOferta', {
 						                	bind: {
 												store: '{comboComites}',
 												value: '{datosbasicosoferta.comiteSancionadorCodigo}',
-												readOnly: '{comiteSancionadorNoEditable}'
+												readOnly: '{comiteSancionadorNoEditable}',
+												hidden: '{esOfertaAlquiler}'
+												
+											},
+											// TODO Sobreescribimos la función porque está dando problemas la carga del store. A veces llega null.
+											setStore: function(store) {
+												if(!Ext.isEmpty(store)) {
+													this.bindStore(store);
+												}
+											}
+						                },
+						                {
+						                	xtype: 'comboboxfieldbase',
+						                	fieldLabel:  HreRem.i18n('fieldlabel.comite.alquiler'),
+						                	reference: 'comboComiteSeleccionadoAlquiler',
+						                	readOnly: false,
+						                	bind: {
+												store: '{comboComitesAlquiler}',
+												value: '{datosbasicosoferta.comiteSancionadorCodigoAlquiler}',
+												readOnly: '{comiteSancionadorNoEditable}',
+												hidden: '{!esOfertaAlquiler}'
 												
 											},
 											// TODO Sobreescribimos la función porque está dando problemas la carga del store. A veces llega null.
@@ -209,44 +272,67 @@ Ext.define('HreRem.view.expedientes.DatosBasicosOferta', {
 		                },
 		    			{
 		                    xtype: 'fieldsettable',
-		                    title: HreRem.i18n('title.comerical.oferta.detalle.oferta.express'),
-		                    bind: {
+		                    title: HreRem.i18n('title.comerical.oferta'),
+		                    /*bind: {
 		                        hidden: '{!esCarteraCajamar}'
-		                    },
+		                    },*/
 		                    colspan: 3,
 		                    items: [
 		                    		{
 										xtype: "textfield",
 										fieldLabel: HreRem.i18n('fieldlabel.comerical.oferta.detalle.cajamar.ofertaExpress'),
 										bind: {
-											value: '{datosbasicosoferta.ofertaExpress}'
+											value: '{datosbasicosoferta.ofertaExpress}',
+												hidden: '{esTipoAlquiler}'
 										},
 					    				readOnly: true,
 					    				width: 410
 					    			},
 					    			{
-										xtype: "textarea",
+										xtype: "textareafieldbase",
 										fieldLabel: HreRem.i18n('fieldlabel.comerical.oferta.detalle.cajamar.observaciones'),
 										bind: {
 											value: '{datosbasicosoferta.observaciones}'
 										},
 										height: 30,
-					    				readOnly: true,
 					    				width: 410,
 					    				colspan: 2
 					    			},
 					    			{
-										xtype: "textfield",
-										fieldLabel: HreRem.i18n('fieldlabel.comerical.oferta.detalle.cajamar.necesitaFinanciacion'),
-										bind: {
-											value: '{datosbasicosoferta.necesitaFinanciacion}'
+					    				xtype: 'comboboxfieldbase',
+					                	bind: {
+								            store: '{comboSiNo}',
+								            value: '{datosbasicosoferta.necesitaFinanciacion}'
 										},
-					    				readOnly: true,
-					    				width: 410
+										fieldLabel: HreRem.i18n('fieldlabel.comerical.oferta.detalle.cajamar.necesitaFinanciacion')
 					    			}
 					    			
 					    			
 		                    ]
+                		},
+                		{
+                			xtype: "container",
+                			layout: "hbox",
+                			items: [
+                				{
+        		                	xtype: 'button',
+        		                	reference: 'btnSendPropuesta',
+        		        		    bind: {hidden: '{!datosbasicosoferta.permiteProponer}'},
+        		                	rowspan: 2,
+        		                	text: HreRem.i18n('btn.propuesta.oferta'),
+        		                	handler: 'onClickGeneraOfertarHojaExcel'
+        		                },
+        		                {
+        		                	xtype: 'button',
+        		                	reference: 'btnSendAprobacion',
+        		        		    bind: {
+        		        		    	hidden: '{!esTipoAlquiler}',
+        		        		    	disabled: '{!esOfertaTramitada}'
+        		        		    },
+        		                	text: HreRem.i18n('btn.enviar.mail.aprobacion'),
+        		                	handler: 'onClickEnviarMailAprobacion'
+        		                }
+                			]
                 		}
 		        ]
 			},
@@ -261,6 +347,7 @@ Ext.define('HreRem.view.expedientes.DatosBasicosOferta', {
 					    topBar: false,
 					    reference: 'listadoTextosOferta',
 						cls	: 'panel-base shadow-panel',
+						secFunToEdit: 'EDITAR_GRID_TEXTOS_OFERTA_EXPEDIENTE',
 						bind: {
 							store: '{storeTextosOferta}'
 						},									

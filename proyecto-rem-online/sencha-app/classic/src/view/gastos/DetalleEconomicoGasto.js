@@ -54,7 +54,7 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 												xtype:'fieldset',
 												border: false,
 												height: 250,
-				        						margin: '10 10 10 0',
+				        						margin: '10 0 10 0',
 				        						defaultType: 'currencyfieldbase',
 				        						defaults: {
 				        							style: 'text-align: right',
@@ -174,6 +174,49 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 														}
 													
 													]
+											},
+											{   
+												xtype:'fieldset',
+												border: false,
+												height: 250,
+				        						margin: '10 0 10 0',
+				        						defaultType: 'currencyfieldbase',
+				        						reference:'fieldGastos',
+				        						defaults: {
+				        							style: 'text-align: right',
+											        fieldStyle:'text-align:right;',
+											        labelStyle: 'text-align:left;'
+				        						},
+												items :
+													[
+														{ 	xtype:'checkboxfieldbase',
+															fieldLabel: HreRem.i18n('fieldlabel.prorrata'),
+															reference:'rfProrrata',
+											                bind:'{detalleeconomico.prorrata}',
+											                readOnly:true
+														},
+														{ 
+															fieldLabel: HreRem.i18n('fieldlabel.exencion.lbk'),
+											                bind: '{detalleeconomico.exencionlbk}',
+											                readOnly:true,
+											                symbol: HreRem.i18n("symbol.euro")
+														},
+														{ 
+															fieldLabel:HreRem.i18n('fieldlabel.total.importe.promocion'),
+											                bind: '{detalleeconomico.totalImportePromocion}',
+											                readOnly:true,
+											                symbol: HreRem.i18n("symbol.euro")
+														},
+														{ 
+															fieldLabel:HreRem.i18n('fieldlabel.importe.total'),
+											                bind: '{detalleeconomico.importeTotalPrinex}',
+											                readOnly:true,
+											                symbol: HreRem.i18n("symbol.euro")
+														}
+													],
+													listeners:{
+														beforerender:'isLiberbankAndGastosPrinex'
+													}
 											},
 											{   
 												xtype:'fieldset',
@@ -431,6 +474,7 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 													]
 											}											
 										]
+										
 					           },
            
 					           	{   
@@ -697,6 +741,7 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 															                {		                
 																			    xtype: 'textfieldbase',
 																			    fieldLabel:  HreRem.i18n('fieldlabel.detalle.economico.nif.titular.cuenta'),
+																				maxLength: 10,
 																			    bind: {
 																			       	value: '{detalleeconomico.nifTitularCuenta}',
 																			       	disabled: '{!seleccionadoAbonar}',
@@ -717,7 +762,8 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 																					    xtype: 'checkboxfieldbase',
 																					    fieldLabel:  HreRem.i18n('fieldlabel.detalle.economico.pagado.bankia'),
 																					    bind: {
-																				        	value: '{detalleeconomico.pagadoConexionBankia}'
+																				        	value: '{detalleeconomico.pagadoConexionBankia}',
+																				        	readOnly: '{!esCarteraBakia}'
 																	            		},
 																	            		listeners: {
 																	            			change: 'onChangePagadoBankia'
@@ -770,7 +816,8 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 																					    xtype: 'checkboxfieldbase',
 																					    fieldLabel:  HreRem.i18n('fieldlabel.detalle.economico.anticipo'),
 																					    bind: {
-																				        	value: '{detalleeconomico.anticipo}'
+																				        	value: '{detalleeconomico.anticipo}',
+																				        	readOnly: '{!esCarteraSareb}'
 																	            		},
 																	            		listeners: {
 																	            			change: 'onChangeAnticipo'
@@ -793,18 +840,17 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 																			}
 															    ]
 															}
+
 																
 												] 
-											}					
+											}				
 
 									]
 								}
-
            
     	];
     
 	    me.addPlugin({ptype: 'lazyitems', items: items });
-	    
 	    me.callParent(); 
     },
     

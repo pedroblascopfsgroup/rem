@@ -63,6 +63,11 @@ public class DtoDetalleEconomicoGasto extends WebDto {
 	private Date fechaConexion;
 	private Boolean anticipo;
 	private Date fechaAnticipo;
+	private String cartera;
+	private Double exencionlbk;
+	private Double totalImportePromocion;
+	private Double importeTotalPrinex;
+	private Boolean prorrata;
 	
 
 	public Long getGastoProveedor() {
@@ -319,6 +324,36 @@ public class DtoDetalleEconomicoGasto extends WebDto {
 	public void setFechaAnticipo(Date fechaAnticipo) {
 		this.fechaAnticipo = fechaAnticipo;
 	}
-
+	public String getCartera() {
+		return cartera;
+	}
+	public void setCartera(String cartera) {
+		this.cartera = cartera;
+	}
+	public Boolean getProrrata() {
+		return prorrata;
+	}
+	public void setProrrata(Boolean prorrata) {
+		this.prorrata = prorrata;
+	}
+	public Double getExencionlbk() {
+		return exencionlbk;
+	}
+	public void setExencionlbk(Double exencionlbk) {
+		this.exencionlbk = exencionlbk;
+	}
+	public Double getTotalImportePromocion() {
+		return totalImportePromocion;
+	}
+	public void setTotalImportePromocion(Double totalImportePromocion) {
+		this.totalImportePromocion = totalImportePromocion;
+	}
+	public Double getImporteTotalPrinex() {
+		return importeTotalPrinex;
+	}
+	public void setImporteTotalPrinex(Double importeTotalPrinex) {
+		this.importeTotalPrinex = importeTotalPrinex;
+	}
+	
    	
 }

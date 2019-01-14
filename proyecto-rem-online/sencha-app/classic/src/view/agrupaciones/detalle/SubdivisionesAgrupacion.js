@@ -8,7 +8,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.SubdivisionesAgrupacion', {
     listeners: {
 			//beforerender:'cargarTabData'
 	},
-	requires: ['HreRem.model.Subdivisiones'],
+	requires: ['HreRem.model.Subdivisiones','HreRem.view.trabajos.detalle.ListaActivosSubdivisionGrid'],
     
     initComponent: function () {
     	
@@ -57,61 +57,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.SubdivisionesAgrupacion', {
 			    ]
 			},
 			{
-			    xtype: 'gridBase',
-			    
-			    loadAfterBind: false,
-			    reference: 'listaActivosSubdivision',
-				cls	: 'panel-base shadow-panel',
-				bind: {
-					store: '{storeActivosSubdivision}',
-					title: HreRem.i18n('title.activos.del.tipo') + ' ' + '{subdivision.descripcion}',
-					hidden: '{!listadoSubdivisionesAgrupacion.selection}'
-				},
-
-				columns: [
-				
-				    {   
-						text: HreRem.i18n('header.numero.activo.haya'),
-			        	dataIndex: 'numActivo',
-			        	flex: 1
-			        },
-			        {
-						text: HreRem.i18n('header.finca.registral'),
-			        	dataIndex: 'numFinca',
-			        	flex: 0.5
-			        },
-			        {
-						text: HreRem.i18n('header.tipo'),
-			        	dataIndex: 'tipoActivo',
-			        	flex: 0.5
-			        },
-			        {
-						text: HreRem.i18n('header.subtipo'),
-			        	dataIndex: 'subtipoActivo',
-			        	flex: 0.5
-			        },
-			        {
-						text: HreRem.i18n('header.dispone.informe.comercial'),
-			        	dataIndex: 'estadoDisposicionInforme',
-			        	flex: 0.3,
-			        	align: 'center',
-			        	renderer: function(value){
-			        		return (Ext.isEmpty(value) || value == 'Rechazado')? "No" : value;
-			        	}
-			        }
-			        
-			       	        
-			    ],
-			    dockedItems : [
-			        {
-			            xtype: 'pagingtoolbar',
-			            dock: 'bottom',
-			            displayInfo: true,
-			            bind: {
-			                store: '{storeActivosSubdivision}'
-			            }
-			        }
-			    ]
+			    xtype: 'listaActivosSubdivisionGrid'
 			}
 		];
     	
@@ -126,11 +72,11 @@ Ext.define('HreRem.view.agrupaciones.detalle.SubdivisionesAgrupacion', {
 		me.recargar = false;
 
 		var listadoSubdivisionesAgrupacion = me.down("[reference=listadoSubdivisionesAgrupacion]");
-		var listaActivosSubdivision = me.down("[reference=listaActivosSubdivision]");
+		var listaActivosSubdivisionGrid = me.down("[reference=listaActivosSubdivisionGrid]");
 		var selectedRecords = listadoSubdivisionesAgrupacion.getSelection();		
 		
 		listadoSubdivisionesAgrupacion.getStore().removeAll();
-		listaActivosSubdivision.getStore().removeAll();
+		listaActivosSubdivisionGrid.getStore().removeAll();
 		listadoSubdivisionesAgrupacion.getStore().load();		
 		
 		if(!Ext.isEmpty(selectedRecords)) {

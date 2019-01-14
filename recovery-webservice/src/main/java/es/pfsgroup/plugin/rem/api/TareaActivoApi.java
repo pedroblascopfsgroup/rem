@@ -6,7 +6,6 @@ import java.util.List;
 import es.capgemini.devon.bo.BusinessOperationException;
 import es.capgemini.pfs.prorroga.dto.DtoSolicitarProrroga;
 import es.capgemini.pfs.users.domain.Usuario;
-import es.pfsgroup.plugin.rem.model.DtoSaltoTarea;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 
 
@@ -56,5 +55,15 @@ public interface TareaActivoApi {
 		public void guardarDatosResolucion(Long idTareaExterna, Date fecha, String resolucion);
 
 		void saltoTarea(Long idProcesBpm, String tareaDestino);
+
+		/**
+		 * Este método obtiene la tarea de activo con el ID de tarea más alto y por el id del trámite que se le pasa por parámetro.
+		 *
+		 * @param idTramite: Id del trámite.
+		 * @return Devuelve una entidad de tipo TareaActivo.
+		 */
+		TareaActivo getUltimaTareaActivoByIdTramite(Long idTramite);
+
+		public String getValorFechaSeguroRentaPorIdActivo(Long idActivo);
 
     }

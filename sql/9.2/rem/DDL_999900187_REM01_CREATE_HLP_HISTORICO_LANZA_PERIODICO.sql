@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=David Gonzalez
---## FECHA_CREACION=20180606
+--## FECHA_CREACION=20180615
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=2.0.18
 --## INCIDENCIA_LINK=HREOS-4166
@@ -64,7 +64,7 @@ BEGIN
 		HLP_SP_CARGA            VARCHAR2(30 CHAR)			  	NOT NULL,
 		HLP_FECHA_EJEC  		TIMESTAMP                 		NOT NULL,
 		HLP_RESULTADO_EJEC  	NUMBER(1)                 		NOT NULL,
-		HLP_CODIGO_REG			NUMBER(16)				  		NOT NULL,
+		HLP_CODIGO_REG			VARCHAR2(50 CHAR)				NOT NULL,
 		HLP_REGISTRO_EJEC  		VARCHAR2(500 CHAR)			 	NOT NULL
     )
 	LOGGING 

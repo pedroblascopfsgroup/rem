@@ -3,7 +3,6 @@ package es.pfsgroup.framework.paradise.gestorEntidad.dao.impl;
 import java.util.List;
 
 import org.hibernate.Query;
-import org.springframework.stereotype.Repository;
 
 import es.capgemini.pfs.dao.AbstractEntityDao;
 import es.capgemini.pfs.gestorEntidad.model.GestorEntidad;
@@ -15,6 +14,7 @@ import es.pfsgroup.framework.paradise.gestorEntidad.dao.GestorEntidadDao;
 
 public class GestorEntidadDaoImpl extends AbstractEntityDao<GestorEntidad, Long> implements GestorEntidadDao {
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public List<EXTDDTipoGestor> getListTipoGestorEditables(Long idTipoGestor) {
 		
@@ -30,6 +30,7 @@ public class GestorEntidadDaoImpl extends AbstractEntityDao<GestorEntidad, Long>
 		
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public List<Usuario> getListUsuariosGestoresExpedientePorTipo(Long idTipoGestor) {
 		
@@ -44,4 +45,20 @@ public class GestorEntidadDaoImpl extends AbstractEntityDao<GestorEntidad, Long>
 		return listado;
 	}
 
+	@SuppressWarnings("unchecked")
+	public String getCodigoGestorPorUsuario(Long idUsuario) {
+		
+		HQLBuilder hb = new HQLBuilder("select distinct(gee.tipoGestor.codigo) from GestorEntidad gee");
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "gee.auditoria.borrado", false);
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "gee.usuario.id", idUsuario);
+		
+		Query query = getSession().createQuery(hb.toString());
+		HQLBuilder.parametrizaQuery(query, hb);
+		List<String> listado = query.list();
+		
+		String codigosGestor = listado.toString().substring(1,listado.toString().length()-1);
+		
+		return codigosGestor.trim();
+	}
+	
 }

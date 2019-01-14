@@ -26,6 +26,7 @@ import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.GenericApi;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustAcceso;
+import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.model.AuthenticationData;
 import es.pfsgroup.plugin.rem.model.DtoMenuItem;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
@@ -45,7 +46,7 @@ public class GenericController extends ParadiseJsonController{
 	@Autowired
 	private LogTrustAcceso trustMe;
 
-	
+
 	/**
 	 * Método para modificar la plantilla de JSON utilizada en el servlet.
 	 * @param request
@@ -78,6 +79,12 @@ public class GenericController extends ParadiseJsonController{
 		
 		return createModelAndViewJson(new ModelMap("data", adapter.getDiccionario(diccionario)));
 		
+	}
+
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getDiccionarioByTipoOferta(String diccionario, String codTipoOferta) {
+
+		return createModelAndViewJson(new ModelMap("data", genericApi.getDiccionarioByTipoOferta(diccionario, codTipoOferta)));
 	}
 
 	@RequestMapping(method = RequestMethod.GET)
@@ -122,6 +129,26 @@ public class GenericController extends ParadiseJsonController{
 	}
 
 	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getDiccionarioCarteraPorCodigoFestor() {
+
+		String diccionario = "entidadesPropietarias";
+
+		AuthenticationData authData =  genericApi.getAuthenticationData();
+
+		String[] codigosGestor = authData.getCodigoGestor().split(",");
+
+		for(String codGestor : codigosGestor) {
+			if(GestorActivoApi.CODIGO_GESTOR_COMITE_INVERSION_INMOBILIARIA_LIBERBANK.equals(codGestor) ||
+				GestorActivoApi.CODIGO_GESTOR_COMITE_DIRECCION_LIBERBANK.equals(codGestor) ||
+				GestorActivoApi.CODIGO_GESTOR_COMITE_INMOBILIARIO_LIBERBANK.equals(codGestor))
+					diccionario = "gestorCommiteLiberbank";
+		}
+
+		return createModelAndViewJson(new ModelMap("data", adapter.getDiccionario(diccionario)));
+
+	}
+
+	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getIndicadorCondicionPrecioFiltered(String codigoCartera){
 		return createModelAndViewJson(new ModelMap("data", genericApi.getIndicadorCondicionPrecioFiltered(codigoCartera)));
 	}
@@ -136,7 +163,7 @@ public class GenericController extends ParadiseJsonController{
 	 * @return Usuario identificado y sus funciones según perfil
 	 */
 	@RequestMapping(method = RequestMethod.GET) 
-	public ModelAndView getAuthenticationData(){
+	public ModelAndView getAuthenticationData(WebDto webDto, ModelMap model){
 
 		AuthenticationData authData =  genericApi.getAuthenticationData();		
 		return new ModelAndView("jsonView",  new ModelMap("data", authData));
@@ -206,6 +233,14 @@ public class GenericController extends ParadiseJsonController{
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getComboTipoGestorByActivo(WebDto webDto, ModelMap model, String idActivo){
+		model.put("data", genericApi.getComboTipoGestorByActivo(webDto, model, idActivo));
+
+		return new ModelAndView("jsonView", model);
+	}
+
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getComboTipoGestorOfertas(WebDto webDto, ModelMap model){
 		model.put("data", genericApi.getComboTipoGestorOfertas());
 		
@@ -239,8 +274,8 @@ public class GenericController extends ParadiseJsonController{
 	}
 	
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getComboSubtipoTrabajo(String tipoTrabajoCodigo){
-		return createModelAndViewJson(new ModelMap("data", genericApi.getComboSubtipoTrabajo(tipoTrabajoCodigo)));	
+	public ModelAndView getComboSubtipoTrabajo(String tipoTrabajoCodigo, Long idActivo){
+		return createModelAndViewJson(new ModelMap("data", genericApi.getComboSubtipoTrabajo(tipoTrabajoCodigo, idActivo)));
 	}
 	
 	@RequestMapping(method = RequestMethod.GET)
@@ -319,6 +354,27 @@ public class GenericController extends ParadiseJsonController{
 	@RequestMapping(method= RequestMethod.GET)
 	public ModelAndView getComboSubcartera(String idCartera) {
 		return createModelAndViewJson(new ModelMap("data", genericApi.getComboSubcartera(idCartera)));	
+	}
+
+	@RequestMapping(method= RequestMethod.GET)
+	public ModelAndView getComitesAlquilerByCartera(Long idActivo, ModelMap model){
+		return createModelAndViewJson(new ModelMap("data", genericApi.getComitesAlquilerByCartera(idActivo)));
+	}
+
+	@RequestMapping(method= RequestMethod.GET)
+	public ModelAndView getComitesAlquilerByCarteraCodigo(String carteraCodigo, ModelMap model){
+		return createModelAndViewJson(new ModelMap("data", genericApi.getComitesAlquilerByCarteraCodigo(carteraCodigo)));
+	}
+
+	@RequestMapping(method= RequestMethod.GET)
+	public ModelAndView getComboTipoAgrupacion() {
+		return createModelAndViewJson(new ModelMap("data", genericApi.getComboTipoAgrupacion()));
+	}
+
+	@RequestMapping(method= RequestMethod.GET)
+	public ModelAndView getTodosComboTipoAgrupacion()
+	{
+		return createModelAndViewJson(new ModelMap("data", genericApi.getTodosComboTipoAgrupacion()));
 	}
 
 }

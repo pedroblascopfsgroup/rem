@@ -13,6 +13,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
+import es.pfsgroup.plugin.rem.api.*;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperCompileManager;
 import net.sf.jasperreports.engine.JasperExportManager;
@@ -36,19 +37,12 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBien;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
-import es.pfsgroup.plugin.rem.api.ActivoApi;
-import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
-import es.pfsgroup.plugin.rem.api.GestorActivoApi;
-import es.pfsgroup.plugin.rem.api.OfertaApi;
-import es.pfsgroup.plugin.rem.api.PropuestaOfertaApi;
-import es.pfsgroup.plugin.rem.api.VisitaApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjudicacionJudicial;
 import es.pfsgroup.plugin.rem.model.ActivoAdmisionDocumento;
 import es.pfsgroup.plugin.rem.model.ActivoDistribucion;
 import es.pfsgroup.plugin.rem.model.ActivoEdificio;
 import es.pfsgroup.plugin.rem.model.ActivoFoto;
-import es.pfsgroup.plugin.rem.model.ActivoHistoricoEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.ActivoInfoComercial;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoPropietarioActivo;
@@ -77,7 +71,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionesPosesoria;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializar;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoFoto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoHabitaculo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
@@ -121,6 +114,9 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi {
 
 	@Autowired
 	private ActivoAdapter activoAdapter;
+
+	@Autowired
+	private ActivoEstadoPublicacionApi activoEstadoPublicacionApi;
 
 	@Override
 	public HashMap<String, String> validatePropuestaOfertaRequestData(OfertaSimpleDto ofertaSimpleDto,
@@ -212,9 +208,8 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi {
 		Filter filtroTipoGestor = genericDao.createFilter(FilterType.EQUALS, "codigo", GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
 
 		EXTDDTipoGestor tipoGestor = genericDao.get(EXTDDTipoGestor.class, filtroTipoGestor);
-		if (!Checks.esNulo(tipoGestor)) {
+		if (Checks.esNulo(tipoGestor)) {
 			mapaValores.put("Gestor", FileUtilsREM.stringify(null));
-
 		} else if (gestorActivoApi.getGestorByActivoYTipo(activo, tipoGestor.getId()) != null) {
 			mapaValores.put("Gestor",
 					gestorActivoApi.getGestorByActivoYTipo(activo, tipoGestor.getId()).getApellidoNombre());
@@ -222,13 +217,8 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi {
 			mapaValores.put("Gestor", FileUtilsREM.stringify(null));
 		}
 
-		ActivoHistoricoEstadoPublicacion historicoPublicacion= activoApi.getUltimoHistoricoEstadoPublicado(activo.getId());
-		if(!Checks.esNulo(historicoPublicacion)){
-			mapaValores.put("FPublWeb", FileUtilsREM.stringify(historicoPublicacion.getFechaDesde()));
-		}
-		else{
-			mapaValores.put("FPublWeb", FileUtilsREM.stringify(null));
-		}
+		mapaValores.put("FPublWeb", FileUtilsREM.stringify(activoEstadoPublicacionApi.getFechaInicioEstadoActualPublicacionVenta(activo.getId())));
+
 		mapaValores.put("NumVisitasWeb", FileUtilsREM.stringify(activo.getVisitas().size()));
 
 		// CARACTERISTICAS INMUEBLE

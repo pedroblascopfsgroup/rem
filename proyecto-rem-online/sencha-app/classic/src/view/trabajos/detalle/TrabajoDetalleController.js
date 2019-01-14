@@ -173,13 +173,23 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 		if(form.isFormValid()) {
 
 			form.mask(HreRem.i18n("msg.mask.espere"));
-			
+   
 			record.save({
-				
 			    success: success,
 			 	failure: function(record, operation) {
-			 		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-			 		me.getView().down("[reference=activosagrupaciontrabajo]").deselectAll();
+			 		var response = Ext.decode(operation.getResponse().responseText);
+			 		if(response.success === "false" && Ext.isDefined(response.error)) {
+						me.fireEvent("errorToast", Ext.decode(operation.getResponse().responseText).error);
+						if(me.getView().down("[reference=activosagrupaciontrabajo]") != null){
+			 				me.getView().down("[reference=activosagrupaciontrabajo]").deselectAll();
+			 			}
+						//me.fireEvent("errorToast", operation.getError());
+			 		}else{
+			 			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+			 			if(me.getView().down("[reference=activosagrupaciontrabajo]") != null){
+			 				me.getView().down("[reference=activosagrupaciontrabajo]").deselectAll();
+			 			}
+			 		}
 			    },
 			    callback: function(record, operation) {
 			    	form.unmask();
@@ -643,13 +653,15 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 	},
 
 	addParamAgrupacion: function(store, operation, opts){
-	
+		
 		var me = this;
 		
 		var idAgrupacion = Ext.ComponentQuery.query("creartrabajowindow")[0].idAgrupacion;
 		store.getProxy().extraParams = {id: idAgrupacion};	
 		return true;		
 	},
+	
+
 	
 	addParamProveedores: function(store, operation, opts) {
 		var me = this;

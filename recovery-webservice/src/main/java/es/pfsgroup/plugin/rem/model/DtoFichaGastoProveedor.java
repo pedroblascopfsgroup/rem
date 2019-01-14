@@ -43,10 +43,10 @@ public class DtoFichaGastoProveedor extends WebDto {
 	private String nombrePropietario;
 	private String codigoEmisor;
 	private String destinatarioGastoCodigo;
-	private boolean autorizado;
-	private boolean rechazado;
-	private boolean asignadoATrabajos;
-	private boolean asignadoAActivos;
+	private Boolean autorizado;
+	private Boolean rechazado;
+	private Boolean asignadoATrabajos;
+	private Boolean asignadoAActivos;
 	private String estadoGastoCodigo;
 	private String estadoGastoDescripcion;
 	private Boolean esGastoEditable;
@@ -58,8 +58,8 @@ public class DtoFichaGastoProveedor extends WebDto {
    	private String numGastoDestinatario;
    	private Long numGastoAbonado;
    	private Long idGastoAbonado; 
-   	private boolean gastoSinActivos;
-   	private boolean enviado;
+   	private Boolean gastoSinActivos;
+   	private Boolean enviado;
    	private Double importeTotal;
    	private String nombreGestoria;
    	private String codigoImpuestoIndirecto;
@@ -197,30 +197,30 @@ public class DtoFichaGastoProveedor extends WebDto {
 	public void setDestinatarioGastoCodigo(String destinatarioGastoCodigo) {
 		this.destinatarioGastoCodigo = destinatarioGastoCodigo;
 	}
-	public void setAutorizado(boolean autorizado) {
+	public void setAutorizado(Boolean autorizado) {
 		this.autorizado = autorizado;
 		
 	}
-   	public boolean getAutorizado() {
+   	public Boolean getAutorizado() {
    		return this.autorizado;
    	}
-	public void setRechazado(boolean rechazado) {
+	public void setRechazado(Boolean rechazado) {
 		this.rechazado = rechazado;
 		
 	}
-   	public boolean getRechazado() {
+   	public Boolean getRechazado() {
    		return this.rechazado;
    	}
-	public boolean getAsignadoATrabajos() {
+	public Boolean getAsignadoATrabajos() {
 		return asignadoATrabajos;
 	}
-	public void setAsignadoATrabajos(boolean asignadoATrabajos) {
+	public void setAsignadoATrabajos(Boolean asignadoATrabajos) {
 		this.asignadoATrabajos = asignadoATrabajos;
 	}
-	public boolean getAsignadoAActivos() {
+	public Boolean getAsignadoAActivos() {
 		return asignadoAActivos;
 	}
-	public void setAsignadoAActivos(boolean asignadoAActivos) {
+	public void setAsignadoAActivos(Boolean asignadoAActivos) {
 		this.asignadoAActivos = asignadoAActivos;
 	}
 	public String getEstadoGastoCodigo() {
@@ -289,16 +289,16 @@ public class DtoFichaGastoProveedor extends WebDto {
 	public void setIdGastoAbonado(Long idGastoAbonado) {
 		this.idGastoAbonado = idGastoAbonado;
 	}
-	public boolean getGastoSinActivos() {
+	public Boolean getGastoSinActivos() {
 		return gastoSinActivos;
 	}
-	public void setGastoSinActivos(boolean gastoSinActivos) {
+	public void setGastoSinActivos(Boolean gastoSinActivos) {
 		this.gastoSinActivos = gastoSinActivos;
 	}
-	public boolean getEnviado() {
+	public Boolean getEnviado() {
 		return enviado;
 	}
-	public void setEnviado(boolean enviado) {
+	public void setEnviado(Boolean enviado) {
 		this.enviado = enviado;
 	}
 	public Double getImporteTotal() {

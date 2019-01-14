@@ -1,12 +1,14 @@
 package es.pfsgroup.plugin.rem.tareasactivo;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import es.capgemini.devon.beans.Service;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.procesosJudiciales.dao.TareaExternaValorDao;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
@@ -21,6 +23,7 @@ import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
+import es.pfsgroup.plugin.rem.model.GestorSustituto;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.tareasactivo.dao.ActivoTareaExternaDao;
 import es.pfsgroup.plugin.rem.tareasactivo.dao.TareaActivoDao;
@@ -64,12 +67,35 @@ public class ActivoTareaExternaManager /*extends TareaExternaManager*/ implement
 	/* (non-Javadoc)
 	 * @see es.pfsgroup.plugin.rem.test.tareas.ActivoTareaExternaManagerApi#getActivasByIdTramite(java.lang.Long)
 	 */
+	@SuppressWarnings("finally")
 	@Override
 	public List<TareaExterna> getActivasByIdTramite(Long idTramite, Usuario usuarioLogado) {
+
+		List<EXTGrupoUsuarios> grupos = genericDao.getList(EXTGrupoUsuarios.class, genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioLogado.getId()));
 		
-		List<EXTGrupoUsuarios> grupos  = genericDao.getList(EXTGrupoUsuarios.class, genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioLogado.getId()));		
-		
-		return activoTareaExternaDao.getTareasTramite(idTramite, usuarioLogado, grupos);
+		// Implementacion de gestores sustitutos, metemos a los USU_ID como si fueran grupos para que luego al tirar la query HQL recupere las tareas de los sustituidos
+		try {
+			List<GestorSustituto> gestoresSustitutos = genericDao.getList(GestorSustituto.class, genericDao.createFilter(FilterType.EQUALS, "usuarioGestorSustituto", usuarioLogado));
+
+			for (GestorSustituto gestor : gestoresSustitutos) {
+				if (!Checks.esNulo(gestor.getFechaFin())) {
+					if (gestor.getFechaFin().after(new Date()) || DateUtils.isSameDay(gestor.getFechaFin(), new Date())) {
+						EXTGrupoUsuarios gestorSustituto = new EXTGrupoUsuarios();
+						gestorSustituto.setGrupo(gestor.getUsuarioGestorOriginal());
+						grupos.add(gestorSustituto);
+					}
+				} else {
+					EXTGrupoUsuarios gestorSustituto = new EXTGrupoUsuarios();
+					gestorSustituto.setGrupo(gestor.getUsuarioGestorOriginal());
+					grupos.add(gestorSustituto);			
+				}
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			return activoTareaExternaDao.getTareasTramite(idTramite, usuarioLogado, grupos);
+		}
 	}
 	
 	/* (non-Javadoc)

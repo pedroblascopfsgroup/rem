@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import es.capgemini.devon.pagination.Page;
@@ -11,15 +12,25 @@ import es.capgemini.pfs.dao.AbstractEntityDao;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.HQLBuilder;
 import es.pfsgroup.commons.utils.HibernateQueryUtils;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
+import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.model.DtoVisitasFilter;
 import es.pfsgroup.plugin.rem.model.VBusquedaVisitasDetalle;
 import es.pfsgroup.plugin.rem.model.Visita;
+import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.rest.dto.VisitaDto;
 import es.pfsgroup.plugin.rem.visita.dao.VisitaDao;
 
 @Repository("VisitaDao")
 public class VisitaDaoImpl extends AbstractEntityDao<Visita, Long> implements VisitaDao{
+	
+	@Autowired
+	private GenericAdapter genericAdapter;
+	
+	@Autowired
+	private GenericABMDao genericDao;
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -87,7 +98,15 @@ public class VisitaDaoImpl extends AbstractEntityDao<Visita, Long> implements Vi
 	@SuppressWarnings("unchecked")
 	@Override
 	public DtoPage getListVisitasDetalle(DtoVisitasFilter dtoVisitasFilter) {
+		
+		UsuarioCartera usuarioCartera = genericDao.get(UsuarioCartera.class,
+				genericDao.createFilter(FilterType.EQUALS, "usuario.id", genericAdapter.getUsuarioLogado().getId()));
+				
 		HQLBuilder hb = new HQLBuilder(" from VBusquedaVisitasDetalle vvisita");
+		
+		if(!Checks.esNulo(usuarioCartera)) {
+			hb.appendWhere("vvisita.idCartera = "+usuarioCartera.getCartera().getId());
+		}
 
 		if(!Checks.esNulo(dtoVisitasFilter.getNumVisitaRem())){
 			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vvisita.numVisita", dtoVisitasFilter.getNumVisitaRem().toString());
@@ -95,6 +114,10 @@ public class VisitaDaoImpl extends AbstractEntityDao<Visita, Long> implements Vi
 
 		if(!Checks.esNulo(dtoVisitasFilter.getNumActivo())){
 			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vvisita.numActivo", dtoVisitasFilter.getNumActivo().toString());
+		}
+		
+		if(!Checks.esNulo(dtoVisitasFilter.getCarteraCodigo())){
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vvisita.carteraCodigo", dtoVisitasFilter.getCarteraCodigo());
 		}
 
 		Page pageVisitas = HibernateQueryUtils.page(this, hb, dtoVisitasFilter);

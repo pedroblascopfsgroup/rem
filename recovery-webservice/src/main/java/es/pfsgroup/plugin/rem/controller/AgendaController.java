@@ -27,21 +27,23 @@ import es.pfsgroup.framework.paradise.agenda.controller.TareaController;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.rem.adapter.AgendaAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
+import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.api.TareaActivoApi;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
 import es.pfsgroup.plugin.rem.excel.TareaExcelReport;
 import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionService;
+import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoReasignarTarea;
 import es.pfsgroup.plugin.rem.model.DtoSaltoTarea;
 import es.pfsgroup.plugin.rem.model.DtoSolicitarProrrogaTarea;
 import es.pfsgroup.plugin.rem.model.DtoTareaFilter;
+import es.pfsgroup.plugin.rem.model.DtoTareaGestorSustitutoFilter;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
 import es.pfsgroup.recovery.ext.factory.dao.dto.DtoResultadoBusquedaTareasBuzones;
 
 @Controller
@@ -67,12 +69,15 @@ public class AgendaController extends TareaController {
 	
 	@Autowired
 	private UvemManagerApi uvemManagerApi;
-
+	
+	@Autowired
+	private TareaActivoApi activoTareaApi;
+	
 	private final Log logger = LogFactory.getLog(getClass());
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView getListTareas(DtoTareaFilter dtoTareaFiltro, ModelMap model) {
+	public ModelAndView getListTareas(DtoTareaFilter dtoTareaFiltro, ModelMap model, Boolean btnGesSustituto) {
 		Page p = adapter.getListTareas(dtoTareaFiltro);
 		model.put("data", p.getResults());
 		// avisos
@@ -93,7 +98,6 @@ public class AgendaController extends TareaController {
 
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView getFormularioTarea(Long idTarea, ModelMap model) {
-
 		model.put("data", adapter.getFormularioTarea(idTarea));
 		return createModelAndViewJson(model);
 	}
@@ -120,6 +124,12 @@ public class AgendaController extends TareaController {
 	public ModelAndView getNumIdExpediente(Long idTarea, ModelMap model) {
 		model.put("idExpediente", adapter.getIdExpediente(idTarea));
 		model.put("numExpediente", adapter.getNumExpediente(idTarea));
+		return createModelAndViewJson(model);
+	}
+	
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView getTipoTituloActivoByIdTarea(Long idTarea, ModelMap model) {
+		model.put("tipoTituloActivo", adapter.getTipoTituloActivoByIdTarea(idTarea));
 		return createModelAndViewJson(model);
 	}
 
@@ -261,6 +271,7 @@ public class AgendaController extends TareaController {
 		return createModelAndViewJson(model);
 	}
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView saltoCierreEconomico(Long idTareaExterna, ModelMap model) {
 		model.put("success", adapter.saltoCierreEconomico(idTareaExterna));
@@ -268,6 +279,7 @@ public class AgendaController extends TareaController {
 		return createModelAndViewJson(model);
 	}
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView saltoResolucionExpediente(Long idTareaExterna, ModelMap model) {
 		model.put("success", adapter.saltoResolucionExpediente(idTareaExterna));
@@ -275,6 +287,7 @@ public class AgendaController extends TareaController {
 		return createModelAndViewJson(model);
 	}
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView saltoResolucionExpedienteByIdExp(Long idExpediente, ModelMap model) {
 
@@ -313,11 +326,12 @@ public class AgendaController extends TareaController {
 			model.put("success", salto);
 
 		} catch (JsonViewerException e) {
-			logger.error("Error al saltar a resolución expediente", e);
+			
 			model.put("success", salto);
 			model.put("msgError", e.getMessage());
 
 		} catch (Exception e) {
+			logger.error("Error al saltar a resolución expediente", e);
 			model.put("success", salto);
 		}
 
@@ -578,6 +592,25 @@ public class AgendaController extends TareaController {
 
 		model.put("success", success);
 
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView getListTareasGestorSustituto(ModelMap model, DtoTareaGestorSustitutoFilter dto) {
+		
+		try{
+			
+			Page page = adapter.getListTareasGS(dto);
+			
+			model.put("succes", true);
+			model.put("data", page.getResults());
+			model.put("totalCount", page.getTotalCount());
+			
+		}catch (Exception e){
+			e.printStackTrace();
+			model.put("succes", false);
+		}
 		return createModelAndViewJson(model);
 	}
 

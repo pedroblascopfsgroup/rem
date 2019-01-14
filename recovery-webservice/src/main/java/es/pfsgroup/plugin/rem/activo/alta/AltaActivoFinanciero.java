@@ -43,6 +43,7 @@ import es.pfsgroup.plugin.rem.model.ActivoPlazaAparcamiento;
 import es.pfsgroup.plugin.rem.model.ActivoPropietario;
 import es.pfsgroup.plugin.rem.model.ActivoPropietarioActivo;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
+import es.pfsgroup.plugin.rem.model.ActivoPublicacion;
 import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.ActivoTitulo;
@@ -56,6 +57,8 @@ import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpRiesgoBancario;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionAlquiler;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionVenta;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
@@ -151,21 +154,18 @@ public class AltaActivoFinanciero implements AltaActivoService {
 
 		beanUtilNotNull.copyProperty(activo, "numActivo", dtoAAF.getNumActivoHaya());
 		activo.setNumActivoRem(activoApi.getNextNumActivoRem());
-		beanUtilNotNull.copyProperty(activo, "tipoTitulo", utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoTituloActivo.class, DDTipoTituloActivo.tipoTituloPDV));
+		beanUtilNotNull.copyProperty(activo, "tipoTitulo", utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoTituloActivo.class, dtoAAF.getTipoTituloCodigo()));
 		beanUtilNotNull.copyProperty(activo, "subtipoTitulo", utilDiccionarioApi.dameValorDiccionarioByCod(DDSubtipoTituloActivo.class, dtoAAF.getSubtipoTituloCodigo()));
 		beanUtilNotNull.copyProperty(activo, "cartera", utilDiccionarioApi.dameValorDiccionarioByCod(DDCartera.class, dtoAAF.getCarteraCodigo()));
+		beanUtilNotNull.copyProperty(activo, "subcartera", utilDiccionarioApi.dameValorDiccionarioByCod(DDSubcartera.class, dtoAAF.getSubcarteraCodigo()));
 		if (!Checks.esNulo(activo.getCartera())) {
-			// Calcular la subcartera en base a la cartera (siempre tipo asistida) y establecer el
-			// 'num activo cartera'.
+			// Establecer el 'num activo cartera'.
 			if (DDCartera.CODIGO_CARTERA_BANKIA.equals(activo.getCartera().getCodigo())) {
 				beanUtilNotNull.copyProperty(activo, "numActivoUvem", dtoAAF.getNumActivoCartera());
-				beanUtilNotNull.copyProperty(activo, "subcartera", utilDiccionarioApi.dameValorDiccionarioByCod(DDSubcartera.class, DDSubcartera.CODIGO_BAN_ASISTIDA));
 			} else if (DDCartera.CODIGO_CARTERA_CAJAMAR.equals(activo.getCartera().getCodigo())) {
 				beanUtilNotNull.copyProperty(activo, "numActivo", dtoAAF.getNumActivoCartera());
-				beanUtilNotNull.copyProperty(activo, "subcartera", utilDiccionarioApi.dameValorDiccionarioByCod(DDSubcartera.class, DDSubcartera.CODIGO_CAJ_ASISTIDA));
 			} else if (DDCartera.CODIGO_CARTERA_SAREB.equals(activo.getCartera().getCodigo())) {
 				beanUtilNotNull.copyProperty(activo, "idSareb", dtoAAF.getNumActivoCartera());
-				beanUtilNotNull.copyProperty(activo, "subcartera", utilDiccionarioApi.dameValorDiccionarioByCod(DDSubcartera.class, DDSubcartera.CODIGO_SAR_ASISTIDA));
 			}
 		}
 		beanUtilNotNull.copyProperty(activo, "idRecovery", dtoAAF.getIdAsuntoRecovery());
@@ -223,10 +223,11 @@ public class AltaActivoFinanciero implements AltaActivoService {
 		// PerimetroActivo
 		PerimetroActivo perimetroActivo = new PerimetroActivo();
 		perimetroActivo.setActivo(activo);
-		perimetroActivo.setAplicaGestion(0);
-		perimetroActivo.setAplicaComercializar(0);
-		perimetroActivo.setAplicaFormalizar(0);
-		perimetroActivo.setIncluidoEnPerimetro(0);
+		perimetroActivo.setAplicaGestion(1);
+		perimetroActivo.setAplicaComercializar(1);
+		perimetroActivo.setAplicaFormalizar(1);
+		perimetroActivo.setAplicaPublicar(true);
+		perimetroActivo.setIncluidoEnPerimetro(1);
 		genericDao.save(PerimetroActivo.class, perimetroActivo);
 
 		// ActivoBancario.
@@ -285,7 +286,8 @@ public class AltaActivoFinanciero implements AltaActivoService {
 		genericDao.save(ActivoInfoRegistral.class, activoInfoRegistral);
 
 		// ActivoPropietarioActivo.
-		ActivoPropietario activoPropietario = genericDao.get(ActivoPropietario.class, genericDao.createFilter(FilterType.EQUALS, "docIdentificativo", dtoAAF.getNifPropietario()));
+		ActivoPropietario activoPropietario = genericDao.get(ActivoPropietario.class, genericDao.createFilter(FilterType.EQUALS, "docIdentificativo", dtoAAF.getNifPropietario()),
+				genericDao.createFilter(FilterType.EQUALS, "cartera", activo.getCartera()));
 		if(Checks.esNulo(activoPropietario)) {
 			// Si el propietario no existe se crea uno nuevo con el NIF recibido.
 			activoPropietario = new ActivoPropietario();
@@ -589,6 +591,29 @@ public class AltaActivoFinanciero implements AltaActivoService {
 
 		activo.setBien(bien);
 		genericDao.save(Activo.class, activo);
+		
+		ActivoPublicacion activoPublicacion = new ActivoPublicacion();
+		activoPublicacion.setActivo(activo);
+		activoPublicacion.setTipoComercializacion((DDTipoComercializacion) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoComercializacion.class, dtoAAF.getDestinoComercialCodigo()));
+		activoPublicacion.setEstadoPublicacionVenta((DDEstadoPublicacionVenta) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoPublicacionVenta.class, DDEstadoPublicacionVenta.CODIGO_NO_PUBLICADO_VENTA));
+		activoPublicacion.setEstadoPublicacionAlquiler((DDEstadoPublicacionAlquiler) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoPublicacionAlquiler.class, DDEstadoPublicacionAlquiler.CODIGO_NO_PUBLICADO_ALQUILER));
+		activoPublicacion.setCheckPublicarVenta(false);
+		activoPublicacion.setCheckOcultarVenta(false);
+		activoPublicacion.setCheckSinPrecioVenta(false);
+		activoPublicacion.setCheckOcultarPrecioVenta(false);
+		activoPublicacion.setCheckPublicarAlquiler(false);
+		activoPublicacion.setCheckOcultarAlquiler(false);
+		activoPublicacion.setCheckSinPrecioAlquiler(false);
+		activoPublicacion.setCheckOcultarPrecioAlquiler(false);
+		activoPublicacion.setVersion(new Long(0));
+		
+		Auditoria auditoria = new Auditoria();
+		auditoria.setBorrado(false);
+		auditoria.setFechaCrear(new Date());
+		auditoria.setUsuarioCrear("CARGA_MASIVA");
+		activoPublicacion.setAuditoria(auditoria);
+		
+		genericDao.save(ActivoPublicacion.class, activoPublicacion);
 	}
 	
 	private ActivoProveedor obtenerMediador(String nifMediador,Long idActivo){

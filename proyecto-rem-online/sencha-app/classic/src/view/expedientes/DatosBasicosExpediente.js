@@ -39,16 +39,47 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 							xtype: 'displayfieldbase',
 							fieldLabel:  HreRem.i18n('fieldlabel.propietario'),
 			                bind:		'{expediente.propietario}'
-						},		       
+						},
 						{ 
 							xtype: 'displayfieldbase',
 							fieldLabel:  HreRem.i18n('fieldlabel.tipo'),
 		                	bind:		'{expediente.tipoExpedienteDescripcion}'
-		                },		                
+		                },
+		                {  
+							xtype:'comboboxfieldbase',
+							fieldLabel: HreRem.i18n('fieldlabel.tipo.alquiler'),
+							cls: 'cabecera-info-field',
+							bind :{ 
+								value: '{expediente.tipoAlquiler}',
+								hidden: '{esOfertaVenta}',
+								store: '{comboTipoAlquiler}'
+							}
+		                },
 		                { 
 							xtype: 'displayfieldbase',
 							fieldLabel:  HreRem.i18n('fiedlabel.numero.activo.agrupacion'),
 		                	bind:		'{expediente.numEntidad}'
+		                },
+
+		                { 
+		                	xtype:'comboboxfieldbase',
+							fieldLabel:HreRem.i18n('fieldlabel.tipo.inquilino'),
+							cls: 'cabecera-info-field',
+							bind :{ 
+								value: '{expediente.tipoInquilino}',
+								hidden: '{esOfertaVenta}',
+									store :'{comboTiposInquilino}'
+							}
+		                },
+
+		                {
+		                	xtype: 'comboboxfieldbase',
+		                	bind: {
+								store: '{comboEstadoExpediente}',
+								value: '{expediente.codigoEstado}'
+							},
+							hidden: !$AU.userIsRol("HAYASUPER"),
+		                	fieldLabel:  HreRem.i18n('fieldlabel.estado')
 		                }
 						
 					]
@@ -161,6 +192,27 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 	                	bind:		'{expediente.fechaAlta}'
 	                	//,readOnly: true
 	                },
+	                { //Fecha Scoring
+	                	xtype:'datefieldbase',
+						formatter: 'date("d/m/Y")',
+						fieldLabel: HreRem.i18n('fieldlabel.fecha.reserva'),
+	                	bind:		{
+	                		value: '{expediente.fechaReserva}'
+	                	},
+	                	listeners: {
+							render: 'tareaDefinicionDeOferta'
+						}
+	                	//,readOnly: true
+	                },
+	                { 
+						xtype: 'datefieldbase',
+						formatter: 'date("d/m/Y")',
+	                	fieldLabel:  HreRem.i18n('fieldlabel.fecha.elevacion.comite'),
+			        	bind: {
+			        		value: '{expediente.fechaSancionComite}',
+			        		hidden: '{esOfertaVenta}'	
+			        	}
+			        },
 	                {
 	                	xtype:'datefieldbase',
 						formatter: 'date("d/m/Y")',
@@ -169,19 +221,23 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 	                	//,readOnly: true
 	                },
 	                { 
+						xtype: 'datefieldbase',
+						formatter: 'date("d/m/Y")',
+	                	fieldLabel:  HreRem.i18n('fieldlabel.fecha.posicionamiento'),
+			        	bind: {
+			        		value: '{expediente.fechaPosicionamiento}',
+			        		hidden: '{esOfertaVenta}'	
+			        	}
+			        },
+	                {//FechaFirmaContrato
 	                	xtype:'datefieldbase',
 						formatter: 'date("d/m/Y")',
-						fieldLabel: HreRem.i18n('fieldlabel.fecha.reserva'),
-	                	bind:		'{expediente.fechaReserva}'
+	                	bind:		{
+	                		value: '{expediente.fechaVenta}',
+	                		fieldLabel:'{fechaVentaEsAlquiler}'
+	                		}
 	                	//,readOnly: true
-	                },
-	                {
-	                	xtype:'datefieldbase',
-						formatter: 'date("d/m/Y")',
-	                	fieldLabel: HreRem.i18n('fieldlabel.fecha.venta'),
-	                	bind:		'{expediente.fechaVenta}'
-	                	//,readOnly: true
-	                	
+	                	//readOnly: !$AU.userIsRol("HAYASUPER")
 	                },
 	                {
 	                	xtype:'datefieldbase',
@@ -189,9 +245,19 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 	                	fieldLabel: HreRem.i18n('fieldlabel.fecha.ingreso.cheque'),
 	                	bind: {
 	                		value: '{expediente.fechaContabilizacionPropietario}',
-	                		readOnly: '{fechaIngresoChequeReadOnly}'
+	                		readOnly: '{fechaIngresoChequeReadOnly}',
+	                		hidden: '{!esOfertaVenta}'
 	                	}		
-	                }
+	                },
+	            	{ 
+						xtype: 'textfieldbase',
+	                	fieldLabel:  HreRem.i18n('fieldlabel.numero.contrato.alquiler'),
+			        	bind: {
+			        		value:'{expediente.numContratoAlquiler}',
+			        		hidden: '{esOfertaVenta}'	
+			        	}
+			        }
+			       
 
 				]
 				
@@ -221,21 +287,22 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 						},
 						{ 
 							xtype: 'comboboxfieldbase',
-		                	fieldLabel:  HreRem.i18n('fieldlabel.motivo.anulacion'),
+							fieldLabel:  HreRem.i18n('fieldlabel.motivo.anulacion'),
 		                	reference: 'comboMotivoAnulacion',
 		                	editable: true,
 				        	bind: {
-				        		store: '{storeMotivoAnulacion}',
-			            		value: '{expediente.codMotivoAnulacion}'
+				        		store: '{getStoreMotivoAnulacionOrRechazoByTipoExpediente}',
+			            		value: '{getMotivoAnulacionOrRechazo}'
 			            	}
 				        },
 						{    
 			                xtype:'fieldsettable',
+			                fieldLabel:  HreRem.i18n('fieldlabel.motivo.anulacion'),
 							defaultType: 'displayfield',
-							title: HreRem.i18n('title.devolucion.reserva'),
 							colspan: 3,
 							bind: {
-								disabled: '{!expediente.tieneReserva}'
+								disabled: '{!expediente.tieneReserva}',
+								hidden: '{!esOfertaVenta}'
 							},
 							items: [
 									{
@@ -268,7 +335,7 @@ Ext.define('HreRem.view.expedientes.DatosBasicosExpediente', {
 							        		disabled: '{!expediente.tieneReserva}',
 							        		store: '{storeEstadosDevolucion}',
 						            		value: '{expediente.estadoDevolucionCodigo}',
-						            		readOnly: '{esCarteraLiberbank}'
+						            		readOnly: '{esReadOnly}'
 						            	},
 						            	listeners:{
 						            		change: function(){

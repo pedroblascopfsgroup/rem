@@ -43,14 +43,6 @@ public interface ActivoPublicacionHistoricoDao extends AbstractDao<ActivoPublica
 	Integer getTotalDeDiasEnEstadoPublicadoAlquilerPorIdActivo(Long idActivo);
 	
 	/**
-	 * Este método devuelve el registro actual del histórico de publicaciones
-	 *
-	 * @param idActivo: ID del activo.
-	 * @return Devuelve el ActivoPublicacionHistorico del activo.
-	 */
-	ActivoPublicacionHistorico getActivoPublicacionHistoricoActual(Long idActivo);
-	
-	/**
 	 * Este método obtiene el conteo de días que se pasa un activo en un mismo estado de publicación para el tipo destino comercial venta. Se limita al estado de 'Publicado'. Para el resto de estados
 	 * devuelve 0.
 	 *

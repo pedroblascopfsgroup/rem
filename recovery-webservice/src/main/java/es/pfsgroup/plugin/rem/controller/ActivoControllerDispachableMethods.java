@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.ui.ModelMap;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -24,7 +26,7 @@ class ActivoControllerDispachableMethods {
 		}
 		
 		public abstract Class<T> getArgumentType();
-		public abstract void execute(Long id, T dto);
+		public abstract void execute(Long id, T dto, HttpServletRequest request);
 	}
 
 	
@@ -46,7 +48,7 @@ class ActivoControllerDispachableMethods {
 			}
 
 			@Override
-			public void execute(Long id, DtoActivoFichaCabecera dto) {
+			public void execute(Long id, DtoActivoFichaCabecera dto, HttpServletRequest request) {
 				if (dto != null ){
 
 					ModelAndView mm = this.controller.saveDatosBasicos(dto, id, new ModelMap());
@@ -72,11 +74,11 @@ class ActivoControllerDispachableMethods {
 			}
 
 			@Override
-			public void execute(Long id, DtoActivoSituacionPosesoria dto) {
+			public void execute(Long id, DtoActivoSituacionPosesoria dto, HttpServletRequest request) {
 				if (dto != null ){
 					ActivoApi activoApi=controller.getActivoApi();
 					if(activoApi.compruebaParaEnviarEmailAvisoOcupacion(dto, id)) {
-						this.controller.saveActivoSituacionPosesoria(dto, id, new ModelMap());
+						this.controller.saveActivoSituacionPosesoria(dto, id, new ModelMap(), request);
 					}else {
 						throw new JsonViewerException("Informe okupación y/o desokupación no adjunto. Se necesita para poder guardar el activo como ocupado SI y con título NO");
 					}
@@ -97,9 +99,9 @@ class ActivoControllerDispachableMethods {
 			}
 
 			@Override
-			public void execute(Long id, DtoActivoInformeComercial dto) {
+			public void execute(Long id, DtoActivoInformeComercial dto, HttpServletRequest request) {
 				if (dto != null ){
-					this.controller.saveActivoInformeComercial(dto, id, new ModelMap());
+					this.controller.saveActivoInformeComercial(dto, id, new ModelMap(), request);
 				}
 				
 			}
@@ -116,7 +118,7 @@ class ActivoControllerDispachableMethods {
 			}
 
 			@Override
-			public void execute(Long id, DtoActivoDatosRegistrales dto) {
+			public void execute(Long id, DtoActivoDatosRegistrales dto, HttpServletRequest request) {
 				if (dto != null ){
 					this.controller.saveActivoDatosRegistrales(dto, id, new ModelMap());
 				}
@@ -135,7 +137,7 @@ class ActivoControllerDispachableMethods {
 			}
 
 			@Override
-			public void execute(Long id, DtoActivoInformacionAdministrativa dto) {
+			public void execute(Long id, DtoActivoInformacionAdministrativa dto, HttpServletRequest request) {
 				if (dto != null ){
 					this.controller.saveActivoInformacionAdministrativa(dto, id, new ModelMap());
 				}
@@ -154,7 +156,7 @@ class ActivoControllerDispachableMethods {
 			}
 
 			@Override
-			public void execute(Long id, DtoActivoCargasTab dto) {
+			public void execute(Long id, DtoActivoCargasTab dto, HttpServletRequest request) {
 				if (dto != null ){
 					dto.setIdActivo(id);
 					this.controller.saveActivoCargaTab(dto, new ModelMap());
@@ -173,7 +175,7 @@ class ActivoControllerDispachableMethods {
 			}
 
 			@Override
-			public void execute(Long id, DtoHistoricoMediador dto) {
+			public void execute(Long id, DtoHistoricoMediador dto, HttpServletRequest request) {
 				if (dto != null ){
 					List<DtoHistoricoMediador> list = controller.getHistoricoMediadorByActivo(id);
 					dto.setCodigo(list.get(0).getCodigo());
@@ -193,7 +195,7 @@ class ActivoControllerDispachableMethods {
 			}
 
 			@Override
-			public void execute(Long idActivo, DtoCondicionEspecifica dto) {
+			public void execute(Long idActivo, DtoCondicionEspecifica dto, HttpServletRequest request) {
 				if (dto != null){
 					this.controller.createCondicionEspecifica(dto, new ModelMap());
 				}
@@ -211,9 +213,9 @@ class ActivoControllerDispachableMethods {
 			}
 
 			@Override
-			public void execute(Long id, DtoCondicionantesDisponibilidad dto) {
+			public void execute(Long id, DtoCondicionantesDisponibilidad dto, HttpServletRequest request) {
 				if (dto != null ){
-					this.controller.saveCondicionantesDisponibilidad(id,dto, new ModelMap());
+					this.controller.saveCondicionantesDisponibilidad(id,dto, new ModelMap(), request);
 				}
 			}
 		});
@@ -229,10 +231,10 @@ class ActivoControllerDispachableMethods {
 			}
 
 			@Override
-			public void execute(Long id, DtoComercialActivo dto) {
+			public void execute(Long id, DtoComercialActivo dto, HttpServletRequest request) {
 				if (dto != null ){
 					dto.setId(id.toString());
-					this.controller.saveComercialActivo(dto, new ModelMap());
+					this.controller.saveComercialActivo(dto, new ModelMap(), request);
 
 				}
 			}
@@ -249,9 +251,9 @@ class ActivoControllerDispachableMethods {
 			}
 
 			@Override
-			public void execute(Long id, DtoActivoAdministracion dto) {
+			public void execute(Long id, DtoActivoAdministracion dto, HttpServletRequest request) {
 				if (dto != null ){
-					this.controller.saveActivoAdministracion(dto, id, new ModelMap());
+					this.controller.saveActivoAdministracion(dto, id, new ModelMap(), request);
 
 				}
 			}
@@ -268,7 +270,7 @@ class ActivoControllerDispachableMethods {
 			}
 
 			@Override
-			public void execute(Long id, DtoDatosPublicacionActivo dto) {
+			public void execute(Long id, DtoDatosPublicacionActivo dto, HttpServletRequest request) {
 				if (dto != null ){
 					dto.setIdActivo(id);
 					this.controller.setDatosPublicacionActivo(dto, new ModelMap());
@@ -287,9 +289,9 @@ class ActivoControllerDispachableMethods {
 			}
 
 			@Override
-			public void execute(Long id, DtoTasacion dto) {
+			public void execute(Long id, DtoTasacion dto, HttpServletRequest request) {
 				if (dto != null ){
-					this.controller.saveTasacionActivo(dto, new ModelMap());
+					this.controller.saveTasacionActivo(dto, new ModelMap(), request);
 				}
 			}
 		});
@@ -305,9 +307,9 @@ class ActivoControllerDispachableMethods {
 			}
 
 			@Override
-			public void execute(Long id, DtoActivoPatrimonio dto) {
+			public void execute(Long id, DtoActivoPatrimonio dto, HttpServletRequest request) {
 				if (dto != null ){
-					this.controller.saveDatosPatrimonio(dto, id, new ModelMap());
+					this.controller.saveDatosPatrimonio(dto, id, new ModelMap(), request);
 				}
 			}
 		});
@@ -323,9 +325,9 @@ class ActivoControllerDispachableMethods {
 			}
 
 			@Override
-			public void execute(Long id, DtoComunidadpropietariosActivo dto) {
+			public void execute(Long id, DtoComunidadpropietariosActivo dto, HttpServletRequest request) {
 				if (dto != null ){
-					this.controller.saveActivoComunidadPropietarios(dto, id, new ModelMap());
+					this.controller.saveActivoComunidadPropietarios(dto, id, new ModelMap(), request);
 
 				}
 			}
@@ -334,11 +336,11 @@ class ActivoControllerDispachableMethods {
 
 	private ActivoController controller;
 
-	public ActivoControllerDispachableMethods(ActivoController c) {
+	ActivoControllerDispachableMethods(ActivoController c) {
 		this.controller = c;
 	}
 
-	public DispachableMethod findDispachableMethod(String modelName) {
+	DispachableMethod findDispachableMethod(String modelName) {
 		return configure(dispachableMethods.get(modelName));
 	}
 

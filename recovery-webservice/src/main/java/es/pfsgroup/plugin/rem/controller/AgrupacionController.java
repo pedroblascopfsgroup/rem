@@ -34,6 +34,25 @@ import es.pfsgroup.plugin.rem.excel.AgrupacionExcelReport;
 import es.pfsgroup.plugin.rem.excel.AgrupacionListadoActivosExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
+import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento;
+import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.ACCION_CODIGO;
+import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.ENTIDAD_CODIGO;
+import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.REQUEST_STATUS_CODE;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
+import es.pfsgroup.plugin.rem.model.ActivoFoto;
+import es.pfsgroup.plugin.rem.model.AgrupacionesVigencias;
+import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
+import es.pfsgroup.plugin.rem.model.DtoAgrupaciones;
+import es.pfsgroup.plugin.rem.model.DtoAgrupacionesActivo;
+import es.pfsgroup.plugin.rem.model.DtoAgrupacionesCreateDelete;
+import es.pfsgroup.plugin.rem.model.DtoFoto;
+import es.pfsgroup.plugin.rem.model.DtoObservacion;
+import es.pfsgroup.plugin.rem.model.DtoOfertaActivo;
+import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
+import es.pfsgroup.plugin.rem.model.DtoSubdivisiones;
+import es.pfsgroup.plugin.rem.model.DtoVigenciaAgrupacion;
+import es.pfsgroup.plugin.rem.model.VActivosAgrupacion;
+import es.pfsgroup.plugin.rem.model.VBusquedaAgrupaciones;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 
 @Controller
@@ -53,6 +72,9 @@ public class AgrupacionController extends ParadiseJsonController {
 
 	@Autowired
 	private ExcelReportGeneratorApi excelReportGeneratorApi;
+
+	@Autowired
+	private LogTrustEvento trustMe;
 
 	private final Log logger = LogFactory.getLog(getClass());
 
@@ -120,9 +142,10 @@ public class AgrupacionController extends ParadiseJsonController {
 	 */
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getAgrupacionById(Long id, int pestana, ModelMap model) {
+	public ModelAndView getAgrupacionById(Long id, int pestana, ModelMap model, HttpServletRequest request) {
 
 		model.put("data", adapter.getAgrupacionById(id));
+		trustMe.registrarSuceso(request, id, ENTIDAD_CODIGO.CODIGO_AGRUPACION, "ficha", ACCION_CODIGO.CODIGO_VER);
 
 		return createModelAndViewJson(model);
 	}
@@ -140,7 +163,7 @@ public class AgrupacionController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getListActivosAgrupacionById(DtoAgrupacionFilter filtro, Long id, ModelMap model) {
+	public ModelAndView getListActivosAgrupacionById(DtoAgrupacionFilter filtro, Long id, ModelMap model, HttpServletRequest request) {
 
 		//TODO cambiar Page por el nuevo dto.
 		//DtoEstadoDisponibilidadComercial page = adapter.getListActivosAgrupacion(filtro, id);
@@ -149,8 +172,10 @@ public class AgrupacionController extends ParadiseJsonController {
 			model.put("data", page.getResults());
 			model.put("totalCount", page.getTotalCount());
 			model.put("success", true);
+			trustMe.registrarSuceso(request, id, ENTIDAD_CODIGO.CODIGO_AGRUPACION, "activos", ACCION_CODIGO.CODIGO_VER);
 		} else {
 			model.put("success", false);
+			trustMe.registrarError(request, id, ENTIDAD_CODIGO.CODIGO_AGRUPACION, "activos", ACCION_CODIGO.CODIGO_VER , REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
 		}
 		return createModelAndViewJson(model);
 	}
@@ -315,9 +340,10 @@ public class AgrupacionController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getListObservacionesAgrupacionById(Long id, ModelMap model) {
+	public ModelAndView getListObservacionesAgrupacionById(Long id, ModelMap model, HttpServletRequest request) {
 
 		model.put("data", adapter.getListObservacionesAgrupacionById(id));
+		trustMe.registrarSuceso(request, id, ENTIDAD_CODIGO.CODIGO_AGRUPACION, "observaciones", ACCION_CODIGO.CODIGO_VER);
 
 		return createModelAndViewJson(model);
 
@@ -325,18 +351,20 @@ public class AgrupacionController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getListVisitasAgrupacionById(Long id, ModelMap model) {
+	public ModelAndView getListVisitasAgrupacionById(Long id, ModelMap model, HttpServletRequest request) {
 
 		model.put("data", adapter.getListVisitasAgrupacionById(id));
+		trustMe.registrarSuceso(request, id, ENTIDAD_CODIGO.CODIGO_AGRUPACION, "visitas", ACCION_CODIGO.CODIGO_VER);
 
 		return createModelAndViewJson(model);
 	}
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getListOfertasAgrupacion(Long id, WebDto webDto, ModelMap model) {
+	public ModelAndView getListOfertasAgrupacion(Long id, WebDto webDto, ModelMap model, HttpServletRequest request) {
 
 		model.put("data", adapter.getListOfertasAgrupacion(id));
+		trustMe.registrarSuceso(request, id, ENTIDAD_CODIGO.CODIGO_AGRUPACION, "ofertas", ACCION_CODIGO.CODIGO_VER);
 
 		return createModelAndViewJson(model);
 	}
@@ -367,7 +395,7 @@ public class AgrupacionController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView saveAgrupacion(DtoAgrupaciones dtoAgrupacion, @RequestParam Long id, ModelMap model)
+	public ModelAndView saveAgrupacion(DtoAgrupaciones dtoAgrupacion, @RequestParam Long id, ModelMap model, HttpServletRequest request)
 	{
 		try
 		{
@@ -385,14 +413,17 @@ public class AgrupacionController extends ParadiseJsonController {
 			{
 				model.put("success", success);
 			}
-			
+			trustMe.registrarSuceso(request, id, ENTIDAD_CODIGO.CODIGO_AGRUPACION, "guardar", ACCION_CODIGO.CODIGO_MODIFICAR);
+
 		} catch (JsonViewerException jvex) {
 			logger.error(jvex);
 			model.put("success", false);
 			model.put("msgError", jvex.getMessage());
+			trustMe.registrarError(request, id, ENTIDAD_CODIGO.CODIGO_AGRUPACION, "guardar", ACCION_CODIGO.CODIGO_MODIFICAR, REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
 		} catch (Exception e) {
 			logger.error(e);
 			model.put("success", false);
+			trustMe.registrarError(request, id, ENTIDAD_CODIGO.CODIGO_AGRUPACION, "guardar", ACCION_CODIGO.CODIGO_MODIFICAR, REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
 		}
 
 		return createModelAndViewJson(model);
@@ -481,7 +512,7 @@ public class AgrupacionController extends ParadiseJsonController {
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	@Transactional(readOnly = false)
-	public ModelAndView getFotosAgrupacionById(Long id, WebDto webDto, ModelMap model) {
+	public ModelAndView getFotosAgrupacionById(Long id, WebDto webDto, ModelMap model, HttpServletRequest request) {
 
 		ActivoAgrupacion agrupacion = activoAgrupacionApi.get(id);
 		List<DtoFoto> listaDtoFotos = new ArrayList<DtoFoto>();
@@ -556,6 +587,7 @@ public class AgrupacionController extends ParadiseJsonController {
 		}
 
 		model.put("data", listaDtoFotos);
+		trustMe.registrarSuceso(request, id, ENTIDAD_CODIGO.CODIGO_AGRUPACION, "fotos", ACCION_CODIGO.CODIGO_VER);
 
 		return new ModelAndView("jsonView", model);
 	}
@@ -563,7 +595,7 @@ public class AgrupacionController extends ParadiseJsonController {
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	@Transactional(readOnly = false)
-	public ModelAndView getFotosSubdivisionById(DtoSubdivisiones subdivision, ModelMap model) {
+	public ModelAndView getFotosSubdivisionById(DtoSubdivisiones subdivision, ModelMap model, HttpServletRequest request) {
 
 		List<DtoFoto> listaDtoFotos = new ArrayList<DtoFoto>();
 		List<ActivoFoto> listaFotos = activoAgrupacionApi.getFotosSubdivision(subdivision);
@@ -593,6 +625,7 @@ public class AgrupacionController extends ParadiseJsonController {
 		}
 
 		model.put("data", listaDtoFotos);
+		trustMe.registrarSuceso(request, subdivision.getAgrId(), ENTIDAD_CODIGO.CODIGO_AGRUPACION, "fotosSubdivision", ACCION_CODIGO.CODIGO_VER);
 
 		return createModelAndViewJson(model);
 	}
@@ -654,24 +687,26 @@ public class AgrupacionController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getListSubdivisionesAgrupacionById(DtoAgrupacionFilter agrupacionFilter, ModelMap model) {
+	public ModelAndView getListSubdivisionesAgrupacionById(DtoAgrupacionFilter agrupacionFilter, ModelMap model, HttpServletRequest request) {
 
 		Page page = activoAgrupacionApi.getListSubdivisionesAgrupacionById(agrupacionFilter);
 
 		model.put("data", page.getResults());
 		model.put("totalCount", page.getTotalCount());
+		trustMe.registrarSuceso(request, agrupacionFilter.getAgrId(), ENTIDAD_CODIGO.CODIGO_AGRUPACION, "subdivisiones", ACCION_CODIGO.CODIGO_VER);
 
 		return createModelAndViewJson(model);
 	}
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getListActivosSubdivisionById(DtoSubdivisiones subdivisionFilter, ModelMap model) {
+	public ModelAndView getListActivosSubdivisionById(DtoSubdivisiones subdivisionFilter, ModelMap model, HttpServletRequest request) {
 
 		Page page = activoAgrupacionApi.getListActivosSubdivisionById(subdivisionFilter);
 
 		model.put("data", page.getResults());
 		model.put("totalCount", page.getTotalCount());
+		trustMe.registrarSuceso(request, subdivisionFilter.getAgrId(), ENTIDAD_CODIGO.CODIGO_AGRUPACION, "activosSubdivision", ACCION_CODIGO.CODIGO_VER);
 
 		return createModelAndViewJson(model);
 	}
@@ -725,7 +760,7 @@ public class AgrupacionController extends ParadiseJsonController {
 
 		return createModelAndViewJson(model);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getGestoresLoteComercialPorTipo(@RequestParam Long agrId, ModelMap model) {
@@ -835,12 +870,13 @@ public class AgrupacionController extends ParadiseJsonController {
 			model.put("success", false);
 		}
 		model.put("data", agrupacion);
+
 		return createModelAndViewJson(model);
 	}
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getHistoricoVigencias(DtoVigenciaAgrupacion agrupacionFilter, ModelMap model) {
+	public ModelAndView getHistoricoVigencias(DtoVigenciaAgrupacion agrupacionFilter, ModelMap model, HttpServletRequest request) {
 
 		try{
 			List<AgrupacionesVigencias> vigencias = activoAgrupacionApi.getHistoricoVigenciaAgrupaciones(agrupacionFilter);
@@ -859,9 +895,11 @@ public class AgrupacionController extends ParadiseJsonController {
 
 			model.put("data", dtoVigenciasList);
 			model.put("success", true);
+			trustMe.registrarSuceso(request, agrupacionFilter.getAgrId(), ENTIDAD_CODIGO.CODIGO_AGRUPACION, "historicoVigencias", ACCION_CODIGO.CODIGO_VER);
 		}catch(Exception e){
 			logger.error("error obteniendo vigencias agrupacion ", e);
 			model.put("success", false);
+			trustMe.registrarError(request, agrupacionFilter.getAgrId(), ENTIDAD_CODIGO.CODIGO_AGRUPACION, "historicoVigencias", ACCION_CODIGO.CODIGO_VER, REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
 		}
 		
 		return createModelAndViewJson(model);

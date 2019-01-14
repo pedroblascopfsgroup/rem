@@ -158,6 +158,7 @@ import es.pfsgroup.plugin.rem.model.DtoReglasPublicacionAutomatica;
 import es.pfsgroup.plugin.rem.model.DtoTasacion;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Formalizacion;
+import es.pfsgroup.plugin.rem.model.GastoProveedor;
 import es.pfsgroup.plugin.rem.model.GastosExpediente;
 import es.pfsgroup.plugin.rem.model.GestorActivo;
 import es.pfsgroup.plugin.rem.model.HistoricoDestinoComercial;
@@ -361,7 +362,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 	@Resource(name = "entityTransactionManager")
     private PlatformTransactionManager transactionManager;
-	
+
 	@Autowired
 	private GestorDocumentalAdapterApi gestorDocumentalAdapterApi;
 
@@ -506,9 +507,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 		ActivoPublicacion actPubli = activoPublicacionDao.get(dto.getIdActivo());
 
-		
+
 		updateActivoPublicacion(dto, actPubli);
-		
+
 		activoAdapter.actualizarEstadoPublicacionActivo(activo.getId());
 
 		return true;
@@ -725,7 +726,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		return resultado;
 	}
 
-		
+
 	@Transactional(readOnly = false)
 	private ExpedienteComercial crearExpedienteReserva(ExpedienteComercial expedienteComercial) {
 		// HREOS-2799
@@ -736,26 +737,26 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		if(!Checks.esNulo(oferta.getActivoPrincipal()) && !Checks.esNulo(oferta.getActivoPrincipal().getCartera())){
 			if (!Checks.esNulo(oferta.getActivoPrincipal()) && !Checks.esNulo(oferta.getActivoPrincipal().getCartera())
 					&& DDCartera.CODIGO_CARTERA_CAJAMAR.equals(oferta.getActivoPrincipal().getCartera().getCodigo())) {
-				
+
 				if(DDCartera.CODIGO_CARTERA_CAJAMAR.equals(oferta.getActivoPrincipal().getCartera().getCodigo())){
 					tipoArras = (DDTiposArras) utilDiccionarioApi
 							.dameValorDiccionarioByCod(DDTiposArras.class, DDTiposArras.CONFIRMATORIAS);
 				}
 				if(DDCartera.CODIGO_CARTERA_CAJAMAR.equals(oferta.getActivoPrincipal().getCartera().getCodigo())) {
-					tipoArras = (DDTiposArras) utilDiccionarioApi.dameValorDiccionarioByCod(DDTiposArras.class, DDTiposArras.CONFIRMATORIAS);					
+					tipoArras = (DDTiposArras) utilDiccionarioApi.dameValorDiccionarioByCod(DDTiposArras.class, DDTiposArras.CONFIRMATORIAS);
 				}
-				if(DDCartera.CODIGO_CARTERA_GALEON.equals(oferta.getActivoPrincipal().getCartera().getCodigo()) 
+				if(DDCartera.CODIGO_CARTERA_GALEON.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
 					|| DDCartera.CODIGO_CARTERA_ZEUS.equals(oferta.getActivoPrincipal().getCartera().getCodigo())) {
 		            tipoArras = (DDTiposArras) utilDiccionarioApi.dameValorDiccionarioByCod(DDTiposArras.class, DDTiposArras.PENITENCIALES);
 				}
-	
+
 				if(tipoArras != null){
 					if (Checks.esNulo(expedienteComercial.getReserva()) ) {
 						Reserva reservaExpediente = expedienteComercialApi.createReservaExpediente(expedienteComercial);
 						reservaExpediente.setTipoArras(tipoArras);
-		
+
 						genericDao.save(Reserva.class, reservaExpediente);
-		
+
 					} else {
 						expedienteComercial.getReserva().setTipoArras(tipoArras);
 					}
@@ -5232,4 +5233,24 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		return false;
 	}
 
+
+	@Override
+	public Activo getActivoByIdProveedor(Long idProveedor) {
+		Filter filterPVE = genericDao.createFilter(FilterType.EQUALS, "id", String.valueOf(idProveedor));
+		VBusquedaProveedoresActivo proveedorActivo = genericDao.get(VBusquedaProveedoresActivo.class, filterPVE);
+
+		if(!Checks.esNulo(proveedorActivo.getIdActivo())) {
+			return get(Long.parseLong(proveedorActivo.getIdActivo()));
+		} else {
+			return null;
+		}
+	}
+
+	@Override
+	public Activo getActivoByIdGastoProveedor(Long idGastoProveedor) {
+		Filter filterGPV = genericDao.createFilter(FilterType.EQUALS, "id", idGastoProveedor);
+		GastoProveedor gastoProveedor = genericDao.get(GastoProveedor.class, filterGPV);
+
+		return getActivoByIdProveedor(gastoProveedor.getProveedor().getId());
+	}
 }

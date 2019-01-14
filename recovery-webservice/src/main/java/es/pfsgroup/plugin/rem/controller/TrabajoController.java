@@ -47,6 +47,10 @@ import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
 import es.pfsgroup.plugin.rem.excel.TrabajoExcelReport;
 import es.pfsgroup.plugin.rem.factory.GenerarPropuestaPreciosFactoryApi;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento;
+import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.ACCION_CODIGO;
+import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.ENTIDAD_CODIGO;
+import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.REQUEST_STATUS_CODE;
 import es.pfsgroup.plugin.rem.model.DtoActivoTrabajo;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
@@ -85,11 +89,11 @@ public class TrabajoController extends ParadiseJsonController {
 	@Autowired
 	private TrabajoApi trabajoApi;
 	
-	
+
 	@Autowired
 	private GenericAdapter genericAdapter;
 	
-	
+
 	@Autowired
 	private UploadAdapter uploadAdapter;
 	
@@ -113,15 +117,18 @@ public class TrabajoController extends ParadiseJsonController {
 	
 	@Autowired
 	private GenerarPropuestaPreciosFactoryApi generarPropuestaApi;
-	
+
+	@Autowired
+	private LogTrustEvento trustMe;
+
 	@Autowired
 	private GestorActivoApi gestorActivoApi;
-	
+
 	@Autowired
 	private TrabajoDao trabajoDao;
-	
+
 	private final Log logger = LogFactory.getLog(getClass());
-	
+
 	private static final String ERROR_DUPLICADOS_CREAR_TRABAJOS = "El fichero contiene registros duplicados";
 	private static final String ERROR_GD_NO_EXISTE_CONTENEDOR = "No existe contenedor para este trabajo. Se creará uno nuevo.";
 
@@ -135,10 +142,11 @@ public class TrabajoController extends ParadiseJsonController {
 	 */
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView findOne(Long id,String pestana, ModelMap model){
+	public ModelAndView findOne(Long id,String pestana, ModelMap model, HttpServletRequest request){
 
 		model.put("data", trabajoApi.getTrabajoById(id, pestana));
-		
+		trustMe.registrarSuceso(request, id, ENTIDAD_CODIGO.CODIGO_TRABAJO, "ficha", ACCION_CODIGO.CODIGO_VER);
+
 		return createModelAndViewJson(model);
 	}
 
@@ -158,31 +166,35 @@ public class TrabajoController extends ParadiseJsonController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView saveFichaTrabajo(ModelMap model, DtoFichaTrabajo dtoTrabajo, @RequestParam Long id){
+	public ModelAndView saveFichaTrabajo(ModelMap model, DtoFichaTrabajo dtoTrabajo, @RequestParam Long id, HttpServletRequest request){
 		try {
 			Boolean success = trabajoApi.saveFichaTrabajo(dtoTrabajo, id);
 			model.put("success", success);
-			
+			trustMe.registrarSuceso(request, id, ENTIDAD_CODIGO.CODIGO_TRABAJO, "trabajo", ACCION_CODIGO.CODIGO_MODIFICAR);
+
 		} catch(Exception e) {
 			logger.error(e.getMessage());
 			model.put("error", e.getMessage());
 			model.put("success", false);
+			trustMe.registrarError(request, id, ENTIDAD_CODIGO.CODIGO_TRABAJO, "trabajo", ACCION_CODIGO.CODIGO_MODIFICAR, REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
 		}
 
 		return createModelAndViewJson(model);
 	}
 	
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView saveGestionEconomicaTrabajo(DtoGestionEconomicaTrabajo dtoGestionEconomica, @RequestParam Long id){
+	public ModelAndView saveGestionEconomicaTrabajo(DtoGestionEconomicaTrabajo dtoGestionEconomica, @RequestParam Long id, HttpServletRequest request){
 		
 		boolean success = false;
 		
 		try {
 			
 			success = trabajoApi.saveGestionEconomicaTrabajo(dtoGestionEconomica, id);
-			
+			trustMe.registrarSuceso(request, id, ENTIDAD_CODIGO.CODIGO_TRABAJO, "gestionEconomica", ACCION_CODIGO.CODIGO_MODIFICAR);
+
 		} catch(Exception e) {
 			logger.error(e.getMessage());
+			trustMe.registrarError(request, id, ENTIDAD_CODIGO.CODIGO_TRABAJO, "gestionEconomica", ACCION_CODIGO.CODIGO_MODIFICAR, REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
 		}
 		
 		return createModelAndViewJson(new ModelMap("success", success));
@@ -196,7 +208,7 @@ public class TrabajoController extends ParadiseJsonController {
 		boolean success = false;
 		
 		ModelMap model = new ModelMap();
-		
+
 		try {
 			
 			Long idTrabajo = trabajoApi.create(dtoTrabajo);
@@ -263,10 +275,10 @@ public class TrabajoController extends ParadiseJsonController {
        	FileItem fileItem = trabajoApi.getFileItemAdjunto(dtoAdjunto);
 		
        	try { 
-       		
+
        		if(!Checks.esNulo(fileItem)) {
-	       		ServletOutputStream salida = response.getOutputStream(); 
-	       			
+	       		ServletOutputStream salida = response.getOutputStream();
+
 	       		response.setHeader("Content-disposition", "attachment; filename=" + fileItem.getFileName());
 	       		response.setHeader("Cache-Control", "must-revalidate, post-check=0,pre-check=0");
 	       		response.setHeader("Cache-Control", "max-age=0");
@@ -274,7 +286,7 @@ public class TrabajoController extends ParadiseJsonController {
 	       		response.setHeader("Pragma", "public");
 	       		response.setDateHeader("Expires", 0); //prevents caching at the proxy
 	       		response.setContentType(fileItem.getContentType());
-	       		
+
 	       		// Write
 	       		FileUtils.copy(fileItem.getInputStream(), salida);
 	       		salida.flush();
@@ -309,14 +321,18 @@ public class TrabajoController extends ParadiseJsonController {
     }
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getListAdjuntos(Long id, ModelMap model){
+	public ModelAndView getListAdjuntos(Long id, ModelMap model, HttpServletRequest request){
 
 		try {
 			model.put("data", trabajoApi.getAdjuntos(id));
+			trustMe.registrarSuceso(request, id, ENTIDAD_CODIGO.CODIGO_TRABAJO, "adjuntos", ACCION_CODIGO.CODIGO_VER);
+
 		} catch(GestorDocumentalException gex) {
 			logger.error(ERROR_GD_NO_EXISTE_CONTENEDOR);
+			trustMe.registrarError(request, id, ENTIDAD_CODIGO.CODIGO_TRABAJO, "adjuntos", ACCION_CODIGO.CODIGO_VER, REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
 		} catch(Exception ex) {
 			logger.error(ex.getMessage());
+			trustMe.registrarError(request, id, ENTIDAD_CODIGO.CODIGO_TRABAJO, "adjuntos", ACCION_CODIGO.CODIGO_VER, REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
 		}
 		
 		return createModelAndViewJson(model);
@@ -325,14 +341,14 @@ public class TrabajoController extends ParadiseJsonController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getListActivos(DtoActivosTrabajoFilter dto){
+	public ModelAndView getListActivos(DtoActivosTrabajoFilter dto, HttpServletRequest request){
 
 		Page page = trabajoApi.getListActivos(dto);
 		
 		ModelMap model = new ModelMap();
 		model.put("data", page.getResults());
 		model.put("totalCount", page.getTotalCount());
-
+		trustMe.registrarSuceso(request, Long.parseLong(dto.getIdTrabajo()), ENTIDAD_CODIGO.CODIGO_TRABAJO, "activos", ACCION_CODIGO.CODIGO_VER);
 		
 		return createModelAndViewJson(model);
 	}
@@ -354,27 +370,28 @@ public class TrabajoController extends ParadiseJsonController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getTarifasTrabajo(DtoGestionEconomicaTrabajo dto, @RequestParam Long idTrabajo){
+	public ModelAndView getTarifasTrabajo(DtoGestionEconomicaTrabajo dto, @RequestParam Long idTrabajo, HttpServletRequest request){
 
 		DtoPage page = trabajoApi.getTarifasTrabajo(dto, idTrabajo);
 		
 		ModelMap model = new ModelMap();
 		model.put("data", page.getResults());
 		model.put("totalCount", page.getTotalCount());
-
+		trustMe.registrarSuceso(request, idTrabajo, ENTIDAD_CODIGO.CODIGO_TRABAJO, "tarifas", ACCION_CODIGO.CODIGO_VER);
 		
 		return createModelAndViewJson(model);
 	}	
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getPresupuestosTrabajo(DtoGestionEconomicaTrabajo dto, @RequestParam Long idTrabajo){
+	public ModelAndView getPresupuestosTrabajo(DtoGestionEconomicaTrabajo dto, @RequestParam Long idTrabajo, HttpServletRequest request){
 
 		DtoPage page = trabajoApi.getPresupuestosTrabajo(dto, idTrabajo);
 		
 		ModelMap model = new ModelMap();
 		model.put("data", page.getResults());
 		model.put("totalCount", page.getTotalCount());
+		trustMe.registrarSuceso(request, idTrabajo, ENTIDAD_CODIGO.CODIGO_TRABAJO, "presupuestos", ACCION_CODIGO.CODIGO_VER);
 
 		
 		return createModelAndViewJson(model);
@@ -513,7 +530,7 @@ public class TrabajoController extends ParadiseJsonController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getTramitesTareas(Long idTrabajo, WebDto webDto, ModelMap model){
+	public ModelAndView getTramitesTareas(Long idTrabajo, WebDto webDto, ModelMap model, HttpServletRequest request){
 		
 		List<DtoListadoTramites> tramites = trabajoAdapter.getListadoTramitesTareasTrabajo(idTrabajo, webDto);
 		
@@ -524,7 +541,8 @@ public class TrabajoController extends ParadiseJsonController {
 		}
 		
 		model.put("tramite", tramite);
-		
+		trustMe.registrarSuceso(request, idTrabajo, ENTIDAD_CODIGO.CODIGO_TRABAJO, "tramitesTareas", ACCION_CODIGO.CODIGO_VER);
+
 		return createModelAndViewJson(model);
 	}
 
@@ -555,14 +573,15 @@ public class TrabajoController extends ParadiseJsonController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getObservaciones(DtoTrabajoFilter dto){
+	public ModelAndView getObservaciones(DtoTrabajoFilter dto, HttpServletRequest request){
 		
 		DtoPage page = trabajoApi.getObservaciones(dto);
 		
 		ModelMap model = new ModelMap();
 		model.put("data", page.getResults());
 		model.put("totalCount", page.getTotalCount());
-		
+		trustMe.registrarSuceso(request, Long.parseLong(dto.getIdTrabajo()), ENTIDAD_CODIGO.CODIGO_TRABAJO, "observaciones", ACCION_CODIGO.CODIGO_VER);
+
 		return createModelAndViewJson(model);
 	}
 	
@@ -688,8 +707,7 @@ public class TrabajoController extends ParadiseJsonController {
 			return null;
 		}
 		
-		
-		
+		trustMe.registrarSuceso(request, id, ENTIDAD_CODIGO.CODIGO_TRABAJO, "fotos", ACCION_CODIGO.CODIGO_VER);
 		
 		return new ModelAndView("jsonView", model);
 	}
@@ -865,23 +883,23 @@ public class TrabajoController extends ParadiseJsonController {
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getComboResponsableTrabajo(Long idTrabajo, ModelMap model) {
-		
+
 		Trabajo trabajo = trabajoDao.get(idTrabajo);
-		
+
 		Activo activo = trabajo.getActivo();
-		
+
 		Usuario gestorActivo = gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_ACTIVO);
 		Usuario gestorAlquileres = gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_ALQUILERES);
 		Usuario gestorSuelos = gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_SUELOS);
 		Usuario gestorEdificaciones = gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_EDIFICACIONES);
-		
+
 		List<DtoUsuario> listaResponsables = new ArrayList<DtoUsuario>();
-		
+
 		DtoUsuario dtoGestorActivo = new DtoUsuario();
 		DtoUsuario dtoGestorAlquileres = new DtoUsuario();
 		DtoUsuario dtoGestorSuelos = new DtoUsuario();
 		DtoUsuario dtoGestorEdificaciones = new DtoUsuario();
-		
+
 		try {
 			if(!Checks.esNulo(gestorActivo)){
 				BeanUtils.copyProperties(dtoGestorActivo, gestorActivo);
@@ -904,12 +922,12 @@ public class TrabajoController extends ParadiseJsonController {
 		} catch (InvocationTargetException e) {
 			e.printStackTrace();
 		}
-		
+
 		model.put("data", listaResponsables);
-		
+
 		return new ModelAndView("jsonView", model);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getPresupuestoById(Long id, ModelMap model){
@@ -922,10 +940,11 @@ public class TrabajoController extends ParadiseJsonController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getRecargosProveedor(Long idTrabajo, ModelMap model){
+	public ModelAndView getRecargosProveedor(Long idTrabajo, ModelMap model, HttpServletRequest request){
 		
 		model.put("data", trabajoApi.getRecargosProveedor(idTrabajo));
-		
+		trustMe.registrarSuceso(request, idTrabajo, ENTIDAD_CODIGO.CODIGO_TRABAJO, "recargosProveedor", ACCION_CODIGO.CODIGO_VER);
+
 		return createModelAndViewJson(model);
 		
 	}
@@ -989,10 +1008,11 @@ public class TrabajoController extends ParadiseJsonController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getProvisionesSuplidos(Long idTrabajo, ModelMap model){
+	public ModelAndView getProvisionesSuplidos(Long idTrabajo, ModelMap model, HttpServletRequest request){
 		
 		model.put("data", trabajoApi.getProvisionSuplidos(idTrabajo));
-		
+		trustMe.registrarSuceso(request, idTrabajo, ENTIDAD_CODIGO.CODIGO_TRABAJO, "provisionesSuplidos", ACCION_CODIGO.CODIGO_VER);
+
 		return createModelAndViewJson(model);
 		
 	}

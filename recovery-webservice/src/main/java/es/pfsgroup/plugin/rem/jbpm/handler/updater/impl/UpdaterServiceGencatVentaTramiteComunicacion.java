@@ -16,7 +16,7 @@ import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ComunicacionGencat;
 
 @Component
-public class UpdaterServiceGencatAlquilerTramiteComunicacion implements UpdaterService {
+public class UpdaterServiceGencatVentaTramiteComunicacion implements UpdaterService {
 
     @Autowired
     private GenericABMDao genericDao;
@@ -32,7 +32,7 @@ public class UpdaterServiceGencatAlquilerTramiteComunicacion implements UpdaterS
 	
 	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {
 		
-		ComunicacionGencat comunicacionGencat = comunicacionGencatApi.getByIdActivoEstadoCreado(tramite.getActivo().getNumActivo());
+		ComunicacionGencat comunicacionGencat = comunicacionGencatApi.getByIdActivoCreado(tramite.getActivo().getId());
 						
 		if(!Checks.esNulo(tramite)) {
 			
@@ -40,15 +40,16 @@ public class UpdaterServiceGencatAlquilerTramiteComunicacion implements UpdaterS
 				if(FECHA_COMUNICACION.equals(valor.getNombre())) {
 					
 					try {
-						comunicacionGencat.setFechaComunicacion(ft.parse(valor.getValor()));
+						comunicacionGencat.setFechaComunicacion(ft.parse(valor.getValor()));						
 					} catch (ParseException e) {
 						e.printStackTrace();
 					}
-					
-					genericDao.save(ComunicacionGencat.class, comunicacionGencat);
-										
-					break;
+									
 				}
+			}
+			
+			if(!Checks.esNulo(comunicacionGencat)) {			
+				genericDao.save(ComunicacionGencat.class, comunicacionGencat);
 			}
 			
 		}

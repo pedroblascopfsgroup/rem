@@ -1,7 +1,5 @@
 package es.pfsgroup.plugin.rem.api;
 
-import java.util.List;
-
 import es.pfsgroup.plugin.rem.model.AdecuacionGencat;
 
 public interface AdecuacionGencatApi {
@@ -13,7 +11,16 @@ public interface AdecuacionGencatApi {
 	 * @param idActivo
 	 * @return
 	 */
-	public AdecuacionGencat getByIdActivo(Long idActivo);
+	public AdecuacionGencat getAdecuacionByIdActivo(Long idActivo);
+	
+	/**
+	 * 
+	 * Método que devuelve una adecuacion a partir de un de la comunicacion 
+	 * 
+	 * @param idComunicacionGencat
+	 * @return
+	 */
+	public AdecuacionGencat getAdecuacionByIdComunicacion(Long idComunicacionGencat);
 			
 	/**
 	 * Método que realiza la persistencia de datos de un objecto de tipo ComunicacionGencat

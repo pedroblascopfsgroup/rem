@@ -18,6 +18,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.api.GencatApi;
 import es.pfsgroup.plugin.rem.api.NotificacionApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.ResolucionComiteApi;
@@ -69,6 +70,9 @@ public class UpdaterServiceSancionOfertaRespuestaOfertante implements UpdaterSer
     
 	@Autowired
 	private ResolucionComiteDao resolucionComiteDao;
+	
+	@Autowired
+	private GencatApi gencatApi;
 
     protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaRespuestaOfertante.class);
 
@@ -98,6 +102,10 @@ public class UpdaterServiceSancionOfertaRespuestaOfertante implements UpdaterSer
 								filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.APROBADO);
 								DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
 								expediente.setEstado(estado);
+								
+								//TODO COMPROBACION PRE BLOQUEO GENCAT 
+
+								gencatApi.bloqueoExpedienteGENCAT(expediente, tramite);
 
 								//Una vez aprobado el expediente, se congelan el resto de ofertas que no estén rechazadas (aceptadas y pendientes)
 								List<Oferta> listaOfertas = ofertaApi.trabajoToOfertas(tramite.getTrabajo());
@@ -111,9 +119,7 @@ public class UpdaterServiceSancionOfertaRespuestaOfertante implements UpdaterSer
 							// Se comprueba si cada activo tiene KO de admisión o de gestión
 							// y se envía una notificación
 							notificacionApi.enviarNotificacionPorActivosAdmisionGestion(expediente);
-							
-							//TODO COMPROBACION PRE BLOQUEO GENCAT gencatApi.bloqueoExpedienteGENCAT(expediente);
-							
+														
 						}else {
 							//Resuelve el expediente
 							filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.ANULADO);

@@ -21,8 +21,10 @@ import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.capgemini.pfs.persona.model.DDTipoPersona;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionesPosesoria;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPeriocidad;
+import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
 
 @Entity
 @Table(name = "ACT_OFG_OFERTA_GENCAT", schema = "${entity.schema}")
@@ -51,7 +53,7 @@ public class OfertaGencat implements Serializable, Auditable {
 	
 	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_TPE_ID")
-    private DDTipoPeriocidad tipoPeriocidad;
+    private DDTiposPersona tiposPersona;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_SIP_ID")
@@ -98,12 +100,12 @@ public class OfertaGencat implements Serializable, Auditable {
 		this.importe = importe;
 	}
 
-	public DDTipoPeriocidad getTipoPeriocidad() {
-		return tipoPeriocidad;
+	public DDTiposPersona getTiposPersona() {
+		return tiposPersona;
 	}
 
-	public void setTipoPeriocidad(DDTipoPeriocidad tipoPeriocidad) {
-		this.tipoPeriocidad = tipoPeriocidad;
+	public void setTiposPersona(DDTiposPersona tiposPersona) {
+		this.tiposPersona = tiposPersona;
 	}
 
 	public DDSituacionesPosesoria getSituacionPosesoria() {

@@ -85,6 +85,7 @@ import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
 import es.pfsgroup.plugin.rem.condiciontanteo.CondicionTanteoApi;
 import es.pfsgroup.plugin.rem.factory.TabActivoFactoryApi;
+import es.pfsgroup.plugin.rem.gencat.GencatManager;
 import es.pfsgroup.plugin.rem.gestor.dao.GestorExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.notificator.impl.NotificatorServiceSancionOfertaAceptacionYRechazo;
@@ -319,6 +320,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 	@Autowired
 	private TareaActivoManager tareaActivoManager;
+	
+	@Autowired
+	private GencatManager gencatManager;
 
 	@Autowired
 	private ActivoEstadoPublicacionApi activoEstadoPublicacionApi;
@@ -720,7 +724,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				hiloReactivar.start();
 
 			}
-
+			
 		}
 
 		return resultado;

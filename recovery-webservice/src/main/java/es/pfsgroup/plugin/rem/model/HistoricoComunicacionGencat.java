@@ -45,8 +45,8 @@ public class HistoricoComunicacionGencat implements Serializable, Auditable {
 	
 	@Id
     @Column(name = "HCG_ID")
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "ComunicacionGencatGenerator")
-    @SequenceGenerator(name = "ComunicacionGencatGenerator", sequenceName = "S_ACT_HCG_COMUNICACION_GENCAT")
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "HistoricoComunicacionGencatGenerator")
+    @SequenceGenerator(name = "HistoricoComunicacionGencatGenerator", sequenceName = "S_ACT_HCG_HIST_COM_GENCAT")
     private Long id;
 	
 	@Column(name = "HCG_FECHA_INI")

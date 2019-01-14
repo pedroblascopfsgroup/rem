@@ -78,6 +78,7 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 				DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
 				expediente.setEstado(estado);
 
+				
 				// Una vez aprobado el expediente, se congelan el resto de
 				// ofertas que no estén rechazadas (aceptadas y pendientes)
 				List<Oferta> listaOfertas = ofertaApi.trabajoToOfertas(tramite.getTrabajo());
@@ -91,8 +92,13 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 				// Se comprueba si cada activo tiene KO de admisión o de gestión
 				// y se envía una notificación
 				notificacionApi.enviarNotificacionPorActivosAdmisionGestion(expediente);
-				//TODO COMPROBACION PRE BLOQUEO GENCAT 
-				gencatApi.bloqueoExpedienteGENCAT(expediente);
+				
+				if(Checks.esNulo(expediente.getReserva())){
+					//TODO COMPROBACION PRE BLOQUEO GENCAT 
+					
+					gencatApi.bloqueoExpedienteGENCAT(expediente, tramite);
+				}
+				
 			}
 		} else {
 			Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());
@@ -115,8 +121,13 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 				}
 				 
 				expediente.setEstado(estado);
-				//TODO COMPROBACION PRE BLOQUEO GENCAT 
-				gencatApi.bloqueoExpedienteGENCAT(expediente);
+				
+				if(Checks.esNulo(expediente.getReserva())){
+					//TODO COMPROBACION PRE BLOQUEO GENCAT 
+
+					gencatApi.bloqueoExpedienteGENCAT(expediente, tramite);
+				}
+				
 			}
 		}
 		

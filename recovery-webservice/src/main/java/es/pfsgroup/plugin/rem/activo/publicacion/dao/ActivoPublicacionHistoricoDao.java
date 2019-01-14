@@ -61,4 +61,12 @@ public interface ActivoPublicacionHistoricoDao extends AbstractDao<ActivoPublica
 	 * @throws ParseException: Puede lanzar un error al convertir la fecha para los cálculos.
 	 */
 	Long obtenerDiasPorEstadoPublicacionAlquilerActivo(ActivoPublicacionHistorico estadoActivo) throws ParseException;
+
+	/**
+	 * Este método devuelve el registro actual del histórico de publicaciones
+	 *
+	 * @param idActivo: ID del activo.
+	 * @return Devuelve el ActivoPublicacionHistorico del activo.
+	 */
+	ActivoPublicacionHistorico getActivoPublicacionHistoricoActual(Long idActivo);
 }

@@ -1188,13 +1188,6 @@ ELSE
           EXECUTE IMMEDIATE V_MSQL;
         ELSIF vACTUALIZADO = 'S' AND pHISTORIFICAR = 'N' THEN
           V_MSQL := '
-            DELETE FROM '|| V_ESQUEMA ||'.ACT_AHP_HIST_PUBLICACION ACT
-            WHERE (AHP_FECHA_FIN_VENTA IS NULL AND AHP_FECHA_FIN_ALQUILER IS NULL)
-                AND EXISTS '|| replace(vQUERY,'AUX','')
-                    ;
-          EXECUTE IMMEDIATE V_MSQL;
-
-          V_MSQL := '
             INSERT INTO '|| V_ESQUEMA ||'.ACT_AHP_HIST_PUBLICACION(AHP_ID,ACT_ID
                                                   ,DD_TPU_A_ID,DD_TPU_V_ID,DD_EPV_ID,DD_EPA_ID,DD_TCO_ID,DD_MTO_V_ID
                                                   ,AHP_MOT_OCULTACION_MANUAL_V,AHP_CHECK_PUBLICAR_V,AHP_CHECK_OCULTAR_V

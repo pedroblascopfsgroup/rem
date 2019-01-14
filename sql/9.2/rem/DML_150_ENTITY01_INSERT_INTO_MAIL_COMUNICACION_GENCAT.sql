@@ -1,7 +1,7 @@
 --/* 
 --##########################################
---## AUTOR=Sonia Garcia
---## FECHA_CREACION=20181228
+--## AUTOR=Oscar Diestre
+--## FECHA_CREACION=20190114
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-5084
@@ -39,7 +39,7 @@ BEGIN
 
 	IF V_NUM_TABLAS = 1 THEN
 
-	 V_SQL:= 'DELETE FROM '||V_ESQUEMA||'.MAIL_COMUNICACION_GENCAT WHERE DE = ''GENCAT_Proceso_Comunicacion''';
+	 V_SQL:= 'DELETE FROM '||V_ESQUEMA||'.MAIL_COMUNICACION_GENCAT WHERE DE IN ( ''GENCAT_Proceso_Comunicacion'', ''GENCAT_Proceso_Reclamacion'' )';
 	DBMS_OUTPUT.PUT_LINE(V_SQL);
 	  EXECUTE IMMEDIATE V_SQL;
 	  DBMS_OUTPUT.PUT_LINE(V_NUM_TABLAS || 'registros borrados');

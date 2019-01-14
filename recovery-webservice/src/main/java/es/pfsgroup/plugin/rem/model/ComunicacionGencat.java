@@ -23,10 +23,8 @@ import javax.persistence.Version;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.Where;
 
-import es.capgemini.devon.files.FileItem;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
-import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoComunicacionGencat;
 import es.pfsgroup.plugin.rem.model.dd.DDSancionGencat;
 

@@ -59,8 +59,6 @@ public class DDEstadosReserva implements Auditable, Dictionary {
 	@Column(name = "DD_ERE_DESCRIPCION_LARGA")   
 	private String descripcionLarga;
 	    
-	
-	    
 	@Version   
 	private Long version;
 	

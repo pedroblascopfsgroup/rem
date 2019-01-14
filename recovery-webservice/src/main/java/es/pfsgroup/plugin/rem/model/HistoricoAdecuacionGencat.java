@@ -64,11 +64,11 @@ public class HistoricoAdecuacionGencat implements Serializable, Auditable {
 		this.id = id;
 	}
 
-	public HistoricoComunicacionGencat getComunicacion() {
+	public HistoricoComunicacionGencat getHistoricoComunicacion() {
 		return historicoComunicacion;
 	}
 
-	public void setComunicacion(HistoricoComunicacionGencat historicoComunicacion) {
+	public void setHistoricoComunicacion(HistoricoComunicacionGencat historicoComunicacion) {
 		this.historicoComunicacion = historicoComunicacion;
 	}
 

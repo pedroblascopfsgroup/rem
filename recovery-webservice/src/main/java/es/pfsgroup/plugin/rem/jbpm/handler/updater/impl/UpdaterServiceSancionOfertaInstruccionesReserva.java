@@ -15,6 +15,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.api.GencatApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
@@ -39,6 +40,9 @@ public class UpdaterServiceSancionOfertaInstruccionesReserva implements UpdaterS
     
     @Autowired
     private UvemManagerApi uvemManagerApi;
+    
+    @Autowired
+    private GencatApi gencatApi;
     
     private static final String FECHA_ENVIO = "fechaEnvio";
     private static final String TIPO_ARRAS = "tipoArras";
@@ -92,6 +96,10 @@ public class UpdaterServiceSancionOfertaInstruccionesReserva implements UpdaterS
 					uvemManagerApi.modificacionesSegunPropuesta(valores.get(0).getTareaExterna());
 				}
 			}
+			
+			//TODO COMPROBACION PRE BLOQUEO GENCAT 
+
+			gencatApi.bloqueoExpedienteGENCAT(expediente, tramite);
 		}
 
 	}

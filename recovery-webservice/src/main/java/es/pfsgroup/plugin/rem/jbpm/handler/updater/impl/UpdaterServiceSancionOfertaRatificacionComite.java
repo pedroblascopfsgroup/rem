@@ -16,6 +16,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.api.GencatApi;
 import es.pfsgroup.plugin.rem.api.NotificacionApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.ResolucionComiteApi;
@@ -61,6 +62,9 @@ public class UpdaterServiceSancionOfertaRatificacionComite implements UpdaterSer
     
 	@Autowired
 	private ResolucionComiteDao resolucionComiteDao;
+	
+	@Autowired
+	private GencatApi gencatApi;
 
     protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaRatificacionComite.class);
 
@@ -100,8 +104,10 @@ public class UpdaterServiceSancionOfertaRatificacionComite implements UpdaterSer
 							// y se envía una notificación
 							notificacionApi.enviarNotificacionPorActivosAdmisionGestion(expediente);
 							
-							//TODO COMPROBACION PRE BLOQUEO GENCAT gencatApi.bloqueoExpedienteGENCAT(expediente);
+							//TODO COMPROBACION PRE BLOQUEO GENCAT 
 
+							gencatApi.bloqueoExpedienteGENCAT(expediente, tramite);
+							
 						} else if(DDResolucionComite.CODIGO_RECHAZA.equals(valor.getValor())) {
 							//Resuelve el expediente
 							filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.ANULADO);
@@ -126,9 +132,6 @@ public class UpdaterServiceSancionOfertaRatificacionComite implements UpdaterSer
 							DDMotivoAnulacionExpediente motivoAnulacionExpediente = 
 									(DDMotivoAnulacionExpediente) utilDiccionarioApi.dameValorDiccionarioByCod(DDMotivoAnulacionExpediente.class, MOTIVO_NO_RATIFICADA);
 							expediente.setMotivoAnulacion(motivoAnulacionExpediente);
-						}
-						else {
-							
 						}
 					}
 					if (IMPORTE_CONTRAOFERTA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {

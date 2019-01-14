@@ -7,6 +7,7 @@ import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ComunicacionGencat;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoGencat;
@@ -16,6 +17,8 @@ import es.pfsgroup.plugin.rem.model.DtoNotificacionActivo;
 import es.pfsgroup.plugin.rem.model.DtoOfertasAsociadasActivo;
 import es.pfsgroup.plugin.rem.model.DtoReclamacionActivo;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.Trabajo;
 
 public interface GencatApi {
 
@@ -153,7 +156,30 @@ public interface GencatApi {
 	/**
 	 * Comprueba si el expediente comercial del activo afecto por GENCAT se tiene que bloquear.
 	 */
-	void bloqueoExpedienteGENCAT(ExpedienteComercial expComercial);
+	void bloqueoExpedienteGENCAT(ExpedienteComercial expComercial, ActivoTramite activoTramite);
 
-
+	/**
+	 * Lanza el nuevo tramite de GENCAT.
+	 * 
+	 * @param Tramite
+	 * */
+	void lanzarTramiteGENCAT(ActivoTramite tramite, Oferta oferta, ExpedienteComercial expedienteComercial) throws Exception; 
+	
+	/**
+	 * Crea los nuevos registros en las tablas ADG, OFG y CMG.
+	 * 
+	 * @param ExpedienteComercial
+	 * @param Oferta
+	 * */
+	void crearRegistrosTramiteGENCAT(ExpedienteComercial expedienteComercial, Oferta oferta, ActivoTramite tramite);
+	
+	/**
+	 * Historifica los registros de las tablas ADG, OFG y CMG.
+	 * 
+	 * @param ExpedienteComercial
+	 * @param Oferta
+	 * @param ActivoTramite
+	 * */
+	void historificarTramiteGENCAT(ActivoTramite activoTramite);
+	
 }

@@ -16,7 +16,7 @@ import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.AdecuacionGencat;
 
 @Component
-public class UpdaterServiceGencatAlquilerTramiteProcesoAdecuacion implements UpdaterService {
+public class UpdaterServiceGencatVentaTramiteProcesoAdecuacion implements UpdaterService {
 
     @Autowired
     private GenericABMDao genericDao;
@@ -26,7 +26,7 @@ public class UpdaterServiceGencatAlquilerTramiteProcesoAdecuacion implements Upd
     
     private static final String NECESITA_REFORMA = "necesitaReforma";
     private static final String FECHA_REVISION = "fechaRevision";
-    private static final String IMPORTE = "importe";
+    private static final String IMPORTE = "importeReforma";
     private static final String OBSERVACIONES = "observaciones";
     
 	public static final String CODIGO_T016_PROCESO_ADECUACION = "T016_ProcesoAdecuacion";
@@ -35,7 +35,7 @@ public class UpdaterServiceGencatAlquilerTramiteProcesoAdecuacion implements Upd
 
 	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {
 				
-		AdecuacionGencat adecuacionGencat = adecuacionGencatApi.getByIdActivo(tramite.getActivo().getNumActivo());
+		AdecuacionGencat adecuacionGencat = adecuacionGencatApi.getAdecuacionByIdActivo(tramite.getActivo().getId());
 				
 		if(!Checks.esNulo(tramite) && !Checks.esNulo(adecuacionGencat)) {
 			

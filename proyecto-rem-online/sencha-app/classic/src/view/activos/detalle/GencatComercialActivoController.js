@@ -24,13 +24,22 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoController', {
 		}
 	},
 		
-	'notificacionesactivolist': { 
+	'notificacionesactivolist': {
 		abrirFormulario: 'abrirFormularioCrearNotificacion',
 		//onClickRemove: 'borrarDocumentoAdjunto',
 		aftercreate: function(grid) {
 			grid.getStore().load(); 
 		}
-    	}
+    	},
+    	
+    	'documentosactivogencatlist': {
+            //  abrirFormulario: 'abrirFormularioAdjuntarComunicacionActivo', 
+            //onClickRemove: 'borrarDocumentoAdjunto',
+            download: 'downloadDocumentoComunicacionActivo'//,
+            /*afterupload: function(grid) {
+            	grid.getStore().load();
+            }*/
+        }
 
     },
     

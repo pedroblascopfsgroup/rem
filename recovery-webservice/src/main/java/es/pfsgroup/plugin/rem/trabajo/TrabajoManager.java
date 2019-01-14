@@ -71,6 +71,7 @@ import es.pfsgroup.plugin.rem.api.GastoProveedorApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.TareaActivoApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
+import es.pfsgroup.plugin.rem.gencat.GencatManager;
 import es.pfsgroup.plugin.rem.gestor.GestorActivoManager;
 import es.pfsgroup.plugin.rem.gestor.dao.GestorActivoDao;
 import es.pfsgroup.plugin.rem.historicotarifaplana.dao.HistoricoTarifaPlanaDao;
@@ -148,7 +149,6 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	@Autowired
 	private GenericABMDao genericDao;
 
-	
 	@Autowired
 	private GestorActivoApi gestorActivoApi;
 
@@ -163,7 +163,6 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 	@Autowired
 	private TrabajoDao trabajoDao;
-
 
 	@Autowired
 	private GestorActivoManager gestorActivoManager;
@@ -239,6 +238,9 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	
 	@Autowired
 	private TareaActivoApi tareaActivoApi;
+	
+	@Autowired
+	private GencatManager gencatManager;
 
 	private BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 	
@@ -1409,7 +1411,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		}
 
 		// Módulo de Expediente comercial ----------
-		if(trabajo.getSubtipoTrabajo().getCodigo().equals(DDSubtipoTrabajo.CODIGO_SANCION_OFERTA_VENTA)) {
+		if(trabajo.getSubtipoTrabajo().getCodigo().equals(DDSubtipoTrabajo.CODIGO_SANCION_OFERTA_VENTA)) {			
 			tipoTramite = tipoProcedimientoManager.getByCodigo(ActivoTramiteApi.CODIGO_TRAMITE_COMERCIAL_VENTA);
 		}
 		if(trabajo.getSubtipoTrabajo().getCodigo().equals(DDSubtipoTrabajo.CODIGO_SANCION_OFERTA_ALQUILER)) {
@@ -1421,7 +1423,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		}
 		ActivoTramite tramite = jbpmActivoTramiteManager.createActivoTramiteTrabajo(tipoTramite, trabajo);
 		tramite.setActivo(trabajo.getActivo());
-
+		
 		jbpmActivoTramiteManager.lanzaBPMAsociadoATramite(tramite.getId());
 		return tramite;
 

@@ -50,7 +50,6 @@ public class NotificacionesGencatManager extends AbstractNotificatorService{
 				
 				para.add(gestoriaFormalizacion.getEmail());
 			}
-			para.add("stefany.moron@pfsgroup.es");
 	
 			if(!para.isEmpty()) {
 				

@@ -32,7 +32,6 @@ import es.pfsgroup.plugin.rem.model.DtoOfertantesOferta;
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaAlqBankia;
 import es.pfsgroup.plugin.rem.model.Oferta;
-import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
 import es.pfsgroup.plugin.rem.oferta.NotificationOfertaManager;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaDto;
@@ -86,18 +85,18 @@ public class OfertasController {
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public void generateExcel(DtoOfertasFilter dtoOfertasFilter, HttpServletRequest request, HttpServletResponse response) throws IOException {
-		dtoOfertasFilter.setStart(excelReportGeneratorApi.getStart());
-		dtoOfertasFilter.setLimit(excelReportGeneratorApi.getLimit());
-
-		List<VOfertasActivosAgrupacion> listaOfertas = (List<VOfertasActivosAgrupacion>) ofertaApi.getListOfertasUsuario(dtoOfertasFilter).getResults();
-
-		ExcelReport report = new OfertasExcelReport(listaOfertas);
-
-		excelReportGeneratorApi.generateAndSend(report, response);
-//		Long prueba = 1L;
-//		List<DtoPropuestaAlqBankia> listaDto = ofertaApi.getListPropuestasAlqBankiaFromView(prueba);
-//		
-//		Long prueba2 = 2L;
+//		dtoOfertasFilter.setStart(excelReportGeneratorApi.getStart());
+//		dtoOfertasFilter.setLimit(excelReportGeneratorApi.getLimit());
+//
+//		List<VOfertasActivosAgrupacion> listaOfertas = (List<VOfertasActivosAgrupacion>) ofertaApi.getListOfertasUsuario(dtoOfertasFilter).getResults();
+//
+//		ExcelReport report = new OfertasExcelReport(listaOfertas);
+//
+//		excelReportGeneratorApi.generateAndSend(report, response);
+		Long prueba = 1L;
+		List<DtoPropuestaAlqBankia> listaDto = ofertaApi.getListPropuestasAlqBankiaFromView(prueba);
+		
+		Long prueba2 = 2L;
 	}
 
 	private ModelAndView createModelAndViewJson(ModelMap model) {

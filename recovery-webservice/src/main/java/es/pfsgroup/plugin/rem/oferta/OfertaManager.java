@@ -78,7 +78,6 @@ import es.pfsgroup.plugin.rem.model.DtoGastoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoHonorariosOferta;
 import es.pfsgroup.plugin.rem.model.DtoOfertantesOferta;
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
-import es.pfsgroup.plugin.rem.model.DtoPropuestaAlqBankia;
 import es.pfsgroup.plugin.rem.model.DtoTanteoActivoExpediente;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
@@ -88,7 +87,6 @@ import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.VPreciosVigentes;
-import es.pfsgroup.plugin.rem.model.VPropuestaAlqBankia;
 import es.pfsgroup.plugin.rem.model.VTasacionCalculoLBK;
 import es.pfsgroup.plugin.rem.model.Visita;
 import es.pfsgroup.plugin.rem.model.dd.DDAccionGastos;
@@ -116,7 +114,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposImpuesto;
 import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
 import es.pfsgroup.plugin.rem.oferta.dao.VOfertaActivoDao;
-import es.pfsgroup.plugin.rem.oferta.dao.VPropuestaAlqBankiaDao;
 import es.pfsgroup.plugin.rem.proveedores.dao.ProveedoresDao;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi.TIPO_VALIDACION;
@@ -204,9 +201,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 	@Autowired
 	private AgendaAdapter adapter;
-	
-	@Autowired
-	private VPropuestaAlqBankiaDao vPropuestaAlqBankiaDao;
 
 	@Autowired
 	ActivoTareaExternaApi activoTareaExternaApi;
@@ -3185,93 +3179,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			}
 		}
 		return minus;
-	}
-	@Override
-	public List<DtoPropuestaAlqBankia> getListPropuestasAlqBankiaFromView(Long ecoId) {
-		List<DtoPropuestaAlqBankia> listaDto = new ArrayList<DtoPropuestaAlqBankia>();
-		List<VPropuestaAlqBankia> listaVista =  vPropuestaAlqBankiaDao.getListPropuestasAlqBankiaFromView(ecoId);
-		DtoPropuestaAlqBankia dtoSimple = null;
-		DtoPropuestaAlqBankia dtoFinal = new DtoPropuestaAlqBankia();
-		Long idUltimoDto = (long) 0;
-		BigDecimal sumaTasacionFinal =  new BigDecimal(0);
-		BigDecimal importeOfertaFinal  = new BigDecimal(0);
-		
-		for (VPropuestaAlqBankia v : listaVista) {
-			idUltimoDto++;
-			dtoSimple = new DtoPropuestaAlqBankia();
-			dtoSimple.setId(v.getId());
-			dtoSimple.setNumActivoUvem(v.getNumActivoUvem());
-			dtoSimple.setTextoOferta(v.getTextoOferta());
-			dtoSimple.setTipoActivoDescripcion(v.getTipoActivoDescripcion());
-			dtoSimple.setFechaAltaExpedienteComercial(v.getFechaAltaExpedienteComercial());
-			dtoSimple.setFechaPublicacionWeb(v.getFechaPublicacionWeb());
-			dtoSimple.setImporteFianza(v.getImporteFianza());
-			dtoSimple.setMesesFianza(v.getMesesFianza());
-			dtoSimple.setDescripcionEstadoPatrimonio(v.getDescripcionEstadoPatrimonio());
-			dtoSimple.setNombrePropietario(v.getNombrePropietario());
-			dtoSimple.setFechaUltimaTasacion(v.getFechaUltimaTasacion());
-			dtoSimple.setImporteTasacionFinal(v.getImporteTasacionFinal());
-			dtoSimple.setTipoActivo(v.getTipoActivo());
-			dtoSimple.setCartera(v.getCartera());
-			dtoSimple.setCompradorDocumento(v.getCompradorDocumento());
-			dtoSimple.setProvincia(v.getProvincia());
-			dtoSimple.setNumDomicilio(v.getNumDomicilio());
-			dtoSimple.setTipoVia(v.getTipoVia());
-			
-			importeOfertaFinal = importeOfertaFinal.add(v.getImporteOferta());
-			sumaTasacionFinal = sumaTasacionFinal.add(v.getImporteTasacionFinal());
-			String stringAux = "";
-
-			if(Checks.esNulo(v.getCompradorNombre())) {
-				stringAux = "" ;
-			}else {
-				stringAux = v.getCompradorNombre();
-			}
-			if(Checks.esNulo(v.getCompradorApellidos())) {
-				stringAux = stringAux + "";
-			}else {
-				stringAux = stringAux + v.getCompradorApellidos();
-			}
-			dtoSimple.setNombreCompleto(stringAux);
-			stringAux = "";
-			if(Checks.esNulo(v.getCodPostal())){
-				stringAux = " ";
-			}else {
-				stringAux = stringAux + Integer.toString(v.getCodPostal()); 
-			}
-			dtoSimple.setCodPostMunicipio(stringAux);
-			stringAux = "";
-			
-			if(Checks.esNulo(v.getCalle())) {
-				stringAux="";
-			}else{
-				stringAux = v.getCalle();
-			}
-			if(Checks.esNulo(v.getPiso())){
-				stringAux= stringAux + "";
-			}else {
-				stringAux = stringAux + v.getCalle();
-			}
-			if(Checks.esNulo(v.getPuerta())){
-				stringAux= stringAux + "";
-			}else {
-				stringAux= stringAux + v.getPuerta();
-			}
-			if(Checks.esNulo(v.getEscalera())){
-				stringAux= stringAux + "";
-			}else {
-				stringAux= stringAux + v.getEscalera();
-			}
-			dtoSimple.setDireccionCompleta(stringAux);
-			
-			listaDto.add(dtoSimple);
-		}
-		dtoFinal.setNumActivoUvem(idUltimoDto);
-		dtoFinal.setImporteTasacionFinal(sumaTasacionFinal);
-		dtoFinal.setImporteOferta(importeOfertaFinal);
-		
-		listaDto.add(dtoFinal);
-		return listaDto;
 	}
 
 }

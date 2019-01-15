@@ -1147,5 +1147,7 @@ public interface ExpedienteComercialApi {
 
 	boolean checkConOpcionCompra(TareaExterna tareaExterna);
 
+	boolean checkConOpcionCompra(TareaExterna tareaExterna);
+
 
 }

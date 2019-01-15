@@ -4626,14 +4626,14 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 
 		gastoExpediente.setImporteCalculo(dto.getImporteCalculo());
-		
+
 		//Si el honorario es menor de 100 € el valor final será, salvo si el importe es fijo, de 100 €. HREOS-5149
 		if(dto.getHonorarios() < 100.00 && !(dto.getCodigoTipoCalculo().equals(DDTipoCalculo.TIPO_CALCULO_IMPORTE_FIJO_ALQ))) {
 			gastoExpediente.setImporteFinal(100.00);
 		}else {
 			gastoExpediente.setImporteFinal(dto.getHonorarios());
 		}
-		
+
 		gastoExpediente.setObservaciones(dto.getObservaciones());
 		gastoExpediente.setExpediente(expediente);
 
@@ -5461,7 +5461,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		return listaActivos;
 	}
 
-	@Transactional(readOnly = false)
+	@Transactional()
 	@Override
 	public void actualizarImporteReservaPorExpediente(ExpedienteComercial expediente) {
 		// Si el expediente tiene reserva.
@@ -7275,8 +7275,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 		return false;
 	}
-	
-		
+
 	@Override
 	public boolean checkConOpcionCompra(TareaExterna tareaExterna) {
 		ExpedienteComercial expedienteComercial = tareaExternaToExpedienteComercial(tareaExterna);
@@ -7382,41 +7381,41 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 	@Override
 	@Transactional(readOnly = false)
-	public List<DtoTipoDocExpedientes> getSubtipoDocumentosExpedientes(Long idExpediente, String valorCombo) {	
+	public List<DtoTipoDocExpedientes> getSubtipoDocumentosExpedientes(Long idExpediente, String valorCombo) {
 
 		List <DtoTipoDocExpedientes> listDtoTipoDocExpediente = new ArrayList <DtoTipoDocExpedientes>();
-		List <DDSubtipoDocumentoExpediente> listaDDSubtipoDocExp= new ArrayList <DDSubtipoDocumentoExpediente>();		
+		List <DDSubtipoDocumentoExpediente> listaDDSubtipoDocExp= new ArrayList <DDSubtipoDocumentoExpediente>();
 		ExpedienteComercial expediente = findOne(idExpediente);
-		
+
 		String codigoVenta = DDTipoOferta.CODIGO_VENTA;
 		String codigoAlquiler = DDTipoOferta.CODIGO_ALQUILER;
-		
+
 		if(!Checks.esNulo(expediente)) {
 			if(expediente.getOferta().getTipoOferta().getCodigo().equals(codigoVenta)) {
 				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "tipoDocumentoExpediente.codigo", valorCombo);
 				listaDDSubtipoDocExp  = genericDao.getList(DDSubtipoDocumentoExpediente.class, filtro);
-				listDtoTipoDocExpediente = generateListSubtipoExpediente(listaDDSubtipoDocExp);					
-			} else {				
+				listDtoTipoDocExpediente = generateListSubtipoExpediente(listaDDSubtipoDocExp);
+			} else {
 				if(expediente.getOferta().getTipoOferta().getCodigo().equals(codigoAlquiler)) {
 					DDSubtipoDocumentoExpediente codRenovacionContrato =
 							(DDSubtipoDocumentoExpediente) utilDiccionarioApi.dameValorDiccionarioByCod(DDSubtipoDocumentoExpediente.class, DDSubtipoDocumentoExpediente.CODIGO_RENOVACION_CONTRATO);
-					
+
 					if(DDEstadosExpedienteComercial.FIRMADO.equals(expediente.getEstado().getCodigo())) {
-						listaDDSubtipoDocExp.add(codRenovacionContrato);									
-						listDtoTipoDocExpediente = generateListSubtipoExpediente(listaDDSubtipoDocExp);	
+						listaDDSubtipoDocExp.add(codRenovacionContrato);
+						listDtoTipoDocExpediente = generateListSubtipoExpediente(listaDDSubtipoDocExp);
 
 					} else {
 						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "tipoDocumentoExpediente.codigo", valorCombo);
 						listaDDSubtipoDocExp  = genericDao.getList(DDSubtipoDocumentoExpediente.class, filtro);
 						listaDDSubtipoDocExp.remove(codRenovacionContrato);
-						listDtoTipoDocExpediente = generateListSubtipoExpediente(listaDDSubtipoDocExp);	
+						listDtoTipoDocExpediente = generateListSubtipoExpediente(listaDDSubtipoDocExp);
 						String tipoAlquilerOpcionCompra = DDTipoAlquiler.CODIGO_ALQUILER_OPCION_COMPRA;
 						String tipoAlquilerNoDefinido = DDTipoAlquiler.CODIGO_NO_DEFINIDO;
 						String tipoTratamientoScoring = DDTipoTratamiento.TIPO_TRATAMIENTO_SCORING;
 						String tipoTratamientoSeguroRentas = DDTipoTratamiento.TIPO_TRATAMIENTO_SEGURO_DE_RENTAS;
 						String tipoTratamientoNinguna = DDTipoTratamiento.TIPO_TRATAMIENTO_NINGUNA;
 						String flagNoDefinido = DDTipoAlquiler.CODIGO_NO_DEFINIDO;
-						
+
 						if (!Checks.esNulo(expediente.getTipoAlquiler().getCodigo())){
 							DDSubtipoDocumentoExpediente codigoContrato = null;
 							if (expediente.getTipoAlquiler().getCodigo().equals(tipoAlquilerOpcionCompra)){
@@ -7427,17 +7426,17 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 								codigoContrato =
 										(DDSubtipoDocumentoExpediente) utilDiccionarioApi.dameValorDiccionarioByCod(DDSubtipoDocumentoExpediente.class, DDSubtipoDocumentoExpediente.CODIGO_ALQUILER_CON_OPCION_A_COMPRA);
 							}
-							
+
 							listaDDSubtipoDocExp.remove(codigoContrato);
 							listaDDSubtipoDocExp.remove(codRenovacionContrato);
-							
+
 						}
-						
+
 						List<ActivoTramite> tramitesActivo = tramiteDao.getTramitesActivoTrabajoList(expediente.getTrabajo().getId());
 						Filter filtroTratamiento = genericDao.createFilter(FilterType.EQUALS, "codigo", "T015_DefinicionOferta");
 						Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
 						TareaProcedimiento tap = genericDao.get(TareaProcedimiento.class, filtroTratamiento, filtroBorrado);
-						
+
 						for(ActivoTramite actt : tramitesActivo){
 							List<TareaExterna> tareas = activoTareaExternaApi.getByIdTareaProcedimientoIdTramite(actt.getId(),tap.getId());
 							for(TareaExterna t : tareas){
@@ -7448,7 +7447,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 											if(te.getValor().equals(tipoTratamientoScoring)) {
 												listaDDSubtipoDocExp.remove((DDSubtipoDocumentoExpediente) utilDiccionarioApi.dameValorDiccionarioByCod(DDSubtipoDocumentoExpediente.class, DDSubtipoDocumentoExpediente.CODIGO_SEGURO_RENTAS));
 											}else if (te.getValor().equals(tipoTratamientoSeguroRentas)) {
-												listaDDSubtipoDocExp.remove((DDSubtipoDocumentoExpediente) utilDiccionarioApi.dameValorDiccionarioByCod(DDSubtipoDocumentoExpediente.class, DDSubtipoDocumentoExpediente.CODIGO_SCORING));							
+												listaDDSubtipoDocExp.remove((DDSubtipoDocumentoExpediente) utilDiccionarioApi.dameValorDiccionarioByCod(DDSubtipoDocumentoExpediente.class, DDSubtipoDocumentoExpediente.CODIGO_SCORING));
 											}else if(te.getValor().equals(tipoTratamientoNinguna)){
 												listaDDSubtipoDocExp.remove((DDSubtipoDocumentoExpediente) utilDiccionarioApi.dameValorDiccionarioByCod(DDSubtipoDocumentoExpediente.class, DDSubtipoDocumentoExpediente.CODIGO_SEGURO_RENTAS));
 												listaDDSubtipoDocExp.remove((DDSubtipoDocumentoExpediente) utilDiccionarioApi.dameValorDiccionarioByCod(DDSubtipoDocumentoExpediente.class, DDSubtipoDocumentoExpediente.CODIGO_SCORING));
@@ -7458,23 +7457,23 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 								}
 							}
 						}
-						
-						
+
+
 						listDtoTipoDocExpediente = generateListSubtipoExpediente(listaDDSubtipoDocExp);
 							listDtoTipoDocExpediente = generateListSubtipoExpediente(listaDDSubtipoDocExp);
 						}
 					}
 				}
 			}
-		
+
 		Collections.sort(listDtoTipoDocExpediente);
 		return listDtoTipoDocExpediente;
 	}
-	
+
 	private List<DtoTipoDocExpedientes> generateListSubtipoExpediente(List <DDSubtipoDocumentoExpediente> listadoDDSubtipoDoc) {
-		
+
 		List <DtoTipoDocExpedientes> listDtoTipoDocExpediente = new ArrayList <DtoTipoDocExpedientes>();
-		
+
 		for (DDSubtipoDocumentoExpediente tipDocExp : listadoDDSubtipoDoc) {
 			DtoTipoDocExpedientes aux= new DtoTipoDocExpedientes();
 			aux.setId(tipDocExp.getId());
@@ -7483,8 +7482,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			aux.setDescripcionLarga(tipDocExp.getDescripcionLarga());
 			aux.setVinculable(tipDocExp.getVinculable());
 			listDtoTipoDocExpediente.add(aux);
-		} 
-		
+		}
+
 		return listDtoTipoDocExpediente;
 	}
 }

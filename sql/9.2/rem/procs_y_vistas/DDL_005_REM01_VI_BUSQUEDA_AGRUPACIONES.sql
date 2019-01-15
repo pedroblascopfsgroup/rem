@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Sergio Salt
---## FECHA_CREACION=20190111
+--## FECHA_CREACION=20190114
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-5175
@@ -51,54 +51,54 @@ BEGIN
 	END IF;
 
 	DBMS_OUTPUT.PUT('CREATE VIEW '|| V_ESQUEMA ||'.V_BUSQUEDA_AGRUPACIONES...');
-	EXECUTE IMMEDIATE 'CREATE VIEW ' || V_ESQUEMA || '.V_BUSQUEDA_AGRUPACIONES 
-		AS
-		SELECT 
-			agr.agr_id, 
-			agr.dd_tag_id, 
-			agr.agr_num_agrup_rem,
-			agr.agr_num_agrup_uvem, 
-			agr.agr_nombre, 
-			agr.agr_descripcion, 
-			agr.agr_fecha_alta, 
-			agr.agr_fecha_baja, 
-			agr.agr_ini_vigencia, 
-			agr.agr_fin_vigencia, 
-			agr.agr_publicado,
-			nvl(agr_p.activos,0) AS activos, 
-			nvl(agr_p.publicados,0) AS publicados, 
-			COALESCE (obr.dd_prv_id, res.dd_prv_id, lco.dd_prv_id, asi.dd_prv_id, pry.dd_prv_id) AS provincia,
-			COALESCE (obr.dd_loc_id, res.dd_loc_id, lco.dd_loc_id, asi.dd_loc_id, pry.dd_loc_id) AS localidad, 
-			COALESCE (obr.onv_direccion, res.res_direccion, lco.lco_direccion, asi.asi_direccion, pry.PRY_DIRECCION) AS direccion,
-			agr_p.dd_cra_codigo cartera, 
-			agr.agr_is_formalizacion,
-			alq.dd_tal_id AS idTipoAlquiler,
-			alq.dd_tal_codigo AS codTipoAlquiler
-		FROM '||V_ESQUEMA||'.act_agr_agrupacion agr 
-		JOIN '||V_ESQUEMA||'.dd_tag_tipo_agrupacion tag ON tag.dd_tag_id = agr.dd_tag_id
-		LEFT JOIN
-			(SELECT SUM (1) activos, SUM (CASE
-			WHEN (epv.dd_epv_codigo = ''03'' OR epa.dd_epa_codigo = ''03'')
-			THEN 1
-			ELSE 0
-			END) publicados, 
-			aga.agr_id, 
-			cra.dd_cra_codigo
-			FROM '||V_ESQUEMA||'.act_aga_agrupacion_activo aga 
-			LEFT JOIN '||V_ESQUEMA||'.act_activo act ON act.act_id = aga.act_id
-			JOIN '||V_ESQUEMA||'.act_apu_activo_publicacion apu ON apu.act_id = act.act_id
-            LEFT JOIN '||V_ESQUEMA||'.dd_epv_estado_pub_venta epv ON epv.dd_epv_id = apu.dd_epv_id
-            LEFT JOIN '||V_ESQUEMA||'.dd_epa_estado_pub_alquiler epa ON epa.dd_epa_id = apu.dd_epa_id
-			LEFT JOIN '||V_ESQUEMA||'.dd_cra_cartera cra ON cra.dd_cra_id = act.dd_cra_id
-			WHERE aga.borrado = 0 AND act.borrado = 0
-			GROUP BY aga.agr_id, cra.dd_cra_codigo) agr_p ON agr_p.agr_id = agr.agr_id
-		LEFT JOIN '||V_ESQUEMA||'.act_onv_obra_nueva obr ON (agr.agr_id = obr.agr_id)
-		LEFT JOIN '||V_ESQUEMA||'.act_res_restringida res ON (agr.agr_id = res.agr_id)
-		LEFT JOIN '||V_ESQUEMA||'.act_lco_lote_comercial lco ON (agr.agr_id = lco.agr_id)
-		LEFT JOIN '||V_ESQUEMA||'.act_asi_asistida asi ON (agr.agr_id = asi.agr_id)
-		LEFT JOIN '||V_ESQUEMA||'.dd_tal_tipo_alquiler alq ON (agr.dd_tal_id = alq.dd_tal_id)
-		LEFT JOIN '||V_ESQUEMA||'.ACT_PRY_PROYECTO PRY ON (agr.agr_id = PRY.agr_id)
-		WHERE agr.borrado = 0 AND tag.borrado = 0';
+	EXECUTE IMMEDIATE 'CREATE VIEW '|| V_ESQUEMA ||'.V_BUSQUEDA_AGRUPACIONES
+		AS SELECT
+		      AGR.AGR_ID,
+		      AGR.DD_TAG_ID,
+		      AGR.AGR_NUM_AGRUP_REM,
+		      AGR.AGR_NUM_AGRUP_UVEM,
+		      AGR.AGR_NOMBRE,
+		      AGR.AGR_DESCRIPCION,
+		      AGR.AGR_FECHA_ALTA,
+		      AGR.AGR_FECHA_BAJA,
+		      AGR.AGR_INI_VIGENCIA,
+		      AGR.AGR_FIN_VIGENCIA,
+		      AGR.AGR_PUBLICADO,
+		      NVL(AGR_P.ACTIVOS,0) AS ACTIVOS,
+		      NVL(AGR_P.PUBLICADOS,0) AS PUBLICADOS,
+		      COALESCE (OBR.DD_PRV_ID, RES.DD_PRV_ID, LCO.DD_PRV_ID, ASI.DD_PRV_ID, PRY.DD_PRV_ID) AS PROVINCIA,
+		      COALESCE (OBR.DD_LOC_ID, RES.DD_LOC_ID, LCO.DD_LOC_ID, ASI.DD_LOC_ID, PRY.DD_LOC_ID) AS LOCALIDAD,
+		      COALESCE (OBR.ONV_DIRECCION, RES.RES_DIRECCION, LCO.LCO_DIRECCION, ASI.ASI_DIRECCION, PRY.PRY_DIRECCION) AS DIRECCION,
+		      AGR_P.DD_CRA_CODIGO CARTERA,
+		      AGR.AGR_IS_FORMALIZACION,
+			  ALQ.DD_TAL_ID AS IDTIPOALQUILER,
+			  ALQ.DD_TAL_CODIGO AS CODTIPOALQUILER
+		    FROM '|| V_ESQUEMA ||'.ACT_AGR_AGRUPACION AGR
+		    JOIN '|| V_ESQUEMA ||'.DD_TAG_TIPO_AGRUPACION TAG ON TAG.DD_TAG_ID = AGR.DD_TAG_ID AND TAG.BORRADO = 0
+		    LEFT JOIN
+		      (SELECT SUM (1) ACTIVOS,
+			    SUM (CASE
+		      WHEN EPA.DD_EPA_CODIGO = ''03'' OR EPV.DD_EPV_CODIGO = ''03''
+		      THEN 1
+		      ELSE 0
+		      END) PUBLICADOS,
+		      AGA.AGR_ID,
+		      CRA.DD_CRA_CODIGO
+		      FROM '|| V_ESQUEMA ||'.ACT_AGA_AGRUPACION_ACTIVO AGA
+		      LEFT JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT ON ACT.ACT_ID = AGA.ACT_ID AND ACT.BORRADO = 0
+			    LEFT JOIN '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION ACT_APU ON ACT_APU.ACT_ID = AGA.ACT_ID AND ACT_APU.BORRADO = 0
+			    LEFT JOIN '|| V_ESQUEMA ||'.DD_EPA_ESTADO_PUB_ALQUILER EPA ON ACT_APU.DD_EPA_ID = EPA.DD_EPA_ID AND EPA.BORRADO = 0
+			    LEFT JOIN '|| V_ESQUEMA ||'.DD_EPV_ESTADO_PUB_VENTA EPV ON ACT_APU.DD_EPV_ID = EPV.DD_EPV_ID AND EPV.BORRADO = 0
+		      LEFT JOIN '|| V_ESQUEMA ||'.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = ACT.DD_CRA_ID AND CRA.BORRADO = 0
+		      WHERE AGA.BORRADO = 0
+		      GROUP BY AGA.AGR_ID, CRA.DD_CRA_CODIGO) AGR_P ON AGR_P.AGR_ID = AGR.AGR_ID
+		    LEFT JOIN '|| V_ESQUEMA ||'.ACT_ONV_OBRA_NUEVA OBR ON AGR.AGR_ID = OBR.AGR_ID
+		    LEFT JOIN '|| V_ESQUEMA ||'.ACT_RES_RESTRINGIDA RES ON AGR.AGR_ID = RES.AGR_ID
+		    LEFT JOIN '|| V_ESQUEMA ||'.ACT_LCO_LOTE_COMERCIAL LCO ON AGR.AGR_ID = LCO.AGR_ID
+		    LEFT JOIN '|| V_ESQUEMA ||'.ACT_ASI_ASISTIDA ASI ON AGR.AGR_ID = ASI.AGR_ID
+		    LEFT JOIN '|| V_ESQUEMA ||'.DD_TAL_TIPO_ALQUILER ALQ ON (AGR.DD_TAL_ID = ALQ.DD_TAL_ID)
+			LEFT JOIN '|| V_ESQUEMA ||'.ACT_PRY_PROYECTO PRY ON (AGR.AGR_ID = PRY.AGR_ID)
+		    WHERE AGR.BORRADO = 0';
 
 	SELECT COUNT(*) INTO table_count FROM ALL_OBJECTS WHERE OBJECT_NAME = 'ACT_AGA_IDX1' AND OWNER=V_ESQUEMA AND OBJECT_TYPE='INDEX';  
 	IF table_count > 0 THEN

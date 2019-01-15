@@ -45,7 +45,7 @@ public class MaestroDePersonas  implements Runnable{
 
 	private PersonaInputDto personaDto = new PersonaInputDto();
 
-	public  MaestroDePersonas(Long expedienteComercial, String userName,String cartera) {
+	public MaestroDePersonas(Long expedienteComercial, String userName, String cartera) {
 		// imprescindible para poder inyectar componentes
 		SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
 		this.userName = userName;
@@ -67,9 +67,9 @@ public class MaestroDePersonas  implements Runnable{
 						 if(Checks.esNulo(compradorExpediente.getIdPersonaHaya()) || idPersonaHayaNoExiste.equals(compradorExpediente.getIdPersonaHaya())) {
 						 	personaDto.setEvent(PersonaInputDto.EVENTO_IDENTIFICADOR_INTERVINIENTE_ORIGEN);
 							personaDto.setIdOrigen(cartera);
-							personaDto.setIdIntervinienteOrigen(PersonaInputDto.ID_INTERVINIENTE_ORIGEN);
+							personaDto.setIdIntervinienteOrigen(compradorExpediente.getPrimaryKey().getComprador().getDocumento());
 							personaDto.setIdIntervinienteHaya(PersonaInputDto.ID_INTERVINIENTE_HAYA);
-							personaDto.setIdCliente(compradorExpediente.getPrimaryKey().getComprador().getDocumento());
+							personaDto.setIdCliente(cartera);
 							
 							logger.error("[MAESTRO DE PERSONAS] LLAMAMOS A EJECUTAR PERSONA");
 							logger.error("[MAESTRO DE PERSONAS] Datos de la llamada: ".concat(personaDto.toString()));

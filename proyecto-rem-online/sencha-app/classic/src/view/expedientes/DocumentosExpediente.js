@@ -107,7 +107,7 @@ Ext.define('HreRem.view.expedientes.DocumentosExpediente', {
 				        	hidden: true
 				        },
 				        {   text: HreRem.i18n('header.fecha.subida'),
-				        	dataIndex: 'fechaDocumento',
+				        	dataIndex: 'createDate',
 				        	flex: 1,
 				        	formatter: 'date("d/m/Y")'
 				        },

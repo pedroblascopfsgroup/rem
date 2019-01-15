@@ -41,6 +41,9 @@ public class ActivoAgrupacionDaoImpl extends AbstractEntityDao<ActivoAgrupacion,
 		boolean activos = dto.getNif() != null || dto.getSubcarteraCodigo() != null || dto.getNumActHaya() != null
 				|| dto.getNumActPrinex() != null || dto.getNumActReco() != null || dto.getNumActSareb() != null
 				|| dto.getNumActUVEM() != null;
+		
+		
+		
 		if (activos) {
 			from = from + ActivoAgrupacionHqlHelper.getFromActivos();
 		}
@@ -65,6 +68,11 @@ public class ActivoAgrupacionDaoImpl extends AbstractEntityDao<ActivoAgrupacion,
 		// HQLBuilder.addFiltroLikeSiNotNull(hb, "agr.publicado",
 		// dto.getPublicado(), true);
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "agr.tipoAgrupacion.codigo", dto.getTipoAgrupacion());
+
+		if(dto.getTipoAlquiler() != null) {
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "agr.codTipoAlquiler", dto.getTipoAlquiler());
+		}
+
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "agr.numAgrupacionRem", dto.getNumAgrupacionRem());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "agr.cartera", dto.getCodCartera());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "agr.provincia.codigo", dto.getCodProvincia());

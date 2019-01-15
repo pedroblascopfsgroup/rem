@@ -55,12 +55,14 @@ public class DtoAgrupaciones extends WebDto {
 	private String estadoVentaDescripcion;
 	private String estadoAlquilerCodigo;
 	private String estadoVentaCodigo;
+	private String subTipoComercial;
+	private String tipoAlquilerCodigo;
 	private String tipoActivoCodigo;
 	private String estadoActivoCodigo;
 	private String subtipoActivoCodigo;
 	private Long idNumActivoPrincipal;
 	private String tipoActivoPrincipalCodigo;
-
+	private String cartera;
 
 	public Boolean getEstaCaducada() {
 		return estaCaducada;
@@ -312,6 +314,18 @@ public class DtoAgrupaciones extends WebDto {
 	public void setEstadoVentaCodigo(String estadoVentaCodigo) {
 		this.estadoVentaCodigo = estadoVentaCodigo;
 	}
+	public String getSubTipoComercial() {
+		return subTipoComercial;
+	}
+	public void setSubTipoComercial(String subTipoComercial) {
+		this.subTipoComercial = subTipoComercial;
+	}
+	public String getTipoAlquilerCodigo() {
+		return tipoAlquilerCodigo;
+	}
+	public void setTipoAlquilerCodigo(String tipoAlquilerCodigo) {
+		this.tipoAlquilerCodigo = tipoAlquilerCodigo;
+	}
 	public Long getCodigoGestorActivo() {
 		return codigoGestorActivo;
 	}
@@ -355,8 +369,10 @@ public class DtoAgrupaciones extends WebDto {
 		this.tipoActivoPrincipalCodigo = tipoActivoPrincipalCodigo;
 	}
 
-
-
-
-
+	public String getCartera() {
+		return cartera;
+	}
+	public void setCartera(String cartera) {
+		this.cartera = cartera;
+	}
 }

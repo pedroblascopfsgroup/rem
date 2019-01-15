@@ -88,7 +88,7 @@ Ext.define('HreRem.view.comercial.ofertas.OfertasComercialSearch', {
 					        	xtype: 'checkboxfield',
 					        	boxLabel: HreRem.i18n('fieldlabel.check.agrupaciones.vinculadas'),
 					        	name: 'agrupacionesVinculadas',
-					        	reference: 'agrupacionesVinculadasOfertaComercial',
+					        	reference: 'agrupacionesVinculadasOfertaComercial', 
 					        	disabled: true
 					        }
 							
@@ -100,30 +100,47 @@ Ext.define('HreRem.view.comercial.ofertas.OfertasComercialSearch', {
 					    	addUxReadOnlyEditFieldPlugin: false
 					    }, 
 		            	items: [
-		            		{ 
+		            		{
 					        	xtype: 'comboboxfieldbase',
 					        	fieldLabel:  HreRem.i18n('fieldlabel.tipo.oferta'),
 					        	name: 'tipoOferta',
+					        	reference: 'tipoOfertaComercial',
+				            	listeners: {
+							    	change: 'activarComboEstadoExpediente'
+							    },
 					        	bind: {
 				            		store: '{comboTipoOferta}'
 				            	}
 				        	},
-				        	{ 
+							{
 					        	xtype: 'comboboxfieldbase',
 					        	multiSelect: true,
-					        	fieldLabel:  HreRem.i18n('fieldlabel.estado.expediente'),
-					        	name: 'estadosExpediente',
+					        	fieldLabel:  HreRem.i18n('fieldlabel.estado.expediente.alquiler'),
+					        	name: 'estadosExpedienteAlquiler',
+					        	reference: 'comboExpedienteAlquiler',
+					        	disabled: true,
 					        	bind: {
-					        		store: '{comboEstadoExpediente}'
+					        		store: '{comboEstadoExpedienteAlquileres}' 
 					        	}
 							},
-				        	{ 
+				        	{
+					        	xtype: 'comboboxfieldbase',
+					        	multiSelect: true,
+					        	fieldLabel:  HreRem.i18n('fieldlabel.estado.expediente.venta'),
+					        	name: 'estadosExpediente',
+					        	reference: 'comboExpedienteVenta',
+					        	disabled: true,
+					        	bind: {
+					        		store: '{comboEstadoExpedienteVentas}'
+					        	}
+							},
+				        	{
 					        	xtype: 'comboboxfieldbase',
 					        	multiSelect: false,
 					        	fieldLabel:  HreRem.i18n('fieldlabel.tipo.comercializar'),
 					        	name: 'tipoComercializar',
 					        	bind: {
-					        		store: '{comboTiposComercializarActivo}'
+					        		store: '{comboTiposComercializarActivo}'					        		
 					        	}
 							},							
 							{

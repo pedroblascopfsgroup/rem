@@ -9,9 +9,22 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
   
 
     initComponent: function () {
+		
+		var me = this;
+		var tipoExpedienteAlquiler = CONST.TIPOS_EXPEDIENTE_COMERCIAL["ALQUILER"];
+		var title = HreRem.i18n('title.compradores');
+		var titlePorcentaje = HreRem.i18n('header.procentaje.compra');
+		var msgPorcentajeTotal = HreRem.i18n("fieldlabel.porcentaje.compra.total");
+		var msgPorcentajeTotalError = HreRem.i18n("fieldlabel.porcentaje.compra.total.error");
 
-        var me = this;
-        me.setTitle(HreRem.i18n('title.compradores'));
+		if(me.lookupViewModel().get('expediente.tipoExpedienteCodigo') === tipoExpedienteAlquiler){
+			title = HreRem.i18n('title.inquilinos');
+			titlePorcentaje = HreRem.i18n('header.procentaje.alquiler');
+			msgPorcentajeTotal = HreRem.i18n("fieldlabel.porcentaje.alquiler.total");
+			msgPorcentajeTotalError = HreRem.i18n("fieldlabel.porcentaje.alquiler.total.error");		
+		};
+		
+		me.setTitle(title);
 		
 		var coloredRender = function (value, meta, record) {
     		var borrado = record.get('borrado');
@@ -34,13 +47,19 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
 	    		return '-';
 	    	}
     	};
+    	
+    	var cartera= function(){
+    		if(me.lookupViewModel().get('expediente.entidadPropietariaDescripcion') == 'Bankia'){
+    			return false;
+    		}else return true;
+    	};
 		
 		
         var items= [
 
 			{   
 				xtype: 'fieldset',
-            	title:  HreRem.i18n('title.compradores'),
+            	title:  title,
             	items : [
             		{
 						xtype: 'button',
@@ -62,7 +81,7 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
 						},									
 						listeners : {
 					    	rowdblclick: 'onCompradoresListDobleClick',
-					    	beforerender: 'esEditableCompradores'
+							beforerender: 'esEditableCompradores'
 					    },
 					    features: [{
 				            id: 'summary',
@@ -122,7 +141,7 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
 					        	renderer: coloredRender
 					       },
 						   {
-								text: HreRem.i18n('header.procentaje.compra'),
+								text:  titlePorcentaje,
 								dataIndex: 'porcentajeCompra',
 								flex: 1,
 								renderer: coloredRender,
@@ -138,10 +157,10 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
 					            	}
 					            	suma = Ext.util.Format.number(suma, '0.00');
 					            	
-					            	var msg = HreRem.i18n("fieldlabel.porcentaje.compra.total") + " " + suma + "%";
+					            	var msg = msgPorcentajeTotal + " " + suma + "%";
 					            	var style = "" 
 					            	if(suma != Ext.util.Format.number(100.00,'0.00')) {
-					            		msg = HreRem.i18n("fieldlabel.porcentaje.compra.total.error");		
+					            		msg = msgPorcentajeTotalError;		
 					            		style = "style= 'color: red'" 
 					            	}	
 					            	
@@ -192,6 +211,14 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
 					            flex: 1,
 					            formatter: 'date("d/m/Y")',
 					            renderer: coloredRender
+						   },
+						   {
+							   text: HreRem.i18n('header.numero.ursus'),
+							   dataIndex: 'numeroClienteUrsus',
+							   flex: 1,
+					           renderer: coloredRender,
+					           hidden: cartera(),
+					           hideable: !cartera()
 						   }
 					    ],
 					    dockedItems : [
@@ -207,8 +234,7 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
 					    onClickAdd: function (btn) {
 							var me = this;
 							var controller= me.lookupController();
-							controller.abrirFormularioCrearComprador(me);
-											    				    	
+							controller.abrirFormularioCrearComprador(me);											    				    	
 						}
 					}
             	]

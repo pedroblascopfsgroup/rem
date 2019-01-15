@@ -88,6 +88,7 @@ import es.pfsgroup.plugin.rem.model.DtoDatosPublicacionActivo;
 import es.pfsgroup.plugin.rem.model.DtoDistribucion;
 import es.pfsgroup.plugin.rem.model.DtoFichaTrabajo;
 import es.pfsgroup.plugin.rem.model.DtoFoto;
+import es.pfsgroup.plugin.rem.model.DtoHistoricoDestinoComercial;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoMediador;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPreciosFilter;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPresupuestosFilter;
@@ -146,7 +147,7 @@ public class ActivoController extends ParadiseJsonController {
 	@Autowired
 	private GenericABMDao genericDao;
 
-	
+
 
 	@Autowired
 	private ActivoApi activoApi;
@@ -219,7 +220,7 @@ public class ActivoController extends ParadiseJsonController {
 	public ModelAndView saveDatosBasicos(DtoActivoFichaCabecera activoDto, @RequestParam Long id, ModelMap model) {
 		try {
 			boolean success = adapter.saveTabActivo(activoDto, id, TabActivoService.TAB_DATOS_BASICOS);
-			
+
 			model.put(RESPONSE_SUCCESS_KEY, success);
 
 		} catch (JsonViewerException jvex) {
@@ -1275,13 +1276,13 @@ public class ActivoController extends ParadiseJsonController {
 			boolean success = adapter.saveAdmisionDocumento(dtoAdmisionDocumento);
 			model.put(RESPONSE_SUCCESS_KEY, success);
 
-		} 		
+		}
 		catch (RemUserException e) {
 			logger.error("error en activoController", e);
 			model.put("success", false);
 			model.put("msg", e.getMensaje());
-		} 
-		
+		}
+
 
 		return createModelAndViewJson(model);
 	}
@@ -2036,7 +2037,7 @@ public class ActivoController extends ParadiseJsonController {
 
 		return createModelAndViewJson(model);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView getListHistoricoOcupacionesIlegales(ModelMap model, WebDto dto, Long idActivo) {
@@ -2227,11 +2228,10 @@ public class ActivoController extends ParadiseJsonController {
 
 				ActivoControllerDispatcher dispatcher = new ActivoControllerDispatcher(this);
 				dispatcher.dispatchSave(restRequest.getJsonObject());
-
 			} catch (JsonViewerException jvex) {
 				model.put(RESPONSE_SUCCESS_KEY, false);
 				model.put(RESPONSE_ERROR_MESSAGE_KEY, jvex.getMessage());
-			}catch (Exception e) {
+			} catch (Exception e) {
 				logger.error("No se ha podido guardar el activo", e);
 				model.put(RESPONSE_ERROR_KEY, e.getMessage());
 			}
@@ -2240,13 +2240,8 @@ public class ActivoController extends ParadiseJsonController {
 		return new ModelAndView("jsonView", model);
 	}
 
-	/**
-	 * Método que comprueba y envía un correo si el Activo está ocupado.
-	 */
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView checkAndSendMailAvisoOcupacion(HttpServletRequest request, ModelMap model)
-	{
-		
+	public ModelAndView checkAndSendMailAvisoOcupacion(HttpServletRequest request, ModelMap model)  {
 		return new ModelAndView("jsonView", new ModelMap());
 	}
 
@@ -2258,16 +2253,20 @@ public class ActivoController extends ParadiseJsonController {
 				RestRequestWrapper restRequest = new RestRequestWrapper(request);
 				ActivoControllerDispatcher dispatcher = new ActivoControllerDispatcher(this);
 				JSONObject json = restRequest.getJsonObject();
-				
+
 				DtoActivoFichaCabecera dto = activoApi.getActivosAgrupacionRestringida(json.getLong("id"));
 				List<VActivosAgrupacion> activos = (List<VActivosAgrupacion>) dto.getActivosAgrupacionRestringida();
-				
+
 				for(VActivosAgrupacion act : activos) {
 					json.put("id", act.getActivoId());
 					json.put("models.id", act.getActivoId());
 					dispatcher.dispatchSave(json);
 				}
 
+			} catch (JsonViewerException jvex) {
+				logger.error("No se ha podido guardar el activo", jvex);
+				model.put(RESPONSE_SUCCESS_KEY, false);
+				model.put(RESPONSE_ERROR_MESSAGE_KEY, jvex.getMessage());
 			} catch (Exception e) {
 				logger.error("No se ha podido guardar el activo", e);
 				model.put(RESPONSE_ERROR_KEY, e.getMessage());
@@ -2434,6 +2433,18 @@ public class ActivoController extends ParadiseJsonController {
 	}
 	
 	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getHistoricoDestinoComercialByActivo(@RequestParam Long id, ModelMap model, WebDto dto) {
+
+		List<DtoHistoricoDestinoComercial> data = activoApi.getDtoHistoricoDestinoComercialByActivo(id);
+
+		//model.put("data", data.subList(dto.getStart(), ( ((data.size() - 1 ) + dto.getStart() ) < dto.getLimit() ? data.size() : (dto.getStart() + dto.getLimit() ) ) ));
+		model.put("data", data.subList(dto.getStart(), ( (data.size() < (dto.getStart() + dto.getLimit()) ) ? data.size() : (dto.getStart() + dto.getLimit()) ) ));
+		model.put("totalCount", data.size());
+		return createModelAndViewJson(model);
+	}
+
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView getActivoExists(String numActivo, ModelMap model) {
 
@@ -2455,7 +2466,6 @@ public class ActivoController extends ParadiseJsonController {
 			model.put("success", false);
 			model.put("error", ERROR_GENERICO);
 		}
-		
 		return createModelAndViewJson(model);
 	}
 

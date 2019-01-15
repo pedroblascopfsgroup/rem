@@ -8,7 +8,11 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalle', {
     			'HreRem.view.expedientes.TramitesTareasExpediente','HreRem.view.expedientes.CondicionesExpediente',
     			'HreRem.view.expedientes.FormalizacionExpediente', 'HreRem.view.expedientes.GestionEconomicaExpediente',
 				'HreRem.view.expedientes.CompradoresExpediente', 'HreRem.view.expedientes.OfertaTanteoYRetracto',
-				'HreRem.view.expedientes.GestoresExpediente','HreRem.view.expedientes.PlusValiaVentaExpediente'],
+				'HreRem.view.expedientes.GestoresExpediente','HreRem.view.expedientes.ScoringExpediente',
+				'HreRem.view.expedientes.SeguroRentasExpediente', 'HreRem.model.HstcoSeguroRentas',
+				'HreRem.view.expedientes.FormalizacionAlquilerExpediente','HreRem.view.expedientes.PlusValiaVentaExpediente'],
+
+
 	bloqueado: false,
 
     listeners	: {
@@ -26,7 +30,18 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalle', {
 			},
 
 			beforetabchange: function (tabPanel, tabNext, tabCurrent) {
-	        	tabPanel.down("[itemId=botoneditar]").setVisible(false);	            	
+				if(tabNext.getTitle() == "Ficha"){
+					var itemsExpedienteForm = tabNext.getForm().getFields().items;
+
+			    	var itemReserva = itemsExpedienteForm.find(function(item){return item.fieldLabel === "Fecha de reserva"});
+
+			    	if(itemReserva != null){
+			    		var me = tabNext;
+			    		me.lookupController().tareaDefinicionDeOferta(itemReserva);
+			    	}
+
+				}
+	        	tabPanel.down("[itemId=botoneditar]").setVisible(false);
 	        	// Comprobamos si estamos editando para confirmar el cambio de pestaña
 	        	if (tabCurrent != null) {
 	        		if (tabPanel.down("[itemId=botonguardar]").isVisible()){	
@@ -99,8 +114,11 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalle', {
 	        $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'tramitestareasexpediente', ocultarBotonesEdicion: true})}, ['TAB_TRÁMITES_EXPEDIENTES']);
 	        $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'gestoresexpediente', ocultarBotonesEdicion: true})}, ['TAB_GESTORES_EXPEDIENTES']);//Poner permiso especifico?
 	        $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'documentosexpediente', ocultarBotonesEdicion: true})}, ['TAB_DOCUMENTOS_EXPEDIENTES']);
-	        $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'formalizacionexpediente', funPermEdition: ['EDITAR_TAB_FORMALIZACION_EXPEDIENTES']})}, ['TAB_FORMALIZACION_EXPEDIENTES']);
+			$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'formalizacionexpediente', funPermEdition: ['EDITAR_TAB_FORMALIZACION_EXPEDIENTES']})}, ['TAB_FORMALIZACION_EXPEDIENTES']);
+			$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'formalizacionalquilerexpediente', funPermEdition: ['EDITAR_TAB_FORMALIZACION_EXPEDIENTES']})}, ['TAB_FORMALIZACION_EXPEDIENTES']);
 	        $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'gestioneconomicaexpediente', ocultarBotonesEdicion: true})}, ['TAB_GESTION_ECONOMICA_EXPEDIENTES']);
+	        items.push({xtype: 'scoringexpediente'});
+	        items.push({xtype: 'segurorentasexpediente'});
 	        $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'plusvaliaventaexpedediente', funPermEdition: ['EDITAR_TAB_CONDICIONES_EXPEDIENTES']})}, ['TAB_CONDICIONES_EXPEDIENTES']);
 
 
@@ -121,7 +139,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalle', {
 			}
 			
 			if(!bloqueado){
-				// Si la pestaña recibida no tiene asignados roles de edicion 
+				// Si la pestaña recibida no tiene asignados roles de edicion
 				if(Ext.isEmpty(tab.funPermEdition)) {
 					editionEnabled();
 				} else {

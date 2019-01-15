@@ -37,6 +37,7 @@ public class DtoAgrupacionFilter extends WebDto {
 	private Long numActReco;
 	private Long idNumActivoPrincipal;
 	private String nif;
+	private String tipoAlquiler;
 	private String condPublVenta;
 	private String condPublAlquiler;
 
@@ -248,6 +249,14 @@ public class DtoAgrupacionFilter extends WebDto {
 		this.idNumActivoPrincipal = idNumActivoPrincipal;
 	}
 
+	public String getTipoAlquiler() {
+		return tipoAlquiler;
+	}
+
+	public void setTipoAlquiler(String tipoAlquiler) {
+		this.tipoAlquiler = tipoAlquiler;
+	}
+
 	public String getCondPublVenta() {
 		return condPublVenta;
 	}
@@ -263,6 +272,4 @@ public class DtoAgrupacionFilter extends WebDto {
 	public void setCondPublAlquiler(String condPublAlquiler) {
 		this.condPublAlquiler = condPublAlquiler;
 	}
-	
-	
 }

@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.gestorDocumental.dto.documentos;
 import java.util.Properties;
 
 import es.capgemini.devon.files.WebFileItem;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.gestorDocumental.model.GestorDocumentalConstants;
 
 public class RecoveryToGestorDocAssembler {
@@ -10,6 +11,7 @@ public class RecoveryToGestorDocAssembler {
 	private static final String ALTA = "ALTA";
 	private static final String PROCESO_CARGA = "WEB SERVICE REM";
 	
+	private static String OPWS = "srv.rem"; 
 	private String USUARIO;
 	private String PASSWORD;
 	private final String TIPO_EXPEDIENTE="Global";
@@ -17,6 +19,11 @@ public class RecoveryToGestorDocAssembler {
 	public RecoveryToGestorDocAssembler(Properties appProperties){
 		USUARIO = appProperties.getProperty("rest.client.gestor.documental.user");
 		PASSWORD = appProperties.getProperty("rest.client.gestor.documental.pass");
+		OPWS = appProperties.getProperty("rest.client.gestor.documental.opws");
+		
+		if(Checks.esNulo(OPWS)) {
+			OPWS = "srv.rem"; 
+		}
 	}
 	
 	public CabeceraPeticionRestClientDto getCabeceraPeticionRestClient(String idExp, String tipoExp, String claseExp) {
@@ -36,7 +43,13 @@ public class RecoveryToGestorDocAssembler {
 		doc.setTipoConsulta(TIPO_EXPEDIENTE);//HREOS-2296
 		doc.setVinculoDocumento(true);//HREOS-2296
 		doc.setVinculoExpediente(false);
-		doc.setUsuarioOperacional(userLogin);
+		
+		if(!Checks.esNulo(userLogin) && userLogin.equals("REST-USER") ) {
+			doc.setUsuarioOperacional(OPWS);
+		} else {
+			doc.setUsuarioOperacional(userLogin);
+		}
+		
 		return doc;
 	}
 	
@@ -44,7 +57,13 @@ public class RecoveryToGestorDocAssembler {
 		BajaDocumentoDto login = new BajaDocumentoDto();
 		login.setUsuario(USUARIO);
 		login.setPassword(PASSWORD);
-		login.setUsuarioOperacional(userLogin);
+		
+		if(!Checks.esNulo(userLogin) && userLogin.equals("REST-USER") ) {
+			login.setUsuarioOperacional(OPWS);
+		} else {
+			login.setUsuarioOperacional(userLogin);
+		}
+		
 		return login;
 	}
 	
@@ -57,7 +76,13 @@ public class RecoveryToGestorDocAssembler {
 		}
 		doc.setUsuario(USUARIO);
 		doc.setPassword(PASSWORD);
-		doc.setUsuarioOperacional(userLogin);
+		
+		if(!Checks.esNulo(userLogin) && userLogin.equals("REST-USER") ) {
+			doc.setUsuarioOperacional(OPWS);
+		} else {
+			doc.setUsuarioOperacional(userLogin);
+		}
+		
 		doc.setDocumento(webFileItem.getFileItem().getFile());
 		doc.setNombreDocumento(webFileItem.getFileItem().getFileName());
 		doc.setDescripcionDocumento(webFileItem.getParameter("descripcion"));
@@ -113,7 +138,13 @@ public class RecoveryToGestorDocAssembler {
 		
 		dto.setUsuario(USUARIO);
 		dto.setPassword(PASSWORD);
-		dto.setUsuarioOperacional(login);
+		
+		if(!Checks.esNulo(login) && login.equals("REST-USER") ) {
+			dto.setUsuarioOperacional(OPWS);
+		} else {
+			dto.setUsuarioOperacional(login);
+		}
+		
 		dto.setDocumento(null);
 		
 		return dto;
@@ -125,7 +156,13 @@ public class RecoveryToGestorDocAssembler {
 		
 		dto.setUsuario(USUARIO);
 		dto.setPassword(PASSWORD);
-		dto.setUsuarioOperacional(login);
+		
+		if(!Checks.esNulo(login) && login.equals("REST-USER") ) {
+			dto.setUsuarioOperacional(OPWS);
+		} else {
+			dto.setUsuarioOperacional(login);
+		}
+		
 		dto.setGeneralDocumentoModif(rellenarGeneralDocumentoModif());
 		dto.setDocumento(null);
 		dto.setArchivoFisico(rellenarArchivoFisico());
@@ -139,7 +176,13 @@ public class RecoveryToGestorDocAssembler {
 		
 		dto.setUsuario(USUARIO);
 		dto.setPassword(PASSWORD);
-		dto.setUsuarioOperacional(login);
+		
+		if(!Checks.esNulo(login) && login.equals("REST-USER") ) {
+			dto.setUsuarioOperacional(OPWS);
+		} else {
+			dto.setUsuarioOperacional(login);
+		}
+		
 		dto.setGeneralDocumentoModif(rellenarGeneralDocumentoModif());
 		dto.setArchivoFisico(rellenarArchivoFisico());
 		
@@ -151,7 +194,13 @@ public class RecoveryToGestorDocAssembler {
 		
 		baja.setUsuario(USUARIO);
 		baja.setPassword(PASSWORD);
-		baja.setUsuarioOperacional(login);
+
+		if(!Checks.esNulo(login) && login.equals("REST-USER") ) {
+			baja.setUsuarioOperacional(OPWS);
+		} else {
+			baja.setUsuarioOperacional(login);
+		}
+		
 		return baja;
 	}
 	
@@ -161,7 +210,13 @@ public class RecoveryToGestorDocAssembler {
 		
 		credUsu.setUsuario(USUARIO);
 		credUsu.setPassword(PASSWORD);
-		credUsu.setUsuarioOperacional(login);
+		
+		if(!Checks.esNulo(login) && login.equals("REST-USER") ) {
+			credUsu.setUsuarioOperacional(OPWS);
+		} else {
+			credUsu.setUsuarioOperacional(login);
+		}
+		
 		return credUsu;
 	}
 	
@@ -171,7 +226,13 @@ public class RecoveryToGestorDocAssembler {
 		doc.setUsuario(USUARIO);
 		doc.setPassword(PASSWORD);
 		doc.setCodClase(codClase);
-		doc.setUsuarioOperacional(username);
+		
+		if(!Checks.esNulo(username) && username.equals("REST-USER") ) {
+			doc.setUsuarioOperacional(OPWS);
+		} else {
+			doc.setUsuarioOperacional(username);
+		}
+		
 		doc.setMetadata(rellenarEntidadMetadata(idEntidad, idEntidad, idSistemaOrigen, cliente));
 		
 		return doc;

@@ -62,6 +62,9 @@ public class DDTipoTrabajo implements Auditable, Dictionary {
 	    
 	@Column(name = "DD_TTR_FILTRAR")   
 	private String filtrar;
+	
+	@Column(name = "DD_TTR_FILTRO_TRAMITE")   
+	private Boolean filtroEnTramite;
 	    
 	@Version   
 	private Long version;
@@ -125,6 +128,14 @@ public class DDTipoTrabajo implements Auditable, Dictionary {
 
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
+	}
+
+	public Boolean getFiltroEnTramite() {
+		return filtroEnTramite;
+	}
+
+	public void setFiltroEnTramite(Boolean filtroEnTramite) {
+		this.filtroEnTramite = filtroEnTramite;
 	}
 
 }

@@ -38,7 +38,7 @@ public class AgrupacionValidatorLoteComercial extends AgrupacionValidatorCommonI
 
 	@Override
 	public String[] getCodigoTipoAgrupacion() {		
-		return new String[]{DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL};
+		return new String[]{DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL, DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_ALQUILER};
 	}
 
 	@Override

@@ -39,7 +39,14 @@ public class DtoActivoSituacionPosesoria extends DtoTabActivo {
 	private String situacionJuridica;
 	private Integer indicaPosesion;
 	private Boolean tieneOkTecnico;
+	private String tipoEstadoAlquiler;
 		
+	public String getTipoEstadoAlquiler() {
+		return tipoEstadoAlquiler;
+	}
+	public void setTipoEstadoAlquiler(String tipoEstadoAlquiler) {
+		this.tipoEstadoAlquiler = tipoEstadoAlquiler;
+	}
 	public String getNumeroActivo() {
 		return numeroActivo;
 	}

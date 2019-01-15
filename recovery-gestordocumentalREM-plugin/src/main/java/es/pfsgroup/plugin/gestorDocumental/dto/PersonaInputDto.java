@@ -1,13 +1,20 @@
 package es.pfsgroup.plugin.gestorDocumental.dto;
 
-public class PersonaInputDto {
+import java.io.Serializable;
 
+public class PersonaInputDto implements Serializable{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1884005212021894617L;
 	//public static final String ID_CLIENTE = "ID_CLIENTE";
 	//public static final String ID_PERSONA_CLIENTE = "ID_INTERVINIENTE_CLIENTE";
 	public static final String ID_INTERVINIENTE_ORIGEN = "ID_INTERVINIENTE_ORIGEN";
-	public static final String ID_ORIGEN = "ID_ORIGEN";
+	public static final String ID_ORIGEN = "NOS";
 	//public static final String ID_TIPO_PERSONA = "ID_TIPO_PERSONA";
 	public static final String ID_INTERVINIENTE_HAYA = "ID_INTERVINIENTE_HAYA";
+	public static final String ID_PERSONA_HAYA = "ID_PERSONA_HAYA";
 	public static final String FORMATO_STRING = "STRING";
 	//public static final String EVENTO_IDENTIFICADOR_INTERVINIENTE_CLIENTE = "ConsultaIdIntervinientePorCliente";
 	public static final String EVENTO_IDENTIFICADOR_INTERVINIENTE_ORIGEN = "ConsultaIdIntervinientePorOrigen";
@@ -20,6 +27,40 @@ public class PersonaInputDto {
 	private String idTipoInterviniente;
 	private String idIntervinienteHaya;
 	private String event;
+	
+	public String toString(){
+		String result = "";
+		
+		if(idCliente != null){
+			result = result + "idCliente: "+ idCliente + "\\n"; 
+		}
+		
+		if(idIntervinienteCliente != null){
+			result = result + "idIntervinienteCliente: "+ idIntervinienteCliente + "\\n"; 
+		}
+		
+		if(idIntervinienteOrigen != null){
+			result = result + "idIntervinienteOrigen: "+ idIntervinienteOrigen + "\\n"; 
+		}
+		
+		if(idOrigen != null){
+			result = result + "idOrigen: "+ idOrigen + "\\n"; 
+		}
+		
+		if(idTipoInterviniente != null){
+			result = result + "idTipoInterviniente: "+ idTipoInterviniente + "\\n"; 
+		}
+		
+		if(idIntervinienteHaya != null){
+			result = result + "idIntervinienteHaya: "+ idIntervinienteHaya + "\\n"; 
+		}
+		
+		if(event != null){
+			result = result + "event: "+ event + "\\n"; 
+		}
+		
+		return result;
+	}
 
 	public String getIdCliente() {
 		return idCliente;

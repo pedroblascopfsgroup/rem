@@ -27,24 +27,18 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
 @Service("activoAvisadorManager")
 public class ActivoAvisadorManager implements ActivoAvisadorApi {
 
-	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-	
+	private SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 	protected static final Log logger = LogFactory.getLog(ActivoAvisadorManager.class);
-	
-	
+
 	@Autowired 
     private ActivoApi activoApi;
-
-
 
 	@Override
 	@BusinessOperation(overrides = "activoAvisadorManager.get")
 	public String get(Long id) {
 		return "";
-		//return activoDao.get(id);
 	}
-	
-	
+
 
 	@Override
 	@BusinessOperation(overrides = "activoAvisadorManager.getListActivoAvisador")
@@ -115,7 +109,7 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 			dtoAviso.setId(String.valueOf(id));
 			listaAvisos.add(dtoAviso);
 		}
-		
+
 		if (Checks.esNulo(activo.getSituacionPosesoria())) {
 			Auditoria auditoria = Auditoria.getNewInstance();
 			ActivoSituacionPosesoria actSit = new ActivoSituacionPosesoria();
@@ -207,17 +201,24 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 			dtoAviso.setId(String.valueOf(id));
 			listaAvisos.add(dtoAviso);	
 		}
-		
-		PerimetroActivo perimetroActivo = activoApi.getPerimetroByIdActivo(activo.getId());
-		
+
+		// Aviso 11: Activo en trámite
+		if(activo.getEnTramite()) {
+			DtoAviso dtoAviso = new DtoAviso();
+			dtoAviso.setDescripcion("Activo en trámite");
+			dtoAviso.setId(String.valueOf(id));
+			listaAvisos.add(dtoAviso);
+		}
+
 		// Aviso 12: Activo no publicable
+		PerimetroActivo perimetroActivo = activoApi.getPerimetroByIdActivo(activo.getId());
 		if(!Checks.esNulo(perimetroActivo) && !Checks.esNulo(perimetroActivo.getAplicaPublicar()) && !perimetroActivo.getAplicaPublicar()) {
 			DtoAviso dtoAviso = new DtoAviso();
 			dtoAviso.setDescripcion("No publicable");
 			dtoAviso.setId(String.valueOf(id));
 			listaAvisos.add(dtoAviso);
 		}
-		
+
 		// Aviso 13: Activo publicable
 		if(!Checks.esNulo(perimetroActivo) && !Checks.esNulo(perimetroActivo.getAplicaPublicar()) && perimetroActivo.getAplicaPublicar()) {
 			DtoAviso dtoAviso = new DtoAviso();
@@ -225,7 +226,7 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 			dtoAviso.setId(String.valueOf(id));
 			listaAvisos.add(dtoAviso);
 		}
-		
+
 		// Aviso 14: Estado activo vandalizado
 		if(!Checks.esNulo(activo.getEstadoActivo())) {
 			if (DDEstadoActivo.ESTADO_ACTIVO_VANDALIZADO.equals(activo.getEstadoActivo().getCodigo())) {
@@ -239,24 +240,24 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 		// Aviso 15: Estado activo vandalizado
 		if(!Checks.esNulo(activo.getEstadoActivo())) {
 			if (DDEstadoActivo.ESTADO_ACTIVO_NO_OBRA_NUEVA_VANDALIZADO.equals(activo.getEstadoActivo().getCodigo())) {
-				
+
 				DtoAviso dtoAviso = new DtoAviso();
 				dtoAviso.setDescripcion(activo.getEstadoActivo().getDescripcion());
 				dtoAviso.setId(String.valueOf(id));
 				listaAvisos.add(dtoAviso);
-				
+
 			}
 		}
-		
+
 		if(!(Checks.esNulo(activo.getTieneDemandaAfecCom())) && activo.getTieneDemandaAfecCom()==1) {
 			DtoAviso dtoAviso = new DtoAviso();
 			dtoAviso.setDescripcion("Activo con demanda con afectación comercial");
 			dtoAviso.setId(String.valueOf(id));
-			listaAvisos.add(dtoAviso);			
+			listaAvisos.add(dtoAviso);
 		}
-		
+
 		// Aviso 17: Cuando el activo esta publicado para la venta y el precio venta está oculto
-		if(!Checks.esNulo(perimetroActivo) && !Checks.esNulo(perimetroActivo.getAplicaPublicar()) && perimetroActivo.getAplicaPublicar()) { 
+		if(!Checks.esNulo(perimetroActivo) && !Checks.esNulo(perimetroActivo.getAplicaPublicar()) && perimetroActivo.getAplicaPublicar()) {
 			if(!Checks.esNulo(activo.getActivoPublicacion())) {
 				if(activo.getActivoPublicacion().getCheckPublicarVenta() && activo.getActivoPublicacion().getCheckOcultarPrecioVenta()){
 					DtoAviso dtoAviso = new DtoAviso();
@@ -264,9 +265,8 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 					dtoAviso.setId(String.valueOf(id));
 					listaAvisos.add(dtoAviso);
 				}
-			}	
+			}
 		}
 		return listaAvisos;
 	}
-
 }

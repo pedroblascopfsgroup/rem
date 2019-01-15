@@ -24,7 +24,10 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
             afterdelete: function(grid) {
             	grid.getStore().load();
             }
-        }
+        },
+        'diariogestionesexpediente':{
+           	enviarComercializadora:'onClickEnviarComercializadora'
+           }
     },
     
    
@@ -34,6 +37,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		var viewModel = me.getViewModel();
 		var idExpediente = me.getViewModel().get("expediente.id");
 		var idActivo = record.data.idActivo;
+		var expedienteDeAlquiler = me.getViewModel().get('expediente.tipoExpedienteDescripcion');
 		
 		viewModel.set("activoExpedienteSeleccionado", record);
 		viewModel.notify();
@@ -48,8 +52,12 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		}
 	
 		var tabPanel = me.lookupReference('activoExpedienteMain');
-		tabPanel.setHidden(false);
-		tabPanel.mask();
+		if(expedienteDeAlquiler == 'Alquiler'){
+			tabPanel.setHidden(true);
+		} else {
+			tabPanel.setHidden(false);
+			tabPanel.mask();
+		}
 
 		HreRem.model.ActivoExpedienteCondicionesModel.load(idExpediente, {
 			params: {idActivo:idActivo,idExpediente:idExpediente},
@@ -105,6 +113,11 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 				// Si la API tiene metodo de lectura (read).
 				model.load({
 				    success: function(record) {
+				    	var itemsExpedienteForm = form.getForm().getFields().items;
+				    	var itemReserva = itemsExpedienteForm.find(function(item){return item.fieldLabel === "Fecha de reserva"});
+				    	if(itemReserva != null){
+				    		me.tareaDefinicionDeOferta(itemReserva);   
+				    	}
 				    	form.setBindRecord(record);			    	
 				    	form.unmask();
 				    	if(Ext.isFunction(form.afterLoad)) {
@@ -655,31 +668,44 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	},
 	
 	onCompradoresListDobleClick : function(gridView,record) {
-		var me=this;
-		var codigoEstado= me.getViewModel().get("expediente.codigoEstado");
-		if(codigoEstado!=CONST.ESTADOS_EXPEDIENTE['VENDIDO']){
+		var me=this,
+		codigoEstado= me.getViewModel().get("expediente.codigoEstado"), 
+		fechaPosicionamiento = me.getViewModel().get("expediente.fechaPosicionamiento"),
+		tipoExpedienteAlquiler = CONST.TIPOS_EXPEDIENTE_COMERCIAL["ALQUILER"],
+		tipoExpedienteVenta = CONST.TIPOS_EXPEDIENTE_COMERCIAL["VENTA"];
+		me.getView().fireEvent("refrescarExpediente", me.getView());
+		if((codigoEstado!=CONST.ESTADOS_EXPEDIENTE['VENDIDO'] && me.getViewModel().get('expediente.tipoExpedienteCodigo') === tipoExpedienteVenta)
+				||  (me.getViewModel().get('expediente.tipoExpedienteCodigo') === tipoExpedienteAlquiler && Ext.isEmpty(fechaPosicionamiento))){
 			var idCliente = record.get("id"),
 			expediente= me.getViewModel().get("expediente");
 			var storeGrid= gridView.store;
 			var edicion = me.getViewModel().get("puedeModificarCompradores");
-		    Ext.create("HreRem.view.expedientes.DatosComprador", {idComprador: idCliente, modoEdicion: edicion, storeGrid:storeGrid, expediente: expediente }).show();
+			var deshabilitarCamposDoc = false;
+			if(me.getViewModel().get('expediente.tipoExpedienteCodigo') === tipoExpedienteAlquiler){
+				deshabilitarCamposDoc = true;
+			}
+
+			Ext.create("HreRem.view.expedientes.DatosComprador", {idComprador: idCliente, modoEdicion: edicion, storeGrid:storeGrid, expediente: expediente,deshabilitarCamposDoc: deshabilitarCamposDoc }).show();
+		}
+		if (me.getViewModel().get('expediente.tipoExpedienteCodigo') === tipoExpedienteAlquiler && !Ext.isEmpty(fechaPosicionamiento)){
+			me.fireEvent("errorToast", "Se ha avanzado la tarea Posicionamiento, no se puede editar los inquilinos");
 		}
 	},
 	esEditableCompradores : function(field){
-	     	var me = this;
-	     	var viewModel = me.getViewModel();
-	     	if(viewModel.get('esCarteraBankia')){
-				if ((viewModel.get('expediente.codigoEstado') != CONST.ESTADOS_EXPEDIENTE['FIRMADO']
-						    && viewModel.get('expediente.codigoEstado') != CONST.ESTADOS_EXPEDIENTE['VENDIDO'] )
-						    && $AU.userHasFunction(['EDITAR_TAB_COMPRADORES_EXPEDIENTES'])){
-					field.topBar = true;
-					field.down('toolbar').show();
-				}else{
-					field.topBar = false;
-					field.down('toolbar').hide();
-				}
-	     	}
-		},
+		var me = this;
+		var viewModel = me.getViewModel();
+		if(viewModel.get('esCarteraBankia')){
+			if ((viewModel.get('expediente.codigoEstado') != CONST.ESTADOS_EXPEDIENTE['FIRMADO']
+						&& viewModel.get('expediente.codigoEstado') != CONST.ESTADOS_EXPEDIENTE['VENDIDO'] )
+						&& $AU.userHasFunction(['EDITAR_TAB_COMPRADORES_EXPEDIENTES'])){
+				field.topBar = true;
+				field.down('toolbar').show();
+			}else{
+				field.topBar = false;
+				field.down('toolbar').hide();
+			}
+		}
+	},
 	onHaCambiadoSolicitaFinanciacion: function(combo, value){
 		var me = this,
     	disabled = value == 0,
@@ -1113,7 +1139,40 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
     		otrosDetallePbc.setDisabled(true);
     	}
 	},
-	
+	tareaDefinicionDeOferta: function(rec){
+		var me = this;
+		var url =  $AC.getRemoteUrl('expedientecomercial/getTareaDefinicionDeOferta');
+		Ext.Ajax.request({
+		
+		     url: url,
+		     params: {
+		    	 idExpediente : me.getViewModel().get("expediente.id")
+		     		}
+			
+		    ,success: function (response,a, operation, context) {
+		    	var data = {};
+		    	try {
+		    		data = Ext.decode(response.responseText);
+		    	}  catch (e){
+		    		
+		    	};
+		    	 	var label = data.codigo;
+		    	 	if(label != "venta" && label != "null"){
+		    	 		rec.setVisible(true);
+		    	 		rec.setFieldLabel(data.codigo)
+		    	 	} else if (label == "null"){
+		    	 		rec.setVisible(false);
+		    	 	} else if(label == "venta"){
+		    	 		rec.setFieldLabel(HreRem.i18n('fieldlabel.fecha.reserva'));
+		    	 	}
+            },
+            
+            failure: function (a, operation, context) {
+            	rec.setFieldLabel(HreRem.i18n('fieldlabel.fecha.reserva'));
+            }
+	     
+		});
+	},
 	onMarcarPrincipalClick: function(grid, rowIndex, colIndex, item, e, rec){
 		var me = this;
     	me.gridOrigen = grid;
@@ -1296,10 +1355,49 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			} else {				
 				importeParticipacion = parseFloat(importeParticipacion).toFixed(2);
 				honorario = (importeParticipacion*importeCalculoHonorario)/100;
-				honorarios.setValue(honorario);
+				honorarios.setValue(Math.round(honorario * 100) / 100);
 				importeField.setMaxValue(100);
 			}
-			me.fireEvent("log" , "[HONORARIOS: Tipo: "+tipoCalculo+" | Calculo: "+importeCalculoHonorario+" | Participacion: "+importeParticipacion+" | Importe: "+honorario+"]");
+			me.fireEvent("log" , "[HONORARIOS: Tipo: "+tipoCalculo+" | Calculo: "+importeCalculoHonorario+" | Participacion: "+importeParticipacion+" | Importe: "+Math.round(honorario * 100) / 100+"]");
+		}
+		
+		else if(CONST.TIPOS_CALCULO['FIJO_ALQ'] == tipoCalculo){//Importe fijo Alquiler
+			var honorarios= me.lookupReference('honorarios');
+			var importeCalculoHonorario= me.lookupReference('importeCalculoHonorario').value;
+			honorarios.setValue(importeCalculoHonorario);
+			importeField.setMaxValue(null);
+		}
+		
+		else if(CONST.TIPOS_CALCULO['PORCENTAJE_ALQ'] == tipoCalculo){//Porcentaje Alquiler
+			var honorarios= me.lookupReference('honorarios');
+			var importeCalculoHonorario= me.lookupReference('importeCalculoHonorario').value;
+			var importeParticipacion = Ext.isEmpty(record) ?  null : record.get("participacionActivo");
+			var honorario;
+			if(!Ext.isEmpty(record) && Ext.isEmpty(importeParticipacion)) {
+				me.fireEvent("errorToast", HreRem.i18n("msg.necesaria.participacion.calculo.honorario"));
+			} else {				
+				importeParticipacion = parseFloat(importeParticipacion).toFixed(2);
+				honorario = ((importeParticipacion*importeCalculoHonorario)/100)*12;
+				honorarios.setValue(Math.round(honorario * 100) / 100);
+				importeField.setMaxValue(100);
+			}
+			me.fireEvent("log" , "[HONORARIOS: Tipo: "+tipoCalculo+" | Calculo: "+importeCalculoHonorario+" | Participacion: "+importeParticipacion+" | Importe: "+Math.round(honorario * 100) / 100+"]");
+		}
+		
+		else if(CONST.TIPOS_CALCULO['MENSUALIDAD_ALQ'] == tipoCalculo){//Mensualidad Alquiler
+			var honorarios= me.lookupReference('honorarios');
+			var importeCalculoHonorario= me.lookupReference('importeCalculoHonorario').value;
+			var importeParticipacion = Ext.isEmpty(record) ?  null : record.get("participacionActivo");
+			var honorario;
+			if(!Ext.isEmpty(record) && Ext.isEmpty(importeParticipacion)) {
+				me.fireEvent("errorToast", HreRem.i18n("msg.necesaria.participacion.calculo.honorario"));
+			} else {				
+				importeParticipacion = parseFloat(importeParticipacion).toFixed(2);
+				honorario = importeParticipacion*importeCalculoHonorario;
+				honorarios.setValue(Math.round(honorario * 100) / 100);
+				importeField.setMaxValue(100);
+			}
+			me.fireEvent("log" , "[HONORARIOS: Tipo: "+tipoCalculo+" | Calculo: "+importeCalculoHonorario+" | Participacion: "+importeParticipacion+" | Importe: "+Math.round(honorario * 100) / 100+"]");
 		}/*
 		
 		else if(tipoCalculo=='Importe fijo'){
@@ -1369,21 +1467,44 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	},
 
 	abrirFormularioCrearComprador: function(grid) {
+		
 		var me = this,
 		idExpediente = me.getViewModel().get("expediente.id"),
-		codigoEstado= me.getViewModel().get("expediente.codigoEstado");
-		bloqueado = me.getViewModel().get("expediente.bloqueado");
-		if(!bloqueado){		
-			if(CONST.ESTADOS_EXPEDIENTE['VENDIDO']!=codigoEstado){
-				var ventanaCompradores= grid.up().up();
-				var expediente= me.getViewModel().get("expediente");
-				Ext.create('HreRem.view.expedientes.DatosComprador',{idExpediente: idExpediente, parent: ventanaCompradores, expediente: expediente}).show();
-				me.onClickBotonRefrescar();
-			}
-			else{
+		codigoEstado = me.getViewModel().get("expediente.codigoEstado"),
+		tipoExpedienteCodigo = me.getViewModel().get("expediente.tipoExpedienteCodigo"),
+		origen = me.getViewModel().get("expediente.origen"),
+		bloqueado = me.getViewModel().get("expediente.bloqueado"),
+		tipoOrigenWCOM = CONST.TIPOS_ORIGEN["WCOM"],
+		fechaSancion = me.getViewModel().get('expediente.fechaSancion');
+
+		if(!bloqueado){
+			if(CONST.ESTADOS_EXPEDIENTE['VENDIDO'] != codigoEstado){
+				if(CONST.TIPOS_EXPEDIENTE_COMERCIAL['ALQUILER'] == tipoExpedienteCodigo){
+					if(tipoOrigenWCOM == origen && !Ext.isEmpty(fechaSancion)){
+						me.fireEvent("errorToast","Expediente con origen WCOM");
+						return;
+					}
+					if(Ext.isEmpty(fechaSancion)){
+						var ventanaCompradores= grid.up().up();
+						var expediente= me.getViewModel().get("expediente");
+						Ext.create('HreRem.view.expedientes.DatosComprador',{idExpediente: idExpediente, parent: ventanaCompradores, expediente: expediente, deshabilitarCamposDoc: false}).show();
+						me.onClickBotonRefrescar();
+					} else {
+						me.fireEvent("errorToast","Expediente sancionado");
+					}
+					return;
+				}
+				if(CONST.TIPOS_EXPEDIENTE_COMERCIAL['VENTA'] == tipoExpedienteCodigo){
+					var ventanaCompradores= grid.up().up();
+					var expediente= me.getViewModel().get("expediente");
+					Ext.create('HreRem.view.expedientes.DatosComprador',{idExpediente: idExpediente, parent: ventanaCompradores, expediente: expediente,deshabilitarCamposDoc: false}).show();
+					me.onClickBotonRefrescar();
+					return;
+				}
+			} else{
 				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.expediente.vendido"));
 			}
-		}else{
+		} else{
 			me.fireEvent("errorToast","Expediente bloqueado");
 		}
 	},
@@ -1665,41 +1786,65 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 
 	borrarComprador: function(grid, record) {
 		var me = this;
-		idExpediente = me.getViewModel().get("expediente.id"),
-		codigoEstado= me.getViewModel().get("expediente.codigoEstado"),
-		idComprador= record.get('id');
-		bloqueado = me.getViewModel().get("expediente.bloqueado");
-		if(!bloqueado){
-				if(CONST.ESTADOS_EXPEDIENTE['VENDIDO']!=codigoEstado){
-					record.erase({
-						params: {idExpediente: idExpediente, idComprador: idComprador},
-			            success: function(record, operation) {
-			           		 me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-			           		 grid.fireEvent("afterdelete", grid);
-			           		 me.onClickBotonRefrescar();
-			            },
-			            failure: function(record, operation) {
-			            	var data = {};
-						    try {
-						    	data = Ext.decode(operation._response.responseText);
-						    }
-						    catch (e){ };
-						    	if (!Ext.isEmpty(data.msg)) {
-						        	me.fireEvent("errorToast", data.msg);
-						        } 
-						        else {
-						        	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-						        }
-			                  grid.fireEvent("afterdelete", grid);
-			            }
-			            
-			        });	
-				}
-				else{
+		var idExpediente = me.getViewModel().get("expediente.id");
+		var codigoEstado= me.getViewModel().get("expediente.codigoEstado");
+		var idComprador= record.get('id');
+		var tipoExpedienteCodigo = me.getViewModel().get("expediente.tipoExpedienteCodigo");
+		var origen = me.getViewModel().get("expediente.origen");
+		var bloqueado = me.getViewModel().get("expediente.bloqueado");
+		var fechaSancion = me.getViewModel().get('expediente.fechaSancion');
+		var tipoOrigenWCOM = CONST.TIPOS_ORIGEN["WCOM"];
+		var llamada = false;
+		
+		if(CONST.TIPOS_EXPEDIENTE_COMERCIAL['VENTA'] == tipoExpedienteCodigo) {
+			if(!bloqueado) {
+				if(CONST.ESTADOS_EXPEDIENTE['VENDIDO']!=codigoEstado) {
+					if(tipoOrigenWCOM != origen) {
+						llamada = true;
+					} else {
+		            	me.fireEvent("errorToast","Expediente con origen WCOM");
+		            }
+				} else {
 					me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.expediente.vendido"));
 				}
-		}else{
-			me.fireEvent("errorToast", "Expediente bloqueado");
+			} else {
+				me.fireEvent("errorToast", "Expediente bloqueado");
+			}
+		} else if(CONST.TIPOS_EXPEDIENTE_COMERCIAL['ALQUILER'] == tipoExpedienteCodigo) {
+			if(tipoOrigenWCOM != origen) {
+				if(Ext.isEmpty(fechaSancion)) {
+					llamada = true;
+				} else {
+					me.fireEvent("errorToast","Expediente sancionado");
+				}
+			} else {
+            	me.fireEvent("errorToast","Expediente con origen WCOM");
+            }
+		}
+		
+		if(llamada == true) {
+			record.erase({
+				params: {idExpediente: idExpediente, idComprador: idComprador},
+	            success: function(record, operation) {
+	            	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+	            	grid.fireEvent("afterdelete", grid);
+	           		me.onClickBotonRefrescar();
+	            },
+				failure: function(record, operation) {
+	            	var data = {};
+				    try {
+				    	data = Ext.decode(operation._response.responseText);
+				    }
+				    catch (e){ };
+			    	if (!Ext.isEmpty(data.msg)) {
+			        	me.fireEvent("errorToast", data.msg);
+			        } 
+			        else {
+			        	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+			        }
+	                grid.fireEvent("afterdelete", grid);
+	            }
+			});
 		}
 	},
 
@@ -1754,6 +1899,22 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		me.lookupReference('horaPosicionamientoRef').setDisabled(false);
 		me.lookupReference('motivoAplazamientoRef').setDisabled(true);
 	},
+
+	comprobarCamposFechasAlquiler: function(editor, gridNfo) {
+		var me = this;
+
+		if(editor.isNew) {
+			me.lookupReference('fechaFirmaRef').setValue();
+			me.lookupReference('horaFirmaRef').setValue();
+			me.lookupReference('motivoAplazamientoRef').setValue();
+		}
+		me.changeFecha(me.lookupReference('fechaFirmaRef'));
+		me.changeHora(me.lookupReference('horaFirmaRef'));
+		
+		me.lookupReference('fechaFirmaRef').setDisabled(false);
+		me.lookupReference('horaFirmaRef').setDisabled(false);
+		me.lookupReference('lugarFirmaRef').setDisabled(false);
+	},
 	
 	comprobacionesDobleClick: function(editor, gridNfo) {
 		var me = this;
@@ -1774,8 +1935,25 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		me.lookupReference('motivoAplazamientoRef').setDisabled(false);
 	},
 
+	comprobacionesDobleClickAlquiler: function(editor, gridNfo) {
+		var me = this;
+
+		if(editor.isNew) {
+			me.lookupReference('fechaFirmaRef').setValue();
+			me.lookupReference('horaFirmaRef').setValue();
+		}
+		me.changeFecha(me.lookupReference('fechaFirmaRef'));
+		me.changeHora(me.lookupReference('horaFirmaRef'));
+		
+		me.lookupReference('fechaFirmaRef').setDisabled(true);
+		me.lookupReference('horaFirmaRef').setDisabled(true);
+		me.lookupReference('lugarFirmaRef').setDisabled(true);
+		me.lookupReference('motivoAplazamientoRef').setDisabled(false);
+	},
+
 	onRowClickPosicionamiento:  function(gridView, record) {
 		var me = this;  
+
 		if(!Ext.isEmpty(record.get('fechaFinPosicionamiento'))){
 			gridView.grid.down('#removeButton').setDisabled(true);
 		}
@@ -1789,17 +1967,32 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		}
 	},
 
+	onRowClickPosicionamientoAlquiler:  function(gridView, record) {
+		var me = this; 
+		if(!Ext.isEmpty(record.get('fechaFinPosicionamiento'))){
+			gridView.grid.down('#removeButton').setDisabled(true);
+		}
+		else{
+			gridView.grid.down('#removeButton').setDisabled(false);
+		}
+
+	},
+
 	changeFecha: function(campoFecha) {
 		var me = this,
 		referencia = campoFecha.getReference().replace('fecha','hora'),
 		campoHora = me.lookupReference(referencia);
-
+		
 		if(campoFecha.getValue() != null) {
-			campoHora.setDisabled(false);
-			campoHora.allowBlank = false;
-			if(campoHora.getValue() == null) {//De esta forma se marca en rojo como obligatorio sin tener que pinchar en el campo
+			if (campoHora.isVisible()) {
+				campoHora.setDisabled(false);
+				campoHora.allowBlank = false;
+				if(campoHora.getValue() == null) {//De esta forma se marca en rojo como obligatorio sin tener que pinchar en el campo
+					campoHora.setValue('00:00');
+					campoHora.setValue();
+				}
+			} else {
 				campoHora.setValue('00:00');
-				campoHora.setValue();
 			}
 		}
 		else {
@@ -1811,7 +2004,6 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	
 	changeHora: function(campoHora) {
 		var me = this;
-
 		if(campoHora.getValue() != null) {
 			campoHora.wasValid = false;
 			
@@ -1841,63 +2033,83 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	},
 
 	comprobarObligatoriedadCamposNexos: function() {
-		
-		var me = this,
-		campoEstadoCivil = me.lookupReference('estadoCivil'),
-		campoRegEconomico = me.lookupReference('regimenMatrimonial'),
-		campoNumConyuge = me.lookupReference('numRegConyuge'),
-		campoApellidos = me.lookupReference('apellidos');
-		// Si el tipo de persona es FÍSICA, entonces el campos Estado civil es obligatorio y se habilitan campos dependientes.
-		if(me.lookupReference('tipoPersona').getValue() === "1" ) {
-			//campoEstadoCivil.setDisabled(false);
-			//campoRegEconomico.setDisabled(false);
-			//campoNumConyuge.setDisabled(false);
-			campoApellidos.setDisabled(false);
-			campoEstadoCivil.allowBlank = false;
-			campoEstadoCivil.validate();
-			if(campoEstadoCivil.getValue() === "02") {
-				// Si el Estado civil es 'Casado', entonces Reg. económico es obligatorio.
-				campoRegEconomico.allowBlank = false;
-				campoRegEconomico.validate();
-				if(me.getViewModel().get('esCarteraLiberbank')|| me.getViewModel().get('comprador.entidadPropietariaCodigo') == CONST.CARTERA['LIBERBANK']){
-					campoNumConyuge.allowBlank = false;
-					campoNumConyuge.validate();
-					if(campoRegEconomico.getValue() === "01" || campoRegEconomico.getValue() === "03"){
-						campoNumConyuge.allowBlank = false;
-						campoNumConyuge.validate();
-					}else if(campoRegEconomico.getValue() === "02" ){
-						campoNumConyuge.allowBlank = true;
-					}
-				}else{
-					campoNumConyuge.allowBlank = true;
+		try{
+			var me = this,
+			
+			campoEstadoCivil = me.lookupReference('estadoCivil'),
+			campoRegEconomico = me.lookupReference('regimenMatrimonial'),
+			campoNumConyuge = me.lookupReference('numRegConyuge'),
+			campoApellidos = me.lookupReference('apellidos');
+			
+			// Si el tipo de persona es FÍSICA, entonces el campos Estado civil es obligatorio y se habilitan campos dependientes.
+			if(me.lookupReference('tipoPersona').getValue() === "1" ) {
+				if(!Ext.isEmpty(campoApellidos)){
+					campoApellidos.setDisabled(false);
 				}
-				//campoRegEconomico.setDisabled(false);
-				//campoNumConyuge.setDisabled(false);
+				if(!Ext.isEmpty(campoEstadoCivil)){
+					campoEstadoCivil.allowBlank = false;
+					campoEstadoCivil.validate();
+					if(campoEstadoCivil.getValue() === "02") {
+						// Si el Estado civil es 'Casado', entonces Reg. económico es obligatorio.
+						if(!Ext.isEmpty(campoRegEconomico)){
+							campoRegEconomico.allowBlank = false;
+							campoRegEconomico.validate();
+						}
+						if(me.getViewModel().get('esCarteraLiberbank')|| me.getViewModel().get('comprador.entidadPropietariaCodigo') == CONST.CARTERA['LIBERBANK']){
+							if(!Ext.isEmpty(campoNumConyuge)){
+								campoNumConyuge.allowBlank = false;
+								campoNumConyuge.validate();
+							}
+							if(!Ext.isEmpty(campoRegEconomico) && !Ext.isEmpty(campoNumConyuge)){
+								if(campoRegEconomico.getValue() === "01" || campoRegEconomico.getValue() === "03"){
+									campoNumConyuge.allowBlank = false;
+									campoNumConyuge.validate();
+								}else if(campoRegEconomico.getValue() === "02" ){
+									campoNumConyuge.allowBlank = true;
+								}
+							}
+						}else{
+							if(!Ext.isEmpty(campoNumConyuge)){
+								campoNumConyuge.allowBlank = true;
+							}
+						}
+					} else {
+						if(!Ext.isEmpty(campoRegEconomico)){
+							campoRegEconomico.allowBlank = true;
+						}
+						if(!Ext.isEmpty(campoNumConyuge)){
+							campoNumConyuge.allowBlank = true;
+						}
+					}
+				}
+				
+				
 			} else {
-				campoRegEconomico.allowBlank = true;
-				campoNumConyuge.allowBlank = true;
-				//campoRegEconomico.reset();
-				//campoNumConyuge.reset();
-				//campoRegEconomico.setDisabled(true);
-				//campoNumConyuge.setDisabled(true);
+				//  Si el tipo de persona es 'Jurídica' entonces desactivar los campos dependientes del otro estado.
+				if(!Ext.isEmpty(campoEstadoCivil)){
+					campoEstadoCivil.allowBlank = true;
+				}
+				if(!Ext.isEmpty(campoRegEconomico)){
+					campoRegEconomico.allowBlank = true;
+				}
+				if(!Ext.isEmpty(campoApellidos)){
+					campoApellidos.setDisabled(true);
+				}
 			}
-		} else {
-			//  Si el tipo de persona es 'Jurídica' entonces desactivar los campos dependientes del otro estado.
-			campoEstadoCivil.allowBlank = true;
-			campoRegEconomico.allowBlank = true;
-			campoApellidos.setDisabled(true);
-			//campoEstadoCivil.reset();
-			//campoRegEconomico.reset();
-			//campoNumConyuge.reset();
-			//campoEstadoCivil.setDisabled(true);
-			//campoRegEconomico.setDisabled(true);
-			//campoNumConyuge.setDisabled(true);
+	
+			// Validar campos para que se muestre o desaparezca la visual roja.
+			if(!Ext.isEmpty(campoEstadoCivil)){
+				campoEstadoCivil.validate();
+			}
+			if(!Ext.isEmpty(campoRegEconomico)){
+				campoRegEconomico.validate();
+			}
+			if(!Ext.isEmpty(campoNumConyuge)){
+				campoNumConyuge.validate();
+			}
+		}catch(err) {
+			Ext.global.console.log(err);
 		}
-
-		// Validar campos para que se muestre o desaparezca la visual roja.
-		campoEstadoCivil.validate();
-		campoRegEconomico.validate();
-		campoNumConyuge.validate();
 	},
 
 	onClickGenerarHojaExcel: function(btn) {
@@ -2052,7 +2264,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	},
 	
 	validarFechaPosicionamiento: function(value){
-		var hoy= new Date();
+		/*var hoy= new Date();
 		hoy.setHours(0,0,0,0);
 		var from = value.split("/");
 		var fechaPosiString = new Date(from[2], from[1] - 1, from[0]);
@@ -2063,7 +2275,8 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		}
 		else{
 			return true;
-		}
+		}*/
+		return true;
 	
 	},
 	buscarSucursal: function(field, e){
@@ -2120,31 +2333,35 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	},
 
 	onCambioTipoImpuesto: function(combo, value,oldValue, eOpts){
-		if(!Ext.isEmpty(oldValue)){
-			var me = this,
-	    	tipoAplicable = me.lookupReference('tipoAplicable'),
-	    	operacionExenta = me.lookupReference('chkboxOperacionExenta'),
-	    	inversionSujetoPasivo = me.lookupReference('chkboxInversionSujetoPasivo'),
-	    	renunciaExencion = me.lookupReference('chkboxRenunciaExencion');
-	
-	
-	    	if(CONST.TIPO_IMPUESTO['ITP'] == value) {
-	    		tipoAplicable.reset();
-	    		tipoAplicable.setDisabled(true);
-	    		tipoAplicable.allowBlank = true;
-	    		tipoAplicable.setValue(0);
-	    		operacionExenta.reset();
-	    		operacionExenta.setReadOnly(true);
-	    		inversionSujetoPasivo.reset();
-	    		inversionSujetoPasivo.setReadOnly(true);
-	    		renunciaExencion.reset();
-	    		renunciaExencion.setReadOnly(true);
-	    	} else {
-	    		tipoAplicable.setDisabled(false);
-	        	tipoAplicable.allowBlank = false;
-	    		operacionExenta.setReadOnly(false);
-	    		inversionSujetoPasivo.setReadOnly(false);
-	    	}
+		try{
+			if(!Ext.isEmpty(oldValue)){
+				var me = this,
+		    	tipoAplicable = me.lookupReference('tipoAplicable'),
+		    	operacionExenta = me.lookupReference('chkboxOperacionExenta'),
+		    	inversionSujetoPasivo = me.lookupReference('chkboxInversionSujetoPasivo'),
+		    	renunciaExencion = me.lookupReference('chkboxRenunciaExencion');
+		
+		
+		    	if(CONST.TIPO_IMPUESTO['ITP'] == value) {
+		    		tipoAplicable.reset();
+		    		tipoAplicable.setDisabled(true);
+		    		tipoAplicable.allowBlank = true;
+		    		tipoAplicable.setValue(0);
+		    		operacionExenta.reset();
+		    		operacionExenta.setReadOnly(true);
+		    		inversionSujetoPasivo.reset();
+		    		inversionSujetoPasivo.setReadOnly(true);
+		    		renunciaExencion.reset();
+		    		renunciaExencion.setReadOnly(true);
+		    	} else {
+		    		tipoAplicable.setDisabled(false);
+		        	tipoAplicable.allowBlank = false;
+		    		operacionExenta.setReadOnly(false);
+		    		inversionSujetoPasivo.setReadOnly(false);
+		    	}
+			}
+		}catch(err) {
+  			Ext.global.console.log('Error en onCambioTipoImpuesto: '+err)
 		}
 	},
 
@@ -2183,11 +2400,47 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			}
 		}
 	},
-
+	onCambioCheckPorcentual: function(checkbox, newValue, oldValue, eOpts) {
+			var me = this,
+			ipc = me.lookupReference('checkboxIPC');
+			porcentaje = me.lookupReference('escaladoRentaPorcentaje');
+			
+			if(newValue) {
+				ipc.show();
+				porcentaje.show();
+			} else {
+				ipc.hide();
+				porcentaje.hide();
+				
+			}
+	},	
+	onCambioCheckRevMercado: function(checkbox, newValue, oldValue, eOpts) {
+		var me = this,
+		fecha = me.lookupReference('revisionMercadoFecha');
+		cadaMes = me.lookupReference('escaladoRentasMeses');
+		if(newValue) {
+			fecha.show();
+			cadaMes.show();
+		} else {
+			fecha.hide();
+			cadaMes.hide();
+		}
+	},
+	onCambioCheckEscaladoFijo: function(checkbox, newValue, oldValue, eOpts) {
+		var me = this,
+		fijoFecha = me.lookupReference('tipoEscaladoFecha');
+		fijoIncremento = me.lookupReference('tipoEscaladoIncremento');
+		grid= me.lookupReference('historicoCondicones');
+		if(newValue) {
+			grid.disableAddButton(false);
+		} else {
+			grid.disableAddButton(true);
+		}
+	},
 	onCambioInversionSujetoPasivo: function(checkbox, newValue, oldValue, eOpts) {
 		if(!Ext.isEmpty(oldValue)){
 			var me = this,
-			operacionExenta = me.lookupReference('chkboxOperacionExenta'),
+			operacionExenta = me.lookupReference('chckboxOperacionExenta'),
 	    	renunciaExencion = me.lookupReference('chkboxRenunciaExencion'),
 	    	tipoAplicable = me.lookupReference('tipoAplicable');
 	
@@ -2206,6 +2459,34 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			}
 		}
 	},
+	
+	onchkbxEnRevisionChange: function(checkbox, newValue, oldValue, eOpts){
+    	var me = this;
+    	seguroComentario = me.lookupReference('textareafieldsegurocomentarios');
+    	if(newValue == false){
+    		seguroComentario.setDisabled(true);
+        }  
+    	else{
+    		seguroComentario.setDisabled(false);
+    	}
+
+    	
+    },
+    
+    habilitarcheckrevisionOnChange: function(combo, newValue){
+		var me = this;
+    	enRevision = me.lookupReference('chkboxEnRevision');
+    	seguroComentario = me.lookupReference('textareafieldsegurocomentarios');
+    	//Si el estado es pendiente(01), habilitamos el check de revision 
+    	if(newValue === '01'){
+			enRevision.setDisabled(false);
+			enRevision.setReadOnly(false);
+        }  
+    	else{
+    		enRevision.setDisabled(true);
+    		seguroComentario.setDisabled(true);
+    	}
+ 	},
 
 	onHaCambiadoFechaResolucion: function( field, newDate, oldDate, eOpts){
 		var me = this;
@@ -2272,5 +2553,257 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		    	 me.getView().unmask();
 		     }
 		});		
+	},
+	
+	onClickGeneraOfertarHojaExcel: function(btn) {
+    	var me = this,
+		config = {};
+
+		config.params = {};
+		config.params.idOferta=me.getViewModel().get("datosbasicosoferta.idOferta");
+		config.url= $AC.getRemoteUrl("ofertas/generateExcelOferta");
+		
+		Ext.Msg.confirm(
+				HreRem.i18n("title.propuesta.oferta"),
+				HreRem.i18n("msg.propuesta.oferta"),
+				function(btn){
+					if (btn == "yes"){
+
+						me.fireEvent("downloadFile", config);
+					}
+				}
+			);
+	},
+
+	onClickEnviarMailAprobacion: function(btn) {
+		
+		var me = this;
+		
+		Ext.Msg.confirm(
+				HreRem.i18n("title.enviar.email.de.aprobacion"),
+				HreRem.i18n("msg.enviar.mail.aprobacion"),
+				function(btn){
+					if (btn == "yes"){
+						
+						var url = $AC.getRemoteUrl("ofertas/enviarMailAprobacion");
+						var parametros = {
+								idOferta: me.getViewModel().get("datosbasicosoferta.idOferta")
+						};
+						
+						me.getView().mask();
+						Ext.Ajax.request({
+				    	     url: url,
+				    	     params: parametros,
+				    	     success: function(response, opts) {
+				    	    	 if(Ext.decode(response.responseText).success == "false") {
+				    	    		me.fireEvent("errorToast", Ext.decode(response.responseText).errorCode);
+				    	    		me.getView().unmask();
+				    	         }
+				    	    	 else if (Ext.decode(response.responseText).success == "true"){
+				    	        	me.getView().unmask();
+				    	        	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+								 }
+				    	     }
+				    	 });
+						
+					}
+				}
+			);
+	},
+	
+	onClickEnviarEmailAsegurador: function(btn) {
+		
+		var me = this;
+		
+		Ext.Msg.confirm(
+				HreRem.i18n("title.enviar.email.a.la.aseguradora"),
+				HreRem.i18n("msg.header.enviar.mail.a.la.aseguradora"),
+				function(btn){
+					if (btn == "yes"){
+						
+						var url = $AC.getRemoteUrl("expedientecomercial/enviarCorreoAsegurador");
+						var parametros = {
+								idExpediente : me.getViewModel().get('expediente.id')
+						};
+						
+						me.getView().mask();
+						Ext.Ajax.request({
+				    	     url: url,
+				    	     params: parametros,
+				    	     success: function(response, opts) {
+				    	    	 console.log("success");
+				    	    	 if(Ext.decode(response.responseText).success == "false") {
+				    	    		me.fireEvent("errorToast", Ext.decode(response.responseText).errorCode);
+				    	    		me.getView().unmask();
+				    	         }
+				    	    	 else if (Ext.decode(response.responseText).success == "true"){
+				    	        	me.getView().unmask();
+				    	        	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+								 }
+				    	     },
+				    	     failure:  function(response, opts) {
+				    	     	me.getView().unmask();
+				    	     	me.fireEvent("errorToast",  HreRem.i18n("msg.operacion.ko") );
+				    	     }
+				    	 });
+						
+					}
+				}
+			);
+	},
+	
+
+	onClickEnviarComercializadora: function(rec){
+		var me = this;
+		var url = $AC.getRemoteUrl('expedientecomercial/enviarCorreoComercializadora');
+		var idExpediente = me.getViewModel().get('expediente.id');
+		var observacion = rec.getData().observacion
+
+
+		Ext.Ajax.request({
+			
+		    url: url,
+		    params: {
+		     			cuerpoEmail: observacion,
+		     			idExpediente: idExpediente
+		     		}
+			
+		   ,success: function (a, operation, context) {
+               	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+				me.getView().unmask();
+           },
+           
+           failure: function (a, operation, context) {
+           	 	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+				me.getView().unmask();
+           }
+	     
+		});
+	},
+	
+	onChangeRevision: function(checkbox, newVal, oldVal) {
+		var me = this;
+		var scoringComentarios= me.lookupReference('scoringComentarios');
+		if(checkbox.checked){
+			scoringComentarios.setDisabled(false);
+		} else {
+			scoringComentarios.setDisabled(true);
+		}
+	},
+	
+	onDisableMotivoRechazo: function(checkbox, newVal, oldVal) {
+		var me = this;
+		var estado = me.getViewModel().get('scoring.comboEstadoScoring');
+		var scoringMotivoRechazo = me.lookupReference('scoringMotivoRechazo');
+		var scoringCheckEnRevision = me.lookupReference('scoringCheckEnRevision');
+				
+		if(estado == "Rechazado" ) {
+			scoringMotivoRechazo.setDisabled(false);
+			scoringMotivoRechazo.setReadOnly(true);
+			scoringCheckEnRevision.setDisabled(true);
+			scoringCheckEnRevision.setReadOnly(true);
+		} else if (estado == "Aprobado"){ //	estado == "Aprobado || estado == En tramite"
+			scoringMotivoRechazo.setDisabled(true);
+			scoringMotivoRechazo.setReadOnly(true);
+			scoringCheckEnRevision.setDisabled(true);
+			scoringCheckEnRevision.setReadOnly(true);
+		} else {
+			scoringMotivoRechazo.setDisabled(true);
+		}
+	},
+	
+	sinContraoferta: function(checkbox, newVal, oldVal){
+		var me = this;
+	
+		return false;
+	},
+
+	enlaceAbrirTrabajo: function(button) {
+		
+		var me = this,		
+		idTrabajo =  me.getViewModel().get("expediente.idTrabajo");
+
+		if(!Ext.isEmpty(idTrabajo)){
+			me.getView().fireEvent('abrirDetalleTrabajoById', idTrabajo, null, button.reflinks);
+		}
+	},
+	
+	onClickEnviarGestionLlaves: function(button){
+		var me = this;
+
+		Ext.Msg.confirm(
+			HreRem.i18n("title.enviar.email.de.gestion.llaves"),
+			HreRem.i18n("msg.enviar.email.gestion.llaves"),
+			function(btn){
+				if (btn == "yes"){
+					var url = $AC.getRemoteUrl("expedientecomercial/enviarCorreoGestionLlaves");
+					var parametros = {
+							idExpediente : me.getViewModel().get('expediente.id')
+					};
+					
+					me.getView().mask(HreRem.i18n("msg.mask.loading")); 
+					Ext.Ajax.request({
+				   	    url: url,
+				   	    params: parametros,
+				   	    success: function(response, opts) {
+				   	   		if(Ext.decode(response.responseText).success == "false") {
+						   	   	me.fireEvent("errorToast", Ext.decode(response.responseText).errorCode);
+						   	   	me.getView().unmask();
+				   	        } else if (Ext.decode(response.responseText).success == "true"){
+					   	       	me.getView().unmask();
+					   	       	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+				   	        }
+				   	    },
+				   	    failure: function(response, opts){
+				   	    	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+				   	    	me.getView().unmask();
+				   	    }
+					});
+				}					
+			}			
+		);		
+	},
+    
+    onChangeCarencia: function(checkbox, newValue, oldValue, eOpts) {
+		if(!Ext.isEmpty(oldValue)){
+			var me = this,
+			meses = me.lookupReference('mesesCarencia'),
+			importe = me.lookupReference('importeCarencia');
+	
+			if(newValue == true) {
+				meses.setDisabled(false);
+				importe.setDisabled(false);
+			} else {
+				meses.setDisabled(true);
+				importe.setDisabled(true);
+			}
+		}
+	},
+	
+	onChangeBonificacion: function(checkbox, newValue, oldValue, eOpts) {
+			var me = this,
+			meses = me.lookupReference('mesesBonificacion'),
+			importe = me.lookupReference('importeBonificacion');
+	
+			if(newValue == true) {
+				meses.setDisabled(false);
+				importe.setDisabled(false);
+			} else {
+				meses.setDisabled(true);
+				importe.setDisabled(true);
+			}
+	},
+	
+	onChangeRepercutibles: function(checkbox, newValue, oldValue, eOpts){
+		if(!Ext.isEmpty(oldValue)){
+			var me = this,
+			comentarios = me.lookupReference('textareafieldcondicioncomentariosgastos');
+	
+			if(newValue == true) {
+				comentarios.setDisabled(false);
+			} else {
+				comentarios.setDisabled(true);
+			}
+		}
 	}
 });

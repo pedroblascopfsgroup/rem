@@ -222,7 +222,10 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
 	            dataIndex: 'numActivo',
 	            text: HreRem.i18n('header.numero.activo.haya'),
 	            flex: 0.6,
-				editor: {xtype:'textfield'}
+				editor: {
+					xtype:'textfield',
+					maskRe: /[0-9]/
+				}
 
 	        },
 	        {   
@@ -238,7 +241,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
 	            flex: 1
 	        },
 	        {
-	            dataIndex: 'subtipoActivoDesc',
+	            dataIndex: 'subtipoActivoDescripcion',
 	            text: HreRem.i18n('header.subtipo'),
 	            flex: 0.5
 	        },
@@ -310,22 +313,16 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
 	            flex: 0.5
 	        },
 	        {   
-	        	dataIndex: 'estadoVenta',
+	        	dataIndex: 'condPublVenta',
 	            text: HreRem.i18n('header.condicionantes.publicacion.venta'),
 	            flex: 1,
-	            renderer: condPublRenderer,
-	            bind: {
-		        	hidden: true
-		        }
+	            renderer: condPublRenderer
 	        },
 	        {
-	            dataIndex: 'estadoAlquiler',
+	            dataIndex: 'condPublAlquiler',
 	            text: HreRem.i18n('header.condicionantes.publicacion.alquiler'),
 	            flex: 1,
-	            renderer: condPublRenderer,
-	            bind: {
-		        	hidden: true
-		        }
+	            renderer: condPublRenderer
 	        },
 	        {
 	            dataIndex: 'situacionComercial',
@@ -613,7 +610,6 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
     editFuncion: function(editor, context){
    		var me= this;
 		me.mask(HreRem.i18n("msg.mask.espere"));
-
 			if (me.isValidRecord(context.record)) {			
         		context.record.save({
                     params: {

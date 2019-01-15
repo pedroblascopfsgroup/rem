@@ -2,7 +2,10 @@ package es.pfsgroup.plugin.rem.model;
 
 import java.util.Date;
 
+import javax.persistence.Column;
+
 import es.capgemini.devon.dto.WebDto;
+import es.pfsgroup.plugin.rem.model.dd.DDEntidadesAvalistas;
 
 
 /**
@@ -68,7 +71,38 @@ public class DtoCondiciones extends WebDto {
 	private Boolean operacionExenta;
 	private Boolean inversionDeSujetoPasivo;
 	
+	private Integer mesesFianza;
+	private Double importeFianza;
+	private Boolean fianzaActualizable;
+	private Integer mesesDeposito;
+	private Double importeDeposito;
+	private Boolean depositoActualizable;
+	private String avalista;
+	private String documentoFiador;
+	private String codigoEntidad;
+	private String importeAval;
+	private Integer numeroAval;
+	private Boolean renunciaTanteo;
+	private Boolean carencia;
+	private String mesesCarencia;
+	private String importeCarencia;
+	private Boolean bonificacion;
+	private String mesesBonificacion;
+	private String importeBonificacion;
+	private String duracionBonificacion;
+	private Boolean gastosRepercutibles;
+	private String repercutiblesComments;
+	private String entidadComments;
+	private Boolean checkFijo;
+	private Date fechaFijo;
+	private Double incrementoRentaFijo;
 	
+	private Boolean checkPorcentual;
+	private Boolean checkIPC;
+	private Integer porcentaje;
+	private Boolean checkRevisionMercado;
+	private Date revisionMercadoFecha;
+	private Integer revisionMercadoMeses;
 
 	//********Datos que vienen del activos (no se editan)********
 	private Date fechaUltimaActualizacion;
@@ -78,6 +112,98 @@ public class DtoCondiciones extends WebDto {
 	private String tipoTitulo;
 	private Integer vpo;
 	//********-------------------------------------------********
+	
+	//Datos para el historico de condiciones, que se utilizan en el grid
+	private Date fechaMinima;
+	private Boolean insertarHistorico;
+	
+	public Integer getMesesFianza() {
+		return mesesFianza;
+	}
+
+	public void setMesesFianza(Integer mesesFianza) {
+		this.mesesFianza = mesesFianza;
+	}
+
+	public Double getImporteFianza() {
+		return importeFianza;
+	}
+
+	public void setImporteFianza(Double importeFianza) {
+		this.importeFianza = importeFianza;
+	}
+
+	public Boolean getFianzaActualizable() {
+		return fianzaActualizable;
+	}
+
+	public void setFianzaActualizable(Boolean fianzaActualizable) {
+		this.fianzaActualizable = fianzaActualizable;
+	}
+
+	public Integer getMesesDeposito() {
+		return mesesDeposito;
+	}
+
+	public void setMesesDeposito(Integer mesesDeposito) {
+		this.mesesDeposito = mesesDeposito;
+	}
+
+	public Double getImporteDeposito() {
+		return importeDeposito;
+	}
+
+	public void setImporteDeposito(Double importeDeposito) {
+		this.importeDeposito = importeDeposito;
+	}
+
+	public Boolean getDepositoActualizable() {
+		return depositoActualizable;
+	}
+
+	public void setDepositoActualizable(Boolean depositoActualizable) {
+		this.depositoActualizable = depositoActualizable;
+	}
+
+	public String getAvalista() {
+		return avalista;
+	}
+
+	public void setAvalista(String avalista) {
+		this.avalista = avalista;
+	}
+
+	public String getDocumentoFiador() {
+		return documentoFiador;
+	}
+
+	public void setDocumentoFiador(String documentoFiador) {
+		this.documentoFiador = documentoFiador;
+	}
+
+	public String getCodigoEntidad() {
+		return codigoEntidad;
+	}
+
+	public void setCodigoEntidad(String codigoEntidad) {
+		this.codigoEntidad = codigoEntidad;
+	}
+
+	public String getImporteAval() {
+		return importeAval;
+	}
+
+	public void setImporteAval(String importeAval) {
+		this.importeAval = importeAval;
+	}
+
+	public Integer getNumeroAval() {
+		return numeroAval;
+	}
+
+	public void setNumeroAval(Integer numeroAval) {
+		this.numeroAval = numeroAval;
+	}
 
 	public Long getIdCondiciones() {
 		return idCondiciones;
@@ -529,7 +655,184 @@ public class DtoCondiciones extends WebDto {
 
 	public void setInversionDeSujetoPasivo(Boolean inversionDeSujetoPasivo) {
 		this.inversionDeSujetoPasivo = inversionDeSujetoPasivo;
-	}  
-   	
-   	
+	}
+
+	public Boolean getRenunciaTanteo() {
+		return renunciaTanteo;
+	}
+
+	public void setRenunciaTanteo(Boolean renunciaTanteo) {
+		this.renunciaTanteo = renunciaTanteo;
+	}
+
+	public Boolean getCarencia() {
+		return carencia;
+	}
+
+	public void setCarencia(Boolean carencia) {
+		this.carencia = carencia;
+	}
+
+	public Boolean getBonificacion() {
+		return bonificacion;
+	}
+
+	public void setBonificacion(Boolean bonificacion) {
+		this.bonificacion = bonificacion;
+	}
+
+	public Boolean getGastosRepercutibles() {
+		return gastosRepercutibles;
+	}
+
+	public void setGastosRepercutibles(Boolean gastosRepercutibles) {
+		this.gastosRepercutibles = gastosRepercutibles;
+	}
+
+	public String getMesesCarencia() {
+		return mesesCarencia;
+	}
+
+	public void setMesesCarencia(String mesesCarencia) {
+		this.mesesCarencia = mesesCarencia;
+	}
+
+	public String getImporteCarencia() {
+		return importeCarencia;
+	}
+
+	public void setImporteCarencia(String importeCarencia) {
+		this.importeCarencia = importeCarencia;
+	}
+
+	public String getMesesBonificacion() {
+		return mesesBonificacion;
+	}
+
+	public void setMesesBonificacion(String mesesBonificacion) {
+		this.mesesBonificacion = mesesBonificacion;
+	}
+
+	public String getImporteBonificacion() {
+		return importeBonificacion;
+	}
+
+	public void setImporteBonificacion(String importeBonificacion) {
+		this.importeBonificacion = importeBonificacion;
+	}
+
+	public String getDuracionBonificacion() {
+		return duracionBonificacion;
+	}
+
+	public void setDuracionBonificacion(String duracionBonificacion) {
+		this.duracionBonificacion = duracionBonificacion;
+	}
+
+	public String getRepercutiblesComments() {
+		return repercutiblesComments;
+	}
+
+	public void setRepercutiblesComments(String repercutiblesComments) {
+		this.repercutiblesComments = repercutiblesComments;
+	}
+
+	public String getEntidadComments() {
+		return entidadComments;
+	}
+
+	public void setEntidadComments(String entidadComments) {
+		this.entidadComments = entidadComments;
+	}
+
+	public Boolean getCheckFijo() {
+		return checkFijo;
+	}
+
+	public void setCheckFijo(Boolean checkFijo) {
+		this.checkFijo = checkFijo;
+	}
+
+	public Date getFechaFijo() {
+		return fechaFijo;
+	}
+
+	public void setFechaFijo(Date fechaFijo) {
+		this.fechaFijo = fechaFijo;
+	}
+
+	public Double getIncrementoRentaFijo() {
+		return incrementoRentaFijo;
+	}
+
+	public void setIncrementoRentaFijo(Double incrementoRentaFijo) {
+		this.incrementoRentaFijo = incrementoRentaFijo;
+	}
+
+	public Boolean getCheckPorcentual() {
+		return checkPorcentual;
+	}
+
+	public void setCheckPorcentual(Boolean checkPorcentual) {
+		this.checkPorcentual = checkPorcentual;
+	}
+
+	public Boolean getCheckIPC() {
+		return checkIPC;
+	}
+
+	public void setCheckIPC(Boolean checkIPC) {
+		this.checkIPC = checkIPC;
+	}
+
+	public Integer getPorcentaje() {
+		return porcentaje;
+	}
+
+	public void setPorcentaje(Integer porcentaje) {
+		this.porcentaje = porcentaje;
+	}
+
+	public Boolean getCheckRevisionMercado() {
+		return checkRevisionMercado;
+	}
+
+	public void setCheckRevisionMercado(Boolean checkRevisionMercado) {
+		this.checkRevisionMercado = checkRevisionMercado;
+	}
+
+	public Date getRevisionMercadoFecha() {
+		return revisionMercadoFecha;
+	}
+
+	public void setRevisionMercadoFecha(Date revisionMercadoFecha) {
+		this.revisionMercadoFecha = revisionMercadoFecha;
+	}
+
+	public Integer getRevisionMercadoMeses() {
+		return revisionMercadoMeses;
+	}
+
+	public void setRevisionMercadoMeses(Integer revisionMercadoMeses) {
+		this.revisionMercadoMeses = revisionMercadoMeses;
+	}
+
+	public Date getFechaMinima() {
+		return fechaMinima;
+	}
+
+	public void setFechaMinima(Date fechaMinima) {
+		this.fechaMinima = fechaMinima;
+	}
+
+	public Boolean getInsertarHistorico() {
+		return insertarHistorico;
+	}
+
+	public void setInsertarHistorico(Boolean insertarHistorico) {
+		this.insertarHistorico = insertarHistorico;
+	}
+
+	
+	
 }

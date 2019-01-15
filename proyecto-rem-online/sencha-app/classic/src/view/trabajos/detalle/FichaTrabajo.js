@@ -246,7 +246,6 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
 											{
 												xtype: 'checkboxfieldbase',
 												boxLabel:  HreRem.i18n('title.fecha.tope'),												
-												bind: '{trabajo.checkFechaTope}',
 												reference: 'checkFechaTope',
 												listeners: {
 													change: function(check, checked) {																		
@@ -552,11 +551,12 @@ Ext.define('HreRem.view.trabajos.detalle.FichaTrabajo', {
         ];  
     	me.callParent();
     	var cartera= me.lookupController().getViewModel().get('trabajo').get('codCartera');
-    	if(CONST.CARTERA['SAREB'] == cartera){
-        	me.down("[reference=checkRequerimiento]").setVisible(true);        	
-        }else{
-        	me.down("[reference=checkRequerimiento]").setVisible(false);
-        }
+    	var fechatope = me.lookupController().getViewModel().get('trabajo').get('fechaTope');
+    	if(fechatope !== null){
+    		me.down("[reference=checkFechaTope]").setValue(true);
+    	}else {
+    		me.down("[reference=checkFechaTope]").setValue(false);
+    	}    	
     },
 
     funcionRecargar: function() {

@@ -42,6 +42,14 @@ public class ActivoOferta implements Serializable {
 	private Double porcentajeParticipacion;
 	
 	
+	public Long getOferta() {
+		return oferta;
+	}
+
+	public void setOferta(Long oferta) {
+		this.oferta = oferta;
+	}
+	
 	public Double getImporteActivoOferta() {
 		return importeActivoOferta;
 	}

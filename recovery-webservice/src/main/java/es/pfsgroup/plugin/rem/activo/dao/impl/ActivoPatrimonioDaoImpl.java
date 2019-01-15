@@ -27,7 +27,7 @@ public class ActivoPatrimonioDaoImpl extends AbstractEntityDao<ActivoPatrimonio,
 	@Override
 	public DDAdecuacionAlquiler getAdecuacionAlquilerFromPatrimonioByIdActivo(Long idActivo) {
 		Criteria criteria = getSession().createCriteria(ActivoPatrimonio.class);
-		criteria.setProjection(Projections.property("AdecuacionAlquiler"));
+		criteria.setProjection(Projections.property("adecuacionAlquiler"));
 		criteria.add(Restrictions.eq("activo.id", idActivo));
 
 		return HibernateUtils.castObject(DDAdecuacionAlquiler.class, criteria.uniqueResult());

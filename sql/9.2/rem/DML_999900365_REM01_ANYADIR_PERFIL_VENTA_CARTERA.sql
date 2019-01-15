@@ -34,11 +34,49 @@ BEGIN
 
 DBMS_OUTPUT.PUT_LINE('[INICIO]');
 
-	V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.PEF_PERFILES (PEF_ID, PEF_DESCRIPCION_LARGA, PEF_DESCRIPCION, USUARIOCREAR, FECHACREAR, PEF_CODIGO)
-		VALUES
-		(S_PEF_PERFILES.NEXTVAL, ''Perfil de carga masiva Venta Cartera'', ''Perfil de carga masiva Venta Cartera'', ''REMVIP-2455'', SYSDATE, ''PMSVVC'')';
+  V_MSQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.PEF_PERFILES WHERE PEF_CODIGO = ''PMSVVC''';
 
-  EXECUTE IMMEDIATE V_MSQL;
+  EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
+
+  IF V_NUM_TABLAS = 0 THEN
+
+  	V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.PEF_PERFILES (PEF_ID, PEF_DESCRIPCION_LARGA, PEF_DESCRIPCION, USUARIOCREAR, FECHACREAR, PEF_CODIGO)
+  		VALUES
+  		(S_PEF_PERFILES.NEXTVAL, ''Perfil de carga masiva Venta Cartera'', ''Perfil de carga masiva Venta Cartera'', ''REMVIP-2455'', SYSDATE, ''PMSVVC'')';
+
+    EXECUTE IMMEDIATE V_MSQL;
+  
+  END IF;
+
+  V_MSQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA||'.PEF_PERFILES WHERE PEF_CODIGO = ''FTI''';
+
+  EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS;
+
+  IF V_NUM_TABLAS = 0 THEN
+
+    V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.PEF_PERFILES 
+            (PEF_ID, 
+            PEF_CODIGO, 
+            PEF_DESCRIPCION, 
+            PEF_DESCRIPCION_LARGA,
+            VERSION, 
+            USUARIOCREAR, 
+            FECHACREAR,
+            BORRADO 
+            )VALUES(
+            '||V_ESQUEMA||'.S_PEF_PERFILES.NEXTVAL,
+            ''FTI'',
+            ''Visualizar los botones'',
+            ''Visualizar los botones para exportar facturas tasas e impuestos'',
+            0,
+            ''REMVIP-2604'',
+            SYSDATE,
+            0
+            )';
+
+    EXECUTE IMMEDIATE V_MSQL;
+
+  END IF;
 
 	#ESQUEMA#.SP_PERFILADO_FUNCIONES('REMVIP-2455');
     

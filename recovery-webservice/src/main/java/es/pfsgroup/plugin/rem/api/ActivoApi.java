@@ -39,6 +39,7 @@ import es.pfsgroup.plugin.rem.model.DtoComunidadpropietariosActivo;
 import es.pfsgroup.plugin.rem.model.DtoCondicionEspecifica;
 import es.pfsgroup.plugin.rem.model.DtoCondicionantesDisponibilidad;
 import es.pfsgroup.plugin.rem.model.DtoEstadosInformeComercialHistorico;
+import es.pfsgroup.plugin.rem.model.DtoHistoricoDestinoComercial;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoMediador;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPreciosFilter;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPresupuestosFilter;
@@ -51,6 +52,7 @@ import es.pfsgroup.plugin.rem.model.DtoPropuestaActivosVinculados;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
 import es.pfsgroup.plugin.rem.model.DtoReglasPublicacionAutomatica;
 import es.pfsgroup.plugin.rem.model.DtoTasacion;
+import es.pfsgroup.plugin.rem.model.HistoricoDestinoComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.Reserva;
@@ -62,6 +64,7 @@ import es.pfsgroup.plugin.rem.model.VTasacionCalculoLBK;
 import es.pfsgroup.plugin.rem.model.Visita;
 import es.pfsgroup.plugin.rem.rest.dto.File;
 import es.pfsgroup.plugin.rem.rest.dto.PortalesDto;
+
 
 public interface ActivoApi {
 
@@ -141,7 +144,7 @@ public interface ActivoApi {
 	@BusinessOperationDefinition("activoManager.isIntegradoAgrupacionObraNueva")
 	boolean isIntegradoAgrupacionObraNueva(Long id, Usuario usuarioLogado);
 
-	
+
 	public boolean isIntegradoAgrupacionComercial(Activo activo);
 
 	public boolean necesitaDocumentoInformeOcupacion(Activo activo);
@@ -501,6 +504,14 @@ public interface ActivoApi {
 	 * @return
 	 */
 	boolean isActivoVendido(Activo activo);
+
+	/**
+	 * Comrpueba si el activo esta vendido, viendo si tiene fecha de escritura (en Formalizacion)
+	 *
+	 * @param activo
+	 * @return
+	 */
+	boolean isActivoAlquilado(Activo activo);
 
 	/**
 	 * Comprueba si el activo esta incluido en alguna agrupacion VIGENTE de tipo Asistida (PDV)
@@ -987,29 +998,44 @@ public interface ActivoApi {
 
 	List<VTasacionCalculoLBK> getVistaTasacion(Long idAgrupacion);
 
+	/**
+	 *
+	 * Transforma una lista de HistoricoDestinoComercial en su correspondiente dto
+	 *
+	 * @param hdc
+	 * @return List<DtoHistoricoDestinoComercial>
+	 */
+	List<DtoHistoricoDestinoComercial> getListDtoHistoricoDestinoComercialByBeanList(List<HistoricoDestinoComercial> hdc);
+
+	DtoHistoricoDestinoComercial getDtoHistoricoDestinoComercialByBean(HistoricoDestinoComercial hdc);
+
+	List<DtoHistoricoDestinoComercial> getDtoHistoricoDestinoComercialByActivo(Long id);
+
+	void updateHistoricoDestinoComercial(Activo activo, Object[] extraArgs);
+
 	boolean isActivoEnPuja(Activo activo);
 
 	boolean updateImpuestos(DtoImpuestosActivo dtoImpuestosFilter) throws ParseException;
 
 	DtoActivoFichaCabecera getActivosAgrupacionRestringida(Long idActivo);
 
-	public Long getIdByNumActivo(Long numActivo);
+	Long getIdByNumActivo(Long numActivo);
 
-	public Integer getGeolocalizacion(Activo activo);
+	Integer getGeolocalizacion(Activo activo);
 
 	/**
 	 * Devuelve true or false en funcion de si tiene un adjunto el activo y cumple ciertas caracteristicas
 	 *
 	 * @param idActivo
-	 * @return 
+	 * @return
 	 */
-	public boolean compruebaParaEnviarEmailAvisoOcupacion(DtoActivoSituacionPosesoria activoDto, Long id) ; 
-	
+	boolean compruebaParaEnviarEmailAvisoOcupacion(DtoActivoSituacionPosesoria activoDto, Long id) ;
+
 	/**
 	 * Devuelve true or false en funcion de lo que devuelve el GD y existe el adjunto con la matricula que le pasamos por parametro
 	 *
 	 * @param idActivo, matriculaActivo
-	 * @return 
+	 * @return
 	 */
-	public boolean compruebaSiExisteActivoBienPorMatricula(Long idActivo, String matriculaActivo);
+	boolean compruebaSiExisteActivoBienPorMatricula(Long idActivo, String matriculaActivo);
 }

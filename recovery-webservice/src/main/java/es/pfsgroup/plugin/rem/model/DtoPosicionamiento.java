@@ -33,6 +33,8 @@ public class DtoPosicionamiento extends WebDto implements Comparable<DtoPosicion
 	private Date fechaHoraAviso;
 	private Date fechaAlta;
 	private Date fechaFinPosicionamiento;
+	private String lugarFirma;
+	private Date fechaHoraFirma;
 	
 	
 	public Long getIdPosicionamiento() {
@@ -100,8 +102,20 @@ public class DtoPosicionamiento extends WebDto implements Comparable<DtoPosicion
 	}
 	public void setFechaFinPosicionamiento(Date fechaFinPosicionamiento) {
 		this.fechaFinPosicionamiento = fechaFinPosicionamiento;
-	} 	
-	
+	}
+	public String getLugarFirma() {
+		return lugarFirma;
+	}
+	public void setLugarFirma(String lugarFirma) {
+		this.lugarFirma = lugarFirma;
+	}	
+	public Date getFechaHoraFirma() {
+		return fechaHoraFirma;
+	}
+	public void setFechaHoraFirma(Date fechaHoraFirma) {
+		this.fechaHoraFirma = fechaHoraFirma;
+	}
+
 	@Override
 	public int compareTo(DtoPosicionamiento o) {
 		

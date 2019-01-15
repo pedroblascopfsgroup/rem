@@ -64,6 +64,12 @@ abstract public class AbstractMSVActualizador implements MSVLiberator {
 			Exception {
 		return this.procesaFila(exc, fila, prmToken);
 	}
+	
+	@Transactional(readOnly = false)
+	public ResultadoProcesarFila procesaFila(MSVHojaExcel exc, int fila, Long prmToken,Object[] extraArgs)
+			throws IOException, ParseException, JsonViewerException, SQLException, Exception{
+			return this.procesaFila(exc, fila, prmToken);
+	}
 
 	public Boolean isValidFor(MSVDDOperacionMasiva tipoOperacion) {
 
@@ -75,7 +81,6 @@ abstract public class AbstractMSVActualizador implements MSVLiberator {
 	}
 
 	@Override
-	@Transactional(readOnly = false)
 	public Boolean liberaFichero(MSVDocumentoMasivo file) throws IllegalArgumentException, IOException, JsonViewerException, SQLException, Exception {
 
 		MSVHojaExcel exc = proxyFactory.proxy(ExcelManagerApi.class).getHojaExcel(file);
@@ -97,7 +102,14 @@ abstract public class AbstractMSVActualizador implements MSVLiberator {
 						resultProcesaFila = this.procesaFila(exc, fila, token, context);
 					} else {
 						transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
-						resultProcesaFila = this.procesaFila(exc, fila, token);
+						
+						if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_PERIMETRO_ACTIVO
+								.equals(file.getProcesoMasivo().getTipoOperacion().getCodigo())) {
+							resultProcesaFila = this.procesaFila(exc, fila, token, file.getExtraArgs());
+						} else {
+							resultProcesaFila = this.procesaFila(exc, fila, token);
+						}
+						
 						transactionManager.commit(transaction);
 					}
 					if(resultProcesaFila.getErrorDesc() != null && !resultProcesaFila.getErrorDesc().isEmpty()) {
@@ -136,8 +148,6 @@ abstract public class AbstractMSVActualizador implements MSVLiberator {
 
 			processAdapter.setExcelResultadosProcesado(archivo, fileItemResultados);
 
-			this.postProcesado(exc);
-
 		} catch (Exception e) {
 			logger.error("Error procesando fichero", e);
 			return false;
@@ -160,7 +170,6 @@ abstract public class AbstractMSVActualizador implements MSVLiberator {
 	public void preProcesado(MSVHojaExcel exc, ProcesoMasivoContext context) throws NumberFormatException, IllegalArgumentException, IOException, ParseException {
 	}
 
-	@Transactional(readOnly = false)
 	public void postProcesado(MSVHojaExcel exc) throws NumberFormatException, IllegalArgumentException, IOException, ParseException {
 	}
 

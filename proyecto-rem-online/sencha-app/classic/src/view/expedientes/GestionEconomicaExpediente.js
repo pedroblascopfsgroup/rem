@@ -13,7 +13,6 @@ Ext.define('HreRem.view.expedientes.GestionEconomicaExpediente', {
         var codigoTipoProveedorFilter= null;
         me.codigoTipoProveedorFilter=null;
         var storeProveedores=null;
-        
 		me.setTitle(HreRem.i18n('title.gestion.economica'));
         var items= [
 
@@ -229,8 +228,8 @@ Ext.define('HreRem.view.expedientes.GestionEconomicaExpediente', {
 										model: 'HreRem.model.ComboBase',
 										proxy: {
 											type: 'uxproxy',
-											remoteUrl: 'generic/getDiccionario',
-											extraParams: {diccionario: 'tiposCalculo'}
+											remoteUrl: 'expedientecomercial/getComboTipoCalculo',
+											extraParams: {idExpediente: me.lookupController().getViewModel().get("expediente.id")}
 										},
 										autoLoad: true
 									}),

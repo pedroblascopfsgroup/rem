@@ -25,47 +25,46 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
     
 	listeners: {
 		boxready: 'cargarDatosComprador',
-		show: function() {		
-			var me = this;			
-//			me.resetWindow();			
+		show: function() {
+			var me = this;
 		}
 	},
 
-    initComponent: function() { 	
+    initComponent: function() {
     	try{
-	    	var me = this;	
+	    	var me = this;
 	    	var modoEdicion = false;
-	    	
+
 		  	var tipoExpedienteAlquiler = CONST.TIPOS_EXPEDIENTE_COMERCIAL["ALQUILER"];
 			var title = HreRem.i18n("title.windows.datos.comprador");
 			var labelTitlePorcentaje = HreRem.i18n('fieldlabel.porcion.compra');
 			var btnCrear = HreRem.i18n('btn.crear');
-			
+
 			var tipoExpedienteCodigo = me.expediente.data.tipoExpedienteCodigo;
-		
+
 			if(tipoExpedienteCodigo === tipoExpedienteAlquiler){
 				title = HreRem.i18n("title.windows.datos.inquilino");
 				labelTitlePorcentaje = HreRem.i18n('fieldlabel.porcion.alquiler');
 				btnCrear = HreRem.i18n('btn.crear.Inquilino');
 			};
-	
+
 			me.setTitle(title);
-	
+
 	    	me.buttonAlign = 'right';
-	
+
 	    	if(!Ext.isEmpty(me.idComprador)){
 				me.buttons = [ { itemId: 'btnModificar', text: HreRem.i18n('btn.modificar'), handler: 'onClickBotonModificarComprador', bind:{disabled: !me.esEditable()}},
 	    					   { itemId: 'btnCancelar', text: HreRem.i18n('btn.cancelBtnText'), handler: 'onClickBotonCerrarComprador'}];
 				modoEdicion = true;
-			
+
 	    	} else {
 	    		me.buttons = [ { itemId: 'btnCrear', text: btnCrear, handler: 'onClickBotonCrearComprador'},
 	    					   { itemId: 'btnCancelar', text: HreRem.i18n('btn.cancelBtnText'), handler: 'onClickBotonCerrarComprador'}];
 	    	}
-	
+
 	    	me.items = [
 	    				{
-		    				xtype: 'formBase', 
+		    				xtype: 'formBase',
 		    				collapsed: false,
 		   			 		scrollable	: 'y',
 		   			 		recordName: "comprador",
@@ -74,10 +73,10 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 		    				listeners: {
 			    				boxready: function(window){
 			    					var me = this;
-									
+
 									Ext.Array.each(window.query('field[isReadOnlyEdit]'),
-										function (field, index) 
-											{ 								
+										function (field, index)
+											{
 												field.fireEvent('edit');
 												if(index == 0) field.focus();
 												field.setReadOnly(!me.up('datoscompradorwindow').modoEdicion)
@@ -85,7 +84,7 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 									);
 			    				}
 		    				},
-						    
+
 	    					items: [
 	    								{
 		    								xtype:'fieldsettable',
@@ -102,8 +101,8 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 		    										}
 		    									]
 	    							    },
-	    								{    
-					                
+	    								{
+
 											xtype:'fieldsettable',
 											collapsible: false,
 											defaultType: 'textfieldbase',
@@ -121,7 +120,7 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 	//							                	readOnly: false,
 	//							                	bind:		'{comprador.titularContratacion}'
 	//											},
-													{ 
+													{
 														xtype: 'comboboxfieldbase',
 											        	fieldLabel: HreRem.i18n('fieldlabel.tipo.persona'),
 														reference: 'tipoPersona',
@@ -146,7 +145,7 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 										            		value: '{comprador.titularReserva}'
 										            	}
 							                		},
-													{ 
+													{
 							                			xtype:'numberfieldbase',
 											        	fieldLabel:  labelTitlePorcentaje,
 											        	reference: 'porcionCompra',
@@ -177,7 +176,7 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 							                		}
 												]
 							           },
-							           {    
+							           {
 											xtype:'fieldsettable',
 											collapsible: false,
 											defaultType: 'textfieldbase',
@@ -190,7 +189,7 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 											title: HreRem.i18n('fieldlabel.datos.identificacion'),
 											items :
 												[
-													{ 
+													{
 														xtype: 'comboboxfieldbase',
 											        	fieldLabel: HreRem.i18n('fieldlabel.tipoDocumento'),
 														reference: 'tipoDocumento',
@@ -213,28 +212,28 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 										            	},
 										            	allowBlank: false
 							                		},
-													{ 
+													{
 											        	fieldLabel:  HreRem.i18n('header.nombre.razon.social'),
 											        	reference: 'nombreRazonSocial',
 											        	bind: {
 										            		value: '{comprador.nombreRazonSocial}'
 										            	}
 											        },
-											        { 
+											        {
 											        	fieldLabel:  HreRem.i18n('fieldlabel.apellidos'),
 											        	reference: 'apellidos',
 											        	bind: {
 										            		value: '{comprador.apellidos}'
 										            	}
 											        },
-											        { 
+											        {
 											        	fieldLabel:  HreRem.i18n('fieldlabel.direccion'),
 											        	reference: 'direccion',
 											        	bind: {
 										            		value: '{comprador.direccion}'
 										            	}
 											        },
-	//										        { 
+	//										        {
 	//													xtype: 'comboboxfieldbase',
 	//										        	fieldLabel: HreRem.i18n('fieldlabel.provincia'),
 	//													reference: 'provincia',
@@ -257,14 +256,14 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 															select: 'onChangeChainedCombo'
 							    						}
 													},
-											        { 
+											        {
 											        	fieldLabel:  HreRem.i18n('fieldlabel.telefono1'),
 											        	reference: 'telefono1',
 											        	bind: {
 										            		value: '{comprador.telefono1}'
 										            	}
 											        },
-											        
+
 											        {
 														xtype: 'comboboxfieldbase',
 														fieldLabel: HreRem.i18n('fieldlabel.municipio'),
@@ -275,14 +274,14 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 										            		disabled: '{!comprador.provinciaCodigo}'
 										            	}
 													},
-											        { 
+											        {
 											        	fieldLabel:  HreRem.i18n('fieldlabel.telefono2'),
 											        	reference: 'telefono2',
 											        	bind: {
 										            		value: '{comprador.telefono2}'
 										            	}
 											        },
-											        { 
+											        {
 											        	xtype:'numberfieldbase',
 											        	fieldLabel:  HreRem.i18n('fieldlabel.codigo.postal'),
 											        	reference: 'codigoPostal',
@@ -290,7 +289,7 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 										            		value: '{comprador.codigoPostal}'
 										            	}
 											        },
-											        { 
+											        {
 											        	fieldLabel:  HreRem.i18n('fieldlabel.email'),
 											        	reference: 'email',
 											        	bind: {
@@ -310,7 +309,7 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 											        	xtype      : 'container',
 								                        layout: 'box',
 								                        items: [
-								                        	{ 
+								                        	{
 																xtype: 'comboboxfieldbase',
 																width: 360,
 													        	fieldLabel: HreRem.i18n('title.windows.datos.cliente.ursus'),
@@ -345,7 +344,7 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 								                            }
 								                        ]
 											        },
-											        
+
 											       {
 						                            	xtype: 'textfieldbase',
 												        fieldLabel:  HreRem.i18n('header.numero.ursus'),
@@ -356,7 +355,7 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 											            },
 											            editable: true
 								                    },
-								                    
+
 								                    {
 						                            	xtype: 'textfieldbase',
 												        fieldLabel:  HreRem.i18n('header.numero.ursus.bh'),
@@ -366,7 +365,7 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 											            	hidden: '{!esBankiaHabitat}'
 											            },
 											            editable: true
-						                            }										        
+						                            }
 												]
 							           },
 							           {
@@ -382,7 +381,7 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 											title: HreRem.i18n('title.nexos'),
 											items :
 												[
-													{ 
+													{
 														xtype: 'comboboxfieldbase',
 											        	fieldLabel: HreRem.i18n('fieldlabel.estado.civil'),
 														reference: 'estadoCivil',
@@ -408,21 +407,21 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 										            	},
 										            	allowBlank:true
 							                		},
-													{ 
+													{
 											        	fieldLabel:  HreRem.i18n('fieldlabel.num.reg.conyuge'),
 											        	reference: 'numRegConyuge',
 											        	bind: {
 										            		value: '{comprador.documentoConyuge}'
 										            	}
 											        },
-											        { 
+											        {
 											        	fieldLabel:  HreRem.i18n('fieldlabel.relacion.hre'),
 											        	reference: 'relacionHre',
 											        	bind: {
 										            		value: '{comprador.relacionHre}'
 										            	}
 											        },
-											        { 
+											        {
 											        	xtype: 'comboboxfieldbase',
 											        	fieldLabel:  HreRem.i18n('fieldlabel.antiguo.deudor'),
 											        	reference: 'antiguoDeudor',
@@ -431,7 +430,7 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 											        		value: '{comprador.antiguoDeudor}'
 										            	}
 											        },
-											        { 
+											        {
 											        	xtype: 'comboboxfieldbase',
 											        	fieldLabel:  HreRem.i18n('fieldlabel.relacion.ant.deudor'),
 											        	reference: 'relacionAntDeudor',
@@ -455,7 +454,7 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 											title: HreRem.i18n('title.datos.representante'),
 											items :
 												[
-													{ 
+													{
 														xtype: 'comboboxfieldbase',
 											        	fieldLabel: HreRem.i18n('fieldlabel.tipoDocumento'),
 														reference: 'tipoDocumentoRte',
@@ -494,21 +493,21 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 										            		}
 										            	}
 							                		},
-													{ 
+													{
 											        	fieldLabel:  HreRem.i18n('header.nombre.razon.social'),
 											        	reference: 'nombreRazonSocialRte',
 											        	bind: {
 										            		value: '{comprador.nombreRazonSocialRte}'
 										            	}
 											        },
-											        { 
+											        {
 											        	fieldLabel:  HreRem.i18n('fieldlabel.apellidos'),
 											        	reference: 'apellidosRte',
 											        	bind: {
 										            		value: '{comprador.apellidosRte}'
 										            	}
 											        },
-											        { 
+											        {
 											        	fieldLabel:  HreRem.i18n('fieldlabel.direccion'),
 											        	reference: 'direccionRte',
 											        	bind: {
@@ -529,7 +528,7 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 															select: 'onChangeChainedCombo'
 							    						}
 													},
-	//										        { 
+	//										        {
 	//													xtype: 'comboboxfieldbase',
 	//										        	fieldLabel: HreRem.i18n('fieldlabel.provincia'),
 	//													reference: 'provinciaRte',
@@ -538,15 +537,15 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 	//									            		value: '{comprador.provinciaRteCondigo}'
 	//									            	}
 	//										        },
-	//										        
-											        { 
+	//
+											        {
 											        	fieldLabel:  HreRem.i18n('fieldlabel.telefono1'),
 											        	reference: 'telefono1Rte',
 											        	bind: {
 										            		value: '{comprador.telefono1Rte}'
 										            	}
 											        },
-	//										        { 
+	//										        {
 	//													xtype: 'comboboxfieldbase',
 	//										        	fieldLabel: HreRem.i18n('fieldlabel.municipio'),
 	//													reference: 'municipioRte',
@@ -565,15 +564,15 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 										            		disabled: '{!comprador.provinciaRteCodigo}'
 										            	}
 													},
-	//										        
-											        { 
+	//
+											        {
 											        	fieldLabel:  HreRem.i18n('fieldlabel.telefono2'),
 											        	reference: 'telefono2Rte',
 											        	bind: {
 										            		value: '{comprador.telefono2Rte}'
 										            	}
 											        },
-											        { 
+											        {
 											        	xtype:'numberfieldbase',
 											        	fieldLabel:  HreRem.i18n('fieldlabel.codigo.postal'),
 											        	reference: 'codigoPostalRte',
@@ -581,7 +580,7 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 										            		value: '{comprador.codigoPostalRte}'
 										            	}
 											        },
-											        { 
+											        {
 											        	fieldLabel:  HreRem.i18n('fieldlabel.email'),
 											        	reference: 'emailRte',
 											        	bind: {
@@ -602,8 +601,8 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 	        				]
 	    			}
 	    	]
-	
-	    	
+
+
     	}catch(err) {
 			Ext.global.console.log(err);
 		}

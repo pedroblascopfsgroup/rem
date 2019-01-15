@@ -62,7 +62,6 @@ import es.pfsgroup.plugin.rem.model.DtoAltaActivoThirdParty;
 import es.pfsgroup.plugin.rem.model.Ejercicio;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.PresupuestoActivo;
-import es.pfsgroup.plugin.rem.model.dd.DDAdecuacionAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
@@ -79,7 +78,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoEstadoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoGradoPropiedad;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoHabitaculo;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoInquilino;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTasacion;
@@ -93,14 +91,14 @@ import es.pfsgroup.plugin.rem.service.AltaActivoThirdPartyService;
 @Component
 public class AltaActivoThirdParty implements AltaActivoThirdPartyService {
 
-	BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
+	private BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 
 	@Autowired
 	private ActivoAdapter activoAdapter;
 
 	@Autowired
 	private GenericABMDao genericDao;
-	
+
 	@Autowired
 	private ActivoPatrimonioDao activoPatrimonioDao;
 
@@ -128,7 +126,7 @@ public class AltaActivoThirdParty implements AltaActivoThirdPartyService {
 	}
 
 	@Override
-	@Transactional(readOnly = false)
+	@Transactional()
 	public Boolean procesarAlta(DtoAltaActivoThirdParty dtoAATP) throws Exception {
 
 		// Asignar los datos del DTO al nuevo activo y almacenarlo en la DB.
@@ -147,23 +145,21 @@ public class AltaActivoThirdParty implements AltaActivoThirdPartyService {
 			
 			ActivoSituacionPosesoria actSit = new ActivoSituacionPosesoria();
 			actSit.setActivo(activo);
-			actSit.setVersion(new Long(0));
+			actSit.setVersion(0L);
 			actSit.setAuditoria(auditoria);
 			
 			genericDao.save(ActivoSituacionPosesoria.class, actSit);
 			
 			ActivoTitulo actTit = new ActivoTitulo();
 			actTit.setActivo(activo);
-			actTit.setVersion(new Long(0));
+			actTit.setVersion(0L);
 			actTit.setAuditoria(auditoria);
 			if(!Checks.esNulo(dtoAATP.getFechaInscripcion())){
 				actTit.setFechaInscripcionReg(dtoAATP.getFechaInscripcion());
 			}
 			
 			genericDao.save(ActivoTitulo.class, actTit);
-			
 
-			
 		} else {
 			return false;
 		}
@@ -343,9 +339,7 @@ private void dtoToEntitiesOtras(DtoAltaActivoThirdParty dtoAATP, Activo activo) 
 			vivienda.setActivo(activo);
 			vivienda.setTipoActivo(activo.getTipoActivo());
 			vivienda.setNumPlantasInter(dtoAATP.getNumPlantasVivienda());
-//<<<<<<< HEAD
-//			vivienda.setMediadorInforme(this.obtenerMediador(dtoAATP.getNifMediador(),activo.getId()));
-//=======
+
 			if(!Checks.esNulo(dtoAATP.getNifMediador())){
 				Filter f1 = genericDao.createFilter(FilterType.EQUALS, "docIdentificativo", dtoAATP.getNifMediador());
 				Filter f2 = genericDao.createFilter(FilterType.EQUALS, "tipoProveedor.codigo", DDTipoProveedor.COD_MEDIADOR);
@@ -356,7 +350,7 @@ private void dtoToEntitiesOtras(DtoAltaActivoThirdParty dtoAATP, Activo activo) 
 				}
 				vivienda.setMediadorInforme(mediador);
 			}
-//>>>>>>> origin/swat-2.0.16-180430-rem
+
 			beanUtilNotNull.copyProperty(vivienda, "planta", dtoAATP.getNumPlantasVivienda());
 			activoVivienda = vivienda;
 			genericDao.save(ActivoVivienda.class, vivienda);
@@ -364,9 +358,7 @@ private void dtoToEntitiesOtras(DtoAltaActivoThirdParty dtoAATP, Activo activo) 
 			ActivoLocalComercial localComercial = new ActivoLocalComercial();
 			localComercial.setActivo(activo);
 			localComercial.setTipoActivo(activo.getTipoActivo());
-//<<<<<<< HEAD
-//			localComercial.setMediadorInforme(this.obtenerMediador(dtoAATP.getNifMediador(),activo.getId()));
-//=======
+
 			if(!Checks.esNulo(dtoAATP.getNifMediador())){
 				Filter f1 = genericDao.createFilter(FilterType.EQUALS, "docIdentificativo", dtoAATP.getNifMediador());
 				Filter f2 = genericDao.createFilter(FilterType.EQUALS, "tipoProveedor.codigo", DDTipoProveedor.COD_MEDIADOR);
@@ -377,7 +369,7 @@ private void dtoToEntitiesOtras(DtoAltaActivoThirdParty dtoAATP, Activo activo) 
 				}
 				localComercial.setMediadorInforme(mediador);
 			}
-//>>>>>>> origin/swat-2.0.16-180430-rem
+
 			beanUtilNotNull.copyProperty(localComercial, "planta", dtoAATP.getNumPlantasVivienda());
 			activoLocalComercial = localComercial;
 			genericDao.save(ActivoLocalComercial.class, localComercial);
@@ -385,9 +377,7 @@ private void dtoToEntitiesOtras(DtoAltaActivoThirdParty dtoAATP, Activo activo) 
 			ActivoPlazaAparcamiento aparcamiento = new ActivoPlazaAparcamiento();
 			aparcamiento.setActivo(activo);
 			aparcamiento.setTipoActivo(activo.getTipoActivo());
-//<<<<<<< HEAD
-//			aparcamiento.setMediadorInforme(this.obtenerMediador(dtoAATP.getNifMediador(),activo.getId()));
-//=======
+
 			if (!Checks.esNulo(dtoAATP.getNifMediador())){
 				Filter f1 = genericDao.createFilter(FilterType.EQUALS, "docIdentificativo", dtoAATP.getNifMediador());
 				Filter f2 = genericDao.createFilter(FilterType.EQUALS, "tipoProveedor.codigo", DDTipoProveedor.COD_MEDIADOR);
@@ -398,7 +388,7 @@ private void dtoToEntitiesOtras(DtoAltaActivoThirdParty dtoAATP, Activo activo) 
 				}
 				aparcamiento.setMediadorInforme(mediador);
 			}
-//>>>>>>> origin/swat-2.0.16-180430-rem
+
 			beanUtilNotNull.copyProperty(aparcamiento, "planta", dtoAATP.getNumPlantasVivienda());
 			activoPlazaAparcamiento = aparcamiento;
 			genericDao.save(ActivoPlazaAparcamiento.class, aparcamiento);
@@ -406,9 +396,7 @@ private void dtoToEntitiesOtras(DtoAltaActivoThirdParty dtoAATP, Activo activo) 
 			ActivoInfoComercial activoInfoComercial = new ActivoInfoComercial();
 			activoInfoComercial.setActivo(activo);
 			activoInfoComercial.setTipoActivo(activo.getTipoActivo());
-//<<<<<<< HEAD
-//			activoInfoComercial.setMediadorInforme(this.obtenerMediador(dtoAATP.getNifMediador(),activo.getId()));
-//=======
+
 			if (!Checks.esNulo(dtoAATP.getNifMediador())){
 				Filter f1 = genericDao.createFilter(FilterType.EQUALS, "docIdentificativo", dtoAATP.getNifMediador());
 				Filter f2 = genericDao.createFilter(FilterType.EQUALS, "tipoProveedor.codigo", DDTipoProveedor.COD_MEDIADOR);
@@ -419,7 +407,7 @@ private void dtoToEntitiesOtras(DtoAltaActivoThirdParty dtoAATP, Activo activo) 
 				}
 				activoInfoComercial.setMediadorInforme(mediador);
 			}
-//>>>>>>> origin/swat-2.0.16-180430-rem
+
 			beanUtilNotNull.copyProperty(activoInfoComercial, "planta", dtoAATP.getNumPlantasVivienda());
 			activoInfoComercialDos = activoInfoComercial;
 			genericDao.save(ActivoInfoComercial.class, activoInfoComercial);
@@ -550,8 +538,7 @@ private void dtoToEntitiesOtras(DtoAltaActivoThirdParty dtoAATP, Activo activo) 
 				genericDao.save(ActivoEdificio.class, activoEdificio);
 				
 				//Gestores				
-				EXTDDTipoGestor tipoGestorComercial = new EXTDDTipoGestor();
-				tipoGestorComercial = (EXTDDTipoGestor) utilDiccionarioApi.dameValorDiccionarioByCod(EXTDDTipoGestor.class, "GCOM");
+				EXTDDTipoGestor tipoGestorComercial = (EXTDDTipoGestor) utilDiccionarioApi.dameValorDiccionarioByCod(EXTDDTipoGestor.class, "GCOM");
 				Filter f1 = genericDao.createFilter(FilterType.EQUALS, "username", dtoAATP.getGestorComercial());
 				Usuario usu = genericDao.get(Usuario.class, f1);
 				GestorEntidadDto dto = new GestorEntidadDto();
@@ -561,8 +548,7 @@ private void dtoToEntitiesOtras(DtoAltaActivoThirdParty dtoAATP, Activo activo) 
 				activoAdapter.insertarGestorAdicional(dto);
 				
 				
-				EXTDDTipoGestor tipoSupervisorComercial = new EXTDDTipoGestor();
-				tipoSupervisorComercial = (EXTDDTipoGestor) utilDiccionarioApi.dameValorDiccionarioByCod(EXTDDTipoGestor.class, "SCOM");
+				EXTDDTipoGestor tipoSupervisorComercial = (EXTDDTipoGestor) utilDiccionarioApi.dameValorDiccionarioByCod(EXTDDTipoGestor.class, "SCOM");
 				Filter f2 = genericDao.createFilter(FilterType.EQUALS, "username", dtoAATP.getSupervisorGestorComercial());
 				Usuario usu2 = genericDao.get(Usuario.class, f2);
 				GestorEntidadDto dto2 = new GestorEntidadDto();
@@ -584,8 +570,7 @@ private void dtoToEntitiesOtras(DtoAltaActivoThirdParty dtoAATP, Activo activo) 
 				}
 				
 				
-				EXTDDTipoGestor tipoSupervisorFormalizacion = new EXTDDTipoGestor();
-				tipoSupervisorFormalizacion = (EXTDDTipoGestor) utilDiccionarioApi.dameValorDiccionarioByCod(EXTDDTipoGestor.class, "SFORM");
+				EXTDDTipoGestor tipoSupervisorFormalizacion = (EXTDDTipoGestor) utilDiccionarioApi.dameValorDiccionarioByCod(EXTDDTipoGestor.class, "SFORM");
 				Filter f4 = genericDao.createFilter(FilterType.EQUALS, "username", dtoAATP.getSupervisorGestorFormalizacion());
 				Usuario usu4 = genericDao.get(Usuario.class, f4);
 				GestorEntidadDto dto4 = new GestorEntidadDto();
@@ -594,8 +579,7 @@ private void dtoToEntitiesOtras(DtoAltaActivoThirdParty dtoAATP, Activo activo) 
 				dto4.setIdTipoGestor(tipoSupervisorFormalizacion.getId());
 				activoAdapter.insertarGestorAdicional(dto4);
 				
-				EXTDDTipoGestor tipoGestorAdmision = new EXTDDTipoGestor();
-				tipoGestorAdmision = (EXTDDTipoGestor) utilDiccionarioApi.dameValorDiccionarioByCod(EXTDDTipoGestor.class, "GADM");
+				EXTDDTipoGestor tipoGestorAdmision = (EXTDDTipoGestor) utilDiccionarioApi.dameValorDiccionarioByCod(EXTDDTipoGestor.class, "GADM");
 				Filter f5 = genericDao.createFilter(FilterType.EQUALS, "username", dtoAATP.getGestorAdmision());
 				Usuario usu5 = genericDao.get(Usuario.class, f5);
 				GestorEntidadDto dto5 = new GestorEntidadDto();
@@ -604,8 +588,7 @@ private void dtoToEntitiesOtras(DtoAltaActivoThirdParty dtoAATP, Activo activo) 
 				dto5.setIdTipoGestor(tipoGestorAdmision.getId());
 				activoAdapter.insertarGestorAdicional(dto5);
 				
-				EXTDDTipoGestor tipoGestorActivos= new EXTDDTipoGestor();
-				tipoGestorActivos = (EXTDDTipoGestor) utilDiccionarioApi.dameValorDiccionarioByCod(EXTDDTipoGestor.class, "GACT");
+				EXTDDTipoGestor tipoGestorActivos = (EXTDDTipoGestor) utilDiccionarioApi.dameValorDiccionarioByCod(EXTDDTipoGestor.class, "GACT");
 				Filter f6 = genericDao.createFilter(FilterType.EQUALS, "username", dtoAATP.getGestorActivos());
 				Usuario usu6 = genericDao.get(Usuario.class, f6);
 				GestorEntidadDto dto6 = new GestorEntidadDto();
@@ -615,8 +598,7 @@ private void dtoToEntitiesOtras(DtoAltaActivoThirdParty dtoAATP, Activo activo) 
 				activoAdapter.insertarGestorAdicional(dto6);
 				
 				if (!Checks.esNulo(dtoAATP.getGestoriaDeFormalizacion())){
-					EXTDDTipoGestor tipoGestoriaFormalizacion= new EXTDDTipoGestor();
-					tipoGestoriaFormalizacion = (EXTDDTipoGestor) utilDiccionarioApi.dameValorDiccionarioByCod(EXTDDTipoGestor.class, "GIAFORM");
+					EXTDDTipoGestor tipoGestoriaFormalizacion = (EXTDDTipoGestor) utilDiccionarioApi.dameValorDiccionarioByCod(EXTDDTipoGestor.class, "GIAFORM");
 					Filter f7 = genericDao.createFilter(FilterType.EQUALS, "username", dtoAATP.getGestoriaDeFormalizacion());
 					Usuario usu7 = genericDao.get(Usuario.class, f7);
 					GestorEntidadDto dto7 = new GestorEntidadDto();
@@ -714,13 +696,10 @@ private void dtoToEntitiesOtras(DtoAltaActivoThirdParty dtoAATP, Activo activo) 
 					}
 					genericDao.save(ActivoAdjudicacionNoJudicial.class, activoAdjudicacionNoJudicial);
 				}
-					
-				
-
 				
 		activo.setBien(bien);
-		genericDao.save(Activo.class, activo);	
-		
+		genericDao.save(Activo.class, activo);
+
 		ActivoPublicacion activoPublicacion = new ActivoPublicacion();
 		activoPublicacion.setActivo(activo);
 		activoPublicacion.setTipoComercializacion((DDTipoComercializacion) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoComercializacion.class, dtoAATP.getDestinoComercialCodigo()));
@@ -734,16 +713,16 @@ private void dtoToEntitiesOtras(DtoAltaActivoThirdParty dtoAATP, Activo activo) 
 		activoPublicacion.setCheckOcultarAlquiler(false);
 		activoPublicacion.setCheckSinPrecioAlquiler(false);
 		activoPublicacion.setCheckOcultarPrecioAlquiler(false);
-		activoPublicacion.setVersion(new Long(0));
-		
+		activoPublicacion.setVersion(0L);
+
 		Auditoria auditoria = new Auditoria();
 		auditoria.setBorrado(false);
 		auditoria.setFechaCrear(new Date());
 		auditoria.setUsuarioCrear("CARGA_MASIVA");
 		activoPublicacion.setAuditoria(auditoria);
-		
+
 		genericDao.save(ActivoPublicacion.class, activoPublicacion);
-		
+
 		ActivoPublicacionHistorico activoPublicacionHistorico = new ActivoPublicacionHistorico();
 		BeanUtils.copyProperties(activoPublicacionHistorico, activoPublicacion);
 		genericDao.save(ActivoPublicacionHistorico.class, activoPublicacionHistorico);
@@ -756,7 +735,7 @@ private void dtoToEntitiesOtras(DtoAltaActivoThirdParty dtoAATP, Activo activo) 
 			if(Checks.esNulo(activoPatrimonio)){
 				activoPatrimonio = new ActivoPatrimonio();
 				activoPatrimonio.setActivo(activo);
-				
+
 			}
 			if (Checks.esNulo(activoPatrimonio.getTipoEstadoAlquiler())) {
 				Filter f1 = genericDao.createFilter(FilterType.EQUALS, "DD_EAL_CODIGO", DDTipoEstadoAlquiler.ESTADO_ALQUILER_LIBRE);
@@ -766,5 +745,5 @@ private void dtoToEntitiesOtras(DtoAltaActivoThirdParty dtoAATP, Activo activo) 
 			genericDao.save(ActivoPatrimonio.class, activoPatrimonio);
 		}
 	}
-	
+
 }

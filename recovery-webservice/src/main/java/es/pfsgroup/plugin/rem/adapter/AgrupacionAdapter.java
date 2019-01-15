@@ -2623,9 +2623,6 @@ public class AgrupacionAdapter {
 									activoPublicacion.setTipoComercializacion(tipoComercializacion);
 								}
 								
-								
-								activoPublicacion.setTipoComercializacion(tipoComercializacion);
-								
 								if(!ofertaVivaAlquiler && DDTipoComercializacion.CODIGO_VENTA.equals(dto.getTipoComercializacionCodigo())) {
 									activoPatrimonio.setCheckHPM(false);
 								}
@@ -2995,7 +2992,7 @@ public class AgrupacionAdapter {
 						ofertas.add(ao.getPrimaryKey().getOferta());
 					}
 				}
-				if(!activoTieneOfertaByTipoOfertaCodigo(ofertas, tipoCodigo))
+				if(activoTieneOfertaByTipoOfertaCodigo(ofertas, tipoCodigo))
 				{
 					return false;
 				}

@@ -243,7 +243,7 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 							ActivoOfertaPk actOfrePk = actOfr.getPrimaryKey();
 							Activo act = actOfrePk.getActivo();
 							ComunicacionGencat comunicacionGencat = comunicacionGencatApi.getByIdActivo(act.getId());
-							if (Checks.esNulo(comunicacionGencat)) {
+							if (!Checks.esNulo(comunicacionGencat)) {
 								DDEstadoComunicacionGencat estadoComunicacion = comunicacionGencat.getEstadoComunicacion();
 								if (DDEstadoComunicacionGencat.COD_CREADO.equals(estadoComunicacion.getCodigo())) {
 									
@@ -272,12 +272,9 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 									comunicacionGencat.setEstadoComunicacion(estado);
 									comunicacionGencat.setFechaAnulacion(new Date());
 									
-								} else if (DDEstadoComunicacionGencat.COD_COMUNICADO.equals(estadoComunicacion.getCodigo())) {
-									Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoComunicacionGencat.COD_ANULADO);
-									DDEstadoComunicacionGencat estado = genericDao.get(DDEstadoComunicacionGencat.class, filtro);
-									comunicacionGencat.setEstadoComunicacion(estado);
-									comunicacionGencat.setFechaAnulacion(new Date());
+									genericDao.save(ComunicacionGencat.class, comunicacionGencat);
 									
+								} else if (DDEstadoComunicacionGencat.COD_COMUNICADO.equals(estadoComunicacion.getCodigo())) {
 									GestorEntidadDto gestorEntidadDto = new GestorEntidadDto();
 									gestorEntidadDto.setIdEntidad(act.getId());
 									gestorEntidadDto.setTipoEntidad(GestorEntidadDto.TIPO_ENTIDAD_ACTIVO);

@@ -250,15 +250,20 @@ public class OfertasController {
 	@RequestMapping(method = RequestMethod.GET)
 	public void generateExcelOferta(Long idOferta, HttpServletRequest request, HttpServletResponse response) throws IOException {
 		
+//		DtoOfertasFilter dto = new DtoOfertasFilter();
+//		dto.setIdOferta(idOferta);
+//		ExcelReport report = new OfertasExcelReport(ofertaApi.getListOfertasFromView(dto));
+//		File file = excelReportGeneratorApi.generateReport(report);
+//		
+//		Oferta oferta = ofertaApi.getOfertaById(idOferta);
+//		notificationOferta.sendNotificationPropuestaOferta(oferta, new FileItem(file));
+//		
+//		excelReportGeneratorApi.sendReport(file, response);
 		DtoOfertasFilter dto = new DtoOfertasFilter();
 		dto.setIdOferta(idOferta);
-		ExcelReport report = new OfertasExcelReport(ofertaApi.getListOfertasFromView(dto));
-		File file = excelReportGeneratorApi.generateReport(report);
+		List<DtoPropuestaAlqBankia> listaDtos = ofertaApi.getListPropuestasAlqBankiaFromView((long) 213342);
 		
-		Oferta oferta = ofertaApi.getOfertaById(idOferta);
-		notificationOferta.sendNotificationPropuestaOferta(oferta, new FileItem(file));
 		
-		excelReportGeneratorApi.sendReport(file, response);
 	}
 	
 	@SuppressWarnings("unchecked")

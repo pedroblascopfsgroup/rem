@@ -1137,7 +1137,7 @@ ELSE
            DBMS_OUTPUT.PUT_LINE('HA ENTRADO');
            
         IF vACTUALIZADO = 'S' AND pHISTORIFICAR = 'S' THEN
-          V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.ACT_AHP_HIST_PUBLICACION
+          V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.ACT_AHP_HIST_PUBLICACION ACT
                         SET AHP_FECHA_FIN_VENTA = SYSDATE
                             ,AHP_FECHA_FIN_ALQUILER = SYSDATE
                             ,USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''

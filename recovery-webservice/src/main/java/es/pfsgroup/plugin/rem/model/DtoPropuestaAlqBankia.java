@@ -23,6 +23,7 @@ public class DtoPropuestaAlqBankia extends WebDto {
 	private BigDecimal importeFianza;
 	private Integer mesesFianza;
 	private BigDecimal importeOferta;
+	private Date fechaAltaOferta;
 	private String  descripcionEstadoPatrimonio;
 	private String nombrePropietario;
 	private Date fechaUltimaTasacion;
@@ -228,6 +229,13 @@ public class DtoPropuestaAlqBankia extends WebDto {
 	}
 	public void setCartera(String cartera) {
 		this.cartera = cartera;
+	}
+	
+	public Date getFechaAltaOferta() {
+		return fechaAltaOferta;
+	}
+	public void setFechaAltaOferta(Date fechaAltaOferta) {
+		this.fechaAltaOferta = fechaAltaOferta;
 	}
 	public static long getSerialversionuid() {
 		return serialVersionUID;

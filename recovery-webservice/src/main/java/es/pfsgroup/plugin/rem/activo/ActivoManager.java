@@ -2492,6 +2492,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		perimetroActivo.setAplicaGestion(0);
 		perimetroActivo.setAplicaTramiteAdmision(0);
 		perimetroActivo.setFechaAplicaComercializar(new Date());
+		perimetroActivo.setAplicaPublicar(true);
 
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDMotivoComercializacion.CODIGO_ASISTIDA);
 		DDMotivoComercializacion motivoComercializacion = genericDao.get(DDMotivoComercializacion.class, filtro);

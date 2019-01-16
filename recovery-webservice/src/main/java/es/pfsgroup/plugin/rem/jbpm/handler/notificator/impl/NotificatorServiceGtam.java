@@ -25,6 +25,7 @@ import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
 import es.pfsgroup.plugin.rem.model.DtoSendNotificator;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VBusquedaCompradoresExpediente;
 import es.pfsgroup.plugin.rem.model.VListadoActivosExpediente;
@@ -69,9 +70,30 @@ public class NotificatorServiceGtam extends AbstractNotificatorService implement
 	public void notificator(ActivoTramite tramite) {
 		ExpedienteComercial expediente = getExpedienteComercial(tramite);
 		Oferta oferta = expediente.getOferta();
-
+		Usuario gestor = null;
+		Boolean enviar = false;
+		for (TareaActivo tareaActivo : tramite.getTareas()) {				
+			if (CODIGO_T013_DEFINICION_OFERTA.equals(tareaActivo.getTareaExterna().getTareaProcedimiento().getCodigo())) {
+				if(tareaActivo.getFechaFin()!= null){
+					enviar = true;
+				}
+				gestor = tareaActivo.getUsuario();
+			}
+		}
+		
 		if (oferta != null && oferta.getActivoPrincipal() != null
-				&& DDCartera.CODIGO_CARTERA_GIANTS.equals(oferta.getActivoPrincipal().getCartera().getCodigo())) {
+				&& DDCartera.CODIGO_CARTERA_GIANTS.equals(oferta.getActivoPrincipal().getCartera().getCodigo()) && enviar) {
+			
+			
+			String gestorNombre = "SIN_DATOS_NOMBRE_APELLIDO_GESTOR";
+			String gestorEmail = "SIN_DATOS_EMAIL_GESTOR";
+			if (gestor != null && gestor.getApellidoNombre() != null ) {
+				gestorNombre = gestor.getApellidoNombre();
+			}
+			if (gestor != null && gestor.getEmail() != null ) {
+				gestorEmail = gestor.getEmail();
+			}
+			
 			Usuario nPLREOSupport = genericDao.get(Usuario.class,
 					genericDao.createFilter(FilterType.EQUALS, "username", NPLREO_SUPPORT));
 			Usuario mailTracker = genericDao.get(Usuario.class,
@@ -125,6 +147,9 @@ public class NotificatorServiceGtam extends AbstractNotificatorService implement
 
 			contenido += "<p> Quedamos a su disposición para cualquier consulta o aclaración.</p>"
 					+ "<p> Saludos cordiales.</p>" + "<p> Fdo: #gestorTarea </p>" + "<p> Email: #mailGestorTarea </p>";
+			
+			contenido = contenido.replace("#gestorTarea", gestorNombre)
+					 .replace("#mailGestorTarea", gestorEmail);
 
 			DtoSendNotificator dtoSendNotificator = this.rellenaDtoSendNotificator(tramite);
 
@@ -143,6 +168,8 @@ public class NotificatorServiceGtam extends AbstractNotificatorService implement
 			mailsPara = getEmailsNotificacion(usuarios);
 
 			titulo = titulo.replace("#numoferta", oferta.getNumOferta().toString());
+			dtoSendNotificator.setTitulo(titulo);
+			dtoSendNotificator.setNumTrabajo(null);
 
 			genericAdapter.sendMail(mailsPara, mailsCC, titulo, this.generateCuerpo(dtoSendNotificator, contenido));
 		}

@@ -86,18 +86,14 @@ public class OfertasController {
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public void generateExcel(DtoOfertasFilter dtoOfertasFilter, HttpServletRequest request, HttpServletResponse response) throws IOException {
-//		dtoOfertasFilter.setStart(excelReportGeneratorApi.getStart());
-//		dtoOfertasFilter.setLimit(excelReportGeneratorApi.getLimit());
-//
-//		List<VOfertasActivosAgrupacion> listaOfertas = (List<VOfertasActivosAgrupacion>) ofertaApi.getListOfertasUsuario(dtoOfertasFilter).getResults();
-//
-//		ExcelReport report = new OfertasExcelReport(listaOfertas);
-//
-//		excelReportGeneratorApi.generateAndSend(report, response);
-		Long prueba = 1L;
-		List<DtoPropuestaAlqBankia> listaDto = ofertaApi.getListPropuestasAlqBankiaFromView(prueba);
-		
-		Long prueba2 = 2L;
+		dtoOfertasFilter.setStart(excelReportGeneratorApi.getStart());
+		dtoOfertasFilter.setLimit(excelReportGeneratorApi.getLimit());
+
+		List<VOfertasActivosAgrupacion> listaOfertas = (List<VOfertasActivosAgrupacion>) ofertaApi.getListOfertasUsuario(dtoOfertasFilter).getResults();
+
+		ExcelReport report = new OfertasExcelReport(listaOfertas);
+
+		excelReportGeneratorApi.generateAndSend(report, response);
 	}
 
 	private ModelAndView createModelAndViewJson(ModelMap model) {
@@ -250,15 +246,20 @@ public class OfertasController {
 	@RequestMapping(method = RequestMethod.GET)
 	public void generateExcelOferta(Long idOferta, HttpServletRequest request, HttpServletResponse response) throws IOException {
 		
-		DtoOfertasFilter dto = new DtoOfertasFilter();
-		dto.setIdOferta(idOferta);
-		ExcelReport report = new OfertasExcelReport(ofertaApi.getListOfertasFromView(dto));
-		File file = excelReportGeneratorApi.generateReport(report);
+//		DtoOfertasFilter dto = new DtoOfertasFilter();
+//		dto.setIdOferta(idOferta);
+//		ExcelReport report = new OfertasExcelReport(ofertaApi.getListOfertasFromView(dto));
+//		File file = excelReportGeneratorApi.generateReport(report);
+//		
+//		Oferta oferta = ofertaApi.getOfertaById(idOferta);
+//		notificationOferta.sendNotificationPropuestaOferta(oferta, new FileItem(file));
+//		
+//		excelReportGeneratorApi.sendReport(file, response);
 		
-		Oferta oferta = ofertaApi.getOfertaById(idOferta);
-		notificationOferta.sendNotificationPropuestaOferta(oferta, new FileItem(file));
+		Long prueba = (long)3199;
+		List<DtoPropuestaAlqBankia> listaDto = ofertaApi.getListPropuestasAlqBankiaFromView(prueba);
 		
-		excelReportGeneratorApi.sendReport(file, response);
+		Long prueba2 = 2L;
 	}
 	
 	@SuppressWarnings("unchecked")

@@ -19,7 +19,7 @@ public class VPropuestaAlqBankiaDaoImpl extends AbstractEntityDao<VPropuestaAlqB
 		HQLBuilder hb = new HQLBuilder(" from VPropuestaAlqBankia vprop");
 
 		if (!Checks.esNulo(ecoId)) {
-			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vprop.id", ecoId);
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "vprop.ecoId", ecoId);
 		}
 
 		return HibernateQueryUtils.list(this, hb);

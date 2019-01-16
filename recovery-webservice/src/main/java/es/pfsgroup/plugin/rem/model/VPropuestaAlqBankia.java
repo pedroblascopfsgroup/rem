@@ -37,9 +37,6 @@ public class VPropuestaAlqBankia implements Serializable {
 		
 	@Column(name = "TXO_TEXTO")
 	private String textoOferta;  
-	
-    @Column(name = "DD_TPA_DESCRIPCION")
-    private String tipoActivoDescripcion;
     
     @Column(name = "ECO_FECHA_ALTA")
    	private Date fechaAltaExpedienteComercial;
@@ -142,14 +139,6 @@ public class VPropuestaAlqBankia implements Serializable {
 
 	public void setTextoOferta(String textoOferta) {
 		this.textoOferta = textoOferta;
-	}
-
-	public String getTipoActivoDescripcion() {
-		return tipoActivoDescripcion;
-	}
-
-	public void setTipoActivoDescripcion(String tipoActivoDescripcion) {
-		this.tipoActivoDescripcion = tipoActivoDescripcion;
 	}
 
 	public Date getFechaAltaExpedienteComercial() {

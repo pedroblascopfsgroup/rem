@@ -18,7 +18,6 @@ public class DtoPropuestaAlqBankia extends WebDto {
 	private Long numActivoUvem;	
 	private int carenciaALquiler; 
 	private String textoOferta;
-    private String tipoActivoDescripcion;
    	private Date fechaAltaExpedienteComercial;
    	private Date fechaPublicacionWeb;
 	private BigDecimal importeFianza;
@@ -71,12 +70,6 @@ public class DtoPropuestaAlqBankia extends WebDto {
 	}
 	public void setTextoOferta(String textoOferta) {
 		this.textoOferta = textoOferta;
-	}
-	public String getTipoActivoDescripcion() {
-		return tipoActivoDescripcion;
-	}
-	public void setTipoActivoDescripcion(String tipoActivoDescripcion) {
-		this.tipoActivoDescripcion = tipoActivoDescripcion;
 	}
 	public Date getFechaAltaExpedienteComercial() {
 		return fechaAltaExpedienteComercial;

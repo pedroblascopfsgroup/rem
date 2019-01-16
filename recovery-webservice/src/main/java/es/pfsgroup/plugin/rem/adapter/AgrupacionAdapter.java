@@ -750,8 +750,10 @@ public class AgrupacionAdapter {
 			}
 
 			if (!Checks.esNulo(numActivo)){
-				if(!particularValidator.esActivoIncluidoPerimetro(Long.toString(numActivo))){
+				if(!DDTipoAgrupacion.AGRUPACION_ASISTIDA.equals(agrupacion.getTipoAgrupacion().getCodigo()) && !particularValidator.esActivoIncluidoPerimetro(Long.toString(numActivo))){
 					throw new JsonViewerException("El activo se encuetra fuera del perímetro HAYA");
+				} else if (DDTipoAgrupacion.AGRUPACION_ASISTIDA.equals(agrupacion.getTipoAgrupacion().getCodigo()) && particularValidator.esActivoIncluidoPerimetro(Long.toString(numActivo))){
+					throw new JsonViewerException("El activo se encuetra dentro del perímetro HAYA");
 				}
 			}
 

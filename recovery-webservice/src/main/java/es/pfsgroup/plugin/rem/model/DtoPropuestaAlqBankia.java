@@ -230,7 +230,6 @@ public class DtoPropuestaAlqBankia extends WebDto {
 	public void setCartera(String cartera) {
 		this.cartera = cartera;
 	}
-	
 	public Date getFechaAltaOferta() {
 		return fechaAltaOferta;
 	}

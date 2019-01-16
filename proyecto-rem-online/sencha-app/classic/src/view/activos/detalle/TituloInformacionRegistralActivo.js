@@ -790,7 +790,7 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 							defaultType: 'textfieldbase',
 							colspan: 4,
 							reference:'calificacionNegativa',
-							hidden: false,
+							hidden: true,
 							title: HreRem.i18n("title.calificacion.negativa"),
 							items :
 							[

@@ -53,6 +53,9 @@ public class VPropuestaAlqBankia implements Serializable {
 	@Column(name = "OFR_IMPORTE")
 	private BigDecimal importeOferta;
 	
+	@Column(name = "OFR_FECHA_ALTA")
+	private Date fechaAltaOferta;
+	
 	@Column(name = "DD_EAL_DESCRIPCION")
 	private String  descripcionEstadoPatrimonio;
 	
@@ -322,6 +325,14 @@ public class VPropuestaAlqBankia implements Serializable {
 
 	public void setCartera(String cartera) {
 		this.cartera = cartera;
+	}
+	
+	public Date getFechaAltaOferta() {
+		return fechaAltaOferta;
+	}
+
+	public void setFechaAltaOferta(Date fechaAltaOferta) {
+		this.fechaAltaOferta = fechaAltaOferta;
 	}
 
 	public static long getSerialversionuid() {

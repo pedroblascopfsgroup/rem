@@ -3203,6 +3203,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			dtoSimple.setNumActivoUvem(v.getNumActivoUvem());
 			dtoSimple.setTextoOferta(v.getTextoOferta());
 			dtoSimple.setFechaAltaExpedienteComercial(v.getFechaAltaExpedienteComercial());
+			dtoSimple.setFechaAltaOferta(v.getFechaAltaOferta());
 			dtoSimple.setFechaPublicacionWeb(v.getFechaPublicacionWeb());
 			dtoSimple.setImporteFianza(v.getImporteFianza());
 			dtoSimple.setMesesFianza(v.getMesesFianza());

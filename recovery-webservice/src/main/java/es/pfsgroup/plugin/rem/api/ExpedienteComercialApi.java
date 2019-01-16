@@ -71,23 +71,23 @@ public interface ExpedienteComercialApi {
 	 *            Long
 	 * @return ExpedienteComercial
 	 */
-	public ExpedienteComercial findOne(Long id);
+	ExpedienteComercial findOne(Long id);
 	
-	public ExpedienteComercial findOneTransactional(Long id);
+	ExpedienteComercial findOneTransactional(Long id);
 
 	/**
 	 * Recupera el ExpedienteComercial indicado.
 	 * @param numExpediente
 	 * @return ExpedienteComercial
 	 */
-	public ExpedienteComercial findOneByNumExpediente(Long numExpediente);
+	ExpedienteComercial findOneByNumExpediente(Long numExpediente);
 	
 	/**
 	 * Recupera el ExpedienteComercial indicado.
 	 * @param trabajo
 	 * @return ExpedienteComercial
 	 */
-	public ExpedienteComercial findOneByTrabajo(Trabajo trabajo);
+	ExpedienteComercial findOneByTrabajo(Trabajo trabajo);
 	
 	/**
 	 * Método que recupera un conjunto de datos del expediente comercial según
@@ -97,7 +97,7 @@ public interface ExpedienteComercialApi {
 	 * @param tab
 	 * @return Object
 	 */
-	public Object getTabExpediente(Long id, String tab);
+	Object getTabExpediente(Long id, String tab);
 
 	/**
 	 * Método que recupera los textos de la oferta de un expediente
@@ -105,7 +105,7 @@ public interface ExpedienteComercialApi {
 	 * @param id
 	 * @return
 	 */
-	public List<DtoTextosOferta> getListTextosOfertaById(Long id);
+	List<DtoTextosOferta> getListTextosOfertaById(Long id);
 
 	/**
 	 * Método que guarda un texto de oferta para un expediente comercial
@@ -115,7 +115,7 @@ public interface ExpedienteComercialApi {
 	 *            id del expediente
 	 * @return resultado de la operacion
 	 */
-	public boolean saveTextoOferta(DtoTextosOferta dto, Long idEntidad);
+	boolean saveTextoOferta(DtoTextosOferta dto, Long idEntidad);
 
 
 	/**
@@ -127,7 +127,7 @@ public interface ExpedienteComercialApi {
 	 *            id del expediente
 	 * @return resultado de la operacion
 	 */
-	public boolean saveSeguroRentasExpediente(DtoSeguroRentas dto, Long idEntidad);
+	boolean saveSeguroRentasExpediente(DtoSeguroRentas dto, Long idEntidad);
 
 	/**
 	 * Método que guarda la información de la pestaña datos básicos de la oferta
@@ -144,14 +144,14 @@ public interface ExpedienteComercialApi {
 	 * @param idExpediente
 	 * @return
 	 */
-	public boolean saveOfertaTanteoYRetracto(DtoTanteoYRetractoOferta dto, Long idExpediente);
+	boolean saveOfertaTanteoYRetracto(DtoTanteoYRetractoOferta dto, Long idExpediente);
 	
 	/**
 	 * Método que recupera las entregas de una reserva para un expediente
 	 * 
 	 * @return
 	 */
-	public List<DtoEntregaReserva> getListEntregasReserva(Long id);
+	List<DtoEntregaReserva> getListEntregasReserva(Long id);
 
 	/**
 	 * Añadir una Entrega Reserva a un Expediente Comercial
@@ -161,7 +161,7 @@ public interface ExpedienteComercialApi {
 	 * @return
 	 * @throws Exception
 	 */
-	public boolean addEntregaReserva(EntregaReserva entregaReserva, Long idExpedienteComercial) throws Exception;
+	boolean addEntregaReserva(EntregaReserva entregaReserva, Long idExpedienteComercial) throws Exception;
 
 	/**
 	 * Actualizar los valores del Expediente Comercial
@@ -169,7 +169,7 @@ public interface ExpedienteComercialApi {
 	 * @parame xpedienteComercial
 	 * @return
 	 */
-	public boolean update(ExpedienteComercial expedienteComercial);
+	boolean update(ExpedienteComercial expedienteComercial);
 	
 	
 	/**
@@ -179,7 +179,7 @@ public interface ExpedienteComercialApi {
 	 * @param codEstadoReserva
 	 * @return
 	 */
-	public boolean updateEstadoDevolucionReserva(ExpedienteComercial expedienteComercial, String codEstadoReserva) throws Exception;
+	boolean updateEstadoDevolucionReserva(ExpedienteComercial expedienteComercial, String codEstadoReserva) throws Exception;
 	
 	/**
 	 * Actualiza el estado de la reserva al codigo dado
@@ -206,14 +206,14 @@ public interface ExpedienteComercialApi {
 	 * @return Devuelve True si el estado del expdiente comercial es distinto a anulado, False si no lo es.
 	 * @throws Exception 
 	 */
-	public boolean updateExpedienteComercialEstadoPrevioResolucionExpediente(ExpedienteComercial expedienteComercial, String codigoTareaActual, String codigoTareaSalto, Boolean botonDeshacerAnulacion) throws Exception;
+	boolean updateExpedienteComercialEstadoPrevioResolucionExpediente(ExpedienteComercial expedienteComercial, String codigoTareaActual, String codigoTareaSalto, Boolean botonDeshacerAnulacion) throws Exception;
 
 	/**
 	 * Método que recupera las observaciones del expediente comercial
 	 * 
 	 * @return
 	 */
-	public DtoPage getListObservaciones(Long idExpediente, WebDto dto);
+	DtoPage getListObservaciones(Long idExpediente, WebDto dto);
 
 	/**
 	 * Actualiza una observacion
@@ -221,7 +221,7 @@ public interface ExpedienteComercialApi {
 	 * @param dtoObservacion
 	 * @return
 	 */
-	public boolean saveObservacion(DtoObservacion dtoObservacion);
+	boolean saveObservacion(DtoObservacion dtoObservacion);
 
 	/**
 	 * Crea una observación
@@ -230,7 +230,7 @@ public interface ExpedienteComercialApi {
 	 * @param idTrabajo
 	 * @return
 	 */
-	public boolean createObservacion(DtoObservacion dtoObservacion, Long idExpediente);
+	boolean createObservacion(DtoObservacion dtoObservacion, Long idExpediente);
 
 	/**
 	 * Elimina una observación
@@ -238,7 +238,7 @@ public interface ExpedienteComercialApi {
 	 * @param idObservacion
 	 * @return
 	 */
-	public boolean deleteObservacion(Long idObservacion);
+	boolean deleteObservacion(Long idObservacion);
 
 	/**
 	 * Método que recupera los activos del expediente comercial
@@ -246,7 +246,7 @@ public interface ExpedienteComercialApi {
 	 * @return
 	 */
 
-	public DtoPage getActivosExpediente(Long idExpediente);
+	DtoPage getActivosExpediente(Long idExpediente);
 
 	/**
 	 * Método que recupera los tipos de documento del expediente comercial
@@ -254,15 +254,23 @@ public interface ExpedienteComercialApi {
 	 * @return
 	 */
 
-	public List <DtoTipoDocExpedientes> getTipoDocumentoExpediente(String tipoExpediente);
+	List <DtoTipoDocExpedientes> getTipoDocumentoExpediente(String tipoExpediente);
 
+	/**
+	 * Método que recupera los subtipos de documento posibles para adjuntar en el Expediente Comercial
+	 * 	
+	 * @param idExpediente, tipoExpediente
+	 * @return listado de archivos adjuntos
+	 */
+	List <DtoTipoDocExpedientes> getSubtipoDocumentosExpedientes(Long idExpediente, String valorCombo);
+		
 	/**
 	 * Recupera el adjunto del Expediente comercial
 	 * 
 	 * @param dtoAdjunto
 	 * @return
 	 */
-	public FileItem getFileItemAdjunto(DtoAdjuntoExpediente dtoAdjunto);
+	FileItem getFileItemAdjunto(DtoAdjuntoExpediente dtoAdjunto);
 
 	/**
 	 * Recupera info de los adjuntos asociados al expediente comercial
@@ -270,14 +278,14 @@ public interface ExpedienteComercialApi {
 	 * @param id
 	 * @return
 	 */
-	public List<DtoAdjuntoExpediente> getAdjuntos(Long id);
+	List<DtoAdjuntoExpediente> getAdjuntos(Long id);
 
 	/**
 	 * 
 	 * @param fileItem
 	 * @return
 	 */
-	public String upload(WebFileItem fileItem) throws Exception;
+	String upload(WebFileItem fileItem) throws Exception;
 
 	/**
 	 * Sube un adjunto del expediente comercial
@@ -285,7 +293,7 @@ public interface ExpedienteComercialApi {
 	 * @param dtoAdjunto
 	 * @return
 	 */
-	public boolean deleteAdjunto(DtoAdjunto dtoAdjunto);
+	boolean deleteAdjunto(DtoAdjunto dtoAdjunto);
 
 	/**
 	 * Recupera la lista de compradores asociados al expediente
@@ -293,7 +301,7 @@ public interface ExpedienteComercialApi {
 	 * @param idExpediente
 	 * @return
 	 */
-	public Page getCompradoresByExpediente(Long idExpediente, WebDto dto);
+	Page getCompradoresByExpediente(Long idExpediente, WebDto dto);
 
 	/**
 	 * Recupera la informacion de un Comprador de un Expediente Comercial
@@ -302,7 +310,7 @@ public interface ExpedienteComercialApi {
 	 * @param idExp
 	 * @return
 	 */
-	public VBusquedaDatosCompradorExpediente getDatosCompradorById(String idCom, String idExp);
+	VBusquedaDatosCompradorExpediente getDatosCompradorById(String idCom, String idExp);
 	/**
 	 * Método que guarda la información de la pestaña Condicionantes del
 	 * expediente
@@ -318,7 +326,7 @@ public interface ExpedienteComercialApi {
 	 * @param expediente
 	 * @return
 	 */
-	public Reserva createReservaExpediente(ExpedienteComercial expediente);
+	Reserva createReservaExpediente(ExpedienteComercial expediente);
 	
 	/**
 	 * Método que guarda la información de la pestaña de un comprador del
@@ -337,7 +345,7 @@ public interface ExpedienteComercialApi {
 	 * @param codigoSubtipoDocumento Código del subtipo de documento del expediente
 	 * @return
 	 */
-	public Boolean comprobarExisteAdjuntoExpedienteComercial(Long idTrabajo, String codigoSubtipoDocumento);
+	Boolean comprobarExisteAdjuntoExpedienteComercial(Long idTrabajo, String codigoSubtipoDocumento);
 		
 
 
@@ -367,7 +375,7 @@ public interface ExpedienteComercialApi {
 	 * @param idExpediente
 	 * @return
 	 */
-	public DtoPage getPosicionamientosExpediente(Long idExpediente);
+	DtoPage getPosicionamientosExpediente(Long idExpediente);
 
 	/**
 	 * Método que obtiene los comparecientes del expediente
@@ -376,7 +384,7 @@ public interface ExpedienteComercialApi {
 	 * @param idExpediente
 	 * @return
 	 */
-	public DtoPage getComparecientesExpediente(Long idExpediente);
+	DtoPage getComparecientesExpediente(Long idExpediente);
 
 	/**
 	 * Método que obtiene las subsanaciones del expediente
@@ -385,7 +393,7 @@ public interface ExpedienteComercialApi {
 	 * @param idExpediente
 	 * @return
 	 */
-	public DtoPage getSubsanacionesExpediente(Long idExpediente);
+	DtoPage getSubsanacionesExpediente(Long idExpediente);
 
 	/**
 	 * Método que obtiene los notarios del expediente
@@ -394,7 +402,7 @@ public interface ExpedienteComercialApi {
 	 * @param idExpediente
 	 * @return
 	 */
-	public List<DtoNotarioContacto> getContactosNotario(Long idProveedor);
+	List<DtoNotarioContacto> getContactosNotario(Long idProveedor);
 
 	/**
 	 * Modifica los datos de una reserva
@@ -411,7 +419,7 @@ public interface ExpedienteComercialApi {
 	 * @param idOferta
 	 * @return
 	 */
-	public List<DtoGastoExpediente> getHonorariosActivoByOfertaAceptada(Oferta oferta, Activo activo);
+	List<DtoGastoExpediente> getHonorariosActivoByOfertaAceptada(Oferta oferta, Activo activo);
 
 	/**
 	 * Método que obtiene los honorarios(gastos) del expediente
@@ -420,7 +428,7 @@ public interface ExpedienteComercialApi {
 	 * @return
 	 */
 
-	public List<DtoHstcoSeguroRentas> getHstcoSeguroRentas(Long idExpediente);
+	List<DtoHstcoSeguroRentas> getHstcoSeguroRentas(Long idExpediente);
 
 	/**
 	 * Método que obtiene los honorarios(gastos) del expediente
@@ -428,7 +436,7 @@ public interface ExpedienteComercialApi {
 	 * @param idExpediente
 	 * @return
 	 */
-	public List<DtoGastoExpediente> getHonorarios(Long idExpediente, Long idActivo);
+	List<DtoGastoExpediente> getHonorarios(Long idExpediente, Long idActivo);
 	
 	/**
 	 * Método que obtiene el historico de condiciones de un expediente comercial
@@ -436,7 +444,7 @@ public interface ExpedienteComercialApi {
 	 * @param idExpediente
 	 * @return
 	 */
-	public List<DtoHistoricoCondiciones> getHistoricoCondiciones(Long idExpediente);
+	List<DtoHistoricoCondiciones> getHistoricoCondiciones(Long idExpediente);
 
 	/**
 	 * Método que guarda los honorarios(gastos) del expediente
@@ -444,7 +452,7 @@ public interface ExpedienteComercialApi {
 	 * @param dtoGastoExpediente
 	 * @return
 	 */
-	public boolean saveHonorario(DtoGastoExpediente dtoGastoExpediente);
+	boolean saveHonorario(DtoGastoExpediente dtoGastoExpediente);
 
 	/**
 	 * Método que obtiene el ExpedienteComercial relacionado con una determinada
@@ -453,7 +461,7 @@ public interface ExpedienteComercialApi {
 	 * @param idOferta
 	 * @return
 	 */
-	public ExpedienteComercial expedienteComercialPorOferta(Long idOferta);
+	ExpedienteComercial expedienteComercialPorOferta(Long idOferta);
 
 	/**
 	 * Método que obtiene uno de los estados posibles del ExpedienteComercial
@@ -462,7 +470,7 @@ public interface ExpedienteComercialApi {
 	 * @param codigo
 	 * @return
 	 */
-	public DDEstadosExpedienteComercial getDDEstadosExpedienteComercialByCodigo(String codigo);
+	DDEstadosExpedienteComercial getDDEstadosExpedienteComercialByCodigo(String codigo);
 
 	/**
 	 * Método que guarda la información de la pestaña Ficha del expediente
@@ -480,7 +488,7 @@ public interface ExpedienteComercialApi {
 	 * @param idExpediente
 	 * @return
 	 */
-	public boolean saveEntregaReserva(DtoEntregaReserva dto, Long idEntidad);
+	boolean saveEntregaReserva(DtoEntregaReserva dto, Long idEntidad);
 
 	/**
 	 * Método que actualiza la información de una entrega de reserva
@@ -489,14 +497,14 @@ public interface ExpedienteComercialApi {
 	 * @param idExpediente
 	 * @return
 	 */
-	public boolean updateEntregaReserva(DtoEntregaReserva dto, Long id);
+	boolean updateEntregaReserva(DtoEntregaReserva dto, Long id);
 
 	/**
 	 * Método que elimina una entrega de reserva
 	 * @param idExpediente
 	 * @return
 	 */
-	public boolean deleteEntregaReserva(Long idEntrega);
+	boolean deleteEntregaReserva(Long idEntrega);
 
 	/**
 	 * Función que devuelve la propuesta de un comité para un expediente
@@ -506,7 +514,7 @@ public interface ExpedienteComercialApi {
 	 * @return
 	 * @throws Exception
 	 */
-	public String consultarComiteSancionador(Long idExpediente) throws Exception;
+	String consultarComiteSancionador(Long idExpediente) throws Exception;
 
 	/**
 	 * Crea un registro de posicionamiento
@@ -515,7 +523,7 @@ public interface ExpedienteComercialApi {
 	 * @param idEntidad
 	 * @return
 	 */
-	public boolean createPosicionamiento(DtoPosicionamiento dto, Long idEntidad);
+	boolean createPosicionamiento(DtoPosicionamiento dto, Long idEntidad);
 
 	/**
 	 * Actualiza un registro de posicionamiento
@@ -523,7 +531,7 @@ public interface ExpedienteComercialApi {
 	 * @param dto
 	 * @return
 	 */
-	public boolean savePosicionamiento(DtoPosicionamiento dto);
+	boolean savePosicionamiento(DtoPosicionamiento dto);
 
 	/**
 	 * Elimina un registro de posicionamiento
@@ -531,7 +539,7 @@ public interface ExpedienteComercialApi {
 	 * @param idPosicionamiento
 	 * @return
 	 */
-	public boolean deletePosicionamiento(Long idPosicionamiento);
+	boolean deletePosicionamiento(Long idPosicionamiento);
 
 	/**
 	 * Método que crea un comprador desde la pestaña compradores del expediente
@@ -547,14 +555,14 @@ public interface ExpedienteComercialApi {
 	 * @param oferta
 	 * @return
 	 */
-	public OfertaUVEMDto createOfertaOVEM(Oferta oferta,ExpedienteComercial expedienteComercial) throws Exception; 
+	OfertaUVEMDto createOfertaOVEM(Oferta oferta, ExpedienteComercial expedienteComercial) throws Exception;
 	
 	/**
 	 * Obtiene la lista de titulares para uvem
 	 * @param expedienteComercial
 	 * @return
 	 */
-	public ArrayList<TitularUVEMDto> obtenerListaTitularesUVEM(ExpedienteComercial expedienteComercial) throws Exception;
+	ArrayList<TitularUVEMDto> obtenerListaTitularesUVEM(ExpedienteComercial expedienteComercial) throws Exception;
 	
 	/**
 	 * Método que devuelve los datos de un comprador de Bankia (WebService Ursus) por número de comprador
@@ -562,7 +570,7 @@ public interface ExpedienteComercialApi {
 	 * @param idExpediente
 	 * @return DatosClienteDto
 	 */
-	public DatosClienteDto buscarNumeroUrsus(String numCompradorUrsus, String tipoDocumento, String idExpediente) throws Exception;
+	DatosClienteDto buscarNumeroUrsus(String numCompradorUrsus, String tipoDocumento, String idExpediente) throws Exception;
 	
 	/**
 	 * Método que devuelve los proveedores filtrados por su tipo de proveedor
@@ -572,7 +580,7 @@ public interface ExpedienteComercialApi {
 	 * @param dto
 	 * @return Page
 	 */
-	public Page getComboProveedoresExpediente(String codigoTipoProveedor, String nombreBusqueda, String idActivo, WebDto dto);
+	Page getComboProveedoresExpediente(String codigoTipoProveedor, String nombreBusqueda, String idActivo, WebDto dto);
 	
 	/**
 	 * Crea un registro de honorarios (gasto_expediente)
@@ -580,28 +588,28 @@ public interface ExpedienteComercialApi {
 	 * @param idEntidad
 	 * @return
 	 */
-	public boolean createHonorario(DtoGastoExpediente dto, Long idEntidad);
+	boolean createHonorario(DtoGastoExpediente dto, Long idEntidad);
 	
 	/**
 	 * Crea un registro de historicoCondiciones
 	 * @param dto
 	 * @return
 	 */
-	public boolean createHistoricoCondiciones(DtoHistoricoCondiciones dto, Long idEntidad);
+	boolean createHistoricoCondiciones(DtoHistoricoCondiciones dto, Long idEntidad);
 	
 	/**
 	 * Elimina un registro de honorario (gasto_expediente)
 	 * @param idPosicionamiento
 	 * @return
 	 */
-	public boolean deleteHonorario(Long idHonorario);
+	boolean deleteHonorario(Long idHonorario);
 	
 	/**
 	 * Elimina la relación entre un comprador y un expediente
 	 * @param idPosicionamiento
 	 * @return
 	 */
-	public boolean deleteCompradorExpediente(Long idExpediente, Long idComprador);
+	boolean deleteCompradorExpediente(Long idExpediente, Long idComprador);
 	
 	/**
 	 * Método que actualiza la información de los activos de un expediente
@@ -610,7 +618,7 @@ public interface ExpedienteComercialApi {
 	 * @param idExpediente
 	 * @return
 	 */
-	public boolean updateActivoExpediente(DtoActivosExpediente dto, Long id);
+	boolean updateActivoExpediente(DtoActivosExpediente dto, Long id);
 	
 	
 	/**
@@ -621,7 +629,7 @@ public interface ExpedienteComercialApi {
 	 * @param codComiteSuperior del expediente.
 	 * @return
 	 */
-	public InstanciaDecisionDto expedienteComercialToInstanciaDecisionList(ExpedienteComercial expediente, Long porcentajeImpuesto, String codComiteSuperior) throws Exception;
+	InstanciaDecisionDto expedienteComercialToInstanciaDecisionList(ExpedienteComercial expediente, Long porcentajeImpuesto, String codComiteSuperior) throws Exception;
 
 	/**
 	 * Este método obtiene una lista de bloqueos formalización por el ID del expediente recibido.
@@ -629,7 +637,7 @@ public interface ExpedienteComercialApi {
 	 * @param dto : dto con el ID de expediente a filtrar la lista de bloqueos.
 	 * @return Devuelve una lista de 'DtoBloqueosFinalizacion' con los datos encontrados.
 	 */
-	public List<DtoBloqueosFinalizacion> getBloqueosFormalizacion(DtoBloqueosFinalizacion dto);
+	List<DtoBloqueosFinalizacion> getBloqueosFormalizacion(DtoBloqueosFinalizacion dto);
 
 	/**
 	 * Este método genera un nuevo bloqueo formalización con los datos obtenidos.
@@ -637,7 +645,7 @@ public interface ExpedienteComercialApi {
 	 * @param dto : dto con los datos del nuevo bloqueo.
 	 * @return Devuelve True si la operación ha sido satisfactoria.
 	 */
-	public boolean createBloqueoFormalizacion(DtoBloqueosFinalizacion dto, Long idActivo);
+	boolean createBloqueoFormalizacion(DtoBloqueosFinalizacion dto, Long idActivo);
 
 	/**
 	 * Este método establece un bloqueo por el ID de bloqueo obtenido a borrado, así como el nombre de usuario
@@ -646,21 +654,21 @@ public interface ExpedienteComercialApi {
 	 * @param dto : dto con los datos del nuevo bloqueo.
 	 * @return Devuelve True si la operación ha sido satisfactoria.
 	 */
-	public boolean deleteBloqueoFormalizacion(DtoBloqueosFinalizacion dto);
+	boolean deleteBloqueoFormalizacion(DtoBloqueosFinalizacion dto);
 
 	/**
 	 * Devuelve el expediente de la oferta en caso de que exista.
 	 * @param oferta
 	 * @return
 	 */
-	public ExpedienteComercial findOneByOferta(Oferta oferta);
+	ExpedienteComercial findOneByOferta(Oferta oferta);
 
 	/**
 	 * Devuelve la descripción de un comité dado su código
 	 * @param codigo
 	 * @return
 	 */
-	public DDComiteSancion comiteSancionadorByCodigo(String codigo);
+	DDComiteSancion comiteSancionadorByCodigo(String codigo);
 
 	/** 
 	 * Este método obtiene el expediente comercial del activo indicado, el cual
@@ -675,61 +683,61 @@ public interface ExpedienteComercialApi {
 	 * @param activo
 	 * @return
 	 */
-	public ExpedienteComercial getExpedienteComercialResetPBC(Activo activo);
+	ExpedienteComercial getExpedienteComercialResetPBC(Activo activo);
 	
 	/**
 	 * Este método recibe un expediente comercial, llama al WS para obtener los datos del préstamo y los guarda en el expediente.
 	 * @param dto
 	 */
-	public boolean obtencionDatosPrestamo(DtoObtencionDatosFinanciacion dto) throws Exception;
+	boolean obtencionDatosPrestamo(DtoObtencionDatosFinanciacion dto) throws Exception;
 
 	/**
 	 * Este método obtiene los datos del apartado 'Financiación' de la tab 'Formalización' del expediente.
 	 * @param dto : DTO con el ID de expediente a filtrar.
 	 * @return
 	 */
-	public DtoFormalizacionFinanciacion getFormalizacionFinanciacion(DtoFormalizacionFinanciacion dto);
+	DtoFormalizacionFinanciacion getFormalizacionFinanciacion(DtoFormalizacionFinanciacion dto);
 
 	/**
 	 * Este método guarda los cambios del apartado 'Financiación' de la tab 'Formalización' del expediente.
 	 * @param dto : DTO con los cambios a guardar.
 	 * @return Devuelve True si la operación ha sido satisfactoria.
 	 */
-	public boolean saveFormalizacionFinanciacion(DtoFormalizacionFinanciacion dto);
+	boolean saveFormalizacionFinanciacion(DtoFormalizacionFinanciacion dto);
 	
 	/**
 	 * Devuelve un listado de usuarios según el tipo de gestor pasado por parámetro
 	 * @param idTipoGestor
 	 * @return
 	 */
-	public List<DtoUsuario> getComboUsuarios(long idTipoGestor);
+	List<DtoUsuario> getComboUsuarios(long idTipoGestor);
 
 	/**
 	 * Inserta un gestor en el expediente comercial
 	 * @param dto
 	 * @return
 	 */
-	public Boolean insertarGestorAdicional(GestorEntidadDto dto);
+	Boolean insertarGestorAdicional(GestorEntidadDto dto);
 	
 	/**
 	 * Recupera los gestores del expediente
 	 * @param idExpediente
 	 * @return
 	 */
-	public List<DtoListadoGestores> getGestores(Long idExpediente);
+	List<DtoListadoGestores> getGestores(Long idExpediente);
 	
 	/**
 	 * Devuelve una lista de los tipos de gestor correspondientes a los expedientes comerciales
 	 * @return
 	 */
-	public List<EXTDDTipoGestor> getComboTipoGestor(Long idExpediente);
+	List<EXTDDTipoGestor> getComboTipoGestor(Long idExpediente);
 	
 	/**
 	 * Actualiza el importe con el que participa un activo en un expediente
 	 * @param Oferta oferta
 	 * @return
 	 */
-	public boolean updateParticipacionActivosOferta(Oferta oferta);
+	boolean updateParticipacionActivosOferta(Oferta oferta);
 	
 	/**
 	 * Comprueba si el activo tiene un expediente comercial vivo, es decir,
@@ -737,7 +745,7 @@ public interface ExpedienteComercialApi {
 	 * @param activo
 	 * @return
 	 */
-	public boolean isExpedienteComercialVivoByActivo(Activo activo);
+	boolean isExpedienteComercialVivoByActivo(Activo activo);
 
 	/**
 	 * Crea un gasto expediente
@@ -747,14 +755,14 @@ public interface ExpedienteComercialApi {
 	 * @param codigoColaboracion
 	 * @return
 	 */
-	public GastosExpediente creaGastoExpediente(ExpedienteComercial expediente,  Oferta oferta, Activo activo, String codigoColaboracion);
+	GastosExpediente creaGastoExpediente(ExpedienteComercial expediente, Oferta oferta, Activo activo, String codigoColaboracion);
 
 	/**
 	 * Devuelve los activos de un expediente dado, para mostrarlos en un combo
 	 * @param idExpediente
 	 * @return
 	 */
-	public List<DtoActivosExpediente> getComboActivos(Long idExpediente);
+	List<DtoActivosExpediente> getComboActivos(Long idExpediente);
 
 	/**
 	 * Este método obtiene una lista de clientes URSUS en base al número de documento
@@ -765,7 +773,7 @@ public interface ExpedienteComercialApi {
 	 * @param idExpediente : idExpediente
 	 * @return Devuelve una lista con los clientes encontrados por el servicio.
 	 */
-	public List<DatosClienteDto> buscarClientesUrsus(String numeroDocumento, String tipoDocumento, String idExpediente) throws Exception;
+	List<DatosClienteDto> buscarClientesUrsus(String numeroDocumento, String tipoDocumento, String idExpediente) throws Exception;
 
 	/**
 	 * Este método obtiene los detalles de cliente en base al número URSUS recibido.
@@ -775,7 +783,7 @@ public interface ExpedienteComercialApi {
 	 * @return Devuelve todos los detalles del cliente encontrados por el servicio.
 	 * @throws Exception Devuelve excepcion si la conexion no ha sido satisfactoria.
 	 */
-	public DatosClienteDto buscarDatosClienteNumeroUrsus(String numeroUrsus, String idExpediente) throws Exception;
+	DatosClienteDto buscarDatosClienteNumeroUrsus(String numeroUrsus, String idExpediente) throws Exception;
 	
 	/**
 	 * Este método calcula el importe de reserva para un expediente si se dan las condiciones:
@@ -786,7 +794,7 @@ public interface ExpedienteComercialApi {
 	 * 
 	 * @param expediente : expediente comercial.
 	 */
-	public void actualizarImporteReservaPorExpediente(ExpedienteComercial expediente);
+	void actualizarImporteReservaPorExpediente(ExpedienteComercial expediente);
 
 	/**
 	 * Este método calcula y actualiza el importe por cada honorario(GastoExpediente) de un Expediente.
@@ -794,7 +802,7 @@ public interface ExpedienteComercialApi {
 	 * 
 	 * @param idTramite: ID del trámite.
 	 */
-	public void actualizarHonorariosPorExpediente(Long idTramite);
+	void actualizarHonorariosPorExpediente(Long idTramite);
 
 	String uploadDocumento(WebFileItem fileItem, Long idDocRestClient, ExpedienteComercial expedienteComercialEntrada,
 			String matricula) throws Exception;
@@ -808,7 +816,7 @@ public interface ExpedienteComercialApi {
 	 * @param idExpediente: ID del expediente comercial para comprobar su importe.
 	 * @return  Devuelve True si los importes coinciden, False si no.
 	 */
-	public Boolean checkImporteParticipacion(Long idExpediente);
+	Boolean checkImporteParticipacion(Long idExpediente);
 
 	/**
 	 * Este método obtiene un expediente comercial en base a un Activo.
@@ -816,7 +824,7 @@ public interface ExpedienteComercialApi {
 	 * @param activo: acivo al que buscar el expediente comercial al que pertenece.
 	 * @return Devuelve un expediente comercial.
 	 */
-	public ExpedienteComercial getExpedientePorActivo(Activo activo);
+	ExpedienteComercial getExpedientePorActivo(Activo activo);
 	
 	/**
 	 * Obtiene los tanteos para un activo en un expediente
@@ -825,7 +833,7 @@ public interface ExpedienteComercialApi {
 	 * @param idActivo
 	 * @return
 	 */
-	public List<DtoTanteoActivoExpediente> getTanteosPorActivoExpediente(Long idExpediente, Long idActivo);
+	List<DtoTanteoActivoExpediente> getTanteosPorActivoExpediente(Long idExpediente, Long idActivo);
 	
 	/**
 	 * Guardar tanteo activo
@@ -833,7 +841,7 @@ public interface ExpedienteComercialApi {
 	 * @param tanteoActivo
 	 * @return
 	 */
-	public boolean guardarTanteoActivo(DtoTanteoActivoExpediente tanteoActivoDto);
+	boolean guardarTanteoActivo(DtoTanteoActivoExpediente tanteoActivoDto);
 	
 	/**
 	 * Borrar tanteo activo
@@ -841,7 +849,7 @@ public interface ExpedienteComercialApi {
 	 * @param tanteoActivoDto
 	 * @return
 	 */
-	public boolean deleteTanteoActivo(Long idTanteo);
+	boolean deleteTanteoActivo(Long idTanteo);
 	
 	/**
 	 * Obitene los condicionenates del activo en el exp comercial
@@ -849,14 +857,14 @@ public interface ExpedienteComercialApi {
 	 * @param idActivo
 	 * @return
 	 */
-	public DtoCondicionesActivoExpediente getCondicionesActivoExpediete(Long idExpediente, Long idActivo);
+	DtoCondicionesActivoExpediente getCondicionesActivoExpediete(Long idExpediente, Long idActivo);
 	
 	/**
 	 * Guarda las condiciones informadas de un activo en un expediente comercial
 	 * @param condiciones
 	 * @return
 	 */
-	public boolean guardarCondicionesActivoExpediente(DtoCondicionesActivoExpediente condiciones);
+	boolean guardarCondicionesActivoExpediente(DtoCondicionesActivoExpediente condiciones);
 
 	/**
 	 * Obtiene la fecha de emisión del informe jurídico
@@ -864,21 +872,21 @@ public interface ExpedienteComercialApi {
 	 * @param idActivo
 	 * @return
 	 */
-	public DtoInformeJuridico getFechaEmisionInfJuridico(Long idExpediente, Long idActivo);
+	DtoInformeJuridico getFechaEmisionInfJuridico(Long idExpediente, Long idActivo);
 
 	/**
 	 * Guarda el informe jurídico
 	 * @param dto
 	 * @return
 	 */
-	public boolean guardarInformeJuridico(DtoInformeJuridico dto);
+	boolean guardarInformeJuridico(DtoInformeJuridico dto);
 	
 	/**
 	 * Valida la posibilidad de bloquear un expediente comercial. Si no es posible devuelve codigo error. Si lo es cadena vacía 
 	 * @param idExpediente
 	 * @return
 	 */
-	public String validaBloqueoExpediente(Long idExpediente);
+	String validaBloqueoExpediente(Long idExpediente);
 	
 	
 	/**
@@ -887,14 +895,14 @@ public interface ExpedienteComercialApi {
 	 * @param idExpediente
 	 * @return
 	 */
-	public void bloquearExpediente(Long idExpediente);
+	void bloquearExpediente(Long idExpediente);
 	
 	/**
 	 * Valida la posibilidad de desbloquear un expediente comercial. Si no es posible devuelve codigo error. Si lo es cadena vacía 
 	 * @param idExpediente
 	 * @return
 	 */
-	public String validaDesbloqueoExpediente(Long idExpediente);
+	String validaDesbloqueoExpediente(Long idExpediente);
 	
 	
 	/**
@@ -903,16 +911,16 @@ public interface ExpedienteComercialApi {
 	 * @param idExpediente
 	 * @return
 	 */
-	public void desbloquearExpediente(Long idExpediente, String motivoCodigo, String motivoDescLibre);
+	void desbloquearExpediente(Long idExpediente, String motivoCodigo, String motivoDescLibre);
 
-	public boolean updateBloqueoFormalizacion(DtoBloqueosFinalizacion dto);
+	boolean updateBloqueoFormalizacion(DtoBloqueosFinalizacion dto);
 
 	/**
 	 * Devuelve true si el expediente está bloqueado y false en caso contrario
 	 * @param idTramite
 	 * @return
 	 */
-	public boolean checkExpedienteBloqueado(Long idTramite) ;
+	boolean checkExpedienteBloqueado(Long idTramite) ;
 	
 	/**
 	 * Actualiza la Fecha vencimiento reserva con la Fecha resolucion + 40 días.
@@ -922,14 +930,14 @@ public interface ExpedienteComercialApi {
 	 * @param tanteosActivo
 	 * @return
 	 */
-	public void actualizarFVencimientoReservaTanteosRenunciados(TanteoActivoExpediente tanteoActivo,List<TanteoActivoExpediente> tanteosActivo);
+	void actualizarFVencimientoReservaTanteosRenunciados(TanteoActivoExpediente tanteoActivo, List<TanteoActivoExpediente> tanteosActivo);
 
 	/**
 	 * Devuelve true si el expediente asociado al trabajo está sancionado por el comite de Haya_Sareb
 	 * @param trabajo
 	 * @return
 	 */
-	public boolean isComiteSancionadorHaya(Trabajo trabajo);
+	boolean isComiteSancionadorHaya(Trabajo trabajo);
 	
 	/**
 	 * Comprueba que el precio mínimo del activo (o activos en agrupaciones) es inferior del importe del expediente para comite sancionador Haya.
@@ -937,7 +945,7 @@ public interface ExpedienteComercialApi {
 	 * @param idTramite
 	 * @return
 	 */
-	public boolean importeExpedienteMenorPreciosMinimosActivos(Long idTramite);
+	boolean importeExpedienteMenorPreciosMinimosActivos(Long idTramite);
 
 	/**
 	 * Crea las condiciones iniciales para un Activo-Expediente. Se le pasa el activo por parametro porque no 
@@ -953,21 +961,21 @@ public interface ExpedienteComercialApi {
 	 * @param expedienteComercial
 	 * @return boolean
 	 */
-	public boolean checkCompradoresTienenNumeroUrsus(Long idTramite);
+	boolean checkCompradoresTienenNumeroUrsus(Long idTramite);
 
 	/**
 	 * Envia todos los compradores(titulares) a UVEM
 	 * @param expedienteComercial
 	 * @return void
 	 */
-	public void enviarTitularesUvem(Long idExpediente) throws Exception;
+	void enviarTitularesUvem(Long idExpediente) throws Exception;
 	
 	/**
 	 * Envia todos los honorarios a UVEM
 	 * @param idExpediente
 	 * @return void
 	 */
-	public void enviarHonorariosUvem(Long idExpediente) throws Exception;
+	void enviarHonorariosUvem(Long idExpediente) throws Exception;
 	
 	/**
 	 * Actualiza la reserva y el expediente al recibir un resol de devolucion
@@ -976,7 +984,7 @@ public interface ExpedienteComercialApi {
 	 * @param ResolucionComiteDto dto
 	 * @return
 	 */
-	public boolean updateEstadosResolucionDevolucion(ExpedienteComercial expedienteComercial,ResolucionComiteDto dto);
+	boolean updateEstadosResolucionDevolucion(ExpedienteComercial expedienteComercial, ResolucionComiteDto dto);
 	
 	/**
 	 * Actualiza la reserva y el expediente al recibir un resol de no devolucion
@@ -985,7 +993,7 @@ public interface ExpedienteComercialApi {
 	 * @param ResolucionComiteDto dto
 	 * @return
 	 */
-	public boolean updateEstadosResolucionNoDevolucion(ExpedienteComercial expedienteComercial,ResolucionComiteDto dto);
+	boolean updateEstadosResolucionNoDevolucion(ExpedienteComercial expedienteComercial, ResolucionComiteDto dto);
 	
 	/**
 	 * Devuelve la subcartera del expediente
@@ -995,7 +1003,7 @@ public interface ExpedienteComercialApi {
 	 * @param ResolucionComiteDto dto
 	 * @return
 	 */
-	public DDSubcartera getCodigoSubCarteraExpediente(Long idExpediente);
+	DDSubcartera getCodigoSubCarteraExpediente(Long idExpediente);
 
 	/**
 	 * Este método comprueba, desde un ID de trámite, si el expediente comercial se encuentra en un estado
@@ -1004,19 +1012,19 @@ public interface ExpedienteComercialApi {
 	 * @param idTramite: ID del trámite desde el cual se realiza la consulta.
 	 * @return Devuelve True si el estado del expdiente comercial es distinto a anulado, False si no lo es.
 	 */
-	public boolean checkEstadoExpedienteDistintoAnulado(Long idTramite);
+	boolean checkEstadoExpedienteDistintoAnulado(Long idTramite);
 
-	public void enviarCondicionantesEconomicosUvem(Long idExpediente) throws Exception;
+	void enviarCondicionantesEconomicosUvem(Long idExpediente) throws Exception;
 
 	boolean checkExpedienteFechaChequeLiberbank(Long idTramite);	
 	
 	boolean reservaFirmada(Long idTramite);
 
-	public Boolean checkInformeJuridicoFinalizado(Long idTramite);	
+	Boolean checkInformeJuridicoFinalizado(Long idTramite);
 	
-	public Boolean checkFechaVenta(Long idTramite);
+	Boolean checkFechaVenta(Long idTramite);
 
-	public Boolean esBH(String idExpediente);
+	Boolean esBH(String idExpediente);
 
 	DtoModificarCompradores vistaADtoModCompradores(VBusquedaDatosCompradorExpediente vista);
 
@@ -1030,7 +1038,7 @@ public interface ExpedienteComercialApi {
 	 */
 	boolean enviarCorreoComercializadora(String cuerpoEmail, Long idExpediente);
 
-	public List<DDTipoCalculo> getComboTipoCalculo(Long idExpediente);
+	List<DDTipoCalculo> getComboTipoCalculo(Long idExpediente);
 
 	/**
 	 * Este método comprueba si el expediente ya contiene un documento del tipo y subtipo indicado
@@ -1040,7 +1048,7 @@ public interface ExpedienteComercialApi {
 	 * @return Devuelve True si existe el documento.
 	 */
 
-	public Boolean existeDocSubtipo(WebFileItem fileItem, ExpedienteComercial expedienteComercialEntrada) throws Exception;
+	Boolean existeDocSubtipo(WebFileItem fileItem, ExpedienteComercial expedienteComercialEntrada) throws Exception;
 
 	/**
 	 * Método que obtiene el histórico de scoring del expediente comercial de alquiler.
@@ -1048,7 +1056,7 @@ public interface ExpedienteComercialApi {
 	 * @param idExpediente
 	 * @return
 	 */
-	public List<DtoExpedienteHistScoring> getHistoricoScoring(Long idScoring);
+	List<DtoExpedienteHistScoring> getHistoricoScoring(Long idScoring);
 
 	/**
 	 * Método que guarda la pestaña Scoring el bloque detalle.
@@ -1056,14 +1064,14 @@ public interface ExpedienteComercialApi {
 	 * @param idEntidad
 	 * @return
 	 */
-	public boolean saveExpedienteScoring(DtoExpedienteScoring dto, Long idEntidad);
+	boolean saveExpedienteScoring(DtoExpedienteScoring dto, Long idEntidad);
 
 	/**
 	 * Metodo que envia correo a a el asegurador informando de la firma de contrato de alquiler
 	 * @param idExpediente
 	 * @return
 	 */
-	public boolean enviarCorreoAsegurador(Long idExpediente);
+	boolean enviarCorreoAsegurador(Long idExpediente);
 
 
 	/**
@@ -1073,14 +1081,14 @@ public interface ExpedienteComercialApi {
 	 * @param envio
 	 * @return
 	 */
-	public boolean enviarCorreoGestionLlaves(Long idExpediente, Posicionamiento posicionamiento, int envio);
+	boolean enviarCorreoGestionLlaves(Long idExpediente, Posicionamiento posicionamiento, int envio);
 
 	/**
 	 * Método que saca una lista de estados del expediente segun si es de tipo venta o de tipo alquiler
 	 * @param idEstado
 	 * @return
 	 */
-	public List<DtoDiccionario> getComboExpedienteComercialByEstado(String idEstado);
+	List<DtoDiccionario> getComboExpedienteComercialByEstado(String idEstado);
 
 	/**
 	 * Metodo que envia correo al gestor comercial notificándole que se ha posicionado una oferta
@@ -1088,21 +1096,21 @@ public interface ExpedienteComercialApi {
 	 * @param posicionamiento
 	 * @return
 	 */
-	public boolean enviarCorreoPosicionamientoFirma(Long idExpediente, Posicionamiento posicionamiento);
+	boolean enviarCorreoPosicionamientoFirma(Long idExpediente, Posicionamiento posicionamiento);
 
 	/**
 	 * Metodo que envia correo al prescriptor de la oferta notificándole que se han subido a REM los documentos necesarios para la firma del contrato.
 	 * @param idExpediente
 	 * @return
 	 */
-	public boolean enviarCorreoSubidaDeContrato(Long idExpediente);
+	boolean enviarCorreoSubidaDeContrato(Long idExpediente);
 
 	/**
 	 * Metodo que comprueba si el documento Precontrato está subido al expediente
 	 * @param tareaExterna
 	 * @return
 	 */
-	public boolean checkPrecontratoSubido(TareaExterna tareaExterna);
+	boolean checkPrecontratoSubido(TareaExterna tareaExterna);
 
 	/**
 	 * Método que saca el expediente comercial a partir de una tarea externa
@@ -1110,9 +1118,9 @@ public interface ExpedienteComercialApi {
 	 * @param tareaExterna
 	 * @return ExpedienteComercial
 	 */
-	public ExpedienteComercial tareaExternaToExpedienteComercial(TareaExterna tareaExterna);
+	ExpedienteComercial tareaExternaToExpedienteComercial(TareaExterna tareaExterna);
 
-	public String getCodigoCarteraExpediente(String idExpediente);
+	String getCodigoCarteraExpediente(String idExpediente);
 
 	DtoPage getActivosExpedienteVista(Long idExpediente);
 
@@ -1125,16 +1133,18 @@ public interface ExpedienteComercialApi {
 	 * @param tareaExterna
 	 * @return
 	 */
-	public boolean checkContratoSubido(TareaExterna tareaExterna);
+	boolean checkContratoSubido(TareaExterna tareaExterna);
 	
 	/**
 	 * 
 	 * @param idExpediente
 	 * @return bool con el estado Ocupado SI/NO del tramite comercial de alquiler
 	 */
-	public boolean checkEstadoOcupadoTramite(Long idExpediente);
+	boolean checkEstadoOcupadoTramite(Long idExpediente);
 
-	public boolean checkConTituloTramite(Long idTramite);
+	boolean checkConTituloTramite(Long idTramite);
 
+
+	boolean checkConOpcionCompra(TareaExterna tareaExterna);
 
 }

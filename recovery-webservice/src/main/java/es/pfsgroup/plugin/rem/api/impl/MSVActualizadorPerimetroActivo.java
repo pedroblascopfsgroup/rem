@@ -3,14 +3,20 @@ package es.pfsgroup.plugin.rem.api.impl;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Date;
+
+import javax.annotation.Resource;
 
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.pfsgroup.commons.utils.Checks;
@@ -24,13 +30,11 @@ import es.pfsgroup.plugin.rem.activo.dao.impl.ActivoPatrimonioDaoImpl;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
-import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoComercializacion;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializar;
@@ -64,8 +68,8 @@ public class MSVActualizadorPerimetroActivo extends AbstractMSVActualizador impl
 	@Autowired
 	private GenericAdapter genericAdapter;
 	
-	@Autowired
-	private GestorActivoApi gestorActivoApi;
+	@Resource(name = "entityTransactionManager")
+	private PlatformTransactionManager transactionManager;
 
 	@Override
 	public String getValidOperation() {
@@ -246,10 +250,39 @@ public class MSVActualizadorPerimetroActivo extends AbstractMSVActualizador impl
 		activoApi.updateHistoricoDestinoComercial(activo, extraArgs);
 
 		activoApi.saveOrUpdate(activo);
-
-		activoAdapter.actualizarEstadoPublicacionActivo(activo.getId());
+		
+		//postProcesado
+		//activoAdapter.actualizarEstadoPublicacionActivo(activo.getId());
 
 		return new ResultadoProcesarFila();
+	}
+	
+	@Override
+	public void postProcesado(MSVHojaExcel exc) throws NumberFormatException, IllegalArgumentException, IOException, ParseException {
+		TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
+		Integer numFilas = exc.getNumeroFilas();
+		ArrayList<Long> idList = new ArrayList<Long>();
+		try{
+			for (int fila = this.getFilaInicial(); fila < numFilas; fila++) {
+				Activo activo = activoApi.getByNumActivo(Long.parseLong(exc.dameCelda(fila, 0)));
+				idList.add(activo.getId());
+			}
+			activoAdapter.actualizarEstadoPublicacionActivo(idList, false);
+			transactionManager.commit(transaction);
+		}catch(NumberFormatException e){
+			transactionManager.rollback(transaction);
+			throw e;
+		}catch(IllegalArgumentException e){
+			transactionManager.rollback(transaction);
+			throw e;
+		}catch(IOException e){
+			transactionManager.rollback(transaction);
+			throw e;
+		}catch(ParseException e){
+			transactionManager.rollback(transaction);
+			throw e;
+		}
+		
 	}
 	
 	/**

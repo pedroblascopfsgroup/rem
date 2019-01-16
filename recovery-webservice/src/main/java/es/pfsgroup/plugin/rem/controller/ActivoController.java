@@ -482,11 +482,20 @@ public class ActivoController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getListAsociadosById(Long id, ModelMap model) {
+		model.put(RESPONSE_DATA_KEY, adapter.getListAsociadosById(id));
+
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getListObservacionesById(Long id, ModelMap model) {
 		model.put(RESPONSE_DATA_KEY, adapter.getListObservacionesById(id));
 
 		return createModelAndViewJson(model);
 	}
+
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)

@@ -750,14 +750,10 @@ public class AgrupacionAdapter {
 			}
 
 			if (!Checks.esNulo(numActivo)){
-				if(!particularValidator.esActivoIncluidoPerimetro(Long.toString(numActivo))){
+				if(!DDTipoAgrupacion.AGRUPACION_ASISTIDA.equals(agrupacion.getTipoAgrupacion().getCodigo()) && !particularValidator.esActivoIncluidoPerimetro(Long.toString(numActivo))){
 					throw new JsonViewerException("El activo se encuetra fuera del perímetro HAYA");
-				}
-			}
-
-			if (!Checks.esNulo(numActivo)){
-				if(particularValidator.isActivoNoComercializable(Long.toString(numActivo))){
-					throw new JsonViewerException("El activo no es comercializable");
+				} else if (DDTipoAgrupacion.AGRUPACION_ASISTIDA.equals(agrupacion.getTipoAgrupacion().getCodigo()) && particularValidator.esActivoIncluidoPerimetro(Long.toString(numActivo))){
+					throw new JsonViewerException("El activo se encuetra dentro del perímetro HAYA");
 				}
 			}
 
@@ -767,7 +763,11 @@ public class AgrupacionAdapter {
 				if (DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_VENTA.equals(agrupacion.getTipoAgrupacion().getCodigo())
 						|| DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_ALQUILER.equals(agrupacion.getTipoAgrupacion().getCodigo())) {
 					
-						
+					// El activo no es comercializable
+					if(particularValidator.isActivoNoComercializable(Long.toString(numActivo))){
+						throw new JsonViewerException("El activo no es comercializable");
+					}
+					
 					// El activo ya esta en una agrupacion comercial viva
 					if (particularValidator.activoEnAgrupacionComercialViva(Long.toString(numActivo))) {
 						throw new JsonViewerException("El activo está incluido en otro lote comercial vivo");
@@ -2625,9 +2625,6 @@ public class AgrupacionAdapter {
 									activoPublicacion.setTipoComercializacion(tipoComercializacion);
 								}
 								
-								
-								activoPublicacion.setTipoComercializacion(tipoComercializacion);
-								
 								if(!ofertaVivaAlquiler && DDTipoComercializacion.CODIGO_VENTA.equals(dto.getTipoComercializacionCodigo())) {
 									activoPatrimonio.setCheckHPM(false);
 								}
@@ -2997,7 +2994,7 @@ public class AgrupacionAdapter {
 						ofertas.add(ao.getPrimaryKey().getOferta());
 					}
 				}
-				if(!activoTieneOfertaByTipoOfertaCodigo(ofertas, tipoCodigo))
+				if(activoTieneOfertaByTipoOfertaCodigo(ofertas, tipoCodigo))
 				{
 					return false;
 				}
@@ -3095,12 +3092,28 @@ public class AgrupacionAdapter {
 		VCondicionantesAgrDisponibilidad vCondicionantesAgrDisponibilidad = genericDao.get(VCondicionantesAgrDisponibilidad.class, idAgrupacionFilter);
 		Double precioWebVenta = 0.0;
 		Double precioWebAlquiler = 0.0;
-
-		for(ActivoAgrupacionActivo aga : agrupacion.getActivos()) {
-			precioWebVenta += !Checks.esNulo(activoValoracionDao.getImporteValoracionVentaWebPorIdActivo(aga.getActivo().getId()))
-					? activoValoracionDao.getImporteValoracionVentaWebPorIdActivo(aga.getActivo().getId()): 0.0;
-			precioWebAlquiler += !Checks.esNulo(activoValoracionDao.getImporteValoracionRentaWebPorIdActivo(aga.getActivo().getId()))
-					? activoValoracionDao.getImporteValoracionRentaWebPorIdActivo(aga.getActivo().getId()): 0.0;
+		Boolean tienePrecioVenta = true;
+		
+		try {
+			
+			for(ActivoAgrupacionActivo aga : agrupacion.getActivos()) {			
+				if(Checks.esNulo(activoValoracionDao.getImporteValoracionVentaWebPorIdActivo(aga.getActivo().getId()))) {
+					tienePrecioVenta = false;
+					break;
+				}
+			}
+			
+			for(ActivoAgrupacionActivo aga : agrupacion.getActivos()) {
+				if(tienePrecioVenta) {
+				precioWebVenta += !Checks.esNulo(activoValoracionDao.getImporteValoracionVentaWebPorIdActivo(aga.getActivo().getId()))
+						? activoValoracionDao.getImporteValoracionVentaWebPorIdActivo(aga.getActivo().getId()): 0.0;
+				}
+				precioWebAlquiler += !Checks.esNulo(activoValoracionDao.getImporteValoracionRentaWebPorIdActivo(aga.getActivo().getId()))
+						? activoValoracionDao.getImporteValoracionRentaWebPorIdActivo(aga.getActivo().getId()): 0.0;
+			}
+		
+		} catch (Exception e) {	
+			logger.error("error en agrupacionAdapter", e);
 		}
 
 		dto.setPrecioWebVenta(precioWebVenta);

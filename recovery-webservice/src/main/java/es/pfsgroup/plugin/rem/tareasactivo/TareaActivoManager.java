@@ -438,6 +438,11 @@ public class TareaActivoManager implements TareaActivoApi {
 			}
 		} return "";
 	}
+
+	@Override
+	public List<TareaActivo> getTareasActivo(Long idActivo, String codigoTipoTramite) {
+		return tareaActivoDao.getTareasActivoPorIdActivoAndTramite(idActivo, codigoTipoTramite);
+	}
 }
 
 

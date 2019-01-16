@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
+//import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Properties;
 
@@ -139,56 +139,66 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 					++currentIndex;
 				}
 					
-					Label valor = new Label(2,4, dtoPAB.getTipoActivoDescripcion());
+					Label valor = new Label(2,4, dtoPAB.getDescripcionEstadoPatrimonio()); // 𝕺𝕶
 					hojaDetalle.addCell(valor);
 					
-					if (Checks.esNulo(dtoPAB.getNumActivoUvem())) {
+					if (Checks.esNulo(dtoPAB.getNumActivoUvem())) { // 𝕺𝕶
 						valor = new Label(2,7, dtoPAB.getNumActivoUvem().toString());
 						hojaDetalle.addCell(valor);	
 					}
 					
-					if (Checks.esNulo(dtoPAB.getNumActivoUvem().toString())) {
-						valor = new Label(2,8, dtoPAB.getNumActivoUvem().toString()); // MAL
+					
+//					valor = new Label(2,9, LocalDateTime.now().toString()); // ?? DATE? JAVA 8 ?
+//					hojaDetalle.addCell(valor);
+					
+					if (Checks.esNulo(dtoPAB.getFechaAltaOferta())) { // 𝕺𝕶
+						valor = new Label(2,10, dtoPAB.getFechaAltaOferta().toString());
 						hojaDetalle.addCell(valor);
 					}
 					
-					valor = new Label(2,9, LocalDateTime.now().toString()); // ?? DATE?
-					hojaDetalle.addCell(valor);
 					
-					valor = new Label(2,10, dtoPAB.getFechaAltaExpedienteComercial().toString());
-					hojaDetalle.addCell(valor);
-					
-					if (Checks.esNulo(dtoPAB.getFechaPublicacionWeb())) {
+					if (Checks.esNulo(dtoPAB.getFechaPublicacionWeb())) { // 𝕺𝕶
 						valor = new Label(2,11,dtoPAB.getFechaPublicacionWeb().toString()); 
 						hojaDetalle.addCell(valor);
 					}
 					
-					valor = new Label(2,12,dtoPAB.getFechaPublicacionWeb().toString()); // MAL
+					valor = new Label(2,18, dtoPAB.getTipoActivo()); // 𝕺𝕶
 					hojaDetalle.addCell(valor);
 					
-					valor = new Label(2,18, dtoPAB.getTipoActivo());
+					valor = new Label(2,20, dtoPAB.getDireccionCompleta()); // 𝕺𝕶
 					hojaDetalle.addCell(valor);
 					
-					valor = new Label(2,20, dtoPAB.getDireccionCompleta());
-					hojaDetalle.addCell(valor);
-					
-					valor = new Label(2,21, dtoPAB.getCodPostal() + dtoPAB.getMunicipio());
+					valor = new Label(2,21, dtoPAB.getCodPostMunicipio()); // 𝕺𝕶
 					hojaDetalle.addCell(valor);
 						
-					valor = new Label(2,24, dtoPAB.getNombrePropietario());
+					valor = new Label(2,24, dtoPAB.getNombrePropietario()); // 𝕺𝕶
 					hojaDetalle.addCell(valor);
 					
-					valor = new Label(2,40, dtoPAB.getImporteTasacionFinal().toString());
+					if (Checks.esNulo(dtoPAB.getImporteTasacionFinal())) { // 𝕺𝕶
+						valor = new Label(2,40, dtoPAB.getImporteTasacionFinal().toString());
+						hojaDetalle.addCell(valor);
+					}
+					 
+					if (Checks.esNulo(dtoPAB.getFechaUltimaTasacion())) { // 𝕺𝕶
+						valor = new Label(2,41, dtoPAB.getFechaUltimaTasacion().toString());
+						hojaDetalle.addCell(valor);
+					}
+					
+					valor = new Label(2,47, dtoPAB.getNombreCompleto()); // 𝕺𝕶
 					hojaDetalle.addCell(valor);
 					
-					valor = new Label(2,41, dtoPAB.getFechaUltimaTasacion().toString());
+					valor = new Label(2,48, dtoPAB.getCompradorDocumento()); //𝕺𝕶
 					hojaDetalle.addCell(valor);
 					
-					valor = new Label(2,47, dtoPAB.getNombreCompleto());
-					hojaDetalle.addCell(valor);
+					if (Checks.esNulo(dtoPAB.getImporteOferta())) { // 𝕺𝕶
+						valor = new Label(2,57, dtoPAB.getImporteOferta().toString()); 
+						hojaDetalle.addCell(valor);
+					}
 					
-					valor = new Label(2,48, dtoPAB.getN); //MAL
-					hojaDetalle.addCell(valor);
+					if (Checks.esNulo(dtoPAB.getCarenciaALquiler())) { // 𝕺𝕶 
+						valor = new Label(2,60, Integer.toString(dtoPAB.getCarenciaALquiler())); 
+						hojaDetalle.addCell(valor);
+					}
 					
 					valor = new Label(1,81, dtoPAB.getTextoOferta());
 					hojaDetalle.addCell(valor);

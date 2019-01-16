@@ -261,7 +261,7 @@ public class OfertasController {
 //		excelReportGeneratorApi.sendReport(file, response);
 		DtoOfertasFilter dto = new DtoOfertasFilter();
 		dto.setIdOferta(idOferta);
-		List<DtoPropuestaAlqBankia> listaDtos = ofertaApi.getListPropuestasAlqBankiaFromView((long) 213342);
+		List<DtoPropuestaAlqBankia> listaDtos = ofertaApi.getListPropuestasAlqBankiaFromView((long) 213342); //3199
 		
 		
 	}

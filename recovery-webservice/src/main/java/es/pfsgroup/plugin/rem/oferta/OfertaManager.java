@@ -3213,6 +3213,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			dtoSimple.setImporteTasacionFinal(v.getImporteTasacionFinal());
 			dtoSimple.setTipoActivo(v.getTipoActivo());
 			dtoSimple.setCartera(v.getCartera());
+			dtoSimple.setCarenciaALquiler(v.getCarenciaALquiler()*30);
 			dtoSimple.setCompradorDocumento(v.getCompradorDocumento());
 			dtoSimple.setProvincia(v.getProvincia());
 			dtoSimple.setNumDomicilio(v.getNumDomicilio());

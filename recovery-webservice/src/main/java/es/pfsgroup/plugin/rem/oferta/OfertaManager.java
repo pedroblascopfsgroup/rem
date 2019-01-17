@@ -2436,6 +2436,13 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				dto.setImporteCalculo(0.00);
 				dto.setHonorarios(0.00);
 			}
+			
+			//Si el honorario es menor de 100 € el valor final será, salvo si el importe es fijo, de 100 €. HREOS-5149 + HREOS-5244
+			if(dto.getHonorarios() < 100.00 && !(DDTipoCalculo.TIPO_CALCULO_IMPORTE_FIJO_ALQ.equals(dto.getCodigoTipoCalculo()))) {
+				dto.setHonorarios(100.00);
+			}else {
+				dto.setHonorarios(dto.getHonorarios());
+			}
 		}
 
 		return dto;

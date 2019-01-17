@@ -258,6 +258,21 @@ public class OfertasController {
 		Long prueba = (long) 3199;
 		List <DtoPropuestaAlqBankia> listaPropuestaAlquilerBankia = ofertaApi.getListPropuestasAlqBankiaFromView(prueba);
 		
+		//List<DtoPropuestaAlqBankia> l_dtoBankia = ofertaApi.getListPropuestasAlqBankiaFromView(3199L);
+		/*DtoPropuestaAlqBankia dtoA = new DtoPropuestaAlqBankia();
+		DtoPropuestaAlqBankia dtoB = new DtoPropuestaAlqBankia();
+		dtoA.setNumActivoUvem(2L);
+		dtoA.setTipoActivo("Normal?");
+		dtoB.setNumActivoUvem(1L);
+		dtoB.setTipoActivo("NoTanNormal");
+		
+		List<DtoPropuestaAlqBankia> l_dtoBankia = new ArrayList<DtoPropuestaAlqBankia>();
+		l_dtoBankia.add(dtoA);
+		l_dtoBankia.add(dtoB);*/
+		
+		File file = excelReportGeneratorApi.generateBankiaReport(listaPropuestaAlquilerBankia, request);
+		String kk;
+//		excelReportGeneratorApi.sendReport(file, response);
 	}
 	
 	@SuppressWarnings("unchecked")

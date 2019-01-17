@@ -426,6 +426,11 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 			para.add(sup_com_alq.getEmail());
 		}
 		
+		Usuario buzonPfs = usuarioManager.getByUsername(BUZON_PFS);
+		if(!Checks.esNulo(buzonPfs)) {
+			para.add(buzonPfs.getEmail());
+		}
+		
 		String tipoDocIndentificacion= oferta.getCliente().getTipoDocumento().getDescripcion();
 		String docIdentificacion= oferta.getCliente().getDocumento();
 		String codigoPrescriptor= oferta.getPrescriptor().getCodigoProveedorRem().toString();

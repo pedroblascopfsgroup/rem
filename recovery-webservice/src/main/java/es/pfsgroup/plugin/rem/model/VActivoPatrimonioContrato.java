@@ -33,6 +33,12 @@ public class VActivoPatrimonioContrato implements Serializable {
 	
 	@Column(name = "DCA_ID_CONTRATO")
 	private String idContrato;
+	
+	@Column(name = "ACT_NUM_ACTIVO")
+	private String numeroActivoHaya;
+	
+	@Column(name = "DCA_NOM_PRINEX")
+	private String nombrePrinex;
 
 	public Long getActivo() {
 		return activo;
@@ -66,6 +72,20 @@ public class VActivoPatrimonioContrato implements Serializable {
 		this.idContrato = idContrato;
 	}
 	
-	
+	public String getNumeroActivoHaya() {
+		return numeroActivoHaya;
+	}
+
+	public void setNumeroActivoHaya(String numeroActivoHaya) {
+		this.numeroActivoHaya = numeroActivoHaya;
+	}
+
+	public String getNombrePrinex() {
+		return nombrePrinex;
+	}
+
+	public void setNombrePrinex(String nombrePrinex) {
+		this.nombrePrinex = nombrePrinex;
+	}
 }
 	

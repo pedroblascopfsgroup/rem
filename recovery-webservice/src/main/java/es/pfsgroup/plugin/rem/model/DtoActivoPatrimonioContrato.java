@@ -29,6 +29,7 @@ public class DtoActivoPatrimonioContrato extends DtoTabActivo {
 	private Date ultimoReciboPagado;
 	private Date ultimoReciboAdeudado;
 	private Boolean multiplesResultados;
+	private String numeroActivoHaya;
 	
 	public Long getIdActivo() {
 		return idActivo;
@@ -119,6 +120,12 @@ public class DtoActivoPatrimonioContrato extends DtoTabActivo {
 	}
 	public void setMultiplesResultados(Boolean multiplesResultados) {
 		this.multiplesResultados = multiplesResultados;
+	}
+	public String getNumeroActivoHaya() {
+		return numeroActivoHaya;
+	}
+	public void setNumeroActivoHaya(String numeroActivoHaya) {
+		this.numeroActivoHaya = numeroActivoHaya;
 	}
 	
 }

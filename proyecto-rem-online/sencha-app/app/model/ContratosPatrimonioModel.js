@@ -13,7 +13,7 @@ Ext.define('HreRem.model.ContratosPatrimonioModel', {
     			dateFormat: 'c'
     		},
     		{
-    			name:'numeroContrato'
+    			name:'idContrato'
     		},
     		{
     			name:'inquilino'
@@ -59,6 +59,9 @@ Ext.define('HreRem.model.ContratosPatrimonioModel', {
     		{
     			name: 'multiplesResultados',
     			type: 'boolean'
+    		},
+    		{
+    			name: 'numeroActivoHaya'
     		}
     ],
     

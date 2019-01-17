@@ -1045,6 +1045,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		else {
 			dto.setRefCircuitoCliente(null);
 		}
+		
 
 		if(DDCartera.CODIGO_CARTERA_BANKIA.equals(oferta.getActivoPrincipal().getCartera().getCodigo())){
 			///Comprobamos si la tarea Elevar a Sanción está activa
@@ -1072,6 +1073,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 		}else{
 			dto.setPermiteProponer(false);
+		}
+		
+		if (!Checks.esNulo(expediente)) {
+			dto.setIdEco(expediente.getId());
 		}
 
 		return dto;

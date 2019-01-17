@@ -2560,7 +2560,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		config = {};
 
 		config.params = {};
-		config.params.idOferta=me.getViewModel().get("datosbasicosoferta.idOferta");
+		config.params.idEco=me.getViewModel().get("datosbasicosoferta.idEco");
 		config.url= $AC.getRemoteUrl("ofertas/generateExcelOferta");
 		
 		Ext.Msg.confirm(
@@ -2587,7 +2587,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 						
 						var url = $AC.getRemoteUrl("ofertas/enviarMailAprobacion");
 						var parametros = {
-								idOferta: me.getViewModel().get("datosbasicosoferta.idOferta")
+								idOferta: me.getViewModel().get("datosbasicosoferta.idEco")
 						};
 						
 						me.getView().mask();

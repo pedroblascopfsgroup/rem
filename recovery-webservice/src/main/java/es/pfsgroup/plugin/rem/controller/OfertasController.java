@@ -244,7 +244,7 @@ public class OfertasController {
 	
 	
 	@RequestMapping(method = RequestMethod.GET)
-	public void generateExcelOferta(Long idOferta, HttpServletRequest request, HttpServletResponse response) throws IOException {
+	public void generateExcelOferta(Long idEco, HttpServletRequest request, HttpServletResponse response) throws IOException {
 		
 //		DtoOfertasFilter dto = new DtoOfertasFilter();
 //		dto.setIdOferta(idOferta);
@@ -256,10 +256,7 @@ public class OfertasController {
 //		
 //		excelReportGeneratorApi.sendReport(file, response);
 		
-		Long prueba = (long)3199;
-		List<DtoPropuestaAlqBankia> listaDto = ofertaApi.getListPropuestasAlqBankiaFromView(prueba);
-		
-		Long prueba2 = 2L;
+		ofertaApi.getListPropuestasAlqBankiaFromView(idEco);
 	}
 	
 	@SuppressWarnings("unchecked")

@@ -2522,7 +2522,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		}
 
 	@Override
-	public boolean esActivoConAdecuacionNofinalizada(Long numActivoHaya) {
+	public boolean esActivoConAdecuacionFinalizada(Long numActivoHaya) {
 		String resultado = "0";
 		if(numActivoHaya != null) {
 			 resultado = rawDao.getExecuteSQL("SELECT COUNT(1) " + 
@@ -2534,7 +2534,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 			 		"JOIN TAC_TAREAS_ACTIVOS TAC ON TRA.TRA_ID = TAC.TRA_ID " + 
 			 		"JOIN TAR_TAREAS_NOTIFICACIONES TAR ON TAC.TAR_ID = TAR.TAR_ID " + 
 			 		"JOIN TEX_TAREA_EXTERNA TEX ON TEX.TAR_ID = TAR.TAR_ID " + 
-			 		"WHERE ACT.ACT_NUM_ACTIVO='"+numActivoHaya+"' AND TAR.TAR_TAREA_FINALIZADA= 0");
+			 		"WHERE ACT.ACT_NUM_ACTIVO='"+numActivoHaya+"' AND TAR.TAR_TAREA_FINALIZADA= 1");
 		}
 	
 		return !"0".equals(resultado);

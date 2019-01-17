@@ -108,7 +108,7 @@ public class MSVValidatorCargaMasivaComunicaciones extends MSVExcelValidatorAbst
 			mapaErrores.put(messageServices.getMessage(ACTIVO_SIN_COMUNICACION_VIVA), validarActivoComunicacionViva(exc));
 			mapaErrores.put(messageServices.getMessage(ACTIVO_SIN_COMUNICACION_EN_ESTADO_COMUNICADO), esActivoConComunicacionComunicada(exc));
 			mapaErrores.put(messageServices.getMessage(ACTIVO_CON_COMUNICACION_NO_GENERADA), esActivoConComunicacionGenerada(exc));
-			//mapaErrores.put(messageServices.getMessage(ACTIVO_CON_ADECUACION_NO_FINALIZADA), esActivoConAdecuacionNofinalizada(exc));
+			mapaErrores.put(messageServices.getMessage(ACTIVO_CON_ADECUACION_NO_FINALIZADA), esActivoConAdecuacionFinalizada(exc));
 			// Validar NIF
 			// Activo sin comunicación viva
 
@@ -116,7 +116,7 @@ public class MSVValidatorCargaMasivaComunicaciones extends MSVExcelValidatorAbst
 					|| !mapaErrores.get(messageServices.getMessage(ACTIVO_SIN_COMUNICACION_VIVA)).isEmpty()
 					|| !mapaErrores.get(messageServices.getMessage(ACTIVO_SIN_COMUNICACION_EN_ESTADO_COMUNICADO)).isEmpty()
 					|| !mapaErrores.get(messageServices.getMessage(ACTIVO_CON_COMUNICACION_NO_GENERADA)).isEmpty()
-					//|| !mapaErrores.get(messageServices.getMessage(ACTIVO_CON_ADECUACION_NO_FINALIZADA)).isEmpty()
+					|| !mapaErrores.get(messageServices.getMessage(ACTIVO_CON_ADECUACION_NO_FINALIZADA)).isEmpty()
 					) {
 				dtoValidacionContenido.setFicheroTieneErrores(true);
 				exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
@@ -133,13 +133,13 @@ public class MSVValidatorCargaMasivaComunicaciones extends MSVExcelValidatorAbst
 	}
 
 	//No ha finalizado la tarea de adecuacion 
-	private List<Integer> esActivoConAdecuacionNofinalizada(MSVHojaExcel exc) {
+	private List<Integer> esActivoConAdecuacionFinalizada(MSVHojaExcel exc) {
 		List<Integer> listaFilas = new ArrayList<Integer>();
 		
 		int i = 0;
 		try{
 			for(i=1; i<this.numFilasHoja;i++){
-				if(!particularValidator.esActivoConAdecuacionNofinalizada(Long.valueOf(exc.dameCelda(i, POSICION_COLUMNA_NUMERO_ACTIVO)))) {
+				if(!particularValidator.esActivoConAdecuacionFinalizada(Long.valueOf(exc.dameCelda(i, POSICION_COLUMNA_NUMERO_ACTIVO)))) {
 					listaFilas.add(i);
 				}
 					

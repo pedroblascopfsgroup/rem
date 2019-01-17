@@ -554,7 +554,7 @@ public interface ParticularValidatorApi {
 	
 	public Boolean esActivoConComunicacionGenerada(Long numActivoHaya);
 	
-	public boolean esActivoConAdecuacionNofinalizada(Long numActivoHaya);
+	public boolean esActivoConAdecuacionFinalizada(Long numActivoHaya);
 
 	/**
 	 * Devuelve true si un activo tiene ofertas vivas de tipo alquiler

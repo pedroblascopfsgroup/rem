@@ -177,7 +177,10 @@ public class UpdaterServicePublicacionRevisionInformeComercial implements Update
 		
 		
 		activoAdapter.actualizarEstadoPublicacionActivo(activo.getId());
-
+		
+		if(checkAcepta){
+			activoApi.calcularRatingActivo(tramite.getActivo().getId());
+		}
 	}
 
 	public String[] getCodigoTarea() {

@@ -113,8 +113,7 @@ Ext.define('HreRem.view.agenda.TareaNotificacion', {
     	    									tooltip: 'Ver Activo',
     	    									cls : 'app-list-ico ico-ver-activov2',
     	    									//handler: 'enlaceAbrirActivo'
-    	    									handler: 'enlaceAbrirActivo', //.createDelegate(this, [{foo:'two', bar:2}], true)
-    	    									idActivo : me.idAsunto
+    	    									handler: 'enlaceAbrirActivoNotificacion' //.createDelegate(this, [{foo:'two', bar:2}], true)
     	    								}
     									]
     								},

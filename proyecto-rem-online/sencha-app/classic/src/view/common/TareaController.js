@@ -345,11 +345,52 @@ Ext.define('HreRem.view.common.TareaController', {
 			  url:url,
 			  params:  {idTarea : me.getView().idTarea},
 			  success: function(response,opts){
-
+				  
 				  idActivo = Ext.JSON.decode(response.responseText).idActivoTarea;
 				  
 				  me.getView().fireEvent('abrirDetalleActivoPrincipal', idActivo, button.reflinks);
 
+			  },
+			  callback: function(options, success, response){
+
+				  button.up('window').unmask();
+
+			  }
+			  
+		    });
+		}else{
+			  me.getView().fireEvent('abrirDetalleActivoPrincipal', idActivo, button.reflinks);
+			  button.up('window').unmask();
+		}
+	},
+	
+	enlaceAbrirActivoNotificacion: function(button) {
+
+		var me = this,
+		window = button.up('window');
+		
+		var idActivo = button.idActivo ? button.idActivo : window.idActivo;
+		
+		button.up('window').mask();
+		
+		me.redirectTo('activos',true);
+
+		if(Ext.isEmpty(idActivo)){
+
+			var url = $AC.getRemoteUrl('agenda/getIdActivoByNumActivo');
+		    Ext.Ajax.request({
+			  url:url,
+			  params:  {idNumAct : me.getView().numActivo},
+			  success: function(response,opts){
+				  
+				  idActivo = Ext.JSON.decode(response.responseText).idActivoTarea;
+				  
+				 if(idActivo != null){
+					 me.getView().fireEvent('abrirDetalleActivoPrincipal', idActivo, button.reflinks);
+				 }else{
+					 me.errorMensaje="Id Activo no encontrado";
+					 me.getViewModel().set("errorValidacion", me.errorMensaje);
+				 }
 			  },
 			  callback: function(options, success, response){
 

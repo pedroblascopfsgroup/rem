@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.controller;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Properties;
 
@@ -26,6 +27,7 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.framework.paradise.agenda.controller.TareaController;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.rem.adapter.AgendaAdapter;
+import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
@@ -38,6 +40,7 @@ import es.pfsgroup.plugin.rem.excel.TareaExcelReport;
 import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionService;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
+import es.pfsgroup.plugin.rem.model.DtoAgendaMultifuncion;
 import es.pfsgroup.plugin.rem.model.DtoReasignarTarea;
 import es.pfsgroup.plugin.rem.model.DtoSaltoTarea;
 import es.pfsgroup.plugin.rem.model.DtoSolicitarProrrogaTarea;
@@ -72,6 +75,7 @@ public class AgendaController extends TareaController {
 	
 	@Autowired
 	private TareaActivoApi activoTareaApi;
+	
 	
 	private final Log logger = LogFactory.getLog(getClass());
 
@@ -140,9 +144,11 @@ public class AgendaController extends TareaController {
 	}
 
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView detalleTarea(Long idTarea, String subtipoTarea) {
+	public ModelAndView detalleTarea(Long idTarea, String subtipoTarea) throws IllegalAccessException, InvocationTargetException {
+		
+		DtoAgendaMultifuncion objetoNotificacionAct = (DtoAgendaMultifuncion) adapter.abreTarea(idTarea, subtipoTarea);
 
-		return createModelAndViewJson(new ModelMap("data", adapter.abreTarea(idTarea, subtipoTarea)));
+		return createModelAndViewJson(new ModelMap("data",objetoNotificacionAct ));
 
 	}
 
@@ -611,6 +617,13 @@ public class AgendaController extends TareaController {
 			e.printStackTrace();
 			model.put("succes", false);
 		}
+		return createModelAndViewJson(model);
+	}
+	
+	
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView getIdActivoByNumActivo(Long idNumAct, ModelMap model) {
+		model.put("idActivoTarea", adapter.getIdActivoByNumActivo(idNumAct));
 		return createModelAndViewJson(model);
 	}
 

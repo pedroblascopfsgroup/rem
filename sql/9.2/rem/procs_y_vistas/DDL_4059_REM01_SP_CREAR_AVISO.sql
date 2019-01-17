@@ -1,16 +1,17 @@
 --/*
 --##########################################
---## AUTOR=Carles Molins
---## FECHA_CREACION=20181107
+--## AUTOR=Sergio Beleña Boix
+--## FECHA_CREACION=20190114
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=2.0.19
---## INCIDENCIA_LINK=HREOS-4683
+--## INCIDENCIA_LINK=REMVIP-2971
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
---##        0.1 Versión inicial
+--##        0.1 HREOS-4683 - Carles Molins
+--##	    0.2 REMVIP-2971 - Sergio Beleña se añade en la MEJ_IRG_INFO_REGISTRO el número de activo 
 --##########################################
 --*/
 
@@ -179,6 +180,18 @@ create or replace PROCEDURE SP_CREAR_AVISO (pACT_ID IN NUMBER DEFAULT NULL
                                             ,IRG_VALOR, VERSION, USUARIOCREAR, FECHACREAR)
             SELECT '|| V_ESQUEMA ||'.S_MEJ_IRG_INFO_REGISTRO.NEXTVAL IRG_ID, '|| V_REG_ID ||' REG_ID
                                             ,''EMISOR_NOTIF'' IRG_CLAVE, '''|| pUSUARIOMODIFICAR ||''' IRG_VALOR
+                                            ,0 VERSION, '''|| pUSUARIOMODIFICAR ||''' USUARIOCREAR
+                                            ,SYSDATE FECHACREAR
+            FROM DUAL';
+        EXECUTE IMMEDIATE V_MSQL;
+
+
+        --NUM_ACT
+        V_MSQL := '
+            INSERT INTO '|| V_ESQUEMA ||'.MEJ_IRG_INFO_REGISTRO (IRG_ID, REG_ID, IRG_CLAVE
+                                            ,IRG_VALOR, VERSION, USUARIOCREAR, FECHACREAR)
+            SELECT '|| V_ESQUEMA ||'.S_MEJ_IRG_INFO_REGISTRO.NEXTVAL IRG_ID, '|| V_REG_ID ||' REG_ID
+                                            ,''NUM_ACT'' IRG_CLAVE, '''|| V_NUM_ACT ||''' IRG_VALOR
                                             ,0 VERSION, '''|| pUSUARIOMODIFICAR ||''' USUARIOCREAR
                                             ,SYSDATE FECHACREAR
             FROM DUAL';

@@ -86,18 +86,14 @@ public class OfertasController {
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public void generateExcel(DtoOfertasFilter dtoOfertasFilter, HttpServletRequest request, HttpServletResponse response) throws IOException {
-//		dtoOfertasFilter.setStart(excelReportGeneratorApi.getStart());
-//		dtoOfertasFilter.setLimit(excelReportGeneratorApi.getLimit());
-//
-//		List<VOfertasActivosAgrupacion> listaOfertas = (List<VOfertasActivosAgrupacion>) ofertaApi.getListOfertasUsuario(dtoOfertasFilter).getResults();
-//
-//		ExcelReport report = new OfertasExcelReport(listaOfertas);
-//
-//		excelReportGeneratorApi.generateAndSend(report, response);
-		Long prueba = 1L;
-		List<DtoPropuestaAlqBankia> listaDto = ofertaApi.getListPropuestasAlqBankiaFromView(prueba);
-		
-		Long prueba2 = 2L;
+		dtoOfertasFilter.setStart(excelReportGeneratorApi.getStart());
+		dtoOfertasFilter.setLimit(excelReportGeneratorApi.getLimit());
+
+		List<VOfertasActivosAgrupacion> listaOfertas = (List<VOfertasActivosAgrupacion>) ofertaApi.getListOfertasUsuario(dtoOfertasFilter).getResults();
+
+		ExcelReport report = new OfertasExcelReport(listaOfertas);
+
+		excelReportGeneratorApi.generateAndSend(report, response);
 	}
 
 	private ModelAndView createModelAndViewJson(ModelMap model) {
@@ -248,7 +244,7 @@ public class OfertasController {
 	
 	
 	@RequestMapping(method = RequestMethod.GET)
-	public void generateExcelOferta(Long idOferta, HttpServletRequest request, HttpServletResponse response) throws IOException {
+	public void generateExcelOferta(Long idEco, HttpServletRequest request, HttpServletResponse response) throws IOException {
 		
 //		DtoOfertasFilter dto = new DtoOfertasFilter();
 //		dto.setIdOferta(idOferta);
@@ -259,11 +255,8 @@ public class OfertasController {
 //		notificationOferta.sendNotificationPropuestaOferta(oferta, new FileItem(file));
 //		
 //		excelReportGeneratorApi.sendReport(file, response);
-		DtoOfertasFilter dto = new DtoOfertasFilter();
-		dto.setIdOferta(idOferta);
-		List<DtoPropuestaAlqBankia> listaDtos = ofertaApi.getListPropuestasAlqBankiaFromView((long) 213342); //3199
 		
-		
+		ofertaApi.getListPropuestasAlqBankiaFromView(idEco);
 	}
 	
 	@SuppressWarnings("unchecked")

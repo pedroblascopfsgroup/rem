@@ -26,22 +26,25 @@ public class VPropuestaAlqBankia implements Serializable {
 	
 	
 	@Id
-	@Column(name = "ECO_ID")
+	@Column(name ="VPROP_ID")
 	private Long id;
 	
-	@Column(name = "ACT_NUM_ACTIVO_UVEM")
+	@Column(name = "ECO_ID") //
+	private Long ecoId;
+	
+	@Column(name = "ACT_NUM_ACTIVO_UVEM")//
 	private Long numActivoUvem;	
 	
-	@Column(name = "ALQ_CARENCIA")
+	@Column(name = "ALQ_CARENCIA")//
 	private Integer carenciaALquiler; 
 		
-	@Column(name = "TXO_TEXTO")
+	@Column(name = "TXO_TEXTO")//
 	private String textoOferta;  
     
-    @Column(name = "ECO_FECHA_ALTA")
+    @Column(name = "ECO_FECHA_ALTA")//
    	private Date fechaAltaExpedienteComercial;
 
-    @Column(name = "APU_FECHA_INI_ALQUILER")
+    @Column(name = "APU_FECHA_INI_ALQUILER")//
    	private Date fechaPublicacionWeb;
 	
 	@Column(name = "ALQ_FIANZA_IMPORTE")
@@ -118,6 +121,14 @@ public class VPropuestaAlqBankia implements Serializable {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+	
+	public Long getEcoId() {
+		return ecoId;
+	}
+
+	public void setEcoId(Long ecoId) {
+		this.ecoId = ecoId;
 	}
 
 	public Long getNumActivoUvem() {

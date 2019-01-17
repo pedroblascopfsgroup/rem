@@ -3199,7 +3199,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		for (VPropuestaAlqBankia v : listaVista) {
 			idUltimoDto++;
 			dtoSimple = new DtoPropuestaAlqBankia();
-			dtoSimple.setId(v.getId());
+			dtoSimple.setEcoId(v.getEcoId());
 			dtoSimple.setNumActivoUvem(v.getNumActivoUvem());
 			dtoSimple.setTextoOferta(v.getTextoOferta());
 			dtoSimple.setFechaAltaExpedienteComercial(v.getFechaAltaExpedienteComercial());
@@ -3218,6 +3218,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			dtoSimple.setProvincia(v.getProvincia());
 			dtoSimple.setNumDomicilio(v.getNumDomicilio());
 			dtoSimple.setTipoVia(v.getTipoVia());
+			dtoSimple.setImporteOferta(v.getImporteOferta());
 			
 			importeOfertaFinal = importeOfertaFinal.add(v.getImporteOferta());
 			sumaTasacionFinal = sumaTasacionFinal.add(v.getImporteTasacionFinal());
@@ -3226,7 +3227,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			if(Checks.esNulo(v.getCompradorNombre())) {
 				stringAux = "" ;
 			}else {
-				stringAux = v.getCompradorNombre();
+				stringAux = v.getCompradorNombre() + " ";
 			}
 			if(Checks.esNulo(v.getCompradorApellidos())) {
 				stringAux = stringAux + "";
@@ -3238,7 +3239,13 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			if(Checks.esNulo(v.getCodPostal())){
 				stringAux = " ";
 			}else {
-				stringAux = stringAux + Integer.toString(v.getCodPostal()); 
+				stringAux = Integer.toString(v.getCodPostal()) + " "; 
+			}
+			if(Checks.esNulo(v.getMunicipio()))
+			{
+				stringAux = " ";
+			}else {
+				stringAux = stringAux + v.getMunicipio();
 			}
 			dtoSimple.setCodPostMunicipio(stringAux);
 			stringAux = "";
@@ -3246,17 +3253,17 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			if(Checks.esNulo(v.getCalle())) {
 				stringAux="";
 			}else{
-				stringAux = v.getCalle();
+				stringAux = v.getCalle() + " ";
 			}
 			if(Checks.esNulo(v.getPiso())){
 				stringAux= stringAux + "";
 			}else {
-				stringAux = stringAux + v.getCalle();
+				stringAux = stringAux + v.getPiso() + " ";
 			}
 			if(Checks.esNulo(v.getPuerta())){
 				stringAux= stringAux + "";
 			}else {
-				stringAux= stringAux + v.getPuerta();
+				stringAux= stringAux + v.getPuerta() + " ";
 			}
 			if(Checks.esNulo(v.getEscalera())){
 				stringAux= stringAux + "";

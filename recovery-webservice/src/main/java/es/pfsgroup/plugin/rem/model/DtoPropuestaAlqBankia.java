@@ -15,6 +15,7 @@ public class DtoPropuestaAlqBankia extends WebDto {
 	private static final long serialVersionUID = 0L;
 
 	private Long id;
+	private Long ecoId;
 	private Long numActivoUvem;	
 	private int carenciaALquiler; 
 	private String textoOferta;
@@ -53,6 +54,12 @@ public class DtoPropuestaAlqBankia extends WebDto {
 	}
 	public void setId(Long id) {
 		this.id = id;
+	}
+	public Long getEcoId() {
+		return ecoId;
+	}
+	public void setEcoId(Long ecoId) {
+		this.ecoId = ecoId;
 	}
 	public Long getNumActivoUvem() {
 		return numActivoUvem;

@@ -698,12 +698,12 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 					if (ActivoPropietario.CODIGO_FONDOS_TITULIZACION.equals(propietario.getCodigo()) || ActivoPropietario.CODIGO_GIVP.equals(propietario.getCodigo()) 
 							|| ActivoPropietario.CODIGO_GIVP_II.equals(propietario.getCodigo())){
 						if (oferta.getOfertaExpress()){
-							f1 = FileItemUtils.fromResource("docs/07_2018_Instrucciones_Reserva_express_OFICINAS.pdf");
+							f1 = FileItemUtils.fromResource("docs/20181001_Instrucciones_Reserva_CAJAMAR.DOCX");
 						}else {
 							f1 = FileItemUtils.fromResource("docs/Instrucciones_Reserva_Formalizacion_estandar_072018.pdf");
 						}					
 					}else {
-						f1 = FileItemUtils.fromResource("docs/instrucciones_reserva_formalizacion_cajamar.pdf");
+						f1 = FileItemUtils.fromResource("docs/20181001_Instrucciones_Reserva_CAJAMAR.DOCX");
 					}
 					
 					f2 = FileItemUtils.fromResource("docs/ficha_cliente.xlsx");

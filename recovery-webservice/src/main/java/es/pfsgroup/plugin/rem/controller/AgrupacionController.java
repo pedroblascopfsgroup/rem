@@ -7,7 +7,6 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import es.pfsgroup.plugin.rem.model.*;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -45,6 +44,8 @@ import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
 import es.pfsgroup.plugin.rem.model.DtoAgrupaciones;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionesActivo;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionesCreateDelete;
+import es.pfsgroup.plugin.rem.model.DtoCondicionEspecificaAgrupacion;
+import es.pfsgroup.plugin.rem.model.DtoDatosPublicacionAgrupacion;
 import es.pfsgroup.plugin.rem.model.DtoFoto;
 import es.pfsgroup.plugin.rem.model.DtoObservacion;
 import es.pfsgroup.plugin.rem.model.DtoOfertaActivo;
@@ -145,7 +146,7 @@ public class AgrupacionController extends ParadiseJsonController {
 	public ModelAndView getAgrupacionById(Long id, int pestana, ModelMap model, HttpServletRequest request) {
 
 		model.put("data", adapter.getAgrupacionById(id));
-		trustMe.registrarSuceso(request, id, ENTIDAD_CODIGO.CODIGO_AGRUPACION, "ficha", ACCION_CODIGO.CODIGO_VER);
+		//trustMe.registrarSuceso(request, id, ENTIDAD_CODIGO.CODIGO_AGRUPACION, "ficha", ACCION_CODIGO.CODIGO_VER);
 
 		return createModelAndViewJson(model);
 	}

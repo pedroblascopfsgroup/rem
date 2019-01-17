@@ -3188,7 +3188,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	}
 	@Override
 	public List<DtoPropuestaAlqBankia> getListPropuestasAlqBankiaFromView(Long ecoId) {
-		List<DtoPropuestaAlqBankia> listaDto = new ArrayList<DtoPropuestaAlqBankia>();
+		List<DtoPropuestaAlqBankia> listaDto = expedienteComercialApi.getListaDtoPropuestaAlqBankiaByExpId(ecoId);
+	/*	List<DtoPropuestaAlqBankia> listaDto = new ArrayList<DtoPropuestaAlqBankia>();
 		List<VPropuestaAlqBankia> listaVista =  vPropuestaAlqBankiaDao.getListPropuestasAlqBankiaFromView(ecoId);
 		DtoPropuestaAlqBankia dtoSimple = null;
 		DtoPropuestaAlqBankia dtoFinal = new DtoPropuestaAlqBankia();
@@ -3278,6 +3279,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		dtoFinal.setImporteOferta(importeOfertaFinal);
 		
 		listaDto.add(dtoFinal);
+	*/
 		return listaDto;
 	}
 

@@ -38,6 +38,7 @@ import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.recovery.agendaMultifuncion.impl.dto.DtoAdjuntoMail;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
+import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBLocalizacionesBien;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoTramiteDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
@@ -7266,5 +7267,164 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		Long idOferta = Long.parseLong(rawDao.getExecuteSQL("SELECT OFR_ID FROM OFR_OFERTAS WHERE OFR_NUM_OFERTA = " + numBusqueda + " AND BORRADO = 0"));
 
 		return Long.parseLong(rawDao.getExecuteSQL("SELECT ECO_NUM_EXPEDIENTE FROM ECO_EXPEDIENTE_COMERCIAL WHERE OFR_ID = " + idOferta + " AND BORRADO = 0"));
+	}
+	
+	public  List<DtoPropuestaAlqBankia> getListaDtoPropuestaAlqBankiaByExpId(Long ecoId) {
+		List<DtoPropuestaAlqBankia> listaPropuestaBankia = new ArrayList<DtoPropuestaAlqBankia>();
+		DtoPropuestaAlqBankia dto = new DtoPropuestaAlqBankia();
+		DtoPropuestaAlqBankia dtoFinal = new DtoPropuestaAlqBankia();
+		
+		ExpedienteComercial expediente = this.findOne(ecoId);
+		Oferta oferta = expediente.getOferta();
+		
+		Activo activo;
+		Long indiceTabla = 0L;
+		Date aux1 = new Date();
+		int index = 0;
+		int aux2 = 0;
+		BigDecimal sumaTasacionFinal =  new BigDecimal(0);
+		BigDecimal importeOfertaFinal  = new BigDecimal(0);
+		
+	
+		List<ActivoOferta> activoOferta = oferta.getActivosOferta();
+			for (ActivoOferta actOf : activoOferta) {	
+				
+				Filter filtroActivoOfertaActivo = genericDao.createFilter(FilterType.EQUALS, "id", actOf.getActivoId());
+				activo = genericDao.get(Activo.class, filtroActivoOfertaActivo);
+				
+				dto.setId(indiceTabla);
+				dto.setEcoId(ecoId);
+				dto.setNumActivoUvem(activo.getNumActivoUvem());
+				dto.setCodPostal(Integer.parseInt(activo.getCodPostal()));
+				dto.setMunicipio(activo.getMunicipio());
+				dto.setNumDomicilio(Integer.parseInt(activo.getNumeroDomicilio()));
+				dto.setProvincia(activo.getProvincia());
+				dto.setTipoActivo(activo.getTipoActivo().getDescripcion());
+				dto.setCartera(activo.getCartera().getDescripcion());
+				
+				
+				Filter filtroActivoOfertaOferta = genericDao.createFilter(FilterType.EQUALS, "id", actOf.getOferta());
+				oferta = genericDao.get(Oferta.class, filtroActivoOfertaOferta);
+				
+				Filter textoOfertaFiltro = genericDao.createFilter(FilterType.EQUALS, "oferta.id", actOf.getOferta());
+				List<TextosOferta> ofertaTXT = genericDao.getList(TextosOferta.class, textoOfertaFiltro);
+				for (TextosOferta textosOferta : ofertaTXT) {
+					if ((DDTiposTextoOferta.TIPOS_TEXTO_OFERTA_GESTOR).equals( textosOferta.getTipoTexto().getCodigo())) {
+						dto.setTextoOferta(textosOferta.getTexto());
+						break;
+					}
+				}
+				
+				dto.setFechaAltaOferta(oferta.getFechaAlta());
+				dto.setImporteOferta(BigDecimal.valueOf(oferta.getImporteOferta()));
+				dto.setFechaAltaExpedienteComercial(expediente.getFechaAlta())	;
+				dto.setFechaPublicacionWeb(activo.getActivoPublicacion().getFechaInicioAlquiler());
+				dto.setImporteFianza((BigDecimal.valueOf(expediente.getCondicionante().getImporteFianza())));
+				dto.setMesesFianza(expediente.getCondicionante().getMesesFianza());
+				dto.setCarenciaALquiler(expediente.getCondicionante().getMesesCarencia());
+				dto.setNombrePropietario(activo.getPropietarioPrincipal().getNombre());
+				
+				
+				List <ActivoTasacion>activoTasacionList = activo.getTasacion();
+				for (ActivoTasacion activoTasacion : activoTasacionList) {
+					if(index == 0) {
+						aux1 = activoTasacion.getAuditoria().getFechaCrear();
+					}
+					else {
+						if((activoTasacion.getAuditoria().getFechaCrear()).after(aux1) || (activoTasacion.getAuditoria().getFechaCrear()).equals(aux1) ){
+							aux2 = index;
+						}else {
+							aux1 = activoTasacion.getAuditoria().getFechaCrear();
+						}
+					}
+					index++;
+				}
+				
+				ActivoTasacion activoTasacion = activoTasacionList.get(aux2);
+				
+				dto.setImporteTasacionFinal((BigDecimal.valueOf(activoTasacion.getImporteTasacionFin())));
+				dto.setFechaUltimaTasacion(activoTasacion.getFechaRecepcionTasacion());
+				dto.setCompradorNombre(expediente.getCompradorPrincipal().getNombre());
+				dto.setCompradorApellidos(expediente.getCompradorPrincipal().getApellidos());
+				dto.setCompradorDocumento(expediente.getCompradorPrincipal().getDocumento());
+			
+				ActivoLocalizacion activoLocalizacion = activo.getLocalizacion();
+				NMBLocalizacionesBien localizacionesBien = activoLocalizacion.getLocalizacionBien();
+				
+				dto.setTipoVia(localizacionesBien.getTipoVia().getDescripcion());
+				dto.setCalle(localizacionesBien.getNombreVia());
+				dto.setNumDomicilio(Integer.parseInt(localizacionesBien.getNumeroDomicilio()));
+				dto.setPuerta(localizacionesBien.getPuerta());
+				dto.setPiso(localizacionesBien.getPiso());
+				dto.setEscalera(localizacionesBien.getEscalera());
+				
+				String stringAux = "";
+				
+				if(Checks.esNulo(dto.getCompradorNombre())) {
+					stringAux = "" ;
+				}else {
+					stringAux = dto.getCompradorNombre() + " ";
+				}
+				if(Checks.esNulo(dto.getCompradorApellidos())) {
+					stringAux = stringAux + "";
+				}else {
+					stringAux = stringAux + dto.getCompradorApellidos();
+				}
+				dto.setNombreCompleto(stringAux);
+				stringAux = "";
+				if(Checks.esNulo(dto.getCodPostal())){
+					stringAux = " ";
+				}else {
+					stringAux = Integer.toString(dto.getCodPostal()) + " "; 
+				}
+				if(Checks.esNulo(dto.getMunicipio()))
+				{
+					stringAux = " ";
+				}else {
+					stringAux = stringAux + dto.getMunicipio();
+				}
+				dto.setCodPostMunicipio(stringAux);
+				stringAux = "";
+				
+				if(Checks.esNulo(dto.getCalle())) {
+					stringAux="";
+				}else{
+					stringAux = dto.getCalle() + " ";
+				}
+				if(Checks.esNulo(dto.getPiso())){
+					stringAux= stringAux + "";
+				}else {
+					stringAux = stringAux + dto.getPiso() + " ";
+				}
+				if(Checks.esNulo(dto.getPuerta())){
+					stringAux= stringAux + "";
+				}else {
+					stringAux= stringAux + dto.getPuerta() + " ";
+				}
+				if(Checks.esNulo(dto.getEscalera())){
+					stringAux= stringAux + "";
+				}else {
+					stringAux= stringAux + dto.getEscalera();
+				}
+				
+				dto.setDireccionCompleta(stringAux);
+				
+			
+				importeOfertaFinal = importeOfertaFinal.add(dto.getImporteOferta());
+				sumaTasacionFinal = sumaTasacionFinal.add(dto.getImporteTasacionFinal());
+				
+				indiceTabla++;
+				listaPropuestaBankia.add(dto);
+			}
+			
+			dtoFinal.setNumActivoUvem(indiceTabla);
+			dtoFinal.setImporteTasacionFinal(sumaTasacionFinal);
+			dtoFinal.setImporteOferta(importeOfertaFinal);
+			
+			listaPropuestaBankia.add(dtoFinal);
+		
+		
+		
+		return listaPropuestaBankia;
 	}
 }

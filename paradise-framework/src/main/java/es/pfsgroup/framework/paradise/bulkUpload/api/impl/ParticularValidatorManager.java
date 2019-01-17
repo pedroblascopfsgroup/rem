@@ -2520,6 +2520,25 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		return !"0".equals(resultado);
 			
 		}
+
+	@Override
+	public boolean esActivoConAdecuacionNofinalizada(Long numActivoHaya) {
+		String resultado = "0";
+		if(numActivoHaya != null) {
+			 resultado = rawDao.getExecuteSQL("SELECT COUNT(1) " + 
+			 		"FROM ACT_ACTIVO ACT " + 
+			 	    "JOIN ACT_CMG_COMUNICACION_GENCAT CMG ON CMG.ACT_ID=ACT.ACT_ID " +
+			 		"JOIN ACT_TRA_TRAMITE TRA ON ACT.ACT_ID=TRA.ACT_ID " + 
+			 		"JOIN DD_TPO_TIPO_PROCEDIMIENTO TPO ON TRA.DD_TPO_ID = TPO.DD_TPO_ID AND TPO.DD_TPO_CODIGO= 'T016' "+ 
+			 		"JOIN TAP_TAREA_PROCEDIMIENTO TAP ON TAP.DD_TPO_ID=TPO.DD_TPO_ID AND TAP.TAP_CODIGO = 'T016_ProcesoAdecuacion' " + 
+			 		"JOIN TAC_TAREAS_ACTIVOS TAC ON TRA.TRA_ID = TAC.TRA_ID " + 
+			 		"JOIN TAR_TAREAS_NOTIFICACIONES TAR ON TAC.TAR_ID = TAR.TAR_ID " + 
+			 		"JOIN TEX_TAREA_EXTERNA TEX ON TEX.TAR_ID = TAR.TAR_ID " + 
+			 		"WHERE ACT.ACT_NUM_ACTIVO='"+numActivoHaya+"' AND TAR.TAR_TAREA_FINALIZADA= 0");
+		}
+	
+		return !"0".equals(resultado);
+	}
 	
 }
 

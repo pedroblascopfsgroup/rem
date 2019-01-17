@@ -416,7 +416,6 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 		Activo activo = oferta.getActivoPrincipal();
 		
 		ArrayList<String> para = new ArrayList<String>();
-		Usuario gest_com = gestorActivoManager.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
 		Usuario gest_com_alq = gestorActivoManager.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_ALQUILERES);
 		Usuario sup_com_alq = gestorActivoManager.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL_ALQUILERES);
 		
@@ -425,9 +424,6 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 		}
 		if(!Checks.esNulo(sup_com_alq)) {
 			para.add(sup_com_alq.getEmail());
-		}
-		if(!Checks.esNulo(gest_com)) {
-			para.add(gest_com.getEmail());
 		}
 		
 		String tipoDocIndentificacion= oferta.getCliente().getTipoDocumento().getDescripcion();

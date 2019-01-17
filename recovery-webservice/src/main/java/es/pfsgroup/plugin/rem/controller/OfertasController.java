@@ -255,8 +255,9 @@ public class OfertasController {
 //		notificationOferta.sendNotificationPropuestaOferta(oferta, new FileItem(file));
 //		
 //		excelReportGeneratorApi.sendReport(file, response);
+		Long prueba = (long) 3199;
+		List <DtoPropuestaAlqBankia> listaPropuestaAlquilerBankia = ofertaApi.getListPropuestasAlqBankiaFromView(prueba);
 		
-		ofertaApi.getListPropuestasAlqBankiaFromView(idEco);
 	}
 	
 	@SuppressWarnings("unchecked")

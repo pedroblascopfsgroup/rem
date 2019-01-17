@@ -7273,10 +7273,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 		return Long.parseLong(rawDao.getExecuteSQL("SELECT ECO_NUM_EXPEDIENTE FROM ECO_EXPEDIENTE_COMERCIAL WHERE OFR_ID = " + idOferta + " AND BORRADO = 0"));
 	}
-	
+	@Override
 	public  List<DtoPropuestaAlqBankia> getListaDtoPropuestaAlqBankiaByExpId(Long ecoId) {
 		List<DtoPropuestaAlqBankia> listaPropuestaBankia = new ArrayList<DtoPropuestaAlqBankia>();
-		DtoPropuestaAlqBankia dto = new DtoPropuestaAlqBankia();
+		DtoPropuestaAlqBankia dto = null;
 		DtoPropuestaAlqBankia dtoFinal = new DtoPropuestaAlqBankia();
 		
 		ExpedienteComercial expediente = this.findOne(ecoId);
@@ -7293,6 +7293,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	
 		List<ActivoOferta> activoOferta = oferta.getActivosOferta();
 			for (ActivoOferta actOf : activoOferta) {	
+				dto = new DtoPropuestaAlqBankia();
 				
 				Filter filtroActivoOfertaActivo = genericDao.createFilter(FilterType.EQUALS, "id", actOf.getActivoId());
 				activo = genericDao.get(Activo.class, filtroActivoOfertaActivo);
@@ -7300,12 +7301,26 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				dto.setId(indiceTabla);
 				dto.setEcoId(ecoId);
 				dto.setNumActivoUvem(activo.getNumActivoUvem());
-				dto.setCodPostal(Integer.parseInt(activo.getCodPostal()));
+				if(!Checks.esNulo(activo.getCodPostal())) {
+					dto.setCodPostal(Integer.parseInt(activo.getCodPostal()));
+				}else {
+					dto.setCodPostal(null);
+				}
+				
 				dto.setMunicipio(activo.getMunicipio());
-				dto.setNumDomicilio(Integer.parseInt(activo.getNumeroDomicilio()));
+				
+				if(!Checks.esNulo(activo.getTipoActivo())) {
+					dto.setTipoActivo(activo.getTipoActivo().getDescripcion());
+				}else {
+					dto.setTipoActivo(null);
+				}
 				dto.setProvincia(activo.getProvincia());
-				dto.setTipoActivo(activo.getTipoActivo().getDescripcion());
-				dto.setCartera(activo.getCartera().getDescripcion());
+				if(!Checks.esNulo(activo.getCartera())) {
+					dto.setCartera(activo.getCartera().getDescripcion());
+				}else {
+					dto.setCartera(null);
+				}
+				
 				
 				
 				Filter filtroActivoOfertaOferta = genericDao.createFilter(FilterType.EQUALS, "id", actOf.getOferta());
@@ -7321,47 +7336,102 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				}
 				
 				dto.setFechaAltaOferta(oferta.getFechaAlta());
-				dto.setImporteOferta(BigDecimal.valueOf(oferta.getImporteOferta()));
+				if(!Checks.esNulo(oferta.getImporteOferta())) {
+					dto.setImporteOferta(BigDecimal.valueOf(oferta.getImporteOferta()));
+				}else {}
+				if(!Checks.esNulo(activo.getActivoPublicacion())) {
+					dto.setFechaPublicacionWeb(activo.getActivoPublicacion().getFechaInicioAlquiler());
+				}else {
+					dto.setFechaPublicacionWeb(null);
+				}
+				
 				dto.setFechaAltaExpedienteComercial(expediente.getFechaAlta())	;
-				dto.setFechaPublicacionWeb(activo.getActivoPublicacion().getFechaInicioAlquiler());
-				dto.setImporteFianza((BigDecimal.valueOf(expediente.getCondicionante().getImporteFianza())));
-				dto.setMesesFianza(expediente.getCondicionante().getMesesFianza());
-				dto.setCarenciaALquiler(expediente.getCondicionante().getMesesCarencia());
-				dto.setNombrePropietario(activo.getPropietarioPrincipal().getNombre());
-				
-				
+
+				if(!Checks.esNulo(expediente.getCondicionante()) && !Checks.esNulo(expediente.getCondicionante().getImporteFianza())){
+					dto.setImporteFianza((BigDecimal.valueOf(expediente.getCondicionante().getImporteFianza())));
+				}else {}
+				if(!Checks.esNulo(expediente.getCondicionante())) {
+					dto.setMesesFianza(expediente.getCondicionante().getMesesFianza());
+				}else {
+					dto.setMesesFianza(null);
+				}
+				if(!Checks.esNulo(expediente.getCondicionante())) {
+					if(!Checks.esNulo(expediente.getCondicionante().getCarencia())){
+							dto.setCarenciaALquiler(expediente.getCondicionante().getMesesCarencia());
+					}
+				}else {}
+				if(!Checks.esNulo(activo.getPropietarioPrincipal())) {
+					dto.setNombrePropietario(activo.getPropietarioPrincipal().getNombre());
+				}else {
+					dto.setNombrePropietario(null);
+				}
+
 				List <ActivoTasacion>activoTasacionList = activo.getTasacion();
+				index = 0;
+				aux2 = 0;
+				aux1 = new Date();
+				
 				for (ActivoTasacion activoTasacion : activoTasacionList) {
 					if(index == 0) {
-						aux1 = activoTasacion.getAuditoria().getFechaCrear();
+						if(!Checks.esNulo(activoTasacion.getAuditoria()))
+						{
+							aux1 = activoTasacion.getAuditoria().getFechaCrear();
+						}
 					}
 					else {
-						if((activoTasacion.getAuditoria().getFechaCrear()).after(aux1) || (activoTasacion.getAuditoria().getFechaCrear()).equals(aux1) ){
-							aux2 = index;
-						}else {
-							aux1 = activoTasacion.getAuditoria().getFechaCrear();
+						if(!Checks.esNulo(activoTasacion.getAuditoria())) {
+							if((activoTasacion.getAuditoria().getFechaCrear()).after(aux1) || (activoTasacion.getAuditoria().getFechaCrear()).equals(aux1) ){
+								aux2 = index;
+							}else {
+								aux1 = activoTasacion.getAuditoria().getFechaCrear();
+							}
 						}
 					}
 					index++;
 				}
 				
 				ActivoTasacion activoTasacion = activoTasacionList.get(aux2);
-				
-				dto.setImporteTasacionFinal((BigDecimal.valueOf(activoTasacion.getImporteTasacionFin())));
-				dto.setFechaUltimaTasacion(activoTasacion.getFechaRecepcionTasacion());
-				dto.setCompradorNombre(expediente.getCompradorPrincipal().getNombre());
-				dto.setCompradorApellidos(expediente.getCompradorPrincipal().getApellidos());
-				dto.setCompradorDocumento(expediente.getCompradorPrincipal().getDocumento());
+				if(!Checks.esNulo(activoTasacion)) {
+					if(!Checks.esNulo(activoTasacion.getImporteTasacionFin())) {
+						dto.setImporteTasacionFinal((BigDecimal.valueOf(activoTasacion.getImporteTasacionFin())));
+					}else {}
+					
+					dto.setFechaUltimaTasacion(activoTasacion.getFechaRecepcionTasacion());
+				}
+
+				if(!Checks.esNulo(expediente.getCompradorPrincipal())) {
+					dto.setCompradorNombre(expediente.getCompradorPrincipal().getNombre());
+					dto.setCompradorApellidos(expediente.getCompradorPrincipal().getApellidos());
+					dto.setCompradorDocumento(expediente.getCompradorPrincipal().getDocumento());
+				}else {
+					dto.setCompradorNombre(null);
+					dto.setCompradorApellidos(null);
+					dto.setCompradorDocumento(null);
+				}
 			
 				ActivoLocalizacion activoLocalizacion = activo.getLocalizacion();
-				NMBLocalizacionesBien localizacionesBien = activoLocalizacion.getLocalizacionBien();
-				
-				dto.setTipoVia(localizacionesBien.getTipoVia().getDescripcion());
-				dto.setCalle(localizacionesBien.getNombreVia());
-				dto.setNumDomicilio(Integer.parseInt(localizacionesBien.getNumeroDomicilio()));
-				dto.setPuerta(localizacionesBien.getPuerta());
-				dto.setPiso(localizacionesBien.getPiso());
-				dto.setEscalera(localizacionesBien.getEscalera());
+				if(!Checks.esNulo(activoLocalizacion)) {
+					NMBLocalizacionesBien localizacionesBien = activoLocalizacion.getLocalizacionBien();
+					
+					if(!Checks.esNulo(localizacionesBien)) {
+						if(!Checks.esNulo(localizacionesBien.getTipoVia())) {
+							dto.setTipoVia(localizacionesBien.getTipoVia().getDescripcion());
+						}else {
+							dto.setTipoVia(null);
+						}
+						dto.setCalle(localizacionesBien.getNombreVia());
+						if(!Checks.esNulo(localizacionesBien.getNumeroDomicilio())) {
+							dto.setNumDomicilio(Integer.parseInt(localizacionesBien.getNumeroDomicilio()));
+						}else {
+							dto.setNumDomicilio(null);
+						}
+
+						dto.setPuerta(localizacionesBien.getPuerta());
+						dto.setPiso(localizacionesBien.getPiso());
+						dto.setEscalera(localizacionesBien.getEscalera());
+					}
+
+				}
 				
 				String stringAux = "";
 				
@@ -7414,14 +7484,20 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				
 				dto.setDireccionCompleta(stringAux);
 				
-			
-				importeOfertaFinal = importeOfertaFinal.add(dto.getImporteOferta());
-				sumaTasacionFinal = sumaTasacionFinal.add(dto.getImporteTasacionFinal());
+				if(!Checks.esNulo(dto.getImporteOferta())) {
+					importeOfertaFinal = importeOfertaFinal.add(dto.getImporteOferta());
+				}else {}
+				if(!Checks.esNulo(dto.getImporteTasacionFinal())) {
+					sumaTasacionFinal = sumaTasacionFinal.add(dto.getImporteTasacionFinal());
+				}else {}
+				
+				
 				
 				indiceTabla++;
 				listaPropuestaBankia.add(dto);
 			}
 			
+			dtoFinal.setId(indiceTabla);
 			dtoFinal.setNumActivoUvem(indiceTabla);
 			dtoFinal.setImporteTasacionFinal(sumaTasacionFinal);
 			dtoFinal.setImporteOferta(importeOfertaFinal);

@@ -695,21 +695,28 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 			if (adjuntaInstrucciones) {
 				//ADJUNTOS SI ES CAJAMAR
 				if(activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_CAJAMAR)) {
+					boolean esUnPdf = true;
 					if (ActivoPropietario.CODIGO_FONDOS_TITULIZACION.equals(propietario.getCodigo()) || ActivoPropietario.CODIGO_GIVP.equals(propietario.getCodigo()) 
 							|| ActivoPropietario.CODIGO_GIVP_II.equals(propietario.getCodigo())){
 						if (oferta.getOfertaExpress()){
 							f1 = FileItemUtils.fromResource("docs/20181001_Instrucciones_Reserva_CAJAMAR.DOCX");
+							esUnPdf = false;
 						}else {
 							f1 = FileItemUtils.fromResource("docs/Instrucciones_Reserva_Formalizacion_estandar_072018.pdf");
 						}					
 					}else {
 						f1 = FileItemUtils.fromResource("docs/20181001_Instrucciones_Reserva_CAJAMAR.DOCX");
+						esUnPdf = false;
 					}
 					
 					f2 = FileItemUtils.fromResource("docs/ficha_cliente.xlsx");
 					f3 = FileItemUtils.fromResource("docs/manif_titular_real.doc");
+					if(esUnPdf){
+						adjuntos.add(createAdjunto(f1, "Instrucciones_Reserva_Formalizacion_Cajamar.pdf"));
+					}else{
+						adjuntos.add(createAdjunto(f1, "Instrucciones_Reserva_Formalizacion_Cajamar.docx"));
+					}
 					
-					adjuntos.add(createAdjunto(f1, "Instrucciones_Reserva_Formalizacion_Cajamar.pdf"));
 					adjuntos.add(createAdjunto(f2, "Ficha_cliente.xlsx"));
 					adjuntos.add(createAdjunto(f3, "Manif_Titular_Real.doc"));
 				}

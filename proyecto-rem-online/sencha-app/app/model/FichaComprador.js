@@ -17,7 +17,7 @@ Ext.define('HreRem.model.FichaComprador', {
 		    	name: 'idExpedienteComercial'
 		},
 		{
-		    	name: 'codTipoPersona'
+		    	name: 'descripcionTipoPersona'
 		},
 		{
 		    	name: 'titularReserva'
@@ -35,7 +35,7 @@ Ext.define('HreRem.model.FichaComprador', {
 		    	name: 'titularContratacion'
 		},
 		{
-		    	name: 'codTipoDocumento'
+		    	name: 'comboTipoDocumento'
 		},
 		{
 		    	name: 'descripcionTipoDocumento'
@@ -211,15 +211,14 @@ Ext.define('HreRem.model.FichaComprador', {
     
 	proxy: {
 		type: 'uxproxy',
+		writeAll: true,
 		remoteUrl: 'expedientecomercial/getCompradorById',
 		api: {
             read: 'expedientecomercial/getCompradorById',
             create: 'expedientecomercial/createComprador',
             update: 'expedientecomercial/saveFichaComprador',
             destroy: 'expedientecomercial/findOne'
-        }
-        
-        
-    }    
+        }       
+	}    
 
 });

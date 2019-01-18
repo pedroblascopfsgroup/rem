@@ -9,7 +9,7 @@ Ext.define('HreRem.view.activos.detalle.WizardAltaOferta', {
     x: 150,
     y: 50,
     closable	: false,
-    requires: ['HreRem.model.OfertaComercialActivo'],
+    requires: ['HreRem.model.OfertaComercial'],
     controller: 'activodetalle',
     viewModel: {
         type: 'activodetalle'

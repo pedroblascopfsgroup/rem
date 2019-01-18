@@ -4,15 +4,17 @@ Ext.define('HreRem.view.activos.detalle.AnyadirNuevaOfertaDocumento', {
 	layout : 'fit',
 	bodyStyle	: 'padding:20px',
 	recordName: "oferta",						
-	recordClass: "HreRem.model.OfertaComercial",
+	recordClass: "HreRem.model.FichaComprador",
 	controller: 'activodetalle',
 	viewModel: {
 		type: 'activodetalle'
 	},
-	    
+	requires: ['HreRem.model.OfertaComercial'],
 	listeners: {    
 		boxready: function(window) {
 			var me = this;
+			
+			var wizard = me.up();
 			
 			Ext.Array.each(window.down('fieldset').query('field[isReadOnlyEdit]'),
 				function (field, index) 
@@ -21,6 +23,13 @@ Ext.define('HreRem.view.activos.detalle.AnyadirNuevaOfertaDocumento', {
 						if(index == 0) field.focus();
 					}
 			);
+			
+			if(wizard.xtype.indexOf("wizardaltacomprador") >= 0){
+				window.setViewModel(me.up('wizardaltacomprador').down('datoscompradorwizard').getViewModel());
+				//window.setBindRecord(Ext.create('HreRem.model.FichaComprador'));
+			}
+			
+			
 		},
 			
 		show: function() {

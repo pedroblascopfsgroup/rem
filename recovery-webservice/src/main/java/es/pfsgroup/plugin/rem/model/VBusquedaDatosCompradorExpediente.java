@@ -199,9 +199,16 @@ public class VBusquedaDatosCompradorExpediente implements Serializable {
 	private String descripcionPaisRte;
 	
 	// HREOS-4937
+	@Column(name = "CLC_CESION_DATOS")
 	private Boolean cesionDatos;
+	
+	@Column(name = "CLC_COMUNI_TERCEROS")
 	private Boolean comunicacionTerceros;
+	
+	@Column(name = "CLC_TRANSF_INTER")
 	private Boolean transferenciasInternacionales;
+	
+	@Column(name = "ADCOM_ID")
 	private Long idDocAdjunto;
     
 

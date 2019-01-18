@@ -1,23 +1,23 @@
 Ext.define('HreRem.view.expedientes.DatosCompradorWizard', {
     extend		: 'HreRem.view.common.FormBase',
     xtype		: 'datoscompradorwizard',
-	reference: 'datoscompradorwindowref',
+	reference: 'datoscompradorwizardref',
 	y:Ext.Element.getViewportHeight()*(10/150),
-    controller: 'expedientedetalle',
+    /*controller: 'expedientedetalle',
     viewModel: {
         type: 'expedientedetalle'
-    },
+    },*/
     requires: ['HreRem.model.FichaComprador'],
    
     modal	: true,
     bodyStyle	: 'padding:20px',
 	collapsed: false,
-	idComprador: null,
+	idComprador: null, 
 	expediente: null,
 	modoEdicion: true, // Inicializado para evitar errores.
 	scrollable	: 'y',
-	recordName: "comprador",
-	recordClass: "HreRem.model.FichaComprador",
+	//recordName: "comprador",
+	//recordClass: "HreRem.model.FichaComprador",
 	listeners: {
 		boxready:'cargarDatosCompradorWizard'
 	},
@@ -33,22 +33,27 @@ Ext.define('HreRem.view.expedientes.DatosCompradorWizard', {
     		me.buttons = [ { itemId: 'btnCrear', text: HreRem.i18n('btn.crear.comprador'), handler: 'onClickBotonCrearComprador'},
     					   { itemId: 'btnCancelar', text: HreRem.i18n('btn.cancelBtnText'), handler: 'onClickBotonCancelarWizardComprador'}];
     	}
-    	 me.items = [{
+    	 me.items = [
+    	 {
+    		xtype:'textfieldbase',
  	    	name:		'cesionDatos',
 			bind:		'{comprador.cesionDatosHaya}',
 			hidden:		true
 	    },
-	    {
+	    {   
+	    	xtype:'textfieldbase',
 	    	name:		'comunicacionTerceros',
 			bind:		'{comprador.comunicacionTerceros}',
 			hidden:		true
 	    },
-	    {
+	    {   
+	    	xtype:'textfieldbase',
 	    	name:		'transferenciasInternacionales',
 			bind:		'{comprador.transferenciasInternacionales}',
 			hidden:		true
 	    },
-	    {
+	    {   
+	    	xtype:'textfieldbase',
 	    	name:		'pedirDoc',
 			bind:		'{comprador.pedirDoc}',
 			hidden:		true
@@ -90,7 +95,7 @@ Ext.define('HreRem.view.expedientes.DatosCompradorWizard', {
 		            		store: '{comboTipoPersona}',
 		            		value: '{comprador.codTipoPersona}'
 		            	},
-		            	allowBlank: false,
+		            	allowBlank: false,		            	
 						listeners: {
 							change: 'comprobarObligatoriedadCamposNexos'
 						}
@@ -157,6 +162,7 @@ Ext.define('HreRem.view.expedientes.DatosCompradorWizard', {
 					{ 
 						xtype: 'comboboxfieldbase',
 			        	fieldLabel: HreRem.i18n('fieldlabel.tipoDocumento'),
+			        	name: 'comboTipoDocumento',
 						reference: 'tipoDocumento',
 						padding: '5px',
 			        	bind: {
@@ -165,8 +171,10 @@ Ext.define('HreRem.view.expedientes.DatosCompradorWizard', {
 		            	},
 		            	allowBlank: false
 			        },
-			        {
+			        
+			        {  
 			        	fieldLabel: HreRem.i18n('fieldlabel.numero.documento'),
+			        	name: 'numDocumento',
 						reference: 'numeroDocumento',
 						padding: '5px',
 			        	bind: {
@@ -176,17 +184,19 @@ Ext.define('HreRem.view.expedientes.DatosCompradorWizard', {
 		            		change: 'onNumeroDocumentoChange'
 		            	},
 		            	allowBlank: false
-           		},
-					{ 
+           	        }, 
+					{   
 			        	fieldLabel:  HreRem.i18n('header.nombre.razon.social'),
+			        	name: 'nombreRazonSocial',
 			        	reference: 'nombreRazonSocial',
 			        	padding: '5px',
 			        	bind: {
-		            		value: '{comprador.nombreRazonSocial}'
+		            		value: '{comprador.nombreRazonSocial}' 
 		            	}
 			        },
-			        { 
+			        {   
 			        	fieldLabel:  HreRem.i18n('fieldlabel.apellidos'),
+			        	name: 'apellidosCliente',
 			        	reference: 'apellidos',
 			        	padding: '5px',
 			        	bind: {
@@ -195,6 +205,7 @@ Ext.define('HreRem.view.expedientes.DatosCompradorWizard', {
 			        },
 			        { 
 			        	fieldLabel:  HreRem.i18n('fieldlabel.direccion'),
+			        	name: 'direccion',
 			        	reference: 'direccion',
 			        	padding: '5px',
 			        	bind: {
@@ -211,14 +222,18 @@ Ext.define('HreRem.view.expedientes.DatosCompradorWizard', {
 						chainedReference: 'municipioCombo',
 		            	bind: {
 		            		store: '{comboProvincia}',
-		            	    value: '{comprador.provinciaCodigo}'
+		            	    value: '{comprador.provinciaCodigo}'  
 		            	},
+		            	displayField: 'descripcion',
+						valueField: 'codigo',
 						listeners: {
 							select: 'onChangeChainedCombo'
 						}
 					},
+				
 			        { 
 			        	fieldLabel:  HreRem.i18n('fieldlabel.telefono1'),
+			        	name: 'telefono1',
 			        	reference: 'telefono1',
 			        	padding: '5px',
 			        	bind: {
@@ -226,7 +241,7 @@ Ext.define('HreRem.view.expedientes.DatosCompradorWizard', {
 		            	}
 			        },
 			        
-			        {
+			       {
 						xtype: 'comboboxfieldbase',
 						fieldLabel: HreRem.i18n('fieldlabel.municipio'),
 						reference: 'municipioCombo',
@@ -239,6 +254,7 @@ Ext.define('HreRem.view.expedientes.DatosCompradorWizard', {
 					},
 			        { 
 			        	fieldLabel:  HreRem.i18n('fieldlabel.telefono2'),
+			        	name: 'telefono2',
 			        	reference: 'telefono2',
 			        	padding: '5px',
 			        	bind: {
@@ -248,6 +264,7 @@ Ext.define('HreRem.view.expedientes.DatosCompradorWizard', {
 			        { 
 			        	xtype:'numberfieldbase',
 			        	fieldLabel:  HreRem.i18n('fieldlabel.codigo.postal'),
+			        	name: 'codigoPostal',
 			        	reference: 'codigoPostal',
 			        	padding: '5px',
 			        	bind: {
@@ -256,6 +273,7 @@ Ext.define('HreRem.view.expedientes.DatosCompradorWizard', {
 			        },
 			        { 
 			        	fieldLabel:  HreRem.i18n('fieldlabel.email'),
+			        	name: 'email',
 			        	reference: 'email',
 			        	padding: '5px',
 			        	bind: {
@@ -265,11 +283,12 @@ Ext.define('HreRem.view.expedientes.DatosCompradorWizard', {
 			        {
 						xtype: 'comboboxfieldbase',
 						fieldLabel: HreRem.i18n('fieldlabel.pais'),
+						name: 'comboPaises',
 						reference: 'pais',
 						padding: '5px',
 		            	bind: {
 		            		store: '{comboPaises}',
-		            		value: '{comprador.codigoPais}'
+		            		value: '{comprador.codigoPais}' 
 		            	}
 					},
 			        {
@@ -277,7 +296,7 @@ Ext.define('HreRem.view.expedientes.DatosCompradorWizard', {
                        layout: 'box',
                        items: [
                        	{ 
-								xtype: 'comboboxfieldbase',
+								xtype: 'comboboxfieldbase',   
 								width: 360,
 					        	fieldLabel: HreRem.i18n('title.windows.datos.cliente.ursus'),
 								reference: 'seleccionClienteUrsus',
@@ -314,7 +333,7 @@ Ext.define('HreRem.view.expedientes.DatosCompradorWizard', {
 			        },
 			        
 			       {
-                   	xtype: 'textfieldbase',
+                   	xtype: 'textfieldbase', 
 				        fieldLabel:  HreRem.i18n('header.numero.ursus'),
 				        reference: 'numeroClienteUrsusRef',
 				        padding: '5px',
@@ -326,7 +345,7 @@ Ext.define('HreRem.view.expedientes.DatosCompradorWizard', {
                    },
                    
                    {
-                   	xtype: 'textfieldbase',
+                   	xtype: 'textfieldbase', 
 				        fieldLabel:  HreRem.i18n('header.numero.ursus.bh'),
 				        reference: 'numeroClienteUrsusBhRef',
 				        padding: '5px',
@@ -354,6 +373,7 @@ Ext.define('HreRem.view.expedientes.DatosCompradorWizard', {
 					{ 
 						xtype: 'comboboxfieldbase',
 			        	fieldLabel: HreRem.i18n('fieldlabel.estado.civil'),
+			        	name: 'comboEstadoCivil',
 						reference: 'estadoCivil',
 						padding: '5px',
 			        	bind: {
@@ -368,6 +388,7 @@ Ext.define('HreRem.view.expedientes.DatosCompradorWizard', {
 			        {
 			        	xtype: 'comboboxfieldbase',
 			        	fieldLabel: HreRem.i18n('fieldlabel.regimen.economico'),
+			        	name: 'comboRegimenMatrimonial',
 						reference: 'regimenMatrimonial',
 						padding: '5px',
 			        	bind: {
@@ -392,7 +413,7 @@ Ext.define('HreRem.view.expedientes.DatosCompradorWizard', {
 			        	reference: 'relacionHre',
 			        	padding: '5px',
 			        	bind: {
-		            		value: '{comprador.relacionHre}'
+		            		value: '{comprador.relacionHre}' 
 		            	}
 			        },
 			        { 
@@ -433,6 +454,7 @@ Ext.define('HreRem.view.expedientes.DatosCompradorWizard', {
 					{ 
 						xtype: 'comboboxfieldbase',
 			        	fieldLabel: HreRem.i18n('fieldlabel.tipoDocumento'),
+			        	name: 'comboTipoDocumentoRte',
 						reference: 'tipoDocumentoRte',
 						padding: '5px',
 			        	bind: {
@@ -454,9 +476,9 @@ Ext.define('HreRem.view.expedientes.DatosCompradorWizard', {
 			        {
 			        	fieldLabel: HreRem.i18n('fieldlabel.numero.documento'),
 						reference: 'numeroDocumentoRte',
+						name: 'numeroDocumentoRte',
 						padding: '5px',
-			        	bind: {
-		            		value: '{numeroDocumentoRte}',
+			        	bind: {		
 		            		value: '{comprador.numDocumentoRte}'
 		            	},
 		            	listeners : {
@@ -476,7 +498,7 @@ Ext.define('HreRem.view.expedientes.DatosCompradorWizard', {
 			        	reference: 'nombreRazonSocialRte',
 			        	padding: '5px',
 			        	bind: {
-		            		value: '{comprador.nombreRazonSocialRte}'
+		            		value: '{comprador.nombreRazonSocialRte}' 
 		            	}
 			        },
 			        { 
@@ -489,6 +511,7 @@ Ext.define('HreRem.view.expedientes.DatosCompradorWizard', {
 			        },
 			        { 
 			        	fieldLabel:  HreRem.i18n('fieldlabel.direccion'),
+			        	name: 'direccion',
 			        	reference: 'direccionRte',
 			        	padding: '5px',
 			        	bind: {
@@ -572,7 +595,7 @@ Ext.define('HreRem.view.expedientes.DatosCompradorWizard', {
     				 			
      resetWindow: function() {
     	var me = this;    	
-		me.setBindRecord(comprador);
+		//me.setBindRecord(comprador);
     },
     
     esEditable: function(){

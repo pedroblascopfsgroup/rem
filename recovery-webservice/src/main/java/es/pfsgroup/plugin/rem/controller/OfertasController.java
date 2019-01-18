@@ -23,6 +23,7 @@ import es.capgemini.devon.files.FileItem;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
+import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
@@ -45,6 +46,9 @@ public class OfertasController {
 
 	@Autowired
 	private OfertaApi ofertaApi;
+	
+	@Autowired
+	private ExpedienteComercialApi expedienteComercialApi;
 
 	@Autowired
 	private ExcelReportGeneratorApi excelReportGeneratorApi;
@@ -293,6 +297,7 @@ public class OfertasController {
 		try {
 			model.put("data", ofertaApi.checkPedirDoc(idActivo, dniComprador, codtipoDoc));
 			model.put("comprador",ofertaApi.getClienteGDPRByTipoDoc(dniComprador, codtipoDoc));
+			model.put("compradorId", expedienteComercialApi.getCompradorIdByDocumento(dniComprador, codtipoDoc));
 			model.put("success", true);
 		} catch (Exception e) {
 			logger.error("Error en ofertasController", e);

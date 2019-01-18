@@ -603,8 +603,9 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 				type: 'uxproxy',
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'tiposDocumentos'}
-			}   	
-	    },
+			}
+		
+	    }, 
     	
 	    comboEstadoCivil: {
 			model: 'HreRem.model.ComboBase',
@@ -639,7 +640,8 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 				type: 'uxproxy',
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'regimenesMatrimoniales'}
-			}
+			},
+			autoLoad: true 
 	    },
 
 		storePosicionamientos: {

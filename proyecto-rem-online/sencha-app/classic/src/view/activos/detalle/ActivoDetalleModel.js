@@ -685,15 +685,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				}
     		},
     		
-    		comboTipoDocumento: {
-    			model: 'HreRem.model.ComboBase',
-				proxy: {
-					type: 'uxproxy',
-					remoteUrl: 'generic/getDiccionario',
-					extraParams: {diccionario: 'tiposDocumentos'}
-				}
-    		},
-    		
     		comboGradoPropiedad: {
     			model: 'HreRem.model.ComboBase',
 				proxy: {

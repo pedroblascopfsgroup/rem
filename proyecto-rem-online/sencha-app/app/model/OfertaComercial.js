@@ -16,6 +16,9 @@ Ext.define('HreRem.model.OfertaComercial', {
             	name:'idAgrupacion'
             },
             {
+            	name:'idActivo'
+            },
+            {
             	name:'importe'
             },
             {

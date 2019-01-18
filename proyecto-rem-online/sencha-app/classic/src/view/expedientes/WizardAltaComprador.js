@@ -9,12 +9,17 @@ Ext.define('HreRem.view.expedientes.WizardAltaComprador', {
 	x : 50,
 	y : 50,
 	closable : false,
-	requires: ['HreRem.view.expedientes.DatosCompradorWizard'],
+	controller: 'expedientedetalle',
+	viewModel: {
+		type: 'expedientedetalle'
+	},
+	requires: ['HreRem.view.expedientes.DatosCompradorWizard', 'HreRem.view.activos.detalle.AnyadirNuevaOfertaDocumento', 
+		'HreRem.view.activos.detalle.AnyadirNuevaOfertaActivoAdjuntarDocumento'],
 	defaults : {
 		border : true
 	},
 	/*
-	Wizard Compradores: Barra inferior para mostrar los botones de avanzar y volver atrás base del wizard, nosotros utilizamos los
+	Wizard Compradores: Barra inferior para mostrar los botones de avanzar y volver atrï¿½s base del wizard, nosotros utilizamos los
 	botones de las vistas
 	bbar : [ {
 		id : 'move-prev',

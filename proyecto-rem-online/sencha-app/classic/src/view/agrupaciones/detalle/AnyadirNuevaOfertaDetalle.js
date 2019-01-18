@@ -7,7 +7,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaDetalle', {
 	recordName: "oferta",
 	bodyStyle	: 'padding:20px',
 	recordClass: "HreRem.model.OfertaComercial",
-	requires: ['HreRem.model.OfertaComercialActivo'],
+	//requires: ['HreRem.model.OfertaComercialActivo'],
 	
 	listeners: {    
 		boxready: function(window) {
@@ -36,7 +36,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaDetalle', {
     	me.buttons = [ {
     		itemId: 'btnGuardar',
     		text: 'Crear',
-    		handler: 'onClickCrearOferta' /*'onClickBotonGuardarOferta'*/
+    		handler: 'onClickBotonGuardarOferta' /*'onClickBotonGuardarOferta'*/
     	},  { itemId: 'btnCancelar', text: 'Cancelar', handler: 'onClickBotonCancelarWizard'}];
 
     	me.items = [
@@ -63,11 +63,6 @@ Ext.define('HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaDetalle', {
 									scrollable	: 'y',
 								cls:'',	    				
 				            	items: [
-				            	    {
-				            	    	name:		'id',
-										bind:		'{oferta.idAgrupacion}',
-										hidden:		true
-				            	    },
 				            	    {
 				            	    	name:		'cesionDatos',
 										bind:		'{oferta.cesionDatosHaya}',
@@ -156,9 +151,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaDetalle', {
 	    					        	bind: {
 	    				            		store: '{comboTipoDocumento}',
 	    				            		value: '{oferta.tipoDocumento}'
-	    				            	},
-	    				            	displayField: 'descripcion',
-	    	    						valueField: 'codigo'
+	    				            	}	    				            	
 									},
 				            	    {
 				            	    	fieldLabel: HreRem.i18n('fieldlabel.documento.cliente'),

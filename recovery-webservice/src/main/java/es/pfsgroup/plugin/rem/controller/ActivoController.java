@@ -88,6 +88,7 @@ import es.pfsgroup.plugin.rem.model.DtoDatosPublicacionActivo;
 import es.pfsgroup.plugin.rem.model.DtoDistribucion;
 import es.pfsgroup.plugin.rem.model.DtoFichaTrabajo;
 import es.pfsgroup.plugin.rem.model.DtoFoto;
+import es.pfsgroup.plugin.rem.model.DtoGenerarDocGDPR;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoDestinoComercial;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoMediador;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPreciosFilter;
@@ -2471,4 +2472,27 @@ public class ActivoController extends ParadiseJsonController {
 		}
 		return false;
 	}
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView generarUrlGDPR(DtoGenerarDocGDPR dtoGenerarDocGDPR, ModelMap model) {
+		try {
+			model.put("data", activoApi.generarUrlGDPR(dtoGenerarDocGDPR));
+			model.put("success",true);
+		}catch(Exception e) {
+			logger.error("error en activoController", e);
+		}
+		return createModelAndViewJson(model);
+	}
+	
+	@RequestMapping(method = RequestMethod.GET)
+	public void generarDocGDPR(DtoGenerarDocGDPR dtoGenerarDocGDPR, HttpServletRequest request, HttpServletResponse response) {
+
+		try {
+			//dtoGenerarDocGDPR.getData();//TODO AQUI LA URL MONTADA
+			response.sendRedirect("https://www.ehu.eus/documents/1940628/2056218/Informe_PAU_2010.pdf/3f12b40c-386c-4e9a-8df3-fecd8d882f59");
+		} catch (Exception e) {
+			logger.error("error en activoController", e);
+		}
+	}
+
 }

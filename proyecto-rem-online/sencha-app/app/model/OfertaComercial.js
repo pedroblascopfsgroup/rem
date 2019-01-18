@@ -61,6 +61,15 @@ Ext.define('HreRem.model.OfertaComercial', {
             	name: 'regimenMatrimonial'
             },
             {
+            	name: 'email'
+            },
+            {
+            	name: 'telefono'
+            },
+            {
+            	name: 'direccion'
+            },
+            {
             	name: 'cesionDatosHaya',
             	type : 'boolean'
             },

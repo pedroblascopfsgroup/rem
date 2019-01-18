@@ -1345,10 +1345,10 @@ Ext
 					},
 
 					cargarDatosCompradorWizard : function(window) { // ELISA
-						
+						debugger;
 						var me = this,
 						    model = null, 
-						    id = window.up().idComprador,
+						    id = window.idComprador,
 						    idExpediente = window.up().expediente.get("id");
 						
 						model = Ext.create('HreRem.model.FichaComprador', {
@@ -2055,15 +2055,59 @@ Ext
 
 					onClickBotonCrearComprador : function(btn) { // ELISA
 						var me = this, 
-						    window = btn.up('datoscompradorwizard'), 
-						    form = window.getForm(),
+						ventanaDetalle = btn.up().up(),
+				 		window = ventanaDetalle.up().xtype,
+						    /*window = btn.up('datoscompradorwizard'),*/ 
+						    form = ventanaDetalle.getForm(),
 						    wizardAltaComprador = btn.up('wizardaltacomprador');
+						
+						if(ventanaDetalle.config.xtype.indexOf('datoscompradorwizard') >=0){
+							pedirDocValor = ventanaDetalle.getForm().findField('pedirDoc').getValue();
+							
+							if (pedirDocValor == 'false'){
+								
+								//TODO PARTE ALEJANDRO GD
+								url = $AC.getRemoteUrl('expedientecomercial/getListAdjuntosComprador');
+			     				ventanaWizard = btn.up('wizardaltacomprador'),
+			     				idExpediente = ventanaDetalle.getBindRecord().comprador.data.idExpedienteComercial;
+			     				var docCliente= ventanaDetalle.getBindRecord().comprador.data.numDocumento;
+			     				Ext.Ajax.request({
+			    	    		     url: url,
+			    	    			 method : 'GET',
+			    	    			 waitMsg: HreRem.i18n('msg.mask.loading'),
+			    	    		     params: {docCliente: docCliente, idExpediente: idExpediente},
+			    	    		
+			    	    		     success: function(response, opts) {
+			    	    		    	 data = Ext.decode(response.responseText);
+			    	    		    	 ventanaWizard.down('anyadirnuevaofertaactivoadjuntardocumento').getForm().findField('docOfertaComercial').setValue(data.data[0].nombre);
+			    	    		    	 ventanaWizard.down('anyadirnuevaofertaactivoadjuntardocumento').down().down('panel').down('button').show();
+			    	    		     },
 
+			    	    			 failure: function(record, operation) {
+			    	    			 	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+			    	    			 }
+			    	    		});
+			     				
+			     				//TODO PASAR CHECKS A VENTANA 3. MIRAR SI MODELO LO PASA AUTOMATICAMENTE
+			     				
+			     				var wizard = btn.up().up().up();
+			         			var layout = wizard.getLayout();
+			         			layout["next"]();
+							}else{
+								//TODO PARTE GUARDAR COMPRADOR
+							}
+							
+						}else{
+							//TODO VIENE DE VENTANA 3. PASAR CHECKS A VENTANA 2 Y PARTE GUARDAR COMPRADOR.
+						}
+						
+						/*
+						
+						 //PARTE GUARDAR COMPRADOR
+						 
 						if (form.isValid()) {
 							model = me.getViewModel().get('comprador'), window
 									.mask(HreRem.i18n("msg.mask.espere"));
-							// window.getModelInstance().getProxy().extraParams.idExpediente
-							// = idExpediente;
 
 							model.save({
 								success : function(a, operation, c) {
@@ -2086,11 +2130,15 @@ Ext
 									wizardAltaComprador.hide();
 								}
 							});
+							
+							
 						} else {
 
 							me.fireEvent("errorToast", HreRem
 									.i18n("msg.form.invalido"));
 						}
+						
+						*/
 					},
 
 					abrirFormularioCrearComprador : function(grid) {

@@ -1,7 +1,7 @@
 Ext.define('HreRem.view.expedientes.WizardAltaComprador', {
 	extend : 'HreRem.view.common.WindowBase',
 	xtype : 'wizardaltacomprador',
-	title : 'Asistente nuevo comprador',//HreRem.i18n('wizard.comprador.title'),
+	title : 'Asistente nuevo comprador',
 	layout : 'card',
 	bodyStyle : 'padding:10px',
 	width : Ext.Element.getViewportWidth() / 2,
@@ -18,6 +18,10 @@ Ext.define('HreRem.view.expedientes.WizardAltaComprador', {
 	defaults : {
 		border : true
 	},
+	controller: 'expedientedetalle',
+    viewModel: {
+        type: 'expedientedetalle'
+    },
 	/*
 	Wizard Compradores: Barra inferior para mostrar los botones de avanzar y volver atr�s base del wizard, nosotros utilizamos los
 	botones de las vistas

@@ -38,6 +38,7 @@ import es.pfsgroup.plugin.rem.model.DtoComunidadpropietariosActivo;
 import es.pfsgroup.plugin.rem.model.DtoCondicionEspecifica;
 import es.pfsgroup.plugin.rem.model.DtoCondicionantesDisponibilidad;
 import es.pfsgroup.plugin.rem.model.DtoEstadosInformeComercialHistorico;
+import es.pfsgroup.plugin.rem.model.DtoGenerarDocGDPR;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoDestinoComercial;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoMediador;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPreciosFilter;
@@ -1029,4 +1030,10 @@ public interface ActivoApi {
 	 * @return
 	 */
 	boolean compruebaSiExisteActivoBienPorMatricula(Long idActivo, String matriculaActivo);
+	/**
+	 * Genera la url del documento GDPR
+	 * @param dtoGenerarDocGDPR
+	 * @return string url del documento GDPR
+	 */
+	String generarUrlGDPR(DtoGenerarDocGDPR dtoGenerarDocGDPR);
 }

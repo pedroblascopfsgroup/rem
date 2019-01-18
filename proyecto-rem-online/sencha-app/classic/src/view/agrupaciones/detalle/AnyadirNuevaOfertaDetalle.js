@@ -36,7 +36,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaDetalle', {
     	me.buttons = [ {
     		itemId: 'btnGuardar',
     		text: 'Crear',
-    		handler: 'onClickBotonGuardarOferta' /*'onClickBotonGuardarOferta'*/
+    		handler: 'onClickCrearOferta' 
     	},  { itemId: 'btnCancelar', text: 'Cancelar', handler: 'onClickBotonCancelarWizard'}];
 
     	me.items = [
@@ -81,6 +81,23 @@ Ext.define('HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaDetalle', {
 				            	    {
 				            	    	name:		'pedirDoc',
 										bind:		'{oferta.pedirDoc}',
+										hidden:		true
+				            	    },
+				            	    {
+				            	    	name:		'telefono',
+										bind:		'{oferta.telefono}',
+										hidden:		true
+				            	    }
+				            	    ,
+				            	    {
+				            	    	name:		'direccion',
+										bind:		'{oferta.direccion}',
+										hidden:		true
+				            	    }
+				            	    ,
+				            	    {
+				            	    	name:		'email',
+										bind:		'{oferta.enail}',
 										hidden:		true
 				            	    },
 									{

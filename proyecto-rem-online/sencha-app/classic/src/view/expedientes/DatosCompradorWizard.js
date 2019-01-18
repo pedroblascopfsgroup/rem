@@ -33,21 +33,23 @@ Ext.define('HreRem.view.expedientes.DatosCompradorWizard', {
     		me.buttons = [ { itemId: 'btnCrear', text: HreRem.i18n('btn.crear.comprador'), handler: 'onClickBotonCrearComprador'},
     					   { itemId: 'btnCancelar', text: HreRem.i18n('btn.cancelBtnText'), handler: 'onClickBotonCancelarWizardComprador'}];
     	}
-    	 me.items = [
-    	 {
-    		xtype:'textfieldbase',
+
+    	 me.items = [{
+    		 xtype: 		'checkboxfieldbase', 
  	    	name:		'cesionDatos',
 			bind:		'{comprador.cesionDatosHaya}',
 			hidden:		true
 	    },
-	    {   
-	    	xtype:'textfieldbase',
+
+	    {
+	    	xtype: 		'checkboxfieldbase',
 	    	name:		'comunicacionTerceros',
 			bind:		'{comprador.comunicacionTerceros}',
 			hidden:		true
 	    },
-	    {   
-	    	xtype:'textfieldbase',
+
+	    {
+	    	xtype: 		'checkboxfieldbase',
 	    	name:		'transferenciasInternacionales',
 			bind:		'{comprador.transferenciasInternacionales}',
 			hidden:		true

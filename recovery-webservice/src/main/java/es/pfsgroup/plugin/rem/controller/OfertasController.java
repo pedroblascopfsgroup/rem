@@ -291,10 +291,10 @@ public class OfertasController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView checkPedirDoc(Long idActivo, String dniComprador, String codtipoDoc, ModelMap model) {
+	public ModelAndView checkPedirDoc(Long idActivo,Long idAgrupacion, Long idExpediente, String dniComprador, String codtipoDoc, ModelMap model) {
 
 		try {
-			model.put("data", ofertaApi.checkPedirDoc(idActivo, dniComprador, codtipoDoc));
+			model.put("data", ofertaApi.checkPedirDoc(idActivo,idAgrupacion,idExpediente, dniComprador, codtipoDoc));
 			model.put("comprador",ofertaApi.getClienteGDPRByTipoDoc(dniComprador, codtipoDoc));
 			model.put("compradorId", expedienteComercialApi.getCompradorIdByDocumento(dniComprador, codtipoDoc));
 			ofertaApi.llamadaMaestroPersonas(dniComprador, "Haya");

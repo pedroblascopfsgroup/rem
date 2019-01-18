@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.activo;
 
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
+import java.security.MessageDigest;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -84,6 +85,7 @@ import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
 import es.pfsgroup.plugin.rem.condiciontanteo.CondicionTanteoApi;
+import es.pfsgroup.plugin.rem.expedienteComercial.dao.ExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.factory.TabActivoFactoryApi;
 import es.pfsgroup.plugin.rem.gestor.dao.GestorExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
@@ -141,6 +143,7 @@ import es.pfsgroup.plugin.rem.model.DtoComunidadpropietariosActivo;
 import es.pfsgroup.plugin.rem.model.DtoCondicionEspecifica;
 import es.pfsgroup.plugin.rem.model.DtoCondicionantesDisponibilidad;
 import es.pfsgroup.plugin.rem.model.DtoEstadosInformeComercialHistorico;
+import es.pfsgroup.plugin.rem.model.DtoGenerarDocGDPR;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoDestinoComercial;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoMediador;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPrecios;
@@ -366,9 +369,11 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	@Autowired
 	private GestorDocumentalAdapterApi gestorDocumentalAdapterApi;
 
-
 	@Autowired
 	private ActivoPublicacionDao activoPublicacionDao;
+	
+	@Autowired
+	private ExpedienteComercialDao expedienteComercialDao;
 
 	@Override
 	public String managerName() {
@@ -5278,6 +5283,79 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			}
 		}
 		return false;
+	}
+	
+	public String generarUrlGDPR(DtoGenerarDocGDPR dtoGenerarDocGDPR) {
+		
+		String fecha = new SimpleDateFormat("yyyyMMdd").format(new Date());
+		String documento = "";
+		if(!Checks.esNulo(dtoGenerarDocGDPR.getDocumento()))
+			documento = dtoGenerarDocGDPR.getDocumento();
+		
+		String reservationKey = appProperties.getProperty(MAESTRO_ORIGEN_WCOM)+documento+fecha;//TODO AQUI EL HASH MD5 MONTADO (key POR DEFINIR + #documento + today(yyyyMMdd)timestamp)
+		String signatrue = computeKey(reservationKey);
+		
+		String url="urlbonitadehaya/"+signatrue+"?";
+		
+		if(!Checks.esNulo(dtoGenerarDocGDPR.getCodPrescriptor())) {
+			url+="codRemPrescriptor="+getCodRemPrescriptor(dtoGenerarDocGDPR);
+		}
+		
+		if(!Checks.esNulo(dtoGenerarDocGDPR.getNombre())) {
+			url+="&nombre="+dtoGenerarDocGDPR.getNombre();
+		}
+		if(!Checks.esNulo(dtoGenerarDocGDPR.getDocumento())) {
+			url+="&documento="+dtoGenerarDocGDPR.getDocumento();
+		}
+		if(!Checks.esNulo(dtoGenerarDocGDPR.getTelefono())) {
+			url+="&telefono="+dtoGenerarDocGDPR.getTelefono();
+		}
+		
+		if(!Checks.esNulo(dtoGenerarDocGDPR.getDireccion())) {
+			url+="&direccion="+dtoGenerarDocGDPR.getDireccion();
+		}
+		
+		if(!Checks.esNulo(dtoGenerarDocGDPR.getEmail())) {
+			url+="&email="+dtoGenerarDocGDPR.getEmail();
+		}
+		
+		return url;
+	}
+	
+	private String computeKey(String key) {
+
+		String result = "";
+		try {
+			byte[] bytesOfMessage = key.getBytes("UTF-8");
+
+			MessageDigest md = MessageDigest.getInstance("MD5");
+			md.update(bytesOfMessage);
+			byte[] thedigest = md.digest();
+			StringBuffer hexString = new StringBuffer();
+			for (int i = 0; i < thedigest.length; i++) {
+				if ((0xff & thedigest[i]) < 0x10) {
+					hexString.append("0" + Integer.toHexString((0xFF & thedigest[i])));
+				} else {
+					hexString.append(Integer.toHexString(0xFF & thedigest[i]));
+				}
+			}
+			result  = hexString.toString();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
+
+	private Long getCodRemPrescriptor(DtoGenerarDocGDPR dtoGenerarDocGDPR) {
+		Long codRemPrescriptor = null;
+		if(!Checks.esNulo(dtoGenerarDocGDPR.getIdExpediente())) {
+			ExpedienteComercial expCom = expedienteComercialDao.get(dtoGenerarDocGDPR.getIdExpediente());
+			codRemPrescriptor= expCom.getOferta().getPrescriptor().getCodigoProveedorRem();
+		}else {
+			codRemPrescriptor= dtoGenerarDocGDPR.getCodPrescriptor();
+		}
+
+		return codRemPrescriptor;
 	}
 
 }

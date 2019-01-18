@@ -57,7 +57,7 @@ import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
-import es.pfsgroup.plugin.rem.thread.MaestroDePersonas;
+import es.pfsgroup.plugin.rem.expedienteComercial.dao.ExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.gestor.GestorExpedienteComercialManager;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
@@ -78,7 +78,6 @@ import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
 import es.pfsgroup.plugin.rem.model.DtoActivosExpediente;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
 import es.pfsgroup.plugin.rem.model.DtoClienteComercial;
-import es.pfsgroup.plugin.rem.model.DtoComprador;
 import es.pfsgroup.plugin.rem.model.DtoDetalleOferta;
 import es.pfsgroup.plugin.rem.model.DtoGastoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoHonorariosOferta;
@@ -127,6 +126,7 @@ import es.pfsgroup.plugin.rem.rest.dto.InstanciaDecisionDto;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaDto;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaTitularAdicionalDto;
 import es.pfsgroup.plugin.rem.rest.dto.ResultadoInstanciaDecisionDto;
+import es.pfsgroup.plugin.rem.thread.MaestroDePersonas;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 import net.sf.json.JSONObject;
 
@@ -213,6 +213,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 	@Autowired
 	ActivoTareaExternaApi activoTareaExternaApi;
+	
+	@Autowired
+	private ExpedienteComercialDao expedienteComercialDao;
 
 	@Resource(name = "entityTransactionManager")
 	private PlatformTransactionManager transactionManager;
@@ -3190,10 +3193,16 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		return minus;
 	}
 
-	public boolean checkPedirDoc(Long idActivo,String dniComprador, String codtipoDoc) {
+	public boolean checkPedirDoc(Long idActivo,Long idAgrupacion, Long idExpediente, String dniComprador, String codtipoDoc) {
 		ClienteGDPR clienteGDPR = null;
 		ClienteComercial clienteCom = null;
-
+		ActivoAgrupacion agrupacion = null;
+		Activo activo = null;
+		ExpedienteComercial expedienteCom = null;
+		if(!Checks.esNulo(idExpediente)) {
+			expedienteCom = expedienteComercialDao.get(idExpediente);
+		}
+		
 		if(!Checks.esNulo(dniComprador) && !Checks.esNulo(codtipoDoc)) {
 			Filter filterComprador = genericDao.createFilter(FilterType.EQUALS, "numDocumento",
 					dniComprador);
@@ -3206,9 +3215,16 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		if(!Checks.esNulo(clienteGDPR)) {
 			clienteCom = clienteGDPR.getCliente();
 		}
-
-		Activo activo = genericDao.get(Activo.class, genericDao.createFilter(FilterType.EQUALS, "id", idActivo));
-
+		
+		if(Checks.esNulo(idActivo) && !Checks.esNulo(idAgrupacion)) {
+			agrupacion = genericDao.get(ActivoAgrupacion.class, genericDao.createFilter(FilterType.EQUALS, "id", idAgrupacion));
+			activo = agrupacion.getActivoPrincipal();
+		}else if(!Checks.esNulo(idActivo)) {
+			activo = genericDao.get(Activo.class, genericDao.createFilter(FilterType.EQUALS, "id", idActivo));
+		}else if(!Checks.esNulo(expedienteCom)){
+			activo = expedienteCom.getOferta().getActivoPrincipal();
+		}
+		
 		if(!Checks.esNulo(clienteGDPR) && !Checks.esNulo(clienteCom)) {
 			if (!Checks.esNulo(clienteGDPR.getNumDocumento()) && !Checks.esNulo(clienteCom.getDocumento()) && clienteCom.getDocumento().equals(clienteGDPR.getNumDocumento())) {
 				if (!Checks.esNulo(clienteCom.getCesionDatos()) && clienteCom.getCesionDatos()) {
@@ -3317,6 +3333,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				clienteComercialDto.setNombreCliente(clienteCom.getNombre());
 				clienteComercialDto.setId(clienteCom.getId());
 				clienteComercialDto.setRazonSocial(clienteCom.getRazonSocial());
+				clienteComercialDto.setDireccion(clienteCom.getDireccion());
+				clienteComercialDto.setTelefono(clienteCom.getTelefono1());
+				clienteComercialDto.setEmail(clienteCom.getEmail());
 				clienteComercialDto.setCesionDatos(clienteGDPR.getCesionDatos());
 				clienteComercialDto.setComunicacionTerceros(clienteGDPR.getComunicacionTerceros());
 				clienteComercialDto.setTransferenciasInternacionales(clienteGDPR.getTransferenciasInternacionales());

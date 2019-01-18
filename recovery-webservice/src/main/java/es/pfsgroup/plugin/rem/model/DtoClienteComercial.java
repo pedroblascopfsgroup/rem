@@ -1,13 +1,14 @@
 package es.pfsgroup.plugin.rem.model;
 
-import es.capgemini.pfs.persona.model.DDTipoDocumento;
-
 public class DtoClienteComercial {
 
 	private Long id;
     private String razonSocial;
     private String nombreCliente;
     private String apellidosCliente;
+    private String direccion;
+    private String telefono;
+    private String email;
 	private String tipoPersonaCodigo;
 	private String tipoPersonaDescripcion;
 	private String estadoCivilCodigo;
@@ -17,8 +18,6 @@ public class DtoClienteComercial {
     private Boolean cesionDatos;
     private Boolean comunicacionTerceros;
     private Boolean transferenciasInternacionales;
-    private String direccion;
-    private String email;
     private String telefono1;
     private String telefono2;
     private String numeroCalle;
@@ -137,6 +136,12 @@ public class DtoClienteComercial {
 	}
 	public void setTelefono2(String telefono2) {
 		this.telefono2 = telefono2;
+	}
+	public String getTelefono() {
+		return telefono;
+	}
+	public void setTelefono(String telefono) {
+		this.telefono = telefono;
 	}
 	public String getNumeroCalle() {
 		return numeroCalle;

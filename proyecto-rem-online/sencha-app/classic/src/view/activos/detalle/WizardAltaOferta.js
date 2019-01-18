@@ -17,6 +17,7 @@ Ext.define('HreRem.view.activos.detalle.WizardAltaOferta', {
     defaults: {
         border: true
     },
+    idAgrupacion: null,
    /*bbar: [
         {
             id: 'move-prev',

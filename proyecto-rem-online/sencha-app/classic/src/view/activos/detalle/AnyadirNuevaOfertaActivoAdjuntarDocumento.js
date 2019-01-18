@@ -40,7 +40,7 @@ Ext.define('HreRem.view.activos.detalle.AnyadirNuevaOfertaActivoAdjuntarDocument
     			layout["prev"]();
     		}
     	},
-    		{ itemId: 'btnGenerarDoc', text: 'Generar Documento', handler: 'onClickBotonCancelarOferta'},
+    		{ itemId: 'btnGenerarDoc', text: 'Generar Documento', handler: 'onClickBotonGenerarDoc'},
     		{ itemId: 'btnSubirDoc', text: 'Subir Documento', handler: 'abrirFormularioAdjuntarDocumentoOferta'},
     		{ itemId: 'btnFinalizar', text: 'Finalizar', handler: 'onClickCrearOferta'}];
     	
@@ -55,7 +55,7 @@ Ext.define('HreRem.view.activos.detalle.AnyadirNuevaOfertaActivoAdjuntarDocument
 					[
 						{
 							xtype:'checkboxfieldbase',
-							fieldLabel: HreRem.i18n('wizard.oferta.documento.cesionDatos'),
+							fieldLabel: HreRem.i18n('wizard.oferta.documento.cesionDatos'),							
 							bind:		'{oferta.cesionDatosHaya}',
 							name:       'cesionDatos',
 							margin: '50px 0 0 200px',
@@ -126,7 +126,8 @@ Ext.define('HreRem.view.activos.detalle.AnyadirNuevaOfertaActivoAdjuntarDocument
 					        		 handler: 'borrarDocumentoAdjuntoOferta'
 				    	         }
 				    	    ]
-			    		}
+				    	}
+
 					]
     		}
     	];

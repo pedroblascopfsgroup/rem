@@ -2680,75 +2680,81 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	@Override
 	public boolean isAfectoGencat(Activo activo) throws ParseException {
 		
-		//Si municipio esta detallado en la tabla de municipios afectados por GENCAT
-		String codigoMunicipio = activo.getMunicipio();
-		
-		Filter filtroMunicipioCodigo = genericDao.createFilter(FilterType.EQUALS, "localidad.codigo", codigoMunicipio);
-		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
-		ConfiguracionMunicipios municipio = genericDao.get(ConfiguracionMunicipios.class, filtroMunicipioCodigo, filtroBorrado);
-		if (municipio == null) {
-			return false;
-		}
-		
-		//Si tipologia es = a Vivienda
-		String tipoActivo = activo.getTipoActivo().getCodigo();
-		if (!DDTipoActivo.COD_VIVIENDA.equals(tipoActivo)) {
-			return false;
-		}
-		
-		//Si fecha adjudicacion es > que 07/04/2018
-		Filter filtroActivoId = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
-		ActivoAdjudicacionJudicial activoAdjudicacionJudicial = genericDao.get(ActivoAdjudicacionJudicial.class, filtroActivoId, filtroBorrado);
-		if (!Checks.esNulo(activoAdjudicacionJudicial)) {
-			Date fechaAdjudicacion = activoAdjudicacionJudicial.getFechaAdjudicacion();
-			SimpleDateFormat dateformat3 = new SimpleDateFormat("dd/MM/yyyy");
-			if (!fechaAdjudicacion.after(dateformat3.parse("07/04/2018"))) {
+		//Comprobación de que el código de localización no es nulo. Si lo es, directamente no es afectoGencat. HREOS-5252
+		if(!Checks.esNulo(activo.getLocalidad())) {
+			//Si municipio esta detallado en la tabla de municipios afectados por GENCAT
+			String codigoMunicipio = activo.getMunicipio();
+
+			Filter filtroMunicipioCodigo = genericDao.createFilter(FilterType.EQUALS, "localidad.codigo", codigoMunicipio);
+			Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+			ConfiguracionMunicipios municipio = genericDao.get(ConfiguracionMunicipios.class, filtroMunicipioCodigo, filtroBorrado);
+			if (municipio == null) {
 				return false;
 			}
+
+			//Si tipologia es = a Vivienda
+			String tipoActivo = activo.getTipoActivo().getCodigo();
+			if (!DDTipoActivo.COD_VIVIENDA.equals(tipoActivo)) {
+				return false;
+			}
+
+			//Si fecha adjudicacion es > que 07/04/2018
+			Filter filtroActivoId = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+			ActivoAdjudicacionJudicial activoAdjudicacionJudicial = genericDao.get(ActivoAdjudicacionJudicial.class, filtroActivoId, filtroBorrado);
+			if (!Checks.esNulo(activoAdjudicacionJudicial)) {
+				Date fechaAdjudicacion = activoAdjudicacionJudicial.getFechaAdjudicacion();
+				SimpleDateFormat dateformat3 = new SimpleDateFormat("dd/MM/yyyy");
+				if (!fechaAdjudicacion.after(dateformat3.parse("07/04/2018"))) {
+					return false;
+				}
+			}
+			else {
+				return false;
+			}
+
+
+			boolean isAfectoAGencat = true;
+			//Comprobar que el activo sea de las carteras/subcarteras que se indican en el HREOS-4836
+			if (DDCartera.CODIGO_CARTERA_BANKIA.equals(activo.getCartera().getCodigo())) {
+
+				if (	!DDSubcartera.CODIGO_BAN_BK.equals(activo.getSubcartera().getCodigo())
+						&& !DDSubcartera.CODIGO_BAN_BH.equals(activo.getSubcartera().getCodigo())
+						&& !DDSubcartera.CODIGO_BAN_TITULIZADA.equals(activo.getSubcartera().getCodigo())
+						&& !DDSubcartera.CODIGO_BAN_BFA.equals(activo.getSubcartera().getCodigo()) 
+						) {
+					isAfectoAGencat = false;
+				}
+
+			}
+			else if (DDCartera.CODIGO_CARTERA_SAREB.equals(activo.getCartera().getCodigo())) {
+				if ( !DDSubcartera.CODIGO_SAR_INMOBILIARIO.equals(activo.getSubcartera().getCodigo()) ) {
+					isAfectoAGencat = false;
+				}
+			}
+			else if (DDCartera.CODIGO_CARTERA_CAJAMAR.equals(activo.getCartera().getCodigo())) {
+				if ( !DDSubcartera.CODIGO_CAJ_INMOBILIARIO.equals(activo.getSubcartera().getCodigo()) ) {
+					isAfectoAGencat = false;
+				}
+			}
+			else if (DDCartera.CODIGO_CARTERA_LIBERBANK.equals(activo.getCartera().getCodigo())) {
+				if ( !DDSubcartera.CODIGO_LIBERBANK_INMOBILIARIO.equals(activo.getSubcartera().getCodigo()) ) {
+					isAfectoAGencat = false;
+				}
+			}
+			else if (DDCartera.CODIGO_CARTERA_HYT.equals(activo.getCartera().getCodigo())) {
+				if ( !DDSubcartera.CODIGO_HYT_INMOBILIARIO.equals(activo.getSubcartera().getCodigo()) ) {
+					isAfectoAGencat = false;
+				}
+			}
+			else {
+				isAfectoAGencat = false;
+			}
+
+			return isAfectoAGencat;
 		}
 		else {
 			return false;
 		}
-		
-		
-		boolean isAfectoAGencat = true;
-		//Comprobar que el activo sea de las carteras/subcarteras que se indican en el HREOS-4836
-		if (DDCartera.CODIGO_CARTERA_BANKIA.equals(activo.getCartera().getCodigo())) {
-			
-			if (	!DDSubcartera.CODIGO_BAN_BK.equals(activo.getSubcartera().getCodigo())
-					&& !DDSubcartera.CODIGO_BAN_BH.equals(activo.getSubcartera().getCodigo())
-					&& !DDSubcartera.CODIGO_BAN_TITULIZADA.equals(activo.getSubcartera().getCodigo())
-					&& !DDSubcartera.CODIGO_BAN_BFA.equals(activo.getSubcartera().getCodigo()) 
-				) {
-				isAfectoAGencat = false;
-			}
-			
-		}
-		else if (DDCartera.CODIGO_CARTERA_SAREB.equals(activo.getCartera().getCodigo())) {
-			if ( !DDSubcartera.CODIGO_SAR_INMOBILIARIO.equals(activo.getSubcartera().getCodigo()) ) {
-				isAfectoAGencat = false;
-			}
-		}
-		else if (DDCartera.CODIGO_CARTERA_CAJAMAR.equals(activo.getCartera().getCodigo())) {
-			if ( !DDSubcartera.CODIGO_CAJ_INMOBILIARIO.equals(activo.getSubcartera().getCodigo()) ) {
-				isAfectoAGencat = false;
-			}
-		}
-		else if (DDCartera.CODIGO_CARTERA_LIBERBANK.equals(activo.getCartera().getCodigo())) {
-			if ( !DDSubcartera.CODIGO_LIBERBANK_INMOBILIARIO.equals(activo.getSubcartera().getCodigo()) ) {
-				isAfectoAGencat = false;
-			}
-		}
-		else if (DDCartera.CODIGO_CARTERA_HYT.equals(activo.getCartera().getCodigo())) {
-			if ( !DDSubcartera.CODIGO_HYT_INMOBILIARIO.equals(activo.getSubcartera().getCodigo()) ) {
-				isAfectoAGencat = false;
-			}
-		}
-		else {
-			isAfectoAGencat = false;
-		}
-		
-		return isAfectoAGencat;
 	}
 
 	@Override

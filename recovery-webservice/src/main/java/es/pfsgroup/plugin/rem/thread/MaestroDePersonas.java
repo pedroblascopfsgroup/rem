@@ -76,9 +76,8 @@ public class MaestroDePersonas  implements Runnable{
 				 if(!Checks.estaVacio(listaPersonas)){
 					 for (CompradorExpediente compradorExpediente : listaPersonas) {
 						 if(Checks.esNulo(compradorExpediente.getIdPersonaHaya()) || idPersonaHayaNoExiste.equals(compradorExpediente.getIdPersonaHaya())) {
-						 	personaDto.setEvent(PersonaInputDto.EVENTO_IDENTIFICADOR_INTERVINIENTE_ORIGEN);
-							personaDto.setIdOrigen(cartera);
-							personaDto.setIdIntervinienteOrigen(compradorExpediente.getPrimaryKey().getComprador().getDocumento());
+						 	personaDto.setEvent(PersonaInputDto.EVENTO_IDENTIFICADOR_PERSONA_ORIGEN);
+							personaDto.setIdPersonaOrigen(compradorExpediente.getPrimaryKey().getComprador().getDocumento());
 							personaDto.setIdIntervinienteHaya(PersonaInputDto.ID_INTERVINIENTE_HAYA);
 							personaDto.setIdCliente(cartera);
 							

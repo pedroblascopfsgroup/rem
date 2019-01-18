@@ -1769,7 +1769,7 @@ public class AgrupacionAdapter {
 
 	public List<VOfertasActivosAgrupacion> getListOfertasAgrupacion(Long idAgrupacion) {
 
-		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "idAgrupacion", idAgrupacion.toString());
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "idAgrupacion", idAgrupacion);
 
 		List<VOfertasActivosAgrupacion> ofertasAgrupacion = genericDao.getList(VOfertasActivosAgrupacion.class, filtro);
 

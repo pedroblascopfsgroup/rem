@@ -1106,9 +1106,11 @@ public class ActivoAdapter {
 	public List<VActivoPatrimonioContrato> getListAsociadosById(Long id) {
 		List<VActivoPatrimonioContrato> listaActivoVistaPatrimonioContrato = new ArrayList<VActivoPatrimonioContrato>();
 		List<ActivoPatrimonioContrato> list = actPatrimonioDao.getActivoPatrimonioContratoByActivo(id);
+		VActivoPatrimonioContrato activoActual = genericDao.get(VActivoPatrimonioContrato.class, genericDao.createFilter(FilterType.EQUALS, "activo",id));
 		if(!Checks.estaVacio(list)) {
 			ActivoPatrimonioContrato a = list.get(0);
-			listaActivoVistaPatrimonioContrato = genericDao.getList(VActivoPatrimonioContrato.class, genericDao.createFilter(FilterType.EQUALS, "idContrato",a.getIdContrato()));
+			listaActivoVistaPatrimonioContrato = genericDao.getList(VActivoPatrimonioContrato.class, genericDao.createFilter(FilterType.EQUALS, "idContrato",a.getIdContrato()),genericDao.createFilter(FilterType.EQUALS, "nombrePrinex",a.getNomPrinex()));
+			listaActivoVistaPatrimonioContrato.remove(activoActual);
 		}
 		
 		return listaActivoVistaPatrimonioContrato;

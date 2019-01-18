@@ -64,7 +64,7 @@ Ext.define('HreRem.view.activos.detalle.ContratosPatrimonio', {
 									{ //Número de contrato
 										xtype : 'displayfieldbase',
 										fieldLabel : HreRem.i18n('fieldlabel.numero.contrato.alquiler'),
-										bind : '{contrato.numeroContrato}',
+										bind : '{contrato.idContrato}',
 										readOnly : true
 										
 									},
@@ -181,7 +181,7 @@ Ext.define('HreRem.view.activos.detalle.ContratosPatrimonio', {
 										 columns: 
 											 [{	  
 									            text: HreRem.i18n('header.patrimonio.contrato.id.haya'),				            
-									            dataIndex: 'activo',
+									            dataIndex: 'numeroActivoHaya',
 									            flex: 1
 											  },
 											  {

@@ -100,7 +100,7 @@ create or replace PROCEDURE SP_MOTIVO_OCULTACION (pACT_ID IN NUMBER
                                      AND ''A'' = '''||pTIPO||'''
                                      AND PTA.ACT_ID= '||pACT_ID||                                                                  
                          ' UNION
-                          SSELECT PAC.ACT_ID
+                          SELECT PAC.ACT_ID
                                , 1 OCULTO
                                , MTO.DD_MTO_CODIGO
                                , MTO.DD_MTO_ORDEN ORDEN

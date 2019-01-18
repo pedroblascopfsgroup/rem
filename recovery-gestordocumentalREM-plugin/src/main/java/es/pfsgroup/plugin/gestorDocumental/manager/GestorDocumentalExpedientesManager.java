@@ -18,6 +18,7 @@ import org.springframework.stereotype.Component;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.gestorDocumental.api.GestorDocumentalExpedientesApi;
 import es.pfsgroup.plugin.gestorDocumental.api.RestClientApi;
+import es.pfsgroup.plugin.gestorDocumental.dto.servicios.CrearEntidadCompradorDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.servicios.CrearExpedienteComercialDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.servicios.CrearGastoDto;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
@@ -173,6 +174,49 @@ public class GestorDocumentalExpedientesManager implements GestorDocumentalExped
 		sb.append("&").append(EXPEDIENTE_COMERCIAL_METADATOS_PATH).append(UriComponent.encode(crearExpedienteComercialDto.getOperacionMetadatos(), UriComponent.Type.QUERY_PARAM_SPACE_ENCODED));
 		sb.append("&").append(TIPO_EXPEDIENTE_PATH).append(crearExpedienteComercialDto.getTipoClase());
 		sb.append("&").append(CLASE_EXPEDIENTE_PATH).append(crearExpedienteComercialDto.getCodClase());
+		return sb.toString();
+	}
+	
+	@Override
+	public RespuestaCrearExpediente crearActivoOferta(CrearEntidadCompradorDto crearActivoOferta) throws GestorDocumentalException {
+		ServerRequest serverRequest =  new ServerRequest();
+		serverRequest.setMethod(RestClientManager.METHOD_POST);
+		serverRequest.setPath(getPathCrearActivoOferta(crearActivoOferta));
+		serverRequest.setMultipart(getMultipartCrearActivoOferta(crearActivoOferta));
+		serverRequest.setResponseClass(RespuestaCrearExpediente.class);
+		RespuestaCrearExpediente respuesta = (RespuestaCrearExpediente) getResponse(serverRequest);
+
+		if(!Checks.esNulo(respuesta) && !Checks.esNulo(respuesta.getMensajeError())) {
+			logger.debug(respuesta.getCodigoError() + "-" + respuesta.getMensajeError());
+			throw new GestorDocumentalException(respuesta.getCodigoError() + "-" + respuesta.getMensajeError());
+		}
+		if (Checks.esNulo(respuesta)) {
+			throw new GestorDocumentalException(ERROR_SERVER_NOT_RESPONDING);			
+		}
+		
+		return respuesta;
+	}
+
+	@SuppressWarnings("resource")
+	private MultiPart getMultipartCrearActivoOferta(CrearEntidadCompradorDto crearActivoOferta) {
+		final MultiPart multipart = new FormDataMultiPart()
+				.field(USUARIO, crearActivoOferta.getUsuario())
+				.field(PASSWORD,  crearActivoOferta.getPassword())
+				.field(DESCRIPCION_EXPEDIENTE, "")
+				.field(COD_CLASE, crearActivoOferta.getCodClase().toString())
+				.field(EXPEDIENTE_COMERCIAL_METADATOS, crearActivoOferta.getOperacionMetadatos());
+		return multipart;
+	}
+
+	private String getPathCrearActivoOferta(CrearEntidadCompradorDto crearActivoOferta) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("/CrearContenedor");
+		sb.append("?").append(USUARIO_PATH).append(crearActivoOferta.getUsuario());
+		sb.append("&").append(PASSWORD_PATH).append(crearActivoOferta.getPassword());
+		sb.append("&").append(USUARIO_OPERACIONAL_PATH).append(crearActivoOferta.getUsuarioOperacional());
+		sb.append("&").append(EXPEDIENTE_COMERCIAL_METADATOS_PATH).append(UriComponent.encode(crearActivoOferta.getOperacionMetadatos(), UriComponent.Type.QUERY_PARAM_SPACE_ENCODED));
+		sb.append("&").append(TIPO_EXPEDIENTE_PATH).append(crearActivoOferta.getTipoClase());
+		sb.append("&").append(CLASE_EXPEDIENTE_PATH).append(crearActivoOferta.getCodClase());
 		return sb.toString();
 	}
 	

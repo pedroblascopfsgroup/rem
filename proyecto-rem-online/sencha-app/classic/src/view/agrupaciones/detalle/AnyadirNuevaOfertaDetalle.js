@@ -86,6 +86,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaDetalle', {
 									{
 										xtype:      'currencyfieldbase',
 										fieldLabel: HreRem.i18n('fieldlabel.importe'),
+										name:       'importeOferta',
 										flex: 		1,
 										allowBlank: false,
 										bind:		'{oferta.importeOferta}'
@@ -94,6 +95,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaDetalle', {
 										xtype: 'comboboxfieldbase',
 	    					        	fieldLabel:  HreRem.i18n('header.oferta.tipoOferta'),
 	    					        	itemId: 'comboTipoOferta',
+	    					        	name: 'comboTipoOferta',
 	    					        	flex:	1,
 	    					        	allowBlank: false,
 	    					        	bind: {
@@ -146,6 +148,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaDetalle', {
 										xtype: 'comboboxfieldbase',
 	    					        	fieldLabel:  HreRem.i18n('fieldlabel.tipoDocumento'),
 	    					        	itemId: 'comboTipoDocumento',
+	    					        	name:   'comboTipoDocumento',
 	    					        	allowBlank: false,
 	    					        	flex:	1,
 	    					        	bind: {

@@ -42,7 +42,7 @@ Ext.define('HreRem.view.activos.detalle.AnyadirNuevaOfertaActivoAdjuntarDocument
     	},
     		{ itemId: 'btnGenerarDoc', text: 'Generar Documento', handler: 'onClickBotonCancelarOferta'},
     		{ itemId: 'btnSubirDoc', text: 'Subir Documento', handler: 'abrirFormularioAdjuntarDocumentoOferta'},
-    		{ itemId: 'btnFinalizar', text: 'Finalizar', handler: 'onClickBotonCancelarOferta'}];
+    		{ itemId: 'btnFinalizar', text: 'Finalizar', handler: 'onClickCrearOferta'}];
     	
     	me.items = [
     		{
@@ -57,6 +57,7 @@ Ext.define('HreRem.view.activos.detalle.AnyadirNuevaOfertaActivoAdjuntarDocument
 							xtype:'checkboxfieldbase',
 							fieldLabel: HreRem.i18n('wizard.oferta.documento.cesionDatos'),
 							bind:		'{oferta.cesionDatosHaya}',
+							name:       'cesionDatos',
 							margin: '50px 0 0 200px',
 							reference: 'chkbxCesionDatosHaya',
 							readOnly: false
@@ -65,6 +66,7 @@ Ext.define('HreRem.view.activos.detalle.AnyadirNuevaOfertaActivoAdjuntarDocument
 							xtype:'checkboxfieldbase',
 							fieldLabel: HreRem.i18n('wizard.oferta.documento.comunicacionTerceros'),
 							bind:		'{oferta.comunicacionTerceros}',
+							name:       'comunicacionTerceros',
 							margin: '10px 0 0 200px',
 							reference: 'chkbxcComunicacionTerceros',
 							readOnly: false
@@ -73,6 +75,7 @@ Ext.define('HreRem.view.activos.detalle.AnyadirNuevaOfertaActivoAdjuntarDocument
 							xtype:'checkboxfieldbase',
 							fieldLabel: HreRem.i18n('wizard.oferta.documento.transferenciasInternacionales'),
 							bind:		'{oferta.transferenciasInternacionales}',
+							name:       'transferenciasInternacionales',
 							margin: '10px 0 0 200px',
 							reference: 'chkbxTransferenciasInternacionales',
 							readOnly: false

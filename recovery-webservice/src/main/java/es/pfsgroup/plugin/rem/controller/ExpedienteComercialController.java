@@ -7,6 +7,9 @@ import es.capgemini.devon.pagination.Page;
 import es.capgemini.devon.utils.FileUtils;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
@@ -25,6 +28,8 @@ import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.Downloader;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.DownloaderFactoryApi;
 import es.pfsgroup.plugin.rem.model.ClienteComercial;
+import es.pfsgroup.plugin.rem.model.AdjuntoComprador;
+import es.pfsgroup.plugin.rem.model.ClienteGDPR;
 import es.pfsgroup.plugin.rem.model.DtoActivosExpediente;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoAviso;
@@ -91,9 +96,13 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	private static final String RESPONSE_DATA_KEY = "data";
 	private static final String RESPONSE_SUCCESS_KEY = "success";
 	private static final String RESPONSE_ERROR_KEY = "error";
+	private static final String RESPONSE_ERROR_MESSAGE_KEY = "errorMessage";
 	private static final String RESPONSE_MESSAGE_KEY = "msg";
 	private static final String RESPONSE_TOTALCOUNT_KEY = "totalCount";
 
+	@Autowired
+	private GenericABMDao genericDao;
+	
 	@Autowired
 	private ExcelReportGeneratorApi excelReportGeneratorApi;
 
@@ -423,6 +432,82 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 		} catch (Exception e) {
 			logger.error("Error en ExpedienteComercialController", e);
 		}
+
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getListAdjuntosComprador(String docCliente, String idExpediente, ModelMap model) {
+		
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "documento", docCliente);
+		ClienteComercial clienteCom = genericDao.get(ClienteComercial.class, filtro);
+		
+		try {
+			model.put(RESPONSE_DATA_KEY, expedienteComercialAdapter.getAdjuntoExpedienteComprador(clienteCom.getIdPersonaHaya(), docCliente, idExpediente));
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put(RESPONSE_ERROR_MESSAGE_KEY, e.getMessage());
+		}
+		
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView saveDocumentoComprador(String docCliente, String idExpediente, HttpServletRequest request) {
+		
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "documento", docCliente);
+		ClienteComercial clienteCom = genericDao.get(ClienteComercial.class, filtro);
+		
+		ModelMap model = new ModelMap();
+		
+		try {
+
+			WebFileItem fileItem = uploadAdapter.getWebFileItem(request);
+			
+			List<DtoAdjunto> listaAdjuntos = expedienteComercialAdapter.getAdjuntoExpedienteComprador(clienteCom.getIdPersonaHaya(), docCliente, idExpediente);
+			if(listaAdjuntos.size() <= 0) {
+				String errores = expedienteComercialAdapter.uploadDocumentoComprador(fileItem, clienteCom.getIdPersonaHaya());
+				model.put("errores", errores);
+				model.put(RESPONSE_SUCCESS_KEY, errores==null);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put(RESPONSE_ERROR_KEY, e.getMessage());
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView eliminarDocumentoAdjuntoOferta(String docCliente, String idExpediente) {
+		
+		Filter filtroCliente = genericDao.createFilter(FilterType.EQUALS, "documento", docCliente);
+		ClienteComercial clienteCom = genericDao.get(ClienteComercial.class, filtroCliente);
+		
+		ModelMap model = new ModelMap();
+		
+		List<DtoAdjunto> listaAdjuntos = null;
+		try {
+			listaAdjuntos = expedienteComercialAdapter.getAdjuntoExpedienteComprador(clienteCom.getIdPersonaHaya(), docCliente, idExpediente);						
+		} catch (GestorDocumentalException e) {
+			e.printStackTrace();
+		}
+		
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "idDocRestClient", listaAdjuntos.get(0).getId());
+		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+		AdjuntoComprador adjComprador = genericDao.get(AdjuntoComprador.class, filtro, filtroBorrado);
+		
+		//Filtro para conseguir el ClienteGDPR a traves del Cliente Comercial
+		Filter filtroClienteGDPR = genericDao.createFilter(FilterType.EQUALS, "cliente", clienteCom);
+		ClienteGDPR clienteGDPR = (ClienteGDPR) genericDao.get(ClienteGDPR.class, filtroClienteGDPR);
+
+		boolean success = expedienteComercialAdapter.deleteAdjuntoComprador(adjComprador, clienteGDPR);
+		model.put(RESPONSE_SUCCESS_KEY, success);
 
 		return createModelAndViewJson(model);
 	}

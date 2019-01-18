@@ -188,17 +188,14 @@ public class ClienteComercial implements Serializable, Auditable {
     @Column(name = "CLC_TRANSF_INTER")
     private Boolean transferenciasInternacionales;
 	
+    @Column(name = "CLC_ID_PERSONA_HAYA")
+    private String idPersonaHaya;
 
 	@Version   
 	private Long version;
 
 	@Embedded
 	private Auditoria auditoria;
-    
-
-	
-	
-	
 
 	public Long getId() {
 		return id;
@@ -540,6 +537,12 @@ public class ClienteComercial implements Serializable, Auditable {
 	public void setTransferenciasInternacionales(Boolean transferenciasInternacionales) {
 		this.transferenciasInternacionales = transferenciasInternacionales;
 	}
+	
+	public String getIdPersonaHaya() {
+		return idPersonaHaya;
+	}
 
-   
+	public void setIdPersonaHaya(String idPersonaHaya) {
+		this.idPersonaHaya = idPersonaHaya;
+	}   
 }

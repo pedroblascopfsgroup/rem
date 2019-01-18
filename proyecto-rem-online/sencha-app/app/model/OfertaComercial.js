@@ -4,8 +4,8 @@
 Ext.define('HreRem.model.OfertaComercial', {
     extend: 'HreRem.model.Base',
 
-    fields: [    
-  
+    fields: [
+    	
             {
             	name:'numOferta'
             },

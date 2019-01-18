@@ -583,5 +583,7 @@ public interface OfertaApi {
 	DtoClienteComercial getClienteComercialByTipoDoc(String dniComprador, String codtipoDoc);
 
 	DtoClienteComercial getClienteGDPRByTipoDoc(String dniComprador, String codtipoDoc);
+
+	public void llamadaMaestroPersonas(String numDocCliente, String cartera);
 }
 

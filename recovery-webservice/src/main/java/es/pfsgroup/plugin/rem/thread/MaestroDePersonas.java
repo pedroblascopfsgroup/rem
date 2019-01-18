@@ -16,6 +16,7 @@ import es.pfsgroup.commons.utils.hibernate.HibernateUtils;
 import es.pfsgroup.plugin.gestorDocumental.dto.PersonaInputDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.PersonaOutputDto;
 import es.pfsgroup.plugin.gestorDocumental.manager.GestorDocumentalMaestroManager;
+import es.pfsgroup.plugin.rem.model.ClienteComercial;
 import es.pfsgroup.plugin.rem.model.CompradorExpediente;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
@@ -37,6 +38,8 @@ public class MaestroDePersonas  implements Runnable{
 
 	private Long expedienteComercial = null;
 	
+	private String numDocCliente = null;
+	
 	private String userName = null;
 
 	private String cartera = null;
@@ -45,11 +48,19 @@ public class MaestroDePersonas  implements Runnable{
 
 	private PersonaInputDto personaDto = new PersonaInputDto();
 
-	public MaestroDePersonas(Long expedienteComercial, String userName, String cartera) {
+	public  MaestroDePersonas(Long expedienteComercial, String userName, String cartera) {
 		// imprescindible para poder inyectar componentes
 		SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
 		this.userName = userName;
 		this.expedienteComercial = expedienteComercial;
+		this.cartera=cartera;
+	}
+	
+	public  MaestroDePersonas(String numDocCliente, String userName, String cartera) {
+		// imprescindible para poder inyectar componentes
+		SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
+		this.userName = userName;
+		this.numDocCliente = numDocCliente;
 		this.cartera=cartera;
 	}
 
@@ -96,6 +107,38 @@ public class MaestroDePersonas  implements Runnable{
 						}	
 					}
 				 }
+			} else if (!Checks.esNulo(numDocCliente)) {
+				ClienteComercial clienteCom = llamadaClienteComercial(sessionObj);
+					if(Checks.esNulo(clienteCom.getIdPersonaHaya()) || idPersonaHayaNoExiste.equals(clienteCom.getIdPersonaHaya())) {
+						personaDto.setEvent(PersonaInputDto.EVENTO_IDENTIFICADOR_INTERVINIENTE_ORIGEN);
+						personaDto.setIdOrigen(cartera);
+						personaDto.setIdIntervinienteOrigen(PersonaInputDto.ID_INTERVINIENTE_ORIGEN);
+						personaDto.setIdIntervinienteHaya(PersonaInputDto.ID_INTERVINIENTE_HAYA);
+						personaDto.setIdCliente(clienteCom.getDocumento());
+							
+						logger.error("[MAESTRO DE PERSONAS] LLAMAMOS A EJECUTAR PERSONA");
+						logger.error("[MAESTRO DE PERSONAS] Datos de la llamada: ".concat(personaDto.toString()));
+						PersonaOutputDto personaOutputDto = gestorDocumentalMaestroManager.ejecutarPersona(personaDto);
+						logger.error("[MAESTRO DE PERSONAS] VOLVEMOS DE EJECUTAR PERSONA");
+						logger.error("[MAESTRO DE PERSONAS] Datos de la respuesta: ".concat(personaOutputDto.toString()));
+							
+						if (Checks.esNulo(personaOutputDto)) {
+							logger.error("[MAESTRO DE PERSONAS] personaOutputDto ES NULO");
+						} else if (Checks.esNulo(personaOutputDto.getIdIntervinienteHaya())) {
+							logger.error("[MAESTRO DE PERSONAS] getIdIntervinienteHaya ES NULO");
+						} else {
+							logger.error("[MAESTRO DE PERSONAS] EL ID RECUPERADO ES " + personaOutputDto.getIdIntervinienteHaya());
+						}
+							
+						if(!Checks.esNulo(personaOutputDto)) {
+							if(!Checks.esNulo(personaOutputDto.getIdIntervinienteHaya())) {
+								clienteCom.setIdPersonaHaya(personaOutputDto.getIdIntervinienteHaya());
+							}else {
+								clienteCom.setIdPersonaHaya(idPersonaHayaNoExiste);
+							}
+							genericDao.update(ClienteComercial.class, clienteCom);
+						}
+					}
 			}
 			sessionObj.close();
 		} catch (Exception e) {
@@ -107,6 +150,12 @@ public class MaestroDePersonas  implements Runnable{
 		Criteria criteria = sessionObj.createCriteria(ExpedienteComercial.class);
 		criteria.add(Restrictions.eq("id", expedienteComercial));
 		return  HibernateUtils.castObject(ExpedienteComercial.class, criteria.uniqueResult());
+	}
+	
+	private ClienteComercial llamadaClienteComercial(Session sessionObj) {
+		Criteria criteria = sessionObj.createCriteria(ClienteComercial.class);
+		criteria.add(Restrictions.eq("documento", numDocCliente));
+		return  HibernateUtils.castObject(ClienteComercial.class, criteria.uniqueResult());
 	}
 }
 

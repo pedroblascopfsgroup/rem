@@ -4,7 +4,7 @@
 --## FECHA_CREACION=20190118
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=REMVIP-1767
+--## INCIDENCIA_LINK=REMVIP-3085
 --## PRODUCTO=NO
 --## 
 --## Finalidad: INCLUIR ACTIVOS EN AGRUPACIONES
@@ -28,10 +28,11 @@ DECLARE
   V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.   
   ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
   ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
+  V_COMMIT NUMBER(16):= 0;
   V_COUNT_ACT NUMBER(16):= 0;
   V_COUNT_AGR NUMBER(16):= 0;
   V_COUNT_AGA NUMBER(16):= 0;
-  V_USUARIO VARCHAR2(100 CHAR) := 'REMVIP-1767';
+  V_USUARIO VARCHAR2(100 CHAR) := 'REMVIP-3085';
   
   TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
   TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
@@ -693,7 +694,7 @@ BEGIN
     DBMS_OUTPUT.PUT_LINE('[INFO]: UPDATE SITUACION COMERCIAL ACTIVO');
     FOR I IN V_TIPO_DATA.FIRST .. V_TIPO_DATA.LAST
       LOOP
-      
+		V_COMMIT := V_COMMIT + 1;
         V_TMP_TIPO_DATA := V_TIPO_DATA(I);
 		
 		-- COmprobamos si la agrupacion existe
@@ -773,6 +774,11 @@ BEGIN
 		
 		ELSE
 			  DBMS_OUTPUT.PUT_LINE('[ERROR]:  LA AGRUPACION '''||TRIM(V_TMP_TIPO_DATA(1))||' NO EXISTE');
+		END IF;
+		
+		IF V_COMMIT > 9 THEN
+			COMMIT;
+			V_COMMIT:= 0;
 		END IF;
 		
     END LOOP;

@@ -1144,8 +1144,7 @@ ELSE
                             ,FECHAMODIFICAR = SYSDATE
                         WHERE (AHP_FECHA_FIN_VENTA IS NULL AND AHP_FECHA_FIN_ALQUILER IS NULL)
                             AND BORRADO = 0
-                            AND EXISTS '|| replace(vQUERY,'AUX','')
-                    ;
+                            AND EXISTS '|| replace(vQUERY,'AUX','');
           EXECUTE IMMEDIATE V_MSQL;
 
           V_MSQL := '

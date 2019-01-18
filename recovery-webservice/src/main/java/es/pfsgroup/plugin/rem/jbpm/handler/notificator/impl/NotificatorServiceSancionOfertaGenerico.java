@@ -367,7 +367,6 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 		HashMap<String, String> gestores = new HashMap<String, String>();
 
 		for (String s : claves) {
-			String email = null;
 			if (GESTOR_PRESCRIPTOR.equals(s)) {
 				ActivoProveedor prescriptor = ofertaApi.getPreescriptor(oferta);
 				if (!Checks.esNulo(prescriptor)){

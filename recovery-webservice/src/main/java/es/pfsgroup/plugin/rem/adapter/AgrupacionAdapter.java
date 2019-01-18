@@ -2622,7 +2622,7 @@ public class AgrupacionAdapter {
 									activoPublicacion = new ActivoPublicacion();
 									activoPublicacion.setActivo(activoAgrupacionActivo.getActivo());
 								}
-								
+
 								if(!Checks.esNulo(tipoComercializacion)) {
 									activoPublicacion.setTipoComercializacion(tipoComercializacion);
 								}

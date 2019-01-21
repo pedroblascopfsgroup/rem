@@ -1,12 +1,13 @@
 package es.pfsgroup.plugin.rem.excel;
 
+
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
+import java.util.Date;
 //import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Properties;
@@ -19,23 +20,30 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hsqldb.Row;
 import org.springframework.stereotype.Component;
 
 import es.capgemini.devon.utils.FileUtils;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.recovery.coreextension.utils.jxl.HojaExcel;
-import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaAlqBankia;
-import es.pfsgroup.plugin.rem.propuestaprecios.service.impl.GenerarPropuestaPreciosServiceEntidad03;
 import jxl.Cell;
 import jxl.Workbook;
 import jxl.WorkbookSettings;
 import jxl.read.biff.BiffException;
 import jxl.write.Label;
+import jxl.write.WritableCell;
 import jxl.write.WritableCellFeatures;
 import jxl.write.WritableSheet;
 import jxl.write.WritableWorkbook;
 import jxl.write.WriteException;
+
+import org.apache.poi.hssf.util.CellReference;
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
 
 @Component
 public class ExcelReportGenerator implements ExcelReportGeneratorApi {
@@ -110,148 +118,312 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 	
 	@Override
 	public File generateBankiaReport(List<DtoPropuestaAlqBankia> l_DtoPropuestaAlq, HttpServletRequest request) {
-		ServletContext sc = request.getSession().getServletContext();
-		String ruta = sc.getRealPath("plantillas/plugin/Propuesta_alquileres_bankia/PROPUESTA_BANKIA.xls");
-		File file;
-		Workbook libroExcel;
+		
+		ServletContext sc = request.getSession().getServletContext();		
+		
 		try {
-			file = new File(ruta);
-			WorkbookSettings workbookSettings = new WorkbookSettings();
-			workbookSettings.setEncoding( "Cp1252" );
-			workbookSettings.setSuppressWarnings(true);
-			libroExcel = Workbook.getWorkbook( file, workbookSettings );
-			
-			
-			file = new File(file.getAbsolutePath().replace("_BANKIA",""));
-			WritableWorkbook libroEditable = Workbook.createWorkbook(file, libroExcel);
-			
-			WritableSheet hojaDetalle;
+
+			File poiFile = new File(sc.getRealPath("plantillas/plugin/Propuesta_alquileres_bankia/PROPUESTA_BANKIA.xlsx"));
+			File fileOut = new File(poiFile.getAbsolutePath().replace("_BANKIA",""));
+			FileInputStream fis = new FileInputStream(poiFile);
+			FileOutputStream fileOutStream = new FileOutputStream(fileOut);
+			XSSFWorkbook myWorkBook = new XSSFWorkbook (fis);
 			
 			boolean primero = true; 
 			int currentIndex = 2;
+			////// 𝕺𝕶
 			
+			XSSFSheet mySheet;
+			CellReference cellReference;
+			XSSFRow r;
+			XSSFCell c;
 			
-			hojaDetalle = libroEditable.getSheet(1);
-			int cols = hojaDetalle.getColumns();
-			int rows = hojaDetalle.getRows();
-			for (int i = 0; i < cols; i++) {
-				for (int j = 0; j < rows; j++) {
-					WritableCellFeatures cellFeatures = new WritableCellFeatures();
-					Cell celda = hojaDetalle.getCell(i, j);
-					String tmp = celda.getContents();
-					Label label = new Label(i, j, tmp);
-					label.setCellFeatures(cellFeatures);
-					hojaDetalle.addCell(label);
-				}
-			}
+			// En el ultimo elemento esta el resumen por eso cogemos todos los DTO menos el ultimo
+			for (int i = 0; i < l_DtoPropuestaAlq.size()-1; i++) {
 				
-			for (DtoPropuestaAlqBankia dtoPAB : l_DtoPropuestaAlq) {
+				DtoPropuestaAlqBankia dtoPAB = l_DtoPropuestaAlq.get(i);
 				
 				if (primero) {
-//					WritableCellFeatures cellFeatures = new WritableCellFeatures();
-					hojaDetalle = libroEditable.getSheet(1);
-//					Cell celda = hojaDetalle.getCell(0, 0);
-//					String tmp = celda.getContents();
-//					Label label = new Label(0, 0, tmp);
-//					label.setCellFeatures(cellFeatures);
-//					hojaDetalle.addCell(label);
-					
+					mySheet = myWorkBook.getSheetAt(1);
 					primero = false;
-					hojaDetalle.setName(dtoPAB.getNumActivoUvem().toString());
 				} else {
-					//libroEditable.createSheet(dtoPAB.getNumActivoUvem().toString(), libroEditable.getNumberOfSheets()+1);//La crea al final
-					//libroEditable.createSheet(dtoPAB.getNumActivoUvem().toString(), 2);
-					
-					libroEditable.copySheet(1, "NEW SHEET", 2);
-					
-					hojaDetalle = libroEditable.getSheet(libroEditable.getNumberOfSheets()-1); //Esto deberia churruscar?
+					mySheet = myWorkBook.cloneSheet(1);
+					myWorkBook.setSheetName(myWorkBook.getSheetIndex(mySheet), dtoPAB.getNumActivoUvem().toString());
 					++currentIndex;
 				}
+				
+				cellReference = new CellReference("B4");
+				r = mySheet.getRow(cellReference.getRow());
+				c = r.getCell(cellReference.getCol());
+				if (!Checks.esNulo(dtoPAB.getDescripcionEstadoPatrimonio())) {
+					c.setCellValue(dtoPAB.getDescripcionEstadoPatrimonio());
+				}	
 					
-					Label valor = new Label(1,3, dtoPAB.getDescripcionEstadoPatrimonio()); // 𝕺𝕶
-					hojaDetalle.addCell(valor);
-					
-					if (!Checks.esNulo(dtoPAB.getNumActivoUvem())) { // 𝕺𝕶
-						valor = new Label(1,6, dtoPAB.getNumActivoUvem().toString());
-						hojaDetalle.addCell(valor);	
-					}
-					
-					
-//					valor = new Label(2,9, LocalDateTime.now().toString()); // ?? DATE? JAVA 8 ?
-//					hojaDetalle.addCell(valor);
-					
-					if (!Checks.esNulo(dtoPAB.getFechaAltaOferta())) { // 𝕺𝕶
-						valor = new Label(1,9, dtoPAB.getFechaAltaOferta().toString());
-						hojaDetalle.addCell(valor);
-					}
-					
-					
-					if (!Checks.esNulo(dtoPAB.getFechaPublicacionWeb())) { // 𝕺𝕶
-						valor = new Label(1,10,dtoPAB.getFechaPublicacionWeb().toString()); 
-						hojaDetalle.addCell(valor);
-					}
-					
-					valor = new Label(1,17, dtoPAB.getTipoActivo()); // 𝕺𝕶
-					hojaDetalle.addCell(valor);
-					
-					valor = new Label(1,19, dtoPAB.getDireccionCompleta()); // 𝕺𝕶
-					hojaDetalle.addCell(valor);
-					
-					valor = new Label(1,20, dtoPAB.getCodPostMunicipio()); // 𝕺𝕶
-					hojaDetalle.addCell(valor);
-						
-					valor = new Label(1,23, dtoPAB.getNombrePropietario()); // 𝕺𝕶
-					hojaDetalle.addCell(valor);
-					
-					if (!Checks.esNulo(dtoPAB.getImporteTasacionFinal())) { // 𝕺𝕶
-						valor = new Label(1,39, dtoPAB.getImporteTasacionFinal().toString());
-						hojaDetalle.addCell(valor);
-					}
-					 
-					if (!Checks.esNulo(dtoPAB.getFechaUltimaTasacion())) { // 𝕺𝕶
-						valor = new Label(1,40, dtoPAB.getFechaUltimaTasacion().toString());
-						hojaDetalle.addCell(valor);
-					}
-					
-					valor = new Label(1,46, dtoPAB.getNombreCompleto()); // 𝕺𝕶
-					hojaDetalle.addCell(valor);
-					
-					valor = new Label(1,47, dtoPAB.getCompradorDocumento()); //𝕺𝕶
-					hojaDetalle.addCell(valor);
-					
-					if (!Checks.esNulo(dtoPAB.getImporteOferta())) { // 𝕺𝕶
-						valor = new Label(1,56, dtoPAB.getImporteOferta().toString()); 
-						hojaDetalle.addCell(valor);
-					}
-					
-					if (!Checks.esNulo(dtoPAB.getCarenciaALquiler())) { // 𝕺𝕶 
-						valor = new Label(1,59, Integer.toString(dtoPAB.getCarenciaALquiler())); 
-						hojaDetalle.addCell(valor);
-					}
-					
-					valor = new Label(0,80, dtoPAB.getTextoOferta());
-					hojaDetalle.addCell(valor);
-					
+				cellReference = new CellReference("B7");
+				r = mySheet.getRow(cellReference.getRow());
+				c = r.getCell(cellReference.getCol());
+				if (!Checks.esNulo(dtoPAB.getNumActivoUvem())) {
+					c.setCellValue(dtoPAB.getNumActivoUvem().toString());
+				}
+				
+				cellReference = new CellReference("B9");
+				r = mySheet.getRow(cellReference.getRow());
+				c = r.getCell(cellReference.getCol());
+				c.setCellValue(new Date());
+				
+				cellReference = new CellReference("B10");
+				r = mySheet.getRow(cellReference.getRow());
+				c = r.getCell(cellReference.getCol());
+				if (!Checks.esNulo(dtoPAB.getFechaAltaOferta())) {
+					c.setCellValue(dtoPAB.getFechaAltaOferta().toString());
+				}
+				
+				cellReference = new CellReference("B11");
+				r = mySheet.getRow(cellReference.getRow());
+				c = r.getCell(cellReference.getCol());
+				if (!Checks.esNulo(dtoPAB.getFechaPublicacionWeb())) {
+					c.setCellValue(dtoPAB.getFechaPublicacionWeb().toString());
+				}
+				
+				cellReference = new CellReference("B18");
+				r = mySheet.getRow(cellReference.getRow());
+				c = r.getCell(cellReference.getCol());
+				if (!Checks.esNulo(dtoPAB.getTipoActivo())) {
+					c.setCellValue(dtoPAB.getTipoActivo());
+				}
+				
+				cellReference = new CellReference("B20");
+				r = mySheet.getRow(cellReference.getRow());
+				c = r.getCell(cellReference.getCol());
+				if (!Checks.esNulo(dtoPAB.getDireccionCompleta())) {
+					c.setCellValue(dtoPAB.getDireccionCompleta());
+				}
+				
+				cellReference = new CellReference("B21");
+				r = mySheet.getRow(cellReference.getRow());
+				c = r.getCell(cellReference.getCol());
+				if (!Checks.esNulo(dtoPAB.getCodPostMunicipio())) {
+					c.setCellValue(dtoPAB.getCodPostMunicipio());
+				}
+				
+				//B22 CARACTERISTICAS ????
+				
+				cellReference = new CellReference("B24");
+				r = mySheet.getRow(cellReference.getRow());
+				c = r.getCell(cellReference.getCol());
+				if (!Checks.esNulo(dtoPAB.getNombrePropietario())) {
+					c.setCellValue(dtoPAB.getNombrePropietario());
+				}
+
+//					
+				
+				//B38 VALOR DE FONDO TOTAL ????
+				//B39 VALOR DE NETO CONTABLE ????
+				
+				
+				cellReference = new CellReference("B40");
+				r = mySheet.getRow(cellReference.getRow());
+				c = r.getCell(cellReference.getCol());
+				if (!Checks.esNulo(dtoPAB.getImporteTasacionFinal())) {
+					c.setCellValue(dtoPAB.getImporteTasacionFinal().toString());
+				}
+				
+				cellReference = new CellReference("B41");
+				r = mySheet.getRow(cellReference.getRow());
+				c = r.getCell(cellReference.getCol());
+				if (!Checks.esNulo(dtoPAB.getFechaUltimaTasacion())) { 
+					c.setCellValue(dtoPAB.getFechaUltimaTasacion().toString());
+				}
+				
+				cellReference = new CellReference("B47");
+				r = mySheet.getRow(cellReference.getRow());
+				c = r.getCell(cellReference.getCol());
+				if (!Checks.esNulo(dtoPAB.getNombreCompleto())) { 
+					c.setCellValue(dtoPAB.getNombreCompleto());
+				}
+				
+				cellReference = new CellReference("B48");
+				r = mySheet.getRow(cellReference.getRow());
+				c = r.getCell(cellReference.getCol());
+				if (!Checks.esNulo(dtoPAB.getCompradorDocumento())) { 
+					c.setCellValue(dtoPAB.getCompradorDocumento());
+				}
+				
+				cellReference = new CellReference("B57");
+				r = mySheet.getRow(cellReference.getRow());
+				c = r.getCell(cellReference.getCol());
+				if (!Checks.esNulo(dtoPAB.getImporteOferta())) { 
+					c.setCellValue(dtoPAB.getImporteOferta().toString());
+				}
+				
+				cellReference = new CellReference("B60");
+				r = mySheet.getRow(cellReference.getRow());
+				c = r.getCell(cellReference.getCol());
+				if (!Checks.esNulo(dtoPAB.getCarenciaALquiler())) { 
+					c.setCellValue(Integer.toString(dtoPAB.getCarenciaALquiler()));
+				}
+				
+				cellReference = new CellReference("A81");
+				r = mySheet.getRow(cellReference.getRow());
+				c = r.getCell(cellReference.getCol());
+				if (!Checks.esNulo(dtoPAB.getTextoOferta())) { 
+					c.setCellValue(dtoPAB.getTextoOferta());
+				}	
 					
 			}
 			
 			
-			/*
-			 	WritableSheet hojaDetalle = libroEditable.getSheet(1);
-				//Relenamos las celdas sueltas de Id propuesta, y gestor
-				Label valor = new Label(2,1,numPropuesta);
-				hojaDetalle.addCell(valor);
-				valor = new Label(2,2,gestor);
-				hojaDetalle.addCell(valor);
-			 */
+			mySheet = myWorkBook.getSheetAt(0);
+			int currentRow = 7;
 			
-			return file;
+			for (int i = 0; i < l_DtoPropuestaAlq.size()-1; i++) {
+				
+				DtoPropuestaAlqBankia dtoPAB = l_DtoPropuestaAlq.get(i);
+				Long numActivo = dtoPAB.getNumActivoUvem(); // El numero de activo lo necesitamos para referenciar el resto de hojas en las formulas
+				
+				if (currentRow != 7) {
+					mySheet.shiftRows(currentRow, currentRow+1, 1);
+				}
+				
+				cellReference = new CellReference("A" + Integer.toString(currentRow)); // LOTE ??
+				r = mySheet.getRow(cellReference.getRow());
+				c = r.getCell(cellReference.getCol());
+				if (!Checks.esNulo(dtoPAB.getTextoOferta())) { 
+					c.setCellValue(dtoPAB.getTextoOferta());
+				}
+				
+				cellReference = new CellReference("B" + Integer.toString(currentRow)); // ACTIVO
+				r = mySheet.getRow(cellReference.getRow());
+				c = r.getCell(cellReference.getCol());
+				if (!Checks.esNulo(numActivo))
+					c.setCellValue(numActivo.toString());
+				
+				cellReference = new CellReference("C" + Integer.toString(currentRow)); // TIPO ACTIVO
+				r = mySheet.getRow(cellReference.getRow());
+				c = r.getCell(cellReference.getCol());
+				if (!Checks.esNulo(dtoPAB.getTipoActivo()))
+					c.setCellValue(dtoPAB.getTipoActivo());
+				
+				cellReference = new CellReference("D" + Integer.toString(currentRow)); // TIPO OPERACION
+				r = mySheet.getRow(cellReference.getRow());
+				c = r.getCell(cellReference.getCol());
+				if (!Checks.esNulo(dtoPAB.getDescripcionEstadoPatrimonio()))
+					c.setCellValue(dtoPAB.getDescripcionEstadoPatrimonio());
+				
+				cellReference = new CellReference("E" + Integer.toString(currentRow)); // NOMBRE CLIENTE ?? 
+				r = mySheet.getRow(cellReference.getRow());
+				c = r.getCell(cellReference.getCol());
+				if (!Checks.esNulo(dtoPAB.getCompradorNombre()))
+					c.setCellValue(dtoPAB.getCompradorNombre());
+				
+				cellReference = new CellReference("F" + Integer.toString(currentRow)); // DIRECCION
+				r = mySheet.getRow(cellReference.getRow());
+				c = r.getCell(cellReference.getCol());
+				if (!Checks.esNulo(dtoPAB.getDireccionCompleta()))
+					c.setCellValue(dtoPAB.getDireccionCompleta());
+				
+				cellReference = new CellReference("H" + Integer.toString(currentRow)); // MUNICIPIO
+				r = mySheet.getRow(cellReference.getRow());
+				c = r.getCell(cellReference.getCol());
+				if (!Checks.esNulo(dtoPAB.getCodPostMunicipio()))
+					c.setCellValue(dtoPAB.getCodPostMunicipio());
+				
+				String formula = "'"+numActivo.toString()+"'.B12";
+				cellReference = new CellReference("I" + Integer.toString(currentRow)); // VALOR CONTABLE NETO
+				r = mySheet.getRow(cellReference.getRow());
+				c = r.getCell(cellReference.getCol());
+				c.setCellType(XSSFCell.CELL_TYPE_FORMULA);
+				c.setCellFormula(formula);
+				
+				cellReference = new CellReference("J" + Integer.toString(currentRow)); // FECHA PUBLICACION WEB
+				r = mySheet.getRow(cellReference.getRow());
+				c = r.getCell(cellReference.getCol());
+				if (!Checks.esNulo(dtoPAB.getFechaPublicacionWeb()))
+					c.setCellValue(dtoPAB.getFechaPublicacionWeb().toString());
+				else
+					c.setCellValue("Sin publicar");
+				
+				cellReference = new CellReference("K" + Integer.toString(currentRow)); // VALOR ORIENTATIVO !!! RELLENA EL GESTOR
+				r = mySheet.getRow(cellReference.getRow());
+				c = r.getCell(cellReference.getCol());
+				if (!Checks.esNulo(dtoPAB.getFechaPublicacionWeb()))
+					c.setCellValue(dtoPAB.getFechaPublicacionWeb().toString());
+				
+//				String formula = "'"+numActivo+"'"+".B39";
+//				cellReference = new CellReference("L" + Integer.toString(currentRow)); // VALOR CONTABLE NETO
+//				r = mySheet.getRow(cellReference.getRow());
+//				c = r.getCell(cellReference.getCol());
+//				c.setCellType(XSSFCell.CELL_TYPE_FORMULA);
+//				c.setCellFormula(formula);
+//				
+//				formula = "$"+numActivo+".B41";
+//				cellReference = new CellReference("N" + Integer.toString(currentRow)); // FECHA TASACION
+//				r = mySheet.getRow(cellReference.getRow());
+//				c = r.getCell(cellReference.getCol());
+//				c.setCellType(XSSFCell.CELL_TYPE_FORMULA);
+//				c.setCellFormula(formula);
+//				
+//				formula = "$"+numActivo+".B57";
+//				cellReference = new CellReference("O" + Integer.toString(currentRow)); // RENTA OFERTA
+//				r = mySheet.getRow(cellReference.getRow());
+//				c = r.getCell(cellReference.getCol());
+//				c.setCellType(XSSFCell.CELL_TYPE_FORMULA);
+//				c.setCellFormula(formula);
+//				
+//				formula = "$"+numActivo+".B58";
+//				cellReference = new CellReference("P" + Integer.toString(currentRow)); // RENTA BONIFICADA
+//				r = mySheet.getRow(cellReference.getRow());
+//				c = r.getCell(cellReference.getCol());
+//				c.setCellType(XSSFCell.CELL_TYPE_FORMULA);
+//				c.setCellFormula(formula);
+//				
+//				formula = "$"+numActivo+".B9";
+//				cellReference = new CellReference("Q" + Integer.toString(currentRow)); // FECHA OFERTA
+//				r = mySheet.getRow(cellReference.getRow());
+//				c = r.getCell(cellReference.getCol());
+//				c.setCellType(XSSFCell.CELL_TYPE_FORMULA);
+//				c.setCellFormula(formula);
+//				
+//				formula = "$"+numActivo+".B61";
+//				cellReference = new CellReference("R" + Integer.toString(currentRow)); // RENTABILIDAD PRIMER ANYO
+//				r = mySheet.getRow(cellReference.getRow());
+//				c = r.getCell(cellReference.getCol());
+//				c.setCellType(XSSFCell.CELL_TYPE_FORMULA);
+//				c.setCellFormula(formula);
+//				
+//				formula = "$"+numActivo+".B62";
+//				cellReference = new CellReference("S" + Integer.toString(currentRow)); // DIFERENCIA CON EURIBOR
+//				r = mySheet.getRow(cellReference.getRow());
+//				c = r.getCell(cellReference.getCol());
+//				c.setCellType(XSSFCell.CELL_TYPE_FORMULA);
+//				c.setCellFormula(formula);
+//				
+//				formula = "$"+numActivo+".B50";
+//				cellReference = new CellReference("T" + Integer.toString(currentRow)); // PAX
+//				r = mySheet.getRow(cellReference.getRow());
+//				c = r.getCell(cellReference.getCol());
+//				c.setCellType(XSSFCell.CELL_TYPE_FORMULA);
+//				c.setCellFormula(formula);
+//				
+//				formula = "$"+numActivo+".B49";
+//				cellReference = new CellReference("U" + Integer.toString(currentRow)); // Ingresos Netos
+//				r = mySheet.getRow(cellReference.getRow());
+//				c = r.getCell(cellReference.getCol());
+//				c.setCellType(XSSFCell.CELL_TYPE_FORMULA);
+//				c.setCellFormula(formula);
+								
+				
+				++currentRow; // Siguiente fila
+					
+			}
 			
-		} catch (BiffException e) {
-			logger.error(e.getMessage());
+			
+			myWorkBook.write(fileOutStream);
+			fileOutStream.close();
+			
+			return fileOut;
+			
 		} catch (IOException e) {
-			logger.error(e.getMessage());
-		} catch (WriteException e) {
 			logger.error(e.getMessage());
 		}
 		

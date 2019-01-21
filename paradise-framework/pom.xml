@@ -115,6 +115,16 @@
 			<optional>true</optional>
 		</dependency>
 		<dependency>
+		    <groupId>org.apache.poi</groupId>
+		    <artifactId>poi</artifactId>
+		    <version>3.7</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.apache.poi</groupId>
+		    <artifactId>poi-ooxml</artifactId>
+		    <version>3.7</version>
+		</dependency>
+		<dependency>
 		  <groupId>net.sf</groupId>
 		  <artifactId>sojo-optional</artifactId>
 		  <version>0.5.0</version>

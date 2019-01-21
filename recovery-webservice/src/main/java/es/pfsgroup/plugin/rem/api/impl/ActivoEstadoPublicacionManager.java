@@ -630,7 +630,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	 */
 	private Boolean registrarHistoricoPublicacion(ActivoPublicacion activoPublicacion, DtoDatosPublicacionActivo dto) {
 		try {
-			ActivoPublicacionHistorico activoPublicacionHistorico = activoPublicacionHistoricoDao.getActivoPublicacionHistoricoActual(dto.getIdActivo());
+			ActivoPublicacionHistorico activoPublicacionHistorico = activoPublicacionHistoricoDao.getActivoPublicacionHistoricoActual(activoPublicacion.getActivo().getId());
 
 			if(Arrays.asList(DDTipoComercializacion.CODIGOS_VENTA).contains(activoPublicacion.getTipoComercializacion().getCodigo()) &&
 					(!Checks.esNulo(dto.getMotivoOcultacionVentaCodigo()) || !Checks.esNulo(dto.getMotivoOcultacionManualVenta()) || !Checks.esNulo(dto.getPublicarVenta()) ||

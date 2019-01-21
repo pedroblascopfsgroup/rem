@@ -88,6 +88,8 @@ public class DtoTramite extends WebDto {
 	private Boolean activoAplicaGestion;
 	
 	private Boolean esTareaAutorizacionBankia;
+	
+	private Boolean tramiteAlquilerAnulado;
 
 	public Long getIdTramite() {
 		return idTramite;
@@ -399,6 +401,14 @@ public class DtoTramite extends WebDto {
 
 	public void setOcultarBotonResolucionAlquiler(Boolean ocultarBotonResolucionAlquiler) {
 		this.ocultarBotonResolucionAlquiler = ocultarBotonResolucionAlquiler;
+	}
+
+	public Boolean getTramiteAlquilerAnulado() {
+		return tramiteAlquilerAnulado;
+	}
+
+	public void setTramiteAlquilerAnulado(Boolean tramiteAlquilerAnulado) {
+		this.tramiteAlquilerAnulado = tramiteAlquilerAnulado;
 	}
 	
 }

@@ -58,10 +58,10 @@ Ext.define('HreRem.view.activos.tramites.TareasList', {
 	           	 name: 'btnSaltoAL',
 	           	 text: 'Anulación del expediente de alquiler',
 	           	 secFunPermToShow: 'BOTON_RESOLUCION_EXPEDIENTE',
-	          	 handler: 'saltoResolucionExpedienteAlquiler',
+	          	 handler:'saltoResolucionExpedienteAlquiler',
 	          	 bind: {
 	          		hidden: '{tramite.ocultarBotonResolucionAlquiler}',
-	          		disabled: '{tramite.estaEnTareaSiguienteResolucionExpediente}'
+	          		disabled: '{tramite.tramiteAlquilerAnulado}'
 	          	 }
              },
              {

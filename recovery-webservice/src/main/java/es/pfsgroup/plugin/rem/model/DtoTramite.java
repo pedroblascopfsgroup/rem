@@ -91,6 +91,8 @@ public class DtoTramite extends WebDto {
 	
 	private String codigoSubcartera;
 
+	private Boolean tramiteAlquilerAnulado;
+
 	public Long getIdTramite() {
 		return idTramite;
 	}
@@ -409,6 +411,14 @@ public class DtoTramite extends WebDto {
 
 	public void setOcultarBotonResolucionAlquiler(Boolean ocultarBotonResolucionAlquiler) {
 		this.ocultarBotonResolucionAlquiler = ocultarBotonResolucionAlquiler;
+	}
+
+	public Boolean getTramiteAlquilerAnulado() {
+		return tramiteAlquilerAnulado;
+	}
+
+	public void setTramiteAlquilerAnulado(Boolean tramiteAlquilerAnulado) {
+		this.tramiteAlquilerAnulado = tramiteAlquilerAnulado;
 	}
 	
 }

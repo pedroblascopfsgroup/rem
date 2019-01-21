@@ -3694,5 +3694,14 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		            comboAdecuacion.setValue("");
 	   	 }
 	   	 checkbox.setReadOnly(this.enableChkPerimetroAlquiler()); 
-    }
+    },
+    
+    onEnlaceAbrirOferta: function(button) {
+    	var me = this;
+    	var idExpediente = me.getViewModel().get('contrato.idExpediente');
+    	
+		if(!Ext.isEmpty(idExpediente)){
+			me.getView().fireEvent('abrirDetalleExpedienteById', idExpediente, null, button.reflinks);
+		}
+	}
 });

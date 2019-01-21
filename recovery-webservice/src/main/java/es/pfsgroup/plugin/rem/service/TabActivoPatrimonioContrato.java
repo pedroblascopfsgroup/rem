@@ -1,7 +1,6 @@
 package es.pfsgroup.plugin.rem.service;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.beanutils.BeanUtils;
@@ -10,11 +9,19 @@ import org.springframework.stereotype.Component;
 
 import es.capgemini.devon.dto.WebDto;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoPatrimonioContratoDao;
+import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoPatrimonioContrato;
 import es.pfsgroup.plugin.rem.model.DtoActivoPatrimonioContrato;
-import es.pfsgroup.plugin.rem.model.DtoActivoVistaPatrimonioContrato;
+import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 
 @Component
 public class TabActivoPatrimonioContrato implements TabActivoService {
@@ -22,6 +29,15 @@ public class TabActivoPatrimonioContrato implements TabActivoService {
 	@Autowired
 	private ActivoPatrimonioContratoDao activoPatrimonioDao;
 
+	@Autowired
+	private OfertaApi ofertaApi;
+	
+	@Autowired
+	private GenericABMDao genericDao;
+	
+	@Autowired
+	private ExpedienteComercialApi expedienteComercialApi;
+	
 	@Override
 	public String[] getKeys() {
 		return this.getCodigoTab();
@@ -35,8 +51,7 @@ public class TabActivoPatrimonioContrato implements TabActivoService {
 	public DtoActivoPatrimonioContrato getTabData(Activo activo) throws IllegalAccessException, InvocationTargetException {
 		DtoActivoPatrimonioContrato activoPatrimonioContratoDto = new DtoActivoPatrimonioContrato();		
 		List<ActivoPatrimonioContrato> listActivoPatrimonioContrato = activoPatrimonioDao.getActivoPatrimonioContratoByActivo(activo.getId());
-		DtoActivoVistaPatrimonioContrato activoVistaPatrimonioContratoDto = new DtoActivoVistaPatrimonioContrato();
-		//List<ActivoVistaPatrimonioContrato> listActivosRelacionados = activoPatrimonioDao.getActivosRelacionados(activo.getId());
+		List<Oferta> listadoOfertas = ofertaApi.getListaOfertasByActivo(activo);
 		
 		if(!Checks.estaVacio(listActivoPatrimonioContrato)) {
 			ActivoPatrimonioContrato activoPatrimonioContrato = listActivoPatrimonioContrato.get(0);
@@ -47,10 +62,23 @@ public class TabActivoPatrimonioContrato implements TabActivoService {
 				}
 			}	
 			activoPatrimonioContratoDto.setMultiplesResultados(listActivoPatrimonioContrato.size() > 1);
-
 		}
 		
-		
+		if(!Checks.estaVacio(listadoOfertas)) {
+			if(!Checks.esNulo(activoPatrimonioContratoDto.getIdContrato())) {
+				String contrato = activoPatrimonioContratoDto.getIdContrato();
+				
+				for (Oferta tipoOferta : listadoOfertas) {	
+					ExpedienteComercial expComercial = expedienteComercialApi.findOneByOferta(tipoOferta);
+					if(contrato.equals(tipoOferta.getNumContratoPrinex())
+							&& DDTipoOferta.CODIGO_ALQUILER.equals(expComercial.getOferta().getTipoOferta().getCodigo())) {
+						activoPatrimonioContratoDto.setOfertaREM(tipoOferta.getNumOferta());	
+						activoPatrimonioContratoDto.setIdExpediente(expComercial.getId());
+					}
+				}
+			}
+		}
+				
 		return activoPatrimonioContratoDto;
 	}
 

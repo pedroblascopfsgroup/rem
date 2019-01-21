@@ -231,6 +231,7 @@ import es.pfsgroup.plugin.rem.rest.api.RestApi.ENTIDADES;
 import es.pfsgroup.plugin.rem.rest.api.RestApi.TIPO_VALIDACION;
 import es.pfsgroup.plugin.rem.rest.dto.File;
 import es.pfsgroup.plugin.rem.rest.dto.FileResponse;
+import es.pfsgroup.plugin.rem.rest.dto.OfertaTitularAdicionalDto;
 import es.pfsgroup.plugin.rem.rest.dto.PortalesDto;
 import es.pfsgroup.plugin.rem.service.TabActivoService;
 import es.pfsgroup.plugin.rem.tareasactivo.TareaActivoManager;
@@ -372,8 +373,10 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	@Autowired
 	private ActivoPublicacionDao activoPublicacionDao;
 	
+
 	@Autowired
 	private ExpedienteComercialDao expedienteComercialDao;
+
 
 	@Override
 	public String managerName() {
@@ -1231,15 +1234,17 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 						nuevoCompradorAdicional.setDocumento(titularAdicional.getDocumento());
 						nuevoCompradorAdicional.setNombre(titularAdicional.getNombre());
 						nuevoCompradorAdicional.setTipoDocumento(titularAdicional.getTipoDocumento());
-						if (!Checks.esNulo(cliGDPR)) {
-							if (!Checks.esNulo(cliGDPR.getCesionDatos())) {
-								nuevoCompradorAdicional.setCesionDatos(cliGDPR.getCesionDatos());
+						
+						//AGREGAR CHECKS DE TITULARES ADICIONALES
+						if (!Checks.esNulo(titularAdicional)) {
+							if (!Checks.esNulo(titularAdicional.getRechazarCesionDatosPropietario())) {
+								nuevoCompradorAdicional.setCesionDatos(!titularAdicional.getRechazarCesionDatosPropietario());
 							}
-							if (!Checks.esNulo(cliGDPR.getComunicacionTerceros())) {
-								nuevoCompradorAdicional.setComunicacionTerceros(cliGDPR.getComunicacionTerceros());
+							if (!Checks.esNulo(titularAdicional.getRechazarCesionDatosProveedores())) {
+								nuevoCompradorAdicional.setComunicacionTerceros(!titularAdicional.getRechazarCesionDatosProveedores());
 							}
-							if (!Checks.esNulo(cliGDPR.getTransferenciasInternacionales())) {
-								nuevoCompradorAdicional.setTransferenciasInternacionales(cliGDPR.getTransferenciasInternacionales());
+							if (!Checks.esNulo(titularAdicional.getRechazarCesionDatosPublicidad())) {
+								nuevoCompradorAdicional.setTransferenciasInternacionales(!titularAdicional.getRechazarCesionDatosPublicidad());
 							}
 						}
 						genericDao.save(Comprador.class, nuevoCompradorAdicional);

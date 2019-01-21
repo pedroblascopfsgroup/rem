@@ -109,9 +109,9 @@ public class MaestroDePersonas  implements Runnable{
 			} else if (!Checks.esNulo(numDocCliente)) {
 				ClienteComercial clienteCom = llamadaClienteComercial(sessionObj);
 					if(Checks.esNulo(clienteCom.getIdPersonaHaya()) || idPersonaHayaNoExiste.equals(clienteCom.getIdPersonaHaya())) {
-						personaDto.setEvent(PersonaInputDto.EVENTO_IDENTIFICADOR_INTERVINIENTE_ORIGEN);
+						personaDto.setEvent(PersonaInputDto.EVENTO_IDENTIFICADOR_PERSONA_ORIGEN);
 						personaDto.setIdOrigen(cartera);
-						personaDto.setIdIntervinienteOrigen(PersonaInputDto.ID_INTERVINIENTE_ORIGEN);
+						personaDto.setIdPersonaOrigen(PersonaInputDto.ID_INTERVINIENTE_ORIGEN);
 						personaDto.setIdIntervinienteHaya(PersonaInputDto.ID_INTERVINIENTE_HAYA);
 						personaDto.setIdCliente(clienteCom.getDocumento());
 							

@@ -28,6 +28,7 @@ Ext
 
 						'compradoresexpediente gridBase' : {
 							onClickRemove : 'borrarComprador',
+							download: 'downloadDocumentoAdjuntoGDPR',
 							afterdelete : function(grid) {
 								grid.getStore().load();
 							}
@@ -973,6 +974,42 @@ Ext
 						config.params.idExpediente = record.get("idExpediente");
 						config.params.nombreDocumento = record.get("nombre");
 						me.fireEvent("downloadFile", config);
+					},
+					downloadDocumentoAdjuntoGDPR: function(grid, record) {
+						var url =$AC.getRemoteUrl('expedientecomercial/existeDocumentoGDPR');
+						var idPersonaHaya = record.get("idPersonaHaya");
+						var idDocAdjunto =  record.get("idDocAdjunto");
+						var idDocRestClient = record.get("idDocRestClient");
+						var nombreAdjunto = record.get("nombreAdjunto");
+						
+						var data;
+						var me = this;
+						Ext.Ajax.request({
+						     url: url,
+						     params: {idPersonaHaya : idPersonaHaya , idDocAdjunto : idDocAdjunto , idDocRestClient : idDocRestClient , nombreAdjunto : nombreAdjunto},
+						     success: function(response, opts) {
+						    	 data = Ext.decode(response.responseText);
+						    	 if(data.success == "true"){
+						    		 
+						    		var config = {};
+						    			config.url=$AC.getWebPath()+"expedientecomercial/bajarAdjuntoExpedienteGDPR."+$AC.getUrlPattern();
+						    			config.params = {};
+						    			config.params.idPersonaHaya=record.get("idPersonaHaya");
+						    			config.params.idExpediente=record.get("idExpediente");
+						    			config.params.idDocRestClient=record.get("idDocRestClient");
+						    			config.params.nombreAdjunto=record.get("nombreAdjunto");
+						    			
+						    			me.fireEvent("downloadFile", config);
+						    	 }else{
+				   		    	 me.fireEvent("errorToast", data.error);
+						    	 }
+						         
+						     },
+						     failure: function(response) {
+						    	 me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+						     }
+						 });	
+						
 					},
 
 					onListadoTramitesTareasExpedienteDobleClick : function(

@@ -49,6 +49,7 @@ Ext.define('HreRem.view.activos.detalle.DocumentosActivoSimple', {
 					        xtype: 'actioncolumn',
 					        width: 30,	
 					        hideable: false,
+					        
 					        items: [{
 					           	iconCls: 'ico-download',
 					           	tooltip: HreRem.i18n("tooltip.download"),

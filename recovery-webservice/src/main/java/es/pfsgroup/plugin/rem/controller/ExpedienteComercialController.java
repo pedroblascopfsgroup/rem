@@ -5,6 +5,7 @@ import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.devon.utils.FileUtils;
+import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -62,8 +63,13 @@ import es.pfsgroup.plugin.rem.model.DtoTipoDocExpedientes;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.VBusquedaDatosCompradorExpediente;
 
+import es.pfsgroup.plugin.rem.thread.MaestroDePersonas;
+
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.annotations.Check;
+import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -86,9 +92,14 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	protected static final Log logger = LogFactory.getLog(ExpedienteComercialController.class);
 	public static final String CONSTANTE_REST_CLIENT = "rest.client.gestor.documental.constante";
 
+	public static final String CONSTANTE_CARTERA_HAYA = "Haya";
+	
 	public static final String ERROR_EXPEDIENTE_NOT_EXISTS = "No existe el expediente que esta buscando, pruebe con otro Nº de Expediente";
 	public static final String ERROR_OFERTA_NOT_EXISTS = "No existe la oferta que esta buscando, pruebe con otro Nº de Oferta";
 	public static final String ERROR_CAMPO_NO_NUMERICO = "El campo introducido es de carácter numérico";
+	public static final String ERROR_NO_ASOCIADO_GDPR = "No se ha encontrado un documento GDPR asociado a este comprador";
+	public static final String ERROR_NO_EXISTE_PERSONA_HAYA = "No existe persona Haya";
+	public static final String ERROR_NO_EXISTE_NUM_DOCUMENTO = "No existe número de documento";
 	public static final String ERROR_GENERICO = "La operación no se ha podido realizar";
 	public static final String CAMPO_EXPEDIENTE = "E";
 	public static final String CAMPO_OFERTA = "O";
@@ -420,6 +431,66 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 			logger.error("Error en ExpedienteComercialController", e);
 		}
 	}
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public void bajarAdjuntoExpedienteGDPR (HttpServletRequest request, HttpServletResponse response, ModelMap model) {
+
+				String key = appProperties.getProperty(CONSTANTE_REST_CLIENT);
+				Downloader dl = downloaderFactoryApi.getDownloader(key);
+				String nombreDocumento = request.getParameter("nombreAdjunto");
+				Long idDocRestClient = Long.parseLong(request.getParameter("idDocRestClient"));
+				
+   			
+       	try {
+       		    FileItem fileItem = dl.getFileItem( idDocRestClient , nombreDocumento);
+           		ServletOutputStream salida = response.getOutputStream(); 
+           			
+           		response.setHeader("Content-disposition", "attachment; filename=" + fileItem.getFileName());
+           		response.setHeader("Cache-Control", "must-revalidate, post-check=0,pre-check=0");
+           		response.setHeader("Cache-Control", "max-age=0");
+           		response.setHeader("Expires", "0");
+           		response.setHeader("Pragma", "public");
+           		response.setDateHeader("Expires", 0); //prevents caching at the proxy
+           		response.setContentType(fileItem.getContentType());
+           		
+           		// Write
+           		FileUtils.copy(fileItem.getInputStream(), salida);
+           		salida.flush();
+        
+    		}catch(Exception e) {
+    			logger.error("Error en ExpedienteComercialController", e);
+		    }	
+       	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView existeDocumentoGDPR(HttpServletRequest request, ModelMap model) {
+		
+		 String  idDocRestClient =  request.getParameter("idDocRestClient");
+		 String  idDocAdjunto    = 	request.getParameter("idDocAdjunto");
+		 String  nombreDocumento =  request.getParameter("nombreAdjunto");
+		 try {
+				if(!Checks.esNulo(idDocAdjunto ) && !Checks.esNulo(nombreDocumento) ) {
+					if(!Checks.esNulo(idDocRestClient)) {
+						model.put("success", true);
+					} else {
+						model.put("success", false);
+						model.put("error", ERROR_NO_EXISTE_NUM_DOCUMENTO);
+					}
+					
+				} else {
+					model.put("success", false);
+					model.put("error", ERROR_NO_ASOCIADO_GDPR );
+					
+				}
+			} catch(Exception e) {
+				logger.error("error obteniendo id Persona Haya ",e);
+				model.put("success", false);
+				model.put("error", ERROR_GENERICO);
+			}
+		return createModelAndViewJson(model);
+		
+	}
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
@@ -436,6 +507,7 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 	
+
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getListAdjuntosComprador(String docCliente, String idExpediente, ModelMap model) {
@@ -511,6 +583,7 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 
 		return createModelAndViewJson(model);
 	}
+
 
 	/**
 	 * Recibe y guarda un adjunto
@@ -709,6 +782,7 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getCompradoresExpediente(Long idExpediente, WebDto dto, ModelMap model) {
+		
 		try {
 			Page page = expedienteComercialApi.getCompradoresByExpediente(idExpediente, dto);
 			model.put(RESPONSE_DATA_KEY, page.getResults());

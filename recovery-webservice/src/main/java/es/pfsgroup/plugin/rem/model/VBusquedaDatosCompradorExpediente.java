@@ -6,6 +6,7 @@ import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Table;
 
 @Entity
@@ -197,19 +198,20 @@ public class VBusquedaDatosCompradorExpediente implements Serializable {
 	
 	@Column(name = "DESC_PAIS_RTE")
 	private String descripcionPaisRte;
-	
-	// HREOS-4937
-	@Column(name = "CLC_CESION_DATOS")
+
+	@Column(name = "COM_CESION_DATOS")
 	private Boolean cesionDatos;
-	
-	@Column(name = "CLC_COMUNI_TERCEROS")
+	    
+	@Column(name = "COM_COMUNI_TERCEROS")
 	private Boolean comunicacionTerceros;
-	
-	@Column(name = "CLC_TRANSF_INTER")
+	    
+	@Column(name = "COM_TRANSF_INTER")
 	private Boolean transferenciasInternacionales;
 	
 	@Column(name = "ADCOM_ID")
 	private Long idDocAdjunto;
+	
+
     
 
 	public String getId() {

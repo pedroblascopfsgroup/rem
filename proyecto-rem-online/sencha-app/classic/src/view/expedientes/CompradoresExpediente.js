@@ -207,14 +207,37 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
 					            renderer: coloredRender
 						   },
 						   {
+
 							   text: HreRem.i18n('header.numero.ursus'),
 							   dataIndex: 'numeroClienteUrsus',
 							   flex: 1,
 					           renderer: coloredRender,
 					           hidden: cartera(),
 					           hideable: !cartera()
-						   }
-					    ],
+
+						   },{
+							   xtype: 'actioncolumn',
+							      width: 30,
+							      flex: 1,
+							      hideable: false,
+							      text: HreRem.i18n('grid.documento.gdpr'),
+							        items: [{
+							           	iconCls: 'ico-download',
+							           	tooltip: "Documento GDPR",
+							            handler: function(grid, rowIndex) {
+							            	var record = grid.getRecord(rowIndex);
+								            var grid = me.down('gridBase');
+								               
+								             grid.fireEvent("download", grid, record);	
+							               
+							          					                
+					            		}
+							        }]
+						   }  
+							  
+
+						   
+						  ],
 					    dockedItems : [
 					        {
 					            xtype: 'pagingtoolbar',

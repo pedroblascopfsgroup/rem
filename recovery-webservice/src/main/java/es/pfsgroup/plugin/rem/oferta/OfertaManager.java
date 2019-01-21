@@ -646,6 +646,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 			Long idOferta = this.saveOferta(oferta);
 			if (!Checks.esNulo(ofertaDto.getTitularesAdicionales()) && !Checks.estaVacio(ofertaDto.getTitularesAdicionales())) {
+				oferta.setId(idOferta);
 				saveOrUpdateListaTitualesAdicionalesOferta(ofertaDto, oferta);
 			}
 			oferta = updateEstadoOferta(idOferta, ofertaDto.getFechaAccion());
@@ -709,8 +710,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 							DDRegimenesMatrimoniales.class,
 							genericDao.createFilter(FilterType.EQUALS, "codigo", titDto.getCodigoRegimenEconomico())));
 				}
-
-				listaTit.add(titAdi);
+				titAdi.setRechazarCesionDatosPropietario(titDto.getRechazarCesionDatosPropietario());
+				titAdi.setRechazarCesionDatosProveedores(titDto.getRechazarCesionDatosProveedores());
+				titAdi.setRechazarCesionDatosPublicidad(titDto.getRechazarCesionDatosPublicidad());
+				listaTit.add(titAdi);			
+				genericDao.save(TitularesAdicionalesOferta.class, titAdi);
 			}
 		}
 		oferta.setTitularesAdicionales(listaTit);

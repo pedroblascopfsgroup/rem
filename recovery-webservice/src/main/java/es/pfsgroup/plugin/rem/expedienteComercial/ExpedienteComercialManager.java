@@ -3372,6 +3372,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				}
 				if (!Checks.esNulo(comprador.getTransferenciasInternacionales())) {
 					clienteCompradorGDPR.setTransferenciasInternacionales(comprador.getTransferenciasInternacionales());
+
 				}
 				if (!Checks.esNulo(docAdjunto)) {
 					clienteCompradorGDPR.setAdjuntoComprador(docAdjunto);
@@ -4098,6 +4099,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				if (!Checks.esNulo(dto.getTransferenciasInternacionales())) {
 					comprador.setTransferenciasInternacionales(dto.getTransferenciasInternacionales());
 				}
+
 				if (!Checks.esNulo(dto.getTitularReserva())) {
 					compradorExpediente.setTitularReserva(dto.getTitularReserva());
 				}
@@ -4243,6 +4245,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				}
 				if (!Checks.esNulo(dto.getTransferenciasInternacionales())) {
 					clienteCompradorGDPR.setTransferenciasInternacionales(dto.getTransferenciasInternacionales());
+
 				}
 				if (!Checks.esNulo(docAdjunto)) {
 					clienteCompradorGDPR.setAdjuntoComprador(docAdjunto);

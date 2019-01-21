@@ -114,8 +114,8 @@ public class NotificatorServiceGtam extends AbstractNotificatorService implement
 							+ ", Tipo : " + activoOferta.getTipoActivo() 
 							+ ", Municipio : " + activoOferta.getMunicipio()
 							+ ", Direcci&oacute;n : " + activoOferta.getDireccion()
-							+ ", &Iacute;mporte participaci&oacute;n : " + activoOferta.getImporteParticipacion()+ "&#8364"
-							+ ", Precio m&iacute;nimo autorizado : " + activoOferta.getPrecioMinimo()+ "&#8364"
+							+ ", &Iacute;mporte participaci&oacute;n : " + activoOferta.getImporteParticipacion()+ "euros"
+							+ ", Precio m&iacute;nimo autorizado : " + activoOferta.getPrecioMinimo()+ "euros"
 							+"</p>";
 				}
 			}

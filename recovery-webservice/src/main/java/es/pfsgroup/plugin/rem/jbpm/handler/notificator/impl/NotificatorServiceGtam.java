@@ -72,12 +72,14 @@ public class NotificatorServiceGtam extends AbstractNotificatorService implement
 		Oferta oferta = expediente.getOferta();
 		Usuario gestor = null;
 		Boolean enviar = false;
-		for (TareaActivo tareaActivo : tramite.getTareas()) {				
-			if (CODIGO_T013_DEFINICION_OFERTA.equals(tareaActivo.getTareaExterna().getTareaProcedimiento().getCodigo())) {
-				if(tareaActivo.getFechaFin()!= null){
-					enviar = true;
+		if(tramite.getTareas() != null && tramite.getTareas().size() > 0){
+			for (TareaActivo tareaActivo : tramite.getTareas()) {				
+				if (CODIGO_T013_DEFINICION_OFERTA.equals(tareaActivo.getTareaExterna().getTareaProcedimiento().getCodigo())) {
+					if(tareaActivo.getFechaFin()!= null){
+						enviar = true;
+					}
+					gestor = tareaActivo.getUsuario();
 				}
-				gestor = tareaActivo.getUsuario();
 			}
 		}
 		

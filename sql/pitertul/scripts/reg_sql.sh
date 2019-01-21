@@ -221,8 +221,6 @@ if [[ "$COMPILE" == "0" ]] ; then
 	        exit | $ORACLE_HOME/bin/sqlplus -s -l $ESQUEMA_EJECUCION/$PW @$BASEDIR/${nombreSinExt}-$ESQUEMA_EJECUCION-reg3.1.sql >> $BASEDIR/$nombreLog
 	        echo "   -- : $BASEDIR/$nombreLog"
 	    else
-<<<<<<< HEAD
-=======
 		   	#Arreglo temporal para que las vistas materializadas esperen 15 segundos antes de comenzar
 			if [[ "$nombreSinExt" =~ "VI_V_TAP_STA" ]] || 
 			   [[ "$nombreSinExt" =~ "VI_ISG_INVENTARIO_SITUACION_GESTION" ]] || 
@@ -230,7 +228,6 @@ if [[ "$COMPILE" == "0" ]] ; then
 			   [[ "$nombreSinExt" =~ "VI_VLIS_CUADROS_CRUZADOS" ]] ; then
 		   		echo $'\t'"  sleep 15" >> ${executionFile}.sh
 			fi
->>>>>>> rama_rem_produccion
 	        echo $'\t'"exit | sqlplus -s -l $ESQUEMA_EJECUCION/$executionPass @./scripts/${nombreSinExt}-$ESQUEMA_EJECUCION-reg3.1.sql > ${nombreSinExt}-$ESQUEMA_EJECUCION.log" >> ${executionFile}.sh
 	        echo $'\t'"exit | sqlplus -s -l \$1 @./scripts/${nombreSinExt}-$ESQUEMA_EJECUCION-reg3.1.sql > ${nombreSinExt}-$ESQUEMA_EJECUCION.log" >> ${executionFile}-one-user.sh
 	        echo "echo 'exit' | sqlplus $ESQUEMA_EJECUCION/$executionPassWin @./scripts/${nombreSinExt}-$ESQUEMA_EJECUCION-reg3.1.sql > ${nombreSinExt}-$ESQUEMA_EJECUCION.log" >> ${executionFile}.bat
@@ -345,8 +342,6 @@ if [[ $PACKAGE == 0 ]]; then
        	export RESULTADO=$?
     fi
 else
-<<<<<<< HEAD
-=======
 	#Arreglo temporal para que las vistas materializadas esperen 15 segundos antes de comenzar
 	if [[ "$nombreSinExt" =~ "VI_V_TAP_STA" ]] || 
 	   [[ "$nombreSinExt" =~ "VI_ISG_INVENTARIO_SITUACION_GESTION" ]] || 
@@ -354,7 +349,6 @@ else
 	   [[ "$nombreSinExt" =~ "VI_VLIS_CUADROS_CRUZADOS" ]] ; then
 	   		echo $'\t'"  sleep 15" >> ${executionFile}.sh
 	fi
->>>>>>> rama_rem_produccion
     echo $'\t'"  exit | sqlplus -s -l $ESQUEMA_EJECUCION/$executionPass @./scripts/${nombreSinExt}-$ESQUEMA_EJECUCION-reg3.1.sql > ${nombreSinExt}-$ESQUEMA_EJECUCION.log" >> ${executionFile}.sh
     echo $'\t'"  exit | sqlplus -s -l \$1 @./scripts/${nombreSinExt}-$ESQUEMA_EJECUCION-reg3.1.sql > ${nombreSinExt}-$ESQUEMA_EJECUCION.log" >> ${executionFile}-one-user.sh
     echo $'\t''  export RESULTADO=$?' | tee -a ${executionFile}.sh ${executionFile}-one-user.sh > /dev/null

@@ -32,42 +32,38 @@ BEGIN
 			
 	DBMS_OUTPUT.PUT_LINE('[INICIO]');
 										
-	 V_SQL := '    MERGE INTO '||V_ESQUEMA||'.ACT_CRG_CARGAS T1
-                        USING (
-                        SELECT ACT.BIE_ID,
-                                ACT.ACT_ID,
-                                BIE.BIE_CAR_ID,
-                                AUX.TIPO_CARGA,
-                                AUX.SUBTIPO_CARGA,
-                                AUX.CARGAS_PROPIAS,
-                                BIE.USUARIOCREAR
-                            FROM '||V_ESQUEMA||'.BIE_CAR_CARGAS BIE
-                            JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT on ACT.bie_id = BIE.bie_id
-                            JOIN '||V_ESQUEMA||'.AUX_JPR_CARGAS aux on BIE.BIE_CAR_IMPORTE_REGISTRAL = AUX.IMPORTE_REGISTRAL and AUX.NUM_HAYA = ACT.act_num_activo
-                            where BIE.USUARIOCREAR = ''REMVIP-2968''              
-                        ) T2 
-                        ON (T1.ACT_ID = T2.ACT_ID)
-                        WHEN NOT MATCHED THEN
-                        INSERT(
-                            T1.CRG_ID,
-                            T1.ACT_ID,
-                            T1.BIE_CAR_ID,
-                            T1.DD_TCA_ID,
-                            T1.DD_STC_ID,
-                            T1.CRG_CARGAS_PROPIAS,
-                            T1.USUARIOCREAR,
-                            T1.FECHACREAR
-                        )
-                        VALUES(
-                            '||V_ESQUEMA||'.S_ACT_CRG_CARGAS.NEXTVAL,
-                            T2.ACT_ID,
-                            T2.BIE_CAR_ID,
-                            T2.TIPO_CARGA,
-                            T2.SUBTIPO_CARGA,
-                            TO_NUMBER(T2.CARGAS_PROPIAS),
-                            ''REMVIP-2968'',
-                            SYSDATE
-                        )
+	 V_SQL := 'MERGE INTO '||V_ESQUEMA||'.BIE_CAR_CARGAS T1
+        USING (
+                    SELECT  ACT.BIE_ID,
+                            AUX.IMPORTE_REGISTRAL,
+                            SIC.DD_SIC_ID,
+                            AUX.TITULAR_CARGA
+            FROM '||V_ESQUEMA||'.AUX_JPR_CARGAS AUX
+            JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO = AUX.NUM_HAYA
+            JOIN '||V_ESQUEMA||'.DD_SIC_SITUACION_CARGA SIC ON SIC.DD_SIC_DESCRIPCION = AUX.ESTADO_REGISTRAL                      
+        ) T2 
+        ON (T1.BIE_ID = T2.BIE_ID)
+        WHEN NOT MATCHED THEN
+        INSERT(
+            T1.BIE_ID,
+            T1.BIE_CAR_ID,
+            T1.BIE_CAR_TITULAR,
+            T1.BIE_CAR_IMPORTE_REGISTRAL,
+            T1.DD_SIC_ID,
+            T1.DD_TPC_ID,
+            T1.USUARIOCREAR,
+            T1.FECHACREAR
+        )
+        VALUES(
+            T2.BIE_ID,
+            '||V_ESQUEMA||'.S_BIE_CAR_CARGAS.NEXTVAL,
+            T2.TITULAR_CARGA,
+            TO_NUMBER(T2.IMPORTE_REGISTRAL),
+            T2.DD_SIC_ID,
+            03,
+            ''REMVIP-2968'',
+            SYSDATE
+        )
 	';
 
 	EXECUTE IMMEDIATE V_SQL;

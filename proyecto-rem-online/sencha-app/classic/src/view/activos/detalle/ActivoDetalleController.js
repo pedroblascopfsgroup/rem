@@ -9,7 +9,7 @@ Ext
 							'HreRem.view.activos.detalle.CargaDetalle',
 							'HreRem.view.activos.detalle.OpcionesPropagacionCambios',
 							'HreRem.view.activos.detalle.VentanaEleccionTipoPublicacion',
-							'HreRem.view.expedientes.ExpedienteDetalleController', 'HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaDetalle'],
+							'HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaDetalle'],
 
 
 					control : {
@@ -2046,21 +2046,51 @@ Ext
 					},
 
 					onClickBotonGuardarOferta : function(btn) {
+					    //debugger;
+						var me = this, 
+						window = btn.up('window'), 
+						form = window.down('formBase'),
+						model = null,
+						data = window.oferta.data,
+						ventanaDetalle = window.down('anyadirnuevaofertadetalle');
 						
-						var me = this;
-						var window = btn.up('window'), 
-						form = window.down('formBase');
-						//form = window.down('anyadirnuevaofertadetalle');
-						var success = function(record, operation) {
-							form.unmask();
-							me.fireEvent("infoToast", HreRem
-									.i18n("msg.operacion.ok"));
-							// window.parent.funcionRecargar();
-							window.parent.up('activosdetalle')
-									.lookupController().refrescarActivo(true);
-							window.destroy();
-						};
-						me.onSaveFormularioCompletoOferta(form, success); 
+						bindRecord = ventanaDetalle.getBindRecord();
+						
+						if(Ext.isDefined(data.idActivo)){
+							model = Ext.create('HreRem.model.OfertaComercialActivo', {
+								idActivo : data.idActivo,
+								importeOferta: bindRecord.importeOferta,
+								tipoOferta: bindRecord.tipoOferta,
+								numDocumentoCliente: bindRecord.numDocumentoCliente,
+								tipoDocumento: bindRecord.tipoDocumento,
+								nombreCliente: bindRecord.nombreCliente,
+								apellidosCliente: bindRecord.apellidosCliente,
+								cesionDatos: bindRecord.cesionDatosHaya,
+								comunicacionTerceros: bindRecord.comunicacionTerceros,
+								transferenciasInternacionales: bindRecord.transferenciasInternacionales,
+								codigoPrescriptor: bindRecord.codigoPrescriptor
+							});
+						}else{
+							model = Ext.create('HreRem.model.OfertaComercial', {
+								idAgrupacion : data.idAgrupacion,
+								importeOferta: bindRecord.importeOferta,
+								tipoOferta: bindRecord.tipoOferta,
+								numDocumentoCliente: bindRecord.numDocumentoCliente,
+								tipoDocumento: bindRecord.tipoDocumento,
+								nombreCliente: bindRecord.nombreCliente,
+								apellidosCliente: bindRecord.apellidosCliente,
+								cesionDatos: bindRecord.cesionDatosHaya,
+								comunicacionTerceros: bindRecord.comunicacionTerceros,
+								transferenciasInternacionales: bindRecord.transferenciasInternacionales,
+								codigoPrescriptor: bindRecord.codigoPrescriptor
+							});
+						}
+						
+						me.getViewModel().set('oferta', model);
+						
+						
+						
+						me.onSaveFormularioCompletoOferta(form, window); 
 					},
 
 					onChkbxOfertasAnuladas : function(chkbox, checked) {
@@ -2159,52 +2189,40 @@ Ext
 
 					},
 
-					onSaveFormularioCompletoOferta : function(form, success) {
-					
-						var me = this;
-						record = form.getBindRecord();
-						success = success
-								|| function() {
-									me.fireEvent("infoToast", HreRem
-											.i18n("msg.operacion.ok"));
-								};
+					onSaveFormularioCompletoOferta : function(form, window) { //ELISA
+					    //debugger; 
+						var me = this,
+						record = form.getBindRecord(),
+						ofertaForm = null,
+						wizardAltaOferta = form.up('wizardaltaoferta');
+														
+						model = me.getViewModel().get('oferta');
+						
+						if(!Ext.isEmpty(wizardAltaOferta.down('anyadirnuevaofertadetalle'))) {
+							ofertaForm = wizardAltaOferta.down('anyadirnuevaofertadetalle').form;
+						}
 
-						if (form.isFormValid()) {
+						if (ofertaForm.isValid()) {
 
-							form.mask(HreRem.i18n("msg.mask.espere"));
+							window.mask(HreRem.i18n("msg.mask.espere"));							
 
-							record
-									.save({
-										success : success,
+							model.save({
+										success : function(record) {
+											window.unmask();
+											me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+											window.parent.up('activosdetalle').lookupController().refrescarActivo(true);
+											window.destroy();
+										},
 										failure : function(record, operation) {
-											var response = Ext
-													.decode(operation
-															.getResponse().responseText);
-											if (response.success === "false"
-													&& Ext
-															.isDefined(response.msg)) {
-												me
-														.fireEvent(
-																"errorToast",
-																Ext
-																		.decode(operation
-																				.getResponse().responseText).msg);
-												form.unmask();
-											} else {
-												me
-														.fireEvent(
-																"errorToast",
-																HreRem
-																		.i18n("msg.operacion.ko"));
-												form.unmask();
-											}
+												me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+												window.unmask();
 										}
 
 									});
+							
 						} else {
 
-							me.fireEvent("errorToast", HreRem
-									.i18n("msg.form.invalido"));
+							me.fireEvent("errorToast", HreRem.i18n("msg.form.invalido"));
 						}
 
 					},
@@ -2242,18 +2260,14 @@ Ext
 						var me = this;
 						var grid = tableView.up('grid');
 
-						var idPrecioVigente = grid.store.getAt(indiceFila).get(
-								'idPrecioVigente');
+						var idPrecioVigente = grid.store.getAt(indiceFila).get('idPrecioVigente');
 
 						if (idPrecioVigente != null) {
 							grid.mask(HreRem.i18n("msg.mask.espere"));
 
-							Ext.Msg
-									.show({
-										title : HreRem
-												.i18n('title.confirmar.borrado.precio.vigente'),
-										msg : HreRem
-												.i18n('msg.confirmar.borrado.precio.vigente'),
+							Ext.Msg.show({
+										title : HreRem.i18n('title.confirmar.borrado.precio.vigente'),
+										msg : HreRem.i18n('msg.confirmar.borrado.precio.vigente'),
 										buttons : Ext.MessageBox.YESNO,
 										fn : function(buttonId) {
 
@@ -4851,7 +4865,6 @@ Ext
 	},
 	
 	existeCliente: function(btn){
-		//debugger;
 		var me = this;
 		var ventanaWizard;
 		var ventanaAltaWizard;
@@ -4876,11 +4889,11 @@ Ext
 			method : 'POST',
     		params: {idActivo: idActivo,idAgrupacion: idAgrupacion,idExpediente: idExpediente,dniComprador:dniComprador,codtipoDoc:codtipoDoc},
     		success: function(response, opts){
-    			
+    			//debugger;
     			var datos = Ext.decode(response.responseText);
     			var pedirDoc = Ext.decode(response.responseText).data;
     			var comprador=datos.comprador;
-    			var ventanaAnyadirOferta;
+    			var ventanaAnyadirOferta;    			
     			
     			if(!Ext.isEmpty(btn.up('wizardaltaoferta'))){
     				ventanaWizard = btn.up('wizardaltaoferta');
@@ -4895,6 +4908,7 @@ Ext
         			}
         			
         			if(!Ext.isEmpty(comprador)){
+        				
         				if(!Ext.isEmpty(comprador.nombreCliente)){
             				ventanaAnyadirOferta.getForm().findField('nombreCliente').setValue(comprador.nombreCliente);
                 			ventanaAnyadirOferta.getForm().findField('nombreCliente').setDisabled('disabled');
@@ -4902,13 +4916,11 @@ Ext
             			if(!Ext.isEmpty(comprador.apellidosCliente)){
             				ventanaAnyadirOferta.getForm().findField('apellidosCliente').setValue(comprador.apellidosCliente);
             				ventanaAnyadirOferta.getForm().findField('apellidosCliente').setDisabled('disabled');
-            			}
-            			
+            			}            			
             			if(!Ext.isEmpty(comprador.razonSocial)){
             				ventanaAnyadirOferta.getForm().findField('razonSocialCliente').setValue(comprador.razonSocial);
             				ventanaAnyadirOferta.getForm().findField('razonSocialCliente').setDisabled('disabled');
             			}
-            			
             			if(!Ext.isEmpty(comprador.tipoPersonaCodigo)){
             				ventanaAnyadirOferta.getForm().findField('comboTipoPersona').setValue(ventanaAnyadirOferta.getForm().findField('comboTipoPersona').getStore().getData().find('id',comprador.tipoPersonaCodigo));
             			}
@@ -4917,6 +4929,9 @@ Ext
             			}
             			if(!Ext.isEmpty(comprador.regimenMatrimonialCodigo)){
             				ventanaAnyadirOferta.getForm().findField('comboRegimenMatrimonial').setValue(ventanaAnyadirOferta.getForm().findField('comboRegimenMatrimonial').getStore().getData().find('id',comprador.regimenMatrimonialCodigo));
+            			}
+            			if(!Ext.isEmpty(comprador.codigoPrescriptor)){
+            				ventanaAnyadirOferta.getForm().findField('codigoPrescriptor').setValue(comprador.codigoPrescriptor);
             			}
             			if(!Ext.isEmpty(comprador.cesionDatos)){
             				ventanaAnyadirOferta.getForm().findField('cesionDatos').setValue(comprador.cesionDatos);
@@ -4939,17 +4954,23 @@ Ext
             			
         			}
     			}else{
-    				debugger;
-    				ventanaWizard = btn.up('wizardaltacomprador');
-    				ventanaAltaWizard = ventanaWizard.down('datoscompradorwizard');
-    				if(!Ext.isEmpty(pedirDoc)){
-    					ventanaAltaWizard.getForm().findField('pedirDoc').setValue(pedirDoc);
-        				if(pedirDoc == "false"){
+    				//debugger;
+    				if(!Ext.isEmpty(btn.up('wizardaltacomprador'))){ 
+    				   ventanaWizard = btn.up('wizardaltacomprador');
+    				   ventanaAltaWizard = ventanaWizard.down('datoscompradorwizard');
+    				   if(!Ext.isEmpty(pedirDoc)){
+    					 ventanaAltaWizard.getForm().findField('pedirDoc').setValue(pedirDoc);
+        				 if(pedirDoc == "false"){
         					ventanaAltaWizard.down('button[itemId=btnCrear]').setText("Continuar");
-        				}
-        			}
+        				 }
+        			   }
+    				   ventanaAltaWizard.idComprador=datos.compradorId;
+    				/*ventanaAltaWizard.getForm().findField('cesionDatosHaya').setValue(comprador.cesionDatosHaya);
+    				ventanaAltaWizard.getForm().findField('comunicacionTerceros').setValue(comprador.comunicacionTerceros);
+    				ventanaAltaWizard.getForm().findField('transferenciasInternacionales').setValue(comprador.transferenciasInternacionales);*/
+    			   }
     			}
-    			ventanaAltaWizard.idComprador=datos.compradorId;
+    			
     			var wizard = btn.up().up().up();
     			var layout = wizard.getLayout();
     			layout["next"]();
@@ -4959,6 +4980,7 @@ Ext
 		 		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
 		    }
     	});
+		    
 	},
 
     onSaveFormularioCompletoTabPatrimonio: function(btn, form){
@@ -5106,10 +5128,12 @@ Ext
 	   	 checkbox.setReadOnly(this.enableChkPerimetroAlquiler());
     },
     
-    onClickCrearOferta: function(btn){
+    onClickCrearOferta: function(btn){ //ELISA
+    	
+    	//debugger;
  		var me = this;
  		var ventanaDetalle = btn.up().up(),
- 		ventanaAlta = ventanaDetalle.up().xtype,
+ 		ventanaAlta = ventanaDetalle.up().xtype, 
  		url = null, ventanaWizard = null;
  		
  		if (ventanaDetalle.config.xtype.indexOf('activoadjuntardocumento') >= 0) {
@@ -5121,7 +5145,7 @@ Ext
  			ventanaDetalle.up().down('anyadirnuevaofertadetalle').getForm().findField('transferenciasInternacionales').setValue(transferenciasInternacionales);
  			me.onClickBotonGuardarOferta(btn);
  		} else if (ventanaDetalle.config.xtype.indexOf('detalle') >= 0) {
- 			pedirDocValor = ventanaDetalle.getForm().findField('pedirDoc').getValue();
+ 			pedirDocValor = ventanaDetalle.getForm().findField('pedirDoc').getValue(); 
  			
  			if (pedirDocValor == 'false'){
  				var docCliente = me.getViewModel().get("oferta.numDocumentoCliente");
@@ -5129,6 +5153,7 @@ Ext
  				ventanaWizard = btn.up('wizardaltaoferta'),
     			idActivo = ventanaWizard.oferta.data.idActivo,
     			idAgrupacion = ventanaWizard.oferta.data.idAgrupacion;
+ 			     
  				Ext.Ajax.request({
  	    		     url: url,
  	    			 method : 'GET',
@@ -5159,6 +5184,7 @@ Ext
      			var layout = wizard.getLayout();
      			layout["next"]();
      		}else{
+     			
      			me.onClickBotonGuardarOferta(btn);
      		}
 

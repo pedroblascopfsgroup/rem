@@ -67,6 +67,7 @@ public class DtoOfertasFilter extends WebDto {
 	private Boolean agrupacionesVinculadas;	
 	private Boolean ventaDirecta;
 	private Long idUvem;
+	private Long idCliente;
 	
 	//HREOS-4937
 	private Boolean cesionDatos;
@@ -435,6 +436,12 @@ public class DtoOfertasFilter extends WebDto {
 	}
 	public void setIdDocAdjunto(Long idDocAdjunto) {
 		this.idDocAdjunto = idDocAdjunto;
+	}
+	public Long getIdCliente() {
+		return idCliente;
+	}
+	public void setIdCliente(Long idCliente) {
+		this.idCliente = idCliente;
 	}
 		
 }

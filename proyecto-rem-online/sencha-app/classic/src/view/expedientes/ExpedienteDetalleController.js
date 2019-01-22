@@ -2091,23 +2091,27 @@ Ext
 					},
 
 					onClickBotonCrearComprador : function(btn) { // ELISA
+						debugger;
 						var me = this, 
 						ventanaDetalle = btn.up().up(),
 				 		window = ventanaDetalle.up().xtype,
 						    /*window = btn.up('datoscompradorwizard'),*/ 
-						    form = ventanaDetalle.getForm(),
-						    wizardAltaComprador = btn.up('wizardaltacomprador');
+					    form = ventanaDetalle.getForm(),
+						//wizardAltaComprador = btn.up('wizardaltacomprador');
+						ventanaWizard = btn.up('wizardaltacomprador');
 						
-						if(ventanaDetalle.config.xtype.indexOf('datoscompradorwizard') >=0){
+						
+						if(ventanaDetalle.config.xtype.indexOf('datoscompradorwizard') >=0){  //QUI
 							pedirDocValor = ventanaDetalle.getForm().findField('pedirDoc').getValue();
+							comprador = ventanaDetalle.getBindRecord().comprador;
 							
 							if (pedirDocValor == 'false'){
 								
 								//TODO PARTE ALEJANDRO GD
 								url = $AC.getRemoteUrl('expedientecomercial/getListAdjuntosComprador');
-			     				ventanaWizard = btn.up('wizardaltacomprador'),
-			     				idExpediente = ventanaDetalle.getBindRecord().comprador.data.idExpedienteComercial;
-			     				var docCliente= ventanaDetalle.getBindRecord().comprador.data.numDocumento;
+			     				
+			     				idExpediente = comprador.data.idExpedienteComercial;
+			     				var docCliente= comprador.data.numDocumento;
 			     				Ext.Ajax.request({
 			    	    		     url: url,
 			    	    			 method : 'GET',
@@ -2126,36 +2130,47 @@ Ext
 			    	    		});
 			     				
 			     				//TODO PASAR CHECKS A VENTANA 3. MIRAR SI MODELO LO PASA AUTOMATICAMENTE
+			     				ventanaWizard.down('anyadirnuevaofertaactivoadjuntardocumento').getForm('cesionDatosHaya').findField().setValue(comprador.data.cesionDatosHaya);
+			     				ventanaWizard.down('anyadirnuevaofertaactivoadjuntardocumento').getForm('comunicacionTerceros').findField().setValue(comprador.data.comunicacionTerceros);
+			     				ventanaWizard.down('anyadirnuevaofertaactivoadjuntardocumento').getForm('transferenciasInternacionales').findField().setValue(comprador.data.transferenciasInternacionales);
 			     				
 			     				var wizard = btn.up().up().up();
 			         			var layout = wizard.getLayout();
 			         			layout["next"]();
 							}else{
 								//TODO PARTE GUARDAR COMPRADOR
+								me.guardarComprador(form, window);
 							}
 							
 						}else{
 							//TODO VIENE DE VENTANA 3. PASAR CHECKS A VENTANA 2 Y PARTE GUARDAR COMPRADOR.
-						}
-						
-						/*
-						
-						 //PARTE GUARDAR COMPRADOR
-						 
+							cesionDatos = ventanaDetalle.getForm().findField('cesionDatos').getValue(),
+							comunicacionTerceros = ventanaDetalle.getForm().findField('comunicacionTerceros').getValue(),
+							transferenciasInternacionales = ventanaDetalle.getForm().findField('transferenciasInternacionales').getValue();
+				 			ventanaDetalle.up().down('anyadirnuevaofertadetalle').getForm().findField('cesionDatos').setValue(cesionDatos);
+				 			ventanaDetalle.up().down('anyadirnuevaofertadetalle').getForm().findField('comunicacionTerceros').setValue(comunicacionTerceros);
+				 			ventanaDetalle.up().down('anyadirnuevaofertadetalle').getForm().findField('transferenciasInternacionales').setValue(transferenciasInternacionales);
+				 			me.guardarComprador(form, window);
+						}						
+						 //PARTE GUARDAR COMPRADOR	 
+						me.guardarComprador(form, window);
+					},
+					
+					
+					guardarComprador: function(form, window) {
 						if (form.isValid()) {
-							model = me.getViewModel().get('comprador'), window
-									.mask(HreRem.i18n("msg.mask.espere"));
+							model = this.getViewModel().get('comprador'), 
+							        
+							window.mask(HreRem.i18n("msg.mask.espere"));
 
 							model.save({
 								success : function(a, operation, c) {
 									me.getView().unmask();
-									me.fireEvent("infoToast", HreRem
-											.i18n("msg.operacion.ok"));
+									me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
 									form.reset();
 									window.hide();
 									wizardAltaComprador.hide();
-									me.getView()
-											.fireEvent("refrescarExpediente",
+									me.getView().fireEvent("refrescarExpediente",
 													me.getView());
 								},
 								failure : function(a, operation) {
@@ -2171,12 +2186,50 @@ Ext
 							
 						} else {
 
-							me.fireEvent("errorToast", HreRem
-									.i18n("msg.form.invalido"));
+							me.fireEvent("errorToast", HreRem.i18n("msg.form.invalido"));
 						}
-						
-						*/
 					},
+					
+					
+					onClickBotonCrearComprador2 : function(btn) {
+						debugger;
+						 var me = this, 
+			                window = btn.up('datoscompradorwizard'), 
+			                form = window.getForm(),
+			                wizardAltaComprador = btn.up('wizardaltacomprador');
+						 
+		                 
+		                  // window.getModelInstance().getProxy().extraParams.idExpediente
+		                  // = idExpediente;
+		                  if (form.isValid()) {
+		                      model = me.getViewModel().get('comprador'), 
+		                      window.mask(HreRem.i18n("msg.mask.espere"));
+		                
+		                  model.save({
+		                      success : function(a, operation, c) {
+		                                me.getView().unmask();
+		                                me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+		                                form.reset();
+		                                window.hide();
+		                                wizardAltaComprador.hide();
+		                                me.getView().fireEvent("refrescarExpediente",
+		                                me.getView());
+		                    },
+		                    failure : function(a, operation) {
+		                              me.getView().unmask();
+		                              me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+		                              form.reset();
+		                              window.hide(); 
+		                              wizardAltaComprador.hide();
+		                    }
+		                  });
+		                } else {
+		     
+		                  me.fireEvent("errorToast", HreRem
+		                      .i18n("msg.form.invalido"));
+		                }
+		              },
+					
 
 					abrirFormularioCrearComprador : function(grid) {
 

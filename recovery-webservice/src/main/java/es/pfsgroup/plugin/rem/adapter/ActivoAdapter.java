@@ -3371,7 +3371,19 @@ public class ActivoAdapter {
 				if (!Checks.esNulo(regimen)) {
 					clienteComercial.setRegimenMatrimonial(regimen);
 				}
-			}						
+			}	
+			
+			if (!Checks.esNulo(dto.getCesionDatos())) {
+				clienteComercial.setCesionDatos(dto.getCesionDatos());
+			}
+			
+			if (!Checks.esNulo(dto.getTransferenciasInternacionales())) {
+				clienteComercial.setTransferenciasInternacionales(dto.getTransferenciasInternacionales());
+			}
+			
+			if (!Checks.esNulo(dto.getComunicacionTerceros())) {
+				clienteComercial.setComunicacionTerceros(dto.getComunicacionTerceros());
+			}
 					
 			genericDao.save(ClienteComercial.class, clienteComercial);
 			
@@ -3380,12 +3392,15 @@ public class ActivoAdapter {
 			oferta.setOrigen(OfertaApi.ORIGEN_REM);
 			
 			oferta.setNumOferta(numOferta);
-			oferta.setImporteOferta(Double.valueOf(dto.getImporteOferta()));
+			if (!Checks.esNulo(dto.getImporteOferta())) {
+			   oferta.setImporteOferta(Double.valueOf(dto.getImporteOferta()));
+			}
 			oferta.setEstadoOferta(estadoOferta);
 			oferta.setTipoOferta(tipoOferta);
 			oferta.setFechaAlta(new Date());
-			oferta.setDesdeTanteo(dto.getDeDerechoTanteo());
-
+			if (!Checks.esNulo(dto.getDeDerechoTanteo())) {
+			    oferta.setDesdeTanteo(dto.getDeDerechoTanteo());
+			}
 			listaActOfr = ofertaApi.buildListaActivoOferta(activo, null, oferta);
 			oferta.setActivosOferta(listaActOfr);
 

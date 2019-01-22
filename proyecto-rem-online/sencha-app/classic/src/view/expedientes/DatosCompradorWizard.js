@@ -36,7 +36,7 @@ Ext.define('HreRem.view.expedientes.DatosCompradorWizard', {
 
     	 me.items = [{
     		 xtype: 		'checkboxfieldbase', 
- 	    	name:		'cesionDatos',
+ 	    	name:		'cesionDatosHaya',
 			bind:		'{comprador.cesionDatosHaya}',
 			hidden:		true
 	    },

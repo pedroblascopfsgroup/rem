@@ -95,6 +95,7 @@ import es.pfsgroup.plugin.rem.model.DtoHistoricoPresupuestosFilter;
 import es.pfsgroup.plugin.rem.model.DtoImpuestosActivo;
 import es.pfsgroup.plugin.rem.model.DtoIncrementoPresupuestoActivo;
 import es.pfsgroup.plugin.rem.model.DtoLlaves;
+import es.pfsgroup.plugin.rem.model.DtoMotivoAnulacionExpediente;
 import es.pfsgroup.plugin.rem.model.DtoMovimientoLlave;
 import es.pfsgroup.plugin.rem.model.DtoObservacion;
 import es.pfsgroup.plugin.rem.model.DtoOfertaActivo;
@@ -2483,5 +2484,23 @@ public class ActivoController extends ParadiseJsonController {
 			}
 		}
 		return false;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getMotivoAnulacionExpediente(ModelMap model) {
+
+		try {
+			List <DtoMotivoAnulacionExpediente> dto= activoApi.getMotivoAnulacionExpediente();
+
+			model.put("data", dto);
+			model.put("success", true);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}
+
+		return createModelAndViewJson(model);
 	}
 }

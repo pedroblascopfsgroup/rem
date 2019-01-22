@@ -148,6 +148,7 @@ import es.pfsgroup.plugin.rem.model.DtoHistoricoPreciosFilter;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPresupuestosFilter;
 import es.pfsgroup.plugin.rem.model.DtoImpuestosActivo;
 import es.pfsgroup.plugin.rem.model.DtoLlaves;
+import es.pfsgroup.plugin.rem.model.DtoMotivoAnulacionExpediente;
 import es.pfsgroup.plugin.rem.model.DtoMovimientoLlave;
 import es.pfsgroup.plugin.rem.model.DtoOcupacionIlegal;
 import es.pfsgroup.plugin.rem.model.DtoOfertaActivo;
@@ -192,6 +193,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoPropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisitaOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRetencion;
@@ -5224,6 +5226,31 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				return activoPatrimonio;
 
 
+	}
+
+
+	@Override
+	public List<DtoMotivoAnulacionExpediente> getMotivoAnulacionExpediente() {
+		
+		List <DtoMotivoAnulacionExpediente> listDtoMotivoAnulacionExpediente = new ArrayList <DtoMotivoAnulacionExpediente>();
+		List <DDMotivoAnulacionExpediente> listaDDMotivoAnulacionExpediente= new ArrayList <DDMotivoAnulacionExpediente>();		
+		
+		Filter filtroMotivoAlquiler = genericDao.createFilter(FilterType.EQUALS, "alquiler", true);
+		listaDDMotivoAnulacionExpediente  = genericDao.getList(DDMotivoAnulacionExpediente.class, filtroMotivoAlquiler);
+		
+		for (DDMotivoAnulacionExpediente tipDocExp : listaDDMotivoAnulacionExpediente) {
+			DtoMotivoAnulacionExpediente aux= new DtoMotivoAnulacionExpediente();
+			aux.setId(tipDocExp.getId());
+			aux.setCodigo(tipDocExp.getCodigo());
+			aux.setDescripcion(tipDocExp.getDescripcion());
+			aux.setDescripcionLarga(tipDocExp.getDescripcionLarga());
+			aux.setVenta(tipDocExp.getVenta());
+			aux.setAlquiler(tipDocExp.getAlquiler());
+			listDtoMotivoAnulacionExpediente.add(aux);
+		}
+			
+		
+		return listDtoMotivoAnulacionExpediente;
 	}
 
 }

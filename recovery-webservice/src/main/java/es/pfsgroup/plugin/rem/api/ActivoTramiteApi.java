@@ -287,5 +287,12 @@ public interface ActivoTramiteApi {
 	public void reactivarTareaResultadoPBC(TareaExterna tareaExterna, ExpedienteComercial expediente);
 
 	List<TareaExterna> getListaTareaExternaByIdTramite(Long idTramite);
+	
+	/**
+	 * Devuelve true si el activo afectado por GENCAT tiene un trámite de GENCAT vivo.
+	 * @param idActivo
+	 * @return 
+	 */
+	public Boolean tieneTramiteGENCATVigenteByIdActivo(Long idActivo);
 }
 

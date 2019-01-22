@@ -1032,9 +1032,7 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 		tramiteNuevo.setActivo(tramite.getActivo());
 		
 		jbpmActivoTramiteManager.lanzaBPMAsociadoATramite(tramiteNuevo.getId());
-		
-		ofertaApi.congelarOferta(oferta);
-		
+				
 	}
 	
 	public void crearRegistrosTramiteGENCAT(ExpedienteComercial expedienteComercial, Oferta oferta, ActivoTramite tramite) {
@@ -1060,6 +1058,7 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 		comunicacionGencat.setActivo(oferta.getActivoPrincipal());
 		comunicacionGencat.setComunicadoAnulacionAGencat(false);
 		comunicacionGencat.setEstadoComunicacion(estadoComunicacion);
+		comunicacionGencat.setFechaPreBloqueo(new Date());
 		comunicacionGencat.setVersion(0L);
 		
 		// Creamos la nueva oferta, habiendo creado previamente la comunicación

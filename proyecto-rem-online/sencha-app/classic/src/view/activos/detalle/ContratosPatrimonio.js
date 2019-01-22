@@ -7,7 +7,7 @@ Ext.define('HreRem.view.activos.detalle.ContratosPatrimonio', {
     reference: 'contratospatrimonio',
     scrollable	: 'y', 
 
-	recordName: "contrato",
+	recordName: 'contrato',
 	
 	recordClass: "HreRem.model.ContratosPatrimonioModel",
     
@@ -105,7 +105,21 @@ Ext.define('HreRem.view.activos.detalle.ContratosPatrimonio', {
 									{ //Oferta REM
 										xtype : 'displayfieldbase',
 										fieldLabel : HreRem.i18n('fieldlabel.oferta.REM'),
-										bind : '{contrato.ofertaREM}',
+										bind: {
+			                            	value: '<div style="color: #26607c">' + '{contrato.ofertaREM}' + '</div>'
+			                            },
+			                            colspan : 2,
+			                            style: 'background: transparent; border: none;',
+			                            handleMouseEvents: true,
+										listeners: {
+			   								'render': function() {
+			   									this.getEl().on('mousedown', 'onEnlaceAbrirOferta');
+			   									new Ext.tip.ToolTip({
+			    								target: this.getEl(),
+			    								html: HreRem.i18n('fieldlabel.numero.oferta.click')
+												});
+			   								}
+										},
 										readOnly : true
 									},
 									{

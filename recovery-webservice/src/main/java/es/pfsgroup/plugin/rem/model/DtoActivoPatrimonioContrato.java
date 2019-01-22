@@ -30,6 +30,9 @@ public class DtoActivoPatrimonioContrato extends DtoTabActivo {
 	private Date ultimoReciboAdeudado;
 	private Boolean multiplesResultados;
 	private String numeroActivoHaya;
+	private Long ofertaREM;
+	private Long idExpediente;
+	
 	
 	public Long getIdActivo() {
 		return idActivo;
@@ -126,6 +129,18 @@ public class DtoActivoPatrimonioContrato extends DtoTabActivo {
 	}
 	public void setNumeroActivoHaya(String numeroActivoHaya) {
 		this.numeroActivoHaya = numeroActivoHaya;
+	}
+	public Long getOfertaREM() {
+		return ofertaREM;
+	}
+	public void setOfertaREM(Long ofertaREM) {
+		this.ofertaREM = ofertaREM;
+	}
+	public Long getIdExpediente() {
+		return idExpediente;
+	}
+	public void setIdExpediente(Long idExpediente) {
+		this.idExpediente = idExpediente;
 	}
 	
 }

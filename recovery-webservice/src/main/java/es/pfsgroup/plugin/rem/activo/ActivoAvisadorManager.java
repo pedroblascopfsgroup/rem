@@ -256,19 +256,6 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 			listaAvisos.add(dtoAviso);
 		}
 
-		// Aviso 17: Estado alquiler o disponible para alquiler
-		ActivoPatrimonio activoPatrimonio= activoApi.getActivoPatrimonio(activo.getId());
-		if(!Checks.esNulo(activoPatrimonio)){
-			DtoAviso dtoAviso = new DtoAviso();
-			if(!Checks.esNulo(activoPatrimonio.getTipoEstadoAlquiler())) {
-				if(DDTipoEstadoAlquiler.ESTADO_ALQUILER_ALQUILADO.equals(activoPatrimonio.getTipoEstadoAlquiler().getCodigo())) {
-					dtoAviso.setDescripcion("Alquilado");
-					dtoAviso.setId(String.valueOf(id));
-					listaAvisos.add(dtoAviso);
-				}
-			}
-		}
-
 		return listaAvisos;
 	}
 }

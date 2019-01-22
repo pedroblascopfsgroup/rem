@@ -4,8 +4,7 @@ Ext.define('HreRem.view.activos.tramites.TramiteDetalleController', {
     
     requires: ['HreRem.view.activos.tramites.LanzarTareaAdministrativa'],
 
-    control: {
-
+    control: {	
          'tareaslist gridBase': {
              aftersaveTarea: function(grid) {
              	// grid.getStore().load();
@@ -22,9 +21,8 @@ Ext.define('HreRem.view.activos.tramites.TramiteDetalleController', {
          }
          
      },
-    
-	cargarTabData: function (tab) {
 
+	cargarTabData: function (tab) {
 		var me = this,
 		model = tab.getModelInstance(),
 		id = me.getViewModel().get("tramite.idTramite");
@@ -362,12 +360,13 @@ Ext.define('HreRem.view.activos.tramites.TramiteDetalleController', {
 	},
 	
 	saltoResolucionExpedienteAlquiler: function(button){
-			
 		
+
 			var me = this;
-	
+			me.getView().up('tabpanel').setDisabled(true);
 			var win = new Ext.window.Window({
 				 border: true,
+				 closable: false,
 				 viewModel: {
 				    type: 'tramitedetalle'
 				 },
@@ -403,12 +402,10 @@ Ext.define('HreRem.view.activos.tramites.TramiteDetalleController', {
 			        	var idTramite = me.getViewModel().get("tramite.idTramite");
 					    var url = $AC.getRemoteUrl('agenda/anularTramiteAlquiler');
 				 	    var motivo = this.lookupController(true).lookupReference('comboalquiler').getValue();
-					 	    console.log('Hola');
-					 	    console.log('motivothis ' + motivo);
 					 	if(motivo != null) {
 					 		Ext.Msg.show({
-							title:'Avanzar a Resolución Expediente ',
-							message: 'Si confirma esta acción, el trámite avanzará a la tarea donde se anulará el expediente. ¿Desea continuar?',
+							title:'Anular expediente.',
+							message: 'Si confirma esta acción, se anulará el expediente. ¿Desea continuar?',
 							buttons: Ext.Msg.YESNO,
 							fn: function(btn) {
 								if (btn == 'yes') {
@@ -419,30 +416,27 @@ Ext.define('HreRem.view.activos.tramites.TramiteDetalleController', {
 									    params: {idTramite : idTramite, motivo: motivo},
 									    success: function(response, opts){
 									    data = Ext.decode(response.responseText);
-									    
-									    console.log("data "+ data);
 									    if(data.success == 'true') {
 									    	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-									    	win.close();
+									    	me.getView().up('tabpanel').setDisabled(false);;
+									    	win.close();	
 									    } else {
 									    	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.anulacion"));
-									    	console.log("falla entrando al if");
 									   }
 									   me.onClickBotonRefrescar(button);
 									    },
 									    failure: function(options, success, response){
 									    	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.anulacion"));
-									    	console.log("falla en el failure");
 									    },
 									    callback: function(options, success, response){
 									    	me.getView().unmask();
+									    	me.getView().up('tabpanel').setDisabled(false);
 									    }
 									})
 								} else if (btn === 'no') {}
 							}
 				    	});
 				    	} else {
-				    		console.log('adios');
 				    		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.saltoresolucionvacia"));
 				    	}
 				  }			
@@ -452,12 +446,14 @@ Ext.define('HreRem.view.activos.tramites.TramiteDetalleController', {
 			        text: 'Cancelar',
 			        handler: function() {
 			            win.close();
+			            me.getView().up('tabpanel').setDisabled(false);
 			        }
 			    }]
 			})
 			win.show();
 		},
-	
+		
+		
 	
 	// generaSaltoCierreEconomico: function(button) {
 	// var me = this;

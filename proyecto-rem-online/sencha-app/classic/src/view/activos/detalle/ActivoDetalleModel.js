@@ -468,7 +468,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
             var adecuacionOk = get('datospublicacionactivo.adecuacionAlquilerCodigo');
             var ceeOk = get('activo.tieneCEE');
             
-            return !(admisionOk && gestionOk && informeComercialAprobado && ceeOk && adecuacionOk=="01" && (publicarSinPrecioAlquiler || precioRentaWeb));
+            return !(admisionOk && gestionOk && informeComercialAprobado && ceeOk && (adecuacionOk=="01"||adecuacionOk=="03") && (publicarSinPrecioAlquiler || precioRentaWeb));
         },
 
         esReadonlyChkbxPublicar: function(get){
@@ -1436,7 +1436,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			proxy: {
 				type: 'uxproxy',
 				remoteUrl: 'generic/getComboMotivoRechazoOferta',
-				extraParams: {tipoRechazoOfertaCodigo: '{ofertaRecord.tipoRechazoCodigo}'}
+				extraParams: {tipoRechazoOfertaCodigo: '{ofertaRecord.tipoRechazoCodigo}', idOferta: '{ofertaRecord.idOferta}'}
 			}
 	    },
 	    

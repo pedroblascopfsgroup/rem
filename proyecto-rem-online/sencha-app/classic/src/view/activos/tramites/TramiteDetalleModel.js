@@ -112,8 +112,7 @@ Ext.define('HreRem.view.activos.tramites.TramiteDetalleModel', {
 			model: 'HreRem.model.ComboBase',
 			proxy: {
 				type: 'uxproxy',
-				remoteUrl: 'generic/getDiccionario',
-				extraParams: {diccionario: 'motivoRechazoExpediente'}
+				remoteUrl: 'activo/getMotivoAnulacionExpediente'
 			}
 		}
      }    

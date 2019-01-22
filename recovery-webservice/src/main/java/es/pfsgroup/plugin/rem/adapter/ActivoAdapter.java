@@ -1924,6 +1924,7 @@ public class ActivoAdapter {
 			beanUtilNotNull.copyProperty(dtoTramite, "idTramite", tramite.getId());
 			beanUtilNotNull.copyProperty(dtoTramite, "idTipoTramite", tramite.getTipoTramite().getId());
 			beanUtilNotNull.copyProperty(dtoTramite, "tipoTramite", tramite.getTipoTramite().getDescripcion());
+			beanUtilNotNull.copyProperty(dtoTramite, "tramiteAlquilerAnulado", false);
 			if (!Checks.esNulo(tramite.getTramitePadre()))
 				beanUtilNotNull.copyProperty(dtoTramite, "idTramitePadre", tramite.getTramitePadre().getId());
 			beanUtilNotNull.copyProperty(dtoTramite, "idActivo", tramite.getActivo().getId());
@@ -2002,6 +2003,10 @@ public class ActivoAdapter {
 						}
 					}
 				}
+			}
+			if(DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CANCELADO.equals(tramite.getEstadoTramite().getCodigo())
+				|| DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CERRADO.equals(tramite.getEstadoTramite().getCodigo())){
+				beanUtilNotNull.copyProperty(dtoTramite, "tramiteAlquilerAnulado", true);	
 			}
 				
 				

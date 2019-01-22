@@ -62,6 +62,9 @@ Ext.define('HreRem.model.ContratosPatrimonioModel', {
     		},
     		{
     			name: 'numeroActivoHaya'
+    		},
+    		{
+    			name: 'idExpediente'
     		}
     ],
     

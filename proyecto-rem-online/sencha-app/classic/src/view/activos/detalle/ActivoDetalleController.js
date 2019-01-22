@@ -2204,7 +2204,7 @@ Ext
 					},
 
 					onSaveFormularioCompletoOferta : function(form, window) { //ELISA
-					    debugger; 
+					    //debugger; 
 						var me = this,
 						record = form.getBindRecord(),
 						ofertaForm = null,

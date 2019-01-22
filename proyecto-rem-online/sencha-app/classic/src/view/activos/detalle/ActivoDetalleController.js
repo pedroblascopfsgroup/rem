@@ -2045,7 +2045,7 @@ Ext
 						});
 					},
 
-					onClickBotonGuardarOferta : function(btn) {
+					onClickBotonGuardarOferta : function(btn) { //ELISA
 					    //debugger;
 						var me = this, 
 						window = btn.up('window'), 
@@ -2204,7 +2204,7 @@ Ext
 					},
 
 					onSaveFormularioCompletoOferta : function(form, window) { //ELISA
-					    //debugger; 
+					    debugger; 
 						var me = this,
 						record = form.getBindRecord(),
 						ofertaForm = null,
@@ -2223,8 +2223,13 @@ Ext
 							model.save({
 										success : function(record) {
 											window.unmask();
+											if (Ext.isDefined(model.data.idActivo)){
+												window.parent.up('activosdetalle').lookupController().refrescarActivo(true);
+											}
+											else {
+												window.parent.up('agrupacionesdetalle').lookupController().refrescarAgrupacion(true);
+											}
 											me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-											window.parent.up('activosdetalle').lookupController().refrescarActivo(true);
 											window.destroy();
 										},
 										failure : function(record, operation) {

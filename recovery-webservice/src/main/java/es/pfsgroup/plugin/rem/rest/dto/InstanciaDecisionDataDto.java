@@ -46,11 +46,7 @@ public class InstanciaDecisionDataDto {
 		return porcentajeImpuesto;
 	}
 	public void setPorcentajeImpuesto(int porcentajeImpuesto) {
-		if(!Checks.esNulo(porcentajeImpuesto)){
-			this.porcentajeImpuesto = porcentajeImpuesto*100;
-		}else{
-			this.porcentajeImpuesto = porcentajeImpuesto;
-		}
+		this.porcentajeImpuesto = porcentajeImpuesto;
 	}
 	public Boolean getRenunciaExencion() {
 		return renunciaExencion;

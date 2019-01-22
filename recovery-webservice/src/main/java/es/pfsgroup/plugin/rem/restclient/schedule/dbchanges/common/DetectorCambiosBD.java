@@ -13,10 +13,14 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.context.SecurityContextHolder;
 
+import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.services.webcom.ErrorServicioWebcom;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.WebcomRESTDto;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.NestedDto;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
+import es.pfsgroup.plugin.rem.rest.model.DestinatariosRest;
 import es.pfsgroup.plugin.rem.restclient.registro.model.RestLlamada;
 import es.pfsgroup.plugin.rem.restclient.utils.Converter;
 import es.pfsgroup.plugin.rem.restclient.utils.WebcomRequestUtils;
@@ -55,6 +59,12 @@ public abstract class DetectorCambiosBD<T extends WebcomRESTDto>
 
 	@Autowired
 	private ServletContext servletContext;
+	
+	@Autowired
+	private GenericABMDao genericDao;
+	
+	@Autowired
+	private GenericAdapter genericAdapter;
 
 	private final Log logger = LogFactory.getLog(getClass());
 
@@ -367,5 +377,33 @@ public abstract class DetectorCambiosBD<T extends WebcomRESTDto>
 	
 	public void setSoloCambiosMarcados(Boolean procesar){
 		//para sobreescribir
+	}
+	
+	/**
+	 * Envia un correo con el error del detector de cambios
+	 */
+	public void eviarCorreoErrorDC(String message){
+		List<String> destinatarios = getDestinatariosDetectorCambios();
+		
+		if (Checks.estaVacio(destinatarios)) {
+			throw new IllegalArgumentException("No se ha encontrado destinatarios para la notificación. ");
+		}
+		
+		List<String> mailsCC = new ArrayList<String>();
+		String asunto = "[Detector Cambios] Error en el detector de cambios";
+		String cuerpo = "<p>" + message + "</p>";
+		
+		genericAdapter.sendMail(destinatarios, mailsCC, asunto, cuerpo);
+	}
+	
+	public List<String> getDestinatariosDetectorCambios(){
+		List<DestinatariosRest> destinatariosRest = genericDao.getList(DestinatariosRest.class);
+		List<String> destinatarios = new ArrayList<String>();
+		if (!Checks.estaVacio(destinatariosRest)){
+			for (DestinatariosRest dRest : destinatariosRest){
+				destinatarios.add(dRest.getCorreo());
+			}
+		}
+		return destinatarios;
 	}
 }

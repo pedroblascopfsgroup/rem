@@ -302,7 +302,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaDetalle', {
 									{
 										xtype: 		'checkboxfieldbase',
 				            	    	fieldLabel:	HreRem.i18n('fieldlabel.intencionfinanciar'),
-				            	    	name:		'intencionfinanciar',
+				            	    	name:		'intencionFinanciar',
 				            	    	allowBlank:	false,
 				            	    	bind:		'{oferta.intencionFinanciar}',
 							        	inputValue: true

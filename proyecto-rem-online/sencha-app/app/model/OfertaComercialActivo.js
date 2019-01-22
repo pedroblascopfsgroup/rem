@@ -64,6 +64,9 @@ Ext.define('HreRem.model.OfertaComercialActivo', {
             	name: 'codigoPrescriptor'
             },
             {
+            	name: 'codigoSucursal'
+            },
+            {
             	name: 'cesionDatos',
             	type : 'boolean'
             },

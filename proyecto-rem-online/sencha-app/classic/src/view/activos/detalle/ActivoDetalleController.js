@@ -2068,7 +2068,14 @@ Ext
 								cesionDatos: bindRecord.cesionDatosHaya,
 								comunicacionTerceros: bindRecord.comunicacionTerceros,
 								transferenciasInternacionales: bindRecord.transferenciasInternacionales,
-								codigoPrescriptor: bindRecord.codigoPrescriptor
+								codigoPrescriptor: bindRecord.codigoPrescriptor,
+								regimenMatrimonial: bindRecord.regimenMatrimonial,
+								estadoCivil: bindRecord.estadoCivil,
+								codigoSucursal: bindRecord.codigoSucursal,
+								intencionFinanciar: bindRecord.intencionFinanciar,
+								tipoPersona: bindRecord.tipoPersona,
+								razonSocialCliente: bindRecord.razonSocialCliente,
+								deDerechoTanteo: bindRecord.deDerechoTanteo
 							});
 						}else{
 							model = Ext.create('HreRem.model.OfertaComercial', {
@@ -2082,7 +2089,14 @@ Ext
 								cesionDatos: bindRecord.cesionDatosHaya,
 								comunicacionTerceros: bindRecord.comunicacionTerceros,
 								transferenciasInternacionales: bindRecord.transferenciasInternacionales,
-								codigoPrescriptor: bindRecord.codigoPrescriptor
+								codigoPrescriptor: bindRecord.codigoPrescriptor,
+								regimenMatrimonial: bindRecord.regimenMatrimonial,
+								estadoCivil: bindRecord.estadoCivil,
+								codigoSucursal: bindRecord.codigoSucursal,
+								intencionFinanciar: bindRecord.intencionFinanciar,
+								tipoPersona: bindRecord.tipoPersona,
+								razonSocialCliente: bindRecord.razonSocialCliente,
+								deDerechoTanteo: bindRecord.deDerechoTanteo
 							});
 						}
 						

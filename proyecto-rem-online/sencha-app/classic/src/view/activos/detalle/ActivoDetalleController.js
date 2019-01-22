@@ -2992,7 +2992,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 
 	onClickGuardarPropagarCambios: function(btn) {
     	var me = this,
-
+    	
     	window = btn.up("window"),
     	grid = me.lookupReference("listaActivos"),
     	radioGroup = me.lookupReference("opcionesPropagacion"),
@@ -3033,7 +3033,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 
 	          }
 	        };
-	
 	        me.saveActivo(window.tabData, successFn);
 	
 	      } else {
@@ -3049,7 +3048,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	            me.getView().fireEvent("refreshComponentOnActivate", "container[reference=tabBuscadorActivos]");
 	          }
 	        };
-	
 	        me.saveActivo(window.tabData, successFn);
 	
 	      }
@@ -3535,6 +3533,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 				}
 
 				var successFn = function(response, eOpts) {
+					
 					me.manageToastJsonResponse(me, response.responseText);
 					me.getView().unmask();
 					me.refrescarActivo(form.refreshAfterSave);
@@ -3588,9 +3587,11 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		}
 
 		if (!Ext.isEmpty(jsonData)) {
+			
 			var data = JSON.parse(jsonData);
 
 			if (data.success !== null && data.success !== undefined && data.success === "false") {
+				me.getViewModel().getData().situacionPosesoria.reject();
 				me.getViewModel().getData().activo.reject();
 				scope.fireEvent("errorToast", data.msgError);
 			} else {

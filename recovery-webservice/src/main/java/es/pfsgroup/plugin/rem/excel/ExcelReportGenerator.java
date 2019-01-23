@@ -40,6 +40,7 @@ import jxl.write.WriteException;
 
 import org.apache.poi.hssf.util.CellReference;
 import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -269,7 +270,7 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 				c = r.getCell(cellReference.getCol());
 				if (!Checks.esNulo(dtoPAB.getTextoOferta())) { 
 					c.setCellValue(dtoPAB.getTextoOferta());
-				}	
+				}
 					
 			}
 			
@@ -278,7 +279,28 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 			int currentRow = 6;
 			DtoPropuestaAlqBankia dtoPAB;
 			Long numActivo;
+			
+			
+			XSSFCellStyle style= myWorkBook.createCellStyle(); 
+			style.setBorderBottom(XSSFCellStyle.BORDER_THIN);
+			style.setBorderTop(XSSFCellStyle.BORDER_THIN);
+			style.setBorderRight(XSSFCellStyle.BORDER_THIN);
+			style.setBorderLeft(XSSFCellStyle.BORDER_THIN);
+			
+			for (int i = 0; i < l_DtoPropuestaAlq.size()-1; i++) { //Anyadimos las columnas y el estilo
+				mySheet.shiftRows(currentRow, currentRow+1, 1);
+				r = mySheet.getRow(currentRow);
+//				for (int j = 1; j < 21; j++) {
+//					c = r.getCell(j);
+//					c.setCellStyle(style);
+//				}
+//				++currentRow;
+			}
+			
+			
 			for (int i = 0; i < l_DtoPropuestaAlq.size()-1; i++) {
+				
+				
 				
 				dtoPAB = l_DtoPropuestaAlq.get(i);
 				numActivo = dtoPAB.getNumActivoUvem(); // El numero de activo lo necesitamos para referenciar el resto de hojas en las formulas
@@ -287,12 +309,12 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 					mySheet.shiftRows(currentRow, currentRow+1, 1);
 				}
 				
-//				cellReference = new CellReference("A" + Integer.toString(currentRow)); // LOTE ??
-//				r = mySheet.getRow(cellReference.getRow());
-//				c = r.getCell(cellReference.getCol());
-//				if (!Checks.esNulo(dtoPAB.getNumeroAgrupacion())) { 
-//					c.setCellValue(dtoPAB.getNumeroAgrupacion().toString());
-//				}
+				cellReference = new CellReference("A" + Integer.toString(currentRow)); // LOTE ??
+				r = mySheet.getRow(cellReference.getRow());
+				c = r.getCell(cellReference.getCol());
+				if (!Checks.esNulo(dtoPAB.getNumeroAgrupacion())) { 
+					c.setCellValue(dtoPAB.getNumeroAgrupacion().toString());
+				}
 				
 				cellReference = new CellReference("B" + Integer.toString(currentRow)); // ACTIVO 
 				r = mySheet.getRow(cellReference.getRow());

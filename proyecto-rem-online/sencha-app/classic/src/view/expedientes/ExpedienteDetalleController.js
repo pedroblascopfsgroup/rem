@@ -27,8 +27,6 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
         }
     },
     
-   
-    
     onRowClickListadoactivos: function(gridView,record){
     	var me = this;
 		var viewModel = me.getViewModel();
@@ -199,7 +197,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	},
 
 	onSaveFormularioCompleto: function(btn, form) {
-		var me = this;
+		var me = this; 
 
 		//disableValidation: Atributo para indicar si el guardado del formulario debe aplicar o no, las validaciones
 		if(form.isFormValid() && form.disableValidation) {
@@ -273,8 +271,8 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			);
 					
 			btn.hide(); 
-			btn.up('tabbar').down('button[itemId=botoncancelar]').hide();
-			btn.up('tabbar').down('button[itemId=botoneditar]').show();
+			/*btn.up('tabbar').down('button[itemId=botoncancelar]').hide();
+			btn.up('tabbar').down('button[itemId=botoneditar]').show();*/
 			me.getViewModel().set("editing", false);
 			
 			if (!form.saveMultiple) {
@@ -388,7 +386,6 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	},
 
 	onClickBotonEditar: function(btn) {
-		
 		var me = this;
 		btn.hide();
 		btn.up('tabbar').down('button[itemId=botonguardar]').show();
@@ -406,7 +403,8 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
     
 	onClickBotonGuardar: function(btn) {
 		var me = this;	
-		me.onSaveFormularioCompleto(btn, btn.up('tabpanel').getActiveTab());	
+		me.onSaveFormularioCompleto(btn, btn.up('tabpanel').getActiveTab());
+    	
 	},
 	
 	onClickBotonGuardarActivoExpediente: function(btn) {
@@ -2271,20 +2269,121 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		});		
 	},
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+	onClickSaveMasivosCondiciones: function(btn) {
+		var me = this,
+    	window = btn.up("window"),
+    	jsonData = window.config.jsonData, 
+    	grid = me.lookupReference("listaActivos"),
+    	radioGroup = me.lookupReference("opcionesPropagacion"),
+    	formActivo = window.form,
+    	activosSeleccionados = grid.getSelectionModel().getSelection(),
+    	opcionPropagacion = radioGroup.getValue().seleccion,
+    	cambios =  window.propagableData,
+    	targetGrid = window.targetGrid;
+    	
+		me.fireEvent("log", cambios);
+		jsonFinal = {};
+		jsonFinal.id = jsonData.ecoId;
+		//var jsonData = {idEntidad: idActivo, posesionInicial: posesionInicial, situacionPosesoriaCodigo: situacionPosesoriaCodigo, estadoTitulo: estadoTitulo};
+		if(!Ext.isEmpty(jsonData)) {
+			if(!Ext.isEmpty(jsonData.estadoTitulo)) {
+				jsonFinal.estadoTitulo = jsonData.estadoTitulo;
+			}
+			
+			if(!Ext.isEmpty(jsonData.posesionInicial)) {
+				jsonFinal.posesionInicial = jsonData.posesionInicial;
+			}
+			
+
+			if(!Ext.isEmpty(jsonData.situacionPosesoriaCodigo)) {
+				jsonFinal.situacionPosesoriaCodigo = jsonData.situacionPosesoriaCodigo;
+			}
+			
+			if(!Ext.isEmpty(jsonData.eviccion)) {
+				jsonFinal.eviccion = jsonData.eviccion;
+			}
+			
+			if(!Ext.isEmpty(jsonData.viciosOcultos)) {
+				jsonFinal.viciosOcultos = jsonData.viciosOcultos;
+			}
+		}
+		
+    	listaAct = [];
+    	
+    	switch (opcionPropagacion) {
+			
+			case "1": 
+				jsonFinal.activos = [jsonData.idEntidad];
+				break;
+				
+			case "2":			        				
+			case "3":
+				jsonFinal.activos=activosSeleccionados[0].data.idActivo;
+				for(i = 1;  i < activosSeleccionados.length; i++) {
+					jsonFinal.activos = jsonFinal.activos +","+activosSeleccionados[i].data.idActivo
+				}
+				break;
+			
+			case "4":
+				if (activosSeleccionados.length == 0) {
+			    	me.fireEvent("errorToast", HreRem.i18n("msg.no.activos.seleccionados"));
+			    	return false;
+		    	} else {
+		    		for(i = 0; i < activosSeleccionados.length; i++) {
+						listaAct[i] = activosSeleccionados[i].data.idActivo;
+					}
+					jsonFinal.activos = listaAct;
+		    	}
+				break;
+		}
+    	
+    	var url = $AC.getRemoteUrl('expedientecomercial/saveActivosExpedienteCondiciones');
+		me.getView().mask(HreRem.i18n("msg.mask.espere"));
+		
+		Ext.Ajax.request({
+			url: url,
+			
+		    params: jsonFinal,
+		    
+		    success: function(response, opts) {
+		    	var data = {};
+		    	try {
+		    		data = Ext.decode(response.responseText);
+		    	}  catch (e){ };
+               
+		    	if(data.success === "true") {
+		    		me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok")); 
+		    		me.getView().unmask();
+		    		window = btn.up('window');
+		        	window.close();
+		        	
+		    	}else {
+		    		if(data.errorUvem == "true"){
+		    			me.fireEvent("errorToast", data.msg);		
+		    		}
+		    		else{
+		    			Utils.defaultRequestFailure(response, opts);
+		    		}
+		    	}
+		     },
+
+		     failure: function(response, opts) {
+		    	 if(data.errorUvem == "true"){
+		    		 me.fireEvent("errorToast", data.msg);		
+		    	 }
+		    	 else{
+		    		 Utils.defaultRequestFailure(response, opts);
+		    	 }
+		     },
+
+		     callback: function() {
+		    	 me.getView().unmask();
+		     }
+		});	
+		
+	},
 	
 	onSaveFormularioCondiciones: function(btn, form) {
-		debugger;
 		var me = this;
 		me.getView().mask(HreRem.i18n("msg.mask.loading"));
 		
@@ -2295,47 +2394,79 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 				function (field, index){field.fireEvent('update'); field.fireEvent('save');}
 			);
 			
+			//Ocultar los botones de guardar y cancelar y mostrar el botón de editar.
+			if(!Ext.isEmpty(btn)) {
+				btn.hide();
+				btn.up('tabbar').down('button[itemId=botoncancelar]').hide();
+				btn.up('tabbar').down('button[itemId=botoneditar]').show();
+				
+				if(Ext.isDefined(btn.name) && btn.name === 'firstLevel') {
+		 			me.getViewModel().set("editingFirstLevel", false);
+		 		} else {
+		 			me.getViewModel().set("editing", false);
+		 		}
+			}
+
+			
 			var idExpediente 	= me.getViewModel().get("expediente.id");
 			var url 			= $AC.getRemoteUrl('expedientecomercial/getActivosPropagables');
 			Ext.Ajax.request({
 			
 			    url: url,
+				method : 'POST',
 			     
 			    params: { idExpediente: idExpediente },
 				
 			    
 			    success: function (response, opts) {
 			    	
-					// Obtener jsondata para guardar activo	
-					var activo 						=	me.getViewModel().get("activoExpedienteSeleccionado");
+					// Obtener jsondata para guardar activo
 					var idActivo 					=	me.getViewModel().get("activoExpedienteSeleccionado.idActivo");
 					var posesionInicial 			=	me.getViewModel().get("condiciones.posesionInicial");
 					var situacionPosesoriaCodigo 	=	me.getViewModel().get("condiciones.situacionPosesoriaCodigo");
-					var estadoTitulo 				=	me.getViewModel().get("condiciones.estadoTitulo");			
+					var estadoTitulo 				=	me.getViewModel().get("condiciones.estadoTitulo");		
+					var eviccion 				=	me.getViewModel().get("condiciones.eviccion");		
+					var viciosOcultos 				=	me.getViewModel().get("condiciones.viciosOcultos");	
 					
-					var jsonData = {idEntidad: idActivo, posesionInicial: posesionInicial, situacionPosesoriaCodigo: situacionPosesoriaCodigo, estadoTitulo: estadoTitulo};
+					var jsonData = {eviccion: eviccion, viciosOcultos: viciosOcultos, idEntidad: idActivo, ecoId: idExpediente, posesionInicial: posesionInicial, situacionPosesoriaCodigo: situacionPosesoriaCodigo, estadoTitulo: estadoTitulo};
 			    	    			
 	    			var activosPropagables = [];
 	    			var data = null;
+	    			
 	                try { 
 	                		data = Ext.decode(response.responseText).data;
 	                		activosPropagables = data;
-	                } catch (e){ };                
+	                } catch (e){ };      
+	            
+	               
+	                
 	                
 	    			var tabData = me.createTabData(form);
 	    			var tabPropagableData = null;
 
 	    			if(activosPropagables.length > 0)
 	    			{
+	    				var activo;
+	    				//Encontramos el activo seleccionado en la pestaña condiciones
+	    				for(var i = 0; i < activosPropagables.length; i++) {
+	    					if(activosPropagables[i].idActivo == idActivo) {
+	    						activo = activosPropagables[i];
+	    					}
+	    				}
+	 	                //var activo = activosPropagablesAux.splice(activosPropagablesAux.findIndex(function(activo){return activo.activoId == me.getViewModel().get("activoExpedienteSeleccionado.idActivo")}),1)[0];
 	    				tabPropagableData = me.createFormPropagableData(form, tabData);
 	    				//if (!Ext.isEmpty(tabPropagableData))
 	    				{
 	    					
-	    					// sacamos el activo actual del listado
-	    					//var activo = activosPropagables.splice(activosPropagables.findIndex(function(activo){return activo.activoId == me.getViewModel().get("activoExpedienteSeleccionado.idActivo")}),1)[0];
 
 	    					// Abrimos la ventana de selección de activos
-	    					var ventanaOpcionesPropagacionCambios = Ext.create("HreRem.view.activos.detalle.OpcionesPropagacionCambios", {form: form, activoActual: activo, activos: activosPropagables, tabData: tabData, propagableData: tabPropagableData}).show();
+	    					var ventanaOpcionesPropagacionCambios = Ext.create("HreRem.view.activos.detalle.OpcionesPropagacionCambios", {
+	    						form: form, 
+	    						activoActual: activo,
+	    						activos: activosPropagables,
+	    						tabData: tabData,
+	    						jsonData: jsonData,
+	    						propagableData: tabPropagableData}).show();
 	       					me.getView().add(ventanaOpcionesPropagacionCambios);
 	       					me.getView().unmask();
 	    				}
@@ -2454,19 +2585,209 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
     	return propagableData;
     },
     
-	onClickGuardarPropagarCambios: function(btn) {	
-		var me = this;
-		// TO DO
+    
+    
+	onClickGuardarPropagarCambios: function(btn) {
+    	var me = this,
+    	
+    	window = btn.up("window"),
+    	grid = me.lookupReference("listaActivos"),
+    	radioGroup = me.lookupReference("opcionesPropagacion"),
+    	formActivo = window.form,
+    	activosSeleccionados = grid.getSelectionModel().getSelection(),
+    	opcionPropagacion = radioGroup.getValue().seleccion,
+    	cambios =  window.propagableData,
+    	targetGrid = window.targetGrid;
+    	
+		me.fireEvent("log", cambios);
 		
-		/*
-		if(btn.up('tabpanel').getActiveTab().getReference()=="activoexpedientetanteo"){
-			me.onSaveFormularioActivoExpedienteTanteo(btn, btn.up('tabpanel').getActiveTab());
-		}else{
-			me.onSaveFormularioCompletoActivoExpediente(btn, btn.up('tabpanel').getActiveTab());
+    	if (opcionPropagacion == "4" &&  activosSeleccionados.length == 0) {
+	    	me.fireEvent("errorToast", HreRem.i18n("msg.no.activos.seleccionados"));
+	    	return false;
+    	}
+	    // Si estamos modificando una pestaña con formulario
+	    if (Ext.isEmpty(targetGrid)) {  
+	      if (!Ext.isEmpty(formActivo)) {	
+	        var successFn = function(record, operation) {
+	          if (activosSeleccionados.length > 0) {
+	        	  me.manageToastJsonResponse(me, record.responseText);
+	        	  me.propagarCambios(window, activosSeleccionados, record.responseText);
+	            /*me.propagarCambios(window, activosSeleccionados);*/
+	          } else {
+	            window.destroy();
+	            me.manageToastJsonResponse(me, record.responseText);
+	            /*me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));*/
+	            me.getView().unmask();
+	            me.refrescarActivoExpediente(formActivo.refreshAfterSave);
+
+	            me.getView().fireEvent("refreshComponentOnActivate", "container[reference=tabBuscadorActivos]");
+	          }
+	        };
+	
+	        me.saveActivo(window.tabData, successFn);
+	
+	      } else {
+	
+	        var successFn = function(record, operation) {
+	          if (activosSeleccionados.length > 0) {
+	        	  me.manageToastJsonResponse(me, record.responseText);
+	        	  me.propagarCambios(window, activosSeleccionados, record.responseText);
+	            /*me.propagarCambios(window, activosSeleccionados);*/
+	          } else {
+	            window.destroy();
+	            me.manageToastJsonResponse(me, record.responseText);
+	            /*me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));*/
+	            me.getView().unmask();
+	            me.getView().fireEvent("refreshComponentOnActivate", "container[reference=tabBuscadorActivos]");
+	          }
+	        };
+	
+	        me.saveActivo(window.tabData, successFn);
+	
+	      }
+	    } else {
+			if(targetGrid=='mediadoractivo') {
+				
+		        var successFn = function(record, operation) {
+		            window.destroy();
+		            me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+		            me.getView().unmask();
+		            me.getView().fireEvent("refreshComponentOnActivate", "container[reference=tabBuscadorActivos]");
+		        };
+		        me.saveActivo(me.createTabDataHistoricoMediadores(activosSeleccionados), successFn);
+			} else if(targetGrid=='condicionesespecificas') {
+
+		        var successFn = function(record, operation) {
+		            window.destroy();
+		            /*me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));*/
+		            me.manageToastJsonResponse(me, record.responseText);
+		            me.getView().unmask();
+		            me.getView().fireEvent("refreshComponentOnActivate", "container[reference=tabBuscadorActivos]");
+		        };
+		        me.saveActivo(me.createTabDataCondicionesEspecificas(activosSeleccionados, window.tabData), successFn);
+			}
+	    }
+	     window.mask("Guardando activos 1 de " + (activosSeleccionados.length));
+	},
+	
+	saveActivo: function(jsonData, successFn) { //saveActivoExpedienteCondiciones
+		var me = this,
+		url =  $AC.getRemoteUrl('activo/saveActivo');
+		
+		me.getView().mask(HreRem.i18n("msg.mask.loading"));
+		
+		successFn = successFn || Ext.emptyFn
+			
+		
+		if(Ext.isEmpty(jsonData)) {
+			me.fireEvent("log", "Obligatorio jsonData para guardar el activo");
+		} else {
+		
+			Ext.Ajax.request({
+				method : 'POST',
+				url: url,
+				jsonData: Ext.JSON.encode(jsonData),
+				success: successFn,
+			 	failure: function(response, opts) {
+			 		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+			 		}
+			    			    
+			});
 		}
-		*/	
+	},
+	
+	propagarCambios: function(window, activos, jsonResponse) {
+    	var me = this,
+    	grid = window.down("grid"),
+    	propagableData = window.propagableData,
+    	numTotalActivos = grid.getSelectionModel().getSelection().length,
+    	targetGrid = window.targetGrid,
+    	numActivoActual = numTotalActivos;
+
+    	if (activos.length>0) {
+    		var activo = activos.shift();
+    		
+    		numActivoActual = numTotalActivos - activos.length;
+    		
+    		if (Ext.isEmpty(targetGrid)) {
+    			propagableData.id = activo.get("activoId");
+    		} else {
+    			if(targetGrid=='mediadoractivo') {
+    				propagableData = me.createTabDataHistoricoMediadores(activos);
+    				// Los lanzamos todos de golpe sin necesidad de iterar
+    				activos = [];
+    			}
+    		}
+
+    		var successFn = function(response, opts){
+				// Lanzamos el evento de refrescar el activo por si está abierto.
+				me.getView().fireEvent("refreshEntityOnActivate", CONST.ENTITY_TYPES['ACTIVO'], activo.get("activoId"));
+				me.manageToastJsonResponse(me,response.responseText);
+				me.propagarCambios(window, activos,response.responseText);
+			};
+
+			window.mask("Guardando activos "+ numActivoActual +" de " + numTotalActivos);
+			me.saveActivo(propagableData, successFn);
+
+    	} else {
+    		Ext.ComponentQuery.query('opcionespropagacioncambios')[0].destroy();
+    		/*me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));*/
+			me.getView().unmask();
+    		return false;
+    	}
+    },
+    
+    saveMultipleRecordsActivoExpediente: function(contador, records) {
+		var me = this;
 		
-		me.onClickCancelarPropagarCambios(btn);
+		if(Ext.isDefined(records[contador].getProxy().getApi().create) || Ext.isDefined(records[contador].getProxy().getApi().update)) {
+			// Si la API tiene metodo de escritura (create or update).
+			records[contador].save({
+				params: {idActivo: me.getViewModel().get("activoExpedienteSeleccionado.idActivo")},
+				success: function (a, operation, c) {
+						contador++;
+						
+						if (contador < records.length) {
+							me.saveMultipleRecords(contador, records);
+						} else {
+							 me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));						
+							 me.getView().unmask();
+							 me.refrescarActivoExpediente(false);							 
+						}
+	            },
+	            failure: function (a, operation) {
+					me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+					me.getView().unmask();
+	            }
+			});		 
+		} else {
+			if (contador < records.length) {
+				contador++;
+				me.saveMultipleRecords(contador, records);
+			}
+		}
+	},
+	
+	manageToastJsonResponse : function(scope,jsonData) {
+		if (!Ext.isEmpty(scope)) {
+			if (this.fireEvent) {
+				scope = this;
+			} else {
+				scope = Ext.GlobalEvents;
+			}
+		}
+
+		if (!Ext.isEmpty(jsonData)) {
+			var data = JSON.parse(jsonData);
+
+			if (data.success !== null && data.success !== undefined && data.success === "false") {
+				scope.fireEvent("errorToast", data.msgError);
+			} else {
+				scope.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+			}
+		} else {
+			scope.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+		}
 	},
     
     onClickCancelarPropagarCambios: function(btn) {

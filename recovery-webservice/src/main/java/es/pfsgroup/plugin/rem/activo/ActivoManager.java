@@ -4916,7 +4916,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 	@Override
 	public DtoActivoFichaCabecera getActivosPropagables(Long idActivo) {
-
 		if (!Checks.esNulo(idActivo)) {
 			DtoActivoFichaCabecera activoDto = new DtoActivoFichaCabecera();
 

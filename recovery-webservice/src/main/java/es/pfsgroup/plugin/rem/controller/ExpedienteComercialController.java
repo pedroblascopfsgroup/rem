@@ -1055,7 +1055,6 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getComboTipoGestorFiltered(WebDto webDto, ModelMap model) {
 		model.put(RESPONSE_DATA_KEY, expedienteComercialApi.getComboTipoGestor());
-
 		return new ModelAndView("jsonView", model);
 	}
 
@@ -1082,6 +1081,24 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 
 		return createModelAndViewJson(model);
 	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView saveActivosExpedienteCondiciones(ModelMap model, @RequestParam(value = "id") Long ecoId, DtoCondicionesActivoExpediente condiciones) {
+		try {
+			condiciones.setEcoId(ecoId);
+			model.put(RESPONSE_DATA_KEY, expedienteComercialApi.guardarCondicionesActivosExpediente(condiciones));
+			model.put(RESPONSE_SUCCESS_KEY, true);
+
+		} catch (Exception e) {
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.error("Error en ExpedienteComercialController", e);
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
+	
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
@@ -1364,22 +1381,6 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 		
 		return createModelAndViewJson(model);
 	}
-	
-	
-	@SuppressWarnings("unchecked")
-	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView getExpedienteComercialPropagables(ModelMap model, @RequestParam(value = "id") Long idExpediente){
-		try{
-			model.put(RESPONSE_DATA_KEY, expedienteComercialApi.getExpedienteComercialPropagables(Long.valueOf(idExpediente)));
-		} catch (Exception e) {
-			logger.error("error en expedienteComercialController", e);
-			model.put(RESPONSE_SUCCESS_KEY, false);
-			model.put(RESPONSE_ERROR_KEY, e.getMessage());
-		}
-
-		return createModelAndViewJson(model);
-	}
-	
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)

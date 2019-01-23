@@ -41,7 +41,6 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.diccionarios.Dictionary;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.Localidad;
-import es.capgemini.pfs.expediente.model.Expediente;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
@@ -98,6 +97,7 @@ import es.pfsgroup.plugin.rem.model.CondicionesActivo;
 import es.pfsgroup.plugin.rem.model.DtoActivosExpediente;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoAdjuntoExpediente;
+import es.pfsgroup.plugin.rem.model.DtoAgrupaciones;
 import es.pfsgroup.plugin.rem.model.DtoBloqueosFinalizacion;
 import es.pfsgroup.plugin.rem.model.DtoClienteUrsus;
 import es.pfsgroup.plugin.rem.model.DtoComparecienteVendedor;
@@ -142,8 +142,11 @@ import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.TextosOferta;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VActivoOfertaImporte;
+import es.pfsgroup.plugin.rem.model.VActivosAgrupacion;
+import es.pfsgroup.plugin.rem.model.VActivosSubdivision;
 import es.pfsgroup.plugin.rem.model.VBusquedaDatosCompradorExpediente;
 import es.pfsgroup.plugin.rem.model.VListadoActivosExpediente;
+import es.pfsgroup.plugin.rem.model.VSubdivisionesAgrupacion;
 import es.pfsgroup.plugin.rem.model.Visita;
 import es.pfsgroup.plugin.rem.model.dd.DDAccionGastos;
 import es.pfsgroup.plugin.rem.model.dd.DDAdministracion;
@@ -272,6 +275,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	
     @Autowired
     private TareaActivoApi tareaActivoApi;
+    
+    private DtoAgrupaciones agrupacionDto;
     
     @Resource(name = "entityTransactionManager")
 	private PlatformTransactionManager transactionManager;
@@ -1151,8 +1156,39 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					}
 				}
 			}
+			
+			if(!Checks.esNulo(activo.getLocalizacion().getLocalizacionBien().getPuerta())) {
+				dtoActivo.setPuerta(activo.getLocalizacion().getLocalizacionBien().getPuerta());
+			}
+			
+			
+			if(!Checks.esNulo(activo.getTotalSuperficieConstruida())) {
+				dtoActivo.setSuperficieConstruida(activo.getTotalSuperficieConstruida());
+			}
+			
+			if(!Checks.esNulo(activo.getSubtipoActivo())) {
+				dtoActivo.setSubtipoActivo(activo.getSubtipoActivo().getDescripcion());
+			}
+			  
+			ActivoAgrupacion agr = expediente.getOferta().getAgrupacion();
+			if(!Checks.esNulo(agr)) {
+				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activoId", activo.getId());
+				Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "agrupacionId", agr.getId());
+				VActivosSubdivision vActSub  = genericDao.get(VActivosSubdivision.class, filtro, filtro2);
+				
+				Filter filtro3 = genericDao.createFilter(FilterType.EQUALS, "agrupacionId", agr.getId());
+				Filter filtro4 = genericDao.createFilter(FilterType.EQUALS, "id", vActSub.getIdSubdivision());
+				VSubdivisionesAgrupacion vSubAgr  = genericDao.get(VSubdivisionesAgrupacion.class, filtro3, filtro4); 
+				
+				
+				if(!Checks.esNulo(vSubAgr.getDescripcion())) {
+					dtoActivo.setSubdivision(vSubAgr.getDescripcion());
+				}
+			}
+
 
 			activos.add(dtoActivo);
+			
 		}
 
 		return new DtoPage(activos, activos.size());
@@ -1163,6 +1199,12 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		List<VListadoActivosExpediente> listadoActivos = genericDao.getList(VListadoActivosExpediente.class,
 				genericDao.createFilter(FilterType.EQUALS, "idExpediente", idExpediente));
 
+		return new DtoPage(listadoActivos, listadoActivos.size());
+	}
+	
+	public DtoPage getActivosAgrupacionesVista(Long idActivo) {
+		List<VActivosAgrupacion> listadoActivos = genericDao.getList(VActivosAgrupacion.class, genericDao.createFilter(FilterType.EQUALS, "activoId", idActivo));
+		
 		return new DtoPage(listadoActivos, listadoActivos.size());
 	}
 
@@ -4696,9 +4738,20 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	}
 
 
-
-
-
+	@Override
+	@Transactional(readOnly = false)
+	public boolean guardarCondicionesActivosExpediente(DtoCondicionesActivoExpediente condiciones) {
+		if(!Checks.esNulo(condiciones.getActivos())) {
+			String[] idsActivos = condiciones.getActivos().split(",");
+			
+			for (String idActivo : idsActivos) {
+				condiciones.setIdActivo(Long.valueOf(idActivo));
+				guardarCondicionesActivoExpediente(condiciones);
+			}
+		}
+		
+		return true;
+	}
 
 
 	@Override
@@ -5747,13 +5800,6 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		return numExpediente;
 
 	}
-
-	@Override
-	public DtoFichaExpediente getExpedienteComercialPropagables(Long idExpediente)
-	{
-		System.out.println("{ EN PROCESO }");			
-		return null;
-	}
 	
 	@Override
 	public List<DtoActivosExpediente> getActivosPropagables(Long idExpediente)
@@ -5761,6 +5807,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		System.out.println("ID EXP: " + idExpediente);
 		DtoPage dtopage = getActivosExpediente(idExpediente);
 		List<DtoActivosExpediente> activos = (List<DtoActivosExpediente>) dtopage.getResults();
+		
 		return activos;
 	}
 }

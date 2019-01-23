@@ -1620,6 +1620,8 @@ public class AgrupacionAdapter {
 			proyecto.setDireccion(dtoAgrupacion.getDireccion());
 
 			genericDao.save(ActivoProyecto.class, proyecto);
+			
+			dtoAgrupacion.setId(proyecto.getId().toString());
 
 			// Si es ASISTIDA
 		} else if (dtoAgrupacion.getTipoAgrupacion().equals(DDTipoAgrupacion.AGRUPACION_ASISTIDA)) {

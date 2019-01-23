@@ -188,6 +188,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTasacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTenedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
 import es.pfsgroup.plugin.rem.oferta.NotificationOfertaManager;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PRINCIPAL;
@@ -2935,9 +2936,15 @@ public class ActivoAdapter {
 				&& ((DDTipoComercializacion.CODIGO_SOLO_ALQUILER).equals(((DtoActivoFichaCabecera)dto).getTipoComercializacionCodigo()) 
 						|| (DDTipoComercializacion.CODIGO_ALQUILER_VENTA).equals(((DtoActivoFichaCabecera)dto).getTipoComercializacionCodigo()))){
 			
+			//HREOS-5263: Al cambiar de Venta a Alquiler un activo ponemos por defecto el tipo de alquiler a "No definido".
+			Filter filtro0 = genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoAlquiler.CODIGO_NO_DEFINIDO);
+			DDTipoAlquiler tipoAlquiler= genericDao.get(DDTipoAlquiler.class, filtro0);
+			activo.setTipoAlquiler(tipoAlquiler);
+			
 			ActivoPatrimonio actPatrimonio = activoPatrimonio.getActivoPatrimonioByActivo(activo.getId());
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoEstadoAlquiler.ESTADO_ALQUILER_LIBRE);
 			DDTipoEstadoAlquiler estadoAlquiler= genericDao.get(DDTipoEstadoAlquiler.class, filtro);
+			
 			if(!Checks.esNulo(actPatrimonio)){
 				actPatrimonio.setCheckHPM(true);
 				actPatrimonio.setTipoEstadoAlquiler(estadoAlquiler);
@@ -2950,6 +2957,7 @@ public class ActivoAdapter {
 				actPatrimonio.setActivo(activo);
 				actPatrimonio.setCheckHPM(true);
 				actPatrimonio.setTipoEstadoAlquiler(estadoAlquiler);
+				
 				Auditoria auditoria = new Auditoria();
 				auditoria.setUsuarioCrear(username);
 				auditoria.setFechaCrear(fecha);

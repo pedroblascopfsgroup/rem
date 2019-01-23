@@ -13,7 +13,10 @@ import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import es.capgemini.devon.beans.Service;
 import es.capgemini.devon.message.MessageService;
@@ -241,6 +244,9 @@ public class AgrupacionAdapter {
 	
 	@Autowired
 	private ActivoHistoricoPatrimonioDao activoHistoricoPatrimonioDao;
+	
+	@Resource(name = "entityTransactionManager")
+    private PlatformTransactionManager transactionManager;
 
 	private final Log logger = LogFactory.getLog(getClass());
 
@@ -1816,7 +1822,7 @@ public class AgrupacionAdapter {
 		return true;
 	}
 
-	@Transactional(readOnly = false)
+	//@Transactional(readOnly = false)
 	public boolean saveOfertaAgrupacion(DtoOfertaActivo dto) throws JsonViewerException, Exception {
 
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdOferta());
@@ -1887,7 +1893,8 @@ public class AgrupacionAdapter {
 			activoManager.crearExpediente(oferta, trabajo);
 		}
 
-		genericDao.update(Oferta.class, oferta);
+		//genericDao.update(Oferta.class, oferta);
+		persistOferta(oferta);
 
 		// si la oferta ha sido rechazada enviamos un email/notificacion.
 		if (DDEstadoOferta.CODIGO_RECHAZADA.equals(tipoOferta.getCodigo())) {
@@ -1921,6 +1928,23 @@ public class AgrupacionAdapter {
 		// }
 
 		return true;
+	}
+	
+	private boolean persistOferta(Oferta oferta) {
+		TransactionStatus transaction = null;
+		boolean resultado = false;
+		try {
+			transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
+			ofertaApi.updateStateDispComercialActivosByOferta(oferta);
+			genericDao.update(Oferta.class, oferta);
+			transactionManager.commit(transaction);
+			resultado = true;
+		} catch (Exception e) {
+			logger.error("Error en activoManager", e);
+			transactionManager.rollback(transaction);
+
+		}
+		return resultado;
 	}
 
 	@Transactional(readOnly = false)

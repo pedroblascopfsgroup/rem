@@ -188,6 +188,7 @@ Ext.define('HreRem.view.activos.detalle.ContratosPatrimonio', {
 									collapsible: false,
 									items : [{
 										 xtype: 'gridBase',
+										 height: 300,
 										 bind: {
 								                store: '{storeActivosAsociados}'
 								         },
@@ -212,6 +213,8 @@ Ext.define('HreRem.view.activos.detalle.ContratosPatrimonio', {
 										    dockedItems : [{
 										    	xtype: 'pagingtoolbar',
 									            dock: 'bottom',
+									            itemId: 'activosAsociadosPaginationToolbar',
+									            displayInfo: true,
 									            bind: {
 									                store: '{storeActivosAsociados}'
 									            }

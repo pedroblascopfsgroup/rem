@@ -76,6 +76,7 @@ import es.pfsgroup.plugin.rem.model.DtoActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.DtoActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.DtoActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoActivoValoraciones;
+import es.pfsgroup.plugin.rem.model.DtoActivoVistaPatrimonioContrato;
 import es.pfsgroup.plugin.rem.model.DtoActivosPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoAdmisionDocumento;
@@ -100,6 +101,7 @@ import es.pfsgroup.plugin.rem.model.DtoMovimientoLlave;
 import es.pfsgroup.plugin.rem.model.DtoObservacion;
 import es.pfsgroup.plugin.rem.model.DtoOfertaActivo;
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
+import es.pfsgroup.plugin.rem.model.DtoPaginadoActivoVistaPatrimonioContrato;
 import es.pfsgroup.plugin.rem.model.DtoPaginadoHistoricoEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoPrecioVigente;
 import es.pfsgroup.plugin.rem.model.DtoPresupuestoGraficoActivo;
@@ -483,9 +485,16 @@ public class ActivoController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getListAsociadosById(Long id, ModelMap model) {
-		model.put(RESPONSE_DATA_KEY, adapter.getListAsociadosById(id));
-
+	public ModelAndView getListAsociadosById(DtoActivoVistaPatrimonioContrato dto, ModelMap model) {
+		try {
+			DtoPage page = adapter.getListAsociadosById(dto);
+			model.put(RESPONSE_DATA_KEY, page.getResults());
+			model.put(RESPONSE_TOTALCOUNT_KEY, page.getTotalCount());
+			model.put(RESPONSE_SUCCESS_KEY, true);
+		} catch (Exception e) {
+			logger.error("error en activoController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+		}
 		return createModelAndViewJson(model);
 	}
 	

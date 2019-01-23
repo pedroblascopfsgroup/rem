@@ -32,7 +32,6 @@ Ext.define('HreRem.view.activos.detalle.ActivosDetalleMain', {
     		me.removeAll();
     		me.add({xtype: 'cabeceraactivo'});
     		me.add({xtype: 'activosdetalle', flex: 1});
-    		me.add({xtype: 'agrupacionesdetalle', flex: 1});
     	}
     	
     	me.down("cabeceraactivo").refreshData(data);

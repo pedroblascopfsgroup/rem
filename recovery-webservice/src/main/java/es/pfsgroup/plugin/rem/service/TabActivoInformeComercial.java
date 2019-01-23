@@ -10,7 +10,6 @@ import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -702,40 +701,47 @@ public class TabActivoInformeComercial implements TabActivoService {
 			}
 
 			switch (Integer.parseInt(codigoTipoActivo)) {
-				case 1:
-					break;
-				case 2:
-					if(activo.getInfoComercial() != null && activo.getInfoComercial() instanceof ActivoVivienda) {
+			case 1:
+				break;
+			case 2:
+				if (activo.getInfoComercial() != null && activo.getInfoComercial() instanceof ActivoVivienda) {
 					ActivoVivienda vivienda = (ActivoVivienda) activo.getInfoComercial();
 					beanUtilNotNull.copyProperties(activoInformeDto, vivienda);
-					}
-					break;
-				case 3:
+				}
+				break;
+			case 3:
+				if (activo.getInfoComercial() instanceof ActivoLocalComercial) {
 					ActivoLocalComercial local = (ActivoLocalComercial) activo.getInfoComercial();
 					beanUtilNotNull.copyProperties(activoInformeDto, local);
-					beanUtilNotNull.copyProperties(activoInformeDto, activo.getInfoComercial().getInstalacion());
-					break;
-				case 4:
-					break;
-				case 5:
-					ActivoEdificio edificio = activo.getInfoComercial().getEdificio();
-					beanUtilNotNull.copyProperties(activoInformeDto, edificio);
-					break;
-				case 6:
-					break;
-				case 7:
+				}
+				beanUtilNotNull.copyProperties(activoInformeDto, activo.getInfoComercial().getInstalacion());
+				break;
+			case 4:
+				break;
+			case 5:
+				ActivoEdificio edificio = activo.getInfoComercial().getEdificio();
+				beanUtilNotNull.copyProperties(activoInformeDto, edificio);
+				break;
+			case 6:
+				break;
+			case 7:
+				if (activo.getInfoComercial() instanceof ActivoPlazaAparcamiento) {
 					ActivoPlazaAparcamiento otros = (ActivoPlazaAparcamiento) activo.getInfoComercial();
 					beanUtilNotNull.copyProperties(activoInformeDto, otros);
-					if (!Checks.esNulo(otros.getTipoCalidad())) beanUtilNotNull.copyProperty(activoInformeDto, "maniobrabilidadCodigo", otros.getTipoCalidad().getCodigo());
+					if (!Checks.esNulo(otros.getTipoCalidad()))
+						beanUtilNotNull.copyProperty(activoInformeDto, "maniobrabilidadCodigo",
+								otros.getTipoCalidad().getCodigo());
 					if (!Checks.esNulo(otros.getSubtipoPlazagaraje()))
-						beanUtilNotNull.copyProperty(activoInformeDto, "subtipoPlazagarajeCodigo", otros.getSubtipoPlazagaraje().getCodigo());
-					// Instalaciones
-					if(activo.getInfoComercial().getInstalacion()!=null){
-						beanUtilNotNull.copyProperties(activoInformeDto, activo.getInfoComercial().getInstalacion());
-					}
-					break;
-				default:
-					break;
+						beanUtilNotNull.copyProperty(activoInformeDto, "subtipoPlazagarajeCodigo",
+								otros.getSubtipoPlazagaraje().getCodigo());
+				}
+				// Instalaciones
+				if (activo.getInfoComercial().getInstalacion() != null) {
+					beanUtilNotNull.copyProperties(activoInformeDto, activo.getInfoComercial().getInstalacion());
+				}
+				break;
+			default:
+				break;
 			}
 
 		} catch (ClassCastException e) {

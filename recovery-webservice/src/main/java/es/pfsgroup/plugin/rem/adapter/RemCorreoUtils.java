@@ -22,6 +22,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -54,6 +57,9 @@ public class RemCorreoUtils {
 
 	@Autowired
 	private GenericABMDao genericDao;
+	
+	@Resource(name = "entityTransactionManager")
+    private PlatformTransactionManager transactionManager;
 
 	protected final Log logger = LogFactory.getLog(getClass());
 
@@ -133,7 +139,17 @@ public class RemCorreoUtils {
 	}
 
 	private void persistirTrazaCorreoSaliente(CorreoSaliente traza) {
-		genericDao.save(CorreoSaliente.class, traza);
+		TransactionStatus transaction = null;
+		try {
+			transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
+			genericDao.save(CorreoSaliente.class, traza);
+			transactionManager.commit(transaction);
+			
+		} catch (Exception e) {
+			logger.error("Error persistiendo traza de correo", e);
+			transactionManager.rollback(transaction);
+
+		}
 	}
 
 	private void doSend(MimeMessage message, Session session, Properties props) throws MessagingException {

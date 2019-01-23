@@ -2477,7 +2477,7 @@ public class ActivoController extends ParadiseJsonController {
 	public ModelAndView generarUrlGDPR(DtoGenerarDocGDPR dtoGenerarDocGDPR, ModelMap model) {
 		try {
 			model.put("data", activoApi.generarUrlGDPR(dtoGenerarDocGDPR));
-			model.put("success",true);
+			model.put("success",false);
 		}catch(Exception e) {
 			logger.error("error en activoController", e);
 		}

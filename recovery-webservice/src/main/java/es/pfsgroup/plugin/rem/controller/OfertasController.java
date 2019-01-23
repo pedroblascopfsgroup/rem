@@ -285,8 +285,10 @@ public class OfertasController {
 //		l_dtoBankia.add(dtoA);
 		
 		File file = excelReportGeneratorApi.generateBankiaReport(listaPropuestaAlquilerBankia, request);
-		String kk;
+
 		excelReportGeneratorApi.sendReport(file, response);
+//		Oferta oferta = ofertaApi.getOfertaById(idOferta);
+//		notificationOferta.sendNotificationPropuestaOferta(oferta, new FileItem(file));
 	}
 	
 	@SuppressWarnings("unchecked")

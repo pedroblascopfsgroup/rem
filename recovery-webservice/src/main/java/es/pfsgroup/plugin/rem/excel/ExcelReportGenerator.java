@@ -7,6 +7,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 //import java.time.LocalDateTime;
 import java.util.List;
@@ -22,6 +23,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hsqldb.Row;
 import org.springframework.stereotype.Component;
+
+import com.itextpdf.text.Font;
 
 import es.capgemini.devon.utils.FileUtils;
 import es.pfsgroup.commons.utils.Checks;
@@ -41,6 +44,7 @@ import jxl.write.WriteException;
 import org.apache.poi.hssf.util.CellReference;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -142,6 +146,7 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 			CellReference cellReference;
 			XSSFRow r;
 			XSSFCell c;
+			SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
 			
 			// En el ultimo elemento esta el resumen por eso cogemos todos los DTO menos el ultimo
 			for (int i = 0; i < l_DtoPropuestaAlq.size()-1; i++) {
@@ -178,13 +183,13 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 				cellReference = new CellReference("B9");
 				r = mySheet.getRow(cellReference.getRow());
 				c = r.getCell(cellReference.getCol());
-				c.setCellValue(new Date());
+				c.setCellValue(format.format(new Date()));
 				
 				cellReference = new CellReference("B10");
 				r = mySheet.getRow(cellReference.getRow());
 				c = r.getCell(cellReference.getCol());
 				if (!Checks.esNulo(dtoPAB.getFechaAltaOferta())) {
-					c.setCellValue(dtoPAB.getFechaAltaOferta().toString());
+					c.setCellValue(format.format(dtoPAB.getFechaAltaOferta()));
 				}
 				
 				cellReference = new CellReference("B11");
@@ -241,7 +246,7 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 				r = mySheet.getRow(cellReference.getRow());
 				c = r.getCell(cellReference.getCol());
 				if (!Checks.esNulo(dtoPAB.getFechaUltimaTasacion())) { 
-					c.setCellValue(dtoPAB.getFechaUltimaTasacion().toString());
+					c.setCellValue(format.format(dtoPAB.getFechaUltimaTasacion()));
 				}
 				
 				cellReference = new CellReference("B47");
@@ -288,25 +293,31 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 			Long numActivo;
 			
 			
-			XSSFCellStyle style= myWorkBook.createCellStyle(); 
+			XSSFCellStyle style= myWorkBook.createCellStyle();
+			XSSFCellStyle styleTitulo= myWorkBook.createCellStyle();
 			style.setBorderBottom(XSSFCellStyle.BORDER_THIN);
 			style.setBorderTop(XSSFCellStyle.BORDER_THIN);
 			style.setBorderRight(XSSFCellStyle.BORDER_THIN);
 			style.setBorderLeft(XSSFCellStyle.BORDER_THIN);
 			
 
-			
-			mySheet.shiftRows(currentRow, currentRow+1, l_DtoPropuestaAlq.size()-2);
-			
-			for (int i = currentRow-1; i < currentRow-1 + l_DtoPropuestaAlq.size()-1; i++) {
-				mySheet.createRow(i);
-				r = mySheet.getRow(i);
-				for (int j = 0; j < NUMERO_COLUMNAS; j++) {
-					r.createCell(j);
-					c = r.getCell(j);
-					c.setCellStyle(style);
+			if (l_DtoPropuestaAlq.size()-2 > 0) {
+				mySheet.shiftRows(currentRow, currentRow+1, l_DtoPropuestaAlq.size()-2);
+				
+				for (int i = currentRow-1; i < currentRow-1 + l_DtoPropuestaAlq.size()-1; i++) {
+					mySheet.createRow(i);
+					r = mySheet.getRow(i);
+					for (int j = 0; j < NUMERO_COLUMNAS; j++) {
+						r.createCell(j);
+						c = r.getCell(j);
+						c.setCellStyle(style);
+					}
 				}
+				
 			}
+				
+			
+			
 			
 					
 			
@@ -413,7 +424,7 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 				cellReference = new CellReference("P" + Integer.toString(currentRow)); // FECHA OFERTA
 				r = mySheet.getRow(cellReference.getRow());
 				c = r.getCell(cellReference.getCol());
-				c.setCellValue(new Date());
+				c.setCellValue(format.format(new Date()));
 
 				formula = "'"+numActivo.toString()+"'!B61";
 				cellReference = new CellReference("Q" + Integer.toString(currentRow)); // RENTABILIDAD 1 AÑO
@@ -457,6 +468,18 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 			
 			dtoPAB = l_DtoPropuestaAlq.get(l_DtoPropuestaAlq.size()-1);
 			numActivo = dtoPAB.getNumActivoUvem();
+			
+			
+			cellReference = new CellReference("D2"); // TITULO
+			r = mySheet.getRow(cellReference.getRow());
+			c = r.getCell(cellReference.getCol());
+			c.setCellValue("PROPUESTAS DE ALQUILER PRESENTADAS AL COMITÉ DE DOBLE FIRMA DE FECHA " + format.format(new Date())); 
+			XSSFFont font = myWorkBook.createFont();
+			font.setFontHeight(14);
+			font.setBold(true);
+			styleTitulo.setFont(font);
+			c.setCellStyle(styleTitulo); 
+			
 			
 			cellReference = new CellReference("A" + Integer.toString(currentRow)); // LOTE ??
 			r = mySheet.getRow(cellReference.getRow());
@@ -505,6 +528,8 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 			c.setCellType(XSSFCell.CELL_TYPE_FORMULA);
 			c.setCellFormula(formula);
 			c.setCellStyle(style);
+			
+
 			
 			myWorkBook.write(fileOutStream);
 			fileOutStream.close();

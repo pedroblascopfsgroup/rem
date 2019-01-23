@@ -132,15 +132,6 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 	     	}
 	     },
 
-	     esAgrupacionLoteComercial: function(get) {
-
-		     	var tipoAgrupacion = get('agrupacionficha.tipoAgrupacionCodigo');
-		     	if((tipoAgrupacion == CONST.TIPOS_AGRUPACION['LOTE_COMERCIAL'])) {
-		     		return true;
-		     	} else {
-		     		return false;
-		     	}
-		 },
 		 esAgrupacionProyecto: function(get) {
 
 		     	var tipoAgrupacion = get('agrupacionficha.tipoAgrupacionCodigo');

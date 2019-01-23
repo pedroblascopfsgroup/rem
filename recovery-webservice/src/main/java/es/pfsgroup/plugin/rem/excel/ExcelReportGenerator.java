@@ -144,6 +144,7 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 				DtoPropuestaAlqBankia dtoPAB = l_DtoPropuestaAlq.get(i);
 				
 				if (primero) {
+					myWorkBook.setSheetName(1, dtoPAB.getNumActivoUvem().toString());
 					mySheet = myWorkBook.getSheetAt(1);
 					primero = false;
 				} else {
@@ -274,25 +275,26 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 			
 			
 			mySheet = myWorkBook.getSheetAt(0);
-			int currentRow = 7;
-			
+			int currentRow = 6;
+			DtoPropuestaAlqBankia dtoPAB;
+			Long numActivo;
 			for (int i = 0; i < l_DtoPropuestaAlq.size()-1; i++) {
 				
-				DtoPropuestaAlqBankia dtoPAB = l_DtoPropuestaAlq.get(i);
-				Long numActivo = dtoPAB.getNumActivoUvem(); // El numero de activo lo necesitamos para referenciar el resto de hojas en las formulas
+				dtoPAB = l_DtoPropuestaAlq.get(i);
+				numActivo = dtoPAB.getNumActivoUvem(); // El numero de activo lo necesitamos para referenciar el resto de hojas en las formulas
 				
-				if (currentRow != 7) {
+				if (currentRow != 6) {
 					mySheet.shiftRows(currentRow, currentRow+1, 1);
 				}
 				
-				cellReference = new CellReference("A" + Integer.toString(currentRow)); // LOTE ??
-				r = mySheet.getRow(cellReference.getRow());
-				c = r.getCell(cellReference.getCol());
-				if (!Checks.esNulo(dtoPAB.getTextoOferta())) { 
-					c.setCellValue(dtoPAB.getTextoOferta());
-				}
+//				cellReference = new CellReference("A" + Integer.toString(currentRow)); // LOTE ??
+//				r = mySheet.getRow(cellReference.getRow());
+//				c = r.getCell(cellReference.getCol());
+//				if (!Checks.esNulo(dtoPAB.getNumeroAgrupacion())) { 
+//					c.setCellValue(dtoPAB.getNumeroAgrupacion().toString());
+//				}
 				
-				cellReference = new CellReference("B" + Integer.toString(currentRow)); // ACTIVO
+				cellReference = new CellReference("B" + Integer.toString(currentRow)); // ACTIVO 
 				r = mySheet.getRow(cellReference.getRow());
 				c = r.getCell(cellReference.getCol());
 				if (!Checks.esNulo(numActivo))
@@ -313,8 +315,8 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 				cellReference = new CellReference("E" + Integer.toString(currentRow)); // NOMBRE CLIENTE ?? 
 				r = mySheet.getRow(cellReference.getRow());
 				c = r.getCell(cellReference.getCol());
-				if (!Checks.esNulo(dtoPAB.getCompradorNombre()))
-					c.setCellValue(dtoPAB.getCompradorNombre());
+				if (!Checks.esNulo(dtoPAB.getNombreCompleto()))
+					c.setCellValue(dtoPAB.getNombreCompleto());
 				
 				cellReference = new CellReference("F" + Integer.toString(currentRow)); // DIRECCION
 				r = mySheet.getRow(cellReference.getRow());
@@ -328,8 +330,8 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 				if (!Checks.esNulo(dtoPAB.getCodPostMunicipio()))
 					c.setCellValue(dtoPAB.getCodPostMunicipio());
 				
-				String formula = "'"+numActivo.toString()+"'.B12";
-				cellReference = new CellReference("I" + Integer.toString(currentRow)); // VALOR CONTABLE NETO
+				String formula = "'"+numActivo.toString()+"'!B12";
+				cellReference = new CellReference("I" + Integer.toString(currentRow)); // VALOR CONTABLE NETO 
 				r = mySheet.getRow(cellReference.getRow());
 				c = r.getCell(cellReference.getCol());
 				c.setCellType(XSSFCell.CELL_TYPE_FORMULA);
@@ -343,80 +345,119 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 				else
 					c.setCellValue("Sin publicar");
 				
-				cellReference = new CellReference("K" + Integer.toString(currentRow)); // VALOR ORIENTATIVO !!! RELLENA EL GESTOR
+				formula = "'"+numActivo.toString()+"'!B37";
+				cellReference = new CellReference("K" + Integer.toString(currentRow)); // VALOR ORIENTATIVO
 				r = mySheet.getRow(cellReference.getRow());
 				c = r.getCell(cellReference.getCol());
-				if (!Checks.esNulo(dtoPAB.getFechaPublicacionWeb()))
-					c.setCellValue(dtoPAB.getFechaPublicacionWeb().toString());
+				c.setCellType(XSSFCell.CELL_TYPE_FORMULA);
+				c.setCellFormula(formula);
 				
-//				String formula = "'"+numActivo+"'"+".B39";
-//				cellReference = new CellReference("L" + Integer.toString(currentRow)); // VALOR CONTABLE NETO
-//				r = mySheet.getRow(cellReference.getRow());
-//				c = r.getCell(cellReference.getCol());
-//				c.setCellType(XSSFCell.CELL_TYPE_FORMULA);
-//				c.setCellFormula(formula);
-//				
-//				formula = "$"+numActivo+".B41";
-//				cellReference = new CellReference("N" + Integer.toString(currentRow)); // FECHA TASACION
-//				r = mySheet.getRow(cellReference.getRow());
-//				c = r.getCell(cellReference.getCol());
-//				c.setCellType(XSSFCell.CELL_TYPE_FORMULA);
-//				c.setCellFormula(formula);
-//				
-//				formula = "$"+numActivo+".B57";
-//				cellReference = new CellReference("O" + Integer.toString(currentRow)); // RENTA OFERTA
-//				r = mySheet.getRow(cellReference.getRow());
-//				c = r.getCell(cellReference.getCol());
-//				c.setCellType(XSSFCell.CELL_TYPE_FORMULA);
-//				c.setCellFormula(formula);
-//				
-//				formula = "$"+numActivo+".B58";
-//				cellReference = new CellReference("P" + Integer.toString(currentRow)); // RENTA BONIFICADA
-//				r = mySheet.getRow(cellReference.getRow());
-//				c = r.getCell(cellReference.getCol());
-//				c.setCellType(XSSFCell.CELL_TYPE_FORMULA);
-//				c.setCellFormula(formula);
-//				
-//				formula = "$"+numActivo+".B9";
-//				cellReference = new CellReference("Q" + Integer.toString(currentRow)); // FECHA OFERTA
-//				r = mySheet.getRow(cellReference.getRow());
-//				c = r.getCell(cellReference.getCol());
-//				c.setCellType(XSSFCell.CELL_TYPE_FORMULA);
-//				c.setCellFormula(formula);
-//				
-//				formula = "$"+numActivo+".B61";
-//				cellReference = new CellReference("R" + Integer.toString(currentRow)); // RENTABILIDAD PRIMER ANYO
-//				r = mySheet.getRow(cellReference.getRow());
-//				c = r.getCell(cellReference.getCol());
-//				c.setCellType(XSSFCell.CELL_TYPE_FORMULA);
-//				c.setCellFormula(formula);
-//				
-//				formula = "$"+numActivo+".B62";
-//				cellReference = new CellReference("S" + Integer.toString(currentRow)); // DIFERENCIA CON EURIBOR
-//				r = mySheet.getRow(cellReference.getRow());
-//				c = r.getCell(cellReference.getCol());
-//				c.setCellType(XSSFCell.CELL_TYPE_FORMULA);
-//				c.setCellFormula(formula);
-//				
-//				formula = "$"+numActivo+".B50";
-//				cellReference = new CellReference("T" + Integer.toString(currentRow)); // PAX
-//				r = mySheet.getRow(cellReference.getRow());
-//				c = r.getCell(cellReference.getCol());
-//				c.setCellType(XSSFCell.CELL_TYPE_FORMULA);
-//				c.setCellFormula(formula);
-//				
-//				formula = "$"+numActivo+".B49";
-//				cellReference = new CellReference("U" + Integer.toString(currentRow)); // Ingresos Netos
-//				r = mySheet.getRow(cellReference.getRow());
-//				c = r.getCell(cellReference.getCol());
-//				c.setCellType(XSSFCell.CELL_TYPE_FORMULA);
-//				c.setCellFormula(formula);
+				formula = "'"+numActivo.toString()+"'!B39";
+				cellReference = new CellReference("L" + Integer.toString(currentRow)); // VALOR CONTABLE NETO
+				r = mySheet.getRow(cellReference.getRow());
+				c = r.getCell(cellReference.getCol());
+				c.setCellType(XSSFCell.CELL_TYPE_FORMULA);
+				c.setCellFormula(formula);
+			
+				cellReference = new CellReference("N" + Integer.toString(currentRow)); // FECHA TASACION
+				r = mySheet.getRow(cellReference.getRow());
+				c = r.getCell(cellReference.getCol());
+				if (!Checks.esNulo(dtoPAB.getFechaUltimaTasacion()))
+					c.setCellValue(dtoPAB.getFechaUltimaTasacion().toString());
+		
+				cellReference = new CellReference("O" + Integer.toString(currentRow)); // RENTA OFERTADA
+				r = mySheet.getRow(cellReference.getRow());
+				c = r.getCell(cellReference.getCol());
+				if (!Checks.esNulo(dtoPAB.getImporteOferta()))
+					c.setCellValue(dtoPAB.getImporteOferta().toString());
+				
+				formula = "'"+numActivo.toString()+"'!B58";
+				cellReference = new CellReference("P" + Integer.toString(currentRow)); // RENTA BONIFICADA
+				r = mySheet.getRow(cellReference.getRow());
+				c = r.getCell(cellReference.getCol());
+				c.setCellType(XSSFCell.CELL_TYPE_FORMULA);
+				c.setCellFormula(formula);
+
+				cellReference = new CellReference("Q" + Integer.toString(currentRow)); // FECHA OFERTA
+				r = mySheet.getRow(cellReference.getRow());
+				c = r.getCell(cellReference.getCol());
+				c.setCellValue(new Date());
+
+				formula = "'"+numActivo.toString()+"'!B61";
+				cellReference = new CellReference("R" + Integer.toString(currentRow)); // RENTABILIDAD 1 AÑO
+				r = mySheet.getRow(cellReference.getRow());
+				c = r.getCell(cellReference.getCol());
+				c.setCellType(XSSFCell.CELL_TYPE_FORMULA);
+				c.setCellFormula(formula);
+
+				formula = "'"+numActivo.toString()+"'!B62";
+				cellReference = new CellReference("S" + Integer.toString(currentRow)); // EURIBOR
+				r = mySheet.getRow(cellReference.getRow());
+				c = r.getCell(cellReference.getCol());
+				c.setCellType(XSSFCell.CELL_TYPE_FORMULA);
+				c.setCellFormula(formula);
+				
+				formula = "'"+numActivo.toString()+"'!B50";
+				cellReference = new CellReference("T" + Integer.toString(currentRow)); // PAX
+				r = mySheet.getRow(cellReference.getRow());
+				c = r.getCell(cellReference.getCol());
+				c.setCellType(XSSFCell.CELL_TYPE_FORMULA);
+				c.setCellFormula(formula);
+			
+				formula = "'"+numActivo.toString()+"'!B49";
+				cellReference = new CellReference("U" + Integer.toString(currentRow)); // INGRESOS NETOS
+				r = mySheet.getRow(cellReference.getRow());
+				c = r.getCell(cellReference.getCol());
+				c.setCellType(XSSFCell.CELL_TYPE_FORMULA);
+				c.setCellFormula(formula);
 								
 				
-				++currentRow; // Siguiente fila
+  				++currentRow; // Siguiente fila
 					
 			}
 			
+			
+//			dtoPAB = l_DtoPropuestaAlq.get(l_DtoPropuestaAlq.size()-1);
+//			numActivo = dtoPAB.getNumActivoUvem();
+//			
+//			cellReference = new CellReference("A" + Integer.toString(currentRow)); // LOTE ??
+//			r = mySheet.getRow(cellReference.getRow());
+//			c = r.getCell(cellReference.getCol());
+//				c.setCellValue("TOTAL");
+//				
+//			cellReference = new CellReference("B" + Integer.toString(currentRow)); // ACTIVO
+//			r = mySheet.getRow(cellReference.getRow());
+//			c = r.getCell(cellReference.getCol());
+//			if (!Checks.esNulo(numActivo))
+//				c.setCellValue(numActivo.toString());
+//			
+//			int fila = 7 + l_DtoPropuestaAlq.size()-2;  //Empieza en la fila 7.
+//			String formula = "SUM(K7:K"+fila+")";
+//			cellReference = new CellReference("K" + Integer.toString(currentRow)); // VALOR ORIENTATIVO
+//			r = mySheet.getRow(cellReference.getRow());
+//			c = r.getCell(cellReference.getCol());
+//			c.setCellType(XSSFCell.CELL_TYPE_FORMULA);
+//			c.setCellFormula(formula);
+//			
+//			formula = "SUM(L7:L"+fila+")";
+//			cellReference = new CellReference("L" + Integer.toString(currentRow)); // VALOR CONTABLE NETO
+//			r = mySheet.getRow(cellReference.getRow());
+//			c = r.getCell(cellReference.getCol());
+//			c.setCellType(XSSFCell.CELL_TYPE_FORMULA);
+//			c.setCellFormula(formula);
+//			
+//			cellReference = new CellReference("O" + Integer.toString(currentRow)); // RENTA OFERTADA
+//			r = mySheet.getRow(cellReference.getRow());
+//			c = r.getCell(cellReference.getCol());
+//			if (!Checks.esNulo(dtoPAB.getImporteOferta()))
+//				c.setCellValue(dtoPAB.getImporteOferta().toString());
+//			
+//			formula = "SUM(P7:P"+fila+")";
+//			cellReference = new CellReference("P" + Integer.toString(currentRow)); // RENTA BONIFICADA
+//			r = mySheet.getRow(cellReference.getRow());
+//			c = r.getCell(cellReference.getCol());
+//			c.setCellType(XSSFCell.CELL_TYPE_FORMULA);
+//			c.setCellFormula(formula);
 			
 			myWorkBook.write(fileOutStream);
 			fileOutStream.close();

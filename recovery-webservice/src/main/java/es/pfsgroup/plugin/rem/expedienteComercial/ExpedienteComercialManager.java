@@ -7336,6 +7336,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				}
 				
 				dto.setFechaAltaOferta(oferta.getFechaAlta());
+				dto.setNumeroAgrupacion(oferta.getAgrupacion().getNumAgrupUvem());
 				if(!Checks.esNulo(oferta.getImporteOferta())) {
 					dto.setImporteOferta(BigDecimal.valueOf(oferta.getImporteOferta()));
 				}else {}
@@ -7389,14 +7390,15 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					}
 					index++;
 				}
-				
-				ActivoTasacion activoTasacion = activoTasacionList.get(aux2);
-				if(!Checks.esNulo(activoTasacion)) {
-					if(!Checks.esNulo(activoTasacion.getImporteTasacionFin())) {
-						dto.setImporteTasacionFinal((BigDecimal.valueOf(activoTasacion.getImporteTasacionFin())));
-					}else {}
-					
-					dto.setFechaUltimaTasacion(activoTasacion.getFechaRecepcionTasacion());
+				if (!Checks.estaVacio(activoTasacionList)) {
+					ActivoTasacion activoTasacion = activoTasacionList.get(aux2);
+					if(!Checks.esNulo(activoTasacion)) {
+						if(!Checks.esNulo(activoTasacion.getImporteTasacionFin())) {
+							dto.setImporteTasacionFinal((BigDecimal.valueOf(activoTasacion.getImporteTasacionFin())));
+						}else {}
+						
+						dto.setFechaUltimaTasacion(activoTasacion.getFechaRecepcionTasacion());
+					}
 				}
 
 				if(!Checks.esNulo(expediente.getCompradorPrincipal())) {
@@ -7421,7 +7423,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 						}
 						dto.setCalle(localizacionesBien.getNombreVia());
 						if(!Checks.esNulo(localizacionesBien.getNumeroDomicilio())) {
-							dto.setNumDomicilio(Integer.parseInt(localizacionesBien.getNumeroDomicilio()));
+							dto.setNumDomicilio(localizacionesBien.getNumeroDomicilio());
 						}else {
 							dto.setNumDomicilio(null);
 						}

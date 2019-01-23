@@ -258,7 +258,7 @@ public class OfertasController {
 //		
 //		excelReportGeneratorApi.sendReport(file, response);
 		Long prueba = (long) 72;//3199;
-		List <DtoPropuestaAlqBankia> listaPropuestaAlquilerBankia = ofertaApi.getListPropuestasAlqBankiaFromView(prueba);
+		List <DtoPropuestaAlqBankia> listaPropuestaAlquilerBankia = ofertaApi.getListPropuestasAlqBankiaFromView(idEco);
 		
 		//List<DtoPropuestaAlqBankia> l_dtoBankia = ofertaApi.getListPropuestasAlqBankiaFromView(3199L);
 //		DtoPropuestaAlqBankia dtoA = new DtoPropuestaAlqBankia();

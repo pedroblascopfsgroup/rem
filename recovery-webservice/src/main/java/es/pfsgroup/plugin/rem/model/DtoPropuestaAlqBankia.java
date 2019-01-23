@@ -17,7 +17,7 @@ public class DtoPropuestaAlqBankia extends WebDto {
 	private Long id;
 	private Long ecoId;
 	private Long numActivoUvem;	
-	private int carenciaALquiler; 
+	private Integer carenciaALquiler; 
 	private String textoOferta;
    	private Date fechaAltaExpedienteComercial;
    	private Date fechaPublicacionWeb;
@@ -36,13 +36,14 @@ public class DtoPropuestaAlqBankia extends WebDto {
 	private String escalera;
 	private String piso;
 	private String puerta;
-	private Integer numDomicilio;
+	private String numDomicilio;
 	private String tipoVia;
 	private String compradorNombre;
 	private String compradorApellidos;
 	private String compradorDocumento;
 	private String tipoActivo;
 	private String cartera;
+	private Long numeroAgrupacion;
 	
 	private String nombreCompleto;
 	private String codPostMunicipio;
@@ -67,10 +68,10 @@ public class DtoPropuestaAlqBankia extends WebDto {
 	public void setNumActivoUvem(Long numActivoUvem) {
 		this.numActivoUvem = numActivoUvem;
 	}
-	public int getCarenciaALquiler() {
+	public Integer getCarenciaALquiler() {
 		return carenciaALquiler;
 	}
-	public void setCarenciaALquiler(int carenciaALquiler) {
+	public void setCarenciaALquiler(Integer carenciaALquiler) {
 		this.carenciaALquiler = carenciaALquiler;
 	}
 	public String getTextoOferta() {
@@ -175,10 +176,10 @@ public class DtoPropuestaAlqBankia extends WebDto {
 	public void setPuerta(String puerta) {
 		this.puerta = puerta;
 	}
-	public Integer getNumDomicilio() {
+	public String getNumDomicilio() {
 		return numDomicilio;
 	}
-	public void setNumDomicilio(Integer numDomicilio) {
+	public void setNumDomicilio(String numDomicilio) {
 		this.numDomicilio = numDomicilio;
 	}
 	public String getTipoVia() {
@@ -243,9 +244,17 @@ public class DtoPropuestaAlqBankia extends WebDto {
 	public void setFechaAltaOferta(Date fechaAltaOferta) {
 		this.fechaAltaOferta = fechaAltaOferta;
 	}
+	public Long getNumeroAgrupacion() {
+		return numeroAgrupacion;
+	}
+	public void setNumeroAgrupacion(Long numeroAgrupacion) {
+		this.numeroAgrupacion = numeroAgrupacion;
+	}
+	
 	public static long getSerialversionuid() {
 		return serialVersionUID;
 	}
+	
 	
 	
 		

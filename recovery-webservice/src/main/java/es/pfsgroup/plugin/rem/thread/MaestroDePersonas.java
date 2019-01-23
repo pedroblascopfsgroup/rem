@@ -143,11 +143,19 @@ public class MaestroDePersonas  implements Runnable{
 					}
 				 }
 			} else if (!Checks.esNulo(numDocCliente)) {
+				String documento = null, idPersonaHaya = null;
+				ClienteComercial clienteCom = null;
 				ClienteGDPR clienteGDPR = llamadaClienteGDPR(sessionObj);
-				ClienteComercial clienteCom = llamadaClienteComercial(sessionObj, clienteGDPR);
-					if(Checks.esNulo(clienteCom.getIdPersonaHaya()) || idPersonaHayaNoExiste.equals(clienteCom.getIdPersonaHaya())) {
+				if(!Checks.esNulo(clienteGDPR)) {
+					clienteCom = llamadaClienteComercial(sessionObj, clienteGDPR);
+					documento = clienteCom.getDocumento();
+					idPersonaHaya = clienteCom.getIdPersonaHaya();
+				} else {
+					documento = numDocCliente;
+				} 
+					if(Checks.esNulo(clienteCom) || Checks.esNulo(idPersonaHaya) || idPersonaHayaNoExiste.equals(idPersonaHaya)) {
 						personaDto.setEvent(PersonaInputDto.EVENTO_IDENTIFICADOR_PERSONA_ORIGEN);
-						personaDto.setIdPersonaOrigen(clienteCom.getDocumento());
+						personaDto.setIdPersonaOrigen(documento);
 						personaDto.setIdIntervinienteHaya(PersonaInputDto.ID_INTERVINIENTE_HAYA);
 						personaDto.setIdCliente(cartera);
 							
@@ -167,7 +175,7 @@ public class MaestroDePersonas  implements Runnable{
 							
 							logger.error("[MAESTRO DE PERSONAS] GENERANDO ID PERSONA");
 							personaDto.setIdCliente(ID_CLIENTE_HAYA);
-							personaDto.setIdPersonaOrigen(clienteCom.getDocumento());
+							personaDto.setIdPersonaOrigen(documento);
 							personaDto.setIdMotivoOperacion(MOTIVO_OPERACION_ALTA);
 							personaDto.setIdOrigen(ID_ORIGEN_REM);
 							personaDto.setFechaOperacion(today);

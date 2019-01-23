@@ -1888,9 +1888,9 @@ public class AgrupacionAdapter {
 
 			DDSubtipoTrabajo subtipoTrabajo = (DDSubtipoTrabajo) utilDiccionarioApi
 					.dameValorDiccionarioByCod(DDSubtipoTrabajo.class, activoApi.getSubtipoTrabajoByOferta(oferta));
-			Trabajo trabajo = trabajoApi.create(subtipoTrabajo, listaActivos, null);
-
+			Trabajo trabajo = trabajoApi.create(subtipoTrabajo, listaActivos, null, false);
 			activoManager.crearExpediente(oferta, trabajo);
+			trabajoApi.createTramiteTrabajo(trabajo);
 		}
 
 		//genericDao.update(Oferta.class, oferta);

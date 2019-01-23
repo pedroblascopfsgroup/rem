@@ -270,21 +270,24 @@ public class TabActivoInformeComercial implements TabActivoService {
 
 			// Datos de la Comunidad de vecinos al Dto.
 			if (!Checks.esNulo(activo.getComunidadPropietarios())) {
-				ActivoComunidadPropietarios comunidadPropietarios = new ActivoComunidadPropietarios();
-				comunidadPropietarios = activo.getComunidadPropietarios();
-
 				// Comunidad inscrita = constituida.
-				beanUtilNotNull.copyProperty(informeComercial, "inscritaComunidad", comunidadPropietarios.getConstituida());
-				// Derrama de la comunidad.
-				beanUtilNotNull.copyProperty(informeComercial, "derramaOrientativaComunidad", activo.getInfoComercial().getDerramaOrientativaComunidad());
-				// Cuota de la comunidad, tomada del importe medio.
-				beanUtilNotNull.copyProperty(informeComercial, "cuotaOrientativaComunidad", activo.getInfoComercial().getCuotaOrientativaComunidad());
-				// Nombre y telefono Presidente.
-				beanUtilNotNull.copyProperty(informeComercial, "nomPresidenteComunidad", comunidadPropietarios.getNomPresidente());
-				beanUtilNotNull.copyProperty(informeComercial, "telPresidenteComunidad", comunidadPropietarios.getTelfPresidente());
-				// Nombre y telefono Administrador.
-				beanUtilNotNull.copyProperty(informeComercial, "nomAdministradorComunidad", comunidadPropietarios.getNomAdministrador());
-				beanUtilNotNull.copyProperty(informeComercial, "telAdministradorComunidad", comunidadPropietarios.getTelfAdministrador());
+				if(activo.getComunidadPropietarios() != null){
+					beanUtilNotNull.copyProperty(informeComercial, "inscritaComunidad", activo.getComunidadPropietarios().getConstituida());
+					// Nombre y telefono Presidente.
+					beanUtilNotNull.copyProperty(informeComercial, "nomPresidenteComunidad", activo.getComunidadPropietarios().getNomPresidente());
+					beanUtilNotNull.copyProperty(informeComercial, "telPresidenteComunidad", activo.getComunidadPropietarios().getTelfPresidente());
+					// Nombre y telefono Administrador.
+					beanUtilNotNull.copyProperty(informeComercial, "nomAdministradorComunidad", activo.getComunidadPropietarios().getNomAdministrador());
+					beanUtilNotNull.copyProperty(informeComercial, "telAdministradorComunidad", activo.getComunidadPropietarios().getTelfAdministrador());
+				}
+				
+				if(activo.getInfoComercial() != null){
+					// Derrama de la comunidad.
+					beanUtilNotNull.copyProperty(informeComercial, "derramaOrientativaComunidad", activo.getInfoComercial().getDerramaOrientativaComunidad());
+					// Cuota de la comunidad, tomada del importe medio.
+					beanUtilNotNull.copyProperty(informeComercial, "cuotaOrientativaComunidad", activo.getInfoComercial().getCuotaOrientativaComunidad());
+				}				
+				
 				
 			}
 

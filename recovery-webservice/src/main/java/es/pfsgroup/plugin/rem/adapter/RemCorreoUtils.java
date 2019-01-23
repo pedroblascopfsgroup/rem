@@ -125,11 +125,13 @@ public class RemCorreoUtils {
 			String paraAcumulado = "";
 			int i = 0;
 			for (String para : mailsPara) {
-				if (i > 0) {
-					paraAcumulado = paraAcumulado.concat(",");
+				if (para != null && para.length() > 0) {
+					if (i > 0) {
+						paraAcumulado = paraAcumulado.concat(",");
+					}
+					paraAcumulado = paraAcumulado.concat(para);
+					i++;
 				}
-				paraAcumulado = paraAcumulado.concat(para);
-				i++;
 			}
 			traza.setTo(paraAcumulado);
 		}

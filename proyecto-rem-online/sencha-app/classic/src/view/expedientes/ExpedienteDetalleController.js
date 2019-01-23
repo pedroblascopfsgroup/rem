@@ -1382,7 +1382,6 @@ Ext
 					},
 
 					cargarDatosCompradorWizard : function(window) { // ELISA
-						debugger;
 						var me = this,
 						    model = null, 
 						    id = window.idComprador,
@@ -2091,7 +2090,6 @@ Ext
 					},
 
 					onClickBotonCrearComprador : function(btn) { // ELISA
-						debugger;
 						var me = this, 
 						ventanaDetalle = btn.up().up(),
 				 		window = ventanaDetalle.up().xtype,
@@ -2106,7 +2104,6 @@ Ext
 							comprador = ventanaDetalle.getBindRecord().comprador;
 							
 							if (pedirDocValor == 'false'){
-								debugger;
 								//TODO PARTE ALEJANDRO GD
 								url = $AC.getRemoteUrl('expedientecomercial/getListAdjuntosComprador');
 			     				
@@ -2194,7 +2191,6 @@ Ext
 					
 					
 					onClickBotonCrearComprador2 : function(btn) {
-						debugger;
 						 var me = this, 
 			                window = btn.up('datoscompradorwizard'), 
 			                form = window.getForm(),

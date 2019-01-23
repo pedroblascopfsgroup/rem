@@ -2,8 +2,10 @@ package es.pfsgroup.plugin.rem.activo.dao;
 
 import java.util.List;
 
+import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.dao.AbstractDao;
 import es.pfsgroup.plugin.rem.model.ActivoPatrimonioContrato;
+import es.pfsgroup.plugin.rem.model.DtoActivoVistaPatrimonioContrato;
 import es.pfsgroup.plugin.rem.model.VActivoPatrimonioContrato;
 
 public interface ActivoPatrimonioContratoDao extends AbstractDao<ActivoPatrimonioContrato, Long>{
@@ -14,7 +16,7 @@ public interface ActivoPatrimonioContratoDao extends AbstractDao<ActivoPatrimoni
 	 * @return ActivoPatrimonio
 	 */
 	public List<ActivoPatrimonioContrato> getActivoPatrimonioContratoByActivo(Long idActivo);
-	
-	public List<VActivoPatrimonioContrato> getActivosRelacionados(Long idActivo);
+
+	Page getActivosRelacionados(DtoActivoVistaPatrimonioContrato dto);
 
 }

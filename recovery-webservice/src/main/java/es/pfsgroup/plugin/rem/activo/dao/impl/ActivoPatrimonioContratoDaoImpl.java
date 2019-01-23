@@ -7,10 +7,13 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
+import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.dao.AbstractEntityDao;
+import es.pfsgroup.commons.utils.HQLBuilder;
+import es.pfsgroup.commons.utils.HibernateQueryUtils;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoPatrimonioContratoDao;
 import es.pfsgroup.plugin.rem.model.ActivoPatrimonioContrato;
-import es.pfsgroup.plugin.rem.model.VActivoPatrimonioContrato;
+import es.pfsgroup.plugin.rem.model.DtoActivoVistaPatrimonioContrato;
 
 @Repository("ActivoPatrimonioContratoDao")
 public class ActivoPatrimonioContratoDaoImpl extends AbstractEntityDao<ActivoPatrimonioContrato, Long>  implements ActivoPatrimonioContratoDao{
@@ -29,11 +32,13 @@ public class ActivoPatrimonioContratoDaoImpl extends AbstractEntityDao<ActivoPat
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<VActivoPatrimonioContrato> getActivosRelacionados(Long idActivo) {
-		DetachedCriteria criteria = DetachedCriteria.forClass(VActivoPatrimonioContrato.class);
-		criteria.add(Restrictions.eq("activo.id", idActivo));
+	public Page getActivosRelacionados(DtoActivoVistaPatrimonioContrato dto) {
+		HQLBuilder hb = new HQLBuilder(" from VActivoPatrimonioContrato va");
+		HQLBuilder.addFiltroIgualQue(hb, "va.idContrato", dto.getIdContrato());
+		HQLBuilder.addFiltroIgualQue(hb, "va.nombrePrinex", dto.getNombrePrinex());
+		hb.appendWhere("va.activo != " + dto.getActivo());
 
-		return getHibernateTemplate().findByCriteria(criteria);
+		return HibernateQueryUtils.page(this, hb, dto);
 	}
 
 

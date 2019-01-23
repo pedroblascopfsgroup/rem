@@ -121,6 +121,7 @@ import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoActivoOcupanteLegal;
 import es.pfsgroup.plugin.rem.model.DtoActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.DtoActivoValoraciones;
+import es.pfsgroup.plugin.rem.model.DtoActivoVistaPatrimonioContrato;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoAdmisionDocumento;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionesActivo;
@@ -1104,17 +1105,29 @@ public class ActivoAdapter {
 
 	}
 	
-	public List<VActivoPatrimonioContrato> getListAsociadosById(Long id) {
-		List<VActivoPatrimonioContrato> listaActivoVistaPatrimonioContrato = new ArrayList<VActivoPatrimonioContrato>();
-		List<ActivoPatrimonioContrato> list = actPatrimonioDao.getActivoPatrimonioContratoByActivo(id);
-		VActivoPatrimonioContrato activoActual = genericDao.get(VActivoPatrimonioContrato.class, genericDao.createFilter(FilterType.EQUALS, "activo",id));
-		if(!Checks.estaVacio(list)) {
-			ActivoPatrimonioContrato a = list.get(0);
-			listaActivoVistaPatrimonioContrato = genericDao.getList(VActivoPatrimonioContrato.class, genericDao.createFilter(FilterType.EQUALS, "idContrato",a.getIdContrato()),genericDao.createFilter(FilterType.EQUALS, "nombrePrinex",a.getNomPrinex()));
-			listaActivoVistaPatrimonioContrato.remove(activoActual);
+	@SuppressWarnings("unchecked")
+	public DtoPage getListAsociadosById(DtoActivoVistaPatrimonioContrato dto) {
+		VActivoPatrimonioContrato activoActual = genericDao.get(VActivoPatrimonioContrato.class, genericDao.createFilter(FilterType.EQUALS, "activo",dto.getActivo()));
+		Page page = null;
+		List<DtoActivoVistaPatrimonioContrato> lista = null;
+		try {
+			BeanUtils.copyProperty(dto, "idContrato", activoActual.getIdContrato());
+			BeanUtils.copyProperty(dto, "nombrePrinex", activoActual.getNombrePrinex());
+			page = actPatrimonioDao.getActivosRelacionados(dto);
+			lista = new ArrayList<DtoActivoVistaPatrimonioContrato>();
+			for (VActivoPatrimonioContrato activo: (List<VActivoPatrimonioContrato>) page.getResults()) {
+				DtoActivoVistaPatrimonioContrato dtoActivo =  new DtoActivoVistaPatrimonioContrato();
+				BeanUtils.copyProperties(dtoActivo, activo);
+				lista.add(dtoActivo);
+			}
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			e.printStackTrace();
 		}
 		
-		return listaActivoVistaPatrimonioContrato;
+		return new DtoPage(lista,page.getTotalCount());
+		
 	}
 
 	public List<DtoAgrupacionesActivo> getListAgrupacionesActivoById(Long id) {

@@ -1047,16 +1047,15 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 	    	},
 	    	
 	    	storeActivosAsociados: {
-	    		pageSize: $AC.getDefaultPageSize(),
+	    		pageSize: 10,
 	    		model: 'HreRem.model.ActivosAsociados',
     			proxy: {
     				type: 'uxproxy',
     				remoteUrl: 'activo/getListAsociadosById',
-    				extraParams: {id: '{activo.id}'}
+    				extraParams: {activo: '{activo.id}'} 
     			},
-    			remoteSort: false,
-    		    remoteFilter: false,	    	
-    		    autoLoad: true
+    			remoteSort: true,
+    		    remoteFilter: true
 	    	},
 	    	
 	    	filtroComboSubtipoTrabajo: {    		

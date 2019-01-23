@@ -7407,20 +7407,31 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				
 				if(!Checks.esNulo(expediente.getCondicionante())) {
 					dto.setMesesFianza(expediente.getCondicionante().getMesesFianza());
-				}
-				
-				if(!Checks.esNulo(expediente.getCondicionante())) {
 					if(!Checks.esNulo(expediente.getCondicionante().getCarencia())){
-							dto.setCarenciaALquiler(expediente.getCondicionante().getMesesCarencia());
+						dto.setCarenciaALquiler(expediente.getCondicionante().getMesesCarencia());
 					}
 				}
-				
-				if(!Checks.esNulo(expediente.getCompradorPrincipal())) {
-					dto.setCompradorNombre(expediente.getCompradorPrincipal().getNombre());
-					dto.setCompradorApellidos(expediente.getCompradorPrincipal().getApellidos());
-					dto.setCompradorDocumento(expediente.getCompradorPrincipal().getDocumento());
+				List <CompradorExpediente> compradores=expediente.getCompradores();
+				if(!Checks.estaVacio(compradores)) {
+					if(compradores.size() <= 1) {
+						if(!Checks.esNulo(expediente.getCompradorPrincipal())) {
+							dto.setCompradorNombre(expediente.getCompradorPrincipal().getNombre());
+							dto.setCompradorApellidos(expediente.getCompradorPrincipal().getApellidos());
+							dto.setCompradorDocumento(expediente.getCompradorPrincipal().getDocumento());
+						}
+					}else {
+						
+						Long compradorId = compradores.get(0).getComprador();
+						Filter filtroComprador = genericDao.createFilter(FilterType.EQUALS, "id", compradorId);
+						Comprador comprador = genericDao.get(Comprador.class, filtroComprador);
+						
+						dto.setCompradorNombre(comprador.getNombre());
+						dto.setCompradorApellidos(comprador.getApellidos());
+						dto.setCompradorDocumento(comprador.getDocumento());
+					}
 				}
 			
+				
 				
 				
 				String stringAux = "";

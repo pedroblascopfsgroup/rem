@@ -7306,8 +7306,15 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 						dto.setCodPostal(Integer.parseInt(activo.getCodPostal()));
 					}
 					
-					dto.setMunicipio(activo.getMunicipio());
-					
+			    	if(!Checks.esNulo(activo.getMunicipio())) {
+				    	String codigoMunicipio = activo.getMunicipio();
+				    	Filter filtroMunicipio = genericDao.createFilter(FilterType.EQUALS, "codigo", codigoMunicipio);
+						Localidad localidad = genericDao.get(Localidad.class, filtroMunicipio);
+						if(!Checks.esNulo(localidad)) {
+							dto.setMunicipio(localidad.getDescripcion());
+						}
+			    	}
+			    	
 					if(!Checks.esNulo(activo.getTipoActivo())) {
 						dto.setTipoActivo(activo.getTipoActivo().getDescripcion());
 					}
@@ -7400,39 +7407,23 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				dto.setFechaAltaExpedienteComercial(expediente.getFechaAlta());
 
 				if(!Checks.esNulo(expediente.getCondicionante())) {
+					dto.setMesesFianza(expediente.getCondicionante().getMesesFianza());
 						if(!Checks.esNulo(expediente.getCondicionante().getImporteFianza())){
 							dto.setImporteFianza((BigDecimal.valueOf(expediente.getCondicionante().getImporteFianza())));
 						}
-				}
-				
-				if(!Checks.esNulo(expediente.getCondicionante())) {
-					dto.setMesesFianza(expediente.getCondicionante().getMesesFianza());
 					if(!Checks.esNulo(expediente.getCondicionante().getCarencia())){
 						dto.setCarenciaALquiler(expediente.getCondicionante().getMesesCarencia());
 					}
 				}
-				List <CompradorExpediente> compradores=expediente.getCompradores();
-				if(!Checks.estaVacio(compradores)) {
-					if(compradores.size() <= 1) {
-						if(!Checks.esNulo(expediente.getCompradorPrincipal())) {
-							dto.setCompradorNombre(expediente.getCompradorPrincipal().getNombre());
-							dto.setCompradorApellidos(expediente.getCompradorPrincipal().getApellidos());
-							dto.setCompradorDocumento(expediente.getCompradorPrincipal().getDocumento());
-						}
-					}else {
-						
-						Long compradorId = compradores.get(0).getComprador();
-						Filter filtroComprador = genericDao.createFilter(FilterType.EQUALS, "id", compradorId);
-						Comprador comprador = genericDao.get(Comprador.class, filtroComprador);
-						
-						dto.setCompradorNombre(comprador.getNombre());
-						dto.setCompradorApellidos(comprador.getApellidos());
-						dto.setCompradorDocumento(comprador.getDocumento());
+				
+				if(!Checks.esNulo(expediente.getOferta())) {
+					if(!Checks.esNulo(expediente.getOferta().getCliente())) {
+						ClienteComercial cliente = expediente.getOferta().getCliente();
+						dto.setCompradorNombre(cliente.getNombre());
+						dto.setCompradorApellidos(cliente.getApellidos());
+						dto.setCompradorDocumento(cliente.getDocumento());
 					}
 				}
-			
-				
-				
 				
 				String stringAux = "";
 				

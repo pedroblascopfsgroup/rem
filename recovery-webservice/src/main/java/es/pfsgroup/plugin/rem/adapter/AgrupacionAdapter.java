@@ -772,18 +772,22 @@ public class AgrupacionAdapter {
 						throw new JsonViewerException("El activo no es comercializable");
 					}
 					
+					
+					
+					
 					// El activo ya esta en una agrupacion comercial viva
 					if (particularValidator.activoEnAgrupacionComercialViva(Long.toString(numActivo))) {
 						throw new JsonViewerException("El activo está incluido en otro lote comercial vivo");
 					}
 					
-					// El activo tiene ofertas vivas
-					if (particularValidator.existeActivoConExpedienteComercialVivo(Long.toString(numActivo))) {
-						throw new JsonViewerException("El activo tiene ofertas individuales vivas");
-					}
 					
 					// Agrupacion Comercial - Alquiler
 					if (DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_ALQUILER.equals(agrupacion.getTipoAgrupacion().getCodigo())) {
+					
+						// El activo tiene ofertas vivas
+						if (particularValidator.existeActivoConExpedienteComercialVivo(Long.toString(numActivo))) {
+							throw new JsonViewerException("El activo tiene ofertas individuales vivas");
+						}
 						
 						// El activo es de alquiler
 						if (DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(activo.getActivoPublicacion().getTipoComercializacion().getCodigo())
@@ -808,6 +812,15 @@ public class AgrupacionAdapter {
 				
 				
 				if(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_VENTA.equals(agrupacion.getTipoAgrupacion().getCodigo())){
+					
+					
+					//existeOfertaAprobadaActivo
+					// El activo tiene ofertas vivas
+					if (particularValidator.existeOfertaAprobadaActivo(Long.toString(numActivo))) {
+						throw new JsonViewerException("El activo tiene ofertas individuales vivas");
+					}
+					
+					
 					if(DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(activo.getActivoPublicacion().getTipoComercializacion().getCodigo())){
 						throw new JsonViewerException("El destino comercial del activo no coincide con el de la agrupación");
 					}

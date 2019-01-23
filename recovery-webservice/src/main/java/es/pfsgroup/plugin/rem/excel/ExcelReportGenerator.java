@@ -57,6 +57,10 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 
 	private static final int START_REPORT_ROW = 0;
 	
+	private static final String TOTAL = "TOTAL";
+	
+	private static final int NUMERO_COLUMNAS = 21;
+	
 	@Resource
 	Properties appProperties;
 	
@@ -287,34 +291,21 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 			style.setBorderRight(XSSFCellStyle.BORDER_THIN);
 			style.setBorderLeft(XSSFCellStyle.BORDER_THIN);
 			
-//			r = mySheet.getRow(0);
-//			r = mySheet.getRow(6);
-//			r = mySheet.getRow(8);
+
 			
 			mySheet.shiftRows(currentRow, currentRow+1, l_DtoPropuestaAlq.size()-2);
 			
 			for (int i = currentRow-1; i < currentRow-1 + l_DtoPropuestaAlq.size()-1; i++) {
 				mySheet.createRow(i);
 				r = mySheet.getRow(i);
-				for (int j = 0; j < 21; j++) {
+				for (int j = 0; j < NUMERO_COLUMNAS; j++) {
 					r.createCell(j);
 					c = r.getCell(j);
 					c.setCellStyle(style);
 				}
 			}
 			
-//			r = mySheet.getRow(5);
-//			
-//			mySheet.createRow(6);
-//			r = mySheet.getRow(6);
-//			r.createCell(0);
-//			c = r.getCell(0);
-//			c.setCellValue("HOLA SDASDAD);
-//			
-//			r = mySheet.getRow(7);
-//			r = mySheet.getRow(8);
-			
-			
+					
 			
 			for (int i = 0; i < l_DtoPropuestaAlq.size()-1; i++) {
 				
@@ -451,48 +442,62 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 					
 			}
 			
+			mySheet.createRow(currentRow);
+			r = mySheet.getRow(currentRow);
+			for (int j = 0; j < NUMERO_COLUMNAS; j++) {
+				r.createCell(j);
+				c = r.getCell(j);
+			}
 			
-//			dtoPAB = l_DtoPropuestaAlq.get(l_DtoPropuestaAlq.size()-1);
-//			numActivo = dtoPAB.getNumActivoUvem();
-//			
-//			cellReference = new CellReference("A" + Integer.toString(currentRow)); // LOTE ??
-//			r = mySheet.getRow(cellReference.getRow());
-//			c = r.getCell(cellReference.getCol());
-//				c.setCellValue("TOTAL");
-//				
-//			cellReference = new CellReference("B" + Integer.toString(currentRow)); // ACTIVO
-//			r = mySheet.getRow(cellReference.getRow());
-//			c = r.getCell(cellReference.getCol());
-//			if (!Checks.esNulo(numActivo))
-//				c.setCellValue(numActivo.toString());
-//			
-//			int fila = 7 + l_DtoPropuestaAlq.size()-2;  //Empieza en la fila 7.
-//			String formula = "SUM(K7:K"+fila+")";
-//			cellReference = new CellReference("K" + Integer.toString(currentRow)); // VALOR ORIENTATIVO
-//			r = mySheet.getRow(cellReference.getRow());
-//			c = r.getCell(cellReference.getCol());
-//			c.setCellType(XSSFCell.CELL_TYPE_FORMULA);
-//			c.setCellFormula(formula);
-//			
-//			formula = "SUM(L7:L"+fila+")";
-//			cellReference = new CellReference("L" + Integer.toString(currentRow)); // VALOR CONTABLE NETO
-//			r = mySheet.getRow(cellReference.getRow());
-//			c = r.getCell(cellReference.getCol());
-//			c.setCellType(XSSFCell.CELL_TYPE_FORMULA);
-//			c.setCellFormula(formula);
-//			
-//			cellReference = new CellReference("O" + Integer.toString(currentRow)); // RENTA OFERTADA
-//			r = mySheet.getRow(cellReference.getRow());
-//			c = r.getCell(cellReference.getCol());
-//			if (!Checks.esNulo(dtoPAB.getImporteOferta()))
-//				c.setCellValue(dtoPAB.getImporteOferta().toString());
-//			
-//			formula = "SUM(P7:P"+fila+")";
-//			cellReference = new CellReference("P" + Integer.toString(currentRow)); // RENTA BONIFICADA
-//			r = mySheet.getRow(cellReference.getRow());
-//			c = r.getCell(cellReference.getCol());
-//			c.setCellType(XSSFCell.CELL_TYPE_FORMULA);
-//			c.setCellFormula(formula);
+			dtoPAB = l_DtoPropuestaAlq.get(l_DtoPropuestaAlq.size()-1);
+			numActivo = dtoPAB.getNumActivoUvem();
+			
+			cellReference = new CellReference("A" + Integer.toString(currentRow)); // LOTE ??
+			r = mySheet.getRow(cellReference.getRow());
+			c = r.getCell(cellReference.getCol());
+				c.setCellValue(TOTAL);
+				c.setCellStyle(style);
+				
+				
+			cellReference = new CellReference("B" + Integer.toString(currentRow)); // ACTIVO
+			r = mySheet.getRow(cellReference.getRow());
+			c = r.getCell(cellReference.getCol());
+			if (!Checks.esNulo(numActivo)) {
+				c.setCellValue(numActivo.toString());
+				c.setCellStyle(style);
+			}
+			int fila = 7 + l_DtoPropuestaAlq.size()-2;  //Empieza en la fila 7.
+			String formula = "SUM(K7:K"+fila+")";
+			cellReference = new CellReference("K" + Integer.toString(currentRow)); // VALOR ORIENTATIVO
+			r = mySheet.getRow(cellReference.getRow());
+			c = r.getCell(cellReference.getCol());
+			c.setCellType(XSSFCell.CELL_TYPE_FORMULA);
+			c.setCellFormula(formula);
+			c.setCellStyle(style);
+			
+			formula = "SUM(L7:L"+fila+")";
+			cellReference = new CellReference("L" + Integer.toString(currentRow)); // VALOR CONTABLE NETO
+			r = mySheet.getRow(cellReference.getRow());
+			c = r.getCell(cellReference.getCol());
+			c.setCellType(XSSFCell.CELL_TYPE_FORMULA);
+			c.setCellFormula(formula);
+			c.setCellStyle(style);
+			
+			cellReference = new CellReference("O" + Integer.toString(currentRow)); // RENTA OFERTADA
+			r = mySheet.getRow(cellReference.getRow());
+			c = r.getCell(cellReference.getCol());
+			if (!Checks.esNulo(dtoPAB.getImporteOferta())) {
+				c.setCellValue(dtoPAB.getImporteOferta().toString());
+				c.setCellStyle(style);
+			}
+			
+			formula = "SUM(P7:P"+fila+")";
+			cellReference = new CellReference("P" + Integer.toString(currentRow)); // RENTA BONIFICADA
+			r = mySheet.getRow(cellReference.getRow());
+			c = r.getCell(cellReference.getCol());
+			c.setCellType(XSSFCell.CELL_TYPE_FORMULA);
+			c.setCellFormula(formula);
+			c.setCellStyle(style);
 			
 			myWorkBook.write(fileOutStream);
 			fileOutStream.close();

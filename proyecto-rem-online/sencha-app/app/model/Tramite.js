@@ -157,6 +157,10 @@ Ext.define('HreRem.model.Tramite', {
     	{
     		name: 'ocultarBotonResolucionAlquiler',
     		type: 'boolean'
+    	},
+    	{
+    		name: 'tramiteAlquilerAnulado',
+    		type: 'boolean'
     	}
     ],
 

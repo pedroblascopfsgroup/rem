@@ -755,14 +755,10 @@ public class AgrupacionAdapter {
 			}
 
 			if (!Checks.esNulo(numActivo)){
-				if(!particularValidator.esActivoIncluidoPerimetro(Long.toString(numActivo))){
+				if(!DDTipoAgrupacion.AGRUPACION_ASISTIDA.equals(agrupacion.getTipoAgrupacion().getCodigo()) && !particularValidator.esActivoIncluidoPerimetro(Long.toString(numActivo))){
 					throw new JsonViewerException("El activo se encuetra fuera del perímetro HAYA");
-				}
-			}
-
-			if (!Checks.esNulo(numActivo)){
-				if(particularValidator.isActivoNoComercializable(Long.toString(numActivo))){
-					throw new JsonViewerException("El activo no es comercializable");
+				} else if (DDTipoAgrupacion.AGRUPACION_ASISTIDA.equals(agrupacion.getTipoAgrupacion().getCodigo()) && particularValidator.esActivoIncluidoPerimetro(Long.toString(numActivo))){
+					throw new JsonViewerException("El activo se encuetra dentro del perímetro HAYA");
 				}
 			}
 
@@ -772,7 +768,11 @@ public class AgrupacionAdapter {
 				if (DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_VENTA.equals(agrupacion.getTipoAgrupacion().getCodigo())
 						|| DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_ALQUILER.equals(agrupacion.getTipoAgrupacion().getCodigo())) {
 					
-						
+					// El activo no es comercializable
+					if(particularValidator.isActivoNoComercializable(Long.toString(numActivo))){
+						throw new JsonViewerException("El activo no es comercializable");
+					}
+					
 					// El activo ya esta en una agrupacion comercial viva
 					if (particularValidator.activoEnAgrupacionComercialViva(Long.toString(numActivo))) {
 						throw new JsonViewerException("El activo está incluido en otro lote comercial vivo");
@@ -1776,7 +1776,7 @@ public class AgrupacionAdapter {
 
 	public List<VOfertasActivosAgrupacion> getListOfertasAgrupacion(Long idAgrupacion) {
 
-		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "idAgrupacion", idAgrupacion.toString());
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "idAgrupacion", idAgrupacion);
 
 		List<VOfertasActivosAgrupacion> ofertasAgrupacion = genericDao.getList(VOfertasActivosAgrupacion.class, filtro);
 
@@ -1910,7 +1910,9 @@ public class AgrupacionAdapter {
 
 				List<Oferta> ofertasVivasAgrupacion = ofertaDao.getListOtrasOfertasVivasAgr(oferta.getId(), agrupacion.getId());
 
-				if (!Checks.esNulo(ofertasVivasAgrupacion) && ofertasVivasAgrupacion.isEmpty()) {
+				if ((agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_VENTA) 
+						|| agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_ALQUILER))
+						&& !Checks.esNulo(ofertasVivasAgrupacion) && ofertasVivasAgrupacion.isEmpty()) {
 					agrupacion.setFechaBaja(new Date());
 					activoAgrupacionApi.saveOrUpdate(agrupacion);
 				}
@@ -2232,7 +2234,6 @@ public class AgrupacionAdapter {
 		return res;
 	}
 
-	@SuppressWarnings("unused")
 	@Transactional(readOnly = false)
 	public String saveAgrupacion(DtoAgrupaciones dto, Long id) throws Exception {
 
@@ -2625,11 +2626,12 @@ public class AgrupacionAdapter {
 									activoPublicacion = new ActivoPublicacion();
 									activoPublicacion.setActivo(activoAgrupacionActivo.getActivo());
 								}
-								String destino_comercial = activoPublicacion.getTipoComercializacion().getCodigo();
-								activoPublicacion.setTipoComercializacion(tipoComercializacion);
-
-
-
+								
+								
+								if(!Checks.esNulo(tipoComercializacion)) {
+									activoPublicacion.setTipoComercializacion(tipoComercializacion);
+								}
+								
 								if(!ofertaVivaAlquiler && DDTipoComercializacion.CODIGO_VENTA.equals(dto.getTipoComercializacionCodigo())) {
 									activoPatrimonio.setCheckHPM(false);
 								}
@@ -3040,7 +3042,7 @@ public class AgrupacionAdapter {
 						ofertas.add(ao.getPrimaryKey().getOferta());
 					}
 				}
-				if(!activoTieneOfertaByTipoOfertaCodigo(ofertas, tipoCodigo))
+				if(activoTieneOfertaByTipoOfertaCodigo(ofertas, tipoCodigo))
 				{
 					return false;
 				}

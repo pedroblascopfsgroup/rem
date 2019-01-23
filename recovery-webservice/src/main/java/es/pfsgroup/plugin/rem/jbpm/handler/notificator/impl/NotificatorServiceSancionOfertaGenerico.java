@@ -117,6 +117,7 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 	@Autowired
 	private TrabajoManager trabajoManager;
 
+	
 	@Override
 	public final void notificator(ActivoTramite tramite) {
 
@@ -214,7 +215,7 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 				}
 				
 				this.enviaNotificacionRechazar(tramite, activo, oferta, destinatarios.toArray(new String[] {}));
-			}
+			}			
 		}
 	}
 
@@ -367,7 +368,6 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 		HashMap<String, String> gestores = new HashMap<String, String>();
 
 		for (String s : claves) {
-			String email = null;
 			if (GESTOR_PRESCRIPTOR.equals(s)) {
 				ActivoProveedor prescriptor = ofertaApi.getPreescriptor(oferta);
 				if (!Checks.esNulo(prescriptor)){

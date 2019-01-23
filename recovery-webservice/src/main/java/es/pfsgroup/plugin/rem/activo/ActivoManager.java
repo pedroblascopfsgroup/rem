@@ -219,6 +219,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoUsoDestino;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposArras;
+import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PRINCIPAL;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PROPIEDAD;
@@ -360,6 +361,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 	@Autowired
 	private MSVRawSQLDao rawDao;
+	
+	@Autowired
+	private OfertaDao ofertaDao;
 
 	@Autowired
 	private AgrupacionAdapter agrupacionAdapter;
@@ -660,8 +664,18 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 			resultado = this.persistOferta(oferta);
 
-			// ofertaApi.updateStateDispComercialActivosByOferta(oferta);
-			// genericDao.update(Oferta.class, oferta);
+			if (!Checks.esNulo(oferta.getAgrupacion())) {
+				ActivoAgrupacion agrupacion = oferta.getAgrupacion();
+
+				List<Oferta> ofertasVivasAgrupacion = ofertaDao.getListOtrasOfertasVivasAgr(oferta.getId(), agrupacion.getId());
+
+				if ((agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_VENTA) 
+						|| agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_ALQUILER))
+						&& !Checks.esNulo(ofertasVivasAgrupacion) && ofertasVivasAgrupacion.isEmpty()) {
+					agrupacion.setFechaBaja(new Date());
+					activoAgrupacionApi.saveOrUpdate(agrupacion);
+				}
+			}
 
 			notificatorServiceSancionOfertaAceptacionYRechazo.notificatorFinSinTramite(oferta.getId());
 		}
@@ -2498,6 +2512,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		perimetroActivo.setAplicaGestion(0);
 		perimetroActivo.setAplicaTramiteAdmision(0);
 		perimetroActivo.setFechaAplicaComercializar(new Date());
+		perimetroActivo.setAplicaPublicar(true);
 
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDMotivoComercializacion.CODIGO_ASISTIDA);
 		DDMotivoComercializacion motivoComercializacion = genericDao.get(DDMotivoComercializacion.class, filtro);

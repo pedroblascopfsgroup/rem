@@ -20,10 +20,10 @@ public class VOfertasActivosAgrupacion implements Serializable {
 	
 	@Id
 	@Column(name= "ID")
-	private String id;
+	private Long id;
 	
 	@Column(name = "OFR_ID")
-	private String idOferta;
+	private Long idOferta;
 	
 	@Column(name = "OFR_NUM_OFERTA")  
 	private Long numOferta;
@@ -40,8 +40,8 @@ public class VOfertasActivosAgrupacion implements Serializable {
 	@Column(name = "OFERTANTE")
 	private String ofertante;
 	
-	/*@Column(name = "PRECIO_PUBLICADO")
-	private String precioPublicado;*/
+	@Column(name = "PRECIO_PUBLICADO")
+	private String precioPublicado;
 	
 	@Column(name = "OFR_IMPORTE")
 	private String importeOferta;
@@ -53,7 +53,7 @@ public class VOfertasActivosAgrupacion implements Serializable {
 	private String codigoEstadoOferta;
 	
 	@Column(name = "ECO_ID")
-	private String idExpediente;
+	private Long idExpediente;
 	
 	@Column(name = "ECO_NUM_EXPEDIENTE")
 	private Long numExpediente;
@@ -77,13 +77,13 @@ public class VOfertasActivosAgrupacion implements Serializable {
 //	private String activos;
 	
 	@Column(name= "ACT_ID")
-	private String idActivo;	
+	private Long idActivo;	
 	
 	@Column(name= "AGR_ID")
-	private String idAgrupacion;
+	private Long idAgrupacion;
 	
 	@Column(name= "GESTOR_LOTE")
-	private String gestorLote;
+	private Long gestorLote;
 
 	@Column(name = "DD_CAP_DESCRIPCION")
 	private String canalPrescripcionDescripcion;
@@ -128,16 +128,16 @@ public class VOfertasActivosAgrupacion implements Serializable {
 	private Long numActivoUvem;
 	
 	@Column(name="NUM_ACTIVO_SAREB")
-	private Long numActivoSareb;
+	private String numActivoSareb;
 	
 	@Column(name="NUM_ACTIVO_PRINEX")
 	private Long numActivoPrinex;
 
 	@Column(name="TIPO_COMERCIALIZACION")
-	private String tipoComercializacion;
+	private Long tipoComercializacion;
 	
 	@Column(name="CLASE_ACTIVO")
-	private String claseActivoBancario;
+	private Long claseActivoBancario;
 	
 	@Column(name="OFERTA_EXPRESS")
 	private Boolean ofertaExpress;	
@@ -159,11 +159,11 @@ public class VOfertasActivosAgrupacion implements Serializable {
 		this.fechaModificar = fechaModificar;
 	}
 
-	public String getIdOferta() {
+	public Long getIdOferta() {
 		return idOferta;
 	}
 
-	public void setIdOferta(String idOferta) {
+	public void setIdOferta(Long idOferta) {
 		this.idOferta = idOferta;
 	}
 
@@ -191,13 +191,13 @@ public class VOfertasActivosAgrupacion implements Serializable {
 		this.ofertante = ofertante;
 	}
 
-/*	public String getPrecioPublicado() {
+	public String getPrecioPublicado() {
 		return precioPublicado;
 	}
 
 	public void setPrecioPublicado(String precioPublicado) {
 		this.precioPublicado = precioPublicado;
-	}*/
+	}
 
 	public String getImporteOferta() {
 		return importeOferta;
@@ -247,11 +247,11 @@ public class VOfertasActivosAgrupacion implements Serializable {
 		this.numOferta = numOferta;
 	}
 
-	public String getIdExpediente() {
+	public Long getIdExpediente() {
 		return idExpediente;
 	}
 
-	public void setIdExpediente(String idExpediente) {
+	public void setIdExpediente(Long idExpediente) {
 		this.idExpediente = idExpediente;
 	}
 
@@ -287,21 +287,6 @@ public class VOfertasActivosAgrupacion implements Serializable {
 //		this.activos = activos;
 //	}
 
-	public String getIdActivo() {
-		return idActivo;
-	}
-
-	public void setIdActivo(String idActivo) {
-		this.idActivo = idActivo;
-	}
-
-	public String getIdAgrupacion() {
-		return idAgrupacion;
-	}
-
-	public void setIdAgrupacion(String idAgrupacion) {
-		this.idAgrupacion = idAgrupacion;
-	}
 
 	public String getCanalPrescripcionDescripcion() {
 		return canalPrescripcionDescripcion;
@@ -349,14 +334,6 @@ public class VOfertasActivosAgrupacion implements Serializable {
 
 	public void setDocumentoOfertante(String documentoOfertante) {
 		this.documentoOfertante = documentoOfertante;
-	}
-
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
 	}
 
 	public Date getFechaFirmaReserva() {
@@ -439,14 +416,6 @@ public class VOfertasActivosAgrupacion implements Serializable {
 		this.numActivoUvem = numActivoUvem;
 	}
 
-	public Long getNumActivoSareb() {
-		return numActivoSareb;
-	}
-
-	public void setNumActivoSareb(Long numActivoSareb) {
-		this.numActivoSareb = numActivoSareb;
-	}
-
 	public Long getNumActivoPrinex() {
 		return numActivoPrinex;
 	}
@@ -455,22 +424,6 @@ public class VOfertasActivosAgrupacion implements Serializable {
 		this.numActivoPrinex = numActivoPrinex;
 	}
 	
-	public String getTipoComercializacion() {
-		return tipoComercializacion;
-	}
-
-	public void setTipoComercializacion(String tipoComercializacion) {
-		this.tipoComercializacion = tipoComercializacion;
-	}
-
-	public String getClaseActivoBancario() {
-		return claseActivoBancario;
-	}
-
-	public void setClaseActivoBancario(String claseActivoBancario) {
-		this.claseActivoBancario = claseActivoBancario;
-	}
-
 	public Boolean getOfertaExpress() {
 		return ofertaExpress;
 	}
@@ -503,5 +456,60 @@ public class VOfertasActivosAgrupacion implements Serializable {
 		this.gencat = gencat;
 	}
 
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public Long getIdActivo() {
+		return idActivo;
+	}
+
+	public void setIdActivo(Long idActivo) {
+		this.idActivo = idActivo;
+	}
+
+	public Long getIdAgrupacion() {
+		return idAgrupacion;
+	}
+
+	public void setIdAgrupacion(Long idAgrupacion) {
+		this.idAgrupacion = idAgrupacion;
+	}
+
+	public Long getGestorLote() {
+		return gestorLote;
+	}
+
+	public void setGestorLote(Long gestorLote) {
+		this.gestorLote = gestorLote;
+	}
+
+	public String getNumActivoSareb() {
+		return numActivoSareb;
+	}
+
+	public void setNumActivoSareb(String numActivoSareb) {
+		this.numActivoSareb = numActivoSareb;
+	}
+
+	public Long getTipoComercializacion() {
+		return tipoComercializacion;
+	}
+
+	public void setTipoComercializacion(Long tipoComercializacion) {
+		this.tipoComercializacion = tipoComercializacion;
+	}
+
+	public Long getClaseActivoBancario() {
+		return claseActivoBancario;
+	}
+
+	public void setClaseActivoBancario(Long claseActivoBancario) {
+		this.claseActivoBancario = claseActivoBancario;
+	}
 
 }

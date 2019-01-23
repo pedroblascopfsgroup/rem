@@ -31,12 +31,14 @@ import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.ProveedoresApi;
 import es.pfsgroup.plugin.rem.api.TareaActivoApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
+import es.pfsgroup.plugin.rem.gencat.GencatManager;
 import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionService;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.AdjuntoExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.CompradorExpediente;
+import es.pfsgroup.plugin.rem.model.ComunicacionGencat;
 import es.pfsgroup.plugin.rem.model.DtoActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.InformeJuridico;
@@ -44,6 +46,7 @@ import es.pfsgroup.plugin.rem.model.TanteoActivoExpediente;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoComunicacionGencat;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoDocumentoExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoGasto;
@@ -94,6 +97,9 @@ public class ActivoTramiteManager implements ActivoTramiteApi{
     
     @Autowired
 	private TareaActivoManager tareaActivoManager;
+    
+    @Autowired
+    private GencatManager gencatManager;
     
 	
 	public ActivoTramite get(Long idTramite){
@@ -796,5 +802,23 @@ public class ActivoTramiteManager implements ActivoTramiteApi{
 		}
 
 		return listaTareaExterna;
+	}
+	
+	@Override
+	public Boolean tieneTramiteGENCATVigenteByIdActivo(Long idActivo){
+		
+		Boolean tieneTramiteGENCAT = false;
+		
+		if(!Checks.esNulo(idActivo)){
+			ComunicacionGencat comunicacionGencat = gencatManager.getComunicacionGencatByIdActivo(idActivo);
+			
+			if(!Checks.esNulo(comunicacionGencat) 
+					&& Checks.esNulo(comunicacionGencat.getFechaComunicacion())
+					&& DDEstadoComunicacionGencat.COD_CREADO.equalsIgnoreCase(comunicacionGencat.getEstadoComunicacion().getDescripcion())) {
+				tieneTramiteGENCAT = true;
+			}
+			
+		}
+		return tieneTramiteGENCAT;
 	}
 }

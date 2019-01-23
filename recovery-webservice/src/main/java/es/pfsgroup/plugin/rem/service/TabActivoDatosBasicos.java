@@ -50,8 +50,6 @@ import es.pfsgroup.plugin.rem.model.ActivoInfoLiberbank;
 import es.pfsgroup.plugin.rem.model.ActivoLocalizacion;
 import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
-import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
-import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
 import es.pfsgroup.plugin.rem.model.DtoEstadosInformeComercialHistorico;
 import es.pfsgroup.plugin.rem.model.DtoListadoGestores;
@@ -553,13 +551,15 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		}
 
 		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
-		for(DtoListadoGestores gestor : adapter.getGestoresActivos(activo.getId())){
+		List<DtoListadoGestores> listaGestores = adapter.getGestoresActivos(activo.getId());
+		for(DtoListadoGestores gestor : listaGestores){
 			if(usuarioLogado.getId().equals(gestor.getIdUsuario())
 					&& (GestorActivoApi.CODIGO_GESTOR_ALQUILERES.equals(gestor.getCodigo())
 					|| GestorActivoApi.CODIGO_SUPERVISOR_ALQUILERES.equals(gestor.getCodigo())
 					|| GestorActivoApi.CODIGO_GESTOR_COMERCIAL_ALQUILERES.equals(gestor.getCodigo())
 					|| GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL_ALQUILERES.equals(gestor.getCodigo()))) {
 				BeanUtils.copyProperty(activoDto, "esGestorAlquiler", true);
+				break;
 			}
 		}
 
@@ -590,26 +590,16 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				tieneOfertaAlquilerViva = true;
 			}
 		}*/
-		
-		List<ActivoTrabajo> listActivoT =  activo.getActivoTrabajos();
-		if(!Checks.estaVacio(listActivoT)){
-			for (ActivoTrabajo activoT : listActivoT){
-				Long idTrabajo = activoT.getTrabajo().getId();
-				ActivoTramite activoTramite = genericDao.get(ActivoTramite.class, genericDao.createFilter(FilterType.EQUALS, "trabajo.id", idTrabajo),genericDao.createFilter(FilterType.EQUALS, "activo.id",activo.getId()),genericDao.createFilter(FilterType.EQUALS, "tipoTramite.codigo", "T015"));
-				
-				if(!Checks.esNulo(activoTramite)){
-					List<TareaActivo>  listaTareas = tareaActivoApi.getTareasActivoByIdTramite(activoTramite.getId());
-					if(!Checks.estaVacio(listaTareas)){
-						for(TareaActivo tarea : listaTareas){
-							if(!tarea.getTareaFinalizada()){
-								tieneOfertaAlquilerViva = true;
-								break;
-							}
-						}
-					}
+		List<TareaActivo> listaTareas = tareaActivoApi.getTareasActivo(activo.getId(),ActivoTramiteApi.CODIGO_TRAMITE_COMERCIAL_ALQUILER);
+		if (!Checks.estaVacio(listaTareas)) {
+			for (TareaActivo tarea : listaTareas) {
+				if (!tarea.getTareaFinalizada()) {
+					tieneOfertaAlquilerViva = true;
+					break;
 				}
 			}
 		}
+		
 		
 		BeanUtils.copyProperty(activoDto, "tieneOfertaAlquilerViva", tieneOfertaAlquilerViva);
 
@@ -637,6 +627,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		for (VAdmisionDocumentos doc : admisionDocumentos) {
 			if ("CEE (Certificado de eficiencia energética)".equals(doc.getDescripcionTipoDoc()) && doc.getAplica().equals("1")) {
 				BeanUtils.copyProperty(activoDto, "tieneCEE", true);
+				break;
 			}
 		}
 

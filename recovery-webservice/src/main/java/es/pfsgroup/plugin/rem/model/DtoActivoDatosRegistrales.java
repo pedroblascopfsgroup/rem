@@ -112,7 +112,12 @@ public class DtoActivoDatosRegistrales extends DtoTabActivo {
 	private String descripcionCalificacionNegativa;
 	
 	
+	//Motivo Estado Calificación negativa
+	private String estadoMotivoCalificacionNegativa;
 	
+	//Responsable Subsanar
+	
+	private String responsableSubsanar;
 	
 	
 	
@@ -637,6 +642,18 @@ public class DtoActivoDatosRegistrales extends DtoTabActivo {
 	}
 	public void setDescripcionCalificacionNegativa(String descripcionCalificacionNegativa) {
 		this.descripcionCalificacionNegativa = descripcionCalificacionNegativa;
+	}
+	public String getEstadoMotivoCalificacionNegativa() {
+		return estadoMotivoCalificacionNegativa;
+	}
+	public void setEstadoMotivoCalificacionNegativa(String estadoMotivoCalificacionNegativa) {
+		this.estadoMotivoCalificacionNegativa = estadoMotivoCalificacionNegativa;
+	}
+	public String getResponsableSubsanar() {
+		return responsableSubsanar;
+	}
+	public void setResponsableSubsanar(String responsableSubsanar) {
+		this.responsableSubsanar = responsableSubsanar;
 	}
 
 

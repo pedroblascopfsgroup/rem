@@ -785,14 +785,17 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 							[
 								{
 						        	xtype: 'comboboxfieldbase',
+						        	reference: 'comboBoxCalificacionNegativa',
 							 		fieldLabel: HreRem.i18n('fieldlabel.calificacion.negativa'),
 						        	name: 'comboCalificacionNegativa',
+						        	
 						        	bind: {
 					            		store: '{comboCalificacionNegativa}',
 					            		value: '{datosRegistrales.calificacionNegativa}'
 					            	},
 						        	listeners : {
-						        		change: 'onChangeCalificacionNegativa'
+						        	    change: 'onChangeCalificacionNegativa',
+						        								        	
 						        	}
 						        },
 						        {
@@ -814,8 +817,10 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 									            listeners:{
 									            	change: function(){
 									            		var me = this;
+									            		console.log(me.getValue());
 									            		var campoDesc = me.lookupController('activodetalle').lookupReference('descMotivo');
 									            		if(me.getValue().includes(CONST.MOTIVOS_CAL_NEGATIVA["OTROS"])){
+									            			campoDesc.setDisabled(false); 
 									            			campoDesc.allowBlank = false;
 									            			campoDesc.setReadOnly(false);
 									            			if(me.up('activosdetallemain').getViewModel().get("editing")){
@@ -824,9 +829,15 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 									            				campoDesc.fireEvent('cancel');
 									            			}
 									            		}else{
+									            			campoDesc.setDisabled(true);
 									            			campoDesc.allowBlank = true;
 									            			campoDesc.setReadOnly(true);
 									            			campoDesc.fireEvent('cancel');
+									            		}
+									            		
+									            		if (me.getValue().length == 0){
+									            			var comboEstadoCalNegativa = me.lookupController('activodetalle').lookupReference('comboBoxCalificacionNegativa');
+									            			comboEstadoCalNegativa.setValue('02');
 									            		}
 									            	}
 									            }
@@ -837,7 +848,37 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 							 		fieldLabel: HreRem.i18n('fieldlabel.calificacion.descripcion'),
 							 		bind: '{datosRegistrales.descripcionCalificacionNegativa}'
 
-								}
+								},
+								{
+						        	xtype: 'comboboxfieldbase', 
+							 		fieldLabel: HreRem.i18n('fieldlabel.calificacion.estadomotivo.calificacion'),
+							 		reference: 'motivoCalificacionNegativa',
+						        	name: 'comboMotivoCalificacionNegativa',
+						        	disabled: true,
+						        	allowBlank:true,
+						        	bind: {
+					            		store: '{comboMotivoCalificacionNegativa}',
+					            		value: '{datosRegistrales.estadoMotivoCalificacionNegativa}'
+					            	},
+						        	listeners : {
+						        		//Eventos 
+						        	}
+						        },
+						    	{
+						        	xtype: 'comboboxfieldbase',
+							 		fieldLabel: HreRem.i18n('fieldlabel.calificacion.responsablesubsanar'),
+							 		reference: 'responsableSubsanar',
+							 		disabled: true,
+							 		allowBlank:true,
+						        	name: 'comboResponsableSubsanar',
+						        	bind: {
+					            		store: '{comboResponsableSubsanar}',
+					            		value: '{datosRegistrales.responsableSubsanar}'
+					            	},
+						        	listeners : {
+						        		//Eventos
+						        	}
+						        }
 							]
 		           		}
 

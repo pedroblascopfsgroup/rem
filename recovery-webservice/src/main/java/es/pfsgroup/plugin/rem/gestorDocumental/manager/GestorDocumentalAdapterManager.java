@@ -248,26 +248,32 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 	}
 	
 	@Override	
-	public Integer crearEntidadComprador(String idIntervinienteHaya, String usuarioLogado, String idActivo, String idAgrupacion, String idExpediente) throws GestorDocumentalException {
+	public Integer crearEntidadComprador(Long idIntervinienteHaya, String usuarioLogado, Long idActivo, Long idAgrupacion, Long idExpediente) throws GestorDocumentalException {
 
-		Activo activoOferta; ActivoAgrupacion agrupacionOferta;
+		Activo activoOferta; ActivoAgrupacion agrupacionOferta; ExpedienteComercial expedienteCom;
 		String idSistemaOrigen = null, cliente = null;
 		DDCartera cartera = null; DDSubcartera subcartera = null;
 		
 		String codClase = GestorDocumentalConstants.CODIGO_CLASE_EXPEDIENTE_PROYECTO;
 		
-		if(!Checks.esNulo(idActivo) && Checks.esNulo(idAgrupacion)) {
-			activoOferta = activoApi.get(Long.parseLong(idActivo));
+		if(!Checks.esNulo(idActivo) && Checks.esNulo(idAgrupacion) && Checks.esNulo(idExpediente)) {
+			activoOferta = activoApi.get(idActivo);
 			idSistemaOrigen = String.valueOf(activoOferta.getId());
 			
 			cartera = activoOferta.getCartera();
 			subcartera = activoOferta.getSubcartera();
-		} else if(!Checks.esNulo(idAgrupacion) && Checks.esNulo(idActivo)) {
-			agrupacionOferta = activoAgrupacionApi.get(Long.parseLong(idAgrupacion));
+		} else if(!Checks.esNulo(idAgrupacion) && Checks.esNulo(idActivo) && Checks.esNulo(idExpediente)) {
+			agrupacionOferta = activoAgrupacionApi.get(idAgrupacion);
 			idSistemaOrigen = String.valueOf(agrupacionOferta.getId());
 			
 			cartera = agrupacionOferta.getActivoPrincipal().getCartera();
 			subcartera = agrupacionOferta.getActivoPrincipal().getSubcartera();
+		} else if(!Checks.esNulo(idExpediente) && Checks.esNulo(idActivo) && Checks.esNulo(idAgrupacion)){
+			expedienteCom = expedienteComercialApi.findOne(idExpediente);
+			idSistemaOrigen = String.valueOf(expedienteCom.getId());
+			
+			cartera = expedienteCom.getOferta().getActivoPrincipal().getCartera();
+			subcartera = expedienteCom.getOferta().getActivoPrincipal().getSubcartera();
 		}
 		
 		cliente = getClienteByCarteraySubcartera(cartera, subcartera);
@@ -275,7 +281,7 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 		String descripcionExpediente = "";
 		
 		RecoveryToGestorExpAssembler recoveryToGestorAssembler =  new RecoveryToGestorExpAssembler(appProperties);
-		CrearEntidadCompradorDto crearActivoOferta = recoveryToGestorAssembler.getCrearActivoOferta(idIntervinienteHaya, usuarioLogado, cliente, idSistemaOrigen, codClase, descripcionExpediente, GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_ENTIDADES);
+		CrearEntidadCompradorDto crearActivoOferta = recoveryToGestorAssembler.getCrearActivoOferta(idIntervinienteHaya.toString(), usuarioLogado, cliente, idSistemaOrigen, codClase, descripcionExpediente, GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_ENTIDADES);
 		RespuestaCrearExpediente respuesta;
 
 		try {
@@ -341,11 +347,11 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 	}
 	
 	@Override
-	public List<DtoAdjunto> getAdjuntosEntidadComprador(String idIntervinienteHaya) throws GestorDocumentalException {
+	public List<DtoAdjunto> getAdjuntosEntidadComprador(Long idIntervinienteHaya) throws GestorDocumentalException {
 		RecoveryToGestorDocAssembler recoveryToGestorDocAssembler = new RecoveryToGestorDocAssembler(appProperties);
 		List<DtoAdjunto> list;
 
-		CabeceraPeticionRestClientDto cabecera = recoveryToGestorDocAssembler.getCabeceraPeticionRestClient(idIntervinienteHaya, 
+		CabeceraPeticionRestClientDto cabecera = recoveryToGestorDocAssembler.getCabeceraPeticionRestClient(idIntervinienteHaya.toString(), 
 				GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_ENTIDADES, GestorDocumentalConstants.CODIGO_CLASE_EXPEDIENTE_PROYECTO);
 		Usuario userLogin = genericAdapter.getUsuarioLogado();
 		DocumentosExpedienteDto docExpDto = recoveryToGestorDocAssembler.getDocumentosExpedienteDto(userLogin.getUsername());

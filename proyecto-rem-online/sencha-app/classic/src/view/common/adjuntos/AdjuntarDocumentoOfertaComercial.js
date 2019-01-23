@@ -63,7 +63,6 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoOfertacomercial', {
     	me.items = [
     				{
 	    				xtype: 'formBase',
-	    				url: $AC.getRemoteUrl("activooferta/saveDocumentoAdjuntoOferta"),
 	    				reference: 'adjuntarDocumentoFormRef',
 	    				collapsed: false,
 	   			 		scrollable	: 'y',
@@ -128,52 +127,61 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoOfertacomercial', {
     },
 
     onClickBotonAdjuntarDocumento: function(btn) {	
-    	debugger;
     	var me = this,
     	form = me.down("form");
-    	if(form.isValid()){
+    	var url = $AC.getRemoteUrl("expedientecomercial/saveDocumentoComprador");
+    	if(btn.up('anyadirnuevaofertaactivoadjuntardocumento').up().xtype.indexOf('oferta') >= 0) {
+    		url = $AC.getRemoteUrl("activooferta/saveDocumentoAdjuntoOferta");
+    	}
+    		if(form.isValid()){
+				form.submit({
+					url: url,
+	                waitMsg: HreRem.i18n('msg.mask.loading'),
+	                params: {docCliente : me.docCliente, idEntidad: me.idEntidad},
+	                success: function(fp, o) {
 
-            form.submit({
-                waitMsg: HreRem.i18n('msg.mask.loading'),
-                params: {docCliente : me.docCliente, idEntidad: me.idEntidad},
-                success: function(fp, o) {
+	                	if(o.result.success == "false") {
+	                		me.fireEvent("errorToast", o.result.errorMessage);
+	                	}else{
+	                		var url = null, ventanaWizard = null;
+	                		if(btn.up('anyadirnuevaofertaactivoadjuntardocumento').up().xtype.indexOf('oferta') >= 0) {
+	                			url = $AC.getRemoteUrl('activooferta/getListAdjuntos');
+	                			ventanaWizard = btn.up('wizardaltaoferta');
+	                		} else {
+	                			url = $AC.getRemoteUrl('expedientecomercial/getListAdjuntosComprador');
+	                			ventanaWizard = btn.up('wizardaltacomprador');
+	                		}
+	                		
+	                		Ext.Ajax.request({
+	                			 waitMsg: HreRem.i18n('msg.mask.loading'),
+	                		     url: url,
+	                			 method : 'GET',
+	                		     params: {docCliente : me.docCliente},
+	                		
+	                		     success: function(response, opts) {
+	                		    	 data = Ext.decode(response.responseText);
+	                		    	 if(!Ext.isEmpty(data.data[0])){
+	                		    	 	ventanaWizard.down('anyadirnuevaofertaactivoadjuntardocumento').getForm().findField('docOfertaComercial').setValue(data.data[0].nombre);
+	                		    	 	ventanaWizard.down('anyadirnuevaofertaactivoadjuntardocumento').down().down('panel').down('button').show();
+	                		    	 	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+	                		    	 }
+	                		     },
 
-                	if(o.result.success == "false") {
-                		me.fireEvent("errorToast", o.result.errorMessage);
-                	}else{
-                		debugger;
-                		var url = $AC.getRemoteUrl('activooferta/getListAdjuntos');
-            			var ventanaWizard = btn.up('wizardaltaoferta');
-            			
-            			Ext.Ajax.request({
-                		     url: url,
-                			 method : 'GET',
-                		     params: {docCliente : me.docCliente},
-                		
-                		     success: function(response, opts) {
-                		    	 debugger;
-                		    	 data = Ext.decode(response.responseText);
-                		    	 ventanaWizard.down('anyadirnuevaofertaactivoadjuntardocumento').getForm().findField('docOfertaComercial').setValue(data.data[0].nombre);
-                		    	 ventanaWizard.down('anyadirnuevaofertaactivoadjuntardocumento').down().down('panel').down('button').show();
-                		     },
-
-                			 failure: function(record, operation) {
-                				 me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-                			 }
-                		     
-                		});
-    		    		me.up('anyadirnuevaofertaactivoadjuntardocumento').down().down('panel').down('button').show();
-                	}
-                	if(!Ext.isEmpty(me.parent)) {
-                		me.parent.fireEvent("afterupload", me.parent);
-                	}
-                    me.close();
-                },
-                failure: function(fp, o) {
-                	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.subir.unico.documento"));
-                	me.close();
-                }
-            });
+	                			 failure: function(record, operation) {
+	                				 me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+	                			 }
+	                		});
+	                	}
+	                	if(!Ext.isEmpty(me.parent)) {
+	                		me.parent.fireEvent("afterupload", me.parent);
+	                	}
+	                    me.close();
+	                },
+	                failure: function(fp, o) {
+	                	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.subir.unico.documento"));
+	                	me.close();
+	                }
+	            });
+			}
         }
-    }
 });

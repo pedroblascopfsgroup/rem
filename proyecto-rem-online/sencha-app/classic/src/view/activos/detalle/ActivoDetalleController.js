@@ -1301,15 +1301,25 @@ Ext
 					},
 
 					abrirFormularioAdjuntarDocumentoOferta : function(grid) {
-						var me = this, idActivo = grid.up('wizardaltaoferta').oferta.data.idActivo, docCliente = me
-								.getViewModel().get(
-										"oferta.numDocumentoCliente");
-						Ext
-								.create(
-										"HreRem.view.common.adjuntos.AdjuntarDocumentoOfertacomercial",
+						var me = this;
+						var idEntidad = null, entidad = null,
+						docCliente = me.getViewModel().get("oferta.numDocumentoCliente");
+						if(grid.up('anyadirnuevaofertaactivoadjuntardocumento').up().xtype.indexOf('oferta') >= 0) {
+							if(grid.up('wizardaltaoferta').oferta.data.idActivo == null) {
+								idEntidad = grid.up('wizardaltaoferta').oferta.data.idActivo;
+								entidad = 'activo';
+							} else {
+								idEntidad = grid.up('wizardaltaoferta').oferta.data.idAgrupacion;
+								entidad = 'agrupacion';
+							}
+						} else {
+							idEntidad = grid.up('wizardaltacomprador').down('datoscompradorwizard').getBindRecord().comprador.data.idExpedienteComercial;
+							entidad = 'expediente';
+						}
+						Ext.create("HreRem.view.common.adjuntos.AdjuntarDocumentoOfertacomercial",
 										{
-											entidad : 'activo',
-											idEntidad : idActivo,
+											entidad : entidad,
+											idEntidad : idEntidad,
 											docCliente : docCliente,
 											parent : grid
 										}).show();
@@ -1355,31 +1365,27 @@ Ext
 					},
 
 					borrarDocumentoAdjuntoOferta : function(grid, record) {
-						var me = this, idActivo = me.getViewModel().get(
-								"activo.id");
+						var me = this, docCliente = me.getViewModel().get("oferta.numDocumentoCliente");
 						me.getView().mask(HreRem.i18n("msg.mask.loading"));
-
 						if (grid.handler == "borrarDocumentoAdjuntoOferta") {
-							var url = $AC
-									.getRemoteUrl('activooferta/eliminarDocumentoAdjuntoOferta');
-							Ext.Ajax
-									.request({
+							var url = null;
+							if(grid.up('anyadirnuevaofertaactivoadjuntardocumento').up().xtype.indexOf('oferta') >= 0){
+								url = $AC.getRemoteUrl('activooferta/eliminarDocumentoAdjuntoOferta');
+							} else {
+								url = $AC.getRemoteUrl('expedientecomercial/eliminarDocumentoAdjuntoOferta');
+							}
+							Ext.Ajax.request({
 										url : url,
-										params : {
-											id : 0
-										},
+										params : {docCliente : docCliente},
 										success : function(a, operation,
 												context) {
-											var data = Ext
-													.decode(a.responseText);
-											if (data.data) {
-												grid.up().down('textfieldbase')
-														.setValue('');
+											var data = Ext.decode(a.responseText);
+											if (data) {
+												grid.up().down('textfieldbase').setValue('');
 											}
 											me.getView().unmask();
 											grid.hide();
-											Ext
-													.toast({
+											Ext.toast({
 														html : 'Operaci&oacute;n relizada con &eacute;xito',
 														width : 360,
 														height : 100,
@@ -1388,8 +1394,7 @@ Ext
 										},
 										failure : function(a, operation,
 												context) {
-											Ext
-													.toast({
+											Ext.toast({
 														html : 'NO HA SIDO POSIBLE REALIZAR LA OPERACIÃN',
 														width : 360,
 														height : 100,
@@ -1398,7 +1403,6 @@ Ext
 											me.unmask();
 										}
 									});
-
 						}
 					},
 
@@ -4989,7 +4993,6 @@ Ext
     				ventanaAltaWizard.getForm().findField('transferenciasInternacionales').setValue(comprador.transferenciasInternacionales);*/
     			   }
     			}
-    			
     			var wizard = btn.up().up().up();
     			var layout = wizard.getLayout();
     			layout["next"]();
@@ -5181,7 +5184,7 @@ Ext
  	    		
  	    		     success: function(response, opts) {
  	    		    	 data = Ext.decode(response.responseText);
- 	    		    	 if(!Ext.isEmpty(data.data[0].nombre)){
+ 	    		    	 if(!Ext.isEmpty(data.data[0])){
  	    		    		ventanaWizard.down('anyadirnuevaofertaactivoadjuntardocumento').getForm().findField('docOfertaComercial').setValue(data.data[0].nombre);
  	    		    		ventanaWizard.down('anyadirnuevaofertaactivoadjuntardocumento').down().down('panel').down('button').show();
  	    		    	 }

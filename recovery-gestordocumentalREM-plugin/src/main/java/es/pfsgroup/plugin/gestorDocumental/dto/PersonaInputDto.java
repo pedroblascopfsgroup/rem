@@ -22,6 +22,13 @@ public class PersonaInputDto implements Serializable{
 	public static final String EVENTO_IDENTIFICADOR_INTERVINIENTE_ORIGEN = "ConsultaIdIntervinientePorOrigen";
 	public static final String EVENTO_IDENTIFICADOR_PERSONA_ORIGEN = "ConsultaIdPersonaPorOrigen";
 	//public static final String EVENTO_CONSULTA_TIPO_INTERVINIENTE = "ConsultaTiposInterviniente";
+	public static final String EVENTO_ALTA_PERSONA = "ALTA_PERSONA_PBC";
+
+	public static final String ID_MOTIVO_OPERACION = "ID_MOTIVO_OPERACION";
+	public static final String ID_ORIGEN_PERSONA = "ID_ORIGEN";
+	public static final String FECHA_OPERACION = "FECHA_OPERACION";
+	public static final String ID_TIPO_IDENTIFICADOR = "ID_TIPO_IDENTIFICADOR";
+	public static final String ID_ROL = "ID_ROL";
 
 	private String idCliente;
 	private String idIntervinienteCliente;
@@ -31,6 +38,11 @@ public class PersonaInputDto implements Serializable{
 	private String idIntervinienteHaya;
 	private String event;
 	
+	private String idMotivoOperacion;
+	private String fechaOperacion;
+	private String idTipoIdentificador;
+	private String idRol;
+
 	public String toString(){
 		String result = "";
 		
@@ -119,6 +131,38 @@ public class PersonaInputDto implements Serializable{
 
 	public void setEvent(String event) {
 		this.event = event;
+	}
+
+	public String getIdMotivoOperacion() {
+		return idMotivoOperacion;
+	}
+
+	public void setIdMotivoOperacion(String idMotivoOperacion) {
+		this.idMotivoOperacion = idMotivoOperacion;
+	}
+
+	public String getFechaOperacion() {
+		return fechaOperacion;
+	}
+
+	public void setFechaOperacion(String fechaOperacion) {
+		this.fechaOperacion = fechaOperacion;
+	}
+
+	public String getIdTipoIdentificador() {
+		return idTipoIdentificador;
+	}
+
+	public void setIdTipoIdentificador(String idTipoIdentificador) {
+		this.idTipoIdentificador = idTipoIdentificador;
+	}
+
+	public String getIdRol() {
+		return idRol;
+	}
+
+	public void setIdRol(String idRol) {
+		this.idRol = idRol;
 	}
 
 }

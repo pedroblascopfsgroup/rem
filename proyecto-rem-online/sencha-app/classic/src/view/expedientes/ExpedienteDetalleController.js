@@ -2106,7 +2106,7 @@ Ext
 							comprador = ventanaDetalle.getBindRecord().comprador;
 							
 							if (pedirDocValor == 'false'){
-								
+								debugger;
 								//TODO PARTE ALEJANDRO GD
 								url = $AC.getRemoteUrl('expedientecomercial/getListAdjuntosComprador');
 			     				
@@ -2120,8 +2120,10 @@ Ext
 			    	    		
 			    	    		     success: function(response, opts) {
 			    	    		    	 data = Ext.decode(response.responseText);
-			    	    		    	 ventanaWizard.down('anyadirnuevaofertaactivoadjuntardocumento').getForm().findField('docOfertaComercial').setValue(data.data[0].nombre);
-			    	    		    	 ventanaWizard.down('anyadirnuevaofertaactivoadjuntardocumento').down().down('panel').down('button').show();
+			    	    		    	 if(!Ext.isEmpty(data.data[0])){
+			    	    		    		 ventanaWizard.down('anyadirnuevaofertaactivoadjuntardocumento').getForm().findField('docOfertaComercial').setValue(data.data[0].nombre);
+			    	    		    		 ventanaWizard.down('anyadirnuevaofertaactivoadjuntardocumento').down().down('panel').down('button').show();
+			    	    		    	 }
 			    	    		     },
 
 			    	    			 failure: function(record, operation) {

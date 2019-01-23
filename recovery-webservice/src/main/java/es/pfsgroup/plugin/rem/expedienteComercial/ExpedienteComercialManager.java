@@ -165,6 +165,7 @@ import es.pfsgroup.plugin.rem.model.Subsanaciones;
 import es.pfsgroup.plugin.rem.model.TanteoActivoExpediente;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.TextosOferta;
+import es.pfsgroup.plugin.rem.model.TmpClienteGDPR;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VActivoOfertaImporte;
 import es.pfsgroup.plugin.rem.model.VBusquedaCompradoresExpedienteDecorator;
@@ -3350,14 +3351,19 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				if (!Checks.esNulo(dto.getTransferenciasInternacionales())) {
 					comprador.setTransferenciasInternacionales(dto.getTransferenciasInternacionales());
 				}
+				TmpClienteGDPR tmpClienteGDPR = genericDao.get(TmpClienteGDPR.class, genericDao.createFilter(FilterType.EQUALS, "numDocumento", dto.getNumDocumento()));
+				
 				// Historificamos despues del update
 				AdjuntoComprador docAdjunto = null;
 				if (!Checks.esNulo(dto.getIdDocAdjunto())) {
 					docAdjunto = genericDao.get(AdjuntoComprador.class,
 							genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdDocAdjunto()));
+				}  else {
+					docAdjunto = genericDao.get(AdjuntoComprador.class,
+							genericDao.createFilter(FilterType.EQUALS, "id", tmpClienteGDPR.getIdAdjunto()));			
 				}
-				ClienteCompradorGDPR clienteCompradorGDPR = new ClienteCompradorGDPR();
-
+				ClienteGDPR clienteCompradorGDPR = new ClienteGDPR();
+				
 				if (!Checks.esNulo(comprador.getTipoDocumento())) {
 					clienteCompradorGDPR.setTipoDocumento(comprador.getTipoDocumento());
 				}
@@ -3377,8 +3383,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				if (!Checks.esNulo(docAdjunto)) {
 					clienteCompradorGDPR.setAdjuntoComprador(docAdjunto);
 				}
+				
+				clienteCompradorGDPR.getCliente().setIdPersonaHaya(tmpClienteGDPR.getIdPersonaHaya().toString());
 
-				genericDao.save(ClienteCompradorGDPR.class, clienteCompradorGDPR);
+				genericDao.save(ClienteGDPR.class, clienteCompradorGDPR);
 
 				Filter filtroExpedienteComercial = genericDao.createFilter(FilterType.EQUALS, "id",
 						Long.parseLong(dto.getIdExpedienteComercial()));
@@ -3506,7 +3514,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					DDTipoGradoPropiedad gradoPropiedad = genericDao.get(DDTipoGradoPropiedad.class,
 							filtroGradoPropiedad);
 					compradorExpediente.setGradoPropiedad(gradoPropiedad);
-				}
+				}				
 
 				genericDao.save(Comprador.class, comprador);
 
@@ -4011,6 +4019,12 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			if (!Checks.esNulo(dto.getNumeroClienteUrsusBh())) {
 				compradorBusqueda.setIdCompradorUrsusBh(dto.getNumeroClienteUrsusBh());
 			}
+			
+			if (!Checks.esNulo(dto.getIdDocAdjunto())) {
+				AdjuntoComprador adjuntoComprador = genericDao.get(AdjuntoComprador.class, genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdDocAdjunto()));
+				
+				//compradorExpediente.setAdjuntoComprador(adjuntoComprador);
+			}
 
 			expediente.getCompradores().add(compradorExpediente);
 
@@ -4226,7 +4240,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				if (!Checks.esNulo(dto.getIdDocAdjunto())) {
 					docAdjunto = genericDao.get(AdjuntoComprador.class,
 							genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdDocAdjunto()));
+					
+					//compradorExpediente.setAdjuntoComprador(docAdjunto);
 				}
+				
 				ClienteCompradorGDPR clienteCompradorGDPR = new ClienteCompradorGDPR();
 
 				if (!Checks.esNulo(dto.getCodTipoDocumento())) {

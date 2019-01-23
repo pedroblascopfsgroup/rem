@@ -63,6 +63,8 @@ public class OfertasController {
 
 	@Autowired
 	private NotificationOfertaManager notificationOferta;
+	
+	private final static String CLIENTE_HAYA = "HAYA";
 
 	
 	@SuppressWarnings("unchecked")
@@ -294,10 +296,11 @@ public class OfertasController {
 	public ModelAndView checkPedirDoc(Long idActivo,Long idAgrupacion, Long idExpediente, String dniComprador, String codtipoDoc, ModelMap model) {
 
 		try {
+			//Se realiza aqui la llamada al Maestro de Personas para que tenga tiempo de ejecutar el hilo. 
+			ofertaApi.llamadaMaestroPersonas(dniComprador, CLIENTE_HAYA);
 			model.put("data", ofertaApi.checkPedirDoc(idActivo,idAgrupacion,idExpediente, dniComprador, codtipoDoc));
 			model.put("comprador",ofertaApi.getClienteGDPRByTipoDoc(dniComprador, codtipoDoc));
 			model.put("compradorId", expedienteComercialApi.getCompradorIdByDocumento(dniComprador, codtipoDoc));
-			ofertaApi.llamadaMaestroPersonas(dniComprador, "Haya");
 			model.put("success", true);
 		} catch (Exception e) {
 			logger.error("Error en ofertasController", e);

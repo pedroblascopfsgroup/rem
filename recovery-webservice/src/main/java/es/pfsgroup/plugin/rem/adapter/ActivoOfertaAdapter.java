@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.adapter;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -22,6 +23,7 @@ import es.pfsgroup.plugin.rem.model.AdjuntoComprador;
 import es.pfsgroup.plugin.rem.model.ClienteComercial;
 import es.pfsgroup.plugin.rem.model.ClienteGDPR;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
+import es.pfsgroup.plugin.rem.model.TmpClienteGDPR;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 
 @Service
@@ -41,14 +43,14 @@ public class ActivoOfertaAdapter {
 	protected static final String CREANDO_CONTENEDOR = "Creando contenedor...";
 	
 	@Transactional(readOnly = false)
-	public List<DtoAdjunto> getAdjunto(String idIntervinienteHaya, String docCliente, String idActivo, String idAgrupacion) throws GestorDocumentalException {
+	public List<DtoAdjunto> getAdjunto(String idIntervinienteHaya, String docCliente, Long idActivo, Long idAgrupacion) throws GestorDocumentalException {
 		
 		List<DtoAdjunto> listaAdjuntos = new ArrayList<DtoAdjunto>();
 		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 		
 		if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
 			try {
-				listaAdjuntos = gestorDocumentalAdapterApi.getAdjuntosEntidadComprador(idIntervinienteHaya);
+				listaAdjuntos = gestorDocumentalAdapterApi.getAdjuntosEntidadComprador(Long.parseLong(idIntervinienteHaya));
 			} catch (GestorDocumentalException gex) {
 					logger.error(gex.getMessage());
 					
@@ -57,7 +59,7 @@ public class ActivoOfertaAdapter {
 					Integer idPersonaHaya;
 					try {
 						logger.info(CREANDO_CONTENEDOR+" ID PERSONA: "+idIntervinienteHaya+", DOCUMENTO: "+docCliente);
-						idPersonaHaya = gestorDocumentalAdapterApi.crearEntidadComprador(idIntervinienteHaya, usuarioLogado.getUsername(), idActivo, idAgrupacion, null);
+						idPersonaHaya = gestorDocumentalAdapterApi.crearEntidadComprador(Long.parseLong(idIntervinienteHaya), usuarioLogado.getUsername(), idActivo, idAgrupacion, null);
 						logger.debug("GESTOR DOCUMENTAL [ crearEntidadOferta para " + docCliente + "]: ID PERSONA RECIBIDO " + idPersonaHaya);
 					} catch (GestorDocumentalException gexc) {
 						logger.error(ERROR_CREACION_CONTENEDOR, gexc);
@@ -80,7 +82,7 @@ public class ActivoOfertaAdapter {
 				Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 				
 				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoDocumentoActivo.CODIGO_CONSENTIMIENTO_PROTECCION_DATOS);
-				DDTipoDocumentoActivo tipoDocumento = (DDTipoDocumentoActivo) genericDao.get(DDTipoDocumentoActivo.class, filtro);
+				DDTipoDocumentoActivo tipoDocumento = genericDao.get(DDTipoDocumentoActivo.class, filtro);
 				
 				Long idDocRestClient = gestorDocumentalAdapterApi.uploadDocumentoEntidadComprador(idIntervinienteHaya, webFileItem, usuarioLogado.getUsername(), tipoDocumento.getMatricula());
 				if (!Checks.esNulo(idDocRestClient)) {
@@ -90,25 +92,35 @@ public class ActivoOfertaAdapter {
 					adjuntoComprador.setNombreAdjunto(webFileItem.getFileItem().getFileName());
 					adjuntoComprador.setTipoDocumento(tipoDocumento.getDescripcion());
 					adjuntoComprador.setIdDocRestClient(idDocRestClient);
-				    Auditoria.save(adjuntoComprador);
+					Auditoria.save(adjuntoComprador);
 					genericDao.save(AdjuntoComprador.class, adjuntoComprador);
 					
 					//Filtro para conseguir el Cliente Comercial (donde se almacena el idPersona que devuelve el Maestro de Personas)
 					Filter filtroPersona = genericDao.createFilter(FilterType.EQUALS, "idPersonaHaya", idIntervinienteHaya);
-					ClienteComercial clienteCom = (ClienteComercial) genericDao.get(ClienteComercial.class, filtroPersona);
+					ClienteComercial clienteCom = genericDao.get(ClienteComercial.class, filtroPersona);
 					
 					//Filtro para conseguir el registro del Adjunto
 					Filter filtroDocumento = genericDao.createFilter(FilterType.EQUALS, "idDocRestClient", idDocRestClient);
-					adjuntoComprador = (AdjuntoComprador) genericDao.get(AdjuntoComprador.class, filtroDocumento);
+					adjuntoComprador = genericDao.get(AdjuntoComprador.class, filtroDocumento);
 					
-					//Filtro para conseguir el ClienteGDPR a traves del Cliente Comercial
-					Filter filtroCliente = genericDao.createFilter(FilterType.EQUALS, "cliente", clienteCom);
-					ClienteGDPR clienteGDPR = (ClienteGDPR) genericDao.get(ClienteGDPR.class, filtroCliente);
+					ClienteGDPR clienteGDPR = null;
 					
-					//Actualizacion de cliente para adjuntar documento
-					clienteGDPR.setAdjuntoComprador(adjuntoComprador);
-					Auditoria.save(clienteGDPR);
-					genericDao.save(ClienteGDPR.class, clienteGDPR);	
+					if(!Checks.esNulo(clienteCom)) {
+						//Filtro para conseguir el ClienteGDPR a traves del Cliente Comercial
+						Filter filtroCliente = genericDao.createFilter(FilterType.EQUALS, "cliente", clienteCom);
+						clienteGDPR = genericDao.get(ClienteGDPR.class, filtroCliente);
+						
+						//Actualizacion de cliente para adjuntar documento
+						clienteGDPR.setAdjuntoComprador(adjuntoComprador);
+						Auditoria.save(clienteGDPR);
+						genericDao.update(ClienteGDPR.class, clienteGDPR);
+					} else {
+						TmpClienteGDPR tmpClienteGDPR = genericDao.get(TmpClienteGDPR.class, filtroPersona);
+						if(!Checks.esNulo(tmpClienteGDPR)) {
+							tmpClienteGDPR.setIdAdjunto(adjuntoComprador.getId());
+							genericDao.update(TmpClienteGDPR.class, tmpClienteGDPR);
+						}
+					}	
 				}
 			}
 		} catch (GestorDocumentalException gex) {
@@ -131,13 +143,23 @@ public class ActivoOfertaAdapter {
 					if(borrado) {
 						//Borrado lógico del documento
 						adjuntoComprador.getAuditoria().setBorrado(true);
-						Auditoria.save(adjuntoComprador);
+						adjuntoComprador.getAuditoria().setUsuarioBorrar(usuarioLogado.getUsername());
+						adjuntoComprador.getAuditoria().setFechaBorrar(new Date());
 						genericDao.update(AdjuntoComprador.class, adjuntoComprador);
 						
-						//Actualizacion del campo en ClienteGDPR
-						clienteGDPR.setAdjuntoComprador(null);
-						Auditoria.save(clienteGDPR);
-						genericDao.save(ClienteGDPR.class, clienteGDPR);
+						if (!Checks.esNulo(clienteGDPR)) {
+							//Actualizacion del campo en ClienteGDPR
+							clienteGDPR.setAdjuntoComprador(null);
+							Auditoria.save(clienteGDPR);
+							genericDao.update(ClienteGDPR.class, clienteGDPR);
+						} else {
+							Filter filtroDocumento = genericDao.createFilter(FilterType.EQUALS, "idDocumento", adjuntoComprador.getId());
+							TmpClienteGDPR tmpClienteGDPR = genericDao.get(TmpClienteGDPR.class, filtroDocumento);
+							if(!Checks.esNulo(tmpClienteGDPR)) {
+								tmpClienteGDPR.setIdAdjunto(null);
+								genericDao.update(TmpClienteGDPR.class, tmpClienteGDPR);
+							}
+						}
 					}
 				} catch (Exception e) {
 					e.printStackTrace();

@@ -7,7 +7,6 @@ import es.capgemini.devon.files.WebFileItem;
 import es.pfsgroup.plugin.gestorDocumental.dto.documentos.CrearRelacionExpedienteDto;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.rem.model.Activo;
-import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoAdjuntoPromocion;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
@@ -46,12 +45,12 @@ public interface GestorDocumentalAdapterApi {
 	
 	List<DtoAdjuntoPromocion> getAdjuntosPromociones (String codPromo) throws GestorDocumentalException;
 
-	Integer crearEntidadComprador(String idIntervinienteHaya, String usuarioLogado, String idActivo,
-			String idAgrupacion, String idExpediente) throws GestorDocumentalException;
-
-	List<DtoAdjunto> getAdjuntosEntidadComprador(String idIntervinienteHaya) throws GestorDocumentalException;
-
 	Long uploadDocumentoEntidadComprador(String idIntervinienteHaya, WebFileItem webFileItem, String userLogin,
 			String matricula) throws GestorDocumentalException;
+
+	Integer crearEntidadComprador(Long idIntervinienteHaya, String usuarioLogado, Long idActivo, Long idAgrupacion,
+			Long idExpediente) throws GestorDocumentalException;
+
+	List<DtoAdjunto> getAdjuntosEntidadComprador(Long idIntervinienteHaya) throws GestorDocumentalException;
 	
 }

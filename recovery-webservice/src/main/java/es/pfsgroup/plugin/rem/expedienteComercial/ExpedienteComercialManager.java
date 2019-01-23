@@ -7306,7 +7306,13 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 						dto.setCodPostal(Integer.parseInt(activo.getCodPostal()));
 					}
 					
-					dto.setMunicipio(activo.getMunicipio());
+			    	if(!Checks.esNulo(activo.getBien())) {
+			    		if(!Checks.estaVacio(activo.getBien().getLocalizaciones())) {
+			    			if(!Checks.esNulo(activo.getBien().getLocalizaciones().get(0))) {
+			    				dto.setMunicipio(activo.getBien().getLocalizaciones().get(0).getPoblacion());
+			    			}
+			    		}
+			    	}
 					
 					if(!Checks.esNulo(activo.getTipoActivo())) {
 						dto.setTipoActivo(activo.getTipoActivo().getDescripcion());

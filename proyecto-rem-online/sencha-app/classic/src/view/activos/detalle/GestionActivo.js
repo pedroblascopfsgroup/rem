@@ -1,26 +1,24 @@
 Ext.define('HreRem.view.activos.detalle.GestionActivo', {
-    extend	: 'Ext.form.Panel',
-    xtype	: 'gestionactivo',
-    layout	: 'fit',
-    requires: ['HreRem.view.activos.detalle.GestionActivoTabPanel'],
+    extend		: 'Ext.tab.Panel',
+    xtype		: 'gestionactivo',
+	cls			: 'panel-base shadow-panel tabPanel-tercer-nivel',
+    reference	: 'gestionactivo',
+    layout		: 'fit',
+    requires	: ['HreRem.view.trabajos.HistoricoPeticionesActivo', 'HreRem.view.trabajos.PresupuestoAsignadoActivo'],
 
     initComponent: function () {
-    	var me = this;
-    	me.setTitle(HreRem.i18n('title.gestion.activo'));
-
-    	var items = [
-			{				
-			    xtype: 'gestionactivotabpanel'
-			}
-    	];
-
-		me.addPlugin({ptype: 'lazyitems', items: items });
+        var me = this;
+        me.setTitle(HreRem.i18n('title.gestion.activo'));
+        me.items = [];
+        $AU.confirmFunToFunctionExecution(function(){me.items.push({xtype: 'historicopeticionesactivo'})}, ['TAB_HIST_PETICIONES']);
+    	$AU.confirmFunToFunctionExecution(function(){me.items.push({xtype: 'presupuestoasignadosactivo', title: HreRem.i18n('title.presupuesto.asignado.activo')})}, ['TAB_PRESUPUESTO_ASIGNADO_ACTIVO']);
+    	me.addPlugin({ptype: 'lazyitems', items: me.items });
     	me.callParent();
     },
 
     funcionRecargar: function() {
 		var me = this;
 		me.recargar = false;
-		me.down('tabpanel').getActiveTab().funcionRecargar();
+		me.getActiveTab().funcionRecargar();
     }
 });

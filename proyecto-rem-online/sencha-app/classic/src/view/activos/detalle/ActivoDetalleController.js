@@ -779,6 +779,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	},
 
 	onClickBotonCancelar: function(btn) {
+		
 		var me = this,
 		activeTab = btn.up('tabpanel').getActiveTab();
 
@@ -799,6 +800,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 
 		btn.hide();
 		btn.up('tabbar').down('button[itemId=botonguardar]').hide();
+		
 		btn.up('tabbar').down('button[itemId=botoneditar]').show();
 		
 		Ext.Array.each(activeTab.query('field[isReadOnlyEdit]'),
@@ -810,6 +812,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		if(Ext.isDefined(btn.name) && btn.name === 'firstLevel') {
  			me.getViewModel().set("editingFirstLevel", false);
  		} else {
+ 			
  			me.getViewModel().set("editing", false);
  		}
 	},
@@ -988,6 +991,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	},
 	
 	refrescarActivo: function(refrescarPestanyaActiva) {
+		
 		var me = this,
 		refrescarPestanyaActiva = Ext.isEmpty(refrescarPestanyaActiva) ? false: refrescarPestanyaActiva,
 		activeTab = me.getView().down("tabpanel").getActiveTab();

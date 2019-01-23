@@ -38,6 +38,7 @@ Ext.define('HreRem.view.activos.detalle.Publicacion', {
 		},
 
         beforetabchange: function (tabPanel, tabNext, tabCurrent) {
+        	
         	tabPanel.down("[itemId=botoneditar]").setVisible(false);	            	
         	// Comprobamos si estamos editando para confirmar el cambio de pestaña
         	if (tabCurrent != null)
@@ -81,8 +82,8 @@ Ext.define('HreRem.view.activos.detalle.Publicacion', {
 					xtype: 'buttontab',
         			itemId: 'botoneditar',
         		    handler	: 'onClickBotonEditar',
-        		    iconCls: 'edit-button-color',
-        		    bind: {hidden: '{editing}'}
+        		    iconCls: 'edit-button-color'//,
+        		    //bind: {hidden: '{editing}'}
         		},
         		{
         			xtype: 'buttontab',
@@ -103,9 +104,11 @@ Ext.define('HreRem.view.activos.detalle.Publicacion', {
         ]
     },
 
-     evaluarBotonesEdicion: function(tab) {    
+     evaluarBotonesEdicion: function(tab) { 
+    	 
     	var me = this;
 		me.down("[itemId=botoneditar]").setVisible(false);
+
 		var editionEnabled = function(tab) {
 			var visible = false;
 			if(tab.xtype=='informecomercialactivo'){

@@ -4054,13 +4054,13 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 	@Override
 	public String consultarComiteSancionador(Long idExpediente) throws Exception {
-		Long porcentajeImpuesto = null;
+		Double porcentajeImpuesto = null;
 
 		try {
 			ExpedienteComercial expediente = findOne(idExpediente);
 			if (!Checks.esNulo(expediente.getCondicionante())) {
 				if (!Checks.esNulo(expediente.getCondicionante().getTipoAplicable())) {
-					porcentajeImpuesto = expediente.getCondicionante().getTipoAplicable().longValue();
+					porcentajeImpuesto = expediente.getCondicionante().getTipoAplicable();
 				}
 			}
 
@@ -4126,7 +4126,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		return instancia;
 	}
 
-	public InstanciaDecisionDto expedienteComercialToInstanciaDecisionList(ExpedienteComercial expediente, Long porcentajeImpuesto, String codComiteSuperior) throws Exception {
+	public InstanciaDecisionDto expedienteComercialToInstanciaDecisionList(ExpedienteComercial expediente, Double porcentajeImpuesto, String codComiteSuperior) throws Exception {
 		String tipoImpuestoCodigo;
 		InstanciaDecisionDto instancia = new InstanciaDecisionDto();
 		BigDecimal importeXActivo = null;
@@ -4208,7 +4208,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 			// PorcentajeImpuesto
 			if (!Checks.esNulo(porcentajeImpuesto)) {
-				instData.setPorcentajeImpuesto(porcentajeImpuesto.intValue());
+				instData.setPorcentajeImpuesto((int)(porcentajeImpuesto*100));
 			}
 			instanciaList.add(instData);
 		}
@@ -6520,11 +6520,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	private InstanciaDecisionDto creaInstanciaDecisionDto(Long idExpediente) throws Exception {
 		try {
 			ExpedienteComercial expediente = findOne(idExpediente);
-			Long porcentajeImpuesto = null;
+			Double porcentajeImpuesto = null;
 
 			if (!Checks.esNulo(expediente) && !Checks.esNulo(expediente.getCondicionante())) {
 				if (!Checks.esNulo(expediente.getCondicionante().getTipoAplicable())) {
-					porcentajeImpuesto = expediente.getCondicionante().getTipoAplicable().longValue();
+					porcentajeImpuesto = expediente.getCondicionante().getTipoAplicable();
 				}
 			}
 

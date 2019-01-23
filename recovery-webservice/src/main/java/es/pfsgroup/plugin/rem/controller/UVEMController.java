@@ -77,10 +77,10 @@ public class UVEMController {
 			}
 			accion = accion.toLowerCase();
 			ResultadoInstanciaDecisionDto resultadoDto = null;
-			Long porcentajeImpuesto = null;
+			Double porcentajeImpuesto = null;
 			if (!Checks.esNulo(expediente.getCondicionante())) {
 				if (!Checks.esNulo(expediente.getCondicionante().getTipoAplicable())) {
-					porcentajeImpuesto = expediente.getCondicionante().getTipoAplicable().longValue();
+					porcentajeImpuesto = expediente.getCondicionante().getTipoAplicable();
 				}
 			}
 			InstanciaDecisionDto instanciaDecisionDto = expedienteComercialApi

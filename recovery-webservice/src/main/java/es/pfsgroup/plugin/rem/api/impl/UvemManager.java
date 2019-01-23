@@ -1684,10 +1684,10 @@ public class UvemManager implements UvemManagerApi {
 
 		Oferta ofertaAceptada = ofertaApi.tareaExternaToOferta(tareaExterna);
 		ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
-		Long porcentajeImpuesto = null;
+		Double porcentajeImpuesto = null;
 		if (!Checks.esNulo(expediente.getCondicionante())) {
 			if (!Checks.esNulo(expediente.getCondicionante().getTipoAplicable())) {
-				porcentajeImpuesto = expediente.getCondicionante().getTipoAplicable().longValue();
+				porcentajeImpuesto = expediente.getCondicionante().getTipoAplicable();
 			}
 		}
 

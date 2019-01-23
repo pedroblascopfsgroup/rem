@@ -7306,14 +7306,15 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 						dto.setCodPostal(Integer.parseInt(activo.getCodPostal()));
 					}
 					
-			    	if(!Checks.esNulo(activo.getBien())) {
-			    		if(!Checks.estaVacio(activo.getBien().getLocalizaciones())) {
-			    			if(!Checks.esNulo(activo.getBien().getLocalizaciones().get(0))) {
-			    				dto.setMunicipio(activo.getBien().getLocalizaciones().get(0).getPoblacion());
-			    			}
-			    		}
+			    	if(!Checks.esNulo(activo.getMunicipio())) {
+				    	String codigoMunicipio = activo.getMunicipio();
+				    	Filter filtroMunicipio = genericDao.createFilter(FilterType.EQUALS, "codigo", codigoMunicipio);
+						Localidad localidad = genericDao.get(Localidad.class, filtroMunicipio);
+						if(!Checks.esNulo(localidad)) {
+							dto.setMunicipio(localidad.getDescripcion());
+						}
 			    	}
-					
+			    	
 					if(!Checks.esNulo(activo.getTipoActivo())) {
 						dto.setTipoActivo(activo.getTipoActivo().getDescripcion());
 					}

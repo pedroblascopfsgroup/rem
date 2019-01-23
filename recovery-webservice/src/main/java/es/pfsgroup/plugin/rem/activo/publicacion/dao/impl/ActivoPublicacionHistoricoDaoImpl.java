@@ -4,6 +4,7 @@ import es.capgemini.pfs.dao.AbstractEntityDao;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.hibernate.HibernateUtils;
 import es.pfsgroup.plugin.rem.activo.publicacion.dao.ActivoPublicacionHistoricoDao;
+import es.pfsgroup.plugin.rem.model.ActivoPublicacion;
 import es.pfsgroup.plugin.rem.model.ActivoPublicacionHistorico;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoPaginadoHistoricoEstadoPublicacion;
@@ -218,5 +219,14 @@ public class ActivoPublicacionHistoricoDaoImpl extends AbstractEntityDao<ActivoP
 		}
 
 		return dias;
+	}
+	
+	public ActivoPublicacionHistorico getActivoPublicacionHistoricoActual(Long idActivo) {
+		Criteria criteria = getSession().createCriteria(ActivoPublicacionHistorico.class);
+		criteria.add(Restrictions.eq("activo.id", idActivo));
+		criteria.add(Restrictions.isNull("fechaFinVenta"));
+		criteria.add(Restrictions.isNull("fechaFinAlquiler"));
+
+		return HibernateUtils.castObject(ActivoPublicacionHistorico.class, criteria.uniqueResult());
 	}
 }

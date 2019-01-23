@@ -1041,6 +1041,17 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			updateStateDispComercialActivosByOferta(oferta);
 			genericDao.save(Oferta.class, oferta);
 
+			if (!Checks.esNulo(oferta.getAgrupacion())) {
+				ActivoAgrupacion agrupacion = oferta.getAgrupacion();
+				List<Oferta> ofertasVivasAgrupacion = ofertaDao.getListOtrasOfertasVivasAgr(oferta.getId(), agrupacion.getId());
+
+				if ((agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_VENTA) 
+						|| agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_ALQUILER))
+						&& !Checks.esNulo(ofertasVivasAgrupacion) && ofertasVivasAgrupacion.isEmpty()) {
+					agrupacion.setFechaBaja(new Date());
+					activoAgrupacionApi.saveOrUpdate(agrupacion);
+				}
+			}
 		} catch (Exception e) {
 			logger.error("error en OfertasManager", e);
 			return false;

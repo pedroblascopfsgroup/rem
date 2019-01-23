@@ -23,6 +23,8 @@ public interface TareaActivoApi {
 		
 		public List<TareaActivo> getTareasActivoByIdTramite(Long idTramite);
 		
+		public List<TareaActivo> getTareasActivo(Long idActivo, String codigoTipoTramite);
+		
 		public Long getTareasPendientes(Usuario usuario);
 		
 		public Long getAlertasPendientes(Usuario usuario);

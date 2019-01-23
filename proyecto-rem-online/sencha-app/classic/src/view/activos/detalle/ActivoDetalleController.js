@@ -2668,7 +2668,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	              return activo.activoId == me.getViewModel().get("activo.id");
 	            }), 1)[0];
 	        var grid = btn.up().up();
-
 	        // Abrimos la ventana de selección de activos
 		    var ventanaOpcionesPropagacionCambios = Ext.create("HreRem.view.activos.detalle.OpcionesPropagacionCambios", {
 		          form : null,

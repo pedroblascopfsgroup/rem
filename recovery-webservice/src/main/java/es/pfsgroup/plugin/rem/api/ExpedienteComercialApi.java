@@ -1095,4 +1095,8 @@ public interface ExpedienteComercialApi {
 	boolean checkConTituloTramite(Long idTramite);
 
 	boolean savePlusvaliaVenta(DtoPlusvaliaVenta dto, Long idExpediente);
+	 
+	 List<DtoActivosExpediente> getActivosPropagables(Long idExpediente);
+
+	boolean guardarCondicionesActivosExpediente(DtoCondicionesActivoExpediente condiciones);
 }

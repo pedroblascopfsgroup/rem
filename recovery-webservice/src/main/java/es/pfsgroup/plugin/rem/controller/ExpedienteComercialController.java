@@ -1216,6 +1216,24 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 
 		return createModelAndViewJson(model);
 	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView saveActivosExpedienteCondiciones(ModelMap model, @RequestParam(value = "id") Long ecoId, DtoCondicionesActivoExpediente condiciones) {
+		try {
+			condiciones.setEcoId(ecoId);
+			model.put(RESPONSE_DATA_KEY, expedienteComercialApi.guardarCondicionesActivosExpediente(condiciones));
+			model.put(RESPONSE_SUCCESS_KEY, true);
+
+		} catch (Exception e) {
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.error("Error en ExpedienteComercialController", e);
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
+	
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
@@ -1629,4 +1647,16 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}	
 
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView getActivosPropagables(ModelMap model, @RequestParam(value = "idExpediente") Long idExpediente){
+		try{
+			model.put(RESPONSE_DATA_KEY, expedienteComercialApi.getActivosPropagables(Long.valueOf(idExpediente)));
+		} catch (Exception e) {
+			logger.error("error en expedienteComercialController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put(RESPONSE_ERROR_KEY, e.getMessage());
+		}
+
+		return createModelAndViewJson(model);
+	}
 }

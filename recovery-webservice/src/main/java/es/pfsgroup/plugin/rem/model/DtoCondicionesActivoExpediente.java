@@ -1,5 +1,7 @@
 package es.pfsgroup.plugin.rem.model;
 
+import java.util.List;
+
 import es.capgemini.devon.dto.WebDto;
 
 public class DtoCondicionesActivoExpediente extends WebDto {
@@ -26,6 +28,8 @@ public class DtoCondicionesActivoExpediente extends WebDto {
 	private Long ecoId;
 	
 	private Long idActivo;
+	
+	private String activos;
 
 	public String getSituacionPosesoriaCodigoInformada() {
 		return situacionPosesoriaCodigoInformada;
@@ -105,6 +109,14 @@ public class DtoCondicionesActivoExpediente extends WebDto {
 
 	public void setIdActivo(Long idActivo) {
 		this.idActivo = idActivo;
+	}
+
+	public String getActivos() {
+		return activos;
+	}
+
+	public void setActivos(String activos) {
+		this.activos = activos;
 	}
 	
 

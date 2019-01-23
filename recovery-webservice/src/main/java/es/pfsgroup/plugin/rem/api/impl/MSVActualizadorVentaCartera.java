@@ -579,10 +579,10 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 			}
 
 			if (DDCartera.CODIGO_CARTERA_BANKIA.equals(primerActivo.getCartera().getCodigo())) {
-				Long porcentajeImpuesto = null;
+				Double porcentajeImpuesto = null;
 				if (!Checks.esNulo(expedienteComercial.getCondicionante())) {
 					if (!Checks.esNulo(expedienteComercial.getCondicionante().getTipoAplicable())) {
-						porcentajeImpuesto = expedienteComercial.getCondicionante().getTipoAplicable().longValue();
+						porcentajeImpuesto = expedienteComercial.getCondicionante().getTipoAplicable();
 					}
 				}
 				InstanciaDecisionDto instanciaDecisionDto = expedienteComercialApi

@@ -287,29 +287,42 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 			style.setBorderRight(XSSFCellStyle.BORDER_THIN);
 			style.setBorderLeft(XSSFCellStyle.BORDER_THIN);
 			
-			for (int i = 0; i < l_DtoPropuestaAlq.size()-1; i++) { //Anyadimos las columnas y el estilo
-				mySheet.shiftRows(currentRow, currentRow+1, 1);
-				r = mySheet.getRow(currentRow);
-//				for (int j = 1; j < 21; j++) {
-//					c = r.getCell(j);
-//					c.setCellStyle(style);
-//				}
-//				++currentRow;
+//			r = mySheet.getRow(0);
+//			r = mySheet.getRow(6);
+//			r = mySheet.getRow(8);
+			
+			mySheet.shiftRows(currentRow, currentRow+1, l_DtoPropuestaAlq.size()-2);
+			
+			for (int i = currentRow-1; i < currentRow-1 + l_DtoPropuestaAlq.size()-1; i++) {
+				mySheet.createRow(i);
+				r = mySheet.getRow(i);
+				for (int j = 0; j < 21; j++) {
+					r.createCell(j);
+					c = r.getCell(j);
+					c.setCellStyle(style);
+				}
 			}
+			
+//			r = mySheet.getRow(5);
+//			
+//			mySheet.createRow(6);
+//			r = mySheet.getRow(6);
+//			r.createCell(0);
+//			c = r.getCell(0);
+//			c.setCellValue("HOLA SDASDAD);
+//			
+//			r = mySheet.getRow(7);
+//			r = mySheet.getRow(8);
+			
 			
 			
 			for (int i = 0; i < l_DtoPropuestaAlq.size()-1; i++) {
 				
-				
-				
 				dtoPAB = l_DtoPropuestaAlq.get(i);
 				numActivo = dtoPAB.getNumActivoUvem(); // El numero de activo lo necesitamos para referenciar el resto de hojas en las formulas
 				
-				if (currentRow != 6) {
-					mySheet.shiftRows(currentRow, currentRow+1, 1);
-				}
 				
-				cellReference = new CellReference("A" + Integer.toString(currentRow)); // LOTE ??
+				cellReference = new CellReference("A" + Integer.toString(currentRow)); // LOTE
 				r = mySheet.getRow(cellReference.getRow());
 				c = r.getCell(cellReference.getCol());
 				if (!Checks.esNulo(dtoPAB.getNumeroAgrupacion())) { 

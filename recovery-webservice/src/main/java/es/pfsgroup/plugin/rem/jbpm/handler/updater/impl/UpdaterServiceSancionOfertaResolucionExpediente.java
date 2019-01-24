@@ -252,7 +252,7 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 									Filter filtroFechaFinalizacionIsNull = genericDao.createFilter(FilterType.NULL, "fechaFinalizacion");
 									List<VBusquedaTramitesActivo> tramitesActivo = genericDao.getList(VBusquedaTramitesActivo.class, filtroActivoId, filtroCodTipoTramite, filtroFechaFinalizacionIsNull);
 									
-									if (Checks.estaVacio(tramitesActivo)) {
+									if (!Checks.estaVacio(tramitesActivo)) {
 										Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 										VBusquedaTramitesActivo vBusquedaTramitesActivo = tramitesActivo.get(0);
 										ActivoTramite activoTramite = activoTramiteDao.get(vBusquedaTramitesActivo.getIdTramite());
@@ -264,7 +264,7 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 										}
 										
 										//Finaliza el trámite
-										activoAdapter.borradoLogicoActivoTramite(usuarioLogado, activoTramite);
+										activoAdapter.cerrarActivoTramite(usuarioLogado, activoTramite);
 									}
 									
 									Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoComunicacionGencat.COD_RECHAZADO);
@@ -283,7 +283,7 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 										if ((GestorActivoApi.CODIGO_GESTORIA_FORMALIZACION.equals(gestor.getTipoGestor().getCodigo())
 												|| GestorActivoApi.CODIGO_GESTOR_FORMALIZACION.equals(gestor.getTipoGestor().getCodigo())
 												|| GestorActivoApi.CODIGO_GESTOR_DE_ADMINISTRACION.equals(gestor.getTipoGestor().getCodigo()))
-												&& Checks.esNulo(gestor.getUsuario().getEmail())) {
+												&& !Checks.esNulo(gestor.getUsuario().getEmail())) {
 											
 												enviarCorreoAnularOfertaActivoBloqueadoPorGencat(act,gestor.getUsuario().getEmail());
 										}

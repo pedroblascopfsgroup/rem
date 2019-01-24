@@ -3971,6 +3971,20 @@ public class ActivoAdapter {
 		activoTramite.getAuditoria().setFechaBorrar(new Date());
 		activoTramiteDao.saveOrUpdate(activoTramite);
 	}
+	
+	/**
+	 * @param usuarioLogado
+	 * @param activoTramite
+	 */
+	public void cerrarActivoTramite(Usuario usuarioLogado, ActivoTramite activoTramite) {
+		DDEstadoProcedimiento estadoTramite = (DDEstadoProcedimiento) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoProcedimiento.class,
+						DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CERRADO);
+		activoTramite.setEstadoTramite(estadoTramite);
+		activoTramite.setFechaFin(new Date());
+		activoTramite.getAuditoria().setUsuarioModificar(usuarioLogado.getUsername());
+		activoTramite.getAuditoria().setFechaModificar(new Date());
+		activoTramiteDao.saveOrUpdate(activoTramite);
+	}
 
 	/**
 	 *

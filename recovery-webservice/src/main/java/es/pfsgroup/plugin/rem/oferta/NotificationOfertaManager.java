@@ -296,8 +296,8 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 			List<String> mailsCC = new ArrayList<String>();
 
 			if(!Checks.esNulo(usuario)){
-				mailsPara.add(usuario.getEmail());
-				
+				//mailsPara.add(usuario.getEmail());
+				mailsPara.add("lara.pablo@pfsgroup.es");
 				List<GestorSustituto> sustitutos = genericDao.getList(GestorSustituto.class, genericDao.createFilter(FilterType.EQUALS, "usuarioGestorOriginal.id", usuario.getId()));
 				for (GestorSustituto gestorSustituto : sustitutos) {
 					if ((gestorSustituto.getFechaFin().after(new Date()) || gestorSustituto.getFechaFin().equals(new Date())) && (gestorSustituto.getFechaInicio().before(new Date()) || gestorSustituto.getFechaInicio().equals(new Date())) && !gestorSustituto.getAuditoria().isBorrado()){

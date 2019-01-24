@@ -835,6 +835,12 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					if (!Checks.esNulo(expediente.getMotivoRechazo())) {
 						dto.setCodMotivoRechazoExp(expediente.getMotivoRechazo().getCodigo());
 						dto.setDescMotivoRechazoExp(expediente.getMotivoRechazo().getDescripcion());
+					} else if (!Checks.esNulo(expediente.getMotivoAnulacion())) {
+						dto.setCodMotivoAnulacion(expediente.getMotivoAnulacion().getCodigo());
+						dto.setDescMotivoAnulacion(expediente.getMotivoAnulacion().getDescripcion());
+					} else if (!Checks.esNulo(expediente.getMotivoAnulacionAlquiler())) {
+						dto.setDescMotivoAnulacionAlq(expediente.getMotivoAnulacionAlquiler().getDescripcion());
+						dto.setCodMotivoAnulacionAlq(expediente.getMotivoAnulacionAlquiler().getCodigo());
 					}
 				}
 
@@ -948,11 +954,6 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 				if (!Checks.esNulo(expediente.getUltimoPosicionamiento())) {
 					dto.setFechaPosicionamiento(expediente.getUltimoPosicionamiento().getFechaPosicionamiento());
-				}
-
-				if (!Checks.esNulo(expediente.getMotivoAnulacion())) {
-					dto.setCodMotivoAnulacion(expediente.getMotivoAnulacion().getCodigo());
-					dto.setDescMotivoAnulacion(expediente.getMotivoAnulacion().getDescripcion());
 				}
 
 				dto.setFechaAnulacion(expediente.getFechaAnulacion());

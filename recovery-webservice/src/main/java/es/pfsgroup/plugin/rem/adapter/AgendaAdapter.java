@@ -72,7 +72,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoExpediente;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
 import es.pfsgroup.plugin.rem.service.UpdaterTransitionService;
 import es.pfsgroup.plugin.rem.tareasactivo.dao.VTareasGestorSustitutoDao;
 import es.pfsgroup.recovery.api.UsuarioApi;
@@ -589,7 +589,7 @@ public class AgendaAdapter {
 			DDEstadoOferta pendiente = genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_PENDIENTE));
 			DDEstadoOferta tramitada = genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_ACEPTADA));
 			DDEstadosExpedienteComercial anuladoExpedienteComercial = genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.ANULADO));
-			DDMotivoRechazoExpediente motivoRechazoAlquiler = genericDao.get(DDMotivoRechazoExpediente.class, genericDao.createFilter(FilterType.EQUALS, "codigo", motivo));
+			DDMotivoAnulacionExpediente motivoRechazoAlquiler = genericDao.get(DDMotivoAnulacionExpediente.class, genericDao.createFilter(FilterType.EQUALS, "codigo", motivo));
 			
 			if ((anulado != null) && (tramite.getTrabajo() != null)) {
 				Trabajo trabajo = tramite.getTrabajo();
@@ -601,7 +601,7 @@ public class AgendaAdapter {
 					Usuario usuarioLogado = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();					
 					eco.setPeticionarioAnulacion(usuarioLogado.getUsername());
 					eco.setFechaAnulacion(new Date());
-					eco.setMotivoRechazo(motivoRechazoAlquiler);
+					eco.setMotivoAnulacion(motivoRechazoAlquiler);
 					genericDao.update(ExpedienteComercial.class, eco);
 					
 	                ddEstadoOferta =  genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_RECHAZADA));     

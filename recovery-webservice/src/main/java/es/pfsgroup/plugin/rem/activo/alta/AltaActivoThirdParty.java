@@ -721,10 +721,22 @@ private void dtoToEntitiesOtras(DtoAltaActivoThirdParty dtoAATP, Activo activo) 
 		activoPublicacion.setCheckOcultarPrecioAlquiler(false);
 		activoPublicacion.setVersion(new Long(0));
 		
+		if (DDTipoComercializacion.CODIGO_VENTA.equals(dtoAATP.getDestinoComercialCodigo())
+				|| DDTipoComercializacion.CODIGO_ALQUILER_VENTA.equals(dtoAATP.getDestinoComercialCodigo())
+				|| DDTipoComercializacion.CODIGO_ALQUILER_OPCION_COMPRA.equals(dtoAATP.getDestinoComercialCodigo())) {
+			activoPublicacion.setFechaInicioVenta(new Date());
+		}
+		
+		if (DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(dtoAATP.getDestinoComercialCodigo())
+				|| DDTipoComercializacion.CODIGO_ALQUILER_VENTA.equals(dtoAATP.getDestinoComercialCodigo())
+				|| DDTipoComercializacion.CODIGO_ALQUILER_OPCION_COMPRA.equals(dtoAATP.getDestinoComercialCodigo())) {
+			activoPublicacion.setFechaInicioAlquiler(new Date());
+		}
+		
 		Auditoria auditoria = new Auditoria();
 		auditoria.setBorrado(false);
 		auditoria.setFechaCrear(new Date());
-		auditoria.setUsuarioCrear("CARGA_MASIVA");
+		auditoria.setUsuarioCrear("ALTA_ACTIVOS_THIRD_PARTIES");
 		activoPublicacion.setAuditoria(auditoria);
 		
 		genericDao.save(ActivoPublicacion.class, activoPublicacion);

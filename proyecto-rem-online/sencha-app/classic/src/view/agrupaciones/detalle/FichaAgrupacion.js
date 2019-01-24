@@ -294,7 +294,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
           {
 				xtype: 'gridBase',
 				title: HreRem.i18n('title.historico.vigencias'),
-			    minHeight: 100,R
+			    minHeight: 100,
 				cls	: 'panel-base shadow-panel',
 				reference: 'listadoSubdivisionesAgrupacion',
 				

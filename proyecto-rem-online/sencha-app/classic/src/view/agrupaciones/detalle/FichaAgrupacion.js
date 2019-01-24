@@ -280,39 +280,6 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
 							}
 						},
 						{
-		                    xtype		: 'comboboxfieldbase',                    
-		                    reference	: 'comboFormalizacion',
-		                    fieldLabel	: HreRem.i18n('fieldlabel.agrupacion.con.formalizacion'),
-		                    bind		: {
-		                    		store: '{comboSiNoRem}',
-		                    		value: '{agrupacionficha.isFormalizacion}',
-		                    		hidden: '{!esAgrupacionLoteComercial}',
-		                        	readOnly: '{agrupacionTieneActivos}'                       
-		                    },
-		                    listeners	: {
-		                        change: function(combo, value) {
-		                          var me = this;
-		                          if(value=='1') {                            
-		                            me.up('formBase').down('[reference=cbGestoriaFormalizacion]').setDisabled(false);
-		                            me.up('formBase').down('[reference=cbGestoriaFormalizacion]').validate();
-		                            me.up('formBase').down('[reference=cbGestorFormalizacion]').setDisabled(false);
-		                            me.up('formBase').down('[reference=cbGestorFormalizacion]').validate();
-		                            me.up('formBase').down('[reference=cbGestorFormalizacion]').allowBlank = '{!esAgrupacionLoteComercial}';
-		                            me.up('formBase').down('[reference=cbGestoriaFormalizacion]').allowBlank = '{!esAgrupacionLoteComercial}';
-		                          } else {
-		                            me.up('formBase').down('[reference=cbGestoriaFormalizacion]').allowBlank = true;
-		                            me.up('formBase').down('[reference=cbGestoriaFormalizacion]').setValue("");
-		                            me.up('formBase').down('[reference=cbGestoriaFormalizacion]').setDisabled(true);
-		                            me.up('formBase').down('[reference=cbGestoriaFormalizacion]').validate();
-		                            me.up('formBase').down('[reference=cbGestorFormalizacion]').allowBlank = true;
-		                            me.up('formBase').down('[reference=cbGestorFormalizacion]').setValue("");
-		                            me.up('formBase').down('[reference=cbGestorFormalizacion]').setDisabled(true);
-		                            me.up('formBase').down('[reference=cbGestorFormalizacion]').validate();                            
-		                          }
-		                        }
-		                    }
-						},
-						{
 							xtype: 'comboboxfieldbase',
                             fieldLabel: HreRem.i18n('fieldlabel.perimetro.destino.comercial'),
                             bind: {
@@ -327,7 +294,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
           {
 				xtype: 'gridBase',
 				title: HreRem.i18n('title.historico.vigencias'),
-			    minHeight: 100,
+			    minHeight: 100,R
 				cls	: 'panel-base shadow-panel',
 				reference: 'listadoSubdivisionesAgrupacion',
 				

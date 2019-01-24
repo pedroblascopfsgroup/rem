@@ -50,7 +50,8 @@ public class GDPersonaOutputAssembler {
 
 		if (output.getParameters() != null) {
 			for (KeyValuePair param : output.getParameters().getParameter()) {
-				if (PersonaInputDto.ID_INTERVINIENTE_HAYA.equals(param.getCode()) || PersonaInputDto.ID_PERSONA_HAYA.equals(param.getCode())) {
+				if (PersonaInputDto.ID_INTERVINIENTE_HAYA.equals(param.getCode()) || PersonaInputDto.ID_PERSONA_HAYA.equals(param.getCode()) ||
+						PersonaInputDto.ID_PERSONA_ORIGEN.equals(param.getCode())) {
 					dto.setIdIntervinienteHaya(param.getValue());
 				} else {
 					dto.setIdIntervinienteHaya(null);

@@ -23,19 +23,13 @@ Ext.define('HreRem.model.FichaComprador', {
 		    	name: 'titularReserva'
 		},
 		{
-		    	name: 'descripcionTipoPersona'
-		},
-		{
-		    	name: 'titularReserva'
-		},
-		{
 		    	name: 'porcentajeCompra'
 		},
 		{
 		    	name: 'titularContratacion'
 		},
 		{
-		    	name: 'comboTipoDocumento'
+		    	name: 'codTipoDocumento'
 		},
 		{
 		    	name: 'descripcionTipoDocumento'

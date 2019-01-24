@@ -860,6 +860,9 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 					if (!Checks.esNulo(dto.getTransferenciasInternacionales())) {
 						vistaSinExp.setTransferenciasInternacionales(dto.getTransferenciasInternacionales());
 					}
+					if (!Checks.esNulo(dto.getIdExpedienteComercial())) {
+						vistaSinExp.setIdExpedienteComercial(dto.getIdExpedienteComercial());
+					}
 					DtoModificarCompradores comprador = expedienteComercialApi.vistaCrearComprador(vistaSinExp); //QUA
 					model.put(RESPONSE_DATA_KEY, comprador);
 					model.put(RESPONSE_SUCCESS_KEY, true);

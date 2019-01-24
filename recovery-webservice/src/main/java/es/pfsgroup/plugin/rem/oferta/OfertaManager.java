@@ -3369,12 +3369,12 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				/*if(!Checks.esNulo(clienteCom.getProvincia())) {
 					clienteComercialDto.setProvinciaCodigo(clienteCom.getProvincia().getCodigo());
 					clienteComercialDto.setProvinciaDescripcion(clienteCom.getProvincia().getDescripcion());
-				}
+				}*/
 				if(!Checks.esNulo(clienteCom.getTipoDocumento())) {
 					clienteComercialDto.setTipoDocumentoCodigo(clienteCom.getTipoDocumento().getCodigo());
 					clienteComercialDto.setTipoDocumentoDescripcion(clienteCom.getTipoDocumento().getDescripcion());
 				}
-				if(!Checks.esNulo(clienteCom.getTipoDocumentoRepresentante())) {
+				/*if(!Checks.esNulo(clienteCom.getTipoDocumentoRepresentante())) {
 					clienteComercialDto.setTipoDocumentoRteCodigo(clienteCom.getTipoDocumentoRepresentante().getCodigo());
 					clienteComercialDto.setTipoDocumentoRteDescripcion(clienteCom.getTipoDocumentoRepresentante().getDescripcion());
 				}*/

@@ -9,7 +9,8 @@ Ext
 							'HreRem.view.activos.detalle.CargaDetalle',
 							'HreRem.view.activos.detalle.OpcionesPropagacionCambios',
 							'HreRem.view.activos.detalle.VentanaEleccionTipoPublicacion',
-							'HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaDetalle'],
+							'HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaDetalle',
+							'HreRem.view.expedientes.ExpedienteDetalleController'],
 
 
 					control : {
@@ -2049,8 +2050,8 @@ Ext
 						});
 					},
 
-					onClickBotonGuardarOferta : function(btn) { //ELISA
-					    //debugger;
+					onClickBotonGuardarOferta : function(btn) { 
+				
 						var me = this, 
 						window = btn.up('window'), 
 						form = window.down('formBase'),
@@ -2104,9 +2105,7 @@ Ext
 							});
 						}
 						
-						me.getViewModel().set('oferta', model);
-						
-						
+						me.getViewModel().set('oferta', model);								
 						
 						me.onSaveFormularioCompletoOferta(form, window); 
 					},
@@ -2207,8 +2206,8 @@ Ext
 
 					},
 
-					onSaveFormularioCompletoOferta : function(form, window) { //ELISA
-					    //debugger; 
+					onSaveFormularioCompletoOferta : function(form, window) { 
+					   //debugger;
 						var me = this,
 						record = form.getBindRecord(),
 						ofertaForm = null,
@@ -2231,7 +2230,9 @@ Ext
 												window.parent.up('activosdetalle').lookupController().refrescarActivo(true);
 											}
 											else {
-												window.parent.up('agrupacionesdetalle').lookupController().refrescarAgrupacion(true);
+												window.setController('agrupaciondetalle');
+												window.getController().refrescarAgrupacion(true);												
+												//window.parent.up('agrupacionesdetalle').lookupController().refrescarAgrupacion(true);
 											}
 											me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
 											window.destroy();
@@ -4912,7 +4913,6 @@ Ext
 			method : 'POST',
     		params: {idActivo: idActivo,idAgrupacion: idAgrupacion,idExpediente: idExpediente,dniComprador:dniComprador,codtipoDoc:codtipoDoc},
     		success: function(response, opts){
-    			//debugger;
     			var datos = Ext.decode(response.responseText);
     			var pedirDoc = Ext.decode(response.responseText).data;
     			var comprador=datos.comprador;
@@ -4977,20 +4977,41 @@ Ext
             			
         			}
     			}else{
-    				//debugger;
+    				
     				if(!Ext.isEmpty(btn.up('wizardaltacomprador'))){ 
+    					
     				   ventanaWizard = btn.up('wizardaltacomprador');
     				   ventanaAltaWizard = ventanaWizard.down('datoscompradorwizard');
+    				   
     				   if(!Ext.isEmpty(pedirDoc)){
-    					 ventanaAltaWizard.getForm().findField('pedirDoc').setValue(pedirDoc);
-        				 if(pedirDoc == "false"){
-        					ventanaAltaWizard.down('button[itemId=btnCrear]').setText("Continuar");
-        				 }
-        			   }
-    				   ventanaAltaWizard.idComprador=datos.compradorId;
-    				/*ventanaAltaWizard.getForm().findField('cesionDatosHaya').setValue(comprador.cesionDatosHaya);
-    				ventanaAltaWizard.getForm().findField('comunicacionTerceros').setValue(comprador.comunicacionTerceros);
-    				ventanaAltaWizard.getForm().findField('transferenciasInternacionales').setValue(comprador.transferenciasInternacionales);*/
+    					   ventanaAltaWizard.getForm().findField('pedirDoc').setValue(pedirDoc);
+           				   if(pedirDoc == "true"){
+           					  ventanaAltaWizard.down('button[itemId=btnCrear]').setText("Crear");
+           				   }else{
+           					  ventanaAltaWizard.down('button[itemId=btnCrear]').setText("Continuar");
+           				   }
+           		       }
+    				   
+    				   if(!Ext.isEmpty(datos.compradorId)){
+    					   ventanaAltaWizard.idComprador=datos.compradorId; 
+    				   } 
+    				   else{    		
+        				   form = ventanaWizard.down('anyadirnuevaofertadocumento').form;
+        				   ventanaAltaWizard.getForm().findField('numDocumento').setValue(form.findField('numDocumentoCliente').getValue());    				  
+        				   ventanaAltaWizard.getForm().findField('codTipoDocumento').setValue(form.findField('comboTipoDocumento').getValue());
+    				   }    
+    				   
+    				   if(!Ext.isEmpty(comprador)){
+    					   if(!Ext.isEmpty(comprador.cesionDatos)){
+    					      ventanaAltaWizard.getForm().findField('cesionDatosHaya').setValue(comprador.cesionDatos);
+    					   }
+    					   if(!Ext.isEmpty(comprador.comunicacionTerceros)){
+        				     ventanaAltaWizard.getForm().findField('comunicacionTerceros').setValue(comprador.comunicacionTerceros);
+    					   }
+        				   if(!Ext.isEmpty(comprador.transferenciasInternacionales)){
+        				     ventanaAltaWizard.getForm().findField('transferenciasInternacionales').setValue(comprador.transferenciasInternacionales);
+        				   }
+    				   }    			
     			   }
     			}
     			var wizard = btn.up().up().up();
@@ -5150,23 +5171,29 @@ Ext
 	   	 checkbox.setReadOnly(this.enableChkPerimetroAlquiler());
     },
     
-    onClickCrearOferta: function(btn){ //ELISA
+    onClickCrearOferta: function(btn){ 
     	
     	//debugger;
+
  		var me = this;
  		var ventanaDetalle = btn.up().up(),
  		ventanaAlta = ventanaDetalle.up().xtype, 
  		url = null, ventanaWizard = null;
  		
- 		if (ventanaDetalle.config.xtype.indexOf('activoadjuntardocumento') >= 0) {
+ 		if (ventanaDetalle.config.xtype.indexOf('activoadjuntardocumento') >= 0 && ventanaAlta.indexOf('wizardaltacomprador') < 0) {
+ 			ventanaDetalle.setController('activodetalle');
 			var cesionDatos = ventanaDetalle.getForm().findField('cesionDatos').getValue(),
 			comunicacionTerceros = ventanaDetalle.getForm().findField('comunicacionTerceros').getValue(),
 			transferenciasInternacionales = ventanaDetalle.getForm().findField('transferenciasInternacionales').getValue();
  			ventanaDetalle.up().down('anyadirnuevaofertadetalle').getForm().findField('cesionDatos').setValue(cesionDatos);
  			ventanaDetalle.up().down('anyadirnuevaofertadetalle').getForm().findField('comunicacionTerceros').setValue(comunicacionTerceros);
  			ventanaDetalle.up().down('anyadirnuevaofertadetalle').getForm().findField('transferenciasInternacionales').setValue(transferenciasInternacionales);
+ 			
  			me.onClickBotonGuardarOferta(btn);
+ 			
  		} else if (ventanaDetalle.config.xtype.indexOf('detalle') >= 0) {
+ 			
+ 			ventanaDetalle.setController('activodetalle');
  			pedirDocValor = ventanaDetalle.getForm().findField('pedirDoc').getValue(); 
  			
  			if (pedirDocValor == 'false'){
@@ -5184,7 +5211,7 @@ Ext
  	    		
  	    		     success: function(response, opts) {
  	    		    	 data = Ext.decode(response.responseText);
- 	    		    	 if(!Ext.isEmpty(data.data[0])){
+ 	    		    	 if(!Ext.isEmpty(data.data)){
  	    		    		ventanaWizard.down('anyadirnuevaofertaactivoadjuntardocumento').getForm().findField('docOfertaComercial').setValue(data.data[0].nombre);
  	    		    		ventanaWizard.down('anyadirnuevaofertaactivoadjuntardocumento').down().down('panel').down('button').show();
  	    		    	 }
@@ -5202,14 +5229,19 @@ Ext
      			ventanaDetalle.up().down('anyadirnuevaofertaactivoadjuntardocumento').getForm().findField('cesionDatos').setValue(valorCesionDatos);
      			ventanaDetalle.up().down('anyadirnuevaofertaactivoadjuntardocumento').getForm().findField('comunicacionTerceros').setValue(valorComTerceros);
      			ventanaDetalle.up().down('anyadirnuevaofertaactivoadjuntardocumento').getForm().findField('transferenciasInternacionales').setValue(valorTransferInternacionales);
+     			
      			var wizard = btn.up().up().up();
      			var layout = wizard.getLayout();
      			layout["next"]();
+     			
      		}else{
      			
      			me.onClickBotonGuardarOferta(btn);
      		}
 
+ 		}else if (ventanaDetalle.config.xtype.indexOf('activoadjuntardocumento') >= 0 && ventanaAlta.indexOf('wizardaltacomprador') >= 0) {
+ 			ventanaDetalle.setController('expedientedetalle');
+ 			ventanaDetalle.getController().onClickBotonCrearComprador(btn);
  		}
  	},
      	

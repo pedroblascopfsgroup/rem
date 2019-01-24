@@ -35,7 +35,7 @@ Ext.define('HreRem.view.expedientes.DatosCompradorWizard', {
     	}
 
     	 me.items = [{
-    		 xtype: 		'checkboxfieldbase', 
+    		xtype: 	'checkboxfieldbase', 
  	    	name:		'cesionDatosHaya',
 			bind:		'{comprador.cesionDatosHaya}',
 			hidden:		true
@@ -55,7 +55,7 @@ Ext.define('HreRem.view.expedientes.DatosCompradorWizard', {
 			hidden:		true
 	    },
 	    {   
-	    	xtype:'textfieldbase',
+	    	xtype:      'textfieldbase',
 	    	name:		'pedirDoc',
 			bind:		'{comprador.pedirDoc}',
 			hidden:		true
@@ -164,7 +164,7 @@ Ext.define('HreRem.view.expedientes.DatosCompradorWizard', {
 					{ 
 						xtype: 'comboboxfieldbase',
 			        	fieldLabel: HreRem.i18n('fieldlabel.tipoDocumento'),
-			        	name: 'comboTipoDocumento',
+			        	name: 'codTipoDocumento',
 						reference: 'tipoDocumento',
 						padding: '5px',
 			        	bind: {

@@ -28,9 +28,9 @@ public class GDPersonaInputAssembler {
 		ProcessEventRequestType input = new ProcessEventRequestType();
 		input.setEventName(inputDto.getEvent());
 		
-		if(!Checks.esNulo(inputDto.getIdMotivoOperacion()) || !Checks.esNulo(inputDto.getFechaOperacion()) ||
-				!Checks.esNulo(inputDto.getIdTipoIdentificador()) || !Checks.esNulo(inputDto.getIdRol()) ||
-				!Checks.esNulo(inputDto.getIdCliente()) || !Checks.esNulo(inputDto.getIdPersonaOrigen()) ||
+		if(!Checks.esNulo(inputDto.getIdMotivoOperacion()) && !Checks.esNulo(inputDto.getFechaOperacion()) &&
+				!Checks.esNulo(inputDto.getIdTipoIdentificador()) && !Checks.esNulo(inputDto.getIdRol()) &&
+				!Checks.esNulo(inputDto.getIdCliente()) && !Checks.esNulo(inputDto.getIdPersonaOrigen()) &&
 				!Checks.esNulo(inputDto.getIdOrigen())) {
 			logger.error("IF en dtoToInputPersona");
 			input.setParameters(getParametersCrearPersona(inputDto));

@@ -1,16 +1,17 @@
 ﻿--/*
 --##########################################
---## AUTOR=Sergio Beleña Boix
---## FECHA_CREACION=20181128
+--## AUTOR=Alberto Flores
+--## FECHA_CREACION=20190121
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-4841
+--## INCIDENCIA_LINK=HREOS-5183
 --## PRODUCTO=no
 --## Finalidad: Creación SP
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##		0.2 [HREOS-5183] Se han cambiado los literales
 --##########################################
 --*/
 
@@ -18,7 +19,7 @@
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
 SET SERVEROUTPUT ON;
 create or replace PROCEDURE PROC_GENCAT_BLOQUEO(SP_OUTPUT OUT VARCHAR2) AS
-
+--v0.2
     DIFERENCIA_DIAS NUMBER (16,0);
     
     V_MSQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar     
@@ -31,14 +32,14 @@ create or replace PROCEDURE PROC_GENCAT_BLOQUEO(SP_OUTPUT OUT VARCHAR2) AS
     V_COUNT NUMBER;
     NUM_OFERTA NUMBER(16,0);
     NUM_ACTIVO NUMBER(16,0);
-    V_USUARIO VARCHAR2 (200 CHAR):= 'HREOS-4841';
+    V_USUARIO VARCHAR2 (200 CHAR):= 'HREOS-5183';
 
     V_TABLA_MAIL    VARCHAR2 (30 CHAR) := 'EMAIL_OFERTAS_BLOQ';
     V_TABLA VARCHAR2 (30 CHAR):= 'GENCAT_BLOQ_TMP';
     V_FROM 			VARCHAR2(100 CHAR) := 'noreply.rem@pfsgroup.es';
     V_TO 			VARCHAR2(100 CHAR) := 'jpoyatos@haya.es';
-    V_BODY 			VARCHAR2(1000 CHAR) := 'Las ofertas de los siguientes activos se han bloqueado por exceso de días de formalización.' || chr(10);
-    V_ASUNTO 		VARCHAR2(250 CHAR) := 'Informe - Oferta bloqueadas por excesos de formalización';
+    V_BODY 			VARCHAR2(1000 CHAR) := 'Se ha bloqueado la oferta del activo YYYYYYY para su comunicación a GENCAT debido a un exceso de días de formalización.' || chr(10);
+    V_ASUNTO 		VARCHAR2(250 CHAR) := 'Bloqueo de la oferta del activo YYYYYYY para su comunicación a GENCAT por exceso de días de formalización.';
     V_ADJUNTO 		VARCHAR2(250 CHAR) := 'ofertas_bloqueadas.xlsx';
 
 BEGIN

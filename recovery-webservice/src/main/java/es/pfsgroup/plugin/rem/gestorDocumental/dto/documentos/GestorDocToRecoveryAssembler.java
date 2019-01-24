@@ -92,7 +92,7 @@ public class GestorDocToRecoveryAssembler {
 				dtoAdj.setCodigoTipo(idnDoc.getTdn1() + "-" + idnDoc.getTdn2());
 				dtoAdj.setDescripcionTipo("");
 				dtoAdj.setContentType(null);
-				dtoAdj.setTamanyo(null);
+				dtoAdj.setGestor(null);
 				dtoAdj.setDescripcion(idnDoc.getDescripcionDocumento());
 				dtoAdj.setMatricula(idnDoc.getTipoExpediente() +"-"+idnDoc.getSerieDocumental()+"-"+idnDoc.getTdn1()+"-"+idnDoc.getTdn2());
 						        

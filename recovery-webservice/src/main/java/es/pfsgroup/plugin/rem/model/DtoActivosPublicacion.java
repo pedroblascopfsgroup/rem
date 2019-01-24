@@ -19,6 +19,8 @@ public class DtoActivosPublicacion extends WebDto {
 	private Boolean informeComercial;
 	private Boolean okventa;
 	private Boolean okalquiler;
+	private String motivosOcultacionCodigo;
+	private String motivosOcultacionAlquilerCodigo;
 
 
 	public String getNumActivo() {
@@ -131,6 +133,22 @@ public class DtoActivosPublicacion extends WebDto {
 
 	public void setOkalquiler(Boolean okalquiler) {
 		this.okalquiler = okalquiler;
+	}
+
+	public String getMotivosOcultacionCodigo() {
+		return motivosOcultacionCodigo;
+	}
+
+	public void setMotivosOcultacionCodigo(String motivosOcultacionCodigo) {
+		this.motivosOcultacionCodigo = motivosOcultacionCodigo;
+	}
+
+	public String getMotivosOcultacionAlquilerCodigo() {
+		return motivosOcultacionAlquilerCodigo;
+	}
+
+	public void setMotivosOcultacionAlquilerCodigo(String motivosOcultacionAlquilerCodigo) {
+		this.motivosOcultacionAlquilerCodigo = motivosOcultacionAlquilerCodigo;
 	}
 	
 }

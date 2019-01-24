@@ -36,7 +36,6 @@ import es.pfsgroup.framework.paradise.bulkUpload.model.ResultadoProcesarFila;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVHojaExcel;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVVentaDeCarteraExcelValidator;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
-import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.AgendaAdapter;
 import es.pfsgroup.plugin.rem.adapter.AgrupacionAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
@@ -81,19 +80,15 @@ import es.pfsgroup.plugin.rem.service.UpdaterTransitionService;
 @Component
 public class MSVActualizadorVentaCartera extends AbstractMSVActualizador implements MSVLiberator {
 
-	public static final int EXCEL_FILA_INICIAL = 3;
-	public static final int EXCEL_COL_NUMACTIVO = 0;
-	public static final String NOMBRE_AGRUPACION = "masivo.vc.agrupacion.nombre";
+	private static final int EXCEL_FILA_INICIAL = 3;
+	private static final String NOMBRE_AGRUPACION = "masivo.vc.agrupacion.nombre";
 	private final Log logger = LogFactory.getLog(getClass());
 
 	@Autowired
-	ActivoAdapter activoAdapter;
+	private AgrupacionAdapter agrupacionAdapter;
 
 	@Autowired
-	AgrupacionAdapter agrupacionAdapter;
-
-	@Autowired
-	ParticularValidatorApi particularValidatorApi;
+	private ParticularValidatorApi particularValidatorApi;
 
 	@Autowired
 	private GenericABMDao genericDao;
@@ -102,13 +97,13 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 	private ExpedienteComercialApi expedienteComercialApi;
 
 	@Autowired
-	AgendaAdapter agendaAdapter;
+	private AgendaAdapter agendaAdapter;
 
 	@Autowired
-	ActivoTramiteApi activoTramiteApi;
+	private ActivoTramiteApi activoTramiteApi;
 
 	@Autowired
-	ActivoTareaExternaApi activoTareaExternaApi;
+	private ActivoTareaExternaApi activoTareaExternaApi;
 
 	@Resource(name = "entityTransactionManager")
 	private PlatformTransactionManager transactionManager;
@@ -126,7 +121,7 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 	private ResolucionComiteApi resolucionComiteApi;
 
 	@Resource
-	MessageService messageServices;
+	private MessageService messageServices;
 
 	private MSVHojaExcel excel;
 
@@ -141,8 +136,7 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 	}
 
 	@Override
-	public void preProcesado(MSVHojaExcel exc, ProcesoMasivoContext context)
-			throws NumberFormatException, IllegalArgumentException, IOException, ParseException {
+	public void preProcesado(MSVHojaExcel exc, ProcesoMasivoContext context) throws NumberFormatException, IllegalArgumentException, IOException, ParseException {
 		logger.debug("OFERTA_CARTERA: preProcesado del fichero: " + exc.getRuta());
 		excel = exc;
 		HashMap<String, String> listaAgrupaciones = calcularImporteOferta(excel);
@@ -153,14 +147,12 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 	}
 
 	@Transactional(readOnly = false)
-	public ResultadoProcesarFila procesaFila(MSVHojaExcel exc, int fila, Long prmToken)
-			throws JsonViewerException, IOException, ParseException, SQLException, Exception {
+	public ResultadoProcesarFila procesaFila(MSVHojaExcel exc, int fila, Long prmToken) throws JsonViewerException, IOException, ParseException, SQLException, Exception {
 		return procesaFila(exc, fila, prmToken, new ProcesoMasivoContext());
 	}
 
 	@Transactional(readOnly = false)
-	public ResultadoProcesarFila procesaFila(MSVHojaExcel exc, int fila, Long prmToken, ProcesoMasivoContext context)
-			throws IOException, ParseException, JsonViewerException, SQLException, Exception {
+	public ResultadoProcesarFila procesaFila(MSVHojaExcel exc, int fila, Long prmToken, ProcesoMasivoContext context) throws IOException, ParseException, JsonViewerException, SQLException, Exception {
 		ResultadoProcesarFila resultado = new ResultadoProcesarFila();
 		resultado.addResultado("NUM ACTIVO",
 				exc.dameCelda(fila, MSVVentaDeCarteraExcelValidator.COL_NUM.NUM_ACTIVO_HAYA));
@@ -323,7 +315,7 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 			transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
 			List<VOfertasActivosAgrupacion> listaOfertas = agrupacionAdapter.getListOfertasAgrupacion(idAgrupacion);
 			Oferta oferta = genericDao.get(Oferta.class, genericDao.createFilter(FilterType.EQUALS, "id",
-					Long.parseLong(listaOfertas.get(0).getIdOferta())));
+					listaOfertas.get(0).getIdOferta()));
 			ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByOferta(oferta);
 
 			if (expedienteComercial.getCompradores() != null && !expedienteComercial.getCompradores().isEmpty()) {
@@ -484,7 +476,7 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 			transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
 			List<VOfertasActivosAgrupacion> listaOfertas = agrupacionAdapter.getListOfertasAgrupacion(idAgrupacion);
 			Oferta oferta = genericDao.get(Oferta.class, genericDao.createFilter(FilterType.EQUALS, "id",
-					Long.parseLong(listaOfertas.get(0).getIdOferta())));
+					listaOfertas.get(0).getIdOferta()));
 			ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByOferta(oferta);
 
 			DateFormat format = new SimpleDateFormat("dd/MM/yyyy");
@@ -569,7 +561,7 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 			transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
 			List<VOfertasActivosAgrupacion> listaOfertas = agrupacionAdapter.getListOfertasAgrupacion(idAgrupacion);
 			Oferta oferta = genericDao.get(Oferta.class, genericDao.createFilter(FilterType.EQUALS, "id",
-					Long.parseLong(listaOfertas.get(0).getIdOferta())));
+					listaOfertas.get(0).getIdOferta()));
 			ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByOferta(oferta);
 
 			Activo primerActivo = oferta.getActivoPrincipal();
@@ -579,10 +571,10 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 			}
 
 			if (DDCartera.CODIGO_CARTERA_BANKIA.equals(primerActivo.getCartera().getCodigo())) {
-				Long porcentajeImpuesto = null;
+				Double porcentajeImpuesto = null;
 				if (!Checks.esNulo(expedienteComercial.getCondicionante())) {
 					if (!Checks.esNulo(expedienteComercial.getCondicionante().getTipoAplicable())) {
-						porcentajeImpuesto = expedienteComercial.getCondicionante().getTipoAplicable().longValue();
+						porcentajeImpuesto = expedienteComercial.getCondicionante().getTipoAplicable();
 					}
 				}
 				InstanciaDecisionDto instanciaDecisionDto = expedienteComercialApi
@@ -627,7 +619,7 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 			// Recuperamos el ExpedienteComercial
 			List<VOfertasActivosAgrupacion> listaOfertas = agrupacionAdapter.getListOfertasAgrupacion(idAgrupacion);
 			Oferta oferta = genericDao.get(Oferta.class, genericDao.createFilter(FilterType.EQUALS, "id",
-					Long.parseLong(listaOfertas.get(0).getIdOferta())));
+					listaOfertas.get(0).getIdOferta()));
 			ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByOferta(oferta);
 			resultado.addResultado("NUM OFERTA", oferta.getNumOferta().toString());
 			resultado.addResultado("EXP comercial", expedienteComercial.getNumExpediente().toString());
@@ -674,7 +666,7 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 			transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
 			List<VOfertasActivosAgrupacion> listaOfertas = agrupacionAdapter.getListOfertasAgrupacion(idAgrupacion);
 			Oferta oferta = genericDao.get(Oferta.class, genericDao.createFilter(FilterType.EQUALS, "id",
-					Long.parseLong(listaOfertas.get(0).getIdOferta())));
+					listaOfertas.get(0).getIdOferta()));
 			ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByOferta(oferta);
 			List<ActivoTramite> listaTramites = activoTramiteApi
 					.getTramitesActivoTrabajoList(expedienteComercial.getTrabajo().getId());
@@ -722,7 +714,7 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 			transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
 			List<VOfertasActivosAgrupacion> listaOfertas = agrupacionAdapter.getListOfertasAgrupacion(idAgrupacion);
 			Oferta oferta = genericDao.get(Oferta.class, genericDao.createFilter(FilterType.EQUALS, "id",
-					Long.parseLong(listaOfertas.get(0).getIdOferta())));
+					listaOfertas.get(0).getIdOferta()));
 			ResolucionComiteDto resolucionComiteDto = new ResolucionComiteDto();
 			resolucionComiteDto.setCodigoComite(codigoComite);
 			resolucionComiteDto.setOfertaHRE(oferta.getNumOferta());
@@ -764,7 +756,7 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 					List<VOfertasActivosAgrupacion> listaOfertas = agrupacionAdapter
 							.getListOfertasAgrupacion(idAgrupacion);
 					Oferta oferta = genericDao.get(Oferta.class, genericDao.createFilter(FilterType.EQUALS, "id",
-							Long.parseLong(listaOfertas.get(0).getIdOferta())));
+							listaOfertas.get(0).getIdOferta()));
 					ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByOferta(oferta);
 					vDatosComprador = new VBusquedaDatosCompradorExpediente();
 					String nombreRazonSocial = null;
@@ -832,7 +824,7 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 			// Recuperamos el ExpedienteComercial
 			List<VOfertasActivosAgrupacion> listaOfertas = agrupacionAdapter.getListOfertasAgrupacion(idAgrupacion);
 			Oferta oferta = genericDao.get(Oferta.class, genericDao.createFilter(FilterType.EQUALS, "id",
-					Long.parseLong(listaOfertas.get(0).getIdOferta())));
+					listaOfertas.get(0).getIdOferta()));
 			ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByOferta(oferta);
 
 			VBusquedaDatosCompradorExpediente vDatosComprador = new VBusquedaDatosCompradorExpediente();
@@ -877,7 +869,7 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 			transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
 			DtoOfertaActivo dtoOferta = new DtoOfertaActivo();
 			List<VOfertasActivosAgrupacion> listaOfertas = agrupacionAdapter.getListOfertasAgrupacion(idAgrupacion);
-			dtoOferta.setIdOferta(Long.parseLong(listaOfertas.get(0).getIdOferta()));
+			dtoOferta.setIdOferta(listaOfertas.get(0).getIdOferta());
 			dtoOferta.setIdAgrupacion(idAgrupacion);
 			dtoOferta.setCodigoEstadoOferta(DDEstadoOferta.CODIGO_ACEPTADA);
 
@@ -903,7 +895,7 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 			transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
 			List<VOfertasActivosAgrupacion> listaOfertas = agrupacionAdapter.getListOfertasAgrupacion(idAgrupacion);
 			Oferta oferta = genericDao.get(Oferta.class, genericDao.createFilter(FilterType.EQUALS, "id",
-					Long.parseLong(listaOfertas.get(0).getIdOferta())));
+					listaOfertas.get(0).getIdOferta()));
 			ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByOferta(oferta);
 			expedienteComercialApi.bloquearExpediente(expedienteComercial.getId());
 
@@ -1178,7 +1170,7 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 			transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
 			List<VOfertasActivosAgrupacion> listaOfertas = agrupacionAdapter.getListOfertasAgrupacion(idAgrupacion);
 			Oferta oferta = genericDao.get(Oferta.class, genericDao.createFilter(FilterType.EQUALS, "id",
-					Long.parseLong(listaOfertas.get(0).getIdOferta())));
+					listaOfertas.get(0).getIdOferta()));
 			ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByOferta(oferta);
 
 			ArrayList<DtoActivosExpediente> activosAgr = ((HashMap<String, ArrayList<DtoActivosExpediente>>) context
@@ -1210,7 +1202,7 @@ public class MSVActualizadorVentaCartera extends AbstractMSVActualizador impleme
 			Date posDate = new Date();
 			List<VOfertasActivosAgrupacion> listaOfertas = agrupacionAdapter.getListOfertasAgrupacion(idAgrupacion);
 			Oferta oferta = genericDao.get(Oferta.class, genericDao.createFilter(FilterType.EQUALS, "id",
-					Long.parseLong(listaOfertas.get(0).getIdOferta())));
+					listaOfertas.get(0).getIdOferta()));
 			ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByOferta(oferta);
 			DtoPosicionamiento posicionamiento = new DtoPosicionamiento();
 			posicionamiento.setFechaPosicionamiento(posDate);

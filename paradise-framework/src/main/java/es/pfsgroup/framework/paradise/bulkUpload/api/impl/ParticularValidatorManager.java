@@ -2279,24 +2279,6 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 	}
 
-
-	@Override
-	public Boolean activoEnAgrupacionComercialViva(String numActivo) {
-
-		String resultado = rawDao.getExecuteSQL("select count(agr.AGR_ID) from ACT_AGR_AGRUPACION agr " +
-				" inner join DD_TAG_TIPO_AGRUPACION tag on tag.DD_TAG_ID = agr.DD_TAG_ID and (tag.DD_TAG_CODIGO = '14' or tag.DD_TAG_CODIGO = '15') " +
-				" inner join ACT_AGA_AGRUPACION_ACTIVO aga on aga.AGR_ID = agr.AGR_ID " +
-				" inner join ACT_ACTIVO act on act.ACT_ID = aga.ACT_ID and act.ACT_NUM_ACTIVO = " + numActivo +
-				" where agr.AGR_FECHA_BAJA IS NULL AND agr.AGR_FIN_VIGENCIA >= sysdate " +
-				" and act.borrado = 0" +
-				" and agr.borrado = 0" +
-				" and tag.borrado = 0" +
-				" and aga.borrado = 0");
-
-		return Integer.valueOf(resultado) > 0;
-
-	}
-
 	@Override
 	public Boolean esAgrupacionTipoAlquiler(String numAgrupacion) {
 		if(Checks.esNulo(numAgrupacion) || !StringUtils.isNumeric(numAgrupacion))
@@ -2432,6 +2414,23 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 
 		return !"0".equals(resultado);
+
+	}
+
+	@Override
+	public Boolean activoEnAgrupacionComercialViva(String numActivo) {
+
+		String resultado = rawDao.getExecuteSQL("select count(agr.AGR_ID) from ACT_AGR_AGRUPACION agr " +
+				" inner join DD_TAG_TIPO_AGRUPACION tag on tag.DD_TAG_ID = agr.DD_TAG_ID and (tag.DD_TAG_CODIGO = '14' or tag.DD_TAG_CODIGO = '15') " +
+				" inner join ACT_AGA_AGRUPACION_ACTIVO aga on aga.AGR_ID = agr.AGR_ID " +
+				" inner join ACT_ACTIVO act on act.ACT_ID = aga.ACT_ID and act.ACT_NUM_ACTIVO = " + numActivo +
+				" where agr.AGR_FECHA_BAJA IS NULL AND agr.AGR_FIN_VIGENCIA >= sysdate " +
+				" and act.borrado = 0" +
+				" and agr.borrado = 0" +
+				" and tag.borrado = 0" +
+				" and aga.borrado = 0");
+
+		return Integer.valueOf(resultado) > 0;
 
 	}
 

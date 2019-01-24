@@ -11,9 +11,9 @@
 	default-autowire="byName">
 	
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/precontencioso/precontencioso.xml" p:version="31"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/precontenciosohaya/precontenciosohaya.xml" p:version="-1"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/precontenciosobankia/precontenciosobankia.xml" p:version="-1"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/precontenciosocajamar/precontenciosocajamar.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/precontenciosohaya/precontenciosohaya.xml" p:version="100"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/precontenciosobankia/precontenciosobankia.xml" p:version="100"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/precontenciosocajamar/precontenciosocajamar.xml" p:version="100"/>
 	
 	<bean id="precontenciosoLeaveActionHandler" class="es.pfsgroup.plugin.precontencioso.expedienteJudicial.handler.PrecontenciosoLeaveActionHandler"></bean>
 	<bean id="precontenciosoEnterActionHandler" class="es.pfsgroup.plugin.precontencioso.expedienteJudicial.handler.PrecontenciosoEnterActionHandler"></bean>

@@ -223,11 +223,11 @@ public class AltaActivoFinanciero implements AltaActivoService {
 		// PerimetroActivo
 		PerimetroActivo perimetroActivo = new PerimetroActivo();
 		perimetroActivo.setActivo(activo);
-		perimetroActivo.setAplicaGestion(1);
-		perimetroActivo.setAplicaComercializar(1);
-		perimetroActivo.setAplicaFormalizar(1);
-		perimetroActivo.setAplicaPublicar(true);
-		perimetroActivo.setIncluidoEnPerimetro(1);
+		perimetroActivo.setAplicaGestion(0);
+		perimetroActivo.setAplicaComercializar(0);
+		perimetroActivo.setAplicaFormalizar(0);
+		perimetroActivo.setAplicaPublicar(false);
+		perimetroActivo.setIncluidoEnPerimetro(0);
 		genericDao.save(PerimetroActivo.class, perimetroActivo);
 
 		// ActivoBancario.

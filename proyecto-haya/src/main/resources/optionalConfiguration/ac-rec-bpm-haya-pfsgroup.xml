@@ -20,77 +20,77 @@
 		    
 	<!-- BPM activos -->
 	<!-- Cambios Rober -->
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/procedimientoHipotecario/haya_procedimientoHipotecario.xml" p:version="-1"/>	
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteAdjudicacion/haya_tramiteAdjudicacionV4.xml" p:version="-1"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteCesionRemate/haya_tramiteCesionRemateV4.xml" p:version="-1"/>		
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteCostas/haya_tramiteCostas.xml" p:version="-1"/>	
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteMoratoriaLanzamiento/haya_tramiteMoratoriaLanzamiento.xml" p:version="-1"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteOcupantes/haya_tramiteOcupantes.xml" p:version="-1"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteDePosesion/haya_tramiteDePosesionV4.xml" p:version="-1"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteDeGestionDeLlaves/haya_tramiteDeGestionDeLlaves.xml" p:version="-1"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteSubsanacionEmbargo/haya_tramiteSubsanacionEmbargo.xml" p:version="-1"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteSubastaSareb/haya_tramiteSubastaSareb.xml" p:version="-1"/>				
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteSubastaSarebConcursal/haya_tramiteSubastaConcursal.xml" p:version="-1"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteSubastaTerceros/haya_tramiteSubastaTerceros.xml" p:version="-1"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteEjecucionNotarial/haya_tramiteEjecucionNotarialV4.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/procedimientoHipotecario/haya_procedimientoHipotecario.xml" p:version="2331"/>	
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteAdjudicacion/haya_tramiteAdjudicacionV4.xml" p:version="1231"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteCesionRemate/haya_tramiteCesionRemateV4.xml" p:version="1129"/>		
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteCostas/haya_tramiteCostas.xml" p:version="1129"/>	
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteMoratoriaLanzamiento/haya_tramiteMoratoriaLanzamiento.xml" p:version="1129"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteOcupantes/haya_tramiteOcupantes.xml" p:version="1129"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteDePosesion/haya_tramiteDePosesionV4.xml" p:version="1137"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteDeGestionDeLlaves/haya_tramiteDeGestionDeLlaves.xml" p:version="1149"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteSubsanacionEmbargo/haya_tramiteSubsanacionEmbargo.xml" p:version="1130"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteSubastaSareb/haya_tramiteSubastaSareb.xml" p:version="1130"/>				
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteSubastaSarebConcursal/haya_tramiteSubastaConcursal.xml" p:version="1130"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteSubastaTerceros/haya_tramiteSubastaTerceros.xml" p:version="1130"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteEjecucionNotarial/haya_tramiteEjecucionNotarialV4.xml" p:version="1130"/>
 	
 	<!-- Cambios JoseVi --> 
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteSaneamientoCargas/tramiteSaneamientoCargas.xml" p:version="-1"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteElevacionSarebLitigios/tramiteElevacionPropSarebLitigios.xml" p:version="-1"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteElevacionSarebAdjudicados/tramiteElevacionPropSarebAdjudicados.xml" p:version="-1"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteFaseComunAbreviado/tramiteFaseComunAbreviadoV4.xml" p:version="-1"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/procedimientoSolicitudConcursal/haya_procedimientoSolicitudConcursal.xml" p:version="-1"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteHomologacionAcuerdo/haya_tramiteHomologacionAcuerdo.xml" p:version="-1"/>	
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteFaseLiquidacion/haya_tramiteFaseLiquidacion.xml" p:version="-1"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteDeposito/haya_tramiteDeposito.xml" p:version="-1"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteCertificacionCargasRevision/haya_tramiteCertificacionCargasRevision.xml" p:version="-1"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteInvestigacionJudicial/haya_tramiteInvestigacionJudicial.xml" p:version="-1"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteEmbargoSalarios/haya_tramiteEmbargoSalarios.xml" p:version="-1"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteReaperturaConcurso/haya_tramiteReaperturaConcurso.xml" p:version="-1"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/procedimientoMonitorio/haya_procedimientoMonitorio.xml" p:version="-1"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/procedimientoOrdinario/haya_procedimientoOrdinario.xml" p:version="-1"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/procedimientoVerbal/haya_procedimientoVerbal.xml" p:version="-1"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/procedimientoVerbalDesdeMonitorio/haya_procedimientoVerbalDesdeMonitorio.xml" p:version="-1"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteCostasVsEntidad/haya_tramiteCostasVsEntidad.xml" p:version="-1"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteTributacionBienesSareb/haya_tramiteTributacionBienesSareb.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteSaneamientoCargas/tramiteSaneamientoCargas.xml" p:version="3247"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteElevacionSarebLitigios/tramiteElevacionPropSarebLitigios.xml" p:version="1019"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteElevacionSarebAdjudicados/tramiteElevacionPropSarebAdjudicados.xml" p:version="1019"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteFaseComunAbreviado/tramiteFaseComunAbreviadoV4.xml" p:version="3300"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/procedimientoSolicitudConcursal/haya_procedimientoSolicitudConcursal.xml" p:version="1130"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteHomologacionAcuerdo/haya_tramiteHomologacionAcuerdo.xml" p:version="1130"/>	
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteFaseLiquidacion/haya_tramiteFaseLiquidacion.xml" p:version="1150"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteDeposito/haya_tramiteDeposito.xml" p:version="1133"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteCertificacionCargasRevision/haya_tramiteCertificacionCargasRevision.xml" p:version="1133"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteInvestigacionJudicial/haya_tramiteInvestigacionJudicial.xml" p:version="1133"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteEmbargoSalarios/haya_tramiteEmbargoSalarios.xml" p:version="1133"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteReaperturaConcurso/haya_tramiteReaperturaConcurso.xml" p:version="1134"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/procedimientoMonitorio/haya_procedimientoMonitorio.xml" p:version="1134"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/procedimientoOrdinario/haya_procedimientoOrdinario.xml" p:version="1134"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/procedimientoVerbal/haya_procedimientoVerbal.xml" p:version="1135"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/procedimientoVerbalDesdeMonitorio/haya_procedimientoVerbalDesdeMonitorio.xml" p:version="1136"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteCostasVsEntidad/haya_tramiteCostasVsEntidad.xml" p:version="1136"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteTributacionBienesSareb/haya_tramiteTributacionBienesSareb.xml" p:version="1136"/>
 		
 	<!-- Cambios Gonzalo -->
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteCalificacion/haya_tramiteCalificacion.xml" p:version="-1"/>		
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteFaseConvenio/tramiteFaseConvenioV4.xml" p:version="-1"/>		
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteValoracionBienesInmuebles/tramiteValoracionBienesInmuebles.xml" p:version="-1"/>		
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteValoracionBienesMuebles/tramiteValoracionBienesMuebles.xml" p:version="-1"/>		
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteIntereses/tramiteIntereses.xml" p:version="-1"/>		
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramitePresentacionPropConvenio/tramitePresentacionPropConvenio.xml" p:version="-1"/>		
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteSeguimientoConvenio/tramiteSeguimientoConvenio.xml" p:version="-1"/>		
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramitePropuestaAnticipadaConvenio/tramitePropuestaAnticipadaConvenio.xml" p:version="-1"/>		
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/procedimientoEjecucionTituloJudicial/procedimientoEjecucionTituloJudicial.xml" p:version="-1"/>		
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/procedimientoEjecucionTituloNoJudicial/procedimientoEjecucionTituloNoJudicial.xml" p:version="-1"/>		
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteCalificacion/haya_tramiteCalificacion.xml" p:version="1136"/>		
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteFaseConvenio/tramiteFaseConvenioV4.xml" p:version="3182"/>		
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteValoracionBienesInmuebles/tramiteValoracionBienesInmuebles.xml" p:version="2832"/>		
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteValoracionBienesMuebles/tramiteValoracionBienesMuebles.xml" p:version="2832"/>		
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteIntereses/tramiteIntereses.xml" p:version="2857"/>		
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramitePresentacionPropConvenio/tramitePresentacionPropConvenio.xml" p:version="2637"/>		
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteSeguimientoConvenio/tramiteSeguimientoConvenio.xml" p:version="1027"/>		
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramitePropuestaAnticipadaConvenio/tramitePropuestaAnticipadaConvenio.xml" p:version="2637"/>		
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/procedimientoEjecucionTituloJudicial/procedimientoEjecucionTituloJudicial.xml" p:version="1028"/>		
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/procedimientoEjecucionTituloNoJudicial/procedimientoEjecucionTituloNoJudicial.xml" p:version="2832"/>		
 
 	<!-- Cambios Nacho --> 
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteSolicitudActuacionesPronunciamientos/haya_tramiteSolicitudActuacionesPronunciamientos.xml" p:version="-1"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramitePrecinto/haya_tramitePrecinto.xml" p:version="-1"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteDemandadoEnIncidente/haya_tramiteDemandadoEnIncidente.xml" p:version="-1"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteVigilanciaCaducidadEmbargos/haya_tramiteVigilanciaCaducidadEmbargos.xml" p:version="-1"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteMejoraEmbargo/haya_tramiteMejoraEmbargo.xml" p:version="-1"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteDemandaIncidental/haya_tramiteDemandaIncidental.xml" p:version="-1"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteConsignacion/haya_tramiteConsignacion.xml" p:version="-1"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteRegistrarResolucionInteres/haya_tramiteRegistrarResolucionInteres.xml" p:version="-1"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteConclusion/haya_tramiteConclusion.xml" p:version="-1"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/procedimientoCambiario/haya_procedimientoCambiario.xml" p:version="-1"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteSubsanacionEscritura/haya_tramiteSubsanacionEscritura.xml" p:version="-1"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteInscripcionDelTitulo/haya_tramiteInscripcionDelTitulo.xml" p:version="-1"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteAsignacionGestores/haya_tramiteAsignacionGestores.xml" p:version="-1"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteAceptacionLitigios/haya_tramiteAceDecLitigios.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteSolicitudActuacionesPronunciamientos/haya_tramiteSolicitudActuacionesPronunciamientos.xml" p:version="1139"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramitePrecinto/haya_tramitePrecinto.xml" p:version="1139"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteDemandadoEnIncidente/haya_tramiteDemandadoEnIncidente.xml" p:version="1139"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteVigilanciaCaducidadEmbargos/haya_tramiteVigilanciaCaducidadEmbargos.xml" p:version="1140"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteMejoraEmbargo/haya_tramiteMejoraEmbargo.xml" p:version="1141"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteDemandaIncidental/haya_tramiteDemandaIncidental.xml" p:version="1141"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteConsignacion/haya_tramiteConsignacion.xml" p:version="1141"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteRegistrarResolucionInteres/haya_tramiteRegistrarResolucionInteres.xml" p:version="1142"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteConclusion/haya_tramiteConclusion.xml" p:version="1142"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/procedimientoCambiario/haya_procedimientoCambiario.xml" p:version="1142"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteSubsanacionEscritura/haya_tramiteSubsanacionEscritura.xml" p:version="1143"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteInscripcionDelTitulo/haya_tramiteInscripcionDelTitulo.xml" p:version="1143"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteAsignacionGestores/haya_tramiteAsignacionGestores.xml" p:version="1143"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteAceptacionLitigios/haya_tramiteAceDecLitigios.xml" p:version="1134"/>
 	
 	<!-- Cambios acuerdos --> 
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteFormalizacionPignoracion/tramiteFormalizacionPignoracion.xml" p:version="-1"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteVentaDeDeuda/tramiteVentaDeDeuda.xml" p:version="-1"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramitePDV/tramitePDV.xml" p:version="-1"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteDacionEnPago/tramiteDacionEnPago.xml" p:version="-1"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteFormalizacionVentaCredito/tramiteFormalizacionVentaCredito.xml" p:version="-1"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteFormalizacionQuita/tramiteFormalizacionQuita.xml" p:version="-1"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteFormalizacionReestructuracionRefinanciacion/tramiteFormalizacionReestructuracionRefinanciacion.xml" p:version="-1"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteFormalizacionAmortizacionVoluntaria/haya_tramiteFormalizacionAmortizacionVoluntaria.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteFormalizacionPignoracion/tramiteFormalizacionPignoracion.xml" p:version="1054"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteVentaDeDeuda/tramiteVentaDeDeuda.xml" p:version="10099"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramitePDV/tramitePDV.xml" p:version="1010"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteDacionEnPago/tramiteDacionEnPago.xml" p:version="1030"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteFormalizacionVentaCredito/tramiteFormalizacionVentaCredito.xml" p:version="100"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteFormalizacionQuita/tramiteFormalizacionQuita.xml" p:version="900"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteFormalizacionReestructuracionRefinanciacion/tramiteFormalizacionReestructuracionRefinanciacion.xml" p:version="900"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/haya/tramiteFormalizacionAmortizacionVoluntaria/haya_tramiteFormalizacionAmortizacionVoluntaria.xml" p:version="982"/>
 	
 	<!-- Groovy's -->
   	<bean id="jbpmUtilHreSareb" class="es.pfsgroup.recovery.haya.utils.JBPMProcessHayaManager" >

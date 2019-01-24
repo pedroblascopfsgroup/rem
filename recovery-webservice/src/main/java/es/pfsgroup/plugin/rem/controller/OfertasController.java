@@ -287,8 +287,8 @@ public class OfertasController {
 		File file = excelReportGeneratorApi.generateBankiaReport(listaPropuestaAlquilerBankia, request);
 
 		excelReportGeneratorApi.sendReport(file, response);
-//		Oferta oferta = ofertaApi.getOfertaById(idOferta);
-//		notificationOferta.sendNotificationPropuestaOferta(oferta, new FileItem(file));
+		Oferta oferta = ofertaApi.getOfertaById(idOferta);
+		notificationOferta.sendNotificationPropuestaOferta(oferta, new FileItem(file));
 	}
 	
 	@SuppressWarnings("unchecked")

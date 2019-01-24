@@ -317,10 +317,6 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 			}
 				
 			
-			
-			
-					
-			
 			for (int i = 0; i < l_DtoPropuestaAlq.size()-1; i++) {
 				
 				dtoPAB = l_DtoPropuestaAlq.get(i);

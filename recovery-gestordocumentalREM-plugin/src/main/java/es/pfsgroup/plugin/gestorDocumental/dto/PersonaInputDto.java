@@ -8,12 +8,13 @@ public class PersonaInputDto implements Serializable{
 	 * 
 	 */
 	private static final long serialVersionUID = 1884005212021894617L;
-	//public static final String ID_CLIENTE = "ID_CLIENTE";
+	public static final String ID_CLIENTE = "ID_CLIENTE";
+	public static final String ID_ENTIDAD_CEDENTE = "ID_ENTIDAD_CEDENTE";
 	//public static final String ID_PERSONA_CLIENTE = "ID_INTERVINIENTE_CLIENTE";
+	public static final String ID_PERSONA_CLIENTE_ALTA = "ID_PERSONA_CLIENTE";
 	public static final String ID_INTERVINIENTE_ORIGEN = "ID_INTERVINIENTE_ORIGEN";
 	public static final String ID_PERSONA_ORIGEN = "ID_PERSONA_ORIGEN";
 	public static final String ID_ORIGEN = "NOS";
-	public static final String ID_CLIENTE = "ID_CLIENTE";
 	//public static final String ID_TIPO_PERSONA = "ID_TIPO_PERSONA";
 	public static final String ID_INTERVINIENTE_HAYA = "ID_INTERVINIENTE_HAYA";
 	public static final String ID_PERSONA_HAYA = "ID_PERSONA_HAYA";
@@ -26,6 +27,7 @@ public class PersonaInputDto implements Serializable{
 
 	public static final String ID_MOTIVO_OPERACION = "ID_MOTIVO_OPERACION";
 	public static final String ID_ORIGEN_PERSONA = "ID_ORIGEN";
+	public static final String ID_TIPO_ORIGEN = "ID_TIPO_ORIGEN";
 	public static final String FECHA_OPERACION = "FECHA_OPERACION";
 	public static final String ID_TIPO_IDENTIFICADOR = "ID_TIPO_IDENTIFICADOR";
 	public static final String ID_ROL = "ID_ROL";
@@ -38,9 +40,13 @@ public class PersonaInputDto implements Serializable{
 	private String idIntervinienteHaya;
 	private String event;
 	
+	private String idEntidadCedente;
+	private String idPersonaCliente;
 	private String idMotivoOperacion;
+	private String idTipoOrigen;
 	private String fechaOperacion;
 	private String idTipoIdentificador;
+	private String idPersonaHaya;
 	private String idRol;
 
 	public String toString(){
@@ -163,6 +169,38 @@ public class PersonaInputDto implements Serializable{
 
 	public void setIdRol(String idRol) {
 		this.idRol = idRol;
+	}
+	
+	public String getIdEntidadCedente() {
+		return idEntidadCedente;
+	}
+
+	public void setIdEntidadCedente(String idEntidadCedente) {
+		this.idEntidadCedente = idEntidadCedente;
+	}
+
+	public String getIdPersonaCliente() {
+		return idPersonaCliente;
+	}
+
+	public void setIdPersonaCliente(String idPersonaCliente) {
+		this.idPersonaCliente = idPersonaCliente;
+	}
+
+	public String getIdTipoOrigen() {
+		return idTipoOrigen;
+	}
+
+	public void setIdTipoOrigen(String idTipoOrigen) {
+		this.idTipoOrigen = idTipoOrigen;
+	}
+
+	public String getIdPersonaHaya() {
+		return idPersonaHaya;
+	}
+
+	public void setIdPersonaHaya(String idPersonaHaya) {
+		this.idPersonaHaya = idPersonaHaya;
 	}
 
 }

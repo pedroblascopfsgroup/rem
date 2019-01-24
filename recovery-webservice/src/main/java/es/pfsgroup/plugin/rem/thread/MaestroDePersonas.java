@@ -109,14 +109,18 @@ public class MaestroDePersonas  implements Runnable{
 								String today = df.format(new Date());
 								
 								logger.error("[MAESTRO DE PERSONAS] GENERANDO ID PERSONA");
+								personaDto.setEvent(PersonaInputDto.EVENTO_ALTA_PERSONA);
 								personaDto.setIdCliente(ID_CLIENTE_HAYA);
+								personaDto.setIdEntidadCedente("");
+								personaDto.setIdPersonaCliente("");
 								personaDto.setIdPersonaOrigen(compradorExpediente.getPrimaryKey().getComprador().getDocumento());
 								personaDto.setIdMotivoOperacion(MOTIVO_OPERACION_ALTA);
 								personaDto.setIdOrigen(ID_ORIGEN_REM);
+								personaDto.setIdTipoOrigen("");
 								personaDto.setFechaOperacion(today);
 								personaDto.setIdTipoIdentificador(ID_TIPO_IDENTIFICADOR_NIF_CIF);
+								personaDto.setIdPersonaHaya("");
 								personaDto.setIdRol(ID_ROL_16);
-								personaDto.setEvent(PersonaInputDto.EVENTO_ALTA_PERSONA);
 								
 								personaOutputDto = gestorDocumentalMaestroManager.ejecutarPersona(personaDto);
 								
@@ -174,14 +178,18 @@ public class MaestroDePersonas  implements Runnable{
 							String today = df.format(new Date());
 							
 							logger.error("[MAESTRO DE PERSONAS] GENERANDO ID PERSONA");
+							personaDto.setEvent(PersonaInputDto.EVENTO_ALTA_PERSONA);
 							personaDto.setIdCliente(ID_CLIENTE_HAYA);
+							personaDto.setIdEntidadCedente("");
+							personaDto.setIdPersonaCliente("");
 							personaDto.setIdPersonaOrigen(documento);
 							personaDto.setIdMotivoOperacion(MOTIVO_OPERACION_ALTA);
 							personaDto.setIdOrigen(ID_ORIGEN_REM);
+							personaDto.setIdTipoOrigen("");
 							personaDto.setFechaOperacion(today);
 							personaDto.setIdTipoIdentificador(ID_TIPO_IDENTIFICADOR_NIF_CIF);
+							personaDto.setIdPersonaHaya("");
 							personaDto.setIdRol(ID_ROL_16);
-							personaDto.setEvent(PersonaInputDto.EVENTO_ALTA_PERSONA);
 							
 							personaOutputDto = gestorDocumentalMaestroManager.ejecutarPersona(personaDto);
 							

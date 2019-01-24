@@ -65,6 +65,7 @@ public class GestorDocumentalMaestroManager extends BaseWS implements GestorDocu
 	@Override
 	public PersonaOutputDto ejecutarPersona(PersonaInputDto dto) {
 		es.pfsgroup.plugin.gestorDocumental.ws.MAESTRO_PERSONAS.ProcessEventRequestType input = GDPersonaInputAssembler.dtoToInputPersona(dto);
+		logger.info("JSON MONTADO:\n"+input);
 		logger.info("LLamando al WS MAESTRO_PERSONAS...Parametros de entrada... " + dto.getEvent() + ", " + dto.getIdCliente() + ", " + dto.getIdPersonaOrigen());
 		es.pfsgroup.plugin.gestorDocumental.ws.MAESTRO_PERSONAS.ProcessEventResponseType output = null;
 		try {	

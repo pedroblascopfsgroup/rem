@@ -73,6 +73,7 @@ import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoTramiteDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
+import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
@@ -216,6 +217,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTiposImpuesto;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPorCuenta;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposTextoOferta;
+import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
 import es.pfsgroup.plugin.rem.reserva.dao.ReservaDao;
 import es.pfsgroup.plugin.rem.rest.dto.DatosClienteDto;
 import es.pfsgroup.plugin.rem.rest.dto.InstanciaDecisionDataDto;
@@ -318,6 +320,12 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
     @Autowired
 	private TrabajoApi trabajoApi;
+    
+    @Autowired
+	private OfertaDao ofertaDao;
+    
+    @Autowired
+	private ActivoAgrupacionApi activoAgrupacionApi;
 
 	@Resource
 	private Properties appProperties;
@@ -577,6 +585,18 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 							o.setEstadoOferta(est); 
 							genericDao.save(Oferta.class, o);
 						}
+					}
+				}
+				
+				if (!Checks.esNulo(oferta.getAgrupacion())) {
+					ActivoAgrupacion agrupacion = oferta.getAgrupacion();
+					List<Oferta> ofertasVivasAgrupacion = ofertaDao.getListOtrasOfertasVivasAgr(oferta.getId(), agrupacion.getId());
+	
+					if ((agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_VENTA) 
+							|| agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_ALQUILER))
+							&& !Checks.esNulo(ofertasVivasAgrupacion) && ofertasVivasAgrupacion.isEmpty()) {
+						agrupacion.setFechaBaja(new Date());
+						activoAgrupacionApi.saveOrUpdate(agrupacion);
 					}
 				}
 			}
@@ -4034,13 +4054,13 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 	@Override
 	public String consultarComiteSancionador(Long idExpediente) throws Exception {
-		Long porcentajeImpuesto = null;
+		Double porcentajeImpuesto = null;
 
 		try {
 			ExpedienteComercial expediente = findOne(idExpediente);
 			if (!Checks.esNulo(expediente.getCondicionante())) {
 				if (!Checks.esNulo(expediente.getCondicionante().getTipoAplicable())) {
-					porcentajeImpuesto = expediente.getCondicionante().getTipoAplicable().longValue();
+					porcentajeImpuesto = expediente.getCondicionante().getTipoAplicable();
 				}
 			}
 
@@ -4106,7 +4126,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		return instancia;
 	}
 
-	public InstanciaDecisionDto expedienteComercialToInstanciaDecisionList(ExpedienteComercial expediente, Long porcentajeImpuesto, String codComiteSuperior) throws Exception {
+	public InstanciaDecisionDto expedienteComercialToInstanciaDecisionList(ExpedienteComercial expediente, Double porcentajeImpuesto, String codComiteSuperior) throws Exception {
 		String tipoImpuestoCodigo;
 		InstanciaDecisionDto instancia = new InstanciaDecisionDto();
 		BigDecimal importeXActivo = null;
@@ -4188,7 +4208,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 			// PorcentajeImpuesto
 			if (!Checks.esNulo(porcentajeImpuesto)) {
-				instData.setPorcentajeImpuesto(porcentajeImpuesto.intValue());
+				instData.setPorcentajeImpuesto((int)(porcentajeImpuesto*100));
 			}
 			instanciaList.add(instData);
 		}
@@ -6500,11 +6520,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	private InstanciaDecisionDto creaInstanciaDecisionDto(Long idExpediente) throws Exception {
 		try {
 			ExpedienteComercial expediente = findOne(idExpediente);
-			Long porcentajeImpuesto = null;
+			Double porcentajeImpuesto = null;
 
 			if (!Checks.esNulo(expediente) && !Checks.esNulo(expediente.getCondicionante())) {
 				if (!Checks.esNulo(expediente.getCondicionante().getTipoAplicable())) {
-					porcentajeImpuesto = expediente.getCondicionante().getTipoAplicable().longValue();
+					porcentajeImpuesto = expediente.getCondicionante().getTipoAplicable();
 				}
 			}
 

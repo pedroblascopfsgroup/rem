@@ -196,7 +196,7 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 				r = mySheet.getRow(cellReference.getRow());
 				c = r.getCell(cellReference.getCol());
 				if (!Checks.esNulo(dtoPAB.getFechaPublicacionWeb())) {
-					c.setCellValue(dtoPAB.getFechaPublicacionWeb().toString());
+					c.setCellValue(format.format(dtoPAB.getFechaPublicacionWeb())); 
 				}
 				
 				cellReference = new CellReference("B18");
@@ -239,7 +239,7 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 				r = mySheet.getRow(cellReference.getRow());
 				c = r.getCell(cellReference.getCol());
 				if (!Checks.esNulo(dtoPAB.getImporteTasacionFinal())) {
-					c.setCellValue(dtoPAB.getImporteTasacionFinal().toString());
+					c.setCellValue(format.format(dtoPAB.getImporteTasacionFinal()));
 				}
 				
 				cellReference = new CellReference("B41");
@@ -282,6 +282,13 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 				c = r.getCell(cellReference.getCol());
 				if (!Checks.esNulo(dtoPAB.getTextoOferta())) { 
 					c.setCellValue(dtoPAB.getTextoOferta());
+				}
+				
+				cellReference = new CellReference("B96");
+				r = mySheet.getRow(cellReference.getRow());
+				c = r.getCell(cellReference.getCol());
+				if (!Checks.esNulo(dtoPAB.getImporteFianza()) && !Checks.esNulo(dtoPAB.getMesesFianza())) { 
+					c.setCellValue("2. Fianza de "+ dtoPAB.getMesesFianza() + " mes ("+dtoPAB.getImporteFianza()+"€)");
 				}
 					
 			}

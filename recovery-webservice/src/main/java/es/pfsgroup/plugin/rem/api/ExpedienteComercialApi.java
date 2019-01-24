@@ -299,7 +299,6 @@ public interface ExpedienteComercialApi {
 	 * @param webDto
 	 * @return
 	 */
-
 	String getTareaDefinicionDeOferta(Long idExpedienteComercial, WebDto webDto);
 
 	/**
@@ -568,7 +567,7 @@ public interface ExpedienteComercialApi {
 	 * @param codComiteSuperior del expediente.
 	 * @return
 	 */
-	InstanciaDecisionDto expedienteComercialToInstanciaDecisionList(ExpedienteComercial expediente, Long porcentajeImpuesto, String codComiteSuperior) throws Exception;
+	InstanciaDecisionDto expedienteComercialToInstanciaDecisionList(ExpedienteComercial expediente, Double porcentajeImpuesto, String codComiteSuperior) throws Exception;
 
 	/**
 	 * Este método obtiene una lista de bloqueos formalización por el ID del expediente recibido.
@@ -965,7 +964,7 @@ public interface ExpedienteComercialApi {
 	boolean reservaFirmada(Long idTramite);
 
 	Boolean checkInformeJuridicoFinalizado(Long idTramite);
-
+	
 	Boolean checkFechaVenta(Long idTramite);
 
 	Boolean esBH(String idExpediente);
@@ -1078,6 +1077,8 @@ public interface ExpedienteComercialApi {
 
 	Long getNumExpByNumOfr(Long numBusqueda);
 
+	boolean savePlusvaliaVenta(DtoPlusvaliaVenta dto, Long idExpediente);
+
 	/**
 	 * Metodo que comprueba si el documento Contrato está subido al expediente
 	 *
@@ -1094,9 +1095,7 @@ public interface ExpedienteComercialApi {
 
 	boolean checkConTituloTramite(Long idTramite);
 
-	boolean savePlusvaliaVenta(DtoPlusvaliaVenta dto, Long idExpediente);
-	 
-	 List<DtoActivosExpediente> getActivosPropagables(Long idExpediente);
+	List<DtoActivosExpediente> getActivosPropagables(Long idExpediente);
 
 	boolean guardarCondicionesActivosExpediente(DtoCondicionesActivoExpediente condiciones);
 }

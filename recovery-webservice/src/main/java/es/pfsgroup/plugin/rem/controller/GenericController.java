@@ -25,13 +25,13 @@ import es.capgemini.pfs.diccionarios.Dictionary;
 import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.GenericApi;
+import es.pfsgroup.plugin.rem.logTrust.LogTrustAcceso;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.model.AuthenticationData;
 import es.pfsgroup.plugin.rem.model.DtoMenuItem;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.rest.dto.DDTipoDocumentoActivoDto;
-
 
 
 @Controller
@@ -43,7 +43,10 @@ public class GenericController extends ParadiseJsonController{
 	@Autowired
 	private GenericApi genericApi;
 
-	
+	@Autowired
+	private LogTrustAcceso trustMe;
+
+
 	/**
 	 * Método para modificar la plantilla de JSON utilizada en el servlet.
 	 * @param request
@@ -78,15 +81,16 @@ public class GenericController extends ParadiseJsonController{
 	}
 
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getDiccionarioByTipoOferta(String diccionario, String codTipoOferta) {
 
-		return createModelAndViewJson(new ModelMap("data", genericApi.getDiccionarioByTipoOferta(diccionario, codTipoOferta)));
-	}
-
-	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getDiccionarioDeGastos(String diccionario) {
 
 		return createModelAndViewJson(new ModelMap("data", adapter.getDiccionarioDeGastos(diccionario)));
+	}
+
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getDiccionarioByTipoOferta(String diccionario, String codTipoOferta) {
+		
+		return createModelAndViewJson(new ModelMap("data", genericApi.getDiccionarioByTipoOferta(diccionario, codTipoOferta)));
 	}
 
 	@RequestMapping(method = RequestMethod.GET)
@@ -131,25 +135,25 @@ public class GenericController extends ParadiseJsonController{
 	}
 
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getDiccionarioCarteraPorCodigoFestor() {	
-		
+	public ModelAndView getDiccionarioCarteraPorCodigoFestor() {
+
 		String diccionario = "entidadesPropietarias";
-		
+
 		AuthenticationData authData =  genericApi.getAuthenticationData();
-		
+
 		String[] codigosGestor = authData.getCodigoGestor().split(",");
-		
+
 		for(String codGestor : codigosGestor) {
-			if(GestorActivoApi.CODIGO_GESTOR_COMITE_INVERSION_INMOBILIARIA_LIBERBANK.equals(codGestor) || 
-				GestorActivoApi.CODIGO_GESTOR_COMITE_DIRECCION_LIBERBANK.equals(codGestor) || 
+			if(GestorActivoApi.CODIGO_GESTOR_COMITE_INVERSION_INMOBILIARIA_LIBERBANK.equals(codGestor) ||
+				GestorActivoApi.CODIGO_GESTOR_COMITE_DIRECCION_LIBERBANK.equals(codGestor) ||
 				GestorActivoApi.CODIGO_GESTOR_COMITE_INMOBILIARIO_LIBERBANK.equals(codGestor))
 					diccionario = "gestorCommiteLiberbank";
 		}
-		
+
 		return createModelAndViewJson(new ModelMap("data", adapter.getDiccionario(diccionario)));
-		
+
 	}
-	
+
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getIndicadorCondicionPrecioFiltered(String codigoCartera){
 		return createModelAndViewJson(new ModelMap("data", genericApi.getIndicadorCondicionPrecioFiltered(codigoCartera)));
@@ -197,9 +201,10 @@ public class GenericController extends ParadiseJsonController{
 	/**
 	 * Comprueba si se ha registrado el acceso del usuario, y sino lo registra
 	 */
-	@RequestMapping(method = RequestMethod.GET) 
+	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView registerUser(){
-		adapter.registerUser();	
+		adapter.registerUser();
+		trustMe.registrarAcceso();
 		
 		return new ModelAndView("jsonView",  new ModelMap("success", true));
 	}
@@ -236,10 +241,10 @@ public class GenericController extends ParadiseJsonController{
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getComboTipoGestorByActivo(WebDto webDto, ModelMap model, String idActivo){
 		model.put("data", genericApi.getComboTipoGestorByActivo(webDto, model, idActivo));
-		
+
 		return new ModelAndView("jsonView", model);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getComboTipoGestorOfertas(WebDto webDto, ModelMap model){
@@ -356,7 +361,7 @@ public class GenericController extends ParadiseJsonController{
 	public ModelAndView getComboSubcartera(String idCartera) {
 		return createModelAndViewJson(new ModelMap("data", genericApi.getComboSubcartera(idCartera)));	
 	}
-	
+
 	@RequestMapping(method= RequestMethod.GET)
 	public ModelAndView getComitesAlquilerByCartera(Long idActivo, ModelMap model){
 		return createModelAndViewJson(new ModelMap("data", genericApi.getComitesAlquilerByCartera(idActivo)));
@@ -371,7 +376,7 @@ public class GenericController extends ParadiseJsonController{
 	public ModelAndView getComboTipoAgrupacion() {
 		return createModelAndViewJson(new ModelMap("data", genericApi.getComboTipoAgrupacion()));
 	}
-	
+
 	@RequestMapping(method= RequestMethod.GET)
 	public ModelAndView getTodosComboTipoAgrupacion()
 	{

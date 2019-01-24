@@ -171,7 +171,10 @@ public class UpdaterServiceAprobacionInformeComercialRevisionInformeComercial im
 		
 		
 		activoAdapter.actualizarEstadoPublicacionActivo(activo.getId());
-
+		
+		if(checkAcepta){
+			activoApi.calcularRatingActivo(tramite.getActivo().getId());
+		}
 	}
 
 	public String[] getCodigoTarea() {

@@ -61,9 +61,7 @@ public class GenericAdapter {
 	
 	protected final Log logger = LogFactory.getLog(getClass());
 	
-	private static final String SERVIDOR_CORREO = "agendaMultifuncion.mail.server";
-	private static final String PUERTO_CORREO = "agendaMultifuncion.mail.port";
-
+	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public List<Dictionary> getDiccionario(String diccionario) {
 		
@@ -164,30 +162,8 @@ public class GenericAdapter {
 	 * @param adjuntos Archivos adjuntos a manar por correo
 	 */
 	public void sendMail(List<String> mailsPara, List<String> mailsCC, String asunto, String cuerpo, List<DtoAdjuntoMail> adjuntos) {
-		// TODO: Para poner remitente, sustituirlo por el primer null de la
-		// llamada al método enviarCorreoConAdjuntos
 		try {
-			// AgendaMultifuncionCorreoUtils.dameInstancia(executor).enviarCorreoConAdjuntos(null,
-			// mailsPara, mailsCC, asunto, cuerpo, null);
-			//añado comprobacion para que no falle en local
-			for(int i = 0; i < mailsPara.size(); i++) {
-				if(Checks.esNulo(mailsPara.get(i)) || "null".equals(mailsPara.get(i).toLowerCase())) {
-					mailsPara.remove(i);
-				}
-			}
-			
-			if (mailsPara.isEmpty()) {
-				logger.warn(
-						"El correo de " + asunto + " no se va a enviar");
-				return;
-			}
-			String servidorCorreo = appProperties.getProperty(SERVIDOR_CORREO);
-			logger.info(servidorCorreo);
-			String puertoCorreo =appProperties.getProperty(PUERTO_CORREO);
-			logger.info(puertoCorreo);
-			if(!Checks.esNulo(servidorCorreo) && !Checks.esNulo(puertoCorreo)){
-				remCorreoUtils.enviarCorreoConAdjuntos(null, mailsPara, mailsCC, asunto, cuerpo, adjuntos);
-			}
+			remCorreoUtils.enviarCorreoConAdjuntos(null, mailsPara, mailsCC, asunto, cuerpo, adjuntos);
 		} catch (Exception e) {
 			//Sacamos log de los receptores y el asunto del mail para trazar los errores
 			logger.error("mailsPara: " + mailsPara + ", mailsCC: " + mailsCC + ", asunto: " + asunto);

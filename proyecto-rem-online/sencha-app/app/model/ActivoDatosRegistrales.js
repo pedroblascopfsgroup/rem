@@ -438,6 +438,8 @@ Ext.define('HreRem.model.ActivoDatosRegistrales', {
 
     ],
     
+    
+    
 	proxy: {
 		type: 'uxproxy',
 		localUrl: 'activos.json',
@@ -450,6 +452,8 @@ Ext.define('HreRem.model.ActivoDatosRegistrales', {
         },
 		extraParams: {tab: 'datosregistrales'}
     }
+    
+    
     
     
 

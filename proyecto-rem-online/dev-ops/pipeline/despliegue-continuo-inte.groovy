@@ -140,6 +140,9 @@ pipeline {
                     echo "Posicionados en commit: ${GIT_COMMIT}"
                 }
 
+                echo "Fusiona versiones de BPMS"
+                sh script: "if [[ -f dev-ops/bpms/fusionar-properties-xmls.sh ]] && [[ -f dev-ops/bpms/versiones-bpms.txt ]] ; then bash ./dev-ops/bpms/fusionar-properties-xmls.sh ./dev-ops/bpms/versiones-bpms.txt ; fi"
+
             }
         }
 
@@ -158,7 +161,7 @@ pipeline {
                     mavenSettingsConfig: 'pfs-recovery-settings.xml'
                     , globalMavenSettingsConfig: 'pfs-nexus-settings.xml'
                     ) {
-                     sh "mvn clean package -Prem -Dmaven.test.skip=true -Dversion=\"${entorno} - ${version} (${GIT_COMMIT})\" surefire-report:report -Daggregate=true"
+                     sh "mvn clean package -Prem,java7 -Dmaven.test.skip=true -Dversion=\"${entorno} - ${version} (${GIT_COMMIT})\" surefire-report:report -Daggregate=true"
                     }
 
             }

@@ -663,6 +663,8 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.informeComercial", dto.getInformeComercial());
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.okventa", dto.getOkventa());
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.okalquiler", dto.getOkalquiler());
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.motivoOcultacionVenta", dto.getMotivosOcultacionCodigo());
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.motivoOcultacionAlquiler", dto.getMotivosOcultacionAlquilerCodigo());
    		if (!Checks.esNulo(dto.getTipoComercializacionCodigo()))HQLBuilder.addFiltroWhereInSiNotNull(hb, "activopubli.tipoComercializacionCodigo", Arrays.asList(dto.getTipoComercializacionCodigo()));
 
 		return HibernateQueryUtils.page(this, hb, dto);
@@ -961,6 +963,8 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 	
 	@Override
 	public void actualizarRatingActivo(Long idActivo, String username) {	
+		getHibernateTemplate().flush();
+		
 		Session session = this.getSessionFactory().getCurrentSession();
 		Query query = session.createSQLQuery(
 		"CALL CALCULO_RATING_ACTIVO_AUTO(:idActivo, :username)")

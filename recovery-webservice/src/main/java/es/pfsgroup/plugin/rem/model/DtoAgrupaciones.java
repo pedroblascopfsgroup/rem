@@ -61,8 +61,9 @@ public class DtoAgrupaciones extends WebDto {
 	private String estadoActivoCodigo;
 	private String subtipoActivoCodigo;
 	private Long idNumActivoPrincipal;
-	private String tipoActivoPrincipalCodigo;
 	private String cartera;
+	private String tipoActivoPrincipalCodigo;
+
 
 	public Boolean getEstaCaducada() {
 		return estaCaducada;

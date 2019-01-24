@@ -85,7 +85,7 @@ public class ReservaController {
 					
 					List<VOfertasActivosAgrupacion> listaOfer = (List<VOfertasActivosAgrupacion>) ofertaApi.getListOfertasFromView(dtoOfertasFilter);
 					if(!Checks.esNulo(listaOfer) && listaOfer.size()>0){
-						Long idOferta = Long.valueOf(listaOfer.get(0).getIdOferta());
+						Long idOferta = listaOfer.get(0).getIdOferta();
 						if(!Checks.esNulo(idOferta)){
 							oferta = ofertaApi.getOfertaById(idOferta);
 						}

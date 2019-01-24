@@ -140,6 +140,9 @@ pipeline {
                     echo "Posicionados en commit: ${GIT_COMMIT}"
                 }
 
+                echo "Fusiona versiones de BPMS"
+                sh script: "if [[ -f dev-ops/bpms/fusionar-properties-xmls.sh ]] && [[ -f dev-ops/bpms/versiones-bpms.txt ]] ; then bash ./dev-ops/bpms/fusionar-properties-xmls.sh ./dev-ops/bpms/versiones-bpms.txt ; fi"
+
             }
         }
 

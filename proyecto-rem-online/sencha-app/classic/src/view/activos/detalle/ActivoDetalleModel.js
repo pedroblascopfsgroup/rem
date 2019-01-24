@@ -540,8 +540,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
             var gestionOk = get('activo.tieneOkTecnico');
             var adecuacionOk = get('datospublicacionactivo.adecuacionAlquilerCodigo');
             var ceeOk = get('activo.tieneCEE');
-
-            return !(admisionOk && gestionOk && informeComercialAprobado && ceeOk && adecuacionOk=="01" && (publicarSinPrecioAlquiler || precioRentaWeb));
+            
+            return !(admisionOk && gestionOk && informeComercialAprobado && ceeOk && (adecuacionOk=="01"||adecuacionOk=="03") && (publicarSinPrecioAlquiler || precioRentaWeb));
         },
 
         esReadonlyChkbxPublicar: function(get){
@@ -1781,6 +1781,15 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			}
 		},
 
+		comboSituacionActivo: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'situacionActivo'}
+			}
+		},
+
 		storeHistoricoDestinoComercial: {
 			 pageSize: 10,
 	   		 model: 'HreRem.model.HistoricoDestinoComercialModel',
@@ -1789,15 +1798,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		        remoteUrl: 'activo/getHistoricoDestinoComercialByActivo',
 		        extraParams: {id: '{activo.id}'}
 	    	 }
-		},
-
-		comboSituacionActivo: {
-			model: 'HreRem.model.ComboBase',
-			proxy: {
-				type: 'uxproxy',
-				remoteUrl: 'generic/getDiccionario',
-				extraParams: {diccionario: 'situacionActivo'}
-			}
-		}
+   		}
      }
 });

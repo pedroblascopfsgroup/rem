@@ -1,7 +1,7 @@
 --/*
 --######################################### 
 --## AUTOR=Hector Gomez
---## FECHA_CREACION=20180618
+--## FECHA_CREACION=20181212
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2.32
 --## INCIDENCIA_LINK=HREOS-4213

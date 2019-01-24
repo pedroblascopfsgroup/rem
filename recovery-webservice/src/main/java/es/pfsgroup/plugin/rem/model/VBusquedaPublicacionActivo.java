@@ -71,6 +71,12 @@ public class VBusquedaPublicacionActivo implements Serializable {
     
     @Column(name="OKVENTA")
     private Boolean okventa;
+    
+    @Column(name="MOTIVO_OCULTACION_ALQUILER")
+    private String motivoOcultacionAlquiler;
+    
+    @Column(name="MOTIVO_OCULTACION_VENTA")
+    private String motivoOcultacionVenta;
 
 	public Long getId() {
 		return id;
@@ -214,6 +220,22 @@ public class VBusquedaPublicacionActivo implements Serializable {
 
 	public void setOkventa(Boolean okventa) {
 		this.okventa = okventa;
+	}
+
+	public String getMotivoOcultacionAlquiler() {
+		return motivoOcultacionAlquiler;
+	}
+
+	public void setMotivoOcultacionAlquiler(String motivoOcultacionAlquiler) {
+		this.motivoOcultacionAlquiler = motivoOcultacionAlquiler;
+	}
+
+	public String getMotivoOcultacionVenta() {
+		return motivoOcultacionVenta;
+	}
+
+	public void setMotivoOcultacionVenta(String motivoOcultacionVenta) {
+		this.motivoOcultacionVenta = motivoOcultacionVenta;
 	}
     
 }

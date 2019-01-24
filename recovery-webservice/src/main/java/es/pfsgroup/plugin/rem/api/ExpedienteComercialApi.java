@@ -128,7 +128,7 @@ public interface ExpedienteComercialApi {
 	 *            id del expediente
 	 * @return resultado de la operacion
 	 */
-	public boolean saveSeguroRentasExpediente(DtoSeguroRentas dto, Long idEntidad);
+	boolean saveSeguroRentasExpediente(DtoSeguroRentas dto, Long idEntidad);
 
 	/**
 	 * Método que guarda la información de la pestaña datos básicos de la oferta
@@ -413,7 +413,7 @@ public interface ExpedienteComercialApi {
 	 * @return
 	 */
 
-	public List<DtoHstcoSeguroRentas> getHstcoSeguroRentas(Long idExpediente);
+	List<DtoHstcoSeguroRentas> getHstcoSeguroRentas(Long idExpediente);
 
 	/**
 	 * Método que obtiene los honorarios(gastos) del expediente
@@ -421,7 +421,7 @@ public interface ExpedienteComercialApi {
 	 * @param idExpediente
 	 * @return
 	 */
-	public List<DtoGastoExpediente> getHonorarios(Long idExpediente, Long idActivo);
+	List<DtoGastoExpediente> getHonorarios(Long idExpediente, Long idActivo);
 	
 	/**
 	 * Método que obtiene el historico de condiciones de un expediente comercial
@@ -429,8 +429,7 @@ public interface ExpedienteComercialApi {
 	 * @param idExpediente
 	 * @return
 	 */
-	public List<DtoHistoricoCondiciones> getHistoricoCondiciones(Long idExpediente);
-
+	List<DtoHistoricoCondiciones> getHistoricoCondiciones(Long idExpediente);
 
 	/**
 	 * Método que guarda los honorarios(gastos) del expediente
@@ -541,7 +540,7 @@ public interface ExpedienteComercialApi {
 	 * @param oferta
 	 * @return
 	 */
-	OfertaUVEMDto createOfertaOVEM(Oferta oferta,ExpedienteComercial expedienteComercial) throws Exception; 
+	OfertaUVEMDto createOfertaOVEM(Oferta oferta,ExpedienteComercial expedienteComercial) throws Exception;
 	
 	/**
 	 * Obtiene la lista de titulares para uvem
@@ -615,8 +614,7 @@ public interface ExpedienteComercialApi {
 	 * @param codComiteSuperior del expediente.
 	 * @return
 	 */
-
-	public InstanciaDecisionDto expedienteComercialToInstanciaDecisionList(ExpedienteComercial expediente, Double porcentajeImpuesto, String codComiteSuperior) throws Exception;
+	InstanciaDecisionDto expedienteComercialToInstanciaDecisionList(ExpedienteComercial expediente, Double porcentajeImpuesto, String codComiteSuperior) throws Exception;
 
 	/**
 	 * Este método obtiene una lista de bloqueos formalización por el ID del expediente recibido.
@@ -1007,7 +1005,7 @@ public interface ExpedienteComercialApi {
 	
 	boolean reservaFirmada(Long idTramite);
 
-	Boolean checkInformeJuridicoFinalizado(Long idTramite);	
+	Boolean checkInformeJuridicoFinalizado(Long idTramite);
 	
 	Boolean checkFechaVenta(Long idTramite);
 

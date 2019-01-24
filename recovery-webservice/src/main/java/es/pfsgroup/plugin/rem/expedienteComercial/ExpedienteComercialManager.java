@@ -3359,8 +3359,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					docAdjunto = genericDao.get(AdjuntoComprador.class,
 							genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdDocAdjunto()));
 				}  else {
-					docAdjunto = genericDao.get(AdjuntoComprador.class,
-							genericDao.createFilter(FilterType.EQUALS, "id", tmpClienteGDPR.getIdAdjunto()));			
+					if (!Checks.esNulo(tmpClienteGDPR)) {
+						docAdjunto = genericDao.get(AdjuntoComprador.class,
+								genericDao.createFilter(FilterType.EQUALS, "id", tmpClienteGDPR.getIdAdjunto()));	
+					}						
 				}
 				ClienteGDPR clienteCompradorGDPR = new ClienteGDPR();
 				

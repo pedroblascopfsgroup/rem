@@ -2207,7 +2207,7 @@ Ext
 					},
 
 					onSaveFormularioCompletoOferta : function(form, window) { 
-					   //debugger;
+					    //debugger;
 						var me = this,
 						record = form.getBindRecord(),
 						ofertaForm = null,
@@ -2225,6 +2225,8 @@ Ext
 
 							model.save({
 										success : function(record) {
+											form.reset();
+											ofertaForm.reset();
 											window.unmask();
 											if (Ext.isDefined(model.data.idActivo)){
 												window.parent.up('activosdetalle').lookupController().refrescarActivo(true);
@@ -2240,6 +2242,8 @@ Ext
 										failure : function(record, operation) {
 												me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
 												window.unmask();
+												form.reset();
+												ofertaForm.reset();
 										}
 
 									});

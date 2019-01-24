@@ -1,5 +1,8 @@
 package es.pfsgroup.plugin.gestorDocumental.assembler;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import es.pfsgroup.plugin.gestorDocumental.dto.ActivoInputDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.ActivoOutputDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.PersonaInputDto;
@@ -10,6 +13,8 @@ import es.pfsgroup.plugin.gestorDocumental.ws.MAESTRO_PERSONAS.ProcessEventRespo
 
 
 public class GDPersonaOutputAssembler {
+	
+	private final static Log logger = LogFactory.getLog(GDPersonaOutputAssembler.class);
 
 	
 	public static ActivoOutputDto outputToDtoActivo(
@@ -50,8 +55,8 @@ public class GDPersonaOutputAssembler {
 
 		if (output.getParameters() != null) {
 			for (KeyValuePair param : output.getParameters().getParameter()) {
-				if (PersonaInputDto.ID_INTERVINIENTE_HAYA.equals(param.getCode()) || PersonaInputDto.ID_PERSONA_HAYA.equals(param.getCode()) ||
-						PersonaInputDto.ID_PERSONA_ORIGEN.equals(param.getCode())) {
+				logger.error(">>>>>>>> CODIGO: "+param.getCode().toString()+" VALOR: "+param.getValue().toString());
+				if (PersonaInputDto.ID_INTERVINIENTE_HAYA.equals(param.getCode()) || PersonaInputDto.ID_PERSONA_HAYA.equals(param.getCode())) {
 					dto.setIdIntervinienteHaya(param.getValue());
 				} else {
 					dto.setIdIntervinienteHaya(null);

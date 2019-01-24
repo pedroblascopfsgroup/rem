@@ -5,6 +5,8 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.List;
 import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 import javax.mail.Message;
@@ -168,7 +170,7 @@ public class RemCorreoUtils {
 	private void prepararDestinatarios(MimeMessage message, List<String> mailsPara, List<String> direccionesMailCc)
 			throws AddressException, MessagingException {
 		for (String emailPara : mailsPara) {
-			if (emailPara != null) {
+			if (validarCorreo(emailPara)) {
 				message.addRecipient(Message.RecipientType.TO, new InternetAddress(emailPara));
 			}
 
@@ -176,12 +178,30 @@ public class RemCorreoUtils {
 
 		if (direccionesMailCc != null && direccionesMailCc.size() > 0) {
 			for (String emailCC : direccionesMailCc) {
-				if (emailCC != null) {
+				if (validarCorreo(emailCC)) {
 					message.addRecipient(Message.RecipientType.CC, new InternetAddress(emailCC));
 				}
 
 			}
 		}
+	}
+	
+	private boolean validarCorreo(String email) {
+		boolean resultado = false;
+
+		if (email != null && !email.isEmpty()) {
+			// Patrón para validar el email
+			Pattern pattern = Pattern.compile(
+					"^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@" + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$");
+
+			Matcher mather = pattern.matcher(email);
+
+			if (mather.find() == true) {
+				resultado = true;
+			}
+		}
+
+		return resultado;
 	}
 
 	private void prepararBodyMensaje(MimeMessage message, List<DtoAdjuntoMail> list, String cuerpoEmail)
@@ -253,8 +273,15 @@ public class RemCorreoUtils {
 	private Properties getPropiedades() {
 
 		Properties props = new Properties();
-		props.setProperty(MAIL_SMTP_HOST, appProperties.getProperty(SERVIDOR_CORREO));
-		props.setProperty(MAIL_SMTP_PORT, appProperties.getProperty(PUERTO_CORREO));
+		if (appProperties.getProperty(SERVIDOR_CORREO) != null) {
+			props.setProperty(MAIL_SMTP_HOST, appProperties.getProperty(SERVIDOR_CORREO));
+		}
+		
+		if (appProperties.getProperty(SERVIDOR_CORREO) != null) {
+			props.setProperty(MAIL_SMTP_PORT, appProperties.getProperty(SERVIDOR_CORREO));
+		}
+		
+		
 
 		if (appProperties.getProperty(STARTTLS_ENABLE) != null) {
 			props.setProperty(MAIL_SMTP_STARTTLS_ENABLE, appProperties.getProperty(STARTTLS_ENABLE));

@@ -3522,7 +3522,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				genericDao.save(ExpedienteComercial.class, expedienteComercial);
 
 				if (reiniciarPBC) {
-					//ofertaApi.resetPBC(expedienteComercial, false);  HAY QUE DESCOMENTARLO!
+					ofertaApi.resetPBC(expedienteComercial, false);  
 				}
 
 			}
@@ -4276,11 +4276,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 				ofertaApi.resetPBC(expediente, true);
 
-				return true; // QUI
+				return true; 
 
 			} catch (Exception e) {
 				logger.error("error en expedienteComercialManager", e);
-				return false; // QUI
+				return false; 
 			}
 		}
 
@@ -7172,7 +7172,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	}
 
 	@Override
-	public DtoModificarCompradores vistaCrearComprador(VBusquedaDatosCompradorExpediente vista) { // QUA
+	public DtoModificarCompradores vistaCrearComprador(VBusquedaDatosCompradorExpediente vista) { 
 		DtoModificarCompradores comprador = new DtoModificarCompradores();
 
 		try {

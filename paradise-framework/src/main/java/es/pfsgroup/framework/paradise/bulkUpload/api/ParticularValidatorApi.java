@@ -572,5 +572,5 @@ public interface ParticularValidatorApi {
 	 */
 	public Boolean existeActivoConOfertaVentaViva(String numActivo);
 
-
+	public Boolean isActivoFinanciero(String numActivo);
 }

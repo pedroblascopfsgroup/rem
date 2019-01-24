@@ -100,6 +100,8 @@ public class GestorDocumentalMaestroManager extends BaseWS implements GestorDocu
 		} catch (MalformedURLException e) {
 			logger.error("Error en el método al invocarServicio", e);
 		}
+		PersonaOutputDto perdto = (PersonaOutputDto) GDPersonaOutputAssembler.outputToDtoPersona(output);
+		logger.error("PerDTO >>>>>>>>>>>>>>>: " + perdto.getIdIntervinienteHaya());
 		return GDPersonaOutputAssembler.outputToDtoPersona(output);
 		}
 		

@@ -57,8 +57,10 @@ public class GDPersonaOutputAssembler {
 			for (KeyValuePair param : output.getParameters().getParameter()) {
 				logger.error(">>>>>>>> CODIGO: "+param.getCode().toString()+" VALOR: "+param.getValue().toString());
 				if (PersonaInputDto.ID_INTERVINIENTE_HAYA.equals(param.getCode()) || PersonaInputDto.ID_PERSONA_HAYA.equals(param.getCode())) {
+					logger.error(">>>>>>>> ID_PERSONA_HAYA GDPersonaOutputAssembler"+param.getValue().toString());
 					dto.setIdIntervinienteHaya(param.getValue());
 				} else {
+					logger.error(">>>>>>>> ID_PERSONA_HAYA GDPersonaOutputAssembler NULL");
 					dto.setIdIntervinienteHaya(null);
 				}
 			}

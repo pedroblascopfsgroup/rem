@@ -2271,18 +2271,15 @@ Ext
 					},
 
 					onChangeChainedCombo : function(combo) {
-						var me = this, chainedCombo = me
-								.lookupReference(combo.chainedReference);
+						try{
+						     var me = this, chainedCombo = me.lookupReference(combo.chainedReference);
+						     me.getViewModel().notify();
 
-						me.getViewModel().notify();
+						    if (!Ext.isEmpty(chainedCombo.getValue())) {
+							   chainedCombo.clearValue();
+						    }
 
-						if (!Ext.isEmpty(chainedCombo.getValue())) {
-							chainedCombo.clearValue();
-						}
-
-						chainedCombo
-								.getStore()
-								.load(
+						chainedCombo.getStore().load(
 										{
 											callback : function(records,
 													operation, success) {
@@ -2303,13 +2300,16 @@ Ext
 										});
 
 						if (me.lookupReference(chainedCombo.chainedReference) != null) {
-							var chainedDos = me
-									.lookupReference(chainedCombo.chainedReference);
+							var chainedDos = me.lookupReference(chainedCombo.chainedReference);
 							if (!chainedDos.isDisabled()) {
 								chainedDos.clearValue();
 								chainedDos.getStore().removeAll();
 								chainedDos.setDisabled(true);
 							}
+						}
+						
+						}catch (err) {
+							Ext.global.console.log(err);
 						}
 					},
 
@@ -2467,6 +2467,7 @@ Ext
 					},
 
 					buscarClientesUrsus : function(field, e) {
+					 try{
 						var me = this;
 						var parent = field.up('datoscompradorwindow');
 						var tipoDocumento = field.up('formBase').down(
@@ -2512,44 +2513,50 @@ Ext
 										});
 							}
 						} else {
-							me
-									.fireEvent(
-											"errorToast",
-											HreRem
-													.i18n("msg.operacion.ko.ursus.necesita.tipo.documento"));
+							me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.ursus.necesita.tipo.documento"));
 						}
+					 }catch (err) {
+						 Ext.global.console.log(err);
+					 }
 					},
 
 					onNumeroDocumentoChange : function(field, e) {
-						var me = this;
-						var fieldClientesUrsus = field.up('formBase').down(
-								'[reference=seleccionClienteUrsus]');
-						var btnDatosClienteUrsus = field.up('formBase').down(
-								'[reference=btnVerDatosClienteUrsus]');
-
-						fieldClientesUrsus.reset();
-						btnDatosClienteUrsus.setDisabled(true);
-						fieldClientesUrsus.recargarField = true;
+						try{							
+						   var me = this;
+						   var fieldClientesUrsus = field.up('formBase').down('[reference=seleccionClienteUrsus]');
+						   var btnDatosClienteUrsus = field.up('formBase').down('[reference=btnVerDatosClienteUrsus]');
+						   fieldClientesUrsus.reset();
+						   btnDatosClienteUrsus.setDisabled(true);
+						   fieldClientesUrsus.recargarField = true;
+						}
+						catch (err) {
+							Ext.global.console.log(err);
+						}
 					},
 
 					establecerNumClienteURSUS : function(field, e) {
-						var me = this;
-						var numeroUrsus = field.up('formBase').down(
+						try{
+						   var me = this;
+						   var numeroUrsus = field.up('formBase').down(
 								'[reference=seleccionClienteUrsus]').getValue();
-						var fieldNumeroClienteUrsus = field.up('formBase')
+						   var fieldNumeroClienteUrsus = field.up('formBase')
 								.down('[reference=numeroClienteUrsusRef]');
-						var fieldNumeroClienteUrsusBh = field.up('formBase')
+						   var fieldNumeroClienteUrsusBh = field.up('formBase')
 								.down('[reference=numeroClienteUrsusBhRef]');
-						var btnDatosClienteUrsus = field.up('formBase').down(
+						   var btnDatosClienteUrsus = field.up('formBase').down(
 								'[reference=btnVerDatosClienteUrsus]');
-						var fichaComprador = field.up('[xtype=formBase]');
-						var esBH = fichaComprador.getBindRecord().get('esBH');
-						btnDatosClienteUrsus.setDisabled(false);
+						   var fichaComprador = field.up('[xtype=formBase]');
+						   var esBH = fichaComprador.getBindRecord().get('esBH');
+						    btnDatosClienteUrsus.setDisabled(false);
 
-						if (esBH == "true") {
-							fieldNumeroClienteUrsusBh.setValue(numeroUrsus);
-						} else {
-							fieldNumeroClienteUrsus.setValue(numeroUrsus);
+						  if (esBH == "true") {
+							  fieldNumeroClienteUrsusBh.setValue(numeroUrsus);
+						  } else {
+							  fieldNumeroClienteUrsus.setValue(numeroUrsus);
+						  }
+						}
+						catch (err) {
+							Ext.global.console.log(err);
 						}
 					},
 

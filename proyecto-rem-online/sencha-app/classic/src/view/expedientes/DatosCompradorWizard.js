@@ -465,14 +465,18 @@ Ext.define('HreRem.view.expedientes.DatosCompradorWizard', {
 		            	},
 		            	listeners : {
 		            		change: function(combo, value) {
-		            			var me = this;
-		            			if(value) {
-		            				me.up('formBase').down('[reference=numeroDocumentoRte]').allowBlank = false;
-		            			} else {
-		            				me.up('formBase').down('[reference=numeroDocumentoRte]').allowBlank = true;
-		            				me.up('formBase').down('[reference=numeroDocumentoRte]').setValue("");
-		            			}
-		            		}
+		            			try{
+		            			     var me = this;
+		            			     if(value) {
+		            				    me.up('formBase').down('[reference=numeroDocumentoRte]').allowBlank = false;
+		            			     } else {
+		            				    me.up('formBase').down('[reference=numeroDocumentoRte]').allowBlank = true;
+		            				    me.up('formBase').down('[reference=numeroDocumentoRte]').setValue("");
+		            			     }
+		            			     }catch (err){
+		            				    Ext.global.console.log(err);
+		            			     }
+		            		   }
 		            	}
 			        },
 			        {
@@ -485,13 +489,18 @@ Ext.define('HreRem.view.expedientes.DatosCompradorWizard', {
 		            	},
 		            	listeners : {
 		            		change: function(combo, value) {
-		            			var me = this;
-		            			if(value) {
-		            				me.up('formBase').down('[reference=tipoDocumentoRte]').allowBlank = false;
-		            			} else {
-		            				me.up('formBase').down('[reference=tipoDocumentoRte]').allowBlank = true;
-		            				me.up('formBase').down('[reference=tipoDocumentoRte]').setValue("");
+		            			try{
+		            				var me = this;
+			            			if(value) {
+			            				me.up('formBase').down('[reference=tipoDocumentoRte]').allowBlank = false;
+			            			} else {
+			            				me.up('formBase').down('[reference=tipoDocumentoRte]').allowBlank = true;
+			            				me.up('formBase').down('[reference=tipoDocumentoRte]').setValue("");
+			            			}
+		            			}catch (err){
+		            				Ext.global.console.log(err);
 		            			}
+		            			
 		            		}
 		            	}
          		},

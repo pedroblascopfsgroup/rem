@@ -47,6 +47,7 @@ import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoComunicacionGencat;
+import es.pfsgroup.plugin.rem.model.dd.DDSancionGencat;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoDocumentoExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoGasto;
@@ -809,13 +810,36 @@ public class ActivoTramiteManager implements ActivoTramiteApi{
 		
 		Boolean tieneTramiteGENCAT = false;
 		
+		
+		
 		if(!Checks.esNulo(idActivo)){
 			ComunicacionGencat comunicacionGencat = gencatManager.getComunicacionGencatByIdActivo(idActivo);
 			
-			if(!Checks.esNulo(comunicacionGencat) 
-					&& Checks.esNulo(comunicacionGencat.getFechaComunicacion())
-					&& DDEstadoComunicacionGencat.COD_CREADO.equalsIgnoreCase(comunicacionGencat.getEstadoComunicacion().getDescripcion())) {
+			// Si se ha lanzado el trámite de GENCAT, tiene comunicación y está en estado CREADO, COMUNICADO O SANCIONADO, 
+			// se bloquean las tareas del trámite comercial de venta
+			if(!Checks.esNulo(comunicacionGencat)
+					&& !Checks.esNulo(comunicacionGencat.getEstadoComunicacion())
+					&& (DDEstadoComunicacionGencat.COD_CREADO.equalsIgnoreCase(comunicacionGencat.getEstadoComunicacion().getDescripcion())
+						|| DDEstadoComunicacionGencat.COD_COMUNICADO.equalsIgnoreCase(comunicacionGencat.getEstadoComunicacion().getDescripcion())
+						|| DDEstadoComunicacionGencat.COD_SANCIONADO.equalsIgnoreCase(comunicacionGencat.getEstadoComunicacion().getDescripcion())
+					)) {
+					
 				tieneTramiteGENCAT = true;
+			
+			}
+			
+			// Si la comunicacion tiene la sancion informada y está en estado EJERCE, se bloquean las tareas del trámite comercial de venta
+			if(!Checks.esNulo(comunicacionGencat.getSancion())
+					&& DDSancionGencat.COD_EJERCE.equalsIgnoreCase(comunicacionGencat.getSancion().getCodigo())) {
+				
+				tieneTramiteGENCAT = true;
+				
+			// Si la comunicacion tiene la sancion informada y está en estado NO EJERCE, se desbloquean las tareas del trámite comercial de venta
+			} else if(!Checks.esNulo(comunicacionGencat.getSancion())
+					&& DDSancionGencat.COD_NO_EJERCE.equalsIgnoreCase(comunicacionGencat.getSancion().getCodigo())) {
+				
+				tieneTramiteGENCAT = false;
+				
 			}
 			
 		}

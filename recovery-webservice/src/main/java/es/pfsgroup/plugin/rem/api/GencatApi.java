@@ -18,7 +18,6 @@ import es.pfsgroup.plugin.rem.model.DtoOfertasAsociadasActivo;
 import es.pfsgroup.plugin.rem.model.DtoReclamacionActivo;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
-import es.pfsgroup.plugin.rem.model.Trabajo;
 
 public interface GencatApi {
 
@@ -181,5 +180,19 @@ public interface GencatApi {
 	 * @param ActivoTramite
 	 * */
 	void historificarTramiteGENCAT(ActivoTramite activoTramite);
+	
+	/**
+	 * Cambiar el estado de comunicacion de GENCAT a comunicado cuando se completa la tarea de Comunicacion GENCAT
+	 * @param comunicacionGencat
+	 */
+	
+	void cambiarEstadoComunicacionGENCAT(ComunicacionGencat comunicacionGencat);
+	
+	/**
+	 * Calcular la fecha de sancion a partir de la fecha actual mas 2 meses
+	 * @param comunicacionGencat
+	 */
+	
+	void informarFechaSancion(ComunicacionGencat comunicacionGencat);
 	
 }

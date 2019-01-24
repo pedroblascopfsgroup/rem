@@ -11,6 +11,7 @@ import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.plugin.rem.api.ComunicacionGencatApi;
+import es.pfsgroup.plugin.rem.api.GencatApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ComunicacionGencat;
@@ -23,6 +24,9 @@ public class UpdaterServiceGencatVentaTramiteComunicacion implements UpdaterServ
             
     @Autowired
     private ComunicacionGencatApi comunicacionGencatApi;
+    
+    @Autowired
+	private GencatApi gencatApi;
     
     private static final String FECHA_COMUNICACION = "fechaComunicacion";
     
@@ -51,6 +55,9 @@ public class UpdaterServiceGencatVentaTramiteComunicacion implements UpdaterServ
 			if(!Checks.esNulo(comunicacionGencat)) {			
 				genericDao.save(ComunicacionGencat.class, comunicacionGencat);
 			}
+			
+			gencatApi.cambiarEstadoComunicacionGENCAT(comunicacionGencat);
+			gencatApi.informarFechaSancion(comunicacionGencat);
 			
 		}
 

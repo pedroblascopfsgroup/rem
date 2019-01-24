@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.rem.gencat;
 import java.lang.reflect.InvocationTargetException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -960,7 +961,7 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 										//SI TIEMPO > 2 MESES LANZAR TRAMITE GENCAT
 										//SI TIEMPO < 2 MESES NO HACER NADA.
 								if(!Checks.esNulo(comGencat.getEstadoComunicacion())
-										&& DDEstadoComunicacionGencat.COD_SANCIONADO.equals(comGencat.getEstadoComunicacion().getCodigo())
+										&& DDEstadoComunicacionGencat.COD_SANCIONADO.equalsIgnoreCase(comGencat.getEstadoComunicacion().getDescripcion())
 										&& !Checks.esNulo(datoVista.getFecha_sancion())) {
 									
 									if(MIN_MESES > calculoDiferenciaFechasEnDias(fechaActual,datoVista.getFecha_sancion())){
@@ -1021,6 +1022,7 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 		return dias;
 	}
 	
+	@Override
 	public void lanzarTramiteGENCAT(ActivoTramite tramite, Oferta oferta, ExpedienteComercial expedienteComercial) {
 		
 		historificarTramiteGENCAT(tramite);
@@ -1035,6 +1037,7 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 				
 	}
 	
+	@Override
 	public void crearRegistrosTramiteGENCAT(ExpedienteComercial expedienteComercial, Oferta oferta, ActivoTramite tramite) {
 		
 		ComunicacionGencat comunicacionGencat = new ComunicacionGencat();
@@ -1090,6 +1093,7 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 		
 	}
 	
+	@Override
 	public void historificarTramiteGENCAT(ActivoTramite tramite) {
 				
 		if(!Checks.esNulo(tramite)) {
@@ -1113,7 +1117,7 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 					crearHistoricoOfertaGencatByOfertaGencat(ofertaGencat, historicoComunicacionGencat);
 					
 					// Borrado del registro vigente del tramite de GENCAT
-					borrarTramiteGENCAT(comunicacionGencat, adecuacionGencat, ofertaGencat);
+					updateTramiteGENCAT(comunicacionGencat, adecuacionGencat, ofertaGencat);
 					
 				}
 				
@@ -1122,8 +1126,9 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 		}
 		
 	}
-		
-	private void borrarTramiteGENCAT(ComunicacionGencat comunicacionGencat, AdecuacionGencat adecuacionGencat, OfertaGencat ofertaGencat) {
+	
+	
+	private void updateTramiteGENCAT(ComunicacionGencat comunicacionGencat, AdecuacionGencat adecuacionGencat, OfertaGencat ofertaGencat) {
 		
 		if(!Checks.esNulo(comunicacionGencat.getId())
 				&& !Checks.esNulo(adecuacionGencat.getId())
@@ -1131,6 +1136,9 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 			genericDao.deleteById(AdecuacionGencat.class, adecuacionGencat.getId());
 			genericDao.deleteById(OfertaGencat.class, ofertaGencat.getId());
 			genericDao.deleteById(ComunicacionGencat.class, comunicacionGencat.getId());
+			
+			AdecuacionGencat ag = 
+			
 		}
 	}
 	
@@ -1199,6 +1207,27 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 		}
 		
 		genericDao.save(HistoricoOfertaGencat.class, historicoOfertaGencat);
+		
+	}
+	
+	@Override
+	public void cambiarEstadoComunicacionGENCAT(ComunicacionGencat comunicacionGencat) {
+		
+		if(!Checks.esNulo(comunicacionGencat)) {
+			comunicacionGencat.setEstadoComunicacion((DDEstadoComunicacionGencat) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoComunicacionGencat.class , DDEstadoComunicacionGencat.COD_COMUNICADO));
+		}
+		
+	}
+	
+	@Override
+	public void informarFechaSancion(ComunicacionGencat comunicacionGencat) {
+		
+		Calendar cal = Calendar.getInstance(); 
+        cal.setTime(new Date()); 
+        cal.add(Calendar.MONTH, 2);
+        Date fechaSancion = cal.getTime();
+		
+		comunicacionGencat.setFechaPrevistaSancion(fechaSancion);
 		
 	}
 	

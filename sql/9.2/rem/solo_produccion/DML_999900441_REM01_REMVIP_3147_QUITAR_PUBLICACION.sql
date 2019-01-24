@@ -60,7 +60,7 @@ BEGIN
             T1.APU_CHECK_PUBLICAR_V = 0,
             T1.APU_CHECK_PUBLICAR_A = 0,
             T1.USUARIOMODIFICAR = ''REMVIP-3147'',
-            T1.FECHAMODIFICAR = SYSDATE;
+            T1.FECHAMODIFICAR = SYSDATE
 
         ';
 

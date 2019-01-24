@@ -315,6 +315,9 @@ public class ActivoAdapter {
 	@Autowired
 	private UsuarioManager usuarioManager;
 	
+	@Autowired
+	private ActivoAdapter activoAdapterApi;
+	
 	private static final String CONSTANTE_REST_CLIENT = "rest.client.gestor.documental.constante";
 	public static final String OFERTA_INCOMPATIBLE_MSG = "El tipo de oferta es incompatible con el destino comercial del activo";
 	private static final String AVISO_TITULO_MODIFICADAS_CONDICIONES_JURIDICAS = "activo.aviso.titulo.modificadas.condiciones.juridicas";
@@ -2775,7 +2778,7 @@ public class ActivoAdapter {
 	public boolean actualizarEstadoPublicacionActivo(Long idActivo) {
 		ArrayList<Long> listaIdActivo = new ArrayList<Long>();
 		listaIdActivo.add(idActivo);
-		return this.actualizarEstadoPublicacionActivo(listaIdActivo,false);
+		return this.actualizarEstadoPublicacionActivo(listaIdActivo,true);
 	}
 	
 	
@@ -3412,6 +3415,7 @@ public class ActivoAdapter {
 			}else {
 				notificationOfertaManager.sendNotification(oferta);
 			}
+			activoAdapterApi.actualizarEstadoPublicacionActivo(activo.getId());
 		} catch (Exception ex) {
 			logger.error("error en activoAdapter", ex);
 			ex.printStackTrace();

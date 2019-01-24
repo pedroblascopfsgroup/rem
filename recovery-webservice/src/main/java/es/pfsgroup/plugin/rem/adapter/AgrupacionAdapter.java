@@ -840,12 +840,6 @@ public class AgrupacionAdapter {
 			}
 			
 			if (!Checks.esNulo(numActivo)){
-				if(particularValidator.existeActivoConOfertaViva(Long.toString(numActivo))){
-					throw new JsonViewerException("El activo tiene ofertas individuales vivas");
-				}
-			}
-
-			if (!Checks.esNulo(numActivo)){
 				if(particularValidator.activoEnAgrupacionComercialViva(Long.toString(numActivo))){
 					throw new JsonViewerException("El activo está incluido en otro lote comercial vivo");
 				}

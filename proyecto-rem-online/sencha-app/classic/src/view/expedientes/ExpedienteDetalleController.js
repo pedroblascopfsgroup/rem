@@ -2468,8 +2468,9 @@ Ext
 
 					buscarClientesUrsus : function(field, e) {
 					 try{
+						 //debugger; 
 						var me = this;
-						var parent = field.up('datoscompradorwindow');
+						var parent = field.up('datoscompradorwizard');
 						var tipoDocumento = field.up('formBase').down(
 								'[reference=tipoDocumento]').getValue();
 						var numeroDocumento = field.up('formBase').down(
@@ -2485,9 +2486,8 @@ Ext
 						if (!Ext.isEmpty(tipoDocumento)
 								&& !Ext.isEmpty(numeroDocumento)
 								&& !Ext.isEmpty(idExpediente)) {
-							var form = parent.down('formBase');
-							var fieldClientesUrsus = form
-									.down('[reference=seleccionClienteUrsus]');
+							//var form = parent.down('formBase');
+							var fieldClientesUrsus = parent.down('[reference=seleccionClienteUrsus]');
 							var store = fieldClientesUrsus.getStore();
 
 							if (Ext.isEmpty(store.getData().items)

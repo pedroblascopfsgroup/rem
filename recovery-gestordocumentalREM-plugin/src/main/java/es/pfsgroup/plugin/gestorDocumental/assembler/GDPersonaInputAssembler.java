@@ -56,15 +56,11 @@ public class GDPersonaInputAssembler {
 		ProcessEventRequestType.Parameters parameters = new Parameters();
 		if(PersonaInputDto.EVENTO_ALTA_PERSONA.equals(inputDto.getEvent())) {
 			parameters.getParameter().add(getIdCliente(inputDto.getIdCliente()));
-			parameters.getParameter().add(getIdEntidadCedente(inputDto.getIdEntidadCedente()));
-			parameters.getParameter().add(getPersonaCliente(inputDto.getIdPersonaCliente()));
 			parameters.getParameter().add(getIdPersonaOrigen(inputDto.getIdPersonaOrigen()));
 			parameters.getParameter().add(getMotivoOperacion(inputDto.getIdMotivoOperacion()));
 			parameters.getParameter().add(getIdOrigen(inputDto.getIdOrigen()));
-			parameters.getParameter().add(getIdTipoOrigen(inputDto.getIdTipoOrigen()));
 			parameters.getParameter().add(getFechaOperacion(inputDto.getFechaOperacion()));
 			parameters.getParameter().add(getTipoIdentificador(inputDto.getIdTipoIdentificador()));
-			parameters.getParameter().add(getidPersonaHaya(inputDto.getIdPersonaHaya()));
 			parameters.getParameter().add(getRol(inputDto.getIdRol()));
 		}
 		return parameters;
@@ -94,22 +90,6 @@ public class GDPersonaInputAssembler {
 		return cliente;
 	}
 	
-	private static KeyValuePair getIdEntidadCedente(String idEntidadCedente) {
-		KeyValuePair entidadCedente = new KeyValuePair();
-		entidadCedente.setCode(PersonaInputDto.ID_ENTIDAD_CEDENTE);
-		entidadCedente.setFormat(PersonaInputDto.FORMATO_STRING);
-		entidadCedente.setValue(idEntidadCedente);
-		return entidadCedente;
-	}
-	
-	private static KeyValuePair getPersonaCliente(String persona_Cliente) {
-		KeyValuePair personaCliente = new KeyValuePair();
-		personaCliente.setCode(PersonaInputDto.ID_PERSONA_CLIENTE_ALTA);
-		personaCliente.setFormat(PersonaInputDto.FORMATO_STRING);
-		personaCliente.setValue(persona_Cliente);
-		return personaCliente;
-	}
-	
 	private static KeyValuePair getIdPersonaOrigen(String idPersonaOrigen) {
 		KeyValuePair personaOrigen = new KeyValuePair();
 		personaOrigen.setCode(PersonaInputDto.ID_PERSONA_ORIGEN);
@@ -134,14 +114,6 @@ public class GDPersonaInputAssembler {
 		return origen;
 	}
 	
-	private static KeyValuePair getIdTipoOrigen(String idTipoOrigen) {
-		KeyValuePair tipoOrigen = new KeyValuePair();
-		tipoOrigen.setCode(PersonaInputDto.ID_TIPO_ORIGEN);
-		tipoOrigen.setFormat(PersonaInputDto.FORMATO_STRING);
-		tipoOrigen.setValue(idTipoOrigen);
-		return tipoOrigen;
-	}
-	
 	private static KeyValuePair getFechaOperacion(String idFechaOperacion) {
 		KeyValuePair fechaOperacion = new KeyValuePair();
 		fechaOperacion.setCode(PersonaInputDto.FECHA_OPERACION);
@@ -156,14 +128,6 @@ public class GDPersonaInputAssembler {
 		tipoIdentificador.setFormat(PersonaInputDto.FORMATO_STRING);
 		tipoIdentificador.setValue(idTipoIdentificador);
 		return tipoIdentificador;
-	}
-	
-	private static KeyValuePair getidPersonaHaya(String idPersonaHaya) {
-		KeyValuePair personaHaya = new KeyValuePair();
-		personaHaya.setCode(PersonaInputDto.ID_PERSONA_HAYA);
-		personaHaya.setFormat(PersonaInputDto.FORMATO_STRING);
-		personaHaya.setValue(idPersonaHaya);
-		return personaHaya;
 	}
 	
 	private static KeyValuePair getRol(String idRol) {

@@ -64,10 +64,10 @@ public class GestorDocumentalMaestroManager extends BaseWS implements GestorDocu
 
 	@Override
 	public PersonaOutputDto ejecutarPersona(PersonaInputDto dto) {
-		logger.info("ENTRANDO EN EJECUTAR_PERSONA");
+		logger.error("ENTRANDO EN EJECUTAR_PERSONA");
 		es.pfsgroup.plugin.gestorDocumental.ws.MAESTRO_PERSONAS.ProcessEventRequestType input = GDPersonaInputAssembler.dtoToInputPersona(dto);
-		logger.info("JSON MONTADO:\n"+input);
-		logger.info("LLamando al WS MAESTRO_PERSONAS...Parametros de entrada... " + dto.getEvent() + ", " + dto.getIdCliente() + ", " + dto.getIdPersonaOrigen());
+		logger.error("JSON MONTADO:\n"+input);
+		logger.error("LLamando al WS MAESTRO_PERSONAS...Parametros de entrada... " + dto.getEvent() + ", " + dto.getIdCliente() + ", " + dto.getIdPersonaOrigen());
 		es.pfsgroup.plugin.gestorDocumental.ws.MAESTRO_PERSONAS.ProcessEventResponseType output = null;
 		try {	
 			String urlWSDL = getWSURL(WEB_SERVICE_PERSONAS);
@@ -91,8 +91,8 @@ public class GestorDocumentalMaestroManager extends BaseWS implements GestorDocu
 						&& output.getParameters().getParameter().get(0).getCode().equals("ERROR")) {
 					logger.info("RESULTADO_COD_MAESTRO: Servicio inactivo");
 				} else {
-					logger.info("RESULTADO_COD_MAESTRO: " + output.getResultCode());
-					logger.info("RESULTADO_DESCRIPCION_MAESTRO: " + output.getResultDescription());
+					logger.error("RESULTADO_COD_MAESTRO: " + output.getResultCode());
+					logger.error("RESULTADO_DESCRIPCION_MAESTRO: " + output.getResultDescription());
 				}
 				
 				

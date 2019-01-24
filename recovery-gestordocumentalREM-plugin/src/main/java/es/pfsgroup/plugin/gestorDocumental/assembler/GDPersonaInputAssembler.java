@@ -20,7 +20,7 @@ public class GDPersonaInputAssembler {
 	
 	public static ProcessEventRequestType dtoToInputPersona (PersonaInputDto inputDto) {
 
-		logger.info("Entrada en dtoToInputPersona");
+		logger.error("Entrada en dtoToInputPersona");
 		if (inputDto == null) {
 			return null;
 		}
@@ -32,13 +32,13 @@ public class GDPersonaInputAssembler {
 				!Checks.esNulo(inputDto.getIdTipoIdentificador()) || !Checks.esNulo(inputDto.getIdRol()) ||
 				!Checks.esNulo(inputDto.getIdCliente()) || !Checks.esNulo(inputDto.getIdPersonaOrigen()) ||
 				!Checks.esNulo(inputDto.getIdOrigen())) {
-			logger.info("IF en dtoToInputPersona");
+			logger.error("IF en dtoToInputPersona");
 			input.setParameters(getParametersCrearPersona(inputDto));
 		} else {
 			input.setParameters(getParametersPersona(inputDto));
 		}
 		
-		logger.info("RETURN:\n"+input);
+		logger.error("RETURN:\n"+input);
 		return input;
 	}
 		

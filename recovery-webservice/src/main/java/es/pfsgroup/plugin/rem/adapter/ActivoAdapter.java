@@ -315,8 +315,6 @@ public class ActivoAdapter {
 	@Autowired
 	private UsuarioManager usuarioManager;
 	
-	@Autowired
-	private ActivoAdapter activoAdapterApi;
 	
 	private static final String CONSTANTE_REST_CLIENT = "rest.client.gestor.documental.constante";
 	public static final String OFERTA_INCOMPATIBLE_MSG = "El tipo de oferta es incompatible con el destino comercial del activo";
@@ -3415,7 +3413,7 @@ public class ActivoAdapter {
 			}else {
 				notificationOfertaManager.sendNotification(oferta);
 			}
-			activoAdapterApi.actualizarEstadoPublicacionActivo(activo.getId());
+			this.actualizarEstadoPublicacionActivo(activo.getId());
 		} catch (Exception ex) {
 			logger.error("error en activoAdapter", ex);
 			ex.printStackTrace();

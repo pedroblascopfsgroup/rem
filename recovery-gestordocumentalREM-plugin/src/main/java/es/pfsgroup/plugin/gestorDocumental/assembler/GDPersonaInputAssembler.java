@@ -1,5 +1,8 @@
 package es.pfsgroup.plugin.gestorDocumental.assembler;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.gestorDocumental.dto.PersonaInputDto;
 import es.pfsgroup.plugin.gestorDocumental.ws.MAESTRO_PERSONAS.KeyValuePair;
@@ -13,8 +16,11 @@ import es.pfsgroup.plugin.gestorDocumental.ws.MAESTRO_PERSONAS.ProcessEventReque
  */
 public class GDPersonaInputAssembler {
 	
+	protected final static Log logger = LogFactory.getLog(GDPersonaInputAssembler.class);
+	
 	public static ProcessEventRequestType dtoToInputPersona (PersonaInputDto inputDto) {
 
+		logger.info("Entrada en dtoToInputPersona");
 		if (inputDto == null) {
 			return null;
 		}
@@ -26,11 +32,13 @@ public class GDPersonaInputAssembler {
 				!Checks.esNulo(inputDto.getIdTipoIdentificador()) || !Checks.esNulo(inputDto.getIdRol()) ||
 				!Checks.esNulo(inputDto.getIdCliente()) || !Checks.esNulo(inputDto.getIdPersonaOrigen()) ||
 				!Checks.esNulo(inputDto.getIdOrigen())) {
+			logger.info("IF en dtoToInputPersona");
 			input.setParameters(getParametersCrearPersona(inputDto));
 		} else {
 			input.setParameters(getParametersPersona(inputDto));
 		}
 		
+		logger.info("RETURN:\n"+input);
 		return input;
 	}
 		

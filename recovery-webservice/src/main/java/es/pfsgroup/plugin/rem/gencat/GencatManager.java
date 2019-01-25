@@ -1138,7 +1138,7 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 					crearHistoricoOfertaGencatByOfertaGencat(ofertaGencat, historicoComunicacionGencat);
 					
 					// Borrado del registro vigente del tramite de GENCAT
-					updateTramiteGENCAT(comunicacionGencat, adecuacionGencat, ofertaGencat);
+					borrarTramiteGENCAT(comunicacionGencat, adecuacionGencat, ofertaGencat);
 					
 				}
 				
@@ -1149,7 +1149,7 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 	}
 	
 	
-	private void updateTramiteGENCAT(ComunicacionGencat comunicacionGencat, AdecuacionGencat adecuacionGencat, OfertaGencat ofertaGencat) {
+	private void borrarTramiteGENCAT(ComunicacionGencat comunicacionGencat, AdecuacionGencat adecuacionGencat, OfertaGencat ofertaGencat) {
 		
 		if(!Checks.esNulo(comunicacionGencat.getId())
 				&& !Checks.esNulo(adecuacionGencat.getId())
@@ -1157,9 +1157,7 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 			genericDao.deleteById(AdecuacionGencat.class, adecuacionGencat.getId());
 			genericDao.deleteById(OfertaGencat.class, ofertaGencat.getId());
 			genericDao.deleteById(ComunicacionGencat.class, comunicacionGencat.getId());
-			
-			//AdecuacionGencat ag = 
-			
+
 		}
 	}
 	

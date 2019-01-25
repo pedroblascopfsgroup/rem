@@ -116,7 +116,7 @@ public class UpdaterStateManager implements UpdaterStateApi{
 
 	@Override
 	public void updaterStateDisponibilidadComercialAndSave(Activo activo, Boolean express) {
-		ArrayList<Long> idActivoActualizarPublicacion = new ArrayList<Long>();
+		//ArrayList<Long> idActivoActualizarPublicacion = new ArrayList<Long>();
 		if(express){
 			String codigo = DDSituacionComercial.CODIGO_DISPONIBLE_VENTA_OFERTA;
 			activo.setSituacionComercial((DDSituacionComercial)utilDiccionarioApi.dameValorDiccionarioByCod(DDSituacionComercial.class,codigo));
@@ -125,9 +125,9 @@ public class UpdaterStateManager implements UpdaterStateApi{
 			activoApi.saveOrUpdate(activo);
 		}
 
-		idActivoActualizarPublicacion.add(activo.getId());
+		//idActivoActualizarPublicacion.add(activo.getId());
 		//activoAdapterApi.actualizarEstadoPublicacionActivo(activo.getId());
-		activoAdapterApi.actualizarEstadoPublicacionActivo(idActivoActualizarPublicacion,false);
+		//activoAdapterApi.actualizarEstadoPublicacionActivo(idActivoActualizarPublicacion,false);
 	}
 	
 	@Override

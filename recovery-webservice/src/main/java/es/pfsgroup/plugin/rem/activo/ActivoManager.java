@@ -2513,10 +2513,12 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		perimetroActivo.setAplicaTramiteAdmision(0);
 		perimetroActivo.setFechaAplicaComercializar(new Date());
 		perimetroActivo.setAplicaPublicar(true);
+		perimetroActivo.setFechaAplicaPublicar(new Date());
 
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDMotivoComercializacion.CODIGO_ASISTIDA);
 		DDMotivoComercializacion motivoComercializacion = genericDao.get(DDMotivoComercializacion.class, filtro);
 		perimetroActivo.setMotivoAplicaComercializar(motivoComercializacion);
+		perimetroActivo.setMotivoAplicaPublicar(motivoComercializacion.getDescripcion());
 
 		saveOrUpdatePerimetroActivo(perimetroActivo);
 
@@ -5221,8 +5223,11 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}else ocupado=posesoria.getOcupado();
 		if(!Checks.esNulo(id))
 		{
-			if(!Checks.esNulo(posesoria) && (!Checks.esNulo(posesoria.getFechaRevisionEstado())
-					|| !Checks.esNulo(posesoria.getFechaTomaPosesion())))
+			if(((DDCartera.CODIGO_CARTERA_BANKIA).equals(activo.getCartera().getCodigo()) 
+					&& (1 == activo.getSituacionPosesoria().getSitaucionJuridica().getIndicaPosesion())) 
+			||(!(DDCartera.CODIGO_CARTERA_BANKIA).equals(activo.getCartera().getCodigo()) 
+					&& (!Checks.esNulo(posesoria) && (!Checks.esNulo(posesoria.getFechaRevisionEstado())
+							|| !Checks.esNulo(posesoria.getFechaTomaPosesion())))))
 			{
 				if(!Checks.esNulo(posesoria.getOcupado()) && (1 == ocupado && 0 == conTitulo))
 				{

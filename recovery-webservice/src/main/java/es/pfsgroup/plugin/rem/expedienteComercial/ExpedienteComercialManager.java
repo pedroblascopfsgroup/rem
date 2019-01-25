@@ -4279,6 +4279,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				genericDao.save(ExpedienteComercial.class, expediente);
 
 				ofertaApi.resetPBC(expediente, true);
+				
+				TmpClienteGDPR tmpClienteGDPR = genericDao.get(TmpClienteGDPR.class, genericDao.createFilter(FilterType.EQUALS, "numDocumento", comprador.getDocumento()));
+				rawDao.getExecuteSQL("DELETE FROM TMP_CLIENTE_GDPRS "
+						+ "			  WHERE NUM_DOCUMENTO = "+tmpClienteGDPR.getNumDocumento());
 
 				return true; 
 
@@ -4287,6 +4291,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				return false; 
 			}
 		}
+		
+		
 
 	}
 

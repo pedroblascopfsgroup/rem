@@ -33,6 +33,7 @@ import es.pfsgroup.framework.paradise.bulkUpload.adapter.ProcessAdapter;
 import es.pfsgroup.framework.paradise.bulkUpload.api.ExcelManagerApi;
 import es.pfsgroup.framework.paradise.bulkUpload.api.MSVProcesoApi;
 import es.pfsgroup.framework.paradise.bulkUpload.api.ParticularValidatorApi;
+import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVRawSQLDao;
 import es.pfsgroup.framework.paradise.bulkUpload.dao.MSVFicheroDao;
 import es.pfsgroup.framework.paradise.bulkUpload.liberators.MSVLiberator;
 import es.pfsgroup.framework.paradise.bulkUpload.liberators.MSVLiberatorsFactory;
@@ -98,6 +99,7 @@ import es.pfsgroup.plugin.rem.model.DtoUsuario;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
+import es.pfsgroup.plugin.rem.model.TmpClienteGDPR;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.VBusquedaAgrupaciones;
@@ -244,6 +246,9 @@ public class AgrupacionAdapter {
 	
 	@Autowired
 	private ActivoHistoricoPatrimonioDao activoHistoricoPatrimonioDao;
+	
+	@Autowired
+	private MSVRawSQLDao rawDao;
 
 	private final Log logger = LogFactory.getLog(getClass());
 
@@ -2113,19 +2118,22 @@ public class AgrupacionAdapter {
 
 				// Si no existe simplemente creamos e insertamos un nuevo objeto ClienteGDPR
 			} else {
-				ClienteGDPR clienteGDPR = new ClienteGDPR();
-				clienteGDPR.setCliente(clienteComercial);
-				clienteGDPR.setTipoDocumento(tipoDocumento);
-				clienteGDPR.setNumDocumento(dto.getNumDocumentoCliente());
-				clienteGDPR.setCesionDatos(dto.getCesionDatos());
-				clienteGDPR.setComunicacionTerceros(dto.getComunicacionTerceros());
-				clienteGDPR.setTransferenciasInternacionales(dto.getTransferenciasInternacionales());
+				cliGDPR.setCliente(clienteComercial);
+				cliGDPR.setTipoDocumento(tipoDocumento);
+				cliGDPR.setNumDocumento(dto.getNumDocumentoCliente());
+				cliGDPR.setCesionDatos(dto.getCesionDatos());
+				cliGDPR.setComunicacionTerceros(dto.getComunicacionTerceros());
+				cliGDPR.setTransferenciasInternacionales(dto.getTransferenciasInternacionales());
 
 				if (!Checks.esNulo(docAdjunto)) {
-					clienteGDPR.setAdjuntoComprador(docAdjunto);
+					cliGDPR.setAdjuntoComprador(docAdjunto);
 				}
-				genericDao.save(ClienteGDPR.class, clienteGDPR);
+				genericDao.save(ClienteGDPR.class, cliGDPR);
 			}
+			
+			TmpClienteGDPR tmpClienteGDPR = genericDao.get(TmpClienteGDPR.class, genericDao.createFilter(FilterType.EQUALS, "numDocumento", cliGDPR.getNumDocumento()));
+			rawDao.getExecuteSQL("DELETE FROM TMP_CLIENTE_GDPRS "
+					+ "			  WHERE NUM_DOCUMENTO = "+tmpClienteGDPR.getNumDocumento());
 
 		} catch (Exception ex) {
 			logger.error("error en agrupacionAdapter", ex);

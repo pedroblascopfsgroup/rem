@@ -48,7 +48,7 @@ public class ActivoOfertaAdapter {
 		List<DtoAdjunto> listaAdjuntos = new ArrayList<DtoAdjunto>();
 		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 		
-		Long intervinienteHaya = Long.parseLong(idIntervinienteHaya);
+		Long intervinienteHaya = Long.parseLong(idIntervinienteHaya.toString());
 		
 		if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
 			try {

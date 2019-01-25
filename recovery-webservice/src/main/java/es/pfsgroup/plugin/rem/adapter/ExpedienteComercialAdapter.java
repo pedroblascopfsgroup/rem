@@ -122,11 +122,11 @@ public class ExpedienteComercialAdapter {
 		List<DtoAdjunto> listaAdjuntos = new ArrayList<DtoAdjunto>();
 		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 		
-		Long intervinienteHaya = Long.parseLong(idIntervinienteHaya.toString());
+		//Long intervinienteHaya = Long.parseLong(idIntervinienteHaya.toString());
 		
 		if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
 			try {
-				listaAdjuntos = gestorDocumentalAdapterApi.getAdjuntosEntidadComprador(intervinienteHaya);
+				listaAdjuntos = gestorDocumentalAdapterApi.getAdjuntosEntidadComprador(idIntervinienteHaya);
 			} catch (GestorDocumentalException gex) {
 					logger.error(gex.getMessage());
 					
@@ -135,7 +135,7 @@ public class ExpedienteComercialAdapter {
 					Integer idPersonaHaya;
 					try {
 						logger.info(CREANDO_CONTENEDOR+" ID PERSONA: "+idIntervinienteHaya+", DOCUMENTO: "+docCliente);
-						idPersonaHaya = gestorDocumentalAdapterApi.crearEntidadComprador(intervinienteHaya, usuarioLogado.getUsername(), null, null, idExpediente);
+						idPersonaHaya = gestorDocumentalAdapterApi.crearEntidadComprador(idIntervinienteHaya, usuarioLogado.getUsername(), null, null, idExpediente);
 						logger.debug("GESTOR DOCUMENTAL [ crearExpedienteComprador para " + docCliente + "]: ID PERSONA RECIBIDO " + idPersonaHaya);
 					} catch (GestorDocumentalException gexc) {
 						logger.error(ERROR_CREACION_CONTENEDOR, gexc);

@@ -48,9 +48,9 @@ public interface GestorDocumentalAdapterApi {
 	Long uploadDocumentoEntidadComprador(String idIntervinienteHaya, WebFileItem webFileItem, String userLogin,
 			String matricula) throws GestorDocumentalException;
 
-	Integer crearEntidadComprador(Long idIntervinienteHaya, String usuarioLogado, Long idActivo, Long idAgrupacion,
-			Long idExpediente) throws GestorDocumentalException;
+	List<DtoAdjunto> getAdjuntosEntidadComprador(String idIntervinienteHaya) throws GestorDocumentalException;
 
-	List<DtoAdjunto> getAdjuntosEntidadComprador(Long idIntervinienteHaya) throws GestorDocumentalException;
+	Integer crearEntidadComprador(String idIntervinienteHaya, String usuarioLogado, Long idActivo, Long idAgrupacion,
+			Long idExpediente) throws GestorDocumentalException;
 	
 }

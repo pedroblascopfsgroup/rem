@@ -3364,7 +3364,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 								genericDao.createFilter(FilterType.EQUALS, "id", tmpClienteGDPR.getIdAdjunto()));	
 					}						
 				}
-				ClienteGDPR clienteCompradorGDPR = new ClienteGDPR();
+				ClienteCompradorGDPR clienteCompradorGDPR = new ClienteCompradorGDPR();
 				
 				if (!Checks.esNulo(comprador.getTipoDocumento())) {
 					clienteCompradorGDPR.setTipoDocumento(comprador.getTipoDocumento());
@@ -3386,11 +3386,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					clienteCompradorGDPR.setAdjuntoComprador(docAdjunto);
 				}
 				
-				if (!Checks.esNulo(tmpClienteGDPR)) {
-					clienteCompradorGDPR.getCliente().setIdPersonaHaya(tmpClienteGDPR.getIdPersonaHaya().toString());
-				}
-				
-				genericDao.save(ClienteGDPR.class, clienteCompradorGDPR);
+				genericDao.save(ClienteCompradorGDPR.class, clienteCompradorGDPR);
 
 				Filter filtroExpedienteComercial = genericDao.createFilter(FilterType.EQUALS, "id",
 						Long.parseLong(dto.getIdExpedienteComercial()));

@@ -281,7 +281,7 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 		String descripcionExpediente = "";
 		
 		RecoveryToGestorExpAssembler recoveryToGestorAssembler =  new RecoveryToGestorExpAssembler(appProperties);
-		CrearEntidadCompradorDto crearActivoOferta = recoveryToGestorAssembler.getCrearActivoOferta(idIntervinienteHaya.toString(), usuarioLogado, cliente, idSistemaOrigen, codClase, descripcionExpediente, GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_ENTIDADES);
+		CrearEntidadCompradorDto crearActivoOferta = recoveryToGestorAssembler.getCrearActivoOferta(idIntervinienteHaya, usuarioLogado, cliente, idSistemaOrigen, codClase, descripcionExpediente, GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_ENTIDADES);
 		RespuestaCrearExpediente respuesta;
 
 		try {
@@ -422,9 +422,10 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 
 		try {
 			respuestaCrearDocumento = gestorDocumentalApi.crearDocumento(cabecera, crearDoc);
-			respuesta = new Long(respuestaCrearDocumento.getIdDocumento());
+			respuesta = Long.parseLong(respuestaCrearDocumento.getIdDocumento().toString());
 		} catch (GestorDocumentalException gex) {
 			logger.debug(gex.getMessage());
+			gex.printStackTrace();
 			throw gex;
 		}
 

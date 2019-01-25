@@ -68,7 +68,7 @@ public class ActivoOfertaAdapter {
 				throw gex;
 			} catch (Exception ex) {
 				logger.error(ex.getMessage());
-				logger.error(ex.getStackTrace());
+				ex.printStackTrace();
 			}		
 		}
 		return listaAdjuntos;
@@ -126,11 +126,11 @@ public class ActivoOfertaAdapter {
 			}
 		} catch (GestorDocumentalException gex) {
 				logger.error(gex.getMessage());
-				logger.error(gex.getStackTrace());
+				gex.printStackTrace();
 				return gex.getMessage();
 		} catch (Exception ex) {
 			logger.error(ex.getMessage());
-			logger.error(ex.getStackTrace());
+			ex.printStackTrace();
 			return ex.getMessage();
 		}
 		return null;

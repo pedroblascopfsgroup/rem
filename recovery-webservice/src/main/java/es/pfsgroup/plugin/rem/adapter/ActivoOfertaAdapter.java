@@ -48,8 +48,6 @@ public class ActivoOfertaAdapter {
 		List<DtoAdjunto> listaAdjuntos = new ArrayList<DtoAdjunto>();
 		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 		
-		//Long intervinienteHaya = Long.parseLong(idIntervinienteHaya.toString());
-		
 		if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
 			try {
 				listaAdjuntos = gestorDocumentalAdapterApi.getAdjuntosEntidadComprador(idIntervinienteHaya);
@@ -70,6 +68,7 @@ public class ActivoOfertaAdapter {
 				throw gex;
 			} catch (Exception ex) {
 				logger.error(ex.getMessage());
+				logger.error(ex.getStackTrace());
 			}		
 		}
 		return listaAdjuntos;
@@ -127,9 +126,11 @@ public class ActivoOfertaAdapter {
 			}
 		} catch (GestorDocumentalException gex) {
 				logger.error(gex.getMessage());
+				logger.error(gex.getStackTrace());
 				return gex.getMessage();
 		} catch (Exception ex) {
 			logger.error(ex.getMessage());
+			logger.error(ex.getStackTrace());
 			return ex.getMessage();
 		}
 		return null;

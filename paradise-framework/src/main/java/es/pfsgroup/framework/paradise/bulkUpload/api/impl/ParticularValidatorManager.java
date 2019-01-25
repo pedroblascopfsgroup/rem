@@ -2492,6 +2492,8 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "			FROM ACT_AGR_AGRUPACION agr\n"
 				+ "			WHERE agr.AGR_NUM_AGRUP_REM = "+ mumAgrupacionRem
 				+ "			AND agr.AGR_ACT_PRINCIPAL IS NOT NULL");
+		
+		return !"0".equals(resultado);
 	}
 
 	public Boolean isActivoFinanciero(String numActivo) {

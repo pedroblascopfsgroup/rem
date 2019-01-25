@@ -7313,6 +7313,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 						if(!Checks.esNulo(localidad)) {
 							dto.setMunicipio(localidad.getDescripcion());
 						}
+						if(!Checks.esNulo(activo.getTipoAlquiler())) {
+							dto.setTipoAlquiler(activo.getTipoAlquiler().getDescripcion());
+						}
 			    	}
 			    	
 					if(!Checks.esNulo(activo.getTipoActivo())) {

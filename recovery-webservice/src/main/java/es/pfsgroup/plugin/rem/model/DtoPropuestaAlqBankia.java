@@ -44,6 +44,7 @@ public class DtoPropuestaAlqBankia extends WebDto {
 	private String tipoActivo;
 	private String cartera;
 	private Long numeroAgrupacion;
+	private String tipoAlquiler;
 	
 	private String nombreCompleto;
 	private String codPostMunicipio;
@@ -250,7 +251,12 @@ public class DtoPropuestaAlqBankia extends WebDto {
 	public void setNumeroAgrupacion(Long numeroAgrupacion) {
 		this.numeroAgrupacion = numeroAgrupacion;
 	}
-	
+	public String getTipoAlquiler() {
+		return tipoAlquiler;
+	}
+	public void setTipoAlquiler(String tipoAlquiler) {
+		this.tipoAlquiler = tipoAlquiler;
+	}
 	public static long getSerialversionuid() {
 		return serialVersionUID;
 	}

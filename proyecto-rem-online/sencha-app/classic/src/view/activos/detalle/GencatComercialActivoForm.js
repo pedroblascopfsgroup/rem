@@ -165,7 +165,8 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoForm', {
 				    				submitFormat:'Y-m-d',
 									bind: {
 										readOnly: me.formDeHistorico,
-										value: '{gencat.fechaSancion}'										
+										value: '{gencat.fechaSancion}',
+										disabled: '{gencat.fechaComunicacionVacia}'
 									}
 				    			},
 				    			{
@@ -176,7 +177,8 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoForm', {
 									bind: {
 										readOnly: me.formDeHistorico,
 										store: '{comboSancionGencat}',
-										value: '{gencat.sancion}'										
+										value: '{gencat.sancion}',
+										disabled: '{gencat.fechaComunicacionVacia}'
 									}
 				    			},
 				    			{

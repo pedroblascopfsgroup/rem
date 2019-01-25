@@ -34,9 +34,9 @@ Ext.define('HreRem.model.Gencat', {
 		{
 			name:'estaActivadoCompradorNuevo',
 			calculate: function(data) { 
-				return data.sancion === CONST.SANCION_GENCAT['EJERCE'];
+				return !Ext.isEmpty(data.fechaSancion) && data.sancion === CONST.SANCION_GENCAT['EJERCE'];
 			},
-			depends: 'sancion'
+			depends: [ 'fechaSancion', 'sancion' ]
 		},
 		{
 			name:'nuevoCompradorNif'
@@ -62,6 +62,13 @@ Ext.define('HreRem.model.Gencat', {
 				return data.estadoComunicacion === CONST.ESTADO_COMUNICACION_GENCAT['COMUNICADO'];
 			},
 			depends: 'estadoComunicacion'
+		},
+		{
+			name:'fechaComunicacionVacia',
+			calculate: function(data) {
+				return Ext.isEmpty(data.fechaComunicacion);
+			},
+			depends: 'fechaComunicacion'
 		},
 		{
 			name:'fechaAnulacion',

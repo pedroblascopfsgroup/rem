@@ -647,7 +647,10 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			DDSubtipoTrabajo subtipoTrabajo = (DDSubtipoTrabajo) utilDiccionarioApi
 					.dameValorDiccionarioByCod(DDSubtipoTrabajo.class, this.getSubtipoTrabajoByOferta(oferta));
 			Trabajo trabajo = trabajoApi.create(subtipoTrabajo, listaActivos, null, false);
-			resultado = crearExpediente(oferta, trabajo);
+			ExpedienteComercial expedienteComercial = crearExpediente(oferta, trabajo, null);
+			if (!Checks.esNulo(expedienteComercial)) {
+				resultado = true;
+			}
 			trabajoApi.createTramiteTrabajo(trabajo);
 		}
 
@@ -701,14 +704,14 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	}
 
 	@Override
-	public boolean crearExpediente(Oferta oferta, Trabajo trabajo) {
+	public ExpedienteComercial crearExpediente(Oferta oferta, Trabajo trabajo, Oferta ofertaOriginalGencatEjerce) {
 		TransactionStatus transaction = null;
 		ExpedienteComercial expedienteComercial = null;
 		boolean resultado = false;
 
 		try {
 			transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
-			expedienteComercial = crearExpedienteGuardado(oferta, trabajo);
+			expedienteComercial = crearExpedienteGuardado(oferta, trabajo, ofertaOriginalGencatEjerce);
 
 			if(DDTipoOferta.CODIGO_ALQUILER.equals(oferta.getTipoOferta().getCodigo()) && MAESTRO_ORIGEN_WCOM.equals(oferta.getOrigen())){
 				Usuario usu=proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
@@ -720,12 +723,10 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			expedienteComercialApi.crearCondicionesActivoExpediente(oferta.getActivoPrincipal(), expedienteComercial);
 
 			transactionManager.commit(transaction);
-			resultado = true;
 
 		} catch (Exception ex) {
 			logger.error("Error en activoManager", ex);
 			transactionManager.rollback(transaction);
-			resultado = false;
 		}
 
 		// cuando creamos el expediente, si procede, creamos el repositorio
@@ -741,7 +742,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			
 		}
 
-		return resultado;
+		return expedienteComercial;
 	}
 
 		
@@ -785,7 +786,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		return expedienteComercial;
 	}
 
-	private ExpedienteComercial crearExpedienteGuardado(Oferta oferta, Trabajo trabajo) throws Exception {
+	private ExpedienteComercial crearExpedienteGuardado(Oferta oferta, Trabajo trabajo, Oferta ofertaOriginalGencatEjerce) throws Exception {
 
 		ExpedienteComercial nuevoExpediente = new ExpedienteComercial();
 
@@ -1035,7 +1036,11 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 		genericDao.save(Oferta.class, oferta);
 
-		crearGastosExpediente(oferta, nuevoExpediente);
+		if (Checks.esNulo(ofertaOriginalGencatEjerce)) {
+			crearGastosExpediente(oferta, nuevoExpediente);
+		} else { // este caso es el que se copia la oferta original para gencat
+			crearGastosExpediente(ofertaOriginalGencatEjerce, nuevoExpediente);
+		}
 
 		// Se asigna un gestor de Formalización al crear un nuevo expediente.
 		asignarGestorYSupervisorFormalizacionToExpediente(nuevoExpediente);
@@ -4584,6 +4589,41 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 
 		return false;
+	}
+	
+	@Override
+	public List<Oferta> getOfertasPendientesOTramitadasByActivo(Activo activo) {
+		List<Oferta> listaOfertasVivas = new ArrayList<Oferta>();
+
+		if (!Checks.estaVacio(activo.getOfertas())) {
+			for (ActivoOferta actOfr : activo.getOfertas()) {
+				Oferta oferta = actOfr.getPrimaryKey().getOferta();
+				if (!Checks.esNulo(oferta) && !Checks.esNulo(oferta.getEstadoOferta())
+						&& (DDEstadoOferta.CODIGO_PENDIENTE.equals(oferta.getEstadoOferta().getCodigo())
+						|| DDEstadoOferta.CODIGO_ACEPTADA.equals(oferta.getEstadoOferta().getCodigo()))) {
+					listaOfertasVivas.add(oferta);
+				}
+			}
+		}
+
+		return listaOfertasVivas;
+	}
+	
+	@Override
+	public List<Oferta> getOfertasPendientesOTramitadasByActivoAgrupacion(ActivoAgrupacion activoAgrupacion) {
+		List<Oferta> listaOfertasVivas = new ArrayList<Oferta>();
+
+		if (!Checks.estaVacio(activoAgrupacion.getOfertas())) {
+			for (Oferta ofr : activoAgrupacion.getOfertas()) {
+				if (!Checks.esNulo(ofr) && !Checks.esNulo(ofr.getEstadoOferta())
+						&& (DDEstadoOferta.CODIGO_PENDIENTE.equals(ofr.getEstadoOferta().getCodigo())
+						|| DDEstadoOferta.CODIGO_ACEPTADA.equals(ofr.getEstadoOferta().getCodigo()))) {
+					listaOfertasVivas.add(ofr);
+				}
+			}
+		}
+
+		return listaOfertasVivas;
 	}
 
 	@Override

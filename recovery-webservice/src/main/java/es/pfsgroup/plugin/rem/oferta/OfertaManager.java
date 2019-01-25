@@ -862,7 +862,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 						.dameValorDiccionarioByCod(DDSubtipoTrabajo.class, activoApi.getSubtipoTrabajoByOferta(oferta));
 
 				Trabajo trabajo = trabajoApi.create(subtipoTrabajo, listaActivos, null, false);
-				activoApi.crearExpediente(oferta, trabajo);
+				activoApi.crearExpediente(oferta, trabajo, null);
 				ActivoTramite activoTramite = trabajoApi.createTramiteTrabajo(trabajo);
 
 				adapter.saltoInstruccionesReserva(activoTramite.getProcessBPM());

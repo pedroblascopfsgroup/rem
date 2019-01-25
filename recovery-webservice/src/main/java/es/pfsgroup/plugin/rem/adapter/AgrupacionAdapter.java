@@ -1891,7 +1891,7 @@ public class AgrupacionAdapter {
 					.dameValorDiccionarioByCod(DDSubtipoTrabajo.class, activoApi.getSubtipoTrabajoByOferta(oferta));
 			Trabajo trabajo = trabajoApi.create(subtipoTrabajo, listaActivos, null);
 
-			activoManager.crearExpediente(oferta, trabajo);
+			activoManager.crearExpediente(oferta, trabajo, null);
 		}
 
 		genericDao.update(Oferta.class, oferta);

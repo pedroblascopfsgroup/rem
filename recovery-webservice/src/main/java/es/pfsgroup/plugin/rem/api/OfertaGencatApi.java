@@ -19,5 +19,15 @@ public interface OfertaGencatApi {
 	 * @param comunicacionGencat
 	 */
 	public void saveOrUpdate(OfertaGencat ofertaGencat);
+	
+
+	/**
+	 * 
+	 * Método que devuelve una OfertaGencat
+	 * 
+	 * @param idComunicacionGencat
+	 * @return
+	 */
+	public OfertaGencat getByIdComunicacionGencatAndIdOfertaAnteriorIsNotNull(Long idComunicacionGencat);
 
 }

@@ -2,7 +2,9 @@ package es.pfsgroup.plugin.rem.controller;
 
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -30,6 +32,7 @@ import es.pfsgroup.plugin.rem.excel.OfertasExcelReport;
 import es.pfsgroup.plugin.rem.model.DtoHonorariosOferta;
 import es.pfsgroup.plugin.rem.model.DtoOfertantesOferta;
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
+import es.pfsgroup.plugin.rem.model.DtoPropuestaAlqBankia;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
 import es.pfsgroup.plugin.rem.oferta.NotificationOfertaManager;
@@ -243,17 +246,49 @@ public class OfertasController {
 	
 	
 	@RequestMapping(method = RequestMethod.GET)
-	public void generateExcelOferta(Long idOferta, HttpServletRequest request, HttpServletResponse response) throws IOException {
+	public void generateExcelOferta(Long idEco, Long idOferta, HttpServletRequest request, HttpServletResponse response) throws IOException {
 		
-		DtoOfertasFilter dto = new DtoOfertasFilter();
-		dto.setIdOferta(idOferta);
-		ExcelReport report = new OfertasExcelReport(ofertaApi.getListOfertasFromView(dto));
-		File file = excelReportGeneratorApi.generateReport(report);
+//		DtoOfertasFilter dto = new DtoOfertasFilter();
+//		dto.setIdOferta(idOferta);
+//		ExcelReport report = new OfertasExcelReport(ofertaApi.getListOfertasFromView(dto));
+//		File file = excelReportGeneratorApi.generateReport(report);
+//		
+//		Oferta oferta = ofertaApi.getOfertaById(idOferta);
+//		notificationOferta.sendNotificationPropuestaOferta(oferta, new FileItem(file));
+//		
+//		excelReportGeneratorApi.sendReport(file, response);
+		Long prueba = (long) 72;//3199;
+		List <DtoPropuestaAlqBankia> listaPropuestaAlquilerBankia = ofertaApi.getListPropuestasAlqBankiaFromView(idEco);
 		
+		//List<DtoPropuestaAlqBankia> l_dtoBankia = ofertaApi.getListPropuestasAlqBankiaFromView(3199L);
+//		DtoPropuestaAlqBankia dtoA = new DtoPropuestaAlqBankia();
+//		DtoPropuestaAlqBankia dtoB = new DtoPropuestaAlqBankia();
+//		dtoA.setNumActivoUvem(2L);
+//		dtoA.setTipoActivo("Normal?");
+//		dtoA.setDescripcionEstadoPatrimonio("JEJEJEJ");
+//		dtoA.setFechaAltaOferta(new Date());
+//		dtoA.setFechaPublicacionWeb(new Date());
+//		dtoA.setNombreCompleto("MG");
+//		dtoA.setDireccionCompleta("Calle Falsa 1 2 3");
+//		dtoA.setCodPostMunicipio("123423141 Alman");
+//		dtoA.setNombrePropietario("JUJUJ INC.");
+//		dtoA.setCompradorDocumento("2150L");
+//		dtoA.setFechaUltimaTasacion(new Date());
+//		dtoA.setImporteTasacionFinal(new BigDecimal(2));
+//		dtoA.setImporteOferta(new BigDecimal(3));
+//		dtoA.setTextoOferta("ddfaofjaiojidfsji");
+//		dtoB.setNumActivoUvem(1L);
+//		dtoB.setTipoActivo("NoTanNormal");
+//		
+//		List<DtoPropuestaAlqBankia> l_dtoBankia = new ArrayList<DtoPropuestaAlqBankia>();
+//		l_dtoBankia.add(dtoB);
+//		l_dtoBankia.add(dtoA);
+		
+		File file = excelReportGeneratorApi.generateBankiaReport(listaPropuestaAlquilerBankia, request);
+
+		excelReportGeneratorApi.sendReport(file, response);
 		Oferta oferta = ofertaApi.getOfertaById(idOferta);
 		notificationOferta.sendNotificationPropuestaOferta(oferta, new FileItem(file));
-		
-		excelReportGeneratorApi.sendReport(file, response);
 	}
 	
 	@SuppressWarnings("unchecked")

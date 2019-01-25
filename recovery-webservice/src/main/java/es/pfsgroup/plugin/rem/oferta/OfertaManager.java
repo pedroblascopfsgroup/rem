@@ -81,6 +81,7 @@ import es.pfsgroup.plugin.rem.model.DtoGastoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoHonorariosOferta;
 import es.pfsgroup.plugin.rem.model.DtoOfertantesOferta;
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
+import es.pfsgroup.plugin.rem.model.DtoPropuestaAlqBankia;
 import es.pfsgroup.plugin.rem.model.DtoTanteoActivoExpediente;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
@@ -3327,6 +3328,13 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		return minus;
 	}
 
+	@Override
+	public List<DtoPropuestaAlqBankia> getListPropuestasAlqBankiaFromView(Long ecoId) {
+		List<DtoPropuestaAlqBankia> listaDto = expedienteComercialApi.getListaDtoPropuestaAlqBankiaByExpId(ecoId);
+		return listaDto;
+}
+
+
 	private void validacionesLote(HashMap<String, String> errorsList, Activo activo, DDCartera cartera, 
 			DDSubcartera subcartera, ActivoPropietario propietario, Integer geolocalizacion) {		
 		if (activo.getCartera() != cartera 
@@ -3335,5 +3343,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				|| activoApi.getGeolocalizacion(activo) != geolocalizacion) {
 			errorsList.put("activosLote", RestApi.REST_MSG_UNKNOWN_KEY);
 		}
+
 	}
 }

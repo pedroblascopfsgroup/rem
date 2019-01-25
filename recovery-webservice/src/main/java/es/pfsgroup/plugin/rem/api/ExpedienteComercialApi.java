@@ -1095,4 +1095,7 @@ public interface ExpedienteComercialApi {
 	boolean checkConTituloTramite(Long idTramite);
 
 	boolean savePlusvaliaVenta(DtoPlusvaliaVenta dto, Long idExpediente);
+	
+	
+	List<DtoPropuestaAlqBankia> getListaDtoPropuestaAlqBankiaByExpId (Long ecoId);
 }

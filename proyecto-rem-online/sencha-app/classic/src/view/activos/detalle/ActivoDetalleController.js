@@ -3688,6 +3688,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	 },
 
 	 onChangeCheckPerimetroAlquiler: function(checkbox, newValue, oldValue, eOpts) {
+		 
 		 var me = this;
 		 var comboTipoAlquiler = me.lookupReference('comboTipoAlquilerRef');
 		 var comboAdecuacion = me.lookupReference('comboAdecuacionRef');
@@ -3699,14 +3700,44 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	   	 checkbox.setReadOnly(this.enableChkPerimetroAlquiler());
 	},
 
-    onChangeCalificacionNegativa: function(me, oValue, nValue){
-        var comboCalificacion = me.value;
-        var comboMotivo = me.up('tituloinformacionregistralactivo').down('[reference="itemselMotivo"]');
+	
 
-        if (comboCalificacion == "01") {
-            comboMotivo.setDisabled(false);
+    onChangeCalificacionNegativa: function(me, nValue, oValue){
+    	var comboCalificacion = nValue;
+        var comboMotivo = me.lookupController('activodetalle').lookupReference('itemselMotivo');
+        var comboEstadoMotivo = me.lookupController('activodetalle').lookupReference('motivoCalificacionNegativa');
+        var comboResponsableSubsanar = me.lookupController('activodetalle').lookupReference('responsableSubsanar');
+        var descMotivoInput = me.lookupController('activodetalle').lookupReference('descMotivo');
+        
+        //En la primera carga del componente la oValue tiene valor y la nValue se inicializa a null. 
+        if (nValue =="01" && oValue == null)  {
+		    comboMotivo.setDisabled(false) 
+			comboEstadoMotivo.setDisabled(false)
+			comboResponsableSubsanar.setDisabled(false)
+			
+    	}else if (comboCalificacion == "01") {
+    		//Combo Motivo
+            comboMotivo.setDisabled(false)
+            
+            //Combo Estado Motivo
+            comboEstadoMotivo.setValue('01')
+            comboEstadoMotivo.setDisabled(false)
+            comboEstadoMotivo.setAllowBlank(false)
+
+            //Combo Responsable Subsanar
+            comboResponsableSubsanar.setDisabled(false)
+            comboResponsableSubsanar.setAllowBlank(false)
+            
         } else {
+        	
+            comboEstadoMotivo.setDisabled(true)
+            comboEstadoMotivo.setValue(null)
+            comboEstadoMotivo.setAllowBlank(true)
+            comboResponsableSubsanar.setDisabled(true)
+            comboResponsableSubsanar.setAllowBlank(true)
+            comboResponsableSubsanar.setValue(null)
             comboMotivo.setDisabled(true);
+            descMotivoInput.setDisabled(true);
         }
     }
 });

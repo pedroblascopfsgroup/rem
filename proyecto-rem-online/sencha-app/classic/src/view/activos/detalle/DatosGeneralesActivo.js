@@ -66,8 +66,7 @@ Ext.define('HreRem.view.activos.detalle.DatosGeneralesActivo', {
 					xtype: 'buttontab',
         			itemId: 'botoneditar',
         		    handler	: 'onClickBotonEditar',
-        		    iconCls: 'edit-button-color'//,
-        		    //bind: {hidden: '{editing}'},
+        		    iconCls: 'edit-button-color'
         		    
         		},
         		{
@@ -93,7 +92,7 @@ Ext.define('HreRem.view.activos.detalle.DatosGeneralesActivo', {
 		var me = this;
 		me.setTitle(HreRem.i18n('title.ficha'));
 		
-		//HREOS-1964: Restringir los activos financieros (asistidos) para que solo puedan ser editables por los perfiles de IT y Gestor�a PDV
+		//HREOS-1964: Restringir los activos financieros (asistidos) para que solo puedan ser editables por los perfiles de IT y Gestoria PDV
 		var ocultarDatosbasicosactivo = false;		
 	    if(me.lookupController().getViewModel().get('activo').get('claseActivoCodigo')=='01'){
 	    	ocultarDatosbasicosactivo = !(($AU.userIsRol(CONST.PERFILES['GESTOPDV']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['HAYACAL']) || $AU.userIsRol(CONST.PERFILES['HAYASUPCAL'])) 
@@ -142,11 +141,7 @@ Ext.define('HreRem.view.activos.detalle.DatosGeneralesActivo', {
 	    	ocultarDatoscomunidadactivo = !$AU.userHasFunction('EDITAR_DATOS_COMUNIDAD_ACTIVO');
 	    }
 	    
-	    /* var edicionCargasCarteraCajamar= me.lookupController().getViewModel().get('activo').get('isCarteraCajamar');
-	    if(Ext.isEmpty(edicionCargasCarteraCajamar)){
-	    	edicionCargasCarteraCajamar= false;
-	    } */
-
+	   
 		var items = [];
 		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'datosbasicosactivo', ocultarBotonesEdicion:ocultarDatosbasicosactivo })}, ['TAB_DATOS_BASICOS_ACTIVO']);
 		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'tituloinformacionregistralactivo', ocultarBotonesEdicion:ocultarTituloinformacionregistralactivo})}, ['TAB_ACTIVO_TITULO_INFO_REGISTRAL']);

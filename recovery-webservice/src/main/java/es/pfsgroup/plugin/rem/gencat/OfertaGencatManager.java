@@ -1,5 +1,7 @@
 package es.pfsgroup.plugin.rem.gencat;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,7 +26,15 @@ public class OfertaGencatManager extends AbstractEntityDao<OfertaGencat, Long> i
 		Filter filtroBorradoAdecuacion = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
 		
 		if(!Checks.esNulo(idComunicacionGencat)) {
-			return genericDao.getList(OfertaGencat.class, filtroIdAdecuacion, filtroBorradoAdecuacion).get(0);			
+			List<OfertaGencat> ofertaGencatList = genericDao.getList(OfertaGencat.class, filtroIdAdecuacion, filtroBorradoAdecuacion);
+			
+			if(!Checks.estaVacio(ofertaGencatList)) {
+				return ofertaGencatList.get(0);
+			} else {
+				return null;
+			}
+			
+						
 		} else {
 			return null;
 		}

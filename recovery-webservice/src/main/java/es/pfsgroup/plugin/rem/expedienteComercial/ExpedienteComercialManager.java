@@ -34,6 +34,7 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import edu.emory.mathcs.backport.java.util.Arrays;
 import es.capgemini.devon.dto.WebDto;
+import es.capgemini.devon.exception.UserException;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.message.MessageService;
@@ -473,7 +474,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 	@Override
 	@Transactional(readOnly = false)
-	public boolean saveTextoOferta(DtoTextosOferta dto, Long idEntidad) {
+	public boolean saveTextoOferta(DtoTextosOferta dto, Long idEntidad) throws UserException {
 		TextosOferta textoOferta;
 
 		ExpedienteComercial expedienteComercial = findOne(idEntidad);
@@ -483,6 +484,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			// Estamos creando un texto que no existía.
 			textoOferta = new TextosOferta();
 			textoOferta.setOferta(oferta);
+			if(dto.getTexto() != null && dto.getTexto().length() > 2048){
+				throw new UserException("La longitud del texto no puede exceder los 2048 car&acute;cteres");
+			}
 			textoOferta.setTexto(dto.getTexto());
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getCampoCodigo());
 			DDTiposTextoOferta tipoTexto = genericDao.get(DDTiposTextoOferta.class, filtro);

@@ -2503,7 +2503,22 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		
 		return !"0".equals(resultado);
 	}
-
+	
+	@Override
+	public Boolean isActivoFinanciero(String numActivo) {
+		if(Checks.esNulo(numActivo))
+			return false;
+		
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1)"
+				+ "			FROM ACT_ACTIVO ACT"
+				+ "			JOIN DD_TTA_TIPO_TITULO_ACTIVO TTA"
+				+ "			ON ACT.DD_TTA_ID = TTA.DD_TTA_ID"
+				+ "			WHERE TTA.DD_TTA_CODIGO IN ('03', '04')"
+				+ "			AND ACT.ACT_NUM_ACTIVO = " + numActivo + " ");
+		
+		return !"0".equals(resultado);
+	}
+	
 	@Override
 	public Boolean isActivoIncluidoPerimetroAlquiler(String numActivo) {
 			String resultado = rawDao.getExecuteSQL( "SELECT COUNT(1)"

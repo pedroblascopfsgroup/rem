@@ -204,6 +204,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 	@Autowired
 	ActivoTareaExternaApi activoTareaExternaApi;
+	
+	@Autowired
+	private ActivoAdapter activoAdapterApi;
 
 	@Resource(name = "entityTransactionManager")
 	private PlatformTransactionManager transactionManager;
@@ -988,6 +991,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	@Transactional(readOnly = false)
 	public void updateStateDispComercialActivosByOferta(Oferta oferta) {
 		if (oferta.getActivosOferta() != null && !oferta.getActivosOferta().isEmpty()) {
+			ArrayList<Long> idActivoActualizarPublicacion = new ArrayList<Long>();
 			for (ActivoOferta activoOferta : oferta.getActivosOferta()) {
 				Activo activo = activoOferta.getPrimaryKey().getActivo();
 				if(!Checks.esNulo(oferta.getOfertaExpress()) && oferta.getOfertaExpress() && DDEstadoOferta.CODIGO_ACEPTADA.equals(oferta.getEstadoOferta().getCodigo())){
@@ -995,7 +999,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				}else{
 					updaterState.updaterStateDisponibilidadComercialAndSave(activo,false);
 				}
+				idActivoActualizarPublicacion.add(activo.getId());
 			}
+			activoAdapterApi.actualizarEstadoPublicacionActivo(idActivoActualizarPublicacion,true);
 		}
 	}
 
@@ -1032,17 +1038,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			updateStateDispComercialActivosByOferta(oferta);
 			genericDao.save(Oferta.class, oferta);
 
-			if (!Checks.esNulo(oferta.getAgrupacion())) {
-				ActivoAgrupacion agrupacion = oferta.getAgrupacion();
-				List<Oferta> ofertasVivasAgrupacion = ofertaDao.getListOtrasOfertasVivasAgr(oferta.getId(), agrupacion.getId());
-
-				if ((agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_VENTA) 
-						|| agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_ALQUILER))
-						&& !Checks.esNulo(ofertasVivasAgrupacion) && ofertasVivasAgrupacion.isEmpty()) {
-					agrupacion.setFechaBaja(new Date());
-					activoAgrupacionApi.saveOrUpdate(agrupacion);
-				}
-			}
 		} catch (Exception e) {
 			logger.error("error en OfertasManager", e);
 			return false;

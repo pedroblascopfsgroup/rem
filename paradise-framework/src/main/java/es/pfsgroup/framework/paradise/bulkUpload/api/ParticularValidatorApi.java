@@ -536,6 +536,7 @@ public interface ParticularValidatorApi {
 	 * @param numActivo número de activo haya.
 	 * @return Devuelve un true si el campo está activo o un false si no.
 	 */
-
 	Boolean isActivoIncluidoPerimetroAlquiler(String numActivo);
+
+	public Boolean isActivoFinanciero(String numActivo);
 }

@@ -2140,7 +2140,6 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	}
 
 	@Override
-	@Transactional(readOnly = false)
 	public CondicionesActivo crearCondicionesActivoExpediente(Activo activo, ExpedienteComercial expediente) {
 		// Como este método es para la creación del expediente crea directamente las condiciones, no busca si ya existen condiciones del Expediente-Activo.
 		CondicionesActivo condicionesActivo = new CondicionesActivo();

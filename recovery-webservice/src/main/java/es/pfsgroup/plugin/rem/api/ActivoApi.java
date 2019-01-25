@@ -965,7 +965,7 @@ public interface ActivoApi {
 	/**
 	 * Crea un expediente comercial
 	 **/
-	boolean crearExpediente(Oferta oferta, Trabajo trabajo);
+	boolean crearExpediente(Oferta oferta, Trabajo trabajo) throws Exception;
 	
 	/**
 	 * Devuelve una lista de adecuaciones alquiler para el grid de adecuaciones en la pestaña patrimonio de un activo

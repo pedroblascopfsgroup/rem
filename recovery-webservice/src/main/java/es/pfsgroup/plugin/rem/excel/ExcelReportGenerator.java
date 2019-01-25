@@ -330,12 +330,12 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 				numActivo = dtoPAB.getNumActivoUvem(); // El numero de activo lo necesitamos para referenciar el resto de hojas en las formulas
 				String formula;
 				
-				cellReference = new CellReference("A" + Integer.toString(currentRow)); // LOTE
-				r = mySheet.getRow(cellReference.getRow());
-				c = r.getCell(cellReference.getCol());
-				if (!Checks.esNulo(dtoPAB.getNumeroAgrupacion())) { 
-					c.setCellValue(dtoPAB.getNumeroAgrupacion().toString());
-				}
+//				cellReference = new CellReference("A" + Integer.toString(currentRow)); // LOTE SE DEJA EN BLANCO
+//				r = mySheet.getRow(cellReference.getRow());
+//				c = r.getCell(cellReference.getCol());
+//				if (!Checks.esNulo(dtoPAB.getNumeroAgrupacion())) { 
+//					c.setCellValue(dtoPAB.getNumeroAgrupacion().toString());
+//				}
 				
 				cellReference = new CellReference("B" + Integer.toString(currentRow)); // ACTIVO 
 				r = mySheet.getRow(cellReference.getRow());

@@ -76,25 +76,31 @@ Ext.define('HreRem.view.activos.detalle.ComercialActivo', {
 								 	if(checkbox.up('activosdetallemain').getViewModel().get('comercial.expedienteComercialVivo')){
 								 		val = false;
 								 		me.fireEvent("errorToast", HreRem.i18n("msg.expediente.vivo"));
+								 		return;
+								 		
 								 	}
 								 	if(checkbox.up('activosdetallemain').getViewModel().get('comercial.situacionComercialCodigo') == CONST.SITUACION_COMERCIAL['NO_COMERCIALIZABLE']){
 								 		val = false;
 								 		me.fireEvent("errorToast", HreRem.i18n("msg.no.comercializable"));
+								 		return;
 								 	}
 								 	if(checkbox.up('activosdetallemain').getViewModel().get('activoPerteneceAgrupacionComercial')){
 								 		val = false;
 								 		me.fireEvent("errorToast", HreRem.i18n("msg.activo.incluido.lote.comercial"));
+								 		return;
 								 	}
 								 	if(checkbox.up('activosdetallemain').getViewModel().get('activoPerteneceAgrupacionRestringida')){
 								 		val = false;
 								 		me.fireEvent("errorToast", HreRem.i18n("msg.activo.incluido.agrupacion.restringida"));
+								 		return;
 								 	}								 								 		
 								}
 								if(!newVal && oldVal && null != checkbox.up('activosdetallemain').getViewModel().get('comercial.fechaVenta')){
 									val = true;
 									me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.activo.vendido"));
+									return;
 								}
-								checkbox.setValue(val);
+								//checkbox.setValue(val);
 							}
                           }
 						},

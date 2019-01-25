@@ -5,6 +5,8 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.List;
 import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 import javax.mail.Message;
@@ -22,6 +24,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -54,6 +59,9 @@ public class RemCorreoUtils {
 
 	@Autowired
 	private GenericABMDao genericDao;
+	
+	@Resource(name = "entityTransactionManager")
+    private PlatformTransactionManager transactionManager;
 
 	protected final Log logger = LogFactory.getLog(getClass());
 
@@ -119,11 +127,13 @@ public class RemCorreoUtils {
 			String paraAcumulado = "";
 			int i = 0;
 			for (String para : mailsPara) {
-				if (i > 0) {
-					paraAcumulado = paraAcumulado.concat(",");
+				if (para != null && para.length() > 0) {
+					if (i > 0) {
+						paraAcumulado = paraAcumulado.concat(",");
+					}
+					paraAcumulado = paraAcumulado.concat(para);
+					i++;
 				}
-				paraAcumulado = paraAcumulado.concat(para);
-				i++;
 			}
 			traza.setTo(paraAcumulado);
 		}
@@ -133,7 +143,17 @@ public class RemCorreoUtils {
 	}
 
 	private void persistirTrazaCorreoSaliente(CorreoSaliente traza) {
-		genericDao.save(CorreoSaliente.class, traza);
+		TransactionStatus transaction = null;
+		try {
+			transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
+			genericDao.save(CorreoSaliente.class, traza);
+			transactionManager.commit(transaction);
+			
+		} catch (Exception e) {
+			logger.error("Error persistiendo traza de correo", e);
+			transactionManager.rollback(transaction);
+
+		}
 	}
 
 	private void doSend(MimeMessage message, Session session, Properties props) throws MessagingException {
@@ -150,7 +170,7 @@ public class RemCorreoUtils {
 	private void prepararDestinatarios(MimeMessage message, List<String> mailsPara, List<String> direccionesMailCc)
 			throws AddressException, MessagingException {
 		for (String emailPara : mailsPara) {
-			if (emailPara != null) {
+			if (validarCorreo(emailPara)) {
 				message.addRecipient(Message.RecipientType.TO, new InternetAddress(emailPara));
 			}
 
@@ -158,12 +178,30 @@ public class RemCorreoUtils {
 
 		if (direccionesMailCc != null && direccionesMailCc.size() > 0) {
 			for (String emailCC : direccionesMailCc) {
-				if (emailCC != null) {
+				if (validarCorreo(emailCC)) {
 					message.addRecipient(Message.RecipientType.CC, new InternetAddress(emailCC));
 				}
 
 			}
 		}
+	}
+	
+	private boolean validarCorreo(String email) {
+		boolean resultado = false;
+
+		if (email != null && !email.isEmpty()) {
+			// Patrón para validar el email
+			Pattern pattern = Pattern.compile(
+					"^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@" + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$");
+
+			Matcher mather = pattern.matcher(email);
+
+			if (mather.find() == true) {
+				resultado = true;
+			}
+		}
+
+		return resultado;
 	}
 
 	private void prepararBodyMensaje(MimeMessage message, List<DtoAdjuntoMail> list, String cuerpoEmail)
@@ -235,8 +273,15 @@ public class RemCorreoUtils {
 	private Properties getPropiedades() {
 
 		Properties props = new Properties();
-		props.setProperty(MAIL_SMTP_HOST, appProperties.getProperty(SERVIDOR_CORREO));
-		props.setProperty(MAIL_SMTP_PORT, appProperties.getProperty(PUERTO_CORREO));
+		if (appProperties.getProperty(SERVIDOR_CORREO) != null) {
+			props.setProperty(MAIL_SMTP_HOST, appProperties.getProperty(SERVIDOR_CORREO));
+		}
+		
+		if (appProperties.getProperty(SERVIDOR_CORREO) != null) {
+			props.setProperty(MAIL_SMTP_PORT, appProperties.getProperty(SERVIDOR_CORREO));
+		}
+		
+		
 
 		if (appProperties.getProperty(STARTTLS_ENABLE) != null) {
 			props.setProperty(MAIL_SMTP_STARTTLS_ENABLE, appProperties.getProperty(STARTTLS_ENABLE));

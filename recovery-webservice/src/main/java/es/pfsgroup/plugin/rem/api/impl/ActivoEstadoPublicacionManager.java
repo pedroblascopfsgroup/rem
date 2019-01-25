@@ -632,6 +632,11 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		try {
 			ActivoPublicacionHistorico activoPublicacionHistorico = activoPublicacionHistoricoDao.getActivoPublicacionHistoricoActual(activoPublicacion.getActivo().getId());
 
+			if(Checks.esNulo(activoPublicacionHistorico)) {
+				activoPublicacionHistorico = new ActivoPublicacionHistorico();
+				BeanUtils.copyProperties(activoPublicacionHistorico, activoPublicacion);
+			}
+			
 			if(Arrays.asList(DDTipoComercializacion.CODIGOS_VENTA).contains(activoPublicacion.getTipoComercializacion().getCodigo()) &&
 					(!Checks.esNulo(dto.getMotivoOcultacionVentaCodigo()) || !Checks.esNulo(dto.getMotivoOcultacionManualVenta()) || !Checks.esNulo(dto.getPublicarVenta()) ||
 					!Checks.esNulo(dto.getOcultarVenta()) || (!Checks.esNulo(dto.getPublicarSinPrecioVenta()) && ("14").equals(activoPublicacion.getMotivoOcultacionVenta().getCodigo())) || !Checks.esNulo(dto.getNoMostrarPrecioVenta()))) {
@@ -645,7 +650,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 			}
 			
 			if(!Checks.esNulo(activoPublicacionHistorico.getFechaFinVenta()) || !Checks.esNulo(activoPublicacionHistorico.getFechaInicioAlquiler())){
-				activoPublicacionHistoricoDao.update(activoPublicacionHistorico);
+				activoPublicacionHistoricoDao.saveOrUpdate(activoPublicacionHistorico);
 			}
 
 		} catch (Exception e) {

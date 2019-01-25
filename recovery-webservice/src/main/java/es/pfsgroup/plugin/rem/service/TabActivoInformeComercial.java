@@ -10,7 +10,6 @@ import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -271,21 +270,24 @@ public class TabActivoInformeComercial implements TabActivoService {
 
 			// Datos de la Comunidad de vecinos al Dto.
 			if (!Checks.esNulo(activo.getComunidadPropietarios())) {
-				ActivoComunidadPropietarios comunidadPropietarios = new ActivoComunidadPropietarios();
-				comunidadPropietarios = activo.getComunidadPropietarios();
-
 				// Comunidad inscrita = constituida.
-				beanUtilNotNull.copyProperty(informeComercial, "inscritaComunidad", comunidadPropietarios.getConstituida());
-				// Derrama de la comunidad.
-				beanUtilNotNull.copyProperty(informeComercial, "derramaOrientativaComunidad", activo.getInfoComercial().getDerramaOrientativaComunidad());
-				// Cuota de la comunidad, tomada del importe medio.
-				beanUtilNotNull.copyProperty(informeComercial, "cuotaOrientativaComunidad", activo.getInfoComercial().getCuotaOrientativaComunidad());
-				// Nombre y telefono Presidente.
-				beanUtilNotNull.copyProperty(informeComercial, "nomPresidenteComunidad", comunidadPropietarios.getNomPresidente());
-				beanUtilNotNull.copyProperty(informeComercial, "telPresidenteComunidad", comunidadPropietarios.getTelfPresidente());
-				// Nombre y telefono Administrador.
-				beanUtilNotNull.copyProperty(informeComercial, "nomAdministradorComunidad", comunidadPropietarios.getNomAdministrador());
-				beanUtilNotNull.copyProperty(informeComercial, "telAdministradorComunidad", comunidadPropietarios.getTelfAdministrador());
+				if(activo.getComunidadPropietarios() != null){
+					beanUtilNotNull.copyProperty(informeComercial, "inscritaComunidad", activo.getComunidadPropietarios().getConstituida());
+					// Nombre y telefono Presidente.
+					beanUtilNotNull.copyProperty(informeComercial, "nomPresidenteComunidad", activo.getComunidadPropietarios().getNomPresidente());
+					beanUtilNotNull.copyProperty(informeComercial, "telPresidenteComunidad", activo.getComunidadPropietarios().getTelfPresidente());
+					// Nombre y telefono Administrador.
+					beanUtilNotNull.copyProperty(informeComercial, "nomAdministradorComunidad", activo.getComunidadPropietarios().getNomAdministrador());
+					beanUtilNotNull.copyProperty(informeComercial, "telAdministradorComunidad", activo.getComunidadPropietarios().getTelfAdministrador());
+				}
+				
+				if(activo.getInfoComercial() != null){
+					// Derrama de la comunidad.
+					beanUtilNotNull.copyProperty(informeComercial, "derramaOrientativaComunidad", activo.getInfoComercial().getDerramaOrientativaComunidad());
+					// Cuota de la comunidad, tomada del importe medio.
+					beanUtilNotNull.copyProperty(informeComercial, "cuotaOrientativaComunidad", activo.getInfoComercial().getCuotaOrientativaComunidad());
+				}				
+				
 				
 			}
 
@@ -702,40 +704,47 @@ public class TabActivoInformeComercial implements TabActivoService {
 			}
 
 			switch (Integer.parseInt(codigoTipoActivo)) {
-				case 1:
-					break;
-				case 2:
-					if(activo.getInfoComercial() != null && activo.getInfoComercial() instanceof ActivoVivienda) {
+			case 1:
+				break;
+			case 2:
+				if (activo.getInfoComercial() != null && activo.getInfoComercial() instanceof ActivoVivienda) {
 					ActivoVivienda vivienda = (ActivoVivienda) activo.getInfoComercial();
 					beanUtilNotNull.copyProperties(activoInformeDto, vivienda);
-					}
-					break;
-				case 3:
+				}
+				break;
+			case 3:
+				if (activo.getInfoComercial() instanceof ActivoLocalComercial) {
 					ActivoLocalComercial local = (ActivoLocalComercial) activo.getInfoComercial();
 					beanUtilNotNull.copyProperties(activoInformeDto, local);
-					beanUtilNotNull.copyProperties(activoInformeDto, activo.getInfoComercial().getInstalacion());
-					break;
-				case 4:
-					break;
-				case 5:
-					ActivoEdificio edificio = activo.getInfoComercial().getEdificio();
-					beanUtilNotNull.copyProperties(activoInformeDto, edificio);
-					break;
-				case 6:
-					break;
-				case 7:
+				}
+				beanUtilNotNull.copyProperties(activoInformeDto, activo.getInfoComercial().getInstalacion());
+				break;
+			case 4:
+				break;
+			case 5:
+				ActivoEdificio edificio = activo.getInfoComercial().getEdificio();
+				beanUtilNotNull.copyProperties(activoInformeDto, edificio);
+				break;
+			case 6:
+				break;
+			case 7:
+				if (activo.getInfoComercial() instanceof ActivoPlazaAparcamiento) {
 					ActivoPlazaAparcamiento otros = (ActivoPlazaAparcamiento) activo.getInfoComercial();
 					beanUtilNotNull.copyProperties(activoInformeDto, otros);
-					if (!Checks.esNulo(otros.getTipoCalidad())) beanUtilNotNull.copyProperty(activoInformeDto, "maniobrabilidadCodigo", otros.getTipoCalidad().getCodigo());
+					if (!Checks.esNulo(otros.getTipoCalidad()))
+						beanUtilNotNull.copyProperty(activoInformeDto, "maniobrabilidadCodigo",
+								otros.getTipoCalidad().getCodigo());
 					if (!Checks.esNulo(otros.getSubtipoPlazagaraje()))
-						beanUtilNotNull.copyProperty(activoInformeDto, "subtipoPlazagarajeCodigo", otros.getSubtipoPlazagaraje().getCodigo());
-					// Instalaciones
-					if(activo.getInfoComercial().getInstalacion()!=null){
-						beanUtilNotNull.copyProperties(activoInformeDto, activo.getInfoComercial().getInstalacion());
-					}
-					break;
-				default:
-					break;
+						beanUtilNotNull.copyProperty(activoInformeDto, "subtipoPlazagarajeCodigo",
+								otros.getSubtipoPlazagaraje().getCodigo());
+				}
+				// Instalaciones
+				if (activo.getInfoComercial().getInstalacion() != null) {
+					beanUtilNotNull.copyProperties(activoInformeDto, activo.getInfoComercial().getInstalacion());
+				}
+				break;
+			default:
+				break;
 			}
 
 		} catch (ClassCastException e) {

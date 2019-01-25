@@ -572,6 +572,8 @@ public interface ParticularValidatorApi {
 	 * @param numActivo
 	 * @return
 	 */
+
 	public String getCodigoDestinoComercialByNumActivo(String numActivo);
 
+	public Boolean isActivoFinanciero(String numActivo);
 }

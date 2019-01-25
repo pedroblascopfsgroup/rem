@@ -614,10 +614,22 @@ public class AltaActivoFinanciero implements AltaActivoService {
 		activoPublicacion.setCheckOcultarPrecioAlquiler(false);
 		activoPublicacion.setVersion(new Long(0));
 		
+		if (DDTipoComercializacion.CODIGO_VENTA.equals(dtoAAF.getDestinoComercialCodigo())
+				|| DDTipoComercializacion.CODIGO_ALQUILER_VENTA.equals(dtoAAF.getDestinoComercialCodigo())
+				|| DDTipoComercializacion.CODIGO_ALQUILER_OPCION_COMPRA.equals(dtoAAF.getDestinoComercialCodigo())) {
+			activoPublicacion.setFechaInicioVenta(new Date());
+		}
+		
+		if (DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(dtoAAF.getDestinoComercialCodigo())
+				|| DDTipoComercializacion.CODIGO_ALQUILER_VENTA.equals(dtoAAF.getDestinoComercialCodigo())
+				|| DDTipoComercializacion.CODIGO_ALQUILER_OPCION_COMPRA.equals(dtoAAF.getDestinoComercialCodigo())) {
+			activoPublicacion.setFechaInicioAlquiler(new Date());
+		}
+		
 		Auditoria auditoria = new Auditoria();
 		auditoria.setBorrado(false);
 		auditoria.setFechaCrear(new Date());
-		auditoria.setUsuarioCrear("CARGA_MASIVA");
+		auditoria.setUsuarioCrear("ALTA_ACTIVOS_FINANCIEROS");
 		activoPublicacion.setAuditoria(auditoria);
 		
 		genericDao.save(ActivoPublicacion.class, activoPublicacion);

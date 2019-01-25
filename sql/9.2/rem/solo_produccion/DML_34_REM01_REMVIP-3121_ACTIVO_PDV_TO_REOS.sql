@@ -4,7 +4,7 @@
 --## FECHA_CREACION=20190125
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK = REMVIP-3121
+--## INCIDENCIA_LINK=REMVIP-3121
 --## PRODUCTO=NO
 --##
 --## Finalidad: Update act_num_activo con prefijo de 999 para pasar activos de PDV a REOS

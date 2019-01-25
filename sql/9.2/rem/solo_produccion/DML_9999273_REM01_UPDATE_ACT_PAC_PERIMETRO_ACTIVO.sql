@@ -1,13 +1,13 @@
 --/*
 --##########################################
---## AUTOR=PABLO MESEGUER
---## FECHA_CREACION=20190117
+--## AUTOR=Carles Molins
+--## FECHA_CREACION=20190125
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=REMVIP-2918
+--## INCIDENCIA_LINK=REMVIP-3139
 --## PRODUCTO=NO
 --##
---## Finalidad: Actualización de gestores comerciales
+--## Finalidad:	Sacar del perímetro todos los activos FINANCIEROS que no estén en una agrupación asistida
 --## INSTRUCCIONES:
 --## VERSIONES:
 --##        0.1 Versión inicial
@@ -55,6 +55,8 @@ BEGIN
 			   ,T1.PAC_CHECK_FORMALIZAR = 0
 			   ,T1.PAC_CHECK_GESTIONAR = 0
 			   ,T1.PAC_CHECK_PUBLICAR = 0
+			   ,T1.USUARIOMODIFICAR = ''REMVIP-3139''
+			   ,T1.FECHAMODIFICAR = SYSDATE
 			   ';
 	EXECUTE IMMEDIATE V_MSQL;
     

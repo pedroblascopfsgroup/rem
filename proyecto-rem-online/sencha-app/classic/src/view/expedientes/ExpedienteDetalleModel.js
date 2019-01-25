@@ -220,12 +220,14 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 				if (tipoExpedienteCodigo == CONST.TIPOS_EXPEDIENTE_COMERCIAL["VENTA"]) {
 		     		return get('expediente.descMotivoAnulacion');
 		     	} else if (tipoExpedienteCodigo == CONST.TIPOS_EXPEDIENTE_COMERCIAL["ALQUILER"]) {
-		     		if (get('expediente.descMotivoRechazoExp')) {
-		     			return get('expediente.descMotivoRechazoExp');
-		     		} else if (get('expediente.descMotivoAnulacion')){
+		     		if (get('expediente.descMotivoAnulacion')){
 		     			return get('expediente.descMotivoAnulacion');
+		     		} else if (get('expediente.descMotivoRechazoExp')) {
+		     			return get('expediente.descMotivoRechazoExp');
 		     		} else if (get('expediente.descMotivoAnulacionAlq')){
 		     			return get('expediente.descMotivoAnulacionAlq');
+		     		} else {
+		     			return null;
 		     		}
 		     	}
 		 },

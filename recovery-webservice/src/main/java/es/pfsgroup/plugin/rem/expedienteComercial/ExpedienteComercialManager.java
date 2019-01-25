@@ -812,13 +812,13 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 						dto.setDescMotivoAnulacion(expediente.getMotivoAnulacion().getDescripcion());
 					}
 				} else {	// Alquiler
-					if (!Checks.esNulo(expediente.getMotivoRechazo())) {
-						dto.setCodMotivoRechazoExp(expediente.getMotivoRechazo().getCodigo());
-						dto.setDescMotivoRechazoExp(expediente.getMotivoRechazo().getDescripcion());
-					} else if (!Checks.esNulo(expediente.getMotivoAnulacion())) {
+					 if (!Checks.esNulo(expediente.getMotivoAnulacion())) {
 						dto.setCodMotivoAnulacion(expediente.getMotivoAnulacion().getCodigo());
 						dto.setDescMotivoAnulacion(expediente.getMotivoAnulacion().getDescripcion());
-					} else if (!Checks.esNulo(expediente.getMotivoAnulacionAlquiler())) {
+					 } else	if (!Checks.esNulo(expediente.getMotivoRechazo())) {
+						dto.setCodMotivoRechazoExp(expediente.getMotivoRechazo().getCodigo());
+						dto.setDescMotivoRechazoExp(expediente.getMotivoRechazo().getDescripcion());
+					 } else if (!Checks.esNulo(expediente.getMotivoAnulacionAlquiler())) {
 						dto.setDescMotivoAnulacionAlq(expediente.getMotivoAnulacionAlquiler().getDescripcion());
 						dto.setCodMotivoAnulacionAlq(expediente.getMotivoAnulacionAlquiler().getCodigo());
 					}

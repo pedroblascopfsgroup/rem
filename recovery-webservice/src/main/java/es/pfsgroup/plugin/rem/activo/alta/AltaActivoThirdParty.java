@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.rem.activo.alta;
 import java.util.Calendar;
 import java.util.Date;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,6 +50,7 @@ import es.pfsgroup.plugin.rem.model.ActivoPropietario;
 import es.pfsgroup.plugin.rem.model.ActivoPropietarioActivo;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoPublicacion;
+import es.pfsgroup.plugin.rem.model.ActivoPublicacionHistorico;
 import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.ActivoTitulo;
@@ -719,13 +721,29 @@ private void dtoToEntitiesOtras(DtoAltaActivoThirdParty dtoAATP, Activo activo) 
 		activoPublicacion.setCheckOcultarPrecioAlquiler(false);
 		activoPublicacion.setVersion(new Long(0));
 		
+		if (DDTipoComercializacion.CODIGO_VENTA.equals(dtoAATP.getDestinoComercialCodigo())
+				|| DDTipoComercializacion.CODIGO_ALQUILER_VENTA.equals(dtoAATP.getDestinoComercialCodigo())
+				|| DDTipoComercializacion.CODIGO_ALQUILER_OPCION_COMPRA.equals(dtoAATP.getDestinoComercialCodigo())) {
+			activoPublicacion.setFechaInicioVenta(new Date());
+		}
+		
+		if (DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(dtoAATP.getDestinoComercialCodigo())
+				|| DDTipoComercializacion.CODIGO_ALQUILER_VENTA.equals(dtoAATP.getDestinoComercialCodigo())
+				|| DDTipoComercializacion.CODIGO_ALQUILER_OPCION_COMPRA.equals(dtoAATP.getDestinoComercialCodigo())) {
+			activoPublicacion.setFechaInicioAlquiler(new Date());
+		}
+		
 		Auditoria auditoria = new Auditoria();
 		auditoria.setBorrado(false);
 		auditoria.setFechaCrear(new Date());
-		auditoria.setUsuarioCrear("CARGA_MASIVA");
+		auditoria.setUsuarioCrear("ALTA_ACTIVOS_THIRD_PARTIES");
 		activoPublicacion.setAuditoria(auditoria);
 		
 		genericDao.save(ActivoPublicacion.class, activoPublicacion);
+		
+		ActivoPublicacionHistorico activoPublicacionHistorico = new ActivoPublicacionHistorico();
+		BeanUtils.copyProperties(activoPublicacionHistorico, activoPublicacion);
+		genericDao.save(ActivoPublicacionHistorico.class, activoPublicacionHistorico);
 	}
 
 }

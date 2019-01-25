@@ -73,6 +73,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoPropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
+import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.service.UpdaterTransitionService;
 import es.pfsgroup.plugin.rem.tareasactivo.dao.VTareasGestorSustitutoDao;
 import es.pfsgroup.recovery.api.UsuarioApi;
@@ -581,6 +582,8 @@ public class AgendaAdapter {
 			ActivoTramite tramite = activoTramiteApi.get(idTramite);
 			List<ActivoOferta> activoOfertas = tramite.getActivo().getOfertas();
 			finalizarTramiteYTareas(tramite);
+			Activo activo = tramite.getActivo();
+			
 			
 			DDEstadoOferta ddEstadoOferta;
 			DDEstadoTrabajo anulado = genericDao.get(DDEstadoTrabajo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoTrabajo.ESTADO_ANULADO));
@@ -588,6 +591,10 @@ public class AgendaAdapter {
 			DDEstadoOferta tramitada = genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_ACEPTADA));
 			DDEstadosExpedienteComercial anuladoExpedienteComercial = genericDao.get(DDEstadosExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.ANULADO));
 			DDMotivoAnulacionExpediente motivoRechazoAlquiler = genericDao.get(DDMotivoAnulacionExpediente.class, genericDao.createFilter(FilterType.EQUALS, "codigo", motivo));
+			DDSituacionComercial situacionComercial = genericDao.get(DDSituacionComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDSituacionComercial.CODIGO_DISPONIBLE_ALQUILER));
+			
+			activo.setSituacionComercial(situacionComercial);
+			genericDao.save(Activo.class, activo);
 			
 			if ((anulado != null) && (tramite.getTrabajo() != null)) {
 				Trabajo trabajo = tramite.getTrabajo();

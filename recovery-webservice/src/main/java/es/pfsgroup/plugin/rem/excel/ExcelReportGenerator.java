@@ -65,6 +65,8 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 	
 	private static final int NUMERO_COLUMNAS = 21;
 	
+	private static final String TEXTO_NO_PUBLICADO = "Sin Publicar";
+	
 	@Resource
 	Properties appProperties;
 	
@@ -169,15 +171,19 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 				cellReference = new CellReference("B4");
 				r = mySheet.getRow(cellReference.getRow());
 				c = r.getCell(cellReference.getCol());
-				if (!Checks.esNulo(dtoPAB.getDescripcionEstadoPatrimonio())) {
-					c.setCellValue(dtoPAB.getDescripcionEstadoPatrimonio());
-				}	
+				if (!Checks.esNulo(dtoPAB.getTipoAlquiler())) {
+					c.setCellValue(dtoPAB.getTipoAlquiler());
+				} else {
+					c.setCellValue("");
+				}
 					
 				cellReference = new CellReference("B7");
 				r = mySheet.getRow(cellReference.getRow());
 				c = r.getCell(cellReference.getCol());
 				if (!Checks.esNulo(dtoPAB.getNumActivoUvem())) {
 					c.setCellValue(dtoPAB.getNumActivoUvem().toString());
+				} else {
+					c.setCellValue("");
 				}
 				
 				cellReference = new CellReference("B9");
@@ -190,6 +196,8 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 				c = r.getCell(cellReference.getCol());
 				if (!Checks.esNulo(dtoPAB.getFechaAltaOferta())) {
 					c.setCellValue(format.format(dtoPAB.getFechaAltaOferta()));
+				} else {
+					c.setCellValue("");
 				}
 				
 				cellReference = new CellReference("B11");
@@ -197,6 +205,8 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 				c = r.getCell(cellReference.getCol());
 				if (!Checks.esNulo(dtoPAB.getFechaPublicacionWeb())) {
 					c.setCellValue(format.format(dtoPAB.getFechaPublicacionWeb())); 
+				} else {
+					c.setCellValue("");
 				}
 				
 				cellReference = new CellReference("B18");
@@ -204,6 +214,8 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 				c = r.getCell(cellReference.getCol());
 				if (!Checks.esNulo(dtoPAB.getTipoActivo())) {
 					c.setCellValue(dtoPAB.getTipoActivo());
+				} else {
+					c.setCellValue("");
 				}
 				
 				cellReference = new CellReference("B20");
@@ -211,6 +223,8 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 				c = r.getCell(cellReference.getCol());
 				if (!Checks.esNulo(dtoPAB.getDireccionCompleta())) {
 					c.setCellValue(dtoPAB.getDireccionCompleta());
+				} else {
+					c.setCellValue("");
 				}
 				
 				cellReference = new CellReference("B21");
@@ -218,6 +232,8 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 				c = r.getCell(cellReference.getCol());
 				if (!Checks.esNulo(dtoPAB.getCodPostMunicipio())) {
 					c.setCellValue(dtoPAB.getCodPostMunicipio());
+				} else {
+					c.setCellValue("");
 				}
 				
 				//B22 CARACTERISTICAS ????
@@ -227,6 +243,8 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 				c = r.getCell(cellReference.getCol());
 				if (!Checks.esNulo(dtoPAB.getNombrePropietario())) {
 					c.setCellValue(dtoPAB.getNombrePropietario());
+				} else {
+					c.setCellValue("");
 				}
 
 //					
@@ -240,6 +258,8 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 				c = r.getCell(cellReference.getCol());
 				if (!Checks.esNulo(dtoPAB.getImporteTasacionFinal())) {
 					c.setCellValue(format.format(dtoPAB.getImporteTasacionFinal()));
+				} else {
+					c.setCellValue("");
 				}
 				
 				cellReference = new CellReference("B41");
@@ -247,6 +267,8 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 				c = r.getCell(cellReference.getCol());
 				if (!Checks.esNulo(dtoPAB.getFechaUltimaTasacion())) { 
 					c.setCellValue(format.format(dtoPAB.getFechaUltimaTasacion()));
+				} else {
+					c.setCellValue("");
 				}
 				
 				cellReference = new CellReference("B47");
@@ -254,6 +276,8 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 				c = r.getCell(cellReference.getCol());
 				if (!Checks.esNulo(dtoPAB.getNombreCompleto())) { 
 					c.setCellValue(dtoPAB.getNombreCompleto());
+				} else {
+					c.setCellValue("");
 				}
 				
 				cellReference = new CellReference("B48");
@@ -261,6 +285,8 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 				c = r.getCell(cellReference.getCol());
 				if (!Checks.esNulo(dtoPAB.getCompradorDocumento())) { 
 					c.setCellValue(dtoPAB.getCompradorDocumento());
+				} else {
+					c.setCellValue("");
 				}
 				
 				cellReference = new CellReference("B57");
@@ -268,6 +294,8 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 				c = r.getCell(cellReference.getCol());
 				if (!Checks.esNulo(dtoPAB.getImporteOferta())) { 
 					c.setCellValue(dtoPAB.getImporteOferta().toString());
+				} else {
+					c.setCellValue("");
 				}
 				
 				cellReference = new CellReference("B60");
@@ -275,6 +303,8 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 				c = r.getCell(cellReference.getCol());
 				if (!Checks.esNulo(dtoPAB.getCarenciaALquiler())) { 
 					c.setCellValue(Integer.toString(dtoPAB.getCarenciaALquiler()));
+				} else {
+					c.setCellValue("");
 				}
 				
 				cellReference = new CellReference("A81");
@@ -282,13 +312,17 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 				c = r.getCell(cellReference.getCol());
 				if (!Checks.esNulo(dtoPAB.getTextoOferta())) { 
 					c.setCellValue(dtoPAB.getTextoOferta());
+				} else {
+					c.setCellValue("");
 				}
 				
-				cellReference = new CellReference("B96");
+				cellReference = new CellReference("A96");
 				r = mySheet.getRow(cellReference.getRow());
 				c = r.getCell(cellReference.getCol());
 				if (!Checks.esNulo(dtoPAB.getImporteFianza()) && !Checks.esNulo(dtoPAB.getMesesFianza())) { 
 					c.setCellValue("2. Fianza de "+ dtoPAB.getMesesFianza() + " mes ("+dtoPAB.getImporteFianza()+"€)");
+				} else {
+					c.setCellValue("Sin valores de fianza");
 				}
 					
 			}
@@ -385,9 +419,9 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 				r = mySheet.getRow(cellReference.getRow());
 				c = r.getCell(cellReference.getCol());
 				if (!Checks.esNulo(dtoPAB.getFechaPublicacionWeb()))
-					c.setCellValue(dtoPAB.getFechaPublicacionWeb().toString());
+					c.setCellValue(format.format(dtoPAB.getFechaPublicacionWeb()));  
 				else
-					c.setCellValue("Sin publicar");
+					c.setCellValue(TEXTO_NO_PUBLICADO);
 				
 				formula = "'"+numActivo.toString()+"'!B37";
 				cellReference = new CellReference("J" + Integer.toString(currentRow)); // VALOR ORIENTATIVO
@@ -409,7 +443,7 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 				r = mySheet.getRow(cellReference.getRow());
 				c = r.getCell(cellReference.getCol());
 				if (!Checks.esNulo(dtoPAB.getFechaUltimaTasacion()))
-					c.setCellValue(dtoPAB.getFechaUltimaTasacion().toString());
+					c.setCellValue(format.format(dtoPAB.getFechaUltimaTasacion()));
 		
 				cellReference = new CellReference("N" + Integer.toString(currentRow)); // RENTA OFERTADA
 				r = mySheet.getRow(cellReference.getRow());

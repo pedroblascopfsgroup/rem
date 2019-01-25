@@ -48,9 +48,11 @@ public class ActivoOfertaAdapter {
 		List<DtoAdjunto> listaAdjuntos = new ArrayList<DtoAdjunto>();
 		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 		
+		Long intervinienteHaya = Long.parseLong(idIntervinienteHaya);
+		
 		if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
 			try {
-				listaAdjuntos = gestorDocumentalAdapterApi.getAdjuntosEntidadComprador(Long.parseLong(idIntervinienteHaya));
+				listaAdjuntos = gestorDocumentalAdapterApi.getAdjuntosEntidadComprador(intervinienteHaya);
 			} catch (GestorDocumentalException gex) {
 					logger.error(gex.getMessage());
 					
@@ -59,7 +61,7 @@ public class ActivoOfertaAdapter {
 					Integer idPersonaHaya;
 					try {
 						logger.info(CREANDO_CONTENEDOR+" ID PERSONA: "+idIntervinienteHaya+", DOCUMENTO: "+docCliente);
-						idPersonaHaya = gestorDocumentalAdapterApi.crearEntidadComprador(Long.parseLong(idIntervinienteHaya), usuarioLogado.getUsername(), idActivo, idAgrupacion, null);
+						idPersonaHaya = gestorDocumentalAdapterApi.crearEntidadComprador(intervinienteHaya, usuarioLogado.getUsername(), idActivo, idAgrupacion, null);
 						logger.debug("GESTOR DOCUMENTAL [ crearEntidadOferta para " + docCliente + "]: ID PERSONA RECIBIDO " + idPersonaHaya);
 					} catch (GestorDocumentalException gexc) {
 						logger.error(ERROR_CREACION_CONTENEDOR, gexc);

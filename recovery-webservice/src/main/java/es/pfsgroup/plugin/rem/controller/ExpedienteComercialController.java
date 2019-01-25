@@ -518,7 +518,7 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "numDocumento", docCliente);
 		ClienteGDPR clienteGDPR = genericDao.get(ClienteGDPR.class, filtro);
 		if(!Checks.esNulo(clienteGDPR)) {
-			ClienteComercial clienteCom = genericDao.get(ClienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "id", clienteGDPR.getCliente().getId()));
+			ClienteComercial clienteCom = clienteGDPR.getCliente();
 			if(!Checks.esNulo(clienteCom)) {
 				idPersonaHaya = Long.parseLong(clienteCom.getIdPersonaHaya());
 			} else {
@@ -553,7 +553,7 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "numDocumento", docCliente);
 		ClienteGDPR clienteGDPR = genericDao.get(ClienteGDPR.class, filtro);
 		if(!Checks.esNulo(clienteGDPR)) {
-			ClienteComercial clienteCom = genericDao.get(ClienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "id", clienteGDPR.getCliente().getId()));
+			ClienteComercial clienteCom = clienteGDPR.getCliente();
 			if(!Checks.esNulo(clienteCom)) {
 				idPersonaHaya = Long.parseLong(clienteCom.getIdPersonaHaya());
 			} else {
@@ -595,7 +595,7 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 		
 		Filter filtroCliente = genericDao.createFilter(FilterType.EQUALS, "numDocumento", docCliente);
 		ClienteGDPR clienteGDPR = genericDao.get(ClienteGDPR.class, filtroCliente);
-		ClienteComercial clienteCom = genericDao.get(ClienteComercial.class, genericDao.createFilter(FilterType.EQUALS, "id", clienteGDPR.getCliente().getId()));
+		ClienteComercial clienteCom = clienteGDPR.getCliente();
 		
 		ModelMap model = new ModelMap();
 		

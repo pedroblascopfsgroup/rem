@@ -196,7 +196,7 @@ public class MaestroDePersonas  implements Runnable{
 							logger.error("[MAESTRO DE PERSONAS] EL ID RECUPERADO ES " + personaOutputDto.getIdIntervinienteHaya());
 						}
 							
-						if(!Checks.esNulo(personaOutputDto)) {
+						if(!Checks.esNulo(personaOutputDto) && !Checks.esNulo(clienteCom)) {
 							if(!Checks.esNulo(personaOutputDto.getIdIntervinienteHaya())) {
 								clienteCom.setIdPersonaHaya(personaOutputDto.getIdIntervinienteHaya());
 							}else {

@@ -73,6 +73,7 @@ public class GestorDocumentalManager implements GestorDocumentalApi {
 		serverRequest.setMethod(RestClientManager.METHOD_GET);
 		serverRequest.setPath(getPathDocExp(cabecera, docExpDto));
 		serverRequest.setResponseClass(RespuestaDocumentosExpedientes.class);
+		logger.error(">>>>>>>>>>>>>>>>>>> GDManager "+serverRequest.toString());
 		RespuestaDocumentosExpedientes respuesta = (RespuestaDocumentosExpedientes) getResponse(serverRequest);
 		if (Checks.esNulo(respuesta)) {
 			throw new GestorDocumentalException(ERROR_SERVER_NOT_RESPONDING);
@@ -393,8 +394,10 @@ public class GestorDocumentalManager implements GestorDocumentalApi {
 	}
 	
 	private Object getResponse(ServerRequest serverRequest) {
+		logger.error(">>>>>>>>>>>>>>>>>>> getResponse GDManager 1"+serverRequest.toString());
 		serverRequest.setRestClientUrl(URL_REST_CLIENT_GESTOR_DOCUMENTAL_DOCUMENTOS);
 		Object resp = restClientApi.getResponse(serverRequest);
+		logger.error(">>>>>>>>>>>>>>>>>>> getResponse GDManager 2"+resp.toString());
 		
 		logger.debug("--------------------------");
 		logger.debug(" RestClient RESPONSE");
@@ -415,7 +418,11 @@ public class GestorDocumentalManager implements GestorDocumentalApi {
 				e.printStackTrace();
 			}
 			logger.debug("\n"+respInString);
+			logger.error(">>>>>>>>>>>>>>>>>>> getResponse GDManager 3"+respInString.toString());
+
 		} else {
+			logger.error(">>>>>>>>>>>>>>>>>>> getResponse GDManager 3 respuesta nula del servidor");
+
 			logger.debug(" No hay respuesta del servidor.");
 		}
 

@@ -3,12 +3,6 @@ Ext.define('HreRem.view.expedientes.DatosCompradorWizard', {
     xtype		: 'datoscompradorwizard',
 	reference: 'datoscompradorwizardref',
 	y:Ext.Element.getViewportHeight()*(10/150),
-    /*controller: 'expedientedetalle',
-    viewModel: {
-        type: 'expedientedetalle'
-    },*/
-    requires: ['HreRem.model.FichaComprador'],
-   
     modal	: true,
     bodyStyle	: 'padding:20px',
 	collapsed: false,
@@ -16,8 +10,6 @@ Ext.define('HreRem.view.expedientes.DatosCompradorWizard', {
 	expediente: null,
 	modoEdicion: true, // Inicializado para evitar errores.
 	scrollable	: 'y',
-	//recordName: "comprador",
-	//recordClass: "HreRem.model.FichaComprador",
 	listeners: {
 		boxready:'cargarDatosCompradorWizard'
 	},
@@ -93,9 +85,9 @@ Ext.define('HreRem.view.expedientes.DatosCompradorWizard', {
 						reference: 'tipoPersona',
 						margin: '10 0 10 0',
 						padding: '5px',
-			        	bind: {
-		            		store: '{comboTipoPersona}',
-		            		value: '{comprador.codTipoPersona}'
+			        	bind: {		            		
+		            		value: '{comprador.codTipoPersona}',
+		            		store: '{comboTipoPersona}'
 		            	},
 		            	allowBlank: false,		            	
 						listeners: {
@@ -493,10 +485,7 @@ Ext.define('HreRem.view.expedientes.DatosCompradorWizard', {
 		            				var me = this;
 			            			if(value) {
 			            				me.up('formBase').down('[reference=tipoDocumentoRte]').allowBlank = false;
-			            			} else {
-			            				me.up('formBase').down('[reference=tipoDocumentoRte]').allowBlank = true;
-			            				me.up('formBase').down('[reference=tipoDocumentoRte]').setValue("");
-			            			}
+			            			} 
 		            			}catch (err){
 		            				Ext.global.console.log(err);
 		            			}

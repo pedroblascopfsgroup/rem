@@ -3,13 +3,8 @@ Ext.define('HreRem.view.activos.detalle.AnyadirNuevaOfertaDocumento', {
 	xtype : 'anyadirnuevaofertadocumento',
 	layout : 'fit',
 	bodyStyle	: 'padding:20px',
-	recordName: "oferta",						
-	recordClass: "HreRem.model.FichaComprador",
 	controller: 'activodetalle',
-	viewModel: {
-		type: 'activodetalle'
-	},
-	requires: ['HreRem.model.OfertaComercial'],
+
 	listeners: {    
 		boxready: function(window) {
 			var me = this;
@@ -26,7 +21,6 @@ Ext.define('HreRem.view.activos.detalle.AnyadirNuevaOfertaDocumento', {
 			
 			if(wizard.xtype.indexOf("wizardaltacomprador") >= 0){
 				window.setViewModel(me.up('wizardaltacomprador').down('datoscompradorwizard').getViewModel());
-				//window.setBindRecord(Ext.create('HreRem.model.FichaComprador'));
 			}
 			
 			
@@ -56,31 +50,25 @@ Ext.define('HreRem.view.activos.detalle.AnyadirNuevaOfertaDocumento', {
 		me.items = [ {
 			xtype : 'fieldsettable',
 			layout : 'vbox',
-			defaultType : 'container',
 			title:  HreRem.i18n('title.nueva.oferta'),
 			collapsible: false,
 			items : [   {
 				xtype: 'comboboxfieldbase',
 	        	fieldLabel:  HreRem.i18n('fieldlabel.tipoDocumento'),
-	        	itemId: 'comboTipoDocumento',
 	        	name: 'comboTipoDocumento',
 	        	allowBlank: false,
 	        	docked: 'top',
 	        	margin: '100px 0 0 150px',
 	        	bind: {
-            		store: '{comboTipoDocumento}',
-            		value: '{oferta.tipoDocumento}'
-            	},
-            	displayField: 'descripcion',
-				valueField: 'codigo'
+            		store: '{comboTipoDocumento}'
+            	}
 			},
     	    {
 				xtype:'textfieldbase',
 				fieldLabel: HreRem.i18n('fieldlabel.documento.cliente'),
 				margin: '10px 0 0 150px',
     	    	name:		'numDocumentoCliente',
-    	    	allowBlank: false,
-				bind:		'{oferta.numDocumentoCliente}'
+    	    	allowBlank: false
     	    } ]
 		} ];
 

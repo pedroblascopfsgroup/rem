@@ -3359,12 +3359,14 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					docAdjunto = genericDao.get(AdjuntoComprador.class,
 							genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdDocAdjunto()));
 				}  else {
-					if (!Checks.esNulo(tmpClienteGDPR)) {
+					if (!Checks.esNulo(tmpClienteGDPR) && !Checks.esNulo(tmpClienteGDPR.getIdAdjunto())) {
 						docAdjunto = genericDao.get(AdjuntoComprador.class,
 								genericDao.createFilter(FilterType.EQUALS, "id", tmpClienteGDPR.getIdAdjunto()));	
 					}						
-				}
+				}					
+				
 				ClienteCompradorGDPR clienteCompradorGDPR = new ClienteCompradorGDPR();
+				
 				
 				if (!Checks.esNulo(comprador.getTipoDocumento())) {
 					clienteCompradorGDPR.setTipoDocumento(comprador.getTipoDocumento());
@@ -3388,35 +3390,15 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				
 				genericDao.save(ClienteCompradorGDPR.class, clienteCompradorGDPR);
 
-				Filter filtroExpedienteComercial = genericDao.createFilter(FilterType.EQUALS, "id",
-						Long.parseLong(dto.getIdExpedienteComercial()));
-				ExpedienteComercial expedienteComercial = genericDao.get(ExpedienteComercial.class,
-						filtroExpedienteComercial);
-
-				Filter filtroComprador = genericDao.createFilter(FilterType.EQUALS, "comprador",
-						Long.parseLong(dto.getId()));
-
-				Filter filtroExpComComprador = genericDao.createFilter(FilterType.EQUALS, "expediente",
-						Long.parseLong(dto.getIdExpedienteComercial()));
-
-				CompradorExpediente compradorExpediente = genericDao.get(CompradorExpediente.class,
-						filtroExpComComprador, filtroComprador);
+				Filter filtroComprador = genericDao.createFilter(FilterType.EQUALS, "comprador", Long.parseLong(dto.getId())); 
+				Filter filtroExpComComprador = genericDao.createFilter(FilterType.EQUALS, "expediente", Long.parseLong(dto.getIdExpedienteComercial()));				
+				
+				ExpedienteComercial expedienteComercial = genericDao.get(ExpedienteComercial.class, filtroExpComComprador);				
+				CompradorExpediente compradorExpediente = genericDao.get(CompradorExpediente.class, filtroComprador, filtroExpComComprador);
 
 				if (Checks.esNulo(compradorExpediente)) { 
 					compradorExpediente = new CompradorExpediente();
-					/*
-					 * for (CompradorExpediente compradorExpediente :
-					 * expedienteComercial.getCompradores()) { if
-					 * (compradorExpediente.getPrimaryKey().getComprador().getId()
-					 * .equals(Long.parseLong(dto.getId())) &&
-					 * compradorExpediente.getPrimaryKey().getExpediente().getId()
-					 * .equals(Long.parseLong(dto.getIdExpedienteComercial()))) {
-					 */
-					/*
-					 * compradorExpediente.setComprador(Long.parseLong(dto.getId()));
-					 * compradorExpediente.setExpediente(Long.parseLong(dto.getIdExpedienteComercial
-					 * ()));
-					 */
+				
 					CompradorExpedientePk pk = new CompradorExpedientePk();
 					pk.setComprador(comprador);
 					pk.setExpediente(expedienteComercial);
@@ -3516,7 +3498,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					compradorExpediente.setGradoPropiedad(gradoPropiedad);
 				}				
 
-				genericDao.save(Comprador.class, comprador);
+				genericDao.update(Comprador.class, comprador); 
 
 				expedienteComercial.getCompradores().add(compradorExpediente);
 				genericDao.save(ExpedienteComercial.class, expedienteComercial);

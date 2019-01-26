@@ -2207,7 +2207,7 @@ Ext
 					},
 
 					onSaveFormularioCompletoOferta : function(form, window) { 
-					    //debugger;
+					    debugger;
 						var me = this,
 						record = form.getBindRecord(),
 						ofertaForm = null,
@@ -2242,8 +2242,8 @@ Ext
 										failure : function(record, operation) {
 												me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
 												window.unmask();
-												form.reset();
-												ofertaForm.reset();
+												//form.reset();
+												//ofertaForm.reset();
 										}
 
 									});

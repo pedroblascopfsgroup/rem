@@ -3343,16 +3343,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				clienteComercialDto.setCesionDatos(clienteGDPR.getCesionDatos());
 				clienteComercialDto.setComunicacionTerceros(clienteGDPR.getComunicacionTerceros());
 				clienteComercialDto.setTransferenciasInternacionales(clienteGDPR.getTransferenciasInternacionales());
-				/*clienteComercialDto.setTelefono1(clienteCom.getTelefono1());
-				clienteComercialDto.setTelefono2(clienteCom.getTelefono2());
-				clienteComercialDto.setEmail(clienteCom.getEmail());
-				clienteComercialDto.setDireccion(clienteCom.getDireccion());
-				clienteComercialDto.setNumeroCalle(clienteCom.getNumeroCalle());
-				clienteComercialDto.setPuerta(clienteCom.getPuerta());
-				clienteComercialDto.setPlanta(clienteCom.getPlanta());
-				clienteComercialDto.setEscalera(clienteCom.getEscalera());
-				clienteComercialDto.setCodigoPostal(clienteCom.getCodigoPostal());
-				clienteComercialDto.setDocumento(clienteCom.getDocumento());*/
 				if(!Checks.esNulo(clienteCom.getEstadoCivil())) {
 					clienteComercialDto.setEstadoCivilCodigo(clienteCom.getEstadoCivil().getCodigo());
 					clienteComercialDto.setEstadoCivilDescripcion(clienteCom.getEstadoCivil().getDescripcion());
@@ -3361,23 +3351,14 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					clienteComercialDto.setRegimenMatrimonialCodigo(clienteCom.getRegimenMatrimonial().getCodigo());
 					clienteComercialDto.setRegimenMatrimonialDescripcion(clienteCom.getRegimenMatrimonial().getDescripcion());
 				}
-
 				if(!Checks.esNulo(clienteCom.getTipoPersona())) {
 					clienteComercialDto.setTipoPersonaCodigo(clienteCom.getTipoPersona().getCodigo());
 					clienteComercialDto.setTipoPersonaDescripcion(clienteCom.getTipoPersona().getDescripcion());
-				}
-				/*if(!Checks.esNulo(clienteCom.getProvincia())) {
-					clienteComercialDto.setProvinciaCodigo(clienteCom.getProvincia().getCodigo());
-					clienteComercialDto.setProvinciaDescripcion(clienteCom.getProvincia().getDescripcion());
-				}*/
+				}				
 				if(!Checks.esNulo(clienteCom.getTipoDocumento())) {
 					clienteComercialDto.setTipoDocumentoCodigo(clienteCom.getTipoDocumento().getCodigo());
 					clienteComercialDto.setTipoDocumentoDescripcion(clienteCom.getTipoDocumento().getDescripcion());
 				}
-				/*if(!Checks.esNulo(clienteCom.getTipoDocumentoRepresentante())) {
-					clienteComercialDto.setTipoDocumentoRteCodigo(clienteCom.getTipoDocumentoRepresentante().getCodigo());
-					clienteComercialDto.setTipoDocumentoRteDescripcion(clienteCom.getTipoDocumentoRepresentante().getDescripcion());
-				}*/
 			}
 
 

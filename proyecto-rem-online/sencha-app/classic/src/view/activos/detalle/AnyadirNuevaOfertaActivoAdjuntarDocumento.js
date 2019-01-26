@@ -4,9 +4,7 @@ Ext.define('HreRem.view.activos.detalle.AnyadirNuevaOfertaActivoAdjuntarDocument
     layout		: 'fit',
     bodyStyle	: 'padding:20px',
     controller: 'activodetalle',
-    viewModel: {
-        type: 'activodetalle'
-    },
+
     recordName	: "oferta",						
     recordClass	: "HreRem.model.OfertaComercial",
     listeners: {    

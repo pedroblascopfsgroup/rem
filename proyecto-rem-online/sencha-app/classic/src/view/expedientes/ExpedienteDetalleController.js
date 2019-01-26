@@ -880,8 +880,7 @@ Ext
 							activeTab.funcionRecargar();
 						}
 
-						me.getView().fireEvent("refrescarExpediente",
-								me.getView());
+						//me.getView().fireEvent("refrescarExpediente", me.getView());
 
 					},
 
@@ -2189,8 +2188,8 @@ Ext
 								failure : function(a, operation) {
 									ventanaWizard.unmask();
 									me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-									form.reset();
-									ventanaWizard.hide(); 									
+									//form.reset();
+									//ventanaWizard.hide(); 									
 								}
 							});
 							
@@ -2203,7 +2202,7 @@ Ext
 					
 					
 					abrirFormularioCrearComprador : function(grid) {
-
+                        //debugger;
 						var me = this, idExpediente = me.getViewModel().get(
 								"expediente.id"), codigoEstado = me
 								.getViewModel().get("expediente.codigoEstado"), tipoExpedienteCodigo = me
@@ -2958,7 +2957,7 @@ Ext
 					comprobarObligatoriedadCamposNexos : function() {
 						try {
 							var me = this,
-
+                           
 							campoEstadoCivil = me
 									.lookupReference('estadoCivil'), campoRegEconomico = me
 									.lookupReference('regimenMatrimonial'), campoNumConyuge = me

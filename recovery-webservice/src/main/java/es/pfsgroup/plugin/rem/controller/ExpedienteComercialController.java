@@ -863,7 +863,7 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 					if (!Checks.esNulo(dto.getIdExpedienteComercial())) {
 						vistaSinExp.setIdExpedienteComercial(dto.getIdExpedienteComercial());
 					}
-					DtoModificarCompradores comprador = expedienteComercialApi.vistaCrearComprador(vistaSinExp); //QUA
+					DtoModificarCompradores comprador = expedienteComercialApi.vistaCrearComprador(vistaSinExp); 
 					model.put(RESPONSE_DATA_KEY, comprador);
 					model.put(RESPONSE_SUCCESS_KEY, true);
 				}
@@ -878,8 +878,7 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView saveFichaComprador(ModelMap model, VBusquedaDatosCompradorExpediente vDatosComprador,
-			@RequestParam Long id) {
+	public ModelAndView saveFichaComprador(ModelMap model, VBusquedaDatosCompradorExpediente vDatosComprador, @RequestParam Long id) {
 		try {
 			boolean success = expedienteComercialApi.saveFichaComprador(vDatosComprador);
 			model.put(RESPONSE_SUCCESS_KEY, success);

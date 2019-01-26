@@ -105,6 +105,7 @@ public class GestorDocumentalManager implements GestorDocumentalApi {
 		serverRequest.setPath(getPathCrearDoc(cabecera));
 		serverRequest.setMultipart(getMultipartCrearDocumento(crearDoc));
 		serverRequest.setResponseClass(RespuestaCrearDocumento.class);
+		logger.error(">>>>>>>>>>>>>>>>>>> crearDocumento ServerREquest"+serverRequest.toString());
 		RespuestaCrearDocumento respuesta = (RespuestaCrearDocumento) getResponse(serverRequest);
 		if (Checks.esNulo(respuesta)) {
 			throw new GestorDocumentalException(ERROR_SERVER_NOT_RESPONDING);

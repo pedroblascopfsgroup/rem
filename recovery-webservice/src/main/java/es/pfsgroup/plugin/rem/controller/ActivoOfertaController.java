@@ -53,7 +53,7 @@ public class ActivoOfertaController extends ParadiseJsonController {
 	public ModelAndView getListAdjuntos(String docCliente, Long idActivo, Long idAgrupacion){
 		
 		String idPersonaHaya = null;
-		
+		logger.error(">>>>>>>>>>>>>>>>>>> ENTRANDO EN METODO getListAdjuntos "+docCliente+" "+idActivo+" "+idAgrupacion);
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "numDocumento", docCliente);
 		ClienteGDPR clienteGDPR = genericDao.get(ClienteGDPR.class, filtro);
 		if(!Checks.esNulo(clienteGDPR)) {
@@ -70,6 +70,7 @@ public class ActivoOfertaController extends ParadiseJsonController {
 		} else {
 			TmpClienteGDPR tmpClienteGDPR = genericDao.get(TmpClienteGDPR.class, genericDao.createFilter(FilterType.EQUALS, "numDocumento", docCliente));
 			idPersonaHaya = String.valueOf(tmpClienteGDPR.getIdPersonaHaya());
+			logger.error(">>>>>>>>>>>>>>>>>>>> REGISTRO EN TMP "+idPersonaHaya);
 		}
 		
 		ModelMap model = new ModelMap();

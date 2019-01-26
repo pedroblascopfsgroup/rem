@@ -2207,7 +2207,6 @@ Ext
 					},
 
 					onSaveFormularioCompletoOferta : function(form, window) { 
-					    debugger;
 						var me = this,
 						record = form.getBindRecord(),
 						ofertaForm = null,
@@ -5176,8 +5175,6 @@ Ext
     },
     
     onClickCrearOferta: function(btn){ 
-    	
-    	//debugger;
 
  		var me = this;
  		var ventanaDetalle = btn.up().up(),
@@ -5256,7 +5253,6 @@ Ext
      		ventana2= window.down('anyadirnuevaofertadetalle');
      		var idExpediente;
      		var codPrescriptor;
-     		//debugger;
      		var numDoc = "";
      		var nombre = "";
      		var direccion = ""
@@ -5292,7 +5288,6 @@ Ext
  	        	   config = {};
  	        	   config.params = {};
 	        	   config.params.data=datos.data;
- 	        	   //debugger;
  	        	   if(datos.success == "true"){
  	        		   me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
  	        		   config.url=$AC.getWebPath()+"activo/generarDocGDPR."+$AC.getUrlPattern();

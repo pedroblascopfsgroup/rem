@@ -2202,6 +2202,16 @@ public class ActivoAdapter {
 		return idBpm;
 	}
 	
+	@Transactional(readOnly = false)
+	public Long crearTramiteGencat(Long idActivo) {
+
+		TipoProcedimiento tprc = tipoProcedimiento.getByCodigo(ActivoTramiteApi.CODIGO_TRAMITE_COMUNICACION_GENCAT);
+		
+		ActivoTramite tramite = jbpmActivoTramiteManagerApi.creaActivoTramite(tprc, activoApi.get(idActivo));
+
+		return jbpmActivoTramiteManagerApi.lanzaBPMAsociadoATramite(tramite.getId());
+	}
+	
 	public void crearRegistroHistorialComercialConCodigoEstado(Activo activo, String codigoEstado){
 		ActivoEstadosInformeComercialHistorico estadoInformeComercialHistorico= new ActivoEstadosInformeComercialHistorico();
 		estadoInformeComercialHistorico.setActivo(activo);

@@ -61,4 +61,7 @@ public interface ActivoAgrupacionActivoDao extends AbstractDao<ActivoAgrupacionA
 	public boolean algunActivoDeAgrRestringidaEnAgrLoteComercial(List<Long> activosID);
 	
 	public List<ActivoAgrupacionActivo> getListActivoAgrupacionVentaByIdActivo(Long idActivo);
+	
+	// TODO borrar metodo y mover a sus DAO correspondientes
+	public void deleteTramiteGencatById(Long idAdecuacionGencat, Long idOfertaGencat, Long idNotificacionGencat, Long idReclamacionGencat, Long idVisitaGencat, Long idComunicacion);
 }

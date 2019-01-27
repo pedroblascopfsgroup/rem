@@ -33,20 +33,26 @@ import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
+import es.pfsgroup.plugin.rem.activo.dao.AdecuacionGencatDao;
 import es.pfsgroup.plugin.rem.activo.dao.ComunicacionGencatAdjuntoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ComunicacionGencatDao;
 import es.pfsgroup.plugin.rem.activo.dao.HistoricoComunicacionGencatAdjuntoDao;
 import es.pfsgroup.plugin.rem.activo.dao.NotificacionGencatDao;
+import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
+import es.pfsgroup.plugin.rem.api.ActivoAgrupacionActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.AdecuacionGencatApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GencatApi;
+import es.pfsgroup.plugin.rem.api.NotificacionGencatApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.OfertaGencatApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.gastosExpediente.dao.GastosExpedienteDao;
+import es.pfsgroup.plugin.rem.api.ReclamacionGencatApi;
+import es.pfsgroup.plugin.rem.api.VisitaGencatApi;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
 import es.pfsgroup.plugin.rem.jbpm.activo.JBPMActivoTramiteManager;
 import es.pfsgroup.plugin.rem.model.Activo;
@@ -130,16 +136,28 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 	private NotificacionGencatDao motificacionGencatDao;
 	
 	@Autowired
+	private AdecuacionGencatDao adecuacionGencatDao;
+	
+	@Autowired
 	private UtilDiccionarioApi utilDiccionarioApi;
 	
 	@Autowired
 	private ComunicacionGencatDao comunicacionGencatDao;
-	
+		
 	@Autowired
 	private AdecuacionGencatApi adecuacionGencatApi;
 	
 	@Autowired
 	private OfertaGencatApi ofertaGencatApi;
+	
+	@Autowired
+	private NotificacionGencatApi notificacionGencatApi;
+	
+	@Autowired
+	private ReclamacionGencatApi reclamacionGencatApi;
+	
+	@Autowired
+	private VisitaGencatApi visitaGencatApi;
 	
 	@Autowired 
 	private OfertaApi ofertaApi;
@@ -148,6 +166,9 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 
 	@Autowired
 	private UsuarioManager usuarioManager;
+	
+	@Autowired
+	private ActivoAdapter activoAdapter;
 	
 	@Autowired
 	protected JBPMActivoTramiteManager jbpmActivoTramiteManager;
@@ -936,6 +957,7 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 	}
 
 	@Override
+	@Transactional(readOnly = false)
 	public void bloqueoExpedienteGENCAT(ExpedienteComercial expComercial, ActivoTramite tramite) {
 		
 		Date fechaActual = new Date();
@@ -1053,17 +1075,13 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 		
 		historificarTramiteGENCAT(tramite);
 		crearRegistrosTramiteGENCAT(expedienteComercial, oferta, tramite);
-		
-		ActivoTramite tramiteNuevo = jbpmActivoTramiteManager.createActivoTramiteTrabajo(
-				tipoProcedimientoManager.getByCodigo(ActivoTramiteApi.CODIGO_TRAMITE_COMUNICACION_GENCAT), 
-				tramite.getTrabajo());
-		tramiteNuevo.setActivo(tramite.getActivo());
-		
-		jbpmActivoTramiteManager.lanzaBPMAsociadoATramite(tramiteNuevo.getId());
+				
+		activoAdapter.crearTramiteGencat(tramite.getActivo().getId());
 				
 	}
 	
 	@Override
+	@Transactional(readOnly = false)
 	public void crearRegistrosTramiteGENCAT(ExpedienteComercial expedienteComercial, Oferta oferta, ActivoTramite tramite) {
 		
 		ComunicacionGencat comunicacionGencat = new ComunicacionGencat();
@@ -1107,6 +1125,9 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 		adecuacionGencat.setComunicacion(comunicacionGencat);
 		adecuacionGencat.setAuditoria(auditoria);
 		adecuacionGencat.setVersion(0L);
+		
+		// TODO Crear notificacionGencat, visitaGencat, reclamacionGencat y la tabla nueva que no esta creada
+		
 
 		genericDao.save(ComunicacionGencat.class, comunicacionGencat);
 		genericDao.save(OfertaGencat.class, ofertaGencat);
@@ -1115,6 +1136,7 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 	}
 	
 	@Override
+	@Transactional(readOnly = false)
 	public void historificarTramiteGENCAT(ActivoTramite tramite) {
 				
 		if(!Checks.esNulo(tramite)) {
@@ -1127,6 +1149,9 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 				
 				AdecuacionGencat adecuacionGencat = adecuacionGencatApi.getAdecuacionByIdComunicacion(idComunicacionGencat);
 				OfertaGencat ofertaGencat = ofertaGencatApi.getOfertaByIdComunicacionGencat(idComunicacionGencat);
+//				NotificacionGencat notificacionGencat = notificacionGencatApi.getNotificacionByIdComunicacionGencat(idComunicacionGencat);
+//				ReclamacionGencat reclamacionGencat = reclamacionGencatApi.getReclamacionByIdComunicacionGencat(idComunicacionGencat);
+//				VisitaGencat visitaGencat = visitaGencatApi.getVisitaByIdComunicacionGencat(idComunicacionGencat);
 				
 				if(!Checks.esNulo(comunicacionGencat)
 						&& !Checks.esNulo(adecuacionGencat)
@@ -1136,9 +1161,12 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 					HistoricoComunicacionGencat historicoComunicacionGencat = crearHistoricoComunicacionGencatByComunicacionGencat(comunicacionGencat);
 					crearHistoricoAdecuacionGencatByAdecuacionGencat(adecuacionGencat, historicoComunicacionGencat);
 					crearHistoricoOfertaGencatByOfertaGencat(ofertaGencat, historicoComunicacionGencat);
+//					crearHistoricoNotificacionGencatByNotificacionGencat(notificacionGencat, historicoComunicacionGencat);
+//					crearHistoricoReclamacionGencatByNotificacionGencat(reclamacionGencat, historicoComunicacionGencat);
+//					crearHistoricoVisitaGencatByNotificacionGencat(visitaGencat, historicoComunicacionGencat);
 					
 					// Borrado del registro vigente del tramite de GENCAT
-					borrarTramiteGENCAT(comunicacionGencat, adecuacionGencat, ofertaGencat);
+					borrarTramiteGENCAT(comunicacionGencat, adecuacionGencat, ofertaGencat, null, null, null);
 					
 				}
 				
@@ -1148,19 +1176,25 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 		
 	}
 	
-	
-	private void borrarTramiteGENCAT(ComunicacionGencat comunicacionGencat, AdecuacionGencat adecuacionGencat, OfertaGencat ofertaGencat) {
+	private void borrarTramiteGENCAT(ComunicacionGencat comunicacionGencat, AdecuacionGencat adecuacionGencat, OfertaGencat ofertaGencat,
+			NotificacionGencat notificacionGencat, ReclamacionGencat reclamacionGencat, VisitaGencat visitaGencat) {
 		
 		if(!Checks.esNulo(comunicacionGencat.getId())
 				&& !Checks.esNulo(adecuacionGencat.getId())
-				&& !Checks.esNulo(ofertaGencat.getId())) {
-			genericDao.deleteById(AdecuacionGencat.class, adecuacionGencat.getId());
-			genericDao.deleteById(OfertaGencat.class, ofertaGencat.getId());
-			genericDao.deleteById(ComunicacionGencat.class, comunicacionGencat.getId());
+				&& !Checks.esNulo(ofertaGencat.getId())
+//				&& !Checks.esNulo(notificacionGencat.getId())
+//				&& !Checks.esNulo(reclamacionGencat.getId())
+//				&& !Checks.esNulo(visitaGencat.getId())
+				) {
 
+			// TODO eliminar metodo y añadir los DAO correspondientes
+			activoAgrupacionActivoDao.deleteTramiteGencatById(adecuacionGencat.getId(), ofertaGencat.getId(), null, 
+					null, null, comunicacionGencat.getId());
+			
 		}
 	}
 	
+	@Transactional(readOnly = false)
 	private HistoricoComunicacionGencat crearHistoricoComunicacionGencatByComunicacionGencat(ComunicacionGencat comunicacionGencat) {
 		
 		HistoricoComunicacionGencat historicoComunicacionGencat = new HistoricoComunicacionGencat();
@@ -1229,6 +1263,60 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 		
 	}
 	
+	private void crearHistoricoNotificacionGencatByNotificacionGencat(NotificacionGencat notificacionGencat, HistoricoComunicacionGencat historicoComunicacionGencat) {
+		
+		HistoricoNotificacionGencat historicoNotificacionGencat = new HistoricoNotificacionGencat();
+		
+		if(!Checks.esNulo(notificacionGencat)) {
+			historicoNotificacionGencat.setHistoricoComunicacion(historicoComunicacionGencat);
+			historicoNotificacionGencat.setCheckNotificacion(notificacionGencat.getCheckNotificacion());			
+			historicoNotificacionGencat.setCierreNotificacion(notificacionGencat.getCierreNotificacion());
+			historicoNotificacionGencat.setFechaNotificacion(notificacionGencat.getFechaNotificacion());			
+			historicoNotificacionGencat.setFechaSancionNotificacion(notificacionGencat.getFechaSancionNotificacion());
+			historicoNotificacionGencat.setTipoNotificacion(notificacionGencat.getTipoNotificacion());
+			historicoNotificacionGencat.setVersion(notificacionGencat.getVersion());
+			historicoNotificacionGencat.setAuditoria(notificacionGencat.getAuditoria());
+			
+		}
+		
+		genericDao.save(HistoricoNotificacionGencat.class, historicoNotificacionGencat);
+		
+	}
+	
+	@Transactional(readOnly = false)
+	private void crearHistoricoReclamacionGencatByNotificacionGencat(ReclamacionGencat reclamacionGencat, HistoricoComunicacionGencat historicoComunicacionGencat) {
+		
+		HistoricoReclamacionGencat historicoReclamacionGencat = new HistoricoReclamacionGencat();
+		
+		if(!Checks.esNulo(reclamacionGencat)) {
+			historicoReclamacionGencat.setHistoricoComunicacion(historicoComunicacionGencat);
+			historicoReclamacionGencat.setFechaAviso(reclamacionGencat.getFechaAviso());			
+			historicoReclamacionGencat.setFechaReclamacion(reclamacionGencat.getFechaReclamacion());
+			historicoReclamacionGencat.setVersion(reclamacionGencat.getVersion());
+			historicoReclamacionGencat.setAuditoria(reclamacionGencat.getAuditoria());
+			
+		}
+		
+		genericDao.save(HistoricoReclamacionGencat.class, historicoReclamacionGencat);
+		
+	}
+	
+	private void crearHistoricoVisitaGencatByNotificacionGencat(VisitaGencat visitaGencat, HistoricoComunicacionGencat historicoComunicacionGencat) {
+		
+		HistoricoVisitaGencat historicoVisitaGencat = new HistoricoVisitaGencat();
+		
+		if(!Checks.esNulo(visitaGencat)) {
+			historicoVisitaGencat.setHistoricoComunicacion(historicoComunicacionGencat);
+			historicoVisitaGencat.setVisita(visitaGencat.getVisita());
+			historicoVisitaGencat.setVersion(visitaGencat.getVersion());
+			historicoVisitaGencat.setAuditoria(visitaGencat.getAuditoria());
+			
+		}
+		
+		genericDao.save(HistoricoVisitaGencat.class, historicoVisitaGencat);
+		
+	}
+		
 	@Override
 	public void cambiarEstadoComunicacionGENCAT(ComunicacionGencat comunicacionGencat) {
 		

@@ -45,6 +45,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.jbpm.JBPMProcessManagerApi;
+import es.pfsgroup.plugin.rem.activo.dao.impl.ActivoTramiteDaoImpl;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
@@ -107,6 +108,9 @@ public abstract class ActivoBaseActionHandler implements ActionHandler {
     
     @Autowired
     protected TareaExternaManager tareaExternaManager;
+    
+    @Autowired
+    private ActivoTramiteDaoImpl activoTramiteDaoImpl;
     
     @Autowired
     TareaActivoApi tareaActivoApi;
@@ -417,7 +421,7 @@ public abstract class ActivoBaseActionHandler implements ActionHandler {
 
     	Long idTramite = (Long) getVariable(BaseActionHandler.ACTIVO_TRAMITE_TAREA_EXTERNA, executionContext);
     	ActivoTramite activoTramite = activoTramiteManagerApi.get(idTramite);
-
+    	
         //TODO :AquÃ­ podrÃ­a recuperarse de la BD en caso de que no estuviera en el contexto
         //Esto se podrÃ­a hacer consultando el executionContext.getProcessInstance().getId() y que coincidiera con un PRC_PROCEDIMIENTOS
 

@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.rem.activo.dao.impl;
 import java.util.List;
 
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.pfs.dao.AbstractEntityDao;
 import es.pfsgroup.commons.utils.HQLBuilder;
@@ -46,6 +47,31 @@ public class ActivoAgrupacionActivoDaoImpl extends AbstractEntityDao<ActivoAgrup
 	public void deleteById(Long id) {
 		
 		StringBuilder sb = new StringBuilder("delete from ActivoAgrupacionActivo aaa where aaa.id = "+id);		
+		this.getSessionFactory().getCurrentSession().createQuery(sb.toString()).executeUpdate();
+		
+	}
+    
+    @Override
+    public void deleteTramiteGencatById(Long idAdecuacionGencat, Long idOfertaGencat, Long idNotificacionGencat, 
+    								Long idReclamacionGencat, Long idVisitaGencat, Long idComunicacionGencat) {
+    	StringBuilder sb;
+    	
+    	sb = new StringBuilder("delete from AdecuacionGencat ag where ag.id = "+idAdecuacionGencat);		
+		this.getSessionFactory().getCurrentSession().createQuery(sb.toString()).executeUpdate();
+    	
+		sb = new StringBuilder("delete from OfertaGencat og where og.id = "+idOfertaGencat);		
+		this.getSessionFactory().getCurrentSession().createQuery(sb.toString()).executeUpdate();
+		
+//		sb = new StringBuilder("delete from NotificacionGencat ng where ng.id = "+idNotificacionGencat);		
+//		this.getSessionFactory().getCurrentSession().createQuery(sb.toString()).executeUpdate();
+//		
+//		sb = new StringBuilder("delete from ReclamacionGencat rg where rg.id = "+idReclamacionGencat);		
+//		this.getSessionFactory().getCurrentSession().createQuery(sb.toString()).executeUpdate();
+//		
+//		sb = new StringBuilder("delete from VisitaGencat vg where vg.id = "+idVisitaGencat);		
+//		this.getSessionFactory().getCurrentSession().createQuery(sb.toString()).executeUpdate();
+		
+		sb = new StringBuilder("delete from ComunicacionGencat cg where cg.id = "+idComunicacionGencat);		
 		this.getSessionFactory().getCurrentSession().createQuery(sb.toString()).executeUpdate();
 		
 	}

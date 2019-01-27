@@ -2107,9 +2107,7 @@ Ext
 						
 						me.getViewModel().set('oferta', model);								
 						
-						me.onSaveFormularioCompletoOferta(form, window); 
-						
-						ventanaDetalle.getForm().reset();
+						me.onSaveFormularioCompletoOferta(form, window);
 					},
 
 					onChkbxOfertasAnuladas : function(chkbox, checked) {

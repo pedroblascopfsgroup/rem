@@ -25,6 +25,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.HibernateException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -4259,8 +4260,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				ofertaApi.resetPBC(expediente, true);
 				
 				TmpClienteGDPR tmpClienteGDPR = genericDao.get(TmpClienteGDPR.class, genericDao.createFilter(FilterType.EQUALS, "numDocumento", comprador.getDocumento()));
-				rawDao.getExecuteSQL("DELETE FROM TMP_CLIENTE_GDPRS "
-						+ "			  WHERE NUM_DOCUMENTO = "+tmpClienteGDPR.getNumDocumento());
+				try {
+					rawDao.getExecuteSQL("DELETE FROM TMP_CLIENTE_GDPR WHERE NUM_DOCUMENTO = '"+tmpClienteGDPR.getNumDocumento()+"'");
+				}  catch (HibernateException hex) {}
 
 				return true; 
 

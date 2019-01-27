@@ -12,6 +12,7 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.HibernateException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -2116,24 +2117,29 @@ public class AgrupacionAdapter {
 				}
 				genericDao.update(ClienteGDPR.class, cliGDPR);
 
+				try {
+					rawDao.getExecuteSQL("DELETE FROM TMP_CLIENTE_GDPR WHERE NUM_DOCUMENTO = '"+cliGDPR.getNumDocumento()+"'");
+				}  catch (HibernateException hex) {}
+
 				// Si no existe simplemente creamos e insertamos un nuevo objeto ClienteGDPR
 			} else {
-				cliGDPR.setCliente(clienteComercial);
-				cliGDPR.setTipoDocumento(tipoDocumento);
-				cliGDPR.setNumDocumento(dto.getNumDocumentoCliente());
-				cliGDPR.setCesionDatos(dto.getCesionDatos());
-				cliGDPR.setComunicacionTerceros(dto.getComunicacionTerceros());
-				cliGDPR.setTransferenciasInternacionales(dto.getTransferenciasInternacionales());
+				ClienteGDPR clienteGDPR =  new ClienteGDPR();
+				clienteGDPR.setCliente(clienteComercial);
+				clienteGDPR.setTipoDocumento(tipoDocumento);
+				clienteGDPR.setNumDocumento(dto.getNumDocumentoCliente());
+				clienteGDPR.setCesionDatos(dto.getCesionDatos());
+				clienteGDPR.setComunicacionTerceros(dto.getComunicacionTerceros());
+				clienteGDPR.setTransferenciasInternacionales(dto.getTransferenciasInternacionales());
 
 				if (!Checks.esNulo(docAdjunto)) {
-					cliGDPR.setAdjuntoComprador(docAdjunto);
+					clienteGDPR.setAdjuntoComprador(docAdjunto);
 				}
-				genericDao.save(ClienteGDPR.class, cliGDPR);
+				genericDao.save(ClienteGDPR.class, clienteGDPR);
+								
+				try {
+					rawDao.getExecuteSQL("DELETE FROM TMP_CLIENTE_GDPR WHERE NUM_DOCUMENTO = '"+clienteGDPR.getNumDocumento()+"'");
+				}  catch (HibernateException hex) {}
 			}
-			
-			TmpClienteGDPR tmpClienteGDPR = genericDao.get(TmpClienteGDPR.class, genericDao.createFilter(FilterType.EQUALS, "numDocumento", cliGDPR.getNumDocumento()));
-			rawDao.getExecuteSQL("DELETE FROM TMP_CLIENTE_GDPRS "
-					+ "			  WHERE NUM_DOCUMENTO = "+tmpClienteGDPR.getNumDocumento());
 
 		} catch (Exception ex) {
 			logger.error("error en agrupacionAdapter", ex);

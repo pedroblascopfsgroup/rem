@@ -1330,7 +1330,7 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 	public void informarFechaSancion(ComunicacionGencat comunicacionGencat) {
 		
 		Calendar cal = Calendar.getInstance(); 
-        cal.setTime(new Date()); 
+        cal.setTime(comunicacionGencat.getFechaComunicacion()); 
         cal.add(Calendar.MONTH, 2);
         Date fechaSancion = cal.getTime();
 		

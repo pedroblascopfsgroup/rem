@@ -2108,6 +2108,8 @@ Ext
 						me.getViewModel().set('oferta', model);								
 						
 						me.onSaveFormularioCompletoOferta(form, window); 
+						
+						ventanaDetalle.getForm().reset();
 					},
 
 					onChkbxOfertasAnuladas : function(chkbox, checked) {
@@ -4925,6 +4927,8 @@ Ext
     			if(!Ext.isEmpty(btn.up('wizardaltaoferta'))){
     				ventanaWizard = btn.up('wizardaltaoferta');
     				ventanaAnyadirOferta = ventanaWizard.down('anyadirnuevaofertadetalle');
+    				
+    				ventanaAnyadirOferta.getForm().reset();
     				if(!Ext.isEmpty(pedirDoc)){
         				ventanaAnyadirOferta.getForm().findField('pedirDoc').setValue(pedirDoc);
         				if(pedirDoc == "true"){
@@ -5188,7 +5192,6 @@ Ext
     },
     
     onClickCrearOferta: function(btn){ 
-
  		var me = this;
  		var ventanaDetalle = btn.up().up(),
  		ventanaAlta = ventanaDetalle.up().xtype, 

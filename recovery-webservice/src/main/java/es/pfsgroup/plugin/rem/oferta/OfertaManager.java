@@ -3327,45 +3327,50 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		}
 		if(!Checks.esNulo(clienteGDPR)) {
 			clienteCom = clienteGDPR.getCliente();
-		}
-		
+			
+			try {
+				if(!Checks.esNulo(clienteCom)) {
+					beanUtilNotNull.copyProperties(clienteCom,clienteComercialDto);
+					clienteComercialDto.setApellidosCliente(clienteCom.getApellidos());
+					clienteComercialDto.setNombreCliente(clienteCom.getNombre());
+					clienteComercialDto.setId(clienteCom.getId());
+					clienteComercialDto.setRazonSocial(clienteCom.getRazonSocial());
+					clienteComercialDto.setDireccion(clienteCom.getDireccion());
+					clienteComercialDto.setTelefono(clienteCom.getTelefono1());
+					clienteComercialDto.setEmail(clienteCom.getEmail());
+					clienteComercialDto.setCesionDatos(clienteGDPR.getCesionDatos());
+					clienteComercialDto.setComunicacionTerceros(clienteGDPR.getComunicacionTerceros());
+					clienteComercialDto.setTransferenciasInternacionales(clienteGDPR.getTransferenciasInternacionales());
+					if(!Checks.esNulo(clienteCom.getEstadoCivil())) {
+						clienteComercialDto.setEstadoCivilCodigo(clienteCom.getEstadoCivil().getCodigo());
+						clienteComercialDto.setEstadoCivilDescripcion(clienteCom.getEstadoCivil().getDescripcion());
+					}
+					if(!Checks.esNulo(clienteCom.getRegimenMatrimonial())) {
+						clienteComercialDto.setRegimenMatrimonialCodigo(clienteCom.getRegimenMatrimonial().getCodigo());
+						clienteComercialDto.setRegimenMatrimonialDescripcion(clienteCom.getRegimenMatrimonial().getDescripcion());
+					}
+					if(!Checks.esNulo(clienteCom.getTipoPersona())) {
+						clienteComercialDto.setTipoPersonaCodigo(clienteCom.getTipoPersona().getCodigo());
+						clienteComercialDto.setTipoPersonaDescripcion(clienteCom.getTipoPersona().getDescripcion());
+					}				
+					if(!Checks.esNulo(clienteCom.getTipoDocumento())) {
+						clienteComercialDto.setTipoDocumentoCodigo(clienteCom.getTipoDocumento().getCodigo());
+						clienteComercialDto.setTipoDocumentoDescripcion(clienteCom.getTipoDocumento().getDescripcion());
+					}
+					if(!Checks.esNulo(clienteCom.getDocumento())) {
+						clienteComercialDto.setDocumento(clienteCom.getDocumento());
+					}
+				}
 
-		try {
-			if(!Checks.esNulo(clienteCom)) {
-				beanUtilNotNull.copyProperties(clienteCom,clienteComercialDto);
-				clienteComercialDto.setApellidosCliente(clienteCom.getApellidos());
-				clienteComercialDto.setNombreCliente(clienteCom.getNombre());
-				clienteComercialDto.setId(clienteCom.getId());
-				clienteComercialDto.setRazonSocial(clienteCom.getRazonSocial());
-				clienteComercialDto.setDireccion(clienteCom.getDireccion());
-				clienteComercialDto.setTelefono(clienteCom.getTelefono1());
-				clienteComercialDto.setEmail(clienteCom.getEmail());
-				clienteComercialDto.setCesionDatos(clienteGDPR.getCesionDatos());
-				clienteComercialDto.setComunicacionTerceros(clienteGDPR.getComunicacionTerceros());
-				clienteComercialDto.setTransferenciasInternacionales(clienteGDPR.getTransferenciasInternacionales());
-				if(!Checks.esNulo(clienteCom.getEstadoCivil())) {
-					clienteComercialDto.setEstadoCivilCodigo(clienteCom.getEstadoCivil().getCodigo());
-					clienteComercialDto.setEstadoCivilDescripcion(clienteCom.getEstadoCivil().getDescripcion());
-				}
-				if(!Checks.esNulo(clienteCom.getRegimenMatrimonial())) {
-					clienteComercialDto.setRegimenMatrimonialCodigo(clienteCom.getRegimenMatrimonial().getCodigo());
-					clienteComercialDto.setRegimenMatrimonialDescripcion(clienteCom.getRegimenMatrimonial().getDescripcion());
-				}
-				if(!Checks.esNulo(clienteCom.getTipoPersona())) {
-					clienteComercialDto.setTipoPersonaCodigo(clienteCom.getTipoPersona().getCodigo());
-					clienteComercialDto.setTipoPersonaDescripcion(clienteCom.getTipoPersona().getDescripcion());
-				}				
-				if(!Checks.esNulo(clienteCom.getTipoDocumento())) {
-					clienteComercialDto.setTipoDocumentoCodigo(clienteCom.getTipoDocumento().getCodigo());
-					clienteComercialDto.setTipoDocumentoDescripcion(clienteCom.getTipoDocumento().getDescripcion());
-				}
+
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			} catch (InvocationTargetException e) {
+				e.printStackTrace();
 			}
-
-
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			e.printStackTrace();
+		}else {
+			clienteComercialDto.setDocumento(dniComprador);
+			clienteComercialDto.setTipoDocumentoCodigo(codtipoDoc);
 		}
 
 		return clienteComercialDto;

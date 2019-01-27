@@ -4893,6 +4893,7 @@ Ext
 	
 	existeCliente: function(btn){
 		var me = this;
+		me.getView().mask(HreRem.i18n("msg.mask.loading"));
 		var ventanaWizard;
 		var ventanaAltaWizard;
 		var idActivo,idAgrupacion;
@@ -4947,14 +4948,25 @@ Ext
             				ventanaAnyadirOferta.getForm().findField('razonSocialCliente').setValue(comprador.razonSocial);
             				ventanaAnyadirOferta.getForm().findField('razonSocialCliente').setDisabled('disabled');
             			}
+            			if(!Ext.isEmpty(comprador.documento)){
+            				ventanaAnyadirOferta.getForm().findField('numDocumentoCliente').setValue(comprador.documento);
+            				ventanaAnyadirOferta.getForm().findField('numDocumentoCliente').setDisabled('disabled');
+            			}
+            			if(!Ext.isEmpty(comprador.tipoDocumentoCodigo)){
+            				ventanaAnyadirOferta.getForm().findField('comboTipoDocumento').setValue(comprador.tipoDocumentoCodigo);
+            				ventanaAnyadirOferta.getForm().findField('comboTipoDocumento').setDisabled('disabled');
+            			}
             			if(!Ext.isEmpty(comprador.tipoPersonaCodigo)){
             				ventanaAnyadirOferta.getForm().findField('comboTipoPersona').setValue(ventanaAnyadirOferta.getForm().findField('comboTipoPersona').getStore().getData().find('id',comprador.tipoPersonaCodigo));
+            				ventanaAnyadirOferta.getForm().findField('comboTipoPersona').setDisabled('disabled');
             			}
             			if(!Ext.isEmpty(comprador.estadoCivilCodigo)){
             				ventanaAnyadirOferta.getForm().findField('comboEstadoCivil').setValue(ventanaAnyadirOferta.getForm().findField('comboEstadoCivil').getStore().getData().find('id',comprador.estadoCivilCodigo));
+            				ventanaAnyadirOferta.getForm().findField('comboEstadoCivil').setDisabled('disabled');
             			}
             			if(!Ext.isEmpty(comprador.regimenMatrimonialCodigo)){
             				ventanaAnyadirOferta.getForm().findField('comboRegimenMatrimonial').setValue(ventanaAnyadirOferta.getForm().findField('comboRegimenMatrimonial').getStore().getData().find('id',comprador.regimenMatrimonialCodigo));
+            				ventanaAnyadirOferta.getForm().findField('comboRegimenMatrimonial').setDisabled('disabled');
             			}
             			if(!Ext.isEmpty(comprador.codigoPrescriptor)){
             				ventanaAnyadirOferta.getForm().findField('codigoPrescriptor').setValue(comprador.codigoPrescriptor);
@@ -5019,6 +5031,7 @@ Ext
     			}
     			var wizard = btn.up().up().up();
     			var layout = wizard.getLayout();
+    			me.getView().unmask();
     			layout["next"]();
     		},
 
@@ -5199,6 +5212,7 @@ Ext
  			
  			if (pedirDocValor == 'false'){
  				var docCliente = me.getViewModel().get("oferta.numDocumentoCliente");
+ 				me.getView().mask(HreRem.i18n("msg.mask.loading"));
  				url = $AC.getRemoteUrl('activooferta/getListAdjuntos');
  				ventanaWizard = btn.up('wizardaltaoferta'),
     			idActivo = ventanaWizard.oferta.data.idActivo,
@@ -5233,6 +5247,7 @@ Ext
      			
      			var wizard = btn.up().up().up();
      			var layout = wizard.getLayout();
+     			me.getView().unmask();
      			layout["next"]();
      			
      		}else{

@@ -12,7 +12,6 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.hibernate.HibernateException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,7 +33,6 @@ import es.pfsgroup.framework.paradise.bulkUpload.adapter.ProcessAdapter;
 import es.pfsgroup.framework.paradise.bulkUpload.api.ExcelManagerApi;
 import es.pfsgroup.framework.paradise.bulkUpload.api.MSVProcesoApi;
 import es.pfsgroup.framework.paradise.bulkUpload.api.ParticularValidatorApi;
-import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVRawSQLDao;
 import es.pfsgroup.framework.paradise.bulkUpload.dao.MSVFicheroDao;
 import es.pfsgroup.framework.paradise.bulkUpload.liberators.MSVLiberator;
 import es.pfsgroup.framework.paradise.bulkUpload.liberators.MSVLiberatorsFactory;
@@ -62,6 +60,7 @@ import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.ProveedoresApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
+import es.pfsgroup.plugin.rem.clienteComercial.dao.ClienteComercialDao;
 import es.pfsgroup.plugin.rem.jbpm.handler.notificator.impl.NotificatorServiceSancionOfertaAceptacionYRechazo;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
@@ -100,7 +99,6 @@ import es.pfsgroup.plugin.rem.model.DtoUsuario;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
-import es.pfsgroup.plugin.rem.model.TmpClienteGDPR;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.VBusquedaAgrupaciones;
@@ -249,7 +247,7 @@ public class AgrupacionAdapter {
 	private ActivoHistoricoPatrimonioDao activoHistoricoPatrimonioDao;
 	
 	@Autowired
-	private MSVRawSQLDao rawDao;
+	private ClienteComercialDao clienteComercialDao;
 
 	private final Log logger = LogFactory.getLog(getClass());
 
@@ -2117,9 +2115,7 @@ public class AgrupacionAdapter {
 				}
 				genericDao.update(ClienteGDPR.class, cliGDPR);
 
-				try {
-					rawDao.getExecuteSQL("DELETE FROM TMP_CLIENTE_GDPR WHERE NUM_DOCUMENTO = '"+cliGDPR.getNumDocumento()+"'");
-				}  catch (HibernateException hex) {}
+				clienteComercialDao.deleteTmpClienteByDocumento(cliGDPR.getNumDocumento());
 
 				// Si no existe simplemente creamos e insertamos un nuevo objeto ClienteGDPR
 			} else {
@@ -2136,9 +2132,7 @@ public class AgrupacionAdapter {
 				}
 				genericDao.save(ClienteGDPR.class, clienteGDPR);
 								
-				try {
-					rawDao.getExecuteSQL("DELETE FROM TMP_CLIENTE_GDPR WHERE NUM_DOCUMENTO = '"+clienteGDPR.getNumDocumento()+"'");
-				}  catch (HibernateException hex) {}
+				clienteComercialDao.deleteTmpClienteByDocumento(clienteGDPR.getNumDocumento());
 			}
 
 		} catch (Exception ex) {

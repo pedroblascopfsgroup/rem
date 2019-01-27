@@ -25,14 +25,12 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.hibernate.HibernateException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
-import org.springframework.ui.ModelMap;
 
 import edu.emory.mathcs.backport.java.util.Arrays;
 import es.capgemini.devon.dto.WebDto;
@@ -85,6 +83,7 @@ import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.TareaActivoApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
+import es.pfsgroup.plugin.rem.clienteComercial.dao.ClienteComercialDao;
 import es.pfsgroup.plugin.rem.controller.ExpedienteComercialController;
 import es.pfsgroup.plugin.rem.expedienteComercial.dao.ExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
@@ -102,7 +101,6 @@ import es.pfsgroup.plugin.rem.model.AdjuntoComprador;
 import es.pfsgroup.plugin.rem.model.AdjuntoExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.BloqueoActivoFormalizacion;
 import es.pfsgroup.plugin.rem.model.ClienteCompradorGDPR;
-import es.pfsgroup.plugin.rem.model.ClienteGDPR;
 import es.pfsgroup.plugin.rem.model.ComparecienteVendedor;
 import es.pfsgroup.plugin.rem.model.Comprador;
 import es.pfsgroup.plugin.rem.model.CompradorExpediente;
@@ -335,6 +333,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 	@Autowired
 	private MSVRawSQLDao rawDao;
+	
+	@Autowired
+	private ClienteComercialDao clienteComercialDao;
 
 	@Override
 	public ExpedienteComercial findOne(Long id) {
@@ -4006,7 +4007,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			if (!Checks.esNulo(dto.getIdDocAdjunto())) {
 				AdjuntoComprador adjuntoComprador = genericDao.get(AdjuntoComprador.class, genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdDocAdjunto()));
 				
-				//compradorExpediente.setAdjuntoComprador(adjuntoComprador);
+				compradorExpediente.setDocumentoAdjunto(adjuntoComprador);
 			}
 
 			expediente.getCompradores().add(compradorExpediente);
@@ -4260,9 +4261,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				ofertaApi.resetPBC(expediente, true);
 				
 				TmpClienteGDPR tmpClienteGDPR = genericDao.get(TmpClienteGDPR.class, genericDao.createFilter(FilterType.EQUALS, "numDocumento", comprador.getDocumento()));
-				try {
-					rawDao.getExecuteSQL("DELETE FROM TMP_CLIENTE_GDPR WHERE NUM_DOCUMENTO = '"+tmpClienteGDPR.getNumDocumento()+"'");
-				}  catch (HibernateException hex) {}
+				clienteComercialDao.deleteTmpClienteByDocumento(tmpClienteGDPR.getNumDocumento());
 
 				return true; 
 

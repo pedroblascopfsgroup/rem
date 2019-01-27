@@ -1,7 +1,6 @@
 package es.pfsgroup.plugin.rem.adapter;
 
 import java.lang.reflect.InvocationTargetException;
-import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -17,7 +16,6 @@ import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.time.DateUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.hibernate.HibernateException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -49,7 +47,6 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.framework.paradise.agenda.adapter.NotificacionAdapter;
 import es.pfsgroup.framework.paradise.agenda.model.Notificacion;
-import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVRawSQLDao;
 import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
 import es.pfsgroup.framework.paradise.gestorEntidad.model.GestorEntidadHistorico;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
@@ -66,7 +63,6 @@ import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoTramiteDao;
 import es.pfsgroup.plugin.rem.activo.dao.impl.ActivoPatrimonioDaoImpl;
-import es.pfsgroup.plugin.rem.activo.publicacion.dao.ActivoPublicacionDao;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoAvisadorApi;
 import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
@@ -77,6 +73,7 @@ import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.ProveedoresApi;
 import es.pfsgroup.plugin.rem.api.TareaActivoApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
+import es.pfsgroup.plugin.rem.clienteComercial.dao.ClienteComercialDao;
 import es.pfsgroup.plugin.rem.exception.RemUserException;
 //import es.pfsgroup.plugin.rem.controller.AccesoActivoException;
 import es.pfsgroup.plugin.rem.factory.TabActivoFactoryApi;
@@ -158,7 +155,6 @@ import es.pfsgroup.plugin.rem.model.IncrementoPresupuesto;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
-import es.pfsgroup.plugin.rem.model.TmpClienteGDPR;
 import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.VAdmisionDocumentos;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivosTrabajoPresupuesto;
@@ -181,6 +177,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalificacionEnergetica;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCargaActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
@@ -190,11 +187,9 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoHabitaculo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoObservacionActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoPublicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTasacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTenedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
 import es.pfsgroup.plugin.rem.oferta.NotificationOfertaManager;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PRINCIPAL;
@@ -326,7 +321,7 @@ public class ActivoAdapter {
 	private UsuarioManager usuarioManager;
 	
 	@Autowired
-	private MSVRawSQLDao rawDao;
+	private ClienteComercialDao clienteComercialDao;
 	
 	private static final String CONSTANTE_REST_CLIENT = "rest.client.gestor.documental.constante";
 	public static final String OFERTA_INCOMPATIBLE_MSG = "El tipo de oferta es incompatible con el destino comercial del activo";
@@ -3484,10 +3479,8 @@ public class ActivoAdapter {
 					cliGDPR.setAdjuntoComprador(docAdjunto);
 				}
 				genericDao.update(ClienteGDPR.class, cliGDPR);
-				
-				try {
-					rawDao.getExecuteSQL("DELETE FROM TMP_CLIENTE_GDPR WHERE NUM_DOCUMENTO = '"+cliGDPR.getNumDocumento()+"'");
-				}  catch (HibernateException hex) {}
+			
+				clienteComercialDao.deleteTmpClienteByDocumento(cliGDPR.getNumDocumento());
 
 				// Si no existe simplemente creamos e insertamos un nuevo objeto ClienteGDPR
 			} else {
@@ -3503,10 +3496,8 @@ public class ActivoAdapter {
 					clienteGDPR.setAdjuntoComprador(docAdjunto);
 				}
 				clienteGDPR = genericDao.save(ClienteGDPR.class, clienteGDPR);
-								
-				try {
-					rawDao.getExecuteSQL("DELETE FROM TMP_CLIENTE_GDPR WHERE NUM_DOCUMENTO = '"+clienteGDPR.getNumDocumento()+"'");
-				}  catch (HibernateException hex) {}			
+				
+				clienteComercialDao.deleteTmpClienteByDocumento(clienteGDPR.getNumDocumento());
 				
 			}			
 			

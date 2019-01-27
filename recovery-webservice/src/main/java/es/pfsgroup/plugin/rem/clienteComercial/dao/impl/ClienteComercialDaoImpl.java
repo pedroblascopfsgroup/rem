@@ -34,4 +34,13 @@ public class ClienteComercialDaoImpl extends AbstractEntityDao<ClienteComercial,
 		return HibernateQueryUtils.list(this, hql);
 	}
 	
+
+    @Override
+	public void deleteTmpClienteByDocumento(String documento) {
+		
+		StringBuilder sb = new StringBuilder("delete from TmpClienteGDPR gdpr where gdpr.numDocumento='"+documento+"'");		
+		this.getSessionFactory().getCurrentSession().createQuery(sb.toString()).executeUpdate();
+		
+	}
+	
 }

@@ -69,7 +69,6 @@ public class NotificatorServiceGtam extends AbstractNotificatorService implement
 	@Override
 	public void notificator(ActivoTramite tramite) {
 		ExpedienteComercial expediente = getExpedienteComercial(tramite);
-		Oferta oferta = expediente.getOferta();
 		Usuario gestor = null;
 		Boolean enviar = false;
 		if(tramite.getTareas() != null && tramite.getTareas().size() > 0){
@@ -83,9 +82,8 @@ public class NotificatorServiceGtam extends AbstractNotificatorService implement
 			}
 		}
 		
-		if (oferta != null && oferta.getActivoPrincipal() != null
-				&& DDCartera.CODIGO_CARTERA_GIANTS.equals(oferta.getActivoPrincipal().getCartera().getCodigo()) && enviar) {
-			
+		if (expediente.getOferta() != null && expediente.getOferta().getActivoPrincipal() != null
+				&& DDCartera.CODIGO_CARTERA_GIANTS.equals(expediente.getOferta().getActivoPrincipal().getCartera().getCodigo()) && enviar) {
 			
 			String gestorNombre = "SIN_DATOS_NOMBRE_APELLIDO_GESTOR";
 			String gestorEmail = "SIN_DATOS_EMAIL_GESTOR";
@@ -169,7 +167,7 @@ public class NotificatorServiceGtam extends AbstractNotificatorService implement
 
 			mailsPara = getEmailsNotificacion(usuarios);
 
-			titulo = titulo.replace("#numoferta", oferta.getNumOferta().toString());
+			titulo = titulo.replace("#numoferta", expediente.getOferta().getNumOferta().toString());
 			dtoSendNotificator.setTitulo(titulo);
 			dtoSendNotificator.setNumTrabajo(null);
 

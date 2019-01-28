@@ -4972,6 +4972,7 @@ Ext
             			}
             			if(!Ext.isEmpty(comprador.codigoPrescriptor)){
             				ventanaAnyadirOferta.getForm().findField('codigoPrescriptor').setValue(comprador.codigoPrescriptor);
+            				ventanaAnyadirOferta.getForm().findField('codigoPrescriptor').setDisabled('disabled');
             			}
             			if(!Ext.isEmpty(comprador.cesionDatos)){
             				ventanaAnyadirOferta.getForm().findField('cesionDatos').setValue(comprador.cesionDatos);
@@ -4984,12 +4985,15 @@ Ext
             			}
             			if(!Ext.isEmpty(comprador.direccion)){
             				ventanaAnyadirOferta.getForm().findField('direccion').setValue(comprador.direccion);
+            				ventanaAnyadirOferta.getForm().findField('direccion').setDisabled('disabled');
             			}
             			if(!Ext.isEmpty(comprador.telefono)){
             				ventanaAnyadirOferta.getForm().findField('telefono').setValue(comprador.telefono);
+            				ventanaAnyadirOferta.getForm().findField('telefono').setDisabled('disabled');
             			}
             			if(!Ext.isEmpty(comprador.email)){
             				ventanaAnyadirOferta.getForm().findField('email').setValue(comprador.email);
+            				ventanaAnyadirOferta.getForm().findField('email').setDisabled('disabled');
             			}
             			
         			}
@@ -5014,8 +5018,10 @@ Ext
     				   } 
     				   else{    		
         				   form = ventanaWizard.down('anyadirnuevaofertadocumento').form;
-        				   ventanaAltaWizard.getForm().findField('numDocumento').setValue(form.findField('numDocumentoCliente').getValue());    				  
+        				   ventanaAltaWizard.getForm().findField('numDocumento').setValue(form.findField('numDocumentoCliente').getValue()); 
+        				   ventanaAltaWizard.getForm().findField('numDocumento').setDisabled(true); 
         				   ventanaAltaWizard.getForm().findField('codTipoDocumento').setValue(form.findField('comboTipoDocumento').getValue());
+        				   ventanaAltaWizard.getForm().findField('codTipoDocumento').setDisabled(true);
     				   }    
     				   
     				   if(!Ext.isEmpty(comprador)){

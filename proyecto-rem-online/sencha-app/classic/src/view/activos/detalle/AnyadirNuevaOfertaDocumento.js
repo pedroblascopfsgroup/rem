@@ -33,8 +33,29 @@ Ext.define('HreRem.view.activos.detalle.AnyadirNuevaOfertaDocumento', {
 	},
 	    
 	initComponent : function() {
+		
+		var titleAnyadir = null;
+		var me = this;
+		
+		if(me.up().xtype.indexOf("wizardaltacomprador") >= 0){
+		
+		     var tipoExpedienteAlquiler = CONST.TIPOS_EXPEDIENTE_COMERCIAL["ALQUILER"];
+		     var title = HreRem.i18n('wizard.comprador.title');
+		     titleAnyadir = HreRem.i18n('title.nuevo.comprador');
+		 
 
-		var me = this;		
+		     if(me.lookupViewModel().get('expediente.tipoExpedienteCodigo') === tipoExpedienteAlquiler){
+			     title = HreRem.i18n('wizard.inquilino.title');
+			    titleAnyadir =  HreRem.i18n('title.nuevo.inquilino');
+		     };
+		  
+		     me.up().setTitle(title);
+		  
+			   
+		}else {
+			
+			titleAnyadir = HreRem.i18n('title.nueva.oferta');
+		}
 		
 		me.buttons = [ {
 			itemId : 'btnAvanza',
@@ -50,7 +71,7 @@ Ext.define('HreRem.view.activos.detalle.AnyadirNuevaOfertaDocumento', {
 		me.items = [ {
 			xtype : 'fieldsettable',
 			layout : 'vbox',
-			title:  HreRem.i18n('title.nueva.oferta'),
+			title: titleAnyadir,
 			collapsible: false,
 			items : [   {
 				xtype: 'comboboxfieldbase',
@@ -80,5 +101,6 @@ Ext.define('HreRem.view.activos.detalle.AnyadirNuevaOfertaDocumento', {
     	me.setBindRecord(me.oferta);
 	
     }
+    
 
 });

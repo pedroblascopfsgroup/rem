@@ -1426,6 +1426,8 @@ Ext
 								},
 								success : function(record) {
 									window.unmask();
+									form.findField('numDocumento').setDisabled(true);
+									form.findField('codTipoDocumento').setDisabled(true); 
 								},
 								failure : function(record, operation) {
 									console.log("FAIL!");

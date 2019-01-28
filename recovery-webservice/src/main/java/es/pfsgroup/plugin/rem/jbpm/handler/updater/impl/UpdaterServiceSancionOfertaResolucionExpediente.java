@@ -332,8 +332,10 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 			ArrayList<String> mailsPara = new ArrayList<String>();
 			mailsPara.add(email);
 			String asunto = "Anulación de la oferta del activo "+ activo.getNumActivo() +" comunicada a GENCAT";
-			String cuerpo = "<p>Se ha anulado la oferta del activo " + activo.getNumActivo() + " comunicada a GENCAT."
-					+ "</br></br>Un saludo. </p>";
+			String cuerpo = "<p>Se ha anulado la oferta del activo " + activo.getNumActivo() + " comunicada a GENCAT. "
+					+ "<br></br>"
+					+ "<br></br>"
+					+ "Un saludo. </p>";
 
 			genericAdapter.sendMail(mailsPara, new ArrayList<String>(),asunto,cuerpo);
 			resultado = true;

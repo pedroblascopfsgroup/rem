@@ -308,7 +308,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		Filter filter = genericDao.createFilter(FilterType.EQUALS, "idActivo", idActivo);
 		VCondicionantesDisponibilidad vcd = genericDao.get(VCondicionantesDisponibilidad.class, filter);
 
-		return !Checks.esNulo(vcd) && !vcd.getSinInformeAprobado();
+		return !Checks.esNulo(vcd) && !vcd.getSinInformeAprobadoREM();
 	}
 
 	// Comprobación mínima.

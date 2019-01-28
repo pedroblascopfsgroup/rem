@@ -11,6 +11,7 @@
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##	    0.2 PGB > REMVIP-3175 Se ha modificado el apartado de la APU para que cambie el estado de publicación a Oculto.
 --##########################################
 --*/ 
 WHENEVER SQLERROR EXIT SQL.SQLCODE;

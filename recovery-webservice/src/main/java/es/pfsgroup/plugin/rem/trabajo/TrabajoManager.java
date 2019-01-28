@@ -3771,7 +3771,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 	public Boolean activoEnTramite(Long idActivo) {
 		Activo activo = activoApi.get(idActivo);
-		return activo.getEnTramite();
+		return activo.getEnTramite()==1;
 	}
 
 

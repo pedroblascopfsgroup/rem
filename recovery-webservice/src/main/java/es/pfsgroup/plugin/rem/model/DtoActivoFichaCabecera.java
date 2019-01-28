@@ -151,8 +151,8 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private Boolean aplicaPublicar;
 	private Date fechaAplicaPublicar;
 	private String motivoAplicaPublicar;
-	private Boolean enTramite;
-
+	private Integer enTramite;
+	
 	//Activo Bancario datos:
 	private String claseActivoCodigo;
 	private String claseActivoDescripcion;
@@ -1560,7 +1560,7 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 		this.acreedorNumExp = acreedorNumExp;
 	}
 
-	public Boolean getEnTramite() {
+	public Integer getEnTramite() {
 		return enTramite;
 	}
 
@@ -1589,7 +1589,7 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 		this.tienePromocion = tienePromocion;
 	}
 
-	public void setEnTramite(Boolean enTramite) {
+	public void setEnTramite(Integer enTramite) {
 		this.enTramite = enTramite;
 	}
 

@@ -2816,7 +2816,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			TareaExterna tex = null;
 
 			for (TareaExterna tarea : listaTareas) {
-				if (tarea.getTareaProcedimiento().getCodigo().equals("T013_FirmaPropietario")) {
+				if (tarea.getTareaProcedimiento() != null && tarea.getTareaProcedimiento().getCodigo().equals("T013_FirmaPropietario")) {
 					tex = tarea;
 					break;
 				}

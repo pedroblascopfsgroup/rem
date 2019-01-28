@@ -312,18 +312,6 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
 		        },
 	            flex: 0.5
 	        },
-	        {   
-	        	dataIndex: 'condPublVenta',
-	            text: HreRem.i18n('header.condicionantes.publicacion.venta'),
-	            flex: 1,
-	            renderer: condPublRenderer
-	        },
-	        {
-	            dataIndex: 'condPublAlquiler',
-	            text: HreRem.i18n('header.condicionantes.publicacion.alquiler'),
-	            flex: 1,
-	            renderer: condPublRenderer
-	        },
 	        {
 	            dataIndex: 'situacionComercial',
 	            text: HreRem.i18n('header.disponibilidad.comercial'),

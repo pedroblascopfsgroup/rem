@@ -66,7 +66,7 @@ public class RemCorreoUtils {
 	protected final Log logger = LogFactory.getLog(getClass());
 
 	public void enviarCorreoConAdjuntos(String emailFrom, List<String> mailsPara, List<String> direccionesMailCc,
-			String asuntoMail, String cuerpoEmail, List<DtoAdjuntoMail> list) throws Exception {
+			String asuntoMail, String cuerpoEmail, List<DtoAdjuntoMail> list) {
 		
 		CorreoSaliente traza = obtenerTrazaCorreoSaliente(emailFrom, mailsPara, direccionesMailCc, asuntoMail,
 				cuerpoEmail, list);

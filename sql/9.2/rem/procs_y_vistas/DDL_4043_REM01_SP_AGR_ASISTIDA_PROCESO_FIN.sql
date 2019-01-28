@@ -11,6 +11,7 @@
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##	    0.2 PGB > REMVIP-3175 Se ha modificado el apartado de la APU para que cambie el estado de publicación a Oculto.
 --##########################################
 --*/ 
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -134,8 +135,8 @@ BEGIN
             SELECT  '|| V_ESQUEMA ||'.S_ACT_AHP_HIST_PUBLICACION.NEXTVAL, ACT_ID
                                                   ,DD_TPU_A_ID
                                                   ,DD_TPU_V_ID
-                                                  ,(SELECT EPV.DD_EPV_ID FROM '||V_ESQUEMA||'.DD_EPV_ESTADO_PUB_VENTA EPV WHERE EPV.DD_EPV_CODIGO = ''01'') DD_EPV_ID
-                                                  ,(SELECT EPA.DD_EPA_ID FROM '||V_ESQUEMA||'.DD_EPA_ESTADO_PUB_ALQUILER EPA WHERE EPA.DD_EPA_CODIGO = ''01'') DD_EPA_ID
+                                                  ,(SELECT EPV.DD_EPV_ID FROM '||V_ESQUEMA||'.DD_EPV_ESTADO_PUB_VENTA EPV WHERE EPV.DD_EPV_CODIGO = ''04'') DD_EPV_ID
+                                                  ,(SELECT EPA.DD_EPA_ID FROM '||V_ESQUEMA||'.DD_EPA_ESTADO_PUB_ALQUILER EPA WHERE EPA.DD_EPA_CODIGO = ''04'') DD_EPA_ID
                                                   ,DD_TCO_ID
                                                   ,DD_MTO_V_ID
                                                   ,APU_MOT_OCULTACION_MANUAL_V,APU_CHECK_PUBLICAR_V,APU_CHECK_OCULTAR_V
@@ -178,8 +179,8 @@ BEGIN
                  FROM '||V_ESQUEMA||'.AUX_ACTIVOS_PDV_CADUCADA) T2
         ON (APU.ACT_ID = T2.ACT_ID)
         WHEN MATCHED THEN UPDATE SET
-            APU.DD_EPV_ID = (SELECT EPV.DD_EPV_ID FROM '||V_ESQUEMA||'.DD_EPV_ESTADO_PUB_VENTA EPV WHERE EPV.DD_EPV_CODIGO = ''01'')
-          , APU.DD_EPA_ID = (SELECT EPA.DD_EPA_ID FROM '||V_ESQUEMA||'.DD_EPA_ESTADO_PUB_ALQUILER EPA WHERE EPA.DD_EPA_CODIGO = ''01'')
+            APU.DD_EPV_ID = (SELECT EPV.DD_EPV_ID FROM '||V_ESQUEMA||'.DD_EPV_ESTADO_PUB_VENTA EPV WHERE EPV.DD_EPV_CODIGO = ''04'')
+          , APU.DD_EPA_ID = (SELECT EPA.DD_EPA_ID FROM '||V_ESQUEMA||'.DD_EPA_ESTADO_PUB_ALQUILER EPA WHERE EPA.DD_EPA_CODIGO = ''04'')
           , APU.APU_MOT_OCULTACION_MANUAL_A = ''Fin vigencia asistida''
           , APU.APU_MOT_OCULTACION_MANUAL_V = ''Fin vigencia asistida''
           , APU.DD_MTO_V_ID = (select dd_mto_id from '||V_ESQUEMA||'.DD_MTO_MOTIVOS_OCULTACION where DD_MTO_CODIGO = ''12'' and borrado = 0)

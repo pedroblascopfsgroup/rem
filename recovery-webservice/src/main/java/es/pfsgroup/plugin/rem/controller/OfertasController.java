@@ -23,16 +23,19 @@ import es.capgemini.devon.files.FileItem;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
 import es.pfsgroup.plugin.rem.excel.OfertasExcelReport;
+import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.DtoHonorariosOferta;
 import es.pfsgroup.plugin.rem.model.DtoOfertantesOferta;
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.oferta.NotificationOfertaManager;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaDto;
@@ -54,6 +57,9 @@ public class OfertasController {
 
 	@Autowired
 	private RestApi restApi;
+	
+	@Autowired
+	private ActivoDao activoDao;
 
 	private final Log logger = LogFactory.getLog(getClass());
 
@@ -301,6 +307,18 @@ public class OfertasController {
 			model.put("data", ofertaApi.checkPedirDoc(idActivo,idAgrupacion,idExpediente, dniComprador, codtipoDoc));
 			model.put("comprador",ofertaApi.getClienteGDPRByTipoDoc(dniComprador, codtipoDoc));
 			model.put("compradorId", expedienteComercialApi.getCompradorIdByDocumento(dniComprador, codtipoDoc));
+			if(!Checks.esNulo(idActivo)) {
+				Activo activo = activoDao.get(idActivo);
+				if(DDCartera.CODIGO_CARTERA_CERBERUS.equals(activo.getCartera().getCodigo())
+						|| DDCartera.CODIGO_CARTERA_GIANTS.equals(activo.getCartera().getCodigo())
+						|| DDCartera.CODIGO_CARTERA_TANGO.equals(activo.getCartera().getCodigo())
+						|| DDCartera.CODIGO_CARTERA_GALEON.equals(activo.getCartera().getCodigo())) {
+					model.put("carteraInternacional", true);
+				} else {
+					model.put("carteraInternacional", false);
+				}
+				
+			}
 			model.put("success", true);
 		} catch (Exception e) {
 			logger.error("Error en ofertasController", e);

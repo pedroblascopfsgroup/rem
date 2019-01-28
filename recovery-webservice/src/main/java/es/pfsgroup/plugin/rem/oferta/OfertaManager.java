@@ -3237,10 +3237,10 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					} else if (!Checks.esNulo(clienteCom.getTransferenciasInternacionales()) && !clienteCom.getTransferenciasInternacionales()) {
 						return false;
 					} else if (Checks.esNulo(clienteCom.getTransferenciasInternacionales())) {
-						return  DDCartera.CODIGO_CARTERA_CERBERUS.equals(activo.getCartera())
-								|| DDCartera.CODIGO_CARTERA_GIANTS.equals(activo.getCartera())
-								|| DDCartera.CODIGO_CARTERA_TANGO.equals(activo.getCartera())
-								|| DDCartera.CODIGO_CARTERA_GALEON.equals(activo.getCartera());
+						return  DDCartera.CODIGO_CARTERA_CERBERUS.equals(activo.getCartera().getCodigo())
+								|| DDCartera.CODIGO_CARTERA_GIANTS.equals(activo.getCartera().getCodigo())
+								|| DDCartera.CODIGO_CARTERA_TANGO.equals(activo.getCartera().getCodigo())
+								|| DDCartera.CODIGO_CARTERA_GALEON.equals(activo.getCartera().getCodigo());
 					}
 				} else {
 					return false;

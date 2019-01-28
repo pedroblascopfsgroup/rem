@@ -1392,6 +1392,7 @@ Ext
 														height : 100,
 														align : 't'
 													});
+											grid.up('anyadirnuevaofertaactivoadjuntardocumento').down('button[itemId=btnFinalizar]').disable();
 										},
 										failure : function(a, operation,
 												context) {
@@ -4893,161 +4894,170 @@ Ext
 	
 	existeCliente: function(btn){
 		var me = this;
-		me.getView().mask(HreRem.i18n("msg.mask.loading"));
-		var ventanaWizard;
-		var ventanaAltaWizard;
-		var idActivo,idAgrupacion;
-		var idExpediente = null;
-		if(!Ext.isEmpty(btn.up('wizardaltaoferta'))){
-			if(!Ext.isEmpty(btn.up('wizardaltaoferta').oferta.data.idActivo)){
-				idActivo = btn.up('wizardaltaoferta').oferta.data.idActivo;
+		var form = btn.up('anyadirnuevaofertadocumento').getForm();
+		if(form.isValid()){
+			me.getView().mask(HreRem.i18n("msg.mask.loading"));
+			var ventanaWizard;
+			var ventanaAltaWizard;
+			var idActivo,idAgrupacion;
+			var idExpediente = null;
+			if(!Ext.isEmpty(btn.up('wizardaltaoferta'))){
+				if(!Ext.isEmpty(btn.up('wizardaltaoferta').oferta.data.idActivo)){
+					idActivo = btn.up('wizardaltaoferta').oferta.data.idActivo;
+				}
+				if(!Ext.isEmpty(btn.up('wizardaltaoferta').oferta.data.idAgrupacion)){
+					idAgrupacion= btn.up('wizardaltaoferta').oferta.data.idAgrupacion	
+				}	
+			}else{
+				idExpediente= btn.up('wizardaltacomprador').expediente.id;
 			}
-			if(!Ext.isEmpty(btn.up('wizardaltaoferta').oferta.data.idAgrupacion)){
-				idAgrupacion= btn.up('wizardaltaoferta').oferta.data.idAgrupacion	
-			}	
-		}else{
-			idExpediente= btn.up('wizardaltacomprador').expediente.id;
+			url =  $AC.getRemoteUrl('ofertas/checkPedirDoc');
+			var datosForm = form.getValues();
+			var codtipoDoc= datosForm.comboTipoDocumento;
+			var dniComprador= datosForm.numDocumentoCliente;
+			Ext.Ajax.request({
+	    		url: url,
+				method : 'POST',
+	    		params: {idActivo: idActivo,idAgrupacion: idAgrupacion,idExpediente: idExpediente,dniComprador:dniComprador,codtipoDoc:codtipoDoc},
+	    		success: function(response, opts){
+	    			var datos = Ext.decode(response.responseText);
+	    			var pedirDoc = Ext.decode(response.responseText).data;
+	    			var comprador=datos.comprador;
+	    			var ventanaWizard = null;
+	    			var carteraInternacional = datos.carteraInternacional;
+	    			var ventanaAnyadirOferta;    			
+	    			
+	    			if(!Ext.isEmpty(btn.up('wizardaltaoferta'))){
+	    				ventanaWizard = btn.up('wizardaltaoferta');
+	    				ventanaAnyadirOferta = ventanaWizard.down('anyadirnuevaofertadetalle');
+	    				
+	    				ventanaAnyadirOferta.getForm().reset();
+	    				if(!Ext.isEmpty(pedirDoc)){
+	        				ventanaAnyadirOferta.getForm().findField('pedirDoc').setValue(pedirDoc);
+	        				if(pedirDoc == "true"){
+	        					ventanaWizard.down('button[itemId=btnGuardar]').setText("Crear");
+	        				}else{
+	        					ventanaWizard.down('button[itemId=btnGuardar]').setText("Continuar");
+	        				}
+	        			}
+	        			
+	        			if(!Ext.isEmpty(comprador)){
+	        				
+	        				if(!Ext.isEmpty(comprador.nombreCliente)){
+	            				ventanaAnyadirOferta.getForm().findField('nombreCliente').setValue(comprador.nombreCliente);
+	                			ventanaAnyadirOferta.getForm().findField('nombreCliente').setDisabled('disabled');
+	            			}
+	            			if(!Ext.isEmpty(comprador.apellidosCliente)){
+	            				ventanaAnyadirOferta.getForm().findField('apellidosCliente').setValue(comprador.apellidosCliente);
+	            				ventanaAnyadirOferta.getForm().findField('apellidosCliente').setDisabled('disabled');
+	            			}            			
+	            			if(!Ext.isEmpty(comprador.razonSocial)){
+	            				ventanaAnyadirOferta.getForm().findField('razonSocialCliente').setValue(comprador.razonSocial);
+	            				ventanaAnyadirOferta.getForm().findField('razonSocialCliente').setDisabled('disabled');
+	            			}
+	            			if(!Ext.isEmpty(comprador.documento)){
+	            				ventanaAnyadirOferta.getForm().findField('numDocumentoCliente').setValue(comprador.documento);
+	            				ventanaAnyadirOferta.getForm().findField('numDocumentoCliente').setDisabled('disabled');
+	            			}
+	            			if(!Ext.isEmpty(comprador.tipoDocumentoCodigo)){
+	            				ventanaAnyadirOferta.getForm().findField('comboTipoDocumento').setValue(comprador.tipoDocumentoCodigo);
+	            				ventanaAnyadirOferta.getForm().findField('comboTipoDocumento').setDisabled('disabled');
+	            			}
+	            			if(!Ext.isEmpty(comprador.tipoPersonaCodigo)){
+	            				ventanaAnyadirOferta.getForm().findField('comboTipoPersona').setValue(comprador.tipoPersonaCodigo);
+	            				ventanaAnyadirOferta.getForm().findField('comboTipoPersona').setDisabled('disabled');
+	            			}
+	            			if(!Ext.isEmpty(comprador.estadoCivilCodigo)){
+	            				ventanaAnyadirOferta.getForm().findField('comboEstadoCivil').setValue(comprador.estadoCivilCodigo);
+	            				ventanaAnyadirOferta.getForm().findField('comboEstadoCivil').setDisabled('disabled');
+	            			}
+	            			if(!Ext.isEmpty(comprador.regimenMatrimonialCodigo)){
+	            				ventanaAnyadirOferta.getForm().findField('comboRegimenMatrimonial').setValue(comprador.regimenMatrimonialCodigo);
+	            				ventanaAnyadirOferta.getForm().findField('comboRegimenMatrimonial').setDisabled('disabled');
+	            			}
+	            			if(!Ext.isEmpty(comprador.codigoPrescriptor)){
+	            				ventanaAnyadirOferta.getForm().findField('codigoPrescriptor').setValue(comprador.codigoPrescriptor);
+	            				ventanaAnyadirOferta.getForm().findField('codigoPrescriptor').setDisabled('disabled');
+	            			}
+	            			if(!Ext.isEmpty(comprador.cesionDatos)){
+	            				ventanaAnyadirOferta.getForm().findField('cesionDatos').setValue(comprador.cesionDatos);
+	            			}
+	            			if(!Ext.isEmpty(comprador.comunicacionTerceros)){
+	            				ventanaAnyadirOferta.getForm().findField('comunicacionTerceros').setValue(comprador.comunicacionTerceros);
+	            			}
+	            			if(!Ext.isEmpty(comprador.transferenciasInternacionales)){
+	            				ventanaAnyadirOferta.getForm().findField('transferenciasInternacionales').setValue(comprador.transferenciasInternacionales);
+	            			}
+	            			if(!Ext.isEmpty(comprador.direccion)){
+	            				ventanaAnyadirOferta.getForm().findField('direccion').setValue(comprador.direccion);
+	            				ventanaAnyadirOferta.getForm().findField('direccion').setDisabled('disabled');
+	            			}
+	            			if(!Ext.isEmpty(comprador.telefono)){
+	            				ventanaAnyadirOferta.getForm().findField('telefono').setValue(comprador.telefono);
+	            				ventanaAnyadirOferta.getForm().findField('telefono').setDisabled('disabled');
+	            			}
+	            			if(!Ext.isEmpty(comprador.email)){
+	            				ventanaAnyadirOferta.getForm().findField('email').setValue(comprador.email);
+	            				ventanaAnyadirOferta.getForm().findField('email').setDisabled('disabled');
+	            			}
+	            			
+	        			}
+	    			}else{
+	    				
+	    				if(!Ext.isEmpty(btn.up('wizardaltacomprador'))){ 
+	    					
+	    				   ventanaWizard = btn.up('wizardaltacomprador');
+	    				   ventanaAltaWizard = ventanaWizard.down('datoscompradorwizard');
+	    				   
+	    				   if(!Ext.isEmpty(pedirDoc)){
+	    					   ventanaAltaWizard.getForm().findField('pedirDoc').setValue(pedirDoc);
+	           				   if(pedirDoc == "true"){
+	           					  ventanaAltaWizard.down('button[itemId=btnCrear]').setText("Crear");
+	           				   }else{
+	           					  ventanaAltaWizard.down('button[itemId=btnCrear]').setText("Continuar");
+	           				   }
+	           		       }
+	    				   
+	    				   if(!Ext.isEmpty(datos.compradorId)){
+	    					   ventanaAltaWizard.idComprador=datos.compradorId; 
+	    				   } 
+	    				   else{    		
+	        				   form = ventanaWizard.down('anyadirnuevaofertadocumento').form;
+	        				   ventanaAltaWizard.getForm().findField('numDocumento').setValue(form.findField('numDocumentoCliente').getValue());
+	        				   ventanaAltaWizard.getForm().findField('numDocumento').setDisabled(true);
+	        				   ventanaAltaWizard.getForm().findField('codTipoDocumento').setValue(form.findField('comboTipoDocumento').getValue());
+	        				   ventanaAltaWizard.getForm().findField('codTipoDocumento').setDisabled(true);
+	    				   }    
+	    				   
+	    				   if(!Ext.isEmpty(comprador)){
+	    					   if(!Ext.isEmpty(comprador.cesionDatos)){
+	    					      ventanaAltaWizard.getForm().findField('cesionDatosHaya').setValue(comprador.cesionDatos);
+	    					   }
+	    					   if(!Ext.isEmpty(comprador.comunicacionTerceros)){
+	        				     ventanaAltaWizard.getForm().findField('comunicacionTerceros').setValue(comprador.comunicacionTerceros);
+	    					   }
+	        				   if(!Ext.isEmpty(comprador.transferenciasInternacionales)){
+	        				     ventanaAltaWizard.getForm().findField('transferenciasInternacionales').setValue(comprador.transferenciasInternacionales);
+	        				   }
+	    				   }    			
+	    			   }
+	    			}
+	    			
+	    			if(!Ext.isEmpty(datos.carteraInternacional)){
+	    				ventanaAdjuntarDocumento = ventanaWizard.down('anyadirnuevaofertaactivoadjuntardocumento');
+	    				ventanaAdjuntarDocumento.getForm().findField('carteraInternacional').setValue(datos.carteraInternacional);
+ 				    } 
+	    			var wizard = btn.up().up().up();
+	    			var layout = wizard.getLayout();
+	    			me.getView().unmask();
+	    			layout["next"]();
+	    		},
+	
+			 	failure: function(record, operation) {
+			 		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+			    }
+	    	});
 		}
-		url =  $AC.getRemoteUrl('ofertas/checkPedirDoc');
-		var datosForm = btn.up('anyadirnuevaofertadocumento').getForm().getValues();
-		var codtipoDoc= datosForm.comboTipoDocumento;
-		var dniComprador= datosForm.numDocumentoCliente;
-		Ext.Ajax.request({
-    		url: url,
-			method : 'POST',
-    		params: {idActivo: idActivo,idAgrupacion: idAgrupacion,idExpediente: idExpediente,dniComprador:dniComprador,codtipoDoc:codtipoDoc},
-    		success: function(response, opts){
-    			var datos = Ext.decode(response.responseText);
-    			var pedirDoc = Ext.decode(response.responseText).data;
-    			var comprador=datos.comprador;
-    			var ventanaAnyadirOferta;    			
-    			
-    			if(!Ext.isEmpty(btn.up('wizardaltaoferta'))){
-    				ventanaWizard = btn.up('wizardaltaoferta');
-    				ventanaAnyadirOferta = ventanaWizard.down('anyadirnuevaofertadetalle');
-    				
-    				ventanaAnyadirOferta.getForm().reset();
-    				if(!Ext.isEmpty(pedirDoc)){
-        				ventanaAnyadirOferta.getForm().findField('pedirDoc').setValue(pedirDoc);
-        				if(pedirDoc == "true"){
-        					ventanaWizard.down('button[itemId=btnGuardar]').setText("Crear");
-        				}else{
-        					ventanaWizard.down('button[itemId=btnGuardar]').setText("Continuar");
-        				}
-        			}
-        			
-        			if(!Ext.isEmpty(comprador)){
-        				
-        				if(!Ext.isEmpty(comprador.nombreCliente)){
-            				ventanaAnyadirOferta.getForm().findField('nombreCliente').setValue(comprador.nombreCliente);
-                			ventanaAnyadirOferta.getForm().findField('nombreCliente').setDisabled('disabled');
-            			}
-            			if(!Ext.isEmpty(comprador.apellidosCliente)){
-            				ventanaAnyadirOferta.getForm().findField('apellidosCliente').setValue(comprador.apellidosCliente);
-            				ventanaAnyadirOferta.getForm().findField('apellidosCliente').setDisabled('disabled');
-            			}            			
-            			if(!Ext.isEmpty(comprador.razonSocial)){
-            				ventanaAnyadirOferta.getForm().findField('razonSocialCliente').setValue(comprador.razonSocial);
-            				ventanaAnyadirOferta.getForm().findField('razonSocialCliente').setDisabled('disabled');
-            			}
-            			if(!Ext.isEmpty(comprador.documento)){
-            				ventanaAnyadirOferta.getForm().findField('numDocumentoCliente').setValue(comprador.documento);
-            				ventanaAnyadirOferta.getForm().findField('numDocumentoCliente').setDisabled('disabled');
-            			}
-            			if(!Ext.isEmpty(comprador.tipoDocumentoCodigo)){
-            				ventanaAnyadirOferta.getForm().findField('comboTipoDocumento').setValue(comprador.tipoDocumentoCodigo);
-            				ventanaAnyadirOferta.getForm().findField('comboTipoDocumento').setDisabled('disabled');
-            			}
-            			if(!Ext.isEmpty(comprador.tipoPersonaCodigo)){
-            				ventanaAnyadirOferta.getForm().findField('comboTipoPersona').setValue(ventanaAnyadirOferta.getForm().findField('comboTipoPersona').getStore().getData().find('id',comprador.tipoPersonaCodigo));
-            				ventanaAnyadirOferta.getForm().findField('comboTipoPersona').setDisabled('disabled');
-            			}
-            			if(!Ext.isEmpty(comprador.estadoCivilCodigo)){
-            				ventanaAnyadirOferta.getForm().findField('comboEstadoCivil').setValue(ventanaAnyadirOferta.getForm().findField('comboEstadoCivil').getStore().getData().find('id',comprador.estadoCivilCodigo));
-            				ventanaAnyadirOferta.getForm().findField('comboEstadoCivil').setDisabled('disabled');
-            			}
-            			if(!Ext.isEmpty(comprador.regimenMatrimonialCodigo)){
-            				ventanaAnyadirOferta.getForm().findField('comboRegimenMatrimonial').setValue(ventanaAnyadirOferta.getForm().findField('comboRegimenMatrimonial').getStore().getData().find('id',comprador.regimenMatrimonialCodigo));
-            				ventanaAnyadirOferta.getForm().findField('comboRegimenMatrimonial').setDisabled('disabled');
-            			}
-            			if(!Ext.isEmpty(comprador.codigoPrescriptor)){
-            				ventanaAnyadirOferta.getForm().findField('codigoPrescriptor').setValue(comprador.codigoPrescriptor);
-            				ventanaAnyadirOferta.getForm().findField('codigoPrescriptor').setDisabled('disabled');
-            			}
-            			if(!Ext.isEmpty(comprador.cesionDatos)){
-            				ventanaAnyadirOferta.getForm().findField('cesionDatos').setValue(comprador.cesionDatos);
-            			}
-            			if(!Ext.isEmpty(comprador.comunicacionTerceros)){
-            				ventanaAnyadirOferta.getForm().findField('comunicacionTerceros').setValue(comprador.comunicacionTerceros);
-            			}
-            			if(!Ext.isEmpty(comprador.transferenciasInternacionales)){
-            				ventanaAnyadirOferta.getForm().findField('transferenciasInternacionales').setValue(comprador.transferenciasInternacionales);
-            			}
-            			if(!Ext.isEmpty(comprador.direccion)){
-            				ventanaAnyadirOferta.getForm().findField('direccion').setValue(comprador.direccion);
-            				ventanaAnyadirOferta.getForm().findField('direccion').setDisabled('disabled');
-            			}
-            			if(!Ext.isEmpty(comprador.telefono)){
-            				ventanaAnyadirOferta.getForm().findField('telefono').setValue(comprador.telefono);
-            				ventanaAnyadirOferta.getForm().findField('telefono').setDisabled('disabled');
-            			}
-            			if(!Ext.isEmpty(comprador.email)){
-            				ventanaAnyadirOferta.getForm().findField('email').setValue(comprador.email);
-            				ventanaAnyadirOferta.getForm().findField('email').setDisabled('disabled');
-            			}
-            			
-        			}
-    			}else{
-    				
-    				if(!Ext.isEmpty(btn.up('wizardaltacomprador'))){ 
-    					
-    				   ventanaWizard = btn.up('wizardaltacomprador');
-    				   ventanaAltaWizard = ventanaWizard.down('datoscompradorwizard');
-    				   
-    				   if(!Ext.isEmpty(pedirDoc)){
-    					   ventanaAltaWizard.getForm().findField('pedirDoc').setValue(pedirDoc);
-           				   if(pedirDoc == "true"){
-           					  ventanaAltaWizard.down('button[itemId=btnCrear]').setText("Crear");
-           				   }else{
-           					  ventanaAltaWizard.down('button[itemId=btnCrear]').setText("Continuar");
-           				   }
-           		       }
-    				   
-    				   if(!Ext.isEmpty(datos.compradorId)){
-    					   ventanaAltaWizard.idComprador=datos.compradorId; 
-    				   } 
-    				   else{    		
-        				   form = ventanaWizard.down('anyadirnuevaofertadocumento').form;
-        				   ventanaAltaWizard.getForm().findField('numDocumento').setValue(form.findField('numDocumentoCliente').getValue()); 
-        				   ventanaAltaWizard.getForm().findField('numDocumento').setDisabled(true); 
-        				   ventanaAltaWizard.getForm().findField('codTipoDocumento').setValue(form.findField('comboTipoDocumento').getValue());
-        				   ventanaAltaWizard.getForm().findField('codTipoDocumento').setDisabled(true);
-    				   }    
-    				   
-    				   if(!Ext.isEmpty(comprador)){
-    					   if(!Ext.isEmpty(comprador.cesionDatos)){
-    					      ventanaAltaWizard.getForm().findField('cesionDatosHaya').setValue(comprador.cesionDatos);
-    					   }
-    					   if(!Ext.isEmpty(comprador.comunicacionTerceros)){
-        				     ventanaAltaWizard.getForm().findField('comunicacionTerceros').setValue(comprador.comunicacionTerceros);
-    					   }
-        				   if(!Ext.isEmpty(comprador.transferenciasInternacionales)){
-        				     ventanaAltaWizard.getForm().findField('transferenciasInternacionales').setValue(comprador.transferenciasInternacionales);
-        				   }
-    				   }    			
-    			   }
-    			}
-    			var wizard = btn.up().up().up();
-    			var layout = wizard.getLayout();
-    			me.getView().unmask();
-    			layout["next"]();
-    		},
-
-		 	failure: function(record, operation) {
-		 		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-		    }
-    	});
-		    
 	},
 
     onSaveFormularioCompletoTabPatrimonio: function(btn, form){
@@ -5200,71 +5210,74 @@ Ext
  		var ventanaDetalle = btn.up().up(),
  		ventanaAlta = ventanaDetalle.up().xtype, 
  		url = null, ventanaWizard = null;
+ 		var form = ventanaDetalle.getForm();
  		
- 		if (ventanaDetalle.config.xtype.indexOf('activoadjuntardocumento') >= 0 && ventanaAlta.indexOf('wizardaltacomprador') < 0) {
- 			ventanaDetalle.setController('activodetalle');
-			var cesionDatos = ventanaDetalle.getForm().findField('cesionDatos').getValue(),
-			comunicacionTerceros = ventanaDetalle.getForm().findField('comunicacionTerceros').getValue(),
-			transferenciasInternacionales = ventanaDetalle.getForm().findField('transferenciasInternacionales').getValue();
- 			ventanaDetalle.up().down('anyadirnuevaofertadetalle').getForm().findField('cesionDatos').setValue(cesionDatos);
- 			ventanaDetalle.up().down('anyadirnuevaofertadetalle').getForm().findField('comunicacionTerceros').setValue(comunicacionTerceros);
- 			ventanaDetalle.up().down('anyadirnuevaofertadetalle').getForm().findField('transferenciasInternacionales').setValue(transferenciasInternacionales);
- 			
- 			me.onClickBotonGuardarOferta(btn);
- 			
- 		} else if (ventanaDetalle.config.xtype.indexOf('detalle') >= 0) {
- 			
- 			ventanaDetalle.setController('activodetalle');
- 			pedirDocValor = ventanaDetalle.getForm().findField('pedirDoc').getValue(); 
- 			
- 			if (pedirDocValor == 'false'){
- 				var docCliente = me.getViewModel().get("oferta.numDocumentoCliente");
- 				me.getView().mask(HreRem.i18n("msg.mask.loading"));
- 				url = $AC.getRemoteUrl('activooferta/getListAdjuntos');
- 				ventanaWizard = btn.up('wizardaltaoferta'),
-    			idActivo = ventanaWizard.oferta.data.idActivo,
-    			idAgrupacion = ventanaWizard.oferta.data.idAgrupacion;
- 			     
- 				Ext.Ajax.request({
- 	    		     url: url,
- 	    			 method : 'GET',
- 	    			 waitMsg: HreRem.i18n('msg.mask.loading'),
- 	    		     params: {docCliente: docCliente, idActivo: idActivo, idAgrupacion: idAgrupacion},
- 	    		
- 	    		     success: function(response, opts) {
- 	    		    	 data = Ext.decode(response.responseText);
- 	    		    	 if(!Ext.isEmpty(data.data)){
- 	    		    		ventanaWizard.down('anyadirnuevaofertaactivoadjuntardocumento').getForm().findField('docOfertaComercial').setValue(data.data[0].nombre);
- 	    		    		ventanaWizard.down('anyadirnuevaofertaactivoadjuntardocumento').down().down('panel').down('button').show();
- 	    		    	 }
- 	    		     },
-
- 	    			 failure: function(record, operation) {
- 	    			 	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
- 	    			 }
- 	    		     
- 	    		});
- 				
- 				var valorCesionDatos = ventanaDetalle.getForm().findField('cesionDatos').getValue(),
-     			valorComTerceros = ventanaDetalle.getForm().findField('comunicacionTerceros').getValue(),
-     			valorTransferInternacionales = ventanaDetalle.getForm().findField('transferenciasInternacionales').getValue();
-     			ventanaDetalle.up().down('anyadirnuevaofertaactivoadjuntardocumento').getForm().findField('cesionDatos').setValue(valorCesionDatos);
-     			ventanaDetalle.up().down('anyadirnuevaofertaactivoadjuntardocumento').getForm().findField('comunicacionTerceros').setValue(valorComTerceros);
-     			ventanaDetalle.up().down('anyadirnuevaofertaactivoadjuntardocumento').getForm().findField('transferenciasInternacionales').setValue(valorTransferInternacionales);
-     			
-     			var wizard = btn.up().up().up();
-     			var layout = wizard.getLayout();
-     			me.getView().unmask();
-     			layout["next"]();
-     			
-     		}else{
-     			
-     			me.onClickBotonGuardarOferta(btn);
-     		}
-
- 		}else if (ventanaDetalle.config.xtype.indexOf('activoadjuntardocumento') >= 0 && ventanaAlta.indexOf('wizardaltacomprador') >= 0) {
- 			ventanaDetalle.setController('expedientedetalle');
- 			ventanaDetalle.getController().onClickBotonCrearComprador(btn);
+ 		if(form.isValid()){
+	 		if (ventanaDetalle.config.xtype.indexOf('activoadjuntardocumento') >= 0 && ventanaAlta.indexOf('wizardaltacomprador') < 0) {
+	 			ventanaDetalle.setController('activodetalle');
+				var cesionDatos = form.findField('cesionDatos').getValue(),
+				comunicacionTerceros = form.findField('comunicacionTerceros').getValue(),
+				transferenciasInternacionales = form.findField('transferenciasInternacionales').getValue();
+	 			ventanaDetalle.up().down('anyadirnuevaofertadetalle').getForm().findField('cesionDatos').setValue(cesionDatos);
+	 			ventanaDetalle.up().down('anyadirnuevaofertadetalle').getForm().findField('comunicacionTerceros').setValue(comunicacionTerceros);
+	 			ventanaDetalle.up().down('anyadirnuevaofertadetalle').getForm().findField('transferenciasInternacionales').setValue(transferenciasInternacionales);
+	 			
+	 			me.onClickBotonGuardarOferta(btn);
+	 			
+	 		} else if (ventanaDetalle.config.xtype.indexOf('detalle') >= 0) {
+	 			
+	 			ventanaDetalle.setController('activodetalle');
+	 			pedirDocValor = form.findField('pedirDoc').getValue(); 
+	 			
+	 			if (pedirDocValor == 'false'){
+	 				var docCliente = me.getViewModel().get("oferta.numDocumentoCliente");
+	 				me.getView().mask(HreRem.i18n("msg.mask.loading"));
+	 				url = $AC.getRemoteUrl('activooferta/getListAdjuntos');
+	 				ventanaWizard = btn.up('wizardaltaoferta'),
+	    			idActivo = ventanaWizard.oferta.data.idActivo,
+	    			idAgrupacion = ventanaWizard.oferta.data.idAgrupacion;
+	 			     
+	 				Ext.Ajax.request({
+	 	    		     url: url,
+	 	    			 method : 'GET',
+	 	    			 waitMsg: HreRem.i18n('msg.mask.loading'),
+	 	    		     params: {docCliente: docCliente, idActivo: idActivo, idAgrupacion: idAgrupacion},
+	 	    		
+	 	    		     success: function(response, opts) {
+	 	    		    	 data = Ext.decode(response.responseText);
+	 	    		    	 if(!Ext.isEmpty(data.data)){
+	 	    		    		ventanaWizard.down('anyadirnuevaofertaactivoadjuntardocumento').getForm().findField('docOfertaComercial').setValue(data.data[0].nombre);
+	 	    		    		ventanaWizard.down('anyadirnuevaofertaactivoadjuntardocumento').down().down('panel').down('button').show();
+	 	    		    	 }
+	 	    		     },
+	
+	 	    			 failure: function(record, operation) {
+	 	    			 	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+	 	    			 }
+	 	    		     
+	 	    		});
+	 				
+	 				var valorCesionDatos = form.findField('cesionDatos').getValue(),
+	     			valorComTerceros = form.findField('comunicacionTerceros').getValue(),
+	     			valorTransferInternacionales = form.findField('transferenciasInternacionales').getValue();
+	     			ventanaDetalle.up().down('anyadirnuevaofertaactivoadjuntardocumento').getForm().findField('cesionDatos').setValue(valorCesionDatos);
+	     			ventanaDetalle.up().down('anyadirnuevaofertaactivoadjuntardocumento').getForm().findField('comunicacionTerceros').setValue(valorComTerceros);
+	     			ventanaDetalle.up().down('anyadirnuevaofertaactivoadjuntardocumento').getForm().findField('transferenciasInternacionales').setValue(valorTransferInternacionales);
+	     			
+	     			var wizard = btn.up().up().up();
+	     			var layout = wizard.getLayout();
+	     			me.getView().unmask();
+	     			layout["next"]();
+	     			
+	     		}else{
+	     			
+	     			me.onClickBotonGuardarOferta(btn);
+	     		}
+	
+	 		}else if (ventanaDetalle.config.xtype.indexOf('activoadjuntardocumento') >= 0 && ventanaAlta.indexOf('wizardaltacomprador') >= 0) {
+	 			ventanaDetalle.setController('expedientedetalle');
+	 			ventanaDetalle.getController().onClickBotonCrearComprador(btn);
+	 		}
  		}
  	},
      	
@@ -5314,8 +5327,10 @@ Ext
  	        		   me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
  	        		   config.url=$AC.getWebPath()+"activo/generarDocGDPR."+$AC.getUrlPattern();
  	 	        	   me.fireEvent("downloadFile", config);
+ 	 	        	   btn.up('anyadirnuevaofertaactivoadjuntardocumento').down('button[itemId=btnSubirDoc]').enable();
  	        	   }else{
  	        		  me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));//TODO DEFINIR MENSAJE ERROR
+ 	        		  btn.up('anyadirnuevaofertaactivoadjuntardocumento').down('button[itemId=btnSubirDoc]').disable();
  	        	   }
  	           },
  	           failure: function(record, operation) {

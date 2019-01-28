@@ -163,6 +163,7 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoOfertacomercial', {
 	                		    	 if(!Ext.isEmpty(data.data[0])){
 	                		    	 	ventanaWizard.down('anyadirnuevaofertaactivoadjuntardocumento').getForm().findField('docOfertaComercial').setValue(data.data[0].nombre);
 	                		    	 	ventanaWizard.down('anyadirnuevaofertaactivoadjuntardocumento').down().down('panel').down('button').show();
+	                		    	 	ventanaWizard.down('anyadirnuevaofertaactivoadjuntardocumento').down('button[itemId=btnFinalizar]').enable();
 	                		    	 	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
 	                		    	 }
 	                		     },

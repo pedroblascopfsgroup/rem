@@ -2120,36 +2120,38 @@ Ext
 							
 							if (pedirDocValor == 'false'){
 
-								url = $AC.getRemoteUrl('expedientecomercial/getListAdjuntosComprador');
-			     				
-			     				idExpediente = comprador.data.idExpedienteComercial;
-			     				var docCliente= comprador.data.numDocumento;
-			     				Ext.Ajax.request({
-			    	    		     url: url,
-			    	    			 method : 'GET',
-			    	    			 waitMsg: HreRem.i18n('msg.mask.loading'),
-			    	    		     params: {docCliente: docCliente, idExpedienteComercial: idExpediente},
-			    	    		
-			    	    		     success: function(response, opts) {
-			    	    		    	 data = Ext.decode(response.responseText);
-			    	    		    	 if(!Ext.isEmpty(data.data)){
-			    	    		    		 ventanaWizard.down('anyadirnuevaofertaactivoadjuntardocumento').getForm().findField('docOfertaComercial').setValue(data.data[0].nombre);
-			    	    		    		 ventanaWizard.down('anyadirnuevaofertaactivoadjuntardocumento').down().down('panel').down('button').show();			    	    		 
-			    	    		    	 }
-			    	    		     },
-
-			    	    			 failure: function(record, operation) {
-			    	    			 	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-			    	    			 }
-			    	    		});
-			     				
-			     				ventanaWizard.down('anyadirnuevaofertaactivoadjuntardocumento').getForm().findField('cesionDatos').setValue(comprador.data.cesionDatosHaya);
-			     				ventanaWizard.down('anyadirnuevaofertaactivoadjuntardocumento').getForm().findField('comunicacionTerceros').setValue(comprador.data.comunicacionTerceros);
-			     				ventanaWizard.down('anyadirnuevaofertaactivoadjuntardocumento').getForm().findField('transferenciasInternacionales').setValue(comprador.data.transferenciasInternacionales);
-			     				
-			     				var wizard = btn.up().up().up();
-			         			var layout = wizard.getLayout();
-			         			layout["next"]();
+								if (form.isValid()) {
+									url = $AC.getRemoteUrl('expedientecomercial/getListAdjuntosComprador');
+				     				
+				     				idExpediente = comprador.data.idExpedienteComercial;
+				     				var docCliente= comprador.data.numDocumento;
+				     				Ext.Ajax.request({
+				    	    		     url: url,
+				    	    			 method : 'GET',
+				    	    			 waitMsg: HreRem.i18n('msg.mask.loading'),
+				    	    		     params: {docCliente: docCliente, idExpedienteComercial: idExpediente},
+				    	    		
+				    	    		     success: function(response, opts) {
+				    	    		    	 data = Ext.decode(response.responseText);
+				    	    		    	 if(!Ext.isEmpty(data.data)){
+				    	    		    		 ventanaWizard.down('anyadirnuevaofertaactivoadjuntardocumento').getForm().findField('docOfertaComercial').setValue(data.data[0].nombre);
+				    	    		    		 ventanaWizard.down('anyadirnuevaofertaactivoadjuntardocumento').down().down('panel').down('button').show();			    	    		 
+				    	    		    	 }
+				    	    		     },
+	
+				    	    			 failure: function(record, operation) {
+				    	    			 	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+				    	    			 }
+				    	    		});
+				     				
+				     				ventanaWizard.down('anyadirnuevaofertaactivoadjuntardocumento').getForm().findField('cesionDatos').setValue(comprador.data.cesionDatosHaya);
+				     				ventanaWizard.down('anyadirnuevaofertaactivoadjuntardocumento').getForm().findField('comunicacionTerceros').setValue(comprador.data.comunicacionTerceros);
+				     				ventanaWizard.down('anyadirnuevaofertaactivoadjuntardocumento').getForm().findField('transferenciasInternacionales').setValue(comprador.data.transferenciasInternacionales);
+				     				
+				     				var wizard = btn.up().up().up();
+				         			var layout = wizard.getLayout();
+				         			layout["next"]();
+								}
 			         			
 							}else{
 								

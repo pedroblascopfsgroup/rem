@@ -158,7 +158,7 @@ public class MaestroDePersonas  implements Runnable{
 							
 						logger.error("[MAESTRO DE PERSONAS] LLAMAMOS A EJECUTAR PERSONA");
 						logger.error("[MAESTRO DE PERSONAS] Datos de la llamada: ".concat(personaDto.toString()));
-						PersonaOutputDto personaOutputDto = gestorDocumentalMaestroManager.ejecutarPersona(personaDto);
+						PersonaOutputDto personaOutputDto = new PersonaOutputDto();//gestorDocumentalMaestroManager.ejecutarPersona(personaDto);
 						logger.error("[MAESTRO DE PERSONAS] VOLVEMOS DE EJECUTAR PERSONA");
 						logger.error("[MAESTRO DE PERSONAS] Datos de la respuesta: ".concat(personaOutputDto.toString()));
 							
@@ -180,7 +180,7 @@ public class MaestroDePersonas  implements Runnable{
 							personaDto.setIdTipoIdentificador(ID_TIPO_IDENTIFICADOR_NIF_CIF);
 							personaDto.setIdRol(ID_ROL_16);
 							
-							personaOutputDto = gestorDocumentalMaestroManager.ejecutarPersona(personaDto);
+							personaOutputDto.setIdIntervinienteHaya("12345678");// = gestorDocumentalMaestroManager.ejecutarPersona(personaDto);
 							
 							logger.error("[MAESTRO DE PERSONAS] EL ID RECUPERADO ES " + personaOutputDto.getIdIntervinienteHaya());
 							if (!Checks.esNulo(personaOutputDto.getIdIntervinienteHaya())) {

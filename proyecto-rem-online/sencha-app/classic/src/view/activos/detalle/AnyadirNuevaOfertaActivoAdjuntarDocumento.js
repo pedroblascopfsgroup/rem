@@ -38,9 +38,9 @@ Ext.define('HreRem.view.activos.detalle.AnyadirNuevaOfertaActivoAdjuntarDocument
     			layout["prev"]();
     		}
     	},
-    		{ itemId: 'btnGenerarDoc', text: 'Generar Documento', handler: 'onClickBotonGenerarDoc'},
-    		{ itemId: 'btnSubirDoc', text: 'Subir Documento', handler: 'abrirFormularioAdjuntarDocumentoOferta'},
-    		{ itemId: 'btnFinalizar', text: 'Finalizar', handler: 'onClickCrearOferta'}];
+    		{ itemId: 'btnGenerarDoc', text: 'Generar Documento', handler: 'onClickBotonGenerarDoc', disabled: true},
+    		{ itemId: 'btnSubirDoc', text: 'Subir Documento', handler: 'abrirFormularioAdjuntarDocumentoOferta', disabled: true},
+    		{ itemId: 'btnFinalizar', text: 'Finalizar', handler: 'onClickCrearOferta', disabled: false}];
     	
     	me.items = [
     		{
@@ -52,13 +52,38 @@ Ext.define('HreRem.view.activos.detalle.AnyadirNuevaOfertaActivoAdjuntarDocument
 				items :
 					[
 						{
+							xtype: 'checkboxfieldbase',
+							name: 'carteraInternacional',
+							hidden: true
+						},
+						{
 							xtype:'checkboxfieldbase',
 							fieldLabel: HreRem.i18n('wizard.oferta.documento.cesionDatos'),							
 							bind:		'{oferta.cesionDatosHaya}',
 							name:       'cesionDatos',
 							margin: '50px 0 0 200px',
 							reference: 'chkbxCesionDatosHaya',
-							readOnly: false
+							readOnly: false,
+							listeners: {
+	                              change: function (checkbox, newVal, oldVal) {
+	                            	  var esInternacional = checkbox.up('anyadirnuevaofertaactivoadjuntardocumento').getForm().findField('carteraInternacional').getValue();
+	                            	  var checkTransInternacionales = checkbox.up('anyadirnuevaofertaactivoadjuntardocumento').getForm().findField('transferenciasInternacionales').getValue();
+	                            	  if(checkbox.getValue()) {
+	                            		  if(esInternacional) {
+	                            			  if(checkTransInternacionales) {
+	                            				  checkbox.up('anyadirnuevaofertaactivoadjuntardocumento').down('button[itemId=btnGenerarDoc]').enable();
+	                            			  } else {
+	                            				  checkbox.up('anyadirnuevaofertaactivoadjuntardocumento').down('button[itemId=btnGenerarDoc]').disable();
+	                            			  }
+	                            			  
+	                            		  } else {
+	                            			  checkbox.up('anyadirnuevaofertaactivoadjuntardocumento').down('button[itemId=btnGenerarDoc]').enable();
+	                            		  }
+	                            	  } else {
+	                            		  checkbox.up('anyadirnuevaofertaactivoadjuntardocumento').down('button[itemId=btnGenerarDoc]').disable();
+	                            	  }
+	                              }
+	                          }
 						},
 						{
 							xtype:'checkboxfieldbase',
@@ -76,7 +101,21 @@ Ext.define('HreRem.view.activos.detalle.AnyadirNuevaOfertaActivoAdjuntarDocument
 							name:       'transferenciasInternacionales',
 							margin: '10px 0 0 200px',
 							reference: 'chkbxTransferenciasInternacionales',
-							readOnly: false
+							readOnly: false,
+							listeners: {
+	                              change: function (checkbox, newVal, oldVal) {
+	                            	  var esInternacional = checkbox.up('anyadirnuevaofertaactivoadjuntardocumento').getForm().findField('carteraInternacional').getValue();
+	                            	  var checkCesionDatos = checkbox.up('anyadirnuevaofertaactivoadjuntardocumento').getForm().findField('cesionDatos').getValue();
+	                            	  if(checkbox.getValue() && esInternacional && checkCesionDatos)
+	                            		  checkbox.up('anyadirnuevaofertaactivoadjuntardocumento').down('button[itemId=btnGenerarDoc]').enable();
+	                            	  else if (checkbox.getValue() && !esInternacional && checkCesionDatos)
+	                            		  checkbox.up('anyadirnuevaofertaactivoadjuntardocumento').down('button[itemId=btnGenerarDoc]').enable();
+	                            	  else if (!checkbox.getValue() && !esInternacional && checkCesionDatos)
+	                            		  checkbox.up('anyadirnuevaofertaactivoadjuntardocumento').down('button[itemId=btnGenerarDoc]').enable();
+	                            	  else
+	                            		  checkbox.up('anyadirnuevaofertaactivoadjuntardocumento').down('button[itemId=btnGenerarDoc]').disable();
+	                              }
+	                          }
 						},
 			    		{
 							xtype: 'panel',
@@ -90,7 +129,6 @@ Ext.define('HreRem.view.activos.detalle.AnyadirNuevaOfertaActivoAdjuntarDocument
 				    	         {
 				    	        	 xtype: 'textfieldbase',
 				    	        	 name: 'docOfertaComercial',
-				    	        	 id: 'docOfertaComercial',
 				    	        	 readOnly: true,
 				    	        	 padding: 10,
 				    	        	 style: 'overflow: hidden',

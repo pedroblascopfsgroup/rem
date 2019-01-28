@@ -67,8 +67,7 @@ Ext.define('HreRem.view.activos.detalle.PatrimonioActivo', {
 					xtype: 'buttontab',
         			itemId: 'botoneditar',
         		    handler	: 'onClickBotonEditar',
-        		    iconCls: 'edit-button-color'//,
-        		    //bind: {hidden: '{editing}'}
+        		    iconCls: 'edit-button-color'
         		},
         		{
         			xtype: 'buttontab',

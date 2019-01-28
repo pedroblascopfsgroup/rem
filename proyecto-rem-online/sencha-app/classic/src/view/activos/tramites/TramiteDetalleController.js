@@ -410,6 +410,7 @@ Ext.define('HreRem.view.activos.tramites.TramiteDetalleController', {
 							fn: function(btn) {
 								if (btn == 'yes') {
 									me.getView().mask(HreRem.i18n("msg.mask.loading"));
+									win.close();
 									var data;
 									Ext.Ajax.request({
 										url:url,
@@ -418,8 +419,7 @@ Ext.define('HreRem.view.activos.tramites.TramiteDetalleController', {
 									    data = Ext.decode(response.responseText);
 									    if(data.success == 'true') {
 									    	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-									    	me.getView().up('tabpanel').setDisabled(false);;
-									    	win.close();	
+									    	me.getView().up('tabpanel').setDisabled(false);	
 									    } else {
 									    	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.anulacion"));
 									   }

@@ -217,6 +217,7 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 				if (resultAdecuacion != null && !resultAdecuacion.isEmpty()) {
 					AdecuacionGencat adecuacionGencat = resultAdecuacion.get(0);
 					BeanUtils.copyProperties(gencatDto, adecuacionGencat);
+					gencatDto.setNecesitaReforma(adecuacionGencat.getNecesitaReforma());
 				}
 				
 				//Visita
@@ -1012,7 +1013,7 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 										&& DDEstadoComunicacionGencat.COD_SANCIONADO.equalsIgnoreCase(comGencat.getEstadoComunicacion().getDescripcion())
 										&& !Checks.esNulo(datoVista.getFecha_sancion())) {
 									
-									if(MIN_MESES > calculoDiferenciaFechasEnDias(fechaActual,datoVista.getFecha_sancion())){
+									if(fechaActual.after(comGencat.getFechaPrevistaSancion())){
 										
 										lanzarTramiteGENCAT(tramite, oferta, expComercial);
 										
@@ -1031,7 +1032,7 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 								if(!Checks.esNulo(comGencat.getEstadoComunicacion())
 										&& DDEstadoComunicacionGencat.COD_ANULADO.equals(comGencat.getEstadoComunicacion().getCodigo())
 										&& Checks.esNulo(datoVista.getFecha_anulacion())) {
-									if(MIN_MESES > calculoDiferenciaFechasEnDias(fechaActual,datoVista.getFecha_sancion())){
+									if(fechaActual.after(comGencat.getFechaPrevistaSancion())){
 										
 										lanzarTramiteGENCAT(tramite, oferta, expComercial);
 										
@@ -1069,7 +1070,7 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 		Long dias = diferenciaEn_ms / (1000 * 60 * 60 * 24);
 		return dias;
 	}
-	
+		
 	@Override
 	public void lanzarTramiteGENCAT(ActivoTramite tramite, Oferta oferta, ExpedienteComercial expedienteComercial) {
 		

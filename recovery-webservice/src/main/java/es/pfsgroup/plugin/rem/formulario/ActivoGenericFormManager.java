@@ -177,11 +177,6 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
         String[] valores = dto.getValues();
         TareaExterna tarea = dto.getForm().getTareaExterna();
 
-        //TareaNotificacion tareaPadre = (TareaNotificacion) executor.execute(ComunBusinessOperation.BO_TAREA_MGR_GET, tarea.getTareaPadre().getId());
-
-        //Procedimiento prc = tareaPadre.getProcedimiento();
-
-        //List<TareaExternaValor> listaValores = new ArrayList<TareaExternaValor>();
         for (int i = 0; i < valores.length; i++) {
             GenericFormItem item = dto.getForm().getItems().get(i);
             TareaExternaValor valor = new TareaExternaValor();

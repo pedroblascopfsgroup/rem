@@ -11,6 +11,7 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.plugin.rem.activo.dao.ComunicacionGencatDao;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
@@ -37,6 +38,9 @@ public class ComunicacionGencatManager extends AbstractEntityDao<ComunicacionGen
 	
 	@Autowired
 	private UserAssigantionServiceFactoryApi userAssigantionServiceFactoryApi;
+	
+	@Autowired
+	private ComunicacionGencatDao comunicacionGencatDao;
 	
 	
 	@Override
@@ -91,7 +95,9 @@ public class ComunicacionGencatManager extends AbstractEntityDao<ComunicacionGen
 		Filter filtroIdActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
 		Filter filtroEstadoTramite = genericDao.createFilter(FilterType.EQUALS, "estadoComunicacion.codigo", DDEstadoComunicacionGencat.COD_CREADO);
 		
-		return genericDao.getList(ComunicacionGencat.class, filtroBorrado, filtroIdActivo, filtroEstadoTramite).get(0);
+		ComunicacionGencat cmg = genericDao.get(ComunicacionGencat.class, filtroBorrado, filtroIdActivo, filtroEstadoTramite);
+		
+		return cmg;
 		
 	}
 

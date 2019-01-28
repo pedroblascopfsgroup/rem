@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.pfs.adjunto.model.Adjunto;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.capgemini.pfs.procesosJudiciales.TipoProcedimientoManager;
 import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Usuario;
@@ -30,18 +31,28 @@ import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
+import es.pfsgroup.plugin.rem.activo.dao.AdecuacionGencatDao;
 import es.pfsgroup.plugin.rem.activo.dao.ComunicacionGencatAdjuntoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ComunicacionGencatDao;
 import es.pfsgroup.plugin.rem.activo.dao.HistoricoComunicacionGencatAdjuntoDao;
 import es.pfsgroup.plugin.rem.activo.dao.NotificacionGencatDao;
+import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
+import es.pfsgroup.plugin.rem.api.ActivoAgrupacionActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.AdecuacionGencatApi;
+import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GencatApi;
+import es.pfsgroup.plugin.rem.api.NotificacionGencatApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.OfertaGencatApi;
+import es.pfsgroup.plugin.rem.api.TrabajoApi;
+import es.pfsgroup.plugin.rem.gastosExpediente.dao.GastosExpedienteDao;
+import es.pfsgroup.plugin.rem.api.ReclamacionGencatApi;
+import es.pfsgroup.plugin.rem.api.VisitaGencatApi;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
 import es.pfsgroup.plugin.rem.jbpm.activo.JBPMActivoTramiteManager;
 import es.pfsgroup.plugin.rem.model.Activo;
@@ -49,10 +60,12 @@ import es.pfsgroup.plugin.rem.model.ActivoAdjuntoActivo;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.AdecuacionGencat;
+import es.pfsgroup.plugin.rem.model.ClienteComercial;
 import es.pfsgroup.plugin.rem.model.Comprador;
 import es.pfsgroup.plugin.rem.model.CompradorExpediente;
 import es.pfsgroup.plugin.rem.model.ComunicacionGencat;
 import es.pfsgroup.plugin.rem.model.ComunicacionGencatAdjunto;
+import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoGencat;
 import es.pfsgroup.plugin.rem.model.DtoGencatSave;
@@ -61,6 +74,7 @@ import es.pfsgroup.plugin.rem.model.DtoNotificacionActivo;
 import es.pfsgroup.plugin.rem.model.DtoOfertasAsociadasActivo;
 import es.pfsgroup.plugin.rem.model.DtoReclamacionActivo;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.GastosExpediente;
 import es.pfsgroup.plugin.rem.model.HistoricoAdecuacionGencat;
 import es.pfsgroup.plugin.rem.model.HistoricoComunicacionGencat;
 import es.pfsgroup.plugin.rem.model.HistoricoComunicacionGencatAdjunto;
@@ -72,18 +86,24 @@ import es.pfsgroup.plugin.rem.model.NotificacionGencat;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.OfertaGencat;
 import es.pfsgroup.plugin.rem.model.ReclamacionGencat;
+import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VExpPreBloqueoGencat;
 import es.pfsgroup.plugin.rem.model.Visita;
 import es.pfsgroup.plugin.rem.model.VisitaGencat;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoComunicacionGencat;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDSancionGencat;
+import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoNotificacionGencat;
+import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
 
 @Service("gencatManager")
 public class GencatManager extends  BusinessOperationOverrider<GencatApi> implements GencatApi {
 	
 	protected static final Log logger = LogFactory.getLog(GencatManager.class);
+	
+	public static final String DD_TIPO_DOCUMENTO_CODIGO_NIF = "15";
 	
 	@Autowired
 	private NotificacionesGencatManager notificacionesGencat;
@@ -116,16 +136,28 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 	private NotificacionGencatDao motificacionGencatDao;
 	
 	@Autowired
+	private AdecuacionGencatDao adecuacionGencatDao;
+	
+	@Autowired
 	private UtilDiccionarioApi utilDiccionarioApi;
 	
 	@Autowired
 	private ComunicacionGencatDao comunicacionGencatDao;
-	
+		
 	@Autowired
 	private AdecuacionGencatApi adecuacionGencatApi;
 	
 	@Autowired
 	private OfertaGencatApi ofertaGencatApi;
+	
+	@Autowired
+	private NotificacionGencatApi notificacionGencatApi;
+	
+	@Autowired
+	private ReclamacionGencatApi reclamacionGencatApi;
+	
+	@Autowired
+	private VisitaGencatApi visitaGencatApi;
 	
 	@Autowired 
 	private OfertaApi ofertaApi;
@@ -136,10 +168,25 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 	private UsuarioManager usuarioManager;
 	
 	@Autowired
+	private ActivoAdapter activoAdapter;
+	
+	@Autowired
 	protected JBPMActivoTramiteManager jbpmActivoTramiteManager;
 	
 	@Autowired
 	protected TipoProcedimientoManager tipoProcedimientoManager;
+	
+	@Autowired
+	private TrabajoApi trabajoApi;
+	
+	@Autowired
+	protected ExpedienteComercialApi expedienteComercialApi;
+	
+	@Autowired
+	protected GastosExpedienteDao gastosExpedienteDao;
+	
+	@Autowired
+	private ActivoAgrupacionActivoDao activoAgrupacionActivoDao;
 	
 	
 	@Override
@@ -170,6 +217,7 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 				if (resultAdecuacion != null && !resultAdecuacion.isEmpty()) {
 					AdecuacionGencat adecuacionGencat = resultAdecuacion.get(0);
 					BeanUtils.copyProperties(gencatDto, adecuacionGencat);
+					gencatDto.setNecesitaReforma(adecuacionGencat.getNecesitaReforma());
 				}
 				
 				//Visita
@@ -910,6 +958,7 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 	}
 
 	@Override
+	@Transactional(readOnly = false)
 	public void bloqueoExpedienteGENCAT(ExpedienteComercial expComercial, ActivoTramite tramite) {
 		
 		Date fechaActual = new Date();
@@ -964,7 +1013,7 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 										&& DDEstadoComunicacionGencat.COD_SANCIONADO.equalsIgnoreCase(comGencat.getEstadoComunicacion().getDescripcion())
 										&& !Checks.esNulo(datoVista.getFecha_sancion())) {
 									
-									if(MIN_MESES > calculoDiferenciaFechasEnDias(fechaActual,datoVista.getFecha_sancion())){
+									if(fechaActual.after(comGencat.getFechaPrevistaSancion())){
 										
 										lanzarTramiteGENCAT(tramite, oferta, expComercial);
 										
@@ -983,7 +1032,7 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 								if(!Checks.esNulo(comGencat.getEstadoComunicacion())
 										&& DDEstadoComunicacionGencat.COD_ANULADO.equals(comGencat.getEstadoComunicacion().getCodigo())
 										&& Checks.esNulo(datoVista.getFecha_anulacion())) {
-									if(MIN_MESES > calculoDiferenciaFechasEnDias(fechaActual,datoVista.getFecha_sancion())){
+									if(fechaActual.after(comGencat.getFechaPrevistaSancion())){
 										
 										lanzarTramiteGENCAT(tramite, oferta, expComercial);
 										
@@ -1021,23 +1070,19 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 		Long dias = diferenciaEn_ms / (1000 * 60 * 60 * 24);
 		return dias;
 	}
-	
+		
 	@Override
 	public void lanzarTramiteGENCAT(ActivoTramite tramite, Oferta oferta, ExpedienteComercial expedienteComercial) {
 		
 		historificarTramiteGENCAT(tramite);
 		crearRegistrosTramiteGENCAT(expedienteComercial, oferta, tramite);
-		
-		ActivoTramite tramiteNuevo = jbpmActivoTramiteManager.createActivoTramiteTrabajo(
-				tipoProcedimientoManager.getByCodigo(ActivoTramiteApi.CODIGO_TRAMITE_COMUNICACION_GENCAT), 
-				tramite.getTrabajo());
-		tramiteNuevo.setActivo(tramite.getActivo());
-		
-		jbpmActivoTramiteManager.lanzaBPMAsociadoATramite(tramiteNuevo.getId());
+				
+		activoAdapter.crearTramiteGencat(tramite.getActivo().getId());
 				
 	}
 	
 	@Override
+	@Transactional(readOnly = false)
 	public void crearRegistrosTramiteGENCAT(ExpedienteComercial expedienteComercial, Oferta oferta, ActivoTramite tramite) {
 		
 		ComunicacionGencat comunicacionGencat = new ComunicacionGencat();
@@ -1068,11 +1113,6 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 		ofertaGencat.setOferta(expedienteComercial.getOferta());
 		ofertaGencat.setComunicacion(comunicacionGencat);
 		ofertaGencat.setImporte(oferta.getImporteOferta());
-		if(!Checks.esNulo(expedienteComercial.getOferta())) {
-			
-			ofertaGencat.setIdOfertaAnterior(expedienteComercial.getOferta().getId());
-			
-		}
 		if(!Checks.esNulo(expedienteComercial.getCondicionante())) {
 			
 			ofertaGencat.setSituacionPosesoria(expedienteComercial.getCondicionante().getSituacionPosesoria());
@@ -1086,6 +1126,9 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 		adecuacionGencat.setComunicacion(comunicacionGencat);
 		adecuacionGencat.setAuditoria(auditoria);
 		adecuacionGencat.setVersion(0L);
+		
+		// TODO Crear notificacionGencat, visitaGencat, reclamacionGencat y la tabla nueva que no esta creada
+		
 
 		genericDao.save(ComunicacionGencat.class, comunicacionGencat);
 		genericDao.save(OfertaGencat.class, ofertaGencat);
@@ -1094,6 +1137,7 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 	}
 	
 	@Override
+	@Transactional(readOnly = false)
 	public void historificarTramiteGENCAT(ActivoTramite tramite) {
 				
 		if(!Checks.esNulo(tramite)) {
@@ -1106,6 +1150,9 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 				
 				AdecuacionGencat adecuacionGencat = adecuacionGencatApi.getAdecuacionByIdComunicacion(idComunicacionGencat);
 				OfertaGencat ofertaGencat = ofertaGencatApi.getOfertaByIdComunicacionGencat(idComunicacionGencat);
+//				NotificacionGencat notificacionGencat = notificacionGencatApi.getNotificacionByIdComunicacionGencat(idComunicacionGencat);
+//				ReclamacionGencat reclamacionGencat = reclamacionGencatApi.getReclamacionByIdComunicacionGencat(idComunicacionGencat);
+//				VisitaGencat visitaGencat = visitaGencatApi.getVisitaByIdComunicacionGencat(idComunicacionGencat);
 				
 				if(!Checks.esNulo(comunicacionGencat)
 						&& !Checks.esNulo(adecuacionGencat)
@@ -1115,9 +1162,12 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 					HistoricoComunicacionGencat historicoComunicacionGencat = crearHistoricoComunicacionGencatByComunicacionGencat(comunicacionGencat);
 					crearHistoricoAdecuacionGencatByAdecuacionGencat(adecuacionGencat, historicoComunicacionGencat);
 					crearHistoricoOfertaGencatByOfertaGencat(ofertaGencat, historicoComunicacionGencat);
+//					crearHistoricoNotificacionGencatByNotificacionGencat(notificacionGencat, historicoComunicacionGencat);
+//					crearHistoricoReclamacionGencatByNotificacionGencat(reclamacionGencat, historicoComunicacionGencat);
+//					crearHistoricoVisitaGencatByNotificacionGencat(visitaGencat, historicoComunicacionGencat);
 					
 					// Borrado del registro vigente del tramite de GENCAT
-					borrarTramiteGENCAT(comunicacionGencat, adecuacionGencat, ofertaGencat);
+					borrarTramiteGENCAT(comunicacionGencat, adecuacionGencat, ofertaGencat, null, null, null);
 					
 				}
 				
@@ -1127,18 +1177,25 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 		
 	}
 	
-	
-	private void borrarTramiteGENCAT(ComunicacionGencat comunicacionGencat, AdecuacionGencat adecuacionGencat, OfertaGencat ofertaGencat) {
+	private void borrarTramiteGENCAT(ComunicacionGencat comunicacionGencat, AdecuacionGencat adecuacionGencat, OfertaGencat ofertaGencat,
+			NotificacionGencat notificacionGencat, ReclamacionGencat reclamacionGencat, VisitaGencat visitaGencat) {
 		
 		if(!Checks.esNulo(comunicacionGencat.getId())
 				&& !Checks.esNulo(adecuacionGencat.getId())
-				&& !Checks.esNulo(ofertaGencat.getId())) {
-			genericDao.deleteById(AdecuacionGencat.class, adecuacionGencat.getId());
-			genericDao.deleteById(OfertaGencat.class, ofertaGencat.getId());
-			genericDao.deleteById(ComunicacionGencat.class, comunicacionGencat.getId());
+				&& !Checks.esNulo(ofertaGencat.getId())
+//				&& !Checks.esNulo(notificacionGencat.getId())
+//				&& !Checks.esNulo(reclamacionGencat.getId())
+//				&& !Checks.esNulo(visitaGencat.getId())
+				) {
+
+			// TODO eliminar metodo y añadir los DAO correspondientes
+			activoAgrupacionActivoDao.deleteTramiteGencatById(adecuacionGencat.getId(), ofertaGencat.getId(), null, 
+					null, null, comunicacionGencat.getId());
+			
 		}
 	}
 	
+	@Transactional(readOnly = false)
 	private HistoricoComunicacionGencat crearHistoricoComunicacionGencatByComunicacionGencat(ComunicacionGencat comunicacionGencat) {
 		
 		HistoricoComunicacionGencat historicoComunicacionGencat = new HistoricoComunicacionGencat();
@@ -1207,6 +1264,60 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 		
 	}
 	
+	private void crearHistoricoNotificacionGencatByNotificacionGencat(NotificacionGencat notificacionGencat, HistoricoComunicacionGencat historicoComunicacionGencat) {
+		
+		HistoricoNotificacionGencat historicoNotificacionGencat = new HistoricoNotificacionGencat();
+		
+		if(!Checks.esNulo(notificacionGencat)) {
+			historicoNotificacionGencat.setHistoricoComunicacion(historicoComunicacionGencat);
+			historicoNotificacionGencat.setCheckNotificacion(notificacionGencat.getCheckNotificacion());			
+			historicoNotificacionGencat.setCierreNotificacion(notificacionGencat.getCierreNotificacion());
+			historicoNotificacionGencat.setFechaNotificacion(notificacionGencat.getFechaNotificacion());			
+			historicoNotificacionGencat.setFechaSancionNotificacion(notificacionGencat.getFechaSancionNotificacion());
+			historicoNotificacionGencat.setTipoNotificacion(notificacionGencat.getTipoNotificacion());
+			historicoNotificacionGencat.setVersion(notificacionGencat.getVersion());
+			historicoNotificacionGencat.setAuditoria(notificacionGencat.getAuditoria());
+			
+		}
+		
+		genericDao.save(HistoricoNotificacionGencat.class, historicoNotificacionGencat);
+		
+	}
+	
+	@Transactional(readOnly = false)
+	private void crearHistoricoReclamacionGencatByNotificacionGencat(ReclamacionGencat reclamacionGencat, HistoricoComunicacionGencat historicoComunicacionGencat) {
+		
+		HistoricoReclamacionGencat historicoReclamacionGencat = new HistoricoReclamacionGencat();
+		
+		if(!Checks.esNulo(reclamacionGencat)) {
+			historicoReclamacionGencat.setHistoricoComunicacion(historicoComunicacionGencat);
+			historicoReclamacionGencat.setFechaAviso(reclamacionGencat.getFechaAviso());			
+			historicoReclamacionGencat.setFechaReclamacion(reclamacionGencat.getFechaReclamacion());
+			historicoReclamacionGencat.setVersion(reclamacionGencat.getVersion());
+			historicoReclamacionGencat.setAuditoria(reclamacionGencat.getAuditoria());
+			
+		}
+		
+		genericDao.save(HistoricoReclamacionGencat.class, historicoReclamacionGencat);
+		
+	}
+	
+	private void crearHistoricoVisitaGencatByNotificacionGencat(VisitaGencat visitaGencat, HistoricoComunicacionGencat historicoComunicacionGencat) {
+		
+		HistoricoVisitaGencat historicoVisitaGencat = new HistoricoVisitaGencat();
+		
+		if(!Checks.esNulo(visitaGencat)) {
+			historicoVisitaGencat.setHistoricoComunicacion(historicoComunicacionGencat);
+			historicoVisitaGencat.setVisita(visitaGencat.getVisita());
+			historicoVisitaGencat.setVersion(visitaGencat.getVersion());
+			historicoVisitaGencat.setAuditoria(visitaGencat.getAuditoria());
+			
+		}
+		
+		genericDao.save(HistoricoVisitaGencat.class, historicoVisitaGencat);
+		
+	}
+		
 	@Override
 	public void cambiarEstadoComunicacionGENCAT(ComunicacionGencat comunicacionGencat) {
 		
@@ -1220,7 +1331,7 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 	public void informarFechaSancion(ComunicacionGencat comunicacionGencat) {
 		
 		Calendar cal = Calendar.getInstance(); 
-        cal.setTime(new Date()); 
+        cal.setTime(comunicacionGencat.getFechaComunicacion()); 
         cal.add(Calendar.MONTH, 2);
         Date fechaSancion = cal.getTime();
 		
@@ -1245,9 +1356,9 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 				comunicacionGencat.getAuditoria().setFechaModificar(new Date());
 				comunicacionGencat.getAuditoria().setUsuarioModificar( usuarioManager.getUsuarioLogado().getUsername() );				
 				comunicacionGencatDao.saveOrUpdate(comunicacionGencat);	
+				
 				notificacionesGencat.sendMailNotificacionSancionGencat(gencatDto, activo, sancion);
 
-				
 				return true;
 			}
 			else
@@ -1290,14 +1401,47 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 			cg.setComunicadoAnulacionAGencat( gencatDto.getComunicadoAnulacionAGencat() );
 		}
 		if(!Checks.esNulo(sancion)) {
-			cg.setSancion( sancion );
-			if( DDSancionGencat.COD_EJERCE.equals(sancion.getCodigo()) )
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoComunicacionGencat.COD_SANCIONADO);
+			DDEstadoComunicacionGencat estadoComunicacion = genericDao.get(DDEstadoComunicacionGencat.class, filtro);
+			cg.setEstadoComunicacion(estadoComunicacion);
+			if( DDSancionGencat.COD_EJERCE.equals(sancion.getCodigo()))
 			{
-				cg.setNuevoCompradorNif( gencatDto.getNuevoCompradorNif() );
-				cg.setNuevoCompradorNombre( gencatDto.getNuevoCompradorNombre() );
-				cg.setNuevoCompradorApellido1( gencatDto.getNuevoCompradorApellido1() );
-				cg.setNuevoCompradorApellido2( gencatDto.getNuevoCompradorApellido2() );
+				if (!Checks.esNulo(gencatDto.getNuevoCompradorNif()) && !Checks.esNulo(gencatDto.getNuevoCompradorNombre())) {
+					cg.setNuevoCompradorNif( gencatDto.getNuevoCompradorNif() );
+					cg.setNuevoCompradorNombre( gencatDto.getNuevoCompradorNombre() );
+					cg.setNuevoCompradorApellido1( gencatDto.getNuevoCompradorApellido1() );
+					cg.setNuevoCompradorApellido2( gencatDto.getNuevoCompradorApellido2() );
+					
+					OfertaGencat ofertaGencatEjerce = ofertaGencatApi.getByIdComunicacionGencatAndIdOfertaAnteriorIsNotNull(cg.getId());
+					// Si ofertaGencatEjerce != null es porque ya se creo la oferta para gencat tras ejercer
+					if (Checks.esNulo(ofertaGencatEjerce)) {
+						OfertaGencat ofertaGencat = ofertaGencatApi.getOfertaByIdComunicacionGencat(cg.getId());
+						if (!Checks.esNulo(ofertaGencat)) {
+							ExpedienteComercial exp = expedienteComercialApi.findOneByOferta(ofertaGencat.getOferta());
+							if (!Checks.esNulo(exp)) {
+								try {
+									crearNuevaOfertaGENCAT(exp, cg);
+								} catch (Exception e) {
+									logger.error("Error en gencatManager", e);
+								}
+							}
+						}
+					}
+					
+				} else {
+					cg.setNuevoCompradorNif(null);
+					cg.setNuevoCompradorNombre(null);
+					cg.setNuevoCompradorApellido1(null);
+					cg.setNuevoCompradorApellido2(null);
+				}
+			} else {
+				cg.setNuevoCompradorNif(null);
+				cg.setNuevoCompradorNombre(null);
+				cg.setNuevoCompradorApellido1(null);
+				cg.setNuevoCompradorApellido2(null);
 			}
+			
+			cg.setSancion( sancion );
 		}
 		
 	}
@@ -1321,5 +1465,168 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 		return null;	
 	}
 	
-	
+	private void crearNuevaOfertaGENCAT(ExpedienteComercial expedienteComercial, ComunicacionGencat cmg) throws Exception {
+
+		Auditoria auditoria = new Auditoria();
+		// Creamos los valores de Auditoria
+		auditoria.setUsuarioCrear(genericAdapter.getUsuarioLogado().getUsername());
+		auditoria.setBorrado(false);
+		auditoria.setFechaCrear(new Date());
+		
+	////////////////////// OFERTA ////////////////////////////////
+		Oferta nuevaOferta = new Oferta();
+		Oferta oferta = expedienteComercial.getOferta();
+		
+		nuevaOferta.setAuditoria(auditoria);
+		
+		// Datos Generales
+		Long numOferta = activoDao.getNextNumOferta();
+		nuevaOferta.setNumOferta(numOferta);
+		DDEstadoOferta estadoOferta = (DDEstadoOferta) utilDiccionarioApi
+				.dameValorDiccionarioByCod(DDEstadoOferta.class, DDEstadoOferta.CODIGO_ACEPTADA);
+		nuevaOferta.setEstadoOferta(estadoOferta);
+		nuevaOferta.setFechaAlta(new Date());
+		nuevaOferta.setTipoOferta(oferta.getTipoOferta());
+		nuevaOferta.setVentaDirecta(oferta.getVentaDirecta());
+		nuevaOferta.setOrigen(oferta.getOrigen());
+		nuevaOferta.setOfertaExpress(oferta.getOfertaExpress());
+		
+		nuevaOferta.setImporteOferta(oferta.getImporteOferta());
+		nuevaOferta.setCanalPrescripcion(oferta.getCanalPrescripcion());
+		nuevaOferta.setPrescriptor(oferta.getPrescriptor());
+		
+		// Activo/s
+		List<ActivoOferta> listaActOfr = ofertaApi.buildListaActivoOferta(cmg.getActivo(), null, nuevaOferta);
+		nuevaOferta.setActivosOferta(listaActOfr);
+		
+		//  Comprador
+		ClienteComercial clienteComercial = new ClienteComercial();
+		Long clcremid = activoDao.getNextClienteRemId();
+		clienteComercial.setIdClienteRem(clcremid);
+		clienteComercial.setNombre(cmg.getNuevoCompradorNombre());
+		clienteComercial.setApellidos(cmg.getNuevoCompradorApellido1()+" "+cmg.getNuevoCompradorApellido2());
+		clienteComercial.setDocumento(cmg.getNuevoCompradorNif());
+		DDTipoDocumento tipoDocumento = (DDTipoDocumento) utilDiccionarioApi
+				.dameValorDiccionarioByCod(DDTipoDocumento.class, DD_TIPO_DOCUMENTO_CODIGO_NIF);
+		clienteComercial.setTipoDocumento(tipoDocumento);
+		clienteComercial.setAuditoria(auditoria);
+		DDTiposPersona tipoPersona = genericDao.get(DDTiposPersona.class,
+				genericDao.createFilter(FilterType.EQUALS, "codigo", DDTiposPersona.CODIGO_TIPO_PERSONA_JURIDICA));
+		clienteComercial.setTipoPersona(tipoPersona);
+
+		genericDao.save(ClienteComercial.class, clienteComercial);
+		
+		nuevaOferta.setCliente(clienteComercial);
+		
+		genericDao.save(Oferta.class, nuevaOferta);
+	/////////////////////////////////////////////////////////////////
+		
+	/////////////////////// EXPEDIENTE ////////////////////////////////
+		// Creacion Exp comercial
+		List<Activo> listaActivos = new ArrayList<Activo>();
+		for (ActivoOferta activoOferta : nuevaOferta.getActivosOferta()) {
+			listaActivos.add(activoOferta.getPrimaryKey().getActivo());
+		}
+		DDSubtipoTrabajo subtipoTrabajo = (DDSubtipoTrabajo) utilDiccionarioApi
+				.dameValorDiccionarioByCod(DDSubtipoTrabajo.class, activoApi.getSubtipoTrabajoByOferta(nuevaOferta));
+		Trabajo trabajo = trabajoApi.create(subtipoTrabajo, listaActivos, null, false);
+		ExpedienteComercial nuevoExpedienteComercial = activoApi.crearExpediente(nuevaOferta, trabajo, oferta);
+		trabajoApi.createTramiteTrabajo(trabajo);
+		
+		
+		nuevoExpedienteComercial.setConflictoIntereses(expedienteComercial.getConflictoIntereses());
+		nuevoExpedienteComercial.setRiesgoReputacional(expedienteComercial.getRiesgoReputacional());
+		nuevoExpedienteComercial.setEstadoPbc(expedienteComercial.getEstadoPbc());
+		
+		genericDao.save(ExpedienteComercial.class, nuevoExpedienteComercial);
+		
+		// Condiciones
+		
+		CondicionanteExpediente condiciones = expedienteComercial.getCondicionante();
+		CondicionanteExpediente condicionesNuevas = nuevoExpedienteComercial.getCondicionante();
+		if (!Checks.esNulo(condiciones) && !Checks.esNulo(condicionesNuevas)) {
+			condicionesNuevas.setSolicitaFinanciacion(condiciones.getSolicitaFinanciacion());
+			condicionesNuevas.setEstadoFinanciacion(condiciones.getEstadoFinanciacion());
+			condicionesNuevas.setEntidadFinanciacion(condiciones.getEntidadFinanciacion());
+			condicionesNuevas.setFechaInicioExpediente(condiciones.getFechaInicioExpediente());
+			condicionesNuevas.setFechaInicioFinanciacion(condiciones.getFechaInicioFinanciacion());
+			condicionesNuevas.setFechaFinFinanciacion(condiciones.getFechaFinFinanciacion());
+			condicionesNuevas.setSolicitaReserva(condiciones.getSolicitaReserva());
+			condicionesNuevas.setTipoCalculoReserva(condiciones.getTipoCalculoReserva());
+			condicionesNuevas.setPorcentajeReserva(condiciones.getPorcentajeReserva());
+			condicionesNuevas.setPlazoFirmaReserva(condiciones.getPlazoFirmaReserva());
+			condicionesNuevas.setImporteReserva(condiciones.getImporteReserva());
+			condicionesNuevas.setTipoImpuesto(condiciones.getTipoImpuesto());
+			condicionesNuevas.setTipoAplicable(condiciones.getTipoAplicable());
+			condicionesNuevas.setRenunciaExencion(condiciones.getRenunciaExencion());
+			condicionesNuevas.setReservaConImpuesto(condiciones.getReservaConImpuesto());
+			condicionesNuevas.setOperacionExenta(condiciones.getOperacionExenta());
+			condicionesNuevas.setInversionDeSujetoPasivo(condiciones.getInversionDeSujetoPasivo());
+			condicionesNuevas.setGastosPlusvalia(condiciones.getGastosPlusvalia());
+			condicionesNuevas.setTipoPorCuentaPlusvalia(condiciones.getTipoPorCuentaPlusvalia());
+			condicionesNuevas.setGastosNotaria(condiciones.getGastosNotaria());
+			condicionesNuevas.setTipoPorCuentaNotaria(condiciones.getTipoPorCuentaNotaria());
+			condicionesNuevas.setGastosOtros(condiciones.getGastosOtros());
+			condicionesNuevas.setTipoPorCuentaGastosOtros(condiciones.getTipoPorCuentaGastosOtros());
+			condicionesNuevas.setCargasImpuestos(condiciones.getCargasImpuestos());
+			condicionesNuevas.setTipoPorCuentaImpuestos(condiciones.getTipoPorCuentaImpuestos());
+			condicionesNuevas.setCargasComunidad(condiciones.getCargasComunidad());
+			condicionesNuevas.setTipoPorCuentaComunidad(condiciones.getTipoPorCuentaComunidad());
+			condicionesNuevas.setCargasOtros(condiciones.getCargasOtros());
+			condicionesNuevas.setTipoPorCuentaCargasOtros(condiciones.getTipoPorCuentaCargasOtros());
+			condicionesNuevas.setSujetoTanteoRetracto(condiciones.getSujetoTanteoRetracto());
+			condicionesNuevas.setEstadoTramite(condiciones.getEstadoTramite());
+			condicionesNuevas.setEstadoTitulo(condiciones.getEstadoTitulo());
+			condicionesNuevas.setPosesionInicial((condiciones.getPosesionInicial()));
+			condicionesNuevas.setSituacionPosesoria(condiciones.getSituacionPosesoria());
+			condicionesNuevas.setRenunciaSaneamientoEviccion(condiciones.getRenunciaSaneamientoEviccion());
+			condicionesNuevas.setRenunciaSaneamientoVicios(condiciones.getRenunciaSaneamientoVicios());
+			condicionesNuevas.setProcedeDescalificacion(condiciones.getProcedeDescalificacion());
+			condicionesNuevas.setTipoPorCuentaDescalificacion(condiciones.getTipoPorCuentaDescalificacion());
+			condicionesNuevas.setLicencia(condiciones.getLicencia());
+			condicionesNuevas.setTipoPorCuentaLicencia(condiciones.getTipoPorCuentaLicencia());
+			
+			genericDao.save(CondicionanteExpediente.class, condicionesNuevas);
+		}
+
+		
+	///////////////// OFERTA GENCAT ///////////////////////////////////
+		OfertaGencat ofertaGencat = new OfertaGencat();
+		ofertaGencat.setAuditoria(auditoria);
+		ofertaGencat.setVersion(0L);
+		
+		ofertaGencat.setOferta(nuevaOferta);
+		ofertaGencat.setComunicacion(cmg);
+		ofertaGencat.setImporte(nuevaOferta.getImporteOferta());
+		ofertaGencat.setIdOfertaAnterior(oferta.getId());
+		if(!Checks.esNulo(expedienteComercial.getCondicionante())) {
+			
+			ofertaGencat.setSituacionPosesoria(expedienteComercial.getCondicionante().getSituacionPosesoria());
+		}
+		
+		ofertaGencat.setTiposPersona(nuevaOferta.getCliente().getTipoPersona());
+		
+		genericDao.save(OfertaGencat.class, ofertaGencat);
+	/////////////////////////////////////////////////////////////////
+		
+	///////////////// CONGELAR OFERTAS PENDIENTES Y TRAMITADAS DEL ACTIVO ///////////////////////////////////
+		List<Oferta> listaOfertasVivas = activoApi.getOfertasPendientesOTramitadasByActivo(cmg.getActivo());
+		for (Oferta ofr : listaOfertasVivas) {
+			if (!ofr.equals(nuevaOferta)) {
+				ofertaApi.congelarOferta(ofr);
+			}
+		}
+		/*
+		List<ActivoAgrupacionActivo> listaAGR = activoAgrupacionActivoDao.getListActivoAgrupacionVentaByIdActivo(cmg.getActivo().getId());
+		
+		for (ActivoAgrupacionActivo aga : listaAGR) {
+			List<Oferta> lista = activoApi.getOfertasPendientesOTramitadasByActivoAgrupacion(aga.getAgrupacion());
+			for (Oferta ofr : lista) {
+				ofertaApi.congelarOferta(ofr);
+			}
+			
+		}
+		*/
+	/////////////////////////////////////////////////////////////////
+	}
 }

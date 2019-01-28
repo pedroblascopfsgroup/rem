@@ -1,5 +1,7 @@
 package es.pfsgroup.plugin.rem.gencat;
 
+import java.util.List;
+
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,7 +57,13 @@ public class AdecuacionGencatManager extends AbstractEntityDao<AdecuacionGencat,
 		Filter filtroBorradoAdecuacion = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
 		
 		if(!Checks.esNulo(idComunicacionGencat)) {
-			return genericDao.getList(AdecuacionGencat.class, filtroIdAdecuacion, filtroBorradoAdecuacion).get(0);			
+			List<AdecuacionGencat> lista =  genericDao.getList(AdecuacionGencat.class, filtroIdAdecuacion, filtroBorradoAdecuacion);
+			if (!Checks.estaVacio(lista)) {
+				return genericDao.getList(AdecuacionGencat.class, filtroIdAdecuacion, filtroBorradoAdecuacion).get(0);	
+			} else {
+				return null;
+			}
+					
 		} else {			
 			return null;
 		}

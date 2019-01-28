@@ -23,18 +23,36 @@ public class OfertaGencatManager extends AbstractEntityDao<OfertaGencat, Long> i
 	public OfertaGencat getOfertaByIdComunicacionGencat(Long idComunicacionGencat) {
 				
 		Filter filtroIdAdecuacion = genericDao.createFilter(FilterType.EQUALS, "comunicacion.id", idComunicacionGencat);
+		Filter filtroIdOfertaAnteriorIsNull = genericDao.createFilter(FilterType.NULL, "idOfertaAnterior");
 		Filter filtroBorradoAdecuacion = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
 		
 		if(!Checks.esNulo(idComunicacionGencat)) {
-			List<OfertaGencat> ofertaGencatList = genericDao.getList(OfertaGencat.class, filtroIdAdecuacion, filtroBorradoAdecuacion);
-			
-			if(!Checks.estaVacio(ofertaGencatList)) {
-				return ofertaGencatList.get(0);
-			} else {
+			List<OfertaGencat> lista = genericDao.getList(OfertaGencat.class, filtroIdAdecuacion, filtroIdOfertaAnteriorIsNull, filtroBorradoAdecuacion);
+			if (Checks.estaVacio(lista)) {
 				return null;
-			}
-			
-						
+			} else {
+				return lista.get(0);
+			}						
+		} else {
+			return null;
+		}
+	
+	}
+	
+	@Override
+	public OfertaGencat getByIdComunicacionGencatAndIdOfertaAnteriorIsNotNull(Long idComunicacionGencat) {
+				
+		Filter filtroIdComunicacion = genericDao.createFilter(FilterType.EQUALS, "comunicacion.id", idComunicacionGencat);
+		Filter filtroIdOfertaAnteriorIsNotNull = genericDao.createFilter(FilterType.NOTNULL, "idOfertaAnterior");
+		Filter filtroBorradoFalse = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+		
+		if(!Checks.esNulo(idComunicacionGencat)) {
+			List<OfertaGencat> lista = genericDao.getList(OfertaGencat.class, filtroIdComunicacion, filtroIdOfertaAnteriorIsNotNull, filtroBorradoFalse);
+			if (Checks.estaVacio(lista)) {
+				return null;
+			} else {
+				return lista.get(0);
+			}			
 		} else {
 			return null;
 		}

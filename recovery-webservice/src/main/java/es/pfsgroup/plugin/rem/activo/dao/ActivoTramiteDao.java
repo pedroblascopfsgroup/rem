@@ -66,5 +66,6 @@ public interface ActivoTramiteDao extends AbstractDao<ActivoTramite, Long>{
 	 * @return
 	 */
 	public Boolean tieneTramiteVigenteByActivoYProcedimiento(Long idActivo, String codigoTipoProcedimiento);
+	
 
 }

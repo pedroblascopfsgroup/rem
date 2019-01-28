@@ -315,6 +315,7 @@ public class ActivoAdapter {
 	@Autowired
 	private UsuarioManager usuarioManager;
 	
+	
 	private static final String CONSTANTE_REST_CLIENT = "rest.client.gestor.documental.constante";
 	public static final String OFERTA_INCOMPATIBLE_MSG = "El tipo de oferta es incompatible con el destino comercial del activo";
 	private static final String AVISO_TITULO_MODIFICADAS_CONDICIONES_JURIDICAS = "activo.aviso.titulo.modificadas.condiciones.juridicas";
@@ -2201,6 +2202,16 @@ public class ActivoAdapter {
 		return idBpm;
 	}
 	
+	@Transactional(readOnly = false)
+	public Long crearTramiteGencat(Long idActivo) {
+
+		TipoProcedimiento tprc = tipoProcedimiento.getByCodigo(ActivoTramiteApi.CODIGO_TRAMITE_COMUNICACION_GENCAT);
+		
+		ActivoTramite tramite = jbpmActivoTramiteManagerApi.creaActivoTramite(tprc, activoApi.get(idActivo));
+
+		return jbpmActivoTramiteManagerApi.lanzaBPMAsociadoATramite(tramite.getId());
+	}
+	
 	public void crearRegistroHistorialComercialConCodigoEstado(Activo activo, String codigoEstado){
 		ActivoEstadosInformeComercialHistorico estadoInformeComercialHistorico= new ActivoEstadosInformeComercialHistorico();
 		estadoInformeComercialHistorico.setActivo(activo);
@@ -2775,7 +2786,7 @@ public class ActivoAdapter {
 	public boolean actualizarEstadoPublicacionActivo(Long idActivo) {
 		ArrayList<Long> listaIdActivo = new ArrayList<Long>();
 		listaIdActivo.add(idActivo);
-		return this.actualizarEstadoPublicacionActivo(listaIdActivo,false);
+		return this.actualizarEstadoPublicacionActivo(listaIdActivo,true);
 	}
 	
 	
@@ -3411,6 +3422,7 @@ public class ActivoAdapter {
 			}else {
 				notificationOfertaManager.sendNotification(oferta);
 			}
+			this.actualizarEstadoPublicacionActivo(activo.getId());
 		} catch (Exception ex) {
 			logger.error("error en activoAdapter", ex);
 			ex.printStackTrace();

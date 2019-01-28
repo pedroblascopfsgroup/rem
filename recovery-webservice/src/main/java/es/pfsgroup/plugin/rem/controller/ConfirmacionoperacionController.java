@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ConfirmarOperacionApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
@@ -48,6 +49,9 @@ public class ConfirmacionoperacionController {
 	
 	@Autowired
 	private UpdaterStateApi updaterState;
+	
+	@Autowired
+	private ActivoAdapter activoAdapterApi;
 
 	private final Log logger = LogFactory.getLog(getClass());
 
@@ -104,14 +108,14 @@ public class ConfirmacionoperacionController {
 						confirmarOperacionApi.anularDevolucionReserva(confirmacionOpDto);
 					}		
 					
-					
+					ArrayList<Long> idActivoActualizarPublicacion = new ArrayList<Long>();
 					// Actualizamos la situacion comercial del activo
 					if(!Checks.esNulo(confirmacionOpDto.getActivo())){
 						Activo activo = activoApi.getByNumActivoUvem(confirmacionOpDto.getActivo());
 						if(!Checks.esNulo(activo)){
 							updaterState.updaterStateDisponibilidadComercialAndSave(activo);
 						}
-						
+						idActivoActualizarPublicacion.add(activo.getId());
 					}else{
 						if(!Checks.esNulo(confirmacionOpDto.getOfertaHRE())){
 							Oferta oferta = ofertaApi.getOfertaByNumOfertaRem(confirmacionOpDto.getOfertaHRE());
@@ -120,6 +124,7 @@ public class ConfirmacionoperacionController {
 								if(!Checks.esNulo(listaAofr) && listaAofr.size()>0){
 									for(int i = 0; i< listaAofr.size(); i++){
 										Activo activo = listaAofr.get(i).getPrimaryKey().getActivo();
+										idActivoActualizarPublicacion.add(activo.getId());
 										if(!Checks.esNulo(activo)){
 											updaterState.updaterStateDisponibilidadComercialAndSave(activo);
 										}
@@ -127,7 +132,8 @@ public class ConfirmacionoperacionController {
 								}
 							}
 						}					
-					}					
+					}	
+					activoAdapterApi.actualizarEstadoPublicacionActivo(idActivoActualizarPublicacion,true);
 				}
 
 				model.put("id", jsonFields.get("id"));

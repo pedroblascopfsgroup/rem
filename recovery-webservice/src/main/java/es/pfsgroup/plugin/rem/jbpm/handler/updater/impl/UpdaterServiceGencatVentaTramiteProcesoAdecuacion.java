@@ -28,6 +28,7 @@ public class UpdaterServiceGencatVentaTramiteProcesoAdecuacion implements Update
     private static final String FECHA_REVISION = "fechaRevision";
     private static final String IMPORTE = "importeReforma";
     private static final String OBSERVACIONES = "observaciones";
+    private static final String NECESITA_REFORMA_SI = "01";
     
 	public static final String CODIGO_T016_PROCESO_ADECUACION = "T016_ProcesoAdecuacion";
 	
@@ -42,7 +43,7 @@ public class UpdaterServiceGencatVentaTramiteProcesoAdecuacion implements Update
 			for(TareaExternaValor valor : valores) {
 				if(NECESITA_REFORMA.equals(valor.getNombre())) {
 						
-					if(valor.getValor().equals("Si")) {
+					if(valor.getValor().equals(NECESITA_REFORMA_SI)) {
 						adecuacionGencat.setNecesitaReforma(true);
 					} else {
 						adecuacionGencat.setNecesitaReforma(false);

@@ -19,6 +19,7 @@ import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoBancario;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
@@ -51,6 +52,7 @@ import es.pfsgroup.plugin.rem.model.DtoPropuestaActivosVinculados;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
 import es.pfsgroup.plugin.rem.model.DtoReglasPublicacionAutomatica;
 import es.pfsgroup.plugin.rem.model.DtoTasacion;
+import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.HistoricoDestinoComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
@@ -880,6 +882,23 @@ public interface ActivoApi {
 	 * @return
 	 */
 	boolean isActivoConOfertasVivas(Activo activo);
+	
+	/**
+	 * Devuelve un lista con las ofertas en estado "Pendiente" o "Tramitada" de un activo
+	 *
+	 * @param activo
+	 * @return
+	 */
+	List<Oferta> getOfertasPendientesOTramitadasByActivo(Activo activo);
+	
+	
+	/**
+	 * Devuelve un lista con las ofertas en estado "Pendiente" o "Tramitada" de una agrupacion
+	 *
+	 * @param activo
+	 * @return
+	 */
+	List<Oferta> getOfertasPendientesOTramitadasByActivoAgrupacion(ActivoAgrupacion activoAgrupacion);
 
 	/**
 	 * Este método llama al api del ActivoDao el cual obtiene el siguiente número de la secuencia para el campo de 'ACT_NUM_ACTIVO_REM'.
@@ -967,7 +986,7 @@ public interface ActivoApi {
 	/**
 	 * Crea un expediente comercial
 	 **/
-	boolean crearExpediente(Oferta oferta, Trabajo trabajo);
+	ExpedienteComercial crearExpediente(Oferta oferta, Trabajo trabajo, Oferta ofertaOriginalGencatEjerce);
 	
 	/**
 	 * Devuelve una lista de adecuaciones alquiler para el grid de adecuaciones en la pestaña patrimonio de un activo

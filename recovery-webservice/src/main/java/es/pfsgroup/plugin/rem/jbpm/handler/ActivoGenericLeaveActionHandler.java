@@ -14,6 +14,7 @@ import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
 import es.capgemini.pfs.prorroga.model.Prorroga;
+import es.pfsgroup.plugin.rem.activo.ActivoTramiteManager;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterServiceFactoryApi;
@@ -27,6 +28,9 @@ public class ActivoGenericLeaveActionHandler extends ActivoGenericActionHandler 
 	
     @Autowired
     private ActivoTareaExternaApi activoTareaExternaManagerApi;
+    
+    @Autowired
+    private ActivoTramiteManager activoTramite;
     
     @Autowired
     private UpdaterServiceFactoryApi updaterServiceFactory;

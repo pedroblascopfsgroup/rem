@@ -627,4 +627,9 @@ public class AgendaController extends TareaController {
 		return createModelAndViewJson(model);
 	}
 
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView getIdAgrByNumAgr(Long idNumAgr, ModelMap model) {
+		model.put("idAgrTarea", adapter.getIdAgrByNumAgr(idNumAgr));
+		return createModelAndViewJson(model);
+	}
 }

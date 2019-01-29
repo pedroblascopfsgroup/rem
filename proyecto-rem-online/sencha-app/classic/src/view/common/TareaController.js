@@ -365,24 +365,44 @@ Ext.define('HreRem.view.common.TareaController', {
 	},
 	
 	enlaceAbrirActivoNotificacion: function(button) {
-
 		var me = this,
 		window = button.up('window');
 		
 		var idActivo = button.idActivo ? button.idActivo : window.idActivo;
+		var numAgr = me.getView().numAgrupacion;
+		var idAgr;
 		
 		button.up('window').mask();
 		
 		me.redirectTo('activos',true);
 
-		if(Ext.isEmpty(idActivo)){
+		if(!Ext.isEmpty(numAgr) && numAgr != null) {
+			
+			var url = $AC.getRemoteUrl('agenda/getIdAgrByNumAgr');
+		    Ext.Ajax.request({
+			  url:url,
+			  params:  {idNumAgr : me.getView().numAgrupacion},
+			  success: function(response,opts){
+				  idAgr = Ext.JSON.decode(response.responseText).idAgrTarea;
+				  
+				 if(idAgr != null){
+					 me.getView().fireEvent('abrirDetalleAgrupacionById', idAgr, null);
+				 }else{
+					 me.errorMensaje="Id Agrupacion no encontrado";
+					 me.getViewModel().set("errorValidacion", me.errorMensaje);
+				 }
+			  },
+			  callback: function(options, success, response){
+				  button.up('window').unmask();
+			  }
+		    });
+		} else if(Ext.isEmpty(idActivo)){
 
 			var url = $AC.getRemoteUrl('agenda/getIdActivoByNumActivo');
 		    Ext.Ajax.request({
 			  url:url,
 			  params:  {idNumAct : me.getView().numActivo},
 			  success: function(response,opts){
-				  
 				  idActivo = Ext.JSON.decode(response.responseText).idActivoTarea;
 				  
 				 if(idActivo != null){

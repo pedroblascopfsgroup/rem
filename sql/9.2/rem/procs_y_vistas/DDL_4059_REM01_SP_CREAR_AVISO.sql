@@ -1,6 +1,6 @@
 --/*
 --##########################################
---## AUTOR=Sergio Beleña Boix
+--## AUTOR=Carles Molins
 --## FECHA_CREACION=20190114
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=2.0.19
@@ -12,6 +12,7 @@
 --## VERSIONES:
 --##        0.1 HREOS-4683 - Carles Molins
 --##	    0.2 REMVIP-2971 - Sergio Beleña se añade en la MEJ_IRG_INFO_REGISTRO el número de activo 
+--##		0.3 REMVIP-2971 - Insert TAC_TAREAS_ACTIVOS
 --##########################################
 --*/
 
@@ -88,15 +89,25 @@ create or replace PROCEDURE SP_CREAR_AVISO (pACT_ID IN NUMBER DEFAULT NULL
                                             ,SYSDATE FECHACREAR, ''EXTTareaNotificacion'' DTYPE
             FROM DUAL';
         EXECUTE IMMEDIATE V_MSQL;
-
-        V_MSQL := '
-            INSERT INTO '|| V_ESQUEMA ||'.ETN_EXTAREAS_NOTIFICACIONES (TAR_ID
-                                            ,TAR_TIPO_DESTINATARIO, TAR_ID_DEST)
-            SELECT '|| V_TAR_ID ||' TAR_ID, ''U'' TAR_TIPO_DESTINATARIO
-                                            ,'|| V_DESTINATARIO ||' TAR_ID_DEST
-            FROM DUAL';
-        EXECUTE IMMEDIATE V_MSQL;
-
+        
+        IF pISAGRUPACION = 0 THEN
+	        V_MSQL := '
+	            INSERT INTO '|| V_ESQUEMA ||'.TAC_TAREAS_ACTIVOS (TAR_ID, ACT_ID, USU_ID
+	                                            ,VERSION, USUARIOCREAR, FECHACREAR)
+	            SELECT '|| V_TAR_ID ||', '||pACT_ID||', '|| V_DESTINATARIO ||', 0 VERSION
+	                                            ,'''|| pUSUARIOMODIFICAR ||''' USUARIOCREAR, SYSDATE FECHACREAR
+	            FROM DUAL';
+	        EXECUTE IMMEDIATE V_MSQL;
+	    ELSE
+	        V_MSQL := '
+	            INSERT INTO '|| V_ESQUEMA ||'.ETN_EXTAREAS_NOTIFICACIONES (TAR_ID
+	                                            ,TAR_TIPO_DESTINATARIO, TAR_ID_DEST)
+	            SELECT '|| V_TAR_ID ||' TAR_ID, ''U'' TAR_TIPO_DESTINATARIO
+	                                            ,'|| V_DESTINATARIO ||' TAR_ID_DEST
+	            FROM DUAL';
+	        EXECUTE IMMEDIATE V_MSQL;
+		END IF;
+		
         V_MSQL := '
             INSERT INTO '|| V_ESQUEMA ||'.MEJ_REG_REGISTRO (REG_ID, DD_TRG_ID, TRG_EIN_CODIGO
                                             ,TRG_EIN_ID, USU_ID, VERSION, USUARIOCREAR, FECHACREAR)
@@ -185,18 +196,18 @@ create or replace PROCEDURE SP_CREAR_AVISO (pACT_ID IN NUMBER DEFAULT NULL
             FROM DUAL';
         EXECUTE IMMEDIATE V_MSQL;
 
-
-        --NUM_ACT
-        V_MSQL := '
-            INSERT INTO '|| V_ESQUEMA ||'.MEJ_IRG_INFO_REGISTRO (IRG_ID, REG_ID, IRG_CLAVE
-                                            ,IRG_VALOR, VERSION, USUARIOCREAR, FECHACREAR)
-            SELECT '|| V_ESQUEMA ||'.S_MEJ_IRG_INFO_REGISTRO.NEXTVAL IRG_ID, '|| V_REG_ID ||' REG_ID
-                                            ,''NUM_ACT'' IRG_CLAVE, '''|| V_NUM_ACT ||''' IRG_VALOR
-                                            ,0 VERSION, '''|| pUSUARIOMODIFICAR ||''' USUARIOCREAR
-                                            ,SYSDATE FECHACREAR
-            FROM DUAL';
-        EXECUTE IMMEDIATE V_MSQL;
-
+        IF pISAGRUPACION = 1 THEN
+        	--NUM_AGR
+	        V_MSQL := '
+	            INSERT INTO '|| V_ESQUEMA ||'.MEJ_IRG_INFO_REGISTRO (IRG_ID, REG_ID, IRG_CLAVE
+	                                            ,IRG_VALOR, VERSION, USUARIOCREAR, FECHACREAR)
+	            SELECT '|| V_ESQUEMA ||'.S_MEJ_IRG_INFO_REGISTRO.NEXTVAL IRG_ID, '|| V_REG_ID ||' REG_ID
+	                                            ,''NUM_AGR'' IRG_CLAVE, '''|| V_NUM_ACT ||''' IRG_VALOR
+	                                            ,0 VERSION, '''|| pUSUARIOMODIFICAR ||''' USUARIOCREAR
+	                                            ,SYSDATE FECHACREAR
+	            FROM DUAL';
+	        EXECUTE IMMEDIATE V_MSQL;
+        END IF;
     COMMIT;
 
 	EXCEPTION

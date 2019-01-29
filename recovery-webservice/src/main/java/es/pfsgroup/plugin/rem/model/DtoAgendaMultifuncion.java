@@ -24,7 +24,7 @@ public class DtoAgendaMultifuncion {
 	private Long idResolucion;
 	private String nombreAdjunto;
 	private Long idTipoResolucion;
-	private String idActivo;
+	private String numAgrupacion;
 
 	public Long getIdAsunto() {
 		return idAsunto;
@@ -202,12 +202,12 @@ public class DtoAgendaMultifuncion {
 		this.idTipoResolucion = idTipoResolucion;
 	}
 
-	public String getNumActivo() {
-		return idActivo;
+	public String getNumAgrupacion() {
+		return numAgrupacion;
 	}
 
-	public void setNumActivo(String idActivo) {
-		this.idActivo = idActivo;
+	public void setNumAgrupacion(String numAgrupacion) {
+		this.numAgrupacion = numAgrupacion;
 	}
 	
 

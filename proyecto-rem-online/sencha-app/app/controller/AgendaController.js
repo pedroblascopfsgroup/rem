@@ -127,10 +127,13 @@ Ext.define('HreRem.controller.AgendaController', {
 	    		     params: {idTarea : idTarea, subtipoTarea : sta},
 	    		
 	    		     success: function(response, opts) {
-	    		    	 
 	    		    	 data = Ext.decode(response.responseText);
 	    		    	 data.data.parent = grid;
-	    		    	 /**data.data.numActivo = record.get('codEntidad');**/
+	    		    	 if(data.data.numAgrupacion == null){
+	    		    		 data.data.numActivo = record.get('codEntidad');
+	    		    	 } else {
+	    		    		 data.data.numActivo = data.data.numAgrupacion;
+	    		    	 }
 	    		    	 if(sta == "701"){
 	    		    		 data.data.tareaEditable = false;
 	    		    		 data.data.tareaFinalizable = true;

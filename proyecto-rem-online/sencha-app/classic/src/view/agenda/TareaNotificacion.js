@@ -104,7 +104,7 @@ Ext.define('HreRem.view.agenda.TareaNotificacion', {
 
     									items : [
     										{	xtype: 'textfield',
-    	    				                	fieldLabel: 'Num. Activo',
+    	    				                	fieldLabel: 'Num. Activo / Agrupación',
     	    				                	value: me.numActivo,
     	    				                	editable: false
     	    				                },

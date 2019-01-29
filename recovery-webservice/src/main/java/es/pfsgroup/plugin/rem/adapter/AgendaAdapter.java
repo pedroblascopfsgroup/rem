@@ -48,6 +48,7 @@ import es.pfsgroup.plugin.recovery.mejoras.api.registro.MEJRegistroApi;
 import es.pfsgroup.plugin.recovery.mejoras.registro.model.MEJInfoRegistro;
 import es.pfsgroup.plugin.recovery.mejoras.web.tareas.BuzonTareasViewHandler;
 import es.pfsgroup.plugin.recovery.mejoras.web.tareas.BuzonTareasViewHandlerFactory;
+import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
@@ -57,6 +58,7 @@ import es.pfsgroup.plugin.rem.api.PreciosApi;
 import es.pfsgroup.plugin.rem.api.TareaActivoApi;
 import es.pfsgroup.plugin.rem.formulario.ActivoGenericFormManager;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
@@ -133,7 +135,9 @@ public class AgendaAdapter {
 	
 	@Autowired
 	private ActivoApi activoApi;
-
+	
+	@Autowired
+	private ActivoAgrupacionApi activoAgrupacionApi;
 
 	public Page getListTareas(DtoTareaFilter dtoTareaFiltro){
 		DtoTarea dto = new DtoTarea();
@@ -279,7 +283,7 @@ public class AgendaAdapter {
 	}
 
 	public Object abreTarea(Long idTarea, String subtipoTarea) throws IllegalAccessException, InvocationTargetException {
-		String idActivo=null;
+		String numAgrupacion=null;
 		BuzonTareasViewHandler handler = viewHandlerFactory.getHandlerForSubtipoTarea(subtipoTarea);
 		
 		DtoMostrarAnotacion objetoNotificacion = (DtoMostrarAnotacion) handler.getModel(idTarea);
@@ -294,10 +298,10 @@ public class AgendaAdapter {
 			if (!Checks.esNulo(infoRegistro)) {
 				Map<String, String> info = proxyFactory.proxy(MEJRegistroApi.class).getMapaRegistro(infoRegistro.getRegistro().getId());
 				
-				idActivo = info.get("NUM_ACT");
-				if (StringUtils.hasText(idActivo)) {
+				numAgrupacion = info.get("NUM_AGR");
+				if (StringUtils.hasText(numAgrupacion)) {
 					
-					objetoNotificacionAct.setNumActivo(idActivo);
+					objetoNotificacionAct.setNumAgrupacion(numAgrupacion);
 				} 
 			}
 
@@ -685,5 +689,8 @@ public class AgendaAdapter {
 		return activo.getId().toString();
 	}
 	
-	
+	public String getIdAgrByNumAgr(Long id) {
+		Long idAgrupacion = activoAgrupacionApi.getAgrupacionIdByNumAgrupRem(id);
+		return idAgrupacion.toString();
+	}
 }

@@ -325,7 +325,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	private Boolean isPublicable(Long idActivo) {
     	PerimetroActivo perimetro = perimetroDao.getPerimetroActivoByIdActivo(idActivo);
 
-    	return !Checks.esNulo(perimetro) && !Checks.esNulo(perimetro.getAplicaPublicar()) && perimetro.getAplicaPublicar();
+    	return !Checks.esNulo(perimetro) && !Checks.esNulo(perimetro.getAplicaPublicar());
 	}
 
 	// Comprobación mínima.

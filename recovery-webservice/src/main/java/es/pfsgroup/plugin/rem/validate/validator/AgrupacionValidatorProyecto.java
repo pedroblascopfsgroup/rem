@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.validate.validator;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import es.pfsgroup.plugin.rem.validate.impl.AgrupacionValidatorCommonImpl;
 import es.pfsgroup.commons.utils.Checks;
@@ -16,6 +17,7 @@ import es.pfsgroup.plugin.rem.model.ActivoProyecto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.validate.AgrupacionValidator;
 
+@Component
 public class AgrupacionValidatorProyecto extends AgrupacionValidatorCommonImpl implements AgrupacionValidator {
 
 	@Autowired 
@@ -48,7 +50,7 @@ public class AgrupacionValidatorProyecto extends AgrupacionValidatorCommonImpl i
 		Filter filtroActivoAgrupacion = genericDao.createFilter(FilterType.EQUALS, "id", agrupacion.getId());
 		ActivoAgrupacion activoAgrupacion = (ActivoAgrupacion) genericDao.get(ActivoAgrupacion.class, filtroActivoAgrupacion);
 		
-		Filter filtroActivoProyecto = genericDao.createFilter(FilterType.EQUALS, "agrupacion", activoAgrupacion);
+		Filter filtroActivoProyecto = genericDao.createFilter(FilterType.EQUALS, "id", agrupacion.getId());
 		ActivoProyecto proyecto = genericDao.get(ActivoProyecto.class, filtroActivoProyecto);	
 		
 		NMBLocalizacionesBienInfo pobl = activo.getLocalizacionActual();

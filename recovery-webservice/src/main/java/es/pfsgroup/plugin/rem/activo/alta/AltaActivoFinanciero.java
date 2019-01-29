@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.rem.activo.alta;
 import java.util.Calendar;
 import java.util.Date;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,6 +44,8 @@ import es.pfsgroup.plugin.rem.model.ActivoPlazaAparcamiento;
 import es.pfsgroup.plugin.rem.model.ActivoPropietario;
 import es.pfsgroup.plugin.rem.model.ActivoPropietarioActivo;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
+import es.pfsgroup.plugin.rem.model.ActivoPublicacion;
+import es.pfsgroup.plugin.rem.model.ActivoPublicacionHistorico;
 import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.ActivoTitulo;
@@ -56,6 +59,8 @@ import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoExpRiesgoBancario;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionAlquiler;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionVenta;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
@@ -223,6 +228,7 @@ public class AltaActivoFinanciero implements AltaActivoService {
 		perimetroActivo.setAplicaGestion(0);
 		perimetroActivo.setAplicaComercializar(0);
 		perimetroActivo.setAplicaFormalizar(0);
+		perimetroActivo.setAplicaPublicar(false);
 		perimetroActivo.setIncluidoEnPerimetro(0);
 		genericDao.save(PerimetroActivo.class, perimetroActivo);
 
@@ -587,6 +593,45 @@ public class AltaActivoFinanciero implements AltaActivoService {
 
 		activo.setBien(bien);
 		genericDao.save(Activo.class, activo);
+		
+		ActivoPublicacion activoPublicacion = new ActivoPublicacion();
+		activoPublicacion.setActivo(activo);
+		activoPublicacion.setTipoComercializacion((DDTipoComercializacion) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoComercializacion.class, dtoAAF.getDestinoComercialCodigo()));
+		activoPublicacion.setEstadoPublicacionVenta((DDEstadoPublicacionVenta) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoPublicacionVenta.class, DDEstadoPublicacionVenta.CODIGO_NO_PUBLICADO_VENTA));
+		activoPublicacion.setEstadoPublicacionAlquiler((DDEstadoPublicacionAlquiler) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoPublicacionAlquiler.class, DDEstadoPublicacionAlquiler.CODIGO_NO_PUBLICADO_ALQUILER));
+		activoPublicacion.setCheckPublicarVenta(false);
+		activoPublicacion.setCheckOcultarVenta(false);
+		activoPublicacion.setCheckSinPrecioVenta(false);
+		activoPublicacion.setCheckOcultarPrecioVenta(false);
+		activoPublicacion.setCheckPublicarAlquiler(false);
+		activoPublicacion.setCheckOcultarAlquiler(false);
+		activoPublicacion.setCheckSinPrecioAlquiler(false);
+		activoPublicacion.setCheckOcultarPrecioAlquiler(false);
+		activoPublicacion.setVersion(new Long(0));
+		
+		if (DDTipoComercializacion.CODIGO_VENTA.equals(dtoAAF.getDestinoComercialCodigo())
+				|| DDTipoComercializacion.CODIGO_ALQUILER_VENTA.equals(dtoAAF.getDestinoComercialCodigo())
+				|| DDTipoComercializacion.CODIGO_ALQUILER_OPCION_COMPRA.equals(dtoAAF.getDestinoComercialCodigo())) {
+			activoPublicacion.setFechaInicioVenta(new Date());
+		}
+		
+		if (DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(dtoAAF.getDestinoComercialCodigo())
+				|| DDTipoComercializacion.CODIGO_ALQUILER_VENTA.equals(dtoAAF.getDestinoComercialCodigo())
+				|| DDTipoComercializacion.CODIGO_ALQUILER_OPCION_COMPRA.equals(dtoAAF.getDestinoComercialCodigo())) {
+			activoPublicacion.setFechaInicioAlquiler(new Date());
+		}
+		
+		Auditoria auditoria = new Auditoria();
+		auditoria.setBorrado(false);
+		auditoria.setFechaCrear(new Date());
+		auditoria.setUsuarioCrear("ALTA_ACTIVOS_FINANCIEROS");
+		activoPublicacion.setAuditoria(auditoria);
+		
+		genericDao.save(ActivoPublicacion.class, activoPublicacion);
+		
+		ActivoPublicacionHistorico activoPublicacionHistorico = new ActivoPublicacionHistorico();
+		BeanUtils.copyProperties(activoPublicacionHistorico, activoPublicacion);
+		genericDao.save(ActivoPublicacionHistorico.class, activoPublicacionHistorico);
 	}
 	
 	private ActivoProveedor obtenerMediador(String nifMediador,Long idActivo){

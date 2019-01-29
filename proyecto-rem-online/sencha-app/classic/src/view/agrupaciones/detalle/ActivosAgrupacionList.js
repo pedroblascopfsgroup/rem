@@ -221,7 +221,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
 	            flex: 1
 	        },
 	        {
-	            dataIndex: 'subtipoActivoDesc',
+	            dataIndex: 'subtipoActivoDescripcion',
 	            text: HreRem.i18n('header.subtipo'),
 	            flex: 0.5
 	        },
@@ -262,22 +262,16 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
 	            flex: 0.5
 	        },
 	        {   
-	        	dataIndex: 'estadoVenta',
+	        	dataIndex: 'condPublVenta',
 	            text: HreRem.i18n('header.condicionantes.publicacion.venta'),
 	            flex: 1,
-	            renderer: condPublRenderer,
-	            bind: {
-		        	hidden: true
-		        }
+	            renderer: condPublRenderer
 	        },
 	        {
-	            dataIndex: 'estadoAlquiler',
+	            dataIndex: 'condPublAlquiler',
 	            text: HreRem.i18n('header.condicionantes.publicacion.alquiler'),
 	            flex: 1,
-	            renderer: condPublRenderer,
-	            bind: {
-		        	hidden: true
-		        }
+	            renderer: condPublRenderer
 	        },
 	        {
 	            dataIndex: 'situacionComercial',
@@ -417,11 +411,11 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
     onAddClick: function(btn){
 	  var me = this;
       var isFormalizacion = me.up('agrupacionesdetallemain').lookupReference('comboFormalizacion').value;
-      var isComercial = me.up('agrupacionesdetallemain').getViewModel().get("agrupacionficha.isComercial");
+      var isComercialVenta = me.up('agrupacionesdetallemain').getViewModel().get("agrupacionficha.isComercialVenta");
       var provincia = me.up('agrupacionesdetallemain').getViewModel().get("agrupacionficha.provinciaCodigo");
       var cartera = me.up('agrupacionesdetallemain').getViewModel().get("agrupacionficha.codigoCartera");
       var tipoAgrupacion = me.up('agrupacionesdetallemain').getViewModel().get('agrupacionficha').get('tipoAgrupacionCodigo');
-      if (isComercial && isFormalizacion==null) {
+      if (isComercialVenta && isFormalizacion==null) {
           Ext.Msg.show({ message: 'No se ha definido el perímetro de formalización.', buttons: Ext.Msg.YES});
       } else if ((tipoAgrupacion == CONST.TIPOS_AGRUPACION['PROYECTO']) && (provincia == null || cartera == null)){
     	  Ext.Msg.show({ message: 'No se ha cumplimentado el campo Provincia o Cartera.', buttons: Ext.Msg.YES});

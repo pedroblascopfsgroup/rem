@@ -13,7 +13,10 @@ import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import es.capgemini.devon.beans.Service;
 import es.capgemini.devon.message.MessageService;
@@ -245,9 +248,12 @@ public class AgrupacionAdapter {
 	
 	@Autowired
 	private ActivoHistoricoPatrimonioDao activoHistoricoPatrimonioDao;
-	
+
 	@Autowired
 	private ClienteComercialDao clienteComercialDao;
+
+	@Resource(name = "entityTransactionManager")
+    private PlatformTransactionManager transactionManager;
 
 	private final Log logger = LogFactory.getLog(getClass());
 
@@ -755,14 +761,10 @@ public class AgrupacionAdapter {
 			}
 
 			if (!Checks.esNulo(numActivo)){
-				if(!particularValidator.esActivoIncluidoPerimetro(Long.toString(numActivo))){
+				if(!DDTipoAgrupacion.AGRUPACION_ASISTIDA.equals(agrupacion.getTipoAgrupacion().getCodigo()) && !particularValidator.esActivoIncluidoPerimetro(Long.toString(numActivo))){
 					throw new JsonViewerException("El activo se encuetra fuera del perímetro HAYA");
-				}
-			}
-
-			if (!Checks.esNulo(numActivo)){
-				if(particularValidator.isActivoNoComercializable(Long.toString(numActivo))){
-					throw new JsonViewerException("El activo no es comercializable");
+				} else if (DDTipoAgrupacion.AGRUPACION_ASISTIDA.equals(agrupacion.getTipoAgrupacion().getCodigo()) && particularValidator.esActivoIncluidoPerimetro(Long.toString(numActivo))){
+					throw new JsonViewerException("El activo se encuetra dentro del perímetro HAYA");
 				}
 			}
 
@@ -772,23 +774,31 @@ public class AgrupacionAdapter {
 				if (DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_VENTA.equals(agrupacion.getTipoAgrupacion().getCodigo())
 						|| DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_ALQUILER.equals(agrupacion.getTipoAgrupacion().getCodigo())) {
 					
-						
+					// El activo no es comercializable
+					if(particularValidator.isActivoNoComercializable(Long.toString(numActivo))){
+						throw new JsonViewerException("El activo no es comercializable");
+					}
+					
+					
+					
+					
 					// El activo ya esta en una agrupacion comercial viva
 					if (particularValidator.activoEnAgrupacionComercialViva(Long.toString(numActivo))) {
 						throw new JsonViewerException("El activo está incluido en otro lote comercial vivo");
 					}
 					
-					// El activo tiene ofertas vivas
-					if (particularValidator.existeActivoConExpedienteComercialVivo(Long.toString(numActivo))) {
-						throw new JsonViewerException("El activo tiene ofertas individuales vivas");
-					}
 					
 					// Agrupacion Comercial - Alquiler
 					if (DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_ALQUILER.equals(agrupacion.getTipoAgrupacion().getCodigo())) {
+					
+						// El activo tiene ofertas vivas
+						if (particularValidator.existeActivoConExpedienteComercialVivo(Long.toString(numActivo))) {
+							throw new JsonViewerException("El activo tiene ofertas individuales vivas");
+						}
 						
 						// El activo es de alquiler
-						if (DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(activo.getTipoComercializacion().getCodigo())
-								|| DDTipoComercializacion.CODIGO_ALQUILER_VENTA.equals(activo.getTipoComercializacion().getCodigo())) {
+						if (DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(activo.getActivoPublicacion().getTipoComercializacion().getCodigo())
+								|| DDTipoComercializacion.CODIGO_ALQUILER_VENTA.equals(activo.getActivoPublicacion().getTipoComercializacion().getCodigo())) {
 							
 							// El activo esta alquilado
 							if (particularValidator.esActivoAlquilado(Long.toString(numActivo))) {
@@ -809,13 +819,22 @@ public class AgrupacionAdapter {
 				
 				
 				if(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_VENTA.equals(agrupacion.getTipoAgrupacion().getCodigo())){
-					if(DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(activo.getTipoComercializacion().getCodigo())){
+					
+					
+					//existeOfertaAprobadaActivo
+					// El activo tiene ofertas vivas
+					if (particularValidator.existeOfertaAprobadaActivo(Long.toString(numActivo))) {
+						throw new JsonViewerException("El activo tiene ofertas individuales vivas");
+					}
+					
+					
+					if(DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(activo.getActivoPublicacion().getTipoComercializacion().getCodigo())){
 						throw new JsonViewerException("El destino comercial del activo no coincide con el de la agrupación");
 					}
 					
 				}else if(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_ALQUILER.equals(agrupacion.getTipoAgrupacion().getCodigo())){
 					
-					if(DDTipoComercializacion.CODIGO_VENTA.equals(activo.getTipoComercializacion().getCodigo())){
+					if(DDTipoComercializacion.CODIGO_VENTA.equals(activo.getActivoPublicacion().getTipoComercializacion().getCodigo())){
 						throw new JsonViewerException("El destino comercial del activo no coincide con el de la agrupación");
 					}else if(!Checks.esNulo(activo.getTipoAlquiler()) && !Checks.esNulo(agrupacion.getTipoAlquiler())){
 						if(!activo.getTipoAlquiler().getCodigo().equals(agrupacion.getTipoAlquiler().getCodigo())){
@@ -827,12 +846,6 @@ public class AgrupacionAdapter {
 				}
 			}
 			
-			if (!Checks.esNulo(numActivo)){
-				if(particularValidator.existeActivoConOfertaViva(Long.toString(numActivo))){
-					throw new JsonViewerException("El activo tiene ofertas individuales vivas");
-				}
-			}
-
 			if (!Checks.esNulo(numActivo)){
 				if(particularValidator.activoEnAgrupacionComercialViva(Long.toString(numActivo))){
 					throw new JsonViewerException("El activo está incluido en otro lote comercial vivo");
@@ -1608,6 +1621,8 @@ public class AgrupacionAdapter {
 			proyecto.setDireccion(dtoAgrupacion.getDireccion());
 
 			genericDao.save(ActivoProyecto.class, proyecto);
+			
+			dtoAgrupacion.setId(proyecto.getId().toString());
 
 			// Si es ASISTIDA
 		} else if (dtoAgrupacion.getTipoAgrupacion().equals(DDTipoAgrupacion.AGRUPACION_ASISTIDA)) {
@@ -1776,7 +1791,7 @@ public class AgrupacionAdapter {
 
 	public List<VOfertasActivosAgrupacion> getListOfertasAgrupacion(Long idAgrupacion) {
 
-		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "idAgrupacion", idAgrupacion.toString());
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "idAgrupacion", idAgrupacion);
 
 		List<VOfertasActivosAgrupacion> ofertasAgrupacion = genericDao.getList(VOfertasActivosAgrupacion.class, filtro);
 
@@ -1823,7 +1838,7 @@ public class AgrupacionAdapter {
 		return true;
 	}
 
-	@Transactional(readOnly = false)
+	//@Transactional(readOnly = false)
 	public boolean saveOfertaAgrupacion(DtoOfertaActivo dto) throws JsonViewerException, Exception {
 
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdOferta());
@@ -1889,12 +1904,13 @@ public class AgrupacionAdapter {
 
 			DDSubtipoTrabajo subtipoTrabajo = (DDSubtipoTrabajo) utilDiccionarioApi
 					.dameValorDiccionarioByCod(DDSubtipoTrabajo.class, activoApi.getSubtipoTrabajoByOferta(oferta));
-			Trabajo trabajo = trabajoApi.create(subtipoTrabajo, listaActivos, null);
-
+			Trabajo trabajo = trabajoApi.create(subtipoTrabajo, listaActivos, null, false);
 			activoManager.crearExpediente(oferta, trabajo);
+			trabajoApi.createTramiteTrabajo(trabajo);
 		}
 
-		genericDao.update(Oferta.class, oferta);
+		//genericDao.update(Oferta.class, oferta);
+		persistOferta(oferta);
 
 		// si la oferta ha sido rechazada enviamos un email/notificacion.
 		if (DDEstadoOferta.CODIGO_RECHAZADA.equals(tipoOferta.getCodigo())) {
@@ -1903,17 +1919,6 @@ public class AgrupacionAdapter {
 				DDMotivoRechazoOferta motivoRechazoOferta = (DDMotivoRechazoOferta) utilDiccionarioApi
 						.dameValorDiccionarioByCod(DDMotivoRechazoOferta.class, dto.getMotivoRechazoCodigo());
 				oferta.setMotivoRechazo(motivoRechazoOferta);
-			}
-
-			if (!Checks.esNulo(oferta.getAgrupacion())) {
-				ActivoAgrupacion agrupacion = oferta.getAgrupacion();
-
-				List<Oferta> ofertasVivasAgrupacion = ofertaDao.getListOtrasOfertasVivasAgr(oferta.getId(), agrupacion.getId());
-
-				if (!Checks.esNulo(ofertasVivasAgrupacion) && ofertasVivasAgrupacion.isEmpty()) {
-					agrupacion.setFechaBaja(new Date());
-					activoAgrupacionApi.saveOrUpdate(agrupacion);
-				}
 			}
 
 			notificatorServiceSancionOfertaAceptacionYRechazo.notificatorFinSinTramite(oferta.getId());
@@ -1926,6 +1931,23 @@ public class AgrupacionAdapter {
 		// }
 
 		return true;
+	}
+	
+	private boolean persistOferta(Oferta oferta) {
+		TransactionStatus transaction = null;
+		boolean resultado = false;
+		try {
+			transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
+			ofertaApi.updateStateDispComercialActivosByOferta(oferta);
+			genericDao.update(Oferta.class, oferta);
+			transactionManager.commit(transaction);
+			resultado = true;
+		} catch (Exception e) {
+			logger.error("Error en activoManager", e);
+			transactionManager.rollback(transaction);
+
+		}
+		return resultado;
 	}
 
 	@Transactional(readOnly = false)
@@ -2294,7 +2316,6 @@ public class AgrupacionAdapter {
 		return res;
 	}
 
-	@SuppressWarnings("unused")
 	@Transactional(readOnly = false)
 	public String saveAgrupacion(DtoAgrupaciones dto, Long id) throws Exception {
 
@@ -2687,11 +2708,12 @@ public class AgrupacionAdapter {
 									activoPublicacion = new ActivoPublicacion();
 									activoPublicacion.setActivo(activoAgrupacionActivo.getActivo());
 								}
-								String destino_comercial = activoPublicacion.getTipoComercializacion().getCodigo();
-								activoPublicacion.setTipoComercializacion(tipoComercializacion);
-
-
-
+								
+								
+								if(!Checks.esNulo(tipoComercializacion)) {
+									activoPublicacion.setTipoComercializacion(tipoComercializacion);
+								}
+								
 								if(!ofertaVivaAlquiler && DDTipoComercializacion.CODIGO_VENTA.equals(dto.getTipoComercializacionCodigo())) {
 									activoPatrimonio.setCheckHPM(false);
 								}
@@ -3102,7 +3124,7 @@ public class AgrupacionAdapter {
 						ofertas.add(ao.getPrimaryKey().getOferta());
 					}
 				}
-				if(!activoTieneOfertaByTipoOfertaCodigo(ofertas, tipoCodigo))
+				if(activoTieneOfertaByTipoOfertaCodigo(ofertas, tipoCodigo))
 				{
 					return false;
 				}
@@ -3209,12 +3231,28 @@ public class AgrupacionAdapter {
 		VCondicionantesAgrDisponibilidad vCondicionantesAgrDisponibilidad = genericDao.get(VCondicionantesAgrDisponibilidad.class, idAgrupacionFilter);
 		Double precioWebVenta = 0.0;
 		Double precioWebAlquiler = 0.0;
-
-		for(ActivoAgrupacionActivo aga : agrupacion.getActivos()) {
-			precioWebVenta += !Checks.esNulo(activoValoracionDao.getImporteValoracionVentaWebPorIdActivo(aga.getActivo().getId()))
-					? activoValoracionDao.getImporteValoracionVentaWebPorIdActivo(aga.getActivo().getId()): 0.0;
-			precioWebAlquiler += !Checks.esNulo(activoValoracionDao.getImporteValoracionRentaWebPorIdActivo(aga.getActivo().getId()))
-					? activoValoracionDao.getImporteValoracionRentaWebPorIdActivo(aga.getActivo().getId()): 0.0;
+		Boolean tienePrecioVenta = true;
+		
+		try {
+			
+			for(ActivoAgrupacionActivo aga : agrupacion.getActivos()) {			
+				if(Checks.esNulo(activoValoracionDao.getImporteValoracionVentaWebPorIdActivo(aga.getActivo().getId()))) {
+					tienePrecioVenta = false;
+					break;
+				}
+			}
+			
+			for(ActivoAgrupacionActivo aga : agrupacion.getActivos()) {
+				if(tienePrecioVenta) {
+				precioWebVenta += !Checks.esNulo(activoValoracionDao.getImporteValoracionVentaWebPorIdActivo(aga.getActivo().getId()))
+						? activoValoracionDao.getImporteValoracionVentaWebPorIdActivo(aga.getActivo().getId()): 0.0;
+				}
+				precioWebAlquiler += !Checks.esNulo(activoValoracionDao.getImporteValoracionRentaWebPorIdActivo(aga.getActivo().getId()))
+						? activoValoracionDao.getImporteValoracionRentaWebPorIdActivo(aga.getActivo().getId()): 0.0;
+			}
+		
+		} catch (Exception e) {	
+			logger.error("error en agrupacionAdapter", e);
 		}
 
 		dto.setPrecioWebVenta(precioWebVenta);

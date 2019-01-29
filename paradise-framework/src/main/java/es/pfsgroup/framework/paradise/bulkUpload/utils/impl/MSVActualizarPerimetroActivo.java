@@ -57,6 +57,7 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 	public static final String VALID_PERIMETRO_FORMALIZACION_EXPEDIENTE_VIVO = "msg.error.masivo.actualizar.perimetro.activo.expediente.vivo";
 	public static final String VALID_DESTINO_COMERCIAL_OFERTAS_VENTA_VIVAS = "msg.error.tipo.comercializacion.ofertas.vivas.venta";
 	public static final String VALID_DESTINO_COMERCIAL_OFERTAS_ALQUILER_VIVAS = "msg.error.tipo.comercializacion.ofertas.vivas.alquiler";
+	public static final String VALID_ACTIVO_FINANCIERO = "msg.error.masivo.actualizar.perimetro.activo.financiero";
 
 	//Posicion fija de Columnas excel, para validaciones especiales de diccionario
 	public static final int COL_NUM_ACTIVO_HAYA = 0;
@@ -76,6 +77,10 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
     public static final String CODIGO_ALQUILER_VENTA = "02";
     public static final String CODIGO_SOLO_ALQUILER = "03";
     public static final String CODIGO_ALQUILER_OPCION_COMPRA = "04";
+    
+    private static final Integer CHECK_VALOR_SI = 1;
+    private static final Integer CHECK_VALOR_NO = 0;
+    private static final Integer CHECK_NO_CAMBIAR = -1;
 
     protected final Log logger = LogFactory.getLog(getClass());
     
@@ -146,6 +151,7 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 				mapaErrores.put(VALID_PERIMETRO_FORMALIZAR_ACTIVO_COMERCIALIZABLE, getFormalizarActivoNoComercializable(exc));
 				mapaErrores.put(messageServices.getMessage(VALID_PERIMETRO_COMERCIALIZACION_OFERTAS_VIVAS), getComercializarConOfertasVivas(exc));
 				mapaErrores.put(messageServices.getMessage(VALID_PERIMETRO_FORMALIZACION_EXPEDIENTE_VIVO), getFormalizarConExpedienteVivo(exc));
+				mapaErrores.put(messageServices.getMessage(VALID_ACTIVO_FINANCIERO), isActivoFinanciero(exc));
 
 			if (!mapaErrores.get(ACTIVE_NOT_EXISTS).isEmpty()
 					|| !mapaErrores.get(messageServices.getMessage(VALID_PERIMETRO_TIPO_COMERCIALIZACION)).isEmpty()
@@ -163,7 +169,8 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 					|| !mapaErrores.get(messageServices.getMessage(VALID_PERIMETRO_COMERCIALIZACION_OFERTAS_VIVAS))
 							.isEmpty()
 					|| !mapaErrores.get(messageServices.getMessage(VALID_PERIMETRO_FORMALIZACION_EXPEDIENTE_VIVO))
-							.isEmpty()) {
+							.isEmpty()
+					|| !mapaErrores.get(messageServices.getMessage(VALID_ACTIVO_FINANCIERO)).isEmpty()) {
 
 				dtoValidacionContenido.setFicheroTieneErrores(true);
 				exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
@@ -700,5 +707,34 @@ public class MSVActualizarPerimetroActivo extends MSVExcelValidatorAbstract {
 		}
 		return listaFilas;
 	}
+	
+	private List<Integer> isActivoFinanciero(MSVHojaExcel exc){
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		
+		try{
+			for(int i=1; i<this.numFilasHoja;i++){
+				try {
+					if(particularValidator.isActivoFinanciero(exc.dameCelda(i, COL_NUM_ACTIVO_HAYA)) && CHECK_VALOR_SI.equals(getCheckValue(exc.dameCelda(i, COL_NUM_EN_PERIMETRO_SN))))
+						listaFilas.add(i);
+				} catch (ParseException e) {
+					listaFilas.add(i);
+				}
+			}
+		} catch (Exception e) {
+			listaFilas.add(0);
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		}
+		return listaFilas;
+	}
 
+	private Integer getCheckValue(String cellValue){
+		if(!Checks.esNulo(cellValue)){
+			if("S".equalsIgnoreCase(cellValue) || String.valueOf(CHECK_VALOR_SI).equalsIgnoreCase(cellValue))
+				return CHECK_VALOR_SI;
+			else
+				return CHECK_VALOR_NO;
+		}
+		return CHECK_NO_CAMBIAR;	
+	}
 }

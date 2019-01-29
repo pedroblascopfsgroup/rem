@@ -1,11 +1,30 @@
 package es.pfsgroup.plugin.rem.api.impl;
 
+import java.lang.reflect.InvocationTargetException;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+
+import javax.annotation.Resource;
+
+import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import edu.emory.mathcs.backport.java.util.concurrent.TimeUnit;
 import es.capgemini.devon.message.MessageService;
 import es.capgemini.pfs.users.UsuarioManager;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
+import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
@@ -23,23 +42,34 @@ import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
-import es.pfsgroup.plugin.rem.model.*;
-import es.pfsgroup.plugin.rem.model.dd.*;
-
-import org.apache.commons.beanutils.BeanUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import javax.annotation.Resource;
-
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
+import es.pfsgroup.plugin.rem.model.ActivoBancario;
+import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
+import es.pfsgroup.plugin.rem.model.ActivoPublicacion;
+import es.pfsgroup.plugin.rem.model.ActivoPublicacionHistorico;
+import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
+import es.pfsgroup.plugin.rem.model.DtoAdmisionDocumento;
+import es.pfsgroup.plugin.rem.model.DtoCondicionantesDisponibilidad;
+import es.pfsgroup.plugin.rem.model.DtoDatosPublicacionActivo;
+import es.pfsgroup.plugin.rem.model.DtoDatosPublicacionAgrupacion;
+import es.pfsgroup.plugin.rem.model.DtoPaginadoHistoricoEstadoPublicacion;
+import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.PerimetroActivo;
+import es.pfsgroup.plugin.rem.model.VCondicionantesDisponibilidad;
+import es.pfsgroup.plugin.rem.model.VPreciosVigentes;
+import es.pfsgroup.plugin.rem.model.dd.DDAdecuacionAlquiler;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionAlquiler;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionVenta;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivosOcultacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
 
 @Service("activoEstadoPublicacionManager")
 public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionApi{
@@ -182,7 +212,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	private Boolean deshabilitarCheckPublicarSinPrecioVenta(Long idActivo) {
 		Boolean resultado = false;
 		try{
-			resultado = isPublicadoVenta(idActivo) || isOcultoVentaVendidoOSalidaSinperimetro(idActivo);
+			resultado = isPublicadoVenta(idActivo) || isOcultoVentaVendidoOSalidaSinperimetro(idActivo) || isVendido(idActivo);
 		}catch(Exception e){
 			logger.error("Error en el método deshabilitarCheckPublicarSinPrecioVenta" , e);
 		}
@@ -201,7 +231,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	private Boolean deshabilitarCheckPublicarSinPrecioAlquiler(Long idActivo) {
 		Boolean resultado = false;
 		try{
-			resultado = isPublicadoAlquiler(idActivo) || isOcultoAlquilerVendidoOSalidaSinperimetro(idActivo);
+			resultado = isPublicadoAlquiler(idActivo) || isOcultoAlquilerVendidoOSalidaSinperimetro(idActivo) || isVendido(idActivo);
 		}catch(Exception e){
 			logger.error("Error en el método deshabilitarCheckPublicarSinPrecioAlquiler" , e);
 		}
@@ -469,8 +499,13 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		List<ActivoAgrupacionActivo> activos = agrupacion.getActivos();
 
 		for(ActivoAgrupacionActivo aga : activos) {
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", aga.getActivo().getId());
+			ActivoSituacionPosesoria condicionantesDisponibilidad = genericDao.get(ActivoSituacionPosesoria.class, filtro);
+			
 			// Registrar el condicionante de disponibilidad 'otros' si se ha modificado.
-			if(!Checks.esNulo(dto.getOtro())) {
+			if((!Checks.esNulo(dto.getOtro()) && Checks.esNulo(condicionantesDisponibilidad.getOtro()))
+					|| (Checks.esNulo(dto.getOtro()) && !Checks.esNulo(condicionantesDisponibilidad.getOtro()))
+					|| (!Checks.esNulo(dto.getOtro()) && !Checks.esNulo(condicionantesDisponibilidad.getOtro()) && !dto.getOtro().equals(condicionantesDisponibilidad.getOtro()))) {
 				DtoCondicionantesDisponibilidad dtoCondicionateDisponibilidad = new DtoCondicionantesDisponibilidad();
 				dtoCondicionateDisponibilidad.setOtro(dto.getOtro());
 				activoApi.saveCondicionantesDisponibilidad(aga.getActivo().getId(), dtoCondicionateDisponibilidad);
@@ -594,11 +629,14 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	 * @return Devuelve True si el proceso ha sido satisfactorio, False si no lo ha sido.
 	 */
 	private Boolean registrarHistoricoPublicacion(ActivoPublicacion activoPublicacion, DtoDatosPublicacionActivo dto) {
-		ActivoPublicacionHistorico activoPublicacionHistorico = new ActivoPublicacionHistorico();
-
 		try {
-			beanUtilNotNull.copyProperties(activoPublicacionHistorico, activoPublicacion);
+			ActivoPublicacionHistorico activoPublicacionHistorico = activoPublicacionHistoricoDao.getActivoPublicacionHistoricoActual(activoPublicacion.getActivo().getId());
 
+			if(Checks.esNulo(activoPublicacionHistorico)) {
+				activoPublicacionHistorico = new ActivoPublicacionHistorico();
+				BeanUtils.copyProperties(activoPublicacionHistorico, activoPublicacion);
+			}
+			
 			if(Arrays.asList(DDTipoComercializacion.CODIGOS_VENTA).contains(activoPublicacion.getTipoComercializacion().getCodigo()) &&
 					(!Checks.esNulo(dto.getMotivoOcultacionVentaCodigo()) || !Checks.esNulo(dto.getMotivoOcultacionManualVenta()) || !Checks.esNulo(dto.getPublicarVenta()) ||
 					!Checks.esNulo(dto.getOcultarVenta()) || (!Checks.esNulo(dto.getPublicarSinPrecioVenta()) && ("14").equals(activoPublicacion.getMotivoOcultacionVenta().getCodigo())) || !Checks.esNulo(dto.getNoMostrarPrecioVenta()))) {
@@ -610,17 +648,14 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 					!Checks.esNulo(dto.getOcultarAlquiler()) || (!Checks.esNulo(dto.getPublicarSinPrecioAlquiler()) && ("14").equals(activoPublicacion.getMotivoOcultacionAlquiler().getCodigo())) || !Checks.esNulo(dto.getNoMostrarPrecioAlquiler()))) {
 				activoPublicacion.setFechaInicioAlquiler(new Date());
 			}
+			
+			if(!Checks.esNulo(activoPublicacionHistorico.getFechaFinVenta()) || !Checks.esNulo(activoPublicacionHistorico.getFechaInicioAlquiler())){
+				activoPublicacionHistoricoDao.saveOrUpdate(activoPublicacionHistorico);
+			}
 
-		} catch (IllegalAccessException e) {
+		} catch (Exception e) {
 			logger.error("Error al registrar en el historico el estado actual de publicacion, error: ", e);
 			return false;
-		} catch (InvocationTargetException e) {
-			logger.error("Error al registrar en el historico el estado actual de publicacion, error: ", e);
-			return false;
-		}
-		
-		if(!Checks.esNulo(activoPublicacionHistorico.getFechaFinVenta()) || !Checks.esNulo(activoPublicacionHistorico.getFechaInicioAlquiler())){
-			activoPublicacionHistoricoDao.save(activoPublicacionHistorico);
 		}
 
 		return true;
@@ -637,9 +672,23 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	private Integer obtenerTotalDeDiasEnEstadoPublicadoVenta(Long idActivo) {
 		Integer dias = 0;
 
-		dias = dias + activoPublicacionHistoricoDao.getTotalDeDiasEnEstadoPublicadoVentaPorIdActivo(idActivo);
-		dias = dias + activoPublicacionDao.getDiasEnEstadoActualPublicadoVentaPorIdActivo(idActivo);
-
+		Filter filterActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
+		Filter filterEstadoPublicacion = genericDao.createFilter(FilterType.EQUALS, "estadoPublicacionVenta.codigo", DDEstadoPublicacionVenta.CODIGO_PUBLICADO_VENTA);
+		Filter filterAuditoria = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+		Order orden = new Order(OrderType.DESC, "id");
+		
+		List<ActivoPublicacionHistorico> listaActivoPublicacionesHistoricas = 
+				genericDao.getListOrdered(ActivoPublicacionHistorico.class, orden, filterActivo, filterEstadoPublicacion, filterAuditoria);
+		
+		if(!Checks.estaVacio(listaActivoPublicacionesHistoricas)){
+			ActivoPublicacionHistorico ultimaPublicacion = listaActivoPublicacionesHistoricas.get(0);
+			try {
+				dias = (int)(long)activoPublicacionHistoricoDao.obtenerDiasPorEstadoPublicacionVentaActivo(ultimaPublicacion);
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+		}
+		
 		return dias;
 	}
 
@@ -654,9 +703,23 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	private Integer obtenerTotalDeDiasEnEstadoPublicadoAlquiler(Long idActivo) {
 		Integer dias = 0;
 
-		dias = dias + activoPublicacionHistoricoDao.getTotalDeDiasEnEstadoPublicadoAlquilerPorIdActivo(idActivo);
-		dias = dias + activoPublicacionDao.getDiasEnEstadoActualPublicadoAlquilerPorIdActivo(idActivo);
-
+		Filter filterActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
+		Filter filterEstadoPublicacion = genericDao.createFilter(FilterType.EQUALS, "estadoPublicacionAlquiler.codigo", DDEstadoPublicacionAlquiler.CODIGO_PUBLICADO_ALQUILER);
+		Filter filterAuditoria = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+		Order orden = new Order(OrderType.DESC, "id");
+		
+		List<ActivoPublicacionHistorico> listaActivoPublicacionesHistoricas = 
+				genericDao.getListOrdered(ActivoPublicacionHistorico.class, orden, filterActivo, filterEstadoPublicacion, filterAuditoria);
+		
+		if(!Checks.estaVacio(listaActivoPublicacionesHistoricas)){
+			ActivoPublicacionHistorico ultimaPublicacion = listaActivoPublicacionesHistoricas.get(0);
+			try {
+				dias = (int)(long)activoPublicacionHistoricoDao.obtenerDiasPorEstadoPublicacionAlquilerActivo(ultimaPublicacion);
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+		}
+		
 		return dias;
 	}
 

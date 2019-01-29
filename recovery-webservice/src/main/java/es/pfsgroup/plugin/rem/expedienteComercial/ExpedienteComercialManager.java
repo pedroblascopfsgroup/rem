@@ -926,15 +926,19 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					dto.setFechaReserva(expediente.getReserva().getFechaFirma());
 				} else {
 					Trabajo trabajo = expediente.getTrabajo();
-					Activo act = trabajo.getActivo();
-					String valor = tareaActivoApi.getValorFechaSeguroRentaPorIdActivo(act.getId());
-					if (valor != null && !valor.equals("")) {
-						SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
-						try {
-							dto.setFechaReserva(sdf1.parse(valor));
-						} catch (ParseException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
+
+					if(trabajo != null){
+						Activo act=trabajo.getActivo();
+						if(act != null){
+							String valor=tareaActivoApi.getValorFechaSeguroRentaPorIdActivo(act.getId());
+							if(valor != null && !valor.equals("")) {
+								SimpleDateFormat sdf1=new SimpleDateFormat("yyyy-MM-dd");
+								try {
+									dto.setFechaReserva(sdf1.parse(valor));
+								} catch (ParseException e) {
+									logger.error("error calculando la fecha de reserva",e);
+								}
+							}
 						}
 					}
 				}
@@ -2633,7 +2637,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			beanUtilNotNull.copyProperty(posicionamiento, "motivoAplazamiento", dto.getMotivoAplazamiento());
 			beanUtilNotNull.copyProperty(posicionamiento, "fechaAviso", dto.getFechaHoraAviso());
 
-			if (!Checks.esNulo(dto.getFechaHoraFirma())) {
+			if(!Checks.esNulo(dto.getFechaHoraFirma()) && (!(new Date(0)).equals(dto.getFechaHoraFirma()))) {
 				beanUtilNotNull.copyProperty(posicionamiento, "fechaPosicionamiento", dto.getFechaHoraFirma());
 			} else if (!Checks.esNulo(dto.getFechaHoraPosicionamiento())) {
 				beanUtilNotNull.copyProperty(posicionamiento, "fechaPosicionamiento",
@@ -4277,13 +4281,13 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 	@Override
 	public String consultarComiteSancionador(Long idExpediente) throws Exception {
-		Long porcentajeImpuesto = null;
+		Double porcentajeImpuesto = null;
 
 		try {
 			ExpedienteComercial expediente = findOne(idExpediente);
 			if (!Checks.esNulo(expediente.getCondicionante())) {
 				if (!Checks.esNulo(expediente.getCondicionante().getTipoAplicable())) {
-					porcentajeImpuesto = expediente.getCondicionante().getTipoAplicable().longValue();
+					porcentajeImpuesto = expediente.getCondicionante().getTipoAplicable();
 				}
 			}
 
@@ -4358,8 +4362,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		return instancia;
 	}
 
-	public InstanciaDecisionDto expedienteComercialToInstanciaDecisionList(ExpedienteComercial expediente,
-			Long porcentajeImpuesto, String codComiteSuperior) throws Exception {
+	public InstanciaDecisionDto expedienteComercialToInstanciaDecisionList(ExpedienteComercial expediente, Double porcentajeImpuesto, String codComiteSuperior) throws Exception {
 		String tipoImpuestoCodigo;
 		InstanciaDecisionDto instancia = new InstanciaDecisionDto();
 		BigDecimal importeXActivo = null;
@@ -4447,7 +4450,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 			// PorcentajeImpuesto
 			if (!Checks.esNulo(porcentajeImpuesto)) {
-				instData.setPorcentajeImpuesto(porcentajeImpuesto.intValue());
+				instData.setPorcentajeImpuesto((int)(porcentajeImpuesto*100));
 			}
 			instanciaList.add(instData);
 		}
@@ -4997,7 +5000,14 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 
 		gastoExpediente.setImporteCalculo(dto.getImporteCalculo());
-		gastoExpediente.setImporteFinal(dto.getHonorarios());
+		
+		//Si el honorario es menor de 100 € el valor final será, salvo si el importe es fijo, de 100 €. HREOS-5149
+		if(dto.getHonorarios() < 100.00 && !(dto.getCodigoTipoCalculo().equals(DDTipoCalculo.TIPO_CALCULO_IMPORTE_FIJO_ALQ))) {
+			gastoExpediente.setImporteFinal(100.00);
+		}else {
+			gastoExpediente.setImporteFinal(dto.getHonorarios());
+		}
+		
 		gastoExpediente.setObservaciones(dto.getObservaciones());
 		gastoExpediente.setExpediente(expediente);
 
@@ -5878,13 +5888,6 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			dto.setIdActivo(activo.getId());
 			dto.setNumActivo(activo.getNumActivo());
 			dto.setImporteParticipacion(activoOferta.getImporteActivoOferta());
-			Oferta oferta = activoOferta.getPrimaryKey().getOferta();
-
-			if (!Checks.esNulo(oferta.getImporteContraOferta())) {
-				dto.setImporteParticipacion(oferta.getImporteContraOferta());
-			} else {
-				dto.setImporteParticipacion(oferta.getImporteOferta());
-			}
 
 			listaActivos.add(dto);
 		}
@@ -6945,11 +6948,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	private InstanciaDecisionDto creaInstanciaDecisionDto(Long idExpediente) throws Exception {
 		try {
 			ExpedienteComercial expediente = findOne(idExpediente);
-			Long porcentajeImpuesto = null;
+			Double porcentajeImpuesto = null;
 
 			if (!Checks.esNulo(expediente) && !Checks.esNulo(expediente.getCondicionante())) {
 				if (!Checks.esNulo(expediente.getCondicionante().getTipoAplicable())) {
-					porcentajeImpuesto = expediente.getCondicionante().getTipoAplicable().longValue();
+					porcentajeImpuesto = expediente.getCondicionante().getTipoAplicable();
 				}
 			}
 

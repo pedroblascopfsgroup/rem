@@ -3054,20 +3054,317 @@ Ext
 						} catch (err) {
 							Ext.global.console.log(err);
 						}
-					},
+					},	
+	
+	validarFechaPosicionamiento: function(value){
+		/*var hoy= new Date();
+		hoy.setHours(0,0,0,0);
+		var from = value.split("/");
+		var fechaPosiString = new Date(from[2], from[1] - 1, from[0]);
+		var fechaPosiDate= new Date(fechaPosiString);
+		
+		if(fechaPosiDate<hoy){
+			return HreRem.i18n('info.msg.fecha.posicionamiento.mayor.hoy');;
+		}
+		else{
+			return true;
+		}*/
+		return true;
+	
+	},
+	buscarSucursal: function(field, e){
+		var me= this;
+		var url =  $AC.getRemoteUrl('proveedores/searchProveedorCodigoUvem');
+		var cartera = me.getViewModel().get('reserva.cartera');
+		var codSucursal = '';
+		var nombreSucursal = '';
+		if(cartera == CONST.CARTERA['BANKIA']){
+			codSucursal = '2038' + field.getValue();
+			nombreSucursal = ' (Oficina Bankia)';
+		}else if(cartera == CONST.CARTERA['CAJAMAR']){
+			codSucursal = '3058' + field.getValue();
+			nombreSucursal = ' (Oficina Cajamar)'
+		}
+		var data;
+		var re = new RegExp("^[0-9]{8}$");
+		
+		Ext.Ajax.request({
+		    			
+		 		url: url,
+		   		params: {codigoProveedorUvem : codSucursal},
+		    		
+		    	success: function(response, opts) {
+			    	data = Ext.decode(response.responseText);
+		    		var buscadorSucursal = field.up('formBase').down('[name=buscadorSucursales]'),
+		    		nombreSucursalField = field.up('formBase').down('[name=nombreSucursal]');
+			    	if(!Utils.isEmptyJSON(data.data)){
+						var id= data.data.id;
+		    		    nombreSucursal = data.data.nombre + nombreSucursal;
+		    		    
+		    		    if(re.test(codSucursal) && nombreSucursal != null && nombreSucursal != ''){
+			    		    if(!Ext.isEmpty(nombreSucursalField)) {
+			    		    	nombreSucursalField.setValue(nombreSucursal);	
+				    		}
+		    		    }else{
+		    		    	nombreSucursalField.setValue('');
+		    				me.fireEvent("errorToast", "El código de la Sucursal introducido no corresponde con ninguna Oficina");
+		    			}
+			    	} else {
+			    		if(!Ext.isEmpty(nombreSucursalField)) {
+			    			nombreSucursalField.setValue('');
+		    		    }
+			    		me.fireEvent("errorToast", HreRem.i18n("msg.buscador.no.encuentra.sucursal.codigo"));
+			    		buscadorSucursal.markInvalid(HreRem.i18n("msg.buscador.no.encuentra.sucursal.codigo"));		    		    
+			    	}		    		    	 
+		    	},
+		    	failure: function(response) {
+					me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+		    	},
+		    	callback: function(options, success, response){
+				}   		     
+		});		
+	},
 
-					onClickGenerarHojaExcel : function(btn) {
+	onCambioTipoImpuesto: function(combo, value,oldValue, eOpts){
+		try{
+			if(!Ext.isEmpty(oldValue)){
+				var me = this,
+		    	tipoAplicable = me.lookupReference('tipoAplicable'),
+		    	operacionExenta = me.lookupReference('chkboxOperacionExenta'),
+		    	inversionSujetoPasivo = me.lookupReference('chkboxInversionSujetoPasivo'),
+		    	renunciaExencion = me.lookupReference('chkboxRenunciaExencion');
+		
+		
+		    	if(CONST.TIPO_IMPUESTO['ITP'] == value) {
+		    		tipoAplicable.reset();
+		    		tipoAplicable.setDisabled(true);
+		    		tipoAplicable.allowBlank = true;
+		    		tipoAplicable.setValue(0);
+		    		operacionExenta.reset();
+		    		operacionExenta.setReadOnly(true);
+		    		inversionSujetoPasivo.reset();
+		    		inversionSujetoPasivo.setReadOnly(true);
+		    		renunciaExencion.reset();
+		    		renunciaExencion.setReadOnly(true);
+		    	} else {
+		    		tipoAplicable.setDisabled(false);
+		        	tipoAplicable.allowBlank = false;
+		    		operacionExenta.setReadOnly(false);
+		    		inversionSujetoPasivo.setReadOnly(false);
+		    	}
+			}
+		}catch(err) {
+  			Ext.global.console.log('Error en onCambioTipoImpuesto: '+err)
+		}
+	},
 
-						var me = this, config = {};
+	onCambioOperacionExenta: function(checkbox, newValue, oldValue, eOpts) {
+		if(!Ext.isEmpty(oldValue)){
+			var me = this,
+			renunciaExencion = me.lookupReference('chkboxRenunciaExencion'),
+			tipoAplicable = me.lookupReference('tipoAplicable');
+	
+			if(newValue == true) {
+				tipoAplicable.reset();
+				tipoAplicable.allowBlank = true;
+				tipoAplicable.setDisabled(true);
+				renunciaExencion.setReadOnly(false);
+			} else {
+				tipoAplicable.setDisabled(false);
+				tipoAplicable.allowBlank = false;
+				renunciaExencion.reset();
+				renunciaExencion.setReadOnly(true);
+			}
+		}
+	},
 
-						config.params = {};
-						config.params.numExpediente = me.getViewModel().get(
-								"expediente.numExpediente");
-						config.url = $AC
-								.getRemoteUrl("operacionventa/operacionVentaPDFByOfertaHRE");
+	onCambioRenunciaExencion: function(checkbox, newValue, oldValue, eOpts) {
+		if(!Ext.isEmpty(oldValue)){
+			var me = this,
+			tipoAplicable = me.lookupReference('tipoAplicable');
+	
+			if(newValue == false) {
+				tipoAplicable.reset();
+				tipoAplicable.allowBlank = true;
+				tipoAplicable.setDisabled(true);
+			} else {
+				tipoAplicable.setDisabled(false);
+				tipoAplicable.allowBlank = false;
+			}
+		}
+	},
+	onCambioCheckPorcentual: function(checkbox, newValue, oldValue, eOpts) {
+			var me = this,
+			ipc = me.lookupReference('checkboxIPC');
+			porcentaje = me.lookupReference('escaladoRentaPorcentaje');
+			
+			if(newValue) {
+				ipc.show();
+				porcentaje.show();
+			} else {
+				ipc.hide();
+				porcentaje.hide();
+				
+			}
+	},	
+	onCambioCheckRevMercado: function(checkbox, newValue, oldValue, eOpts) {
+		var me = this,
+		fecha = me.lookupReference('revisionMercadoFecha');
+		cadaMes = me.lookupReference('escaladoRentasMeses');
+		if(newValue) {
+			fecha.show();
+			cadaMes.show();
+		} else {
+			fecha.hide();
+			cadaMes.hide();
+		}
+	},
+	onCambioCheckEscaladoFijo: function(checkbox, newValue, oldValue, eOpts) {
+		var me = this,
+		fijoFecha = me.lookupReference('tipoEscaladoFecha');
+		fijoIncremento = me.lookupReference('tipoEscaladoIncremento');
+		grid= me.lookupReference('historicoCondicones');
+		if(newValue) {
+			grid.disableAddButton(false);
+		} else {
+			grid.disableAddButton(true);
+		}
+	},
+	onCambioInversionSujetoPasivo: function(checkbox, newValue, oldValue, eOpts) {
+		if(!Ext.isEmpty(oldValue)){
+			var me = this,
+			operacionExenta = me.lookupReference('chckboxOperacionExenta'),
+	    	renunciaExencion = me.lookupReference('chkboxRenunciaExencion'),
+	    	tipoAplicable = me.lookupReference('tipoAplicable');
+	
+			if(newValue == true) {
+				operacionExenta.reset();
+				operacionExenta.setReadOnly(true);
+				renunciaExencion.reset();
+	    		renunciaExencion.setReadOnly(true);
+	    		tipoAplicable.reset();
+	    		tipoAplicable.allowBlank = true;
+	    		tipoAplicable.setDisabled(true);
+			} else {
+				operacionExenta.setReadOnly(false);
+				tipoAplicable.allowBlank = false;
+				tipoAplicable.setDisabled(false);
+			}
+		}
+	},
+	
+	onchkbxEnRevisionChange: function(checkbox, newValue, oldValue, eOpts){
+    	var me = this;
+    	seguroComentario = me.lookupReference('textareafieldsegurocomentarios');
+    	if(newValue == false){
+    		seguroComentario.setDisabled(true);
+        }  
+    	else{
+    		seguroComentario.setDisabled(false);
+    	}
 
-						me.fireEvent("downloadFile", config);
-					},
+    	
+    },
+    
+    habilitarcheckrevisionOnChange: function(combo, newValue){
+		var me = this;
+    	enRevision = me.lookupReference('chkboxEnRevision');
+    	seguroComentario = me.lookupReference('textareafieldsegurocomentarios');
+    	//Si el estado es pendiente(01), habilitamos el check de revision 
+    	if(newValue === '01'){
+			enRevision.setDisabled(false);
+			enRevision.setReadOnly(false);
+        }  
+    	else{
+    		enRevision.setDisabled(true);
+    		seguroComentario.setDisabled(true);
+    	}
+ 	},
+
+	onHaCambiadoFechaResolucion: function( field, newDate, oldDate, eOpts){
+		var me = this;
+		var resultado= me.lookupReference('comboResultadoTanteoForm');
+		if(!Ext.isEmpty(newDate)){
+			resultado.allowBlank= false;
+		}
+		else{
+			resultado.allowBlank= true;
+		}
+	},
+	
+	onHaCambiadoResultadoTanteo: function(combo, value){
+		var me = this;
+		var fechaResolucion= me.lookupReference('fechaResolucionForm');
+		if(!Ext.isEmpty(value)){
+			fechaResolucion.allowBlank= false;
+		}
+		else{
+		 	fechaResolucion.allowBlank= true;
+		}
+	},
+	
+	enviarCondicionantesEconomicosUvem: function(btn){
+		var me = this;
+		var url = $AC.getRemoteUrl('expedientecomercial/enviarCondicionantesEconomicosUvem');
+		me.getView().mask(HreRem.i18n("msg.mask.espere"));
+		
+		Ext.Ajax.request({
+			url: url,
+			
+		    params:  {
+		    	idExpediente : me.getViewModel().get("expediente.id")
+		    },
+		    
+		    success: function(response, opts) {
+		    	var data = {};
+		    	try {
+		    		data = Ext.decode(response.responseText);
+		    	}  catch (e){ };
+               
+		    	if(data.success === "true") {
+		    		me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));           	
+		    	}else {
+		    		if(data.errorUvem == "true"){
+		    			me.fireEvent("errorToast", data.msg);		
+		    		}
+		    		else{
+		    			Utils.defaultRequestFailure(response, opts);
+		    		}
+		    	}
+		     },
+
+		     failure: function(response, opts) {
+		    	 if(data.errorUvem == "true"){
+		    		 me.fireEvent("errorToast", data.msg);		
+		    	 }
+		    	 else{
+		    		 Utils.defaultRequestFailure(response, opts);
+		    	 }
+		     },
+
+		     callback: function() {
+		    	 me.getView().unmask();
+		     }
+		});		
+	},
+	
+	onClickGeneraOfertarHojaExcel: function(btn) {
+    	var me = this,
+		config = {};
+
+		config.params = {};
+		config.params.idOferta=me.getViewModel().get("datosbasicosoferta.idOferta");
+		config.url= $AC.getRemoteUrl("ofertas/generateExcelOferta");
+		
+		Ext.Msg.confirm(
+				HreRem.i18n("title.propuesta.oferta"),
+				HreRem.i18n("msg.propuesta.oferta"),
+				function(btn){
+					if (btn == "yes"){
+						me.fireEvent("downloadFile", config);		
+					}
+				});
+	},
 
 					onClickGenerarFacturaPdf : function(btn) {
 						var me = this, config = {};

@@ -4,6 +4,7 @@ import es.capgemini.pfs.dao.AbstractEntityDao;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.hibernate.HibernateUtils;
 import es.pfsgroup.plugin.rem.activo.publicacion.dao.ActivoPublicacionHistoricoDao;
+import es.pfsgroup.plugin.rem.model.ActivoPublicacion;
 import es.pfsgroup.plugin.rem.model.ActivoPublicacionHistorico;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoPaginadoHistoricoEstadoPublicacion;
@@ -14,6 +15,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.type.Type;
@@ -186,15 +188,8 @@ public class ActivoPublicacionHistoricoDaoImpl extends AbstractEntityDao<ActivoP
 		return HibernateUtils.castObject(Integer.class, criteria.uniqueResult());
 	}
 
-	/**
-	 * Este método obtiene el conteo de días que se pasa un activo en un mismo estado de publicación para el tipo destino comercial venta. Se limita al estado de 'Publicado'. Para el resto de estados
-	 * devuelve 0.
-	 *
-	 * @param estadoActivo: estado del activo del cual calcular sus días.
-	 * @return Devuelve el número de días que ha estado un activo en un mismo estado.
-	 * @throws ParseException: Puede lanzar un error al convertir la fecha para los cálculos
-	 */
-	private Long obtenerDiasPorEstadoPublicacionVentaActivo(ActivoPublicacionHistorico estadoActivo) throws ParseException {
+	@Override
+	public Long obtenerDiasPorEstadoPublicacionVentaActivo(ActivoPublicacionHistorico estadoActivo) throws ParseException {
 		Long dias = 0L;
 
 		if (DDEstadoPublicacionVenta.CODIGO_PUBLICADO_VENTA.equals(estadoActivo.getEstadoPublicacionVenta().getCodigo()) && !Checks.esNulo(estadoActivo.getFechaInicioVenta())) {
@@ -210,15 +205,8 @@ public class ActivoPublicacionHistoricoDaoImpl extends AbstractEntityDao<ActivoP
 		return dias;
 	}
 
-	/**
-	 * Este método obtiene el conteo de días que se pasa un activo en un mismo estado de publicación para el tipo destino comercial alquiler. Se limita al estado de 'Publicado'. Para el resto de
-	 * estados devuelve 0.
-	 *
-	 * @param estadoActivo: estado del activo del cual calcular sus días.
-	 * @return Devuelve el número de días que ha estado un activo en un mismo estado.
-	 * @throws ParseException: Puede lanzar un error al convertir la fecha para los cálculos.
-	 */
-	private Long obtenerDiasPorEstadoPublicacionAlquilerActivo(ActivoPublicacionHistorico estadoActivo) throws ParseException {
+	@Override
+	public Long obtenerDiasPorEstadoPublicacionAlquilerActivo(ActivoPublicacionHistorico estadoActivo) throws ParseException {
 		Long dias = 0L;
 
 		if (DDEstadoPublicacionAlquiler.CODIGO_PUBLICADO_ALQUILER.equals(estadoActivo.getEstadoPublicacionAlquiler().getCodigo()) && !Checks.esNulo(estadoActivo.getFechaInicioAlquiler())) {
@@ -232,5 +220,21 @@ public class ActivoPublicacionHistoricoDaoImpl extends AbstractEntityDao<ActivoP
 		}
 
 		return dias;
+	}
+	
+	public ActivoPublicacionHistorico getActivoPublicacionHistoricoActual(Long idActivo) {
+		Criteria criteria = getSession().createCriteria(ActivoPublicacionHistorico.class);
+		criteria.add(Restrictions.eq("activo.id", idActivo));
+		criteria.add(Restrictions.isNull("fechaFinVenta"));
+		criteria.add(Restrictions.isNull("fechaFinAlquiler"));
+		criteria.add(Restrictions.eq("auditoria.borrado", false));
+		criteria.addOrder(Order.desc("auditoria.fechaCrear"));
+
+		List<ActivoPublicacionHistorico> historicos = HibernateUtils.castList(ActivoPublicacionHistorico.class, criteria.list());
+		
+		if(!Checks.esNulo(historicos) && !historicos.isEmpty())
+			return historicos.get(0);
+		else
+			return null;
 	}
 }

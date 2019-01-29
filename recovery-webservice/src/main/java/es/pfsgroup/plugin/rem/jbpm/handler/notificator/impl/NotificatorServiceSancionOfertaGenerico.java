@@ -117,6 +117,7 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 	@Autowired
 	private TrabajoManager trabajoManager;
 
+	
 	@Override
 	public final void notificator(ActivoTramite tramite) {
 
@@ -214,7 +215,7 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 				}
 				
 				this.enviaNotificacionRechazar(tramite, activo, oferta, destinatarios.toArray(new String[] {}));
-			}
+			}			
 		}
 	}
 
@@ -282,7 +283,7 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 			// DESTINATARIOS SI ES CAJAMAR
 		} else if (activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_CAJAMAR)) {
 			clavesGestores.addAll(
-					Arrays.asList(GESTOR_PRESCRIPTOR, GESTOR_MEDIADOR, claveGestorComercial, GESTOR_BACKOFFICE, GESTOR_COMERCIAL_ACTIVO_SUS, GESTOR_BACKOFFICE_SUS));
+					Arrays.asList(GESTOR_PRESCRIPTOR, GESTOR_MEDIADOR, claveGestorComercial, GESTOR_BACKOFFICE, GESTOR_COMERCIAL_ACTIVO_SUS, GESTOR_BACKOFFICE_SUS, GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO));
 			if (formalizacion) {
 				clavesGestores.addAll(Arrays.asList(GESTOR_FORMALIZACION, GESTOR_FORMALIZACION_SUS));
 				clavesGestores.addAll(Arrays.asList(GESTOR_GESTORIA_FASE_3, GESTOR_GESTORIA_FASE_3_SUS));
@@ -367,7 +368,6 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 		HashMap<String, String> gestores = new HashMap<String, String>();
 
 		for (String s : claves) {
-			String email = null;
 			if (GESTOR_PRESCRIPTOR.equals(s)) {
 				ActivoProveedor prescriptor = ofertaApi.getPreescriptor(oferta);
 				if (!Checks.esNulo(prescriptor)){
@@ -695,21 +695,28 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 			if (adjuntaInstrucciones) {
 				//ADJUNTOS SI ES CAJAMAR
 				if(activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_CAJAMAR)) {
+					boolean esUnPdf = true;
 					if (ActivoPropietario.CODIGO_FONDOS_TITULIZACION.equals(propietario.getCodigo()) || ActivoPropietario.CODIGO_GIVP.equals(propietario.getCodigo()) 
 							|| ActivoPropietario.CODIGO_GIVP_II.equals(propietario.getCodigo())){
 						if (oferta.getOfertaExpress()){
-							f1 = FileItemUtils.fromResource("docs/07_2018_Instrucciones_Reserva_express_OFICINAS.pdf");
+							f1 = FileItemUtils.fromResource("docs/20181001_Instrucciones_Reserva_CAJAMAR.DOCX");
+							esUnPdf = false;
 						}else {
 							f1 = FileItemUtils.fromResource("docs/Instrucciones_Reserva_Formalizacion_estandar_072018.pdf");
 						}					
 					}else {
-						f1 = FileItemUtils.fromResource("docs/instrucciones_reserva_formalizacion_cajamar.pdf");
+						f1 = FileItemUtils.fromResource("docs/20181001_Instrucciones_Reserva_CAJAMAR.DOCX");
+						esUnPdf = false;
 					}
 					
 					f2 = FileItemUtils.fromResource("docs/ficha_cliente.xlsx");
 					f3 = FileItemUtils.fromResource("docs/manif_titular_real.doc");
+					if(esUnPdf){
+						adjuntos.add(createAdjunto(f1, "Instrucciones_Reserva_Formalizacion_Cajamar.pdf"));
+					}else{
+						adjuntos.add(createAdjunto(f1, "Instrucciones_Reserva_Formalizacion_Cajamar.docx"));
+					}
 					
-					adjuntos.add(createAdjunto(f1, "Instrucciones_Reserva_Formalizacion_Cajamar.pdf"));
 					adjuntos.add(createAdjunto(f2, "Ficha_cliente.xlsx"));
 					adjuntos.add(createAdjunto(f3, "Manif_Titular_Real.doc"));
 				}

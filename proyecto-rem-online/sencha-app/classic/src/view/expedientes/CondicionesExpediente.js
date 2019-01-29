@@ -153,15 +153,14 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 										xtype : 'numberfieldbase',
 										reference : 'tipoAplicable',
 										symbol : HreRem.i18n("symbol.porcentaje"),
-										fieldLabel : HreRem
-												.i18n('fieldlabel.tipo.aplicable'),
+										fieldLabel : HreRem.i18n('fieldlabel.tipo.aplicable'),
 										bind : {
 											value : '{condiciones.tipoAplicable}'
 										}
 									},
 									{
 										xtype : 'checkboxfieldbase',
-										reference : 'chckboxfieldbase',
+										reference : 'chckboxOperacionExenta',
 										fieldLabel : HreRem.i18n('fieldlabel.operacion.exenta'),
 										bind : {
 											value : '{condiciones.operacionExenta}',

@@ -976,7 +976,6 @@ public class ActivoAdapter {
 	public List<DtoNumPlantas> getNumeroPlantasActivo(Long idActivo) {
 		List<DtoNumPlantas> listaPlantas = new ArrayList<DtoNumPlantas>();
 		Activo activo = activoApi.get(Long.valueOf(idActivo));
-
 		if (activo.getInfoComercial().getTipoActivo().getCodigo().equals(DDTipoActivo.COD_VIVIENDA)) {
 			if(activo.getInfoComercial() != null && activo.getInfoComercial() instanceof ActivoVivienda) {
 				
@@ -1922,6 +1921,9 @@ public class ActivoAdapter {
 				beanUtilNotNull.copyProperty(dtoTramite, "cartera", tramite.getActivo().getCartera().getDescripcion());
 				beanUtilNotNull.copyProperty(dtoTramite, "codigoCartera", tramite.getActivo().getCartera().getCodigo());
 			}
+			if(!Checks.esNulo(tramite.getActivo().getSubcartera())){
+				beanUtilNotNull.copyProperty(dtoTramite, "codigoSubcartera", tramite.getActivo().getSubcartera().getCodigo());
+			}
 			if (!Checks.esNulo(tramite.getFechaInicio()))
 				beanUtilNotNull.copyProperty(dtoTramite, "fechaInicio", formato.format(tramite.getFechaInicio()));
 			if (!Checks.esNulo(tramite.getFechaFin()))
@@ -2781,15 +2783,24 @@ public class ActivoAdapter {
 	public boolean actualizarEstadoPublicacionActivo(Long idActivo) {
 		ArrayList<Long> listaIdActivo = new ArrayList<Long>();
 		listaIdActivo.add(idActivo);
-		return this.actualizarEstadoPublicacionActivo(listaIdActivo,false);
+		return this.actualizarEstadoPublicacionActivo(listaIdActivo,true);
 	}
+	
+	
 	
 	@Transactional(readOnly = false)
 	public boolean actualizarEstadoPublicacionActivo(ArrayList<Long> listaIdActivo,Boolean asincrono){
 		boolean resultado = true;
-		if(listaIdActivo != null && listaIdActivo.size() > 0){
-			for(Long idActivo : listaIdActivo){
-				resultado = resultado && this.actualizarEstadoPublicacionActivo(idActivo,asincrono);
+		if(asincrono){
+			activoDao.hibernateFlush();
+			Thread hilo = new Thread(new EjecutarSPPublicacionAsincrono(genericAdapter.getUsuarioLogado().getUsername(), listaIdActivo));
+			hilo.start();
+			resultado = true;
+		}else{
+			if(listaIdActivo != null && listaIdActivo.size() > 0){
+				for(Long idActivo : listaIdActivo){
+					return activoEstadoPublicacionApi.actualizarEstadoPublicacionDelActivoOrAgrupacionRestringidaSiPertenece(idActivo,true);
+				}
 			}
 		}
 		return resultado;
@@ -2797,20 +2808,20 @@ public class ActivoAdapter {
 	
 	@Transactional(readOnly = false)
 	public boolean actualizarEstadoPublicacionActivo(Long idActivo, Boolean asincrono) {
-		if(asincrono){
-			activoDao.hibernateFlush();
-			Thread hilo = new Thread(new EjecutarSPPublicacionAsincrono(genericAdapter.getUsuarioLogado().getUsername(), idActivo));
-			hilo.start();
-			return true;
-		}else{
-			return activoEstadoPublicacionApi.actualizarEstadoPublicacionDelActivoOrAgrupacionRestringidaSiPertenece(idActivo,true);
-		}
+		ArrayList<Long> listaIdActivo = new ArrayList<Long>();
+		listaIdActivo.add(idActivo);
+		return actualizarEstadoPublicacionActivo(listaIdActivo, asincrono);
 		
 	}
 
 	@Transactional(readOnly = false)
 	public boolean guardarCondicionantesDisponibilidad(Long idActivo, DtoCondicionantesDisponibilidad dto) {
-		if(!Checks.esNulo(dto.getOtro())) {
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
+		ActivoSituacionPosesoria condicionantesDisponibilidad = genericDao.get(ActivoSituacionPosesoria.class, filtro);
+		
+		if((!Checks.esNulo(dto.getOtro()) && Checks.esNulo(condicionantesDisponibilidad.getOtro()))
+				|| (Checks.esNulo(dto.getOtro()) && !Checks.esNulo(condicionantesDisponibilidad.getOtro()))
+			    || (!Checks.esNulo(dto.getOtro()) && !Checks.esNulo(condicionantesDisponibilidad.getOtro()) && !dto.getOtro().equals(condicionantesDisponibilidad.getOtro()))) {
 			boolean success = activoApi.saveCondicionantesDisponibilidad(idActivo, dto);
 			activoApi.updateCondicionantesDisponibilidad(idActivo);
 			if (success)
@@ -2847,7 +2858,8 @@ public class ActivoAdapter {
 				List<ActivoAgrupacionActivo> agrupaciones = activo.getAgrupaciones();
 				for(ActivoAgrupacionActivo agrupActivo : agrupaciones) {
 					ActivoAgrupacion agrup= agrupActivo.getAgrupacion();
-					if(agrup.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_VENTA)) {
+					if(agrup.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_VENTA) 
+							&& Checks.esNulo(agrup.getFechaBaja())) {
 						tieneAgrupVenta=true;
 						break;
 					}
@@ -2998,12 +3010,8 @@ public class ActivoAdapter {
 		//Ampliación de [HREOS-4985]
 		//Al cambiar el destino comercial de Venta a Alquiler/Alquiler y Venta
 		}else if(dto instanceof DtoActivoFichaCabecera && !Checks.esNulo(((DtoActivoFichaCabecera)dto).getTipoComercializacionCodigo()) 
-					&& ((((DtoActivoFichaCabecera)dto).getTipoComercializacionCodigo().equals(DDTipoComercializacion.CODIGO_SOLO_ALQUILER)
-							&& !Checks.esNulo(activo) && !Checks.esNulo(activo.getActivoPublicacion()) && !Checks.esNulo(activo.getActivoPublicacion().getTipoComercializacion())
-							&& activo.getActivoPublicacion().getTipoComercializacion().getCodigo().equals(DDTipoComercializacion.CODIGO_SOLO_ALQUILER))	
-						|| (((DtoActivoFichaCabecera)dto).getTipoComercializacionCodigo().equals(DDTipoComercializacion.CODIGO_ALQUILER_VENTA)
-								&& !Checks.esNulo(activo) && !Checks.esNulo(activo.getActivoPublicacion()) && !Checks.esNulo(activo.getActivoPublicacion().getTipoComercializacion())
-								&& activo.getActivoPublicacion().getTipoComercializacion().getCodigo().equals(DDTipoComercializacion.CODIGO_ALQUILER_VENTA)))){
+					&& (((DtoActivoFichaCabecera)dto).getTipoComercializacionCodigo().equals(DDTipoComercializacion.CODIGO_SOLO_ALQUILER)	
+						|| ((DtoActivoFichaCabecera)dto).getTipoComercializacionCodigo().equals(DDTipoComercializacion.CODIGO_ALQUILER_VENTA))){
 			
 			//anyadimos el nuevo gestor
  			if(Checks.esNulo(gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_ALQUILERES))){
@@ -3030,9 +3038,7 @@ public class ActivoAdapter {
 			}
 		//Al cambiar el destino comercial a Venta de Alquiler/Alquiler y Venta
 		}else if(dto instanceof DtoActivoFichaCabecera && !Checks.esNulo(((DtoActivoFichaCabecera)dto).getTipoComercializacionCodigo()) 
-				&& (((DtoActivoFichaCabecera)dto).getTipoComercializacionCodigo().equals(DDTipoComercializacion.CODIGO_VENTA)
-						&& !Checks.esNulo(activo) && !Checks.esNulo(activo.getActivoPublicacion()) && !Checks.esNulo(activo.getActivoPublicacion().getTipoComercializacion())
-						&& activo.getActivoPublicacion().getTipoComercializacion().getCodigo().equals(DDTipoComercializacion.CODIGO_VENTA))){
+				&& ((DtoActivoFichaCabecera)dto).getTipoComercializacionCodigo().equals(DDTipoComercializacion.CODIGO_VENTA)){
 			
 			this.cambiarTrabajosActivosAGestorActivo(activo,GestorActivoApi.CODIGO_GESTOR_ALQUILERES);
 			this.borrarGestor(activo,GestorActivoApi.CODIGO_GESTOR_ALQUILERES);
@@ -3437,8 +3443,7 @@ public class ActivoAdapter {
 				notificationOfertaManager.enviarPropuestaOfertaTipoAlquiler(oferta);
 			}else {
 				notificationOfertaManager.sendNotification(oferta);
-			}
-					
+			}					
 			// HREOS-4937 -- 'General Data Protection Regulation'
 
 			// Comprobamos si existe en la tabla CGD_CLIENTE_GDPR un registro con el mismo
@@ -3501,6 +3506,8 @@ public class ActivoAdapter {
 				
 			}			
 			
+			this.actualizarEstadoPublicacionActivo(activo.getId());
+
 		} catch (Exception ex) {
 			logger.error("error en activoAdapter", ex);
 			ex.printStackTrace();

@@ -217,6 +217,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	@Autowired
 	private ExpedienteComercialDao expedienteComercialDao;
 
+	@Autowired
+	private ActivoAdapter activoAdapterApi;
+
 	@Resource(name = "entityTransactionManager")
 	private PlatformTransactionManager transactionManager;
 
@@ -1004,6 +1007,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	@Transactional(readOnly = false)
 	public void updateStateDispComercialActivosByOferta(Oferta oferta) {
 		if (oferta.getActivosOferta() != null && !oferta.getActivosOferta().isEmpty()) {
+			ArrayList<Long> idActivoActualizarPublicacion = new ArrayList<Long>();
 			for (ActivoOferta activoOferta : oferta.getActivosOferta()) {
 				Activo activo = activoOferta.getPrimaryKey().getActivo();
 				if(!Checks.esNulo(oferta.getOfertaExpress()) && oferta.getOfertaExpress() && DDEstadoOferta.CODIGO_ACEPTADA.equals(oferta.getEstadoOferta().getCodigo())){
@@ -1011,7 +1015,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				}else{
 					updaterState.updaterStateDisponibilidadComercialAndSave(activo,false);
 				}
+				idActivoActualizarPublicacion.add(activo.getId());
 			}
+			activoAdapterApi.actualizarEstadoPublicacionActivo(idActivoActualizarPublicacion,true);
 		}
 	}
 
@@ -1714,10 +1720,10 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	public boolean altaComite(TareaExterna tareaExterna) {
 		Oferta ofertaAceptada = tareaExternaToOferta(tareaExterna);
 		ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
-		Long porcentajeImpuesto = null;
+		Double porcentajeImpuesto = null;
 		if (!Checks.esNulo(expediente.getCondicionante())) {
 			if (!Checks.esNulo(expediente.getCondicionante().getTipoAplicable())) {
-				porcentajeImpuesto = expediente.getCondicionante().getTipoAplicable().longValue();
+				porcentajeImpuesto = expediente.getCondicionante().getTipoAplicable();
 			} else {
 				return false;
 			}
@@ -1756,10 +1762,10 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			ExpedienteComercial expediente = expedienteComercialApi
 					.expedienteComercialPorOferta(ofertaAceptada.getId());
 
-			Long porcentajeImpuesto = null;
+			Double porcentajeImpuesto = null;
 			if (!Checks.esNulo(expediente.getCondicionante())) {
 				if (!Checks.esNulo(expediente.getCondicionante().getTipoAplicable())) {
-					porcentajeImpuesto = expediente.getCondicionante().getTipoAplicable().longValue();
+					porcentajeImpuesto = expediente.getCondicionante().getTipoAplicable();
 				} else {
 					logger.debug("Datos insuficientes para dar de alta un comité");
 					throw new JsonViewerException("No ha sido posible realizar la operación");
@@ -1817,10 +1823,10 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	public boolean ratificacionComite(TareaExterna tareaExterna) {
 		Oferta ofertaAceptada = tareaExternaToOferta(tareaExterna);
 		ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
-		Long porcentajeImpuesto = null;
+		Double porcentajeImpuesto = null;
 		if (!Checks.esNulo(expediente.getCondicionante())) {
 			if (!Checks.esNulo(expediente.getCondicionante().getTipoAplicable())) {
-				porcentajeImpuesto = expediente.getCondicionante().getTipoAplicable().longValue();
+				porcentajeImpuesto = expediente.getCondicionante().getTipoAplicable();
 			} else {
 				return false;
 			}
@@ -1846,7 +1852,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			Oferta ofertaAceptada = tareaExternaToOferta(tareaExterna);
 			ExpedienteComercial expediente = expedienteComercialApi
 					.expedienteComercialPorOferta(ofertaAceptada.getId());
-			Long porcentajeImpuesto = null;
+			Double porcentajeImpuesto = null;
 			if (!Checks.esNulo(importeOfertante) && importeOfertante != "") {
 				ofertaAceptada.setImporteContraOferta(Double.valueOf(importeOfertante.replace(',', '.')));
 				genericDao.save(Oferta.class, ofertaAceptada);
@@ -1860,7 +1866,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			}
 			if (!Checks.esNulo(expediente.getCondicionante())) {
 				if (!Checks.esNulo(expediente.getCondicionante().getTipoAplicable())) {
-					porcentajeImpuesto = expediente.getCondicionante().getTipoAplicable().longValue();
+					porcentajeImpuesto = expediente.getCondicionante().getTipoAplicable();
 				} else {
 					logger.debug("Datos insuficientes para ratificar comité");
 					throw new JsonViewerException("No ha sido posible realizar la operación");

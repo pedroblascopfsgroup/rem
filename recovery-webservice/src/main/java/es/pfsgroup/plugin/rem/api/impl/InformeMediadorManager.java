@@ -78,6 +78,9 @@ public class InformeMediadorManager implements InformeMediadorApi {
 
 	@Autowired
 	private UpdaterStateApi updaterState;
+	
+	@Autowired
+	private ActivoAdapter activoAdapterApi;
 
 	public InformeMediadorManager() {
 		obligatorios = new HashMap<String, HashMap<String, Boolean>>();
@@ -1442,7 +1445,7 @@ public class InformeMediadorManager implements InformeMediadorApi {
 					}
 					
 					if (!Checks.esNulo(idProveedorParche)){
-						Filter filterPve = genericDao.createFilter(FilterType.EQUALS, "codigoProveedorRem", idProveedorParche);
+						Filter filterPve = genericDao.createFilter(FilterType.EQUALS, "id", idProveedorParche);
 						ActivoProveedor proveedor = genericDao.get(ActivoProveedor.class, filterPve);
 						if (!Checks.esNulo(proveedor)){
 							informeEntity.setMediadorInforme(proveedor);
@@ -1530,6 +1533,8 @@ public class InformeMediadorManager implements InformeMediadorApi {
 				activoApi.calcularRatingActivo(activo.getId());
 				// Actualizamos la situacion comercial del activo
 				updaterState.updaterStateDisponibilidadComercialAndSave(activo);
+				
+				activoAdapterApi.actualizarEstadoPublicacionActivo(activo.getId());
 
 				map.put("idInformeMediadorWebcom", informe.getIdInformeMediadorWebcom());
 				if (!Checks.esNulo(informeEntity)) {

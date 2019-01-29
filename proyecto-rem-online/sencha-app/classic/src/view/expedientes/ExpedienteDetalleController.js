@@ -2206,7 +2206,6 @@ Ext
 					
 					
 					abrirFormularioCrearComprador : function(grid) {
-                        //debugger;
 						var me = this, idExpediente = me.getViewModel().get(
 								"expediente.id"), codigoEstado = me
 								.getViewModel().get("expediente.codigoEstado"), tipoExpedienteCodigo = me
@@ -2471,7 +2470,6 @@ Ext
 
 					buscarClientesUrsus : function(field, e) {
 					 try{
-						 //debugger; 
 						var me = this;
 						var parent = field.up('datoscompradorwizard');
 						var tipoDocumento = field.up('formBase').down(

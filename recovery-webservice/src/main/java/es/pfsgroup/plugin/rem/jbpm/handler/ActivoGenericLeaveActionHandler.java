@@ -14,6 +14,7 @@ import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
 import es.capgemini.pfs.prorroga.model.Prorroga;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterServiceFactoryApi;
@@ -184,16 +185,18 @@ public class ActivoGenericLeaveActionHandler extends ActivoGenericActionHandler 
 	 */
 	protected void guardadoAdicionalTarea(ExecutionContext executionContext) {
 		TareaExterna tareaExterna = getTareaExterna(executionContext);
-		ActivoTramite tramite = getActivoTramite(executionContext);
+		ActivoTramite tramite = getActivoTramite(executionContext); 
 		TareaProcedimiento tareaProcedimiento = tareaExterna.getTareaProcedimiento();
 
 		List<TareaExternaValor> valores = activoTareaExternaManagerApi.obtenerValoresTarea(tareaExterna.getId());
 				
 		UpdaterService dataUpdater = updaterServiceFactory.getService(tareaProcedimiento.getCodigo());
 		
-		dataUpdater.saveValues(tramite, valores);
+		if(!Checks.estaVacio(valores)){
+			dataUpdater.saveValues(tramite, valores);
 		
-		enviaNotificacionFinTareaConValores(tareaExterna.getId(),valores);
+			enviaNotificacionFinTareaConValores(tareaExterna.getId(),valores);
+		}
 			
 		logger.debug("\tGuardamos los datos de la tarea: " + getNombreNodo(executionContext));
 	}

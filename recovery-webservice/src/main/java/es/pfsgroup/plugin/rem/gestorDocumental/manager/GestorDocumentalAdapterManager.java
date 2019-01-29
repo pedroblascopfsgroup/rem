@@ -287,7 +287,7 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 
 		try {
 			respuesta = gestorDocumentalExpedientesApi.crearActivoOferta(crearActivoOferta);
-			logger.info("RESPUESTA: "+ respuesta);
+			logger.error("RESPUESTA: "+ respuesta);
 		} catch (GestorDocumentalException gex) {
 			logger.debug(gex.getMessage());
 			throw new GestorDocumentalException(gex.getMessage());

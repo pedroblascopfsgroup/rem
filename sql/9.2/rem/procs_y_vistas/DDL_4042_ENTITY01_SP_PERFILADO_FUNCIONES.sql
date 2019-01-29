@@ -1,10 +1,10 @@
 --/*
 --######################################### 
 --## AUTOR=Mariam Lliso
---## FECHA_CREACION=20190128
+--## FECHA_CREACION=20190129
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-5307
+--## INCIDENCIA_LINK=HREOS-5274
 --## PRODUCTO=NO
 --## 
 --## Finalidad: Procedimiento encargado de perfilar las funciones.

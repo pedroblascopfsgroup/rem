@@ -1430,7 +1430,7 @@ Ext
 									form.findField('codTipoDocumento').setDisabled(true); 
 								},
 								failure : function(record, operation) {
-									console.log("FAIL!");
+									console.log("Failure: no ha sido posible cargar los datos del comprador.");
 								}
 							});
 						}else{
@@ -2084,24 +2084,27 @@ Ext
 						var form1 = window.down('anyadirnuevaofertadocumento');
 						var form2 = window.down('datoscompradorwizard');
 						var form3 = window.down('anyadirnuevaofertaactivoadjuntardocumento');
-						Ext.Msg.show({
-							title : HreRem.i18n('wizard.msg.show.title'),
-							msg : HreRem.i18n('wizard.msh.show.text'),
-							buttons : Ext.MessageBox.YESNO,
-							fn : function(buttonId) {
-								if (buttonId == 'yes') {
-									if (!Ext.isEmpty(form1)) {
-										form1.reset();
+						Ext.Msg.show({							
+								title : HreRem.i18n('wizard.msg.show.title'),
+								msg : HreRem.i18n('wizard.msh.show.text'),
+								buttons : Ext.MessageBox.YESNO,
+								fn : function(buttonId) {
+								
+									if (buttonId == 'yes') {
+										if (!Ext.isEmpty(form1)) {
+											form1.reset();
+										}
+										/*if (!Ext.isEmpty(form2)) {
+											form2.reset();
+										}*/
+										if (!Ext.isEmpty(form3)) {
+											form3.reset();
+										}
+										window.close();
 									}
-									/*if (!Ext.isEmpty(form2)) {
-										form2.reset();
-									}*/
-									if (!Ext.isEmpty(form3)) {
-										form3.reset();
-									}
-									window.close();
 								}
-							}
+							
+							
 						});
 					},
 

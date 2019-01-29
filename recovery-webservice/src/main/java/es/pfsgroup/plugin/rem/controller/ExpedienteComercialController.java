@@ -584,6 +584,7 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 			e.printStackTrace();
 			model.put(RESPONSE_SUCCESS_KEY, false);
 			model.put(RESPONSE_ERROR_KEY, e.getMessage());
+			logger.error(e.getMessage());
 		}
 
 		return createModelAndViewJson(model);

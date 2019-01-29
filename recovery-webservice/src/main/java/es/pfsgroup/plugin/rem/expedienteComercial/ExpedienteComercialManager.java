@@ -1199,7 +1199,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			dto.setRefCircuitoCliente(null);
 		}
 
-		if(DDCartera.CODIGO_CARTERA_BANKIA.equals(oferta.getActivoPrincipal().getCartera().getCodigo())){
+		if(oferta.getActivoPrincipal() != null && oferta.getActivoPrincipal().getCartera() != null && DDCartera.CODIGO_CARTERA_BANKIA.equals(oferta.getActivoPrincipal().getCartera().getCodigo())){
 			///Comprobamos si la tarea Elevar a Sanción está activa
 			dto.setPermiteProponer(false);
 

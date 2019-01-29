@@ -100,7 +100,9 @@ public class RemCorreoUtils {
 
 				prepararBodyMensaje(message, list, cuerpoEmail);
 
-				message.setFrom(new InternetAddress(emailFrom));
+				if(emailFrom != null){
+					message.setFrom(new InternetAddress(emailFrom));
+				}
 
 				// Lo enviamos.
 				if (esCorreoActivado()) {

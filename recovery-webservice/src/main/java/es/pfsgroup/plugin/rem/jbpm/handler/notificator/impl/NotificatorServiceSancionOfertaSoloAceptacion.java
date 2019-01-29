@@ -15,7 +15,7 @@ public class NotificatorServiceSancionOfertaSoloAceptacion extends NotificatorSe
 	public static final String CODIGO_T013_DEFINICION_OFERTA = "T013_DefinicionOferta";
 	
 	@Autowired
-	private NotificatorServiceGtam notificatorApi;
+	private NotificatorServiceGtam notificatorGtamApi;
 
 	@Override
 	public String[] getKeys() {
@@ -32,7 +32,7 @@ public class NotificatorServiceSancionOfertaSoloAceptacion extends NotificatorSe
 	public void notificatorFinTareaConValores(ActivoTramite tramite, List<TareaExternaValor> valores) {
 		this.generaNotificacion(tramite, false, true);
 		//gtam, solo si procede
-		notificatorApi.notificatorFinTareaConValores(tramite, valores);
+		notificatorGtamApi.notificatorFinTareaConValores(tramite, valores);
 		
 	}
 

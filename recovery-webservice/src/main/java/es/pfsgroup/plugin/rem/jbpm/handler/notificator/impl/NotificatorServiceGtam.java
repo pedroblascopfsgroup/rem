@@ -24,7 +24,6 @@ import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
 import es.pfsgroup.plugin.rem.model.DtoSendNotificator;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VBusquedaCompradoresExpediente;
@@ -62,7 +61,7 @@ public class NotificatorServiceGtam extends AbstractNotificatorService implement
 
 	@Override
 	public String[] getCodigoTarea() {
-		return new String[] { CODIGO_T013_DEFINICION_OFERTA };
+		return new String[] { };
 	}
 
 	@SuppressWarnings("unchecked")

@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Adrian Daniel Casiean
---## FECHA_CREACION=20181220
+--## AUTOR=Mariam Lliso
+--## FECHA_CREACION=20190129
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-5090
+--## INCIDENCIA_LINK=HREOS-5302
 --## PRODUCTO=NO
 --## Finalidad: Crear vista gestores activo
 --##           
@@ -17,6 +17,7 @@
 --##    0.5 HREOS-4844- SHG - AÑADIMOS GESTCOMALQ y SUPCOMALQ
 --##	0.6 Se añade GPUBL y SPUBL.
 --##	0.7 Se quita las restricción de filtrar por el tipo de destino comercial para los gestores GESTCOMALQ y SUPCOMALQ (HREOS-5090)
+--##	0.8 Se añade GFORMADM
 --##########################################
 --*/
 
@@ -868,6 +869,34 @@ UNION ALL
           )
           WHERE
             act.borrado = 0
+
+UNION ALL
+/* Gestor Formalización-Administración */
+
+        SELECT
+            act.act_id,
+            TO_NUMBER (dd_cra.dd_cra_codigo) dd_cra_codigo,
+            TO_NUMBER (dd_eac.DD_EAC_CODIGO) dd_eac_codigo,
+	    NULL dd_tcr_codigo,
+            TO_CHAR(dist.cod_provincia) cod_provincia,
+            dist.cod_municipio cod_municipio,
+            dist.cod_postal cod_postal,
+            dist.tipo_gestor AS tipo_gestor,
+            dist.username username,
+            nombre_usuario nombre
+        FROM '||V_ESQUEMA||'.act_activo act
+            JOIN '||V_ESQUEMA||'.act_loc_localizacion aloc ON act.act_id = aloc.act_id
+            JOIN '||V_ESQUEMA||'.bie_localizacion loc ON loc.bie_loc_id = aloc.bie_loc_id
+            JOIN '||V_ESQUEMA_M||'.dd_loc_localidad dd_loc ON loc.dd_loc_id = dd_loc.dd_loc_id
+            JOIN '||V_ESQUEMA_M||'.dd_prv_provincia dd_prov ON dd_prov.dd_prv_id = loc.dd_prv_id
+            JOIN '||V_ESQUEMA||'.dd_eac_estado_activo dd_eac ON dd_eac.dd_eac_id = act.dd_eac_id
+            JOIN '||V_ESQUEMA||'.dd_cra_cartera dd_cra ON dd_cra.dd_cra_id = act.dd_cra_id
+            LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist 
+            ON (dd_prov.dd_prv_codigo = dist.cod_provincia
+            AND dist.tipo_gestor = ''GFORMADM'')
+          WHERE
+            act.borrado = 0 AND dist.COD_PROVINCIA IN (''8'',''17'',''43'',''25'')
+
 ';
 
     --DBMS_OUTPUT.PUT_LINE(  V_MSQL); 

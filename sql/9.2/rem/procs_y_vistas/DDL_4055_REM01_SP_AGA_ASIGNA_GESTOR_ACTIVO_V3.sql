@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Mariam Lliso
---## FECHA_CREACION=20190102
+--## AUTOR=Daniel Algaba
+--## FECHA_CREACION=20190128
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-5160
+--## INCIDENCIA_LINK=HREOS-5239
 --## PRODUCTO=NO
 --## Finalidad: Procedimiento almacenado que asigna Gestores de todos los tipos.
 --##           
@@ -17,7 +17,7 @@
 --##		0.5 Añadidos los nuevos gestores comerciales de alquiler (gestor y supervisor) - HREOS-5064
 --##		0.6 HREOS-5049 Carlos López: Optimización
 --##		0.7 HREOS-5160 Mariam Lliso: modificada la asignación de gestores
---##
+--##		0.8 HREOS-5239 Daniel Algaba: corrección multicartera CERBERUS
 --##########################################
 --*/
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
@@ -31,7 +31,7 @@ CREATE OR REPLACE PROCEDURE #ESQUEMA#.SP_AGA_ASIGNA_GESTOR_ACTIVO_V3 (
     P_ACT_ID        IN #ESQUEMA#.act_activo.act_id%TYPE,
     P_ALL_ACTIVOS   IN NUMBER,
     P_CLASE_ACTIVO  IN VARCHAR2) AS
---v0.7
+--v0.8
 
     V_ESQUEMA VARCHAR2(15 CHAR) := '#ESQUEMA#';
     V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := '#ESQUEMA_MASTER#';
@@ -65,7 +65,7 @@ BEGIN
         V_GESTOR := V_GESTOR_FINANCIERO;
         V_CLASE_ACTIVO :=  'JOIN '||V_ESQUEMA||'.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = ACT.DD_CRA_ID
             JOIN '||V_ESQUEMA||'.DD_SCR_SUBCARTERA SCR ON SCR.DD_CRA_ID = CRA.DD_CRA_ID AND SCR.DD_SCR_ID = ACT.DD_SCR_ID
-            WHERE SCR.DD_SCR_CODIGO = DECODE (CRA.DD_CRA_CODIGO, ''01'',''01'',''02'',''03'',''03'',''05'',''04'',''10'',''05'',''12'',''09'',''21'',''07'',''134'',''07'',''38'',''00'')';
+            WHERE SCR.DD_SCR_CODIGO IN (''01'',''03'',''05'',''10'',''12'',''21'',''134'',''38'',''00'')';
         V_CLASE_ACTIVO_NULL :=  'LEFT JOIN '||V_ESQUEMA||'.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = ACT.DD_CRA_ID
             LEFT JOIN '||V_ESQUEMA||'.DD_SCR_SUBCARTERA SCR ON SCR.DD_CRA_ID = CRA.DD_CRA_ID AND SCR.DD_SCR_ID = ACT.DD_SCR_ID
             WHERE SCR.DD_SCR_CODIGO IS NULL';
@@ -73,7 +73,7 @@ BEGIN
         V_GESTOR := V_GESTOR_INMOBILIAR;
         V_CLASE_ACTIVO := 'JOIN '||V_ESQUEMA||'.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = ACT.DD_CRA_ID
             JOIN '||V_ESQUEMA||'.DD_SCR_SUBCARTERA SCR ON SCR.DD_CRA_ID = CRA.DD_CRA_ID AND SCR.DD_SCR_ID = ACT.DD_SCR_ID
-            WHERE SCR.DD_SCR_CODIGO <> DECODE (CRA.DD_CRA_CODIGO, ''01'',''01'',''02'',''03'',''03'',''05'',''04'',''10'',''05'',''12'',''09'',''21'',''07'',''134'',''07'',''38'',''00'')';
+            WHERE SCR.DD_SCR_CODIGO NOT IN (''01'',''03'',''05'',''10'',''12'',''21'',''134'',''38'',''00'')';
         V_CLASE_ACTIVO_NULL := 'LEFT JOIN '||V_ESQUEMA||'.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = ACT.DD_CRA_ID
             LEFT JOIN '||V_ESQUEMA||'.DD_SCR_SUBCARTERA SCR ON SCR.DD_CRA_ID = CRA.DD_CRA_ID AND SCR.DD_SCR_ID = ACT.DD_SCR_ID
             WHERE SCR.DD_SCR_CODIGO IS NULL';

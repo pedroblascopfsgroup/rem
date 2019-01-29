@@ -106,8 +106,8 @@ public class ActivoPublicacionHistoricoDaoImpl extends AbstractEntityDao<ActivoP
 		dto.setFechaDesde(entidad.getFechaInicioVenta());
 		dto.setFechaHasta(entidad.getFechaFinVenta());
 		dto.setOculto(entidad.getCheckOcultarVenta());
-		if (!Checks.esNulo(entidad.getTipoPublicacion())) {
-			dto.setTipoPublicacion(entidad.getTipoPublicacion().getDescripcion());
+		if (!Checks.esNulo(entidad.getTipoPublicacionVenta())) {
+			dto.setTipoPublicacion(entidad.getTipoPublicacionVenta().getDescripcion());
 		} else {
 			dto.setTipoPublicacion(SEPARADOR_VACIO);
 		}
@@ -147,8 +147,8 @@ public class ActivoPublicacionHistoricoDaoImpl extends AbstractEntityDao<ActivoP
 		dto.setFechaDesde(entidad.getFechaInicioAlquiler());
 		dto.setFechaHasta(entidad.getFechaFinAlquiler());
 		dto.setOculto(entidad.getCheckOcultarAlquiler());
-		if (!Checks.esNulo(entidad.getTipoPublicacion())) {
-			dto.setTipoPublicacion(entidad.getTipoPublicacion().getDescripcion());
+		if (!Checks.esNulo(entidad.getTipoPublicacionAlquiler())) {
+			dto.setTipoPublicacion(entidad.getTipoPublicacionAlquiler().getDescripcion());
 		} else {
 			dto.setTipoPublicacion(SEPARADOR_VACIO);
 		}

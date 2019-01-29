@@ -125,25 +125,30 @@ BEGIN
                              WHERE ACT2.borrado = 0
                               )
                       WHERE rn = 1)VAL ON VAL.ACT_ID = ACT.ACT_ID  
-          LEFT JOIN (SELECT act_id, precio_V
-                       FROM (SELECT ACT2.act_id,
-                                   CASE
-                                      WHEN NVL (tpc.dd_tpc_codigo, ''00'') = ''02'' /*Aprobado de venta (web)*/ AND NVL (tco.dd_tco_codigo, ''00'') IN (''01'', ''02'', ''04'')
-                                         THEN 1
-                                      WHEN APU.APU_CHECK_PUB_SIN_PRECIO_V = 1
-                                         THEN 1   
-                                      ELSE 0
-                                   END AS precio_V,
-                                   tpc.dd_tpc_codigo, tco.dd_tco_codigo,
-                                   ROW_NUMBER () OVER (PARTITION BY ACT2.act_id ORDER BY DECODE (tpc.dd_tpc_codigo || tco.dd_tco_codigo, ''0201'', 0, ''0202'', 0, ''0204'', 0, ''0302'', 0, ''0303'', 0, ''0304'', 0, 1)) rn
-                              FROM '|| V_ESQUEMA ||'.ACT_ACTIVO ACT2
-                              JOIN '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION APU ON APU.ACT_ID = ACT2.ACT_ID AND APU.BORRADO = 0
-                              LEFT JOIN '|| V_ESQUEMA ||'.act_val_valoraciones val ON val.act_id = ACT2.act_id AND val.borrado = 0
-                              LEFT JOIN '|| V_ESQUEMA ||'.DD_TPC_TIPO_PRECIO tpc ON tpc.dd_tpc_id = val.dd_tpc_id AND tpc.dd_tpc_codigo IN (''02'', ''03'') AND TPC.BORRADO = 0 
-                              JOIN '|| V_ESQUEMA ||'.DD_TCO_TIPO_COMERCIALIZACION tco ON tco.dd_tco_id = APU.dd_tco_id AND TCO.BORRADO = 0 AND tco.dd_tco_codigo IN (''01'', ''02'', ''03'', ''04'')
-                             WHERE ACT2.borrado = 0
-                              )
-                      WHERE rn = 1)VAL2 ON VAL2.ACT_ID = ACT.ACT_ID                          
+           LEFT JOIN (
+                    SELECT act_id, precio_V, val_id, rn
+                           FROM (
+                               SELECT act_id, precio_V, val_id, deco, ROW_NUMBER () OVER (PARTITION BY act_id ORDER BY precio_V desc, deco) rn
+                               FROM (
+                                     SELECT act2.ACT_NUM_ACTIVO, ACT2.act_id, val_id,
+                                           CASE
+                                              WHEN NVL (tpc.dd_tpc_codigo, ''00'') = ''02'' /*Aprobado de venta (web)*/ AND NVL (tco.dd_tco_codigo, ''00'') IN (''01'', ''02'', ''04'')
+                                                 THEN 1
+                                              WHEN APU.APU_CHECK_PUB_SIN_PRECIO_V = 1
+                                                 THEN 1
+                                              ELSE 0
+                                           END AS precio_V,
+                                           tpc.dd_tpc_codigo, tco.dd_tco_codigo,
+                                           DECODE (nvl(tpc.dd_tpc_codigo, ''02'') || nvl(tco.dd_tco_codigo, ''02''), ''0201'', 0, ''0202'', 0, ''0204'', 0, ''0302'', 0, ''0303'', 0, ''0304'', 0, 1) deco
+                                      FROM '|| V_ESQUEMA ||'.ACT_ACTIVO ACT2
+                                      JOIN '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION APU ON APU.ACT_ID = ACT2.ACT_ID AND APU.BORRADO = 0
+                                      LEFT JOIN '|| V_ESQUEMA ||'.act_val_valoraciones val ON val.act_id = ACT2.act_id AND val.borrado = 0
+                                      LEFT JOIN '|| V_ESQUEMA ||'.DD_TPC_TIPO_PRECIO tpc ON tpc.dd_tpc_id = val.dd_tpc_id AND tpc.dd_tpc_codigo IN (''02'', ''03'') AND TPC.BORRADO = 0
+                                      JOIN '|| V_ESQUEMA ||'.DD_TCO_TIPO_COMERCIALIZACION tco ON tco.dd_tco_id = APU.dd_tco_id AND TCO.BORRADO = 0 AND tco.dd_tco_codigo IN (''01'', ''02'', ''03'', ''04'')
+                                     WHERE ACT2.borrado = 0
+                                     )
+                                 )
+                      WHERE rn = 1) VAL2 ON VAL2.ACT_ID = ACT.ACT_ID                        
           LEFT JOIN (SELECT ADO.ACT_ID
                        FROM '|| V_ESQUEMA ||'.ACT_ADO_ADMISION_DOCUMENTO ADO
                        LEFT JOIN '|| V_ESQUEMA ||'.ACT_CFD_CONFIG_DOCUMENTO CFD ON CFD.CFD_ID = ADO.CFD_ID AND CFD.BORRADO = 0 AND CFD.CFD_APLICA_CALIFICACION = 1 AND CFD.CFD_APLICA_F_ETIQUETA = 1

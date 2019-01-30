@@ -42,7 +42,6 @@ import org.springframework.ui.ModelMap;
 import es.capgemini.devon.beans.Service;
 import es.capgemini.devon.utils.DbIdContextHolder;
 import es.capgemini.pfs.auditoria.model.Auditoria;
-import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.dsm.dao.EntidadDao;
 import es.capgemini.pfs.dsm.model.Entidad;
 import es.capgemini.pfs.security.model.UsuarioSecurity;
@@ -71,8 +70,11 @@ import es.pfsgroup.plugin.rem.restclient.exception.RestConfigurationException;
 import es.pfsgroup.plugin.rem.restclient.registro.model.RestLlamada;
 import es.pfsgroup.plugin.rem.restclient.webcom.WebcomRESTDevonProperties;
 import es.pfsgroup.plugin.rem.utils.WebcomSignatureUtils;
+import es.pfsgroup.recovery.api.UsuarioApi;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
+
+
 
 @Service("restManager")
 public class RestManagerImpl implements RestApi {

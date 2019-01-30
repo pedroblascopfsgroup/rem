@@ -90,7 +90,7 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 		    extension = fileName.substring(i+1);
 		}
 		
-		response.setHeader("Content-disposition", "attachment; filename='"+ fileName + "'");
+		response.setHeader("Content-disposition", "attachment; filename="+ fileName);
 		response.setHeader("Cache-Control","must-revalidate, post-check=0,pre-check=0");
 		response.setHeader("Cache-Control", "max-age=0");
 		response.setHeader("Expires", "0");

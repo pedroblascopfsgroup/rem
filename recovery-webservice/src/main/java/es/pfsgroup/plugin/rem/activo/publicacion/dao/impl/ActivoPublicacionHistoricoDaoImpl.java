@@ -4,6 +4,7 @@ import es.capgemini.pfs.dao.AbstractEntityDao;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.hibernate.HibernateUtils;
 import es.pfsgroup.plugin.rem.activo.publicacion.dao.ActivoPublicacionHistoricoDao;
+import es.pfsgroup.plugin.rem.model.ActivoPublicacion;
 import es.pfsgroup.plugin.rem.model.ActivoPublicacionHistorico;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoEstadoPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoPaginadoHistoricoEstadoPublicacion;
@@ -14,6 +15,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.type.Type;
@@ -218,5 +220,21 @@ public class ActivoPublicacionHistoricoDaoImpl extends AbstractEntityDao<ActivoP
 		}
 
 		return dias;
+	}
+	
+	public ActivoPublicacionHistorico getActivoPublicacionHistoricoActual(Long idActivo) {
+		Criteria criteria = getSession().createCriteria(ActivoPublicacionHistorico.class);
+		criteria.add(Restrictions.eq("activo.id", idActivo));
+		criteria.add(Restrictions.isNull("fechaFinVenta"));
+		criteria.add(Restrictions.isNull("fechaFinAlquiler"));
+		criteria.add(Restrictions.eq("auditoria.borrado", false));
+		criteria.addOrder(Order.desc("auditoria.fechaCrear"));
+
+		List<ActivoPublicacionHistorico> historicos = HibernateUtils.castList(ActivoPublicacionHistorico.class, criteria.list());
+		
+		if(!Checks.esNulo(historicos) && !historicos.isEmpty())
+			return historicos.get(0);
+		else
+			return null;
 	}
 }

@@ -540,8 +540,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
             var gestionOk = get('activo.tieneOkTecnico');
             var adecuacionOk = get('datospublicacionactivo.adecuacionAlquilerCodigo');
             var ceeOk = get('activo.tieneCEE');
-
-            return !(admisionOk && gestionOk && informeComercialAprobado && ceeOk && adecuacionOk=="01" && (publicarSinPrecioAlquiler || precioRentaWeb));
+            
+            return !(admisionOk && gestionOk && informeComercialAprobado && ceeOk && (adecuacionOk=="01"||adecuacionOk=="03") && (publicarSinPrecioAlquiler || precioRentaWeb));
         },
 
         esReadonlyChkbxPublicar: function(get){

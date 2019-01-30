@@ -961,6 +961,8 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 	
 	@Override
 	public void actualizarRatingActivo(Long idActivo, String username) {	
+		getHibernateTemplate().flush();
+		
 		Session session = this.getSessionFactory().getCurrentSession();
 		Query query = session.createSQLQuery(
 		"CALL CALCULO_RATING_ACTIVO_AUTO(:idActivo, :username)")

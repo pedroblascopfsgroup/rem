@@ -112,10 +112,10 @@ Ext.define('HreRem.view.activos.detalle.FotosActivo', {
 			ocultarFotostecnicasactivo = !$AU.userHasFunction('EDITAR_TAB_FOTOS_ACTIVO_TECNICAS');
 		}
 
-        me.items = [];
-    	$AU.confirmFunToFunctionExecution(function(){me.items.push({xtype: 'fotoswebactivo', ocultarBotonesEdicion: ocultarFotoswebactivo})}, ['TAB_FOTOS_ACTIVO_WEB']);
-        $AU.confirmFunToFunctionExecution(function(){me.items.push({xtype: 'fotostecnicasactivo', ocultarBotonesEdicion: ocultarFotostecnicasactivo})}, ['TAB_FOTOS_ACTIVO_TECNICAS']);
-        me.addPlugin({ptype: 'lazyitems', items: me.items });
+        var items = [];
+    	$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'fotoswebactivo', ocultarBotonesEdicion: ocultarFotoswebactivo})}, ['TAB_FOTOS_ACTIVO_WEB']);
+        $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'fotostecnicasactivo', ocultarBotonesEdicion: ocultarFotostecnicasactivo})}, ['TAB_FOTOS_ACTIVO_TECNICAS']);
+        me.addPlugin({ptype: 'lazyitems', items: items });
 		me.callParent();
     },
 

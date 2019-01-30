@@ -631,11 +631,14 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	 * @return Devuelve True si el proceso ha sido satisfactorio, False si no lo ha sido.
 	 */
 	private Boolean registrarHistoricoPublicacion(ActivoPublicacion activoPublicacion, DtoDatosPublicacionActivo dto) {
-		ActivoPublicacionHistorico activoPublicacionHistorico = new ActivoPublicacionHistorico();
-
 		try {
-			beanUtilNotNull.copyProperties(activoPublicacionHistorico, activoPublicacion);
+			ActivoPublicacionHistorico activoPublicacionHistorico = activoPublicacionHistoricoDao.getActivoPublicacionHistoricoActual(activoPublicacion.getActivo().getId());
 
+			if(Checks.esNulo(activoPublicacionHistorico)) {
+				activoPublicacionHistorico = new ActivoPublicacionHistorico();
+				BeanUtils.copyProperties(activoPublicacionHistorico, activoPublicacion);
+			}
+			
 			if(Arrays.asList(DDTipoComercializacion.CODIGOS_VENTA).contains(activoPublicacion.getTipoComercializacion().getCodigo()) &&
 					(!Checks.esNulo(dto.getMotivoOcultacionVentaCodigo()) || !Checks.esNulo(dto.getMotivoOcultacionManualVenta()) || !Checks.esNulo(dto.getPublicarVenta()) ||
 					!Checks.esNulo(dto.getOcultarVenta()) || (!Checks.esNulo(dto.getPublicarSinPrecioVenta()) && ("14").equals(activoPublicacion.getMotivoOcultacionVenta().getCodigo())) || !Checks.esNulo(dto.getNoMostrarPrecioVenta()))) {
@@ -647,17 +650,14 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 					!Checks.esNulo(dto.getOcultarAlquiler()) || (!Checks.esNulo(dto.getPublicarSinPrecioAlquiler()) && ("14").equals(activoPublicacion.getMotivoOcultacionAlquiler().getCodigo())) || !Checks.esNulo(dto.getNoMostrarPrecioAlquiler()))) {
 				activoPublicacion.setFechaInicioAlquiler(new Date());
 			}
+			
+			if(!Checks.esNulo(activoPublicacionHistorico.getFechaFinVenta()) || !Checks.esNulo(activoPublicacionHistorico.getFechaInicioAlquiler())){
+				activoPublicacionHistoricoDao.saveOrUpdate(activoPublicacionHistorico);
+			}
 
-		} catch (IllegalAccessException e) {
+		} catch (Exception e) {
 			logger.error("Error al registrar en el historico el estado actual de publicacion, error: ", e);
 			return false;
-		} catch (InvocationTargetException e) {
-			logger.error("Error al registrar en el historico el estado actual de publicacion, error: ", e);
-			return false;
-		}
-		
-		if(!Checks.esNulo(activoPublicacionHistorico.getFechaFinVenta()) || !Checks.esNulo(activoPublicacionHistorico.getFechaInicioAlquiler())){
-			activoPublicacionHistoricoDao.save(activoPublicacionHistorico);
 		}
 
 		return true;

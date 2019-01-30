@@ -538,4 +538,7 @@ public interface ParticularValidatorApi {
 	 */
 
 	Boolean isActivoIncluidoPerimetroAlquiler(String numActivo);
+
+	public Boolean isActivoFinanciero(String numActivo);
+
 }

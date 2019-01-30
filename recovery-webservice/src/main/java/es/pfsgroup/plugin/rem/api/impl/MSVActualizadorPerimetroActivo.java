@@ -113,7 +113,9 @@ public class MSVActualizadorPerimetroActivo extends AbstractMSVActualizador impl
 		//Incluido en perimetro		---------------------------
 		if(!CHECK_NO_CAMBIAR.equals(tmpIncluidoEnPerimetro)) perimetroActivo.setIncluidoEnPerimetro(tmpIncluidoEnPerimetro);
 		
-		
+		// Si se quita del perimetro, forzamos el quitado de la gestión
+		if(CHECK_VALOR_NO.equals(tmpIncluidoEnPerimetro) && !CHECK_VALOR_NO.equals(perimetroActivo.getAplicaGestion())) tmpAplicaGestion=0;
+				
 		//Aplica gestion 			---------------------------
 		if(!CHECK_NO_CAMBIAR.equals(tmpAplicaGestion)){
 			perimetroActivo.setAplicaGestion(tmpAplicaGestion);
@@ -224,6 +226,9 @@ public class MSVActualizadorPerimetroActivo extends AbstractMSVActualizador impl
 
 		if(!Checks.esNulo(tmpMotivoAplicaFormalizar)) perimetroActivo.setMotivoAplicaFormalizar(tmpMotivoAplicaFormalizar);
 		
+		// Si se quita del perimetro, forzamos el quitado de la publicación
+		if(CHECK_VALOR_NO.equals(tmpIncluidoEnPerimetro) && perimetroActivo.getAplicaPublicar()) tmpAplicaPublicar=0;
+				
 		//Aplica Publicar 		---------------------------
 		if(!CHECK_NO_CAMBIAR.equals(tmpAplicaPublicar)){
 			perimetroActivo.setAplicaPublicar(BooleanUtils.toBooleanObject(tmpAplicaPublicar));

@@ -2823,7 +2823,7 @@ public class ActivoAdapter {
 	public boolean actualizarEstadoPublicacionActivo(Long idActivo) {
 		ArrayList<Long> listaIdActivo = new ArrayList<Long>();
 		listaIdActivo.add(idActivo);
-		return this.actualizarEstadoPublicacionActivo(listaIdActivo,false);
+		return this.actualizarEstadoPublicacionActivo(listaIdActivo,true);
 	}
 	
 	
@@ -3460,6 +3460,7 @@ public class ActivoAdapter {
 			}else {
 				notificationOfertaManager.sendNotification(oferta);
 			}
+			this.actualizarEstadoPublicacionActivo(activo.getId());
 		} catch (Exception ex) {
 			logger.error("error en activoAdapter", ex);
 			ex.printStackTrace();

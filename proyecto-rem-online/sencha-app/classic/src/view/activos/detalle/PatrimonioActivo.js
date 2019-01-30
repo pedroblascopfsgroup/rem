@@ -4,7 +4,7 @@ Ext.define('HreRem.view.activos.detalle.PatrimonioActivo', {
 	cls			: 'panel-base shadow-panel tabPanel-tercer-nivel',
     reference	: 'patrimonio',
     layout		: 'fit',
-    requires	: ['HreRem.view.activos.detalle.DatosPatrimonio', 'HreRem.view.activos.detalle.ContratosPatrimonio'],
+    requires	: ['HreRem.view.activos.detalle.DatosPatrimonio'],
     listeners	: {
     	boxready: function (tabPanel) {
 			if(tabPanel.items.length > 0 && tabPanel.items.items.length > 0) {
@@ -92,7 +92,6 @@ Ext.define('HreRem.view.activos.detalle.PatrimonioActivo', {
 	     me.setTitle(HreRem.i18n('title.patrimonio.activo'));	     
 	     var items =[];     	     
 	     items.push({xtype: 'datospatrimonio', ocultarBotonesEdicion: false, title: HreRem.i18n('title.datos.basicos')})
-	     items.push({xtype: 'contratospatrimonio', ocultarBotonesEdicion: true, bind: {disabled:'{!esActivoAlquilado}'}, title: HreRem.i18n('title.patrimonio.datos.patrimonio.contratos')})
 	     me.addPlugin({ptype: 'lazyitems', items: items });
 	     me.callParent();
 	 },

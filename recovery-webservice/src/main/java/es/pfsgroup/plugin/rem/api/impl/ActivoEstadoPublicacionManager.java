@@ -247,12 +247,33 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	 */
 	private Boolean deshabilitarCheckOcultarVenta(Long idActivo) {
 		Boolean resultado = false;
-		try{
-			resultado = !isPublicable(idActivo) || !isComercializable(idActivo) || isVendido(idActivo) || (!isPublicadoVenta(idActivo) && !isOcultoVenta(idActivo)) || isOcultoAutomaticoVenta(idActivo) || isFueraDePerimetro(idActivo);
-		}catch(Exception e){
-			logger.error("Error en el método deshabilitarCheckOcultarVenta",e);
+		try {
+			resultado = !isPublicable(idActivo) || !isComercializable(idActivo) || isVendido(idActivo)
+					|| (!isPublicadoVenta(idActivo) && !isOcultoVenta(idActivo)) || isOcultoAutomaticoVenta(idActivo)
+					|| isFueraDePerimetro(idActivo);
+		} catch (Exception e) {
+			logger.error("Error en el método deshabilitarCheckOcultarVenta", e);
 		}
-		
+
+		return resultado;
+	}
+	
+	/**
+	 * Este método calcula si el check de ocultar activo alquiler se ha de deshabilitar en base a unas reglas.
+	 *
+	 * @param idActivo: ID del activo del que obtener los datos para verificar las reglas.
+	 * @return Devuelve True si el check de ocultar activo para el alquiler debe estar deshabilitado.
+	 */
+	private Boolean deshabilitarCheckOcultarAlquiler(Long idActivo) {
+		Boolean resultado = false;
+		try {
+			resultado = !isPublicable(idActivo) || !isComercializable(idActivo) || isVendido(idActivo)
+					|| (!isPublicadoAlquiler(idActivo) && !isOcultoAlquiler(idActivo)) || isOcultoAutomaticoAlquiler(idActivo)
+					|| isFueraDePerimetro(idActivo);
+		} catch (Exception e) {
+			logger.error("Error en el método deshabilitarCheckOcultarAlquiler", e);
+		}
+
 		return resultado;
 	}
 
@@ -274,22 +295,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		return resultado;
 	}
 
-	/**
-	 * Este método calcula si el check de ocultar activo alquiler se ha de deshabilitar en base a unas reglas.
-	 *
-	 * @param idActivo: ID del activo del que obtener los datos para verificar las reglas.
-	 * @return Devuelve True si el check de ocultar activo para el alquiler debe estar deshabilitado.
-	 */
-	private Boolean deshabilitarCheckOcultarAlquiler(Long idActivo) {
-		Boolean resultado = false;
-		try{
-			resultado =!isPublicable(idActivo) || !isComercializable(idActivo) || isVendido(idActivo) || !isPublicadoAlquiler(idActivo) || isOcultoAutomaticoAlquiler(idActivo) || isFueraDePerimetro(idActivo);
-		}catch(Exception e){
-			logger.error("Error en el método deshabilitarCheckOcultarAlquiler" ,e);
-		}
-		
-		return resultado;
-	}
+	
 
 	// Comprobación mínima.
 	private Boolean isAdecuacionAlquilerNotNull(Long idActivo) {

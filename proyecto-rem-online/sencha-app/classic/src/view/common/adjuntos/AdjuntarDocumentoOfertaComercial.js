@@ -134,14 +134,14 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoOfertacomercial', {
     		url = $AC.getRemoteUrl("activooferta/saveDocumentoAdjuntoOferta");
     	}
     		if(form.isValid()){
-				form.submit({
+    		  Ext.Ajax.request({
 					url: url,
 	                waitMsg: HreRem.i18n('msg.mask.loading'),
 	                params: {docCliente : me.docCliente, idEntidad: me.idEntidad},
-	                success: function(fp, o) {
-
-	                	if(o.result.success == "false") {
-	                		me.fireEvent("errorToast", o.result.errorMessage);
+	                success: function(response) {
+	                	resultado = Ext.decode(response.responseText);
+	                	if(!resultado.success) {
+	                		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
 	                	}else{
 	                		var url = null, ventanaWizard = null;
 	                		if(btn.up('anyadirnuevaofertaactivoadjuntardocumento').up().xtype.indexOf('oferta') >= 0) {

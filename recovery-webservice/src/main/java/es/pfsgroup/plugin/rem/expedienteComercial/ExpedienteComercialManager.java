@@ -3397,9 +3397,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				genericDao.save(ClienteCompradorGDPR.class, clienteCompradorGDPR);
 
 				Filter filtroComprador = genericDao.createFilter(FilterType.EQUALS, "comprador", Long.parseLong(dto.getId())); 
-				Filter filtroExpComComprador = genericDao.createFilter(FilterType.EQUALS, "expediente", Long.parseLong(dto.getIdExpedienteComercial()));				
+				Filter filtroExpComComprador = genericDao.createFilter(FilterType.EQUALS, "expediente", Long.parseLong(dto.getIdExpedienteComercial()));
+				Filter filtroExpedienteComercial = genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(dto.getIdExpedienteComercial()));
 				
-				ExpedienteComercial expedienteComercial = genericDao.get(ExpedienteComercial.class, filtroExpComComprador);				
+				ExpedienteComercial expedienteComercial = genericDao.get(ExpedienteComercial.class, filtroExpedienteComercial);				
 				CompradorExpediente compradorExpediente = genericDao.get(CompradorExpediente.class, filtroComprador, filtroExpComComprador);
 
 				if (Checks.esNulo(compradorExpediente)) { 

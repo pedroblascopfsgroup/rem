@@ -137,6 +137,7 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoOfertacomercial', {
     		  Ext.Ajax.request({
 					url: url,
 	                waitMsg: HreRem.i18n('msg.mask.loading'),
+	                method: 'POST',
 	                params: {docCliente : me.docCliente, idEntidad: me.idEntidad},
 	                success: function(response) {
 	                	resultado = Ext.decode(response.responseText);

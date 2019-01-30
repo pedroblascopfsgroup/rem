@@ -2476,11 +2476,23 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		if(numActivoHaya != null) {
 			resultado = rawDao.getExecuteSQL("SELECT count(1) FROM ACT_CMG_COMUNICACION_GENCAT com " + 
 			 		" WHERE com.ACT_ID = (SELECT ACT_ID FROM ACT_ACTIVO WHERE ACT_NUM_ACTIVO = '"+numActivoHaya+"') " + 
-			 		" AND com.DD_ECG_ID IN ( " + 
-			 		" SELECT DD_ECG_ID FROM DD_ECG_ESTADO_COM_GENCAT WHERE DD_ECG_CODIGO = 'CREADO')");
+			 		" AND com.DD_ECG_ID IN ( SELECT DD_ECG_ID FROM DD_ECG_ESTADO_COM_GENCAT WHERE DD_ECG_CODIGO IN ('CREADO','COMUNICADO'))");
 		}
 
 		return !"0".equals(resultado);
+		
+	}
+	
+	public Boolean esActivoSinComunicacionViva(Long numActivoHaya) {
+			
+		String resultado = "0";
+		if(numActivoHaya != null) {
+			resultado = rawDao.getExecuteSQL("SELECT count(1) FROM ACT_CMG_COMUNICACION_GENCAT com " + 
+			 		" WHERE com.ACT_ID = (SELECT ACT_ID FROM ACT_ACTIVO WHERE ACT_NUM_ACTIVO = '"+numActivoHaya+"') " + 
+			 		" AND com.DD_ECG_ID NOT IN ( SELECT DD_ECG_ID FROM DD_ECG_ESTADO_COM_GENCAT WHERE DD_ECG_CODIGO IN ('CREADO','COMUNICADO'))");
+		}
+
+		return "0".equals(resultado);
 		
 	}
 	

@@ -38,6 +38,7 @@ public class MSVValidatorCargaMasivaComunicaciones extends MSVExcelValidatorAbst
 	
 	private static final String ACTIVO_NO_EXISTE = "msg.error.masivo.agrupar.activos.asistida.activo.noExiste";
 	private static final String ACTIVO_SIN_COMUNICACION_VIVA = "msg.error.masivo.activo.sin.comunicacion.viva";
+	private static final String ACTIVO_CON_COMUNICACION_EN_ESTADO_COMUNICADO = "msg.error.masivo.activo.con.comunicacion.comunicada";
 	private static final String ACTIVO_CON_COMUNICACION_NO_GENERADA = "msg.error.masivo.comunicacion.no.generada";
 	private static final String ACTIVO_CON_ADECUACION_NO_FINALIZADA = "msg.error.masivo.comunicacion.adecuacion.no.finalizada";
 	
@@ -101,7 +102,8 @@ public class MSVValidatorCargaMasivaComunicaciones extends MSVExcelValidatorAbst
 			
 			// Validaciones individuales activo por activo:
 			mapaErrores.put(messageServices.getMessage(ACTIVO_NO_EXISTE), activesNotExistsRows(exc));
-			mapaErrores.put(messageServices.getMessage(ACTIVO_SIN_COMUNICACION_VIVA), validarActivoComunicacionViva(exc));
+			mapaErrores.put(messageServices.getMessage(ACTIVO_SIN_COMUNICACION_VIVA), esActivoSinComunicacionViva(exc));
+			mapaErrores.put(messageServices.getMessage(ACTIVO_CON_COMUNICACION_EN_ESTADO_COMUNICADO), esActivoConComunicacionComunicada(exc));
 			mapaErrores.put(messageServices.getMessage(ACTIVO_CON_COMUNICACION_NO_GENERADA), esActivoConComunicacionGenerada(exc));
 			mapaErrores.put(messageServices.getMessage(ACTIVO_CON_ADECUACION_NO_FINALIZADA), esActivoConAdecuacionFinalizada(exc));
 			// Validar NIF
@@ -109,6 +111,7 @@ public class MSVValidatorCargaMasivaComunicaciones extends MSVExcelValidatorAbst
 
 			if (!mapaErrores.get(messageServices.getMessage(ACTIVO_NO_EXISTE)).isEmpty()
 					|| !mapaErrores.get(messageServices.getMessage(ACTIVO_SIN_COMUNICACION_VIVA)).isEmpty()
+					|| !mapaErrores.get(messageServices.getMessage(ACTIVO_CON_COMUNICACION_EN_ESTADO_COMUNICADO)).isEmpty()
 					|| !mapaErrores.get(messageServices.getMessage(ACTIVO_CON_COMUNICACION_NO_GENERADA)).isEmpty()
 					|| !mapaErrores.get(messageServices.getMessage(ACTIVO_CON_ADECUACION_NO_FINALIZADA)).isEmpty()
 					) {
@@ -175,13 +178,13 @@ public class MSVValidatorCargaMasivaComunicaciones extends MSVExcelValidatorAbst
 
 
 	//Tiene una comunicación
-	private List<Integer> validarActivoComunicacionViva(MSVHojaExcel exc) {
+	private List<Integer> esActivoSinComunicacionViva(MSVHojaExcel exc) {
 		List<Integer> listaFilas = new ArrayList<Integer>();
 
 		int i = 0;
 		try{
 			for(i=1; i<this.numFilasHoja;i++){
-				if(!particularValidator.esActivoConComunicacionViva(Long.valueOf(exc.dameCelda(i, POSICION_COLUMNA_NUMERO_ACTIVO)))) {
+				if(!particularValidator.esActivoSinComunicacionViva(Long.valueOf(exc.dameCelda(i, POSICION_COLUMNA_NUMERO_ACTIVO)))) {
 					listaFilas.add(i);
 				}
 					
@@ -196,6 +199,30 @@ public class MSVValidatorCargaMasivaComunicaciones extends MSVExcelValidatorAbst
 		
 		return listaFilas;
 	}
+	
+	//La comunicación está en estado "comunicado"
+		private List<Integer> esActivoConComunicacionComunicada(MSVHojaExcel exc) {
+			List<Integer> listaFilas = new ArrayList<Integer>();
+
+			int i = 0;
+			try{
+				for(i=1; i<this.numFilasHoja;i++){
+					if(particularValidator.esActivoConComunicacionComunicada(Long.valueOf(exc.dameCelda(i, POSICION_COLUMNA_NUMERO_ACTIVO)))) {
+						listaFilas.add(i);
+					}
+						
+				}
+			} catch (Exception e) {
+				if (i != 0) {
+					listaFilas.add(i);
+				}
+				logger.error(e.getMessage());
+				e.printStackTrace();
+			}
+			
+			return listaFilas;
+		}
+	
 
 	//El activo existe
 	private List<Integer> activesNotExistsRows(MSVHojaExcel exc) {

@@ -9,10 +9,10 @@ Ext.define('HreRem.view.activos.detalle.GestionActivo', {
     initComponent: function () {
         var me = this;
         me.setTitle(HreRem.i18n('title.gestion.activo'));
-        me.items = [];
-        $AU.confirmFunToFunctionExecution(function(){me.items.push({xtype: 'historicopeticionesactivo'})}, ['TAB_HIST_PETICIONES']);
-    	$AU.confirmFunToFunctionExecution(function(){me.items.push({xtype: 'presupuestoasignadosactivo', title: HreRem.i18n('title.presupuesto.asignado.activo')})}, ['TAB_PRESUPUESTO_ASIGNADO_ACTIVO']);
-    	me.addPlugin({ptype: 'lazyitems', items: me.items });
+        var items = [];
+        $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'historicopeticionesactivo'})}, ['TAB_HIST_PETICIONES']);
+    	$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'presupuestoasignadosactivo', title: HreRem.i18n('title.presupuesto.asignado.activo')})}, ['TAB_PRESUPUESTO_ASIGNADO_ACTIVO']);
+    	me.addPlugin({ptype: 'lazyitems', items: items });
     	me.callParent();
     },
 

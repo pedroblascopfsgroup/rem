@@ -97,11 +97,11 @@ Ext.define('HreRem.view.activos.detalle.PreciosActivo', {
 		 ocultarValorespreciosactivo = !$AU.userHasFunction('EDITAR_TAB_VALORACIONES_PRECIOS');
 		}
 
-     	me.items = [];
-     	$AU.confirmFunToFunctionExecution(function(){me.items.push({xtype: 'valorespreciosactivo', ocultarBotonesEdicion: ocultarValorespreciosactivo})}, ['TAB_VALORACIONES_PRECIOS']);
-        $AU.confirmFunToFunctionExecution(function(){me.items.push({xtype: 'tasacionesactivo', ocultarBotonesEdicion: true})}, ['TAB_TASACIONES']);
-        $AU.confirmFunToFunctionExecution(function(){me.items.push({xtype: 'propuestaspreciosactivo', ocultarBotonesEdicion: true})}, ['TAB_PROPUESTAS_PRECIO']);
-        me.addPlugin({ptype: 'lazyitems', items: me.items });
+     	var items = [];
+     	$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'valorespreciosactivo', ocultarBotonesEdicion: ocultarValorespreciosactivo})}, ['TAB_VALORACIONES_PRECIOS']);
+        $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'tasacionesactivo', ocultarBotonesEdicion: true})}, ['TAB_TASACIONES']);
+        $AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'propuestaspreciosactivo', ocultarBotonesEdicion: true})}, ['TAB_PROPUESTAS_PRECIO']);
+        me.addPlugin({ptype: 'lazyitems', items: items });
      	me.callParent();
      },
 

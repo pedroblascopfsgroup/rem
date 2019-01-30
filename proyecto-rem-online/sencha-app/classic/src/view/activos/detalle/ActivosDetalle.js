@@ -24,80 +24,46 @@ Ext.define('HreRem.view.activos.detalle.ActivosDetalle', {
 			}
     	},
 
-	    beforetabchange: function (tabPanel, tabNext, tabCurrent) {
-	    	tabPanel.down("[itemId=botoneditar]").setVisible(false);
-	    	// Comprobamos si estamos editando para confirmar el cambio de pestaña
-	    	if (tabCurrent != null) {
-	        	if (tabPanel.lookupController().getViewModel().get("editingFirstLevel")) {
-	        		Ext.Msg.show({
-	        			   title: HreRem.i18n('title.descartar.cambios'),
-	        			   msg: HreRem.i18n('msg.desea.descartar'),
-	        			   buttons: Ext.MessageBox.YESNO,
-	        			   fn: function(buttonId) {
-	        			        if (buttonId == 'yes') {
-	        			        	var btn = tabPanel.down('[itemId=botoncancelar]');
-	        			        	Ext.callback(btn.handler, btn.scope, [btn, null], 0, btn);
-	        			        	tabPanel.getLayout().setActiveItem(tabNext);		            			        	
+    	beforetabchange: function (tabPanel, tabNext, tabCurrent) {
+        	tabPanel.down("[itemId=botoneditar]").setVisible(false);	            	
+        	// Comprobamos si estamos editando para confirmar el cambio de pestaña
+        	if (tabCurrent != null) {
+            	if (tabPanel.lookupController().getViewModel().get("editingFirstLevel")) {
+            		Ext.Msg.show({
+            			   title: HreRem.i18n('title.descartar.cambios'),
+            			   msg: HreRem.i18n('msg.desea.descartar'),
+            			   buttons: Ext.MessageBox.YESNO,
+            			   fn: function(buttonId) {
+            			        if (buttonId == 'yes') {
+            			        	var btn = tabPanel.down('button[itemId=botoncancelar]');
+            			        	Ext.callback(btn.handler, btn.scope, [btn, null], 0, btn);
+            			        	tabPanel.getLayout().setActiveItem(tabNext);		            			        	
 						            // Si la pestaña necesita botones de edición
-	
+
 				   					if(!tabNext.ocultarBotonesEdicion) {
 					            		tabPanel.evaluarBotonesEdicion(tabNext);
 				   					} else {
 				   						tabPanel.down("[itemId=botoneditar]").setVisible(false);
 				   					}
-	        			        }
-	        			   }
-	    			});
-	
-	        		return false;
-	        	}
-	
-	        	// Si la pestaña necesita botones de edición
+            			        }
+            			   }
+        			});
+
+            		return false;
+            	}
+
+            	// Si la pestaña necesita botones de edición
 				if(!tabNext.ocultarBotonesEdicion) {
-	        		tabPanel.evaluarBotonesEdicion(tabNext);
+            		tabPanel.evaluarBotonesEdicion(tabNext);
 				} else {
 						tabPanel.down("[itemId=botoneditar]").setVisible(false);
-				}
-				if(tabNext.items.length > 0 && tabNext.items.items.length > 0 && tabNext.xtype != 'comercialactivo'){
-					
-					//subpestañas
-					if (tabPanel.lookupController().getViewModel().get("editing")) {
-	            		Ext.Msg.show({
-	            			   title: HreRem.i18n('title.descartar.cambios'),
-	            			   msg: HreRem.i18n('msg.desea.descartar'),
-	            			   buttons: Ext.MessageBox.YESNO,
-	            			   fn: function(buttonId) {
-	            			        if (buttonId == 'yes') {
-	            			        	var btn = tabPanel.getActiveTab().down('[itemId=botoncancelar]');
-	            			        	Ext.callback(btn.handler, btn.scope, [btn, null], 0, btn);
-	            			        	
-	            			        	tabPanel.getLayout().setActiveItem(tabNext);	            			        	
+					}
 
-					   					if(tabNext.getActiveTab().ocultarBotonesEdicion == false) {
-					   						tabNext.evaluarBotonesEdicion(tabNext.getActiveTab());
-					   					} else {
-					   						tabNext.getActiveTab().down("[itemId=botoneditar]").setVisible(false);
-					   					}
-
-					   					tabNext.getLayout().setActiveItem(tabNext.getActiveTab());
-	            			        }
-	            			   }
-	        			});
-	
-	            		return false;
-	            	}
-
-   					if(tabNext.ocultarBotonesEdicion == false) {
-   						tabNext.up("tabpanel").evaluarBotonesEdicion(tabNext);
-   					} else {
-   						tabNext.up("tabpanel").down("[itemId=botoneditar]").setVisible(false);
-   					}
-
-				}
-	        	return true;
-	    	}
-		}
+            	return true;
+        	}
+        }
 	},
+
 	tabBar: {
         items: [
         		{

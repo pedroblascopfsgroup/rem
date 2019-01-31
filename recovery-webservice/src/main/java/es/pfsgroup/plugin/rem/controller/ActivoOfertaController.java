@@ -119,6 +119,8 @@ public class ActivoOfertaController extends ParadiseJsonController {
 		ModelMap model = new ModelMap();
 		
 		try {
+			
+			logger.error("------------------------------REQUEST:   "+ request);
 
 			WebFileItem fileItem = uploadAdapter.getWebFileItem(request);
 			

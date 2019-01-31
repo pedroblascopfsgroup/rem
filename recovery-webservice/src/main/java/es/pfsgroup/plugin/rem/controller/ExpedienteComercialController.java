@@ -571,7 +571,7 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 		ModelMap model = new ModelMap();
 		
 		try {
-
+			logger.error("------------------------------REQUEST:   "+ request);
 			WebFileItem fileItem = uploadAdapter.getWebFileItem(request);
 			
 			List<DtoAdjunto> listaAdjuntos = expedienteComercialAdapter.getAdjuntoExpedienteComprador(idPersonaHaya, docCliente, idExpediente);

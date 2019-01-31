@@ -16,6 +16,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import es.capgemini.devon.beans.Service;
 import es.capgemini.devon.bo.BusinessOperationException;
@@ -42,8 +43,14 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
+import es.pfsgroup.plugin.recovery.agendaMultifuncion.api.AgendaMultifuncionTipoEventoRegistro;
+import es.pfsgroup.plugin.recovery.agendaMultifuncion.api.dto.DtoMostrarAnotacion;
+import es.pfsgroup.plugin.recovery.mejoras.api.registro.MEJRegistroApi;
+import es.pfsgroup.plugin.recovery.mejoras.registro.model.MEJInfoRegistro;
 import es.pfsgroup.plugin.recovery.mejoras.web.tareas.BuzonTareasViewHandler;
 import es.pfsgroup.plugin.recovery.mejoras.web.tareas.BuzonTareasViewHandlerFactory;
+import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
+import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
@@ -52,9 +59,11 @@ import es.pfsgroup.plugin.rem.api.PreciosApi;
 import es.pfsgroup.plugin.rem.api.TareaActivoApi;
 import es.pfsgroup.plugin.rem.formulario.ActivoGenericFormManager;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
+import es.pfsgroup.plugin.rem.model.DtoAgendaMultifuncion;
 import es.pfsgroup.plugin.rem.model.DtoCampo;
 import es.pfsgroup.plugin.rem.model.DtoNombreTarea;
 import es.pfsgroup.plugin.rem.model.DtoReasignarTarea;
@@ -130,6 +139,14 @@ public class AgendaAdapter {
 	@Autowired
 	private OfertaApi ofertaApi;
 
+	@Autowired
+	private OfertaApi ofertaApi;
+	
+	@Autowired
+	private ActivoApi activoApi;
+	
+	@Autowired
+	private ActivoAgrupacionApi activoAgrupacionApi;
 
 	public Page getListTareas(DtoTareaFilter dtoTareaFiltro){
 		DtoTarea dto = new DtoTarea();
@@ -274,10 +291,47 @@ public class AgendaAdapter {
 		return camposDto;
 	}
 
-	public Object abreTarea(Long idTarea, String subtipoTarea) {
+	public Object abreTarea(Long idTarea, String subtipoTarea) throws IllegalAccessException, InvocationTargetException {
+		String numAgrupacion=null;
 		BuzonTareasViewHandler handler = viewHandlerFactory.getHandlerForSubtipoTarea(subtipoTarea);
+		
+		DtoMostrarAnotacion objetoNotificacion = (DtoMostrarAnotacion) handler.getModel(idTarea);
+		DtoAgendaMultifuncion objetoNotificacionAct = new DtoAgendaMultifuncion();
+		
+		try{
+			beanUtilNotNull.copyProperties(objetoNotificacionAct, objetoNotificacion);
+			
+			Filter f1 = genericDao.createFilter(FilterType.EQUALS, "clave", AgendaMultifuncionTipoEventoRegistro.EventoNotificacion.ID_NOTIFICACION);
+			Filter f2 = genericDao.createFilter(FilterType.EQUALS, "valorCorto", idTarea.toString());
+			MEJInfoRegistro infoRegistro = getInfoRegistro(f1, f2);
+			if (!Checks.esNulo(infoRegistro)) {
+				Map<String, String> info = proxyFactory.proxy(MEJRegistroApi.class).getMapaRegistro(infoRegistro.getRegistro().getId());
+				
+				numAgrupacion = info.get("NUM_AGR");
+				if (StringUtils.hasText(numAgrupacion)) {
+					
+					objetoNotificacionAct.setNumAgrupacion(numAgrupacion);
+				} 
+			}
 
-		return handler.getModel(idTarea);
+		} catch (IllegalAccessException e) {
+			logger.error("Error al obtener el formulario de la tarea", e);
+		} catch (InvocationTargetException e) {
+			logger.error("Error al obtener el formulario de la tarea", e);
+		}
+		
+		
+		return objetoNotificacionAct;
+	}
+	
+	
+	private MEJInfoRegistro getInfoRegistro(Filter f1, Filter f2) {
+		List<MEJInfoRegistro> infoRegistroList = genericDao.getList(MEJInfoRegistro.class, f1, f2);
+		MEJInfoRegistro infoRegistro = null;
+		if (!Checks.estaVacio(infoRegistroList)) {
+			infoRegistro = infoRegistroList.get(0);
+		}
+		return infoRegistro;
 	}
 
 	public Boolean save(Map<String,String[]> valores) throws Exception{
@@ -703,5 +757,16 @@ public class AgendaAdapter {
 
 	public Page getListTareasGS(DtoTareaGestorSustitutoFilter dto){
 		return tareasGSDao.getListTareasGS(dto);
+	}
+	
+
+	public String getIdActivoByNumActivo(Long id){
+		Activo activo = activoApi.getByNumActivo(id);
+		return activo.getId().toString();
+	}
+	
+	public String getIdAgrByNumAgr(Long id) {
+		Long idAgrupacion = activoAgrupacionApi.getAgrupacionIdByNumAgrupRem(id);
+		return idAgrupacion.toString();
 	}
 }

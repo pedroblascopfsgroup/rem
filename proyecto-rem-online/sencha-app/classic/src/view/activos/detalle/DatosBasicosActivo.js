@@ -484,7 +484,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								fieldLabel: HreRem.i18n('fieldlabel.perimetro.check.comercial'),
 								bind:	{
 									value: '{activo.aplicaComercializar}',
-									readOnly: '{activo.isVendidoOEntramite}'
+									readOnly: '{activo.isActivoEnTramite}'
 								},
 								reference: 'chkbxPerimetroComercializar',
 								listeners: {
@@ -525,7 +525,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 
 								bind: {
 									value: '{activo.aplicaFormalizar}',
-									readOnly: '{activo.enTramite}'
+									readOnly: '{activo.isActivoEnTramite}'
 									
 								},
 								listeners: {

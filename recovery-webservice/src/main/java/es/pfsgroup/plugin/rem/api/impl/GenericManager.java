@@ -579,7 +579,7 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 				// OBTENCION DOCUMENTAL
 				// cuando el activo no tiene condicion de gestion en el
 				// perimetro (check gestion = false)
-				if (act.getEnTramite()) {
+				if (act.getEnTramite()==1) {
 					if (!Checks.esNulo(tipoTrabajo.getFiltroEnTramite()) && tipoTrabajo.getFiltroEnTramite()) {
 						tiposTrabajoFiltered.add(tipoTrabajo);
 					}
@@ -643,10 +643,10 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		List<DDSubtipoTrabajo> lista = new ArrayList<DDSubtipoTrabajo>();
 		DDTipoTrabajo tipoTrabajo = genericDao.get(DDTipoTrabajo.class,
 				genericDao.createFilter(FilterType.EQUALS, "codigo", tipoTrabajoCodigo));
-
+		
 		if (!Checks.esNulo(idActivo)) {
 			Activo activo = activoApi.get(idActivo);
-			if (activo.getEnTramite()) {
+			if (activo.getEnTramite()==1) {
 				Usuario gestorProveedorTecnico = gestorActivoApi.getGestorByActivoYTipo(activo, "PTEC");
 				if (!Checks.esNulo(gestorProveedorTecnico)) {
 

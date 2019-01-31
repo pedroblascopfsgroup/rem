@@ -776,9 +776,6 @@ public class AgrupacionAdapter {
 						throw new JsonViewerException("El activo no es comercializable");
 					}
 					
-					
-					
-					
 					// El activo ya esta en una agrupacion comercial viva
 					if (particularValidator.activoEnAgrupacionComercialViva(Long.toString(numActivo))) {
 						throw new JsonViewerException("El activo está incluido en otro lote comercial vivo");

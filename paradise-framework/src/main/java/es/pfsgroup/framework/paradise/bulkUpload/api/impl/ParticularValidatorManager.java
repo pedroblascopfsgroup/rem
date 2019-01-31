@@ -2503,7 +2503,8 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		
 		return !"0".equals(resultado);
 	}
-	
+
+
 	@Override
 	public Boolean isActivoFinanciero(String numActivo) {
 		if(Checks.esNulo(numActivo))

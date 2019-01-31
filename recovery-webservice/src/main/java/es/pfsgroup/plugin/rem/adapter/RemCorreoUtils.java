@@ -174,6 +174,7 @@ public class RemCorreoUtils {
 	private void prepararDestinatarios(MimeMessage message, List<String> mailsPara, List<String> direccionesMailCc)
 			throws AddressException, MessagingException {
 		for (String emailPara : mailsPara) {
+			emailPara = emailPara.trim();
 			if (validarCorreo(emailPara)) {
 				message.addRecipient(Message.RecipientType.TO, new InternetAddress(emailPara));
 			}
@@ -182,6 +183,7 @@ public class RemCorreoUtils {
 
 		if (direccionesMailCc != null && direccionesMailCc.size() > 0) {
 			for (String emailCC : direccionesMailCc) {
+				emailCC = emailCC.trim();
 				if (validarCorreo(emailCC)) {
 					message.addRecipient(Message.RecipientType.CC, new InternetAddress(emailCC));
 				}

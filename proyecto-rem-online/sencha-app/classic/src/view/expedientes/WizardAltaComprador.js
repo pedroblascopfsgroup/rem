@@ -6,7 +6,7 @@ Ext.define('HreRem.view.expedientes.WizardAltaComprador', {
 	bodyStyle : 'padding:10px',
 	width : Ext.Element.getViewportWidth() / 2,
 	height : Ext.Element.getViewportHeight() > 500 ? 500 : Ext.Element.getViewportHeight() - 100,
-	x : 50,
+	x : 150,
 	y : 50,
 	closable : false,
 

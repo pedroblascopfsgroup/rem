@@ -5284,6 +5284,9 @@ Ext
 	     			ventanaDetalle.up().down('anyadirnuevaofertaactivoadjuntardocumento').getForm().findField('comunicacionTerceros').setValue(valorComTerceros);
 	     			ventanaDetalle.up().down('anyadirnuevaofertaactivoadjuntardocumento').getForm().findField('transferenciasInternacionales').setValue(valorTransferInternacionales);
 	     			
+	     			btn.up('wizardaltaoferta').width = Ext.Element.getViewportWidth()/2;
+	    			btn.up('wizardaltaoferta').height = Ext.Element.getViewportHeight() > 500 ? 500 : Ext.Element.getViewportHeight()-100;
+	    			
 	     			var wizard = btn.up().up().up();
 	     			var layout = wizard.getLayout();
 	     			me.getView().unmask();
@@ -5298,9 +5301,6 @@ Ext
 	 			ventanaDetalle.setController('expedientedetalle');
 	 			ventanaDetalle.getController().onClickBotonCrearComprador(btn);
 	 		}
-	 		
-	 		ventanaDetalle.up().width = Ext.Element.getViewportWidth()/2;
-			ventanaDetalle.up().height = Ext.Element.getViewportHeight() > 500 ? 500 : Ext.Element.getViewportHeight()-100;
  		}
  	},
      	
@@ -5337,6 +5337,7 @@ Ext
      		
  			ventana3.getForm().findField('cesionDatos').disable();
  			ventana3.getForm().findField('transferenciasInternacionales').disable();
+ 			ventana3.getForm().findField('comunicacionTerceros').disable();
  			
     		var url =  $AC.getRemoteUrl('activo/generarUrlGDPR');
     		Ext.Ajax.request({

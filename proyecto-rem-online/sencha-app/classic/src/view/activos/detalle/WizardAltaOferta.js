@@ -5,7 +5,7 @@ Ext.define('HreRem.view.activos.detalle.WizardAltaOferta', {
     layout		: 'card',
     bodyStyle	: 'padding:10px',
     width		: Ext.Element.getViewportWidth() / 2,    
-    height		: Ext.Element.getViewportHeight() > 500 ? 500 : Ext.Element.getViewportHeight() -50 ,
+    height		: Ext.Element.getViewportHeight() > 500 ? 500 : Ext.Element.getViewportHeight() -100 ,
     x: 150,
     y: 50,
     closable	: false,

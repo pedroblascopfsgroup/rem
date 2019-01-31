@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Sergio Salt
---## FECHA_CREACION=20190116
+--## FECHA_CREACION=20190131
 --## ARTEFACTO=web
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-5208
@@ -69,24 +69,37 @@ DECLARE
 
 
     --Restricciones 
-
+   
+    
+    
         DBMS_OUTPUT.PUT_LINE('[INFO] Añadiendo las restricciones a las columnas añadidas ');
     V_SQL := 'SELECT COUNT(CONSTRAINT_NAME) FROM USER_CONS_COLUMNS WHERE TABLE_NAME = '''||V_NOMBRE_TABLA||''' AND OWNER = '''||V_ESQUEMA||''' AND COLUMN_NAME = '''|| V_NOMBRE_COL_1||''' ';
     EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
     IF V_NUM_TABLAS = 0 THEN
-        V_SQL := 'ALTER TABLE '|| V_NOMBRE_TABLA||' ADD CONSTRAINT FK_'||V_NOMBRE_COL_1||' FOREIGN KEY ('||V_NOMBRE_COL_1||') REFERENCES   '||V_NOMBRE_TABLA_REF1||' ('||V_NOMBRE_COL_1||')';
-        EXECUTE IMMEDIATE V_SQL;
+    
+        V_SQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME = '''||V_NOMBRE_TABLA_REF1||''' ';
+        EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+        IF V_NUM_TABLAS = 1 THEN
+            V_SQL := 'ALTER TABLE '|| V_NOMBRE_TABLA||' ADD CONSTRAINT FK_'||V_NOMBRE_COL_1||' FOREIGN KEY ('||V_NOMBRE_COL_1||') REFERENCES   '||V_NOMBRE_TABLA_REF1||' ('||V_NOMBRE_COL_1||')';
+            EXECUTE IMMEDIATE V_SQL;
+        END IF;
     ELSE 
         DBMS_OUTPUT.PUT_LINE('[INFO] La columna ' ||V_NOMBRE_COL_1 || ' ya posee la restriccion pertinente');
     END IF;
         V_SQL := 'SELECT COUNT(CONSTRAINT_NAME) FROM USER_CONS_COLUMNS WHERE TABLE_NAME = '''||V_NOMBRE_TABLA||''' AND OWNER = '''||V_ESQUEMA||''' AND COLUMN_NAME = '''|| V_NOMBRE_COL_2||''' ';
     EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
     IF V_NUM_TABLAS = 0 THEN
-        V_SQL := 'ALTER TABLE '|| V_NOMBRE_TABLA||' ADD CONSTRAINT FK_'||V_NOMBRE_COL_2||' FOREIGN KEY ('||V_NOMBRE_COL_2||') REFERENCES   '||V_NOMBRE_TABLA_REF2||' ('||V_NOMBRE_COL_2||')';
-        EXECUTE IMMEDIATE V_SQL;
+            
+        V_SQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME = '''||V_NOMBRE_TABLA_REF2||''' ';
+        EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+         IF V_NUM_TABLAS = 1 THEN
+            V_SQL := 'ALTER TABLE '|| V_NOMBRE_TABLA||' ADD CONSTRAINT FK_'||V_NOMBRE_COL_2||' FOREIGN KEY ('||V_NOMBRE_COL_2||') REFERENCES   '||V_NOMBRE_TABLA_REF2||' ('||V_NOMBRE_COL_2||')';
+            EXECUTE IMMEDIATE V_SQL;
+        END IF;
     ELSE 
     DBMS_OUTPUT.PUT_LINE('[INFO] La columna ' || V_NOMBRE_COL_2 || ' ya posee la restriccion pertinente');
     END IF;
+    
     --Comentarios
     DBMS_OUTPUT.PUT_LINE('[INFO] Añadiendo los comentarios a las columnas añadidas ');
 

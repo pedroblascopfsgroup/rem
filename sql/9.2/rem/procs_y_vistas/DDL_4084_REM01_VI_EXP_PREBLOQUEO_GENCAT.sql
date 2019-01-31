@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Ivan Rubio
---## FECHA_CREACION=20181227
+--## AUTOR=Lara Pablo
+--## FECHA_CREACION=20190131
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-5043
+--## INCIDENCIA_LINK=HREOS-5355
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           

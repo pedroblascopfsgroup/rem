@@ -170,6 +170,7 @@ create or replace PROCEDURE SP_MOTIVO_OCULTACION_AGR (nAGR_ID IN NUMBER
                                                       FROM '|| V_ESQUEMA ||'.ACT_VAL_VALORACIONES VAL
                                                       JOIN '|| V_ESQUEMA ||'.DD_TPC_TIPO_PRECIO TPC ON TPC.DD_TPC_ID = VAL.DD_TPC_ID AND TPC.BORRADO = 0 AND TPC.DD_TPC_CODIGO = ''03''/*Aprobado de renta (web)*/
                                                      WHERE VAL.BORRADO = 0
+													   AND VAL.VAL_IMPORTE IS NOT NULL
                                                        AND VAL.ACT_ID = ACT.ACT_ID)                                     
                                      AND ''A'' = '''||pTIPO||'''
                                      AND EXISTS '||vQUERY||                                      
@@ -189,6 +190,7 @@ create or replace PROCEDURE SP_MOTIVO_OCULTACION_AGR (nAGR_ID IN NUMBER
                                                       FROM '|| V_ESQUEMA ||'.ACT_VAL_VALORACIONES VAL
                                                       JOIN '|| V_ESQUEMA ||'.DD_TPC_TIPO_PRECIO TPC ON TPC.DD_TPC_ID = VAL.DD_TPC_ID AND TPC.BORRADO = 0 AND TPC.DD_TPC_CODIGO = ''02''/*Aprobado de venta (web)*/
                                                      WHERE VAL.BORRADO = 0
+													   AND VAL.VAL_IMPORTE IS NOT NULL
                                                        AND VAL.ACT_ID = ACT.ACT_ID)                                       
                                      AND ''V'' = '''||pTIPO||'''
                                      AND EXISTS '||vQUERY||                                   

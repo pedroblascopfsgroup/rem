@@ -149,7 +149,7 @@ BEGIN
                                    ROW_NUMBER () OVER (PARTITION BY ACT2.act_id ORDER BY DECODE (tpc.dd_tpc_codigo || tco.dd_tco_codigo, ''0201'', 0, ''0202'', 0, ''0204'', 0, ''0302'', 0, ''0303'', 0, ''0304'', 0, 1)) rn
                               FROM '|| V_ESQUEMA ||'.ACT_ACTIVO ACT2
                               JOIN '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION APU ON APU.ACT_ID = ACT2.ACT_ID AND APU.BORRADO = 0
-                              LEFT JOIN '|| V_ESQUEMA ||'.act_val_valoraciones val ON val.act_id = ACT2.act_id AND val.borrado = 0
+                              LEFT JOIN '|| V_ESQUEMA ||'.act_val_valoraciones val ON val.act_id = ACT2.act_id AND val.borrado = 0 AND VAL.VAL_IMPORTE IS NOT NULL
                               LEFT JOIN '|| V_ESQUEMA ||'.DD_TPC_TIPO_PRECIO tpc ON tpc.dd_tpc_id = val.dd_tpc_id AND tpc.dd_tpc_codigo = ''03'' AND TPC.BORRADO = 0 
                               JOIN '|| V_ESQUEMA ||'.DD_TCO_TIPO_COMERCIALIZACION tco ON tco.dd_tco_id = ACT2.dd_tco_id AND TCO.BORRADO = 0 AND tco.dd_tco_codigo IN (''02'', ''03'', ''04'')
                              WHERE ACT2.borrado = 0
@@ -168,7 +168,7 @@ BEGIN
                                    ROW_NUMBER () OVER (PARTITION BY ACT2.act_id ORDER BY DECODE (tpc.dd_tpc_codigo || tco.dd_tco_codigo, ''0201'', 0, ''0202'', 0, ''0204'', 0, ''0302'', 0, ''0303'', 0, ''0304'', 0, 1)) rn
                               FROM '|| V_ESQUEMA ||'.ACT_ACTIVO ACT2
                               JOIN '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION APU ON APU.ACT_ID = ACT2.ACT_ID AND APU.BORRADO = 0
-                              LEFT JOIN '|| V_ESQUEMA ||'.act_val_valoraciones val ON val.act_id = ACT2.act_id AND val.borrado = 0
+                              LEFT JOIN '|| V_ESQUEMA ||'.act_val_valoraciones val ON val.act_id = ACT2.act_id AND val.borrado = 0 AND VAL.VAL_IMPORTE IS NOT NULL
                               LEFT JOIN '|| V_ESQUEMA ||'.DD_TPC_TIPO_PRECIO tpc ON tpc.dd_tpc_id = val.dd_tpc_id AND tpc.dd_tpc_codigo = ''02'' AND TPC.BORRADO = 0 
                                JOIN '|| V_ESQUEMA ||'.DD_TCO_TIPO_COMERCIALIZACION tco ON tco.dd_tco_id = ACT2.dd_tco_id AND TCO.BORRADO = 0 AND tco.dd_tco_codigo IN (''01'', ''02'', ''04'')
                              WHERE ACT2.borrado = 0

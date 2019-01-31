@@ -709,7 +709,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 		
 		// HREOS-5146 Si deja crear una nueva oferta, debe dejar pasarla a congelada manualmente.
-		if (DDEstadoOferta.CODIGO_CONGELADA.equals(tipoOferta.getCodigo())) {
+		if (DDEstadoOferta.CODIGO_CONGELADA.equals(estadoOferta.getCodigo())) {
 			resultado = this.persistOferta(oferta);
 		}
 

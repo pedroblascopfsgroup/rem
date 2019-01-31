@@ -2118,6 +2118,7 @@ Ext
 									}
 									window.close();
 								}
+							}
 						});
 					},
 

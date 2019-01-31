@@ -5300,7 +5300,7 @@ Ext
 	 		}
 	 		
 	 		ventanaDetalle.up().width = Ext.Element.getViewportWidth()/2;
-			ventanaDetalle.up().height = Ext.Element.getViewportHeight()-325;
+			ventanaDetalle.up().height = Ext.Element.getViewportHeight() > 500 ? 500 : Ext.Element.getViewportHeight()-100;
  		}
  	},
      	

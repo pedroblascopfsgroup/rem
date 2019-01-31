@@ -75,7 +75,8 @@ Ext.define('HreRem.view.expedientes.DatosCompradorWizard', {
 			layout: {
 		        type: 'table',
 		        columns: 2,
-		        tdAttrs: {width: '55%'}
+			    trAttrs: {width: '25%'},
+		        tdAttrs: {width: '25%'}
 			},
 			items :
 				[
@@ -83,7 +84,7 @@ Ext.define('HreRem.view.expedientes.DatosCompradorWizard', {
 						xtype: 'comboboxfieldbase',
 			        	fieldLabel: HreRem.i18n('fieldlabel.tipo.persona'),
 						reference: 'tipoPersona',
-						margin: '10 0 10 0',
+						margin: '10px 0 10px 0',
 						padding: '5px',
 			        	bind: {		            		
 		            		value: '{comprador.codTipoPersona}',
@@ -99,7 +100,6 @@ Ext.define('HreRem.view.expedientes.DatosCompradorWizard', {
 			        	fieldLabel: HreRem.i18n('fieldlabel.titular.reserva'),
 						reference: 'titularReserva',
 						hidden: true,
-						margin: '10 0 10 0',
 						padding: '5px',
 			        	bind: {
 		            		store: '{comboSiNoRem}',
@@ -144,13 +144,13 @@ Ext.define('HreRem.view.expedientes.DatosCompradorWizard', {
 			xtype:'fieldsettable',
 			collapsible: false,
 			defaultType: 'textfieldbase',
-			margin: '10 10 10 10',
+			margin: '10px 10px 10px 10px',
+			title: HreRem.i18n('fieldlabel.datos.identificacion'),
 			layout: {
 		        type: 'table',
 		        columns: 2,
-		        tdAttrs: {width: '55%'}
+			    trAttrs: {width: '25%'}
 			},
-			title: HreRem.i18n('fieldlabel.datos.identificacion'),
 			items :
 				[
 					{ 
@@ -158,6 +158,7 @@ Ext.define('HreRem.view.expedientes.DatosCompradorWizard', {
 			        	fieldLabel: HreRem.i18n('fieldlabel.tipoDocumento'),
 			        	name: 'codTipoDocumento',
 						reference: 'tipoDocumento',
+						margin: '10px 0 10px 0',
 						padding: '5px',
 			        	bind: {
 		            		store: '{comboTipoDocumento}',
@@ -355,13 +356,14 @@ Ext.define('HreRem.view.expedientes.DatosCompradorWizard', {
 			xtype:'fieldsettable',
 			collapsible: false,
 			defaultType: 'textfieldbase',
-			margin: '10 10 10 10',
+			margin: '10px 10px 10px 10px',
+			title: HreRem.i18n('title.nexos'),
 			layout: {
 		        type: 'table',
 		        columns: 2,
-		        tdAttrs: {width: '55%'}
+			    trAttrs: {width: '25%'},
+		        tdAttrs: {width: '25%'}
 			},
-			title: HreRem.i18n('title.nexos'),
 			items :
 				[
 					{ 
@@ -436,13 +438,14 @@ Ext.define('HreRem.view.expedientes.DatosCompradorWizard', {
 			xtype:'fieldsettable',
 			collapsible: false,
 			defaultType: 'textfieldbase',
-			margin: '10 10 10 10',
+			margin: '10px 10px 10px 10px',
+			title: HreRem.i18n('title.datos.representante'),
 			layout: {
 		        type: 'table',
 		        columns: 2,
-		        tdAttrs: {width: '55%'}
+			    trAttrs: {width: '25%'},
+		        tdAttrs: {width: '25%'}
 			},
-			title: HreRem.i18n('title.datos.representante'),
 			items :
 				[
 					{ 

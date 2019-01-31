@@ -22,6 +22,7 @@ import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.rem.adapter.ActivoOfertaAdapter;
+import es.pfsgroup.plugin.rem.clienteComercial.dao.ClienteComercialDao;
 import es.pfsgroup.plugin.rem.model.AdjuntoComprador;
 import es.pfsgroup.plugin.rem.model.ClienteComercial;
 import es.pfsgroup.plugin.rem.model.ClienteGDPR;
@@ -39,6 +40,9 @@ public class ActivoOfertaController extends ParadiseJsonController {
 	
 	@Autowired 
     private ActivoOfertaAdapter activoOfertaAdapter;
+	
+	@Autowired
+	private ClienteComercialDao clienteComercialDao;
 	
 	protected static final Log logger = LogFactory.getLog(ActivoOfertaController.class);
 	
@@ -115,6 +119,8 @@ public class ActivoOfertaController extends ParadiseJsonController {
 		ModelMap model = new ModelMap();
 		
 		try {
+			
+			logger.error("------------------------------REQUEST:   "+ request);
 
 			WebFileItem fileItem = uploadAdapter.getWebFileItem(request);
 			
@@ -158,6 +164,20 @@ public class ActivoOfertaController extends ParadiseJsonController {
 
 		boolean success = activoOfertaAdapter.deleteAdjunto(adjComprador, clienteGDPR);
 		model.put(RESPONSE_SUCCESS_KEY, success);
+
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView deleteTmpClienteByDocumento(ModelMap model, String docCliente) {
+		try {
+			clienteComercialDao.deleteTmpClienteByDocumento(docCliente);
+			model.put("success", true);
+		} catch (Exception e) {
+			model.put("success", false);
+			logger.error("Error en ExpedienteComercialController", e);
+		}
 
 		return createModelAndViewJson(model);
 	}

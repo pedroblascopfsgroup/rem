@@ -564,127 +564,154 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			activoPublicacionDao.save(actPubli);
 		}
 	}
-
-	@Override
-	@BusinessOperation(overrides = "activoManager.saveOfertaActivo")
-	public boolean saveOfertaActivo(DtoOfertaActivo dto) throws JsonViewerException, Exception {
-		boolean resultado = true;
-
+	
+	private void validateSaveOferta(DtoOfertaActivo dto, Oferta oferta, DDEstadoOferta estadoOferta) {
 		// Si el activo pertenece a un lote comercial, no se pueden aceptar
 		// ofertas de forma individual en el activo
 		if (activoAgrupacionActivoDao.activoEnAgrupacionLoteComercial(dto.getIdActivo())
 				&& (Checks.esNulo(dto.getEsAnulacion()) || !dto.getEsAnulacion())) {
 			throw new JsonViewerException(messageServices.getMessage(AVISO_MENSAJE_ACTIVO_EN_LOTE_COMERCIAL));
 		}
+		if (!Checks.esNulo(oferta.getCliente())) {
+			if (Checks.esNulo(oferta.getCliente().getDocumento())
+					|| Checks.esNulo(oferta.getCliente().getTipoDocumento())) {
+				throw new JsonViewerException(messageServices.getMessage(AVISO_MENSAJE_TIPO_NUMERO_DOCUMENTO));
+			}
+		} else {
+			throw new JsonViewerException(messageServices.getMessage(AVISO_MENSAJE_CLIENTE_OBLIGATORIO));
+		}
+		// Si el activo esta marcado como alquilado no permitiremos tramitar
+		// ofertas de alquiler
+		if (!Checks.esNulo(oferta) && !Checks.esNulo(oferta.getActivoPrincipal())
+				&& DDEstadoOferta.CODIGO_ACEPTADA.equals(estadoOferta.getCodigo())
+				&& DDTipoOferta.CODIGO_ALQUILER.equals(oferta.getTipoOferta().getCodigo())
+				&& !Checks.esNulo(oferta.getActivoPrincipal().getSituacionComercial())
+				&& !Checks.esNulo(oferta.getActivoPrincipal().getSituacionComercial().getCodigo())
+				&& DDSituacionComercial.CODIGO_ALQUILADO
+						.equals(oferta.getActivoPrincipal().getSituacionComercial().getCodigo())) {
+
+			throw new JsonViewerException(messageServices.getMessage(AVISO_MENSAJE_ACITVO_ALQUILADO_O_OCUPADO));
+
+		}
+
+		// Si el activo esta marcado como ocupado sin titulo no permitiremos
+		// tramitar ofertas de alquiler
+		if (!Checks.esNulo(estadoOferta) && !Checks.esNulo(oferta.getActivoPrincipal())
+				&& DDEstadoOferta.CODIGO_ACEPTADA.equals(estadoOferta.getCodigo())
+				&& DDTipoOferta.CODIGO_ALQUILER.equals(oferta.getTipoOferta().getCodigo())
+				&& !Checks.esNulo(oferta.getActivoPrincipal().getSituacionPosesoria())
+				&& !Checks.esNulo(oferta.getActivoPrincipal().getSituacionPosesoria().getOcupado())
+				&& oferta.getActivoPrincipal().getSituacionPosesoria().getOcupado() == 1
+				&& (Checks.esNulo(oferta.getActivoPrincipal().getSituacionPosesoria().getConTitulo())
+						|| (!Checks.esNulo(oferta.getActivoPrincipal().getSituacionPosesoria().getConTitulo())
+								&& oferta.getActivoPrincipal().getSituacionPosesoria().getConTitulo() == 0))) {
+
+			throw new JsonViewerException(messageServices.getMessage(AVISO_MENSAJE_ACITVO_ALQUILADO_O_OCUPADO));
+
+		}
+
+		// Si el estado de la oferta es tramitada y tipo oferta es alquiler
+		// Sole se podrá realizar el cambio si no existe para el mismo activo
+		// una oferta de tipo venta
+		if (!Checks.esNulo(estadoOferta) && !Checks.esNulo(oferta.getTipoOferta())
+				&& DDEstadoOferta.CODIGO_ACEPTADA.equals(estadoOferta.getCodigo())
+				&& DDTipoOferta.CODIGO_ALQUILER.equals(oferta.getTipoOferta().getCodigo())) {
+
+			// Consultar ofertas activo
+			List<ActivoOferta> ofertasActivo = oferta.getActivoPrincipal().getOfertas();
+
+			for (ActivoOferta acivoOferta : ofertasActivo) {
+				// Si existe oferta de venta lanzar error
+				if (DDTipoOferta.CODIGO_VENTA
+						.equals(acivoOferta.getPrimaryKey().getOferta().getTipoOferta().getCodigo())
+						&& !DDEstadoOferta.CODIGO_RECHAZADA
+								.equals(acivoOferta.getPrimaryKey().getOferta().getEstadoOferta().getCodigo())) {
+
+					throw new JsonViewerException(messageServices.getMessage(AVISO_MENSAJE_EXISTEN_OFERTAS_VENTA));
+
+				}
+			}
+
+		}
+
+	}
+	
+	private boolean doRechazaOferta(DtoOfertaActivo dto,Oferta oferta){
+		boolean resultado = false;
+		if (!Checks.esNulo(dto.getMotivoRechazoCodigo())) {
+			DDMotivoRechazoOferta motivoRechazoOferta = (DDMotivoRechazoOferta) utilDiccionarioApi
+					.dameValorDiccionarioByCod(DDMotivoRechazoOferta.class, dto.getMotivoRechazoCodigo());
+			oferta.setMotivoRechazo(motivoRechazoOferta);
+			Usuario usu = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+			oferta.setUsuarioBaja(usu.getApellidoNombre());
+		}
+
+		
+
+		if (!Checks.esNulo(oferta.getAgrupacion())) {
+			ActivoAgrupacion agrupacion = oferta.getAgrupacion();
+
+			List<Oferta> ofertasVivasAgrupacion = ofertaDao.getListOtrasOfertasVivasAgr(oferta.getId(),
+					agrupacion.getId());
+
+			if ((agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_VENTA)
+					|| agrupacion.getTipoAgrupacion().getCodigo()
+							.equals(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_ALQUILER))
+					&& !Checks.esNulo(ofertasVivasAgrupacion) && ofertasVivasAgrupacion.isEmpty()) {
+				agrupacion.setFechaBaja(new Date());
+				activoAgrupacionApi.saveOrUpdate(agrupacion);
+			}
+		}
+
+		notificatorServiceSancionOfertaAceptacionYRechazo.notificatorFinSinTramite(oferta.getId());
+		return resultado;
+	}
+	
+	private boolean doAceptaOferta(Oferta oferta) throws Exception{
+		boolean resultado = true;
+		List<Activo> listaActivos = new ArrayList<Activo>();
+		for (ActivoOferta activoOferta : oferta.getActivosOferta()) {
+			listaActivos.add(activoOferta.getPrimaryKey().getActivo());
+		}
+		DDSubtipoTrabajo subtipoTrabajo = (DDSubtipoTrabajo) utilDiccionarioApi
+				.dameValorDiccionarioByCod(DDSubtipoTrabajo.class, this.getSubtipoTrabajoByOferta(oferta));
+		Trabajo trabajo = trabajoApi.create(subtipoTrabajo, listaActivos, null, false);
+		resultado = crearExpediente(oferta, trabajo);
+		trabajoApi.createTramiteTrabajo(trabajo);
+		return resultado;
+	}
+
+	@Override
+	@BusinessOperation(overrides = "activoManager.saveOfertaActivo")
+	public boolean saveOfertaActivo(DtoOfertaActivo dto) throws JsonViewerException, Exception {
+		boolean resultado = true;
 
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdOferta());
 		Oferta oferta = genericDao.get(Oferta.class, filtro);
 
-			if(!Checks.esNulo(oferta.getCliente())){
-				if(Checks.esNulo(oferta.getCliente().getDocumento()) || Checks.esNulo(oferta.getCliente().getTipoDocumento())){
-					throw new JsonViewerException(messageServices.getMessage(AVISO_MENSAJE_TIPO_NUMERO_DOCUMENTO));
-				}
-			}else{
-				throw new JsonViewerException(messageServices.getMessage(AVISO_MENSAJE_CLIENTE_OBLIGATORIO));
-			}
-			
-			DDEstadoOferta tipoOferta = (DDEstadoOferta) utilDiccionarioApi
-					.dameValorDiccionarioByCod(DDEstadoOferta.class, dto.getCodigoEstadoOferta());
+		DDEstadoOferta estadoOferta = (DDEstadoOferta) utilDiccionarioApi
+				.dameValorDiccionarioByCod(DDEstadoOferta.class, dto.getCodigoEstadoOferta());
 
-			// Si el activo esta marcado como alquilado no permitiremos tramitar ofertas de alquiler
-			if(!Checks.esNulo(oferta) && !Checks.esNulo(oferta.getActivoPrincipal())
-					&& DDEstadoOferta.CODIGO_ACEPTADA.equals(tipoOferta.getCodigo())
-					&& DDTipoOferta.CODIGO_ALQUILER.equals(oferta.getTipoOferta().getCodigo())
-					&& !Checks.esNulo(oferta.getActivoPrincipal().getSituacionComercial())
-					&& !Checks.esNulo(oferta.getActivoPrincipal().getSituacionComercial().getCodigo())
-					&& DDSituacionComercial.CODIGO_ALQUILADO.equals(oferta.getActivoPrincipal().getSituacionComercial().getCodigo())) {
+		validateSaveOferta(dto, oferta, estadoOferta);
 
-				throw new JsonViewerException(messageServices.getMessage(AVISO_MENSAJE_ACITVO_ALQUILADO_O_OCUPADO));
-
-			}
-
-			// Si el activo esta marcado como ocupado sin titulo no permitiremos tramitar ofertas de alquiler
-			if(!Checks.esNulo(tipoOferta) && !Checks.esNulo(oferta.getActivoPrincipal())
-					&& DDEstadoOferta.CODIGO_ACEPTADA.equals(tipoOferta.getCodigo())
-					&& DDTipoOferta.CODIGO_ALQUILER.equals(oferta.getTipoOferta().getCodigo())
-					&& !Checks.esNulo(oferta.getActivoPrincipal().getSituacionPosesoria())
-					&& !Checks.esNulo(oferta.getActivoPrincipal().getSituacionPosesoria().getOcupado())
-					&& oferta.getActivoPrincipal().getSituacionPosesoria().getOcupado() == 1
-						&& (Checks.esNulo(oferta.getActivoPrincipal().getSituacionPosesoria().getConTitulo())
-							|| (!Checks.esNulo(oferta.getActivoPrincipal().getSituacionPosesoria().getConTitulo())
-									&& oferta.getActivoPrincipal().getSituacionPosesoria().getConTitulo() == 0))
-					) {
-
-				throw new JsonViewerException(messageServices.getMessage(AVISO_MENSAJE_ACITVO_ALQUILADO_O_OCUPADO));
-
-			}
-
-			// Si el estado de la oferta es tramitada y tipo oferta es alquiler
-			// Sole se podrá realizar el cambio si no existe para el mismo activo una oferta de tipo venta
-			if (!Checks.esNulo(tipoOferta) && !Checks.esNulo(oferta.getTipoOferta())
-					&& DDEstadoOferta.CODIGO_ACEPTADA.equals(tipoOferta.getCodigo())
-					&& DDTipoOferta.CODIGO_ALQUILER.equals(oferta.getTipoOferta().getCodigo())) {
-
-				// Consultar ofertas activo
-				List<ActivoOferta> ofertasActivo = oferta.getActivoPrincipal().getOfertas();
-
-
-				for(ActivoOferta acivoOferta: ofertasActivo) {
-					// Si existe oferta de venta lanzar error
-					if(DDTipoOferta.CODIGO_VENTA.equals(acivoOferta.getPrimaryKey().getOferta().getTipoOferta().getCodigo())
-							&& !DDEstadoOferta.CODIGO_RECHAZADA.equals(acivoOferta.getPrimaryKey().getOferta().getEstadoOferta().getCodigo())) {
-
-						throw new JsonViewerException(messageServices.getMessage(AVISO_MENSAJE_EXISTEN_OFERTAS_VENTA));
-
-					}
-				}
-
-			}
-
-		oferta.setEstadoOferta(tipoOferta);
+		oferta.setEstadoOferta(estadoOferta);
 
 		// Al aceptar la oferta, se crea el trabajo de sancion oferta y el
 		// expediente comercial
-		if (DDEstadoOferta.CODIGO_ACEPTADA.equals(tipoOferta.getCodigo())) {
-			List<Activo> listaActivos = new ArrayList<Activo>();
-			for (ActivoOferta activoOferta : oferta.getActivosOferta()) {
-				listaActivos.add(activoOferta.getPrimaryKey().getActivo());
-			}
-			DDSubtipoTrabajo subtipoTrabajo = (DDSubtipoTrabajo) utilDiccionarioApi
-					.dameValorDiccionarioByCod(DDSubtipoTrabajo.class, this.getSubtipoTrabajoByOferta(oferta));
-			Trabajo trabajo = trabajoApi.create(subtipoTrabajo, listaActivos, null, false);
-			resultado = crearExpediente(oferta, trabajo);
-			trabajoApi.createTramiteTrabajo(trabajo);
+		if (DDEstadoOferta.CODIGO_ACEPTADA.equals(estadoOferta.getCodigo())) {
+			resultado = doAceptaOferta(oferta);
 		}
 
 		// si la oferta ha sido rechazada guarda los motivos de rechazo y
 		// enviamos un email/notificacion.
-		if (DDEstadoOferta.CODIGO_RECHAZADA.equals(tipoOferta.getCodigo())) {
-			if (!Checks.esNulo(dto.getMotivoRechazoCodigo())) {
-				DDMotivoRechazoOferta motivoRechazoOferta = (DDMotivoRechazoOferta) utilDiccionarioApi
-						.dameValorDiccionarioByCod(DDMotivoRechazoOferta.class, dto.getMotivoRechazoCodigo());
-				oferta.setMotivoRechazo(motivoRechazoOferta);
-				Usuario usu = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
-				oferta.setUsuarioBaja(usu.getApellidoNombre());
-			}
-
-			resultado = this.persistOferta(oferta);
-
-			if (!Checks.esNulo(oferta.getAgrupacion())) {
-				ActivoAgrupacion agrupacion = oferta.getAgrupacion();
-
-				List<Oferta> ofertasVivasAgrupacion = ofertaDao.getListOtrasOfertasVivasAgr(oferta.getId(), agrupacion.getId());
-
-				if ((agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_VENTA) 
-						|| agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_ALQUILER))
-						&& !Checks.esNulo(ofertasVivasAgrupacion) && ofertasVivasAgrupacion.isEmpty()) {
-					agrupacion.setFechaBaja(new Date());
-					activoAgrupacionApi.saveOrUpdate(agrupacion);
-				}
-			}
-
-			notificatorServiceSancionOfertaAceptacionYRechazo.notificatorFinSinTramite(oferta.getId());
+		if (DDEstadoOferta.CODIGO_RECHAZADA.equals(estadoOferta.getCodigo())) {
+			resultado = doRechazaOferta(dto, oferta);
 		}
+		
+		if(!resultado){
+			resultado = this.persistOferta(oferta);
+		}
+		
 
 		return resultado;
 	}
@@ -707,7 +734,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	}
 
 	@Override
-	public boolean crearExpediente(Oferta oferta, Trabajo trabajo) {
+	public boolean crearExpediente(Oferta oferta, Trabajo trabajo) throws Exception {
 		TransactionStatus transaction = null;
 		ExpedienteComercial expedienteComercial = null;
 		boolean resultado = false;
@@ -731,7 +758,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		} catch (Exception ex) {
 			logger.error("Error en activoManager", ex);
 			transactionManager.rollback(transaction);
-			resultado = false;
+			throw ex;
 		}
 
 		// cuando creamos el expediente, si procede, creamos el repositorio
@@ -751,7 +778,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	}
 
 		
-	@Transactional(readOnly = false)
 	private ExpedienteComercial crearExpedienteReserva(ExpedienteComercial expedienteComercial) {
 		// HREOS-2799
 		// Activos de Cajamar, debe tener en Reserva - tipo de Arras por
@@ -1039,8 +1065,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 		nuevoExpediente = genericDao.save(ExpedienteComercial.class, nuevoExpediente);
 
-		genericDao.save(Oferta.class, oferta);
-
+		
 		crearGastosExpediente(oferta, nuevoExpediente);
 
 		// Se asigna un gestor de Formalización al crear un nuevo expediente.
@@ -5210,75 +5235,85 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	}
 
 	@Override
-	public boolean compruebaParaEnviarEmailAvisoOcupacion(DtoActivoSituacionPosesoria activoDto, Long id)
-	{
-		Activo activo= this.get(id);
-		ActivoSituacionPosesoria posesoria=activo.getSituacionPosesoria();
-		Integer ocupado;
-		Integer conTitulo;
-		if(activoDto.getConTitulo() != null) {
-			conTitulo=activoDto.getConTitulo();
-		}else conTitulo=posesoria.getConTitulo();
-		if(activoDto.getOcupado() != null) {
-			ocupado=activoDto.getOcupado();
-		}else ocupado=posesoria.getOcupado();
-		if(!Checks.esNulo(id))
-		{
-			if(((DDCartera.CODIGO_CARTERA_BANKIA).equals(activo.getCartera().getCodigo()) 
-					&& (1 == activo.getSituacionPosesoria().getSitaucionJuridica().getIndicaPosesion())) 
-			||(!(DDCartera.CODIGO_CARTERA_BANKIA).equals(activo.getCartera().getCodigo()) 
-					&& (!Checks.esNulo(posesoria) && (!Checks.esNulo(posesoria.getFechaRevisionEstado())
-							|| !Checks.esNulo(posesoria.getFechaTomaPosesion())))))
-			{
-				if(!Checks.esNulo(posesoria.getOcupado()) && (1 == ocupado && 0 == conTitulo))
-				{
-					boolean val = compruebaSiExisteActivoBienPorMatricula(id, DDTipoDocumentoActivo.CODIGO_INFORME_OCUPACION_DESOCUPACION);
-					if(val)
-						{
-						//falta enviar el mensaje
-						ActivoAdjuntoActivo adjuntoAux = null;
-						List<DtoAdjuntoMail> sendAdj = new ArrayList<DtoAdjuntoMail>();
-						for(ActivoAdjuntoActivo adjunto : activo.getAdjuntos())
-						{
-							if(!Checks.esNulo(adjunto.getTipoDocumentoActivo()) &&
-								DDTipoDocumentoActivo.CODIGO_INFORME_OCUPACION_DESOCUPACION.equals(adjunto.getTipoDocumentoActivo().getCodigo()))
-							{
-								Date adjuntoFecha = adjunto.getFechaDocumento();
-								if (Checks.esNulo(adjuntoAux) || adjuntoFecha.after(adjuntoAux.getFechaDocumento())) {
-									adjuntoAux = adjunto;
+	public boolean compruebaParaEnviarEmailAvisoOcupacion(DtoActivoSituacionPosesoria activoDto, Long id) {
+		Activo activo = this.get(id);
+		ActivoSituacionPosesoria posesoria = activo.getSituacionPosesoria();
+		if (posesoria != null) {
+			Integer ocupado;
+			Integer conTitulo;
+			if (activoDto.getConTitulo() != null) {
+				conTitulo = activoDto.getConTitulo();
+			} else
+				conTitulo = posesoria.getConTitulo();
+			if (activoDto.getOcupado() != null) {
+				ocupado = activoDto.getOcupado();
+			} else
+				ocupado = posesoria.getOcupado();
+			if (!Checks.esNulo(id)) {
+				if (((DDCartera.CODIGO_CARTERA_BANKIA).equals(activo.getCartera().getCodigo())
+						&& (1 == activo.getSituacionPosesoria().getSitaucionJuridica().getIndicaPosesion()))
+						|| (!(DDCartera.CODIGO_CARTERA_BANKIA).equals(activo.getCartera().getCodigo())
+								&& (!Checks.esNulo(posesoria) && (!Checks.esNulo(posesoria.getFechaRevisionEstado())
+										|| !Checks.esNulo(posesoria.getFechaTomaPosesion()))))) {
+					if (!Checks.esNulo(posesoria.getOcupado()) && (1 == ocupado && 0 == conTitulo)) {
+						boolean val = compruebaSiExisteActivoBienPorMatricula(id,
+								DDTipoDocumentoActivo.CODIGO_INFORME_OCUPACION_DESOCUPACION);
+						if (val) {
+							// falta enviar el mensaje
+							ActivoAdjuntoActivo adjuntoAux = null;
+							List<DtoAdjuntoMail> sendAdj = new ArrayList<DtoAdjuntoMail>();
+							for (ActivoAdjuntoActivo adjunto : activo.getAdjuntos()) {
+								if (!Checks.esNulo(adjunto.getTipoDocumentoActivo())
+										&& DDTipoDocumentoActivo.CODIGO_INFORME_OCUPACION_DESOCUPACION
+												.equals(adjunto.getTipoDocumentoActivo().getCodigo())) {
+									Date adjuntoFecha = adjunto.getFechaDocumento();
+									if (Checks.esNulo(adjuntoAux)
+											|| adjuntoFecha.after(adjuntoAux.getFechaDocumento())) {
+										adjuntoAux = adjunto;
+									}
 								}
 							}
-						}
 
-						if (!Checks.esNulo(adjuntoAux)) {
-							DtoAdjuntoMail adj = new DtoAdjuntoMail();
-							adj.setNombre(adjuntoAux.getNombre());
-							adj.setAdjunto(adjuntoAux.getAdjunto());
-							sendAdj.add(adj);
-						}
+							if (!Checks.esNulo(adjuntoAux)) {
+								DtoAdjuntoMail adj = new DtoAdjuntoMail();
+								adj.setNombre(adjuntoAux.getNombre());
+								adj.setAdjunto(adjuntoAux.getAdjunto());
+								sendAdj.add(adj);
+							}
 
-						Usuario usu = usuarioApi.getByUsername(EMAIL_OCUPACIONES);
-						if(!Checks.esNulo(usu) && !Checks.esNulo(usu.getEmail()))
-						{
-							List<String> para = new ArrayList<String>();
-							para.add(usu.getEmail());
-							String activoS = activo.getNumActivo()+"";
-							String carteraS = activo.getCartera().getDescripcion();
-							StringBuilder cuerpo = new StringBuilder("<!DOCTYPE HTML PUBLIC '-//W3C//DTD HTML 4.01 Transitional//EN'><html><head><META http-equiv='Content-Type' content='text/html; charset=utf-8'></head><body>");
-							cuerpo.append("<div><p>Se ha marcado en REM una ocupación ilegal del activo ");
-							cuerpo.append(activoS);
-							cuerpo.append(" de la cartera ");
-							cuerpo.append(carteraS);
-							cuerpo.append("</p><p>Se anexa el informe de ocupación remitido por el API custodio</p><p>Un saludo</p></div></body></html>");
-							genericAdapter.sendMail(para, null, "Ocupación ilegal del activo: " + activoS + ", de la cartera " + carteraS, cuerpo.toString(), sendAdj);
-						}
-						//se envia un true, por que ya hemos mandado el correo y tiene que guardar los cambios
+							Usuario usu = usuarioApi.getByUsername(EMAIL_OCUPACIONES);
+							if (!Checks.esNulo(usu) && !Checks.esNulo(usu.getEmail())) {
+								List<String> para = new ArrayList<String>();
+								para.add(usu.getEmail());
+								String activoS = activo.getNumActivo() + "";
+								String carteraS = activo.getCartera().getDescripcion();
+								StringBuilder cuerpo = new StringBuilder(
+										"<!DOCTYPE HTML PUBLIC '-//W3C//DTD HTML 4.01 Transitional//EN'><html><head><META http-equiv='Content-Type' content='text/html; charset=utf-8'></head><body>");
+								cuerpo.append("<div><p>Se ha marcado en REM una ocupación ilegal del activo ");
+								cuerpo.append(activoS);
+								cuerpo.append(" de la cartera ");
+								cuerpo.append(carteraS);
+								cuerpo.append(
+										"</p><p>Se anexa el informe de ocupación remitido por el API custodio</p><p>Un saludo</p></div></body></html>");
+								genericAdapter.sendMail(para, null,
+										"Ocupación ilegal del activo: " + activoS + ", de la cartera " + carteraS,
+										cuerpo.toString(), sendAdj);
+							}
+							// se envia un true, por que ya hemos mandado el
+							// correo
+							// y tiene que guardar los cambios
+							return true;
+						} else
+							return false;
+						// devolvemos un false por que no esta adjuntado el
+						// archivo
+						// y no se pueden guardar los cambios
+					}
+					// se envia un true, por que tiene que guardar los datos
+					// modificados del activo, ya que no se cumple la condicion
+					else
 						return true;
-						}else return false;
-							//devolvemos un false por que no esta adjuntado el archivo y no se pueden guardar los cambios
 				}
-				//se envia un true, por que tiene que guardar los datos modificados del activo, ya que no se cumple la condicion
-				else return true;
 			}
 		}
 

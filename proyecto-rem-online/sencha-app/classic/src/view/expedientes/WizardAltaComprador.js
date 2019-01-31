@@ -17,12 +17,14 @@ Ext.define('HreRem.view.expedientes.WizardAltaComprador', {
 	},
 
 	items : [ {
-		xtype : 'anyadirnuevaofertadocumento'
-
+		xtype : 'anyadirnuevaofertadocumento',
+		resizable: true
 	}, {
-		xtype : 'datoscompradorwizard'
+		xtype : 'datoscompradorwizard',
+		resizable: true
 	}, {
-		xtype : 'anyadirnuevaofertaactivoadjuntardocumento'
+		xtype : 'anyadirnuevaofertaactivoadjuntardocumento',
+		resizable: true
 	} ],
 	renderTo : Ext.getBody()
 });

@@ -2,7 +2,6 @@ package es.pfsgroup.plugin.rem.oferta;
 
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
-import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.ParseException;
@@ -788,7 +787,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	}
 
 	@Transactional(readOnly = false)
-	private Oferta updateEstadoOferta(Long idOferta, Date fechaAccion) throws JsonViewerException, SQLException {
+	private Oferta updateEstadoOferta(Long idOferta, Date fechaAccion) throws Exception {
 
 		Oferta ofertaAcepted = null;
 		//Boolean inLoteComercial = false;
@@ -3238,16 +3237,17 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		if(!Checks.esNulo(clienteGDPR) && !Checks.esNulo(clienteCom)) {
 			if (!Checks.esNulo(clienteGDPR.getNumDocumento()) && !Checks.esNulo(clienteCom.getDocumento()) && clienteCom.getDocumento().equals(clienteGDPR.getNumDocumento())) {
 				if (!Checks.esNulo(clienteCom.getCesionDatos()) && clienteCom.getCesionDatos()) {
-					if (!Checks.esNulo(clienteCom.getTransferenciasInternacionales()) && clienteCom.getTransferenciasInternacionales()) {
-						return true;
-					} else if (!Checks.esNulo(clienteCom.getTransferenciasInternacionales()) && !clienteCom.getTransferenciasInternacionales()) {
-						return false;
-					} else if (Checks.esNulo(clienteCom.getTransferenciasInternacionales())) {
-						return  DDCartera.CODIGO_CARTERA_CERBERUS.equals(activo.getCartera().getCodigo())
-								|| DDCartera.CODIGO_CARTERA_GIANTS.equals(activo.getCartera().getCodigo())
-								|| DDCartera.CODIGO_CARTERA_TANGO.equals(activo.getCartera().getCodigo())
-								|| DDCartera.CODIGO_CARTERA_GALEON.equals(activo.getCartera().getCodigo());
-					}
+					if(DDCartera.CODIGO_CARTERA_CERBERUS.equals(activo.getCartera().getCodigo()) 
+							|| DDCartera.CODIGO_CARTERA_GIANTS.equals(activo.getCartera().getCodigo())
+							|| DDCartera.CODIGO_CARTERA_TANGO.equals(activo.getCartera().getCodigo())
+							|| DDCartera.CODIGO_CARTERA_GALEON.equals(activo.getCartera().getCodigo())) {
+						if (!Checks.esNulo(clienteCom.getTransferenciasInternacionales()) && clienteCom.getTransferenciasInternacionales()) {
+							return true;
+						}
+						else {
+							return false;
+						}	
+					}					
 				} else {
 					return false;
 				}

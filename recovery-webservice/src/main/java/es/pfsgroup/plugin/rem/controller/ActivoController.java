@@ -2481,7 +2481,7 @@ public class ActivoController extends ParadiseJsonController {
 	public ModelAndView generarUrlGDPR(DtoGenerarDocGDPR dtoGenerarDocGDPR, ModelMap model) {
 		try {
 			model.put("data", activoApi.generarUrlGDPR(dtoGenerarDocGDPR));
-			model.put("success",false);
+			model.put("success",true);
 		}catch(Exception e) {
 			logger.error("error en activoController", e);
 		}
@@ -2492,8 +2492,8 @@ public class ActivoController extends ParadiseJsonController {
 	public void generarDocGDPR(DtoGenerarDocGDPR dtoGenerarDocGDPR, HttpServletRequest request, HttpServletResponse response) {
 
 		try {
-			//dtoGenerarDocGDPR.getData();//TODO AQUI LA URL MONTADA
-			response.sendRedirect("https://www.ehu.eus/documents/1940628/2056218/Informe_PAU_2010.pdf/3f12b40c-386c-4e9a-8df3-fecd8d882f59");
+			dtoGenerarDocGDPR.getData();
+			response.sendRedirect(activoApi.generarUrlGDPR(dtoGenerarDocGDPR));
 		} catch (Exception e) {
 			logger.error("error en activoController", e);
 		}

@@ -256,6 +256,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	private static final String AVISO_MENSAJE_EXISTEN_OFERTAS_VENTA = "activo.motivo.oferta.existe.venta";
 	private static final String AVISO_MENSAJE_ACITVO_ALQUILADO_O_OCUPADO = "activo.motivo.oferta.alquilado.ocupado";
 	private static final String MAESTRO_ORIGEN_WCOM="WCOM";
+	private static final String KEY_GDPR="gdpr.data.key";
+	private static final String URL_GDPR="gdpr.data.url";
 	private SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 	private BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 
@@ -5318,10 +5320,10 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		if(!Checks.esNulo(dtoGenerarDocGDPR.getDocumento()))
 			documento = dtoGenerarDocGDPR.getDocumento();
 		
-		String reservationKey = appProperties.getProperty(MAESTRO_ORIGEN_WCOM)+documento+fecha;//TODO AQUI EL HASH MD5 MONTADO (key POR DEFINIR + #documento + today(yyyyMMdd)timestamp)
-		String signatrue = computeKey(reservationKey);
+		String reservationKey = appProperties.getProperty(KEY_GDPR)+documento+fecha;//TODO AQUI EL HASH MD5 MONTADO (key POR DEFINIR + #documento + today(yyyyMMdd)timestamp)
+		String signature = computeKey(reservationKey);
 		
-		String url="urlbonitadehaya/"+signatrue+"?";
+		String url=appProperties.getProperty(URL_GDPR)+signature+"?";
 		
 		if(!Checks.esNulo(dtoGenerarDocGDPR.getCodPrescriptor())) {
 			url+="codRemPrescriptor="+getCodRemPrescriptor(dtoGenerarDocGDPR);

@@ -574,8 +574,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		},
 		onInitChangePrecioWebAlquiler: function (get){
 			var noMostrarPrecio = get('datospublicacionactivo.noMostrarPrecioAlquiler');
-			
-			console.log(noMostrarPrecio);
 			var precioWebVentaAlquiler = get('datospublicacionactivo.precioWebAlquiler');
 				if (noMostrarPrecio)
 					return 0;

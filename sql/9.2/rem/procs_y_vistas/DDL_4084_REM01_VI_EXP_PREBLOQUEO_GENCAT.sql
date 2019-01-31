@@ -54,7 +54,7 @@ BEGIN
       AS
        SELECT cmg.ACT_ID, cmg.CMG_ID, cmg.CMG_FECHA_COMUNICACION, cmg.CMG_FECHA_SANCION,
         ecg.DD_ECG_CODIGO,san.DD_SAN_CODIGO,ofg.OFR_ID
-        ,ofg.OFG_IMPORTE, tpe.DD_TPE_CODIGO, sip.DD_SIP_CODIGO, cmg.CMG_FECHA_ANULACION
+        ,ofg.OFG_IMPORTE, tpe.DD_TPE_CODIGO, sip.DD_SIP_CODIGO, cmg.CMG_FECHA_ANULACION, cmg.CMG_CHECK_ANULACION
         from '|| V_ESQUEMA ||'.ACT_CMG_COMUNICACION_GENCAT cmg
         left join '|| V_ESQUEMA ||'.DD_ECG_ESTADO_COM_GENCAT ecg ON cmg.DD_ecg_id =ecg.DD_ECG_ID
         left join '|| V_ESQUEMA ||'.DD_SAN_SANCION san ON cmg.DD_SAN_ID = san.DD_SAN_ID

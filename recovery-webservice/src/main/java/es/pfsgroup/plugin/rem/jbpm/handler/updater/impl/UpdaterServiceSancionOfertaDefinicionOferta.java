@@ -68,11 +68,15 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 		 * de resolución del comité externo.
 		 */
 		if (ofertaApi.checkAtribuciones(tramite.getTrabajo())) {
+			Boolean esTramitadoAntesQueAprobado = false;
 			Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());
 			if (!Checks.esNulo(ofertaAceptada)) {
 				ExpedienteComercial expediente = expedienteComercialApi
 						.expedienteComercialPorOferta(ofertaAceptada.getId());
 				expediente.setFechaSancion(new Date());
+				if(DDEstadosExpedienteComercial.EN_TRAMITACION.equals(expediente.getEstado().getCodigo())) {
+					esTramitadoAntesQueAprobado = true;
+				}
 				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo",
 						DDEstadosExpedienteComercial.APROBADO);
 				DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
@@ -93,7 +97,7 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 				// y se envía una notificación
 				notificacionApi.enviarNotificacionPorActivosAdmisionGestion(expediente);
 				
-				if(Checks.esNulo(expediente.getReserva())){
+				if(Checks.esNulo(expediente.getReserva()) && esTramitadoAntesQueAprobado){
 					//TODO COMPROBACION PRE BLOQUEO GENCAT 
 					
 					gencatApi.bloqueoExpedienteGENCAT(expediente, tramite);
@@ -103,6 +107,7 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 		} else {
 			Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());
 			if (!Checks.esNulo(ofertaAceptada)) {
+				Boolean esTramitadoAntesQueAprobado = false;
 				ExpedienteComercial expediente = expedienteComercialApi
 						.expedienteComercialPorOferta(ofertaAceptada.getId());
 				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo",
@@ -113,16 +118,20 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 				PerimetroActivo perimetro = activoApi.getPerimetroByIdActivo(expediente.getOferta().getActivoPrincipal().getId());
 				
 				DDEstadosExpedienteComercial estado;
+
 				
 				if(perimetro.getAplicaFormalizar() == 0){
-					estado = genericDao.get(DDEstadosExpedienteComercial.class, filtroSinFormalizacion);
+					if(DDEstadosExpedienteComercial.EN_TRAMITACION.equals(expediente.getEstado().getCodigo())) {
+						esTramitadoAntesQueAprobado = true;
+					}
+					estado = genericDao.get(DDEstadosExpedienteComercial.class, filtroSinFormalizacion);	
 				}else{
 					estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
 				}
 				 
 				expediente.setEstado(estado);
 				
-				if(Checks.esNulo(expediente.getReserva())){
+				if(Checks.esNulo(expediente.getReserva()) && esTramitadoAntesQueAprobado){
 					//TODO COMPROBACION PRE BLOQUEO GENCAT 
 
 					gencatApi.bloqueoExpedienteGENCAT(expediente, tramite);

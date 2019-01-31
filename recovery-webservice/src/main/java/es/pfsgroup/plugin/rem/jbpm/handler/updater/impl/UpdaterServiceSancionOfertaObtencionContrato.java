@@ -18,6 +18,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.api.GencatApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
@@ -51,6 +52,9 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 
 	@Autowired
 	private GestorActivoApi gestorActivoApi;
+	
+	@Autowired
+    private GencatApi gencatApi;
 
 	private static final String CODIGO_T013_OBTENCION_CONTRATO_RESERVA = "T013_ObtencionContratoReserva";
 	private static final String FECHA_FIRMA = "fechaFirma";
@@ -93,6 +97,7 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 		if (!Checks.esNulo(ofertaAceptada)) {
 			
 			Boolean finalizado = false;
+			Boolean esEstadoAnteriorAprobado = false;
 			activo = ofertaAceptada.getActivoPrincipal();
 			
 			List<TareaExterna> listaTareas = activoTramiteApi
@@ -109,11 +114,19 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 			
 			if (ofertaApi.checkDerechoTanteo(tramite.getTrabajo()) && !finalizado)
 				filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.BLOQUEO_ADM);
-			else
+			else{
 				filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.RESERVADO);
+				if(DDEstadosExpedienteComercial.APROBADO.equals(expediente.getEstado().getCodigo())) {
+					esEstadoAnteriorAprobado = true;
+				}
+			}
 
 			DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
 			expediente.setEstado(estado);
+			
+			if(Checks.esNulo(expediente.getReserva()) && esEstadoAnteriorAprobado) {
+				gencatApi.bloqueoExpedienteGENCAT(expediente, tramite); 
+			}
 
 			// actualizamos el estado de la reserva a firmada
 			if (!Checks.esNulo(expediente.getReserva())) {

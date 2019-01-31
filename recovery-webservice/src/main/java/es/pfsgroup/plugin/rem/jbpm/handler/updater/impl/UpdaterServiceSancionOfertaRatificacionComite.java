@@ -89,6 +89,10 @@ public class UpdaterServiceSancionOfertaRatificacionComite implements UpdaterSer
 					if(COMBO_RATIFICACION.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 						Filter filtro;
 						if(DDResolucionComite.CODIGO_APRUEBA.equals(valor.getValor())) {
+							Boolean esEstadoAnteriorTramitado = false;
+							if(DDEstadosExpedienteComercial.EN_TRAMITACION.equals(expediente.getEstado().getCodigo())) {
+								esEstadoAnteriorTramitado = true;
+							}
 							filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.APROBADO);
 							DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
 							expediente.setEstado(estado);
@@ -105,9 +109,9 @@ public class UpdaterServiceSancionOfertaRatificacionComite implements UpdaterSer
 							notificacionApi.enviarNotificacionPorActivosAdmisionGestion(expediente);
 							
 							//TODO COMPROBACION PRE BLOQUEO GENCAT 
-
-							gencatApi.bloqueoExpedienteGENCAT(expediente, tramite);
-							
+							if ((Checks.esNulo(expediente.getReserva())) && (esEstadoAnteriorTramitado)) {
+								gencatApi.bloqueoExpedienteGENCAT(expediente, tramite);
+							}
 						} else if(DDResolucionComite.CODIGO_RECHAZA.equals(valor.getValor())) {
 							//Resuelve el expediente
 							filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.ANULADO);

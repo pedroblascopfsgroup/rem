@@ -9,7 +9,6 @@ import org.jbpm.graph.exe.ExecutionContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
-import es.capgemini.devon.bo.Executor;
 import es.capgemini.devon.exception.UserException;
 import es.capgemini.pfs.BPMContants;
 import es.capgemini.pfs.core.api.procesosJudiciales.TareaExternaApi;
@@ -17,27 +16,19 @@ import es.capgemini.pfs.core.api.procesosJudiciales.dto.EXTDtoCrearTareaExterna;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.procesosJudiciales.model.EXTTareaProcedimiento;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
-import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
 import es.capgemini.pfs.tareaNotificacion.VencimientoUtils.TipoCalculo;
 import es.capgemini.pfs.tareaNotificacion.model.EXTSubtipoTarea;
 import es.capgemini.pfs.tareaNotificacion.model.SubtipoTarea;
-import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.framework.paradise.genericlistener.GenerarTransicionListener;
+import es.pfsgroup.plugin.rem.api.ActivoRequisitoTareaApi;
+import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.jbpm.activo.JBPMActivoTareasManagerApi;
-import es.pfsgroup.plugin.rem.jbpm.handler.notificator.NotificatorService;
-import es.pfsgroup.plugin.rem.jbpm.handler.notificator.NotificatorServiceFactoryApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.plazo.PlazoAssignationService;
 import es.pfsgroup.plugin.rem.jbpm.handler.plazo.PlazoAssignationServiceFactoryApi;
-import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
-import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterServiceFactoryApi;
-import es.pfsgroup.plugin.rem.jbpm.handler.user.UserAssigantionService;
-import es.pfsgroup.plugin.rem.model.ActivoTramite;
-import es.pfsgroup.plugin.rem.api.ActivoRequisitoTareaApi;
 import es.pfsgroup.plugin.rem.model.ActivoRequisitoTarea;
-import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
-import es.pfsgroup.framework.paradise.genericlistener.GenerarTransicionListener;
+import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.CampoTareaNoEncontradaException;
 
 public class ActivoGenericEnterActionHandler extends ActivoGenericActionHandler {
@@ -45,12 +36,6 @@ public class ActivoGenericEnterActionHandler extends ActivoGenericActionHandler 
 	private static final long serialVersionUID = -2997523481794698821L;
 
 	private TipoCalculo tipoCalculoVencimiento = null;
-	
-	@Autowired
-	private Executor executor;
-
-	@Autowired
-	private GenericABMDao genericDao;
 	
 	@Autowired
 	ActivoTareaExternaApi activoTareaExternaManagerApi;

@@ -25,8 +25,3 @@ Ext.define('HreRem.view.activos.detalle.PatrimonioActivo', {
 		me.down('tabpanel').getActiveTab().funcionRecargar();
     }
 });
-
-
-
-
-

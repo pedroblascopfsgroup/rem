@@ -546,12 +546,14 @@ Ext.define('HreRem.model.Activo', {
 				type: 'boolean'
 			},
 			{
-				name: 'enTramite',
-				type: 'boolean'
+				name: 'enTramite'
 			},
 			{
-				name: 'enTramite',
-				type: 'boolean'
+				name: 'isActivoEnTramite',
+				calculate: function(data) { 
+    				return data.enTramite == 1;
+    			},
+    			depends: 'enTramite'
 			},
 			{
 				name: 'tipoComercializacionCodigo'

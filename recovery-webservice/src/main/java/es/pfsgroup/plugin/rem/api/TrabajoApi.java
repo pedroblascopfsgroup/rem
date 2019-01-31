@@ -126,7 +126,7 @@ public interface TrabajoApi {
 	 *            pasa la propuesta
 	 * @return
 	 */
-	public Trabajo create(DDSubtipoTrabajo subtipoTrabajo, List<Activo> listaActivos, PropuestaPrecio propuestaPrecio);
+	public Trabajo create(DDSubtipoTrabajo subtipoTrabajo, List<Activo> listaActivos, PropuestaPrecio propuestaPrecio) throws Exception;
 
 	/**
 	 * Crear trabajo a partir de una lista de activos y un subtipo dados: -
@@ -144,7 +144,7 @@ public interface TrabajoApi {
 	 * @return
 	 */
 	public Trabajo create(DDSubtipoTrabajo subtipoTrabajo, List<Activo> listaActivos, PropuestaPrecio propuestaPrecio,
-			boolean inicializarTramite);
+			boolean inicializarTramite)  throws Exception;
 
 	/**
 	 * Crear trabajo desde la pantalla de crear trabajos: - Crea un trabajo

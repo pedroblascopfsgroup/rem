@@ -105,7 +105,7 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoForm', {
     		}
         	
         }
-        
+        debugger;
         var items = [
         	{
 				xtype:'fieldsettable',
@@ -164,7 +164,7 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoForm', {
 				    				name: 'fechaSancion',
 				    				submitFormat:'Y-m-d',
 									bind: {
-										readOnly: me.formDeHistorico,
+										readOnly: '{!gencat.IsUserAllowed}',
 										value: '{gencat.fechaSancion}',
 										disabled: '{gencat.fechaComunicacionVacia}'
 									}
@@ -175,7 +175,7 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoForm', {
 				    				colspan: 2,
 				    				name: 'sancion',
 									bind: {
-										readOnly: me.formDeHistorico,
+										readOnly: '{!gencat.IsUserAllowed}',
 										store: '{comboSancionGencat}',
 										value: '{gencat.sancion}',
 										disabled: '{gencat.fechaComunicacionVacia}'
@@ -197,7 +197,7 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoForm', {
 							    				fieldLabel: HreRem.i18n('fieldlabel.nif'),
 							    				name: 'nuevoCompradorNif',
 												bind: {
-													readOnly: me.formDeHistorico,
+													readOnly: '{!gencat.IsUserAllowed}',
 													disabled: '{!gencat.estaActivadoCompradorNuevo}',
 													value: '{gencat.nuevoCompradorNif}'													
 												}
@@ -206,7 +206,7 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoForm', {
 							    				fieldLabel: HreRem.i18n('fieldlabel.nombre'),
 							    				name: 'nuevoCompradorNombre',
 												bind: {
-													readOnly: me.formDeHistorico,
+													readOnly: '{!gencat.IsUserAllowed}',
 													disabled: '{!gencat.estaActivadoCompradorNuevo}',
 													value: '{gencat.nuevoCompradorNombre}'													
 												}
@@ -215,7 +215,7 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoForm', {
 							    				fieldLabel: HreRem.i18n('fieldlabel.primer.apellido'),
 							    				name: 'nuevoCompradorApellido1',
 												bind: {
-													readOnly: me.formDeHistorico,
+													readOnly: '{!gencat.IsUserAllowed}',
 													disabled: '{!gencat.estaActivadoCompradorNuevo}',
 													value: '{gencat.nuevoCompradorApellido1}'													
 												}
@@ -224,7 +224,7 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoForm', {
 							    				fieldLabel: HreRem.i18n('fieldlabel.segundo.apellido'),
 							    				name: 'nuevoCompradorApellido2',
 												bind: {
-													readOnly: me.formDeHistorico,
+													readOnly: '{!gencat.IsUserAllowed}',
 													disabled: '{!gencat.estaActivadoCompradorNuevo}',
 													value: '{gencat.nuevoCompradorApellido2}'												
 												}

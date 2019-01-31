@@ -79,6 +79,12 @@ Ext.define('HreRem.model.Gencat', {
 			name:'comunicadoAnulacionAGencat',
 			type: 'boolean'
 		},
+		{
+			name: 'IsUserAllowed',
+			calculate: function(){
+				return ($AU.userIsRol(CONST.PERFILES['HAYAGESTFORMADM']) || $AU.userIsRol(CONST.PERFILES['GESTIAFORM']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER']));
+			},
+		},
 		
 		
 		//Adecuacion

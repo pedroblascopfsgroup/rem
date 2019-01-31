@@ -1,10 +1,10 @@
 --/*
 --######################################### 
---## AUTOR=Mariam Lliso
---## FECHA_CREACION=20190129
+--## AUTOR=Alberto Flores
+--## FECHA_CREACION=20190131
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-5274
+--## INCIDENCIA_LINK=HREOS-5304
 --## PRODUCTO=NO
 --## 
 --## Finalidad: Procedimiento encargado de perfilar las funciones.
@@ -13,6 +13,7 @@
 --## VERSIONES:
 --##        0.1 Versión inicial
 --##        0.2 HREOS-5274: añadido perfil HAYAGESTFORMADM
+--##        0.3 HREOS-5304: Permisos de Carga Masiva Sanciones para HAYAGESTFORMADM y GESTIAFORM
 --#########################################
 --*/
 
@@ -267,6 +268,7 @@ T_VAR( 'MASIVO_INDICADOR_ACTIVO','N','N','N','N','N','N','N','N','S','S','N','N'
 T_VAR( 'MASIVO_RECLAMACIONES','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','N','N','N','N','N','N','N','S','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S'),
 T_VAR( 'MASIVO_ADECUACION','N','N','N','N','N','N','N','N','S','S','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N'),
 T_VAR( 'MASIVO_EXCLUIR_ACTIVOS_DWH','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N'),
+T_VAR( 'CARGA_MASIVA_SANCION','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','N','N','N','N','N','N','N','S','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S'),
 
 T_VAR( 'MENU_DASHBOARD','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N'),
 T_VAR( 'MENU_AGENDA','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','N','S','S','S','S','S','S','S','S','S','S','S','S','N','N','N','N','N','N','S'),

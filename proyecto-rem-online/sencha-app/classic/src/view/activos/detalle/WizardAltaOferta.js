@@ -38,13 +38,14 @@ Ext.define('HreRem.view.activos.detalle.WizardAltaOferta', {
     ],*/
 
     items: [{
-        xtype: 'anyadirnuevaofertadocumento'
-        	
+        xtype: 'anyadirnuevaofertadocumento',
+		resizable: true        	
     },{
-    	xtype: 'anyadirnuevaofertadetalle'
-
+    	xtype: 'anyadirnuevaofertadetalle',
+		resizable: true
     },{
-    	xtype: 'anyadirnuevaofertaactivoadjuntardocumento'
+    	xtype: 'anyadirnuevaofertaactivoadjuntardocumento',
+		resizable: true
     }],
     renderTo: Ext.getBody()
 });

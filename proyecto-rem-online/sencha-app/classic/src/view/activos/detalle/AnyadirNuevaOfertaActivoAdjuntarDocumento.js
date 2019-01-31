@@ -28,13 +28,21 @@ Ext.define('HreRem.view.activos.detalle.AnyadirNuevaOfertaActivoAdjuntarDocument
 	initComponent: function() {
     	
     	var me = this;
-    	
+
     	me.buttons = [ {
     		itemId: 'btnAtras',
     		text: 'Volver',
     		handler: function(btn){
     			var wizard = btn.up().up().up();
     			var layout = wizard.getLayout();
+    			if(wizard.xtype.indexOf('wizardaltacomprador') >= 0) {
+    				wizard.width = Ext.Element.getViewportWidth()/2;
+        			wizard.height = Ext.Element.getViewportHeight()-100;
+    			} else {
+    				wizard.width = Ext.Element.getViewportWidth()/2;
+    				wizard.height = Ext.Element.getViewportHeight()-325;
+    			}
+    			
     			layout["prev"]();
     		}
     	},
@@ -59,7 +67,7 @@ Ext.define('HreRem.view.activos.detalle.AnyadirNuevaOfertaActivoAdjuntarDocument
 						{
 							xtype:'checkboxfieldbase',
 							fieldLabel: HreRem.i18n('wizard.oferta.documento.cesionDatos'),							
-							bind:		'{oferta.cesionDatosHaya}',
+							bind:  '{oferta.cesionDatosHaya}',
 							name:       'cesionDatos',
 							margin: '50px 0 0 200px',
 							reference: 'chkbxCesionDatosHaya',
@@ -97,7 +105,7 @@ Ext.define('HreRem.view.activos.detalle.AnyadirNuevaOfertaActivoAdjuntarDocument
 						{
 							xtype:'checkboxfieldbase',
 							fieldLabel: HreRem.i18n('wizard.oferta.documento.transferenciasInternacionales'),
-							bind:		'{oferta.transferenciasInternacionales}',
+							bind:	'{oferta.transferenciasInternacionales}',
 							name:       'transferenciasInternacionales',
 							margin: '10px 0 0 200px',
 							reference: 'chkbxTransferenciasInternacionales',
@@ -106,14 +114,19 @@ Ext.define('HreRem.view.activos.detalle.AnyadirNuevaOfertaActivoAdjuntarDocument
 	                              change: function (checkbox, newVal, oldVal) {
 	                            	  var esInternacional = checkbox.up('anyadirnuevaofertaactivoadjuntardocumento').getForm().findField('carteraInternacional').getValue();
 	                            	  var checkCesionDatos = checkbox.up('anyadirnuevaofertaactivoadjuntardocumento').getForm().findField('cesionDatos').getValue();
-	                            	  if(checkbox.getValue() && esInternacional && checkCesionDatos)
-	                            		  checkbox.up('anyadirnuevaofertaactivoadjuntardocumento').down('button[itemId=btnGenerarDoc]').enable();
-	                            	  else if (checkbox.getValue() && !esInternacional && checkCesionDatos)
-	                            		  checkbox.up('anyadirnuevaofertaactivoadjuntardocumento').down('button[itemId=btnGenerarDoc]').enable();
-	                            	  else if (!checkbox.getValue() && !esInternacional && checkCesionDatos)
-	                            		  checkbox.up('anyadirnuevaofertaactivoadjuntardocumento').down('button[itemId=btnGenerarDoc]').enable();
-	                            	  else
+	                            	  if(checkbox.getValue() && esInternacional && checkCesionDatos) {
+	                            		  checkbox.up('anyadirnuevaofertaactivoadjuntardocumento').down('button[itemId=btnGenerarDoc]').enable(); 
+	                            	  }
+	                            	  else if (checkbox.getValue() && !esInternacional && checkCesionDatos) {
+	                            		  checkbox.up('anyadirnuevaofertaactivoadjuntardocumento').down('button[itemId=btnGenerarDoc]').enable(); 
+	                            	  }
+	                            	  else if (!checkbox.getValue() && !esInternacional && checkCesionDatos) {
+	                            		  checkbox.up('anyadirnuevaofertaactivoadjuntardocumento').down('button[itemId=btnGenerarDoc]').enable(); 
+	                            	  }
+	                            	  else  {
 	                            		  checkbox.up('anyadirnuevaofertaactivoadjuntardocumento').down('button[itemId=btnGenerarDoc]').disable();
+	                            	  }
+	                            	  
 	                              }
 	                          }
 						},

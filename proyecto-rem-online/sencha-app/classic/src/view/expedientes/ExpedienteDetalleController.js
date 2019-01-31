@@ -1451,10 +1451,13 @@ Ext
 					onClickBotonModificarComprador : function(btn) {
 					
 						var me = this, window = btn.up("window"), form = window
-								.down("form");
+								.down("form"), ventanaWizard = btn.up('wizardaltacomprador');
 
 						form.recordName = "comprador";
 						form.recordClass = "HreRem.model.FichaComprador";
+						
+						ventanaWizard.width = Ext.Element.getViewportWidth()/2;
+						ventanaWizard.height = Ext.Element.getViewportHeight() > 500 ? 500 : Ext.Element.getViewportHeight()-100;
 
 						var success = function(record, operation) {
 							me.getView().unmask();
@@ -2084,27 +2087,37 @@ Ext
 						var form1 = window.down('anyadirnuevaofertadocumento');
 						var form2 = window.down('datoscompradorwizard');
 						var form3 = window.down('anyadirnuevaofertaactivoadjuntardocumento');
-						Ext.Msg.show({							
-								title : HreRem.i18n('wizard.msg.show.title'),
-								msg : HreRem.i18n('wizard.msh.show.text'),
-								buttons : Ext.MessageBox.YESNO,
-								fn : function(buttonId) {
-								
-									if (buttonId == 'yes') {
-										if (!Ext.isEmpty(form1)) {
-											form1.reset();
-										}
-										/*if (!Ext.isEmpty(form2)) {
-											form2.reset();
-										}*/
-										if (!Ext.isEmpty(form3)) {
-											form3.reset();
-										}
-										window.close();
+						var docCliente = form2.getForm().findField('numDocumento').getValue();
+						Ext.Msg.show({
+							title : HreRem.i18n('wizard.msg.show.title'),
+							msg : HreRem.i18n('wizard.msh.show.text'),
+							buttons : Ext.MessageBox.YESNO,
+							fn : function(buttonId) {
+								if (buttonId == 'yes') {
+									var url = $AC.getRemoteUrl('expedientecomercial/deleteTmpClienteByDocumento');
+									Ext.Ajax.request({
+				    	    		     url: url,
+				    	    			 method : 'POST',
+				    	    		     params: {docCliente: docCliente},
+				    	    		     success: function(response, opts) {
+				    	    		    	//me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+				    	    		     },
+				    	    			 failure: function(record, operation) {
+				    	    			 	//me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+				    	    			 }
+				    	    		});								
+									
+									if (!Ext.isEmpty(form1)) {
+										form1.reset();
 									}
+									/*if (!Ext.isEmpty(form2)) {
+										form2.reset();
+									}*/
+									if (!Ext.isEmpty(form3)) {
+										form3.reset();
+									}
+									window.close();
 								}
-							
-							
 						});
 					},
 
@@ -2115,7 +2128,8 @@ Ext
 				 		window = ventanaDetalle.up().xtype,
 					    form = ventanaDetalle.getForm(),
 						ventanaWizard = btn.up('wizardaltacomprador');
-						
+						ventanaWizard.width = Ext.Element.getViewportWidth()/2;
+						ventanaWizard.height = Ext.Element.getViewportHeight() > 500 ? 500 : Ext.Element.getViewportHeight() - 100;
 						
 						if(ventanaDetalle.config.xtype.indexOf('datoscompradorwizard') >=0){ 
 							pedirDocValor = ventanaDetalle.getForm().findField('pedirDoc').getValue();

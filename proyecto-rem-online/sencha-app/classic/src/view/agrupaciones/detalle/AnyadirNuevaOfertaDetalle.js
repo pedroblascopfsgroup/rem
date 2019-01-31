@@ -49,12 +49,12 @@ Ext.define('HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaDetalle', {
 							        type: 'table',
 							        // The total column count must be specified here
 							        columns: 2,
-							        trAttrs: {height: '45px', width: '50%'},
-							        tdAttrs: {width: '50%'},
+							        trAttrs: {height: '45px', width: '25%'},
+							        tdAttrs: {width: '25%'},
 							        tableAttrs: {
 							            style: {
 							                width: '100%',
-							                margin: '10px 0 0 150px'
+							                margin: '10px 0 0 10px'
 										}
 							        }
 								},

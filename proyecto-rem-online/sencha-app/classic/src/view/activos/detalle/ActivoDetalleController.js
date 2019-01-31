@@ -2028,14 +2028,26 @@ Ext
 						var me = this, window = btn.up('window');
 						var form1 = window.down('anyadirnuevaofertadocumento');
 						var form2 = window.down('anyadirnuevaofertadetalle');
-						var form3 = window
-								.down('anyadirnuevaofertaactivoadjuntardocumento');
+						var form3 = window.down('anyadirnuevaofertaactivoadjuntardocumento');
+						var docCliente = form2.getForm().findField('numDocumento').getValue();
 						Ext.Msg.show({
 							title : HreRem.i18n('wizard.msg.show.title'),
 							msg : HreRem.i18n('wizard.msh.show.text'),
 							buttons : Ext.MessageBox.YESNO,
 							fn : function(buttonId) {
 								if (buttonId == 'yes') {
+									var url = $AC.getRemoteUrl('activooferta/deleteTmpClienteByDocumento');
+									Ext.Ajax.request({
+				    	    		     url: url,
+				    	    			 method : 'POST',
+				    	    		     params: {docCliente: docCliente},
+				    	    		     success: function(response, opts) {
+				    	    		    	//me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+				    	    		     },
+				    	    			 failure: function(record, operation) {
+				    	    			 	//me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+				    	    			 }
+				    	    		});		
 									if (!Ext.isEmpty(form1)) {
 										form1.reset();
 									}
@@ -5002,6 +5014,10 @@ Ext
 	            			}
 	            			
 	        			}
+	        			
+	        			ventanaWizard.width = Ext.Element.getViewportWidth()/2;
+	        			ventanaWizard.height = Ext.Element.getViewportHeight()-325;
+	    			
 	    			}else{
 	    				
 	    				if(!Ext.isEmpty(btn.up('wizardaltacomprador'))){ 
@@ -5041,6 +5057,9 @@ Ext
 	        				   }
 	    				   }    			
 	    			   }
+	    				
+	    				ventanaWizard.width = Ext.Element.getViewportWidth()/2;
+	    				ventanaWizard.height = Ext.Element.getViewportHeight()-100;
 	    			}
 	    			
 	    			if(!Ext.isEmpty(datos.carteraInternacional)){
@@ -5215,6 +5234,7 @@ Ext
  		if(form.isValid()){
 	 		if (ventanaDetalle.config.xtype.indexOf('activoadjuntardocumento') >= 0 && ventanaAlta.indexOf('wizardaltacomprador') < 0) {
 	 			ventanaDetalle.setController('activodetalle');
+	 			var esCarteraInternacional = ventanaDetalle.getForm().findField('carteraInternacional').getValue();
 				var cesionDatos = form.findField('cesionDatos').getValue(),
 				comunicacionTerceros = form.findField('comunicacionTerceros').getValue(),
 				transferenciasInternacionales = form.findField('transferenciasInternacionales').getValue();
@@ -5222,7 +5242,7 @@ Ext
 	 			ventanaDetalle.up().down('anyadirnuevaofertadetalle').getForm().findField('comunicacionTerceros').setValue(comunicacionTerceros);
 	 			ventanaDetalle.up().down('anyadirnuevaofertadetalle').getForm().findField('transferenciasInternacionales').setValue(transferenciasInternacionales);
 	 			
-	 			me.onClickBotonGuardarOferta(btn);
+				me.onClickBotonGuardarOferta(btn);
 	 			
 	 		} else if (ventanaDetalle.config.xtype.indexOf('detalle') >= 0) {
 	 			
@@ -5278,6 +5298,9 @@ Ext
 	 			ventanaDetalle.setController('expedientedetalle');
 	 			ventanaDetalle.getController().onClickBotonCrearComprador(btn);
 	 		}
+	 		
+	 		ventanaDetalle.up().width = Ext.Element.getViewportWidth()/2;
+			ventanaDetalle.up().height = Ext.Element.getViewportHeight()-325;
  		}
  	},
      	
@@ -5312,6 +5335,9 @@ Ext
  			var transIntern = ventana3.getForm().findField('transferenciasInternacionales').value;
  			var comTerceros = ventana3.getForm().findField('comunicacionTerceros').value;
      		
+ 			ventana3.getForm().findField('cesionDatos').disable();
+ 			ventana3.getForm().findField('transferenciasInternacionales').disable();
+ 			
     		var url =  $AC.getRemoteUrl('activo/generarUrlGDPR');
     		Ext.Ajax.request({
  	           url: url,

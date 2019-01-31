@@ -38,7 +38,7 @@ Ext.define('HreRem.view.activos.detalle.AnyadirNuevaOfertaDocumento', {
 		var me = this;
 		
 		if(me.up().xtype.indexOf("wizardaltacomprador") >= 0){
-		
+			
 		     var tipoExpedienteAlquiler = CONST.TIPOS_EXPEDIENTE_COMERCIAL["ALQUILER"];
 		     var title = HreRem.i18n('wizard.comprador.title');
 		     titleAnyadir = HreRem.i18n('title.nuevo.comprador');

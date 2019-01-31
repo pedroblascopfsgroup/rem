@@ -98,8 +98,8 @@ public class UpdaterServiceSancionOfertaInstruccionesReserva implements UpdaterS
 			}
 			
 			//TODO COMPROBACION PRE BLOQUEO GENCAT 
-
-			gencatApi.bloqueoExpedienteGENCAT(expediente, tramite);
+			//Creemos que no hay que llamar ya que no se cambia el estado del expediente.
+			//gencatApi.bloqueoExpedienteGENCAT(expediente, tramite);  
 		}
 
 	}

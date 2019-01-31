@@ -49,8 +49,14 @@ public class ComunicacionGencatManager extends AbstractEntityDao<ComunicacionGen
 		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
 		Filter filtroIdActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
 
-		return genericDao.getList(ComunicacionGencat.class, filtroBorrado, filtroIdActivo).get(0);
 		
+		List<ComunicacionGencat> listagencat =  genericDao.getList(ComunicacionGencat.class, filtroBorrado, filtroIdActivo);
+		
+		if(!Checks.estaVacio(listagencat)) {
+			return listagencat.get(0);
+		}
+		
+		return null;
 	}
 
 	@Override

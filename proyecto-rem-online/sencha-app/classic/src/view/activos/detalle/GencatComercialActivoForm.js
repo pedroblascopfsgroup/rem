@@ -306,15 +306,14 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoForm', {
 							width: 410
 					    },
 						items:
-							[
+							[ 
 								{
 				    				xtype: "comboboxfieldbase",
 				    				fieldLabel: HreRem.i18n('fieldlabel.necesita.reforma'),
-				    				readOnly: true,
+				    				readOnly: false,
 				    				name: 'necesitaReforma',
 									bind: {
-										store: '{comboSiNo}',
-										value: '{gencat.necesitaReforma}'										
+										store: '{comboSiNo}'									
 									}
 				    			},
 				    			{
@@ -401,7 +400,7 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoForm', {
 								width: 200,
 								handler: 'onClickSolicitarVisita',
 								bind: {
-									disabled: me.formDeHistorico || '{!gencat.estaComunicado}'
+									disabled: me.formDeHistorico || '{!gencat.usuarioValido}'
 								}
 							}
 						]

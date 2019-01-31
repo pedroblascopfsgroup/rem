@@ -985,7 +985,8 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 
 			if(!Checks.estaVacio(listDatosVista)) {
 				//Pillar 1º registro que es el mas reciente para comparar los condicionantes
-				datoVista = listDatosVista.get(0);
+					datoVista = listDatosVista.get(0);
+				
 				//COMPROBACION SI HAY COMUNICACION GENCAT CREADA
 				
 				if(!Checks.esNulo(datoVista.getFecha_comunicacion())) {
@@ -1001,43 +1002,42 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 							}
 							
 							//TODO COMPROBACION CONDICIONANTES
-							if(codSitPos.equals(datoVista.getSituacionPosesoria()) 
-									&& codTipoPer.equals(datoVista.getTipoPersona())
-									&& (!Checks.esNulo(oferta.getImporteOferta()) ? oferta.getImporteOferta() : new Double(0)).equals(datoVista.getImporteOferta())) {
+							if(!Checks.esNulo(datoVista.getSituacionPosesoria()) && datoVista.getSituacionPosesoria().equals(codSitPos) 
+									&&!Checks.esNulo(datoVista.getTipoPersona())&&  datoVista.getTipoPersona().equals(codTipoPer)
+									&& (!Checks.esNulo(oferta.getImporteOferta()) && oferta.getImporteOferta().equals(datoVista.getImporteOferta()))) {
 								
 								//COMPROBACION OFERTA ULTIMA SANCION:
 									//SI DD_ECG_CODIGO SANCIONADA SE COMPARA TIEMPO SANCION AL TIEMPO ACTUAL:
 										//SI TIEMPO > 2 MESES LANZAR TRAMITE GENCAT
 										//SI TIEMPO < 2 MESES NO HACER NADA.
 								if(!Checks.esNulo(comGencat.getEstadoComunicacion())
-										&& DDEstadoComunicacionGencat.COD_SANCIONADO.equalsIgnoreCase(comGencat.getEstadoComunicacion().getDescripcion())
+										&& DDEstadoComunicacionGencat.COD_SANCIONADO.equals(comGencat.getEstadoComunicacion().getCodigo())
 										&& !Checks.esNulo(datoVista.getFecha_sancion())) {
 									
-									if(fechaActual.after(comGencat.getFechaPrevistaSancion())){
-										
+									if(fechaActual.after(comGencat.getFechaPrevistaSancion())){ 
+									 	
 										lanzarTramiteGENCAT(tramite, oferta, expComercial);
 										
 									}
 									
 								}
 									//SI DD_ECG_CODIGO ANULADA Y CMG_FECHA_ANULACION RELLENA LANZA TRAMITE GENCAT
-								if(!Checks.esNulo(comGencat.getEstadoComunicacion())
+								 if(!Checks.esNulo(comGencat.getEstadoComunicacion())
 										&& DDEstadoComunicacionGencat.COD_ANULADO.equals(comGencat.getEstadoComunicacion().getCodigo())
-										&& !Checks.esNulo(datoVista.getFecha_anulacion())) {
+										&& datoVista.getCheck_anulacion()) {
 									
-									lanzarTramiteGENCAT(tramite, oferta, expComercial);
+										lanzarTramiteGENCAT(tramite, oferta, expComercial);
 								}
 									//SI DD_ECG_CODIGO ANULADA Y CMG_FECHA_ANULACION NULL SE COMPARA TIEMPO SANCION AL TIEMPO ACTUAL:
 										//SI TIEMPO < 2 MESES NO HACER NADA.
 								if(!Checks.esNulo(comGencat.getEstadoComunicacion())
 										&& DDEstadoComunicacionGencat.COD_ANULADO.equals(comGencat.getEstadoComunicacion().getCodigo())
-										&& Checks.esNulo(datoVista.getFecha_anulacion())) {
-									if(fechaActual.after(comGencat.getFechaPrevistaSancion())){
+										&& !datoVista.getCheck_anulacion()) {
+											if(fechaActual.after(comGencat.getFechaPrevistaSancion())){  
+				
+												lanzarTramiteGENCAT(tramite, oferta, expComercial);
 										
-										lanzarTramiteGENCAT(tramite, oferta, expComercial);
-										
-									}
-									
+											}	
 								}
 								
 							}else {								

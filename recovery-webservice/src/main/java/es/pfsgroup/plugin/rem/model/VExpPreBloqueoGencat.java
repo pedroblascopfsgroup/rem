@@ -53,6 +53,9 @@ public class VExpPreBloqueoGencat implements Serializable{
 	
 	@Column(name = "CMG_FECHA_ANULACION")
 	private Date fecha_anulacion;
+	
+	@Column(name = "CMG_CHECK_ANULACION")
+	private Boolean check_anulacion;
 
 	public Long getIdActivo() {
 		return idActivo;
@@ -134,6 +137,14 @@ public class VExpPreBloqueoGencat implements Serializable{
 		this.fecha_anulacion = fecha_anulacion;
 	}
 
+	public Boolean getCheck_anulacion() {
+		return check_anulacion;
+	}
+
+	public void setCheck_anulacion(Boolean check_anulacion) {
+		this.check_anulacion = check_anulacion;
+	}
+	
 	
 
 }

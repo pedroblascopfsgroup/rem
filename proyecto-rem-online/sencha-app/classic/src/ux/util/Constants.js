@@ -183,7 +183,7 @@ Ext.define('HreRem.ux.util.Constants', {
     	'10': 'TANGO',
     	'12': 'GIANTS',
     	'15': 'GALEON',
-    	'15': 'ZEUS'
+    	'14': 'ZEUS'
     },
  
     NOMBRE_CARTERA2: {

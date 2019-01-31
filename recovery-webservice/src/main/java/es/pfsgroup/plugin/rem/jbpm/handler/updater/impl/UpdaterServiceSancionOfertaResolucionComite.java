@@ -98,6 +98,10 @@ public class UpdaterServiceSancionOfertaResolucionComite implements UpdaterServi
 					if (COMBO_RESOLUCION.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.APROBADO);
 						if (DDResolucionComite.CODIGO_APRUEBA.equals(valor.getValor())) {
+							Boolean esEstadoAnteriorTramitado = false;
+							if(DDEstadosExpedienteComercial.EN_TRAMITACION.equals(expediente.getEstado().getCodigo())) {
+								esEstadoAnteriorTramitado = true;
+							}
 							filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.APROBADO);
 	
 							// Una vez aprobado el expediente, se congelan el resto de ofertas que no
@@ -114,7 +118,7 @@ public class UpdaterServiceSancionOfertaResolucionComite implements UpdaterServi
 							notificacionApi.enviarNotificacionPorActivosAdmisionGestion(expediente);
 							
 							//TODO COMPROBACION PRE BLOQUEO GENCAT 
-
+							if(Checks.esNulo(expediente.getReserva()) && esEstadoAnteriorTramitado)
 							gencatApi.bloqueoExpedienteGENCAT(expediente, tramite);
 														
 						} else {

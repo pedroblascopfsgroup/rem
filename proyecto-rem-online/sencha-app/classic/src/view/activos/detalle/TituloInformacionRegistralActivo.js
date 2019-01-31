@@ -761,7 +761,18 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 						{
 							xtype:'datefieldbase',
 		                	fieldLabel: HreRem.i18n('fieldlabel.fecha.inscripcion.registro'),
-					 		bind: '{datosRegistrales.fechaInscripcionReg}'
+					 		bind: '{datosRegistrales.fechaInscripcionReg}', 
+					 		listeners: {
+					 			change: function () {
+						 			me = this;
+						 			var combo = me.lookupController('activodetalle').lookupReference('comboCalificacionNegativaRef');
+						 			
+						 			if (combo != null && combo != '')
+						 				combo.setValue('03');
+						 			
+						 		}
+					 		}
+					 		
 						},
 						{
 							xtype:'datefieldbase',
@@ -778,8 +789,8 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 							xtype:'fieldsettable',
 							defaultType: 'textfieldbase',
 							colspan: 4,
-							reference:'judicial',
-							hidden: false,
+							reference:'calificacionNegativa',
+							hidden: true,
 							title: HreRem.i18n("title.calificacion.negativa"),
 							items :
 							[
@@ -788,7 +799,7 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 						        	reference: 'comboBoxCalificacionNegativa',
 							 		fieldLabel: HreRem.i18n('fieldlabel.calificacion.negativa'),
 						        	name: 'comboCalificacionNegativa',
-						        	
+						        	reference: 'comboCalificacionNegativaRef',
 						        	bind: {
 					            		store: '{comboCalificacionNegativa}',
 					            		value: '{datosRegistrales.calificacionNegativa}'
@@ -813,6 +824,7 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 									},
             						bind: {
 					            		value: '{datosRegistrales.motivoCalificacionNegativa}'
+					            		
 					            	},
 									            listeners:{
 									            	change: function(){
@@ -823,6 +835,7 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 									            			campoDesc.setDisabled(false); 
 									            			campoDesc.allowBlank = false;
 									            			campoDesc.setReadOnly(false);
+									            			campoDesc.setDisabled(false);
 									            			if(me.up('activosdetallemain').getViewModel().get("editing")){
 									            				campoDesc.fireEvent('edit');
 									            			}else{
@@ -832,6 +845,7 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 									            			campoDesc.setDisabled(true);
 									            			campoDesc.allowBlank = true;
 									            			campoDesc.setReadOnly(true);
+									            			campoDesc.setDisabled(true);
 									            			campoDesc.fireEvent('cancel');
 									            		}
 									            		

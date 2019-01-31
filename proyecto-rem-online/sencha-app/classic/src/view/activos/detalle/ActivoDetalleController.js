@@ -2668,7 +2668,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	              return activo.activoId == me.getViewModel().get("activo.id");
 	            }), 1)[0];
 	        var grid = btn.up().up();
-
 	        // Abrimos la ventana de selección de activos
 		    var ventanaOpcionesPropagacionCambios = Ext.create("HreRem.view.activos.detalle.OpcionesPropagacionCambios", {
 		          form : null,
@@ -3031,7 +3030,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	            me.actualizarGridHistoricoDestinoComercial(formActivo);
 	          }
 	        };
-	
 	        me.saveActivo(window.tabData, successFn);
 	
 	      } else {
@@ -3047,7 +3045,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	            me.getView().fireEvent("refreshComponentOnActivate", "container[reference=tabBuscadorActivos]");
 	          }
 	        };
-	
 	        me.saveActivo(window.tabData, successFn);
 	
 	      }
@@ -3533,6 +3530,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 				}
 
 				var successFn = function(response, eOpts) {
+
 					me.manageToastJsonResponse(me, response.responseText);
 					me.getView().unmask();
 					me.refrescarActivo(form.refreshAfterSave);
@@ -3586,18 +3584,36 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		}
 
 		if (!Ext.isEmpty(jsonData)) {
+
 			var data = JSON.parse(jsonData);
 
 			if (data.success !== null && data.success !== undefined && data.success === "false") {
+				me.getViewModel().getData().situacionPosesoria.reject();
 				me.getViewModel().getData().activo.reject();
 				scope.fireEvent("errorToast", data.msgError);
 			} else {
 				scope.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
 			}
 		} else {
-			scope.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-		}
+            scope.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+        }
 	},
+
+    onChangeCalificacionNegativa: function(me, oValue, nValue){
+        var comboCalificacion = me.value;
+        var comboMotivo = me.up('tituloinformacionregistralactivo').down('[reference="itemselMotivo"]');
+        var campoDescripcion = me.up('tituloinformacionregistralactivo').down('[reference="descMotivo"]');
+
+        if (comboCalificacion == "01") {
+            comboMotivo.setDisabled(false);
+            if (comboMotivo.getValue().includes(CONST.MOTIVOS_CAL_NEGATIVA["OTROS"])) {
+            	campoDescripcion.setDisabled(false);
+            }
+        } else {
+            comboMotivo.setDisabled(true);
+            campoDescripcion.setDisabled(true);
+        }
+    },
 
     actualizarGridHistoricoDestinoComercial : function(form) {
 

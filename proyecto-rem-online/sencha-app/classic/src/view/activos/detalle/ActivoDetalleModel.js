@@ -1790,6 +1790,15 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			}
 		},
 
+		comboSituacionActivo: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'situacionActivo'}
+			}
+		},
+
 		storeHistoricoDestinoComercial: {
 			 pageSize: 10,
 	   		 model: 'HreRem.model.HistoricoDestinoComercialModel',
@@ -1798,15 +1807,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		        remoteUrl: 'activo/getHistoricoDestinoComercialByActivo',
 		        extraParams: {id: '{activo.id}'}
 	    	 }
-		},
-
-		comboSituacionActivo: {
-			model: 'HreRem.model.ComboBase',
-			proxy: {
-				type: 'uxproxy',
-				remoteUrl: 'generic/getDiccionario',
-				extraParams: {diccionario: 'situacionActivo'}
-			}
-		}
+   		}
      }
 });

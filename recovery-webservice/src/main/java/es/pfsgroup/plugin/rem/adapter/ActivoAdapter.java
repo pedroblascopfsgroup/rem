@@ -316,6 +316,7 @@ public class ActivoAdapter {
 	@Autowired
 	private UsuarioManager usuarioManager;
 	
+
 	@Autowired 
     private ActivoAgrupacionDao activoAgrupacionDao;
 
@@ -1184,32 +1185,31 @@ public class ActivoAdapter {
 	}
 
 	public List<DtoActivoCatastro> getListCatastroById(Long id) {
-
 		Activo activo = activoApi.get(id);
-		// DtoCarga cargaDto = new ArrayList<DtoCarga>();
 		List<DtoActivoCatastro> listaDtoCatastro = new ArrayList<DtoActivoCatastro>();
 
 		if (activo.getInfoAdministrativa() != null && activo.getCatastro() != null) {
-
 			for (int i = 0; i < activo.getCatastro().size(); i++) {
 				DtoActivoCatastro catastroDto = new DtoActivoCatastro();
+
 				try {
 					BeanUtils.copyProperties(catastroDto, activo.getCatastro().get(i));
 					BeanUtils.copyProperty(catastroDto, "idCatastro", activo.getCatastro().get(i).getId());
+					BeanUtils.copyProperty(catastroDto, "idActivo", activo.getId());
 					BeanUtils.copyProperty(catastroDto, "resultadoSiNO", activo.getCatastro().get(i).getResultado());
 
 				} catch (IllegalAccessException e) {
-					e.printStackTrace();
-				} catch (InvocationTargetException e) {
-					e.printStackTrace();
-				}
-				listaDtoCatastro.add(catastroDto);
+					logger.error("Error en ActivoAdapter", e);
 
+				} catch (InvocationTargetException e) {
+					logger.error("Error en ActivoAdapter", e);
+				}
+
+				listaDtoCatastro.add(catastroDto);
 			}
 		}
 
 		return listaDtoCatastro;
-
 	}
 
 	public DtoActivoValoraciones getValoresPreciosActivoById(Long id) {
@@ -2203,15 +2203,15 @@ public class ActivoAdapter {
 		if(!tieneTramiteVigente){
 			boolean activoEnAgrupacionObraNuevaOAsistida = activoApi.isIntegradoAgrupacionObraNuevaOrAsistida(activo);
 			ActivoTramite tramite;
-			
+
 			if (activoEnAgrupacionObraNuevaOAsistida) {
 				Long idSubdivision  = activoAgrupacionDao.getIdSubdivisionByIdActivo(idActivo);
 				List<ActivoAgrupacionActivo> agrupaciones = activo.getAgrupaciones();
 				String listaIdAgrupacion = "";
-				
+
 				for (ActivoAgrupacionActivo aga : agrupaciones) {
-					
-					if (DDTipoAgrupacion.AGRUPACION_OBRA_NUEVA.equals(aga.getAgrupacion().getTipoAgrupacion().getCodigo()) 
+
+					if (DDTipoAgrupacion.AGRUPACION_OBRA_NUEVA.equals(aga.getAgrupacion().getTipoAgrupacion().getCodigo())
 								|| DDTipoAgrupacion.AGRUPACION_ASISTIDA.equals(aga.getAgrupacion().getTipoAgrupacion().getCodigo())) {
 						if (Checks.esNulo(listaIdAgrupacion)) {
 							listaIdAgrupacion += aga.getAgrupacion().getId();
@@ -2220,12 +2220,12 @@ public class ActivoAdapter {
 						}
 					}
 				}
-				
+
 				List<Long> listaIdActivo = activoAgrupacionDao.getListIdActivoByIdSubdivisionAndIdsAgrupacion(idSubdivision, listaIdAgrupacion);
-				
+
 				for (Long id : listaIdActivo) {
 					tieneTramiteVigente = activoTramiteApi.tieneTramiteVigenteByActivoYProcedimiento(id, tprc.getCodigo());
-					
+
 					if (!tieneTramiteVigente) {
 						tramite = jbpmActivoTramiteManagerApi.creaActivoTramite(tprc, activoApi.get(id));
 						if (id.equals(idActivo)) {
@@ -2233,15 +2233,15 @@ public class ActivoAdapter {
 						} else {
 							jbpmActivoTramiteManagerApi.lanzaBPMAsociadoATramite(tramite.getId());
 						}
-						
+
 						crearRegistroHistorialComercialConCodigoEstado(activoApi.get(id), DDEstadoInformeComercial.ESTADO_INFORME_COMERCIAL_EMISION);
 					}
 				}
-				
+
 			} else {
 				tramite = jbpmActivoTramiteManagerApi.creaActivoTramite(tprc, activoApi.get(idActivo));
 				idBpm = jbpmActivoTramiteManagerApi.lanzaBPMAsociadoATramite(tramite.getId());
-				
+
 				crearRegistroHistorialComercialConCodigoEstado(activo, DDEstadoInformeComercial.ESTADO_INFORME_COMERCIAL_EMISION);
 			}
 		}

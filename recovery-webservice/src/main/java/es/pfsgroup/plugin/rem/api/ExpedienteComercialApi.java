@@ -299,7 +299,6 @@ public interface ExpedienteComercialApi {
 	 * @param webDto
 	 * @return
 	 */
-
 	String getTareaDefinicionDeOferta(Long idExpedienteComercial, WebDto webDto);
 
 	/**
@@ -965,7 +964,7 @@ public interface ExpedienteComercialApi {
 	boolean reservaFirmada(Long idTramite);
 
 	Boolean checkInformeJuridicoFinalizado(Long idTramite);
-
+	
 	Boolean checkFechaVenta(Long idTramite);
 
 	Boolean esBH(String idExpediente);
@@ -1078,6 +1077,8 @@ public interface ExpedienteComercialApi {
 
 	Long getNumExpByNumOfr(Long numBusqueda);
 
+	boolean savePlusvaliaVenta(DtoPlusvaliaVenta dto, Long idExpediente);
+
 	/**
 	 * Metodo que comprueba si el documento Contrato está subido al expediente
 	 *
@@ -1093,9 +1094,11 @@ public interface ExpedienteComercialApi {
 	boolean checkEstadoOcupadoTramite(Long idExpediente);
 
 	boolean checkConTituloTramite(Long idTramite);
-
-	boolean savePlusvaliaVenta(DtoPlusvaliaVenta dto, Long idExpediente);
-	
 	
 	List<DtoPropuestaAlqBankia> getListaDtoPropuestaAlqBankiaByExpId (Long ecoId);
+
+	List<DtoActivosExpediente> getActivosPropagables(Long idExpediente);
+
+	boolean guardarCondicionesActivosExpediente(DtoCondicionesActivoExpediente condiciones);
+
 }

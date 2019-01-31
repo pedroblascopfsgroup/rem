@@ -991,7 +991,7 @@ public interface ActivoApi {
 	boolean deleteImpuestos(DtoImpuestosActivo dtoImpuestosFilter);
 
 	boolean esLiberBank(Long idActivo);
-	
+
 	boolean esCajamar(Long idActivo);
 
 	DtoActivoFichaCabecera getActivosPropagables(Long idActivo);
@@ -1038,4 +1038,18 @@ public interface ActivoApi {
 	 * @return
 	 */
 	boolean compruebaSiExisteActivoBienPorMatricula(Long idActivo, String matriculaActivo);
+
+	/**
+	 * Recoge el activo relacionado con el proveedor a partir del id del proveedor.
+	 * @param idProveedor
+	 * @return
+	 */
+	public Activo getActivoByIdProveedor(Long idProveedor);
+
+	/**
+	 * Recoge el activo relacionado con el proveedor a partir del id del gasto del proveedor.
+	 * @param idGastoProveedor
+	 * @return
+	 */
+	public Activo getActivoByIdGastoProveedor(Long idGastoProveedor);
 }

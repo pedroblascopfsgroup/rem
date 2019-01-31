@@ -153,9 +153,6 @@ public class StockDto implements WebcomRESTDto{
 	private StringDataType descripcionOtros;
 
 	private LongDataType activoProveedorTecnico;
-	
-	// Modificaciones WS Stock
-	private StringDataType codTipoAlquiler;
 
 	//@MappedColumn("COD_ESTADO_FIS_ACTIVO")
 	private StringDataType codEstadoFisico;
@@ -163,6 +160,9 @@ public class StockDto implements WebcomRESTDto{
 	private StringDataType codTipoUsoDestino;
 	
 	
+
+	// Modificaciones WS Stock
+	private StringDataType codTipoAlquiler;
 
 	public LongDataType getIdActivoHaya() {
 		return idActivoHaya;
@@ -729,12 +729,6 @@ public class StockDto implements WebcomRESTDto{
 	public void setActivoProveedorTecnico(LongDataType activoProveedorTecnico) {
 		this.activoProveedorTecnico = activoProveedorTecnico;
 	}
-	public StringDataType getCodTipoAlquiler() {
-		return codTipoAlquiler;
-	}
-	public void setCodTipoAlquiler(StringDataType codTipoAlquiler) {
-		this.codTipoAlquiler = codTipoAlquiler;
-	}
 	public StringDataType getCodEstadoFisico() {
 		return codEstadoFisico;
 	}
@@ -754,4 +748,12 @@ public class StockDto implements WebcomRESTDto{
 	public void setCodigoAgrupacionComercialRem(LongDataType codigoAgrupacionComercialRem) {
 		this.codigoAgrupacionComercialRem = codigoAgrupacionComercialRem;
 	}
+	
+	public StringDataType getCodTipoAlquiler() {
+		return codTipoAlquiler;
+	}
+	public void setCodTipoAlquiler(StringDataType codTipoAlquiler) {
+		this.codTipoAlquiler = codTipoAlquiler;
+	}
+
 }

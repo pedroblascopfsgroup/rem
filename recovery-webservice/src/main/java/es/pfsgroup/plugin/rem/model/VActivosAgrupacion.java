@@ -11,16 +11,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
-
-
 @Entity
 @Table(name = "V_ACTIVOS_AGRUPACION", schema = "${entity.schema}")
 public class VActivosAgrupacion implements Serializable {
-
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	
 	
@@ -99,11 +92,12 @@ public class VActivosAgrupacion implements Serializable {
 	@Column(name="PUBLICADO")
 	private String publicado;
 
-	@Column(name="COND_PUBL_VENTA")
-	private Integer condPublVenta;
+	@Column(name = "COND_PUBL_VENTA")
+	private String condPublVenta;
 
-	@Column(name="COND_PUBL_ALQUILER")
-	private Integer condPublAlquiler;
+	@Column(name = "COND_PUBL_ALQUILER")
+	private String condPublAlquiler;
+
 
 	public Long getId() {
 		return id;
@@ -297,20 +291,19 @@ public class VActivosAgrupacion implements Serializable {
 		this.publicado = publicado;
 	}
 
-	public Integer getCondPublVenta() {
+	public String getCondPublVenta() {
 		return condPublVenta;
 	}
 
-	public void setCondPublVenta(Integer condPublVenta) {
+	public void setCondPublVenta(String condPublVenta) {
 		this.condPublVenta = condPublVenta;
 	}
 
-	public Integer getCondPublAlquiler() {
+	public String getCondPublAlquiler() {
 		return condPublAlquiler;
 	}
 
-	public void setCondPublAlquiler(Integer condPublAlquiler) {
+	public void setCondPublAlquiler(String condPublAlquiler) {
 		this.condPublAlquiler = condPublAlquiler;
 	}
-
 }

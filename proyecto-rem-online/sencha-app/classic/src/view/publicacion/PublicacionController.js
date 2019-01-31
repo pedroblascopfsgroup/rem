@@ -84,7 +84,7 @@ Ext.define('HreRem.view.publicacion.PublicacionController', {
 		var estadoPublicacionVenta = me.getViewModel().get('estadoPublicacionVenta');
 		var motivosOcultacionVenta = me.lookupReference('motivosOcultacionVenta');
 		
-    	if (estadoPublicacionVenta.selection.data.codigo == CONST.ESTADO_PUBLICACION_VENTA['OCULTO']){
+    	if (!Ext.isEmpty(estadoPublicacionVenta.selection) && estadoPublicacionVenta.selection.data.codigo == CONST.ESTADO_PUBLICACION_VENTA['OCULTO']){
     		motivosOcultacionVenta.setHidden(false);
     	} else {
     		motivosOcultacionVenta.setHidden(true);
@@ -99,7 +99,7 @@ Ext.define('HreRem.view.publicacion.PublicacionController', {
 		var estadoPublicacionAlquiler = me.getViewModel().get('estadoPublicacionAlquiler');
 		var motivosOcultacionAlquiler = me.lookupReference('motivosOcultacionAlquiler');
 
-    	if (estadoPublicacionAlquiler.selection.data.codigo == CONST.ESTADO_PUBLICACION_ALQUILER['OCULTO']){
+    	if (!Ext.isEmpty(estadoPublicacionAlquiler.selection) && estadoPublicacionAlquiler.selection.data.codigo == CONST.ESTADO_PUBLICACION_ALQUILER['OCULTO']){
     		motivosOcultacionAlquiler.setHidden(false);
     	} else {
     		motivosOcultacionAlquiler.setHidden(true);

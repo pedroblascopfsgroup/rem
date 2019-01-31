@@ -138,9 +138,6 @@ public class AgendaAdapter {
 	
 	@Autowired
 	private OfertaApi ofertaApi;
-
-	@Autowired
-	private OfertaApi ofertaApi;
 	
 	@Autowired
 	private ActivoApi activoApi;

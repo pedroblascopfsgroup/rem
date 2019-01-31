@@ -109,9 +109,9 @@ public class UpdaterServiceSancionOfertaRespuestaOfertante implements UpdaterSer
 								expediente.setEstado(estado);
 								
 								//TODO COMPROBACION PRE BLOQUEO GENCAT 
-								if() && esEstadoAnteriorTramitado)
-								gencatApi.bloqueoExpedienteGENCAT(expediente, tramite);
-
+								if(Checks.esNulo(expediente.getReserva()) && esEstadoAnteriorTramitado) {
+									gencatApi.bloqueoExpedienteGENCAT(expediente, tramite);
+								}
 								//Una vez aprobado el expediente, se congelan el resto de ofertas que no estén rechazadas (aceptadas y pendientes)
 								List<Oferta> listaOfertas = ofertaApi.trabajoToOfertas(tramite.getTrabajo());
 								for(Oferta oferta : listaOfertas){

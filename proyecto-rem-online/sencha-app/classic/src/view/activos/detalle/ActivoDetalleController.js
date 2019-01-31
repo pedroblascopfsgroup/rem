@@ -2029,7 +2029,7 @@ Ext
 						var form1 = window.down('anyadirnuevaofertadocumento');
 						var form2 = window.down('anyadirnuevaofertadetalle');
 						var form3 = window.down('anyadirnuevaofertaactivoadjuntardocumento');
-						var docCliente = form2.getForm().findField('numDocumento').getValue();
+						var docCliente = form2.getForm().findField('numDocumentoCliente').getValue();
 						Ext.Msg.show({
 							title : HreRem.i18n('wizard.msg.show.title'),
 							msg : HreRem.i18n('wizard.msh.show.text'),

@@ -222,6 +222,7 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 			model.put(RESPONSE_SUCCESS_KEY, expedienteComercialApi.saveTextoOferta(dto, idEntidad));
 
 		} catch (Exception e) {
+			model.put(RESPONSE_MESSAGE_KEY, e.getMessage());
 			model.put(RESPONSE_SUCCESS_KEY, false);
 			logger.error("Error en ExpedienteComercialController", e);
 		}

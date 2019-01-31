@@ -24,7 +24,6 @@ import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
 import es.pfsgroup.plugin.rem.model.DtoSendNotificator;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VBusquedaCompradoresExpediente;
@@ -62,14 +61,13 @@ public class NotificatorServiceGtam extends AbstractNotificatorService implement
 
 	@Override
 	public String[] getCodigoTarea() {
-		return new String[] { CODIGO_T013_DEFINICION_OFERTA };
+		return new String[] { };
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public void notificator(ActivoTramite tramite) {
 		ExpedienteComercial expediente = getExpedienteComercial(tramite);
-		Oferta oferta = expediente.getOferta();
 		Usuario gestor = null;
 		Boolean enviar = false;
 		if(tramite.getTareas() != null && tramite.getTareas().size() > 0){
@@ -83,9 +81,8 @@ public class NotificatorServiceGtam extends AbstractNotificatorService implement
 			}
 		}
 		
-		if (oferta != null && oferta.getActivoPrincipal() != null
-				&& DDCartera.CODIGO_CARTERA_GIANTS.equals(oferta.getActivoPrincipal().getCartera().getCodigo()) && enviar) {
-			
+		if (expediente.getOferta() != null && expediente.getOferta().getActivoPrincipal() != null
+				&& DDCartera.CODIGO_CARTERA_GIANTS.equals(expediente.getOferta().getActivoPrincipal().getCartera().getCodigo()) && enviar) {
 			
 			String gestorNombre = "SIN_DATOS_NOMBRE_APELLIDO_GESTOR";
 			String gestorEmail = "SIN_DATOS_EMAIL_GESTOR";
@@ -169,7 +166,7 @@ public class NotificatorServiceGtam extends AbstractNotificatorService implement
 
 			mailsPara = getEmailsNotificacion(usuarios);
 
-			titulo = titulo.replace("#numoferta", oferta.getNumOferta().toString());
+			titulo = titulo.replace("#numoferta", expediente.getOferta().getNumOferta().toString());
 			dtoSendNotificator.setTitulo(titulo);
 			dtoSendNotificator.setNumTrabajo(null);
 

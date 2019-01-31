@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.rem.adapter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 import java.util.regex.Matcher;
@@ -66,7 +67,7 @@ public class RemCorreoUtils {
 	protected final Log logger = LogFactory.getLog(getClass());
 
 	public void enviarCorreoConAdjuntos(String emailFrom, List<String> mailsPara, List<String> direccionesMailCc,
-			String asuntoMail, String cuerpoEmail, List<DtoAdjuntoMail> list) throws Exception {
+			String asuntoMail, String cuerpoEmail, List<DtoAdjuntoMail> list) {
 		
 		CorreoSaliente traza = obtenerTrazaCorreoSaliente(emailFrom, mailsPara, direccionesMailCc, asuntoMail,
 				cuerpoEmail, list);
@@ -99,7 +100,9 @@ public class RemCorreoUtils {
 
 				prepararBodyMensaje(message, list, cuerpoEmail);
 
-				message.setFrom(new InternetAddress(emailFrom));
+				if(emailFrom != null){
+					message.setFrom(new InternetAddress(emailFrom));
+				}
 
 				// Lo enviamos.
 				if (esCorreoActivado()) {
@@ -146,6 +149,7 @@ public class RemCorreoUtils {
 		TransactionStatus transaction = null;
 		try {
 			transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
+			traza.setFechaEnvio(new Date());
 			genericDao.save(CorreoSaliente.class, traza);
 			transactionManager.commit(transaction);
 			
@@ -277,8 +281,8 @@ public class RemCorreoUtils {
 			props.setProperty(MAIL_SMTP_HOST, appProperties.getProperty(SERVIDOR_CORREO));
 		}
 		
-		if (appProperties.getProperty(SERVIDOR_CORREO) != null) {
-			props.setProperty(MAIL_SMTP_PORT, appProperties.getProperty(SERVIDOR_CORREO));
+		if (appProperties.getProperty(MAIL_SMTP_PORT) != null) {
+			props.setProperty(MAIL_SMTP_PORT, appProperties.getProperty(MAIL_SMTP_PORT));
 		}
 		
 		
@@ -290,12 +294,15 @@ public class RemCorreoUtils {
 		}
 
 		if (appProperties.getProperty(AUTH) != null) {
-			props.setProperty(MAIL_SMTP_STARTTLS_ENABLE, appProperties.getProperty(AUTH));
+			props.setProperty(MAIL_SMTP_AUTH, appProperties.getProperty(AUTH));
 		} else {
 			props.setProperty(MAIL_SMTP_AUTH, "true");
 		}
 
-		props.setProperty(MAIL_SMTP_USER, appProperties.getProperty(USUARIO_CORREO));
+		if (appProperties.getProperty(USUARIO_CORREO) != null) {
+			props.setProperty(MAIL_SMTP_USER, appProperties.getProperty(USUARIO_CORREO));
+		}
+		
 
 		props.setProperty(MAIL_SMTP_DEBUG, "false");
 

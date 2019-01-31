@@ -14,6 +14,7 @@ Ext.define('HreRem.view.activos.detalle.AdmisionActivo', {
 			}
     	];
 
+
 		me.addPlugin({ptype: 'lazyitems', items: items });
     	me.callParent();
     },

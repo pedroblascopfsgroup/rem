@@ -15,6 +15,7 @@ import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.message.MessageService;
 import es.capgemini.devon.pagination.Page;
+import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
@@ -102,7 +103,7 @@ public class ActivoTramiteManager implements ActivoTramiteApi{
     @Autowired
     private GencatManager gencatManager;
     
-	
+   
 	public ActivoTramite get(Long idTramite){
 		return activoTramiteDao.get(idTramite);
 	}
@@ -809,40 +810,44 @@ public class ActivoTramiteManager implements ActivoTramiteApi{
 	public Boolean tieneTramiteGENCATVigenteByIdActivo(Long idActivo){
 		
 		Boolean tieneTramiteGENCAT = false;
-		
+		Boolean expBloqueado = true;
 		
 		
 		if(!Checks.esNulo(idActivo)){
+		
 			ComunicacionGencat comunicacionGencat = gencatManager.getComunicacionGencatByIdActivo(idActivo);
 			
-			// Si se ha lanzado el trámite de GENCAT, tiene comunicación y está en estado CREADO, COMUNICADO O SANCIONADO, 
-			// se bloquean las tareas del trámite comercial de venta
-			if(!Checks.esNulo(comunicacionGencat)
-					&& !Checks.esNulo(comunicacionGencat.getEstadoComunicacion())
-					&& (DDEstadoComunicacionGencat.COD_CREADO.equalsIgnoreCase(comunicacionGencat.getEstadoComunicacion().getDescripcion())
-						|| DDEstadoComunicacionGencat.COD_COMUNICADO.equalsIgnoreCase(comunicacionGencat.getEstadoComunicacion().getDescripcion())
-						|| DDEstadoComunicacionGencat.COD_SANCIONADO.equalsIgnoreCase(comunicacionGencat.getEstadoComunicacion().getDescripcion())
-					)) {
-					
-				tieneTramiteGENCAT = true;
-			
+			// Comprueba si todos los tramites gencat están cerrados.
+			Activo activo = activoApi.get(idActivo);
+			List<ActivoTramite> actTraList = genericDao.getList(ActivoTramite.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId()));
+			if(!Checks.estaVacio(actTraList)){
+				for (ActivoTramite activoTramite : actTraList) {
+					if(ActivoTramiteApi.CODIGO_TRAMITE_COMUNICACION_GENCAT.equals(activoTramite.getTipoTramite().getCodigo())){
+						if(!Checks.esNulo(activoTramite.getEstadoTramite()) && DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CERRADO.equals(activoTramite.getEstadoTramite().getCodigo())
+							|| !Checks.esNulo(activoTramite.getEstadoTramite()) && DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CANCELADO.equals(activoTramite.getEstadoTramite().getCodigo())
+						){
+							expBloqueado = true;
+						}else{
+							expBloqueado = false;
+							break;
+						}
+					}
+				}
+				if(expBloqueado) {
+					tieneTramiteGENCAT = false;
+				}else {
+					if(!Checks.esNulo(comunicacionGencat)) {
+						if(!Checks.esNulo(comunicacionGencat.getSancion())&& DDSancionGencat.COD_EJERCE.equalsIgnoreCase(comunicacionGencat.getSancion().getCodigo())) {
+							tieneTramiteGENCAT = true;
+						// Si la comunicacion tiene la sancion informada y está en estado NO EJERCE, se desbloquean las tareas del trámite comercial de venta
+						} else if(!Checks.esNulo(comunicacionGencat.getSancion())&& DDSancionGencat.COD_NO_EJERCE.equalsIgnoreCase(comunicacionGencat.getSancion().getCodigo())) {
+							tieneTramiteGENCAT = false;
+						}
+					}			
+				}
 			}
-			
-			// Si la comunicacion tiene la sancion informada y está en estado EJERCE, se bloquean las tareas del trámite comercial de venta
-			if(!Checks.esNulo(comunicacionGencat.getSancion())
-					&& DDSancionGencat.COD_EJERCE.equalsIgnoreCase(comunicacionGencat.getSancion().getCodigo())) {
-				
-				tieneTramiteGENCAT = true;
-				
-			// Si la comunicacion tiene la sancion informada y está en estado NO EJERCE, se desbloquean las tareas del trámite comercial de venta
-			} else if(!Checks.esNulo(comunicacionGencat.getSancion())
-					&& DDSancionGencat.COD_NO_EJERCE.equalsIgnoreCase(comunicacionGencat.getSancion().getCodigo())) {
-				
-				tieneTramiteGENCAT = false;
-				
-			}
-			
 		}
+		
 		return tieneTramiteGENCAT;
 	}
 }

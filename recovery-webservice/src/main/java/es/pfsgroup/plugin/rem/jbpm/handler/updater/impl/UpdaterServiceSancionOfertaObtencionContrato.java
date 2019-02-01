@@ -100,31 +100,17 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 			Boolean esEstadoAnteriorAprobado = false;
 			activo = ofertaAceptada.getActivoPrincipal();
 			
-			List<TareaExterna> listaTareas = activoTramiteApi
-					.getListaTareaExternaByIdTramite(tramite.getId());
-			for (int i = 0; i < listaTareas.size(); i++) {
-				TareaExterna tarea = listaTareas.get(i);
-				if (!Checks.esNulo(tarea)) {
-					if (tarea.getTareaProcedimiento().getCodigo().equalsIgnoreCase("T013_ResolucionTanteo")) {
-						finalizado = !Checks.esNulo(tarea.getTareaPadre().getFechaFin());
-						break;
-					}
-				}
-			}
+			List<TareaExterna> listaTareas = activoTramiteApi.getListaTareaExternaByIdTramite(tramite.getId());
 			
-			if (ofertaApi.checkDerechoTanteo(tramite.getTrabajo()) && !finalizado)
-				filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.BLOQUEO_ADM);
-			else{
-				filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.RESERVADO);
+			filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.RESERVADO);
 				if(DDEstadosExpedienteComercial.APROBADO.equals(expediente.getEstado().getCodigo())) {
 					esEstadoAnteriorAprobado = true;
 				}
-			}
 
 			DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
 			expediente.setEstado(estado);
 			
-			if(Checks.esNulo(expediente.getReserva()) && esEstadoAnteriorAprobado) {
+			if(!Checks.esNulo(expediente.getReserva()) && esEstadoAnteriorAprobado) {
 				gencatApi.bloqueoExpedienteGENCAT(expediente, tramite); 
 			}
 

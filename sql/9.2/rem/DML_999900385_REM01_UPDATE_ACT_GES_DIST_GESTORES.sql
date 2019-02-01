@@ -41,107 +41,107 @@ DECLARE
     		     -- TIPO_GESTOR-COD_CRA-EAC-TCR-COD_PROVINCIA-MUN-CP-USERNAME
 
 
-		T_TIPO_DATA('GIAADMT', '3', '', '', '4', '', '', 'maretra03'),
+		T_TIPO_DATA('GIAADMT', '3', '', '', '4', '', '', 'maretra02'),
 
-		T_TIPO_DATA('GIAADMT', '3', '', '', '11', '', '', 'maretra03'),
+		T_TIPO_DATA('GIAADMT', '3', '', '', '11', '', '', 'maretra02'),
 
-		T_TIPO_DATA('GIAADMT', '3', '', '', '14', '', '', 'maretra03'),
+		T_TIPO_DATA('GIAADMT', '3', '', '', '14', '', '', 'maretra02'),
 
-		T_TIPO_DATA('GIAADMT', '3', '', '', '18', '', '', 'maretra03'),
+		T_TIPO_DATA('GIAADMT', '3', '', '', '18', '', '', 'maretra02'),
 
-		T_TIPO_DATA('GIAADMT', '3', '', '', '21', '', '', 'maretra03'),
+		T_TIPO_DATA('GIAADMT', '3', '', '', '21', '', '', 'maretra02'),
 
-		T_TIPO_DATA('GIAADMT', '3', '', '', '23', '', '', 'maretra03'),
+		T_TIPO_DATA('GIAADMT', '3', '', '', '23', '', '', 'maretra02'),
 
-		T_TIPO_DATA('GIAADMT', '3', '', '', '29', '', '', 'maretra03'),
+		T_TIPO_DATA('GIAADMT', '3', '', '', '29', '', '', 'maretra02'),
 
-		T_TIPO_DATA('GIAADMT', '3', '', '', '41', '', '', 'maretra03'),
+		T_TIPO_DATA('GIAADMT', '3', '', '', '41', '', '', 'maretra02'),
 
-		T_TIPO_DATA('GIAADMT', '3', '', '', '22', '', '', 'montalvo03'),
+		T_TIPO_DATA('GIAADMT', '3', '', '', '22', '', '', 'montalvo02'),
 
-		T_TIPO_DATA('GIAADMT', '3', '', '', '44', '', '', 'montalvo03'),
+		T_TIPO_DATA('GIAADMT', '3', '', '', '44', '', '', 'montalvo02'),
 
-		T_TIPO_DATA('GIAADMT', '3', '', '', '50', '', '', 'montalvo03'),
+		T_TIPO_DATA('GIAADMT', '3', '', '', '50', '', '', 'montalvo02'),
 
-		T_TIPO_DATA('GIAADMT', '3', '', '', '33', '', '', 'montalvo03'),
+		T_TIPO_DATA('GIAADMT', '3', '', '', '33', '', '', 'montalvo02'),
 
-		T_TIPO_DATA('GIAADMT', '3', '', '', '7', '', '', 'maretra03'),
+		T_TIPO_DATA('GIAADMT', '3', '', '', '7', '', '', 'maretra02'),
 
-		T_TIPO_DATA('GIAADMT', '3', '', '', '35', '', '', 'qipert03'),
+		T_TIPO_DATA('GIAADMT', '3', '', '', '35', '', '', 'qipert02'),
 
-		T_TIPO_DATA('GIAADMT', '3', '', '', '38', '', '', 'montalvo03'),
+		T_TIPO_DATA('GIAADMT', '3', '', '', '38', '', '', 'montalvo02'),
 
-		T_TIPO_DATA('GIAADMT', '3', '', '', '39', '', '', 'montalvo03'),
+		T_TIPO_DATA('GIAADMT', '3', '', '', '39', '', '', 'montalvo02'),
 
-		T_TIPO_DATA('GIAADMT', '3', '', '', '2', '', '', 'montalvo03'),
+		T_TIPO_DATA('GIAADMT', '3', '', '', '2', '', '', 'montalvo02'),
 
-		T_TIPO_DATA('GIAADMT', '3', '', '', '13', '', '', 'montalvo03'),
+		T_TIPO_DATA('GIAADMT', '3', '', '', '13', '', '', 'montalvo02'),
 
-		T_TIPO_DATA('GIAADMT', '3', '', '', '16', '', '', 'montalvo03'),
+		T_TIPO_DATA('GIAADMT', '3', '', '', '16', '', '', 'montalvo02'),
 
-		T_TIPO_DATA('GIAADMT', '3', '', '', '19', '', '', 'montalvo03'),
+		T_TIPO_DATA('GIAADMT', '3', '', '', '19', '', '', 'montalvo02'),
 
-		T_TIPO_DATA('GIAADMT', '3', '', '', '45', '', '', 'montalvo03'),
+		T_TIPO_DATA('GIAADMT', '3', '', '', '45', '', '', 'montalvo02'),
 
-		T_TIPO_DATA('GIAADMT', '3', '', '', '5', '', '', 'qipert03'),
+		T_TIPO_DATA('GIAADMT', '3', '', '', '5', '', '', 'qipert02'),
 
-		T_TIPO_DATA('GIAADMT', '3', '', '', '9', '', '', 'qipert03'),
+		T_TIPO_DATA('GIAADMT', '3', '', '', '9', '', '', 'qipert02'),
 
-		T_TIPO_DATA('GIAADMT', '3', '', '', '24', '', '', 'qipert03'),
+		T_TIPO_DATA('GIAADMT', '3', '', '', '24', '', '', 'qipert02'),
 
-		T_TIPO_DATA('GIAADMT', '3', '', '', '34', '', '', 'qipert03'),
+		T_TIPO_DATA('GIAADMT', '3', '', '', '34', '', '', 'qipert02'),
 
-		T_TIPO_DATA('GIAADMT', '3', '', '', '37', '', '', 'qipert03'),
+		T_TIPO_DATA('GIAADMT', '3', '', '', '37', '', '', 'qipert02'),
 
-		T_TIPO_DATA('GIAADMT', '3', '', '', '40', '', '', 'qipert03'),
+		T_TIPO_DATA('GIAADMT', '3', '', '', '40', '', '', 'qipert02'),
 
-		T_TIPO_DATA('GIAADMT', '3', '', '', '42', '', '', 'qipert03'),
+		T_TIPO_DATA('GIAADMT', '3', '', '', '42', '', '', 'qipert02'),
 
-		T_TIPO_DATA('GIAADMT', '3', '', '', '47', '', '', 'qipert03'),
+		T_TIPO_DATA('GIAADMT', '3', '', '', '47', '', '', 'qipert02'),
 
-		T_TIPO_DATA('GIAADMT', '3', '', '', '49', '', '', 'qipert03'),
+		T_TIPO_DATA('GIAADMT', '3', '', '', '49', '', '', 'qipert02'),
 
-		T_TIPO_DATA('GIAADMT', '3', '', '', '8', '', '', 'grupobc03'),
+		T_TIPO_DATA('GIAADMT', '3', '', '', '8', '', '', 'grupobc02'),
 
-		T_TIPO_DATA('GIAADMT', '3', '', '', '17', '', '', 'grupobc03'),
+		T_TIPO_DATA('GIAADMT', '3', '', '', '17', '', '', 'grupobc02'),
 
-		T_TIPO_DATA('GIAADMT', '3', '', '', '25', '', '', 'grupobc03'),
+		T_TIPO_DATA('GIAADMT', '3', '', '', '25', '', '', 'grupobc02'),
 
-		T_TIPO_DATA('GIAADMT', '3', '', '', '43', '', '', 'grupobc03'),
+		T_TIPO_DATA('GIAADMT', '3', '', '', '43', '', '', 'grupobc02'),
 
-		T_TIPO_DATA('GIAADMT', '3', '', '', '51', '', '', 'qipert03'),
+		T_TIPO_DATA('GIAADMT', '3', '', '', '51', '', '', 'qipert02'),
 
-		T_TIPO_DATA('GIAADMT', '3', '', '', '3', '', '', 'garsa03'),
+		T_TIPO_DATA('GIAADMT', '3', '', '', '3', '', '', 'garsa02'),
 
-		T_TIPO_DATA('GIAADMT', '3', '', '', '12', '', '', 'garsa03'),
+		T_TIPO_DATA('GIAADMT', '3', '', '', '12', '', '', 'garsa02'),
 
-		T_TIPO_DATA('GIAADMT', '3', '', '', '46', '', '', 'garsa03'),
+		T_TIPO_DATA('GIAADMT', '3', '', '', '46', '', '', 'garsa02'),
 
-		T_TIPO_DATA('GIAADMT', '3', '', '', '6', '', '', 'qipert03'),
+		T_TIPO_DATA('GIAADMT', '3', '', '', '6', '', '', 'qipert02'),
 
-		T_TIPO_DATA('GIAADMT', '3', '', '', '10', '', '', 'qipert03'),
+		T_TIPO_DATA('GIAADMT', '3', '', '', '10', '', '', 'qipert02'),
 
-		T_TIPO_DATA('GIAADMT', '3', '', '', '15', '', '', 'qipert03'),
+		T_TIPO_DATA('GIAADMT', '3', '', '', '15', '', '', 'qipert02'),
 
-		T_TIPO_DATA('GIAADMT', '3', '', '', '27', '', '', 'qipert03'),
+		T_TIPO_DATA('GIAADMT', '3', '', '', '27', '', '', 'qipert02'),
 
-		T_TIPO_DATA('GIAADMT', '3', '', '', '32', '', '', 'qipert03'),
+		T_TIPO_DATA('GIAADMT', '3', '', '', '32', '', '', 'qipert02'),
 
-		T_TIPO_DATA('GIAADMT', '3', '', '', '36', '', '', 'qipert03'),
+		T_TIPO_DATA('GIAADMT', '3', '', '', '36', '', '', 'qipert02'),
 
-		T_TIPO_DATA('GIAADMT', '3', '', '', '28', '', '', 'montalvo03'),
+		T_TIPO_DATA('GIAADMT', '3', '', '', '28', '', '', 'montalvo02'),
 
-		T_TIPO_DATA('GIAADMT', '3', '', '', '30', '', '', 'qipert03'),
+		T_TIPO_DATA('GIAADMT', '3', '', '', '30', '', '', 'qipert02'),
 
-		T_TIPO_DATA('GIAADMT', '3', '', '', '31', '', '', 'qipert03'),
+		T_TIPO_DATA('GIAADMT', '3', '', '', '31', '', '', 'qipert02'),
 
-		T_TIPO_DATA('GIAADMT', '3', '', '', '1', '', '', 'qipert03'),
+		T_TIPO_DATA('GIAADMT', '3', '', '', '1', '', '', 'qipert02'),
 
-		T_TIPO_DATA('GIAADMT', '3', '', '', '48', '', '', 'qipert03'),
+		T_TIPO_DATA('GIAADMT', '3', '', '', '48', '', '', 'qipert02'),
 
-		T_TIPO_DATA('GIAADMT', '3', '', '', '20', '', '', 'qipert03'),
+		T_TIPO_DATA('GIAADMT', '3', '', '', '20', '', '', 'qipert02'),
 
-		T_TIPO_DATA('GIAADMT', '3', '', '', '26', '', '', 'montalvo03'),
+		T_TIPO_DATA('GIAADMT', '3', '', '', '26', '', '', 'montalvo02'),
 
 
 		T_TIPO_DATA('GGADM', '3', '', '', '4', '', '', 'maretra01'),
@@ -256,6 +256,7 @@ BEGIN
 	DBMS_OUTPUT.PUT_LINE('[INICIO] ');
 	
     V_MSQL := 'DELETE FROM '|| V_ESQUEMA ||'.'|| V_TEXT_TABLA ||' WHERE COD_CARTERA = 3 AND TIPO_GESTOR IN (''GGADM'')'; 
+    V_MSQL := 'DELETE FROM '|| V_ESQUEMA ||'.'|| V_TEXT_TABLA ||' WHERE COD_CARTERA = 3 AND TIPO_GESTOR IN (''GIAADMT'')'; 
     EXECUTE IMMEDIATE V_MSQL;
     DBMS_OUTPUT.PUT_LINE('[INFO]: TABLA TRUNCADA');
 

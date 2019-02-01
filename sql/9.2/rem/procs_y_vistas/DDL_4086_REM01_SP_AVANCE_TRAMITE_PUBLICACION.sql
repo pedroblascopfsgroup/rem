@@ -120,7 +120,7 @@ BEGIN
                     LEFT JOIN '||V_ESQUEMA||'.TAC_TAREAS_ACTIVOS tac on tac.tra_id = tra.tra_id
                     LEFT JOIN '||V_ESQUEMA||'.TEX_TAREA_EXTERNA TEx on tac.tar_id = tex.tar_id
                     LEFT JOIN '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO tap on tap.tap_id = tex.tap_id
-                    WHERE TAP.BORRADO = 0 AND TRA.TRA_ID IN ('||LIST_TRA_ID||')';
+                    WHERE TRA.TRA_ID IN ('||LIST_TRA_ID||')';
       --DBMS_OUTPUT.PUT_LINE(V_MSQL);
       EXECUTE IMMEDIATE V_MSQL;
 

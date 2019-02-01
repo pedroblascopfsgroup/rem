@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Sergio Beleña
---## FECHA_CREACION=20181213
+--## AUTOR=Oscar Diestre
+--## FECHA_CREACION=20190201
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=2.0.3
---## INCIDENCIA_LINK=HREOS-4931
+--## INCIDENCIA_LINK=HREOS-5358
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -13,6 +13,7 @@
 --##        	0.1 Versión inicial
 --##		0.2 Modificado precio_v y precio_a - Maria Presencia Herrero - REMVIP-2638
 --##		0.3 Sergio Beleña -HREOS-4931- Optimización de tiempos   
+--##		0.4 Oscar Diestre -HREOS-5358- Modificado para mostrar agrupaciones asisitidas vencidas 
 --##########################################
 --*/
 
@@ -113,8 +114,15 @@ BEGIN
           JOIN '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION APU ON APU.ACT_ID = ACT.ACT_ID AND APU.BORRADO = 0
           JOIN '|| V_ESQUEMA ||'.ACT_AGA_AGRUPACION_ACTIVO AGA ON AGA.ACT_ID = ACT.ACT_ID AND AGA.BORRADO = 0
           JOIN '|| V_ESQUEMA ||'.ACT_AGR_AGRUPACION AGR ON AGR.AGR_ID = AGA.AGR_ID AND AGR.BORRADO = 0
-          JOIN '|| V_ESQUEMA ||'.DD_TAG_TIPO_AGRUPACION TAG ON TAG.DD_TAG_ID = AGR.DD_TAG_ID AND TAG.BORRADO = 0 AND TAG.DD_TAG_CODIGO = ''02''	/*Restringida*/ 
-               AND (AGR.AGR_FIN_VIGENCIA IS NULL OR TRUNC(AGR.AGR_FIN_VIGENCIA) >= TRUNC(SYSDATE))
+          JOIN '|| V_ESQUEMA ||'.DD_TAG_TIPO_AGRUPACION TAG ON TAG.DD_TAG_ID = AGR.DD_TAG_ID AND TAG.BORRADO = 0 
+                        AND (             
+                              (        TAG.DD_TAG_CODIGO = '02'	/*Restringida*/
+                                AND (AGR.AGR_FIN_VIGENCIA IS NULL OR TRUNC(AGR.AGR_FIN_VIGENCIA) >= TRUNC(SYSDATE))
+                              )     
+                            OR(     TAG.DD_TAG_CODIGO = '13'	/*Asistida*/
+                                AND (TRUNC(AGR.AGR_FIN_VIGENCIA) < TRUNC(SYSDATE))
+                                )
+                            )    
           LEFT JOIN '|| V_ESQUEMA ||'.DD_TCO_TIPO_COMERCIALIZACION TCO ON APU.DD_TCO_ID = TCO.DD_TCO_ID AND TCO.BORRADO = 0
           LEFT JOIN '|| V_ESQUEMA ||'.DD_EPA_ESTADO_PUB_ALQUILER EPA ON APU.DD_EPA_ID = EPA.DD_EPA_ID AND EPA.BORRADO = 0
           LEFT JOIN '|| V_ESQUEMA ||'.DD_EPV_ESTADO_PUB_VENTA EPV ON APU.DD_EPV_ID = EPV.DD_EPV_ID AND EPV.BORRADO = 0

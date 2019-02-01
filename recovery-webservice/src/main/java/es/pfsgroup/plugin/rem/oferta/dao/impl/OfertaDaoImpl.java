@@ -203,7 +203,7 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 			Activo idActivo = genericDao.get(Activo.class, filtroIdActivo);
 			
 			if(!Checks.esNulo(idActivo)){
-				HQLBuilder.addFiltroIgualQueSiNotNull(hb, "voferta.idActivo", idActivo.getId().toString());
+				HQLBuilder.addFiltroIgualQueSiNotNull(hb, "voferta.idActivo", idActivo.getId());
 			}else{
 				HQLBuilder.addFiltroIsNull(hb, "voferta.idActivo");
 			}

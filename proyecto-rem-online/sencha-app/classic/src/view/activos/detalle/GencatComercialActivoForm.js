@@ -105,7 +105,7 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoForm', {
     		}
         	
         }
-        debugger;
+        
         var items = [
         	{
 				xtype:'fieldsettable',

@@ -546,7 +546,7 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView saveDocumentoComprador(String docCliente, Long idExpediente, HttpServletRequest request) {
+	public ModelAndView saveDocumentoComprador(String docCliente, String idExpediente, HttpServletRequest request) {
 		
 		String idPersonaHaya = null;
 		
@@ -574,7 +574,7 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 			logger.error("------------------------------REQUEST:   "+ request);
 			WebFileItem fileItem = uploadAdapter.getWebFileItem(request);
 			
-			List<DtoAdjunto> listaAdjuntos = expedienteComercialAdapter.getAdjuntoExpedienteComprador(idPersonaHaya, docCliente, idExpediente);
+			List<DtoAdjunto> listaAdjuntos = expedienteComercialAdapter.getAdjuntoExpedienteComprador(idPersonaHaya, docCliente, Long.parseLong(idExpediente));
 			if(listaAdjuntos.size() <= 0) {
 				String errores = expedienteComercialAdapter.uploadDocumentoComprador(fileItem, idPersonaHaya.toString());
 				model.put("errores", errores);

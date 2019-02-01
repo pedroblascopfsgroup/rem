@@ -93,7 +93,7 @@ public class ActivoOfertaController extends ParadiseJsonController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView saveDocumentoAdjuntoOferta(String docCliente, HttpServletRequest request) {
+	public ModelAndView saveDocumentoAdjuntoOferta(String docCliente, String idEntidad, HttpServletRequest request) {
 		
 		TmpClienteGDPR tmpClienteGDPR;
 		String idPersonaHaya = null;

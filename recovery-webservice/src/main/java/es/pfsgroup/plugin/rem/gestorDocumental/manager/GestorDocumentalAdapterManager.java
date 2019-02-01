@@ -428,7 +428,7 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 
 		try {
 			respuestaCrearDocumento = gestorDocumentalApi.crearDocumento(cabecera, crearDoc);
-			respuesta = (Long) Long.parseLong(respuestaCrearDocumento.getIdDocumento().toString()); 
+			respuesta = new Long(respuestaCrearDocumento.getIdDocumento()); 
 			logger.error(">>>>>>>>>>>>>>>>>>> uploadDocumentoEntidadComprador RESPUESTA" +respuesta.toString());
 
 		} catch (GestorDocumentalException gex) {

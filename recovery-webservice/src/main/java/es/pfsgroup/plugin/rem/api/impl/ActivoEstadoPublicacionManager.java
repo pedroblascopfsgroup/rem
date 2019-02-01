@@ -148,6 +148,8 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		dto.setDeshabilitarCheckOcultarAlquiler(this.deshabilitarCheckOcultarAlquiler(idActivo));
 		dto.setDeshabilitarCheckPublicarSinPrecioVenta(this.deshabilitarCheckPublicarSinPrecioVenta(idActivo));
 		dto.setDeshabilitarCheckPublicarSinPrecioAlquiler(this.deshabilitarCheckPublicarSinPrecioAlquiler(idActivo));
+		dto.setDeshabilitarCheckNoMostrarPrecioVenta(this.deshabilitarCheckNoMostrarPrecioVenta(idActivo));
+		dto.setDeshabilitarCheckNoMostrarPrecioAlquiler(this.deshabilitarCheckNoMostrarPrecioAlquiler(idActivo));
 
     	return dto;
 	}
@@ -212,7 +214,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	private Boolean deshabilitarCheckPublicarSinPrecioVenta(Long idActivo) {
 		Boolean resultado = false;
 		try{
-			resultado = isPublicadoVenta(idActivo) || isOcultoVentaVendidoOSalidaSinperimetro(idActivo) || isVendido(idActivo);
+			resultado = !isPublicable(idActivo) || isPublicadoVenta(idActivo) || isOcultoVentaVendidoOSalidaSinperimetro(idActivo) || isVendido(idActivo);
 		}catch(Exception e){
 			logger.error("Error en el método deshabilitarCheckPublicarSinPrecioVenta" , e);
 		}
@@ -231,9 +233,43 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	private Boolean deshabilitarCheckPublicarSinPrecioAlquiler(Long idActivo) {
 		Boolean resultado = false;
 		try{
-			resultado = isPublicadoAlquiler(idActivo) || isOcultoAlquilerVendidoOSalidaSinperimetro(idActivo) || isVendido(idActivo);
+			resultado = !isPublicable(idActivo) || isPublicadoAlquiler(idActivo) || isOcultoAlquilerVendidoOSalidaSinperimetro(idActivo) || isVendido(idActivo);
 		}catch(Exception e){
 			logger.error("Error en el método deshabilitarCheckPublicarSinPrecioAlquiler" , e);
+		}
+		
+		return resultado;
+	}
+	
+	/**
+	 * Este método calcula si el check de no mostrar precio venta se ha de deshabilitar en base a unas reglas.
+	 *
+	 * @param idActivo: ID del activo del que obtener los datos para verificar las reglas.
+	 * @return Devuelve True si el check no mostrar precio para la venta debe estar deshabilitado.
+	 */
+	private Boolean deshabilitarCheckNoMostrarPrecioVenta(Long idActivo) {
+		Boolean resultado = false;
+		try {
+			resultado = !isPublicable(idActivo);
+		} catch(Exception e) {
+			logger.error("Error en el método deshabilitarCheckNoMostrarPrecioVenta" , e);
+		}
+		
+		return resultado;
+	}
+	
+	/**
+	 * Este método calcula si el check de no mostrar precio alquiler se ha de deshabilitar en base a unas reglas.
+	 *
+	 * @param idActivo: ID del activo del que obtener los datos para verificar las reglas.
+	 * @return Devuelve True si el check no mostrar precio para el alquiler debe estar deshabilitado.
+	 */
+	private Boolean deshabilitarCheckNoMostrarPrecioAlquiler(Long idActivo) {
+		Boolean resultado = false;
+		try {
+			resultado = !isPublicable(idActivo);
+		} catch(Exception e) {
+			logger.error("Error en el método deshabilitarCheckNoMostrarPrecioAlquiler" , e);
 		}
 		
 		return resultado;
@@ -286,7 +322,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	private Boolean deshabilitarCheckPublicarAlquiler(Long idActivo) {
 		Boolean resultado = false;
 		try{
-			resultado =!isPublicable(idActivo) || !isComercializable(idActivo) || isVendido(idActivo) || isReservado(idActivo) || isPublicadoAlquiler(idActivo) || isOcultoAlquiler(idActivo) ||
+			resultado = !isPublicable(idActivo) || !isComercializable(idActivo) || isVendido(idActivo) || isReservado(idActivo) || isPublicadoAlquiler(idActivo) || isOcultoAlquiler(idActivo) ||
 			!isAdecuacionAlquilerNotNull(idActivo) || isFueraDePerimetro(idActivo) || (!isInformeAprobado(idActivo) && (!tienePrecioRenta(idActivo) && !isPublicarSinPrecioAlquilerActivado(idActivo)));
 		}catch(Exception e){
 			logger.error("Error en el método deshabilitarCheckPublicarAlquiler",e);
@@ -329,9 +365,13 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 
 	// Comprobación mínima.
 	private Boolean isPublicable(Long idActivo) {
-    	PerimetroActivo perimetro = perimetroDao.getPerimetroActivoByIdActivo(idActivo);
+		PerimetroActivo perimetro = perimetroDao.getPerimetroActivoByIdActivo(idActivo);
 
-    	return !Checks.esNulo(perimetro) && !Checks.esNulo(perimetro.getAplicaPublicar()) && perimetro.getAplicaPublicar();
+		if(!Checks.esNulo(perimetro) && !Checks.esNulo(perimetro.getAplicaPublicar())) {
+			return perimetro.getAplicaPublicar();
+		}
+
+		return true;
 	}
 
 	// Comprobación mínima.

@@ -1130,5 +1130,27 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
         me.getViewModel().get('filtrarComboMotivosOcultacionVenta');
         me.getViewModel().get('filtrarComboMotivosOcultacionAlquiler');
         
+    },
+    onChangeComboMotivoOcultacionAlquiler: function() {
+    	var me = this;
+    	var combo = me.lookupReference('comboMotivoOcultacionAlquiler');
+    	var textArea = me.lookupReference(combo.textareaRefChained);
+
+    	if(combo && combo.value === CONST.MOTIVO_OCULTACION['OTROS']) {
+    		textArea.setDisabled(false);
+    	} else {
+    		textArea.setDisabled(true);
+    	}
+    },
+    onChangeComboMotivoOcultacionVenta: function() { 
+    	var me = this;
+    	var combo = me.lookupReference('comboMotivoOcultacionVenta');
+    	var textArea = me.lookupReference(combo.textareaRefChained);
+
+    	if(combo && combo.value === CONST.MOTIVO_OCULTACION['OTROS']) {
+    		textArea.setDisabled(false);
+    	} else {
+    		textArea.setDisabled(true);
+    	}
     }
 });

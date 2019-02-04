@@ -47,7 +47,6 @@ import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
-import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
@@ -132,7 +131,6 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	private static final String PESTANA_GESTION = "gestion";
 	private static final String PESTANA_IMPUGNACION = "impugnacion";
 
-	private static final String EXCEPTION_EXPEDIENT_NOT_FOUND_COD = "ExceptionExp";
 	private static final String COD_PEF_GESTORIA_ADMINISTRACION = "HAYAGESTADMT";
 	private static final String COD_PEF_GESTORIA_PLUSVALIA = "GESTOPLUS";
 	private static final String COD_PEF_USUARIO_CERTIFICADOR = "HAYACERTI";
@@ -394,6 +392,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		return dto;
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	@Transactional(readOnly = false)
 	public GastoProveedor createGastoProveedor(DtoFichaGastoProveedor dto) {
@@ -809,7 +808,6 @@ public class GastoProveedorManager implements GastoProveedorApi {
 					Double diarioBase = 0.0;
 					Double diarioCuota = 0.0;
 					Double diario2Base = 0.0;
-					Double diario2Cuota = 0.0;
 					
 				if(!Checks.esNulo(gastoPrinex.getDiario1())) {
 					if(("20").equals(gastoPrinex.getDiario1())){
@@ -870,11 +868,8 @@ public class GastoProveedorManager implements GastoProveedorApi {
 					if(!Checks.esNulo(gastoPrinex.getDiario2())) {
 						if(!Checks.esNulo(gastoPrinex.getDiario2Base())) {
 							diario2Base=gastoPrinex.getDiario2Base();
-						}
-							
-						if(!Checks.esNulo(gastoPrinex.getDiario2Cuota())) {
-							diario2Cuota=gastoPrinex.getDiario2Cuota();	
-						}
+						}		
+						
 							
 					}
 					Double importeTotalPrinex = diarioBase+diarioCuota+diario2Base+importePromocion;
@@ -1214,7 +1209,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 					}
 					
 					Filter filtroNumAct = genericDao.createFilter(FilterType.EQUALS, "numActivo", numActivo);
-					Filter filtroTram = genericDao.createFilter(FilterType.EQUALS, "enTramite", true);
+					Filter filtroTram = genericDao.createFilter(FilterType.EQUALS, "enTramite", 1);
 					Activo actTram = genericDao.get(Activo.class, filtroNumAct, filtroTram);
 					
 					if(!Checks.esNulo(actTram)) {
@@ -1283,7 +1278,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 								
 								
 								Filter filtroNumAct = genericDao.createFilter(FilterType.EQUALS, "numActivo", activoAgrupacion.getActivo().getNumActivo());
-								Filter filtroTram = genericDao.createFilter(FilterType.EQUALS, "enTramite", true);
+								Filter filtroTram = genericDao.createFilter(FilterType.EQUALS, "enTramite", 1);
 								Activo actTram = genericDao.get(Activo.class, filtroNumAct, filtroTram);
 								
 								
@@ -1301,11 +1296,6 @@ public class GastoProveedorManager implements GastoProveedorApi {
 						
 						for (ActivoAgrupacionActivo activoAgrupacion : agrupacion.getActivos()) {
 																
-									Filter filtroNumAct = genericDao.createFilter(FilterType.EQUALS, "numActivo", activoAgrupacion.getActivo().getNumActivo());
-									Filter filtroTram = genericDao.createFilter(FilterType.EQUALS, "enTramite", true);
-									Activo actTram = genericDao.get(Activo.class, filtroNumAct, filtroTram);
-																																
-
 									filtroGasto = genericDao.createFilter(FilterType.EQUALS, "id", idGasto);
 									gasto = genericDao.get(GastoProveedor.class, filtroGasto);
 
@@ -1483,8 +1473,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		porcentaje = Float.valueOf(df.format(porcentaje).replace(',', '.'));
 		
 		
-		Float resto = (100f-porcentajePrinex) - (porcentaje * numActivos);
-
+		
 		for (GastoProveedorActivo gastoProveedor : gastosActivosList) {
 			Filter filtro3 = genericDao.createFilter(FilterType.EQUALS, "idActivo",gastoProveedor.getActivo().getId());
 			gastoPrinex = genericDao.get(GastoPrinex.class, filtro,filtro3);
@@ -1619,6 +1608,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		return true;
 	}
 
+	@SuppressWarnings("deprecation")
 	public DtoInfoContabilidadGasto infoContabilidadToDtoInfoContabilidad(GastoProveedor gasto) {
 
 		DtoInfoContabilidadGasto dto = new DtoInfoContabilidadGasto();
@@ -1716,6 +1706,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 	}
 
 
+	@SuppressWarnings("unchecked")
 	private boolean hayCambiosGasto(Object dtoIni, Object dtoFin, GastoProveedor gasto) {
 		String[] camposMinimos = new String[]{"numGastoHaya", "numGastoGestoria", "referenciaEmisor", "tipoGastoCodigo", "subtipoGastoCodigo", "idEmisor", "destinatario", "propietario", "fechaEmision", "periodicidad", "concepto", "tipoOperacionCodigo", "importeTotal", "impuestoIndirectoTipoCodigo", "asignadoAActivos", "cuentaContable", "partidaPresupuestaria", "gestoria", "fechaAltaRem"};
 		List<String> campos = new ArrayList<String>(Arrays.asList(camposMinimos));
@@ -1733,7 +1724,6 @@ public class GastoProveedorManager implements GastoProveedorApi {
             try {
             	
                 String propertyName = objDescriptor.getName();
-                Object propType = PropertyUtils.getPropertyType(dtoIni, propertyName);
                 Object propValueIni = PropertyUtils.getProperty(dtoIni, propertyName);
                 Object propValueFin = PropertyUtils.getProperty(dtoFin, propertyName);
                 if(campos.contains(propertyName)) {
@@ -2105,8 +2095,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 				}
 
 			} catch (GestorDocumentalException gex) {
-				String[] error = gex.getMessage().split("-");
-
+				
 				// Si no existe el expediente lo creamos
 				if (GestorDocumentalException.CODIGO_ERROR_CONTENEDOR_NO_EXISTE.equals(gex.getCodigoError())) {
 

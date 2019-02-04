@@ -1,7 +1,6 @@
 package es.pfsgroup.plugin.rem.oferta;
 
 import java.math.BigDecimal;
-import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.ParseException;
@@ -876,7 +875,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	}
 
 	@Transactional(readOnly = false)
-	private Oferta updateEstadoOferta(Long idOferta, Date fechaAccion) throws JsonViewerException, SQLException {
+	private Oferta updateEstadoOferta(Long idOferta, Date fechaAccion) throws Exception {
 
 		Oferta ofertaAcepted = null;
 		//Boolean inLoteComercial = false;

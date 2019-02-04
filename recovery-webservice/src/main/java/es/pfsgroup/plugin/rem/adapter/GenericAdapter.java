@@ -161,18 +161,13 @@ public class GenericAdapter {
 	 *            indicado en mailsPara y mailsCC
 	 * @param adjuntos Archivos adjuntos a manar por correo
 	 */
-	public void sendMail(List<String> mailsPara, List<String> mailsCC, String asunto, String cuerpo, List<DtoAdjuntoMail> adjuntos) {
-		try {
-			remCorreoUtils.enviarCorreoConAdjuntos(null, mailsPara, mailsCC, asunto, cuerpo, adjuntos);
-		} catch (Exception e) {
-			//Sacamos log de los receptores y el asunto del mail para trazar los errores
-			logger.error("mailsPara: " + mailsPara + ", mailsCC: " + mailsCC + ", asunto: " + asunto);
-			logger.error("error enviando correo",e);			
-		}
+	public void sendMail(List<String> mailsPara, List<String> mailsCC, String asunto, String cuerpo,
+			List<DtoAdjuntoMail> adjuntos) {
+		remCorreoUtils.enviarCorreoConAdjuntos(null, mailsPara, mailsCC, asunto, cuerpo, adjuntos);
 	}
 	
 	public void sendMailAsinc(List<String> mailsPara, List<String> mailsCC, String asunto, String cuerpo, List<DtoAdjuntoMail> adjuntos) {
-		Thread hiloCorreo = new Thread(new EnvioCorreoAsync(appProperties,mailsPara, mailsCC, asunto, cuerpo, adjuntos));
+		Thread hiloCorreo = new Thread(new EnvioCorreoAsync(mailsPara, mailsCC, asunto, cuerpo, adjuntos));
 		hiloCorreo.start();	
 	}
 	

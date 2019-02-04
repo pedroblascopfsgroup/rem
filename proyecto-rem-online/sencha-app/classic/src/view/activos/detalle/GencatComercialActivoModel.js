@@ -20,23 +20,24 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoModel', {
 
     	esSoloLecturaCheckAnularGencat: function(get){
     		var me = this;
-    		var soloLectura;
+    		var soloLectura = true;
     		var estadoComunicacion= get('gencat.estadoComunicacion');
     		var estadoSancion= get('gencat.sancion');
-    		if ((estadoComunicacion === CONST.ESTADO_COMUNICACION_GENCAT['COMUNICADO'] ||
-    				estadoComunicacion === CONST.ESTADO_COMUNICACION_GENCAT['RECHAZADO'] || 
-    				estadoComunicacion === CONST.ESTADO_COMUNICACION_GENCAT['ANULADO']) || 
-    				(estadoComunicacion === CONST.ESTADO_COMUNICACION_GENCAT['SANCIONADO'] &&
-    				  estadoSancion === CONST.SANCION_GENCAT['NO_EJERCE'] )){
-    			soloLectura = false
-    			  
-    		}else{
-    			soloLectura = true
+    		var comunicacdoAnulacionGencat = get('gencat.comunicadoAnulacionAGencat');
+
+    		//Si ya se ha comunicado la anulación con el checkbox, no debe dejar modificarlo.
+    		if(!comunicacdoAnulacionGencat){	
+    			//Si estadoComunicacion es COMUNICADO / RECHAZADO / ANULADO o bien SANCIONADO + estadoSancion NO EJERCE, y además el usuario tiene perfil HAYAGESTFORMADM / HAYASUPER
+    			if ( ((estadoComunicacion === CONST.ESTADO_COMUNICACION_GENCAT['COMUNICADO'] ||
+    					estadoComunicacion === CONST.ESTADO_COMUNICACION_GENCAT['RECHAZADO']  || 
+    					estadoComunicacion === CONST.ESTADO_COMUNICACION_GENCAT['ANULADO'])   || 
+    					(estadoComunicacion === CONST.ESTADO_COMUNICACION_GENCAT['SANCIONADO'] && estadoSancion === CONST.SANCION_GENCAT['NO_EJERCE'] )) &&
+    					($AU.userIsRol(CONST.PERFILES['HAYAGESTFORMADM']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER'])) ){
+    				soloLectura = false
+    			}
     		}
-    		  
     		return soloLectura;
-    	 }
-	     
+    	} 
     },
 
     stores: {

@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Adrián Molina
---## FECHA_CREACION=20190129
+--## FECHA_CREACION=20190204
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-5303
@@ -42,7 +42,9 @@ BEGIN
         DBMS_OUTPUT.PUT_LINE('Actualizar descripción de trabajo de '||V_TEXT_TABLA);
 
             V_MSQL := 'UPDATE '||V_ESQUEMA||'.'||V_TEXT_TABLA||'
-                    SET DD_TGE_ID = ''400''
+                    SET DD_TGE_ID = (SELECT DD_TGE_ID FROM '||V_ESQUEMA_M||'.DD_TGE_TIPO_GESTOR WHERE DD_TGE_CODIGO = ''GFORMADM'')
+					, USUARIOMODIFICAR = '''||V_USUARIO||'''
+					, FECHAMODIFICAR = SYSDATE
             		WHERE TAP_CODIGO = ''T016_ComunicarGENCAT''';
             EXECUTE IMMEDIATE V_MSQL;
         

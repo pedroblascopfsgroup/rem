@@ -54,10 +54,11 @@ public class ActivoOfertaController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getListAdjuntos(String docCliente, String idActivo, String idAgrupacion){
+	public ModelAndView getListAdjuntos(String docCliente, Long idActivo, Long idAgrupacion){
 		
+		TmpClienteGDPR tmpClienteGDPR;
 		String idPersonaHaya = null;
-		logger.error(">>>>>>>>>>>>>>>>>>> ENTRANDO EN METODO getListAdjuntos "+docCliente+" "+idActivo+" "+idAgrupacion);
+		
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "numDocumento", docCliente);
 		ClienteGDPR clienteGDPR = genericDao.get(ClienteGDPR.class, filtro);
 		if(!Checks.esNulo(clienteGDPR)) {
@@ -65,22 +66,21 @@ public class ActivoOfertaController extends ParadiseJsonController {
 			if(!Checks.esNulo(clienteCom)) {
 				idPersonaHaya = clienteCom.getIdPersonaHaya();
 			} else {
-				TmpClienteGDPR tmpClienteGDPR = genericDao.get(TmpClienteGDPR.class, genericDao.createFilter(FilterType.EQUALS, "numDocumento", docCliente));
+				tmpClienteGDPR = genericDao.get(TmpClienteGDPR.class, genericDao.createFilter(FilterType.EQUALS, "numDocumento", docCliente));
 
 				if(!Checks.esNulo(tmpClienteGDPR)) {
 					idPersonaHaya = String.valueOf(tmpClienteGDPR.getIdPersonaHaya());
 				}
 			}
 		} else {
-			TmpClienteGDPR tmpClienteGDPR = genericDao.get(TmpClienteGDPR.class, genericDao.createFilter(FilterType.EQUALS, "numDocumento", docCliente));
+			tmpClienteGDPR = genericDao.get(TmpClienteGDPR.class, genericDao.createFilter(FilterType.EQUALS, "numDocumento", docCliente));
 			idPersonaHaya = String.valueOf(tmpClienteGDPR.getIdPersonaHaya());
-			logger.error(">>>>>>>>>>>>>>>>>>>> REGISTRO EN TMP "+idPersonaHaya);
 		}
 		
 		ModelMap model = new ModelMap();
 		
 		try {
-			model.put(RESPONSE_DATA_KEY, activoOfertaAdapter.getAdjunto(idPersonaHaya, docCliente, Long.parseLong(idActivo), Long.parseLong(idAgrupacion)));
+			model.put(RESPONSE_DATA_KEY, activoOfertaAdapter.getAdjunto(idPersonaHaya, docCliente, idActivo, idAgrupacion));
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 			model.put(RESPONSE_SUCCESS_KEY, false);
@@ -120,8 +120,6 @@ public class ActivoOfertaController extends ParadiseJsonController {
 		
 		try {
 			
-			logger.error("------------------------------REQUEST:   "+ request);
-
 			WebFileItem fileItem = uploadAdapter.getWebFileItem(request);
 			
 			List<DtoAdjunto> listaAdjuntos = activoOfertaAdapter.getAdjunto(idPersonaHaya, docCliente, null, null);
@@ -145,22 +143,39 @@ public class ActivoOfertaController extends ParadiseJsonController {
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView eliminarDocumentoAdjuntoOferta(String docCliente) {
 		
-		Filter filtroCliente = genericDao.createFilter(FilterType.EQUALS, "numDocumento", docCliente);
-		ClienteGDPR clienteGDPR = genericDao.get(ClienteGDPR.class, filtroCliente);
-		ClienteComercial clienteCom = clienteGDPR.getCliente();
+		TmpClienteGDPR tmpClienteGDPR;
+		String idPersonaHaya = null;
+		
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "numDocumento", docCliente);
+		ClienteGDPR clienteGDPR = genericDao.get(ClienteGDPR.class, filtro);
+		if(!Checks.esNulo(clienteGDPR)) {
+			ClienteComercial clienteCom = clienteGDPR.getCliente();
+			if(!Checks.esNulo(clienteCom)) {
+				idPersonaHaya = clienteCom.getIdPersonaHaya();
+			} else {
+				tmpClienteGDPR = genericDao.get(TmpClienteGDPR.class, genericDao.createFilter(FilterType.EQUALS, "numDocumento", docCliente));
+				
+				if(!Checks.esNulo(tmpClienteGDPR)) {
+					idPersonaHaya = String.valueOf(tmpClienteGDPR.getIdPersonaHaya());
+				}
+			}
+		} else {
+			tmpClienteGDPR = genericDao.get(TmpClienteGDPR.class, genericDao.createFilter(FilterType.EQUALS, "numDocumento", docCliente));
+			idPersonaHaya = String.valueOf(tmpClienteGDPR.getIdPersonaHaya());
+		}
 		
 		ModelMap model = new ModelMap();
 		
 		List<DtoAdjunto> listaAdjuntos = null;
 		try {
-			listaAdjuntos = activoOfertaAdapter.getAdjunto(clienteCom.getIdPersonaHaya(), docCliente, null, null);						
+			listaAdjuntos = activoOfertaAdapter.getAdjunto(idPersonaHaya, docCliente, null, null);						
 		} catch (GestorDocumentalException e) {
 			e.printStackTrace();
 		}
 		
-		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "idDocRestClient", listaAdjuntos.get(0).getId());
+		Filter filtroDoc = genericDao.createFilter(FilterType.EQUALS, "idDocRestClient", listaAdjuntos.get(0).getId());
 		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
-		AdjuntoComprador adjComprador = genericDao.get(AdjuntoComprador.class, filtro, filtroBorrado);
+		AdjuntoComprador adjComprador = genericDao.get(AdjuntoComprador.class, filtroDoc, filtroBorrado);
 
 		boolean success = activoOfertaAdapter.deleteAdjunto(adjComprador, clienteGDPR);
 		model.put(RESPONSE_SUCCESS_KEY, success);

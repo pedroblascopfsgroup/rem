@@ -45,14 +45,12 @@ public class ActivoOfertaAdapter {
 	@Transactional(readOnly = false)
 	public List<DtoAdjunto> getAdjunto(String idIntervinienteHaya, String docCliente, Long idActivo, Long idAgrupacion) throws GestorDocumentalException {
 		
-		logger.error(">>>>>>>>>>>>>>>>>>> ENTRANDO EN METODO getAdjunto "+" "+idIntervinienteHaya+" "+docCliente+" "+idActivo+" "+idAgrupacion);
 		List<DtoAdjunto> listaAdjuntos = new ArrayList<DtoAdjunto>();
 		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 		
 		if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
 			try {
 				listaAdjuntos = gestorDocumentalAdapterApi.getAdjuntosEntidadComprador(idIntervinienteHaya);
-				logger.error(">>>>>>>>>>>>>>>>>>> METODO getAdjunto "+listaAdjuntos.toString());
 			} catch (GestorDocumentalException gex) {
 					logger.error(gex.getMessage());
 					
@@ -79,7 +77,6 @@ public class ActivoOfertaAdapter {
 	@Transactional(readOnly = false)
 	public String uploadDocumento(WebFileItem webFileItem, String idIntervinienteHaya) throws Exception {
 		
-		logger.error(">>>>>>>>>>>>>>>>>>> ENTRANDO EN METODO uploadDocumento "+" "+idIntervinienteHaya);
 		try {
 			if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
 				
@@ -88,9 +85,7 @@ public class ActivoOfertaAdapter {
 				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoDocumentoActivo.CODIGO_CONSENTIMIENTO_PROTECCION_DATOS);
 				DDTipoDocumentoActivo tipoDocumento = genericDao.get(DDTipoDocumentoActivo.class, filtro);
 				
-				logger.error(">>>>>>>>>>>>>>>>>>> uploadDocumento "+" "+tipoDocumento.toString());
 				Long idDocRestClient = gestorDocumentalAdapterApi.uploadDocumentoEntidadComprador(idIntervinienteHaya, webFileItem, usuarioLogado.getUsername(), tipoDocumento.getMatricula());
-				logger.error(">>>>>>>>>>>>>>>>>>> uploadDocumento "+" "+idDocRestClient);
 
 				if (!Checks.esNulo(idDocRestClient)) {
 					//Subida registro adjunto de la oferta activo.
@@ -122,6 +117,7 @@ public class ActivoOfertaAdapter {
 						Auditoria.save(clienteGDPR);
 						genericDao.update(ClienteGDPR.class, clienteGDPR);
 					} else {
+						filtroPersona = genericDao.createFilter(FilterType.EQUALS, "idPersonaHaya", Long.parseLong(idIntervinienteHaya));
 						TmpClienteGDPR tmpClienteGDPR = genericDao.get(TmpClienteGDPR.class, filtroPersona);
 						if(!Checks.esNulo(tmpClienteGDPR)) {
 							tmpClienteGDPR.setIdAdjunto(adjuntoComprador.getId());
@@ -162,7 +158,7 @@ public class ActivoOfertaAdapter {
 							Auditoria.save(clienteGDPR);
 							genericDao.update(ClienteGDPR.class, clienteGDPR);
 						} else {
-							Filter filtroDocumento = genericDao.createFilter(FilterType.EQUALS, "idDocumento", adjuntoComprador.getId());
+							Filter filtroDocumento = genericDao.createFilter(FilterType.EQUALS, "idAdjunto", adjuntoComprador.getId());
 							TmpClienteGDPR tmpClienteGDPR = genericDao.get(TmpClienteGDPR.class, filtroDocumento);
 							if(!Checks.esNulo(tmpClienteGDPR)) {
 								tmpClienteGDPR.setIdAdjunto(null);

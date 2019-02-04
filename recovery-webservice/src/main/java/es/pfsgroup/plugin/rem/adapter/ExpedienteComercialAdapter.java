@@ -125,9 +125,7 @@ public class ExpedienteComercialAdapter {
 		if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
 			try {
 				listaAdjuntos = gestorDocumentalAdapterApi.getAdjuntosEntidadComprador(idIntervinienteHaya);
-			} catch (GestorDocumentalException gex) {
-					logger.error(gex.getMessage());
-					
+			} catch (GestorDocumentalException gex) {					
 					if (GestorDocumentalException.CODIGO_ERROR_CONTENEDOR_NO_EXISTE.equals(gex.getCodigoError())) {
 	
 					Integer idPersonaHaya;
@@ -152,10 +150,7 @@ public class ExpedienteComercialAdapter {
 	public String uploadDocumentoComprador(WebFileItem webFileItem, String idIntervinienteHaya) throws Exception {
 		
 		try {
-			if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
-				
-				logger.error("UPLOAD DOCUMENTO COMPRADOR");
-				
+			if (gestorDocumentalAdapterApi.modoRestClientActivado()) {				
 				Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 				
 				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoDocumentoActivo.CODIGO_CONSENTIMIENTO_PROTECCION_DATOS);
@@ -179,7 +174,6 @@ public class ExpedienteComercialAdapter {
 					//Filtro para conseguir el registro del Adjunto
 					Filter filtroDocumento = genericDao.createFilter(FilterType.EQUALS, "idDocRestClient", idDocRestClient);
 					adjuntoComprador = genericDao.get(AdjuntoComprador.class, filtroDocumento);
-					logger.error("ADJUNTO COMPRADOR: "+adjuntoComprador);
 					
 					ClienteGDPR clienteGDPR = null;
 					
@@ -192,14 +186,13 @@ public class ExpedienteComercialAdapter {
 						clienteGDPR.setAdjuntoComprador(adjuntoComprador);
 						Auditoria.save(clienteGDPR);
 						genericDao.update(ClienteGDPR.class, clienteGDPR);
-						logger.error("CLIENTE GDPR: "+clienteGDPR);
 					} else {
+						filtroPersona = genericDao.createFilter(FilterType.EQUALS, "idPersonaHaya", Long.parseLong(idIntervinienteHaya));
 						TmpClienteGDPR tmpClienteGDPR = genericDao.get(TmpClienteGDPR.class, filtroPersona);
 						if(!Checks.esNulo(tmpClienteGDPR)) {
 							tmpClienteGDPR.setIdAdjunto(adjuntoComprador.getId());
 							genericDao.update(TmpClienteGDPR.class, tmpClienteGDPR);
 						}
-						logger.error("TEMPORAL GDPR: "+tmpClienteGDPR);
 					}
 				}
 			}
@@ -233,7 +226,7 @@ public class ExpedienteComercialAdapter {
 							Auditoria.save(clienteGDPR);
 							genericDao.update(ClienteGDPR.class, clienteGDPR);
 						} else {
-							Filter filtroDocumento = genericDao.createFilter(FilterType.EQUALS, "idDocumento", adjuntoComprador.getId());
+							Filter filtroDocumento = genericDao.createFilter(FilterType.EQUALS, "idAdjunto", adjuntoComprador.getId());
 							TmpClienteGDPR tmpClienteGDPR = genericDao.get(TmpClienteGDPR.class, filtroDocumento);
 							if(!Checks.esNulo(tmpClienteGDPR)) {
 								tmpClienteGDPR.setIdAdjunto(null);

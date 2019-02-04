@@ -3668,26 +3668,15 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     },
     
     onChangeComboOcupado: function(combo, newValue, oldValue, eOpts) {
-    	console.log("Combo : " + combo + "\n NewValue : " +newValue + '\n oldValue : ' +oldValue+ '\neOpts: ' + eOpts);
-    	
-    	if (newValue == 0 && oldValue == null ){
-    		combo.up('formBase').down('[reference=comboSituacionPosesoriaConTitulo]').setDisabled(true);
-    		combo.up('formBase').down('[reference=comboSituacionPosesoriaConTitulo]').setValue(null);
-    		
-    	}else if (newValue == 0) {
+    	if (newValue == 0) {
     		combo.up('formBase').down('[reference=comboSituacionPosesoriaConTitulo]').setDisabled(true);
     		combo.up('formBase').down('[reference=comboSituacionPosesoriaConTitulo]').setValue(null);
     	}else {
     		combo.up('formBase').down('[reference=comboSituacionPosesoriaConTitulo]').setDisabled(false);
     	}
-    	/*var me = this;
-    	var tipoEstadoAlquiler = me.getViewModel().get('situacionPosesoria.tipoEstadoAlquiler');
-    	
-		if (tipoEstadoAlquiler != CONST.COMBO_ESTADO_ALQUILER['ALQUILADO'] && newValue == CONST.COMBO_OCUPACION['SI']) {
-			combo.up('formBase').down('[reference=comboSituacionPosesoriaConTitulo]').setValue(CONST.COMBO_CON_TITULO['NO']);
-		}*/
+    
 	},
-	
+
 	enableChkPerimetroAlquiler: function(get){
 		var me = this;
 		 var esGestorAlquiler = me.getViewModel().get('activo.esGestorAlquiler');

@@ -45,6 +45,7 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.dsm.dao.EntidadDao;
 import es.capgemini.pfs.dsm.model.Entidad;
 import es.capgemini.pfs.security.model.UsuarioSecurity;
+import es.capgemini.pfs.users.UsuarioManager;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
@@ -73,6 +74,8 @@ import es.pfsgroup.plugin.rem.utils.WebcomSignatureUtils;
 import es.pfsgroup.recovery.api.UsuarioApi;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
+
+
 
 @Service("restManager")
 public class RestManagerImpl implements RestApi {
@@ -104,6 +107,10 @@ public class RestManagerImpl implements RestApi {
 	
 	@Autowired
 	private LogTrustWebService trustMe;
+	
+	@Autowired
+	private UsuarioManager usuarioManager;
+
 	
 	@Override
 	public boolean validateSignature(Broker broker, String signature, RestRequestWrapper restRequest)
@@ -346,8 +353,9 @@ public class RestManagerImpl implements RestApi {
 
 	@Override
 	public UsuarioSecurity loadUser(Entidad entidad, String userName) {
+		Usuario usuario = usuarioManager.getByUsername(userName);
 		UsuarioSecurity user = new UsuarioSecurity();
-		user.setId(-1L);
+		user.setId(usuario.getId());
 		user.setUsername(userName);
 		user.setAccountNonExpired(true);
 		user.setAccountNonLocked(true);

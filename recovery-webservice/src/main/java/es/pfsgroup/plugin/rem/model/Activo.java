@@ -418,7 +418,7 @@ public class Activo implements Serializable, Auditable {
     private Integer tieneDemandaAfecCom;
 
     @Column(name = "ACT_EN_TRAMITE")
-    private Boolean enTramite;
+    private Integer enTramite;
 
     @Column(name = "ACT_PUJA")
     private Boolean estaEnPuja;
@@ -1690,11 +1690,11 @@ public class Activo implements Serializable, Auditable {
 		this.tieneOkTecnico = tieneOkTecnico;
 	}
 
-	public Boolean getEnTramite() {
+	public Integer getEnTramite() {
 		return enTramite;
 	}
 
-	public void setEnTramite(Boolean enTramite) {
+	public void setEnTramite(Integer enTramite) {
 		this.enTramite = enTramite;
 	}
 

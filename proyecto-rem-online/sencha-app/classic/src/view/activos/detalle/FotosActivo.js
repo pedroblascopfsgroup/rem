@@ -21,6 +21,7 @@ Ext.define('HreRem.view.activos.detalle.FotosActivo', {
         var me = this;
         me.setTitle(HreRem.i18n('title.fotos'));
 
+
         var items = [
         	{
         		xtype: 'fotosactivotabpanel'

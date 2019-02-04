@@ -16,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import edu.emory.mathcs.backport.java.util.concurrent.TimeUnit;
 import es.capgemini.devon.message.MessageService;
 import es.capgemini.pfs.users.UsuarioManager;
 import es.pfsgroup.commons.utils.Checks;
@@ -246,14 +245,35 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	 * @return Devuelve True si el check de ocultar activo para la venta debe estar deshabilitado.
 	 */
 	private Boolean deshabilitarCheckOcultarVenta(Long idActivo) {
-		boolean resultado = false;
 
-		try{
-			resultado = !isPublicable(idActivo) || !isComercializable(idActivo) || isVendido(idActivo) || (!isPublicadoVenta(idActivo) && !isOcultoVenta(idActivo)) || isOcultoAutomaticoVenta(idActivo) || isFueraDePerimetro(idActivo);
-		}catch(Exception e){
-			logger.error("Error en el método deshabilitarCheckOcultarVenta",e);
+		Boolean resultado = false;
+		try {
+			resultado = !isPublicable(idActivo) || !isComercializable(idActivo) || isVendido(idActivo)
+					|| (!isPublicadoVenta(idActivo) && !isOcultoVenta(idActivo)) || isOcultoAutomaticoVenta(idActivo)
+					|| isFueraDePerimetro(idActivo);
+		} catch (Exception e) {
+			logger.error("Error en el método deshabilitarCheckOcultarVenta", e);
 		}
-		
+
+		return resultado;
+	}
+	
+	/**
+	 * Este método calcula si el check de ocultar activo alquiler se ha de deshabilitar en base a unas reglas.
+	 *
+	 * @param idActivo: ID del activo del que obtener los datos para verificar las reglas.
+	 * @return Devuelve True si el check de ocultar activo para el alquiler debe estar deshabilitado.
+	 */
+	private Boolean deshabilitarCheckOcultarAlquiler(Long idActivo) {
+		Boolean resultado = false;
+		try {
+			resultado = !isPublicable(idActivo) || !isComercializable(idActivo) || isVendido(idActivo)
+					|| (!isPublicadoAlquiler(idActivo) && !isOcultoAlquiler(idActivo)) || isOcultoAutomaticoAlquiler(idActivo)
+					|| isFueraDePerimetro(idActivo);
+		} catch (Exception e) {
+			logger.error("Error en el método deshabilitarCheckOcultarAlquiler", e);
+		}
+
 		return resultado;
 	}
 
@@ -264,30 +284,12 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	 * @return Devuelve True si el check de publicar activo para el alquiler debe estar deshabilitado.
 	 */
 	private Boolean deshabilitarCheckPublicarAlquiler(Long idActivo) {
-		boolean resultado = false;
+		Boolean resultado = false;
 		try{
 			resultado =!isPublicable(idActivo) || !isComercializable(idActivo) || isVendido(idActivo) || isReservado(idActivo) || isPublicadoAlquiler(idActivo) || isOcultoAlquiler(idActivo) ||
 			!isAdecuacionAlquilerNotNull(idActivo) || isFueraDePerimetro(idActivo) || (!isInformeAprobado(idActivo) && (!tienePrecioRenta(idActivo) && !isPublicarSinPrecioAlquilerActivado(idActivo)));
 		}catch(Exception e){
 			logger.error("Error en el método deshabilitarCheckPublicarAlquiler",e);
-		}
-		
-		return resultado;
-	}
-
-	/**
-	 * Este método calcula si el check de ocultar activo alquiler se ha de deshabilitar en base a unas reglas.
-	 *
-	 * @param idActivo: ID del activo del que obtener los datos para verificar las reglas.
-	 * @return Devuelve True si el check de ocultar activo para el alquiler debe estar deshabilitado.
-	 */
-	private Boolean deshabilitarCheckOcultarAlquiler(Long idActivo) {
-		boolean resultado = false;
-
-		try{
-			resultado =!isPublicable(idActivo) || !isComercializable(idActivo) || isVendido(idActivo) || !isPublicadoAlquiler(idActivo) || isOcultoAutomaticoAlquiler(idActivo) || isFueraDePerimetro(idActivo);
-		}catch(Exception e){
-			logger.error("Error en el método deshabilitarCheckOcultarAlquiler" ,e);
 		}
 		
 		return resultado;
@@ -310,7 +312,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		Filter filter = genericDao.createFilter(FilterType.EQUALS, "idActivo", idActivo);
 		VCondicionantesDisponibilidad vcd = genericDao.get(VCondicionantesDisponibilidad.class, filter);
 
-		return !Checks.esNulo(vcd) && !vcd.getSinInformeAprobado();
+		return !Checks.esNulo(vcd) && !vcd.getSinInformeAprobadoREM();
 	}
 
 	// Comprobación mínima.
@@ -327,7 +329,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	private Boolean isPublicable(Long idActivo) {
     	PerimetroActivo perimetro = perimetroDao.getPerimetroActivoByIdActivo(idActivo);
 
-    	return !Checks.esNulo(perimetro) && !Checks.esNulo(perimetro.getAplicaPublicar());
+    	return !Checks.esNulo(perimetro) && !Checks.esNulo(perimetro.getAplicaPublicar()) && perimetro.getAplicaPublicar();
 	}
 
 	// Comprobación mínima.

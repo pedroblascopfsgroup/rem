@@ -1,4 +1,3 @@
-
 Ext.define('HreRem.view.activos.detalle.DatosGeneralesActivo', {
     extend: 'Ext.panel.Panel',
     xtype: 'datosgeneralesactivo',

@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Sergio Beleña
---## FECHA_CREACION=20181213
+--## AUTOR=Oscar Diestre
+--## FECHA_CREACION=20190204
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=2.0.3
---## INCIDENCIA_LINK=HREOS-4931
+--## INCIDENCIA_LINK=HREOS-5358
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -13,6 +13,8 @@
 --##        	0.1 Versión inicial
 --##		0.2 Modificado precio_v y precio_a - Maria Presencia Herrero - REMVIP-2638
 --##		0.3 Sergio Beleña -HREOS-4931- Optimización de tiempos   
+--##		0.4 Oscar Diestre -HREOS-5358- Modificado para mostrar agrupaciones asisitidas vencidas 
+--##		0.5 Oscar Diestre -HREOS-5358- Corregidas por coma simple
 --##########################################
 --*/
 
@@ -113,8 +115,15 @@ BEGIN
           JOIN '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION APU ON APU.ACT_ID = ACT.ACT_ID AND APU.BORRADO = 0
           JOIN '|| V_ESQUEMA ||'.ACT_AGA_AGRUPACION_ACTIVO AGA ON AGA.ACT_ID = ACT.ACT_ID AND AGA.BORRADO = 0
           JOIN '|| V_ESQUEMA ||'.ACT_AGR_AGRUPACION AGR ON AGR.AGR_ID = AGA.AGR_ID AND AGR.BORRADO = 0
-          JOIN '|| V_ESQUEMA ||'.DD_TAG_TIPO_AGRUPACION TAG ON TAG.DD_TAG_ID = AGR.DD_TAG_ID AND TAG.BORRADO = 0 AND TAG.DD_TAG_CODIGO = ''02''	/*Restringida*/ 
-               AND (AGR.AGR_FIN_VIGENCIA IS NULL OR TRUNC(AGR.AGR_FIN_VIGENCIA) >= TRUNC(SYSDATE))
+          JOIN '|| V_ESQUEMA ||'.DD_TAG_TIPO_AGRUPACION TAG ON TAG.DD_TAG_ID = AGR.DD_TAG_ID AND TAG.BORRADO = 0 
+                        AND (             
+                              (        TAG.DD_TAG_CODIGO = ''02''	/*Restringida*/
+                                AND (AGR.AGR_FIN_VIGENCIA IS NULL OR TRUNC(AGR.AGR_FIN_VIGENCIA) >= TRUNC(SYSDATE))
+                              )     
+                            OR(     TAG.DD_TAG_CODIGO = ''13''	/*Asistida*/
+                                AND (TRUNC(AGR.AGR_FIN_VIGENCIA) < TRUNC(SYSDATE))
+                                )
+                            )    
           LEFT JOIN '|| V_ESQUEMA ||'.DD_TCO_TIPO_COMERCIALIZACION TCO ON APU.DD_TCO_ID = TCO.DD_TCO_ID AND TCO.BORRADO = 0
           LEFT JOIN '|| V_ESQUEMA ||'.DD_EPA_ESTADO_PUB_ALQUILER EPA ON APU.DD_EPA_ID = EPA.DD_EPA_ID AND EPA.BORRADO = 0
           LEFT JOIN '|| V_ESQUEMA ||'.DD_EPV_ESTADO_PUB_VENTA EPV ON APU.DD_EPV_ID = EPV.DD_EPV_ID AND EPV.BORRADO = 0
@@ -153,6 +162,7 @@ BEGIN
                               LEFT JOIN '|| V_ESQUEMA ||'.DD_TPC_TIPO_PRECIO tpc ON tpc.dd_tpc_id = val.dd_tpc_id AND tpc.dd_tpc_codigo IN (''02'', ''03'') AND TPC.BORRADO = 0
                               JOIN '|| V_ESQUEMA ||'.DD_TCO_TIPO_COMERCIALIZACION tco ON tco.dd_tco_id = APU.dd_tco_id AND TCO.BORRADO = 0 AND tco.dd_tco_codigo IN (''01'', ''02'', ''03'', ''04'')
                              WHERE APU.borrado = 0
+
                               )
                       WHERE rn = 1)VAL ON VAL.ACT_ID = ACT.ACT_ID  
           LEFT JOIN ( SELECT act_id, precio_V
@@ -165,12 +175,14 @@ BEGIN
                                       ELSE 0
                                    END AS precio_V,
                                    tpc.dd_tpc_codigo, tco.dd_tco_codigo,
+
                                    ROW_NUMBER () OVER (PARTITION BY APU.act_id ORDER BY DECODE (tpc.dd_tpc_codigo || tco.dd_tco_codigo, ''0201'', 0, ''0202'', 0, ''0204'', 0, ''0302'', 0, ''0303'', 0, ''0304'', 0, 1)) rn
                               FROM '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION APU
                               LEFT JOIN '|| V_ESQUEMA ||'.act_val_valoraciones val ON val.act_id = APU.act_id AND val.borrado = 0
                               LEFT JOIN '|| V_ESQUEMA ||'.DD_TPC_TIPO_PRECIO tpc ON tpc.dd_tpc_id = val.dd_tpc_id AND tpc.dd_tpc_codigo IN (''02'', ''03'') AND TPC.BORRADO = 0
                                JOIN '|| V_ESQUEMA ||'.DD_TCO_TIPO_COMERCIALIZACION tco ON tco.dd_tco_id = APU.dd_tco_id AND TCO.BORRADO = 0 AND tco.dd_tco_codigo IN (''01'', ''02'', ''03'', ''04'')
                              WHERE APU.borrado = 0
+
                               )
                       WHERE rn = 1)VAL2 ON VAL2.ACT_ID = ACT.ACT_ID                          
           LEFT JOIN (SELECT ADO.ACT_ID

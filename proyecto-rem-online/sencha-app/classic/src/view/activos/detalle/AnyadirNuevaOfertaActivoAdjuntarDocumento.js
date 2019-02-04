@@ -35,7 +35,9 @@ Ext.define('HreRem.view.activos.detalle.AnyadirNuevaOfertaActivoAdjuntarDocument
     		handler: function(btn){
     			var wizard = btn.up().up().up();
     			var layout = wizard.getLayout();
-    			
+    			var ventanaWizard = btn.up('anyadirnuevaofertaactivoadjuntardocumento'),
+    			btnGenerarDoc = ventanaWizard.down('button[itemId=btnGenerarDoc]');
+
     			if(wizard.xtype.indexOf('wizardaltacomprador') >= 0) {
     				wizard.width = Ext.Element.getViewportWidth()/2;
         			wizard.height = Ext.Element.getViewportHeight()-100;
@@ -44,38 +46,35 @@ Ext.define('HreRem.view.activos.detalle.AnyadirNuevaOfertaActivoAdjuntarDocument
     				wizard.height = Ext.Element.getViewportHeight()-325;
     			}
     			
-    			
-    			var esInternacional = btn.up('anyadirnuevaofertaactivoadjuntardocumento').getForm().findField('carteraInternacional').getValue();
-          	    var cesionDatos = btn.up('anyadirnuevaofertaactivoadjuntardocumento').getForm().findField('cesionDatos').getValue();
-          	    var checkTransInternacionales = btn.up('anyadirnuevaofertaactivoadjuntardocumento').getForm().findField('transferenciasInternacionales').getValue();
+    			var esInternacional = ventanaWizard.getForm().findField('carteraInternacional').getValue();
+          	    var cesionDatos = ventanaWizard.getForm().findField('cesionDatos').getValue();
+          	    var checkTransInternacionales = ventanaWizard.getForm().findField('transferenciasInternacionales').getValue();
           	  
     			if(cesionDatos) {
 	          		  if(esInternacional) {
-	          			  if(checkTransInternacionales) {
-	          				btn.up('anyadirnuevaofertaactivoadjuntardocumento').down('button[itemId=btnGenerarDoc]').enable();
-	          			  } else {
-	          				btn.up('anyadirnuevaofertaactivoadjuntardocumento').down('button[itemId=btnGenerarDoc]').disable();
-	          			  }
-	          			  
+	          			  if(checkTransInternacionales)
+	          				btnGenerarDoc.enable();
+	          			  else 
+	          				btnGenerarDoc.disable();
 	          		  } else {
-	          			btn.up('anyadirnuevaofertaactivoadjuntardocumento').down('button[itemId=btnGenerarDoc]').enable();
+	          			btnGenerarDoc.enable();
 	          		  }
 	          	  } else {
-	          		btn.up('anyadirnuevaofertaactivoadjuntardocumento').down('button[itemId=btnGenerarDoc]').disable();
-	          		btn.enable();
-	          		btn.up('anyadirnuevaofertaactivoadjuntardocumento').getForm().findField('comunicacionTerceros').enable();
-	          		btn.up('anyadirnuevaofertaactivoadjuntardocumento').getForm().findField('transferenciasInternacionales').enable();
+		          	btn.enable();
+	          		btnGenerarDoc.disable();
+	          		ventanaWizard.getForm().findField('comunicacionTerceros').enable();
+	          		ventanaWizard.getForm().findField('transferenciasInternacionales').enable();
 	          	  }
+    			
     			wizard.down('anyadirnuevaofertaactivoadjuntardocumento').down('button[itemId=btnSubirDoc]').disable();
-    			//Se descomenta para version final, se deja comentado para hacer pruebas
-    			//wizard.down('anyadirnuevaofertaactivoadjuntardocumento').down('button[itemId=btnFinalizar]').disable();
+    			wizard.down('anyadirnuevaofertaactivoadjuntardocumento').down('button[itemId=btnFinalizar]').disable();
     			
     			layout["prev"]();
     		}
     	},
     		{ itemId: 'btnGenerarDoc', text: 'Generar Documento', handler: 'onClickBotonGenerarDoc', disabled: true},
     		{ itemId: 'btnSubirDoc', text: 'Subir Documento', handler: 'abrirFormularioAdjuntarDocumentoOferta', disabled: true},
-    		{ itemId: 'btnFinalizar', text: 'Finalizar', handler: 'onClickCrearOferta', disabled: false}];//Se pondrá a true en la version final, es false para realizar pruebas
+    		{ itemId: 'btnFinalizar', text: 'Finalizar', handler: 'onClickCrearOferta', disabled: true}];
     	
     	me.items = [
     		{
@@ -101,23 +100,29 @@ Ext.define('HreRem.view.activos.detalle.AnyadirNuevaOfertaActivoAdjuntarDocument
 							readOnly: false,
 							listeners: {
 	                              change: function (checkbox, newVal, oldVal) {
-	                            	  var esInternacional = checkbox.up('anyadirnuevaofertaactivoadjuntardocumento').getForm().findField('carteraInternacional').getValue();
+	                            	  var ventanaWizard = checkbox.up('anyadirnuevaofertaactivoadjuntardocumento'),
+	                            	  esInternacional = ventanaWizard.getForm().findField('carteraInternacional').getValue(),
+	                            	  btnGenerarDoc = ventanaWizard.down('button[itemId=btnGenerarDoc]'),
+	                            	  btnSubirDoc = ventanaWizard.down('button[itemId=btnSubirDoc]'),
+	                            	  btnFinalizar = ventanaWizard.down('button[itemId=btnFinalizar]');
 	                            	  if(checkbox.getValue()) {
 	                            		  if(esInternacional) {
 	                            			  if(checkTransInternacionales) {
-	                            				  checkbox.up('anyadirnuevaofertaactivoadjuntardocumento').down('button[itemId=btnGenerarDoc]').enable();
+	                            				  btnGenerarDoc.enable();
 	                            			  } else {
-	                            				  checkbox.up('anyadirnuevaofertaactivoadjuntardocumento').down('button[itemId=btnGenerarDoc]').disable();
+	                            				  btnGenerarDoc.disable();
+	                            			  	  btnSubirDoc.disable();
 	                            			  }
-	                            			  
 	                            		  } else {
-	                            			  checkbox.up('anyadirnuevaofertaactivoadjuntardocumento').down('button[itemId=btnGenerarDoc]').enable();
+	                            			  btnGenerarDoc.enable();
 	                            		  }
 	                            	  } else {
-	                            		  checkbox.up('anyadirnuevaofertaactivoadjuntardocumento').down('button[itemId=btnGenerarDoc]').disable();
 	                            		  checkbox.enable();
-	                            		  checkbox.up('anyadirnuevaofertaactivoadjuntardocumento').getForm().findField('comunicacionTerceros').enable();
-	                            		  checkbox.up('anyadirnuevaofertaactivoadjuntardocumento').getForm().findField('transferenciasInternacionales').enable();
+	                            		  btnGenerarDoc.disable();
+	                            		  btnSubirDoc.disable();
+	                            		  btnFinalizar.disable();
+	                            		  ventanaWizard.getForm().findField('comunicacionTerceros').enable();
+	                            		  ventanaWizard.getForm().findField('transferenciasInternacionales').enable();
 	                            	  }
 	                              }
 	                          }
@@ -141,24 +146,24 @@ Ext.define('HreRem.view.activos.detalle.AnyadirNuevaOfertaActivoAdjuntarDocument
 							readOnly: false,
 							listeners: {
 	                              change: function (checkbox, newVal, oldVal) {
-	                            	  var esInternacional = checkbox.up('anyadirnuevaofertaactivoadjuntardocumento').getForm().findField('carteraInternacional').getValue();
-	                            	  var cesionDatos = checkbox.up('anyadirnuevaofertaactivoadjuntardocumento').getForm().findField('cesionDatos').getValue();
-	                            	  if(checkbox.getValue() && esInternacional) {
-	                            		  checkbox.up('anyadirnuevaofertaactivoadjuntardocumento').down('button[itemId=btnGenerarDoc]').enable();
-	                            	  }
-	                            	  else if (checkbox.getValue() && !esInternacional) {
-	                            		  checkbox.up('anyadirnuevaofertaactivoadjuntardocumento').down('button[itemId=btnGenerarDoc]').enable();
-	                            	  }
-	                            	  else if (!checkbox.getValue() && !esInternacional && cesionDatos) {
-	                            		  checkbox.up('anyadirnuevaofertaactivoadjuntardocumento').down('button[itemId=btnGenerarDoc]').enable();
-	                            	  }
-	                            	  else if (!checkbox.getValue() && !esInternacional && !cesionDatos) {
-	                            		  checkbox.up('anyadirnuevaofertaactivoadjuntardocumento').down('button[itemId=btnGenerarDoc]').disable();
-	                            	  }
-	                            	  else  {
-	                            		  checkbox.up('anyadirnuevaofertaactivoadjuntardocumento').down('button[itemId=btnGenerarDoc]').disable();
-	                            	  }
+	                            	  var ventanaWizard = checkbox.up('anyadirnuevaofertaactivoadjuntardocumento'),
+	                            	  esInternacional = ventanaWizard.getForm().findField('carteraInternacional').getValue(),
+	                            	  btnGenerarDoc = ventanaWizard.down('button[itemId=btnGenerarDoc]'),
+	                            	  cesionDatos = ventanaWizard.getForm().findField('cesionDatos').getValue(),
+	                            	  btnSubirDoc = ventanaWizard.down('button[itemId=btnSubirDoc]'),
+	                            	  btnFinalizar = ventanaWizard.down('button[itemId=btnFinalizar]');
 	                            	  
+	                            	  if(checkbox.getValue() && esInternacional && cesionDatos) {
+	                            		  btnGenerarDoc.enable();
+	                            	  } else if (checkbox.getValue() && !esInternacional && cesionDatos) {
+	                            		  btnGenerarDoc.enable();
+	                            	  } else if (!checkbox.getValue() && !esInternacional && cesionDatos) {
+	                            		  btnGenerarDoc.enable();
+	                            	  } else {
+	                            		  btnGenerarDoc.disable();
+	                            		  btnSubirDoc.disable();
+	                            		  btnFinalizar.disable();
+	                            	  }
 	                              }
 	                          }
 						},

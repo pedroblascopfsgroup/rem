@@ -119,7 +119,6 @@ public class ActivoOfertaController extends ParadiseJsonController {
 		ModelMap model = new ModelMap();
 		
 		try {
-			
 			WebFileItem fileItem = uploadAdapter.getWebFileItem(request);
 			
 			List<DtoAdjunto> listaAdjuntos = activoOfertaAdapter.getAdjunto(idPersonaHaya, docCliente, null, null);

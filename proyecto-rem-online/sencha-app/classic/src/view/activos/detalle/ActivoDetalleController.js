@@ -1378,8 +1378,7 @@ Ext
 							Ext.Ajax.request({
 										url : url,
 										params : {docCliente : docCliente},
-										success : function(a, operation,
-												context) {
+										success : function(a, operation, context) {
 											var data = Ext.decode(a.responseText);
 											if (data) {
 												grid.up().down('textfieldbase').setValue('');
@@ -1392,7 +1391,13 @@ Ext
 														height : 100,
 														align : 't'
 													});
-											grid.up('anyadirnuevaofertaactivoadjuntardocumento').down('button[itemId=btnFinalizar]').disable();
+											var ventanaWizard = grid.up('anyadirnuevaofertaactivoadjuntardocumento');
+											ventanaWizard.down('button[itemId=btnFinalizar]').disable();
+											ventanaWizard.down('button[itemId=btnSubirDoc]').disable();
+											ventanaWizard.down('button[itemId=btnGenerarDoc]').enable();
+											ventanaWizard.getForm().findField('comunicacionTerceros').enable();
+											ventanaWizard.getForm().findField('cesionDatos').enable();
+											ventanaWizard.getForm().findField('transferenciasInternacionales').enable();
 										},
 										failure : function(a, operation,
 												context) {
@@ -5267,8 +5272,27 @@ Ext
 	 	    		     success: function(response, opts) {
 	 	    		    	 data = Ext.decode(response.responseText);
 	 	    		    	 if(!Ext.isEmpty(data.data)){
-	 	    		    		ventanaWizard.down('anyadirnuevaofertaactivoadjuntardocumento').getForm().findField('docOfertaComercial').setValue(data.data[0].nombre);
-	 	    		    		ventanaWizard.down('anyadirnuevaofertaactivoadjuntardocumento').down().down('panel').down('button').show();
+	 	    		    		var ventanaWizardAdjuntarDocumento = ventanaWizard.down('anyadirnuevaofertaactivoadjuntardocumento'),
+	 	    		    		esInternacional = ventanaWizardAdjuntarDocumento.getForm().findField('carteraInternacional').getValue(),
+	 	    		    		cesionDatos = ventanaWizardAdjuntarDocumento.getForm().findField('cesionDatos'),
+	 	    		    		transferenciasInternacionales = ventanaWizardAdjuntarDocumento.getForm().findField('transferenciasInternacionales'),
+            		    		btnGenerarDoc = ventanaWizardAdjuntarDocumento.down('button[itemId=btnGenerarDoc]');
+	 	    		    		
+	 	    		    		ventanaWizardAdjuntarDocumento.getForm().findField('docOfertaComercial').setValue(data.data[0].nombre);
+            		    		ventanaWizardAdjuntarDocumento.down().down('panel').down('button').show();
+	 	    		    		
+	 	    		    		if(cesionDatos.getValue()) {
+	 	    		    			  if(esInternacional) {
+		                          			if(transferenciasInternacionales.getValue())
+				                          		btnGenerarDoc.enable();
+		                          			else
+				                          		btnGenerarDoc.disable();
+	                          		  } else {
+		                          		btnGenerarDoc.enable();
+	                          		  }
+	                          	  } else {
+	                          		btnGenerarDoc.disable();
+	                          	  }
 	 	    		    	 }
 	 	    		     },
 	
@@ -5335,10 +5359,6 @@ Ext
      		var cesionDatos = ventana3.getForm().findField('cesionDatos').value;
  			var transIntern = ventana3.getForm().findField('transferenciasInternacionales').value;
  			var comTerceros = ventana3.getForm().findField('comunicacionTerceros').value;
-     		
- 			ventana3.getForm().findField('cesionDatos').disable();
- 			ventana3.getForm().findField('transferenciasInternacionales').disable();
- 			ventana3.getForm().findField('comunicacionTerceros').disable();
  			
     		var url =  $AC.getRemoteUrl('activo/generarUrlGDPR');
     		Ext.Ajax.request({

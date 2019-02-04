@@ -166,9 +166,14 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoOfertacomercial', {
 	                		     success: function(response, opts) {
 	                		    	 data = Ext.decode(response.responseText);
 	                		    	 if(!Ext.isEmpty(data.data)){
-	                		    	 	ventanaWizard.down('anyadirnuevaofertaactivoadjuntardocumento').getForm().findField('docOfertaComercial').setValue(data.data[0].nombre);
-	                		    	 	ventanaWizard.down('anyadirnuevaofertaactivoadjuntardocumento').down().down('panel').down('button').show();
-	                		    	 	ventanaWizard.down('anyadirnuevaofertaactivoadjuntardocumento').down('button[itemId=btnFinalizar]').enable();
+	                		    		var ventanaWizardAdjuntarDocumento = ventanaWizard.down('anyadirnuevaofertaactivoadjuntardocumento');
+	                		    		ventanaWizardAdjuntarDocumento.getForm().findField('docOfertaComercial').setValue(data.data[0].nombre);
+	                		    		ventanaWizardAdjuntarDocumento.down().down('panel').down('button').show();
+	                		    		ventanaWizardAdjuntarDocumento.down('button[itemId=btnFinalizar]').enable();
+	                		    		ventanaWizardAdjuntarDocumento.down('button[itemId=btnGenerarDoc]').disable();
+	                		    		ventanaWizardAdjuntarDocumento.getForm().findField('comunicacionTerceros').disable();
+	                		    		ventanaWizardAdjuntarDocumento.getForm().findField('cesionDatos').disable();
+	                		    		ventanaWizardAdjuntarDocumento.getForm().findField('transferenciasInternacionales').disable();
 	                		    	 	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
 	                		    	 }
 	                		     },

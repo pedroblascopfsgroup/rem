@@ -54,7 +54,7 @@ public class ActivoOfertaController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getListAdjuntos(String docCliente, Long idActivo, Long idAgrupacion){
+	public ModelAndView getListAdjuntos(String docCliente, String idActivo, String idAgrupacion){
 		
 		String idPersonaHaya = null;
 		logger.error(">>>>>>>>>>>>>>>>>>> ENTRANDO EN METODO getListAdjuntos "+docCliente+" "+idActivo+" "+idAgrupacion);
@@ -80,7 +80,7 @@ public class ActivoOfertaController extends ParadiseJsonController {
 		ModelMap model = new ModelMap();
 		
 		try {
-			model.put(RESPONSE_DATA_KEY, activoOfertaAdapter.getAdjunto(idPersonaHaya, docCliente, idActivo, idAgrupacion));
+			model.put(RESPONSE_DATA_KEY, activoOfertaAdapter.getAdjunto(idPersonaHaya, docCliente, Long.parseLong(idActivo), Long.parseLong(idAgrupacion)));
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 			model.put(RESPONSE_SUCCESS_KEY, false);

@@ -482,10 +482,11 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			return ponerPublicarAReadonly;
 		},
 
-		esEditableChkbxComercializar: function(get){
+		esReadOnlyChkbxComercializar: function(get){
 			var activoVendido = get('activo.isVendido');
+			var activoEnTramite = get('activo.isActivoEnTramite');
 
-			return activoVendido;
+			return activoVendido || activoEnTramite;
 		},
 
 		esVisibleTipoPublicacionVenta: function(get){

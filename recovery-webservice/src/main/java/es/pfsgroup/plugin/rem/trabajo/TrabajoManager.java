@@ -559,7 +559,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 	@Override
 	@Transactional(readOnly = false)
-	public Trabajo create(DDSubtipoTrabajo subtipoTrabajo, List<Activo> listaActivos, PropuestaPrecio propuestaPrecio) {
+	public Trabajo create(DDSubtipoTrabajo subtipoTrabajo, List<Activo> listaActivos, PropuestaPrecio propuestaPrecio) throws Exception {
 		return this.create(subtipoTrabajo, listaActivos, propuestaPrecio,true);
 	}
 
@@ -2079,9 +2079,6 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			} catch (Exception ex) {
 				logger.error(ex.getMessage());
 			}
-
-		} catch (Exception ex) {
-			logger.error(ex.getMessage());
 		}
 
 		return listaAdjuntos;

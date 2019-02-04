@@ -16,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import edu.emory.mathcs.backport.java.util.concurrent.TimeUnit;
 import es.capgemini.devon.message.MessageService;
 import es.capgemini.pfs.users.UsuarioManager;
 import es.pfsgroup.commons.utils.Checks;
@@ -278,7 +277,23 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		return resultado;
 	}
 
-	
+	/**
+	 * Este método calcula si el check de publicar activo alquiler se ha de deshabilitar en base a unas reglas.
+	 *
+	 * @param idActivo: ID del activo del que obtener los datos para verificar las reglas.
+	 * @return Devuelve True si el check de publicar activo para el alquiler debe estar deshabilitado.
+	 */
+	private Boolean deshabilitarCheckPublicarAlquiler(Long idActivo) {
+		Boolean resultado = false;
+		try{
+			resultado =!isPublicable(idActivo) || !isComercializable(idActivo) || isVendido(idActivo) || isReservado(idActivo) || isPublicadoAlquiler(idActivo) || isOcultoAlquiler(idActivo) ||
+			!isAdecuacionAlquilerNotNull(idActivo) || isFueraDePerimetro(idActivo) || (!isInformeAprobado(idActivo) && (!tienePrecioRenta(idActivo) && !isPublicarSinPrecioAlquilerActivado(idActivo)));
+		}catch(Exception e){
+			logger.error("Error en el método deshabilitarCheckPublicarAlquiler",e);
+		}
+		
+		return resultado;
+	}
 
 	// Comprobación mínima.
 	private Boolean isAdecuacionAlquilerNotNull(Long idActivo) {

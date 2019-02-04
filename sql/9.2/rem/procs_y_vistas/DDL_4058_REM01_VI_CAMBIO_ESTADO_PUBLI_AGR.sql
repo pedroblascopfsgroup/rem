@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Oscar Diestre
---## FECHA_CREACION=20190201
+--## FECHA_CREACION=20190204
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=2.0.3
 --## INCIDENCIA_LINK=HREOS-5358
@@ -14,6 +14,7 @@
 --##		0.2 Modificado precio_v y precio_a - Maria Presencia Herrero - REMVIP-2638
 --##		0.3 Sergio Beleña -HREOS-4931- Optimización de tiempos   
 --##		0.4 Oscar Diestre -HREOS-5358- Modificado para mostrar agrupaciones asisitidas vencidas 
+--##		0.5 Oscar Diestre -HREOS-5358- Corregidas por coma simple
 --##########################################
 --*/
 
@@ -116,10 +117,10 @@ BEGIN
           JOIN '|| V_ESQUEMA ||'.ACT_AGR_AGRUPACION AGR ON AGR.AGR_ID = AGA.AGR_ID AND AGR.BORRADO = 0
           JOIN '|| V_ESQUEMA ||'.DD_TAG_TIPO_AGRUPACION TAG ON TAG.DD_TAG_ID = AGR.DD_TAG_ID AND TAG.BORRADO = 0 
                         AND (             
-                              (        TAG.DD_TAG_CODIGO = '02'	/*Restringida*/
+                              (        TAG.DD_TAG_CODIGO = ''02''	/*Restringida*/
                                 AND (AGR.AGR_FIN_VIGENCIA IS NULL OR TRUNC(AGR.AGR_FIN_VIGENCIA) >= TRUNC(SYSDATE))
                               )     
-                            OR(     TAG.DD_TAG_CODIGO = '13'	/*Asistida*/
+                            OR(     TAG.DD_TAG_CODIGO = ''13''	/*Asistida*/
                                 AND (TRUNC(AGR.AGR_FIN_VIGENCIA) < TRUNC(SYSDATE))
                                 )
                             )    

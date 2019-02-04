@@ -171,7 +171,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.DatosPublicacionAgrupacion', {
 									value: '{datospublicacionagrupacion.motivoOcultacionVentaCodigo}'
 								},
 								listeners: {
-									change: 'onChangeComboMotivoOcultacion'
+									change: 'onChangeComboMotivoOcultacionVenta'
 								}
 							},
 							{
@@ -195,7 +195,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.DatosPublicacionAgrupacion', {
 							},
 							{
 								xtype: 'textareafieldbase',
-								reference: 'textareaMotivoOcultacionManualVenta',
+								reference: 'textareaMotivoOcultacionManualVenta', 
 								bind: {
 									readOnly: '{datospublicacionagrupacion.deshabilitarCheckOcultarVenta}',
 									value: '{datospublicacionagrupacion.motivoOcultacionManualVenta}'
@@ -343,7 +343,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.DatosPublicacionAgrupacion', {
 				            		value: '{datospublicacionagrupacion.motivoOcultacionAlquilerCodigo}'
 				            	},
 	    						listeners: {
-				                	change: 'onChangeComboMotivoOcultacion'
+				                	change: 'onChangeComboMotivoOcultacionAlquiler'
 				            	}
 					        },
 					        {

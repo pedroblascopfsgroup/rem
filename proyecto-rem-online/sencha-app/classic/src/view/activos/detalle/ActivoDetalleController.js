@@ -4786,7 +4786,6 @@ Ext
 												'eleccionUsuarioTipoPublicacionAlquiler',
 												btn.codigo);
 						}
-
 						btn.up('window').destroy();
 					},
 

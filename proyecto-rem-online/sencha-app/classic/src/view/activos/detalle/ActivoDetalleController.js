@@ -5025,6 +5025,8 @@ Ext
 	    				   ventanaWizard = btn.up('wizardaltacomprador');
 	    				   ventanaAltaWizard = ventanaWizard.down('datoscompradorwizard');
 	    				   
+	    				   ventanaAltaWizard.getForm().reset();
+	    				   
 	    				   if(!Ext.isEmpty(pedirDoc)){
 	    					   ventanaAltaWizard.getForm().findField('pedirDoc').setValue(pedirDoc);
 	           				   if(pedirDoc == "true"){

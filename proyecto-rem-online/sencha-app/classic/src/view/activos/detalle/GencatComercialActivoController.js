@@ -49,9 +49,11 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoController', {
     
     onClickSolicitarVisita: function(btn) {
 
-        var me = this;
-        //TODO: Funcionalidad del botón de solicitar visitas de GENCAT
-        console.log("onClickSolicitarVisita");
+		var me = this;
+		
+		var idActivo = me.getViewModel().get("activo.id");
+		
+		me.abrirFormularioAltaVisita(idActivo, btn);
 
     },
     
@@ -126,7 +128,7 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoController', {
 			idActivo: idActivo, 
 			parent: grid
 		};
-		Ext.create("HreRem.view.common.adjuntos.VentanaCrearNotificacion", data).show();
+		Ext.create("HreRem.view.activos.detalle.VentanaCrearNotificacion", data).show();
 		
 	},
 	
@@ -174,9 +176,8 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoController', {
                 	window.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
                 }
             });
-        }
-	
-		me.fireEvent("downloadFile", config);
+		}
+		
 	},
 	
     onClickAbrirExpedienteComercial: function() { 
@@ -207,6 +208,53 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoController', {
 		 	}
 	 });
     		    	     
-  }
+  },
+
+	abrirFormularioAltaVisita: function(idActivo, btn) {
+		
+		var me = this;
+		
+		var data = {
+			idActivo: idActivo,
+			parent: btn.up("gencatcomercialactivoform")
+		};
+		
+		Ext.create("HreRem.view.activos.detalle.VentanaAltaVisita", data).show();
+	
+	},
+
+	onClickGuardarAltaVisita: function(btn) {
+		
+		var me = this;
+		
+		var window = btn.up('[reference=ventanaaltavisitaRef]');  
+		
+		var form = window.down('[reference=altaVisitaFormRef]');
+		
+		if(form.isValid()){
+    		
+            form.submit({
+                waitMsg: HreRem.i18n('msg.mask.loading'),
+                params: {
+                	idActivo: window.idActivo
+                },
+                success: function(fp, o) {
+
+                	if(o.result.success == "false") {
+                		window.fireEvent("errorToast", o.result.errorMessage);
+                	}
+                	else {
+                		window.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+					}
+					
+                	window.close();
+                },
+                failure: function(fp, o) {
+                	window.fireEvent("infoToast", HreRem.i18n("msg.operacion.ko"));
+                }
+            });
+		}
+		
+	}
     
 });

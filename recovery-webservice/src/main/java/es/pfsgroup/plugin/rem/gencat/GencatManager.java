@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.gencat;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -40,9 +41,7 @@ import es.pfsgroup.plugin.rem.activo.dao.HistoricoComunicacionGencatAdjuntoDao;
 import es.pfsgroup.plugin.rem.activo.dao.NotificacionGencatDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
-import es.pfsgroup.plugin.rem.api.ActivoAgrupacionActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
-import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.AdecuacionGencatApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GencatApi;
@@ -67,6 +66,7 @@ import es.pfsgroup.plugin.rem.model.ComunicacionGencat;
 import es.pfsgroup.plugin.rem.model.ComunicacionGencatAdjunto;
 import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
+import es.pfsgroup.plugin.rem.model.DtoAltaVisita;
 import es.pfsgroup.plugin.rem.model.DtoGencat;
 import es.pfsgroup.plugin.rem.model.DtoGencatSave;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoComunicacionGencat;
@@ -74,7 +74,6 @@ import es.pfsgroup.plugin.rem.model.DtoNotificacionActivo;
 import es.pfsgroup.plugin.rem.model.DtoOfertasAsociadasActivo;
 import es.pfsgroup.plugin.rem.model.DtoReclamacionActivo;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.GastosExpediente;
 import es.pfsgroup.plugin.rem.model.HistoricoAdecuacionGencat;
 import es.pfsgroup.plugin.rem.model.HistoricoComunicacionGencat;
 import es.pfsgroup.plugin.rem.model.HistoricoComunicacionGencatAdjunto;
@@ -97,6 +96,9 @@ import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoNotificacionGencat;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
+import es.pfsgroup.plugin.rem.rest.salesforce.api.SalesforceApi;
+import es.pfsgroup.plugin.rem.restclient.exception.RestClientException;
+import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientException;
 
 @Service("gencatManager")
 public class GencatManager extends  BusinessOperationOverrider<GencatApi> implements GencatApi {
@@ -133,7 +135,7 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 	private GenericAdapter genericAdapter;
 	
 	@Autowired
-	private NotificacionGencatDao motificacionGencatDao;
+	private NotificacionGencatDao notificacionGencatDao;
 	
 	@Autowired
 	private AdecuacionGencatDao adecuacionGencatDao;
@@ -187,6 +189,9 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 	
 	@Autowired
 	private ActivoAgrupacionActivoDao activoAgrupacionActivoDao;
+	
+	@Autowired
+	private SalesforceApi salesforceManager;
 	
 	
 	@Override
@@ -949,7 +954,7 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 				notificacion.setVersion(new Long(0));
 				notificacion.setAuditoria(auditoria);
 				
-				motificacionGencatDao.save(notificacion);
+				notificacionGencatDao.save(notificacion);
 			}
 			catch (java.text.ParseException e) {
 				logger.error("Error en gencatManager", e);
@@ -1633,4 +1638,13 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 		*/
 	/////////////////////////////////////////////////////////////////
 	}
+
+	@Override
+	public DtoAltaVisita altaVisitaComunicacion(DtoAltaVisita dtoAltaVisita) throws IOException, RestClientException, HttpClientException {
+		
+		salesforceManager.test3();
+		
+		return dtoAltaVisita;
+	}
+	
 }

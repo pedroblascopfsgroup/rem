@@ -92,12 +92,18 @@ public class HttpClientFacade {
 			return JSONObject.fromObject(respBody);
 		} catch (Exception e) {
 			String errorMsg = "Error Sending REST Request [URL:" + serviceUrl + ",METHOD:" + sendMethod + "]";
+			//Se añade este logger para poder ver en consola los errores que desvuelve el webservice
+			logger.error(e);
 			throw new HttpClientException(errorMsg, responseCode, e);
 		} finally {
 			if (method != null) {
 				method.releaseConnection();
 			}
 		}
+	}
+	
+	private HttpClient createHttpClient_AcceptsUntrustedCerts() {
+	    return null;
 	}
 
 	private void setRequestParams(PostMethod method, String jsonString, String charSet)

@@ -1,4 +1,4 @@
-Ext.define('HreRem.view.common.adjuntos.VentanaCrearNotificacion', {
+Ext.define('HreRem.view.activos.detalle.VentanaCrearNotificacion', {
 	extend		: 'HreRem.view.common.WindowBase',
     xtype		: 'ventanacrearnotificacion',
     
@@ -7,7 +7,7 @@ Ext.define('HreRem.view.common.adjuntos.VentanaCrearNotificacion', {
 	reference: 'ventanacrearnotificacionRef',
     
     /**
-     * Parámetro para enviar el id del activo al que pertenece la comunicación de gencat a la añadiremos la notificación.
+     * Parámetro para enviar el id del activo al que pertenece la comunicación de gencat a la que añadiremos la notificación.
      * Debe darse valor al crear/abrir la ventana.
      * @type
      */
@@ -16,6 +16,7 @@ Ext.define('HreRem.view.common.adjuntos.VentanaCrearNotificacion', {
 
     /**
      * Párametro para saber que componente abre la ventana, y poder refrescarlo después.
+	 * También se usa para poder usar los handlers del controlador que tenga asignado parent.
      * @type
      */
     parent: null,

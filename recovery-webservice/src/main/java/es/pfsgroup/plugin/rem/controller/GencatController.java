@@ -1,5 +1,7 @@
 package es.pfsgroup.plugin.rem.controller;
 
+import java.io.IOException;
+
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -23,8 +25,11 @@ import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.GencatAdapter;
 import es.pfsgroup.plugin.rem.api.GencatApi;
+import es.pfsgroup.plugin.rem.model.DtoAltaVisita;
 import es.pfsgroup.plugin.rem.model.DtoGencatSave;
 import es.pfsgroup.plugin.rem.model.DtoNotificacionActivo;
+import es.pfsgroup.plugin.rem.restclient.exception.RestClientException;
+import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientException;
 
 
 @Controller
@@ -343,6 +348,48 @@ public class GencatController {
 			logger.warn("error en gencatController");
 			model.put("success", false);
 			model.put("errorMessage", "Ha habido un problema en el guardado del formulario.");
+		}
+		
+		return createModelAndViewJson(model);
+	}
+	
+	/**
+	 * Recibe y da de alta una visita de una comunicación
+	 * 
+	 * @param request
+	 * @param response
+	 * @return
+	 * @throws Exception
+	 */
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView altaVisitaComunicacion(DtoAltaVisita dtoAltaVisita) {
+
+		ModelMap model = new ModelMap();
+		
+		try {
+			model.put("data", gencatApi.altaVisitaComunicacion(dtoAltaVisita));
+			model.put("success", true);
+		}
+		catch (RestClientException e) {
+			logger.error("error en gencatController", e);
+			model.put("success", false);
+			model.put("errorMessage", e.getMessage());
+		}
+		catch (HttpClientException e) {
+			logger.error("error en gencatController", e);
+			model.put("success", false);
+			model.put("errorMessage", e.getMessage());
+		}
+		catch (IOException e) {
+			logger.error("error en gencatController", e);
+			model.put("success", false);
+			model.put("errorMessage", e.getMessage());
+		}
+		catch (Exception e) {
+			logger.error("error en gencatController", e);
+			model.put("success", false);
+			model.put("errorMessage", "Ha habido un problema al dar de alta la visita.");
 		}
 		
 		return createModelAndViewJson(model);

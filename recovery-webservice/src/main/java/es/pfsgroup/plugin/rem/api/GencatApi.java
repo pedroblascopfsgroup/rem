@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.api;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
@@ -10,6 +11,7 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ComunicacionGencat;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
+import es.pfsgroup.plugin.rem.model.DtoAltaVisita;
 import es.pfsgroup.plugin.rem.model.DtoGencat;
 import es.pfsgroup.plugin.rem.model.DtoGencatSave;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoComunicacionGencat;
@@ -18,6 +20,8 @@ import es.pfsgroup.plugin.rem.model.DtoOfertasAsociadasActivo;
 import es.pfsgroup.plugin.rem.model.DtoReclamacionActivo;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.restclient.exception.RestClientException;
+import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientException;
 
 public interface GencatApi {
 
@@ -155,14 +159,14 @@ public interface GencatApi {
 	/**
 	 * Comprueba si el expediente comercial del activo afecto por GENCAT se tiene que bloquear.
 	 */
-	void bloqueoExpedienteGENCAT(ExpedienteComercial expComercial, ActivoTramite activoTramite);
+	public void bloqueoExpedienteGENCAT(ExpedienteComercial expComercial, ActivoTramite activoTramite);
 
 	/**
 	 * Lanza el nuevo tramite de GENCAT.
 	 * 
 	 * @param Tramite
 	 * */
-	void lanzarTramiteGENCAT(ActivoTramite tramite, Oferta oferta, ExpedienteComercial expedienteComercial) throws Exception; 
+	public void lanzarTramiteGENCAT(ActivoTramite tramite, Oferta oferta, ExpedienteComercial expedienteComercial) throws Exception; 
 	
 	/**
 	 * Crea los nuevos registros en las tablas ADG, OFG y CMG.
@@ -170,7 +174,7 @@ public interface GencatApi {
 	 * @param ExpedienteComercial
 	 * @param Oferta
 	 * */
-	void crearRegistrosTramiteGENCAT(ExpedienteComercial expedienteComercial, Oferta oferta, ActivoTramite tramite);
+	public void crearRegistrosTramiteGENCAT(ExpedienteComercial expedienteComercial, Oferta oferta, ActivoTramite tramite);
 	
 	/**
 	 * Historifica los registros de las tablas ADG, OFG y CMG.
@@ -179,20 +183,26 @@ public interface GencatApi {
 	 * @param Oferta
 	 * @param ActivoTramite
 	 * */
-	void historificarTramiteGENCAT(ActivoTramite activoTramite);
+	public void historificarTramiteGENCAT(ActivoTramite activoTramite);
 	
 	/**
 	 * Cambiar el estado de comunicacion de GENCAT a comunicado cuando se completa la tarea de Comunicacion GENCAT
 	 * @param comunicacionGencat
 	 */
-	
-	void cambiarEstadoComunicacionGENCAT(ComunicacionGencat comunicacionGencat);
+	public void cambiarEstadoComunicacionGENCAT(ComunicacionGencat comunicacionGencat);
 	
 	/**
 	 * Calcular la fecha de sancion a partir de la fecha actual mas 2 meses
 	 * @param comunicacionGencat
 	 */
+	public void informarFechaSancion(ComunicacionGencat comunicacionGencat);
 	
-	void informarFechaSancion(ComunicacionGencat comunicacionGencat);
+	/**
+	 * Crea una visita y la asocia a la comunicación del activo pasado como parámetro
+	 * 
+	 * @param id del activo al que pertenece la comunicación
+	 * @return DtoReclamacionActivo
+	 */
+	public DtoAltaVisita altaVisitaComunicacion(DtoAltaVisita dtoAltaVisita) throws IOException, RestClientException, HttpClientException;
 	
 }

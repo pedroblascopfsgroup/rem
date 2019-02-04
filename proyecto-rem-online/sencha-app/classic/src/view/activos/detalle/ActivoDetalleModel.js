@@ -537,11 +537,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			return (Ext.isEmpty(comboEstadoAlquiler) && comboEstadoAlquiler == CONST.COMBO_ESTADO_ALQUILER["LIBRE"]);
 		},
 
-		esTipoEstadoAlquilerAlquilado: function(get){
-			var estadoAlquilerCodigo = get('situacionPosesoria.tipoEstadoAlquiler');
-
-			return (CONST.COMBO_ESTADO_ALQUILER["ALQUILADO"] == estadoAlquilerCodigo);
-		},
 		isCarteraLiberbank: function(get){
 			 var isLiberbank = get('activo.isCarteraLiberbank');
 			 if(isLiberbank){
@@ -549,7 +544,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			 }
 			 return false;
 		 }
-
+		 
 
 	 },
 

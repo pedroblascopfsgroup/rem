@@ -24,12 +24,8 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
-import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
-import es.pfsgroup.plugin.rem.api.GestorExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.model.Activo;
-import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
-import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
 import es.pfsgroup.plugin.rem.model.DtoTextosOferta;
@@ -54,8 +50,6 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 	public static String CODIGO_NUM_ACTIVO= "NUM_ACTIVO";
 	
 
-	@Autowired
-	private GenericAdapter adapter;
 	
 	@Autowired
 	private GenericABMDao genericDao;
@@ -67,7 +61,7 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 		return getListOfertas(dtoOfertasFilter, null, null);
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public DtoPage getListOfertas(DtoOfertasFilter dtoOfertasFilter, Usuario usuarioGestor, Usuario usuarioGestoria) {
 
@@ -203,7 +197,7 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 			Activo idActivo = genericDao.get(Activo.class, filtroIdActivo);
 			
 			if(!Checks.esNulo(idActivo)){
-				HQLBuilder.addFiltroIgualQueSiNotNull(hb, "voferta.idActivo", idActivo.getId().toString());
+				HQLBuilder.addFiltroIgualQueSiNotNull(hb, "voferta.idActivo", idActivo.getId());
 			}else{
 				HQLBuilder.addFiltroIsNull(hb, "voferta.idActivo");
 			}

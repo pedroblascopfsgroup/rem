@@ -25,10 +25,10 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.agendaMultifuncion.impl.dto.DtoAdjuntoMail;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
-import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.GestorExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
+import es.pfsgroup.plugin.rem.expedienteComercial.dao.ExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.jbpm.handler.notificator.AbstractNotificatorService;
 import es.pfsgroup.plugin.rem.jbpm.handler.notificator.NotificatorService;
 import es.pfsgroup.plugin.rem.model.Activo;
@@ -43,12 +43,12 @@ import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.GestorSustituto;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
+import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
-import es.pfsgroup.plugin.rem.trabajo.TrabajoManager;
 import es.pfsgroup.plugin.rem.utils.FileItemUtils;
 
 public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNotificatorService
@@ -88,9 +88,6 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 	private OfertaApi ofertaApi;
 
 	@Autowired
-	private ExpedienteComercialApi expedienteComercialApi;
-
-	@Autowired
 	private ActivoApi activoApi;
 
 	@Autowired
@@ -109,7 +106,9 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 	private UsuarioManager usuarioManager;
 	
 	@Autowired
-	private TrabajoManager trabajoManager;
+	private ExpedienteComercialDao expedienteComercialDao;
+	
+	
 
 	
 	@Override
@@ -120,34 +119,47 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 	protected void generaNotificacion(ActivoTramite tramite, boolean permieRechazar, boolean permiteNotificarAprobacion) {
 
 		if(tramite.getActivo() != null && tramite.getTrabajo() != null){
-			Activo activo = tramite.getActivo();
-			Oferta oferta = ofertaApi.trabajoToOferta(trabajoManager.findOne(tramite.getTrabajo().getId()));
-
-			ActivoTramite tramiteSimulado = new ActivoTramite();
-			tramiteSimulado.setActivo(activo);
-
-			sendNotification(tramiteSimulado, permieRechazar, activo, oferta, permiteNotificarAprobacion);
+			sendNotification(tramite, permieRechazar, getExpComercial(tramite), permiteNotificarAprobacion);
 		}
 		
 	}
+	
+	private ExpedienteComercial getExpComercial(ActivoTramite tramite) {
+		
+		if (tramite == null) {
+			return null;
+		}
 
-	private void sendNotification(ActivoTramite tramite, boolean permiteRechazar, Activo activo, Oferta oferta, boolean permiteNotificarAprobacion) {
+		Trabajo trabajo = tramite.getTrabajo();
+
+		if (trabajo == null) {
+			return null;
+		}
+
+		return expedienteComercialDao.getExpedienteComercialByIdTrabajo(trabajo.getId());
+	}
+
+	private void sendNotification(ActivoTramite tramite, boolean permiteRechazar, ExpedienteComercial expediente, boolean permiteNotificarAprobacion) {
 
 		ArrayList<String> destinatarios = new ArrayList<String>();
 		
 		Usuario buzonRem = usuarioManager.getByUsername(BUZON_REM);
 		Usuario buzonPfs = usuarioManager.getByUsername(BUZON_PFS);
-		
+		Oferta oferta = expediente.getOferta();
+		Activo activo = oferta.getActivoPrincipal();
 		if (!Checks.esNulo(oferta)) {
-			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(oferta.getId());
 			if (permiteNotificarAprobacion && !Checks.esNulo(expediente)
 					&& DDEstadosExpedienteComercial.APROBADO.equals(expediente.getEstado().getCodigo())) { // APROBACIÓN
 
 				destinatarios = getDestinatariosNotificacion(activo, oferta, expediente);
 				
-				if (activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_CAJAMAR)){
-					destinatarios.add(usuarioManager.getByUsername(USUARIO_FICTICIO_OFERTA_CAJAMAR).getEmail());
-					if (!Checks.esNulo(oferta.getPrescriptor().getEmail())){
+				if (DDCartera.CODIGO_CARTERA_CAJAMAR.equals(activo.getCartera().getCodigo())){
+					Usuario usuarioFicticioCajamar= usuarioManager.getByUsername(USUARIO_FICTICIO_OFERTA_CAJAMAR);
+					if(usuarioFicticioCajamar != null && usuarioFicticioCajamar.getEmail() != null){
+						destinatarios.add(usuarioFicticioCajamar.getEmail());
+					}
+					
+					if (oferta.getPrescriptor() != null && oferta.getPrescriptor().getEmail() != null){
 						destinatarios.add(oferta.getPrescriptor().getEmail());
 					}
 				}
@@ -207,8 +219,8 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 		// como si viniera de un tramite
 		ActivoTramite tramiteSimulado = new ActivoTramite();
 		tramiteSimulado.setActivo(activo);
-
-		sendNotification(tramiteSimulado, true, activo, oferta, true);
+		ExpedienteComercial eco = expedienteComercialDao.getExpedienteComercialByIdOferta(idOferta);
+		sendNotification(tramiteSimulado, true, eco, true);
 	}
 
 	private String getPrescriptor(Activo activo, Oferta ofertaAceptada) {
@@ -542,10 +554,14 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 			}
 			
 			Filter filterProp = genericDao.createFilter(FilterType.EQUALS, "activo.id", tramite.getActivo().getId());
-			ActivoPropietario propietario = genericDao.get(ActivoPropietarioActivo.class, filterProp).getPropietario();
+			ActivoPropietarioActivo activoPropietario = genericDao.get(ActivoPropietarioActivo.class, filterProp);
+			ActivoPropietario propietario = null;
+			if(activoPropietario != null ){
+				propietario = activoPropietario.getPropietario();
+			}
 			
-			if(tramite.getActivo().getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_CAJAMAR)) {
-				if (!ActivoPropietario.CODIGO_FONDOS_TITULIZACION.equals(propietario.getCodigo()) && !ActivoPropietario.CODIGO_GIVP.equals(propietario.getCodigo()) 
+			if(codigoCartera.equals(DDCartera.CODIGO_CARTERA_CAJAMAR)) {
+				if (propietario != null && !ActivoPropietario.CODIGO_FONDOS_TITULIZACION.equals(propietario.getCodigo()) && !ActivoPropietario.CODIGO_GIVP.equals(propietario.getCodigo()) 
 						&& !ActivoPropietario.CODIGO_GIVP_II.equals(propietario.getCodigo())){					
 					cuerpo = cuerpo + "<p>Pinche <a href=\"" + reservationUrl + expediente.getId() + "/" + reservationKey
 							+ "/1\">aquí</a> para la descarga del contrato de reserva.</p>";
@@ -624,15 +640,19 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 		FileItem f3 = null;
 		
 		Filter filterProp = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
-		ActivoPropietario propietario = genericDao.get(ActivoPropietarioActivo.class, filterProp).getPropietario();
+		ActivoPropietarioActivo activoPropietario = genericDao.get(ActivoPropietarioActivo.class, filterProp);
+		ActivoPropietario propietario = null;
+		if(activoPropietario != null){
+			propietario = activoPropietario.getPropietario();
+		}
 
 		try {
 
 			if (adjuntaInstrucciones) {
 				//ADJUNTOS SI ES CAJAMAR
-				if(activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_CAJAMAR)) {
-					if (ActivoPropietario.CODIGO_FONDOS_TITULIZACION.equals(propietario.getCodigo()) || ActivoPropietario.CODIGO_GIVP.equals(propietario.getCodigo()) 
-							|| ActivoPropietario.CODIGO_GIVP_II.equals(propietario.getCodigo())){
+				if(DDCartera.CODIGO_CARTERA_CAJAMAR.equals(activo.getCartera().getCodigo())) {
+					if (propietario != null && (ActivoPropietario.CODIGO_FONDOS_TITULIZACION.equals(propietario.getCodigo()) || ActivoPropietario.CODIGO_GIVP.equals(propietario.getCodigo()) 
+							|| ActivoPropietario.CODIGO_GIVP_II.equals(propietario.getCodigo()))){
 						if (oferta.getOfertaExpress()){
 							f1 = FileItemUtils.fromResource("docs/20181001_Instrucciones_Reserva_CAJAMAR.pdf");
 						}else {
@@ -644,25 +664,39 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 					
 					f2 = FileItemUtils.fromResource("docs/ficha_cliente.xlsx");
 					f3 = FileItemUtils.fromResource("docs/manif_titular_real.doc");
-					adjuntos.add(createAdjunto(f1, "Instrucciones_Reserva_Formalizacion_Cajamar.pdf"));
+					if(f1 != null){
+						adjuntos.add(createAdjunto(f1, "Instrucciones_Reserva_Formalizacion_Cajamar.pdf"));
+					}					
+					if(f2 != null){
+						adjuntos.add(createAdjunto(f2, "Ficha_cliente.xlsx"));
+					}
+					if(f3 != null){
+						adjuntos.add(createAdjunto(f3, "Manif_Titular_Real.doc"));
+					}
 					
-					adjuntos.add(createAdjunto(f2, "Ficha_cliente.xlsx"));
-					adjuntos.add(createAdjunto(f3, "Manif_Titular_Real.doc"));
 				}
 				//ADJUNTOS SI ES SAREB
 				else if(activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_SAREB)) {
 					f1 = FileItemUtils.fromResource("docs/instrucciones_de_reserva.docx");
-					adjuntos.add(createAdjunto(f1, "Instrucciones_de_reserva.docx"));
+					if(f1 != null){
+						adjuntos.add(createAdjunto(f1, "Instrucciones_de_reserva.docx"));
+					}
+					
 				}
 				//ADJUNTOS SI ES BANKIA
 				else if(activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_BANKIA)){
 					f1 = FileItemUtils.fromResource("docs/instrucciones_reserva_Bankia_v7.docx");
-					adjuntos.add(createAdjunto(f1, "instrucciones_reserva_Bankia.docx"));
+					if(f1 != null){
+						adjuntos.add(createAdjunto(f1, "instrucciones_reserva_Bankia.docx"));
+					}
+					
 				}
 				//ADJUNTOS SI ES TANGO
 				else if(activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_TANGO)){
 					f1 = FileItemUtils.fromResource("docs/contrato_reserva_Tango.docx");
-					adjuntos.add(createAdjunto(f1, "contrato_reserva_Tango.docx"));
+					if(f1 != null){
+						adjuntos.add(createAdjunto(f1, "contrato_reserva_Tango.docx"));
+					}
 				}
 				//ADJUNTOS SI ES GIANTS
 				//Comentamos esta parte del código hasta que tengamos contrato de reserva de GIANTS
@@ -673,7 +707,10 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 				//ADJUNTOS SI ES LIBERBANK
 				else if(activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_LIBERBANK)) {
 					f1 = FileItemUtils.fromResource("docs/instrucciones_reserva_y_formalizacion_Liberbank.docx");
-					adjuntos.add(createAdjunto(f1, "instrucciones_reserva_y_formalizacion_Liberbank.docx"));
+					if(f1 != null){
+						adjuntos.add(createAdjunto(f1, "instrucciones_reserva_y_formalizacion_Liberbank.docx"));
+					}
+					
 				}
 			}
 			List<String> mailsPara = new ArrayList<String>();

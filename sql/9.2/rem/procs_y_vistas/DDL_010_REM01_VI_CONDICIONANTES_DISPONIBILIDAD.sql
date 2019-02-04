@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Ramon Llinares
---## FECHA_CREACION=20190130
+--## FECHA_CREACION=20190202
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-5003
@@ -170,3 +170,4 @@ END;
 /
 
 EXIT;
+

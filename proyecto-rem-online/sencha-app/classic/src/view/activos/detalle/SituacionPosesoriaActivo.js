@@ -222,10 +222,10 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 							fieldLabel: HreRem.i18n('fieldlabel.con.titulo'),
 				        	bind: {
 			            		store: '{comboSiNoRem}',
-			            		value: '{situacionPosesoria.conTitulo}',
-			            		disabled: '{esTipoEstadoAlquilerAlquilado}',
-			            		readOnly: '{esTipoEstadoAlquilerAlquilado}'  
+			            		value: '{situacionPosesoria.conTitulo}'
 			            	}
+			            
+			            
 				        },
 				        {
 							xtype: 'textfieldbase',

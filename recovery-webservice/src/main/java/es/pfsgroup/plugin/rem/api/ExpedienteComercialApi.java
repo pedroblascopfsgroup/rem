@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import es.capgemini.devon.dto.WebDto;
+import es.capgemini.devon.exception.UserException;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.pagination.Page;
-import es.capgemini.pfs.diccionarios.Dictionary;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
@@ -116,7 +116,7 @@ public interface ExpedienteComercialApi {
 	 *            id del expediente
 	 * @return resultado de la operacion
 	 */
-	boolean saveTextoOferta(DtoTextosOferta dto, Long idEntidad);
+	public boolean saveTextoOferta(DtoTextosOferta dto, Long idEntidad) throws UserException;
 
 
 	/**

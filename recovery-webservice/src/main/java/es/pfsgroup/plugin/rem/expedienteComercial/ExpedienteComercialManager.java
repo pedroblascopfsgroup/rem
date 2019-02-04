@@ -34,6 +34,7 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import edu.emory.mathcs.backport.java.util.Arrays;
 import es.capgemini.devon.dto.WebDto;
+import es.capgemini.devon.exception.UserException;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.message.MessageService;
@@ -476,7 +477,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 	@Override
 	@Transactional(readOnly = false)
-	public boolean saveTextoOferta(DtoTextosOferta dto, Long idEntidad) {
+	public boolean saveTextoOferta(DtoTextosOferta dto, Long idEntidad) throws UserException {
 		TextosOferta textoOferta;
 
 		ExpedienteComercial expedienteComercial = findOne(idEntidad);
@@ -486,6 +487,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			// Estamos creando un texto que no existía.
 			textoOferta = new TextosOferta();
 			textoOferta.setOferta(oferta);
+			if(dto.getTexto() != null && dto.getTexto().length() > 2048){
+				throw new UserException("La longitud del texto no puede exceder los 2048 car&acute;cteres");
+			}
 			textoOferta.setTexto(dto.getTexto());
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getCampoCodigo());
 			DDTiposTextoOferta tipoTexto = genericDao.get(DDTiposTextoOferta.class, filtro);
@@ -1198,7 +1202,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			dto.setRefCircuitoCliente(null);
 		}
 
-		if(DDCartera.CODIGO_CARTERA_BANKIA.equals(oferta.getActivoPrincipal().getCartera().getCodigo())){
+		if(oferta.getActivoPrincipal() != null && oferta.getActivoPrincipal().getCartera() != null && DDCartera.CODIGO_CARTERA_BANKIA.equals(oferta.getActivoPrincipal().getCartera().getCodigo())){
 			///Comprobamos si la tarea Elevar a Sanción está activa
 			dto.setPermiteProponer(false);
 
@@ -2873,7 +2877,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			TareaExterna tex = null;
 
 			for (TareaExterna tarea : listaTareas) {
-				if (tarea.getTareaProcedimiento().getCodigo().equals("T013_FirmaPropietario")) {
+				if (tarea.getTareaProcedimiento() != null && tarea.getTareaProcedimiento().getCodigo().equals("T013_FirmaPropietario")) {
 					tex = tarea;
 					break;
 				}

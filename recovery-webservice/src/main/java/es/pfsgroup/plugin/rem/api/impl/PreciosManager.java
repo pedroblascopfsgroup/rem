@@ -168,7 +168,7 @@ public class PreciosManager extends BusinessOperationOverrider<PreciosApi> imple
 	
 	@Override
 	@Transactional(readOnly = false)
-	public PropuestaPrecio createPropuestaPreciosManual(List<VBusquedaActivosPrecios> activosPrecios, String nombrePropuesta, String tipoPropuestaCodigo){
+	public PropuestaPrecio createPropuestaPreciosManual(List<VBusquedaActivosPrecios> activosPrecios, String nombrePropuesta, String tipoPropuestaCodigo) throws Exception{
 
 		// Funcionalidad para crear una propuesta generada desde la pantalla "Generar propuesta - Manual - Automatica"
 		

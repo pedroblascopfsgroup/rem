@@ -149,7 +149,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 	@Autowired
 	private GenericABMDao genericDao;
-	
+
 	
 	@Autowired
 	private GestorActivoApi gestorActivoApi;
@@ -166,7 +166,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	@Autowired
 	private TrabajoDao trabajoDao;
 
-	
+
 	@Autowired
 	private GestorActivoManager gestorActivoManager;
 
@@ -459,7 +459,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	@Override
 	@Transactional(readOnly = false)
 	public Trabajo create(DDSubtipoTrabajo subtipoTrabajo, List<Activo> listaActivos, PropuestaPrecio propuestaPrecio,
-			boolean inicializarTramite) {
+			boolean inicializarTramite) throws Exception {
 		/*
 		 * Crear trabajo a partir de una lista de activos y un subtipo dados: -
 		 * Nuevos trabajos del módulo de precios y marketing - Otros trabajos
@@ -551,6 +551,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				mensaje = e.getMessage();
 			}
 			logger.error("[ERROR] - Crear trabajo multiactivo: ".concat(mensaje));
+			throw e;
 		}
 
 		return trabajo;
@@ -2078,6 +2079,9 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			} catch (Exception ex) {
 				logger.error(ex.getMessage());
 			}
+
+		} catch (Exception ex) {
+			logger.error(ex.getMessage());
 		}
 
 		return listaAdjuntos;
@@ -3870,7 +3874,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 	public Boolean activoEnTramite(Long idActivo) {
 		Activo activo = activoApi.get(idActivo);
-		return activo.getEnTramite();
+		return activo.getEnTramite()==1;
 	}
 
 

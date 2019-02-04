@@ -113,6 +113,7 @@ Ext.define('HreRem.controller.AgendaController', {
     		var me = this;
 	        var window;
 	        var tarea = record;
+	        
 	        grid.mask(HreRem.i18n("msg.mask.loading"));
 	        if(tarea.get("subtipoTareaCodigoSubtarea") == "700" || tarea.get("subtipoTareaCodigoSubtarea") == "701"){
 	        	var url =  $AC.getRemoteUrl('agenda/detalleTarea');
@@ -128,7 +129,11 @@ Ext.define('HreRem.controller.AgendaController', {
 	    		     success: function(response, opts) {
 	    		    	 data = Ext.decode(response.responseText);
 	    		    	 data.data.parent = grid;
-	    		    	 data.data.numActivo = record.get('codEntidad');
+	    		    	 if(data.data.numAgrupacion == null){
+	    		    		 data.data.numActivo = record.get('codEntidad');
+	    		    	 } else {
+	    		    		 data.data.numActivo = data.data.numAgrupacion;
+	    		    	 }
 	    		    	 if(sta == "701"){
 	    		    		 data.data.tareaEditable = false;
 	    		    		 data.data.tareaFinalizable = true;

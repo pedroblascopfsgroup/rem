@@ -194,7 +194,7 @@ public class ActivoPublicacionHistoricoDaoImpl extends AbstractEntityDao<ActivoP
 	public Long obtenerDiasPorEstadoPublicacionVentaActivo(ActivoPublicacionHistorico estadoActivo) throws ParseException {
 		Long dias = 0L;
 
-		//if (DDEstadoPublicacionVenta.CODIGO_PUBLICADO_VENTA.equals(estadoActivo.getEstadoPublicacionVenta().getCodigo()) && !Checks.esNulo(estadoActivo.getFechaInicioVenta())) {
+		if (!Checks.esNulo(estadoActivo.getFechaInicioVenta())) {
 			Date fechaDesdeSinTiempo = this.sdfFecha.parse(this.sdfFecha.format(estadoActivo.getFechaInicioVenta()));
 			Date fechaHastaSinTiempo = new Date();
 			if (!Checks.esNulo(estadoActivo.getFechaFinVenta())) {
@@ -202,7 +202,7 @@ public class ActivoPublicacionHistoricoDaoImpl extends AbstractEntityDao<ActivoP
 			}
 			Long diferenciaMilis = fechaHastaSinTiempo.getTime() - fechaDesdeSinTiempo.getTime();
 			dias = diferenciaMilis / (MILLISECONDS * SECONDS * MINUTES * HOURS);
-		//}
+		}
 
 		return dias;
 	}
@@ -211,7 +211,7 @@ public class ActivoPublicacionHistoricoDaoImpl extends AbstractEntityDao<ActivoP
 	public Long obtenerDiasPorEstadoPublicacionAlquilerActivo(ActivoPublicacionHistorico estadoActivo) throws ParseException {
 		Long dias = 0L;
 
-		//if (DDEstadoPublicacionAlquiler.CODIGO_PUBLICADO_ALQUILER.equals(estadoActivo.getEstadoPublicacionAlquiler().getCodigo()) && !Checks.esNulo(estadoActivo.getFechaInicioAlquiler())) {
+		if (!Checks.esNulo(estadoActivo.getFechaInicioAlquiler())) {
 			Date fechaDesdeSinTiempo = this.sdfFecha.parse(this.sdfFecha.format(estadoActivo.getFechaInicioAlquiler()));
 			Date fechaHastaSinTiempo = new Date();
 			if (!Checks.esNulo(estadoActivo.getFechaFinAlquiler())) {
@@ -219,7 +219,7 @@ public class ActivoPublicacionHistoricoDaoImpl extends AbstractEntityDao<ActivoP
 			}
 			Long diferenciaMilis = fechaHastaSinTiempo.getTime() - fechaDesdeSinTiempo.getTime();
 			dias = diferenciaMilis / (MILLISECONDS * SECONDS * MINUTES * HOURS);
-		//}
+		}
 
 		return dias;
 	}

@@ -51,7 +51,7 @@ Ext.define('HreRem.view.activos.detalle.CabeceraActivo', {
 				},
 				listeners: {
 					mapready: function(gmap, map) {
-						if(map.center.marker){
+						if(Ext.isDefined(map) && map.center.marker){
 							gmap.addMarker(map.center.marker);
 						}
 					}

@@ -2444,7 +2444,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			perimetroActivo.setAplicaAsignarMediador(1);
 			perimetroActivo.setAplicaComercializar(1);
 			perimetroActivo.setAplicaFormalizar(1);
-			perimetroActivo.setAplicaPublicar(false);
+			perimetroActivo.setAplicaPublicar(true);
 		}
 
 		return perimetroActivo;

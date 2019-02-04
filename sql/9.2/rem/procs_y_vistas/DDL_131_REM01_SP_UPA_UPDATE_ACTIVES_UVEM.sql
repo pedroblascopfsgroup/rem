@@ -1,16 +1,19 @@
 --/*
 --##########################################
---## AUTOR=DAP
---## FECHA_CREACION=20180418
+--## AUTOR=Pablo Meseguer
+--## FECHA_CREACION=20190201
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=2.0.16
---## INCIDENCIA_LINK=REMVIP-536
+--## VERSION_ARTEFACTO=bau_jaus
+--## INCIDENCIA_LINK=REMVIP-3254
 --## PRODUCTO=NO
 --## Finalidad: Interfax Stock REM - UVEM. Nuevas columnas. Anula DDL_99900087
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##	    0.2 DAP- Interfax Stock REM - UVEM. Nuevas columnas.
+--##	    0.3 Sergio Beleña - correción ACT_EN_TRAMITE
+--##		0.4 Pablo Meseguer - Dejamos de actualizar los campos de UVEM CASUTR, CASUTG y CASUTC
 --##########################################
 --*/
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
@@ -2187,7 +2190,7 @@ FOR I IN V_TIPO_TABLA10.FIRST .. V_TIPO_TABLA10.LAST
 --[19.1] CASUTR --> SUP_TOTAL_REAL_UTIL (REG_SUPERFICIE_UTIL)
 
 
-	V_SQL := '
+	/*V_SQL := '
 		MERGE INTO '||V_ESQUEMA||'.ACT_REG_INFO_REGISTRAL T1 USING 
 		(
 		SELECT ACT.ACT_ID, REG.REG_SUPERFICIE_UTIL AS REG_UTIL, APR.SUP_TOTAL_REAL_UTIL AS APR_UTIL FROM APR_AUX_STOCK_UVEM_TO_REM APR
@@ -2290,7 +2293,7 @@ FOR I IN V_TIPO_TABLA10.FIRST .. V_TIPO_TABLA10.LAST
 
             COMMIT;
 
-  END IF;
+  END IF;*/
 
 
 

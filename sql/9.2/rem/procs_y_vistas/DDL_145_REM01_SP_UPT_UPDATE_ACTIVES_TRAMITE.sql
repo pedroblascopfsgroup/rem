@@ -1,18 +1,19 @@
 --/*
 --##########################################
---## AUTOR=Sergio Beleña Boix
---## FECHA_CREACION=20190107
+--## AUTOR=Pablo Meseguer Benlloch
+--## FECHA_CREACION=20190201
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=func-rem-activosEnTramite
---## INCIDENCIA_LINK=HREOS-5150
+--## VERSION_ARTEFACTO=bau_jaus
+--## INCIDENCIA_LINK=REMVIP-3173
 --## PRODUCTO=NO
---## Finalidad: correción errores ETL
+--## Finalidad: correción errores SP
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
 --##	    0.2 DAP Actualiza activos en trámite de UVEM
 --##	    0.3 Sergio Beleña - correción ACT_EN_TRAMITE
+--##		0.4 Pablo Meseguer - Añadir filtro para ACT_EN_TRAMITE
 --##########################################
 --*/
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE

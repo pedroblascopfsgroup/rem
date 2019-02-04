@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.api;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.text.ParseException;
@@ -17,6 +18,7 @@ import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
+import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
@@ -1034,6 +1036,8 @@ public interface ActivoApi {
 	 * Genera la url del documento GDPR
 	 * @param dtoGenerarDocGDPR
 	 * @return string url del documento GDPR
+	 * @throws GestorDocumentalException 
+	 * @throws IOException 
 	 */
-	String generarUrlGDPR(DtoGenerarDocGDPR dtoGenerarDocGDPR);
+	FileItem generarUrlGDPR(DtoGenerarDocGDPR dtoGenerarDocGDPR) throws GestorDocumentalException, IOException;
 }

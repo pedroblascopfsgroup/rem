@@ -1,5 +1,8 @@
 package es.pfsgroup.plugin.rem.activo;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.security.MessageDigest;
@@ -14,11 +17,18 @@ import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Resource;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.Response;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.glassfish.jersey.jackson.JacksonFeature;
+import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -58,8 +68,12 @@ import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
+import es.pfsgroup.plugin.gestorDocumental.api.RestClientApi;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.gestorDocumental.manager.GestorDocumentalExpedientesManager;
+import es.pfsgroup.plugin.gestorDocumental.manager.RestClientManager;
+import es.pfsgroup.plugin.gestorDocumental.model.ServerRequest;
+import es.pfsgroup.plugin.gestorDocumental.model.documentos.RespuestaDescargarDocumento;
 import es.pfsgroup.plugin.recovery.agendaMultifuncion.impl.dto.DtoAdjuntoMail;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDSituacionCarga;
@@ -89,6 +103,7 @@ import es.pfsgroup.plugin.rem.expedienteComercial.dao.ExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.factory.TabActivoFactoryApi;
 import es.pfsgroup.plugin.rem.gestor.dao.GestorExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
+import es.pfsgroup.plugin.rem.gestorDocumental.dto.documentos.GestorDocToRecoveryAssembler;
 import es.pfsgroup.plugin.rem.jbpm.handler.notificator.impl.NotificatorServiceSancionOfertaAceptacionYRechazo;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjuntoActivo;
@@ -263,7 +278,10 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 	@Resource
 	private MessageService messageServices;
-
+	
+	@Autowired
+	private RestClientApi restClientApi;
+	
 	@Autowired
 	private GestorDocumentalFotosApi gestorDocumentalFotos;
 
@@ -5348,7 +5366,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		return false;
 	}
 	
-	public String generarUrlGDPR(DtoGenerarDocGDPR dtoGenerarDocGDPR) {
+	public FileItem generarUrlGDPR(DtoGenerarDocGDPR dtoGenerarDocGDPR) throws GestorDocumentalException, IOException {
 		
 		String fecha = new SimpleDateFormat("yyyyMMdd").format(new Date());
 		String documento = "";
@@ -5358,8 +5376,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		String reservationKey = appProperties.getProperty(KEY_GDPR)+documento+fecha;//TODO AQUI EL HASH MD5 MONTADO (key POR DEFINIR + #documento + today(yyyyMMdd)timestamp)
 		String signature = computeKey(reservationKey);
 		
-		String url=appProperties.getProperty(URL_GDPR)+signature+"?";
+		String url2=appProperties.getProperty(URL_GDPR)+signature+"?";
 		
+		String url = "";
 		if(!Checks.esNulo(dtoGenerarDocGDPR.getCodPrescriptor())) {
 			url+="codRemPrescriptor="+getCodRemPrescriptor(dtoGenerarDocGDPR);
 		}
@@ -5382,7 +5401,83 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			url+="&email="+dtoGenerarDocGDPR.getEmail();
 		}
 		
-		return url;
+		if(!Checks.esNulo(dtoGenerarDocGDPR.getCesionDatos())){
+			url+="&gdpr1="+dtoGenerarDocGDPR.getCesionDatos();
+		}
+		
+		if(!Checks.esNulo(dtoGenerarDocGDPR.getComTerceros())){
+			url+="&gdpr2="+dtoGenerarDocGDPR.getComTerceros();
+		}
+
+		if(!Checks.esNulo(dtoGenerarDocGDPR.getTransIntern())){
+			url+="&gdpr3="+dtoGenerarDocGDPR.getTransIntern();
+		}
+		
+		ServerRequest serverRequest =  new ServerRequest();
+		serverRequest.setMethod(RestClientManager.METHOD_POST);
+		serverRequest.setRestClientUrl(url2);
+		serverRequest.setPath(url);
+		serverRequest.setResponseClass(RespuestaDescargarDocumento.class);
+		Object respuesta = this.getBinaryResponse(serverRequest,"");
+		byte[] bytes = null;
+		
+		if(respuesta instanceof byte[]) {
+			bytes = (byte[]) respuesta;
+		}
+		else {
+			throw new GestorDocumentalException("Error al descargar documento");
+		}
+		RespuestaDescargarDocumento respuesta2 = this.rellenarRespuestaDescarga(bytes,dtoGenerarDocGDPR.getDocumento()); 
+		FileItem fileItem = GestorDocToRecoveryAssembler.getFileItem(respuesta2);
+		return fileItem;
+	}
+	
+	private Object getBinaryResponse(ServerRequest serverRequest, String fileName) {
+		Object respuesta = this.getFinalBinaryResponse(serverRequest);
+		
+		return respuesta;
+	}
+	
+	private RespuestaDescargarDocumento rellenarRespuestaDescarga(byte[] contenido, String nombreDocumento){
+		
+		Byte[] bytes = ArrayUtils.toObject(contenido);
+		
+		RespuestaDescargarDocumento respuesta = new RespuestaDescargarDocumento();
+		respuesta.setContenido(bytes);
+		respuesta.setNombreDocumento(nombreDocumento);
+		
+		return respuesta;
+	}
+	
+	public Object getFinalBinaryResponse(ServerRequest serverRequest) {
+		String restClientUrl = serverRequest.getRestClientUrl();
+		
+		final Client client = ClientBuilder.newBuilder().register(MultiPartFeature.class).register(JacksonFeature.class).build();
+		String url = restClientUrl + serverRequest.getPath();
+		WebTarget webTarget = client.target(url);
+		logger.info("URL: " + url);
+		Object response = webTarget.request().post(null);
+		
+		if (response == null) return null;
+		Response res = (Response) response;
+		InputStream is = (InputStream)res.getEntity();
+		ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+		int nRead;
+	    byte[] data = new byte[1024];
+	    try {
+		    while ((nRead = is.read(data, 0, data.length)) != -1) {
+		        buffer.write(data, 0, nRead);
+		    }
+		 
+		    buffer.flush();
+			byte[] bytes = buffer.toByteArray();
+			buffer.close();
+			is.close();
+			return bytes;
+		} catch (IOException e) {
+			logger.error("RestClientManager : Error al recoger bytes del archivo - " +e);
+			return null;
+		}
 	}
 	
 	private String computeKey(String key) {

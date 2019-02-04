@@ -5347,19 +5347,6 @@ Ext
  	           params: {codPrescriptor:codPrescriptor,cesionDatos:cesionDatos,transIntern:transIntern,comTerceros:comTerceros,
  	        	   documento:numDoc,nombre:nombre,direccion:direccion,email:email,idExpediente:idExpediente, telefono:telefono},
  	           success: function(response, opts){
- 	        	   var datos = Ext.decode(response.responseText);
- 	        	   config = {};
- 	        	   config.params = {};
-	        	   config.params.data=datos.data;
- 	        	   if(datos.success == "true"){
- 	        		   me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
- 	        		   config.url=$AC.getWebPath()+"activo/generarDocGDPR."+$AC.getUrlPattern();
- 	 	        	   me.fireEvent("downloadFile", config);
- 	 	        	   btn.up('anyadirnuevaofertaactivoadjuntardocumento').down('button[itemId=btnSubirDoc]').enable();
- 	        	   }else{
- 	        		  me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));//TODO DEFINIR MENSAJE ERROR
- 	        		  btn.up('anyadirnuevaofertaactivoadjuntardocumento').down('button[itemId=btnSubirDoc]').disable();
- 	        	   }
  	           },
  	           failure: function(record, operation) {
  	               me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));

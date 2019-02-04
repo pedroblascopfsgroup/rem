@@ -2488,12 +2488,12 @@ public class ActivoController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 	
-	@RequestMapping(method = RequestMethod.GET)
+	@RequestMapping(method = RequestMethod.POST)
 	public void generarDocGDPR(DtoGenerarDocGDPR dtoGenerarDocGDPR, HttpServletRequest request, HttpServletResponse response) {
 
 		try {
 			dtoGenerarDocGDPR.getData();
-			response.sendRedirect(activoApi.generarUrlGDPR(dtoGenerarDocGDPR));
+			//response.sendRedirect(activoApi.generarUrlGDPR(dtoGenerarDocGDPR));
 		} catch (Exception e) {
 			logger.error("error en activoController", e);
 		}

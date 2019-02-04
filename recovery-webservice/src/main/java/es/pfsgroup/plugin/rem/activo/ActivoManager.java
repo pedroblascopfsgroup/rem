@@ -670,7 +670,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		DDSubtipoTrabajo subtipoTrabajo = (DDSubtipoTrabajo) utilDiccionarioApi
 				.dameValorDiccionarioByCod(DDSubtipoTrabajo.class, this.getSubtipoTrabajoByOferta(oferta));
 		Trabajo trabajo = trabajoApi.create(subtipoTrabajo, listaActivos, null, false);
-		resultado = crearExpediente(oferta, trabajo);
+		crearExpediente(oferta, trabajo,null);
 		trabajoApi.createTramiteTrabajo(trabajo);
 		return resultado;
 	}

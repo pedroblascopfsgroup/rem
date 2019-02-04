@@ -286,7 +286,9 @@ BEGIN
            (SELECT vi.act_id,
 					 CASE 
 					  WHEN
-						pac.pac_check_comercializar IS NULL THEN 1 
+						pac.pac_check_comercializar IS NULL THEN 1
+						ELSE
+						pac.pac_check_comercializar
 					  END 
                    || vi.sin_toma_posesion_inicial --Sin Posesión
                    || vi.ocupado_contitulo --Alquilado

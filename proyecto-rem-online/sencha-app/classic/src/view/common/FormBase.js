@@ -320,8 +320,8 @@
 		var me = this;		
 		me.errors.length = 0;
 		
-		Ext.Array.each(me.getForm().getFields().items, function(field, index) {			
-			if(!field.validate()) {
+		Ext.Array.each(me.getForm().getFields().items, function(field, index) {	
+			if(!field.validate() && !field.hidden) {
 				me.errors = me.errors.concat(field.getActiveErrors());
 			}
 		});

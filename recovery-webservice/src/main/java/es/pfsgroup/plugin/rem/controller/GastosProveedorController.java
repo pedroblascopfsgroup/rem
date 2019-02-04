@@ -31,14 +31,13 @@ import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.GastoAvisadorApi;
 import es.pfsgroup.plugin.rem.api.GastoProveedorApi;
 import es.pfsgroup.plugin.rem.api.ProveedoresApi;
-import es.pfsgroup.plugin.rem.excel.FacturasProveedoresExcelReport;
 import es.pfsgroup.plugin.rem.excel.ActivosGastoExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
+import es.pfsgroup.plugin.rem.excel.FacturasProveedoresExcelReport;
 import es.pfsgroup.plugin.rem.excel.GestionGastosExcelReport;
 import es.pfsgroup.plugin.rem.excel.TasasImpuestosExcelReport;
 import es.pfsgroup.plugin.rem.excel.TrabajosGastoExcelReport;
-import es.pfsgroup.plugin.rem.gasto.dao.GastoDao;
 import es.pfsgroup.plugin.rem.model.DtoActivoGasto;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoAviso;
@@ -82,10 +81,6 @@ public class GastosProveedorController extends ParadiseJsonController {
 	@Autowired
 	private ExcelReportGeneratorApi excelReportGeneratorApi;
 	
-	@Autowired
-	private GastoDao gastoDao;
-
-
 	/**
 	 * Método que recupera un conjunto de datos del gasto según su id 
 	 * @param id Id del gasto
@@ -968,7 +963,6 @@ public class GastosProveedorController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 	
-	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public void generateExcelFacturas(HttpServletRequest request, HttpServletResponse response) throws IOException{
 
@@ -979,7 +973,6 @@ public class GastosProveedorController extends ParadiseJsonController {
 		excelReportGeneratorApi.generateAndSend(report, response);
 	}
 	
-	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public void generateExcelTasasImpuestos(HttpServletRequest request, HttpServletResponse response) throws IOException{
 		

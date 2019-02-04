@@ -91,7 +91,8 @@ Ext.define('HreRem.controller.ActivosController', {
         	actualizarGridTareas: 'actualizarGridTareas',
 			abrirDetalleTrabajoById: 'abrirDetalleTrabajoById',
 			abrirDetalleActivoPrincipal: 'abrirDetalleActivoPrincipal',
-        	abrirDetalleExpedienteById: 'abrirDetalleExpedienteById'
+        	abrirDetalleExpedienteById: 'abrirDetalleExpedienteById',
+        	abrirDetalleAgrupacionById: 'abrirDetalleAgrupacionById'
     	},
     	
     	'agrupacionesmain' : {

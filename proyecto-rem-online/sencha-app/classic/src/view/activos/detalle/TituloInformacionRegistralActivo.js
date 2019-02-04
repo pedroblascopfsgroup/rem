@@ -423,19 +423,13 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 							ventana.show();
 					 	    				    	
 					 	},
-					 	onDeleteClick: function (btn) {					 		
+					 	onDeleteClick: function (btn) {		
 					 		var me = this;	
 							var url =  $AC.getRemoteUrl('activo/deleteActivoPropietarioTab');
 							var propietario = me.up('tabpanel').down('grid').getSelection();
 							var activo = me.lookupController().getViewModel().get('activo');
 							if (propietario[0].get('tipoPropietario') == "Principal"){
-								Ext.toast({
-									 html: 'No se puede eliminar el propietario principal',
-									 width: 400,
-									 height: 100,
-									 align: 't'									     
-								  });
-								
+								me.fireEvent("errorToast",'No se puede eliminar el propietario principal' );
 							}else {
 								var params={};
 								params["idActivo"]=activo.get('id');

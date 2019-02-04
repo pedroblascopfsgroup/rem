@@ -1,7 +1,7 @@
 --/* 
 --##########################################
---## AUTOR=Alberto Flores
---## FECHA_CREACION=20190125
+--## AUTOR=Oscar Diestre
+--## FECHA_CREACION=20190204
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-5183
@@ -11,6 +11,7 @@
 --## INSTRUCCIONES: 
 --## VERSIONES:
 --##        0.1 Version inicial
+--##        0.2 Añadido el correo backup.rem@pfsgroup.es como destinatario
 --##########################################
 --*/
 
@@ -40,7 +41,7 @@ BEGIN
 	IF V_NUM_TABLAS = 1 THEN	
 		V_SQL := 'UPDATE '||V_ESQUEMA||'.MAIL_COMUNICACION_GENCAT SET
 						DE = ''noreply.rem@haya.es'', 
-						A = ''jpoyatos@haya.es'',  
+						A = ''jpoyatos@haya.es;backup.rem@pfsgroup.es'',  
 						CUERPO = ''Los activos del Excel adjunto están bloqueados en REM a DDMMYYYY'', 
 						ASUNTO = ''Comunicación activos con ofertas afectas por GENCAT, DDMMYYYY'',
 						ADJUNTO = ''Excel_comunicaciones.xls''';

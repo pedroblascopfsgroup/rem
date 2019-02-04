@@ -1,10 +1,10 @@
 --/*
 --#########################################
 --## AUTOR=Ivan Castelló Cabrelles
---## FECHA_CREACION=20190127
+--## FECHA_CREACION=20190204
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=REMVIP-3170
+--## INCIDENCIA_LINK=REMVIP-3269
 --## PRODUCTO=NO
 --## 
 --## Finalidad: Cambio 
@@ -58,7 +58,7 @@ WHEN MATCHED THEN
             T1.APU_CHECK_PUBLICAR_V = 1,
             T1.DD_EPV_ID = 4,
             T1.USUARIOMODIFICAR = ''REMVIP-3269'',
-            T1.FECHAMODIFICAR = SYSDATE; 
+            T1.FECHAMODIFICAR = SYSDATE 
 
         ';
 

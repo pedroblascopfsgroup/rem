@@ -50,7 +50,7 @@ IFS=','
 for proyecto in $PROYECTOS ; do 
 	echo "Procesando commits del proyecto: $proyecto"
 	echo "---------------------------------------------------------------"
-	git log --no-merges --oneline ${TAG1}..${TAG2} -i --grep="$proyecto" | tee -a ${DIR_ORIGEN}/salida.txt
+	git --no-pager log --no-merges --oneline ${TAG1}..${TAG2} -i --grep="$proyecto" | tee -a ${DIR_ORIGEN}/salida.txt
 	echo "---------------------------------------------------------------"
 done
 

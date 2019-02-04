@@ -282,7 +282,7 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 									for (GestorEntidadHistorico gestor : listaGestores) {
 										if ((GestorActivoApi.CODIGO_GESTORIA_FORMALIZACION.equals(gestor.getTipoGestor().getCodigo())
 												|| GestorActivoApi.CODIGO_GESTOR_FORMALIZACION.equals(gestor.getTipoGestor().getCodigo())
-												|| GestorActivoApi.CODIGO_GESTOR_DE_ADMINISTRACION.equals(gestor.getTipoGestor().getCodigo()))
+												|| GestorActivoApi.CODIGO_GESTOR_FORMALIZACION_ADMINISTRACION.equals(gestor.getTipoGestor().getCodigo()))
 												&& !Checks.esNulo(gestor.getUsuario().getEmail())) {
 											
 												enviarCorreoAnularOfertaActivoBloqueadoPorGencat(act,gestor.getUsuario().getEmail());

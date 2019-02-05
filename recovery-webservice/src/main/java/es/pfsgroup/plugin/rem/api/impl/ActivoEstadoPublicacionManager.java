@@ -759,13 +759,13 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 			
 			if(Arrays.asList(DDTipoComercializacion.CODIGOS_VENTA).contains(activoPublicacion.getTipoComercializacion().getCodigo()) &&
 					(!Checks.esNulo(dto.getMotivoOcultacionVentaCodigo()) || !Checks.esNulo(dto.getMotivoOcultacionManualVenta()) || !Checks.esNulo(dto.getPublicarVenta()) ||
-					!Checks.esNulo(dto.getOcultarVenta()) || (!Checks.esNulo(dto.getPublicarSinPrecioVenta()) && !Checks.esNulo(activoPublicacion.getMotivoOcultacionVenta()) && ("14").equals(activoPublicacion.getMotivoOcultacionVenta().getCodigo())) || !Checks.esNulo(dto.getNoMostrarPrecioVenta()))) {
+					!Checks.esNulo(dto.getOcultarVenta()) || (!Checks.esNulo(dto.getPublicarSinPrecioVenta()) && !Checks.esNulo(activoPublicacion.getMotivoOcultacionVenta()) && DDMotivosOcultacion.CODIGO_SIN_PRECIO.equals(activoPublicacion.getMotivoOcultacionVenta().getCodigo())) || !Checks.esNulo(dto.getNoMostrarPrecioVenta()))) {
 				activoPublicacionHistorico.setFechaFinVenta(new Date());
 			}
 
 			if(Arrays.asList(DDTipoComercializacion.CODIGOS_ALQUILER).contains(activoPublicacion.getTipoComercializacion().getCodigo()) &&
 					(!Checks.esNulo(dto.getMotivoOcultacionAlquilerCodigo()) || !Checks.esNulo(dto.getMotivoOcultacionManualAlquiler()) || !Checks.esNulo(dto.getPublicarAlquiler()) ||
-					!Checks.esNulo(dto.getOcultarAlquiler()) || (!Checks.esNulo(dto.getPublicarSinPrecioAlquiler()) && !Checks.esNulo(activoPublicacion.getMotivoOcultacionAlquiler()) && ("14").equals(activoPublicacion.getMotivoOcultacionAlquiler().getCodigo())) || !Checks.esNulo(dto.getNoMostrarPrecioAlquiler()))) {
+					!Checks.esNulo(dto.getOcultarAlquiler()) || (!Checks.esNulo(dto.getPublicarSinPrecioAlquiler()) && !Checks.esNulo(activoPublicacion.getMotivoOcultacionAlquiler()) && DDMotivosOcultacion.CODIGO_SIN_PRECIO.equals(activoPublicacion.getMotivoOcultacionAlquiler().getCodigo())) || !Checks.esNulo(dto.getNoMostrarPrecioAlquiler()))) {
 				activoPublicacion.setFechaInicioAlquiler(new Date());
 			}
 			

@@ -251,4 +251,43 @@ public class RecoveryToGestorDocAssembler {
 		return sb.toString();
 	}
 	
+	public CrearDocumentoDto getCrearDocumentoComunicacionGencatDto(WebFileItem webFileItem, String userLogin, String matricula, String fechaDocumento) {
+		CrearDocumentoDto doc = new CrearDocumentoDto();
+		String[] arrayMatricula = new String[4];
+		if (matricula!=null && matricula.contains("-")) {
+			arrayMatricula = matricula.split("-");
+		}
+		doc.setUsuario(USUARIO);
+		doc.setPassword(PASSWORD);
+		
+		if(!Checks.esNulo(userLogin) && userLogin.equals("REST-USER") ) {
+			doc.setUsuarioOperacional(OPWS);
+		} else {
+			doc.setUsuarioOperacional(userLogin);
+		}
+		
+		doc.setDocumento(webFileItem.getFileItem().getFile());
+		doc.setNombreDocumento(webFileItem.getFileItem().getFileName());
+		doc.setDescripcionDocumento(webFileItem.getParameter("descripcion"));
+		doc.setGeneralDocumento(rellenarGeneralDocumentoComuncacionGencat(arrayMatricula[1], arrayMatricula[2], arrayMatricula[3],fechaDocumento));
+		doc.setArchivoFisico("{}");
+		
+		return doc;
+	}
+	
+	private String rellenarGeneralDocumentoComuncacionGencat (String serie, String tdn1, String tdn2, String fechaDocumento) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("{");
+			sb.append(GestorDocumentalConstants.metadataComunicaciones[0]).append("{");
+				sb.append(GestorDocumentalConstants.metadataComunicaciones[1]).append("\""+fechaDocumento+"\"").append(",");
+				sb.append(GestorDocumentalConstants.metadataComunicaciones[2]).append("\""+serie+"\"").append(",");
+				sb.append(GestorDocumentalConstants.metadataComunicaciones[3]).append("\""+tdn1+"\"").append(",");
+				sb.append(GestorDocumentalConstants.metadataComunicaciones[4]).append("\""+tdn2+"\"").append(",");
+				sb.append(GestorDocumentalConstants.metadataComunicaciones[5]).append("\"" + PROCESO_CARGA + "\"").append("},");
+				sb.append(GestorDocumentalConstants.metadataComunicaciones[6]).append("{");
+				sb.append(GestorDocumentalConstants.metadataComunicaciones[7]).append("\"CONT\"");
+			sb.append("}");
+		sb.append("}");
+		return sb.toString();
+	}
 }

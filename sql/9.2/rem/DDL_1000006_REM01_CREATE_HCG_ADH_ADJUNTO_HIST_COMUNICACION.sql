@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=ISIDRO SOTOCA
---## FECHA_CREACION=20181217
+--## FECHA_CREACION=20190124
 --## ARTEFACTO=web
 --## VERSION_ARTEFACTO=func-rem-GENCAT
 --## INCIDENCIA_LINK=HREOS-5051
@@ -11,6 +11,7 @@
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##		0.2 Sergio Nieto HREOS-5213 modificación del campo de adjunto de referencia
 --##########################################
 --*/
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
@@ -57,7 +58,7 @@ DECLARE
 	V_MSQL := 'CREATE TABLE '||V_ESQUEMA||'.'||V_TABLA||' (
 					ADH_ID NUMBER (16,0) NOT NULL ENABLE,
 					HCG_ID NUMBER (16,0) NOT NULL ENABLE,
-					ADA_ID NUMBER (16,0) NOT NULL ENABLE,
+					ADC_ID NUMBER (16,0) NOT NULL ENABLE,
 				  	VERSION NUMBER(1,0) DEFAULT 0, 
 				  	USUARIOCREAR VARCHAR2 (50 CHAR) NOT NULL ENABLE, 
 				  	FECHACREAR TIMESTAMP(6) DEFAULT SYSTIMESTAMP, 
@@ -77,7 +78,7 @@ DECLARE
 	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TABLA||'.FK_HCG_ID... Foreign key creada.');
 	
 	-- Creamos foreign key ADA_ID
-	V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TABLA||' ADD (CONSTRAINT FK_ADH_ADA_ID FOREIGN KEY (ADA_ID) REFERENCES '||V_ESQUEMA||'.ACT_ADA_ADJUNTO_ACTIVO (ADA_ID) ON DELETE CASCADE)';
+	V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_TABLA||' ADD (CONSTRAINT FK_ADH_ADC_ID FOREIGN KEY (ADA_ID) REFERENCES '||V_ESQUEMA||'.ADC_ADJUNTO_COMUNICACION (ADC_ID) ON DELETE CASCADE)';
 	EXECUTE IMMEDIATE V_MSQL;
 	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TABLA||'.FK_ADA_ID... Foreign key creada.');
 	
@@ -92,7 +93,7 @@ DECLARE
 	-- Añadimos comentarios a las columnas
 	EXECUTE IMMEDIATE  'COMMENT ON COLUMN '|| V_ESQUEMA ||'.'||V_TABLA||'.ADH_ID      		IS ''Código identificador único del adjunto de la comunicación''  ';
 	EXECUTE IMMEDIATE  'COMMENT ON COLUMN '|| V_ESQUEMA ||'.'||V_TABLA||'.HCG_ID      		IS ''Código identificador único de la comunicación del historico a la que pertenece el adjunto.''  ';
-	EXECUTE IMMEDIATE  'COMMENT ON COLUMN '|| V_ESQUEMA ||'.'||V_TABLA||'.ADA_ID      		IS ''Código identificador único del adjunto del activo.''  ';
+	EXECUTE IMMEDIATE  'COMMENT ON COLUMN '|| V_ESQUEMA ||'.'||V_TABLA||'.ADC_ID      		IS ''Código identificador único del adjunto de la comunicación.''  ';
 	EXECUTE IMMEDIATE  'COMMENT ON COLUMN '|| V_ESQUEMA ||'.'||V_TABLA||'.VERSION      		IS ''Indica la version del registro.''  ';
 	EXECUTE IMMEDIATE  'COMMENT ON COLUMN '|| V_ESQUEMA ||'.'||V_TABLA||'.USUARIOCREAR    	IS ''Indica el usuario que creo el registro.''  ';
 	EXECUTE IMMEDIATE  'COMMENT ON COLUMN '|| V_ESQUEMA ||'.'||V_TABLA||'.FECHACREAR      	IS ''Indica la fecha en la que se creo el registro.''  ';

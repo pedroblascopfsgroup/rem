@@ -46,4 +46,14 @@ public interface GestorDocumentalAdapterApi {
 	Long uploadDocumentoPromociones(String codPromo, WebFileItem webFileItem, String userLogin, String matricula) throws Exception;
 	
 	List<DtoAdjuntoPromocion> getAdjuntosPromociones (String codPromo) throws GestorDocumentalException;
+
+	List<DtoAdjunto> getAdjuntosComunicacionGencat(ComunicacionGencat comunicacionGencat) throws GestorDocumentalException;
+
+	Integer crearContenedorComunicacionGencat(ComunicacionGencat comunicacionGencat, String username) throws GestorDocumentalException;
+
+	Long uploadDocumentoComunicacionGencat(ComunicacionGencat comunicacionGencat, WebFileItem webFileItem,
+			String userLogin, String matricula) throws GestorDocumentalException;
+
+	void crearRelacionActivosComunicacion(ComunicacionGencat comunicacionGencat, Long idDocRestClient, Activo Activo,
+			String username, CrearRelacionExpedienteDto crearRelacionExpedienteDto) throws GestorDocumentalException;
 }

@@ -8,7 +8,7 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoController', {
 
     	'documentoscomunicaciongencatlist': {
 		abrirFormulario: 'abrirFormularioAdjuntarDocumentoComunicacion',
-		//onClickRemove: 'borrarDocumentoAdjunto',
+		onClickRemove: 'borrarDocumentoAdjunto',
 		download: 'downloadDocumentoComunicacionActivo',
 		afterupload: function(grid) {
 		grid.getStore().load(); 
@@ -207,6 +207,26 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoController', {
 		 	}
 	 });
     		    	     
-  }
+  },borrarDocumentoAdjunto: function(grid, record) {
+		var me = this,
+		idActivo = me.getViewModel().get("activo.id");
+		me.getView().mask(HreRem.i18n("msg.mask.loading"));
+		record.erase({
+			params: {idEntidad: idActivo},
+            success: function(record, operation) {
+            	 grid.fireEvent("afterdelete", grid);
+            	 grid.getStore().load();
+             	 grid.disableRemoveButton(true);
+           		 me.getView().unmask();
+           		 me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+            },
+            failure: function(record, operation) {
+				 grid.fireEvent("afterdelete", grid);
+				 me.getView().unmask();
+                 me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+            }
+            
+        });	
+	}
     
 });

@@ -359,7 +359,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
 			            		readOnly:'{agrupacionProyectoTieneActivos}'
 			            	}
 						},
-						{//TODO Arreglar esta mierda
+						{
 							xtype		: 'comboboxfieldbase',
 				        	fieldLabel	: HreRem.i18n('fieldlabel.gestor.comercial'),
 				        	reference	: 'cbGestorComercial',

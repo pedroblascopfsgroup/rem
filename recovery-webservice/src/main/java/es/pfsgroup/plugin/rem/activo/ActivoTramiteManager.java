@@ -810,7 +810,7 @@ public class ActivoTramiteManager implements ActivoTramiteApi{
 	public Boolean tieneTramiteGENCATVigenteByIdActivo(Long idActivo){
 		
 		Boolean tieneTramiteGENCAT = false;
-		Boolean expBloqueado = true;
+		Boolean exosteGencatActivo = false;
 		
 		
 		if(!Checks.esNulo(idActivo)){
@@ -826,15 +826,15 @@ public class ActivoTramiteManager implements ActivoTramiteApi{
 						if(!Checks.esNulo(activoTramite.getEstadoTramite()) && DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CERRADO.equals(activoTramite.getEstadoTramite().getCodigo())
 							|| !Checks.esNulo(activoTramite.getEstadoTramite()) && DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CANCELADO.equals(activoTramite.getEstadoTramite().getCodigo())
 						){
-							expBloqueado = true;
+							exosteGencatActivo = false;
 						}else{
-							expBloqueado = false;
+							exosteGencatActivo = true;
 							break;
 						}
 					}
 				}
-				if(expBloqueado) {
-					tieneTramiteGENCAT = false;
+				if(exosteGencatActivo) {
+					tieneTramiteGENCAT = true;
 				}else {
 					if(!Checks.esNulo(comunicacionGencat)) {
 						if(!Checks.esNulo(comunicacionGencat.getSancion())&& DDSancionGencat.COD_EJERCE.equalsIgnoreCase(comunicacionGencat.getSancion().getCodigo())) {

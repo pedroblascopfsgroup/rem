@@ -37,9 +37,10 @@ public class ExpedienteAvisoBloqueadoGencat implements ExpedienteAvisadorApi{
 		Boolean expBloqueado = false;
 		if(!Checks.esNulo(expediente) && !Checks.esNulo(expediente.getOferta())){
 			List<ActivoOferta> actOfrList = expediente.getOferta().getActivosOferta();
+			ComunicacionGencat comGen = null;
 			for (ActivoOferta actOfr : actOfrList){
 				Activo activo = actOfr.getPrimaryKey().getActivo();
-				ComunicacionGencat comGen = genericDao.get(ComunicacionGencat.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId()));
+				comGen = genericDao.get(ComunicacionGencat.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId()));
 				if (!Checks.esNulo(comGen) && !DDEstadoComunicacionGencat.COD_SANCIONADO.equals(comGen.getEstadoComunicacion().getCodigo()) && activoDao.isActivoAfectoGENCAT(activo.getId()) &&
 						!DDEstadosExpedienteComercial.RESERVADO.equals(expediente.getEstado().getCodigo()) && !DDEstadosExpedienteComercial.APROBADO.equals(expediente.getEstado().getCodigo())) {
 					dtoAviso.setId(String.valueOf(expediente.getId()));
@@ -50,7 +51,7 @@ public class ExpedienteAvisoBloqueadoGencat implements ExpedienteAvisadorApi{
 				if(!Checks.estaVacio(actTraList)){
 					for (ActivoTramite activoTramite : actTraList) {
 						if(ActivoTramiteApi.CODIGO_TRAMITE_COMUNICACION_GENCAT.equals(activoTramite.getTipoTramite().getCodigo())){
-							if(!Checks.esNulo(activoTramite.getEstadoTramite()) && DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CERRADO.equals(activoTramite.getEstadoTramite().getCodigo())){
+							if(!Checks.esNulo(activoTramite.getEstadoTramite()) && (DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CERRADO.equals(activoTramite.getEstadoTramite().getCodigo()) || DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CANCELADO.equals(activoTramite.getEstadoTramite().getCodigo()))){
 								expBloqueado = true;
 							}else{
 								expBloqueado = false;
@@ -58,7 +59,7 @@ public class ExpedienteAvisoBloqueadoGencat implements ExpedienteAvisadorApi{
 							}
 						}
 					}
-					if(expBloqueado){
+					if(expBloqueado && !Checks.esNulo(comGen) && Checks.esNulo(comGen.getSancion())){
 						dtoAviso.setId(String.valueOf(expediente.getId()));
 						dtoAviso.setDescripcion("Expediente bloqueado por GENCAT");
 						return dtoAviso;

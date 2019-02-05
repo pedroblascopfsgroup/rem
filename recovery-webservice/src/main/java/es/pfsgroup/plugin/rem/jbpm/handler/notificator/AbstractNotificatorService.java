@@ -8,6 +8,8 @@ import java.util.Properties;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import es.capgemini.pfs.users.domain.Usuario;
@@ -52,6 +54,8 @@ public abstract class AbstractNotificatorService{
 	
 	private static final String STR_MISSING_VALUE = "---";
 	
+	protected final Log logger = LogFactory.getLog(getClass());
+	
 	private String generateFechaTrabajo(Trabajo trabajo){
 		String fecha = null;
 		DateFormat formatoFecha = new SimpleDateFormat("dd/MM/yyyy");
@@ -66,14 +70,20 @@ public abstract class AbstractNotificatorService{
 	}
 	
 	public String generateDireccion(Activo activo){
-		String direccion = (!Checks.esNulo(activo.getLocalizacionActual().getTipoVia())? activo.getLocalizacionActual().getTipoVia().getDescripcion() : "") + " "
-				 		 + (!Checks.esNulo(activo.getLocalizacionActual().getDireccion())? activo.getLocalizacionActual().getDireccion() : "") + " "
-				 		 + (!Checks.esNulo(activo.getLocalizacionActual().getNumeroDomicilio())? activo.getLocalizacionActual().getNumeroDomicilio() : "") + " "
-				 		 + (!Checks.esNulo(activo.getLocalizacionActual().getEscalera())? activo.getLocalizacionActual().getEscalera() : "") + " "
-				 		 + (!Checks.esNulo(activo.getLocalizacionActual().getPiso())? activo.getLocalizacionActual().getPiso() : "") + " "
-				 		 + (!Checks.esNulo(activo.getLocalizacionActual().getPuerta())? activo.getLocalizacionActual().getPuerta() : "") + " "
-				 		 + (!Checks.esNulo(activo.getLocalizacionActual().getCodPostal())? activo.getLocalizacionActual().getCodPostal() : "") + " "
-				 		 + (!Checks.esNulo(activo.getLocalizacionActual().getProvincia())? activo.getLocalizacionActual().getProvincia().getDescripcion() : "");
+		String direccion = "";
+		
+		try{
+			direccion = (!Checks.esNulo(activo.getLocalizacionActual().getTipoVia())? activo.getLocalizacionActual().getTipoVia().getDescripcion() : "") + " "
+			 		 + (!Checks.esNulo(activo.getLocalizacionActual().getDireccion())? activo.getLocalizacionActual().getDireccion() : "") + " "
+			 		 + (!Checks.esNulo(activo.getLocalizacionActual().getNumeroDomicilio())? activo.getLocalizacionActual().getNumeroDomicilio() : "") + " "
+			 		 + (!Checks.esNulo(activo.getLocalizacionActual().getEscalera())? activo.getLocalizacionActual().getEscalera() : "") + " "
+			 		 + (!Checks.esNulo(activo.getLocalizacionActual().getPiso())? activo.getLocalizacionActual().getPiso() : "") + " "
+			 		 + (!Checks.esNulo(activo.getLocalizacionActual().getPuerta())? activo.getLocalizacionActual().getPuerta() : "") + " "
+			 		 + (!Checks.esNulo(activo.getLocalizacionActual().getCodPostal())? activo.getLocalizacionActual().getCodPostal() : "") + " "
+			 		 + (!Checks.esNulo(activo.getLocalizacionActual().getProvincia())? activo.getLocalizacionActual().getProvincia().getDescripcion() : "");
+		}catch(Exception e){
+			logger.error("error generando direccion",e);
+		}
 		return (!Checks.esNulo(direccion)? direccion : "");
 	}
 	
@@ -218,7 +228,7 @@ public abstract class AbstractNotificatorService{
 		dtoSendNotificator.setNumActivo(tramite.getActivo().getNumActivo());
 		dtoSendNotificator.setDireccion(this.generateDireccion(tramite.getActivo()));
 
-		if (!Checks.esNulo(tramite.getTrabajo())) {
+		if (!Checks.esNulo(tramite.getTrabajo()) && tramite.getTrabajo().getSubtipoTrabajo() != null) {
 			dtoSendNotificator.setTipoContrato(tramite.getTrabajo().getSubtipoTrabajo().getDescripcion());
 			dtoSendNotificator.setNumTrabajo(tramite.getTrabajo().getNumTrabajo());
 			dtoSendNotificator.setFechaFinalizacion(this.generateFechaTrabajo(tramite.getTrabajo()));	
@@ -467,14 +477,18 @@ protected String nombresOfertantesExpress(ExpedienteComercial expediente) {
 
 
 protected String getCompradorFullName(Long compradorId) {
-	if (compradorId != null) {
-		Comprador comprador = genericDao.get(Comprador.class, genericDao.createFilter(FilterType.EQUALS, "id", compradorId) );
-		if (comprador != null) {
-			return comprador.getFullName();
+	try{
+		if (compradorId != null) {
+			Comprador comprador = genericDao.get(Comprador.class, genericDao.createFilter(FilterType.EQUALS, "id", compradorId) );
+			if (comprador != null) {
+				return comprador.getFullName();
+			} else {
+				return STR_MISSING_VALUE;
+			}
 		} else {
 			return STR_MISSING_VALUE;
 		}
-	} else {
+	}catch(Exception e){
 		return STR_MISSING_VALUE;
 	}
 }

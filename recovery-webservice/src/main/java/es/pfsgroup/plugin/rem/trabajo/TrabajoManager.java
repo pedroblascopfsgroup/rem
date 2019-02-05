@@ -57,6 +57,7 @@ import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
+import es.pfsgroup.plugin.gestorDocumental.dto.documentos.CrearRelacionExpedienteDto;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionDao;
@@ -146,6 +147,9 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	private SimpleDateFormat groovyft = new SimpleDateFormat("yyyy-MM-dd");
 
 	protected static final Log logger = LogFactory.getLog(TrabajoManager.class);
+	
+	private static final String RELACION_TIPO_DOCUMENTO_EXPEDIENTE = "d-e";	
+	private static final String OPERACION_ALTA = "Alta";	
 
 	@Autowired
 	private GenericABMDao genericDao;
@@ -1693,7 +1697,9 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 		try {
 			// Borramos en el gestor documental si hay
-			if (DDTipoTrabajo.CODIGO_ACTUACION_TECNICA.equals(trabajo.getTipoTrabajo().getCodigo()) && gestorDocumentalAdapterApi.modoRestClientActivado()) {
+			if ((DDTipoTrabajo.CODIGO_ACTUACION_TECNICA.equals(trabajo.getTipoTrabajo().getCodigo()) 
+					|| DDTipoTrabajo.CODIGO_OBTENCION_DOCUMENTAL.equals(trabajo.getTipoTrabajo().getCodigo()) 
+					|| DDTipoTrabajo.CODIGO_PRECIOS.equals(trabajo.getTipoTrabajo().getCodigo()) ) && gestorDocumentalAdapterApi.modoRestClientActivado()) {
 				Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 				borrado = gestorDocumentalAdapterApi.borrarAdjunto(dtoAdjunto.getId(), usuarioLogado.getUsername());
 				
@@ -1929,10 +1935,24 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		DDTipoDocumentoActivo tipoDocumento = genericDao.get(DDTipoDocumentoActivo.class,
 				filtro);
 		
-		if(DDTipoTrabajo.CODIGO_ACTUACION_TECNICA.equals(trabajo.getTipoTrabajo().getCodigo()) && gestorDocumentalAdapterApi.modoRestClientActivado()){
+		if((DDTipoTrabajo.CODIGO_ACTUACION_TECNICA.equals(trabajo.getTipoTrabajo().getCodigo()) 
+				|| DDTipoTrabajo.CODIGO_OBTENCION_DOCUMENTAL.equals(trabajo.getTipoTrabajo().getCodigo())
+				|| DDTipoTrabajo.CODIGO_PRECIOS.equals(trabajo.getTipoTrabajo().getCodigo()) ) && gestorDocumentalAdapterApi.modoRestClientActivado()){
 			try {
 				Long idDocRestClient = gestorDocumentalAdapterApi.uploadDocumentoActuacionesTecnicas(trabajo, fileItem, usuarioLogado.getUsername(), tipoDocumento.getMatricula());
-				// Subida del registro del adjunto al Trabajo
+				// Subida del registro del adjunto al Trabajo						
+				CrearRelacionExpedienteDto crearRelacionExpedienteDto = new CrearRelacionExpedienteDto();
+				crearRelacionExpedienteDto.setTipoRelacion(RELACION_TIPO_DOCUMENTO_EXPEDIENTE);
+				String mat = tipoDocumento.getMatricula();
+				if(!Checks.esNulo(mat)){
+					String[] matSplit = mat.split("-");
+					crearRelacionExpedienteDto.setCodTipoDestino(matSplit[0]);
+					crearRelacionExpedienteDto.setCodClaseDestino(matSplit[1]);
+				}
+				crearRelacionExpedienteDto.setOperacion(OPERACION_ALTA);
+				gestorDocumentalAdapterApi.crearRelacionTrabajosActivo(trabajo, idDocRestClient, trabajo.getActivo().getNumActivo().toString(),
+						usuarioLogado.getUsername(), crearRelacionExpedienteDto);
+				
 				AdjuntoTrabajo adjuntoTrabajo = new AdjuntoTrabajo();
 				adjuntoTrabajo.setTrabajo(trabajo);
 				adjuntoTrabajo.setTipoDocumentoActivo(tipoDocumento);
@@ -2030,7 +2050,9 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		Usuario usuario = genericAdapter.getUsuarioLogado();
 		Trabajo trabajo = trabajoDao.get(id);
 
-		if(DDTipoTrabajo.CODIGO_ACTUACION_TECNICA.equals(trabajo.getTipoTrabajo().getCodigo()) && gestorDocumentalAdapterApi.modoRestClientActivado()) {
+		if((DDTipoTrabajo.CODIGO_ACTUACION_TECNICA.equals(trabajo.getTipoTrabajo().getCodigo()) 
+				|| DDTipoTrabajo.CODIGO_OBTENCION_DOCUMENTAL.equals(trabajo.getTipoTrabajo().getCodigo()) 
+				|| DDTipoTrabajo.CODIGO_PRECIOS.equals(trabajo.getTipoTrabajo().getCodigo()) ) && gestorDocumentalAdapterApi.modoRestClientActivado()) {
 			try {
 				listaAdjuntos = gestorDocumentalAdapterApi.getAdjuntosActuacionesTecnicas(trabajo);
 						for (DtoAdjunto adj : listaAdjuntos) {

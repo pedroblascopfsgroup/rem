@@ -5,9 +5,7 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.io.StringWriter;
-import java.net.Socket;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
@@ -18,14 +16,10 @@ import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 
-import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.bouncycastle.crypto.tls.DefaultTlsClient;
-import org.bouncycastle.crypto.tls.TlsAuthentication;
-import org.bouncycastle.crypto.tls.TlsClientProtocol;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -138,12 +132,12 @@ public class ClienteSalesforceGenerico {
 
 			System.out.println("Generando SSLContext tipo TLSv1.2, aqui puede fallar facil , C103 , CON JAVA 6 AQUI FALLA SIEMPRE");
 			SSLContext sslContext = SSLContext.getInstance("TLSv1.2");
-			System.out.println("Inizializando SSLContext");
+			System.out.println("Inicializando SSLContext");
 			sslContext.init(null, new TrustManager[] { new CustomInsecureX509TrustManager() }, new java.security.SecureRandom());
 			
 			System.out.println("Creando URL");
 			URL url = new URL(serviceUrl);
-			System.out.println("URL creada, abierndo conexion (aqui puede fallar facil)");
+			System.out.println("URL creada, abriendo conexion (aqui puede fallar facil)");
 			
 			HttpsURLConnection httpsURLConnection = (HttpsURLConnection) url.openConnection();
 			

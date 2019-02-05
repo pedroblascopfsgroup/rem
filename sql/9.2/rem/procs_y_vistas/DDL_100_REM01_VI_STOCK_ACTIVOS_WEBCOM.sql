@@ -284,7 +284,7 @@ BEGIN
         LEFT JOIN '||V_ESQUEMA||'.dd_tpu_tipo_publicacion tpu ON tpu.dd_tpu_id = actpub.DD_TPU_A_ID
         LEFT JOIN
            (SELECT vi.act_id,
-					 CASE 
+					CASE 
 					  WHEN
 						pac.pac_check_comercializar IS NULL THEN 1
 						ELSE

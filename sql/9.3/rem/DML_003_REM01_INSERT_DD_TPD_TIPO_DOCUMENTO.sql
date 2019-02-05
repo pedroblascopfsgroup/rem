@@ -4,10 +4,10 @@
 --## FECHA_CREACION=20190124
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=REMVIP-2940
+--## INCIDENCIA_LINK=REMVIP-3158
 --## PRODUCTO=NO
 --##
---## Finalidad: update TAP_TAREA_PROCEDIMIENTO script validacion T004_FijacionPlazo
+--## Finalidad: INSERT TIPO DOCUMENTO
 --## INSTRUCCIONES: 
 --## VERSIONES:
 --##        0.1 Version inicial
@@ -66,7 +66,7 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
        	  V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.'||V_TEXT_TABLA||' '||
                     'SET DD_'||V_TEXT_CHARS||'_DESCRIPCION = '''||TRIM(V_TMP_TIPO_DATA(2))||''''|| 
 					', DD_'||V_TEXT_CHARS||'_DESCRIPCION_LARGA = '''||TRIM(V_TMP_TIPO_DATA(3))||''''||
-					', DD_'||V_TEXT_CHARS||'_MATRICULA_GD = '''||TRIM(V_TMP_TIPO_DATA(5))||''''||
+					', DD_'||V_TEXT_CHARS||'_MATRICULA_GD = '''||TRIM(V_TMP_TIPO_DATA(4))||''''||
 					', USUARIOMODIFICAR = ''REMVIP-3158'' , FECHAMODIFICAR = SYSDATE '||
 					', DD_'||V_TEXT_CHARS||'_VISIBLE = 1'||
 					'WHERE DD_'||V_TEXT_CHARS||'_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';
@@ -80,7 +80,7 @@ DBMS_OUTPUT.PUT_LINE('[INICIO]');
           EXECUTE IMMEDIATE V_MSQL INTO V_ID;
           V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.'||V_TEXT_TABLA||' (' ||
                       'DD_'||V_TEXT_CHARS||'_ID, DD_'||V_TEXT_CHARS||'_CODIGO, DD_'||V_TEXT_CHARS||'_DESCRIPCION, DD_'||V_TEXT_CHARS||'_DESCRIPCION_LARGA, DD_'||V_TEXT_CHARS||'_MATRICULA_GD, VERSION, USUARIOCREAR, FECHACREAR, BORRADO,DD_'||V_TEXT_CHARS||'_VISIBLE) ' ||
-                      'SELECT '|| V_ID || ',  '''||V_TMP_TIPO_DATA(1)||''','''||TRIM(V_TMP_TIPO_DATA(2))||''','''||TRIM(V_TMP_TIPO_DATA(3))||''', '''||TRIM(V_TMP_TIPO_DATA(4))||''', 0, ''HREOS-4995'',SYSDATE,0 '||
+                      'SELECT '|| V_ID || ',  '''||V_TMP_TIPO_DATA(1)||''','''||TRIM(V_TMP_TIPO_DATA(2))||''','''||TRIM(V_TMP_TIPO_DATA(3))||''', '''||TRIM(V_TMP_TIPO_DATA(4))||''', 0, ''HREOS-3158'',SYSDATE,0 '||
 					  ', 1  FROM DUAL';
           DBMS_OUTPUT.PUT_LINE(V_MSQL);
           EXECUTE IMMEDIATE V_MSQL;

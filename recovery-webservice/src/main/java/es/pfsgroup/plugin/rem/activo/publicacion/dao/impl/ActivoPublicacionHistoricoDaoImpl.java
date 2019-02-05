@@ -10,6 +10,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
+import org.hibernate.criterion.Conjunction;
+import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
@@ -41,8 +43,12 @@ public class ActivoPublicacionHistoricoDaoImpl extends AbstractEntityDao<ActivoP
 	@Override
 	public DtoPaginadoHistoricoEstadoPublicacion getListadoPaginadoHistoricoEstadosPublicacionVentaByIdActivo(DtoPaginadoHistoricoEstadoPublicacion dto) {
 		Criteria criteria = getSession().createCriteria(ActivoPublicacionHistorico.class);
+		Disjunction andFechas = Restrictions.disjunction();
 		criteria.add(Restrictions.eq("activo.id", dto.getIdActivo())).createCriteria("tipoComercializacion").add(Restrictions.in("codigo", DDTipoComercializacion.CODIGOS_VENTA))
 				.setMaxResults(dto.getLimit()).setFirstResult(dto.getStart());
+		andFechas.add(Restrictions.isNotNull("fechaInicioVenta"));
+		andFechas.add(Restrictions.isNotNull("fechaFinVenta"));
+		criteria.add(andFechas);
 		criteria.addOrder(Order.desc("auditoria.fechaCrear"));
 		List<ActivoPublicacionHistorico> listadoEntidades = HibernateUtils.castList(ActivoPublicacionHistorico.class, criteria.list());
 
@@ -66,8 +72,12 @@ public class ActivoPublicacionHistoricoDaoImpl extends AbstractEntityDao<ActivoP
 	@Override
 	public DtoPaginadoHistoricoEstadoPublicacion getListadoHistoricoEstadosPublicacionAlquilerByIdActivo(DtoPaginadoHistoricoEstadoPublicacion dto) {
 		Criteria criteria = getSession().createCriteria(ActivoPublicacionHistorico.class);
+		Disjunction andFechas = Restrictions.disjunction();
 		criteria.add(Restrictions.eq("activo.id", dto.getIdActivo())).createCriteria("tipoComercializacion").add(Restrictions.in("codigo", DDTipoComercializacion.CODIGOS_ALQUILER))
 				.setMaxResults(dto.getLimit()).setFirstResult(dto.getStart());
+		andFechas.add(Restrictions.isNotNull("fechaInicioAlquiler"));
+		andFechas.add(Restrictions.isNotNull("fechaFinAlquiler"));
+		criteria.add(andFechas);
 		criteria.addOrder(Order.desc("auditoria.fechaCrear"));
 		List<ActivoPublicacionHistorico> listadoEntidades = HibernateUtils.castList(ActivoPublicacionHistorico.class, criteria.list());
 
@@ -103,6 +113,7 @@ public class ActivoPublicacionHistoricoDaoImpl extends AbstractEntityDao<ActivoP
 		if (!Checks.esNulo(entidad.getActivo())) {
 			dto.setIdActivo(entidad.getActivo().getId());
 		}
+		
 		dto.setFechaDesde(entidad.getFechaInicioVenta());
 		dto.setFechaHasta(entidad.getFechaFinVenta());
 		dto.setOculto(entidad.getCheckOcultarVenta());
@@ -144,6 +155,7 @@ public class ActivoPublicacionHistoricoDaoImpl extends AbstractEntityDao<ActivoP
 		if (!Checks.esNulo(entidad.getActivo())) {
 			dto.setIdActivo(entidad.getActivo().getId());
 		}
+		
 		dto.setFechaDesde(entidad.getFechaInicioAlquiler());
 		dto.setFechaHasta(entidad.getFechaFinAlquiler());
 		dto.setOculto(entidad.getCheckOcultarAlquiler());
@@ -194,7 +206,7 @@ public class ActivoPublicacionHistoricoDaoImpl extends AbstractEntityDao<ActivoP
 	public Long obtenerDiasPorEstadoPublicacionVentaActivo(ActivoPublicacionHistorico estadoActivo) throws ParseException {
 		Long dias = 0L;
 
-		//if (DDEstadoPublicacionVenta.CODIGO_PUBLICADO_VENTA.equals(estadoActivo.getEstadoPublicacionVenta().getCodigo()) && !Checks.esNulo(estadoActivo.getFechaInicioVenta())) {
+		if (!Checks.esNulo(estadoActivo.getFechaInicioVenta())) {
 			Date fechaDesdeSinTiempo = this.sdfFecha.parse(this.sdfFecha.format(estadoActivo.getFechaInicioVenta()));
 			Date fechaHastaSinTiempo = new Date();
 			if (!Checks.esNulo(estadoActivo.getFechaFinVenta())) {
@@ -202,7 +214,7 @@ public class ActivoPublicacionHistoricoDaoImpl extends AbstractEntityDao<ActivoP
 			}
 			Long diferenciaMilis = fechaHastaSinTiempo.getTime() - fechaDesdeSinTiempo.getTime();
 			dias = diferenciaMilis / (MILLISECONDS * SECONDS * MINUTES * HOURS);
-		//}
+		}
 
 		return dias;
 	}
@@ -211,7 +223,7 @@ public class ActivoPublicacionHistoricoDaoImpl extends AbstractEntityDao<ActivoP
 	public Long obtenerDiasPorEstadoPublicacionAlquilerActivo(ActivoPublicacionHistorico estadoActivo) throws ParseException {
 		Long dias = 0L;
 
-		//if (DDEstadoPublicacionAlquiler.CODIGO_PUBLICADO_ALQUILER.equals(estadoActivo.getEstadoPublicacionAlquiler().getCodigo()) && !Checks.esNulo(estadoActivo.getFechaInicioAlquiler())) {
+		if (!Checks.esNulo(estadoActivo.getFechaInicioAlquiler())) {
 			Date fechaDesdeSinTiempo = this.sdfFecha.parse(this.sdfFecha.format(estadoActivo.getFechaInicioAlquiler()));
 			Date fechaHastaSinTiempo = new Date();
 			if (!Checks.esNulo(estadoActivo.getFechaFinAlquiler())) {
@@ -219,7 +231,7 @@ public class ActivoPublicacionHistoricoDaoImpl extends AbstractEntityDao<ActivoP
 			}
 			Long diferenciaMilis = fechaHastaSinTiempo.getTime() - fechaDesdeSinTiempo.getTime();
 			dias = diferenciaMilis / (MILLISECONDS * SECONDS * MINUTES * HOURS);
-		//}
+		}
 
 		return dias;
 	}
@@ -229,6 +241,8 @@ public class ActivoPublicacionHistoricoDaoImpl extends AbstractEntityDao<ActivoP
 		criteria.add(Restrictions.eq("activo.id", idActivo));
 		criteria.add(Restrictions.isNull("fechaFinVenta"));
 		criteria.add(Restrictions.isNull("fechaFinAlquiler"));
+		criteria.add(Restrictions.isNotNull("fechaInicioAlquiler"));
+		criteria.add(Restrictions.isNotNull("fechaInicioVenta"));
 		criteria.add(Restrictions.eq("auditoria.borrado", false));
 		criteria.addOrder(Order.desc("auditoria.fechaCrear"));
 

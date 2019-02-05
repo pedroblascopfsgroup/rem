@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=ANAHUAC DE VICENTE
---## FECHA_CREACION=20170411
+--## AUTOR=Ramon Llinares
+--## FECHA_CREACION=20190205
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-1877
+--## INCIDENCIA_LINK=HREOS-5221
 --## PRODUCTO=NO
 --## Finalidad: Vista Materializada exclusiva para Stock que contiene la relación de activos y subdivisiones.
 --##           
@@ -67,9 +67,9 @@ BEGIN
 			INNER JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_ID = ICO.ACT_ID
 			LEFT JOIN '||V_ESQUEMA||'.ACT_VIV_VIVIENDA VIV ON VIV.ICO_ID = ICO.ICO_ID
 			LEFT JOIN '||V_ESQUEMA||'.ACT_DIS_DISTRIBUCION DIS ON DIS.ICO_ID = VIV.ICO_ID
-		where act.borrado = 0
+            where act.borrado = 0
 			AND DIS.BORRADO = 0
-		GROUP BY ACT.ACT_ID,
+			GROUP BY ACT.ACT_ID,
 		    ACT.ACT_NUM_ACTIVO,
 		    ACT.DD_TPA_ID,
 		    ACT.DD_SAC_ID,

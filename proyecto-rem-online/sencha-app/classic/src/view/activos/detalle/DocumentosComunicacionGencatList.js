@@ -7,7 +7,7 @@ Ext.define('HreRem.view.activos.detalle.DocumentosComunicacionGencatList', {
     },
     features: [{ftype:'grouping'}],
     topBar		:  true,
-    removeButton: false,
+    removeButton: true,
         
     initComponent: function () {
         
@@ -38,16 +38,14 @@ Ext.define('HreRem.view.activos.detalle.DocumentosComunicacionGencatList', {
 	    		{
 		            dataIndex: 'nombre',
 		            text: HreRem.i18n('header.nombre.documento'),
-		            flex: 1,
-		            hidden: true
+		            flex: 1
 		        },
 		        {   text: HreRem.i18n('header.tipo'),
 		        	dataIndex: 'descripcionTipo',
-		        	flex: 1,
-		        	hidden: true
+		        	flex: 1
 		        },
 		        {
-		            dataIndex: 'fechaDocumento',
+		            dataIndex: 'createDate',
 		            text: HreRem.i18n('header.fecha.subida'),
 		            formatter: 'date("d/m/Y")',
 		            flex: 1

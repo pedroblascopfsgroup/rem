@@ -18,8 +18,10 @@ Ext.define('HreRem.model.DocumentoActivoGencat', {
     proxy: {
 		type: 'uxproxy',
 		localUrl: 'activos.json',
-		remoteUrl: 'activo/getActivoById'
-        
+		remoteUrl: 'activo/getActivoById',
+			api: {
+	            destroy: 'gencat/deleteAdjunto'
+	        }
     } 
 
 });

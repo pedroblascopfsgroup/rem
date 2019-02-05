@@ -61,6 +61,7 @@ import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.AdecuacionGencat;
 import es.pfsgroup.plugin.rem.model.ClienteComercial;
+import es.pfsgroup.plugin.rem.model.AdjuntoComunicacion;
 import es.pfsgroup.plugin.rem.model.Comprador;
 import es.pfsgroup.plugin.rem.model.CompradorExpediente;
 import es.pfsgroup.plugin.rem.model.ComunicacionGencat;
@@ -95,6 +96,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDSancionGencat;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoComunicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoNotificacionGencat;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
 
@@ -119,9 +121,6 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 	
 	@Autowired
 	private UploadAdapter uploadAdapter;
-	
-	@Autowired
-	private ActivoDao activoDao;
 	
 	@Autowired
 	private ComunicacionGencatAdjuntoDao comunicacionGencatAdjuntoDao;
@@ -187,6 +186,9 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 	
 	@Autowired
 	private ActivoAgrupacionActivoDao activoAgrupacionActivoDao;
+	
+	@Autowired
+	private ActivoDao activoDao;
 	
 	
 	@Override
@@ -372,8 +374,29 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 			
 			//if... gestor documental activado
 			if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
-				listaAdjuntos = getAdjuntosComunicacionGD(idActivo, comunicacionGencat, listaAdjuntos);
-
+				try {
+					listaAdjuntos = gestorDocumentalAdapterApi.getAdjuntosComunicacionGencat(comunicacionGencat);
+				} catch (GestorDocumentalException gex) {
+					String[] error = gex.getMessage().split("-");
+					if (error.length > 0 &&  (error[2].trim().contains("Error al obtener el activo, no existe"))) {
+						Usuario usuario = genericAdapter.getUsuarioLogado();
+						Integer idExp;
+						try{
+							idExp = gestorDocumentalAdapterApi.crearContenedorComunicacionGencat(comunicacionGencat,usuario.getUsername());
+							logger.debug("GESTOR DOCUMENTAL [ crearExpediente para " + comunicacionGencat.getId() + "]: ID EXPEDIENTE RECIBIDO " + idExp);
+						} catch (GestorDocumentalException gexc) {
+							gexc.printStackTrace();
+							logger.debug(gexc.getMessage());
+						}
+	
+					}
+					try {
+						throw gex;
+					} catch (GestorDocumentalException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
 			} 
 			else {
 				listaAdjuntos = getAdjuntosComunicacion(idActivo, comunicacionGencat, listaAdjuntos);
@@ -391,10 +414,10 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 		for (ComunicacionGencatAdjunto referenciaAdjunto : comunicacion.getAdjuntos()) {
 			DtoAdjunto dto = new DtoAdjunto();
 
-			ActivoAdjuntoActivo adjunto = referenciaAdjunto.getActivoAdjuntoActivo();
+			AdjuntoComunicacion adjunto = referenciaAdjunto.getAdjuntoComunicacion();
 			BeanUtils.copyProperties(dto, adjunto);
 			dto.setIdEntidad(idActivo);
-			dto.setDescripcionTipo(adjunto.getTipoDocumentoActivo().getDescripcion());
+			dto.setDescripcionTipo(adjunto.getTipoDocumentoComunicacion().getDescripcion());
 			dto.setGestor(adjunto.getAuditoria().getUsuarioCrear());
 
 			listaAdjuntos.add(dto);
@@ -402,38 +425,7 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 		return listaAdjuntos;
 	}
 	
-	private List<DtoAdjunto> getAdjuntosComunicacionGD(Long idActivo, ComunicacionGencat comunicacion, List<DtoAdjunto> listaAdjuntos) 
-			throws IllegalAccessException, InvocationTargetException {
-		
-		Activo activo = activoApi.get(idActivo);
 
-		for (ComunicacionGencatAdjunto referenciaAdjunto : comunicacion.getAdjuntos()) {
-			DtoAdjunto dto = new DtoAdjunto();
-			
-			Long idAdjuntoGD = referenciaAdjunto.getActivoAdjuntoActivo().getIdDocRestClient();
-
-			if (!Checks.esNulo(idAdjuntoGD)) {
-				
-				ActivoAdjuntoActivo adjunto = activo.getAdjuntoGD(idAdjuntoGD);
-				if (!Checks.esNulo(adjunto)) {
-					BeanUtils.copyProperties(dto, adjunto);
-					dto.setIdEntidad(activo.getId());
-					dto.setId(idAdjuntoGD);
-					if (!Checks.esNulo(adjunto.getTipoDocumentoActivo())) {
-						dto.setDescripcionTipo(adjunto.getTipoDocumentoActivo().getDescripcion());
-					}
-					dto.setContentType(adjunto.getContentType());
-					if (!Checks.esNulo(adjunto.getAuditoria())) {
-						dto.setGestor(adjunto.getAuditoria().getUsuarioCrear());
-					}
-					dto.setTamanyo(adjunto.getTamanyo());
-					listaAdjuntos.add(dto);
-				}
-				
-			}
-		}
-		return listaAdjuntos;
-	}
 	
 	@Override
 	public List<DtoHistoricoComunicacionGencat> getHistoricoComunicacionesByIdActivo(Long idActivo) {
@@ -639,10 +631,10 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 		for (HistoricoComunicacionGencatAdjunto referenciaAdjunto : hComunicacionGencat.getAdjuntos()) {
 			DtoAdjunto dto = new DtoAdjunto();
 
-			ActivoAdjuntoActivo adjunto = referenciaAdjunto.getActivoAdjuntoActivo();
+			AdjuntoComunicacion adjunto = referenciaAdjunto.getAdjuntoComunicacion();
 			BeanUtils.copyProperties(dto, adjunto);
 			dto.setIdEntidad(hComunicacionGencat.getActivo().getId());
-			dto.setDescripcionTipo(adjunto.getTipoDocumentoActivo().getDescripcion());
+			dto.setDescripcionTipo(adjunto.getTipoDocumentoComunicacion().getDescripcion());
 			dto.setGestor(adjunto.getAuditoria().getUsuarioCrear());
 
 			listaAdjuntos.add(dto);
@@ -658,7 +650,7 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 		for (HistoricoComunicacionGencatAdjunto referenciaAdjunto : hComunicacionGencat.getAdjuntos()) {
 			DtoAdjunto dto = new DtoAdjunto();
 			
-			Long idAdjuntoGD = referenciaAdjunto.getActivoAdjuntoActivo().getIdDocRestClient();
+			Long idAdjuntoGD = referenciaAdjunto.getAdjuntoComunicacion().getIdDocRestClient();
 
 			if (!Checks.esNulo(idAdjuntoGD)) {
 				
@@ -684,9 +676,9 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 	
 	@Override
 	@Transactional(readOnly = false)
-	public String uploadDocumento(WebFileItem webFileItem, Long idDocRestClient, Activo activoEntrada, String matricula, Usuario usuarioLogado) throws Exception {
+	public String uploadDocumento(WebFileItem webFileItem, Long idDocRestClient, Activo activoEntrada, String matricula, Usuario usuarioLogado, ComunicacionGencat comunicacionGencat) throws Exception {
 		Activo activo = null;
-		DDTipoDocumentoActivo tipoDocumento = null;
+		DDTipoDocumentoComunicacion tipoDocumento = null;
 		if (Checks.esNulo(activoEntrada)) {
 			activo = activoApi.get(Long.parseLong(webFileItem.getParameter("idEntidad")));
 
@@ -694,52 +686,56 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 				throw new Exception("Tipo no valido");
 
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", webFileItem.getParameter("tipo"));
-			tipoDocumento = (DDTipoDocumentoActivo) genericDao.get(DDTipoDocumentoActivo.class, filtro);
+			tipoDocumento = genericDao.get(DDTipoDocumentoComunicacion.class, filtro);
 			
 		} else {
 			activo = activoEntrada;
 			if (!Checks.esNulo(matricula)) {
 				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "matricula", matricula);
-				tipoDocumento = (DDTipoDocumentoActivo) genericDao.get(DDTipoDocumentoActivo.class, filtro);
+				tipoDocumento = genericDao.get(DDTipoDocumentoComunicacion.class, filtro);
 			}
 			if (tipoDocumento == null) {
 				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", webFileItem.getParameter("tipo"));
-				tipoDocumento = (DDTipoDocumentoActivo) genericDao.get(DDTipoDocumentoActivo.class, filtro);
+				tipoDocumento = genericDao.get(DDTipoDocumentoComunicacion.class, filtro);
 			}
 		}
 
 		try {
 			if (!Checks.esNulo(activo) && !Checks.esNulo(tipoDocumento)) {
 
-				Adjunto adj = uploadAdapter.saveBLOB(webFileItem.getFileItem());
 
-				ActivoAdjuntoActivo adjuntoActivo = new ActivoAdjuntoActivo();
-				adjuntoActivo.setAdjunto(adj);
-				adjuntoActivo.setActivo(activo);
-
-				adjuntoActivo.setIdDocRestClient(idDocRestClient);
-
-				adjuntoActivo.setTipoDocumentoActivo(tipoDocumento);
-
-				adjuntoActivo.setContentType(webFileItem.getFileItem().getContentType());
-
-				adjuntoActivo.setTamanyo(webFileItem.getFileItem().getLength());
-
-				adjuntoActivo.setNombre(webFileItem.getFileItem().getFileName());
-
-				adjuntoActivo.setDescripcion(webFileItem.getParameter("descripcion"));
-
-				adjuntoActivo.setFechaDocumento(new Date());
-
-				Auditoria.save(adjuntoActivo);
-
-				activo.getAdjuntos().add(adjuntoActivo);
-
-				activoDao.save(activo);
+				AdjuntoComunicacion adjuntoComunicacion = new AdjuntoComunicacion();
+				if(Checks.esNulo(idDocRestClient)){
+					Adjunto adj = uploadAdapter.saveBLOB(webFileItem.getFileItem());
+					adjuntoComunicacion.setAdjunto(adj);
+				}
 				
+				adjuntoComunicacion.setComunicacionGencat(comunicacionGencat);
+
+				adjuntoComunicacion.setIdDocRestClient(idDocRestClient);
+
+				adjuntoComunicacion.setTipoDocumentoComunicacion(tipoDocumento);
+
+				adjuntoComunicacion.setContentType(webFileItem.getFileItem().getContentType());
+
+				adjuntoComunicacion.setTamanyo(webFileItem.getFileItem().getLength());
+
+				adjuntoComunicacion.setNombre(webFileItem.getFileItem().getFileName());
+
+				adjuntoComunicacion.setDescripcion(webFileItem.getParameter("descripcion"));
+
+				adjuntoComunicacion.setFechaDocumento(new Date());
+				
+				String fechaNotificacion = webFileItem.getParameter("fechaNotificacion");
+				SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+						Date fNotificacion = sdf.parse(fechaNotificacion);
+				
+				adjuntoComunicacion.setFechaNotificacion(fNotificacion);
+
+				genericDao.save(AdjuntoComunicacion.class, adjuntoComunicacion);
 				String idHComunicacion = webFileItem.getParameter("idHComunicacion");
 				
-				agregarReferenciaComunicacionAdjunto(adj, activo, usuarioLogado, idHComunicacion);
+				agregarReferenciaComunicacionAdjunto(null, activo, usuarioLogado, idHComunicacion,comunicacionGencat,adjuntoComunicacion);
 			} 
 			else {
 				throw new Exception("No se ha encontrado activo o tipo para relacionar adjunto");
@@ -752,20 +748,11 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 
 	}
 	
-	private void agregarReferenciaComunicacionAdjunto(Adjunto adjunto, Activo activo, Usuario usuarioLogado, String idHComunicacionString) {
+	private void agregarReferenciaComunicacionAdjunto(Adjunto adjunto, Activo activo, Usuario usuarioLogado, String idHComunicacionString, ComunicacionGencat comunicacionGencat, AdjuntoComunicacion adjuntoComunicacion) {
 		
-		Filter filtroIdAdjunto = genericDao.createFilter(FilterType.EQUALS, "adjunto.id", adjunto.getId());
-		Filter filtroIdActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+
 		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false); 
-		Order orderByFechaCrear = new Order(OrderType.DESC, "auditoria.fechaCrear");
-		
-		//Datos del nuevo fichero subido
-		List <ActivoAdjuntoActivo> resultActivoAdjuntoActivo = genericDao.getListOrdered(ActivoAdjuntoActivo.class, orderByFechaCrear, filtroIdAdjunto, filtroIdActivo, filtroBorrado);
-		ActivoAdjuntoActivo activoAdjuntoActivo = null;
-		if (!Checks.esNulo(resultActivoAdjuntoActivo) && !resultActivoAdjuntoActivo.isEmpty()) {
-			activoAdjuntoActivo = resultActivoAdjuntoActivo.get(0);
-		}
-		
+				
 		if (!Checks.esNulo(idHComunicacionString)) {
 			
 			Long idHComunicacion = Long.parseLong(idHComunicacionString);
@@ -775,10 +762,10 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 			//Datos de la comunicación del histórico
 			HistoricoComunicacionGencat hComunicacionGencat = genericDao.get(HistoricoComunicacionGencat.class, filtroHComunicacionId, filtroBorrado);
 			
-			if (!Checks.esNulo(activoAdjuntoActivo) && !Checks.esNulo(hComunicacionGencat)) {
+			if (!Checks.esNulo(adjuntoComunicacion) && !Checks.esNulo(hComunicacionGencat)) {
 				
 				HistoricoComunicacionGencatAdjunto referenciaComunicacionHistoricoAdjunto = new HistoricoComunicacionGencatAdjunto();
-				referenciaComunicacionHistoricoAdjunto.setActivoAdjuntoActivo(activoAdjuntoActivo);
+				referenciaComunicacionHistoricoAdjunto.setAdjuntoComunicacion(adjuntoComunicacion);
 				referenciaComunicacionHistoricoAdjunto.setHistoricoComunicacionGencat(hComunicacionGencat);
 				
 				Auditoria auditoria = new Auditoria();
@@ -796,16 +783,10 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 		}
 		else {
 			
-			//Datos de la comunicación del activo
-			List <ComunicacionGencat> resultComunicacion = genericDao.getListOrdered(ComunicacionGencat.class, orderByFechaCrear, filtroIdActivo, filtroBorrado);
-			ComunicacionGencat comunicacionGencat = null;
-			if (!Checks.esNulo(resultComunicacion) && !resultComunicacion.isEmpty()) {
-				comunicacionGencat = resultComunicacion.get(0);
-			}
-			
-			if (!Checks.esNulo(activoAdjuntoActivo) && !Checks.esNulo(comunicacionGencat)) {
+		
+			if (!Checks.esNulo(adjuntoComunicacion) && !Checks.esNulo(comunicacionGencat)) {
 				ComunicacionGencatAdjunto referenciaComunicacionAdjunto = new ComunicacionGencatAdjunto();
-				referenciaComunicacionAdjunto.setActivoAdjuntoActivo(activoAdjuntoActivo);
+				referenciaComunicacionAdjunto.setAdjuntoComunicacion(adjuntoComunicacion);
 				referenciaComunicacionAdjunto.setComunicacionGencat(comunicacionGencat);
 				
 				Auditoria auditoria = new Auditoria();
@@ -1467,6 +1448,39 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 			return comunicacionGencat;
 		}
 		return null;	
+	}
+
+	@Override
+	@Transactional(readOnly = false)
+	public Boolean deleteAdjunto(DtoAdjunto dtoAdjunto) {
+		boolean borrado = false;
+		if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
+			Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+			try {
+				borrado = gestorDocumentalAdapterApi.borrarAdjunto(dtoAdjunto.getId(), usuarioLogado.getUsername());
+				borrado = deleteAdjuntoLocal(dtoAdjunto);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		} else {
+			borrado = this.deleteAdjuntoLocal(dtoAdjunto);
+		}
+		return borrado;
+	}
+
+	private boolean deleteAdjuntoLocal(DtoAdjunto dtoAdjunto) {
+		Filter filtroComunicacionIdActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", dtoAdjunto.getIdEntidad());
+		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+		Order orderByFechaCrear = new Order(OrderType.DESC, "auditoria.fechaCrear");
+		List <ComunicacionGencat> resultComunicacion = genericDao.getListOrdered(ComunicacionGencat.class, orderByFechaCrear, filtroComunicacionIdActivo, filtroBorrado);
+		ComunicacionGencat comunicacionGencat = null;
+		if (resultComunicacion != null && !resultComunicacion.isEmpty()) {
+			comunicacionGencat = resultComunicacion.get(0);
+		}
+		
+		AdjuntoComunicacion adjunto = genericDao.get(AdjuntoComunicacion.class, genericDao.createFilter(FilterType.EQUALS, "comunicacionGencat.id",comunicacionGencat.getId()),genericDao.createFilter(FilterType.EQUALS, "idDocRestClient",dtoAdjunto.getId()));
+		genericDao.deleteById(AdjuntoComunicacion.class, adjunto.getId());
+		return true;
 	}
 	
 	private void crearNuevaOfertaGENCAT(ExpedienteComercial expedienteComercial, ComunicacionGencat cmg) throws Exception {

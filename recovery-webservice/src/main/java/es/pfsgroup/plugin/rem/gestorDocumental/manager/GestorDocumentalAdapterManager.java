@@ -54,6 +54,7 @@ import es.pfsgroup.plugin.rem.gestorDocumental.dto.documentos.GestorDocToRecover
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoPropietario;
+import es.pfsgroup.plugin.rem.model.AdjuntoComunicacion;
 import es.pfsgroup.plugin.rem.model.ComunicacionGencat;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoAdjuntoPromocion;
@@ -540,5 +541,136 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 	@Override
 	public FileItem getFileItemPromocion(Long idDocumento, String nombreDocumento) throws Exception {
 		return this.getFileItem(idDocumento, nombreDocumento);
+	}
+
+	@Override
+	public List<DtoAdjunto> getAdjuntosComunicacionGencat(ComunicacionGencat comunicacionGencat) throws GestorDocumentalException  {
+		RecoveryToGestorDocAssembler recoveryToGestorDocAssembler = new RecoveryToGestorDocAssembler(appProperties);
+		List<DtoAdjunto> list;
+
+		String codigoEstado = "31";
+		
+
+		CabeceraPeticionRestClientDto cabecera = recoveryToGestorDocAssembler.getCabeceraPeticionRestClient(
+				comunicacionGencat.getId().toString(), GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_OPERACIONES, codigoEstado);
+		Usuario userLogin = genericAdapter.getUsuarioLogado();
+		DocumentosExpedienteDto docExpDto = recoveryToGestorDocAssembler.getDocumentosExpedienteDto(userLogin.getUsername());
+		RespuestaDocumentosExpedientes respuesta = gestorDocumentalApi.documentosExpediente(cabecera, docExpDto);
+
+		list = GestorDocToRecoveryAssembler.getListDtoAdjunto(respuesta);
+		for (DtoAdjunto adjunto : list) {
+			DDTipoDocumentoComunicacion tipoDoc = genericDao.get(DDTipoDocumentoComunicacion.class,genericDao.createFilter(FilterType.EQUALS, "matricula","OP-31-"+adjunto.getCodigoTipo()));
+			if (tipoDoc == null) {
+				adjunto.setDescripcionTipo("");
+			} else {
+				adjunto.setDescripcionTipo(tipoDoc.getDescripcion());
+			}
+			AdjuntoComunicacion adj = genericDao.get(AdjuntoComunicacion.class, genericDao.createFilter(FilterType.EQUALS, "idDocRestClient",adjunto.getId()));
+			Usuario usuarioGestor = genericDao.get(Usuario.class,genericDao.createFilter(FilterType.EQUALS,"username", adj.getAuditoria().getUsuarioCrear()),genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
+			adjunto.setGestor(usuarioGestor.getApellidoNombre());
+		}
+
+		return list;
+	}
+
+	
+	/**
+	 * 
+	 * Método para la creación de un contenedor de comunicaciones Gencat
+	 * 
+	 */
+	@Override
+	public Integer crearContenedorComunicacionGencat(ComunicacionGencat comunicacionGencat, String username)  throws GestorDocumentalException {		
+		String idComunicacionGencat = comunicacionGencat.getId().toString();
+		
+		String idSistemaOrigen = "";
+		String cliente = "";
+		if(!Checks.esNulo(comunicacionGencat) && !Checks.esNulo(comunicacionGencat.getActivo())){
+			idSistemaOrigen = comunicacionGencat.getId().toString();
+			DDCartera cartera = comunicacionGencat.getActivo().getCartera();
+			DDSubcartera subcartera = comunicacionGencat.getActivo().getSubcartera();
+			cliente = getClienteByCarteraySubcartera(cartera, subcartera);
+		}
+		String estadoExpediente = "Alta";
+		String codClase = "31";
+		
+		
+		String descripcionExpediente = "";
+		RecoveryToGestorExpAssembler recoveryToGestorAssembler =  new RecoveryToGestorExpAssembler(appProperties);
+		CrearExpedienteComercialDto crearExpedienteComercialDto = recoveryToGestorAssembler.getCrearExpedienteComercialDto(idComunicacionGencat,descripcionExpediente, username, cliente, estadoExpediente, idSistemaOrigen,codClase, TIPO_EXPEDIENTE);
+		RespuestaCrearExpediente respuesta;
+		
+		try {
+			respuesta = gestorDocumentalExpedientesApi.crearExpedienteComercial(crearExpedienteComercialDto);
+		} catch (GestorDocumentalException gex) {
+			logger.debug(gex.getMessage());
+			throw gex;
+		}
+		
+		Integer idExpediente = null;
+		
+		if(!Checks.esNulo(respuesta)) {
+			idExpediente = respuesta.getIdExpediente();
+		}
+		
+		return idExpediente;	
+	}
+	
+	/**
+	 * 
+	 * Método para subir documentos de comunicación
+	 */
+	@Override
+	public Long uploadDocumentoComunicacionGencat(ComunicacionGencat comunicacionGencat,
+			WebFileItem webFileItem, String userLogin, String matricula) throws GestorDocumentalException {
+		RecoveryToGestorDocAssembler recoveryToGestorDocAssembler = new RecoveryToGestorDocAssembler(appProperties);
+		Long respuesta;
+		String codigoEstado = "31";
+		String fechaNotificacion = webFileItem.getParameter("fechaNotificacion");
+
+		CabeceraPeticionRestClientDto cabecera = recoveryToGestorDocAssembler.getCabeceraPeticionRestClient(
+				comunicacionGencat.getId().toString(), GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_OPERACIONES, codigoEstado);
+		CrearDocumentoDto crearDoc = recoveryToGestorDocAssembler.getCrearDocumentoComunicacionGencatDto(webFileItem, userLogin, matricula,fechaNotificacion);
+		
+		RespuestaCrearDocumento respuestaCrearDocumento;
+
+		try {
+			respuestaCrearDocumento = gestorDocumentalApi.crearDocumento(cabecera, crearDoc);
+			respuesta = new Long(respuestaCrearDocumento.getIdDocumento());
+		} catch (GestorDocumentalException gex) {
+			logger.debug(gex.getMessage());
+			throw gex;
+		}
+
+		return respuesta;
+	}
+
+	@Override
+	public void crearRelacionActivosComunicacion(ComunicacionGencat comunicacionGencat, Long idDocRestClient,
+			Activo activo, String username, CrearRelacionExpedienteDto crearRelacionExpedienteDto)  throws GestorDocumentalException  {
+		RecoveryToGestorDocAssembler recoveryToGestorDocAssembler = new RecoveryToGestorDocAssembler(appProperties);
+		CredencialesUsuarioDto credUsu = recoveryToGestorDocAssembler.getCredencialesDto(username);
+		String codigoEstado = "03"; //Hablado con Manuel Pardo
+		CabeceraPeticionRestClientDto cabecera = recoveryToGestorDocAssembler.getCabeceraPeticionRestClient(comunicacionGencat.getId().toString(), getTipoExpediente(activo), codigoEstado);
+		cabecera.setIdDocumento(idDocRestClient);
+
+		//Un vez adjuntado el documento al expediente, y obtenido el id del mismo, cread un bucle sobre el listado de activos seleccionados.
+		//Llamar al servicio de vinculación entre el documento adjuntado al activo.
+		StringBuilder errorMessage = new StringBuilder();
+	
+			cabecera.setIdExpedienteHaya(activo.getNumActivo().toString());
+
+			try {
+				gestorDocumentalApi.crearRelacionExpediente(cabecera, credUsu, crearRelacionExpedienteDto);
+			} catch (GestorDocumentalException gex) {
+				logger.debug(gex.getMessage());
+				errorMessage.append("[").append(activo.getNumActivo().toString()).append("] ").append(gex.getMessage()).append("\n");
+			}
+		
+
+		if (errorMessage.length()!=0) {
+			throw new GestorDocumentalException(errorMessage.toString());
+		}
+		
 	}
 }

@@ -27,16 +27,16 @@ import es.capgemini.pfs.auditoria.model.Auditoria;
  *
  */
 @Entity
-@Table(name = "CMG_ADC_ADJUNTO_COM_GENCAT", schema = "${entity.schema}")
+@Table(name = "CMG_ACG_ADJUNTO_COM_GENCAT", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class ComunicacionGencatAdjunto implements Serializable, Auditable {
 
 	private static final long serialVersionUID = 467244568707940683L;
 	
 	@Id
-    @Column(name = "ADC_ID")
+    @Column(name = "ACG_ID")
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "ComunicacionGencatAdjuntoGenerator")
-    @SequenceGenerator(name = "ComunicacionGencatAdjuntoGenerator", sequenceName = "S_CMG_ADC_ADJUNTO_COM_GENCAT")
+    @SequenceGenerator(name = "ComunicacionGencatAdjuntoGenerator", sequenceName = "S_CMG_ACG_ADJUNTO_COM_GENCAT")
     private Long id;
 	
 	@ManyToOne
@@ -44,8 +44,8 @@ public class ComunicacionGencatAdjunto implements Serializable, Auditable {
 	private ComunicacionGencat comunicacionGencat;
 	
 	@ManyToOne
-    @JoinColumn(name = "ADA_ID")
-	private ActivoAdjuntoActivo activoAdjuntoActivo;
+    @JoinColumn(name = "ADC_ID")
+	private AdjuntoComunicacion adjuntoComunicacion;
 	
 	@Version   
 	private Long version;
@@ -69,12 +69,12 @@ public class ComunicacionGencatAdjunto implements Serializable, Auditable {
 		this.comunicacionGencat = comunicacionGencat;
 	}
 
-	public ActivoAdjuntoActivo getActivoAdjuntoActivo() {
-		return activoAdjuntoActivo;
+	public AdjuntoComunicacion getAdjuntoComunicacion() {
+		return adjuntoComunicacion;
 	}
 
-	public void setActivoAdjuntoActivo(ActivoAdjuntoActivo activoAdjuntoActivo) {
-		this.activoAdjuntoActivo = activoAdjuntoActivo;
+	public void setAdjuntoComunicacion(AdjuntoComunicacion adjuntoComunicacion) {
+		this.adjuntoComunicacion = adjuntoComunicacion;
 	}
 
 	public Long getVersion() {

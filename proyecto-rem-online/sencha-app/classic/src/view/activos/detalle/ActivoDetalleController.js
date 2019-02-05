@@ -5341,6 +5341,7 @@ Ext
      		var direccion = ""
      		var email = "";
      		var telefono= "";
+     		me.getView().mask(HreRem.i18n("msg.mask.loading"));
      		if(!Ext.isEmpty(ventana2)){
      			codPrescriptor = ventana2.getForm().findField('buscadorPrescriptores').value;
      			numDoc = ventana2.getForm().getValues().numDocumentoCliente;
@@ -5370,6 +5371,9 @@ Ext
  	           },
  	           failure: function(record, operation) {
  	               me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+ 	           },
+ 	           callback: function(options, success, response){
+ 	        	   me.getView().unmask();
  	           }
  	        });
     		

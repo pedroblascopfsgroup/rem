@@ -5403,14 +5403,20 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		
 		if(!Checks.esNulo(dtoGenerarDocGDPR.getCesionDatos())){
 			url+="&gdpr1="+dtoGenerarDocGDPR.getCesionDatos();
+		}else{
+			url+="&gdpr1=false";
 		}
 		
 		if(!Checks.esNulo(dtoGenerarDocGDPR.getComTerceros())){
 			url+="&gdpr2="+dtoGenerarDocGDPR.getComTerceros();
+		}else{
+			url+="&gdpr2=false";
 		}
 
 		if(!Checks.esNulo(dtoGenerarDocGDPR.getTransIntern())){
 			url+="&gdpr3="+dtoGenerarDocGDPR.getTransIntern();
+		}else{
+			url+="&gdpr3=false";
 		}
 		
 		ServerRequest serverRequest =  new ServerRequest();
@@ -5432,12 +5438,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		return fileItem;
 	}
 	
-	private Object getBinaryResponse(ServerRequest serverRequest, String fileName) {
-		Object respuesta = this.getFinalBinaryResponse(serverRequest);
-		
-		return respuesta;
-	}
-	
 	private RespuestaDescargarDocumento rellenarRespuestaDescarga(byte[] contenido, String nombreDocumento){
 		
 		Byte[] bytes = ArrayUtils.toObject(contenido);
@@ -5449,7 +5449,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		return respuesta;
 	}
 	
-	public Object getFinalBinaryResponse(ServerRequest serverRequest) {
+	public Object getBinaryResponse(ServerRequest serverRequest, String fileName) {
 		String restClientUrl = serverRequest.getRestClientUrl();
 		
 		final Client client = ClientBuilder.newBuilder().register(MultiPartFeature.class).register(JacksonFeature.class).build();

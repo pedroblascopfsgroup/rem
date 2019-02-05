@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Daniel Algaba
---## FECHA_CREACION=20181208
+--## AUTOR=Javier Pons
+--## FECHA_CREACION=20190130
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=2.1.0
---## INCIDENCIA_LINK=HREOS-4994
+--## INCIDENCIA_LINK=REMVIP-3197
 --## PRODUCTO=NO
 --## Finalidad: Tabla para almacentar el historico del stock de activos enviados a webcom.
 --##           
@@ -286,7 +286,10 @@ BEGIN
         LEFT JOIN '||V_ESQUEMA||'.dd_tpu_tipo_publicacion tpu ON tpu.dd_tpu_id = actpub.DD_TPU_A_ID
         LEFT JOIN
            (SELECT vi.act_id,
-                      pac.pac_check_comercializar --Disponible
+					 CASE 
+					  WHEN
+						pac.pac_check_comercializar IS NULL THEN 1 
+					  END 
                    || vi.sin_toma_posesion_inicial --Sin Posesión
                    || vi.ocupado_contitulo --Alquilado
                    || vi.ocupado_sintitulo --Ocupado
@@ -309,7 +312,7 @@ BEGIN
                    condicionantes,
                    vi.otro descripcion_otros
               FROM rem01.v_cond_disponibilidad vi
-              join rem01.ACT_PAC_PERIMETRO_ACTIVO pac on pac.act_id = vi.act_id) v ON v.act_id = actpub.act_id
+              LEFT JOIN rem01.ACT_PAC_PERIMETRO_ACTIVO pac on pac.act_id = vi.act_id) v ON v.act_id = actpub.act_id
 
     	LEFT JOIN(  SELECT DISTINCT pve.PVE_COD_REM, gac.ACT_ID, row_number() over(partition by gac.act_id order by pve.fechacrear desc) rn
     	    FROM '||V_ESQUEMA||'.GAC_GESTOR_ADD_ACTIVO gac

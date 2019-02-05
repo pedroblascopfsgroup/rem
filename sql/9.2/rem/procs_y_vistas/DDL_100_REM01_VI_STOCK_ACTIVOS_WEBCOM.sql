@@ -227,7 +227,6 @@ BEGIN
 			THEN DD_TAL.DD_TAL_CODIGO
 			ELSE NULL
 		END 																				AS COD_TIPO_ALQUILER,
-		PVEPRV.PVE_COD_REM 	                                                                AS ACTIVO_PROVEEDOR_TECNICO,
 		CAST(DDEAC.DD_EAC_CODIGO AS VARCHAR2(5 CHAR))										AS cod_estado_fisico,
 		CAST(TUD.DD_TUD_CODIGO AS VARCHAR2(5 CHAR))											AS cod_tipo_uso_destino
     	FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT

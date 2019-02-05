@@ -1,6 +1,5 @@
 package es.pfsgroup.plugin.rem.activo;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,7 +25,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
 @Service("activoAvisadorManager")
 public class ActivoAvisadorManager implements ActivoAvisadorApi {
 
-	private SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 	protected static final Log logger = LogFactory.getLog(ActivoAvisadorManager.class);
 
 	@Autowired 
@@ -45,7 +43,6 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 		
 		List<DtoAviso> listaAvisos = new ArrayList<DtoAviso>();
 		Activo activo = activoApi.get(id);
-		List<Perfil> perfilesUsuario = usuarioLogado.getPerfiles();
 		
 		boolean restringida = false;
 		boolean obraNueva = false;
@@ -120,9 +117,9 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 		}
 		
 		// Aviso 3 / 4: Situación posesoria OCUPADO + Con o sín título
-		if (!Checks.esNulo(activo.getSituacionPosesoria().getOcupado())) {
+		if (activo.getSituacionPosesoria() != null && !Checks.esNulo(activo.getSituacionPosesoria().getOcupado())) {
 			if (activo.getSituacionPosesoria().getOcupado() == 1) {
-				if (activo.getSituacionPosesoria().getConTitulo() == 1) {
+				if (activo.getSituacionPosesoria().getConTitulo() != null && activo.getSituacionPosesoria().getConTitulo() == 1) {
 					DtoAviso dtoAviso = new DtoAviso();
 					dtoAviso.setDescripcion("Situación posesoria ocupado con título");
 					dtoAviso.setId(String.valueOf(id));

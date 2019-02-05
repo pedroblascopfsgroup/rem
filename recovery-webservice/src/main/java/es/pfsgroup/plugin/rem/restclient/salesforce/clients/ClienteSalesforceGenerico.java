@@ -1,36 +1,42 @@
 package es.pfsgroup.plugin.rem.restclient.salesforce.clients;
 
-import java.io.FileWriter;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.StringWriter;
+import java.net.Socket;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
 import javax.annotation.Resource;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
 
+import org.apache.commons.httpclient.HttpMethod;
+import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.bouncycastle.crypto.tls.DefaultTlsClient;
+import org.bouncycastle.crypto.tls.TlsAuthentication;
+import org.bouncycastle.crypto.tls.TlsClientProtocol;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.api.services.webcom.ErrorServicioWebcom;
+import es.pfsgroup.plugin.rem.rest.salesforce.api.impl.CustomInsecureX509TrustManager;
 import es.pfsgroup.plugin.rem.restclient.exception.RestConfigurationException;
 import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientException;
 import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientFacade;
 import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientFacadeInternalError;
 import es.pfsgroup.plugin.rem.restclient.registro.dao.RestLlamadaDao;
 import es.pfsgroup.plugin.rem.restclient.registro.model.RestLlamada;
-import es.pfsgroup.plugin.rem.restclient.salesforce.SalesforceRESTDevonProperties;
-import es.pfsgroup.plugin.rem.restclient.utils.WebcomRequestUtils;
-import es.pfsgroup.plugin.rem.restclient.webcom.ParamsList;
-import es.pfsgroup.plugin.rem.restclient.webcom.WebcomRESTDevonProperties;
-import es.pfsgroup.plugin.rem.restclient.webcom.clients.WebcomEndpoint;
-import es.pfsgroup.plugin.rem.utils.WebcomSignatureUtils;
-import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 /**
@@ -100,8 +106,7 @@ public class ClienteSalesforceGenerico {
 		registro.setEndpoint(serviceUrl);
 		registro.setRequest(jsonString);
 
-		JSONObject result = 
-			httpClient.processRequest(serviceUrl, endpoint.getHttpMethod(), headers, jsonString, endpoint.getTimeout(), endpoint.getCharset());
+		JSONObject result = processRequest(serviceUrl, endpoint, headers, jsonString, endpoint.getTimeout(), endpoint.getCharset());
 
 		try {
 			registro.setResponse(result.toString());
@@ -111,6 +116,87 @@ public class ClienteSalesforceGenerico {
 		}
 
 		return result;
+	}
+	
+	public JSONObject processRequest(String serviceUrl, SalesforceEndpoint endpoint, Map<String, String> headers, String jsonString,int responseTimeOut, String charSet) throws HttpClientException {
+
+		if (StringUtils.isBlank(serviceUrl)) {
+			throw new HttpClientFacadeInternalError("Service URL is required");
+		}
+
+		if (jsonString == null) {
+			throw new HttpClientFacadeInternalError("JSON request is required");
+		}
+		String sendMethod = endpoint.getHttpMethod();
+		responseTimeOut = responseTimeOut * 1000;
+		logger.trace("Estableciendo coneixón con httpClient [url=" + serviceUrl + ", method=" + sendMethod
+				+ ", timeout=" + responseTimeOut + ", charset=" + charSet + "]");
+
+		
+		Integer responseCode = null;
+		try {
+
+			System.out.println("Generando SSLContext tipo TLSv1.2, aqui puede fallar facil , C103 , CON JAVA 6 AQUI FALLA SIEMPRE");
+			SSLContext sslContext = SSLContext.getInstance("TLSv1.2");
+			System.out.println("Inizializando SSLContext");
+			sslContext.init(null, new TrustManager[] { new CustomInsecureX509TrustManager() }, new java.security.SecureRandom());
+			
+			System.out.println("Creando URL");
+			URL url = new URL(serviceUrl);
+			System.out.println("URL creada, abierndo conexion (aqui puede fallar facil)");
+			
+			HttpsURLConnection httpsURLConnection = (HttpsURLConnection) url.openConnection();
+			
+			httpsURLConnection.setHostnameVerifier(new SFHostnameVerifier());
+			httpsURLConnection.setSSLSocketFactory(sslContext.getSocketFactory());
+			
+			System.out.println("INICIANDO COMUNICACION, aqui puede fallar facil , C103");
+			InputStream inputStream = httpsURLConnection.getInputStream();
+			System.out.println("COMUNICACION REALIZADA, C103");
+			String respBody = getResponseBody(inputStream);
+			
+			logger.trace("-- RESPONSE BODY --");
+			logger.trace(respBody);
+			
+			if (respBody.trim().isEmpty()){
+				throw new HttpClientException("Empty response", responseCode);
+			}
+			
+			return JSONObject.fromObject(respBody);
+		} catch (Exception e) {
+			String errorMsg = "Error Sending REST Request [URL:" + serviceUrl + ",METHOD:" + sendMethod + "]";
+			//Se añade este logger para poder ver en consola los errores que desvuelve el webservice
+			logger.error(e);
+			throw new HttpClientException(errorMsg, responseCode, e);
+		}
+	}
+	
+	private String getResponseBody(InputStream inputStream) {
+
+		BufferedReader in = null;
+		StringWriter stringOut = new StringWriter();
+		BufferedWriter dumpOut = new BufferedWriter(stringOut, 8192);
+		try {
+			in = new BufferedReader(new InputStreamReader(inputStream));
+			String line = "";
+			while ((line = in.readLine()) != null) {
+				dumpOut.write(line);
+				dumpOut.newLine();
+			}
+		} catch (IOException e) {
+			throw new HttpClientFacadeInternalError("Error Reading Response Stream", e);
+		} finally {
+			try {
+				dumpOut.flush();
+				dumpOut.close();
+				if (in != null)
+					in.close();
+			} catch (IOException e) {
+				logger.warn("Error Closing Response Stream", e);
+			}
+		}
+		return StringEscapeUtils.unescapeHtml(stringOut.toString());
+
 	}
 	
 	/*TODO: 

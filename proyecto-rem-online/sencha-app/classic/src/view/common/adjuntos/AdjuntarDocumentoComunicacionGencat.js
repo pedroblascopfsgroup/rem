@@ -43,6 +43,7 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoComunicacionGencat', {
 				extraParams: {diccionario: 'tipoDocumentoComunicacion'}
 			}
     	});
+    
 
 		comboTipoDocumento.filter([
 			{
@@ -52,7 +53,20 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoComunicacionGencat', {
 		    scope: this
 		  }
 		]);
+		if ($AU.userIsRol(CONST.PERFILES['GESTIAFORM'])){
+			comboTipoDocumento.filter([
+				{
+			    fn: function(record) {
+						return record.data.codigo == '02' || record.data.codigo == '04' || record.data.codigo == '07' || record.data.codigo == '08' ;
+			    },
+			    scope: this
+			  }
+			]);
+		}
 
+		
+		
+		
     	me.buttons = [ 
     		{ 
     			formBind: true, 

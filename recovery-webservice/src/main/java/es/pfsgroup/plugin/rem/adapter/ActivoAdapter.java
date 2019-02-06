@@ -190,8 +190,6 @@ import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PRINCIPAL;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PROPIEDAD;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.SITUACION;
-import es.pfsgroup.plugin.rem.rest.api.RestApi;
-import es.pfsgroup.plugin.rem.rest.api.RestApi.ENTIDADES;
 import es.pfsgroup.plugin.rem.rest.dto.FileListResponse;
 import es.pfsgroup.plugin.rem.rest.dto.FileResponse;
 import es.pfsgroup.plugin.rem.restclient.exception.UnknownIdException;
@@ -207,9 +205,7 @@ import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 @Service
 public class ActivoAdapter {
 	
-	@Autowired
-	private RestApi restApi;
-
+	
 	@Autowired
 	private ActivoAgrupacionActivoDao activoAgrupacionActivoDao;
 
@@ -372,8 +368,7 @@ public class ActivoAdapter {
 		try {
 			beanUtilNotNull.copyProperties(activoCatastro, dtoCatastro);
 			genericDao.save(ActivoCatastro.class, activoCatastro);
-			restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO, activoCatastro.getActivo());
-
+		
 		} catch (IllegalAccessException e) {
 			logger.error("Error en ActivoAdapter, saveCatastro", e);
 		} catch (InvocationTargetException e) {
@@ -462,7 +457,6 @@ public class ActivoAdapter {
 			ActivoCatastro activoCatastro = genericDao.get(ActivoCatastro.class, filtro);
 			if(activoCatastro != null){
 				genericDao.deleteById(ActivoCatastro.class, activoCatastro.getId());
-				restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO, activoCatastro.getActivo());
 			}
 			
 		} catch (Exception e) {
@@ -561,7 +555,6 @@ public class ActivoAdapter {
 			activoCondicionEspecifica.setActivo(activo);
 
 			genericDao.save(ActivoCondicionEspecifica.class, activoCondicionEspecifica);
-			restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO,activo);
 		} catch (Exception e) {
 			logger.error("Error en ActivoAdapter, createCondicionHistorico", e);
 		}
@@ -592,8 +585,6 @@ public class ActivoAdapter {
 				activo.setInfoComercial(viviendaTemp);
 			}			
 			activoApi.saveOrUpdate(activo);
-			restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO, activo);
-
 		} catch (IllegalAccessException e) {
 			logger.error("Error en ActivoAdapter, createDistribucion", e);
 		} catch (InvocationTargetException e) {
@@ -2211,7 +2202,6 @@ public class ActivoAdapter {
 		estadoInformeComercialHistorico.setFecha(new Date());
 		
 		genericDao.save(ActivoEstadosInformeComercialHistorico.class, estadoInformeComercialHistorico);
-		restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO, activo);		
 	}
 
 	public List<VAdmisionDocumentos> getListAdmisionCheckDocumentos(Long idActivo) {
@@ -2293,8 +2283,6 @@ public class ActivoAdapter {
 
 			rellenaCheckingDocumentoAdmision(activoAdmisionDocumento, dtoAdmisionDocumento);
 			genericDao.save(ActivoAdmisionDocumento.class, activoAdmisionDocumento);
-			restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO, activoAdmisionDocumento.getActivo());
-
 		}
 
 		return true;

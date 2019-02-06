@@ -77,8 +77,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTasacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoUsoDestino;
-import es.pfsgroup.plugin.rem.rest.api.RestApi;
-import es.pfsgroup.plugin.rem.rest.api.RestApi.ENTIDADES;
 import es.pfsgroup.plugin.rem.service.AltaActivoService;
 
 @Component
@@ -98,8 +96,6 @@ public class AltaActivoFinanciero implements AltaActivoService {
 	@Autowired
 	private UtilDiccionarioApi utilDiccionarioApi;
 	
-	@Autowired
-	private RestApi restApi;
 	
 	@Autowired
 	private GestorActivoApi gestorActivoManager;
@@ -124,7 +120,6 @@ public class AltaActivoFinanciero implements AltaActivoService {
 		// Si el nuevo activo se ha persistido correctamente, continuar con las demás entidades.
 		if (!Checks.esNulo(activo)) {
 			this.dtoToEntitiesOtras(dtoAAF, activo);
-			restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO, activo);
 			
 			Auditoria auditoria = new Auditoria();
 			auditoria.setBorrado(false);

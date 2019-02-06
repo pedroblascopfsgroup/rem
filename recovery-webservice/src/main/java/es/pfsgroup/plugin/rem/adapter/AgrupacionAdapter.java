@@ -123,9 +123,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoEstadoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
 import es.pfsgroup.plugin.rem.oferta.NotificationOfertaManager;
-import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
-import es.pfsgroup.plugin.rem.rest.api.RestApi;
-import es.pfsgroup.plugin.rem.rest.api.RestApi.ENTIDADES;
 import es.pfsgroup.plugin.rem.thread.LiberarFichero;
 import es.pfsgroup.plugin.rem.thread.ReactivarActivosAgrupacion;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
@@ -219,16 +216,11 @@ public class AgrupacionAdapter {
 	private NotificatorServiceSancionOfertaAceptacionYRechazo notificatorServiceSancionOfertaAceptacionYRechazo;
 
 	@Autowired
-	private RestApi restApi;
-	
-	@Autowired
 	private ProcessAdapter processAdapter;
 	
 	@Autowired
 	private MSVProcesoApi msvProcesoApi;
 
-	@Autowired
-    private OfertaDao ofertaDao;
 
 	@Autowired
 	private ParticularValidatorApi particularValidator;
@@ -1140,7 +1132,6 @@ public class AgrupacionAdapter {
 					Date today = new Date();
 					nuevaRelacionAgrupacionActivo.setFechaInclusion(today);
 					activoAgrupacionActivoApi.save(nuevaRelacionAgrupacionActivo);
-					restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO, act);
 				}
 			}
 		}
@@ -1152,7 +1143,6 @@ public class AgrupacionAdapter {
 			Date today = new Date();
 			nuevaRelacionAgrupacionActivo.setFechaInclusion(today);
 			activoAgrupacionActivoApi.save(nuevaRelacionAgrupacionActivo);
-			restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO, activo);
 		}
 	}
 
@@ -1343,7 +1333,6 @@ public class AgrupacionAdapter {
 			} else {
 				activoAgrupacionActivoApi.delete(activoAgrupacionActivo);
 			}
-			restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO, activoAgrupacionActivo.getActivo());
 			return true;
 		} else {
 			throw new JsonViewerException("No ha sido posible eliminar el activo de la agrupación");
@@ -1451,7 +1440,6 @@ public class AgrupacionAdapter {
 				if (!Checks.estaVacio(agrupacionesActivoABorrar)) {
 					for (ActivoAgrupacionActivo agrupaciones : agrupacionesActivoABorrar) {
 						activoAgrupacionActivoApi.delete(agrupaciones);
-						restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO, agrupaciones.getActivo());
 					}
 				}
 			}
@@ -1477,7 +1465,6 @@ public class AgrupacionAdapter {
 					}
 				}
 				activoAgrupacionActivoApi.delete(activoAgrupacionActivo);
-				restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO, activoAgrupacionActivo.getActivo());
 			}
 		}
 
@@ -1523,7 +1510,6 @@ public class AgrupacionAdapter {
 					genericDao.update(ActivoAgrupacion.class, activoAgrupacionActivo.getAgrupacion());
 				}
 				activoAgrupacionActivoApi.delete(activoAgrupacionActivo);
-				restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO, activoAgrupacionActivo.getActivo());
 			}
 
 		} catch (Exception e) {

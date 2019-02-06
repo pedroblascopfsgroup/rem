@@ -2988,8 +2988,17 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 	@Override
 	public String diffDate(String date1, String date2) {
-		Long datef1 = Long.valueOf(date1.replace("-", ""));
-		Long datef2 = Long.valueOf(date2.replace("-", ""));
+		Long datef1 = null;
+		Long datef2 = null;
+		
+		if(date1 != null && !date1.isEmpty()){
+			datef1 = Long.valueOf(date1.replace("-", ""));
+		}
+		if(date2 != null && !date2.isEmpty()){
+			datef2 = Long.valueOf(date2.replace("-", ""));
+		}
+		
+		
 		if (datef1.equals(datef2)) {
 			return "IGUAL";
 		} else if (datef1 > datef2) {

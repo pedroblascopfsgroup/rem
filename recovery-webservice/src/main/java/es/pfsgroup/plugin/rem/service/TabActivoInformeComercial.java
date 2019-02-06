@@ -34,7 +34,6 @@ import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.factory.TabActivoFactoryApi;
 import es.pfsgroup.plugin.rem.model.Activo;
-import es.pfsgroup.plugin.rem.model.ActivoComunidadPropietarios;
 import es.pfsgroup.plugin.rem.model.ActivoEdificio;
 import es.pfsgroup.plugin.rem.model.ActivoEstadosInformeComercialHistorico;
 import es.pfsgroup.plugin.rem.model.ActivoInfoComercial;
@@ -53,8 +52,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDUbicacionActivo;
-import es.pfsgroup.plugin.rem.rest.api.RestApi;
-import es.pfsgroup.plugin.rem.rest.api.RestApi.ENTIDADES;
 import es.pfsgroup.recovery.api.UsuarioApi;
 
 @Component
@@ -74,8 +71,6 @@ public class TabActivoInformeComercial implements TabActivoService {
 	@Autowired
 	private ActivoApi activoApi;
 	
-	@Autowired
-	private RestApi restApi;
 
 	@Autowired
 	private UtilDiccionarioApi utilDiccionarioApi;
@@ -626,7 +621,6 @@ public class TabActivoInformeComercial implements TabActivoService {
 				
 				activo.setValoracion(valoraciones);
 				activo.setInfoComercial(genericDao.save(ActivoInfoComercial.class, activo.getInfoComercial()));
-				restApi.marcarRegistroParaEnvio(ENTIDADES.INFORME, activo.getInfoComercial());
 				activoApi.saveOrUpdate(activo);				
 			}
 		}

@@ -13,7 +13,7 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<maven.resources.overwrite>true</maven.resources.overwrite>
 
-		<devon.version.web>1.1.1</devon.version.web>
+		<devon.version.web>1.1.2</devon.version.web>
 		<devon.version.webflow>1.1.1</devon.version.webflow>
 		<downloadSources>true</downloadSources>
 		<downloadJavadocs>true</downloadJavadocs>
@@ -1465,7 +1465,16 @@
 					<version>${aspectj.version}</version>
 					<scope>compile</scope>
 				</dependency>
-				<!-- Libs para Spring Json View -->
+
+				<!-- Versión de Oracle -->
+				<dependency>
+					<groupId>${ojdbc.groupid}</groupId>
+					<artifactId>${ojdbc.artifactId}</artifactId>
+					<version>${ojdbc.version}</version>
+					<scope>compile</scope>
+				</dependency>
+
+				<!-- Libs para Spring Json View -->				
 
 				<dependency>
 					<groupId>net.sf.spring-json</groupId>
@@ -1532,6 +1541,7 @@
 				</plugins>
 			</build>
 		</profile>
+		
 		<profile>
 			<id>java7</id>
 			<properties>
@@ -1541,5 +1551,24 @@
 				<aspectj.version>1.7.2.RELEASE</aspectj.version>
 			</properties>
 		</profile>
+		
+		<profile>
+			<id>ora11</id>
+			<properties>
+				<ojdbc.groupid>batch.libraries</ojdbc.groupid>
+				<ojdbc.artifactId>ojdbc6</ojdbc.artifactId>
+				<ojdbc.version>STABLE</ojdbc.version>
+			</properties>					
+		</profile>
+
+		<profile>
+			<id>ora12</id>
+			<properties>
+				<ojdbc.groupid>oracle.ojdbc6</ojdbc.groupid>
+				<ojdbc.artifactId>ojdbc6</ojdbc.artifactId>
+				<ojdbc.version>12.1.0.1.0</ojdbc.version>
+			</properties>		
+		</profile> 
+
 	</profiles>
 </project>

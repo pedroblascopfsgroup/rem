@@ -98,19 +98,6 @@ Ext.define('HreRem.view.expedientes.OfertaExpediente', {
     		)
     	}, ['TAB_DATOS_BASICOS_OFERTA_EXPEDIENTES']);
     	
-    	if(CONST.TIPOS_EXPEDIENTE_COMERCIAL["ALQUILER"] != me.up("expedientedetallemain").getViewModel().get('expediente.tipoExpedienteCodigo')) {
-	    	$AU.confirmFunToFunctionExecution( function(){
-	    		items.push(
-	    				{
-	    					xtype: 'ofertatanteoyretracto', 
-	    					bind: {
-	    						disabled: '{esExpedienteNoSujetoTramiteTanteo}'}, 
-	    						funPermEdition: ['EDITAR_TAB_TANTEO_RETRACTO_OFERTA_EXPEDIENTES']
-	    					}
-	    		)
-	    	}, ['TAB_TANTEO_RETRACTO_OFERTA_EXPEDIENTES']);
-    	}
-    	
     	me.addPlugin({ptype: 'lazyitems', items: items});
 
     	me.callParent();

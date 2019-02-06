@@ -244,7 +244,6 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	private static final String TAR_INFORME_JURIDICO = "Informe jurídico";
 	private static final String PESTANA_FICHA = "ficha";
 	private static final String PESTANA_DATOSBASICOS_OFERTA = "datosbasicosoferta";
-	private static final String PESTANA_TANTEO_Y_RETRACTO_OFERTA = "ofertatanteoyretracto";
 	private static final String PESTANA_RESERVA = "reserva";
 	private static final String PESTANA_CONDICIONES = "condiciones";
 	private static final String PESTANA_FORMALIZACION = "formalizacion";
@@ -387,8 +386,6 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			dto = expedienteToDtoFichaExpediente(expediente);
 		} else if (PESTANA_DATOSBASICOS_OFERTA.equals(tab)) {
 			dto = expedienteToDtoDatosBasicosOferta(expediente);
-		} else if (PESTANA_TANTEO_Y_RETRACTO_OFERTA.equals(tab)) {
-			dto = expedienteToDtoTanteoYRetractoOferta(expediente);
 		} else if (PESTANA_RESERVA.equals(tab)) {
 			dto = expedienteToDtoReserva(expediente);
 		} else if (PESTANA_CONDICIONES.equals(tab)) {

@@ -1504,7 +1504,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				VSubdivisionesAgrupacion vSubAgr  = genericDao.get(VSubdivisionesAgrupacion.class, filtro3, filtro4);
 
 
-				if(!Checks.esNulo(vSubAgr.getDescripcion())) {
+				if(!Checks.esNulo(vSubAgr) && !Checks.esNulo(vSubAgr.getDescripcion())) {
 					dtoActivo.setSubdivision(vSubAgr.getDescripcion());
 				}
 			}

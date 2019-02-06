@@ -543,6 +543,35 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 			throw new GestorDocumentalException(errorMessage.toString());
 		}
 	}
+	
+	public void crearRelacionTrabajosActivo(Trabajo trabajo, Long idDocRestClient, String activo, String login,
+			CrearRelacionExpedienteDto crearRelacionExpedienteDto) throws GestorDocumentalException {
+		String codigoEstado = "03";
+		RecoveryToGestorDocAssembler recoveryToGestorDocAssembler = new RecoveryToGestorDocAssembler(appProperties);
+		CredencialesUsuarioDto credUsu = recoveryToGestorDocAssembler.getCredencialesDto(login);
+		CabeceraPeticionRestClientDto cabecera = recoveryToGestorDocAssembler.getCabeceraPeticionRestClient(activo,
+				getTipoExpediente(trabajo.getActivo()),codigoEstado);
+		cabecera.setIdDocumento(idDocRestClient);
+
+		//Un vez adjuntado el documento al expediente, y obtenido el id del mismo, cread un bucle sobre el listado de activos seleccionados.
+		//Llamar al servicio de vinculación entre el documento adjuntado al activo.
+		StringBuilder errorMessage = new StringBuilder();
+		
+			cabecera.setIdExpedienteHaya(activo);
+
+			try {
+				gestorDocumentalApi.crearRelacionExpediente(cabecera, credUsu, crearRelacionExpedienteDto);
+			} catch (GestorDocumentalException gex) {
+				logger.debug(gex.getMessage());
+				errorMessage.append("[").append(activo).append("] ").append(gex.getMessage()).append("\n");
+			}
+		
+
+		if (errorMessage.length()!=0) {
+			throw new GestorDocumentalException(errorMessage.toString());
+		}
+	}
+	
 
 	private String getTipoExpediente (Activo activo) {
 		String tipoExp = GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_REO;

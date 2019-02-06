@@ -5346,7 +5346,7 @@ Ext
      		me.getView().mask(HreRem.i18n("msg.mask.loading"));
      		if(!Ext.isEmpty(ventana2)){
      			codPrescriptor = ventana2.getForm().findField('buscadorPrescriptores').value;
-     			numDoc = ventana2.getForm().getValues().numDocumentoCliente;
+     			numDoc = ventana2.getForm().findField('numDocumentoCliente').value;
      			nombre= ventana2.getForm().findField('nombreCliente').value;
      			direccion = ventana2.getForm().getValues().direccion;
      			email = ventana2.getForm().getValues().email;

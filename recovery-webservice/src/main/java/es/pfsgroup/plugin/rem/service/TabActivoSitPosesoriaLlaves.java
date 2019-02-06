@@ -156,7 +156,9 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 		DtoActivoSituacionPosesoria dto = (DtoActivoSituacionPosesoria) webDto;
 		
 		try {
-						
+			
+			
+			beanUtilNotNull.copyProperties(activo.getSituacionPosesoria(), dto);			
 			if (activo.getSituacionPosesoria() == null) {
 				
 				activo.setSituacionPosesoria(new ActivoSituacionPosesoria());
@@ -165,10 +167,10 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 			}
 			
 			if(!Checks.esNulo(dto.getOcupado()) && !BooleanUtils.toBoolean(dto.getOcupado())) {				
-				dto.setConTitulo(null);				
+				activo.getSituacionPosesoria().setConTitulo(null);				
 			}
 				
-			beanUtilNotNull.copyProperties(activo.getSituacionPosesoria(), dto);
+			
 			if(!Checks.esNulo(dto.getFechaTomaPosesion())){
 				activo.getSituacionPosesoria().setEditadoFechaTomaPosesion(true);
 			}

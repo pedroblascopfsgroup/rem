@@ -155,6 +155,7 @@ import es.pfsgroup.plugin.rem.model.IncrementoPresupuesto;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
+import es.pfsgroup.plugin.rem.model.TmpClienteGDPR;
 import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.VAdmisionDocumentos;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivosTrabajoPresupuesto;
@@ -3456,6 +3457,16 @@ public class ActivoAdapter {
 			if (!Checks.esNulo(dto.getIdDocAdjunto())) {
 				docAdjunto = genericDao.get(AdjuntoComprador.class,
 						genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdDocAdjunto()));
+			} else {
+				if(Checks.esNulo(cliGDPR)) {
+					//Replicar esto en agrupaciones y compradores
+					TmpClienteGDPR tmpClienteGDPR = genericDao.get(TmpClienteGDPR.class,
+							genericDao.createFilter(FilterType.EQUALS, "numDocumento", dto.getNumDocumentoCliente()));
+					if(!Checks.esNulo(tmpClienteGDPR.getIdAdjunto())) {
+						docAdjunto = genericDao.get(AdjuntoComprador.class,
+								genericDao.createFilter(FilterType.EQUALS, "id", tmpClienteGDPR.getIdAdjunto()));
+					}
+				}
 			}
 			// Si existe pasamos la información al histórico y actualizamos el objeto con
 			// los nuevos datos

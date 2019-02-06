@@ -134,6 +134,7 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoOfertacomercial', {
     	if(btn.up('anyadirnuevaofertaactivoadjuntardocumento').up().xtype.indexOf('oferta') >= 0) {
     		url = $AC.getRemoteUrl("activooferta/saveDocumentoAdjuntoOferta");
     	}
+
     		if(form.isValid()){
     			form.submit({
 					url: url,
@@ -154,7 +155,7 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoOfertacomercial', {
 	                			url = $AC.getRemoteUrl('expedientecomercial/getListAdjuntosComprador');
 	                			ventanaWizard = btn.up('wizardaltacomprador');
 	                			params.docCliente = me.docCliente;
-	                			params.idExpediente = ventanaWizard.oferta.data.idExpediente;
+	                			params.idExpediente = ventanaWizard.comprador.data.idExpedienteComercial;
 	                		}
 	                		
 	                		Ext.Ajax.request({

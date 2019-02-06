@@ -1304,7 +1304,7 @@ Ext
 					abrirFormularioAdjuntarDocumentoOferta : function(grid) {
 						var me = this;
 						var idEntidad = null, entidad = null,
-						docCliente = me.getViewModel().get("oferta.numDocumentoCliente");
+						docCliente = null;
 						if(grid.up('anyadirnuevaofertaactivoadjuntardocumento').up().xtype.indexOf('oferta') >= 0) {
 							if(grid.up('wizardaltaoferta').oferta.data.idActivo == null) {
 								idEntidad = grid.up('wizardaltaoferta').oferta.data.idActivo;
@@ -1313,9 +1313,11 @@ Ext
 								idEntidad = grid.up('wizardaltaoferta').oferta.data.idAgrupacion;
 								entidad = 'agrupacion';
 							}
+							docCliente = me.getViewModel().get("oferta.numDocumentoCliente");
 						} else {
 							idEntidad = grid.up('wizardaltacomprador').down('datoscompradorwizard').getBindRecord().comprador.data.idExpedienteComercial;
 							entidad = 'expediente';
+							docCliente = me.getViewModel().get("comprador.numDocumento");
 						}
 						Ext.create("HreRem.view.common.adjuntos.AdjuntarDocumentoOfertacomercial",
 										{
@@ -1373,7 +1375,7 @@ Ext
 							if(grid.up('anyadirnuevaofertaactivoadjuntardocumento').up().xtype.indexOf('oferta') >= 0){
 								url = $AC.getRemoteUrl('activooferta/eliminarDocumentoAdjuntoOferta');
 							} else {
-								url = $AC.getRemoteUrl('expedientecomercial/eliminarDocumentoAdjuntoOferta');
+								url = $AC.getRemoteUrl('expedientecomercial/eliminarDocumentoAdjuntoComprador');
 							}
 							Ext.Ajax.request({
 										url : url,

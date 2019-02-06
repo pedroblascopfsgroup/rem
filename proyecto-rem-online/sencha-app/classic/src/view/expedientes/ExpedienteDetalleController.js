@@ -2147,7 +2147,7 @@ Ext
 				    	    		     url: url,
 				    	    			 method : 'GET',
 				    	    			 waitMsg: HreRem.i18n('msg.mask.loading'),
-				    	    		     params: {docCliente: docCliente, idExpedienteComercial: idExpediente},
+				    	    		     params: {docCliente: docCliente, idExpediente: idExpediente},
 				    	    		
 				    	    		     success: function(response, opts) {
 				    	    		    	 data = Ext.decode(response.responseText);

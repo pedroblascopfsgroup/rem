@@ -136,6 +136,7 @@ import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
+import es.pfsgroup.plugin.rem.model.AdjuntoComprador;
 import es.pfsgroup.plugin.rem.model.ClienteCompradorGDPR;
 import es.pfsgroup.plugin.rem.model.ClienteGDPR;
 import es.pfsgroup.plugin.rem.model.Comprador;
@@ -1149,6 +1150,15 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				compradorExpedienteNuevo.setTitularContratacion(1);
 				compradorExpedienteNuevo.setPorcionCompra(parteCompraPrincipal);
 				compradorExpedienteNuevo.setBorrado(false);
+				
+				Order order = new Order(OrderType.ASC, "expediente");
+				List<CompradorExpediente> listaCex = genericDao.getListOrdered(CompradorExpediente.class, order, 
+						genericDao.createFilter(FilterType.EQUALS, "expediente", nuevoExpediente),
+						genericDao.createFilter(FilterType.EQUALS, "comprador", compradorBusqueda));
+				if(listaCex.size() > 0) {
+					CompradorExpediente comExpAnterior = listaCex.get(0);
+					compradorExpedienteNuevo.setDocumentoAdjunto(comExpAnterior.getDocumentoAdjunto());
+				}
 
 				listaCompradoresExpediente.add(compradorExpedienteNuevo);
 			} else { // Si no existe un comprador con dicho dni, lo crea, añade
@@ -1224,10 +1234,10 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				if (!Checks.esNulo(oferta.getCliente().getRegimenMatrimonial())) {
 					compradorExpedienteNuevo.setRegimenMatrimonial(oferta.getCliente().getRegimenMatrimonial());
 				}
+				compradorExpedienteNuevo.setDocumentoAdjunto(clienteGDPR.getAdjuntoComprador());
 
 				listaCompradoresExpediente.add(compradorExpedienteNuevo);
-				
-				
+								
 				// HREOS - 4937 - Historificando				
 				ClienteCompradorGDPR clienteCompradorGDPR = new ClienteCompradorGDPR();
 				clienteCompradorGDPR.setTipoDocumento(nuevoComprador.getTipoDocumento());

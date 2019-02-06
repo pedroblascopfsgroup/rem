@@ -80,7 +80,7 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoModel', {
     	
     	comboSiNo: {
 			data : [
-		        {"codigo":"true", "descripcion":eval(String.fromCharCode(34,83,237,34))},
+		        {"codigo":"true", "descripcion": eval(String.fromCharCode(34,83,237,34))},
 		        {"codigo":"false", "descripcion":"No"}
 		    ]
 		},

@@ -310,10 +310,11 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoForm', {
 								{
 				    				xtype: "comboboxfieldbase",
 				    				fieldLabel: HreRem.i18n('fieldlabel.necesita.reforma'),
-				    				readOnly: false,
+				    				readOnly: true,
 				    				name: 'necesitaReforma',
 									bind: {
-										store: '{comboSiNo}'									
+										store: '{comboSiNo}',
+										value: '{gencat.necesitaReforma}'
 									}
 				    			},
 				    			{

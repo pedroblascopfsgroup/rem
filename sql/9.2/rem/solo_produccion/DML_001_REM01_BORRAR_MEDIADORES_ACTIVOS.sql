@@ -4,7 +4,7 @@
 --## FECHA_CREACION=20190206
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=
+--## INCIDENCIA_LINK=REMVIP-3300
 --## PRODUCTO=NO
 --## 
 --## Finalidad: Eliminar mediadores activos
@@ -28,7 +28,7 @@ DECLARE
   V_ECO_ID NUMBER(16); -- Vble. para validar la existencia de una tabla.   
   ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
   ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
-  V_MODIFICAR VARCHAR2(100 CHAR):= 'REMVIP-';
+  V_MODIFICAR VARCHAR2(100 CHAR):= 'REMVIP-3300';
   V_COUNT NUMBER(16):= 0;
   V_COUNT2 NUMBER(16):= 0;
   V_COUNT3 NUMBER(16):= 0;

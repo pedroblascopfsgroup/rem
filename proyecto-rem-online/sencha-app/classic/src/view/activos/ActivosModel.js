@@ -154,12 +154,12 @@ Ext.define('HreRem.view.activos.ActivosModel', {
 					}
 			},
 
-			comboTiposComercializarActivo: {
+			comboTiposComercializacionActivo: {
 				model: 'HreRem.model.ComboBase',
 					proxy: {
 						type: 'uxproxy',
 						remoteUrl: 'generic/getDiccionario',
-						extraParams: {diccionario: 'tiposComercializarActivo'}
+						extraParams: {diccionario: 'tiposComercializacionActivo'}
 					}
 			},
 

@@ -25,8 +25,8 @@ create or replace PROCEDURE SP_PERFILADO_FUNCIONES (
 )
 AS
 
-  V_ESQUEMA VARCHAR2(25 CHAR):= 'REM01'; 	-- 'REM01'; -- Configuracion Esquema
-  V_ESQUEMA_M VARCHAR2(25 CHAR):= 'REMMASTER';	-- 'REMMASTER'; -- Configuracion Esquema Master
+  V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; 	-- 'REM01'; -- Configuracion Esquema
+  V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#';	-- 'REMMASTER'; -- Configuracion Esquema Master
   V_SQL VARCHAR2(4000 CHAR); -- Vble. para almacenar la sentencia.
   V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.
 

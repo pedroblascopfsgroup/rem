@@ -823,7 +823,6 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 									            listeners:{
 									            	change: function(){
 									            		var me = this;
-									            		console.log(me.getValue());
 									            		var campoDesc = me.lookupController('activodetalle').lookupReference('descMotivo');
 									            		if(me.getValue().includes(CONST.MOTIVOS_CAL_NEGATIVA["OTROS"])){
 									            			campoDesc.setDisabled(false); 
@@ -844,7 +843,7 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 									            		}
 									            		
 									            		if (me.getValue().length == 0){
-									            			var comboEstadoCalNegativa = me.lookupController('activodetalle').lookupReference('comboBoxCalificacionNegativa');
+									            			var comboEstadoCalNegativa = me.lookupController('activodetalle').lookupReference('comboCalificacionNegativaRef');
 									            			comboEstadoCalNegativa.setValue('02');
 									            		}
 									            	}

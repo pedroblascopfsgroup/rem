@@ -557,7 +557,7 @@ Ext.define('HreRem.view.activos.detalle.ValoresPreciosActivo', {
    evaluarEdicion: function() {    	
 		var me = this;
 	
-		if(me.lookupController().getViewModel().get('activo').get('incluidoEnPerimetro')=="false") {
+		if(me.lookupController().getViewModel().get('activo').get('incluidoEnPerimetro')=="false"  || me.lookupController().getViewModel().get('activo').get('isActivoEnTramite')) {
 			me.down('[reference=gridPreciosVigentes]').rowEditing.clearListeners()
 		}
    }

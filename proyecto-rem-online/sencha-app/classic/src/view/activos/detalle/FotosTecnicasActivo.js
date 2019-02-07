@@ -228,7 +228,7 @@ Ext.define('HreRem.view.activos.detalle.FotosTecnicasActivo', {
     evaluarEdicion: function() {    	
     	var me = this;
 		var allowEdit = true;		
-    	if(me.lookupController().getViewModel().get('activo').get('incluidoEnPerimetro')=="false") {
+    	if(me.lookupController().getViewModel().get('activo').get('incluidoEnPerimetro')=="false" || me.lookupController().getViewModel().get('activo').get('isActivoEnTramite')) {
 			//me.down('[xtype=toolbar]').hide();
 			allowEdit = false;
 		}

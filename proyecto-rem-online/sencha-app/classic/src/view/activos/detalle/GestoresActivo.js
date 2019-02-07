@@ -60,7 +60,7 @@ Ext.define('HreRem.view.activos.detalle.GestoresActivo', {
     evaluarEdicion: function() {    	
 		var me = this;
 
-		if(me.lookupController().getViewModel().get('activo').get('incluidoEnPerimetro')=="false") {
+		if(me.lookupController().getViewModel().get('activo').get('incluidoEnPerimetro')=="false"  || me.lookupController().getViewModel().get('activo').get('isActivoEnTramite')) {
 			me.down('[xtype=combogestores]').setVisible(false);
 		}
     }

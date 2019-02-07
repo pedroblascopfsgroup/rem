@@ -23,10 +23,10 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoModel', {
     		var soloLectura = true;
     		var estadoComunicacion= get('gencat.estadoComunicacion');
     		var estadoSancion= get('gencat.sancion');
-    		var comunicacdoAnulacionGencat = get('gencat.comunicadoAnulacionAGencat');
+    		var comunicadoAnulacionGencat = get('gencat.comunicadoAnulacionAGencat');
 
     		//Si ya se ha comunicado la anulación con el checkbox, no debe dejar modificarlo.
-    		if(!comunicacdoAnulacionGencat){	
+    		if(!comunicadoAnulacionGencat){	
     			//Si estadoComunicacion es COMUNICADO / RECHAZADO / ANULADO o bien SANCIONADO + estadoSancion NO EJERCE, y además el usuario tiene perfil HAYAGESTFORMADM / HAYASUPER
     			if ( ((estadoComunicacion === CONST.ESTADO_COMUNICACION_GENCAT['COMUNICADO'] ||
     					estadoComunicacion === CONST.ESTADO_COMUNICACION_GENCAT['RECHAZADO']  || 
@@ -37,7 +37,19 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoModel', {
     			}
     		}
     		return soloLectura;
-    	} 
+    	},
+    	
+    	estadoComunicacionField: function(get){
+    		var estadoComunicacion= get('gencat.estadoComunicacion');
+    		var comunicadoAnulacionGencat = get('gencat.comunicadoAnulacionAGencat');
+    		
+    		if(comunicadoAnulacionGencat &&  CONST.ESTADO_COMUNICACION_GENCAT['RECHAZADO'] != estadoComunicacion){
+    			return CONST.ESTADO_COMUNICACION_GENCAT['ANULADO'];
+    		}else{
+    			return estadoComunicacion;
+    		}
+    	}
+    
     },
 
     stores: {

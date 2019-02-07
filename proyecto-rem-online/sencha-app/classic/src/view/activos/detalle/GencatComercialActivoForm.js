@@ -259,7 +259,7 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoForm', {
 				    				name : 'estadoComunicacion',
 									bind: {
 										store: '{comboEstadoComunicacionGencat}',
-										value: '{gencat.estadoComunicacion}'
+										value: '{estadoComunicacionField}'
 									}
 				    			},
 				    			{

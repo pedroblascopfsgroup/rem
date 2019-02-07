@@ -837,11 +837,15 @@ public class ActivoTramiteManager implements ActivoTramiteApi{
 					tieneTramiteGENCAT = true;
 				}else {
 					if(!Checks.esNulo(comunicacionGencat)) {
-						if(!Checks.esNulo(comunicacionGencat.getSancion())&& DDSancionGencat.COD_EJERCE.equalsIgnoreCase(comunicacionGencat.getSancion().getCodigo())) {
+						if(Checks.esNulo(comunicacionGencat.getSancion())){
 							tieneTramiteGENCAT = true;
-						// Si la comunicacion tiene la sancion informada y está en estado NO EJERCE, se desbloquean las tareas del trámite comercial de venta
-						} else if(!Checks.esNulo(comunicacionGencat.getSancion())&& DDSancionGencat.COD_NO_EJERCE.equalsIgnoreCase(comunicacionGencat.getSancion().getCodigo())) {
-							tieneTramiteGENCAT = false;
+						}else{
+							if(!Checks.esNulo(comunicacionGencat.getSancion())&& DDSancionGencat.COD_EJERCE.equalsIgnoreCase(comunicacionGencat.getSancion().getCodigo())) {
+								tieneTramiteGENCAT = true;
+							// Si la comunicacion tiene la sancion informada y está en estado NO EJERCE, se desbloquean las tareas del trámite comercial de venta
+							} else if(!Checks.esNulo(comunicacionGencat.getSancion())&& DDSancionGencat.COD_NO_EJERCE.equalsIgnoreCase(comunicacionGencat.getSancion().getCodigo())) {
+								tieneTramiteGENCAT = false;
+							}	
 						}
 					}			
 				}

@@ -79,4 +79,74 @@ bye
 EOF
 echo "Fichero movido satisfactoriamente"
 
+cd $INSTALL_DIR/control/etl/emais/output
+
+echo "Gestoria EMAIS - EMAIS_DOCUMENTOS_RESUL_RG_${1}.dat"
+lftp -u sftp_emais,"UZ-q4}{k" sftp://192.168.49.14 <<EOF
+cd /output/
+mput $INSTALL_DIR/control/etl/emais/output/EMAIS_DOCUMENTOS_RESUL_RG_${1}.dat
+bye
+EOF
+echo "Fichero movido satisfactoriamente"
+
+cd $INSTALL_DIR/control/etl/f\&g/output
+
+echo "Gestoria F&G - F&G_DOCUMENTOS_RESUL_RG_${1}.dat"
+lftp -u sftp_fyg,"D]it&2/J" sftp://192.168.49.14 <<EOF
+cd /output/
+mput F\&G_DOCUMENTOS_RESUL_RG_${1}.dat
+bye
+EOF
+echo "Fichero movido satisfactoriamente"
+
+cd $INSTALL_DIR/control/etl/gestinova/output
+
+echo "Gestoria GESTINOVA - GESTINOVA_DOCUMENTOS_RESUL_RG_${1}.dat"
+lftp -u sftp_gestinova,"JD3Rir('" sftp://192.168.49.14 <<EOF
+cd /output/
+mput $INSTALL_DIR/control/etl/gestinova/output/GESTINOVA_DOCUMENTOS_RESUL_RG_${1}.dat
+bye
+EOF
+echo "Fichero movido satisfactoriamente"
+
+cd $INSTALL_DIR/control/etl/maretra/output
+
+echo "Gestoria MARETRA - MARETRA_DOCUMENTOS_RESUL_RG_${1}.dat"
+lftp -u sftp_maretra,"4Dmx<HEb" sftp://192.168.49.14 <<EOF
+cd /output/
+mput $INSTALL_DIR/control/etl/maretra/output/MARETRA_DOCUMENTOS_RESUL_RG_${1}.dat
+bye
+EOF
+echo "Fichero movido satisfactoriamente"
+
+cd $INSTALL_DIR/control/etl/qipert/output
+
+echo "Gestoria QIPERT - QIPERT_DOCUMENTOS_RESUL_RG_${1}.dat"
+lftp -u sftp_qipert,"E4GL7~|K" sftp://192.168.49.14 <<EOF
+cd /output/
+mput $INSTALL_DIR/control/etl/qipert/output/QIPERT_DOCUMENTOS_RESUL_RG_${1}.dat
+bye
+EOF
+echo "Fichero movido satisfactoriamente"
+
+cd $INSTALL_DIR/control/etl/mediterraneo/output
+
+echo "Gestoria MEDITERRANEO - MEDITERRANEO_DOCUMENTOS_RESUL_RG_${1}.dat"
+lftp -u sftp_mediterraneo,"3qP*X8iG" sftp://192.168.49.14 <<EOF
+cd /output/
+mput $INSTALL_DIR/control/etl/mediterraneo/output/MEDITERRANEO_DOCUMENTOS_RESUL_RG_${1}.dat
+bye
+EOF
+echo "Fichero movido satisfactoriamente"
+
+cd $INSTALL_DIR/control/etl/grupoBC/output
+
+echo "Gestoria GRUPOBC - GRUPOBC_DOCUMENTOS_RESUL_RG_${1}.dat"
+lftp -u sftp_grupobc,"eDRvpuxN" sftp://192.168.49.14 <<EOF
+cd /output/
+mput $INSTALL_DIR/control/etl/grupoBC/output/GRUPOBC_DOCUMENTOS_RESUL_RG_${1}.dat
+bye
+EOF
+echo "Fichero movido satisfactoriamente"
+
 echo "Fin del proceso de volcado de los ficheros de documentos de resultado a las gestorias"

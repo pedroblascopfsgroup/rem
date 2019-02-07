@@ -241,3 +241,213 @@ do
 done
 
 echo "Fin de la transferecia de los ficheros de la gestoria UNIGES"
+
+#############
+### EMAIS
+#############
+echo "Se inicia la transferecia de los ficheros de la gestoria EMAIS"
+fichero=EMAIS_ENTIDADES_ACTIVOS_GR
+
+if [[ -z ${INSTALL_DIR/control/etl/emais/input} ]] || [[ ! -d ${INSTALL_DIR/control/etl/emais/input} ]]; then
+    echo "$(basename $0) Error: DIR_DESTINO no definido o no es un directorio. Compruebe invocación previa a setBatchEnv.sh"
+    exit 1
+fi
+#rm -f ${INSTALL_DIR/control/etl/uniges/input}$fichero_$1
+
+extensionTxt=".dat"
+
+OIFS=$IFS
+IFS=','
+arrayfichero=${fichero}
+
+for fichero in $arrayfichero
+do
+    ficheroTxt=$INSTALL_DIR/control/etl/emais/input/${fichero}_$1$extensionTxt
+    echo "fichero .dat: $ficheroTxt"
+    if [[ "$#" -eq 1 ]]; then
+        ./ftp/ftp_get_gestoria_emais_files.sh $1 ${fichero}_$1 $INSTALL_DIR/control/etl/emais/input/
+        echo "Fichero movido al destino $INSTALL_DIR/control/etl/emais/input/"
+    fi
+done
+
+echo "Fin de la transferecia de los ficheros de la gestoria EMAIS"
+
+#############
+### F&G
+#############
+echo "Se inicia la transferecia de los ficheros de la gestoria F&G"
+fichero=F\&G_ENTIDADES_ACTIVOS_GR
+
+if [[ -z ${INSTALL_DIR/control/etl/f\&g/input} ]] || [[ ! -d ${INSTALL_DIR/control/etl/f\&g/input} ]]; then
+    echo "$(basename $0) Error: DIR_DESTINO no definido o no es un directorio. Compruebe invocación previa a setBatchEnv.sh"
+    exit 1
+fi
+#rm -f ${INSTALL_DIR/control/etl/uniges/input}$fichero_$1
+
+extensionTxt=".dat"
+
+OIFS=$IFS
+IFS=','
+arrayfichero=${fichero}
+
+for fichero in $arrayfichero
+do
+    ficheroTxt=$INSTALL_DIR/control/etl/f\&g/input/${fichero}_$1$extensionTxt
+    echo "fichero .dat: $ficheroTxt"
+    if [[ "$#" -eq 1 ]]; then
+        ./ftp/ftp_get_gestoria_fyg_files.sh $1 ${fichero}_$1 $INSTALL_DIR/control/etl/f\&g/input/
+        echo "Fichero movido al destino $INSTALL_DIR/control/etl/f&g/input/"
+    fi
+done
+
+echo "Fin de la transferecia de los ficheros de la gestoria F&G"
+
+#############
+### GESTINOVA
+#############
+echo "Se inicia la transferecia de los ficheros de la gestoria GESTINOVA"
+fichero=GESTINOVA_ENTIDADES_ACTIVOS_GR
+
+if [[ -z ${INSTALL_DIR/control/etl/gestinova/input} ]] || [[ ! -d ${INSTALL_DIR/control/etl/gestinova/input} ]]; then
+    echo "$(basename $0) Error: DIR_DESTINO no definido o no es un directorio. Compruebe invocación previa a setBatchEnv.sh"
+    exit 1
+fi
+#rm -f ${INSTALL_DIR/control/etl/uniges/input}$fichero_$1
+
+extensionTxt=".dat"
+
+OIFS=$IFS
+IFS=','
+arrayfichero=${fichero}
+
+for fichero in $arrayfichero
+do
+    ficheroTxt=$INSTALL_DIR/control/etl/gestinova/input/${fichero}_$1$extensionTxt
+    echo "fichero .dat: $ficheroTxt"
+    if [[ "$#" -eq 1 ]]; then
+        ./ftp/ftp_get_gestoria_gestinova_files.sh $1 ${fichero}_$1 $INSTALL_DIR/control/etl/gestinova/input/
+        echo "Fichero movido al destino $INSTALL_DIR/control/etl/gestinova/input/"
+    fi
+done
+
+echo "Fin de la transferecia de los ficheros de la gestoria GESTINOVA"
+
+#############
+### MARETRA
+#############
+echo "Se inicia la transferecia de los ficheros de la gestoria MARETRA"
+fichero=MARETRA_ENTIDADES_ACTIVOS_GR
+
+if [[ -z ${INSTALL_DIR/control/etl/maretra/input} ]] || [[ ! -d ${INSTALL_DIR/control/etl/maretra/input} ]]; then
+    echo "$(basename $0) Error: DIR_DESTINO no definido o no es un directorio. Compruebe invocación previa a setBatchEnv.sh"
+    exit 1
+fi
+#rm -f ${INSTALL_DIR/control/etl/uniges/input}$fichero_$1
+
+extensionTxt=".dat"
+
+OIFS=$IFS
+IFS=','
+arrayfichero=${fichero}
+
+for fichero in $arrayfichero
+do
+    ficheroTxt=$INSTALL_DIR/control/etl/maretra/input/${fichero}_$1$extensionTxt
+    echo "fichero .dat: $ficheroTxt"
+    if [[ "$#" -eq 1 ]]; then
+        ./ftp/ftp_get_gestoria_maretra_files.sh $1 ${fichero}_$1 $INSTALL_DIR/control/etl/maretra/input/
+        echo "Fichero movido al destino $INSTALL_DIR/control/etl/maretra/input/"
+    fi
+done
+
+echo "Fin de la transferecia de los ficheros de la gestoria MARETRA"
+
+#############
+### QIPERT
+#############
+echo "Se inicia la transferecia de los ficheros de la gestoria QIPERT"
+fichero=QIPERT_ENTIDADES_ACTIVOS_GR
+
+if [[ -z ${INSTALL_DIR/control/etl/qipert/input} ]] || [[ ! -d ${INSTALL_DIR/control/etl/qipert/input} ]]; then
+    echo "$(basename $0) Error: DIR_DESTINO no definido o no es un directorio. Compruebe invocación previa a setBatchEnv.sh"
+    exit 1
+fi
+#rm -f ${INSTALL_DIR/control/etl/uniges/input}$fichero_$1
+
+extensionTxt=".dat"
+
+OIFS=$IFS
+IFS=','
+arrayfichero=${fichero}
+
+for fichero in $arrayfichero
+do
+    ficheroTxt=$INSTALL_DIR/control/etl/qipert/input/${fichero}_$1$extensionTxt
+    echo "fichero .dat: $ficheroTxt"
+    if [[ "$#" -eq 1 ]]; then
+        ./ftp/ftp_get_gestoria_qipert_files.sh $1 ${fichero}_$1 $INSTALL_DIR/control/etl/qipert/input/
+        echo "Fichero movido al destino $INSTALL_DIR/control/etl/qipert/input/"
+    fi
+done
+
+echo "Fin de la transferecia de los ficheros de la gestoria QIPERT"
+
+#############
+### MEDITERRANEO
+#############
+echo "Se inicia la transferecia de los ficheros de la gestoria MEDITERRANEO"
+fichero=MEDITERRANEO_ENTIDADES_ACTIVOS_GR
+
+if [[ -z ${INSTALL_DIR/control/etl/mediterraneo/input} ]] || [[ ! -d ${INSTALL_DIR/control/etl/mediterraneo/input} ]]; then
+    echo "$(basename $0) Error: DIR_DESTINO no definido o no es un directorio. Compruebe invocación previa a setBatchEnv.sh"
+    exit 1
+fi
+#rm -f ${INSTALL_DIR/control/etl/uniges/input}$fichero_$1
+
+extensionTxt=".dat"
+
+OIFS=$IFS
+IFS=','
+arrayfichero=${fichero}
+
+for fichero in $arrayfichero
+do
+    ficheroTxt=$INSTALL_DIR/control/etl/mediterraneo/input/${fichero}_$1$extensionTxt
+    echo "fichero .dat: $ficheroTxt"
+    if [[ "$#" -eq 1 ]]; then
+        ./ftp/ftp_get_gestoria_mediterraneo_files.sh $1 ${fichero}_$1 $INSTALL_DIR/control/etl/mediterraneo/input/
+        echo "Fichero movido al destino $INSTALL_DIR/control/etl/mediterraneo/input/"
+    fi
+done
+
+echo "Fin de la transferecia de los ficheros de la gestoria MEDITERRANEO"
+
+#############
+### GrupoBC
+#############
+echo "Se inicia la transferecia de los ficheros de la gestoria GrupoBC"
+fichero=GRUPOBC_ENTIDADES_ACTIVOS_GR
+
+if [[ -z ${INSTALL_DIR/control/etl/grupoBC/input} ]] || [[ ! -d ${INSTALL_DIR/control/etl/grupoBC/input} ]]; then
+    echo "$(basename $0) Error: DIR_DESTINO no definido o no es un directorio. Compruebe invocación previa a setBatchEnv.sh"
+    exit 1
+fi
+#rm -f ${INSTALL_DIR/control/etl/uniges/input}$fichero_$1
+
+extensionTxt=".dat"
+
+OIFS=$IFS
+IFS=','
+arrayfichero=${fichero}
+
+for fichero in $arrayfichero
+do
+    ficheroTxt=$INSTALL_DIR/control/etl/grupoBC/input/${fichero}_$1$extensionTxt
+    echo "fichero .dat: $ficheroTxt"
+    if [[ "$#" -eq 1 ]]; then
+        ./ftp/ftp_get_gestoria_grupobc_files.sh $1 ${fichero}_$1 $INSTALL_DIR/control/etl/grupoBC/input/
+        echo "Fichero movido al destino $INSTALL_DIR/control/etl/grupoBC/input/"
+    fi
+done
+
+echo "Fin de la transferecia de los ficheros de la gestoria GrupoBC"

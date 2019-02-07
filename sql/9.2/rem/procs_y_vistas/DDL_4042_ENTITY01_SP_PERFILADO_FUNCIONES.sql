@@ -12,7 +12,7 @@
 --## INSTRUCCIONES:  
 --## VERSIONES:
 --##        0.1 Versión inicial
---##        0.2 Añadido perfil SUPERUSUARIO
+--##        0.2 Añadido perfil SUPERUSUARIONEGOCIO
 --#########################################
 --*/
 
@@ -357,7 +357,7 @@ BEGIN
 			,PMSVVC
 			,FTI
             ,HAYAGESTFORMADM
-            ,SUPERUSUARIO
+            ,SUPERUSUARIONEGOCIO
             )
             SELECT
               '''||V_TMP_VAR(1)||'''
@@ -507,7 +507,7 @@ BEGIN
 			,PMSVVC
 			,FTI
             ,HAYAGESTFORMADM
-            ,SUPERUSUARIO
+            ,SUPERUSUARIONEGOCIO
                 )
               )
             )
@@ -612,7 +612,7 @@ BEGIN
 			,PMSVVC
 			,FTI
             ,HAYAGESTFORMADM
-            ,SUPERUSUARIO
+            ,SUPERUSUARIONEGOCIO
                )
             )
           )

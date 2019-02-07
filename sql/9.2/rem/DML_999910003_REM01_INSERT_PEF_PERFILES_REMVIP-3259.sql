@@ -30,7 +30,7 @@ DECLARE
 BEGIN	
 	DBMS_OUTPUT.PUT_LINE('[INICIO] INSERCION TABLA PEF_PERFILES');
 	
-	V_SQL := 'SELECT COUNT(*) FROM '||V_ESQUEMA||'.PEF_PERFILES WHERE PEF_CODIGO = ''SUPERUSUARIO''';
+	V_SQL := 'SELECT COUNT(*) FROM '||V_ESQUEMA||'.PEF_PERFILES WHERE PEF_CODIGO = ''SUPERUSUARIONEGOCIO''';
 	
 	EXECUTE IMMEDIATE V_SQL INTO V_NUM_FILAS;
 	
@@ -47,13 +47,13 @@ BEGIN
 					PEF_CODIGO
 					)VALUES(
 					'||V_ESQUEMA||'.S_PEF_PERFILES.NEXTVAL,
-					''Superusuario con permisos especificos'',
-					''Superusuario con permisos especificos'',
+					''Usuario especial para negocios'',
+					''Usuario especial para negocios'',
 					0,
 					''REMVIP-3259'',
 					SYSDATE,
 					0,
-					''SUPERUSUARIO''
+					''SUPERUSUARIONEGOCIO''
 					)';
 	
 		EXECUTE IMMEDIATE V_MSQL;

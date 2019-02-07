@@ -35,6 +35,7 @@ public class SalesforceEndpoint {
 	private String password;
 	private String clientId;
 	private String clientSecret;
+	private String fullUrl;
 	
 	public SalesforceEndpoint(String httpMethod, int timeout, String baseUrl, String endpointUrl, String user,
 			String password, String clientId, String clientSecret) {
@@ -99,7 +100,12 @@ public class SalesforceEndpoint {
 	}
 	
 	public String getFullUrl() {
-		return this.baseUrl.concat(this.endpointUrl);
+		if (fullUrl == null) {
+			return this.baseUrl.concat(this.endpointUrl);
+		} else {
+			return fullUrl;
+		}
+		
 	}
 
 	public String getUser() {
@@ -172,5 +178,8 @@ public class SalesforceEndpoint {
 		}
 		
 	}
-	
+
+	public void setFullUrl(String fullUrl) {
+		this.fullUrl = fullUrl;
+	}
 }

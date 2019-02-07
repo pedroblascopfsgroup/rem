@@ -5,9 +5,11 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.StringWriter;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 
@@ -80,17 +82,13 @@ public class ClienteSalesforceGenerico {
 			throw new IllegalArgumentException("El método no se ha invocado correctamente. Falta el endpoint.");
 		}
 		
-		if (jsonString == null) {
-			throw new IllegalArgumentException("'jsonString' no puede ser NULL");
-		}
-		
 		RestLlamada registro = new RestLlamada();
 		registro.setMetodo(endpoint.getHttpMethod());
 		Map<String, String> headers = new HashMap<String, String>();
 		
 		String serviceUrl = null;
 		if (authtoken != null) {
-			headers.put("AUTHTOKEN", authtoken);
+			headers.put("Authorization", authtoken);
 			serviceUrl = endpoint.getFullUrl();
 		}
 		else {
@@ -101,7 +99,7 @@ public class ClienteSalesforceGenerico {
 		registro.setRequest(jsonString);
 
 		JSONObject result = processRequest(serviceUrl, endpoint, headers, jsonString, endpoint.getTimeout(), endpoint.getCharset());
-
+		
 		try {
 			registro.setResponse(result.toString());
 			llamadaDao.guardaRegistro(registro);
@@ -118,9 +116,6 @@ public class ClienteSalesforceGenerico {
 			throw new HttpClientFacadeInternalError("Service URL is required");
 		}
 
-		if (jsonString == null) {
-			throw new HttpClientFacadeInternalError("JSON request is required");
-		}
 		String sendMethod = endpoint.getHttpMethod();
 		responseTimeOut = responseTimeOut * 1000;
 		logger.trace("Estableciendo coneixón con httpClient [url=" + serviceUrl + ", method=" + sendMethod
@@ -143,14 +138,46 @@ public class ClienteSalesforceGenerico {
 			
 			httpsURLConnection.setHostnameVerifier(new SFHostnameVerifier());
 			httpsURLConnection.setSSLSocketFactory(sslContext.getSocketFactory());
+			httpsURLConnection.setRequestMethod("POST");
+			httpsURLConnection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+			httpsURLConnection.setConnectTimeout(responseTimeOut);
+			
+			System.out.println("Metiendo headers");
+			Iterator<Map.Entry<String, String>> it = headers.entrySet().iterator();
+			System.out.println("While in");
+			while (it.hasNext()) {
+				Map.Entry<String, String> headerPair = it.next();
+				System.out.println("H : " +headerPair.getKey() + " V : " + headerPair.getValue());
+				httpsURLConnection.setRequestProperty(headerPair.getKey(),headerPair.getValue());
+			}
+			
+			System.out.println("While out");
+			
+			
+			// Body
+			if (jsonString != null && !jsonString.isEmpty()) {
+				
+				httpsURLConnection.setRequestProperty("Content-Type", "application/json");
+				
+				System.out.println("Metiendo cuerpo");
+				System.out.println(jsonString);
+				System.out.println("Output a true");
+				httpsURLConnection.setDoOutput(true);
+				OutputStream body = httpsURLConnection.getOutputStream();
+				body.write(jsonString.getBytes("UTF-8"));
+				body.flush();
+				body.close();
+			}
 			
 			System.out.println("INICIANDO COMUNICACION, aqui puede fallar facil , C103");
 			InputStream inputStream = httpsURLConnection.getInputStream();
 			System.out.println("COMUNICACION REALIZADA, C103");
 			String respBody = getResponseBody(inputStream);
-			
+			System.out.println(respBody);
 			logger.trace("-- RESPONSE BODY --");
 			logger.trace(respBody);
+			
+			httpsURLConnection.disconnect();
 			
 			if (respBody.trim().isEmpty()){
 				throw new HttpClientException("Empty response", responseCode);

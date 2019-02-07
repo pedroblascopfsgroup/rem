@@ -48,10 +48,10 @@ import es.pfsgroup.plugin.rem.api.GencatApi;
 import es.pfsgroup.plugin.rem.api.NotificacionGencatApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.OfertaGencatApi;
-import es.pfsgroup.plugin.rem.api.TrabajoApi;
-import es.pfsgroup.plugin.rem.gastosExpediente.dao.GastosExpedienteDao;
 import es.pfsgroup.plugin.rem.api.ReclamacionGencatApi;
+import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.api.VisitaGencatApi;
+import es.pfsgroup.plugin.rem.gastosExpediente.dao.GastosExpedienteDao;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
 import es.pfsgroup.plugin.rem.jbpm.activo.JBPMActivoTramiteManager;
 import es.pfsgroup.plugin.rem.model.Activo;
@@ -96,6 +96,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoNotificacionGencat;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
+import es.pfsgroup.plugin.rem.rest.dto.SalesforceAuthDto;
 import es.pfsgroup.plugin.rem.rest.salesforce.api.SalesforceApi;
 import es.pfsgroup.plugin.rem.restclient.exception.RestClientException;
 import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientException;
@@ -1642,7 +1643,16 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 	@Override
 	public DtoAltaVisita altaVisitaComunicacion(DtoAltaVisita dtoAltaVisita) throws IOException, RestClientException, HttpClientException {
 		
-		salesforceManager.test3();
+		try {
+			
+			SalesforceAuthDto auth = salesforceManager.getAuthtoken();
+			System.out.println("Constructor 0");
+			salesforceManager.altaVisita(auth, dtoAltaVisita);
+			
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		
 		return dtoAltaVisita;
 	}

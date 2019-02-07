@@ -1,22 +1,9 @@
 package es.pfsgroup.plugin.rem.rest.salesforce.api.impl;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.StringWriter;
-import java.io.UnsupportedEncodingException;
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Properties;
 
 import javax.annotation.Resource;
+import javax.servlet.ServletContext;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -24,23 +11,11 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import es.pfsgroup.commons.utils.Checks;
-import es.pfsgroup.plugin.rem.api.services.webcom.ErrorServicioWebcom;
-import es.pfsgroup.plugin.rem.rest.dto.AuthtokenRequest;
-import es.pfsgroup.plugin.rem.rest.dto.AuthtokenResponse;
+import es.pfsgroup.plugin.rem.model.DtoAltaVisita;
+import es.pfsgroup.plugin.rem.model.DtoLeadVisita;
 import es.pfsgroup.plugin.rem.rest.dto.ResponseGestorDocumentalFotos;
-
-/*import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.HttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.util.EntityUtils;
-import org.apache.http.client.ClientProtocolException;
-import org.json.JSONObject;
-import org.json.JSONTokener;
-import org.json.JSONException;*/
-
+import es.pfsgroup.plugin.rem.rest.dto.SalesforceAuthDto;
+import es.pfsgroup.plugin.rem.rest.dto.SalesforceResponseDto;
 import es.pfsgroup.plugin.rem.rest.salesforce.api.SalesforceApi;
 import es.pfsgroup.plugin.rem.restclient.exception.AccesDeniedException;
 import es.pfsgroup.plugin.rem.restclient.exception.FileErrorException;
@@ -48,41 +23,8 @@ import es.pfsgroup.plugin.rem.restclient.exception.InvalidJsonException;
 import es.pfsgroup.plugin.rem.restclient.exception.MissingRequiredFieldsException;
 import es.pfsgroup.plugin.rem.restclient.exception.RestClientException;
 import es.pfsgroup.plugin.rem.restclient.exception.UnknownIdException;
-import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientException;
-import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientFacadeInternalError;
-import es.pfsgroup.plugin.rem.restclient.registro.model.RestLlamada;
 import es.pfsgroup.plugin.rem.restclient.salesforce.clients.ClienteSalesforceGenerico;
 import es.pfsgroup.plugin.rem.restclient.salesforce.clients.SalesforceEndpoint;
-import es.pfsgroup.plugin.rem.restclient.utils.WebcomRequestUtils;
-import es.pfsgroup.plugin.rem.restclient.webcom.ParamsList;
-import es.pfsgroup.plugin.rem.restclient.webcom.WebcomRESTDevonProperties;
-import es.pfsgroup.plugin.rem.restclient.webcom.clients.WebcomEndpoint;
-import es.pfsgroup.plugin.rem.utils.WebcomSignatureUtils;
-import net.sf.json.JSONArray;
-import net.sf.json.JSONException;
-import net.sf.json.JSONObject;
-
-// INICIO IMPORTS HTTPCLIENT
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpMethod;
-import org.apache.commons.httpclient.methods.PostMethod;
-// FIN IMPORTS HTTPCLIENT
-
-
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSession;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
-import javax.servlet.ServletContext;
-
-import java.security.cert.CertificateException;
-import java.security.cert.X509Certificate;
-
-
-
-import org.apache.commons.lang.StringEscapeUtils;
 
 
 /**
@@ -94,17 +36,6 @@ import org.apache.commons.lang.StringEscapeUtils;
  */
 @Component
 public class SalesforceManager implements SalesforceApi {
-	
-	
-	//TODO: Meter esto en un devon
-	private static final String USERNAME = "admin@haya.es.dev";
-	private static final String PASSWORD = "empaua_2016";
-	private static final String LOGIN_URL = "https://test.salesforce.com";
-	private static final String GRANT_SERVICE = "/services/oauth2/token?grant_type=authorization_code";
-	//private static final String GRANT_TYPE = "authorization_code";
-	private static final String CLIENT_ID = 
-    		"3MVG9w8uXui2aB_pR8OlLmNTWNoIy9xDh.q6oZo2O8nuJv_sV200sZZE.LJzA.qpfMr7xwk.eEYVAgT.x0vQx";
-	private static final String CLIENT_SECRET = "8669100424893793616";
 	
 	private final Log logger = LogFactory.getLog(getClass());
 	
@@ -118,262 +49,33 @@ public class SalesforceManager implements SalesforceApi {
 	private ClienteSalesforceGenerico cliente;
 	
 	private static String ID_AUTH_TOKEN = "idAuthToken";
-	private static String GET_AUTHTOKEN_ENDPOINT = "getAuthtoken/";
-	private static String UPLOAD_ENDPOINT = "upload/";
-	private static String DELETE_ENDPOINT = "delete/";
-	private static String FILE_SEARCH_ENDPOINT = "get/";
+//	private static String UPLOAD_ENDPOINT = "upload/";
+//	private static String DELETE_ENDPOINT = "delete/";
+//	private static String FILE_SEARCH_ENDPOINT = "get/";
 	
 	ObjectMapper mapper = new ObjectMapper();
 	
 	@Override
-	public void test2() {
-		
-		
-		
-		// Create a trust manager that does not validate certificate chains
-	    TrustManager[] trustAllCerts = new TrustManager[] {new X509TrustManager() {
-	            public java.security.cert.X509Certificate[] getAcceptedIssuers() {
-	                return null;
-	            }
-	            public void checkClientTrusted(X509Certificate[] certs, String authType) {
-	            }
-	            public void checkServerTrusted(X509Certificate[] certs, String authType) {
-	            }
-	        }
-	    };
-
-	    // Install the all-trusting trust manager
-	    SSLContext sc;
-		try {
-			sc = SSLContext.getInstance("SSL");
-			sc.init(null, trustAllCerts, new java.security.SecureRandom());
-		    HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
-
-		    // Create all-trusting host name verifier
-		    HostnameVerifier allHostsValid = new HostnameVerifier() {
-		        public boolean verify(String hostname, SSLSession session) {
-		            return true;
-		        }
-		    };
-
-		    // Install the all-trusting host verifier
-		    HttpsURLConnection.setDefaultHostnameVerifier(allHostsValid);
-		} catch (NoSuchAlgorithmException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (KeyManagementException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		HttpClient httpclient = new HttpClient();
-
-        // Assemble the login request URL
-        String loginURL = 	LOGIN_URL +
-        					GRANT_SERVICE +
-							"&client_id=" + CLIENT_ID +
-							"&client_secret=" + CLIENT_SECRET +
-							"&username=" + USERNAME +
-							"&password=" + PASSWORD;
-
-        // Login requests must be POSTs
-        PostMethod httpPost = new PostMethod();
-        httpPost.setPath(loginURL);
-        Integer statusCode = null;
-
-        try {
-            // Execute the login POST request
-        	statusCode = httpclient.executeMethod(httpPost);
-        }  
-        catch (IOException ioException) {
-            ioException.printStackTrace();
-        }
-
-        // verify response is HTTP OK
-        if (statusCode != 200) {
-            System.out.println("Error authenticating to Force.com: "+statusCode);
-            // Error is in EntityUtils.toString(response.getEntity())
-            return;
-        }
-
-        String getResult = null;
-        try {
-            getResult = getResponseBody(httpPost);
-            JSONObject jsonObject = null;
-            String loginAccessToken = null;
-            String loginInstanceUrl = null;
-            try {
-            	jsonObject = JSONObject.fromObject(getResult);
-            	loginAccessToken = jsonObject.getString("access_token");
-            	loginInstanceUrl = jsonObject.getString("instance_url");
-            } 
-            catch (JSONException jsonException) {
-            	jsonException.printStackTrace();
-            }
-            
-            //System.out.println(response.getStatusLine());
-            System.out.println("Successful login");
-            System.out.println("  instance URL: "+loginInstanceUrl);
-            System.out.println("  access token/session ID: "+loginAccessToken);
-        } catch (Exception ioException) {
-            ioException.printStackTrace();
-        }
-
-        // release connection
-        httpPost.releaseConnection();
-		
-	}
-	
-	
-	private String getResponseBody(HttpMethod method) {
-		// Ensure we have read entire response body by reading from buffered
-		// stream
-		if (method != null && method.hasBeenUsed()) {
-			BufferedReader in = null;
-			StringWriter stringOut = new StringWriter();
-			BufferedWriter dumpOut = new BufferedWriter(stringOut, 8192);
-			try {
-				in = new BufferedReader(new InputStreamReader(method.getResponseBodyAsStream()));
-				String line = "";
-				while ((line = in.readLine()) != null) {
-					dumpOut.write(line);
-					dumpOut.newLine();
-				}
-			} catch (IOException e) {
-				throw new HttpClientFacadeInternalError("Error Reading Response Stream", e);
-			} finally {
-				try {
-					dumpOut.flush();
-					dumpOut.close();
-					if (in != null)
-						in.close();
-				} catch (IOException e) {
-					logger.warn("Error Closing Response Stream", e);
-				}
-			}
-			return StringEscapeUtils.unescapeHtml(stringOut.toString());
-		}
-		return null;
-	}
-	
-	
-	
-	public void test() {
-		
-		/*String params = "{"
-				+ "grant_type: 'password', "
-				+ "client_id: '3MVG9w8uXui2aB_pR8OlLmNTWNoIy9xDh.q6oZo2O8nuJv_sV200sZZE.LJzA.qpfMr7xwk.eEYVAgT.x0vQx', "
-				+ "client_secret: '8669100424893793616', "
-				+ "username: 'admin@haya.es.dev', "
-				+ "password: 'empaua_2016' "
-		+ "}";
-		
-		httpClient.processRequest(LOGIN_URL + GRANT_SERVICE, "POST", "application/x-www-form-urlencoded", params, 5,
-			"");*/
-		
-		/*HttpClient httpclient = HttpClientBuilder.create().build();
-
-        // Assemble the login request URL
-        String loginURL = 	LOGIN_URL +
-        					GRANT_SERVICE +
-							"&client_id=" + CLIENT_ID +
-							"&client_secret=" + CLIENT_SECRET +
-							"&username=" + USERNAME +
-							"&password=" + PASSWORD;
-
-        // Login requests must be POSTs
-        HttpPost httpPost = new HttpPost(loginURL);
-        HttpResponse response = null;
-
-        try {
-            // Execute the login POST request
-            response = httpclient.execute(httpPost);
-        } 
-        catch (ClientProtocolException cpException) {
-            cpException.printStackTrace();
-        } 
-        catch (IOException ioException) {
-            ioException.printStackTrace();
-        }
-
-        // verify response is HTTP OK
-        final int statusCode = response.getStatusLine().getStatusCode();
-        if (statusCode != HttpStatus.SC_OK) {
-            System.out.println("Error authenticating to Force.com: "+statusCode);
-            // Error is in EntityUtils.toString(response.getEntity())
-            return;
-        }
-
-        String getResult = null;
-        try {
-            getResult = EntityUtils.toString(response.getEntity());
-        } catch (IOException ioException) {
-            ioException.printStackTrace();
-        }
-        JSONObject jsonObject = null;
-        String loginAccessToken = null;
-        String loginInstanceUrl = null;
-        try {
-            jsonObject = (JSONObject) new JSONTokener(getResult).nextValue();
-            loginAccessToken = jsonObject.getString("access_token");
-            loginInstanceUrl = jsonObject.getString("instance_url");
-        } 
-        catch (JSONException jsonException) {
-            jsonException.printStackTrace();
-        }
-        
-        //System.out.println(response.getStatusLine());
-        System.out.println("Successful login");
-        System.out.println("  instance URL: "+loginInstanceUrl);
-        System.out.println("  access token/session ID: "+loginAccessToken);
-
-        // release connection
-        httpPost.releaseConnection();*/
-		
-	}
-	
-	//Llamadas utilizando la misma forma que GD Fotos
-	@Override
-	public void test3() throws IOException, RestClientException, HttpClientException {
-		try {
-			//trustEveryone();
-		}
-		catch (Exception e) {
-			throw new IOException(e.getMessage());
-		}
-		getAuthtoken();
-	}
-	
-	private AuthtokenResponse getAuthtoken() throws IOException, RestClientException, HttpClientException {
-		
-		AuthtokenRequest request = new AuthtokenRequest();
+	public SalesforceAuthDto getAuthtoken() throws Exception {
 		
 		SalesforceEndpoint salesforceEndpoint = SalesforceEndpoint.getTokenEndPoint(appProperties);
 		salesforceEndpoint.validateCallTokenEndpoint();
 		
-		request.setApp_id(salesforceEndpoint.getClientId());
-		request.setApp_secret(salesforceEndpoint.getClientSecret());
-		
 		String jsonResponse = null;
-		AuthtokenResponse response = null;
+		SalesforceAuthDto response = null;
 		if (servletContext.getAttribute(ID_AUTH_TOKEN) != null) {
-			
-			response = (AuthtokenResponse) servletContext.getAttribute(ID_AUTH_TOKEN);
-			if (response.getData().getExpires().compareTo(new Date()) < 0) {
-				
-				jsonResponse = cliente.send(null, salesforceEndpoint, "").toString();
-				response = mapper.readValue(jsonResponse, AuthtokenResponse.class);
-				if (response.getError() != null && !response.getError().isEmpty()) {
-					servletContext.setAttribute(ID_AUTH_TOKEN, null);
-					throwException(response.getError());
-				}
 
+			jsonResponse = cliente.send(null, salesforceEndpoint, null).toString();
+			response = mapper.readValue(jsonResponse, SalesforceAuthDto.class);
+			if (response.getError() != null && !response.getError().isEmpty()) {
+				servletContext.setAttribute(ID_AUTH_TOKEN, null);
+				throwException(response.getError());
 			}
-		} 
-		else {
+
+		} else {
 			
-			jsonResponse = cliente.send(null, salesforceEndpoint, "").toString();
-			response = mapper.readValue(jsonResponse, AuthtokenResponse.class);
+			jsonResponse = cliente.send(null, salesforceEndpoint, null).toString();
+			response = mapper.readValue(jsonResponse, SalesforceAuthDto.class);
 			if (response.getError() != null && !response.getError().isEmpty()) {
 				servletContext.setAttribute(ID_AUTH_TOKEN, null);
 				throwException(response.getError());
@@ -381,6 +83,32 @@ public class SalesforceManager implements SalesforceApi {
 			servletContext.setAttribute(ID_AUTH_TOKEN, response);
 
 		}
+		return response;
+		
+	}
+	
+	@Override
+	public SalesforceResponseDto altaVisita(SalesforceAuthDto dto, DtoAltaVisita dtoAltaVisita) throws Exception {
+		
+		SalesforceEndpoint salesforceEndpoint = SalesforceEndpoint.getTokenEndPoint(appProperties);
+		salesforceEndpoint.validateCallTokenEndpoint();
+		salesforceEndpoint.setFullUrl(dto.getInstance_url()+"/services/data/v34.0/composite/tree/HAY_LOAD_VISITAS__c/");
+		
+		String jsonResponse = null;
+		SalesforceResponseDto response = null;
+		if (servletContext.getAttribute(ID_AUTH_TOKEN) != null) {
+			System.out.println("Constructor XXX");
+			jsonResponse = cliente.send(dto.getFullToken(), salesforceEndpoint, new DtoLeadVisita(dtoAltaVisita).toBodyString()).toString();
+			System.out.println("OBJECT MAPPER TODO AQUI PETARA");
+			response = mapper.readValue(jsonResponse, SalesforceResponseDto.class);
+			System.out.println("OBJECT MAPPER after readValue call");
+			if (response.getHasErrors() != null && !response.getHasErrors()) {
+				servletContext.setAttribute(ID_AUTH_TOKEN, null);
+				throwException("UNKOWN_ERROR");
+			}
+
+		}
+		System.out.println("Constructor YYY");
 		return response;
 		
 	}
@@ -401,60 +129,11 @@ public class SalesforceManager implements SalesforceApi {
 		} 
 		else if (error.equals(ResponseGestorDocumentalFotos.UNKNOWN_ID)) {
 			throw new UnknownIdException();
+		} else if (error.equals("UNKOWN_ERROR")) {
+			throw new UnknownError("Error desconocido en SalesForceManager");
 		}
 		
 	}
-	
-	
-	private void ignorarSSLHandshakeException() throws Exception {
-		
-		try {
-	        TrustManager[] trustAllCerts = new TrustManager[] { 
-	            new X509TrustManager() {
-	                public X509Certificate[] getAcceptedIssuers() {
-	                    X509Certificate[] myTrustedAnchors = new X509Certificate[0];  
-	                    return myTrustedAnchors;
-	                }
-
-	                @Override
-	                public void checkClientTrusted(X509Certificate[] certs, String authType) {}
-
-	                @Override
-	                public void checkServerTrusted(X509Certificate[] certs, String authType) {}
-	            }
-	        };
-
-	        SSLContext sc = SSLContext.getInstance("SSL");
-	        sc.init(null, trustAllCerts, new SecureRandom());
-	        HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
-	        HttpsURLConnection.setDefaultHostnameVerifier(new HostnameVerifier() {
-	            @Override
-	            public boolean verify(String arg0, SSLSession arg1) {
-	                return true;
-	            }
-	        });
-	    } catch (Exception e) {
-	    	throw e;
-	    }
-        
-	}
-	
-	private void trustEveryone() { 
-	    try { 
-	            HttpsURLConnection.setDefaultHostnameVerifier(new HostnameVerifier(){ 
-	                    public boolean verify(String hostname, SSLSession session) { 
-	                            return true; 
-	                    }}); 
-	            SSLContext context = SSLContext.getInstance("TLS"); 
-	            context.init(null, new X509TrustManager[]{new CustomInsecureX509TrustManager()
-	            		}, new SecureRandom()); 
-	            HttpsURLConnection.setDefaultSSLSocketFactory( 
-	                            context.getSocketFactory()); 
-	    } catch (Exception e) { // should never happen 
-	    	System.out.println("Error en trustEveryone");
-	            e.printStackTrace(); 
-	    } 
-	} 
 	
 	/**
 	 * Método genérico para enviar una petición REST a Saleforce.
@@ -472,7 +151,7 @@ public class SalesforceManager implements SalesforceApi {
 	 * @return
 	 * @throws ErrorServicioWebcom
 	 */
-	@SuppressWarnings("unchecked")
+	/**@SuppressWarnings("unchecked")
 	public Map<String, Object> send(WebcomEndpoint endpoint, ParamsList paramsList, RestLlamada registroLlamada)
 			throws ErrorServicioWebcom {
 		
@@ -570,65 +249,6 @@ public class SalesforceManager implements SalesforceApi {
 
 		}
 		
-	}
-	
-	/**
-	 * Método tentativo para obtener la data de la petición o la respuest
-	 * @param object
-	 * @return
-	 */
-	private JSONArray obtenerDataResponse(JSONObject object) {
-		JSONArray data = null;
-		try {
-			data = object.getJSONArray("data");
-		} catch (Exception e) {
-			//no cambiar esto a error, es un metodo tentativo
-			logger.info("Error al obtener la respuesta, usamos la peticion");
-		}
-		return data;
-
-	}
-
-	private void trazarObjetosRechazados(RestLlamada registroLlamada, JSONArray data, boolean trazandoRequest) {
-		ArrayList<JSONObject> datosErroneos = new ArrayList<JSONObject>();
-		for (int i = 0; i < data.size(); i++) {
-			JSONObject jsonObject = data.getJSONObject(i);
-			if (trazandoRequest || (jsonObject.containsKey("success") && !jsonObject.getBoolean("success"))) {
-				datosErroneos.add(jsonObject);
-			}
-
-		}
-		registroLlamada.setDatosErroneos(datosErroneos);
-	}
-
-	private void debugJsonFile(String jsonString) {
-		String DEBUG_FILE = !Checks.esNulo(appProperties.getProperty("rest.client.json.debug.file"))
-				? appProperties.getProperty("rest.client.json.debug.file") : "true";
-
-		if (DEBUG_FILE.equals("true")) {
-			FileWriter fileW = null;
-
-			try {
-				fileW = new FileWriter(System.getProperty("user.dir").concat(System.getProperty("file.separator"))
-						.concat("call.json"));
-				fileW.write(jsonString);
-			} catch (Exception e) {
-				logger.error("error al guardar el fichero JSON");
-			} finally {
-				try {
-					if (fileW != null) {
-						fileW.close();
-					}
-				} catch (IOException e) {
-					logger.error("error al cerrar el fichero");
-				}
-			}
-		}
-	}
-	
-	private String getPublicAddress() {
-		return WebcomRESTDevonProperties.extractDevonProperty(appProperties,
-				WebcomRESTDevonProperties.SERVER_PUBLIC_ADDRESS, "UNKNOWN_ADDRESS");
-	}
+	}*/
 	
 }

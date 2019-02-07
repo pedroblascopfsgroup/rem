@@ -307,6 +307,7 @@ public class OfertasController {
 			model.put("data", ofertaApi.checkPedirDoc(idActivo,idAgrupacion,idExpediente, dniComprador, codtipoDoc));
 			model.put("comprador",ofertaApi.getClienteGDPRByTipoDoc(dniComprador, codtipoDoc));
 			model.put("compradorId", expedienteComercialApi.getCompradorIdByDocumento(dniComprador, codtipoDoc));
+			model.put("destinoComercial", activoDao.get(idActivo).getTipoComercializacion().getDescripcion());
 			if(!Checks.esNulo(idActivo)) {
 				Activo activo = activoDao.get(idActivo);
 				if(DDCartera.CODIGO_CARTERA_CERBERUS.equals(activo.getCartera().getCodigo())

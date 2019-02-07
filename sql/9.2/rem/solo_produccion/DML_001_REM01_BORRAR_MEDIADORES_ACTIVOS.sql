@@ -1652,15 +1652,18 @@ BEGIN
         EXECUTE IMMEDIATE V_MSQL INTO V_COUNT;
         
         IF V_COUNT = 1 THEN
-
-            V_MSQL:='UPDATE '||V_ESQUEMA||'.ACT_ICM_INF_COMER_HIST_MEDI SET ICM_FECHA_HASTA = SYSDATE , fechamodificar = SYSDATE,usuariomodificar = '''||V_MODIFICAR||'''
-                    WHERE ACT_ID = (SELECT ACT_ID from '||V_ESQUEMA||'.ACT_ACTIVO where act_num_activo = '''||TRIM(V_TMP_TIPO_DATA(1))||''') AND 
-                          ICO_MEDIADOR_ID = (SELECT ICO.ICO_MEDIADOR_ID FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT
-                                                INNER JOIN '||V_ESQUEMA||'.ACT_ICO_INFO_COMERCIAL ICO on act.act_id = ICO.ACT_ID
-                                                WHERE ACT.ACT_NUM_ACTIVO =  '''||TRIM(V_TMP_TIPO_DATA(1))||''') AND
-                          ICM_FECHA_HASTA IS NULL';
-            --DBMS_OUTPUT.PUT_LINE(V_MSQL);
-            EXECUTE IMMEDIATE V_MSQL;
+           
+            V_MSQL:='SELECT COUNT(1) FROM '||V_ESQUEMA||'.ACT_ICM_INF_COMER_HIST_MEDI WHERE ACT_ID = (SELECT act.ACT_ID from '||V_ESQUEMA||'.ACT_ACTIVO act where act.act_num_activo = '''||TRIM(V_TMP_TIPO_DATA(1))||''')';
+            
+            EXECUTE IMMEDIATE V_MSQL INTO V_COUNT;
+            
+            IF V_COUNT = 1 THEN
+				V_MSQL:='UPDATE '||V_ESQUEMA||'.ACT_ICM_INF_COMER_HIST_MEDI SET ICM_FECHA_HASTA = SYSDATE , fechamodificar = SYSDATE,usuariomodificar = '''||V_MODIFICAR||'''
+                    WHERE ACT_ID = (SELECT ACT_ID from '||V_ESQUEMA||'.ACT_ACTIVO where act_num_activo = '''||TRIM(V_TMP_TIPO_DATA(1))||''')';
+            ELSE
+				DBMS_OUTPUT.PUT_LINE('[ERROR]: No se actualiza el histórico del activo '||TRIM(V_TMP_TIPO_DATA(1))||'');
+            END IF;
+            
             
             V_MSQL:='UPDATE '||V_ESQUEMA||'.ACT_ICO_INFO_COMERCIAL SET ICO_MEDIADOR_ID = null, USUARIOMODIFICAR = '''||V_MODIFICAR||''',FECHAMODIFICAR = sysdate
                         where ACT_ID = (SELECT ACT_ID FROM '||V_ESQUEMA||'.ACT_ACTIVO where ACT_NUM_ACTIVO = '''||TRIM(V_TMP_TIPO_DATA(1))||''')';

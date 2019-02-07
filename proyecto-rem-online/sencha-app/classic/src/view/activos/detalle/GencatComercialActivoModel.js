@@ -43,7 +43,7 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoModel', {
     		var estadoComunicacion= get('gencat.estadoComunicacion');
     		var comunicadoAnulacionGencat = get('gencat.comunicadoAnulacionAGencat');
     		
-    		if(comunicadoAnulacionGencat){
+    		if(comunicadoAnulacionGencat &&  CONST.ESTADO_COMUNICACION_GENCAT['RECHAZADO'] != estadoComunicacion){
     			return CONST.ESTADO_COMUNICACION_GENCAT['ANULADO'];
     		}else{
     			return estadoComunicacion;

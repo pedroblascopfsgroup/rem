@@ -19,6 +19,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GencatApi;
 import es.pfsgroup.plugin.rem.api.NotificacionApi;
@@ -65,6 +66,9 @@ public class UpdaterServiceSancionOfertaResolucionComite implements UpdaterServi
 	
 	@Autowired
 	private GencatApi gencatApi;
+	
+	@Autowired
+	private ActivoDao activoDao;
 
 
 	protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaResolucionComite.class);
@@ -78,7 +82,12 @@ public class UpdaterServiceSancionOfertaResolucionComite implements UpdaterServi
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 
 	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {
-
+		
+		Boolean esAfectoGencat = false;
+		if(!Checks.esNulo(tramite.getActivo()) && !Checks.esNulo(tramite.getActivo().getId())){
+			esAfectoGencat = activoDao.isActivoBloqueadoGENCAT(tramite.getActivo().getId());
+		}
+		
 		Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());
 		if (!Checks.esNulo(ofertaAceptada)) {
 			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
@@ -118,8 +127,9 @@ public class UpdaterServiceSancionOfertaResolucionComite implements UpdaterServi
 							notificacionApi.enviarNotificacionPorActivosAdmisionGestion(expediente);
 							
 							//TODO COMPROBACION PRE BLOQUEO GENCAT 
-							if(Checks.esNulo(expediente.getReserva()) && esEstadoAnteriorTramitado)
-							gencatApi.bloqueoExpedienteGENCAT(expediente, tramite);
+							if(Checks.esNulo(expediente.getReserva()) && esEstadoAnteriorTramitado && esAfectoGencat){
+								gencatApi.bloqueoExpedienteGENCAT(expediente, tramite);
+							}
 														
 						} else {
 							if (DDResolucionComite.CODIGO_RECHAZA.equals(valor.getValor())) {

@@ -15,6 +15,7 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GencatApi;
@@ -49,6 +50,9 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 	
 	@Autowired
 	private GencatApi gencatApi;
+	
+	@Autowired
+	private ActivoDao activoDao;
 
 	protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaDefinicionOferta.class);
 
@@ -62,6 +66,11 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 
 	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {
+		Boolean esAfectoGencat = false;
+		if(!Checks.esNulo(tramite.getActivo()) && !Checks.esNulo(tramite.getActivo().getId())){
+			esAfectoGencat = activoDao.isActivoBloqueadoGENCAT(tramite.getActivo().getId());
+		}
+		
 		/*
 		 * Si tiene atribuciones guardamos la fecha de aceptación de la tarea
 		 * como fecha de sanción, en caso contrario, la fecha de sanción será la
@@ -97,9 +106,7 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 				// y se envía una notificación
 				notificacionApi.enviarNotificacionPorActivosAdmisionGestion(expediente);
 				
-				if(Checks.esNulo(expediente.getReserva()) && esTramitadoAntesQueAprobado){
-					//TODO COMPROBACION PRE BLOQUEO GENCAT 
-					
+				if(Checks.esNulo(expediente.getReserva()) && esTramitadoAntesQueAprobado && esAfectoGencat){
 					gencatApi.bloqueoExpedienteGENCAT(expediente, tramite);
 				}
 				
@@ -131,9 +138,7 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 				 
 				expediente.setEstado(estado);
 				
-				if(Checks.esNulo(expediente.getReserva()) && esTramitadoAntesQueAprobado){
-					//TODO COMPROBACION PRE BLOQUEO GENCAT 
-
+				if(Checks.esNulo(expediente.getReserva()) && esTramitadoAntesQueAprobado && esAfectoGencat){
 					gencatApi.bloqueoExpedienteGENCAT(expediente, tramite);
 				}
 				

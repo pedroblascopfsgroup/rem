@@ -2478,13 +2478,26 @@ public class ActivoController extends ParadiseJsonController {
 	}
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView generarUrlGDPR(DtoGenerarDocGDPR dtoGenerarDocGDPR, ModelMap model) {
+	public void generarUrlGDPR(DtoGenerarDocGDPR dtoGenerarDocGDPR, HttpServletRequest request, HttpServletResponse response) {
 		try {
-			model.put("data", activoApi.generarUrlGDPR(dtoGenerarDocGDPR));
-			model.put("success",true);
-		}catch(Exception e) {
-			logger.error("error en activoController", e);
+			FileItem fileItem = activoApi.generarUrlGDPR(dtoGenerarDocGDPR);
+			ServletOutputStream salida = response.getOutputStream();
+
+			response.setHeader("Content-disposition", "attachment; filename=" + fileItem.getFileName());
+			response.setHeader("Cache-Control", "must-revalidate, post-check=0,pre-check=0");
+			response.setHeader("Cache-Control", "max-age=0");
+			response.setHeader("Expires", "0");
+			response.setHeader("Pragma", "public");
+			response.setDateHeader("Expires", 0); // prevents caching at the proxy
+			response.setContentType(fileItem.getContentType());
+
+			// Write
+			FileUtils.copy(fileItem.getInputStream(), salida);
+			salida.flush();
+			salida.close();
+
+		} catch (Exception e) {
+			logger.error("Error en ActivoCOntroller", e);
 		}
-		return createModelAndViewJson(model);
 	}
 }

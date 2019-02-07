@@ -5343,7 +5343,6 @@ Ext
      		var direccion = ""
      		var email = "";
      		var telefono= "";
-     		me.getView().mask(HreRem.i18n("msg.mask.loading"));
      		if(!Ext.isEmpty(ventana2)){
      			codPrescriptor = ventana2.getForm().findField('buscadorPrescriptores').value;
      			numDoc = ventana2.getForm().findField('numDocumentoCliente').value;
@@ -5362,23 +5361,13 @@ Ext
      		var cesionDatos = ventana3.getForm().findField('cesionDatos').value;
  			var transIntern = ventana3.getForm().findField('transferenciasInternacionales').value;
  			var comTerceros = ventana3.getForm().findField('comunicacionTerceros').value;
- 			
     		var url =  $AC.getRemoteUrl('activo/generarUrlGDPR');
-    		Ext.Ajax.request({
- 	           url: url,
- 	           method : 'POST',
- 	           params: {codPrescriptor:codPrescriptor,cesionDatos:cesionDatos,transIntern:transIntern,comTerceros:comTerceros,
- 	        	   documento:numDoc,nombre:nombre,direccion:direccion,email:email,idExpediente:idExpediente, telefono:telefono},
- 	           success: function(response, opts){
- 	           },
- 	           failure: function(record, operation) {
- 	               me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
- 	           },
- 	           callback: function(options, success, response){
- 	        	   me.getView().unmask();
- 	           }
- 	        });
-    		
+    		config = {};
+    		config.url=url;
+    		config.method='POST';
+    		config.params = {codPrescriptor:codPrescriptor,cesionDatos:cesionDatos,transIntern:transIntern,comTerceros:comTerceros,
+  	        	   documento:numDoc,nombre:nombre,direccion:direccion,email:email,idExpediente:idExpediente, telefono:telefono};
+    		me.fireEvent("downloadFile", config);
      	}
      	
 });

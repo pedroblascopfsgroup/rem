@@ -2036,7 +2036,11 @@ Ext
 						var form1 = window.down('anyadirnuevaofertadocumento');
 						var form2 = window.down('anyadirnuevaofertadetalle');
 						var form3 = window.down('anyadirnuevaofertaactivoadjuntardocumento');
-						var docCliente = form2.getForm().findField('numDocumentoCliente').getValue();
+						
+						if(!Ext.isEmpty(form2)){
+							var docCliente = form2.getForm().findField('numDocumentoCliente').getValue();
+						}
+						
 						Ext.Msg.show({
 							title : HreRem.i18n('wizard.msg.show.title'),
 							msg : HreRem.i18n('wizard.msh.show.text'),
@@ -4943,8 +4947,8 @@ Ext
 	    			var comprador=datos.comprador;
 	    			var ventanaWizard = null;
 	    			var carteraInternacional = datos.carteraInternacional;
-	    			var ventanaAnyadirOferta;    			
-	    			
+	    			var ventanaAnyadirOferta;  
+	    			    			
 	    			if(!Ext.isEmpty(btn.up('wizardaltaoferta'))){
 	    				ventanaWizard = btn.up('wizardaltaoferta');
 	    				ventanaAnyadirOferta = ventanaWizard.down('anyadirnuevaofertadetalle');
@@ -5051,7 +5055,7 @@ Ext
 	        				   ventanaAltaWizard.getForm().findField('numDocumento').setDisabled(true);
 	        				   ventanaAltaWizard.getForm().findField('codTipoDocumento').setValue(form.findField('comboTipoDocumento').getValue());
 	        				   ventanaAltaWizard.getForm().findField('codTipoDocumento').setDisabled(true);
-	    				   }    
+	    				   }  
 	    				   
 	    				   if(!Ext.isEmpty(comprador)){
 	    					   if(!Ext.isEmpty(comprador.cesionDatos)){
@@ -5062,7 +5066,7 @@ Ext
 	    					   }
 	        				   if(!Ext.isEmpty(comprador.transferenciasInternacionales)){
 	        				     ventanaAltaWizard.getForm().findField('transferenciasInternacionales').setValue(comprador.transferenciasInternacionales);
-	        				   }
+	        				   } 
 	    				   }    			
 	    			   }
 	    				

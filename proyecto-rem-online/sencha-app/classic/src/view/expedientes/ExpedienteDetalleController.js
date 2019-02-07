@@ -2078,11 +2078,11 @@ Ext
 					onClickBotonCerrarComprador : function(btn) {
 						var me = this;
 						var window = btn.up("window");
-						window.destroy();
+						window.close();
 					}, 
 
 					onClickBotonCancelarWizardComprador : function(btn) {
-						
+					
 						var me = this, window = btn.up('window');
 						var form1 = window.down('anyadirnuevaofertadocumento');
 						var form2 = window.down('datoscompradorwizard');
@@ -2977,14 +2977,14 @@ Ext
 					comprobarObligatoriedadCamposNexos : function() {
 						try {
 							var me = this,
-                           
+							
 							campoEstadoCivil = me
 									.lookupReference('estadoCivil'), campoRegEconomico = me
 									.lookupReference('regimenMatrimonial'), campoNumConyuge = me
 									.lookupReference('numRegConyuge'), campoApellidos = me
 									.lookupReference('apellidos');
-
-							// Si el tipo de persona es FÍSICA, entonces el
+							
+	                        // Si el tipo de persona es FÍSICA, entonces el
 							// campos Estado civil es obligatorio y se habilitan
 							// campos dependientes.
 							if (me.lookupReference('tipoPersona').getValue() === "1") {
@@ -3071,7 +3071,7 @@ Ext
 							Ext.global.console.log(err);
 						}
 					},	
-	
+					
 	validarFechaPosicionamiento: function(value){
 		/*var hoy= new Date();
 		hoy.setHours(0,0,0,0);

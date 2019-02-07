@@ -42,7 +42,7 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 			var btnCrear = HreRem.i18n('btn.crear');
 			
 			var tipoExpedienteCodigo = me.expediente.data.tipoExpedienteCodigo;
-		
+			
 			if(tipoExpedienteCodigo === tipoExpedienteAlquiler){
 				title = HreRem.i18n("title.windows.datos.inquilino");
 				labelTitlePorcentaje = HreRem.i18n('fieldlabel.porcion.alquiler');
@@ -399,12 +399,12 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 											        	xtype: 'comboboxfieldbase',
 											        	fieldLabel: HreRem.i18n('fieldlabel.regimen.economico'),
 														reference: 'regimenMatrimonial',
-											        	bind: {
+														bind: {
 										            		store: '{comboRegimenesMatrimoniales}',
 										            		value: '{comprador.codigoRegimenMatrimonial}'
 										            	},
 										            	listeners: {
-										            		change: 'comprobarObligatoriedadCamposNexos'
+										            		change: 'comprobarObligatoriedadCamposNexos'										         
 										            	},
 										            	allowBlank:true
 							                		},

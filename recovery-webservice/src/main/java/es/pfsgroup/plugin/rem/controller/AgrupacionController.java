@@ -285,7 +285,6 @@ public class AgrupacionController extends ParadiseJsonController {
 	public ModelAndView createAgrupacion(DtoAgrupacionesCreateDelete dtoAgrupacion, ModelMap model) {
 
 		try {
-		    adapter.createAgrupacion(dtoAgrupacion);
 			DtoAgrupacionesCreateDelete agrupDto = adapter.createAgrupacion(dtoAgrupacion);
 			model.put("data", agrupDto);
 			model.put("success", true);

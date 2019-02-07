@@ -1661,7 +1661,7 @@ BEGIN
             
             IF V_COUNT = 1 THEN
 				V_MSQL:='UPDATE '||V_ESQUEMA||'.ACT_ICM_INF_COMER_HIST_MEDI SET ICM_FECHA_HASTA = SYSDATE , fechamodificar = SYSDATE,usuariomodificar = '''||V_MODIFICAR||'''
-                    WHERE ACT_ID = (SELECT ACT_ID from '||V_ESQUEMA||'.ACT_ACTIVO where act_num_activo = '''||TRIM(V_TMP_TIPO_DATA(1))||''') AND
+                    WHERE ACT_ID = (SELECT ACT_ID from '||V_ESQUEMA||'.ACT_ACTIVO where act_num_activo = '''||TRIM(V_TMP_TIPO_DATA(1))||''') 
                     AND ICM_FECHA_HASTA IS NULL';
                 EXECUTE IMMEDIATE V_MSQL ;
             ELSE

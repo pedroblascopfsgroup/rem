@@ -22,7 +22,7 @@ SET DEFINE OFF;
 
 DECLARE
   V_MSQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar     
-  V_ESQUEMA VARCHAR2(25 CHAR):= 'REM01'; -- Configuracion Esquema
+  V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
   V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
   V_SQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
   V_ECO_ID NUMBER(16); -- Vble. para validar la existencia de una tabla.   
@@ -1646,8 +1646,10 @@ BEGIN
         V_MSQL:='SELECT COUNT(1) FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT
                 INNER JOIN '||V_ESQUEMA||'.ACT_ICO_INFO_COMERCIAL ICO on act.act_id = ICO.ACT_ID
                 WHERE ACT.ACT_NUM_ACTIVO = '''||TRIM(V_TMP_TIPO_DATA(1))||'''';   
-                
-        EXECUTE IMMEDIATE V_SQL INTO V_COUNT;
+        
+        --DBMS_OUTPUT.PUT_LINE(V_MSQL);
+        
+        EXECUTE IMMEDIATE V_MSQL INTO V_COUNT;
         
         IF V_COUNT = 1 THEN
 
@@ -1656,12 +1658,14 @@ BEGIN
                           ICO_MEDIADOR_ID = (SELECT ICO.ICO_MEDIADOR_ID FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT
                                                 INNER JOIN '||V_ESQUEMA||'.ACT_ICO_INFO_COMERCIAL ICO on act.act_id = ICO.ACT_ID
                                                 WHERE ACT.ACT_NUM_ACTIVO =  '''||TRIM(V_TMP_TIPO_DATA(1))||''')';
-            EXECUTE IMMEDIATE V_SQL;
+            --DBMS_OUTPUT.PUT_LINE(V_MSQL);
+            EXECUTE IMMEDIATE V_MSQL;
             
             V_MSQL:='UPDATE '||V_ESQUEMA||'.ACT_ICO_INFO_COMERCIAL SET ICO_MEDIADOR_ID = null, USUARIOMODIFICAR = '''||V_MODIFICAR||''',FECHAMODIFICAR = sysdate
                         where ACT_ID = (SELECT ACT_ID FROM '||V_ESQUEMA||'.ACT_ACTIVO where ACT_NUM_ACTIVO = '''||TRIM(V_TMP_TIPO_DATA(1))||''')';
                         
-            EXECUTE IMMEDIATE V_SQL;
+            --DBMS_OUTPUT.PUT_LINE(V_MSQL);
+            EXECUTE IMMEDIATE V_MSQL;
             
             V_COUNT2 := V_COUNT2 +1;
             V_COUNT3 := V_COUNT3 +1;
@@ -1669,7 +1673,7 @@ BEGIN
             DBMS_OUTPUT.PUT_LINE('El activo '||TRIM(V_TMP_TIPO_DATA(1))||'no existe ');
         END IF;
         
-        IF V_COUNT3 > 50 THEN 
+        IF V_COUNT3 >= 50 THEN 
             COMMIT;
             DBMS_OUTPUT.PUT_LINE('[INFO]: Actualizamos '||V_COUNT3||' registros.');
             V_COUNT3 := 0;

@@ -94,6 +94,8 @@ public class UvemManager implements UvemManagerApi {
 	private final String COCGUS = "0562";
 	private final String INSTANCIA_DECISION_MODIFICACION_3 = "MOD3";
 
+	private final String ERROR_UVEM_OFERTA_YA_ANULADA = "Error anulación oferta (UVEM): ERROR, OFERTA YA ANULADA *";
+	
 	private String URL = "";
 	private String ALIAS = "";
 
@@ -1570,11 +1572,18 @@ public class UvemManager implements UvemManagerApi {
 
 			servicioGMPAJC29_INS.setAlias(ALIAS);
 			// servicioGMPAJC29_INS.execute();
+			
 			executeService(servicioGMPAJC29_INS);
 
 		} catch (WIException wie) {
 			errorDesc = wie.getMessage();
-			throw new JsonViewerException("Error anulación oferta (UVEM): " + wie.getMessage());
+			
+			// Si el error que devuelve UVEM es que la oferta ya está anulada en Bankia, no devolvemos el throw para poder avanzar
+			// la tarea de Resolución Expediente en REM y anular la oferta.
+			if(!ERROR_UVEM_OFERTA_YA_ANULADA.equals(errorDesc)) {
+				throw new JsonViewerException("Error anulación oferta (UVEM): " + errorDesc);								
+			}
+			
 		} finally {
 			registrarLlamada(servicioGMPAJC29_INS, errorDesc);
 		}

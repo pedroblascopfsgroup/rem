@@ -199,15 +199,26 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
 		Order orderByFechaCrear = new Order(OrderType.DESC, "auditoria.fechaCrear");
 		
-		//Datos comunicación
+		//Datos comunicación 
 		List <ComunicacionGencat> resultComunicacion = genericDao.getListOrdered(ComunicacionGencat.class, orderByFechaCrear, filtroComunicacionIdActivo, filtroBorrado);
+		
 		ComunicacionGencat comunicacionGencat = null;
 		if (resultComunicacion != null && !resultComunicacion.isEmpty()) {
 			comunicacionGencat = resultComunicacion.get(0);
 		}
 		
+		
+		
 		if (comunicacionGencat != null) {
 			try {
+				// Comrpueba que todos los datos del usuario nuevo esten completos
+				if (!Checks.esNulo(comunicacionGencat.getNuevoCompradorNif()) && !Checks.esNulo(comunicacionGencat.getNuevoCompradorNombre()) && !Checks.esNulo(comunicacionGencat.getNuevoCompradorApellido1()) 
+						&& !Checks.esNulo(comunicacionGencat.getNuevoCompradorApellido2())) {
+					gencatDto.setUsuarioCompleto(true);
+				} else {
+					gencatDto.setUsuarioCompleto(false);
+				}
+				
 				BeanUtils.copyProperties(gencatDto, comunicacionGencat);
 				gencatDto.setSancion(comunicacionGencat.getSancion() != null ? comunicacionGencat.getSancion().getCodigo() : null);
 				gencatDto.setEstadoComunicacion(comunicacionGencat.getEstadoComunicacion() != null ? comunicacionGencat.getEstadoComunicacion().getCodigo() : null);

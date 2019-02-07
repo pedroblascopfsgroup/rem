@@ -102,7 +102,7 @@ Ext.define('HreRem.view.activos.detalle.PatrimonioActivoTabPanel', {
 			me.down("[itemId=botoneditar]").setVisible(true);
 		}
 		
-		if(me.lookupController().getViewModel().get('activo').get('incluidoEnPerimetro')=="true") {
+		if(me.lookupController().getViewModel().get('activo').get('incluidoEnPerimetro')=="true" && !me.lookupController().getViewModel().get('activo').get('isActivoEnTramite')) {
 			if(Ext.isEmpty(tab.funPermEdition)) {
 	    		editionEnabled();
 	    	} else {

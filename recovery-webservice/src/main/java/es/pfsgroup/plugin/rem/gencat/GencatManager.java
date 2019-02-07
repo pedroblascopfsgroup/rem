@@ -988,7 +988,7 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 							
 							//TODO COMPROBACION CONDICIONANTES
 							if(!Checks.esNulo(datoVista.getSituacionPosesoria()) && datoVista.getSituacionPosesoria().equals(codSitPos) 
-									//&& !Checks.esNulo(datoVista.getTipoPersona())&&  datoVista.getTipoPersona().equals(codTipoPer)
+									&& !Checks.esNulo(datoVista.getTipoPersona())&&  datoVista.getTipoPersona().equals(codTipoPer)
 									&& (!Checks.esNulo(oferta.getImporteOferta()) && oferta.getImporteOferta().equals(datoVista.getImporteOferta()))) {
 								
 								//COMPROBACION OFERTA ULTIMA SANCION:

@@ -271,7 +271,7 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 									DDEstadoComunicacionGencat estado = genericDao.get(DDEstadoComunicacionGencat.class, filtro);
 									comunicacionGencat.setEstadoComunicacion(estado);
 									comunicacionGencat.setFechaAnulacion(new Date());
-									if(!Checks.esNulo(estado) && DDEstadoComunicacionGencat.COD_RECHAZADO.equals(estado)) {
+									if(!Checks.esNulo(estado) && DDEstadoComunicacionGencat.COD_RECHAZADO.equals(estado.getCodigo())) {
 										comunicacionGencat.setComunicadoAnulacionAGencat(true);
 									}
 									

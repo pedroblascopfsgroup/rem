@@ -16,6 +16,7 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GencatApi;
@@ -55,6 +56,9 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 	
 	@Autowired
     private GencatApi gencatApi;
+	
+	@Autowired
+	private ActivoDao activoDao;
 
 	private static final String CODIGO_T013_OBTENCION_CONTRATO_RESERVA = "T013_ObtencionContratoReserva";
 	private static final String FECHA_FIRMA = "fechaFirma";
@@ -64,7 +68,11 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 	protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaObtencionContrato.class);
 
 	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {
-
+		Boolean esAfectoGencat = false;
+		if(!Checks.esNulo(tramite.getActivo()) && !Checks.esNulo(tramite.getActivo().getId())){
+			esAfectoGencat = activoDao.isActivoBloqueadoGENCAT(tramite.getActivo().getId());
+		}
+		
 		Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());
 		ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
 		Filter filtro;
@@ -110,7 +118,7 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 			DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
 			expediente.setEstado(estado);
 			
-			if(!Checks.esNulo(expediente.getReserva()) && esEstadoAnteriorAprobado) {
+			if(!Checks.esNulo(expediente.getReserva()) && esEstadoAnteriorAprobado && esAfectoGencat) {
 				gencatApi.bloqueoExpedienteGENCAT(expediente, tramite); 
 			}
 

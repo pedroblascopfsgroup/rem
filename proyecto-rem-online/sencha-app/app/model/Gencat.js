@@ -88,14 +88,7 @@ Ext.define('HreRem.model.Gencat', {
 		},
 		{
 			name:'comunicadoAnulacionAGencat',
-			type: 'boolean',
-			calculate: function(data){
-				if(data.estadoComunicacion === CONST.ESTADO_COMUNICACION_GENCAT['RECHAZADO'] || data.estadoComunicacion === CONST.ESTADO_COMUNICACION_GENCAT['ANULADO']){
-					return true
-				}else{
-					return false
-				}
-			}
+			type: 'boolean',	
 		},
 		{
 			name: 'IsUserAllowed',

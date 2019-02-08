@@ -978,7 +978,7 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 			if(!Checks.estaVacio(listDatosVista)) { //Pillar 1º registro que es el mas reciente para comparar los condicionantes
 				datoVista = listDatosVista.get(0);
 				
-				//COMPROBACION SI HAY COMUNICACION GENCAT CREADA
+				//COMPROBACION SI HAY COMUNICACION GENCAT CREADA+
 				if(!Checks.esNulo(datoVista.getFecha_comunicacion())) {
 					//TODO REVISAR CONDICIONES DE ULTIMA OFERTA QUE PROVOCO LA COMUNICACION CON LOS DATOS DEL EXPEDIENTE QUE SE RECOGEN
 					comGencat = genericDao.get(ComunicacionGencat.class, genericDao.createFilter(FilterType.EQUALS,"activo.id", activo.getId()));
@@ -1033,6 +1033,7 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 							}
 					}
 				}else {
+					comGencat = genericDao.get(ComunicacionGencat.class, genericDao.createFilter(FilterType.EQUALS,"activo.id", activo.getId()));
 					if(!Checks.esNulo(comGencat.getEstadoComunicacion())
 						&& DDEstadoComunicacionGencat.COD_ANULADO.equals(comGencat.getEstadoComunicacion().getCodigo())
 						|| DDEstadoComunicacionGencat.COD_RECHAZADO.equals(comGencat.getEstadoComunicacion().getCodigo())) {

@@ -471,24 +471,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
             return !(admisionOk && gestionOk && informeComercialAprobado && ceeOk && (adecuacionOk=="01"||adecuacionOk=="03") && (publicarSinPrecioAlquiler || precioRentaWeb));
         },
 
-        esReadonlyChkbxPublicar: function(get){
-			var activoVendido = get('activo.isVendido');
-
-			var ponerPublicarAReadonly = false;
-			if(activoVendido) {
-				ponerPublicarAReadonly = true;
-			}
-
-			return ponerPublicarAReadonly;
-		},
-
-		esReadOnlyChkbxComercializar: function(get){
-			var activoVendido = get('activo.isVendido');
-			var activoEnTramite = get('activo.isActivoEnTramite');
-
-			return activoVendido || activoEnTramite;
-		},
-
 		esVisibleTipoPublicacionVenta: function(get){
 			var estadoVenta = get('datospublicacionactivo.estadoPublicacionVenta');
 			var tipoPublicacionVenta = get('datospublicacionactivo.tipoPublicacionVentaDescripcion');

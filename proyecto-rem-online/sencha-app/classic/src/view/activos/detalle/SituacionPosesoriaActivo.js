@@ -217,6 +217,7 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 				        	xtype: 'comboboxfieldbase',
 				        	reference: 'comboSituacionPosesoriaConTitulo',
 							fieldLabel: HreRem.i18n('fieldlabel.con.titulo'),
+							allowBlank: false,
 				        	bind: {
 			            		store: '{comboSiNoRem}',
 			            		value: '{situacionPosesoria.conTitulo}'

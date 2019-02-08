@@ -36,6 +36,7 @@ public class SalesforceEndpoint {
 	private String clientId;
 	private String clientSecret;
 	private String fullUrl;
+	private String cookie;
 	
 	public SalesforceEndpoint(String httpMethod, int timeout, String baseUrl, String endpointUrl, String user,
 			String password, String clientId, String clientSecret) {
@@ -182,4 +183,15 @@ public class SalesforceEndpoint {
 	public void setFullUrl(String fullUrl) {
 		this.fullUrl = fullUrl;
 	}
+
+	public String getCookie() {
+		return cookie;
+	}
+
+	public void setCookie(String cookie) {
+		this.cookie = cookie;
+	}
+	
+	
+	
 }

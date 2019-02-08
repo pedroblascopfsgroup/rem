@@ -1,15 +1,22 @@
 package es.pfsgroup.plugin.rem.rest.salesforce.api.impl;
 
+import java.io.ByteArrayOutputStream;
 import java.util.Properties;
 
 import javax.annotation.Resource;
 import javax.servlet.ServletContext;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Marshaller;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.soap.MessageFactory;
+import javax.xml.soap.SOAPMessage;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.w3c.dom.Document;
 
 import es.pfsgroup.plugin.rem.model.DtoAltaVisita;
 import es.pfsgroup.plugin.rem.model.DtoLeadVisita;
@@ -93,12 +100,41 @@ public class SalesforceManager implements SalesforceApi {
 		SalesforceEndpoint salesforceEndpoint = SalesforceEndpoint.getTokenEndPoint(appProperties);
 		salesforceEndpoint.validateCallTokenEndpoint();
 		salesforceEndpoint.setFullUrl(dto.getInstance_url()+"/services/data/v34.0/composite/tree/HAY_LOAD_VISITAS__c/");
+		salesforceEndpoint.setCookie(dto.getAccess_token());
 		
 		String jsonResponse = null;
 		SalesforceResponseDto response = null;
 		if (servletContext.getAttribute(ID_AUTH_TOKEN) != null) {
 			System.out.println("Constructor XXX");
-			jsonResponse = cliente.send(dto.getFullToken(), salesforceEndpoint, new DtoLeadVisita(dtoAltaVisita).toBodyString()).toString();
+			
+							System.out.println("Creando document");
+			Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
+			
+							System.out.println("Creando Marshaller");
+			Marshaller marshaller = JAXBContext.newInstance(DtoLeadVisita.class).createMarshaller();
+			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+			
+							System.out.println("Generando contenido");
+			marshaller.marshal(new DtoLeadVisita(dtoAltaVisita), document);
+			
+							System.out.println("Generando soapMessage");
+			SOAPMessage soapMessage = MessageFactory.newInstance().createMessage();
+			
+							System.out.println("Adding soapMessage to document, C103");
+			soapMessage.getSOAPBody().addDocument(document);
+			
+							System.out.println("Pasando el este a bytearray para algo que no entiendo que hace");
+			ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+			
+							System.out.println("Pasanto el bytearray al soap o algo raro");
+			soapMessage.writeTo(outputStream);
+			
+							System.out.println("Pasando la cosa a un string para que se pueda leer");
+			String body = new String(outputStream.toByteArray());
+			
+							System.out.println("El string es : " + body);
+			
+			jsonResponse = cliente.send(dto.getFullToken(), salesforceEndpoint, body).toString();
 			System.out.println("OBJECT MAPPER TODO AQUI PETARA");
 			response = mapper.readValue(jsonResponse, SalesforceResponseDto.class);
 			System.out.println("OBJECT MAPPER after readValue call");

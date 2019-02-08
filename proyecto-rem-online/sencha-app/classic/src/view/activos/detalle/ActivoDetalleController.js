@@ -1306,7 +1306,7 @@ Ext
 						var idEntidad = null, entidad = null,
 						docCliente = null;
 						if(grid.up('anyadirnuevaofertaactivoadjuntardocumento').up().xtype.indexOf('oferta') >= 0) {
-							if(grid.up('wizardaltaoferta').oferta.data.idActivo == null) {
+							if(!Ext.isEmpty(grid.up('wizardaltaoferta').oferta.data.idActivo)) {
 								idEntidad = grid.up('wizardaltaoferta').oferta.data.idActivo;
 								entidad = 'activo';
 							} else {
@@ -1368,14 +1368,16 @@ Ext
 					},
 
 					borrarDocumentoAdjuntoOferta : function(grid, record) {
-						var me = this, docCliente = me.getViewModel().get("oferta.numDocumentoCliente");
+						var me = this, docCliente = null;
 						me.getView().mask(HreRem.i18n("msg.mask.loading"));
 						if (grid.handler == "borrarDocumentoAdjuntoOferta") {
 							var url = null;
 							if(grid.up('anyadirnuevaofertaactivoadjuntardocumento').up().xtype.indexOf('oferta') >= 0){
 								url = $AC.getRemoteUrl('activooferta/eliminarDocumentoAdjuntoOferta');
+								docCliente = me.getViewModel().get("oferta.numDocumentoCliente");
 							} else {
 								url = $AC.getRemoteUrl('expedientecomercial/eliminarDocumentoAdjuntoComprador');
+								docCliente = me.getViewModel().get("comprador.numDocumento");
 							}
 							Ext.Ajax.request({
 										url : url,
@@ -5248,15 +5250,19 @@ Ext
  		if(form.isValid()){
  			var valueDestComercial,destinoComercialActivo;
  			
- 			if(ventanaDetalle.config.xtype.indexOf('activoadjuntardocumento') >= 0 ){
- 				valueDestComercial = ventanaDetalle.up().getViewModel().data.valueDestComercial;
- 				destinoComercialActivo = ventanaDetalle.up().getViewModel().data.destinoComercialActivo;
- 			}else{
- 				valueDestComercial = form.findField('comboTipoOferta').getSelection().data.descripcion;
- 	 	 		destinoComercialActivo = ventanaDetalle.up().getViewModel().data.destinoComercial;
- 	 	 		ventanaDetalle.up().getViewModel().data.valueDestComercial = valueDestComercial;
- 	 	 		ventanaDetalle.up().getViewModel().data.destinoComercialActivo = destinoComercialActivo;
+ 			if(ventanaAlta.indexOf('wizardaltacomprador') < 0) 
+ 			{
+ 				if(ventanaDetalle.config.xtype.indexOf('activoadjuntardocumento') >= 0 ){
+ 	 				valueDestComercial = ventanaDetalle.up().getViewModel().data.valueDestComercial;
+ 	 				destinoComercialActivo = ventanaDetalle.up().getViewModel().data.destinoComercialActivo;
+ 	 			}else{
+ 	 				valueDestComercial = form.findField('comboTipoOferta').getSelection().data.descripcion;
+ 	 	 	 		destinoComercialActivo = ventanaDetalle.up().getViewModel().data.destinoComercial;
+ 	 	 	 		ventanaDetalle.up().getViewModel().data.valueDestComercial = valueDestComercial;
+ 	 	 	 		ventanaDetalle.up().getViewModel().data.destinoComercialActivo = destinoComercialActivo;
+ 	 			}
  			}
+ 			
  			
  			if(destinoComercialActivo === valueDestComercial || destinoComercialActivo === CONST.TIPO_COMERCIALIZACION_ACTIVO["ALQUILER_VENTA"]){
  				if (ventanaDetalle.config.xtype.indexOf('activoadjuntardocumento') >= 0 && ventanaAlta.indexOf('wizardaltacomprador') < 0) {

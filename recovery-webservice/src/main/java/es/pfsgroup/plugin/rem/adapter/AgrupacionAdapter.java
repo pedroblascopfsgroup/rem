@@ -102,6 +102,7 @@ import es.pfsgroup.plugin.rem.model.DtoUsuario;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
+import es.pfsgroup.plugin.rem.model.TmpClienteGDPR;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.VBusquedaAgrupaciones;
@@ -2042,6 +2043,25 @@ public class AgrupacionAdapter {
 				}
 			}
 			
+			if (!Checks.esNulo(dto.getCesionDatos())) {
+				clienteComercial.setCesionDatos(dto.getCesionDatos());
+			}
+			
+			if (!Checks.esNulo(dto.getTransferenciasInternacionales())) {
+				clienteComercial.setTransferenciasInternacionales(dto.getTransferenciasInternacionales());
+			}
+			
+			if (!Checks.esNulo(dto.getComunicacionTerceros())) {
+				clienteComercial.setComunicacionTerceros(dto.getComunicacionTerceros());
+			}
+			
+			TmpClienteGDPR tmpClienteGDPR = genericDao.get(TmpClienteGDPR.class,
+					genericDao.createFilter(FilterType.EQUALS, "numDocumento", dto.getNumDocumentoCliente()));
+			
+			if (!Checks.esNulo(tmpClienteGDPR)) {
+				clienteComercial.setIdPersonaHaya(String.valueOf(tmpClienteGDPR.getIdPersonaHaya()));
+			}
+			
 			genericDao.save(ClienteComercial.class, clienteComercial);
 
 			Oferta oferta = new Oferta();
@@ -2108,7 +2128,8 @@ public class AgrupacionAdapter {
 			if (!Checks.esNulo(dto.getIdDocAdjunto())) {
 				docAdjunto = genericDao.get(AdjuntoComprador.class,
 						genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdDocAdjunto()));
-			}
+			} 
+			
 			// Si existe pasamos la información al histórico y actualizamos el objeto con
 			// los nuevos datos
 			if (!Checks.esNulo(cliGDPR)) {
@@ -2148,7 +2169,11 @@ public class AgrupacionAdapter {
 				clienteGDPR.setCesionDatos(dto.getCesionDatos());
 				clienteGDPR.setComunicacionTerceros(dto.getComunicacionTerceros());
 				clienteGDPR.setTransferenciasInternacionales(dto.getTransferenciasInternacionales());
-
+				
+				if(!Checks.esNulo(tmpClienteGDPR.getIdAdjunto())) {
+					docAdjunto = genericDao.get(AdjuntoComprador.class,
+							genericDao.createFilter(FilterType.EQUALS, "id", tmpClienteGDPR.getIdAdjunto()));
+				}
 				if (!Checks.esNulo(docAdjunto)) {
 					clienteGDPR.setAdjuntoComprador(docAdjunto);
 				}

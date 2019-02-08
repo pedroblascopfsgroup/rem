@@ -10,10 +10,12 @@ import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.hibernate.HibernateUtils;
 import es.pfsgroup.plugin.gestorDocumental.dto.PersonaInputDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.PersonaOutputDto;
@@ -74,6 +76,7 @@ public class MaestroDePersonas  implements Runnable{
 		this.cartera=cartera;
 	}
 	
+	@Transactional
 	public void run() {
 		Session sessionObj = null;
 		try {
@@ -184,10 +187,17 @@ public class MaestroDePersonas  implements Runnable{
 							
 							logger.error("[MAESTRO DE PERSONAS] EL ID RECUPERADO ES " + personaOutputDto.getIdIntervinienteHaya());
 							if (!Checks.esNulo(personaOutputDto.getIdIntervinienteHaya())) {
-								TmpClienteGDPR tmpClienteGDPR = new TmpClienteGDPR();
-								tmpClienteGDPR.setIdPersonaHaya(Long.parseLong(personaOutputDto.getIdIntervinienteHaya()));
-								tmpClienteGDPR.setNumDocumento(personaDto.getIdPersonaOrigen());
-								genericDao.save(TmpClienteGDPR.class, tmpClienteGDPR);
+								Criteria criteria = sessionObj.createCriteria(TmpClienteGDPR.class);
+								criteria.add(Restrictions.eq("idPersonaHaya", Long.parseLong(personaOutputDto.getIdIntervinienteHaya())));
+								criteria.add(Restrictions.eq("numDocumento", documento));
+								TmpClienteGDPR tmpClienteGDPR = HibernateUtils.castObject(TmpClienteGDPR.class, criteria.uniqueResult());
+								
+								if(Checks.esNulo(tmpClienteGDPR)) {
+									tmpClienteGDPR = new TmpClienteGDPR();
+									tmpClienteGDPR.setIdPersonaHaya(Long.parseLong(personaOutputDto.getIdIntervinienteHaya()));
+									tmpClienteGDPR.setNumDocumento(personaDto.getIdPersonaOrigen());
+									genericDao.save(TmpClienteGDPR.class, tmpClienteGDPR);
+								}
 							}
 						} else {
 							logger.error("[MAESTRO DE PERSONAS] EL ID RECUPERADO ES " + personaOutputDto.getIdIntervinienteHaya());

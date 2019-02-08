@@ -1154,14 +1154,11 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				compradorExpedienteNuevo.setPorcionCompra(parteCompraPrincipal);
 				compradorExpedienteNuevo.setBorrado(false);
 				
-				Order order = new Order(OrderType.ASC, "expediente");
-				List<CompradorExpediente> listaCex = genericDao.getListOrdered(CompradorExpediente.class, order, 
-						genericDao.createFilter(FilterType.EQUALS, "expediente", nuevoExpediente),
-						genericDao.createFilter(FilterType.EQUALS, "comprador", compradorBusqueda));
-				if(listaCex.size() > 0) {
-					CompradorExpediente comExpAnterior = listaCex.get(0);
-					compradorExpedienteNuevo.setDocumentoAdjunto(comExpAnterior.getDocumentoAdjunto());
-				}
+				ClienteGDPR clienteGDPR = genericDao.get(ClienteGDPR.class, 
+						genericDao.createFilter(FilterType.EQUALS, "numDocumento", compradorBusqueda.getDocumento()),
+						genericDao.createFilter(FilterType.EQUALS, "tipoDocumento.codigo", compradorBusqueda.getTipoDocumento().getCodigo()));
+				
+				compradorExpedienteNuevo.setDocumentoAdjunto(clienteGDPR.getAdjuntoComprador());
 
 				listaCompradoresExpediente.add(compradorExpedienteNuevo);
 			} else { // Si no existe un comprador con dicho dni, lo crea, añade

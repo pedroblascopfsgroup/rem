@@ -3401,6 +3401,13 @@ public class ActivoAdapter {
 			if (!Checks.esNulo(dto.getComunicacionTerceros())) {
 				clienteComercial.setComunicacionTerceros(dto.getComunicacionTerceros());
 			}
+			
+			TmpClienteGDPR tmpClienteGDPR = genericDao.get(TmpClienteGDPR.class,
+					genericDao.createFilter(FilterType.EQUALS, "numDocumento", dto.getNumDocumentoCliente()));
+			
+			if (!Checks.esNulo(tmpClienteGDPR)) {
+				clienteComercial.setIdPersonaHaya(String.valueOf(tmpClienteGDPR.getIdPersonaHaya()));
+			}
 					
 			clienteComercial = genericDao.save(ClienteComercial.class, clienteComercial);
 			
@@ -3457,16 +3464,6 @@ public class ActivoAdapter {
 			if (!Checks.esNulo(dto.getIdDocAdjunto())) {
 				docAdjunto = genericDao.get(AdjuntoComprador.class,
 						genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdDocAdjunto()));
-			} else {
-				if(Checks.esNulo(cliGDPR)) {
-					//Replicar esto en agrupaciones y compradores
-					TmpClienteGDPR tmpClienteGDPR = genericDao.get(TmpClienteGDPR.class,
-							genericDao.createFilter(FilterType.EQUALS, "numDocumento", dto.getNumDocumentoCliente()));
-					if(!Checks.esNulo(tmpClienteGDPR.getIdAdjunto())) {
-						docAdjunto = genericDao.get(AdjuntoComprador.class,
-								genericDao.createFilter(FilterType.EQUALS, "id", tmpClienteGDPR.getIdAdjunto()));
-					}
-				}
 			}
 			// Si existe pasamos la información al histórico y actualizamos el objeto con
 			// los nuevos datos
@@ -3490,13 +3487,7 @@ public class ActivoAdapter {
 				cliGDPR.setCesionDatos(dto.getCesionDatos());
 				cliGDPR.setComunicacionTerceros(dto.getComunicacionTerceros());
 				cliGDPR.setTransferenciasInternacionales(dto.getTransferenciasInternacionales());
-
-				if (!Checks.esNulo(docAdjunto)) {
-					cliGDPR.setAdjuntoComprador(docAdjunto);
-				}
 				genericDao.update(ClienteGDPR.class, cliGDPR);
-			
-				clienteComercialDao.deleteTmpClienteByDocumento(cliGDPR.getNumDocumento());
 
 				// Si no existe simplemente creamos e insertamos un nuevo objeto ClienteGDPR
 			} else {
@@ -3507,7 +3498,11 @@ public class ActivoAdapter {
 				clienteGDPR.setCesionDatos(dto.getCesionDatos());
 				clienteGDPR.setComunicacionTerceros(dto.getComunicacionTerceros());
 				clienteGDPR.setTransferenciasInternacionales(dto.getTransferenciasInternacionales());
-
+				
+				if(!Checks.esNulo(tmpClienteGDPR.getIdAdjunto())) {
+					docAdjunto = genericDao.get(AdjuntoComprador.class,
+							genericDao.createFilter(FilterType.EQUALS, "id", tmpClienteGDPR.getIdAdjunto()));
+				}
 				if (!Checks.esNulo(docAdjunto)) {
 					clienteGDPR.setAdjuntoComprador(docAdjunto);
 				}

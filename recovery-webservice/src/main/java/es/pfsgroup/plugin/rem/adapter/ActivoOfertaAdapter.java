@@ -17,6 +17,8 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
+import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
 import es.pfsgroup.plugin.rem.model.AdjuntoComprador;
@@ -99,7 +101,11 @@ public class ActivoOfertaAdapter {
 					
 					//Filtro para conseguir el Cliente Comercial (donde se almacena el idPersona que devuelve el Maestro de Personas)
 					Filter filtroPersona = genericDao.createFilter(FilterType.EQUALS, "idPersonaHaya", idIntervinienteHaya);
-					ClienteComercial clienteCom = genericDao.get(ClienteComercial.class, filtroPersona);
+					Order order = new Order(OrderType.DESC, "id");
+					List<ClienteComercial> listClienteCom = genericDao.getListOrdered(ClienteComercial.class,order, filtroPersona);
+					ClienteComercial clienteCom = null;
+					if(!Checks.estaVacio(listClienteCom))
+						clienteCom=listClienteCom.get(0);
 					
 					//Filtro para conseguir el registro del Adjunto
 					Filter filtroDocumento = genericDao.createFilter(FilterType.EQUALS, "idDocRestClient", idDocRestClient);
@@ -109,13 +115,15 @@ public class ActivoOfertaAdapter {
 					
 					if(!Checks.esNulo(clienteCom)) {
 						//Filtro para conseguir el ClienteGDPR a traves del Cliente Comercial
-						Filter filtroCliente = genericDao.createFilter(FilterType.EQUALS, "cliente", clienteCom);
+						Filter filtroCliente = genericDao.createFilter(FilterType.EQUALS, "numDocumento", clienteCom.getDocumento());
 						clienteGDPR = genericDao.get(ClienteGDPR.class, filtroCliente);
 						
-						//Actualizacion de cliente para adjuntar documento
-						clienteGDPR.setAdjuntoComprador(adjuntoComprador);
-						Auditoria.save(clienteGDPR);
-						genericDao.update(ClienteGDPR.class, clienteGDPR);
+						if(!Checks.esNulo(clienteGDPR)) {
+							//Actualizacion de cliente para adjuntar documento
+							clienteGDPR.setAdjuntoComprador(adjuntoComprador);
+							Auditoria.save(clienteGDPR);
+							genericDao.update(ClienteGDPR.class, clienteGDPR);
+						}
 					} else {
 						filtroPersona = genericDao.createFilter(FilterType.EQUALS, "idPersonaHaya", Long.parseLong(idIntervinienteHaya));
 						TmpClienteGDPR tmpClienteGDPR = genericDao.get(TmpClienteGDPR.class, filtroPersona);

@@ -3382,7 +3382,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		return clienteComercialDto;
 	}
 	
-	@Override 
+	@Override
 	public void llamadaMaestroPersonas(String numDocCliente, String cartera) {
 
 		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();

@@ -2070,7 +2070,20 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
         var importeReforma = me.down('[name=importeReforma]');
         comboReforma.allowBlank = false;
         fechaRevision.allowBlank = false;
-        importeReforma.allowBlank = false;
+        me.setFechaActual(me.down('[name=fechaRevision]'));
+        importeReforma.allowBlank = true;
+    	me.deshabilitarCampo(me.down('[name=importeReforma]'));
+        comboReforma.addListener('change', function(){
+	        if(comboReforma.value == '01'){
+	        	importeReforma.allowBlank = false;
+	        	me.habilitarCampo(me.down('[name=importeReforma]'));
+	        }
+	        else{
+	        	importeReforma.allowBlank = true;
+	        	me.deshabilitarCampo(me.down('[name=importeReforma]'));
+	        	me.down('[name=importeReforma]').reset();
+	        }
+        });
     },
     
     T016_ComunicarGENCATValidacion: function() {

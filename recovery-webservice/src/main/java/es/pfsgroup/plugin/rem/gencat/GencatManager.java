@@ -199,15 +199,26 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
 		Order orderByFechaCrear = new Order(OrderType.DESC, "auditoria.fechaCrear");
 		
-		//Datos comunicación
+		//Datos comunicación 
 		List <ComunicacionGencat> resultComunicacion = genericDao.getListOrdered(ComunicacionGencat.class, orderByFechaCrear, filtroComunicacionIdActivo, filtroBorrado);
+		
 		ComunicacionGencat comunicacionGencat = null;
 		if (resultComunicacion != null && !resultComunicacion.isEmpty()) {
 			comunicacionGencat = resultComunicacion.get(0);
 		}
 		
+		
+		
 		if (comunicacionGencat != null) {
 			try {
+				// Comrpueba que todos los datos del usuario nuevo esten completos
+				if (!Checks.esNulo(comunicacionGencat.getNuevoCompradorNif()) && !Checks.esNulo(comunicacionGencat.getNuevoCompradorNombre()) && !Checks.esNulo(comunicacionGencat.getNuevoCompradorApellido1()) 
+						&& !Checks.esNulo(comunicacionGencat.getNuevoCompradorApellido2())) {
+					gencatDto.setUsuarioCompleto(true);
+				} else {
+					gencatDto.setUsuarioCompleto(false);
+				}
+				
 				BeanUtils.copyProperties(gencatDto, comunicacionGencat);
 				gencatDto.setSancion(comunicacionGencat.getSancion() != null ? comunicacionGencat.getSancion().getCodigo() : null);
 				gencatDto.setEstadoComunicacion(comunicacionGencat.getEstadoComunicacion() != null ? comunicacionGencat.getEstadoComunicacion().getCodigo() : null);
@@ -980,76 +991,72 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 					if(!Checks.esNulo(expComercial.getCondicionante())) {
 						if(!Checks.esNulo(expComercial.getCondicionante().getSituacionPosesoria())){
 							codSitPos = expComercial.getCondicionante().getSituacionPosesoria().getCodigo();
+						}
 							
-							
-							if(!Checks.esNulo(comprador) && !Checks.esNulo(comprador.getTipoPersona())) {
-								codTipoPer = comprador.getTipoPersona().getCodigo();
-							}
+						if(!Checks.esNulo(comprador) && !Checks.esNulo(comprador.getTipoPersona())) {
+							codTipoPer = comprador.getTipoPersona().getCodigo();
+						}
 							
 							//TODO COMPROBACION CONDICIONANTES
-							if(!Checks.esNulo(datoVista.getSituacionPosesoria()) && datoVista.getSituacionPosesoria().equals(codSitPos) 
-									&& !Checks.esNulo(datoVista.getTipoPersona())&&  datoVista.getTipoPersona().equals(codTipoPer)
-									&& (!Checks.esNulo(oferta.getImporteOferta()) && oferta.getImporteOferta().equals(datoVista.getImporteOferta()))) {
+						if(!Checks.esNulo(datoVista.getSituacionPosesoria()) && datoVista.getSituacionPosesoria().equals(codSitPos) 
+								&& !Checks.esNulo(datoVista.getTipoPersona())&&  datoVista.getTipoPersona().equals(codTipoPer)
+								&& (!Checks.esNulo(oferta.getImporteOferta()) && oferta.getImporteOferta().equals(datoVista.getImporteOferta()))) {
 								
 								//COMPROBACION OFERTA ULTIMA SANCION:
 									//SI DD_ECG_CODIGO SANCIONADA SE COMPARA TIEMPO SANCION AL TIEMPO ACTUAL:
 										//SI TIEMPO > 2 MESES LANZAR TRAMITE GENCAT
 										//SI TIEMPO < 2 MESES NO HACER NADA.
-								if(!Checks.esNulo(comGencat.getEstadoComunicacion())
-										&& DDEstadoComunicacionGencat.COD_SANCIONADO.equals(comGencat.getEstadoComunicacion().getCodigo())
-										&& !Checks.esNulo(datoVista.getFecha_sancion())) {
-									
-									if(fechaActual.after(comGencat.getFechaPrevistaSancion())){ 
+							if(!Checks.esNulo(comGencat.getEstadoComunicacion())
+									&& DDEstadoComunicacionGencat.COD_SANCIONADO.equals(comGencat.getEstadoComunicacion().getCodigo())
+									&& !Checks.esNulo(datoVista.getFecha_sancion())) {
+								
+								if(fechaActual.after(comGencat.getFechaPrevistaSancion())){ 
 									 	
-										lanzarTramiteGENCAT(tramite, oferta, expComercial);
+									lanzarTramiteGENCAT(tramite, oferta, expComercial);
 										
-									}
-									
 								}
+									
+							}
 									//SI DD_ECG_CODIGO ANULADA Y CMG_FECHA_ANULACION RELLENA LANZA TRAMITE GENCAT
-								 if(!Checks.esNulo(comGencat.getEstadoComunicacion())
-										&& DDEstadoComunicacionGencat.COD_ANULADO.equals(comGencat.getEstadoComunicacion().getCodigo())
-										&& datoVista.getCheck_anulacion()) {
+							 if(!Checks.esNulo(comGencat.getEstadoComunicacion())
+									&& DDEstadoComunicacionGencat.COD_ANULADO.equals(comGencat.getEstadoComunicacion().getCodigo())
+									&& datoVista.getCheck_anulacion()) {
 									
-										lanzarTramiteGENCAT(tramite, oferta, expComercial);
-								}
+									lanzarTramiteGENCAT(tramite, oferta, expComercial);
+							}
 									//SI DD_ECG_CODIGO ANULADA Y CMG_FECHA_ANULACION NULL SE COMPARA TIEMPO SANCION AL TIEMPO ACTUAL:
 										//SI TIEMPO < 2 MESES NO HACER NADA.
-								if(!Checks.esNulo(comGencat.getEstadoComunicacion())
-										&& DDEstadoComunicacionGencat.COD_ANULADO.equals(comGencat.getEstadoComunicacion().getCodigo())
-										&& !datoVista.getCheck_anulacion()) {
-											Date fechaAnulacionPrevista;
-											if(!Checks.esNulo(comGencat.getFechaAnulacion())) {
-												Calendar cal = Calendar.getInstance(); 
-										        cal.setTime(comGencat.getFechaAnulacion()); 
-										        cal.add(Calendar.MONTH, 2);
-										        fechaAnulacionPrevista = cal.getTime();
-											}else {
-												fechaAnulacionPrevista = fechaActual;
-											}
-											if(fechaActual.after(fechaAnulacionPrevista) || Checks.esNulo(comGencat.getFechaAnulacion())){  
-				
-												lanzarTramiteGENCAT(tramite, oferta, expComercial);
-										
-											}	
-								}
-								
-							}else {								
-								lanzarTramiteGENCAT(tramite, oferta, expComercial);
+							if(!Checks.esNulo(comGencat.getEstadoComunicacion())
+									&& DDEstadoComunicacionGencat.COD_ANULADO.equals(comGencat.getEstadoComunicacion().getCodigo())
+									&& !datoVista.getCheck_anulacion()) {
+										Date fechaAnulacionPrevista;
+										if(!Checks.esNulo(comGencat.getFechaAnulacion())) {
+											Calendar cal = Calendar.getInstance(); 
+									        cal.setTime(comGencat.getFechaAnulacion()); 
+									        cal.add(Calendar.MONTH, 2);
+									        fechaAnulacionPrevista = cal.getTime();
+										}else {
+											fechaAnulacionPrevista = fechaActual;
+										}
+										if(fechaActual.after(fechaAnulacionPrevista) || Checks.esNulo(comGencat.getFechaAnulacion())){  
+			
+											lanzarTramiteGENCAT(tramite, oferta, expComercial);
+									
+										}	
 							}
-							
+								
+						}else {								
+							lanzarTramiteGENCAT(tramite, oferta, expComercial);
 						}
 						
 					}
 					
-				}else {					
-					lanzarTramiteGENCAT(tramite, oferta, expComercial);
 				}
 				
-			}else {				
+			}else {					
 				lanzarTramiteGENCAT(tramite, oferta, expComercial);
-			}
-		}	
+			}	
+		}
 	}
 
 	/**

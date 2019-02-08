@@ -40,19 +40,17 @@ import es.pfsgroup.plugin.rem.activo.dao.HistoricoComunicacionGencatAdjuntoDao;
 import es.pfsgroup.plugin.rem.activo.dao.NotificacionGencatDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
-import es.pfsgroup.plugin.rem.api.ActivoAgrupacionActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
-import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.AdecuacionGencatApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GencatApi;
 import es.pfsgroup.plugin.rem.api.NotificacionGencatApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.OfertaGencatApi;
-import es.pfsgroup.plugin.rem.api.TrabajoApi;
-import es.pfsgroup.plugin.rem.gastosExpediente.dao.GastosExpedienteDao;
 import es.pfsgroup.plugin.rem.api.ReclamacionGencatApi;
+import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.api.VisitaGencatApi;
+import es.pfsgroup.plugin.rem.gastosExpediente.dao.GastosExpedienteDao;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
 import es.pfsgroup.plugin.rem.jbpm.activo.JBPMActivoTramiteManager;
 import es.pfsgroup.plugin.rem.model.Activo;
@@ -60,8 +58,8 @@ import es.pfsgroup.plugin.rem.model.ActivoAdjuntoActivo;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.AdecuacionGencat;
-import es.pfsgroup.plugin.rem.model.ClienteComercial;
 import es.pfsgroup.plugin.rem.model.AdjuntoComunicacion;
+import es.pfsgroup.plugin.rem.model.ClienteComercial;
 import es.pfsgroup.plugin.rem.model.Comprador;
 import es.pfsgroup.plugin.rem.model.CompradorExpediente;
 import es.pfsgroup.plugin.rem.model.ComunicacionGencat;
@@ -75,7 +73,6 @@ import es.pfsgroup.plugin.rem.model.DtoNotificacionActivo;
 import es.pfsgroup.plugin.rem.model.DtoOfertasAsociadasActivo;
 import es.pfsgroup.plugin.rem.model.DtoReclamacionActivo;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.GastosExpediente;
 import es.pfsgroup.plugin.rem.model.HistoricoAdecuacionGencat;
 import es.pfsgroup.plugin.rem.model.HistoricoComunicacionGencat;
 import es.pfsgroup.plugin.rem.model.HistoricoComunicacionGencatAdjunto;
@@ -95,7 +92,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoComunicacionGencat;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDSancionGencat;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoComunicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoNotificacionGencat;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
@@ -977,14 +973,12 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 			activo = activoOferta.getPrimaryKey().getActivo();
 			
 			List<VExpPreBloqueoGencat> listDatosVista = genericDao.getList(VExpPreBloqueoGencat.class, 
-					genericDao.createFilter(FilterType.EQUALS,"idActivo", activo.getId()));
+				genericDao.createFilter(FilterType.EQUALS,"idActivo", activo.getId()));
 
-			if(!Checks.estaVacio(listDatosVista)) {
-				//Pillar 1º registro que es el mas reciente para comparar los condicionantes
-					datoVista = listDatosVista.get(0);
+			if(!Checks.estaVacio(listDatosVista)) { //Pillar 1º registro que es el mas reciente para comparar los condicionantes
+				datoVista = listDatosVista.get(0);
 				
 				//COMPROBACION SI HAY COMUNICACION GENCAT CREADA
-				
 				if(!Checks.esNulo(datoVista.getFecha_comunicacion())) {
 					//TODO REVISAR CONDICIONES DE ULTIMA OFERTA QUE PROVOCO LA COMUNICACION CON LOS DATOS DEL EXPEDIENTE QUE SE RECOGEN
 					comGencat = genericDao.get(ComunicacionGencat.class, genericDao.createFilter(FilterType.EQUALS,"activo.id", activo.getId()));
@@ -999,60 +993,52 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 							
 							//TODO COMPROBACION CONDICIONANTES
 						if(!Checks.esNulo(datoVista.getSituacionPosesoria()) && datoVista.getSituacionPosesoria().equals(codSitPos) 
-								&& !Checks.esNulo(datoVista.getTipoPersona())&&  datoVista.getTipoPersona().equals(codTipoPer)
-								&& (!Checks.esNulo(oferta.getImporteOferta()) && oferta.getImporteOferta().equals(datoVista.getImporteOferta()))) {
+							&& !Checks.esNulo(datoVista.getTipoPersona())&&  datoVista.getTipoPersona().equals(codTipoPer)
+							&& (!Checks.esNulo(oferta.getImporteOferta()) && oferta.getImporteOferta().equals(datoVista.getImporteOferta()))) {
 								
 								//COMPROBACION OFERTA ULTIMA SANCION:
 									//SI DD_ECG_CODIGO SANCIONADA SE COMPARA TIEMPO SANCION AL TIEMPO ACTUAL:
 										//SI TIEMPO > 2 MESES LANZAR TRAMITE GENCAT
 										//SI TIEMPO < 2 MESES NO HACER NADA.
 							if(!Checks.esNulo(comGencat.getEstadoComunicacion())
-									&& DDEstadoComunicacionGencat.COD_SANCIONADO.equals(comGencat.getEstadoComunicacion().getCodigo())
-									&& !Checks.esNulo(datoVista.getFecha_sancion())) {
-								
-								if(fechaActual.after(comGencat.getFechaPrevistaSancion())){ 
-									 	
-									lanzarTramiteGENCAT(tramite, oferta, expComercial);
-										
+								&& DDEstadoComunicacionGencat.COD_SANCIONADO.equals(comGencat.getEstadoComunicacion().getCodigo())
+								&& !Checks.esNulo(datoVista.getFecha_sancion())) {
+								if(!Checks.esNulo(comGencat.getSancion()) && DDSancionGencat.COD_NO_EJERCE.equals(comGencat.getSancion().getCodigo())) {
+									Date fecha2MesesMasSancion;
+									if(!Checks.esNulo(comGencat.getFechaSancion())) {
+										Calendar cal = Calendar.getInstance(); 
+								        cal.setTime(comGencat.getFechaSancion()); 
+								        cal.add(Calendar.MONTH, 2);
+								        fecha2MesesMasSancion = cal.getTime();
+									}else{
+										fecha2MesesMasSancion = fechaActual;
+									}
+									if(fechaActual.after(fecha2MesesMasSancion) || Checks.esNulo(comGencat.getFechaSancion())){  
+										lanzarTramiteGENCAT(tramite, oferta, expComercial);
+									}
 								}
-									
 							}
-									//SI DD_ECG_CODIGO ANULADA Y CMG_FECHA_ANULACION RELLENA LANZA TRAMITE GENCAT
-							 if(!Checks.esNulo(comGencat.getEstadoComunicacion())
-									&& DDEstadoComunicacionGencat.COD_ANULADO.equals(comGencat.getEstadoComunicacion().getCodigo())
-									&& datoVista.getCheck_anulacion()) {
-									
-									lanzarTramiteGENCAT(tramite, oferta, expComercial);
-							}
-									//SI DD_ECG_CODIGO ANULADA Y CMG_FECHA_ANULACION NULL SE COMPARA TIEMPO SANCION AL TIEMPO ACTUAL:
-										//SI TIEMPO < 2 MESES NO HACER NADA.
+							//SI DD_ECG_CODIGO ANULADA
 							if(!Checks.esNulo(comGencat.getEstadoComunicacion())
-									&& DDEstadoComunicacionGencat.COD_ANULADO.equals(comGencat.getEstadoComunicacion().getCodigo())
-									&& !datoVista.getCheck_anulacion()) {
-										Date fechaAnulacionPrevista;
-										if(!Checks.esNulo(comGencat.getFechaAnulacion())) {
-											Calendar cal = Calendar.getInstance(); 
-									        cal.setTime(comGencat.getFechaAnulacion()); 
-									        cal.add(Calendar.MONTH, 2);
-									        fechaAnulacionPrevista = cal.getTime();
-										}else {
-											fechaAnulacionPrevista = fechaActual;
-										}
-										if(fechaActual.after(fechaAnulacionPrevista) || Checks.esNulo(comGencat.getFechaAnulacion())){  
-			
-											lanzarTramiteGENCAT(tramite, oferta, expComercial);
-									
-										}	
-							}
-								
+								&& DDEstadoComunicacionGencat.COD_ANULADO.equals(comGencat.getEstadoComunicacion().getCodigo())) {
+									lanzarTramiteGENCAT(tramite, oferta, expComercial);
+							}								
 						}else {								
 							lanzarTramiteGENCAT(tramite, oferta, expComercial);
 						}
-						
+					}else {
+						if(!Checks.esNulo(comGencat.getEstadoComunicacion())
+								&& DDEstadoComunicacionGencat.COD_ANULADO.equals(comGencat.getEstadoComunicacion().getCodigo())) {
+									lanzarTramiteGENCAT(tramite, oferta, expComercial);
+							}
 					}
-					
+				}else {
+					if(!Checks.esNulo(comGencat.getEstadoComunicacion())
+						&& DDEstadoComunicacionGencat.COD_ANULADO.equals(comGencat.getEstadoComunicacion().getCodigo())
+						|| DDEstadoComunicacionGencat.COD_RECHAZADO.equals(comGencat.getEstadoComunicacion().getCodigo())) {
+							lanzarTramiteGENCAT(tramite, oferta, expComercial);
+					}
 				}
-				
 			}else {					
 				lanzarTramiteGENCAT(tramite, oferta, expComercial);
 			}	

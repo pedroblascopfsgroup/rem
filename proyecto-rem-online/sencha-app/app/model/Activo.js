@@ -548,13 +548,12 @@ Ext.define('HreRem.model.Activo', {
 			{
 				name: 'isVendidoOEntramite',
     			calculate: function(data) { 
-    				return data.situacionComercialCodigo == CONST.SITUACION_COMERCIAL['VENDIDO'] || data.enTramite;
+    				return data.situacionComercialCodigo == CONST.SITUACION_COMERCIAL['VENDIDO'] || data.isActivoEnTramite;
     			},
-    			depends: 'situacionComercialCodigo'
+    			depends: ['situacionComercialCodigo', 'isActivoEnTramite']
 			},
 			{
-				name: 'enTramite',
-				type: 'boolean'
+				name: 'enTramite'
 			},
 			{
 				name: 'isActivoEnTramite',

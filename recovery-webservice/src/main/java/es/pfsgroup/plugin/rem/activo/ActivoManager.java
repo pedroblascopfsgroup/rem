@@ -19,6 +19,7 @@ import java.util.concurrent.TimeUnit;
 import javax.annotation.Resource;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
 
@@ -28,6 +29,8 @@ import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.glassfish.jersey.jackson.JacksonFeature;
+import org.glassfish.jersey.media.multipart.FormDataMultiPart;
+import org.glassfish.jersey.media.multipart.MultiPart;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -5386,55 +5389,13 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		String reservationKey = appProperties.getProperty(KEY_GDPR)+documento+fecha;//TODO AQUI EL HASH MD5 MONTADO (key POR DEFINIR + #documento + today(yyyyMMdd)timestamp)
 		String signature = computeKey(reservationKey);
 		
-		String url2=appProperties.getProperty(URL_GDPR)+signature+"?";
-		
-		String url = "";
-		if(!Checks.esNulo(dtoGenerarDocGDPR.getCodPrescriptor())) {
-			url+="codRemPrescriptor="+getCodRemPrescriptor(dtoGenerarDocGDPR);
-		}
-		
-		if(!Checks.esNulo(dtoGenerarDocGDPR.getNombre())) {
-			url+="&nombre="+dtoGenerarDocGDPR.getNombre();
-		}
-		if(!Checks.esNulo(dtoGenerarDocGDPR.getDocumento())) {
-			url+="&documento="+dtoGenerarDocGDPR.getDocumento();
-		}
-		if(!Checks.esNulo(dtoGenerarDocGDPR.getTelefono())) {
-			url+="&telefono="+dtoGenerarDocGDPR.getTelefono();
-		}
-		
-		if(!Checks.esNulo(dtoGenerarDocGDPR.getDireccion())) {
-			url+="&direccion="+dtoGenerarDocGDPR.getDireccion();
-		}
-		
-		if(!Checks.esNulo(dtoGenerarDocGDPR.getEmail())) {
-			url+="&email="+dtoGenerarDocGDPR.getEmail();
-		}
-		
-		if(!Checks.esNulo(dtoGenerarDocGDPR.getCesionDatos())){
-			url+="&gdpr1="+dtoGenerarDocGDPR.getCesionDatos();
-		}else{
-			url+="&gdpr1=false";
-		}
-		
-		if(!Checks.esNulo(dtoGenerarDocGDPR.getComTerceros())){
-			url+="&gdpr2="+dtoGenerarDocGDPR.getComTerceros();
-		}else{
-			url+="&gdpr2=false";
-		}
-
-		if(!Checks.esNulo(dtoGenerarDocGDPR.getTransIntern())){
-			url+="&gdpr3="+dtoGenerarDocGDPR.getTransIntern();
-		}else{
-			url+="&gdpr3=false";
-		}
+		String url=appProperties.getProperty(URL_GDPR);
 		
 		ServerRequest serverRequest =  new ServerRequest();
 		serverRequest.setMethod(RestClientManager.METHOD_POST);
-		serverRequest.setRestClientUrl(url2);
-		serverRequest.setPath(url);
+		serverRequest.setRestClientUrl(url);
 		serverRequest.setResponseClass(RespuestaDescargarDocumento.class);
-		Object respuesta = this.getBinaryResponse(serverRequest,"");
+		Object respuesta = this.getBinaryResponse(serverRequest,"", dtoGenerarDocGDPR, signature);
 		byte[] bytes = null;
 		
 		if(respuesta instanceof byte[]) {
@@ -5459,14 +5420,37 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		return respuesta;
 	}
 	
-	public Object getBinaryResponse(ServerRequest serverRequest, String fileName) {
+	public Object getBinaryResponse(ServerRequest serverRequest, String fileName, DtoGenerarDocGDPR dtoGenerarDocGDPR, String signature) {
 		String restClientUrl = serverRequest.getRestClientUrl();
+		String gdpr1 = "0";
+		String gdpr2 = "0";
+		String gdpr3 = "0";
+		if(!Checks.esNulo(dtoGenerarDocGDPR.getCesionDatos())){
+			gdpr1 = "1";
+		}
+		if(!Checks.esNulo(dtoGenerarDocGDPR.getComTerceros())){
+			gdpr2 = "1";
+		}
+		if(!Checks.esNulo(dtoGenerarDocGDPR.getTransIntern())){
+			gdpr3 = "1";
+		}
+		
+		final MultiPart multipart = new FormDataMultiPart()
+				.field("Content-Length", "0")
+				.field("documento", dtoGenerarDocGDPR.getDocumento())
+				.field("gdpr1", gdpr1)
+				.field("gdpr2", gdpr2)
+				.field("gdpr3", gdpr3)
+				.field("codRemPresciptor", String.valueOf(getCodRemPrescriptor(dtoGenerarDocGDPR)))
+				.field("signature", signature);
+		
+		serverRequest.setMultipart(multipart);
 		
 		final Client client = ClientBuilder.newBuilder().register(MultiPartFeature.class).register(JacksonFeature.class).build();
-		String url = restClientUrl + serverRequest.getPath();
+		String url = restClientUrl;
 		WebTarget webTarget = client.target(url);
 		logger.info("URL: " + url);
-		Object response = webTarget.request().post(null);
+		Object response = webTarget.request().post(Entity.entity(serverRequest.getMultipart(), serverRequest.getMultipart().getMediaType()));
 		
 		if (response == null) return null;
 		Response res = (Response) response;

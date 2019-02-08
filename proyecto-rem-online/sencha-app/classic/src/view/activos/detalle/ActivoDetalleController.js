@@ -3677,18 +3677,13 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	     	}else if (newValue == 1 && oldValue == null){
     	    		conTitulo.setValue(me.getViewModel().get('situacionPosesoria.conTitulo'));
     	    		conTitulo.setDisabled(false);
-    	     	}else if ( newValue == 0){
+    	     	}else if (newValue == 0){
     	     		conTitulo.setDisabled(true);
     	    		conTitulo.setValue(null);
     	    	}else {
-    	     		conTitulo.setDisabled(false);	
+    	     		conTitulo.setDisabled(false);
+    	     		conTitulo.setValue(0);
     	     	}
-    	/*var me = this;
-    	var tipoEstadoAlquiler = me.getViewModel().get('situacionPosesoria.tipoEstadoAlquiler');
-    	
-		if (tipoEstadoAlquiler != CONST.COMBO_ESTADO_ALQUILER['ALQUILADO'] && newValue == CONST.COMBO_OCUPACION['SI']) {
-			combo.up('formBase').down('[reference=comboSituacionPosesoriaConTitulo]').setValue(CONST.COMBO_CON_TITULO['NO']);
-		}*/
 	},
 
 	enableChkPerimetroAlquiler: function(get){

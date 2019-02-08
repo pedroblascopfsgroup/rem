@@ -11,6 +11,9 @@ Ext.define('HreRem.view.expedientes.WizardAltaComprador', {
 	closable : false,
 	requires: ['HreRem.view.expedientes.DatosCompradorWizard', 'HreRem.view.activos.detalle.AnyadirNuevaOfertaDocumento', 
 		'HreRem.view.activos.detalle.AnyadirNuevaOfertaActivoAdjuntarDocumento'],
+	viewModel: {
+        type: 'expedientedetalle'
+    },
 	defaults : {
 		border : true
 	},

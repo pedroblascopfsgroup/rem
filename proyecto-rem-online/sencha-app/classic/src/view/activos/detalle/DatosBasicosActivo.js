@@ -460,7 +460,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								fieldLabel: HreRem.i18n('fieldlabel.perimetro.check.publicacion'),
 								reference: 'chkbxPerimetroPublicar',
 								bind: {
-									readOnly: '{esReadonlyChkbxPublicar}',
+									readOnly: '{activo.isVendido}',
 									value: '{activo.aplicaPublicar}'
 								}
 							},
@@ -484,7 +484,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								fieldLabel: HreRem.i18n('fieldlabel.perimetro.check.comercial'),
 								reference: 'chkbxPerimetroComercializar',
 								bind: {
-									readOnly: '{esReadOnlyChkbxComercializar}',
+									readOnly: '{activo.isVendidoOEntramite}',
 									value: '{activo.aplicaComercializar}'
 								},
 								listeners: {

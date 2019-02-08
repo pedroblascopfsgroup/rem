@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.io.StringWriter;
 import java.net.URL;
 import java.util.HashMap;
@@ -18,9 +17,6 @@ import javax.annotation.Resource;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Marshaller;
-import javax.xml.soap.SOAPMessage;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
@@ -134,7 +130,7 @@ public class ClienteSalesforceGenerico {
 			System.out.println("Inicializando SSLContext");
 			sslContext.init(null, new TrustManager[] { new CustomInsecureX509TrustManager() }, new java.security.SecureRandom());
 			
-			System.out.println("Creando URL hacia : " + serviceUrl);
+			System.out.println("Creando URL");
 			URL url = new URL(serviceUrl);
 			System.out.println("URL creada, abriendo conexion (aqui puede fallar facil)");
 			
@@ -143,10 +139,9 @@ public class ClienteSalesforceGenerico {
 			httpsURLConnection.setHostnameVerifier(new SFHostnameVerifier());
 			httpsURLConnection.setSSLSocketFactory(sslContext.getSocketFactory());
 			httpsURLConnection.setRequestMethod("POST");
+			httpsURLConnection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
 			httpsURLConnection.setConnectTimeout(responseTimeOut);
-			//System.out.println("Seteando cookie : " + endpoint.getCookie());
-			//httpsURLConnection.setRequestProperty("Cookie", "Authorization="+endpoint.getCookie());
-
+			
 			System.out.println("Metiendo headers");
 			Iterator<Map.Entry<String, String>> it = headers.entrySet().iterator();
 			System.out.println("While in");
@@ -158,29 +153,20 @@ public class ClienteSalesforceGenerico {
 			
 			System.out.println("While out");
 			
+			
 			// Body
 			if (jsonString != null && !jsonString.isEmpty()) {
 				
-				httpsURLConnection.setRequestProperty("Content-Type", "application/xml");
-
-				//httpsURLConnection.setRequestProperty("Accept", "application/xml");
+				httpsURLConnection.setRequestProperty("Content-Type", "application/json");
 				
-				//httpsURLConnection.setRequestProperty("Content-Length", Integer.toString(jsonString.length()));
-				
-				System.out.println("Output a true");
-				httpsURLConnection.setDoOutput(true);
-				httpsURLConnection.setDoOutput(true);
 				System.out.println("Metiendo cuerpo");
 				System.out.println(jsonString);
-				
+				System.out.println("Output a true");
+				httpsURLConnection.setDoOutput(true);
 				OutputStream body = httpsURLConnection.getOutputStream();
-				OutputStreamWriter wr = new OutputStreamWriter(body, "UTF-8");
-				wr.write(jsonString);
-				wr.flush();
-				wr.close();	
-				
-			} else {
-				httpsURLConnection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+				body.write(jsonString.getBytes("UTF-8"));
+				body.flush();
+				body.close();
 			}
 			
 			System.out.println("INICIANDO COMUNICACION, aqui puede fallar facil , C103");
@@ -200,11 +186,6 @@ public class ClienteSalesforceGenerico {
 			return JSONObject.fromObject(respBody);
 		} catch (Exception e) {
 			String errorMsg = "Error Sending REST Request [URL:" + serviceUrl + ",METHOD:" + sendMethod + "]";
-			e.printStackTrace();
-			System.out.println(e.getCause().getMessage());
-			System.out.println(e.getCause().getCause().getMessage());
-			System.out.println(e.getCause().getCause().getCause().getMessage());
-			System.out.println(e.getCause().getCause().getCause().getCause().getMessage());
 			//Se añade este logger para poder ver en consola los errores que desvuelve el webservice
 			logger.error(e);
 			throw new HttpClientException(errorMsg, responseCode, e);

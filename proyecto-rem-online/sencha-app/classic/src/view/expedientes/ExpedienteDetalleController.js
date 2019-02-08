@@ -2129,8 +2129,9 @@ Ext
 				 		window = ventanaDetalle.up().xtype,
 					    form = ventanaDetalle.getForm(),
 						ventanaWizard = btn.up('wizardaltacomprador');
-						ventanaWizard.width = Ext.Element.getViewportWidth()/2;
-						ventanaWizard.height = Ext.Element.getViewportHeight() > 500 ? 500 : Ext.Element.getViewportHeight() - 100;
+						
+						ventanaWizard.height =  Ext.Element.getViewportHeight() > 500 ? 500 : Ext.Element.getViewportHeight()-100;
+						ventanaWizard.setY( Ext.Element.getViewportHeight()/2 - ((Ext.Element.getViewportHeight() > 500 ? 500 : Ext.Element.getViewportHeight() -100)/2));
 						
 						if(ventanaDetalle.config.xtype.indexOf('datoscompradorwizard') >=0){ 
 							pedirDocValor = ventanaDetalle.getForm().findField('pedirDoc').getValue();

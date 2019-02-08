@@ -7,7 +7,6 @@ Ext.define('HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaDetalle', {
 	recordName: "oferta",
 	bodyStyle	: 'padding:20px',
 	recordClass: "HreRem.model.OfertaComercial",
-	//requires: ['HreRem.model.OfertaComercialActivo'],
 	
 	listeners: {    
 		boxready: function(window) {

@@ -5024,9 +5024,10 @@ Ext
 	            			}
 	            			
 	        			}
-	        			
-	        			//ventanaWizard.width = Ext.Element.getViewportWidth()/2;
-	        			//ventanaWizard.height = Ext.Element.getViewportHeight()-325;
+	        			ventanaWizard.width= Ext.Element.getViewportWidth() > 1370 ? Ext.Element.getViewportWidth() / 2 : Ext.Element.getViewportWidth() /1.5;
+	        			ventanaWizard.setX( Ext.Element.getViewportWidth() / 2 - ((Ext.Element.getViewportWidth() > 1370 ? Ext.Element.getViewportWidth() / 2 : Ext.Element.getViewportWidth() /1.5) / 2));
+	        			ventanaWizard.height = Ext.Element.getViewportHeight() > 600 ? 600 : Ext.Element.getViewportHeight() -100;
+	        			ventanaWizard.setY( Ext.Element.getViewportHeight()/2 - ((Ext.Element.getViewportHeight() > 600 ? 600 : Ext.Element.getViewportHeight() -100)/2));
 	    			
 	    			}else{
 	    				
@@ -5069,9 +5070,10 @@ Ext
 	        				   } 
 	    				   }    			
 	    			   }
-	    				
-	    				//ventanaWizard.width = Ext.Element.getViewportWidth()/2;
-	    				//ventanaWizard.height = Ext.Element.getViewportHeight()-100;
+	    				ventanaWizard.width= Ext.Element.getViewportWidth() > 1370 ? Ext.Element.getViewportWidth() / 2 : Ext.Element.getViewportWidth() /1.5;
+	    				ventanaWizard.setX( Ext.Element.getViewportWidth() / 2 - ((Ext.Element.getViewportWidth() > 1370 ? Ext.Element.getViewportWidth() / 2 : Ext.Element.getViewportWidth() /1.5) / 2),);
+	    				ventanaWizard.height = Ext.Element.getViewportHeight() > 800 ? 800 : Ext.Element.getViewportHeight() -100;
+	        			ventanaWizard.setY( Ext.Element.getViewportHeight()/2 - ((Ext.Element.getViewportHeight() > 800 ? 800 : Ext.Element.getViewportHeight() -100)/2));
 	    			}
 	    			
 	    			if(!Ext.isEmpty(datos.carteraInternacional)){
@@ -5244,10 +5246,18 @@ Ext
  		var form = ventanaDetalle.getForm();
  		
  		if(form.isValid()){
- 			var valueDestComercial= form.findField('comboTipoOferta').getSelection().data.descripcion;
- 	 		var destinoComercialActivo = ventanaDetalle.up().getViewModel().data.destinoComercial; 
- 	 		
- 	 		
+ 			var valueDestComercial,destinoComercialActivo;
+ 			
+ 			if(ventanaDetalle.config.xtype.indexOf('activoadjuntardocumento') >= 0 ){
+ 				valueDestComercial = ventanaDetalle.up().getViewModel().data.valueDestComercial;
+ 				destinoComercialActivo = ventanaDetalle.up().getViewModel().data.destinoComercialActivo;
+ 			}else{
+ 				valueDestComercial = form.findField('comboTipoOferta').getSelection().data.descripcion;
+ 	 	 		destinoComercialActivo = ventanaDetalle.up().getViewModel().data.destinoComercial;
+ 	 	 		ventanaDetalle.up().getViewModel().data.valueDestComercial = valueDestComercial;
+ 	 	 		ventanaDetalle.up().getViewModel().data.destinoComercialActivo = destinoComercialActivo;
+ 			}
+ 			
  			if(destinoComercialActivo === valueDestComercial || destinoComercialActivo === CONST.TIPO_COMERCIALIZACION_ACTIVO["ALQUILER_VENTA"]){
  				if (ventanaDetalle.config.xtype.indexOf('activoadjuntardocumento') >= 0 && ventanaAlta.indexOf('wizardaltacomprador') < 0) {
  		 			ventanaDetalle.setController('activodetalle');
@@ -5320,8 +5330,8 @@ Ext
  		     			ventanaDetalle.up().down('anyadirnuevaofertaactivoadjuntardocumento').getForm().findField('comunicacionTerceros').setValue(valorComTerceros);
  		     			ventanaDetalle.up().down('anyadirnuevaofertaactivoadjuntardocumento').getForm().findField('transferenciasInternacionales').setValue(valorTransferInternacionales);
  		     			
- 		     			btn.up('wizardaltaoferta').width = Ext.Element.getViewportWidth()/2;
  		    			btn.up('wizardaltaoferta').height = Ext.Element.getViewportHeight() > 500 ? 500 : Ext.Element.getViewportHeight()-100;
+ 		    			btn.up('wizardaltaoferta').setY( Ext.Element.getViewportHeight()/2 - ((Ext.Element.getViewportHeight() > 500 ? 500 : Ext.Element.getViewportHeight() -100)/2));
  		    			
  		     			var wizard = btn.up().up().up();
  		     			var layout = wizard.getLayout();

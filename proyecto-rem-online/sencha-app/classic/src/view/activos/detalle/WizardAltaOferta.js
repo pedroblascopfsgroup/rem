@@ -4,10 +4,10 @@ Ext.define('HreRem.view.activos.detalle.WizardAltaOferta', {
     title		: 'Asistente - A&ntilde;adir nueva oferta',
     layout		: 'card',
     bodyStyle	: 'padding:10px',
-    width		: Ext.Element.getViewportWidth() / 2,    
+    width		: Ext.Element.getViewportWidth() > 1370 ? Ext.Element.getViewportWidth() / 2 : Ext.Element.getViewportWidth() /1.5,
     height		: Ext.Element.getViewportHeight() > 500 ? 500 : Ext.Element.getViewportHeight() -100 ,
-    x: 150,
-    y: 50,
+    x: Ext.Element.getViewportWidth() / 2 - ((Ext.Element.getViewportWidth() > 1370 ? Ext.Element.getViewportWidth() / 2 : Ext.Element.getViewportWidth() /1.5) / 2),
+    y: Ext.Element.getViewportHeight()/2 - ((Ext.Element.getViewportHeight() > 500 ? 500 : Ext.Element.getViewportHeight() -100)/2),
     closable	: false,
     requires: ['HreRem.model.OfertaComercial'],
     controller: 'activodetalle',
@@ -18,25 +18,6 @@ Ext.define('HreRem.view.activos.detalle.WizardAltaOferta', {
         border: true
     },
     idAgrupacion: null,
-   /*bbar: [
-        {
-            id: 'move-prev',
-            text: 'Back',
-            handler: function(btn) {
-                navigate(btn.up("panel"), "prev");
-            },
-            disabled: true
-        },
-        '->',
-        {
-            id: 'move-next',
-            text: 'Next',
-            handler: function(btn) {
-                navigate(btn.up("panel"), "next");
-            }
-        }
-    ],*/
-
     items: [{
         xtype: 'anyadirnuevaofertadocumento',
 		resizable: true        	
@@ -49,11 +30,3 @@ Ext.define('HreRem.view.activos.detalle.WizardAltaOferta', {
     }],
     renderTo: Ext.getBody()
 });
-/*
-var navigate = function(panel, direction){
-
-    var layout = panel.getLayout();
-    layout[direction]();
-    Ext.getCmp('move-prev').setDisabled(!layout.getPrev());
-    Ext.getCmp('move-next').setDisabled(!layout.getNext());
-};*/

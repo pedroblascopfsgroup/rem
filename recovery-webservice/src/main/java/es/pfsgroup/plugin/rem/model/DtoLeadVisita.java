@@ -1,7 +1,5 @@
 package es.pfsgroup.plugin.rem.model;
 
-import org.codehaus.jackson.map.ObjectMapper;
-
 /**
  * 
  * Dto para enviar los datos de la visita al webservice de Salesforce
@@ -9,19 +7,20 @@ import org.codehaus.jackson.map.ObjectMapper;
  */
 public class DtoLeadVisita {
 
+	@SuppressWarnings("unused")
 	private class Attributes {
 		
 		private String type = "HAY_LOAD_VISITAS__c"; // Campo obligatorio , se omite seter
-		private int referenceId;
+		private String referenceId;
 		
 		public String getType() {
 			return type;
 		}
 
-		public int getReferenceId() {
+		public String getReferenceId() {
 			return referenceId;
 		}
-		public void setReferenceId(int referenceId) {
+		public void setReferenceId(String referenceId) {
 			this.referenceId = referenceId;
 		}
 		
@@ -41,7 +40,7 @@ public class DtoLeadVisita {
 	private boolean HAY_NoProcesar__c = true; // Campo obligatorio , se omite seter
 
 	public DtoLeadVisita (DtoAltaVisita dto) {
-		System.out.println("Constructor 1");
+
 		this.setCOD_ID_ACTIVO_ESP__c(dto.getIdActivo().intValue());
 		this.setPRIMER_APELLIDO__c(dto.getNombre());
 		this.setNUM_TELEFONO__c(dto.getTelefono());
@@ -53,22 +52,9 @@ public class DtoLeadVisita {
 		this.setMAIL__c(email);
 		
 		Attributes attributes = new Attributes();
+		attributes.setReferenceId(dto.getIdActivo() + "");
 		this.setAttributes(attributes);
-		
-		System.out.println("Constructor 2");
-	}
-	
-	public String toBodyString() {
-		System.out.println("Constructor 3");
-		ObjectMapper mapper = new ObjectMapper();
-		try {
-			System.out.println("Constructor 4");
-			return mapper.writeValueAsString(this);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		System.out.println("Constructor 5");
-		return null;
+;
 	}
 	
 	public Attributes getAttributes() {

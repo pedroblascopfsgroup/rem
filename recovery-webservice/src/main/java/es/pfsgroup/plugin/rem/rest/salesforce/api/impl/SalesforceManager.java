@@ -1,5 +1,7 @@
 package es.pfsgroup.plugin.rem.rest.salesforce.api.impl;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 import javax.annotation.Resource;
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Component;
 
 import es.pfsgroup.plugin.rem.model.DtoAltaVisita;
 import es.pfsgroup.plugin.rem.model.DtoLeadVisita;
+import es.pfsgroup.plugin.rem.model.SalesforceRequestDto;
 import es.pfsgroup.plugin.rem.rest.dto.ResponseGestorDocumentalFotos;
 import es.pfsgroup.plugin.rem.rest.dto.SalesforceAuthDto;
 import es.pfsgroup.plugin.rem.rest.dto.SalesforceResponseDto;
@@ -97,18 +100,43 @@ public class SalesforceManager implements SalesforceApi {
 		String jsonResponse = null;
 		SalesforceResponseDto response = null;
 		if (servletContext.getAttribute(ID_AUTH_TOKEN) != null) {
-			System.out.println("Constructor XXX");
-			jsonResponse = cliente.send(dto.getFullToken(), salesforceEndpoint, new DtoLeadVisita(dtoAltaVisita).toBodyString()).toString();
-			System.out.println("OBJECT MAPPER TODO AQUI PETARA");
+			
+			DtoLeadVisita dtoLeadVisita = new DtoLeadVisita(dtoAltaVisita);
+			
+			SalesforceRequestDto<DtoLeadVisita> sfRequest = new SalesforceRequestDto<DtoLeadVisita>();
+			
+			List<DtoLeadVisita> dataList = new ArrayList<DtoLeadVisita>();
+			dataList.add(dtoLeadVisita);
+			
+			sfRequest.setRecords(dataList);
+			
+			jsonResponse = cliente.send(dto.getFullToken(), salesforceEndpoint, sfRequest.toBodyString()).toString();
+
 			response = mapper.readValue(jsonResponse, SalesforceResponseDto.class);
-			System.out.println("OBJECT MAPPER after readValue call");
-			if (response.getHasErrors() != null && !response.getHasErrors()) {
+
+			if (response.getHasErrors() != null && response.getHasErrors()) {
 				servletContext.setAttribute(ID_AUTH_TOKEN, null);
 				throwException("UNKOWN_ERROR");
 			}
 
 		}
-		System.out.println("Constructor YYY");
+		
+		System.out.println("------------- Se ha recibido la siguiente respuesta ---------");
+		
+		System.out.println("hasErrors : " + response.getHasErrors());
+		
+		for (int i = 0; i < response.getResults().size(); i++) {
+			
+			System.out.println("Imprimiento results index (empieza en 0) : " + i);
+			
+			System.out.println("Reference id : " + response.getResults().get(i).getReferenceId());
+			System.out.println("Id : " + response.getResults().get(i).getId());
+			
+		}
+		
+		
+		System.out.println("------------- Fin de respuesta, devolviendo contenido al manager ---------");
+		
 		return response;
 		
 	}

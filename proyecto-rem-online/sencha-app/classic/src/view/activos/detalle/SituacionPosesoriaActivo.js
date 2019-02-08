@@ -3,6 +3,7 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
     xtype: 'situacionposesoriaactivo',    
     cls	: 'panel-base shadow-panel',
     collapsed: false,
+    refreshAfterSave: true,
     disableValidation: true,
     reference: 'situacionposesoriaactivoref',
     scrollable	: 'y',
@@ -30,8 +31,6 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 					}]
 				});
         me.setTitle(HreRem.i18n('title.situacion.posesoria.llaves'));
-
-        var tipoComercializacionCodigo = me.lookupViewModel().get('activo.tipoComercializacionCodigo');
 
         var items= [
 
@@ -191,9 +190,7 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 							fieldLabel: HreRem.i18n('fieldlabel.ocupado'),
 				        	bind: {
 			            		store: '{comboSiNoRem}',
-			            		value : '{situacionPosesoria.ocupado}',
-			            		disabled: '{esTipoEstadoAlquilerAlquilado}', 
-			            		readOnly: '{esTipoEstadoAlquilerAlquilado}'
+			            		value: '{situacionPosesoria.ocupado}'
 			            	},
 			            	listeners: {
 			            		change: 'onChangeComboOcupado'

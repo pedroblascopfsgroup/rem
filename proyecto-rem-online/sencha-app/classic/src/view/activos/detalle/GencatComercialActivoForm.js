@@ -248,7 +248,7 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoForm', {
 								    style:{
 								    	cursor: 'pointer',
 								    	'text-decoration': 'underline'
-								    },
+								    }
 								    
 				    			},
 				    			{

@@ -85,7 +85,7 @@ public class UpdaterServiceSancionOfertaResolucionComite implements UpdaterServi
 		
 		Boolean esAfectoGencat = false;
 		if(!Checks.esNulo(tramite.getActivo()) && !Checks.esNulo(tramite.getActivo().getId())){
-			esAfectoGencat = activoDao.isActivoBloqueadoGENCAT(tramite.getActivo().getId());
+			esAfectoGencat = activoDao.isActivoAfectoGENCAT(tramite.getActivo().getId());
 		}
 		
 		Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());

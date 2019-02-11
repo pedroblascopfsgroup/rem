@@ -32,7 +32,7 @@ public class DtoGencat extends DtoTabActivo {
 	
 	//Adecuacion
 	private Boolean necesitaReforma;
-	private Long importeReforma;
+	private Double importeReforma;
 	private Date fechaRevision;
 	
 	//Visita
@@ -100,10 +100,10 @@ public class DtoGencat extends DtoTabActivo {
 	public void setNecesitaReforma(Boolean necesitaReforma) {
 		this.necesitaReforma = necesitaReforma;
 	}
-	public Long getImporteReforma() {
+	public Double getImporteReforma() {
 		return importeReforma;
 	}
-	public void setImporteReforma(Long importeReforma) {
+	public void setImporteReforma(Double importeReforma) {
 		this.importeReforma = importeReforma;
 	}
 	public Long getIdVisita() {

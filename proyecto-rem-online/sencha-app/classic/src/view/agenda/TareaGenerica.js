@@ -2071,17 +2071,20 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
         comboReforma.allowBlank = false;
         fechaRevision.allowBlank = false;
         me.setFechaActual(me.down('[name=fechaRevision]'));
-        importeReforma.allowBlank = true;
+        importeReforma.allowBlank = false;
     	me.deshabilitarCampo(me.down('[name=importeReforma]'));
         comboReforma.addListener('change', function(){
 	        if(comboReforma.value == '01'){
-	        	importeReforma.allowBlank = false;
 	        	me.habilitarCampo(me.down('[name=importeReforma]'));
+	        	importeReforma.allowBlank = false;
+	        	importeReforma.validate();
 	        }
 	        else{
-	        	importeReforma.allowBlank = true;
+	        	
 	        	me.deshabilitarCampo(me.down('[name=importeReforma]'));
 	        	me.down('[name=importeReforma]').reset();
+	        	importeReforma.allowBlank = true;
+	        	importeReforma.validate();
 	        }
         });
         fechaRevision.addListener('click', function(){

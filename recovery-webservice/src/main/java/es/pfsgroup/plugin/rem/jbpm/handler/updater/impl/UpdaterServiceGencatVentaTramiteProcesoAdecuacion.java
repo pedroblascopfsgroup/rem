@@ -1,7 +1,9 @@
 package es.pfsgroup.plugin.rem.jbpm.handler.updater.impl;
 
+import java.text.DecimalFormatSymbols;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,7 +61,11 @@ public class UpdaterServiceGencatVentaTramiteProcesoAdecuacion implements Update
 					
 				} else if(IMPORTE.equals(valor.getNombre())) {
 					if(!Checks.esNulo(valor.getValor())) {
-						adecuacionGencat.setImporteReforma(Double.parseDouble(valor.getValor()));
+						String valorString=valor.getValor();
+						if(valorString.contains(",")) {
+							valorString = valorString.replace(",", ".");
+						}
+						adecuacionGencat.setImporteReforma(Double.valueOf(valorString));
 					}
 									
 				} else if(OBSERVACIONES.equals(valor.getNombre())) {

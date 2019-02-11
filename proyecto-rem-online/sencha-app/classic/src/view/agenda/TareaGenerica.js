@@ -2084,6 +2084,11 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 	        	me.down('[name=importeReforma]').reset();
 	        }
         });
+        fechaRevision.addListener('click', function(){
+        	me.down('[name=fechaRevision]').reset();
+        	me.setDate(me.down('[name=fechaRevision]'));
+        	
+        });
     },
     
     T016_ComunicarGENCATValidacion: function() {

@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Oscar Diestre
---## FECHA_CREACION=20190207
+--## FECHA_CREACION=20190211
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-5323
+--## INCIDENCIA_LINK=HREOS-5448
 --## PRODUCTO=NO
 --##
 --## Finalidad: Script que añade en PEF_PERFILES los datos añadidos en T_ARRAY_FUNCION.
@@ -39,7 +39,10 @@ DECLARE
     V_FUNCION T_ARRAY_FUNCION := T_ARRAY_FUNCION(
 
     --			USU_USERNAME			CODIGO PERFIL
-	  T_FUNCION('graprobcerb',			'APROBCERB')
+	  T_FUNCION('cpy',			'APROBCERB'),
+	  T_FUNCION('pdorado',			'APROBCERB'),
+	  T_FUNCION('msabate',			'APROBCERB'),
+	  T_FUNCION('jguarch',			'APROBCERB')
 
     );
 

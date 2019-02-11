@@ -1496,12 +1496,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	me.getView().fireEvent('abrirDetalleExpediente', record);
     	
     },
-    ondblClickAbreExpediente: function(grid, record) {
-		var me = this;
-		if (record.data.idExpediente != undefined && record.data.numExpediente != undefined)
-			me.getView().fireEvent('abrirDetalleExpediente', record)
-		
-	},
     onEnlaceTrabajoClick: function(grid, rowIndex, colIndex) {
     	
     	var me = this,

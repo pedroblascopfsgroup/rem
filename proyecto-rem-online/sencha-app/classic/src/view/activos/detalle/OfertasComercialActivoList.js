@@ -16,9 +16,7 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
     		var me = this;
     		me.evaluarEdicion();
     	},
-    	rowclick: 'onOfertaListClick',
-    	rowdblclick:'ondblClickAbreExpediente'
-    		
+    	rowclick: 'onOfertaListClick'    		
     },
 
     initComponent: function () {

@@ -218,7 +218,7 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 				BeanUtils.copyProperties(gencatDto, comunicacionGencat);
 				gencatDto.setSancion(comunicacionGencat.getSancion() != null ? comunicacionGencat.getSancion().getCodigo() : null);
 				gencatDto.setEstadoComunicacion(comunicacionGencat.getEstadoComunicacion() != null ? comunicacionGencat.getEstadoComunicacion().getCodigo() : null);
-				
+				gencatDto.setComunicadoAnulacionAGencat2(comunicacionGencat.getComunicadoAnulacionAGencat());
 				Filter filtroIdComunicacion = genericDao.createFilter(FilterType.EQUALS, "comunicacion.id", comunicacionGencat.getId());
 				
 				//Adecuacion
@@ -1343,6 +1343,16 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 				comunicacionGencat.getAuditoria().setFechaModificar(new Date());
 				comunicacionGencat.getAuditoria().setUsuarioModificar( usuarioManager.getUsuarioLogado().getUsername() );				
 				comunicacionGencatDao.saveOrUpdate(comunicacionGencat);	
+				
+				if(comunicacionGencat.getComunicadoAnulacionAGencat() 
+					&& !Checks.esNulo(comunicacionGencat.getEstadoComunicacion()) 
+					&& !(DDEstadoComunicacionGencat.COD_RECHAZADO.equals(comunicacionGencat.getEstadoComunicacion().getCodigo()))) {
+					
+						DDEstadoComunicacionGencat anulado = (DDEstadoComunicacionGencat) utilDiccionarioApi.dameValorDiccionarioByCod( DDEstadoComunicacionGencat.class , DDEstadoComunicacionGencat.COD_ANULADO );	
+						comunicacionGencat.setEstadoComunicacion(anulado);
+						comunicacionGencat.setFechaAnulacion(new Date());
+						
+				}
 				
 				notificacionesGencat.sendMailNotificacionSancionGencat(gencatDto, activo, sancion);
 

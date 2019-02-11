@@ -29,7 +29,7 @@ public class DtoGencat extends DtoTabActivo {
 	private Date fechaAnulacion;
 	private Boolean comunicadoAnulacionAGencat;
 	private Boolean usuarioCompleto;
-	
+	private Boolean comunicadoAnulacionAGencat2;	
 	//Adecuacion
 	private Boolean necesitaReforma;
 	private Long importeReforma;
@@ -183,6 +183,12 @@ public class DtoGencat extends DtoTabActivo {
 	}
 	public void setUsuarioCompleto(Boolean usuarioCompleto) {
 		this.usuarioCompleto = usuarioCompleto;
+	}
+	public Boolean getComunicadoAnulacionAGencat2() {
+		return comunicadoAnulacionAGencat2;
+	}
+	public void setComunicadoAnulacionAGencat2(Boolean comunicadoAnulacionAGencat2) {
+		this.comunicadoAnulacionAGencat2 = comunicadoAnulacionAGencat2;
 	}
 
 }

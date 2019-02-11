@@ -21,8 +21,7 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoForm', {
     ],
     
     listeners: { 
-		boxready:'cargarTabData',
-   
+		boxready:'cargarTabData'   
     },
     
     data: {

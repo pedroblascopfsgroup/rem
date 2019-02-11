@@ -254,6 +254,6 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoController', {
 		 				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
 		 	}
 	 });
-	},
+	}
     
 });

@@ -157,8 +157,9 @@ Ext.define('HreRem.model.Gencat', {
 			name:'usuarioCompleto',
 			type:'boolean'
 		},
+		{
 			name:'comunicadoAnulacionAGencat2',
-			type: 'boolean',	
+			type: 'boolean'	
 		}
     ],
     

@@ -1577,10 +1577,13 @@ public class UvemManager implements UvemManagerApi {
 
 		} catch (WIException wie) {
 			errorDesc = wie.getMessage();
+			if(errorDesc == null){
+				errorDesc = "Error desconocido"
+			}
 			
 			// Si el error que devuelve UVEM es que la oferta ya está anulada en Bankia, no devolvemos el throw para poder avanzar
 			// la tarea de Resolución Expediente en REM y anular la oferta.
-			if(!ERROR_UVEM_OFERTA_YA_ANULADA.contains(errorDesc)) {
+			if(!errorDesc.contains(ERROR_UVEM_OFERTA_YA_ANULADA)) {
 				throw new JsonViewerException("Error anulación oferta (UVEM): " + errorDesc);								
 			}
 			

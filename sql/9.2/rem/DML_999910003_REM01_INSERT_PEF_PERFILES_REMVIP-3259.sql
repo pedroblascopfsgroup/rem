@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Rasul Akhmeddibirov
---## FECHA_CREACION=20190205
+--## FECHA_CREACION=20180207
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=REMVIP-3259
@@ -26,46 +26,71 @@ DECLARE
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
     V_USR VARCHAR2(30 CHAR) := 'REMVIP-3259'; -- USUARIOCREAR/USUARIOMODIFICAR.
     V_ECO_ID NUMBER(16); 
+
+    TYPE T_PERFIL IS TABLE OF VARCHAR2(150);
+    TYPE T_ARRAY_PERFILES IS TABLE OF T_PERFIL;
+
+    -- ARRAY DE PERFILES para otorgales los permisos
+    V_PERFILES T_ARRAY_PERFILES := T_ARRAY_PERFILES(
+
+		-- 		 PERFIL					DESCRIPCION DEL PERFIL
+    	T_PERFIL('SUPERFORM',			'Superusuario Formalización'),
+		T_PERFIL('SUPERGESTACT',		'Superusuario Gestión Activos'),
+		T_PERFIL('SUPERADMIN',			'Superusuario Admisión, Administración y CAT'),
+		T_PERFIL('SUPERMIDDLE',			'Superusuario Middle Office'),
+		T_PERFIL('SUPERPUBLI',			'Superusuario Publicaciones'),
+		T_PERFIL('SUPERFRONT',			'Superusuario Front Office'),
+		T_PERFIL('SUPERPLANIF',			'Superusuario Planificación Comercial')
+    );   
+    V_TMP_PERFIL T_PERFIL;
     
 BEGIN	
-	DBMS_OUTPUT.PUT_LINE('[INICIO] INSERCION TABLA PEF_PERFILES');
 	
-	V_SQL := 'SELECT COUNT(*) FROM '||V_ESQUEMA||'.PEF_PERFILES WHERE PEF_CODIGO = ''SUPERUSUARIONEGOCIO''';
-	
-	EXECUTE IMMEDIATE V_SQL INTO V_NUM_FILAS;
-	
-	IF V_NUM_FILAS = 0 THEN
-	
-		V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.PEF_PERFILES 
-					(PEF_ID,
-					PEF_DESCRIPCION_LARGA,
-					PEF_DESCRIPCION,
-					VERSION, 
-					USUARIOCREAR, 
-					FECHACREAR,
-					BORRADO,
-					PEF_CODIGO
-					)VALUES(
-					'||V_ESQUEMA||'.S_PEF_PERFILES.NEXTVAL,
-					''Usuario especial para negocios'',
-					''Usuario especial para negocios'',
-					0,
-					''REMVIP-3259'',
-					SYSDATE,
-					0,
-					''SUPERUSUARIONEGOCIO''
-					)';
-	
-		EXECUTE IMMEDIATE V_MSQL;
+    DBMS_OUTPUT.PUT_LINE('[INICIO] '||V_ESQUEMA_M||'.FUN_PEF... Empezando a insertar datos en la tabla');
     
-		DBMS_OUTPUT.PUT_LINE('[FIN] REGISTRO INSERTADO');
-		
-	ELSE
-		
-		DBMS_OUTPUT.PUT_LINE('[FIN] REGISTRO YA EXISTE');
-		
-	END IF;
-		
+    FOR I IN V_PERFILES.FIRST .. V_PERFILES.LAST
+		LOOP
+			V_TMP_PERFIL := V_PERFILES(I);
+
+
+			V_SQL := 'SELECT COUNT(*) FROM '||V_ESQUEMA||'.PEF_PERFILES WHERE PEF_CODIGO = '''||TRIM(V_TMP_PERFIL(1))||''' ';
+			
+			EXECUTE IMMEDIATE V_SQL INTO V_NUM_FILAS;
+			
+			IF V_NUM_FILAS = 0 THEN
+			
+				V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.PEF_PERFILES 
+							(PEF_ID,
+							PEF_DESCRIPCION_LARGA,
+							PEF_DESCRIPCION,
+							VERSION, 
+							USUARIOCREAR, 
+							FECHACREAR,
+							BORRADO,
+							PEF_CODIGO
+							)VALUES(
+							'||V_ESQUEMA||'.S_PEF_PERFILES.NEXTVAL,
+							'''||TRIM(V_TMP_PERFIL(2))||''',
+							'''||TRIM(V_TMP_PERFIL(2))||''',
+							0,
+							''REMVIP-3259'',
+							SYSDATE,
+							0,
+							'''||TRIM(V_TMP_PERFIL(1))||'''
+							)';
+			
+				EXECUTE IMMEDIATE V_MSQL;
+			
+				DBMS_OUTPUT.PUT_LINE('[FIN] REGISTRO INSERTADO');
+				
+			ELSE
+				
+				DBMS_OUTPUT.PUT_LINE('[FIN] REGISTRO YA EXISTE');
+				
+			END IF;
+
+		END LOOP;
+			
 	COMMIT;
  
 EXCEPTION

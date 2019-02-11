@@ -986,8 +986,8 @@ public interface ActivoApi {
 	/**
 	 * Crea un expediente comercial
 	 **/
-	ExpedienteComercial crearExpediente(Oferta oferta, Trabajo trabajo, Oferta ofertaOriginalGencatEjerce);
-	
+	ExpedienteComercial crearExpediente(Oferta oferta, Trabajo trabajo, Oferta ofertaOriginalGencatEjerce) throws Exception;
+
 	/**
 	 * Devuelve una lista de adecuaciones alquiler para el grid de adecuaciones en la pestaña patrimonio de un activo
 	 *

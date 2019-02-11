@@ -47,7 +47,7 @@ public class ExpedienteAvisoPreBloqueadoGencat implements ExpedienteAvisadorApi{
 				if(!Checks.estaVacio(actTraList)){
 					for (ActivoTramite activoTramite : actTraList) {
 						if(ActivoTramiteApi.CODIGO_TRAMITE_COMUNICACION_GENCAT.equals(activoTramite.getTipoTramite().getCodigo())){
-							if(!Checks.esNulo(activoTramite.getEstadoTramite()) && DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CERRADO.equals(activoTramite.getEstadoTramite().getCodigo())){
+							if(!Checks.esNulo(activoTramite.getEstadoTramite()) && (DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CERRADO.equals(activoTramite.getEstadoTramite().getCodigo()) || DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CANCELADO.equals(activoTramite.getEstadoTramite().getCodigo()))){
 								expBloqueado = true;
 							}else{
 								expBloqueado = false; 

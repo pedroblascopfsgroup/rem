@@ -175,7 +175,12 @@ execute immediate
 '--      WHEN ''10'' --Notificacion '||Chr(13)||Chr(10)||
 '--        THEN tar.tar_id '||Chr(13)||Chr(10)||
 '      WHEN ''61'' --Activo '||Chr(13)||Chr(10)||
-'        THEN ACT.ACT_NUM_ACTIVO  '||Chr(13)||Chr(10)||
+'        THEN '||Chr(13)||Chr(10)||
+'		 	CASE '||Chr(13)||Chr(10)||
+'            	WHEN TO_NUMBER(IRG2.IRG_VALOR) IS NULL '||Chr(13)||Chr(10)||
+'               	THEN ACT.ACT_NUM_ACTIVO '||Chr(13)||Chr(10)||
+'				ELSE TO_NUMBER(IRG2.IRG_VALOR) '||Chr(13)||Chr(10)||
+'		 END '||Chr(13)||Chr(10)||
 '        -- TODO poner para el resto de unidades de gestion '||Chr(13)||Chr(10)||
 '      ELSE -1 '||Chr(13)||Chr(10)||
 '    END codentidad , '||Chr(13)||Chr(10)||
@@ -367,7 +372,9 @@ execute immediate
 '  LEFT JOIN '||V_ESQUEMA||'.ACT_TRA_TRAMITE ATT ON TAC.TRA_ID = ATT.TRA_ID '||Chr(13)||Chr(10)||
 '  LEFT JOIN '||V_ESQUEMA||'.DD_TPO_TIPO_PROCEDIMIENTO TPO ON ATT.DD_TPO_ID = TPO.DD_TPO_ID '||Chr(13)||Chr(10)||
 '--  LEFT JOIN '||V_ESQUEMA_M||'.USU_USUARIOS USU ON USU.USU_ID = TAC.USU_ID '||Chr(13)||Chr(10)||
-'--  LEFT JOIN '||V_ESQUEMA||'.VTAR_TAR_VRE_VIA_PRC VRE_PRC ON TAR.TAR_ID = VRE_PRC.TAR_ID 
+'--  LEFT JOIN '||V_ESQUEMA||'.VTAR_TAR_VRE_VIA_PRC VRE_PRC ON TAR.TAR_ID = VRE_PRC.TAR_ID '||Chr(13)||Chr(10)||
+'  LEFT JOIN '||V_ESQUEMA||'.MEJ_IRG_INFO_REGISTRO IRG ON IRG.IRG_VALOR = TAR.TAR_ID AND IRG.IRG_CLAVE = ''ID_NOTIF'' '||Chr(13)||Chr(10)||
+'  LEFT JOIN '||V_ESQUEMA||'.MEJ_IRG_INFO_REGISTRO IRG2 ON IRG2.REG_ID = IRG.REG_ID AND IRG2.IRG_CLAVE = ''NUM_AGR''
 ');
 
 --/* Recompilar nueva vista

@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=Daniel Algaba
---## FECHA_CREACION=20181210
+--## AUTOR=Ramon Llinares
+--## FECHA_CREACION=20190202
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-5003
@@ -104,7 +104,7 @@ AS
                 CASE WHEN eac1.dd_eac_codigo = ''05'' THEN 1 ELSE 0 END as ruina,
 				CASE WHEN (eac1.dd_eac_codigo IN (''08'',''07'')) THEN 1 ELSE 0 END as VANDALIZADO,
                 sps1.sps_otro AS otro,
-				CASE WHEN (cra.dd_cra_codigo in (''01'', ''08'' )) 
+				CASE WHEN (cra.dd_cra_codigo in (''01'', ''08'', ''02'' )) 
                     THEN DECODE (vei.dd_aic_codigo, ''02'', 0, 1)
                     ELSE 0	
 				END AS sin_informe_aprobado,
@@ -128,8 +128,8 @@ AS
                            OR NVL2 (reg2.reg_id, 1, 0) = 1
 
                            OR NVL2(sps1.sps_otro,1,0) = 1                                               -- OTROS MOTIVOS                           
-
-                          )                                                                                                                              --OR DECODE(VEI.DD_AIC_CODIGO ,''02'' ,0 , 1) = 1
+						   OR DECODE(VEI.DD_AIC_CODIGO ,''02'' ,0 , 1) = 1                              -- sin_informe_aprobado         	 
+                          ) 
 						   OR NVL2 (vcg.con_cargas, vcg.con_cargas, 0) = 1
 					THEN ''01''
                     ELSE ''02''
@@ -170,3 +170,4 @@ END;
 /
 
 EXIT;
+

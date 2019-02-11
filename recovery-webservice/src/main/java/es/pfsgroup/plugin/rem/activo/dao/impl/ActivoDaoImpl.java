@@ -1293,24 +1293,63 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 			Session session = this.getSessionFactory().getCurrentSession();
 
 			Query query = session
-					.createSQLQuery("SELECT COUNT (DISTINCT ACT.ACT_ID)\r\n" + "    FROM ACT_ACTIVO ACT\r\n"
-							+ "    INNER JOIN REM01.BIE_LOCALIZACION BIE ON ACT.BIE_ID = BIE.BIE_ID\r\n"
-							+ "    INNER JOIN REM01.CMU_CONFIG_MUNICIPIOS CMU ON CMU.DD_LOC_ID = BIE.DD_LOC_ID\r\n"
-							+ "    INNER JOIN REM01.DD_TPA_TIPO_ACTIVO TPA ON TPA.DD_TPA_ID = ACT.DD_TPA_ID AND DD_TPA_CODIGO = '02'\r\n"
-							+ "    INNER JOIN REM01.ACT_AJD_ADJJUDICIAL AJD ON AJD.ACT_ID = ACT.ACT_ID AND TRUNC(AJD.AJD_FECHA_ADJUDICACION) > TO_DATE('07/04/2018', 'DD/MM/YYYY')\r\n"
-							+ "    INNER JOIN REM01.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = ACT.DD_CRA_ID\r\n"
-							+ "    INNER JOIN REM01.DD_SCR_SUBCARTERA SCR ON SCR.DD_SCR_ID = ACT.DD_SCR_ID\r\n"
-							+ "    INNER JOIN REM01.ACT_OFR AOFR ON AOFR.ACT_ID = ACT.ACT_ID\r\n"
-							+ "    INNER JOIN REM01.OFR_OFERTAS OFR ON OFR.OFR_ID = AOFR.OFR_ID\r\n"
-							+ "    INNER JOIN REM01.DD_EOF_ESTADOS_OFERTA EOF ON EOF.DD_EOF_ID = OFR.DD_EOF_ID\r\n"
-							+ "    INNER JOIN REM01.DD_TOF_TIPOS_OFERTA TOF ON TOF.DD_TOF_ID = OFR.DD_TOF_ID \r\n"
-							+ "WHERE\r\n" + "      ACT.ACT_ID = " + idActivo + " AND (\r\n"
-							+ "        (CRA.DD_CRA_CODIGO = '03' AND ( SCR.DD_SCR_CODIGO = '08' OR SCR.DD_SCR_CODIGO = '06' OR SCR.DD_SCR_CODIGO = '09' OR SCR.DD_SCR_CODIGO = '07'))\r\n"
-							+ "        OR (CRA.DD_CRA_CODIGO = '02' AND SCR.DD_SCR_CODIGO = '04')\r\n"
-							+ "        OR (CRA.DD_CRA_CODIGO = '01' AND SCR.DD_SCR_CODIGO = '02')\r\n"
-							+ "        OR (CRA.DD_CRA_CODIGO = '08' AND SCR.DD_SCR_CODIGO = '18')\r\n"
-							+ "        OR (CRA.DD_CRA_CODIGO = '06' AND SCR.DD_SCR_CODIGO = '16')\r\n" + "     )  \r\n"
-							+ "     AND TOF.DD_TOF_CODIGO = '01'\r\n" + "     AND EOF.DD_EOF_CODIGO <> '02'");
+					.createSQLQuery("WITH COMUNICADO AS (\n" + 
+							"    SELECT CMG.ACT_ID\n" + 
+							"    FROM REM01.ACT_CMG_COMUNICACION_GENCAT CMG\n" + 
+							"    JOIN REM01.DD_ECG_ESTADO_COM_GENCAT ECG ON ECG.DD_ECG_ID = CMG.DD_ECG_ID\n" + 
+							"        AND ECG.DD_ECG_CODIGO = 'COMUNICADO'\n" + 
+							"    WHERE CMG.BORRADO = 0\n" + 
+							"    )\n" + 
+							", EJERCIDO AS (\n" + 
+							"    SELECT CMG.ACT_ID\n" + 
+							"    FROM REM01.ACT_CMG_COMUNICACION_GENCAT CMG\n" + 
+							"    JOIN REM01.DD_ECG_ESTADO_COM_GENCAT ECG ON ECG.DD_ECG_ID = CMG.DD_ECG_ID\n" + 
+							"        AND ECG.DD_ECG_CODIGO = 'SANCIONADO'\n" + 
+							"    JOIN REM01.DD_SAN_SANCION SAN ON SAN.DD_SAN_ID = CMG.DD_SAN_ID\n" + 
+							"        AND SAN.DD_SAN_CODIGO = 'EJERCE'\n" + 
+							"    WHERE CMG.BORRADO = 0\n" + 
+							"    )\n" + 
+							"SELECT COUNT(DISTINCT ACT.ACT_ID)\n" + 
+							"FROM ACT_ACTIVO ACT\n" + 
+							"JOIN BIE_LOCALIZACION LOC ON LOC.BIE_ID = ACT.BIE_ID AND LOC.BORRADO = 0\n" + 
+							"JOIN ACT_LOC_LOCALIZACION ACT_LOC ON ACT_LOC.ACT_ID = ACT.ACT_ID\n" + 
+							"    AND LOC.BIE_LOC_ID = ACT_LOC.BIE_LOC_ID\n" + 
+							"    AND ACT_LOC.BORRADO = 0\n" + 
+							"JOIN CMU_CONFIG_MUNICIPIOS CMU ON CMU.DD_LOC_ID = LOC.DD_LOC_ID AND CMU.BORRADO = 0\n" + 
+							"JOIN BIE_ADJ_ADJUDICACION ADJ ON ADJ.BIE_ID = ACT.BIE_ID AND ADJ.BORRADO = 0\n" + 
+							"JOIN ACT_AJD_ADJJUDICIAL ACT_ADJ ON ACT_ADJ.ACT_ID = ACT.ACT_ID\n" + 
+							"    AND ADJ.BIE_ADJ_ID = ACT_ADJ.BIE_ADJ_ID\n" + 
+							"    AND ACT_ADJ.BORRADO = 0\n" + 
+							"JOIN DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = ACT.DD_CRA_ID AND CRA.BORRADO = 0\n" + 
+							"JOIN DD_SCR_SUBCARTERA SCR ON SCR.DD_SCR_ID = ACT.DD_SCR_ID AND SCR.BORRADO = 0\n" + 
+							"    AND SCR.DD_CRA_ID = CRA.DD_CRA_ID\n" + 
+							"JOIN DD_TPA_TIPO_ACTIVO TPA ON TPA.DD_TPA_ID = ACT.DD_TPA_ID AND TPA.BORRADO = 0\n" + 
+							"JOIN REMMASTER.DD_LOC_LOCALIDAD DD_LOC ON DD_LOC.DD_LOC_ID = LOC.DD_LOC_ID AND DD_LOC.BORRADO = 0\n" + 
+							"JOIN ACT_APU_ACTIVO_PUBLICACION APU ON APU.ACT_ID = ACT.ACT_ID AND APU.BORRADO = 0\n" + 
+							"--JOIN GESTORES GES ON GES.ACT_ID = ACT.ACT_ID\n" + 
+							"WHERE ACT.BORRADO = 0\n" + 
+							"    AND ACT_ADJ.AJD_FECHA_ADJUDICACION > TO_DATE('07/04/2018','DD/MM/YYYY')\n" + 
+							"    AND TPA.DD_TPA_CODIGO = '02'\n" + 
+							"    AND (CRA.DD_CRA_CODIGO, SCR.DD_SCR_CODIGO) IN (\n" + 
+							"            ('03','06'),('03','07'),('03','08'),('03','09')\n" + 
+							"            ,('02','04')\n" + 
+							"            ,('01','02')\n" + 
+							"            ,('08','18')\n" + 
+							"            ,('06','16')\n" + 
+							"        )\n" + 
+							"    AND (\n" + 
+							"        EXISTS (\n" + 
+							"            SELECT 1\n" + 
+							"            FROM COMUNICADO CMG\n" + 
+							"            WHERE CMG.ACT_ID = ACT.ACT_ID\n" + 
+							"            )\n" + 
+							"        OR EXISTS (\n" + 
+							"            SELECT 1\n" + 
+							"            FROM EJERCIDO EJE\n" + 
+							"            WHERE EJE.ACT_ID = ACT.ACT_ID\n" + 
+							"            )\n" + 
+							"        )\n" + 
+							"    AND ACT.ACT_ID = " + idActivo);
 
 			num = (BigDecimal) query.uniqueResult();
 			return num.intValueExact() > 0;

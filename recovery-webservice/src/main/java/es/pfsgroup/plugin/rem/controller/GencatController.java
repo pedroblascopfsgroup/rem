@@ -13,7 +13,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import es.capgemini.devon.files.FileItem;
@@ -26,6 +25,7 @@ import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.GencatAdapter;
 import es.pfsgroup.plugin.rem.api.GencatApi;
 import es.pfsgroup.plugin.rem.model.DtoAltaVisita;
+import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoGencatSave;
 import es.pfsgroup.plugin.rem.model.DtoNotificacionActivo;
 import es.pfsgroup.plugin.rem.restclient.exception.RestClientException;
@@ -36,7 +36,8 @@ import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientException;
 public class GencatController {
 	
 	protected static final Log logger = LogFactory.getLog(GencatController.class);
-	
+	private static final String RESPONSE_SUCCESS_KEY = "success";
+
 	@Autowired
 	private GencatApi gencatApi;
 	
@@ -392,6 +393,21 @@ public class GencatController {
 			model.put("errorMessage", "Ha habido un problema al dar de alta la visita.");
 		}
 		
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView deleteAdjunto(DtoAdjunto dtoAdjunto, ModelMap model) {
+		try {
+			model.put(RESPONSE_SUCCESS_KEY, gencatApi.deleteAdjunto(dtoAdjunto));
+
+		} catch (Exception e) {
+			logger.error("error en gencatController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put("errorMessage", e.getMessage());
+		}
+
 		return createModelAndViewJson(model);
 	}
 	

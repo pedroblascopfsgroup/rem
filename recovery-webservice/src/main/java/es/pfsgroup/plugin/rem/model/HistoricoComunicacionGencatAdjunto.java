@@ -44,8 +44,8 @@ public class HistoricoComunicacionGencatAdjunto implements Serializable, Auditab
 	private HistoricoComunicacionGencat historicoComunicacionGencat;
 	
 	@ManyToOne
-    @JoinColumn(name = "ADA_ID")
-	private ActivoAdjuntoActivo activoAdjuntoActivo;
+    @JoinColumn(name = "ADC_ID")
+	private AdjuntoComunicacion adjuntoComunicacion;
 	
 	@Version   
 	private Long version;
@@ -69,12 +69,12 @@ public class HistoricoComunicacionGencatAdjunto implements Serializable, Auditab
 		this.historicoComunicacionGencat = historicoComunicacionGencat;
 	}
 
-	public ActivoAdjuntoActivo getActivoAdjuntoActivo() {
-		return activoAdjuntoActivo;
+	public AdjuntoComunicacion getAdjuntoComunicacion() {
+		return adjuntoComunicacion;
 	}
 
-	public void setActivoAdjuntoActivo(ActivoAdjuntoActivo activoAdjuntoActivo) {
-		this.activoAdjuntoActivo = activoAdjuntoActivo;
+	public void setAdjuntoComunicacion(AdjuntoComunicacion adjuntoComunicacion) {
+		this.adjuntoComunicacion = adjuntoComunicacion;
 	}
 
 	public Long getVersion() {

@@ -238,34 +238,20 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoForm', {
 				    				readOnly: true,
 									bind: {
 										value: '{gencat.ofertaGencat}',
-										visible: '{gencat.estaActivadoCompradorNuevo}'
+										visible: '{gencat.usuarioCompleto}'
 										
 									},
 									listeners: {
 								        click: {
 								            element: 'el', 
 								            fn: 'onClickAbrirExpedienteComercial'
-								        },
-								        render: function(p) {
-								            var elemento = p.getEl();
-								            var tip = Ext.create('Ext.tip.Tip', {
-								                html: HreRem.i18n('tooltip.ver.expediente'),
-								                margin: '0 0 0 220'
-								            });
-								           
-								            elemento.on('mouseover', function(){
-								                tip.showAt(elemento.getX(), elemento.getY());
-								            });
-								           
-								            elemento.on('mouseleave', function(){
-								                tip.hide();
-								            });
 								        }
-								       
 								    },
 								    style:{
-								    	cursor: 'pointer'
+								    	cursor: 'pointer',
+								    	'text-decoration': 'underline'
 								    }
+								    
 				    			},
 				    			{
 				    				xtype: "comboboxfieldbase",
@@ -275,7 +261,7 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoForm', {
 				    				name : 'estadoComunicacion',
 									bind: {
 										store: '{comboEstadoComunicacionGencat}',
-										value: '{gencat.estadoComunicacion}'
+										value: '{estadoComunicacionField}'
 									}
 				    			},
 				    			{
@@ -312,10 +298,11 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoForm', {
 								{
 				    				xtype: "comboboxfieldbase",
 				    				fieldLabel: HreRem.i18n('fieldlabel.necesita.reforma'),
-				    				readOnly: false,
+				    				readOnly: true,
 				    				name: 'necesitaReforma',
 									bind: {
-										store: '{comboSiNo}'									
+										store: '{comboSiNo}',
+										value: '{gencat.necesitaReforma}'
 									}
 				    			},
 				    			{

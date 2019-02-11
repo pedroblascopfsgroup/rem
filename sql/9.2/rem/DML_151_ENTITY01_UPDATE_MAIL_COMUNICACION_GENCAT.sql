@@ -1,16 +1,18 @@
 --/* 
 --##########################################
---## AUTOR=Alberto Flores
---## FECHA_CREACION=20190125
+--## AUTOR=Sonia García
+--## FECHA_CREACION=20190211
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-5183
+--## INCIDENCIA_LINK=HREOS-5309
 --## PRODUCTO=NO
 --##
 --## Finalidad: HREOS-5183 - Modificación de literales para el email
 --## INSTRUCCIONES: 
 --## VERSIONES:
 --##        0.1 Version inicial
+--##        0.2 Añadido el correo backup.rem@pfsgroup.es como destinatario
+--##	    0.3 Delete del registro con solo un destinatario jpoyatos@haya.es
 --##########################################
 --*/
 
@@ -38,9 +40,17 @@ BEGIN
 	
 
 	IF V_NUM_TABLAS = 1 THEN	
+
+	V_SQL:= 'DELETE FROM '||V_ESQUEMA||'.MAIL_COMUNICACION_GENCAT WHERE CUERPO = ''Comunicaciones generadas a día de hoy.''';
+	DBMS_OUTPUT.PUT_LINE(V_SQL);
+	  EXECUTE IMMEDIATE V_SQL;
+	  DBMS_OUTPUT.PUT_LINE(V_NUM_TABLAS || 'registros borrados');
+
+
+
 		V_SQL := 'UPDATE '||V_ESQUEMA||'.MAIL_COMUNICACION_GENCAT SET
 						DE = ''noreply.rem@haya.es'', 
-						A = ''jpoyatos@haya.es'',  
+						A = ''jpoyatos@haya.es;backup.rem@pfsgroup.es'',  
 						CUERPO = ''Los activos del Excel adjunto están bloqueados en REM a DDMMYYYY'', 
 						ASUNTO = ''Comunicación activos con ofertas afectas por GENCAT, DDMMYYYY'',
 						ADJUNTO = ''Excel_comunicaciones.xls''';

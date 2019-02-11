@@ -34,24 +34,16 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoComunicacionGencat', {
     	me.setTitle(HreRem.i18n("title.adjuntar.documento.comunicacion.gencat"));
 
     	me.buttonAlign = 'left';
-
-    	/*var comboTipoDocPromo = new Ext.data.Store({
-			model: 'HreRem.model.ComboBase',
-			proxy: {
-				type: 'uxproxy',
-				remoteUrl: 'generic/getDiccionario',
-				extraParams: {diccionario: 'tiposDocumentoPromocion'}
-			}
-    	});*/
     	
     	var comboTipoDocumento = new Ext.data.Store({
 			model: 'HreRem.model.ComboBase',
 			proxy: {
 				type: 'uxproxy',
-				remoteUrl: 'generic/getDiccionarioTiposDocumento',
-				extraParams: {diccionario: 'tiposDocumento'}
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tipoDocumentoComunicacion'}
 			}
     	});
+    
 
 		comboTipoDocumento.filter([
 			{
@@ -61,7 +53,20 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoComunicacionGencat', {
 		    scope: this
 		  }
 		]);
+		if ($AU.userIsRol(CONST.PERFILES['GESTIAFORM'])){
+			comboTipoDocumento.filter([
+				{
+			    fn: function(record) {
+						return record.data.codigo == '02' || record.data.codigo == '04' || record.data.codigo == '07' || record.data.codigo == '08' ;
+			    },
+			    scope: this
+			  }
+			]);
+		}
 
+		
+		
+		
     	me.buttons = [ 
     		{ 
     			formBind: true, 
@@ -91,6 +96,16 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoComunicacionGencat', {
 	    				cls:'formbase_no_shadow',
 	    				items: [
 	    						{
+				    				xtype: "datefieldbase",
+				    				fieldLabel: HreRem.i18n('fieldlabel.fecha.notificacion'),
+				    				name: 'fechaNotificacion',
+				    				addUxReadOnlyEditFieldPlugin : false,
+				    				anchor: '100%',
+				    				allowBlank: false,
+				    				maxValue: null,
+				    				align: 'right', 
+				    				width: '100%' 
+				    			},{
 
  									xtype: 'filefield',
 							        fieldLabel:   HreRem.i18n('fieldlabel.archivo'),

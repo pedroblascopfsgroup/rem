@@ -106,7 +106,7 @@ public interface GencatApi {
 	 * @return
 	 * @throws Exception
 	 */
-	public String uploadDocumento(WebFileItem webFileItem, Long idDocRestClient, Activo activo, String matricula, Usuario usuarioLogado) throws Exception;
+	public String uploadDocumento(WebFileItem webFileItem, Long idDocRestClient, Activo activo, String matricula, Usuario usuarioLogado, ComunicacionGencat comunicacionGencat) throws Exception;
 	
 	/**
 	 * Devuelve las notificaciones de la comunicación de un activo.
@@ -184,6 +184,8 @@ public interface GencatApi {
 	 * @param ActivoTramite
 	 * */
 	public void historificarTramiteGENCAT(ActivoTramite activoTramite);
+
+	public Boolean deleteAdjunto(DtoAdjunto dtoAdjunto);
 	
 	/**
 	 * Cambiar el estado de comunicacion de GENCAT a comunicado cuando se completa la tarea de Comunicacion GENCAT

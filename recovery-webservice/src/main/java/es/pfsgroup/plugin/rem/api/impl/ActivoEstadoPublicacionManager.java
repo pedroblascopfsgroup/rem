@@ -148,6 +148,8 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		dto.setDeshabilitarCheckOcultarAlquiler(this.deshabilitarCheckOcultarAlquiler(idActivo));
 		dto.setDeshabilitarCheckPublicarSinPrecioVenta(this.deshabilitarCheckPublicarSinPrecioVenta(idActivo));
 		dto.setDeshabilitarCheckPublicarSinPrecioAlquiler(this.deshabilitarCheckPublicarSinPrecioAlquiler(idActivo));
+		dto.setDeshabilitarCheckNoMostrarPrecioVenta(this.deshabilitarCheckNoMostrarPrecioVenta(idActivo));
+		dto.setDeshabilitarCheckNoMostrarPrecioAlquiler(this.deshabilitarCheckNoMostrarPrecioAlquiler(idActivo));
 
     	return dto;
 	}
@@ -212,7 +214,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	private Boolean deshabilitarCheckPublicarSinPrecioVenta(Long idActivo) {
 		Boolean resultado = false;
 		try{
-			resultado = isPublicadoVenta(idActivo) || isOcultoVentaVendidoOSalidaSinperimetro(idActivo) || isVendido(idActivo);
+			resultado = !isPublicable(idActivo) || isPublicadoVenta(idActivo) || isOcultoVentaVendidoOSalidaSinperimetro(idActivo) || isVendido(idActivo);
 		}catch(Exception e){
 			logger.error("Error en el método deshabilitarCheckPublicarSinPrecioVenta" , e);
 		}
@@ -231,9 +233,43 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	private Boolean deshabilitarCheckPublicarSinPrecioAlquiler(Long idActivo) {
 		Boolean resultado = false;
 		try{
-			resultado = isPublicadoAlquiler(idActivo) || isOcultoAlquilerVendidoOSalidaSinperimetro(idActivo) || isVendido(idActivo);
+			resultado = !isPublicable(idActivo) || isPublicadoAlquiler(idActivo) || isOcultoAlquilerVendidoOSalidaSinperimetro(idActivo) || isVendido(idActivo);
 		}catch(Exception e){
 			logger.error("Error en el método deshabilitarCheckPublicarSinPrecioAlquiler" , e);
+		}
+		
+		return resultado;
+	}
+	
+	/**
+	 * Este método calcula si el check de no mostrar precio venta se ha de deshabilitar en base a unas reglas.
+	 *
+	 * @param idActivo: ID del activo del que obtener los datos para verificar las reglas.
+	 * @return Devuelve True si el check no mostrar precio para la venta debe estar deshabilitado.
+	 */
+	private Boolean deshabilitarCheckNoMostrarPrecioVenta(Long idActivo) {
+		Boolean resultado = false;
+		try {
+			resultado = !isPublicable(idActivo);
+		} catch(Exception e) {
+			logger.error("Error en el método deshabilitarCheckNoMostrarPrecioVenta" , e);
+		}
+		
+		return resultado;
+	}
+	
+	/**
+	 * Este método calcula si el check de no mostrar precio alquiler se ha de deshabilitar en base a unas reglas.
+	 *
+	 * @param idActivo: ID del activo del que obtener los datos para verificar las reglas.
+	 * @return Devuelve True si el check no mostrar precio para el alquiler debe estar deshabilitado.
+	 */
+	private Boolean deshabilitarCheckNoMostrarPrecioAlquiler(Long idActivo) {
+		Boolean resultado = false;
+		try {
+			resultado = !isPublicable(idActivo);
+		} catch(Exception e) {
+			logger.error("Error en el método deshabilitarCheckNoMostrarPrecioAlquiler" , e);
 		}
 		
 		return resultado;
@@ -247,12 +283,33 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	 */
 	private Boolean deshabilitarCheckOcultarVenta(Long idActivo) {
 		Boolean resultado = false;
-		try{
-			resultado = !isPublicable(idActivo) || !isComercializable(idActivo) || isVendido(idActivo) || (!isPublicadoVenta(idActivo) && !isOcultoVenta(idActivo)) || isOcultoAutomaticoVenta(idActivo) || isFueraDePerimetro(idActivo);
-		}catch(Exception e){
-			logger.error("Error en el método deshabilitarCheckOcultarVenta",e);
+		try {
+			resultado = !isPublicable(idActivo) || !isComercializable(idActivo) || isVendido(idActivo)
+					|| (!isPublicadoVenta(idActivo) && !isOcultoVenta(idActivo)) || isOcultoAutomaticoVenta(idActivo)
+					|| isFueraDePerimetro(idActivo);
+		} catch (Exception e) {
+			logger.error("Error en el método deshabilitarCheckOcultarVenta", e);
 		}
-		
+
+		return resultado;
+	}
+	
+	/**
+	 * Este método calcula si el check de ocultar activo alquiler se ha de deshabilitar en base a unas reglas.
+	 *
+	 * @param idActivo: ID del activo del que obtener los datos para verificar las reglas.
+	 * @return Devuelve True si el check de ocultar activo para el alquiler debe estar deshabilitado.
+	 */
+	private Boolean deshabilitarCheckOcultarAlquiler(Long idActivo) {
+		Boolean resultado = false;
+		try {
+			resultado = !isPublicable(idActivo) || !isComercializable(idActivo) || isVendido(idActivo)
+					|| (!isPublicadoAlquiler(idActivo) && !isOcultoAlquiler(idActivo)) || isOcultoAutomaticoAlquiler(idActivo)
+					|| isFueraDePerimetro(idActivo);
+		} catch (Exception e) {
+			logger.error("Error en el método deshabilitarCheckOcultarAlquiler", e);
+		}
+
 		return resultado;
 	}
 
@@ -265,7 +322,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	private Boolean deshabilitarCheckPublicarAlquiler(Long idActivo) {
 		Boolean resultado = false;
 		try{
-			resultado =!isPublicable(idActivo) || !isComercializable(idActivo) || isVendido(idActivo) || isReservado(idActivo) || isPublicadoAlquiler(idActivo) || isOcultoAlquiler(idActivo) ||
+			resultado = !isPublicable(idActivo) || !isComercializable(idActivo) || isVendido(idActivo) || isReservado(idActivo) || isPublicadoAlquiler(idActivo) || isOcultoAlquiler(idActivo) ||
 			!isAdecuacionAlquilerNotNull(idActivo) || isFueraDePerimetro(idActivo) || (!isInformeAprobado(idActivo) && (!tienePrecioRenta(idActivo) && !isPublicarSinPrecioAlquilerActivado(idActivo)));
 		}catch(Exception e){
 			logger.error("Error en el método deshabilitarCheckPublicarAlquiler",e);
@@ -274,22 +331,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		return resultado;
 	}
 
-	/**
-	 * Este método calcula si el check de ocultar activo alquiler se ha de deshabilitar en base a unas reglas.
-	 *
-	 * @param idActivo: ID del activo del que obtener los datos para verificar las reglas.
-	 * @return Devuelve True si el check de ocultar activo para el alquiler debe estar deshabilitado.
-	 */
-	private Boolean deshabilitarCheckOcultarAlquiler(Long idActivo) {
-		Boolean resultado = false;
-		try{
-			resultado =!isPublicable(idActivo) || !isComercializable(idActivo) || isVendido(idActivo) || !isPublicadoAlquiler(idActivo) || isOcultoAutomaticoAlquiler(idActivo) || isFueraDePerimetro(idActivo);
-		}catch(Exception e){
-			logger.error("Error en el método deshabilitarCheckOcultarAlquiler" ,e);
-		}
-		
-		return resultado;
-	}
+	
 
 	// Comprobación mínima.
 	private Boolean isAdecuacionAlquilerNotNull(Long idActivo) {
@@ -308,7 +350,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		Filter filter = genericDao.createFilter(FilterType.EQUALS, "idActivo", idActivo);
 		VCondicionantesDisponibilidad vcd = genericDao.get(VCondicionantesDisponibilidad.class, filter);
 
-		return !Checks.esNulo(vcd) && !vcd.getSinInformeAprobado();
+		return !Checks.esNulo(vcd) && !vcd.getSinInformeAprobadoREM();
 	}
 
 	// Comprobación mínima.
@@ -323,9 +365,13 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 
 	// Comprobación mínima.
 	private Boolean isPublicable(Long idActivo) {
-    	PerimetroActivo perimetro = perimetroDao.getPerimetroActivoByIdActivo(idActivo);
+		PerimetroActivo perimetro = perimetroDao.getPerimetroActivoByIdActivo(idActivo);
 
-    	return !Checks.esNulo(perimetro) && !Checks.esNulo(perimetro.getAplicaPublicar());
+		if(!Checks.esNulo(perimetro) && !Checks.esNulo(perimetro.getAplicaPublicar())) {
+			return perimetro.getAplicaPublicar();
+		}
+
+		return true;
 	}
 
 	// Comprobación mínima.
@@ -497,6 +543,8 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	public Boolean setDatosPublicacionAgrupacion(Long id, DtoDatosPublicacionAgrupacion dto) throws JsonViewerException{
 		ActivoAgrupacion agrupacion = activoAgrupacionApi.get(id);
 		List<ActivoAgrupacionActivo> activos = agrupacion.getActivos();
+		List<ActivoPublicacion> activosPublicacion = new ArrayList<ActivoPublicacion>();
+		ActivoPublicacion activoPublicacion;
 
 		for(ActivoAgrupacionActivo aga : activos) {
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", aga.getActivo().getId());
@@ -512,11 +560,12 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 			}
 
 			// Registrar los cambios en la publicación.
-			ActivoPublicacion activoPublicacion = activoPublicacionDao.getActivoPublicacionPorIdActivo(aga.getActivo().getId());
+			activoPublicacion = activoPublicacionDao.getActivoPublicacionPorIdActivo(aga.getActivo().getId());
 			if(this.registrarHistoricoPublicacion(activoPublicacion, dto)) {
-				this.actualizarDatosEstadoActualPublicacion(dto, activoPublicacion);
+				activosPublicacion.add(activoPublicacion);
 			}
 		}
+		this.actualizarDatosEstadoActualPublicaciones(dto, activosPublicacion);
 
 		activoDao.publicarAgrupacionSinHistorico(id, genericAdapter.getUsuarioLogado().getUsername(), dto.getEleccionUsuarioTipoPublicacionAlquiler(),true);
 		return true;
@@ -535,13 +584,14 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 				dtoCondicionateDisponibilidad.setOtro(dto.getOtro());
 				activoApi.saveCondicionantesDisponibilidad(aga.getActivo().getId(), dtoCondicionateDisponibilidad);
 			}
-
+						
 			// Registrar los cambios en la publicación.
 			ActivoPublicacion activoPublicacion = activoPublicacionDao.getActivoPublicacionPorIdActivo(aga.getActivo().getId());
 			if(this.registrarHistoricoPublicacion(activoPublicacion, dto)) {
 				this.actualizarDatosEstadoActualPublicacion(dto, activoPublicacion);
 			}
 		}
+		
 		return true;
 	}
 
@@ -563,6 +613,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	 * @param activoPublicacion : entidad del estado actual de publicación en la que persistir los datos nuevos.
 	 * @return Devuelve True si el proceso ha sido satisfactorio, False si no lo ha sido.
 	 */
+	@Transactional
 	private Boolean actualizarDatosEstadoActualPublicacion(DtoDatosPublicacionActivo dto, ActivoPublicacion activoPublicacion) {
 		try {
 			if(!Checks.esNulo(dto.getMotivoOcultacionVentaCodigo())) {
@@ -597,12 +648,14 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 
 
 			if(!Checks.esNulo(dto.getMotivoOcultacionVentaCodigo()) || !Checks.esNulo(dto.getMotivoOcultacionManualVenta()) || !Checks.esNulo(dto.getPublicarVenta()) ||
-					!Checks.esNulo(dto.getOcultarVenta()) || (!Checks.esNulo(dto.getPublicarSinPrecioVenta()) && ("14").equals(activoPublicacion.getMotivoOcultacionVenta().getCodigo())) || !Checks.esNulo(dto.getNoMostrarPrecioVenta())) {
+					!Checks.esNulo(dto.getOcultarVenta()) || (!Checks.esNulo(dto.getPublicarSinPrecioVenta()) && !Checks.esNulo(activoPublicacion.getMotivoOcultacionVenta()) 
+							&& ("14").equals(activoPublicacion.getMotivoOcultacionVenta().getCodigo())) || !Checks.esNulo(dto.getNoMostrarPrecioVenta())) {
 				activoPublicacion.setFechaInicioVenta(new Date());
 			}
 
 			if(!Checks.esNulo(dto.getMotivoOcultacionAlquilerCodigo()) || !Checks.esNulo(dto.getMotivoOcultacionManualAlquiler()) || !Checks.esNulo(dto.getPublicarAlquiler()) ||
-					!Checks.esNulo(dto.getOcultarAlquiler()) || (!Checks.esNulo(dto.getPublicarSinPrecioAlquiler()) && ("14").equals(activoPublicacion.getMotivoOcultacionAlquiler().getCodigo())) || !Checks.esNulo(dto.getNoMostrarPrecioAlquiler())) {
+					!Checks.esNulo(dto.getOcultarAlquiler()) || (!Checks.esNulo(dto.getPublicarSinPrecioAlquiler()) && !Checks.esNulo(activoPublicacion.getMotivoOcultacionVenta()) 
+							&& ("14").equals(activoPublicacion.getMotivoOcultacionAlquiler().getCodigo())) || !Checks.esNulo(dto.getNoMostrarPrecioAlquiler())) {
 				activoPublicacion.setFechaInicioAlquiler(new Date());
 			}
 			
@@ -610,6 +663,66 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 
 			activoPublicacionDao.save(activoPublicacion);
 
+		} catch (IllegalAccessException e) {
+			logger.error("Error al actualizar el estado actual de publicacion, error: ", e);
+			return false;
+		} catch (InvocationTargetException e) {
+			logger.error("Error al actualizar el estado actual de publicacion, error: ", e);
+			return false;
+		}
+
+		return true;
+	}
+	
+	@Transactional
+	private Boolean actualizarDatosEstadoActualPublicaciones(DtoDatosPublicacionActivo dto, List<ActivoPublicacion> activosPublicacion) {
+		try {
+			for(ActivoPublicacion activoPublicacion : activosPublicacion) {
+				if(!Checks.esNulo(dto.getMotivoOcultacionVentaCodigo())) {
+					beanUtilNotNull.copyProperty(activoPublicacion, "motivoOcultacionVenta", utilDiccionarioApi.dameValorDiccionarioByCod(DDMotivosOcultacion.class,
+							dto.getMotivoOcultacionVentaCodigo()));
+				}
+				if(!Checks.esNulo(dto.getMotivoOcultacionAlquilerCodigo())) {
+					beanUtilNotNull.copyProperty(activoPublicacion, "motivoOcultacionAlquiler", utilDiccionarioApi.dameValorDiccionarioByCod(DDMotivosOcultacion.class,
+							dto.getMotivoOcultacionAlquilerCodigo()));
+				}
+				beanUtilNotNull.copyProperty(activoPublicacion, "motivoOcultacionManualVenta", dto.getMotivoOcultacionManualVenta());
+				beanUtilNotNull.copyProperty(activoPublicacion, "motivoOcultacionManualAlquiler", dto.getMotivoOcultacionManualAlquiler());
+				beanUtilNotNull.copyProperty(activoPublicacion, "checkPublicarVenta", dto.getPublicarVenta());
+				beanUtilNotNull.copyProperty(activoPublicacion, "checkOcultarVenta", dto.getOcultarVenta());
+				if(!Checks.esNulo(dto.getOcultarVenta()) && !dto.getOcultarVenta()) {
+					// Si el check de ocultar viene implícitamente a false vaciar motivos de ocultación.
+					activoPublicacion.setMotivoOcultacionVenta(null);
+					activoPublicacion.setMotivoOcultacionManualVenta(null);
+				}
+				beanUtilNotNull.copyProperty(activoPublicacion, "checkOcultarPrecioVenta", dto.getNoMostrarPrecioVenta());
+				beanUtilNotNull.copyProperty(activoPublicacion, "checkSinPrecioVenta", dto.getPublicarSinPrecioVenta());
+				beanUtilNotNull.copyProperty(activoPublicacion, "checkPublicarAlquiler", dto.getPublicarAlquiler());
+				beanUtilNotNull.copyProperty(activoPublicacion, "checkOcultarAlquiler", dto.getOcultarAlquiler());
+				if(!Checks.esNulo(dto.getOcultarAlquiler()) && !dto.getOcultarAlquiler()) {
+					// Si el check de ocultar viene implícitamente a false vaciar motivos de ocultación.
+					activoPublicacion.setMotivoOcultacionAlquiler(null);
+					activoPublicacion.setMotivoOcultacionManualAlquiler(null);
+				}
+				beanUtilNotNull.copyProperty(activoPublicacion, "checkOcultarPrecioAlquiler", dto.getNoMostrarPrecioAlquiler());
+				beanUtilNotNull.copyProperty(activoPublicacion, "checkSinPrecioAlquiler", dto.getPublicarSinPrecioAlquiler());
+				activoPublicacion.getAuditoria().setUsuarioCrear(genericAdapter.getUsuarioLogado().getUsername());
+	
+	
+				if(!Checks.esNulo(dto.getMotivoOcultacionVentaCodigo()) || !Checks.esNulo(dto.getMotivoOcultacionManualVenta()) || !Checks.esNulo(dto.getPublicarVenta()) ||
+						!Checks.esNulo(dto.getOcultarVenta()) || (!Checks.esNulo(dto.getPublicarSinPrecioVenta()) && ("14").equals(activoPublicacion.getMotivoOcultacionVenta().getCodigo())) || !Checks.esNulo(dto.getNoMostrarPrecioVenta())) {
+					activoPublicacion.setFechaInicioVenta(new Date());
+				}
+	
+				if(!Checks.esNulo(dto.getMotivoOcultacionAlquilerCodigo()) || !Checks.esNulo(dto.getMotivoOcultacionManualAlquiler()) || !Checks.esNulo(dto.getPublicarAlquiler()) ||
+						!Checks.esNulo(dto.getOcultarAlquiler()) || (!Checks.esNulo(dto.getPublicarSinPrecioAlquiler()) && ("14").equals(activoPublicacion.getMotivoOcultacionAlquiler().getCodigo())) || !Checks.esNulo(dto.getNoMostrarPrecioAlquiler())) {
+					activoPublicacion.setFechaInicioAlquiler(new Date());
+				}
+				
+				activoPublicacion.setMotivoPublicacion(dto.getMotivoPublicacion());
+	
+				activoPublicacionDao.save(activoPublicacion);
+			}
 		} catch (IllegalAccessException e) {
 			logger.error("Error al actualizar el estado actual de publicacion, error: ", e);
 			return false;
@@ -639,13 +752,13 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 			
 			if(Arrays.asList(DDTipoComercializacion.CODIGOS_VENTA).contains(activoPublicacion.getTipoComercializacion().getCodigo()) &&
 					(!Checks.esNulo(dto.getMotivoOcultacionVentaCodigo()) || !Checks.esNulo(dto.getMotivoOcultacionManualVenta()) || !Checks.esNulo(dto.getPublicarVenta()) ||
-					!Checks.esNulo(dto.getOcultarVenta()) || (!Checks.esNulo(dto.getPublicarSinPrecioVenta()) && ("14").equals(activoPublicacion.getMotivoOcultacionVenta().getCodigo())) || !Checks.esNulo(dto.getNoMostrarPrecioVenta()))) {
+					!Checks.esNulo(dto.getOcultarVenta()) || (!Checks.esNulo(dto.getPublicarSinPrecioVenta()) && !Checks.esNulo(activoPublicacion.getMotivoOcultacionVenta()) && DDMotivosOcultacion.CODIGO_SIN_PRECIO.equals(activoPublicacion.getMotivoOcultacionVenta().getCodigo())) || !Checks.esNulo(dto.getNoMostrarPrecioVenta()))) {
 				activoPublicacionHistorico.setFechaFinVenta(new Date());
 			}
 
 			if(Arrays.asList(DDTipoComercializacion.CODIGOS_ALQUILER).contains(activoPublicacion.getTipoComercializacion().getCodigo()) &&
 					(!Checks.esNulo(dto.getMotivoOcultacionAlquilerCodigo()) || !Checks.esNulo(dto.getMotivoOcultacionManualAlquiler()) || !Checks.esNulo(dto.getPublicarAlquiler()) ||
-					!Checks.esNulo(dto.getOcultarAlquiler()) || (!Checks.esNulo(dto.getPublicarSinPrecioAlquiler()) && ("14").equals(activoPublicacion.getMotivoOcultacionAlquiler().getCodigo())) || !Checks.esNulo(dto.getNoMostrarPrecioAlquiler()))) {
+					!Checks.esNulo(dto.getOcultarAlquiler()) || (!Checks.esNulo(dto.getPublicarSinPrecioAlquiler()) && !Checks.esNulo(activoPublicacion.getMotivoOcultacionAlquiler()) && DDMotivosOcultacion.CODIGO_SIN_PRECIO.equals(activoPublicacion.getMotivoOcultacionAlquiler().getCodigo())) || !Checks.esNulo(dto.getNoMostrarPrecioAlquiler()))) {
 				activoPublicacion.setFechaInicioAlquiler(new Date());
 			}
 			

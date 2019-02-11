@@ -1491,13 +1491,17 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     },
     
     onClickAbrirExpedienteComercial: function(grid, rowIndex, colIndex) {
-    	
     	var me = this,
     	record = grid.getStore().getAt(rowIndex);
     	me.getView().fireEvent('abrirDetalleExpediente', record);
     	
     },
-    
+    ondblClickAbreExpediente: function(grid, record) {
+		var me = this;
+		if (record.data.idExpediente != undefined && record.data.numExpediente != undefined)
+			me.getView().fireEvent('abrirDetalleExpediente', record)
+		
+	},
     onEnlaceTrabajoClick: function(grid, rowIndex, colIndex) {
     	
     	var me = this,
@@ -3516,7 +3520,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 					}
 				}
 				
-				if(activosPropagables.length > 0 && tabData.models[0].name != "datospublicacion") {
+				if(activosPropagables.length > 0) {
 					tabPropagableData = me.createFormPropagableData(form, tabData);
 					if (!Ext.isEmpty(tabPropagableData)) {
 						// sacamos el activo actual del listado

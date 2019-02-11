@@ -58,8 +58,9 @@ public class UpdaterServiceGencatVentaTramiteProcesoAdecuacion implements Update
 					}
 					
 				} else if(IMPORTE.equals(valor.getNombre())) {
-					
-					adecuacionGencat.setImporteReforma(Double.parseDouble(valor.getValor()));
+					if(!Checks.esNulo(valor.getValor())) {
+						adecuacionGencat.setImporteReforma(Double.parseDouble(valor.getValor()));
+					}
 									
 				} else if(OBSERVACIONES.equals(valor.getNombre())) {
 					//TODO El funcional no indica donde se guarda el campo.

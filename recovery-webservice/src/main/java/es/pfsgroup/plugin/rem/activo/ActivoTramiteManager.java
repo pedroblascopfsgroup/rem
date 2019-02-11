@@ -810,7 +810,7 @@ public class ActivoTramiteManager implements ActivoTramiteApi{
 	public Boolean tieneTramiteGENCATVigenteByIdActivo(Long idActivo){
 		
 		Boolean tieneTramiteGENCAT = false;
-		Boolean expBloqueado = true;
+		Boolean exosteGencatActivo = false;
 		
 		
 		if(!Checks.esNulo(idActivo)){
@@ -826,22 +826,26 @@ public class ActivoTramiteManager implements ActivoTramiteApi{
 						if(!Checks.esNulo(activoTramite.getEstadoTramite()) && DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CERRADO.equals(activoTramite.getEstadoTramite().getCodigo())
 							|| !Checks.esNulo(activoTramite.getEstadoTramite()) && DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CANCELADO.equals(activoTramite.getEstadoTramite().getCodigo())
 						){
-							expBloqueado = true;
+							exosteGencatActivo = false;
 						}else{
-							expBloqueado = false;
+							exosteGencatActivo = true;
 							break;
 						}
 					}
 				}
-				if(expBloqueado) {
-					tieneTramiteGENCAT = false;
+				if(exosteGencatActivo) {
+					tieneTramiteGENCAT = true;
 				}else {
 					if(!Checks.esNulo(comunicacionGencat)) {
-						if(!Checks.esNulo(comunicacionGencat.getSancion())&& DDSancionGencat.COD_EJERCE.equalsIgnoreCase(comunicacionGencat.getSancion().getCodigo())) {
+						if(Checks.esNulo(comunicacionGencat.getSancion())){
 							tieneTramiteGENCAT = true;
-						// Si la comunicacion tiene la sancion informada y está en estado NO EJERCE, se desbloquean las tareas del trámite comercial de venta
-						} else if(!Checks.esNulo(comunicacionGencat.getSancion())&& DDSancionGencat.COD_NO_EJERCE.equalsIgnoreCase(comunicacionGencat.getSancion().getCodigo())) {
-							tieneTramiteGENCAT = false;
+						}else{
+							if(!Checks.esNulo(comunicacionGencat.getSancion())&& DDSancionGencat.COD_EJERCE.equalsIgnoreCase(comunicacionGencat.getSancion().getCodigo())) {
+								tieneTramiteGENCAT = true;
+							// Si la comunicacion tiene la sancion informada y está en estado NO EJERCE, se desbloquean las tareas del trámite comercial de venta
+							} else if(!Checks.esNulo(comunicacionGencat.getSancion())&& DDSancionGencat.COD_NO_EJERCE.equalsIgnoreCase(comunicacionGencat.getSancion().getCodigo())) {
+								tieneTramiteGENCAT = false;
+							}	
 						}
 					}			
 				}

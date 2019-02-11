@@ -22,8 +22,6 @@ import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalidad;
-import es.pfsgroup.plugin.rem.rest.api.RestApi;
-import es.pfsgroup.plugin.rem.rest.api.RestApi.ENTIDADES;
 
 @Component
 public class UpdaterServiceActuacionTecnicaValidacionActuacion implements UpdaterService {
@@ -38,8 +36,6 @@ public class UpdaterServiceActuacionTecnicaValidacionActuacion implements Update
 	@Autowired
 	private GenericABMDao genericDao;
 	
-	@Autowired
-	private RestApi restApi;
 	
 	@Transactional
 	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {
@@ -80,7 +76,6 @@ public class UpdaterServiceActuacionTecnicaValidacionActuacion implements Update
 						situacionPosesoria.setFechaAccesoTapiado(trabajo.getFechaFin());
 						situacionPosesoria.setAccesoTapiado(1);
 						genericDao.save(ActivoSituacionPosesoria.class, situacionPosesoria);
-						restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO, activo);
 					}
 					
 					if(DDSubtipoTrabajo.CODIGO_AT_COLOCACION_PUERTAS.equals(trabajo.getSubtipoTrabajo().getCodigo())){
@@ -89,7 +84,6 @@ public class UpdaterServiceActuacionTecnicaValidacionActuacion implements Update
 						situacionPosesoria.setFechaAccesoAntiocupa(trabajo.getFechaFin());
 						situacionPosesoria.setAccesoAntiocupa(1);
 						genericDao.save(ActivoSituacionPosesoria.class, situacionPosesoria);
-						restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO, activo);
 					}
 					
 					Filter filter = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoTrabajo.ESTADO_VALIDADO);

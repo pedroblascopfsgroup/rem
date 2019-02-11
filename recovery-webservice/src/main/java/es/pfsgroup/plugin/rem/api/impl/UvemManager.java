@@ -1578,7 +1578,7 @@ public class UvemManager implements UvemManagerApi {
 		} catch (WIException wie) {
 			errorDesc = wie.getMessage();
 			if(errorDesc == null){
-				errorDesc = "Error desconocido"
+				errorDesc = "Error desconocido";
 			}
 			
 			// Si el error que devuelve UVEM es que la oferta ya está anulada en Bankia, no devolvemos el throw para poder avanzar

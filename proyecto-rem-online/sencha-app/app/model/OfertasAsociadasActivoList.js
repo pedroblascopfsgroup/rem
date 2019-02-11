@@ -6,7 +6,9 @@ Ext.define('HreRem.view.activos.detalle.OfertasAsociadasActivoList', {
     bind: {
         store: '{storeOfertasAsociadasActivo}'
     },
-        
+	listeners : {
+		rowdblclick: 'ondblClickAbreExpediente'
+	},    
     initComponent: function () {
         
         var me = this;

@@ -16,11 +16,10 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
     		var me = this;
     		me.evaluarEdicion();
     	},
-    	rowclick: 'onOfertaListClick'
+    	rowclick: 'onOfertaListClick'    		
     },
 
     initComponent: function () {
-
         var me = this;
 
         me.columns= [
@@ -187,7 +186,8 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 
             this.editOnSelect = allowEdit;
             return allowEdit;
-        });  
+        }); 
+      
 
         
         me.dockedItems = [

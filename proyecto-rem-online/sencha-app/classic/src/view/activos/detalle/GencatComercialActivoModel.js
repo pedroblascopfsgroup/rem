@@ -23,8 +23,7 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoModel', {
     		var soloLectura = true;
     		var estadoComunicacion= get('gencat.estadoComunicacion');
     		var estadoSancion= get('gencat.sancion');
-    		var comunicadoAnulacionGencat = get('gencat.comunicadoAnulacionAGencat');
-
+    		var comunicadoAnulacionGencat = get('gencat.comunicadoAnulacionAGencat2');
     		//Si ya se ha comunicado la anulación con el checkbox, no debe dejar modificarlo.
     		if(!comunicadoAnulacionGencat){	
     			//Si estadoComunicacion es COMUNICADO / RECHAZADO / ANULADO o bien SANCIONADO + estadoSancion NO EJERCE, y además el usuario tiene perfil HAYAGESTFORMADM / HAYASUPER

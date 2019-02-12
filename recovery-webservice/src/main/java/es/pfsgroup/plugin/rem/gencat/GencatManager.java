@@ -1022,8 +1022,14 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 								&& DDEstadoComunicacionGencat.COD_ANULADO.equals(comGencat.getEstadoComunicacion().getCodigo())) {
 									lanzarTramiteGENCAT(tramite, oferta, expComercial);
 							}								
-						}else {								
-							lanzarTramiteGENCAT(tramite, oferta, expComercial);
+						}else {
+							if(!Checks.esNulo(comGencat.getSancion())) {
+								if(!DDSancionGencat.COD_EJERCE.equals(comGencat.getSancion().getCodigo())) {
+									lanzarTramiteGENCAT(tramite, oferta, expComercial);
+								}
+							}else {
+								lanzarTramiteGENCAT(tramite, oferta, expComercial);
+							}
 						}
 					}else {
 						if(!Checks.esNulo(comGencat.getEstadoComunicacion())

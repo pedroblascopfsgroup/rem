@@ -26,7 +26,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 					}
 				}
 			}
-    		return true;
+    		return true; 
     	 },
     	 
     	 expedienteEstaAprobado: function(get){
@@ -218,9 +218,17 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 		 getMotivoAnulacionOrRechazo: function(get){
 				var tipoExpedienteCodigo = get('expediente.tipoExpedienteCodigo');
 				if (tipoExpedienteCodigo == CONST.TIPOS_EXPEDIENTE_COMERCIAL["VENTA"]) {
-		     		return get('expediente.codMotivoAnulacion');
-		     	} else {
-		     		return get('expediente.codMotivoRechazoExp');
+		     		return get('expediente.descMotivoAnulacion');
+		     	} else if (tipoExpedienteCodigo == CONST.TIPOS_EXPEDIENTE_COMERCIAL["ALQUILER"]) {
+		     		if (get('expediente.descMotivoAnulacion')){
+		     			return get('expediente.descMotivoAnulacion');
+		     		} else if (get('expediente.descMotivoRechazoExp')) {
+		     			return get('expediente.descMotivoRechazoExp');
+		     		} else if (get('expediente.descMotivoAnulacionAlq')){
+		     			return get('expediente.descMotivoAnulacionAlq');
+		     		} else {
+		     			return null;
+		     		}
 		     	}
 		 },
 		 
@@ -1027,5 +1035,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 		        extraParams: {idExpediente: '{expediente.id}'}
 	    	}
 		}
+		
+		
     }
 });

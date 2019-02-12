@@ -1,16 +1,20 @@
 --/*
 --##########################################
---## AUTOR=DAP
---## FECHA_CREACION=20180418
+--## AUTOR=Pablo Meseguer
+--## FECHA_CREACION=20190205
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=2.0.16
---## INCIDENCIA_LINK=REMVIP-536
+--## VERSION_ARTEFACTO=bau_jaus
+--## INCIDENCIA_LINK=REMVIP-3283
 --## PRODUCTO=NO
 --## Finalidad: Interfax Stock REM - UVEM. Nuevas columnas. Anula DDL_99900087
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##	    0.2 DAP- Interfax Stock REM - UVEM. Nuevas columnas.
+--##	    0.3 Sergio Beleña - correción ACT_EN_TRAMITE
+--##		0.4 Pablo Meseguer - Dejamos de actualizar los campos de UVEM CASUTR, CASUTG y CASUTC
+--##		0.5 Pablo Meseguer - actualizamos el tipo de activo junto con el subtipo a traves del COTSIN
 --##########################################
 --*/
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
@@ -33,12 +37,19 @@ V_SQL2 VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de u
 V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.
 V_NOT_UPDATE VARCHAR2(2000 CHAR) := '';
 
-  --[1]TABLA BIE_BIEN
+  --[1]TABLA ACT_ACTIVO
+					   --ACT_EN_TRAMITE
+                       --ACT_VPO
+                       --ACT_LLAVES_NECESARIAS
+                       --ACT_LLAVES_FECHA_RECEP
+                       --ACT_NUM_INMOVILIZADO_BNK
+                       --DD_ENA_ID
+  --[2]TABLA BIE_BIEN
                       --BIE_VIVIENDA_HABITUAL
                       --BIE_PORCT_IMP_COMPRA
-  --[2]TABLA BIE_DATOS_REGISTRALES
+  --[3]TABLA BIE_DATOS_REGISTRALES
                       --BIE_DREG_LIBRO, BIE_DREG_TOMO Y BIE_DREG_FOLIO
-  --[3]TABLA BIE_ADJ_ADJUDICACION
+  --[4]TABLA BIE_ADJ_ADJUDICACION
                       --BIE_ADJ_IMPORTE_ADJUDICACION
                       --BIE_ADJ_LANZAMIENTO_NECES
                       --BIE_ADJ_F_SEN_POSESION
@@ -47,12 +58,6 @@ V_NOT_UPDATE VARCHAR2(2000 CHAR) := '';
                       --BIE_ADJ_FSOLMORATORIA
                       --BIE_ADJ_F_RES_MORATORIA
                       --BIE_ADJ_F_DECRETO_FIRME
-  --[4]TABLA ACT_ACTIVO
-                       --ACT_VPO
-                       --ACT_LLAVES_NECESARIAS
-                       --ACT_LLAVES_FECHA_RECEP
-                       --ACT_NUM_INMOVILIZADO_BNK
-                       --DD_ENA_ID
   --[5]TABLA ACT_AJD_ADJJUDICIAL
                       --AJD_NUM_AUTO
                       --AJD_PROCURADOR
@@ -141,10 +146,286 @@ BEGIN
   DBMS_OUTPUT.PUT_LINE('[INFO] INICIO DEL PROCESO DE ACTUALIZACIÓN DE INFORMACIÓN DE ACTIVOS.');
   DBMS_OUTPUT.PUT_LINE('---------------------------------------------------------------------');
 
+------------------------
+---- [1] ACT_ACTIVO ----
+------------------------
+--[1.1] ACT_ACTIVO -> ACTUALIZAR COESEN
+     V_SQL := '
+		  MERGE INTO '||V_ESQUEMA||'.ACT_ACTIVO ACT 
+			USING (
+				  SELECT DISTINCT
+				  DECODE(ESA.COESEN,''01'', 1, ''02'', 0, 0) AS COESEN, AUX.APR_ID, AUX.ACT_NUMERO_UVEM, AUX.REM
+				  FROM '||V_ESQUEMA||'.APR_AUX_STOCK_UVEM_TO_REM AUX
+                  INNER JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_UVEM = AUX.ACT_NUMERO_UVEM
+                  INNER JOIN '||V_ESQUEMA||'.ACT_ESA_ESTADOS_ACT_UVEM ESA ON ESA.ACT_ID = ACT.ACT_ID
+				  WHERE REM = 1
+			) TEMP
+			ON (ACT.ACT_NUM_ACTIVO_UVEM = TEMP.ACT_NUMERO_UVEM)
+			WHEN MATCHED THEN UPDATE SET
+			ACT.ACT_EN_TRAMITE= TEMP.COESEN,
+			ACT.USUARIOMODIFICAR = '''||V_USUARIO||''',
+			ACT.FECHAMODIFICAR = SYSDATE
+			WHERE TEMP.COESEN = 0
+			'
+			;
+		
+		EXECUTE IMMEDIATE V_SQL;
+		V_NUM_TABLAS := SQL%ROWCOUNT;
+		
+--[1.2]--ACT_VPO
+          V_SQL := '
+          MERGE INTO '||V_ESQUEMA||'.ACT_ACTIVO ACT USING
+          (
+           WITH TEMP AS (
+              SELECT DISTINCT
+              DECODE(APR.REGIMEN_PROTECCION,''01'',1,''02'',1,''03'',1,''04'',1,NULL) AS REGIMEN_PROTECCION, APR_ID, ACT_NUMERO_UVEM, REM
+              FROM '||V_ESQUEMA||'.APR_AUX_STOCK_UVEM_TO_REM APR
+            )
+            SELECT TEMP.*, ACT.ACT_VPO, ACT.ACT_ID
+            FROM TEMP
+            INNER JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT
+              ON ACT.ACT_NUM_ACTIVO_UVEM = TEMP.ACT_NUMERO_UVEM
+            INNER JOIN '||V_ESQUEMA||'.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = ACT.DD_CRA_ID
+            WHERE
+              TEMP.REM = 1
+              AND CRA.DD_CRA_CODIGO = ''03''
+               AND
+             (ACT.ACT_VPO IS NULL
+              AND
+              TEMP.REGIMEN_PROTECCION IS NOT NULL)
+               and act.borrado = 0
+          ) TMP
+          ON (TMP.ACT_ID = ACT.ACT_ID)
+          WHEN MATCHED THEN UPDATE SET
+          ACT.ACT_VPO = TMP.REGIMEN_PROTECCION,
+          ACT.USUARIOMODIFICAR = '''||V_USUARIO||''',
+          ACT.FECHAMODIFICAR = SYSDATE
+          '
+          ;
+          EXECUTE IMMEDIATE V_SQL;
+          V_NUM_TABLAS := V_NUM_TABLAS + SQL%ROWCOUNT;
+
+--[1.3]--ACT_LLAVES_NECESARIAS
+          V_SQL := '
+          MERGE INTO '||V_ESQUEMA||'.ACT_ACTIVO ACT USING
+          (
+           WITH TEMP AS (
+              SELECT DISTINCT
+              DECODE(APR.LLAVES_NECESARIAS,''N'',0,''S'',1,NULL) AS LLAVES_NECESARIAS, APR_ID, ACT_NUMERO_UVEM, REM
+              FROM '||V_ESQUEMA||'.APR_AUX_STOCK_UVEM_TO_REM APR
+            )
+            SELECT TEMP.*, ACT.ACT_LLAVES_NECESARIAS, ACT.ACT_ID
+            FROM TEMP
+            INNER JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT
+              ON ACT.ACT_NUM_ACTIVO_UVEM = TEMP.ACT_NUMERO_UVEM
+            INNER JOIN '||V_ESQUEMA||'.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = ACT.DD_CRA_ID
+            WHERE 
+                  TEMP.REM = 1
+                  AND CRA.DD_CRA_CODIGO = ''03''
+	          AND act.borrado = 0
+          ) TMP
+          ON (TMP.ACT_ID = ACT.ACT_ID)
+          WHEN MATCHED THEN UPDATE SET
+          ACT.ACT_LLAVES_NECESARIAS = TMP.LLAVES_NECESARIAS,
+          ACT.USUARIOMODIFICAR = '''||V_USUARIO||''',
+          ACT.FECHAMODIFICAR = SYSDATE
+          WHERE (ACT.ACT_LLAVES_NECESARIAS <> TMP.LLAVES_NECESARIAS
+          OR ACT.ACT_LLAVES_NECESARIAS IS NULL
+          OR TMP.LLAVES_NECESARIAS IS NULL)
+          '
+          ;
+          EXECUTE IMMEDIATE V_SQL;
+          V_NUM_TABLAS := V_NUM_TABLAS + SQL%ROWCOUNT;
+
+--[1.4]--ACT_LLAVES_FECHA_RECEP
+          V_SQL := '
+          MERGE INTO '||V_ESQUEMA||'.ACT_ACTIVO ACT USING
+          (
+           WITH TEMP AS (
+              SELECT DISTINCT
+              APR.FEC_RECEP_LLAVES, APR_ID, ACT_NUMERO_UVEM, REM
+              FROM '||V_ESQUEMA||'.APR_AUX_STOCK_UVEM_TO_REM APR
+            )
+            SELECT TEMP.*, ACT.ACT_LLAVES_FECHA_RECEP, ACT.ACT_ID
+            FROM TEMP
+            INNER JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT
+              ON ACT.ACT_NUM_ACTIVO_UVEM = TEMP.ACT_NUMERO_UVEM
+            INNER JOIN '||V_ESQUEMA||'.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = ACT.DD_CRA_ID
+            WHERE
+              TEMP.REM = 1
+              AND CRA.DD_CRA_CODIGO = ''03''
+               AND
+             (ACT.ACT_LLAVES_FECHA_RECEP IS NULL
+              AND
+              TEMP.FEC_RECEP_LLAVES IS NOT NULL)
+               and act.borrado = 0
+          ) TMP
+          ON (TMP.ACT_ID = ACT.ACT_ID)
+          WHEN MATCHED THEN UPDATE SET
+          ACT.ACT_LLAVES_FECHA_RECEP = TMP.FEC_RECEP_LLAVES,
+          ACT.USUARIOMODIFICAR = '''||V_USUARIO||''',
+          ACT.FECHAMODIFICAR = SYSDATE
+          '
+          ;
+          EXECUTE IMMEDIATE V_SQL;
+          V_NUM_TABLAS := V_NUM_TABLAS + SQL%ROWCOUNT;
+
+
+--[1.5]--ACT_NUM_INMOVILIZADO_BNK
+          V_SQL := '
+          MERGE INTO '||V_ESQUEMA||'.ACT_ACTIVO ACT USING
+          (
+           WITH TEMP AS (
+              SELECT DISTINCT
+              APR.NUINMU, APR_ID, ACT_NUMERO_UVEM, REM
+              FROM '||V_ESQUEMA||'.APR_AUX_STOCK_UVEM_TO_REM APR
+            )
+            SELECT TEMP.*, ACT.ACT_NUM_INMOVILIZADO_BNK, ACT.ACT_ID
+            FROM TEMP
+            INNER JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT
+              ON ACT.ACT_NUM_ACTIVO_UVEM = TEMP.ACT_NUMERO_UVEM
+            INNER JOIN '||V_ESQUEMA||'.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = ACT.DD_CRA_ID
+            WHERE
+              TEMP.REM = 1
+              AND CRA.DD_CRA_CODIGO = ''03''
+              AND (ACT.ACT_NUM_INMOVILIZADO_BNK <> TEMP.NUINMU OR ACT.ACT_NUM_INMOVILIZADO_BNK IS NULL OR TEMP.NUINMU IS NULL)
+              AND ACT.BORRADO = 0
+          ) TMP
+          ON (TMP.ACT_ID = ACT.ACT_ID)
+          WHEN MATCHED THEN UPDATE SET
+          ACT.ACT_NUM_INMOVILIZADO_BNK = TMP.NUINMU,
+          ACT.USUARIOMODIFICAR = '''||V_USUARIO||''',
+          ACT.FECHAMODIFICAR = SYSDATE
+          '
+          ;
+          EXECUTE IMMEDIATE V_SQL;
+          V_NUM_TABLAS := V_NUM_TABLAS + SQL%ROWCOUNT;
+
+
+--[1.6]--DD_ENA_ID
+
+          V_SQL := '
+          MERGE INTO '||V_ESQUEMA||'.ACT_ACTIVO ACT USING
+          (
+           WITH TEMP AS (
+             SELECT DISTINCT
+  	      (SELECT ENA.DD_ENA_ID FROM '||V_ESQUEMA||'.DD_ENA_ENTRADA_ACTIVO_BNK ENA WHERE ENA.DD_ENA_CODIGO = APR.COD_ENTRADA_ACTIVO) AS ENA,
+  		APR_ID, ACT_NUMERO_UVEM, REM
+  	    	FROM '||V_ESQUEMA||'.APR_AUX_STOCK_UVEM_TO_REM APR
+		)
+            SELECT TEMP.*, ACT.DD_ENA_ID, ACT.ACT_ID
+            FROM TEMP 
+            INNER JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT  ON ACT.ACT_NUM_ACTIVO_UVEM = TEMP.ACT_NUMERO_UVEM
+            INNER JOIN '||V_ESQUEMA||'.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = ACT.DD_CRA_ID
+            WHERE TEMP.REM = 1
+              AND CRA.DD_CRA_CODIGO = ''03''
+              AND (ACT.DD_ENA_ID <> TEMP.ENA OR ACT.DD_ENA_ID IS NULL OR TEMP.ENA IS NULL)
+              AND ACT.BORRADO = 0
+          ) TMP
+          ON (TMP.ACT_ID = ACT.ACT_ID)
+          WHEN MATCHED THEN UPDATE SET
+          ACT.DD_ENA_ID = TMP.ENA,
+          ACT.USUARIOMODIFICAR = '''||V_USUARIO||''',
+          ACT.FECHAMODIFICAR = SYSDATE
+          '
+          ;
+          EXECUTE IMMEDIATE V_SQL;
+          V_NUM_TABLAS := V_NUM_TABLAS + SQL%ROWCOUNT;
+
+
+--[1.7] COTSIN -> DD_TPA_ID Y DD_SAC_ID (TIPO Y SUBTIPO ACTIVO)
+         
+         V_SQL := '
+          MERGE INTO '||V_ESQUEMA||'.ACT_ACTIVO ACT 
+          USING (  
+				WITH TEMP AS (
+                SELECT DISTINCT SAC.DD_SAC_ID, SAC.DD_TPA_ID, APR.ACT_NUMERO_UVEM, APR.REM
+                FROM '||V_ESQUEMA||'.APR_AUX_STOCK_UVEM_TO_REM APR
+                JOIN '||V_ESQUEMA||'.DD_EQV_BANKIA_REM EQV ON EQV.DD_CODIGO_BANKIA = APR.COTSIN
+                JOIN '||V_ESQUEMA||'.DD_SAC_SUBTIPO_ACTIVO SAC ON SAC.DD_SAC_CODIGO = EQV.DD_CODIGO_REM
+     			)	
+            SELECT TEMP.*, ACT.ACT_ID
+            FROM TEMP
+            INNER JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT  ON ACT.ACT_NUM_ACTIVO_UVEM = TEMP.ACT_NUMERO_UVEM
+            INNER JOIN '||V_ESQUEMA||'.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = ACT.DD_CRA_ID
+            WHERE TEMP.REM = 1
+            AND CRA.DD_CRA_CODIGO = ''03''
+            AND (ACT.DD_SAC_ID <> TEMP.DD_SAC_ID OR ACT.DD_SAC_ID IS NULL OR TEMP.DD_SAC_ID IS NULL)
+            AND act.borrado = 0
+          ) TMP
+          ON (TMP.ACT_ID = ACT.ACT_ID)
+          WHEN MATCHED THEN UPDATE SET
+          ACT.DD_TPA_ID = TMP.DD_TPA_ID,
+          ACT.DD_SAC_ID = TMP.DD_SAC_ID,
+          ACT.USUARIOMODIFICAR = '''||V_USUARIO||''',
+          ACT.FECHAMODIFICAR = SYSDATE
+          '
+          ;
+          EXECUTE IMMEDIATE V_SQL;
+          V_NUM_TABLAS := V_NUM_TABLAS + SQL%ROWCOUNT;
+	
+
+	
+--[1.8] COEXCA -> ACT_CON_CARGAS (EXISTEN_CARGAS_RECOVERY)
+
+ 	V_SQL := '
+          MERGE INTO '||V_ESQUEMA||'.ACT_ACTIVO T1 USING(
+    		SELECT DECODE(APR.EXISTEN_CARGAS_RECOVERY, 1, 0, 2, 0, 3, 1, null, 0) AS CARGAS_UVEM, ACT.ACT_CON_CARGAS, ACT.ACT_ID FROM '||V_ESQUEMA||'.APR_AUX_STOCK_UVEM_TO_REM APR
+    		JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_UVEM = APR.ACT_NUMERO_UVEM
+		INNER JOIN '||V_ESQUEMA||'.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = ACT.DD_CRA_ID
+   		WHERE APR.REM = 1
+   		AND CRA.DD_CRA_CODIGO = ''03''
+		AND ACT.BORRADO = 0
+		AND (DECODE(EXISTEN_CARGAS_RECOVERY, 1, 0, 2, 0, 3, 1, null, 0) <> ACT.ACT_CON_CARGAS OR EXISTEN_CARGAS_RECOVERY IS NULL OR ACT.ACT_CON_CARGAS IS NULL)
+	     ) T2 ON (T2.ACT_ID = T1.ACT_ID)
+		WHEN MATCHED THEN UPDATE SET
+		T1.ACT_CON_CARGAS = T2.CARGAS_UVEM,
+		T1.USUARIOMODIFICAR = '''||V_USUARIO||''',
+		T1.FECHAMODIFICAR = SYSDATE
+          '
+          ;
+          EXECUTE IMMEDIATE V_SQL;
+          V_NUM_TABLAS := V_NUM_TABLAS + SQL%ROWCOUNT;
+
+--[1.9] DD_SCR_ID -> ACTUALIZAR SUBCARTERA
+
+ 	V_SQL := '
+          MERGE INTO '||V_ESQUEMA||'.ACT_ACTIVO T1 
+		USING(
+			SELECT ACT.ACT_ID, SCR.DD_SCR_CODIGO AS SUBCARTERA_ACTIVO, EQV.DD_CODIGO_REM AS SUBCARTERA_NUEVA, CRA.DD_CRA_ID FROM '||V_ESQUEMA||'.APR_AUX_STOCK_UVEM_TO_REM APR
+			INNER JOIN '||V_ESQUEMA||'.ACT_ACTIVO ACT ON ACT.ACT_NUM_ACTIVO_UVEM = APR.ACT_NUMERO_UVEM
+			INNER JOIN '||V_ESQUEMA||'.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = ACT.DD_CRA_ID
+			INNER JOIN '||V_ESQUEMA||'.DD_EQV_BANKIA_REM EQV ON APR.COD_SOC_PATRIMONIAL = EQV.DD_CODIGO_BANKIA
+			INNER JOIN '||V_ESQUEMA||'.DD_SCR_SUBCARTERA SCR ON SCR.DD_SCR_ID = ACT.DD_SCR_ID
+			WHERE CRA.DD_CRA_CODIGO = ''03'' AND EQV.DD_NOMBRE_BANKIA = ''DD_SCR_CODIGO'' AND EQV.DD_NOMBRE_REM = ''DD_SCR_SUBCARTERA'' AND EQV.DD_CODIGO_REM <> SCR.DD_SCR_CODIGO
+			AND SCR.DD_SCR_CODIGO <> ''05'' AND EQV.DD_CODIGO_REM <> ''05'' AND ACT.BORRADO = 0 AND EQV.BORRADO = 0 AND APR.REM = 1    		
+		
+		) T2 ON (T2.ACT_ID = T1.ACT_ID)
+		WHEN MATCHED THEN UPDATE SET
+		T1.DD_SCR_ID = (SELECT DD_SCR_ID FROM '||V_ESQUEMA||'.DD_SCR_SUBCARTERA WHERE DD_SCR_CODIGO = T2.SUBCARTERA_NUEVA),
+		T1.USUARIOMODIFICAR = '''||V_USUARIO||''',
+		T1.FECHAMODIFICAR = SYSDATE
+          '
+          ;
+          EXECUTE IMMEDIATE V_SQL;
+          V_NUM_TABLAS := V_NUM_TABLAS + SQL%ROWCOUNT;            
+
+
+          IF V_NUM_TABLAS != 0 THEN
+
+            DBMS_OUTPUT.PUT_LINE('[INFO] REGISTROS ACTUALIZADOS EN '||V_ESQUEMA||'.ACT_ACTIVO '||V_NUM_TABLAS||' Registros.');
+            PL_OUTPUT := PL_OUTPUT||'[INFO] REGISTROS ACTUALIZADOS EN '||V_ESQUEMA||'.ACT_ACTIVO '||V_NUM_TABLAS||' Registros. '||CHR(10)||CHR(10);
+            DBMS_OUTPUT.PUT_LINE('----------------------------------------------------------------');
+
+            COMMIT;
+
+          END IF;
+
+
 ----------------------
----- [1] BIE_BIEN ----
+---- [2] BIE_BIEN ----
 ----------------------
---[1.1]--BIE_VIVIENDA_HABITUAL
+--[2.1]--BIE_VIVIENDA_HABITUAL
         V_SQL := '
         MERGE INTO '||V_ESQUEMA||'.BIE_BIEN BIE USING
         (
@@ -179,7 +460,7 @@ BEGIN
         EXECUTE IMMEDIATE V_SQL;
         V_NUM_TABLAS := SQL%ROWCOUNT;
 
---[1.2]--BIE_PORCT_IMP_COMPRA
+--[2.2]--BIE_PORCT_IMP_COMPRA
         V_SQL := '
         MERGE INTO '||V_ESQUEMA||'.BIE_BIEN BIE USING
         (
@@ -228,9 +509,9 @@ BEGIN
 
 
 -----------------------------------
----- [2] BIE_DATOS_REGISTRALES ----
+---- [3] BIE_DATOS_REGISTRALES ----
 -----------------------------------
---[2.1]--BIE_DREG_LIBRO, BIE_DREG_TOMO Y BIE_DREG_FOLIO
+--[3.1]--BIE_DREG_LIBRO, BIE_DREG_TOMO Y BIE_DREG_FOLIO
           V_SQL := '
           MERGE INTO '||V_ESQUEMA||'.BIE_DATOS_REGISTRALES BIE USING
           (
@@ -275,9 +556,9 @@ BEGIN
 
 
 ----------------------------------
----- [3] BIE_ADJ_ADJUDICACION ----
+---- [4] BIE_ADJ_ADJUDICACION ----
 ----------------------------------
---[3.1]--BIE_ADJ_IMPORTE_ADJUDICACION
+--[4.1]--BIE_ADJ_IMPORTE_ADJUDICACION
           V_SQL := '
           MERGE INTO '||V_ESQUEMA||'.BIE_ADJ_ADJUDICACION BIE USING
           (
@@ -803,7 +1084,7 @@ BEGIN
 		V_SQL := '
 			MERGE INTO '||V_ESQUEMA||'.ACT_PAC_PERIMETRO_ACTIVO PAC
 				USING (
-					SELECT DISTINCT ACT_ACT_ID, ACT_EN_TRAMITE
+					SELECT DISTINCT ACT_ID, ACT_EN_TRAMITE
 					FROM '||V_ESQUEMA||'.ACT_ACTIVO
 					WHERE ACT_EN_TRAMITE = 2
 				) TEMP
@@ -2237,7 +2518,7 @@ FOR I IN V_TIPO_TABLA10.FIRST .. V_TIPO_TABLA10.LAST
 --[19.1] CASUTR --> SUP_TOTAL_REAL_UTIL (REG_SUPERFICIE_UTIL)
 
 
-	V_SQL := '
+	/*V_SQL := '
 		MERGE INTO '||V_ESQUEMA||'.ACT_REG_INFO_REGISTRAL T1 USING 
 		(
 		SELECT ACT.ACT_ID, REG.REG_SUPERFICIE_UTIL AS REG_UTIL, APR.SUP_TOTAL_REAL_UTIL AS APR_UTIL FROM APR_AUX_STOCK_UVEM_TO_REM APR
@@ -2340,7 +2621,7 @@ FOR I IN V_TIPO_TABLA10.FIRST .. V_TIPO_TABLA10.LAST
 
             COMMIT;
 
-  END IF;
+  END IF;*/
 
 
 

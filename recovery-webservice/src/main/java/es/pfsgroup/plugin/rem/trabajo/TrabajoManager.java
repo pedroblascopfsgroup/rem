@@ -148,13 +148,12 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	@Autowired
 	private GenericABMDao genericDao;
 
-	
 	@Autowired
 	private GestorActivoApi gestorActivoApi;
 
 	@Autowired
 	private ActivoDao activoDao;
-	
+
 	@Autowired
 	private GenericAdapter adapter;
 
@@ -163,7 +162,6 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 	@Autowired
 	private TrabajoDao trabajoDao;
-
 
 	@Autowired
 	private GestorActivoManager gestorActivoManager;
@@ -197,57 +195,56 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 	@Autowired
 	private ActivoApi activoApi;
-	
+
 	@Autowired
 	ActivoTareaExternaApi activoTareaExternaManagerApi;
-	
+
 	@Autowired
 	private UpdaterStateApi updaterStateApi;
-	
+
 	@Autowired
 	private PropuestaPrecioDao propuestaDao;
 
 	@Autowired
 	private ProcessAdapter processAdapter;
-	
+
 	@Resource
 	private MessageService messageServices;
-	
+
 	@Autowired
 	private ProveedoresDao proveedoresDao;
-	
+
 	@Autowired
 	private GestorActivoDao gestorActivoDao;
-	
+
 	@Autowired
 	private ActivoAgrupacionApi activoAgrupacionApi;
-	
+
 	@Autowired
 	private ActivoAdapter activoAdapter;
-	
+
 	@Autowired
 	private ExpedienteComercialApi expedienteComercialApi;
 
 	@Autowired
 	private GastoProveedorApi gastoProveedorApi;
-	
+
 	@Autowired
 	private HistoricoTarifaPlanaDao historicoTarifaPlanaDao;
-	
+
 	@Autowired
 	private ActivoTramiteApi activoTramiteApi;
-	
+
 	@Autowired
 	private TareaActivoApi tareaActivoApi;
 
 	private BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
-	
 
 	@Override
 	public String managerName() {
 		return "trabajoManager";
 	}
-	
+
 	@Override
 	@BusinessOperation(overrides = "trabajoManager.findAll")
 	public Page findAll(DtoTrabajoFilter dto, Usuario usuarioLogado) {
@@ -256,17 +253,17 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioLogado.getId()));
 		if (!Checks.esNulo(usuarioCartera))
 			dto.setCartera(usuarioCartera.getCartera().getCodigo());
-		
+
 		// Comprobar si el usuario es externo y, en tal caso, seteamos proveedor
 		// y según HREOS-2272 en el modulo de trabajos
 		// los perfiles externos de CAPA_CONTROL_BANKIA y USUARIOS_DE_CONSULTA
 		// Siempre tendrán filtrado por actuación técnica y obtención documental
-		if(this.gestorActivoDao.isUsuarioGestorExterno(usuarioLogado.getId())) {
-			boolean esControlConsulta =  false;
+		if (this.gestorActivoDao.isUsuarioGestorExterno(usuarioLogado.getId())) {
+			boolean esControlConsulta = false;
 			List<Perfil> perfilesUsuario = usuarioLogado.getPerfiles();
-			for (int i=0;i<perfilesUsuario.size() && !esControlConsulta;i++) {
-				if (perfilesUsuario.get(i).getCodigo().equals(PERFIL_CAPA_CONTROL_BANKIA) ||
-					perfilesUsuario.get(i).getCodigo().equals(PERFIL_USUARIOS_DE_CONSULTA)) {
+			for (int i = 0; i < perfilesUsuario.size() && !esControlConsulta; i++) {
+				if (perfilesUsuario.get(i).getCodigo().equals(PERFIL_CAPA_CONTROL_BANKIA)
+						|| perfilesUsuario.get(i).getCodigo().equals(PERFIL_USUARIOS_DE_CONSULTA)) {
 					esControlConsulta = true;
 				}
 			}
@@ -342,14 +339,22 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			}
 
 			dtoToTrabajo(dtoTrabajo, trabajo);
-			if(!Checks.esNulo(tareaActivo.getTareaExterna()) && !Checks.esNulo(tareaActivo.getTareaExterna().getTareaProcedimiento()) &&
-					!Checks.esNulo(dtoTrabajo.getIdResponsableTrabajo()) &&
-					(CODIGO_T004_AUTORIZACION_BANKIA.equals(tareaActivo.getTareaExterna().getTareaProcedimiento().getCodigo())) || 
-					(CODIGO_T004_AUTORIZACION_PROPIETARIO.equals(tareaActivo.getTareaExterna().getTareaProcedimiento().getCodigo()) && DDCartera.CODIGO_CARTERA_LIBERBANK.equals(trabajo.getActivo().getCartera().getCodigo()))){
-				// Si las condiciones no se cumplen evitar cambiar el responsable al trámite lanzando excepción.
-				throw new JsonViewerException("No se permite cambiar de responsable para la tarea Autorizacion del propietario");
-			} else if(!Checks.esNulo(dtoTrabajo.getIdResponsableTrabajo())) {
-				// Si las condiciones si se cumplen, comprobar de igual forma si se ha cambiado específicamente el responsable del trabajo.
+			if (!Checks.esNulo(tareaActivo.getTareaExterna())
+					&& !Checks.esNulo(tareaActivo.getTareaExterna().getTareaProcedimiento())
+					&& !Checks.esNulo(dtoTrabajo.getIdResponsableTrabajo())
+					&& (CODIGO_T004_AUTORIZACION_BANKIA
+							.equals(tareaActivo.getTareaExterna().getTareaProcedimiento().getCodigo()))
+					|| (CODIGO_T004_AUTORIZACION_PROPIETARIO
+							.equals(tareaActivo.getTareaExterna().getTareaProcedimiento().getCodigo())
+							&& DDCartera.CODIGO_CARTERA_LIBERBANK
+									.equals(trabajo.getActivo().getCartera().getCodigo()))) {
+				// Si las condiciones no se cumplen evitar cambiar el
+				// responsable al trámite lanzando excepción.
+				throw new JsonViewerException(
+						"No se permite cambiar de responsable para la tarea Autorizacion del propietario");
+			} else if (!Checks.esNulo(dtoTrabajo.getIdResponsableTrabajo())) {
+				// Si las condiciones si se cumplen, comprobar de igual forma si
+				// se ha cambiado específicamente el responsable del trabajo.
 				editarTramites(trabajo);
 			}
 
@@ -450,7 +455,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		return trabajo;
 
 	}
-	
+
 	@Override
 	@Transactional(readOnly = false)
 	public Trabajo create(DDSubtipoTrabajo subtipoTrabajo, List<Activo> listaActivos, PropuestaPrecio propuestaPrecio,
@@ -494,27 +499,28 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 					trabajo.setFechaAprobacion(new Date());
 				}
 			}
-			
-			
+
 			// Se crea la relacion de activos - trabajos, utilizando la lista de
 			// activos de entrada
 			Double participacion = null;
 			for (Activo activo : listaActivos) {
-				
-				participacion = updaterStateApi.calcularParticipacionPorActivo(trabajo.getTipoTrabajo().getCodigo(),listaActivos, activo);
-				
-				//Si participación es null significa que, o no se han pasado bien los parámetros, 
-				//o que no son ni de tipo obtención documental ni actuaciones técnicas.
-				//Se calcula a partes iguales para todos los activos.
-				if(participacion == null){
+
+				participacion = updaterStateApi.calcularParticipacionPorActivo(trabajo.getTipoTrabajo().getCodigo(),
+						listaActivos, activo);
+
+				// Si participación es null significa que, o no se han pasado
+				// bien los parámetros,
+				// o que no son ni de tipo obtención documental ni actuaciones
+				// técnicas.
+				// Se calcula a partes iguales para todos los activos.
+				if (participacion == null) {
 					participacion = (100d / listaActivos.size());
 				}
-				
+
 				ActivoTrabajo activoTrabajo = createActivoTrabajo(activo, trabajo, participacion.toString());
 				trabajo.getActivosTrabajo().add(activoTrabajo);
 			}
-			
-			
+
 			// Si es un trabajo derivado de propuesta de precios:
 			// - Antes de crear el tramite, se relacionan la propuesta y el
 			// trabajo, porque el tramite puede requerir la propuesta
@@ -523,24 +529,25 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				trabajo.setPropuestaPrecio(propuestaPrecio);
 			}
 
-			if(listaActivos != null && listaActivos.size() == 1){
+			if (listaActivos != null && listaActivos.size() == 1) {
 				Activo activo = listaActivos.get(0);
 				trabajo.setActivo(activo);
 				// Seteo del flag esTarifaPlana
-				trabajo.setEsTarifaPlana(this.esTrabajoTarifaPlana(activo, subtipoTrabajo, trabajo.getFechaSolicitud()));
+				trabajo.setEsTarifaPlana(
+						this.esTrabajoTarifaPlana(activo, subtipoTrabajo, trabajo.getFechaSolicitud()));
 			}
-			
+
 			trabajoDao.saveOrUpdate(trabajo);
 
 			// Crea el trámite relacionado con el nuevo trabajo generado
 			// --------------------
-			if(inicializarTramite){
+			if (inicializarTramite) {
 				createTramiteTrabajo(trabajo);
 			}
 
 		} catch (Exception e) {
-			String mensaje="";
-			if(e.getMessage()!=null){
+			String mensaje = "";
+			if (e.getMessage() != null) {
 				mensaje = e.getMessage();
 			}
 			logger.error("[ERROR] - Crear trabajo multiactivo: ".concat(mensaje));
@@ -568,10 +575,10 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		 * provienen de la pantalla "Crear trabajo"
 		 */
 		Trabajo trabajo = new Trabajo();
-		List<Long> idsActivosSeleccionados= new ArrayList<Long>();
-		if(!Checks.esNulo(dtoTrabajo.getIdsActivos())){
+		List<Long> idsActivosSeleccionados = new ArrayList<Long>();
+		if (!Checks.esNulo(dtoTrabajo.getIdsActivos())) {
 			List<String> activosIDArray = Arrays.asList(dtoTrabajo.getIdsActivos().split(","));
-			for(String idActivoSeleccionado: activosIDArray){
+			for (String idActivoSeleccionado : activosIDArray) {
 				idsActivosSeleccionados.add(Long.parseLong(idActivoSeleccionado));
 			}
 		}
@@ -583,71 +590,84 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				createTramiteTrabajo(trabajoActivo);
 			}
 
-			
 		} else {
 			if (dtoTrabajo.getIdActivo() != null) {
 				Activo activo = activoDao.get(dtoTrabajo.getIdActivo());
-				Double participacion = updaterStateApi.calcularParticipacionPorActivo(dtoTrabajo.getTipoTrabajoCodigo(), null, activo);
+				Double participacion = updaterStateApi.calcularParticipacionPorActivo(dtoTrabajo.getTipoTrabajoCodigo(),
+						null, activo);
 				dtoTrabajo.setParticipacion(Checks.esNulo(participacion) ? "0" : participacion.toString());
 				trabajo = crearTrabajoPorActivo(activo, dtoTrabajo);
 				createTramiteTrabajo(trabajo);
 
 			}
-			
-			else if(Checks.esNulo(dtoTrabajo.getIdsActivos())){ //Si no se selecciona ningun activo
-				if(!Checks.esNulo(dtoTrabajo.getEsSolicitudConjunta()) && dtoTrabajo.getEsSolicitudConjunta().equals(true)){ //Si se marca el check
-					//Se lanza un trabajo que englobe a todos loas activos de la agrupacion
+
+			else if (Checks.esNulo(dtoTrabajo.getIdsActivos())) { // Si no se
+																	// selecciona
+																	// ningun
+																	// activo
+				if (!Checks.esNulo(dtoTrabajo.getEsSolicitudConjunta())
+						&& dtoTrabajo.getEsSolicitudConjunta().equals(true)) { // Si
+																				// se
+																				// marca
+																				// el
+																				// check
+					// Se lanza un trabajo que englobe a todos loas activos de
+					// la agrupacion
 					trabajo = crearTrabajoPorAgrupacion(dtoTrabajo, null);
 					createTramiteTrabajo(trabajo);
-				}
-				else{//Si no se marca el check
-					//Se lanza un trabajo por cada activo de la agrupacion
+				} else {// Si no se marca el check
+						// Se lanza un trabajo por cada activo de la agrupacion
 					List<Trabajo> trabajos = crearTrabajoPorActivoAgrupacion(dtoTrabajo, null);
 					for (Trabajo trabajoActivoAgrupacion : trabajos) {
 						createTramiteTrabajo(trabajoActivoAgrupacion);
 					}
 				}
-			}
-			else{//Si se seleccionan activos
-				if(!Checks.esNulo(dtoTrabajo.getEsSolicitudConjunta()) && dtoTrabajo.getEsSolicitudConjunta().equals(true)){//Si se marca el check
-					//se lanza un trabajo que engloba a todos los activos seleccionados
+			} else {// Si se seleccionan activos
+				if (!Checks.esNulo(dtoTrabajo.getEsSolicitudConjunta())
+						&& dtoTrabajo.getEsSolicitudConjunta().equals(true)) {// Si
+																				// se
+																				// marca
+																				// el
+																				// check
+					// se lanza un trabajo que engloba a todos los activos
+					// seleccionados
 					trabajo = crearTrabajoPorAgrupacion(dtoTrabajo, idsActivosSeleccionados);
 					createTramiteTrabajo(trabajo);
-				}
-				else{ //Si no se marca el check
-					//Se lanza un trabajo por cada activo seleccionados
-					List<Trabajo> trabajos= crearTrabajoPorActivoAgrupacion(dtoTrabajo,idsActivosSeleccionados);
+				} else { // Si no se marca el check
+							// Se lanza un trabajo por cada activo seleccionados
+					List<Trabajo> trabajos = crearTrabajoPorActivoAgrupacion(dtoTrabajo, idsActivosSeleccionados);
 					for (Trabajo trabajoActivoAgrupacion : trabajos) {
 						createTramiteTrabajo(trabajoActivoAgrupacion);
 					}
 				}
 			}
-			
 
 		}
 
 		return trabajo.getId();
 	}
 
-	private List<Trabajo> crearTrabajoPorActivoAgrupacion(DtoFichaTrabajo dtoTrabajo, List<Long> idsActivosSeleccionados) {
+	private List<Trabajo> crearTrabajoPorActivoAgrupacion(DtoFichaTrabajo dtoTrabajo,
+			List<Long> idsActivosSeleccionados) {
 		List<Trabajo> trabajos = new ArrayList<Trabajo>();
-		Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "agrId", Long.valueOf(dtoTrabajo.getIdAgrupacion()));
-		List<VActivosAgrupacionTrabajo> activosAgrupacionTrabajo = genericDao.getList(VActivosAgrupacionTrabajo.class, filtro1);
+		Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "agrId",
+				Long.valueOf(dtoTrabajo.getIdAgrupacion()));
+		List<VActivosAgrupacionTrabajo> activosAgrupacionTrabajo = genericDao.getList(VActivosAgrupacionTrabajo.class,
+				filtro1);
 
 		List<Long> activosID = new ArrayList<Long>();
-		
-		for(VActivosAgrupacionTrabajo activoAgrupacion : activosAgrupacionTrabajo) {
-			if(activoAgrupacion.getIdActivo() != null) {
-				
-				if(!Checks.esNulo(idsActivosSeleccionados)){
-					for(Long idActivoSeleccionado: idsActivosSeleccionados){
-						if(activoAgrupacion.getIdActivo().equals(idActivoSeleccionado.toString())){
+
+		for (VActivosAgrupacionTrabajo activoAgrupacion : activosAgrupacionTrabajo) {
+			if (activoAgrupacion.getIdActivo() != null) {
+
+				if (!Checks.esNulo(idsActivosSeleccionados)) {
+					for (Long idActivoSeleccionado : idsActivosSeleccionados) {
+						if (activoAgrupacion.getIdActivo().equals(idActivoSeleccionado.toString())) {
 							activosID.add(Long.parseLong(activoAgrupacion.getIdActivo()));
 							break;
 						}
 					}
-				}
-				else{
+				} else {
 					activosID.add(Long.parseLong(activoAgrupacion.getIdActivo()));
 				}
 			}
@@ -657,7 +677,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 		Trabajo trabajo = null;
 		for (Activo activo : activosList) {
-			Double participacion = updaterStateApi.calcularParticipacionPorActivo(dtoTrabajo.getTipoTrabajoCodigo(), activosList, null);
+			Double participacion = updaterStateApi.calcularParticipacionPorActivo(dtoTrabajo.getTipoTrabajoCodigo(),
+					activosList, null);
 			dtoTrabajo.setParticipacion(Checks.esNulo(participacion) ? "0" : participacion.toString());
 			trabajo = crearTrabajoPorActivo(activo, dtoTrabajo);
 			trabajos.add(trabajo);
@@ -672,28 +693,29 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		ActivoAgrupacion agrupacion = activoAgrupacionDao.get(dtoTrabajo.getIdAgrupacion());
 
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "agrId", Long.valueOf(dtoTrabajo.getIdAgrupacion()));
-		List<VActivosAgrupacionTrabajo> activosAgrupacionTrabajoTem = genericDao.getList(VActivosAgrupacionTrabajo.class, filtro);
+		List<VActivosAgrupacionTrabajo> activosAgrupacionTrabajoTem = genericDao
+				.getList(VActivosAgrupacionTrabajo.class, filtro);
 		List<VActivosAgrupacionTrabajo> activosAgrupacionTrabajo = new ArrayList<VActivosAgrupacionTrabajo>();
 
-		if(!Checks.esNulo(idsActivosSelecionados) && !Checks.esNulo(dtoTrabajo.getEsSolicitudConjunta()) && dtoTrabajo.getEsSolicitudConjunta().equals(true)){
+		if (!Checks.esNulo(idsActivosSelecionados) && !Checks.esNulo(dtoTrabajo.getEsSolicitudConjunta())
+				&& dtoTrabajo.getEsSolicitudConjunta().equals(true)) {
 			boolean seleccionado;
-			for(VActivosAgrupacionTrabajo activoAgr: activosAgrupacionTrabajoTem){
-				seleccionado= false;
-				for(Long idActivoSeleccionado: idsActivosSelecionados){
-					if(activoAgr.getIdActivo().equals(idActivoSeleccionado.toString())){
-						seleccionado= true;
+			for (VActivosAgrupacionTrabajo activoAgr : activosAgrupacionTrabajoTem) {
+				seleccionado = false;
+				for (Long idActivoSeleccionado : idsActivosSelecionados) {
+					if (activoAgr.getIdActivo().equals(idActivoSeleccionado.toString())) {
+						seleccionado = true;
 						break;
 					}
 				}
-				if(seleccionado){
+				if (seleccionado) {
 					activosAgrupacionTrabajo.add(activoAgr);
 				}
-			}			
+			}
+		} else {
+			activosAgrupacionTrabajo = activosAgrupacionTrabajoTem;
 		}
-		else{
-			activosAgrupacionTrabajo= activosAgrupacionTrabajoTem;
-		}
-		
+
 		Trabajo trabajo = new Trabajo();
 
 		try {
@@ -702,44 +724,24 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			trabajo.setFechaSolicitud(new Date());
 			trabajo.setNumTrabajo(trabajoDao.getNextNumTrabajo());
 			trabajo.setAgrupacion(agrupacion);
-
-			if (GestorActivoApi.CODIGO_GESTOR_ACTIVO.equals(dtoTrabajo.getResponsableTrabajo())
-					&& !Checks.esNulo(dtoTrabajo.getIdSolicitante())) {
-
-				Filter filtroSolicitante = genericDao.createFilter(FilterType.EQUALS, "id", dtoTrabajo.getIdSolicitante());
-
-				Usuario solicitante = genericDao.get(Usuario.class, filtroSolicitante);
-				Usuario responsable = gestorActivoApi.getGestorByActivoYTipo(agrupacion.getActivos().get(0).getActivo(), "GACT");
-
-				if (!Checks.esNulo(solicitante) && !Checks.esNulo(responsable)) {
-					trabajo.setSolicitante(solicitante);
-					trabajo.setUsuarioResponsableTrabajo(responsable);
-				} else {
-					trabajo.setSolicitante(genericAdapter.getUsuarioLogado());
-				}
-
-			} else {
-
-				trabajo.setSolicitante(genericAdapter.getUsuarioLogado());
-
-			}
-			
+			trabajo.setSolicitante(genericAdapter.getUsuarioLogado());
 
 			List<Long> activosID = new ArrayList<Long>();
-			
-			for(VActivosAgrupacionTrabajo activoAgrupacion : activosAgrupacionTrabajo) {
-				if(activoAgrupacion.getIdActivo() != null) {
+
+			for (VActivosAgrupacionTrabajo activoAgrupacion : activosAgrupacionTrabajo) {
+				if (activoAgrupacion.getIdActivo() != null) {
 					activosID.add(Long.parseLong(activoAgrupacion.getIdActivo()));
 				}
 			}
 
 			List<Activo> activosList = activoApi.getListActivosPorID(activosID);
-			
+
 			Boolean isFirstLoop = true;
 			for (VActivosAgrupacionTrabajo activoAgrupacion : activosAgrupacionTrabajo) {
 				Activo activo = activoDao.get(Long.valueOf(activoAgrupacion.getIdActivo()));
 
-				Double participacion = updaterStateApi.calcularParticipacionPorActivo(trabajo.getTipoTrabajo().getCodigo(), activosList, activo);
+				Double participacion = updaterStateApi
+						.calcularParticipacionPorActivo(trabajo.getTipoTrabajo().getCodigo(), activosList, activo);
 				dtoTrabajo.setParticipacion(Checks.esNulo(participacion) ? "0" : participacion.toString());
 
 				// FIXME: Datos del trabajo que se definen por un activo, en
@@ -783,7 +785,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 			if (DDTipoTrabajo.CODIGO_OBTENCION_DOCUMENTAL.equals(trabajo.getTipoTrabajo().getCodigo()))
 				trabajo.setEsTarificado(true);
-			
+
 			if (activosAgrupacionTrabajo.size() > 0) {
 				Activo activo = activoDao.get(Long.valueOf(activosAgrupacionTrabajo.get(0).getIdActivo()));
 				Usuario galq = gestorActivoApi.getGestorByActivoYTipo(activo, "GALQ");
@@ -812,7 +814,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			} else {
 				trabajo.setUsuarioResponsableTrabajo(genericAdapter.getUsuarioLogado());
 			}
-			if(dtoTrabajo.getRequerimiento() != null){
+			if (dtoTrabajo.getRequerimiento() != null) {
 				trabajo.setRequerimiento(dtoTrabajo.getRequerimiento());
 			}
 
@@ -833,7 +835,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		MSVHojaExcel exc = excelParser.getExcel(documento.getContenidoFichero().getFile());
 
 		try {
-			Integer numFilas = exc.getNumeroFilasByHoja(0,documento.getProcesoMasivo().getTipoOperacion());
+			Integer numFilas = exc.getNumeroFilasByHoja(0, documento.getProcesoMasivo().getTipoOperacion());
 			for (int i = 1; i < numFilas; i++) {
 				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "numActivo",
 						Long.parseLong(exc.dameCelda(i, 0)));
@@ -884,58 +886,57 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		List<Activo> listaActivos = this.getListaActivosProceso(dtoTrabajo.getIdProceso());
 		Trabajo trabajo = new Trabajo();
 		List<Trabajo> listaTrabajos = new ArrayList<Trabajo>();
-		
+
 		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 		try {
 
 			Boolean isFirstLoop = true;
-			Double total= 0d;
-			Boolean algunoSinPrecio= false;
-			Map<Long,Double> mapaValores= new HashMap<Long,Double>();
-			for(Activo activo:listaActivos){
-				Double valor= updaterStateApi.calcularParticipacionValorPorActivo(dtoTrabajo.getTipoTrabajoCodigo(), activo);
-				total= total+valor;
-				if(valor.equals(0d)){
-					algunoSinPrecio= true;
+			Double total = 0d;
+			Boolean algunoSinPrecio = false;
+			Map<Long, Double> mapaValores = new HashMap<Long, Double>();
+			for (Activo activo : listaActivos) {
+				Double valor = updaterStateApi.calcularParticipacionValorPorActivo(dtoTrabajo.getTipoTrabajoCodigo(),
+						activo);
+				total = total + valor;
+				if (valor.equals(0d)) {
+					algunoSinPrecio = true;
 					break;
 				}
 				mapaValores.put(activo.getId(), valor);
 			}
 			for (Activo activo : listaActivos) {
 				Double participacion = null;
-				if(algunoSinPrecio){
-					participacion= (100d/listaActivos.size());
-				}
-				else{
-					participacion= (mapaValores.get(activo.getId())/total)*100;
+				if (algunoSinPrecio) {
+					participacion = (100d / listaActivos.size());
+				} else {
+					participacion = (mapaValores.get(activo.getId()) / total) * 100;
 				}
 
 				dtoTrabajo.setParticipacion(Checks.esNulo(participacion) ? "0" : participacion.toString());
-				
+
 				Usuario usuarioGestor = null;
-				
-				if(!Checks.esNulo(dtoTrabajo.getIdGestorActivoResponsable())){
-					usuarioGestor = genericDao.get(Usuario.class,genericDao.createFilter(FilterType.EQUALS,"id", dtoTrabajo.getIdGestorActivoResponsable()),genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
-					if(!Checks.esNulo(usuarioGestor)){
+
+				if (!Checks.esNulo(dtoTrabajo.getIdGestorActivoResponsable())) {
+					usuarioGestor = genericDao.get(Usuario.class,
+							genericDao.createFilter(FilterType.EQUALS, "id", dtoTrabajo.getIdGestorActivoResponsable()),
+							genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
+					if (!Checks.esNulo(usuarioGestor)) {
 						trabajo.setUsuarioGestorActivoResponsable(usuarioGestor);
 					}
 				}
-				
+
 				if (isFirstLoop || !dtoTrabajo.getEsSolicitudConjunta()) {
 					trabajo = new Trabajo();
 					dtoToTrabajo(dtoTrabajo, trabajo);
 					trabajo.setFechaSolicitud(new Date());
 					trabajo.setNumTrabajo(trabajoDao.getNextNumTrabajo());
-
-					trabajo.setSolicitante(genericAdapter.getUsuarioLogado());
-					trabajo.setUsuarioResponsableTrabajo(genericAdapter.getUsuarioLogado());
-
-					if(!Checks.esNulo(usuarioGestor)) {
+					trabajo.setSolicitante(usuarioLogado);
+					if (!Checks.esNulo(usuarioGestor)) {
 						trabajo.setUsuarioResponsableTrabajo(usuarioGestor);
-					}else {
+					} else {
 						trabajo.setUsuarioResponsableTrabajo(usuarioLogado);
 					}
-					
+
 					trabajo.setEstado(getEstadoNuevoTrabajo(dtoTrabajo, activo));
 
 					// El gestor de activo se salta tareas de estos trámites y
@@ -944,7 +945,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 					if (gestorActivoManager.isGestorActivo(activo, usuarioLogado)) {
 						if (DDTipoTrabajo.CODIGO_OBTENCION_DOCUMENTAL.equals(trabajo.getTipoTrabajo().getCodigo())
 								|| DDTipoTrabajo.CODIGO_TASACION.equals(trabajo.getTipoTrabajo().getCodigo())
-								|| DDSubtipoTrabajo.CODIGO_AT_VERIFICACION_AVERIAS.equals(trabajo.getSubtipoTrabajo().getCodigo())) {
+								|| DDSubtipoTrabajo.CODIGO_AT_VERIFICACION_AVERIAS
+										.equals(trabajo.getSubtipoTrabajo().getCodigo())) {
 							trabajo.setFechaAprobacion(new Date());
 						}
 					}
@@ -963,16 +965,18 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				ActivoTrabajo activoTrabajo = createActivoTrabajo(activo, trabajo, dtoTrabajo.getParticipacion());
 				trabajo.getActivosTrabajo().add(activoTrabajo);
 				isFirstLoop = false;
-				
-				if(!Checks.esNulo(dtoTrabajo.getIdSupervisorActivo())){
-					Usuario usuarioSupervisor = genericDao.get(Usuario.class,genericDao.createFilter(FilterType.EQUALS,"id", dtoTrabajo.getIdSupervisorActivo()),genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
-					if(!Checks.esNulo(usuarioSupervisor)){
+
+				if (!Checks.esNulo(dtoTrabajo.getIdSupervisorActivo())) {
+					Usuario usuarioSupervisor = genericDao.get(Usuario.class,
+							genericDao.createFilter(FilterType.EQUALS, "id", dtoTrabajo.getIdSupervisorActivo()),
+							genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
+					if (!Checks.esNulo(usuarioSupervisor)) {
 						trabajo.setSupervisorActivoResponsable(usuarioSupervisor);
 					}
 				}
 
-				if(!dtoTrabajo.getEsSolicitudConjunta()) {
-					if(dtoTrabajo.getRequerimiento() != null){
+				if (!dtoTrabajo.getEsSolicitudConjunta()) {
+					if (dtoTrabajo.getRequerimiento() != null) {
 						trabajo.setRequerimiento(dtoTrabajo.getRequerimiento());
 					}
 					trabajoDao.saveOrUpdate(trabajo);
@@ -980,8 +984,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				}
 			}
 
-			if(dtoTrabajo.getEsSolicitudConjunta()) {
-				if(dtoTrabajo.getRequerimiento() != null){
+			if (dtoTrabajo.getEsSolicitudConjunta()) {
+				if (dtoTrabajo.getRequerimiento() != null) {
 					trabajo.setRequerimiento(dtoTrabajo.getRequerimiento());
 				}
 				trabajoDao.saveOrUpdate(trabajo);
@@ -1006,46 +1010,41 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		Usuario gsue = gestorActivoApi.getGestorByActivoYTipo(activo, "GSUE");
 		Usuario gedi = gestorActivoApi.getGestorByActivoYTipo(activo, "GEDI");
 		Usuario gact = gestorActivoApi.getGestorByActivoYTipo(activo, "GACT");
-		
+
 		Usuario solicitante = genericAdapter.getUsuarioLogado();
-		//Si el trabajo es de limpieza se asigna el usuario responsable del dto,
-		//ya que en UpdaterServicePosicionamiento en crearTrabajoLimpieza()
-		//se calcula si existe doble gestor o no.
-		//HREOS-5061
-		if(DDTipoTrabajo.CODIGO_ACTUACION_TECNICA.equals(dtoTrabajo.getTipoTrabajoCodigo()) && DDSubtipoTrabajo.CODIGO_AT_LIMPIEZA.equals(dtoTrabajo.getSubtipoTrabajoCodigo()) 
+		// Si el trabajo es de limpieza se asigna el usuario responsable del
+		// dto,
+		// ya que en UpdaterServicePosicionamiento en crearTrabajoLimpieza()
+		// se calcula si existe doble gestor o no.
+		// HREOS-5061
+		if (DDTipoTrabajo.CODIGO_ACTUACION_TECNICA.equals(dtoTrabajo.getTipoTrabajoCodigo())
+				&& DDSubtipoTrabajo.CODIGO_AT_LIMPIEZA.equals(dtoTrabajo.getSubtipoTrabajoCodigo())
 				&& !Checks.esNulo(dtoTrabajo.getResponsableTrabajo())) {
-			Usuario responsable= gestorActivoApi.getGestorByActivoYTipo(activo, dtoTrabajo.getResponsableTrabajo());
+			Usuario responsable = gestorActivoApi.getGestorByActivoYTipo(activo, dtoTrabajo.getResponsableTrabajo());
 			trabajo.setUsuarioResponsableTrabajo(responsable);
-		}
-		else if (GestorActivoApi.CODIGO_GESTOR_ACTIVO.equals(dtoTrabajo.getResponsableTrabajo())
+		} else if (GestorActivoApi.CODIGO_GESTOR_ACTIVO.equals(dtoTrabajo.getResponsableTrabajo())
 				&& !Checks.esNulo(gact)) {
 
 			trabajo.setUsuarioResponsableTrabajo(gact);
 
 		} else {
-			if(Checks.esNulo(galq) && Checks.esNulo(gsue) && Checks.esNulo(gedi) && !Checks.esNulo(gact)){
-			trabajo.setUsuarioResponsableTrabajo(gact);
-		}else if((!Checks.esNulo(galq) && solicitante.equals(galq)) 
-				|| (!Checks.esNulo(gsue) && solicitante.equals(gsue)) 
-				|| (!Checks.esNulo(gedi) && solicitante.equals(gedi)) 
-				|| (!Checks.esNulo(gact) && solicitante.equals(gact))){
-			trabajo.setUsuarioResponsableTrabajo(solicitante);
-		}else{
-			if (!Checks.esNulo(galq))
-			{
-				trabajo.setUsuarioResponsableTrabajo(galq);
-			}
-			else if (!Checks.esNulo(gsue)) {
-				trabajo.setUsuarioResponsableTrabajo(gsue);
-			}
-			else if (!Checks.esNulo(gedi))
-			{
-				trabajo.setUsuarioResponsableTrabajo(gedi);
+			if (Checks.esNulo(galq) && Checks.esNulo(gsue) && Checks.esNulo(gedi) && !Checks.esNulo(gact)) {
+				trabajo.setUsuarioResponsableTrabajo(gact);
+			} else if ((!Checks.esNulo(galq) && solicitante.equals(galq))
+					|| (!Checks.esNulo(gsue) && solicitante.equals(gsue))
+					|| (!Checks.esNulo(gedi) && solicitante.equals(gedi))
+					|| (!Checks.esNulo(gact) && solicitante.equals(gact))) {
+				trabajo.setUsuarioResponsableTrabajo(solicitante);
+			} else {
+				if (!Checks.esNulo(galq)) {
+					trabajo.setUsuarioResponsableTrabajo(galq);
+				} else if (!Checks.esNulo(gsue)) {
+					trabajo.setUsuarioResponsableTrabajo(gsue);
+				} else if (!Checks.esNulo(gedi)) {
+					trabajo.setUsuarioResponsableTrabajo(gedi);
+				}
 			}
 		}
-		}
-
-
 
 		try {
 
@@ -1055,7 +1054,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			trabajo.setActivo(activo);
 			trabajo.setFechaSolicitud(new Date());
 			if (!Checks.esNulo(dtoTrabajo.getIdSolicitante())) {
-				Usuario user = genericDao.get(Usuario.class,genericDao.createFilter(FilterType.EQUALS, "id", dtoTrabajo.getIdSolicitante()));
+				Usuario user = genericDao.get(Usuario.class,
+						genericDao.createFilter(FilterType.EQUALS, "id", dtoTrabajo.getIdSolicitante()));
 				if (!Checks.esNulo(user)) {
 					trabajo.setSolicitante(user);
 
@@ -1091,7 +1091,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			if (DDSubtipoTrabajo.CODIGO_CEDULA_HABITABILIDAD.equals(trabajo.getSubtipoTrabajo().getCodigo())) {
 				trabajo.setFechaAprobacion(new Date());
 			}
-			if(dtoTrabajo.getRequerimiento() != null){
+			if (dtoTrabajo.getRequerimiento() != null) {
 				trabajo.setRequerimiento(dtoTrabajo.getRequerimiento());
 			}
 
@@ -1111,15 +1111,17 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		 * TRAMITE Si es gestor activo (algunos trámites): EN TRAMITE El resto
 		 * de casos: SOLICITADO
 		 */
-		Filter filtroSolicitado = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoTrabajo.ESTADO_SOLICITADO);
-		Filter filtroEnTramite = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoTrabajo.ESTADO_EN_TRAMITE);
+		Filter filtroSolicitado = genericDao.createFilter(FilterType.EQUALS, "codigo",
+				DDEstadoTrabajo.ESTADO_SOLICITADO);
+		Filter filtroEnTramite = genericDao.createFilter(FilterType.EQUALS, "codigo",
+				DDEstadoTrabajo.ESTADO_EN_TRAMITE);
 
 		// Por defecto: Solicitado
 		DDEstadoTrabajo estadoTrabajo = genericDao.get(DDEstadoTrabajo.class, filtroSolicitado);
-		if (gestorActivoManager.isGestorActivo(activo, genericAdapter.getUsuarioLogado()) && (dtoTrabajo
-				.getTipoTrabajoCodigo().equals(DDTipoTrabajo.CODIGO_OBTENCION_DOCUMENTAL)
-				|| dtoTrabajo.getTipoTrabajoCodigo().equals(DDTipoTrabajo.CODIGO_TASACION)
-				|| dtoTrabajo.getSubtipoTrabajoCodigo().equals(DDSubtipoTrabajo.CODIGO_AT_VERIFICACION_AVERIAS))) {
+		if (gestorActivoManager.isGestorActivo(activo, genericAdapter.getUsuarioLogado())
+				&& (dtoTrabajo.getTipoTrabajoCodigo().equals(DDTipoTrabajo.CODIGO_OBTENCION_DOCUMENTAL)
+						|| dtoTrabajo.getTipoTrabajoCodigo().equals(DDTipoTrabajo.CODIGO_TASACION) || dtoTrabajo
+								.getSubtipoTrabajoCodigo().equals(DDSubtipoTrabajo.CODIGO_AT_VERIFICACION_AVERIAS))) {
 			// Es gestor activo + Obtención documental(menos Cédula) o
 			// Tasación: En Trámite
 			estadoTrabajo = genericDao.get(DDEstadoTrabajo.class, filtroEnTramite);
@@ -1130,13 +1132,13 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 	@Override
 	public ActivoTrabajo createActivoTrabajo(Activo activo, Trabajo trabajo, String participacion) {
-		if(trabajo.getId() == null){
-			trabajo =genericDao.save(Trabajo.class, trabajo);
-		}		
+		if (trabajo.getId() == null) {
+			trabajo = genericDao.save(Trabajo.class, trabajo);
+		}
 		ActivoTrabajo activoTrabajo = new ActivoTrabajo();
 		activoTrabajo.setActivo(activo);
 		activoTrabajo.setTrabajo(trabajo);
-		activoTrabajo.setPrimaryKey(new ActivoTrabajoPk(activo.getId(),trabajo.getId()));
+		activoTrabajo.setPrimaryKey(new ActivoTrabajoPk(activo.getId(), trabajo.getId()));
 		activoTrabajo.setParticipacion(new Float(participacion));
 		return activoTrabajo;
 	}
@@ -1180,7 +1182,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			DDSubtipoTrabajo subtipoTrabajo = genericDao.get(DDSubtipoTrabajo.class, filtro);
 
 			trabajo.setSubtipoTrabajo(subtipoTrabajo);
-			
+
 			// Seteo del flag esTarifaPlana
 			if (!Checks.esNulo(dtoTrabajo.getIdActivo())) {
 				Activo activoAux = activoApi.get(dtoTrabajo.getIdActivo());
@@ -1196,21 +1198,21 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 			trabajo.setMediador(mediador);
 		}
-		
-		if(!Checks.esNulo(dtoTrabajo.getIdGestorActivoResponsable())){
+
+		if (!Checks.esNulo(dtoTrabajo.getIdGestorActivoResponsable())) {
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dtoTrabajo.getIdGestorActivoResponsable());
 			Usuario usuario = genericDao.get(Usuario.class, filtro);
-			
+
 			trabajo.setUsuarioGestorActivoResponsable(usuario);
 		}
-		
-		if(!Checks.esNulo(dtoTrabajo.getIdSupervisorActivo())){
+
+		if (!Checks.esNulo(dtoTrabajo.getIdSupervisorActivo())) {
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dtoTrabajo.getIdSupervisorActivo());
 			Usuario usuario = genericDao.get(Usuario.class, filtro);
-			
+
 			trabajo.setSupervisorActivoResponsable(usuario);
 		}
-		if(!Checks.esNulo(dtoTrabajo.getIdResponsableTrabajo())){
+		if (!Checks.esNulo(dtoTrabajo.getIdResponsableTrabajo())) {
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dtoTrabajo.getIdResponsableTrabajo());
 			Usuario usuario = genericDao.get(Usuario.class, filtro);
 			trabajo.setUsuarioResponsableTrabajo(usuario);
@@ -1219,28 +1221,37 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			ActivoTramite activoTramite = activoTramites.get(0);
 			TareaActivo tareaActivo = tareaActivoApi.getUltimaTareaActivoByIdTramite(activoTramite.getId());
 
-			if(!Checks.esNulo(tareaActivo.getTareaExterna()) && !Checks.esNulo(tareaActivo.getTareaExterna().getTareaProcedimiento()) &&
-					(!CODIGO_T004_AUTORIZACION_BANKIA.equals(tareaActivo.getTareaExterna().getTareaProcedimiento().getCodigo())) || 
-					(CODIGO_T004_AUTORIZACION_PROPIETARIO.equals(tareaActivo.getTareaExterna().getTareaProcedimiento().getCodigo()) && !DDCartera.CODIGO_CARTERA_LIBERBANK.equals(trabajo.getActivo().getCartera().getCodigo()))) {
-				if(gestorActivoApi.isGestorAlquileres(trabajo.getActivo(), usuario)){
-					Usuario supervisor = gestorActivoApi.getGestorByActivoYTipo(trabajo.getActivo(), GestorActivoApi.CODIGO_SUPERVISOR_ALQUILERES);
+			if (!Checks.esNulo(tareaActivo.getTareaExterna())
+					&& !Checks.esNulo(tareaActivo.getTareaExterna().getTareaProcedimiento())
+					&& (!CODIGO_T004_AUTORIZACION_BANKIA
+							.equals(tareaActivo.getTareaExterna().getTareaProcedimiento().getCodigo()))
+					|| (CODIGO_T004_AUTORIZACION_PROPIETARIO
+							.equals(tareaActivo.getTareaExterna().getTareaProcedimiento().getCodigo())
+							&& !DDCartera.CODIGO_CARTERA_LIBERBANK
+									.equals(trabajo.getActivo().getCartera().getCodigo()))) {
+				if (gestorActivoApi.isGestorAlquileres(trabajo.getActivo(), usuario)) {
+					Usuario supervisor = gestorActivoApi.getGestorByActivoYTipo(trabajo.getActivo(),
+							GestorActivoApi.CODIGO_SUPERVISOR_ALQUILERES);
 					tareaActivo.setSupervisorActivo(supervisor);
-	
-				} else if(gestorActivoApi.isGestorEdificaciones(trabajo.getActivo(), usuario)) {
-					Usuario supervisor = gestorActivoApi.getGestorByActivoYTipo(trabajo.getActivo(), GestorActivoApi.CODIGO_SUPERVISOR_EDIFICACIONES);
+
+				} else if (gestorActivoApi.isGestorEdificaciones(trabajo.getActivo(), usuario)) {
+					Usuario supervisor = gestorActivoApi.getGestorByActivoYTipo(trabajo.getActivo(),
+							GestorActivoApi.CODIGO_SUPERVISOR_EDIFICACIONES);
 					tareaActivo.setSupervisorActivo(supervisor);
-					
-				} else if(gestorActivoApi.isGestorSuelos(trabajo.getActivo(), usuario)) {
-					Usuario supervisor = gestorActivoApi.getGestorByActivoYTipo(trabajo.getActivo(), GestorActivoApi.CODIGO_SUPERVISOR_SUELOS);
+
+				} else if (gestorActivoApi.isGestorSuelos(trabajo.getActivo(), usuario)) {
+					Usuario supervisor = gestorActivoApi.getGestorByActivoYTipo(trabajo.getActivo(),
+							GestorActivoApi.CODIGO_SUPERVISOR_SUELOS);
 					tareaActivo.setSupervisorActivo(supervisor);
-					
+
 				} else {
-					Usuario supervisor = gestorActivoApi.getGestorByActivoYTipo(trabajo.getActivo(), GestorActivoApi.CODIGO_SUPERVISOR_ACTIVOS);
+					Usuario supervisor = gestorActivoApi.getGestorByActivoYTipo(trabajo.getActivo(),
+							GestorActivoApi.CODIGO_SUPERVISOR_ACTIVOS);
 					tareaActivo.setSupervisorActivo(supervisor);
 				}
 			}
 		}
-		if(!Checks.esNulo(dtoTrabajo.getRequerimiento())){
+		if (!Checks.esNulo(dtoTrabajo.getRequerimiento())) {
 			trabajo.setRequerimiento(dtoTrabajo.getRequerimiento());
 
 		}
@@ -1252,12 +1263,13 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 		BeanUtilNotNull beanUtils = new BeanUtilNotNull();
 		beanUtils.copyProperties(trabajo, dtoGestionEconomica);
-		
-		if(!Checks.esNulo(dtoGestionEconomica.getIdProveedorContacto())) {
-			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", dtoGestionEconomica.getIdProveedorContacto());
+
+		if (!Checks.esNulo(dtoGestionEconomica.getIdProveedorContacto())) {
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id",
+					dtoGestionEconomica.getIdProveedorContacto());
 			ActivoProveedorContacto proveedorContacto = genericDao.get(ActivoProveedorContacto.class, filtro);
-			
-			if(!Checks.esNulo(proveedorContacto))
+
+			if (!Checks.esNulo(proveedorContacto))
 				trabajo.setProveedorContacto(proveedorContacto);
 		}
 	}
@@ -1267,7 +1279,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	@BusinessOperation(overrides = "trabajoManager.createTramiteTrabajo")
 	public ActivoTramite createTramiteTrabajo(Trabajo trabajo) {
 		TipoProcedimiento tipoTramite = new TipoProcedimiento();
-		if(trabajo.getEsTarifaPlana() == null){
+		if (trabajo.getEsTarifaPlana() == null) {
 			trabajo.setEsTarifaPlana(false);
 		}
 
@@ -1276,80 +1288,94 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 																										// documental
 			if (trabajo.getSubtipoTrabajo().getCodigo().equals(DDSubtipoTrabajo.CODIGO_CEE)) {// CEE
 				tipoTramite = tipoProcedimientoManager.getByCodigo(ActivoTramiteApi.CODIGO_TRAMITE_OBTENCION_DOC_CEE); // Trámite
-																			// de
-																			// obtención
-																			// documental
-																			// CEE
-				//Si el trabajo es Bankia/Sareb/Tango asignamos proveedorContacto
-				if(this.checkBankia(trabajo) || this.checkSareb(trabajo) || this.checkTango(trabajo)) {
-					Filter filtroUsuProveedorBankiaSareb = genericDao.createFilter(FilterType.EQUALS, "username", GestorActivoApi.CIF_PROVEEDOR_BANKIA_SAREB_TINSA);
+				// de
+				// obtención
+				// documental
+				// CEE
+				// Si el trabajo es Bankia/Sareb/Tango asignamos
+				// proveedorContacto
+				if (this.checkBankia(trabajo) || this.checkSareb(trabajo) || this.checkTango(trabajo)) {
+					Filter filtroUsuProveedorBankiaSareb = genericDao.createFilter(FilterType.EQUALS, "username",
+							GestorActivoApi.CIF_PROVEEDOR_BANKIA_SAREB_TINSA);
 					Usuario usuProveedorBankiaSareb = genericDao.get(Usuario.class, filtroUsuProveedorBankiaSareb);
-					if(!Checks.esNulo(usuProveedorBankiaSareb)) {
-						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "usuario",usuProveedorBankiaSareb);
-						Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "proveedor.tipoProveedor.codigo", DDTipoProveedor.COD_CERTIFICADORA);
-						List<ActivoProveedorContacto> listaPVC = genericDao.getList(ActivoProveedorContacto.class,filtro,filtro2);
-						if(!Checks.estaVacio(listaPVC)){
-							
+					if (!Checks.esNulo(usuProveedorBankiaSareb)) {
+						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "usuario", usuProveedorBankiaSareb);
+						Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "proveedor.tipoProveedor.codigo",
+								DDTipoProveedor.COD_CERTIFICADORA);
+						List<ActivoProveedorContacto> listaPVC = genericDao.getList(ActivoProveedorContacto.class,
+								filtro, filtro2);
+						if (!Checks.estaVacio(listaPVC)) {
+
 							trabajo.setProveedorContacto(listaPVC.get(0));
 							trabajo = genericDao.save(Trabajo.class, trabajo);
 						}
 					}
-				//Si el trabajo es de JAIPUR/GIANTS/GALEON
-				}else if(this.checkGiants(trabajo) || this.checkGaleon(trabajo) || this.checkJaipur(trabajo)){
-					Filter filtroPVE = genericDao.createFilter(FilterType.EQUALS, "docIdentificativo", GestorActivoApi.CIF_PROVEEDOR_HOMESERVE);
+					// Si el trabajo es de JAIPUR/GIANTS/GALEON
+				} else if (this.checkGiants(trabajo) || this.checkGaleon(trabajo) || this.checkJaipur(trabajo)) {
+					Filter filtroPVE = genericDao.createFilter(FilterType.EQUALS, "docIdentificativo",
+							GestorActivoApi.CIF_PROVEEDOR_HOMESERVE);
 					Filter filtroPVE2 = genericDao.createFilter(FilterType.NULL, "fechaBaja");
 					ActivoProveedor pve = genericDao.get(ActivoProveedor.class, filtroPVE, filtroPVE2);
-					if(!Checks.esNulo(pve)) {
+					if (!Checks.esNulo(pve)) {
 						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "proveedor", pve);
-						Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "docIdentificativo", GestorActivoApi.CIF_PROVEEDOR_HOMESERVE);
-						ActivoProveedorContacto pvc = genericDao.get(ActivoProveedorContacto.class,filtro, filtro2);
-						if(!Checks.esNulo(pvc)){
+						Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "docIdentificativo",
+								GestorActivoApi.CIF_PROVEEDOR_HOMESERVE);
+						ActivoProveedorContacto pvc = genericDao.get(ActivoProveedorContacto.class, filtro, filtro2);
+						if (!Checks.esNulo(pvc)) {
 							trabajo.setProveedorContacto(pvc);
 							trabajo = genericDao.save(Trabajo.class, trabajo);
 						}
 					}
 				}
-			}
-			else if (trabajo.getSubtipoTrabajo().getCodigo().equals(DDSubtipoTrabajo.CODIGO_CEDULA_HABITABILIDAD)) {
-				tipoTramite = tipoProcedimientoManager.getByCodigo(ActivoTramiteApi.CODIGO_TRAMITE_OBTENCION_DOC_CEDULA); // Trámite
-																			// de
-																			// obtención
-																			// de
-																			// cédula
-				//Si el trabajo es Bankia/Sareb/Tango/Giants asignamos proveedorContacto
-				if(this.checkBankia(trabajo) || this.checkSareb(trabajo) || this.checkTango(trabajo) || this.checkGiants(trabajo)) {
-					Usuario usuario = gestorActivoManager.getGestorByActivoYTipo(trabajo.getActivo(), GestorActivoApi.CODIGO_GESTORIA_CEDULAS);
-					if(!Checks.esNulo(usuario)) {
-						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "usuario",usuario);
-						Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "proveedor.tipoProveedor.codigo", DDTipoProveedor.COD_GESTORIA); 
-						List<ActivoProveedorContacto> listaPVC = genericDao.getList(ActivoProveedorContacto.class,filtro,filtro2);
-						if(!Checks.estaVacio(listaPVC)){
+			} else if (trabajo.getSubtipoTrabajo().getCodigo().equals(DDSubtipoTrabajo.CODIGO_CEDULA_HABITABILIDAD)) {
+				tipoTramite = tipoProcedimientoManager
+						.getByCodigo(ActivoTramiteApi.CODIGO_TRAMITE_OBTENCION_DOC_CEDULA); // Trámite
+				// de
+				// obtención
+				// de
+				// cédula
+				// Si el trabajo es Bankia/Sareb/Tango/Giants asignamos
+				// proveedorContacto
+				if (this.checkBankia(trabajo) || this.checkSareb(trabajo) || this.checkTango(trabajo)
+						|| this.checkGiants(trabajo)) {
+					Usuario usuario = gestorActivoManager.getGestorByActivoYTipo(trabajo.getActivo(),
+							GestorActivoApi.CODIGO_GESTORIA_CEDULAS);
+					if (!Checks.esNulo(usuario)) {
+						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "usuario", usuario);
+						Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "proveedor.tipoProveedor.codigo",
+								DDTipoProveedor.COD_GESTORIA);
+						List<ActivoProveedorContacto> listaPVC = genericDao.getList(ActivoProveedorContacto.class,
+								filtro, filtro2);
+						if (!Checks.estaVacio(listaPVC)) {
 							trabajo.setProveedorContacto(listaPVC.get(0));
 							trabajo = genericDao.save(Trabajo.class, trabajo);
 						}
 					}
 				}
-				
-			}
-			else if (trabajo.getSubtipoTrabajo().getCodigo().equals(DDSubtipoTrabajo.CODIGO_INFORMES))
+
+			} else if (trabajo.getSubtipoTrabajo().getCodigo().equals(DDSubtipoTrabajo.CODIGO_INFORMES))
 				tipoTramite = tipoProcedimientoManager.getByCodigo(ActivoTramiteApi.CODIGO_TRAMITE_INFORME);// Trámite
-																			// de
-																			// informes
+			// de
+			// informes
 			else {
-				tipoTramite = tipoProcedimientoManager.getByCodigo(ActivoTramiteApi.CODIGO_TRAMITE_OBTENCION_DOC); 	// Trámite
+				tipoTramite = tipoProcedimientoManager.getByCodigo(ActivoTramiteApi.CODIGO_TRAMITE_OBTENCION_DOC); // Trámite
 																													// de
 																													// obtención
 																													// documental
 
-				//Si el trabajo es Bankia/Sareb/Tango/Giants asignamos proveedorContacto
-				if(this.checkBankia(trabajo) || this.checkSareb(trabajo) || this.checkTango(trabajo) || this.checkGiants(trabajo)) {
+				// Si el trabajo es Bankia/Sareb/Tango/Giants asignamos
+				// proveedorContacto
+				if (this.checkBankia(trabajo) || this.checkSareb(trabajo) || this.checkTango(trabajo)
+						|| this.checkGiants(trabajo)) {
 
-					Usuario gestorAdmision = gestorActivoManager.getGestorByActivoYTipo(trabajo.getActivo(), GestorActivoApi.CODIGO_GESTOR_ADMISION);
+					Usuario gestorAdmision = gestorActivoManager.getGestorByActivoYTipo(trabajo.getActivo(),
+							GestorActivoApi.CODIGO_GESTOR_ADMISION);
 
-					if(!Checks.esNulo(gestorAdmision)) {
+					if (!Checks.esNulo(gestorAdmision)) {
 						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "usuario", gestorAdmision);
-						List<ActivoProveedorContacto> listaPVC = genericDao.getList(ActivoProveedorContacto.class,filtro);
-						if(!Checks.estaVacio(listaPVC)){
+						List<ActivoProveedorContacto> listaPVC = genericDao.getList(ActivoProveedorContacto.class,
+								filtro);
+						if (!Checks.estaVacio(listaPVC)) {
 							trabajo.setProveedorContacto(listaPVC.get(0));
 							trabajo = genericDao.save(Trabajo.class, trabajo);
 						}
@@ -1359,17 +1385,17 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		}
 		if (trabajo.getTipoTrabajo().getCodigo().equals(DDTipoTrabajo.CODIGO_TASACION)) { // Tasación
 			tipoTramite = tipoProcedimientoManager.getByCodigo(ActivoTramiteApi.CODIGO_TRAMITE_TASACION); // Trámite
-																		// de
-																		// tasación
+			// de
+			// tasación
 		}
 		if (trabajo.getTipoTrabajo().getCodigo().equals(DDTipoTrabajo.CODIGO_ACTUACION_TECNICA)) { // Actuación
 																									// técnica
 			if (trabajo.getSubtipoTrabajo().getCodigo().equals(DDSubtipoTrabajo.CODIGO_AT_VERIFICACION_AVERIAS))
 				tipoTramite = tipoProcedimientoManager.getByCodigo(ActivoTramiteApi.CODIGO_TRAMITE_INFORME); // Sólo
-																			// en
-																			// verificación
-																			// de
-																			// averias
+			// en
+			// verificación
+			// de
+			// averias
 			else
 				tipoTramite = tipoProcedimientoManager.getByCodigo(ActivoTramiteApi.CODIGO_TRAMITE_ACTUACION_TECNICA);
 		}
@@ -1410,13 +1436,13 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		}
 
 		// Módulo de Expediente comercial ----------
-		if(trabajo.getSubtipoTrabajo().getCodigo().equals(DDSubtipoTrabajo.CODIGO_SANCION_OFERTA_VENTA)) {
+		if (trabajo.getSubtipoTrabajo().getCodigo().equals(DDSubtipoTrabajo.CODIGO_SANCION_OFERTA_VENTA)) {
 			tipoTramite = tipoProcedimientoManager.getByCodigo(ActivoTramiteApi.CODIGO_TRAMITE_COMERCIAL_VENTA);
 		}
-		if(trabajo.getSubtipoTrabajo().getCodigo().equals(DDSubtipoTrabajo.CODIGO_SANCION_OFERTA_ALQUILER)) {
+		if (trabajo.getSubtipoTrabajo().getCodigo().equals(DDSubtipoTrabajo.CODIGO_SANCION_OFERTA_ALQUILER)) {
 			tipoTramite = tipoProcedimientoManager.getByCodigo(ActivoTramiteApi.CODIGO_TRAMITE_COMERCIAL_ALQUILER);
 		}
-		
+
 		if (Checks.esNulo(tipoTramite.getId())) {
 			return null;
 		}
@@ -1428,16 +1454,16 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 	}
 
-	private DtoFichaTrabajo trabajoToDtoFichaTrabajo(Trabajo trabajo) throws IllegalAccessException, InvocationTargetException {
+	private DtoFichaTrabajo trabajoToDtoFichaTrabajo(Trabajo trabajo)
+			throws IllegalAccessException, InvocationTargetException {
 
 		DtoFichaTrabajo dtoTrabajo = new DtoFichaTrabajo();
 
 		beanUtilNotNull.copyProperties(dtoTrabajo, trabajo);
 
 		Activo activo = trabajo.getActivo();
-		
-		Usuario usuariologado = adapter.getUsuarioLogado();
 
+		Usuario usuariologado = adapter.getUsuarioLogado();
 
 		if (!Checks.esNulo(activo)) {
 
@@ -1445,12 +1471,12 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 					&& !Checks.esNulo(activo.getInfoComercial().getMediadorInforme())) {
 				dtoTrabajo.setNombreMediador(activo.getInfoComercial().getMediadorInforme().getNombre());
 			}
-			
+
 			dtoTrabajo.setCartera(activo.getCartera().getDescripcion());
 			dtoTrabajo.setCodCartera(activo.getCartera().getCodigo());
 			dtoTrabajo.setPropietario(activo.getFullNamePropietario());
 			dtoTrabajo.setIdActivo(activo.getId());
-		}else if (trabajo.getAgrupacion() != null && trabajo.getAgrupacion().getActivoPrincipal() != null) {
+		} else if (trabajo.getAgrupacion() != null && trabajo.getAgrupacion().getActivoPrincipal() != null) {
 			dtoTrabajo.setCodCartera(trabajo.getAgrupacion().getActivoPrincipal().getCartera().getCodigo());
 		}
 
@@ -1496,130 +1522,139 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			dtoTrabajo.setTipoAgrupacionDescripcion(trabajo.getAgrupacion().getTipoAgrupacion().getDescripcion());
 		}
 
-		if (!Checks.esNulo(trabajo.getGastoTrabajo()) && !Checks.esNulo(trabajo.getGastoTrabajo().getGastoProveedor())) {
+		if (!Checks.esNulo(trabajo.getGastoTrabajo())
+				&& !Checks.esNulo(trabajo.getGastoTrabajo().getGastoProveedor())) {
 			dtoTrabajo.setFechaEmisionFactura(trabajo.getGastoTrabajo().getGastoProveedor().getFechaEmision());
 		}
 
-		if(!Checks.esNulo(trabajo.getUsuarioGestorActivoResponsable())){
+		if (!Checks.esNulo(trabajo.getUsuarioGestorActivoResponsable())) {
 			dtoTrabajo.setGestorActivoResponsable(trabajo.getUsuarioGestorActivoResponsable().getApellidoNombre());
 			dtoTrabajo.setIdGestorActivoResponsable(trabajo.getUsuarioGestorActivoResponsable().getId());
 
 		} else {
 			Usuario gestorActivo = gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_ACTIVO);
-			if(!Checks.esNulo(gestorActivo)) {
+			if (!Checks.esNulo(gestorActivo)) {
 				dtoTrabajo.setGestorActivoResponsable(gestorActivo.getApellidoNombre());
 				dtoTrabajo.setIdGestorActivoResponsable(gestorActivo.getId());
 			}
 		}
 
-		if(!Checks.esNulo(trabajo.getSupervisorActivoResponsable())){
+		if (!Checks.esNulo(trabajo.getSupervisorActivoResponsable())) {
 			dtoTrabajo.setSupervisorActivo(trabajo.getSupervisorActivoResponsable().getApellidoNombre());
 			dtoTrabajo.setIdSupervisorActivo(trabajo.getSupervisorActivoResponsable().getId());
 
 		} else {
-			Usuario supervisorActivo = gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_SUPERVISOR_ACTIVOS);
-			if(!Checks.esNulo(supervisorActivo)){
+			Usuario supervisorActivo = gestorActivoApi.getGestorByActivoYTipo(activo,
+					GestorActivoApi.CODIGO_SUPERVISOR_ACTIVOS);
+			if (!Checks.esNulo(supervisorActivo)) {
 
 				dtoTrabajo.setSupervisorActivo(supervisorActivo.getApellidoNombre());
 				dtoTrabajo.setIdSupervisorActivo(supervisorActivo.getId());
 			}
 		}
-		
-		if(!Checks.esNulo(trabajo.getUsuarioResponsableTrabajo())){
+
+		if (!Checks.esNulo(trabajo.getUsuarioResponsableTrabajo())) {
 			dtoTrabajo.setResponsableTrabajo(trabajo.getUsuarioResponsableTrabajo().getApellidoNombre());
 			dtoTrabajo.setIdResponsableTrabajo(trabajo.getUsuarioResponsableTrabajo().getId());
-			
-		}
-		else if (!Checks.esNulo(trabajo.getSolicitante())){
+
+		} else if (!Checks.esNulo(trabajo.getSolicitante())) {
 			dtoTrabajo.setResponsableTrabajo(trabajo.getSolicitante().getApellidoNombre());
 			dtoTrabajo.setIdResponsableTrabajo(trabajo.getSolicitante().getId());
 		}
-		
-		
-		if(trabajo.getEsTarifaPlana()){
+
+		if (trabajo.getEsTarifaPlana()) {
 			dtoTrabajo.setEsTarifaPlana(1);
-		}else{
+		} else {
 			dtoTrabajo.setEsTarifaPlana(0);
 		}
-		
-		 if(!Checks.esNulo(trabajo.getFechaAutorizacionPropietario())) {
+
+		if (!Checks.esNulo(trabajo.getFechaAutorizacionPropietario())) {
 			dtoTrabajo.setFechaAutorizacionPropietario(trabajo.getFechaAutorizacionPropietario());
-		 }
-		 
-		 Usuario supervisorActivo = gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_SUPERVISOR_ACTIVOS);
-		 Usuario supervisorEdificaciones = gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_SUPERVISOR_EDIFICACIONES);
-		 Usuario supervisorAlquileres = gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_SUPERVISOR_ALQUILERES);
-		 Usuario supervisorSuelos = gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_SUPERVISOR_SUELOS);
-		 Usuario gestorEdificaciones = gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_EDIFICACIONES);
-		 Usuario gestorAlquileres = gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_ALQUILERES);
-		 Usuario gestorSuelos = gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_SUELOS);
-		 Usuario gestorActivo = gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_ACTIVO);
-		 Usuario responsableTrabajo = trabajo.getUsuarioResponsableTrabajo();
-			
-		 if(!Checks.esNulo(responsableTrabajo)?usuariologado.equals(responsableTrabajo):false){
-			 dtoTrabajo.setBloquearResponsable(false);
-		 }else if(((!Checks.esNulo(responsableTrabajo) && !Checks.esNulo(gestorEdificaciones))?responsableTrabajo.equals(gestorEdificaciones):false) 
-				 && (!Checks.esNulo(supervisorEdificaciones)?usuariologado.equals(supervisorEdificaciones):false)){
-			 dtoTrabajo.setBloquearResponsable(false);
-		 }else if(((!Checks.esNulo(responsableTrabajo) && !Checks.esNulo(gestorAlquileres))?responsableTrabajo.equals(gestorAlquileres):false) 
-				 && (!Checks.esNulo(supervisorAlquileres)?usuariologado.equals(supervisorAlquileres):false)){
-			 dtoTrabajo.setBloquearResponsable(false);
-		 }else if(((!Checks.esNulo(responsableTrabajo) && !Checks.esNulo(gestorSuelos))?responsableTrabajo.equals(gestorSuelos):false) 
-				 && (!Checks.esNulo(supervisorSuelos)?usuariologado.equals(supervisorSuelos):false)){
-			 dtoTrabajo.setBloquearResponsable(false);
-		 }else if(((!Checks.esNulo(responsableTrabajo) && !Checks.esNulo(gestorActivo))?responsableTrabajo.equals(gestorActivo):false) 
-				 && (!Checks.esNulo(supervisorActivo)?usuariologado.equals(supervisorActivo):false)){
-			 dtoTrabajo.setBloquearResponsable(false);
-		 }
-		 else {
-			 dtoTrabajo.setBloquearResponsable(true);
-		 }
-		 
-		 if(usuariologado != null && usuariologado.equals(gestorActivo)){
-			 dtoTrabajo.setLogadoGestorMantenimiento(true);
-		 }else{
-			 dtoTrabajo.setLogadoGestorMantenimiento(false);
-		 }
+		}
 
-		 if(!Checks.esNulo(supervisorEdificaciones)){
-			 dtoTrabajo.setIdSupervisorEdificaciones(supervisorEdificaciones.getId());
-		 }else if(!Checks.esNulo(supervisorAlquileres)){
-			 dtoTrabajo.setIdSupervisorAlquileres(supervisorAlquileres.getId());
-		 }else if(!Checks.esNulo(supervisorSuelos)){
-			 dtoTrabajo.setIdSupervisorSuelos(supervisorSuelos.getId());
-		 }
+		Usuario supervisorActivo = gestorActivoApi.getGestorByActivoYTipo(activo,
+				GestorActivoApi.CODIGO_SUPERVISOR_ACTIVOS);
+		Usuario supervisorEdificaciones = gestorActivoApi.getGestorByActivoYTipo(activo,
+				GestorActivoApi.CODIGO_SUPERVISOR_EDIFICACIONES);
+		Usuario supervisorAlquileres = gestorActivoApi.getGestorByActivoYTipo(activo,
+				GestorActivoApi.CODIGO_SUPERVISOR_ALQUILERES);
+		Usuario supervisorSuelos = gestorActivoApi.getGestorByActivoYTipo(activo,
+				GestorActivoApi.CODIGO_SUPERVISOR_SUELOS);
+		Usuario gestorEdificaciones = gestorActivoApi.getGestorByActivoYTipo(activo,
+				GestorActivoApi.CODIGO_GESTOR_EDIFICACIONES);
+		Usuario gestorAlquileres = gestorActivoApi.getGestorByActivoYTipo(activo,
+				GestorActivoApi.CODIGO_GESTOR_ALQUILERES);
+		Usuario gestorSuelos = gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_SUELOS);
+		Usuario gestorActivo = gestorActivoApi.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_ACTIVO);
+		Usuario responsableTrabajo = trabajo.getUsuarioResponsableTrabajo();
 
-		 if(trabajo.getRequerimiento() != null && trabajo.getRequerimiento()){
-			 dtoTrabajo.setRequerimiento(true);
-		 }else{
-			 dtoTrabajo.setRequerimiento(false);
-		 }
+		if (!Checks.esNulo(responsableTrabajo) ? usuariologado.equals(responsableTrabajo) : false) {
+			dtoTrabajo.setBloquearResponsable(false);
+		} else if (((!Checks.esNulo(responsableTrabajo) && !Checks.esNulo(gestorEdificaciones))
+				? responsableTrabajo.equals(gestorEdificaciones) : false)
+				&& (!Checks.esNulo(supervisorEdificaciones) ? usuariologado.equals(supervisorEdificaciones) : false)) {
+			dtoTrabajo.setBloquearResponsable(false);
+		} else if (((!Checks.esNulo(responsableTrabajo) && !Checks.esNulo(gestorAlquileres))
+				? responsableTrabajo.equals(gestorAlquileres) : false)
+				&& (!Checks.esNulo(supervisorAlquileres) ? usuariologado.equals(supervisorAlquileres) : false)) {
+			dtoTrabajo.setBloquearResponsable(false);
+		} else if (((!Checks.esNulo(responsableTrabajo) && !Checks.esNulo(gestorSuelos))
+				? responsableTrabajo.equals(gestorSuelos) : false)
+				&& (!Checks.esNulo(supervisorSuelos) ? usuariologado.equals(supervisorSuelos) : false)) {
+			dtoTrabajo.setBloquearResponsable(false);
+		} else if (((!Checks.esNulo(responsableTrabajo) && !Checks.esNulo(gestorActivo))
+				? responsableTrabajo.equals(gestorActivo) : false)
+				&& (!Checks.esNulo(supervisorActivo) ? usuariologado.equals(supervisorActivo) : false)) {
+			dtoTrabajo.setBloquearResponsable(false);
+		} else {
+			dtoTrabajo.setBloquearResponsable(true);
+		}
 
+		if (usuariologado != null && usuariologado.equals(gestorActivo)) {
+			dtoTrabajo.setLogadoGestorMantenimiento(true);
+		} else {
+			dtoTrabajo.setLogadoGestorMantenimiento(false);
+		}
+
+		if (!Checks.esNulo(supervisorEdificaciones)) {
+			dtoTrabajo.setIdSupervisorEdificaciones(supervisorEdificaciones.getId());
+		} else if (!Checks.esNulo(supervisorAlquileres)) {
+			dtoTrabajo.setIdSupervisorAlquileres(supervisorAlquileres.getId());
+		} else if (!Checks.esNulo(supervisorSuelos)) {
+			dtoTrabajo.setIdSupervisorSuelos(supervisorSuelos.getId());
+		}
+
+		if (trabajo.getRequerimiento() != null && trabajo.getRequerimiento()) {
+			dtoTrabajo.setRequerimiento(true);
+		} else {
+			dtoTrabajo.setRequerimiento(false);
+		}
 
 		return dtoTrabajo;
 	}
-	
-	@Transactional(readOnly = false)
-	private void editarTramites (Trabajo trabajo) {
-	
-	 List<ActivoTramite> listActTra = genericDao.getList(ActivoTramite.class,genericDao.createFilter(FilterType.EQUALS, "trabajo.id", trabajo.getId()),genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
-	 for (ActivoTramite actTra : listActTra) {
-		 List<TareaActivo> listaActivo = genericDao.getList(TareaActivo.class,genericDao.createFilter(FilterType.EQUALS, "tramite.id", actTra.getId()),genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
-		 for (TareaActivo tarAct: listaActivo) {
-			 if(!Checks.esNulo(trabajo.getUsuarioResponsableTrabajo())){
-				 tarAct.setUsuario(trabajo.getUsuarioResponsableTrabajo());
-					genericDao.save(TareaActivo.class, tarAct);
-						
-				 
-			 }
-			 else {
-				 
-			 }
 
-		 }
-	 }
+	@Transactional(readOnly = false)
+	private void editarTramites(Trabajo trabajo) {
+
+		List<ActivoTramite> listActTra = genericDao.getList(ActivoTramite.class,
+				genericDao.createFilter(FilterType.EQUALS, "trabajo.id", trabajo.getId()),
+				genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
+		for (ActivoTramite actTra : listActTra) {
+			List<TareaActivo> listaActivo = genericDao.getList(TareaActivo.class,
+					genericDao.createFilter(FilterType.EQUALS, "tramite.id", actTra.getId()),
+					genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
+			for (TareaActivo tarAct : listaActivo) {
+				if (!Checks.esNulo(trabajo.getUsuarioResponsableTrabajo())) {
+					tarAct.setUsuario(trabajo.getUsuarioResponsableTrabajo());
+					genericDao.save(TareaActivo.class, tarAct);
+
+				} else {
+
+				}
+
+			}
+		}
 	}
-	 
 
 	private DtoGestionEconomicaTrabajo trabajoToDtoGestionEconomicaTrabajo(Trabajo trabajo)
 			throws IllegalAccessException, InvocationTargetException {
@@ -1655,10 +1690,11 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 		if (trabajo.getProveedorContacto() != null) {
 			dtoTrabajo.setIdProveedorContacto(trabajo.getProveedorContacto().getId());
-			
+
 			if (trabajo.getProveedorContacto().getProveedor() != null) {
 				dtoTrabajo.setIdProveedor(trabajo.getProveedorContacto().getProveedor().getId());
-				dtoTrabajo.setCodigoTipoProveedor(trabajo.getProveedorContacto().getProveedor().getTipoProveedor().getCodigo());
+				dtoTrabajo.setCodigoTipoProveedor(
+						trabajo.getProveedorContacto().getProveedor().getTipoProveedor().getCodigo());
 			}
 			if (trabajo.getProveedorContacto().getUsuario() != null) {
 				dtoTrabajo.setUsuarioProveedorContacto(trabajo.getProveedorContacto().getUsuario().getApellidoNombre());
@@ -1739,13 +1775,11 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 																							// presupuesto:
 																							// en
 																							// estudio
-			DDEstadoPresupuesto estadoPresupuesto = genericDao.get(DDEstadoPresupuesto.class,
-					filtro2);
+			DDEstadoPresupuesto estadoPresupuesto = genericDao.get(DDEstadoPresupuesto.class, filtro2);
 			presupuesto.setEstadoPresupuesto(estadoPresupuesto);
 			beanUtilNotNull.copyProperties(presupuesto, presupuestoDto);
 			genericDao.save(PresupuestoTrabajo.class, presupuesto);
 
-			
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 		}
@@ -1769,15 +1803,15 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				presupuestoTrabajo.setProveedor(proveedor);
 			}
 			if (presupuestoDto.getIdProveedorContacto() != null) {
-				Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "id", presupuestoDto.getIdProveedorContacto());
+				Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "id",
+						presupuestoDto.getIdProveedorContacto());
 				ActivoProveedorContacto proveedorContacto = genericDao.get(ActivoProveedorContacto.class, filtro2);
 				presupuestoTrabajo.setProveedorContacto(proveedorContacto);
 			}
 			if (presupuestoDto.getEstadoPresupuestoCodigo() != null) {
 				Filter filtro3 = genericDao.createFilter(FilterType.EQUALS, "codigo",
 						presupuestoDto.getEstadoPresupuestoCodigo());
-				DDEstadoPresupuesto estadoPresupuesto = genericDao.get(DDEstadoPresupuesto.class,
-						filtro3);
+				DDEstadoPresupuesto estadoPresupuesto = genericDao.get(DDEstadoPresupuesto.class, filtro3);
 				presupuestoTrabajo.setEstadoPresupuesto(estadoPresupuesto);
 				// Si el nuevo estado del presupuesto es autorizado, el resto de
 				// presupuestos para ese trabajo pasa a ser rechazado
@@ -1790,7 +1824,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 							filtroPresupuestos);
 
 					// Buscamos el proveedor y lo asignamos al trabajo
-					filtro = genericDao.createFilter(FilterType.EQUALS, "id", presupuestoTrabajo.getProveedorContacto().getId());
+					filtro = genericDao.createFilter(FilterType.EQUALS, "id",
+							presupuestoTrabajo.getProveedorContacto().getId());
 					ActivoProveedorContacto activoProveedor = genericDao.get(ActivoProveedorContacto.class, filtro);
 					trabajo.setProveedorContacto(activoProveedor);
 
@@ -1798,8 +1833,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 						if (presup.getId() != presupuestoTrabajo.getId()) {
 							Filter filtroRechazado = genericDao.createFilter(FilterType.EQUALS, "codigo", "01"); // Estado
 																													// rechazado
-							DDEstadoPresupuesto estadoPresupuestoRechazado = genericDao
-									.get(DDEstadoPresupuesto.class, filtroRechazado);
+							DDEstadoPresupuesto estadoPresupuestoRechazado = genericDao.get(DDEstadoPresupuesto.class,
+									filtroRechazado);
 							presup.setEstadoPresupuesto(estadoPresupuestoRechazado);
 							genericDao.save(PresupuestoTrabajo.class, presup);
 						}
@@ -1890,10 +1925,9 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	public String upload(WebFileItem fileItem) throws Exception {
 
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", fileItem.getParameter("tipo"));
-		DDTipoDocumentoActivo tipoDocumento = genericDao.get(DDTipoDocumentoActivo.class,
-				filtro);
-		
-		if(!Checks.esNulo(tipoDocumento)) {
+		DDTipoDocumentoActivo tipoDocumento = genericDao.get(DDTipoDocumentoActivo.class, filtro);
+
+		if (!Checks.esNulo(tipoDocumento)) {
 			// Subida de adjunto al Trabajo
 			Trabajo trabajo = trabajoDao.get(Long.parseLong(fileItem.getParameter("idEntidad")));
 
@@ -1989,7 +2023,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 		return trabajoDao.getListActivosTrabajo(dto);
 	}
-	
+
 	@Override
 	public Page getListActivosPresupuesto(DtoActivosTrabajoFilter dto) {
 
@@ -2186,7 +2220,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			if (presupuesto.getProveedor() != null) {
 				BeanUtils.copyProperty(presupuestoDto, "idProveedor", presupuesto.getProveedor().getId());
 				BeanUtils.copyProperty(presupuestoDto, "proveedorDescripcion", presupuesto.getProveedor().getNombre());
-				BeanUtils.copyProperty(presupuestoDto, "codigoTipoProveedor", presupuesto.getProveedor().getTipoProveedor().getCodigo());
+				BeanUtils.copyProperty(presupuestoDto, "codigoTipoProveedor",
+						presupuesto.getProveedor().getTipoProveedor().getCodigo());
 			}
 			if (presupuesto.getEstadoPresupuesto() != null) {
 				BeanUtils.copyProperty(presupuestoDto, "estadoPresupuestoCodigo",
@@ -2194,12 +2229,16 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				BeanUtils.copyProperty(presupuestoDto, "estadoPresupuestoDescripcion",
 						presupuesto.getEstadoPresupuesto().getDescripcion());
 			}
-			if(presupuesto.getProveedorContacto() != null){
-				BeanUtils.copyProperty(presupuestoDto, "idProveedorContacto", presupuesto.getProveedorContacto().getId());
-				BeanUtils.copyProperty(presupuestoDto, "nombreProveedorContacto", presupuesto.getProveedorContacto().getNombre());
-				BeanUtils.copyProperty(presupuestoDto, "emailProveedorContacto", presupuesto.getProveedorContacto().getEmail());
-				if(presupuesto.getProveedorContacto().getUsuario() != null) {
-					BeanUtils.copyProperty(presupuestoDto, "usuarioProveedorContacto", presupuesto.getProveedorContacto().getUsuario().getApellidoNombre());
+			if (presupuesto.getProveedorContacto() != null) {
+				BeanUtils.copyProperty(presupuestoDto, "idProveedorContacto",
+						presupuesto.getProveedorContacto().getId());
+				BeanUtils.copyProperty(presupuestoDto, "nombreProveedorContacto",
+						presupuesto.getProveedorContacto().getNombre());
+				BeanUtils.copyProperty(presupuestoDto, "emailProveedorContacto",
+						presupuesto.getProveedorContacto().getEmail());
+				if (presupuesto.getProveedorContacto().getUsuario() != null) {
+					BeanUtils.copyProperty(presupuestoDto, "usuarioProveedorContacto",
+							presupuesto.getProveedorContacto().getUsuario().getApellidoNombre());
 				}
 			}
 
@@ -2214,22 +2253,25 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	@Transactional(readOnly = false)
 	public boolean saveActivoTrabajo(DtoActivoTrabajo dtoActivoTrabajo) {
 		Float porcentajeParticipacion = 0f;
-		if(dtoActivoTrabajo.getParticipacion() != null) {
+		if (dtoActivoTrabajo.getParticipacion() != null) {
 			porcentajeParticipacion = Float.valueOf(dtoActivoTrabajo.getParticipacion());
 		}
-		
-		Filter f1 = genericDao.createFilter(FilterType.EQUALS, "activo.id", Long.valueOf(dtoActivoTrabajo.getIdActivo()));
-		Filter f2 = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", Long.valueOf(dtoActivoTrabajo.getIdTrabajo()));
-		
+
+		Filter f1 = genericDao.createFilter(FilterType.EQUALS, "activo.id",
+				Long.valueOf(dtoActivoTrabajo.getIdActivo()));
+		Filter f2 = genericDao.createFilter(FilterType.EQUALS, "trabajo.id",
+				Long.valueOf(dtoActivoTrabajo.getIdTrabajo()));
+
 		ActivoTrabajo activoTrabajo = genericDao.get(ActivoTrabajo.class, f1, f2);
-		
+
 		activoTrabajo.setParticipacion(porcentajeParticipacion);
 		genericDao.update(ActivoTrabajo.class, activoTrabajo);
 
-		// Si el trabajo está asociado a un gasto actualizar el porcentaje en el mismo.
-		if(activoTrabajo.getTrabajo().getGastoTrabajo() != null) {
-		gastoProveedorApi.actualizarPorcentajeParticipacionGastoProveedorActivo(activoTrabajo.getActivo().getId(), 
-				activoTrabajo.getTrabajo().getGastoTrabajo().getGastoProveedor().getId(), porcentajeParticipacion);
+		// Si el trabajo está asociado a un gasto actualizar el porcentaje en el
+		// mismo.
+		if (activoTrabajo.getTrabajo().getGastoTrabajo() != null) {
+			gastoProveedorApi.actualizarPorcentajeParticipacionGastoProveedorActivo(activoTrabajo.getActivo().getId(),
+					activoTrabajo.getTrabajo().getGastoTrabajo().getGastoProveedor().getId(), porcentajeParticipacion);
 		}
 
 		return true;
@@ -2253,22 +2295,24 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		filtro.setCarteraCodigo(cartera);
 		filtro.setTipoTrabajoCodigo(tipoTrabajo);
 		filtro.setSubtipoTrabajoCodigo(subtipoTrabajo);
-		
-		if(!Checks.esNulo(filtro.getIdTrabajo())){
+
+		if (!Checks.esNulo(filtro.getIdTrabajo())) {
 			Trabajo trabajo = findOne(filtro.getIdTrabajo());
-			if(!Checks.esNulo(trabajo.getProveedorContacto()) && !Checks.esNulo(trabajo.getProveedorContacto().getProveedor())){
+			if (!Checks.esNulo(trabajo.getProveedorContacto())
+					&& !Checks.esNulo(trabajo.getProveedorContacto().getProveedor())) {
 				filtro.setIdProveedor(trabajo.getProveedorContacto().getProveedor().getId());
 			}
 		}
-		if(!Checks.esNulo(codigoTarifa)){
+		if (!Checks.esNulo(codigoTarifa)) {
 			filtro.setCodigoTarifaTrabajo(codigoTarifa);
 		}
-		if(!Checks.esNulo(descripcionTarifa)){
+		if (!Checks.esNulo(descripcionTarifa)) {
 			filtro.setDescripcionTarifaTrabajo(descripcionTarifa);
 		}
 		Page page = trabajoDao.getSeleccionTarifasTrabajo(filtro, usuarioLogado);
-		//Si no existen tarifas para un Proveedor, se recuperan las tarifas sin el filtro del Proveedor
-		if(page.getTotalCount() == 0){
+		// Si no existen tarifas para un Proveedor, se recuperan las tarifas sin
+		// el filtro del Proveedor
+		if (page.getTotalCount() == 0) {
 			filtro.setIdProveedor(null);
 			page = trabajoDao.getSeleccionTarifasTrabajo(filtro, usuarioLogado);
 		}
@@ -2304,10 +2348,10 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 		return tarifas;
 	}
-	
+
 	@Override
 	public DtoPage getTarifasTrabajo(DtoGestionEconomicaTrabajo filtro, Long idTrabajo) {
-		
+
 		List<DtoTarifaTrabajo> listaTarifasTrabajo = getListDtoTarifaTrabajo(filtro, idTrabajo);
 		return new DtoPage(listaTarifasTrabajo, listaTarifasTrabajo.size());
 	}
@@ -2352,28 +2396,32 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 		return hayPresupuestoAutorizado;
 	}
-	
+
 	@Override
 	public Boolean checkSuperaDelegacion(TareaExterna tarea) {
 		String PRESUPUESTO_AUTORIZADO = "02";
-		Long limiteDelegacion = 5000L; //Importe maximo para Delegacion a Capa Control Bankia
+		Long limiteDelegacion = 5000L; // Importe maximo para Delegacion a Capa
+										// Control Bankia
 
 		Trabajo trabajo = getTrabajoByTareaExterna(tarea);
 
-		if(!Checks.esNulo(trabajo.getEsTarificado()) && trabajo.getEsTarificado()){
+		if (!Checks.esNulo(trabajo.getEsTarificado()) && trabajo.getEsTarificado()) {
 			DtoGestionEconomicaTrabajo filtroTarifas = new DtoGestionEconomicaTrabajo();
-			filtroTarifas.setLimit(5000000); // Limite de paginacion de resultados - Maximo soportado 5mill de tarifas por trabajo
+			filtroTarifas.setLimit(5000000); // Limite de paginacion de
+												// resultados - Maximo soportado
+												// 5mill de tarifas por trabajo
 			filtroTarifas.setStart(0);
 			List<DtoTarifaTrabajo> listaTarifas = getListDtoTarifaTrabajo(filtroTarifas, trabajo.getId());
-			
+
 			// Acumulado por tarifas
 			BigDecimal importeTotalTarifas = new BigDecimal(0);
-			
-			for(DtoTarifaTrabajo tarifaTrabajo : listaTarifas){
+
+			for (DtoTarifaTrabajo tarifaTrabajo : listaTarifas) {
 				importeTotalTarifas = importeTotalTarifas.add(new BigDecimal(tarifaTrabajo.getPrecioUnitario()));
-				
-				// Si el acumulado de tarifas hasta ahora, supera limite de delegacion - Supera delegacion - a Capa Control
-				if(importeTotalTarifas.compareTo(new BigDecimal(limiteDelegacion)) == 1){
+
+				// Si el acumulado de tarifas hasta ahora, supera limite de
+				// delegacion - Supera delegacion - a Capa Control
+				if (importeTotalTarifas.compareTo(new BigDecimal(limiteDelegacion)) == 1) {
 					return true;
 				}
 			}
@@ -2381,11 +2429,12 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		} else {
 			Filter filtroTrabajo = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", trabajo.getId());
 			List<PresupuestoTrabajo> presupuestosTrabajo = genericDao.getList(PresupuestoTrabajo.class, filtroTrabajo);
-	
+
 			for (PresupuestoTrabajo presupuestoTrabajo : presupuestosTrabajo) {
 				if (PRESUPUESTO_AUTORIZADO.equals(presupuestoTrabajo.getEstadoPresupuesto().getCodigo())) {
-					//Si el presupuesto del trabajo supera limite de delegacion - Supera delegacion - a Capa Control 
-					if(presupuestoTrabajo.getImporte()>limiteDelegacion)
+					// Si el presupuesto del trabajo supera limite de delegacion
+					// - Supera delegacion - a Capa Control
+					if (presupuestoTrabajo.getImporte() > limiteDelegacion)
 						return true;
 				}
 			}
@@ -2398,15 +2447,15 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	@BusinessOperation(overrides = "trabajoManager.checkSuperaPresupuestoActivoTarea")
 	public Boolean checkSuperaPresupuestoActivoTarea(TareaExterna tarea) {
 		Trabajo trabajo = getTrabajoByTareaExterna(tarea);
-		
-		return checkSuperaPresupuestoActivo(trabajo);		
+
+		return checkSuperaPresupuestoActivo(trabajo);
 	}
-	
+
 	@Override
 	@BusinessOperation(overrides = "trabajoManager.checkSuperaPresupuestoActivo")
 	public Boolean checkSuperaPresupuestoActivo(Trabajo trabajo) {
 
-		if(getExcesoPresupuestoActivo(trabajo) > 0L)
+		if (getExcesoPresupuestoActivo(trabajo) > 0L)
 			return true;
 		else
 			return false;
@@ -2415,47 +2464,53 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	@Override
 	@BusinessOperation(overrides = "trabajoManager.getExcesoPresupuestoActivo")
 	public Float getExcesoPresupuestoActivo(Trabajo trabajo) {
-		
+
 		SimpleDateFormat dfAnyo = new SimpleDateFormat("yyyy");
 		String ejercicioActual = dfAnyo.format(new Date());
-		
+
 		Double ultimoPresupuestoActivoImporte = 0D;
 		Double acumuladoTrabajosActivoImporte = 0D;
 		Long idUltimoPresupuestoActivo = null;
 		VBusquedaPresupuestosActivo ultimoPresupuestoActivo = null;
-		
-		// Obtiene el presupuesto del activo, si se asigno para el ejercicio actual
+
+		// Obtiene el presupuesto del activo, si se asigno para el ejercicio
+		// actual
 		if (!Checks.esNulo(trabajo.getActivo()))
 			idUltimoPresupuestoActivo = activoApi.getPresupuestoActual(trabajo.getActivo().getId());
- 		
-		if (!Checks.esNulo(idUltimoPresupuestoActivo)){
-			Filter filtroUltimoPresupuesto = genericDao.createFilter(FilterType.EQUALS, "id", idUltimoPresupuestoActivo.toString());
+
+		if (!Checks.esNulo(idUltimoPresupuestoActivo)) {
+			Filter filtroUltimoPresupuesto = genericDao.createFilter(FilterType.EQUALS, "id",
+					idUltimoPresupuestoActivo.toString());
 			ultimoPresupuestoActivo = genericDao.get(VBusquedaPresupuestosActivo.class, filtroUltimoPresupuesto);
 		}
- 		
+
 		if (!Checks.esNulo(ultimoPresupuestoActivo) && !Checks.esNulo(ultimoPresupuestoActivo.getImporteInicial()))
-			if(!Checks.esNulo(ultimoPresupuestoActivo.getSumaIncrementos()))
-				ultimoPresupuestoActivoImporte = ultimoPresupuestoActivo.getImporteInicial() + ultimoPresupuestoActivo.getSumaIncrementos();
+			if (!Checks.esNulo(ultimoPresupuestoActivo.getSumaIncrementos()))
+				ultimoPresupuestoActivoImporte = ultimoPresupuestoActivo.getImporteInicial()
+						+ ultimoPresupuestoActivo.getSumaIncrementos();
 			else
 				ultimoPresupuestoActivoImporte = ultimoPresupuestoActivo.getImporteInicial();
 
-		// Obtiene el acumulado de presupuestos de trabajos del activo, para el ejercicio actual
-		Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "idActivo", trabajo.getActivo().getId().toString());
+		// Obtiene el acumulado de presupuestos de trabajos del activo, para el
+		// ejercicio actual
+		Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "idActivo",
+				trabajo.getActivo().getId().toString());
 		Filter filtroEjercicioActual = genericDao.createFilter(FilterType.EQUALS, "ejercicio", ejercicioActual);
-		List<VBusquedaActivosTrabajoPresupuesto> listaTrabajosActivo = genericDao.getList(VBusquedaActivosTrabajoPresupuesto.class, filtroActivo, filtroEjercicioActual);
+		List<VBusquedaActivosTrabajoPresupuesto> listaTrabajosActivo = genericDao
+				.getList(VBusquedaActivosTrabajoPresupuesto.class, filtroActivo, filtroEjercicioActual);
 
 		BigDecimal importeParticipacionTrabajo = new BigDecimal(0);
 		for (VBusquedaActivosTrabajoPresupuesto trabajoActivo : listaTrabajosActivo) {
-			if(!Checks.esNulo(trabajoActivo.getImporteParticipa()))
+			if (!Checks.esNulo(trabajoActivo.getImporteParticipa()))
 				importeParticipacionTrabajo = new BigDecimal(trabajoActivo.getImporteParticipa());
 			else
 				importeParticipacionTrabajo = new BigDecimal(0);
-			
+
 			acumuladoTrabajosActivoImporte = acumuladoTrabajosActivoImporte + importeParticipacionTrabajo.doubleValue();
 		}
 
-	
-		BigDecimal importeExcesoPresupuesto = new BigDecimal(acumuladoTrabajosActivoImporte - ultimoPresupuestoActivoImporte);
+		BigDecimal importeExcesoPresupuesto = new BigDecimal(
+				acumuladoTrabajosActivoImporte - ultimoPresupuestoActivoImporte);
 
 		return importeExcesoPresupuesto.floatValue();
 	}
@@ -2465,13 +2520,13 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	public Boolean existeTarifaTrabajo(TareaExterna tarea) {
 
 		Trabajo trabajo = getTrabajoByTareaExterna(tarea);
-		if(trabajo.getEsTarifaPlana()){
+		if (trabajo.getEsTarifaPlana()) {
 			return true;
-		}else{
+		} else {
 			Filter filtroTrabajo = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", trabajo.getId());
 			List<TrabajoConfiguracionTarifa> tarifasTrabajo = genericDao.getList(TrabajoConfiguracionTarifa.class,
 					filtroTrabajo);
-	
+
 			return !tarifasTrabajo.isEmpty();
 		}
 	}
@@ -2512,8 +2567,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		DtoPresupuestoTrabajo dtoPresupuesto = new DtoPresupuestoTrabajo();
 
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", id);
-		PresupuestoTrabajo presupuestoSeleccionado = genericDao.get(PresupuestoTrabajo.class,
-				filtro);
+		PresupuestoTrabajo presupuestoSeleccionado = genericDao.get(PresupuestoTrabajo.class, filtro);
 
 		try {
 			beanUtilNotNull.copyProperties(dtoPresupuesto, presupuestoSeleccionado);
@@ -2542,18 +2596,18 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 				// El usuario actualmente no está conectado con el proveedor,
 				// así que no podemos hacer su copyProperty
 			}
-			if(presupuestoSeleccionado.getProveedorContacto() != null){
+			if (presupuestoSeleccionado.getProveedorContacto() != null) {
 				beanUtilNotNull.copyProperty(dtoPresupuesto, "idProveedorContacto",
 						presupuestoSeleccionado.getProveedorContacto().getId());
 				beanUtilNotNull.copyProperty(dtoPresupuesto, "nombreProveedorContacto",
 						presupuestoSeleccionado.getProveedorContacto().getNombre());
-				if(presupuestoSeleccionado.getProveedorContacto().getUsuario() != null) {
+				if (presupuestoSeleccionado.getProveedorContacto().getUsuario() != null) {
 					beanUtilNotNull.copyProperty(dtoPresupuesto, "usuarioProveedorContacto",
 							presupuestoSeleccionado.getProveedorContacto().getUsuario().getApellidoNombre());
 				}
 				beanUtilNotNull.copyProperty(dtoPresupuesto, "emailProveedorContacto",
 						presupuestoSeleccionado.getProveedorContacto().getEmail());
-				
+
 			}
 
 		} catch (IllegalAccessException e) {
@@ -2616,130 +2670,139 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 		Trabajo trabajo = findOne(idTrabajo);
 		Activo activo = trabajo.getActivo();
-		if(!Checks.esNulo(activo)){
-			if(!Checks.esNulo(activo.getCartera())) {
-			
-				Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "codigoCartera", activo.getCartera().getCodigo());
+		if (!Checks.esNulo(activo)) {
+			if (!Checks.esNulo(activo.getCartera())) {
+
+				Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "codigoCartera",
+						activo.getCartera().getCodigo());
 				Filter filtro3 = genericDao.createFilter(FilterType.EQUALS, "baja", 0);
-				Order orden = new Order(OrderType.ASC,"nombreComercial");
-				
+				Order orden = new Order(OrderType.ASC, "nombreComercial");
+
 				return genericDao.getListOrdered(VProveedores.class, orden, filtro1, filtro3);
 			}
 		}
-		
+
 		return new ArrayList<VProveedores>();
 	}
-	
+
 	@Override
 	public List<VProveedores> getComboProveedorFiltered(Long idTrabajo, String codigoTipoProveedor) {
-		
-		Trabajo trabajo = findOne(idTrabajo);		
+
+		Trabajo trabajo = findOne(idTrabajo);
 		Activo activo = trabajo.getActivo();
-		
-		if(!Checks.esNulo(activo)){
-			if(!Checks.esNulo(activo.getCartera())) {
-				return proveedoresDao.getProveedoresFilteredByTiposTrabajo(codigoTipoProveedor,activo.getCartera().getCodigo());
+
+		if (!Checks.esNulo(activo)) {
+			if (!Checks.esNulo(activo.getCartera())) {
+				return proveedoresDao.getProveedoresFilteredByTiposTrabajo(codigoTipoProveedor,
+						activo.getCartera().getCodigo());
 			}
 		}
 		return new ArrayList<VProveedores>();
 	}
-	
+
 	@Override
 	public List<DDTipoProveedor> getComboTipoProveedorFiltered(Long idTrabajo) {
-		
-		Trabajo trabajo = findOne(idTrabajo);		
+
+		Trabajo trabajo = findOne(idTrabajo);
 		Activo activo = trabajo.getActivo();
 		List<DDTipoProveedor> listaTiposProveedor = new ArrayList<DDTipoProveedor>();
-		
-		if(!Checks.esNulo(activo)){
-			if(!Checks.esNulo(activo.getCartera())) {
+
+		if (!Checks.esNulo(activo)) {
+			if (!Checks.esNulo(activo.getCartera())) {
 				Filter filtroTipoProveedor = null;
 				DDTipoProveedor tipoProveedor = null;
-				if(DDTipoTrabajo.CODIGO_ACTUACION_TECNICA.equals(trabajo.getTipoTrabajo().getCodigo())) {
-					filtroTipoProveedor = genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoProveedor.COD_MANTENIMIENTO_TECNICO);
+				if (DDTipoTrabajo.CODIGO_ACTUACION_TECNICA.equals(trabajo.getTipoTrabajo().getCodigo())) {
+					filtroTipoProveedor = genericDao.createFilter(FilterType.EQUALS, "codigo",
+							DDTipoProveedor.COD_MANTENIMIENTO_TECNICO);
 					tipoProveedor = genericDao.get(DDTipoProveedor.class, filtroTipoProveedor);
 					listaTiposProveedor.add(tipoProveedor);
-					filtroTipoProveedor = genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoProveedor.COD_ASEGURADORA);
+					filtroTipoProveedor = genericDao.createFilter(FilterType.EQUALS, "codigo",
+							DDTipoProveedor.COD_ASEGURADORA);
 					tipoProveedor = genericDao.get(DDTipoProveedor.class, filtroTipoProveedor);
 					listaTiposProveedor.add(tipoProveedor);
-				
-				} else if(DDTipoTrabajo.CODIGO_OBTENCION_DOCUMENTAL.equals(trabajo.getTipoTrabajo().getCodigo())) {
+
+				} else if (DDTipoTrabajo.CODIGO_OBTENCION_DOCUMENTAL.equals(trabajo.getTipoTrabajo().getCodigo())) {
 					String codSubtipo = trabajo.getSubtipoTrabajo().getCodigo();
-					if(!DDSubtipoTrabajo.CODIGO_CEE.equals(codSubtipo)) {
-						filtroTipoProveedor = genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoProveedor.COD_MANTENIMIENTO_TECNICO);
+					if (!DDSubtipoTrabajo.CODIGO_CEE.equals(codSubtipo)) {
+						filtroTipoProveedor = genericDao.createFilter(FilterType.EQUALS, "codigo",
+								DDTipoProveedor.COD_MANTENIMIENTO_TECNICO);
 						tipoProveedor = genericDao.get(DDTipoProveedor.class, filtroTipoProveedor);
 						listaTiposProveedor.add(tipoProveedor);
-						filtroTipoProveedor = genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoProveedor.COD_GESTORIA);
+						filtroTipoProveedor = genericDao.createFilter(FilterType.EQUALS, "codigo",
+								DDTipoProveedor.COD_GESTORIA);
 						tipoProveedor = genericDao.get(DDTipoProveedor.class, filtroTipoProveedor);
 						listaTiposProveedor.add(tipoProveedor);
-						filtroTipoProveedor = genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoProveedor.COD_CERTIFICADORA);
+						filtroTipoProveedor = genericDao.createFilter(FilterType.EQUALS, "codigo",
+								DDTipoProveedor.COD_CERTIFICADORA);
 						tipoProveedor = genericDao.get(DDTipoProveedor.class, filtroTipoProveedor);
 						listaTiposProveedor.add(tipoProveedor);
-						filtroTipoProveedor = genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoProveedor.COD_ASEGURADORA);
-						tipoProveedor = genericDao.get(DDTipoProveedor.class, filtroTipoProveedor);
-						listaTiposProveedor.add(tipoProveedor);					
-					}else {
-						filtroTipoProveedor = genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoProveedor.COD_CERTIFICADORA);
+						filtroTipoProveedor = genericDao.createFilter(FilterType.EQUALS, "codigo",
+								DDTipoProveedor.COD_ASEGURADORA);
 						tipoProveedor = genericDao.get(DDTipoProveedor.class, filtroTipoProveedor);
 						listaTiposProveedor.add(tipoProveedor);
-						filtroTipoProveedor = genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoProveedor.COD_MANTENIMIENTO_TECNICO);
+					} else {
+						filtroTipoProveedor = genericDao.createFilter(FilterType.EQUALS, "codigo",
+								DDTipoProveedor.COD_CERTIFICADORA);
+						tipoProveedor = genericDao.get(DDTipoProveedor.class, filtroTipoProveedor);
+						listaTiposProveedor.add(tipoProveedor);
+						filtroTipoProveedor = genericDao.createFilter(FilterType.EQUALS, "codigo",
+								DDTipoProveedor.COD_MANTENIMIENTO_TECNICO);
 						tipoProveedor = genericDao.get(DDTipoProveedor.class, filtroTipoProveedor);
 
 						listaTiposProveedor.add(tipoProveedor);
 					}
 				}
-				
+
 			}
 		}
 		return listaTiposProveedor;
 	}
-	
+
 	@Override
 	public List<DtoProveedorContactoSimple> getComboProveedorContacto(Long idProveedor) throws Exception {
-		
+
 		List<DtoProveedorContactoSimple> listaDtoProveedorContactoSimple = new ArrayList<DtoProveedorContactoSimple>();
 		List<ActivoProveedorContacto> listaProveedorContacto = null;
-		
-		
-		if(Checks.esNulo(idProveedor)) {
+
+		if (Checks.esNulo(idProveedor)) {
 			throw new JsonViewerException("Debe seleccionar antes un proveedor.");
-			
-		}else{
-			
+
+		} else {
+
 			Filter filtro1 = genericDao.createFilter(FilterType.EQUALS, "proveedor.id", idProveedor);
 			listaProveedorContacto = genericDao.getList(ActivoProveedorContacto.class, filtro1);
-						
-			for (ActivoProveedorContacto source: listaProveedorContacto ) {
+
+			for (ActivoProveedorContacto source : listaProveedorContacto) {
 				try {
-					DtoProveedorContactoSimple target= new DtoProveedorContactoSimple();
-			        BeanUtils.copyProperties(target, source);
-			        
-			        if(!Checks.esNulo(source.getUsuario())){
-			        	target.setIdUsuario(source.getUsuario().getId());
-			        }
-			        if(!Checks.esNulo(source.getUsuario())){
-			        	target.setLoginUsuario(source.getUsuario().getUsername());
-			        }
-			        if(!Checks.esNulo(source.getUsuario())){
-			        	target.setLoginUsuario(source.getUsuario().getUsername());
-			        }
-			        if(!Checks.esNulo(source.getProvincia())){
-			        	target.setCodProvincia(source.getProvincia().getCodigo());
-			        }
-			        if(!Checks.esNulo(source.getTipoDocIdentificativo())){
-			        	target.setCodTipoDocIdentificativo(source.getTipoDocIdentificativo().getCodigo());
-			        }
+					DtoProveedorContactoSimple target = new DtoProveedorContactoSimple();
+					BeanUtils.copyProperties(target, source);
+
+					if (!Checks.esNulo(source.getUsuario())) {
+						target.setIdUsuario(source.getUsuario().getId());
+					}
+					if (!Checks.esNulo(source.getUsuario())) {
+						target.setLoginUsuario(source.getUsuario().getUsername());
+					}
+					if (!Checks.esNulo(source.getUsuario())) {
+						target.setLoginUsuario(source.getUsuario().getUsername());
+					}
+					if (!Checks.esNulo(source.getProvincia())) {
+						target.setCodProvincia(source.getProvincia().getCodigo());
+					}
+					if (!Checks.esNulo(source.getTipoDocIdentificativo())) {
+						target.setCodTipoDocIdentificativo(source.getTipoDocIdentificativo().getCodigo());
+					}
 					if (!Checks.esNulo(source.getUsuario())) {
 						if (!Checks.esNulo(source.getUsuario().getUsuarioGrupo())) {
 							target.setUsuarioGrupo(source.getUsuario().getUsuarioGrupo());
-						}		
+						}
 					}
 					listaDtoProveedorContactoSimple.add(target);
 				} catch (IllegalAccessException e) {
-					logger.error("Error al consultar las localidades sin filtro",e);
+					logger.error("Error al consultar las localidades sin filtro", e);
 					throw new Exception(e);
 				} catch (InvocationTargetException e) {
-					logger.error("Error al consultar las localidades sin filtro",e);
+					logger.error("Error al consultar las localidades sin filtro", e);
 					throw new Exception(e);
 				}
 			}
@@ -2748,8 +2811,6 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		return listaDtoProveedorContactoSimple;
 	}
 
-	
-	
 	@Override
 	@BusinessOperationDefinition("trabajoManager.getRecargosProveedor")
 	public List<DtoRecargoProveedor> getRecargosProveedor(Long idTrabajo) {
@@ -2794,8 +2855,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			recargo.setTipoCalculo(tipoCalculo);
 
 			filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", recargoDto.getTipoRecargoCodigo());
-			DDTipoRecargoProveedor tipoRecargo = genericDao.get(DDTipoRecargoProveedor.class,
-					filtro);
+			DDTipoRecargoProveedor tipoRecargo = genericDao.get(DDTipoRecargoProveedor.class, filtro);
 			recargo.setTipoRecargo(tipoRecargo);
 			beanUtilNotNull.copyProperties(recargo, recargoDto);
 			trabajo.getRecargosProveedor().add(recargo);
@@ -2829,8 +2889,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 			if (!Checks.esNulo(recargoDto.getTipoRecargoCodigo())) {
 				filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", recargoDto.getTipoRecargoCodigo());
-				DDTipoRecargoProveedor tipoRecargo = genericDao
-						.get(DDTipoRecargoProveedor.class, filtro);
+				DDTipoRecargoProveedor tipoRecargo = genericDao.get(DDTipoRecargoProveedor.class, filtro);
 				recargo.setTipoRecargo(tipoRecargo);
 			}
 			genericDao.save(TrabajoRecargosProveedor.class, recargo);
@@ -2988,8 +3047,17 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 	@Override
 	public String diffDate(String date1, String date2) {
-		Long datef1 = Long.valueOf(date1.replace("-", ""));
-		Long datef2 = Long.valueOf(date2.replace("-", ""));
+		Long datef1 = null;
+		Long datef2 = null;
+		
+		if(date1 != null && !date1.isEmpty()){
+			datef1 = Long.valueOf(date1.replace("-", ""));
+		}
+		if(date2 != null && !date2.isEmpty()){
+			datef2 = Long.valueOf(date2.replace("-", ""));
+		}
+		
+		
 		if (datef1.equals(datef2)) {
 			return "IGUAL";
 		} else if (datef1 > datef2) {
@@ -3157,7 +3225,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 					}
 				}
 				if (!Checks.esNulo(trabajoDto.getCodSubtipoTrabajo())) {
-					DDSubtipoTrabajo subtipotbj =  genericDao.get(DDSubtipoTrabajo.class,
+					DDSubtipoTrabajo subtipotbj = genericDao.get(DDSubtipoTrabajo.class,
 							genericDao.createFilter(FilterType.EQUALS, "codigo", trabajoDto.getCodSubtipoTrabajo()));
 					if (Checks.esNulo(subtipotbj)) {
 						hashErrores.put("codSubtipoTrabajo", RestApi.REST_MSG_UNKNOWN_KEY);
@@ -3178,12 +3246,12 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 							.createFilter(FilterType.EQUALS, "codigoProveedorRem", trabajoDto.getIdProveedorRem()));
 					if (Checks.esNulo(apiResp)) {
 						hashErrores.put("idProveedorRem", RestApi.REST_MSG_UNKNOWN_KEY);
-					} 
+					}
 				}
-				
+
 				if (!Checks.esNulo(trabajoDto.getFechaPrioridadRequirienteEsExacta())
 						&& trabajoDto.getFechaPrioridadRequirienteEsExacta()) {
-					
+
 					if (Checks.esNulo(trabajoDto.getFechaPrioridadRequiriente())) {
 						hashErrores.put("fechaPrioridadRequiriente", RestApi.REST_MSG_MISSING_REQUIRED);
 					}
@@ -3288,8 +3356,9 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 					if (!Checks.esNulo(trabajoDto.getFechaPrioridadRequiriente())) {
 						dtoFichaTrabajo.setFechaConcreta(trabajoDto.getFechaPrioridadRequiriente());
 						dtoFichaTrabajo.setHoraConcreta(trabajoDto.getFechaPrioridadRequiriente());
-					}else{
-						//este supuesto no es posible x la validacion de la peticion
+					} else {
+						// este supuesto no es posible x la validacion de la
+						// peticion
 						dtoFichaTrabajo.setFechaConcreta(new Date());
 					}
 				} else {
@@ -3306,9 +3375,9 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 					} else {
 						if (!Checks.esNulo(trabajoDto.getFechaPrioridadRequiriente())) {
 							dtoFichaTrabajo.setFechaTope(trabajoDto.getFechaPrioridadRequiriente());
-						}else{
+						} else {
 							dtoFichaTrabajo.setFechaTope(new Date());
-						}						
+						}
 					}
 				}
 			}
@@ -3345,15 +3414,15 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		}
 		return false;
 	}
-	
 
 	@Override
 	public boolean checkReservaNecesariaNotNull(TareaExterna tareaExterna) {
-		boolean result= false;
+		boolean result = false;
 		Trabajo trabajo = tareaExternaToTrabajo(tareaExterna);
 		if (!Checks.esNulo(trabajo)) {
 			ExpedienteComercial expediente = expedienteComercialApi.findOneByTrabajo(trabajo);
-			if (!Checks.esNulo(expediente.getCondicionante()) && !Checks.esNulo(expediente.getCondicionante().getSolicitaReserva())) {
+			if (!Checks.esNulo(expediente.getCondicionante())
+					&& !Checks.esNulo(expediente.getCondicionante().getSolicitaReserva())) {
 				result = true;
 			}
 		}
@@ -3362,14 +3431,15 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 	@Override
 	public boolean checkReservaNecesariaNotNull(ExpedienteComercial expediente) {
-		boolean result= false;
-		if (!Checks.esNulo(expediente.getCondicionante()) && !Checks.esNulo(expediente.getCondicionante().getSolicitaReserva())) {
+		boolean result = false;
+		if (!Checks.esNulo(expediente.getCondicionante())
+				&& !Checks.esNulo(expediente.getCondicionante().getSolicitaReserva())) {
 			result = true;
 		}
-	
+
 		return result;
 	}
-	
+
 	@Override
 	public boolean checkSareb(TareaExterna tareaExterna) {
 		Trabajo trabajo = tareaExternaToTrabajo(tareaExterna);
@@ -3392,7 +3462,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		}
 		return false;
 	}
-	
+
 	@Override
 	public boolean checkTango(TareaExterna tareaExterna) {
 		Trabajo trabajo = tareaExternaToTrabajo(tareaExterna);
@@ -3415,7 +3485,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		}
 		return false;
 	}
-	
+
 	@Override
 	public boolean checkGiants(TareaExterna tareaExterna) {
 		Trabajo trabajo = tareaExternaToTrabajo(tareaExterna);
@@ -3440,10 +3510,10 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	}
 
 	@Override
-	public boolean checkJaipur(Trabajo trabajo){
-		if(!Checks.esNulo(trabajo)){
+	public boolean checkJaipur(Trabajo trabajo) {
+		if (!Checks.esNulo(trabajo)) {
 			Activo primerActivo = trabajo.getActivo();
-			if(!Checks.esNulo(primerActivo)){
+			if (!Checks.esNulo(primerActivo)) {
 				return (DDCartera.CODIGO_CARTERA_JAIPUR.equals(primerActivo.getCartera().getCodigo()));
 			}
 		}
@@ -3451,10 +3521,10 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	}
 
 	@Override
-	public boolean checkGaleon(Trabajo trabajo){
-		if(!Checks.esNulo(trabajo)){
+	public boolean checkGaleon(Trabajo trabajo) {
+		if (!Checks.esNulo(trabajo)) {
 			Activo primerActivo = trabajo.getActivo();
-			if(!Checks.esNulo(primerActivo)){
+			if (!Checks.esNulo(primerActivo)) {
 				return (DDCartera.CODIGO_CARTERA_GALEON.equals(primerActivo.getCartera().getCodigo()));
 			}
 		}
@@ -3483,7 +3553,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		}
 		return false;
 	}
-	
+
 	@Override
 	public boolean checkLiberbank(TareaExterna tareaExterna) {
 		Trabajo trabajo = tareaExternaToTrabajo(tareaExterna);
@@ -3506,7 +3576,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		}
 		return false;
 	}
-	
+
 	@Override
 	public boolean checkCajamar(TareaExterna tareaExterna) {
 		Trabajo trabajo = tareaExternaToTrabajo(tareaExterna);
@@ -3542,7 +3612,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 		return null;
 	}
-	
+
 	public String comprobarPropuestaPrecios(TareaExterna tareaExterna) {
 
 		String mensaje = new String();
@@ -3641,58 +3711,59 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	public boolean checkEsMultiactivo(TareaExterna tareaExterna) {
 		Trabajo trabajo = tareaExternaToTrabajo(tareaExterna);
 		if (!Checks.esNulo(trabajo)) {
-			if (trabajo.getActivosTrabajo().size() > 1){
+			if (trabajo.getActivosTrabajo().size() > 1) {
 				return true;
-			}else{
+			} else {
 				return false;
 			}
 		}
 		return false;
 	}
-	
+
 	@Override
-	public Map<String,Long> getSupervisorGestor(Long idAgrupacion){
-		Map<String,Long> supervisorGestor= new HashMap<String, Long>();
-		
-		ActivoAgrupacion agrupacion= activoAgrupacionApi.get(idAgrupacion);
-		if(!Checks.esNulo(agrupacion)){
-			Activo activo= agrupacion.getActivos().get(0).getActivo();
-			if(!Checks.esNulo(activo)){
-				List<DtoListadoGestores> gestores= activoAdapter.getGestores(activo.getId());
-				for(DtoListadoGestores gestor: gestores){
-					if(gestor.getCodigo().equals(GestorActivoApi.CODIGO_SUPERVISOR_ACTIVOS)){
-						if(Checks.esNulo(gestor.getFechaHasta())){
+	public Map<String, Long> getSupervisorGestor(Long idAgrupacion) {
+		Map<String, Long> supervisorGestor = new HashMap<String, Long>();
+
+		ActivoAgrupacion agrupacion = activoAgrupacionApi.get(idAgrupacion);
+		if (!Checks.esNulo(agrupacion)) {
+			Activo activo = agrupacion.getActivos().get(0).getActivo();
+			if (!Checks.esNulo(activo)) {
+				List<DtoListadoGestores> gestores = activoAdapter.getGestores(activo.getId());
+				for (DtoListadoGestores gestor : gestores) {
+					if (gestor.getCodigo().equals(GestorActivoApi.CODIGO_SUPERVISOR_ACTIVOS)) {
+						if (Checks.esNulo(gestor.getFechaHasta())) {
 							supervisorGestor.put("SUPACT", gestor.getIdUsuario());
 						}
 					}
-					if(gestor.getCodigo().equals(GestorActivoApi.CODIGO_GESTOR_ACTIVO)){
-						if(Checks.esNulo(gestor.getFechaHasta())){
+					if (gestor.getCodigo().equals(GestorActivoApi.CODIGO_GESTOR_ACTIVO)) {
+						if (Checks.esNulo(gestor.getFechaHasta())) {
 							supervisorGestor.put("GACT", gestor.getIdUsuario());
 						}
 					}
 				}
 			}
 		}
-		
+
 		return supervisorGestor;
 	}
 
-	
-	private Boolean esTrabajoTarifaPlana(Activo activo, DDSubtipoTrabajo subtipoTrabajo, Date fechaSolicitud){
+	private Boolean esTrabajoTarifaPlana(Activo activo, DDSubtipoTrabajo subtipoTrabajo, Date fechaSolicitud) {
 		Boolean resultado = false;
 		Usuario gestorProveedorTecnico = gestorActivoApi.getGestorByActivoYTipo(activo, "PTEC");
-		if(!Checks.esNulo(gestorProveedorTecnico) && historicoTarifaPlanaDao.subtipoTrabajoTieneTarifaPlanaVigente(subtipoTrabajo.getId(), fechaSolicitud)){
+		if (!Checks.esNulo(gestorProveedorTecnico) && historicoTarifaPlanaDao
+				.subtipoTrabajoTieneTarifaPlanaVigente(subtipoTrabajo.getId(), fechaSolicitud)) {
 			resultado = true;
 		}
 		return resultado;
 	}
-	
+
 	@Override
-	public Boolean trabajoTieneTarifaPlana(TareaExterna tareaExterna){
+	public Boolean trabajoTieneTarifaPlana(TareaExterna tareaExterna) {
 		Boolean esTarifaPlana = false;
 		Trabajo trabajo = tareaExternaToTrabajo(tareaExterna);
 		if (!Checks.esNulo(trabajo)) {
-			esTarifaPlana = esTrabajoTarifaPlana(trabajo.getActivo(), trabajo.getSubtipoTrabajo(), trabajo.getFechaSolicitud());
+			esTarifaPlana = esTrabajoTarifaPlana(trabajo.getActivo(), trabajo.getSubtipoTrabajo(),
+					trabajo.getFechaSolicitud());
 		}
 		return esTarifaPlana;
 	}
@@ -3700,7 +3771,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	public boolean superaLimiteLiberbank(Long idTramite) {
 		ActivoTramite activoTramite = activoTramiteApi.get(idTramite);
 		boolean supera = false;
-		
+
 		if (!Checks.esNulo(activoTramite)) {
 			Double importe = new Double("0.0");
 			Trabajo trabajo = activoTramite.getTrabajo();
@@ -3708,30 +3779,30 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			List<ActivoTrabajo> listActivos = trabajo.getActivosTrabajo();
 			int nActivos = listActivos.size();
 			boolean hasCodPrinex = false;
-			
-			if(!Checks.esNulo(trabajo.getAgrupacion()))
-				for(ActivoTrabajo activo : listActivos) {
-					if(null != activo.getActivo().getCodigoPromocionPrinex() && !activo.getActivo().getCodigoPromocionPrinex().isEmpty()){
+
+			if (!Checks.esNulo(trabajo.getAgrupacion()))
+				for (ActivoTrabajo activo : listActivos) {
+					if (null != activo.getActivo().getCodigoPromocionPrinex()
+							&& !activo.getActivo().getCodigoPromocionPrinex().isEmpty()) {
 						hasCodPrinex = true;
 						break;
 					}
 				}
-			else
-				if(!Checks.esNulo(trabajo.getCodigoPromocionPrinex()))
-					hasCodPrinex = true;
-			
-			
-			
+			else if (!Checks.esNulo(trabajo.getCodigoPromocionPrinex()))
+				hasCodPrinex = true;
+
 			if (!Checks.esNulo(trabajo.getEsTarificado()) && !trabajo.getEsTarificado()) { // Presupuesto
 				List<PresupuestoTrabajo> presupuestos = genericDao.getList(PresupuestoTrabajo.class, filtro);
 				for (PresupuestoTrabajo presupuesto : presupuestos) {
 					if (!presupuesto.getAuditoria().isBorrado() && !Checks.esNulo(presupuesto.getImporte())
-							&& presupuesto.getEstadoPresupuesto() != null && "02".equals(presupuesto.getEstadoPresupuesto().getCodigo())) {
+							&& presupuesto.getEstadoPresupuesto() != null
+							&& "02".equals(presupuesto.getEstadoPresupuesto().getCodigo())) {
 						importe += presupuesto.getImporte();
 					}
 				}
-			}else { // Tarifas
-				List<TrabajoConfiguracionTarifa> cfgTarifas = genericDao.getList(TrabajoConfiguracionTarifa.class, filtro);
+			} else { // Tarifas
+				List<TrabajoConfiguracionTarifa> cfgTarifas = genericDao.getList(TrabajoConfiguracionTarifa.class,
+						filtro);
 				for (TrabajoConfiguracionTarifa tarifa : cfgTarifas) {
 					if (!tarifa.getAuditoria().isBorrado() && !Checks.esNulo(tarifa.getPrecioUnitario())
 							&& !Checks.esNulo(tarifa.getMedicion())) {
@@ -3739,29 +3810,29 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 					}
 				}
 			}
-			
-			if(nActivos > 1 && hasCodPrinex) {
-				if( importe >= ActuacionTecnicaUserAssignationService.LIBERBANK_LIMITE_INFERIOR_AGRUPACIONES)
+
+			if (nActivos > 1 && hasCodPrinex) {
+				if (importe >= ActuacionTecnicaUserAssignationService.LIBERBANK_LIMITE_INFERIOR_AGRUPACIONES)
 					supera = true;
-			}else{
-				if(importe >= ActuacionTecnicaUserAssignationService.LIBERBANK_LIMITE_INFERIOR) {
+			} else {
+				if (importe >= ActuacionTecnicaUserAssignationService.LIBERBANK_LIMITE_INFERIOR) {
 					supera = true;
 				}
 			}
 		}
 		return supera;
 	}
-	
+
 	@Override
-	public Boolean trabajoEsTarificado(Long idTramite){
+	public Boolean trabajoEsTarificado(Long idTramite) {
 		ActivoTramite activoTramite = activoTramiteApi.get(idTramite);
 		Trabajo trabajo = null;
 		if (!Checks.esNulo(activoTramite)) {
 			trabajo = activoTramite.getTrabajo();
-			if(!Checks.esNulo(trabajo)){
-				if(!Checks.esNulo(trabajo.getEsTarifaPlana()) && trabajo.getEsTarifaPlana().equals(true)){
+			if (!Checks.esNulo(trabajo)) {
+				if (!Checks.esNulo(trabajo.getEsTarifaPlana()) && trabajo.getEsTarifaPlana().equals(true)) {
 					return true;
-				}else if(!Checks.esNulo(trabajo.getEsTarificado())){
+				} else if (!Checks.esNulo(trabajo.getEsTarificado())) {
 					return trabajo.getEsTarificado();
 				}
 			}
@@ -3774,6 +3845,4 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		return activo.getEnTramite()==1;
 	}
 
-
 }
-

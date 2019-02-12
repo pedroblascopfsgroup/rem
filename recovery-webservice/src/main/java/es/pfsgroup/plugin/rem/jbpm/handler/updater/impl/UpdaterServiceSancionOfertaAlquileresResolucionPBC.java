@@ -14,7 +14,10 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
+import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
@@ -33,6 +36,9 @@ public class UpdaterServiceSancionOfertaAlquileresResolucionPBC implements Updat
     
     @Autowired
     private ExpedienteComercialApi expedienteComercialApi;
+    
+	@Autowired
+	private OfertaApi ofertaApi;
 
     protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaAlquileresResolucionPBC.class);
     
@@ -67,10 +73,38 @@ public class UpdaterServiceSancionOfertaAlquileresResolucionPBC implements Updat
 					estadoOferta = (DDEstadoOferta) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadoOferta.class, DDEstadoOferta.CODIGO_RECHAZADA);
 					oferta.setEstadoOferta(estadoOferta);
 					expedienteComercial.setOferta(oferta);
+							
+					//Descongelar Ofertas de activo
+					DDEstadoOferta pendiente = genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_PENDIENTE));
+					DDEstadoOferta tramitada = genericDao.get(DDEstadoOferta.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_ACEPTADA));
+					List<ActivoOferta> activoOfertas = tramite.getActivo().getOfertas();
+					if(!Checks.esNulo(activoOfertas) && !Checks.estaVacio(activoOfertas)) {
+						ActivoOferta activoOferta;
+						Oferta ofertaCongelada;
+						for(int i = 0; i<activoOfertas.size(); i++) {
+							activoOferta = activoOfertas.get(i);
+							ofertaCongelada = ofertaApi.getOfertaById(activoOferta.getOferta());
+							if(DDEstadoOferta.CODIGO_CONGELADA.equals(ofertaCongelada.getEstadoOferta().getCodigo())){
+								ExpedienteComercial existeExpedienteComercial = genericDao.get(ExpedienteComercial.class,  genericDao.createFilter(FilterType.EQUALS, "oferta.id", ofertaCongelada.getId()));
+								if(!Checks.esNulo(existeExpedienteComercial)) {
+									ofertaCongelada.setEstadoOferta(tramitada);	
+								}else {
+									ofertaCongelada.setEstadoOferta(pendiente);
+								}
+								genericDao.save(Oferta.class, ofertaCongelada);
+								
+							}
+						}
+					}
 				}
 				
 			}
 		}
+
+		
+		
+		
+		
 		expedienteComercialApi.update(expedienteComercial);
 	}
 

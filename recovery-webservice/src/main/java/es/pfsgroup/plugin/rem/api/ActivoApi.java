@@ -23,6 +23,7 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoBancario;
+import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
@@ -47,6 +48,7 @@ import es.pfsgroup.plugin.rem.model.DtoHistoricoPreciosFilter;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPresupuestosFilter;
 import es.pfsgroup.plugin.rem.model.DtoImpuestosActivo;
 import es.pfsgroup.plugin.rem.model.DtoLlaves;
+import es.pfsgroup.plugin.rem.model.DtoMotivoAnulacionExpediente;
 import es.pfsgroup.plugin.rem.model.DtoOfertaActivo;
 import es.pfsgroup.plugin.rem.model.DtoPrecioVigente;
 import es.pfsgroup.plugin.rem.model.DtoPropietario;
@@ -1040,4 +1042,21 @@ public interface ActivoApi {
 	 * @throws IOException 
 	 */
 	FileItem generarUrlGDPR(DtoGenerarDocGDPR dtoGenerarDocGDPR) throws GestorDocumentalException, IOException;
+	
+	/**
+	 * Devuelve el activoPatrimonio a partir de la id de un activo.
+	 *
+	 * @param idActivo
+	 * @return ActivoPatrimonio.
+	 */
+	ActivoPatrimonio getActivoPatrimonio(Long idActivo);
+
+	/**
+	 * Devuelve los motivos de anulacion de un expediente de alquiler.
+	 *
+	 *
+	 * @return DtoMotivoAnulacionExpediente.
+	 */
+	List<DtoMotivoAnulacionExpediente> getMotivoAnulacionExpediente();
+
 }

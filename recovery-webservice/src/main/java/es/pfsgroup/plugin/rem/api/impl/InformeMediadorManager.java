@@ -1554,7 +1554,6 @@ public class InformeMediadorManager implements InformeMediadorApi {
 			}
 
 			listaRespuesta.add(map);
-			restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO, activo);
 			i++;
 		}
 		return listaRespuesta;

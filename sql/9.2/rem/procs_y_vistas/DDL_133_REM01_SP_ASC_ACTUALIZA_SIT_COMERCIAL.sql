@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Vicente Martinez
---## FECHA_CREACION=20180109
+--## AUTOR=Ivan Castelló
+--## FECHA_CREACION=20190115
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.1
---## INCIDENCIA_LINK=HREOS-3523
+--## INCIDENCIA_LINK=REMVIP-3040
 --## PRODUCTO=NO
 --## Finalidad: Stored Procedure que actualiza la situacion comercial de los activos en REM.
 --##           
@@ -12,6 +12,7 @@
 --## VERSIONES:
 --##        0.1 Versión inicial - HREOS-1936 - David Gonzalez
 --##        0.2 Segunda version - HREOS-3523 - Vicente Martinez
+--##        0.3 Tercera version - REMVIP-3040 - Ivan Castelló
 --##########################################
 --*/
 
@@ -24,7 +25,8 @@ SET DEFINE OFF;
 
 create or replace PROCEDURE SP_ASC_ACTUALIZA_SIT_COMERCIAL (
       ID_ACTIVO       IN NUMBER DEFAULT 0,
-      ACTUALIZAR      IN NUMBER DEFAULT 0
+      ACTUALIZAR      IN NUMBER DEFAULT 0,
+      PROCESO         IN NUMBER DEFAULT 0
 )
 AS
 --David González
@@ -46,6 +48,8 @@ AS
 --ID_ACTIVO -> Podemos ejecutar el proceso sobre un Activo en concreto (ACT_ID),
 --             o por contra, si no indicamos nada, o indicamos '0', el perímetro se extiende a todos los activos.
 --ACTUALIZAR -> Si marcamos '1', ademas de informar la tabla TMP_ACT_SCM, se actualizara la tabla ACT_ACTIVO. Si marcamos '0' solo se informara.
+--PROCESO -> Si marcamos '1', es porque el SP se lanza desde un proceso que ya ha rellenado la tabla TMP. Si marcamos '0' el SP se lanza de forma independiente.
+
 
 --EJEMPLOS DE USO:
 ----SP_ASC_ACTUALIZA_SIT_COMERCIAL(161,0); | Solo informaria la Situacion Comercial para el ACT_ID 161
@@ -86,42 +90,47 @@ BEGIN
   DBMS_OUTPUT.PUT_LINE('[INFO] INICIO DEL PROCESO DE INFORMACIÓN/ACTUALIZACIÓN DE ESTADOS COMERCIALES.');
   DBMS_OUTPUT.PUT_LINE('------------------------------------------------------------------------------');
 
-  EXECUTE IMMEDIATE 'TRUNCATE TABLE '||V_ESQUEMA||'.'||TABLA_APOYO||'';
+ 
+  IF PROCESO = 0 THEN --IF_0
 
-  IF ID_ACTIVO > 0 THEN --IF_1
+    EXECUTE IMMEDIATE 'TRUNCATE TABLE '||V_ESQUEMA||'.'||TABLA_APOYO||'';
 
-    EXECUTE IMMEDIATE '
-    SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||TABLA_ACTIVO||' WHERE ACT_ID = '||ID_ACTIVO||' AND BORRADO = 0
-    ' INTO V_COUNT;
+    IF ID_ACTIVO > 0 THEN --IF_1
 
-    IF V_COUNT > 0 THEN --IF_2
+      EXECUTE IMMEDIATE '
+      SELECT COUNT(1) FROM '||V_ESQUEMA||'.'||TABLA_ACTIVO||' WHERE ACT_ID = '||ID_ACTIVO||' AND BORRADO = 0
+      ' INTO V_COUNT;
 
-      DBMS_OUTPUT.PUT_LINE('[INFO] Se ejecutará el proceso para el Activo '||ID_ACTIVO||'.');
+      IF V_COUNT > 0 THEN --IF_2
+
+        DBMS_OUTPUT.PUT_LINE('[INFO] Se ejecutará el proceso para el Activo '||ID_ACTIVO||'.');
+
+        EXECUTE IMMEDIATE '
+          INSERT INTO '||V_ESQUEMA||'.'||TABLA_APOYO||' (ACT_ID,DD_SCM_ID_OLD,DD_SCM_ID_NEW,FECHA_CALCULO)
+          SELECT ACT_ID, DD_SCM_ID, (SELECT DD_SCM_ID FROM '||V_ESQUEMA||'.DD_SCM_SITUACION_COMERCIAL WHERE DD_SCM_CODIGO = '''||SITCOM_VENTA||''')
+          , SYSDATE FROM '||V_ESQUEMA||'.'||TABLA_ACTIVO||' WHERE ACT_ID = '||ID_ACTIVO||' AND BORRADO = 0 ORDER BY ACT_ID DESC
+        ';
+
+      ELSE --IF_2
+
+        DBMS_OUTPUT.PUT_LINE('[INFO] No existe el Activo '||ID_ACTIVO||' pasado por parámetros. El proceso finalizará.');
+
+      END IF; --IF_2
+
+    ELSE --IF_1
+
+      DBMS_OUTPUT.PUT_LINE('[INFO] Se informará/actualizará la Situación Comercial para todos los Activos.');
 
       EXECUTE IMMEDIATE '
         INSERT INTO '||V_ESQUEMA||'.'||TABLA_APOYO||' (ACT_ID,DD_SCM_ID_OLD,DD_SCM_ID_NEW,FECHA_CALCULO)
         SELECT ACT_ID, DD_SCM_ID, (SELECT DD_SCM_ID FROM '||V_ESQUEMA||'.DD_SCM_SITUACION_COMERCIAL WHERE DD_SCM_CODIGO = '''||SITCOM_VENTA||''')
-        , SYSDATE FROM '||V_ESQUEMA||'.'||TABLA_ACTIVO||' WHERE ACT_ID = '||ID_ACTIVO||' AND BORRADO = 0 ORDER BY ACT_ID DESC
+        , SYSDATE FROM '||V_ESQUEMA||'.'||TABLA_ACTIVO||' WHERE BORRADO = 0 ORDER BY ACT_ID DESC
       ';
 
-    ELSE --IF_2
-
-      DBMS_OUTPUT.PUT_LINE('[INFO] No existe el Activo '||ID_ACTIVO||' pasado por parámetros. El proceso finalizará.');
-
-    END IF; --IF_2
-
-  ELSE --IF_1
-
-    DBMS_OUTPUT.PUT_LINE('[INFO] Se informará/actualizará la Situación Comercial para todos los Activos.');
-
-    EXECUTE IMMEDIATE '
-      INSERT INTO '||V_ESQUEMA||'.'||TABLA_APOYO||' (ACT_ID,DD_SCM_ID_OLD,DD_SCM_ID_NEW,FECHA_CALCULO)
-      SELECT ACT_ID, DD_SCM_ID, (SELECT DD_SCM_ID FROM '||V_ESQUEMA||'.DD_SCM_SITUACION_COMERCIAL WHERE DD_SCM_CODIGO = '''||SITCOM_VENTA||''')
-      , SYSDATE FROM '||V_ESQUEMA||'.'||TABLA_ACTIVO||' WHERE BORRADO = 0 ORDER BY ACT_ID DESC
-    ';
-
-  END IF; --IF_1
-
+    END IF; --IF_1
+  
+  END IF; --IF_0
+  
 
   EXECUTE IMMEDIATE '
   SELECT COUNT(*) FROM '||V_ESQUEMA||'.'||TABLA_APOYO||'

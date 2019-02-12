@@ -1610,6 +1610,19 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 		return activoTCO.equals("1");
 	}
+	
+	@Override
+	public boolean isMismoTipoComercializacionActivoPrincipalExcel(String numActivo, String numActivoPrincipalExcel) {
+		String activoTCO = rawDao.getExecuteSQL("SELECT COUNT(1) "
+		        + "        FROM ACT_APU_ACTIVO_PUBLICACION APU "
+				+ "        JOIN ACT_ACTIVO ACT ON ACT.ACT_ID = APU.ACT_ID "
+		        + "        WHERE ACT.ACT_NUM_ACTIVO = "+numActivo+" AND APU.DD_TCO_ID = (SELECT APU.DD_TCO_ID "
+				+ "                                   FROM ACT_APU_ACTIVO_PUBLICACION APU "
+		        + "                                   JOIN ACT_ACTIVO ACT ON APU.ACT_ID = ACT.ACT_ID "
+		        + "                                   AND ACT.ACT_NUM_ACTIVO_REM = "+numActivoPrincipalExcel+")");
+
+		return activoTCO.equals("1");
+	}
 
 	@Override
 	public boolean isMismoEpuActivoPrincipalAgrupacion(String numActivo, String numAgrupacion) {
@@ -1626,6 +1639,23 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "                                   JOIN ACT_ACTIVO ACT ON APU.ACT_ID = ACT.ACT_ID "
 				+ "                                   JOIN ACT_AGR_AGRUPACION AGR ON ACT.ACT_ID = AGR.AGR_ACT_PRINCIPAL "
 				+ "                                   AND AGR.AGR_NUM_AGRUP_REM = "+numAgrupacion+")");
+
+		return activoEPU.equals("1");
+	}
+	
+	@Override
+	public boolean isMismoEpuActivoPrincipalExcel(String numActivo, String numActivoPrincipalExcel) {
+		String activoEPU = rawDao.getExecuteSQL("SELECT COUNT(1) "
+		        + "        FROM ACT_ACTIVO ACT "
+				+ "        JOIN ACT_APU_ACTIVO_PUBLICACION APU ON ACT.ACT_ID = APU.ACT_ID "
+		        + "        WHERE ACT.ACT_NUM_ACTIVO = "+numActivo+" AND APU.DD_EPV_ID = (SELECT APU.DD_EPV_ID "
+				+ "                                   FROM ACT_APU_ACTIVO_PUBLICACION APU"
+		        + "                                   JOIN ACT_ACTIVO ACT ON APU.ACT_ID = ACT.ACT_ID"
+				+ "                                   AND ACT.ACT_NUM_ACTIVO = "+numActivoPrincipalExcel+") "
+				+ "        AND APU.DD_EPA_ID = (SELECT APU.DD_EPA_ID "
+				+ "									  FROM ACT_APU_ACTIVO_PUBLICACION APU "
+				+ "                                   JOIN ACT_ACTIVO ACT ON APU.ACT_ID = ACT.ACT_ID "
+				+ "                                   AND ACT.ACT_NUM_ACTIVO = "+numActivoPrincipalExcel+")");
 
 		return activoEPU.equals("1");
 	}
@@ -2457,6 +2487,15 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 	
 	@Override
+	public Boolean isAgrupacionSinActivoPrincipal(String mumAgrupacionRem) {
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1)" 
+				+ "			FROM ACT_AGR_AGRUPACION agr\n"
+				+ "			WHERE agr.AGR_NUM_AGRUP_REM = "+ mumAgrupacionRem
+				+ "			AND agr.AGR_ACT_PRINCIPAL IS NOT NULL");
+		
+		return !"0".equals(resultado);
+	}
+
 	public Boolean isActivoFinanciero(String numActivo) {
 		if(Checks.esNulo(numActivo))
 			return false;

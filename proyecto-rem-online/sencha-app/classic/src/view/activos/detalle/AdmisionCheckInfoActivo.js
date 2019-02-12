@@ -1169,7 +1169,7 @@ Ext.define('HreRem.view.activos.detalle.AdmisionCheckInfoActivo', {
     evaluarEdicion: function() {    	
 		var me = this;
 		
-		if(me.lookupController().getViewModel().get('activo').get('incluidoEnPerimetro')=="false") {
+		if(me.lookupController().getViewModel().get('activo').get('incluidoEnPerimetro')=="false" || me.lookupController().getViewModel().get('activo').get('isActivoEnTramite')) {
 			me.down('[xtype=gridBaseEditableRow]').setTopBar(false);
 			me.down('[xtype=gridBaseEditableRow]').rowEditing.clearListeners();
 		}

@@ -15,7 +15,6 @@ import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.hibernate.HibernateUtils;
 import es.pfsgroup.plugin.gestorDocumental.dto.PersonaInputDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.PersonaOutputDto;
@@ -59,8 +58,8 @@ public class MaestroDePersonas  implements Runnable{
 	private static final String ID_ROL_16 = "16";
 
 	private PersonaInputDto personaDto = new PersonaInputDto();
-	 
-	public  MaestroDePersonas(Long expedienteComercial, String userName, String cartera) {
+
+	public MaestroDePersonas(Long expedienteComercial, String userName, String cartera) {
 		// imprescindible para poder inyectar componentes
 		SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
 		this.userName = userName;
@@ -79,13 +78,16 @@ public class MaestroDePersonas  implements Runnable{
 	@Transactional
 	public void run() {
 		Session sessionObj = null;
+		List<CompradorExpediente> listaPersonas = null;
 		try {
 			restApi.doSessionConfig(this.userName);
 			Thread.sleep(5000);
 		    sessionObj = hibernateUtils.getSessionFactory().openSession();
 			if(!Checks.esNulo(expedienteComercial)) {
 				ExpedienteComercial expedienteCom = llamadaExpedienteComercial(sessionObj);
-				 List<CompradorExpediente> listaPersonas = expedienteCom.getCompradores();
+				if(!Checks.esNulo(expedienteCom.getCompradores())) {					
+					listaPersonas = expedienteCom.getCompradores();
+				}
 				 if(!Checks.estaVacio(listaPersonas)){
 					 for (CompradorExpediente compradorExpediente : listaPersonas) {
 						 if(Checks.esNulo(compradorExpediente.getIdPersonaHaya()) || idPersonaHayaNoExiste.equals(compradorExpediente.getIdPersonaHaya())) {

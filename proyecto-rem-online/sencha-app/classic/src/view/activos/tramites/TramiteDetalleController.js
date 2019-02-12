@@ -4,11 +4,10 @@ Ext.define('HreRem.view.activos.tramites.TramiteDetalleController', {
     
     requires: ['HreRem.view.activos.tramites.LanzarTareaAdministrativa'],
 
-    control: {
-
+    control: {	
          'tareaslist gridBase': {
              aftersaveTarea: function(grid) {
-             	//grid.getStore().load();
+             	// grid.getStore().load();
             	var tabActivo = grid.up("tabpanel").getActiveTab();
             	var tabHistorico = grid.up("tramitesdetalle").lookupReference("historicoTareasTramite");
             	
@@ -22,9 +21,8 @@ Ext.define('HreRem.view.activos.tramites.TramiteDetalleController', {
          }
          
      },
-    
-	cargarTabData: function (tab) {
 
+	cargarTabData: function (tab) {
 		var me = this,
 		model = tab.getModelInstance(),
 		id = me.getViewModel().get("tramite.idTramite");
@@ -48,15 +46,16 @@ Ext.define('HreRem.view.activos.tramites.TramiteDetalleController', {
     },
 	
 	/**
-     * Función que refresca la pestaña activa, y marca el resto de componentes para referescar.
-     * Para que un componente sea marcado para refrescar, es necesario que implemente la función 
-     * funciónRecargar con el código necesario para refrescar los datos.
-     */
+	 * Función que refresca la pestaña activa, y marca el resto de componentes para referescar. Para
+	 * que un componente sea marcado para refrescar, es necesario que implemente la función
+	 * funciónRecargar con el código necesario para refrescar los datos.
+	 */
 	onClickBotonRefrescar: function (btn) {
 		
 		var me = this,
 		activeTab = me.getView().down("tabpanel").getActiveTab();		
-		// Marcamos todas los componentes para refrescar, de manera que se vayan actualizando conforme se vayan mostrando.
+		// Marcamos todas los componentes para refrescar, de manera que se vayan actualizando
+		// conforme se vayan mostrando.
 		Ext.Array.each(me.getView().query('component[funcionRecargar]'), function(component) {
   			if(component.rendered) {
   				component.recargar=true;
@@ -77,7 +76,7 @@ Ext.define('HreRem.view.activos.tramites.TramiteDetalleController', {
 				
 		var me = this;
 		var editor = new Ext.Editor({
-		    // update the innerHTML of the bound element 
+		    // update the innerHTML of the bound element
 		    // when editing completes
 		    updateEl: true,
 		    alignment: 'l-l',
@@ -273,7 +272,7 @@ Ext.define('HreRem.view.activos.tramites.TramiteDetalleController', {
 				me.getView().unmask();
 			}
 		})
-		//me.getView().fireEvent('saltocierreeconomico', me.getView(), idTareaExterna);
+		// me.getView().fireEvent('saltocierreeconomico', me.getView(), idTareaExterna);
 	},
 	
 	anularTramite : function(button) {
@@ -354,56 +353,151 @@ Ext.define('HreRem.view.activos.tramites.TramiteDetalleController', {
 		    				me.getView().unmask();
 		    			}
 		    		})
-		        } else if (btn === 'no') {
-		        }
+		        } else if (btn === 'no') {}
 		    }
 		});
-		//me.getView().fireEvent('saltocierreeconomico', me.getView(), idTareaExterna);
+		// me.getView().fireEvent('saltocierreeconomico', me.getView(), idTareaExterna);
 	},
 	
-	//	generaSaltoCierreEconomico: function(button) {
-	//		var me = this;
+	saltoResolucionExpedienteAlquiler: function(button){
+		
+
+			var me = this;
+			me.getView().up('tabpanel').setDisabled(true);
+			var win = new Ext.window.Window({
+				 border: true,
+				 closable: false,
+				 viewModel: {
+				    type: 'tramitedetalle'
+				 },
+				 width: 400,
+			     title: 'Seleccione motivo anulación',
+			     layout: 'hbox',
+			     items: [
+			    	 {
+			             xtype: 'label',
+			             text: 'Motivo:',
+			             labelStyle: 'font-weight:bold;',
+			             style: 'margin: 15px 25px 20px 25px'
+			         },
+			    	 {	
+			             xtype: 'combobox',
+			             reference: 'comboalquiler',
+			             width: '90%',
+			             forceSelection: true,
+			             allowblank: false,
+			             displayField: 'descripcion',
+			             valueField: 'codigo',
+			             bind: {
+			            	 store: '{comboMotivoAnulacionAlquiler}'
+			             },
+			             style: 'margin: 15px 0px 0px 0px'
+			         }
+			     ],
+			     buttons: [{
+			        xtype: 'button',
+			        name: 'guardarBoton',
+			        text: 'Guardar',
+			        handler: function() {
+			        	var idTramite = me.getViewModel().get("tramite.idTramite");
+					    var url = $AC.getRemoteUrl('agenda/anularTramiteAlquiler');
+				 	    var motivo = this.lookupController(true).lookupReference('comboalquiler').getValue();
+					 	if(motivo != null) {
+					 		Ext.Msg.show({
+							title:'Anular expediente.',
+							message: 'Si confirma esta acción, se anulará el expediente. ¿Desea continuar?',
+							buttons: Ext.Msg.YESNO,
+							fn: function(btn) {
+								if (btn == 'yes') {
+									me.getView().mask(HreRem.i18n("msg.mask.loading"));
+									win.close();
+									var data;
+									Ext.Ajax.request({
+										url:url,
+									    params: {idTramite : idTramite, motivo: motivo},
+									    success: function(response, opts){
+									    data = Ext.decode(response.responseText);
+									    if(data.success == 'true') {
+									    	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+									    	me.getView().up('tabpanel').setDisabled(false);	
+									    } else {
+									    	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.anulacion"));
+									   }
+									   me.onClickBotonRefrescar(button);
+									    },
+									    failure: function(options, success, response){
+									    	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.anulacion"));
+									    },
+									    callback: function(options, success, response){
+									    	me.getView().unmask();
+									    	me.getView().up('tabpanel').setDisabled(false);
+									    }
+									})
+								} else if (btn === 'no') {}
+							}
+				    	});
+				    	} else {
+				    		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.saltoresolucionvacia"));
+				    	}
+				  }			
+			    },{
+			        xtype: 'button',
+			        name: 'cancelarBoton',
+			        text: 'Cancelar',
+			        handler: function() {
+			            win.close();
+			            me.getView().up('tabpanel').setDisabled(false);
+			        }
+			    }]
+			})
+			win.show();
+		},
+		
+		
+	
+	// generaSaltoCierreEconomico: function(button) {
+	// var me = this;
 	//		
-	//		var formulario = me.getView().down('[reference=formSolicitarProrroga]');
+	// var formulario = me.getView().down('[reference=formSolicitarProrroga]');
 	//		
-	//		if(formulario.getForm().isValid()) {
+	// if(formulario.getForm().isValid()) {
 	//			
-	//			button.up('window').mask("Guardando....");
+	// button.up('window').mask("Guardando....");
 	//			
-	//    		var task = new Ext.util.DelayedTask(function(){    			
+	// var task = new Ext.util.DelayedTask(function(){
 	// 
-	//    			me.getView().mask(HreRem.i18n("msg.mask.loading"));
-	//    			var parametros = formulario.getValues();
+	// me.getView().mask(HreRem.i18n("msg.mask.loading"));
+	// var parametros = formulario.getValues();
 	//    			
 	//    			
-	//    			var url = $AC.getRemoteUrl('agenda/generarAutoprorroga');
-	//    	    	var data;
-	//    	    	Ext.Ajax.request({
-	//    	    			url:url,
-	//    	    			params: parametros,
-	//    	    			success: function(response,opts){
-	//    	    				data = Ext.decode(response.responseText);
-	//    	    				if(data.success == 'true')
-	//    	    					me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-	//    	    				else
-	//    	    					me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.autoprorroga")); 
-	//    	    			},
-	//    	    			failure: function(options, success, response){
-	//    	    				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.autoprorroga")); 
-	//    	    			},
-	//    	    			callback: function(options, success, response){
-	//    	    				me.getView().unmask();
-	//    	    				button.up('window').unmask();
-	//    	    				button.up('window').destroy();
-	//    	    			}
-	//    	    	});
-	//			});
+	// var url = $AC.getRemoteUrl('agenda/generarAutoprorroga');
+	// var data;
+	// Ext.Ajax.request({
+	// url:url,
+	// params: parametros,
+	// success: function(response,opts){
+	// data = Ext.decode(response.responseText);
+	// if(data.success == 'true')
+	// me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+	// else
+	// me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.autoprorroga"));
+	// },
+	// failure: function(options, success, response){
+	// me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.autoprorroga"));
+	// },
+	// callback: function(options, success, response){
+	// me.getView().unmask();
+	// button.up('window').unmask();
+	// button.up('window').destroy();
+	// }
+	// });
+	// });
 				
-	//			task.delay(500);
-	//		}
+	// task.delay(500);
+	// }
 	//			
 	//    	
-	//	},
+	// },
 		
 		
 	cancelarProrroga: function(button) {

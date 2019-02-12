@@ -8,13 +8,13 @@ public class PersonaInputDto implements Serializable{
 	 * 
 	 */
 	private static final long serialVersionUID = 1884005212021894617L;
-	public static final String ID_CLIENTE = "ID_CLIENTE";
 	public static final String ID_ENTIDAD_CEDENTE = "ID_ENTIDAD_CEDENTE";
 	//public static final String ID_PERSONA_CLIENTE = "ID_INTERVINIENTE_CLIENTE";
 	public static final String ID_PERSONA_CLIENTE_ALTA = "ID_PERSONA_CLIENTE";
 	public static final String ID_INTERVINIENTE_ORIGEN = "ID_INTERVINIENTE_ORIGEN";
 	public static final String ID_PERSONA_ORIGEN = "ID_PERSONA_ORIGEN";
 	public static final String ID_ORIGEN = "NOS";
+	public static final String ID_CLIENTE = "ID_CLIENTE";
 	//public static final String ID_TIPO_PERSONA = "ID_TIPO_PERSONA";
 	public static final String ID_INTERVINIENTE_HAYA = "ID_INTERVINIENTE_HAYA";
 	public static final String ID_PERSONA_HAYA = "ID_PERSONA_HAYA";

@@ -128,9 +128,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoEstadoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
 import es.pfsgroup.plugin.rem.oferta.NotificationOfertaManager;
-import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
-import es.pfsgroup.plugin.rem.rest.api.RestApi;
-import es.pfsgroup.plugin.rem.rest.api.RestApi.ENTIDADES;
 import es.pfsgroup.plugin.rem.thread.LiberarFichero;
 import es.pfsgroup.plugin.rem.thread.ReactivarActivosAgrupacion;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
@@ -224,20 +221,15 @@ public class AgrupacionAdapter {
 	private NotificatorServiceSancionOfertaAceptacionYRechazo notificatorServiceSancionOfertaAceptacionYRechazo;
 
 	@Autowired
-	private RestApi restApi;
-	
-	@Autowired
 	private ProcessAdapter processAdapter;
 	
 	@Autowired
 	private MSVProcesoApi msvProcesoApi;
 
 	@Autowired
-    private OfertaDao ofertaDao;
-
-	@Autowired
 	private ParticularValidatorApi particularValidator;
 
+	
 	@Autowired
 	private ActivoValoracionDao activoValoracionDao;
 
@@ -518,7 +510,6 @@ public class AgrupacionAdapter {
 						BeanUtils.copyProperty(dtoAgrupacion, "cartera", proyectoTemp.getCartera().getDescripcion());
 						BeanUtils.copyProperty(dtoAgrupacion, "codigoCartera", proyectoTemp.getCartera().getCodigo());
 					}
-
 				}else if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_ALQUILER)) {
 					
 					if(!Checks.estaVacio(agrupacion.getActivos())){
@@ -1148,7 +1139,6 @@ public class AgrupacionAdapter {
 					Date today = new Date();
 					nuevaRelacionAgrupacionActivo.setFechaInclusion(today);
 					activoAgrupacionActivoApi.save(nuevaRelacionAgrupacionActivo);
-					restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO, act);
 				}
 			}
 		}
@@ -1160,7 +1150,6 @@ public class AgrupacionAdapter {
 			Date today = new Date();
 			nuevaRelacionAgrupacionActivo.setFechaInclusion(today);
 			activoAgrupacionActivoApi.save(nuevaRelacionAgrupacionActivo);
-			restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO, activo);
 		}
 	}
 
@@ -1351,7 +1340,6 @@ public class AgrupacionAdapter {
 			} else {
 				activoAgrupacionActivoApi.delete(activoAgrupacionActivo);
 			}
-			restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO, activoAgrupacionActivo.getActivo());
 			return true;
 		} else {
 			throw new JsonViewerException("No ha sido posible eliminar el activo de la agrupación");
@@ -1459,7 +1447,6 @@ public class AgrupacionAdapter {
 				if (!Checks.estaVacio(agrupacionesActivoABorrar)) {
 					for (ActivoAgrupacionActivo agrupaciones : agrupacionesActivoABorrar) {
 						activoAgrupacionActivoApi.delete(agrupaciones);
-						restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO, agrupaciones.getActivo());
 					}
 				}
 			}
@@ -1485,7 +1472,6 @@ public class AgrupacionAdapter {
 					}
 				}
 				activoAgrupacionActivoApi.delete(activoAgrupacionActivo);
-				restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO, activoAgrupacionActivo.getActivo());
 			}
 		}
 
@@ -1531,7 +1517,6 @@ public class AgrupacionAdapter {
 					genericDao.update(ActivoAgrupacion.class, activoAgrupacionActivo.getAgrupacion());
 				}
 				activoAgrupacionActivoApi.delete(activoAgrupacionActivo);
-				restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO, activoAgrupacionActivo.getActivo());
 			}
 
 		} catch (Exception e) {
@@ -2582,7 +2567,7 @@ public class AgrupacionAdapter {
 				return "false"+SPLIT_VALUE+jve.getMessage();
 			} catch (Exception e) {
 				logger.error("error en agrupacionAdapter", e);
-				return null;
+				return "false";
 			}
 		}
 
@@ -2733,8 +2718,7 @@ public class AgrupacionAdapter {
 									activoPublicacion = new ActivoPublicacion();
 									activoPublicacion.setActivo(activoAgrupacionActivo.getActivo());
 								}
-								
-								
+
 								if(!Checks.esNulo(tipoComercializacion)) {
 									activoPublicacion.setTipoComercializacion(tipoComercializacion);
 								}
@@ -2777,48 +2761,6 @@ public class AgrupacionAdapter {
 								}
 								activoPatrimonioDao.saveOrUpdate(activoPatrimonio);
 								activoPublicacionDao.saveOrUpdate(activoPublicacion);
-								
-								//HREOS-5090 Punto 93
-								//Asignar Gestores al cambiar el destino comercial de la agrupación si pasamos de 'alquiler y venta' a 'alquiler'
-								//Se descartan los cambios por que es lo que me han indicado desde producto, pero no lo borro por si en un futuro se utiliza
-								/*if(DDTipoComercializacion.CODIGO_ALQUILER_VENTA.equals(destino_comercial) && DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(tipoComercializacion.getCodigo())) {
-									
-									Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "activo", activoAgrupacionActivo.getActivo());
-									List<GestorActivo> gestores_activo  = (List<GestorActivo>) genericDao.getList(GestorActivo.class, filtro2);
-									for(GestorActivo gest : gestores_activo) {
-										if(TIPO_GESTOR_COMERCIAL_VENTA.equals(gest.getTipoGestor().getCodigo())) {
-											//borramos el gestor del activo
-											gestorActivoDao.delete(gest);
-											//y agregamos el gestor al historico del activo
-											Filter filt= genericDao.createFilter(FilterType.EQUALS, "activo", activoAgrupacionActivo.getActivo());
-											Filter filt1 = genericDao.createFilter(FilterType.EQUALS, "tipoGestor.codigo", TIPO_GESTOR_COMERCIAL_VENTA);
-											Filter filt3 = genericDao.createFilter(FilterType.NULL, "fechaHasta");
-											GestorActivoHistorico gah_g=genericDao.get(GestorActivoHistorico.class,filt,filt1,filt3);
-											if(!Checks.esNulo(gah_g)) {
-													gah_g.setFechaHasta(new Date());
-													genericDao.update(GestorActivoHistorico.class, gah_g); 
-											}
-											
-										}else if(TIPO_SUPERVISOR_COMERCIAL_VENTA.equals(gest.getTipoGestor().getCodigo())) {
-											//borramos el gestor del activo
-											gestorActivoDao.delete(gest);
-											//y agregamos el gestor al historico del activo
-											Filter filt= genericDao.createFilter(FilterType.EQUALS, "activo", activoAgrupacionActivo.getActivo());
-											Filter filt2 = genericDao.createFilter(FilterType.EQUALS, "tipoGestor.codigo", TIPO_SUPERVISOR_COMERCIAL_VENTA);
-											Filter filt3 = genericDao.createFilter(FilterType.NULL, "fechaHasta");
-											
-											GestorActivoHistorico gah_s=genericDao.get(GestorActivoHistorico.class,filt,filt2,filt3);
-											if(!Checks.esNulo(gah_s)) {
-													gah_s.setFechaHasta(new Date());
-													genericDao.update(GestorActivoHistorico.class, gah_s); 
-											}
-										}
-											
-										
-									}
-									
-								}*/
-								
 							}
 						}
 					} else {
@@ -3040,6 +2982,7 @@ public class AgrupacionAdapter {
 		return null;
 	}
 
+
 	public List<DtoUsuario> getUsuariosPorDobleCodTipoGestor(String codigoGestorEdi,String codigoGestorSu) {
 
 		List<DtoUsuario> listaUsuariosDtoDobleActivo = new ArrayList<DtoUsuario>();
@@ -3153,15 +3096,6 @@ public class AgrupacionAdapter {
 				{
 					return false;
 				}
-				/*
-				for(ActivoOferta ao : ofertas)
-				{
-					Oferta oferta = ao.getPrimaryKey().getOferta();
-					if(ofertaApi.estaViva(oferta) && !tipoCodigo.equals(oferta.getTipoOferta().getCodigo()))
-					{
-						return false;
-					}
-				}*/
 			}
 		}
 		return true;

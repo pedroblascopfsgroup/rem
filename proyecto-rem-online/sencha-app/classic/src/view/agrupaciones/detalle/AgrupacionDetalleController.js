@@ -607,34 +607,38 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 			record.save({
 			    success: success,
 			 	failure: function(record, operation) {
-			 		
-			 		var response = Ext.decode(operation.success);
-			 		
-			 		if(operation.getResponse() != null){
-				 		var msg =  Ext.decode(operation.getResponse().responseText).msg;
+			 		try {
+				 		var response = Ext.decode(operation.success);
+				 		
+				 		if(operation.getResponse() != null){
+					 		var msg =  Ext.decode(operation.getResponse().responseText).msg;
+				 		}
+				 		
+				 		if((response === "false" || !response) && msg != null) {
+							me.fireEvent("errorToast", Ext.decode(operation.getResponse().responseText).msg);
+							form.unmask();
+						} else if(operation.error != null && "communication failure" === operation.error.statusText){
+				 			form.unmask();
+					    	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+					    	window.parent.funcionRecargar();
+					    	window.destroy();
+				 		} else {
+							me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+					 		form.unmask();
+						}
+						
+						if(Ext.isDefined(form.funcionRefrescar)) {
+							form.funcionRefrescar();
+						}
+			 		}catch(err) {
+						if(Ext.isDefined(err.message)){
+							me.fireEvent("errorToast", err.message);
+						}else{
+							me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+						}
+					  	
+					 	form.unmask();
 			 		}
-			 		
-			 		/* TODO 
-			 		 * Eliminar "communication failure" cuando createOfertaAgrupacion este bien optimizada 
-			 		 * y no salte timeout de bbdd 
-			 		 */
-//			 		
-			 		if((response === "false" || !response) && msg != null) {
-						me.fireEvent("errorToast", Ext.decode(operation.getResponse().responseText).msg);
-						form.unmask();
-					} else if(operation.error != null && "communication failure" === operation.error.statusText){
-			 			form.unmask();
-				    	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-				    	window.parent.funcionRecargar();
-				    	window.destroy();
-			 		} else {
-						me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-				 		form.unmask();
-					}
-					
-					if(Ext.isDefined(form.funcionRefrescar)) {
-						form.funcionRefrescar();
-					}
 			    }
 			});
 		} else {

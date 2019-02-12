@@ -387,6 +387,24 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getSubtipoDocumentosExpedientes(ModelMap model, Long idExpediente, String valorCombo) {
+
+		try {
+			List <DtoTipoDocExpedientes> dto= expedienteComercialApi.getSubtipoDocumentosExpedientes(idExpediente, valorCombo);
+
+			model.put("data", dto);
+			model.put("success", true);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getTipoDocumentoExpediente(ModelMap model, String tipoExpediente) {
 
 		try {
@@ -401,7 +419,6 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 		}
 
 		return createModelAndViewJson(model);
-
 	}
 
 	@RequestMapping(method = RequestMethod.GET)

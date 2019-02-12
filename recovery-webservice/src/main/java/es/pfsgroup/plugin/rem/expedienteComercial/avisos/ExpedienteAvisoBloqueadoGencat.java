@@ -62,7 +62,8 @@ public class ExpedienteAvisoBloqueadoGencat implements ExpedienteAvisadorApi{
 						}
 					}
 					if(expBloqueado && !Checks.esNulo(comGen) && Checks.esNulo(comGen.getSancion())
-							&& !Checks.esNulo(comGen.getEstadoComunicacion()) && !DDEstadoComunicacionGencat.COD_ANULADO.equals(comGen.getEstadoComunicacion().getCodigo()))
+							&& !Checks.esNulo(comGen.getEstadoComunicacion()) && !DDEstadoComunicacionGencat.COD_ANULADO.equals(comGen.getEstadoComunicacion().getCodigo())
+							&& !DDEstadoComunicacionGencat.COD_RECHAZADO.equals(comGen.getEstadoComunicacion().getCodigo()))
 					{
 						dtoAviso.setId(String.valueOf(expediente.getId()));
 						dtoAviso.setDescripcion("Expediente bloqueado por GENCAT");

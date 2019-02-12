@@ -13,8 +13,6 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoInfAdministrativa;
 import es.pfsgroup.plugin.rem.model.DtoActivoInformacionAdministrativa;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoVpo;
-import es.pfsgroup.plugin.rem.rest.api.RestApi;
-import es.pfsgroup.plugin.rem.rest.api.RestApi.ENTIDADES;
 
 @Component
 public class TabActivoInfoAdministrativa implements TabActivoService {
@@ -25,8 +23,6 @@ public class TabActivoInfoAdministrativa implements TabActivoService {
 	@Autowired
 	private UtilDiccionarioApi diccionarioApi;
 	
-	@Autowired
-	private RestApi restApi;
 	
 	
 
@@ -77,7 +73,6 @@ public class TabActivoInfoAdministrativa implements TabActivoService {
 			beanUtilNotNull.copyProperties(activo.getInfoAdministrativa(), dto);
 			
 			activo.setInfoAdministrativa(genericDao.save(ActivoInfAdministrativa.class, activo.getInfoAdministrativa()));
-			restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO, activo);
 			
 			if (dto.getTipoVpoCodigo() != null) {
 			

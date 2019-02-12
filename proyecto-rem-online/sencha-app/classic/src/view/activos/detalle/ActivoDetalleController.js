@@ -5396,6 +5396,8 @@ Ext
     		config.params = {codPrescriptor:codPrescriptor,cesionDatos:cesionDatos,transIntern:transIntern,comTerceros:comTerceros,
   	        	   documento:numDoc,nombre:nombre,direccion:direccion,email:email,idExpediente:idExpediente, telefono:telefono};
     		me.fireEvent("downloadFile", config);
+    		
+    		ventana3.down('button[itemId=btnSubirDoc]').enable();
      	}
      	
 });

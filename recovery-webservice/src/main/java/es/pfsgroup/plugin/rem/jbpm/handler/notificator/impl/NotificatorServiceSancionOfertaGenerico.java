@@ -145,9 +145,13 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 		
 		Usuario buzonRem = usuarioManager.getByUsername(BUZON_REM);
 		Usuario buzonPfs = usuarioManager.getByUsername(BUZON_PFS);
-		Oferta oferta = expediente.getOferta();
-		Activo activo = oferta.getActivoPrincipal();
+		Oferta oferta = null;
+		if(expediente != null){
+			oferta = expediente.getOferta();
+		}
+		
 		if (!Checks.esNulo(oferta)) {
+			Activo activo = oferta.getActivoPrincipal();
 			if (permiteNotificarAprobacion && !Checks.esNulo(expediente)
 					&& DDEstadosExpedienteComercial.APROBADO.equals(expediente.getEstado().getCodigo())) { // APROBACIÓN
 

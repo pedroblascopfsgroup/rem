@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=Sergio Ortuño
---## FECHA_CREACION=20180307
+--## AUTOR=Sergio Salt
+--## FECHA_CREACION=20190103
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=0

@@ -46,6 +46,8 @@ public class DtoAgrupaciones extends WebDto {
 	private Integer isFormalizacion;
 	private Boolean estaCaducada;
 	private Boolean agrupacionEliminada;
+	private String subTipoComercial; 
+	private String tipoAlquilerCodigo;
 	private Integer estadoVenta;
 	private Integer estadoAlquiler;
 	private String tipoComercializacionCodigo;
@@ -55,8 +57,6 @@ public class DtoAgrupaciones extends WebDto {
 	private String estadoVentaDescripcion;
 	private String estadoAlquilerCodigo;
 	private String estadoVentaCodigo;
-	private String subTipoComercial;
-	private String tipoAlquilerCodigo;
 	private String tipoActivoCodigo;
 	private String estadoActivoCodigo;
 	private String subtipoActivoCodigo;
@@ -261,6 +261,18 @@ public class DtoAgrupaciones extends WebDto {
 	public void setAgrupacionEliminada(Boolean agrupacionEliminada) {
 		this.agrupacionEliminada = agrupacionEliminada;
 	}
+	public String getSubTipoComercial() {
+		return subTipoComercial;
+	}
+	public void setSubTipoComercial(String subTipoComercial) {
+		this.subTipoComercial = subTipoComercial;
+	}
+	public String getTipoAlquilerCodigo() {
+		return tipoAlquilerCodigo;
+	}
+	public void setTipoAlquilerCodigo(String tipoAlquilerCodigo) {
+		this.tipoAlquilerCodigo = tipoAlquilerCodigo;
+	}
 	public Integer getEstadoVenta() {
 		return estadoVenta;
 	}
@@ -314,18 +326,6 @@ public class DtoAgrupaciones extends WebDto {
 	}
 	public void setEstadoVentaCodigo(String estadoVentaCodigo) {
 		this.estadoVentaCodigo = estadoVentaCodigo;
-	}
-	public String getSubTipoComercial() {
-		return subTipoComercial;
-	}
-	public void setSubTipoComercial(String subTipoComercial) {
-		this.subTipoComercial = subTipoComercial;
-	}
-	public String getTipoAlquilerCodigo() {
-		return tipoAlquilerCodigo;
-	}
-	public void setTipoAlquilerCodigo(String tipoAlquilerCodigo) {
-		this.tipoAlquilerCodigo = tipoAlquilerCodigo;
 	}
 	public Long getCodigoGestorActivo() {
 		return codigoGestorActivo;

@@ -119,7 +119,7 @@ public class ActivoGenericLeaveActionHandler extends ActivoGenericActionHandler 
 		 */
 		String transicion = executionContext.getTransition().getName();
 		boolean transicionSalto = transicion.startsWith("salto") || ActivoBaseActionHandler.SALTO_CIERRE_ECONOMICO.equals(transicion) || ActivoBaseActionHandler.SALTO_RESOLUCION_EXPEDIENTE.equals(transicion);
-		if (!BPMContants.TRANSICION_VUELTA_ATRAS.equals(transicion) && !StringUtils.isBlank(scriptValidacion) && !transicionSalto) {
+		if (!BPMContants.TRANSICION_VUELTA_ATRAS.equals(transicion) && !StringUtils.isBlank(scriptValidacion) && !transicionSalto && !transicion.toLowerCase().equals("fin") && !transicion.toLowerCase().equals("saltofin")) {
 			try {
 				Long activoTramite = getActivoTramite(executionContext).getId();
 				Object result = jbpmMActivoScriptExecutorApi.evaluaScript(activoTramite, tareaExterna.getId(), tareaExterna.getTareaProcedimiento().getId(),
@@ -195,16 +195,18 @@ public class ActivoGenericLeaveActionHandler extends ActivoGenericActionHandler 
 	 */
 	protected void guardadoAdicionalTarea(ExecutionContext executionContext) {
 		TareaExterna tareaExterna = getTareaExterna(executionContext);
-		ActivoTramite tramite = getActivoTramite(executionContext);
+		ActivoTramite tramite = getActivoTramite(executionContext); 
 		TareaProcedimiento tareaProcedimiento = tareaExterna.getTareaProcedimiento();
 
 		List<TareaExternaValor> valores = activoTareaExternaManagerApi.obtenerValoresTarea(tareaExterna.getId());
 				
 		UpdaterService dataUpdater = updaterServiceFactory.getService(tareaProcedimiento.getCodigo());
 		
-		dataUpdater.saveValues(tramite, valores);
+		if(!Checks.estaVacio(valores)){
+			dataUpdater.saveValues(tramite, valores);
 		
-		enviaNotificacionFinTareaConValores(tareaExterna.getId(),valores);
+			enviaNotificacionFinTareaConValores(tareaExterna.getId(),valores);
+		}
 			
 		logger.debug("\tGuardamos los datos de la tarea: " + getNombreNodo(executionContext));
 	}

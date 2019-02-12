@@ -124,7 +124,7 @@ public class UpdaterServiceSancionOfertaAlquileresCierreContrato implements Upda
 		try {
 		if(DDTipoOferta.CODIGO_ALQUILER.equals(oferta.getTipoOferta().getCodigo()) && MAESTRO_ORIGEN_REM.equals(oferta.getOrigen())){
 			Usuario usu=proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
-			Thread maestroPersona = new Thread( new MaestroDePersonas(expedienteComercial.getId(),usu.getUsername(),oferta.getActivoPrincipal().getCartera().getCodigo()));
+			Thread maestroPersona = new Thread( new MaestroDePersonas(expedienteComercial.getId(),usu.getUsername(),oferta.getActivoPrincipal().getCartera().getDescripcion()));
 			maestroPersona.start();
 		}
 		}catch(Exception e){

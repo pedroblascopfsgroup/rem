@@ -208,8 +208,7 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 		if (comunicacionGencat != null) {
 			try {
 				// Comrpueba que todos los datos del usuario nuevo esten completos
-				if (!Checks.esNulo(comunicacionGencat.getNuevoCompradorNif()) && !Checks.esNulo(comunicacionGencat.getNuevoCompradorNombre()) && !Checks.esNulo(comunicacionGencat.getNuevoCompradorApellido1()) 
-						&& !Checks.esNulo(comunicacionGencat.getNuevoCompradorApellido2())) {
+				if (!Checks.esNulo(comunicacionGencat.getNuevoCompradorNif()) && !Checks.esNulo(comunicacionGencat.getNuevoCompradorNombre())) {
 					gencatDto.setUsuarioCompleto(true);
 				} else {
 					gencatDto.setUsuarioCompleto(false);

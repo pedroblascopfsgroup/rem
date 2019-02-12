@@ -625,6 +625,11 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		}
 		activoDto.setAfectoAGencat(afectoAGencat);
 		
+		Boolean tieneComunicacionGencat = false;
+		if(afectoAGencat){
+			tieneComunicacionGencat = activoApi.tieneComunicacionGencat(activo);
+		}
+		activoDto.setTieneComunicacionGencat(tieneComunicacionGencat);
 	
 		List<VAdmisionDocumentos> admisionDocumentos = adapter.getListAdmisionCheckDocumentos(activo.getId());
 		

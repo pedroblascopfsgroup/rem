@@ -126,6 +126,7 @@ import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.Comprador;
 import es.pfsgroup.plugin.rem.model.CompradorExpediente;
 import es.pfsgroup.plugin.rem.model.CompradorExpediente.CompradorExpedientePk;
+import es.pfsgroup.plugin.rem.model.ComunicacionGencat;
 import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
 import es.pfsgroup.plugin.rem.model.ConfiguracionMunicipios;
 import es.pfsgroup.plugin.rem.model.DtoActivoCargas;
@@ -5408,6 +5409,17 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			
 		
 		return listDtoMotivoAnulacionExpediente;
+	}
+
+
+	@Override
+	public Boolean tieneComunicacionGencat(Activo activo) {
+		List<ComunicacionGencat> listaComunicacionGencat = genericDao.getList(ComunicacionGencat.class,genericDao.createFilter(FilterType.EQUALS, "activo.id",activo.getId()));
+		if (!Checks.estaVacio(listaComunicacionGencat)){
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 }

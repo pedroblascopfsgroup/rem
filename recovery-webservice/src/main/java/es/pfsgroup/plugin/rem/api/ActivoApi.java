@@ -1052,6 +1052,7 @@ public interface ActivoApi {
 	 * @return
 	 */
 	boolean compruebaSiExisteActivoBienPorMatricula(Long idActivo, String matriculaActivo);
+
 	
 	/**
 	 * Devuelve el activoPatrimonio a partir de la id de un activo.
@@ -1068,4 +1069,13 @@ public interface ActivoApi {
 	 * @return DtoMotivoAnulacionExpediente.
 	 */
 	List<DtoMotivoAnulacionExpediente> getMotivoAnulacionExpediente();
+
+	/**
+	 * Devuelve true si tiene alguna comunicacion
+	 * 
+	 * @param activo
+	 * @return
+	 */
+	Boolean tieneComunicacionGencat(Activo activo);
+
 }

@@ -103,8 +103,8 @@ function check_pitertul_format() {
 						[problem]="El fichero no está en formato correcto para PITERTUL."
 						[solution]="Puedes encontrar ayuda en https://link-doc.pfsgroup.es/confluence/display/TEC/PITERTUL%3A+making+of"
 					)
-	# Completa: r=$(cat $f | tr '\n' ' ' | grep -E -i "\sWHENEVER\sSQLERROR\sEXIT\sSQL\.SQLCODE(;|)\sSET\sSERVEROUTPUT\sON(;|)(\s*SET\sDEFINE\sOFF(;|)|)\s*(DECLARE(.*)\s*BEGIN|)\s*(.*)EXCEPTION(.*)ROLLBACK;\s*RAISE;\s*END(.*);\s*\/\s*EXIT(;|)\s*$")
-	r=$(cat $f | tr '\n' ' ' | grep -E -i "WHENEVER\sSQLERROR\sEXIT\sSQL\.SQLCODE(;|)\sSET\sSERVEROUTPUT\sON(;|)(\s*SET\sDEFINE\sOFF(;|)|)\s*(DECLARE(.*)\s*BEGIN|)\s*(.*)(END(.*);\s*|)\/\s*EXIT(;|)\s*$")
+	r=$(cat $f | tr '\n' ' ' | tr '\t' ' ' | tr -s [:space:] | tr -cd "[:print:]" | 
+		grep -a -E -i "\s*WHENEVER\s*SQLERROR\s*EXIT\s*SQL\.SQLCODE(;|)\s*SET\s*SERVEROUTPUT\s*ON(;|)(\s*SET\s*DEFINE\sOFF(;|)|)\s*DECLARE\s*.*\s*BEGIN\s*.*EXCEPTION(.*)ROLLBACK;\s*RAISE;\s*END.*(;|)\s*.*\sEXIT(;|)\s*$")
 	if [[ "x" == "x$r" ]]; then
 		paint_error rule
 		exit 1

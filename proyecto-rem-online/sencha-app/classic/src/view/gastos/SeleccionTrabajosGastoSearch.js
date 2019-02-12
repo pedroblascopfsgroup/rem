@@ -50,7 +50,8 @@ Ext.define('HreRem.view.gastos.SeleccionTrabajosGastoSearch', {
 											{
 												name: 'idProveedor',
 												bind: '{gasto.idEmisor}',
-												hidden: true
+												hidden: true,
+												allowBlank: false
 											},
 											{
 												name: 'conCierreEconomico',
@@ -65,7 +66,8 @@ Ext.define('HreRem.view.gastos.SeleccionTrabajosGastoSearch', {
 											{
 												name: 'numGasto',
 												bind: '{gasto.numGastoHaya}',
-												hidden: true
+												hidden: true,
+												allowBlank: false
 											}
 							]
 				    },

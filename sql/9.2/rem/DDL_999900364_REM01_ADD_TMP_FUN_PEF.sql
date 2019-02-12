@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=JIN LI HU
---## FECHA_CREACION=20181125
+--## FECHA_CREACION=20190115
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=REMVIP-2604

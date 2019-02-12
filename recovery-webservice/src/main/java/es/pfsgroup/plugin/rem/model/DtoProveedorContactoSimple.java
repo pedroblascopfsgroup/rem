@@ -162,18 +162,20 @@ public class DtoProveedorContactoSimple implements Comparable<DtoProveedorContac
 	public int compareTo(DtoProveedorContactoSimple o) {
 		int resultado = 0;
 			
-		if(this.getUsuarioGrupo() && o.getUsuarioGrupo()){
-			resultado= this.getNombre().compareTo(o.getNombre());
-		}
-		else{
-			if(this.getUsuarioGrupo() || o.getUsuarioGrupo()){
-				resultado= o.getUsuarioGrupo().compareTo(this.getUsuarioGrupo());
-			}
-			else{
+		if (!Checks.esNulo(o.getUsuarioGrupo())) {
+
+			if(this.getUsuarioGrupo() && o.getUsuarioGrupo()){
 				resultado= this.getNombre().compareTo(o.getNombre());
 			}
-		}				
-		
+			else{
+				if(this.getUsuarioGrupo() || o.getUsuarioGrupo()){
+					resultado= o.getUsuarioGrupo().compareTo(this.getUsuarioGrupo());
+				}
+				else{
+					resultado= this.getNombre().compareTo(o.getNombre());
+				}
+			}				
+		}
 		return resultado;
 	}
 	

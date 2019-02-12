@@ -531,6 +531,10 @@
             	def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
             	return expedienteComercialManager.checkConTituloTramite(idTramite);
             }
+            def checkConOpcionCompra = {
+				def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
+            	return expedienteComercialManager.checkConOpcionCompra(tareaExterna);
+			}
   			 ]]></value>
   		</list>
   	</property>

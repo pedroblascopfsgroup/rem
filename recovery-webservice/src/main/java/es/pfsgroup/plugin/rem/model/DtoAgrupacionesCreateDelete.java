@@ -21,6 +21,7 @@ public class DtoAgrupacionesCreateDelete {
 	private String direccion;
 
 
+	
 	public String getNombre() {
 		return nombre;
 	}
@@ -69,13 +70,11 @@ public class DtoAgrupacionesCreateDelete {
 	public void setNumAgrupacionRem(Long numAgrupacionRem) {
 		this.numAgrupacionRem = numAgrupacionRem;
 	}
+
 	public String getDireccion() {
 		return direccion;
 	}
 	public void setDireccion(String direccion) {
 		this.direccion = direccion;
 	}
-
-
-
 }

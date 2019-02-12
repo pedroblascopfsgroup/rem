@@ -2098,8 +2098,8 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
         var me = this;
         var fecha = me.down('[name=fechaTarea]');
         var fechaComunicacion = me.down('[name=fechaComunicacion]');
-        fecha.setValue($AC.getCurrentDate());
-        me.deshabilitarCampo(fecha);
+        fecha.setValue($AC.getCurrentDate()); 
+        //me.deshabilitarCampo(fecha);
         fecha.setReadOnly(true);
         fechaComunicacion.allowBlank = false;
     },

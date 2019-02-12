@@ -1,6 +1,7 @@
 #!/bin/bash
  
 fichero=URSTOCK
+fichero_ET=URSTOCK_ET.txt
 
 if [[ -z ${DIR_DESTINO} ]] || [[ ! -d ${DIR_DESTINO} ]]; then
     echo "$(basename $0) Error: DIR_DESTINO no definido o no es un directorio. Compruebe invocación previa a setBatchEnv.sh"
@@ -13,6 +14,42 @@ extensionTxt=".txt"
 OIFS=$IFS
 IFS=','
 arrayfichero=$fichero
+arrayficheroET=$fichero_ET
+
+#Calculo de hora limite
+hora_limite=`date --date="5 minutes" +%Y%m%d%H%M%S`
+hora_actual=`date +%Y%m%d%H%M%S`
+echo "Hora actual: $hora_actual - Hora limite: $hora_limite"
+
+for fichero_ET in $arrayficheroET
+do
+     fichero_ETTxt=$DIR_INPUT_AUX$fichero_ET$extensionTxt
+
+    echo "$fichero_ETTxt"
+    if [[ "$#" -eq 1 ]]; then
+        ./ftp/ftp_get_uvem_files.sh $1 $fichero_ET
+    fi
+        while [[ "$hora_actual" -lt "$hora_limite" ]] && [[ ! -e $fichero_ETTxt ]]; do
+            sleep 10
+            hora_actual=`date +%Y%m%d%H%M%S`
+        if [[ "$#" -eq 1 ]]; then
+            ./ftp/ftp_get_uvem_files.sh $1 $fichero_ET
+        fi
+        done
+done
+
+if [ "$hora_actual" -ge "$hora_limite" ]
+then
+   echo "$(basename $0) Tiempo límite alcanzado: fichero $fichero_ET no encontrado"
+else
+	if [ -e  fichero_ETTxt ]; then
+		fichero_ETTxt=$DIR_INPUT_AUX$fichero_ET$extensionTxt
+		mv $fichero_ETTxt $DIR_DESTINO
+		echo "$(basename $0) fichero $fichero_ET encontrado"
+	else
+		echo "No encontrado el fichero $fichero_ET"
+	fi
+fi
 
 #Calculo de hora limite
 hora_limite=`date --date="$MAX_WAITING_MINUTES minutes" +%Y%m%d%H%M%S`
@@ -51,4 +88,3 @@ else
    echo "$(basename $0) fichero encontrados"
    exit 0
 fi
-

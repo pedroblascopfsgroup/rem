@@ -552,6 +552,29 @@ public class AgendaController extends TareaController {
 		
 		return createModelAndViewJson(model);
 	}
+	
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView anularTramiteAlquiler(Long idTramite, String motivo, ModelMap model) {
+		Boolean anulado = false;
+		try {
+			if (Checks.esNulo(idTramite)) {
+				throw new JsonViewerException("No se ha informado el expediente comercial.");
+			} else {
+				anulado = adapter.anularTramiteAlquiler(idTramite, motivo);
+			}
+			model.put("success", anulado);
+			
+		} catch (JsonViewerException jve) {
+			logger.error("Error al anular el trámite", jve);
+			model.put("success", anulado);
+			model.put("msgError", jve.getMessage());
+		} catch (Exception e) {
+			logger.error("Error al anular el trámite", e);
+			model.put("success", anulado);
+		}	
+		
+		return createModelAndViewJson(model);
+	}
 
 	private String getMensajeInvalidDataAccessExcepcion(InvalidDataAccessResourceUsageException e) {
 

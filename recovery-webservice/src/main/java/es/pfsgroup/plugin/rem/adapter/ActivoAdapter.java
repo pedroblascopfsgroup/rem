@@ -61,6 +61,7 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBValoracionesBien;
 import es.pfsgroup.plugin.rem.activo.ActivoManager;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoPatrimonioContratoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoTramiteDao;
 import es.pfsgroup.plugin.rem.activo.dao.impl.ActivoPatrimonioDaoImpl;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
@@ -103,6 +104,7 @@ import es.pfsgroup.plugin.rem.model.ActivoObservacion;
 import es.pfsgroup.plugin.rem.model.ActivoOcupanteLegal;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
+import es.pfsgroup.plugin.rem.model.ActivoPatrimonioContrato;
 import es.pfsgroup.plugin.rem.model.ActivoPropietarioActivo;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
@@ -119,6 +121,7 @@ import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoActivoOcupanteLegal;
 import es.pfsgroup.plugin.rem.model.DtoActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.DtoActivoValoraciones;
+import es.pfsgroup.plugin.rem.model.DtoActivoVistaPatrimonioContrato;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoAdmisionDocumento;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionesActivo;
@@ -152,6 +155,7 @@ import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.UsuarioCartera;
+import es.pfsgroup.plugin.rem.model.VActivoPatrimonioContrato;
 import es.pfsgroup.plugin.rem.model.VAdmisionDocumentos;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivosTrabajoPresupuesto;
 import es.pfsgroup.plugin.rem.model.VBusquedaPresupuestosActivo;
@@ -185,13 +189,12 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTasacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTenedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
 import es.pfsgroup.plugin.rem.oferta.NotificationOfertaManager;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PRINCIPAL;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PROPIEDAD;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.SITUACION;
-import es.pfsgroup.plugin.rem.rest.api.RestApi;
-import es.pfsgroup.plugin.rem.rest.api.RestApi.ENTIDADES;
 import es.pfsgroup.plugin.rem.rest.dto.FileListResponse;
 import es.pfsgroup.plugin.rem.rest.dto.FileResponse;
 import es.pfsgroup.plugin.rem.restclient.exception.UnknownIdException;
@@ -207,9 +210,7 @@ import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 @Service
 public class ActivoAdapter {
 	
-	@Autowired
-	private RestApi restApi;
-
+	
 	@Autowired
 	private ActivoAgrupacionActivoDao activoAgrupacionActivoDao;
 
@@ -218,6 +219,9 @@ public class ActivoAdapter {
 
 	@Autowired
 	private GenericABMDao genericDao;
+	
+	@Autowired
+	private ActivoPatrimonioContratoDao actPatrimonioDao;
 
 	@Autowired
 	private coreextensionApi coreextensionApi;
@@ -373,8 +377,7 @@ public class ActivoAdapter {
 			beanUtilNotNull.copyProperties(activoCatastro, dtoCatastro);
 			activoCatastro.setResultado(dtoCatastro.getResultadoSiNO());
 			genericDao.save(ActivoCatastro.class, activoCatastro);
-			restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO, activoCatastro.getActivo());
-
+		
 		} catch (IllegalAccessException e) {
 			logger.error("Error en ActivoAdapter, saveCatastro", e);
 		} catch (InvocationTargetException e) {
@@ -463,7 +466,6 @@ public class ActivoAdapter {
 			ActivoCatastro activoCatastro = genericDao.get(ActivoCatastro.class, filtro);
 			if(activoCatastro != null){
 				genericDao.deleteById(ActivoCatastro.class, activoCatastro.getId());
-				restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO, activoCatastro.getActivo());
 			}
 			
 		} catch (Exception e) {
@@ -562,7 +564,6 @@ public class ActivoAdapter {
 			activoCondicionEspecifica.setActivo(activo);
 
 			genericDao.save(ActivoCondicionEspecifica.class, activoCondicionEspecifica);
-			restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO,activo);
 		} catch (Exception e) {
 			logger.error("Error en ActivoAdapter, createCondicionHistorico", e);
 		}
@@ -593,8 +594,6 @@ public class ActivoAdapter {
 				activo.setInfoComercial(viviendaTemp);
 			}			
 			activoApi.saveOrUpdate(activo);
-			restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO, activo);
-
 		} catch (IllegalAccessException e) {
 			logger.error("Error en ActivoAdapter, createDistribucion", e);
 		} catch (InvocationTargetException e) {
@@ -1101,6 +1100,31 @@ public class ActivoAdapter {
 		return listaDtoObservaciones;
 
 	}
+	
+	@SuppressWarnings("unchecked")
+	public DtoPage getListAsociadosById(DtoActivoVistaPatrimonioContrato dto) {
+		VActivoPatrimonioContrato activoActual = genericDao.get(VActivoPatrimonioContrato.class, genericDao.createFilter(FilterType.EQUALS, "activo",dto.getActivo()));
+		Page page = null;
+		List<DtoActivoVistaPatrimonioContrato> lista = null;
+		try {
+			BeanUtils.copyProperty(dto, "idContrato", activoActual.getIdContrato());
+			BeanUtils.copyProperty(dto, "nombrePrinex", activoActual.getNombrePrinex());
+			page = actPatrimonioDao.getActivosRelacionados(dto);
+			lista = new ArrayList<DtoActivoVistaPatrimonioContrato>();
+			for (VActivoPatrimonioContrato activo: (List<VActivoPatrimonioContrato>) page.getResults()) {
+				DtoActivoVistaPatrimonioContrato dtoActivo =  new DtoActivoVistaPatrimonioContrato();
+				BeanUtils.copyProperties(dtoActivo, activo);
+				lista.add(dtoActivo);
+			}
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			e.printStackTrace();
+		}
+		
+		return new DtoPage(lista,page.getTotalCount());
+		
+	}
 
 	public List<DtoAgrupacionesActivo> getListAgrupacionesActivoById(Long id) {
 
@@ -1163,6 +1187,23 @@ public class ActivoAdapter {
 
 		return listaCalc;
 	}
+	
+	/*public List<VActivoPatrimonioContrato> getActivosAsociados(Long id) {
+		
+		
+		Activo activo = activoApi.get(id);
+		List<VActivoPatrimonioContrato> listaAsociados = new ArrayList<VActivoPatrimonioContrato>();
+		
+		if(!Checks.esNulo(activo)) {
+			//createFilter(FilterType.EQUALS, "idContrato",a.getIdContrato()
+			Filter filtro = genericDao.createFilter(type, propertyName)
+		}
+		
+		
+		
+		
+		return listaAsociados;
+	}*/
 
 	public List<VBusquedaVisitasDetalle> getListVisitasActivoById(Long id)
 			throws IllegalAccessException, InvocationTargetException {
@@ -1894,6 +1935,7 @@ public class ActivoAdapter {
 			beanUtilNotNull.copyProperty(dtoTramite, "idTramite", tramite.getId());
 			beanUtilNotNull.copyProperty(dtoTramite, "idTipoTramite", tramite.getTipoTramite().getId());
 			beanUtilNotNull.copyProperty(dtoTramite, "tipoTramite", tramite.getTipoTramite().getDescripcion());
+			beanUtilNotNull.copyProperty(dtoTramite, "tramiteAlquilerAnulado", false);
 			if (!Checks.esNulo(tramite.getTramitePadre()))
 				beanUtilNotNull.copyProperty(dtoTramite, "idTramitePadre", tramite.getTramitePadre().getId());
 			beanUtilNotNull.copyProperty(dtoTramite, "idActivo", tramite.getActivo().getId());
@@ -1945,7 +1987,9 @@ public class ActivoAdapter {
 				if (!ActivoTramiteApi.CODIGO_TRAMITE_COMERCIAL_VENTA.equals(tramite.getTipoTramite().getCodigo())) {
 					beanUtilNotNull.copyProperty(dtoTramite, "ocultarBotonResolucion", true);
 				}
-				
+				if (!ActivoTramiteApi.CODIGO_TRAMITE_COMERCIAL_ALQUILER.equals(tramite.getTipoTramite().getCodigo())) {
+					beanUtilNotNull.copyProperty(dtoTramite, "ocultarBotonResolucionAlquiler", true);
+				}
 				if (!ActivoTramiteApi.CODIGO_TRAMITE_PROPUESTA_PRECIOS.equals(tramite.getTipoTramite().getCodigo())) {
 					beanUtilNotNull.copyProperty(dtoTramite, "ocultarBotonAnular", true);
 				}
@@ -1970,6 +2014,10 @@ public class ActivoAdapter {
 						}
 					}
 				}
+			}
+			if(DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CANCELADO.equals(tramite.getEstadoTramite().getCodigo())
+				|| DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CERRADO.equals(tramite.getEstadoTramite().getCodigo())){
+				beanUtilNotNull.copyProperty(dtoTramite, "tramiteAlquilerAnulado", true);	
 			}
 				
 				
@@ -2216,7 +2264,6 @@ public class ActivoAdapter {
 		estadoInformeComercialHistorico.setFecha(new Date());
 		
 		genericDao.save(ActivoEstadosInformeComercialHistorico.class, estadoInformeComercialHistorico);
-		restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO, activo);		
 	}
 
 	public List<VAdmisionDocumentos> getListAdmisionCheckDocumentos(Long idActivo) {
@@ -2298,8 +2345,6 @@ public class ActivoAdapter {
 
 			rellenaCheckingDocumentoAdmision(activoAdmisionDocumento, dtoAdmisionDocumento);
 			genericDao.save(ActivoAdmisionDocumento.class, activoAdmisionDocumento);
-			restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO, activoAdmisionDocumento.getActivo());
-
 		}
 
 		return true;
@@ -2898,9 +2943,15 @@ public class ActivoAdapter {
 				&& ((DDTipoComercializacion.CODIGO_SOLO_ALQUILER).equals(((DtoActivoFichaCabecera)dto).getTipoComercializacionCodigo()) 
 						|| (DDTipoComercializacion.CODIGO_ALQUILER_VENTA).equals(((DtoActivoFichaCabecera)dto).getTipoComercializacionCodigo()))){
 			
+			//HREOS-5263: Al cambiar de Venta a Alquiler un activo ponemos por defecto el tipo de alquiler a "No definido".
+			Filter filtro0 = genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoAlquiler.CODIGO_NO_DEFINIDO);
+			DDTipoAlquiler tipoAlquiler= genericDao.get(DDTipoAlquiler.class, filtro0);
+			activo.setTipoAlquiler(tipoAlquiler);
+			
 			ActivoPatrimonio actPatrimonio = activoPatrimonio.getActivoPatrimonioByActivo(activo.getId());
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoEstadoAlquiler.ESTADO_ALQUILER_LIBRE);
 			DDTipoEstadoAlquiler estadoAlquiler= genericDao.get(DDTipoEstadoAlquiler.class, filtro);
+			
 			if(!Checks.esNulo(actPatrimonio)){
 				actPatrimonio.setCheckHPM(true);
 				actPatrimonio.setTipoEstadoAlquiler(estadoAlquiler);
@@ -2913,6 +2964,7 @@ public class ActivoAdapter {
 				actPatrimonio.setActivo(activo);
 				actPatrimonio.setCheckHPM(true);
 				actPatrimonio.setTipoEstadoAlquiler(estadoAlquiler);
+				
 				Auditoria auditoria = new Auditoria();
 				auditoria.setUsuarioCrear(username);
 				auditoria.setFechaCrear(fecha);

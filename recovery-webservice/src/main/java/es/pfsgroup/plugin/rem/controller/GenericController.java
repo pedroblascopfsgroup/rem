@@ -297,8 +297,8 @@ public class GenericController extends ParadiseJsonController{
 	}
 
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getComboMotivoRechazoOferta(String tipoRechazoOfertaCodigo){
-		return createModelAndViewJson(new ModelMap("data", genericApi.getComboMotivoRechazoOferta(tipoRechazoOfertaCodigo)));	
+	public ModelAndView getComboMotivoRechazoOferta(String tipoRechazoOfertaCodigo, Long idOferta){
+		return createModelAndViewJson(new ModelMap("data", genericApi.getComboMotivoRechazoOferta(tipoRechazoOfertaCodigo, idOferta)));	
 	}
 	
 	@SuppressWarnings("unchecked")

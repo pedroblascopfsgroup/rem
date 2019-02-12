@@ -85,6 +85,7 @@ public abstract class ActivoBaseActionHandler implements ActionHandler {
     private static final String CODIGO_T004_AUTORIZACION_PROPIETARIO = "T004_AutorizacionPropietario";
     private static final String CODIGO_T004_RESULTADO_TARIFICADA = "T004_ResultadoTarificada";
     private static final String CODIGO_T004_RESULTADO_NOTARIFICADA = "T004_ResultadoNoTarificada";
+    public static final String CODIGO_FIN = "Fin";
     
     protected final Log logger = LogFactory.getLog(getClass());
 

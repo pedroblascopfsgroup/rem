@@ -124,11 +124,13 @@ Ext.define('HreRem.view.activos.detalle.FotosActivoTabPanel', {
 			me.down("[itemId=botoneditar]").setVisible(true);
 		}
 
-		// Si la pestaña recibida no tiene asignados roles de edicion 
-		if(Ext.isEmpty(tab.funPermEdition)) {
-    		editionEnabled();
-    	} else {
-    		$AU.confirmFunToFunctionExecution(editionEnabled, tab.funPermEdition);
-    	}
+		// Si la pestaña recibida no tiene asignados roles de edicion
+		if(me.lookupController().getViewModel().get('activo').get('incluidoEnPerimetro')=="true"  && !me.lookupController().getViewModel().get('activo').get('isActivoEnTramite')) {
+			if(Ext.isEmpty(tab.funPermEdition)) {
+	    		editionEnabled();
+	    	} else {
+	    		$AU.confirmFunToFunctionExecution(editionEnabled, tab.funPermEdition);
+	    	}
+		}
     }
 });

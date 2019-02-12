@@ -79,4 +79,74 @@ bye
 EOF
 echo "Fichero movido satisfactoriamente"
 
+cd $INSTALL_DIR/control/etl/emais/output
+
+echo "Gestoria EMAIS - EMAIS_STOCK_GASTOS_RG_${1}.dat"
+lftp -u sftp_emais,"UZ-q4}{k" sftp://192.168.49.14 <<EOF
+cd /output/
+mput $INSTALL_DIR/control/etl/emais/output/EMAIS_STOCK_GASTOS_RG_${1}.dat
+bye
+EOF
+echo "Fichero movido satisfactoriamente"
+
+cd $INSTALL_DIR/control/etl/f\&g/output
+
+echo "Gestoria F&G - F&G_STOCK_GASTOS_RG_${1}.dat"
+lftp -u sftp_fyg,"D]it&2/J" sftp://192.168.49.14 <<EOF
+cd /output/
+mput F\&G_STOCK_GASTOS_RG_${1}.dat
+bye
+EOF
+echo "Fichero movido satisfactoriamente"
+
+cd $INSTALL_DIR/control/etl/gestinova/output
+
+echo "Gestoria GESTINOVA - GESTINOVA_STOCK_GASTOS_RG_${1}.dat"
+lftp -u sftp_gestinova,"JD3Rir('" sftp://192.168.49.14 <<EOF
+cd /output/
+mput $INSTALL_DIR/control/etl/gestinova/output/GESTINOVA_STOCK_GASTOS_RG_${1}.dat
+bye
+EOF
+echo "Fichero movido satisfactoriamente"
+
+cd $INSTALL_DIR/control/etl/maretra/output
+
+echo "Gestoria MARETRA - MARETRA_STOCK_GASTOS_RG_${1}.dat"
+lftp -u sftp_maretra,"4Dmx<HEb" sftp://192.168.49.14 <<EOF
+cd /output/
+mput $INSTALL_DIR/control/etl/maretra/output/MARETRA_STOCK_GASTOS_RG_${1}.dat
+bye
+EOF
+echo "Fichero movido satisfactoriamente"
+
+cd $INSTALL_DIR/control/etl/qipert/output
+
+echo "Gestoria QIPERT - QIPERT_STOCK_GASTOS_RG_${1}.dat"
+lftp -u sftp_qipert,"E4GL7~|K" sftp://192.168.49.14 <<EOF
+cd /output/
+mput $INSTALL_DIR/control/etl/qipert/output/QIPERT_STOCK_GASTOS_RG_${1}.dat
+bye
+EOF
+echo "Fichero movido satisfactoriamente"
+
+cd $INSTALL_DIR/control/etl/mediterraneo/output
+
+echo "Gestoria MEDITERRANEO - MEDITERRANEO_STOCK_GASTOS_RG_${1}.dat"
+lftp -u sftp_mediterraneo,"3qP*X8iG" sftp://192.168.49.14 <<EOF
+cd /output/
+mput $INSTALL_DIR/control/etl/mediterraneo/output/MEDITERRANEO_STOCK_GASTOS_RG_${1}.dat
+bye
+EOF
+echo "Fichero movido satisfactoriamente"
+
+cd $INSTALL_DIR/control/etl/grupoBC/output
+
+echo "Gestoria GRUPOBC - GRUPOBC_STOCK_GASTOS_RG_${1}.dat"
+lftp -u sftp_grupobc,"eDRvpuxN" sftp://192.168.49.14 <<EOF
+cd /output/
+mput $INSTALL_DIR/control/etl/grupoBC/output/GRUPOBC_STOCK_GASTOS_RG_${1}.dat
+bye
+EOF
+echo "Fichero movido satisfactoriamente"
+
 echo "Fin del proceso de volcado de los ficheros de errores de gastos a las gestorias"

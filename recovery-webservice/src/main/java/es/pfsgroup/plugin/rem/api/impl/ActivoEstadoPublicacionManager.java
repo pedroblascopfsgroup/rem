@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import edu.emory.mathcs.backport.java.util.concurrent.TimeUnit;
 import es.capgemini.devon.message.MessageService;
+import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.users.UsuarioManager;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -661,6 +662,12 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 			activoPublicacion.setMotivoPublicacion(dto.getMotivoPublicacion());
 
 			activoPublicacionDao.save(activoPublicacion);
+			
+			if((Checks.esNulo(dto.getOcultarVenta()) && !Checks.esNulo(dto.getMotivoOcultacionVentaCodigo())) || (Checks.esNulo(dto.getOcultarAlquiler()) && !Checks.esNulo(dto.getMotivoOcultacionAlquilerCodigo()))) {
+				ActivoPublicacionHistorico activoPublicacionHistorico = new ActivoPublicacionHistorico();
+				BeanUtils.copyProperties(activoPublicacionHistorico, activoPublicacion);
+				activoPublicacionHistoricoDao.save(activoPublicacionHistorico);
+			}
 
 		} catch (IllegalAccessException e) {
 			logger.error("Error al actualizar el estado actual de publicacion, error: ", e);

@@ -398,8 +398,14 @@ public interface ParticularValidatorApi {
 	Boolean existeProveedorMediadorByNIFConFVD(String proveedorMediadorNIF);
 
 	boolean isMismoTipoComercializacionActivoPrincipalAgrupacion(String numActivo, String numAgrupacion);
+	
+	boolean isMismoTipoComercializacionActivoPrincipalExcel(String numActivo, String numActivoPrincipalExcel);
+	
+	Boolean isAgrupacionSinActivoPrincipal(String mumAgrupacionRem);
 
 	boolean isMismoEpuActivoPrincipalAgrupacion(String numActivo, String numAgrupacion);
+	
+	boolean isMismoEpuActivoPrincipalExcel(String numActivo, String numActivoPrincipalExcel);
 
 	String idAgrupacionDelActivoPrincipal(String numActivo);
 
@@ -461,7 +467,7 @@ public interface ParticularValidatorApi {
 	 * @return devuelve true si un activo tiene un destino comercial de tipo
 	 *         venta (no confundir con venta y alquiler)
 	 */
-	Boolean activoConDestinoComercialVenta(String idActivo);
+	public Boolean activoConDestinoComercialVenta(String idActivo);
 
 	/**
 	 *
@@ -473,6 +479,13 @@ public interface ParticularValidatorApi {
 
 	/**
 	 *
+	 * @param numActivo
+	 * @return devuelve true si el activo se encuentra incluido en una
+	 *         agrupacion viva de tipo comercial
+	 */
+	Boolean activoEnAgrupacionComercialViva(String numActivo);
+
+	/**
 	 * @param numActivo:
 	 * @return devuelve true si un activo tiene un destino comercial de tipo
 	 *         alquiler (no confundir con venta y alquiler)
@@ -487,13 +500,10 @@ public interface ParticularValidatorApi {
 	Boolean esAgrupacionTipoAlquiler(String numAgrupacion);
 
 	/**
-	 *
-	 *
 	 * @param numAgrupacion
 	 * @param numActivo
 	 * @return Devuelve true si el activo tiene el mismo tipo de alquiler que la
 	 *         agrupacion.
-	 *
 	 */
 	Boolean mismoTipoAlquilerActivoAgrupacion(String numAgrupacion, String numActivo);
 
@@ -510,7 +520,7 @@ public interface ParticularValidatorApi {
 	 * @return devuelve el código de la subcartera de una agrupación según su
 	 *         activo principal
 	 */
-	String getCodigoSubcarteraAgrupacion(String numAgrupacion);
+	public String getCodigoSubcarteraAgrupacion(String numAgrupacion);
 
 	Boolean subtipoPerteneceTipoTitulo(String subtipo, String tipoTitulo);
 
@@ -522,52 +532,42 @@ public interface ParticularValidatorApi {
 
 	Boolean mediadorExisteVigente(String codMediador);
 
-	Boolean agrupacionEsProyecto(String numAgrupacion);
+	Boolean existeComunidadPropietarios(String idPropietarios);
 
-	Boolean activoTienePRV(String numActivo);
+	Boolean existeSituacion(String idSituacion);
 
-	Boolean activoTieneLOC(String numActivo);
+	Boolean existeImpuesto(String idImpuesto);
 
-	Boolean esMismaProvincia(Long numActivo, Long numAgrupacion);
+	Boolean existeActivoEnPropietarios(String numActivo, String idPropietarios);
 
-	public Boolean esMismaLocalidad(Long numActivo, Long numAgrupacion);	
-		/**
-		 * Devuelve true si un activo tiene ofertas vivas de tipo venta
-		 * @param numActivo
-		 * @return
-		 */
-		public Boolean existeActivoConOfertaVentaViva(String numActivo);
+	Boolean existeCatastro(String catastro);
 		
-		/**
-		 * Devuelve true si un activo tiene ofertas vivas de tipo alquiler
-		 * @param numActivo
-		 * @return
-		 */
-		public Boolean existeActivoConOfertaAlquilerViva(String numActivo);
 		
-		/**
-		 * Devuelve el codigo del destino comercial de un activo
-		 * @param numActivo
-		 * @return
-		 */
-		public String getCodigoDestinoComercialByNumActivo(String numActivo);
+	public Boolean agrupacionEsProyecto(String numAgrupacion);
 
-		Boolean existeComunidadPropietarios(String idPropietarios);
+	public Boolean activoTienePRV(String numActivo);
 
-		Boolean existeSituacion(String idSituacion);
+	public Boolean activoTieneLOC(String numActivo);
 
-		Boolean existeImpuesto(String idImpuesto);
+	public Boolean esMismaProvincia(Long numActivo, Long numAgrupacion);
 
-		Boolean existeActivoEnPropietarios(String numActivo, String idPropietarios);
+	public Boolean esMismaLocalidad(Long numActivo, Long numAgrupacion);
 
-		Boolean existeCatastro(String catastro);	
-		
-		/**
-		 * @param numActivo
-		 * @return devuelve true si el activo se encuentra incluido en una
-		 *         agrupacion viva de tipo comercial
-		 */
-		public Boolean activoEnAgrupacionComercialViva(String numActivo);
+	/**
+	 * Devuelve true si un activo tiene ofertas vivas de tipo venta
+	 * 
+	 * @param numActivo
+	 * @return
+	 */
+	public Boolean existeActivoConOfertaVentaViva(String numActivo);
+
+	/**
+	 * Devuelve el codigo del destino comercial de un activo
+	 * 
+	 * @param numActivo
+	 * @return
+	 */
+	public Boolean existeActivoConOfertaAlquilerViva(String numActivo);
 
 	public Boolean isActivoPublicadoVenta(String numActivo);
 
@@ -587,7 +587,8 @@ public interface ParticularValidatorApi {
 	 * @param numActivo
 	 * @return
 	 */
-	public Boolean existeActivoConOfertaVentaViva(String numActivo);
+
+	public String getCodigoDestinoComercialByNumActivo(String numActivo);
 
 	public Boolean isActivoFinanciero(String numActivo);
 

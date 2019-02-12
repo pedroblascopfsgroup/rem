@@ -256,6 +256,14 @@ public interface ExpedienteComercialApi {
 	public List <DtoTipoDocExpedientes> getTipoDocumentoExpediente(String tipoExpediente);
 
 	/**
+	 * Método que recupera los subtipos de documento posibles para adjuntar en el Expediente Comercial
+	 * 	
+	 * @param idExpediente, tipoExpediente
+	 * @return listado de archivos adjuntos
+	 */
+	List <DtoTipoDocExpedientes> getSubtipoDocumentosExpedientes(Long idExpediente, String valorCombo);
+		
+	/**
 	 * Recupera el adjunto del Expediente comercial
 	 * 
 	 * @param dtoAdjunto
@@ -359,8 +367,14 @@ public interface ExpedienteComercialApi {
 	public DtoPage getPosicionamientosExpediente(Long idExpediente);
 
 
+	/**
+	 * Método que obtiene la tarea de definición oferta
+	 *
+	 * @param dto
+	 * @param idExpediente
+	 * @return
+	 */
 	String getTareaDefinicionDeOferta(Long idExpedienteComercial, WebDto webDto);
-
 
 	/**
 	 * Método que obtiene los comparecientes del expediente
@@ -540,7 +554,8 @@ public interface ExpedienteComercialApi {
 	 * @param oferta
 	 * @return
 	 */
-	OfertaUVEMDto createOfertaOVEM(Oferta oferta,ExpedienteComercial expedienteComercial) throws Exception;
+
+	OfertaUVEMDto createOfertaOVEM(Oferta oferta, ExpedienteComercial expedienteComercial) throws Exception;
 	
 	/**
 	 * Obtiene la lista de titulares para uvem
@@ -580,7 +595,7 @@ public interface ExpedienteComercialApi {
 	 * @param dto
 	 * @return
 	 */
-	public boolean createHistoricoCondiciones(DtoHistoricoCondiciones dto, Long idEntidad);
+	boolean createHistoricoCondiciones(DtoHistoricoCondiciones dto, Long idEntidad);
 	
 	/**
 	 * Elimina un registro de honorario (gasto_expediente)
@@ -1023,7 +1038,7 @@ public interface ExpedienteComercialApi {
 	 */
 	boolean enviarCorreoComercializadora(String cuerpoEmail, Long idExpediente);
 
-	public List<DDTipoCalculo> getComboTipoCalculo(Long idExpediente);
+	List<DDTipoCalculo> getComboTipoCalculo(Long idExpediente);
 
 	/**
 	 * Este método comprueba si el expediente ya contiene un documento del tipo y subtipo indicado
@@ -1033,7 +1048,7 @@ public interface ExpedienteComercialApi {
 	 * @return Devuelve True si existe el documento.
 	 */
 
-	public Boolean existeDocSubtipo(WebFileItem fileItem, ExpedienteComercial expedienteComercialEntrada) throws Exception;
+	Boolean existeDocSubtipo(WebFileItem fileItem, ExpedienteComercial expedienteComercialEntrada) throws Exception;
 
 	/**
 	 * Método que obtiene el histórico de scoring del expediente comercial de alquiler.
@@ -1041,7 +1056,7 @@ public interface ExpedienteComercialApi {
 	 * @param idExpediente
 	 * @return
 	 */
-	public List<DtoExpedienteHistScoring> getHistoricoScoring(Long idScoring);
+	List<DtoExpedienteHistScoring> getHistoricoScoring(Long idScoring);
 
 	/**
 	 * Método que guarda la pestaña Scoring el bloque detalle.
@@ -1049,14 +1064,14 @@ public interface ExpedienteComercialApi {
 	 * @param idEntidad
 	 * @return
 	 */
-	public boolean saveExpedienteScoring(DtoExpedienteScoring dto, Long idEntidad);
+	boolean saveExpedienteScoring(DtoExpedienteScoring dto, Long idEntidad);
 
 	/**
 	 * Metodo que envia correo a a el asegurador informando de la firma de contrato de alquiler
 	 * @param idExpediente
 	 * @return
 	 */
-	public boolean enviarCorreoAsegurador(Long idExpediente);
+	boolean enviarCorreoAsegurador(Long idExpediente);
 
 
 	/**
@@ -1066,14 +1081,14 @@ public interface ExpedienteComercialApi {
 	 * @param envio
 	 * @return
 	 */
-	public boolean enviarCorreoGestionLlaves(Long idExpediente, Posicionamiento posicionamiento, int envio);
+	boolean enviarCorreoGestionLlaves(Long idExpediente, Posicionamiento posicionamiento, int envio);
 
 	/**
 	 * Método que saca una lista de estados del expediente segun si es de tipo venta o de tipo alquiler
 	 * @param idEstado
 	 * @return
 	 */
-	public List<DtoDiccionario> getComboExpedienteComercialByEstado(String idEstado);
+	List<DtoDiccionario> getComboExpedienteComercialByEstado(String idEstado);
 
 	/**
 	 * Metodo que envia correo al gestor comercial notificándole que se ha posicionado una oferta
@@ -1081,21 +1096,21 @@ public interface ExpedienteComercialApi {
 	 * @param posicionamiento
 	 * @return
 	 */
-	public boolean enviarCorreoPosicionamientoFirma(Long idExpediente, Posicionamiento posicionamiento);
+	boolean enviarCorreoPosicionamientoFirma(Long idExpediente, Posicionamiento posicionamiento);
 
 	/**
 	 * Metodo que envia correo al prescriptor de la oferta notificándole que se han subido a REM los documentos necesarios para la firma del contrato.
 	 * @param idExpediente
 	 * @return
 	 */
-	public boolean enviarCorreoSubidaDeContrato(Long idExpediente);
+	boolean enviarCorreoSubidaDeContrato(Long idExpediente);
 
 	/**
 	 * Metodo que comprueba si el documento Precontrato está subido al expediente
 	 * @param tareaExterna
 	 * @return
 	 */
-	public boolean checkPrecontratoSubido(TareaExterna tareaExterna);
+	boolean checkPrecontratoSubido(TareaExterna tareaExterna);
 
 	/**
 	 * Método que saca el expediente comercial a partir de una tarea externa
@@ -1103,9 +1118,9 @@ public interface ExpedienteComercialApi {
 	 * @param tareaExterna
 	 * @return ExpedienteComercial
 	 */
-	public ExpedienteComercial tareaExternaToExpedienteComercial(TareaExterna tareaExterna);
+	ExpedienteComercial tareaExternaToExpedienteComercial(TareaExterna tareaExterna);
 
-	public String getCodigoCarteraExpediente(String idExpediente);
+	String getCodigoCarteraExpediente(String idExpediente);
 
 	DtoPage getActivosExpedienteVista(Long idExpediente);
 
@@ -1120,15 +1135,18 @@ public interface ExpedienteComercialApi {
 	 * @param tareaExterna
 	 * @return
 	 */
-	public boolean checkContratoSubido(TareaExterna tareaExterna);
+	boolean checkContratoSubido(TareaExterna tareaExterna);
 	
 	/**
 	 * 
 	 * @param idExpediente
 	 * @return bool con el estado Ocupado SI/NO del tramite comercial de alquiler
 	 */
-	public boolean checkEstadoOcupadoTramite(Long idExpediente);
+	boolean checkEstadoOcupadoTramite(Long idExpediente);
 
-	public boolean checkConTituloTramite(Long idTramite);
+	boolean checkConTituloTramite(Long idTramite);
+
+
+	boolean checkConOpcionCompra(TareaExterna tareaExterna);
 
 }

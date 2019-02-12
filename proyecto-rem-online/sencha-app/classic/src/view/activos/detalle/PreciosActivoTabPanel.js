@@ -87,7 +87,7 @@ Ext.define('HreRem.view.activos.detalle.PreciosActivoTabPanel', {
 
     initComponent: function () {
      	var me = this;
-     	//HREOS-1964: Restringir los activos financieros (asistidos) para que solo puedan ser editables por los perfiles de IT y Gestoría PDV
+     	//HREOS-1964: Restringir los activos financieros (asistidos) para que solo puedan ser editables por los perfiles de IT y Gestorï¿½a PDV
 		var ocultarValorespreciosactivo = false;		
 		if(me.lookupController().getViewModel().get('activo').get('claseActivoCodigo')=='01'){
 		 ocultarValorespreciosactivo = !(($AU.userIsRol(CONST.PERFILES['GESTOPDV']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['HAYACAL']) || $AU.userIsRol(CONST.PERFILES['HAYASUPCAL'])) 
@@ -108,7 +108,7 @@ Ext.define('HreRem.view.activos.detalle.PreciosActivoTabPanel', {
     	var me = this;
 		me.down("[itemId=botoneditar]").setVisible(false);
 		var editionEnabled = function() {
-			//HREOS-1964: Restringir los activos financieros (asistidos) para que solo puedan ser editables por los perfiles de IT y Gestoría PDV
+			//HREOS-1964: Restringir los activos financieros (asistidos) para que solo puedan ser editables por los perfiles de IT y Gestorï¿½a PDV
 			 var ocultarValorespreciosactivo = false;		
 			 if(me.lookupController().getViewModel().get('activo').get('claseActivoCodigo')=='01'){
 				 ocultarValorespreciosactivo = (($AU.userIsRol(CONST.PERFILES['GESTOPDV']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['HAYACAL']) || $AU.userIsRol(CONST.PERFILES['HAYASUPCAL'])) 
@@ -120,7 +120,7 @@ Ext.define('HreRem.view.activos.detalle.PreciosActivoTabPanel', {
 		}
 
 		//HREOS-846 Si NO esta dentro del perimetro, no se habilitan los botones de editar
-		if(me.lookupController().getViewModel().get('activo').get('incluidoEnPerimetro')=="true") {
+		if(me.lookupController().getViewModel().get('activo').get('incluidoEnPerimetro')=="true" && !me.lookupController().getViewModel().get('activo').get('isActivoEnTramite')) {
 			// Si la pestaÃ±a recibida no tiene asignados roles de edicion 
 			if(Ext.isEmpty(tab.funPermEdition)) {
 	    		editionEnabled();

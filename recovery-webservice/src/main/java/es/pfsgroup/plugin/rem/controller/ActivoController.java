@@ -76,6 +76,7 @@ import es.pfsgroup.plugin.rem.model.DtoActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.DtoActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.DtoActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoActivoValoraciones;
+import es.pfsgroup.plugin.rem.model.DtoActivoVistaPatrimonioContrato;
 import es.pfsgroup.plugin.rem.model.DtoActivosPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoAdmisionDocumento;
@@ -95,6 +96,7 @@ import es.pfsgroup.plugin.rem.model.DtoHistoricoPresupuestosFilter;
 import es.pfsgroup.plugin.rem.model.DtoImpuestosActivo;
 import es.pfsgroup.plugin.rem.model.DtoIncrementoPresupuestoActivo;
 import es.pfsgroup.plugin.rem.model.DtoLlaves;
+import es.pfsgroup.plugin.rem.model.DtoMotivoAnulacionExpediente;
 import es.pfsgroup.plugin.rem.model.DtoMovimientoLlave;
 import es.pfsgroup.plugin.rem.model.DtoObservacion;
 import es.pfsgroup.plugin.rem.model.DtoOfertaActivo;
@@ -482,11 +484,27 @@ public class ActivoController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getListAsociadosById(DtoActivoVistaPatrimonioContrato dto, ModelMap model) {
+		try {
+			DtoPage page = adapter.getListAsociadosById(dto);
+			model.put(RESPONSE_DATA_KEY, page.getResults());
+			model.put(RESPONSE_TOTALCOUNT_KEY, page.getTotalCount());
+			model.put(RESPONSE_SUCCESS_KEY, true);
+		} catch (Exception e) {
+			logger.error("error en activoController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+		}
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getListObservacionesById(Long id, ModelMap model) {
 		model.put(RESPONSE_DATA_KEY, adapter.getListObservacionesById(id));
 
 		return createModelAndViewJson(model);
 	}
+
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
@@ -2474,5 +2492,23 @@ public class ActivoController extends ParadiseJsonController {
 			}
 		}
 		return false;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getMotivoAnulacionExpediente(ModelMap model) {
+
+		try {
+			List <DtoMotivoAnulacionExpediente> dto= activoApi.getMotivoAnulacionExpediente();
+
+			model.put("data", dto);
+			model.put("success", true);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}
+
+		return createModelAndViewJson(model);
 	}
 }

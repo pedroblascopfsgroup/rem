@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Adrian Daniel Casiean
---## FECHA_CREACION=20181220
+--## AUTOR=Daniel Algaba
+--## FECHA_CREACION=20190212
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-5090
+--## INCIDENCIA_LINK=HREOS-5387
 --## PRODUCTO=NO
 --## Finalidad: Crear vista gestores activo
 --##           
@@ -17,6 +17,7 @@
 --##    0.5 HREOS-4844- SHG - AÑADIMOS GESTCOMALQ y SUPCOMALQ
 --##	0.6 Se añade GPUBL y SPUBL.
 --##	0.7 Se quita las restricción de filtrar por el tipo de destino comercial para los gestores GESTCOMALQ y SUPCOMALQ (HREOS-5090)
+--##  0.8 Se añade el Supervisor comercial Backoffice Inmobiliario 
 --##########################################
 --*/
 
@@ -89,6 +90,17 @@ SELECT act.act_id, TO_NUMBER(cra.dd_cra_codigo), NULL dd_eac_codigo, NULL dd_tcr
                   JOIN '||V_ESQUEMA_M||'.DD_PRV_PROVINCIA PRV ON PRV.DD_PRV_ID = BL.DD_PRV_ID 
                   LEFT JOIN '||V_ESQUEMA_M||'.DD_LOC_LOCALIDAD LOC ON LOC.DD_LOC_ID = BL.DD_LOC_ID 
                   LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist1 ON dist1.cod_cartera = dd_cra.dd_cra_codigo AND dist1.tipo_gestor = ''HAYAGBOINM''
+                  AND PRV.DD_PRV_CODIGO = dist1.COD_PROVINCIA AND LOC.DD_LOC_CODIGO = NVL(dist1.COD_MUNICIPIO,LOC.DD_LOC_CODIGO)
+           where act.borrado = 0
+           UNION ALL
+/*Supervisor Comercial BackOffice Inmobiliario*/
+           SELECT act.act_id, dist1.cod_cartera, NULL dd_eac_codigo, NULL dd_tcr_codigo, NULL dd_prv_codigo, NULL dd_loc_codigo, NULL cod_postal, dist1.tipo_gestor tipo_gestor,
+                  dist1.username username, dist1.nombre_usuario nombre
+             FROM act_activo act JOIN dd_cra_cartera dd_cra ON dd_cra.dd_cra_id = act.dd_cra_id
+                  JOIN '||V_ESQUEMA||'.BIE_LOCALIZACION BL ON BL.BIE_ID = ACT.BIE_ID
+                  JOIN '||V_ESQUEMA_M||'.DD_PRV_PROVINCIA PRV ON PRV.DD_PRV_ID = BL.DD_PRV_ID
+                  LEFT JOIN '||V_ESQUEMA_M||'.DD_LOC_LOCALIDAD LOC ON LOC.DD_LOC_ID = BL.DD_LOC_ID
+                  LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist1 ON dist1.cod_cartera = dd_cra.dd_cra_codigo AND dist1.tipo_gestor = ''HAYASBOINM''
                   AND PRV.DD_PRV_CODIGO = dist1.COD_PROVINCIA AND LOC.DD_LOC_CODIGO = NVL(dist1.COD_MUNICIPIO,LOC.DD_LOC_CODIGO)
            where act.borrado = 0
            UNION ALL

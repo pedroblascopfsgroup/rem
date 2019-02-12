@@ -10,7 +10,6 @@ import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,12 +26,9 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionDao;
-import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
-import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
-import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
@@ -53,20 +49,16 @@ import es.pfsgroup.plugin.rem.model.DtoSubdivisiones;
 import es.pfsgroup.plugin.rem.model.DtoVActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.DtoVigenciaAgrupacion;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.GestorActivo;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.VActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.VListaActivosAgrupacionVSCondicionantes;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoFoto;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PRINCIPAL;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PROPIEDAD;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.SITUACION;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.TIPO;
-import es.pfsgroup.plugin.rem.rest.api.RestApi;
-import es.pfsgroup.plugin.rem.rest.api.RestApi.ENTIDADES;
 import es.pfsgroup.plugin.rem.rest.dto.File;
 import es.pfsgroup.plugin.rem.rest.dto.FileListResponse;
 import es.pfsgroup.plugin.rem.rest.dto.FileResponse;
@@ -101,12 +93,6 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 	private OfertaApi ofertaApi;
 	
 	@Autowired
-	private RestApi restApi;
-	
-	@Autowired
-	private ActivoEstadoPublicacionApi activoEstadoPublicacionApi;
-
-	@Autowired
 	private GestorActivoApi gestorActivoApi;
 
 	// @Override
@@ -134,11 +120,6 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 	@Transactional
 	public boolean saveOrUpdate(ActivoAgrupacion activoAgrupacion) {
 		activoAgrupacionDao.saveOrUpdate(activoAgrupacion);
-		if(activoAgrupacion.getActivos() != null && activoAgrupacion.getActivos().size()>0){
-			for(ActivoAgrupacionActivo activo : activoAgrupacion.getActivos()){
-				restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO, activo.getActivo());
-			}
-		}
 		return true;
 	}
 
@@ -147,8 +128,6 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 	@Transactional
 	public boolean deleteById(Long id) {
 		activoAgrupacionDao.deleteById(id);
-		ActivoAgrupacion activoAgrupacion = this.get(id);
-		restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO, activoAgrupacion.getActivoPrincipal());
 		return true;
 	}
 
@@ -165,6 +144,7 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 	}
 	
 
+	@SuppressWarnings("unchecked")
 	public DtoEstadoDisponibilidadComercial getListActivosAgrupacionByIdActivo(DtoAgrupacionFilter dto, Usuario usuarioLogado) {
 		
 		DtoEstadoDisponibilidadComercial dtoEstadoDispcom = new DtoEstadoDisponibilidadComercial();

@@ -3431,21 +3431,20 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	        me.getViewModel().get('activo').getData().estadoVentaCodigo === CONST.ESTADO_PUBLICACION_VENTA['PRE_PUBLICADO'] ||
 	        me.getViewModel().get('activo').getData().estadoVentaCodigo === CONST.ESTADO_PUBLICACION_VENTA['OCULTO'];
 
-	    if (isDirty && !estadoPubVentaPublicado) {
-		    var readOnly = Ext.isEmpty(me.getViewModel().get('datospublicacionactivo').getData().precioWebVenta) && !checkbox.getValue();
-		    checkboxPublicarVenta.setReadOnly(readOnly);
-		}
-	    if (!isDirty && !estadoPubVentaPublicado) {
-		    var readOnly = Ext.isEmpty(me.getViewModel().get('datospublicacionactivo').getData().precioWebVenta) && !checkbox.getValue();
-		    checkboxPublicarVenta.setReadOnly(readOnly);
-		    checkboxPublicarVenta.setValue(false);
-		}
-	    if (!estadoCheckPublicarFicha) {
-		    checkboxPublicarVenta.setReadOnly(true);
-	    } else {
-	    	var readOnly = Ext.isEmpty(me.getViewModel().get('datospublicacionactivo').getData().precioWebVenta) && !checkbox.getValue();
-		    checkboxPublicarVenta.setReadOnly(readOnly);
-	    }
+	    if (!estadoCheckPublicarFicha){
+            checkbox.setValue(false);
+        } else {
+		    if(isDirty && !estadoPubVentaPublicado) {
+		        var readOnly = Ext.isEmpty(me.getViewModel().get('datospublicacionactivo').getData().precioWebVenta) && !checkbox.getValue();
+		        checkboxPublicarVenta.setReadOnly(readOnly);
+		    } else if (!isDirty && !estadoPubVentaPublicado) {
+		        var readOnly = Ext.isEmpty(me.getViewModel().get('datospublicacionactivo').getData().precioWebVenta) && !checkbox.getValue();
+		        checkboxPublicarVenta.setReadOnly(readOnly);
+	    		checkboxPublicarVenta.setValue(false);
+		    } else {
+		    	checkboxPublicarVenta.setReadOnly(true);
+		    }
+        }
 	},
 
     onChangeCheckboxPublicarSinPrecioAlquiler: function(checkbox, isDirty) {
@@ -3456,21 +3455,21 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			me.getViewModel().get('activo').getData().estadoAlquilerCodigo === CONST.ESTADO_PUBLICACION_ALQUILER['PRE_PUBLICADO'] ||
 			me.getViewModel().get('activo').getData().estadoAlquilerCodigo === CONST.ESTADO_PUBLICACION_ALQUILER['OCULTO'];
 
-		if (isDirty && !estadoPubAlquilerPublicado) {
-			var readOnly = Ext.isEmpty(me.getViewModel().get('datospublicacionactivo').getData().precioWebAlquiler) && !checkbox.getValue();
-	        checkboxPublicarAlquiler.setReadOnly(readOnly);
-		} if (!isDirty && !estadoPubAlquilerPublicado) {
-			var readOnly = Ext.isEmpty(me.getViewModel().get('datospublicacionactivo').getData().precioWebAlquiler) && !checkbox.getValue();
-			checkboxPublicarAlquiler.setReadOnly(readOnly);
-			checkbox.up('activosdetallemain').getViewModel().get('datospublicacionactivo').set('eleccionUsuarioTipoPublicacionAlquiler');
-			checkboxPublicarAlquiler.setValue(false);
-		}
-		if (!estadoCheckPublicarFicha) {
-			checkboxPublicarAlquiler.setReadOnly(true);
-	    } else {
-	    	var readOnly = Ext.isEmpty(me.getViewModel().get('datospublicacionactivo').getData().precioWebAlquiler) && !checkbox.getValue();
-	    	checkboxPublicarAlquiler.setReadOnly(readOnly);
-	    }
+		if(!estadoCheckPublicarFicha){
+            checkbox.setValue(false);
+        } else {
+			if(isDirty && !estadoPubAlquilerPublicado) {
+				var readOnly = Ext.isEmpty(me.getViewModel().get('datospublicacionactivo').getData().precioWebAlquiler) && !checkbox.getValue();
+	            checkboxPublicarAlquiler.setReadOnly(readOnly);
+			} else if (!isDirty && !estadoPubAlquilerPublicado) {
+				var readOnly = Ext.isEmpty(me.getViewModel().get('datospublicacionactivo').getData().precioWebAlquiler) && !checkbox.getValue();
+				checkboxPublicarAlquiler.setReadOnly(readOnly);
+				checkbox.up('activosdetallemain').getViewModel().get('datospublicacionactivo').set('eleccionUsuarioTipoPublicacionAlquiler');
+				checkboxPublicarAlquiler.setValue(false);
+			} else {
+				checkboxPublicarAlquiler.setReadOnly(false);
+			}
+        }
     },
 
     establecerTipoPublicacionAlquiler: function(btn) {

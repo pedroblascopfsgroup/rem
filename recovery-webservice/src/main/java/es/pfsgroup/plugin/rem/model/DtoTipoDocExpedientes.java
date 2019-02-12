@@ -13,7 +13,7 @@ public class DtoTipoDocExpedientes extends WebDto implements Comparable<DtoTipoD
 	private String codigo;
 	private String descripcion;
 	private String descripcionLarga;
-	
+	private Integer vinculable;
 	
 	public Long getId() {
 		return id;
@@ -39,6 +39,12 @@ public class DtoTipoDocExpedientes extends WebDto implements Comparable<DtoTipoD
 	}
 	public void setDescripcionLarga(String descripcionLarga) {
 		this.descripcionLarga = descripcionLarga;
+	}
+	public Integer getVinculable() {
+		return vinculable;
+	}
+	public void setVinculable(Integer vinculable) {
+		this.vinculable = vinculable;
 	}
 	
 	@Override

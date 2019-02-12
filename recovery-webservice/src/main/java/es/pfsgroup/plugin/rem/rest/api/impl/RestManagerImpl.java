@@ -654,6 +654,7 @@ public class RestManagerImpl implements RestApi {
 	}
 
 	@Override
+	@Deprecated
 	public void marcarRegistroParaEnvio(ENTIDADES entidad, Object instanciaEntidad) {
 		Usuario usu = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
 		if (entidad.equals(ENTIDADES.ACTIVO)) {

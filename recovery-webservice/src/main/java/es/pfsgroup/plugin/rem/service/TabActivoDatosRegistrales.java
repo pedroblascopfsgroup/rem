@@ -54,8 +54,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoTitulo;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoCalificacionNegativa;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
-import es.pfsgroup.plugin.rem.rest.api.RestApi;
-import es.pfsgroup.plugin.rem.rest.api.RestApi.ENTIDADES;
 
 @Component
 public class TabActivoDatosRegistrales implements TabActivoService {
@@ -79,8 +77,6 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 	@Autowired
 	private NotificatorServiceDesbloqExpCambioSitJuridica notificatorServiceDesbloqueoExpediente;
 	
-	@Autowired
-	private RestApi restApi;
 	
 	@Autowired
 	private ActivoApi activoApi;
@@ -322,7 +318,6 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 			
 			activo.getInfoRegistral().setInfoRegistralBien((genericDao.save(NMBInformacionRegistralBien.class, activo.getInfoRegistral().getInfoRegistralBien())));
 			activo.setInfoRegistral((genericDao.save(ActivoInfoRegistral.class, activo.getInfoRegistral())));
-			restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO, activo);
 			
 			if (dto.getEstadoObraNuevaCodigo() != null) {
 				

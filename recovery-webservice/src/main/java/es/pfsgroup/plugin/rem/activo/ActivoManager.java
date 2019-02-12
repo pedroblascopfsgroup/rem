@@ -5421,7 +5421,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 		
 		final MultiPart multipart = new FormDataMultiPart()
-				.field("Content-Length", "0")
+				.field("nombre", dtoGenerarDocGDPR.getNombre())
 				.field("documento", dtoGenerarDocGDPR.getDocumento())
 				.field("gdpr1", gdpr1)
 				.field("gdpr2", gdpr2)

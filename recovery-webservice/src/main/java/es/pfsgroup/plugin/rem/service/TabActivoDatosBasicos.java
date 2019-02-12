@@ -79,8 +79,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoProductoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoUsoDestino;
 import es.pfsgroup.plugin.rem.notificacion.api.AnotacionApi;
-import es.pfsgroup.plugin.rem.rest.api.RestApi;
-import es.pfsgroup.plugin.rem.rest.api.RestApi.ENTIDADES;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
 
 @Component
@@ -128,8 +126,6 @@ public class TabActivoDatosBasicos implements TabActivoService {
 	@Autowired
 	private AnotacionApi anotacionApi;
 	
-	@Autowired
-	private RestApi restApi;
 
 	
 	@Autowired
@@ -961,8 +957,6 @@ public class TabActivoDatosBasicos implements TabActivoService {
 					ofertaApi.resetPBC(expediente, false);
 				}
 			}
-
-			restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO, activo);
 
 		} catch(JsonViewerException jve) {
 			throw jve;

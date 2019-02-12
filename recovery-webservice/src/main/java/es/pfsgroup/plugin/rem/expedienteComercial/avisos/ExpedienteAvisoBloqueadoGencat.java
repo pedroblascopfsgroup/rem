@@ -41,7 +41,8 @@ public class ExpedienteAvisoBloqueadoGencat implements ExpedienteAvisadorApi{
 			for (ActivoOferta actOfr : actOfrList){
 				Activo activo = actOfr.getPrimaryKey().getActivo();
 				comGen = genericDao.get(ComunicacionGencat.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId()));
-				if (!Checks.esNulo(comGen) && !DDEstadoComunicacionGencat.COD_SANCIONADO.equals(comGen.getEstadoComunicacion().getCodigo()) && activoDao.isActivoAfectoGENCAT(activo.getId()) &&
+				if (!Checks.esNulo(comGen) && !Checks.esNulo(comGen.getEstadoComunicacion()) && !DDEstadoComunicacionGencat.COD_RECHAZADO.equals(comGen.getEstadoComunicacion().getCodigo()) 
+						&& !DDEstadoComunicacionGencat.COD_SANCIONADO.equals(comGen.getEstadoComunicacion().getCodigo()) && activoDao.isActivoAfectoGENCAT(activo.getId()) &&
 						!DDEstadosExpedienteComercial.RESERVADO.equals(expediente.getEstado().getCodigo()) && !DDEstadosExpedienteComercial.APROBADO.equals(expediente.getEstado().getCodigo())) {
 					dtoAviso.setId(String.valueOf(expediente.getId()));
 					dtoAviso.setDescripcion("Expediente bloqueado por GENCAT");

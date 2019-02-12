@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=Pablo Meseguer Benlloch
---## FECHA_CREACION=20190205
+--## AUTOR=Maria Presencia Herrero
+--## FECHA_CREACION=20190212
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=bau_jaus
 --## INCIDENCIA_LINK=REMVIP-3283
@@ -15,6 +15,7 @@
 --##	    0.3 Sergio Beleña - correción ACT_EN_TRAMITE
 --##		0.4 Pablo Meseguer - Añadir filtro para ACT_EN_TRAMITE
 --##		0.5 Pablo Meseguer - actualizamos el tipo de activo junto con el subtipo a traves del COTSIN
+--##		0.6 Maria Presencia - Modificado fallo en PROD
 --##########################################
 --*/
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
@@ -174,7 +175,7 @@ BEGIN
 			ACT.ACT_EN_TRAMITE= TEMP.COESEN,
 			ACT.USUARIOMODIFICAR = '''||V_USUARIO||''',
 			ACT.FECHAMODIFICAR = SYSDATE
-			WHERE TMP.COESEN = 1
+			WHERE TEMP.COESEN = 1
 			'
 			;
 		

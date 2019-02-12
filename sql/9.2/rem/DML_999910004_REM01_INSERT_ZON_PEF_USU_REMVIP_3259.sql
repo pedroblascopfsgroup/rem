@@ -27,8 +27,10 @@ DECLARE
     ERR_NUM NUMBER;-- Numero de errores
     ERR_MSG VARCHAR2(2048);-- Mensaje de error
     PL_OUTPUT VARCHAR2(32000 CHAR);
+	V_EXISTE_PERFIL NUMBER(16); -- Vble. para validar la existencia de los nuevos perfiles.
+	V_EXISTE_USUARIO NUMBER(16); -- Vble. para validar la existencia de los usuarios.
 	V_NUM_FILAS NUMBER(16); -- Vble. para validar la existencia de un registro.
-
+	
 
 	TYPE T_USUARIO IS TABLE OF VARCHAR2(150);
 
@@ -90,33 +92,39 @@ BEGIN
 					WHERE PEF_ID = (SELECT PEF_ID FROM '||V_ESQUEMA||'.PEF_PERFILES WHERE PEF_CODIGO = '''||TRIM(V_TMP_USUARIO(2))||''')
 					AND USU_ID = (SELECT USU_ID FROM '||V_ESQUEMA_M||'.USU_USUARIOS WHERE USU_USERNAME = '''||TRIM(V_TMP_USUARIO(1))||''')';
 
-		EXECUTE IMMEDIATE V_SQL INTO V_NUM_FILAS;
-	
-		IF V_NUM_FILAS = 0 THEN
+			EXECUTE IMMEDIATE V_SQL INTO V_NUM_FILAS;
+		
+			IF V_NUM_FILAS = 0 THEN
 
-				V_SQL := 	'INSERT INTO '||V_ESQUEMA||'.ZON_PEF_USU (
-								ZON_ID,
-								PEF_ID,
-								USU_ID,
-								ZPU_ID,
-								USUARIOCREAR,
-								FECHACREAR
-							) VALUES (
-								19504,
-								(SELECT PEF_ID FROM '||V_ESQUEMA||'.PEF_PERFILES WHERE PEF_CODIGO = '''||TRIM(V_TMP_USUARIO(2))||'''),
-								(SELECT USU_ID FROM '||V_ESQUEMA_M||'.USU_USUARIOS WHERE USU_USERNAME = '''||TRIM(V_TMP_USUARIO(1))||'''),
-								S_ZON_PEF_USU.NEXTVAL,
-								''REMVIP-3259'',
-								SYSDATE
-							)';
+					V_SQL := 	'INSERT INTO '||V_ESQUEMA||'.ZON_PEF_USU (
+									ZON_ID,
+									PEF_ID,
+									USU_ID,
+									ZPU_ID,
+									USUARIOCREAR,
+									FECHACREAR
+								) VALUES (
+									19504,
+									(SELECT PEF_ID FROM '||V_ESQUEMA||'.PEF_PERFILES WHERE PEF_CODIGO = '''||TRIM(V_TMP_USUARIO(2))||'''),
+									(SELECT USU_ID FROM '||V_ESQUEMA_M||'.USU_USUARIOS WHERE USU_USERNAME = '''||TRIM(V_TMP_USUARIO(1))||'''),
+									S_ZON_PEF_USU.NEXTVAL,
+									''REMVIP-3259'',
+									SYSDATE
+								)';
 
-				EXECUTE IMMEDIATE V_SQL;
-				DBMS_OUTPUT.PUT_LINE('  [INFO] Se han insertado '||SQL%ROWCOUNT||' en la tabla ZON_PEF_USU.');
+					EXECUTE IMMEDIATE V_SQL;
+					DBMS_OUTPUT.PUT_LINE('  [INFO] Se han insertado '||SQL%ROWCOUNT||' en la tabla ZON_PEF_USU.');
+			
+			ELSE
+			
+				DBMS_OUTPUT.PUT_LINE('[FIN] El registro ya existe.');
+			
+			END IF;
 		
-		ELSE
-		
-			DBMS_OUTPUT.PUT_LINE('[FIN] El registro ya existe.');
-		
+		ELSE 
+
+			DBMS_OUTPUT.PUT_LINE('  [INFO] No se ha encontrado el perfil/usuario '||TRIM(V_TMP_USUARIO(2))||'/'||TRIM(V_TMP_USUARIO(1))|| '.');
+
 		END IF;
 
 	END LOOP;

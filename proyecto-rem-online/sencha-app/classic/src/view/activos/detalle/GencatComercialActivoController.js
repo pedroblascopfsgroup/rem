@@ -295,59 +295,40 @@ comprobarFormatoNIF: function(value) {
 		}
 
 		if (value.length == 9) { // Comprobamos CIF
-			var letters = [ 'J', 'A', 'B', 'C', 'D', 'E', 'F',
-					'G', 'H', 'I' ];
-			var digits = value.substr(1, value.length - 2);
-			var letter = value.substr(0, 1);
-			var control = value.substr(value.length - 1);
-			var sum = 0;
-			var i;
-			var digit;
+			var CIF_REGEX = /^([ABCDEFGHJKLMNPQRSUVW])(\d{7})([0-9A-J])$/;
+			var str = value.toString().toUpperCase();
+		    var auxMatch = str.match(CIF_REGEX);
+		    var letter  = auxMatch[1],
+		        number  = auxMatch[2],
+		        control = auxMatch[3];
 
-			if (!letter.match(/[A-Z]/)) {
-				return HreRem
-						.i18n('msg.error.comprador.nif.incorrecto');
-			}
+		    var even_sum = 0;
+		    var odd_sum = 0;
+		    var n;
 
-			for (i = 0; i < digits.length; i++) {
-				digit = parseInt(digits[i]);
+		    for ( var i = 0; i < number.length; i++) {
+		      n = parseInt( number[i], 10 );
+		      if ( i % 2 === 0 ) {
+		        n *= 2;
+		        odd_sum += n < 10 ? n : n - 9;
+		      } else {
+		        even_sum += n;
+		      }
 
-				if (isNaN(digit)) {
-					return HreRem
-							.i18n('msg.error.comprador.nif.incorrecto');
-				}
+		    }
 
-				if (i % 2 === 0) {
-					digit *= 2;
-					if (digit > 9) {
-						digit = parseInt(digit / 10)
-								 (digit % 10);
-					}
+		    var control_digit = (10 - (even_sum + odd_sum).toString().substr(-1) );
+		    var control_letter = 'JABCDEFGHI'.substr( control_digit, 1 );
 
-					sum = digit;
-				} else {
-					sum = digit;
-				}
-			}
+		    if ( letter.match( /[ABEH]/ ) && control == control_digit) {
+		      return true;
 
-			sum %= 10;
-			if (sum !== 0) {
-				digit = 10 - sum;
-			} else {
-				digit = sum;
-			}
+		    } else if ( letter.match( /[KPQS]/ ) && control == control_letter) {
+		      return true;
 
-			if (letter.match(/[ABEH]/)
-					&& String(digit) === control)
-				return true;
-
-			if (letter.match(/[NPQRSW]/)
-					&& letters[digit] === control)
-				return true;
-
-			if (String(digit) === control
-					|| letters[digit] === control)
-				return true;
+		    } else if (control == control_digit || control == control_letter) {
+		      return true;
+		    }
 		}
 
 		return HreRem

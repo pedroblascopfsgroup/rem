@@ -370,7 +370,7 @@ EXECUTE IMMEDIATE 'INSERT INTO REM01.AUX_RECOVERY_14703 VALUES ( 6815967  ,   10
 EXECUTE IMMEDIATE '
 merge into rem01.act_activo act
 using ( select * from AUX_RECOVERY_14703) tmp
-on (act.act_id = tmp.act_num_activo)
+on (act.act_num_activo = tmp.act_num_activo)
 when matched then update
 set act.act_recovery_id = tmp.dato_correcto,
 USUARIOMODIFICAR = ''RECOVERY-14703'',

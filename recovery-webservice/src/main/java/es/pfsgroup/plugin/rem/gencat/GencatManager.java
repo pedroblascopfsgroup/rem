@@ -452,6 +452,7 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 				BeanUtils.copyProperties(dtoHistoricoComunicacion, resultHistoricoComunicaciones.get(i));
 				dtoHistoricoComunicacion.setSancion(resultHistoricoComunicaciones.get(i).getSancion() != null ? resultHistoricoComunicaciones.get(i).getSancion().getDescripcion() : null);
 				dtoHistoricoComunicacion.setEstadoComunicacion(resultHistoricoComunicaciones.get(i).getEstadoComunicacion() != null ? resultHistoricoComunicaciones.get(i).getEstadoComunicacion().getDescripcion() : null);
+				dtoHistoricoComunicacion.setFechaPreBloqueo(resultHistoricoComunicaciones.get(i).getFechaPreBloqueo());
 				listaHistoricoComunicaciones.add(dtoHistoricoComunicacion);
 			}
 		}
@@ -1203,6 +1204,7 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 			historicoComunicacionGencat.setCompradorApellido2(comunicacionGencat.getNuevoCompradorApellido2());
 			historicoComunicacionGencat.setVersion(comunicacionGencat.getVersion());
 			historicoComunicacionGencat.setAuditoria(comunicacionGencat.getAuditoria());
+			historicoComunicacionGencat.setFechaPreBloqueo(comunicacionGencat.getFechaPreBloqueo());
 			
 		}
 		

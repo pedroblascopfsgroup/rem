@@ -9,7 +9,9 @@ import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteAvisadorApi;
@@ -40,7 +42,11 @@ public class ExpedienteAvisoBloqueadoGencat implements ExpedienteAvisadorApi{
 			ComunicacionGencat comGen = null;
 			for (ActivoOferta actOfr : actOfrList){
 				Activo activo = actOfr.getPrimaryKey().getActivo();
-				comGen = genericDao.get(ComunicacionGencat.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId()));
+				Order order = new Order(OrderType.DESC,"id");
+				List<ComunicacionGencat> comGenLista = genericDao.getListOrdered(ComunicacionGencat.class, order ,genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId()));
+				if(!Checks.estaVacio(comGenLista)) {
+					comGen = comGenLista.get(0);
+				}
 				if (!Checks.esNulo(comGen) && !Checks.esNulo(comGen.getEstadoComunicacion()) && !DDEstadoComunicacionGencat.COD_RECHAZADO.equals(comGen.getEstadoComunicacion().getCodigo())
 						&& !DDEstadoComunicacionGencat.COD_ANULADO.equals(comGen.getEstadoComunicacion().getCodigo())
 						&& !DDEstadoComunicacionGencat.COD_SANCIONADO.equals(comGen.getEstadoComunicacion().getCodigo()) && activoDao.isActivoAfectoGENCAT(activo.getId()) &&

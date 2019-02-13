@@ -7,6 +7,8 @@ import es.capgemini.devon.pagination.Page;
 import es.capgemini.devon.utils.FileUtils;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
@@ -16,6 +18,8 @@ import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.rem.adapter.ExpedienteComercialAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.adapter.TrabajoAdapter;
+import es.pfsgroup.plugin.rem.api.ActivoApi;
+import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteAvisadorApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
@@ -24,6 +28,7 @@ import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.Downloader;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.DownloaderFactoryApi;
+import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.DtoActivosExpediente;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoAviso;
@@ -124,6 +129,14 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	@Autowired
 	private OfertaApi ofertaApi;
 	
+	@Autowired
+	private ActivoTramiteApi activoTramiteApi;
+	
+	@Autowired
+	private ActivoApi activoApi;
+	
+	@Autowired
+    private GenericABMDao genericDao;
 	/**
 	 * Método para modificar la plantilla de JSON utilizada en el servlet.
 	 * 
@@ -1701,4 +1714,26 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 
 		return createModelAndViewJson(model);
 	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView getIsExpedienteGencat(Long idActivo, ModelMap model){
+		try {
+			boolean tieneBloqueoGencat = false;
+			if(!Checks.esNulo(idActivo)) {
+				Activo activo = genericDao.get(Activo.class,genericDao.createFilter(FilterType.EQUALS,"id", idActivo));
+				if(activoApi.isAfectoGencat(activo)) {
+					tieneBloqueoGencat = activoTramiteApi.tieneTramiteGENCATVigenteByIdActivo(idActivo);
+				}
+			}
+			model.put("data", tieneBloqueoGencat);
+			model.put("success", true);
+		} catch (Exception e) {
+			model.put("success", false);
+			model.put("error", e.getMessage());
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
 }

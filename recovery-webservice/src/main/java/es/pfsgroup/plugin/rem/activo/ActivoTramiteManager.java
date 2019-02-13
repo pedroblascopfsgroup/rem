@@ -837,7 +837,8 @@ public class ActivoTramiteManager implements ActivoTramiteApi{
 					tieneTramiteGENCAT = true;
 				}else {
 					if(!Checks.esNulo(comunicacionGencat)) {
-						if(Checks.esNulo(comunicacionGencat.getSancion())){
+						if(DDEstadoComunicacionGencat.COD_CREADO.equals(comunicacionGencat.getEstadoComunicacion().getCodigo())
+								|| DDEstadoComunicacionGencat.COD_COMUNICADO.equals(comunicacionGencat.getEstadoComunicacion().getCodigo())){
 							tieneTramiteGENCAT = true;
 						}else{
 							if(!Checks.esNulo(comunicacionGencat.getSancion())&& DDSancionGencat.COD_EJERCE.equalsIgnoreCase(comunicacionGencat.getSancion().getCodigo())) {

@@ -25,6 +25,7 @@ import es.pfsgroup.plugin.rem.api.GencatApi;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoGencatSave;
 import es.pfsgroup.plugin.rem.model.DtoNotificacionActivo;
+import es.pfsgroup.plugin.rem.model.DtoReclamacionActivo;
 
 
 @Controller
@@ -355,6 +356,20 @@ public class GencatController {
 		try {
 			model.put(RESPONSE_SUCCESS_KEY, gencatApi.deleteAdjunto(dtoAdjunto));
 
+		} catch (Exception e) {
+			logger.error("error en gencatController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put("errorMessage", e.getMessage());
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView updateFechaReclamacion(DtoReclamacionActivo gencatDto, ModelMap model) {
+		try {
+			model.put(RESPONSE_SUCCESS_KEY, gencatApi.updateFechaReclamacion(gencatDto));
 		} catch (Exception e) {
 			logger.error("error en gencatController", e);
 			model.put(RESPONSE_SUCCESS_KEY, false);

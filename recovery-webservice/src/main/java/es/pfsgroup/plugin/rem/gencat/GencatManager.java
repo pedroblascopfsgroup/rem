@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.gencat;
 
 import java.lang.reflect.InvocationTargetException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -69,6 +70,7 @@ import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoGencat;
 import es.pfsgroup.plugin.rem.model.DtoGencatSave;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoComunicacionGencat;
+import es.pfsgroup.plugin.rem.model.DtoImpuestosActivo;
 import es.pfsgroup.plugin.rem.model.DtoNotificacionActivo;
 import es.pfsgroup.plugin.rem.model.DtoOfertasAsociadasActivo;
 import es.pfsgroup.plugin.rem.model.DtoReclamacionActivo;
@@ -80,6 +82,7 @@ import es.pfsgroup.plugin.rem.model.HistoricoNotificacionGencat;
 import es.pfsgroup.plugin.rem.model.HistoricoOfertaGencat;
 import es.pfsgroup.plugin.rem.model.HistoricoReclamacionGencat;
 import es.pfsgroup.plugin.rem.model.HistoricoVisitaGencat;
+import es.pfsgroup.plugin.rem.model.ImpuestosActivo;
 import es.pfsgroup.plugin.rem.model.NotificacionGencat;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.OfertaGencat;
@@ -88,12 +91,15 @@ import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VExpPreBloqueoGencat;
 import es.pfsgroup.plugin.rem.model.Visita;
 import es.pfsgroup.plugin.rem.model.VisitaGencat;
+import es.pfsgroup.plugin.rem.model.dd.DDCalculoImpuesto;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoComunicacionGencat;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDSancionGencat;
+import es.pfsgroup.plugin.rem.model.dd.DDSubtipoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoComunicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoNotificacionGencat;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoPeriocidad;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
 
 @Service("gencatManager")
@@ -102,6 +108,8 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 	protected static final Log logger = LogFactory.getLog(GencatManager.class);
 	
 	public static final String DD_TIPO_DOCUMENTO_CODIGO_NIF = "15";
+	
+	private SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 	
 	@Autowired
 	private NotificacionesGencatManager notificacionesGencat;
@@ -1658,5 +1666,30 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 		}
 		*/
 	/////////////////////////////////////////////////////////////////
+	}
+
+	@Override
+	@Transactional(readOnly = false)
+	public boolean updateFechaReclamacion(DtoReclamacionActivo gencatDto) {
+		
+		if (!Checks.esNulo(gencatDto)) {
+			ReclamacionGencat reclamacion = genericDao.get(ReclamacionGencat.class, 
+					genericDao.createFilter(FilterType.EQUALS, "id", gencatDto.getId()));
+			
+			if (!Checks.esNulo(gencatDto.getFechaReclamacion())) {
+				try {
+					reclamacion.setFechaReclamacion(ft.parse(gencatDto.getFechaReclamacion()));
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			
+			genericDao.update(ReclamacionGencat.class, reclamacion);
+
+			return true;
+		}
+		
+		return false;
 	}
 }

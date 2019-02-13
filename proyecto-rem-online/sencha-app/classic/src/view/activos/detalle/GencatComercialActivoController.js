@@ -227,7 +227,14 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoController', {
             }
             
         });	
-	},
+	},	
+	onGridReclamacionesActivoRowClick: function(grid , record , tr , rowIndex){
+    	if ($AU.userIsRol(CONST.PERFILES['HAYAGESTFORMADM']) || $AU.userIsRol(CONST.PERFILES['GESTIAFORM']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER'])) {
+    		grid.getPlugin('rowEditing').editor.form.findField('fieldToDisable').enable();
+        } else {
+            grid.getPlugin('rowEditing').editor.form.findField('fieldToDisable').disable();
+    	}
+    },
     ondblClickAbreExpediente: function(grid, record) {
     	var me = this;
     	var gencat = me.getViewModel().data.gencat;
@@ -254,6 +261,14 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoController', {
 		 				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
 		 	}
 	 });
+	},
+	
+	onBeforeEditReclamacionesActivo: function(editor, context, eOpts) {
+		if(context.record.get('IsUserAllowed')) {
+			return true;
+		} else {
+			return false;
+		}
 	}
     
 });

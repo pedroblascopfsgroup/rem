@@ -829,7 +829,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			if (oferta.getOfertaExpress()) {
 				oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class,
 						genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_ACEPTADA)));
-
+				
 				// Congelar resto de ofertas
 				for (ActivoOferta actOfer : oferta.getActivoPrincipal().getOfertas()) {
 
@@ -871,6 +871,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				DDEstadosExpedienteComercial estadoExpCom = expedienteComercialApi
 						.getDDEstadosExpedienteComercialByCodigo(DDEstadosExpedienteComercial.APROBADO);
 				expComercial.setEstado(estadoExpCom);
+				expComercial.setFechaSancion(new Date());
 				
 				genericDao.update(ExpedienteComercial.class, expComercial);
 

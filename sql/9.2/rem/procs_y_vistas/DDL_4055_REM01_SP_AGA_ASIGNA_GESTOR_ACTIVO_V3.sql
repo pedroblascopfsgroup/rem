@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Mariam Lliso
---## FECHA_CREACION=20190102
+--## AUTOR=Daniel Algaba
+--## FECHA_CREACION=20190213
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-5160
+--## INCIDENCIA_LINK=HREOS-5443
 --## PRODUCTO=NO
 --## Finalidad: Procedimiento almacenado que asigna Gestores de todos los tipos.
 --##           
@@ -17,6 +17,8 @@
 --##		0.5 Añadidos los nuevos gestores comerciales de alquiler (gestor y supervisor) - HREOS-5064
 --##		0.6 HREOS-5049 Carlos López: Optimización
 --##		0.7 HREOS-5160 Mariam Lliso: modificada la asignación de gestores
+--##		0.8 HREOS-5239 Daniel Algaba: corrección multicartera CERBERUS
+--##        0.9 HREOS-5443 Daniel Algaba: corrección para que no filtre por la TMP_GEST_CONT en activos con subcarteras
 --##########################################
 --*/
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
@@ -30,7 +32,8 @@ CREATE OR REPLACE PROCEDURE #ESQUEMA#.SP_AGA_ASIGNA_GESTOR_ACTIVO_V3 (
     P_ACT_ID        IN #ESQUEMA#.act_activo.act_id%TYPE,
     P_ALL_ACTIVOS   IN NUMBER,
     P_CLASE_ACTIVO  IN VARCHAR2) AS
---v0.2
+
+--v0.9
 
     V_ESQUEMA VARCHAR2(15 CHAR) := '#ESQUEMA#';
     V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := '#ESQUEMA_MASTER#';
@@ -139,14 +142,9 @@ BEGIN
                     AND ACT.BORRADO = 0
                     AND NOT EXISTS (
                         SELECT 1
-                        FROM '||V_ESQUEMA||'.GAH_GESTOR_ACTIVO_HISTORICO GAH
-                        JOIN '||V_ESQUEMA||'.GAC_GESTOR_ADD_ACTIVO GAC        ON GAC.ACT_ID    = GAH.ACT_ID
-                        JOIN '||V_ESQUEMA||'.GEH_GESTOR_ENTIDAD_HIST GEH      ON GEH.GEH_ID    = GAH.GEH_ID
-                        JOIN '||V_ESQUEMA||'.GEE_GESTOR_ENTIDAD GEE           ON GEE.GEE_ID    = GAC.GEE_ID
-                        JOIN '||V_ESQUEMA_MASTER||'.DD_TGE_TIPO_GESTOR TGE    ON TGE.DD_TGE_ID = GEE.DD_TGE_ID AND TGE.DD_TGE_ID = GEH.DD_TGE_ID
-                            AND TGE.DD_TGE_CODIGO = '''||V_GESTOR(I)||'''
-                        WHERE GEE.BORRADO = 0 AND GEH.BORRADO = 0
-                            AND ACT.ACT_ID = GAH.ACT_ID)
+                          FROM '||V_ESQUEMA||'.TMP_GEST_GAH GAH
+                         WHERE ACT.ACT_ID = GAH.ACT_ID
+                           AND GEST.TIPO_GESTOR = GAH.TIPO_GESTOR)                         
                     '||V_ACT_ID;
 
             EXECUTE IMMEDIATE V_MSQL;

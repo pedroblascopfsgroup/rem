@@ -17,14 +17,17 @@ import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoAvisadorApi;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.DtoAviso;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoEstadoAlquiler;
 
 
 @Service("activoAvisadorManager")
 public class ActivoAvisadorManager implements ActivoAvisadorApi {
+
 
 	//private SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 	protected static final Log logger = LogFactory.getLog(ActivoAvisadorManager.class);
@@ -52,6 +55,7 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 		List<DtoAviso> listaAvisos = new ArrayList<DtoAviso>();
 		Activo activo = activoApi.get(id);
 		activoApi.calcularFechaTomaPosesion(activo);
+
 		
 		boolean restringida = false;
 		boolean obraNueva = false;
@@ -120,17 +124,16 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 
 			ActivoSituacionPosesoria actSit = new ActivoSituacionPosesoria();
 			actSit.setActivo(activo);
-			actSit.setVersion(new Long(0));
+			actSit.setVersion(0L);
 			actSit.setAuditoria(auditoria);
 			activo.setSituacionPosesoria(actSit);
 
 		}
 		
 		// Aviso 3 / 4: Situación posesoria OCUPADO + Con o sín título
-		if (!Checks.esNulo(activo.getSituacionPosesoria().getOcupado())) {
+		if (activo.getSituacionPosesoria() != null && !Checks.esNulo(activo.getSituacionPosesoria().getOcupado())) {
 			if (activo.getSituacionPosesoria().getOcupado() == 1) {
-
-				if (activo.getSituacionPosesoria().getConTitulo() == 1) {
+				if (activo.getSituacionPosesoria().getConTitulo() != null && activo.getSituacionPosesoria().getConTitulo() == 1) {
 					DtoAviso dtoAviso = new DtoAviso();
 					dtoAviso.setDescripcion("Situación posesoria ocupado con título");
 					dtoAviso.setId(String.valueOf(id));
@@ -270,12 +273,14 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 			}
 		}
 
+		// Aviso 17: Estado activo con demanda con afectación comercial
 		if(!(Checks.esNulo(activo.getTieneDemandaAfecCom())) && activo.getTieneDemandaAfecCom()==1) {
 			DtoAviso dtoAviso = new DtoAviso();
 			dtoAviso.setDescripcion("Activo con demanda con afectación comercial");
 			dtoAviso.setId(String.valueOf(id));
 			listaAvisos.add(dtoAviso);
 		}
+
 		return listaAvisos;
 	}
 }

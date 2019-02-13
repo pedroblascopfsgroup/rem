@@ -49,62 +49,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaAgrupacion', {
     	
     	me.items = [
 					{
-						xtype: 'anyadirnuevaofertadetalle'/*, 
-						collapsed: false,
-					 	scrollable	: 'y',
-						cls:'',	  
-						
-						recordName: "oferta",						
-						recordClass: "HreRem.model.OfertaComercial",
-						
-						items: [
-		    			   {
-								xtype:'fieldset',
-								cls	: 'panel-base shadow-panel',
-								layout: {
-							        type: 'table',
-							        // The total column count must be specified here
-							        columns: 1,
-							        trAttrs: {height: '45px', width: '100%'},
-							        tdAttrs: {width: '100%'},
-							        tableAttrs: {
-							            style: {
-							                width: '100%'
-										}
-							        }
-								},
-								defaultType: 'textfieldbase',
-								collapsed: false,
-									scrollable	: 'y',
-								cls:'',	    				
-				            	items: [
-				            	    {
-				            	    	name:		'id',
-										bind:		'{oferta.idAgrupacion}',
-										hidden:		true
-				            	    },
-									{
-										xtype:      'currencyfieldbase',
-										fieldLabel: HreRem.i18n('fieldlabel.importe'),
-										flex: 		1,
-										bind:		'{oferta.importeOferta}'
-									},
-									{
-										xtype: 'comboboxfieldbase',
-	    					        	fieldLabel:  HreRem.i18n('header.oferta.tipoOferta'),
-	    					        	itemId: 'comboTipoOferta',
-	    					        	flex:	1,
-	    					        	bind: {
-	    				            		store: '{comboTipoOferta}',
-	    				            		value: '{oferta.tipoOferta}'
-	    				            	},
-	    				            	displayField: 'descripcion',
-	    	    						valueField: 'codigo'
-									}
-
-				            	]
-		    			   }
-		    		]*/
+						xtype: 'anyadirnuevaofertadetalle'
 				}
     	];
     	

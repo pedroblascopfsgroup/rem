@@ -107,7 +107,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 		 esAgrupacionLoteComercial: function(get) {
 
 	     	var tipoComercial = get('agrupacionficha.tipoAgrupacionCodigo');
-	     	if((tipoComercial == CONST.TIPOS_AGRUPACION['COMERCIAL_ALQUILER']) || (tipoComercial == CONST.TIPOS_AGRUPACION['LOTE_COMERCIAL'])) {
+	     	if(tipoComercial == CONST.TIPOS_AGRUPACION['LOTE_COMERCIAL']) {
 	     		return true;
 	     	} else {
 	     		return false;
@@ -135,16 +135,6 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 	     		return false;
 	     	}
 	     },
-
-	     esAgrupacionLoteComercial: function(get) {
-
-		     	var tipoAgrupacion = get('agrupacionficha.tipoAgrupacionCodigo');
-		     	if((tipoAgrupacion == CONST.TIPOS_AGRUPACION['LOTE_COMERCIAL'])) {
-		     		return true;
-		     	} else {
-		     		return false;
-		     	}
-		 },
 
 		 esAgrupacionProyecto: function(get) {
 
@@ -701,7 +691,14 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 			},
 			autoLoad: true   	
 	    },
-
+	    comboTipoAlquiler: {
+	    	model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tiposAlquilerActivo'}
+			}
+	    },
 	    comboMotivosOcultacionVenta: {
 			model: 'HreRem.model.ComboBase',
 			proxy: {
@@ -709,7 +706,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'motivosOcultacion'}
 			}
-		},
+	    },
 
 		comboAdecuacionAlquiler: {
 			model: 'HreRem.model.ComboBase',

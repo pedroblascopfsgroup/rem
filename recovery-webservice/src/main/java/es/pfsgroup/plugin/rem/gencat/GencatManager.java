@@ -216,8 +216,7 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 		if (comunicacionGencat != null) {
 			try {
 				// Comrpueba que todos los datos del usuario nuevo esten completos
-				if (!Checks.esNulo(comunicacionGencat.getNuevoCompradorNif()) && !Checks.esNulo(comunicacionGencat.getNuevoCompradorNombre()) && !Checks.esNulo(comunicacionGencat.getNuevoCompradorApellido1()) 
-						&& !Checks.esNulo(comunicacionGencat.getNuevoCompradorApellido2())) {
+				if (!Checks.esNulo(comunicacionGencat.getNuevoCompradorNif()) && !Checks.esNulo(comunicacionGencat.getNuevoCompradorNombre())) {
 					gencatDto.setUsuarioCompleto(true);
 				} else {
 					gencatDto.setUsuarioCompleto(false);
@@ -460,6 +459,7 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 				BeanUtils.copyProperties(dtoHistoricoComunicacion, resultHistoricoComunicaciones.get(i));
 				dtoHistoricoComunicacion.setSancion(resultHistoricoComunicaciones.get(i).getSancion() != null ? resultHistoricoComunicaciones.get(i).getSancion().getDescripcion() : null);
 				dtoHistoricoComunicacion.setEstadoComunicacion(resultHistoricoComunicaciones.get(i).getEstadoComunicacion() != null ? resultHistoricoComunicaciones.get(i).getEstadoComunicacion().getDescripcion() : null);
+				dtoHistoricoComunicacion.setFechaPreBloqueo(resultHistoricoComunicaciones.get(i).getFechaPreBloqueo());
 				listaHistoricoComunicaciones.add(dtoHistoricoComunicacion);
 			}
 		}
@@ -1031,8 +1031,14 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 								&& DDEstadoComunicacionGencat.COD_ANULADO.equals(comGencat.getEstadoComunicacion().getCodigo())) {
 									lanzarTramiteGENCAT(tramite, oferta, expComercial);
 							}								
-						}else {								
-							lanzarTramiteGENCAT(tramite, oferta, expComercial);
+						}else {
+							if(!Checks.esNulo(comGencat.getSancion())) {
+								if(!DDSancionGencat.COD_EJERCE.equals(comGencat.getSancion().getCodigo())) {
+									lanzarTramiteGENCAT(tramite, oferta, expComercial);
+								}
+							}else {
+								lanzarTramiteGENCAT(tramite, oferta, expComercial);
+							}
 						}
 					}else {
 						if(!Checks.esNulo(comGencat.getEstadoComunicacion())
@@ -1211,6 +1217,7 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 			historicoComunicacionGencat.setCompradorApellido2(comunicacionGencat.getNuevoCompradorApellido2());
 			historicoComunicacionGencat.setVersion(comunicacionGencat.getVersion());
 			historicoComunicacionGencat.setAuditoria(comunicacionGencat.getAuditoria());
+			historicoComunicacionGencat.setFechaPreBloqueo(comunicacionGencat.getFechaPreBloqueo());
 			
 		}
 		

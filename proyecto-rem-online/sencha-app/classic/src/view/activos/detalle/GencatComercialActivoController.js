@@ -261,14 +261,91 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoController', {
 		 				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
 		 	}
 	 });
-	},
-	
+	},	
 	onBeforeEditReclamacionesActivo: function(editor, context, eOpts) {
 		if(context.record.get('IsUserAllowed')) {
 			return true;
 		} else {
 			return false;
 		}
-	}
-    
+	},
+	comprobarCampoNifNombre: function(combo, value) {
+		var me = this;
+		var campoNif = me.lookupReference('nuevoCompradorNifref');
+		var campoNombre = me.lookupReference('nuevoCompradorNombreref');
+		var campoSancion = me.lookupReference('sancionRef');
+		
+		if (campoSancion.getValue() == CONST.DD_SAN_SANCION['COD_EJERCE']) {
+			campoNombre.allowBlank = false;
+			campoNif.allowBlank = false;
+		} else {
+			campoNombre.allowBlank = true;
+			campoNif.allowBlank = true;
+		}
+	},
+	
+comprobarFormatoNIF: function(value) {
+		
+		if (value.length == 9) { // Comprobamos NIF y NIE
+			var validChars = 'TRWAGMYFPDXBNJZSQVHLCKET';
+			var nifRexp = /^[0-9]{8}[TRWAGMYFPDXBNJZSQVHLCKET]{1}$/i;
+			var nieRexp = /^[XYZ]{1}[0-9]{7}[TRWAGMYFPDXBNJZSQVHLCKET]{1}$/i;
+			var str = value.toString().toUpperCase();
+
+			var continuar = true;
+			if (!nifRexp.test(str) && !nieRexp.test(str))
+				continuar = false;
+
+			if (continuar) {
+				var nie = str.replace(/^[X]/, '0').replace(
+						/^[Y]/, '1').replace(/^[Z]/, '2');
+
+				var letter = str.substr(-1);
+				var charIndex = parseInt(nie.substr(0, 8)) % 23;
+
+				if (validChars.charAt(charIndex) === letter)
+					return true;
+			}
+		}
+
+		if (value.length == 9) { // Comprobamos CIF
+			var CIF_REGEX = /^([ABCDEFGHJKLMNPQRSUVW])(\d{7})([0-9A-J])$/;
+			var str = value.toString().toUpperCase();
+		    var auxMatch = str.match(CIF_REGEX);
+		    var letter  = auxMatch[1],
+		        number  = auxMatch[2],
+		        control = auxMatch[3];
+
+		    var even_sum = 0;
+		    var odd_sum = 0;
+		    var n;
+
+		    for ( var i = 0; i < number.length; i++) {
+		      n = parseInt( number[i], 10 );
+		      if ( i % 2 === 0 ) {
+		        n *= 2;
+		        odd_sum += n < 10 ? n : n - 9;
+		      } else {
+		        even_sum += n;
+		      }
+
+		    }
+
+		    var control_digit = (10 - (even_sum + odd_sum).toString().substr(-1) );
+		    var control_letter = 'JABCDEFGHI'.substr( control_digit, 1 );
+
+		    if ( letter.match( /[ABEH]/ ) && control == control_digit) {
+		      return true;
+
+		    } else if ( letter.match( /[KPQS]/ ) && control == control_letter) {
+		      return true;
+
+		    } else if (control == control_digit || control == control_letter) {
+		      return true;
+		    }
+		}
+
+		return HreRem
+				.i18n('msg.error.comprador.nif.incorrecto');
+ 	}
 });

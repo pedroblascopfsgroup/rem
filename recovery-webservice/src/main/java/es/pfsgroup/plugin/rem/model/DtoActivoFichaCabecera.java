@@ -153,7 +153,6 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private Date fechaAplicaPublicar;
 	private String motivoAplicaPublicar;
 	private Integer enTramite;
-	
 	//Activo Bancario datos:
 	private String claseActivoCodigo;
 	private String claseActivoDescripcion;
@@ -212,6 +211,8 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	
 	//HREOS-4836 (GENCAT)
 	private Boolean afectoAGencat;
+	
+	private Boolean tieneComunicacionGencat;
 
 	private int ocupado;
 	private int conTitulo;
@@ -1726,6 +1727,14 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 
 	public Boolean isTieneCEE() {
 		return tieneCEE;
+	}
+
+	public Boolean getTieneComunicacionGencat() {
+		return tieneComunicacionGencat;
+	}
+
+	public void setTieneComunicacionGencat(Boolean tieneComunicacionGencat) {
+		this.tieneComunicacionGencat = tieneComunicacionGencat;
 	}
 	
 }

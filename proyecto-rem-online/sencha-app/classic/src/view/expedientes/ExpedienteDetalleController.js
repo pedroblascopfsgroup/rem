@@ -397,20 +397,38 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		}
 	},
 
-	onClickBotonEditar: function(btn) {
+onClickBotonEditar: function(btn) {
 		
 		var me = this;
-		btn.hide();
-		btn.up('tabbar').down('button[itemId=botonguardar]').show();
-		btn.up('tabbar').down('button[itemId=botoncancelar]').show();
-		me.getViewModel().set("editing", true);		
-
-		Ext.Array.each(btn.up('tabpanel').getActiveTab().query('field[isReadOnlyEdit]'),
-						function (field, index) 
-							{ 
-								field.fireEvent('edit');});
-								
-		btn.up('tabpanel').getActiveTab().query('field[isReadOnlyEdit]')[0].focus();
+		var url =  $AC.getRemoteUrl('expedientecomercial/getIsExpedienteGencat');
+		
+		Ext.Ajax.request({
+		     url: url,
+		     method: 'POST',
+		     params: {idActivo: me.getViewModel().data.expediente.data.idActivo},
+		     success: function(response, opts) {
+		    	data = Ext.decode(response.responseText);
+		    	if(data.data == "false"){
+		    		btn.hide();
+	    			btn.up('tabbar').down('button[itemId=botonguardar]').show();
+	    			btn.up('tabbar').down('button[itemId=botoncancelar]').show();
+	    			me.getViewModel().set("editing", true);	
+	    	
+	    			Ext.Array.each(btn.up('tabpanel').getActiveTab().query('field[isReadOnlyEdit]'),
+	    							function (field, index) 
+	    								{ 
+	    									field.fireEvent('edit');});
+	    									
+	    			btn.up('tabpanel').getActiveTab().query('field[isReadOnlyEdit]')[0].focus();
+		    	}else{
+		    		 me.fireEvent("errorToast", HreRem.i18n("msg.no.editable.afectado.gencat"));
+		    	}    	 
+		    },
+		    failure: function (a, operation) {
+		    	 me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+		 	}
+		});
+		
 		
 	},
     

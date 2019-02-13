@@ -1,0 +1,152 @@
+--/*
+--#########################################
+--## AUTOR=GUILLEM REY
+--## FECHA_CREACION=20181220
+--## ARTEFACTO=batch
+--## VERSION_ARTEFACTO=0.1
+--## INCIDENCIA_LINK=HREOS-2209
+--## PRODUCTO=NO
+--## 
+--## Finalidad: Proceso de migración 'MIG_APC_PROP_CABECERA' -> 'ACT_PRO_PROPIETARIO'
+--##			
+--## INSTRUCCIONES:  
+--## VERSIONES:
+--##        0.1 Versión inicial
+--#########################################
+--*/
+
+--Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON;
+SET DEFINE OFF;
+
+
+DECLARE
+
+V_ESQUEMA VARCHAR2(10 CHAR) := 'REM01'; --REM01
+V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := 'REMMASTER'; --REMMASTER
+V_USUARIO VARCHAR2(50 CHAR) := '#USUARIO_MIGRACION#';
+V_TABLA VARCHAR2(40 CHAR) := 'ACT_PRO_PROPIETARIO';
+V_TABLA_MIG VARCHAR2(40 CHAR) := 'MIG_APC_PROP_CABECERA';
+V_SENTENCIA VARCHAR2(1600 CHAR);
+
+BEGIN
+
+  DBMS_OUTPUT.PUT_LINE('[INFO] COMIENZA EL PROCESO DE MIGRACION SOBRE LA TABLA '||V_ESQUEMA||'.'||V_TABLA||'.');
+  
+	EXECUTE IMMEDIATE ('
+	INSERT INTO '||V_ESQUEMA||'.'||V_TABLA||' (
+	PRO_ID,
+	DD_LOC_ID,
+	DD_PRV_ID,
+	PRO_CODIGO_UVEM,
+	DD_TPE_ID,
+	PRO_NOMBRE,
+	PRO_APELLIDO1,
+	PRO_APELLIDO2,
+	DD_TDI_ID,
+	PRO_DOCIDENTIF,
+	PRO_DIR,
+	PRO_TELF,
+	PRO_EMAIL,
+	PRO_CP,
+	DD_LOC_ID_CONT,
+	DD_PRV_ID_CONT,
+	PRO_CONTACTO_NOM,
+	PRO_CONTACTO_TELF1,
+	PRO_CONTACTO_TELF2,
+	PRO_CONTACTO_EMAIL,
+	PRO_CONTACTO_DIR,
+	PRO_CONTACTO_CP,
+	PRO_OBSERVACIONES,
+	PRO_PAGA_EJECUTANTE,
+	VERSION,
+	USUARIOCREAR,
+	FECHACREAR,
+	BORRADO,
+	DD_CRA_ID
+	)
+	WITH PRO_CODIGO_UVEM AS (
+	  SELECT MIGW.PRO_CODIGO_UVEM, MIGW.PRO_COD_CARTERA
+	  FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIGW
+	  INNER JOIN '||V_ESQUEMA||'.DD_CRA_CARTERA CRA
+		ON CRA.DD_CRA_CODIGO = MIGW.PRO_COD_CARTERA
+	  WHERE NOT EXISTS (
+	    SELECT 1 
+	    FROM '||V_ESQUEMA||'.'||V_TABLA||' PROW
+	    WHERE PROW.PRO_CODIGO_UVEM = MIGW.PRO_CODIGO_UVEM
+	    AND DD_CRA_ID = CRA.DD_CRA_ID
+	  )
+	  AND MIGW.VALIDACION = 0
+	)
+	SELECT
+	'||V_ESQUEMA||'.S_ACT_PRO_PROPIETARIO.NEXTVAL			            PRO_ID,
+	(SELECT DD_LOC_ID
+	FROM '||V_ESQUEMA_MASTER||'.DD_LOC_LOCALIDAD 
+	WHERE DD_LOC_CODIGO = MIG.LOCALIDAD_PROPIETARIO)     	DD_LOC_ID,
+	(SELECT DD_PRV_ID
+	FROM '||V_ESQUEMA_MASTER||'.DD_PRV_PROVINCIA 
+	WHERE DD_PRV_CODIGO = MIG.PROVINCIA_PROPIETARIO)		    DD_PRV_ID,
+	MIG.PRO_CODIGO_UVEM				  						PRO_CODIGO_UVEM,
+	(SELECT DD_TPE_ID
+	FROM '||V_ESQUEMA_MASTER||'.DD_TPE_TIPO_PERSONA
+	WHERE DD_TPE_CODIGO = MIG.TIPO_PERSONA)                       DD_TPE_ID,
+	MIG.PRO_NOMBRE                            				PRO_NOMBRE,
+	MIG.PRO_APELLIDO1                             		  	PRO_APELLIDO1,
+	MIG.PRO_APELLIDO2                             		  	PRO_APELLIDO2,
+	(SELECT DD_TDI_ID
+	FROM '||V_ESQUEMA||'.DD_TDI_TIPO_DOCUMENTO_ID
+	WHERE DD_TDI_CODIGO = MIG.TIPO_DOCUMENTO)                   DD_TDI_ID,
+	MIG.PRO_NIF												PRO_DOCIDENTIF,
+	MIG.PRO_DIR												PRO_DIR,
+	MIG.PRO_TELF											PRO_TLF,
+	MIG.PRO_EMAIL											PRO_EMAIL,
+	MIG.PRO_CP												PRO_CP,
+	(SELECT DD_LOC_ID
+	FROM '||V_ESQUEMA_MASTER||'.DD_LOC_LOCALIDAD
+	WHERE DD_LOC_CODIGO = MIG.LOCALIDAD_CONTACTO)           DD_LOC_ID_CONT,
+	(SELECT DD_PRV_ID
+	FROM '||V_ESQUEMA_MASTER||'.DD_PRV_PROVINCIA 
+	WHERE DD_PRV_CODIGO = MIG.PROVINCIA_CONTACTO)			      DD_PRV_ID_CONT,
+	MIG.PRO_CONTACTO_NOM									                                        PRO_CONTACTO_NOM,
+	MIG.PRO_CONTACTO_TELF1								                                    	PRO_CONTACTO_TELF1,
+	MIG.PRO_CONTACTO_TELF2							                                      		PRO_CONTACTO_TELF2,
+	MIG.PRO_CONTACTO_EMAIL							                                    		PRO_CONTACTO_EMAIL,
+	MIG.PRO_CONTACTO_DIR								                                          	PRO_CONTACTO_DIR,
+	MIG.PRO_CONTACTO_CP								                                        		PRO_CONTACTO_CP,
+	MIG.PRO_OBSERVACIONES								                                          	PRO_OBSERVACIONES,
+	MIG.PRO_PAGA_EJECUTANTE					                                      				PRO_PAGA_EJECUTANTE,
+	''0''                                                                                            	VERSION,
+	'''||V_USUARIO||'''                                                                                        	USUARIOCREAR,
+	SYSDATE                                                                                 	FECHACREAR,
+	0                                                                                           	BORRADO,
+	(SELECT DD_CRA_ID
+	FROM '||V_ESQUEMA||'.DD_CRA_CARTERA
+	WHERE DD_CRA_CODIGO = MIG.PRO_COD_CARTERA)                   		DD_CRA_ID
+	FROM '||V_ESQUEMA||'.'||V_TABLA_MIG||' MIG
+	INNER JOIN PRO_CODIGO_UVEM PRO
+	ON PRO.PRO_CODIGO_UVEM = MIG.PRO_CODIGO_UVEM
+	AND PRO.PRO_COD_CARTERA = MIG.PRO_COD_CARTERA
+	')
+	;
+  
+  DBMS_OUTPUT.PUT_LINE('[INFO] - '||to_char(sysdate,'HH24:MI:SS')||'  '||V_ESQUEMA||'.'||V_TABLA||' cargada. '||SQL%ROWCOUNT||' Filas.');
+  
+  COMMIT;
+  
+  V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''ANALYZE'','''||V_TABLA||''',''1''); END;';
+  EXECUTE IMMEDIATE V_SENTENCIA;
+  
+EXCEPTION
+
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecucion:'||TO_CHAR(SQLCODE));
+        DBMS_OUTPUT.put_line('-----------------------------------------------------------');
+        DBMS_OUTPUT.put_line(SQLERRM);
+        ROLLBACK;
+        RAISE;
+END;
+/
+
+EXIT;

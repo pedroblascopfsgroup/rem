@@ -12,7 +12,7 @@ Ext.define('HreRem.view.activos.detalle.DocumentosComunicacionGencatList', {
     initComponent: function () {
         
         var me = this;
-        me.topBar = ($AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['GESTIAFORM'])|| $AU.userIsRol(CONST.PERFILES['HAYAGESTFORMADM'])); 
+        me.topBar = me.lookupViewModel().get('activo.tieneComunicacionGencat')!='false' && ($AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['GESTIAFORM'])|| $AU.userIsRol(CONST.PERFILES['HAYAGESTFORMADM'])); 
         
         /*me.listeners = {	    	
 			rowdblclick: 'onVisitasListDobleClick'

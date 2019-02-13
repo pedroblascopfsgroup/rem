@@ -208,8 +208,7 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 		if (comunicacionGencat != null) {
 			try {
 				// Comrpueba que todos los datos del usuario nuevo esten completos
-				if (!Checks.esNulo(comunicacionGencat.getNuevoCompradorNif()) && !Checks.esNulo(comunicacionGencat.getNuevoCompradorNombre()) && !Checks.esNulo(comunicacionGencat.getNuevoCompradorApellido1()) 
-						&& !Checks.esNulo(comunicacionGencat.getNuevoCompradorApellido2())) {
+				if (!Checks.esNulo(comunicacionGencat.getNuevoCompradorNif()) && !Checks.esNulo(comunicacionGencat.getNuevoCompradorNombre())) {
 					gencatDto.setUsuarioCompleto(true);
 				} else {
 					gencatDto.setUsuarioCompleto(false);
@@ -1024,8 +1023,14 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 								&& DDEstadoComunicacionGencat.COD_ANULADO.equals(comGencat.getEstadoComunicacion().getCodigo())) {
 									lanzarTramiteGENCAT(tramite, oferta, expComercial);
 							}								
-						}else {								
-							lanzarTramiteGENCAT(tramite, oferta, expComercial);
+						}else {
+							if(!Checks.esNulo(comGencat.getSancion())) {
+								if(!DDSancionGencat.COD_EJERCE.equals(comGencat.getSancion().getCodigo())) {
+									lanzarTramiteGENCAT(tramite, oferta, expComercial);
+								}
+							}else {
+								lanzarTramiteGENCAT(tramite, oferta, expComercial);
+							}
 						}
 					}else {
 						if(!Checks.esNulo(comGencat.getEstadoComunicacion())

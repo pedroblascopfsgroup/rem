@@ -481,6 +481,11 @@ Ext.define('HreRem.ux.util.Constants', {
 		AVAL_BANCARIO: '52',
 		JUSTIFICANTE_INGRESOS: '53',
 		ALQUILER_CON_OPCION_A_COMPRA: '54'
-	}
+	},
+	
+	DD_SAN_SANCION: {
+		COD_EJERCE: 'EJERCE',
+		COD_NO_EJERCE: 'NO_EJERCE'
+ 	}
     
 });

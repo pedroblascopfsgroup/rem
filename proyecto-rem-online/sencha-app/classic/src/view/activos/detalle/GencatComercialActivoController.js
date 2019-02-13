@@ -254,6 +254,103 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoController', {
 		 				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
 		 	}
 	 });
-	}
-    
+	},
+	comprobarCampoNifNombre: function(combo, value) {
+		var me = this;
+		var campoNif = me.lookupReference('nuevoCompradorNifref');
+		var campoNombre = me.lookupReference('nuevoCompradorNombreref');
+		var campoSancion = me.lookupReference('sancionRef');
+		
+		if (campoSancion.getValue() == CONST.DD_SAN_SANCION['COD_EJERCE']) {
+			campoNombre.allowBlank = false;
+			campoNif.allowBlank = false;
+		} else {
+			campoNombre.allowBlank = true;
+			campoNif.allowBlank = true;
+		}
+	},
+	
+comprobarFormatoNIF: function(value) {
+		
+		if (value.length == 9) { // Comprobamos NIF y NIE
+			var validChars = 'TRWAGMYFPDXBNJZSQVHLCKET';
+			var nifRexp = /^[0-9]{8}[TRWAGMYFPDXBNJZSQVHLCKET]{1}$/i;
+			var nieRexp = /^[XYZ]{1}[0-9]{7}[TRWAGMYFPDXBNJZSQVHLCKET]{1}$/i;
+			var str = value.toString().toUpperCase();
+
+			var continuar = true;
+			if (!nifRexp.test(str) && !nieRexp.test(str))
+				continuar = false;
+
+			if (continuar) {
+				var nie = str.replace(/^[X]/, '0').replace(
+						/^[Y]/, '1').replace(/^[Z]/, '2');
+
+				var letter = str.substr(-1);
+				var charIndex = parseInt(nie.substr(0, 8)) % 23;
+
+				if (validChars.charAt(charIndex) === letter)
+					return true;
+			}
+		}
+
+		if (value.length == 9) { // Comprobamos CIF
+			var letters = [ 'J', 'A', 'B', 'C', 'D', 'E', 'F',
+					'G', 'H', 'I' ];
+			var digits = value.substr(1, value.length - 2);
+			var letter = value.substr(0, 1);
+			var control = value.substr(value.length - 1);
+			var sum = 0;
+			var i;
+			var digit;
+
+			if (!letter.match(/[A-Z]/)) {
+				return HreRem
+						.i18n('msg.error.comprador.nif.incorrecto');
+			}
+
+			for (i = 0; i < digits.length; i++) {
+				digit = parseInt(digits[i]);
+
+				if (isNaN(digit)) {
+					return HreRem
+							.i18n('msg.error.comprador.nif.incorrecto');
+				}
+
+				if (i % 2 === 0) {
+					digit *= 2;
+					if (digit > 9) {
+						digit = parseInt(digit / 10)
+								 (digit % 10);
+					}
+
+					sum = digit;
+				} else {
+					sum = digit;
+				}
+			}
+
+			sum %= 10;
+			if (sum !== 0) {
+				digit = 10 - sum;
+			} else {
+				digit = sum;
+			}
+
+			if (letter.match(/[ABEH]/)
+					&& String(digit) === control)
+				return true;
+
+			if (letter.match(/[NPQRSW]/)
+					&& letters[digit] === control)
+				return true;
+
+			if (String(digit) === control
+					|| letters[digit] === control)
+				return true;
+		}
+
+		return HreRem
+				.i18n('msg.error.comprador.nif.incorrecto');
+ 	}
 });

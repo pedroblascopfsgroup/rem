@@ -175,11 +175,15 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoForm', {
 				    				fieldLabel: HreRem.i18n('fieldlabel.sancion'),
 				    				colspan: 2,
 				    				name: 'sancion',
+				    				reference: 'sancionRef',
 									bind: {
 										readOnly: '{!gencat.IsUserAllowed}',
 										store: '{comboSancionGencat}',
 										value: '{gencat.sancion}',
 										disabled: '{gencat.fechaComunicacionVacia}'
+									},
+									listeners: {
+										change : 'comprobarCampoNifNombre'
 									}
 				    			},
 				    			{
@@ -197,15 +201,20 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoForm', {
 											{
 							    				fieldLabel: HreRem.i18n('fieldlabel.nif'),
 							    				name: 'nuevoCompradorNif',
+							    				reference: 'nuevoCompradorNifref',
 												bind: {
 													readOnly: '{!gencat.IsUserAllowed}',
 													disabled: '{!gencat.estaActivadoCompradorNuevo}',
 													value: '{gencat.nuevoCompradorNif}'													
+												},
+												validator: function(value) {
+													return this.up('gencatcomercialactivo').getController().comprobarFormatoNIF(value);
 												}
 							    			},
 							    			{
 							    				fieldLabel: HreRem.i18n('fieldlabel.nombre'),
 							    				name: 'nuevoCompradorNombre',
+							    				reference: 'nuevoCompradorNombreref',
 												bind: {
 													readOnly: '{!gencat.IsUserAllowed}',
 													disabled: '{!gencat.estaActivadoCompradorNuevo}',

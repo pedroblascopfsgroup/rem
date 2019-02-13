@@ -3,39 +3,37 @@ Ext.define('HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaDetalle', {
     xtype		: 'anyadirnuevaofertadetalle',
     reference	: 'anyadirNuevaOfertaDetalle',
     collapsed: false,
-	scrollable	: 'y',	  				
-	recordName: "oferta",
+	scrollable	: 'y',
 	bodyStyle	: 'padding:20px',
+	recordName: "oferta",
 	recordClass: "HreRem.model.OfertaComercial",
-	
-	listeners: {    
+
+	listeners: {
 		boxready: function(window) {
 			var me = this;
-			
+
 			Ext.Array.each(me.down('fieldset').query('field[isReadOnlyEdit]'),
-				function (field, index) 
-					{ 								
+				function (field, index)
+					{
 						field.fireEvent('edit');
 						if(index == 0) field.focus();
 					}
 			);
 		},
-		
+
 		show: function() {
 			var me = this;
-			me.resetWindow();			
+			me.resetWindow();
 		}
 	},
 
-    
 	initComponent: function() {
-    	
     	var me = this;
-    	    	
+
     	me.buttons = [ {
     		itemId: 'btnGuardar',
     		text: 'Crear',
-    		handler: 'onClickCrearOferta' 
+    		handler: 'onClickCrearOferta'
     	},  { itemId: 'btnCancelar', text: 'Cancelar', handler: 'onClickBotonCancelarWizard'}];
 
     	me.items = [
@@ -59,7 +57,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaDetalle', {
 								},
 								defaultType: 'textfieldbase',
 								collapsed: false,
-								scrollable	: 'y',	    				
+								scrollable	: 'y',
 				            	items: [
 				            	    {
 				            	    	name:		'cesionDatos',
@@ -307,22 +305,6 @@ Ext.define('HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaDetalle', {
 				                	},
 				                	{
 										xtype: 'textfieldbase',
-										fieldLabel: HreRem.i18n('fieldlabel.prescriptor'),
-										name: 'nombrePrescriptor',
-										//disabled: true,
-										readOnly: true,
-										allowBlank: false
-									},
-									{
-										xtype: 		'checkboxfieldbase',
-				            	    	fieldLabel:	HreRem.i18n('fieldlabel.intencionfinanciar'),
-				            	    	name:		'intencionFinanciar',
-				            	    	allowBlank:	false,
-				            	    	bind:		'{oferta.intencionFinanciar}',
-							        	inputValue: true
-									},
-									{
-										xtype: 'textfieldbase',
 										fieldLabel: HreRem.i18n('fieldlabel.codigo.sucursalreserva'),
 										name: 'buscadorSucursales',
 										maskRe: /^\d{1,4}$/,
@@ -347,9 +329,16 @@ Ext.define('HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaDetalle', {
 								        			field.lookupController().buscarSucursal(field);											        			
 								        		}
 								        	}
-								        },
-								        colspan: 2
+								        }
 				                	},
+				                	{
+										xtype: 'textfieldbase',
+										fieldLabel: HreRem.i18n('fieldlabel.prescriptor'),
+										name: 'nombrePrescriptor',
+										//disabled: true,
+										readOnly: true,
+										allowBlank: false
+									},
 				                	{
 										xtype: 'textfieldbase',
 										fieldLabel: HreRem.i18n('fieldlabel.sucursalreserva'),
@@ -365,9 +354,9 @@ Ext.define('HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaDetalle', {
     	
     	me.callParent();
     },
-    
+
     resetWindow: function() {
-    	var me = this;	
+    	var me = this;
 		me.setBindRecord(me.oferta);
     }
     

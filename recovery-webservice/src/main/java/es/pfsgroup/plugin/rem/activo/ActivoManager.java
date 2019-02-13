@@ -277,6 +277,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	private static final String MAESTRO_ORIGEN_WCOM="WCOM";
 	private static final String KEY_GDPR="gdpr.data.key";
 	private static final String URL_GDPR="gdpr.data.url";
+	private static final String PATH_GDPR="gdpr.data.path";
 	private SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 	private BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 	
@@ -5375,10 +5376,12 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		String signature = computeKey(reservationKey);
 		
 		String url=appProperties.getProperty(URL_GDPR);
+		String path=appProperties.getProperty(PATH_GDPR);
 		
 		ServerRequest serverRequest =  new ServerRequest();
 		serverRequest.setMethod(RestClientManager.METHOD_POST);
 		serverRequest.setRestClientUrl(url);
+		serverRequest.setPath(path);
 		serverRequest.setResponseClass(RespuestaDescargarDocumento.class);
 		Object respuesta = this.getBinaryResponse(serverRequest,"", dtoGenerarDocGDPR, signature);
 		byte[] bytes = null;
@@ -5400,7 +5403,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		
 		RespuestaDescargarDocumento respuesta = new RespuestaDescargarDocumento();
 		respuesta.setContenido(bytes);
-		respuesta.setNombreDocumento(nombreDocumento);
+		respuesta.setNombreDocumento(nombreDocumento+".pdf");
 		
 		return respuesta;
 	}

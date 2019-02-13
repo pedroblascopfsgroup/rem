@@ -271,7 +271,7 @@ public class ProcessController extends ParadiseJsonController {
 			FileItem fileItem = processAdapter.downloadErrors(idProcess);
 
 			if (fileItem != null) {
-				response.setHeader("Content-disposition", "attachment; filename='" + fileItem.getFileName() + "'");
+				response.setHeader("Content-disposition", "attachment; filename=" + fileItem.getFileName());
 				response.setHeader("Cache-Control", "must-revalidate, post-check=0,pre-check=0");
 				response.setHeader("Cache-Control", "max-age=0");
 				response.setHeader("Expires", "0");
@@ -301,7 +301,7 @@ public class ProcessController extends ParadiseJsonController {
 			FileItem fileItem = processAdapter.downloadResultados(idProcess);
 
 			if (fileItem != null) {
-				response.setHeader("Content-disposition", "attachment; filename='" + fileItem.getFileName() + "'");
+				response.setHeader("Content-disposition", "attachment; filename=" + fileItem.getFileName());
 				response.setHeader("Cache-Control", "must-revalidate, post-check=0,pre-check=0");
 				response.setHeader("Cache-Control", "max-age=0");
 				response.setHeader("Expires", "0");
@@ -343,7 +343,6 @@ public class ProcessController extends ParadiseJsonController {
 	public ModelAndView subeListaActivos(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
 		ModelMap model = new ModelMap();
-		String result = null;
 		Long idProceso = null;
 
 		try {

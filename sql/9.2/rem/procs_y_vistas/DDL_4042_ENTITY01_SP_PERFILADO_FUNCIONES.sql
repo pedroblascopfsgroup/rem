@@ -1,10 +1,10 @@
 --/*
 --######################################### 
 --## AUTOR=Rasul Akhmeddibirov
---## FECHA_CREACION=20180207
+--## FECHA_CREACION=20180213
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=REMVIP-3259
+--## INCIDENCIA_LINK=REMVIP-3284
 --## PRODUCTO=NO
 --## 
 --## Finalidad: Procedimiento encargado de perfilar las funciones.
@@ -12,7 +12,6 @@
 --## INSTRUCCIONES:  
 --## VERSIONES:
 --##        0.1 Versión inicial
---##        0.2 Añadido perfil SUPERUSUARIONEGOCIO
 --#########################################
 --*/
 
@@ -56,7 +55,7 @@ T_VAR( 'EDITAR_TAB_FOTOS_ACTIVO_WEB',                              'N','N','S','
 T_VAR( 'TAB_FOTOS_ACTIVO_WEB',                                     'S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','N','N','S','N','N','S','N','N','N','N','N','N','N'),
 T_VAR( 'EDITAR_TAB_FOTOS_ACTIVO_TECNICAS',                         'N','N','S','S','S','S','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','N','N','S','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N'),
 T_VAR( 'TAB_FOTOS_ACTIVO_TECNICAS',                                'S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','N','S','S','S','S','S','S','S','S','S','S','S','S','S','S','N','N','S','N','N','S','N','N','N','N','N','N','N'),
-T_VAR( 'EDITAR_CHECKING_INFO_ADMISION',                            'S','S','S','S','S','S','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N'),
+T_VAR( 'EDITAR_CHECKING_INFO_ADMISION',                            'S','S','S','S','S','S','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','N','N','N','N','N','N','N','N','S','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N'),
 T_VAR( 'EDITAR_SELLO_CALIDAD',                                     'N','N','N','N','S','S','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N'),
 T_VAR( 'TAB_CHECKING_INFO_ADMISION',                               'S','S','S','S','S','S','S','S','S','S','N','S','S','S','S','S','S','S','S','S','S','S','S','S','S','N','N','N','N','N','N','N','N','N','N','S','S','S','S','S','S','S','S','S','S','S','S','S','S','N','N','S','N','N','S','N','N','N','N','N','N','N'),
 T_VAR( 'TAB_CHECKING_DOC_ADMISION',                                'S','S','S','S','S','S','S','S','S','S','N','S','S','S','S','S','S','S','S','S','S','S','S','S','S','N','N','N','N','N','N','N','N','N','N','S','S','S','S','S','S','S','S','S','S','S','S','S','S','N','N','S','N','N','S','N','N','N','N','N','N','N'),

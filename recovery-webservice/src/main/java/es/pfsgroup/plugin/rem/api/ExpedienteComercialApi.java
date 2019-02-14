@@ -203,6 +203,14 @@ public interface ExpedienteComercialApi {
 	List<DtoTipoDocExpedientes> getTipoDocumentoExpediente(String tipoExpediente);
 
 	/**
+	 * Método que recupera los subtipos de documento posibles para adjuntar en el Expediente Comercial
+	 * 	
+	 * @param idExpediente, tipoExpediente
+	 * @return listado de archivos adjuntos
+	 */
+	List <DtoTipoDocExpedientes> getSubtipoDocumentosExpedientes(Long idExpediente, String valorCombo);
+		
+	/**
 	 * Recupera el adjunto del Expediente comercial
 	 *
 	 * @param dtoAdjunto
@@ -300,15 +308,18 @@ public interface ExpedienteComercialApi {
 	 * @param webDto
 	 * @return
 	 */
-	String getTareaDefinicionDeOferta(Long idExpedienteComercial, WebDto webDto);
+
+	public DtoPage getPosicionamientosExpediente(Long idExpediente);
+
 
 	/**
 	 * Método que obtiene la tarea de definición oferta
 	 *
+	 * @param dto
 	 * @param idExpediente
 	 * @return
 	 */
-	DtoPage getPosicionamientosExpediente(Long idExpediente);
+	String getTareaDefinicionDeOferta(Long idExpedienteComercial, WebDto webDto);
 
 	/**
 	 * Método que obtiene los comparecientes del expediente
@@ -486,6 +497,7 @@ public interface ExpedienteComercialApi {
 	 * @param oferta
 	 * @return
 	 */
+
 	OfertaUVEMDto createOfertaOVEM(Oferta oferta, ExpedienteComercial expedienteComercial) throws Exception;
 
 	/**
@@ -1096,7 +1108,11 @@ public interface ExpedienteComercialApi {
 
 	boolean checkConTituloTramite(Long idTramite);
 
+
 	List<DtoActivosExpediente> getActivosPropagables(Long idExpediente);
+	
+	boolean checkConOpcionCompra(TareaExterna tareaExterna);
+
 
 	boolean guardarCondicionesActivosExpediente(DtoCondicionesActivoExpediente condiciones);
 }

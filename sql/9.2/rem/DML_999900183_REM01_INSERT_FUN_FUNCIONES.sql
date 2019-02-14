@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=Josep Ros
---## FECHA_CREACION=20180227
+--## AUTOR=Sergio Salt
+--## FECHA_CREACION=20190103
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=0

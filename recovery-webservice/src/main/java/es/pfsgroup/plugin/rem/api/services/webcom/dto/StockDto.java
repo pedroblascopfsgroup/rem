@@ -103,18 +103,27 @@ public class StockDto implements WebcomRESTDto{
 	
 	//HREOS-1478
 	@DecimalDataTypeFormat(decimals=2)
+	@WebcomRequired
 	private DoubleDataType actualImporteDescuentoWeb;
+	@WebcomRequired
 	private DateDataType desdeImporteDescuentoWeb;
+	@WebcomRequired
 	private DateDataType hastaImporteDescuentoWeb;
 	@DecimalDataTypeFormat(decimals=2)
+	@WebcomRequired
 	private DoubleDataType valorAprobadoRenta;
+	@WebcomRequired
 	private DateDataType fechaValorAprobadoRenta;	
 	@DecimalDataTypeFormat(decimals=2)
+	@WebcomRequired
 	private DoubleDataType anteriorValorAprobadoRenta;
 	@DecimalDataTypeFormat(decimals=2)
+	@WebcomRequired
 	private DoubleDataType valorAprobadoVenta;
+	@WebcomRequired
 	private DateDataType fechaValorAprobadoVenta;
 	@DecimalDataTypeFormat(decimals=2)
+	@WebcomRequired
 	private DoubleDataType anteriorValorAprobadoVenta;
 	
 	//Petición HREOS-1551

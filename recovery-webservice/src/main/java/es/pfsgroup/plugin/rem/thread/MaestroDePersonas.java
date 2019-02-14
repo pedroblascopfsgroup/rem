@@ -45,7 +45,7 @@ public class MaestroDePersonas  implements Runnable{
 
 	private PersonaInputDto personaDto = new PersonaInputDto();
 
-	public  MaestroDePersonas(Long expedienteComercial, String userName,String cartera) {
+	public MaestroDePersonas(Long expedienteComercial, String userName, String cartera) {
 		// imprescindible para poder inyectar componentes
 		SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
 		this.userName = userName;
@@ -55,21 +55,23 @@ public class MaestroDePersonas  implements Runnable{
 
 	public void run() {
 		Session sessionObj = null;
+		List<CompradorExpediente> listaPersonas = null;
 		try {
 			restApi.doSessionConfig(this.userName);
 			Thread.sleep(5000);
 		    sessionObj = hibernateUtils.getSessionFactory().openSession();
 			if(!Checks.esNulo(expedienteComercial)) {
 				ExpedienteComercial expedienteCom = llamadaExpedienteComercial(sessionObj);
-				 List<CompradorExpediente> listaPersonas = expedienteCom.getCompradores();
+				if(!Checks.esNulo(expedienteCom.getCompradores())) {					
+					listaPersonas = expedienteCom.getCompradores();
+				}
 				 if(!Checks.estaVacio(listaPersonas)){
 					 for (CompradorExpediente compradorExpediente : listaPersonas) {
 						 if(Checks.esNulo(compradorExpediente.getIdPersonaHaya()) || idPersonaHayaNoExiste.equals(compradorExpediente.getIdPersonaHaya())) {
-						 	personaDto.setEvent(PersonaInputDto.EVENTO_IDENTIFICADOR_INTERVINIENTE_ORIGEN);
-							personaDto.setIdOrigen(cartera);
-							personaDto.setIdIntervinienteOrigen(PersonaInputDto.ID_INTERVINIENTE_ORIGEN);
+						 	personaDto.setEvent(PersonaInputDto.EVENTO_IDENTIFICADOR_PERSONA_ORIGEN);
+							personaDto.setIdPersonaOrigen(compradorExpediente.getPrimaryKey().getComprador().getDocumento());
 							personaDto.setIdIntervinienteHaya(PersonaInputDto.ID_INTERVINIENTE_HAYA);
-							personaDto.setIdCliente(compradorExpediente.getPrimaryKey().getComprador().getDocumento());
+							personaDto.setIdCliente(cartera);
 							
 							logger.error("[MAESTRO DE PERSONAS] LLAMAMOS A EJECUTAR PERSONA");
 							logger.error("[MAESTRO DE PERSONAS] Datos de la llamada: ".concat(personaDto.toString()));

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="activo_tramiteComercialAlquiler" width="1368" height="861">
+<root-container name="activo_tramiteComercialAlquiler" width="1414" height="662">
   <node name="inicio" x="11" y="11" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>

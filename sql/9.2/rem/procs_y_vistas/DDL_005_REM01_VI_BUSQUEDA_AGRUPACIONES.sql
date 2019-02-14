@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Sergio Salt
+--## AUTOR=Sergio Salt 
 --## FECHA_CREACION=20190114
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-5175
+--## INCIDENCIA_LINK=HREOS-5231
 --## PRODUCTO=NO
 --## Finalidad: Vista para la búsqueda de agrupaciones.
 --##  

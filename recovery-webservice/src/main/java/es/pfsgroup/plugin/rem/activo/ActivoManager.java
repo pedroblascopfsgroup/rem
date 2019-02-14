@@ -69,6 +69,7 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBValoracionesBien;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoHistoricoPatrimonioDao;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoPatrimonioDao;
 import es.pfsgroup.plugin.rem.activo.publicacion.dao.ActivoPublicacionDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.AgrupacionAdapter;
@@ -111,6 +112,7 @@ import es.pfsgroup.plugin.rem.model.ActivoLlave;
 import es.pfsgroup.plugin.rem.model.ActivoMovimientoLlave;
 import es.pfsgroup.plugin.rem.model.ActivoOcupacionIlegal;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
+import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.ActivoPropietarioActivo;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
@@ -147,6 +149,7 @@ import es.pfsgroup.plugin.rem.model.DtoHistoricoPreciosFilter;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPresupuestosFilter;
 import es.pfsgroup.plugin.rem.model.DtoImpuestosActivo;
 import es.pfsgroup.plugin.rem.model.DtoLlaves;
+import es.pfsgroup.plugin.rem.model.DtoMotivoAnulacionExpediente;
 import es.pfsgroup.plugin.rem.model.DtoMovimientoLlave;
 import es.pfsgroup.plugin.rem.model.DtoOcupacionIlegal;
 import es.pfsgroup.plugin.rem.model.DtoOfertaActivo;
@@ -192,6 +195,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoPropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisitaOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRetencion;
@@ -226,7 +230,6 @@ import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PROPIEDAD;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.SITUACION;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.TIPO;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
-import es.pfsgroup.plugin.rem.rest.api.RestApi.ENTIDADES;
 import es.pfsgroup.plugin.rem.rest.api.RestApi.TIPO_VALIDACION;
 import es.pfsgroup.plugin.rem.rest.dto.File;
 import es.pfsgroup.plugin.rem.rest.dto.FileResponse;
@@ -255,6 +258,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	private static final String MAESTRO_ORIGEN_WCOM="WCOM";
 	private SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 	private BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
+	
 
 	@Resource
 	private MessageService messageServices;
@@ -374,6 +378,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 	@Autowired
 	private ActivoPublicacionDao activoPublicacionDao;
+	
+	@Autowired
+	private ActivoPatrimonioDao activoPatrimonioDao;
 
 	@Override
 	public String managerName() {
@@ -404,8 +411,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	@Transactional
 	public boolean saveOrUpdate(Activo activo) {
 		activoDao.saveOrUpdate(activo);
-
-		restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO, activo);
 
 		// Actualiza los check de Admisión, Gestión y Situacion Comercial del
 		// activo
@@ -692,6 +697,10 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			resultado = this.persistOferta(oferta);
 		}
 		
+		// HREOS-5146 Si deja crear una nueva oferta, debe dejar pasarla a congelada manualmente.
+		if (DDEstadoOferta.CODIGO_CONGELADA.equals(estadoOferta.getCodigo())) {
+			resultado = this.persistOferta(oferta);
+		}
 
 		return resultado;
 	}
@@ -725,7 +734,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 			if(DDTipoOferta.CODIGO_ALQUILER.equals(oferta.getTipoOferta().getCodigo()) && MAESTRO_ORIGEN_WCOM.equals(oferta.getOrigen())){
 				Usuario usu=proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
-				Thread maestroPersona = new Thread( new MaestroDePersonas(expedienteComercial.getId(),usu.getUsername(),oferta.getActivoPrincipal().getCartera().getCodigo()));
+				Thread maestroPersona = new Thread( new MaestroDePersonas(expedienteComercial.getId(),usu.getUsername(),oferta.getActivoPrincipal().getCartera().getDescripcion()));
 				maestroPersona.start();
 			}
 
@@ -1291,11 +1300,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			if (DDTipoPrecio.CODIGO_TPC_APROBADO_VENTA.equals(dto.getCodigoTipoPrecio())) {
 				// Actualizar el tipoComercialización del activo
 				updaterState.updaterStateTipoComercializacion(activo);
-			}
-
-			if (!Checks.esNulo(activoValoracion.getActivo())) {
-				restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO, activoValoracion.getActivo());
-			}
+			}			
 
 		} catch (Exception ex) {
 			logger.error("Error en activoManager", ex);
@@ -1321,8 +1326,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		historicoValoracion.setObservaciones(activoValoracion.getObservaciones());
 
 		genericDao.save(ActivoHistoricoValoraciones.class, historicoValoracion);
-		restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO, activoValoracion.getActivo());
-
+		
 		return true;
 	}
 
@@ -1365,7 +1369,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 
 		if (activoValoracion != null && activoValoracion.getActivo() != null) {
-			restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO, activoValoracion.getActivo());
 			activoAdapter.actualizarEstadoPublicacionActivo(activoValoracion.getActivo().getId());
 		}
 
@@ -1931,8 +1934,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 
 		genericDao.save(ActivoCondicionEspecifica.class, condicionEspecifica);
-		restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO, this.get(dtoCondicionEspecifica.getIdActivo()));
-
+		
 		return true;
 	}
 
@@ -1954,8 +1956,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			}
 
 			genericDao.save(ActivoCondicionEspecifica.class, condicionEspecifica);
-			restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO, condicionEspecifica.getActivo());
-
+			
 			return true;
 
 		} else {
@@ -1982,8 +1983,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			}
 
 			genericDao.save(ActivoCondicionEspecifica.class, condicionEspecifica);
-			restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO, condicionEspecifica.getActivo());
-
+			
 			return true;
 
 		} else {
@@ -2218,8 +2218,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			}
 
 			genericDao.save(ActivoInformeComercialHistoricoMediador.class, historicoMediador);
-			restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO, activo);
-
+		
 		} catch (IllegalAccessException e) {
 			logger.error("Error en activoManager", e);
 			return false;
@@ -2448,8 +2447,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				perimetroActivo.getAuditoria().setUsuarioCrear(adapter.getUsuarioLogado().getUsername());
 				genericDao.save(PerimetroActivo.class, perimetroActivo);
 			}
-			restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO, perimetroActivo.getActivo());
-
+	
 		} catch (Exception ex) {
 			logger.error("Error en activoManager", ex);
 		}
@@ -2529,8 +2527,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				activoBancario.getAuditoria().setUsuarioCrear(adapter.getUsuarioLogado().getUsername());
 				genericDao.save(ActivoBancario.class, activoBancario);
 			}
-
-			restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO, activoBancario.getActivo());
 
 		} catch (Exception ex) {
 			logger.error("Error en activoManager", ex);
@@ -3392,8 +3388,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			}
 
 			genericDao.update(ActivoIntegrado.class, activoIntegrado);
-			restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO, activoIntegrado.getActivo());
-
+			
 			return true;
 
 		} catch (Exception e) {
@@ -5233,6 +5228,40 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			}
 		}
 		return false;
+	}
+	@Override
+	public ActivoPatrimonio getActivoPatrimonio(Long idActivo) {
+		ActivoPatrimonio activoPatrimonio = activoPatrimonioDao.getActivoPatrimonioByActivo(idActivo);
+
+
+				return activoPatrimonio;
+
+
+	}
+
+
+	@Override
+	public List<DtoMotivoAnulacionExpediente> getMotivoAnulacionExpediente() {
+		
+		List <DtoMotivoAnulacionExpediente> listDtoMotivoAnulacionExpediente = new ArrayList <DtoMotivoAnulacionExpediente>();
+		List <DDMotivoAnulacionExpediente> listaDDMotivoAnulacionExpediente= new ArrayList <DDMotivoAnulacionExpediente>();		
+		
+		Filter filtroMotivoAlquiler = genericDao.createFilter(FilterType.EQUALS, "alquiler", true);
+		listaDDMotivoAnulacionExpediente  = genericDao.getList(DDMotivoAnulacionExpediente.class, filtroMotivoAlquiler);
+		
+		for (DDMotivoAnulacionExpediente tipDocExp : listaDDMotivoAnulacionExpediente) {
+			DtoMotivoAnulacionExpediente aux= new DtoMotivoAnulacionExpediente();
+			aux.setId(tipDocExp.getId());
+			aux.setCodigo(tipDocExp.getCodigo());
+			aux.setDescripcion(tipDocExp.getDescripcion());
+			aux.setDescripcionLarga(tipDocExp.getDescripcionLarga());
+			aux.setVenta(tipDocExp.getVenta());
+			aux.setAlquiler(tipDocExp.getAlquiler());
+			listDtoMotivoAnulacionExpediente.add(aux);
+		}
+			
+		
+		return listDtoMotivoAnulacionExpediente;
 	}
 
 

@@ -174,9 +174,11 @@ public class RemCorreoUtils {
 	private void prepararDestinatarios(MimeMessage message, List<String> mailsPara, List<String> direccionesMailCc)
 			throws AddressException, MessagingException {
 		for (String emailPara : mailsPara) {
-			emailPara = emailPara.trim();
-			if (validarCorreo(emailPara)) {
-				message.addRecipient(Message.RecipientType.TO, new InternetAddress(emailPara));
+			if(emailPara != null && !emailPara.isEmpty()){
+				emailPara = emailPara.trim();
+				if (validarCorreo(emailPara)) {
+					message.addRecipient(Message.RecipientType.TO, new InternetAddress(emailPara));
+				}
 			}
 
 		}

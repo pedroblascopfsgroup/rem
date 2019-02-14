@@ -55,8 +55,14 @@ public class DDMotivoRechazoOferta implements Auditable, Dictionary {
 	private String descripcion;
 	    
 	@Column(name = "DD_MRO_DESCRIPCION_LARGA")   
-	private String descripcionLarga;	    
+	private String descripcionLarga;
+	
+	@Column(name = "DD_MRO_VENTA")   
+	private Boolean venta;
 
+	@Column(name = "DD_MRO_ALQUILER")   
+	private Boolean alquiler;
+	
 	@Version   
 	private Long version;
 
@@ -101,6 +107,22 @@ public class DDMotivoRechazoOferta implements Auditable, Dictionary {
 
 	public void setDescripcionLarga(String descripcionLarga) {
 		this.descripcionLarga = descripcionLarga;
+	}
+	
+	public Boolean getVenta() {
+		return venta;
+	}
+
+	public void setVenta(Boolean venta) {
+		this.venta = venta;
+	}
+	
+	public Boolean getAlquiler() {
+		return alquiler;
+	}
+
+	public void setAlquiler(Boolean alquiler) {
+		this.alquiler = alquiler;
 	}
 
 	public Long getVersion() {

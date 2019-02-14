@@ -3,6 +3,7 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
     xtype: 'situacionposesoriaactivo',    
     cls	: 'panel-base shadow-panel',
     collapsed: false,
+    refreshAfterSave: true,
     disableValidation: true,
     reference: 'situacionposesoriaactivoref',
     scrollable	: 'y',
@@ -20,7 +21,7 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
         var me = this;
         var storeConTituloPosesionNo = Ext.create('Ext.data.Store', {
 					data : [{
-						"codigo" : "01",
+						"codigo" : "1",
 						"descripcion" : eval(String.fromCharCode(34, 83, 237,
 								34))
 					}, {
@@ -39,8 +40,6 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 			}]
 		});
         me.setTitle(HreRem.i18n('title.situacion.posesoria.llaves'));
-
-        var tipoComercializacionCodigo = me.lookupViewModel().get('activo.tipoComercializacionCodigo');
 
         var items= [
 
@@ -201,6 +200,7 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 							fieldLabel: HreRem.i18n('fieldlabel.ocupado'),
 				        	bind: {
 			            		store: '{comboSiNoRem}',
+
 			            		value : '{situacionPosesoria.ocupado}',
 			            		disabled: '{esTipoEstadoAlquilerAlquilado}',
 			            		readOnly: '{esTipoEstadoAlquilerAlquilado}'
@@ -230,12 +230,16 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
 				        	xtype: 'comboboxfieldbase',
 				        	reference: 'comboSituacionPosesoriaConTitulo',
 							fieldLabel: HreRem.i18n('fieldlabel.con.titulo'),
+							allowBlank: false,
 				        	bind: {
 			            		store: '{comboDDTipoTituloActivoTPA}',
 			            		value: '{situacionPosesoria.conTituloTPA}',
                                 disabled: '{esTipoEstadoAlquilerAlquilado}',
                                 readOnly: '{esTipoEstadoAlquilerAlquilado}'
+
 			            	}
+			            
+			            
 				        },
 				        {
 							xtype: 'textfieldbase',

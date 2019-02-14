@@ -32,8 +32,6 @@ import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloPosesorio;
-import es.pfsgroup.plugin.rem.rest.api.RestApi;
-import es.pfsgroup.plugin.rem.rest.api.RestApi.ENTIDADES;
 
 @Component
 public class TabActivoSitPosesoriaLlaves implements TabActivoService {
@@ -59,8 +57,6 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 	@Autowired
 	private NotificatorServiceDesbloqExpCambioSitJuridica notificatorServiceDesbloqueoExpediente;
 	
-	@Autowired
-	private RestApi restApi;
 	
 	@Autowired
 	private ActivoApi activoApi;
@@ -163,7 +159,9 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 		DtoActivoSituacionPosesoria dto = (DtoActivoSituacionPosesoria) webDto;
 		
 		try {
-						
+			
+			
+			beanUtilNotNull.copyProperties(activo.getSituacionPosesoria(), dto);			
 			if (activo.getSituacionPosesoria() == null) {
 				
 				activo.setSituacionPosesoria(new ActivoSituacionPosesoria());
@@ -182,6 +180,7 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 			}
 			
 			beanUtilNotNull.copyProperties(activo.getSituacionPosesoria(), dto);
+
 			if(!Checks.esNulo(dto.getFechaTomaPosesion())){
 				activo.getSituacionPosesoria().setEditadoFechaTomaPosesion(true);
 			}
@@ -220,7 +219,6 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 			if (!Checks.esNulo(dto.getTieneOkTecnico())){
 				activo.setTieneOkTecnico(dto.getTieneOkTecnico());
 			}
-			restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO, activo);
 		} catch (IllegalAccessException e) {
 			e.printStackTrace();
 		} catch (InvocationTargetException e) {

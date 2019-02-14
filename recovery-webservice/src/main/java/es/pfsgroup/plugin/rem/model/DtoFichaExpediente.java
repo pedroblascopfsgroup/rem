@@ -71,6 +71,10 @@ public class DtoFichaExpediente extends WebDto {
 	private String codMotivoRechazoExp;
 
 	private String descMotivoRechazoExp;
+	
+	private String codMotivoAnulacionAlq;
+
+	private String descMotivoAnulacionAlq;
 
 	private Date fechaAnulacion;
 
@@ -662,6 +666,22 @@ public class DtoFichaExpediente extends WebDto {
 
 	public void setNumTrabajo(Long numTrabajo) {
 		this.numTrabajo = numTrabajo;
-	}	
+	}
+
+	public String getCodMotivoAnulacionAlq() {
+		return codMotivoAnulacionAlq;
+	}
+
+	public void setCodMotivoAnulacionAlq(String codMotivoAnulacionAlq) {
+		this.codMotivoAnulacionAlq = codMotivoAnulacionAlq;
+	}
+
+	public String getDescMotivoAnulacionAlq() {
+		return descMotivoAnulacionAlq;
+	}
+
+	public void setDescMotivoAnulacionAlq(String descMotivoAnulacionAlq) {
+		this.descMotivoAnulacionAlq = descMotivoAnulacionAlq;
+	}
 	
 }

@@ -16,7 +16,6 @@ import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoHistDao;
-import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionDao;
 import es.pfsgroup.plugin.rem.adapter.AgrupacionAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoAgrupacionActivoApi;
 import es.pfsgroup.plugin.rem.model.Activo;
@@ -26,8 +25,6 @@ import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivoHistorico;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
 import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
-import es.pfsgroup.plugin.rem.rest.api.RestApi;
-import es.pfsgroup.plugin.rem.rest.api.RestApi.ENTIDADES;
 import es.pfsgroup.recovery.api.UsuarioApi;
 
 @Service("activoAgrupacionActivoManager")
@@ -51,18 +48,12 @@ public class ActivoAgrupacionActivoManager extends BusinessOperationOverrider<Ac
 	@Autowired
 	private ApiProxyFactory proxyFactory;
 	
-	@Autowired
-	private ActivoAgrupacionDao activoAgrupacionDao;
-
 	@Override
 	public String managerName() {
 		return "activoAgrupacionActivoManager";
 	}
 
 	
-	@Autowired
-	private RestApi restApi;
-
 	@Override
 	@BusinessOperation(overrides = "activoAgrupacionActivoManager.get")
 	public ActivoAgrupacionActivo get(Long id) {
@@ -101,7 +92,6 @@ public class ActivoAgrupacionActivoManager extends BusinessOperationOverrider<Ac
 		}
 
 		Long resultado = activoAgrupacionActivoDao.save(activoAgrupacionActivo);
-		restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO, activoAgrupacionActivo.getActivo());
 		return resultado;
 	}
 	

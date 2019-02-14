@@ -818,13 +818,15 @@ public class ActivoTramiteManager implements ActivoTramiteApi{
 		if(!Checks.esNulo(idActivo)){
 			
 			ComunicacionGencat comunicacionGencat = gencatManager.getComunicacionGencatByIdActivo(idActivo);
-			List <ActivoOferta> ofertas = comunicacionGencat.getActivo().getOfertas();
-			for (ActivoOferta activoOferta : ofertas) {
-				Long ofertaId = activoOferta.getOferta();	
-				OfertaGencat ofertaGencat = genericDao.get(OfertaGencat.class,genericDao.createFilter(FilterType.EQUALS,"oferta.id", ofertaId));
-				if(!Checks.esNulo(ofertaGencat) && Checks.esNulo(ofertaGencat.getIdOfertaAnterior()) && !ofertaGencat.getBorrado()) {
-					tieneOfertaCreadaPorGencat = true;
-					break;
+			if (!Checks.esNulo(comunicacionGencat)) {
+				List <ActivoOferta> ofertas = comunicacionGencat.getActivo().getOfertas();
+				for (ActivoOferta activoOferta : ofertas) {
+					Long ofertaId = activoOferta.getOferta();	
+					OfertaGencat ofertaGencat = genericDao.get(OfertaGencat.class,genericDao.createFilter(FilterType.EQUALS,"oferta.id", ofertaId));
+					if(!Checks.esNulo(ofertaGencat) && Checks.esNulo(ofertaGencat.getIdOfertaAnterior()) && !ofertaGencat.getBorrado()) {
+						tieneOfertaCreadaPorGencat = true;
+						break;
+					}
 				}
 			}
 			if(!tieneOfertaCreadaPorGencat) {

@@ -18,6 +18,8 @@ import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoAviso;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.OfertaGencat;
 import es.pfsgroup.plugin.rem.model.Reserva;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 
@@ -39,39 +41,45 @@ public class ExpedienteAvisoPreBloqueadoGencat implements ExpedienteAvisadorApi{
 		Boolean expBloqueado = false;
 		
 		if(!Checks.esNulo(expediente) && !Checks.esNulo(expediente.getOferta())){
-			List<ActivoOferta> actOfrList = expediente.getOferta().getActivosOferta();
-			Reserva reserva = genericDao.get(Reserva.class, genericDao.createFilter(FilterType.EQUALS, "expediente.id", expediente.getId()));
-			for (ActivoOferta actOfr : actOfrList){
-				Activo activo = actOfr.getPrimaryKey().getActivo();	
-				List<ActivoTramite> actTraList = genericDao.getList(ActivoTramite.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId()));
-				if(!Checks.estaVacio(actTraList)){
-					for (ActivoTramite activoTramite : actTraList) {
-						if(ActivoTramiteApi.CODIGO_TRAMITE_COMUNICACION_GENCAT.equals(activoTramite.getTipoTramite().getCodigo())){
-							if(!Checks.esNulo(activoTramite.getEstadoTramite()) && (DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CERRADO.equals(activoTramite.getEstadoTramite().getCodigo()) || DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CANCELADO.equals(activoTramite.getEstadoTramite().getCodigo()))){
-								expBloqueado = true;
-							}else{
-								expBloqueado = false; 
-								break;
+			Oferta oferta = expediente.getOferta();	
+			OfertaGencat ofertaGencat = genericDao.get(OfertaGencat.class,genericDao.createFilter(FilterType.EQUALS,"oferta", oferta));
+
+			if(!Checks.esNulo(ofertaGencat) && Checks.esNulo(ofertaGencat.getIdOfertaAnterior()) && !ofertaGencat.getBorrado()) {
+				List<ActivoOferta> actOfrList = expediente.getOferta().getActivosOferta();
+				Reserva reserva = genericDao.get(Reserva.class, genericDao.createFilter(FilterType.EQUALS, "expediente.id", expediente.getId()));
+				for (ActivoOferta actOfr : actOfrList){
+					Activo activo = actOfr.getPrimaryKey().getActivo();	
+					List<ActivoTramite> actTraList = genericDao.getList(ActivoTramite.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId()));
+					if(!Checks.estaVacio(actTraList)){
+						for (ActivoTramite activoTramite : actTraList) {
+							if(ActivoTramiteApi.CODIGO_TRAMITE_COMUNICACION_GENCAT.equals(activoTramite.getTipoTramite().getCodigo())){
+								if(!Checks.esNulo(activoTramite.getEstadoTramite()) && (DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CERRADO.equals(activoTramite.getEstadoTramite().getCodigo()) || DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CANCELADO.equals(activoTramite.getEstadoTramite().getCodigo()))){
+									expBloqueado = true;
+								}else{
+									expBloqueado = false; 
+									break;
+								}
 							}
 						}
-					}
-					if(!expBloqueado){
-						if (!Checks.esNulo(reserva)){
-							if (activoDao.isActivoAfectoGENCAT(activo.getId()) && DDEstadosExpedienteComercial.RESERVADO.equals(expediente.getEstado().getCodigo())) {
-								dtoAviso.setId(String.valueOf(expediente.getId()));
-								dtoAviso.setDescripcion("Expediente pre-bloqueado por GENCAT");
-								break;
-							}
-						}else {
-							if (activoDao.isActivoAfectoGENCAT(activo.getId()) && DDEstadosExpedienteComercial.APROBADO.equals(expediente.getEstado().getCodigo())) {
-								dtoAviso.setId(String.valueOf(expediente.getId()));
-								dtoAviso.setDescripcion("Expediente pre-bloqueado por GENCAT");
-								break;
+						if(!expBloqueado){
+							if (!Checks.esNulo(reserva)){
+								if (activoDao.isActivoAfectoGENCAT(activo.getId()) && DDEstadosExpedienteComercial.RESERVADO.equals(expediente.getEstado().getCodigo())) {
+									dtoAviso.setId(String.valueOf(expediente.getId()));
+									dtoAviso.setDescripcion("Expediente pre-bloqueado por GENCAT");
+									break;
+								}
+							}else {
+								if (activoDao.isActivoAfectoGENCAT(activo.getId()) && DDEstadosExpedienteComercial.APROBADO.equals(expediente.getEstado().getCodigo())) {
+									dtoAviso.setId(String.valueOf(expediente.getId()));
+									dtoAviso.setDescripcion("Expediente pre-bloqueado por GENCAT");
+									break;
+								}
 							}
 						}
 					}
 				}
 			}
+			
 		}
 
 		return dtoAviso;

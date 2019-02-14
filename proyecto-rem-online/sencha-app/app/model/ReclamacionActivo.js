@@ -3,6 +3,9 @@ Ext.define('HreRem.model.ReclamacionActivo', {
 
     fields: [
     	{
+    		name:'id'
+    	},
+    	{
     		name : 'fechaAviso',
     		type : 'date',
     		dateFormat: 'c'
@@ -11,14 +14,22 @@ Ext.define('HreRem.model.ReclamacionActivo', {
     		name : 'fechaReclamacion',
     		type : 'date',
     		dateFormat: 'c'
-    	}
+    	},
+    	{
+			name: 'IsUserAllowed',
+			calculate: function(){
+				return ($AU.userIsRol(CONST.PERFILES['HAYAGESTFORMADM']) || $AU.userIsRol(CONST.PERFILES['GESTIAFORM']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER']));
+			}
+		}
     ],
     
     proxy: {
 		type: 'uxproxy',
 		localUrl: 'activos.json',
-		remoteUrl: 'activo/getActivoById'
-        
+		remoteUrl: 'activo/getActivoById',
+        api: {
+        	update: 'gencat/updateFechaReclamacion'
+        }
     }    
 
 });

@@ -197,4 +197,12 @@ public interface GencatApi {
 	
 	void informarFechaSancion(ComunicacionGencat comunicacionGencat);
 	
+	/**
+	 * Cambia la fecha de reclamación en la BBDD
+	 * 
+	 * @param gencatDto
+	 * @return boolean
+	 */
+	public boolean updateFechaReclamacion(DtoReclamacionActivo gencatDto);
+	
 }

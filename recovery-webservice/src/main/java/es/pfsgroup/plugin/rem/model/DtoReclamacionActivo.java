@@ -1,27 +1,31 @@
 package es.pfsgroup.plugin.rem.model;
 
-import java.util.Date;
-
 import es.capgemini.devon.dto.WebDto;
 
 public class DtoReclamacionActivo extends WebDto {
 	
 	private static final long serialVersionUID = -2437741500037132036L;
 	
-	private Date fechaAviso;
-	private Date fechaReclamacion;
+    private Long id;
+	private String fechaAviso;
+	private String fechaReclamacion;
 	
-	public Date getFechaAviso() {
+	public Long getId() {
+		return id;
+	}
+	public void setId(Long id) {
+		this.id = id;
+	}
+	public String getFechaAviso() {
 		return fechaAviso;
 	}
-	public void setFechaAviso(Date fechaAviso) {
+	public void setFechaAviso(String fechaAviso) {
 		this.fechaAviso = fechaAviso;
 	}
-	public Date getFechaReclamacion() {
+	public String getFechaReclamacion() {
 		return fechaReclamacion;
 	}
-	public void setFechaReclamacion(Date fechaReclamacion) {
+	public void setFechaReclamacion(String fechaReclamacion) {
 		this.fechaReclamacion = fechaReclamacion;
 	}
-	
 }

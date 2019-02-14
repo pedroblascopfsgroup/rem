@@ -28,6 +28,7 @@ import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.OfertaGencat;
 import es.pfsgroup.plugin.rem.model.ResolucionComiteBankia;
 import es.pfsgroup.plugin.rem.model.ResolucionComiteBankiaDto;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
@@ -117,7 +118,11 @@ public class UpdaterServiceSancionOfertaRespuestaOfertante implements UpdaterSer
 								
 								//TODO COMPROBACION PRE BLOQUEO GENCAT 
 								if(Checks.esNulo(expediente.getReserva()) && esEstadoAnteriorTramitado && esAfectoGencat) {
-									gencatApi.bloqueoExpedienteGENCAT(expediente, tramite);
+									Oferta oferta = expediente.getOferta();	
+									OfertaGencat ofertaGencat = genericDao.get(OfertaGencat.class,genericDao.createFilter(FilterType.EQUALS,"oferta", oferta));
+									if(!Checks.esNulo(ofertaGencat) && Checks.esNulo(ofertaGencat.getIdOfertaAnterior())&& !ofertaGencat.getBorrado()) {
+										gencatApi.bloqueoExpedienteGENCAT(expediente, tramite);
+									}
 								}
 								//Una vez aprobado el expediente, se congelan el resto de ofertas que no estén rechazadas (aceptadas y pendientes)
 								List<Oferta> listaOfertas = ofertaApi.trabajoToOfertas(tramite.getTrabajo());

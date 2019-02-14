@@ -1,17 +1,16 @@
 Ext.define('HreRem.view.activos.detalle.ReclamacionesActivoList', {
-	extend		: 'HreRem.view.common.GridBase',
+	extend		: 'HreRem.view.common.GridBaseEditableRow',
     xtype		: 'reclamacionesactivolist',
+	id			: 'id',
     bind: {
         store: '{storeReclamacionesActivo}'
     },
-        
+    listeners:{
+        beforeedit: 'onBeforeEditReclamacionesActivo'
+    },
     initComponent: function () {
         
         var me = this;  
-        
-        /*me.listeners = {	    	
-			rowdblclick: 'onVisitasListDobleClick'
-	    }*/
         
         me.columns= [
 		        {
@@ -21,13 +20,16 @@ Ext.define('HreRem.view.activos.detalle.ReclamacionesActivoList', {
 		            flex: 1
 		        },
 		        {
-		            dataIndex: 'fechaReclamacion',
+		        	dataIndex: 'fechaReclamacion',
 		            text: HreRem.i18n('header.fecha.reclamacion'),
 		            formatter: 'date("d/m/Y")',
+		            editor: {
+		           	 xtype:'datefield',
+		           	 allowBlank: false		         
+		           	},		           	
 		            flex: 1
 		        }
-        ];
-        
+        ];   
         
         me.dockedItems = [
 		        {
@@ -41,10 +43,10 @@ Ext.define('HreRem.view.activos.detalle.ReclamacionesActivoList', {
 		            }
 		        }
 		];
-		    
-        me.callParent(); 
+        
+	    me.callParent();
+	        
         
     }
-
 
 });

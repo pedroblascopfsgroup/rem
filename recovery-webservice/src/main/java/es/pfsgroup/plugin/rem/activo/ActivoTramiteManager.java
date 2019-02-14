@@ -43,6 +43,8 @@ import es.pfsgroup.plugin.rem.model.ComunicacionGencat;
 import es.pfsgroup.plugin.rem.model.DtoActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.InformeJuridico;
+import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.OfertaGencat;
 import es.pfsgroup.plugin.rem.model.TanteoActivoExpediente;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.Trabajo;
@@ -811,43 +813,54 @@ public class ActivoTramiteManager implements ActivoTramiteApi{
 		
 		Boolean tieneTramiteGENCAT = false;
 		Boolean exosteGencatActivo = false;
-		
+		Boolean tieneOfertaCreadaPorGencat = false;
 		
 		if(!Checks.esNulo(idActivo)){
-		
-			ComunicacionGencat comunicacionGencat = gencatManager.getComunicacionGencatByIdActivo(idActivo);
 			
+			ComunicacionGencat comunicacionGencat = gencatManager.getComunicacionGencatByIdActivo(idActivo);
+			List <ActivoOferta> ofertas = comunicacionGencat.getActivo().getOfertas();
+			for (ActivoOferta activoOferta : ofertas) {
+				Long ofertaId = activoOferta.getOferta();	
+				OfertaGencat ofertaGencat = genericDao.get(OfertaGencat.class,genericDao.createFilter(FilterType.EQUALS,"oferta.id", ofertaId));
+				if(!Checks.esNulo(ofertaGencat) && Checks.esNulo(ofertaGencat.getIdOfertaAnterior()) && !ofertaGencat.getBorrado()) {
+					tieneOfertaCreadaPorGencat = true;
+					break;
+				}
+			}
+			if(!tieneOfertaCreadaPorGencat) {
 			// Comprueba si todos los tramites gencat están cerrados.
-			Activo activo = activoApi.get(idActivo);
-			List<ActivoTramite> actTraList = genericDao.getList(ActivoTramite.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId()));
-			if(!Checks.estaVacio(actTraList)){
-				for (ActivoTramite activoTramite : actTraList) {
-					if(ActivoTramiteApi.CODIGO_TRAMITE_COMUNICACION_GENCAT.equals(activoTramite.getTipoTramite().getCodigo())){
-						if(!Checks.esNulo(activoTramite.getEstadoTramite()) && DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CERRADO.equals(activoTramite.getEstadoTramite().getCodigo())
-							|| !Checks.esNulo(activoTramite.getEstadoTramite()) && DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CANCELADO.equals(activoTramite.getEstadoTramite().getCodigo())
-						){
-							exosteGencatActivo = false;
-						}else{
-							exosteGencatActivo = true;
-							break;
+				Activo activo = activoApi.get(idActivo);
+				List<ActivoTramite> actTraList = genericDao.getList(ActivoTramite.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId()));
+				if(!Checks.estaVacio(actTraList)){
+					for (ActivoTramite activoTramite : actTraList) {
+						if(ActivoTramiteApi.CODIGO_TRAMITE_COMUNICACION_GENCAT.equals(activoTramite.getTipoTramite().getCodigo())){
+							if(!Checks.esNulo(activoTramite.getEstadoTramite()) && DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CERRADO.equals(activoTramite.getEstadoTramite().getCodigo())
+								|| !Checks.esNulo(activoTramite.getEstadoTramite()) && DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CANCELADO.equals(activoTramite.getEstadoTramite().getCodigo())
+							){
+								exosteGencatActivo = false;
+							}else{
+								exosteGencatActivo = true;
+								break;
+							}
 						}
 					}
-				}
-				if(exosteGencatActivo) {
-					tieneTramiteGENCAT = true;
-				}else {
-					if(!Checks.esNulo(comunicacionGencat)) {
-						if(Checks.esNulo(comunicacionGencat.getSancion())){
-							tieneTramiteGENCAT = true;
-						}else{
-							if(!Checks.esNulo(comunicacionGencat.getSancion())&& DDSancionGencat.COD_EJERCE.equalsIgnoreCase(comunicacionGencat.getSancion().getCodigo())) {
+					if(exosteGencatActivo) {
+						tieneTramiteGENCAT = true;
+					}else {
+						if(!Checks.esNulo(comunicacionGencat)) {
+							if(DDEstadoComunicacionGencat.COD_CREADO.equals(comunicacionGencat.getEstadoComunicacion().getCodigo())
+									|| DDEstadoComunicacionGencat.COD_COMUNICADO.equals(comunicacionGencat.getEstadoComunicacion().getCodigo())){
 								tieneTramiteGENCAT = true;
-							// Si la comunicacion tiene la sancion informada y está en estado NO EJERCE, se desbloquean las tareas del trámite comercial de venta
-							} else if(!Checks.esNulo(comunicacionGencat.getSancion())&& DDSancionGencat.COD_NO_EJERCE.equalsIgnoreCase(comunicacionGencat.getSancion().getCodigo())) {
-								tieneTramiteGENCAT = false;
-							}	
-						}
-					}			
+							}else{
+								if(!Checks.esNulo(comunicacionGencat.getSancion())&& DDSancionGencat.COD_EJERCE.equalsIgnoreCase(comunicacionGencat.getSancion().getCodigo())) {
+									tieneTramiteGENCAT = true;
+								// Si la comunicacion tiene la sancion informada y está en estado NO EJERCE, se desbloquean las tareas del trámite comercial de venta
+								} else if(!Checks.esNulo(comunicacionGencat.getSancion())&& DDSancionGencat.COD_NO_EJERCE.equalsIgnoreCase(comunicacionGencat.getSancion().getCodigo())) {
+									tieneTramiteGENCAT = false;
+								}	
+							}
+						}			
+					}
 				}
 			}
 		}

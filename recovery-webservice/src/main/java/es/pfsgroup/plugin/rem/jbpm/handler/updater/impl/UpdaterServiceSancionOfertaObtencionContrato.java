@@ -27,6 +27,7 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.OfertaGencat;
 import es.pfsgroup.plugin.rem.model.Reserva;
 import es.pfsgroup.plugin.rem.model.TanteoActivoExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
@@ -119,7 +120,11 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 			expediente.setEstado(estado);
 			
 			if(!Checks.esNulo(expediente.getReserva()) && esEstadoAnteriorAprobado && esAfectoGencat) {
-				gencatApi.bloqueoExpedienteGENCAT(expediente, tramite); 
+				Oferta oferta = expediente.getOferta();	
+				OfertaGencat ofertaGencat = genericDao.get(OfertaGencat.class,genericDao.createFilter(FilterType.EQUALS,"oferta", oferta));
+				if(!Checks.esNulo(ofertaGencat) && Checks.esNulo(ofertaGencat.getIdOfertaAnterior())&& !ofertaGencat.getBorrado()) {
+					gencatApi.bloqueoExpedienteGENCAT(expediente, tramite);
+				} 
 			}
 
 			// actualizamos el estado de la reserva a firmada

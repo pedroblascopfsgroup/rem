@@ -277,7 +277,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	private static final String MAESTRO_ORIGEN_WCOM="WCOM";
 	private static final String KEY_GDPR="gdpr.data.key";
 	private static final String URL_GDPR="gdpr.data.url";
-	private static final String PATH_GDPR="gdpr.data.path";
 	private SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 	private BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 	
@@ -5365,6 +5364,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		return false;
 	}
 	
+	@SuppressWarnings("resource")
 	public FileItem generarUrlGDPR(DtoGenerarDocGDPR dtoGenerarDocGDPR) throws GestorDocumentalException, IOException {
 		
 		String fecha = new SimpleDateFormat("yyyyMMdd").format(new Date());
@@ -5376,12 +5376,34 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		String signature = computeKey(reservationKey);
 		
 		String url=appProperties.getProperty(URL_GDPR);
-		String path=appProperties.getProperty(PATH_GDPR);
+		String gdpr1 = "0";
+		String gdpr2 = "0";
+		String gdpr3 = "0";
+		if(!Checks.esNulo(dtoGenerarDocGDPR.getCesionDatos())){
+			gdpr1 = "1";
+		}
+		if(!Checks.esNulo(dtoGenerarDocGDPR.getComTerceros())){
+			gdpr2 = "1";
+		}
+		if(!Checks.esNulo(dtoGenerarDocGDPR.getTransIntern())){
+			gdpr3 = "1";
+		}
+		
+		final MultiPart multipart = new FormDataMultiPart()
+				.field("nombre", dtoGenerarDocGDPR.getNombre())
+				.field("documento", dtoGenerarDocGDPR.getDocumento())
+				.field("gdpr1", gdpr1)
+				.field("gdpr2", gdpr2)
+				.field("gdpr3", gdpr3)
+				.field("codRemPresciptor", String.valueOf(getCodRemPrescriptor(dtoGenerarDocGDPR)))
+				.field("signature", signature);
+		
+		
 		
 		ServerRequest serverRequest =  new ServerRequest();
 		serverRequest.setMethod(RestClientManager.METHOD_POST);
 		serverRequest.setRestClientUrl(url);
-		serverRequest.setPath(path);
+		serverRequest.setMultipart(multipart);
 		serverRequest.setResponseClass(RespuestaDescargarDocumento.class);
 		Object respuesta = this.getBinaryResponse(serverRequest,"", dtoGenerarDocGDPR, signature);
 		byte[] bytes = null;
@@ -5409,31 +5431,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	}
 	
 	public Object getBinaryResponse(ServerRequest serverRequest, String fileName, DtoGenerarDocGDPR dtoGenerarDocGDPR, String signature) {
+		
 		String restClientUrl = serverRequest.getRestClientUrl();
-		String gdpr1 = "0";
-		String gdpr2 = "0";
-		String gdpr3 = "0";
-		if(!Checks.esNulo(dtoGenerarDocGDPR.getCesionDatos())){
-			gdpr1 = "1";
-		}
-		if(!Checks.esNulo(dtoGenerarDocGDPR.getComTerceros())){
-			gdpr2 = "1";
-		}
-		if(!Checks.esNulo(dtoGenerarDocGDPR.getTransIntern())){
-			gdpr3 = "1";
-		}
-		
-		final MultiPart multipart = new FormDataMultiPart()
-				.field("nombre", dtoGenerarDocGDPR.getNombre())
-				.field("documento", dtoGenerarDocGDPR.getDocumento())
-				.field("gdpr1", gdpr1)
-				.field("gdpr2", gdpr2)
-				.field("gdpr3", gdpr3)
-				.field("codRemPresciptor", String.valueOf(getCodRemPrescriptor(dtoGenerarDocGDPR)))
-				.field("signature", signature);
-		
-		serverRequest.setMultipart(multipart);
-		
+
 		final Client client = ClientBuilder.newBuilder().register(MultiPartFeature.class).register(JacksonFeature.class).build();
 		String url = restClientUrl;
 		WebTarget webTarget = client.target(url);

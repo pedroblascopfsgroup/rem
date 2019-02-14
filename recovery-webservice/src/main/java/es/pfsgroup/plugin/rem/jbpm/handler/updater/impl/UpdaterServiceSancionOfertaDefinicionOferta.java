@@ -25,6 +25,7 @@ import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.OfertaGencat;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
@@ -107,7 +108,11 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 				notificacionApi.enviarNotificacionPorActivosAdmisionGestion(expediente);
 				
 				if(Checks.esNulo(expediente.getReserva()) && esTramitadoAntesQueAprobado && esAfectoGencat){
-					gencatApi.bloqueoExpedienteGENCAT(expediente, tramite);
+					Oferta oferta = expediente.getOferta();	
+					OfertaGencat ofertaGencat = genericDao.get(OfertaGencat.class,genericDao.createFilter(FilterType.EQUALS,"oferta", oferta));
+					if(!Checks.esNulo(ofertaGencat) && Checks.esNulo(ofertaGencat.getIdOfertaAnterior()) && !ofertaGencat.getBorrado()) {
+						gencatApi.bloqueoExpedienteGENCAT(expediente, tramite);
+					}
 				}
 				
 			}
@@ -139,7 +144,11 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 				expediente.setEstado(estado);
 				
 				if(Checks.esNulo(expediente.getReserva()) && esTramitadoAntesQueAprobado && esAfectoGencat){
-					gencatApi.bloqueoExpedienteGENCAT(expediente, tramite);
+					Oferta oferta = expediente.getOferta();	
+					OfertaGencat ofertaGencat = genericDao.get(OfertaGencat.class,genericDao.createFilter(FilterType.EQUALS,"oferta", oferta));
+					if(!Checks.esNulo(ofertaGencat) && Checks.esNulo(ofertaGencat.getIdOfertaAnterior())&& !ofertaGencat.getBorrado()) {
+						gencatApi.bloqueoExpedienteGENCAT(expediente, tramite);
+					}
 				}
 				
 			}

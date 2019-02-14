@@ -68,6 +68,9 @@ public class OfertaGencat implements Serializable, Auditable {
     @Column(name = "OFR_ID_ANT")
     private Long idOfertaAnterior;
 
+    @Column(name = "BORRADO")
+    private Boolean borrado;
+    
 	public Long getId() {
 		return id;
 	}
@@ -140,4 +143,13 @@ public class OfertaGencat implements Serializable, Auditable {
 		this.idOfertaAnterior = idOfertaAnterior;
 	}
 
+	public Boolean getBorrado() {
+		return borrado;
+	}
+
+	public void setEsborrado(Boolean borrado) {
+		this.borrado = borrado;
+	}
+	
+	
 }

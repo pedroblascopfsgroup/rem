@@ -21,6 +21,8 @@ import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ComunicacionGencat;
 import es.pfsgroup.plugin.rem.model.DtoAviso;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.OfertaGencat;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoComunicacionGencat;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSancionGencat;
@@ -39,38 +41,43 @@ public class ExpedienteAvisoAnuladoGencat implements ExpedienteAvisadorApi{
 		DtoAviso dtoAviso = new DtoAviso();
 		Boolean expBloqueado = false;
 		if(!Checks.esNulo(expediente) && !Checks.esNulo(expediente.getOferta())){
-			List<ActivoOferta> actOfrList = expediente.getOferta().getActivosOferta();
-			for (ActivoOferta actOfr : actOfrList){
-				Activo activo = actOfr.getPrimaryKey().getActivo();
-				Order order = new Order(OrderType.DESC,"id");
-				List<ComunicacionGencat> comGenLista = genericDao.getListOrdered(ComunicacionGencat.class, order ,genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId()));
-				if(!Checks.estaVacio(comGenLista)) {
-					ComunicacionGencat comGen = comGenLista.get(0);
-				
-					List<ActivoTramite> actTraList = genericDao.getList(ActivoTramite.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId()));
-					if(!Checks.estaVacio(actTraList)){
-						for (ActivoTramite activoTramite : actTraList) {
-							if(ActivoTramiteApi.CODIGO_TRAMITE_COMUNICACION_GENCAT.equals(activoTramite.getTipoTramite().getCodigo())){
-								if(!Checks.esNulo(activoTramite.getEstadoTramite()) && (DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CERRADO.equals(activoTramite.getEstadoTramite().getCodigo()) || DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CANCELADO.equals(activoTramite.getEstadoTramite().getCodigo()))){
-									expBloqueado = true;
-								}else{
-									expBloqueado = false;
-									break;
+			
+			Oferta oferta = expediente.getOferta();	
+			OfertaGencat ofertaGencat = genericDao.get(OfertaGencat.class,genericDao.createFilter(FilterType.EQUALS,"oferta", oferta));
+
+			if(!Checks.esNulo(ofertaGencat) && Checks.esNulo(ofertaGencat.getIdOfertaAnterior()) && !ofertaGencat.getBorrado()) {
+				List<ActivoOferta> actOfrList = expediente.getOferta().getActivosOferta();
+				for (ActivoOferta actOfr : actOfrList){
+					Activo activo = actOfr.getPrimaryKey().getActivo();
+					Order order = new Order(OrderType.DESC,"id");
+					List<ComunicacionGencat> comGenLista = genericDao.getListOrdered(ComunicacionGencat.class, order ,genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId()));
+					if(!Checks.estaVacio(comGenLista)) {
+						ComunicacionGencat comGen = comGenLista.get(0);
+					
+						List<ActivoTramite> actTraList = genericDao.getList(ActivoTramite.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId()));
+						if(!Checks.estaVacio(actTraList)){
+							for (ActivoTramite activoTramite : actTraList) {
+								if(ActivoTramiteApi.CODIGO_TRAMITE_COMUNICACION_GENCAT.equals(activoTramite.getTipoTramite().getCodigo())){
+									if(!Checks.esNulo(activoTramite.getEstadoTramite()) && (DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CERRADO.equals(activoTramite.getEstadoTramite().getCodigo()) || DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CANCELADO.equals(activoTramite.getEstadoTramite().getCodigo()))){
+										expBloqueado = true;
+									}else{
+										expBloqueado = false;
+										break;
+									}
 								}
 							}
 						}
-					}
-					
-					if (!Checks.esNulo(comGen) && expBloqueado && !Checks.esNulo(comGen.getSancion()) &&
-							DDSancionGencat.COD_EJERCE.equals(comGen.getSancion().getCodigo()) && activoDao.isActivoAfectoGENCAT(activo.getId())) {
-						dtoAviso.setId(String.valueOf(expediente.getId()));
-						dtoAviso.setDescripcion("Expediente anulado por GENCAT");
-						break;
+						
+						if (!Checks.esNulo(comGen) && expBloqueado && !Checks.esNulo(comGen.getSancion()) &&
+								DDSancionGencat.COD_EJERCE.equals(comGen.getSancion().getCodigo()) && activoDao.isActivoAfectoGENCAT(activo.getId())) {
+							dtoAviso.setId(String.valueOf(expediente.getId()));
+							dtoAviso.setDescripcion("Expediente anulado por GENCAT");
+							break;
+						}
 					}
 				}
 			}
 		}
-
 		return dtoAviso;
 	}
 

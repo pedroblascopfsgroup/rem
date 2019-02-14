@@ -361,7 +361,17 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoForm', {
 			    				name: 'idVisita',
 			    				bind: {
 									value: '{gencat.idVisita}'									
-								}
+								},
+								listeners: {
+							        click: {
+							            element: 'el', 
+							            fn: 'onClickAbrirVisitaActivo'
+							        }
+							    },
+							    style:{
+							    	cursor: 'pointer',
+							    	'text-decoration': 'underline'
+							    }
 			    			},
 			    			{
 			    				xtype: "comboboxfieldbase",

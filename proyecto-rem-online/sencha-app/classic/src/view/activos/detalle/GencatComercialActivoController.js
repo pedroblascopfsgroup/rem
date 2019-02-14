@@ -179,7 +179,7 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoController', {
 		me.fireEvent("downloadFile", config);
 	},
 	
-    onClickAbrirExpedienteComercial: function() { 
+onClickAbrirExpedienteComercial: function() { 
     	
     	var me = this;
     	var gencat = me.getViewModel().data.gencat;
@@ -207,7 +207,37 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoController', {
 		 	}
 	 });
     		    	     
-  },borrarDocumentoAdjunto: function(grid, record) {
+  },
+  onClickAbrirVisitaActivo: function() {
+  	var me = this;
+  	var gencat = me.getViewModel().data.gencat;
+  	var numVisita = gencat.data.idVisita;
+  	
+  	Ext.Ajax.request({
+		url: $AC.getRemoteUrl('visitas/getVisitaById'),
+		params: {numVisitaRem: numVisita},
+	     method: 'POST',
+	     success: function(response, opts){
+	    	 var record = JSON.parse(response.responseText);
+	    		if(record.success === 'true') {
+					var ventana = Ext.create('HreRem.view.comercial.visitas.VisitasComercialDetalle',{detallevisita: record});
+					me.getView().up('mainviewport').add(ventana);
+					ventana.show();
+				} else {
+					me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+				}
+			},
+	    
+	     failure: function (a, operation) {
+	 				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));334500
+	 	},
+	    callback: function(record, operation) {
+			me.getView().unmask();
+	    }
+	 });
+  		    	     
+}
+	,borrarDocumentoAdjunto: function(grid, record) {
 		var me = this,
 		idActivo = me.getViewModel().get("activo.id");
 		me.getView().mask(HreRem.i18n("msg.mask.loading"));

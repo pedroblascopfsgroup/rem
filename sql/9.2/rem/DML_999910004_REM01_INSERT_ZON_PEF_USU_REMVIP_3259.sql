@@ -1,7 +1,7 @@
 --/*
 --#########################################
 --## AUTOR=Rasul Akhmeddibirov
---## FECHA_CREACION=20190205
+--## FECHA_CREACION=20180207
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=REMVIP-3259
@@ -27,66 +27,104 @@ DECLARE
     ERR_NUM NUMBER;-- Numero de errores
     ERR_MSG VARCHAR2(2048);-- Mensaje de error
     PL_OUTPUT VARCHAR2(32000 CHAR);
+	V_EXISTE_PERFIL NUMBER(16); -- Vble. para validar la existencia de los nuevos perfiles.
+	V_EXISTE_USUARIO NUMBER(16); -- Vble. para validar la existencia de los usuarios.
 	V_NUM_FILAS NUMBER(16); -- Vble. para validar la existencia de un registro.
+	
 
-
-	TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
+	TYPE T_USUARIO IS TABLE OF VARCHAR2(150);
 
     -- FILAS A MODIFICAR O CREAR
-    TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
-    V_TMP_TIPO_DATA T_TIPO_DATA;
-    V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-                    --USU_USERNAME
-        T_TIPO_DATA('''acampos'''),
-        T_TIPO_DATA('''mblascop'''),
-        T_TIPO_DATA('''acarabal'''),
-        T_TIPO_DATA('''dmontero'''),
-        T_TIPO_DATA('''saragon''')
+    TYPE T_ARRAY_USUARIOS IS TABLE OF T_USUARIO;
+	
+    V_USUARIOS T_ARRAY_USUARIOS := T_ARRAY_USUARIOS(
+                  --USUARIO			-- PERFIL
+        T_USUARIO('acampos', 		'SUPERFORM'),
+
+        T_USUARIO('mblascop', 		'SUPERGESTACT'),
+
+        T_USUARIO('acarabal', 		'SUPERADMIN'),
+		T_USUARIO('dmontero', 		'SUPERADMIN'),
+
+        T_USUARIO('imartin', 		'SUPERMIDDLE'),
+		T_USUARIO('lclaret', 		'SUPERMIDDLE'),
+		T_USUARIO('rsanchez', 		'SUPERMIDDLE'),
+		T_USUARIO('mruiz', 			'SUPERMIDDLE'),
+		T_USUARIO('afraile', 		'SUPERMIDDLE'),
+
+        T_USUARIO('saragon', 		'SUPERPUBLI'),
+
+		T_USUARIO('csanchezb', 		'SUPERFRONT'),
+		T_USUARIO('lmartinga', 		'SUPERFRONT'),
+		T_USUARIO('jdominguezr', 	'SUPERFRONT'),
+		T_USUARIO('jgracia', 		'SUPERFRONT'),
+
+		T_USUARIO('fvaldes', 		'SUPERPLANIF'),
+		T_USUARIO('dgonzalez', 		'SUPERPLANIF')
     );
 
+	V_TMP_USUARIO T_USUARIO;
 
 BEGIN
 
-	DBMS_OUTPUT.PUT_LINE('[INICIO] Añadimos el perfil SUPERUSUARIONECOGIO a los usuarios acampos, mblascop, acarabal, dmontero, saragon.');
-
-	FOR I IN V_TIPO_DATA.FIRST .. V_TIPO_DATA.LAST
+	FOR I IN V_USUARIOS.FIRST .. V_USUARIOS.LAST
     LOOP
 
-		V_TMP_TIPO_DATA := V_TIPO_DATA(I);
+		V_TMP_USUARIO := V_USUARIOS(I);
 
-		DBMS_OUTPUT.PUT_LINE('[INFO] Comprobamos si existe el usuario ' ||TRIM(V_TMP_TIPO_DATA(1))|| ' con el perfil SUPERUSUARIONECOGIO.');
-		
-		V_SQL := 'SELECT COUNT(*) 
-				FROM '||V_ESQUEMA||'.ZON_PEF_USU 
-				WHERE PEF_ID = (SELECT PEF_ID FROM '||V_ESQUEMA||'.PEF_PERFILES WHERE PEF_CODIGO = ''SUPERUSUARIONECOGIO'')
-				AND USU_ID = (SELECT USU_ID FROM '||V_ESQUEMA_M||'.USU_USUARIOS WHERE USU_USERNAME = '||TRIM(V_TMP_TIPO_DATA(1))||')';
-		EXECUTE IMMEDIATE V_SQL INTO V_NUM_FILAS;
-	
-		IF V_NUM_FILAS = 0 THEN
+		DBMS_OUTPUT.PUT_LINE('[INFO] Comprobamos que existe el perfil '||TRIM(V_TMP_USUARIO(2))||'.');
 
-				V_SQL := 	'INSERT INTO '||V_ESQUEMA||'.ZON_PEF_USU (
-								ZON_ID,
-								PEF_ID,
-								USU_ID,
-								ZPU_ID,
-								USUARIOCREAR,
-								FECHACREAR
-							) VALUES (
-								19504,
-								(SELECT PEF_ID FROM '||V_ESQUEMA||'.PEF_PERFILES WHERE PEF_CODIGO = ''SUPERUSUARIONECOGIO''),
-								(SELECT USU_ID FROM '||V_ESQUEMA_M||'.USU_USUARIOS WHERE USU_USERNAME = '||TRIM(V_TMP_TIPO_DATA(1))||'),
-								S_ZON_PEF_USU.NEXTVAL,
-								''REMVIP-3259'',
-								SYSDATE
-							)';
+		V_SQL := 'SELECT COUNT(*) PEF_ID FROM '||V_ESQUEMA||'.PEF_PERFILES WHERE PEF_CODIGO = '''||TRIM(V_TMP_USUARIO(2))||''' ';
+		EXECUTE IMMEDIATE V_SQL INTO V_EXISTE_PERFIL;
 
-				EXECUTE IMMEDIATE V_SQL;
-				DBMS_OUTPUT.PUT_LINE('  [INFO] Se han insertado '||SQL%ROWCOUNT||' en la tabla ZON_PEF_USU.');
+
+		DBMS_OUTPUT.PUT_LINE('[INFO] Comprobamos que existe el usuario '||TRIM(V_TMP_USUARIO(2))||'.');
+
+		V_SQL := 'SELECT COUNT(*) PEF_ID FROM '||V_ESQUEMA_M||'.USU_USUARIOS WHERE USU_USERNAME = '''||TRIM(V_TMP_USUARIO(1))||''' ';
+		EXECUTE IMMEDIATE V_SQL INTO V_EXISTE_USUARIO;
+
+		IF V_EXISTE_PERFIL = 1 AND V_EXISTE_USUARIO = 1 THEN
+
+			DBMS_OUTPUT.PUT_LINE('[INFO] Comprobamos si existe el usuario ' ||TRIM(V_TMP_USUARIO(1))|| ' con el perfil '||TRIM(V_TMP_USUARIO(2))||'.');
+
+			V_SQL := 'SELECT COUNT(*) 
+					FROM '||V_ESQUEMA||'.ZON_PEF_USU 
+					WHERE PEF_ID = (SELECT PEF_ID FROM '||V_ESQUEMA||'.PEF_PERFILES WHERE PEF_CODIGO = '''||TRIM(V_TMP_USUARIO(2))||''')
+					AND USU_ID = (SELECT USU_ID FROM '||V_ESQUEMA_M||'.USU_USUARIOS WHERE USU_USERNAME = '''||TRIM(V_TMP_USUARIO(1))||''')';
+
+			EXECUTE IMMEDIATE V_SQL INTO V_NUM_FILAS;
 		
-		ELSE
+			IF V_NUM_FILAS = 0 THEN
+
+					V_SQL := 	'INSERT INTO '||V_ESQUEMA||'.ZON_PEF_USU (
+									ZON_ID,
+									PEF_ID,
+									USU_ID,
+									ZPU_ID,
+									USUARIOCREAR,
+									FECHACREAR
+								) VALUES (
+									19504,
+									(SELECT PEF_ID FROM '||V_ESQUEMA||'.PEF_PERFILES WHERE PEF_CODIGO = '''||TRIM(V_TMP_USUARIO(2))||'''),
+									(SELECT USU_ID FROM '||V_ESQUEMA_M||'.USU_USUARIOS WHERE USU_USERNAME = '''||TRIM(V_TMP_USUARIO(1))||'''),
+									S_ZON_PEF_USU.NEXTVAL,
+									''REMVIP-3259'',
+									SYSDATE
+								)';
+
+					EXECUTE IMMEDIATE V_SQL;
+					DBMS_OUTPUT.PUT_LINE('  [INFO] Se han insertado '||SQL%ROWCOUNT||' en la tabla ZON_PEF_USU.');
+			
+			ELSE
+			
+				DBMS_OUTPUT.PUT_LINE('[FIN] El registro ya existe.');
+			
+			END IF;
 		
-			DBMS_OUTPUT.PUT_LINE('[FIN] El registro ya existe.');
-		
+		ELSE 
+
+			DBMS_OUTPUT.PUT_LINE('  [INFO] No se ha encontrado el perfil/usuario '||TRIM(V_TMP_USUARIO(2))||'/'||TRIM(V_TMP_USUARIO(1))|| '.');
+
 		END IF;
 
 	END LOOP;

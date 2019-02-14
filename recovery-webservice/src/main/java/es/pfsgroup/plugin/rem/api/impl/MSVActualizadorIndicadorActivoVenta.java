@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.rem.api.impl;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.text.ParseException;
+import java.util.ArrayList;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -17,6 +18,7 @@ import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
 import es.pfsgroup.framework.paradise.bulkUpload.model.ResultadoProcesarFila;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVHojaExcel;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
+import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoPublicacion;
@@ -36,6 +38,9 @@ public class MSVActualizadorIndicadorActivoVenta extends AbstractMSVActualizador
 	
 	@Autowired
 	private GenericABMDao genericDao;
+	
+	@Autowired
+	private ActivoAdapter activoAdapter;
 
 	@Override
 	public String getValidOperation() {
@@ -84,6 +89,8 @@ public class MSVActualizadorIndicadorActivoVenta extends AbstractMSVActualizador
 			return getNotFound(fila);
 		}
 		
+		this.actualizarEstadoPublicacion(activo);
+		
 		return new ResultadoProcesarFila();
 	}
 	
@@ -96,6 +103,12 @@ public class MSVActualizadorIndicadorActivoVenta extends AbstractMSVActualizador
 		
 		return resultado;
 		
+	}
+	
+	//HREOS-5433. Los registros de la fila son correctos. Se lanza el SP_CAMBIO_ESTADO_PUBLICACION.
+	private void actualizarEstadoPublicacion(Activo activo) {
+		@SuppressWarnings("unused")
+		boolean result = activoAdapter.actualizarEstadoPublicacionActivo(activo.getId());
 	}
 	
 }

@@ -27,7 +27,6 @@ public class OfertaDto implements Serializable {
 	private Long idVisitaRem;
 	@NotNull(groups = { Insert.class })
 	private Long idClienteRem;
-	@NotNull(groups = { Insert.class })
 	private Long idActivoHaya;
 	@NotNull(groups = { Insert.class })
 	private Double importe;

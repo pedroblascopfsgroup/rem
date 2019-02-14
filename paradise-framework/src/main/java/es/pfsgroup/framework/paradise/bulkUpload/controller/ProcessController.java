@@ -359,7 +359,7 @@ public class ProcessController extends ParadiseJsonController {
 			parameters.put("idTipoOperacion", fileItem.getParameter("idTipoOperacion"));
 			fileItem.setParameters(parameters);
 
-			result = processAdapter.subirFicheroParaProcesar(fileItem);
+			processAdapter.subirFicheroParaProcesar(fileItem);
 
 			// MSVHojaExcel exc =
 			// excelParser.getExcel(fileItem.getFileItem().getFile());

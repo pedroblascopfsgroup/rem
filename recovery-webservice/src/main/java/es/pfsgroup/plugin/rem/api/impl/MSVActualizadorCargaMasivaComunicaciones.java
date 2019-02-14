@@ -137,7 +137,8 @@ public class MSVActualizadorCargaMasivaComunicaciones extends AbstractMSVActuali
 	private ActivoTramite obtenerTramiteGencat(Long idNumActivo) {
 		Filter filtroTramitesDelactivo = genericDao.createFilter(FilterType.EQUALS, "activo.numActivo", idNumActivo);
 		Filter filtroTPOGencat = genericDao.createFilter(FilterType.EQUALS, "tipoTramite.codigo", TIPO_TRAMITE_GENCAT);
-		return genericDao.get(ActivoTramite.class, filtroTramitesDelactivo, filtroTPOGencat);
+		Filter filtroTramiteActual = genericDao.createFilter(FilterType.NULL, "fechaFin");
+		return genericDao.get(ActivoTramite.class, filtroTramitesDelactivo, filtroTPOGencat, filtroTramiteActual);
 	}
 	
 }

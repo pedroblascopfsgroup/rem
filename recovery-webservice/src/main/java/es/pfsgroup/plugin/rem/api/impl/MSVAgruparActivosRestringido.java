@@ -3,12 +3,9 @@ package es.pfsgroup.plugin.rem.api.impl;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.annotation.Resource;
 
-import es.pfsgroup.plugin.rem.model.DtoDatosPublicacionAgrupacion;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -17,22 +14,21 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import es.pfsgroup.commons.utils.Checks;
-
 import es.pfsgroup.framework.paradise.bulkUpload.adapter.ProcessAdapter;
 import es.pfsgroup.framework.paradise.bulkUpload.liberators.MSVLiberator;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
+import es.pfsgroup.framework.paradise.bulkUpload.model.ResultadoProcesarFila;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVHojaExcel;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.adapter.AgrupacionAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
-import es.pfsgroup.framework.paradise.bulkUpload.model.ResultadoProcesarFila;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
-import es.pfsgroup.plugin.rem.model.DtoDatosPublicacionActivo;
+import es.pfsgroup.plugin.rem.model.DtoDatosPublicacionAgrupacion;
 
 @Component
 public class MSVAgruparActivosRestringido extends AbstractMSVActualizador implements MSVLiberator {
@@ -79,7 +75,7 @@ public class MSVAgruparActivosRestringido extends AbstractMSVActualizador implem
 	}
 
 	@Override
-	public void postProcesado(MSVHojaExcel exc) throws NumberFormatException, IllegalArgumentException, IOException, ParseException {
+	public void postProcesado(MSVHojaExcel exc) throws Exception {
 		TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
 		try{
 			if (this.getValidOperation().equals(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_AGRUPATION_RESTRICTED)) {

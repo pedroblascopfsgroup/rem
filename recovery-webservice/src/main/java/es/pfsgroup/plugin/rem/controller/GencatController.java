@@ -1,7 +1,5 @@
 package es.pfsgroup.plugin.rem.controller;
 
-import java.io.IOException;
-
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -28,8 +26,6 @@ import es.pfsgroup.plugin.rem.model.DtoAltaVisita;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoGencatSave;
 import es.pfsgroup.plugin.rem.model.DtoNotificacionActivo;
-import es.pfsgroup.plugin.rem.restclient.exception.RestClientException;
-import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientException;
 
 
 @Controller
@@ -370,27 +366,12 @@ public class GencatController {
 		
 		try {
 			model.put("data", gencatApi.altaVisitaComunicacion(dtoAltaVisita));
-			model.put("success", true);
-		}
-		catch (RestClientException e) {
-			logger.error("error en gencatController", e);
-			model.put("success", false);
-			model.put("errorMessage", e.getMessage());
-		}
-		catch (HttpClientException e) {
-			logger.error("error en gencatController", e);
-			model.put("success", false);
-			model.put("errorMessage", e.getMessage());
-		}
-		catch (IOException e) {
-			logger.error("error en gencatController", e);
-			model.put("success", false);
-			model.put("errorMessage", e.getMessage());
+			model.put(RESPONSE_SUCCESS_KEY, true);
 		}
 		catch (Exception e) {
 			logger.error("error en gencatController", e);
-			model.put("success", false);
-			model.put("errorMessage", "Ha habido un problema al dar de alta la visita.");
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put("errorMessage", e.getMessage());
 		}
 		
 		return createModelAndViewJson(model);

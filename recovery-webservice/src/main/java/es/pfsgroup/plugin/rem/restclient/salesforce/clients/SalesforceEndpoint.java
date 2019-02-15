@@ -19,35 +19,40 @@ public class SalesforceEndpoint {
 	private static final String DEFAULT_METHOD = "POST";
 	private static final String DEFAULT_CHARSET = "UTF-8";
 	private static final String DEFAULT_TIMEOUT = "10";
-	private static final String DEFAULT_BASE_URL = "http://unknown";
-	private static final String DEFAULT_ENDPOINT_VALUE = "unknown";
-	private static final String DEFAULT_USERNAME = "unknown";
-	private static final String DEFAULT_PASSWORD = "unknown";
-	private static final String DEFAULT_CLIENT_ID = "0123456789";
-	private static final String DEFAULT_CLIENT_SECRET = "0123456789";
 	private static final String GRANT_LOGIN = "password";
+	
+	//ERRORES
+	private static String ERROR_CLIENTID_CLIENTSECRET = "configura el clientId y el clientSecret";
+	private static String ERROR_USER_PASS = "configura el user y el password";
+	private static String ERROR_TOKENBASEURL = "configura la tokenBaseUrl";
+	private static String ERROR_TOKENENDPOINTURL = "configura el tokenEndpointUrl";
+	private static String ERROR_BASEURL = "configura la baseUrl";
+	private static String ERROR_ENDPOINTURL = "configura el endpointUrl";
 	
 	private String httpMethod;
 	private int timeout;
-	private String baseUrl;
-	private String endpointUrl;
+	private String tokenBaseUrl;
+	private String tokenEndpointUrl;
 	private String user;
 	private String password;
 	private String clientId;
 	private String clientSecret;
-	private String fullUrl;
+	private String baseUrl;
+	private String endpointUrl;
 	
-	public SalesforceEndpoint(String httpMethod, int timeout, String baseUrl, String endpointUrl, String user,
-			String password, String clientId, String clientSecret) {
+	public SalesforceEndpoint(String httpMethod, int timeout, String tokenBaseUrl, String tokenEndpointUrl, String user,
+			String password, String clientId, String clientSecret, String baseUrl, String endpointUrl) {
 		super();
 		this.httpMethod = httpMethod;
 		this.timeout = timeout;
-		this.baseUrl = baseUrl;
-		this.endpointUrl = endpointUrl;
+		this.tokenBaseUrl = tokenBaseUrl;
+		this.tokenEndpointUrl = tokenEndpointUrl;
 		this.user = user;
 		this.password = password;
 		this.clientId = clientId;
 		this.clientSecret = clientSecret;
+		this.baseUrl = baseUrl;
+		this.endpointUrl = endpointUrl;
 	}
 
 	/**
@@ -57,6 +62,15 @@ public class SalesforceEndpoint {
 	 */
 	public static SalesforceEndpoint getTokenEndPoint(Properties appProperties) {
 		return createSalesforceEndpointInstance(appProperties, SalesforceRESTDevonProperties.GET_TOKEN);
+	}
+	
+	/**
+	 * Método factoría para obtener el endpoint de Salesforce.
+	 * 
+	 * @return
+	 */
+	public static SalesforceEndpoint getEndPoint(Properties appProperties, String endpointKey) {
+		return createSalesforceEndpointInstance(appProperties, endpointKey);
 	}
 	
 	/**
@@ -91,21 +105,16 @@ public class SalesforceEndpoint {
 	 * 
 	 * @return
 	 */
-	public String getEndpointUrl() {
-		return this.endpointUrl;
+	public String getTokenEndpointUrl() {
+		return this.tokenEndpointUrl;
 	}
 	
-	public String getBaseUrl() {
-		return baseUrl;
+	public String getTokenBaseUrl() {
+		return tokenBaseUrl;
 	}
 	
-	public String getFullUrl() {
-		if (fullUrl == null) {
-			return this.baseUrl.concat(this.endpointUrl);
-		} else {
-			return fullUrl;
-		}
-		
+	public String getTokenFullUrl() {
+		return this.tokenBaseUrl.concat(this.tokenEndpointUrl);
 	}
 
 	public String getUser() {
@@ -125,7 +134,7 @@ public class SalesforceEndpoint {
 	}
 	
 	public String getFullTokenUrl() {
-		String fullUrl = getFullUrl();
+		String fullUrl = getTokenFullUrl();
 		fullUrl += "?grant_type=" + GRANT_LOGIN;
 		fullUrl += "&client_id=" + getClientId();
 		fullUrl += "&client_secret=" + getClientSecret();
@@ -133,20 +142,35 @@ public class SalesforceEndpoint {
 		fullUrl += "&password=" + getPassword();
 		return fullUrl;
 	}
+	
+	public String getFullUrl() {
+		return this.baseUrl.concat(this.endpointUrl);
+	}
 
 	@Override
 	public String toString() {
-		return "SalesforceEndpoint [" + httpMethod + " => " + this.getEndpointUrl() + "]";
+		return "SalesforceEndpoint [" + httpMethod + " => " + this.getTokenEndpointUrl() + "]";
 	}
 	
 	private static SalesforceEndpoint createSalesforceEndpointInstance(Properties appProperties, String endpointKey) {
 		
+		String tokenBaseUrl = "";
+		String tokenEndpointUrl = "";
+		String baseUrl = "";
+		String endpointUrl = "";
+		if (SalesforceRESTDevonProperties.GET_TOKEN.equals(endpointKey)) {
+			tokenBaseUrl = SalesforceRESTDevonProperties.extractDevonProperty(appProperties,
+					SalesforceRESTDevonProperties.TOKEN_BASE_URL, null);
+			tokenEndpointUrl = SalesforceRESTDevonProperties.extractDevonProperty(appProperties,
+					SalesforceRESTDevonProperties.GET_TOKEN, null);
+		}
+		else {
+			endpointUrl = SalesforceRESTDevonProperties.extractDevonProperty(appProperties,
+					endpointKey, null);
+		}
+		
 		String timeout = SalesforceRESTDevonProperties.extractDevonProperty(appProperties,
 				SalesforceRESTDevonProperties.TIMEOUT_CONEXION, DEFAULT_TIMEOUT);
-		String baseUrl = SalesforceRESTDevonProperties.extractDevonProperty(appProperties,
-				SalesforceRESTDevonProperties.BASE_URL, null);
-		String endpoint = SalesforceRESTDevonProperties.extractDevonProperty(appProperties,
-				endpointKey, null);
 		String user = SalesforceRESTDevonProperties.extractDevonProperty(appProperties,
 				SalesforceRESTDevonProperties.USERNAME, null);
 		String password = SalesforceRESTDevonProperties.extractDevonProperty(appProperties,
@@ -156,30 +180,53 @@ public class SalesforceEndpoint {
 		String clientSecret = SalesforceRESTDevonProperties.extractDevonProperty(appProperties,
 				SalesforceRESTDevonProperties.CLIENT_SECRET, null);
 		
-		return new SalesforceEndpoint(DEFAULT_METHOD, Integer.parseInt(timeout), baseUrl, endpoint, user, password, clientId, clientSecret);
+		return new SalesforceEndpoint(DEFAULT_METHOD, Integer.parseInt(timeout), tokenBaseUrl, 
+				tokenEndpointUrl, user, password, clientId, clientSecret, baseUrl, endpointUrl);
 	}
 	
-	public void validateCallTokenEndpoint() throws RestConfigurationException {
+	public void validateTokenEndpointCall() throws RestConfigurationException {
 		
 		if (this.clientId == null || this.clientId.isEmpty() || this.clientSecret == null || this.clientSecret.isEmpty()) {
-			throw new RestConfigurationException("configura el clientId y el clientSecret");
+			throw new RestConfigurationException(ERROR_CLIENTID_CLIENTSECRET);
 		}
 		
 		if (this.user == null || this.user.isEmpty() || this.password == null || this.password.isEmpty()) {
-			throw new RestConfigurationException("configura el user y el password");
+			throw new RestConfigurationException(ERROR_USER_PASS);
 		}
 		
+		if (this.tokenBaseUrl == null || this.tokenBaseUrl.isEmpty()) {
+			throw new RestConfigurationException(ERROR_TOKENBASEURL);
+		}
+		
+		if (this.tokenEndpointUrl == null || this.tokenEndpointUrl.isEmpty()) {
+			throw new RestConfigurationException(ERROR_TOKENENDPOINTURL);
+		}
+		
+	}
+	
+	public void validateEndpointCall() throws RestConfigurationException {
+		
 		if (this.baseUrl == null || this.baseUrl.isEmpty()) {
-			throw new RestConfigurationException("configura la baseUrl");
+			throw new RestConfigurationException(ERROR_BASEURL);
 		}
 		
 		if (this.endpointUrl == null || this.endpointUrl.isEmpty()) {
-			throw new RestConfigurationException("configura el endpointUrl");
+			throw new RestConfigurationException(ERROR_ENDPOINTURL);
 		}
 		
 	}
 
-	public void setFullUrl(String fullUrl) {
-		this.fullUrl = fullUrl;
+	public void setBaseUrl(String fullUrl) {
+		this.baseUrl = fullUrl;
 	}
+
+	public String getBaseUrl() {
+		return baseUrl;
+	}
+
+	public String getEndpointUrl() {
+		return endpointUrl;
+	}
+	
+	
 }

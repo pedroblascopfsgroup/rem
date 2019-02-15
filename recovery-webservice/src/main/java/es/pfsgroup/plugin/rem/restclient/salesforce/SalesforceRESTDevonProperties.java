@@ -12,9 +12,9 @@ import java.util.Properties;
 public class SalesforceRESTDevonProperties {
 
 	//Rutas
-	public static final String BASE_URL = "rest.client.salesforce.url.base";
+	public static final String TOKEN_BASE_URL = "rest.client.salesforce.url.base";
 	public static final String GET_TOKEN = "rest.client.salesforce.endpoint.login";
-	//public static final String ENVIO_VISITAS = "rest.client.salesforce.endpoint.visitas";
+	public static final String ALTA_VISITAS = "rest.client.salesforce.endpoint.alta.visitas";
 	
 	//Credenciales
 	public static final String USERNAME = "rest.client.salesforce.username";
@@ -22,6 +22,11 @@ public class SalesforceRESTDevonProperties {
 	public static final String TIMEOUT_CONEXION = "rest.client.salesforce.timeout.seconds";
 	public static final String CLIENT_ID = "rest.client.salesforce.client.id";
 	public static final String CLIENT_SECRET = "rest.client.salesforce.client.secret";
+	
+	/*
+	 * TODO: las contraseñas están puestas a pelo en el devon, hay que encriptarlas para mayor seguridad usando esto:
+	 * https://link-doc.pfsgroup.es/confluence/pages/viewpage.action?pageId=7114213
+	 */
 
 	//Este método extrae la propiedad pasada como parámetro del devon
 	public static String extractDevonProperty(Properties appProperties, String key, String defaultValue) {

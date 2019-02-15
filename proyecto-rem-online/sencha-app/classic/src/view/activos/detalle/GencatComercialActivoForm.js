@@ -389,7 +389,7 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoForm', {
 								width: 200,
 								handler: 'onClickSolicitarVisita',
 								bind: {
-									disabled: me.formDeHistorico || '{!gencat.usuarioValido}'
+									disabled: me.formDeHistorico || '{gencat.desactivarBotonSolicitarVisita}'
 								}
 							}
 						]

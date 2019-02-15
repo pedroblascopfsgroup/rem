@@ -20,6 +20,8 @@ import es.pfsgroup.plugin.rem.model.DtoOfertasAsociadasActivo;
 import es.pfsgroup.plugin.rem.model.DtoReclamacionActivo;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.Visita;
+import es.pfsgroup.plugin.rem.rest.dto.SalesforceResponseDto;
 import es.pfsgroup.plugin.rem.restclient.exception.RestClientException;
 import es.pfsgroup.plugin.rem.restclient.httpclient.HttpClientException;
 
@@ -200,11 +202,41 @@ public interface GencatApi {
 	public void informarFechaSancion(ComunicacionGencat comunicacionGencat);
 	
 	/**
-	 * Crea una visita y la asocia a la comunicación del activo pasado como parámetro
+	 * Da de alta una visita en Salesforce y la guarda en la BBDD de REM
 	 * 
-	 * @param id del activo al que pertenece la comunicación
-	 * @return DtoReclamacionActivo
+	 * @param DtoAltaVisita visita que se quiere dar de alta y enviar a Salesforce
+	 * @return DtoAltaVisita
 	 */
-	public DtoAltaVisita altaVisitaComunicacion(DtoAltaVisita dtoAltaVisita) throws IOException, RestClientException, HttpClientException;
+	public DtoAltaVisita altaVisitaComunicacion(DtoAltaVisita dtoAltaVisita) throws Exception;
+	
+	/**
+	 * Valida que los campos obligatorios del formulario esten rellenos, que el activo tenga una comunicacion y que
+	 * no haya ya una visita creada.
+	 * 
+	 * @param DtoAltaVisita dto de la visita que queremos guardar
+	 * @return ComunicacionGencat
+	 */
+	public ComunicacionGencat validateAltaVisita(DtoAltaVisita dtoAltaVisita);
+	
+	/**
+	 * Guarda la visita en la BBDD de REM y la asocia con el idSalesforce que nos devuelva Haya
+	 * 
+	 * @param ComunicacionGencat comunicacion a la que se asociara la visita
+	 * @param DtoAltaVisita dto de la visita que queremos guardar
+	 * @param SalesforceResponseDto respuesta de salesforce con el idSalesforce
+	 * @return DtoAltaVisita
+	 */
+	public DtoAltaVisita createVisitaComunicacion(ComunicacionGencat comunicacionGencat, DtoAltaVisita dtoAltaVisita, SalesforceResponseDto salesforceResponseDto);
+	
+	/**
+	 * Metodo que usara el WS de alta de visitas de webcom para asociar las visitas que cree a la
+	 * comunicacion del activo pasado como parametro y su idSalesforce
+	 * 
+	 * @param idActivo La id del activo al que pertenece la comunicación
+	 * @param idSalesforce La id que tiene la visita en Salesforce
+	 * @param visitaInsertada La visita que queremos asociar con la comunicacion
+	 * @return void
+	 */
+	public void updateVisitaComunicacion(Long idActivo, String idSalesforce, Visita visitaInsertada);
 	
 }

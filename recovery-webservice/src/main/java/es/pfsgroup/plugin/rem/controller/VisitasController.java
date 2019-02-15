@@ -62,28 +62,26 @@ public class VisitasController {
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST, value = "/visitas")
 	public void saveOrUpdateVisita(ModelMap model, RestRequestWrapper request, HttpServletResponse response) {
+		
 		VisitaRequestDto jsonData = null;
 		ArrayList<Map<String, Object>> listaRespuesta = new ArrayList<Map<String, Object>>();
 		JSONObject jsonFields = null;
-
+		
 		try {
-
 			jsonFields = request.getJsonObject();
 			jsonData = (VisitaRequestDto) request.getRequestData(VisitaRequestDto.class);
 			List<VisitaDto> listaVisitaDto = jsonData.getData();
 
-
 			if (Checks.esNulo(jsonFields) && jsonFields.isEmpty()) {
 				throw new Exception(RestApi.REST_MSG_MISSING_REQUIRED_FIELDS);
-
-			} else {
+			} 
+			else {
 				listaRespuesta = visitaApi.saveOrUpdateVisitas(listaVisitaDto, jsonFields);
 				model.put("id", jsonFields.get("id"));
 				model.put("data", listaRespuesta);
 				model.put("error", "null");
-
 			}
-
+			
 		} catch (Exception e) {
 			logger.error("Error visitas", e);
 			request.getPeticionRest().setErrorDesc(e.getMessage());

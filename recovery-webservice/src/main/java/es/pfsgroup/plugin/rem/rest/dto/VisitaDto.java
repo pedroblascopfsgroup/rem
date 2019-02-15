@@ -66,6 +66,8 @@ public class VisitaDto implements Serializable {
 	private Long idUsuarioRemAccion;
 	private Date fecha;
 	
+	private String idLeadSalesforce;
+	
 	//Se añaden nuevos atributos petición HREOS-1396
 	@Size(max=14,groups = { Insert.class, Update.class })
 	private String telefonoContactoVisitas;
@@ -187,5 +189,12 @@ public class VisitaDto implements Serializable {
 		this.visitaApiCustodio = visitaApiCustodio;
 	}
 	*/
+	
+	public String getIdLeadSalesforce() {
+		return idLeadSalesforce;
+	}
+	public void setIdLeadSalesforce(String idLeadSalesforce) {
+		this.idLeadSalesforce = idLeadSalesforce;
+	}
 	
 }

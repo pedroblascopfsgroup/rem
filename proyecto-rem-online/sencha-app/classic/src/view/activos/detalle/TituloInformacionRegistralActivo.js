@@ -799,7 +799,7 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 					            		value: '{datosRegistrales.calificacionNegativa}'
 					            	},
 						        	listeners : {
-						        	    change: 'onChangeCalificacionNegativa',
+						        	    change: 'onChangeCalificacionNegativa'
 						        								        	
 						        	}
 						        },

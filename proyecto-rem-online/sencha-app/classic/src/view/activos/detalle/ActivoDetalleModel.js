@@ -7,7 +7,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
     'HreRem.model.Carga', 'HreRem.model.Llaves', 'HreRem.model.PreciosVigentes','HreRem.model.VisitasActivo',
     'HreRem.model.OfertaActivo', 'HreRem.model.PropuestaActivosVinculados', 'HreRem.model.HistoricoMediadorModel','HreRem.model.AdjuntoActivoPromocion',
     'HreRem.model.MediadorModel', 'HreRem.model.MovimientosLlave', 'HreRem.model.ActivoPatrimonio', 'HreRem.model.HistoricoAdecuacionesPatrimonioModel',
-    'HreRem.model.ImpuestosActivo','HreRem.model.OcupacionIlegal','HreRem.model.HistoricoDestinoComercialModel'],
+    'HreRem.model.ImpuestosActivo','HreRem.model.OcupacionIlegal','HreRem.model.HistoricoDestinoComercialModel','HreRem.model.ActivosAsociados'],
 
     data: {
     	activo: null,
@@ -109,6 +109,13 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 	            return 'app-tbfiedset-ico icono-okn';
 	        }
 		 },
+		 
+		 esActivoAlquilado : function(get) {
+			 var comboEstadoAlquiler = get('patrimonio.estadoAlquiler');
+
+			return comboEstadoAlquiler == CONST.COMBO_ESTADO_ALQUILER["ALQUILADO"];
+		 },
+		 
 
 		 getIconClsestadoAlquiler : function(get) {
 			var estadoAlquiler = get('activo.estadoAlquiler');
@@ -544,23 +551,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
             return !(admisionOk && gestionOk && informeComercialAprobado && ceeOk && (adecuacionOk=="01"||adecuacionOk=="03") && (publicarSinPrecioAlquiler || precioRentaWeb));
         },
 
-        esReadonlyChkbxPublicar: function(get){
-			var activoVendido = get('activo.isVendido');
-
-			var ponerPublicarAReadonly = false;
-			if(activoVendido) {
-				ponerPublicarAReadonly = true;
-			}
-
-			return ponerPublicarAReadonly;
-		},
-
-		esEditableChkbxComercializar: function(get){
-			var activoVendido = get('activo.isVendido');
-
-			return activoVendido;
-		},
-
 		esVisibleTipoPublicacionVenta: function(get){
 			var estadoVenta = get('datospublicacionactivo.estadoPublicacionVenta');
 			var tipoPublicacionVenta = get('datospublicacionactivo.tipoPublicacionVentaDescripcion');
@@ -619,6 +609,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			return (Ext.isEmpty(comboEstadoAlquiler) && comboEstadoAlquiler == CONST.COMBO_ESTADO_ALQUILER["LIBRE"]);
 		},
 
+
 		esTipoEstadoAlquilerAlquilado: function(get){
 			var estadoAlquilerCodigo = get('situacionPosesoria.tipoEstadoAlquiler');
 
@@ -632,8 +623,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			 }
 			 return false;
 		 }
-	},
 
+	},
+	
     stores: {
     		
     		comboProvincia: {
@@ -1125,6 +1117,18 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		    	autoLoad: false
 	    	},
 	    	
+	    	storeActivosAsociados: {
+	    		pageSize: 10,
+	    		model: 'HreRem.model.ActivosAsociados',
+    			proxy: {
+    				type: 'uxproxy',
+    				remoteUrl: 'activo/getListAsociadosById',
+    				extraParams: {activo: '{activo.id}'} 
+    			},
+    			remoteSort: true,
+    		    remoteFilter: true
+	    	},
+	    	
 	    	filtroComboSubtipoTrabajo: {    		
 				model: 'HreRem.model.ComboBase',
 				proxy: {
@@ -1502,7 +1506,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			proxy: {
 				type: 'uxproxy',
 				remoteUrl: 'generic/getComboMotivoRechazoOferta',
-				extraParams: {tipoRechazoOfertaCodigo: '{ofertaRecord.tipoRechazoCodigo}'}
+				extraParams: {tipoRechazoOfertaCodigo: '{ofertaRecord.tipoRechazoCodigo}', idOferta: '{ofertaRecord.idOferta}'}
 			}
 	    },
 	    

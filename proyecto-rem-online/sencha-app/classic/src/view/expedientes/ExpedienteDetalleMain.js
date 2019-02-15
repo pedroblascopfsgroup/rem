@@ -79,5 +79,15 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleMain', {
 			tabScoring.tab.setVisible(true);
 		}
 		
+		if(me.getViewModel().get('expediente.tipoExpedienteCodigo') === tipoExpedienteAlquiler){				
+			var tabGestores = me.down('gestoresexpediente');
+
+			tabGestores.tab.setVisible(false);
+		} else if(me.getViewModel().get('expediente.tipoExpedienteCodigo') === tipoExpedienteVenta){				
+			var tabGestores = me.down('gestoresexpediente');
+
+			tabGestores.tab.setVisible(true);
+		}
+		
     }
 });

@@ -123,9 +123,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoEstadoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
 import es.pfsgroup.plugin.rem.oferta.NotificationOfertaManager;
-import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
-import es.pfsgroup.plugin.rem.rest.api.RestApi;
-import es.pfsgroup.plugin.rem.rest.api.RestApi.ENTIDADES;
 import es.pfsgroup.plugin.rem.thread.LiberarFichero;
 import es.pfsgroup.plugin.rem.thread.ReactivarActivosAgrupacion;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateApi;
@@ -219,20 +216,15 @@ public class AgrupacionAdapter {
 	private NotificatorServiceSancionOfertaAceptacionYRechazo notificatorServiceSancionOfertaAceptacionYRechazo;
 
 	@Autowired
-	private RestApi restApi;
-	
-	@Autowired
 	private ProcessAdapter processAdapter;
 	
 	@Autowired
 	private MSVProcesoApi msvProcesoApi;
 
 	@Autowired
-    private OfertaDao ofertaDao;
-
-	@Autowired
 	private ParticularValidatorApi particularValidator;
 
+	
 	@Autowired
 	private ActivoValoracionDao activoValoracionDao;
 
@@ -510,7 +502,6 @@ public class AgrupacionAdapter {
 						BeanUtils.copyProperty(dtoAgrupacion, "cartera", proyectoTemp.getCartera().getDescripcion());
 						BeanUtils.copyProperty(dtoAgrupacion, "codigoCartera", proyectoTemp.getCartera().getCodigo());
 					}
-
 				}else if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_ALQUILER)) {
 
 					if(!Checks.estaVacio(agrupacion.getActivos())){
@@ -1141,7 +1132,6 @@ public class AgrupacionAdapter {
 					Date today = new Date();
 					nuevaRelacionAgrupacionActivo.setFechaInclusion(today);
 					activoAgrupacionActivoApi.save(nuevaRelacionAgrupacionActivo);
-					restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO, act);
 				}
 			}
 		}
@@ -1153,7 +1143,6 @@ public class AgrupacionAdapter {
 			Date today = new Date();
 			nuevaRelacionAgrupacionActivo.setFechaInclusion(today);
 			activoAgrupacionActivoApi.save(nuevaRelacionAgrupacionActivo);
-			restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO, activo);
 		}
 	}
 
@@ -1344,7 +1333,6 @@ public class AgrupacionAdapter {
 			} else {
 				activoAgrupacionActivoApi.delete(activoAgrupacionActivo);
 			}
-			restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO, activoAgrupacionActivo.getActivo());
 			return true;
 		} else {
 			throw new JsonViewerException("No ha sido posible eliminar el activo de la agrupación");
@@ -1452,7 +1440,6 @@ public class AgrupacionAdapter {
 				if (!Checks.estaVacio(agrupacionesActivoABorrar)) {
 					for (ActivoAgrupacionActivo agrupaciones : agrupacionesActivoABorrar) {
 						activoAgrupacionActivoApi.delete(agrupaciones);
-						restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO, agrupaciones.getActivo());
 					}
 				}
 			}
@@ -1478,7 +1465,6 @@ public class AgrupacionAdapter {
 					}
 				}
 				activoAgrupacionActivoApi.delete(activoAgrupacionActivo);
-				restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO, activoAgrupacionActivo.getActivo());
 			}
 		}
 
@@ -1524,7 +1510,6 @@ public class AgrupacionAdapter {
 					genericDao.update(ActivoAgrupacion.class, activoAgrupacionActivo.getAgrupacion());
 				}
 				activoAgrupacionActivoApi.delete(activoAgrupacionActivo);
-				restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO, activoAgrupacionActivo.getActivo());
 			}
 
 		} catch (Exception e) {
@@ -2488,7 +2473,7 @@ public class AgrupacionAdapter {
 				return "false"+SPLIT_VALUE+jve.getMessage();
 			} catch (Exception e) {
 				logger.error("error en agrupacionAdapter", e);
-				return null;
+				return "false";
 			}
 		}
 
@@ -2639,8 +2624,7 @@ public class AgrupacionAdapter {
 									activoPublicacion = new ActivoPublicacion();
 									activoPublicacion.setActivo(activoAgrupacionActivo.getActivo());
 								}
-								
-								
+
 								if(!Checks.esNulo(tipoComercializacion)) {
 									activoPublicacion.setTipoComercializacion(tipoComercializacion);
 								}
@@ -2724,6 +2708,7 @@ public class AgrupacionAdapter {
 									}
 
 								}*/
+
 
 							}
 						}
@@ -2946,6 +2931,7 @@ public class AgrupacionAdapter {
 		return null;
 	}
 
+
 	public List<DtoUsuario> getUsuariosPorDobleCodTipoGestor(String codigoGestorEdi,String codigoGestorSu) {
 
 		List<DtoUsuario> listaUsuariosDtoDobleActivo = new ArrayList<DtoUsuario>();
@@ -3059,15 +3045,6 @@ public class AgrupacionAdapter {
 				{
 					return false;
 				}
-				/*
-				for(ActivoOferta ao : ofertas)
-				{
-					Oferta oferta = ao.getPrimaryKey().getOferta();
-					if(ofertaApi.estaViva(oferta) && !tipoCodigo.equals(oferta.getTipoOferta().getCodigo()))
-					{
-						return false;
-					}
-				}*/
 			}
 		}
 		return true;

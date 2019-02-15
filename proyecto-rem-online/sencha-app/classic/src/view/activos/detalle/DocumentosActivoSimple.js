@@ -129,7 +129,7 @@ Ext.define('HreRem.view.activos.detalle.DocumentosActivoSimple', {
     evaluarEdicion: function() {    	
 		var me = this;
 		var allow = true;
-		if(me.lookupController().getViewModel().get('activo').get('incluidoEnPerimetro')=="false") {
+		if(me.lookupController().getViewModel().get('activo').get('incluidoEnPerimetro')=="false" || me.lookupController().getViewModel().get('activo').get('isActivoEnTramite')) {
 			//me.down('[xtype=toolbar]').hide();
 			allow = false;
 		}

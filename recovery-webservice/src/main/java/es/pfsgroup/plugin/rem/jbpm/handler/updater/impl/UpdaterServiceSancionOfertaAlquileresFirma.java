@@ -16,6 +16,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
+import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.Activo;
@@ -38,6 +39,9 @@ public class UpdaterServiceSancionOfertaAlquileresFirma implements UpdaterServic
     
     @Autowired
     private ExpedienteComercialApi expedienteComercialApi;
+    
+    @Autowired
+    private ActivoAdapter activoAdapter;
 
     protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaAlquileresFirma.class);
     
@@ -71,6 +75,7 @@ public class UpdaterServiceSancionOfertaAlquileresFirma implements UpdaterServic
 			}
 		}
 		activoDao.saveOrUpdate(activo);
+		activoAdapter.actualizarEstadoPublicacionActivo(activo.getId(),true);
 		expedienteComercialApi.update(expedienteComercial);
 	}
 

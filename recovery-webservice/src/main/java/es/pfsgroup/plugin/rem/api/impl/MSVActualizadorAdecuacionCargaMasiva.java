@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.api.impl;
 
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.ArrayList;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -14,6 +15,7 @@ import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVHojaExcel;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoPatrimonioDao;
+import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.dd.DDAdecuacionAlquiler;
@@ -33,6 +35,9 @@ public class MSVActualizadorAdecuacionCargaMasiva extends AbstractMSVActualizado
 	
 	@Autowired
 	private ActivoPatrimonioDao activoPatrimonioDao;
+	
+	@Autowired
+	private ActivoAdapter activoAdapter;
 
 	@Override
 	public String getValidOperation() {
@@ -61,9 +66,15 @@ public class MSVActualizadorAdecuacionCargaMasiva extends AbstractMSVActualizado
 		}
 		
 		activoPatrimonioDao.save(activoPatrimonio);
-
+		
+		this.actualizarEstadoPublicacion(activo);
+		
 		return new ResultadoProcesarFila();
 	}
 	
-	
+	//HREOS-5433. Los registros de la fila son correctos. Se lanza el SP_CAMBIO_ESTADO_PUBLICACION.
+	private void actualizarEstadoPublicacion(Activo activo) {
+		@SuppressWarnings("unused")
+		boolean result = activoAdapter.actualizarEstadoPublicacionActivo(activo.getId());
+	}
 }

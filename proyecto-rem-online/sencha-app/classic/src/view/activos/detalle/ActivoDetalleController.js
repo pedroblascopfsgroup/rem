@@ -1587,16 +1587,24 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			record.save({
 			    success: success,
 			 	failure: function(record, operation) {
-			 		var response = Ext.decode(operation.getResponse().responseText);
-			 		if(response.success === "false" && Ext.isDefined(response.msg)) {
-						me.fireEvent("errorToast", Ext.decode(operation.getResponse().responseText).msg);
-						form.unmask();
-					} else {
-						me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-				 		form.unmask();
+			 		try {
+  						var response = Ext.decode(operation.getResponse().responseText);
+				 		if(response.success === "false" && Ext.isDefined(response.msg)) {
+							me.fireEvent("errorToast", Ext.decode(operation.getResponse().responseText).msg);
+							form.unmask();
+						} else {
+							me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+					 		form.unmask();
+						}
+					}catch(err) {
+					  if(Ext.isDefined(err.message)){
+							me.fireEvent("errorToast", err.message);
+					  }else{
+							me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+					  }
+					  form.unmask();
 					}
 			    }
-
 			});
 		} else {
 		
@@ -2990,8 +2998,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 
 	onClickGuardarPropagarCambios: function(btn) {
     	var me = this,
-
-    	window = btn.up("window"),
+	   	window = btn.up("window"),
     	grid = me.lookupReference("listaActivos"),
     	radioGroup = me.lookupReference("opcionesPropagacion"),
     	formActivo = window.form,
@@ -3131,7 +3138,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     },
     
     createTabData: function(form) {
-
     	var me = this,
     	tabData = {};
     	
@@ -3148,7 +3154,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     		});
     		
     	} else {
-    		var type = form.recordName; 
+    		var type = form.recordName;
     		var model = me.createModelToSave(form.getBindRecord(), type);
     		if(!Ext.isEmpty(model)) {
     			tabData.models.push(model);
@@ -3196,7 +3202,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	},
 
     createModelToSave: function(record, type) {
-    	
     	var me = this;
     	var model = null;
     	if (Ext.isDefined(record.getProxy().getApi().update)) { 
@@ -3387,7 +3392,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
         var estadoPubVentaPublicado = me.getViewModel().get('activo').getData().estadoVentaCodigo === CONST.ESTADO_PUBLICACION_VENTA['PUBLICADO'] ||
         me.getViewModel().get('activo').getData().estadoVentaCodigo === CONST.ESTADO_PUBLICACION_VENTA['OCULTO'];
         var textarea = me.lookupReference(checkbox.textareaRefChained);
-
+        
         if(!isDirty && estadoPubVentaPublicado) {
     		var readOnly = Ext.isEmpty(me.getViewModel().get('datospublicacionactivo').getData().precioWebVenta) && !checkbox.getValue();
             checkbox.setReadOnly(readOnly);
@@ -3425,21 +3430,20 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	        me.getViewModel().get('activo').getData().estadoVentaCodigo === CONST.ESTADO_PUBLICACION_VENTA['PRE_PUBLICADO'] ||
 	        me.getViewModel().get('activo').getData().estadoVentaCodigo === CONST.ESTADO_PUBLICACION_VENTA['OCULTO'];
 
-	    if (isDirty && !estadoPubVentaPublicado) {
-		    var readOnly = Ext.isEmpty(me.getViewModel().get('datospublicacionactivo').getData().precioWebVenta) && !checkbox.getValue();
-		    checkboxPublicarVenta.setReadOnly(readOnly);
-		}
-	    if (!isDirty && !estadoPubVentaPublicado) {
-		    var readOnly = Ext.isEmpty(me.getViewModel().get('datospublicacionactivo').getData().precioWebVenta) && !checkbox.getValue();
-		    checkboxPublicarVenta.setReadOnly(readOnly);
-		    checkboxPublicarVenta.setValue(false);
-		}
-	    if (!estadoCheckPublicarFicha) {
-		    checkboxPublicarVenta.setReadOnly(true);
-	    } else {
-	    	var readOnly = Ext.isEmpty(me.getViewModel().get('datospublicacionactivo').getData().precioWebVenta) && !checkbox.getValue();
-		    checkboxPublicarVenta.setReadOnly(readOnly);
-	    }
+	    if (!estadoCheckPublicarFicha){
+            checkbox.setValue(false);
+        } else {
+		    if(isDirty && !estadoPubVentaPublicado) {
+		        var readOnly = Ext.isEmpty(me.getViewModel().get('datospublicacionactivo').getData().precioWebVenta) && !checkbox.getValue();
+		        checkboxPublicarVenta.setReadOnly(readOnly);
+		    } else if (!isDirty && !estadoPubVentaPublicado) {
+		        var readOnly = Ext.isEmpty(me.getViewModel().get('datospublicacionactivo').getData().precioWebVenta) && !checkbox.getValue();
+		        checkboxPublicarVenta.setReadOnly(readOnly);
+	    		checkboxPublicarVenta.setValue(false);
+		    } else {
+		    	checkboxPublicarVenta.setReadOnly(true);
+		    }
+        }
 	},
 
     onChangeCheckboxPublicarSinPrecioAlquiler: function(checkbox, isDirty) {
@@ -3450,21 +3454,21 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			me.getViewModel().get('activo').getData().estadoAlquilerCodigo === CONST.ESTADO_PUBLICACION_ALQUILER['PRE_PUBLICADO'] ||
 			me.getViewModel().get('activo').getData().estadoAlquilerCodigo === CONST.ESTADO_PUBLICACION_ALQUILER['OCULTO'];
 
-		if (isDirty && !estadoPubAlquilerPublicado) {
-			var readOnly = Ext.isEmpty(me.getViewModel().get('datospublicacionactivo').getData().precioWebAlquiler) && !checkbox.getValue();
-	        checkboxPublicarAlquiler.setReadOnly(readOnly);
-		} if (!isDirty && !estadoPubAlquilerPublicado) {
-			var readOnly = Ext.isEmpty(me.getViewModel().get('datospublicacionactivo').getData().precioWebAlquiler) && !checkbox.getValue();
-			checkboxPublicarAlquiler.setReadOnly(readOnly);
-			checkbox.up('activosdetallemain').getViewModel().get('datospublicacionactivo').set('eleccionUsuarioTipoPublicacionAlquiler');
-			checkboxPublicarAlquiler.setValue(false);
-		}
-		if (!estadoCheckPublicarFicha) {
-			checkboxPublicarAlquiler.setReadOnly(true);
-	    } else {
-	    	var readOnly = Ext.isEmpty(me.getViewModel().get('datospublicacionactivo').getData().precioWebAlquiler) && !checkbox.getValue();
-	    	checkboxPublicarAlquiler.setReadOnly(readOnly);
-	    }
+		if(!estadoCheckPublicarFicha){
+            checkbox.setValue(false);
+        } else {
+			if(isDirty && !estadoPubAlquilerPublicado) {
+				var readOnly = Ext.isEmpty(me.getViewModel().get('datospublicacionactivo').getData().precioWebAlquiler) && !checkbox.getValue();
+	            checkboxPublicarAlquiler.setReadOnly(readOnly);
+			} else if (!isDirty && !estadoPubAlquilerPublicado) {
+				var readOnly = Ext.isEmpty(me.getViewModel().get('datospublicacionactivo').getData().precioWebAlquiler) && !checkbox.getValue();
+				checkboxPublicarAlquiler.setReadOnly(readOnly);
+				checkbox.up('activosdetallemain').getViewModel().get('datospublicacionactivo').set('eleccionUsuarioTipoPublicacionAlquiler');
+				checkboxPublicarAlquiler.setValue(false);
+			} else {
+				checkboxPublicarAlquiler.setReadOnly(false);
+			}
+        }
     },
 
     establecerTipoPublicacionAlquiler: function(btn) {
@@ -3679,12 +3683,31 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     },
 
     onChangeComboOcupado: function(combo, newValue, oldValue, eOpts) {
+
     	/*var me = this;
     	var tipoEstadoAlquiler = me.getViewModel().get('situacionPosesoria.tipoEstadoAlquiler');
 
 		if (tipoEstadoAlquiler != CONST.COMBO_ESTADO_ALQUILER['ALQUILADO'] && newValue == CONST.COMBO_OCUPACION['SI']) {
 			combo.up('formBase').down('[reference=comboSituacionPosesoriaConTitulo]').setValue(CONST.COMBO_CON_TITULO['NO']);
 		}*/
+
+    	var me = this;
+    	     	var conTitulo = combo.up('formBase').down('[reference=comboSituacionPosesoriaConTitulo]');
+    	     	
+    	     	if (newValue == 0 && oldValue == null) {
+    	    		conTitulo.setDisabled(true);
+    	     		conTitulo.setValue(null);
+    	     	}else if (newValue == 1 && oldValue == null){
+    	    		conTitulo.setValue(me.getViewModel().get('situacionPosesoria.conTitulo'));
+    	    		conTitulo.setDisabled(false);
+    	     	}else if (newValue == 0){
+    	     		conTitulo.setDisabled(true);
+    	    		conTitulo.reset();
+    	    	}else {
+    	     		conTitulo.setDisabled(false);
+    	     		conTitulo.setValue(0);
+    	     	}
+
 	},
 
 	enableChkPerimetroAlquiler: function(get){
@@ -3713,6 +3736,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		    		comboTipoAlquiler.setValue("");
 		            comboAdecuacion.setValue("");
 	   	 }
+
 	   	 checkbox.setReadOnly(this.enableChkPerimetroAlquiler());
 	},
 
@@ -3755,5 +3779,13 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
             comboMotivo.setDisabled(true);
             descMotivoInput.setDisabled(true);
         }
-    }
+    },
+	 onEnlaceAbrirOferta: function(button) {
+	    	var me = this;
+	    	var idExpediente = me.getViewModel().get('contrato.idExpediente');
+	    	
+			if(!Ext.isEmpty(idExpediente)){
+				me.getView().fireEvent('abrirDetalleExpedienteById', idExpediente, null, button.reflinks);
+			}
+		}
 });

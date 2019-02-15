@@ -7,6 +7,7 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoExpediente', {
     width: Ext.Element.getViewportWidth() / 1.5,
 	reference: 'adjuntarDocumentoExpedienteWindowRef',
 	requires: ['HreRem.view.common.adjuntos.AdjuntarDocumentoExpedienteModel'],
+	controller: 'expedientedetalle',
 	viewModel: {
         type: 'adjuntardocumentoexpediente'
     },
@@ -28,7 +29,7 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoExpediente', {
     parent: null,
 	
     initComponent: function() {
-    	
+
     	var me = this;
 
     	me.setTitle(HreRem.i18n("title.adjuntar.documento"));
@@ -94,42 +95,60 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoExpediente', {
 									xtype: 'comboboxfieldbase',
 						        	fieldLabel:  HreRem.i18n('fieldlabel.tipo'),
 						        	reference: 'filtroComboTipoDocumentoExpediente',
+						        	chainedStore: 'comboSubtipoDoc',
+									chainedReference: 'comboSubtipoDocumentoExpediente',
 						        	name: 'tipo',
 					            	bind: {
 					            		store: '{comboTipoDoc}'
 					            	},
 									allowBlank: false,
-									publishes: 'value'
-						        },
+									publishes: 'value',									
+		    						listeners: {
+										select: 'onChangeChainedCombo'
+		    						}
+					    		},
 						        {
 				                	xtype: 'textareafieldbase',
-				                	fieldLabel: HreRem.i18n('fieldlabel.descripcion'),
+				                	fieldLabel: HreRem.i18n('fieldlabel.descripcion'),				                	
 				                	name: 'descripcion',
 				                	maxLength: 256			                	
 			            		},
 						        { 
 									xtype: 'comboboxfieldbase',
 						        	fieldLabel:  HreRem.i18n('fieldlabel.subtipo'),
+						        	reference: 'comboSubtipoDocumentoExpediente',
 						        	name: 'subtipo',
-						        	queryMode: 'remote',
 						        	editable: false,
 						        	forceSelection: true,
-						        	bind: {
-						        		store: '{comboSubtipoDocumento}',
-					                    disabled: '{!filtroComboTipoDocumentoExpediente.value}',
-						        		filters: {
-					                        property: 'codigoTipoDocExpediente',
-					                        value: '{filtroComboTipoDocumentoExpediente.value}'
-					                    }
+						        	bind: {			        					
+						        		store: '{comboSubtipoDoc}',
+					                    disabled: '{!filtroComboTipoDocumentoExpediente.value}'
 					            	},
 									allowBlank: false,
 									listeners: {
 										select: function(combo, record) {
-											if (record.get("vinculable")) {
-												me.down("gridBase").setDisabled(false);
-												if(!me.down("gridBase").getStore().isLoaded()) {
-													me.down("gridBase").getStore().load();
+											if (record.getData().vinculable == 1) {
+												if(combo.value == CONST.SUBTIPO_DOCUMENTO_EXPEDIENTE ['RENOVACION_CONTRATO']
+												|| combo.value == CONST.SUBTIPO_DOCUMENTO_EXPEDIENTE ['CONTRATO']
+												|| combo.value == CONST.SUBTIPO_DOCUMENTO_EXPEDIENTE ['FIANZA']
+												|| combo.value == CONST.SUBTIPO_DOCUMENTO_EXPEDIENTE ['AVAL_BANCARIO']
+												|| combo.value == CONST.SUBTIPO_DOCUMENTO_EXPEDIENTE ['JUSTIFICANTE_INGRESOS']
+												|| combo.value == CONST.SUBTIPO_DOCUMENTO_EXPEDIENTE ['ALQUILER_CON_OPCION_A_COMPRA']){
+												
+													me.down("gridBase").setDisabled(true);
+													me.down("gridBase").getStore().load(function (){
+														me.down("gridBase").getSelectionModel().selectAll();
+													});		
+													
+												
+												}else{
+													me.down("gridBase").setDisabled(false);
+													me.down("gridBase").getSelectionModel().deselectAll();
+													if(!me.down("gridBase").getStore().isLoaded()) {
+														me.down("gridBase").getStore().load();
+													}
 												}
+												
 											} else {
 												me.down("gridBase").setDisabled(true);
 												me.down("gridBase").getSelectionModel().deselectAll();

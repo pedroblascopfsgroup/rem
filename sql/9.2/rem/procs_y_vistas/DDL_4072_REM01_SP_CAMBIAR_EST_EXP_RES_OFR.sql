@@ -19,14 +19,14 @@ SET SERVEROUTPUT ON;
 SET DEFINE OFF;
 
 CREATE OR REPLACE PROCEDURE #ESQUEMA#.SP_CAMBIAR_EST_EXP_RES_OFR
-        (  
+    (
 		  V_NUM_EXPEDIENTE IN VARCHAR2
         , V_ESTADO_EXPEDIENTE IN VARCHAR2
         , V_ESTADO_OFERTA IN VARCHAR2
-        , V_ESTADO_RESERVA IN VARCHAR2 
+        , V_ESTADO_RESERVA IN VARCHAR2
 		, V_USUARIO_MODIFICAR IN VARCHAR2
-		, V_F_VENTA IN VARCHAR2 
-		, V_F_ING_CHEQUE IN VARCHAR2 
+		, V_F_VENTA IN VARCHAR2
+		, V_F_ING_CHEQUE IN VARCHAR2
 		, V_F_FIR_RES IN VARCHAR2
 		, V_TAREA IN VARCHAR2
         , PL_OUTPUT OUT VARCHAR2
@@ -35,16 +35,16 @@ CREATE OR REPLACE PROCEDURE #ESQUEMA#.SP_CAMBIAR_EST_EXP_RES_OFR
    AS
 
    V_SQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar
-   V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
-   V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
+   V_ESQUEMA VARCHAR2(25 CHAR):= 'REM01'; -- Configuracion Esquema
+   V_ESQUEMA_M VARCHAR2(25 CHAR):= 'REMMASTER'; -- Configuracion Esquema Master
    ERR_NUM NUMBER(25); -- Vble. auxiliar para registrar errores en el script.
    ERR_MSG VARCHAR2(10024 CHAR); -- Vble. auxiliar para registrar errores en el script.
    V_NUM_TABLAS NUMBER(16); -- Variable auxiliar
    USUARIO_CONSULTA_REM VARCHAR2(50 CHAR):= 'REM_QUERY';
    V_AUX NUMBER(16);
-   
-   PL_OUTPUT_1 VARCHAR2(16000 CHAR);
-   
+
+   PL_OUTPUT_1 VARCHAR2(32000 CHAR);
+
    EST_ANT_EXP_COD VARCHAR2(4 CHAR);
    EST_ANT_RES_COD VARCHAR2(4 CHAR);
    EST_ANT_OFR_COD VARCHAR2(4 CHAR);
@@ -64,7 +64,7 @@ CREATE OR REPLACE PROCEDURE #ESQUEMA#.SP_CAMBIAR_EST_EXP_RES_OFR
    VAR_FEC_ANT_ING_CHEQUE VARCHAR2(50 CHAR);
    VAR_FEC_ANT_FIR_RES VARCHAR2(50 CHAR);
 
-
+   VAR_V_TAREA VARCHAR(100 CHAR);
 
 BEGIN
 
@@ -249,6 +249,12 @@ BEGIN
                     VAR_FEC_ANT_FIR_RES := 'NULL';
                 END IF;
                     -- DBMS_OUTPUT.PUT_LINE(FEC_ANT_FIR_RES);
+                    
+                IF V_TAREA IS NULL THEN 
+                    VAR_V_TAREA := 'NULL';
+                ELSE 
+                    VAR_V_TAREA := V_TAREA;
+                END IF;
 	-- Aqui va el insert a la tabla de históricos para evitar fallos por parte del usuario.
 
 				V_SQL := 'INSERT INTO '||V_ESQUEMA||'.H_TRANS_EST_EOR (
@@ -358,21 +364,22 @@ BEGIN
                         EXECUTE IMMEDIATE V_SQL;
 
 						PL_OUTPUT := PL_OUTPUT ||'[INFO] Se ha actualizado el estado de la RESERVA relacionada con el expediente '||V_NUM_EXPEDIENTE|| CHR(10) ;
-                        
-                        IF V_TAREA IS NOT NULL THEN
-                            
-							#ESQUEMA#.AVANCE_TRAMITE(''||V_USUARIO_MODIFICAR||'',''||V_NUM_EXPEDIENTE||'',''||V_TAREA||'',null,null,PL_OUTPUT_1);
-                            
+
+                        IF VAR_V_TAREA <> 'NULL' THEN
+
+							#ESQUEMA#.AVANCE_TRAMITE(''||V_USUARIO_MODIFICAR||'',''||V_NUM_EXPEDIENTE||'',''||VAR_V_TAREA||'',null,null,PL_OUTPUT_1);
+
                             EXECUTE IMMEDIATE V_SQL;
-                                                        PL_OUTPUT := PL_OUTPUT || PL_OUTPUT_1 || CHR(10);
-                            PL_OUTPUT := PL_OUTPUT || '[INFO] Se ha reposicionado el trámite '||V_TAREA||' relacionado con el expediente '||V_NUM_EXPEDIENTE|| CHR(10) ;
                             
+                            PL_OUTPUT := PL_OUTPUT || PL_OUTPUT_1 || CHR(10);
+                            PL_OUTPUT := PL_OUTPUT || '[INFO] Se ha reposicionado el trámite '||VAR_V_TAREA||' relacionado con el expediente '||V_NUM_EXPEDIENTE|| CHR(10) ;
+
                         ELSE
-                            
-                            PL_OUTPUT := PL_OUTPUT ||'[INFO] No se ha reposicionado el trámite del expediente '||V_NUM_EXPEDIENTE|| CHR(10) ; 
-                        
+
+                            PL_OUTPUT := PL_OUTPUT ||'[INFO] No se ha reposicionado el trámite del expediente '||V_NUM_EXPEDIENTE|| CHR(10) ;
+
                         END IF;
-                        
+
 					ELSE IF FEC_ANT_FIR_RES IS NOT NULL AND V_F_FIR_RES IS NULL THEN
 
 						-- Actualizar estado expediente
@@ -420,21 +427,22 @@ BEGIN
                         EXECUTE IMMEDIATE V_SQL;
 
 						PL_OUTPUT := PL_OUTPUT ||'[INFO] Se ha actualizado el estado de la RESERVA relacionada con el expediente '||V_NUM_EXPEDIENTE|| CHR(10) ;
-                        
-                        IF V_TAREA IS NOT NULL THEN
-                            
-							#ESQUEMA#.AVANCE_TRAMITE(''||V_USUARIO_MODIFICAR||'',''||V_NUM_EXPEDIENTE||'',''||V_TAREA||'',null,null,PL_OUTPUT_1);
-                            
+
+                       IF VAR_V_TAREA <> 'NULL' THEN
+
+							#ESQUEMA#.AVANCE_TRAMITE(''||V_USUARIO_MODIFICAR||'',''||V_NUM_EXPEDIENTE||'',''||VAR_V_TAREA||'',null,null,PL_OUTPUT_1);
+
                             EXECUTE IMMEDIATE V_SQL;
-                                                        PL_OUTPUT := PL_OUTPUT || PL_OUTPUT_1 || CHR(10);
-                            PL_OUTPUT := PL_OUTPUT || '[INFO] Se ha reposicionado el trámite '||V_TAREA||' relacionado con el expediente '||V_NUM_EXPEDIENTE|| CHR(10) ;
                             
+                            PL_OUTPUT := PL_OUTPUT || PL_OUTPUT_1 || CHR(10);
+                            PL_OUTPUT := PL_OUTPUT || '[INFO] Se ha reposicionado el trámite '||VAR_V_TAREA||' relacionado con el expediente '||V_NUM_EXPEDIENTE|| CHR(10) ;
+
                         ELSE
-                            
-                            PL_OUTPUT := PL_OUTPUT ||'[INFO] No se ha reposicionado el trámite del expediente '||V_NUM_EXPEDIENTE|| CHR(10) ; 
-                        
+
+                            PL_OUTPUT := PL_OUTPUT ||'[INFO] No se ha reposicionado el trámite del expediente '||V_NUM_EXPEDIENTE|| CHR(10) ;
+
                         END IF;
-                        
+
 					ELSE
 
 						PL_OUTPUT := PL_OUTPUT ||'[ERROR] No se puede pasar a este estado sin FECHA FIRMA DE LA RESERVA '|| CHR(10);
@@ -493,21 +501,22 @@ BEGIN
                         EXECUTE IMMEDIATE V_SQL;
 
 						PL_OUTPUT := PL_OUTPUT ||'[INFO] Se ha actualizado el estado de la RESERVA relacionada con el expediente '||V_NUM_EXPEDIENTE|| CHR(10) ;
-                        
-                        IF V_TAREA IS NOT NULL THEN
-                            
-							#ESQUEMA#.AVANCE_TRAMITE(''||V_USUARIO_MODIFICAR||'',''||V_NUM_EXPEDIENTE||'',''||V_TAREA||'',null,null,PL_OUTPUT_1);
-                            
+
+                       IF VAR_V_TAREA <> 'NULL' THEN
+
+							#ESQUEMA#.AVANCE_TRAMITE(''||V_USUARIO_MODIFICAR||'',''||V_NUM_EXPEDIENTE||'',''||VAR_V_TAREA||'',null,null,PL_OUTPUT_1);
+
                             EXECUTE IMMEDIATE V_SQL;
-                                                        PL_OUTPUT := PL_OUTPUT || PL_OUTPUT_1 || CHR(10);
-                            PL_OUTPUT := PL_OUTPUT || '[INFO] Se ha reposicionado el trámite '||V_TAREA||' relacionado con el expediente '||V_NUM_EXPEDIENTE|| CHR(10) ;
-                            
+                                                        
+                            PL_OUTPUT := PL_OUTPUT || PL_OUTPUT_1 || CHR(10);
+                            PL_OUTPUT := PL_OUTPUT || '[INFO] Se ha reposicionado el trámite '||VAR_V_TAREA||' relacionado con el expediente '||V_NUM_EXPEDIENTE|| CHR(10) ;
+
                         ELSE
-                            
-                            PL_OUTPUT := PL_OUTPUT ||'[INFO] No se ha reposicionado el trámite del expediente '||V_NUM_EXPEDIENTE|| CHR(10) ; 
-                        
+
+                            PL_OUTPUT := PL_OUTPUT ||'[INFO] No se ha reposicionado el trámite del expediente '||V_NUM_EXPEDIENTE|| CHR(10) ;
+
                         END IF;
-                        
+
 					ELSE IF FEC_ANT_FIR_RES IS NOT NULL AND V_F_FIR_RES IS NULL THEN
 
 						-- Actualizar estado expediente
@@ -556,20 +565,21 @@ BEGIN
 
 						PL_OUTPUT := PL_OUTPUT ||'[INFO] Se ha actualizado el estado de la RESERVA relacionada con el expediente '||V_NUM_EXPEDIENTE|| CHR(10) ;
 
-                        IF V_TAREA IS NOT NULL THEN
-                            
-							#ESQUEMA#.AVANCE_TRAMITE(''||V_USUARIO_MODIFICAR||'',''||V_NUM_EXPEDIENTE||'',''||V_TAREA||'',null,null,PL_OUTPUT_1);
-                            
+                       IF VAR_V_TAREA <> 'NULL' THEN
+
+							#ESQUEMA#.AVANCE_TRAMITE(''||V_USUARIO_MODIFICAR||'',''||V_NUM_EXPEDIENTE||'',''||VAR_V_TAREA||'',null,null,PL_OUTPUT_1);
+
                             EXECUTE IMMEDIATE V_SQL;
-                                                        PL_OUTPUT := PL_OUTPUT || PL_OUTPUT_1 || CHR(10);
-                            PL_OUTPUT := PL_OUTPUT || '[INFO] Se ha reposicionado el trámite '||V_TAREA||' relacionado con el expediente '||V_NUM_EXPEDIENTE|| CHR(10) ;
                             
+                            PL_OUTPUT := PL_OUTPUT || PL_OUTPUT_1 || CHR(10);
+                            PL_OUTPUT := PL_OUTPUT || '[INFO] Se ha reposicionado el trámite '||VAR_V_TAREA||' relacionado con el expediente '||V_NUM_EXPEDIENTE|| CHR(10) ;
+
                         ELSE
-                            
-                            PL_OUTPUT := PL_OUTPUT ||'[INFO] No se ha reposicionado el trámite del expediente '||V_NUM_EXPEDIENTE|| CHR(10) ; 
-                        
+
+                            PL_OUTPUT := PL_OUTPUT ||'[INFO] No se ha reposicionado el trámite del expediente '||V_NUM_EXPEDIENTE|| CHR(10) ;
+
                         END IF;
-                        
+
 					ELSE
 
 						PL_OUTPUT := PL_OUTPUT ||'[ERROR] No se puede pasar a este estado sin FECHA FIRMA DE LA RESERVA '|| CHR(10);
@@ -630,20 +640,20 @@ BEGIN
                         EXECUTE IMMEDIATE V_SQL;
 
 						PL_OUTPUT := PL_OUTPUT ||'[INFO] Se ha actualizado el estado de la RESERVA relacionada con el expediente '||V_NUM_EXPEDIENTE|| CHR(10) ;
-                        
-                        IF V_TAREA IS NOT NULL THEN
-                            
-							#ESQUEMA#.AVANCE_TRAMITE(''||V_USUARIO_MODIFICAR||'',''||V_NUM_EXPEDIENTE||'',''||V_TAREA||'',null,null,PL_OUTPUT_1);
+
+                       IF VAR_V_TAREA <> 'NULL' THEN
+
+							#ESQUEMA#.AVANCE_TRAMITE(''||V_USUARIO_MODIFICAR||'',''||V_NUM_EXPEDIENTE||'',''||VAR_V_TAREA||'',null,null,PL_OUTPUT_1);
 
                             PL_OUTPUT := PL_OUTPUT || PL_OUTPUT_1 || CHR(10);
-                            PL_OUTPUT := PL_OUTPUT || '[INFO] Se ha reposicionado el trámite '||V_TAREA||' relacionado con el expediente '||V_NUM_EXPEDIENTE|| CHR(10) ;
-                            
+                            PL_OUTPUT := PL_OUTPUT || '[INFO] Se ha reposicionado el trámite '||VAR_V_TAREA||' relacionado con el expediente '||V_NUM_EXPEDIENTE|| CHR(10) ;
+
                         ELSE
-                            
-                            PL_OUTPUT := PL_OUTPUT ||'[INFO] No se ha reposicionado el trámite del expediente '||V_NUM_EXPEDIENTE|| CHR(10) ; 
-                        
+
+                            PL_OUTPUT := PL_OUTPUT ||'[INFO] No se ha reposicionado el trámite del expediente '||V_NUM_EXPEDIENTE|| CHR(10) ;
+
                         END IF;
-                        
+
 					ELSE
 
 						-- Actualizar estado expediente
@@ -694,21 +704,22 @@ BEGIN
                         EXECUTE IMMEDIATE V_SQL;
 
 						PL_OUTPUT := PL_OUTPUT ||'[INFO] Se ha actualizado el estado de la RESERVA relacionada con el expediente '||V_NUM_EXPEDIENTE|| CHR(10) ;
-                        
-                        IF V_TAREA IS NOT NULL THEN
-                            
-							#ESQUEMA#.AVANCE_TRAMITE(''||V_USUARIO_MODIFICAR||'',''||V_NUM_EXPEDIENTE||'',''||V_TAREA||'',null,null,PL_OUTPUT_1);
-                            
+
+                       IF VAR_V_TAREA <> 'NULL' THEN
+
+							#ESQUEMA#.AVANCE_TRAMITE(''||V_USUARIO_MODIFICAR||'',''||V_NUM_EXPEDIENTE||'',''||VAR_V_TAREA||'',null,null,PL_OUTPUT_1);
+
                             EXECUTE IMMEDIATE V_SQL;
-                                                        PL_OUTPUT := PL_OUTPUT || PL_OUTPUT_1 || CHR(10);
-                            PL_OUTPUT := PL_OUTPUT || '[INFO] Se ha reposicionado el trámite '||V_TAREA||' relacionado con el expediente '||V_NUM_EXPEDIENTE|| CHR(10) ;
                             
+                            PL_OUTPUT := PL_OUTPUT || PL_OUTPUT_1 || CHR(10);            
+                            PL_OUTPUT := PL_OUTPUT || '[INFO] Se ha reposicionado el trámite '||VAR_V_TAREA||' relacionado con el expediente '||V_NUM_EXPEDIENTE|| CHR(10) ;
+
                         ELSE
-                            
-                            PL_OUTPUT := PL_OUTPUT ||'[INFO] No se ha reposicionado el trámite del expediente '||V_NUM_EXPEDIENTE|| CHR(10) ; 
-                        
+
+                            PL_OUTPUT := PL_OUTPUT ||'[INFO] No se ha reposicionado el trámite del expediente '||V_NUM_EXPEDIENTE|| CHR(10) ;
+
                         END IF;
-                        
+
                     END IF;
 
 				-- Estado expediente a "Vendido"
@@ -750,7 +761,7 @@ BEGIN
 						V_SQL := 'UPDATE '||V_ESQUEMA||'.RES_RESERVAS RES
 									SET RES.DD_ERE_ID = (SELECT ERE.DD_ERE_ID FROM '||V_ESQUEMA||'.DD_ERE_ESTADOS_RESERVA ERE WHERE ERE.DD_ERE_CODIGO = '''||V_ESTADO_RESERVA||''')
 									   ,RES_FECHA_FIRMA = TRIM(TO_DATE('''||V_F_FIR_RES||''',''DD/MM/RR''))
-									   ,USUARIOMODIFICAR = TRIM(TO_DATE('''||V_USUARIO_MODIFICAR||''',''DD/MM/RR''))
+									   ,USUARIOMODIFICAR = '''||V_USUARIO_MODIFICAR||'''
 									   ,FECHAMODIFICAR = SYSDATE
 									WHERE RES.RES_ID = (SELECT RES.RES_ID FROM '||V_ESQUEMA||'.RES_RESERVAS RES
 															INNER JOIN '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL ECO ON ECO.ECO_ID = RES.ECO_ID AND ECO.BORRADO = 0
@@ -761,21 +772,22 @@ BEGIN
                         EXECUTE IMMEDIATE V_SQL;
 
 						PL_OUTPUT := PL_OUTPUT ||'[INFO] Se ha actualizado el estado de la RESERVA relacionada con el expediente '||V_NUM_EXPEDIENTE|| CHR(10) ;
-                        
-                        IF V_TAREA IS NOT NULL THEN
-                            
-							#ESQUEMA#.AVANCE_TRAMITE(''||V_USUARIO_MODIFICAR||'',''||V_NUM_EXPEDIENTE||'',''||V_TAREA||'',null,null,PL_OUTPUT_1);
-                            
+
+                       IF VAR_V_TAREA <> 'NULL' THEN
+
+							#ESQUEMA#.AVANCE_TRAMITE(''||V_USUARIO_MODIFICAR||'',''||V_NUM_EXPEDIENTE||'',''||VAR_V_TAREA||'',null,null,PL_OUTPUT_1);
+
                             EXECUTE IMMEDIATE V_SQL;
-                                                        PL_OUTPUT := PL_OUTPUT || PL_OUTPUT_1 || CHR(10);
-                            PL_OUTPUT := PL_OUTPUT || '[INFO] Se ha reposicionado el trámite '||V_TAREA||' relacionado con el expediente '||V_NUM_EXPEDIENTE|| CHR(10) ;
-                            
+                                                        
+                            PL_OUTPUT := PL_OUTPUT || PL_OUTPUT_1 || CHR(10);
+                            PL_OUTPUT := PL_OUTPUT || '[INFO] Se ha reposicionado el trámite '||VAR_V_TAREA||' relacionado con el expediente '||V_NUM_EXPEDIENTE|| CHR(10) ;
+
                         ELSE
-                            
-                            PL_OUTPUT := PL_OUTPUT ||'[INFO] No se ha reposicionado el trámite del expediente '||V_NUM_EXPEDIENTE|| CHR(10) ; 
-                        
+
+                            PL_OUTPUT := PL_OUTPUT ||'[INFO] No se ha reposicionado el trámite del expediente '||V_NUM_EXPEDIENTE|| CHR(10) ;
+
                         END IF;
-                        
+
 					ELSE IF V_F_FIR_RES IS NULL AND FEC_ANT_FIR_RES IS NOT NULL AND V_ESTADO_RESERVA IS NOT NULL THEN
 
 						-- Actualizar estado expediente
@@ -807,12 +819,12 @@ BEGIN
                         EXECUTE IMMEDIATE V_SQL;
 
 						PL_OUTPUT := PL_OUTPUT ||'[INFO] Se ha actualizado el estado de la OFERTA relacionada con el expediente '||V_NUM_EXPEDIENTE|| CHR(10) ;
-                        
+
 						-- Actualizar estado reserva
 						V_SQL := 'UPDATE '||V_ESQUEMA||'.RES_RESERVAS RES
 									SET RES.DD_ERE_ID = (SELECT ERE.DD_ERE_ID FROM '||V_ESQUEMA||'.DD_ERE_ESTADOS_RESERVA ERE WHERE ERE.DD_ERE_CODIGO = '''||V_ESTADO_RESERVA||''')
 									   ,RES_FECHA_FIRMA = TRIM(TO_DATE('''||FEC_ANT_FIR_RES||''',''DD/MM/RR''))
-									   ,USUARIOMODIFICAR = TRIM(TO_DATE('''||V_USUARIO_MODIFICAR||''',''DD/MM/RR''))
+									   ,USUARIOMODIFICAR = '''||V_USUARIO_MODIFICAR||'''
 									   ,FECHAMODIFICAR = SYSDATE
 									WHERE RES.RES_ID = (SELECT RES.RES_ID FROM '||V_ESQUEMA||'.RES_RESERVAS RES
 															INNER JOIN '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL ECO ON ECO.ECO_ID = RES.ECO_ID AND ECO.BORRADO = 0
@@ -823,21 +835,22 @@ BEGIN
                         EXECUTE IMMEDIATE V_SQL;
 
 						PL_OUTPUT := PL_OUTPUT ||'[INFO] Se ha actualizado el estado de la RESERVA relacionada con el expediente '||V_NUM_EXPEDIENTE|| CHR(10) ;
-                        
-                        IF V_TAREA IS NOT NULL THEN
-                            
-							#ESQUEMA#.AVANCE_TRAMITE(''||V_USUARIO_MODIFICAR||'',''||V_NUM_EXPEDIENTE||'',''||V_TAREA||'',null,null,PL_OUTPUT_1);
-                            
+
+                       IF VAR_V_TAREA <> 'NULL' THEN
+
+							#ESQUEMA#.AVANCE_TRAMITE(''||V_USUARIO_MODIFICAR||'',''||V_NUM_EXPEDIENTE||'',''||VAR_V_TAREA||'',null,null,PL_OUTPUT_1);
+
                             EXECUTE IMMEDIATE V_SQL;
-                                                        PL_OUTPUT := PL_OUTPUT || PL_OUTPUT_1 || CHR(10);
-                            PL_OUTPUT := PL_OUTPUT || '[INFO] Se ha reposicionado el trámite '||V_TAREA||' relacionado con el expediente '||V_NUM_EXPEDIENTE|| CHR(10) ;
                             
+                            PL_OUTPUT := PL_OUTPUT || PL_OUTPUT_1 || CHR(10);
+                            PL_OUTPUT := PL_OUTPUT || '[INFO] Se ha reposicionado el trámite '||VAR_V_TAREA||' relacionado con el expediente '||V_NUM_EXPEDIENTE|| CHR(10) ;
+
                         ELSE
-                            
-                            PL_OUTPUT := PL_OUTPUT ||'[INFO] No se ha reposicionado el trámite del expediente '||V_NUM_EXPEDIENTE|| CHR(10) ; 
-                        
+
+                            PL_OUTPUT := PL_OUTPUT ||'[INFO] No se ha reposicionado el trámite del expediente '||V_NUM_EXPEDIENTE|| CHR(10) ;
+
                         END IF;
-                        
+
 					ELSE IF V_F_FIR_RES IS NOT NULL AND V_ESTADO_RESERVA IS NULL THEN
 
 						-- Actualizar estado expediente
@@ -874,7 +887,7 @@ BEGIN
 						V_SQL := 'UPDATE '||V_ESQUEMA||'.RES_RESERVAS RES
 									SET RES.DD_ERE_ID = NULL
 									   ,RES_FECHA_FIRMA = TRIM(TO_DATE('''||V_F_FIR_RES||''',''DD/MM/RR''))
-									   ,USUARIOMODIFICAR = TRIM(TO_DATE('''||V_USUARIO_MODIFICAR||''',''DD/MM/RR''))
+									   ,USUARIOMODIFICAR = '''||V_USUARIO_MODIFICAR||'''
 									   ,FECHAMODIFICAR = SYSDATE
 									WHERE RES.RES_ID = (SELECT RES.RES_ID FROM '||V_ESQUEMA||'.RES_RESERVAS RES
 															INNER JOIN '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL ECO ON ECO.ECO_ID = RES.ECO_ID AND ECO.BORRADO = 0
@@ -883,23 +896,24 @@ BEGIN
 
 -- DBMS_OUTPUT.PUT_LINE(V_SQL);
                         EXECUTE IMMEDIATE V_SQL;
-						
+
 						PL_OUTPUT := PL_OUTPUT ||'[INFO] Se ha actualizado el estado de la RESERVA relacionada con el expediente '||V_NUM_EXPEDIENTE|| CHR(10) ;
-						
-						 IF V_TAREA IS NOT NULL THEN
+
+						IF VAR_V_TAREA <> 'NULL' THEN
+
+							#ESQUEMA#.AVANCE_TRAMITE(''||V_USUARIO_MODIFICAR||'',''||V_NUM_EXPEDIENTE||'',''||VAR_V_TAREA||'',null,null,PL_OUTPUT_1);
+
+                            EXECUTE IMMEDIATE V_SQL;                            
                             
-							#ESQUEMA#.AVANCE_TRAMITE(''||V_USUARIO_MODIFICAR||'',''||V_NUM_EXPEDIENTE||'',''||V_TAREA||'',null,null,PL_OUTPUT_1);
-                            
-                            EXECUTE IMMEDIATE V_SQL;                            PL_OUTPUT := PL_OUTPUT || PL_OUTPUT_1 || CHR(10);
-                            
-                            PL_OUTPUT := PL_OUTPUT || '[INFO] Se ha reposicionado el trámite '||V_TAREA||' relacionado con el expediente '||V_NUM_EXPEDIENTE|| CHR(10) ;
-                            
+                            PL_OUTPUT := PL_OUTPUT || PL_OUTPUT_1 || CHR(10);
+                            PL_OUTPUT := PL_OUTPUT || '[INFO] Se ha reposicionado el trámite '||VAR_V_TAREA||' relacionado con el expediente '||V_NUM_EXPEDIENTE|| CHR(10) ;
+
                         ELSE
-                            
-                            PL_OUTPUT := PL_OUTPUT ||'[INFO] No se ha reposicionado el trámite del expediente '||V_NUM_EXPEDIENTE|| CHR(10) ; 
-                        
+
+                            PL_OUTPUT := PL_OUTPUT ||'[INFO] No se ha reposicionado el trámite del expediente '||V_NUM_EXPEDIENTE|| CHR(10) ;
+
                         END IF;
-                        
+
 					ELSE IF V_F_FIR_RES IS NULL AND FEC_ANT_FIR_RES IS NOT NULL AND V_ESTADO_RESERVA IS NULL THEN
 
 						-- Actualizar estado expediente
@@ -936,7 +950,7 @@ BEGIN
 						V_SQL := 'UPDATE '||V_ESQUEMA||'.RES_RESERVAS RES
 									SET RES.DD_ERE_ID = (SELECT ERE.DD_ERE_ID FROM '||V_ESQUEMA||'.DD_ERE_ESTADOS_RESERVA ERE WHERE ERE.DD_ERE_CODIGO = '''||V_ESTADO_RESERVA||''')
 									   ,RES_FECHA_FIRMA = TRIM(TO_DATE('''||FEC_ANT_FIR_RES||''',''DD/MM/RR''))
-									   ,USUARIOMODIFICAR = TRIM(TO_DATE('''||V_USUARIO_MODIFICAR||''',''DD/MM/RR''))
+									   ,USUARIOMODIFICAR = '''||V_USUARIO_MODIFICAR||'''
 									   ,FECHAMODIFICAR = SYSDATE
 									WHERE RES.RES_ID = (SELECT RES.RES_ID FROM '||V_ESQUEMA||'.RES_RESERVAS RES
 															INNER JOIN '||V_ESQUEMA||'.ECO_EXPEDIENTE_COMERCIAL ECO ON ECO.ECO_ID = RES.ECO_ID AND ECO.BORRADO = 0
@@ -948,21 +962,21 @@ BEGIN
 
 						PL_OUTPUT := PL_OUTPUT ||'[INFO] Se ha actualizado el estado de la RESERVA relacionada con el expediente '||V_NUM_EXPEDIENTE|| CHR(10) ;
 
-                        IF V_TAREA IS NOT NULL THEN
-                            
-							#ESQUEMA#.AVANCE_TRAMITE(''||V_USUARIO_MODIFICAR||'',''||V_NUM_EXPEDIENTE||'',''||V_TAREA||'',null,null,PL_OUTPUT_1);
-                            
+                       IF VAR_V_TAREA <> 'NULL' THEN
+
+							#ESQUEMA#.AVANCE_TRAMITE(''||V_USUARIO_MODIFICAR||'',''||V_NUM_EXPEDIENTE||'',''||VAR_V_TAREA||'',null,null,PL_OUTPUT_1);
+
                             EXECUTE IMMEDIATE V_SQL;
-                            
+
                             PL_OUTPUT := PL_OUTPUT || PL_OUTPUT_1 || CHR(10);
-                            PL_OUTPUT := PL_OUTPUT || '[INFO] Se ha reposicionado el trámite '||V_TAREA||' relacionado con el expediente '||V_NUM_EXPEDIENTE|| CHR(10) ;
-                            
+                            PL_OUTPUT := PL_OUTPUT || '[INFO] Se ha reposicionado el trámite '||VAR_V_TAREA||' relacionado con el expediente '||V_NUM_EXPEDIENTE|| CHR(10) ;
+
                         ELSE
-                            
-                            PL_OUTPUT := PL_OUTPUT ||'[INFO] No se ha reposicionado el trámite del expediente '||V_NUM_EXPEDIENTE|| CHR(10) ; 
-                        
+
+                            PL_OUTPUT := PL_OUTPUT ||'[INFO] No se ha reposicionado el trámite del expediente '||V_NUM_EXPEDIENTE|| CHR(10) ;
+
                         END IF;
-                        
+
 					ELSE
 
 						PL_OUTPUT := PL_OUTPUT ||'[ERROR] No se puede pasar a vendido porque falta algún parámetro '|| CHR(10);
@@ -1003,6 +1017,9 @@ EXCEPTION
       ROLLBACK;
       RAISE;
 END SP_CAMBIAR_EST_EXP_RES_OFR;
+
 /
-EXIT
+
+EXIT;
+
 

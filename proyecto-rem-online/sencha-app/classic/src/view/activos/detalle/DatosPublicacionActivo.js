@@ -161,7 +161,7 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 												bind: {
 													readOnly: '{datospublicacionactivo.deshabilitarCheckNoMostrarPrecioVenta}',
 													value: '{datospublicacionactivo.noMostrarPrecioVenta}'
-												},
+												}
 												
 											},
 											{

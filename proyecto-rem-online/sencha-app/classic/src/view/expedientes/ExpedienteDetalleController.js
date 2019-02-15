@@ -2825,8 +2825,6 @@ onClickBotonEditar: function(btn) {
 	},
 	
     onRenderCargaOfertaOrigen: function(campo) { 
-    	
-    	this.onMouseHoverOfertaOrigen(campo);
 	
 		var url =  $AC.getRemoteUrl('ofertas/getOfertaOrigenByIdExpediente');
 		var me = this;

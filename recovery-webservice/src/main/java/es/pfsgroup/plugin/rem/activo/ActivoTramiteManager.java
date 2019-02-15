@@ -1,4 +1,4 @@
-package es.pfsgroup.plugin.rem.activo;
+		package es.pfsgroup.plugin.rem.activo;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -823,8 +823,10 @@ public class ActivoTramiteManager implements ActivoTramiteApi{
 				for (ActivoOferta activoOferta : ofertas) {
 					Long ofertaId = activoOferta.getOferta();	
 					OfertaGencat ofertaGencat = genericDao.get(OfertaGencat.class,genericDao.createFilter(FilterType.EQUALS,"oferta.id", ofertaId));
-					if(!Checks.esNulo(ofertaGencat) && Checks.esNulo(ofertaGencat.getIdOfertaAnterior()) && !ofertaGencat.getBorrado()) {
-						tieneOfertaCreadaPorGencat = true;
+					if(!Checks.esNulo(ofertaGencat) && Checks.esNulo(ofertaGencat.getIdOfertaAnterior()) && !ofertaGencat.getAuditoria().isBorrado()) {
+						tieneOfertaCreadaPorGencat = false;
+					}else {
+						tieneOfertaCreadaPorGencat = false;
 						break;
 					}
 				}

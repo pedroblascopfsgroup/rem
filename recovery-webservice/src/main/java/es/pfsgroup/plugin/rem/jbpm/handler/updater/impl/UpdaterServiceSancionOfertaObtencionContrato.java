@@ -122,9 +122,13 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 			if(!Checks.esNulo(expediente.getReserva()) && esEstadoAnteriorAprobado && esAfectoGencat) {
 				Oferta oferta = expediente.getOferta();	
 				OfertaGencat ofertaGencat = genericDao.get(OfertaGencat.class,genericDao.createFilter(FilterType.EQUALS,"oferta", oferta));
-				if(!Checks.esNulo(ofertaGencat) && Checks.esNulo(ofertaGencat.getIdOfertaAnterior())&& !ofertaGencat.getBorrado()) {
+				if(!Checks.esNulo(ofertaGencat)) {
+					if(Checks.esNulo(ofertaGencat.getIdOfertaAnterior()) && !ofertaGencat.getAuditoria().isBorrado()) {
+						gencatApi.bloqueoExpedienteGENCAT(expediente, tramite);
+					}
+				}else{	
 					gencatApi.bloqueoExpedienteGENCAT(expediente, tramite);
-				} 
+				}
 			}
 
 			// actualizamos el estado de la reserva a firmada

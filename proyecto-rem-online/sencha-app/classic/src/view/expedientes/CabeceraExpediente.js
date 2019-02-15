@@ -183,7 +183,7 @@ Ext.define('HreRem.view.expedientes.CabeceraExpediente', {
 															cls: 'cabecera-info-field',
 										                	bind: {
 										                		value: '{expediente.ofertaOrigen}',
-										                		visible: ''
+										                		//hidden: '{!expediente.ofertaOrigen}'
 										                	},
 										                	listeners: {
 										                		click: {

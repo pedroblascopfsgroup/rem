@@ -62,6 +62,8 @@ import es.pfsgroup.plugin.rem.model.DtoTipoDocExpedientes;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.VBusquedaDatosCompradorExpediente;
+import es.pfsgroup.recovery.api.ExpedienteApi;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -134,6 +136,9 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	
 	@Autowired
 	private ActivoApi activoApi;
+	
+	@Autowired
+	private ExpedienteApi expedienteApi;
 	
 	@Autowired
     private GenericABMDao genericDao;
@@ -1735,5 +1740,5 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 
 		return createModelAndViewJson(model);
 	}
-	
+
 }

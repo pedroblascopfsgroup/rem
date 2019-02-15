@@ -2857,22 +2857,6 @@ onClickBotonEditar: function(btn) {
    	  });
 	},
 	
-	onMouseHoverOfertaOrigen: function(campo) {
-		var elemento = campo.getEl();
-        var tip = Ext.create('Ext.tip.Tip', {
-            html: HreRem.i18n('tooltip.ver.expediente'),
-            margin: '0 0 0 150'
-        });
-       
-        elemento.on('mouseover', function(){
-            tip.showAt(elemento.getX(), elemento.getY());
-        });
-       
-        elemento.on('mouseleave', function(){
-            tip.hide();
-        });
-	},
-	
 	onClickAbrirExpedienteComercial: function() { 
 		
     	var me = this;

@@ -2913,80 +2913,103 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		 		}
 			}
 
-			
-			var idExpediente 	= me.getViewModel().get("expediente.id");
-			var url 			= $AC.getRemoteUrl('expedientecomercial/getActivosPropagables');
-			Ext.Ajax.request({
-			
-			    url: url,
-				method : 'POST',
-			     
-			    params: { idExpediente: idExpediente },
+			if (form.xtype == 'activoexpedientejuridico') { //TODO Retirar toda esta cinta aislante y hacer las propagaciones bien
+				var id = me.getViewModel().get("expediente.id");
+				var idActivo = me.getViewModel().get("activoExpedienteSeleccionado.idActivo");
+				var url = $AC.getRemoteUrl('expedientecomercial/saveFechaEmisionInfJuridico');
+				var jsonFinal = {};
+				jsonFinal.id = id;
+				jsonFinal.idActivo = idActivo;
+				if (form.getForm().findField('fechaEmision') != null)
+					jsonFinal.fechaEmision = form.getForm().findField('fechaEmision').getValue();
+				Ext.Ajax.request({
+					url: url,
+					method: 'POST',
+					params: jsonFinal,
+					success: function (response, opts) {
+						me.getView().unmask();
+					},
+					failure: function (a, operation, context) {
+		            	 me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+						 me.getView().unmask();
+		            }
+				});
+			} else {
+				var idExpediente 	= me.getViewModel().get("expediente.id");
+				var url 			= $AC.getRemoteUrl('expedientecomercial/getActivosPropagables');
+				Ext.Ajax.request({
 				
-			    
-			    success: function (response, opts) {
-			    	
-					// Obtener jsondata para guardar activo
-					var idActivo 					=	me.getViewModel().get("activoExpedienteSeleccionado.idActivo");
-					var posesionInicial 			=	me.getViewModel().get("condiciones.posesionInicial");
-					var situacionPosesoriaCodigo 	=	me.getViewModel().get("condiciones.situacionPosesoriaCodigo");
-					var estadoTitulo 				=	me.getViewModel().get("condiciones.estadoTitulo");		
-					var eviccion 				=	me.getViewModel().get("condiciones.eviccion");		
-					var viciosOcultos 				=	me.getViewModel().get("condiciones.viciosOcultos");	
+				    url: url,
+					method : 'POST',
+				     
+				    params: { idExpediente: idExpediente },
 					
-					var jsonData = {eviccion: eviccion, viciosOcultos: viciosOcultos, idEntidad: idActivo, ecoId: idExpediente, posesionInicial: posesionInicial, situacionPosesoriaCodigo: situacionPosesoriaCodigo, estadoTitulo: estadoTitulo};
-			    	    			
-	    			var activosPropagables = [];
-	    			var data = null;
-	    			
-	                try { 
-	                		data = Ext.decode(response.responseText).data;
-	                		activosPropagables = data;
-	                } catch (e){ };      
-	            
-	               
-	                
-	                
-	    			var tabData = me.createTabData(form);
-	    			var tabPropagableData = null;
+				    
+				    success: function (response, opts) {
+				    	
+						// Obtener jsondata para guardar activo
+						var idActivo 					=	me.getViewModel().get("activoExpedienteSeleccionado.idActivo");
+						var posesionInicial 			=	me.getViewModel().get("condiciones.posesionInicial");
+						var situacionPosesoriaCodigo 	=	me.getViewModel().get("condiciones.situacionPosesoriaCodigo");
+						var estadoTitulo 				=	me.getViewModel().get("condiciones.estadoTitulo");		
+						var eviccion 				=	me.getViewModel().get("condiciones.eviccion");		
+						var viciosOcultos 				=	me.getViewModel().get("condiciones.viciosOcultos");	
+						
+						var jsonData = {eviccion: eviccion, viciosOcultos: viciosOcultos, idEntidad: idActivo, ecoId: idExpediente, posesionInicial: posesionInicial, situacionPosesoriaCodigo: situacionPosesoriaCodigo, estadoTitulo: estadoTitulo};
+				    	    			
+		    			var activosPropagables = [];
+		    			var data = null;
+		    			
+		                try { 
+		                		data = Ext.decode(response.responseText).data;
+		                		activosPropagables = data;
+		                } catch (e){ };      
+		            
+		               
+		                
+		                
+		    			var tabData = me.createTabData(form);
+		    			var tabPropagableData = null;
 
-	    			if(activosPropagables.length > 0)
-	    			{
-	    				var activo;
-	    				//Encontramos el activo seleccionado en la pestaña condiciones
-	    				for(var i = 0; i < activosPropagables.length; i++) {
-	    					if(activosPropagables[i].idActivo == idActivo) {
-	    						activo = activosPropagables[i];
-	    					}
-	    				}
-	 	                //var activo = activosPropagablesAux.splice(activosPropagablesAux.findIndex(function(activo){return activo.activoId == me.getViewModel().get("activoExpedienteSeleccionado.idActivo")}),1)[0];
-	    				tabPropagableData = me.createFormPropagableData(form, tabData);
-	    				//if (!Ext.isEmpty(tabPropagableData))
-	    				{
-	    					
+		    			if(activosPropagables.length > 0)
+		    			{
+		    				var activo;
+		    				//Encontramos el activo seleccionado en la pestaña condiciones
+		    				for(var i = 0; i < activosPropagables.length; i++) {
+		    					if(activosPropagables[i].idActivo == idActivo) {
+		    						activo = activosPropagables[i];
+		    					}
+		    				}
+		 	                //var activo = activosPropagablesAux.splice(activosPropagablesAux.findIndex(function(activo){return activo.activoId == me.getViewModel().get("activoExpedienteSeleccionado.idActivo")}),1)[0];
+		    				tabPropagableData = me.createFormPropagableData(form, tabData);
+		    				//if (!Ext.isEmpty(tabPropagableData))
+		    				{
+		    					
 
-	    					// Abrimos la ventana de selección de activos
-	    					var ventanaOpcionesPropagacionCambios = Ext.create("HreRem.view.activos.detalle.OpcionesPropagacionCambios", {
-	    						form: form, 
-	    						activoActual: activo,
-	    						activos: activosPropagables,
-	    						tabData: tabData,
-	    						jsonData: jsonData,
-	    						propagableData: tabPropagableData}).show();
-	       					me.getView().add(ventanaOpcionesPropagacionCambios);
-	       					me.getView().unmask();
-	    				}
-	    			}
+		    					// Abrimos la ventana de selección de activos
+		    					var ventanaOpcionesPropagacionCambios = Ext.create("HreRem.view.expedientes.OpcionesPropagacionCambiosExpedientes", {
+		    						form: form, 
+		    						activoActual: activo,
+		    						activos: activosPropagables,
+		    						tabData: tabData,
+		    						jsonData: jsonData,
+		    						propagableData: tabPropagableData}).show();
+		       					me.getView().add(ventanaOpcionesPropagacionCambios);
+		       					me.getView().unmask();
+		    				}
+		    			}
 
-	    			me.getView().unmask();
-	            },
-	            
-	            failure: function (a, operation, context) {
-	            	 me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-					 me.getView().unmask();
-	            }
-		     
-			});									
+		    			me.getView().unmask();
+		            },
+		            
+		            failure: function (a, operation, context) {
+		            	 me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+						 me.getView().unmask();
+		            }
+			     
+				});
+			}
+												
 
 		} else {
 			me.getView().unmask();

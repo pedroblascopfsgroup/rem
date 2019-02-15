@@ -16,9 +16,11 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
+
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi.ENTIDADES;
+
 
 @Component
 public class UpdaterServiceAdmisionVerificarEstadoPosesorio implements UpdaterService {
@@ -26,8 +28,6 @@ public class UpdaterServiceAdmisionVerificarEstadoPosesorio implements UpdaterSe
 	@Autowired
 	private GenericABMDao genericDao;
 	
-	@Autowired
-	private RestApi restApi;
 	
 	private static final String FECHA = "fecha";
 	private static final String COMBO_OCUPADO = "comboOcupado";
@@ -70,7 +70,6 @@ public class UpdaterServiceAdmisionVerificarEstadoPosesorio implements UpdaterSe
 					sitpos.setConTitulo(null);
 		}
 		genericDao.save(ActivoSituacionPosesoria.class, sitpos);
-		restApi.marcarRegistroParaEnvio(ENTIDADES.ACTIVO, tramite.getActivo());
 	}
 
 	public String[] getCodigoTarea() {

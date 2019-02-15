@@ -776,7 +776,7 @@ public class AgrupacionController extends ParadiseJsonController {
 
 		return createModelAndViewJson(model);
 	}
-
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getDobleGestorActivo(@RequestParam Long agrId, @RequestParam String codigoGestorEdi,@RequestParam String codigoGestorSu,
 			ModelMap model) {

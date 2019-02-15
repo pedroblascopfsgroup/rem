@@ -197,7 +197,14 @@
 		<appender-ref ref="syslog" />
 		<appender-ref ref="email" />
 	</logger>
-
+	
+	<logger name="es.capgemini.devon.webflow.view.WebflowJSPView" additivity="false">
+		<level value="fatal" />
+		<appender-ref ref="console" />
+		<appender-ref ref="file" />
+		<appender-ref ref="syslog" />
+		<appender-ref ref="email" />
+	</logger>
 	<logger name="es.pfsgroup.plugin.gestorDocumental" additivity="false">
 		<level value="error" />
 		<appender-ref ref="console" />

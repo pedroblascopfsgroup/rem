@@ -241,20 +241,15 @@ public class DtoAgrupacionFilter extends WebDto {
 		this.nif = nif;
 	}
 
-	public Long getIdNumActivoPrincipal() {
-		return idNumActivoPrincipal;
-	}
-
-	public void setIdNumActivoPrincipal(Long idNumActivoPrincipal) {
-		this.idNumActivoPrincipal = idNumActivoPrincipal;
-	}
-
 	public String getTipoAlquiler() {
 		return tipoAlquiler;
 	}
 
 	public void setTipoAlquiler(String tipoAlquiler) {
 		this.tipoAlquiler = tipoAlquiler;
+	}
+	public Long getIdNumActivoPrincipal() {
+		return idNumActivoPrincipal;
 	}
 
 	public String getCondPublVenta() {
@@ -271,5 +266,9 @@ public class DtoAgrupacionFilter extends WebDto {
 
 	public void setCondPublAlquiler(String condPublAlquiler) {
 		this.condPublAlquiler = condPublAlquiler;
+	}
+
+	public void setIdNumActivoPrincipal(Long idNumActivoPrincipal) {
+		this.idNumActivoPrincipal = idNumActivoPrincipal;
 	}
 }

@@ -152,7 +152,6 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private Date fechaAplicaPublicar;
 	private String motivoAplicaPublicar;
 	private Integer enTramite;
-	
 	//Activo Bancario datos:
 	private String claseActivoCodigo;
 	private String claseActivoDescripcion;

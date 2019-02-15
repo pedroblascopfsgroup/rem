@@ -1249,7 +1249,7 @@ ELSE
         
 
         /*******************************************************************************************/
-        /*Actualiza los activos de agrupaciones asistidas con fecha vigencia anterior al día actual para esconderlas:
+        /*Actualiza los activos de agrupaciones asistidas con fecha vigencia anterior al día actual para esconderlas:*/
         /**************/
         PLP$AGR_ASISTIDAS_ESC_ACT( nAGR_ID, vDD_TCO_CODIGO );        
      
@@ -1340,58 +1340,22 @@ ELSE
            fES_CONDICONADO <> hES_CONDICONADO THEN
 
            DBMS_OUTPUT.PUT_LINE('HA ENTRADO');
-
-        IF vACTUALIZADO = 'S' AND pHISTORIFICAR = 'S' THEN
-          V_MSQL := '
-            INSERT INTO '|| V_ESQUEMA ||'.ACT_AHP_HIST_PUBLICACION(AHP_ID,ACT_ID
-                                                  ,DD_TPU_A_ID,DD_TPU_V_ID,DD_EPV_ID,DD_EPA_ID,DD_TCO_ID,DD_MTO_V_ID
-                                                  ,AHP_MOT_OCULTACION_MANUAL_V,AHP_CHECK_PUBLICAR_V,AHP_CHECK_OCULTAR_V
-                                                  ,AHP_CHECK_OCULTAR_PRECIO_V,AHP_CHECK_PUB_SIN_PRECIO_V
-                                                  ,DD_MTO_A_ID
-                                                  ,AHP_MOT_OCULTACION_MANUAL_A,AHP_CHECK_PUBLICAR_A
-                                                  ,AHP_CHECK_OCULTAR_A,AHP_CHECK_OCULTAR_PRECIO_A
-                                                  ,AHP_CHECK_PUB_SIN_PRECIO_A
-                                                  ,AHP_FECHA_INI_VENTA,AHP_FECHA_INI_ALQUILER
-                                                  ,AHP_FECHA_FIN_VENTA,AHP_FECHA_FIN_ALQUILER
-                                                  ,VERSION
-                                                  ,USUARIOCREAR,FECHACREAR
-                                                  ,USUARIOMODIFICAR,FECHAMODIFICAR
-                                                  ,USUARIOBORRAR,FECHABORRAR,BORRADO)
-            SELECT  '|| V_ESQUEMA ||'.S_ACT_AHP_HIST_PUBLICACION.NEXTVAL, ACT_ID
-                                                  ,(SELECT DD_TPU_ID FROM '|| V_ESQUEMA ||'.DD_TPU_TIPO_PUBLICACION WHERE BORRADO = 0 AND DD_TPU_CODIGO = '''||vDD_TPU_CODIGO_A||''')DD_TPU_A_ID
-                                                  ,(SELECT DD_TPU_ID FROM '|| V_ESQUEMA ||'.DD_TPU_TIPO_PUBLICACION WHERE BORRADO = 0 AND DD_TPU_CODIGO = '''||vDD_TPU_CODIGO_V||''')DD_TPU_V_ID
-                                                  ,(SELECT DD_EPV_ID FROM '|| V_ESQUEMA ||'.DD_EPV_ESTADO_PUB_VENTA WHERE BORRADO = 0 AND DD_EPV_CODIGO = '''||vCODIGO_ESTADO_V||''')DD_EPV_ID
-                                                  ,(SELECT DD_EPA_ID FROM '|| V_ESQUEMA ||'.DD_EPA_ESTADO_PUB_ALQUILER WHERE BORRADO = 0 AND DD_EPA_CODIGO = '''||vCODIGO_ESTADO_A||''')DD_EPA_ID
-                                                  ,DD_TCO_ID
-                                                  ,(SELECT DD_MTO_ID FROM '|| V_ESQUEMA ||'.DD_MTO_MOTIVOS_OCULTACION WHERE DD_MTO_CODIGO = '''||vDD_MTO_CODIGO_V||''')DD_MTO_V_ID
-                                                  ,APU_MOT_OCULTACION_MANUAL_V,APU_CHECK_PUBLICAR_V,'''||vCHECK_OCULTAR_V||''' APU_CHECK_OCULTAR_V
-                                                  ,APU_CHECK_OCULTAR_PRECIO_V,APU_CHECK_PUB_SIN_PRECIO_V
-                                                  ,(SELECT DD_MTO_ID FROM '|| V_ESQUEMA ||'.DD_MTO_MOTIVOS_OCULTACION WHERE DD_MTO_CODIGO = '''||vDD_MTO_CODIGO_A||''')DD_MTO_A_ID
-                                                  ,APU_MOT_OCULTACION_MANUAL_A,APU_CHECK_PUBLICAR_A
-                                                  ,'''||vCHECK_OCULTAR_A||''' APU_CHECK_OCULTAR_A,APU_CHECK_OCULTAR_PRECIO_A
-                                                  ,APU_CHECK_PUB_SIN_PRECIO_A
-                                                  ,FECHAMODIFICAR,FECHAMODIFICAR
-                                                  ,SYSDATE APU_FECHA_FIN_VENTA
-                                                  ,SYSDATE APU_FECHA_FIN_ALQUILER
-                                                  ,VERSION
-                                                  ,'''||pUSUARIOMODIFICAR||''' USUARIOCREAR, SYSDATE FECHACREAR
-                                                  ,USUARIOMODIFICAR,FECHAMODIFICAR
-                                                  ,USUARIOBORRAR,FECHABORRAR,BORRADO
-              FROM '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION ACT
-             WHERE ACT.BORRADO = 0
-               AND EXISTS '|| replace(vQUERY,'AUX','')
-                    ;
-          EXECUTE IMMEDIATE V_MSQL;
-
-          V_MSQL := '
-            DELETE FROM '|| V_ESQUEMA ||'.ACT_AHP_HIST_PUBLICACION ACT
-            WHERE (AHP_FECHA_FIN_VENTA IS NULL AND AHP_FECHA_FIN_ALQUILER IS NULL)
-                AND EXISTS '|| replace(vQUERY,'AUX','')
-                    ;
-          EXECUTE IMMEDIATE V_MSQL;
-
-          V_MSQL := '
-            INSERT INTO '|| V_ESQUEMA ||'.ACT_AHP_HIST_PUBLICACION(AHP_ID,ACT_ID
+           
+        IF vACTUALIZADO = 'S' THEN
+			IF pHISTORIFICAR = 'S' THEN
+	          V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.ACT_AHP_HIST_PUBLICACION ACT
+	                        SET AHP_FECHA_FIN_VENTA = SYSDATE
+	                            ,AHP_FECHA_FIN_ALQUILER = SYSDATE
+	                            ,USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
+	                            ,FECHAMODIFICAR = SYSDATE
+	                        WHERE (AHP_FECHA_FIN_VENTA IS NULL AND AHP_FECHA_FIN_ALQUILER IS NULL)
+	                            AND BORRADO = 0
+	                            AND EXISTS '|| replace(vQUERY,'AUX','');
+	          EXECUTE IMMEDIATE V_MSQL;
+			END IF;
+			
+          	V_MSQL := '
+            	INSERT INTO '|| V_ESQUEMA ||'.ACT_AHP_HIST_PUBLICACION(AHP_ID,ACT_ID
                                                   ,DD_TPU_A_ID,DD_TPU_V_ID,DD_EPV_ID,DD_EPA_ID,DD_TCO_ID,DD_MTO_V_ID
                                                   ,AHP_MOT_OCULTACION_MANUAL_V,AHP_CHECK_PUBLICAR_V,AHP_CHECK_OCULTAR_V
                                                   ,AHP_CHECK_OCULTAR_PRECIO_V,AHP_CHECK_PUB_SIN_PRECIO_V
@@ -1405,7 +1369,7 @@ ELSE
                                                   ,USUARIOMODIFICAR,FECHAMODIFICAR
                                                   ,USUARIOBORRAR,FECHABORRAR,BORRADO
                                                   ,ES_CONDICONADO_ANTERIOR)
-            SELECT  '|| V_ESQUEMA ||'.S_ACT_AHP_HIST_PUBLICACION.NEXTVAL, ACT_ID
+            	SELECT  '|| V_ESQUEMA ||'.S_ACT_AHP_HIST_PUBLICACION.NEXTVAL, ACT_ID
                                                   ,DD_TPU_A_ID
                                                   ,DD_TPU_V_ID
                                                   ,DD_EPV_ID
@@ -1424,16 +1388,17 @@ ELSE
                                                   ,USUARIOMODIFICAR,FECHAMODIFICAR
                                                   ,USUARIOBORRAR,FECHABORRAR,BORRADO
                                                   ,ES_CONDICONADO_ANTERIOR
-              FROM '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION ACT
-             WHERE ACT.BORRADO = 0
-               AND EXISTS '|| replace(vQUERY,'AUX','')
+              	FROM '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION ACT
+             	WHERE ACT.BORRADO = 0
+               	AND EXISTS '|| replace(vQUERY,'AUX','')
                     ;
-          EXECUTE IMMEDIATE V_MSQL;
+          	EXECUTE IMMEDIATE V_MSQL;
         END IF;
 
     END IF;
     
     END IF;
+
 
 
         nCONTADOR := nCONTADOR + 1;

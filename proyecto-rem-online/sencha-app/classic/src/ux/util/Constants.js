@@ -633,7 +633,7 @@ Ext.define('HreRem.ux.util.Constants', {
 		SCORING: '01',
 		SEGURO_RENTAS: '02',
 		NINGUNA: '03'
-    },
+	},
 
 	SUBTIPO_DOCUMENTO_EXPEDIENTE: {
 		RENOVACION_CONTRATO: '46',

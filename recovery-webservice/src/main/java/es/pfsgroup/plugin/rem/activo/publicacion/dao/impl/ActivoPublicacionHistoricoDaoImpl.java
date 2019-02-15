@@ -241,8 +241,6 @@ public class ActivoPublicacionHistoricoDaoImpl extends AbstractEntityDao<ActivoP
 		criteria.add(Restrictions.eq("activo.id", idActivo));
 		criteria.add(Restrictions.isNull("fechaFinVenta"));
 		criteria.add(Restrictions.isNull("fechaFinAlquiler"));
-		criteria.add(Restrictions.isNotNull("fechaInicioAlquiler"));
-		criteria.add(Restrictions.isNotNull("fechaInicioVenta"));
 		criteria.add(Restrictions.eq("auditoria.borrado", false));
 		criteria.addOrder(Order.desc("auditoria.fechaCrear"));
 

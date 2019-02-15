@@ -3,12 +3,13 @@ package es.pfsgroup.framework.paradise.bulkUpload.utils.impl;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.*;
-import java.text.ParseException;
+import java.util.Set;
 
 import javax.annotation.Resource;
 
@@ -18,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import es.capgemini.devon.files.FileItem;
+import es.capgemini.devon.message.MessageService;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -36,9 +38,6 @@ import es.pfsgroup.framework.paradise.bulkUpload.dto.MSVExcelFileItemDto;
 import es.pfsgroup.framework.paradise.bulkUpload.dto.ResultadoValidacion;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.MSVExcelParser;
-import es.pfsgroup.framework.paradise.utils.JsonViewerException;
-import es.pfsgroup.framework.paradise.bulkUpload.utils.MSVExcelParser;
-import es.capgemini.devon.message.MessageService;
 
 
 
@@ -52,8 +51,8 @@ public class MSVAgrupacionRestringidoExcelValidator extends MSVExcelValidatorAbs
 	public static final String ACTIVO_EN_AGRUPACION = "msg.error.masivo.agrupar.activos.restringida.activo.enAgrupacion";
 	public static final String ACTIVO_EN_OTRA_AGRUPACION = "msg.error.masivo.agrupar.activos.restringida.activo.enOtraAgrupacion";
 	public static final String ERROR_ACTIVO_DISTINTO_PROPIETARIO = "msg.error.masivo.agrupar.activos.propietarios.no.coinciden";
-	public static final String ACTIVO_ESTADO_PUBLICACION_DISTINTO = "msg.error.masivo.agrupar.activos.restringida.activos.agrupacion.destino.comercial";
-	public static final String ACTIVO_SITUACION_PUBLICACION_DISTINTO = "msg.error.masivo.agrupar.activos.restringida.activos.agrupacion.situacion.comercial";
+	public static final String ACTIVO_TIPO_COMERCIALIZACION_DISTINTO = "msg.error.masivo.agrupar.activos.restringida.activos.agrupacion.destino.comercial";
+	public static final String ACTIVO_ESTADO_PUBLICACION_DISTINTO = "msg.error.masivo.agrupar.activos.restringida.activos.agrupacion.estado.publicacion";
 	public static final String AGRUPACION_NO_EXISTE = "msg.error.masivo.agrupar.activos.restringida.agrupacion.noExiste";
 	public static final String AGRUPACION_PROPIETARIO = "msg.error.masivo.agrupar.activos.restringida.agrupacion.propietario";
 	
@@ -75,6 +74,8 @@ public class MSVAgrupacionRestringidoExcelValidator extends MSVExcelValidatorAbs
 	
 	@Autowired
 	private MSVProcesoApi msvProcesoApi;
+	
+	
 	
 	@Resource
     MessageService messageServices;
@@ -113,8 +114,8 @@ public class MSVAgrupacionRestringidoExcelValidator extends MSVExcelValidatorAbs
 			mapaErrores.put(messageServices.getMessage(AGRUPACION_NO_EXISTE), agrupacionNotExistsRows(exc));
 			mapaErrores.put(messageServices.getMessage(ACTIVO_EN_AGRUPACION), activosEnAgrupacionRows(exc));
 			mapaErrores.put(messageServices.getMessage(ACTIVO_EN_OTRA_AGRUPACION), activosEnOtraAgrupacionRows(exc));
+			mapaErrores.put(messageServices.getMessage(ACTIVO_TIPO_COMERCIALIZACION_DISTINTO), comprobarTipoComercializacionActivoAgrupacion(exc));
 			mapaErrores.put(messageServices.getMessage(ACTIVO_ESTADO_PUBLICACION_DISTINTO), comprobarEstadoPublicacionActivoAgrupacion(exc));
-			mapaErrores.put(messageServices.getMessage(ACTIVO_SITUACION_PUBLICACION_DISTINTO), comprobarSituacionActivoAgrupacion(exc));
 			mapaErrores.put(messageServices.getMessage(AGRUPACION_PROPIETARIO), comprobarDistintoPropietario(exc));
 			mapaErrores.put(messageServices.getMessage(ACTIVOS_NO_MISMA_LOCALIZACION.mensajeError), activosAgrupMultipleValidacionRows(exc, ACTIVOS_NO_MISMA_LOCALIZACION.codigoError));
 			//mapaErrores.put(messageServices.getMessage(ERROR_ACTIVO_DISTINTO_PROPIETARIO), comprobarDistintoPropietario(exc));
@@ -126,8 +127,8 @@ public class MSVAgrupacionRestringidoExcelValidator extends MSVExcelValidatorAbs
 					|| !mapaErrores.get(messageServices.getMessage(ACTIVO_EN_OTRA_AGRUPACION)).isEmpty() 
 					|| !mapaErrores.get(messageServices.getMessage(AGRUPACION_PROPIETARIO)).isEmpty() 
 					|| !mapaErrores.get(messageServices.getMessage(ACTIVOS_NO_MISMA_LOCALIZACION.mensajeError)).isEmpty()
-					|| !mapaErrores.get(messageServices.getMessage(ACTIVO_ESTADO_PUBLICACION_DISTINTO)).isEmpty()
-					|| !mapaErrores.get(messageServices.getMessage(ACTIVO_SITUACION_PUBLICACION_DISTINTO)).isEmpty() ) {
+					|| !mapaErrores.get(messageServices.getMessage(ACTIVO_TIPO_COMERCIALIZACION_DISTINTO)).isEmpty()
+					|| !mapaErrores.get(messageServices.getMessage(ACTIVO_ESTADO_PUBLICACION_DISTINTO)).isEmpty() ) {
 
 				dtoValidacionContenido.setFicheroTieneErrores(true);
 				exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
@@ -369,22 +370,51 @@ public class MSVAgrupacionRestringidoExcelValidator extends MSVExcelValidatorAbs
 		return listaFilas;
 	}
 	
-	private List<Integer> comprobarEstadoPublicacionActivoAgrupacion(MSVHojaExcel exc) {
+	private List<Integer> comprobarTipoComercializacionActivoAgrupacion(MSVHojaExcel exc) {
 		
 		
 		List<Integer> listaFilas = new ArrayList<Integer>();
 		
 		String numActivo;
 		String numAgrupacion;
+		String activoPrincipal;		
+		boolean noHayActipoPrincipalEnExcel = true;
+		String numActivoPrincipalExcel = null;
+		
 		int i = 0;
 		try {
+			
+			
+			if(!particularValidator.isAgrupacionSinActivoPrincipal(exc.dameCelda(1, 0))) {
+				
+				for(i=1; i < this.numFilasHoja; i++){
+					activoPrincipal = exc.dameCelda(i, 2);
+					
+					if(activoPrincipal.equals("1")) {
+						numActivoPrincipalExcel = exc.dameCelda(i, 1);
+						noHayActipoPrincipalEnExcel = false;
+					}
+					
+				}
+				
+			}
+			
+				
 			for(i=1; i<this.numFilasHoja;i++){
 				numAgrupacion = exc.dameCelda(i, 0);
 				numActivo = exc.dameCelda(i, 1);
-				if(!particularValidator.isMismoTipoComercializacionActivoPrincipalAgrupacion(numActivo, numAgrupacion))
-					listaFilas.add(i);
+				
+				if(noHayActipoPrincipalEnExcel) {
+					if(!particularValidator.isMismoTipoComercializacionActivoPrincipalAgrupacion(numActivo, numAgrupacion))
+						listaFilas.add(i);
+				} else {
+					if(!particularValidator.isMismoTipoComercializacionActivoPrincipalExcel(numActivo, numActivoPrincipalExcel))
+						listaFilas.add(i);
+				}
 				
 			}
+			
+			
 		} catch (Exception e) {
 			if (i != 0) listaFilas.add(i);
 			logger.error(e.getMessage());
@@ -397,20 +427,50 @@ public class MSVAgrupacionRestringidoExcelValidator extends MSVExcelValidatorAbs
 	}
 	
 	
-	private List<Integer> comprobarSituacionActivoAgrupacion(MSVHojaExcel exc) {
+	private List<Integer> comprobarEstadoPublicacionActivoAgrupacion(MSVHojaExcel exc) {
 		
 		
 		List<Integer> listaFilas = new ArrayList<Integer>();
 		
 		String numActivo;
 		String numAgrupacion;
+		String activoPrincipal;		
+		boolean noHayActipoPrincipalEnExcel = true;
+		String numActivoPrincipalExcel = null;
+		
 		int i = 0;
 		try {
+			
+			if(!particularValidator.isAgrupacionSinActivoPrincipal(exc.dameCelda(1, 0))) {
+				
+				for(i=1; i < this.numFilasHoja; i++){
+					activoPrincipal = exc.dameCelda(i, 2);
+					
+					
+					if(activoPrincipal.equals("1")) {
+						numActivoPrincipalExcel = exc.dameCelda(i, 1);
+						noHayActipoPrincipalEnExcel = false;
+					}
+					
+				}
+				
+			}
+			
+			
+			
 			for(i=1; i<this.numFilasHoja;i++){
 				numAgrupacion = exc.dameCelda(i, 0);
 				numActivo = exc.dameCelda(i, 1);
-				if(!particularValidator.isMismoEpuActivoPrincipalAgrupacion(numActivo, numAgrupacion))
-					listaFilas.add(i);
+				
+
+				if(noHayActipoPrincipalEnExcel) {
+					if(!particularValidator.isMismoEpuActivoPrincipalAgrupacion(numActivo, numAgrupacion))
+						listaFilas.add(i);
+					
+				} else {					
+					if(!particularValidator.isMismoEpuActivoPrincipalExcel(numActivo, numActivoPrincipalExcel))
+						listaFilas.add(i);
+				}
 				
 			}
 		} catch (Exception e) {

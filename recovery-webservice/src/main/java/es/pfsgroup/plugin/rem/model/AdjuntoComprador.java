@@ -2,19 +2,15 @@ package es.pfsgroup.plugin.rem.model;
 
 
 import java.io.Serializable;
-import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
@@ -25,17 +21,6 @@ import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
-import es.capgemini.pfs.direccion.model.DDProvincia;
-import es.capgemini.pfs.direccion.model.DDTipoVia;
-import es.capgemini.pfs.direccion.model.Localidad;
-import es.capgemini.pfs.persona.model.DDTipoDocumento;
-import es.capgemini.pfs.users.domain.Usuario;
-import es.pfsgroup.commons.utils.Checks;
-import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
-import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
-import es.pfsgroup.plugin.rem.model.dd.DDTiposColaborador;
-import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
 
 
 /**
@@ -80,6 +65,10 @@ public class AdjuntoComprador implements Serializable, Auditable {
     @Column(name = "ADC_ID_DOCUMENTO_REST")
     private Long idDocRestClient;
 
+    //Esta columna contendrá el ID de ADJ_ADJUNTOS pero no tiene una Clave Foranea como tal
+    // ya que puede ser null dependiendo de si el Gestor Documental esta activado (esta columna a null) o no (esta columna deberia rellenarse).
+    @Column(name = "ADJ_ID")
+    private Long adjunto; 
 
 	@Version   
 	private Long version;
@@ -152,5 +141,12 @@ public class AdjuntoComprador implements Serializable, Auditable {
 		this.idDocRestClient = idDocRestClient;
 	}
 
+	public Long getAdjunto() {
+		return adjunto;
+	}
+
+	public void setAdjunto(Long adjunto) {
+		this.adjunto = adjunto;
+	}
 	
 }

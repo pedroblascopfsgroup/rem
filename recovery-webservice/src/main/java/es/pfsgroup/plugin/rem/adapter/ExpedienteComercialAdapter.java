@@ -16,11 +16,13 @@ import org.springframework.transaction.annotation.Transactional;
 import es.capgemini.devon.beans.Service;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
+import es.capgemini.pfs.adjunto.model.Adjunto;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.Order;
+import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
@@ -35,6 +37,8 @@ import es.pfsgroup.plugin.rem.model.AdjuntoComprador;
 import es.pfsgroup.plugin.rem.model.AdjuntoExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.ClienteComercial;
 import es.pfsgroup.plugin.rem.model.ClienteGDPR;
+import es.pfsgroup.plugin.rem.model.Comprador;
+import es.pfsgroup.plugin.rem.model.CompradorExpediente;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.TmpClienteGDPR;
@@ -67,6 +71,9 @@ public class ExpedienteComercialAdapter {
 	
 	@Autowired
 	private GenericABMDao genericDao;
+	
+	@Autowired
+	private UploadAdapter uploadAdapter;
 	
 	
 	protected static final Log logger = LogFactory.getLog(ActivoAdapter.class);
@@ -143,62 +150,94 @@ public class ExpedienteComercialAdapter {
 			} catch (Exception ex) {
 				logger.error(ex.getMessage());
 			}		
+		} else {
+			//Filtro para conseguir el Cliente Comercial (donde se almacena el idPersona que devuelve el Maestro de Personas)
+			Filter filtroPersona = genericDao.createFilter(FilterType.EQUALS, "idPersonaHaya", idIntervinienteHaya);
+			Order order = new Order(OrderType.DESC, "id");
+			List<ClienteComercial> listClienteCom = genericDao.getListOrdered(ClienteComercial.class, order, filtroPersona);
+			ClienteComercial clienteCom = null;
+			if(!Checks.estaVacio(listClienteCom))
+				clienteCom = listClienteCom.get(0);
+			
+			DtoAdjunto dtoAdjunto = new DtoAdjunto();
+			AdjuntoComprador adjuntoComprador = null;
+			
+			if(!Checks.esNulo(clienteCom)) {
+				Comprador comprador = genericDao.get(Comprador.class, genericDao.createFilter(FilterType.EQUALS, "clienteComercial", clienteCom));
+				
+				if(!Checks.esNulo(comprador)) {
+					Filter filtroCompradorExp = genericDao.createFilter(FilterType.EQUALS, "comprador", comprador.getId());
+					Order orderCompExp = new Order(OrderType.DESC, "expediente");
+					List<CompradorExpediente> listCompradorExp = genericDao.getListOrdered(CompradorExpediente.class, orderCompExp, filtroCompradorExp);
+					CompradorExpediente compradorExpediente = null;
+					if(!Checks.estaVacio(listCompradorExp))
+						compradorExpediente = listCompradorExp.get(0);
+					
+					if(!Checks.esNulo(compradorExpediente)) {
+						adjuntoComprador = genericDao.get(AdjuntoComprador.class, genericDao.createFilter(FilterType.EQUALS, "id", compradorExpediente.getDocumentoAdjunto().getId()));
+					}
+				}
+			} else {
+				filtroPersona = genericDao.createFilter(FilterType.EQUALS, "idPersonaHaya", Long.parseLong(idIntervinienteHaya));
+				TmpClienteGDPR tmpClienteGDPR = genericDao.get(TmpClienteGDPR.class, filtroPersona);
+				if(!Checks.esNulo(tmpClienteGDPR) && !Checks.esNulo(tmpClienteGDPR.getIdAdjunto())) {
+					adjuntoComprador = genericDao.get(AdjuntoComprador.class, genericDao.createFilter(FilterType.EQUALS, "id", tmpClienteGDPR.getIdAdjunto()));
+				}
+			}
+			
+			if(!Checks.esNulo(adjuntoComprador)) {
+				dtoAdjunto.setId(adjuntoComprador.getId());
+				dtoAdjunto.setMatricula(adjuntoComprador.getMatricula());
+				dtoAdjunto.setNombre(adjuntoComprador.getNombreAdjunto());
+				dtoAdjunto.setDescripcionTipo(adjuntoComprador.getTipoDocumento());	
+				listaAdjuntos.add(dtoAdjunto);
+			}
 		}
 		return listaAdjuntos;
-		
 	}
 	
 	@Transactional(readOnly = false)
 	public String uploadDocumentoComprador(WebFileItem webFileItem, String idIntervinienteHaya) throws Exception {
 		
 		try {
-			if (gestorDocumentalAdapterApi.modoRestClientActivado()) {				
-				Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
-				
-				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoDocumentoActivo.CODIGO_CONSENTIMIENTO_PROTECCION_DATOS);
-				DDTipoDocumentoActivo tipoDocumento = genericDao.get(DDTipoDocumentoActivo.class, filtro);
-				
-				Long idDocRestClient = gestorDocumentalAdapterApi.uploadDocumentoEntidadComprador(idIntervinienteHaya, webFileItem, usuarioLogado.getUsername(), tipoDocumento.getMatricula());
+			Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+			AdjuntoComprador adjuntoComprador = new AdjuntoComprador();
+			Adjunto adj = null;
+			Long idDocRestClient = null;
+			
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoDocumentoActivo.CODIGO_CONSENTIMIENTO_PROTECCION_DATOS);
+			DDTipoDocumentoActivo tipoDocumento = genericDao.get(DDTipoDocumentoActivo.class, filtro);
+						
+			if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
+				idDocRestClient = gestorDocumentalAdapterApi.uploadDocumentoEntidadComprador(idIntervinienteHaya, webFileItem, usuarioLogado.getUsername(), tipoDocumento.getMatricula());
+
 				if (!Checks.esNulo(idDocRestClient)) {
-					//Subida registro adjunto de la oferta activo.
-					AdjuntoComprador adjuntoComprador = new AdjuntoComprador();
-					adjuntoComprador.setMatricula(tipoDocumento.getMatricula());
-					adjuntoComprador.setNombreAdjunto(webFileItem.getFileItem().getFileName());
-					adjuntoComprador.setTipoDocumento(tipoDocumento.getDescripcion());
 					adjuntoComprador.setIdDocRestClient(idDocRestClient);
-					Auditoria.save(adjuntoComprador);
-					genericDao.save(AdjuntoComprador.class, adjuntoComprador);
-					
-					//Filtro para conseguir el Cliente Comercial (donde se almacena el idPersona que devuelve el Maestro de Personas)
-					Filter filtroPersona = genericDao.createFilter(FilterType.EQUALS, "idPersonaHaya", Long.parseLong(idIntervinienteHaya));
-					/*Order order = new Order(OrderType.DESC, "id");
-					List<ClienteComercial> listClienteCom = genericDao.getListOrdered(ClienteComercial.class,order, filtroPersona);
-					ClienteComercial clienteCom = null;
-					if(!Checks.estaVacio(listClienteCom))
-						clienteCom=listClienteCom.get(0);
-					
-					*/TmpClienteGDPR tmpClienteGDPR;/*
-					if(!Checks.esNulo(clienteCom)) {
-						tmpClienteGDPR = genericDao.get(TmpClienteGDPR.class,
-								genericDao.createFilter(FilterType.EQUALS, "idPersonaHaya", Long.parseLong(clienteCom.getIdPersonaHaya())),
-								genericDao.createFilter(FilterType.EQUALS, "numDocumento", clienteCom.getDocumento()));
-						if(Checks.esNulo(tmpClienteGDPR)) {
-							tmpClienteGDPR = new TmpClienteGDPR();
-							tmpClienteGDPR.setIdPersonaHaya(Long.valueOf(clienteCom.getIdPersonaHaya()));
-							tmpClienteGDPR.setNumDocumento(clienteCom.getDocumento());
-							tmpClienteGDPR.setIdAdjunto(adjuntoComprador.getId());
-							genericDao.save(TmpClienteGDPR.class, tmpClienteGDPR);
-						}
-					} else {*/
-						tmpClienteGDPR = genericDao.get(TmpClienteGDPR.class, filtroPersona);
-						if(!Checks.esNulo(tmpClienteGDPR)) {
-							tmpClienteGDPR.setIdAdjunto(adjuntoComprador.getId());
-							genericDao.update(TmpClienteGDPR.class, tmpClienteGDPR);
-						}
-					/*}*/
-					
+				}
+			} else {
+				//Subida del adjunto en BBDD si el GD no esta activado.
+				adj = uploadAdapter.saveBLOB(webFileItem.getFileItem());
+								
+				if(!Checks.esNulo(adj)) {
+					adjuntoComprador.setAdjunto(adj.getId());
 				}
 			}
+			
+			adjuntoComprador.setMatricula(tipoDocumento.getMatricula());
+			adjuntoComprador.setNombreAdjunto(webFileItem.getFileItem().getFileName());
+			adjuntoComprador.setTipoDocumento(tipoDocumento.getDescripcion());
+			Auditoria.save(adjuntoComprador);
+			genericDao.save(AdjuntoComprador.class, adjuntoComprador);
+				
+			//Filtro para conseguir el Cliente Comercial (donde se almacena el idPersona que devuelve el Maestro de Personas)
+			Filter filtroPersona = genericDao.createFilter(FilterType.EQUALS, "idPersonaHaya", Long.parseLong(idIntervinienteHaya));
+				
+			TmpClienteGDPR tmpClienteGDPR;
+			tmpClienteGDPR = genericDao.get(TmpClienteGDPR.class, filtroPersona);
+			if(!Checks.esNulo(tmpClienteGDPR)) {
+				tmpClienteGDPR.setIdAdjunto(adjuntoComprador.getId());
+				genericDao.update(TmpClienteGDPR.class, tmpClienteGDPR);
+			}				
 		} catch (GestorDocumentalException gex) {
 				logger.error(gex.getMessage());
 				return gex.getMessage();
@@ -211,27 +250,28 @@ public class ExpedienteComercialAdapter {
 	
 	@Transactional(readOnly = false)
 	public boolean deleteAdjuntoComprador(AdjuntoComprador adjuntoComprador, ClienteGDPR clienteGDPR) {
-		boolean borrado = false;
-			if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
-				Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+		boolean borrado = true;
+		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+			if (gestorDocumentalAdapterApi.modoRestClientActivado()) {	
 				try {
 					borrado = gestorDocumentalAdapterApi.borrarAdjunto(adjuntoComprador.getIdDocRestClient(), usuarioLogado.getUsername());
-					if(borrado) {
-						//Borrado lógico del documento
-						adjuntoComprador.getAuditoria().setBorrado(true);
-						adjuntoComprador.getAuditoria().setUsuarioBorrar(usuarioLogado.getUsername());
-						adjuntoComprador.getAuditoria().setFechaBorrar(new Date());
-						genericDao.update(AdjuntoComprador.class, adjuntoComprador);
-						
-						Filter filtroDocumento = genericDao.createFilter(FilterType.EQUALS, "idAdjunto", adjuntoComprador.getId());
-						TmpClienteGDPR tmpClienteGDPR = genericDao.get(TmpClienteGDPR.class, filtroDocumento);
-						if(!Checks.esNulo(tmpClienteGDPR)) {
-							tmpClienteGDPR.setIdAdjunto(null);
-							genericDao.update(TmpClienteGDPR.class, tmpClienteGDPR);
-						}
-					}
 				} catch (Exception e) {
 					e.printStackTrace();
+				}
+			}
+				
+			if(borrado) {
+				//Borrado lógico del documento
+				adjuntoComprador.getAuditoria().setBorrado(true);
+				adjuntoComprador.getAuditoria().setUsuarioBorrar(usuarioLogado.getUsername());
+				adjuntoComprador.getAuditoria().setFechaBorrar(new Date());
+				genericDao.update(AdjuntoComprador.class, adjuntoComprador);
+				
+				Filter filtroDocumento = genericDao.createFilter(FilterType.EQUALS, "idAdjunto", adjuntoComprador.getId());
+				TmpClienteGDPR tmpClienteGDPR = genericDao.get(TmpClienteGDPR.class, filtroDocumento);
+				if(!Checks.esNulo(tmpClienteGDPR)) {
+					tmpClienteGDPR.setIdAdjunto(null);
+					genericDao.update(TmpClienteGDPR.class, tmpClienteGDPR);
 				}
 			}
 		return borrado;		

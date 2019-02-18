@@ -23,6 +23,7 @@ import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.rem.adapter.ActivoOfertaAdapter;
 import es.pfsgroup.plugin.rem.clienteComercial.dao.ClienteComercialDao;
+import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
 import es.pfsgroup.plugin.rem.model.AdjuntoComprador;
 import es.pfsgroup.plugin.rem.model.ClienteComercial;
 import es.pfsgroup.plugin.rem.model.ClienteGDPR;
@@ -43,6 +44,9 @@ public class ActivoOfertaController extends ParadiseJsonController {
 	
 	@Autowired
 	private ClienteComercialDao clienteComercialDao;
+	
+	@Autowired
+	private GestorDocumentalAdapterApi gestorDocumentalAdapterApi;
 	
 	protected static final Log logger = LogFactory.getLog(ActivoOfertaController.class);
 	
@@ -172,7 +176,13 @@ public class ActivoOfertaController extends ParadiseJsonController {
 			e.printStackTrace();
 		}
 		
-		Filter filtroDoc = genericDao.createFilter(FilterType.EQUALS, "idDocRestClient", listaAdjuntos.get(0).getId());
+		Filter filtroDoc;
+		if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
+			filtroDoc = genericDao.createFilter(FilterType.EQUALS, "idDocRestClient", listaAdjuntos.get(0).getId());
+		} else {
+			filtroDoc = genericDao.createFilter(FilterType.EQUALS, "id", listaAdjuntos.get(0).getId());
+		}
+		
 		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
 		AdjuntoComprador adjComprador = genericDao.get(AdjuntoComprador.class, filtroDoc, filtroBorrado);
 

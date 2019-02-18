@@ -1003,6 +1003,7 @@ Ext
 						    			config.params = {};
 						    			config.params.idPersonaHaya=record.get("idPersonaHaya");
 						    			config.params.idExpediente=record.get("idExpediente");
+						    			config.params.idDocAdjunto = record.get("idDocAdjunto");
 						    			config.params.idDocRestClient=record.get("idDocRestClient");
 						    			config.params.nombreAdjunto=record.get("nombreAdjunto");
 						    			

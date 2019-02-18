@@ -24,6 +24,7 @@ import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.devon.utils.FileUtils;
+import es.capgemini.pfs.adjunto.model.Adjunto;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -47,6 +48,8 @@ import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.Downloader;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.DownloaderFactoryApi;
+import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
+import es.pfsgroup.plugin.rem.model.ActivoAdjuntoActivo;
 import es.pfsgroup.plugin.rem.model.AdjuntoComprador;
 import es.pfsgroup.plugin.rem.model.ClienteComercial;
 import es.pfsgroup.plugin.rem.model.ClienteGDPR;
@@ -143,6 +146,9 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	
 	@Autowired
 	private ClienteComercialDao clienteComercialDao;
+	
+	@Autowired
+	private GestorDocumentalAdapterApi gestorDocumentalAdapterApi;
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
@@ -456,11 +462,20 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 				String key = appProperties.getProperty(CONSTANTE_REST_CLIENT);
 				Downloader dl = downloaderFactoryApi.getDownloader(key);
 				String nombreDocumento = request.getParameter("nombreAdjunto");
-				Long idDocRestClient = Long.parseLong(request.getParameter("idDocRestClient"));
+				String idDocRestClient = request.getParameter("idDocRestClient");
+				String idDocAdjunto = request.getParameter("idDocAdjunto");
 				
-   			
        	try {
-       		    FileItem fileItem = dl.getFileItem( idDocRestClient , nombreDocumento);
+	       		FileItem fileItem;
+	       		if(gestorDocumentalAdapterApi.modoRestClientActivado()) {
+	       			fileItem = dl.getFileItem(Long.parseLong(idDocRestClient), nombreDocumento);
+	       		} else {
+	       			AdjuntoComprador adjuntoComprador = genericDao.get(AdjuntoComprador.class, genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(idDocAdjunto)));
+	       			Adjunto adjunto = genericDao.get(Adjunto.class, genericDao.createFilter(FilterType.EQUALS, "id", adjuntoComprador.getAdjunto()));
+	
+	       			fileItem = adjunto.getFileItem();
+	       			fileItem.setFileName(adjuntoComprador.getNombreAdjunto());
+	       		}
            		ServletOutputStream salida = response.getOutputStream(); 
            			
            		response.setHeader("Content-disposition", "attachment; filename=" + fileItem.getFileName());
@@ -488,8 +503,10 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 		 String  idDocAdjunto    = 	request.getParameter("idDocAdjunto");
 		 String  nombreDocumento =  request.getParameter("nombreAdjunto");
 		 try {
-				if(!Checks.esNulo(idDocAdjunto ) && !Checks.esNulo(nombreDocumento) ) {
-					if(!Checks.esNulo(idDocRestClient)) {
+				if(!Checks.esNulo(idDocAdjunto) && !Checks.esNulo(nombreDocumento)) {
+					if(!Checks.esNulo(idDocRestClient) && gestorDocumentalAdapterApi.modoRestClientActivado()) {
+						model.put("success", true);
+					} else if(!Checks.esNulo(idDocAdjunto) && !gestorDocumentalAdapterApi.modoRestClientActivado()) {
 						model.put("success", true);
 					} else {
 						model.put("success", false);
@@ -623,7 +640,12 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 			e.printStackTrace();
 		}
 		
-		Filter filtroDoc = genericDao.createFilter(FilterType.EQUALS, "idDocRestClient", listaAdjuntos.get(0).getId());
+		Filter filtroDoc;
+		if(gestorDocumentalAdapterApi.modoRestClientActivado()) {
+			filtroDoc = genericDao.createFilter(FilterType.EQUALS, "idDocRestClient", listaAdjuntos.get(0).getId());
+		} else {
+			filtroDoc = genericDao.createFilter(FilterType.EQUALS, "id", listaAdjuntos.get(0).getId());
+		}
 		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
 		AdjuntoComprador adjComprador = genericDao.get(AdjuntoComprador.class, filtroDoc, filtroBorrado);
 

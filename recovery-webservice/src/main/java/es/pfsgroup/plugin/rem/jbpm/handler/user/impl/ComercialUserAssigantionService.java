@@ -160,9 +160,6 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 			return loteComercial.getUsuarioGestorComercial();
 		}
 		
-		if(GestorActivoApi.CODIGO_GESTOR_BACKOFFICE.equals(codigoGestor) && loteComercial != null && !Checks.esNulo(loteComercial.getUsuarioGestorComercialBackOffice())) {
-			return loteComercial.getUsuarioGestorComercialBackOffice();
-		}
 		
 		if(GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO.equals(codigoGestor) && loteComercial != null && !Checks.esNulo(loteComercial.getUsuarioGestorComercialBackOffice())) {
 			return loteComercial.getUsuarioGestorComercialBackOffice();

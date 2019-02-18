@@ -1,6 +1,6 @@
-Ext.define('HreRem.view.activos.detalle.OpcionesPropagacionCambios', {
+Ext.define('HreRem.view.expedientes.OpcionesPropagacionCambiosExpedientes', {
     extend		: 'HreRem.view.common.WindowBase',
-    xtype		: 'opcionespropagacioncambios',
+    xtype		: 'opcionespropagacioncambiosexpedientes',
         
     layout	: {
     	type: 'hbox',
@@ -36,7 +36,7 @@ Ext.define('HreRem.view.activos.detalle.OpcionesPropagacionCambios', {
 
     	me.setTitle(HreRem.i18n("title.seleccion.cambios.masivo"));
     	
-    	me.buttons = [ { itemId: 'btnGuardar', text: HreRem.i18n("btn.saveBtnText"), handler: "onClickGuardarPropagarCambios"}, { itemId: 'btnCancelar', text: HreRem.i18n("btn.cancelBtnText"), handler: 'onClickCancelarPropagarCambios'}];
+    	me.buttons = [ { itemId: 'btnGuardar', text: HreRem.i18n("btn.saveBtnText"), handler: "onClickSaveMasivosCondiciones"}, { itemId: 'btnCancelar', text: HreRem.i18n("btn.cancelBtnText"), handler: 'onClickCancelarPropagarCambios'}];
     	
     	me.items = [
     	

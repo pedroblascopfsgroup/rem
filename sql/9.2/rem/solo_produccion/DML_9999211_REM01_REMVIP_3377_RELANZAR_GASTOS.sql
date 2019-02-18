@@ -1,7 +1,7 @@
 --/*
 --#########################################
 --## AUTOR=Ivan Castelló Cabrelles
---## FECHA_CREACION=20190218
+--## FECHA_CREACION=20190219
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=0.1
 --## INCIDENCIA_LINK=REMVIP-3377
@@ -169,7 +169,7 @@ WHEN MATCHED THEN
         10280955,
         10280993,
         10281174,
-        10281067)   
+        10281067)  group by GPV.PRG_ID 
           
 )T2 ON (T1.PRG_ID = T2.PRG_ID) 
 WHEN MATCHED THEN

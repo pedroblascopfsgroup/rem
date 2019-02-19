@@ -185,6 +185,8 @@ BEGIN
             PAC.PAC_CHECK_PUBLICAR      = 0
           , PAC.PAC_CHECK_COMERCIALIZAR = 0
           , PAC.PAC_CHECK_GESTIONAR     = 0
+          , PAC.PAC_INCLUIDO            = 0
+          , PAC.PAC_CHECK_FORMALIZAR    = 0
           , PAC.USUARIOMODIFICAR = '''||USUARIO||'''
           , PAC.FECHAMODIFICAR = SYSDATE
         WHERE 1 = 1
@@ -359,7 +361,10 @@ BEGIN
         WHEN MATCHED THEN UPDATE SET
             PAC.PAC_CHECK_PUBLICAR      = 0
           , PAC.PAC_CHECK_COMERCIALIZAR = 0
-          , PAC.PAC_CHECK_GESTIONAR     = 0
+          , PAC.PAC_CHECK_GESTIONAR     = 0          
+    	  , PAC.PAC_INCLUIDO            = 0
+          , PAC.PAC_CHECK_FORMALIZAR    = 0
+
           , PAC.USUARIOMODIFICAR = '''||USUARIO||'''
           , PAC.FECHAMODIFICAR = SYSDATE
 

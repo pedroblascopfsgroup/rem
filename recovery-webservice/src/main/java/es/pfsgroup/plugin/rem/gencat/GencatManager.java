@@ -1510,7 +1510,7 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 		return true;
 	}
 	
-	private void crearNuevaOfertaGENCAT(ExpedienteComercial expedienteComercial, ComunicacionGencat cmg) throws Exception {
+	public void crearNuevaOfertaGENCAT(ExpedienteComercial expedienteComercial, ComunicacionGencat cmg) throws Exception {
 
 		Auditoria auditoria = new Auditoria();
 		// Creamos los valores de Auditoria

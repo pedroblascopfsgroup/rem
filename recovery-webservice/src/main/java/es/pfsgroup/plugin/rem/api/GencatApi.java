@@ -205,4 +205,12 @@ public interface GencatApi {
 	 */
 	public boolean updateFechaReclamacion(DtoReclamacionActivo gencatDto);
 	
+	/**
+	 * Crea la nueva oferta asociada a un activo
+	 * 
+	 * @param expedienteComercial
+	 * @param cmg
+	 */
+	public void crearNuevaOfertaGENCAT(ExpedienteComercial expedienteComercial, ComunicacionGencat cmg) throws Exception;
+	
 }

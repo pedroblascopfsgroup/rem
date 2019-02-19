@@ -514,7 +514,7 @@ public interface ActivoApi {
 	 * @param activo
 	 * @return boolean
 	 */
-	public boolean isAfectoGencat(Activo activo) throws ParseException;
+	public boolean isAfectoGencat(Activo activo);
 
 	boolean isActivoAlquilado(Activo activo);
 

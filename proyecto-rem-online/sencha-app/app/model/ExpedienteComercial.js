@@ -223,7 +223,7 @@ Ext.define('HreRem.model.ExpedienteComercial', {
     			type: 'boolean'
     		},
     		{
-    			name: 'ofertaOrigen'
+    			name: 'idOfertaAnterior'
     		}
     		 
     ],

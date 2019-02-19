@@ -92,9 +92,12 @@ Ext.define('HreRem.model.Gencat', {
 		},
 		{
 			name: 'IsUserAllowed',
-			calculate: function(){
+			calculate: function(data){
+				if (data.usuarioCompleto)
+					return false;
 				return ($AU.userIsRol(CONST.PERFILES['HAYAGESTFORMADM']) || $AU.userIsRol(CONST.PERFILES['GESTIAFORM']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER']));
-			}
+			},
+			depends: ['usuarioCompleto']
 		},
 		
 		

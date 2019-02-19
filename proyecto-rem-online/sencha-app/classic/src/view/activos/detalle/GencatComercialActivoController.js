@@ -377,5 +377,37 @@ comprobarFormatoNIF: function(value) {
 
 		return HreRem
 				.i18n('msg.error.comprador.nif.incorrecto');
+ 	},
+	
+ 	onExisteDocumentoAnulacion: function(btn, newValue, oldValue, opts){
+ 		
+ 		if(newValue){
+ 			var me = this;
+ 	 		
+ 	 		var idActivo = me.getViewModel().get("activo.id");
+ 	 		
+ 	 		Ext.Ajax.request({
+ 	 			url: $AC.getRemoteUrl('gencat/comprobacionDocumentoAnulacion'),
+ 	 			params: {idActivo: idActivo},
+ 	 		     method: 'GET',
+ 	 		     success: function(response, opts){
+ 	 		    	data = Ext.decode(response.responseText);
+ 	 		    	if(data.data == 'false'){
+ 	 		    		me.fireEvent("errorToast", HreRem.i18n("msg.falta.documento.anulacion"));
+ 						Ext.getCmp('checkComunicadoAnulacion').setValue(false);
+ 	 		    	 }
+ 	 		    	 
+ 	 				},
+ 	 		    
+ 	 		     failure: function (a, operation) {
+ 	 		 				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));334500
+ 	 		 	},
+ 	 		    callback: function(record, operation) {
+ 	 				me.getView().unmask();
+ 	 		    }
+ 	 		 });
+ 		}
+
+ 		
  	}
 });

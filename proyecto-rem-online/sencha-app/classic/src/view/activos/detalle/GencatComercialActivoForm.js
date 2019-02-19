@@ -287,6 +287,10 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoForm', {
 				    				xtype: "checkboxfieldbase",
 				    				fieldLabel: HreRem.i18n('fieldlabel.comunicado.anulacion.gencat'),
 				    				name: 'comunicadoAnulacionAGencat',
+				    				id: 'checkComunicadoAnulacion',
+				    				listeners: {
+				    					change: 'onExisteDocumentoAnulacion'
+				    				},
 									bind: {
 										readOnly: '{esSoloLecturaCheckAnularGencat}',
 										value: '{gencat.comunicadoAnulacionAGencat}'

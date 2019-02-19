@@ -212,5 +212,13 @@ public interface GencatApi {
 	 * @param cmg
 	 */
 	public void crearNuevaOfertaGENCAT(ExpedienteComercial expedienteComercial, ComunicacionGencat cmg) throws Exception;
+
+	 /* Obtiene si tiene o no el archivo de anulacion Gencat, devuelve true si está el documento de anulación adjunto.
+	 * 
+	 * @param idActivo
+	 * @return boolean
+	 */
+	public boolean comprobacionDocumentoAnulacion(Long idActivo);
+
 	
 }

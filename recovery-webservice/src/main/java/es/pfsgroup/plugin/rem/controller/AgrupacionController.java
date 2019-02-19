@@ -173,10 +173,10 @@ public class AgrupacionController extends ParadiseJsonController {
 			model.put("data", page.getResults());
 			model.put("totalCount", page.getTotalCount());
 			model.put("success", true);
-			trustMe.registrarSuceso(request, id, ENTIDAD_CODIGO.CODIGO_AGRUPACION, "activos", ACCION_CODIGO.CODIGO_VER);
+			//trustMe.registrarSuceso(request, id, ENTIDAD_CODIGO.CODIGO_AGRUPACION, "activos", ACCION_CODIGO.CODIGO_VER);
 		} else {
 			model.put("success", false);
-			trustMe.registrarError(request, id, ENTIDAD_CODIGO.CODIGO_AGRUPACION, "activos", ACCION_CODIGO.CODIGO_VER , REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
+			//trustMe.registrarError(request, id, ENTIDAD_CODIGO.CODIGO_AGRUPACION, "activos", ACCION_CODIGO.CODIGO_VER , REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
 		}
 		return createModelAndViewJson(model);
 	}
@@ -344,7 +344,7 @@ public class AgrupacionController extends ParadiseJsonController {
 	public ModelAndView getListObservacionesAgrupacionById(Long id, ModelMap model, HttpServletRequest request) {
 
 		model.put("data", adapter.getListObservacionesAgrupacionById(id));
-		trustMe.registrarSuceso(request, id, ENTIDAD_CODIGO.CODIGO_AGRUPACION, "observaciones", ACCION_CODIGO.CODIGO_VER);
+		//trustMe.registrarSuceso(request, id, ENTIDAD_CODIGO.CODIGO_AGRUPACION, "observaciones", ACCION_CODIGO.CODIGO_VER);
 
 		return createModelAndViewJson(model);
 
@@ -355,7 +355,7 @@ public class AgrupacionController extends ParadiseJsonController {
 	public ModelAndView getListVisitasAgrupacionById(Long id, ModelMap model, HttpServletRequest request) {
 
 		model.put("data", adapter.getListVisitasAgrupacionById(id));
-		trustMe.registrarSuceso(request, id, ENTIDAD_CODIGO.CODIGO_AGRUPACION, "visitas", ACCION_CODIGO.CODIGO_VER);
+		//trustMe.registrarSuceso(request, id, ENTIDAD_CODIGO.CODIGO_AGRUPACION, "visitas", ACCION_CODIGO.CODIGO_VER);
 
 		return createModelAndViewJson(model);
 	}
@@ -365,7 +365,7 @@ public class AgrupacionController extends ParadiseJsonController {
 	public ModelAndView getListOfertasAgrupacion(Long id, WebDto webDto, ModelMap model, HttpServletRequest request) {
 
 		model.put("data", adapter.getListOfertasAgrupacion(id));
-		trustMe.registrarSuceso(request, id, ENTIDAD_CODIGO.CODIGO_AGRUPACION, "ofertas", ACCION_CODIGO.CODIGO_VER);
+		//trustMe.registrarSuceso(request, id, ENTIDAD_CODIGO.CODIGO_AGRUPACION, "ofertas", ACCION_CODIGO.CODIGO_VER);
 
 		return createModelAndViewJson(model);
 	}
@@ -414,17 +414,17 @@ public class AgrupacionController extends ParadiseJsonController {
 			{
 				model.put("success", success);
 			}
-			trustMe.registrarSuceso(request, id, ENTIDAD_CODIGO.CODIGO_AGRUPACION, "guardar", ACCION_CODIGO.CODIGO_MODIFICAR);
+			//trustMe.registrarSuceso(request, id, ENTIDAD_CODIGO.CODIGO_AGRUPACION, "guardar", ACCION_CODIGO.CODIGO_MODIFICAR);
 
 		} catch (JsonViewerException jvex) {
 			logger.error(jvex);
 			model.put("success", false);
 			model.put("msgError", jvex.getMessage());
-			trustMe.registrarError(request, id, ENTIDAD_CODIGO.CODIGO_AGRUPACION, "guardar", ACCION_CODIGO.CODIGO_MODIFICAR, REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
+			//trustMe.registrarError(request, id, ENTIDAD_CODIGO.CODIGO_AGRUPACION, "guardar", ACCION_CODIGO.CODIGO_MODIFICAR, REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
 		} catch (Exception e) {
 			logger.error(e);
 			model.put("success", false);
-			trustMe.registrarError(request, id, ENTIDAD_CODIGO.CODIGO_AGRUPACION, "guardar", ACCION_CODIGO.CODIGO_MODIFICAR, REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
+			//trustMe.registrarError(request, id, ENTIDAD_CODIGO.CODIGO_AGRUPACION, "guardar", ACCION_CODIGO.CODIGO_MODIFICAR, REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
 		}
 
 		return createModelAndViewJson(model);
@@ -588,7 +588,7 @@ public class AgrupacionController extends ParadiseJsonController {
 		}
 
 		model.put("data", listaDtoFotos);
-		trustMe.registrarSuceso(request, id, ENTIDAD_CODIGO.CODIGO_AGRUPACION, "fotos", ACCION_CODIGO.CODIGO_VER);
+		//trustMe.registrarSuceso(request, id, ENTIDAD_CODIGO.CODIGO_AGRUPACION, "fotos", ACCION_CODIGO.CODIGO_VER);
 
 		return new ModelAndView("jsonView", model);
 	}
@@ -626,7 +626,7 @@ public class AgrupacionController extends ParadiseJsonController {
 		}
 
 		model.put("data", listaDtoFotos);
-		trustMe.registrarSuceso(request, subdivision.getAgrId(), ENTIDAD_CODIGO.CODIGO_AGRUPACION, "fotosSubdivision", ACCION_CODIGO.CODIGO_VER);
+		//trustMe.registrarSuceso(request, subdivision.getAgrId(), ENTIDAD_CODIGO.CODIGO_AGRUPACION, "fotosSubdivision", ACCION_CODIGO.CODIGO_VER);
 
 		return createModelAndViewJson(model);
 	}
@@ -694,7 +694,7 @@ public class AgrupacionController extends ParadiseJsonController {
 
 		model.put("data", page.getResults());
 		model.put("totalCount", page.getTotalCount());
-		trustMe.registrarSuceso(request, agrupacionFilter.getAgrId(), ENTIDAD_CODIGO.CODIGO_AGRUPACION, "subdivisiones", ACCION_CODIGO.CODIGO_VER);
+		//trustMe.registrarSuceso(request, agrupacionFilter.getAgrId(), ENTIDAD_CODIGO.CODIGO_AGRUPACION, "subdivisiones", ACCION_CODIGO.CODIGO_VER);
 
 		return createModelAndViewJson(model);
 	}
@@ -707,7 +707,7 @@ public class AgrupacionController extends ParadiseJsonController {
 
 		model.put("data", page.getResults());
 		model.put("totalCount", page.getTotalCount());
-		trustMe.registrarSuceso(request, subdivisionFilter.getAgrId(), ENTIDAD_CODIGO.CODIGO_AGRUPACION, "activosSubdivision", ACCION_CODIGO.CODIGO_VER);
+		//trustMe.registrarSuceso(request, subdivisionFilter.getAgrId(), ENTIDAD_CODIGO.CODIGO_AGRUPACION, "activosSubdivision", ACCION_CODIGO.CODIGO_VER);
 
 		return createModelAndViewJson(model);
 	}
@@ -896,11 +896,11 @@ public class AgrupacionController extends ParadiseJsonController {
 
 			model.put("data", dtoVigenciasList);
 			model.put("success", true);
-			trustMe.registrarSuceso(request, agrupacionFilter.getAgrId(), ENTIDAD_CODIGO.CODIGO_AGRUPACION, "historicoVigencias", ACCION_CODIGO.CODIGO_VER);
+			//trustMe.registrarSuceso(request, agrupacionFilter.getAgrId(), ENTIDAD_CODIGO.CODIGO_AGRUPACION, "historicoVigencias", ACCION_CODIGO.CODIGO_VER);
 		}catch(Exception e){
 			logger.error("error obteniendo vigencias agrupacion ", e);
 			model.put("success", false);
-			trustMe.registrarError(request, agrupacionFilter.getAgrId(), ENTIDAD_CODIGO.CODIGO_AGRUPACION, "historicoVigencias", ACCION_CODIGO.CODIGO_VER, REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
+			//trustMe.registrarError(request, agrupacionFilter.getAgrId(), ENTIDAD_CODIGO.CODIGO_AGRUPACION, "historicoVigencias", ACCION_CODIGO.CODIGO_VER, REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
 		}
 		
 		return createModelAndViewJson(model);

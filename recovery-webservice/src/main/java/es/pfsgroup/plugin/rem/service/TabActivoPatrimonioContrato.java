@@ -78,7 +78,7 @@ public class TabActivoPatrimonioContrato implements TabActivoService {
 								if(Checks.esNulo(aux)) {
 									aux = expComercial;
 								} else {
-									if(!aux.getFechaVenta().before(expComercial.getFechaVenta())) { //Nos quedamos con el más reciente
+									if(aux.getFechaVenta().before(expComercial.getFechaVenta())) { //Nos quedamos con el más reciente
 										aux = expComercial;
 									}
 								}

@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Sergio Beleña
---## FECHA_CREACION=20181210
+--## AUTOR=JINLIHU
+--## FECHA_CREACION=20190220
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=2.0.3
---## INCIDENCIA_LINK=HREOS-4931
+--## INCIDENCIA_LINK=HREOS-5562
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -14,6 +14,7 @@
 --##		0.2 Versión con ofertas express
 --##		0.3 Modificaciones motivo "No adecuado" y "Revisión publicación"
 --##		0.4 Optimización de tiempos
+--##		0.5 HREOS-5562, Ocultación Automática, motivo "Revisión publicación", eliminar el join con la tabla TMP_PUBL_ACT
 --##########################################
 --*/
 
@@ -165,7 +166,6 @@ create or replace PROCEDURE SP_MOTIVO_OCULTACION (pACT_ID IN NUMBER
                                , MTO.DD_MTO_ORDEN ORDEN
                                     FROM '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION APU
                                     JOIN '|| V_ESQUEMA ||'.V_COND_DISPONIBILIDAD V ON V.ACT_ID = APU.ACT_ID AND V.ES_CONDICIONADO = 0 and V.BORRADO=0
-                                    JOIN '|| V_ESQUEMA ||'.TMP_PUBL_ACT EST ON EST.ACT_ID = APU.ACT_ID AND EST.INFORME_COMERCIAL = 0
                                     JOIN '|| V_ESQUEMA ||'.V_CAMBIO_ESTADO_PUBLI EST ON EST.ACT_ID = APU.ACT_ID AND EST.INFORME_COMERCIAL = 0
                                     LEFT JOIN '|| V_ESQUEMA ||'.DD_MTO_MOTIVOS_OCULTACION MTO ON MTO.DD_MTO_CODIGO = ''06'' AND MTO.BORRADO = 0 /*Revisión Publicación*/
                                    WHERE APU.BORRADO = 0.

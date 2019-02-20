@@ -5125,10 +5125,12 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		Activo activo= this.get(id);
 		ActivoSituacionPosesoria posesoria=activo.getSituacionPosesoria();
 		Integer ocupado;
-		String conTitulo;
+		String conTitulo = "";
 		if(activoDto.getConTituloTPA() != null) {
 			conTitulo=activoDto.getConTituloTPA();
-		}else conTitulo=posesoria.getConTitulo().getCodigo();
+		}else if(!Checks.esNulo(posesoria.getConTitulo())){
+			conTitulo = posesoria.getConTitulo().getCodigo();
+		}
 		if(activoDto.getOcupado() != null) {
 			ocupado=activoDto.getOcupado();
 		}else ocupado=posesoria.getOcupado();
@@ -5139,7 +5141,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 						|| (!(DDCartera.CODIGO_CARTERA_BANKIA).equals(activo.getCartera().getCodigo())
 								&& (!Checks.esNulo(posesoria) && (!Checks.esNulo(posesoria.getFechaRevisionEstado())
 										|| !Checks.esNulo(posesoria.getFechaTomaPosesion()))))) {
-					if (!Checks.esNulo(posesoria.getOcupado()) && (1 == ocupado && "0".equals(conTitulo))) {
+					if (!Checks.esNulo(posesoria.getOcupado()) && (1 == ocupado && "02".equals(conTitulo))) {
 						boolean val = compruebaSiExisteActivoBienPorMatricula(id,
 								DDTipoDocumentoActivo.CODIGO_INFORME_OCUPACION_DESOCUPACION);
 						if (val) {

@@ -219,6 +219,12 @@ public class TareaActivoManager implements TareaActivoApi {
 	
 	@Override
 	@Transactional(readOnly=false)
+	public void saltoFinAlquileres(Long idTareaExterna){
+		saltoDesdeTareaExternaAlquileres(idTareaExterna,ActivoGenerarSaltoImpl.CODIGO_FIN);
+	}
+	
+	@Override
+	@Transactional(readOnly=false)
 	public void saltoPBC(Long idProcesBpm){		
 		saltoTarea(idProcesBpm, ActivoGenerarSaltoImpl.CODIGO_SALTO_PBC);
 	}
@@ -252,6 +258,20 @@ public class TareaActivoManager implements TareaActivoApi {
 			jbpmManager.signalToken(tareaAsociada.getTareaExterna().getTokenIdBpm(), "salto"+tareaDestino);
 			saltoTarea(tareaAsociada.getTareaExterna().getTokenIdBpm(), tareaDestino);
 
+		}
+	}
+	
+	@Transactional(readOnly=false)
+	void saltoDesdeTareaExternaAlquileres(Long idTareaExterna, String tareaDestino){
+		TareaActivo tareaAsociada = null;
+		TareaExterna tareaExterna = proxyFactory.proxy(TareaExternaApi.class).get(idTareaExterna);
+		if (!Checks.esNulo(tareaExterna)) {
+			tareaAsociada = (TareaActivo) tareaExterna.getTareaPadre();
+		}
+		if(!Checks.esNulo(tareaAsociada.getTareaExterna())){
+			jbpmManager.generaTransicionesSalto(tareaAsociada.getTareaExterna().getTokenIdBpm(), tareaDestino);
+			jbpmManager.signalToken(tareaAsociada.getTareaExterna().getTokenIdBpm(), tareaDestino);
+			saltoTarea(tareaAsociada.getTareaExterna().getTokenIdBpm(), tareaDestino);
 		}
 	}
 	

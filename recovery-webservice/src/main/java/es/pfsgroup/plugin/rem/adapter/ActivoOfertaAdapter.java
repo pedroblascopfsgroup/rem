@@ -101,7 +101,7 @@ public class ActivoOfertaAdapter {
 			AdjuntoComprador adjuntoComprador = null;
 			
 			if(!Checks.esNulo(clienteGDPR)) {
-				adjuntoComprador = genericDao.get(AdjuntoComprador.class, genericDao.createFilter(FilterType.EQUALS, "id", clienteGDPR.getAdjuntoComprador()));
+				adjuntoComprador = clienteGDPR.getAdjuntoComprador();
 			} else {
 				filtroPersona = genericDao.createFilter(FilterType.EQUALS, "idPersonaHaya", Long.parseLong(idIntervinienteHaya));
 				TmpClienteGDPR tmpClienteGDPR = genericDao.get(TmpClienteGDPR.class, filtroPersona);

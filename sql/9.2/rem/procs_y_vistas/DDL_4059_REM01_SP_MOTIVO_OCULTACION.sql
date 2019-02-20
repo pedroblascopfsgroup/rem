@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=JINLIHU
+--## AUTOR=Matias Garcia-Argudo
 --## FECHA_CREACION=20190220
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=2.0.3
---## INCIDENCIA_LINK=HREOS-5562
+--## INCIDENCIA_LINK=HREOS-5565
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -154,7 +154,7 @@ create or replace PROCEDURE SP_MOTIVO_OCULTACION (pACT_ID IN NUMBER
                                     LEFT JOIN '|| V_ESQUEMA ||'.DD_MTO_MOTIVOS_OCULTACION MTO ON MTO.DD_MTO_CODIGO = ''03'' AND MTO.BORRADO = 0 /*Alquilado*/
                                    WHERE APU.BORRADO = 0.
                                      AND SPS.SPS_OCUPADO = 1 
-                                     AND SPS.SPS_CON_TITULO = 1 
+                                     AND SPS.DD_TPA_ID = (SELECT DD_TPA_ID FROM DD_TPA_TIPO_TITULO_ACT WHERE DD_TPA_CODIGO = ''01'')
                                      AND ((TRUNC(SPS.SPS_FECHA_TITULO) <= TRUNC(SYSDATE) AND TRUNC(SPS.SPS_FECHA_VENC_TITULO) >= TRUNC(sysdate)) OR (TRUNC(SPS.SPS_FECHA_TITULO) <= TRUNC(SYSDATE) AND SPS.SPS_FECHA_VENC_TITULO IS NULL))
                                      AND SPS.ACT_ID= '||pACT_ID||    
                                      

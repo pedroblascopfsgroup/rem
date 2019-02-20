@@ -75,6 +75,7 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 	public void sendNotification(Oferta oferta) {
 
 		Usuario usuario = null;
+		Usuario usuarioBackOffice = null;
 		Usuario supervisor= null;
 		Activo activo = oferta.getActivoPrincipal();
 
@@ -93,6 +94,8 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 			usuario = gestorActivoManager.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL);
 			supervisor = gestorActivoManager.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_SUPERVISOR_COMERCIAL);
 		}
+		
+		
 
 		if (activo != null && (usuario != null || supervisor != null)) {
 			
@@ -119,6 +122,16 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 
 			List<String> mailsPara = new ArrayList<String>();
 			List<String> mailsCC = new ArrayList<String>();
+			
+			if(oferta.getActivoPrincipal() != null){
+				if(DDCartera.CODIGO_CARTERA_BANKIA.equals(oferta.getActivoPrincipal().getCartera().getCodigo()) 
+						|| DDCartera.CODIGO_CARTERA_SAREB.equals(oferta.getActivoPrincipal().getCartera().getCodigo())){
+					usuarioBackOffice = gestorActivoManager.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
+					if(!Checks.esNulo(usuarioBackOffice)){
+						mailsPara.add(usuario.getEmail());					
+					}
+				}
+			}
 
 			if(!Checks.esNulo(usuario)){
 				mailsPara.add(usuario.getEmail());

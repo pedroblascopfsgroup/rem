@@ -57,7 +57,7 @@ public class UpdaterServiceSancionOfertaAlquileresFirma implements UpdaterServic
 		DDEstadosExpedienteComercial estadoExpedienteComercial = genericDao.get(DDEstadosExpedienteComercial.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadosExpedienteComercial.PTE_CIERRE));
 		Activo activo =tramite.getActivo();
 		DDSituacionComercial situacionComercial = (DDSituacionComercial) utilDiccionarioApi.dameValorDiccionarioByCod(DDSituacionComercial.class, DDSituacionComercial.CODIGO_ALQUILADO);
-		DDTipoTituloActivoTPA tipoTituloActivoTPA = (DDTipoTituloActivoTPA) utilDiccionarioApi.dameValorDiccionarioByCod(DDSituacionComercial.class, DDTipoTituloActivoTPA.tipoTituloSi);
+		DDTipoTituloActivoTPA tipoTituloActivoTPA = (DDTipoTituloActivoTPA) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoTituloActivoTPA.class, DDTipoTituloActivoTPA.tipoTituloSi);
 		activo.setSituacionComercial(situacionComercial);
 		activo.getSituacionPosesoria().setOcupado(1);
 		activo.getSituacionPosesoria().setConTitulo(tipoTituloActivoTPA);

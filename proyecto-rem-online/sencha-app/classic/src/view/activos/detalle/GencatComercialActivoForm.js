@@ -162,6 +162,7 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoForm', {
 				    			{
 				    				xtype: "datefieldbase",
 				    				fieldLabel: HreRem.i18n('fieldlabel.fecha.sancion'),
+				    				reference: 'fechaSancionRef',
 				    				name: 'fechaSancion',
 				    				submitFormat:'Y-m-d',
 									bind: {

@@ -300,17 +300,23 @@ onClickAbrirExpedienteComercial: function() {
 		}
 	},
 	comprobarCampoNifNombre: function(combo, value) {
+		debugger;
 		var me = this;
 		var campoNif = me.lookupReference('nuevoCompradorNifref');
 		var campoNombre = me.lookupReference('nuevoCompradorNombreref');
 		var campoSancion = me.lookupReference('sancionRef');
+		var campoFechaSancion = me.lookupReference('fechaSancionRef');
 		
 		if (campoSancion.getValue() == CONST.DD_SAN_SANCION['COD_EJERCE']) {
+			campoFechaSancion.allowBlank = false;
 			campoNombre.allowBlank = false;
 			campoNif.allowBlank = false;
-		} else {
+		} else if (campoSancion.getValue() == CONST.DD_SAN_SANCION['COD_NO_EJERCE']) {
+			campoFechaSancion.allowBlank = false;
 			campoNombre.allowBlank = true;
 			campoNif.allowBlank = true;
+		}else {
+			campoFechaSancion.allowBlank = true;
 		}
 	},
 	

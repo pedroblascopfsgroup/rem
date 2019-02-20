@@ -227,14 +227,12 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 												title: HreRem.i18n('title.gasto.detalle.economico.impuesto.indirecto'),
 
 												listeners:{												
-													afterrender: function(){			
+													afterrender: function(){														
 									         			if(!Ext.isEmpty(me.up('gastodetallemain').getViewModel().get('gasto').get('nombreGestoria'))){
-									         				this.up('gastodetallemain').lookupReference('cbTipoImpuesto').allowBlank = true;
 									         				this.setHidden(true);
 									         				this.setDisabled(true);
 									         			}
 									         			else{
-									         				this.up('gastodetallemain').lookupReference('cbTipoImpuesto').allowBlank = false;
 									         				this.setHidden(false);
 									         				this.setDisabled(false);
 									         			}
@@ -309,7 +307,7 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 											                	}else
 											                		this.clearInvalid();
 											                	if(principal.getValue()!='' && principal.getValue()>0){
-									                            	if(this.getValue() <= 0 && Ext.isEmpty(me.up('gastodetallemain').getViewModel().get('gasto').get('nombreGestoria')))
+									                            	if(this.getValue() <= 0)
 										                            	return "La cuota debe ser mayor que 0";
 									                            	else
 												                		this.clearInvalid();									                            	

@@ -380,12 +380,11 @@ public class UpdaterStateGastoManager implements UpdaterStateGastoApi{
 			}else {
 				Pattern justPattern = Pattern.compile(".*-CERA-.*");
 				if (!Checks.esNulo(gasto.getGastoDetalleEconomico())) {
-					if ((!Checks.esNulo(gasto.getGastoGestion().getEstadoAutorizacionPropietario()) && DDEstadoAutorizacionPropietario.CODIGO_AUTORIZADO_POR_CONTABILIDAD.equals(gasto.getGastoGestion().getEstadoAutorizacionPropietario().getCodigo())) 
-							&& (((Checks.esNulo(gasto.getGastoDetalleEconomico().getAnticipo())
+					if ((Checks.esNulo(gasto.getGastoDetalleEconomico().getAnticipo())
 							|| gasto.getGastoDetalleEconomico().getAnticipo().equals(Integer.valueOf(0)))
 							&& (Checks.esNulo(gasto.getGastoDetalleEconomico().getIncluirPagoProvision())
 									|| gasto.getGastoDetalleEconomico().getIncluirPagoProvision()
-											.equals(Integer.valueOf(0)))))) {
+											.equals(Integer.valueOf(0)))) {
 						if(!Checks.estaVacio(gasto.getAdjuntos())) {
 							for(AdjuntoGasto adjunto : gasto.getAdjuntos()) {
 								if(justPattern.matcher(adjunto.getTipoDocumentoGasto().getMatricula()).matches()){

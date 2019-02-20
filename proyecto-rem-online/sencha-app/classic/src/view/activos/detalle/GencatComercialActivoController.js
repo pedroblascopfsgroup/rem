@@ -300,7 +300,6 @@ onClickAbrirExpedienteComercial: function() {
 		}
 	},
 	comprobarCampoNifNombre: function(combo, value) {
-		debugger;
 		var me = this;
 		var campoNif = me.lookupReference('nuevoCompradorNifref');
 		var campoNombre = me.lookupReference('nuevoCompradorNombreref');

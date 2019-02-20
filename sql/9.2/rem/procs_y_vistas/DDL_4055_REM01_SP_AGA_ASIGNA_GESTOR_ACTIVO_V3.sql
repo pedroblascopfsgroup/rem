@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20190213
+--## FECHA_CREACION=20190216
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-5443
+--## INCIDENCIA_LINK=HREOS-5387
 --## PRODUCTO=NO
 --## Finalidad: Procedimiento almacenado que asigna Gestores de todos los tipos.
 --##           
@@ -17,8 +17,7 @@
 --##		0.5 Añadidos los nuevos gestores comerciales de alquiler (gestor y supervisor) - HREOS-5064
 --##		0.6 HREOS-5049 Carlos López: Optimización
 --##		0.7 HREOS-5160 Mariam Lliso: modificada la asignación de gestores
---##		0.8 HREOS-5239 Daniel Algaba: corrección multicartera CERBERUS
---##        0.9 HREOS-5443 Daniel Algaba: corrección para que no filtre por la TMP_GEST_CONT en activos con subcarteras
+--##        0.8 HREOS-5387 Daniel Algaba: añadimos el Supervisor comercial Backoffice Inmobiliario
 --##########################################
 --*/
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
@@ -32,8 +31,7 @@ CREATE OR REPLACE PROCEDURE #ESQUEMA#.SP_AGA_ASIGNA_GESTOR_ACTIVO_V3 (
     P_ACT_ID        IN #ESQUEMA#.act_activo.act_id%TYPE,
     P_ALL_ACTIVOS   IN NUMBER,
     P_CLASE_ACTIVO  IN VARCHAR2) AS
-
---v0.9
+--v0.8
 
     V_ESQUEMA VARCHAR2(15 CHAR) := '#ESQUEMA#';
     V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := '#ESQUEMA_MASTER#';
@@ -46,8 +44,8 @@ CREATE OR REPLACE PROCEDURE #ESQUEMA#.SP_AGA_ASIGNA_GESTOR_ACTIVO_V3 (
     V_CLASE_ACTIVO_NULL VARCHAR (500 CHAR);
     TYPE T_GESTOR IS TABLE OF VARCHAR2(250 CHAR);
 
-    V_GESTOR_FINANCIERO T_GESTOR := T_GESTOR('GPUBL','SPUBL','GCOM','SCOM','FVDNEG','FVDBACKOFR','FVDBACKVNT','SUPFVD','SFORM','GCODI','GCOINM','GCOIN','GLIBINVINM','GLIBSINTER','GLIBRES','GESRES','SUPRES');
-    V_GESTOR_INMOBILIAR T_GESTOR := T_GESTOR('GADM','SUPADM','GACT','SUPACT','GPREC','SPREC','GPUBL','SPUBL','GCOM','SCOM','FVDNEG','FVDBACKOFR','FVDBACKVNT','SUPFVD','SFORM','GGADM','GIAFORM','GTOCED','CERT','GIAADMT','PTEC', 'GTREE','GCODI','GCOINM','GCOIN','GLIBINVINM','GLIBSINTER','GLIBRES','HAYAGBOINM','SBACKOFFICEINMLIBER','GEDI', 'SUPEDI', 'GSUE', 'SUPSUE','GALQ','SUALQ', 'GESTCOMALQ', 'SUPCOMALQ');
+    V_GESTOR_FINANCIERO T_GESTOR := T_GESTOR('GPUBL','SPUBL','GCOM','SCOM','FVDNEG','FVDBACKOFR','FVDBACKVNT','SUPFVD','SFORM','GCODI','GCOINM','GCOIN','GLIBINVINM','GLIBSINTER','GLIBRES','GESRES','SUPRES','HAYAGBOINM','HAYASBOINM');
+    V_GESTOR_INMOBILIAR T_GESTOR := T_GESTOR('GADM','SUPADM','GACT','SUPACT','GPREC','SPREC','GPUBL','SPUBL','GCOM','SCOM','FVDNEG','FVDBACKOFR','FVDBACKVNT','SUPFVD','SFORM','GGADM','GIAFORM','GTOCED','CERT','GIAADMT','PTEC', 'GTREE','GCODI','GCOINM','GCOIN','GLIBINVINM','GLIBSINTER','GLIBRES','HAYAGBOINM','HAYASBOINM','SBACKOFFICEINMLIBER','GEDI', 'SUPEDI', 'GSUE', 'SUPSUE','GALQ','SUALQ', 'GESTCOMALQ', 'SUPCOMALQ');
     V_GESTOR T_GESTOR;
 
 BEGIN
@@ -142,9 +140,14 @@ BEGIN
                     AND ACT.BORRADO = 0
                     AND NOT EXISTS (
                         SELECT 1
-                          FROM '||V_ESQUEMA||'.TMP_GEST_GAH GAH
-                         WHERE ACT.ACT_ID = GAH.ACT_ID
-                           AND GEST.TIPO_GESTOR = GAH.TIPO_GESTOR)                         
+                        FROM '||V_ESQUEMA||'.GAH_GESTOR_ACTIVO_HISTORICO GAH
+                        JOIN '||V_ESQUEMA||'.GAC_GESTOR_ADD_ACTIVO GAC        ON GAC.ACT_ID    = GAH.ACT_ID
+                        JOIN '||V_ESQUEMA||'.GEH_GESTOR_ENTIDAD_HIST GEH      ON GEH.GEH_ID    = GAH.GEH_ID
+                        JOIN '||V_ESQUEMA||'.GEE_GESTOR_ENTIDAD GEE           ON GEE.GEE_ID    = GAC.GEE_ID
+                        JOIN '||V_ESQUEMA_MASTER||'.DD_TGE_TIPO_GESTOR TGE    ON TGE.DD_TGE_ID = GEE.DD_TGE_ID AND TGE.DD_TGE_ID = GEH.DD_TGE_ID
+                            AND TGE.DD_TGE_CODIGO = '''||V_GESTOR(I)||'''
+                        WHERE GEE.BORRADO = 0 AND GEH.BORRADO = 0
+                            AND ACT.ACT_ID = GAH.ACT_ID)
                     '||V_ACT_ID;
 
             EXECUTE IMMEDIATE V_MSQL;

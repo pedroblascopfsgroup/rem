@@ -29,7 +29,7 @@ DECLARE
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
 	
-    V_USUARIO VARCHAR2(50 CHAR) := 'HREOS-5323'; -- USUARIO CREAR/MODIFICAR
+    V_USUARIO VARCHAR2(50 CHAR) := 'HREOS-5500'; -- USUARIO CREAR/MODIFICAR
     V_TABLA VARCHAR2(50 CHAR) := 'GRU_GRUPOS_USUARIOS';
     V_ENTIDAD_ID NUMBER(16);
     V_ID NUMBER(16);

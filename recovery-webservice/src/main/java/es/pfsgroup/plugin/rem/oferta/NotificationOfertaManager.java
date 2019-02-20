@@ -128,7 +128,7 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 						|| DDCartera.CODIGO_CARTERA_SAREB.equals(oferta.getActivoPrincipal().getCartera().getCodigo())){
 					usuarioBackOffice = gestorActivoManager.getGestorByActivoYTipo(activo, GestorActivoApi.CODIGO_GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO);
 					if(!Checks.esNulo(usuarioBackOffice)){
-						mailsPara.add(usuario.getEmail());					
+						mailsPara.add(usuarioBackOffice.getEmail());					
 					}
 				}
 			}

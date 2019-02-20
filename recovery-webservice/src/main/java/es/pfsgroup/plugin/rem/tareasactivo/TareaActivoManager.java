@@ -248,13 +248,8 @@ public class TareaActivoManager implements TareaActivoApi {
 				variables.put("saltando", true);
 				jbpmManager.addVariablesToProcess(tareaAsociada.getTramite().getProcessBPM(), variables);
 			}
-			if(ActivoBaseActionHandler.CODIGO_FIN.equals(tareaDestino)) {
-				jbpmManager.generaTransicionesSalto(tareaAsociada.getTareaExterna().getTokenIdBpm(), tareaDestino);
-				jbpmManager.signalToken(tareaAsociada.getTareaExterna().getTokenIdBpm(), tareaDestino);
-			}else {
-				jbpmManager.generaTransicionesSalto(tareaAsociada.getTareaExterna().getTokenIdBpm(), tareaDestino);
-				jbpmManager.signalToken(tareaAsociada.getTareaExterna().getTokenIdBpm(), "salto"+tareaDestino);
-			}
+			jbpmManager.generaTransicionesSalto(tareaAsociada.getTareaExterna().getTokenIdBpm(), tareaDestino);
+			jbpmManager.signalToken(tareaAsociada.getTareaExterna().getTokenIdBpm(), "salto"+tareaDestino);
 			saltoTarea(tareaAsociada.getTareaExterna().getTokenIdBpm(), tareaDestino);
 
 		}

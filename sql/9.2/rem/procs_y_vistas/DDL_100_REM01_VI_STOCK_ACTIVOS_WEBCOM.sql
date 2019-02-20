@@ -218,7 +218,7 @@ BEGIN
 					(AGA.AGR_FIN_VIGENCIA IS NULL OR AGA.AGR_FIN_VIGENCIA > SYSDATE))
 			THEN CAST(AGA.AGR_NUM_AGRUP_REM AS NUMBER(16,0))
 			ELSE NULL
-		END																					AS COD_AGRUPACION_COMERCIAL_REM
+		END																					AS COD_AGRUPACION_COMERCIAL_REM,
        CAST(epv.dd_epv_codigo AS VARCHAR2(5 CHAR)) 											AS cod_estado_publicacion,
        CAST(epa.dd_epa_codigo AS VARCHAR2(5 CHAR)) 											AS cod_estado_pub_alquiler,
        CAST(tpu.dd_tpu_codigo AS VARCHAR2(5 CHAR)) 											AS cod_subestado_pub_venta,

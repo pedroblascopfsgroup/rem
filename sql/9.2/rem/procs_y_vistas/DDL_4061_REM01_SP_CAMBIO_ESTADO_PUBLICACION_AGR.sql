@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Oscar Diestre
---## FECHA_CREACION=20190201
+--## FECHA_CREACION=20190219
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=2.3.0
 --## INCIDENCIA_LINK=HREOS-5358
@@ -25,7 +25,8 @@
 
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
 SET SERVEROUTPUT ON; 
-
+SET DEFINE OFF;
+--## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 
 create or replace PROCEDURE #ESQUEMA#.SP_CAMBIO_ESTADO_PUBLI_AGR (pAGR_ID IN NUMBER DEFAULT NULL
 														, pCondAlquiler VARCHAR2 DEFAULT 1

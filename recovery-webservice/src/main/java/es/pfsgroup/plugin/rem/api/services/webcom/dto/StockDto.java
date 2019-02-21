@@ -750,14 +750,6 @@ public class StockDto implements WebcomRESTDto{
 	public void setCodTipoUsoDestino(StringDataType codTipoUsoDestino) {
 		this.codTipoUsoDestino = codTipoUsoDestino;
 	}
-	
-	public LongDataType getCodigoAgrupacionComercialRem() {
-		return codigoAgrupacionComercialRem;
-	}
-	public void setCodigoAgrupacionComercialRem(LongDataType codigoAgrupacionComercialRem) {
-		this.codigoAgrupacionComercialRem = codigoAgrupacionComercialRem;
-	}
-	
 	public StringDataType getCodTipoAlquiler() {
 		return codTipoAlquiler;
 	}

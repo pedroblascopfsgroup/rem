@@ -741,6 +741,22 @@
 				<module>rem-web</module>
 			</modules>
 		</profile>
+		<profile>
+			<id>bau</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+			<modules>
+				<module>recovery-coreextension-plugin</module>
+				<module>recovery-agendaMultifuncion-plugin</module>
+				<module>proyecto-rem-online</module>
+				<module>recovery-webservice</module>
+				<module>paradise-framework</module>
+				<!--<module>recovery-message-broker</module>-->
+				<module>recovery-gestordocumentalREM-plugin</module>	
+				<module>rem-web</module>
+			</modules>
+		</profile>
 
 	</profiles>
 </project>

@@ -73,6 +73,7 @@ public class DDMotivoAnulacionExpediente implements Auditable, Dictionary {
 	public static final String CODIGO_ANULADA_ALTA_NUEVA_FACULTAD_HAYA = "804";
 	public static final String CODIGO_FINANCIACION_DENEGADA = "901";
 	public static final String CODIGO_PBC_DENEGADO = "902";
+	public static final String CODIGO_EXCESIVO_TIEMPO_FIRMA = "903";
 
 	@Id
 	@Column(name = "DD_MAN_ID")

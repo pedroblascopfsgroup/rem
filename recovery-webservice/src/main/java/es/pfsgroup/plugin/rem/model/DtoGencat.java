@@ -30,6 +30,7 @@ public class DtoGencat extends DtoTabActivo {
 	private Boolean comunicadoAnulacionAGencat;
 	private Boolean usuarioCompleto;
 	private Boolean comunicadoAnulacionAGencat2;	
+	private Boolean ofertasAsociadasEstanAnuladas;	
 	//Adecuacion
 	private Boolean necesitaReforma;
 	private Double importeReforma;
@@ -189,6 +190,12 @@ public class DtoGencat extends DtoTabActivo {
 	}
 	public void setComunicadoAnulacionAGencat2(Boolean comunicadoAnulacionAGencat2) {
 		this.comunicadoAnulacionAGencat2 = comunicadoAnulacionAGencat2;
+	}
+	public Boolean getOfertasAsociadasEstanAnuladas() {
+		return ofertasAsociadasEstanAnuladas;
+	}
+	public void setOfertasAsociadasEstanAnuladas(Boolean ofertasAsociadasEstanAnuladas) {
+		this.ofertasAsociadasEstanAnuladas = ofertasAsociadasEstanAnuladas;
 	}
 
 }

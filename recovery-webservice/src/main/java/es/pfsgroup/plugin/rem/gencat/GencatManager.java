@@ -94,6 +94,7 @@ import es.pfsgroup.plugin.rem.model.VisitaGencat;
 import es.pfsgroup.plugin.rem.model.dd.DDCalculoImpuesto;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoComunicacionGencat;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisitaOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDSancionGencat;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
@@ -254,12 +255,24 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 				}
 				
 				//Oferta
+				gencatDto.setOfertasAsociadasEstanAnuladas(true);
 				List <OfertaGencat> resultOfertaGencatGencat = genericDao.getListOrdered(OfertaGencat.class, orderByFechaCrear, filtroIdComunicacion, filtroBorrado);
 				if (resultOfertaGencatGencat != null && !resultOfertaGencatGencat.isEmpty()) {
 					OfertaGencat ofertaGencat = resultOfertaGencatGencat.get(0);
 					Oferta oferta = ofertaGencat.getOferta();
 					if (oferta != null) {
 						gencatDto.setOfertaGencat(oferta.getNumOferta());
+					}
+					for (OfertaGencat ofertGencat : resultOfertaGencatGencat) {
+						if(!Checks.esNulo(ofertGencat)) {
+							if(!Checks.esNulo(ofertGencat.getOferta())) {
+								if(!Checks.esNulo(ofertGencat.getOferta().getEstadoOferta())) {
+									if(!ofertGencat.getOferta().getEstadoOferta().getCodigo().equals(DDEstadoOferta.CODIGO_RECHAZADA)) {
+										gencatDto.setOfertasAsociadasEstanAnuladas(false);
+									}
+								}
+							}
+						}
 					}
 				}
 				

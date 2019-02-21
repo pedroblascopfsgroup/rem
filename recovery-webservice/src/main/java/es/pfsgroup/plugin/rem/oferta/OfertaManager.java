@@ -3347,8 +3347,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	public List<DtoPropuestaAlqBankia> getListPropuestasAlqBankiaFromView(Long ecoId) {
 		List<DtoPropuestaAlqBankia> listaDto = expedienteComercialApi.getListaDtoPropuestaAlqBankiaByExpId(ecoId);
 		return listaDto;
-}
-
+	}
 
 	private void validacionesLote(HashMap<String, String> errorsList, Activo activo, DDCartera cartera, 
 			DDSubcartera subcartera, ActivoPropietario propietario, Integer geolocalizacion) {		
@@ -3358,6 +3357,5 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				|| activoApi.getGeolocalizacion(activo) != geolocalizacion) {
 			errorsList.put("activosLote", RestApi.REST_MSG_UNKNOWN_KEY);
 		}
-
 	}
 }

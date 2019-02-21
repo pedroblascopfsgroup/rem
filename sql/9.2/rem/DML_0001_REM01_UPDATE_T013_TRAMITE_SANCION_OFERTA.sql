@@ -1,16 +1,17 @@
 --/*
 --##########################################
---## AUTOR= Lara Pablo
---## FECHA_CREACION=20190208
+--## AUTOR= Daniel Algaba
+--## FECHA_CREACION=20190220
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-5377
+--## INCIDENCIA_LINK=HREOS-5518
 --## PRODUCTO=SI
 --##
 --## Finalidad: Actualizar script validacion en tramite sancion oferta de venta comercial.
 --## INSTRUCCIONES: 
 --## VERSIONES:
---##        0.1 Version inicial
+--##        0.1 Version inicial HREOS-5377
+-- ##		0.2 HREOS-5518 - Corregimos las tareas de reserva para dejar a nulo la decision
 --##########################################
 --*/
 
@@ -111,9 +112,7 @@ BEGIN
 		IF V_NUM_TABLAS > 0 THEN
 
 		    V_MSQL := 'UPDATE '||V_ESQUEMA||'.'||V_TEXT_TABLA||'
-					SET BORRADO = 1           		
-                    , USUARIOBORRAR = ''HREOS-5377''
-                    , FECHABORRAR = SYSDATE
+					SET TAP_SCRIPT_DECISION = null
                     WHERE TAP_CODIGO = ''T013_InstruccionesReserva''';
 			DBMS_OUTPUT.PUT_LINE('[INFO] Actualizando decisión tarea T013_InstruccionesReserva	.......');
 		    --DBMS_OUTPUT.PUT_LINE(V_MSQL);
@@ -128,9 +127,7 @@ BEGIN
 		IF V_NUM_TABLAS > 0 THEN
 
 		    V_MSQL := 'UPDATE '||V_ESQUEMA||'.'||V_TEXT_TABLA||'
-					SET BORRADO = 1         		
-                    , USUARIOBORRAR = ''HREOS-5377''
-                    , FECHABORRAR = SYSDATE
+					SET TAP_SCRIPT_DECISION = null
                     WHERE TAP_CODIGO = ''T013_ObtencionContratoReserva''';
 			DBMS_OUTPUT.PUT_LINE('[INFO] Actualizando decisión tarea T013_ObtencionContratoReserva.......');
 		    --DBMS_OUTPUT.PUT_LINE(V_MSQL);

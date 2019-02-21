@@ -1063,13 +1063,14 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					dto.setBloqueado(true);
 				}
 
-				OfertaGencat ofertaGencat = genericDao.get(OfertaGencat.class,genericDao.createFilter(FilterType.EQUALS,"oferta", oferta));
-				if(!Checks.esNulo(ofertaGencat) && !Checks.esNulo(ofertaGencat.getIdOfertaAnterior())) {
-					Long idOfertaAnterior = ofertaGencat.getIdOfertaAnterior();
-					Oferta ofertaAnterior = genericDao.get(Oferta.class,genericDao.createFilter(FilterType.EQUALS,"id", idOfertaAnterior));
-					Long numOfertaAnterior = ofertaAnterior.getNumOferta();
-					dto.setIdOfertaAnterior(numOfertaAnterior);
-					
+				List<OfertaGencat> ofertaGencats = genericDao.getList(OfertaGencat.class,genericDao.createFilter(FilterType.EQUALS,"oferta", oferta));	
+				if(!Checks.estaVacio(ofertaGencats)){
+					if(!Checks.esNulo(ofertaGencats.get(0).getIdOfertaAnterior())) {
+						Long idOfertaAnterior = ofertaGencats.get(0).getIdOfertaAnterior();
+						Oferta ofertaAnterior = genericDao.get(Oferta.class,genericDao.createFilter(FilterType.EQUALS,"id", idOfertaAnterior));
+						Long numOfertaAnterior = ofertaAnterior.getNumOferta();
+						dto.setIdOfertaAnterior(numOfertaAnterior);
+					}
 				}
 				
 				dto.setDefinicionOfertaScoring(false);

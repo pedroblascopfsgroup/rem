@@ -10,7 +10,6 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -24,6 +23,7 @@ import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
@@ -69,11 +69,6 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 	protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaObtencionContrato.class);
 
 	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {
-		Boolean esAfectoGencat = false;
-		if(!Checks.esNulo(tramite.getActivo()) && !Checks.esNulo(tramite.getActivo().getId())){
-			esAfectoGencat = activoDao.isActivoAfectoGENCAT(tramite.getActivo().getId());
-		}
-		
 		Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());
 		ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
 		Filter filtro;
@@ -104,32 +99,27 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 //		
 		
 		if (!Checks.esNulo(ofertaAceptada)) {
-			
-			Boolean finalizado = false;
-			Boolean esEstadoAnteriorAprobado = false;
+			List<ActivoOferta> listActivosOferta = expediente.getOferta().getActivosOferta();
+			for (ActivoOferta activoOferta : listActivosOferta) {
+				if(!Checks.esNulo(expediente.getReserva()) && DDEstadosExpedienteComercial.APROBADO.equals(expediente.getEstado().getCodigo()) && activoDao.isActivoAfectoGENCAT(activoOferta.getPrimaryKey().getActivo().getId())){
+					Oferta oferta = expediente.getOferta();	
+					OfertaGencat ofertaGencat = genericDao.get(OfertaGencat.class,genericDao.createFilter(FilterType.EQUALS,"oferta", oferta));
+					if(!Checks.esNulo(ofertaGencat)) {
+							if(Checks.esNulo(ofertaGencat.getIdOfertaAnterior()) && !ofertaGencat.getAuditoria().isBorrado()) {
+								gencatApi.bloqueoExpedienteGENCAT(expediente, activoOferta.getPrimaryKey().getActivo().getId());
+							}
+					}else{	
+						gencatApi.bloqueoExpedienteGENCAT(expediente, activoOferta.getPrimaryKey().getActivo().getId());
+					}					
+				}
+			}
+
 			activo = ofertaAceptada.getActivoPrincipal();
 			
-			List<TareaExterna> listaTareas = activoTramiteApi.getListaTareaExternaByIdTramite(tramite.getId());
-			
 			filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.RESERVADO);
-				if(DDEstadosExpedienteComercial.APROBADO.equals(expediente.getEstado().getCodigo())) {
-					esEstadoAnteriorAprobado = true;
-				}
 
 			DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
 			expediente.setEstado(estado);
-			
-			if(!Checks.esNulo(expediente.getReserva()) && esEstadoAnteriorAprobado && esAfectoGencat) {
-				Oferta oferta = expediente.getOferta();	
-				OfertaGencat ofertaGencat = genericDao.get(OfertaGencat.class,genericDao.createFilter(FilterType.EQUALS,"oferta", oferta));
-				if(!Checks.esNulo(ofertaGencat)) {
-					if(Checks.esNulo(ofertaGencat.getIdOfertaAnterior()) && !ofertaGencat.getAuditoria().isBorrado()) {
-						gencatApi.bloqueoExpedienteGENCAT(expediente, tramite);
-					}
-				}else{	
-					gencatApi.bloqueoExpedienteGENCAT(expediente, tramite);
-				}
-			}
 
 			// actualizamos el estado de la reserva a firmada
 			if (!Checks.esNulo(expediente.getReserva())) {

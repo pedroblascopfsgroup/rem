@@ -7,15 +7,13 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
-import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.api.ComunicacionGencatApi;
 import es.pfsgroup.plugin.rem.api.GencatApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
+import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ComunicacionGencat;
 
@@ -37,30 +35,28 @@ public class UpdaterServiceGencatVentaTramiteComunicacion implements UpdaterServ
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 	
-	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {
-		
-		ComunicacionGencat comunicacionGencat = comunicacionGencatApi.getByIdActivoCreado(tramite.getActivo().getId());
-						
+	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {				
 		if(!Checks.esNulo(tramite)) {
-			if(!Checks.esNulo(comunicacionGencat)) {
-				for(TareaExternaValor valor : valores) {
-					if(FECHA_COMUNICACION.equals(valor.getNombre())) {
-						
-						try {
-							comunicacionGencat.setFechaComunicacion(ft.parse(valor.getValor()));						
-						} catch (ParseException e) {
-							e.printStackTrace();
+			List<Activo> activos = tramite.getActivos();
+			for (Activo activo : activos) {
+				ComunicacionGencat comunicacionGencat = comunicacionGencatApi.getByIdActivoCreado(activo.getId());
+				if(!Checks.esNulo(comunicacionGencat)) {
+					for(TareaExternaValor valor : valores) {
+						if(FECHA_COMUNICACION.equals(valor.getNombre())) {
+							
+							try {
+								comunicacionGencat.setFechaComunicacion(ft.parse(valor.getValor()));						
+							} catch (ParseException e) {
+								e.printStackTrace();
+							}
+											
 						}
-										
 					}
+					
+					genericDao.save(ComunicacionGencat.class, comunicacionGencat);
+					gencatApi.cambiarEstadoComunicacionGENCAT(comunicacionGencat);
+					gencatApi.informarFechaSancion(comunicacionGencat);
 				}
-				
-				genericDao.save(ComunicacionGencat.class, comunicacionGencat);
-				gencatApi.cambiarEstadoComunicacionGENCAT(comunicacionGencat);
-				gencatApi.informarFechaSancion(comunicacionGencat);
-			}else {
-				DDEstadoProcedimiento estadoCerrado =  genericDao.get(DDEstadoProcedimiento.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CERRADO));
-				tramite.setEstadoTramite(estadoCerrado);
 			}
 		}
 

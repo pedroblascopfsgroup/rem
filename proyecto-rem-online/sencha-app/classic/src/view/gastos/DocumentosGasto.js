@@ -34,10 +34,28 @@ Ext.define('HreRem.view.gastos.DocumentosGasto', {
 						           	iconCls: 'ico-download',
 						           	tooltip: HreRem.i18n("tooltip.download"),
 						            handler: function(grid, rowIndex, colIndex) {
-						                var grid = me.down('gridBase'),
-						                record = grid.getStore().getAt(rowIndex);
-						               
-						                grid.fireEvent("download", grid, record);					                
+						            	var url= $AC.getRemoteUrl('activo/getLimiteArchivo');
+						        		var data;
+						        		Ext.Ajax.request({
+						        		     url: url,
+						        		     success: function(response, opts) {
+						        		    	 data = Ext.decode(response.responseText);
+						        		    	 if(data.sucess == "true"){
+						        		    		 var grid = me.down('gridBase');
+						        		    		 var limite = data.limite;
+						        		    		 var record = grid.getStore().getAt(rowIndex);
+						        		    		 
+						        		    		 if(record.get('tamanyo')/1024/1024 <= limite){
+						        		    			 grid.fireEvent("download", grid, record);
+						        		    		 }else{
+						        		    			 grid.fireEvent("errorToast", "No se puede descargar ficheros mayores de "+limite+"Mb.");
+						        		    		 }
+						        		    	 }					        		         
+						        		     },
+						        		     failure: function(response) {
+						        		    	 grid.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+						        		     }
+						        		 });					                
 				            		}
 						        }]
 				    		},

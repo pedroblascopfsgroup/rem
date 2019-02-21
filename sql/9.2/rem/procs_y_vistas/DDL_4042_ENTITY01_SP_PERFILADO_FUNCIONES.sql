@@ -12,6 +12,7 @@
 --## INSTRUCCIONES:  
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##		0.2 Resolución conflictos
 --#########################################
 --*/
 

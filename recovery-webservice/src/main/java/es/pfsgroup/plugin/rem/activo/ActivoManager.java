@@ -5379,13 +5379,13 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		String gdpr1 = "0";
 		String gdpr2 = "0";
 		String gdpr3 = "0";
-		if(!Checks.esNulo(dtoGenerarDocGDPR.getCesionDatos())){
+		if(!Checks.esNulo(dtoGenerarDocGDPR.getCesionDatos()) && dtoGenerarDocGDPR.getCesionDatos().equals(true)){
 			gdpr1 = "1";
 		}
-		if(!Checks.esNulo(dtoGenerarDocGDPR.getComTerceros())){
+		if(!Checks.esNulo(dtoGenerarDocGDPR.getComTerceros()) && dtoGenerarDocGDPR.getComTerceros().equals(true)){
 			gdpr2 = "1";
 		}
-		if(!Checks.esNulo(dtoGenerarDocGDPR.getTransIntern())){
+		if(!Checks.esNulo(dtoGenerarDocGDPR.getTransIntern()) && dtoGenerarDocGDPR.getTransIntern().equals(true)){
 			gdpr3 = "1";
 		}
 		

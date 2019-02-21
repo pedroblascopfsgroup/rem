@@ -5381,6 +5381,7 @@ Ext
      		}else{
      			ventana2=window.down('datoscompradorwizard');
      			idExpediente= ventana2.getBindRecord().comprador.data.idExpedienteComercial;
+     			numDoc = ventana2.getBindRecord().comprador.data.numDocumento;
      			nombre=ventana2.getBindRecord().comprador.data.nombreRazonSocial;
      			direccion = ventana2.getForm().getValues().direccion;
      			email = ventana2.getBindRecord().comprador.data.email;

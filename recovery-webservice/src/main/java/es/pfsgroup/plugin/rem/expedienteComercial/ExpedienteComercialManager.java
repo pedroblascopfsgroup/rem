@@ -1703,11 +1703,6 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			}
 		}
 
-		if (!Checks.esNulo(adjuntoActivo)&& !Checks.esNulo(adjuntoActivo.getIdDocRestClient())) {
-			adjuntoExpediente.setIdDocRestClient(adjuntoActivo.getIdDocRestClient());
-			genericDao.update(AdjuntoExpedienteComercial.class, adjuntoExpediente);
-		}
-
 		return null;
 	}
 

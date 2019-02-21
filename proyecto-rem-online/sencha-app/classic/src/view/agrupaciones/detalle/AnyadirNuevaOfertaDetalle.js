@@ -143,6 +143,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaDetalle', {
 				            	    {
 				            	    	fieldLabel: HreRem.i18n('fieldlabel.apellidos.cliente'),
 				            	    	name:		'apellidosCliente',
+				            	    	allowBlank: false,
 										bind:		{
 											value: '{oferta.apellidosCliente}',
 											disabled: '{oferta.razonSocialCliente}'

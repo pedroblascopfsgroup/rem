@@ -187,7 +187,8 @@ Ext.define('HreRem.view.expedientes.DatosCompradorWizard', {
 			        	padding: '5px',
 			        	bind: {
 		            		value: '{comprador.nombreRazonSocial}' 
-		            	}
+		            	},
+		            	allowBlank: false
 			        },
 			        {   
 			        	fieldLabel:  HreRem.i18n('fieldlabel.apellidos'),
@@ -196,7 +197,8 @@ Ext.define('HreRem.view.expedientes.DatosCompradorWizard', {
 			        	padding: '5px',
 			        	bind: {
 		            		value: '{comprador.apellidos}'
-		            	}
+		            	},
+		            	allowBlank: false
 			        },
 			        { 
 			        	fieldLabel:  HreRem.i18n('fieldlabel.direccion'),

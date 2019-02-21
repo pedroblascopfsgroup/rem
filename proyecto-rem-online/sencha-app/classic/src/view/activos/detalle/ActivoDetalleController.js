@@ -5374,7 +5374,7 @@ Ext
      		if(!Ext.isEmpty(ventana2)){
      			codPrescriptor = ventana2.getForm().findField('buscadorPrescriptores').value;
      			numDoc = ventana2.getForm().findField('numDocumentoCliente').value;
-     			nombre= ventana2.getForm().findField('nombreCliente').value;
+     			nombre= ventana2.getForm().findField('nombreCliente').value + " " + ventana2.getForm().findField('apellidosCliente').value;
      			direccion = ventana2.getForm().getValues().direccion;
      			email = ventana2.getForm().getValues().email;
      			telefono = ventana2.getForm().getValues().telefono;
@@ -5382,7 +5382,7 @@ Ext
      			ventana2=window.down('datoscompradorwizard');
      			idExpediente= ventana2.getBindRecord().comprador.data.idExpedienteComercial;
      			numDoc = ventana2.getBindRecord().comprador.data.numDocumento;
-     			nombre=ventana2.getBindRecord().comprador.data.nombreRazonSocial;
+     			nombre=ventana2.getBindRecord().comprador.data.nombreRazonSocial + " " + ventana2.getBindRecord().comprador.data.apellidos;
      			direccion = ventana2.getForm().getValues().direccion;
      			email = ventana2.getBindRecord().comprador.data.email;
      			telefono = ventana2.getBindRecord().comprador.data.telefono1;

@@ -128,7 +128,7 @@ AS
                            OR NVL2 (reg2.reg_id, 1, 0) = 1
 
                            OR NVL2(sps1.sps_otro,1,0) = 1                                               -- OTROS MOTIVOS                           
-						   OR DECODE(VEI.DD_AIC_CODIGO ,''02'' ,0 , 1) = 1                              -- sin_informe_aprobado         	 
+						   --OR DECODE(VEI.DD_AIC_CODIGO ,''02'' ,0 , 1) = 1                              -- sin_informe_aprobado         	 
                           ) 
 						   OR NVL2 (vcg.con_cargas, vcg.con_cargas, 0) = 1
 					THEN ''01''

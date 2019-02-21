@@ -845,6 +845,7 @@ public class TrabajoController extends ParadiseJsonController {
 		} catch (Exception e) {
 			model.put("success", false);
 			model.put("msg", "Se ha producido un error al ejecutar la petición.");
+			logger.error("error obteniendo contactos",e);
 		}
 		return createModelAndViewJson(model);
 		

@@ -2774,30 +2774,33 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 			for (ActivoProveedorContacto source : listaProveedorContacto) {
 				try {
-					DtoProveedorContactoSimple target = new DtoProveedorContactoSimple();
-					BeanUtils.copyProperties(target, source);
-
-					if (!Checks.esNulo(source.getUsuario())) {
-						target.setIdUsuario(source.getUsuario().getId());
-					}
-					if (!Checks.esNulo(source.getUsuario())) {
-						target.setLoginUsuario(source.getUsuario().getUsername());
-					}
-					if (!Checks.esNulo(source.getUsuario())) {
-						target.setLoginUsuario(source.getUsuario().getUsername());
-					}
-					if (!Checks.esNulo(source.getProvincia())) {
-						target.setCodProvincia(source.getProvincia().getCodigo());
-					}
-					if (!Checks.esNulo(source.getTipoDocIdentificativo())) {
-						target.setCodTipoDocIdentificativo(source.getTipoDocIdentificativo().getCodigo());
-					}
-					if (!Checks.esNulo(source.getUsuario())) {
-						if (!Checks.esNulo(source.getUsuario().getUsuarioGrupo())) {
-							target.setUsuarioGrupo(source.getUsuario().getUsuarioGrupo());
+					
+					if(source.getUsuario() != null){
+						DtoProveedorContactoSimple target = new DtoProveedorContactoSimple();
+						BeanUtils.copyProperties(target, source);
+	
+						if (!Checks.esNulo(source.getUsuario())) {
+							target.setIdUsuario(source.getUsuario().getId());
 						}
+						if (!Checks.esNulo(source.getUsuario())) {
+							target.setLoginUsuario(source.getUsuario().getUsername());
+						}
+						if (!Checks.esNulo(source.getUsuario())) {
+							target.setLoginUsuario(source.getUsuario().getUsername());
+						}
+						if (!Checks.esNulo(source.getProvincia())) {
+							target.setCodProvincia(source.getProvincia().getCodigo());
+						}
+						if (!Checks.esNulo(source.getTipoDocIdentificativo())) {
+							target.setCodTipoDocIdentificativo(source.getTipoDocIdentificativo().getCodigo());
+						}
+						if (!Checks.esNulo(source.getUsuario())) {
+							if (!Checks.esNulo(source.getUsuario().getUsuarioGrupo())) {
+								target.setUsuarioGrupo(source.getUsuario().getUsuarioGrupo());
+							}
+						}
+						listaDtoProveedorContactoSimple.add(target);
 					}
-					listaDtoProveedorContactoSimple.add(target);
 				} catch (IllegalAccessException e) {
 					logger.error("Error al consultar las localidades sin filtro", e);
 					throw new Exception(e);

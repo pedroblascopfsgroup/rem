@@ -804,7 +804,8 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
 				+ "			FROM ACT_ACTIVO act "
-				+ "			WHERE act.DD_TCO_ID IN ( "
+				+ "			INNER JOIN ACT_APU_ACTIVO_PUBLICACION APU ON ACT.ACT_ID = APU.ACT_ID "
+				+ "			WHERE APU.dd_tco_id IN ( "
 				+ "				SELECT tco.DD_TCO_ID "
 				+ "				FROM DD_TCO_TIPO_COMERCIALIZACION tco"
 				+ "				where tco.DD_TCO_CODIGO NOT IN ('01','02')) "
@@ -820,7 +821,8 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1) "
 				+ "			FROM ACT_ACTIVO act "
-				+ "			WHERE act.DD_TCO_ID IN ( "
+				+ "			INNER JOIN ACT_APU_ACTIVO_PUBLICACION APU ON ACT.ACT_ID = APU.ACT_ID "
+				+ "			WHERE apu.DD_TCO_ID IN ( "
 				+ "				SELECT tco.DD_TCO_ID "
 				+ "				FROM DD_TCO_TIPO_COMERCIALIZACION tco"
 				+ "				where tco.DD_TCO_CODIGO NOT IN ('02','03')) "
@@ -904,7 +906,8 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(act.act_id) "
 				+ "			FROM ACT_ACTIVO act "
-				+ "			WHERE act.dd_tco_id in (select dd_tco_id from DD_TCO_TIPO_COMERCIALIZACION where dd_tco_codigo in('01', '02')) "
+				+ "			JOIN ACT_APU_ACTIVO_PUBLICACION APU ON ACT.ACT_ID = APU.ACT_ID "
+				+ "			WHERE APU.dd_tco_id IN (SELECT dd_tco_id FROM DD_TCO_TIPO_COMERCIALIZACION WHERE dd_tco_codigo in('01', '02')) "
 				+ "			AND act.ACT_NUM_ACTIVO = "+numActivo+" "
 				+ "			AND act.borrado = 0");
 
@@ -918,7 +921,8 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(act.act_id) "
 				+ "			FROM ACT_ACTIVO act "
-				+ "			WHERE act.dd_tco_id in (select dd_tco_id from DD_TCO_TIPO_COMERCIALIZACION where dd_tco_codigo in('03', '02')) "
+				+ "			JOIN ACT_APU_ACTIVO_PUBLICACION APU ON ACT.ACT_ID = APU.ACT_ID "
+				+ "			WHERE APU.dd_tco_id IN (SELECT dd_tco_id FROM DD_TCO_TIPO_COMERCIALIZACION WHERE dd_tco_codigo in('03', '02')) "
 				+ "			AND act.ACT_NUM_ACTIVO = "+numActivo+" "
 				+ "			AND act.borrado = 0");
 
@@ -2312,8 +2316,9 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	public Boolean activoConDestinoComercialVenta(String numActivo) {
 
 		if(!Checks.esNulo(numActivo)){
-			String resultado = rawDao.getExecuteSQL("select DD_TCO_CODIGO from ACT_ACTIVO act "
-					 + " inner join DD_TCO_TIPO_COMERCIALIZACION tco on tco.DD_TCO_ID = act.DD_TCO_ID"
+			String resultado = rawDao.getExecuteSQL("select TCO.DD_TCO_CODIGO from ACT_ACTIVO act "					
+					 + " INNER JOIN ACT_APU_ACTIVO_PUBLICACION APU ON ACT.ACT_ID = APU.ACT_ID " 
+					 + " INNER JOIN DD_TCO_TIPO_COMERCIALIZACION TCO ON APU.DD_TCO_ID = TCO.DD_TCO_ID " 
 					 + " where act.ACT_NUM_ACTIVO = "+numActivo);
 
 			if(resultado != null && "01".equals(resultado)) {
@@ -2333,8 +2338,9 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	public Boolean activoConDestinoComercialAlquiler(String numActivo) {
 
 		if(!Checks.esNulo(numActivo)){
-			String resultado = rawDao.getExecuteSQL("select DD_TCO_CODIGO from ACT_ACTIVO act "
-					 + " inner join DD_TCO_TIPO_COMERCIALIZACION tco on tco.DD_TCO_ID = act.DD_TCO_ID"
+			String resultado = rawDao.getExecuteSQL("select TCO.DD_TCO_CODIGO from ACT_ACTIVO act "
+					 + " INNER JOIN ACT_APU_ACTIVO_PUBLICACION APU ON ACT.ACT_ID = APU.ACT_ID " 
+					 + " INNER JOIN DD_TCO_TIPO_COMERCIALIZACION TCO ON APU.DD_TCO_ID = TCO.DD_TCO_ID " 
 					 + " where act.ACT_NUM_ACTIVO = "+numActivo);
 
 			if(resultado != null && "03".equals(resultado)) {

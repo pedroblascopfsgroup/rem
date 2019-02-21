@@ -259,6 +259,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	public static final String ESTADO_PROCEDIMIENTO_FINALIZADO = "11";
 	private static final String STR_MISSING_VALUE = "---";
 	public static final Integer NUMERO_DIAS_VENCIMIENTO_SAREB = 40;
+	private static final String DESCRIPCION_COMITE_HAYA = "Haya";
+	
 
 	@Resource
 	private MessageService messageServices;
@@ -370,11 +372,14 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 	@Override
 	public boolean isComiteSancionadorHaya(Trabajo trabajo) {
-		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "comiteSancion.codigo", DDComiteSancion.CODIGO_HAYA_SAREB);
-		Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", trabajo.getId());
-		ExpedienteComercial expediente = genericDao.get(ExpedienteComercial.class, filtro, filtro2);
+		boolean resultado = false;
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", trabajo.getId());
+		ExpedienteComercial expediente = genericDao.get(ExpedienteComercial.class, filtro);
+		if(expediente.getComiteSancion() != null && expediente.getComiteSancion().getDescripcion().trim().equals(DESCRIPCION_COMITE_HAYA)){
+			resultado = true;
+		}
 
-		return !Checks.esNulo(expediente);
+		return resultado;
 	}
 
 	@Override

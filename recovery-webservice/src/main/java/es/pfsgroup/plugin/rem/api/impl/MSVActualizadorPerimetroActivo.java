@@ -263,7 +263,7 @@ public class MSVActualizadorPerimetroActivo extends AbstractMSVActualizador impl
 	}
 	
 	@Override
-	public void postProcesado(MSVHojaExcel exc) throws NumberFormatException, IllegalArgumentException, IOException, ParseException {
+	public void postProcesado(MSVHojaExcel exc) throws Exception {
 		TransactionStatus transaction = transactionManager.getTransaction(new DefaultTransactionDefinition());
 		Integer numFilas = exc.getNumeroFilas();
 		ArrayList<Long> idList = new ArrayList<Long>();
@@ -274,16 +274,7 @@ public class MSVActualizadorPerimetroActivo extends AbstractMSVActualizador impl
 			}
 			activoAdapter.actualizarEstadoPublicacionActivo(idList, false);
 			transactionManager.commit(transaction);
-		}catch(NumberFormatException e){
-			transactionManager.rollback(transaction);
-			throw e;
-		}catch(IllegalArgumentException e){
-			transactionManager.rollback(transaction);
-			throw e;
-		}catch(IOException e){
-			transactionManager.rollback(transaction);
-			throw e;
-		}catch(ParseException e){
+		}catch(Exception e){
 			transactionManager.rollback(transaction);
 			throw e;
 		}

@@ -114,28 +114,25 @@ public class MSVActualizadorPrinex extends AbstractMSVActualizador implements MS
 	//SET DEL RESTO DE CAMPOS
 	private void actualizarEntidad(GastoPrinex entidad, Integer columna, MSVHojaExcel exc, int fila)
 			throws IllegalArgumentException, IOException, ParseException {
-		if (exc.dameCelda(fila, columna) == null || exc.dameCelda(fila, columna).isEmpty()) {
-			return;
-		}
-
+		
 		switch (columna) {
 		case MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_PROYECTO:
-			entidad.setPromocion(Long.valueOf(exc.dameCelda(fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_PROYECTO)));
+			entidad.setPromocion(dameLong(exc,fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_PROYECTO));
 			break;
 		case MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_TIPO_INMUEBLE:
-			entidad.setTipoInmueble(exc.dameCelda(fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_TIPO_INMUEBLE));
+			entidad.setTipoInmueble(dameString(exc,fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_TIPO_INMUEBLE));
 			break;
 		case MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_CLAVE_1:
-			entidad.setClave1(exc.dameCelda(fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_CLAVE_1));
+			entidad.setClave1(dameString(exc,fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_CLAVE_1));
 			break;
 		case MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_CLAVE_2:
-			entidad.setClave2(exc.dameCelda(fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_CLAVE_2));
+			entidad.setClave2(dameString(exc,fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_CLAVE_2));
 			break;
 		case MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_CLAVE_3:
-			entidad.setClave3(exc.dameCelda(fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_CLAVE_3));
+			entidad.setClave3(dameString(exc,fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_CLAVE_3));
 			break;
 		case MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_CLAVE_4:
-			entidad.setClave4(exc.dameCelda(fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_CLAVE_4));
+			entidad.setClave4(dameString(exc,fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_CLAVE_4));
 			break;
 		case MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_IMPORTE_GASTO:
 			entidad.setImporteGasto(
@@ -147,13 +144,13 @@ public class MSVActualizadorPrinex extends AbstractMSVActualizador implements MS
 			break;
 		case MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_DIARIO_CONTB:
 			entidad.setDiarioContable(
-					exc.dameCelda(fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_DIARIO_CONTB));
+					dameString(exc,fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_DIARIO_CONTB));
 			break;
 		case MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_D347:
-			entidad.setD347(exc.dameCelda(fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_D347));
+			entidad.setD347(dameString(exc,fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_D347));
 			break;
 		case MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_DELEGACION:
-			entidad.setDelegacion(exc.dameCelda(fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_DELEGACION));
+			entidad.setDelegacion(dameString(exc,fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_DELEGACION));
 			break;
 		case MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_BASE_RETENCION:
 			entidad.setRetencionBase(
@@ -169,7 +166,7 @@ public class MSVActualizadorPrinex extends AbstractMSVActualizador implements MS
 			break;
 		case MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_APLICAR_RETENCION:
 			entidad.setAplicarRetencion(
-					exc.dameCelda(fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_APLICAR_RETENCION));
+					dameString(exc,fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_APLICAR_RETENCION));
 			break;
 		case MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_BASE_IRPF:
 			entidad.setBaseIrpf(dameNumero(exc, fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_BASE_IRPF));
@@ -183,122 +180,122 @@ public class MSVActualizadorPrinex extends AbstractMSVActualizador implements MS
 					dameNumero(exc, fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_IMPORTE_IRPF));
 			break;
 		case MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_CLAVE_IRPF:
-			entidad.setClaveIrpf(exc.dameCelda(fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_CLAVE_IRPF));
+			entidad.setClaveIrpf(dameString(exc,fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_CLAVE_IRPF));
 			break;
 		case MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_SUBCLAVE_IRPF:
 			entidad.setSubClaveIrpf(
-					exc.dameCelda(fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_SUBCLAVE_IRPF));
+					dameString(exc,fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_SUBCLAVE_IRPF));
 			break;
 		case MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_CEUTA:
-			entidad.setCeuta(exc.dameCelda(fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_CEUTA));
+			entidad.setCeuta(dameString(exc,fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_CEUTA));
 			break;
 		case MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_CTA_IVAD:
-			entidad.setCtaIvad(exc.dameCelda(fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_CTA_IVAD));
+			entidad.setCtaIvad(dameString(exc,fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_CTA_IVAD));
 			break;
 		case MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_SCTA_IVAD:
-			entidad.setSctaIvad(exc.dameCelda(fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_SCTA_IVAD));
+			entidad.setSctaIvad(dameString(exc,fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_SCTA_IVAD));
 			break;
 		case MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_CONDICIONES:
-			entidad.setCondiciones(exc.dameCelda(fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_CONDICIONES));
+			entidad.setCondiciones(dameString(exc,fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_CONDICIONES));
 			break;
 		case MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_CTA_BANCO:
-			entidad.setCtaBanco(exc.dameCelda(fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_CTA_BANCO));
+			entidad.setCtaBanco(dameString(exc,fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_CTA_BANCO));
 			break;
 		case MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_SCTA_BANCO:
-			entidad.setSctaBanco(exc.dameCelda(fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_SCTA_BANCO));
+			entidad.setSctaBanco(dameString(exc,fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_SCTA_BANCO));
 			break;
 		case MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_CTA_EFECTOS:
-			entidad.setCtaEfectos(exc.dameCelda(fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_CTA_EFECTOS));
+			entidad.setCtaEfectos(dameString(exc,fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_CTA_EFECTOS));
 			break;
 		case MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_SCTA_EFECTOS:
-			entidad.setSctaEfectos(exc.dameCelda(fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_SCTA_EFECTOS));
+			entidad.setSctaEfectos(dameString(exc,fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_SCTA_EFECTOS));
 			break;
 		case MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_APUNTE:
-			entidad.setApunte(exc.dameCelda(fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_APUNTE));
+			entidad.setApunte(dameString(exc,fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_APUNTE));
 			break;
 		case MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_CENTRODESTINO:
 			entidad.setCentroDestino(
-					exc.dameCelda(fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_CENTRODESTINO));
+					dameString(exc,fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_CENTRODESTINO));
 			break;
 		case MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_TIPO_FRA_SII:
-			entidad.setTipoFraSii(exc.dameCelda(fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_TIPO_FRA_SII));
+			entidad.setTipoFraSii(dameString(exc,fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_TIPO_FRA_SII));
 			break;
 		case MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_CLAVE_RE:
-			entidad.setClaveRe(exc.dameCelda(fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_CLAVE_RE));
+			entidad.setClaveRe(dameString(exc,fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_CLAVE_RE));
 			break;
 		case MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_CLAVE_RE_AD1:
-			entidad.setClaveReAd1(exc.dameCelda(fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_CLAVE_RE_AD1));
+			entidad.setClaveReAd1(dameString(exc,fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_CLAVE_RE_AD1));
 			break;
 		case MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_CLAVE_RE_AD2:
-			entidad.setClaveReAd2(exc.dameCelda(fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_CLAVE_RE_AD2));
+			entidad.setClaveReAd2(dameString(exc,fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_CLAVE_RE_AD2));
 			break;
 		case MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_TIPO_OP_INTRA:
 			entidad.setTipoOpIntra(
-					exc.dameCelda(fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_TIPO_OP_INTRA));
+					dameString(exc,fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_TIPO_OP_INTRA));
 			break;
 		case MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_DESC_BIENES:
-			entidad.setDescBienes(exc.dameCelda(fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_DESC_BIENES));
+			entidad.setDescBienes(dameString(exc,fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_DESC_BIENES));
 			break;
 		case MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_DESCRIPCION_OP:
 			entidad.setDescripcionOp(
-					exc.dameCelda(fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_DESCRIPCION_OP));
+					dameString(exc,fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_DESCRIPCION_OP));
 			break;
 		case MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_SIMPLIFICADA:
 			entidad.setSimplificada(
-					exc.dameCelda(fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_SIMPLIFICADA));
+					dameString(exc,fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_SIMPLIFICADA));
 			break;
 		case MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_FRA_SIMPLI_IDEN:
 			entidad.setFraSimpliIden(
-					exc.dameCelda(fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_FRA_SIMPLI_IDEN));
+					dameString(exc,fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_FRA_SIMPLI_IDEN));
 			break;
 		case MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_DIARIO1:
-			entidad.setDiario1(exc.dameCelda(fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_DIARIO1));
+			entidad.setDiario1(dameString(exc,fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_DIARIO1));
 			break;
 		case MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_DIARIO2:
-			entidad.setDiario2(exc.dameCelda(fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_DIARIO2));
+			entidad.setDiario2(dameString(exc,fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_DIARIO2));
 			break;
 		case MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_TIPO_PARTIDA:
-			entidad.setTipoPartida(exc.dameCelda(fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_TIPO_PARTIDA));
+			entidad.setTipoPartida(dameString(exc,fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_TIPO_PARTIDA));
 			break;
 		case MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_APARTADO:
-			entidad.setApartado(exc.dameCelda(fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_APARTADO));
+			entidad.setApartado(dameString(exc,fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_APARTADO));
 			break;
 		case MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_CAPITULO:
-			entidad.setCapitulo(exc.dameCelda(fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_CAPITULO));
+			entidad.setCapitulo(dameString(exc,fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_CAPITULO));
 			break;
 		case MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_PARTIDA:
-			entidad.setPartida(exc.dameCelda(fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_PARTIDA));
+			entidad.setPartida(dameString(exc,fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_PARTIDA));
 			break;
 		case MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_CTA_GASTO:
-			entidad.setCtaGasto(exc.dameCelda(fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_CTA_GASTO));
+			entidad.setCtaGasto(dameString(exc,fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_CTA_GASTO));
 			break;
 		case MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_SCTA_GASTO:
-			entidad.setSctaGasto(exc.dameCelda(fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_SCTA_GASTO));
+			entidad.setSctaGasto(dameString(exc,fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_SCTA_GASTO));
 			break;
 		case MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_REPERCUTIR:
-			entidad.setRepercutir(exc.dameCelda(fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_REPERCUTIR));
+			entidad.setRepercutir(dameString(exc,fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_REPERCUTIR));
 			break;
 		case MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_CONCEPTO_FAC:
-			entidad.setConceptoFac(exc.dameCelda(fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_CONCEPTO_FAC));
+			entidad.setConceptoFac(dameString(exc,fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_CONCEPTO_FAC));
 			break;
 		case MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_FECHA_FAC:
 			entidad.setFechaFac(dameFecha(exc, fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_FECHA_FAC));
 			break;
 		case MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_COD_COEF:
-			entidad.setCodCoef(exc.dameCelda(fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_COD_COEF));
+			entidad.setCodCoef(dameString(exc,fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_COD_COEF));
 			break;
 		case MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_CODI_DIAR_IVA_V:
 			entidad.setCodiDiarIvaV(
-					exc.dameCelda(fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_CODI_DIAR_IVA_V));
+					dameString(exc,fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_CODI_DIAR_IVA_V));
 			break;
 		case MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_PCTJE_IVA_V:
 			entidad.setPctjeIvaV(dameNumero(exc, fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_PCTJE_IVA_V));
 			break;
 		case MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_NOMBRE:
-			entidad.setNombre(exc.dameCelda(fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_NOMBRE));
+			entidad.setNombre(dameString(exc,fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_NOMBRE));
 			break;
 		case MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_CARACTERISTICA:
-			entidad.setCaracteristica(exc.dameCelda(fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_CARACTERISTICA));
+			entidad.setCaracteristica(dameString(exc,fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_CARACTERISTICA));
 			break;
 		case MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_DIARIO1_BASE:
 			entidad.setDiario1Base(dameNumero(exc, fila, MSVInfoDetallePrinexLbkExcelValidator.COL_NUM.GPL_DIARIO1_BASE));
@@ -340,9 +337,26 @@ public class MSVActualizadorPrinex extends AbstractMSVActualizador implements MS
 	private Double dameNumero(MSVHojaExcel exc, int fila, Integer columna)
 			throws NumberFormatException, IllegalArgumentException, IOException, ParseException {
 		Double resultado = null;
-		resultado = Double.valueOf(exc.dameCelda(fila, columna));
+		if(exc.dameCelda(fila, columna) != null && !exc.dameCelda(fila, columna).isEmpty())
+			resultado = Double.valueOf(exc.dameCelda(fila, columna));
 		return resultado;
-	}	
+	}
+	
+	private Long dameLong(MSVHojaExcel exc, int fila, Integer columna)
+			throws NumberFormatException, IllegalArgumentException, IOException, ParseException {
+		Long resultado = null;
+		if(exc.dameCelda(fila, columna) != null && !exc.dameCelda(fila, columna).isEmpty())
+			resultado = Long.valueOf(exc.dameCelda(fila, columna));
+		return resultado;
+	}
+	
+	private String dameString(MSVHojaExcel exc, int fila, Integer columna)
+			throws NumberFormatException, IllegalArgumentException, IOException, ParseException {
+		String resultado = null;
+		if(exc.dameCelda(fila, columna) != null && !exc.dameCelda(fila, columna).isEmpty())
+			resultado = exc.dameCelda(fila, columna);
+		return resultado;
+	}
 	
 
 }

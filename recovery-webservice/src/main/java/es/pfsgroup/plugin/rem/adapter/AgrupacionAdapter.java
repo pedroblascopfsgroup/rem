@@ -119,6 +119,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializar;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoEstadoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
@@ -1816,11 +1817,31 @@ public class AgrupacionAdapter {
 				return false;
 			}
 		} else {
-			if (Checks.esNulo(loteComercial.getUsuarioGestorComercial())) {
+			if((agr.getActivos().get(0).getActivo().getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_BANKIA)
+					|| agr.getActivos().get(0).getActivo().getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_SAREB))
+					&& isRetail(agr)){
+				if (Checks.esNulo(loteComercial.getUsuarioGestorComercial()) || Checks.esNulo(loteComercial.getUsuarioGestorComercialBackOffice())) {
+					return false;
+				}
+				
+			}else if (Checks.esNulo(loteComercial.getUsuarioGestorComercial())) {
 				return false;
 			}
 		}
 		return true;
+	}
+	
+	private boolean isRetail(ActivoAgrupacion agr){
+		boolean resultado = false;
+		if(agr != null && agr.getActivos() != null && agr.getActivos().size() > 0){
+			for(ActivoAgrupacionActivo activo : agr.getActivos()){
+				if(DDTipoComercializar.CODIGO_RETAIL.equals(activo.getActivo().getTipoComercializar().getCodigo())){
+					resultado = true;
+					break;
+				}
+			}
+		}
+		return resultado;
 	}
 
 	//@Transactional(readOnly = false)

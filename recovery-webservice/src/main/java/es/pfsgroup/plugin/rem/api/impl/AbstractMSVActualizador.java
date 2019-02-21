@@ -170,7 +170,7 @@ abstract public class AbstractMSVActualizador implements MSVLiberator {
 	public void preProcesado(MSVHojaExcel exc, ProcesoMasivoContext context) throws NumberFormatException, IllegalArgumentException, IOException, ParseException {
 	}
 
-	public void postProcesado(MSVHojaExcel exc) throws NumberFormatException, IllegalArgumentException, IOException, ParseException {
+	public void postProcesado(MSVHojaExcel exc) throws Exception {
 	}
 
 	@Override

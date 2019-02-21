@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Pier Gotta
---## FECHA_CREACION=20190216
+--## FECHA_CREACION=20190221
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-5387
+--## INCIDENCIA_LINK=REMVIP-3083
 --## PRODUCTO=NO
 --## Finalidad: Crear vista gestores activo
 --##           
@@ -17,8 +17,9 @@
 --##    0.5 HREOS-4844- SHG - AÑADIMOS GESTCOMALQ y SUPCOMALQ
 --##	0.6 Se añade GPUBL y SPUBL.
 --##	0.7 Se quita las restricción de filtrar por el tipo de destino comercial para los gestores GESTCOMALQ y SUPCOMALQ (HREOS-5090)
---##  0.8 Se añade el Supervisor comercial Backoffice Inmobiliario
---##    0.9 Añadido filtro tipo comercializar para Backoffice Inmobiliario
+--##    0.8 Se añade el Supervisor comercial Backoffice Inmobiliario
+--##    0.9 Se añade filtro tipo comercializar para Backoffice Inmobiliario
+--##    0.10 Se añade filtro codigo postal para Backoffice Inmobiliario
 --##########################################
 --*/
 
@@ -92,6 +93,7 @@ SELECT act.act_id, TO_NUMBER(cra.dd_cra_codigo), NULL dd_eac_codigo, NULL dd_tcr
                   JOIN '||V_ESQUEMA_M||'.DD_PRV_PROVINCIA PRV ON PRV.DD_PRV_ID = BL.DD_PRV_ID 
                   LEFT JOIN '||V_ESQUEMA_M||'.DD_LOC_LOCALIDAD LOC ON LOC.DD_LOC_ID = BL.DD_LOC_ID 
                   LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist1 ON dist1.cod_cartera = dd_cra.dd_cra_codigo AND dist1.tipo_gestor = ''HAYAGBOINM'' AND PRV.DD_PRV_CODIGO = dist1.COD_PROVINCIA AND LOC.DD_LOC_CODIGO = NVL(dist1.COD_MUNICIPIO,LOC.DD_LOC_CODIGO)  AND (DIST1.COD_TIPO_COMERZIALZACION IS NULL OR DD_TCR.DD_TCR_CODIGO = NVL(dist1.COD_TIPO_COMERZIALZACION,DD_TCR.DD_TCR_CODIGO))
+AND (DIST1.COD_POSTAL IS NULL OR BL.BIE_LOC_COD_POST = NVL(DIST1.COD_POSTAL,BL.BIE_LOC_COD_POST))
            where act.borrado = 0
            UNION ALL
 /*Supervisor Comercial BackOffice Inmobiliario*/

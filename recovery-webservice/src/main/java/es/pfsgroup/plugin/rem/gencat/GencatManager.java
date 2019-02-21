@@ -70,10 +70,10 @@ import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoGencat;
 import es.pfsgroup.plugin.rem.model.DtoGencatSave;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoComunicacionGencat;
-import es.pfsgroup.plugin.rem.model.DtoImpuestosActivo;
 import es.pfsgroup.plugin.rem.model.DtoNotificacionActivo;
 import es.pfsgroup.plugin.rem.model.DtoOfertasAsociadasActivo;
 import es.pfsgroup.plugin.rem.model.DtoReclamacionActivo;
+import es.pfsgroup.plugin.rem.model.DtoTiposDocumentoComunicacion;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.HistoricoAdecuacionGencat;
 import es.pfsgroup.plugin.rem.model.HistoricoComunicacionGencat;
@@ -82,7 +82,6 @@ import es.pfsgroup.plugin.rem.model.HistoricoNotificacionGencat;
 import es.pfsgroup.plugin.rem.model.HistoricoOfertaGencat;
 import es.pfsgroup.plugin.rem.model.HistoricoReclamacionGencat;
 import es.pfsgroup.plugin.rem.model.HistoricoVisitaGencat;
-import es.pfsgroup.plugin.rem.model.ImpuestosActivo;
 import es.pfsgroup.plugin.rem.model.NotificacionGencat;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.OfertaGencat;
@@ -91,15 +90,12 @@ import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VExpPreBloqueoGencat;
 import es.pfsgroup.plugin.rem.model.Visita;
 import es.pfsgroup.plugin.rem.model.VisitaGencat;
-import es.pfsgroup.plugin.rem.model.dd.DDCalculoImpuesto;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoComunicacionGencat;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDSancionGencat;
-import es.pfsgroup.plugin.rem.model.dd.DDSubtipoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoComunicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoNotificacionGencat;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoPeriocidad;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
 
 @Service("gencatManager")
@@ -748,9 +744,12 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 				adjuntoComunicacion.setFechaNotificacion(fNotificacion);
 
 				genericDao.save(AdjuntoComunicacion.class, adjuntoComunicacion);
+				//TODO INSERTAR AQUI
 				String idHComunicacion = webFileItem.getParameter("idHComunicacion");
 				
 				agregarReferenciaComunicacionAdjunto(null, activo, usuarioLogado, idHComunicacion,comunicacionGencat,adjuntoComunicacion);
+				
+				return adjuntoComunicacion.getId().toString();
 			} 
 			else {
 				throw new Exception("No se ha encontrado activo o tipo para relacionar adjunto");
@@ -846,6 +845,9 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 					dtoNotificacionActivo = new DtoNotificacionActivo();
 					BeanUtils.copyProperties(dtoNotificacionActivo, listaNotificacionGencat.get(i));
 					dtoNotificacionActivo.setMotivoNotificacion(listaNotificacionGencat.get(i).getTipoNotificacion() != null ? listaNotificacionGencat.get(i).getTipoNotificacion().getDescripcion() : null);
+					if(!Checks.esNulo(listaNotificacionGencat.get(i).getDocumentoId())) {
+						dtoNotificacionActivo.setNombre(listaNotificacionGencat.get(i).getDocumentoId().getNombre());
+					}
 					listaNotificaciones.add(dtoNotificacionActivo);
 				}
 			}
@@ -919,7 +921,7 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 				Filter filtroIdTipoNotificacion = genericDao.createFilter(FilterType.EQUALS, "codigo", dtoNotificacion.getMotivoNotificacion());
 				
 				DDTipoNotificacionGencat tipoNotificacionGencat = genericDao.get(DDTipoNotificacionGencat.class, filtroIdTipoNotificacion, filtroBorrado);
-				
+				AdjuntoComunicacion adj = genericDao.get(AdjuntoComunicacion.class, genericDao.createFilter(FilterType.EQUALS, "id",Long.valueOf(dtoNotificacion.getIdDocumento())));
 				Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 				SimpleDateFormat dateformat3 = new SimpleDateFormat("dd/MM/yyyy");
 				
@@ -936,7 +938,7 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 				notificacion.setTipoNotificacion(tipoNotificacionGencat);
 				notificacion.setFechaSancionNotificacion(fechaSancion);
 				notificacion.setCierreNotificacion(fechaCierre);
-				
+				notificacion.setDocumentoId(adj);
 				Auditoria auditoria = new Auditoria();
 				auditoria.setBorrado(false);
 				auditoria.setFechaCrear(new Date());
@@ -1698,5 +1700,45 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 		}
 		
 		return false;
+	}
+
+	@Override
+	public List <DtoTiposDocumentoComunicacion> getTiposDocumentoComunicacion() {
+		
+		List <DtoTiposDocumentoComunicacion> listDtoTipoDocumento = new ArrayList <DtoTiposDocumentoComunicacion>();
+		List <DDTipoDocumentoComunicacion> listaDDTipoDocumento= new ArrayList <DDTipoDocumentoComunicacion>();		
+		
+		listaDDTipoDocumento = genericDao.getList(DDTipoDocumentoComunicacion.class);
+		
+		for (DDTipoDocumentoComunicacion tipDoc : listaDDTipoDocumento) {
+			if (!DDTipoDocumentoComunicacion.CODIGO_NOTIFICACION_VARIACIONES_DATOS_GENCAT.equals(tipDoc.getCodigo())) {
+				DtoTiposDocumentoComunicacion aux = new DtoTiposDocumentoComunicacion();
+				aux.setCodigo(tipDoc.getCodigo());
+				aux.setDescripcion(tipDoc.getDescripcion());
+				aux.setDescripcionLarga(tipDoc.getDescripcionLarga());
+				listDtoTipoDocumento.add(aux);
+			}
+		}
+		return listDtoTipoDocumento;
+	}
+	
+	@Override
+	public List <DtoTiposDocumentoComunicacion> getTiposDocumentoNotificacion() {
+		
+		List <DtoTiposDocumentoComunicacion> listDtoTipoDocumento = new ArrayList <DtoTiposDocumentoComunicacion>();
+		List <DDTipoDocumentoComunicacion> listaDDTipoDocumento= new ArrayList <DDTipoDocumentoComunicacion>();		
+		
+		listaDDTipoDocumento = genericDao.getList(DDTipoDocumentoComunicacion.class);
+		
+		for (DDTipoDocumentoComunicacion tipDoc : listaDDTipoDocumento) {
+			if (DDTipoDocumentoComunicacion.CODIGO_NOTIFICACION_VARIACIONES_DATOS_GENCAT.equals(tipDoc.getCodigo())) {
+				DtoTiposDocumentoComunicacion aux = new DtoTiposDocumentoComunicacion();
+				aux.setCodigo(tipDoc.getCodigo());
+				aux.setDescripcion(tipDoc.getDescripcion());
+				aux.setDescripcionLarga(tipDoc.getDescripcionLarga());
+				listDtoTipoDocumento.add(aux);
+			}
+		}
+		return listDtoTipoDocumento;
 	}
 }

@@ -11,6 +11,8 @@ public class DtoNotificacionActivo extends WebDto {
 	private String motivoNotificacion;
 	private String fechaSancionNotificacion;
 	private String cierreNotificacion;
+	private String idDocumento;
+	private String nombre;
 	
 	public Long getIdActivo() {
 		return idActivo;
@@ -41,6 +43,18 @@ public class DtoNotificacionActivo extends WebDto {
 	}
 	public void setCierreNotificacion(String cierreNotificacion) {
 		this.cierreNotificacion = cierreNotificacion;
+	}
+	public String getIdDocumento() {
+		return idDocumento;
+	}
+	public void setIdDocumento(String idDocumento) {
+		this.idDocumento = idDocumento;
+	}
+	public String getNombre() {
+		return nombre;
+	}
+	public void setNombre(String nombre) {
+		this.nombre = nombre;
 	}
 	
 }

@@ -16,6 +16,7 @@ import es.pfsgroup.plugin.rem.model.DtoHistoricoComunicacionGencat;
 import es.pfsgroup.plugin.rem.model.DtoNotificacionActivo;
 import es.pfsgroup.plugin.rem.model.DtoOfertasAsociadasActivo;
 import es.pfsgroup.plugin.rem.model.DtoReclamacionActivo;
+import es.pfsgroup.plugin.rem.model.DtoTiposDocumentoComunicacion;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 
@@ -205,4 +206,14 @@ public interface GencatApi {
 	 */
 	public boolean updateFechaReclamacion(DtoReclamacionActivo gencatDto);
 	
+	/*
+	 * Obtiene los tipos de documento para el combobox del panel Documentos
+	 */
+	public List <DtoTiposDocumentoComunicacion> getTiposDocumentoComunicacion();
+
+	/*
+	 * Obtiene los tipos de documento para el combobox del panel Notificaciones en la pestaña GENCAT
+	 */
+	public List <DtoTiposDocumentoComunicacion> getTiposDocumentoNotificacion();
+
 }

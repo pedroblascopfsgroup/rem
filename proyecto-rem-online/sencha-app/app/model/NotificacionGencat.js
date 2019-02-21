@@ -20,8 +20,18 @@ Ext.define('HreRem.model.NotificacionGencat', {
 		{
 			name:'cierreNotificacion',
 			type:'date'
+		},
+		{
+			name: 'fileUpload',
+			xtype: 'filefield'
+		},
+		{
+			name: 'tipo',
+			xtype: 'combobox'
+		},
+		{
+			name: 'descripcion',
+			xtype: 'textarea'
 		}
-		
     ]
-
 });

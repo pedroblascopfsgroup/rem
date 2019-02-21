@@ -61,6 +61,10 @@ public class NotificacionGencat implements Serializable, Auditable {
 	@Column(name = "NOG_FECHA_CIERRE_NOTIFICATION")
 	private Date cierreNotificacion;
 	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "ADC_ID")
+	private AdjuntoComunicacion adcId;
+	
 	@Version   
 	private Long version;
     
@@ -122,7 +126,15 @@ public class NotificacionGencat implements Serializable, Auditable {
 	public void setCierreNotificacion(Date fechaCierre) {
 		this.cierreNotificacion = fechaCierre;
 	}
+	
+	public AdjuntoComunicacion getDocumentoId() {
+		return adcId;
+	}
 
+	public void setDocumentoId(AdjuntoComunicacion adcId) {
+		this.adcId = adcId;
+	}
+	
 	public Long getVersion() {
 		return version;
 	}

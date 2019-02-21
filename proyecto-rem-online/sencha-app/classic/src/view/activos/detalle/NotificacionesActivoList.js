@@ -36,6 +36,11 @@ Ext.define('HreRem.view.activos.detalle.NotificacionesActivoList', {
 		            flex: 1
 		        },
 		        {
+		            dataIndex: 'nombre',
+		            text: HreRem.i18n('header.nombre.documento'),
+		            flex: 1
+		        },
+		        {
 		            dataIndex: 'motivoNotificacion',
 		            text: HreRem.i18n('fieldlabel.motivo'),
 		            flex: 2

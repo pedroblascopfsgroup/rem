@@ -566,8 +566,10 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 				adjunto.setDescripcionTipo(tipoDoc.getDescripcion());
 			}
 			AdjuntoComunicacion adj = genericDao.get(AdjuntoComunicacion.class, genericDao.createFilter(FilterType.EQUALS, "idDocRestClient",adjunto.getId()));
-			Usuario usuarioGestor = genericDao.get(Usuario.class,genericDao.createFilter(FilterType.EQUALS,"username", adj.getAuditoria().getUsuarioCrear()),genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
-			adjunto.setGestor(usuarioGestor.getApellidoNombre());
+			if(!Checks.esNulo(adj)) {
+				Usuario usuarioGestor = genericDao.get(Usuario.class,genericDao.createFilter(FilterType.EQUALS,"username", adj.getAuditoria().getUsuarioCrear()),genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
+				adjunto.setGestor(usuarioGestor.getApellidoNombre());
+			}
 		}
 
 		return list;

@@ -130,16 +130,17 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoController', {
 		
 	},
 	
-	onClickAdjuntarDocumentoNotificaciones: function(btn) {
-		
-		var me = this;
-		var idActivo = me.getViewModel().get("activo.id");
-		var data = {
-			entidad: 'gencat', 
-			idEntidad: idActivo
-		};
-		Ext.create("HreRem.view.common.adjuntos.AdjuntarDocumentoNotificacionGencat", data).show();
-	},
+	//Sin utilizar desde HREOS-5509
+//	onClickAdjuntarDocumentoNotificaciones: function(btn) {
+//		
+//		var me = this;
+//		var idActivo = me.getViewModel().get("activo.id");
+//		var data = {
+//			entidad: 'gencat', 
+//			idEntidad: idActivo
+//		};
+//		Ext.create("HreRem.view.common.adjuntos.AdjuntarDocumentoNotificacionGencat", data).show();
+//	},
 	
 	onClickGuardarNotificacion: function(btn) {
 		
@@ -154,6 +155,7 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoController', {
             form.submit({
                 waitMsg: HreRem.i18n('msg.mask.loading'),
                 params: {
+                	idEntidad: window.idActivo,
                 	idActivo: window.idActivo
                 },
                 success: function(fp, o) {
@@ -229,7 +231,7 @@ onClickAbrirExpedienteComercial: function() {
 			},
 	    
 	     failure: function (a, operation) {
-	 				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));334500
+	 		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
 	 	},
 	    callback: function(record, operation) {
 			me.getView().unmask();

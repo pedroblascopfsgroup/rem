@@ -89,7 +89,7 @@ SELECT act.act_id, TO_NUMBER(cra.dd_cra_codigo), NULL dd_eac_codigo, NULL dd_tcr
                   dist1.username username, dist1.nombre_usuario nombre
              FROM act_activo act JOIN dd_cra_cartera dd_cra ON dd_cra.dd_cra_id = act.dd_cra_id
                   JOIN '||V_ESQUEMA||'.BIE_LOCALIZACION BL ON BL.BIE_ID = ACT.BIE_ID
-       		  JOIN '||V_ESQUEMA||'.dd_tcr_tipo_comercializar dd_tcr ON dd_tcr.dd_tcr_id = act.dd_tcr_id
+       		  LEFT JOIN '||V_ESQUEMA||'.dd_tcr_tipo_comercializar dd_tcr ON dd_tcr.dd_tcr_id = act.dd_tcr_id
                   JOIN '||V_ESQUEMA_M||'.DD_PRV_PROVINCIA PRV ON PRV.DD_PRV_ID = BL.DD_PRV_ID 
                   LEFT JOIN '||V_ESQUEMA_M||'.DD_LOC_LOCALIDAD LOC ON LOC.DD_LOC_ID = BL.DD_LOC_ID 
                   LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist1 ON dist1.cod_cartera = dd_cra.dd_cra_codigo AND dist1.tipo_gestor = ''HAYAGBOINM'' AND PRV.DD_PRV_CODIGO = dist1.COD_PROVINCIA AND LOC.DD_LOC_CODIGO = NVL(dist1.COD_MUNICIPIO,LOC.DD_LOC_CODIGO)  AND (DIST1.COD_TIPO_COMERZIALZACION IS NULL OR DD_TCR.DD_TCR_CODIGO = NVL(dist1.COD_TIPO_COMERZIALZACION,DD_TCR.DD_TCR_CODIGO))

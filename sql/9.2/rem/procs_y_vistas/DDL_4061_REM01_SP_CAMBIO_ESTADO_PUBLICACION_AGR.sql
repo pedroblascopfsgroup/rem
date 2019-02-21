@@ -997,7 +997,7 @@ ELSE
                               (        TAG.DD_TAG_CODIGO = ''02''	/*Restringida*/
                                 AND (AGR.AGR_FIN_VIGENCIA IS NULL OR TRUNC(AGR.AGR_FIN_VIGENCIA) >= TRUNC(SYSDATE))
                               )     
-                        /*    OR(     TAG.DD_TAG_CODIGO = ''13''	/*Asistida*/
+                        /*    OR(     TAG.DD_TAG_CODIGO = ''13''	--Asistida
                                 AND (TRUNC(AGR.AGR_FIN_VIGENCIA) < TRUNC(SYSDATE))
                                 ) */
                             )                                                        
@@ -1014,7 +1014,7 @@ ELSE
                               (        TAG.DD_TAG_CODIGO = ''02''	/*Restringida*/
                                 AND (AGR.AGR_FIN_VIGENCIA IS NULL OR TRUNC(AGR.AGR_FIN_VIGENCIA) >= TRUNC(SYSDATE))
                               )     
-                        /*    OR(     TAG.DD_TAG_CODIGO = ''13''	/*Asistida*/
+                        /*    OR(     TAG.DD_TAG_CODIGO = ''13''	--Asistida
                                 AND (TRUNC(AGR.AGR_FIN_VIGENCIA) < TRUNC(SYSDATE))
                                 ) */
                             )                                                                                   
@@ -1031,7 +1031,7 @@ ELSE
                               (        TAG.DD_TAG_CODIGO = ''02''	/*Restringida*/
                                 AND (AGR.AGR_FIN_VIGENCIA IS NULL OR TRUNC(AGR.AGR_FIN_VIGENCIA) >= TRUNC(SYSDATE))
                               )     
-                       /*     OR(     TAG.DD_TAG_CODIGO = ''13''	/*Asistida*/
+                       /*     OR(     TAG.DD_TAG_CODIGO = ''13''	--Asistida
                                 AND (TRUNC(AGR.AGR_FIN_VIGENCIA) < TRUNC(SYSDATE))
                                 ) */
                             )                                                        

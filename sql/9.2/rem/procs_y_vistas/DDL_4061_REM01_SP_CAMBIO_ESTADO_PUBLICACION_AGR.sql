@@ -17,6 +17,7 @@
 --##		0.5 Modificado las condiciones alquiler Carles Molins HREOS-4683
 --##		0.6 Sergio B HREOS-4931 - Optimización de tiempos
 --##		0.7 Oscar Diestre HREOS-5358 - Tratamiento agrupaciones asisitidas vencidas
+--##		0.8 Sergio H . Deshacemos temporalmente las modificaciones de la 0.7
 --##########################################
 --*/
 
@@ -995,9 +996,9 @@ ELSE
                               (        TAG.DD_TAG_CODIGO = ''02''	/*Restringida*/
                                 AND (AGR.AGR_FIN_VIGENCIA IS NULL OR TRUNC(AGR.AGR_FIN_VIGENCIA) >= TRUNC(SYSDATE))
                               )     
-                            OR(     TAG.DD_TAG_CODIGO = ''13''	/*Asistida*/
+                        /*    OR(     TAG.DD_TAG_CODIGO = ''13''	/*Asistida*/
                                 AND (TRUNC(AGR.AGR_FIN_VIGENCIA) < TRUNC(SYSDATE))
-                                )
+                                ) */
                             )                                                        
                       WHERE AGA.ACT_ID = ACT.ACT_ID
                         AND AGA.BORRADO = 0
@@ -1012,9 +1013,9 @@ ELSE
                               (        TAG.DD_TAG_CODIGO = ''02''	/*Restringida*/
                                 AND (AGR.AGR_FIN_VIGENCIA IS NULL OR TRUNC(AGR.AGR_FIN_VIGENCIA) >= TRUNC(SYSDATE))
                               )     
-                            OR(     TAG.DD_TAG_CODIGO = ''13''	/*Asistida*/
+                        /*    OR(     TAG.DD_TAG_CODIGO = ''13''	/*Asistida*/
                                 AND (TRUNC(AGR.AGR_FIN_VIGENCIA) < TRUNC(SYSDATE))
-                                )
+                                ) */
                             )                                                                                   
                       WHERE AGA.BORRADO = 0
                         AND AGR.AGR_ID = '||nAGR_ID||'
@@ -1029,9 +1030,9 @@ ELSE
                               (        TAG.DD_TAG_CODIGO = ''02''	/*Restringida*/
                                 AND (AGR.AGR_FIN_VIGENCIA IS NULL OR TRUNC(AGR.AGR_FIN_VIGENCIA) >= TRUNC(SYSDATE))
                               )     
-                            OR(     TAG.DD_TAG_CODIGO = ''13''	/*Asistida*/
+                       /*     OR(     TAG.DD_TAG_CODIGO = ''13''	/*Asistida*/
                                 AND (TRUNC(AGR.AGR_FIN_VIGENCIA) < TRUNC(SYSDATE))
-                                )
+                                ) */
                             )                                                        
                       WHERE AGA.BORRADO = 0
                         AND AGR.AGR_ID = '||nAGR_ID||'

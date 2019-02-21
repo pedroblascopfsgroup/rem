@@ -2800,6 +2800,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 
 		var me= this;
 		var url =  $AC.getRemoteUrl('proveedores/searchProveedorCodigoUvem');
+		debugger;
 		var carteraBankia = me.view.up().lookupController().getViewModel().get('activo.isCarteraBankia');
 		var carteraCajamar = me.view.up().lookupController().getViewModel().get('activo.isCarteraCajamar');
 		var codSucursal = '';

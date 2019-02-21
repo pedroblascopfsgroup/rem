@@ -4,7 +4,7 @@
 --## FECHA_CREACION=20190221
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=
+--## INCIDENCIA_LINK=REMVIP-XXXX
 --## PRODUCTO=NO
 --##
 --## Finalidad: Actualizar perímetro activos

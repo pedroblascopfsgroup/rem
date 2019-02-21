@@ -13,6 +13,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.plugin.rem.api.ComunicacionGencatApi;
 import es.pfsgroup.plugin.rem.api.GencatApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
+import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ComunicacionGencat;
 
@@ -34,31 +35,29 @@ public class UpdaterServiceGencatVentaTramiteComunicacion implements UpdaterServ
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 	
-	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {
-		
-		ComunicacionGencat comunicacionGencat = comunicacionGencatApi.getByIdActivoCreado(tramite.getActivo().getId());
-						
+	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {				
 		if(!Checks.esNulo(tramite)) {
-			
-			for(TareaExternaValor valor : valores) {
-				if(FECHA_COMUNICACION.equals(valor.getNombre())) {
-					
-					try {
-						comunicacionGencat.setFechaComunicacion(ft.parse(valor.getValor()));						
-					} catch (ParseException e) {
-						e.printStackTrace();
+			List<Activo> activos = tramite.getActivos();
+			for (Activo activo : activos) {
+				ComunicacionGencat comunicacionGencat = comunicacionGencatApi.getByIdActivoCreado(activo.getId());
+				if(!Checks.esNulo(comunicacionGencat)) {
+					for(TareaExternaValor valor : valores) {
+						if(FECHA_COMUNICACION.equals(valor.getNombre())) {
+							
+							try {
+								comunicacionGencat.setFechaComunicacion(ft.parse(valor.getValor()));						
+							} catch (ParseException e) {
+								e.printStackTrace();
+							}
+											
+						}
 					}
-									
+					
+					genericDao.save(ComunicacionGencat.class, comunicacionGencat);
+					gencatApi.cambiarEstadoComunicacionGENCAT(comunicacionGencat);
+					gencatApi.informarFechaSancion(comunicacionGencat);
 				}
 			}
-			
-			if(!Checks.esNulo(comunicacionGencat)) {			
-				genericDao.save(ComunicacionGencat.class, comunicacionGencat);
-			}
-			
-			gencatApi.cambiarEstadoComunicacionGENCAT(comunicacionGencat);
-			gencatApi.informarFechaSancion(comunicacionGencat);
-			
 		}
 
 	}

@@ -214,6 +214,17 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 	             return false;
 	         }
 	     },
+	     
+	     mostrarComboBO: function(get) {
+			var codigoCartera=get('agrupacionficha.codigoCartera');
+	         var tipoAgrup= get('agrupacionficha.tipoAgrupacionCodigo');
+	         if((codigoCartera == CONST.CARTERA['LIBERBANK'] || codigoCartera == CONST.CARTERA['BANKIA'] || codigoCartera == CONST.CARTERA['SAREB']) 
+	         	&& tipoAgrup == CONST.TIPOS_AGRUPACION['LOTE_COMERCIAL']){
+	             return true;
+	         }else{
+	             return false;
+	         }
+	     },
 
 	     getIconClsEstadoVenta: function(get) {
 	        var estadoVenta = get('agrupacionficha.estadoVenta');

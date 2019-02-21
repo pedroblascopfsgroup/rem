@@ -30,7 +30,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
     },
     
    
-    
+
     onRowClickListadoactivos: function(gridView,record){
     	var me = this;
 		var viewModel = me.getViewModel();
@@ -1816,11 +1816,7 @@ onClickBotonEditar: function(btn) {
 		if(CONST.TIPOS_EXPEDIENTE_COMERCIAL['VENTA'] == tipoExpedienteCodigo) {
 			if(!bloqueado) {
 				if(CONST.ESTADOS_EXPEDIENTE['VENDIDO']!=codigoEstado) {
-					if(tipoOrigenWCOM != origen) {
-						llamada = true;
-					} else {
-		            	me.fireEvent("errorToast","Expediente con origen WCOM");
-		            }
+					llamada = true;
 				} else {
 					me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.expediente.vendido"));
 				}
@@ -2823,47 +2819,15 @@ onClickBotonEditar: function(btn) {
 			}
 		}
 	},
-	
-    onRenderCargaOfertaOrigen: function(campo) { 
-	
-		var url =  $AC.getRemoteUrl('ofertas/getOfertaOrigenByIdExpediente');
-		var me = this;
-		var expediente = me.getViewModel().data.expediente; 
-		var numExpediente = expediente.data.numExpediente;
-		var data = {};
-		
-		Ext.Ajax.request({
-		     url: url,
-		     method: 'POST',
-		     params:  {numExpediente: numExpediente},
-		     success: function(response, opts) {
-		    	 data = Ext.decode(response.responseText);
-		    	 
-		    	 if(data.data.numOferta){
-		    		 campo.setVisible(true);
-		    		 campo.setValue(data.data.numOferta);
-		    	 }
-		    	 else {
-		    		 campo.setVisible(false);
-		    	 }
-		    	
-		     },
-		     failure: function(response) {
-					Utils.defaultRequestFailure(response, opts);
-					me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-		     }
-   	  });
-	},
+
 	
 	onClickAbrirExpedienteComercial: function() { 
 		
     	var me = this;
     	var expediente = me.getViewModel().data.expediente; 
-    	var numOfertaOrigen = expediente.data.ofertaOrigen;
+    	var numOfertaOrigen = expediente.data.idOfertaAnterior;
     	var data;
     	var url =  $AC.getRemoteUrl('expedientecomercial/getExpedienteByIdOferta');
-    	console.log("PRINT: ",numOfertaOrigen);
-    	
     	Ext.Ajax.request({
 		     url: url,
 		     method: 'POST',

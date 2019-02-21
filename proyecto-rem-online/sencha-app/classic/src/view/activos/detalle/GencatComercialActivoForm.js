@@ -162,6 +162,7 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoForm', {
 				    			{
 				    				xtype: "datefieldbase",
 				    				fieldLabel: HreRem.i18n('fieldlabel.fecha.sancion'),
+				    				reference: 'fechaSancionRef',
 				    				name: 'fechaSancion',
 				    				submitFormat:'Y-m-d',
 									bind: {
@@ -287,6 +288,10 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoForm', {
 				    				xtype: "checkboxfieldbase",
 				    				fieldLabel: HreRem.i18n('fieldlabel.comunicado.anulacion.gencat'),
 				    				name: 'comunicadoAnulacionAGencat',
+				    				id: 'checkComunicadoAnulacion',
+				    				listeners: {
+				    					change: 'onExisteDocumentoAnulacion'
+				    				},
 									bind: {
 										readOnly: '{esSoloLecturaCheckAnularGencat}',
 										value: '{gencat.comunicadoAnulacionAGencat}'

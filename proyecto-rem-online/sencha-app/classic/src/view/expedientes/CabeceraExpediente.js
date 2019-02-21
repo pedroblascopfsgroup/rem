@@ -182,18 +182,18 @@ Ext.define('HreRem.view.expedientes.CabeceraExpediente', {
 															readOnly: true,
 															cls: 'cabecera-info-field',
 										                	bind: {
-										                		value: '{expediente.ofertaOrigen}',
-										                		//hidden: '{!expediente.ofertaOrigen}'
+										                		value: '{expediente.idOfertaAnterior}',
+										                		hidden: '{!expediente.idOfertaAnterior}'
 										                	},
 										                	listeners: {
 										                		click: {
 										                	            element: 'el',
 										                	            fn: 'onClickAbrirExpedienteComercial'
-										                	    },
-										                		render: 'onRenderCargaOfertaOrigen'
+										                	    }
 										                	},
 														    style:{
-														    	cursor: 'pointer'
+														    	cursor: 'pointer',
+														    	'text-decoration': 'underline'
 														    }
 										                }
 										               

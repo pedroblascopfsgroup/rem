@@ -25,6 +25,7 @@ import es.pfsgroup.plugin.rem.api.ResolucionComiteApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
+import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
@@ -107,27 +108,24 @@ public class UpdaterServiceSancionOfertaRespuestaOfertante implements UpdaterSer
 						if(DDRespuestaOfertante.CODIGO_ACEPTA.equals(valor.getValor()) || DDRespuestaOfertante.CODIGO_CONTRAOFERTA.equals(valor.getValor())){
 							//Si el activo es de Bankia, se ratifica el comité
 							if(!trabajoApi.checkBankia(expediente.getTrabajo())){
-								Boolean esEstadoAnteriorTramitado = false;
-								filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.APROBADO);
-								DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
-								if(DDEstadosExpedienteComercial.EN_TRAMITACION.equals(expediente.getEstado().getCodigo())) {
-									esEstadoAnteriorTramitado = true;
-								}
-								
-								expediente.setEstado(estado);
-								
-								//TODO COMPROBACION PRE BLOQUEO GENCAT 
-								if(Checks.esNulo(expediente.getReserva()) && esEstadoAnteriorTramitado && esAfectoGencat) {
-									Oferta oferta = expediente.getOferta();	
-									OfertaGencat ofertaGencat = genericDao.get(OfertaGencat.class,genericDao.createFilter(FilterType.EQUALS,"oferta", oferta));
-									if(!Checks.esNulo(ofertaGencat)) {
-										if(Checks.esNulo(ofertaGencat.getIdOfertaAnterior()) && !ofertaGencat.getAuditoria().isBorrado()) {
-											gencatApi.bloqueoExpedienteGENCAT(expediente, tramite);
-										}
-									}else{	
-										gencatApi.bloqueoExpedienteGENCAT(expediente, tramite);
+								List<ActivoOferta> listActivosOferta = expediente.getOferta().getActivosOferta();
+								for (ActivoOferta activoOferta : listActivosOferta) {
+									if(Checks.esNulo(expediente.getReserva()) && DDEstadosExpedienteComercial.EN_TRAMITACION.equals(expediente.getEstado().getCodigo()) && activoDao.isActivoAfectoGENCAT(activoOferta.getPrimaryKey().getActivo().getId())){
+										Oferta oferta = expediente.getOferta();	
+										OfertaGencat ofertaGencat = genericDao.get(OfertaGencat.class,genericDao.createFilter(FilterType.EQUALS,"oferta", oferta));
+										if(!Checks.esNulo(ofertaGencat)) {
+												if(Checks.esNulo(ofertaGencat.getIdOfertaAnterior()) && !ofertaGencat.getAuditoria().isBorrado()) {
+													gencatApi.bloqueoExpedienteGENCAT(expediente, activoOferta.getPrimaryKey().getActivo().getId());
+												}
+										}else{	
+											gencatApi.bloqueoExpedienteGENCAT(expediente, activoOferta.getPrimaryKey().getActivo().getId());
+										}					
 									}
 								}
+								filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.APROBADO);
+								DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
+								
+								expediente.setEstado(estado);
 								//Una vez aprobado el expediente, se congelan el resto de ofertas que no estén rechazadas (aceptadas y pendientes)
 								List<Oferta> listaOfertas = ofertaApi.trabajoToOfertas(tramite.getTrabajo());
 								for(Oferta oferta : listaOfertas){

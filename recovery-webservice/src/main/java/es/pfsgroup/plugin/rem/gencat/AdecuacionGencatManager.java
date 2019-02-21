@@ -34,19 +34,21 @@ public class AdecuacionGencatManager extends AbstractEntityDao<AdecuacionGencat,
 		Filter filtroIdActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
 		Filter filtroBorradoComunicacion = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
 		
-		ComunicacionGencat comunicacionGencat = genericDao.getList(ComunicacionGencat.class, filtroEstadoTramite, filtroIdActivo, filtroBorradoComunicacion).get(0);
+		List<ComunicacionGencat> comunicacionGencats = genericDao.getList(ComunicacionGencat.class, filtroEstadoTramite, filtroIdActivo, filtroBorradoComunicacion);
+		if(!Checks.estaVacio(comunicacionGencats)) {
+			ComunicacionGencat comunicacionGencat = comunicacionGencats.get(0);
 		
-		if(!Checks.esNulo(comunicacionGencat)) {
-			idComunicacionGencat = comunicacionGencat.getId();
-		}
-		
-		if(!Checks.esNulo(idComunicacionGencat)) {
-			Filter filtroIdAdecuacion = genericDao.createFilter(FilterType.EQUALS, "comunicacion.id", idComunicacionGencat);
-			Filter filtroBorradoAdecuacion = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+			if(!Checks.esNulo(comunicacionGencat)) {
+				idComunicacionGencat = comunicacionGencat.getId();
+			}
 			
-			adecuacionGencat = genericDao.getList(AdecuacionGencat.class, filtroIdAdecuacion, filtroBorradoAdecuacion).get(0);
+			if(!Checks.esNulo(idComunicacionGencat)) {
+				Filter filtroIdAdecuacion = genericDao.createFilter(FilterType.EQUALS, "comunicacion.id", idComunicacionGencat);
+				Filter filtroBorradoAdecuacion = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+				
+				adecuacionGencat = genericDao.getList(AdecuacionGencat.class, filtroIdAdecuacion, filtroBorradoAdecuacion).get(0);
+			}
 		}
-		
 		return adecuacionGencat;
 	}
 	

@@ -92,6 +92,7 @@ import es.pfsgroup.plugin.rem.model.Visita;
 import es.pfsgroup.plugin.rem.model.VisitaGencat;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoComunicacionGencat;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisitaOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDSancionGencat;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoComunicacion;
@@ -211,7 +212,7 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 		
 		if (comunicacionGencat != null) {
 			try {
-				// Comrpueba que todos los datos del usuario nuevo esten completos
+				// Comrpueba que los datos minimos del usuario nuevo esten completos
 				if (!Checks.esNulo(comunicacionGencat.getNuevoCompradorNif()) && !Checks.esNulo(comunicacionGencat.getNuevoCompradorNombre())) {
 					gencatDto.setUsuarioCompleto(true);
 				} else {
@@ -250,12 +251,24 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 				}
 				
 				//Oferta
+				gencatDto.setOfertasAsociadasEstanAnuladas(true);
 				List <OfertaGencat> resultOfertaGencatGencat = genericDao.getListOrdered(OfertaGencat.class, orderByFechaCrear, filtroIdComunicacion, filtroBorrado);
 				if (resultOfertaGencatGencat != null && !resultOfertaGencatGencat.isEmpty()) {
 					OfertaGencat ofertaGencat = resultOfertaGencatGencat.get(0);
 					Oferta oferta = ofertaGencat.getOferta();
 					if (oferta != null) {
 						gencatDto.setOfertaGencat(oferta.getNumOferta());
+					}
+					for (OfertaGencat ofertGencat : resultOfertaGencatGencat) {
+						if(!Checks.esNulo(ofertGencat)) {
+							if(!Checks.esNulo(ofertGencat.getOferta())) {
+								if(!Checks.esNulo(ofertGencat.getOferta().getEstadoOferta())) {
+									if(!ofertGencat.getOferta().getEstadoOferta().getCodigo().equals(DDEstadoOferta.CODIGO_RECHAZADA)) {
+										gencatDto.setOfertasAsociadasEstanAnuladas(false);
+									}
+								}
+							}
+						}
 					}
 				}
 				
@@ -736,7 +749,7 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 				adjuntoComunicacion.setDescripcion(webFileItem.getParameter("descripcion"));
 
 				adjuntoComunicacion.setFechaDocumento(new Date());
-				
+								
 				String fechaNotificacion = webFileItem.getParameter("fechaNotificacion");
 				SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 						Date fNotificacion = sdf.parse(fechaNotificacion);
@@ -961,7 +974,7 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 
 	@Override
 	@Transactional(readOnly = false)
-	public void bloqueoExpedienteGENCAT(ExpedienteComercial expComercial, ActivoTramite tramite) {
+	public void bloqueoExpedienteGENCAT(ExpedienteComercial expComercial, Long idActivo) {
 		
 		Date fechaActual = new Date();
 		Oferta oferta = expComercial.getOferta();
@@ -972,94 +985,88 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 		if(!Checks.esNulo(compradorExp)) {
 			comprador = genericDao.get(Comprador.class, genericDao.createFilter(FilterType.EQUALS,"id",compradorExp.getComprador()));
 		}
-		List<ActivoOferta> listActivosOferta = expComercial.getOferta().getActivosOferta();
-		Activo activo = new Activo();
 		String codSitPos = "0";
 		String codTipoPer = "0";
 		ComunicacionGencat comGencat = new ComunicacionGencat();
 		VExpPreBloqueoGencat datoVista = null;
 		
-		for (ActivoOferta activoOferta : listActivosOferta) {
-			activo = activoOferta.getPrimaryKey().getActivo();
-			
-			List<VExpPreBloqueoGencat> listDatosVista = genericDao.getList(VExpPreBloqueoGencat.class, 
-				genericDao.createFilter(FilterType.EQUALS,"idActivo", activo.getId()));
+		List<VExpPreBloqueoGencat> listDatosVista = genericDao.getList(VExpPreBloqueoGencat.class, 
+			genericDao.createFilter(FilterType.EQUALS,"idActivo", idActivo));
 
-			if(!Checks.estaVacio(listDatosVista)) { //Pillar 1º registro que es el mas reciente para comparar los condicionantes
-				datoVista = listDatosVista.get(0);
-				
-				//COMPROBACION SI HAY COMUNICACION GENCAT CREADA+
-				if(!Checks.esNulo(datoVista.getFecha_comunicacion())) {
-					//TODO REVISAR CONDICIONES DE ULTIMA OFERTA QUE PROVOCO LA COMUNICACION CON LOS DATOS DEL EXPEDIENTE QUE SE RECOGEN
-					comGencat = genericDao.get(ComunicacionGencat.class, genericDao.createFilter(FilterType.EQUALS,"activo.id", activo.getId()));
-					if(!Checks.esNulo(expComercial.getCondicionante())) {
-						if(!Checks.esNulo(expComercial.getCondicionante().getSituacionPosesoria())){
-							codSitPos = expComercial.getCondicionante().getSituacionPosesoria().getCodigo();
-						}
+		if(!Checks.estaVacio(listDatosVista)) { //Pillar 1º registro que es el mas reciente para comparar los condicionantes
+			datoVista = listDatosVista.get(0);
+			
+			//COMPROBACION SI HAY COMUNICACION GENCAT CREADA+
+			if(!Checks.esNulo(datoVista.getFecha_comunicacion())) {
+				//TODO REVISAR CONDICIONES DE ULTIMA OFERTA QUE PROVOCO LA COMUNICACION CON LOS DATOS DEL EXPEDIENTE QUE SE RECOGEN
+				comGencat = genericDao.get(ComunicacionGencat.class, genericDao.createFilter(FilterType.EQUALS,"activo.id", idActivo));
+				if(!Checks.esNulo(expComercial.getCondicionante())) {
+					if(!Checks.esNulo(expComercial.getCondicionante().getSituacionPosesoria())){
+						codSitPos = expComercial.getCondicionante().getSituacionPosesoria().getCodigo();
+					}
+						
+					if(!Checks.esNulo(comprador) && !Checks.esNulo(comprador.getTipoPersona())) {
+						codTipoPer = comprador.getTipoPersona().getCodigo();
+					}
+						
+						//TODO COMPROBACION CONDICIONANTES
+					if(!Checks.esNulo(datoVista.getSituacionPosesoria()) && datoVista.getSituacionPosesoria().equals(codSitPos) 
+						&& !Checks.esNulo(datoVista.getTipoPersona())&&  datoVista.getTipoPersona().equals(codTipoPer)
+						&& (!Checks.esNulo(oferta.getImporteOferta()) && oferta.getImporteOferta().equals(datoVista.getImporteOferta()))) {
 							
-						if(!Checks.esNulo(comprador) && !Checks.esNulo(comprador.getTipoPersona())) {
-							codTipoPer = comprador.getTipoPersona().getCodigo();
-						}
-							
-							//TODO COMPROBACION CONDICIONANTES
-						if(!Checks.esNulo(datoVista.getSituacionPosesoria()) && datoVista.getSituacionPosesoria().equals(codSitPos) 
-							&& !Checks.esNulo(datoVista.getTipoPersona())&&  datoVista.getTipoPersona().equals(codTipoPer)
-							&& (!Checks.esNulo(oferta.getImporteOferta()) && oferta.getImporteOferta().equals(datoVista.getImporteOferta()))) {
-								
-								//COMPROBACION OFERTA ULTIMA SANCION:
-									//SI DD_ECG_CODIGO SANCIONADA SE COMPARA TIEMPO SANCION AL TIEMPO ACTUAL:
-										//SI TIEMPO > 2 MESES LANZAR TRAMITE GENCAT
-										//SI TIEMPO < 2 MESES NO HACER NADA.
-							if(!Checks.esNulo(comGencat.getEstadoComunicacion())
-								&& DDEstadoComunicacionGencat.COD_SANCIONADO.equals(comGencat.getEstadoComunicacion().getCodigo())
-								&& !Checks.esNulo(datoVista.getFecha_sancion())) {
-								if(!Checks.esNulo(comGencat.getSancion()) && DDSancionGencat.COD_NO_EJERCE.equals(comGencat.getSancion().getCodigo())) {
-									Date fecha2MesesMasSancion;
-									if(!Checks.esNulo(comGencat.getFechaSancion())) {
-										Calendar cal = Calendar.getInstance(); 
-								        cal.setTime(comGencat.getFechaSancion()); 
-								        cal.add(Calendar.MONTH, 2);
-								        fecha2MesesMasSancion = cal.getTime();
-									}else{
-										fecha2MesesMasSancion = fechaActual;
-									}
-									if(fechaActual.after(fecha2MesesMasSancion) || Checks.esNulo(comGencat.getFechaSancion())){  
-										lanzarTramiteGENCAT(tramite, oferta, expComercial);
-									}
-								}
-							}
-							//SI DD_ECG_CODIGO ANULADA
-							if(!Checks.esNulo(comGencat.getEstadoComunicacion())
-								&& DDEstadoComunicacionGencat.COD_ANULADO.equals(comGencat.getEstadoComunicacion().getCodigo())) {
-									lanzarTramiteGENCAT(tramite, oferta, expComercial);
-							}								
-						}else {
-							if(!Checks.esNulo(comGencat.getSancion())) {
-								if(!DDSancionGencat.COD_EJERCE.equals(comGencat.getSancion().getCodigo())) {
-									lanzarTramiteGENCAT(tramite, oferta, expComercial);
-								}
-							}else {
-								lanzarTramiteGENCAT(tramite, oferta, expComercial);
-							}
-						}
-					}else {
+							//COMPROBACION OFERTA ULTIMA SANCION:
+								//SI DD_ECG_CODIGO SANCIONADA SE COMPARA TIEMPO SANCION AL TIEMPO ACTUAL:
+									//SI TIEMPO > 2 MESES LANZAR TRAMITE GENCAT
+									//SI TIEMPO < 2 MESES NO HACER NADA.
 						if(!Checks.esNulo(comGencat.getEstadoComunicacion())
-								&& DDEstadoComunicacionGencat.COD_ANULADO.equals(comGencat.getEstadoComunicacion().getCodigo())) {
-									lanzarTramiteGENCAT(tramite, oferta, expComercial);
+							&& DDEstadoComunicacionGencat.COD_SANCIONADO.equals(comGencat.getEstadoComunicacion().getCodigo())
+							&& !Checks.esNulo(datoVista.getFecha_sancion())) {
+							if(!Checks.esNulo(comGencat.getSancion()) && DDSancionGencat.COD_NO_EJERCE.equals(comGencat.getSancion().getCodigo())) {
+								Date fecha2MesesMasSancion;
+								if(!Checks.esNulo(comGencat.getFechaSancion())) {
+									Calendar cal = Calendar.getInstance(); 
+							        cal.setTime(comGencat.getFechaSancion()); 
+							        cal.add(Calendar.MONTH, 2);
+							        fecha2MesesMasSancion = cal.getTime();
+								}else{
+									fecha2MesesMasSancion = fechaActual;
+								}
+								if(fechaActual.after(fecha2MesesMasSancion) || Checks.esNulo(comGencat.getFechaSancion())){  
+									lanzarTramiteGENCAT(idActivo, oferta, expComercial);
+								}
 							}
+						}
+						//SI DD_ECG_CODIGO ANULADA
+						if(!Checks.esNulo(comGencat.getEstadoComunicacion())
+							&& DDEstadoComunicacionGencat.COD_ANULADO.equals(comGencat.getEstadoComunicacion().getCodigo())) {
+								lanzarTramiteGENCAT(idActivo, oferta, expComercial);
+						}								
+					}else {
+						if(!Checks.esNulo(comGencat.getSancion())) {
+							if(!DDSancionGencat.COD_EJERCE.equals(comGencat.getSancion().getCodigo())) {
+								lanzarTramiteGENCAT(idActivo, oferta, expComercial);
+							}
+						}else {
+							lanzarTramiteGENCAT(idActivo, oferta, expComercial);
+						}
 					}
 				}else {
-					comGencat = genericDao.get(ComunicacionGencat.class, genericDao.createFilter(FilterType.EQUALS,"activo.id", activo.getId()));
 					if(!Checks.esNulo(comGencat.getEstadoComunicacion())
-						&& DDEstadoComunicacionGencat.COD_ANULADO.equals(comGencat.getEstadoComunicacion().getCodigo())
-						|| DDEstadoComunicacionGencat.COD_RECHAZADO.equals(comGencat.getEstadoComunicacion().getCodigo())) {
-							lanzarTramiteGENCAT(tramite, oferta, expComercial);
-					}
+							&& DDEstadoComunicacionGencat.COD_ANULADO.equals(comGencat.getEstadoComunicacion().getCodigo())) {
+								lanzarTramiteGENCAT(idActivo, oferta, expComercial);
+						}
 				}
-			}else {					
-				lanzarTramiteGENCAT(tramite, oferta, expComercial);
-			}	
-		}
+			}else {
+				comGencat = genericDao.get(ComunicacionGencat.class, genericDao.createFilter(FilterType.EQUALS,"activo.id", idActivo));
+				if(!Checks.esNulo(comGencat.getEstadoComunicacion())
+					&& DDEstadoComunicacionGencat.COD_ANULADO.equals(comGencat.getEstadoComunicacion().getCodigo())
+					|| DDEstadoComunicacionGencat.COD_RECHAZADO.equals(comGencat.getEstadoComunicacion().getCodigo())) {
+						lanzarTramiteGENCAT(idActivo, oferta, expComercial);
+				}
+			}
+		}else {					
+			lanzarTramiteGENCAT(idActivo, oferta, expComercial);
+		}	
 	}
 
 	/**
@@ -1075,18 +1082,18 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 	}
 		
 	@Override
-	public void lanzarTramiteGENCAT(ActivoTramite tramite, Oferta oferta, ExpedienteComercial expedienteComercial) {
+	public void lanzarTramiteGENCAT(Long idActivo, Oferta oferta, ExpedienteComercial expedienteComercial) {
 		
-		historificarTramiteGENCAT(tramite);
-		crearRegistrosTramiteGENCAT(expedienteComercial, oferta, tramite);
+		historificarTramiteGENCAT(idActivo);
+		crearRegistrosTramiteGENCAT(expedienteComercial, oferta, idActivo);
 				
-		activoAdapter.crearTramiteGencat(tramite.getActivo().getId());
+		activoAdapter.crearTramiteGencat(idActivo);
 				
 	}
 	
 	@Override
 	@Transactional(readOnly = false)
-	public void crearRegistrosTramiteGENCAT(ExpedienteComercial expedienteComercial, Oferta oferta, ActivoTramite tramite) {
+	public void crearRegistrosTramiteGENCAT(ExpedienteComercial expedienteComercial, Oferta oferta, Long idActivo) {
 		
 		ComunicacionGencat comunicacionGencat = new ComunicacionGencat();
 		AdecuacionGencat adecuacionGencat = new AdecuacionGencat();
@@ -1106,7 +1113,7 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 
 		// Creamos la nueva comunicación
 		comunicacionGencat.setAuditoria(auditoria);
-		comunicacionGencat.setActivo(oferta.getActivoPrincipal());
+		comunicacionGencat.setActivo(activoApi.get(idActivo));
 		comunicacionGencat.setComunicadoAnulacionAGencat(false);
 		comunicacionGencat.setEstadoComunicacion(estadoComunicacion);
 		comunicacionGencat.setFechaPreBloqueo(new Date());
@@ -1141,12 +1148,12 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 	
 	@Override
 	@Transactional(readOnly = false)
-	public void historificarTramiteGENCAT(ActivoTramite tramite) {
+	public void historificarTramiteGENCAT(Long idActivo) {
 				
-		if(!Checks.esNulo(tramite)) {
+		if(!Checks.esNulo(idActivo)) {
 			
 			ComunicacionGencat comunicacionGencat = genericDao.get(ComunicacionGencat.class, 
-					genericDao.createFilter(FilterType.EQUALS,"activo.id", tramite.getActivo().getId()));
+					genericDao.createFilter(FilterType.EQUALS,"activo.id", idActivo));
 			
 			if(!Checks.esNulo(comunicacionGencat)) {
 				Long idComunicacionGencat = comunicacionGencat.getId();
@@ -1512,7 +1519,7 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 		return true;
 	}
 	
-	private void crearNuevaOfertaGENCAT(ExpedienteComercial expedienteComercial, ComunicacionGencat cmg) throws Exception {
+	public void crearNuevaOfertaGENCAT(ExpedienteComercial expedienteComercial, ComunicacionGencat cmg) throws Exception {
 
 		Auditoria auditoria = new Auditoria();
 		// Creamos los valores de Auditoria
@@ -1740,5 +1747,39 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 			}
 		}
 		return listDtoTipoDocumento;
+	}
+	
+	public boolean comprobacionDocumentoAnulacion(Long idActivo) {
+		
+		Filter filtroIdActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
+		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+		Order orderByFechaCrear = new Order(OrderType.DESC, "auditoria.fechaCrear");
+		
+		//Datos comunicación
+		List <ComunicacionGencat> resultComunicacion = genericDao.getListOrdered(ComunicacionGencat.class, orderByFechaCrear, filtroIdActivo, filtroBorrado);
+		ComunicacionGencat comunicacionGencat = null;
+		if (!Checks.esNulo(resultComunicacion) && !resultComunicacion.isEmpty()) {
+			comunicacionGencat = resultComunicacion.get(0);
+		}
+		
+		long cmg = comunicacionGencat.getId();
+		
+		Filter filtroCmgId = genericDao.createFilter(FilterType.EQUALS, "comunicacionGencat.id", cmg);
+		
+		List <AdjuntoComunicacion> resultAdjuntoComunicacion = genericDao.getList(AdjuntoComunicacion.class, filtroCmgId);
+		
+		if (!Checks.esNulo(resultAdjuntoComunicacion)) {
+			for(AdjuntoComunicacion cga: resultAdjuntoComunicacion) {
+				if(cga.getTipoDocumentoComunicacion().getCodigo().equals(DDTipoDocumentoComunicacion.CODIGO_ANULACION_OFERTA_GENCAT)) {
+					return true;
+				}else {
+					return false;
+				}
+			}
+		}else {
+			return false;
+		}
+		
+		return false;
 	}
 }

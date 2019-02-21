@@ -1,5 +1,7 @@
 package es.pfsgroup.plugin.rem.controller;
 
+import java.util.List;
+
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -17,15 +19,22 @@ import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.utils.FileUtils;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.dao.abm.Order;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.GencatAdapter;
 import es.pfsgroup.plugin.rem.api.GencatApi;
+import es.pfsgroup.plugin.rem.model.AdjuntoComunicacion;
+import es.pfsgroup.plugin.rem.model.ComunicacionGencat;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoGencatSave;
 import es.pfsgroup.plugin.rem.model.DtoNotificacionActivo;
 import es.pfsgroup.plugin.rem.model.DtoReclamacionActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoComunicacion;
 
 
 @Controller
@@ -408,6 +417,19 @@ public class GencatController {
 			logger.error("error en gencatController", e);
 			model.put(RESPONSE_SUCCESS_DATA, false);
 			model.put("errorMessage", e.getMessage());
+		}
+
+		return createModelAndViewJson(model);
+	}
+	public ModelAndView comprobacionDocumentoAnulacion(Long idActivo, ModelMap model) {
+		
+		try {
+			model.put("data", gencatApi.comprobacionDocumentoAnulacion(idActivo));
+			model.put("success", true);
+		} 
+		catch (Exception e) {
+			logger.error("Error en gencatController", e);
+			model.put("success", false);
 		}
 
 		return createModelAndViewJson(model);

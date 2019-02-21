@@ -617,11 +617,8 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		
 		//HREOS-4836 (GENCAT)
 		Boolean afectoAGencat = false;
-		try {
+		if (!Checks.esNulo(activo)) {
 			afectoAGencat = activoApi.isAfectoGencat(activo);
-		}
-		catch (ParseException e) {
-			e.printStackTrace();
 		}
 		activoDto.setAfectoAGencat(afectoAGencat);
 		

@@ -100,12 +100,12 @@ public class RemCorreoUtils {
 
 				prepararBodyMensaje(message, list, cuerpoEmail);
 
-				if(emailFrom != null){
-					message.setFrom(new InternetAddress(emailFrom));
-				}
-
+				
 				// Lo enviamos.
 				if (esCorreoActivado()) {
+					if(emailFrom != null){
+						message.setFrom(new InternetAddress(emailFrom));
+					}
 					doSend(message, session, props);
 				}				
 				traza.setResultado(true);

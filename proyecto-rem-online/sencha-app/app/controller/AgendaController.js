@@ -109,7 +109,7 @@ Ext.define('HreRem.controller.AgendaController', {
         }
     },
     
-    abrirtarea: function(record, grid, target, idTrabajo, idActivo, idExpediente, numEC) {	
+    abrirtarea: function(record, grid, target, idTrabajo, idActivo, idExpediente, numEC) {
     		var me = this;
 	        var window;
 	        var tarea = record;

@@ -13,6 +13,9 @@ import javax.persistence.Version;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Where;
+
+import es.capgemini.pfs.auditoria.model.Auditoria;
 
 
 
@@ -134,6 +137,7 @@ public class ActivoOferta implements Serializable {
 
         @ManyToOne
         @JoinColumn(name = "OFR_ID")
+        @Where(clause = Auditoria.UNDELETED_RESTICTION)
         private Oferta oferta;
 
         /**

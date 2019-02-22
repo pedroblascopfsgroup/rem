@@ -1234,6 +1234,13 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 		
 		genericDao.save(HistoricoComunicacionGencat.class, historicoComunicacionGencat);
 		
+		 AdjuntoComunicacion adjuntoComunicacion = genericDao.get(AdjuntoComunicacion.class, genericDao.createFilter(FilterType.EQUALS, "comunicacionGencat.id", comunicacionGencat.getId()));
+		 if(!Checks.esNulo(adjuntoComunicacion)) {
+			 adjuntoComunicacion.setHistoricoComunicacionGencat(historicoComunicacionGencat);
+	
+			 genericDao.update(AdjuntoComunicacion.class, adjuntoComunicacion);
+		 }
+		
 		return historicoComunicacionGencat;
 		
 	}

@@ -53,7 +53,11 @@ public class AdjuntoComunicacion implements Serializable, Auditable {
 	
 	@ManyToOne
     @JoinColumn(name = "CMG_ID")
-    private ComunicacionGencat comunicacionGencat;   	
+    private ComunicacionGencat comunicacionGencat;
+	
+	@ManyToOne
+    @JoinColumn(name = "HCG_ID")
+    private HistoricoComunicacionGencat historicoComunicacionGencat;   
 	
 	@ManyToOne
     @JoinColumn(name = "DD_TDC_ID")
@@ -215,6 +219,15 @@ public class AdjuntoComunicacion implements Serializable, Auditable {
 
 	public void setFechaNotificacion(Date fechaNotificacion) {
 		this.fechaNotificacion = fechaNotificacion;
+	}
+
+	public HistoricoComunicacionGencat getHistoricoComunicacionGencat() {
+		return historicoComunicacionGencat;
+	}
+
+	public void setHistoricoComunicacionGencat(
+			HistoricoComunicacionGencat historicoComunicacionGencat) {
+		this.historicoComunicacionGencat = historicoComunicacionGencat;
 	}
 
 }

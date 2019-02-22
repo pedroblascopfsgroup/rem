@@ -1326,6 +1326,23 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 							trabajo = genericDao.save(Trabajo.class, trabajo);
 						}
 					}
+				}else if (this.checkLiberbank(trabajo)) {
+					Filter filtroUsuProveedor = genericDao.createFilter(FilterType.EQUALS, "username",
+							GestorActivoApi.CIF_PROVEEDOR_AESCTECTONICA);
+					Usuario usuProveedor = genericDao.get(Usuario.class, filtroUsuProveedor);
+					if (!Checks.esNulo(usuProveedor)) {
+						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "usuario", usuProveedor);
+						Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "proveedor.tipoProveedor.codigo",
+								DDTipoProveedor.COD_CERTIFICADORA);
+						List<ActivoProveedorContacto> listaPVC = genericDao.getList(ActivoProveedorContacto.class,
+								filtro, filtro2);
+						if (!Checks.estaVacio(listaPVC)) {
+
+							trabajo.setProveedorContacto(listaPVC.get(0));
+							trabajo = genericDao.save(Trabajo.class, trabajo);
+						}
+					}
+					
 				}
 			} else if (trabajo.getSubtipoTrabajo().getCodigo().equals(DDSubtipoTrabajo.CODIGO_CEDULA_HABITABILIDAD)) {
 				tipoTramite = tipoProcedimientoManager

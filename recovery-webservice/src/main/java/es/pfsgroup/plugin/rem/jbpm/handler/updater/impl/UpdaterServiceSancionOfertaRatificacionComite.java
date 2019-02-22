@@ -15,7 +15,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
-import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
+import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GencatApi;
 import es.pfsgroup.plugin.rem.api.NotificacionApi;
@@ -65,7 +65,7 @@ public class UpdaterServiceSancionOfertaRatificacionComite implements UpdaterSer
 	private GencatApi gencatApi;
 	
 	@Autowired
-	private ActivoDao activoDao;
+	private ActivoApi activoApi;
 
     protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaRatificacionComite.class);
 
@@ -91,7 +91,7 @@ public class UpdaterServiceSancionOfertaRatificacionComite implements UpdaterSer
 						if(DDResolucionComite.CODIGO_APRUEBA.equals(valor.getValor())) {
 							List<ActivoOferta> listActivosOferta = expediente.getOferta().getActivosOferta();
 							for (ActivoOferta activoOferta : listActivosOferta) {
-								if(Checks.esNulo(expediente.getReserva()) && DDEstadosExpedienteComercial.EN_TRAMITACION.equals(expediente.getEstado().getCodigo()) && activoDao.isActivoAfectoGENCAT(activoOferta.getPrimaryKey().getActivo().getId())){
+								if(Checks.esNulo(expediente.getReserva()) && DDEstadosExpedienteComercial.EN_TRAMITACION.equals(expediente.getEstado().getCodigo()) && activoApi.isAfectoGencat(activoOferta.getPrimaryKey().getActivo())){
 									Oferta oferta = expediente.getOferta();	
 									OfertaGencat ofertaGencat = genericDao.get(OfertaGencat.class,genericDao.createFilter(FilterType.EQUALS,"oferta", oferta));
 									if(!Checks.esNulo(ofertaGencat)) {

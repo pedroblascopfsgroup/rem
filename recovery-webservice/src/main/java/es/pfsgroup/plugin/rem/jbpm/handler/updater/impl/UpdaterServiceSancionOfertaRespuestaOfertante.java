@@ -16,7 +16,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
-import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
+import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GencatApi;
 import es.pfsgroup.plugin.rem.api.NotificacionApi;
@@ -76,7 +76,7 @@ public class UpdaterServiceSancionOfertaRespuestaOfertante implements UpdaterSer
 	private GencatApi gencatApi;
 	
 	@Autowired
-	private ActivoDao activoDao;
+	private ActivoApi activoApi;
 
     protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaRespuestaOfertante.class);
 
@@ -88,13 +88,7 @@ public class UpdaterServiceSancionOfertaRespuestaOfertante implements UpdaterSer
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 
-	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {
-		
-		Boolean esAfectoGencat = false;
-		if(!Checks.esNulo(tramite.getActivo()) && !Checks.esNulo(tramite.getActivo().getId())){
-			esAfectoGencat = activoDao.isActivoAfectoGENCAT(tramite.getActivo().getId());
-		}
-		
+	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {		
 		Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());
 		if(!Checks.esNulo(ofertaAceptada)) {
 			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
@@ -110,7 +104,7 @@ public class UpdaterServiceSancionOfertaRespuestaOfertante implements UpdaterSer
 							if(!trabajoApi.checkBankia(expediente.getTrabajo())){
 								List<ActivoOferta> listActivosOferta = expediente.getOferta().getActivosOferta();
 								for (ActivoOferta activoOferta : listActivosOferta) {
-									if(Checks.esNulo(expediente.getReserva()) && DDEstadosExpedienteComercial.EN_TRAMITACION.equals(expediente.getEstado().getCodigo()) && activoDao.isActivoAfectoGENCAT(activoOferta.getPrimaryKey().getActivo().getId())){
+									if(Checks.esNulo(expediente.getReserva()) && DDEstadosExpedienteComercial.EN_TRAMITACION.equals(expediente.getEstado().getCodigo()) && activoApi.isAfectoGencat(activoOferta.getPrimaryKey().getActivo())){
 										Oferta oferta = expediente.getOferta();	
 										OfertaGencat ofertaGencat = genericDao.get(OfertaGencat.class,genericDao.createFilter(FilterType.EQUALS,"oferta", oferta));
 										if(!Checks.esNulo(ofertaGencat)) {

@@ -9,10 +9,11 @@ import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
-import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
+import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
+import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteAvisadorApi;
 import es.pfsgroup.plugin.rem.model.Activo;
@@ -35,6 +36,9 @@ public class ExpedienteAvisoBloqueadoGencat implements ExpedienteAvisadorApi{
 	@Autowired
 	private ActivoDao activoDao;
 	
+	@Autowired
+	private ActivoApi activoApi;
+	
 	@Override
 	public DtoAviso getAviso(ExpedienteComercial expediente, Usuario usuarioLogado) {
 		DtoAviso dtoAviso = new DtoAviso();
@@ -56,7 +60,7 @@ public class ExpedienteAvisoBloqueadoGencat implements ExpedienteAvisadorApi{
 					}
 					if (!Checks.esNulo(comGen) && !Checks.esNulo(comGen.getEstadoComunicacion()) && !DDEstadoComunicacionGencat.COD_RECHAZADO.equals(comGen.getEstadoComunicacion().getCodigo())
 							&& !DDEstadoComunicacionGencat.COD_ANULADO.equals(comGen.getEstadoComunicacion().getCodigo())
-							&& !DDEstadoComunicacionGencat.COD_SANCIONADO.equals(comGen.getEstadoComunicacion().getCodigo()) && activoDao.isActivoAfectoGENCAT(activo.getId()) &&
+							&& !DDEstadoComunicacionGencat.COD_SANCIONADO.equals(comGen.getEstadoComunicacion().getCodigo()) && activoApi.isAfectoGencat(activo) &&
 							!DDEstadosExpedienteComercial.RESERVADO.equals(expediente.getEstado().getCodigo()) && !DDEstadosExpedienteComercial.APROBADO.equals(expediente.getEstado().getCodigo())) {
 						dtoAviso.setId(String.valueOf(expediente.getId()));
 						dtoAviso.setDescripcion("Expediente bloqueado por GENCAT");

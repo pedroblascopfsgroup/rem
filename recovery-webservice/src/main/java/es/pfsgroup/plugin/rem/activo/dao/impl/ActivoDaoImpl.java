@@ -1251,64 +1251,6 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 	}
 
 	@Override
-	public Boolean isActivoAfectoGENCAT(Long idActivo) {
-		try {
-			BigDecimal num = new BigDecimal(1);
-			Session session = this.getSessionFactory().getCurrentSession();
-			Query query = session
-					.createSQLQuery("WITH FECHA_ADJUDICACION AS (\r\n" 
-							+ " SELECT ACT.ACT_ID\r\n"
-							+ " , CASE WHEN TTA.DD_TTA_CODIGO = '01' AND AJD.AJD_ID IS NOT NULL THEN ADJ.BIE_ADJ_F_DECRETO_FIRME\r\n"
-							+ " WHEN TTA.DD_TTA_CODIGO = '02' THEN ADN.ADN_FECHA_FIRMA_TITULO\r\n"
-							+ " END FECHA_ADJUDICACION\r\n"
-							+ " , ROW_NUMBER() OVER(PARTITION BY ACT.ACT_ID \r\n"
-							+ " ORDER BY\r\n"
-							+ " CASE WHEN TTA.DD_TTA_CODIGO = '01' AND AJD.AJD_ID IS NOT NULL THEN ADJ.BIE_ADJ_F_DECRETO_FIRME\r\n"
-							+ " WHEN TTA.DD_TTA_CODIGO = '02' THEN ADN.ADN_FECHA_FIRMA_TITULO\r\n"
-							+ " END NULLS LAST) RN\r\n"
-							+ " FROM REM01.ACT_ACTIVO ACT\r\n"
-							+ " JOIN REM01.DD_TTA_TIPO_TITULO_ACTIVO TTA ON TTA.DD_TTA_ID = ACT.DD_TTA_ID AND TTA.BORRADO = 0\r\n"
-							+ " LEFT JOIN REM01.ACT_ADN_ADJNOJUDICIAL ADN ON ADN.ACT_ID = ACT.ACT_ID AND ADN.BORRADO = 0\r\n"
-							+ " LEFT JOIN REM01.BIE_ADJ_ADJUDICACION ADJ ON ADJ.BIE_ID = ACT.BIE_ID AND ADJ.BORRADO = 0\r\n"
-							+ " LEFT JOIN REM01.ACT_AJD_ADJJUDICIAL AJD ON AJD.ACT_ID = ACT.ACT_ID AND AJD.BORRADO = 0\r\n"
-							+ " AND AJD.BIE_ADJ_ID = ADJ.BIE_ADJ_ID\r\n"
-							+ " WHERE ACT.BORRADO = 0)\r\n"
-							+ " SELECT COUNT(DISTINCT ACT.ACT_ID)\r\n"
-							+ " FROM REM01.ACT_ACTIVO ACT\r\n"
-							+ " JOIN REM01.BIE_LOCALIZACION LOC ON LOC.BIE_ID = ACT.BIE_ID AND LOC.BORRADO = 0\r\n"
-							+ " JOIN REM01.ACT_LOC_LOCALIZACION ACT_LOC ON ACT_LOC.ACT_ID = ACT.ACT_ID\r\n"
-							+ " AND LOC.BIE_LOC_ID = ACT_LOC.BIE_LOC_ID\r\n"
-							+ " AND ACT_LOC.BORRADO = 0\r\n"
-							+ " JOIN REM01.CMU_CONFIG_MUNICIPIOS CMU ON CMU.DD_LOC_ID = LOC.DD_LOC_ID AND CMU.BORRADO = 0\r\n"
-							+ " JOIN REM01.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = ACT.DD_CRA_ID AND CRA.BORRADO = 0\r\n"
-							+ " JOIN REM01.DD_SCR_SUBCARTERA SCR ON SCR.DD_SCR_ID = ACT.DD_SCR_ID AND SCR.BORRADO = 0\r\n"
-							+ " AND SCR.DD_CRA_ID = CRA.DD_CRA_ID\r\n"
-							+ " JOIN REM01.DD_TPA_TIPO_ACTIVO TPA ON TPA.DD_TPA_ID = ACT.DD_TPA_ID AND TPA.BORRADO = 0\r\n"
-							+ " JOIN REMMASTER.DD_LOC_LOCALIDAD DD_LOC ON DD_LOC.DD_LOC_ID = LOC.DD_LOC_ID AND DD_LOC.BORRADO = 0\r\n"
-							+ " JOIN REM01.ACT_APU_ACTIVO_PUBLICACION APU ON APU.ACT_ID = ACT.ACT_ID AND APU.BORRADO = 0\r\n"
-							+ " JOIN FECHA_ADJUDICACION ADJ ON ADJ.ACT_ID = ACT.ACT_ID AND ADJ.RN = 1\r\n"
-							+ " WHERE ACT.BORRADO = 0\r\n"
-							+ " AND ADJ.FECHA_ADJUDICACION > TO_DATE('07/04/2018','DD/MM/YYYY')\r\n"
-							+ " AND TPA.DD_TPA_CODIGO = '02'\r\n"
-							+ " AND (CRA.DD_CRA_CODIGO, SCR.DD_SCR_CODIGO) IN (\r\n"
-							+ " ('03','06'),('03','07'),('03','08'),('03','09'),('02','04'),('01','02'),('08','18'),('06','16'))\r\n"
-							+ " AND ACT.ACT_ID = " + idActivo);
-
-			BigDecimal contador = (BigDecimal) query.uniqueResult();
-
-			if (num.equals(contador)) {
-				return true;
-			} else {
-				return false;
-			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			return false;
-		}
-	}
-
-	@Override
 	public Boolean isActivoBloqueadoGENCAT(Long idActivo) {
 
 		try {

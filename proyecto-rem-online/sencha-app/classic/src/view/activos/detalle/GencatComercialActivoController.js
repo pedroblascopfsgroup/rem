@@ -1,3 +1,4 @@
+
 Ext.define('HreRem.view.activos.detalle.GencatComercialActivoController', {
     extend: 'Ext.app.ViewController',
     alias: 'controller.gencatcomercialactivo', 
@@ -180,46 +181,20 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoController', {
 	
 		me.fireEvent("downloadFile", config);
 	},
-	
-onClickAbrirExpedienteComercial: function() { 
-    	
-    	var me = this;
-    	var gencat = me.getViewModel().data.gencat;
-    	var numOfertaGencat = gencat.data.ofertaGencat;
-    	var data; 
-    	
-    	var url =  $AC.getRemoteUrl('expedientecomercial/getExpedienteByIdOferta');
   
-    	Ext.Ajax.request({
-		     url: url,
-		     method: 'POST',
-		     params: {numOferta : numOfertaGencat},
-		     success: function(response, opts) {
-		    	data = Ext.decode(response.responseText);
-		    	if(data.data){
-		 		   me.getView().fireEvent('abrirDetalleExpedienteOferta', data.data);
-		    	}
-		    	else {
-		    		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-		    	}
-		    },
-		    
-		     failure: function (a, operation) {
-		 				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-		 	}
-	 });
-    		    	     
-  },
-  onClickAbrirVisitaActivo: function() {
+  onClickAbrirVisitaActivo2: function() {
   	var me = this;
   	var gencat = me.getViewModel().data.gencat;
   	var numVisita = gencat.data.idVisita;
+  	debugger;
   	
   	Ext.Ajax.request({
-		url: $AC.getRemoteUrl('visitas/getVisitaById'),
-		params: {numVisitaRem: numVisita},
+		//url: $AC.getRemoteUrl('visitas/getVisitaById'),
+  	    url: $AC.getRemoteUrl('visitagencat/getVisitaByIdComunicacionGencat'),
+		params: {idComunicacionnGencat: numVisita},
 	     method: 'POST',
 	     success: function(response, opts){
+	    	 debugger;
 	    	 var record = JSON.parse(response.responseText);
 	    		if(record.success === 'true') {
 					var ventana = Ext.create('HreRem.view.comercial.visitas.VisitasComercialDetalle',{detallevisita: record});
@@ -232,13 +207,52 @@ onClickAbrirExpedienteComercial: function() {
 	    
 	     failure: function (a, operation) {
 	 		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+
 	 	},
 	    callback: function(record, operation) {
 			me.getView().unmask();
 	    }
 	 });
   		    	     
-}
+  },
+  
+  
+  
+  onClickAbrirVisitaActivo: function(btn) {
+	  
+	  	var me = this;
+	  	var gencat = me.getViewModel().data.gencat;
+	  	var numVisita = gencat.data.idVisita;
+		var url =  $AC.getRemoteUrl('visitas/getVisitaByIdComunicacionGencat');
+		
+		Ext.Ajax.request({
+		     url: url,
+		     method: 'POST',
+		     params: {idComunicacionnGencat: numVisita},
+		     success: function(response, opts) {
+		    	 var record = JSON.parse(response.responseText);
+		    	 debugger;
+		    		if(record.success === 'true') {
+						var ventana = Ext.create('HreRem.view.comercial.visitas.VisitasComercialDetalle',{detallevisita: record});
+						me.getView().up('mainviewport').add(ventana);
+						me.getView().up('#activosdetalle-1267-body').add(ventana);
+						me.getView().add(ventana);
+						ventana.show();
+					} else {
+						me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+					}
+		    },
+		    failure: function (a, operation) {
+		    	 me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+		 	}
+		});
+		
+		
+	}
+  
+  
+  
+  
 	,borrarDocumentoAdjunto: function(grid, record) {
 		var me = this,
 		idActivo = me.getViewModel().get("activo.id");

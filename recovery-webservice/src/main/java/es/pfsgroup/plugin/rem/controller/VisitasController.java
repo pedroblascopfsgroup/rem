@@ -19,6 +19,7 @@ import org.springframework.web.servlet.ModelAndView;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.api.VisitaApi;
+import es.pfsgroup.plugin.rem.api.VisitaGencatApi;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
 import es.pfsgroup.plugin.rem.excel.VisitasExcelReport;
@@ -40,6 +41,9 @@ public class VisitasController {
 
 	@Autowired
 	private VisitaApi visitaApi;
+	
+	@Autowired
+	private VisitaGencatApi visitaGencatApi;
 
 	private final Log logger = LogFactory.getLog(getClass());
 
@@ -182,6 +186,19 @@ public class VisitasController {
 			model.put("success", false);
 		}
 
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getVisitaByIdComunicacionGencat(Long idComunicacionnGencat,ModelMap model){
+		try {
+			model.put("data", visitaGencatApi.getVisitaByIdComunicacionGencat(idComunicacionnGencat));
+			model.put("success", true);
+		} catch (Exception e) {
+			model.put("success", false);
+			model.put("error", e.getMessage());
+		}
 		return createModelAndViewJson(model);
 	}
 }

@@ -572,13 +572,21 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 				
 				HistoricoOfertaGencat ofertaGencat = listaOfertasGencat.get(i);
 				Oferta oferta = ofertaGencat.getOferta();
-				
-				dtoOfertasAsociadasActivo.setFechaPreBloqueo(hComunicacionGencat.getFechaPreBloqueo());
-				dtoOfertasAsociadasActivo.setNumOferta(oferta.getNumOferta());
-				dtoOfertasAsociadasActivo.setImporteOferta(ofertaGencat.getImporte());
-				dtoOfertasAsociadasActivo.setTipoComprador(ofertaGencat.getTiposPersona().getDescripcion());
-				dtoOfertasAsociadasActivo.setSituacionOcupacional(ofertaGencat.getSituacionPosesoria().getDescripcion());
-				
+				if(!Checks.esNulo(ofertaGencat)) {
+					dtoOfertasAsociadasActivo.setImporteOferta(ofertaGencat.getImporte());
+					if(!Checks.esNulo(ofertaGencat.getTiposPersona())){
+						dtoOfertasAsociadasActivo.setTipoComprador(ofertaGencat.getTiposPersona().getDescripcion());
+					}
+					if(!Checks.esNulo(ofertaGencat.getSituacionPosesoria())){
+						dtoOfertasAsociadasActivo.setSituacionOcupacional(ofertaGencat.getSituacionPosesoria().getDescripcion());
+					}
+				}
+				if(!Checks.esNulo(oferta)) {
+					dtoOfertasAsociadasActivo.setNumOferta(oferta.getNumOferta());
+				}
+				if(!Checks.esNulo(hComunicacionGencat)) {
+					dtoOfertasAsociadasActivo.setFechaPreBloqueo(hComunicacionGencat.getFechaPreBloqueo());
+				}
 				listaDtoOfertasAsociadasActivo.add(dtoOfertasAsociadasActivo);
 			}
 		}
@@ -1233,6 +1241,13 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 		}
 		
 		genericDao.save(HistoricoComunicacionGencat.class, historicoComunicacionGencat);
+		
+		 AdjuntoComunicacion adjuntoComunicacion = genericDao.get(AdjuntoComunicacion.class, genericDao.createFilter(FilterType.EQUALS, "comunicacionGencat.id", comunicacionGencat.getId()));
+		 if(!Checks.esNulo(adjuntoComunicacion)) {
+			 adjuntoComunicacion.setHistoricoComunicacionGencat(historicoComunicacionGencat);
+	
+			 genericDao.update(AdjuntoComunicacion.class, adjuntoComunicacion);
+		 }
 		
 		return historicoComunicacionGencat;
 		

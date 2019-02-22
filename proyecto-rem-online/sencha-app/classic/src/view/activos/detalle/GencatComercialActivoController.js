@@ -401,7 +401,8 @@ comprobarFormatoNIF: function(value) {
  	 		    	data = Ext.decode(response.responseText);
  	 		    	if(data.data == 'false'){
  	 		    		me.fireEvent("errorToast", HreRem.i18n("msg.falta.documento.anulacion"));
- 						Ext.getCmp('checkComunicadoAnulacion').setValue(false);
+ 	 		    		me.lookupReference('checkComunicadoAnulacion').setValue(false);
+ 						//Ext.getCmp('checkComunicadoAnulacion').setValue(false);
  	 		    	 }
  	 		    	 
  	 				},

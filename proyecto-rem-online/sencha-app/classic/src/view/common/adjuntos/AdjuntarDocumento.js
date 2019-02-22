@@ -95,7 +95,7 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumento', {
 					                            fld.setRawValue(fileName);
 				                        	}
 				                        }
-				                    }
+				                    } 
 					    		},
 					    		{
 									xtype: 'combobox',

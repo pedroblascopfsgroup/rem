@@ -2501,6 +2501,12 @@ public class ActivoAdapter {
 		Downloader dl = downloaderFactoryApi.getDownloader(key);
 		return dl.getFileItem(id,nombreDocumento);
 	}
+	
+	public FileItem downloadComunicacionGencat(Long id,String nombreDocumento) throws Exception {
+		String key = appProperties.getProperty(CONSTANTE_REST_CLIENT);
+		Downloader dl = downloaderFactoryApi.getDownloader(key);
+		return dl.getFileItemComunicacionGencat(id,nombreDocumento);
+	}
 
 	public boolean deleteAdjunto(DtoAdjunto dtoAdjunto) {
 		boolean borrado = false;

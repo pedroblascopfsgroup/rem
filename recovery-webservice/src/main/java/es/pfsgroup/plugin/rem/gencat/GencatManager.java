@@ -433,18 +433,20 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 	
 	private List<DtoAdjunto> getAdjuntosComunicacion(Long idActivo, ComunicacionGencat comunicacion, List<DtoAdjunto> listaAdjuntos) 
 			throws IllegalAccessException, InvocationTargetException {
+			List<AdjuntoComunicacion> listaAdjuntosComunicacion = genericDao.getList(AdjuntoComunicacion.class , genericDao.createFilter(FilterType.EQUALS, "comunicacionGencat.id", comunicacion.getId()),genericDao.createFilter(FilterType.EQUALS,"auditoria.borrado", false));
+			
+			if (!Checks.estaVacio(listaAdjuntosComunicacion)) {
+				for (AdjuntoComunicacion adjunto : listaAdjuntosComunicacion) {
+					DtoAdjunto dto = new DtoAdjunto();
+					BeanUtils.copyProperties(dto, adjunto);
+					dto.setIdEntidad(idActivo);
+					dto.setDescripcionTipo(adjunto.getTipoDocumentoComunicacion().getDescripcion());
+					dto.setGestor(adjunto.getAuditoria().getUsuarioCrear());
 
-		for (ComunicacionGencatAdjunto referenciaAdjunto : comunicacion.getAdjuntos()) {
-			DtoAdjunto dto = new DtoAdjunto();
+					listaAdjuntos.add(dto);
+				}
+			}
 
-			AdjuntoComunicacion adjunto = referenciaAdjunto.getAdjuntoComunicacion();
-			BeanUtils.copyProperties(dto, adjunto);
-			dto.setIdEntidad(idActivo);
-			dto.setDescripcionTipo(adjunto.getTipoDocumentoComunicacion().getDescripcion());
-			dto.setGestor(adjunto.getAuditoria().getUsuarioCrear());
-
-			listaAdjuntos.add(dto);
-		}
 		return listaAdjuntos;
 	}
 	
@@ -1506,7 +1508,7 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 
 	private boolean deleteAdjuntoLocal(DtoAdjunto dtoAdjunto) {
 		Filter filtroComunicacionIdActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", dtoAdjunto.getIdEntidad());
-		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+ 		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
 		Order orderByFechaCrear = new Order(OrderType.DESC, "auditoria.fechaCrear");
 		List <ComunicacionGencat> resultComunicacion = genericDao.getListOrdered(ComunicacionGencat.class, orderByFechaCrear, filtroComunicacionIdActivo, filtroBorrado);
 		ComunicacionGencat comunicacionGencat = null;
@@ -1515,7 +1517,14 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 		}
 		
 		AdjuntoComunicacion adjunto = genericDao.get(AdjuntoComunicacion.class, genericDao.createFilter(FilterType.EQUALS, "comunicacionGencat.id",comunicacionGencat.getId()),genericDao.createFilter(FilterType.EQUALS, "idDocRestClient",dtoAdjunto.getId()));
-		genericDao.deleteById(AdjuntoComunicacion.class, adjunto.getId());
+		if (!Checks.esNulo(adjunto)){
+			genericDao.deleteById(AdjuntoComunicacion.class, adjunto.getId());
+		}else {
+			adjunto = genericDao.get(AdjuntoComunicacion.class, genericDao.createFilter(FilterType.EQUALS, "comunicacionGencat.id",comunicacionGencat.getId()),genericDao.createFilter(FilterType.EQUALS, "id",dtoAdjunto.getId()));
+			if (!Checks.esNulo(adjunto)){
+				genericDao.deleteById(AdjuntoComunicacion.class, adjunto.getId());
+			}
+		}
 		return true;
 	}
 	

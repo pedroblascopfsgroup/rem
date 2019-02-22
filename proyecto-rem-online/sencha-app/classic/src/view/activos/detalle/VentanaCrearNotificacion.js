@@ -30,7 +30,7 @@ Ext.define('HreRem.view.common.adjuntos.VentanaCrearNotificacion', {
 			proxy: {
 				type: 'uxproxy',
 				remoteUrl: 'gencat/getTiposDocumentoNotificacion'
-			},
+			}
     	});
 
     	me.buttons = [ 

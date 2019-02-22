@@ -38,7 +38,7 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoComunicacionGencat', {
 			model: 'HreRem.model.ComboBase',
 			proxy: {
 				type: 'uxproxy',
-				remoteUrl: 'gencat/getTiposDocumentoComunicacion',
+				remoteUrl: 'gencat/getTiposDocumentoComunicacion'
 			}
     	});
  
@@ -90,16 +90,6 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoComunicacionGencat', {
 	    				cls:'formbase_no_shadow',
 	    				items: [
 	    						{
-				    				xtype: "datefieldbase",
-				    				fieldLabel: HreRem.i18n('fieldlabel.fecha.notificacion'),
-				    				name: 'fechaNotificacion',
-				    				addUxReadOnlyEditFieldPlugin : false,
-				    				anchor: '100%',
-				    				allowBlank: false,
-				    				maxValue: null,
-				    				align: 'right', 
-				    				width: '100%' 
-				    			},{
 
  									xtype: 'filefield',
 							        fieldLabel:   HreRem.i18n('fieldlabel.archivo'),

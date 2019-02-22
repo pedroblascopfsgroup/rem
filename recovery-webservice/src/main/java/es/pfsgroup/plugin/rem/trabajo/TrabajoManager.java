@@ -1358,7 +1358,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 							trabajo = genericDao.save(Trabajo.class, trabajo);
 						}
 					}
-				} else if (this.checkLiberbank(trabajo)) {
+				}else if (this.checkLiberbank(trabajo)) {
 					Filter filtroUsuProveedor = genericDao.createFilter(FilterType.EQUALS, "username",
 							GestorActivoApi.CIF_PROVEEDOR_AESCTECTONICA);
 					Usuario usuProveedor = genericDao.get(Usuario.class, filtroUsuProveedor);
@@ -1374,7 +1374,6 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 							trabajo = genericDao.save(Trabajo.class, trabajo);
 						}
 					}
-
 				}
 			} else if (trabajo.getSubtipoTrabajo().getCodigo().equals(DDSubtipoTrabajo.CODIGO_CEDULA_HABITABILIDAD)) {
 				tipoTramite = tipoProcedimientoManager

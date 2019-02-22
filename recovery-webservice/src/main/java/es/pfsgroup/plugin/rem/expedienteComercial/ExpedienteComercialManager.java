@@ -112,7 +112,6 @@ import es.pfsgroup.plugin.rem.model.HistoricoSeguroRentasAlquiler;
 import es.pfsgroup.plugin.rem.model.InformeJuridico;
 import es.pfsgroup.plugin.rem.model.ObservacionesExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
-import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.Posicionamiento;
 import es.pfsgroup.plugin.rem.model.Reserva;
 import es.pfsgroup.plugin.rem.model.ScoringAlquiler;
@@ -229,7 +228,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	private static final String NO_MOSTRAR = "null";
 	private static final String ESTADO_PROCEDIMIENTO_FINALIZADO = "11";
 	private static final String STR_MISSING_VALUE = "---";
-	private static final Integer NUMERO_DIAS_VENCIMIENTO_SAREB = 40;
+	public static final Integer NUMERO_DIAS_VENCIMIENTO_SAREB = 40;
+	private static final String DESCRIPCION_COMITE_HAYA = "Haya";
 
 	@Resource
 	private MessageService messageServices;
@@ -347,11 +347,14 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 	@Override
 	public boolean isComiteSancionadorHaya(Trabajo trabajo) {
-		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "comiteSancion.codigo", DDComiteSancion.CODIGO_HAYA_SAREB);
-		Filter filtro2 = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", trabajo.getId());
-		ExpedienteComercial expediente = genericDao.get(ExpedienteComercial.class, filtro, filtro2);
+		boolean resultado = false;
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", trabajo.getId());
+		ExpedienteComercial expediente = genericDao.get(ExpedienteComercial.class, filtro);
+		if(expediente.getComiteSancion() != null && expediente.getComiteSancion().getDescripcion().trim().equals(DESCRIPCION_COMITE_HAYA)){
+			resultado = true;
+		}
 
-		return !Checks.esNulo(expediente);
+		return resultado;
 	}
 
 	@Override
@@ -3546,7 +3549,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		gastoExpediente.setImporteCalculo(dtoGastoExpediente.getImporteCalculo());
 		
 		//Si el honorario es menor de 100 € el valor final será, salvo si el importe es fijo, de 100 €. HREOS-5149
-		if(dtoGastoExpediente.getHonorarios() < 100.00 && !(DDTipoCalculo.TIPO_CALCULO_IMPORTE_FIJO_ALQ.equals(dtoGastoExpediente.getCodigoTipoCalculo()))) {
+		if(dtoGastoExpediente.getHonorarios() < 100.00 && (DDTipoCalculo.TIPO_CALCULO_IMPORTE_FIJO_ALQ.equals(dtoGastoExpediente.getCodigoTipoCalculo()))) {
 			gastoExpediente.setImporteFinal(100.00);
 		}else {
 			gastoExpediente.setImporteFinal(dtoGastoExpediente.getHonorarios());
@@ -7743,7 +7746,6 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 						listaDDSubtipoDocExp.remove(codRenovacionContrato);
 						listDtoTipoDocExpediente = generateListSubtipoExpediente(listaDDSubtipoDocExp);
 						String tipoAlquilerOpcionCompra = DDTipoAlquiler.CODIGO_ALQUILER_OPCION_COMPRA;
-						String tipoAlquilerNoDefinido = DDTipoAlquiler.CODIGO_NO_DEFINIDO;
 						String tipoTratamientoScoring = DDTipoTratamiento.TIPO_TRATAMIENTO_SCORING;
 						String tipoTratamientoSeguroRentas = DDTipoTratamiento.TIPO_TRATAMIENTO_SEGURO_DE_RENTAS;
 						String tipoTratamientoNinguna = DDTipoTratamiento.TIPO_TRATAMIENTO_NINGUNA;

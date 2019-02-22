@@ -2384,7 +2384,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 
 		for (GastoProveedorActivo gastoActivo : gasto.getGastoProveedorActivos()) {
 			Long idActivo = gastoActivo.getActivo().getId();
-			if (!mapa.isEmpty()) {
+			if (!mapa.isEmpty() && !Checks.esNulo(mapa.get(idActivo))) {
 				gastoActivo.setParticipacionGasto((float) (mapa.get(idActivo) * 100 / importeTotal));
 			}
 		}

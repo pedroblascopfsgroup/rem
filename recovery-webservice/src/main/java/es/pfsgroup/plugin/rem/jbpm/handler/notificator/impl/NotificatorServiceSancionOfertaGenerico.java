@@ -67,13 +67,15 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 	private static final String GESTOR_FORMALIZACION = "gestor-formalizacion";
 	private static final String GESTOR_FORMALIZACION_SUS = "gestor-formalizacion-sustituto";
 	private static final String SUPERVISOR_COMERCIAL = "supervisor-comercial";
-	private static final String GESTOR_BACKOFFICE = "gestor-backoffice";
-	private static final String GESTOR_BACKOFFICE_SUS = "gestor-backoffice-sustituto";
 	private static final String GESTOR_GESTORIA_FASE_3 = "gestoria-fase-3";
 	private static final String GESTOR_GESTORIA_FASE_3_SUS = "gestoria-fase-3-sustituto";
 	private static final String USUARIO_FICTICIO_OFERTA_CAJAMAR = "ficticioOfertaCajamar";
 	private static final String SUPERVISOR_BACKOFFICE_LIBERBANK = "supervisor-backoffice-liberbank";
+	private static final String GESTOR_BACKOFFICE_SUS = "gestor-backoffice-sustituto";
+	private static final String GESTOR_BACKOFFICE = "gestor-backoffice";
+	private static final String GESTOR_BACKOFFICE_LOTE = "gestor-backoffice-lote";
 	private static final String GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO = "gestor-comercial-backoffice-inmobiliario";
+	private static final String GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO_LOTE = "gestor-comercial-backoffice-inmobiliario-lote";
 	private static final String BUZON_REM = "buzonrem";
 	private static final String BUZON_PFS = "buzonpfs";
 	
@@ -268,6 +270,10 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 				clavesGestores.addAll(Arrays.asList(GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO, SUPERVISOR_BACKOFFICE_LIBERBANK));
 			}
 			
+			if(DDCartera.CODIGO_CARTERA_BANKIA.equals(activo.getCartera().getCodigo()) || DDCartera.CODIGO_CARTERA_SAREB.equals(activo.getCartera().getCodigo())) {
+				clavesGestores.addAll(Arrays.asList(GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO));
+			}
+			
 			if (formalizacion) {
 				clavesGestores.addAll(Arrays.asList(GESTOR_FORMALIZACION, GESTOR_FORMALIZACION_SUS));
 				clavesGestores.addAll(Arrays.asList(GESTOR_GESTORIA_FASE_3, GESTOR_GESTORIA_FASE_3_SUS));
@@ -334,6 +340,8 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 			return null;
 		}
 	}
+	
+	
 
 	private boolean checkFormalizar(Long id) {
 		if (id == null) {
@@ -471,7 +479,13 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 					addMail(s, gestores.put(s, extractEmail(supBackLiberbank)), gestores);
 				}
 			} else if(GESTOR_COMERCIAL_BACKOFFICE_INMOBILIARIO.equals(s)) {
-				Usuario gesBackInmobiliario = gestorActivoApi.getGestorByActivoYTipo(activo, "HAYAGBOINM");
+				Usuario gesBackInmobiliario = null;
+				if(loteComercial == null || loteComercial.getUsuarioGestorComercialBackOffice() == null){
+					gesBackInmobiliario = gestorActivoApi.getGestorByActivoYTipo(activo, "HAYAGBOINM");
+				}else{
+					gesBackInmobiliario = loteComercial.getUsuarioGestorComercialBackOffice();
+				}
+				
 				if(!Checks.esNulo(gesBackInmobiliario)) {
 					addMail(s, gestores.put(s, extractEmail(gesBackInmobiliario)), gestores);
 				}

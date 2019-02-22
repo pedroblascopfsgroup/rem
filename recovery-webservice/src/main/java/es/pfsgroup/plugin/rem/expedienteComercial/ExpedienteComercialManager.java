@@ -6094,24 +6094,6 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			if (bloqueoVigente) {
 				codigoError = "imposible.bloquear.bloqueo.vigente";
 			} else {
-				// validamos los tanteos
-				List<TanteoActivoExpediente> tanteosExpediente = expediente.getTanteoActivoExpediente();
-				int contTanteos = 0;
-				int contTanteosRenunciado = 0;
-				for (TanteoActivoExpediente tanteo : tanteosExpediente) {
-					contTanteos++;
-					if (tanteo.getResultadoTanteo() != null) {
-						if (tanteo.getResultadoTanteo().getCodigo().equals(DDResultadoTanteo.CODIGO_EJERCIDO)) {
-							break;
-						} else if (tanteo.getResultadoTanteo().getCodigo().equals(DDResultadoTanteo.CODIGO_RENUNCIADO)) {
-							contTanteosRenunciado++;
-						}
-					}
-				}
-
-				if (contTanteos != contTanteosRenunciado) {
-					codigoError = "imposible.bloquear.tanteos.vigentes";
-				} else {
 					// validamos condiciones
 					boolean seCumplenCondiciones = true;
 					for (ActivoOferta activoOferta : activosExpediente) {
@@ -6174,7 +6156,6 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 						}
 					}
 				}
-			}
 		}
 
 		return codigoError;

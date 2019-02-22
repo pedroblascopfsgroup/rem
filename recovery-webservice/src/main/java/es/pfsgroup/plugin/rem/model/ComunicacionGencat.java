@@ -97,6 +97,7 @@ public class ComunicacionGencat implements Serializable, Auditable {
 	@OneToMany(mappedBy = "comunicacionGencat", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "CMG_ID")
     @Cascade({org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
+	@Where(clause=Auditoria.UNDELETED_RESTICTION)
     private List<ComunicacionGencatAdjunto> adjuntos;
 
 	public Long getId() {

@@ -691,6 +691,10 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
     	}
     	else{
     		me.fireEvent("errorToast", HreRem.i18n("msg.buscador.activo.gasto.busqueda.campos.vacios"));
+    		form.reset();
+			window.unmask();
+			window.parent.funcionRecargar();
+			window.close();
     	}
     	
     	

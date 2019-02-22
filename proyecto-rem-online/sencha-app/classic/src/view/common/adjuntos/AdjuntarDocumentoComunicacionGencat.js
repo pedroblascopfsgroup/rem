@@ -38,7 +38,7 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoComunicacionGencat', {
 			model: 'HreRem.model.ComboBase',
 			proxy: {
 				type: 'uxproxy',
-				remoteUrl: 'gencat/getTiposDocumentoComunicacion',
+				remoteUrl: 'gencat/getTiposDocumentoComunicacion'
 			}
     	});
  

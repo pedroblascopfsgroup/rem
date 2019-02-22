@@ -21,7 +21,6 @@ import org.hibernate.annotations.Where;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.diccionarios.Dictionary;
-import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 
 /**
  * Modelo que gestiona el diccionario de tipos de calculo

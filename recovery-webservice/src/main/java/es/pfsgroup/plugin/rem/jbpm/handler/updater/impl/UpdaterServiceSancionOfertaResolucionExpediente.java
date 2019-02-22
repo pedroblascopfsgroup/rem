@@ -51,6 +51,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDSancionGencat;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoRechazoOferta;
 import es.pfsgroup.plugin.rem.updaterstate.UpdaterStateOfertaApi;
 
@@ -245,7 +246,7 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 							ComunicacionGencat comunicacionGencat = comunicacionGencatApi.getByIdActivo(act.getId());
 							if (!Checks.esNulo(comunicacionGencat)) {
 								DDEstadoComunicacionGencat estadoComunicacion = comunicacionGencat.getEstadoComunicacion();
-								if (DDEstadoComunicacionGencat.COD_CREADO.equals(estadoComunicacion.getCodigo())) {
+								if (DDEstadoComunicacionGencat.COD_CREADO.equals(estadoComunicacion.getCodigo()) || (!Checks.esNulo(comunicacionGencat.getSancion()) && DDSancionGencat.COD_EJERCE.equalsIgnoreCase(comunicacionGencat.getSancion().getCodigo())) ) {
 									
 									Filter filtroActivoId = genericDao.createFilter(FilterType.EQUALS, "idActivo", act.getId());
 									Filter filtroCodTipoTramite = genericDao.createFilter(FilterType.EQUALS, "codigoTipoTramite", ActivoTramiteApi.CODIGO_TRAMITE_COMUNICACION_GENCAT);

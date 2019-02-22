@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Carles Molins
---## FECHA_CREACION=20181128
+--## AUTOR=Daniel Algaba
+--## FECHA_CREACION=20190220
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=REMVIP-2629
+--## INCIDENCIA_LINK=HREOS-5518
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -17,6 +17,7 @@
 --##		0.5 Se modifica la vista para mejorar el rendimiento
 --##		0.6 Se modifica la vista para que tenga en cuenta el borrado lógico de las distribuciones
 --##		0.7 Se añaden las nuevas columnas de publicaciones
+--##    0.8 HREOS-5518 Se cambia la query de GENCAT para actualizarla a los nuevos requerimientos
 --##########################################
 --*/
 
@@ -101,22 +102,44 @@ BEGIN
 						AND TO_DATE(VAL5.VAL_FECHA_INICIO,''DD/MM/YYYY'') <= TO_DATE(sysdate,''DD/MM/YYYY'') AND VAL5.BORRADO = 0) VAL2
 			WHERE VAL2.VAL_FECHA_INICIO = VAL2.FECHA_MAX AND VAL2.ACT_ID = ACT.ACT_ID) AS VAL_IMPORTE_DESCUENTO_PUBLICO,
       (
-            SELECT COUNT (ACTI.ACT_ID)
-                FROM ACT_ACTIVO ACTI
-                INNER JOIN '|| V_ESQUEMA ||'.BIE_LOCALIZACION BIE ON ACTI.BIE_ID = BIE.BIE_ID
-                INNER JOIN '|| V_ESQUEMA ||'.CMU_CONFIG_MUNICIPIOS CMU ON CMU.DD_LOC_ID = BIE.DD_LOC_ID
-                INNER JOIN '|| V_ESQUEMA ||'.DD_TPA_TIPO_ACTIVO TPA ON TPA.DD_TPA_ID = ACTI.DD_TPA_ID AND DD_TPA_CODIGO = ''02''
-                INNER JOIN '|| V_ESQUEMA ||'.ACT_AJD_ADJJUDICIAL AJD ON AJD.ACT_ID = ACTI.ACT_ID AND TRUNC(AJD.AJD_FECHA_ADJUDICACION) > TO_DATE(''07/04/2018'', ''DD/MM/YYYY'')
-                INNER JOIN '|| V_ESQUEMA ||'.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = ACTI.DD_CRA_ID
-                INNER JOIN '|| V_ESQUEMA ||'.DD_SCR_SUBCARTERA SCR ON SCR.DD_SCR_ID = ACTI.DD_SCR_ID
-            WHERE
-                (
-                    (CRA.DD_CRA_CODIGO = ''03'' AND (SCR.DD_SCR_CODIGO = ''08'' OR SCR.DD_SCR_CODIGO = ''06'' OR SCR.DD_SCR_CODIGO = ''09'' OR SCR.DD_SCR_CODIGO = ''07''))
-                    OR (CRA.DD_CRA_CODIGO = ''02'' AND SCR.DD_SCR_CODIGO = ''04'')
-                    OR (CRA.DD_CRA_CODIGO = ''01'' AND SCR.DD_SCR_CODIGO = ''02'')
-                    OR (CRA.DD_CRA_CODIGO = ''08'' AND SCR.DD_SCR_CODIGO = ''18'')
-                    OR (CRA.DD_CRA_CODIGO = ''06'' AND SCR.DD_SCR_CODIGO = ''16'')
-                ) AND ACTI.ACT_ID = ACT.ACT_ID 
+         WITH FECHA_ADJUDICACION AS (
+            SELECT ACT.ACT_ID
+                , CASE WHEN TTA.DD_TTA_CODIGO = ''01'' AND AJD.AJD_ID IS NOT NULL THEN ADJ.BIE_ADJ_F_DECRETO_FIRME
+                       WHEN TTA.DD_TTA_CODIGO = ''02'' THEN ADN.ADN_FECHA_FIRMA_TITULO
+                       END FECHA_ADJUDICACION
+                , ROW_NUMBER() OVER(PARTITION BY ACT.ACT_ID 
+                    ORDER BY 
+                        CASE WHEN TTA.DD_TTA_CODIGO = ''01'' AND AJD.AJD_ID IS NOT NULL THEN ADJ.BIE_ADJ_F_DECRETO_FIRME
+                             WHEN TTA.DD_TTA_CODIGO = ''02'' THEN ADN.ADN_FECHA_FIRMA_TITULO
+                        END NULLS LAST) RN
+            FROM '|| V_ESQUEMA ||'.ACT_ACTIVO ACT
+            JOIN '|| V_ESQUEMA ||'.DD_TTA_TIPO_TITULO_ACTIVO TTA ON TTA.DD_TTA_ID = ACT.DD_TTA_ID AND TTA.BORRADO = 0
+            LEFT JOIN '|| V_ESQUEMA ||'.ACT_ADN_ADJNOJUDICIAL ADN ON ADN.ACT_ID = ACT.ACT_ID AND ADN.BORRADO = 0
+            LEFT JOIN '|| V_ESQUEMA ||'.BIE_ADJ_ADJUDICACION ADJ ON ADJ.BIE_ID = ACT.BIE_ID AND ADJ.BORRADO = 0
+            LEFT JOIN '|| V_ESQUEMA ||'.ACT_AJD_ADJJUDICIAL AJD ON AJD.ACT_ID = ACT.ACT_ID AND AJD.BORRADO = 0
+                AND AJD.BIE_ADJ_ID = ADJ.BIE_ADJ_ID
+            WHERE ACT.BORRADO = 0
+            )
+        SELECT COUNT(ACTI.ACT_ID)
+        FROM '|| V_ESQUEMA ||'.ACT_ACTIVO ACTI
+        JOIN '|| V_ESQUEMA ||'.BIE_LOCALIZACION LOC ON LOC.BIE_ID = ACTI.BIE_ID AND LOC.BORRADO = 0
+        JOIN '|| V_ESQUEMA ||'.ACT_LOC_LOCALIZACION ACT_LOC ON ACT_LOC.ACT_ID = ACTI.ACT_ID
+            AND LOC.BIE_LOC_ID = ACT_LOC.BIE_LOC_ID
+            AND ACT_LOC.BORRADO = 0
+        JOIN '|| V_ESQUEMA ||'.CMU_CONFIG_MUNICIPIOS CMU ON CMU.DD_LOC_ID = LOC.DD_LOC_ID AND CMU.BORRADO = 0
+        JOIN '|| V_ESQUEMA ||'.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = ACTI.DD_CRA_ID AND CRA.BORRADO = 0
+        JOIN '|| V_ESQUEMA ||'.DD_SCR_SUBCARTERA SCR ON SCR.DD_SCR_ID = ACTI.DD_SCR_ID AND SCR.BORRADO = 0
+            AND SCR.DD_CRA_ID = CRA.DD_CRA_ID
+        JOIN '|| V_ESQUEMA ||'.DD_TPA_TIPO_ACTIVO TPA ON TPA.DD_TPA_ID = ACTI.DD_TPA_ID AND TPA.BORRADO = 0
+        JOIN REMMASTER.DD_LOC_LOCALIDAD DD_LOC ON DD_LOC.DD_LOC_ID = LOC.DD_LOC_ID AND DD_LOC.BORRADO = 0
+        JOIN '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION APU ON APU.ACT_ID = ACTI.ACT_ID AND APU.BORRADO = 0
+        JOIN FECHA_ADJUDICACION ADJ ON ADJ.ACT_ID = ACTI.ACT_ID AND ADJ.RN = 1
+        WHERE ACTI.BORRADO = 0
+            AND ADJ.FECHA_ADJUDICACION > TO_DATE(''07/04/2018'',''DD/MM/YYYY'')
+            AND TPA.DD_TPA_CODIGO = ''02''
+            AND (CRA.DD_CRA_CODIGO, SCR.DD_SCR_CODIGO) IN ((''03'',''06''),(''03'',''07''),(''03'',''08'')
+                ,(''03'',''09''),(''02'',''04''),(''01'',''02''),(''08'',''18'') ,(''06'',''16''))
+            AND ACTI.ACT_ID = ACT.ACT_ID
             ) AS ACTIVO_GENCAT,
         V_PUBL.COND_PUBL_VENTA,
         V_PUBL.COND_PUBL_ALQUILER

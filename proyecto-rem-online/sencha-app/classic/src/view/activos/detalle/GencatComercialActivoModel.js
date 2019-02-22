@@ -24,16 +24,20 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoModel', {
     		var estadoComunicacion= get('gencat.estadoComunicacion');
     		var estadoSancion= get('gencat.sancion');
     		var comunicadoAnulacionGencat = get('gencat.comunicadoAnulacionAGencat2');
+    		var ofertasAsociadasEstanAnuladas = get('gencat.ofertasAsociadasEstanAnuladas');
     		//Si ya se ha comunicado la anulación con el checkbox, no debe dejar modificarlo.
     		if(!comunicadoAnulacionGencat){	
-    			//Si estadoComunicacion es COMUNICADO / RECHAZADO / ANULADO o bien SANCIONADO + estadoSancion NO EJERCE, y además el usuario tiene perfil HAYAGESTFORMADM / HAYASUPER
-    			if ( ((estadoComunicacion === CONST.ESTADO_COMUNICACION_GENCAT['COMUNICADO'] ||
-    					estadoComunicacion === CONST.ESTADO_COMUNICACION_GENCAT['RECHAZADO']  || 
-    					estadoComunicacion === CONST.ESTADO_COMUNICACION_GENCAT['ANULADO'])   || 
-    					(estadoComunicacion === CONST.ESTADO_COMUNICACION_GENCAT['SANCIONADO'] && estadoSancion === CONST.SANCION_GENCAT['NO_EJERCE'] )) &&
-    					($AU.userIsRol(CONST.PERFILES['HAYAGESTFORMADM']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER'])) ){
-    				soloLectura = false
-    			}
+    			//Si las ofertas asociadas están anuladas, debe dejar modificarlo.
+        		if(ofertasAsociadasEstanAnuladas){
+	    			//Si estadoComunicacion es COMUNICADO / RECHAZADO / ANULADO o bien SANCIONADO + estadoSancion NO EJERCE, y además el usuario tiene perfil HAYAGESTFORMADM / HAYASUPER
+	    			if ( ((estadoComunicacion === CONST.ESTADO_COMUNICACION_GENCAT['COMUNICADO'] ||
+	    					estadoComunicacion === CONST.ESTADO_COMUNICACION_GENCAT['RECHAZADO']  || 
+	    					estadoComunicacion === CONST.ESTADO_COMUNICACION_GENCAT['ANULADO'])   || 
+	    					(estadoComunicacion === CONST.ESTADO_COMUNICACION_GENCAT['SANCIONADO'] && estadoSancion === CONST.SANCION_GENCAT['NO_EJERCE'] )) &&
+	    					($AU.userIsRol(CONST.PERFILES['HAYAGESTFORMADM']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER'])) ){
+	    				soloLectura = false
+	    			}
+        		}
     		}
     		return soloLectura;
     	},

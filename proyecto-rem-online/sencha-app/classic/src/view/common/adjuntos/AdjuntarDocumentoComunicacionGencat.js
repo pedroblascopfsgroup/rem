@@ -30,22 +30,19 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoComunicacionGencat', {
     initComponent: function() {
 
     	var me = this;
-
     	me.setTitle(HreRem.i18n("title.adjuntar.documento.comunicacion.gencat"));
 
     	me.buttonAlign = 'left';
     	
-    	var comboTipoDocumento = new Ext.data.Store({
+    	var comboTipoDocumentoComunicacion = new Ext.data.Store({
 			model: 'HreRem.model.ComboBase',
 			proxy: {
 				type: 'uxproxy',
-				remoteUrl: 'generic/getDiccionario',
-				extraParams: {diccionario: 'tipoDocumentoComunicacion'}
+				remoteUrl: 'gencat/getTiposDocumentoComunicacion'
 			}
     	});
-    
-
-		comboTipoDocumento.filter([
+ 
+    	comboTipoDocumentoComunicacion.filter([
 			{
 		    fn: function(record) {
 					return me.tipoTrabajoCodigo == null || record.get('tipoTrabajoCodigos').indexOf(me.tipoTrabajoCodigo) != -1;
@@ -54,7 +51,7 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoComunicacionGencat', {
 		  }
 		]);
 		if ($AU.userIsRol(CONST.PERFILES['GESTIAFORM'])){
-			comboTipoDocumento.filter([
+			comboTipoDocumentoComunicacion.filter([
 				{
 			    fn: function(record) {
 						return record.data.codigo == '02' || record.data.codigo == '04' || record.data.codigo == '07' || record.data.codigo == '08' ;
@@ -64,9 +61,6 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoComunicacionGencat', {
 			]);
 		}
 
-		
-		
-		
     	me.buttons = [ 
     		{ 
     			formBind: true, 
@@ -96,16 +90,6 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoComunicacionGencat', {
 	    				cls:'formbase_no_shadow',
 	    				items: [
 	    						{
-				    				xtype: "datefieldbase",
-				    				fieldLabel: HreRem.i18n('fieldlabel.fecha.notificacion'),
-				    				name: 'fechaNotificacion',
-				    				addUxReadOnlyEditFieldPlugin : false,
-				    				anchor: '100%',
-				    				allowBlank: false,
-				    				maxValue: null,
-				    				align: 'right', 
-				    				width: '100%' 
-				    			},{
 
  									xtype: 'filefield',
 							        fieldLabel:   HreRem.i18n('fieldlabel.archivo'),
@@ -138,7 +122,7 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoComunicacionGencat', {
 						        	name: 'tipo',
 						        	editable: false,
 						        	msgTarget: 'side',
-					            	store: comboTipoDocumento,
+						        	store: comboTipoDocumentoComunicacion,
 					            	displayField: 'descripcion',
 								    valueField: 'codigo',
 									allowBlank: false,
@@ -190,8 +174,5 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoComunicacionGencat', {
                 }
             });
         }
-
-
-
     }
 });

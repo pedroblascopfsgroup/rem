@@ -9,10 +9,10 @@ import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
-import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
-import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
+import es.pfsgroup.commons.utils.dao.abm.Order;
+import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteAvisadorApi;
 import es.pfsgroup.plugin.rem.model.Activo;
@@ -23,8 +23,6 @@ import es.pfsgroup.plugin.rem.model.DtoAviso;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.OfertaGencat;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoComunicacionGencat;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSancionGencat;
 
 @Service("expedienteAvisoAnuladoGencat")
@@ -34,7 +32,7 @@ public class ExpedienteAvisoAnuladoGencat implements ExpedienteAvisadorApi{
 	private GenericABMDao genericDao;
 	
 	@Autowired
-	private ActivoDao activoDao;
+	private ActivoApi activoApi;
 	
 	@Override
 	public DtoAviso getAviso(ExpedienteComercial expediente, Usuario usuarioLogado) {
@@ -69,7 +67,7 @@ public class ExpedienteAvisoAnuladoGencat implements ExpedienteAvisadorApi{
 							}
 							
 							if (!Checks.esNulo(comGen) && expBloqueado && !Checks.esNulo(comGen.getSancion()) &&
-									DDSancionGencat.COD_EJERCE.equals(comGen.getSancion().getCodigo()) && activoDao.isActivoAfectoGENCAT(activo.getId())) {
+									DDSancionGencat.COD_EJERCE.equals(comGen.getSancion().getCodigo()) && activoApi.isAfectoGencat(activo)) {
 								dtoAviso.setId(String.valueOf(expediente.getId()));
 								dtoAviso.setDescripcion("Expediente anulado por GENCAT");
 								break;

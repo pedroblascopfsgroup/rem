@@ -423,7 +423,7 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
             				ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
             				
             				SimpleDateFormat formatoFecha = new SimpleDateFormat("yyyy-MM-dd");
-                			if(!Checks.esNulo(expediente.getReserva().getFechaFirma())){
+                			if(!Checks.esNulo(expediente) && !Checks.esNulo(expediente.getReserva()) && !Checks.esNulo(expediente.getReserva().getFechaFirma())) {
                 				item.setValue(formatoFecha.format(expediente.getReserva().getFechaFirma()));
                 			}
             			}            			

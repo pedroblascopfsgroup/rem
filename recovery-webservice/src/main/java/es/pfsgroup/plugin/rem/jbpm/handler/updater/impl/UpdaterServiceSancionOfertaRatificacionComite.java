@@ -15,7 +15,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
-import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
+import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GencatApi;
 import es.pfsgroup.plugin.rem.api.NotificacionApi;
@@ -23,20 +23,16 @@ import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.ResolucionComiteApi;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
+import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.OfertaGencat;
-import es.pfsgroup.plugin.rem.model.ResolucionComiteBankia;
-import es.pfsgroup.plugin.rem.model.ResolucionComiteBankiaDto;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadoResolucion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDResolucionComite;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoResolucion;
 import es.pfsgroup.plugin.rem.resolucionComite.dao.ResolucionComiteDao;
-import es.pfsgroup.plugin.rem.rest.dto.ResolucionComiteDto;
 
 @Component
 public class UpdaterServiceSancionOfertaRatificacionComite implements UpdaterService {
@@ -69,7 +65,7 @@ public class UpdaterServiceSancionOfertaRatificacionComite implements UpdaterSer
 	private GencatApi gencatApi;
 	
 	@Autowired
-	private ActivoDao activoDao;
+	private ActivoApi activoApi;
 
     protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaRatificacionComite.class);
 
@@ -81,13 +77,7 @@ public class UpdaterServiceSancionOfertaRatificacionComite implements UpdaterSer
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 
-	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {
-		
-		Boolean esAfectoGencat = false;
-		if(!Checks.esNulo(tramite.getActivo()) && !Checks.esNulo(tramite.getActivo().getId())){
-			esAfectoGencat = activoDao.isActivoAfectoGENCAT(tramite.getActivo().getId());
-		}
-		
+	public void saveValues(ActivoTramite tramite, List<TareaExternaValor> valores) {		
 		Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());
 		if(!Checks.esNulo(ofertaAceptada)) {
 			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
@@ -99,9 +89,19 @@ public class UpdaterServiceSancionOfertaRatificacionComite implements UpdaterSer
 					if(COMBO_RATIFICACION.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 						Filter filtro;
 						if(DDResolucionComite.CODIGO_APRUEBA.equals(valor.getValor())) {
-							Boolean esEstadoAnteriorTramitado = false;
-							if(DDEstadosExpedienteComercial.EN_TRAMITACION.equals(expediente.getEstado().getCodigo())) {
-								esEstadoAnteriorTramitado = true;
+							List<ActivoOferta> listActivosOferta = expediente.getOferta().getActivosOferta();
+							for (ActivoOferta activoOferta : listActivosOferta) {
+								if(Checks.esNulo(expediente.getReserva()) && DDEstadosExpedienteComercial.EN_TRAMITACION.equals(expediente.getEstado().getCodigo()) && activoApi.isAfectoGencat(activoOferta.getPrimaryKey().getActivo())){
+									Oferta oferta = expediente.getOferta();	
+									OfertaGencat ofertaGencat = genericDao.get(OfertaGencat.class,genericDao.createFilter(FilterType.EQUALS,"oferta", oferta));
+									if(!Checks.esNulo(ofertaGencat)) {
+											if(Checks.esNulo(ofertaGencat.getIdOfertaAnterior()) && !ofertaGencat.getAuditoria().isBorrado()) {
+												gencatApi.bloqueoExpedienteGENCAT(expediente, activoOferta.getPrimaryKey().getActivo().getId());
+											}
+									}else{	
+										gencatApi.bloqueoExpedienteGENCAT(expediente, activoOferta.getPrimaryKey().getActivo().getId());
+									}					
+								}
 							}
 							filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.APROBADO);
 							DDEstadosExpedienteComercial estado = genericDao.get(DDEstadosExpedienteComercial.class, filtro);
@@ -117,19 +117,6 @@ public class UpdaterServiceSancionOfertaRatificacionComite implements UpdaterSer
 							// Se comprueba si cada activo tiene KO de admisión o de gestión
 							// y se envía una notificación
 							notificacionApi.enviarNotificacionPorActivosAdmisionGestion(expediente);
-							
-							//TODO COMPROBACION PRE BLOQUEO GENCAT 
-							if ((Checks.esNulo(expediente.getReserva())) && (esEstadoAnteriorTramitado) && esAfectoGencat) {
-								Oferta oferta = expediente.getOferta();	
-								OfertaGencat ofertaGencat = genericDao.get(OfertaGencat.class,genericDao.createFilter(FilterType.EQUALS,"oferta", oferta));
-								if(!Checks.esNulo(ofertaGencat)) {
-									if(Checks.esNulo(ofertaGencat.getIdOfertaAnterior()) && !ofertaGencat.getAuditoria().isBorrado()) {
-										gencatApi.bloqueoExpedienteGENCAT(expediente, tramite);
-									}
-								}else{	
-									gencatApi.bloqueoExpedienteGENCAT(expediente, tramite);
-								}
-							}
 						} else if(DDResolucionComite.CODIGO_RECHAZA.equals(valor.getValor())) {
 							//Resuelve el expediente
 							filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.ANULADO);

@@ -266,7 +266,7 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 				dtoAviso.setDescripcion("Activo bloqueado por GENCAT");
 				dtoAviso.setId(String.valueOf(id));
 				listaAvisos.add(dtoAviso);
-			} else if(activoDao.isActivoAfectoGENCAT(activo.getId())) {
+			} else if(activoApi.isAfectoGencat(activo)) {
 				dtoAviso.setDescripcion("Activo afecto por GENCAT");
 				dtoAviso.setId(String.valueOf(id));
 				listaAvisos.add(dtoAviso);

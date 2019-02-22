@@ -16,6 +16,7 @@ import es.pfsgroup.plugin.rem.model.DtoHistoricoComunicacionGencat;
 import es.pfsgroup.plugin.rem.model.DtoNotificacionActivo;
 import es.pfsgroup.plugin.rem.model.DtoOfertasAsociadasActivo;
 import es.pfsgroup.plugin.rem.model.DtoReclamacionActivo;
+import es.pfsgroup.plugin.rem.model.DtoTiposDocumentoComunicacion;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 
@@ -155,14 +156,14 @@ public interface GencatApi {
 	/**
 	 * Comprueba si el expediente comercial del activo afecto por GENCAT se tiene que bloquear.
 	 */
-	void bloqueoExpedienteGENCAT(ExpedienteComercial expComercial, ActivoTramite activoTramite);
+	void bloqueoExpedienteGENCAT(ExpedienteComercial expComercial, Long idActivo);
 
 	/**
 	 * Lanza el nuevo tramite de GENCAT.
 	 * 
 	 * @param Tramite
 	 * */
-	void lanzarTramiteGENCAT(ActivoTramite tramite, Oferta oferta, ExpedienteComercial expedienteComercial) throws Exception; 
+	void lanzarTramiteGENCAT(Long idActivo, Oferta oferta, ExpedienteComercial expedienteComercial) throws Exception; 
 	
 	/**
 	 * Crea los nuevos registros en las tablas ADG, OFG y CMG.
@@ -170,7 +171,7 @@ public interface GencatApi {
 	 * @param ExpedienteComercial
 	 * @param Oferta
 	 * */
-	void crearRegistrosTramiteGENCAT(ExpedienteComercial expedienteComercial, Oferta oferta, ActivoTramite tramite);
+	void crearRegistrosTramiteGENCAT(ExpedienteComercial expedienteComercial, Oferta oferta, Long idActivo);
 	
 	/**
 	 * Historifica los registros de las tablas ADG, OFG y CMG.
@@ -179,7 +180,7 @@ public interface GencatApi {
 	 * @param Oferta
 	 * @param ActivoTramite
 	 * */
-	void historificarTramiteGENCAT(ActivoTramite activoTramite);
+	void historificarTramiteGENCAT(Long idActivo);
 
 	public Boolean deleteAdjunto(DtoAdjunto dtoAdjunto);
 	
@@ -205,6 +206,16 @@ public interface GencatApi {
 	 */
 	public boolean updateFechaReclamacion(DtoReclamacionActivo gencatDto);
 	
+	/*
+	 * Obtiene los tipos de documento para el combobox del panel Documentos
+	 */
+	public List <DtoTiposDocumentoComunicacion> getTiposDocumentoComunicacion();
+
+	/*
+	 * Obtiene los tipos de documento para el combobox del panel Notificaciones en la pestaña GENCAT
+	 */
+	public List <DtoTiposDocumentoComunicacion> getTiposDocumentoNotificacion();
+
 	/**
 	 * Crea la nueva oferta asociada a un activo
 	 * 
@@ -219,6 +230,4 @@ public interface GencatApi {
 	 * @return boolean
 	 */
 	public boolean comprobacionDocumentoAnulacion(Long idActivo);
-
-	
 }

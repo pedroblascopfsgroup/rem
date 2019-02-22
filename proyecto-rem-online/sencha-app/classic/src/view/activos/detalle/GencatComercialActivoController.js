@@ -1,3 +1,4 @@
+
 Ext.define('HreRem.view.activos.detalle.GencatComercialActivoController', {
     extend: 'Ext.app.ViewController',
     alias: 'controller.gencatcomercialactivo', 
@@ -130,16 +131,17 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoController', {
 		
 	},
 	
-	onClickAdjuntarDocumentoNotificaciones: function(btn) {
-		
-		var me = this;
-		var idActivo = me.getViewModel().get("activo.id");
-		var data = {
-			entidad: 'gencat', 
-			idEntidad: idActivo
-		};
-		Ext.create("HreRem.view.common.adjuntos.AdjuntarDocumentoNotificacionGencat", data).show();
-	},
+	//Sin utilizar desde HREOS-5509
+//	onClickAdjuntarDocumentoNotificaciones: function(btn) {
+//		
+//		var me = this;
+//		var idActivo = me.getViewModel().get("activo.id");
+//		var data = {
+//			entidad: 'gencat', 
+//			idEntidad: idActivo
+//		};
+//		Ext.create("HreRem.view.common.adjuntos.AdjuntarDocumentoNotificacionGencat", data).show();
+//	},
 	
 	onClickGuardarNotificacion: function(btn) {
 		
@@ -154,6 +156,7 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoController', {
             form.submit({
                 waitMsg: HreRem.i18n('msg.mask.loading'),
                 params: {
+                	idEntidad: window.idActivo,
                 	idActivo: window.idActivo
                 },
                 success: function(fp, o) {
@@ -203,7 +206,8 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoController', {
 			},
 	    
 	     failure: function (a, operation) {
-	 				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+	 		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+
 	 	},
 	    callback: function(record, operation) {
 			me.getView().unmask();
@@ -316,13 +320,18 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoController', {
 		var campoNif = me.lookupReference('nuevoCompradorNifref');
 		var campoNombre = me.lookupReference('nuevoCompradorNombreref');
 		var campoSancion = me.lookupReference('sancionRef');
+		var campoFechaSancion = me.lookupReference('fechaSancionRef');
 		
 		if (campoSancion.getValue() == CONST.DD_SAN_SANCION['COD_EJERCE']) {
+			campoFechaSancion.allowBlank = false;
 			campoNombre.allowBlank = false;
 			campoNif.allowBlank = false;
-		} else {
+		} else if (campoSancion.getValue() == CONST.DD_SAN_SANCION['COD_NO_EJERCE']) {
+			campoFechaSancion.allowBlank = false;
 			campoNombre.allowBlank = true;
 			campoNif.allowBlank = true;
+		}else {
+			campoFechaSancion.allowBlank = true;
 		}
 	},
 	

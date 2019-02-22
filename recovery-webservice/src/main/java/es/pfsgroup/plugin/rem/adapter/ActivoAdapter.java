@@ -104,7 +104,6 @@ import es.pfsgroup.plugin.rem.model.ActivoObservacion;
 import es.pfsgroup.plugin.rem.model.ActivoOcupanteLegal;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
-import es.pfsgroup.plugin.rem.model.ActivoPatrimonioContrato;
 import es.pfsgroup.plugin.rem.model.ActivoPropietarioActivo;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
@@ -177,6 +176,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalificacionEnergetica;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCargaActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
@@ -189,7 +189,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTasacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTenedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
 import es.pfsgroup.plugin.rem.oferta.NotificationOfertaManager;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PRINCIPAL;
@@ -2501,6 +2500,12 @@ public class ActivoAdapter {
 		String key = appProperties.getProperty(CONSTANTE_REST_CLIENT);
 		Downloader dl = downloaderFactoryApi.getDownloader(key);
 		return dl.getFileItem(id,nombreDocumento);
+	}
+	
+	public FileItem downloadComunicacionGencat(Long id,String nombreDocumento) throws Exception {
+		String key = appProperties.getProperty(CONSTANTE_REST_CLIENT);
+		Downloader dl = downloaderFactoryApi.getDownloader(key);
+		return dl.getFileItemComunicacionGencat(id,nombreDocumento);
 	}
 
 	public boolean deleteAdjunto(DtoAdjunto dtoAdjunto) {

@@ -12,7 +12,6 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoCondicionEspecifica;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
-import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoActivosPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPreciosFilter;
@@ -204,13 +203,6 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	public Page getListHistoricoOcupacionesIlegalesByActivo(WebDto dto, Long idActivo);
 
 	public void hibernateFlush();
-	
-	/**
-	 * Comprueba pasando el id del activo si el activo esta afecto por GENCAT
-	 * @param idActivo
-	 * @return boolean true or false
-	 */
-	Boolean isActivoAfectoGENCAT(Long idActivo);
 	
 	/**
 	 * Comprueba pasando el id del activo si el activo esta bloqueado por GENCAT

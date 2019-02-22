@@ -1816,11 +1816,7 @@ onClickBotonEditar: function(btn) {
 		if(CONST.TIPOS_EXPEDIENTE_COMERCIAL['VENTA'] == tipoExpedienteCodigo) {
 			if(!bloqueado) {
 				if(CONST.ESTADOS_EXPEDIENTE['VENDIDO']!=codigoEstado) {
-					if(tipoOrigenWCOM != origen) {
-						llamada = true;
-					} else {
-		            	me.fireEvent("errorToast","Expediente con origen WCOM");
-		            }
+					llamada = true;
 				} else {
 					me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.expediente.vendido"));
 				}

@@ -176,6 +176,7 @@ import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.TitularesAdicionalesOferta;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.UsuarioCartera;
+import es.pfsgroup.plugin.rem.model.VActivosAfectosGencat;
 import es.pfsgroup.plugin.rem.model.VBusquedaGastoActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaPublicacionActivo;
@@ -2715,11 +2716,15 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	
 	@Override
 	public boolean isAfectoGencat(Activo activo) {
-		boolean isAfectoAGencat = false;
-		if (!Checks.esNulo(activo)) {
-			isAfectoAGencat = activoDao.isActivoAfectoGENCAT(activo.getId());
+		boolean afecto = false;
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "idActivo", activo.getId());
+		VActivosAfectosGencat activoAfecto = genericDao.get(VActivosAfectosGencat.class, filtro);
+		
+		if(!Checks.esNulo(activoAfecto)) {
+			afecto = true;
 		}
-		return isAfectoAGencat;	
+		
+		return afecto;
 	}
 
 	@Override

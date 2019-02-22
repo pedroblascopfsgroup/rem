@@ -6,7 +6,6 @@ import org.springframework.stereotype.Component;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.procesosJudiciales.model.EXTTareaProcedimiento;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
-import es.capgemini.pfs.procesosJudiciales.model.TipoProcedimiento;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;

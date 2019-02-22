@@ -28,6 +28,7 @@ import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.GencatAdapter;
 import es.pfsgroup.plugin.rem.api.GencatApi;
+import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
 import es.pfsgroup.plugin.rem.model.AdjuntoComunicacion;
 import es.pfsgroup.plugin.rem.model.ComunicacionGencat;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
@@ -42,6 +43,7 @@ public class GencatController {
 	
 	protected static final Log logger = LogFactory.getLog(GencatController.class);
 	private static final String RESPONSE_SUCCESS_KEY = "success";
+	private static final String RESPONSE_SUCCESS_DATA = "data";
 
 	@Autowired
 	private GencatApi gencatApi;
@@ -54,6 +56,9 @@ public class GencatController {
 	
 	@Autowired
 	private UploadAdapter uploadAdapter;
+	
+	@Autowired
+	private GestorDocumentalAdapterApi gestorDocumentalAdapterApi;
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
@@ -217,7 +222,8 @@ public class GencatController {
 			id = Long.parseLong(request.getParameter("id"));
 			String nombreDocumento = request.getParameter("nombreDocumento");
 			ServletOutputStream salida = response.getOutputStream();
-			FileItem fileItem = activoAdapter.download(id,nombreDocumento);
+			FileItem fileItem =  null;
+			fileItem = activoAdapter.downloadComunicacionGencat(id,nombreDocumento);
 			response.setHeader("Content-disposition", "attachment; filename=" + fileItem.getFileName());
 			response.setHeader("Cache-Control", "must-revalidate, post-check=0,pre-check=0");
 			response.setHeader("Cache-Control", "max-age=0");
@@ -315,11 +321,15 @@ public class GencatController {
 	 */
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView crearNotificacionComunicacion(DtoNotificacionActivo notificacionActivo) {
+	public ModelAndView crearNotificacionComunicacion(HttpServletRequest request, DtoNotificacionActivo notificacionActivo) {
 
 		ModelMap model = new ModelMap();
 		
 		try {
+			WebFileItem webFileItem = uploadAdapter.getWebFileItem(request);
+			String idAdjunto = gencatAdapter.upload(webFileItem);
+			notificacionActivo.setIdDocumento(idAdjunto);
+			//model.put("success", true);
 			model.put("data", gencatApi.createNotificacionComunicacion(notificacionActivo));
 			model.put("success", true);
 		}
@@ -390,6 +400,32 @@ public class GencatController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getTiposDocumentoComunicacion(ModelMap model) {
+		
+		try {
+			model.put(RESPONSE_SUCCESS_DATA, gencatApi.getTiposDocumentoComunicacion());
+		} catch (Exception e) {
+			logger.error("error en gencatController", e);
+			model.put(RESPONSE_SUCCESS_DATA, false);
+			model.put("errorMessage", e.getMessage());
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getTiposDocumentoNotificacion(ModelMap model) {
+		try {
+			model.put(RESPONSE_SUCCESS_DATA, gencatApi.getTiposDocumentoNotificacion());
+		} catch (Exception e) {
+			logger.error("error en gencatController", e);
+			model.put(RESPONSE_SUCCESS_DATA, false);
+			model.put("errorMessage", e.getMessage());
+		}
+
+		return createModelAndViewJson(model);
+	}
 	public ModelAndView comprobacionDocumentoAnulacion(Long idActivo, ModelMap model) {
 		
 		try {
@@ -402,6 +438,5 @@ public class GencatController {
 		}
 
 		return createModelAndViewJson(model);
-
 	}
 }

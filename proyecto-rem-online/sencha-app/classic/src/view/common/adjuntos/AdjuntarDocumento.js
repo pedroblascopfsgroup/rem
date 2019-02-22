@@ -31,9 +31,9 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumento', {
     parent: null,
 
     initComponent: function() {
-
+    	
     	var me = this;
-
+    	 
     	me.setTitle(HreRem.i18n("title.adjuntar.documento"));
 
     	me.buttonAlign = 'left';
@@ -95,7 +95,7 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumento', {
 					                            fld.setRawValue(fileName);
 				                        	}
 				                        }
-				                    }
+				                    } 
 					    		},
 					    		{
 									xtype: 'combobox',

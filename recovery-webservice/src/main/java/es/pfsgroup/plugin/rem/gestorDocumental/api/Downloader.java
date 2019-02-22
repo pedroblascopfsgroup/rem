@@ -10,4 +10,6 @@ public interface Downloader {
 	
 	String[] getKeys();
 
+	FileItem getFileItemComunicacionGencat(Long id, String nombreDocumento);
+
 }

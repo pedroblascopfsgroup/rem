@@ -163,6 +163,10 @@ Ext.define('HreRem.model.Gencat', {
 		{
 			name:'comunicadoAnulacionAGencat2',
 			type: 'boolean'	
+		},
+		{
+			name:'ofertasAsociadasEstanAnuladas',
+			type: 'boolean'	
 		}
     ],
     

@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.gestorDocumental.manager;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
@@ -566,8 +567,10 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 				adjunto.setDescripcionTipo(tipoDoc.getDescripcion());
 			}
 			AdjuntoComunicacion adj = genericDao.get(AdjuntoComunicacion.class, genericDao.createFilter(FilterType.EQUALS, "idDocRestClient",adjunto.getId()));
-			Usuario usuarioGestor = genericDao.get(Usuario.class,genericDao.createFilter(FilterType.EQUALS,"username", adj.getAuditoria().getUsuarioCrear()),genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
-			adjunto.setGestor(usuarioGestor.getApellidoNombre());
+			if(!Checks.esNulo(adj)) {
+				Usuario usuarioGestor = genericDao.get(Usuario.class,genericDao.createFilter(FilterType.EQUALS,"username", adj.getAuditoria().getUsuarioCrear()),genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false));
+				adjunto.setGestor(usuarioGestor.getApellidoNombre());
+			}
 		}
 
 		return list;
@@ -627,7 +630,10 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 		Long respuesta;
 		String codigoEstado = "31";
 		String fechaNotificacion = webFileItem.getParameter("fechaNotificacion");
-
+		if (Checks.esNulo(fechaNotificacion)) {
+			SimpleDateFormat sdf = new SimpleDateFormat("dd/M/yyyy hh:mm");
+			fechaNotificacion = sdf.format(new Date());
+		}
 		CabeceraPeticionRestClientDto cabecera = recoveryToGestorDocAssembler.getCabeceraPeticionRestClient(
 				comunicacionGencat.getId().toString(), GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_OPERACIONES, codigoEstado);
 		CrearDocumentoDto crearDoc = recoveryToGestorDocAssembler.getCrearDocumentoComunicacionGencatDto(webFileItem, userLogin, matricula,fechaNotificacion);
@@ -672,5 +678,10 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 			throw new GestorDocumentalException(errorMessage.toString());
 		}
 		
+	}
+
+	@Override
+	public FileItem getFileItemComunicacionGencat(Long id, String nombreDocumento) {
+	return this.getFileItem(id, nombreDocumento);
 	}
 }

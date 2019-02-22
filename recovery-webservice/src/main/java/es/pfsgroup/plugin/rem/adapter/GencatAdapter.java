@@ -58,7 +58,7 @@ public class GencatAdapter {
 
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", webFileItem.getParameter("tipo"));
 			DDTipoDocumentoComunicacion tipoDocumento = genericDao.get(DDTipoDocumentoComunicacion.class, filtro);
-
+			String idDocumento = null;
 			//Datos comunicación
 			Filter filtroComunicacionIdActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
 			Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
@@ -73,7 +73,7 @@ public class GencatAdapter {
 				
 				if (!Checks.esNulo(tipoDocumento)) {
 					Long idDocRestClient = gestorDocumentalAdapterApi.uploadDocumentoComunicacionGencat(comunicacionGencat, webFileItem, usuarioLogado.getUsername(), tipoDocumento.getMatricula());
-					gencatManager.uploadDocumento(webFileItem, idDocRestClient,null,null,usuarioLogado,comunicacionGencat);
+					idDocumento = gencatManager.uploadDocumento(webFileItem, idDocRestClient,null,null,usuarioLogado,comunicacionGencat);
 			
 						CrearRelacionExpedienteDto crearRelacionExpedienteDto = new CrearRelacionExpedienteDto();
 						crearRelacionExpedienteDto.setTipoRelacion(RELACION_TIPO_DOCUMENTO_EXPEDIENTE);
@@ -105,9 +105,9 @@ public class GencatAdapter {
 				}
 			}
 			else {
-				gencatManager.uploadDocumento(webFileItem, null, null, null, usuarioLogado,comunicacionGencat);
+				idDocumento = gencatManager.uploadDocumento(webFileItem, null, null, null, usuarioLogado,comunicacionGencat);
 			}					
-		return null;
+		return idDocumento;
 	}
 	
 	public String upload(WebFileItem webFileItem) throws Exception {

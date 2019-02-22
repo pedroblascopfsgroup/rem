@@ -426,7 +426,7 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 					 	onDeleteClick: function (btn) {					 		
 					 		var me = this;	
 							var url =  $AC.getRemoteUrl('activo/deleteActivoPropietarioTab');
-							var propietario = me.up('tabpanel').down('grid').getSelection();
+							var propietario = me.up().down('grid').getSelection();
 							var activo = me.lookupController().getViewModel().get('activo');
 							if (propietario[0].get('tipoPropietario') == "Principal"){
 								Ext.toast({
@@ -445,7 +445,7 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 								     params:params,
 								     success: function (a, operation, context) {
 								    	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-								    	me.up('tabpanel').down('grid').getStore().load();
+								    	me.up().down('grid').getStore().load();
 						           },
 						           failure: function (a, operation, context) {
 						           	  Ext.toast({

@@ -51,7 +51,6 @@ BEGIN
 				  ';
         EXECUTE IMMEDIATE V_SQL; 
         DBMS_OUTPUT.PUT_LINE('[INFO] '|| V_ESQUEMA ||'.'||V_TABLA||'... Se ha añadido la columna y clave foranea con exito');
-        EXECUTE IMMEDIATE V_SQL; 
 	END IF;
 	
 EXCEPTION

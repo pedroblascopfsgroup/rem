@@ -1052,7 +1052,11 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 								lanzarTramiteGENCAT(idActivo, oferta, expComercial);
 						}								
 					}else {
-						if(!Checks.esNulo(comGencat.getSancion())) {
+						if(DDEstadoComunicacionGencat.COD_ANULADO.equals(comGencat.getEstadoComunicacion().getCodigo())) 
+						{
+							lanzarTramiteGENCAT(idActivo, oferta, expComercial);
+							
+						}else if(!Checks.esNulo(comGencat.getSancion())) {
 							if(!DDSancionGencat.COD_EJERCE.equals(comGencat.getSancion().getCodigo())) {
 								lanzarTramiteGENCAT(idActivo, oferta, expComercial);
 							}
@@ -1248,7 +1252,7 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 	
 			 genericDao.update(AdjuntoComunicacion.class, adjuntoComunicacion);
 		 }
-		
+	
 		return historicoComunicacionGencat;
 		
 	}

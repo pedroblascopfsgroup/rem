@@ -267,16 +267,22 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 										//Finaliza el trámite
 										activoAdapter.cerrarActivoTramite(usuarioLogado, activoTramite);
 									}
-									
-									Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoComunicacionGencat.COD_RECHAZADO);
-									DDEstadoComunicacionGencat estado = genericDao.get(DDEstadoComunicacionGencat.class, filtro);
+									DDEstadoComunicacionGencat estado = new DDEstadoComunicacionGencat();
+									if(DDEstadoComunicacionGencat.COD_CREADO.equals(estadoComunicacion.getCodigo())){
+										Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoComunicacionGencat.COD_RECHAZADO);
+										estado = genericDao.get(DDEstadoComunicacionGencat.class, filtro);
+									}else {
+										Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoComunicacionGencat.COD_ANULADO);
+										estado = genericDao.get(DDEstadoComunicacionGencat.class, filtro);
+									}
 									comunicacionGencat.setEstadoComunicacion(estado);
 									comunicacionGencat.setFechaAnulacion(new Date());
-									if(!Checks.esNulo(estado) && DDEstadoComunicacionGencat.COD_RECHAZADO.equals(estado.getCodigo())) {
+									if(!Checks.esNulo(estado) && (DDEstadoComunicacionGencat.COD_RECHAZADO.equals(estado.getCodigo()) || DDEstadoComunicacionGencat.COD_ANULADO.equals(estado.getCodigo()))) {
 										comunicacionGencat.setComunicadoAnulacionAGencat(true);
 									}
 									
 									genericDao.save(ComunicacionGencat.class, comunicacionGencat);
+									
 									
 								} else if (DDEstadoComunicacionGencat.COD_COMUNICADO.equals(estadoComunicacion.getCodigo())) {
 									GestorEntidadDto gestorEntidadDto = new GestorEntidadDto();

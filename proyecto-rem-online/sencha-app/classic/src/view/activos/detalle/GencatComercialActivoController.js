@@ -186,7 +186,6 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoController', {
   	var me = this;
   	var gencat = me.getViewModel().data.gencat;
   	var numVisita = gencat.data.idVisita;
-  	debugger;
   	
   	Ext.Ajax.request({
 		//url: $AC.getRemoteUrl('visitas/getVisitaById'),
@@ -194,7 +193,6 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoController', {
 		params: {idComunicacionnGencat: numVisita},
 	     method: 'POST',
 	     success: function(response, opts){
-	    	 debugger;
 	    	 var record = JSON.parse(response.responseText);
 	    		if(record.success === 'true') {
 					var ventana = Ext.create('HreRem.view.comercial.visitas.VisitasComercialDetalle',{detallevisita: record});
@@ -231,7 +229,6 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoController', {
 		     params: {idComunicacionnGencat: numVisita},
 		     success: function(response, opts) {
 		    	 var record = JSON.parse(response.responseText);
-		    	 debugger;
 		    		if(record.success === 'true') {
 						var ventana = Ext.create('HreRem.view.comercial.visitas.VisitasComercialDetalle',{detallevisita: record});
 						me.getView().up('mainviewport').add(ventana);

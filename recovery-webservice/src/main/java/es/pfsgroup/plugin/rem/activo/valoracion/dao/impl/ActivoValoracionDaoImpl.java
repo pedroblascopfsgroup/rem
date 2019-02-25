@@ -79,7 +79,7 @@ public class ActivoValoracionDaoImpl extends AbstractEntityDao<ActivoValoracione
 				+	"                        WHERE VAL_FECHA_INICIO IS NOT NULL AND VAL_FECHA_INICIO < TRUNC(SYSDATE)   " 
 				+	"                        AND (VAL_FECHA_FIN IS NULL OR VAL_FECHA_FIN > TRUNC(SYSDATE))   " 
 				+	"                        AND DD_TPC_ID IN (SELECT DD_TPC_ID FROM DD_TPC_TIPO_PRECIO WHERE DD_TPC_CODIGO IN ('04','07','13')))   " 
-				+	"                        WHERE DESCUENTO_PUBLICADO_WEB IS NOT NULL AND ACT_ID = "+ idActivo +" VAL_BORRADO = 0) AS DESCUENTO_PUBLICADO_WEB   " 
+				+	"                        WHERE DESCUENTO_PUBLICADO_WEB IS NOT NULL AND ACT_ID = "+ idActivo +" AND VAL_BORRADO = 0) AS DESCUENTO_PUBLICADO_WEB   " 
 				+	"                    FROM DUAL)) CALCULO ON ACTOFR.ACT_ID = CALCULO.ACT_ID " 
 				+	"AND OFR.DD_EOF_ID = (SELECT DD_EOF_ID FROM DD_EOF_ESTADOS_OFERTA WHERE DD_EOF_CODIGO = '01')   " 
 				+	"AND OFR.BORRADO = 0 AND ACTVAL.BORRADO = 0    " 

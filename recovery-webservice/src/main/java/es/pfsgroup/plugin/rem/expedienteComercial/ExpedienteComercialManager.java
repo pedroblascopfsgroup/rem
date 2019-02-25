@@ -1830,7 +1830,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				if (!Checks.esNulo(activoPrincipal.getSituacionPosesoria())) {
 					dto.setFechaTomaPosesion(activoPrincipal.getSituacionPosesoria().getFechaTomaPosesion());
 					dto.setOcupado(activoPrincipal.getSituacionPosesoria().getOcupado());
-					dto.setConTitulo(activoPrincipal.getSituacionPosesoria().getConTitulo().getCodigo());
+					if (!Checks.esNulo(activoPrincipal.getSituacionPosesoria().getConTitulo())) {
+						dto.setConTitulo(activoPrincipal.getSituacionPosesoria().getConTitulo().getCodigo());
+					}
 					if (!Checks.esNulo(activoPrincipal.getSituacionPosesoria().getTipoTituloPosesorio())) {
 						dto.setTipoTitulo(activoPrincipal.getSituacionPosesoria().getTipoTituloPosesorio().getDescripcion());
 					}

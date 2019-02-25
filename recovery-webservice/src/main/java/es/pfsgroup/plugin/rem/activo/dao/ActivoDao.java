@@ -206,4 +206,6 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	Page getListHistoricoOcupacionesIlegalesByActivo(WebDto dto, Long idActivo);
 
 	void hibernateFlush();
+
+	List<ActivoCalificacionNegativa> getListActivoCalificacionNegativaByIdActivoBorradoFalse(Long idActivo);
 }

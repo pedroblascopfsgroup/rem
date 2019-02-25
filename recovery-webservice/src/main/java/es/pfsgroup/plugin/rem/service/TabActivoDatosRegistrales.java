@@ -503,17 +503,7 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 			
 			Filter filterActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
 			
-			if (DDCalificacionNegativa.CODIGO_NO.equals(dto.getCalificacionNegativa())){
-				
-				Filter filterBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
-				List<ActivoCalificacionNegativa> acnList = genericDao.getList(ActivoCalificacionNegativa.class, filterActivo, filterBorrado);
-				
-				for (ActivoCalificacionNegativa acn : acnList){
-					acn.getAuditoria().setBorrado(true);
-					genericDao.update(ActivoCalificacionNegativa.class, acn);
-				}
-			
-			} else if (Checks.esNulo(dto.getCalificacionNegativa())){
+			if (Checks.esNulo(dto.getCalificacionNegativa())){
 					Filter filterNoBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
 					List<ActivoCalificacionNegativa> acnList = genericDao.getList(ActivoCalificacionNegativa.class, filterActivo, filterNoBorrado);
 					if (!Checks.estaVacio(acnList) && !Checks.esNulo(acnList.get(0).getCalificacionNegativa())){

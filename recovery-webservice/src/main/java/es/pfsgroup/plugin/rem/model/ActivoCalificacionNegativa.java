@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.model;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -67,12 +68,23 @@ public class ActivoCalificacionNegativa implements Serializable, Auditable {
     @ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "DD_RSU_ID")
   	private DDResponsableSubsanar responsableSubsanar;
+    
+    @Column(name = "ACT_FECHA_SUBSANACION")
+	private Date fechaSubsanacion;
 
 	@Version   
 	private Long version;
 	
 	@Embedded
 	private Auditoria auditoria;
+
+	public Date getFechaSubsanacion() {
+		return fechaSubsanacion;
+	}
+
+	public void setFechaSubsanacion(Date fechaSubsanacion) {
+		this.fechaSubsanacion = fechaSubsanacion;
+	}
 
 	public Long getId() {
 		return id;

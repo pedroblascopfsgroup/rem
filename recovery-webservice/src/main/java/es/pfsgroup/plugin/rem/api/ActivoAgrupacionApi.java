@@ -19,7 +19,6 @@ import es.pfsgroup.plugin.rem.model.DtoCondicionEspecificaAgrupacion;
 import es.pfsgroup.plugin.rem.model.DtoEstadoDisponibilidadComercial;
 import es.pfsgroup.plugin.rem.model.DtoSubdivisiones;
 import es.pfsgroup.plugin.rem.model.DtoVigenciaAgrupacion;
-import es.pfsgroup.plugin.rem.model.GestorActivo;
 import es.pfsgroup.plugin.rem.rest.dto.File;
 
 public interface ActivoAgrupacionApi {
@@ -144,4 +143,11 @@ public interface ActivoAgrupacionApi {
 	public Usuario getGestorComercialAgrupacion(List<Long> numActivos);
 	
 	public Boolean arrayComparer(Long idAgr, List<Long> agrupaciones);
+	
+	/**
+	 * Cuenta el numero de activos afecto Gencat que estan presentes en una agrupacion
+	 * @param agrupacion
+	 * @return int n de activos
+	 */
+	public int countActivosAfectoGENCAT(ActivoAgrupacion agrupacion);
 }

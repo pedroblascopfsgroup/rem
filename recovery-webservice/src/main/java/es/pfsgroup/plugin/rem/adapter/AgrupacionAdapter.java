@@ -337,7 +337,7 @@ public class AgrupacionAdapter {
 								agrupacionTemp.getUsuarioGestorComercialBackOffice().getId());
 					}
 					
-					BeanUtils.copyProperty(dtoAgrupacion, "activosGencat", activoDao.countActivosAfectoGENCAT(agrupacion.getId()));
+					BeanUtils.copyProperty(dtoAgrupacion, "activosGencat", activoAgrupacionApi.countActivosAfectoGENCAT(agrupacion));
 
 					if (!Checks.esNulo(agrupacion.getTipoAlquiler())) {
 						BeanUtils.copyProperty(dtoAgrupacion, "tipoAlquilerCodigo", agrupacion.getTipoAlquiler().getCodigo());
@@ -440,7 +440,7 @@ public class AgrupacionAdapter {
 					}
 
 					
-					BeanUtils.copyProperty(dtoAgrupacion, "activosGencat", activoDao.countActivosAfectoGENCAT(agrupacion.getId()));
+					BeanUtils.copyProperty(dtoAgrupacion, "activosGencat", activoAgrupacionApi.countActivosAfectoGENCAT(agrupacion));
 
 					if (!Checks.esNulo(agrupacion.getActivoPrincipal())) {
 						BeanUtils.copyProperty(dtoAgrupacion, "idNumActivoPrincipal",

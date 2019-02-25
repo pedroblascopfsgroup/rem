@@ -64,7 +64,7 @@ public class VActivosAgrupacion implements Serializable {
 	@Column(name = "VAL_IMPORTE_DESCUENTO_PUBLICO")
 	private Double importeDescuentoPublicado;
 	
-	@Column(name="ACTIVO_GENCAT")
+	@Column(name="GENCAT")
 	private String activoGencat;
 	
     @ManyToOne(fetch = FetchType.LAZY)

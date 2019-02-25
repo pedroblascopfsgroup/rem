@@ -1078,4 +1078,6 @@ public interface ActivoApi {
 	 */
 	Boolean tieneComunicacionGencat(Activo activo);
 
+	public boolean isActivoBloqueadoGencat(Activo activo);
+
 }

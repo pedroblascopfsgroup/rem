@@ -203,20 +203,6 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	public Page getListHistoricoOcupacionesIlegalesByActivo(WebDto dto, Long idActivo);
 
 	public void hibernateFlush();
-	
-	/**
-	 * Comprueba pasando el id del activo si el activo esta bloqueado por GENCAT
-	 * @param idActivo
-	 * @return boolean true or false
-	 */
-	Boolean isActivoBloqueadoGENCAT(Long idActivo);
-	
-	/**
-	 * Cuenta el numero de activos afecto Gencat que estan presentes en una agrupacion
-	 * @param idAgrupacion
-	 * @return int n de activos
-	 */
-	int countActivosAfectoGENCAT(Long idAgrupacion);
 
 	/**
 	 * Comprueba en un activo si tiene ofertas de venta.

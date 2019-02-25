@@ -177,6 +177,7 @@ import es.pfsgroup.plugin.rem.model.TitularesAdicionalesOferta;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.VActivosAfectosGencat;
+import es.pfsgroup.plugin.rem.model.VActivosAfectosGencatBloqueados;
 import es.pfsgroup.plugin.rem.model.VBusquedaGastoActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaPublicacionActivo;
@@ -2725,6 +2726,19 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 		
 		return afecto;
+	}
+	
+	@Override
+	public boolean isActivoBloqueadoGencat(Activo activo) {
+		boolean bloqueado = false;
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "idActivo", activo.getId());
+		VActivosAfectosGencatBloqueados activoBloqueado = genericDao.get(VActivosAfectosGencatBloqueados.class, filtro);
+		
+		if(!Checks.esNulo(activoBloqueado)) {
+			bloqueado = true;
+		}
+		
+		return bloqueado;
 	}
 
 	@Override

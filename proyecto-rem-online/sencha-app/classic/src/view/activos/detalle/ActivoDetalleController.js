@@ -627,16 +627,17 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		me.lookupReference('usuarioGestor').getStore().load();
 	},
       
-	onChangeTipoTitulo: function(btn,value) {
+	onChangeTipoTitulo: function(btn,value, oValue, eOps) {
     	
     	var me = this;
-    		
     	me.lookupReference('judicial').setVisible(value == '01');
     	me.lookupReference('judicial').setDisabled(value != '01');
     	me.lookupReference('noJudicial').setVisible(value == '02');
     	me.lookupReference('noJudicial').setDisabled(value != '02');
 		me.lookupReference('pdv').setVisible(value == '03');
 		me.lookupReference('pdv').setDisabled(value != '03');
+    	if (value == '05' && oValue == null)
+    		me.lookupReference('comboTipoTituloRef').readOnly = true;
     	
     },
     

@@ -302,7 +302,8 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 						allowBlank: false,
 						labelWidth: 200,
 		            	bind: {
-		            		store: '{comboTipoTitulo}',
+		            		//store: '{comboTipoTitulo}',
+		            		store: '{storeTituloOrigenActivo}',
 		            		value: '{datosRegistrales.tipoTituloCodigo}'
 		            	},
 		            	listeners: {
@@ -821,7 +822,6 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 
    		me.addExternalErrors(errores);
    },
-
    funcionRecargar: function() {
 		var me = this; 
 		me.recargar = false;

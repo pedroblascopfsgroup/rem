@@ -526,8 +526,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				 return true;
 			 }
 			 return false;
-		 }
-		 
+		 }		 
 
 	 },
 
@@ -884,6 +883,15 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			   	    }
 			    }
     		},
+    		storeTituloOrigenActivo: {								        		
+    			model: 'HreRem.model.ComboBase',   
+      		     proxy: {
+        		        type: 'uxproxy',
+        		        remoteUrl: 'activo/getOrigenActivo',
+        		        extraParams: {id: '{activo.id}'}
+    	    	},
+    	    	autoLoad: true
+			},
 
     		storeGestores: {
     			pageSize: $AC.getDefaultPageSize(),

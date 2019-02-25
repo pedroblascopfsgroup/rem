@@ -538,7 +538,13 @@ public class ActivoController extends ParadiseJsonController {
 
 		return createModelAndViewJson(model);
 	}
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getOrigenActivo(Long id, ModelMap model) {
+		model.put(RESPONSE_DATA_KEY, adapter.getOrigenActivo(id));
 
+		return createModelAndViewJson(model);
+	}
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView getListLlavesById(DtoLlaves dto, ModelMap model) {

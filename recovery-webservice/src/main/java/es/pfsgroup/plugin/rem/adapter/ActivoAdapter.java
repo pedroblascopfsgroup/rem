@@ -28,6 +28,7 @@ import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.asunto.model.DDEstadoProcedimiento;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.despachoExterno.model.DespachoExterno;
+import es.capgemini.pfs.diccionarios.Dictionary;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.capgemini.pfs.procesosJudiciales.TipoProcedimientoManager;
@@ -174,6 +175,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
+import es.pfsgroup.plugin.rem.model.dd.DDSubtipoDocumentoExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
@@ -188,6 +190,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTasacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTenedor;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
 import es.pfsgroup.plugin.rem.oferta.NotificationOfertaManager;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi;
@@ -4061,6 +4064,29 @@ public class ActivoAdapter {
 				}
 			}
 		}
+	}
+
+	public List<DDTipoTituloActivo> getOrigenActivo(Long id) {
+		List<DDTipoTituloActivo>  StoreOrigenActivos = null;
+		if (!Checks.esNulo(id)) {
+			StoreOrigenActivos = genericDao.getList(DDTipoTituloActivo.class);
+			boolean esTipoPromocionAlquiler = false;
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "ACT_ID", id);
+			List<ActivoAgrupacionActivo> agrupaciones = genericDao.getList(ActivoAgrupacionActivo.class, filtro);
+			if (!Checks.estaVacio(agrupaciones)) {
+				for (ActivoAgrupacionActivo agrupacion : agrupaciones) {
+					if (agrupacion.getAgrupacion().getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_PROMOCION_ALQUILER)) {
+						esTipoPromocionAlquiler = true;
+					}
+				}
+				if (!esTipoPromocionAlquiler) {
+					DDTipoTituloActivo unidadAlquilable =
+							(DDTipoTituloActivo) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoTituloActivo.class, DDTipoTituloActivo.UNIDAD_ALQUILABLE);
+					StoreOrigenActivos.remove(unidadAlquilable);
+				}
+			}
+		}		
+		return StoreOrigenActivos;
 	}
 
 }

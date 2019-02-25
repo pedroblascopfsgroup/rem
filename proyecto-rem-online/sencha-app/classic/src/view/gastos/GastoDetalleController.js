@@ -558,6 +558,10 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 	    	
 	    	if(!Ext.isEmpty(numeroActivo) && !Ext.isEmpty(numeroAgrupacion)){
 	    		me.fireEvent("errorToast", HreRem.i18n("msg.buscador.activo.gasto.busqueda.no.posible"));
+	    		form.reset();
+				window.unmask();
+				window.parent.funcionRecargar();
+				window.close();
 	    	}
 	    	else if(!Ext.isEmpty(numeroActivo)){
 	    		if(Ext.isDefined(detalle.getModelInstance().getProxy().getApi().create)){
@@ -687,6 +691,10 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
     	}
     	else{
     		me.fireEvent("errorToast", HreRem.i18n("msg.buscador.activo.gasto.busqueda.campos.vacios"));
+    		form.reset();
+			window.unmask();
+			window.parent.funcionRecargar();
+			window.close();
     	}
     	
     	

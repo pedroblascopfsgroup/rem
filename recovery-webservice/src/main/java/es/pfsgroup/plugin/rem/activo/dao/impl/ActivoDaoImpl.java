@@ -1294,7 +1294,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 							"JOIN ACT_APU_ACTIVO_PUBLICACION APU ON APU.ACT_ID = ACT.ACT_ID AND APU.BORRADO = 0\n" + 
 							"--JOIN GESTORES GES ON GES.ACT_ID = ACT.ACT_ID\n" + 
 							"WHERE ACT.BORRADO = 0\n" + 
-							"    AND ACT_ADJ.AJD_FECHA_ADJUDICACION > TO_DATE('07/04/2018','DD/MM/YYYY')\n" + 
+							"    AND ACT_ADJ.AJD_FECHA_ADJUDICACION > TO_DATE('07/04/2008','DD/MM/YYYY')\n" + 
 							"    AND TPA.DD_TPA_CODIGO = '02'\n" + 
 							"    AND (CRA.DD_CRA_CODIGO, SCR.DD_SCR_CODIGO) IN (\n" + 
 							"            ('03','06'),('03','07'),('03','08'),('03','09')\n" + 
@@ -1365,7 +1365,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 					+ " JOIN FECHA_ADJUDICACION ADJ ON ADJ.ACT_ID = ACT.ACT_ID AND ADJ.RN = 1\r\n"
 					+ " JOIN REM01.ACT_AGA_AGRUPACION_ACTIVO AGA ON AGA.ACT_ID = ACT.ACT_ID\r\n"
 					+ " WHERE ACT.BORRADO = 0\r\n"
-					+ " AND ADJ.FECHA_ADJUDICACION > TO_DATE('07/04/2018','DD/MM/YYYY')\r\n"
+					+ " AND ADJ.FECHA_ADJUDICACION > TO_DATE('07/04/2008','DD/MM/YYYY')\r\n"
 					+ " AND TPA.DD_TPA_CODIGO = '02'\r\n"
 					+ " AND (CRA.DD_CRA_CODIGO, SCR.DD_SCR_CODIGO) IN (\r\n"
 					+ " ('03','06'),('03','07'),('03','08'),('03','09'),('02','04'),('01','02'),('08','18'),('06','16'))\r\n"

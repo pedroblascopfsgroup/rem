@@ -543,9 +543,9 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		ActivoAgrupacion agrupacion = activoAgrupacionApi.get(id);
 		List<ActivoAgrupacionActivo> activos = agrupacion.getActivos();
 		List<ActivoPublicacion> activosPublicacion = new ArrayList<ActivoPublicacion>();
-		ActivoPublicacion activoPublicacion;
 
 		for(ActivoAgrupacionActivo aga : activos) {
+			ActivoPublicacion activoPublicacion = new ActivoPublicacion();
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", aga.getActivo().getId());
 			ActivoSituacionPosesoria condicionantesDisponibilidad = genericDao.get(ActivoSituacionPosesoria.class, filtro);
 			
@@ -768,7 +768,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 			}
 			
 			if(!Checks.esNulo(activoPublicacionHistorico.getFechaFinVenta()) || !Checks.esNulo(activoPublicacionHistorico.getFechaInicioAlquiler())){
-				activoPublicacionHistoricoDao.saveOrUpdate(activoPublicacionHistorico);
+				activoPublicacionHistoricoDao.save(activoPublicacionHistorico);
 			}
 
 		} catch (Exception e) {

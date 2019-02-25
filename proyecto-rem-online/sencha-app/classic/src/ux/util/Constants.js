@@ -622,6 +622,11 @@ Ext.define('HreRem.ux.util.Constants', {
 	MOTIVOS_CAL_NEGATIVA:{
 		OTROS: '21'
 	},
+	
+	ESTADOS_MOTIVOS_CAL_NEGATIVA:{
+		PENDIENTE: '01',
+		SUBSANADO: '02'
+	},
     
     TAREAS:{
     	T015_DEFINICIONOFERTA : 'T015_DefinicionOferta',

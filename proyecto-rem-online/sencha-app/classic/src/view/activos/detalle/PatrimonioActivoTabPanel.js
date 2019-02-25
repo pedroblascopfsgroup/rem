@@ -95,7 +95,6 @@ Ext.define('HreRem.view.activos.detalle.PatrimonioActivoTabPanel', {
 	initComponent: function () {
 	     var me = this;
 	     me.callParent();
-	     debugger;
 	     me.add({xtype: 'datospatrimonio', ocultarBotonesEdicion: false, title: HreRem.i18n('title.datos.basicos')})
 	     me.add({xtype: 'contratospatrimonio', ocultarBotonesEdicion: true, bind: {disabled: me.lookupViewModel().get('activo.tieneRegistroContrato')=="false"}, title: HreRem.i18n('title.patrimonio.datos.patrimonio.contratos')})
 	},

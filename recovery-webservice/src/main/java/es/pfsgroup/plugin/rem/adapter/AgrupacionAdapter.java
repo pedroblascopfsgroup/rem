@@ -76,6 +76,7 @@ import es.pfsgroup.plugin.rem.model.ActivoLoteComercial;
 import es.pfsgroup.plugin.rem.model.ActivoObraNueva;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
+import es.pfsgroup.plugin.rem.model.ActivoPromocionAlquiler;
 import es.pfsgroup.plugin.rem.model.ActivoPropietario;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoProyecto;
@@ -1642,6 +1643,22 @@ public class AgrupacionAdapter {
 			genericDao.save(ActivoLoteComercial.class, loteComercial);
 
 			dtoAgrupacion.setId(loteComercial.getId().toString());
+			
+			// Si es PROMOCION ALQUILER
+		} 		else if (dtoAgrupacion.getTipoAgrupacion().equals(DDTipoAgrupacion.AGRUPACION_PROMOCION_ALQUILER)) {
+
+			ActivoPromocionAlquiler promocionAlquiler = new ActivoPromocionAlquiler();
+
+			promocionAlquiler.setDescripcion(dtoAgrupacion.getDescripcion());
+			promocionAlquiler.setNombre(dtoAgrupacion.getNombre());
+			promocionAlquiler.setTipoAgrupacion(tipoAgrupacion);
+			promocionAlquiler.setFechaAlta(new Date());
+			promocionAlquiler.setNumAgrupRem(numAgrupacionRem);
+			promocionAlquiler.setDireccion(dtoAgrupacion.getDireccion());
+
+		    genericDao.save(ActivoPromocionAlquiler.class, promocionAlquiler);
+
+		    dtoAgrupacion.setId(promocionAlquiler.getId().toString());
 		}
 
 		return dtoAgrupacion;

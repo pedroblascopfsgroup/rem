@@ -63,9 +63,16 @@ public interface ActivoPublicacionHistoricoDao extends AbstractDao<ActivoPublica
 	Long obtenerDiasPorEstadoPublicacionAlquilerActivo(ActivoPublicacionHistorico estadoActivo) throws ParseException;
 
 	/**
-	 * Este método devuelve el registro actual del histórico de publicaciones
+	 * Este método devuelve el registro actual del histórico de publicaciones de venta del activo
 	 * @param idActivo: ID del activo.
-	 * @return Devuelve el ActivoPublicacionHistorico del activo.
+	 * @return Devuelve el ActivoPublicacionHistorico.
 	 */
-	ActivoPublicacionHistorico getActivoPublicacionHistoricoActual(Long idActivo);
+	ActivoPublicacionHistorico getActivoPublicacionHistoricoActualVenta(Long idActivo);
+	
+	/**
+	 * Este método devuelve el registro actual del histórico de publicaciones de alquiler del activo
+	 * @param idActivo: ID del activo.
+	 * @return Devuelve el ActivoPublicacionHistorico.
+	 */
+	ActivoPublicacionHistorico getActivoPublicacionHistoricoActualAlquiler(Long idActivo);
 }

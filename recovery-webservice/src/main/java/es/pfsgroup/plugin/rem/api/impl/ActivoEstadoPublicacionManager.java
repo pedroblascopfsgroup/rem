@@ -651,22 +651,34 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 			if(!Checks.esNulo(dto.getMotivoOcultacionVentaCodigo()) || !Checks.esNulo(dto.getMotivoOcultacionManualVenta()) || !Checks.esNulo(dto.getPublicarVenta()) ||
 					!Checks.esNulo(dto.getOcultarVenta()) || (!Checks.esNulo(dto.getPublicarSinPrecioVenta()) && !Checks.esNulo(activoPublicacion.getMotivoOcultacionVenta()) 
 							&& ("14").equals(activoPublicacion.getMotivoOcultacionVenta().getCodigo())) || !Checks.esNulo(dto.getNoMostrarPrecioVenta())) {
-				activoPublicacion.setFechaInicioVenta(new Date());
+				activoPublicacion.setFechaInicioVenta(new Date(System.currentTimeMillis() + 3600 * 1000));
 			}
 
 			if(!Checks.esNulo(dto.getMotivoOcultacionAlquilerCodigo()) || !Checks.esNulo(dto.getMotivoOcultacionManualAlquiler()) || !Checks.esNulo(dto.getPublicarAlquiler()) ||
 					!Checks.esNulo(dto.getOcultarAlquiler()) || (!Checks.esNulo(dto.getPublicarSinPrecioAlquiler()) && !Checks.esNulo(activoPublicacion.getMotivoOcultacionVenta()) 
 							&& ("14").equals(activoPublicacion.getMotivoOcultacionAlquiler().getCodigo())) || !Checks.esNulo(dto.getNoMostrarPrecioAlquiler())) {
-				activoPublicacion.setFechaInicioAlquiler(new Date());
+				activoPublicacion.setFechaInicioAlquiler(new Date(System.currentTimeMillis() + 3600 * 1000));
 			}
 			
 			activoPublicacion.setMotivoPublicacion(dto.getMotivoPublicacion());
 
 			activoPublicacionDao.save(activoPublicacion);
 			
-			if((Checks.esNulo(dto.getOcultarVenta()) && !Checks.esNulo(dto.getMotivoOcultacionVentaCodigo())) || (Checks.esNulo(dto.getOcultarAlquiler()) && !Checks.esNulo(dto.getMotivoOcultacionAlquilerCodigo()))) {
+			if(Checks.esNulo(dto.getOcultarVenta()) && !Checks.esNulo(dto.getMotivoOcultacionVentaCodigo())) {
 				ActivoPublicacionHistorico activoPublicacionHistorico = new ActivoPublicacionHistorico();
 				BeanUtils.copyProperties(activoPublicacionHistorico, activoPublicacion);
+				activoPublicacionHistorico.setFechaInicioVenta(new Date(System.currentTimeMillis() + 3600 * 1000));
+				activoPublicacionHistorico.setFechaInicioAlquiler(null);
+				activoPublicacionHistorico.setAuditoria(null);
+				activoPublicacionHistoricoDao.save(activoPublicacionHistorico);
+			}
+			
+			if(Checks.esNulo(dto.getOcultarAlquiler()) && !Checks.esNulo(dto.getMotivoOcultacionAlquilerCodigo())) {
+				ActivoPublicacionHistorico activoPublicacionHistorico = new ActivoPublicacionHistorico();
+				BeanUtils.copyProperties(activoPublicacionHistorico, activoPublicacion);
+				activoPublicacionHistorico.setFechaInicioVenta(null);
+				activoPublicacionHistorico.setFechaInicioAlquiler(new Date(System.currentTimeMillis() + 3600 * 1000));
+				activoPublicacionHistorico.setAuditoria(null);
 				activoPublicacionHistoricoDao.save(activoPublicacionHistorico);
 			}
 
@@ -718,17 +730,35 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	
 				if(!Checks.esNulo(dto.getMotivoOcultacionVentaCodigo()) || !Checks.esNulo(dto.getMotivoOcultacionManualVenta()) || !Checks.esNulo(dto.getPublicarVenta()) ||
 						!Checks.esNulo(dto.getOcultarVenta()) || (!Checks.esNulo(dto.getPublicarSinPrecioVenta()) && ("14").equals(activoPublicacion.getMotivoOcultacionVenta().getCodigo())) || !Checks.esNulo(dto.getNoMostrarPrecioVenta())) {
-					activoPublicacion.setFechaInicioVenta(new Date());
+					activoPublicacion.setFechaInicioVenta(new Date(System.currentTimeMillis() + 3600 * 1000));
 				}
 	
 				if(!Checks.esNulo(dto.getMotivoOcultacionAlquilerCodigo()) || !Checks.esNulo(dto.getMotivoOcultacionManualAlquiler()) || !Checks.esNulo(dto.getPublicarAlquiler()) ||
 						!Checks.esNulo(dto.getOcultarAlquiler()) || (!Checks.esNulo(dto.getPublicarSinPrecioAlquiler()) && ("14").equals(activoPublicacion.getMotivoOcultacionAlquiler().getCodigo())) || !Checks.esNulo(dto.getNoMostrarPrecioAlquiler())) {
-					activoPublicacion.setFechaInicioAlquiler(new Date());
+					activoPublicacion.setFechaInicioAlquiler(new Date(System.currentTimeMillis() + 3600 * 1000));
 				}
 				
 				activoPublicacion.setMotivoPublicacion(dto.getMotivoPublicacion());
 	
 				activoPublicacionDao.save(activoPublicacion);
+				
+				if(Checks.esNulo(dto.getOcultarVenta()) && !Checks.esNulo(dto.getMotivoOcultacionVentaCodigo())) {
+					ActivoPublicacionHistorico activoPublicacionHistorico = new ActivoPublicacionHistorico();
+					BeanUtils.copyProperties(activoPublicacionHistorico, activoPublicacion);
+					activoPublicacionHistorico.setFechaInicioVenta(new Date(System.currentTimeMillis() + 3600 * 1000));
+					activoPublicacionHistorico.setFechaInicioAlquiler(null);
+					activoPublicacionHistorico.setAuditoria(null);
+					activoPublicacionHistoricoDao.save(activoPublicacionHistorico);
+				}
+				
+				if(Checks.esNulo(dto.getOcultarAlquiler()) && !Checks.esNulo(dto.getMotivoOcultacionAlquilerCodigo())) {
+					ActivoPublicacionHistorico activoPublicacionHistorico = new ActivoPublicacionHistorico();
+					BeanUtils.copyProperties(activoPublicacionHistorico, activoPublicacion);
+					activoPublicacionHistorico.setFechaInicioVenta(null);
+					activoPublicacionHistorico.setFechaInicioAlquiler(new Date(System.currentTimeMillis() + 3600 * 1000));
+					activoPublicacionHistorico.setAuditoria(null);
+					activoPublicacionHistoricoDao.save(activoPublicacionHistorico);
+				}
 			}
 		} catch (IllegalAccessException e) {
 			logger.error("Error al actualizar el estado actual de publicacion, error: ", e);
@@ -750,29 +780,20 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	 */
 	private Boolean registrarHistoricoPublicacion(ActivoPublicacion activoPublicacion, DtoDatosPublicacionActivo dto) {
 		try {
-			ActivoPublicacionHistorico activoPublicacionHistorico = activoPublicacionHistoricoDao.getActivoPublicacionHistoricoActual(activoPublicacion.getActivo().getId());
-
-			if(Checks.esNulo(activoPublicacionHistorico)) {
-				activoPublicacionHistorico = new ActivoPublicacionHistorico();
-				BeanUtils.copyProperties(activoPublicacionHistorico, activoPublicacion);
-			}
-			
 			if(Arrays.asList(DDTipoComercializacion.CODIGOS_VENTA).contains(activoPublicacion.getTipoComercializacion().getCodigo()) &&
 					(!Checks.esNulo(dto.getMotivoOcultacionVentaCodigo()) || !Checks.esNulo(dto.getMotivoOcultacionManualVenta()) || !Checks.esNulo(dto.getPublicarVenta()) ||
 					!Checks.esNulo(dto.getOcultarVenta()) || (!Checks.esNulo(dto.getPublicarSinPrecioVenta()) && !Checks.esNulo(activoPublicacion.getMotivoOcultacionVenta()) && DDMotivosOcultacion.CODIGO_SIN_PRECIO.equals(activoPublicacion.getMotivoOcultacionVenta().getCodigo())) || !Checks.esNulo(dto.getNoMostrarPrecioVenta()))) {
-				activoPublicacionHistorico.setFechaFinVenta(new Date());
+				ActivoPublicacionHistorico activoPublicacionHistoricoVenta = activoPublicacionHistoricoDao.getActivoPublicacionHistoricoActualVenta(activoPublicacion.getActivo().getId());
+				activoPublicacionHistoricoVenta.setFechaFinVenta(new Date(System.currentTimeMillis() + 3600 * 1000));
+				activoPublicacionHistoricoDao.saveOrUpdate(activoPublicacionHistoricoVenta);
 			}
-
 			if(Arrays.asList(DDTipoComercializacion.CODIGOS_ALQUILER).contains(activoPublicacion.getTipoComercializacion().getCodigo()) &&
 					(!Checks.esNulo(dto.getMotivoOcultacionAlquilerCodigo()) || !Checks.esNulo(dto.getMotivoOcultacionManualAlquiler()) || !Checks.esNulo(dto.getPublicarAlquiler()) ||
 					!Checks.esNulo(dto.getOcultarAlquiler()) || (!Checks.esNulo(dto.getPublicarSinPrecioAlquiler()) && !Checks.esNulo(activoPublicacion.getMotivoOcultacionAlquiler()) && DDMotivosOcultacion.CODIGO_SIN_PRECIO.equals(activoPublicacion.getMotivoOcultacionAlquiler().getCodigo())) || !Checks.esNulo(dto.getNoMostrarPrecioAlquiler()))) {
-				activoPublicacion.setFechaInicioAlquiler(new Date());
+				ActivoPublicacionHistorico activoPublicacionHistoricoAlquiler = activoPublicacionHistoricoDao.getActivoPublicacionHistoricoActualAlquiler(activoPublicacion.getActivo().getId());
+				activoPublicacionHistoricoAlquiler.setFechaFinAlquiler(new Date(System.currentTimeMillis() + 3600 * 1000));
+				activoPublicacionHistoricoDao.saveOrUpdate(activoPublicacionHistoricoAlquiler);
 			}
-			
-			if(!Checks.esNulo(activoPublicacionHistorico.getFechaFinVenta()) || !Checks.esNulo(activoPublicacionHistorico.getFechaInicioAlquiler())){
-				activoPublicacionHistoricoDao.saveOrUpdate(activoPublicacionHistorico);
-			}
-
 		} catch (Exception e) {
 			logger.error("Error al registrar en el historico el estado actual de publicacion, error: ", e);
 			return false;
@@ -1142,5 +1163,70 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 			logger.error("No se ha podido notificar la adecuación del activo.", e);
 		}
 		return resultado;
+	}
+	
+	@Override
+	@Transactional
+	public Boolean actualizarPublicacionActivoCambioTipoComercializacion(Activo activo, String tcoNuevo) {
+		try {
+			ActivoPublicacion activoPublicacion = activoPublicacionDao.getActivoPublicacionPorIdActivo(activo.getId());
+			ActivoPublicacionHistorico activoPublicacionHistorico = null;
+			ActivoPublicacionHistorico activoPublicacionHistoricoActual = null;
+			String tcoAnterior = activoPublicacion.getTipoComercializacion().getCodigo();
+			DDTipoComercializacion tipoComercializacion = (DDTipoComercializacion) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoComercializacion.class,  tcoNuevo);
+			activoPublicacion.setTipoComercializacion(tipoComercializacion);
+			activo.setTipoComercializacion(tipoComercializacion);
+			
+			if (DDTipoComercializacion.CODIGO_ALQUILER_VENTA.equals(tcoAnterior)) {				
+				if (DDTipoComercializacion.CODIGO_VENTA.equals(tcoNuevo)) {
+					activoPublicacionHistorico = activoPublicacionHistoricoDao.getActivoPublicacionHistoricoActualAlquiler(activo.getId());
+					activoPublicacionHistorico.setFechaFinAlquiler(new Date(System.currentTimeMillis() + 3600 * 1000));
+				} else if (DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(tcoNuevo)) {
+					activoPublicacionHistorico = activoPublicacionHistoricoDao.getActivoPublicacionHistoricoActualVenta(activo.getId());
+					activoPublicacionHistorico.setFechaFinVenta(new Date(System.currentTimeMillis() + 3600 * 1000));
+				}
+			} else if (DDTipoComercializacion.CODIGO_ALQUILER_VENTA.equals(tcoNuevo)) {
+				activoPublicacionHistoricoActual = new ActivoPublicacionHistorico();
+				BeanUtils.copyProperties(activoPublicacionHistoricoActual, activoPublicacion);
+				
+				if (DDTipoComercializacion.CODIGO_VENTA.equals(tcoAnterior)) {
+					activoPublicacion.setFechaInicioAlquiler(new Date(System.currentTimeMillis() + 3600 * 1000));
+					activoPublicacionHistoricoActual.setFechaInicioAlquiler(new Date(System.currentTimeMillis() + 3600 * 1000));
+					activoPublicacionHistoricoActual.setFechaInicioVenta(null);
+				} else if (DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(tcoAnterior)) {
+					activoPublicacion.setFechaInicioVenta(new Date(System.currentTimeMillis() + 3600 * 1000));
+					activoPublicacionHistoricoActual.setFechaInicioVenta(new Date(System.currentTimeMillis() + 3600 * 1000));
+					activoPublicacionHistoricoActual.setFechaInicioAlquiler(null);
+				}
+			} else {
+				if (DDTipoComercializacion.CODIGO_VENTA.equals(tcoAnterior) && DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(tcoNuevo)){
+					activoPublicacionHistorico = activoPublicacionHistoricoDao.getActivoPublicacionHistoricoActualVenta(activo.getId());
+					activoPublicacionHistorico.setFechaFinVenta(new Date(System.currentTimeMillis() + 3600 * 1000));
+					activoPublicacion.setFechaInicioVenta(null);
+					activoPublicacion.setFechaInicioAlquiler(new Date(System.currentTimeMillis() + 3600 * 1000));
+				} else if (DDTipoComercializacion.CODIGO_SOLO_ALQUILER.equals(tcoAnterior) && DDTipoComercializacion.CODIGO_VENTA.equals(tcoNuevo)){
+					activoPublicacionHistorico = activoPublicacionHistoricoDao.getActivoPublicacionHistoricoActualAlquiler(activo.getId());
+					activoPublicacionHistorico.setFechaFinAlquiler(new Date(System.currentTimeMillis() + 3600 * 1000));
+					activoPublicacion.setFechaInicioAlquiler(null);
+					activoPublicacion.setFechaInicioVenta(new Date(System.currentTimeMillis() + 3600 * 1000));
+				}
+				activoPublicacionHistoricoActual = new ActivoPublicacionHistorico();
+				BeanUtils.copyProperties(activoPublicacionHistoricoActual, activoPublicacion);	
+			}
+			
+			if (!Checks.esNulo(activoPublicacionHistorico)) {
+				activoPublicacionHistoricoDao.saveOrUpdate(activoPublicacionHistorico);
+			}
+			
+			if (!Checks.esNulo(activoPublicacionHistoricoActual)) {
+				activoPublicacionHistoricoActual.setAuditoria(null);
+				activoPublicacionHistoricoDao.save(activoPublicacionHistoricoActual);
+			}
+		} catch (Exception e) {
+			logger.error("Error al actualizar el estado de publicación del activo tras modificar el destino comercial, error: ", e);
+			return false;
+		}
+		
+		return true;
 	}
 }

@@ -854,13 +854,10 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				// Hace throws en caso de inflingir alguna valdiacion con el cambio de TipoComercializacion a realizar
 				validarCambiosTipoComercializacion(activo,dto);
 
-				DDTipoComercializacion tipoComercializacion = (DDTipoComercializacion) diccionarioApi.dameValorDiccionarioByCod(DDTipoComercializacion.class,  dto.getTipoComercializacionCodigo());
-				activo.setTipoComercializacion(tipoComercializacion);
-				activo.getActivoPublicacion().setTipoComercializacion(tipoComercializacion);
+				activoEstadoPublicacionApi.actualizarPublicacionActivoCambioTipoComercializacion(activo, dto.getTipoComercializacionCodigo());
 
 				// Actualizar registros del Historico Destino Comercial
 				activoApi.updateHistoricoDestinoComercial(activo, null);
-
 			}
 			
 			if (!Checks.esNulo(dto.getTipoAlquilerCodigo())) {

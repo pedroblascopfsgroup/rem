@@ -236,10 +236,28 @@ public class ActivoPublicacionHistoricoDaoImpl extends AbstractEntityDao<ActivoP
 		return dias;
 	}
 	
-	public ActivoPublicacionHistorico getActivoPublicacionHistoricoActual(Long idActivo) {
+	@Override
+	public ActivoPublicacionHistorico getActivoPublicacionHistoricoActualVenta(Long idActivo) {
 		Criteria criteria = getSession().createCriteria(ActivoPublicacionHistorico.class);
-		criteria.add(Restrictions.eq("activo.id", idActivo));
+		criteria.add(Restrictions.eq("activo.id", idActivo)).createCriteria("tipoComercializacion").add(Restrictions.in("codigo", DDTipoComercializacion.CODIGOS_VENTA));
+		criteria.add(Restrictions.isNotNull("fechaInicioVenta"));
 		criteria.add(Restrictions.isNull("fechaFinVenta"));
+		criteria.add(Restrictions.eq("auditoria.borrado", false));
+		criteria.addOrder(Order.desc("auditoria.fechaCrear"));
+
+		List<ActivoPublicacionHistorico> historicos = HibernateUtils.castList(ActivoPublicacionHistorico.class, criteria.list());
+		
+		if(!Checks.esNulo(historicos) && !historicos.isEmpty())
+			return historicos.get(0);
+		else
+			return null;
+	}
+	
+	@Override
+	public ActivoPublicacionHistorico getActivoPublicacionHistoricoActualAlquiler(Long idActivo) {
+		Criteria criteria = getSession().createCriteria(ActivoPublicacionHistorico.class);
+		criteria.add(Restrictions.eq("activo.id", idActivo)).createCriteria("tipoComercializacion").add(Restrictions.in("codigo", DDTipoComercializacion.CODIGOS_ALQUILER));
+		criteria.add(Restrictions.isNotNull("fechaInicioAlquiler"));
 		criteria.add(Restrictions.isNull("fechaFinAlquiler"));
 		criteria.add(Restrictions.eq("auditoria.borrado", false));
 		criteria.addOrder(Order.desc("auditoria.fechaCrear"));

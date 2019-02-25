@@ -179,4 +179,13 @@ public interface ActivoEstadoPublicacionApi {
 	Date getFechaInicioEstadoActualPublicacionVenta(Long idActivo);
 
 	Boolean enviarCorreoAdecuacion(ActivoPublicacion activoPublicacion);
+	
+	/**
+	 * Este método actualiza el estado y el historico de publicación del activo tras cambiar el tipo de comercialización 
+	 * 
+	 * @param idActivo: ID del activo.
+	 * @param tipoComercializacionCodigo: Código del nuevo destino comercial del activo
+	 * @return Devuelve True si la operación se ha llevado a cabo.
+	 */
+	Boolean actualizarPublicacionActivoCambioTipoComercializacion(Activo activo, String tipoComercializacionCodigo);
 }

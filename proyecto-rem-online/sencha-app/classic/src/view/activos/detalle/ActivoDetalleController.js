@@ -5368,13 +5368,19 @@ Ext
      		var codPrescriptor;
      		var numDoc = "";
      		var nombre = "";
+     		var razonSocial = "";
      		var direccion = ""
      		var email = "";
      		var telefono= "";
      		if(!Ext.isEmpty(ventana2)){
      			codPrescriptor = ventana2.getForm().findField('buscadorPrescriptores').value;
      			numDoc = ventana2.getForm().findField('numDocumentoCliente').value;
-     			nombre= ventana2.getForm().findField('nombreCliente').value + " " + ventana2.getForm().findField('apellidosCliente').value;
+     			razonSocial = ventana2.getForm().findField('razonSocialCliente').value;
+     			if(razonSocial !== ""){
+     				nombre = razonSocial;
+     			}else{
+     				nombre = ventana2.getForm().findField('nombreCliente').value + " " + ventana2.getForm().findField('apellidosCliente').value;
+     			}
      			direccion = ventana2.getForm().getValues().direccion;
      			email = ventana2.getForm().getValues().email;
      			telefono = ventana2.getForm().getValues().telefono;

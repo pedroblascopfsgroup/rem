@@ -55,7 +55,7 @@ public class DtoActivoFilter extends WebDto {
 	private String unidadInferior;
 	private String numRegistro;
 	private Integer ocupado;
-	private Integer conTitulo;
+	private String conTitulo;
 	private Integer inscrito;
 	private Integer conPosesion;
 	private Integer conCargas;
@@ -212,10 +212,10 @@ public class DtoActivoFilter extends WebDto {
 	public void setOcupado(Integer ocupado) {
 		this.ocupado = ocupado;
 	}
-	public Integer getConTitulo() {
+	public String getConTitulo() {
 		return conTitulo;
 	}
-	public void setConTitulo(Integer conTitulo) {
+	public void setConTitulo(String conTitulo) {
 		this.conTitulo = conTitulo;
 	}
 	public String getFincaAvanzada() {

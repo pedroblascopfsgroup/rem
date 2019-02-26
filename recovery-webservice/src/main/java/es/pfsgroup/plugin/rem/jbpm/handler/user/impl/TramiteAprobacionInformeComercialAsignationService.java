@@ -18,7 +18,7 @@ import es.pfsgroup.plugin.rem.jbpm.handler.user.UserAssigantionService;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 
-public class TramitePublicacionAsignationService implements UserAssigantionService {
+public class TramiteAprobacionInformeComercialAsignationService implements UserAssigantionService {
 
 	public static final String CODIGO_T011_ANALISIS_PETICION_CORRECCION = "T011_AnalisisPeticionCorreccion";
 	public static final String CODIGO_T011_REVISION_INFORME_COMERCIAL = "T011_RevisionInformeComercial";

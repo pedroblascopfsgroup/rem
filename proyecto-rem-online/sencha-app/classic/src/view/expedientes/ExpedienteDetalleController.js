@@ -2,8 +2,9 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
     extend: 'Ext.app.ViewController',
     alias: 'controller.expedientedetalle',  
     requires: ['HreRem.view.expedientes.NotarioSeleccionado', 'HreRem.view.expedientes.DatosComprador', 
-    'HreRem.view.expedientes.DatosClienteUrsus','HreRem.model.ActivoExpedienteCondicionesModel',
-    'HreRem.view.common.adjuntos.AdjuntarDocumentoExpediente'],
+    'HreRem.view.expedientes.DatosClienteUrsus',"HreRem.model.ActivoExpedienteCondicionesModel",
+    "HreRem.view.common.adjuntos.AdjuntarDocumentoExpediente", 'HreRem.view.activos.detalle.OpcionesPropagacionCambios'],
+    
     control: {
     	'documentosexpediente gridBase': {
             abrirFormulario: 'abrirFormularioAdjuntarDocumentos',
@@ -28,8 +29,6 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
            	enviarComercializadora:'onClickEnviarComercializadora'
            }
     },
-    
-   
 
     onRowClickListadoactivos: function(gridView,record){
     	var me = this;
@@ -266,6 +265,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 				var contador = 0;
 				me.saveMultipleRecords(contador, records);
 			}
+
 		} else {
 		
 			me.fireEvent("errorToast", HreRem.i18n("msg.form.invalido"));
@@ -282,9 +282,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 				function (field, index){field.fireEvent('update'); field.fireEvent('save');}
 			);
 					
-			btn.hide(); 
-			btn.up('tabbar').down('button[itemId=botoncancelar]').hide();
-			btn.up('tabbar').down('button[itemId=botoneditar]').show();
+			btn.hide();
 			me.getViewModel().set("editing", false);
 			
 			if (!form.saveMultiple) {
@@ -397,11 +395,10 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		}
 	},
 
-onClickBotonEditar: function(btn) {
-		
+	onClickBotonEditar: function(btn) {
 		var me = this;
 		var url =  $AC.getRemoteUrl('expedientecomercial/getIsExpedienteGencat');
-		
+
 		Ext.Ajax.request({
 		     url: url,
 		     method: 'POST',
@@ -409,27 +406,27 @@ onClickBotonEditar: function(btn) {
 		     success: function(response, opts) {
 		    	data = Ext.decode(response.responseText);
 		    	if(data.data == "false"){
-		    		btn.hide();
-	    			btn.up('tabbar').down('button[itemId=botonguardar]').show();
-	    			btn.up('tabbar').down('button[itemId=botoncancelar]').show();
-	    			me.getViewModel().set("editing", true);	
-	    	
-	    			Ext.Array.each(btn.up('tabpanel').getActiveTab().query('field[isReadOnlyEdit]'),
-	    							function (field, index) 
-	    								{ 
-	    									field.fireEvent('edit');});
-	    									
-	    			btn.up('tabpanel').getActiveTab().query('field[isReadOnlyEdit]')[0].focus();
+		btn.hide();
+		btn.up('tabbar').down('button[itemId=botonguardar]').show();
+		btn.up('tabbar').down('button[itemId=botoncancelar]').show();
+		me.getViewModel().set("editing", true);		
+
+		Ext.Array.each(btn.up('tabpanel').getActiveTab().query('field[isReadOnlyEdit]'),
+						function (field, index) 
+							{ 
+								field.fireEvent('edit');});
+								
+		btn.up('tabpanel').getActiveTab().query('field[isReadOnlyEdit]')[0].focus();
 		    	}else{
 		    		 me.fireEvent("errorToast", HreRem.i18n("msg.no.editable.afectado.gencat"));
-		    	}    	 
+		    	}
 		    },
 		    failure: function (a, operation) {
 		    	 me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
 		 	}
 		});
-		
-		
+
+
 	},
     
 	onClickBotonGuardar: function(btn) {
@@ -439,12 +436,12 @@ onClickBotonEditar: function(btn) {
 	
 	onClickBotonGuardarActivoExpediente: function(btn) {
 		var me = this;
-		if(btn.up('tabpanel').getActiveTab().getReference()=="activoexpedientetanteo"){
+		/*if(btn.up('tabpanel').getActiveTab().getReference()=="activoexpedientetanteo"){
 			me.onSaveFormularioActivoExpedienteTanteo(btn, btn.up('tabpanel').getActiveTab());
 		}else{
 			me.onSaveFormularioCompletoActivoExpediente(btn, btn.up('tabpanel').getActiveTab());
-		}
-						
+		}*/
+		me.onSaveFormularioCondiciones(btn, btn.up('tabpanel').getActiveTab());
 	},
 	
 	onSaveFormularioActivoExpedienteTanteo: function(btn, form) {
@@ -2793,6 +2790,497 @@ onClickBotonEditar: function(btn) {
 		}
 	},
 	
+	onClickSaveMasivosCondiciones: function(btn) {
+		var me = this,
+    	window = btn.up("window"),
+    	jsonData = window.config.jsonData,
+    	grid = me.lookupReference("listaActivos"),
+    	radioGroup = me.lookupReference("opcionesPropagacion"),
+    	formActivo = window.form,
+    	activosSeleccionados = grid.getSelectionModel().getSelection(),
+    	opcionPropagacion = radioGroup.getValue().seleccion,
+    	cambios =  window.propagableData,
+    	targetGrid = window.targetGrid;
+
+		me.fireEvent("log", cambios);
+		jsonFinal = {};
+		jsonFinal.id = jsonData.ecoId;
+		//var jsonData = {idEntidad: idActivo, posesionInicial: posesionInicial, situacionPosesoriaCodigo: situacionPosesoriaCodigo, estadoTitulo: estadoTitulo};
+		if(!Ext.isEmpty(jsonData)) {
+			if(!Ext.isEmpty(jsonData.estadoTitulo)) {
+				jsonFinal.estadoTitulo = jsonData.estadoTitulo;
+			}
+
+			if(!Ext.isEmpty(jsonData.posesionInicial)) {
+				jsonFinal.posesionInicial = jsonData.posesionInicial;
+			}
+
+
+			if(!Ext.isEmpty(jsonData.situacionPosesoriaCodigo)) {
+				jsonFinal.situacionPosesoriaCodigo = jsonData.situacionPosesoriaCodigo;
+			}
+
+			if(!Ext.isEmpty(jsonData.eviccion)) {
+				jsonFinal.eviccion = jsonData.eviccion;
+			}
+
+			if(!Ext.isEmpty(jsonData.viciosOcultos)) {
+				jsonFinal.viciosOcultos = jsonData.viciosOcultos;
+			}
+		}
+
+    	listaAct = [];
+
+    	switch (opcionPropagacion) {
+
+			case "1":
+				jsonFinal.activos = [jsonData.idEntidad];
+				break;
+
+			case "2":
+			case "3":
+				jsonFinal.activos=activosSeleccionados[0].data.idActivo;
+				for(i = 1;  i < activosSeleccionados.length; i++) {
+					jsonFinal.activos = jsonFinal.activos +","+activosSeleccionados[i].data.idActivo
+				}
+				break;
+
+			case "4":
+				if (activosSeleccionados.length == 0) {
+			    	me.fireEvent("errorToast", HreRem.i18n("msg.no.activos.seleccionados"));
+			    	return false;
+		    	} else {
+		    		for(i = 0; i < activosSeleccionados.length; i++) {
+						listaAct[i] = activosSeleccionados[i].data.idActivo;
+					}
+					jsonFinal.activos = listaAct;
+		    	}
+				break;
+		}
+
+    	var url = $AC.getRemoteUrl('expedientecomercial/saveActivosExpedienteCondiciones');
+		me.getView().mask(HreRem.i18n("msg.mask.espere"));
+
+		Ext.Ajax.request({
+			url: url,
+
+		    params: jsonFinal,
+
+		    success: function(response, opts) {
+		    	var data = {};
+		    	try {
+		    		data = Ext.decode(response.responseText);
+		    	}  catch (e){ };
+
+		    	if(data.success === "true") {
+		    		me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+		    		me.getView().unmask();
+		    		window = btn.up('window');
+		        	window.close();
+
+		    	}else {
+		    		if(data.errorUvem == "true"){
+		    			me.fireEvent("errorToast", data.msg);
+		    		}
+		    		else{
+		    			Utils.defaultRequestFailure(response, opts);
+		    		}
+		    	}
+		     },
+
+		     failure: function(response, opts) {
+		    	 if(data.errorUvem == "true"){
+		    		 me.fireEvent("errorToast", data.msg);
+		    	 }
+		    	 else{
+		    		 Utils.defaultRequestFailure(response, opts);
+		    	 }
+		     },
+
+		     callback: function() {
+		    	 me.getView().unmask();
+		     }
+		});
+
+	},
+
+	onSaveFormularioCondiciones: function(btn, form) {
+		var me = this;
+		me.getView().mask(HreRem.i18n("msg.mask.loading"));
+
+		//disableValidation: Atributo para indicar si el guardado del formulario debe aplicar o no, las validaciones.
+		if(form.isFormValid() || form.disableValidation) {
+
+			Ext.Array.each(form.query('field[isReadOnlyEdit]'),
+				function (field, index){field.fireEvent('update'); field.fireEvent('save');}
+			);
+
+			//Ocultar los botones de guardar y cancelar y mostrar el botón de editar.
+			if(!Ext.isEmpty(btn)) {
+				btn.hide();
+				btn.up('tabbar').down('button[itemId=botoncancelar]').hide();
+				btn.up('tabbar').down('button[itemId=botoneditar]').show();
+
+				if(Ext.isDefined(btn.name) && btn.name === 'firstLevel') {
+		 			me.getViewModel().set("editingFirstLevel", false);
+		 		} else {
+		 			me.getViewModel().set("editing", false);
+		 		}
+			}
+
+			if (form.xtype == 'activoexpedientejuridico') { //TODO Retirar toda esta cinta aislante y hacer las propagaciones bien
+				var id = me.getViewModel().get("expediente.id");
+				var idActivo = me.getViewModel().get("activoExpedienteSeleccionado.idActivo");
+				var url = $AC.getRemoteUrl('expedientecomercial/saveFechaEmisionInfJuridico');
+				var jsonFinal = {};
+				jsonFinal.id = id;
+				jsonFinal.idActivo = idActivo;
+				if (form.getForm().findField('fechaEmision') != null)
+					jsonFinal.fechaEmision = form.getForm().findField('fechaEmision').getValue();
+				Ext.Ajax.request({
+					url: url,
+					method: 'POST',
+					params: jsonFinal,
+					success: function (response, opts) {
+						me.getView().unmask();
+					},
+					failure: function (a, operation, context) {
+		            	 me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+						 me.getView().unmask();
+		            }
+				});
+			} else {
+				var idExpediente 	= me.getViewModel().get("expediente.id");
+				var url 			= $AC.getRemoteUrl('expedientecomercial/getActivosPropagables');
+				Ext.Ajax.request({
+
+				    url: url,
+					method : 'POST',
+
+				    params: { idExpediente: idExpediente },
+
+
+				    success: function (response, opts) {
+
+						// Obtener jsondata para guardar activo
+						var idActivo 					=	me.getViewModel().get("activoExpedienteSeleccionado.idActivo");
+						var posesionInicial 			=	me.getViewModel().get("condiciones.posesionInicial");
+						var situacionPosesoriaCodigo 	=	me.getViewModel().get("condiciones.situacionPosesoriaCodigo");
+						var estadoTitulo 				=	me.getViewModel().get("condiciones.estadoTitulo");
+						var eviccion 				=	me.getViewModel().get("condiciones.eviccion");
+						var viciosOcultos 				=	me.getViewModel().get("condiciones.viciosOcultos");
+
+						var jsonData = {eviccion: eviccion, viciosOcultos: viciosOcultos, idEntidad: idActivo, ecoId: idExpediente, posesionInicial: posesionInicial, situacionPosesoriaCodigo: situacionPosesoriaCodigo, estadoTitulo: estadoTitulo};
+
+		    			var activosPropagables = [];
+		    			var data = null;
+
+		                try {
+		                		data = Ext.decode(response.responseText).data;
+		                		activosPropagables = data;
+		                } catch (e){ };
+
+
+
+
+		    			var tabData = me.createTabData(form);
+		    			var tabPropagableData = null;
+
+		    			if(activosPropagables.length > 0)
+		    			{
+		    				var activo;
+		    				//Encontramos el activo seleccionado en la pestaña condiciones
+		    				for(var i = 0; i < activosPropagables.length; i++) {
+		    					if(activosPropagables[i].idActivo == idActivo) {
+		    						activo = activosPropagables[i];
+		    					}
+		    				}
+		 	                //var activo = activosPropagablesAux.splice(activosPropagablesAux.findIndex(function(activo){return activo.activoId == me.getViewModel().get("activoExpedienteSeleccionado.idActivo")}),1)[0];
+		    				tabPropagableData = me.createFormPropagableData(form, tabData);
+		    				//if (!Ext.isEmpty(tabPropagableData))
+		    				{
+
+
+		    					// Abrimos la ventana de selección de activos
+		    					var ventanaOpcionesPropagacionCambios = Ext.create("HreRem.view.expedientes.OpcionesPropagacionCambiosExpedientes", {
+		    						form: form,
+		    						activoActual: activo,
+		    						activos: activosPropagables,
+		    						tabData: tabData,
+		    						jsonData: jsonData,
+		    						propagableData: tabPropagableData}).show();
+		       					me.getView().add(ventanaOpcionesPropagacionCambios);
+		       					me.getView().unmask();
+		    				}
+		    			}
+
+		    			me.getView().unmask();
+		            },
+
+		            failure: function (a, operation, context) {
+		            	 me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+						 me.getView().unmask();
+		            }
+
+				});
+			}
+
+
+		} else {
+			me.getView().unmask();
+			me.fireEvent("errorToast", HreRem.i18n("msg.form.invalido"));
+
+		}
+
+	},
+
+	createTabData: function(form) {
+
+    	var me = this,
+    	tabData = {};
+
+    	tabData.id = me.getViewModel().get("activoExpedienteSeleccionado.idActivo");
+    	tabData.models = [];
+
+    	if(form.saveMultiple) {
+    		var types = form.records;
+    		Ext.Array.each(form.getBindRecords(), function(record, index) {
+    			var model = me.createModelToSave(record, types[index]);
+	    		if(!Ext.isEmpty(model)) {
+	    			tabData.models.push(model);
+	    		}
+    		});
+
+    	} else {
+    		var type = form.recordName;
+    		var model = me.createModelToSave(form.getBindRecord(), type);
+    		if(!Ext.isEmpty(model)) {
+    			tabData.models.push(model);
+    		}
+    	}
+
+    	if(tabData.models.length > 0) {
+    		return tabData;
+
+    	} else {
+    		return null;
+    	}
+    },
+
+    createModelToSave: function(record, type) {
+
+    	var me = this;
+    	var model = null;
+    	if (Ext.isDefined(record.getProxy().getApi().update)) {
+    		model = {};
+    		model.name= record.getProxy().getExtraParams().tab;
+    		model.type= type;
+    		model.data= record.getProxy().getWriter().getRecordData(record);
+    	}
+
+    	return model;
+
+    },
+
+	 createFormPropagableData: function(form, tabData) {
+
+    	var me = this,
+    	propagableData=null,
+    	camposPropagables = [],
+    	dirtyFieldsModel =  [],
+    	propagableData = [];
+
+    	var records = [],
+    	models = [];
+
+    	if(form.saveMultiple) {
+    		records = records.concat(form.getBindRecords())
+    	} else {
+    		records.push(form.getBindRecord());
+    	}
+
+    	Ext.Array.each(records, function(record, index) {
+    		var name = record.getProxy().getExtraParams().tab;
+    		camposPropagables[name] = record.get("camposPropagables"); // ¿CAMBIAR?
+    	});
+
+    	Ext.Array.each(tabData.models, function(model, index) {
+    		var data = {},
+    		modelHasData = false;
+    		Ext.Array.each(camposPropagables[model.name], function(campo, index){
+    			if(Ext.isDefined(model.data[campo])) {
+    				data[campo] = model.data[campo];
+    				modelHasData=true;
+    			}
+    		});
+
+    		if(modelHasData) {
+    			model.data=data;
+    			models.push(model);
+    		}
+
+    	});
+
+    	if(models.length>0) {
+    		propagableData = {};
+    		propagableData.models = models
+    	}
+
+    	return propagableData;
+    },
+
+
+
+	onClickGuardarPropagarCambios: function(btn) {
+    	var me = this,
+
+    	window = btn.up("window"),
+    	grid = me.lookupReference("listaActivos"),
+    	radioGroup = me.lookupReference("opcionesPropagacion"),
+    	formActivo = window.form,
+    	activosSeleccionados = grid.getSelectionModel().getSelection(),
+    	opcionPropagacion = radioGroup.getValue().seleccion,
+    	cambios =  window.propagableData,
+    	targetGrid = window.targetGrid;
+
+		me.fireEvent("log", cambios);
+
+    	if (opcionPropagacion == "4" &&  activosSeleccionados.length == 0) {
+	    	me.fireEvent("errorToast", HreRem.i18n("msg.no.activos.seleccionados"));
+	    	return false;
+    	}
+	    // Si estamos modificando una pestaña con formulario
+	    if (Ext.isEmpty(targetGrid)) {
+	      if (!Ext.isEmpty(formActivo)) {
+	        var successFn = function(record, operation) {
+	          if (activosSeleccionados.length > 0) {
+	        	  me.manageToastJsonResponse(me, record.responseText);
+	        	  me.propagarCambios(window, activosSeleccionados, record.responseText);
+	            /*me.propagarCambios(window, activosSeleccionados);*/
+	          } else {
+	            window.destroy();
+	            me.manageToastJsonResponse(me, record.responseText);
+	            /*me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));*/
+	            me.getView().unmask();
+	            me.refrescarActivoExpediente(formActivo.refreshAfterSave);
+
+	            me.getView().fireEvent("refreshComponentOnActivate", "container[reference=tabBuscadorActivos]");
+	          }
+	        };
+
+	        me.saveActivo(window.tabData, successFn);
+
+	      } else {
+
+	        var successFn = function(record, operation) {
+	          if (activosSeleccionados.length > 0) {
+	        	  me.manageToastJsonResponse(me, record.responseText);
+	        	  me.propagarCambios(window, activosSeleccionados, record.responseText);
+	            /*me.propagarCambios(window, activosSeleccionados);*/
+	          } else {
+	            window.destroy();
+	            me.manageToastJsonResponse(me, record.responseText);
+	            /*me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));*/
+	            me.getView().unmask();
+	            me.getView().fireEvent("refreshComponentOnActivate", "container[reference=tabBuscadorActivos]");
+	          }
+	        };
+
+	        me.saveActivo(window.tabData, successFn);
+
+	      }
+	    } else {
+			if(targetGrid=='mediadoractivo') {
+
+		        var successFn = function(record, operation) {
+		            window.destroy();
+		            me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+		            me.getView().unmask();
+		            me.getView().fireEvent("refreshComponentOnActivate", "container[reference=tabBuscadorActivos]");
+		        };
+		        me.saveActivo(me.createTabDataHistoricoMediadores(activosSeleccionados), successFn);
+			} else if(targetGrid=='condicionesespecificas') {
+
+		        var successFn = function(record, operation) {
+		            window.destroy();
+		            /*me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));*/
+		            me.manageToastJsonResponse(me, record.responseText);
+		            me.getView().unmask();
+		            me.getView().fireEvent("refreshComponentOnActivate", "container[reference=tabBuscadorActivos]");
+		        };
+		        me.saveActivo(me.createTabDataCondicionesEspecificas(activosSeleccionados, window.tabData), successFn);
+			}
+	    }
+	     window.mask("Guardando activos 1 de " + (activosSeleccionados.length));
+	},
+
+	saveActivo: function(jsonData, successFn) { //saveActivoExpedienteCondiciones
+		var me = this,
+		url =  $AC.getRemoteUrl('activo/saveActivo');
+
+		me.getView().mask(HreRem.i18n("msg.mask.loading"));
+
+		successFn = successFn || Ext.emptyFn
+
+
+		if(Ext.isEmpty(jsonData)) {
+			me.fireEvent("log", "Obligatorio jsonData para guardar el activo");
+		} else {
+
+			Ext.Ajax.request({
+				method : 'POST',
+				url: url,
+				jsonData: Ext.JSON.encode(jsonData),
+				success: successFn,
+			 	failure: function(response, opts) {
+			 		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+			 		}
+
+			});
+		}
+	},
+
+	propagarCambios: function(window, activos, jsonResponse) {
+    	var me = this,
+    	grid = window.down("grid"),
+    	propagableData = window.propagableData,
+    	numTotalActivos = grid.getSelectionModel().getSelection().length,
+    	targetGrid = window.targetGrid,
+    	numActivoActual = numTotalActivos;
+
+    	if (activos.length>0) {
+    		var activo = activos.shift();
+
+    		numActivoActual = numTotalActivos - activos.length;
+
+    		if (Ext.isEmpty(targetGrid)) {
+    			propagableData.id = activo.get("activoId");
+    		} else {
+    			if(targetGrid=='mediadoractivo') {
+    				propagableData = me.createTabDataHistoricoMediadores(activos);
+    				// Los lanzamos todos de golpe sin necesidad de iterar
+    				activos = [];
+    			}
+    		}
+
+    		var successFn = function(response, opts){
+				// Lanzamos el evento de refrescar el activo por si está abierto.
+				me.getView().fireEvent("refreshEntityOnActivate", CONST.ENTITY_TYPES['ACTIVO'], activo.get("activoId"));
+				me.manageToastJsonResponse(me,response.responseText);
+				me.propagarCambios(window, activos,response.responseText);
+			};
+
+			window.mask("Guardando activos "+ numActivoActual +" de " + numTotalActivos);
+			me.saveActivo(propagableData, successFn);
+
+    	} else {
+    		Ext.ComponentQuery.query('opcionespropagacioncambios')[0].destroy();
+    		/*me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));*/
+			me.getView().unmask();
+    		return false;
+    	}
+    },
+
 	onChangeBonificacion: function(checkbox, newValue, oldValue, eOpts) {
 			var me = this,
 			meses = me.lookupReference('mesesBonificacion'),
@@ -2820,11 +3308,40 @@ onClickBotonEditar: function(btn) {
 		}
 	},
 
-	
-	onClickAbrirExpedienteComercial: function() { 
-		
+	manageToastJsonResponse : function(scope,jsonData) {
+		if (!Ext.isEmpty(scope)) {
+			if (this.fireEvent) {
+				scope = this;
+			} else {
+				scope = Ext.GlobalEvents;
+			}
+		}
+
+		if (!Ext.isEmpty(jsonData)) {
+			var data = JSON.parse(jsonData);
+
+			if (data.success !== null && data.success !== undefined && data.success === "false") {
+				scope.fireEvent("errorToast", data.msgError);
+			} else {
+				scope.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+			}
+		} else {
+			scope.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+		}
+	},
+
+    onClickCancelarPropagarCambios: function(btn) {
+    	var me = this,
+    	window = btn.up("window");
+    	window.destroy();
+    	me.refrescarActivoExpediente(false);
+	},
+
+
+	onClickAbrirExpedienteComercial: function() {
+
     	var me = this;
-    	var expediente = me.getViewModel().data.expediente; 
+    	var expediente = me.getViewModel().data.expediente;
     	var numOfertaOrigen = expediente.data.idOfertaAnterior;
     	var data;
     	var url =  $AC.getRemoteUrl('expedientecomercial/getExpedienteByIdOferta');
@@ -2840,14 +3357,13 @@ onClickBotonEditar: function(btn) {
 		    	else {
 		    		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
 		    	}
-		    	    	 
+
 		    },
-		    
+
 		     failure: function (a, operation) {
 		 				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
 		 	}
 	 });
-    		    	     
   }
-	
+
 });

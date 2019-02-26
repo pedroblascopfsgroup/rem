@@ -10,12 +10,14 @@ import org.springframework.stereotype.Component;
 import es.capgemini.devon.dto.WebDto;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.activo.ActivoManager;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.factory.TabActivoFactoryApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoComunidadPropietarios;
 import es.pfsgroup.plugin.rem.model.DtoComunidadpropietariosActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDSituacionActivo;
 
 @Component
 public class TabActivoDatosComunidad implements TabActivoService {
@@ -80,6 +82,24 @@ public class TabActivoDatosComunidad implements TabActivoService {
 				if (!Checks.esNulo(activo.getComunidadPropietarios().getBurofax())) {
 					beanUtilNotNull.copyProperty(datosComunidad, "burofax", activo.getComunidadPropietarios().getBurofax());
 				}
+				if (!Checks.esNulo(activo.getComunidadPropietarios().getFechaEnvioCarta())) {
+						beanUtilNotNull.copyProperty(datosComunidad, "fechaEnvioCarta", activo.getComunidadPropietarios().getFechaEnvioCarta());
+				}
+				if (!Checks.esNulo(activo.getComunidadPropietarios().getSituacion())) {
+					
+					if (!Checks.esNulo(activo.getComunidadPropietarios().getSituacion().getId())) {
+						beanUtilNotNull.copyProperty(datosComunidad, "situacionId", activo.getComunidadPropietarios().getSituacion().getId());
+					}
+					
+					if (!Checks.esNulo(activo.getComunidadPropietarios().getSituacion().getDescripcionLarga())) {
+						beanUtilNotNull.copyProperty(datosComunidad, "situacionDescripcion", activo.getComunidadPropietarios().getSituacion().getDescripcionLarga());
+					}
+					if (!Checks.esNulo(activo.getComunidadPropietarios().getSituacion().getCodigo())) {
+						beanUtilNotNull.copyProperty(datosComunidad, "situacionCodigo", activo.getComunidadPropietarios().getSituacion().getCodigo());
+					}
+				}
+				
+				
 			}
 			datosComunidad.setCamposPropagables(TabActivoService.TAB_COMUNIDAD_PROPIETARIOS);
 
@@ -140,6 +160,13 @@ public class TabActivoDatosComunidad implements TabActivoService {
 
 				if (!Checks.esNulo(activoComunidadPropietariosDto.getBurofax())) {
 					beanUtilNotNull.copyProperty(activo.getComunidadPropietarios(), "burofax", activoComunidadPropietariosDto.getBurofax());
+				}
+				if (!Checks.esNulo(activoComunidadPropietariosDto.getSituacionCodigo())) {
+					DDSituacionActivo ddSituacionCodigo = genericDao.get(DDSituacionActivo.class,  genericDao.createFilter(FilterType.EQUALS, "codigo",activoComunidadPropietariosDto.getSituacionCodigo()));
+					beanUtilNotNull.copyProperty(activo.getComunidadPropietarios(), "situacion", ddSituacionCodigo);
+				}
+				if (!Checks.esNulo(activoComunidadPropietariosDto.getFechaEnvioCarta())) {
+					beanUtilNotNull.copyProperty(activo.getComunidadPropietarios(), "fechaEnvioCarta", activoComunidadPropietariosDto.getFechaEnvioCarta());
 				}
 				
 				activo.setComunidadPropietarios(genericDao.save(ActivoComunidadPropietarios.class, activo.getComunidadPropietarios()));

@@ -267,8 +267,10 @@ public class ActivoTramiteManager implements ActivoTramiteApi{
 		
 		// Si no hemos pasado codigo por param y el mapeo de documentos tampoco nos da un documento, NO realizamos validación
 		if (!Checks.esNulo(codigoDocAdjunto)){			
-			if (("A".equals(uGestion) || "T".equals(uGestion)) && !Checks.esNulo(codigoDocAdjunto) ){
+			if ("A".equals(uGestion) && !Checks.esNulo(codigoDocAdjunto)){
 				return activoApi.comprobarExisteAdjuntoActivo(trabajoApi.getTrabajoByTareaExterna(tareaExterna).getActivo().getId(), codigoDocAdjunto);
+			}else if("T".equals(uGestion) && !Checks.esNulo(codigoDocAdjunto) ){
+				return trabajoApi.comprobarExisteAdjuntoTrabajo(trabajoApi.getTrabajoByTareaExterna(tareaExterna).getId(), codigoDocAdjunto);	
 			}else if("E".equals(uGestion) && !Checks.esNulo(codigoDocAdjunto) ){
 				return expedienteComercialApi.comprobarExisteAdjuntoExpedienteComercial(trabajoApi.getTrabajoByTareaExterna(tareaExterna).getId(), codigoDocAdjunto);
 			}else if("P".equals(uGestion) && !Checks.esNulo(codigoDocAdjunto) ){

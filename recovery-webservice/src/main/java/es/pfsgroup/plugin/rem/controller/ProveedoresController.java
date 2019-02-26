@@ -15,6 +15,10 @@ import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
 import es.pfsgroup.plugin.rem.excel.ProveedorExcelReport;
 import es.pfsgroup.plugin.rem.model.*;
+import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento;
+import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.ACCION_CODIGO;
+import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.ENTIDAD_CODIGO;
+import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.REQUEST_STATUS_CODE;
 import es.pfsgroup.plugin.rem.proveedores.ProveedoresManager;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -47,30 +51,38 @@ public class ProveedoresController extends ParadiseJsonController {
 	@Autowired
 	private UploadAdapter uploadAdapter;
 
+	@Autowired
+	private LogTrustEvento trustMe;
+
+
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getProveedorById(Long id, ModelMap model) {
+	public ModelAndView getProveedorById(Long id, ModelMap model, HttpServletRequest request) {
 		model.put("data", proveedoresApi.getProveedorById(id));
 		model.put("success", true);
+		trustMe.registrarSuceso(request, id, ENTIDAD_CODIGO.CODIGO_PROVEEDOR, "datos", ACCION_CODIGO.CODIGO_VER);
 
 		return createModelAndViewJson(model);
 	}
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView saveProveedorById(DtoActivoProveedor dto, ModelMap model) {
-		try {
+	public ModelAndView saveProveedorById(DtoActivoProveedor dto, ModelMap model, HttpServletRequest request) {
+		try{
 			boolean success = proveedoresApi.saveProveedorById(dto);
 			model.put("success", success);
+			trustMe.registrarSuceso(request, dto.getId(), ENTIDAD_CODIGO.CODIGO_PROVEEDOR, "datos", ACCION_CODIGO.CODIGO_MODIFICAR);
 
 		} catch (JsonViewerException jvex) {
 			model.put("success", false);
 			model.put("msg", jvex.getMessage());
 			logger.warn("Excepción controlada en ProveedoresController", jvex);
+			trustMe.registrarError(request, dto.getId(), ENTIDAD_CODIGO.CODIGO_PROVEEDOR, "datos", ACCION_CODIGO.CODIGO_MODIFICAR, REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
 
 		} catch (Exception e) {
 			logger.error("Error en ProveedoresController", e);
 			model.put("success", false);
+			trustMe.registrarError(request, dto.getId(), ENTIDAD_CODIGO.CODIGO_PROVEEDOR, "datos", ACCION_CODIGO.CODIGO_MODIFICAR, REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
 		}
 
 		return createModelAndViewJson(model);
@@ -114,8 +126,9 @@ public class ProveedoresController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getDireccionesDelegacionesByProveedor(DtoDireccionDelegacion dtoDireccionDelegacion, ModelMap model) {
-		try {
+	public ModelAndView getDireccionesDelegacionesByProveedor(DtoDireccionDelegacion dtoDireccionDelegacion, ModelMap model, HttpServletRequest request) {
+		
+		try{
 			List<DtoDireccionDelegacion> resultados = proveedoresApi.getDireccionesDelegacionesByProveedor(dtoDireccionDelegacion);
 			model.put("data", resultados);
 
@@ -127,10 +140,12 @@ public class ProveedoresController extends ParadiseJsonController {
 			}
 
 			model.put("success", true);
+			trustMe.registrarSuceso(request, Long.parseLong(dtoDireccionDelegacion.getId()), ENTIDAD_CODIGO.CODIGO_PROVEEDOR, "delegaciones", ACCION_CODIGO.CODIGO_VER);
 
 		} catch (Exception e) {
 			logger.error("Error en ProveedoresController", e);
 			model.put("success", false);
+			trustMe.registrarError(request, Long.parseLong(dtoDireccionDelegacion.getId()), ENTIDAD_CODIGO.CODIGO_PROVEEDOR, "delegaciones", ACCION_CODIGO.CODIGO_VER , REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
 		}
 
 		return createModelAndViewJson(model);
@@ -183,8 +198,8 @@ public class ProveedoresController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getPersonasContactoByProveedor(DtoPersonaContacto dtoPersonaContacto, ModelMap model) {
-		try {
+	public ModelAndView getPersonasContactoByProveedor(DtoPersonaContacto dtoPersonaContacto, ModelMap model, HttpServletRequest request) {
+		try{
 			List<DtoPersonaContacto> resultados = proveedoresApi.getPersonasContactoByProveedor(dtoPersonaContacto);
 			model.put("data", resultados);
 
@@ -196,10 +211,12 @@ public class ProveedoresController extends ParadiseJsonController {
 			}
 
 			model.put("success", true);
+			trustMe.registrarSuceso(request, Long.parseLong(dtoPersonaContacto.getId()), ENTIDAD_CODIGO.CODIGO_PROVEEDOR, "personas", ACCION_CODIGO.CODIGO_VER);
 
 		} catch (Exception e) {
 			logger.error("Error en ProveedoresController", e);
 			model.put("success", false);
+			trustMe.registrarError(request, Long.parseLong(dtoPersonaContacto.getId()), ENTIDAD_CODIGO.CODIGO_PROVEEDOR, "personas", ACCION_CODIGO.CODIGO_VER, REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
 		}
 
 		return createModelAndViewJson(model);
@@ -278,8 +295,8 @@ public class ProveedoresController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getActivosIntegradosByProveedor(DtoActivoIntegrado dtoActivoIntegrado, ModelMap model) {
-		try {
+	public ModelAndView getActivosIntegradosByProveedor(DtoActivoIntegrado dtoActivoIntegrado, ModelMap model, HttpServletRequest request) {
+		try{
 			List<DtoActivoIntegrado> resultados = proveedoresApi.getActivoIntegradoByProveedor(dtoActivoIntegrado);
 			model.put("data", resultados);
 
@@ -289,10 +306,12 @@ public class ProveedoresController extends ParadiseJsonController {
 				model.put("totalCount", 0);
 			}
 			model.put("success", true);
+			trustMe.registrarSuceso(request, Long.parseLong(dtoActivoIntegrado.getId()), ENTIDAD_CODIGO.CODIGO_PROVEEDOR, "activoIntegrado", ACCION_CODIGO.CODIGO_VER);
 
 		} catch (Exception e) {
 			logger.error("Error en ProveedoresController", e);
 			model.put("success", false);
+			trustMe.registrarError(request, Long.parseLong(dtoActivoIntegrado.getId()), ENTIDAD_CODIGO.CODIGO_PROVEEDOR, "activoIntegrado", ACCION_CODIGO.CODIGO_VER , REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
 		}
 
 		return createModelAndViewJson(model);
@@ -300,8 +319,9 @@ public class ProveedoresController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getListAdjuntos(Long id, ModelMap model) {
+	public ModelAndView getListAdjuntos(Long id, ModelMap model, HttpServletRequest request){
 		model.put("data", proveedoresApi.getAdjuntos(id));
+		trustMe.registrarSuceso(request, id, ENTIDAD_CODIGO.CODIGO_PROVEEDOR, "adjuntos", ACCION_CODIGO.CODIGO_VER);
 
 		return createModelAndViewJson(model);
 	}

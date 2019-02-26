@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
-public interface ParticularValidatorApi {
+interface ParticularValidatorApi {
 
 	String getOneNumActivoAgrupacionRaw(String numAgrupacion);
 
@@ -29,6 +29,10 @@ public interface ParticularValidatorApi {
 	Boolean esActivoEnOtraAgrupacion(Long numActivo, Long numAgrupacion);
 
 	Boolean existeActivo(String numActivo);
+
+	Boolean isActivoVendido(String numActivo);
+
+	Boolean existePlusvalia(String numActivo);
 
 	Boolean isActivoPrePublicable(String numActivo);
 
@@ -65,8 +69,7 @@ public interface ParticularValidatorApi {
 	Boolean isFechaTraspasoPosteriorAFechaDevengo(String numActivo, String numGasto);
 
 	/**
-	 * Validacion para las agrupaciones de la lista excel. Valida si estan dadas
-	 * de baja
+	 * Validacion para las agrupaciones de la lista excel. Valida si estan dadas de baja
 	 *
 	 * @param numAgrupacion
 	 * @return
@@ -76,8 +79,7 @@ public interface ParticularValidatorApi {
 	/**
 	 * Validacion de Localizacion unica para un grupo de activos
 	 *
-	 * @param inSqlNumActivosRem
-	 *            El parametro es una cadena de numActivoRem separados por comas
+	 * @param inSqlNumActivosRem El parametro es una cadena de numActivoRem separados por comas
 	 * @return
 	 */
 	Boolean esActivosMismaLocalizacion(String inSqlNumActivosRem);
@@ -85,20 +87,16 @@ public interface ParticularValidatorApi {
 	/**
 	 * Validacion de Propietario unico para un grupo de activos
 	 *
-	 * @param inSqlNumActivosRem
-	 *            El parametro es una cadena de numActivoRem separados por comas
+	 * @param inSqlNumActivosRem El parametro es una cadena de numActivoRem separados por comas
 	 * @return
 	 */
 	Boolean esActivosMismoPropietario(String inSqlNumActivosRem);
 
 	/**
-	 * Validacion de ofertas aceptadas para un grupo de activos y agrupaciones
-	 * de estos
+	 * Validacion de ofertas aceptadas para un grupo de activos y agrupaciones de estos
 	 *
-	 * @param inSqlNumActivosRem
-	 *            El parametro es una cadena de numActivoRem separados por comas
-	 * @param numAgrupRem
-	 *            Numero agrupacion
+	 * @param inSqlNumActivosRem El parametro es una cadena de numActivoRem separados por comas
+	 * @param numAgrupRem Numero agrupacion
 	 * @return
 	 */
 	Boolean esActivosOfertasAceptadas(String inSqlNumActivosRem, String numAgrupRem);
@@ -145,86 +143,65 @@ public interface ParticularValidatorApi {
 	Boolean isActivoNoComercializable(String numActivo);
 
 	/**
-	 * Este método comprueba si un activo es publicable por su perímetro de
-	 * publicación.
+	 * Este método comprueba si un activo es publicable por su perímetro de publicación.
 	 *
-	 * @param numActivo:
-	 *            Numero del activo para realizar las comprobaciones.
-	 * @return Devuelve True si un activo no es publicable por su perímetro,
-	 *         False si no lo es.
+	 * @param numActivo: Numero del activo para realizar las comprobaciones.
+	 * @return Devuelve True si un activo no es publicable por su perímetro, False si no lo es.
 	 */
 	Boolean isActivoNoPublicable(String numActivo);
 
 	/**
-	 * Este método comprueba si un activo no se encuentra en el destino
-	 * comercial de venta.
+	 * Este método comprueba si un activo no se encuentra en el destino comercial de venta.
 	 *
-	 * @param numActivo:
-	 *            Numero del activo para realizar las comprobaciones.
-	 * @return Devuelve True si un activo no se encuentra en el destino
-	 *         comercial de venta, False si se encuentra.
+	 * @param numActivo: Numero del activo para realizar las comprobaciones.
+	 * @return Devuelve True si un activo no se encuentra en el destino comercial de venta, False si se encuentra.
 	 */
 	Boolean isActivoDestinoComercialNoVenta(String numActivo);
 
 	/**
-	 * Este método comprueba si un activo no se encuentra en el destino
-	 * comercial de alquiler.
+	 * Este método comprueba si un activo no se encuentra en el destino comercial de alquiler.
 	 *
-	 * @param numActivo:
-	 *            Numero del activo para realizar las comprobaciones.
-	 * @return Devuelve True si un activo no se encuentra en el destino
-	 *         comercial de alquiler, False si se encuentra.
+	 * @param numActivo: Numero del activo para realizar las comprobaciones.
+	 * @return Devuelve True si un activo no se encuentra en el destino comercial de alquiler, False si se encuentra.
 	 */
 	Boolean isActivoDestinoComercialNoAlquiler(String numActivo);
 
 	/**
-	 * Este método comprueba si un activo no dispone de precio de venta web
-	 * asignado.
+	 * Este método comprueba si un activo no dispone de precio de venta web asignado.
 	 *
-	 * @param numActivo:
-	 *            Numero del activo para realizar las comprobaciones.
-	 * @return Devuelve True si un activo no tiene precio de venta web, False si
-	 *         se lo tiene.
+	 * @param numActivo: Numero del activo para realizar las comprobaciones.
+	 * @return Devuelve True si un activo no tiene precio de venta web, False si se lo tiene.
 	 */
 	Boolean isActivoSinPrecioVentaWeb(String numActivo);
 
 	/**
-	 * Este método comprueba si un activo no dispone de precio de renta web
-	 * asignado.
+	 * Este método comprueba si un activo no dispone de precio de renta web asignado.
 	 *
-	 * @param numActivo:
-	 *            Numero del activo para realizar las comprobaciones.
-	 * @return Devuelve True si un activo no tiene precio de renta web, False si
-	 *         se lo tiene.
+	 * @param numActivo: Numero del activo para realizar las comprobaciones.
+	 * @return Devuelve True si un activo no tiene precio de renta web, False si se lo tiene.
 	 */
 	Boolean isActivoSinPrecioRentaWeb(String numActivo);
 
 	/**
 	 * Este método comprueba si un activo no tiene el informe aprobado.
 	 *
-	 * @param numActivo:
-	 *            Numero del activo para realizar las comprobaciones.
-	 * @return Devuelve True si un activo no tiene el informe aprobado, False si
-	 *         lo tiene aprobado.
+	 * @param numActivo: Numero del activo para realizar las comprobaciones.
+	 * @return Devuelve True si un activo no tiene el informe aprobado, False si lo tiene  aprobado.
 	 */
 	Boolean isActivoSinInformeAprobado(String numActivo);
 
 	/**
-	 * Este método obtiene una lista de importes actuales por el número de
-	 * activo.
+	 * Este método obtiene una lista de importes actuales por el número de activo.
 	 *
-	 * @param numActivo
-	 *            : número haya del activo.
+	 * @param numActivo : número haya del activo.
 	 * @return Devuelve una lista de importes actuales del activo.
 	 */
 	List<BigDecimal> getImportesActualesActivo(String numActivo);
 
 	/**
-	 * Este método obtiene una lista de fechas de importes actuales por el
-	 * número de activo.
+	 * Este método obtiene una lista de fechas de importes actuales por el número de activo.
 	 *
-	 * @param numActivo
-	 *            : número haya del activo.
+	 * @param numActivo : número haya del activo.
 	 * @return Devuelve una lista de fechas de importes actuales del activo.
 	 */
 	List<Date> getFechasImportesActualesActivo(String numActivo);
@@ -255,8 +232,7 @@ public interface ParticularValidatorApi {
 	Boolean existeActivoConOfertaViva(String numActivo);
 
 	/**
-	 * Comprueba que el activo no este en un expediente comercial vivo (con
-	 * trámites en activo)
+	 * Comprueba que el activo no este en un expediente comercial vivo (con trámites en activo)
 	 *
 	 * @param numActivo
 	 * @return
@@ -264,41 +240,33 @@ public interface ParticularValidatorApi {
 	Boolean existeActivoConExpedienteComercialVivo(String numActivo);
 
 	/**
-	 * Este método indica si el NIF de la sociedad acreedora existe en la DB o
-	 * no.
+	 * Este método indica si el NIF de la sociedad acreedora existe en la DB o no.
 	 *
-	 * @param sociedadAcreedoraNIF
-	 *            : NIF de la sociedad acreedora a buscar en la DB.
-	 * @return Devuelve True si se encuentra una coincidencia con el NIF. False
-	 *         si no existe coincidencia.
+	 * @param sociedadAcreedoraNIF : NIF de la sociedad acreedora a buscar en la DB.
+	 * @return Devuelve True si se encuentra una coincidencia con el NIF. False si no existe coincidencia.
 	 */
 	Boolean existeSociedadAcreedora(String sociedadAcreedoraNIF);
 
 	/**
 	 * Este método indica si el NIF del propietario existe en la DB o no.
 	 *
-	 * @param propietarioNIF
-	 *            : NIF del propietario a buscar en la DB.
-	 * @return Devuelve True si se encuentra una coincidencia con el NIF. False
-	 *         si no existe coincidencia.
+	 * @param propietarioNIF : NIF del propietario a buscar en la DB.
+	 * @return Devuelve True si se encuentra una coincidencia con el NIF. False si no existe coincidencia.
 	 */
 	Boolean existePropietario(String propietarioNIF);
 
 	/**
 	 * Este método indica si el NIF del proveedor mediador existe en la DB o no.
 	 *
-	 * @param proveedorMediadorNIF
-	 *            : NIF del proveedor mediador a buscar en la DB.
-	 * @return Devuelve True si se encuentra una coincidencia con el NIF. False
-	 *         si no existe coincidencia.
+	 * @param proveedorMediadorNIF : NIF del proveedor mediador a buscar en la DB.
+	 * @return Devuelve True si se encuentra una coincidencia con el NIF. False si no existe coincidencia.
 	 */
 	Boolean existeProveedorMediadorByNIF(String proveedorMediadorNIF);
 
 	/**
 	 * Este método indica si el código de provincia existe en la DB.
 	 *
-	 * @param codigoProvincia
-	 *            : código de la provincia.
+	 * @param codigoProvincia : código de la provincia.
 	 * @return Devuelve True si existe, False si no existe el código.
 	 */
 	Boolean existeProvinciaByCodigo(String codigoProvincia);
@@ -306,18 +274,15 @@ public interface ParticularValidatorApi {
 	/**
 	 * Este método indica si el código de municipio existe en la DB.
 	 *
-	 * @param codigoMunicipio
-	 *            : código del municipio.
+	 * @param codigoMunicipio : código del municipio.
 	 * @return Devuelve True si existe, False si no existe el código.
 	 */
 	Boolean existeMunicipioByCodigo(String codigoMunicipio);
 
 	/**
-	 * Este método indica si el código de la unidad inferior al municipio existe
-	 * en la DB.
+	 * Este método indica si el código de la unidad inferior al municipio existe en la DB.
 	 *
-	 * @param codigoUnidadInferiorMunicipio
-	 *            : código de la unidad inferior al municipio.
+	 * @param codigoUnidadInferiorMunicipio : código de la unidad inferior al municipio.
 	 * @return Devuelve True si existe, False si no existe el código.
 	 */
 	Boolean existeUnidadInferiorMunicipioByCodigo(String codigoUnidadInferiorMunicipio);
@@ -348,8 +313,7 @@ public interface ParticularValidatorApi {
 
 	Boolean usuarioEsTipoGestor(String username, String codigoTipoGestor);
 
-	Boolean combinacionGestorCarteraAcagexValida(String codigoGestor, String numActivo, String numAgrupacion,
-			String numExpediente);
+	Boolean combinacionGestorCarteraAcagexValida(String codigoGestor, String numActivo, String numAgrupacion, String numExpediente);
 
 	Boolean destinoFinalNoVenta(String numActivo);
 
@@ -440,8 +404,7 @@ public interface ParticularValidatorApi {
 	/**
 	 * El método indica si existe alguna agrupación con la descripcion indicada
 	 *
-	 * @param descripcionAgrupacion
-	 *            : Descripion de la agrupación
+	 * @param descripcionAgrupacion : Descripion de la agrupación
 	 * @return : Devuelve True si existe, False si no existe el código.
 	 */
 	Boolean existeAgrupacionByDescripcion(String descripcionAgrupacion);
@@ -459,37 +422,31 @@ public interface ParticularValidatorApi {
 	Boolean subcarteraPerteneceCartera(String subcartera, String cartera);
 
 	/**
-	 *
 	 * @param idActivo
-	 * @return devuelve true si un activo tiene un destino comercial de tipo
-	 *         venta (no confundir con venta y alquiler)
+	 * @return devuelve true si un activo tiene un destino comercial de tipo venta (no confundir con venta y alquiler)
 	 */
-	public Boolean activoConDestinoComercialVenta(String idActivo);
+	Boolean activoConDestinoComercialVenta(String idActivo);
 
 	/**
-	 *
 	 * @param numActivo
-	 * @return devuelve true si el activo tiene una situación comercial de
-	 *         alquilado
+	 * @return devuelve true si el activo tiene una situación comercial de alquilado
 	 */
 	Boolean esActivoAlquilado(String numActivo);
 
 	/**
+	 *
 	 * @param numActivo
-	 * @return devuelve true si el activo se encuentra incluido en una
-	 *         agrupacion viva de tipo comercial
+	 * @return devuelve true si el activo se encuentra incluido en una agrupacion viva de tipo comercial
 	 */
 	Boolean activoEnAgrupacionComercialViva(String numActivo);
 
 	/**
 	 * @param numActivo:
-	 * @return devuelve true si un activo tiene un destino comercial de tipo
-	 *         alquiler (no confundir con venta y alquiler)
+	 * @return devuelve true si un activo tiene un destino comercial de tipo alquiler (no confundir con venta y alquiler)
 	 */
 	Boolean activoConDestinoComercialAlquiler(String numActivo);
 
 	/**
-	 *
 	 * @param numAgrupacion
 	 * @return devuelve true si la agrupacion es de tipo comercial alquiler
 	 */
@@ -498,25 +455,21 @@ public interface ParticularValidatorApi {
 	/**
 	 * @param numAgrupacion
 	 * @param numActivo
-	 * @return Devuelve true si el activo tiene el mismo tipo de alquiler que la
-	 *         agrupacion.
+	 * @return Devuelve true si el activo tiene el mismo tipo de alquiler que la agrupacion.
 	 */
 	Boolean mismoTipoAlquilerActivoAgrupacion(String numAgrupacion, String numActivo);
 
 	/**
-	 *
 	 * @param numAgrupacion
 	 * @return devuelve true si la agrupacion es de tipo comercial venta
 	 */
 	Boolean esAgrupacionTipoComercialVenta(String numAgrupacion);
 
 	/**
-	 *
 	 * @param numAgrupacion
-	 * @return devuelve el código de la subcartera de una agrupación según su
-	 *         activo principal
+	 * @return devuelve el código de la subcartera de una agrupación según su activo principal
 	 */
-	public String getCodigoSubcarteraAgrupacion(String numAgrupacion);
+	String getCodigoSubcarteraAgrupacion(String numAgrupacion);
 
 	Boolean subtipoPerteneceTipoTitulo(String subtipo, String tipoTitulo);
 
@@ -528,23 +481,52 @@ public interface ParticularValidatorApi {
 
 	Boolean mediadorExisteVigente(String codMediador);
 
-	public Boolean agrupacionEsProyecto(String numAgrupacion);
+	Boolean existeComunidadPropietarios(String idPropietarios);
 
-	public Boolean activoTienePRV(String numActivo);
+	Boolean existeSituacion(String idSituacion);
 
-	public Boolean activoTieneLOC(String numActivo);
+	Boolean existeImpuesto(String idImpuesto);
 
-	public Boolean esMismaProvincia(Long numActivo, Long numAgrupacion);
+	Boolean existeActivoEnPropietarios(String numActivo, String idPropietarios);
 
-	public Boolean esMismaLocalidad(Long numActivo, Long numAgrupacion);
 	
-	public Boolean esActivoConComunicacionComunicada(Long numActivoHaya);
+	/**
+	 * Devuelve true si un activo tiene ofertas vivas de tipo venta
+	 *
+	 * @param numActivo
+	 * @return
+	 */
+	Boolean existeActivoConOfertaVentaViva(String numActivo);
+
 	
-	public Boolean esActivoConComunicacionViva(Long numActivoHaya);
+	Boolean isActivoPublicadoVenta(String numActivo);
+
+	Boolean isActivoOcultoVentaPorMotivosManuales(String numActivo);
+
+	Boolean isActivoPublicadoAlquiler(String numActivo);
+
+	Boolean isActivoOcultoAlquilerPorMotivosManuales(String numActivo);
+
+	Boolean existeCatastro(String catastro);
+		
+		
+	Boolean agrupacionEsProyecto(String numAgrupacion);
+
+	Boolean activoTienePRV(String numActivo);
+
+	Boolean activoTieneLOC(String numActivo);
+
+	Boolean esMismaProvincia(Long numActivo, Long numAgrupacion);
+
+	Boolean esMismaLocalidad(Long numActivo, Long numAgrupacion);
 	
-	public Boolean esActivoSinComunicacionViva(Long numActivoHaya);
+	Boolean esActivoConComunicacionComunicada(Long numActivoHaya);
 	
-	public Boolean esNIFValido(String nif);
+	Boolean esActivoConComunicacionViva(Long numActivoHaya);
+	
+	Boolean esActivoSinComunicacionViva(Long numActivoHaya);
+	
+	Boolean esNIFValido(String nif);
 	
 	/**
 	 * 
@@ -554,11 +536,11 @@ public interface ParticularValidatorApi {
 	 * @return Devuelve un boolean. Si es TRUE la comunicación viva ya esta reclamada.
 	 * 
 	 */
-	public boolean esActivoConComunicacionReclamada(Long numActivoHaya);
+	boolean esActivoConComunicacionReclamada(Long numActivoHaya);
 	
-	public Boolean esActivoConComunicacionGenerada(Long numActivoHaya);
+	Boolean esActivoConComunicacionGenerada(Long numActivoHaya);
 	
-	public boolean esActivoConAdecuacionFinalizada(Long numActivoHaya);
+	boolean esActivoConAdecuacionFinalizada(Long numActivoHaya);
 
 	/**
 	 * Devuelve true si un activo tiene ofertas vivas de tipo venta
@@ -566,36 +548,38 @@ public interface ParticularValidatorApi {
 	 * @param numActivo
 	 * @return
 	 */
-	public Boolean existeActivoConOfertaVentaViva(String numActivo);
-
+	Boolean existeActivoConOfertaVentaViva(String numActivo);
+	
 	/**
 	 * Devuelve el codigo del destino comercial de un activo
 	 * 
 	 * @param numActivo
 	 * @return
 	 */
-	public Boolean existeActivoConOfertaAlquilerViva(String numActivo);
+	Boolean existeActivoConOfertaAlquilerViva(String numActivo);
 
-	public Boolean isActivoPublicadoVenta(String numActivo);
 
-	public Boolean isActivoOcultoVentaPorMotivosManuales(String numActivo);
+	Boolean isActivoOcultoVenta(String numActivo);
 
-	public Boolean isActivoPublicadoAlquiler(String numActivo);
+	Boolean isActivoOcultoAlquiler(String numActivo);
 
-	public Boolean isActivoOcultoAlquilerPorMotivosManuales(String numActivo);
-
-	public Boolean isActivoOcultoVenta(String numActivo);
-
-	public Boolean isActivoOcultoAlquiler(String numActivo);
+	
+	/**
+	 * Este método te comprueba si el campo perimetro de alquiler está activo.
+	 *
+	 * @param numActivo número de activo haya.
+	 * @return Devuelve un true si el campo está activo o un false si no.
+	 */
+	Boolean isActivoIncluidoPerimetroAlquiler(String numActivo);
 
 	/**
-	 * Devuelve true si un activo tiene ofertas vivas de tipo venta
-	 * 
+	 * Devuelve el codigo del destino comercial de un activo
+	 *
 	 * @param numActivo
 	 * @return
 	 */
+	String getCodigoDestinoComercialByNumActivo(String numActivo);
 
-	public String getCodigoDestinoComercialByNumActivo(String numActivo);
 
-	public Boolean isActivoFinanciero(String numActivo);
+	Boolean isActivoFinanciero(String numActivo);
 }

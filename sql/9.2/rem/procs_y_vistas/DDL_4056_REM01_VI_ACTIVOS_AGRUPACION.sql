@@ -17,8 +17,9 @@
 --##		0.5 Se modifica la vista para mejorar el rendimiento
 --##		0.6 Se modifica la vista para que tenga en cuenta el borrado lógico de las distribuciones
 --##		0.7 Se añaden las nuevas columnas de publicaciones
---##    0.8 HREOS-5518 Se cambia la query de GENCAT para actualizarla a los nuevos requerimientos
---##        0.9 Cambiamos la vista para que calcule desde la vista gencat.
+--##		0.8 Se realiza un Join con la vista V_COND_PUBLICACION para sacar los campos COND_PUBL_VENTA, COND_PUBL_ALQUILER (HREOS-4907)
+--##        0.9 Se cambia la query de GENCAT para actualizarla a los nuevos requerimientos
+--##        0.10 Cambiamos la vista para que calcule desde la vista gencat.
 --##########################################
 --*/
 
@@ -124,9 +125,8 @@ BEGIN
         LEFT JOIN '|| V_ESQUEMA ||'.DD_TCO_TIPO_COMERCIALIZACION 	TCO 	ON TCO.DD_TCO_ID= ACT_APU.DD_TCO_ID  AND TCO.BORRADO = 0
 		INNER JOIN '|| V_ESQUEMA ||'.V_COND_PUBLICACION             V_PUBL  ON V_PUBL.ACT_ID = ACT.ACT_ID
         LEFT JOIN (
-            SELECT DISTINCT T1.ACT_ID, SUM(T4.DIS_CANTIDAD) OVER (PARTITION BY T1.ACT_ID,T5.DD_TPH_DESCRIPCION) AS SUMA 
-
-				FROM '|| V_ESQUEMA ||'.ACT_ACTIVO T1 
+            SELECT DISTINCT T1.ACT_ID, SUM(T4.DIS_CANTIDAD) OVER (PARTITION BY T1.ACT_ID,T5.DD_TPH_DESCRIPCION) AS SUMA
+				FROM '|| V_ESQUEMA ||'.ACT_ACTIVO T1
 				INNER JOIN '|| V_ESQUEMA ||'.ACT_ICO_INFO_COMERCIAL T2 ON T2.ACT_ID = T1.ACT_ID AND T2.BORRADO = 0
 				LEFT JOIN '|| V_ESQUEMA ||'.ACT_VIV_VIVIENDA 		T3 ON T3.ICO_ID = T2.ICO_ID	
 				LEFT JOIN '|| V_ESQUEMA ||'.ACT_DIS_DISTRIBUCION 	T4 ON T4.ICO_ID = T2.ICO_ID AND T4.BORRADO = 0

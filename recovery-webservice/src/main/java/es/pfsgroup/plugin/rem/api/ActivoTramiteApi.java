@@ -35,7 +35,7 @@ public interface ActivoTramiteApi {
 	public static final String CODIGO_TRAMITE_OBTENCION_DOC_CEDULA = "T008";
 	public static final String CODIGO_TRAMITE_PROPUESTA_PRECIOS = "T009";
 	public static final String CODIGO_TRAMITE_ACTUALIZA_PRECIOS = "T010";
-	public static final String CODIGO_TRAMITE_PUBLICACION = "T011";
+	public static final String CODIGO_TRAMITE_APROBACION_INFORME_COMERCIAL = "T011";
 	public static final String CODIGO_TRAMITE_ACTUALIZA_ESTADOS = "T012";
 	public static final String CODIGO_TRAMITE_COMERCIAL_VENTA = "T013";
 	public static final String CODIGO_TRAMITE_SANCION_OFERTA_ALQUILER = "T014";

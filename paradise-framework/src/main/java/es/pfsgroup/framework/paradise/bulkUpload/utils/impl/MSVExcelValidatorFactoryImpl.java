@@ -98,13 +98,13 @@ public class MSVExcelValidatorFactoryImpl {
 
 	@Autowired
 	private MSVInfoDetallePrinexLbkExcelValidator infoDetallePrinexLbk;
-	
+
 	@Autowired
 	private MSVDesocultacionVenta desocultacionVenta;
-	
+
 	@Autowired
 	private MSVDesocultacionAlquiler desocultarAlquiler;
-	
+
 	@Autowired
 	private MSVExclusionDwh excluirDwh;
 	
@@ -117,6 +117,24 @@ public class MSVExcelValidatorFactoryImpl {
 	@Autowired
 	private MSVValidatorCargaMasivaComunicaciones validatorCargaMasivaComunicaciones;
 
+	@Autowired
+	private MSVSituacionComunidadesPropietariosExcelValidator situacionComunidadesPropietarios;
+
+	@Autowired
+	private MSVSituacionImpuestosExcelValidator situacionImpuestos;
+
+	@Autowired
+	private MSVSituacionPlusvaliaExcelValidator situacionPlusvalia;
+
+	@Autowired
+	private MSVValidatorIndicadorActivoVenta indicadorActivoVenta;
+
+	@Autowired
+	private MSVValidatorIndicadorActivoAlquiler indicadorActivoAlquiler;
+
+	@Autowired
+	private MSVValidadorCargaMasivaAdecuacion adecuacion;
+
 
 	public MSVExcelValidator getForTipoValidador(String codTipoOperacion) {
 
@@ -128,7 +146,7 @@ public class MSVExcelValidatorFactoryImpl {
 			return agrupacionAsistidaExcelValidator;
 		} else if (MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_AGRUPACION_LOTE_COMERCIAL.equals(codTipoOperacion)) {
 			return agrupacionLoteComercialExcelValidator;
-		} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_AGRUPACION_PROYECTO.equals(codTipoOperacion)){
+		} else if (MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_AGRUPACION_PROYECTO.equals(codTipoOperacion)) {
 			return agrupacionProyectoExcelValidator;
 		} else if (MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ALTA_ACTIVOS_FINANCIEROS.equals(codTipoOperacion)) {
 			return altaActvos;
@@ -150,11 +168,7 @@ public class MSVExcelValidatorFactoryImpl {
 			return actualizarBloqueoPrecioActivo;
 		} else if (MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_PRECIOS_ACTIVO_DESBLOQUEO.equals(codTipoOperacion)) {
 			return actualizarDesbloqueoPrecioActivo;
-		} else if (MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_PUBLICAR_ORDINARIA.equals(codTipoOperacion) || MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_PUBLICAR.equals(codTipoOperacion) ||
-				MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_OCULTARACTIVO.equals(codTipoOperacion) || MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_DESOCULTARACTIVO.equals(codTipoOperacion) ||
-				MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_OCULTARPRECIO.equals(codTipoOperacion) || MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_DESOCULTARPRECIO.equals(codTipoOperacion) ||
-				MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_DESPUBLICAR.equals(codTipoOperacion) || MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_DESMARCAR_PUBLICAR_FORZADO.equals(codTipoOperacion) ||
-				MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_DESMARCAR_DESPUBLICAR_FORZADO.equals(codTipoOperacion) || MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_AUTORIZAREDICION.equals(codTipoOperacion)) {
+		} else if (MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_PUBLICAR_ORDINARIA.equals(codTipoOperacion) || MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_PUBLICAR.equals(codTipoOperacion) || MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_OCULTARACTIVO.equals(codTipoOperacion) || MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_DESOCULTARACTIVO.equals(codTipoOperacion) || MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_OCULTARPRECIO.equals(codTipoOperacion) || MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_DESOCULTARPRECIO.equals(codTipoOperacion) || MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_DESPUBLICAR.equals(codTipoOperacion) || MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_DESMARCAR_PUBLICAR_FORZADO.equals(codTipoOperacion) || MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_DESMARCAR_DESPUBLICAR_FORZADO.equals(codTipoOperacion) || MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_AUTORIZAREDICION.equals(codTipoOperacion)) {
 			return actualizarEstadoPublicacion;
 		} else if (MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_PERIMETRO_ACTIVO.equals(codTipoOperacion)) {
 			return actualizarPerimetroActivo;
@@ -196,11 +210,7 @@ public class MSVExcelValidatorFactoryImpl {
 			return actualizarBloqueoPrecioActivo;
 		} else if (MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_PRECIOS_ACTIVO_DESBLOQUEO.equals(codTipoOperacion)) {
 			return actualizarDesbloqueoPrecioActivo;
-		} else if (MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_PUBLICAR_ORDINARIA.equals(codTipoOperacion) || MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_PUBLICAR.equals(codTipoOperacion) ||
-				MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_OCULTARACTIVO.equals(codTipoOperacion) || MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_DESOCULTARACTIVO.equals(codTipoOperacion) ||
-				MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_OCULTARPRECIO.equals(codTipoOperacion) || MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_DESOCULTARPRECIO.equals(codTipoOperacion) ||
-				MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_DESPUBLICAR.equals(codTipoOperacion) || MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_DESMARCAR_PUBLICAR_FORZADO.equals(codTipoOperacion) ||
-				MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_DESMARCAR_DESPUBLICAR_FORZADO.equals(codTipoOperacion) || MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_AUTORIZAREDICION.equals(codTipoOperacion)) {
+		} else if (MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_PUBLICAR_ORDINARIA.equals(codTipoOperacion) || MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_PUBLICAR.equals(codTipoOperacion) || MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_OCULTARACTIVO.equals(codTipoOperacion) || MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_DESOCULTARACTIVO.equals(codTipoOperacion) || MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_OCULTARPRECIO.equals(codTipoOperacion) || MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_DESOCULTARPRECIO.equals(codTipoOperacion) || MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_DESPUBLICAR.equals(codTipoOperacion) || MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_DESMARCAR_PUBLICAR_FORZADO.equals(codTipoOperacion) || MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_DESMARCAR_DESPUBLICAR_FORZADO.equals(codTipoOperacion) || MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_AUTORIZAREDICION.equals(codTipoOperacion)) {
 			return actualizarEstadoPublicacion;
 		} else if (MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_ACTUALIZAR_PERIMETRO_ACTIVO.equals(codTipoOperacion)) {
 			return actualizarPerimetroActivo;
@@ -218,29 +228,35 @@ public class MSVExcelValidatorFactoryImpl {
 			return altaActivosTP;
 		} else if (MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_VENTA_DE_CARTERA.equals(codTipoOperacion)) {
 			return ventaDeCartera;
-		}else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_ACTIVOS_GASTOS_PORCENTAJE.equals(codTipoOperacion)){
+		} else if (MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_ACTIVOS_GASTOS_PORCENTAJE.equals(codTipoOperacion)) {
 			return activosGastoPorcentajeValidator;
-		}
-		else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_VENTA_DE_CARTERA.equals(codTipoOperacion)){
+		} else if (MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_VENTA_DE_CARTERA.equals(codTipoOperacion)) {
 			return ventaDeCartera;
-		}
-		else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_INFO_DETALLE_PRINEX_LBK.equals(codTipoOperacion)){
+		} else if (MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_INFO_DETALLE_PRINEX_LBK.equals(codTipoOperacion)) {
 			return infoDetallePrinexLbk;
-		}else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_ACTIVOS_GASTOS_PORCENTAJE.equals(codTipoOperacion)){
+		} else if (MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_SITUACION_COMUNIDADEDES_PROPIETARIOS.equals(codTipoOperacion)) {
+			return situacionComunidadesPropietarios;
+		} else if (MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_SITUACION_IMPUESTOS.equals(codTipoOperacion)) {
+			return situacionImpuestos;
+		} else if (MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_SITUACION_PLUSVALIA.equals(codTipoOperacion)) {
+			return situacionPlusvalia;
+		} else if (MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_ACTIVOS_GASTOS_PORCENTAJE.equals(codTipoOperacion)) {
 			return activosGastoPorcentajeValidator;
-		}
-		else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_VENTA_DE_CARTERA.equals(codTipoOperacion)){
+		} else if (MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_VENTA_DE_CARTERA.equals(codTipoOperacion)) {
 			return ventaDeCartera;
-		} else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_AGRUPACION_LOTE_COMERCIAL_ALQUILER.equals(codTipoOperacion)) {
+		} else if (MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_AGRUPACION_LOTE_COMERCIAL_ALQUILER.equals(codTipoOperacion)) {
 			return agrupacionLoteComercialAlquilerExcelValidator;
-		}
-		else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_DESOCULTACION_VENTA.equals(codTipoOperacion)){
+		} else if (MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_DESOCULTACION_VENTA.equals(codTipoOperacion)) {
 			return desocultacionVenta;
-		}
-		else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_DESOCULTACION_ALQUILER.equals(codTipoOperacion)){
+		} else if (MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_DESOCULTACION_ALQUILER.equals(codTipoOperacion)) {
 			return desocultarAlquiler;
-		}
-		else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_EXCLUSION_DWH.equals(codTipoOperacion)){
+		} else if (MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_INDICADOR_ACTIVO_VENTA.equals(codTipoOperacion)) {
+			return indicadorActivoVenta;
+		} else if (MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_INDICADOR_ACTIVO_ALQUILER.equals(codTipoOperacion)) {
+			return indicadorActivoAlquiler;
+		} else if (MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_VALIDADOR_CARGA_MASIVA_ADECUACION.equals(codTipoOperacion)) {
+			return adecuacion;
+		} else if (MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_EXCLUSION_DWH.equals(codTipoOperacion)) {
 			return excluirDwh;
 		}
 		else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_MASIVA_SANCIONES.equals(codTipoOperacion)) {

@@ -81,9 +81,6 @@ public class ActivoSubdivision implements Serializable, Auditable {
     private List<ActivoFoto> fotos;
     
     
-    
-    
-	
 	@Version   
 	private Long version;
 

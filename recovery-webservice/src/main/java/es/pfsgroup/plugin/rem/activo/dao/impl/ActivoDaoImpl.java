@@ -37,6 +37,7 @@ import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
+import es.pfsgroup.plugin.rem.model.ActivoCalificacionNegativa;
 import es.pfsgroup.plugin.rem.model.ActivoCondicionEspecifica;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
@@ -688,9 +689,11 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.publicacion", dto.getPublicacion());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.precio", dto.getPrecio());
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.informeComercial", dto.getInformeComercial());
-		if (!Checks.esNulo(dto.getTipoComercializacionCodigo()))
-			HQLBuilder.addFiltroWhereInSiNotNull(hb, "activopubli.tipoComercializacionCodigo",
-					Arrays.asList(dto.getTipoComercializacionCodigo()));
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.okventa", dto.getOkventa());
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.okalquiler", dto.getOkalquiler());
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.motivoOcultacionVenta", dto.getMotivosOcultacionCodigo());
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.motivoOcultacionAlquiler", dto.getMotivosOcultacionAlquilerCodigo());
+   		if (!Checks.esNulo(dto.getTipoComercializacionCodigo()))HQLBuilder.addFiltroWhereInSiNotNull(hb, "activopubli.tipoComercializacionCodigo", Arrays.asList(dto.getTipoComercializacionCodigo()));
 
 		return HibernateQueryUtils.page(this, hb, dto);
 	}
@@ -707,7 +710,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		return busquedaActivo.getPrecio();
 	}
 
-	
+
 
 	@Override
 	public Boolean publicarActivoSinHistorico(Long idActivo, String username,
@@ -720,9 +723,9 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		return this.publicarActivo(idActivo, username, false, eleccionUsuarioTipoPublicacionAlquiler);
 	}
 
-	
 
-	
+
+
 
 	/**
 	 * Este método lanza el procedimiento de cambio de estado de publicación
@@ -859,7 +862,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		return activoTasacionList;
 	}
 
-	
+
 
 	@Override
 	public Page getLlavesByActivo(DtoLlaves dto) {
@@ -897,7 +900,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 	/**
 	 * Inserta un orderBy en la consulta, para los movimientos, ya que al ser
 	 * una consulta de dos tablas, no las ordena por defecto desde sencha.
-	 * 
+	 *
 	 * @param dto
 	 * @param hb
 	 */
@@ -1034,7 +1037,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 				.longValue();
 	}
 
-	
+
 
 	@Override
 	public Activo getActivoById(Long activoId) {
@@ -1060,6 +1063,17 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 	}
 
 	@Override
+	public List<ActivoCalificacionNegativa> getListActivoCalificacionNegativaByIdActivo(Long idActivo) {
+		String hql = " from ActivoCalificacionNegativa acn ";
+		HQLBuilder hb = new HQLBuilder(hql);
+		hb.appendWhere(" acn.activo.id =  "+idActivo+" ");
+		hb.appendWhere(" acn.auditoria.borrado IS NOT NULL ");
+
+		return (List<ActivoCalificacionNegativa>) this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).list();
+
+	}
+
+	@Override
 	public Page getListHistoricoOcupacionesIlegalesByActivo(WebDto dto, Long idActivo) {
 		// También se puede usar el genericDao en REM, pero hay que ver como
 		// devolver un Page porque no he encontrado casos así.
@@ -1070,6 +1084,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activo.id", idActivo);
 
 		return HibernateQueryUtils.page(this, hb, dto);
+
 	}
 
 	public void finHistoricoDestinoComercial(Activo activo, Object[] extraArgs) {
@@ -1100,7 +1115,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 	}
 
 
-	
+
 	@Override
 	public Boolean publicarAgrupacionSinHistorico(Long idAgrupacion, String username,
 			String eleccionUsuarioTipoPublicacionAlquiler, boolean doFlush) {
@@ -1247,5 +1262,5 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		HQLBuilder.addFiltroWhereInSiNotNull(hb, "id", activosID);
 
 		return HibernateQueryUtils.list(this, hb);
-	}	
+	}
 }

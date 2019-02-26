@@ -13,29 +13,35 @@ import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoAdjuntoPromocion;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
+import es.pfsgroup.plugin.rem.model.Trabajo;
 
 public interface GestorDocumentalAdapterApi {
 	
 	List<DtoAdjunto> getAdjuntosActivo (Activo activo) throws GestorDocumentalException;
 	
-	FileItem getFileItem(Long idDocumento, String nombreDocumento) throws Exception; 
+	List<DtoAdjunto> getAdjuntosActuacionesTecnicas (Trabajo trabajo) throws GestorDocumentalException;
+
+	FileItem getFileItem(Long idDocumento, String nombreDocumento) throws Exception;
 	
 	Long upload(Activo activo, WebFileItem webFileItem, String userLogin, String matricula) throws Exception;
 	
 	Long uploadDocumentoGasto(GastoProveedor gasto, WebFileItem webFileItem, String userLogin, String matricula) throws Exception;
 	
+	Long uploadDocumentoActuacionesTecnicas(Trabajo trabajo, WebFileItem webFileItem, String userLogin, String matricula) throws Exception;
+
 	boolean borrarAdjunto(Long idDocumento, String usuarioLogado);
 
 	boolean modoRestClientActivado();
 
 	Integer crearGasto(GastoProveedor gasto,  String usuarioLogado) throws GestorDocumentalException;
 
+	Integer crearActuacionTecnica(Trabajo trabajo, String usuarioLogado) throws GestorDocumentalException;
+
 	List<DtoAdjunto> getAdjuntosGasto(String numGasto) throws GestorDocumentalException;
 
 	List<DtoAdjunto> getAdjuntosExpedienteComercial(ExpedienteComercial expedienteComercial) throws GestorDocumentalException;
 
-	Long uploadDocumentoExpedienteComercial(ExpedienteComercial expedienteComercialEntrada, WebFileItem webFileItem,
-			String username, String matricula) throws GestorDocumentalException;
+	Long uploadDocumentoExpedienteComercial(ExpedienteComercial expedienteComercialEntrada, WebFileItem webFileItem, String username, String matricula) throws GestorDocumentalException;
 
 	Integer crearExpedienteComercial(ExpedienteComercial expedienteComercial, String username) throws GestorDocumentalException;
 	
@@ -47,13 +53,13 @@ public interface GestorDocumentalAdapterApi {
 	
 	List<DtoAdjuntoPromocion> getAdjuntosPromociones (String codPromo) throws GestorDocumentalException;
 
+	void crearRelacionTrabajosActivo(Trabajo trabajo, Long idDocRestClient, String activo, String login, CrearRelacionExpedienteDto crearRelacionExpedienteDto) throws GestorDocumentalException ;
+
 	List<DtoAdjunto> getAdjuntosComunicacionGencat(ComunicacionGencat comunicacionGencat) throws GestorDocumentalException;
 
 	Integer crearContenedorComunicacionGencat(ComunicacionGencat comunicacionGencat, String username) throws GestorDocumentalException;
 
-	Long uploadDocumentoComunicacionGencat(ComunicacionGencat comunicacionGencat, WebFileItem webFileItem,
-			String userLogin, String matricula) throws GestorDocumentalException;
+	Long uploadDocumentoComunicacionGencat(ComunicacionGencat comunicacionGencat, WebFileItem webFileItem, String userLogin, String matricula) throws GestorDocumentalException;
 
-	void crearRelacionActivosComunicacion(ComunicacionGencat comunicacionGencat, Long idDocRestClient, Activo Activo,
-			String username, CrearRelacionExpedienteDto crearRelacionExpedienteDto) throws GestorDocumentalException;
+	void crearRelacionActivosComunicacion(ComunicacionGencat comunicacionGencat, Long idDocRestClient, Activo Activo, String username, CrearRelacionExpedienteDto crearRelacionExpedienteDto) throws GestorDocumentalException;
 }

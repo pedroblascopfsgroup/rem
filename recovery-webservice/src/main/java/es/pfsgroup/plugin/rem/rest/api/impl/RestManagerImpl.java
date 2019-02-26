@@ -51,6 +51,7 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.Diccionary;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.UniqueKey;
+import es.pfsgroup.plugin.rem.logTrust.LogTrustWebService;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoInfoComercial;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
@@ -80,10 +81,10 @@ import net.sf.json.JSONObject;
 public class RestManagerImpl implements RestApi {
 
 	@Autowired
-	BrokerDao brokerDao;
+	private BrokerDao brokerDao;
 
 	@Autowired
-	PeticionDao peticionDao;
+	private PeticionDao peticionDao;
 
 	@Autowired
 	private EntidadDao entidadDao;
@@ -105,7 +106,11 @@ public class RestManagerImpl implements RestApi {
 	private ApiProxyFactory proxyFactory;
 	
 	@Autowired
+	private LogTrustWebService trustMe;
+	
+	@Autowired
 	private UsuarioManager usuarioManager;
+
 	
 	@Override
 	public boolean validateSignature(Broker broker, String signature, RestRequestWrapper restRequest)
@@ -197,6 +202,7 @@ public class RestManagerImpl implements RestApi {
 	public void guardarPeticionRest(PeticionRest peticion) {
 		if (peticion != null) {
 			peticionDao.saveOrUpdate(peticion);
+			trustMe.registrarPeticionServicioWeb(peticion);
 		}
 	}
 

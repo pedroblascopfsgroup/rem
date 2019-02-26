@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Carles Molins
---## FECHA_CREACION=20181120
+--## AUTOR=Oscar Diestre
+--## FECHA_CREACION=20190201
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=2.0.19
---## INCIDENCIA_LINK=HREOS-4683
+--## VERSION_ARTEFACTO=2.0.3
+--## INCIDENCIA_LINK=HREOS-5358
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -14,7 +14,9 @@
 --##		0.2 Actualizar tipo de publicacion
 --##		0.3 Llamada SP_CREAR_AVISO
 --##		0.4 Modificado CONDICIONANTE_ALQUIER
---##		0.5 Añade insert en la tabla AHP del estado actual (APU)
+--##		0.5 Añade insert en la tabla AHP del estado actual (APU) Carles Molins HREOS-4683
+--##		0.6 Sergio B HREOS-4931 - Optmización de tiempos
+--##		0.7 Sergio B HREOS-5358 - Tratamiento de activos asociados a agrupaciones asistidas vencidas
 --##########################################
 --*/
 
@@ -97,7 +99,9 @@ create or replace PROCEDURE REM01.SP_CAMBIO_ESTADO_PUBLICACION (pACT_ID IN NUMBE
 
     nCONTADOR         NUMBER := 0;
     nCONTADORMax      NUMBER := 10000;
-  PROCEDURE PLP$LIMPIAR_ALQUILER(nACT_ID NUMBER, pUSUARIOMODIFICAR VARCHAR2) IS
+    V_TABLA_TMP_V VARCHAR2(30 CHAR):='TMP_PUBL_ACT';
+
+ PROCEDURE PLP$LIMPIAR_ALQUILER(nACT_ID NUMBER, pUSUARIOMODIFICAR VARCHAR2) IS
 
   BEGIN
     V_MSQL := 'UPDATE '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION
@@ -195,7 +199,7 @@ create or replace PROCEDURE REM01.SP_CAMBIO_ESTADO_PUBLICACION (pACT_ID IN NUMBE
 											  FROM '|| V_ESQUEMA ||'.DD_MTO_MOTIVOS_OCULTACION
 											 WHERE BORRADO = 0
 											   AND DD_MTO_CODIGO = '''||pDD_MTO_CODIGO||'''))
-					'  
+					'
 					;
 
 		  EXECUTE IMMEDIATE V_MSQL;
@@ -214,13 +218,13 @@ create or replace PROCEDURE REM01.SP_CAMBIO_ESTADO_PUBLICACION (pACT_ID IN NUMBE
 						  , APU_MOT_OCULTACION_MANUAL_V = NULL
 					  WHERE ACT_ID = '||nACT_ID||'
 						AND BORRADO = 0
-					'  
+					'
 					;
 
 		    EXECUTE IMMEDIATE V_MSQL;
 		    IF SQL%ROWCOUNT > 0 THEN
 			  vACTUALIZADO := 'S';
-		    END IF;		  
+		    END IF;
 		  END IF;
 
 		  IF pDD_MTO_CODIGO = '02' THEN /*No Comercializable*/
@@ -233,13 +237,13 @@ create or replace PROCEDURE REM01.SP_CAMBIO_ESTADO_PUBLICACION (pACT_ID IN NUMBE
 						  , FECHAMODIFICAR = SYSDATE
 					  WHERE ACT_ID = '||nACT_ID||'
 						AND BORRADO = 0
-					'  
+					'
 					;
 
 		    EXECUTE IMMEDIATE V_MSQL;
 		    IF SQL%ROWCOUNT > 0 THEN
 			  vACTUALIZADO := 'S';
-		    END IF;		  
+		    END IF;
 		  END IF;
 
 		  IF pDD_MTO_CODIGO = '04' THEN /*Revisión adecuación*/
@@ -259,12 +263,12 @@ create or replace PROCEDURE REM01.SP_CAMBIO_ESTADO_PUBLICACION (pACT_ID IN NUMBE
 		    IF SQL%ROWCOUNT > 0 THEN
 			  vACTUALIZADO := 'S';
 		    END IF;
-		  END IF; 	
+		  END IF;
 
 		  IF pDD_MTO_CODIGO = '06' THEN /*Revisión Publicación*/
 		    vACTUALIZAR_COND := 'N';
 		    REM01.SP_CREAR_AVISO (pACT_ID, 'GPUBL', pUSUARIOMODIFICAR, 'Se ha situado en Oculto Alquiler con motivo Revisión Publicación el activo: ', 0);
-		  END IF; 
+		  END IF;
 
 		END IF;
 	END IF;
@@ -285,7 +289,7 @@ create or replace PROCEDURE REM01.SP_CAMBIO_ESTADO_PUBLICACION (pACT_ID IN NUMBE
 											  FROM '|| V_ESQUEMA ||'.DD_MTO_MOTIVOS_OCULTACION
 											 WHERE BORRADO = 0
 											   AND DD_MTO_CODIGO = '''||pDD_MTO_CODIGO||'''))
-					'  
+					'
 					;
 
 		  EXECUTE IMMEDIATE V_MSQL;
@@ -303,13 +307,13 @@ create or replace PROCEDURE REM01.SP_CAMBIO_ESTADO_PUBLICACION (pACT_ID IN NUMBE
 						  , FECHAMODIFICAR = SYSDATE
 					  WHERE ACT_ID = '||nACT_ID||'
 						AND BORRADO = 0
-					'  
+					'
 					;
 
 		    EXECUTE IMMEDIATE V_MSQL;
 		    IF SQL%ROWCOUNT > 0 THEN
 			  vACTUALIZADO := 'S';
-		    END IF;		  
+		    END IF;
 		  END IF;
 
 		  IF pDD_MTO_CODIGO = '02' THEN /*No Comercializable*/
@@ -322,13 +326,13 @@ create or replace PROCEDURE REM01.SP_CAMBIO_ESTADO_PUBLICACION (pACT_ID IN NUMBE
 						  , FECHAMODIFICAR = SYSDATE
 					  WHERE ACT_ID = '||nACT_ID||'
 						AND BORRADO = 0
-					'  
+					'
 					;
 
 		    EXECUTE IMMEDIATE V_MSQL;
 		    IF SQL%ROWCOUNT > 0 THEN
 			  vACTUALIZADO := 'S';
-		    END IF;		  
+		    END IF;
 		  END IF;
 
 		IF pDD_MTO_CODIGO IN ('04') THEN /*Revisión adecuación*/
@@ -346,7 +350,7 @@ create or replace PROCEDURE REM01.SP_CAMBIO_ESTADO_PUBLICACION (pACT_ID IN NUMBE
 		  EXECUTE IMMEDIATE V_MSQL;
 		  IF SQL%ROWCOUNT > 0 THEN
 			vACTUALIZADO := 'S';
-		  END IF;   
+		  END IF;
 
 		END IF;
 
@@ -356,8 +360,8 @@ create or replace PROCEDURE REM01.SP_CAMBIO_ESTADO_PUBLICACION (pACT_ID IN NUMBE
                      ,ACT.PAC_FECHA_COMERCIALIZAR = SYSDATE
                      ,ACT.USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
 					 ,ACT.FECHAMODIFICAR = SYSDATE
-                WHERE ACT.ACT_ID = '||nACT_ID||' 
-                  AND ACT.PAC_CHECK_COMERCIALIZAR = 1            
+                WHERE ACT.ACT_ID = '||nACT_ID||'
+                  AND ACT.PAC_CHECK_COMERCIALIZAR = 1
           ';
 
 		  EXECUTE IMMEDIATE V_MSQL;
@@ -370,8 +374,8 @@ create or replace PROCEDURE REM01.SP_CAMBIO_ESTADO_PUBLICACION (pACT_ID IN NUMBE
                      ,ACT.PAC_FECHA_FORMALIZAR = SYSDATE
                      ,ACT.USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
 					 ,ACT.FECHAMODIFICAR = SYSDATE
-                WHERE ACT.ACT_ID = '||nACT_ID||' 
-                  AND ACT.PAC_CHECK_FORMALIZAR = 1            
+                WHERE ACT.ACT_ID = '||nACT_ID||'
+                  AND ACT.PAC_CHECK_FORMALIZAR = 1
           ';
 
 		  EXECUTE IMMEDIATE V_MSQL;
@@ -384,22 +388,22 @@ create or replace PROCEDURE REM01.SP_CAMBIO_ESTADO_PUBLICACION (pACT_ID IN NUMBE
                      ,ACT.PAC_FECHA_PUBLICAR = SYSDATE
                      ,ACT.USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
 					 ,ACT.FECHAMODIFICAR = SYSDATE
-                WHERE ACT.ACT_ID = '||nACT_ID||' 
-                  AND ACT.PAC_CHECK_PUBLICAR = 1            
+                WHERE ACT.ACT_ID = '||nACT_ID||'
+                  AND ACT.PAC_CHECK_PUBLICAR = 1
           ';
 
 		  EXECUTE IMMEDIATE V_MSQL;
 		  IF SQL%ROWCOUNT > 0 THEN
 			  vACTUALIZADO := 'S';
-		  END IF;      
+		  END IF;
 		END IF;
 
 		IF pDD_MTO_CODIGO = '06' THEN /*Revisión Publicación*/
 		  vACTUALIZAR_COND := 'N';
 		  REM01.SP_CREAR_AVISO (pACT_ID, 'GPUBL', pUSUARIOMODIFICAR, 'Se ha situado en Oculto Venta con motivo Revisión Publicación el activo: ', 0);
-		END IF; 		
+		END IF;
 
-	  END IF;	  		  
+	  END IF;
 	END IF;
 
   END;
@@ -575,7 +579,7 @@ IF pINFORME_COMERCIAL = 1 THEN
 			EXECUTE IMMEDIATE V_MSQL;
 				IF SQL%ROWCOUNT > 0 THEN
 				vACTUALIZADO := 'S';
-				END IF;  		
+				END IF;
 
 		ELSIF pCondAlquiler = 1 THEN
 				/*PUBLICADO FORZADO*/
@@ -597,7 +601,7 @@ IF pINFORME_COMERCIAL = 1 THEN
 				EXECUTE IMMEDIATE V_MSQL;
 					IF SQL%ROWCOUNT > 0 THEN
 					vACTUALIZADO := 'S';
-					END IF;   
+					END IF;
 		END IF;
 
    ELSE
@@ -644,7 +648,7 @@ ELSE
 			EXECUTE IMMEDIATE V_MSQL;
 			IF SQL%ROWCOUNT > 0 THEN
 			  vACTUALIZADO := 'S';
-			END IF;  		
+			END IF;
 
 		ELSIF pCondAlquiler = 1 THEN
 			/*PUBLICADO FORZADO*/
@@ -666,11 +670,181 @@ ELSE
 			EXECUTE IMMEDIATE V_MSQL;
 				IF SQL%ROWCOUNT > 0 THEN
 				vACTUALIZADO := 'S';
-				END IF;   
+				END IF;
         END IF;
    END IF;
 END IF;
   END;
+
+
+  FUNCTION PLP$ESTA_EN_ASISTIDA_VEN( nACT_ID NUMBER ) RETURN NUMBER  IS
+   v_cursor_aux    CurTyp;
+   sRES NUMBER;
+  BEGIN
+  
+      V_MSQL := ' SELECT COUNT( 1 ) AS RES
+                FROM '|| V_ESQUEMA ||'.ACT_AGR_AGRUPACION AGR 
+                JOIN '|| V_ESQUEMA ||'.DD_TAG_TIPO_AGRUPACION TAG 
+                    ON TAG.DD_TAG_ID = AGR.DD_TAG_ID AND TAG.BORRADO = 0 
+                WHERE 1 = 1
+                AND EXISTS ( SELECT 1
+                             FROM '|| V_ESQUEMA ||'.ACT_AGA_AGRUPACION_ACTIVO AGA
+                             WHERE AGA.AGR_ID = AGR.AGR_ID
+                             AND AGA.ACT_ID = ' || nACT_ID  || ' AND AGA.BORRADO = 0  
+                            )
+                AND TAG.DD_TAG_CODIGO = ''13''
+                AND AGR.AGR_FIN_VIGENCIA < SYSDATE ';       
+  
+    OPEN v_cursor_aux FOR V_MSQL;
+    FETCH v_cursor_aux INTO sRES;
+    CLOSE v_cursor_aux;	
+  
+     IF sRES > 0 THEN
+     
+      RETURN ( 1 );
+      
+    ELSE 
+    
+      RETURN ( 0 );
+      
+    END IF;
+  
+  END;
+
+  PROCEDURE PLP$AGR_ASISTIDAS_ESC_ACT( nACT_ID NUMBER, vDD_TCO_CODIGO VARCHAR2 ) IS
+  
+  BEGIN
+    
+    IF PLP$ESTA_EN_ASISTIDA_VEN( nACT_ID ) = 1 THEN --Se trata de una agrupación asistida ??
+    
+        IF vDD_TCO_CODIGO IN ('02','03','04') THEN -- Alquiler
+    
+            -- Activos en alquiler publicados:
+            V_MSQL := '
+            MERGE INTO '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION ACT
+                USING ( SELECT ACT_ID FROM ACT_ACTIVO WHERE ACT_ID = ' || nACT_ID || ' ) AUX
+                ON ( ACT.ACT_ID = AUX.ACT_ID )
+                WHEN MATCHED THEN
+                UPDATE
+                    SET APU_CHECK_OCULTAR_A = 1
+                    , APU_CHECK_OCULTAR_V = 1
+                    , USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
+                    , FECHAMODIFICAR = SYSDATE
+                    , DD_MTO_A_ID = ( SELECT DD_MTO_ID 
+                                      FROM '|| V_ESQUEMA ||'.DD_MTO_MOTIVOS_OCULTACION
+                                      WHERE DD_MTO_CODIGO = ''01'' )
+                    , DD_EPV_ID = ( SELECT DD_EPV_ID 
+                                    FROM '|| V_ESQUEMA ||'.DD_EPV_ESTADO_PUB_VENTA
+                                    WHERE DD_EPV_CODIGO = ''04'' )                
+                    , DD_EPA_ID = ( SELECT DD_EPA_ID 
+                                    FROM '|| V_ESQUEMA ||'.DD_EPA_ESTADO_PUB_ALQUILER
+                                    WHERE DD_EPA_CODIGO = ''04'' )                                          
+                WHERE BORRADO = 0
+                AND DD_EPA_ID IN ( SELECT DD_EPA_ID 
+                                    FROM '|| V_ESQUEMA ||'.DD_EPA_ESTADO_PUB_ALQUILER
+                                    WHERE DD_EPA_CODIGO IN ( ''02'', ''03'' ) )               
+            ';
+
+            EXECUTE IMMEDIATE V_MSQL;
+  
+            IF SQL%ROWCOUNT > 0 THEN
+                vACTUALIZADO := 'S';
+            END IF;
+
+            -- Activos en alquiler no publicados:
+            V_MSQL := '
+            MERGE INTO '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION ACT
+                USING ( SELECT ACT_ID FROM ACT_ACTIVO WHERE ACT_ID = ' || nACT_ID || ' ) AUX
+                ON ( ACT.ACT_ID = AUX.ACT_ID )
+                WHEN MATCHED THEN
+                UPDATE
+                    SET APU_CHECK_OCULTAR_A = 1
+                    , APU_CHECK_OCULTAR_V = 1
+                    , USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
+                    , FECHAMODIFICAR = SYSDATE
+                    , DD_MTO_A_ID = ( SELECT DD_MTO_ID 
+                                      FROM '|| V_ESQUEMA ||'.DD_MTO_MOTIVOS_OCULTACION
+                                      WHERE DD_MTO_CODIGO = ''01'' )                              
+                WHERE BORRADO = 0
+                AND DD_EPA_ID IN ( SELECT DD_EPA_ID 
+                                    FROM '|| V_ESQUEMA ||'.DD_EPA_ESTADO_PUB_ALQUILER
+                                    WHERE DD_EPA_CODIGO = ''01'' )
+            ';
+        
+            EXECUTE IMMEDIATE V_MSQL;
+  
+            IF SQL%ROWCOUNT > 0 THEN
+                vACTUALIZADO := 'S';
+            END IF;
+          
+        END IF;
+
+        IF vDD_TCO_CODIGO IN ('01','02') THEN -- Venta
+
+            -- Activos en venta publicados:
+            V_MSQL := '
+            MERGE INTO '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION ACT
+                USING ( SELECT ACT_ID FROM ACT_ACTIVO WHERE ACT_ID = ' || nACT_ID || ' ) AUX
+                ON ( ACT.ACT_ID = AUX.ACT_ID )
+                WHEN MATCHED THEN
+                UPDATE
+                    SET APU_CHECK_OCULTAR_A = 1
+                    , APU_CHECK_OCULTAR_V = 1
+                    , USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
+                    , FECHAMODIFICAR = SYSDATE
+                    , DD_MTO_V_ID = ( SELECT DD_MTO_ID 
+                                      FROM '|| V_ESQUEMA ||'.DD_MTO_MOTIVOS_OCULTACION
+                                      WHERE DD_MTO_CODIGO = ''01'' )
+                    , DD_EPV_ID = ( SELECT DD_EPV_ID 
+                                    FROM '|| V_ESQUEMA ||'.DD_EPV_ESTADO_PUB_VENTA
+                                    WHERE DD_EPV_CODIGO = ''04'' )           
+                    , DD_EPA_ID = ( SELECT DD_EPA_ID 
+                                    FROM '|| V_ESQUEMA ||'.DD_EPA_ESTADO_PUB_ALQUILER
+                                    WHERE DD_EPA_CODIGO = ''04'' )                                             
+                WHERE BORRADO = 0
+                AND DD_EPV_ID IN ( SELECT DD_EPV_ID 
+                                    FROM '|| V_ESQUEMA ||'.DD_EPV_ESTADO_PUB_VENTA 
+                                    WHERE DD_EPV_CODIGO IN ( ''02'', ''03'' ) )               
+            ';            
+
+            EXECUTE IMMEDIATE V_MSQL;
+  
+            IF SQL%ROWCOUNT > 0 THEN
+                vACTUALIZADO := 'S';
+            END IF;
+
+            -- Activos en venta no publicados:
+            V_MSQL := '
+            MERGE INTO '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION ACT
+                USING ( SELECT ACT_ID FROM ACT_ACTIVO WHERE ACT_ID = ' || nACT_ID || ' ) AUX
+                ON ( ACT.ACT_ID = AUX.ACT_ID )
+                WHEN MATCHED THEN
+                UPDATE
+                    SET APU_CHECK_OCULTAR_A = 1
+                    , APU_CHECK_OCULTAR_V = 1
+                    , USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''
+                    , FECHAMODIFICAR = SYSDATE
+                    , DD_MTO_V_ID = ( SELECT DD_MTO_ID 
+                                      FROM '|| V_ESQUEMA ||'.DD_MTO_MOTIVOS_OCULTACION
+                                      WHERE DD_MTO_CODIGO = ''01'' )                  
+                WHERE BORRADO = 0
+                AND DD_EPV_ID IN ( SELECT DD_EPV_ID 
+                                    FROM '|| V_ESQUEMA ||'.DD_EPV_ESTADO_PUB_VENTA 
+                                    WHERE DD_EPV_CODIGO =  ''01'' )                
+            ';
+
+            EXECUTE IMMEDIATE V_MSQL;
+  
+            IF SQL%ROWCOUNT > 0 THEN
+                vACTUALIZADO := 'S';
+            END IF;
+
+        END IF;
+  
+    END IF;
+    
+  END;
+
 
   BEGIN
 	    DBMS_OUTPUT.PUT_LINE('[INICIO]');
@@ -697,7 +871,7 @@ END IF;
 	  END IF;
 
       V_MSQL := '
-        SELECT 
+        SELECT
                V.ACT_ID, V.DD_TCO_CODIGO
              , V.CODIGO_ESTADO_A, V.DESC_ESTADO_A, V.CHECK_PUBLICAR_A, V.CHECK_OCULTAR_A, V.DD_MTO_CODIGO_A, V.DD_MTO_MANUAL_A
              , V.CODIGO_ESTADO_V, V.DESC_ESTADO_V, V.CHECK_PUBLICAR_V, V.CHECK_OCULTAR_V, V.DD_MTO_CODIGO_V, V.DD_MTO_MANUAL_V
@@ -722,7 +896,16 @@ END IF;
         EXIT WHEN v_cursor%NOTFOUND;
 
         vACTUALIZADO := 'N';
-        vACTUALIZAR_COND := 'S';
+        vACTUALIZAR_COND := 'S';       
+        
+        -- Esconde el activo si está en una agrupación asistida vencida:
+        IF PLP$ESTA_EN_ASISTIDA_VEN( nACT_ID ) = 1 THEN
+        
+         PLP$AGR_ASISTIDAS_ESC_ACT( nACT_ID, vDD_TCO_CODIGO );
+        
+        END IF;
+
+
 
         /**************/
         /*No Publicado*/
@@ -730,7 +913,7 @@ END IF;
 
         IF vDD_TCO_CODIGO IN ('02','03','04') THEN
 
-          IF vCODIGO_ESTADO_A = '01' THEN
+          IF vCODIGO_ESTADO_A = '01' AND PLP$ESTA_EN_ASISTIDA_VEN( nACT_ID ) = 0 THEN
 
             IF vCHECK_PUBLICAR_A = 1 AND vCondAlquiler IS NOT NULL THEN
               PLP$CONDICIONANTE_ALQUILER(nACT_ID, nADMISION, nGESTION, nINFORME_COMERCIAL,nPRECIO_A, nCEE_VIGENTE, nADECUADO, vUSUARIOMODIFICAR, vCondAlquiler);
@@ -741,7 +924,7 @@ END IF;
 
         IF vDD_TCO_CODIGO IN ('01','02') THEN
 
-          IF vCODIGO_ESTADO_V = '01' THEN
+          IF vCODIGO_ESTADO_V = '01' AND PLP$ESTA_EN_ASISTIDA_VEN( nACT_ID ) = 0  THEN
 
             IF vCHECK_PUBLICAR_V = 1 THEN
               PLP$CONDICIONANTE_VENTA(nACT_ID, nADMISION, nGESTION, nINFORME_COMERCIAL,nPRECIO_V, vUSUARIOMODIFICAR);
@@ -927,6 +1110,8 @@ END IF;
 
 		    EXECUTE IMMEDIATE V_MSQL;
         END IF;
+        
+
 
         /**************/
         /*HISTORIFICAR*/
@@ -938,10 +1123,10 @@ END IF;
                 SELECT AHP_ID, ACT_ID, TCO.DD_TCO_CODIGO, TPU_V.DD_TPU_CODIGO AS TPU_V_COD, TPU_A.DD_TPU_CODIGO AS TPU_A_COD, EPV.DD_EPV_CODIGO, EPA.DD_EPA_CODIGO, MTO_V.DD_MTO_CODIGO AS MTO_V_COD, MTO_A.DD_MTO_CODIGO AS MTO_A_COD
                     , AHP.AHP_CHECK_OCULTAR_V, AHP.AHP_CHECK_OCULTAR_A, AHP.ES_CONDICONADO_ANTERIOR
                     , ROW_NUMBER() OVER(
-                        PARTITION BY AHP.ACT_ID 
-                        ORDER BY (CASE 
-                            WHEN TCO.DD_TCO_CODIGO IN (''01'',''02'') 
-                            THEN AHP.AHP_FECHA_FIN_VENTA 
+                        PARTITION BY AHP.ACT_ID
+                        ORDER BY (CASE
+                            WHEN TCO.DD_TCO_CODIGO IN (''01'',''02'')
+                            THEN AHP.AHP_FECHA_FIN_VENTA
                             ELSE AHP.AHP_FECHA_FIN_ALQUILER
                             END)
                             DESC NULLS FIRST) RN
@@ -1088,6 +1273,7 @@ END IF;
 	    RAISE;
 
 	END SP_CAMBIO_ESTADO_PUBLICACION;
+
 /
 
 EXIT;

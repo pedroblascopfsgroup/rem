@@ -182,10 +182,8 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 	     },
 	     
 	     esAutorizable: function(get) {
-
 	     	var estaAutorizado = get('gasto.autorizado');
 	     	var estaContabilizado = CONST.ESTADOS_GASTO['CONTABILIZADO'] == get('gasto.estadoGastoCodigo');
-	     	var estaPagado = CONST.ESTADOS_GASTO['PAGADO'] == get('gasto.estadoGastoCodigo');
 	     	var estaAnulado = CONST.ESTADOS_GASTO['ANULADO'] == get('gasto.estadoGastoCodigo');
 	     	var estaEnviado = get('gasto.enviado');
 	     	var estaRetenido = CONST.ESTADOS_GASTO['RETENIDO'] == get('gasto.estadoGastoCodigo');
@@ -194,14 +192,13 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 	     	var estaAutorizadoAdministracion = CONST.ESTADOS_GASTO['AUTORIZADO'] == get('gasto.estadoGastoCodigo');
 	     	var estaAutorizadoPropietario = CONST.ESTADOS_GASTO['AUTORIZADO_PROPIETARIO'] == get('gasto.estadoGastoCodigo');
 	     	
-	     	return !estaEnviado && !estaAutorizado && !estaContabilizado && !estaPagado && !estaAnulado && !estaRetenido && !estaIncompleto 
+	     	return !estaEnviado && !estaAutorizado && !estaContabilizado && !estaAnulado && !estaRetenido && !estaIncompleto 
 	     			&& !estaRechazadoPropietario && !estaAutorizadoAdministracion && !estaAutorizadoPropietario;
 	     },
 	     
 	     esRechazable: function(get) {	     
 	     	var estaRechazado = get('gasto.rechazado');
 	     	var estaContabilizado = CONST.ESTADOS_GASTO['CONTABILIZADO'] == get('gasto.estadoGastoCodigo');
-	     	var estaPagado = CONST.ESTADOS_GASTO['PAGADO'] == get('gasto.estadoGastoCodigo');
 	     	var estaPagadoSinJustificante = CONST.ESTADOS_GASTO['PAGADO_SIN_JUSTIFICANTE'] == get('gasto.estadoGastoCodigo');
 	     	var estaAnulado = CONST.ESTADOS_GASTO['ANULADO'] == get('gasto.estadoGastoCodigo');
 	     	var estaEnviado = get('gasto.enviado');
@@ -213,7 +210,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 	     	var estaAutorizadoAdministracion = CONST.ESTADOS_GASTO['AUTORIZADO'] == get('gasto.estadoGastoCodigo');
 	     	var estaAutorizadoPropietario = CONST.ESTADOS_GASTO['AUTORIZADO_PROPIETARIO'] == get('gasto.estadoGastoCodigo');
 	     	
-	     	return  !estaEnviado && !estaRechazado && !estaContabilizado && !estaPagado && !estaAnulado && !estaRetenido && !estaSubsanadoYAutorizado && !estaIncompleto 
+	     	return  !estaEnviado && !estaRechazado && !estaContabilizado && !estaAnulado && !estaRetenido && !estaSubsanadoYAutorizado && !estaIncompleto 
 	     			&& !estaRechazadoAdministracion && !estaRechazadoPropietario && !estaAutorizadoAdministracion && !estaAutorizadoPropietario && !estaPagadoSinJustificante;
 	     },
 	     

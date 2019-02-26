@@ -106,6 +106,11 @@ public class DtoActivoDatosRegistrales extends DtoTabActivo {
 	private String entidadAdjudicatariaCodigo;
 	private String entidadEjecutanteCodigo;
 	
+	//Calificacion negativa
+	private String calificacionNegativa;
+	private String motivoCalificacionNegativa;
+	private String descripcionCalificacionNegativa;
+	
 	
 	
 	
@@ -614,6 +619,24 @@ public class DtoActivoDatosRegistrales extends DtoTabActivo {
 	}
 	public void setFechaResolucionMoratoria(Date fechaResolucionMoratoria) {
 		this.fechaResolucionMoratoria = fechaResolucionMoratoria;
+	}
+	public String getCalificacionNegativa() {
+		return calificacionNegativa;
+	}
+	public void setCalificacionNegativa(String calificacionNegativa) {
+		this.calificacionNegativa = calificacionNegativa;
+	}
+	public String getMotivoCalificacionNegativa() {
+		return motivoCalificacionNegativa;
+	}
+	public void setMotivoCalificacionNegativa(String motivoCalificacionNegativa) {
+		this.motivoCalificacionNegativa = motivoCalificacionNegativa;
+	}
+	public String getDescripcionCalificacionNegativa() {
+		return descripcionCalificacionNegativa;
+	}
+	public void setDescripcionCalificacionNegativa(String descripcionCalificacionNegativa) {
+		this.descripcionCalificacionNegativa = descripcionCalificacionNegativa;
 	}
 
 

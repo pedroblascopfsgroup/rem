@@ -62,6 +62,7 @@ public class DtoAgrupaciones extends WebDto {
 	private String subtipoActivoCodigo;
 	private Long idNumActivoPrincipal;
 	private String cartera;
+	private String tipoActivoPrincipalCodigo;
 	private Integer activosGencat;
 
 
@@ -361,6 +362,7 @@ public class DtoAgrupaciones extends WebDto {
 	public Long getIdNumActivoPrincipal() {
 		return idNumActivoPrincipal;
 	}
+
 	public void setIdNumActivoPrincipal(Long idNumActivoPrincipal) {
 		this.idNumActivoPrincipal = idNumActivoPrincipal;
 	}
@@ -369,6 +371,12 @@ public class DtoAgrupaciones extends WebDto {
 	}
 	public void setActivosGencat(Integer activosGencat) {
 		this.activosGencat = activosGencat;
+	}
+	public String getTipoActivoPrincipalCodigo() {
+		return tipoActivoPrincipalCodigo;
+	}
+	public void setTipoActivoPrincipalCodigo(String tipoActivoPrincipalCodigo) {
+		this.tipoActivoPrincipalCodigo = tipoActivoPrincipalCodigo;
 	}
 
 	public String getCartera() {

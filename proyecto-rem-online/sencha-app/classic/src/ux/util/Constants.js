@@ -154,6 +154,7 @@ Ext.define('HreRem.ux.util.Constants', {
 		DOCU:				'documentosexpediente',
 		FORMA:				'formalizacionexpediente',
 		GESECO:				'gestioneconomicaexpediente',
+		PLUVTA:             'plusvaliaventaexpedediente',
 		SEGREN: 			'segurorentasexpediente'
 //		INVISIBLE:		Si creamos un registro-enlace-expediente en TFI y como codigo (en TFI_NOMBRE) damos este valor, ocultara el enlace
     },
@@ -169,7 +170,7 @@ Ext.define('HreRem.ux.util.Constants', {
     	TANGO: '10',
     	GIANTS: '12',
     	GALEON:'15',
-    	ZEUS: '14'	
+    	ZEUS: '14'
     },
 
     NOMBRE_CARTERA:	{
@@ -179,13 +180,13 @@ Ext.define('HreRem.ux.util.Constants', {
     	'04': 'TERCEROS',
     	'06': 'HYT',
     	'07': 'CERBERUS',
-    	'08': 'LIBERBANK',    	
+    	'08': 'LIBERBANK',
     	'10': 'TANGO',
     	'12': 'GIANTS',
     	'15': 'GALEON',
     	'14': 'ZEUS'
     },
- 
+
     NOMBRE_CARTERA2: {
     	CAJAMAR: 'CAJAMAR',
     	SAREB: 'SAREB',
@@ -413,12 +414,12 @@ Ext.define('HreRem.ux.util.Constants', {
 	EXPORTADOR:{
 		LIMITE: '1000'
 	},
-	
+
 	SANCION_GENCAT: {
 		EJERCE: 'EJERCE',
 		NO_EJERCE: 'NO_EJERCE'
 	},
-	
+
 	ESTADO_COMUNICACION_GENCAT: {
 		CREADO: 'CREADO',
 		RECHAZADO: 'RECHAZADO',
@@ -461,19 +462,23 @@ Ext.define('HreRem.ux.util.Constants', {
         PUBLICADO_ALQUILER: 'Publicado Alquiler',
         OCULTO_ALQUILER: 'Oculto Alquiler'
     },
-    
+
+	MOTIVOS_CAL_NEGATIVA:{
+		OTROS: '21'
+	},
+
     TAREAS:{
     	T015_DEFINICIONOFERTA : 'T015_DefinicionOferta',
     	T015_VERIFICARSCORING : 'T015_VerificarScoring',
     	T015_VERIFICARSEGURORENTAS : 'T015_VerificarSeguroRentas'
     },
-    
+
     TIPO_INQUILINO: {
 		SCORING: '01',
 		SEGURO_RENTAS: '02',
 		NINGUNA: '03'
 	},
-	
+
 	SUBTIPO_DOCUMENTO_EXPEDIENTE: {
 		RENOVACION_CONTRATO: '46',
 		CONTRATO: '49',
@@ -482,10 +487,9 @@ Ext.define('HreRem.ux.util.Constants', {
 		JUSTIFICANTE_INGRESOS: '53',
 		ALQUILER_CON_OPCION_A_COMPRA: '54'
 	},
-	
+
 	DD_SAN_SANCION: {
 		COD_EJERCE: 'EJERCE',
 		COD_NO_EJERCE: 'NO_EJERCE'
  	}
-    
 });

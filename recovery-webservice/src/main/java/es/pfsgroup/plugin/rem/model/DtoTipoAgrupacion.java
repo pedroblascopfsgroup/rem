@@ -3,7 +3,7 @@ package es.pfsgroup.plugin.rem.model;
 public class DtoTipoAgrupacion extends DtoCondicionEspecifica {
 
 	private Long idAgrupacion;
-	private Integer idCodigo;
+	private String codigo;
 	private String descripcion;
 	private String descripcionLarga;
 	
@@ -13,11 +13,11 @@ public class DtoTipoAgrupacion extends DtoCondicionEspecifica {
 	public void setIdAgrupacion(Long idAgrupacion) {
 		this.idAgrupacion = idAgrupacion;
 	}
-	public Integer getIdCodigo() {
-		return idCodigo;
+	public String getCodigo() {
+		return codigo;
 	}
-	public void setIdCodigo(Integer idCodigo) {
-		this.idCodigo = idCodigo;
+	public void setCodigo(String codigo) {
+		this.codigo = codigo;
 	}
 	public String getDescripcion() {
 		return descripcion;

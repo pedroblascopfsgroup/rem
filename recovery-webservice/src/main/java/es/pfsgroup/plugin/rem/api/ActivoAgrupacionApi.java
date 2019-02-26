@@ -18,6 +18,7 @@ import es.pfsgroup.plugin.rem.model.DtoCondicionEspecifica;
 import es.pfsgroup.plugin.rem.model.DtoCondicionEspecificaAgrupacion;
 import es.pfsgroup.plugin.rem.model.DtoEstadoDisponibilidadComercial;
 import es.pfsgroup.plugin.rem.model.DtoSubdivisiones;
+import es.pfsgroup.plugin.rem.model.DtoTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.DtoVigenciaAgrupacion;
 import es.pfsgroup.plugin.rem.model.GestorActivo;
 import es.pfsgroup.plugin.rem.rest.dto.File;
@@ -144,4 +145,6 @@ public interface ActivoAgrupacionApi {
 	public Usuario getGestorComercialAgrupacion(List<Long> numActivos);
 	
 	public Boolean arrayComparer(Long idAgr, List<Long> agrupaciones);
+	
+	public List<DtoTipoAgrupacion> getComboTipoAgrupacion();
 }

@@ -25,10 +25,10 @@ Ext.define('HreRem.view.agrupaciones.AgrupacionesModel', {
 
     	comboTipoAgrupacion: {
 			pageSize: 10,
-	    	model: 'HreRem.model.ComboBase',
+	    	model: 'HreRem.model.Agrupaciones',
 	    	proxy: {
 		        type: 'uxproxy',
-		        remoteUrl: 'generic/getComboTipoAgrupacion'
+		        remoteUrl: 'agrupacion/getComboTipoAgrupacion'
 	    	},
 	    	autoLoad: true
     	},

@@ -23,6 +23,7 @@ import org.springframework.web.servlet.ModelAndView;
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.pagination.Page;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
@@ -936,4 +937,23 @@ public class AgrupacionController extends ParadiseJsonController {
 		model.put("data", activoAgrupacionApi.darDeBajaCondicionEspecifica(dto));
 		return createModelAndViewJson(model);
 	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getComboTipoAgrupacion(ModelMap model) {
+
+		try {
+			List <DtoTipoAgrupacion> dto= activoAgrupacionApi.getComboTipoAgrupacion();
+
+			model.put("data", dto);
+			model.put("success", true);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}
+
+		return createModelAndViewJson(model);
+	}
+
 }

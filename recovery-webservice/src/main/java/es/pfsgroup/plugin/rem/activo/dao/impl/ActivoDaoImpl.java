@@ -1178,4 +1178,5 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 	public void hibernateFlush() {
 		getHibernateTemplate().flush();
 	}
+
 }

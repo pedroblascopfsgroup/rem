@@ -79,7 +79,10 @@ public class CondicionanteExpediente implements Serializable, Auditable {
     
     @Column(name="COE_IMPORTE_RESERVA")
     private Double importeReserva;
-
+    
+	@Column(name="COE_DEPOSITO_RESERVA")
+    private Double depositoReserva;
+    
     @Column(name="COE_PLAZO_FIRMA_RESERVA")
     private Integer plazoFirmaReserva;
     
@@ -327,8 +330,14 @@ public class CondicionanteExpediente implements Serializable, Auditable {
 
 	@Embedded
 	private Auditoria auditoria;
-	   
-	
+
+	public Double getDepositoReserva() {
+		return depositoReserva;
+	}
+
+	public void setDepositoReserva(Double depositoReserva) {
+		this.depositoReserva = depositoReserva;
+	}
 
 	public Long getId() {
 		return id;

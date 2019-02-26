@@ -41,7 +41,9 @@ import es.pfsgroup.plugin.recovery.agendaMultifuncion.impl.dto.DtoAdjuntoMail;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBLocalizacionesBien;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoTramiteDao;
+import es.pfsgroup.plugin.rem.activo.dao.impl.ActivoDaoImpl;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
+import es.pfsgroup.plugin.rem.adapter.ExpedienteComercialAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.*;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
@@ -238,6 +240,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	private GenericABMDao genericDao;
 
 	@Autowired
+	private ActivoDaoImpl activoDaoImpl;
+	
+	@Autowired
 	private GenericAdapter genericAdapter;
 
 	@Autowired
@@ -257,7 +262,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 	@Autowired
 	private ActivoAdapter activoAdapter;
-
+	
+	@Autowired
+	private ExpedienteComercialAdapter expedienteAdapter;
+	
 	@Autowired
 	private UvemManagerApi uvemManagerApi;
 
@@ -1272,6 +1280,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			dto.setFechaEnvio(reserva.getFechaEnvio());
 			dto.setFechaFirma(reserva.getFechaFirma());
 			dto.setFechaVencimiento(reserva.getFechaVencimiento());
+
 			if (!Checks.esNulo(reserva.getEstadoReserva())) {
 				dto.setEstadoReservaDescripcion(reserva.getEstadoReserva().getDescripcion());
 				dto.setEstadoReservaCodigo(reserva.getEstadoReserva().getCodigo());
@@ -1648,10 +1657,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	@Override
 	@Transactional(readOnly = false)
 	public String uploadDocumento(WebFileItem fileItem, Long idDocRestClient,
-			ExpedienteComercial expedienteComercialEntrada, String matricula) throws Exception {
+		ExpedienteComercial expedienteComercialEntrada, String matricula) throws Exception {
 		ExpedienteComercial expedienteComercial;
 		DDTipoDocumentoExpediente tipoDocumento = null;
-
+		
 		if (Checks.esNulo(expedienteComercialEntrada)) {
 			expedienteComercial = findOne(Long.parseLong(fileItem.getParameter("idEntidad")));
 
@@ -1709,7 +1718,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					&& DDSubtipoDocumentoExpediente.CODIGO_PRE_LIQUIDACION_ITP
 							.equals(adjuntoExpediente.getSubtipoDocumentoExpediente().getCodigo())) {
 				this.enviarCorreoSubidaDeContrato(expedienteComercial.getId());
-			}
+			} 
 		}
 
 		expedienteComercial.getAdjuntos().add(adjuntoExpediente);
@@ -1718,10 +1727,22 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 		for (ActivoOferta activoOferta : expedienteComercial.getOferta().getActivosOferta()) {
 			if (!Checks.esNulo(adjuntoExpediente) && !Checks.esNulo(adjuntoExpediente.getSubtipoDocumentoExpediente())
-					&& !Checks.esNulo(adjuntoExpediente.getSubtipoDocumentoExpediente().getMatricula())) {
-				Activo activo = activoOferta.getPrimaryKey().getActivo();
-				activoAdapter.uploadDocumento(fileItem, activo,
-						adjuntoExpediente.getSubtipoDocumentoExpediente().getMatricula());
+			&& !Checks.esNulo(adjuntoExpediente.getSubtipoDocumentoExpediente().getMatricula())) {
+				Activo activo = activoApi.get(activoOferta.getPrimaryKey().getActivo().getId());
+				activoAdapter.uploadDocumento(fileItem, activo, adjuntoExpediente.getSubtipoDocumentoExpediente().getMatricula());	
+				// HREOS-5392
+				// Se comprueba que el documento que sube es el de deposito despublicacion activo
+				// Se comprueba cartera Cerberus subcarteras Agora
+				// Cambia la situación comercial a '04' Disponible para la venta con reserva de cada activo incluido en la oferta del expediente
+				// Lanza el SP para ocultar el/los activo/s con motivo Reservado		
+				if (DDSubtipoDocumentoExpediente.CODIGO_DEPOSITO_DESPUBLICACION_ACTIVO
+						.equals(adjuntoExpediente.getSubtipoDocumentoExpediente().getCodigo())
+						 && DDCartera.CODIGO_CARTERA_CERBERUS.equals(activo.getCartera().getCodigo()) &&
+							((DDSubcartera.CODIGO_AGORA_INMOBILIARIO.equals(activo.getSubcartera().getCodigo())) ||
+							(DDSubcartera.CODIGO_AGORA_FINANCIERO.equals(activo.getSubcartera().getCodigo())))) {
+							activo.setSituacionComercial(genericDao.get(DDSituacionComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDSituacionComercial.CODIGO_DISPONIBLE_VENTA_RESERVA)));
+							activoDaoImpl.publicarActivoConHistorico(activo.getId(), genericAdapter.getUsuarioLogado().getUsername(), true);
+				}
 				if (activo.getAdjuntos() != null && activo.getAdjuntos().size() > 0) {
 					adjuntoActivo = activo.getAdjuntos().get(activo.getAdjuntos().size() - 1);
 				}
@@ -1872,6 +1893,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 			// Económicas-Reserva
 			dto.setSolicitaReserva(condiciones.getSolicitaReserva());
+			if (!Checks.esNulo(condiciones.getDepositoReserva())) {
+					dto.setDepositoReserva(condiciones.getDepositoReserva());
+			}
 			if (!Checks.esNulo(condiciones.getTipoCalculoReserva())) {
 				dto.setTipoCalculo(condiciones.getTipoCalculoReserva().getCodigo());
 			}
@@ -2159,9 +2183,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getCodigoEntidad());
 			entidadAvalista  = genericDao.get(DDEntidadesAvalistas.class, filtro);
 		}
-
-
-
+		
 		if (!Checks.esNulo(condiciones)) {
 			condiciones = dtoCondicionantestoCondicionante(condiciones, dto);
 			expedienteComercial.setCondicionante(condiciones);
@@ -2258,7 +2280,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 	@Override
 	@Transactional(readOnly = false)
-	public Reserva createReservaExpediente(ExpedienteComercial expediente) {
+	public Reserva createReservaExpediente(ExpedienteComercial expediente) { 
 		CondicionanteExpediente condiciones = expediente.getCondicionante();
 		Reserva reserva = expediente.getReserva();
 
@@ -7358,7 +7380,57 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 		return false;
 	}
+	
 
+	@Override
+	public boolean checkDepositoDespublicacionSubido(TareaExterna tareaExterna) {
+		ExpedienteComercial expedienteComercial = tareaExternaToExpedienteComercial(tareaExterna);
+		try {
+			List<DtoAdjunto> adjuntosExpediente = gestorDocumentalAdapterApi.getAdjuntosExpedienteComercial(expedienteComercial);
+			for (DtoAdjunto adjunto : adjuntosExpediente) {
+				if(DDSubtipoDocumentoExpediente.MATRICULA_DEPOSITO_DESPUBLICACION_ACTIVO.equals(adjunto.getMatricula())) {
+					return true;
+				}
+			}
+		} catch (GestorDocumentalException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+	
+	@Override
+	public boolean esAgora(TareaExterna tareaExterna) {
+		ExpedienteComercial expedienteComercial = tareaExternaToExpedienteComercial(tareaExterna);
+		boolean esAgora = false;
+		for (ActivoOferta activoOferta : expedienteComercial.getOferta().getActivosOferta()) {
+			Activo activo = activoApi.get(activoOferta.getPrimaryKey().getActivo().getId());
+			esAgora=false;
+			if (DDCartera.CODIGO_CARTERA_CERBERUS.equals(activo.getCartera().getCodigo()) &&
+						((DDSubcartera.CODIGO_AGORA_INMOBILIARIO.equals(activo.getSubcartera().getCodigo())) ||
+						(DDSubcartera.CODIGO_AGORA_FINANCIERO.equals(activo.getSubcartera().getCodigo())) )) {
+				esAgora = true;
+			}
+		}
+		return esAgora;
+		/*return (DDCartera.CODIGO_CARTERA_CERBERUS.equals(expedienteComercial.getOferta().getActivoPrincipal().getCartera().getCodigo()) && 
+				((DDSubcartera.CODIGO_AGORA_FINANCIERO.equals(expedienteComercial.getOferta().getActivoPrincipal().getSubcartera().getCodigo()) 
+				|| DDSubcartera.CODIGO_AGORA_INMOBILIARIO.equals(expedienteComercial.getOferta().getActivoPrincipal().getSubcartera().getCodigo()))));*/
+	}
+	
+	@Override
+	public boolean checkDepositoRelleno(TareaExterna tareaExterna) {
+		ExpedienteComercial expedienteComercial = tareaExternaToExpedienteComercial(tareaExterna);
+		boolean depositoRelleno = false;
+		for (ActivoOferta activoOferta : expedienteComercial.getOferta().getActivosOferta()) {
+			//Activo activo = activoApi.get(activoOferta.getPrimaryKey().getActivo().getId());
+			depositoRelleno = false;
+			if (!Checks.esNulo(expedienteToDtoCondiciones(expedienteComercial).getDepositoReserva())) {
+				depositoRelleno = true;
+			}
+		}
+		return depositoRelleno;
+	}
+	
 	@Override
 	public ExpedienteComercial tareaExternaToExpedienteComercial(TareaExterna tareaExterna) {
 		ExpedienteComercial expedienteComercial = null;

@@ -349,7 +349,9 @@ Ext.define('HreRem.ux.util.Constants', {
 	},
 
 	SUBCARTERA: {
-		BH: '06'
+		BH: '06',
+		AGORAINMOBILIARIO: '135',
+		AGORAFINANCIERO: '137'
 	},
 
 	NOMBRE_CARTERA:	{

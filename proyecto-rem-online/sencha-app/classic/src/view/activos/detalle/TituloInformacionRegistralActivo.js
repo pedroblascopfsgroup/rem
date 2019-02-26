@@ -428,7 +428,7 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 					 	onDeleteClick: function (btn) {		
 					 		var me = this;	
 							var url =  $AC.getRemoteUrl('activo/deleteActivoPropietarioTab');
-							var propietario = me.up('tabpanel').down('grid').getSelection();
+							var propietario = me.getView().getSelectionModel().getSelection()
 							var activo = me.lookupController().getViewModel().get('activo');
 							if (propietario[0].get('tipoPropietario') == "Principal"){
 								me.fireEvent("errorToast",'No se puede eliminar el propietario principal' );

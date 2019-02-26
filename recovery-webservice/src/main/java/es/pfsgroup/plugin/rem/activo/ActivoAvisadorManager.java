@@ -121,7 +121,7 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 		// Aviso 3 / 4: Situación posesoria OCUPADO + Con o sín título
 		if (activo.getSituacionPosesoria() != null && !Checks.esNulo(activo.getSituacionPosesoria().getOcupado())) {
 			if (activo.getSituacionPosesoria().getOcupado() == 1) {
-				if (activo.getSituacionPosesoria().getConTitulo().equals(DDTipoTituloActivoTPA.tipoTituloSi)) {
+				if (DDTipoTituloActivoTPA.tipoTituloSi.equals(activo.getSituacionPosesoria().getConTitulo().getCodigo())) {
 
 					DtoAviso dtoAviso = new DtoAviso();
 					dtoAviso.setDescripcion("Situación posesoria ocupado con título");

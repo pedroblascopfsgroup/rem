@@ -7,11 +7,10 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalle', {
     			'HreRem.view.expedientes.DocumentosExpediente', 'HreRem.view.expedientes.ActivosExpediente',
     			'HreRem.view.expedientes.TramitesTareasExpediente','HreRem.view.expedientes.CondicionesExpediente',
     			'HreRem.view.expedientes.FormalizacionExpediente', 'HreRem.view.expedientes.GestionEconomicaExpediente',
-				'HreRem.view.expedientes.CompradoresExpediente', 'HreRem.view.expedientes.OfertaTanteoYRetracto',
+				'HreRem.view.expedientes.CompradoresExpediente', 'HreRem.view.expedientes.ScoringExpediente',
 				'HreRem.view.expedientes.GestoresExpediente','HreRem.view.expedientes.ScoringExpediente',
 				'HreRem.view.expedientes.SeguroRentasExpediente', 'HreRem.model.HstcoSeguroRentas',
-				'HreRem.view.expedientes.FormalizacionAlquilerExpediente', 'HreRem.view.expedientes.PlusValiaVentaExpediente',
-				'HreRem.view.expedientes.ScoringExpediente'],
+				'HreRem.view.expedientes.FormalizacionAlquilerExpediente', 'HreRem.view.expedientes.PlusValiaVentaExpediente'],
 
 
 	bloqueado: false,

@@ -716,13 +716,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	onClickBotonEditar: function(btn) {
 		var me = this;
 
-		if(btn.up('tabpanel').getActiveTab().xtype === 'comercialactivo') {
-			Ext.Array.each(btn.up('tabpanel').getActiveTab().query(' > container > component[isReadOnlyEdit]'),
-				function (field, index){
-					field.fireEvent('edit');
-				}
-			);
-		} else {
 		Ext.Array.each(btn.up('tabpanel').getActiveTab().query('component[isReadOnlyEdit]'),
 						function (field, index) 
 							{ 

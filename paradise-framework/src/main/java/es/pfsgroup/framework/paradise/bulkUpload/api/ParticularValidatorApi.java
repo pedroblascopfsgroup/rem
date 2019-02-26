@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
-interface ParticularValidatorApi {
+public interface ParticularValidatorApi {
 
 	String getOneNumActivoAgrupacionRaw(String numAgrupacion);
 
@@ -490,15 +490,6 @@ interface ParticularValidatorApi {
 	Boolean existeActivoEnPropietarios(String numActivo, String idPropietarios);
 
 	
-	/**
-	 * Devuelve true si un activo tiene ofertas vivas de tipo venta
-	 *
-	 * @param numActivo
-	 * @return
-	 */
-	Boolean existeActivoConOfertaVentaViva(String numActivo);
-
-	
 	Boolean isActivoPublicadoVenta(String numActivo);
 
 	Boolean isActivoOcultoVentaPorMotivosManuales(String numActivo);
@@ -532,7 +523,7 @@ interface ParticularValidatorApi {
 	 * 
 	 * El método indica si el activo tiene una comunicación ya reclamada
 	 * 
-	 * @param MSVHojaExcel : Excel con las reclamaciones
+	 * @param numActivoHaya : Excel con las reclamaciones
 	 * @return Devuelve un boolean. Si es TRUE la comunicación viva ya esta reclamada.
 	 * 
 	 */

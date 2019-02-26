@@ -93,7 +93,7 @@ public class RecoveryToGestorExpAssembler {
 	
 	public CrearEntidadCompradorDto getCrearActivoOferta(String idIntervinienteHaya, String username, String cliente, String idSistemaOrigen, String codClase, String descripcionEntidad, String tipoActivoOferta) {
 		CrearEntidadCompradorDto doc = new CrearEntidadCompradorDto();
-		
+
 		doc.setUsuario(USUARIO);
 		doc.setPassword(PASSWORD);
 		doc.setCodClase(codClase);
@@ -103,7 +103,7 @@ public class RecoveryToGestorExpAssembler {
 		doc.setTipoClase(tipoActivoOferta);
 		return doc;
 	}
-	
+
 	private static String rellenarActivoOfertaMetadatos (String id, String idExterno, String idSistemaOrigen, String cliente) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("{");
@@ -116,6 +116,33 @@ public class RecoveryToGestorExpAssembler {
 		sb.append("}");
 		return sb.toString();
 	}
-	
-	
+
+	public CrearActuacionTecnicaDto getCrearActuacionTecnicaDto(String idTrabajo, String descripcionActuacion, String username, String cliente, String estadoTrabajo, String idSistemaOrigen, String codClase, String tipoTrabajo) {
+		CrearActuacionTecnicaDto doc = new CrearActuacionTecnicaDto();
+
+		doc.setUsuario(USUARIO);
+		doc.setPassword(PASSWORD);
+		doc.setCodClase(codClase);
+		doc.setTipoClase(tipoTrabajo);
+		doc.setUsuarioOperacional(username);
+		doc.setDescripcionActuacion(descripcionActuacion);
+		doc.setOperacionMetadatos(rellenarActuacionTecnicaMetadatos(idTrabajo, idTrabajo, idSistemaOrigen, estadoTrabajo, cliente));
+
+		return doc;
+	}
+
+	private static String rellenarActuacionTecnicaMetadatos (String id, String idExterno, String idSistemaOrigen, String estadoTrabajo, String cliente) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("{");
+			sb.append(GestorDocumentalConstants.OPERACION).append("{");
+				sb.append(GestorDocumentalConstants.metadataCrearContenedor[0]).append("\"").append(id).append("\"").append(",");
+				sb.append(GestorDocumentalConstants.metadataCrearContenedor[1]).append("\"").append(idExterno).append("\"").append(",");
+				sb.append(GestorDocumentalConstants.metadataCrearContenedor[2]).append("\"").append(idSistemaOrigen).append("\"").append(",");
+				sb.append(GestorDocumentalConstants.metadataCrearContenedor[3]).append("\"").append(cliente).append("\"");
+			sb.append("}");
+		sb.append("}");
+		return sb.toString();
+	}
+
+
 }

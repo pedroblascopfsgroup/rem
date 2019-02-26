@@ -52,5 +52,12 @@ public interface ActivoAgrupacionActivoApi {
 	public List<ActivoAgrupacionActivo> getListActivosAgrupacion(DtoAgrupacionFilter dtoAgrupActivo);
 
 	Boolean existenOfertasActivasEnAgrupacion(Long idAgrupacion);
+	
+	/**
+	 * Devuelve la fila de la base de datos de ActivoAgrupacionActivo que contiene el activo principal de la agrupacion.
+	 * @param idAgrupacion
+	 * @return
+	 */
+	public ActivoAgrupacionActivo getActivoAgrupacionActivoPrincipalByIdAgrupacion(long idAgrupacion);
 
 }

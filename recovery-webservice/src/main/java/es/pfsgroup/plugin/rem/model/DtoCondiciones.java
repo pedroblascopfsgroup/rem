@@ -108,7 +108,7 @@ public class DtoCondiciones extends WebDto {
 	private Date fechaUltimaActualizacion;
 	private Date fechaTomaPosesion;
 	private Integer ocupado;
-	private Integer conTitulo;
+	private String conTitulo;
 	private String tipoTitulo;
 	private Integer vpo;
 	//********-------------------------------------------********
@@ -245,11 +245,11 @@ public class DtoCondiciones extends WebDto {
 		this.ocupado = ocupado;
 	}
 
-	public Integer getConTitulo() {
+	public String getConTitulo() {
 		return conTitulo;
 	}
 
-	public void setConTitulo(Integer conTitulo) {
+	public void setConTitulo(String conTitulo) {
 		this.conTitulo = conTitulo;
 	}
 

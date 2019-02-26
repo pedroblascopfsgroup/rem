@@ -160,6 +160,7 @@ Ext.define('HreRem.ux.util.Constants', {
 		DOCU:				'documentosexpediente',
 		FORMA:				'formalizacionexpediente',
 		GESECO:				'gestioneconomicaexpediente',
+		PLUVTA:             'plusvaliaventaexpedediente',
 		SEGREN: 			'segurorentasexpediente'
 //		INVISIBLE:		Si creamos un registro-enlace-expediente en TFI y como codigo (en TFI_NOMBRE) damos este valor, ocultara el enlace
     },
@@ -624,19 +625,23 @@ Ext.define('HreRem.ux.util.Constants', {
         PUBLICADO_ALQUILER: 'Publicado Alquiler',
         OCULTO_ALQUILER: 'Oculto Alquiler'
     },
+
+	MOTIVOS_CAL_NEGATIVA:{
+		OTROS: '21'
+	},
     
     TAREAS:{
     	T015_DEFINICIONOFERTA : 'T015_DefinicionOferta',
     	T015_VERIFICARSCORING : 'T015_VerificarScoring',
     	T015_VERIFICARSEGURORENTAS : 'T015_VerificarSeguroRentas'
     },
-    
+
     TIPO_INQUILINO: {
 		SCORING: '01',
 		SEGURO_RENTAS: '02',
 		NINGUNA: '03'
 	},
-	
+
 	SUBTIPO_DOCUMENTO_EXPEDIENTE: {
 		RENOVACION_CONTRATO: '46',
 		CONTRATO: '49',
@@ -645,5 +650,4 @@ Ext.define('HreRem.ux.util.Constants', {
 		JUSTIFICANTE_INGRESOS: '53',
 		ALQUILER_CON_OPCION_A_COMPRA: '54'
 	}
-    
 });

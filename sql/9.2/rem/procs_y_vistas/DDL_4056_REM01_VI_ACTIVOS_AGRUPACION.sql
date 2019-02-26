@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Carles Molins
---## FECHA_CREACION=20181128
+--## AUTOR=Adrian Daniel Casiean
+--## FECHA_CREACION=20181210
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=REMVIP-2629
+--## INCIDENCIA_LINK=HREOS-4907
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -17,6 +17,7 @@
 --##		0.5 Se modifica la vista para mejorar el rendimiento
 --##		0.6 Se modifica la vista para que tenga en cuenta el borrado lógico de las distribuciones
 --##		0.7 Se añaden las nuevas columnas de publicaciones
+--##		0.8 Se realiza un Join con la vista V_COND_PUBLICACION para sacar los campos COND_PUBL_VENTA, COND_PUBL_ALQUILER (HREOS-4907)
 --##########################################
 --*/
 
@@ -121,8 +122,7 @@ BEGIN
 		INNER JOIN '|| V_ESQUEMA ||'.V_COND_PUBLICACION             V_PUBL  ON V_PUBL.ACT_ID = ACT.ACT_ID
         LEFT JOIN (
             SELECT DISTINCT T1.ACT_ID, SUM(T4.DIS_CANTIDAD) OVER (PARTITION BY T1.ACT_ID,T5.DD_TPH_DESCRIPCION) AS SUMA 
-
-				FROM '|| V_ESQUEMA ||'.ACT_ACTIVO T1 
+				FROM '|| V_ESQUEMA ||'.ACT_ACTIVO T1
 				INNER JOIN '|| V_ESQUEMA ||'.ACT_ICO_INFO_COMERCIAL T2 ON T2.ACT_ID = T1.ACT_ID AND T2.BORRADO = 0
 				LEFT JOIN '|| V_ESQUEMA ||'.ACT_VIV_VIVIENDA 		T3 ON T3.ICO_ID = T2.ICO_ID	
 				LEFT JOIN '|| V_ESQUEMA ||'.ACT_DIS_DISTRIBUCION 	T4 ON T4.ICO_ID = T2.ICO_ID AND T4.BORRADO = 0

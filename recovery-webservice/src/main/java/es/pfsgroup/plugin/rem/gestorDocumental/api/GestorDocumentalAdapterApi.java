@@ -11,10 +11,13 @@ import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoAdjuntoPromocion;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
+import es.pfsgroup.plugin.rem.model.Trabajo;
 
 public interface GestorDocumentalAdapterApi {
 	
 	List<DtoAdjunto> getAdjuntosActivo (Activo activo) throws GestorDocumentalException;
+	
+	List<DtoAdjunto> getAdjuntosActuacionesTecnicas (Trabajo trabajo) throws GestorDocumentalException;
 	
 	FileItem getFileItem(Long idDocumento, String nombreDocumento) throws Exception; 
 	
@@ -22,11 +25,15 @@ public interface GestorDocumentalAdapterApi {
 	
 	Long uploadDocumentoGasto(GastoProveedor gasto, WebFileItem webFileItem, String userLogin, String matricula) throws Exception;
 	
+	Long uploadDocumentoActuacionesTecnicas(Trabajo trabajo, WebFileItem webFileItem, String userLogin, String matricula) throws Exception;
+	
 	boolean borrarAdjunto(Long idDocumento, String usuarioLogado);
 
 	boolean modoRestClientActivado();
 
 	Integer crearGasto(GastoProveedor gasto,  String usuarioLogado) throws GestorDocumentalException;
+	
+	Integer crearActuacionTecnica(Trabajo trabajo, String usuarioLogado) throws GestorDocumentalException;
 
 	List<DtoAdjunto> getAdjuntosGasto(String numGasto) throws GestorDocumentalException;
 
@@ -53,4 +60,6 @@ public interface GestorDocumentalAdapterApi {
 	Integer crearEntidadComprador(String idIntervinienteHaya, String usuarioLogado, Long idActivo, Long idAgrupacion,
 			Long idExpediente) throws GestorDocumentalException;
 	
+	public void crearRelacionTrabajosActivo(Trabajo trabajo, Long idDocRestClient, String activo, String login,
+			CrearRelacionExpedienteDto crearRelacionExpedienteDto) throws GestorDocumentalException;
 }

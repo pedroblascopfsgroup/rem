@@ -1502,7 +1502,7 @@ public class InformeMediadorManager implements InformeMediadorApi {
 					}
 				}
 				if (!tieneInformeComercialAceptado) {
-					adapter.crearTramitePublicacion(activo.getId());
+					adapter.crearTramiteAprobacionInformeComercial(activo.getId());
 				} else {
 					ActivoEstadosInformeComercialHistorico activoEstadoInfComercialHistorico = new ActivoEstadosInformeComercialHistorico();
 					activoEstadoInfComercialHistorico.setActivo(activo);

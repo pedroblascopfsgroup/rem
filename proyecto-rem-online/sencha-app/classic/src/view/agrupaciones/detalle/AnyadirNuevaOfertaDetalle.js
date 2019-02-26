@@ -46,8 +46,8 @@ Ext.define('HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaDetalle', {
 							        type: 'table',
 							        // The total column count must be specified here
 							        columns: 2,
-							        trAttrs: {height: '45px', width: '25%'},
-							        tdAttrs: {width: '25%'},
+							        trAttrs: {height: '45px', width: '50%'},
+							        tdAttrs: {width: '50%'},
 							        tableAttrs: {
 							            style: {
 							                width: '100%',
@@ -57,7 +57,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaDetalle', {
 								},
 								defaultType: 'textfieldbase',
 								collapsed: false,
-								scrollable	: 'y',
+								scrollable	: 'y',	    				
 				            	items: [
 				            	    {
 				            	    	name:		'cesionDatos',
@@ -330,7 +330,10 @@ Ext.define('HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaDetalle', {
 								        			field.lookupController().buscarSucursal(field);											        			
 								        		}
 								        	}
-								        }
+								        },
+
+							        	colspan: 2
+
 				                	},
 				                	{
 										xtype: 'textfieldbase',

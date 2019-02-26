@@ -25,6 +25,7 @@ import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.pfsgroup.plugin.rem.model.dd.DDSituacionActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCuota;
 
 
@@ -145,8 +146,15 @@ public class ActivoComunidadPropietarios implements Serializable, Auditable {
     @JoinColumn(name = "CPR_ID")
     @Where(clause = Auditoria.UNDELETED_RESTICTION)
     private List<ActivoCuotasComunidadPropietarios> cuotaComunidadPropietarios;
-	
-	
+    
+   // @Column(name = "DD_SACT_ID")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_SACT_ID")
+	private DDSituacionActivo situacion;
+    
+    @Column(name = "CPR_FECHA_ENVIO_CARTA")
+   	private Date fechaEnvioCarta;
+		
 	@Version   
 	private Long version;
 	
@@ -432,5 +440,24 @@ public class ActivoComunidadPropietarios implements Serializable, Auditable {
 		this.burofax = burofax;
 	}
 
+
+
+	public Date getFechaEnvioCarta() {
+		return fechaEnvioCarta;
+	}
+
+	public void setFechaEnvioCarta(Date fechaEnvioCarta) {
+		this.fechaEnvioCarta = fechaEnvioCarta;
+	}
+
+	public DDSituacionActivo getSituacion() {
+		return situacion;
+	}
+
+	public void setSituacion(DDSituacionActivo situacion) {
+		this.situacion = situacion;
+	}
+
+	
 
 }

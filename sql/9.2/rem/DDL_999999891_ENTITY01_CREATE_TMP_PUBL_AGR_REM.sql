@@ -1,0 +1,105 @@
+--/*
+--##########################################
+--## AUTOR=Sergio Beleña Boix
+--## FECHA_CREACION=20181205
+--## ARTEFACTO=batch
+--## VERSION_ARTEFACTO=9.2
+--## INCIDENCIA_LINK=HREOS-4931
+--## PRODUCTO=NO
+--## Finalidad: DDL para crear la tabla TMP_PUBL_AGR
+--##           
+--## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
+--## VERSIONES:
+--##       
+--##########################################
+--*/
+
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON;
+SET DEFINE OFF;
+
+DECLARE
+
+    V_NUM_TABLAS NUMBER(16);
+    V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; --Configuracion Esquema
+    V_ESQUEMA_M VARCHAR2(25 CHAR):='#ESQUEMA_MASTER#'; --Configuracion Esquema Master
+    ERR_NUM NUMBER; -- Numero de errores
+    ERR_MSG VARCHAR2(2048); -- Mensaje de error
+    V_MSQL VARCHAR2(4000 CHAR);
+    V_TABLA VARCHAR2(4000 CHAR) := 'TMP_PUBL_AGR';
+	
+	
+BEGIN
+	
+	DBMS_OUTPUT.PUT_LINE('[INICIO]');
+
+	
+	DBMS_OUTPUT.PUT_LINE('[INICIO] Inicio del proceso');
+	DBMS_OUTPUT.PUT_LINE(' ');
+	DBMS_OUTPUT.PUT_LINE('[INFO] crear Tabla: '||V_TABLA);
+	
+	
+
+	  EXECUTE IMMEDIATE 'SELECT COUNT(1) FROM ALL_TABLES WHERE TABLE_NAME ='''||V_TABLA||''' AND OWNER='''||V_ESQUEMA||''''
+	  INTO V_NUM_TABLAS;
+
+		IF V_NUM_TABLAS > 0 THEN
+	
+	 	 DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TABLA||' LA TABLA EXISTE');
+
+		ELSE
+
+	
+			V_MSQL := '
+		CREATE TABLE '||V_ESQUEMA||'.'||V_TABLA||'(
+			 ADECUADO				NUMBER
+			,ADMISION				NUMBER
+			,AGR_ID					NUMBER(16)
+			,CEE_VIGENTE				NUMBER
+			,CHECK_OCULTAR_A			NUMBER
+			,CHECK_OCULTAR_V			NUMBER
+			,CHECK_PUBLICAR_A			NUMBER
+			,CHECK_PUBLICAR_V			NUMBER
+			,CODIGO_ESTADO_A			VARCHAR2(20 CHAR)
+			,CODIGO_ESTADO_V			VARCHAR2(20 CHAR)
+			,DD_MTO_CODIGO_A			VARCHAR2(20 CHAR)
+			,DD_MTO_CODIGO_V			VARCHAR2(20 CHAR)
+			,DD_MTO_MANUAL_A			NUMBER
+			,DD_MTO_MANUAL_V			NUMBER
+			,DD_TAL_CODIGO				VARCHAR2(20 CHAR)
+			,DD_TCO_CODIGO				VARCHAR2(20 CHAR)
+			,DD_TPU_CODIGO_A			VARCHAR2(20 CHAR)
+			,DD_TPU_CODIGO_V			VARCHAR2(20 CHAR)
+			,DESC_ESTADO_A				VARCHAR2(100 CHAR)
+			,DESC_ESTADO_V				VARCHAR2(100 CHAR)
+			,ES_CONDICONADO				NUMBER
+			,GESTION				NUMBER
+			,INFORME_COMERCIAL			NUMBER
+			,PRECIO_A				NUMBER
+			,PRECIO_V				NUMBER
+
+		)NOLOGGING';
+        
+        EXECUTE IMMEDIATE V_MSQL;
+
+	END IF;
+        DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TABLA||' CREADA');
+	
+	COMMIT;
+
+	DBMS_OUTPUT.PUT_LINE('[FIN]');
+
+EXCEPTION
+  WHEN OTHERS THEN
+    ERR_NUM := SQLCODE;
+    ERR_MSG := SQLERRM;
+    DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(ERR_NUM));
+    DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
+    DBMS_OUTPUT.put_line(ERR_MSG);
+    ROLLBACK;
+    RAISE;   
+END;
+/
+EXIT;
+
+

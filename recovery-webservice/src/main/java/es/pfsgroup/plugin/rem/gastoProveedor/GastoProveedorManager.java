@@ -114,6 +114,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOperacionGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPagador;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPeriocidad;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloPosesorio;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposImpuesto;
 import es.pfsgroup.plugin.rem.provisiongastos.dao.ProvisionGastosDao;
@@ -2784,7 +2785,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 					if (!Checks.esNulo(activo.getSituacionPosesoria().getOcupado())
 							&& !Checks.esNulo(activo.getSituacionPosesoria().getConTitulo())) {
 						if (activo.getSituacionPosesoria().getOcupado() == 1
-								&& activo.getSituacionPosesoria().getConTitulo() == 1) {
+								&& activo.getSituacionPosesoria().getConTitulo().equals(DDTipoTituloActivoTPA.tipoTituloSi)) {
 							if (!Checks.esNulo(activo.getSituacionPosesoria().getTipoTituloPosesorio())) {
 								if (activo.getSituacionPosesoria().getTipoTituloPosesorio().getCodigo()
 										.equals(DDTipoTituloPosesorio.CODIGO_ARRENDAMIENTO)) {

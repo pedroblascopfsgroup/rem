@@ -23,6 +23,7 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoBancario;
+import es.pfsgroup.plugin.rem.model.ActivoCalificacionNegativa;
 import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
@@ -446,6 +447,14 @@ public interface ActivoApi {
 	 * @return ActivoBancario
 	 */
 	ActivoBancario getActivoBancarioByIdActivo(Long idActivo);
+
+	/**
+	 * Devuelve la calificacion negativa del ID de un activo dado
+	 *
+	 * @param idActivo
+	 * @return ActivoCalificacionNegativa
+	 */
+	List<ActivoCalificacionNegativa> getActivoCalificacionNegativaByIdActivo(Long idActivo);
 
 	PerimetroActivo saveOrUpdatePerimetroActivo(PerimetroActivo perimetroActivo);
 
@@ -987,7 +996,7 @@ public interface ActivoApi {
 	boolean deleteImpuestos(DtoImpuestosActivo dtoImpuestosFilter);
 
 	boolean esLiberBank(Long idActivo);
-	
+
 	boolean esCajamar(Long idActivo);
 
 	DtoActivoFichaCabecera getActivosPropagables(Long idActivo);
@@ -1034,6 +1043,7 @@ public interface ActivoApi {
 	 * @return
 	 */
 	boolean compruebaSiExisteActivoBienPorMatricula(Long idActivo, String matriculaActivo);
+
 	/**
 	 * Genera la url del documento GDPR
 	 * @param dtoGenerarDocGDPR
@@ -1042,6 +1052,21 @@ public interface ActivoApi {
 	 * @throws IOException 
 	 */
 	FileItem generarUrlGDPR(DtoGenerarDocGDPR dtoGenerarDocGDPR) throws GestorDocumentalException, IOException;
+
+	/**
+	 * Recoge el activo relacionado con el proveedor a partir del id del proveedor.
+	 * @param idProveedor
+	 * @return
+	 */
+	public Activo getActivoByIdProveedor(Long idProveedor);
+
+	/**
+	 * Recoge el activo relacionado con el proveedor a partir del id del gasto del proveedor.
+	 * @param idGastoProveedor
+	 * @return
+	 */
+	public Activo getActivoByIdGastoProveedor(Long idGastoProveedor);
+
 	
 	/**
 	 * Devuelve el activoPatrimonio a partir de la id de un activo.

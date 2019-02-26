@@ -18,6 +18,7 @@ import org.springframework.stereotype.Component;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.gestorDocumental.api.GestorDocumentalExpedientesApi;
 import es.pfsgroup.plugin.gestorDocumental.api.RestClientApi;
+import es.pfsgroup.plugin.gestorDocumental.dto.servicios.CrearActuacionTecnicaDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.servicios.CrearEntidadCompradorDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.servicios.CrearExpedienteComercialDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.servicios.CrearGastoDto;
@@ -176,7 +177,7 @@ public class GestorDocumentalExpedientesManager implements GestorDocumentalExped
 		sb.append("&").append(CLASE_EXPEDIENTE_PATH).append(crearExpedienteComercialDto.getCodClase());
 		return sb.toString();
 	}
-	
+
 	@Override
 	public RespuestaCrearExpediente crearActivoOferta(CrearEntidadCompradorDto crearActivoOferta) throws GestorDocumentalException {
 		ServerRequest serverRequest =  new ServerRequest();
@@ -191,9 +192,9 @@ public class GestorDocumentalExpedientesManager implements GestorDocumentalExped
 			throw new GestorDocumentalException(respuesta.getCodigoError() + "-" + respuesta.getMensajeError());
 		}
 		if (Checks.esNulo(respuesta)) {
-			throw new GestorDocumentalException(ERROR_SERVER_NOT_RESPONDING);			
+			throw new GestorDocumentalException(ERROR_SERVER_NOT_RESPONDING);
 		}
-		
+
 		return respuesta;
 	}
 
@@ -219,5 +220,48 @@ public class GestorDocumentalExpedientesManager implements GestorDocumentalExped
 		sb.append("&").append(CLASE_EXPEDIENTE_PATH).append(crearActivoOferta.getCodClase());
 		return sb.toString();
 	}
-	
+
+	@Override
+	public RespuestaCrearExpediente crearActuacionTecnica(CrearActuacionTecnicaDto crearActuacionTecnicaDto) throws GestorDocumentalException {
+		ServerRequest serverRequest =  new ServerRequest();
+		serverRequest.setMethod(RestClientManager.METHOD_POST);
+		serverRequest.setPath(getPathCrearActuacionTecnica(crearActuacionTecnicaDto));
+		serverRequest.setMultipart(getMultipartCrearActuacionTecnica(crearActuacionTecnicaDto));
+		serverRequest.setResponseClass(RespuestaCrearExpediente.class);
+		RespuestaCrearExpediente respuesta = (RespuestaCrearExpediente) getResponse(serverRequest);
+
+		if(!Checks.esNulo(respuesta) && !Checks.esNulo(respuesta.getMensajeError())) {
+			logger.debug(respuesta.getCodigoError() + "-" + respuesta.getMensajeError());
+			throw new GestorDocumentalException(respuesta.getCodigoError() + "-" + respuesta.getMensajeError());
+		}
+		if (Checks.esNulo(respuesta)) {
+			throw new GestorDocumentalException(ERROR_SERVER_NOT_RESPONDING);
+		}
+
+		return respuesta;
+	}
+
+	@SuppressWarnings("resource")
+	private MultiPart getMultipartCrearActuacionTecnica(CrearActuacionTecnicaDto crearActuacionTecnicaDto) {
+		final MultiPart multipart = new FormDataMultiPart()
+				.field(USUARIO, crearActuacionTecnicaDto.getUsuario())
+				.field(PASSWORD,  crearActuacionTecnicaDto.getPassword())
+				.field(DESCRIPCION_EXPEDIENTE, crearActuacionTecnicaDto.getDescripcionActuacion())
+				.field(COD_CLASE, crearActuacionTecnicaDto.getCodClase().toString())
+				.field(EXPEDIENTE_COMERCIAL_METADATOS, crearActuacionTecnicaDto.getOperacionMetadatos());
+		return multipart;
+	}
+
+	private String getPathCrearActuacionTecnica(CrearActuacionTecnicaDto crearActuacionTecnicaDto) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("/CrearContenedor");
+		sb.append("?").append(USUARIO_PATH).append(crearActuacionTecnicaDto.getUsuario());
+		sb.append("&").append(PASSWORD_PATH).append(crearActuacionTecnicaDto.getPassword());
+		sb.append("&").append(USUARIO_OPERACIONAL_PATH).append(crearActuacionTecnicaDto.getUsuarioOperacional());
+		sb.append("&").append(EXPEDIENTE_COMERCIAL_METADATOS_PATH).append(UriComponent.encode(crearActuacionTecnicaDto.getOperacionMetadatos(), UriComponent.Type.QUERY_PARAM_SPACE_ENCODED));
+		sb.append("&").append(TIPO_EXPEDIENTE_PATH).append(crearActuacionTecnicaDto.getTipoClase());
+		sb.append("&").append(CLASE_EXPEDIENTE_PATH).append(crearActuacionTecnicaDto.getCodClase());
+		return sb.toString();
+	}
+
 }

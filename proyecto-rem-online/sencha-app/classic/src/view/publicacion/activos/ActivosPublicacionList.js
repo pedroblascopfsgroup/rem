@@ -69,10 +69,17 @@ Ext.define('HreRem.view.publicacion.activos.ActivosPublicacionList', {
 		            align: 'center'
 		        },
 		        {
-		            text: HreRem.i18n('header.activos.publicacion.publicacion'),
+		            text: HreRem.i18n('header.activos.publicacion.publicacion.venta'),
 		            renderer: estadoRenderer,	           
 		            flex: 0.5,
-		            dataIndex: 'publicacion',
+		            dataIndex: 'okventa',
+		            align: 'center'
+		        },
+		        {
+		            text: HreRem.i18n('header.activos.publicacion.publicacion.alquiler'),
+		            renderer: estadoRenderer,	           
+		            flex: 0.5,
+		            dataIndex: 'okalquiler',
 		            align: 'center'
 		        },
 		        {

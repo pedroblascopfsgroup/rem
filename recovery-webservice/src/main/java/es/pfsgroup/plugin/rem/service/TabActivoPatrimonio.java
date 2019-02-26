@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
+import es.pfsgroup.plugin.rem.model.dd.*;
 import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -25,12 +27,6 @@ import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.ActivoPublicacion;
 import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.DtoActivoPatrimonio;
-import es.pfsgroup.plugin.rem.model.dd.DDAdecuacionAlquiler;
-import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoEstadoAlquiler;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoInquilino;
 
 @Component
 public class TabActivoPatrimonio implements TabActivoService {
@@ -49,6 +45,9 @@ public class TabActivoPatrimonio implements TabActivoService {
 
 	@Autowired
 	private ActivoAdapter activoAdapterApi;
+
+	@Autowired
+	private UtilDiccionarioApi utilDiccionarioApi;
 
 
 	@Override
@@ -98,7 +97,7 @@ public class TabActivoPatrimonio implements TabActivoService {
 		return activoPatrimonioDto;
 	}
 
-	@Transactional(readOnly=false)
+	@Transactional()
 	@Override
 	public Activo saveTabActivo(Activo activo, WebDto dto) {
 		List<ActivoHistoricoPatrimonio> listHistPatrimonio = activoHistoricoPatrimonioDao.getHistoricoAdecuacionesAlquilerByActivo(activo.getId());
@@ -106,7 +105,7 @@ public class TabActivoPatrimonio implements TabActivoService {
 
 		DtoActivoPatrimonio activoPatrimonioDto = (DtoActivoPatrimonio) dto;
 		ActivoPatrimonio activoPatrimonio = genericDao.get(ActivoPatrimonio.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId()));
-		ActivoSituacionPosesoria activoSituacionPosesoria = genericDao.get(ActivoSituacionPosesoria.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId()));
+		ActivoSituacionPosesoria activoSituacionPosesoria;
 
 		if(Checks.esNulo(activoPatrimonio)) {
 			activoPatrimonio = new ActivoPatrimonio();
@@ -265,7 +264,8 @@ public class TabActivoPatrimonio implements TabActivoService {
 					activoSituacionPosesoria.setOcupado(1);
 				}
 
-				activoSituacionPosesoria.setConTitulo(1);
+				DDTipoTituloActivoTPA tipoTituloActivoTPA = (DDTipoTituloActivoTPA) utilDiccionarioApi.dameValorDiccionarioByCod(DDSituacionComercial.class, DDTipoTituloActivoTPA.tipoTituloSi);
+				activoSituacionPosesoria.setConTitulo(tipoTituloActivoTPA);
 
 				genericDao.save(ActivoSituacionPosesoria.class, activoSituacionPosesoria);
 			} else if(activoPatrimonioDto.getEstadoAlquiler().equals(DDTipoEstadoAlquiler.ESTADO_ALQUILER_LIBRE)) {

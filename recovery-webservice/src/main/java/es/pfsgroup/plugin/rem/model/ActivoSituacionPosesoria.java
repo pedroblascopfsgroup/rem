@@ -27,6 +27,7 @@ import org.hibernate.annotations.Where;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionJuridica;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloPosesorio;
 
 
@@ -76,8 +77,9 @@ public class ActivoSituacionPosesoria implements Serializable, Auditable {
 	@Column(name = "SPS_OCUPADO")
 	private Integer ocupado;
 	
-	@Column(name = "SPS_CON_TITULO")
-	private Integer conTitulo;
+	@ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_TPA_ID")
+    private DDTipoTituloActivoTPA conTitulo;
 	
 	@Column(name = "SPS_RIESGO_OCUPACION")
 	private Integer riesgoOcupacion;
@@ -182,11 +184,11 @@ public class ActivoSituacionPosesoria implements Serializable, Auditable {
 		this.ocupado = ocupado;
 	}
 
-	public Integer getConTitulo() {
+	public DDTipoTituloActivoTPA getConTitulo() {
 		return conTitulo;
 	}
 
-	public void setConTitulo(Integer conTitulo) {
+	public void setConTitulo(DDTipoTituloActivoTPA conTitulo) {
 		this.conTitulo = conTitulo;
 	}
 

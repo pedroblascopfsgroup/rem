@@ -3358,62 +3358,79 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		return minus;
 	}
 
-	public boolean checkPedirDoc(Long idActivo,Long idAgrupacion, Long idExpediente, String dniComprador, String codtipoDoc) {
-		ClienteGDPR clienteGDPR = null;
-		ClienteComercial clienteCom = null;
-		ActivoAgrupacion agrupacion = null;
-		Activo activo = null;
-		ExpedienteComercial expedienteCom = null;
-		if(!Checks.esNulo(idExpediente)) {
-			expedienteCom = expedienteComercialDao.get(idExpediente);
+	public boolean checkPedirDoc(Long idActivo, Long idAgrupacion, Long idExpediente, String dniComprador, String codtipoDoc) {
+		ClienteGDPR clienteGDPR = null; Comprador comprador = null;
+		ClienteComercial clienteCom = null; ActivoAgrupacion agrupacion = null;
+		Activo activo = null; ExpedienteComercial expedienteCom = null;
+		boolean esCarteraInternacional = false;
+		
+		Filter filterComprador = null, filterCodigoTpoDoc = null;
+		if (!Checks.esNulo(dniComprador) && !Checks.esNulo(codtipoDoc)) {
+			filterCodigoTpoDoc = genericDao.createFilter(FilterType.EQUALS, "tipoDocumento.codigo", codtipoDoc);
+		
+			if ((!Checks.esNulo(idActivo) || !Checks.esNulo(idAgrupacion)) && Checks.esNulo(idExpediente)) {
+				filterComprador = genericDao.createFilter(FilterType.EQUALS, "numDocumento", dniComprador);
+				clienteGDPR = genericDao.get(ClienteGDPR.class, filterComprador, filterCodigoTpoDoc);
+				
+				if (Checks.esNulo(idActivo) && !Checks.esNulo(idAgrupacion)) {
+					agrupacion = genericDao.get(ActivoAgrupacion.class, genericDao.createFilter(FilterType.EQUALS, "id", idAgrupacion));
+					if(!Checks.esNulo(agrupacion.getActivoPrincipal())) {
+						activo = agrupacion.getActivoPrincipal();
+					} else {
+						activo = agrupacion.getActivos().get(0).getActivo();
+					}
+				} else if (!Checks.esNulo(idActivo)) {
+					activo = genericDao.get(Activo.class, genericDao.createFilter(FilterType.EQUALS, "id", idActivo));
+				}
+			} else if (Checks.esNulo(idActivo) && Checks.esNulo(idAgrupacion) && !Checks.esNulo(idExpediente)) {
+				filterComprador = genericDao.createFilter(FilterType.EQUALS, "documento", dniComprador);
+				expedienteCom = expedienteComercialDao.get(idExpediente);
+				comprador = genericDao.get(Comprador.class, filterComprador, filterCodigoTpoDoc);
+				
+				if (!Checks.esNulo(expedienteCom)) {
+					activo = expedienteCom.getOferta().getActivoPrincipal();
+				}
+			}
 		}
 		
-		if(!Checks.esNulo(dniComprador) && !Checks.esNulo(codtipoDoc)) {
-			Filter filterComprador = genericDao.createFilter(FilterType.EQUALS, "numDocumento",
-					dniComprador);
-
-			Filter filterCodigoTpoDoc = genericDao.createFilter(FilterType.EQUALS, "tipoDocumento.codigo",
-					codtipoDoc);
-
-			clienteGDPR = genericDao.get(ClienteGDPR.class, filterComprador,filterCodigoTpoDoc);
-		}
-		if(!Checks.esNulo(clienteGDPR)) {
+		if (!Checks.esNulo(clienteGDPR) && !Checks.esNulo(clienteGDPR.getCliente())) {
 			clienteCom = clienteGDPR.getCliente();
 		}
 		
-		if(Checks.esNulo(idActivo) && !Checks.esNulo(idAgrupacion)) {
-			agrupacion = genericDao.get(ActivoAgrupacion.class, genericDao.createFilter(FilterType.EQUALS, "id", idAgrupacion));
-			activo = agrupacion.getActivoPrincipal();
-		}else if(!Checks.esNulo(idActivo)) {
-			activo = genericDao.get(Activo.class, genericDao.createFilter(FilterType.EQUALS, "id", idActivo));
-		}else if(!Checks.esNulo(expedienteCom)){
-			activo = expedienteCom.getOferta().getActivoPrincipal();
+		//Se comprueba si es una cartera internacional.
+		if (DDCartera.CODIGO_CARTERA_CERBERUS.equals(activo.getCartera().getCodigo()) 
+				|| DDCartera.CODIGO_CARTERA_GIANTS.equals(activo.getCartera().getCodigo())
+				|| DDCartera.CODIGO_CARTERA_TANGO.equals(activo.getCartera().getCodigo())
+				|| DDCartera.CODIGO_CARTERA_GALEON.equals(activo.getCartera().getCodigo())) {
+			esCarteraInternacional = true;
 		}
 		
-		if(!Checks.esNulo(clienteGDPR) && !Checks.esNulo(clienteCom)) {
+		//Si viene de oferta (Activo/Agrupacion) se comprueban los checks del Cliente Comercial.
+		// para saber si tiene el documento
+		// True = Tiene documento adjunto, por lo tanto NO hay que pedirlo.
+		// False = NO tiene documento adjunto, por lo tanto hay que pedirlo.
+		if (!Checks.esNulo(clienteGDPR) && !Checks.esNulo(clienteCom)) {
 			if (!Checks.esNulo(clienteGDPR.getNumDocumento()) && !Checks.esNulo(clienteCom.getDocumento()) && clienteCom.getDocumento().equals(clienteGDPR.getNumDocumento())) {
 				if (!Checks.esNulo(clienteCom.getCesionDatos()) && clienteCom.getCesionDatos()) {
-					if(DDCartera.CODIGO_CARTERA_CERBERUS.equals(activo.getCartera().getCodigo()) 
-							|| DDCartera.CODIGO_CARTERA_GIANTS.equals(activo.getCartera().getCodigo())
-							|| DDCartera.CODIGO_CARTERA_TANGO.equals(activo.getCartera().getCodigo())
-							|| DDCartera.CODIGO_CARTERA_GALEON.equals(activo.getCartera().getCodigo())) {
-						if (!Checks.esNulo(clienteCom.getTransferenciasInternacionales()) && clienteCom.getTransferenciasInternacionales()) {
-							return true;
-						}
-						else {
-							return false;
-						}	
-					}					
-				} else {
-					return false;
-				}
-			} else {
-				return false;
-			}
-		}else {
-			return false;
+					if ((esCarteraInternacional && !Checks.esNulo(clienteCom.getTransferenciasInternacionales()) && clienteCom.getTransferenciasInternacionales()) ||
+							!esCarteraInternacional) {
+						return true;
+					} else return false;
+				} else return false;
+			} else return false;
+		//Si viene de comprador (Expediente Comercial) se comprueban los checks del Comprador
+		// para saber si tiene el documento.
+		} else if (!Checks.esNulo(comprador)) {
+			if (!Checks.esNulo(comprador.getDocumento())) {
+				if (!Checks.esNulo(comprador.getCesionDatos()) && comprador.getCesionDatos()) {
+					if ((esCarteraInternacional && !Checks.esNulo(comprador.getTransferenciasInternacionales()) && comprador.getTransferenciasInternacionales()) ||
+						!esCarteraInternacional) {
+						return true;
+					} else return false;
+				} else return false;
+			} else return false;
 		}
-
+		
 		return false;
 	}
 
@@ -3555,5 +3572,25 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				|| activoApi.getGeolocalizacion(activo) != geolocalizacion) {
 			errorsList.put("activosLote", RestApi.REST_MSG_UNKNOWN_KEY);
 		}
+	}
+	
+	public String getDestinoComercialActivo(Long idActivo, Long idAgrupacion, Long idExpediente) {
+		String destinoComercial = "";
+		if (!Checks.esNulo(idActivo) && Checks.esNulo(idAgrupacion)) {
+			destinoComercial = activoApi.get(idActivo).getTipoComercializacion().getDescripcion();
+		} else if (Checks.esNulo(idActivo) && !Checks.esNulo(idAgrupacion)) {
+			ActivoAgrupacion agr = activoAgrupacionApi.get(idAgrupacion);
+			if(!Checks.esNulo(agr.getActivoPrincipal())) {
+				destinoComercial = agr.getActivoPrincipal().getTipoComercializacion().getDescripcion();
+			} else {
+				destinoComercial = agr.getActivos().get(0).getActivo().getTipoComercializacion().getDescripcion();
+			}
+		} else {
+			ExpedienteComercial exp = expedienteComercialApi.findOne(idExpediente);
+			destinoComercial = exp.getOferta().getActivoPrincipal().getTipoComercializacion().getDescripcion();
+		}
+		
+	return destinoComercial;
+		
 	}
 }

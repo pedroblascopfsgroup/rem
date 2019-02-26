@@ -584,5 +584,11 @@ public interface OfertaApi {
 	DtoClienteComercial getClienteGDPRByTipoDoc(String dniComprador, String codtipoDoc);
 
 	public void llamadaMaestroPersonas(String numDocCliente, String cartera);
+	
+	/**
+	 * Devuelve el destino comercial segun el id del activo.
+	 * @return String destino comercial del activo.
+	 */
+	public String getDestinoComercialActivo(Long idActivo, Long idAgrupacion, Long idExpediente);
 }
 

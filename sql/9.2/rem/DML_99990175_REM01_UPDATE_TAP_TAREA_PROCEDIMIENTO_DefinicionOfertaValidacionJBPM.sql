@@ -54,7 +54,7 @@ BEGIN
 		END IF;
 		
 		
-    ROLLBACK;
+    COMMIT;
 EXCEPTION
      WHEN OTHERS THEN
           ERR_NUM := SQLCODE;

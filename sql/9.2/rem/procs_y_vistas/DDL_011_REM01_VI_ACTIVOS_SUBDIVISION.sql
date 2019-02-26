@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=Sergio Beleña
---## FECHA_CREACION=20181120
+--## AUTOR=Adrian Daniel Casiean
+--## FECHA_CREACION=20181205
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=0
@@ -12,6 +12,7 @@
 --## VERSIONES:
 --##        0.1 Versión inicial (JOSE VILLEL 20160510)
 --##        0.2 Creación columna de Estado de publicación
+--##		0.3 Se ha creado la vista V_COND_PUBLICACION y se hace un join con esta vista para sacar los campos COND_PUBL_VENTA y COND_PUBL_ALQUILER + añadir la columna publicado
 --##########################################
 --*/
 
@@ -54,25 +55,8 @@ BEGIN
 
 	AS
 		SELECT act_sd.ID, aga.agr_id, act_sd.act_id, act_sd.act_num_activo, act_sd.bie_dreg_num_finca, act_sd.dd_tpa_descripcion, act_sd.dd_sac_descripcion, act_sd.dd_aic_descripcion,
-		(CASE 
-       		 WHEN cond.CON_CARGAS= 0
-		 AND cond.DIVHORIZONTAL_NOINSCRITA= 0
-		 AND cond.ES_CONDICIONADO= 0 
-		 AND cond.OBRANUEVA_ENCONSTRUCCION= 0
-		 AND cond.OBRANUEVA_SINDECLARAR= 0 
-        	 AND cond.OCUPADO_CONTITULO= 0
-		 AND cond.OCUPADO_SINTITULO= 0
-		 AND cond.PENDIENTE_INSCRIPCION= 0
-		 AND cond.ESTADO_PORTAL_EXTERNO= 0
-		 AND cond.PROINDIVISO= 0
-		 AND cond.RUINA= 0
-        	 AND cond.SIN_INFORME_APROBADO= 0
-		 AND cond.SIN_TOMA_POSESION_INICIAL= 0
-		 AND cond.VANDALIZADO= 0
-		 AND cond.TAPIADO= 0
-		 THEN 0
-       		 ELSE 1 
-		END) AS ESTADOPUBLICACION
+DECODE(tco.DD_TCO_CODIGO ,''03'',epa.DD_EPA_DESCRIPCION,''01'',epv.DD_EPV_DESCRIPCION,''02'',epa.DD_EPA_DESCRIPCION||''/''||epv.DD_EPV_DESCRIPCION) AS PUBLICADO,
+COND.COND_PUBL_VENTA, COND.COND_PUBL_ALQUILER
 
   FROM (SELECT subd.ID, subd.act_id, subd.act_num_activo, subd.bie_dreg_num_finca, tpa.dd_tpa_descripcion, sac.dd_sac_descripcion, subd.dd_aic_descripcion
           FROM (SELECT   act.act_id, act.act_num_activo, act.dd_tpa_id, act.dd_sac_id, biedreg.bie_dreg_num_finca, aic.dd_aic_descripcion,
@@ -96,9 +80,13 @@ BEGIN
                dd_tpa_tipo_activo tpa ON tpa.dd_tpa_id = subd.dd_tpa_id
                JOIN dd_sac_subtipo_activo sac ON sac.dd_sac_id = subd.dd_sac_id
                ) act_sd
-       JOIN
-        act_aga_agrupacion_activo aga ON aga.act_id = act_sd.act_id
-	JOIN V_COND_DISPONIBILIDAD cond ON  aga.act_id = cond.act_id';
+        
+		JOIN act_aga_agrupacion_activo aga ON aga.act_id = act_sd.act_id
+		JOIN ACT_APU_ACTIVO_PUBLICACION APU ON APU.act_id = act_sd.act_id and APU.BORRADO = 0
+		JOIN V_COND_PUBLICACION COND on act_sd.ACT_ID = COND.ACT_ID
+		LEFT JOIN DD_TCO_TIPO_COMERCIALIZACION tco ON tco.dd_tco_id = APU.dd_tco_id and tco.BORRADO = 0
+		LEFT JOIN DD_EPV_ESTADO_PUB_VENTA epv ON epv.dd_epv_id = APU.dd_epv_id
+        LEFT JOIN DD_EPA_ESTADO_PUB_ALQUILER epa ON  epa.dd_epa_id = APU.dd_epa_id';
 
   DBMS_OUTPUT.PUT_LINE('CREATE VIEW '|| V_ESQUEMA ||'.V_ACTIVOS_SUBDIVISION...Creada OK');
   

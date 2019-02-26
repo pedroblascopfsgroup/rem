@@ -425,9 +425,20 @@ Ext.define('HreRem.model.ActivoDatosRegistrales', {
 	    				}
     				}
     			}
-    		}    		
+    		},
+    		{
+    			name:'calificacionNegativa'
+    		},
+    		{
+    			name:'motivoCalificacionNegativa'
+    		},
+    		{
+    			name:'descripcionCalificacionNegativa'
+    		}
 
     ],
+    
+    
     
 	proxy: {
 		type: 'uxproxy',
@@ -441,6 +452,8 @@ Ext.define('HreRem.model.ActivoDatosRegistrales', {
         },
 		extraParams: {tab: 'datosregistrales'}
     }
+    
+    
     
     
 

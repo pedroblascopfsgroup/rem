@@ -67,6 +67,7 @@ import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.impl.UpdaterServiceSancionOfertaInstruccionesReserva;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.impl.UpdaterServiceSancionOfertaResultadoPBC;
+import es.pfsgroup.plugin.rem.logTrust.LogTrustWebService;
 import es.pfsgroup.plugin.rem.model.DtoClienteUrsus;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
@@ -129,6 +130,9 @@ public class UvemManager implements UvemManagerApi {
 	@Autowired
 	private OfertaApi ofertaApi;
 
+	@Autowired
+	private LogTrustWebService trustMe;
+
 	private static final int MASK = (-1) >>> 1; // all ones except the sign bit
 
 	private void iniciarServicio() throws WIException {
@@ -183,6 +187,7 @@ public class UvemManager implements UvemManagerApi {
 		try {
 			registro.setResponse(result);
 			llamadaDao.guardaRegistro(registro);
+			trustMe.registrarLlamadaServicioWeb(registro);
 		} catch (Exception e) {
 			logger.error("Error al trazar la llamada al WS", e);
 		}

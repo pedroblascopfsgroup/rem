@@ -476,7 +476,7 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 				            		store: '{comboEntidadesEjecutantes}',
 				            		value: '{datosRegistrales.entidadEjecutanteCodigo}'
 				            	}
-                                 
+
 							},
 
 			                {
@@ -617,6 +617,7 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 			                	bind: '{datosRegistrales.defectosTestimonio}'
 			                }
 						]
+
             		},
             		{
 						xtype:'fieldsettable',
@@ -656,6 +657,7 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 			                { 
 						 		fieldLabel: HreRem.i18n('fieldlabel.notario.juzgado.organo.administrativo'),
 						 		bind: '{datosRegistrales.tramitadorTitulo}'
+
 							},
 			                { 
 						 		fieldLabel: HreRem.i18n('fieldlabel.protocolo.autos.numero.expediente'),
@@ -668,6 +670,7 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
                                 bind: '{datosRegistrales.defectosTestimonio}'
                             }
 						]
+
         			},
         			{
 						xtype:'fieldsettable',
@@ -680,30 +683,37 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 							{
 						 		fieldLabel: HreRem.i18n('fieldlabel.sociedad.acreedora'),
 						 		bind: '{datosRegistrales.acreedorNombre}'
+
 							},
 							{ 
 						 		fieldLabel: HreRem.i18n('fieldlabel.codigo.sociedad.acreedora'),
 						 		bind: '{datosRegistrales.acreedorId}'
+
 							},
 							{ 
 						 		fieldLabel: HreRem.i18n('fieldlabel.nif.sociedad.acreedor'),
 						 		bind: '{datosRegistrales.acreedorNif}'
+
 							},
 							{ 
 						 		fieldLabel: HreRem.i18n('fieldlabel.domicilio.sociedad.acreedor'),
 						 		bind: '{datosRegistrales.acreedorDir}'
+
 							},
 							{ 
 						 		fieldLabel: HreRem.i18n('fieldlabel.importe.deuda'),
 						 		bind: '{datosRegistrales.importeDeuda}'
+
 							},
 							{ 
 						 		fieldLabel: HreRem.i18n('fieldlabel.numero.expediente.riesgo.sociedad.acreedora'),
 						 		bind: '{datosRegistrales.acreedorNumExp}'
+
 							}
 						]
         			}
 				]
+
             },
 			{
 				xtype:'fieldsettable',
@@ -717,7 +727,9 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 				        	bind: {
 			            		store: '{comboEstadoTitulo}',
 			            		value: '{datosRegistrales.estadoTitulo}'
+
 			            	},
+
 			            	reference: 'estadoTitulo'
                         },
 				        {
@@ -729,6 +741,7 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 							xtype:'datefieldbase',
 					 		fieldLabel: HreRem.i18n('fieldlabel.fecha.presentacion.hacienda'),
 					 		bind: '{datosRegistrales.fechaPresHacienda}'
+
 						},
 						{
 							xtype:'datefieldbase',
@@ -748,7 +761,18 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 						{
 							xtype:'datefieldbase',
 		                	fieldLabel: HreRem.i18n('fieldlabel.fecha.inscripcion.registro'),
-					 		bind: '{datosRegistrales.fechaInscripcionReg}'
+					 		bind: '{datosRegistrales.fechaInscripcionReg}', 
+					 		listeners: {
+					 			change: function () {
+						 			me = this;
+						 			var combo = me.lookupController('activodetalle').lookupReference('comboCalificacionNegativaRef');
+						 			
+						 			if (combo != null && combo != '')
+						 				combo.setValue('03');
+						 			
+						 		}
+					 		}
+					 		
 						},
 						{
 							xtype:'datefieldbase',
@@ -758,17 +782,92 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 						{
 							xtype:'datefieldbase',
 		                	fieldLabel: HreRem.i18n('fieldlabel.fecha.nota.simple'),
+
 					 		bind: '{datosRegistrales.fechaNotaSimple}'
-						}
+						},
+						{
+							xtype:'fieldsettable',
+							defaultType: 'textfieldbase',
+							colspan: 4,
+							reference:'calificacionNegativa',
+							hidden: true,
+							title: HreRem.i18n("title.calificacion.negativa"),
+							items :
+							[
+								{
+						        	xtype: 'comboboxfieldbase',
+							 		fieldLabel: HreRem.i18n('fieldlabel.calificacion.negativa'),
+						        	name: 'comboCalificacionNegativa',
+						        	reference: 'comboCalificacionNegativaRef',
+						        	bind: {
+					            		store: '{comboCalificacionNegativa}',
+					            		value: '{datosRegistrales.calificacionNegativa}'
+					            	},
+						        	listeners : {
+						        		change: 'onChangeCalificacionNegativa'
+						        	}
+						        },
+						        {
+									xtype:'itemselectorbase',
+									reference: 'itemselMotivo',
+									fieldLabel: HreRem.i18n('fieldlabel.calificacion.motivo'),
+            						store: {
+            							model: 'HreRem.model.ComboBase',
+										proxy: {
+										type: 'uxproxy',
+										remoteUrl: 'generic/getDiccionario',
+										extraParams: {diccionario: 'motivosCalificacionNegativa'}
+										},
+										autoLoad: true
+									},
+            						bind: {
+					            		value: '{datosRegistrales.motivoCalificacionNegativa}'
+					            		
+					            	},
+									            listeners:{
+									            	change: function(){
+									            		var me = this;
+									            		var campoDesc = me.lookupController('activodetalle').lookupReference('descMotivo');
+									            		if(me.getValue().includes(CONST.MOTIVOS_CAL_NEGATIVA["OTROS"])){
+									            			campoDesc.allowBlank = false;
+									            			campoDesc.setReadOnly(false);
+									            			campoDesc.setDisabled(false);
+									            			if(me.up('activosdetallemain').getViewModel().get("editing")){
+									            				campoDesc.fireEvent('edit');
+									            			}else{
+									            				campoDesc.fireEvent('cancel');
+									            			}
+									            		}else{
+									            			campoDesc.allowBlank = true;
+									            			campoDesc.setReadOnly(true);
+									            			campoDesc.setDisabled(true);
+									            			campoDesc.fireEvent('cancel');
+									            		}
+									            	}
+									            }
+								},
+								{
+									reference: 'descMotivo',
+									allowBlank: true,
+							 		fieldLabel: HreRem.i18n('fieldlabel.calificacion.descripcion'),
+							 		bind: '{datosRegistrales.descripcionCalificacionNegativa}'
+
+								}
+							]
+		           		}
+
+
 					]
 			}
 		];
 
 		me.addPlugin({ptype: 'lazyitems', items: items });
     	me.callParent();
+
 	},
 
 	getErrorsExtendedFormBase: function() {
+
    		var me = this,
    		errores = [],
    		error,   		
@@ -786,11 +885,21 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
    		fechaTomaPosesion = me.down("[reference=fechaTomaPosesionJudicial]"),
    		fechaAutoAdjudicacion = me.down("[reference=fechaAutoAdjudicacion]");
 
+   		motivoCalNegativa = me.down("[reference=itemselMotivo]");
+
    		if(provinciaRegistro.getValue() != codigoProvinciaDomicilio) {
    			error = HreRem.i18n("txt.validacion.provincia.diferente.registro");
    			errores.push(error);
    			provinciaRegistro.markInvalid(error); 
    		}
+
+
+   		if(motivoCalNegativa.getValue().length == 0) {
+   			error = HreRem.i18n("txt.validacion.motivo.obligatorio");
+   			errores.push(error);
+   			motivoCalNegativa.markInvalid(error);
+   		}
+
 
    		if(superficieUtil.getValue() > superficieConstruida.getValue()) {
    			error = HreRem.i18n("txt.validacion.suputil.mayor.supconstruida");
@@ -816,6 +925,7 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
    				error = HreRem.i18n("txt.validacion.fechaAutoAdjudicacion.mayor.fechaFirmezaAutoAdjudicacion");
 	   			errores.push(error);
 	   			fechaFirmezaAutoAdjudicacion.markInvalid(error);
+
    			}
    		}
 

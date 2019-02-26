@@ -23,6 +23,8 @@ public class GestorDocumentalConstants {
 	public static final String CODIGO_CLASE_EXPEDIENTE_ACTIVO = "03";
 	public static final String CODIGO_CLASE_GASTO = "07";
 	public static final String CODIGO_CLASE_PROMOCIONES = "09";
+	public static final String CODIGO_CLASE_ACTUACION_TECNICA = "13";
+	public static final String CODIGO_CLASE_TRABAJO = "13";
 	
 	public static final String TIPO_CONSULTA_RELACION_EXPEDIENTE = "Tipo Expediente";
 	public static final String TIPO_CONSULTA_RELACION_GLOBAL = "Global";

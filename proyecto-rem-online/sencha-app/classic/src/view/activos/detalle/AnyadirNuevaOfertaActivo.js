@@ -2,7 +2,7 @@ Ext.define('HreRem.view.activos.detalle.AnyadirNuevaOfertaActivo', {
     extend		: 'HreRem.view.common.WindowBase',
     xtype		: 'anyadirnuevaofertaactivo',
     layout	: 'fit',
-    width	: Ext.Element.getViewportWidth() / 3,    
+    width	: Ext.Element.getViewportWidth() / 2,    
     //height	: Ext.Element.getViewportHeight() > 500 ? 500 : Ext.Element.getViewportHeight() - 50 ,
     //closable: true,		
     //closeAction: 'hide',

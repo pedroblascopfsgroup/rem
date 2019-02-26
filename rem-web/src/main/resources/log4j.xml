@@ -40,7 +40,34 @@
 		</filter>
 	</appender>
 
-	<!-- Hay que setear la propiedad de sistema log.mail.sendError = true si 
+	<appender name="logTrustEvento" class="es.capgemini.pfs.utils.log4j.CustomRollingFileAppender">
+		<param name="file" value="{DEVON_HOME}/log/logtrust/logTrust_evento.log" />
+		<param name="MaxFileSize" value="2MB" />
+		<param name="MaxBackupIndex" value="10" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%m%n" />
+		</layout>
+	</appender>
+
+	<appender name="logTrustAcceso" class="es.capgemini.pfs.utils.log4j.CustomRollingFileAppender">
+		<param name="file" value="{DEVON_HOME}/log/logtrust/logTrust_acceso.log" />
+		<param name="MaxFileSize" value="2MB" />
+		<param name="MaxBackupIndex" value="10" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%m%n" />
+		</layout>
+	</appender>
+
+	<appender name="logTrustWebService" class="es.capgemini.pfs.utils.log4j.CustomRollingFileAppender">
+		<param name="file" value="{DEVON_HOME}/log/logtrust/logTrust_ws.log" />
+		<param name="MaxFileSize" value="2MB" />
+		<param name="MaxBackupIndex" value="10" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%m%n" />
+		</layout>
+	</appender>
+
+	<!-- Hay que setear la propiedad de sistema log.mail.sendError = true si
 		se quiere el envio de mails -->
 	<appender name="email"
 		class="es.capgemini.pfs.utils.log4j.CustomSMTPAppender">
@@ -112,12 +139,14 @@
 		<appender-ref ref="syslog" />
 		<appender-ref ref="email" />
 	</logger>
-	<!-- <logger name="org.springframework" additivity="false"> <level value="warn"/> 
+
+	<!-- <logger name="org.springframework" additivity="false"> <level value="warn"/>
 		<appender-ref ref="console" /> <appender-ref ref="file" /> <appender-ref ref="syslog" /> </logger> <logger 
 		name="org.springframework.binding.mapping" additivity="false"> <level value="warn"/> 
 		<appender-ref ref="console" /> <appender-ref ref="file" /> <appender-ref ref="syslog" /> </logger> <logger 
 		name="org.springframework.webflow" additivity="false"> <level value="warn"/> 
 		<appender-ref ref="console" /> <appender-ref ref="file" /> <appender-ref ref="syslog" /> </logger> -->
+
 	<logger name="org.springframework.security.ldap" additivity="false">
 		<level value="warn" />
 		<appender-ref ref="console" />
@@ -142,6 +171,7 @@
 		<appender-ref ref="syslog" />
 		<appender-ref ref="email" />
 	</logger>
+
 	<logger name="org.hibernate.cache.CacheFactory" additivity="false">
 		<level value="error" />
 		<appender-ref ref="console" />
@@ -149,6 +179,7 @@
 		<appender-ref ref="syslog" />
 		<appender-ref ref="email" />
 	</logger>
+
 	<logger name="org.hibernate.cache.EhCacheProvider" additivity="false">
 		<level value="error" />
 		<appender-ref ref="console" />
@@ -156,6 +187,7 @@
 		<appender-ref ref="syslog" />
 		<appender-ref ref="email" />
 	</logger>
+
 	<logger name="org.hibernate.engine.StatefulPersistenceContext"
 		additivity="false">
 		<level value="error" />
@@ -171,7 +203,6 @@
 		<appender-ref ref="syslog" />
 		<appender-ref ref="email" />
 	</logger>
-	
 	<logger name="es.pfsgroup.plugin.gestorDocumental" additivity="false">
 		<level value="error" />
 		<appender-ref ref="console" />
@@ -201,6 +232,7 @@
 		<appender-ref ref="console" />
 		<appender-ref ref="fileRest" />
 	</logger>
+
 	<logger name="es.pfsgroup.plugin.rem.controller.ClientesController"
 		additivity="false">
 		<level value="error" />
@@ -214,65 +246,76 @@
 		<appender-ref ref="console" />
 		<appender-ref ref="fileRest" />
 	</logger>
+
 	<logger name="es.pfsgroup.plugin.rem.controller.OfertasController"
 		additivity="false">
 		<level value="error" />
 		<appender-ref ref="console" />
 		<appender-ref ref="fileRest" />
 	</logger>
+
 	<logger name="es.pfsgroup.plugin.rem.controller.TrabajoController"
 		additivity="false">
 		<level value="error" />
 		<appender-ref ref="console" />
 	</logger>
+
 	<logger name="es.pfsgroup.plugin.rem.controller.ComisionesController"
 		additivity="false">
 		<level value="debug" />
 		<appender-ref ref="console" />
 		<appender-ref ref="fileRest" />
 	</logger>
+
 	<logger name="es.pfsgroup.plugin.rem.controller.NotificacionesController"
 		additivity="false">
 		<level value="error" />
 		<appender-ref ref="console" />
 		<appender-ref ref="fileRest" />
 	</logger>
+
 	<logger name="es.pfsgroup.plugin.rem.controller.InformemediadorController"
 		additivity="false">
 		<level value="error" />
 		<appender-ref ref="console" />
 		<appender-ref ref="fileRest" />
 	</logger>
+
 	<logger name="es.pfsgroup.plugin.rem.controller.PortalesController"
 		additivity="false">
 		<level value="debug" />
 		<appender-ref ref="console" />
 		<appender-ref ref="fileRest" />
 	</logger>
+
 	<logger name="es.pfsgroup.plugin.rem.controller.PropuestaresolucionController"
 		additivity="false">
 		<level value="error" />
 		<appender-ref ref="console" />
 		<appender-ref ref="fileRest" />
-	</logger>	
+	</logger>
+
 	<logger name="es.pfsgroup.plugin.rem.controller.ReservaController"
 		additivity="false">
 		<level value="error" />
 		<appender-ref ref="console" />
 		<appender-ref ref="fileRest" />
 	</logger>
+
 	<logger name="es.pfsgroup.plugin.rem.controller.ReintegroController"
 		additivity="false">
 		<level value="error" />
 		<appender-ref ref="console" />
 		<appender-ref ref="fileRest" />
 	</logger>
+
 	<logger name="es.pfsgroup.plugin.rem.controller.ConfirmacionoperacionController"
 		additivity="false">
 		<level value="error" />
 		<appender-ref ref="console" />
 		<appender-ref ref="fileRest" />
 	</logger>
+
 	<logger name="es.pfsgroup.plugin.rem.controller.ResolucionComiteController"
 		additivity="false">
 		<level value="error" />
@@ -286,12 +329,14 @@
 		<appender-ref ref="file" />
 		<appender-ref ref="syslog" />
 	</logger>
+
 	<logger name="es.pfsgroup.plugin.rem.rest.api.impl.GestorDocumentalFotos"
 		additivity="false">
 		<level value="error" />
 		<appender-ref ref="console" />
 		<appender-ref ref="fileRest" />
 	</logger>
+
 	<logger name="es.pfsgroup.plugin.rem.api.impl.MSVActualizadorVentaCartera"
 		additivity="false">
 		<level value="error" />
@@ -314,14 +359,26 @@
 		<appender-ref ref="email" />
 	</logger>
 
+	<logger name="es.pfsgroup.plugin.rem.logTrust.LogTrustEvento" additivity="false">
+		<level value="debug" />
+		<appender-ref ref="logTrustEvento" />
+	</logger>
+
+	<logger name="es.pfsgroup.plugin.rem.logTrust.LogTrustAcceso" additivity="false">
+		<level value="debug" />
+		<appender-ref ref="logTrustAcceso" />
+	</logger>
+
+	<logger name="es.pfsgroup.plugin.rem.logTrust.LogTrustWebService" additivity="false">
+		<level value="debug" />
+		<appender-ref ref="logTrustWebService" />
+	</logger>
 
 
 
 	<!--Descomentar para Ver las SQL-->
 	<!--<logger name="org.hibernate.SQL" additivity="false"> <level value="debug"/> 
 		<appender-ref ref="console" /> </logger>-->
-
-
 
 	<!-- Descomentar para Ver las SQL que ejecuta la aplicacion, el Thread, 
 		la session y la transaccion en al que se ejecutan -->
@@ -330,6 +387,8 @@
 		ref="console" /> </logger> <logger name="es.capgemini.pfs.utils.hibernate.HibernateMasterSqlInterceptor" 
 		additivity="false"> <level value="debug"/> <appender-ref ref="file" /> <appender-ref ref="syslog" /> <appender-ref 
 		ref="console" /> </logger> -->
+
+
 
 	<!-- root -->
 	<root>
@@ -341,4 +400,3 @@
 	</root>
 
 </log4j:configuration> 
-

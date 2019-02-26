@@ -27,7 +27,7 @@ import java.util.Date;
 import java.util.List;
 
 @Component
-public class UpdaterServicePublicacionAPCorreccionDatos implements UpdaterService {
+public class UpdaterServiceAprobacionInformeComercialAPCorreccionDatos implements UpdaterService {
 
     @Autowired
     private GenericABMDao genericDao;

@@ -59,7 +59,7 @@ Ext.define('HreRem.view.activos.detalle.ImpuestosActivoGrid', {
 							model: 'HreRem.model.ComboBase',
 							proxy: {
 								type: 'uxproxy',
-								remoteUrl: 'generic/getDiccionario',
+								remoteUrl: 'generic/getDiccionarioDeGastos',
 								extraParams: {diccionario: 'subtiposGasto'}
 							},
 							autoLoad: true

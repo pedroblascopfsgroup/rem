@@ -99,7 +99,7 @@ public class LogTrustEvento extends LogTrust {
 	 * @param accion: código de tipo de interación predefinido.
 	 */
 	public void registrarSuceso(HttpServletRequest peticion, Long idEntidad, ENTIDAD_CODIGO entidad, String tabOrEvento, ACCION_CODIGO accion) {
-		this.obtenerInformacionDelEvento(peticion, entidad, idEntidad, accion, REQUEST_STATUS_CODE.CODIGO_ESTADO_OK, tabOrEvento);
+		//this.obtenerInformacionDelEvento(peticion, entidad, idEntidad, accion, REQUEST_STATUS_CODE.CODIGO_ESTADO_OK, tabOrEvento);
 	}
 	
 	/**
@@ -112,7 +112,7 @@ public class LogTrustEvento extends LogTrust {
 	 * @param codigoEstadoPeticion: código de error predefinido.
 	 */
 	public void registrarError(HttpServletRequest peticion, Long idEntidad, ENTIDAD_CODIGO entidad, String tabOrEvento, ACCION_CODIGO accion, REQUEST_STATUS_CODE codigoEstadoPeticion) {
-		this.obtenerInformacionDelEvento(peticion, entidad, idEntidad, accion, codigoEstadoPeticion, tabOrEvento);
+		//this.obtenerInformacionDelEvento(peticion, entidad, idEntidad, accion, codigoEstadoPeticion, tabOrEvento);
 	}
 
 	/**

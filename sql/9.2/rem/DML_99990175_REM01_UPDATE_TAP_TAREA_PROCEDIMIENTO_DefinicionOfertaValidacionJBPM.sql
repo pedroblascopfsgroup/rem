@@ -45,7 +45,7 @@ BEGIN
         
 		IF V_NUM_TABLAS > 0 THEN
 
-		    V_MSQL := 'UPDATE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' SET TAP_SCRIPT_VALIDACION_JBPM = ''existeAdjuntoUGCarteraValidacion("36", "E", "01") == null ? valores[''''T013_DefinicionOferta''''][''''comboConflicto''''] == DDSiNo.SI || valores[''''T013_DefinicionOferta''''][''''comboRiesgo''''] == DDSiNo.SI ? ''El estado de la responsabilidad corporativa no es el correcto para poder avanzar.'' : definicionOfertaT013(valores[''''T013_DefinicionOferta''''][''''comiteSuperior'''']) : existeAdjuntoUGCarteraValidacion("36", "E", "01")'''|| 
+		   V_MSQL := 'UPDATE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' SET TAP_SCRIPT_VALIDACION_JBPM = ''existeAdjuntoUGCarteraValidacion("36", "E", "01") == null ? valores[''''T013_DefinicionOferta''''][''''comboConflicto''''] == DDSiNo.SI || valores[''''T013_DefinicionOferta''''][''''comboRiesgo''''] == DDSiNo.SI ? ''''El estado de la responsabilidad corporativa no es el correcto para poder avanzar.'''' : definicionOfertaT013(valores[''''T013_DefinicionOferta''''][''''comiteSuperior'''']) : existeAdjuntoUGCarteraValidacion("36", "E", "01")'''||
 		    ' WHERE TAP_CODIGO = ''T013_DefinicionOferta'' ';
 			DBMS_OUTPUT.PUT_LINE('[INFO] Actualizando tarea T013_DefinicionOferta.......');
 		    DBMS_OUTPUT.PUT_LINE(V_MSQL);
@@ -54,7 +54,7 @@ BEGIN
 		END IF;
 		
 		
-    COMMIT;
+    ROLLBACK;
 EXCEPTION
      WHEN OTHERS THEN
           ERR_NUM := SQLCODE;

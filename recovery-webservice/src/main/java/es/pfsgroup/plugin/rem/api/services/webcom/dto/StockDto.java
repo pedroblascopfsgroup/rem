@@ -231,16 +231,24 @@ public class StockDto implements WebcomRESTDto{
 	@WebcomRequired
 	private StringDataType arrCodDetallePublicacion;
 	
-	@WebcomRequired
+
+	@MappedColumn("COD_AGRUPACION_COMERCIAL_REM")
+	private LongDataType codigoAgrupacionComercialRem;
+	
 	private StringDataType descripcionOtros;
 
 	@WebcomRequired
 	private LongDataType activoProveedorTecnico;
+
+	//@MappedColumn("COD_ESTADO_FIS_ACTIVO")
+	private StringDataType codEstadoFisico;
+
+	private StringDataType codTipoUsoDestino;
 	
-	//HREOS-4500 - Modificaciones WS Stock
-	@WebcomRequired
+
+	// Modificaciones WS Stock
 	private StringDataType codTipoAlquiler;
-	
+
 	public LongDataType getIdActivoHaya() {
 		return idActivoHaya;
 	}
@@ -806,11 +814,28 @@ public class StockDto implements WebcomRESTDto{
 	public void setActivoProveedorTecnico(LongDataType activoProveedorTecnico) {
 		this.activoProveedorTecnico = activoProveedorTecnico;
 	}
+	public StringDataType getCodEstadoFisico() {
+		return codEstadoFisico;
+	}
+	public void setCodEstadoFisico(StringDataType codEstadoFisico) {
+		this.codEstadoFisico = codEstadoFisico;
+	}
+	public StringDataType getCodTipoUsoDestino() {
+		return codTipoUsoDestino;
+	}
+	public void setCodTipoUsoDestino(StringDataType codTipoUsoDestino) {
+		this.codTipoUsoDestino = codTipoUsoDestino;
+	}
 	public StringDataType getCodTipoAlquiler() {
 		return codTipoAlquiler;
 	}
 	public void setCodTipoAlquiler(StringDataType codTipoAlquiler) {
 		this.codTipoAlquiler = codTipoAlquiler;
 	}
-	
+	public LongDataType getCodigoAgrupacionComercialRem() {
+		return codigoAgrupacionComercialRem;
+	}
+	public void setCodigoAgrupacionComercialRem(LongDataType codigoAgrupacionComercialRem) {
+		this.codigoAgrupacionComercialRem = codigoAgrupacionComercialRem;
+	}
 }

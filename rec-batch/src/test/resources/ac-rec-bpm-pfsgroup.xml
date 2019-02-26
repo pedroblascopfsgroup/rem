@@ -111,61 +111,61 @@
 	</bean>
 
 
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/tramiteSubasta/processdefinition.xml" p:version="2304"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/tramiteSubasta/processdefinition.xml" p:version="2757"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/tramiteCesionRemate/tramiteCesionRemate.xml" p:version="133"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/tramiteIntereses/tramiteIntereses.xml" p:version="2305"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/ejecucionTituloJudicial/processdefinition.xml" p:version="2305"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/tramiteEmbargoSalarios/tramiteEmbargoSalarios.xml" p:version="2306"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/procedimientoHipotecario/procedimientoHipotecario.xml" p:version="2280"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/procedimientoMonitorio/procedimientoMonitorio.xml" p:version="2280"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/procedimientoOrdinario/procedimientoOrdinario.xml" p:version="2280"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/procedimientoVerbal/procedimientoVerbal.xml" p:version="2280"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/tramiteIntereses/tramiteIntereses.xml" p:version="2857"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/ejecucionTituloJudicial/processdefinition.xml" p:version="2757"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/tramiteEmbargoSalarios/tramiteEmbargoSalarios.xml" p:version="2758"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/procedimientoHipotecario/procedimientoHipotecario.xml" p:version="2732"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/procedimientoMonitorio/procedimientoMonitorio.xml" p:version="2732"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/procedimientoOrdinario/procedimientoOrdinario.xml" p:version="2732"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/procedimientoVerbal/procedimientoVerbal.xml" p:version="2732"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/tramiteAdjudicacion/tramiteAdjudicacion.xml" p:version="2280"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/tramiteNotificacion/tramiteNotificacion.xml" p:version="2282"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/tramiteCostas/tramiteCostas.xml" p:version="2282"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/tramiteCertificacionCargasRevision/tramiteCertificacionCargasRevision.xml" p:version="2282"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/tramiteValoracionBienesInmuebles/tramiteValoracionBienesInmuebles.xml" p:version="2282"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/tramiteValoracionBienesMuebles/tramiteValoracionBienesMuebles.xml" p:version="2282"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/tramiteMejoraEmbargo/tramiteMejoraEmbargo.xml" p:version="2282"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/procedimientoEjecucionTituloNoJudicial/procedimientoEjecucionTituloNoJudicial.xml" p:version="2282"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/procedimientoCambiario/procedimientoCambiario.xml" p:version="2282"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/tramiteDeposito/tramiteDeposito.xml" p:version="2282"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/tramitePrecinto/tramitePrecinto.xml" p:version="2282"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/tramiteInvestigacionJudicial/tramiteInvestigacionJudicial.xml" p:version="2282"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/procedimientoVerbalDesdeMonitorio/procedimientoVerbalDesdeMonitorio.xml" p:version="2282"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/procedimientoSolicitudConcursal/procedimientoSolicitudConcursal.xml" p:version="2058"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/tramiteNotificacion/tramiteNotificacion.xml" p:version="2732"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/tramiteCostas/tramiteCostas.xml" p:version="2732"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/tramiteCertificacionCargasRevision/tramiteCertificacionCargasRevision.xml" p:version="2732"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/tramiteValoracionBienesInmuebles/tramiteValoracionBienesInmuebles.xml" p:version="2832"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/tramiteValoracionBienesMuebles/tramiteValoracionBienesMuebles.xml" p:version="2832"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/tramiteMejoraEmbargo/tramiteMejoraEmbargo.xml" p:version="2732"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/procedimientoEjecucionTituloNoJudicial/procedimientoEjecucionTituloNoJudicial.xml" p:version="2832"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/procedimientoCambiario/procedimientoCambiario.xml" p:version="2732"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/tramiteDeposito/tramiteDeposito.xml" p:version="2732"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/tramitePrecinto/tramitePrecinto.xml" p:version="2732"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/tramiteInvestigacionJudicial/tramiteInvestigacionJudicial.xml" p:version="2732"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/procedimientoVerbalDesdeMonitorio/procedimientoVerbalDesdeMonitorio.xml" p:version="2732"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/procedimientoSolicitudConcursal/procedimientoSolicitudConcursal.xml" p:version="3171"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/tramiteFaseComunAbreviado/tramiteFaseComunAbreviado.xml" p:version="2058"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/tramiteFaseComunOrdinario/tramiteFaseComunOrdinario.xml" p:version="2058"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/tramiteDemandaIncidental/tramiteDemandaIncidental.xml" p:version="2060"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/tramiteFaseComunOrdinario/tramiteFaseComunOrdinario.xml" p:version="2537"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/tramiteDemandaIncidental/tramiteDemandaIncidental.xml" p:version="3177"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/tramiteDemandadoEnIncidente/tramiteDemandadoEnIncidente.xml" p:version="2060"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/tramiteSolicitudActuacionesReintegracionContra3/tramiteSolicitudActuacionesReintegracionContra3.xml" p:version="2056"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/tramiteRegistrarResolucionDeInteres/tramiteRegistrarResolucionDeInteres.xml" p:version="2056"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/tramiteSolicitudActuacionesReintegracionContra3/tramiteSolicitudActuacionesReintegracionContra3.xml" p:version="2537"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/tramiteRegistrarResolucionDeInteres/tramiteRegistrarResolucionDeInteres.xml" p:version="2537"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/tramiteFaseConvenio/tramiteFaseConvenio.xml" p:version="2060"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/tramitePropuestaAnticipadaConvenio/tramitePropuestaAnticipadaConvenio.xml" p:version="2060"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/tramiteFaseLiquidacion/tramiteFaseLiquidacion.xml" p:version="2056"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/procedimientoAbreviado/processdefinition.xml" p:version="2035"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/tramiteArchivo/processdefinition.xml" p:version="2077"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/tramiteCalificacion/tramiteCalificacion.xml" p:version="2060"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/tramitePresentacionPropConvenio/tramitePresentacionPropConvenio.xml" p:version="2060"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/tramiteDeRegistro/tramiteDeRegistro.xml" p:version="2056"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/tramitePropuestaAnticipadaConvenio/tramitePropuestaAnticipadaConvenio.xml" p:version="2637"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/tramiteFaseLiquidacion/tramiteFaseLiquidacion.xml" p:version="2537"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/procedimientoAbreviado/processdefinition.xml" p:version="2757"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/tramiteArchivo/processdefinition.xml" p:version="2757"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/tramiteCalificacion/tramiteCalificacion.xml" p:version="2537"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/tramitePresentacionPropConvenio/tramitePresentacionPropConvenio.xml" p:version="2637"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/tramiteDeRegistro/tramiteDeRegistro.xml" p:version="2504"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/tramiteDePosesion/tramiteDePosesion.xml" p:version="2056"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/procedimientoHistorico_0/procedimientoHistorico_0.xml" p:version="1963"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/procedimientoHistorico_15/procedimientoHistorico_15.xml" p:version="1963"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/procedimientoHistorico_30/procedimientoHistorico_30.xml" p:version="1963"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/procedimientoHistorico_45/procedimientoHistorico_45.xml" p:version="1963"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/procedimientoActuacionAmistosa/procedimientoActuacionAmistosa.xml" p:version="1963"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/procedimientoContratosBloqueado/procedimientoContratosBloqueado.xml" p:version="1963"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/vigilanciaCaducidadAnotacion/vigilanciaCaducidadAnotacion.xml" p:version="1727"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/procedimientoConcursalBloqueado/procedimientoConcursalBloqueado.xml" p:version="1050"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/procedimientoHistorico_0/procedimientoHistorico_0.xml" p:version="2411"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/procedimientoHistorico_15/procedimientoHistorico_15.xml" p:version="2411"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/procedimientoHistorico_30/procedimientoHistorico_30.xml" p:version="2411"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/procedimientoHistorico_45/procedimientoHistorico_45.xml" p:version="2411"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/procedimientoActuacionAmistosa/procedimientoActuacionAmistosa.xml" p:version="2411"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/procedimientoContratosBloqueado/procedimientoContratosBloqueado.xml" p:version="2411"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/vigilanciaCaducidadAnotacion/vigilanciaCaducidadAnotacion.xml" p:version="2170"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/procedimientoConcursalBloqueado/procedimientoConcursalBloqueado.xml" p:version="1496"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/aceptacionYdecision/aceptacionYdecision.xml" p:version="745"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/tramiteConclusionConcurso/conclusionConcurso.xml" p:version="726"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/tramiteAdhesionConvenio/tramiteAdhesionConvenio.xml" p:version="717"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/tramiteSeguimientoConvenio/tramiteSeguimientoConvenio.xml" p:version="709"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/tramiteEjecucionNotarial/tramiteEjecucionNotarial.xml" p:version="615"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/tramiteConfeccionExpedienteUnnim/tramiteConfeccionExpedienteUnnim.xml" p:version="-1"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/tramiteConfeccionExpedienteSabadell/tramiteConfeccionExpedienteSabadell.xml" p:version="-1"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/tramiteRecobro/tramiteRecobro.xml" p:version="611"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/tramiteReaperturaConcurso/tramiteReaperturaConcurso.xml" p:version="417"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/tramiteConclusionConcurso/conclusionConcurso.xml" p:version="795"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/tramiteAdhesionConvenio/tramiteAdhesionConvenio.xml" p:version="786"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/tramiteSeguimientoConvenio/tramiteSeguimientoConvenio.xml" p:version="1027"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/tramiteEjecucionNotarial/tramiteEjecucionNotarial.xml" p:version="684"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/tramiteConfeccionExpedienteUnnim/tramiteConfeccionExpedienteUnnim.xml" p:version="680"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/tramiteConfeccionExpedienteSabadell/tramiteConfeccionExpedienteSabadell.xml" p:version="681"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/tramiteRecobro/tramiteRecobro.xml" p:version="681"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/tramiteReaperturaConcurso/tramiteReaperturaConcurso.xml" p:version="487"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/pfsgroup/seleccionProcedimiento/seleccionProcedimiento.xml" p:version="2"/>
 
 	<bean id="jbpmUtil" class="es.capgemini.pfs.utils.JBPMProcessManager" >

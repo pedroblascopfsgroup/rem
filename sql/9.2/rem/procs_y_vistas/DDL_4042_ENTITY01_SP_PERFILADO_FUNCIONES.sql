@@ -12,6 +12,7 @@
 --## INSTRUCCIONES:  
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##		0.2 Resolución conflictos
 --#########################################
 --*/
 
@@ -19,7 +20,7 @@ WHENEVER SQLERROR EXIT SQL.SQLCODE;
 SET SERVEROUTPUT ON; 
 SET DEFINE OFF;
 
-create or replace PROCEDURE SP_PERFILADO_FUNCIONES (
+CREATE OR REPLACE PROCEDURE SP_PERFILADO_FUNCIONES (
   V_USUARIO   VARCHAR2 DEFAULT 'SP_PEF_FUN'
 )
 AS
@@ -36,6 +37,7 @@ AS
   TYPE T_VAR is table of VARCHAR2(250);
   TYPE T_ARRAY IS TABLE OF T_VAR;
   V_FUN T_ARRAY := T_ARRAY(
+
     ------    FUNCION   --------------------------------------------1- -2---3---4---5---6---7---8---9--10--11--12--13--14--15--16--17--18--19--20--21--22--23--24--25--26--27--28--29--30--31--32--33--34--35--36--37--38--39--40--41--42--43--44--45--46--47--48--49--50--51--52--54--55--57--58--59--60--61--62--63--64--65
 T_VAR( 'TAB_BUSQUEDA_ACTIVOS','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','N','N','S','N','N','S','S','N','N','N','N','N','N','N','S'),
 T_VAR( 'TAB_ACTIVO_DATOS_GENERALES','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','N','N','S','N','N','S','N','N','N','N','N','N','N','N','S'),
@@ -360,7 +362,7 @@ BEGIN
 			,HAYASUPER
 			,HAYAGESTCOM
 			,HAYASUPCOM
-      ,HAYAGOLDTREE
+            ,HAYAGOLDTREE
 			,FVDNEGOCIO
 			,FVDBACKOFERTA
 			,FVDBACKVENTA
@@ -375,14 +377,14 @@ BEGIN
 			,VALORACIONES
 			,PMSVVC
 			,FTI
-      ,HAYAGESTFORMADM
-      ,SUPERFORM
-      ,SUPERGESTACT
-      ,SUPERADMIN
-      ,SUPERPUBLI
-      ,SUPERMIDDLE
-      ,SUPERFRONT
-      ,SUPERPLANIF
+      		,HAYAGESTFORMADM
+      		,SUPERFORM
+      		,SUPERGESTACT
+      		,SUPERADMIN
+      		,SUPERPUBLI
+      		,SUPERMIDDLE
+      		,SUPERFRONT
+      		,SUPERPLANIF
             )
             SELECT
             '''||V_TMP_VAR(1)||'''

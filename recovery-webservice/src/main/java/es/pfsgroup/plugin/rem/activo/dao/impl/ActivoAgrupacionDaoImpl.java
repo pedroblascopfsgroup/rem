@@ -15,6 +15,7 @@ import es.capgemini.devon.hibernate.pagination.PaginationManager;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.dao.AbstractEntityDao;
 import es.capgemini.pfs.users.domain.Usuario;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.DateFormat;
 import es.pfsgroup.commons.utils.HQLBuilder;
 import es.pfsgroup.commons.utils.HibernateQueryUtils;
@@ -346,6 +347,43 @@ public class ActivoAgrupacionDaoImpl extends AbstractEntityDao<ActivoAgrupacion,
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "actsub.agrupacionId", subdivision.getAgrId());
 
 		return HibernateQueryUtils.page(this, hb, subdivision);
+	}
+	
+	@Override
+	public Long getIdSubdivisionByIdActivo(Long idActivo) {
+		
+		Long idSubdivision = null;
+		
+		try {
+			HQLBuilder hb = new HQLBuilder("select distinct actsub.idSubdivision from VActivosSubdivision actsub where actsub.activoId = " + idActivo);
+
+			List<Long> lista = (List<Long>) getHibernateTemplate().find(hb.toString());
+			
+			if (!Checks.estaVacio(lista)) {
+				idSubdivision = lista.get(0);
+			}
+			
+			return idSubdivision;
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	public List<Long> getListIdActivoByIdSubdivisionAndIdsAgrupacion(Long idSubdivision, String idsAgrupacion) {
+
+		try {
+
+			HQLBuilder hb = new HQLBuilder("select actsub.activoId from VActivosSubdivision actsub where actsub.idSubdivision = " + idSubdivision +
+											" and actsub.agrupacionId in (" + idsAgrupacion + ")");
+	
+			return (List<Long>) getHibernateTemplate().find(hb.toString());
+		
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 	@SuppressWarnings("unchecked")

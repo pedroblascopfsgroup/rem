@@ -20,7 +20,9 @@ import org.hibernate.annotations.Where;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTituloActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoUsoDestino;
 
 
@@ -250,8 +252,8 @@ public class VBusquedaActivos implements Serializable {
 	@Column(name = "SPS_OCUPADO")
 	private Integer ocupado;
 	
-	@Column(name = "SPS_CON_TITULO")
-	private Integer conTitulo;
+	@Column(name = "DD_TPA_CODIGO")
+    private String conTitulo;
 	
 	@Column(name= "DD_SCM_DESCRIPCION")
 	private String situacionComercial;
@@ -453,11 +455,11 @@ public class VBusquedaActivos implements Serializable {
 		this.ocupado = ocupado;
 	}
 
-	public Integer getConTitulo() {
+	public String getConTitulo() {
 		return conTitulo;
 	}
 
-	public void setConTitulo(Integer conTitulo) {
+	public void setConTitulo(String conTitulo) {
 		this.conTitulo = conTitulo;
 	}
 

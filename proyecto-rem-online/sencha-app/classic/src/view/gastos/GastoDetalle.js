@@ -153,8 +153,8 @@ Ext.define('HreRem.view.gastos.GastoDetalle', {
 		return false;
 		
 	},
-	edicionPestanyaDetalleEconomico: function(estadoGasto, autorizado, rechazado, agrupado, gestoria){
-		if( $AU.userHasFunction('EDITAR_TAB_DETALLE_ECONOMICO_GASTOS') && (
+	edicionPestanyaDetalleEconomico: function(estadoGasto, autorizado, rechazado, agrupado, gestoria){ 
+		if( $AU.userHasFunction('EDITAR_TAB_DETALLE_ECONOMICO_GASTOS') && ((CONST.ESTADOS_GASTO['PAGADO']==estadoGasto) ||
 				(CONST.ESTADOS_GASTO['AUTORIZADO']==estadoGasto && gestoria) || /*CONST.ESTADOS_GASTO['AUTORIZADO_PROPIETARIO']==estadoGasto || */
 	    		CONST.ESTADOS_GASTO['CONTABILIZADO']==estadoGasto || CONST.ESTADOS_GASTO['INCOMPLETO']==estadoGasto || CONST.ESTADOS_GASTO['PENDIENTE']==estadoGasto || 
 	    		CONST.ESTADOS_GASTO['RECHAZADO']==estadoGasto || (CONST.ESTADOS_GASTO['SUBSANADO']==estadoGasto && !autorizado) 

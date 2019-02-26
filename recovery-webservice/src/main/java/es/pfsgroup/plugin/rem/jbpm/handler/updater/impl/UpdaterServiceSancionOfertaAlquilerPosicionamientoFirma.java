@@ -27,6 +27,7 @@ import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
 
 @Component
 public class UpdaterServiceSancionOfertaAlquilerPosicionamientoFirma implements UpdaterService {
@@ -63,6 +64,8 @@ public class UpdaterServiceSancionOfertaAlquilerPosicionamientoFirma implements 
 		
 		ExpedienteComercial expedienteComercial = expedienteComercialApi.findOneByTrabajo(tramite.getTrabajo());
 		Oferta ofertaAceptada = expedienteComercial.getOferta();
+		Filter tituloActivo;
+		DDTipoTituloActivoTPA tipoTitulo;
 		
 		for(TareaExternaValor valor :  valores){
 
@@ -79,8 +82,10 @@ public class UpdaterServiceSancionOfertaAlquilerPosicionamientoFirma implements 
 				for(ActivoOferta activoOferta : ofertaAceptada.getActivosOferta())
 				{
 					Activo activo = activoOferta.getPrimaryKey().getActivo();
+					tituloActivo = genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoTituloActivoTPA.tipoTituloSi);
+					tipoTitulo = genericDao.get(DDTipoTituloActivoTPA.class, tituloActivo);
 					
-					situacionPosesoria.setConTitulo(1);
+					situacionPosesoria.setConTitulo(tipoTitulo);
 					situacionPosesoria.setOcupado(1);
 					try {
 						situacionPosesoria.setFechaTomaPosesion(ft.parse(valor.getValor()));

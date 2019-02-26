@@ -17,6 +17,8 @@ Ext.define('HreRem.view.activos.detalle.OpcionesPropagacionCambios', {
     
     propagableData: null,
     
+    sub: null,
+    
     targetGrid: null,
     
     listeners: {
@@ -127,17 +129,14 @@ Ext.define('HreRem.view.activos.detalle.OpcionesPropagacionCambios', {
 					        hidden: true 
 					    },
 				        {
-				            dataIndex: 'tipoActivoDescripcion',
+				            dataIndex: 'tipoActivo',
 				            text: HreRem.i18n('header.tipo'),
 				            flex: 1
 				        },
 				        {
 				            dataIndex: 'subtipoActivo',
 				            text: HreRem.i18n('header.subtipo'),
-				            flex: 0.5,
-				            renderer: function (value) {
-				            	return Ext.isEmpty(value) ? "" : value.descripcion;
-				            }
+				            flex: 0.5
 				        },
 				        {
 				            dataIndex: 'subdivision',
@@ -146,7 +145,7 @@ Ext.define('HreRem.view.activos.detalle.OpcionesPropagacionCambios', {
 				            flex: 2
 				        },				      
 				        {
-				            dataIndex: 'numFinca',
+				            dataIndex: 'fincaRegistral',
 				            text: HreRem.i18n('header.finca.registral'),
 				            hideable: false,
 				            bind: {
@@ -372,10 +371,8 @@ Ext.define('HreRem.view.activos.detalle.OpcionesPropagacionCambios', {
 				grid.getSelectionModel().selectAll();
 				break;
 				
-			case "3":
-				
+			case "3":	
 				checkColumn.setVisible(false);
-				grid.getSelectionModel().deselectAll();
 				grid.getStore().filter('subdivision', me.activoActual.subdivision);
 				grid.getSelectionModel().selectAll();
 				break;

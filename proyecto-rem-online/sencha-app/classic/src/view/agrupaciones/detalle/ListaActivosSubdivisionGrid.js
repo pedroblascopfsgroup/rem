@@ -33,15 +33,21 @@ Ext.define('HreRem.view.trabajos.detalle.ListaActivosSubdivisionGrid', {
 		var estadoRenderer =  function(condicionado) {
         	var src = '',
         	alt = '';
-        	if (condicionado != '0') {
+        	if (condicionado == '0') {
         		src = 'icono_KO.svg';
         		alt = 'KO';
-        	} else { 
+        		var ret= '<div> <img src="resources/images/'+src+'" alt ="'+alt+'" width="15px"></div>';
+        	} else if(condicionado == '1'){ 
         		src = 'icono_OK.svg';
         		alt = 'OK';
-        	}  
-
-        	return '<div> <img src="resources/images/'+src+'" alt ="'+alt+'" width="15px"></div>';
+        		var ret= '<div> <img src="resources/images/'+src+'" alt ="'+alt+'" width="15px"></div>';
+        	} else if(condicionado == '2'){
+        		src = 'icono_OKN.svg';
+        		alt = 'OKN';
+        		var ret= '<div> <img src="resources/images/'+src+'" alt ="'+alt+'" width="15px"></div>';
+        	}else var ret= '<div>-</div>';
+        	
+        	return ret;
         }; 
 
 	
@@ -78,9 +84,40 @@ Ext.define('HreRem.view.trabajos.detalle.ListaActivosSubdivisionGrid', {
 	        		return (Ext.isEmpty(value) || value == 'Rechazado')? "No" : value;
 	        	}
 	        },
-	        {
+	        /*{
 	            dataIndex: 'estadoPublicacionS',
 	            text: HreRem.i18n('header.estado.publicacion'),
+	            flex: 1,
+	            bind:{
+	            	hidden: '{!esAgrupacionObraNuevaOrAsistida}'
+	            },
+	            renderer: estadoRenderer
+	            
+	        },*/
+	        {
+	        	dataIndex: 'publicaciones',
+	        	text: HreRem.i18n('title.publicaciones.estadoPublicacion'),
+	        	flex: 1,
+	        	hideable: false,
+	        	bind:{
+	            	hidden: '{!esAgrupacionObraNuevaOrAsistida}'
+	            }
+	        },
+	        {
+	            dataIndex: 'condPublVenta',
+	            text: HreRem.i18n('header.condicionantes.publicacion.venta'),
+	            flex: 1,
+	            hideable: false,
+	            bind:{
+	            	hidden: '{!esAgrupacionObraNuevaOrAsistida}'
+	            },
+	            renderer: estadoRenderer
+	            
+	        },
+	        {
+	            dataIndex: 'condPublAlquiler',
+	            text: HreRem.i18n('header.condicionantes.publicacion.alquiler'),
+	            hideable: false,
 	            flex: 1,
 	            bind:{
 	            	hidden: '{!esAgrupacionObraNuevaOrAsistida}'

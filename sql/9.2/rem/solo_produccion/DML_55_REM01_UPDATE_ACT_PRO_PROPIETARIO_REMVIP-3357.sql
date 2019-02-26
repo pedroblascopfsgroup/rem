@@ -3,7 +3,7 @@
 --## AUTOR=Rasul Akhmeddibirov
 --## FECHA_CREACION=20190225
 --## ARTEFACTO=batch
---## VERSION_ARTEFACTO=?
+--## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=REMVIP-3357
 --## PRODUCTO=NO
 --## 
@@ -44,12 +44,16 @@ BEGIN
 
 		DBMS_OUTPUT.PUT_LINE('[INFO] Se va a aplicar el borrado lógico sobre el propietario '||V_PORPIETARIO||'.');
 
-		V_SQL := 	'UPDATE '||V_ESQUEMA_M||'.'||V_TABLA||'
+		V_SQL := 	'UPDATE '||V_ESQUEMA||'.'||V_TABLA||'
 					SET BORRADO = 0,
 					USUARIOMODIFICAR = '''||V_USUARIO||''',
 					FECHAMODIFICAR = SYSDATE
-					WHERE PRO_NOMBRE = '''||V_PORPIETARIO||''' ';
+					WHERE PRO_NOMBRE = '''||V_PORPIETARIO||'''';
 
+		EXECUTE IMMEDIATE V_SQL;
+		
+		DBMS_OUTPUT.PUT_LINE('[INFO] Se ha relizado el cambio correctamente sobre el propietario '||V_PORPIETARIO||'.');
+		
 	ELSE
 		DBMS_OUTPUT.PUT_LINE('[INFO] No existe el propietario '||V_PORPIETARIO||'.');
 	END IF;

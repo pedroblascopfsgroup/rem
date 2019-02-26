@@ -29,7 +29,7 @@ Ext.define('HreRem.view.activos.detalle.InformacionAdministrativaActivo', {
 				title:HreRem.i18n('title.catastro'),
 			    xtype: 'gridBaseEditableRow',
 			    idPrincipal: 'activo.id',
-			    topBar: false,
+			    topBar: true,
 				cls	: 'panel-base shadow-panel',
 				bind: {
 					store: '{storeCatastro}'

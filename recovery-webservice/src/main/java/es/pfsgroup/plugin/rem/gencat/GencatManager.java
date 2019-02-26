@@ -39,6 +39,7 @@ import es.pfsgroup.plugin.rem.activo.dao.ComunicacionGencatAdjuntoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ComunicacionGencatDao;
 import es.pfsgroup.plugin.rem.activo.dao.HistoricoComunicacionGencatAdjuntoDao;
 import es.pfsgroup.plugin.rem.activo.dao.NotificacionGencatDao;
+import es.pfsgroup.plugin.rem.activo.dao.VisitaGencatDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
@@ -67,6 +68,7 @@ import es.pfsgroup.plugin.rem.model.ComunicacionGencat;
 import es.pfsgroup.plugin.rem.model.ComunicacionGencatAdjunto;
 import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
+import es.pfsgroup.plugin.rem.model.DtoAltaVisita;
 import es.pfsgroup.plugin.rem.model.DtoGencat;
 import es.pfsgroup.plugin.rem.model.DtoGencatSave;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoComunicacionGencat;
@@ -98,6 +100,9 @@ import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoComunicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoNotificacionGencat;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
+import es.pfsgroup.plugin.rem.rest.dto.SalesforceAuthDto;
+import es.pfsgroup.plugin.rem.rest.dto.SalesforceResponseDto;
+import es.pfsgroup.plugin.rem.rest.salesforce.api.SalesforceApi;
 
 @Service("gencatManager")
 public class GencatManager extends  BusinessOperationOverrider<GencatApi> implements GencatApi {
@@ -107,6 +112,14 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 	public static final String DD_TIPO_DOCUMENTO_CODIGO_NIF = "15";
 	
 	private SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+	//Errores
+	private static String ERROR_FALTA_VISITA = "El método no se ha invocado correctamente. Hay que enviar una visita.";
+	private static String ERROR_FALTA_IDACTIVO = "Falta el ID del activo.";
+	private static String ERROR_FALTA_NOMBRE = "Nombre es un campo obligatorio.";
+	private static String ERROR_FALTA_TELEFONO = "Teléfono es un campo obligatorio.";
+	private static String ERROR_FALTA_EMAIL = "Email es un campo obligatorio.";
+	private static String ERROR_FALTA_COMUNICACION = "El activo no tiene ninguna comunicación asociada.";
+	private static String ERROR_YA_HAY_VISITA = "Ya se ha solicitado una visita previamente.";
 	
 	@Autowired
 	private NotificacionesGencatManager notificacionesGencat;
@@ -133,7 +146,7 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 	private GenericAdapter genericAdapter;
 	
 	@Autowired
-	private NotificacionGencatDao motificacionGencatDao;
+	private NotificacionGencatDao notificacionGencatDao;
 	
 	@Autowired
 	private AdecuacionGencatDao adecuacionGencatDao;
@@ -189,7 +202,13 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 	private ActivoAgrupacionActivoDao activoAgrupacionActivoDao;
 	
 	@Autowired
+	private SalesforceApi salesforceManager;
+
+	@Autowired
 	private ActivoDao activoDao;
+	
+	@Autowired
+	private VisitaGencatDao visitaGencatDao;
 	
 	
 	@Override
@@ -223,6 +242,7 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 				gencatDto.setSancion(comunicacionGencat.getSancion() != null ? comunicacionGencat.getSancion().getCodigo() : null);
 				gencatDto.setEstadoComunicacion(comunicacionGencat.getEstadoComunicacion() != null ? comunicacionGencat.getEstadoComunicacion().getCodigo() : null);
 				gencatDto.setComunicadoAnulacionAGencat2(comunicacionGencat.getComunicadoAnulacionAGencat());
+				gencatDto.setIdComunicacion(comunicacionGencat.getId());
 				Filter filtroIdComunicacion = genericDao.createFilter(FilterType.EQUALS, "comunicacion.id", comunicacionGencat.getId());
 				
 				//Adecuacion
@@ -247,7 +267,9 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 						if (mediador != null) {
 							gencatDto.setApiRealizaLaVisita(mediador.getApellidoNombre());
 						}
+						
 					}
+					gencatDto.setIdLeadSF(visitaGencat.getIdLeadSF());
 				}
 				
 				//Oferta
@@ -970,7 +992,7 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 				notificacion.setVersion(new Long(0));
 				notificacion.setAuditoria(auditoria);
 				
-				motificacionGencatDao.save(notificacion);
+				notificacionGencatDao.save(notificacion);
 			}
 			catch (java.text.ParseException e) {
 				logger.error("Error en gencatManager", e);
@@ -1780,34 +1802,164 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 	public boolean comprobacionDocumentoAnulacion(Long idActivo) {
 		
 		Filter filtroIdActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
+
+	public DtoAltaVisita altaVisitaComunicacion(DtoAltaVisita dtoAltaVisita) throws Exception {
+		
+		//Validacion
+		ComunicacionGencat comunicacionGencat = validateAltaVisita(dtoAltaVisita);
+		
+		//WS que dan da alta la visita en SF
+		SalesforceAuthDto auth = salesforceManager.getAuthtoken();
+		SalesforceResponseDto salesforceResponseDto = salesforceManager.altaVisita(auth, dtoAltaVisita);
+		
+		//Guardado en BBDD
+		createVisitaComunicacion(comunicacionGencat, dtoAltaVisita, salesforceResponseDto);
+		
+		return dtoAltaVisita;
+	}
+	
+	@Override
+	public ComunicacionGencat validateAltaVisita(DtoAltaVisita dtoAltaVisita) {
+		
+		if (Checks.esNulo(dtoAltaVisita)) {
+			throw new IllegalArgumentException(ERROR_FALTA_VISITA);
+		}
+		
+		if (Checks.esNulo(dtoAltaVisita.getIdActivo())) {
+			throw new IllegalArgumentException(ERROR_FALTA_IDACTIVO);
+		}
+		
+		if (Checks.esNulo(dtoAltaVisita.getNombre())) {
+			throw new IllegalArgumentException(ERROR_FALTA_NOMBRE);
+		}
+		
+		if (Checks.esNulo(dtoAltaVisita.getTelefono())) {
+			throw new IllegalArgumentException(ERROR_FALTA_TELEFONO);
+		}
+		
+		if (Checks.esNulo(dtoAltaVisita.getEmail())) {
+			throw new IllegalArgumentException(ERROR_FALTA_EMAIL);
+		}
+		
+		//Se comprueba si el activo pasado como parametro tiene una comunicacion
+		Filter filtroComunicacionIdActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", dtoAltaVisita.getIdActivo());
+		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+		Order orderByFechaCrear = new Order(OrderType.DESC, "auditoria.fechaCrear");
+		
+		List <ComunicacionGencat> resultComunicacion = genericDao.getListOrdered(ComunicacionGencat.class, orderByFechaCrear, filtroComunicacionIdActivo, filtroBorrado);
+		ComunicacionGencat comunicacionGencat = null;
+		if (resultComunicacion != null && !resultComunicacion.isEmpty()) {
+			comunicacionGencat = resultComunicacion.get(0);
+		}
+		
+		if (Checks.esNulo(comunicacionGencat)) {
+			throw new IllegalArgumentException(ERROR_FALTA_COMUNICACION);
+		}
+		
+		//Se comprueba si ya se ha enviado previamente una visita
+		Filter filtroIdComunicacion = genericDao.createFilter(FilterType.EQUALS, "comunicacion.id", comunicacionGencat.getId());
+		List <VisitaGencat> resultVisitaGencat = genericDao.getListOrdered(VisitaGencat.class, orderByFechaCrear, filtroIdComunicacion, filtroBorrado);
+		VisitaGencat visitaGencat = null;
+		if (resultVisitaGencat != null && !resultVisitaGencat.isEmpty()) {
+			visitaGencat = resultVisitaGencat.get(0);
+		}
+		
+		if (!Checks.esNulo(visitaGencat)) {
+			throw new IllegalArgumentException(ERROR_YA_HAY_VISITA);
+		}
+		
+		return comunicacionGencat;
+		
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public DtoAltaVisita createVisitaComunicacion(ComunicacionGencat comunicacionGencat, DtoAltaVisita dtoAltaVisita, SalesforceResponseDto salesforceResponseDto) {
+			
+		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+		
+		VisitaGencat visita = new VisitaGencat();
+		visita.setComunicacion(comunicacionGencat);
+		visita.setFechaEnvioSolicitud(new Date());
+		visita.setIdLeadSF(salesforceResponseDto.getResults().get(0).getId());
+		
+		Auditoria auditoria = new Auditoria();
+		auditoria.setBorrado(false);
+		auditoria.setFechaCrear(new Date());
+		auditoria.setUsuarioCrear(usuarioLogado.getApellidoNombre());
+		
+		visita.setVersion(new Long(0));
+		visita.setAuditoria(auditoria);
+		
+		visitaGencatDao.save(visita);
+		
+		return dtoAltaVisita;
+		
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public void updateVisitaComunicacion(Long idActivo, String idSalesforce, Visita visitaInsertada) {
+		
+		Filter filtroComunicacionIdActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
 		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
 		Order orderByFechaCrear = new Order(OrderType.DESC, "auditoria.fechaCrear");
 		
 		//Datos comunicación
-		List <ComunicacionGencat> resultComunicacion = genericDao.getListOrdered(ComunicacionGencat.class, orderByFechaCrear, filtroIdActivo, filtroBorrado);
+		List <ComunicacionGencat> resultComunicacion = genericDao.getListOrdered(ComunicacionGencat.class, orderByFechaCrear, filtroComunicacionIdActivo, filtroBorrado);
 		ComunicacionGencat comunicacionGencat = null;
-		if (!Checks.esNulo(resultComunicacion) && !resultComunicacion.isEmpty()) {
+		if (resultComunicacion != null && !resultComunicacion.isEmpty()) {
 			comunicacionGencat = resultComunicacion.get(0);
 		}
 		
-		long cmg = comunicacionGencat.getId();
 		
-		Filter filtroCmgId = genericDao.createFilter(FilterType.EQUALS, "comunicacionGencat.id", cmg);
-		
-		List <AdjuntoComunicacion> resultAdjuntoComunicacion = genericDao.getList(AdjuntoComunicacion.class, filtroCmgId);
-		
-		if (!Checks.esNulo(resultAdjuntoComunicacion)) {
-			for(AdjuntoComunicacion cga: resultAdjuntoComunicacion) {
-				if(cga.getTipoDocumentoComunicacion().getCodigo().equals(DDTipoDocumentoComunicacion.CODIGO_ANULACION_OFERTA_GENCAT)) {
-					return true;
-				}else {
-					return false;
-				}
+		if (comunicacionGencat != null) {
+			
+			//Visita
+			Filter filtroIdComunicacion = genericDao.createFilter(FilterType.EQUALS, "comunicacion.id", comunicacionGencat.getId());
+			Filter filtroIdSalesforce = genericDao.createFilter(FilterType.EQUALS, "idLeadSF", idSalesforce);
+			List <VisitaGencat> resultVisitaGencat = genericDao.getListOrdered(VisitaGencat.class, orderByFechaCrear, filtroIdComunicacion, filtroIdSalesforce, filtroBorrado);
+			
+			//Si la visita ya estaba creada, actualizaremos la fecha de recepcion y visita asociada
+			if (resultVisitaGencat != null && !resultVisitaGencat.isEmpty()) {
+				VisitaGencat visitaGencat = resultVisitaGencat.get(0);
+				
+				visitaGencat.setVisita(visitaInsertada);
+				visitaGencat.setFechaRecepcionSolicitud(new Date());
+				
+				Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+				
+				visitaGencat.getAuditoria().setUsuarioModificar(usuarioLogado.getApellidoNombre());
+				visitaGencat.getAuditoria().setFechaModificar(new Date());
+				
+				visitaGencatDao.save(visitaGencat);
+				
 			}
-		}else {
-			return false;
+			//Si la visita no existe, se crea
+			else {
+				
+				Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+				
+				//Insertar Visita
+				VisitaGencat visitaGencat = new VisitaGencat();
+				visitaGencat.setComunicacion(comunicacionGencat);
+				visitaGencat.setFechaRecepcionSolicitud(new Date());
+				visitaGencat.setIdLeadSF(idSalesforce);
+				
+				Auditoria auditoria = new Auditoria();
+				auditoria.setBorrado(false);
+				auditoria.setFechaCrear(new Date());
+				auditoria.setUsuarioCrear(usuarioLogado.getApellidoNombre());
+				
+				visitaGencat.setVersion(new Long(0));
+				visitaGencat.setAuditoria(auditoria);
+				
+				visitaGencatDao.save(visitaGencat);
+				
+			}
+			
 		}
 		
-		return false;
 	}
+
 }

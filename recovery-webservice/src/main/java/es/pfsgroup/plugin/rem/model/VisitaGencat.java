@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.model;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -52,6 +53,15 @@ public class VisitaGencat implements Serializable, Auditable {
     
     @Embedded
 	private Auditoria auditoria;
+    
+    @Column(name = "ID_LEAD_SF")
+	private String idLeadSF;
+    
+    @Column(name = "FECHA_ENVIO_SOLICITUD")
+	private Date fechaEnvioSolicitud;
+    
+    @Column(name = "FECHA_RECEPCION_ALTA")
+	private Date fechaRecepcionSolicitud;
 
 	public Long getId() {
 		return id;
@@ -91,6 +101,30 @@ public class VisitaGencat implements Serializable, Auditable {
 
 	public void setAuditoria(Auditoria auditoria) {
 		this.auditoria = auditoria;
+	}
+
+	public String getIdLeadSF() {
+		return idLeadSF;
+	}
+
+	public void setIdLeadSF(String idLeadSF) {
+		this.idLeadSF = idLeadSF;
+	}
+
+	public Date getFechaEnvioSolicitud() {
+		return fechaEnvioSolicitud;
+	}
+
+	public void setFechaEnvioSolicitud(Date fechaEnvioSolicitud) {
+		this.fechaEnvioSolicitud = fechaEnvioSolicitud;
+	}
+
+	public Date getFechaRecepcionSolicitud() {
+		return fechaRecepcionSolicitud;
+	}
+
+	public void setFechaRecepcionSolicitud(Date fechaRecepcionSolicitud) {
+		this.fechaRecepcionSolicitud = fechaRecepcionSolicitud;
 	}
 
 }

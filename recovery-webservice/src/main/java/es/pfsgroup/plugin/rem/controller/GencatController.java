@@ -31,6 +31,7 @@ import es.pfsgroup.plugin.rem.api.GencatApi;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
 import es.pfsgroup.plugin.rem.model.AdjuntoComunicacion;
 import es.pfsgroup.plugin.rem.model.ComunicacionGencat;
+import es.pfsgroup.plugin.rem.model.DtoAltaVisita;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoGencatSave;
 import es.pfsgroup.plugin.rem.model.DtoNotificacionActivo;
@@ -364,6 +365,33 @@ public class GencatController {
 			logger.warn("error en gencatController");
 			model.put("success", false);
 			model.put("errorMessage", "Ha habido un problema en el guardado del formulario.");
+		}
+		
+		return createModelAndViewJson(model);
+	}
+	
+	/**
+	 * Recibe y da de alta una visita de una comunicación
+	 * 
+	 * @param request
+	 * @param response
+	 * @return
+	 * @throws Exception
+	 */
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView altaVisitaComunicacion(DtoAltaVisita dtoAltaVisita) {
+
+		ModelMap model = new ModelMap();
+		
+		try {
+			model.put("data", gencatApi.altaVisitaComunicacion(dtoAltaVisita));
+			model.put(RESPONSE_SUCCESS_KEY, true);
+		}
+		catch (Exception e) {
+			logger.error("error en gencatController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put("errorMessage", e.getMessage());
 		}
 		
 		return createModelAndViewJson(model);

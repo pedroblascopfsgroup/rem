@@ -17,7 +17,9 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoForm', {
     	'HreRem.view.activos.detalle.ReclamacionesActivoList',
     	'HreRem.view.activos.detalle.HistoricoReclamacionesActivoList',
     	'HreRem.view.activos.detalle.NotificacionesActivoList',
-    	'HreRem.view.activos.detalle.HistoricoNotificacionesActivoList'
+		'HreRem.view.activos.detalle.HistoricoNotificacionesActivoList',
+		'HreRem.view.activos.detalle.VentanaCrearNotificacion',
+		'HreRem.view.activos.detalle.VentanaAltaVisita'
     ],
     
     listeners: { 
@@ -413,7 +415,7 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoForm', {
 								width: 200,
 								handler: 'onClickSolicitarVisita',
 								bind: {
-									disabled: me.formDeHistorico || '{!gencat.usuarioValido}'
+									disabled: me.formDeHistorico || '{gencat.desactivarBotonSolicitarVisita}'
 								}
 							}
 						]

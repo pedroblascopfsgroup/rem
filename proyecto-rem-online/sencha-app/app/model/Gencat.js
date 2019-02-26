@@ -9,6 +9,9 @@ Ext.define('HreRem.model.Gencat', {
       
 		//Datos comunicación
 		{
+			name: 'idComunicacion'
+		},
+		{
 			name:'fechaPreBloqueo',
 			type:'date',
 			dateFormat: 'c'
@@ -66,11 +69,7 @@ Ext.define('HreRem.model.Gencat', {
 		{
 			name:'usuarioValido',
 			calculate: function(data) {
-				if(data.estadoComunicacion === CONST.ESTADO_COMUNICACION_GENCAT['COMUNICADO'] && ($AU.userIsRol(CONST.PERFILES['HAYAGESTFORMADM']) || $AU.userIsRol(CONST.PERFILES['GESTIAFORM']))){
-					return true
-				}else{
-					return false
-				}
+				return $AU.userIsRol(CONST.PERFILES['HAYAGESTFORMADM']) || $AU.userIsRol(CONST.PERFILES['GESTIAFORM']);
 			},
 			depends: 'estadoComunicacion'
 		},
@@ -128,6 +127,23 @@ Ext.define('HreRem.model.Gencat', {
 			name:'fechaRealizacionVisita',
 			type:'date',
 			dateFormat: 'c'
+		},
+		{
+			name:'idLeadSF'
+		},
+		{
+			name:'visitaNoSolicitada',
+			calculate: function(data) {
+				return !Ext.isEmpty(data.idComunicacion) && Ext.isEmpty(data.idLeadSF);
+			},
+			depends: [ 'idComunicacion', 'idLeadSF' ]
+		},
+		{
+			name:'desactivarBotonSolicitarVisita',
+			calculate: function(data) {
+				return !(data.estaComunicado && data.usuarioValido && data.visitaNoSolicitada);
+			},
+			depends: [ 'estaComunicado', 'usuarioValido', 'visitaNoSolicitada' ]
 		},
 		
 		//Notificacion

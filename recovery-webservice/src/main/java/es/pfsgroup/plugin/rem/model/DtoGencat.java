@@ -15,6 +15,7 @@ public class DtoGencat extends DtoTabActivo {
 	private Long idActivo;
 	
 	//Datos comunicación
+	private Long idComunicacion;
 	private Date fechaPreBloqueo;
 	private Date fechaComunicacion;
 	private Date fechaPrevistaSancion;
@@ -41,6 +42,7 @@ public class DtoGencat extends DtoTabActivo {
 	private String estadoVisita;
 	private String apiRealizaLaVisita;
 	private Date fechaRealizacionVisita;
+	private String idLeadSF;
 	
 	//Oferta
 	private Long ofertaGencat;
@@ -191,11 +193,24 @@ public class DtoGencat extends DtoTabActivo {
 	public void setComunicadoAnulacionAGencat2(Boolean comunicadoAnulacionAGencat2) {
 		this.comunicadoAnulacionAGencat2 = comunicadoAnulacionAGencat2;
 	}
+
 	public Boolean getOfertasAsociadasEstanAnuladas() {
 		return ofertasAsociadasEstanAnuladas;
 	}
 	public void setOfertasAsociadasEstanAnuladas(Boolean ofertasAsociadasEstanAnuladas) {
 		this.ofertasAsociadasEstanAnuladas = ofertasAsociadasEstanAnuladas;
+
+	public String getIdLeadSF() {
+		return idLeadSF;
+	}
+	public void setIdLeadSF(String idLeadSF) {
+		this.idLeadSF = idLeadSF;
+	}
+	public Long getIdComunicacion() {
+		return idComunicacion;
+	}
+	public void setIdComunicacion(Long idComunicacion) {
+		this.idComunicacion = idComunicacion;
 	}
 
 }

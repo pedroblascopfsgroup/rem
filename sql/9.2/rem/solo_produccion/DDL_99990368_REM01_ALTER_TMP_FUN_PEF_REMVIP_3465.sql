@@ -49,7 +49,7 @@ BEGIN
     IF V_NUM_TABLAS > 0 THEN
 
         V_MSQL :=   'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||'
-                    DROP COLUMN '''||V_TEXT_COLUMN||'''';
+                    DROP COLUMN '||V_TEXT_COLUMN||'';
         EXECUTE IMMEDIATE V_MSQL;
         DBMS_OUTPUT.PUT_LINE('[INFO] Columna' ||V_TEXT_TABLA||'.'||V_TEXT_COLUMN||' borrada.');
 

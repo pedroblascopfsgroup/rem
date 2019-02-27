@@ -419,7 +419,7 @@ comprobarFormatoNIF: function(value) {
  	 				},
  	 		    
  	 		     failure: function (a, operation) {
- 	 		 				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));334500
+ 	 		 				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
  	 		 	},
  	 		    callback: function(record, operation) {
  	 				me.getView().unmask();

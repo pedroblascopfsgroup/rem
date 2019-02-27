@@ -32,9 +32,6 @@ public class ExpedienteAvisoPreBloqueadoGencat implements ExpedienteAvisadorApi{
 	@Autowired
 	private ActivoApi activoApi;
 	
-	@Autowired
-	private ActivoTramiteApi activoTramiteApi;
-	
 	@Override
 	public DtoAviso getAviso(ExpedienteComercial expediente, Usuario usuarioLogado) {
 		DtoAviso dtoAviso = new DtoAviso();
@@ -42,9 +39,9 @@ public class ExpedienteAvisoPreBloqueadoGencat implements ExpedienteAvisadorApi{
 		
 		if(!Checks.esNulo(expediente) && !Checks.esNulo(expediente.getOferta())){
 			Oferta oferta = expediente.getOferta();	
-			OfertaGencat ofertaGencat = genericDao.get(OfertaGencat.class,genericDao.createFilter(FilterType.EQUALS,"oferta", oferta));
+			List<OfertaGencat> ofertaGencat = genericDao.getList(OfertaGencat.class,genericDao.createFilter(FilterType.EQUALS,"oferta", oferta));
 
-			if((Checks.esNulo(ofertaGencat)) || (!Checks.esNulo(ofertaGencat) && Checks.esNulo(ofertaGencat.getIdOfertaAnterior()) && !ofertaGencat.getAuditoria().isBorrado()))  {
+			if((Checks.esNulo(ofertaGencat.get(0))) || (!Checks.esNulo(ofertaGencat) && Checks.esNulo(ofertaGencat.get(0).getIdOfertaAnterior()) && !ofertaGencat.get(0).getAuditoria().isBorrado()))  {
 				List<ActivoOferta> actOfrList = expediente.getOferta().getActivosOferta();
 				Reserva reserva = genericDao.get(Reserva.class, genericDao.createFilter(FilterType.EQUALS, "expediente.id", expediente.getId()));
 				for (ActivoOferta actOfr : actOfrList){

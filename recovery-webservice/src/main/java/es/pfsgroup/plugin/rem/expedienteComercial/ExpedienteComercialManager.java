@@ -46,6 +46,7 @@ import es.pfsgroup.plugin.rem.api.*;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
+import es.pfsgroup.plugin.rem.api.ExpedienteAvisadorApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.GestorExpedienteComercialApi;
@@ -67,6 +68,7 @@ import es.pfsgroup.plugin.rem.model.DtoActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.DtoActivosExpediente;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoAdjuntoExpediente;
+import es.pfsgroup.plugin.rem.model.DtoAviso;
 import es.pfsgroup.plugin.rem.model.DtoBloqueosFinalizacion;
 import es.pfsgroup.plugin.rem.model.DtoClienteUrsus;
 import es.pfsgroup.plugin.rem.model.DtoComparecienteVendedor;
@@ -75,10 +77,10 @@ import es.pfsgroup.plugin.rem.model.DtoCondicionesActivoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoDatosBasicosOferta;
 import es.pfsgroup.plugin.rem.model.DtoDiccionario;
 import es.pfsgroup.plugin.rem.model.DtoEntregaReserva;
+import es.pfsgroup.plugin.rem.model.DtoExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.DtoExpedienteDocumentos;
 import es.pfsgroup.plugin.rem.model.DtoExpedienteHistScoring;
 import es.pfsgroup.plugin.rem.model.DtoExpedienteScoring;
-import es.pfsgroup.plugin.rem.model.DtoExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.DtoFichaExpediente;
 import es.pfsgroup.plugin.rem.model.DtoFormalizacionFinanciacion;
 import es.pfsgroup.plugin.rem.model.DtoFormalizacionResolucion;
@@ -309,6 +311,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 	@Autowired
 	private MSVRawSQLDao rawDao;
+	
+	@Autowired
+	private List<ExpedienteAvisadorApi> avisadores;
 
 	@Override
 	public ExpedienteComercial findOne(Long id) {
@@ -7596,5 +7601,46 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		dtoExp.setId(expediente.getId());
 		dtoExp.setNumExpediente(expediente.getNumExpediente());
 		return dtoExp;
+	}
+	
+	@Override
+	public DtoAviso getAvisosExpedienteById(Long id) {
+		boolean avisoPrioritario = false;
+		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+		ExpedienteComercial expediente = findOne(id);
+
+		DtoAviso avisosFormateados = new DtoAviso();
+		avisosFormateados.setDescripcion("");
+		avisosFormateados.setId(id.toString());
+
+		if (!Checks.esNulo(expediente)) {
+			if (!Checks.esNulo(expediente.getOferta().getAgrupacion())){
+				for (ExpedienteAvisadorApi avisador : avisadores) {
+					DtoAviso aviso = avisador.getAviso(expediente, usuarioLogado);
+					if (!Checks.esNulo(aviso) && !Checks.esNulo(aviso.getDescripcion())) {
+						if ("Expediente anulado por GENCAT".equals(aviso.getDescripcion())) {
+							avisoPrioritario = true;
+							avisosFormateados.setDescripcion(avisosFormateados.getDescripcion() + "<div class='div-aviso red'>" + aviso.getDescripcion() + "</div>");
+						} else if (!avisoPrioritario && "Expediente bloqueado por GENCAT".equals(aviso.getDescripcion())) {
+							avisoPrioritario = true;
+							avisosFormateados.setDescripcion(avisosFormateados.getDescripcion() + "<div class='div-aviso red'>" + aviso.getDescripcion() + "</div>");
+						} else if (!avisoPrioritario && "Expediente pre-bloqueado por GENCAT".equals(aviso.getDescripcion())) {
+							avisoPrioritario = true;
+							avisosFormateados.setDescripcion(avisosFormateados.getDescripcion() + "<div class='div-aviso red'>" + aviso.getDescripcion() + "</div>");
+						} else if (!aviso.getDescripcion().contains("GENCAT")){
+							avisosFormateados.setDescripcion(avisosFormateados.getDescripcion() + "<div class='div-aviso red'>" + aviso.getDescripcion() + "</div>");
+						}
+					}
+				}
+			} else {
+				for (ExpedienteAvisadorApi avisador : avisadores) {
+					DtoAviso aviso = avisador.getAviso(expediente, usuarioLogado);
+					if (!Checks.esNulo(aviso) && !Checks.esNulo(aviso.getDescripcion())) {
+						avisosFormateados.setDescripcion(avisosFormateados.getDescripcion() + "<div class='div-aviso red'>" + aviso.getDescripcion() + "</div>");
+					}
+				}
+			}
+		}
+		return avisosFormateados;
 	}
 }

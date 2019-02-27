@@ -1114,6 +1114,8 @@ public interface ExpedienteComercialApi {
 	List<DtoActivosExpediente> getActivosPropagables(Long idExpediente);
 
 	boolean checkConOpcionCompra(TareaExterna tareaExterna);
+	
+	public DtoAviso getAvisosExpedienteById(Long id);
 
 
 	boolean guardarCondicionesActivosExpediente(DtoCondicionesActivoExpediente condiciones);

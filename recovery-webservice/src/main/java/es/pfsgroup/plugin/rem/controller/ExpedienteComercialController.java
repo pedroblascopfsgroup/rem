@@ -173,21 +173,14 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	@SuppressWarnings({ "unchecked" })
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getAvisosExpedienteById(Long id, WebDto webDto, ModelMap model) {
-		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
-		ExpedienteComercial expediente = expedienteComercialApi.findOne(id);
-
-		DtoAviso avisosFormateados = new DtoAviso();
-		avisosFormateados.setDescripcion("");
-		avisosFormateados.setId(id.toString());
-
-		for (ExpedienteAvisadorApi avisador : avisadores) {
-			DtoAviso aviso = avisador.getAviso(expediente, usuarioLogado);
-			if (!Checks.esNulo(aviso) && !Checks.esNulo(aviso.getDescripcion())) {
-				avisosFormateados.setDescripcion(avisosFormateados.getDescripcion() + "<div class='div-aviso red'>" + aviso.getDescripcion() + "</div>");
-			}
+		try {
+			DtoAviso avisosFormateados = expedienteComercialApi.getAvisosExpedienteById(id);
+			model.put(RESPONSE_DATA_KEY, avisosFormateados);
+			model.put(RESPONSE_SUCCESS_KEY, true);
+		} catch (Exception e) {
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.error("Error en ExpedienteComercialController", e);
 		}
-
-		model.put(RESPONSE_DATA_KEY, avisosFormateados);
 
 		return createModelAndViewJson(model);
 	}

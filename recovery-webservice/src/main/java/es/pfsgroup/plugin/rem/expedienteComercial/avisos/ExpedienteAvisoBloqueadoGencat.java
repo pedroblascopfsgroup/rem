@@ -12,7 +12,6 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.commons.utils.dao.abm.Order;
-import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteAvisadorApi;
@@ -34,9 +33,6 @@ public class ExpedienteAvisoBloqueadoGencat implements ExpedienteAvisadorApi{
 	private GenericABMDao genericDao;
 	
 	@Autowired
-	private ActivoDao activoDao;
-	
-	@Autowired
 	private ActivoApi activoApi;
 	
 	@Override
@@ -46,9 +42,9 @@ public class ExpedienteAvisoBloqueadoGencat implements ExpedienteAvisadorApi{
 		if(!Checks.esNulo(expediente) && !Checks.esNulo(expediente.getOferta())){
 			
 			Oferta oferta = expediente.getOferta();	
-			OfertaGencat ofertaGencat = genericDao.get(OfertaGencat.class,genericDao.createFilter(FilterType.EQUALS,"oferta", oferta));
+			List<OfertaGencat> ofertaGencat = genericDao.getList(OfertaGencat.class,genericDao.createFilter(FilterType.EQUALS,"oferta", oferta));
 			
-			if((Checks.esNulo(ofertaGencat)) || (!Checks.esNulo(ofertaGencat) && Checks.esNulo(ofertaGencat.getIdOfertaAnterior()) && !ofertaGencat.getAuditoria().isBorrado())) {
+			if((Checks.esNulo(ofertaGencat.get(0))) || (!Checks.esNulo(ofertaGencat) && Checks.esNulo(ofertaGencat.get(0).getIdOfertaAnterior()) && !ofertaGencat.get(0).getAuditoria().isBorrado())) {
 				List<ActivoOferta> actOfrList = expediente.getOferta().getActivosOferta();
 				ComunicacionGencat comGen = null;
 				for (ActivoOferta actOfr : actOfrList){

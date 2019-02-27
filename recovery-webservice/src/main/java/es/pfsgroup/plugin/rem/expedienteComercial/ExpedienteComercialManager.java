@@ -7042,14 +7042,14 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		if (!Checks.esNulo(activoTramite)) {
 			Activo activo = activoTramite.getActivo();
 			if (!Checks.esNulo(activo)) {
-				PerimetroActivo pac = genericDao.get(PerimetroActivo.class,
-						genericDao.createFilter(FilterType.EQUALS, "activo", activo));
+
+				PerimetroActivo pac = genericDao.get(PerimetroActivo.class, genericDao.createFilter(FilterType.EQUALS, "activo", activo));
 				return pac.getAplicaFormalizar() == 0;
 			}
 		}
 		return false;
 	}
-
+	
 	@Override
 	public boolean checkEstadoExpedienteDistintoAnulado(Long idTramite) {
 		ActivoTramite activoTramite = activoTramiteApi.get(idTramite);

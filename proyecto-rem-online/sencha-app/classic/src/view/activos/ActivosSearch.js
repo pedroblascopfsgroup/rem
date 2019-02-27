@@ -433,8 +433,9 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 							        	editable: false,
 										fieldLabel: HreRem.i18n('fieldlabel.con.titulo'),
 						            	name:		'conTitulo',
+						            	reference:	'conTitulo',
 							        	bind: {
-						            		store: '{comboSiNoRem}'
+						            		store: '{comboDDTipoTituloActivoTPA}'
 						            	}
 							        },
 							        {

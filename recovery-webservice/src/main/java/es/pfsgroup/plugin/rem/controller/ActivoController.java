@@ -35,6 +35,7 @@ import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.devon.utils.FileUtils;
+import es.capgemini.pfs.config.ConfigManager;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -42,6 +43,7 @@ import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
+import es.pfsgroup.framework.paradise.utils.JsonViewer;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
@@ -57,6 +59,10 @@ import es.pfsgroup.plugin.rem.excel.ActivoExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
 import es.pfsgroup.plugin.rem.excel.PublicacionExcelReport;
+import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento;
+import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.ACCION_CODIGO;
+import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.ENTIDAD_CODIGO;
+import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.REQUEST_STATUS_CODE;
 import es.pfsgroup.plugin.rem.exception.RemUserException;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoFoto;
@@ -117,12 +123,10 @@ import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaPublicacionActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDRatingActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoHabitaculo;
-import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi;
 import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
 import es.pfsgroup.plugin.rem.service.TabActivoService;
 import es.pfsgroup.plugin.rem.trabajo.dto.DtoActivosTrabajoFilter;
 import net.sf.json.JSONObject;
-
 
 @Controller
 public class ActivoController extends ParadiseJsonController {
@@ -134,11 +138,11 @@ public class ActivoController extends ParadiseJsonController {
 	private static final String RESPONSE_MESSAGE_KEY = "msg";
 	private static final String RESPONSE_ERROR_MESSAGE_KEY= "msgError";
 	private static final String RESPONSE_TOTALCOUNT_KEY = "totalCount";
-	public static final String ERROR_ACTIVO_NOT_EXISTS = "No existe el activo que esta buscando, pruebe con otro Nº de Activo";
-	public static final String ERROR_ACTIVO_NO_NUMERICO = "El campo introducido es de carácter numérico";
-	public static final String ERROR_GENERICO = "La operación no se ha podido realizar";
-	public static final String ERROR_CONEXION_FOTOS = "Ha habido un error al conectar con CRM";
-	public static final String ERROR_PRECIO_CERO = "No se puede realizar la operación. Está introduciendo un importe 0";
+	private static final String ERROR_ACTIVO_NOT_EXISTS = "No existe el activo que esta buscando, pruebe con otro Nº de Activo";
+	private static final String ERROR_ACTIVO_NO_NUMERICO = "El campo introducido es de carácter numérico";
+	private static final String ERROR_GENERICO = "La operación no se ha podido realizar";
+	private static final String ERROR_CONEXION_FOTOS = "Ha habido un error al conectar con CRM";
+	private static final String ERROR_PRECIO_CERO = "No se puede realizar la operación. Está introduciendo un importe 0";
 
 	@Autowired
 	private ActivoAdapter adapter;
@@ -148,8 +152,6 @@ public class ActivoController extends ParadiseJsonController {
 
 	@Autowired
 	private GenericABMDao genericDao;
-
-
 
 	@Autowired
 	private ActivoApi activoApi;
@@ -176,23 +178,33 @@ public class ActivoController extends ParadiseJsonController {
 	private ActivoPropagacionApi activoPropagacionApi;
 	
 	@Autowired
-	GestorDocumentalFotosApi gestorDocumentalFotos;
+	private LogTrustEvento trustMe;
 	
 	@Autowired
 	private ActivoAdapter activoAdapter;
 	
+	@Autowired
+	private ConfigManager configManager;
+	
+
 	public ActivoApi getActivoApi() {
 		return activoApi;
 	}
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getTabActivo(Long id, String tab, ModelMap model) {
+	public ModelAndView getTabActivo(Long id, String tab, ModelMap model, HttpServletRequest request) {
 		try {
 			model.put(RESPONSE_DATA_KEY, adapter.getTabActivo(id, tab));
+			trustMe.registrarSuceso(request, id, ENTIDAD_CODIGO.CODIGO_ACTIVO, tab, ACCION_CODIGO.CODIGO_VER);
 
+		} catch (AccesoActivoException e) {
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put(RESPONSE_ERROR_KEY, e.getMessage());
+			trustMe.registrarError(request, id, ENTIDAD_CODIGO.CODIGO_ACTIVO, tab, ACCION_CODIGO.CODIGO_VER, REQUEST_STATUS_CODE.CODIGO_ESTADO_USUARIO_SIN_ACCESO);
 		} catch (Exception e) {
 			logger.error("error en activoController", e);
+			trustMe.registrarError(request, id, ENTIDAD_CODIGO.CODIGO_ACTIVO, tab, ACCION_CODIGO.CODIGO_VER, REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
 			model.put(RESPONSE_SUCCESS_KEY, false);
 			model.put(RESPONSE_ERROR_KEY, e.getMessage());
 		}
@@ -382,15 +394,17 @@ public class ActivoController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView saveActivoAdministracion(DtoActivoAdministracion activoDto, @RequestParam Long id, ModelMap model) {
+	public ModelAndView saveActivoAdministracion(DtoActivoAdministracion activoDto, @RequestParam Long id, ModelMap model, HttpServletRequest request) {
 		try {
 			boolean success = adapter.saveTabActivo(activoDto, id, TabActivoService.TAB_ADMINISTRACION);
 			if (success) adapter.actualizarEstadoPublicacionActivo(id);
 			model.put(RESPONSE_SUCCESS_KEY, success);
+			trustMe.registrarSuceso(request, id, ENTIDAD_CODIGO.CODIGO_ACTIVO, TabActivoService.TAB_ADMINISTRACION, ACCION_CODIGO.CODIGO_MODIFICAR);
 
 		} catch (Exception e) {
 			logger.error("error en activoController", e);
 			model.put(RESPONSE_SUCCESS_KEY, false);
+			trustMe.registrarError(request, id, ENTIDAD_CODIGO.CODIGO_ACTIVO, TabActivoService.TAB_ADMINISTRACION, ACCION_CODIGO.CODIGO_MODIFICAR, REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
 		}
 
 		return createModelAndViewJson(model);
@@ -398,15 +412,17 @@ public class ActivoController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView saveActivoSituacionPosesoria(DtoActivoSituacionPosesoria activoDto, @RequestParam Long id, ModelMap model) {
+	public ModelAndView saveActivoSituacionPosesoria(DtoActivoSituacionPosesoria activoDto, @RequestParam Long id, ModelMap model, HttpServletRequest request) {
 		try {
 			boolean success = adapter.saveTabActivo(activoDto, id, TabActivoService.TAB_SIT_POSESORIA_LLAVES);
 			if (success) adapter.actualizarEstadoPublicacionActivo(id);
 			model.put(RESPONSE_SUCCESS_KEY, success);
+			trustMe.registrarSuceso(request, id, ENTIDAD_CODIGO.CODIGO_ACTIVO, TabActivoService.TAB_SIT_POSESORIA_LLAVES, ACCION_CODIGO.CODIGO_MODIFICAR);
 
 		} catch (Exception e) {
 			logger.error("error en activoController", e);
 			model.put(RESPONSE_SUCCESS_KEY, false);
+			trustMe.registrarError(request, id, ENTIDAD_CODIGO.CODIGO_ACTIVO, TabActivoService.TAB_SIT_POSESORIA_LLAVES, ACCION_CODIGO.CODIGO_MODIFICAR, REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
 		}
 
 		return createModelAndViewJson(model);
@@ -414,18 +430,20 @@ public class ActivoController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView saveActivoInformeComercial(DtoActivoInformeComercial activoDto, @RequestParam Long id, ModelMap model) {
+	public ModelAndView saveActivoInformeComercial(DtoActivoInformeComercial activoDto, @RequestParam Long id, ModelMap model, HttpServletRequest request) {
 		try {
 			boolean success = adapter.saveTabActivo(activoDto, id, TabActivoService.TAB_INFORME_COMERCIAL);
 			if (success) adapter.actualizarEstadoPublicacionActivo(id);
 
-			// Después de haber guardado los cambios sobre informacion comercial, recalculamos el rating del activo.
+			// Después de haber guardado los cambios sobre información comercial, recalculamos el rating del activo.
 			activoApi.calcularRatingActivo(id);
 			model.put(RESPONSE_SUCCESS_KEY, success);
+			trustMe.registrarSuceso(request, id, ENTIDAD_CODIGO.CODIGO_ACTIVO, TabActivoService.TAB_INFORME_COMERCIAL, ACCION_CODIGO.CODIGO_MODIFICAR);
 
 		} catch (Exception e) {
 			logger.error("error en activoController", e);
 			model.put(RESPONSE_SUCCESS_KEY, false);
+			trustMe.registrarError(request, id, ENTIDAD_CODIGO.CODIGO_ACTIVO, TabActivoService.TAB_INFORME_COMERCIAL, ACCION_CODIGO.CODIGO_MODIFICAR, REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
 		}
 
 		return createModelAndViewJson(model);
@@ -433,7 +451,7 @@ public class ActivoController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView saveActivoComunidadPropietarios(DtoComunidadpropietariosActivo activoDto, @RequestParam Long id, ModelMap model) {
+	public ModelAndView saveActivoComunidadPropietarios(DtoComunidadpropietariosActivo activoDto, @RequestParam Long id, ModelMap model, HttpServletRequest request) {
 		try {
 			boolean success = adapter.saveTabActivo(activoDto, id, TabActivoService.TAB_COMUNIDAD_PROPIETARIOS);
 			if (success) adapter.actualizarEstadoPublicacionActivo(id);
@@ -441,10 +459,12 @@ public class ActivoController extends ParadiseJsonController {
 			// Después de haber guardado los cambios sobre informacion comercial, recalculamos el rating del activo.
 			activoApi.calcularRatingActivo(id);
 			model.put(RESPONSE_SUCCESS_KEY, success);
+			trustMe.registrarSuceso(request, id, ENTIDAD_CODIGO.CODIGO_ACTIVO, TabActivoService.TAB_COMUNIDAD_PROPIETARIOS, ACCION_CODIGO.CODIGO_MODIFICAR);
 
 		} catch (Exception e) {
 			logger.error("error en activoController", e);
 			model.put(RESPONSE_SUCCESS_KEY, false);
+			trustMe.registrarError(request, id, ENTIDAD_CODIGO.CODIGO_ACTIVO, TabActivoService.TAB_COMUNIDAD_PROPIETARIOS, ACCION_CODIGO.CODIGO_MODIFICAR, REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
 		}
 
 		return createModelAndViewJson(model);
@@ -499,8 +519,9 @@ public class ActivoController extends ParadiseJsonController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getListObservacionesById(Long id, ModelMap model) {
+	public ModelAndView getListObservacionesById(Long id, ModelMap model,HttpServletRequest request) {
 		model.put(RESPONSE_DATA_KEY, adapter.getListObservacionesById(id));
+		trustMe.registrarSuceso(request, id, ENTIDAD_CODIGO.CODIGO_ACTIVO, "observaciones", ACCION_CODIGO.CODIGO_VER);
 
 		return createModelAndViewJson(model);
 	}
@@ -508,8 +529,9 @@ public class ActivoController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getListAgrupacionesActivoById(Long id, ModelMap model) {
+	public ModelAndView getListAgrupacionesActivoById(Long id, ModelMap model, HttpServletRequest request) {
 		model.put(RESPONSE_DATA_KEY, adapter.getListAgrupacionesActivoById(id));
+		trustMe.registrarSuceso(request, id, ENTIDAD_CODIGO.CODIGO_ACTIVO, "listadoAgrupaciones", ACCION_CODIGO.CODIGO_VER);
 
 		return createModelAndViewJson(model);
 	}
@@ -559,14 +581,16 @@ public class ActivoController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView saveLlave(DtoLlaves dto, ModelMap model) {
+	public ModelAndView saveLlave(DtoLlaves dto, ModelMap model, HttpServletRequest request) {
 		try {
 			boolean success = adapter.saveLlave(dto);
 			model.put(RESPONSE_SUCCESS_KEY, success);
+			trustMe.registrarSuceso(request, Long.valueOf(dto.getIdActivo()), ENTIDAD_CODIGO.CODIGO_ACTIVO, "llave", ACCION_CODIGO.CODIGO_MODIFICAR);
 
 		} catch (Exception e) {
 			logger.error("error en activoController", e);
 			model.put(RESPONSE_SUCCESS_KEY, false);
+			trustMe.registrarError(request, Long.valueOf(dto.getIdActivo()), ENTIDAD_CODIGO.CODIGO_ACTIVO, "llave", ACCION_CODIGO.CODIGO_MODIFICAR, REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
 		}
 
 		return createModelAndViewJson(model);
@@ -604,8 +628,9 @@ public class ActivoController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getListCatastroById(Long id, ModelMap model) {
+	public ModelAndView getListCatastroById(Long id, ModelMap model, HttpServletRequest request) {
 		model.put(RESPONSE_DATA_KEY, adapter.getListCatastroById(id));
+		trustMe.registrarSuceso(request, id, ENTIDAD_CODIGO.CODIGO_ACTIVO, "catastro", ACCION_CODIGO.CODIGO_VER);
 
 		return createModelAndViewJson(model);
 	}
@@ -620,14 +645,16 @@ public class ActivoController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView saveCatastro(DtoActivoCatastro catastroDto, @RequestParam Long idCatastro, ModelMap model) {
+	public ModelAndView saveCatastro(DtoActivoCatastro catastroDto, @RequestParam Long idCatastro, ModelMap model, HttpServletRequest request) {
 		try {
 			boolean success = adapter.saveCatastro(catastroDto, idCatastro);
 			model.put(RESPONSE_SUCCESS_KEY, success);
+			trustMe.registrarSuceso(request, catastroDto.getIdActivo(), ENTIDAD_CODIGO.CODIGO_ACTIVO, "catastro", ACCION_CODIGO.CODIGO_MODIFICAR);
 
 		} catch (Exception e) {
 			logger.error("error en activoController", e);
 			model.put(RESPONSE_SUCCESS_KEY, false);
+			trustMe.registrarError(request, catastroDto.getIdActivo(), ENTIDAD_CODIGO.CODIGO_ACTIVO, "catastro", ACCION_CODIGO.CODIGO_MODIFICAR, REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
 		}
 
 		return createModelAndViewJson(model);
@@ -665,7 +692,7 @@ public class ActivoController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView savePrecioVigente(DtoPrecioVigente precioVigenteDto, ModelMap model) {
+	public ModelAndView savePrecioVigente(DtoPrecioVigente precioVigenteDto, ModelMap model, HttpServletRequest request) {
 		try {
 			if(precioVigenteDto.getImporte().equals(0d)) {
 				model.put(RESPONSE_SUCCESS_KEY, false);
@@ -677,10 +704,12 @@ public class ActivoController extends ParadiseJsonController {
 				}
 				model.put(RESPONSE_SUCCESS_KEY, success);
 			}
+			trustMe.registrarSuceso(request, precioVigenteDto.getIdActivo(), ENTIDAD_CODIGO.CODIGO_ACTIVO, "precio", ACCION_CODIGO.CODIGO_MODIFICAR);
 
 		} catch (Exception e) {
 			logger.error("error en activoController", e);
 			model.put(RESPONSE_SUCCESS_KEY, false);
+			trustMe.registrarError(request, precioVigenteDto.getIdActivo(), ENTIDAD_CODIGO.CODIGO_ACTIVO, "precio", ACCION_CODIGO.CODIGO_MODIFICAR, REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
 		}
 
 		return createModelAndViewJson(model);
@@ -688,18 +717,20 @@ public class ActivoController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView saveOfertaActivo(DtoOfertaActivo ofertaActivoDto, ModelMap model) {
+	public ModelAndView saveOfertaActivo(DtoOfertaActivo ofertaActivoDto, ModelMap model, HttpServletRequest request) {
 		try {
 			boolean success = activoApi.saveOfertaActivo(ofertaActivoDto);
 			model.put(RESPONSE_SUCCESS_KEY, success);
+			trustMe.registrarSuceso(request, ofertaActivoDto.getIdActivo(), ENTIDAD_CODIGO.CODIGO_ACTIVO, "oferta", ACCION_CODIGO.CODIGO_MODIFICAR);
 
 		} catch (JsonViewerException jvex) {
 			model.put(RESPONSE_SUCCESS_KEY, false);
 			model.put(RESPONSE_MESSAGE_KEY, jvex.getMessage());
-
+			trustMe.registrarError(request, ofertaActivoDto.getIdActivo(), ENTIDAD_CODIGO.CODIGO_ACTIVO, "oferta", ACCION_CODIGO.CODIGO_MODIFICAR, REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
 		} catch (Exception e) {
 			logger.error("error en activoController", e);
 			model.put(RESPONSE_SUCCESS_KEY, false);
+			trustMe.registrarError(request, ofertaActivoDto.getIdActivo(), ENTIDAD_CODIGO.CODIGO_ACTIVO, "oferta", ACCION_CODIGO.CODIGO_MODIFICAR, REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
 		}
 
 		return createModelAndViewJson(model);
@@ -966,8 +997,9 @@ public class ActivoController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getGestores(Long idActivo, WebDto webDto, ModelMap model) {
+	public ModelAndView getGestores(Long idActivo, WebDto webDto, ModelMap model, HttpServletRequest request) {
 		model.put(RESPONSE_DATA_KEY, adapter.getGestores(idActivo));
+		trustMe.registrarSuceso(request, idActivo, ENTIDAD_CODIGO.CODIGO_ACTIVO, "gestores", ACCION_CODIGO.CODIGO_VER);
 
 		return new ModelAndView("jsonView", model);
 	}
@@ -1037,6 +1069,7 @@ public class ActivoController extends ParadiseJsonController {
 								if (aListaActivoFoto.getInteriorExterior() != null) {
 									if (aListaActivoFoto.getInteriorExterior()) {
 										BeanUtils.copyProperty(fotoDto, "tituloFoto", "Principal INTERIOR");
+
 									} else {
 										BeanUtils.copyProperty(fotoDto, "tituloFoto", "Principal EXTERIOR");
 									}
@@ -1045,6 +1078,7 @@ public class ActivoController extends ParadiseJsonController {
 
 						} catch (IllegalAccessException e) {
 							logger.error("error en activoController", e);
+
 						} catch (InvocationTargetException e) {
 							logger.error("error en activoController", e);
 						}
@@ -1055,9 +1089,11 @@ public class ActivoController extends ParadiseJsonController {
 			}
 
 			model.put(RESPONSE_DATA_KEY, listaFotos);
+			trustMe.registrarSuceso(request, id, ENTIDAD_CODIGO.CODIGO_ACTIVO, "fotos", ACCION_CODIGO.CODIGO_VER);
 
 		} catch (Exception e) {
 			logger.error("error en activoController", e);
+			trustMe.registrarError(request, id, ENTIDAD_CODIGO.CODIGO_ACTIVO, "fotos", ACCION_CODIGO.CODIGO_VER, REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
 			return null;
 		}
 
@@ -1128,7 +1164,7 @@ public class ActivoController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getTramites(Long idActivo, WebDto webDto, ModelMap model) {
+	public ModelAndView getTramites(Long idActivo, WebDto webDto, ModelMap model, HttpServletRequest request) {
 		model.put(RESPONSE_DATA_KEY, adapter.getTramitesActivo(idActivo, webDto));
 
 		return new ModelAndView("jsonView", model);
@@ -1136,16 +1172,18 @@ public class ActivoController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getPreciosVigentesById(Long id, WebDto webDto, ModelMap model) {
+	public ModelAndView getPreciosVigentesById(Long id, WebDto webDto, ModelMap model, HttpServletRequest request) {
 		model.put(RESPONSE_DATA_KEY, adapter.getPreciosVigentesById(id));
+		trustMe.registrarSuceso(request, id, ENTIDAD_CODIGO.CODIGO_ACTIVO, "precios", ACCION_CODIGO.CODIGO_VER);
 
 		return new ModelAndView("jsonView", model);
 	}
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getListPropietarioById(Long id, ModelMap model) {
+	public ModelAndView getListPropietarioById(Long id, ModelMap model, HttpServletRequest request) {
 		model.put(RESPONSE_DATA_KEY, adapter.getListPropietarioById(id));
+		trustMe.registrarSuceso(request, id, ENTIDAD_CODIGO.CODIGO_ACTIVO, "propietarios", ACCION_CODIGO.CODIGO_VER);
 
 		return createModelAndViewJson(model);
 	}
@@ -1168,8 +1206,9 @@ public class ActivoController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getListTasacionByIdGrid(Long id, ModelMap model) {
+	public ModelAndView getListTasacionByIdGrid(Long id, ModelMap model, HttpServletRequest request) {
 		model.put(RESPONSE_DATA_KEY, adapter.getListTasacionByIdGrid(id));
+		trustMe.registrarSuceso(request, id, ENTIDAD_CODIGO.CODIGO_ACTIVO, "tasaciones", ACCION_CODIGO.CODIGO_VER);
 
 		return createModelAndViewJson(model);
 	}
@@ -1196,8 +1235,9 @@ public class ActivoController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getTramite(Long id, ModelMap model) {
+	public ModelAndView getTramite(Long id, ModelMap model, HttpServletRequest request) {
 		model.put(RESPONSE_DATA_KEY, adapter.getTramite(id));
+		trustMe.registrarSuceso(request, id, ENTIDAD_CODIGO.CODIGO_TRAMITE, "datosGenerales", ACCION_CODIGO.CODIGO_VER);
 
 		return createModelAndViewJson(model);
 	}
@@ -1212,27 +1252,30 @@ public class ActivoController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getTareasTramite(Long idTramite, WebDto webDto, ModelMap model) {
+	public ModelAndView getTareasTramite(Long idTramite, WebDto webDto, ModelMap model, HttpServletRequest request) {
 		model.put(RESPONSE_DATA_KEY, adapter.getTareasTramite(idTramite));
+		trustMe.registrarSuceso(request, idTramite, ENTIDAD_CODIGO.CODIGO_TRAMITE, "tareas", ACCION_CODIGO.CODIGO_VER);
 
 		return createModelAndViewJson(model);
 	}
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getTareasTramiteHistorico(Long idTramite, WebDto webDto, ModelMap model) {
+	public ModelAndView getTareasTramiteHistorico(Long idTramite, WebDto webDto, ModelMap model, HttpServletRequest request) {
 		model.put(RESPONSE_DATA_KEY, adapter.getTareasTramiteHistorico(idTramite));
+		trustMe.registrarSuceso(request, idTramite, ENTIDAD_CODIGO.CODIGO_TRAMITE, "historicoTareas", ACCION_CODIGO.CODIGO_VER);
 
 		return createModelAndViewJson(model);
 	}
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getActivosTramite(Long idTramite, WebDto webDto, ModelMap model) {
+	public ModelAndView getActivosTramite(Long idTramite, WebDto webDto, ModelMap model, HttpServletRequest request) {
 		List<Activo> listActivos = activoTramiteApi.getActivosTramite(idTramite);
 		List<DtoActivoTramite> listDtoActivosTramite = activoTramiteApi.getDtoActivosTramite(listActivos);
 		model.put(RESPONSE_DATA_KEY, listDtoActivosTramite);
 		model.put(RESPONSE_TOTALCOUNT_KEY, listDtoActivosTramite.size());
+		trustMe.registrarSuceso(request, idTramite, ENTIDAD_CODIGO.CODIGO_TRAMITE, "activos", ACCION_CODIGO.CODIGO_VER);
 
 		return createModelAndViewJson(model);
 	}
@@ -1263,9 +1306,14 @@ public class ActivoController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView crearTramitePublicacion(Long idActivo, ModelMap model) {
+	public ModelAndView crearTramiteAprobacionInformeComercial(Long idActivo, ModelMap model) {
 		try {
-			model.put(RESPONSE_DATA_KEY, adapter.crearTramitePublicacion(idActivo));
+			Long idBpm = adapter.crearTramiteAprobacionInformeComercial(idActivo);
+			if (new Long(0).equals(idBpm)) {
+				model.put("errorCreacion", "El activo ya tiene un trámite de Aprobación Informe Comercial en trámite");
+				model.put(RESPONSE_SUCCESS_KEY, false);
+			}
+			model.put(RESPONSE_DATA_KEY, idBpm);
 
 		} catch (Exception e) {
 			logger.error("error en activoController", e);
@@ -1284,16 +1332,18 @@ public class ActivoController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView saveAdmisionDocumento(DtoAdmisionDocumento dtoAdmisionDocumento, ModelMap model) {
+	public ModelAndView saveAdmisionDocumento(DtoAdmisionDocumento dtoAdmisionDocumento, ModelMap model, HttpServletRequest request) {
 		try {
 			boolean success = adapter.saveAdmisionDocumento(dtoAdmisionDocumento);
 			model.put(RESPONSE_SUCCESS_KEY, success);
+			trustMe.registrarSuceso(request, dtoAdmisionDocumento.getIdActivo(), ENTIDAD_CODIGO.CODIGO_ACTIVO, "admisionDocumento", ACCION_CODIGO.CODIGO_MODIFICAR);
 
 		}
 		catch (RemUserException e) {
 			logger.error("error en activoController", e);
-			model.put("success", false);
-			model.put("msg", e.getMensaje());
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put(RESPONSE_MESSAGE_KEY, e.getMensaje());
+			trustMe.registrarError(request, dtoAdmisionDocumento.getIdActivo(), ENTIDAD_CODIGO.CODIGO_ACTIVO, "admisionDocumento", ACCION_CODIGO.CODIGO_MODIFICAR, REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
 		}
 
 
@@ -1308,7 +1358,7 @@ public class ActivoController extends ParadiseJsonController {
 		try {
 			WebFileItem webFileItem = uploadAdapter.getWebFileItem(request);
 			adapter.upload(webFileItem);
-			model.put(RESPONSE_SUCCESS_KEY, true);
+			model.put(RESPONSE_SUCCESS_KEY, true);			
 		} catch (GestorDocumentalException e) {
 			model.put(RESPONSE_SUCCESS_KEY, false);
 			model.put("errorMessage", "Ha habido un problema con la subida del fichero al gestor documental.");
@@ -1321,7 +1371,17 @@ public class ActivoController extends ParadiseJsonController {
 
 		return createModelAndViewJson(model);
 	}
-
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getLimiteArchivo(HttpServletRequest request, HttpServletResponse response) {
+		String limite = configManager.getConfigByKey("documentos.max.size").getValor();
+		ModelMap model = new ModelMap();
+		model.put("sucess",true);
+		model.put("limite", limite);
+		return JsonViewer.createModelAndViewJson(model);
+	}
+	
 	@RequestMapping(method = RequestMethod.GET)
 	public void bajarAdjuntoActivo(HttpServletRequest request, HttpServletResponse response) {
 		try {
@@ -1366,15 +1426,18 @@ public class ActivoController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getListAdjuntos(Long id, ModelMap model) {
+	public ModelAndView getListAdjuntos(Long id, ModelMap model, HttpServletRequest request) {
 		try {
 			model.put(RESPONSE_DATA_KEY, adapter.getAdjuntosActivo(id));
 
 		} catch (GestorDocumentalException e) {
 			model.put(RESPONSE_SUCCESS_KEY, false);
 			model.put("errorMessage", e.getMessage());
+			trustMe.registrarSuceso(request, id, ENTIDAD_CODIGO.CODIGO_ACTIVO, "admisionDocumento", ACCION_CODIGO.CODIGO_MODIFICAR);
+
 		} catch (Exception e) {
 			logger.error("error en activoController", e);
+			trustMe.registrarError(request, id, ENTIDAD_CODIGO.CODIGO_ACTIVO, "admisionDocumento", ACCION_CODIGO.CODIGO_MODIFICAR, REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
 			model.put(RESPONSE_SUCCESS_KEY, false);
 			model.put("errorMessage", e.getMessage());
 		}
@@ -1599,14 +1662,16 @@ public class ActivoController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView saveCondicionantesDisponibilidad(Long idActivo, DtoCondicionantesDisponibilidad dto, ModelMap model) {
+	public ModelAndView saveCondicionantesDisponibilidad(Long idActivo, DtoCondicionantesDisponibilidad dto, ModelMap model, HttpServletRequest request) {
 		try {
 			boolean success = adapter.guardarCondicionantesDisponibilidad(idActivo, dto);
 			model.put(RESPONSE_SUCCESS_KEY, success);
+			trustMe.registrarSuceso(request, idActivo, ENTIDAD_CODIGO.CODIGO_ACTIVO, "condicionantes", ACCION_CODIGO.CODIGO_MODIFICAR);
 
 		} catch (Exception e) {
 			logger.error("error en activoController", e);
 			model.put(RESPONSE_SUCCESS_KEY, false);
+			trustMe.registrarError(request, idActivo, ENTIDAD_CODIGO.CODIGO_ACTIVO, "condicionantes", ACCION_CODIGO.CODIGO_MODIFICAR, REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
 		}
 
 		return createModelAndViewJson(model);
@@ -1614,16 +1679,18 @@ public class ActivoController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getHistoricoValoresPrecios(DtoHistoricoPreciosFilter dto, ModelMap model) {
+	public ModelAndView getHistoricoValoresPrecios(DtoHistoricoPreciosFilter dto, ModelMap model, HttpServletRequest request) {
 		try {
 			DtoPage page = activoApi.getHistoricoValoresPrecios(dto);
 			model.put(RESPONSE_DATA_KEY, page.getResults());
 			model.put(RESPONSE_TOTALCOUNT_KEY, page.getTotalCount());
 			model.put(RESPONSE_SUCCESS_KEY, true);
+			trustMe.registrarSuceso(request, Long.valueOf(dto.getIdActivo()), ENTIDAD_CODIGO.CODIGO_ACTIVO, "historicoPrecios", ACCION_CODIGO.CODIGO_VER);
 
 		} catch (Exception e) {
 			logger.error("error en activoController", e);
 			model.put(RESPONSE_SUCCESS_KEY, false);
+			trustMe.registrarError(request, Long.valueOf(dto.getIdActivo()), ENTIDAD_CODIGO.CODIGO_ACTIVO, "historicoPrecios", ACCION_CODIGO.CODIGO_VER, REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
 		}
 
 		return createModelAndViewJson(model);
@@ -1631,16 +1698,18 @@ public class ActivoController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getPropuestas(DtoPropuestaFilter dtoPropuestaFiltro, ModelMap model) {
+	public ModelAndView getPropuestas(DtoPropuestaFilter dtoPropuestaFiltro, ModelMap model, HttpServletRequest request) {
 		try {
 			Page page = activoApi.getPropuestas(dtoPropuestaFiltro);
 			model.put(RESPONSE_DATA_KEY, page.getResults());
 			model.put(RESPONSE_TOTALCOUNT_KEY, page.getTotalCount());
 			model.put(RESPONSE_SUCCESS_KEY, true);
+			trustMe.registrarSuceso(request, Long.valueOf(dtoPropuestaFiltro.getIdActivo()), ENTIDAD_CODIGO.CODIGO_ACTIVO, "propuestas", ACCION_CODIGO.CODIGO_VER);
 
 		} catch (Exception e) {
 			logger.error("error en activoController", e);
 			model.put(RESPONSE_SUCCESS_KEY, false);
+			trustMe.registrarError(request, Long.valueOf(dtoPropuestaFiltro.getIdActivo()), ENTIDAD_CODIGO.CODIGO_ACTIVO, "propuestas", ACCION_CODIGO.CODIGO_VER, REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
 		}
 
 		return createModelAndViewJson(model);
@@ -1672,8 +1741,9 @@ public class ActivoController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView saveCondicionEspecifica(DtoCondicionEspecifica dtoCondicionEspecifica, ModelMap model) {
+	public ModelAndView saveCondicionEspecifica(DtoCondicionEspecifica dtoCondicionEspecifica, ModelMap model, HttpServletRequest request) {
 		model.put(RESPONSE_SUCCESS_KEY, activoApi.saveCondicionEspecifica(dtoCondicionEspecifica));
+		trustMe.registrarSuceso(request, dtoCondicionEspecifica.getIdActivo(), ENTIDAD_CODIGO.CODIGO_ACTIVO, "condicion", ACCION_CODIGO.CODIGO_MODIFICAR);
 
 		return createModelAndViewJson(model);
 	}
@@ -2135,14 +2205,15 @@ public class ActivoController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getComercialActivo(DtoComercialActivo dto, ModelMap model) {
+	public ModelAndView getComercialActivo(DtoComercialActivo dto, ModelMap model, HttpServletRequest request) {
 		try {
 			model.put(RESPONSE_DATA_KEY, activoApi.getComercialActivo(dto));
 			model.put(RESPONSE_SUCCESS_KEY, true);
-
+			trustMe.registrarSuceso(request, Long.valueOf(dto.getId()), ENTIDAD_CODIGO.CODIGO_ACTIVO, "comercial", ACCION_CODIGO.CODIGO_VER);
 		} catch (Exception e) {
 			logger.error("error en activoController", e);
 			model.put(RESPONSE_SUCCESS_KEY, false);
+			trustMe.registrarError(request, Long.valueOf(dto.getId()), ENTIDAD_CODIGO.CODIGO_ACTIVO, "comercial", ACCION_CODIGO.CODIGO_VER, REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
 		}
 
 		return createModelAndViewJson(model);
@@ -2150,18 +2221,20 @@ public class ActivoController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView saveComercialActivo(DtoComercialActivo dto, ModelMap model) {
+	public ModelAndView saveComercialActivo(DtoComercialActivo dto, ModelMap model, HttpServletRequest request) {
 		try {
 			model.put(RESPONSE_SUCCESS_KEY, activoApi.saveComercialActivo(dto));
+			trustMe.registrarSuceso(request, Long.valueOf(dto.getId()), ENTIDAD_CODIGO.CODIGO_ACTIVO, "comercial", ACCION_CODIGO.CODIGO_MODIFICAR);
 
 		} catch (JsonViewerException jvex) {
 			logger.error("error en activoController.saveComercialActivo", jvex);
 			model.put(RESPONSE_SUCCESS_KEY, false);
 			model.put(RESPONSE_ERROR_MESSAGE_KEY, jvex.getMessage());
-
+			trustMe.registrarError(request, Long.valueOf(dto.getId()), ENTIDAD_CODIGO.CODIGO_ACTIVO, "comercial", ACCION_CODIGO.CODIGO_MODIFICAR, REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
 		} catch (Exception e) {
 			logger.error("error en activoController", e);
 			model.put(RESPONSE_SUCCESS_KEY, false);
+			trustMe.registrarError(request, Long.valueOf(dto.getId()), ENTIDAD_CODIGO.CODIGO_ACTIVO, "comercial", ACCION_CODIGO.CODIGO_MODIFICAR, REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
 		}
 
 		return createModelAndViewJson(model);
@@ -2240,7 +2313,7 @@ public class ActivoController extends ParadiseJsonController {
 				RestRequestWrapper restRequest = new RestRequestWrapper(request);
 
 				ActivoControllerDispatcher dispatcher = new ActivoControllerDispatcher(this);
-				dispatcher.dispatchSave(restRequest.getJsonObject());
+				dispatcher.dispatchSave(restRequest.getJsonObject(), request);
 			} catch (JsonViewerException jvex) {
 				model.put(RESPONSE_SUCCESS_KEY, false);
 				model.put(RESPONSE_ERROR_MESSAGE_KEY, jvex.getMessage());
@@ -2273,7 +2346,7 @@ public class ActivoController extends ParadiseJsonController {
 				for(VActivosAgrupacion act : activos) {
 					json.put("id", act.getActivoId());
 					json.put("models.id", act.getActivoId());
-					dispatcher.dispatchSave(json);
+					dispatcher.dispatchSave(json, request);
 				}
 
 			} catch (JsonViewerException jvex) {
@@ -2306,14 +2379,16 @@ public class ActivoController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView saveTasacionActivo(DtoTasacion tasacionDto, ModelMap model) {
+	public ModelAndView saveTasacionActivo(DtoTasacion tasacionDto, ModelMap model, HttpServletRequest request) {
 		try {
 			boolean success = adapter.saveTasacion(tasacionDto);
 			model.put(RESPONSE_SUCCESS_KEY, success);
+			trustMe.registrarSuceso(request, tasacionDto.getIdActivo(), ENTIDAD_CODIGO.CODIGO_ACTIVO, "tasacion", ACCION_CODIGO.CODIGO_MODIFICAR);
 
 		} catch (Exception e) {
 			logger.error("error en activoController", e);
 			model.put(RESPONSE_SUCCESS_KEY, false);
+			trustMe.registrarError(request, tasacionDto.getIdActivo(), ENTIDAD_CODIGO.CODIGO_ACTIVO, "tasacion", ACCION_CODIGO.CODIGO_MODIFICAR, REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
 		}
 
 		return createModelAndViewJson(model);
@@ -2321,7 +2396,7 @@ public class ActivoController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView saveDatosPatrimonio(DtoActivoPatrimonio patrimonioDto, @RequestParam Long id, ModelMap model) {
+	public ModelAndView saveDatosPatrimonio(DtoActivoPatrimonio patrimonioDto, @RequestParam Long id, ModelMap model, HttpServletRequest request) {
 		try {
 			boolean success = adapter.saveTabActivo(patrimonioDto, id, TabActivoService.TAB_PATRIMONIO);
 			if (success){
@@ -2336,6 +2411,7 @@ public class ActivoController extends ParadiseJsonController {
 		} catch (Exception e) {
 			logger.error("error en activoController", e);
 			model.put(RESPONSE_SUCCESS_KEY, false);
+			trustMe.registrarError(request, id, ENTIDAD_CODIGO.CODIGO_ACTIVO, "tasacion", ACCION_CODIGO.CODIGO_MODIFICAR, REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
 		}
 
 		return createModelAndViewJson(model);
@@ -2444,7 +2520,7 @@ public class ActivoController extends ParadiseJsonController {
 		return activoAdapter.actualizarEstadoPublicacionActivo(id);
 
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getHistoricoDestinoComercialByActivo(@RequestParam Long id, ModelMap model, WebDto dto) {
@@ -2463,7 +2539,7 @@ public class ActivoController extends ParadiseJsonController {
 
 		try {
 			Long idActivo = activoApi.getIdByNumActivo(Long.parseLong(numActivo));
-			
+
 			if(!Checks.esNulo(idActivo)) {
 				model.put("success", true);
 				model.put("data", idActivo);

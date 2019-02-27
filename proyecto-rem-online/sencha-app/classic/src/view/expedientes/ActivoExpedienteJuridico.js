@@ -23,7 +23,8 @@ Ext.define('HreRem.view.expedientes.ActivoExpedienteJuridico', {
 				items :
 					[
 		                {
-		                	xtype: 'datefieldbase', 
+		                	xtype: 'datefieldbase',
+		                	name: 'fechaEmision',
 		                	formatter: 'date("d/m/Y")',
 		                	fieldLabel:  HreRem.i18n('label.fecha.emision'),
 		                	maxValue: new Date(),

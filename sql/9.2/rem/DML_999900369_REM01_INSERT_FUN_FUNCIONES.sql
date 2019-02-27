@@ -1,80 +1,111 @@
 --/*
 --##########################################
---## AUTOR=JIN LI HU
---## FECHA_CREACION=20181119
+--## AUTOR=Juanjo Arbona
+--## FECHA_CREACION=20181120
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=REMVIP-2475
+--## INCIDENCIA_LINK=0
 --## PRODUCTO=NO
 --##
---## INSTRUCCIONES: 
+--## Finalidad: Script que añade en FUN_FUNCIONES los datos añadidos en T_ARRAY_DATA
+--## INSTRUCCIONES:
 --## VERSIONES:
 --##        0.1 Versión inicial
 --##########################################
 --*/
+
+
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
 SET SERVEROUTPUT ON; 
-SET DEFINE OFF; 
+SET DEFINE OFF;
+
+
 DECLARE
-    V_MSQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar    
-    V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquemas
+    V_MSQL VARCHAR2(32000 CHAR); -- Sentencia a ejecutar     
+    V_ESQUEMA VARCHAR2(25 CHAR):= '#ESQUEMA#'; -- Configuracion Esquema
     V_ESQUEMA_M VARCHAR2(25 CHAR):= '#ESQUEMA_MASTER#'; -- Configuracion Esquema Master
     V_SQL VARCHAR2(4000 CHAR); -- Vble. para consulta que valida la existencia de una tabla.
-    V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.
-    V_NUM_FILAS NUMBER(16); -- Vble. para validar la existencia de un registro.
+    V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.   
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
-    V_USR VARCHAR2(30 CHAR) := 'REMVIP-2475'; -- USUARIOCREAR/USUARIOMODIFICAR.
-    V_ECO_ID NUMBER(16); 
+	
+    V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar
+    V_ENTIDAD_ID NUMBER(16);
+    V_ID NUMBER(16);
+
+    
+    TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
+    TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
+    V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
+        T_TIPO_DATA('Carga masiva situación de plusvalia' ,'MASIVO_PLUSVALIA')
+		); 
+    V_TMP_TIPO_DATA T_TIPO_DATA;
     
 BEGIN	
-	DBMS_OUTPUT.PUT_LINE('[INICIO] INSERCION TABLA FUN_FUNCIONES');
 	
-	V_SQL := 'SELECT COUNT(*) FROM '||V_ESQUEMA_M||'.FUN_FUNCIONES WHERE FUN_DESCRIPCION = ''EDITAR_BTN_EXPORT_FACTURAS_TASAS_IMPUESTOS''';
-	
-	EXECUTE IMMEDIATE V_SQL INTO V_NUM_FILAS;
-	
-	IF V_NUM_FILAS = 0 THEN
-	
-		V_MSQL := 'INSERT INTO '||V_ESQUEMA_M||'.FUN_FUNCIONES 
-					(FUN_ID, 
-					FUN_DESCRIPCION_LARGA, 
-					FUN_DESCRIPCION, 
-					VERSION, 
-					USUARIOCREAR, 
-					FECHACREAR,
-					BORRADO 
-					)VALUES(
-					'||V_ESQUEMA_M||'.S_FUN_FUNCIONES.NEXTVAL,
-					''Puede editar los botones Exportar facturas y Exportar tasas e impuestos'',
-					''EDITAR_BTN_EXPORT_FACTURAS_TASAS_IMPUESTOS'',
-					0,
-					''REMVIP-2475'',
-					SYSDATE,
-					0
-					)';
-	
-		EXECUTE IMMEDIATE V_MSQL;
+	DBMS_OUTPUT.PUT_LINE('[INICIO] ');
+
+	 
+    -- LOOP para insertar los valores en FUN_FUNCIONES -----------------------------------------------------------------
+    DBMS_OUTPUT.PUT_LINE('[INFO]: INSERCION EN FUN_FUNCIONES ');
+    FOR I IN V_TIPO_DATA.FIRST .. V_TIPO_DATA.LAST
+      LOOP
+      
+        V_TMP_TIPO_DATA := V_TIPO_DATA(I);
     
-		DBMS_OUTPUT.PUT_LINE('[FIN] REGISTRO INSERTADO');
-		
-	ELSE
-		
-		DBMS_OUTPUT.PUT_LINE('[FIN] REGISTRO YA EXISTE');
-		
-	END IF;
-		
-	COMMIT;
- 
+        --Comprobamos el dato a insertar
+        V_SQL := 'SELECT COUNT(1) FROM '||V_ESQUEMA_M||'.FUN_FUNCIONES WHERE FUN_DESCRIPCION = '''||TRIM(V_TMP_TIPO_DATA(2))||'''';
+        EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+        
+        --Si existe lo modificamos
+        IF V_NUM_TABLAS > 0 THEN				
+          
+          DBMS_OUTPUT.PUT_LINE('[INFO]: MODIFICAMOS EL REGISTRO '''|| TRIM(V_TMP_TIPO_DATA(1)) ||'''');
+       	  V_MSQL := 'UPDATE '|| V_ESQUEMA_M ||'.FUN_FUNCIONES '||
+                    'SET FUN_DESCRIPCION_LARGA = '''||TRIM(V_TMP_TIPO_DATA(1))||''''|| 
+					', FUN_DESCRIPCION = '''||TRIM(V_TMP_TIPO_DATA(2))||''''||
+					', USUARIOMODIFICAR = ''HREOS-4712'' , FECHAMODIFICAR = SYSDATE '||
+					'WHERE FUN_DESCRIPCION = '''||TRIM(V_TMP_TIPO_DATA(2))||'''';
+          EXECUTE IMMEDIATE V_MSQL;
+          DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO MODIFICADO CORRECTAMENTE');
+          
+       --Si no existe, lo insertamos   
+       ELSE
+       
+          DBMS_OUTPUT.PUT_LINE('[INFO]: INSERTAMOS EL REGISTRO '''|| TRIM(V_TMP_TIPO_DATA(1)) ||'''');   
+          V_MSQL := 'SELECT '|| V_ESQUEMA_M ||'.S_FUN_FUNCIONES.NEXTVAL FROM DUAL'; -- TENEMOS QUE ESCRIBIR EL NOMBRE DE LA SECUENCIA. TODOS EMPIEZAN POR "S" Y SE VE EN SECUENCIAS EN ORACLE
+          EXECUTE IMMEDIATE V_MSQL INTO V_ID;	
+          V_MSQL := 'INSERT INTO '|| V_ESQUEMA_M ||'.FUN_FUNCIONES (' ||
+                      'FUN_ID, FUN_DESCRIPCION_LARGA, FUN_DESCRIPCION, VERSION, USUARIOCREAR, FECHACREAR, BORRADO) ' ||
+                      'SELECT '|| V_ID || ','''||V_TMP_TIPO_DATA(1)||''','''||TRIM(V_TMP_TIPO_DATA(2))||''',0, ''HREOS-4712'',SYSDATE,0 FROM DUAL';
+          EXECUTE IMMEDIATE V_MSQL;
+          DBMS_OUTPUT.PUT_LINE('[INFO]: REGISTRO INSERTADO CORRECTAMENTE');
+        
+       END IF;
+      END LOOP;
+    COMMIT;
+
+    DBMS_OUTPUT.PUT_LINE('[FIN]: TABLA FUN_FUNCIONES ACTUALIZADA CORRECTAMENTE ');
+   
+
 EXCEPTION
      WHEN OTHERS THEN
-          ERR_NUM := SQLCODE;
-          ERR_MSG := SQLERRM;
-          DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(ERR_NUM));
+          err_num := SQLCODE;
+          err_msg := SQLERRM;
+
+          DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(err_num));
           DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
-          DBMS_OUTPUT.put_line(ERR_MSG);
+          DBMS_OUTPUT.put_line(err_msg);
+
           ROLLBACK;
-          RAISE;   
+          RAISE;          
+
 END;
+
 /
-EXIT;
+
+EXIT
+
+
+
+   

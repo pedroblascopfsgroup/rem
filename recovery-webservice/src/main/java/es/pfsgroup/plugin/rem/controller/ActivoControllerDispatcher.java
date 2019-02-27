@@ -8,6 +8,8 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -36,13 +38,13 @@ public class ActivoControllerDispatcher {
 	/*
 	 * Testeado en es.pfsgroup.plugin.rem.test.controller.activoControllerDispatcher.DispatchSaveTests
 	 */
-	public void dispatchSave(JSONObject json) {
+	public void dispatchSave(JSONObject json, HttpServletRequest request) {
 		if ((json != null) && !json.isEmpty()) {
 			if (json.containsKey("id") && json.containsKey("models")) {
 				Long id = json.getLong("id");
 				JSONArray modelsArray = json.getJSONArray("models");
 				if (!modelsArray.isEmpty()) {
-					saveModels(id, modelsArray);
+					saveModels(id, modelsArray, request);
 				}
 				
 			} else {
@@ -52,7 +54,7 @@ public class ActivoControllerDispatcher {
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private void saveModels(Long id, JSONArray modelsArray) {
+	private void saveModels(Long id, JSONArray modelsArray, HttpServletRequest request) {
 		for (Object o : modelsArray) {
 			JSONObject model = (JSONObject) o;
 			if (o != null) {
@@ -62,7 +64,7 @@ public class ActivoControllerDispatcher {
 					ActivoControllerDispachableMethods methods = new ActivoControllerDispachableMethods(controller);
 					DispachableMethod method = methods.findDispachableMethod(modelName);
 					if (method != null) {
-						method.execute(id, createFromJson(method.getArgumentType(), modelData));
+						method.execute(id, createFromJson(method.getArgumentType(), modelData), request);
 					}
 				}
 			}

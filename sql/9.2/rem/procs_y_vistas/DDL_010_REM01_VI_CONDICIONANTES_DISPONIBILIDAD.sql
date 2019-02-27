@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Ramon Llinares
---## FECHA_CREACION=20190202
+--## AUTOR=JINLI HU
+--## FECHA_CREACION=20190220
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-5003
+--## INCIDENCIA_LINK=HREOS-5562
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -25,6 +25,7 @@
 --##		0.12 REMVIP-969 - Añadir condicionante "Sin acceso"
 --##		0.13 HREOS-4565 -SBG- Optimizar vista: evito hacer 7 LEFT con la tabla act_sps_sit_posesoria y 2 LEFT con la tabla dd_eac_estado_activo añadiendo CASE con las distintas opciones
 --##    0.14 HREOS-5003 - Añadimos Obra nueva (Vandalizado) a VANDALIZADO
+--##		0.15 HREOS-5562 - Ocultación Automática, motivo "Revisión publicación", comentar la linea "OR DECODE(VEI.DD_AIC_CODIGO ,''02'' ,0 , 1) = 1"
 --##########################################
 --*/
 

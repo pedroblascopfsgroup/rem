@@ -13,6 +13,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivos;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
 
 
 public class ActivoExcelReport extends AbstractExcelReport implements ExcelReport {
@@ -121,8 +122,8 @@ public class ActivoExcelReport extends AbstractExcelReport implements ExcelRepor
 			if(situacion.getOcupado() == 0) return "No ocupado";
 			else if(!Checks.esNulo(situacion.getConTitulo()) && situacion.getOcupado() == 1)
 			{
-				if(situacion.getConTitulo() == 0) return "Ocupado sin título";
-				else if(situacion.getConTitulo() == 1)
+				if(situacion.getConTitulo().equals(DDTipoTituloActivoTPA.tipoTituloNo)) return "Ocupado sin título";
+				else if(situacion.getConTitulo().equals(DDTipoTituloActivoTPA.tipoTituloSi))
 				{
 					if(!Checks.esNulo(situacion.getTipoTituloPosesorio())) return "Ocupado con título de " + situacion.getTipoTituloPosesorio().getDescripcion();
 					else return "Ocupado con título";

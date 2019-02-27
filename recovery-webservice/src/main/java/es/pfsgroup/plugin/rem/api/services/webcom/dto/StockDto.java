@@ -16,89 +16,152 @@ public class StockDto implements WebcomRESTDto{
 	private DateDataType fechaAccion;
 	@WebcomRequired
 	private LongDataType idActivoHaya;
+	@WebcomRequired
 	private LongDataType idActivoSareb;
+	@WebcomRequired
 	private LongDataType idActivoPrinex;
+	@WebcomRequired
 	private LongDataType idActivoRem;
+	@WebcomRequired
 	private StringDataType codTipoVia;
+	@WebcomRequired
 	private StringDataType nombreCalle;
+	@WebcomRequired
 	private StringDataType numeroCalle;
+	@WebcomRequired
 	private StringDataType escalera;
+	@WebcomRequired
 	private StringDataType planta;
+	@WebcomRequired
 	private StringDataType puerta;
+	@WebcomRequired
 	private StringDataType codMunicipio;
+	@WebcomRequired
 	private StringDataType codPedania;
+	@WebcomRequired
 	private StringDataType codProvincia;
+	@WebcomRequired
 	private StringDataType codigoPostal;
+	@WebcomRequired
 	private StringDataType codTipoInmueble;
+	@WebcomRequired
 	private StringDataType codSubtipoInmueble;
+	@WebcomRequired
 	private StringDataType fincaRegistral;
+	@WebcomRequired
 	private StringDataType codMunicipioRegistro;
+	@WebcomRequired
 	private StringDataType registro;
+	@WebcomRequired
 	private StringDataType referenciaCatastral;
+	@WebcomRequired
 	private BooleanDataType ascensor;
+	@WebcomRequired
 	private LongDataType dormitorios;
+	@WebcomRequired
 	private LongDataType banyos;
+	@WebcomRequired
 	private LongDataType aseos;
+	@WebcomRequired
 	private LongDataType garajes;
+	@WebcomRequired
 	private StringDataType codEstadoComercial;
+	@WebcomRequired
 	private StringDataType codTipoVenta;
+	@WebcomRequired
 	@DecimalDataTypeFormat(decimals=8)
 	private DoubleDataType lat;
+	@WebcomRequired
 	@DecimalDataTypeFormat(decimals=8)
 	private DoubleDataType lng;
+	@WebcomRequired
 	private StringDataType codEstadoConstruccion;
+	@WebcomRequired
 	private LongDataType terrazas;
+	@WebcomRequired
 	private StringDataType codEstadoPublicacion;
+	@WebcomRequired
 	private DateDataType publicadoDesde;
+	@WebcomRequired
 	private BooleanDataType reformas;
+	@WebcomRequired
 	private StringDataType codRegimenProteccion;
+	@WebcomRequired
 	private StringDataType distribucion;
+	@WebcomRequired
 	private StringDataType codDetallePublicacion;
+	@WebcomRequired
 	private LongDataType codigoAgrupacionObraNueva;
+	@WebcomRequired
 	private LongDataType codigoCabeceraObraNueva;
+	@WebcomRequired
 	private LongDataType idProveedorRemAnterior;
+	@WebcomRequired
 	private LongDataType idProveedorRem;
+	@WebcomRequired
 	private StringDataType nombreGestorComercial;
+	@WebcomRequired
 	private StringDataType telefonoGestorComercial;
+	@WebcomRequired
 	private StringDataType emailGestorComercial;
+	@WebcomRequired
 	private StringDataType codCee;
+	@WebcomRequired
 	private LongDataType antiguedad;
+	@WebcomRequired
 	private StringDataType codCartera;
+	@WebcomRequired
 	private StringDataType codRatio;
-	
-	//Petición HREOS-1399
-	//@WebcomRequired
+	@WebcomRequired
 	private BooleanDataType esNuevo;
 	@DecimalDataTypeFormat(decimals=2)
+	@WebcomRequired
 	private DoubleDataType utilSuperficie;
 	@DecimalDataTypeFormat(decimals=2)
+	@WebcomRequired
 	private DoubleDataType construidaSuperficie;
 	@DecimalDataTypeFormat(decimals=2)
+	@WebcomRequired
 	private DoubleDataType registralSuperficie;
 	@DecimalDataTypeFormat(decimals=2)
+	@WebcomRequired
 	private DoubleDataType parcelaSuperficie;
+	@WebcomRequired
 	private LongDataType idActivoUvem;
+	@WebcomRequired
 	private BooleanDataType riesgoOcupacion;
+	@WebcomRequired
 	private DateDataType fechaPosesion;
 	@MappedColumn("FECHA_CONTRATO_DATOS_OCU")
+	@WebcomRequired
 	private DateDataType fechaContratoDatosOcupacionales;
 	@MappedColumn("PLAZO_CONTRATO_DATOS_OCU")
+	@WebcomRequired
 	private DateDataType plazoContratoDatosOcupacionales;
+	@WebcomRequired
 	@MappedColumn("RENTA_MENSUAL_DATOS_OCU")
 	private DoubleDataType rentaMensualDatosOcupacionales;
+	@WebcomRequired
 	@MappedColumn("RECIBIDO_IMPORTE_DATOS_ADM")
 	private DoubleDataType recibidoImporteDatosAdministracion;
+	@WebcomRequired
 	@MappedColumn("IBI_IMPORTE_DATOS_ADM")
 	private DoubleDataType ibiImporteDatosAdministracion;
+	@WebcomRequired
 	@MappedColumn("DERRAMA_IMPORTE_DATOS_ADM")
 	private DoubleDataType derramaImporteDatosAdministracion;
+	@WebcomRequired
 	@MappedColumn("DETALLE_DERRAMA_DATOS_ADM")
 	private StringDataType detalleDerramaDatosAdministracion;
+	@WebcomRequired
 	private StringDataType anejoTrastero;
+	@WebcomRequired
 	private BooleanDataType existePiscina;
 	
 	//HREOS-1479
+	@WebcomRequired
 	private LongDataType idLoteRem;
+	@WebcomRequired
 	private BooleanDataType esActivoPrincipal;
 	
 	//HREOS-1478
@@ -127,42 +190,65 @@ public class StockDto implements WebcomRESTDto{
 	private DoubleDataType anteriorValorAprobadoVenta;
 	
 	//Petición HREOS-1551
+	@WebcomRequired
 	private LongDataType idAsistida;
+	@WebcomRequired
 	private LongDataType codigoCabeceraAsistida;
 	
 	//HREOS-1630
+	@WebcomRequired
 	private StringDataType codSubtipoTitulo;
 	
 	//HREOS-1809
+	@WebcomRequired
 	private StringDataType codSubCartera;
 	
 	//Petición HREOS-1930 - Se amplia campo de 500 a 3000
+	@WebcomRequired
 	private StringDataType condicionesEspecificas;
+	@WebcomRequired
 	private StringDataType descripcion;
 	
 	//HREOS-3955
 	@MappedColumn("cod_estado_pub_alquiler")
+	@WebcomRequired
 	private StringDataType codEstadoPublicacionAlquiler;
 	
 	@MappedColumn("cod_subestado_pub_venta")
+	@WebcomRequired
 	private StringDataType codSubEstadoPublicacionVenta;
     
 	@MappedColumn("cod_subestado_pub_alquiler")
+	@WebcomRequired
 	private StringDataType codSubEstadoPublicacionAlquiler;
 
+	@WebcomRequired
 	private BooleanDataType indOcultarPrecioVenta;
 	
+	@WebcomRequired
 	private BooleanDataType indOcultarPrecioAlquiler;
     
+	@WebcomRequired
 	private StringDataType arrCodDetallePublicacion;
+	
+
+	@MappedColumn("COD_AGRUPACION_COMERCIAL_REM")
+	private LongDataType codigoAgrupacionComercialRem;
 	
 	private StringDataType descripcionOtros;
 
+	@WebcomRequired
 	private LongDataType activoProveedorTecnico;
+
+	//@MappedColumn("COD_ESTADO_FIS_ACTIVO")
+	private StringDataType codEstadoFisico;
+
+	private StringDataType codTipoUsoDestino;
 	
-	//HREOS-4500 - Modificaciones WS Stock
+
+	// Modificaciones WS Stock
 	private StringDataType codTipoAlquiler;
-	
+
 	public LongDataType getIdActivoHaya() {
 		return idActivoHaya;
 	}
@@ -728,11 +814,28 @@ public class StockDto implements WebcomRESTDto{
 	public void setActivoProveedorTecnico(LongDataType activoProveedorTecnico) {
 		this.activoProveedorTecnico = activoProveedorTecnico;
 	}
+	public StringDataType getCodEstadoFisico() {
+		return codEstadoFisico;
+	}
+	public void setCodEstadoFisico(StringDataType codEstadoFisico) {
+		this.codEstadoFisico = codEstadoFisico;
+	}
+	public StringDataType getCodTipoUsoDestino() {
+		return codTipoUsoDestino;
+	}
+	public void setCodTipoUsoDestino(StringDataType codTipoUsoDestino) {
+		this.codTipoUsoDestino = codTipoUsoDestino;
+	}
 	public StringDataType getCodTipoAlquiler() {
 		return codTipoAlquiler;
 	}
 	public void setCodTipoAlquiler(StringDataType codTipoAlquiler) {
 		this.codTipoAlquiler = codTipoAlquiler;
 	}
-	
+	public LongDataType getCodigoAgrupacionComercialRem() {
+		return codigoAgrupacionComercialRem;
+	}
+	public void setCodigoAgrupacionComercialRem(LongDataType codigoAgrupacionComercialRem) {
+		this.codigoAgrupacionComercialRem = codigoAgrupacionComercialRem;
+	}
 }

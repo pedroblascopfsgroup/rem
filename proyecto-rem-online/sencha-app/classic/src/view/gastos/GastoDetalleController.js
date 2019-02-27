@@ -558,6 +558,10 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 	    	
 	    	if(!Ext.isEmpty(numeroActivo) && !Ext.isEmpty(numeroAgrupacion)){
 	    		me.fireEvent("errorToast", HreRem.i18n("msg.buscador.activo.gasto.busqueda.no.posible"));
+	    		form.reset();
+				window.unmask();
+				window.parent.funcionRecargar();
+				window.close();
 	    	}
 	    	else if(!Ext.isEmpty(numeroActivo)){
 	    		if(Ext.isDefined(detalle.getModelInstance().getProxy().getApi().create)){
@@ -687,6 +691,10 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
     	}
     	else{
     		me.fireEvent("errorToast", HreRem.i18n("msg.buscador.activo.gasto.busqueda.campos.vacios"));
+    		form.reset();
+			window.unmask();
+			window.parent.funcionRecargar();
+			window.close();
     	}
     	
     	
@@ -1495,7 +1503,7 @@ Ext.define('HreRem.view.gastos.GastoDetalleController', {
 	    		return true;
     	}
     	
-    	if(tabSeleccionada.xtype=='detalleeconomicogasto' && $AU.userHasFunction('EDITAR_TAB_DETALLE_ECONOMICO_GASTOS') && (
+    	if(tabSeleccionada.xtype=='detalleeconomicogasto' && $AU.userHasFunction('EDITAR_TAB_DETALLE_ECONOMICO_GASTOS') && ((CONST.ESTADOS_GASTO['PAGADO']==estadoGasto) ||
     			(CONST.ESTADOS_GASTO['AUTORIZADO']==estadoGasto && gestoria) || /*CONST.ESTADOS_GASTO['AUTORIZADO_PROPIETARIO']==estadoGasto || */
 	    		CONST.ESTADOS_GASTO['CONTABILIZADO']==estadoGasto || CONST.ESTADOS_GASTO['INCOMPLETO']==estadoGasto || CONST.ESTADOS_GASTO['PENDIENTE']==estadoGasto || 
 	    		CONST.ESTADOS_GASTO['RECHAZADO']==estadoGasto || (CONST.ESTADOS_GASTO['SUBSANADO']==estadoGasto && !autorizado) 

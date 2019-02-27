@@ -16,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import edu.emory.mathcs.backport.java.util.concurrent.TimeUnit;
 import es.capgemini.devon.message.MessageService;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.users.UsuarioManager;
@@ -194,15 +193,15 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	 * @return Devuelve True si el check de publicar activo para la venta debe estar deshabilitado.
 	 */
 	private Boolean deshabilitarCheckPublicarVenta(Long idActivo) {
-		Boolean resultado = false;
-		try{
+		boolean resultado = false;
+
+		try {
 			resultado = !isPublicable(idActivo) || !isComercializable(idActivo) || isVendido(idActivo) || isReservado(idActivo) || isPublicadoVenta(idActivo) || isOcultoVenta(idActivo) ||
 					isFueraDePerimetro(idActivo) || (!isInformeAprobado(idActivo) && (!tienePrecioVenta(idActivo) && !isPublicarSinPrecioVentaActivado(idActivo)));
-		}catch(Exception e){
+		} catch(Exception e) {
 			logger.error("Error en el método deshabilitarCheckPublicarVenta" , e);
 		}
-		
-		
+
 		return resultado;	
 	}
 	
@@ -213,17 +212,16 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	 * @return Devuelve True si el check de publicar sin precio venta debe estar deshabilitado.
 	 */
 	private Boolean deshabilitarCheckPublicarSinPrecioVenta(Long idActivo) {
-		Boolean resultado = false;
+		boolean resultado = false;
+
 		try{
 			resultado = !isPublicable(idActivo) || isPublicadoVenta(idActivo) || isOcultoVentaVendidoOSalidaSinperimetro(idActivo) || isVendido(idActivo);
 		}catch(Exception e){
 			logger.error("Error en el método deshabilitarCheckPublicarSinPrecioVenta" , e);
 		}
-		
-		
+
 		return resultado;	
 	}
-	
 
 	/**
 	 * Este método calcula si el check de publicar sin precio venta se ha de deshabilitar en base a unas reglas.
@@ -232,7 +230,8 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	 * @return Devuelve True si el check de publicar sin precio venta debe estar deshabilitado.
 	 */
 	private Boolean deshabilitarCheckPublicarSinPrecioAlquiler(Long idActivo) {
-		Boolean resultado = false;
+		boolean resultado = false;
+
 		try{
 			resultado = !isPublicable(idActivo) || isPublicadoAlquiler(idActivo) || isOcultoAlquilerVendidoOSalidaSinperimetro(idActivo) || isVendido(idActivo);
 		}catch(Exception e){
@@ -283,6 +282,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 	 * @return Devuelve True si el check de ocultar activo para la venta debe estar deshabilitado.
 	 */
 	private Boolean deshabilitarCheckOcultarVenta(Long idActivo) {
+
 		Boolean resultado = false;
 		try {
 			resultado = !isPublicable(idActivo) || !isComercializable(idActivo) || isVendido(idActivo)
@@ -331,8 +331,6 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		
 		return resultado;
 	}
-
-	
 
 	// Comprobación mínima.
 	private Boolean isAdecuacionAlquilerNotNull(Long idActivo) {
@@ -545,9 +543,9 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		ActivoAgrupacion agrupacion = activoAgrupacionApi.get(id);
 		List<ActivoAgrupacionActivo> activos = agrupacion.getActivos();
 		List<ActivoPublicacion> activosPublicacion = new ArrayList<ActivoPublicacion>();
-		ActivoPublicacion activoPublicacion;
 
 		for(ActivoAgrupacionActivo aga : activos) {
+			ActivoPublicacion activoPublicacion = new ActivoPublicacion();
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "activo.id", aga.getActivo().getId());
 			ActivoSituacionPosesoria condicionantesDisponibilidad = genericDao.get(ActivoSituacionPosesoria.class, filtro);
 			

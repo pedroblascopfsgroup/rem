@@ -55,12 +55,12 @@ BEGIN
     
     -- FECHA_FIN REGISTRO A NULL -----------------------------------------------
     
-    V_SQL := 'MERGE INTO ACT_AHP_HIST_PUBLICACION T1
+    V_SQL := 'MERGE INTO '||V_ESQUEMA||'.ACT_AHP_HIST_PUBLICACION T1
                 USING (
                     WITH HIST AS (
                         SELECT DISTINCT AHP.ACT_ID, AHP.AHP_ID, AHP.AHP_FECHA_INI_VENTA, AHP.AHP_FECHA_FIN_VENTA,
                         ROW_NUMBER() OVER (PARTITION BY AHP.ACT_ID ORDER BY AHP.AHP_FECHA_INI_VENTA ASC) RN
-                        FROM ACT_AHP_HIST_PUBLICACION AHP
+                        FROM '||V_ESQUEMA||'.ACT_AHP_HIST_PUBLICACION AHP
                         WHERE AHP.DD_TCO_ID in (1,2)
                         AND AHP.BORRADO = 0
                         ORDER BY 1,2,3,5
@@ -69,9 +69,9 @@ BEGIN
                            CASE WHEN RN = 1 THEN H.AHP_FECHA_FIN_VENTA 
                            ELSE (SELECT AHP_FECHA_FIN_VENTA FROM HIST WHERE ACT_ID = AHP.ACT_ID AND RN = H.RN+1) 
                            END AS FECHA_FIN_NUEVA
-                    FROM ACT_AHP_HIST_PUBLICACION AHP
+                    FROM '||V_ESQUEMA||'.ACT_AHP_HIST_PUBLICACION AHP
                     JOIN HIST H ON AHP.ACT_ID = H.ACT_ID
-                    WHERE H.AHP_FECHA_INI_ALQUILER IS NOT NULL AND H.AHP_FECHA_FIN_VENTA IS NULL
+                    WHERE H.AHP_FECHA_INI_VENTA IS NOT NULL AND H.AHP_FECHA_FIN_VENTA IS NULL
                     AND AHP.DD_TCO_ID in (1,2)
                 ) T2
                 ON (T1.AHP_ID = T2.AHP_ID)
@@ -82,12 +82,12 @@ BEGIN
                 WHERE T2.FECHA_FIN_NUEVA IS NOT NULL';
     EXECUTE IMMEDIATE V_SQL;
     
-    V_SQL := 'MERGE INTO ACT_AHP_HIST_PUBLICACION T1
+    V_SQL := 'MERGE INTO '||V_ESQUEMA||'.ACT_AHP_HIST_PUBLICACION T1
                 USING (
                     WITH HIST AS (
                         SELECT DISTINCT AHP.ACT_ID, AHP.AHP_ID, AHP.AHP_FECHA_INI_ALQUILER, AHP.AHP_FECHA_FIN_ALQUILER,
                         ROW_NUMBER() OVER (PARTITION BY AHP.ACT_ID ORDER BY AHP.AHP_FECHA_INI_ALQUILER ASC) RN
-                        FROM ACT_AHP_HIST_PUBLICACION AHP
+                        FROM '||V_ESQUEMA||'.ACT_AHP_HIST_PUBLICACION AHP
                         WHERE AHP.DD_TCO_ID in (2,3)
                         AND AHP.BORRADO = 0
                         ORDER BY 1,2,3,5
@@ -96,7 +96,7 @@ BEGIN
                            CASE WHEN RN = 1 THEN H.AHP_FECHA_FIN_ALQUILER 
                            ELSE (SELECT AHP_FECHA_FIN_ALQUILER FROM HIST WHERE ACT_ID = AHP.ACT_ID AND RN = H.RN+1) 
                            END AS FECHA_FIN_NUEVA
-                    FROM ACT_AHP_HIST_PUBLICACION AHP
+                    FROM '||V_ESQUEMA||'.ACT_AHP_HIST_PUBLICACION AHP
                     JOIN HIST H ON AHP.ACT_ID = H.ACT_ID
                     WHERE H.AHP_FECHA_INI_ALQUILER IS NOT NULL AND H.AHP_FECHA_FIN_ALQUILER IS NULL
                     AND AHP.DD_TCO_ID in (2,3)
@@ -117,7 +117,6 @@ BEGIN
                         SELECT DISTINCT AHP.ACT_ID, AHP.AHP_ID, AHP.AHP_FECHA_INI_VENTA, AHP.AHP_FECHA_FIN_VENTA,
                         ROW_NUMBER() OVER (PARTITION BY AHP.ACT_ID ORDER BY AHP.AHP_FECHA_FIN_VENTA ASC) RN
                         FROM '||V_ESQUEMA||'.ACT_AHP_HIST_PUBLICACION AHP
-                        WHERE AHP.DD_TCO_ID in (1,2)
                         AND AHP.BORRADO = 0
                         ORDER BY 1,2,3,5
                     )
@@ -134,7 +133,8 @@ BEGIN
                     T1.AHP_FECHA_INI_VENTA = T2.FECHA_INI_NUEVA
                     ,T1.USUARIOMODIFICAR = '||V_USUARIO||'
                     ,T1.FECHAMODIFICAR = SYSDATE
-                WHERE T2.FECHA_INI_NUEVA IS NOT NULL';
+                WHERE T2.FECHA_INI_NUEVA IS NOT NULL
+				AND T1.DD_TCO_ID IN (1,2)';
     EXECUTE IMMEDIATE V_SQL;
     
     V_SQL := 'MERGE INTO '||V_ESQUEMA||'.ACT_AHP_HIST_PUBLICACION T1
@@ -143,7 +143,6 @@ BEGIN
                         SELECT DISTINCT AHP.ACT_ID, AHP.AHP_ID, AHP.AHP_FECHA_INI_ALQUILER, AHP.AHP_FECHA_FIN_ALQUILER,
                         ROW_NUMBER() OVER (PARTITION BY AHP.ACT_ID ORDER BY AHP.AHP_FECHA_FIN_ALQUILER ASC) RN
                         FROM '||V_ESQUEMA||'.ACT_AHP_HIST_PUBLICACION AHP
-                        WHERE AHP.DD_TCO_ID in (2,3)
                         AND AHP.BORRADO = 0
                         ORDER BY 1,2,3,5
                     )
@@ -160,7 +159,8 @@ BEGIN
                     T1.AHP_FECHA_INI_ALQUILER = T2.FECHA_INI_NUEVA
                     ,T1.USUARIOMODIFICAR = '||V_USUARIO||'
                     ,T1.FECHAMODIFICAR = SYSDATE
-                WHERE T2.FECHA_INI_NUEVA IS NOT NULL';
+                WHERE T2.FECHA_INI_NUEVA IS NOT NULL
+				AND T1.DD_TCO_ID IN (2,3)';
     EXECUTE IMMEDIATE V_SQL;
     
 	COMMIT;

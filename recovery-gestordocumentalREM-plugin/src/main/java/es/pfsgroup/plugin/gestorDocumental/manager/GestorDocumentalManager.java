@@ -14,6 +14,7 @@ import org.glassfish.jersey.media.multipart.file.FileDataBodyPart;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import es.capgemini.devon.exception.UserException;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.gestorDocumental.api.GestorDocumentalApi;
 import es.pfsgroup.plugin.gestorDocumental.api.RestClientApi;
@@ -139,15 +140,17 @@ public class GestorDocumentalManager implements GestorDocumentalApi {
 	}
 	
 	@Override
-	public RespuestaDescargarDocumento descargarDocumento(Long idDocumento, BajaDocumentoDto login, String nombreDocumento) throws GestorDocumentalException {
+	public RespuestaDescargarDocumento descargarDocumento(Long idDocumento, BajaDocumentoDto login, String nombreDocumento) throws GestorDocumentalException,UserException {
 		ServerRequest serverRequest =  new ServerRequest();
 		serverRequest.setMethod(RestClientManager.METHOD_GET);
 		serverRequest.setPath(getPathDescargarDoc(idDocumento, login));		
 		serverRequest.setResponseClass(RespuestaDescargarDocumento.class);
 		Object respuesta = this.getBinaryResponse(serverRequest,"");
 		byte[] bytes = null;
-		
-		if(respuesta instanceof byte[]) {
+		if(respuesta instanceof String) {
+			throw new UserException((String)respuesta);
+		}
+		else if(respuesta instanceof byte[]) {
 			bytes = (byte[]) respuesta;
 		}
 		else {

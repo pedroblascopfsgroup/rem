@@ -199,7 +199,7 @@ public class DtoGencat extends DtoTabActivo {
 	}
 	public void setOfertasAsociadasEstanAnuladas(Boolean ofertasAsociadasEstanAnuladas) {
 		this.ofertasAsociadasEstanAnuladas = ofertasAsociadasEstanAnuladas;
-
+	}
 	public String getIdLeadSF() {
 		return idLeadSF;
 	}

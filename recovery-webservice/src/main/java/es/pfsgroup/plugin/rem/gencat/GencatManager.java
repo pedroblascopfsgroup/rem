@@ -1802,6 +1802,8 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 	public boolean comprobacionDocumentoAnulacion(Long idActivo) {
 		
 		Filter filtroIdActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
+		return false;
+	}
 
 	public DtoAltaVisita altaVisitaComunicacion(DtoAltaVisita dtoAltaVisita) throws Exception {
 		

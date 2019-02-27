@@ -3638,7 +3638,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 						&& !checkbox.getValue();
 				checkboxPublicarAlquiler.setReadOnly(readOnly);
 			}
-		},
+		}
+    },
 
     establecerTipoPublicacionAlquiler: function(btn) {
         var me = this;

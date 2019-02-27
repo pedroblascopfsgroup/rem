@@ -4103,7 +4103,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 			if (!Checks.esNulo(propietario.getPorcPropiedad())) {
 				copropietarioActivo.setPorcPropiedad(propietario.getPorcPropiedad());
-
 			} else {
 				return false;
 			}

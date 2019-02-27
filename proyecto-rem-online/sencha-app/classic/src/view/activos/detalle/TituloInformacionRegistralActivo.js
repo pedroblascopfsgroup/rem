@@ -441,7 +441,7 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 								     params:params,
 								     success: function (a, operation, context) {
 								    	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-								    	me.up('tabpanel').down('grid').getStore().load();
+								    	me.up().down('grid').getStore().load();
 						           },
 						           failure: function (a, operation, context) {
 						           	  Ext.toast({

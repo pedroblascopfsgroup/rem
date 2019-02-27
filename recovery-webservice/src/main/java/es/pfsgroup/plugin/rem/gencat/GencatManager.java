@@ -1802,9 +1802,38 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 	public boolean comprobacionDocumentoAnulacion(Long idActivo) {
 		
 		Filter filtroIdActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
+		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+		Order orderByFechaCrear = new Order(OrderType.DESC, "auditoria.fechaCrear");
+		
+		//Datos comunicación
+		List <ComunicacionGencat> resultComunicacion = genericDao.getListOrdered(ComunicacionGencat.class, orderByFechaCrear, filtroIdActivo, filtroBorrado);
+		ComunicacionGencat comunicacionGencat = null;
+		if (!Checks.esNulo(resultComunicacion) && !resultComunicacion.isEmpty()) {
+			comunicacionGencat = resultComunicacion.get(0);
+		}
+		
+		long cmg = comunicacionGencat.getId();
+		
+		Filter filtroCmgId = genericDao.createFilter(FilterType.EQUALS, "comunicacionGencat.id", cmg);
+		
+		List <AdjuntoComunicacion> resultAdjuntoComunicacion = genericDao.getList(AdjuntoComunicacion.class, filtroCmgId);
+		
+		if (!Checks.esNulo(resultAdjuntoComunicacion)) {
+			for(AdjuntoComunicacion cga: resultAdjuntoComunicacion) {
+				if(cga.getTipoDocumentoComunicacion().getCodigo().equals(DDTipoDocumentoComunicacion.CODIGO_ANULACION_OFERTA_GENCAT)) {
+					return true;
+				}else {
+					return false;
+				}
+			}
+		}else {
+			return false;
+		}
 		return false;
 	}
 
+	@Override
+	@Transactional(readOnly = false)
 	public DtoAltaVisita altaVisitaComunicacion(DtoAltaVisita dtoAltaVisita) throws Exception {
 		
 		//Validacion

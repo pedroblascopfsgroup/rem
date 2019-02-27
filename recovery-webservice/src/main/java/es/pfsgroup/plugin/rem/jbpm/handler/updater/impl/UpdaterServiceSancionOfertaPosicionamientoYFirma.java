@@ -160,7 +160,7 @@ public class UpdaterServiceSancionOfertaPosicionamientoYFirma implements Updater
 							tituloActivo = genericDao.createFilter(FilterType.EQUALS, "codigo", valor.getValor());
 							tipoTitulo = genericDao.get(DDTipoTituloActivoTPA.class, tituloActivo);
 							
-							if((situacionPosesoria.getConTitulo().equals(DDTipoTituloActivoTPA.tipoTituloSi)) && (situacionPosesoria.getOcupado() == 1)){
+							if(situacionPosesoria!= null && situacionPosesoria.getConTitulo() != null && (situacionPosesoria.getConTitulo().equals(DDTipoTituloActivoTPA.tipoTituloSi) && situacionPosesoria.getOcupado() == 1)){
 								situacionPosesoria.setConTitulo(tipoTitulo);
 								situacionPosesoria.setOcupado(1);
 							}else{

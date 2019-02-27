@@ -49,14 +49,12 @@ import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.Downloader;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.DownloaderFactoryApi;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
-import es.pfsgroup.plugin.rem.model.ActivoAdjuntoActivo;
-import es.pfsgroup.plugin.rem.model.AdjuntoComprador;
-import es.pfsgroup.plugin.rem.model.ClienteComercial;
-import es.pfsgroup.plugin.rem.model.ClienteGDPR;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.ACCION_CODIGO;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.ENTIDAD_CODIGO;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.REQUEST_STATUS_CODE;
+import es.pfsgroup.plugin.rem.model.AdjuntoComprador;
+import es.pfsgroup.plugin.rem.model.ClienteComercial;
 import es.pfsgroup.plugin.rem.model.DtoActivosExpediente;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoAviso;
@@ -105,7 +103,7 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	private static final String ERROR_GENERICO = "La operación no se ha podido realizar";
 	private static final String ERROR_NO_EXISTE_PERSONA_HAYA = "No existe persona Haya";
 	private static final String ERROR_NO_EXISTE_NUM_DOCUMENTO = "No existe número de documento";
-	private static final String CAMPO_EXPEDIENTE = "E";
+	public static final String CAMPO_EXPEDIENTE = "E";
 	private static final String CAMPO_OFERTA = "O";
 
 	private static final String RESPONSE_DATA_KEY = "data";

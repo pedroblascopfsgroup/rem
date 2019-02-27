@@ -50,11 +50,6 @@
 			</exclusions>
 		</dependency>
 		<dependency>
-		    <groupId>org.bouncycastle</groupId>
-		    <artifactId>bctls-jdk15on</artifactId>
-		    <version>1.57</version>
-		</dependency>
-		<dependency>
 			<groupId>es.pfsgroup.plugin.evolution</groupId>
 			<artifactId>recovery-calendario-plugin-evol</artifactId>
 			<optional>true</optional>

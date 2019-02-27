@@ -35,6 +35,7 @@ import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.devon.utils.FileUtils;
+import es.capgemini.pfs.config.ConfigManager;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -42,6 +43,7 @@ import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
+import es.pfsgroup.framework.paradise.utils.JsonViewer;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
@@ -180,6 +182,10 @@ public class ActivoController extends ParadiseJsonController {
 	
 	@Autowired
 	private ActivoAdapter activoAdapter;
+	
+	@Autowired
+	private ConfigManager configManager;
+	
 
 	public ActivoApi getActivoApi() {
 		return activoApi;
@@ -1352,7 +1358,7 @@ public class ActivoController extends ParadiseJsonController {
 		try {
 			WebFileItem webFileItem = uploadAdapter.getWebFileItem(request);
 			adapter.upload(webFileItem);
-			model.put(RESPONSE_SUCCESS_KEY, true);
+			model.put(RESPONSE_SUCCESS_KEY, true);			
 		} catch (GestorDocumentalException e) {
 			model.put(RESPONSE_SUCCESS_KEY, false);
 			model.put("errorMessage", "Ha habido un problema con la subida del fichero al gestor documental.");
@@ -1365,7 +1371,17 @@ public class ActivoController extends ParadiseJsonController {
 
 		return createModelAndViewJson(model);
 	}
-
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getLimiteArchivo(HttpServletRequest request, HttpServletResponse response) {
+		String limite = configManager.getConfigByKey("documentos.max.size").getValor();
+		ModelMap model = new ModelMap();
+		model.put("sucess",true);
+		model.put("limite", limite);
+		return JsonViewer.createModelAndViewJson(model);
+	}
+	
 	@RequestMapping(method = RequestMethod.GET)
 	public void bajarAdjuntoActivo(HttpServletRequest request, HttpServletResponse response) {
 		try {

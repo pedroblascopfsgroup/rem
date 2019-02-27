@@ -2611,10 +2611,14 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 
 	onCargasListDobleClick: function (grid, record) {
 		var me = this;
-
-		if(CONST.ORIGEN_DATO['REM'] === record.getData().origenDatoCodigo) {
+		var isCarteraSareb = me.getViewModel().get("activo.isCarteraSareb");
+		var isCarteraBankia = me.getViewModel().get("activo.isCarteraBankia");
+		if((CONST.ORIGEN_DATO['REM'] === record.getData().origenDatoCodigo) || ((CONST.ORIGEN_DATO['RECOVERY'] === record.getData().origenDatoCodigo) && isCarteraSareb )) {
 			Ext.create("HreRem.view.activos.detalle.CargaDetalle", {carga: record, parent: grid.up("form"), modoEdicion: true}).show();
+		} else if((CONST.ORIGEN_DATO['RECOVERY'] === record.getData().origenDatoCodigo) && isCarteraBankia ){
+				Ext.create("HreRem.view.activos.detalle.CargaDetalle", {carga: record, parent: grid.up("form"), modoEdicion: false}).show();
 		}
+		
 	},
 
 	abrirFormularioAnyadirCarga: function(grid) {

@@ -198,7 +198,7 @@
  		return gestorEntidadApi.getListGestoresAdicionalesHistoricoData(gestorEntidadDto);
  	}
  	
- 	public Usuario getGestorByActivoYTipo(Activo activo, Long tipo){
+ 	public Usuario getGestorByActivoYTipo(Activo activo, Long tipo){ // NOS HEMOS QUEDADO MRIANDO ESTO
  		List<Usuario> usuariosGestoresList = ((GestorActivoDao) gestorEntidadDao).getListUsuariosGestoresActivoByTipoYActivo(tipo, activo);
  		
  		if(usuariosGestoresList != null && !usuariosGestoresList.isEmpty()) {

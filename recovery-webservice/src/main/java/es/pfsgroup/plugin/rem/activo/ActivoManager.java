@@ -2,6 +2,7 @@ package es.pfsgroup.plugin.rem.activo;
 
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -186,20 +187,24 @@ import es.pfsgroup.plugin.rem.model.Visita;
 import es.pfsgroup.plugin.rem.model.dd.DDAccionGastos;
 import es.pfsgroup.plugin.rem.model.dd.DDAdministracion;
 import es.pfsgroup.plugin.rem.model.dd.DDCalculoImpuesto;
+import es.pfsgroup.plugin.rem.model.dd.DDCalificacionNegativa;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoInformeComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoMotivoCalificacionNegativa;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisitaOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoCalificacionNegativa;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRechazoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoRetencion;
 import es.pfsgroup.plugin.rem.model.dd.DDOrigenDato;
+import es.pfsgroup.plugin.rem.model.dd.DDResponsableSubsanar;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionesPosesoria;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
@@ -880,6 +885,18 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				nuevoCondicionante.setPorcentajeReserva(new Double(3));
 				nuevoCondicionante.setImporteReserva(oferta.getImporteOferta() * (new Double(3) / 100));
 				nuevoCondicionante.setPlazoFirmaReserva(5);
+			}
+			// HREOS-5392
+			// Activos de Cerberus->Agora(Financiero, Inmobiliario) debe haber reserva por porcentaje del 10%
+			if (DDCartera.CODIGO_CARTERA_CERBERUS.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
+				&& (DDSubcartera.CODIGO_AGORA_INMOBILIARIO.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo())) ||
+					(DDSubcartera.CODIGO_AGORA_FINANCIERO.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo()))) {
+				nuevoCondicionante.setSolicitaReserva(1);
+				DDTipoCalculo tipoCalculo = (DDTipoCalculo) utilDiccionarioApi
+						.dameValorDiccionarioByCod(DDTipoCalculo.class, DDTipoCalculo.TIPO_CALCULO_PORCENTAJE);
+				nuevoCondicionante.setTipoCalculoReserva(tipoCalculo);
+				nuevoCondicionante.setPorcentajeReserva(new Double(10));
+				nuevoCondicionante.setImporteReserva(oferta.getImporteOferta() * (new Double(10) / 100));
 			}
 		}
 
@@ -5285,4 +5302,150 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 		return getActivoByIdProveedor(gastoProveedor.getProveedor().getId());
 	}
+	
+
+	@Override
+	public DtoActivoDatosRegistrales getCalificacionNegativoByidActivoIdMotivo(Long idActivo, String idMotivo) {
+		
+		Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id",idActivo);
+		Filter filtroMotivo = genericDao.createFilter(FilterType.EQUALS, "motivoCalificacionNegativa.codigo",idMotivo);
+		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado",false);
+		
+		DtoActivoDatosRegistrales dto = new DtoActivoDatosRegistrales();
+		ActivoCalificacionNegativa actCalNeg = genericDao.get(ActivoCalificacionNegativa.class, filtroActivo,filtroMotivo,filtroBorrado);
+		DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+		Date fechaFormateada = null;
+		if(!Checks.esNulo(actCalNeg)) {
+			try {
+				if(!Checks.esNulo(actCalNeg.getFechaSubsanacion())) {
+					fechaFormateada = formatter.parse(formatter.format(actCalNeg.getFechaSubsanacion()));
+				}
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+			dto.setFechaSubsanacion(fechaFormateada);
+			dto.setEstadoMotivoCalificacionNegativa(actCalNeg.getEstadoMotivoCalificacionNegativa().getDescripcion());
+			dto.setCodigoEstadoMotivoCalificacionNegativa(actCalNeg.getEstadoMotivoCalificacionNegativa().getCodigo());
+			dto.setDescripcionCalificacionNegativa(actCalNeg.getDescripcion());
+			dto.setCodigoResponsableSubsanar(actCalNeg.getResponsableSubsanar().getCodigo());
+			dto.setResponsableSubsanar(actCalNeg.getResponsableSubsanar().getDescripcion());
+			dto.setCodigoMotivoCalificacionNegativa(actCalNeg.getMotivoCalificacionNegativa().getCodigo());
+		}
+		return dto;
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public boolean saveCalificacionNegativoMotivo(DtoActivoDatosRegistrales dto) {
+	
+		boolean resultado = false;
+		if (!Checks.esNulo(dto.getCalificacionNegativa())) {
+			
+			if (!Checks.esNulo(dto.getMotivoCalificacionNegativa())) {
+				Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id",Long.parseLong(dto.getNumeroActivo()));
+				Filter filtroMotivo = genericDao.createFilter(FilterType.EQUALS, "motivoCalificacionNegativa.id",Long.parseLong(dto.getMotivoCalificacionNegativa()));
+				ActivoCalificacionNegativa actCalNeg = genericDao.get(ActivoCalificacionNegativa.class, filtroActivo,filtroMotivo);
+				DDEstadoMotivoCalificacionNegativa estMotCalNegativa = genericDao.get(DDEstadoMotivoCalificacionNegativa.class,genericDao.createFilter(FilterType.EQUALS, "codigo",  dto.getEstadoMotivoCalificacionNegativa()));
+				DDResponsableSubsanar responSubsanar = genericDao.get(DDResponsableSubsanar.class, genericDao.createFilter(FilterType.EQUALS, "codigo",  dto.getResponsableSubsanar()));
+				
+				if(!Checks.esNulo(actCalNeg)) {
+					if(!Checks.esNulo(estMotCalNegativa)) {
+						actCalNeg.setEstadoMotivoCalificacionNegativa(estMotCalNegativa);
+					}else {
+						actCalNeg.setEstadoMotivoCalificacionNegativa(null);
+					}
+					
+					if(!Checks.esNulo(responSubsanar)) {
+						actCalNeg.setResponsableSubsanar(responSubsanar);
+					}else {
+						actCalNeg.setResponsableSubsanar(null);
+					}
+					
+					if(!Checks.esNulo(dto.getFechaSubsanacion())) {
+						actCalNeg.setFechaSubsanacion(dto.getFechaSubsanacion());
+					}else {
+						actCalNeg.setFechaSubsanacion(null);
+					}
+					
+					if(DDMotivoCalificacionNegativa.CODIGO_OTROS.equals(actCalNeg.getMotivoCalificacionNegativa().getCodigo())) {
+						actCalNeg.setDescripcion(dto.getDescripcionCalificacionNegativa());
+					}
+					
+					if(actCalNeg.getAuditoria().isBorrado()) {
+						actCalNeg.getAuditoria().setFechaBorrar(null);
+						actCalNeg.getAuditoria().setUsuarioBorrar(null);
+						actCalNeg.getAuditoria().setBorrado(false);
+					}
+					
+					genericDao.save(ActivoCalificacionNegativa.class, actCalNeg);
+					
+					resultado = true;
+				}else {
+					actCalNeg = new ActivoCalificacionNegativa();
+					
+					if(!Checks.esNulo(estMotCalNegativa)) {
+						actCalNeg.setEstadoMotivoCalificacionNegativa(estMotCalNegativa);
+					}
+					
+					if(!Checks.esNulo(responSubsanar)) {
+						actCalNeg.setResponsableSubsanar(responSubsanar);
+					}
+					
+					if(!Checks.esNulo(dto.getFechaSubsanacion())) {
+						actCalNeg.setFechaSubsanacion(dto.getFechaSubsanacion());
+					}else {
+						actCalNeg.setFechaSubsanacion(null);
+					}
+					DDMotivoCalificacionNegativa motivoCN =(DDMotivoCalificacionNegativa) utilDiccionarioApi
+							.dameValorDiccionarioByCod(DDMotivoCalificacionNegativa.class, dto.getCodigoMotivoCalificacionNegativa());
+					
+					actCalNeg.setMotivoCalificacionNegativa(motivoCN);
+					actCalNeg.setActivo(activoDao.get(Long.parseLong(dto.getNumeroActivo())));
+					actCalNeg.setCalificacionNegativa((DDCalificacionNegativa) utilDiccionarioApi
+							.dameValorDiccionarioByCod(DDCalificacionNegativa.class, dto.getCalificacionNegativa()));
+					
+					if(DDMotivoCalificacionNegativa.CODIGO_OTROS.equals(motivoCN.getCodigo())) {
+						actCalNeg.setDescripcion(dto.getDescripcionCalificacionNegativa());
+					}
+					
+					
+					genericDao.save(ActivoCalificacionNegativa.class, actCalNeg);
+					
+					resultado = true;
+				}
+				
+			}
+			
+			
+		}
+		
+		return resultado;
+	}
+	
+	@Override
+	public boolean getMotivosCalificacionNegativaSubsanados( Long idActivo, String idMotivo) {
+		
+		int subsanado = 0;
+		boolean resultado = false;
+		
+		List<ActivoCalificacionNegativa> motivosCalificacionNegativa = activoDao.getListActivoCalificacionNegativaByIdActivoBorradoFalse(idActivo);
+		for (ActivoCalificacionNegativa activoCN : motivosCalificacionNegativa){
+			if (!activoCN.getAuditoria().isBorrado()){
+				
+				if(DDEstadoMotivoCalificacionNegativa.DD_SUBSANADO_CODIGO.equals(activoCN.getEstadoMotivoCalificacionNegativa().getCodigo())){
+					subsanado=subsanado+1;
+				}else if(idMotivo.equals(activoCN.getMotivoCalificacionNegativa().getCodigo())) {
+					subsanado=subsanado+1;
+				}
+			}
+		}
+		
+		if(subsanado == motivosCalificacionNegativa.size()) {
+			resultado = true;
+		}
+
+		return resultado;
+	}
+	
+	
 }

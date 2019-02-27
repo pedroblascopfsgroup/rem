@@ -319,7 +319,8 @@ public class ActivoAdapter {
 	@Autowired
 	private UsuarioManager usuarioManager;
 	
-	@Autowired
+
+	@Autowired 
     private ActivoAgrupacionDao activoAgrupacionDao;
 
 	private static final String CONSTANTE_REST_CLIENT = "rest.client.gestor.documental.constante";

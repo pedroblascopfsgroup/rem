@@ -51,7 +51,7 @@ public class TabActivoPatrimonioContrato implements TabActivoService {
 	public DtoActivoPatrimonioContrato getTabData(Activo activo) throws IllegalAccessException, InvocationTargetException {
 		DtoActivoPatrimonioContrato activoPatrimonioContratoDto = new DtoActivoPatrimonioContrato();		
 		List<ActivoPatrimonioContrato> listActivoPatrimonioContrato = activoPatrimonioDao.getActivoPatrimonioContratoByActivo(activo.getId());
-		List<Oferta> listadoOfertas = ofertaApi.getListaOfertasByActivo(activo);
+		List<Oferta> listadoOfertas = ofertaApi.getListaOfertasByActivo(activo); //Listado de ofertas del activo
 		
 		if(!Checks.estaVacio(listActivoPatrimonioContrato)) {
 			ActivoPatrimonioContrato activoPatrimonioContrato = listActivoPatrimonioContrato.get(0);
@@ -62,23 +62,35 @@ public class TabActivoPatrimonioContrato implements TabActivoService {
 				}
 			}	
 			activoPatrimonioContratoDto.setMultiplesResultados(listActivoPatrimonioContrato.size() > 1);
+			activoPatrimonioContratoDto.setTieneRegistro(listActivoPatrimonioContrato.size() >= 1); //Tiene más de un registro
 		}
 		
 		if(!Checks.estaVacio(listadoOfertas)) {
-			if(!Checks.esNulo(activoPatrimonioContratoDto.getIdContrato())) {
-				String contrato = activoPatrimonioContratoDto.getIdContrato();
-				
-				for (Oferta tipoOferta : listadoOfertas) {	
-					ExpedienteComercial expComercial = expedienteComercialApi.findOneByOferta(tipoOferta);
-					if(contrato.equals(tipoOferta.getNumContratoPrinex())
-							&& DDTipoOferta.CODIGO_ALQUILER.equals(expComercial.getOferta().getTipoOferta().getCodigo())) {
-						activoPatrimonioContratoDto.setOfertaREM(tipoOferta.getNumOferta());	
-						activoPatrimonioContratoDto.setIdExpediente(expComercial.getId());
+			String idContrato = activoPatrimonioContratoDto.getIdContrato(); 
+			if(!Checks.esNulo(idContrato)) {
+				ExpedienteComercial aux = null;
+				for (Oferta oferta : listadoOfertas) {	//Lista de ofertas del activo con un expediente relacionado
+					ExpedienteComercial expComercial = expedienteComercialApi.findOneByOferta(oferta);
+					if(!Checks.esNulo(expComercial)) {
+						String numContratoAlquiler = expComercial.getNumContratoAlquiler(); 
+						if(!Checks.esNulo(numContratoAlquiler)) {
+							if(numContratoAlquiler.equals(idContrato)) { //Expedientes con el mismo contrato que el activo
+								if(Checks.esNulo(aux)) {
+									aux = expComercial;
+								} else {
+									if(aux.getFechaVenta().before(expComercial.getFechaVenta())) { //Nos quedamos con el más reciente
+										aux = expComercial;
+									}
+								}
+							}
+						}
 					}
 				}
+				activoPatrimonioContratoDto.setOfertaREM(aux.getOferta().getNumOferta());
+				activoPatrimonioContratoDto.setIdExpediente(aux.getId());
 			}
 		}
-				
+		
 		return activoPatrimonioContratoDto;
 	}
 

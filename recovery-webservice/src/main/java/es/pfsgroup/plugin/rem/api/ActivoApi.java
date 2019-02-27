@@ -28,6 +28,7 @@ import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.DtoActivoCargas;
 import es.pfsgroup.plugin.rem.model.DtoActivoCargasTab;
+import es.pfsgroup.plugin.rem.model.DtoActivoDatosRegistrales;
 import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoActivoIntegrado;
@@ -1070,4 +1071,26 @@ public interface ActivoApi {
 	 * @return DtoMotivoAnulacionExpediente.
 	 */
 	List<DtoMotivoAnulacionExpediente> getMotivoAnulacionExpediente();
+	
+	/**
+	 * Devuelve la calificacion negativa de un activo a partir de un motivo
+	 * @param idActivo
+	 * @param idMotivo
+	 * @return
+	 */
+	DtoActivoDatosRegistrales getCalificacionNegativoByidActivoIdMotivo(Long idActivo, String idMotivo);
+	
+	/**
+	 * Guarda la calificacion negativa de un motivo en un activo
+	 * @param dto
+	 * @return boolean 
+	 */
+	boolean saveCalificacionNegativoMotivo(DtoActivoDatosRegistrales dto);
+	
+	/**
+	 * Devuelve un boolean al comprobar si los motivos de calificacion negativa tienen como estado subsanado.
+	 * @param idActivo
+	 * @return boolean
+	 */
+	boolean getMotivosCalificacionNegativaSubsanados(Long idActivo, String idMotivo);
 }

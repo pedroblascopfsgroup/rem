@@ -2540,7 +2540,6 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		return !"0".equals(resultado);
 	}
 
-
 	@Override
 	public Boolean isAgrupacionSinActivoPrincipal(String mumAgrupacionRem) {
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1)" 
@@ -2564,7 +2563,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		
 		return !"0".equals(resultado);
 	}
-	
+
 	@Override
 	public Boolean isActivoIncluidoPerimetroAlquiler(String numActivo) {
 			String resultado = rawDao.getExecuteSQL( "SELECT COUNT(1)"

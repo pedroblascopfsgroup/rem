@@ -372,13 +372,11 @@ public String creaCuerpoPropuestaOferta(Oferta oferta){
 	
 	
 	Activo activo = oferta.getActivoPrincipal();
-	
+	DtoSendNotificator dtoSendNotificator = new DtoSendNotificator();
 	Filter filterAct = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
 	List<ActivoTramite> tramites = genericDao.getList(ActivoTramite.class, filterAct);
+	ActivoTramite tramite;
 	
-	Integer numTramites = tramites.size();
-	
-	ActivoTramite tramite = tramites.get(numTramites-1);
 	
 	String asunto = "Notificación de propuesta de la oferta " + oferta.getNumOferta();
 	String cuerpo = "<p>Nos complace mandarle la información de la propuesta de oferta " + oferta.getNumOferta();
@@ -397,9 +395,14 @@ public String creaCuerpoPropuestaOferta(Oferta oferta){
 	cuerpo = cuerpo + String.format("<p>Gestor comercial: %s </p>", (gestorComercial != null) ? gestorComercial.getApellidoNombre() : STR_MISSING_VALUE );
 	cuerpo = cuerpo + String.format("<p>%s</p>", (gestorComercial != null) ? gestorComercial.getEmail() : STR_MISSING_VALUE);
 
-	DtoSendNotificator dtoSendNotificator = this.rellenaDtoSendNotificator(tramite);
-	dtoSendNotificator.setTitulo(asunto);
-
+	Integer numTramites = tramites.size();
+	
+	if(!Checks.estaVacio(tramites)) {
+		tramite = tramites.get(numTramites-1);
+		dtoSendNotificator = this.rellenaDtoSendNotificator(tramite);
+		dtoSendNotificator.setTitulo(asunto);
+	}
+	
 	String cuerpoCorreo = this.generateCuerpo(dtoSendNotificator, cuerpo);
 	
 	return cuerpoCorreo;

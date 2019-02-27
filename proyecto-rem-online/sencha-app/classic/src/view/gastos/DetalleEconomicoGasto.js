@@ -784,7 +784,7 @@ Ext.define('HreRem.view.gastos.DetalleEconomicoGasto', {
 																						
 																			},
 															           		{		                
-																					    xtype: 'textfieldbase',
+																					    xtype: 'numberfieldbase',
 																					    fieldLabel:  HreRem.i18n('fieldlabel.detalle.economico.numero.conexion'),
 																					    bind: {
 																				        	value: '{detalleeconomico.numeroConexion}',

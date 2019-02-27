@@ -349,7 +349,9 @@ Ext.define('HreRem.ux.util.Constants', {
 	},
 
 	SUBCARTERA: {
-		BH: '06'
+		BH: '06',
+		AGORAINMOBILIARIO: '135',
+		AGORAFINANCIERO: '137'
 	},
 
 	NOMBRE_CARTERA:	{
@@ -621,6 +623,11 @@ Ext.define('HreRem.ux.util.Constants', {
 
 	MOTIVOS_CAL_NEGATIVA:{
 		OTROS: '21'
+	},
+	
+	ESTADOS_MOTIVOS_CAL_NEGATIVA:{
+		PENDIENTE: '01',
+		SUBSANADO: '02'
 	},
     
     TAREAS:{

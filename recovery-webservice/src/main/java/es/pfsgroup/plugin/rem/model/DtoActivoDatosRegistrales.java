@@ -109,12 +109,21 @@ public class DtoActivoDatosRegistrales extends DtoTabActivo {
 	//Calificacion negativa
 	private String calificacionNegativa;
 	private String motivoCalificacionNegativa;
+	private String codigoMotivoCalificacionNegativa;
 	private String descripcionCalificacionNegativa;
 	
 	
+	//Motivo Estado Calificación negativa
+	private String estadoMotivoCalificacionNegativa;
+	private String codigoEstadoMotivoCalificacionNegativa;
 	
+	//Responsable Subsanar
 	
+	private String responsableSubsanar;
+	private String codigoResponsableSubsanar;
 	
+	private Date fechaSubsanacion;
+	private Long idMotivo;
 	
 	/*
 
@@ -637,6 +646,48 @@ public class DtoActivoDatosRegistrales extends DtoTabActivo {
 	}
 	public void setDescripcionCalificacionNegativa(String descripcionCalificacionNegativa) {
 		this.descripcionCalificacionNegativa = descripcionCalificacionNegativa;
+	}
+	public String getEstadoMotivoCalificacionNegativa() {
+		return estadoMotivoCalificacionNegativa;
+	}
+	public void setEstadoMotivoCalificacionNegativa(String estadoMotivoCalificacionNegativa) {
+		this.estadoMotivoCalificacionNegativa = estadoMotivoCalificacionNegativa;
+	}
+	public String getResponsableSubsanar() {
+		return responsableSubsanar;
+	}
+	public void setResponsableSubsanar(String responsableSubsanar) {
+		this.responsableSubsanar = responsableSubsanar;
+	}
+	public Date getFechaSubsanacion() {
+		return fechaSubsanacion;
+	}
+	public void setFechaSubsanacion(Date fechaSubsanacion) {
+		this.fechaSubsanacion = fechaSubsanacion;
+	}
+	public String getCodigoEstadoMotivoCalificacionNegativa() {
+		return codigoEstadoMotivoCalificacionNegativa;
+	}
+	public void setCodigoEstadoMotivoCalificacionNegativa(String codigoEstadoMotivoCalificacionNegativa) {
+		this.codigoEstadoMotivoCalificacionNegativa = codigoEstadoMotivoCalificacionNegativa;
+	}
+	public String getCodigoResponsableSubsanar() {
+		return codigoResponsableSubsanar;
+	}
+	public void setCodigoResponsableSubsanar(String codigoResponsableSubsanar) {
+		this.codigoResponsableSubsanar = codigoResponsableSubsanar;
+	}
+	public Long getIdMotivo() {
+		return idMotivo;
+	}
+	public void setIdMotivo(Long idMotivo) {
+		this.idMotivo = idMotivo;
+	}
+	public String getCodigoMotivoCalificacionNegativa() {
+		return codigoMotivoCalificacionNegativa;
+	}
+	public void setCodigoMotivoCalificacionNegativa(String codigoMotivoCalificacionNegativa) {
+		this.codigoMotivoCalificacionNegativa = codigoMotivoCalificacionNegativa;
 	}
 
 

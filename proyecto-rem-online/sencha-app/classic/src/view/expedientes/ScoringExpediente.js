@@ -97,49 +97,7 @@ Ext.define('HreRem.view.expedientes.ScoringExpediente', {
 				            	   store: '{storeHistoricoScoring}'  
 				               },
 							   columns :
-								[
-									{
-	        					        xtype: 'actioncolumn',
-	        					        width: 30,
-	        					        hideable: false,
-	        					        items: [{
-	        					           	iconCls: 'ico-download',
-	        					           	tooltip: HreRem.i18n('tooltip.download'),
-	        					            handler: function(grid, rowIndex, colIndex) {
-	        					                var record = grid.getRecord(rowIndex);
-	        					                var idActivo=record.get('idActivo');
-	        					                if(!Ext.isEmpty(idActivo)){
-		        					               //Todo lo que viene a continuación, es para descargar el fichero
-		        					                config = {};
-													config.url=$AC.getWebPath()+'activo/bajarAdjuntoActivo.'+$AC.getUrlPattern();
-													config.params = {};
-													config.params.id=record.get('identificador');
-													config.params.idActivo=record.get("idActivo");
-													
-													config = config || {};
-			    
-												    var url = config.url,
-												        method = config.method || 'GET',// Either GET or POST. Default is POST.
-												        params = config.params || {};
-												    var form = Ext.create('Ext.form.Panel', {
-												        standardSubmit: true,
-												        url: url,
-												        method: method
-												    });
-												    form.submit({
-												        target: '_blank', 
-												        params: params
-												    });
-												    Ext.defer(function(){
-												        form.destroy();
-												    }, 1000);
-	        					                 				                
-	        					                }else{
-	        					                	me.fireEvent("errorToast", "No hay adjunto ningun documento de tipo Scoring");
-	        					                }
-	        					            }
-	        					        }]
-	        			    		},
+								[									
 	        			    		{   
 					                	text: HreRem.i18n('fieldlabel.fecha.sancion'),
 							        	dataIndex: 'fechaSancion',

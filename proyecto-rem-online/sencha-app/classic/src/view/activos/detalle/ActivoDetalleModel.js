@@ -562,7 +562,16 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			}
 
 		},
-
+		onInitChangePrecioWebAlquiler: function (get){
+			var noMostrarPrecio = get('datospublicacionactivo.noMostrarPrecioAlquiler');
+			var precioWebVentaAlquiler = get('datospublicacionactivo.precioWebAlquiler');
+				if (noMostrarPrecio)
+					return 0;
+				else
+					return precioWebVentaAlquiler;
+			
+			
+		},
 		esVisibleTipoPublicacionAlquiler: function(get){
 			var estadoAlquiler = get('datospublicacionactivo.estadoPublicacionAlquiler');
 			var tipoPublicacionAlquiler = get('datospublicacionactivo.tipoPublicacionAlquilerDescripcion');

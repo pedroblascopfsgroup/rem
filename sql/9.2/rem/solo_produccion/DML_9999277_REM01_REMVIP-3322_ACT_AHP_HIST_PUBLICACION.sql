@@ -32,28 +32,35 @@ DECLARE
     V_USUARIO VARCHAR2(25 CHAR):= 'REMVIP-3322'; -- Usuario modificar
     
 BEGIN	
-
+	DBMS_OUTPUT.PUT_LINE('[INICIO]');
+	
     -- LIMPIAR FECHAS HISTÓRICO ------------------------------------------------
     
+	DBMS_OUTPUT.PUT_LINE('	[INFO]	Inicio limpieza fechas histórico venta');
+	
 	V_SQL := 'UPDATE '||V_ESQUEMA||'.ACT_AHP_HIST_PUBLICACION
               SET AHP_FECHA_INI_VENTA = NULL
                  ,AHP_FECHA_FIN_VENTA = NULL
-                 ,USUARIOMODIFICAR = '||V_USUARIO||'
+                 ,USUARIOMODIFICAR = '''||V_USUARIO||'''
                  ,FECHAMODIFICAR = SYSDATE
               WHERE (AHP_FECHA_INI_VENTA IS NOT NULL OR AHP_FECHA_FIN_VENTA IS NOT NULL)
               AND DD_TCO_ID = 3';
     EXECUTE IMMEDIATE V_SQL;
     
+    DBMS_OUTPUT.PUT_LINE('	[INFO]	Inicio limpieza fechas histórico alquiler');
+    
     V_SQL := 'UPDATE '||V_ESQUEMA||'.ACT_AHP_HIST_PUBLICACION
               SET AHP_FECHA_INI_ALQUILER = NULL
                  ,AHP_FECHA_FIN_ALQUILER = NULL
-                 ,USUARIOMODIFICAR = '||V_USUARIO||'
+                 ,USUARIOMODIFICAR = '''||V_USUARIO||'''
                  ,FECHAMODIFICAR = SYSDATE
               WHERE (AHP_FECHA_INI_ALQUILER IS NOT NULL OR AHP_FECHA_FIN_ALQUILER IS NOT NULL)
               AND DD_TCO_ID = 1';
     EXECUTE IMMEDIATE V_SQL;
     
     -- FECHA_FIN REGISTRO A NULL -----------------------------------------------
+    
+    DBMS_OUTPUT.PUT_LINE('	[INFO]	Inicio update fecha fin venta null');
     
     V_SQL := 'MERGE INTO '||V_ESQUEMA||'.ACT_AHP_HIST_PUBLICACION T1
                 USING (
@@ -77,10 +84,12 @@ BEGIN
                 ON (T1.AHP_ID = T2.AHP_ID)
                 WHEN MATCHED THEN UPDATE SET 
                     T1.AHP_FECHA_FIN_VENTA = T2.FECHA_FIN_NUEVA
-                    ,USUARIOMODIFICAR = '||V_USUARIO||'
+                    ,USUARIOMODIFICAR = '''||V_USUARIO||'''
                     ,FECHAMODIFICAR = SYSDATE
                 WHERE T2.FECHA_FIN_NUEVA IS NOT NULL';
     EXECUTE IMMEDIATE V_SQL;
+    
+    DBMS_OUTPUT.PUT_LINE('	[INFO]	Inicio update fecha fin alquiler null');
     
     V_SQL := 'MERGE INTO '||V_ESQUEMA||'.ACT_AHP_HIST_PUBLICACION T1
                 USING (
@@ -104,12 +113,14 @@ BEGIN
                 ON (T1.AHP_ID = T2.AHP_ID)
                 WHEN MATCHED THEN UPDATE SET 
                     T1.AHP_FECHA_FIN_ALQUILER = T2.FECHA_FIN_NUEVA
-                    ,USUARIOMODIFICAR = '||V_USUARIO||'
+                    ,USUARIOMODIFICAR = '''||V_USUARIO||'''
                     ,FECHAMODIFICAR = SYSDATE
                 WHERE T2.FECHA_FIN_NUEVA IS NOT NULL';
     EXECUTE IMMEDIATE V_SQL;
     
     -- CUADRAR FECHA_INI CON FECHA_FIN ANTERIOR --------------------------------
+    
+    DBMS_OUTPUT.PUT_LINE('	[INFO]	Inicio cuadrar fecha_ini_venta con fecha_fin_venta anterior');
     
     V_SQL := 'MERGE INTO '||V_ESQUEMA||'.ACT_AHP_HIST_PUBLICACION T1
                 USING (
@@ -131,11 +142,13 @@ BEGIN
                 ON (T1.AHP_ID = T2.AHP_ID)
                 WHEN MATCHED THEN UPDATE SET
                     T1.AHP_FECHA_INI_VENTA = T2.FECHA_INI_NUEVA
-                    ,T1.USUARIOMODIFICAR = '||V_USUARIO||'
+                    ,T1.USUARIOMODIFICAR = '''||V_USUARIO||'''
                     ,T1.FECHAMODIFICAR = SYSDATE
                 WHERE T2.FECHA_INI_NUEVA IS NOT NULL
 				AND T1.DD_TCO_ID IN (1,2)';
     EXECUTE IMMEDIATE V_SQL;
+    
+    DBMS_OUTPUT.PUT_LINE('	[INFO]	Inicio cuadrar fecha_ini_alquiler con fecha_fin_alquiler anterior');
     
     V_SQL := 'MERGE INTO '||V_ESQUEMA||'.ACT_AHP_HIST_PUBLICACION T1
                 USING (
@@ -157,14 +170,16 @@ BEGIN
                 ON (T1.AHP_ID = T2.AHP_ID)
                 WHEN MATCHED THEN UPDATE SET
                     T1.AHP_FECHA_INI_ALQUILER = T2.FECHA_INI_NUEVA
-                    ,T1.USUARIOMODIFICAR = '||V_USUARIO||'
+                    ,T1.USUARIOMODIFICAR = '''||V_USUARIO||'''
                     ,T1.FECHAMODIFICAR = SYSDATE
                 WHERE T2.FECHA_INI_NUEVA IS NOT NULL
 				AND T1.DD_TCO_ID IN (2,3)';
     EXECUTE IMMEDIATE V_SQL;
     
 	COMMIT;
- 
+	
+ 	DBMS_OUTPUT.PUT_LINE('[FIN]');
+	
 EXCEPTION
      WHEN OTHERS THEN
           ERR_NUM := SQLCODE;

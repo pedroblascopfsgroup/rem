@@ -94,16 +94,25 @@ public class GenericController extends ParadiseJsonController{
 	}
 
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getDiccionarioTiposDocumento(String diccionario) {	
+	public ModelAndView getDiccionarioTiposDocumento(String diccionario, String entidad) {	
 
 		if ("tiposDocumento".equals(diccionario)) {
 			List<Dictionary> result = adapter.getDiccionario(diccionario);
 
 			List<DDTipoDocumentoActivoDto> out = new ArrayList<DDTipoDocumentoActivoDto>();
 
+			//si es un ñapa... lo se
 			for (Dictionary ddTipoDocumentoActivo : result) {
-				if(((DDTipoDocumentoActivo)ddTipoDocumentoActivo).getVisible())
-					out.add(new DDTipoDocumentoActivoDto((DDTipoDocumentoActivo) ddTipoDocumentoActivo));
+				if(entidad == null || entidad.equals("activo")){
+					if(((DDTipoDocumentoActivo)ddTipoDocumentoActivo).getVisible()){
+						out.add(new DDTipoDocumentoActivoDto((DDTipoDocumentoActivo) ddTipoDocumentoActivo));
+					}						
+				}else{
+					if(!((DDTipoDocumentoActivo)ddTipoDocumentoActivo).getVisible()){
+						out.add(new DDTipoDocumentoActivoDto((DDTipoDocumentoActivo) ddTipoDocumentoActivo));
+					}						
+				}
+				
 			}
 
 			return createModelAndViewJson(new ModelMap("data", out));	

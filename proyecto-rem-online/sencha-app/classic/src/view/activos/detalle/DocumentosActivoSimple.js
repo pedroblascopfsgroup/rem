@@ -65,7 +65,7 @@ Ext.define('HreRem.view.activos.detalle.DocumentosActivoSimple', {
 					        		    		 var limite = data.limite;
 					        		    		 var record = grid.getStore().getAt(rowIndex);
 					        		    		 
-					        		    		 if(record.get('tamanyo')/1024/1024 <= limite){
+					        		    		 if(!Ext.isDefined(record.get('tamanyo')) || record.get('tamanyo') == null || limite == 0 || record.get('tamanyo')/1024/1024 <= limite){
 					        		    			 grid.fireEvent("download", grid, record);
 					        		    		 }else{
 					        		    			 grid.fireEvent("errorToast", "No se puede descargar ficheros mayores de "+limite+"Mb.");

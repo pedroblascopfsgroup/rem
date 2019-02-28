@@ -41,7 +41,7 @@ public class ExpedienteAvisoPreBloqueadoGencat implements ExpedienteAvisadorApi{
 			Oferta oferta = expediente.getOferta();	
 			List<OfertaGencat> ofertaGencat = genericDao.getList(OfertaGencat.class,genericDao.createFilter(FilterType.EQUALS,"oferta", oferta));
 
-			if((Checks.esNulo(ofertaGencat.get(0))) || (!Checks.esNulo(ofertaGencat) && Checks.esNulo(ofertaGencat.get(0).getIdOfertaAnterior()) && !ofertaGencat.get(0).getAuditoria().isBorrado()))  {
+			if(ofertaGencat.size() > 0 && Checks.esNulo(ofertaGencat.get(0).getIdOfertaAnterior()) && !ofertaGencat.get(0).getAuditoria().isBorrado())  {
 				List<ActivoOferta> actOfrList = expediente.getOferta().getActivosOferta();
 				Reserva reserva = genericDao.get(Reserva.class, genericDao.createFilter(FilterType.EQUALS, "expediente.id", expediente.getId()));
 				for (ActivoOferta actOfr : actOfrList){

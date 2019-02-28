@@ -168,4 +168,14 @@ public class ActivoAgrupacionActivoDaoImpl extends AbstractEntityDao<ActivoAgrup
 
 		return (list.size() > 0);
 	}
+	
+	@Override
+	public Activo getActivoMatrizByIdAgrupacion(Long idAgrupacion){
+		HQLBuilder hb = new HQLBuilder("select aa.activo from ActivoAgrupacionActivo aa where aa.agrupacion.id = "+idAgrupacion+ " and aa.isActivoMatriz = 1");
+		try{
+			return ((Activo) getHibernateTemplate().find(hb.toString()).get(0));
+		}catch(Exception e){
+			return null;
+		}
+	}
 }

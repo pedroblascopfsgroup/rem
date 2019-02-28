@@ -14,11 +14,13 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
@@ -43,6 +45,9 @@ public class UpdaterServiceSancionOfertaAlquileresFirma implements UpdaterServic
     
     @Autowired
     private ActivoAdapter activoAdapter;
+    
+    @Autowired
+    private ActivoAgrupacionActivoDao activoAgrupacionActivoDao;
 
     protected static final Log logger = LogFactory.getLog(UpdaterServiceSancionOfertaAlquileresFirma.class);
     
@@ -61,7 +66,8 @@ public class UpdaterServiceSancionOfertaAlquileresFirma implements UpdaterServic
 		for(ActivoAgrupacionActivo activoAgrupacionActivo : agrupacionesActivo){
 			if(!Checks.esNulo(activoAgrupacionActivo.getAgrupacion()) && !Checks.esNulo(activoAgrupacionActivo.getAgrupacion().getTipoAgrupacion())){
 				if((DDTipoAgrupacion.AGRUPACION_PROMOCION_ALQUILER).equals(activoAgrupacionActivo.getAgrupacion().getTipoAgrupacion().getCodigo())){
-					Activo activoMatriz = activoAgrupacionActivo.getAgrupacion().getActivoPrincipal();
+					Long idAgrupacion = activoAgrupacionActivo.getAgrupacion().getId();
+					Activo activoMatriz = activoAgrupacionActivoDao.getActivoMatrizByIdAgrupacion(idAgrupacion);
 					DDSituacionComercial alquiladoParcialmente = genericDao.get(DDSituacionComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDSituacionComercial.CODIGO_ALQUILADO_PARCIALMENTE));
 					activoMatriz.setSituacionComercial(alquiladoParcialmente);
 					activoDao.saveOrUpdate(activoMatriz);

@@ -59,4 +59,6 @@ public interface ActivoAgrupacionActivoDao extends AbstractDao<ActivoAgrupacionA
 	 * @return Devuelve True si algún activo se encuentra en alguna agrupación de tipo 'lote comercial', False si no es así.
 	 */
 	public boolean algunActivoDeAgrRestringidaEnAgrLoteComercial(List<Long> activosID);
+
+	public Activo getActivoMatrizByIdAgrupacion(Long idAgrupacion);
 }

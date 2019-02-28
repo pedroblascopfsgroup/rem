@@ -1,6 +1,5 @@
 --/*
 --##########################################
-
 --## AUTOR=Carles Molins
 --## FECHA_CREACION=20190214
 --## ARTEFACTO=online

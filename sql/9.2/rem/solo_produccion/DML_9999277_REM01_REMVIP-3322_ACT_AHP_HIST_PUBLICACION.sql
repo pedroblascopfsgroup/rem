@@ -44,6 +44,7 @@ BEGIN
               AND DD_TCO_ID = 3';
     EXECUTE IMMEDIATE V_MSQL;
     
+    DBMS_OUTPUT.PUT_LINE('          '||SQL%ROWCOUNT||' registros actualizados');
     DBMS_OUTPUT.PUT_LINE('	[INFO]	Inicio limpieza fechas histórico alquiler');
     
     V_MSQL := 'UPDATE '||V_ESQUEMA||'.ACT_AHP_HIST_PUBLICACION
@@ -55,6 +56,7 @@ BEGIN
               AND DD_TCO_ID = 1';
     EXECUTE IMMEDIATE V_MSQL;
     
+    DBMS_OUTPUT.PUT_LINE('          '||SQL%ROWCOUNT||' registros actualizados');
     DBMS_OUTPUT.PUT_LINE('	[INFO]	Inicio update fecha fin venta null');
     
     V_MSQL := 'MERGE INTO '||V_ESQUEMA||'.ACT_AHP_HIST_PUBLICACION T1
@@ -81,6 +83,7 @@ BEGIN
                     ,FECHAMODIFICAR = SYSDATE';
     EXECUTE IMMEDIATE V_MSQL;
     
+    DBMS_OUTPUT.PUT_LINE('          '||SQL%ROWCOUNT||' registros actualizados');
     DBMS_OUTPUT.PUT_LINE('	[INFO]	Inicio update fecha fin alquiler null');
     
     V_MSQL := 'MERGE INTO '||V_ESQUEMA||'.ACT_AHP_HIST_PUBLICACION T1
@@ -107,13 +110,14 @@ BEGIN
                     ,FECHAMODIFICAR = SYSDATE';
     EXECUTE IMMEDIATE V_MSQL;
     
+    DBMS_OUTPUT.PUT_LINE('          '||SQL%ROWCOUNT||' registros actualizados');
     DBMS_OUTPUT.PUT_LINE('	[INFO]	Inicio cuadrar fecha_ini_venta con fecha_fin_venta anterior');
     
     V_MSQL := 'MERGE INTO '||V_ESQUEMA||'.ACT_AHP_HIST_PUBLICACION T1
                 USING (
                     WITH HIST AS (
                         SELECT DISTINCT AHP.ACT_ID, AHP.AHP_ID, AHP.AHP_FECHA_INI_VENTA, AHP.AHP_FECHA_FIN_VENTA,
-                        ROW_NUMBER() OVER (PARTITION BY AHP.ACT_ID ORDER BY AHP.AHP_FECHA_FIN_VENTA ASC) RN
+                        ROW_NUMBER() OVER (PARTITION BY AHP.ACT_ID ORDER BY AHP.AHP_FECHA_INI_VENTA ASC NULLS FIRST) RN
                         FROM '||V_ESQUEMA||'.ACT_AHP_HIST_PUBLICACION AHP
                         WHERE ((AHP.AHP_FECHA_INI_VENTA IS NOT NULL OR AHP.AHP_FECHA_FIN_VENTA IS NOT NULL) AND DD_TCO_ID IN (1,2))
                         AND AHP.BORRADO = 0
@@ -137,13 +141,14 @@ BEGIN
                 AND T2.FECHA_INI_NUEVA IS NOT NULL';
     EXECUTE IMMEDIATE V_MSQL;
     
+    DBMS_OUTPUT.PUT_LINE('          '||SQL%ROWCOUNT||' registros actualizados');
     DBMS_OUTPUT.PUT_LINE('	[INFO]	Inicio cuadrar fecha_ini_alquiler con fecha_fin_alquiler anterior');
     
     V_MSQL := 'MERGE INTO '||V_ESQUEMA||'.ACT_AHP_HIST_PUBLICACION T1
                 USING (
                     WITH HIST AS (
                         SELECT DISTINCT AHP.ACT_ID, AHP.AHP_ID, AHP.AHP_FECHA_INI_ALQUILER, AHP.AHP_FECHA_FIN_ALQUILER,
-                        ROW_NUMBER() OVER (PARTITION BY AHP.ACT_ID ORDER BY AHP.AHP_FECHA_FIN_ALQUILER ASC) RN
+                        ROW_NUMBER() OVER (PARTITION BY AHP.ACT_ID ORDER BY AHP.AHP_FECHA_INI_ALQUILER ASC NULLS FIRST) RN
                         FROM '||V_ESQUEMA||'.ACT_AHP_HIST_PUBLICACION AHP
                         WHERE ((AHP.AHP_FECHA_INI_ALQUILER IS NOT NULL OR AHP.AHP_FECHA_FIN_ALQUILER IS NOT NULL) AND DD_TCO_ID IN (2,3))
                         AND AHP.BORRADO = 0
@@ -166,6 +171,48 @@ BEGIN
                 WHERE T1.DD_TCO_ID IN (2,3)
                 AND T2.FECHA_INI_NUEVA IS NOT NULL';
     EXECUTE IMMEDIATE V_MSQL;
+    
+    DBMS_OUTPUT.PUT_LINE('          '||SQL%ROWCOUNT||' registros actualizados');
+    DBMS_OUTPUT.PUT_LINE('	[INFO]	Inicio poner a nulo la fecha_fin_venta actual');
+    
+    V_MSQL := 'MERGE INTO '||V_ESQUEMA||'.ACT_AHP_HIST_PUBLICACION T1
+				USING (
+				    SELECT AHP.AHP_ID, APU.ACT_ID, AHP.AHP_FECHA_FIN_VENTA
+				    ,ROW_NUMBER() OVER (PARTITION BY AHP.ACT_ID ORDER BY AHP.AHP_FECHA_FIN_VENTA DESC NULLS FIRST) RN
+				    FROM '||V_ESQUEMA||'.ACT_AHP_HIST_PUBLICACION AHP
+				    JOIN '||V_ESQUEMA||'.ACT_APU_ACTIVO_PUBLICACION APU ON APU.ACT_ID = AHP.ACT_ID
+				    WHERE APU.DD_TCO_ID IN (1,2)
+                    AND (AHP.AHP_FECHA_INI_VENTA IS NOT NULL OR AHP.AHP_FECHA_FIN_VENTA IS NOT NULL)
+				) T2
+				ON (T1.AHP_ID = T2.AHP_ID)
+				WHEN MATCHED THEN UPDATE SET
+				    T1.AHP_FECHA_FIN_VENTA = NULL
+				    ,T1.USUARIOMODIFICAR = '''||V_USUARIO||'''
+				    ,T1.FECHAMODIFICAR = SYSDATE
+				WHERE T2.RN = 1';
+    EXECUTE IMMEDIATE V_MSQL;
+    
+    DBMS_OUTPUT.PUT_LINE('          '||SQL%ROWCOUNT||' registros actualizados');
+    DBMS_OUTPUT.PUT_LINE('	[INFO]	Inicio poner a nulo la fecha_fin_alquiler actual');
+    
+    V_MSQL := 'MERGE INTO '||V_ESQUEMA||'.ACT_AHP_HIST_PUBLICACION T1
+				USING (
+				    SELECT AHP.AHP_ID, APU.ACT_ID, AHP.AHP_FECHA_FIN_ALQUILER
+				    ,ROW_NUMBER() OVER (PARTITION BY AHP.ACT_ID ORDER BY AHP.AHP_FECHA_FIN_ALQUILER DESC NULLS FIRST) RN
+				    FROM '||V_ESQUEMA||'.ACT_AHP_HIST_PUBLICACION AHP
+				    JOIN '||V_ESQUEMA||'.ACT_APU_ACTIVO_PUBLICACION APU ON APU.ACT_ID = AHP.ACT_ID
+                    AND (AHP.AHP_FECHA_INI_ALQUILER IS NOT NULL OR AHP.AHP_FECHA_FIN_ALQUILER IS NOT NULL)
+				    WHERE APU.DD_TCO_ID IN (2,3)
+				) T2
+				ON (T1.AHP_ID = T2.AHP_ID)
+				WHEN MATCHED THEN UPDATE SET
+				    T1.AHP_FECHA_FIN_ALQUILER = NULL
+				    ,T1.USUARIOMODIFICAR = '''||V_USUARIO||'''
+				    ,T1.FECHAMODIFICAR = SYSDATE
+				WHERE T2.RN = 1';
+    EXECUTE IMMEDIATE V_MSQL;
+    
+    DBMS_OUTPUT.PUT_LINE('          '||SQL%ROWCOUNT||' registros actualizados');
     
 	COMMIT;
     

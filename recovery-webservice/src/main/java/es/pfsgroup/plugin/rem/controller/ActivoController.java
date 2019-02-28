@@ -9,6 +9,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -37,6 +38,7 @@ import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.devon.utils.FileUtils;
+import es.capgemini.pfs.config.ConfigManager;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -44,6 +46,7 @@ import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
+import es.pfsgroup.framework.paradise.utils.JsonViewer;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
@@ -182,6 +185,10 @@ public class ActivoController extends ParadiseJsonController {
 	
 	@Autowired
 	private ActivoAdapter activoAdapter;
+	
+	@Autowired
+	private ConfigManager configManager;
+	
 
 	public ActivoApi getActivoApi() {
 		return activoApi;
@@ -1354,7 +1361,7 @@ public class ActivoController extends ParadiseJsonController {
 		try {
 			WebFileItem webFileItem = uploadAdapter.getWebFileItem(request);
 			adapter.upload(webFileItem);
-			model.put(RESPONSE_SUCCESS_KEY, true);
+			model.put(RESPONSE_SUCCESS_KEY, true);			
 		} catch (GestorDocumentalException e) {
 			model.put(RESPONSE_SUCCESS_KEY, false);
 			model.put("errorMessage", "Ha habido un problema con la subida del fichero al gestor documental.");
@@ -1367,13 +1374,25 @@ public class ActivoController extends ParadiseJsonController {
 
 		return createModelAndViewJson(model);
 	}
-
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getLimiteArchivo(HttpServletRequest request, HttpServletResponse response) {
+		String limite = configManager.getConfigByKey("documentos.max.size").getValor();
+		ModelMap model = new ModelMap();
+		model.put("sucess",true);
+		model.put("limite", limite);
+		return JsonViewer.createModelAndViewJson(model);
+	}
+	
 	@RequestMapping(method = RequestMethod.GET)
 	public void bajarAdjuntoActivo(HttpServletRequest request, HttpServletResponse response) {
+		ServletOutputStream salida = null;
+		
 		try {
 			Long id = Long.parseLong(request.getParameter("id"));
 			String nombreDocumento = request.getParameter("nombreDocumento");
-			ServletOutputStream salida = response.getOutputStream();
+			salida = response.getOutputStream();
 			FileItem fileItem = adapter.download(id, nombreDocumento);
 			response.setHeader("Content-disposition", "attachment; filename=" + fileItem.getFileName());
 			response.setHeader("Cache-Control", "must-revalidate, post-check=0,pre-check=0");
@@ -1387,12 +1406,26 @@ public class ActivoController extends ParadiseJsonController {
 
 			// Write
 			FileUtils.copy(fileItem.getInputStream(), salida);
-			salida.flush();
-			salida.close();
 
-		} catch (Exception e) {
-			logger.error("error en activoController", e);
+		} catch(UserException ex) {
+			try {
+				salida.write(ex.toString().getBytes(Charset.forName("UTF-8")));
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	
 		}
+		catch (Exception e) {
+			logger.error("error en activoController", e);
+		}finally {
+			try {
+				salida.flush();			
+				salida.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}		
 	}
 
 	@SuppressWarnings("unchecked")

@@ -106,7 +106,13 @@
 		<appender-ref ref="syslog" />
 		<appender-ref ref="email" />
 	</logger>
-
+	<logger name="es.capgemini.devon.webflow.view.WebflowJSPView" additivity="false">
+		<level value="fatal" />
+		<appender-ref ref="console" />
+		<appender-ref ref="file" />
+		<appender-ref ref="syslog" />
+		<appender-ref ref="email" />
+	</logger>
 	<!-- PFS -->
 	<logger name="es.capgemini.pfs" additivity="false">
 		<level value="info" />
@@ -191,14 +197,6 @@
 		<appender-ref ref="email" />
 	</logger>
 	<logger name="org.jbpm.graph.def.GraphElement" additivity="false">
-		<level value="fatal" />
-		<appender-ref ref="console" />
-		<appender-ref ref="file" />
-		<appender-ref ref="syslog" />
-		<appender-ref ref="email" />
-	</logger>
-	
-	<logger name="es.capgemini.devon.webflow.view.WebflowJSPView" additivity="false">
 		<level value="fatal" />
 		<appender-ref ref="console" />
 		<appender-ref ref="file" />

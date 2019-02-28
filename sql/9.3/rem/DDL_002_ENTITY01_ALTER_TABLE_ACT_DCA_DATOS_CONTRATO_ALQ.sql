@@ -1,9 +1,9 @@
 --/* 
 --##########################################
 --## AUTOR=Sonia Garcia
---## FECHA_CREACION=20190110
+--## FECHA_CREACION=20190227
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=v9.5.02
+--## VERSION_ARTEFACTO=v2.2.0
 --## INCIDENCIA_LINK=HREOS-5066
 --## PRODUCTO=NO
 --##
@@ -32,7 +32,7 @@ DECLARE
 	V_COL1 VARCHAR2(50 CHAR):= 'ID_PRINEX'; --Nombre de la columna
 
 	 V_TIPO VARCHAR2(250 CHAR):= 'NUMBER(16,0) DEFAULT 0 NOT NULL ENABLE';--Tipo nuevo campo
- 	V_TIPO1 VARCHAR2(250 CHAR):= 'NUMBER(16,0) DEFAULT 0 NOT NULL ENABLE';--Tipo nuevo campo
+ 	V_TIPO1 VARCHAR2(250 CHAR):= 'NUMBER(16,0)';--Tipo nuevo campo
 
  	V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.
     

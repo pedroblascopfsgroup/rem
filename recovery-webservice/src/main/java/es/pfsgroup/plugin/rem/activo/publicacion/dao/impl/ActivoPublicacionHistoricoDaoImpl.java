@@ -49,7 +49,7 @@ public class ActivoPublicacionHistoricoDaoImpl extends AbstractEntityDao<ActivoP
 		andFechas.add(Restrictions.isNotNull("fechaInicioVenta"));
 		andFechas.add(Restrictions.isNotNull("fechaFinVenta"));
 		criteria.add(andFechas);
-		criteria.addOrder(Order.desc("auditoria.fechaCrear"));
+		criteria.addOrder(Order.desc("fechaInicioVenta"));
 		List<ActivoPublicacionHistorico> listadoEntidades = HibernateUtils.castList(ActivoPublicacionHistorico.class, criteria.list());
 
 		List<DtoHistoricoEstadoPublicacion> listaDto = new ArrayList<DtoHistoricoEstadoPublicacion>();
@@ -78,7 +78,7 @@ public class ActivoPublicacionHistoricoDaoImpl extends AbstractEntityDao<ActivoP
 		andFechas.add(Restrictions.isNotNull("fechaInicioAlquiler"));
 		andFechas.add(Restrictions.isNotNull("fechaFinAlquiler"));
 		criteria.add(andFechas);
-		criteria.addOrder(Order.desc("auditoria.fechaCrear"));
+		criteria.addOrder(Order.desc("fechaInicioAlquiler"));
 		List<ActivoPublicacionHistorico> listadoEntidades = HibernateUtils.castList(ActivoPublicacionHistorico.class, criteria.list());
 
 		List<DtoHistoricoEstadoPublicacion> listaDto = new ArrayList<DtoHistoricoEstadoPublicacion>();

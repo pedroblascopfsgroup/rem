@@ -749,7 +749,7 @@ END IF;
             EXECUTE IMMEDIATE V_MSQL;
   
             IF SQL%ROWCOUNT > 0 THEN
-                vACTUALIZADO := 'S';
+                vACTUALIZADO_A := 'S';
             END IF;
 
             -- Activos en alquiler no publicados:
@@ -775,7 +775,7 @@ END IF;
             EXECUTE IMMEDIATE V_MSQL;
   
             IF SQL%ROWCOUNT > 0 THEN
-                vACTUALIZADO := 'S';
+                vACTUALIZADO_A := 'S';
             END IF;
           
         END IF;
@@ -811,7 +811,7 @@ END IF;
             EXECUTE IMMEDIATE V_MSQL;
   
             IF SQL%ROWCOUNT > 0 THEN
-                vACTUALIZADO := 'S';
+                vACTUALIZADO_V := 'S';
             END IF;
 
             -- Activos en venta no publicados:
@@ -837,7 +837,7 @@ END IF;
             EXECUTE IMMEDIATE V_MSQL;
   
             IF SQL%ROWCOUNT > 0 THEN
-                vACTUALIZADO := 'S';
+                vACTUALIZADO_V := 'S';
             END IF;
 
         END IF;

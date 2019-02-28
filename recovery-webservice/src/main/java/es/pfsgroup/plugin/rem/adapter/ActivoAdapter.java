@@ -76,6 +76,7 @@ import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.ProveedoresApi;
 import es.pfsgroup.plugin.rem.api.TareaActivoApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
+import es.pfsgroup.plugin.rem.clienteComercial.dao.ClienteComercialDao;
 import es.pfsgroup.plugin.rem.exception.RemUserException;
 //import es.pfsgroup.plugin.rem.controller.AccesoActivoException;
 import es.pfsgroup.plugin.rem.factory.TabActivoFactoryApi;
@@ -114,7 +115,10 @@ import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ActivoVivienda;
+import es.pfsgroup.plugin.rem.model.AdjuntoComprador;
 import es.pfsgroup.plugin.rem.model.ClienteComercial;
+import es.pfsgroup.plugin.rem.model.ClienteCompradorGDPR;
+import es.pfsgroup.plugin.rem.model.ClienteGDPR;
 import es.pfsgroup.plugin.rem.model.DtoActivoCargas;
 import es.pfsgroup.plugin.rem.model.DtoActivoCatastro;
 import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
@@ -155,6 +159,7 @@ import es.pfsgroup.plugin.rem.model.IncrementoPresupuesto;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
+import es.pfsgroup.plugin.rem.model.TmpClienteGDPR;
 import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.VActivoPatrimonioContrato;
 import es.pfsgroup.plugin.rem.model.VAdmisionDocumentos;
@@ -320,8 +325,10 @@ public class ActivoAdapter {
 	@Autowired
 	private UsuarioManager usuarioManager;
 	
+	@Autowired
+	private ClienteComercialDao clienteComercialDao;
 
-	@Autowired 
+	@Autowired
     private ActivoAgrupacionDao activoAgrupacionDao;
 
 	private static final String CONSTANTE_REST_CLIENT = "rest.client.gestor.documental.constante";
@@ -3420,9 +3427,7 @@ public class ActivoAdapter {
 		}
 
 		try {
-			Oferta oferta = new Oferta();
-			oferta.setVentaDirecta(dto.getVentaDirecta());
-			oferta.setOrigen(OfertaApi.ORIGEN_REM);
+			
 			ClienteComercial clienteComercial = new ClienteComercial();
 
 			/*
@@ -3474,17 +3479,43 @@ public class ActivoAdapter {
 				if (!Checks.esNulo(regimen)) {
 					clienteComercial.setRegimenMatrimonial(regimen);
 				}
+			}	
+			
+			if (!Checks.esNulo(dto.getCesionDatos())) {
+				clienteComercial.setCesionDatos(dto.getCesionDatos());
 			}
-
-			genericDao.save(ClienteComercial.class, clienteComercial);
-
+			
+			if (!Checks.esNulo(dto.getTransferenciasInternacionales())) {
+				clienteComercial.setTransferenciasInternacionales(dto.getTransferenciasInternacionales());
+			}
+			
+			if (!Checks.esNulo(dto.getComunicacionTerceros())) {
+				clienteComercial.setComunicacionTerceros(dto.getComunicacionTerceros());
+			}
+			
+			TmpClienteGDPR tmpClienteGDPR = genericDao.get(TmpClienteGDPR.class,
+					genericDao.createFilter(FilterType.EQUALS, "numDocumento", dto.getNumDocumentoCliente()));
+			
+			if (!Checks.esNulo(tmpClienteGDPR)) {
+				clienteComercial.setIdPersonaHaya(String.valueOf(tmpClienteGDPR.getIdPersonaHaya()));
+			}
+					
+			clienteComercial = genericDao.save(ClienteComercial.class, clienteComercial);
+			
+			Oferta oferta = new Oferta();
+			oferta.setVentaDirecta(dto.getVentaDirecta());
+			oferta.setOrigen(OfertaApi.ORIGEN_REM);
+			
 			oferta.setNumOferta(numOferta);
-			oferta.setImporteOferta(Double.valueOf(dto.getImporteOferta()));
+			if (!Checks.esNulo(dto.getImporteOferta())) {
+			   oferta.setImporteOferta(Double.valueOf(dto.getImporteOferta()));
+			}
 			oferta.setEstadoOferta(estadoOferta);
 			oferta.setTipoOferta(tipoOferta);
 			oferta.setFechaAlta(new Date());
-			oferta.setDesdeTanteo(dto.getDeDerechoTanteo());
-
+			if (!Checks.esNulo(dto.getDeDerechoTanteo())) {
+			    oferta.setDesdeTanteo(dto.getDeDerechoTanteo());
+			}
 			listaActOfr = ofertaApi.buildListaActivoOferta(activo, null, oferta);
 			oferta.setActivosOferta(listaActOfr);
 
@@ -3511,8 +3542,69 @@ public class ActivoAdapter {
 				notificationOfertaManager.enviarPropuestaOfertaTipoAlquiler(oferta);
 			}else {
 				notificationOfertaManager.sendNotification(oferta);
+			}					
+			// HREOS-4937 -- 'General Data Protection Regulation'
+
+			// Comprobamos si existe en la tabla CGD_CLIENTE_GDPR un registro con el mismo
+			// número y tipo de documento
+			ClienteGDPR cliGDPR = genericDao.get(ClienteGDPR.class,
+					genericDao.createFilter(FilterType.EQUALS, "tipoDocumento.id", tipoDocumento.getId()),
+					genericDao.createFilter(FilterType.EQUALS, "numDocumento", dto.getNumDocumentoCliente()));
+
+			AdjuntoComprador docAdjunto = null;
+			if (!Checks.esNulo(dto.getIdDocAdjunto())) {
+				docAdjunto = genericDao.get(AdjuntoComprador.class,
+						genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdDocAdjunto()));
 			}
+			// Si existe pasamos la información al histórico y actualizamos el objeto con
+			// los nuevos datos
+			if (!Checks.esNulo(cliGDPR)) {
+
+				// Primero historificamos los datos de ClienteGDPR en ClienteCompradorGDPR
+				ClienteCompradorGDPR clienteCompradorGDPR = new ClienteCompradorGDPR();
+				clienteCompradorGDPR.setTipoDocumento(cliGDPR.getTipoDocumento());
+				clienteCompradorGDPR.setNumDocumento(cliGDPR.getNumDocumento());
+				clienteCompradorGDPR.setCesionDatos(cliGDPR.getCesionDatos());
+				clienteCompradorGDPR.setComunicacionTerceros(cliGDPR.getComunicacionTerceros());
+				clienteCompradorGDPR.setTransferenciasInternacionales(cliGDPR.getTransferenciasInternacionales());
+				if (!Checks.esNulo(cliGDPR.getAdjuntoComprador())) {
+					clienteCompradorGDPR.setAdjuntoComprador(cliGDPR.getAdjuntoComprador());
+				}
+
+				genericDao.save(ClienteCompradorGDPR.class, clienteCompradorGDPR);
+
+				// Despues se hace el update en ClienteGDPR
+				cliGDPR.setCliente(clienteComercial);
+				cliGDPR.setCesionDatos(dto.getCesionDatos());
+				cliGDPR.setComunicacionTerceros(dto.getComunicacionTerceros());
+				cliGDPR.setTransferenciasInternacionales(dto.getTransferenciasInternacionales());
+				genericDao.update(ClienteGDPR.class, cliGDPR);
+
+				// Si no existe simplemente creamos e insertamos un nuevo objeto ClienteGDPR
+			} else {
+				ClienteGDPR clienteGDPR =  new ClienteGDPR();
+				clienteGDPR.setCliente(clienteComercial);
+				clienteGDPR.setTipoDocumento(tipoDocumento);
+				clienteGDPR.setNumDocumento(dto.getNumDocumentoCliente());
+				clienteGDPR.setCesionDatos(dto.getCesionDatos());
+				clienteGDPR.setComunicacionTerceros(dto.getComunicacionTerceros());
+				clienteGDPR.setTransferenciasInternacionales(dto.getTransferenciasInternacionales());
+				
+				if(!Checks.esNulo(tmpClienteGDPR.getIdAdjunto())) {
+					docAdjunto = genericDao.get(AdjuntoComprador.class,
+							genericDao.createFilter(FilterType.EQUALS, "id", tmpClienteGDPR.getIdAdjunto()));
+				}
+				if (!Checks.esNulo(docAdjunto)) {
+					clienteGDPR.setAdjuntoComprador(docAdjunto);
+				}
+				clienteGDPR = genericDao.save(ClienteGDPR.class, clienteGDPR);
+				
+				clienteComercialDao.deleteTmpClienteByDocumento(clienteGDPR.getNumDocumento());
+				
+			}			
+			
 			this.actualizarEstadoPublicacionActivo(activo.getId());
+
 		} catch (Exception ex) {
 			logger.error("error en activoAdapter", ex);
 			ex.printStackTrace();

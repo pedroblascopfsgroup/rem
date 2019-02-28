@@ -53,6 +53,21 @@ Ext.define('HreRem.model.CompradorExpediente', {
         		dateFormat: 'c'
     		},
     		{
+    			name:'nombreAdjunto'
+    		},
+    		{
+    			name:'idPersonaHaya'
+    		},
+    		{
+		    	name: 'idExpediente'
+		    },
+		    {
+		    	name: 'idDocAdjunto'
+		    },
+		    {
+		    	name: 'idDocRestClient'
+		    },
+    		{
     			name:'borrado',
     			type: 'boolean'
     		},
@@ -82,3 +97,4 @@ Ext.define('HreRem.model.CompradorExpediente', {
     }    
 
 });
+

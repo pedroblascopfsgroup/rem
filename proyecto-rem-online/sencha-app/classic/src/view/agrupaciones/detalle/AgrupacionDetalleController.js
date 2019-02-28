@@ -90,8 +90,12 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 	
 	refrescarAgrupacion: function(refrescarPestanyaActiva) {
 		
-		var me = this,
-		activeTab = me.getView().down("tabpanel").getActiveTab();		
+		var me = this;
+		if(!Ext.isEmpty(me.getView().down("tabpanel"))){
+	    	 activeTab = me.getView().down("tabpanel").getActiveTab();
+	    }else {
+	    	activeTab = me.getView().up("tabpanel").getActiveTab();
+	    }
 		// Marcamos todas los componentes para refrescar, de manera que se vayan actualizando conforme se vayan mostrando.
 		Ext.Array.each(me.getView().query('component[funcionRecargar]'), function(component) {
   			if(component.rendered) {

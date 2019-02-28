@@ -32,6 +32,13 @@ Ext.define('HreRem.ux.util.Constants', {
 		SOLO_ALQUILER: '03',
 		ALQUILER_OPCION_COMPRA: '04'
 	},
+	
+	TIPO_COMERCIALIZACION_ACTIVO: {
+		VENTA:'Venta',
+		ALQUILER: 'Alquiler',
+		ALQUILER_VENTA: 'Alquiler y venta',
+		ALQUILER_OPCION_COMPRA: 'Alquiler con opción a compra'
+	},
 
 	TIPOS_AGRUPACION: {
 		OBRA_NUEVA: '01',

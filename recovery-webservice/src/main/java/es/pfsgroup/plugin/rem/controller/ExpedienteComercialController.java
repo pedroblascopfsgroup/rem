@@ -1,12 +1,35 @@
 package es.pfsgroup.plugin.rem.controller;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.Properties;
+
+import javax.annotation.Resource;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
+
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.devon.utils.FileUtils;
+import es.capgemini.pfs.adjunto.model.Adjunto;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
@@ -16,17 +39,22 @@ import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.rem.adapter.ExpedienteComercialAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.adapter.TrabajoAdapter;
+import es.pfsgroup.plugin.rem.api.ClienteComercialApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteAvisadorApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.clienteComercial.dao.ClienteComercialDao;
 import es.pfsgroup.plugin.rem.excel.ActivosExpedienteExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.Downloader;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.DownloaderFactoryApi;
+import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.ACCION_CODIGO;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.ENTIDAD_CODIGO;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.REQUEST_STATUS_CODE;
+import es.pfsgroup.plugin.rem.model.AdjuntoComprador;
+import es.pfsgroup.plugin.rem.model.ClienteComercial;
 import es.pfsgroup.plugin.rem.model.DtoActivosExpediente;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoAviso;
@@ -39,10 +67,10 @@ import es.pfsgroup.plugin.rem.model.DtoEntregaReserva;
 import es.pfsgroup.plugin.rem.model.DtoExpedienteHistScoring;
 import es.pfsgroup.plugin.rem.model.DtoExpedienteScoring;
 import es.pfsgroup.plugin.rem.model.DtoFichaExpediente;
-import es.pfsgroup.plugin.rem.model.DtoHstcoSeguroRentas;
 import es.pfsgroup.plugin.rem.model.DtoFormalizacionFinanciacion;
 import es.pfsgroup.plugin.rem.model.DtoGastoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoCondiciones;
+import es.pfsgroup.plugin.rem.model.DtoHstcoSeguroRentas;
 import es.pfsgroup.plugin.rem.model.DtoInformeJuridico;
 import es.pfsgroup.plugin.rem.model.DtoListadoTramites;
 import es.pfsgroup.plugin.rem.model.DtoModificarCompradores;
@@ -58,24 +86,8 @@ import es.pfsgroup.plugin.rem.model.DtoTanteoYRetractoOferta;
 import es.pfsgroup.plugin.rem.model.DtoTextosOferta;
 import es.pfsgroup.plugin.rem.model.DtoTipoDocExpedientes;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.TmpClienteGDPR;
 import es.pfsgroup.plugin.rem.model.VBusquedaDatosCompradorExpediente;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.ModelAndView;
-
-import javax.annotation.Resource;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.List;
-import java.util.Properties;
 
 @Controller
 public class ExpedienteComercialController extends ParadiseJsonController {
@@ -83,24 +95,35 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	protected static final Log logger = LogFactory.getLog(ActivoController.class);
 	private static final String CONSTANTE_REST_CLIENT = "rest.client.gestor.documental.constante";
 
+	private static final String CONSTANTE_CARTERA_HAYA = "Haya";
 	private static final String ERROR_EXPEDIENTE_NOT_EXISTS = "No existe el expediente que esta buscando, pruebe con otro Nº de Expediente";
 	private static final String ERROR_OFERTA_NOT_EXISTS = "No existe la oferta que esta buscando, pruebe con otro Nº de Oferta";
 	private static final String ERROR_CAMPO_NO_NUMERICO = "El campo introducido es de carácter numérico";
+	private static final String ERROR_NO_ASOCIADO_GDPR = "No se ha encontrado un documento GDPR asociado a este comprador";
 	private static final String ERROR_GENERICO = "La operación no se ha podido realizar";
+	private static final String ERROR_NO_EXISTE_PERSONA_HAYA = "No existe persona Haya";
+	private static final String ERROR_NO_EXISTE_NUM_DOCUMENTO = "No existe número de documento";
 	public static final String CAMPO_EXPEDIENTE = "E";
-	public static final String CAMPO_OFERTA = "O";
+	private static final String CAMPO_OFERTA = "O";
 
 	private static final String RESPONSE_DATA_KEY = "data";
 	private static final String RESPONSE_SUCCESS_KEY = "success";
 	private static final String RESPONSE_ERROR_KEY = "error";
+	private static final String RESPONSE_ERROR_MESSAGE_KEY = "errorMessage";
 	private static final String RESPONSE_MESSAGE_KEY = "msg";
 	private static final String RESPONSE_TOTALCOUNT_KEY = "totalCount";
 
+	@Autowired
+	private GenericABMDao genericDao;
+	
 	@Autowired
 	private ExcelReportGeneratorApi excelReportGeneratorApi;
 
 	@Autowired
 	private ExpedienteComercialApi expedienteComercialApi;
+
+	@Autowired
+	private ClienteComercialApi clienteComercialApi;
 
 	@Autowired
 	private GenericAdapter genericAdapter;
@@ -122,6 +145,12 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 
 	@Autowired
 	private DownloaderFactoryApi downloaderFactoryApi;
+
+	@Autowired
+	private ClienteComercialDao clienteComercialDao;
+	
+	@Autowired
+	private GestorDocumentalAdapterApi gestorDocumentalAdapterApi;
 
 	@Autowired
 	private LogTrustEvento trustMe;
@@ -158,7 +187,8 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 		for (ExpedienteAvisadorApi avisador : avisadores) {
 			DtoAviso aviso = avisador.getAviso(expediente, usuarioLogado);
 			if (!Checks.esNulo(aviso) && !Checks.esNulo(aviso.getDescripcion())) {
-				avisosFormateados.setDescripcion(avisosFormateados.getDescripcion() + "<div class='div-aviso red'>" + aviso.getDescripcion() + "</div>");
+				avisosFormateados.setDescripcion(avisosFormateados.getDescripcion() + "<div class='div-aviso red'>"
+						+ aviso.getDescripcion() + "</div>");
 			}
 		}
 
@@ -240,14 +270,14 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView saveSeguroRentasExpediente(DtoSeguroRentas dto, @RequestParam Long idSeguroRentas, ModelMap model) {
+	public ModelAndView saveSeguroRentasExpediente(DtoSeguroRentas dto, @RequestParam Long idSeguroRentas,
+			ModelMap model) {
 		try {
 			model.put("success", expedienteComercialApi.saveSeguroRentasExpediente(dto, idSeguroRentas));
 
-		}catch (JsonViewerException e) {
+		} catch (JsonViewerException e) {
 			e.printStackTrace();
 			model.put("msg", e.getMessage());
 			model.put("success", false);
@@ -261,7 +291,6 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 
 	}
-
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
@@ -347,7 +376,6 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView createObservacion(ModelMap model, DtoObservacion dtoObservacion, Long idEntidad) {
@@ -419,7 +447,9 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getTipoDocumentoExpediente(ModelMap model, String tipoExpediente) {
 		try {
-			List <DtoTipoDocExpedientes> dto= expedienteComercialApi.getTipoDocumentoExpediente(tipoExpediente);
+
+			List<DtoTipoDocExpedientes> dto = expedienteComercialApi.getTipoDocumentoExpediente(tipoExpediente);
+
 			model.put("data", dto);
 			model.put("success", true);
 
@@ -462,6 +492,77 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 			logger.error("Error en ExpedienteComercialController", e);
 		}
 	}
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public void bajarAdjuntoExpedienteGDPR (HttpServletRequest request, HttpServletResponse response, ModelMap model) {
+
+				String key = appProperties.getProperty(CONSTANTE_REST_CLIENT);
+				Downloader dl = downloaderFactoryApi.getDownloader(key);
+				String nombreDocumento = request.getParameter("nombreAdjunto");
+				String idDocRestClient = request.getParameter("idDocRestClient");
+				String idDocAdjunto = request.getParameter("idDocAdjunto");
+				
+       	try {
+	       		FileItem fileItem;
+	       		if(gestorDocumentalAdapterApi.modoRestClientActivado()) {
+	       			fileItem = dl.getFileItem(Long.parseLong(idDocRestClient), nombreDocumento);
+	       		} else {
+	       			AdjuntoComprador adjuntoComprador = genericDao.get(AdjuntoComprador.class, genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(idDocAdjunto)));
+	       			Adjunto adjunto = genericDao.get(Adjunto.class, genericDao.createFilter(FilterType.EQUALS, "id", adjuntoComprador.getAdjunto()));
+	
+	       			fileItem = adjunto.getFileItem();
+	       			fileItem.setFileName(adjuntoComprador.getNombreAdjunto());
+	       		}
+           		ServletOutputStream salida = response.getOutputStream(); 
+           			
+           		response.setHeader("Content-disposition", "attachment; filename=" + fileItem.getFileName());
+           		response.setHeader("Cache-Control", "must-revalidate, post-check=0,pre-check=0");
+           		response.setHeader("Cache-Control", "max-age=0");
+           		response.setHeader("Expires", "0");
+           		response.setHeader("Pragma", "public");
+           		response.setDateHeader("Expires", 0); //prevents caching at the proxy
+           		response.setContentType(fileItem.getContentType());
+           		
+           		// Write
+           		FileUtils.copy(fileItem.getInputStream(), salida);
+           		salida.flush();
+        
+    		}catch(Exception e) {
+    			logger.error("Error en ExpedienteComercialController", e);
+		    }	
+       	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView existeDocumentoGDPR(HttpServletRequest request, ModelMap model) {
+		
+		 String  idDocRestClient =  request.getParameter("idDocRestClient");
+		 String  idDocAdjunto    = 	request.getParameter("idDocAdjunto");
+		 String  nombreDocumento =  request.getParameter("nombreAdjunto");
+		 try {
+				if(!Checks.esNulo(idDocAdjunto) && !Checks.esNulo(nombreDocumento)) {
+					if(!Checks.esNulo(idDocRestClient) && gestorDocumentalAdapterApi.modoRestClientActivado()) {
+						model.put("success", true);
+					} else if(!Checks.esNulo(idDocAdjunto) && !gestorDocumentalAdapterApi.modoRestClientActivado()) {
+						model.put("success", true);
+					} else {
+						model.put("success", false);
+						model.put("error", ERROR_NO_EXISTE_NUM_DOCUMENTO);
+					}
+					
+				} else {
+					model.put("success", false);
+					model.put("error", ERROR_NO_ASOCIADO_GDPR );
+					
+				}
+			} catch(Exception e) {
+				logger.error("error obteniendo id Persona Haya ",e);
+				model.put("success", false);
+				model.put("error", ERROR_GENERICO);
+			}
+		return createModelAndViewJson(model);
+		
+	}
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
@@ -475,10 +576,124 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 			model.put(RESPONSE_SUCCESS_KEY, false);
 			model.put("errorMessage", e.getMessage());
 			trustMe.registrarError(request, idExpediente, ENTIDAD_CODIGO.CODIGO_EXPEDIENTE_COMERCIAL, "adjuntos", ACCION_CODIGO.CODIGO_VER, REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
+
 		} catch (Exception e) {
 			logger.error("Error en ExpedienteComercialController", e);
 			trustMe.registrarError(request, idExpediente, ENTIDAD_CODIGO.CODIGO_EXPEDIENTE_COMERCIAL, "adjuntos", ACCION_CODIGO.CODIGO_VER, REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
 		}
+
+		return createModelAndViewJson(model);
+	}
+	
+
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getListAdjuntosComprador(String docCliente, Long idExpediente, ModelMap model) {
+		
+		String idPersonaHaya = null;
+		
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "documento", docCliente);
+		ClienteComercial clienteCom = genericDao.get(ClienteComercial.class, filtro);
+			if(!Checks.esNulo(clienteCom)) {
+				idPersonaHaya = clienteCom.getIdPersonaHaya();
+			} else {
+				TmpClienteGDPR tmpClienteGDPR = genericDao.get(TmpClienteGDPR.class, genericDao.createFilter(FilterType.EQUALS, "numDocumento", docCliente));
+
+				if(!Checks.esNulo(tmpClienteGDPR)) {
+					idPersonaHaya = String.valueOf(tmpClienteGDPR.getIdPersonaHaya());
+				}
+			} 
+			
+		try {
+			model.put(RESPONSE_DATA_KEY, expedienteComercialAdapter.getAdjuntoExpedienteComprador(idPersonaHaya, docCliente, idExpediente));
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put(RESPONSE_ERROR_MESSAGE_KEY, e.getMessage());
+		}
+		
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView saveDocumentoComprador(String docCliente, Long idEntidad, HttpServletRequest request) {
+		
+		String idPersonaHaya = null;
+		
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "documento", docCliente);
+		ClienteComercial clienteCom = genericDao.get(ClienteComercial.class, filtro);
+			if(!Checks.esNulo(clienteCom)) {
+				idPersonaHaya = clienteCom.getIdPersonaHaya();
+			} else {
+				TmpClienteGDPR tmpClienteGDPR = genericDao.get(TmpClienteGDPR.class, genericDao.createFilter(FilterType.EQUALS, "numDocumento", docCliente));
+
+				if(!Checks.esNulo(tmpClienteGDPR)) {
+					idPersonaHaya = String.valueOf(tmpClienteGDPR.getIdPersonaHaya());
+				}
+			} 
+			
+			
+		ModelMap model = new ModelMap();
+		
+		try {
+			WebFileItem fileItem = uploadAdapter.getWebFileItem(request);
+			
+			List<DtoAdjunto> listaAdjuntos = expedienteComercialAdapter.getAdjuntoExpedienteComprador(idPersonaHaya, docCliente, idEntidad);
+			if(listaAdjuntos.size() <= 0) {
+				String errores = expedienteComercialAdapter.uploadDocumentoComprador(fileItem, idPersonaHaya);
+				model.put("errores", errores);
+				model.put(RESPONSE_SUCCESS_KEY, errores==null);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put(RESPONSE_ERROR_KEY, e.getMessage());
+			logger.error(e.getMessage());
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView eliminarDocumentoAdjuntoComprador(String docCliente) {
+		
+		String idPersonaHaya = null;
+		
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "documento", docCliente);
+		ClienteComercial clienteCom = genericDao.get(ClienteComercial.class, filtro);
+			if(!Checks.esNulo(clienteCom)) {
+				idPersonaHaya = clienteCom.getIdPersonaHaya();
+			} else {
+				TmpClienteGDPR tmpClienteGDPR = genericDao.get(TmpClienteGDPR.class, genericDao.createFilter(FilterType.EQUALS, "numDocumento", docCliente));
+
+				if(!Checks.esNulo(tmpClienteGDPR)) {
+					idPersonaHaya = String.valueOf(tmpClienteGDPR.getIdPersonaHaya());
+				}
+			} 
+			
+		
+		ModelMap model = new ModelMap();
+		
+		List<DtoAdjunto> listaAdjuntos = null;
+		try {
+			listaAdjuntos = expedienteComercialAdapter.getAdjuntoExpedienteComprador(idPersonaHaya, docCliente, null);							
+		} catch (GestorDocumentalException e) {
+			e.printStackTrace();
+		}
+		
+		Filter filtroDoc;
+		if(gestorDocumentalAdapterApi.modoRestClientActivado()) {
+			filtroDoc = genericDao.createFilter(FilterType.EQUALS, "idDocRestClient", listaAdjuntos.get(0).getId());
+		} else {
+			filtroDoc = genericDao.createFilter(FilterType.EQUALS, "id", listaAdjuntos.get(0).getId());
+		}
+		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+		AdjuntoComprador adjComprador = genericDao.get(AdjuntoComprador.class, filtroDoc, filtroBorrado);
+
+		boolean success = expedienteComercialAdapter.deleteAdjuntoComprador(adjComprador, null);
+		model.put(RESPONSE_SUCCESS_KEY, success);
 
 		return createModelAndViewJson(model);
 	}
@@ -496,11 +711,10 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 			model.put("errores", errores);
 			model.put(RESPONSE_SUCCESS_KEY, errores == null);
 
-		}catch (GestorDocumentalException eGd) {
+		} catch (GestorDocumentalException eGd) {
 			model.put(RESPONSE_SUCCESS_KEY, false);
 			model.put("errores", eGd.getMessage());
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			model.put(RESPONSE_SUCCESS_KEY, false);
 			model.put("errores", e.getMessage());
 			logger.error("Error en ExpedienteComercialController", e);
@@ -523,7 +737,8 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	public ModelAndView getTramitesTareas(Long idExpediente, WebDto webDto, ModelMap model, HttpServletRequest request) {
 		
 		ExpedienteComercial expediente = expedienteComercialApi.findOne(idExpediente);
-		List<DtoListadoTramites> tramites = trabajoAdapter.getListadoTramitesTareasTrabajo(expediente.getTrabajo().getId(), webDto);
+		List<DtoListadoTramites> tramites = trabajoAdapter
+				.getListadoTramitesTareasTrabajo(expediente.getTrabajo().getId(), webDto);
 
 		DtoListadoTramites tramite = new DtoListadoTramites();
 		if (!Checks.estaVacio(tramites)) {
@@ -676,8 +891,11 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 
 	}
+
 	/**
-	 * Recupera la lista de compradores para la pestanya Compradores /PBC de un expediente
+	 * Recupera la lista de compradores para la pestanya Compradores /PBC de un
+	 * expediente
+	 * 
 	 * @param idExpediente
 	 * @param model
 	 * @return
@@ -685,6 +903,7 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getCompradoresExpediente(Long idExpediente, WebDto dto, ModelMap model, HttpServletRequest request) {
+
 		try {
 			Page page = expedienteComercialApi.getCompradoresByExpediente(idExpediente, dto);
 			model.put(RESPONSE_DATA_KEY, page.getResults());
@@ -705,12 +924,42 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getCompradorById(VBusquedaDatosCompradorExpediente dto, ModelMap model) {
 		try {
-			VBusquedaDatosCompradorExpediente vista = expedienteComercialApi.getDatosCompradorById(dto.getId(), dto.getIdExpedienteComercial());
-			DtoModificarCompradores comprador = expedienteComercialApi.vistaADtoModCompradores(vista);
-			model.put(RESPONSE_DATA_KEY, comprador);
-			model.put(RESPONSE_SUCCESS_KEY, true);
-
-		}catch (Exception e) {
+			VBusquedaDatosCompradorExpediente vistaConExp = expedienteComercialApi.getDatosCompradorById(dto.getId(),
+					dto.getIdExpedienteComercial());
+			if (!Checks.esNulo(vistaConExp)) {
+				if (!Checks.esNulo(dto.getCesionDatos())) {
+					vistaConExp.setCesionDatos(dto.getCesionDatos());
+				}
+				if (!Checks.esNulo(dto.getComunicacionTerceros())) {
+					vistaConExp.setComunicacionTerceros(dto.getComunicacionTerceros());
+				}
+				if (!Checks.esNulo(dto.getTransferenciasInternacionales())) {
+					vistaConExp.setTransferenciasInternacionales(dto.getTransferenciasInternacionales());
+				}
+				DtoModificarCompradores comprador = expedienteComercialApi.vistaADtoModCompradores(vistaConExp);
+				model.put(RESPONSE_DATA_KEY, comprador);
+				model.put(RESPONSE_SUCCESS_KEY, true);
+			} else {
+				VBusquedaDatosCompradorExpediente vistaSinExp = expedienteComercialApi.getDatCompradorById(dto.getId());
+				if (!Checks.esNulo(vistaSinExp)) {
+					if (!Checks.esNulo(dto.getCesionDatos())) {
+						vistaSinExp.setCesionDatos(dto.getCesionDatos());
+					}
+					if (!Checks.esNulo(dto.getComunicacionTerceros())) {
+						vistaSinExp.setComunicacionTerceros(dto.getComunicacionTerceros());
+					}
+					if (!Checks.esNulo(dto.getTransferenciasInternacionales())) {
+						vistaSinExp.setTransferenciasInternacionales(dto.getTransferenciasInternacionales());
+					}
+					if (!Checks.esNulo(dto.getIdExpedienteComercial())) {
+						vistaSinExp.setIdExpedienteComercial(dto.getIdExpedienteComercial());
+					}
+					DtoModificarCompradores comprador = expedienteComercialApi.vistaCrearComprador(vistaSinExp); 
+					model.put(RESPONSE_DATA_KEY, comprador);
+					model.put(RESPONSE_SUCCESS_KEY, true);
+				}
+			}
+		} catch (Exception e) {
 			model.put(RESPONSE_SUCCESS_KEY, false);
 			logger.error("Error en ExpedienteComercialController", e);
 		}
@@ -735,7 +984,8 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView marcarCompradorPrincipal(@RequestParam Long idComprador, @RequestParam Long idExpedienteComercial, ModelMap model) {
+	public ModelAndView marcarCompradorPrincipal(@RequestParam Long idComprador,
+			@RequestParam Long idExpedienteComercial, ModelMap model) {
 		try {
 			boolean success = expedienteComercialApi.marcarCompradorPrincipal(idComprador, idExpedienteComercial);
 			model.put(RESPONSE_SUCCESS_KEY, success);
@@ -844,7 +1094,8 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView createComprador(ModelMap model, VBusquedaDatosCompradorExpediente vDatosComprador, Long idExpediente) {
+	public ModelAndView createComprador(ModelMap model, VBusquedaDatosCompradorExpediente vDatosComprador,
+			Long idExpediente) {
 		try {
 			boolean success = expedienteComercialApi.createComprador(vDatosComprador, idExpediente);
 			model.put(RESPONSE_SUCCESS_KEY, success);
@@ -924,9 +1175,11 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView buscarNumeroUrsus(@RequestParam String numeroDocumento, @RequestParam String tipoDocumento, String idExpediente, ModelMap model) {
+	public ModelAndView buscarNumeroUrsus(@RequestParam String numeroDocumento, @RequestParam String tipoDocumento,
+			String idExpediente, ModelMap model) {
 		try {
-			model.put(RESPONSE_DATA_KEY, expedienteComercialApi.buscarNumeroUrsus(numeroDocumento, tipoDocumento, idExpediente));
+			model.put(RESPONSE_DATA_KEY,
+					expedienteComercialApi.buscarNumeroUrsus(numeroDocumento, tipoDocumento, idExpediente));
 			model.put(RESPONSE_SUCCESS_KEY, true);
 
 		} catch (JsonViewerException e) {
@@ -945,9 +1198,11 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView buscarDatosClienteNumeroUrsus(@RequestParam String numeroUrsus, @RequestParam String idExpediente, ModelMap model) {
+	public ModelAndView buscarDatosClienteNumeroUrsus(@RequestParam String numeroUrsus,
+			@RequestParam String idExpediente, ModelMap model) {
 		try {
-			model.put(RESPONSE_DATA_KEY, expedienteComercialApi.buscarDatosClienteNumeroUrsus(numeroUrsus, idExpediente));
+			model.put(RESPONSE_DATA_KEY,
+					expedienteComercialApi.buscarDatosClienteNumeroUrsus(numeroUrsus, idExpediente));
 			model.put(RESPONSE_SUCCESS_KEY, true);
 
 		} catch (JsonViewerException e) {
@@ -965,9 +1220,11 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView buscarClientesUrsus(@RequestParam String numeroDocumento, @RequestParam String tipoDocumento, String idExpediente, ModelMap model) {
+	public ModelAndView buscarClientesUrsus(@RequestParam String numeroDocumento, @RequestParam String tipoDocumento,
+			String idExpediente, ModelMap model) {
 		try {
-			model.put(RESPONSE_DATA_KEY, expedienteComercialApi.buscarClientesUrsus(numeroDocumento, tipoDocumento, idExpediente));
+			model.put(RESPONSE_DATA_KEY,
+					expedienteComercialApi.buscarClientesUrsus(numeroDocumento, tipoDocumento, idExpediente));
 			model.put(RESPONSE_SUCCESS_KEY, true);
 
 		} catch (JsonViewerException e) {
@@ -985,10 +1242,12 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getComboProveedoresExpediente(@RequestParam(required = false) String codigoTipoProveedor, @RequestParam(required = false) String nombreBusqueda, @RequestParam(required =
-			false) String idActivo, WebDto dto, ModelMap model) {
+	public ModelAndView getComboProveedoresExpediente(@RequestParam(required = false) String codigoTipoProveedor,
+			@RequestParam(required = false) String nombreBusqueda, @RequestParam(required = false) String idActivo,
+			WebDto dto, ModelMap model) {
 		try {
-			Page proveedores = expedienteComercialApi.getComboProveedoresExpediente(codigoTipoProveedor, nombreBusqueda, idActivo, dto);
+			Page proveedores = expedienteComercialApi.getComboProveedoresExpediente(codigoTipoProveedor, nombreBusqueda,
+					idActivo, dto);
 			model.put(RESPONSE_DATA_KEY, proveedores.getResults());
 			model.put(RESPONSE_SUCCESS_KEY, true);
 
@@ -1027,16 +1286,16 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView createHistoricoCondiciones(ModelMap model, DtoHistoricoCondiciones dto, Long idEntidad, Boolean idEntidadPk) {
+	public ModelAndView createHistoricoCondiciones(ModelMap model, DtoHistoricoCondiciones dto, Long idEntidad,
+			Boolean idEntidadPk) {
 		try {
-			if(idEntidadPk) {
+			if (idEntidadPk) {
 				boolean success = expedienteComercialApi.createHistoricoCondiciones(dto, idEntidad);
 				model.put(RESPONSE_SUCCESS_KEY, success);
-			}else {
+			} else {
 				model.put(RESPONSE_MESSAGE_KEY, "Hay 10 registros insertados");
 				model.put(RESPONSE_SUCCESS_KEY, false);
 			}
-			
 
 		} catch (JsonViewerException e) {
 			model.put(RESPONSE_MESSAGE_KEY, e.getMessage());
@@ -1068,7 +1327,8 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView deleteCompradorExpediente(ModelMap model, @RequestParam Long idExpediente, @RequestParam Long idComprador) {
+	public ModelAndView deleteCompradorExpediente(ModelMap model, @RequestParam Long idExpediente,
+			@RequestParam Long idComprador) {
 		try {
 			boolean success = expedienteComercialApi.deleteCompradorExpediente(idExpediente, idComprador);
 			model.put(RESPONSE_SUCCESS_KEY, success);
@@ -1100,7 +1360,6 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
-
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getBloqueosFormalizacion(ModelMap model, DtoBloqueosFinalizacion dto) {
@@ -1118,8 +1377,8 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView createBloqueoFormalizacion(ModelMap model, DtoBloqueosFinalizacion dto, @RequestParam(value = "idEntidad") Long idExpediente, @RequestParam(value = "idEntidadPk") Long
-			idActivo) {
+	public ModelAndView createBloqueoFormalizacion(ModelMap model, DtoBloqueosFinalizacion dto,
+			@RequestParam(value = "idEntidad") Long idExpediente, @RequestParam(value = "idEntidadPk") Long idActivo) {
 		try {
 			model.put(RESPONSE_SUCCESS_KEY, expedienteComercialApi.createBloqueoFormalizacion(dto, idActivo));
 
@@ -1220,7 +1479,8 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView insertarGestorAdicional(Long idExpediente, Long usuarioGestor, Long tipoGestor, WebDto webDto, ModelMap model) {
+	public ModelAndView insertarGestorAdicional(Long idExpediente, Long usuarioGestor, Long tipoGestor, WebDto webDto,
+			ModelMap model) {
 		try {
 			GestorEntidadDto dto = new GestorEntidadDto();
 			dto.setIdEntidad(idExpediente);
@@ -1249,7 +1509,7 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getComboTipoGestorFiltered(Long idExpediente, WebDto webDto, ModelMap model){
+	public ModelAndView getComboTipoGestorFiltered(Long idExpediente, WebDto webDto, ModelMap model) {
 
 		model.put(RESPONSE_DATA_KEY, expedienteComercialApi.getComboTipoGestor(idExpediente));
 		return new ModelAndView("jsonView", model);
@@ -1299,7 +1559,8 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView saveActivoExpedienteCondiciones(ModelMap model, @RequestParam(value = "id") Long ecoId, DtoCondicionesActivoExpediente condiciones) {
+	public ModelAndView saveActivoExpedienteCondiciones(ModelMap model, @RequestParam(value = "id") Long ecoId,
+			DtoCondicionesActivoExpediente condiciones) {
 		try {
 			condiciones.setEcoId(ecoId);
 			model.put(RESPONSE_DATA_KEY, expedienteComercialApi.guardarCondicionesActivoExpediente(condiciones));
@@ -1333,7 +1594,8 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getTanteosActivo(ModelMap model, Long idExpediente,Long idActivo, HttpServletRequest request) {
 		try {
-			List<DtoTanteoActivoExpediente> list = expedienteComercialApi.getTanteosPorActivoExpediente(idExpediente, idActivo);
+			List<DtoTanteoActivoExpediente> list = expedienteComercialApi.getTanteosPorActivoExpediente(idExpediente,
+					idActivo);
 			model.put(RESPONSE_DATA_KEY, list);
 			model.put(RESPONSE_SUCCESS_KEY, true);
 			trustMe.registrarSuceso(request, idExpediente, ENTIDAD_CODIGO.CODIGO_EXPEDIENTE_COMERCIAL, "tanteos", ACCION_CODIGO.CODIGO_VER);
@@ -1362,7 +1624,9 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView saveTanteo(ModelMap model, DtoTanteoActivoExpediente tanteo, @RequestParam(value = "idEntidad") Long idActivo, @RequestParam(value = "idEntidadPk") Long idExpedienteComercial, HttpServletRequest request) {
+	public ModelAndView saveTanteo(ModelMap model, DtoTanteoActivoExpediente tanteo, 
+			@RequestParam(value = "idEntidad") Long idActivo, 
+			@RequestParam(value = "idEntidadPk") Long idExpedienteComercial, HttpServletRequest request) {
 		try {
 			tanteo.setIdActivo(idActivo);
 			tanteo.setEcoId(idExpedienteComercial);
@@ -1397,7 +1661,8 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView saveFechaEmisionInfJuridico(ModelMap model, DtoInformeJuridico dto, @RequestParam(value = "id") Long id, @RequestParam(value = "idActivo") Long idActivo) {
+	public ModelAndView saveFechaEmisionInfJuridico(ModelMap model, DtoInformeJuridico dto,
+			@RequestParam(value = "id") Long id, @RequestParam(value = "idActivo") Long idActivo) {
 		dto.setIdActivo(idActivo);
 		dto.setIdExpediente(id);
 
@@ -1439,7 +1704,8 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView desbloqueoExpediente(ModelMap model, Long idExpediente, String motivoCodigo, String motivoDescLibre) {
+	public ModelAndView desbloqueoExpediente(ModelMap model, Long idExpediente, String motivoCodigo,
+			String motivoDescLibre) {
 		try {
 			String errorCode = expedienteComercialApi.validaDesbloqueoExpediente(idExpediente);
 
@@ -1472,7 +1738,7 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 			ExcelReport report = new ActivosExpedienteExcelReport(dtosActivos, expedienteComercial.getNumExpediente());
 			excelReportGeneratorApi.generateAndSend(report, response);
 
-		} catch(IOException e) {
+		} catch (IOException e) {
 			logger.error("Error en ExpedienteComercialController", e);
 		}
 	}
@@ -1553,19 +1819,19 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 		try {
 			Long idExpediente = expedienteComercialApi.getIdByNumExpOrNumOfr(Long.parseLong(numBusqueda), campo);
 
-			if(!Checks.esNulo(idExpediente)) {
+			if (!Checks.esNulo(idExpediente)) {
 				model.put("success", true);
 				model.put("data", idExpediente);
-				if(CAMPO_EXPEDIENTE.equals(campo)) {
+				if (CAMPO_EXPEDIENTE.equals(campo)) {
 					model.put("numExpediente", numBusqueda);
-				}else {
+				} else {
 					model.put("numExpediente", expedienteComercialApi.getNumExpByNumOfr(Long.parseLong(numBusqueda)));
 				}
-			}else {
+			} else {
 				model.put("success", false);
-				if(CAMPO_EXPEDIENTE.equals(campo)) {
+				if (CAMPO_EXPEDIENTE.equals(campo)) {
 					model.put("error", ERROR_EXPEDIENTE_NOT_EXISTS);
-				}else {
+				} else {
 					model.put("error", ERROR_OFERTA_NOT_EXISTS);
 				}
 			}
@@ -1573,7 +1839,7 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 			e.printStackTrace();
 			model.put("success", false);
 			model.put("error", ERROR_CAMPO_NO_NUMERICO);
-		} catch(Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			model.put("success", false);
 			model.put("error", ERROR_GENERICO);
@@ -1584,7 +1850,7 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getComboTipoCalculo(Long idExpediente, WebDto webDto, ModelMap model){
+	public ModelAndView getComboTipoCalculo(Long idExpediente, WebDto webDto, ModelMap model) {
 
 		model.put("data", expedienteComercialApi.getComboTipoCalculo(idExpediente));
 		return new ModelAndView("jsonView", model);
@@ -1605,7 +1871,6 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 		return new ModelAndView("jsonView", model);
 	}
 
-
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView enviarCorreoAsegurador(Long idExpediente, ModelMap model) {
@@ -1620,8 +1885,6 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 		}
 		return new ModelAndView("jsonView", model);
 	}
-
-
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
@@ -1648,7 +1911,7 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 
 			model.put("success", expedienteComercialApi.saveExpedienteScoring(dto, id));
 
-		}catch (JsonViewerException e) {
+		} catch (JsonViewerException e) {
 			e.printStackTrace();
 			model.put("msg", e.getMessage());
 			model.put("success", false);
@@ -1667,14 +1930,14 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView enviarCorreoGestionLlaves(Long idExpediente, ModelMap model) {
 
-	try {
-		boolean success = expedienteComercialApi.enviarCorreoGestionLlaves(idExpediente, null, 1);
-		model.put("success", success);
+		try {
+			boolean success = expedienteComercialApi.enviarCorreoGestionLlaves(idExpediente, null, 1);
+			model.put("success", success);
 
-	} catch (Exception e) {
-		e.printStackTrace();
-		model.put("success", false);
-	}
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}
 		return new ModelAndView("jsonView", model);
 	}
 
@@ -1704,6 +1967,20 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 			boolean success = expedienteComercialApi.checkEstadoOcupadoTramite(idTramite);
 
 			model.put("success", success);
+		} catch (Exception e) {
+			model.put("success", false);
+			logger.error("Error en ExpedienteComercialController", e);
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView deleteTmpClienteByDocumento(ModelMap model, String docCliente) {
+		try {
+			clienteComercialDao.deleteTmpClienteByDocumento(docCliente);
+			model.put("success", true);
 		} catch (Exception e) {
 			model.put("success", false);
 			logger.error("Error en ExpedienteComercialController", e);

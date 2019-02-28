@@ -186,7 +186,7 @@ Ext.define('HreRem.view.agrupacion.detalle.OfertasComercialAgrupacionList', {
 		}else {
 			var parent= me.up('ofertascomercialagrupacion');
 			oferta = Ext.create('HreRem.model.OfertaComercial', {idAgrupacion: idAgrupacion, numAgrupacionRem: numAgrupacionRem});
-			Ext.create('HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaAgrupacion',{oferta: oferta, parent: parent}).show();
+			Ext.create('HreRem.view.activos.detalle.WizardAltaOferta',{oferta: oferta, parent: parent, idAgrupacion:idAgrupacion}).show();  
 		}    	
 		
 	},

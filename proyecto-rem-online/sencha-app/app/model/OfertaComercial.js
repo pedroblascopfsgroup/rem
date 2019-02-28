@@ -4,8 +4,8 @@
 Ext.define('HreRem.model.OfertaComercial', {
     extend: 'HreRem.model.Base',
 
-    fields: [    
-  
+    fields: [
+    	
             {
             	name:'numOferta'
             },
@@ -14,6 +14,9 @@ Ext.define('HreRem.model.OfertaComercial', {
             },
             {
             	name:'idAgrupacion'
+            },
+            {
+            	name:'idActivo'
             },
             {
             	name:'importe'
@@ -56,7 +59,33 @@ Ext.define('HreRem.model.OfertaComercial', {
             },
             {
             	name: 'regimenMatrimonial'
+            },
+            {
+            	name: 'email'
+            },
+            {
+            	name: 'telefono'
+            },
+            {
+            	name: 'direccion'
+            },
+            {
+            	name: 'cesionDatosHaya',
+            	type : 'boolean'
+            },
+            {
+            	name: 'comunicacionTerceros',
+            	type : 'boolean'
+            },
+            {
+            	name: 'transferenciasInternacionales',
+            	type : 'boolean'
+            },
+            {
+            	name: 'pedirDoc',
+            	type : 'boolean'
             }
+            
     ],
     
 	proxy: {

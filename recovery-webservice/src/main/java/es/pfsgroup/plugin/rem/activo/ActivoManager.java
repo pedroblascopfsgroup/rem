@@ -1,7 +1,11 @@
 package es.pfsgroup.plugin.rem.activo;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
+import java.security.MessageDigest;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -14,11 +18,21 @@ import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Resource;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.Response;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.glassfish.jersey.jackson.JacksonFeature;
+import org.glassfish.jersey.media.multipart.FormDataMultiPart;
+import org.glassfish.jersey.media.multipart.MultiPart;
+import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -60,6 +74,9 @@ import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.gestorDocumental.manager.GestorDocumentalExpedientesManager;
+import es.pfsgroup.plugin.gestorDocumental.manager.RestClientManager;
+import es.pfsgroup.plugin.gestorDocumental.model.ServerRequest;
+import es.pfsgroup.plugin.gestorDocumental.model.documentos.RespuestaDescargarDocumento;
 import es.pfsgroup.plugin.recovery.agendaMultifuncion.impl.dto.DtoAdjuntoMail;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDSituacionCarga;
@@ -86,9 +103,11 @@ import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
 import es.pfsgroup.plugin.rem.condiciontanteo.CondicionTanteoApi;
+import es.pfsgroup.plugin.rem.expedienteComercial.dao.ExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.factory.TabActivoFactoryApi;
 import es.pfsgroup.plugin.rem.gestor.dao.GestorExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
+import es.pfsgroup.plugin.rem.gestorDocumental.dto.documentos.GestorDocToRecoveryAssembler;
 import es.pfsgroup.plugin.rem.jbpm.handler.notificator.impl.NotificatorServiceSancionOfertaAceptacionYRechazo;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjuntoActivo;
@@ -123,6 +142,8 @@ import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
+import es.pfsgroup.plugin.rem.model.ClienteCompradorGDPR;
+import es.pfsgroup.plugin.rem.model.ClienteGDPR;
 import es.pfsgroup.plugin.rem.model.Comprador;
 import es.pfsgroup.plugin.rem.model.CompradorExpediente;
 import es.pfsgroup.plugin.rem.model.CompradorExpediente.CompradorExpedientePk;
@@ -143,6 +164,7 @@ import es.pfsgroup.plugin.rem.model.DtoComunidadpropietariosActivo;
 import es.pfsgroup.plugin.rem.model.DtoCondicionEspecifica;
 import es.pfsgroup.plugin.rem.model.DtoCondicionantesDisponibilidad;
 import es.pfsgroup.plugin.rem.model.DtoEstadosInformeComercialHistorico;
+import es.pfsgroup.plugin.rem.model.DtoGenerarDocGDPR;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoDestinoComercial;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoMediador;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPrecios;
@@ -261,13 +283,15 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	private static final String AVISO_MENSAJE_EXISTEN_OFERTAS_VENTA = "activo.motivo.oferta.existe.venta";
 	private static final String AVISO_MENSAJE_ACITVO_ALQUILADO_O_OCUPADO = "activo.motivo.oferta.alquilado.ocupado";
 	private static final String MAESTRO_ORIGEN_WCOM="WCOM";
+	private static final String KEY_GDPR="gdpr.data.key";
+	private static final String URL_GDPR="gdpr.data.url";
 	private SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 	private BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 	
 
 	@Resource
 	private MessageService messageServices;
-
+	
 	@Autowired
 	private GestorDocumentalFotosApi gestorDocumentalFotos;
 
@@ -380,10 +404,13 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	@Autowired
 	private GestorDocumentalAdapterApi gestorDocumentalAdapterApi;
 
-
 	@Autowired
 	private ActivoPublicacionDao activoPublicacionDao;
 	
+
+	@Autowired
+	private ExpedienteComercialDao expedienteComercialDao;
+
 	@Autowired
 	private ActivoPatrimonioDao activoPatrimonioDao;
 
@@ -1137,6 +1164,12 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				compradorExpedienteNuevo.setTitularContratacion(1);
 				compradorExpedienteNuevo.setPorcionCompra(parteCompraPrincipal);
 				compradorExpedienteNuevo.setBorrado(false);
+				
+				ClienteGDPR clienteGDPR = genericDao.get(ClienteGDPR.class, 
+						genericDao.createFilter(FilterType.EQUALS, "numDocumento", compradorBusqueda.getDocumento()),
+						genericDao.createFilter(FilterType.EQUALS, "tipoDocumento.codigo", compradorBusqueda.getTipoDocumento().getCodigo()));
+				
+				compradorExpedienteNuevo.setDocumentoAdjunto(clienteGDPR.getAdjuntoComprador());
 
 				listaCompradoresExpediente.add(compradorExpedienteNuevo);
 			} else { // Si no existe un comprador con dicho dni, lo crea, añade
@@ -1179,6 +1212,21 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				if (!Checks.esNulo(oferta.getCliente().getTipoPersona())) {
 					nuevoComprador.setTipoPersona(oferta.getCliente().getTipoPersona());
 				}
+								
+				// HREOS - 4937
+				ClienteGDPR clienteGDPR = genericDao.get(ClienteGDPR.class,
+						genericDao.createFilter(FilterType.EQUALS, "cliente.id", oferta.getCliente().getId()));
+				if (!Checks.esNulo(clienteGDPR)) {
+					if (!Checks.esNulo(clienteGDPR.getCesionDatos())) {
+						nuevoComprador.setCesionDatos(clienteGDPR.getCesionDatos());
+					}
+					if (!Checks.esNulo(clienteGDPR.getComunicacionTerceros())) {
+						nuevoComprador.setComunicacionTerceros(clienteGDPR.getComunicacionTerceros());
+					}
+					if (!Checks.esNulo(clienteGDPR.getTransferenciasInternacionales())) {
+						nuevoComprador.setTransferenciasInternacionales(clienteGDPR.getTransferenciasInternacionales());
+					}
+				}
 
 				genericDao.save(Comprador.class, nuevoComprador);
 
@@ -1197,8 +1245,30 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				if (!Checks.esNulo(oferta.getCliente().getRegimenMatrimonial())) {
 					compradorExpedienteNuevo.setRegimenMatrimonial(oferta.getCliente().getRegimenMatrimonial());
 				}
+				compradorExpedienteNuevo.setDocumentoAdjunto(clienteGDPR.getAdjuntoComprador());
 
 				listaCompradoresExpediente.add(compradorExpedienteNuevo);
+								
+				// HREOS - 4937 - Historificando				
+				ClienteCompradorGDPR clienteCompradorGDPR = new ClienteCompradorGDPR();
+				clienteCompradorGDPR.setTipoDocumento(nuevoComprador.getTipoDocumento());
+				clienteCompradorGDPR.setNumDocumento(nuevoComprador.getDocumento());
+				if (!Checks.esNulo(clienteGDPR)) {
+					if (!Checks.esNulo(clienteGDPR.getCesionDatos())) {
+						clienteCompradorGDPR.setCesionDatos(clienteGDPR.getCesionDatos());
+					}
+					if (!Checks.esNulo(clienteGDPR.getComunicacionTerceros())) {
+						clienteCompradorGDPR.setComunicacionTerceros(clienteGDPR.getComunicacionTerceros());
+					}
+					if (!Checks.esNulo(clienteGDPR.getTransferenciasInternacionales())) {
+						clienteCompradorGDPR.setTransferenciasInternacionales(clienteGDPR.getTransferenciasInternacionales());								
+					}
+					if (!Checks.esNulo(clienteGDPR.getAdjuntoComprador())) {
+						clienteCompradorGDPR.setAdjuntoComprador(clienteGDPR.getAdjuntoComprador());
+					}
+				}				
+				genericDao.save(ClienteCompradorGDPR.class, clienteCompradorGDPR);				
+				
 			}
 
 			// Se recorre todos los titulares adicionales, estos tambien se
@@ -1230,6 +1300,10 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 						listaCompradoresExpediente.add(compradorExpedienteAdicionalNuevo);
 
 					} else {
+						ClienteGDPR cliGDPR = genericDao.get(ClienteGDPR.class,
+								genericDao.createFilter(FilterType.EQUALS, "tipoDocumento.id", titularAdicional.getTipoDocumento().getId()),
+								genericDao.createFilter(FilterType.EQUALS, "numDocumento", titularAdicional.getDocumento()));
+						
 						Comprador nuevoCompradorAdicional = new Comprador();
 						CompradorExpediente compradorExpedienteAdicionalNuevo = new CompradorExpediente();
 						compradorExpedienteAdicionalNuevo.setBorrado(false);
@@ -1240,6 +1314,19 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 						nuevoCompradorAdicional.setDocumento(titularAdicional.getDocumento());
 						nuevoCompradorAdicional.setNombre(titularAdicional.getNombre());
 						nuevoCompradorAdicional.setTipoDocumento(titularAdicional.getTipoDocumento());
+						
+						//AGREGAR CHECKS DE TITULARES ADICIONALES
+						if (!Checks.esNulo(titularAdicional)) {
+							if (!Checks.esNulo(titularAdicional.getRechazarCesionDatosPropietario())) {
+								nuevoCompradorAdicional.setCesionDatos(!titularAdicional.getRechazarCesionDatosPropietario());
+							}
+							if (!Checks.esNulo(titularAdicional.getRechazarCesionDatosProveedores())) {
+								nuevoCompradorAdicional.setComunicacionTerceros(!titularAdicional.getRechazarCesionDatosProveedores());
+							}
+							if (!Checks.esNulo(titularAdicional.getRechazarCesionDatosPublicidad())) {
+								nuevoCompradorAdicional.setTransferenciasInternacionales(!titularAdicional.getRechazarCesionDatosPublicidad());
+							}
+						}
 						genericDao.save(Comprador.class, nuevoCompradorAdicional);
 
 						CompradorExpedientePk pk = new CompradorExpedientePk();
@@ -1252,6 +1339,27 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 						compradorExpedienteAdicionalNuevo.setPorcionCompra(parteCompraAdicionales);
 
 						listaCompradoresExpediente.add(compradorExpedienteAdicionalNuevo);
+						
+						// HREOS - 4937 - Historificando				
+						ClienteCompradorGDPR clienteCompradorGDPR = new ClienteCompradorGDPR();
+						clienteCompradorGDPR.setTipoDocumento(nuevoCompradorAdicional.getTipoDocumento());
+						clienteCompradorGDPR.setNumDocumento(nuevoCompradorAdicional.getDocumento());
+						if (!Checks.esNulo(cliGDPR)) {
+							if (!Checks.esNulo(cliGDPR.getCesionDatos())) {
+								clienteCompradorGDPR.setCesionDatos(cliGDPR.getCesionDatos());
+							}
+							if (!Checks.esNulo(cliGDPR.getComunicacionTerceros())) {
+								clienteCompradorGDPR.setComunicacionTerceros(cliGDPR.getComunicacionTerceros());
+							}
+							if (!Checks.esNulo(cliGDPR.getTransferenciasInternacionales())) {
+								clienteCompradorGDPR.setTransferenciasInternacionales(cliGDPR.getTransferenciasInternacionales());								
+							}
+							if (!Checks.esNulo(cliGDPR.getAdjuntoComprador())) {
+								clienteCompradorGDPR.setAdjuntoComprador(cliGDPR.getAdjuntoComprador());
+							}
+						}						
+						genericDao.save(ClienteCompradorGDPR.class, clienteCompradorGDPR);
+
 					}
 				}
 			}
@@ -5245,6 +5353,140 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			}
 		}
 		return false;
+	}
+	
+	@SuppressWarnings("resource")
+	public FileItem generarUrlGDPR(DtoGenerarDocGDPR dtoGenerarDocGDPR) throws GestorDocumentalException, IOException {
+		
+		String fecha = new SimpleDateFormat("yyyyMMdd").format(new Date());
+		String documento = "";
+		if(!Checks.esNulo(dtoGenerarDocGDPR.getDocumento()))
+			documento = dtoGenerarDocGDPR.getDocumento();
+		
+		String reservationKey = appProperties.getProperty(KEY_GDPR)+documento+fecha;//TODO AQUI EL HASH MD5 MONTADO (key POR DEFINIR + #documento + today(yyyyMMdd)timestamp)
+		String signature = computeKey(reservationKey);
+		
+		String url=appProperties.getProperty(URL_GDPR);
+		String gdpr1 = "0";
+		String gdpr2 = "0";
+		String gdpr3 = "0";
+		if(!Checks.esNulo(dtoGenerarDocGDPR.getCesionDatos()) && dtoGenerarDocGDPR.getCesionDatos().equals(true)){
+			gdpr1 = "1";
+		}
+		if(!Checks.esNulo(dtoGenerarDocGDPR.getComTerceros()) && dtoGenerarDocGDPR.getComTerceros().equals(true)){
+			gdpr2 = "1";
+		}
+		if(!Checks.esNulo(dtoGenerarDocGDPR.getTransIntern()) && dtoGenerarDocGDPR.getTransIntern().equals(true)){
+			gdpr3 = "1";
+		}
+		
+		final MultiPart multipart = new FormDataMultiPart()
+				.field("nombre", dtoGenerarDocGDPR.getNombre())
+				.field("documento", dtoGenerarDocGDPR.getDocumento())
+				.field("gdpr1", gdpr1)
+				.field("gdpr2", gdpr2)
+				.field("gdpr3", gdpr3)
+				.field("codRemPresciptor", String.valueOf(getCodRemPrescriptor(dtoGenerarDocGDPR)))
+				.field("signature", signature);
+		
+		
+		
+		ServerRequest serverRequest =  new ServerRequest();
+		serverRequest.setMethod(RestClientManager.METHOD_POST);
+		serverRequest.setRestClientUrl(url);
+		serverRequest.setMultipart(multipart);
+		serverRequest.setResponseClass(RespuestaDescargarDocumento.class);
+		Object respuesta = this.getBinaryResponse(serverRequest,"", dtoGenerarDocGDPR, signature);
+		byte[] bytes = null;
+		
+		if(respuesta instanceof byte[]) {
+			bytes = (byte[]) respuesta;
+		}
+		else {
+			throw new GestorDocumentalException("Error al descargar documento");
+		}
+		RespuestaDescargarDocumento respuesta2 = this.rellenarRespuestaDescarga(bytes,dtoGenerarDocGDPR.getDocumento()); 
+		FileItem fileItem = GestorDocToRecoveryAssembler.getFileItem(respuesta2);
+		return fileItem;
+	}
+	
+	private RespuestaDescargarDocumento rellenarRespuestaDescarga(byte[] contenido, String nombreDocumento){
+		
+		Byte[] bytes = ArrayUtils.toObject(contenido);
+		
+		RespuestaDescargarDocumento respuesta = new RespuestaDescargarDocumento();
+		respuesta.setContenido(bytes);
+		respuesta.setNombreDocumento(nombreDocumento+".pdf");
+		
+		return respuesta;
+	}
+	
+	public Object getBinaryResponse(ServerRequest serverRequest, String fileName, DtoGenerarDocGDPR dtoGenerarDocGDPR, String signature) {
+		
+		String restClientUrl = serverRequest.getRestClientUrl();
+
+		final Client client = ClientBuilder.newBuilder().register(MultiPartFeature.class).register(JacksonFeature.class).build();
+		String url = restClientUrl;
+		WebTarget webTarget = client.target(url);
+		logger.info("URL: " + url);
+		Object response = webTarget.request().post(Entity.entity(serverRequest.getMultipart(), serverRequest.getMultipart().getMediaType()));
+		
+		if (response == null) return null;
+		Response res = (Response) response;
+		InputStream is = (InputStream)res.getEntity();
+		ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+		int nRead;
+	    byte[] data = new byte[1024];
+	    try {
+		    while ((nRead = is.read(data, 0, data.length)) != -1) {
+		        buffer.write(data, 0, nRead);
+		    }
+		 
+		    buffer.flush();
+			byte[] bytes = buffer.toByteArray();
+			buffer.close();
+			is.close();
+			return bytes;
+		} catch (IOException e) {
+			logger.error("RestClientManager : Error al recoger bytes del archivo - " +e);
+			return null;
+		}
+	}
+	
+	private String computeKey(String key) {
+
+		String result = "";
+		try {
+			byte[] bytesOfMessage = key.getBytes("UTF-8");
+
+			MessageDigest md = MessageDigest.getInstance("MD5");
+			md.update(bytesOfMessage);
+			byte[] thedigest = md.digest();
+			StringBuffer hexString = new StringBuffer();
+			for (int i = 0; i < thedigest.length; i++) {
+				if ((0xff & thedigest[i]) < 0x10) {
+					hexString.append("0" + Integer.toHexString((0xFF & thedigest[i])));
+				} else {
+					hexString.append(Integer.toHexString(0xFF & thedigest[i]));
+				}
+			}
+			result  = hexString.toString();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
+
+	private Long getCodRemPrescriptor(DtoGenerarDocGDPR dtoGenerarDocGDPR) {
+		Long codRemPrescriptor = null;
+		if(!Checks.esNulo(dtoGenerarDocGDPR.getIdExpediente())) {
+			ExpedienteComercial expCom = expedienteComercialDao.get(dtoGenerarDocGDPR.getIdExpediente());
+			codRemPrescriptor= expCom.getOferta().getPrescriptor().getCodigoProveedorRem();
+		}else {
+			codRemPrescriptor= dtoGenerarDocGDPR.getCodPrescriptor();
+		}
+
+		return codRemPrescriptor;
 	}
 	@Override
 	public ActivoPatrimonio getActivoPatrimonio(Long idActivo) {

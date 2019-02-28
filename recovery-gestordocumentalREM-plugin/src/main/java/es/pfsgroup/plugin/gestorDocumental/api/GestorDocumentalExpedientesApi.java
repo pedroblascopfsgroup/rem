@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.gestorDocumental.api;
 
+import es.pfsgroup.plugin.gestorDocumental.dto.servicios.CrearEntidadCompradorDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.servicios.CrearActuacionTecnicaDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.servicios.CrearExpedienteComercialDto;
 import es.pfsgroup.plugin.gestorDocumental.dto.servicios.CrearGastoDto;
@@ -14,11 +15,13 @@ public interface GestorDocumentalExpedientesApi {
 	 * @return
 	 * @throws GestorDocumentalException
 	 */
+	
 	RespuestaCrearExpediente crearGasto(CrearGastoDto crearGasto) throws GestorDocumentalException;
 
 	RespuestaCrearExpediente crearExpedienteComercial(CrearExpedienteComercialDto crearExpedienteComercialDto) throws GestorDocumentalException;
 
-	RespuestaCrearExpediente crearActuacionTecnica(CrearActuacionTecnicaDto crearActuacionTecnicaDto)
-			throws GestorDocumentalException;	
+	RespuestaCrearExpediente crearActivoOferta(CrearEntidadCompradorDto crearActivoOferta) throws GestorDocumentalException;
+
+	RespuestaCrearExpediente crearActuacionTecnica(CrearActuacionTecnicaDto crearActuacionTecnicaDto) throws GestorDocumentalException;	
 
 }

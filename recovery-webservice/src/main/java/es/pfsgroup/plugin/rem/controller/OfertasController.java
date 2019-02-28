@@ -30,12 +30,15 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
+import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
 import es.pfsgroup.plugin.rem.excel.OfertasExcelReport;
+import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.DtoHonorariosOferta;
 import es.pfsgroup.plugin.rem.model.DtoOfertantesOferta;
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
@@ -57,12 +60,18 @@ public class OfertasController {
 
 	@Autowired
 	private OfertaApi ofertaApi;
+	
+	@Autowired
+	private ExpedienteComercialApi expedienteComercialApi;
 
 	@Autowired
 	private ExcelReportGeneratorApi excelReportGeneratorApi;
 
 	@Autowired
 	private RestApi restApi;
+	
+	@Autowired
+	private ActivoDao activoDao;
 
 	private final Log logger = LogFactory.getLog(getClass());
 
@@ -80,7 +89,8 @@ public class OfertasController {
 	
 	@Autowired
 	private ActivoTareaExternaApi activoTareaExternaApi;
-
+	
+	private final static String CLIENTE_HAYA = "HAYA";
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
@@ -178,7 +188,7 @@ public class OfertasController {
 	 * HEADERS: Content-Type - application/json signature - sdgsdgsdgsdg
 	 * 
 	 * BODY: {"id":"111111114111","data": [{
-	 * "idOfertaWebcom": "1000", "idVisitaRem": "1", "idClienteRem": "1", 
+	 * "idOfertaWebcom": "1000", "idVisitaRem": "1", "idClienteRem": "1",
 	 * "activosLote": ["6346320", "6346321", "6346322"],
 	 * "codEstadoOferta": "04","codTipoOferta": "01", "fechaAccion":
 	 * "2016-01-01T10:10:10", "idUsuarioRemAccion": "29468",
@@ -200,7 +210,7 @@ public class OfertasController {
 		ArrayList<Map<String, Object>> listaRespuesta = new ArrayList<Map<String, Object>>();
 		JSONObject jsonFields = null;
 		List<OfertaDto> listaOfertaDto = null;
-		
+
 		try {
 
 			jsonFields = request.getJsonObject();
@@ -213,7 +223,7 @@ public class OfertasController {
 			} else {
 
 				ofertaApi.saveOrUpdateOfertas(listaOfertaDto, jsonFields, listaRespuesta);
-				
+
 				model.put("id", jsonFields.get("id"));
 				model.put("data", listaRespuesta);
 				model.put("error", "null");
@@ -314,80 +324,76 @@ public class OfertasController {
 		return createModelAndViewJson(new ModelMap("data", ofertaApi.getDiccionarioSubtipoProveedorCanal()));
 	}
 	
-	
+
 	@RequestMapping(method = RequestMethod.GET)
 	public void generateExcelOferta(Long idEco, Long idOferta, HttpServletRequest request, HttpServletResponse response) throws IOException {
 		
-//		DtoOfertasFilter dto = new DtoOfertasFilter();
-//		dto.setIdOferta(idOferta);
-//		ExcelReport report = new OfertasExcelReport(ofertaApi.getListOfertasFromView(dto));
-//		File file = excelReportGeneratorApi.generateReport(report);
-//		
-//		Oferta oferta = ofertaApi.getOfertaById(idOferta);
-//		notificationOferta.sendNotificationPropuestaOferta(oferta, new FileItem(file));
-//		
-//		excelReportGeneratorApi.sendReport(file, response);
-		Long prueba = (long) 72;//3199;
 		List <DtoPropuestaAlqBankia> listaPropuestaAlquilerBankia = ofertaApi.getListPropuestasAlqBankiaFromView(idEco);
 		
-		//List<DtoPropuestaAlqBankia> l_dtoBankia = ofertaApi.getListPropuestasAlqBankiaFromView(3199L);
-//		DtoPropuestaAlqBankia dtoA = new DtoPropuestaAlqBankia();
-//		DtoPropuestaAlqBankia dtoB = new DtoPropuestaAlqBankia();
-//		dtoA.setNumActivoUvem(2L);
-//		dtoA.setTipoActivo("Normal?");
-//		dtoA.setDescripcionEstadoPatrimonio("JEJEJEJ");
-//		dtoA.setFechaAltaOferta(new Date());
-//		dtoA.setFechaPublicacionWeb(new Date());
-//		dtoA.setNombreCompleto("MG");
-//		dtoA.setDireccionCompleta("Calle Falsa 1 2 3");
-//		dtoA.setCodPostMunicipio("123423141 Alman");
-//		dtoA.setNombrePropietario("JUJUJ INC.");
-//		dtoA.setCompradorDocumento("2150L");
-//		dtoA.setFechaUltimaTasacion(new Date());
-//		dtoA.setImporteTasacionFinal(new BigDecimal(2));
-//		dtoA.setImporteOferta(new BigDecimal(3));
-//		dtoA.setTextoOferta("ddfaofjaiojidfsji");
-//		dtoB.setNumActivoUvem(1L);
-//		dtoB.setTipoActivo("NoTanNormal");
-//		
-//		List<DtoPropuestaAlqBankia> l_dtoBankia = new ArrayList<DtoPropuestaAlqBankia>();
-//		l_dtoBankia.add(dtoB);
-//		l_dtoBankia.add(dtoA);
-		
 		File file = excelReportGeneratorApi.generateBankiaReport(listaPropuestaAlquilerBankia, request);
-
 		excelReportGeneratorApi.sendReport(file, response);
 		Oferta oferta = ofertaApi.getOfertaById(idOferta);
 		notificationOferta.sendNotificationPropuestaOferta(oferta, new FileItem(file));
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView enviarMailAprobacion(ModelMap model, Long idOferta) {
-		
+
 		try {
-			
+
 			Oferta oferta = ofertaApi.getOfertaById(idOferta);
 			String errorCode = notificationOferta.enviarMailAprobacion(oferta);
-			
+
 			if(errorCode == null || errorCode.isEmpty()){
 				model.put("success", true);
 			}
 			else{
 				model.put("success", false);
 				model.put("errorCode", errorCode);
-			}			
-			
-			
-		} 
+			}
+
+
+		}
 		catch (Exception e) {
 			e.printStackTrace();
 			model.put("success", false);
 			model.put("errorCode", "imposible.bloquear.general");
-		}		
-		
+		}
+
 		return createModelAndViewJson(model);
-		
+
 	}
-	
+
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView checkPedirDoc(Long idActivo,Long idAgrupacion, Long idExpediente, String dniComprador, String codtipoDoc, ModelMap model) {
+
+		try {
+			//Se realiza aqui la llamada al Maestro de Personas para que tenga tiempo de ejecutar el hilo. 
+			ofertaApi.llamadaMaestroPersonas(dniComprador, CLIENTE_HAYA);
+			model.put("data", ofertaApi.checkPedirDoc(idActivo,idAgrupacion,idExpediente, dniComprador, codtipoDoc));
+			model.put("comprador",ofertaApi.getClienteGDPRByTipoDoc(dniComprador, codtipoDoc));
+			model.put("compradorId", expedienteComercialApi.getCompradorIdByDocumento(dniComprador, codtipoDoc));
+			model.put("destinoComercial", ofertaApi.getDestinoComercialActivo(idActivo, idAgrupacion, idExpediente));
+			if(!Checks.esNulo(idActivo)) {
+				Activo activo = activoDao.get(idActivo);
+				if(DDCartera.CODIGO_CARTERA_CERBERUS.equals(activo.getCartera().getCodigo())
+						|| DDCartera.CODIGO_CARTERA_GIANTS.equals(activo.getCartera().getCodigo())
+						|| DDCartera.CODIGO_CARTERA_TANGO.equals(activo.getCartera().getCodigo())
+						|| DDCartera.CODIGO_CARTERA_GALEON.equals(activo.getCartera().getCodigo())) {
+					model.put("carteraInternacional", true);
+				} else {
+					model.put("carteraInternacional", false);
+				}
+				
+			}
+			model.put("success", true);
+		} catch (Exception e) {
+			logger.error("Error en ofertasController", e);
+			model.put("success", false);
+		}
+
+		return createModelAndViewJson(model);
+	}
 }

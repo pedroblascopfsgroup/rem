@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.api;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.text.ParseException;
@@ -17,6 +18,7 @@ import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
+import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
@@ -41,6 +43,7 @@ import es.pfsgroup.plugin.rem.model.DtoComunidadpropietariosActivo;
 import es.pfsgroup.plugin.rem.model.DtoCondicionEspecifica;
 import es.pfsgroup.plugin.rem.model.DtoCondicionantesDisponibilidad;
 import es.pfsgroup.plugin.rem.model.DtoEstadosInformeComercialHistorico;
+import es.pfsgroup.plugin.rem.model.DtoGenerarDocGDPR;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoDestinoComercial;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoMediador;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPreciosFilter;
@@ -1043,6 +1046,15 @@ public interface ActivoApi {
 	boolean compruebaSiExisteActivoBienPorMatricula(Long idActivo, String matriculaActivo);
 
 	/**
+	 * Genera la url del documento GDPR
+	 * @param dtoGenerarDocGDPR
+	 * @return string url del documento GDPR
+	 * @throws GestorDocumentalException 
+	 * @throws IOException 
+	 */
+	FileItem generarUrlGDPR(DtoGenerarDocGDPR dtoGenerarDocGDPR) throws GestorDocumentalException, IOException;
+
+	/**
 	 * Recoge el activo relacionado con el proveedor a partir del id del proveedor.
 	 * @param idProveedor
 	 * @return
@@ -1055,6 +1067,7 @@ public interface ActivoApi {
 	 * @return
 	 */
 	public Activo getActivoByIdGastoProveedor(Long idGastoProveedor);
+
 	
 	/**
 	 * Devuelve el activoPatrimonio a partir de la id de un activo.

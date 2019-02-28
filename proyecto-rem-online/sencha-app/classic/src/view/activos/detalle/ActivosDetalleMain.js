@@ -12,7 +12,7 @@ Ext.define('HreRem.view.activos.detalle.ActivosDetalleMain', {
         align: 'stretch'
     },
     requires : ['HreRem.view.activos.detalle.ActivoDetalleController', 'HreRem.view.activos.detalle.ActivoDetalleModel', 
-			'HreRem.view.activos.detalle.CabeceraActivo', 'HreRem.view.activos.detalle.ActivosDetalle'],
+			'HreRem.view.activos.detalle.CabeceraActivo', 'HreRem.view.activos.detalle.ActivosDetalle', 'HreRem.view.agrupaciones.detalle.AgrupacionesDetalle'],
 
     // NOTA: Añadiendo los items en la función configCmp, y llamando a esta en el callback de la petición de datos del activo, conseguimos que la pestaña se añada casi de inmediato al tabpanel,
 	// renderizando el resto de contenido una vez hecha la petición. Se ha añadido un simple container, que posteriormente se quitará, para que la mascará de carga de la pestaña se muestre correctamante

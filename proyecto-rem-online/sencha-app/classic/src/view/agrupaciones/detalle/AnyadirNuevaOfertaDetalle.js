@@ -4,21 +4,44 @@ Ext.define('HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaDetalle', {
     reference	: 'anyadirNuevaOfertaDetalle',
     collapsed: false,
 	scrollable	: 'y',
-	cls:'',	  				
-	recordName: "oferta",						
+	bodyStyle	: 'padding:20px',
+	recordName: "oferta",
 	recordClass: "HreRem.model.OfertaComercial",
 
-    
+	listeners: {
+		boxready: function(window) {
+			var me = this;
+
+			Ext.Array.each(me.down('fieldset').query('field[isReadOnlyEdit]'),
+				function (field, index)
+					{
+						field.fireEvent('edit');
+						if(index == 0) field.focus();
+					}
+			);
+		},
+
+		show: function() {
+			var me = this;
+			me.resetWindow();
+		}
+	},
+
 	initComponent: function() {
-    	
     	var me = this;
-    	
-    	
+
+    	me.buttons = [ {
+    		itemId: 'btnGuardar',
+    		text: 'Crear',
+    		handler: 'onClickCrearOferta'
+    	},  { itemId: 'btnCancelar', text: 'Cancelar', handler: 'onClickBotonCancelarWizard'}];
+
     	me.items = [
 					{
 						
 								xtype:'fieldset',
 								cls	: 'panel-base shadow-panel',
+								title: HreRem.i18n('title.nueva.oferta'),
 								layout: {
 							        type: 'table',
 							        // The total column count must be specified here
@@ -27,7 +50,8 @@ Ext.define('HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaDetalle', {
 							        tdAttrs: {width: '50%'},
 							        tableAttrs: {
 							            style: {
-							                width: '100%'
+							                width: '100%',
+							                margin: '10px 0 0 10px'
 										}
 							        }
 								},
@@ -36,13 +60,46 @@ Ext.define('HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaDetalle', {
 								scrollable	: 'y',	    				
 				            	items: [
 				            	    {
-				            	    	name:		'id',
-										bind:		'{oferta.idAgrupacion}',
+				            	    	name:		'cesionDatos',
+										bind:		'{oferta.cesionDatosHaya}',
+										hidden:		true
+				            	    },
+				            	    {
+				            	    	name:		'comunicacionTerceros',
+										bind:		'{oferta.comunicacionTerceros}',
+										hidden:		true
+				            	    },
+				            	    {
+				            	    	name:		'transferenciasInternacionales',
+										bind:		'{oferta.transferenciasInternacionales}',
+										hidden:		true
+				            	    },
+				            	    {
+				            	    	name:		'pedirDoc',
+										bind:		'{oferta.pedirDoc}',
+										hidden:		true
+				            	    },
+				            	    {
+				            	    	name:		'telefono',
+										bind:		'{oferta.telefono}',
+										hidden:		true
+				            	    }
+				            	    ,
+				            	    {
+				            	    	name:		'direccion',
+										bind:		'{oferta.direccion}',
+										hidden:		true
+				            	    }
+				            	    ,
+				            	    {
+				            	    	name:		'email',
+										bind:		'{oferta.enail}',
 										hidden:		true
 				            	    },
 									{
 										xtype:      'currencyfieldbase',
 										fieldLabel: HreRem.i18n('fieldlabel.importe'),
+										name:       'importeOferta',
 										flex: 		1,
 										allowBlank: false,
 										bind:		'{oferta.importeOferta}'
@@ -51,6 +108,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaDetalle', {
 										xtype: 'comboboxfieldbase',
 	    					        	fieldLabel:  HreRem.i18n('header.oferta.tipoOferta'),
 	    					        	itemId: 'comboTipoOferta',
+	    					        	name: 'comboTipoOferta',
 	    					        	flex:	1,
 	    					        	allowBlank: false,
 	    					        	bind: {
@@ -85,6 +143,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaDetalle', {
 				            	    {
 				            	    	fieldLabel: HreRem.i18n('fieldlabel.apellidos.cliente'),
 				            	    	name:		'apellidosCliente',
+				            	    	allowBlank: false,
 										bind:		{
 											value: '{oferta.apellidosCliente}',
 											disabled: '{oferta.razonSocialCliente}'
@@ -105,6 +164,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaDetalle', {
 										xtype: 'comboboxfieldbase',
 	    					        	fieldLabel:  HreRem.i18n('fieldlabel.tipoDocumento'),
 	    					        	itemId: 'comboTipoDocumento',
+	    					        	name:   'comboTipoDocumento',
 	    					        	allowBlank: false,
 	    					        	flex:	1,
 	    					        	bind: {
@@ -125,6 +185,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaDetalle', {
 										xtype: 'comboboxfieldbase',
 	    					        	fieldLabel:  HreRem.i18n('fieldlabel.tipo.persona'),
 	    					        	itemId: 'comboTipoPersona',
+	    					        	name: 'comboTipoPersona',
 	    					        	flex:	1,
 	    					        	allowBlank: true,
 	    					        	bind: {
@@ -240,15 +301,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaDetalle', {
 								        		if (e.getKey() === e.ENTER) {
 								        			field.lookupController().buscarPrescriptor(field);											        			
 								        		}
-								        	}/*,
-								        	
-								        	blur: function(field, e) {											        		
-								        		if(!Ext.isEmpty(field.getValue())) {
-								        			field.lookupController().buscarPrescriptor(field);
-								        		}
-								        	}*/
-								        	
-								        	
+								        	}
 								        }
 				                	},
 				                	{
@@ -263,7 +316,6 @@ Ext.define('HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaDetalle', {
 										},
 										allowBlank: true,
 										triggers: {
-											
 												buscarEmisor: {
 										            cls: Ext.baseCSSPrefix + 'form-search-trigger',
 										            handler: 'buscarSucursal'
@@ -277,17 +329,11 @@ Ext.define('HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaDetalle', {
 								        		if (e.getKey() === e.ENTER) {
 								        			field.lookupController().buscarSucursal(field);											        			
 								        		}
-								        	}/*,
-								        	
-								        	blur: function(field, e) {											        		
-								        		if(!Ext.isEmpty(field.getValue())) {
-								        			field.lookupController().buscarPrescriptor(field);
-								        		}
-								        	}*/
-								        	
-								        	
+								        	}
 								        },
+
 							        	colspan: 2
+
 				                	},
 				                	{
 										xtype: 'textfieldbase',
@@ -306,12 +352,16 @@ Ext.define('HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaDetalle', {
 										allowBlank: true,
 							        	colspan: 2
 									}
-				            	]
+								]
 				}
     	];
     	
     	me.callParent();
-    	//me.setTitle(HreRem.i18n('title.nueva.oferta'));
+    },
+
+    resetWindow: function() {
+    	var me = this;
+		me.setBindRecord(me.oferta);
     }
     
 });

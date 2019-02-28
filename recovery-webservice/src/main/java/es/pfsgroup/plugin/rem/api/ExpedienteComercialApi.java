@@ -1,5 +1,8 @@
 package es.pfsgroup.plugin.rem.api;
 
+import java.util.ArrayList;
+import java.util.List;
+import org.springframework.ui.ModelMap;
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.exception.UserException;
 import es.capgemini.devon.files.FileItem;
@@ -26,12 +29,14 @@ public interface ExpedienteComercialApi {
 	 * @param id Long
 	 * @return ExpedienteComercial
 	 */
+
 	ExpedienteComercial findOne(Long id);
 
 	ExpedienteComercial findOneTransactional(Long id);
 
 	/**
-	 * Recupera el ExpedienteComercial indicado.
+	 * Método que recupera un conjunto de datos del expediente comercial según su id
+	 * 
 	 *
 	 * @param numExpediente
 	 * @return ExpedienteComercial
@@ -70,8 +75,7 @@ public interface ExpedienteComercialApi {
 	 * @param idEntidad id del expediente
 	 * @return resultado de la operacion
 	 */
-	public boolean saveTextoOferta(DtoTextosOferta dto, Long idEntidad) throws UserException;
-
+	boolean saveTextoOferta(DtoTextosOferta dto, Long idEntidad) throws UserException;
 
 	/**
 	 * Método que guarda un Seguro de rentas del expediente comercial y en el historico de rentas
@@ -125,7 +129,6 @@ public interface ExpedienteComercialApi {
 	 */
 	boolean update(ExpedienteComercial expedienteComercial);
 
-
 	/**
 	 * Actualiza el estado de la dev reserva al codigo dado
 	 *
@@ -151,8 +154,19 @@ public interface ExpedienteComercialApi {
 	 * @param codEstadoExpedienteComercial
 	 * @return
 	 */
-	boolean updateEstadoExpedienteComercial(ExpedienteComercial expedienteComercial, String codEstadoExpedienteComercial) throws Exception;
+	boolean updateEstadoExpedienteComercial(ExpedienteComercial expedienteComercial,
+			String codEstadoExpedienteComercial) throws Exception;
 
+	/**
+	 * Este método devuelve el Expediente Comercial junto con la Reserva al estado
+	 * previo a la tarea Resolución Expediente
+	 * 
+	 * @param idTramite:
+	 *            ID del trámite desde el cual se realiza la consulta.
+	 * @return Devuelve True si el estado del expdiente comercial es distinto a
+	 *         anulado, False si no lo es.
+	 * @throws Exception
+	 */
 	boolean updateExpedienteComercialEstadoPrevioResolucionExpediente(ExpedienteComercial expedienteComercial, String codigoTareaActual, String codigoTareaSalto, Boolean botonDeshacerAnulacion) throws Exception;
 
 	/**
@@ -199,7 +213,6 @@ public interface ExpedienteComercialApi {
 	 *
 	 * @return
 	 */
-
 	List<DtoTipoDocExpedientes> getTipoDocumentoExpediente(String tipoExpediente);
 
 	/**
@@ -258,6 +271,15 @@ public interface ExpedienteComercialApi {
 	VBusquedaDatosCompradorExpediente getDatosCompradorById(String idCom, String idExp);
 
 	/**
+	 * Recupera la informacion de un Comprador independientemente del Expediente
+	 * Comercial asociado
+	 * 
+	 * @param idCom
+	 * @return
+	 */
+	VBusquedaDatosCompradorExpediente getDatCompradorById(String idCom);
+
+	/**
 	 * Método que guarda la información de la pestaña Condicionantes del expediente
 	 *
 	 * @param dto
@@ -267,8 +289,8 @@ public interface ExpedienteComercialApi {
 	boolean saveCondicionesExpediente(DtoCondiciones dto, Long idExpediente);
 
 	/**
-	 * Metodo que crea la reserva para un expediente comercial
-	 *
+	 * Método que guarda la información de la pestaña de un comprador del expediente
+	 * 
 	 * @param expediente
 	 * @return
 	 */
@@ -281,16 +303,18 @@ public interface ExpedienteComercialApi {
 	 * @return
 	 */
 	boolean saveFichaComprador(VBusquedaDatosCompradorExpediente dto);
+	
+	//boolean crearCompradorExpedienteComercial(VBusquedaDatosCompradorExpediente dto);
 
 	/**
 	 * Verificación de adjunto existente en el expediente comercial, buscando por subtipo de documento. Esta verificación está pensada para trámites (ya que se identifica el trabajo)
 	 *
 	 * @param idTrabajo
-	 * @param codigoSubtipoDocumento Código del subtipo de documento del expediente
+	 * @param codigoSubtipoDocumento
+	 *            Código del subtipo de documento del expediente
 	 * @return
 	 */
 	Boolean comprobarExisteAdjuntoExpedienteComercial(Long idTrabajo, String codigoSubtipoDocumento);
-
 
 	/**
 	 * Método que guarda el comprador como principal
@@ -353,7 +377,6 @@ public interface ExpedienteComercialApi {
 	 * @return
 	 */
 	boolean saveReserva(DtoReserva dto, Long idEntidad);
-
 
 	/**
 	 * Método que obtiene los honorarios(gastos) por activo y oferta aceptada
@@ -608,7 +631,6 @@ public interface ExpedienteComercialApi {
 
 	/**
 	 * Devuelve el expediente de la oferta en caso de que exista.
-	 *
 	 * @param oferta
 	 * @return
 	 */
@@ -616,7 +638,6 @@ public interface ExpedienteComercialApi {
 
 	/**
 	 * Devuelve la descripción de un comité dado su código
-	 *
 	 * @param codigo
 	 * @return
 	 */
@@ -710,11 +731,12 @@ public interface ExpedienteComercialApi {
 	 * @param codigoColaboracion
 	 * @return
 	 */
-	GastosExpediente creaGastoExpediente(ExpedienteComercial expediente, Oferta oferta, Activo activo, String codigoColaboracion);
+	public GastosExpediente creaGastoExpediente(ExpedienteComercial expediente, Oferta oferta, Activo activo,
+			String codigoColaboracion);
 
 	/**
 	 * Devuelve los activos de un expediente dado, para mostrarlos en un combo
-	 *
+	 * 
 	 * @param idExpediente
 	 * @return
 	 */
@@ -728,7 +750,8 @@ public interface ExpedienteComercialApi {
 	 * @param idExpediente : idExpediente
 	 * @return Devuelve una lista con los clientes encontrados por el servicio.
 	 */
-	List<DatosClienteDto> buscarClientesUrsus(String numeroDocumento, String tipoDocumento, String idExpediente) throws Exception;
+	public List<DatosClienteDto> buscarClientesUrsus(String numeroDocumento, String tipoDocumento, String idExpediente)
+			throws Exception;
 
 	/**
 	 * Este método obtiene los detalles de cliente en base al número URSUS recibido.
@@ -736,7 +759,8 @@ public interface ExpedienteComercialApi {
 	 * @param numeroUrsus : número URSUS del cliente.
 	 * @param idExpediente : idExpediente
 	 * @return Devuelve todos los detalles del cliente encontrados por el servicio.
-	 * @throws Exception Devuelve excepcion si la conexion no ha sido satisfactoria.
+	 * @throws Exception
+	 *             Devuelve excepcion si la conexion no ha sido satisfactoria.
 	 */
 	DatosClienteDto buscarDatosClienteNumeroUrsus(String numeroUrsus, String idExpediente) throws Exception;
 
@@ -841,7 +865,6 @@ public interface ExpedienteComercialApi {
 	 */
 	String validaBloqueoExpediente(Long idExpediente);
 
-
 	/**
 	 * Bloquea el expediente comercial
 	 *
@@ -857,7 +880,6 @@ public interface ExpedienteComercialApi {
 	 * @return
 	 */
 	String validaDesbloqueoExpediente(Long idExpediente);
-
 
 	/**
 	 * Desbloquea el expediente comercial
@@ -885,7 +907,8 @@ public interface ExpedienteComercialApi {
 	 * @param tanteosActivo
 	 * @return
 	 */
-	void actualizarFVencimientoReservaTanteosRenunciados(TanteoActivoExpediente tanteoActivo, List<TanteoActivoExpediente> tanteosActivo);
+	public void actualizarFVencimientoReservaTanteosRenunciados(TanteoActivoExpediente tanteoActivo,
+			List<TanteoActivoExpediente> tanteosActivo);
 
 	/**
 	 * Devuelve true si el expediente asociado al trabajo está sancionado por el comite de Haya_Sareb
@@ -977,7 +1000,7 @@ public interface ExpedienteComercialApi {
 	boolean reservaFirmada(Long idTramite);
 
 	Boolean checkInformeJuridicoFinalizado(Long idTramite);
-	
+
 	Boolean checkFechaVenta(Long idTramite);
 
 	Boolean esBH(String idExpediente);
@@ -987,26 +1010,32 @@ public interface ExpedienteComercialApi {
 	/**
 	 * Este método envia un correo a los receptores Gestor comercial alquiler, Supervisor comercial alquiler y Prescriptor con el suerpo del mensaje que se recibe por parametro.
 	 *
-	 * @param cuerpoEmail: Contenido del cuerpo del mensaje.
-	 * @param idExpediente: Id del expediente al que hace referencia.
-	 * @return Devuelve True si el mensaje ha sido enviado y false si no ha sido asi.
+	 * @param cuerpoEmail:
+	 *            Contenido del cuerpo del mensaje.
+	 * @param idExpediente:
+	 *            Id del expediente al que hace referencia.
+	 * @return Devuelve True si el mensaje ha sido enviado y false si no ha sido
+	 *         asi.
 	 */
 	boolean enviarCorreoComercializadora(String cuerpoEmail, Long idExpediente);
 
 	List<DDTipoCalculo> getComboTipoCalculo(Long idExpediente);
 
 	/**
-	 * Este método comprueba si el expediente ya contiene un documento del tipo y subtipo indicado
+	 * Este método comprueba si el expediente ya contiene un documento del tipo y
+	 * subtipo indicado
 	 *
 	 * @param fileItem: Datos del documento.
 	 * @param expedienteComercialEntrada: Expediente Comercial al que hace referencia.
 	 * @return Devuelve True si existe el documento.
 	 */
 
-	Boolean existeDocSubtipo(WebFileItem fileItem, ExpedienteComercial expedienteComercialEntrada) throws Exception;
+	Boolean existeDocSubtipo(WebFileItem fileItem, ExpedienteComercial expedienteComercialEntrada)
+			throws Exception;
 
 	/**
-	 * Método que obtiene el histórico de scoring del expediente comercial de alquiler.
+	 * Método que obtiene el histórico de scoring del expediente comercial de
+	 * alquiler.
 	 *
 	 * @param idScoring
 	 * @return
@@ -1015,7 +1044,7 @@ public interface ExpedienteComercialApi {
 
 	/**
 	 * Método que guarda la pestaña Scoring el bloque detalle.
-	 *
+	 * 
 	 * @param dto
 	 * @param idEntidad
 	 * @return
@@ -1029,7 +1058,6 @@ public interface ExpedienteComercialApi {
 	 * @return
 	 */
 	boolean enviarCorreoAsegurador(Long idExpediente);
-
 
 	/**
 	 * Método que envía un correo para avisar de la fecha prevista para la entrega de llaves del alquiler
@@ -1110,11 +1138,13 @@ public interface ExpedienteComercialApi {
 	
 	List<DtoPropuestaAlqBankia> getListaDtoPropuestaAlqBankiaByExpId (Long ecoId);
 
+	DtoModificarCompradores vistaCrearComprador(VBusquedaDatosCompradorExpediente vista); //QUA
 
-	List<DtoActivosExpediente> getActivosPropagables(Long idExpediente);
-	
 	boolean checkConOpcionCompra(TareaExterna tareaExterna);
 
+	Long getCompradorIdByDocumento(String dniComprador, String codtipoDoc);
+
+	List<DtoActivosExpediente> getActivosPropagables(Long idExpediente);
 
 	boolean guardarCondicionesActivosExpediente(DtoCondicionesActivoExpediente condiciones);
 

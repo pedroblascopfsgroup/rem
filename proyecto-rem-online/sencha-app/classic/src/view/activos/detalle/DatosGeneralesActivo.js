@@ -5,7 +5,6 @@ Ext.define('HreRem.view.activos.detalle.DatosGeneralesActivo', {
     cls	: 'panel-base shadow-panel',
     layout 	: 'fit',		
     reference: 'datosGeneralesActivo',
-
     initComponent: function () {
 
         var me = this;
@@ -28,6 +27,7 @@ Ext.define('HreRem.view.activos.detalle.DatosGeneralesActivo', {
 		var me = this; 
 		me.recargar = false;		
 		me.down('tabpanel').getActiveTab().funcionRecargar();
+
     }
     
 });

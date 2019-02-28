@@ -9,6 +9,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -1386,10 +1387,12 @@ public class ActivoController extends ParadiseJsonController {
 	
 	@RequestMapping(method = RequestMethod.GET)
 	public void bajarAdjuntoActivo(HttpServletRequest request, HttpServletResponse response) {
+		ServletOutputStream salida = null;
+		
 		try {
 			Long id = Long.parseLong(request.getParameter("id"));
 			String nombreDocumento = request.getParameter("nombreDocumento");
-			ServletOutputStream salida = response.getOutputStream();
+			salida = response.getOutputStream();
 			FileItem fileItem = adapter.download(id, nombreDocumento);
 			response.setHeader("Content-disposition", "attachment; filename=" + fileItem.getFileName());
 			response.setHeader("Cache-Control", "must-revalidate, post-check=0,pre-check=0");
@@ -1403,12 +1406,26 @@ public class ActivoController extends ParadiseJsonController {
 
 			// Write
 			FileUtils.copy(fileItem.getInputStream(), salida);
-			salida.flush();
-			salida.close();
 
-		} catch (Exception e) {
-			logger.error("error en activoController", e);
+		} catch(UserException ex) {
+			try {
+				salida.write(ex.toString().getBytes(Charset.forName("UTF-8")));
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	
 		}
+		catch (Exception e) {
+			logger.error("error en activoController", e);
+		}finally {
+			try {
+				salida.flush();			
+				salida.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}		
 	}
 
 	@SuppressWarnings("unchecked")

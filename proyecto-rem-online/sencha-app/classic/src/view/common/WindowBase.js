@@ -67,7 +67,8 @@ Ext.define('HreRem.view.common.WindowBase', {
     		                 	}
     		                 },
     		                 progress: function(action, progress, event) {
-    		                 	if(event.total/1000/1000 > limite){
+    		                	 
+    		                 	if(limite > 0 && event.total/1000/1000 > limite){
     		                 		Ext.Ajax.getLatest().abort();
     		                 		me.fireEvent("errorToast", "No se puede subir ficheros mayores de "+limite+"Mb.");
     		                 		progress = 1;

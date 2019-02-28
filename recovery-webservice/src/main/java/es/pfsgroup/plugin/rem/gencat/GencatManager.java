@@ -57,7 +57,6 @@ import es.pfsgroup.plugin.rem.jbpm.activo.JBPMActivoTramiteManager;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjuntoActivo;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
-import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.AdecuacionGencat;
 import es.pfsgroup.plugin.rem.model.AdjuntoComunicacion;
 import es.pfsgroup.plugin.rem.model.ClienteComercial;
@@ -92,7 +91,6 @@ import es.pfsgroup.plugin.rem.model.Visita;
 import es.pfsgroup.plugin.rem.model.VisitaGencat;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoComunicacionGencat;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisitaOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDSancionGencat;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoComunicacion;
@@ -442,7 +440,7 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 					dto.setIdEntidad(idActivo);
 					dto.setDescripcionTipo(adjunto.getTipoDocumentoComunicacion().getDescripcion());
 					dto.setGestor(adjunto.getAuditoria().getUsuarioCrear());
-
+					dto.setCreateDate(adjunto.getFechaDocumento());
 					listaAdjuntos.add(dto);
 				}
 			}
@@ -759,12 +757,8 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 				adjuntoComunicacion.setDescripcion(webFileItem.getParameter("descripcion"));
 
 				adjuntoComunicacion.setFechaDocumento(new Date());
-								
-				String fechaNotificacion = webFileItem.getParameter("fechaNotificacion");
-				SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-						Date fNotificacion = sdf.parse(fechaNotificacion);
 				
-				adjuntoComunicacion.setFechaNotificacion(fNotificacion);
+				adjuntoComunicacion.setFechaNotificacion(new Date());
 
 				genericDao.save(AdjuntoComunicacion.class, adjuntoComunicacion);
 				//TODO INSERTAR AQUI

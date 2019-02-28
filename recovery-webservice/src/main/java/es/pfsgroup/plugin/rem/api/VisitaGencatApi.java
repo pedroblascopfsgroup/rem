@@ -1,5 +1,8 @@
 package es.pfsgroup.plugin.rem.api;
 
+import java.lang.reflect.InvocationTargetException;
+
+import es.pfsgroup.plugin.rem.model.VBusquedaVisitasDetalle;
 import es.pfsgroup.plugin.rem.model.VisitaGencat;
 
 public interface VisitaGencatApi {
@@ -19,5 +22,7 @@ public interface VisitaGencatApi {
 	 * @param visitaGencat
 	 */
 	public void saveOrUpdate(VisitaGencat visitaGencat);
+
+	public VBusquedaVisitasDetalle getVisitaByIdVisitaGencat(Long idVisita) throws IllegalAccessException, InvocationTargetException;
 
 }

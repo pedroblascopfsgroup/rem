@@ -372,7 +372,7 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoForm', {
 							        click: {
 							            element: 'el', 
 							            fn: 'onClickAbrirVisitaActivo'
-							        }
+							        }        
 							    },
 							    style:{
 							    	cursor: 'pointer',

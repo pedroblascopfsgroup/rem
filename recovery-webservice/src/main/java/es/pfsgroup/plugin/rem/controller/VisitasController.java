@@ -201,4 +201,17 @@ public class VisitasController {
 		}
 		return createModelAndViewJson(model);
 	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView getVisitaByIdVisitaGencat(Long numVisita,ModelMap model){
+		try {
+			model.put("data", visitaGencatApi.getVisitaByIdVisitaGencat(numVisita));
+			model.put("success", true);
+		} catch (Exception e) {
+			model.put("success", false);
+			model.put("error", e.getMessage());
+		}
+		return createModelAndViewJson(model);
+	}
 }

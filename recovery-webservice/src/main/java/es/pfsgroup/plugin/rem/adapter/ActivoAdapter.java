@@ -1223,6 +1223,7 @@ public class ActivoAdapter {
 		return visitasDetalles;
 
 	}
+	
 
 	public List<DtoActivoCatastro> getListCatastroById(Long id) {
 		Activo activo = activoApi.get(id);

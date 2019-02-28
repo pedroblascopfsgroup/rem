@@ -1,5 +1,7 @@
 package es.pfsgroup.plugin.rem.gencat;
 
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +12,10 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.VisitaGencatApi;
+import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.VBusquedaVisitasDetalle;
 import es.pfsgroup.plugin.rem.model.VisitaGencat;
 
 @Service("visitaGencatManager")
@@ -18,6 +23,8 @@ public class VisitaGencatManager extends AbstractEntityDao<VisitaGencat, Long> i
 	
 	@Autowired
 	private GenericABMDao genericDao;
+	@Autowired
+	private ActivoApi activoApi;
 		
 	@Override
 	public VisitaGencat getVisitaByIdComunicacionGencat(Long idComunicacionGencat) {
@@ -38,6 +45,20 @@ public class VisitaGencatManager extends AbstractEntityDao<VisitaGencat, Long> i
 		} else {
 			return null;
 		}
+	
+	}
+	
+	@Override
+	public VBusquedaVisitasDetalle getVisitaByIdVisitaGencat(Long numVisita) throws IllegalAccessException, InvocationTargetException {
+				
+		VBusquedaVisitasDetalle visitasDetalles = null;
+
+		if (!Checks.esNulo(numVisita)) {
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "numVisita", numVisita.toString());
+			visitasDetalles = genericDao.get(VBusquedaVisitasDetalle.class, filtro);
+		}
+
+		return visitasDetalles;
 	
 	}
 

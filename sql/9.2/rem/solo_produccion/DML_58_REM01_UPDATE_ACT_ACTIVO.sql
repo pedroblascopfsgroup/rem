@@ -4,7 +4,7 @@
 --## FECHA_CREACION=20190228
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=REMVIP-3433
+--## INCIDENCIA_LINK=REMVIP-3472
 --## PRODUCTO=NO
 --##
 --## Finalidad: Actualización campo ACT_VENTA_EXTERNA_OBSERVACION
@@ -47,7 +47,7 @@ BEGIN
     DBMS_OUTPUT.PUT_LINE('[INFO]: Modificamos el campo ACT_VENTA_EXTERNA_OBSERVACION');
 	V_MSQL := 'UPDATE '||V_ESQUEMA||'.ACT_ACTIVO ACT
 						SET ACT_VENTA_EXTERNA_OBSERVACION = ''CHELO: en periodo de transparencia hasta el 05/03. OCUPADO !!!'',
-						USUARIOMODIFICAR = ''REMVIP-3433'',
+						USUARIOMODIFICAR = ''REMVIP-3472'',
 						FECHAMODIFICAR = SYSDATE
 						WHERE ACT.ACT_NUM_ACTIVO_UVEM = 5235451
 						';
@@ -56,7 +56,7 @@ BEGIN
 
 	V_MSQL := 'UPDATE '||V_ESQUEMA||'.ACT_ACTIVO ACT
 						SET ACT_VENTA_EXTERNA_OBSERVACION = ''20/2 CHELO: en perido de transparencia hasta el 28/02 (nuria viviz) VPO '',
-						USUARIOMODIFICAR = ''REMVIP-3433'',
+						USUARIOMODIFICAR = ''REMVIP-3472'',
 						FECHAMODIFICAR = SYSDATE
 						WHERE ACT.ACT_NUM_ACTIVO_UVEM = 11049975
 						';
@@ -65,7 +65,7 @@ BEGIN
 
 	V_MSQL := 'UPDATE '||V_ESQUEMA||'.ACT_ACTIVO ACT
 						SET ACT_VENTA_EXTERNA_OBSERVACION = ''20/02 CHELO: en periodo de transparencia hasta el 27/02, Re: SOLICITUD FSV ACTIVO Nº 6059032. Buenos días, el valor actual de venta de activo solicitado es de 130.000€. Para cualquier duda estamos a tu disposición. He solic a FV informe fiscal'',
-						USUARIOMODIFICAR = ''REMVIP-3433'',
+						USUARIOMODIFICAR = ''REMVIP-3472'',
 						FECHAMODIFICAR = SYSDATE
 						WHERE ACT.ACT_NUM_ACTIVO_UVEM = 20281772
 						';
@@ -74,7 +74,7 @@ BEGIN
 
 	V_MSQL := 'UPDATE '||V_ESQUEMA||'.ACT_ACTIVO ACT
 						SET ACT_VENTA_EXTERNA_OBSERVACION = ''20/02 CHELO: en periodo de transparencia hasta el 28/02, por visitas pdtes. Vivienda dividida en 4 plantas con escalera interior de caracol. Humedades en el techo y ventanas con humedades; tarifa para cambiar. En la tercera planta con filtraciones.'',
-						USUARIOMODIFICAR = ''REMVIP-3433'',
+						USUARIOMODIFICAR = ''REMVIP-3472'',
 						FECHAMODIFICAR = SYSDATE
 						WHERE ACT.ACT_NUM_ACTIVO_UVEM = 29244942
 						';
@@ -83,7 +83,7 @@ BEGIN
 
 	V_MSQL := 'UPDATE '||V_ESQUEMA||'.ACT_ACTIVO ACT
 						SET ACT_VENTA_EXTERNA_OBSERVACION = ''26/02 CHELO: lmadridano Lucia Madridano Gutierrezañadió un comentario - 27/feb/19 11:37. Buenos días, El valor de mercado del activo es 74.000 €.'',
-						USUARIOMODIFICAR = ''REMVIP-3433'',
+						USUARIOMODIFICAR = ''REMVIP-3472'',
 						FECHAMODIFICAR = SYSDATE
 						WHERE ACT.ACT_NUM_ACTIVO_UVEM = 31215685
 						';
@@ -92,7 +92,7 @@ BEGIN
 
 	V_MSQL := 'UPDATE '||V_ESQUEMA||'.ACT_ACTIVO ACT
 						SET ACT_VENTA_EXTERNA_OBSERVACION = ''CHELO: El valor actual de venta de activo solicitado es de 170.000€ periodo de transparencia hasta el 28/02'',
-						USUARIOMODIFICAR = ''REMVIP-3433'',
+						USUARIOMODIFICAR = ''REMVIP-3472'',
 						FECHAMODIFICAR = SYSDATE
 						WHERE ACT.ACT_NUM_ACTIVO_UVEM = 32017617
 						';

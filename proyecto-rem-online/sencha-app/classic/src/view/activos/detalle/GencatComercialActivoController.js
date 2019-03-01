@@ -327,7 +327,8 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoController', {
 	},
 	
 comprobarFormatoNIF: function(value) {
-		
+		var me = this;
+		value = me.lookupReference('nuevoCompradorNifref');
 		if (value.length == 9) { // Comprobamos NIF y NIE
 			var validChars = 'TRWAGMYFPDXBNJZSQVHLCKET';
 			var nifRexp = /^[0-9]{8}[TRWAGMYFPDXBNJZSQVHLCKET]{1}$/i;

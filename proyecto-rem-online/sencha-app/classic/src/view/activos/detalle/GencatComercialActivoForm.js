@@ -208,8 +208,8 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoForm', {
 													disabled: '{!gencat.estaActivadoCompradorNuevo}',
 													value: '{gencat.nuevoCompradorNif}'													
 												},
-												validator: function(value) {
-													return this.up('gencatcomercialactivo').getController().comprobarFormatoNIF(value);
+												listener:{
+													blur: 'comprobarFormatoNIF'
 												}
 							    			},
 							    			{

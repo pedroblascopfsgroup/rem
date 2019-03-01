@@ -31,6 +31,7 @@ import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDCicCodigoIsoCirbeBKP;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBLocalizacionesBien;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoPatrimonioDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
@@ -104,6 +105,9 @@ public class TabActivoDatosBasicos implements TabActivoService {
 	
 	@Autowired
 	private ActivoApi activoApi;
+	
+	@Autowired
+	private ActivoDao activoDao;
 	
 	@Autowired
 	private UpdaterStateApi updaterState;
@@ -626,8 +630,8 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		
 		
 		if (!Checks.esNulo(activo)) {
-			boolean isUnidadAlquilable = activoApi.isActivoUnidadAlquilable(activo.getId());
-			boolean isActivoMatriz = activoApi.isActivoMatrizPromocionAlquiler(activo.getId());
+			boolean isUnidadAlquilable = activoDao.isUnidadAlquilableEnAgrupacionPA(activo.getId());
+			boolean isActivoMatriz = activoDao.isActivoMatrizEnAgrupacionPA(activo.getId());
 			if (!Checks.esNulo(isUnidadAlquilable) && (isUnidadAlquilable || isActivoMatriz)) {
 
 				Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "ACT_ID", activo.getId());
@@ -635,27 +639,27 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				if (!Checks.estaVacio(ActivosAgrupacion)) {
 					for (ActivoAgrupacionActivo agrupacionActivo : ActivosAgrupacion) {
 						
-						if (agrupacionActivo.getAgrupacion().getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_PROMOCION_ALQUILER) && agrupacionActivo.getisActivoMatriz() == 1) {
+						if (agrupacionActivo.getAgrupacion().getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_PROMOCION_ALQUILER) && agrupacionActivo.getActivoMatriz() == 1) {
 							
-							activoDto.setIsActivoMatriz(activoApi.isActivoMatrizPromocionAlquiler(activo.getId()));
+							activoDto.setActivoMatriz(activoDao.isActivoMatrizEnAgrupacionPA(activo.getId()));
 							Filter filtroAgrupacion = genericDao.createFilter(FilterType.EQUALS, "AGR_ID", agrupacionActivo.getAgrupacion().getId());
 							List<ActivoAgrupacionActivo> UAsEnAgrupacion = genericDao.getList(ActivoAgrupacionActivo.class, filtroAgrupacion);
 							int countUnidadesAlquilables = UAsEnAgrupacion.size() -1;
 							activoDto.setUnidadesAlquilablesEnAgrupacion(countUnidadesAlquilables);
 							
 							
-						}else if (agrupacionActivo.getAgrupacion().getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_PROMOCION_ALQUILER) && agrupacionActivo.getisActivoMatriz() == 0) {
+						}else if (agrupacionActivo.getAgrupacion().getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_PROMOCION_ALQUILER) && agrupacionActivo.getActivoMatriz() == 0) {
 							//TODO Añadir porcenaje de participación
 							activoDto.setPorcentajeParticipacion(agrupacionActivo.getParticipacionUA());
 							Filter filtroAgrupacion = genericDao.createFilter(FilterType.EQUALS, "AGR_ID", agrupacionActivo.getAgrupacion().getId());
 							List<ActivoAgrupacionActivo> UAsEnAgrupacion = genericDao.getList(ActivoAgrupacionActivo.class, filtroAgrupacion);
 							if (!Checks.estaVacio(UAsEnAgrupacion)) {
 								for (ActivoAgrupacionActivo activoMatriz : UAsEnAgrupacion) {
-									if (activoMatriz.getAgrupacion().getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_PROMOCION_ALQUILER) && activoMatriz.getisActivoMatriz() == 1) 
+									if (activoMatriz.getAgrupacion().getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_PROMOCION_ALQUILER) && activoMatriz.getActivoMatriz() == 1) 
 										activoDto.setNumActivoMatriz(activoMatriz.getActivo().getNumActivo());
 								}
 							}
-							activoDto.setIsUnidadAlquilable(activoApi.isActivoUnidadAlquilable(activo.getId()));
+							activoDto.setUnidadAlquilable(activoDao.isUnidadAlquilableEnAgrupacionPA(activo.getId()));
 						}
 					}
 				}

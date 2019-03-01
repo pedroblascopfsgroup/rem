@@ -10,6 +10,7 @@ import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivosPrecios;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoCondicionEspecifica;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
@@ -204,5 +205,31 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 
 	public void hibernateFlush();
 
-
+	/**
+	 * Dado un idActivo devuelve una agrupacion de tipo PA si el idActivo pertenece a alguna
+	 *
+	 * @param idActivo
+	 */
+	ActivoAgrupacion getAgrupacionPAByIdActivo(Long idActivo);
+	
+	/**
+	 * Dado un idActivo devuelve true si forma parte de una agrupacion de tipo Promocion Alquiler(PA) tanto si es AM como UA
+	 *
+	 * @param idActivo
+	 */
+	boolean isIntegradoEnAgrupacionPA(Long idActivo);
+	
+	/**
+	 * Dado un idActivo devuelve true si es un Activo Matriz en una agrupacion de tipo Promocion Alquiler(PA)
+	 *
+	 * @param idActivo
+	 */
+	boolean isActivoMatrizEnAgrupacionPA(Long idActivo);
+	
+	/**
+	 * Dado un idActivo devuelve true si es una Unidad Alquilable en una agrupacion de tipo Promocion Alquiler(PA)
+	 *
+	 * @param idActivo
+	 */
+	boolean isUnidadAlquilableEnAgrupacionPA(Long idActivo);
 }

@@ -36,6 +36,7 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoCondicionEspecifica;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
@@ -56,6 +57,7 @@ import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.VOfertasTramitadasPendientesActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 import es.pfsgroup.plugin.rem.utils.MSVREMUtils;
 
 @Repository("ActivoDao")
@@ -1148,5 +1150,48 @@ HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.provinciaCodigo", dto.getProvinci
 	@Override
 	public void hibernateFlush() {
 		getHibernateTemplate().flush();
+	}
+	
+	@Override
+	public ActivoAgrupacion getAgrupacionPAByIdActivo(Long idActivo) {
+		HQLBuilder hb = new HQLBuilder("select act.agrupacion. from ActivoAgrupacionActivo act where act.agrupacion.fechaBaja is null and act.activo.id = " + idActivo + " and act.agrupacion.tipoAgrupacion.codigo = " + DDTipoAgrupacion.AGRUPACION_PROMOCION_ALQUILER);
+		List<ActivoAgrupacion> lista = getHibernateTemplate().find(hb.toString());
+		
+		if (!Checks.estaVacio(lista)) {
+			return lista.get(0);
+		} else {
+			return null;
+		}
+	}
+
+	@Override
+	public boolean isIntegradoEnAgrupacionPA(Long idActivo) {
+		HQLBuilder hb = new HQLBuilder("select count(*) from ActivoAgrupacionActivo act where act.agrupacion.fechaBaja is null and act.activo.id = " + idActivo + " and act.agrupacion.tipoAgrupacion.codigo = " + DDTipoAgrupacion.AGRUPACION_PROMOCION_ALQUILER);
+
+   		return ((Long) getHibernateTemplate().find(hb.toString()).get(0)).intValue() > 0;
+	}
+	
+	@Override
+	public boolean isActivoMatrizEnAgrupacionPA(Long idActivo) {
+		HQLBuilder hb = new HQLBuilder("select count(*) from ActivoAgrupacionActivo aga where aga.agrupacion.fechaBaja is null and aga.activo.id = " + idActivo 
+				+ " and act.agrupacion.tipoAgrupacion.codigo = " + DDTipoAgrupacion.AGRUPACION_PROMOCION_ALQUILER 
+				+ " and aga.activoMatriz = 1");
+
+   		return ((Long) getHibernateTemplate().find(hb.toString()).get(0)).intValue() > 0;
+	}
+	
+	@Override
+	public boolean isUnidadAlquilableEnAgrupacionPA(Long idActivo) {
+		boolean isUnidadAlquilable = false;
+		if (!Checks.esNulo(idActivo)) {
+			Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "id", idActivo);
+			Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+			Activo activo = genericDao.get(Activo.class, filtroActivo, filtroBorrado);
+			if (!Checks.esNulo(activo) && !Checks.esNulo(activo.getTipoTitulo()) && DDTipoTituloActivo.UNIDAD_ALQUILABLE.equals(activo.getTipoTitulo().getCodigo())) {
+				isUnidadAlquilable = true; 
+			}
+		}
+		
+		return isUnidadAlquilable;
 	}
 }

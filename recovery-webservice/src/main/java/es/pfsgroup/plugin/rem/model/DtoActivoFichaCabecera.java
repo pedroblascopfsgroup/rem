@@ -218,8 +218,8 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private Boolean esGestorAlquiler;
 	
 	//HREOS-5573
-		private Boolean isUnidadAlquilable;
-		private Boolean isActivoMatriz;
+		private Boolean unidadAlquilable;
+		private Boolean activoMatriz;
 		private Long numActivoMatriz;
 		private Long porcentajeParticipacion;
 		private int unidadesAlquilablesEnAgrupacion;
@@ -1714,13 +1714,21 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	public Boolean isTieneCEE() {
 		return tieneCEE;
 	}
-	
-	public Boolean getIsUnidadAlquilable() {
-		return isUnidadAlquilable;
+
+	public Boolean getUnidadAlquilable() {
+		return unidadAlquilable;
 	}
 
-	public void setIsUnidadAlquilable(Boolean isUnidadAlquilable) {
-		this.isUnidadAlquilable = isUnidadAlquilable;
+	public void setUnidadAlquilable(Boolean unidadAlquilable) {
+		this.unidadAlquilable = unidadAlquilable;
+	}
+
+	public Boolean getActivoMatriz() {
+		return activoMatriz;
+	}
+
+	public void setActivoMatriz(Boolean activoMatriz) {
+		this.activoMatriz = activoMatriz;
 	}
 
 	public Long getNumActivoMatriz() {
@@ -1745,14 +1753,5 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	public void setUnidadesAlquilablesEnAgrupacion(int unidadesAlquilablesEnAgrupacion) {
 	this.unidadesAlquilablesEnAgrupacion = unidadesAlquilablesEnAgrupacion;
 	}
-
-	public Boolean getIsActivoMatriz() {
-		return isActivoMatriz;
-	}
-
-	public void setIsActivoMatriz(Boolean isActivoMatriz) {
-		this.isActivoMatriz = isActivoMatriz;
-	}
- 	
 	
 }

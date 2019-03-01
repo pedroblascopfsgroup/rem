@@ -13,6 +13,8 @@ import es.capgemini.devon.bo.annotations.BusinessOperation;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoAvisadorApi;
 import es.pfsgroup.plugin.rem.model.Activo;
@@ -30,6 +32,9 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 
 	@Autowired 
     private ActivoApi activoApi;
+	
+	@Autowired 
+    private ActivoDao activoDao;
 
 	@Override
 	@BusinessOperation(overrides = "activoAvisadorManager.get")
@@ -255,12 +260,12 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 		}
 		//Aviso 17: Es unidad Alquilable / Es activo matriz
 		if (!Checks.esNulo(id)) {
-			if (activoApi.isActivoMatrizPromocionAlquiler(id)) {
+			if (activoDao.isActivoMatrizEnAgrupacionPA(id)) {
 				DtoAviso dtoAviso = new DtoAviso();
 				dtoAviso.setDescripcion("Activo dividido en unidades alquilables");
 				dtoAviso.setId(String.valueOf(id));
 				listaAvisos.add(dtoAviso);
-			}else if (activoApi.isActivoUnidadAlquilable(id)) {
+			}else if (activoDao.isUnidadAlquilableEnAgrupacionPA(id)) {
 				DtoAviso dtoAviso = new DtoAviso();
 				dtoAviso.setDescripcion("Unidad Alquilable");
 				dtoAviso.setId(String.valueOf(id));

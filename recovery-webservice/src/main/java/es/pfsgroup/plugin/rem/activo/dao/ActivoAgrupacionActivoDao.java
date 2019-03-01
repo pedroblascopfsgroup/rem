@@ -60,5 +60,19 @@ public interface ActivoAgrupacionActivoDao extends AbstractDao<ActivoAgrupacionA
 	 */
 	public boolean algunActivoDeAgrRestringidaEnAgrLoteComercial(List<Long> activosID);
 
+	/**
+	 * Este método devuelve el Activo Matriz de una agrupacion de tipo PA por medio de un idAgrupacion
+	 * 
+	 * @param idAgrupacion : idAgrupacion.
+	 * @return Activo
+	 */
 	public Activo getActivoMatrizByIdAgrupacion(Long idAgrupacion);
+	
+	/**
+	 * Este método devuelve el Activo Matriz de una agrupacion de tipo PA por medio de un idAgrupacion
+	 * 
+	 * @param idAgrupacion : idAgrupacion.
+	 * @return Activo
+	 */
+	public List<Activo> getListUAsByIdAgrupacion(Long idAgrupacion);
 }

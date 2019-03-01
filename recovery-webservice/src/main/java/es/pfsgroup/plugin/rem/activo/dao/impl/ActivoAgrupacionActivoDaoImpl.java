@@ -171,11 +171,18 @@ public class ActivoAgrupacionActivoDaoImpl extends AbstractEntityDao<ActivoAgrup
 	
 	@Override
 	public Activo getActivoMatrizByIdAgrupacion(Long idAgrupacion){
-		HQLBuilder hb = new HQLBuilder("select aa.activo from ActivoAgrupacionActivo aa where aa.agrupacion.id = "+idAgrupacion+ " and aa.isActivoMatriz = 1");
-		try{
-			return ((Activo) getHibernateTemplate().find(hb.toString()).get(0));
-		}catch(Exception e){
+		HQLBuilder hb = new HQLBuilder("select aa.activo from ActivoAgrupacionActivo aa where aa.agrupacion.id = "+idAgrupacion+ " and aa.activoMatriz = 1");
+		try {
+			return (Activo) getHibernateTemplate().find(hb.toString()).get(0);
+		} catch(Exception e) {
 			return null;
 		}
+	}
+	
+	@Override
+	public List<Activo> getListUAsByIdAgrupacion(Long idAgrupacion) {
+		HQLBuilder hb = new HQLBuilder("select aa.activo from ActivoAgrupacionActivo aa where aa.agrupacion.id = "+idAgrupacion+ " and aa.activoMatriz = 0");
+		
+		return (List<Activo>) getHibernateTemplate().find(hb.toString());
 	}
 }

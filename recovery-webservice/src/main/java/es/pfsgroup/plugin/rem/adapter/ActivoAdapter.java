@@ -4070,7 +4070,7 @@ public class ActivoAdapter {
 		List<DDTipoTituloActivo>  StoreOrigenActivos = null;
 		if (!Checks.esNulo(id)) {
 			StoreOrigenActivos = genericDao.getList(DDTipoTituloActivo.class);
-				if (!activoApi.isActivoUnidadAlquilable(id)) {
+				if (!activoDao.isUnidadAlquilableEnAgrupacionPA(id)) {
 					DDTipoTituloActivo unidadAlquilable =
 							(DDTipoTituloActivo) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoTituloActivo.class, DDTipoTituloActivo.UNIDAD_ALQUILABLE);
 						StoreOrigenActivos.remove(unidadAlquilable);

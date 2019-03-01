@@ -2396,8 +2396,7 @@ public class AgrupacionAdapter {
 						aga.setActivo(act);
 						aga.setAgrupacion(pa);
 						aga.setFechaInclusion(new Date());
-						aga.setisActivoMatriz(1);
-						
+						aga.setActivoMatriz(1);
 						
 						activoAgrupacionActivoDao.saveOrUpdate(aga);
 					}

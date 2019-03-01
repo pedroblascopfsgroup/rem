@@ -58,7 +58,8 @@ DECLARE
     		--si no existe la columna la creamos
     		IF V_NUM_TABLAS = 0 THEN
 	            V_MSQL := 'ALTER TABLE '||V_ESQUEMA||'.'||V_NOMBRE_TABLA||' ADD '||V_NOMBRE_COL_2||' '|| V_TIPO;
-	            EXECUTE IMMEDIATE V_MSQL;       
+	            EXECUTE IMMEDIATE V_MSQL;
+                COMMIT;       
 	            DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA ||'.'||V_NOMBRE_TABLA||' columna '||V_NOMBRE_COL_2||' añadida');
             ELSE 
                     DBMS_OUTPUT.PUT_LINE('[INFO] La columna ' ||V_NOMBRE_COL_2 || ' ya existe ');
@@ -95,6 +96,7 @@ DECLARE
          IF V_NUM_TABLAS = 1 THEN
             V_SQL := 'ALTER TABLE '|| V_NOMBRE_TABLA||' ADD CONSTRAINT FK_'||V_NOMBRE_COL_2||' FOREIGN KEY ('||V_NOMBRE_COL_2||') REFERENCES   '||V_NOMBRE_TABLA_REF2||' ('||V_NOMBRE_COL_2||')';
             EXECUTE IMMEDIATE V_SQL;
+            COMMIT;
         END IF;
     ELSE 
     DBMS_OUTPUT.PUT_LINE('[INFO] La columna ' || V_NOMBRE_COL_2 || ' ya posee la restriccion pertinente');

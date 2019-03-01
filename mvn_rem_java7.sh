@@ -1,1 +1,1 @@
-mvn -Prem,java7 -Dmaven.test.skip=true -pl pfs-commons-java,plugins,proyecto-rem-online,recovery-webservice,paradise-framework,recovery-gestordocumentalREM-plugin,rem-web $*
+echo "Este script está obsoleto dado que ahora se va a compilar REM siempre con el perfil de java7. Para compilar usa el script 'sh mvn_rem.sh clean package'."

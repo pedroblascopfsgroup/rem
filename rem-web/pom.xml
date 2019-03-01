@@ -13,7 +13,7 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<maven.resources.overwrite>true</maven.resources.overwrite>
 
-		<devon.version.web>1.1.1</devon.version.web>
+		<devon.version.web>1.1.2</devon.version.web>
 		<devon.version.webflow>1.1.1</devon.version.webflow>
 		<downloadSources>true</downloadSources>
 		<downloadJavadocs>true</downloadJavadocs>
@@ -1390,7 +1390,7 @@
 			<plugin>
 				<groupId>es.pfsgroup.maven</groupId>
 				<artifactId>docker-maven-plugin</artifactId>
-				<version>2.0.0-RC6</version>
+				<version>2.0.0-RC15</version>
 				<configuration>
 					<DB>${b}</DB>
 					<cliente>${docker.cliente}</cliente>
@@ -1465,8 +1465,20 @@
 					<version>${aspectj.version}</version>
 					<scope>compile</scope>
 				</dependency>
+				
+				<!-- Versión de Oracle -->
+				<!-- Nota: si la compilacion esta cascando por esto es que no se está compilando bien.
+				Hay que compilar con los perfiles de java7 y ora11 o bien ora12 según la versión
+				de oracle que vayamos a usar. Ahora será obligatorio especificar la versión de oracle
+				al compilar. -->
+				<dependency>
+					<groupId>${ojdbc.groupid}</groupId>
+					<artifactId>${ojdbc.artifactId}</artifactId>
+					<version>${ojdbc.version}</version>
+					<scope>compile</scope>
+				</dependency> 
+				
 				<!-- Libs para Spring Json View -->
-
 				<dependency>
 					<groupId>net.sf.spring-json</groupId>
 					<artifactId>spring-json</artifactId>
@@ -1619,6 +1631,7 @@
 				</plugins>
 			</build>
 		</profile>
+		
 		<profile>
 			<id>java7</id>
 			<properties>
@@ -1628,5 +1641,24 @@
 				<aspectj.version>1.7.2.RELEASE</aspectj.version>
 			</properties>
 		</profile>
+		
+		<profile>
+			<id>ora11</id>
+			<properties>
+				<ojdbc.groupid>batch.libraries</ojdbc.groupid>
+				<ojdbc.artifactId>ojdbc6</ojdbc.artifactId>
+				<ojdbc.version>STABLE</ojdbc.version>
+			</properties>					
+		</profile>
+
+		<profile>
+			<id>ora12</id>
+			<properties>
+				<ojdbc.groupid>oracle.ojdbc6</ojdbc.groupid>
+				<ojdbc.artifactId>ojdbc6</ojdbc.artifactId>
+				<ojdbc.version>12.1.0.1.0</ojdbc.version>
+			</properties>		
+		</profile>
+		
 	</profiles>
 </project>

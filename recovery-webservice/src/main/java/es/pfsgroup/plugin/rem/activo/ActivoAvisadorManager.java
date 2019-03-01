@@ -23,7 +23,8 @@ import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.DtoAviso;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
-import es.pfsgroup.plugin.rem.model.dd.DDTipoEstadoAlquiler;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
+
 
 @Service("activoAvisadorManager")
 public class ActivoAvisadorManager implements ActivoAvisadorApi {
@@ -125,7 +126,8 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 		// Aviso 3 / 4: Situación posesoria OCUPADO + Con o sín título
 		if (activo.getSituacionPosesoria() != null && !Checks.esNulo(activo.getSituacionPosesoria().getOcupado())) {
 			if (activo.getSituacionPosesoria().getOcupado() == 1) {
-				if (activo.getSituacionPosesoria().getConTitulo() != null && activo.getSituacionPosesoria().getConTitulo() == 1) {
+				if (DDTipoTituloActivoTPA.tipoTituloSi.equals(activo.getSituacionPosesoria().getConTitulo().getCodigo())) {
+
 					DtoAviso dtoAviso = new DtoAviso();
 					dtoAviso.setDescripcion("Situación posesoria ocupado con título");
 					dtoAviso.setId(String.valueOf(id));
@@ -258,6 +260,7 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 			dtoAviso.setId(String.valueOf(id));
 			listaAvisos.add(dtoAviso);
 		}
+
 		//Aviso 17: Es unidad Alquilable / Es activo matriz
 		if (!Checks.esNulo(id)) {
 			if (activoDao.isActivoMatrizEnAgrupacionPA(id)) {
@@ -272,7 +275,21 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 				listaAvisos.add(dtoAviso);
 			}
 		}
- 
+
+
+		// Aviso 18: Cuando el activo esta publicado para la venta y el precio venta está oculto
+		if(!Checks.esNulo(perimetroActivo) && !Checks.esNulo(perimetroActivo.getAplicaPublicar()) && perimetroActivo.getAplicaPublicar()) {
+			if(!Checks.esNulo(activo.getActivoPublicacion())) {
+				if((activo.getActivoPublicacion().getCheckPublicarVenta() && activo.getActivoPublicacion().getCheckOcultarPrecioVenta())
+						|| (activo.getActivoPublicacion().getCheckOcultarPrecioAlquiler() && activo.getActivoPublicacion().getCheckPublicarAlquiler())){
+					DtoAviso dtoAviso = new DtoAviso();
+					dtoAviso.setDescripcion("Publicado con precio oculto");
+					dtoAviso.setId(String.valueOf(id));
+					listaAvisos.add(dtoAviso);
+				}
+			}
+		}
+
 		return listaAvisos;
 	}
 }

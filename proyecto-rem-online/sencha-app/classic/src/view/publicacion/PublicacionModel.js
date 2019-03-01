@@ -79,6 +79,16 @@ Ext.define('HreRem.view.publicacion.PublicacionModel', {
 				extraParams: {diccionario: 'entidadesPropietarias'}
 			},
 			autoLoad: true
+		},
+		
+		comboMotivoOcultacion: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'motivosOcultacion'}
+			}
+			
 		}
     }
 });

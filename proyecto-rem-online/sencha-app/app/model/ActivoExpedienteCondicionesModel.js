@@ -42,7 +42,8 @@ Ext.define('HreRem.model.ActivoExpedienteCondicionesModel', {
 		localUrl: 'activoExpediente.json',
 		api: {
             read: 'expedientecomercial/getActivoExpedienteCondiciones',
-            update: 'expedientecomercial/saveActivoExpedienteCondiciones'	
+            update: 'expedientecomercial/saveActivoExpedienteCondiciones'
+            //update: 'expedientecomercial/getExpedienteComercialPropagables'
         }
     }
 

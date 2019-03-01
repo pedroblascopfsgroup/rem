@@ -1,6 +1,8 @@
 package es.pfsgroup.plugin.rem.service;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.beanutils.BeanUtils;
@@ -34,6 +36,7 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjudicacionJudicial;
 import es.pfsgroup.plugin.rem.model.ActivoAdjudicacionNoJudicial;
 import es.pfsgroup.plugin.rem.model.ActivoBancario;
+import es.pfsgroup.plugin.rem.model.ActivoCalificacionNegativa;
 import es.pfsgroup.plugin.rem.model.ActivoInfoRegistral;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoPlanDinVentas;
@@ -42,11 +45,13 @@ import es.pfsgroup.plugin.rem.model.ActivoTitulo;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoActivoDatosRegistrales;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDCalificacionNegativa;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadEjecutante;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoAdjudicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoDivHorizontal;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoObraNueva;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTitulo;
+import es.pfsgroup.plugin.rem.model.dd.DDMotivoCalificacionNegativa;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 
@@ -208,7 +213,35 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 		if(!Checks.esNulo(activoBancario)) {
 			BeanUtils.copyProperty(activoDto, "acreedorNumExp", activoBancario.getNumExpRiesgo());
 		}
+		
+		Filter filterActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+		
+		List<ActivoCalificacionNegativa> motivosCalificacionNegativa = genericDao.getList(ActivoCalificacionNegativa.class, filterActivo);
+		List<ActivoCalificacionNegativa> motivosVigentes = new ArrayList<ActivoCalificacionNegativa>();
+		for (ActivoCalificacionNegativa activoCN : motivosCalificacionNegativa){
+			if (!activoCN.getAuditoria().isBorrado()){
+				motivosVigentes.add(activoCN);
+			}
+		}	
+			if (!Checks.estaVacio(motivosVigentes) && motivosVigentes.get(0).getCalificacionNegativa() != null) {
+				BeanUtils.copyProperty(activoDto, "calificacionNegativa", motivosVigentes.get(0).getCalificacionNegativa().getCodigo());
+				
+				StringBuffer codigos = new StringBuffer();
+				for(ActivoCalificacionNegativa act : motivosVigentes) {
+					if(!Checks.esNulo(act.getMotivoCalificacionNegativa())) {
+						codigos.append(act.getMotivoCalificacionNegativa().getCodigo()).append(",");
+						if (DDMotivoCalificacionNegativa.CODIGO_OTROS.equals(act.getMotivoCalificacionNegativa().getCodigo())){
+							beanUtilNotNull.copyProperty(activoDto, "descripcionCalificacionNegativa", act.getDescripcion());
+						}
+					}
+				}
+				beanUtilNotNull.copyProperty(activoDto, "motivoCalificacionNegativa", codigos.substring(0, (codigos.length()-1)));
 
+			} else {
+				BeanUtils.copyProperty(activoDto, "calificacionNegativa", DDCalificacionNegativa.CODIGO_NO);
+			}
+			
+		
 		// HREOS-2761: Buscamos los campos que pueden ser propagados para esta pestaña
 		activoDto.setCamposPropagables(TabActivoService.TAB_DATOS_REGISTRALES);
 		
@@ -455,7 +488,200 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 				}
 			}
 			
-
+			Filter filterActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+			
+			if (DDCalificacionNegativa.CODIGO_NO.equals(dto.getCalificacionNegativa())){
+				
+				Filter filterBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+				List<ActivoCalificacionNegativa> acnList = genericDao.getList(ActivoCalificacionNegativa.class, filterActivo, filterBorrado);
+				
+				for (ActivoCalificacionNegativa acn : acnList){
+					acn.getAuditoria().setBorrado(true);
+					genericDao.update(ActivoCalificacionNegativa.class, acn);
+				}
+			
+			} else if (Checks.esNulo(dto.getCalificacionNegativa())){
+					Filter filterNoBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+					List<ActivoCalificacionNegativa> acnList = genericDao.getList(ActivoCalificacionNegativa.class, filterActivo, filterNoBorrado);
+					if (!Checks.estaVacio(acnList) && !Checks.esNulo(acnList.get(0).getCalificacionNegativa())){
+						if (!DDCalificacionNegativa.CODIGO_NO.equals(acnList.get(0).getCalificacionNegativa().getCodigo())){
+							if (!Checks.esNulo(dto.getMotivoCalificacionNegativa())){
+								List<ActivoCalificacionNegativa> motivosCalificacionNegativa = activoApi.getActivoCalificacionNegativaByIdActivo(activo.getId());
+								List<String> motivosVigentes = new ArrayList<String>();
+								List<String> motivosBorrados = new ArrayList<String>();
+								
+								for (ActivoCalificacionNegativa activoCN : motivosCalificacionNegativa){
+									if (!activoCN.getAuditoria().isBorrado()){
+										motivosVigentes.add(activoCN.getMotivoCalificacionNegativa().getCodigo());
+									} else {
+										motivosBorrados.add(activoCN.getMotivoCalificacionNegativa().getCodigo());				}
+								}
+								
+								String motivosCalificacion = dto.getMotivoCalificacionNegativa();
+								String motivosFormat = motivosCalificacion.replace("[", "");
+								motivosFormat = motivosFormat.replace("]", "");
+								motivosFormat = motivosFormat.replace("\"", "");
+								if (!Checks.esNulo(motivosFormat)){
+									List<String> motivosList = Arrays.asList(motivosFormat.split(","));
+									
+									for (String motivo : motivosList){
+										if (!motivosVigentes.contains(motivo) && !motivosBorrados.contains(motivo)) {
+											ActivoCalificacionNegativa activoCalificacion = new ActivoCalificacionNegativa();
+											activoCalificacion.setActivo(activo);
+											Filter filterMotivo = genericDao.createFilter(FilterType.EQUALS, "codigo", motivo);
+											activoCalificacion.setMotivoCalificacionNegativa(genericDao.get(DDMotivoCalificacionNegativa.class, filterMotivo));
+											if (Checks.esNulo(dto.getCalificacionNegativa()) && Checks.esNulo(motivosCalificacionNegativa.get(0).getCalificacionNegativa())){
+												DDCalificacionNegativa calNegativa = genericDao.get(DDCalificacionNegativa.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDCalificacionNegativa.CODIGO_SI));
+												activoCalificacion.setCalificacionNegativa(calNegativa);
+											} else if (!Checks.esNulo(dto.getCalificacionNegativa())){			
+												DDCalificacionNegativa calNegativa = genericDao.get(DDCalificacionNegativa.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getCalificacionNegativa()));
+												activoCalificacion.setCalificacionNegativa(calNegativa);
+											} else {
+												DDCalificacionNegativa calNegativa = genericDao.get(DDCalificacionNegativa.class, genericDao.createFilter(FilterType.EQUALS, "codigo", motivosCalificacionNegativa.get(0).getCalificacionNegativa().getCodigo()));
+												activoCalificacion.setCalificacionNegativa(calNegativa);
+											}
+												if (DDMotivoCalificacionNegativa.CODIGO_OTROS.equals(motivo)){
+													activoCalificacion.setDescripcion(dto.getDescripcionCalificacionNegativa());
+												}
+											genericDao.save(ActivoCalificacionNegativa.class, activoCalificacion);
+										} else if (!motivosVigentes.contains(motivo) && motivosBorrados.contains(motivo)){
+											
+											Filter filterCodigo = genericDao.createFilter(FilterType.EQUALS, "motivoCalificacionNegativa.codigo", motivo);
+											Filter filterBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", true);
+											ActivoCalificacionNegativa acn = genericDao.get(ActivoCalificacionNegativa.class, filterActivo, filterCodigo, filterBorrado);
+											acn.getAuditoria().setBorrado(false);
+											if (DDMotivoCalificacionNegativa.CODIGO_OTROS.equals(motivo)){
+												acn.setDescripcion(dto.getDescripcionCalificacionNegativa());
+											}
+											if (acn.getCalificacionNegativa().getCodigo().equals(acnList.get(0).getCalificacionNegativa().getCodigo())){
+												genericDao.update(ActivoCalificacionNegativa.class, acn);
+											}else {
+												genericDao.save(ActivoCalificacionNegativa.class, acn);
+											}
+											
+										} else {
+											for (String codigoVigente : motivosVigentes){
+												if (!motivosList.contains(codigoVigente)){
+													this.borrarActivoCalificacionNegativaByCodigo(codigoVigente, activo.getId(), acnList.get(0).getCalificacionNegativa().getCodigo());
+												}
+											}
+										}
+									}
+								}
+							} else {
+								Filter filterBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+								Filter filterOtros = genericDao.createFilter(FilterType.EQUALS, "motivoCalificacionNegativa.codigo", DDMotivoCalificacionNegativa.CODIGO_OTROS);
+								ActivoCalificacionNegativa acn = genericDao.get(ActivoCalificacionNegativa.class, filterActivo, filterBorrado, filterOtros);
+								if (!Checks.esNulo(acn)){
+									if (!Checks.esNulo(dto.getDescripcionCalificacionNegativa())){
+										acn.setDescripcion(dto.getDescripcionCalificacionNegativa());
+									}					
+										genericDao.save(ActivoCalificacionNegativa.class, acn);
+								}	
+							}
+						}			
+				}
+			} else if (!Checks.esNulo(dto.getCalificacionNegativa())){
+				if (!DDCalificacionNegativa.CODIGO_NO.equals(dto.getCalificacionNegativa())){
+					if (!Checks.esNulo(dto.getMotivoCalificacionNegativa())){
+						List<ActivoCalificacionNegativa> motivosCalificacionNegativa = genericDao.getList(ActivoCalificacionNegativa.class, filterActivo);
+						List<String> motivosVigentes = new ArrayList<String>();
+						List<String> motivosBorrados = new ArrayList<String>();
+						
+						for (ActivoCalificacionNegativa activoCN : motivosCalificacionNegativa){
+							if (!activoCN.getAuditoria().isBorrado()){
+								motivosVigentes.add(activoCN.getMotivoCalificacionNegativa().getCodigo());
+							} else {
+								motivosBorrados.add(activoCN.getMotivoCalificacionNegativa().getCodigo());				}
+						}
+						
+						String motivosCalificacion = dto.getMotivoCalificacionNegativa();
+						String motivosFormat = motivosCalificacion.replace("[", "");
+						motivosFormat = motivosFormat.replace("]", "");
+						motivosFormat = motivosFormat.replace("\"", "");
+						if (!Checks.esNulo(motivosFormat)){
+							List<String> motivosList = Arrays.asList(motivosFormat.split(","));
+							
+							for (String motivo : motivosList){
+								if (!motivosVigentes.contains(motivo) && !motivosBorrados.contains(motivo)) {
+									ActivoCalificacionNegativa activoCalificacion = new ActivoCalificacionNegativa();
+									activoCalificacion.setActivo(activo);
+									activoCalificacion.setMotivoCalificacionNegativa(genericDao.get(DDMotivoCalificacionNegativa.class, genericDao.createFilter(FilterType.EQUALS, "codigo", motivo)));
+									if (Checks.esNulo(dto.getCalificacionNegativa()) && Checks.esNulo(motivosCalificacionNegativa.get(0).getCalificacionNegativa())){
+										DDCalificacionNegativa calNegativa = genericDao.get(DDCalificacionNegativa.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDCalificacionNegativa.CODIGO_SI));
+										activoCalificacion.setCalificacionNegativa(calNegativa);
+									} else if (!Checks.esNulo(dto.getCalificacionNegativa())){			
+										DDCalificacionNegativa calNegativa = genericDao.get(DDCalificacionNegativa.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getCalificacionNegativa()));
+										activoCalificacion.setCalificacionNegativa(calNegativa);
+									} else {
+										DDCalificacionNegativa calNegativa = genericDao.get(DDCalificacionNegativa.class, genericDao.createFilter(FilterType.EQUALS, "codigo", motivosCalificacionNegativa.get(0).getCalificacionNegativa().getCodigo()));
+										activoCalificacion.setCalificacionNegativa(calNegativa);
+									}
+									if (DDMotivoCalificacionNegativa.CODIGO_OTROS.equals(motivo)){
+										activoCalificacion.setDescripcion(dto.getDescripcionCalificacionNegativa());
+									}
+									genericDao.save(ActivoCalificacionNegativa.class, activoCalificacion);
+								} else if (!motivosVigentes.contains(motivo) && motivosBorrados.contains(motivo)){
+									
+									Filter filterCodigo = genericDao.createFilter(FilterType.EQUALS, "motivoCalificacionNegativa.codigo", motivo);
+									Filter filterBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", true);
+									ActivoCalificacionNegativa acn = genericDao.get(ActivoCalificacionNegativa.class, filterActivo, filterCodigo, filterBorrado);
+									acn.getAuditoria().setBorrado(false);
+									if (DDMotivoCalificacionNegativa.CODIGO_OTROS.equals(motivo)){
+										acn.setDescripcion(dto.getDescripcionCalificacionNegativa());
+									}
+									if (acn.getCalificacionNegativa().getCodigo().equals(dto.getCalificacionNegativa())){										
+										genericDao.update(ActivoCalificacionNegativa.class, acn);
+									}else {
+										genericDao.save(ActivoCalificacionNegativa.class, acn);
+									}
+								} else {
+									for (String codigoVigente : motivosVigentes){
+										if (!motivosList.contains(codigoVigente)){
+											this.borrarActivoCalificacionNegativaByCodigo(codigoVigente, activo.getId(), dto.getCalificacionNegativa());
+										}
+									}
+									
+								}
+							}
+						}
+					} else {
+						Filter filterNoBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+						Filter filterBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", true);
+						List<ActivoCalificacionNegativa> acnList = genericDao.getList(ActivoCalificacionNegativa.class, filterActivo, filterNoBorrado);
+						List<ActivoCalificacionNegativa> acnListBorrado = genericDao.getList(ActivoCalificacionNegativa.class, filterActivo, filterBorrado);
+						Boolean isActualizado = false;
+						for (ActivoCalificacionNegativa acn : acnList){
+							ActivoCalificacionNegativa activoCN = new ActivoCalificacionNegativa();
+							if (!Checks.esNulo(dto.getDescripcionCalificacionNegativa()) && DDMotivoCalificacionNegativa.CODIGO_OTROS.equals(acn.getMotivoCalificacionNegativa().getCodigo())){
+								activoCN.setDescripcion(dto.getDescripcionCalificacionNegativa());
+							}
+							activoCN.setActivo(acn.getActivo());	
+							activoCN.setMotivoCalificacionNegativa(acn.getMotivoCalificacionNegativa());
+							DDCalificacionNegativa calNegativa = genericDao.get(DDCalificacionNegativa.class, genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getCalificacionNegativa()));
+							if (!Checks.esNulo(calNegativa)){
+								activoCN.setCalificacionNegativa(calNegativa);
+							}
+							
+							for (ActivoCalificacionNegativa acnBorrado : acnListBorrado) {
+								if (acnBorrado.getActivo().equals(activoCN.getActivo()) && acnBorrado.getCalificacionNegativa().equals(activoCN.getCalificacionNegativa()) && acnBorrado.getMotivoCalificacionNegativa().equals(activoCN.getMotivoCalificacionNegativa())){
+									acnBorrado.getAuditoria().setBorrado(false);
+									genericDao.update(ActivoCalificacionNegativa.class, acnBorrado);
+									isActualizado = true;
+									break;
+								}
+							}
+							
+							if (!isActualizado){
+								genericDao.save(ActivoCalificacionNegativa.class, activoCN);
+							}
+							acn.getAuditoria().setBorrado(true);
+							genericDao.update(ActivoCalificacionNegativa.class, acn);
+							}
+						}
+					}
+				}
+			
 		} catch (IllegalAccessException e) {
 			e.printStackTrace();
 		} catch (InvocationTargetException e) {
@@ -502,6 +728,33 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 				}
 			}
 			
+		}
+	}
+	
+	public void updateActivoCalificacionNegativa(String motivo, String codigo, String descripcion, Long idActivo){
+		Filter filterActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
+		Filter filterCodigo = genericDao.createFilter(FilterType.EQUALS, "motivoCalificacionNegativa.codigo", motivo);
+		Filter filterBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", true);
+		ActivoCalificacionNegativa acn = genericDao.get(ActivoCalificacionNegativa.class, filterActivo, filterCodigo, filterBorrado);
+		acn.getAuditoria().setBorrado(false);
+		if (DDMotivoCalificacionNegativa.CODIGO_OTROS.equals(motivo)){
+			acn.setDescripcion(descripcion);
+		}
+		if (acn.getCalificacionNegativa().getCodigo().equals(codigo)){
+			genericDao.update(ActivoCalificacionNegativa.class, acn);
+		}else {
+			genericDao.save(ActivoCalificacionNegativa.class, acn);
+		}
+	}
+	
+	public void borrarActivoCalificacionNegativaByCodigo(String motivo, Long idActivo, String calificacionNegativa){
+		Filter filterActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
+		Filter filterCodigo = genericDao.createFilter(FilterType.EQUALS, "motivoCalificacionNegativa.codigo", motivo);
+		Filter filterBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+		ActivoCalificacionNegativa acn = genericDao.get(ActivoCalificacionNegativa.class, filterActivo, filterCodigo, filterBorrado);
+		acn.getAuditoria().setBorrado(true);
+		if (acn.getCalificacionNegativa().getCodigo().equals(calificacionNegativa)){										
+			genericDao.update(ActivoCalificacionNegativa.class, acn);
 		}
 	}
 

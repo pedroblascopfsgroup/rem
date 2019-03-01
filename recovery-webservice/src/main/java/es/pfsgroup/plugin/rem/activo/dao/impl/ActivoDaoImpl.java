@@ -38,6 +38,7 @@ import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
+import es.pfsgroup.plugin.rem.model.ActivoCalificacionNegativa;
 import es.pfsgroup.plugin.rem.model.ActivoCondicionEspecifica;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
@@ -95,7 +96,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
    		HQLBuilder.addFiltroLikeSiNotNull(hb, "act.refCatastral", dto.getRefCatastral(), true);
    		HQLBuilder.addFiltroLikeSiNotNull(hb, "act.finca", dto.getFinca(), true);
    		if (dto.getProvinciaCodigo() != null)
-HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.provinciaCodigo", dto.getProvinciaCodigo());
+   			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.provinciaCodigo", dto.getProvinciaCodigo());
    		
    		HQLBuilder.addFiltroLikeSiNotNull(hb, "act.localidadDescripcion", dto.getLocalidadDescripcion(), true);
    		if(dto.getCodigoPromocionPrinex() != null) {
@@ -662,6 +663,10 @@ HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.provinciaCodigo", dto.getProvinci
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.publicacion", dto.getPublicacion());
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.precio", dto.getPrecio());
    		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.informeComercial", dto.getInformeComercial());
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.okventa", dto.getOkventa());
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.okalquiler", dto.getOkalquiler());
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.motivoOcultacionVenta", dto.getMotivosOcultacionCodigo());
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activopubli.motivoOcultacionAlquiler", dto.getMotivosOcultacionAlquilerCodigo());
    		if (!Checks.esNulo(dto.getTipoComercializacionCodigo()))HQLBuilder.addFiltroWhereInSiNotNull(hb, "activopubli.tipoComercializacionCodigo", Arrays.asList(dto.getTipoComercializacionCodigo()));
 
 		return HibernateQueryUtils.page(this, hb, dto);
@@ -1068,6 +1073,17 @@ HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.provinciaCodigo", dto.getProvinci
 		
 
 	}
+
+	@Override
+	public List<ActivoCalificacionNegativa> getListActivoCalificacionNegativaByIdActivo(Long idActivo) {
+		String hql = " from ActivoCalificacionNegativa acn ";
+		HQLBuilder hb = new HQLBuilder(hql);
+		hb.appendWhere(" acn.activo.id =  "+idActivo+" ");
+		hb.appendWhere(" acn.auditoria.borrado IS NOT NULL ");
+
+		return (List<ActivoCalificacionNegativa>) this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).list();
+
+	}
 	
 	@Override
 	public Page getListHistoricoOcupacionesIlegalesByActivo(WebDto dto, Long idActivo) {
@@ -1077,6 +1093,7 @@ HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.provinciaCodigo", dto.getProvinci
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "activo.id", idActivo);
 		
 		return HibernateQueryUtils.page(this, hb, dto);
+
 	}
 
 	public void finHistoricoDestinoComercial(Activo activo, Object[] extraArgs) {
@@ -1175,7 +1192,7 @@ HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.provinciaCodigo", dto.getProvinci
 	public boolean isActivoMatrizEnAgrupacionPA(Long idActivo) {
 		HQLBuilder hb = new HQLBuilder("select count(*) from ActivoAgrupacionActivo aga where aga.agrupacion.fechaBaja is null and aga.activo.id = " + idActivo 
 				+ " and act.agrupacion.tipoAgrupacion.codigo = " + DDTipoAgrupacion.AGRUPACION_PROMOCION_ALQUILER 
-				+ " and aga.activoMatriz = 1");
+				+ " and aga.principal = 1");
 
    		return ((Long) getHibernateTemplate().find(hb.toString()).get(0)).intValue() > 0;
 	}

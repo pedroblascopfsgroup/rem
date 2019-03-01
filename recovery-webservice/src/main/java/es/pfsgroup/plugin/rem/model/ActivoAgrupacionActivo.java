@@ -61,10 +61,11 @@ public class ActivoAgrupacionActivo implements Serializable , Auditable {
 	private Date fechaInclusion;
     
 	@Column(name = "AGA_PRINCIPAL")
-	private Integer activoMatriz;
+	private Integer principal;
 		
 	@Column(name = "ACT_AGA_PARTICIPACION_UA")
 	private Long participacionUA;
+
 
 	
 	
@@ -109,13 +110,6 @@ public class ActivoAgrupacionActivo implements Serializable , Auditable {
 		this.fechaInclusion = fechaInclusion;
 	}
 
-	public Integer getActivoMatriz() {
-		return activoMatriz;
-	}
-
-	public void setActivoMatriz(Integer activoMatriz) {
-		this.activoMatriz = activoMatriz;
-	}
 
 	public Long getVersion() {
 		return version;
@@ -123,6 +117,14 @@ public class ActivoAgrupacionActivo implements Serializable , Auditable {
 
 	public void setVersion(Long version) {
 		this.version = version;
+	}
+
+	public Integer getPrincipal() {
+		return principal;
+	}
+
+	public void setPrincipal(Integer principal) {
+		this.principal = principal;
 	}
 
 	public Auditoria getAuditoria() {

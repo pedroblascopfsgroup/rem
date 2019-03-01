@@ -8,7 +8,7 @@ Ext.define('HreRem.view.activos.detalle.CabeceraActivo', {
 		var me = this;
 
 		me.menu = Ext.create("Ext.menu.Menu", {
-			width: 150,
+			width: 240,
 			cls: 'menu-favoritos',
 			plain: true,
 			floating: true,
@@ -34,8 +34,8 @@ Ext.define('HreRem.view.activos.detalle.CabeceraActivo', {
 					hidden: (me.lookupController().getViewModel().get('activo').get('incluidoEnPerimetro')=="false")
 				},
 				{
-					text: 'Lanzar T. de Publicacion',
-					handler: 'onTramitePublicacionClick',
+					text: HreRem.i18n('btn.nuevo.tramiteAprovacionInformeComercial'),
+					handler: 'onTramiteAprobacionInformeComercialClick',
 					hidden: (me.lookupController().getViewModel().get('activo').get('incluidoEnPerimetro')=="false")
 				}
 			]
@@ -52,7 +52,22 @@ Ext.define('HreRem.view.activos.detalle.CabeceraActivo', {
 				listeners: {
 					mapready: function(gmap, map) {
 						if(Ext.isDefined(map) && Ext.isDefined(map.center) && map.center.marker){
+
 							gmap.addMarker(map.center.marker);
+						}
+
+						if (map.center) {
+							if(map.center.marker){
+								gmap.addMarker(map.center.marker);
+							}
+						} else {
+							// Error al cargar el mapa, se añade una imagen por defecto.
+							if (gmap.getEl() && gmap.getEl().dom
+									&& gmap.getEl().dom.lastElementChild 
+									&& gmap.getEl().dom.lastElementChild.lastElementChild) {
+								var gmapDiv = gmap.getEl().dom.lastElementChild.lastElementChild;
+								gmapDiv.innerHTML = "<img style= 'width: 225px; height: 125px;' alt= 'Imagen de relleno de google maps' src='resources/images/imagenRellenoMaps.png' />"
+							}
 						}
 					}
 				}
@@ -208,7 +223,7 @@ Ext.define('HreRem.view.activos.detalle.CabeceraActivo', {
 										cls: 'cabecera-info-field',
 										bind: {
 											hidden: '{!activo.incluyeDestinoComercialVenta}',
-											value: '{activo.estadoVentaDescripcion}'
+											value: '{getValuePublicacionVenta}'
 										}
 									},
 									{
@@ -216,15 +231,7 @@ Ext.define('HreRem.view.activos.detalle.CabeceraActivo', {
 										cls: 'cabecera-info-field',
 										bind: {
 											hidden: '{!activo.incluyeDestinoComercialAlquiler}',
-											value: '{activo.estadoAlquilerDescripcion}'
-										}
-									},
-									{
-										fieldLabel: HreRem.i18n('fieldlabel.enlace.externo'),
-										cls: 'cabecera-info-field',
-										bind: {
-											hidden: '{!estaPublicadoVentaOAlquiler}',
-											value: '<a href="' + HreRem.i18n('fieldlabel.link.web.haya') + '{getLinkHayaActivo}" target="_blank">' + HreRem.i18n('fieldlabel.web.haya') + '</a>'
+											value: '{getValuePublicacionAlquiler}'
 										}
 									},
 									{

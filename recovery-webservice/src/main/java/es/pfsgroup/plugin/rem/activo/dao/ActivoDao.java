@@ -8,10 +8,10 @@ import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.dao.AbstractDao;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
-import es.pfsgroup.plugin.rem.model.VBusquedaActivosPrecios;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
+import es.pfsgroup.plugin.rem.model.ActivoCalificacionNegativa;
 import es.pfsgroup.plugin.rem.model.ActivoCondicionEspecifica;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
@@ -23,6 +23,7 @@ import es.pfsgroup.plugin.rem.model.DtoPropuestaActivosVinculados;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaFilter;
 import es.pfsgroup.plugin.rem.model.DtoTrabajoListActivos;
 import es.pfsgroup.plugin.rem.model.PropuestaActivosVinculados;
+import es.pfsgroup.plugin.rem.model.VBusquedaActivosPrecios;
 import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.VOfertasTramitadasPendientesActivosAgrupacion;
 
@@ -177,7 +178,7 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	 *
 	 * @param activo
 	 */
-	public void finHistoricoDestinoComercial(Activo activo, Object[] extraArgs);
+	void finHistoricoDestinoComercial(Activo activo, Object[] extraArgs);
 
 	/**
 	 * Crea un nuevo registro de un activo en el Historico de destino comercial
@@ -185,9 +186,11 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	 *
 	 * @param activo
 	 */
-	public void crearHistoricoDestinoComercial(Activo activo, Object[] extraArgs);
+	void crearHistoricoDestinoComercial(Activo activo, Object[] extraArgs);
 
-	public List<VOfertasTramitadasPendientesActivosAgrupacion> getListOfertasTramitadasPendientesActivo(Long idActivo);
+	List<VOfertasTramitadasPendientesActivosAgrupacion> getListOfertasTramitadasPendientesActivo(Long idActivo);
+
+	List<ActivoCalificacionNegativa> getListActivoCalificacionNegativaByIdActivo(Long idActivo);
 
 
 	/**
@@ -201,10 +204,10 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	 */
 	Boolean publicarActivoSinHistorico(Long idActivo, String username, String eleccionUsuarioTipoPublicacionAlquiler,boolean doFlush);
 
-	public Page getListHistoricoOcupacionesIlegalesByActivo(WebDto dto, Long idActivo);
+	Page getListHistoricoOcupacionesIlegalesByActivo(WebDto dto, Long idActivo);
 
-	public void hibernateFlush();
-
+	void hibernateFlush();
+	
 	/**
 	 * Dado un idActivo devuelve una agrupacion de tipo PA si el idActivo pertenece a alguna
 	 *
@@ -232,4 +235,5 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	 * @param idActivo
 	 */
 	boolean isUnidadAlquilableEnAgrupacionPA(Long idActivo);
+
 }

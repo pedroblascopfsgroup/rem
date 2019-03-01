@@ -75,4 +75,7 @@ public interface ActivoAgrupacionActivoDao extends AbstractDao<ActivoAgrupacionA
 	 * @return Activo
 	 */
 	public List<Activo> getListUAsByIdAgrupacion(Long idAgrupacion);
+	
+	public ActivoAgrupacionActivo getActivoAgrupacionActivoPrincipalByIdAgrupacion(long idAgrupacion);
+
 }

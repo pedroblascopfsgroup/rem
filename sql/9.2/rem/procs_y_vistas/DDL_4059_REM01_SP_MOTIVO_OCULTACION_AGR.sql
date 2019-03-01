@@ -1,18 +1,19 @@
 --/*
 --##########################################
---## AUTOR=Carles Molins
---## FECHA_CREACION=20181017
+--## AUTOR=Sergio Beleña
+--## FECHA_CREACION=20181210
 --## ARTEFACTO=batch
---## VERSION_ARTEFACTO=2.0.19
---## INCIDENCIA_LINK=HREOS-4563
+--## VERSION_ARTEFACTO=2.0.3
+--## INCIDENCIA_LINK=HREOS-4931
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
---##        0.1 Versión inicial
---##		0.2 Versión con ofertas express
---##########################################
+--##		0.1 Versión inicial
+--##		0.2 Versión con ofertas express Carles Molins -HREOS-4563
+--##		0.3 Sergio B -HREOS-4931- Optimización de tiempos
+--########################################## 
 --*/
 
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
@@ -147,9 +148,9 @@ create or replace PROCEDURE SP_MOTIVO_OCULTACION_AGR (nAGR_ID IN NUMBER
                                , MTO.DD_MTO_CODIGO
                                , MTO.DD_MTO_ORDEN ORDEN
                                     FROM '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION ACT
-                                    JOIN '|| V_ESQUEMA ||'.V_COND_DISPONIBILIDAD V ON V.ACT_ID = ACT.ACT_ID AND V.ES_CONDICIONADO = 0
+                                    JOIN '|| V_ESQUEMA ||'.V_COND_DISPONIBILIDAD V ON V.ACT_ID = ACT.ACT_ID AND V.ES_CONDICIONADO = 0 AND V.BORRADO=0
                                     JOIN '|| V_ESQUEMA ||'.ACT_AGA_AGRUPACION_ACTIVO agr on act.act_id = agr.act_id and agr.borrado = 0
-                                    JOIN '|| V_ESQUEMA ||'.V_CAMBIO_ESTADO_PUBLI_AGR EST ON EST.agr_id = agr.agr_id AND EST.INFORME_COMERCIAL = 0 AND EST.AGR_ID = '||nAGR_ID||'
+                                    JOIN '|| V_ESQUEMA ||'.TMP_PUBL_AGR EST ON EST.agr_id = agr.agr_id AND EST.INFORME_COMERCIAL = 0 AND EST.AGR_ID = '||nAGR_ID||'
                                     LEFT JOIN '|| V_ESQUEMA ||'.DD_MTO_MOTIVOS_OCULTACION MTO ON MTO.DD_MTO_CODIGO = ''06'' AND MTO.BORRADO = 0 /*Revisión Publicación*/
                                    WHERE ACT.BORRADO = 0.
                                      AND ACT.ES_CONDICONADO_ANTERIOR = 1 

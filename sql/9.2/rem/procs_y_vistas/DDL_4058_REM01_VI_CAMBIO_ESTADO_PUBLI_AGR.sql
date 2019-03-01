@@ -1,17 +1,20 @@
 --/*
 --##########################################
---## AUTOR=Maria Presencia Herrero
---## FECHA_CREACION=20181126
+--## AUTOR=Oscar Diestre
+--## FECHA_CREACION=20190204
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=REMVIP-2638
+--## VERSION_ARTEFACTO=2.0.3
+--## INCIDENCIA_LINK=HREOS-5358
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
---##        0.1 Versión inicial
---##		0.2 Modificado precio_v y precio_a
+--##        	0.1 Versión inicial
+--##		0.2 Modificado precio_v y precio_a - Maria Presencia Herrero - REMVIP-2638
+--##		0.3 Sergio Beleña -HREOS-4931- Optimización de tiempos   
+--##		0.4 Oscar Diestre -HREOS-5358- Modificado para mostrar agrupaciones asisitidas vencidas 
+--##		0.5 Oscar Diestre -HREOS-5358- Corregidas por coma simple
 --##########################################
 --*/
 
@@ -112,13 +115,20 @@ BEGIN
           JOIN '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION APU ON APU.ACT_ID = ACT.ACT_ID AND APU.BORRADO = 0
           JOIN '|| V_ESQUEMA ||'.ACT_AGA_AGRUPACION_ACTIVO AGA ON AGA.ACT_ID = ACT.ACT_ID AND AGA.BORRADO = 0
           JOIN '|| V_ESQUEMA ||'.ACT_AGR_AGRUPACION AGR ON AGR.AGR_ID = AGA.AGR_ID AND AGR.BORRADO = 0
-          JOIN '|| V_ESQUEMA ||'.DD_TAG_TIPO_AGRUPACION TAG ON TAG.DD_TAG_ID = AGR.DD_TAG_ID AND TAG.BORRADO = 0 AND TAG.DD_TAG_CODIGO = ''02''	/*Restringida*/ 
-               AND (AGR.AGR_FIN_VIGENCIA IS NULL OR TRUNC(AGR.AGR_FIN_VIGENCIA) >= TRUNC(SYSDATE))
+          JOIN '|| V_ESQUEMA ||'.DD_TAG_TIPO_AGRUPACION TAG ON TAG.DD_TAG_ID = AGR.DD_TAG_ID AND TAG.BORRADO = 0 
+                        AND (             
+                              (        TAG.DD_TAG_CODIGO = ''02''	/*Restringida*/
+                                AND (AGR.AGR_FIN_VIGENCIA IS NULL OR TRUNC(AGR.AGR_FIN_VIGENCIA) >= TRUNC(SYSDATE))
+                              )     
+                            OR(     TAG.DD_TAG_CODIGO = ''13''	/*Asistida*/
+                                AND (TRUNC(AGR.AGR_FIN_VIGENCIA) < TRUNC(SYSDATE))
+                                )
+                            )    
           LEFT JOIN '|| V_ESQUEMA ||'.DD_TCO_TIPO_COMERCIALIZACION TCO ON APU.DD_TCO_ID = TCO.DD_TCO_ID AND TCO.BORRADO = 0
           LEFT JOIN '|| V_ESQUEMA ||'.DD_EPA_ESTADO_PUB_ALQUILER EPA ON APU.DD_EPA_ID = EPA.DD_EPA_ID AND EPA.BORRADO = 0
           LEFT JOIN '|| V_ESQUEMA ||'.DD_EPV_ESTADO_PUB_VENTA EPV ON APU.DD_EPV_ID = EPV.DD_EPV_ID AND EPV.BORRADO = 0
           
-          LEFT JOIN '|| V_ESQUEMA ||'.V_COND_DISPONIBILIDAD V ON V.ACT_ID = APU.ACT_ID
+          LEFT JOIN '|| V_ESQUEMA ||'.V_COND_DISPONIBILIDAD V ON V.ACT_ID = APU.ACT_ID AND V.BORRADO=0
           
           LEFT JOIN '|| V_ESQUEMA ||'.DD_MTO_MOTIVOS_OCULTACION MTO ON APU.DD_MTO_A_ID = MTO.DD_MTO_ID AND MTO.BORRADO = 0
           LEFT JOIN '|| V_ESQUEMA ||'.DD_MTO_MOTIVOS_OCULTACION MTO2 ON APU.DD_MTO_V_ID = MTO2.DD_MTO_ID AND MTO2.BORRADO = 0
@@ -137,41 +147,39 @@ BEGIN
                             )
                       WHERE rn = 1) HIC ON ACT.ACT_ID = HIC.ACT_ID
           LEFT JOIN (SELECT act_id, precio_A
-                       FROM (SELECT ACT2.act_id,
+                       FROM (SELECT APU.act_id,
                                    CASE
                                       WHEN NVL (tpc.dd_tpc_codigo, ''00'') = ''03'' /*Aprobado de renta (web)*/ AND NVL (tco.dd_tco_codigo, ''00'') IN (''02'', ''03'', ''04'')
                                          THEN 1
                                       WHEN APU.APU_CHECK_PUB_SIN_PRECIO_A = 1
-                                         THEN 1   
+                                         THEN 1
                                       ELSE 0
                                    END AS precio_A,
                                    tpc.dd_tpc_codigo, tco.dd_tco_codigo,
-                                   ROW_NUMBER () OVER (PARTITION BY ACT2.act_id ORDER BY DECODE (tpc.dd_tpc_codigo || tco.dd_tco_codigo, ''0201'', 0, ''0202'', 0, ''0204'', 0, ''0302'', 0, ''0303'', 0, ''0304'', 0, 1)) rn
-                              FROM '|| V_ESQUEMA ||'.ACT_ACTIVO ACT2
-                              JOIN '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION APU ON APU.ACT_ID = ACT2.ACT_ID AND APU.BORRADO = 0
-                              LEFT JOIN '|| V_ESQUEMA ||'.act_val_valoraciones val ON val.act_id = ACT2.act_id AND val.borrado = 0 AND VAL.VAL_IMPORTE IS NOT NULL
-                              LEFT JOIN '|| V_ESQUEMA ||'.DD_TPC_TIPO_PRECIO tpc ON tpc.dd_tpc_id = val.dd_tpc_id AND tpc.dd_tpc_codigo = ''03'' AND TPC.BORRADO = 0 
-                              JOIN '|| V_ESQUEMA ||'.DD_TCO_TIPO_COMERCIALIZACION tco ON tco.dd_tco_id = ACT2.dd_tco_id AND TCO.BORRADO = 0 AND tco.dd_tco_codigo IN (''02'', ''03'', ''04'')
-                             WHERE ACT2.borrado = 0
+                                   ROW_NUMBER () OVER (PARTITION BY APU.act_id ORDER BY DECODE (tpc.dd_tpc_codigo || tco.dd_tco_codigo, ''0201'', 0, ''0202'', 0, ''0204'', 0, ''0302'', 0, ''0303'', 0, ''0304'', 0, 1)) rn
+                              FROM '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION APU 
+                              LEFT JOIN '|| V_ESQUEMA ||'.act_val_valoraciones val ON val.act_id = APU.act_id AND val.borrado = 0
+                              LEFT JOIN '|| V_ESQUEMA ||'.DD_TPC_TIPO_PRECIO tpc ON tpc.dd_tpc_id = val.dd_tpc_id AND tpc.dd_tpc_codigo IN (''02'', ''03'') AND TPC.BORRADO = 0
+                              JOIN '|| V_ESQUEMA ||'.DD_TCO_TIPO_COMERCIALIZACION tco ON tco.dd_tco_id = APU.dd_tco_id AND TCO.BORRADO = 0 AND tco.dd_tco_codigo IN (''01'', ''02'', ''03'', ''04'')
+                             WHERE APU.borrado = 0
                               )
                       WHERE rn = 1)VAL ON VAL.ACT_ID = ACT.ACT_ID  
-          LEFT JOIN (SELECT act_id, precio_V
-                       FROM (SELECT ACT2.act_id,
+          LEFT JOIN ( SELECT act_id, precio_V
+                       FROM (SELECT APU.act_id,
                                    CASE
                                       WHEN NVL (tpc.dd_tpc_codigo, ''00'') = ''02'' /*Aprobado de venta (web)*/ AND NVL (tco.dd_tco_codigo, ''00'') IN (''01'', ''02'', ''04'')
                                          THEN 1
                                       WHEN APU.APU_CHECK_PUB_SIN_PRECIO_V = 1
-                                         THEN 1   
+                                         THEN 1
                                       ELSE 0
                                    END AS precio_V,
                                    tpc.dd_tpc_codigo, tco.dd_tco_codigo,
-                                   ROW_NUMBER () OVER (PARTITION BY ACT2.act_id ORDER BY DECODE (tpc.dd_tpc_codigo || tco.dd_tco_codigo, ''0201'', 0, ''0202'', 0, ''0204'', 0, ''0302'', 0, ''0303'', 0, ''0304'', 0, 1)) rn
-                              FROM '|| V_ESQUEMA ||'.ACT_ACTIVO ACT2
-                              JOIN '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION APU ON APU.ACT_ID = ACT2.ACT_ID AND APU.BORRADO = 0
-                              LEFT JOIN '|| V_ESQUEMA ||'.act_val_valoraciones val ON val.act_id = ACT2.act_id AND val.borrado = 0 AND VAL.VAL_IMPORTE IS NOT NULL
-                              LEFT JOIN '|| V_ESQUEMA ||'.DD_TPC_TIPO_PRECIO tpc ON tpc.dd_tpc_id = val.dd_tpc_id AND tpc.dd_tpc_codigo = ''02'' AND TPC.BORRADO = 0 
-                               JOIN '|| V_ESQUEMA ||'.DD_TCO_TIPO_COMERCIALIZACION tco ON tco.dd_tco_id = ACT2.dd_tco_id AND TCO.BORRADO = 0 AND tco.dd_tco_codigo IN (''01'', ''02'', ''04'')
-                             WHERE ACT2.borrado = 0
+                                   ROW_NUMBER () OVER (PARTITION BY APU.act_id ORDER BY DECODE (tpc.dd_tpc_codigo || tco.dd_tco_codigo, ''0201'', 0, ''0202'', 0, ''0204'', 0, ''0302'', 0, ''0303'', 0, ''0304'', 0, 1)) rn
+                              FROM '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION APU
+                              LEFT JOIN '|| V_ESQUEMA ||'.act_val_valoraciones val ON val.act_id = APU.act_id AND val.borrado = 0
+                              LEFT JOIN '|| V_ESQUEMA ||'.DD_TPC_TIPO_PRECIO tpc ON tpc.dd_tpc_id = val.dd_tpc_id AND tpc.dd_tpc_codigo IN (''02'', ''03'') AND TPC.BORRADO = 0
+                               JOIN '|| V_ESQUEMA ||'.DD_TCO_TIPO_COMERCIALIZACION tco ON tco.dd_tco_id = APU.dd_tco_id AND TCO.BORRADO = 0 AND tco.dd_tco_codigo IN (''01'', ''02'', ''03'', ''04'')
+                             WHERE APU.borrado = 0
                               )
                       WHERE rn = 1)VAL2 ON VAL2.ACT_ID = ACT.ACT_ID                          
           LEFT JOIN (SELECT ADO.ACT_ID

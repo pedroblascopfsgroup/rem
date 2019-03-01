@@ -26,6 +26,19 @@ Ext.define('HreRem.model.ActivoComunidadPropietarios', {
     		},
     		{
     			name: 'burofax'
+    		},{
+    			name: 'situacionId'
+    		},{
+    			name: 'fechaEnvioCarta',
+    			type:'date',
+    			dateFormat: 'c'
+    		},{
+    			name: 'situacion'
+    		},{
+    			name: 'situacionDescripcion'
+    		},
+    		{
+    			name: 'situacionCodigo'
     		}
     ],
     

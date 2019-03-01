@@ -4,6 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
+import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,9 +76,10 @@ public class UpdaterServiceSancionOfertaAlquileresFirma implements UpdaterServic
 			}
 		}
 		DDSituacionComercial situacionComercial = (DDSituacionComercial) utilDiccionarioApi.dameValorDiccionarioByCod(DDSituacionComercial.class, DDSituacionComercial.CODIGO_ALQUILADO);
+		DDTipoTituloActivoTPA tipoTituloActivoTPA = (DDTipoTituloActivoTPA) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoTituloActivoTPA.class, DDTipoTituloActivoTPA.tipoTituloSi);
 		activo.setSituacionComercial(situacionComercial);
 		activo.getSituacionPosesoria().setOcupado(1);
-		activo.getSituacionPosesoria().setConTitulo(1);
+		activo.getSituacionPosesoria().setConTitulo(tipoTituloActivoTPA);
 		
 		expedienteComercial.setEstado(estadoExpedienteComercial);
 		

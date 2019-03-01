@@ -34,7 +34,7 @@ Ext.define('HreRem.view.configuracion.administracion.proveedores.detalle.Direcci
 		        {
 		        	dataIndex: 'id',
 		        	text: HreRem.i18n('fieldlabel.proveedores.id'),
-		        	flex:0.5,
+		        	flex:0.5, 
 		        	hidden:true
 		        },
 		        {

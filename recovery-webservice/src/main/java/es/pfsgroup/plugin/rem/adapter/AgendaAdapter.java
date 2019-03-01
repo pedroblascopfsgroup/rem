@@ -700,7 +700,11 @@ public class AgendaAdapter {
 			if (!Checks.estaVacio(tareas)) {
 				for (TareaExterna t : tareas) {
 					if (t != null) {
-						tareaActivoApi.saltoFin(t.getId());
+						if(ActivoTramiteApi.CODIGO_TRAMITE_COMERCIAL_ALQUILER.equals(tramite.getTipoTramite().getCodigo())){
+							tareaActivoApi.saltoFinAlquileres(t.getId());
+						}else{
+							tareaActivoApi.saltoFin(t.getId());
+						}
 					}
 				}
 			}

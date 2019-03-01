@@ -63,9 +63,26 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
 		                	xtype		: 'displayfieldbase',
 		                	fieldLabel	:  HreRem.i18n('fieldlabel.numero.agrupacion.uvem'),
 		                	bind		: {
-			            		value: '{agrupacionficha.numAgrupUvem}'
+			            		value: '{agrupacionficha.numAgrupUvem}',
+			            		hidden: '{esAgrupacionPromocionAlquiler}'
 			            	}		
 		                },
+		                {
+		                	fieldLabel: HreRem.i18n('header.numero.agrupacion.prinex'),
+		                	bind: {
+		                		hidden: '{!esAgrupacionPromocionAlquiler}',
+		                		value: '{agrupacionficha.numAgrupUvem}',
+		                		readOnly: false
+		                	}		
+		                },
+		                {
+		                	fieldLabel: HreRem.i18n('fieldlabel.numero.agrupacion.activo.matriz'),
+		                	bind: {
+		                		readOnly: '{existeActivoEnAgrupacion}',
+		                		hidden: '{!esAgrupacionPromocionAlquiler}',
+		                		value: '{agrupacionficha.activoMatriz}'
+		                	}
+	                	},	
 		                { 
 		                	fieldLabel	: HreRem.i18n('fieldlabel.subtipo'),
 			            	bind		: {
@@ -83,7 +100,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
 			            		store: '{comboMunicipio}',
 			            		value: '{agrupacionficha.municipioCodigo}',
 			            		disabled: '{!agrupacionficha.provinciaCodigo}',
-			            		readOnly: '{agrupacionTieneActivosOrExisteFechaBaja}'
+			            		readOnly: '{isCampoReadOnly}'
 			            	}
 
 						},
@@ -100,8 +117,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
 		                	fieldLabel	:  HreRem.i18n('fieldlabel.numero.agrupacion.uvem'),
 		                	bind		: {
 			            		value: '{agrupacionficha.numAgrupUvem}',
-			            		hidden:'{esAgrupacionProyecto}'
-
+			            		hidden:'{muestraUvem}'
 			            	}		
 						},
 		                {
@@ -120,7 +136,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
 							fieldLabel	: HreRem.i18n('fieldlabel.direccion'),
 							bind		: {
 								value: '{agrupacionficha.direccion}',
-								readOnly: '{agrupacionficha.existeFechaBaja}',
+								readOnly: '{isCampoReadOnly}',
 								hidden:'{esAgrupacionProyecto}'
 							},
 							allowBlank	:	'{esAgrupacionLoteComercial}'
@@ -142,8 +158,8 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
 							bind		: {
 								store: '{comboCartera}',
 								value: '{agrupacionficha.codigoCartera}',
-								readOnly: '{agrupacionTieneActivosOrExisteFechaBaja}',
-								allowBlank	:'{esAgrupacionLoteComercial}'	
+								readOnly: '{isCampoReadOnly}',
+								allowBlank	:'{campoAllowBlank}'	
 							}	
 						},
 		                { 
@@ -163,8 +179,8 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
 			            	bind		: {
 			            		store: '{comboProvincia}',
 			            	    value: '{agrupacionficha.provinciaCodigo}',
-			            	    readOnly: '{agrupacionTieneActivosOrExisteFechaBaja}',
-			            	    allowBlank	:'{esAgrupacionLoteComercial}'
+			            	    readOnly: '{isCampoReadOnly}',
+			            	    allowBlank	:'{campoAllowBlank}'
 			            	},
     						listeners	: {
 								select: 'onChangeChainedCombo'
@@ -207,7 +223,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
 							fieldLabel	: HreRem.i18n('fieldlabel.codigo.postal'),
 							bind		: {
 								value: '{agrupacionficha.codigoPostal}',
-								readOnly: '{agrupacionTieneActivosOrExisteFechaBaja}'
+								readOnly: '{isCampoReadOnly}'
 							},
 							allowBlank	:	'{esAgrupacionLoteComercial}',
 							maskRe		: /^\d*$/,
@@ -285,7 +301,8 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
                             bind: {
                                 store: '{comboTipoDestinoComercialCreaFiltered}',
                                 value: '{agrupacionficha.tipoComercializacionCodigo}',
-                                disabled: '{agrupacionficha.isComercial}'
+                                disabled: '{agrupacionficha.isComercial}',
+                                readOnly: '{isCampoReadOnly}'
                             }
 						}
 

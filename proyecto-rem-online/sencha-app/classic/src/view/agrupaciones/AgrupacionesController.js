@@ -20,6 +20,10 @@ Ext.define('HreRem.view.agrupaciones.AgrupacionesController', {
 			this.lookupReference('agrupacioneslist').getStore().loadPage(1);
         }
 	},
+	
+	esAgrupacionPromocionAlquiler: function(btn) {
+		return true;
+	},
 
 	paramLoading: function(store, operation, opts) {
 

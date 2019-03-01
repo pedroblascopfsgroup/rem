@@ -13,6 +13,14 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
     },
     
     formulas: {
+    	
+    	muestraUvem: function(get) {
+    		return get('esAgrupacionProyecto') || get('esAgrupacionPromocionAlquiler');
+    	},
+    	
+    	existeActivoEnAgrupacion: function(get) {
+    		return get('agrupacionficha.numeroActivos') > 0;
+    	},
     		
     	getSrcCartera: function(get) {
 	     	
@@ -26,6 +34,15 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
         	}else {
         		return 'resources/images/'+src;	     
         	}
+	     },
+	     
+	     esAgrupacionPromocionAlquiler: function(get) {
+	    	var tipoAgrupacion = get('agrupacionficha.tipoAgrupacionCodigo') ;
+	    	if((tipoAgrupacion == CONST.TIPOS_AGRUPACION['PROMOCION_ALQUILER'])) {
+	    		return true;
+	    	} else {
+	    		return false;
+	    	}
 	     },
 
 	     esAgrupacionRestringida: function(get) {
@@ -101,13 +118,22 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 		 },
 
 		 esAgrupacionLoteComercial: function(get) {
-
 	     	var tipoComercial = get('agrupacionficha.tipoAgrupacionCodigo');
 	     	if(tipoComercial == CONST.TIPOS_AGRUPACION['LOTE_COMERCIAL']) {
+
 	     		return true;
 	     	} else {
 	     		return false;
 	     	}
+		 },
+		 
+		 campoAllowBlank: function(get) {
+			 var tipoAgrupacion = get('agrupacionficha.tipoAgrupacionCodigo');
+			 if(tipoAgrupacion == CONST.TIPOS_AGRUPACION['PROMOCION_ALQUILER']) {
+				 return true;
+			 } else {
+				 return get('esAgrupacionLoteComercial');
+			 }
 		 },
 
 	     esAgrupacionAsistidaAndFechaVigenciaNotNull: function(get) {
@@ -151,6 +177,16 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 		     		return false;
 		     	}
 		 },
+		 agrupacionPromocionAlquilerTieneActivos: function(get) {
+			 var tipoAgrupacion = get('agrupacionficha.tipoAgrupacionCodigo');
+		     var numeroActivos = get('agrupacionficha.numeroActivos');
+		     if((tipoAgrupacion == CONST.TIPOS_AGRUPACION['PROMOCION_ALQUILER']) && numeroActivos > 0) {
+		     	return true;
+		     } else {
+		     	return false;
+		     }
+		 },
+		 
 		 agrupacionTieneActivosOrExisteFechaBaja: function(get) {
 		     	var tipoAgrupacion = get('agrupacionficha.tipoAgrupacionCodigo');
 		     	var numeroActivos = get('agrupacionficha.numeroActivos');
@@ -165,6 +201,29 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 		     	} else {
 		     		return existeFechaBaja;
 		     	}
+		 },
+		 
+		 isCampoReadOnly: function(get) {
+			 var tipoAgrupacion = get('agrupacionficha.tipoAgrupacionCodigo');
+			 if (tipoAgrupacion == CONST.TIPOS_AGRUPACION['PROMOCION_ALQUILER']) {
+				 return true;
+			 } else {
+				 return get('agrupacionTieneActivosOrExisteFechaBaja');
+			 }
+		 },
+		 
+		 agrupacionTieneFechaBajaOrEsPromocionAlquiler: function(get) {
+			return get('esAgrupacionPromocionAlquiler') || get('existeFechaBaja');
+		 },
+		 
+		 existeFechaBajaOrEsPromocionAlquiler: function(get) {
+			 var tipoAgrupacion = get('agrupacionficha.tipoAgrupacionCodigo');
+			 var existeFechaBaja = get('agrupacionficha.existeFechaBaja');
+			 if(existeFechaBaja || (tipoAgrupacion == CONST.TIPOS_AGRUPACION['PROMOCION_ALQUILER'])) {
+				 return true;
+			 } else {
+				 return false;
+			 }
 		 },
 
 	     esAgrupacionObraNuevaOrAsistida: function(get) {

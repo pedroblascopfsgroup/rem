@@ -49,6 +49,7 @@ import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.api.model.NMBLocalizacionesBienInfo;
 import es.pfsgroup.plugin.rem.activo.ActivoManager;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoHistoricoPatrimonioDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoPatrimonioDao;
@@ -152,6 +153,9 @@ public class AgrupacionAdapter {
 	@Autowired
 	private ActivoAdapter activoAdapter;
 
+	@Autowired
+	private ActivoAgrupacionDao activoAgrupacionDao;
+	
 	@Autowired
 	private ActivoAgrupacionActivoDao activoAgrupacionActivoDao;
 
@@ -272,6 +276,7 @@ public class AgrupacionAdapter {
 		DtoAgrupaciones dtoAgrupacion = new DtoAgrupaciones();
 
 		ActivoAgrupacion agrupacion = activoAgrupacionApi.get(id);
+		ActivoAgrupacionActivo agrupacionActivo = activoAgrupacionActivoApi.get(id);
 
 		Usuario usuarioLogado = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
 
@@ -282,6 +287,8 @@ public class AgrupacionAdapter {
 
 		VBusquedaAgrupaciones agrupacionVista = (VBusquedaAgrupaciones) activoAgrupacionApi
 				.getListAgrupaciones(dtoAgrupacionFilter, usuarioLogado).getResults().get(0);
+		
+		
 
 		try {
 
@@ -504,13 +511,43 @@ public class AgrupacionAdapter {
 						BeanUtils.copyProperty(dtoAgrupacion, "cartera", proyectoTemp.getCartera().getDescripcion());
 						BeanUtils.copyProperty(dtoAgrupacion, "codigoCartera", proyectoTemp.getCartera().getCodigo());
 					}
-				}else if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_ALQUILER)) {
+				} //SI ES DE TIPO COMERCIAL ALQUILER
+				else if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_ALQUILER)) {
 					
 					if(!Checks.estaVacio(agrupacion.getActivos())){
 						Activo activo = agrupacion.getActivos().get(0).getActivo();
 						BeanUtils.copyProperty(dtoAgrupacion, "cartera", activo.getCartera().getDescripcion());
 					}
 
+				} // SI ES TIPO PROMOCION ALQUILER 
+				else if(agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_PROMOCION_ALQUILER)) {
+
+
+					ActivoPromocionAlquiler agrupacionTemp = (ActivoPromocionAlquiler) agrupacion;
+					Activo am = activoAgrupacionActivoDao.getActivoMatrizByIdAgrupacion(id);
+					
+					BeanUtils.copyProperties(dtoAgrupacion, agrupacionTemp);
+
+					if (agrupacionTemp.getLocalidad() != null) {
+						BeanUtils.copyProperty(dtoAgrupacion, "municipioDescripcion",
+								agrupacionTemp.getLocalidad().getDescripcion());
+						BeanUtils.copyProperty(dtoAgrupacion, "municipioCodigo",
+								agrupacionTemp.getLocalidad().getCodigo());
+					}
+
+					if (agrupacionTemp.getProvincia() != null) {
+						BeanUtils.copyProperty(dtoAgrupacion, "provinciaDescripcion",
+								agrupacionTemp.getProvincia().getDescripcion());
+						BeanUtils.copyProperty(dtoAgrupacion, "provinciaCodigo",
+								agrupacionTemp.getProvincia().getCodigo());
+					}
+					
+					if(!Checks.esNulo(am)) {
+						BeanUtils.copyProperty(dtoAgrupacion, "activoMatriz", am.getNumActivo());
+						BeanUtils.copyProperty(dtoAgrupacion, "codigoPostal", am.getCodPostal());
+						BeanUtils.copyProperty(dtoAgrupacion, "municipio", am.getMunicipio());
+					}
+				
 				}
 
 				// TODO: Hacer cuando esté listo el activo principal dentro de
@@ -2308,6 +2345,69 @@ public class AgrupacionAdapter {
 			}
 			if(!Checks.esNulo(dto.getAgrupacionEliminada())){
 				agrupacion.setEliminado(BooleanUtils.toInteger(dto.getAgrupacionEliminada()));
+			}
+		}
+		
+		// SI ES TIPO PROMOCION ALQUILER
+		if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_PROMOCION_ALQUILER)) {
+	
+			ActivoPromocionAlquiler pa = (ActivoPromocionAlquiler) agrupacion;
+	
+			try {
+				if(!permiteCambiarDestinoComercial(pa))
+				{
+					return "false"+SPLIT_VALUE+OFERTA_INCOMPATIBLE_AGR_MSG;
+				}
+				else
+				{
+					beanUtilNotNull.copyProperties(pa, dto);
+	
+					if (dto.getMunicipioCodigo() != null) {
+	
+						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getMunicipioCodigo());
+						Localidad municipioNuevo = (Localidad) genericDao.get(Localidad.class, filtro);
+	
+						pa.setLocalidad(municipioNuevo);
+					}
+					/*
+					if (dto.getEstadoObraNuevaCodigo() != null) {
+	
+						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo",
+								dto.getEstadoObraNuevaCodigo());
+						DDEstadoObraNueva estadoNuevo = (DDEstadoObraNueva) genericDao.get(DDEstadoObraNueva.class, filtro);
+	
+						pa.setEstadoObraNueva(estadoNuevo);
+	
+					}
+					*/
+					if (dto.getProvinciaCodigo() != null) {
+	
+						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getProvinciaCodigo());
+						DDProvincia provinciaNueva = (DDProvincia) genericDao.get(DDProvincia.class, filtro);
+	
+						pa.setProvincia(provinciaNueva);
+					}
+					
+					if(!Checks.esNulo(dto.getActivoMatriz())) {
+						Activo act = activoDao.getActivoByNumActivo(dto.getActivoMatriz());
+						/*TODO: Validaciones HREOS-5596*/
+						act.setDescripcion(dto.getDescripcion());
+						ActivoAgrupacionActivo aga = new ActivoAgrupacionActivo();
+						aga.setActivo(act);
+						aga.setAgrupacion(pa);
+						aga.setFechaInclusion(new Date());
+						aga.setisActivoMatriz(1);
+						
+						
+						activoAgrupacionActivoDao.saveOrUpdate(aga);
+					}
+					
+					activoAgrupacionApi.saveOrUpdate(pa);
+				}
+	
+			} catch (Exception e) {
+				logger.error("error en agrupacionAdapter", e);
+				return "false";
 			}
 		}
 

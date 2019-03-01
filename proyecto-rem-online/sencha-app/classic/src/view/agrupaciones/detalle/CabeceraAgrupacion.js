@@ -174,11 +174,21 @@ Ext.define('HreRem.view.agrupaciones.detalle.CabeceraAgrupacion', {
 									                   	},	
 									                   	{
 									                   		fieldLabel: HreRem.i18n('fieldlabel.numero.agrupacion.uvem'),
-															bind:		'{agrupacionficha.numAgrupUvem}'
+															bind: {
+																hidden: '{esAgrupacionPromocionAlquiler}',
+																value: '{agrupacionficha.numAgrupUvem}'
+															}		
 									                   	},									                   
 										                { 
 															fieldLabel: HreRem.i18n('fieldlabel.nombre'),
 										                	bind: 		'{agrupacionficha.nombre}'
+										                },
+										                {
+										                	fieldLabel: HreRem.i18n('header.numero.agrupacion.prinex'),
+										                	bind: {
+										                		hidden: '{!esAgrupacionPromocionAlquiler}',
+										                		value: '{agrupacionficha.numAgrupUvem}'
+										                	}		
 										                },
 										                { 
 															fieldLabel: HreRem.i18n('fieldlabel.tipo'),

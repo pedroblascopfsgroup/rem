@@ -4070,21 +4070,11 @@ public class ActivoAdapter {
 		List<DDTipoTituloActivo>  StoreOrigenActivos = null;
 		if (!Checks.esNulo(id)) {
 			StoreOrigenActivos = genericDao.getList(DDTipoTituloActivo.class);
-			boolean esTipoPromocionAlquiler = false;
-			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "ACT_ID", id);
-			List<ActivoAgrupacionActivo> agrupaciones = genericDao.getList(ActivoAgrupacionActivo.class, filtro);
-			if (!Checks.estaVacio(agrupaciones)) {
-				for (ActivoAgrupacionActivo agrupacion : agrupaciones) {
-					if (agrupacion.getAgrupacion().getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_PROMOCION_ALQUILER)) {
-						esTipoPromocionAlquiler = true;
-					}
-				}
-				if (!esTipoPromocionAlquiler) {
+				if (!activoApi.isActivoUnidadAlquilable(id)) {
 					DDTipoTituloActivo unidadAlquilable =
 							(DDTipoTituloActivo) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoTituloActivo.class, DDTipoTituloActivo.UNIDAD_ALQUILABLE);
-					StoreOrigenActivos.remove(unidadAlquilable);
+						StoreOrigenActivos.remove(unidadAlquilable);
 				}
-			}
 		}		
 		return StoreOrigenActivos;
 	}

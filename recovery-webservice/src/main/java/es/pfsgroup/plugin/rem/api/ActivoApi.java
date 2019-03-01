@@ -1047,4 +1047,9 @@ public interface ActivoApi {
 	 * @return DtoMotivoAnulacionExpediente.
 	 */
 	List<DtoMotivoAnulacionExpediente> getMotivoAnulacionExpediente();
+	
+	boolean isActivoUnidadAlquilable(Long id);
+	boolean isActivoMatrizPromocionAlquiler(Long id);
+	
+	
 }

@@ -3718,5 +3718,33 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		if(!Ext.isEmpty(idExpediente)){
 			me.getView().fireEvent('abrirDetalleExpedienteById', idExpediente, null, button.reflinks);
 		}
+	},
+	onClickActivoMatriz: function(me){
+		var me = this;
+		var numActivo = me.getViewModel().get('activo.numActivoMatriz');
+		
+		if(numActivo != ""){
+		  	var url= $AC.getRemoteUrl('activo/getActivoExists');
+        	var data;
+    		Ext.Ajax.request({
+    		     url: url,
+    		     params: {numActivo : numActivo},
+    		     success: function(response, opts) {
+    		    	 data = Ext.decode(response.responseText);
+    		    	 if(data.success == "true"){
+    		    		 var titulo = "Activo " + numActivo;
+        		    	 me.getView().up().fireEvent('abrirDetalleActivoById', data.data, titulo); 
+    		    	 }else{
+        		    	 me.fireEvent("errorToast", data.error);
+    		    	 }
+    		         
+    		     },
+    		     failure: function(response) {
+    		    	 me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+    		     }
+    		 });    
+			
+		}
+			
 	}
 });

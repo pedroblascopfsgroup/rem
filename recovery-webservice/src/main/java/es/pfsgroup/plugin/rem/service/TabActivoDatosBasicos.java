@@ -623,6 +623,45 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				break;
 			}
 		}
+		
+		
+		if (!Checks.esNulo(activo)) {
+			boolean isUnidadAlquilable = activoApi.isActivoUnidadAlquilable(activo.getId());
+			boolean isActivoMatriz = activoApi.isActivoMatrizPromocionAlquiler(activo.getId());
+			if (!Checks.esNulo(isUnidadAlquilable) && (isUnidadAlquilable || isActivoMatriz)) {
+
+				Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "ACT_ID", activo.getId());
+				List<ActivoAgrupacionActivo> ActivosAgrupacion = genericDao.getList(ActivoAgrupacionActivo.class, filtroActivo);
+				if (!Checks.estaVacio(ActivosAgrupacion)) {
+					for (ActivoAgrupacionActivo agrupacionActivo : ActivosAgrupacion) {
+						
+						if (agrupacionActivo.getAgrupacion().getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_PROMOCION_ALQUILER) && agrupacionActivo.getisActivoMatriz() == 1) {
+							
+							activoDto.setIsActivoMatriz(activoApi.isActivoMatrizPromocionAlquiler(activo.getId()));
+							Filter filtroAgrupacion = genericDao.createFilter(FilterType.EQUALS, "AGR_ID", agrupacionActivo.getAgrupacion().getId());
+							List<ActivoAgrupacionActivo> UAsEnAgrupacion = genericDao.getList(ActivoAgrupacionActivo.class, filtroAgrupacion);
+							int countUnidadesAlquilables = UAsEnAgrupacion.size() -1;
+							activoDto.setUnidadesAlquilablesEnAgrupacion(countUnidadesAlquilables);
+							
+							
+						}else if (agrupacionActivo.getAgrupacion().getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_PROMOCION_ALQUILER) && agrupacionActivo.getisActivoMatriz() == 0) {
+							//TODO Añadir porcenaje de participación
+							activoDto.setPorcentajeParticipacion(agrupacionActivo.getParticipacionUA());
+							Filter filtroAgrupacion = genericDao.createFilter(FilterType.EQUALS, "AGR_ID", agrupacionActivo.getAgrupacion().getId());
+							List<ActivoAgrupacionActivo> UAsEnAgrupacion = genericDao.getList(ActivoAgrupacionActivo.class, filtroAgrupacion);
+							if (!Checks.estaVacio(UAsEnAgrupacion)) {
+								for (ActivoAgrupacionActivo activoMatriz : UAsEnAgrupacion) {
+									if (activoMatriz.getAgrupacion().getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_PROMOCION_ALQUILER) && activoMatriz.getisActivoMatriz() == 1) 
+										activoDto.setNumActivoMatriz(activoMatriz.getActivo().getNumActivo());
+								}
+							}
+							activoDto.setIsUnidadAlquilable(activoApi.isActivoUnidadAlquilable(activo.getId()));
+						}
+					}
+				}
+			}	
+		}
+
 
 		return activoDto;
 	}

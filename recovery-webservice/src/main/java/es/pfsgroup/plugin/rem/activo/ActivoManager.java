@@ -5023,7 +5023,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			return null;
 
 		List<Object> listaObj = rawDao.getExecuteSQLList(
-				"SELECT AGR_ID FROM ACT_AGA_AGRUPACION_ACTIVO WHERE ACT_ID = " + idActivo.toString());
+				"SELECT AGR_ID FROM ACT_AGA_AGRUPACION_ACTIVO WHERE ACT_ID = " + idActivo.toString() + "AND BORRADO = 0");
 
 		List<Long> listaAgr = new ArrayList<Long>();
 

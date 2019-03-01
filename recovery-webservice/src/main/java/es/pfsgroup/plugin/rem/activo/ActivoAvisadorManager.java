@@ -263,12 +263,12 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 
 		//Aviso 17: Es unidad Alquilable / Es activo matriz
 		if (!Checks.esNulo(id)) {
-			if (activoDao.isActivoMatrizEnAgrupacionPA(id)) {
+			if (activoDao.isActivoMatriz(id)) {
 				DtoAviso dtoAviso = new DtoAviso();
 				dtoAviso.setDescripcion("Activo dividido en unidades alquilables");
 				dtoAviso.setId(String.valueOf(id));
 				listaAvisos.add(dtoAviso);
-			}else if (activoDao.isUnidadAlquilableEnAgrupacionPA(id)) {
+			}else if (activoDao.isUnidadAlquilable(id)) {
 				DtoAviso dtoAviso = new DtoAviso();
 				dtoAviso.setDescripcion("Unidad Alquilable");
 				dtoAviso.setId(String.valueOf(id));

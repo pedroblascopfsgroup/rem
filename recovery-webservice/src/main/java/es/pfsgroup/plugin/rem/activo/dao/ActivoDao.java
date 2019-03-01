@@ -26,6 +26,7 @@ import es.pfsgroup.plugin.rem.model.PropuestaActivosVinculados;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivosPrecios;
 import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.VOfertasTramitadasPendientesActivosAgrupacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 
 public interface ActivoDao extends AbstractDao<Activo, Long>{
 	
@@ -223,17 +224,17 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	boolean isIntegradoEnAgrupacionPA(Long idActivo);
 	
 	/**
-	 * Dado un idActivo devuelve true si es un Activo Matriz en una agrupacion de tipo Promocion Alquiler(PA)
+	 * Dado un idActivo devuelve true si es un Activo Matriz(AGA_PRINCIPAL = 1) en una agrupacion de tipo Promocion Alquiler(PA)
 	 *
 	 * @param idActivo
 	 */
-	boolean isActivoMatrizEnAgrupacionPA(Long idActivo);
+	boolean isActivoMatriz(Long idActivo);
 	
 	/**
-	 * Dado un idActivo devuelve true si es una Unidad Alquilable en una agrupacion de tipo Promocion Alquiler(PA)
+	 * Dado un idActivo devuelve true si es un activo con DDTipoTituloActivo.UNIDAD_ALQUILABLE
 	 *
 	 * @param idActivo
 	 */
-	boolean isUnidadAlquilableEnAgrupacionPA(Long idActivo);
+	boolean isUnidadAlquilable(Long idActivo);
 
 }

@@ -1189,7 +1189,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 	}
 	
 	@Override
-	public boolean isActivoMatrizEnAgrupacionPA(Long idActivo) {
+	public boolean isActivoMatriz(Long idActivo) {
 		HQLBuilder hb = new HQLBuilder("select count(*) from ActivoAgrupacionActivo aga where aga.agrupacion.fechaBaja is null and aga.activo.id = " + idActivo 
 				+ " and act.agrupacion.tipoAgrupacion.codigo = " + DDTipoAgrupacion.AGRUPACION_PROMOCION_ALQUILER 
 				+ " and aga.principal = 1");
@@ -1198,7 +1198,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 	}
 	
 	@Override
-	public boolean isUnidadAlquilableEnAgrupacionPA(Long idActivo) {
+	public boolean isUnidadAlquilable(Long idActivo) {
 		boolean isUnidadAlquilable = false;
 		if (!Checks.esNulo(idActivo)) {
 			Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "id", idActivo);

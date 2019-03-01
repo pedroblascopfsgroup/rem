@@ -253,7 +253,21 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 			dtoAviso.setId(String.valueOf(id));
 			listaAvisos.add(dtoAviso);
 		}
-
+		//Aviso 17: Es unidad Alquilable / Es activo matriz
+		if (!Checks.esNulo(id)) {
+			if (activoApi.isActivoMatrizPromocionAlquiler(id)) {
+				DtoAviso dtoAviso = new DtoAviso();
+				dtoAviso.setDescripcion("Activo dividido en unidades alquilables");
+				dtoAviso.setId(String.valueOf(id));
+				listaAvisos.add(dtoAviso);
+			}else if (activoApi.isActivoUnidadAlquilable(id)) {
+				DtoAviso dtoAviso = new DtoAviso();
+				dtoAviso.setDescripcion("Unidad Alquilable");
+				dtoAviso.setId(String.valueOf(id));
+				listaAvisos.add(dtoAviso);
+			}
+		}
+ 
 		return listaAvisos;
 	}
 }

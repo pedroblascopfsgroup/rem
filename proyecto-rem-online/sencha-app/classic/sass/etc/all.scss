@@ -1324,3 +1324,10 @@ position:fixed !important;
 		background: #f5f5f5 !important;
 	}
 }
+	
+.show-text-as-link .x-form-item-body .label-read-only-formulario-completo{
+	color: #8600cc;
+	cursor: pointer;
+	text-decoration: underline;
+	font-weight: 700;
+}

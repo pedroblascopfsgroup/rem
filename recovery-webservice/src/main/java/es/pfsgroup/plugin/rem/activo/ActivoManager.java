@@ -5284,10 +5284,44 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			aux.setVenta(tipDocExp.getVenta());
 			aux.setAlquiler(tipDocExp.getAlquiler());
 			listDtoMotivoAnulacionExpediente.add(aux);
-		}
-			
+		}	
 		
 		return listDtoMotivoAnulacionExpediente;
 	}
+
+	@Override
+	public boolean isActivoUnidadAlquilable(Long id) {
+		boolean isUnidadAlquilable = false;
+		if (!Checks.esNulo(id)) {
+			Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "id", id);
+			Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+			Activo activo = genericDao.get(Activo.class, filtroActivo, filtroBorrado);
+			if (!Checks.esNulo(activo) && !Checks.esNulo(activo.getTipoTitulo())  
+					&& DDTipoTituloActivo.UNIDAD_ALQUILABLE.equals(activo.getTipoTitulo().getCodigo()) && 
+					!isActivoMatrizPromocionAlquiler(id)) {
+					isUnidadAlquilable=true; 
+			}
+		}
+		return isUnidadAlquilable;
+	}
+	
+	@Override
+	public boolean isActivoMatrizPromocionAlquiler(Long id) {
+		boolean isActivoMatriz = false;
+		if (!Checks.esNulo(id)) {
+			Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", id);
+			Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+			List<ActivoAgrupacionActivo> agrupaciones = genericDao.getList(ActivoAgrupacionActivo.class, filtroActivo, filtroBorrado);
+			if (!Checks.estaVacio(agrupaciones)) {
+			for (ActivoAgrupacionActivo agrupacion : agrupaciones) {
+					if (agrupacion.getAgrupacion().getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_PROMOCION_ALQUILER) && agrupacion.getisActivoMatriz() == 1) {
+						isActivoMatriz = true;
+				}
+				}
+			}
+		}
+		return isActivoMatriz;
+	}
+ 
 
 }

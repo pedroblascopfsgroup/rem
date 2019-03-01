@@ -715,11 +715,20 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	
 	onClickBotonEditar: function(btn) {
 		var me = this;
-
-		Ext.Array.each(btn.up('tabpanel').getActiveTab().query('component[isReadOnlyEdit]'),
-						function (field, index) 
-							{ 
-								field.fireEvent('edit');});
+		
+		if(btn.up('tabpanel').getActiveTab().xtype === 'comercialactivo') {
+			Ext.Array.each(btn.up('tabpanel').getActiveTab().query(' > container > component[isReadOnlyEdit]'),
+				function (field, index){ 
+					field.fireEvent('edit');
+				}
+			);
+		} else {
+			Ext.Array.each(btn.up('tabpanel').getActiveTab().query('component[isReadOnlyEdit]'),
+				function (field, index){ 
+					field.fireEvent('edit');
+				}
+			);
+		}
 								
 		btn.up('tabpanel').getActiveTab().query('component[isReadOnlyEdit]')[0].focus();
 		if(Ext.isDefined(btn.name) && btn.name === 'firstLevel') {
@@ -728,11 +737,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
  			me.getViewModel().set("editing", true);
  		}
 
-		Ext.Array.each(btn.up('tabpanel').getActiveTab().query('component[isReadOnlyEdit]'),
-						function (field, index)
-							{
-								field.fireEvent('edit');
-							});
 		btn.hide();
 
 		btn.up('tabbar').down('button[itemId=botonguardar]').show();

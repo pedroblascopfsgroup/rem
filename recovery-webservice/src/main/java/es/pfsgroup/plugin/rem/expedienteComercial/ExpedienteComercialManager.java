@@ -7416,7 +7416,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				BeanUtils.copyProperty(activoDto, "conTitulo", activo.getSituacionPosesoria().getConTitulo().getCodigo());
 			}
 
-			if(!Checks.esNulo(activoDto) && activoDto.getConTituloTPA().equals("0")) {
+			if(!Checks.esNulo(activoDto) && activoDto.getConTitulo().equals("0")) {
 				ocupado = false;
 			}
 

@@ -5130,8 +5130,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		ActivoSituacionPosesoria posesoria=activo.getSituacionPosesoria();
 		Integer ocupado;
 		String conTitulo = "";
-		if(activoDto.getConTituloTPA() != null) {
-			conTitulo=activoDto.getConTituloTPA();
+		if(activoDto.getConTitulo() != null) {
+			conTitulo=activoDto.getConTitulo();
 		}else if(!Checks.esNulo(posesoria.getConTitulo())){
 			conTitulo = posesoria.getConTitulo().getCodigo();
 		}

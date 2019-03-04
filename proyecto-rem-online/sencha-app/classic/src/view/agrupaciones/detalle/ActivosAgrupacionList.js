@@ -359,7 +359,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
 	        	 dataIndex: 'activoGencat',
 		            hideable: false,
 		            bind: {
-			        	hidden: '{esAgrupacionLoteComercialOrRestringida}'
+			        	hidden: '{esAgrupacionLoteComercialOrRestringidaOrNotGencat}'
 			        },
 		            renderer: function(value) {
 		            	return Ext.isEmpty(value) ? "No" : value=='1' ? "Si"  : "No";

@@ -41,6 +41,19 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 		 esAgrupacionLoteComercialOrRestringida: function(get) {
 			 return !(get('esAgrupacionRestringida') || get('esAgrupacionLoteComercial'));
 		 },
+		 
+		 esAgrupacionGencat: function(get) {
+		     	var agrupacionGencat = get('agrupacionficha.isAgrupacionGencat');
+		     	if (!agrupacionGencat) {
+	    			return true;
+	    		} else {
+	    			return false;
+	    		}
+		 },
+		 
+		 esAgrupacionLoteComercialOrRestringidaOrNotGencat: function(get) {
+			 return !(get('esAgrupacionRestringida') || get('esAgrupacionLoteComercial')) || !get('esAgrupacionGencat');
+		 },
 
 		 esAgrupacionRestringidaIncluyeDestinoComercialVenta: function(get) {
 

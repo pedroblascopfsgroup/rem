@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.beans.Service;
 import es.capgemini.devon.dto.WebDto;
+import es.capgemini.devon.exception.UserException;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.message.MessageService;
@@ -2535,7 +2536,7 @@ public class ActivoAdapter {
 		// return null;
 	}
 
-	public FileItem download(Long id,String nombreDocumento) throws Exception {
+	public FileItem download(Long id,String nombreDocumento) throws UserException,Exception {
 		String key = appProperties.getProperty(CONSTANTE_REST_CLIENT);
 		Downloader dl = downloaderFactoryApi.getDownloader(key);
 		return dl.getFileItem(id,nombreDocumento);

@@ -3761,10 +3761,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			if(!Ext.isEmpty(idExpediente)){
 				me.getView().fireEvent('abrirDetalleExpedienteById', idExpediente, null, button.reflinks);
 			}
-		}
 	},
 	onClickActivoMatriz: function(me){
-		var me = this;
 		var numActivo = me.getViewModel().get('activo.numActivoMatriz');
 		
 		if(numActivo != ""){

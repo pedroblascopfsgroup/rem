@@ -150,7 +150,7 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoForm', {
 									}
 				    			},
 				    			{
-				    				xtype: "datefieldbase",
+				    				xtype: "datefield",
 				    				fieldLabel: HreRem.i18n('fieldlabel.fecha.prevista.sancion'),
 				    				readOnly: true,
 				    				name: 'fechaPrevistaSancion',
@@ -274,7 +274,7 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoForm', {
 									}
 				    			},
 				    			{
-				    				xtype: "datefieldbase",
+				    				xtype: "datefield",
 				    				fieldLabel: HreRem.i18n('fieldlabel.fecha.anulacion'),
 				    				colspan: 2,
 				    				readOnly: true,
@@ -329,7 +329,7 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoForm', {
 									}
 				    			},
 				    			{
-				    				xtype: "datefieldbase",
+				    				xtype: "datefield",
 				    				fieldLabel: HreRem.i18n('fieldlabel.fecha.revision'),
 				    				readOnly: true,
 				    				name: 'fechaRevision',

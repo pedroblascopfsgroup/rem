@@ -209,7 +209,7 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoForm', {
 													value: '{gencat.nuevoCompradorNif}'													
 												},
 												listener:{
-													blur: 'comprobarFormatoNIF'
+													blur:'comprobarFormatoNIF'
 												}
 							    			},
 							    			{
@@ -289,9 +289,9 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoForm', {
 				    				fieldLabel: HreRem.i18n('fieldlabel.comunicado.anulacion.gencat'),
 				    				name: 'comunicadoAnulacionAGencat',
 				    				reference:'checkComunicadoAnulacion',
-				    				//id: 'checkComunicadoAnulacion',
+				    				id: 'checkComunicadoAnulacion',
 				    				listeners: {
-				    					change: 'onExisteDocumentoAnulacion'
+				    					change : 'onExisteDocumentoAnulacion'
 				    				},
 									bind: {
 										readOnly: '{esSoloLecturaCheckAnularGencat}',

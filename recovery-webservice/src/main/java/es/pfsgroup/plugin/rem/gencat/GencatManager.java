@@ -1793,7 +1793,10 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 		if (!Checks.esNulo(resultAdjuntoComunicacion)) {
 			for(AdjuntoComunicacion cga: resultAdjuntoComunicacion) {
 				if(cga.getTipoDocumentoComunicacion().getCodigo().equals(DDTipoDocumentoComunicacion.CODIGO_ANULACION_OFERTA_GENCAT)) {
-					return true;
+					boolean estadosOfertas = activoDao.todasLasOfertasEstanAnuladas(idActivo);
+					if (!Checks.esNulo(estadosOfertas)) {
+						return estadosOfertas;
+					}					
 				}else {
 					return false;
 				}

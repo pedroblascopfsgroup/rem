@@ -334,7 +334,7 @@ comprobarFormatoNIF: function(value) {
 			var nifRexp = /^[0-9]{8}[TRWAGMYFPDXBNJZSQVHLCKET]{1}$/i;
 			var nieRexp = /^[XYZ]{1}[0-9]{7}[TRWAGMYFPDXBNJZSQVHLCKET]{1}$/i;
 			var str = value.toString().toUpperCase();
-
+   
 			var continuar = true;
 			if (!nifRexp.test(str) && !nieRexp.test(str))
 				continuar = false;
@@ -393,7 +393,6 @@ comprobarFormatoNIF: function(value) {
  	},
 	
  	onExisteDocumentoAnulacion: function(btn, newValue, oldValue, opts){
- 		
  		if(newValue){
  			var me = this;
  	 		
@@ -408,7 +407,7 @@ comprobarFormatoNIF: function(value) {
  	 		    	if(data.data == 'false'){
  	 		    		me.fireEvent("errorToast", HreRem.i18n("msg.falta.documento.anulacion"));
  	 		    		me.lookupReference('checkComunicadoAnulacion').setValue(false);
- 						//Ext.getCmp('checkComunicadoAnulacion').setValue(false);
+ 						Ext.getCmp('checkComunicadoAnulacion').setValue(false);
  	 		    	 }
  	 		    	 
  	 				},

@@ -1263,4 +1263,23 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 
 		return HibernateQueryUtils.list(this, hb);
 	}
+
+	@Override
+	public Boolean todasLasOfertasEstanAnuladas(Long idActivo) {
+		String sql = "Select count(1) "
+					+ "FROM ACT_OFR actOfr "
+					+ "INNER JOIN OFR_OFERTAS ofr ON actOfr.OFR_ID = ofr.OFR_ID"
+					+ " WHERE actOfr.ACT_ID = "+idActivo
+					+ " AND ofr.DD_EOF_ID NOT IN (SELECT DD_EOF_ID FROM DD_EOF_ESTADOS_OFERTA WHERE DD_EOF_CODIGO = '02')";
+		Long ofertasAnuladas;
+		if (Checks.esNulo(this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult())) {
+			  return false; 
+		} else { 
+			 ofertasAnuladas = ((BigDecimal) this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult()).longValue();
+			 if (ofertasAnuladas == 0 ) 
+				 return true; 
+			 else 
+				 return false;
+		}
+	}
 }

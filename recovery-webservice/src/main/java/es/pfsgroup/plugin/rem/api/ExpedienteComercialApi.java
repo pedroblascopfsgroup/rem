@@ -1119,4 +1119,8 @@ public interface ExpedienteComercialApi {
 
 
 	boolean guardarCondicionesActivosExpediente(DtoCondicionesActivoExpediente condiciones);
+	
+	public boolean comprobarExpedienteAnuladoGencat (ExpedienteComercial expediente);
+	
+	public boolean descongelaExpedienteGencat(ExpedienteComercial expediente);
 }

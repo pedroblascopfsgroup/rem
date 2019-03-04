@@ -259,6 +259,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	private static final String EMAIL_OCUPACIONES = "emailOcupaciones";
 	private static final String AVISO_MENSAJE_EXISTEN_OFERTAS_VENTA = "activo.motivo.oferta.existe.venta";
 	private static final String AVISO_MENSAJE_ACITVO_ALQUILADO_O_OCUPADO = "activo.motivo.oferta.alquilado.ocupado";
+	private static final String AVISO_MENSAJE_EXPEDIENTE_ANULADO_POR_GENCAT = "activo.motivo.oferta.anulado.gencat";
 	private static final String MAESTRO_ORIGEN_WCOM="WCOM";
 	private SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 	private BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
@@ -624,6 +625,15 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				}
 			}
 
+		}
+		
+		ExpedienteComercial expediente = expedienteComercialApi.findOneByOferta(oferta);
+		boolean anuladoGencat = false;
+		if (!Checks.esNulo(expediente)) {
+			anuladoGencat = expedienteComercialApi.comprobarExpedienteAnuladoGencat(expediente);
+		}
+		if (!Checks.esNulo(estadoOferta) && (DDEstadoOferta.CODIGO_ACEPTADA.equals(estadoOferta.getCodigo()) || DDEstadoOferta.CODIGO_PENDIENTE.equals(estadoOferta.getCodigo())) && anuladoGencat) {
+			throw new JsonViewerException(messageServices.getMessage(AVISO_MENSAJE_EXPEDIENTE_ANULADO_POR_GENCAT));
 		}
 
 	}

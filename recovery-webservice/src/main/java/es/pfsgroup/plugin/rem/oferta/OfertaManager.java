@@ -86,8 +86,8 @@ import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
 import es.pfsgroup.plugin.rem.model.DtoTanteoActivoExpediente;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
-import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.OfertaGencat;
+import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.TitularesAdicionalesOferta;
 import es.pfsgroup.plugin.rem.model.Trabajo;
@@ -1163,6 +1163,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	public void descongelarOfertas(ExpedienteComercial expediente) throws Exception {
 		DDEstadoOferta estado = null;
 		Filter filtro = null;
+		boolean descongelar = false;
 
 		if (Checks.esNulo(expediente)) {
 			throw new Exception("Parámetros incorrectos. El expediente es nulo.");
@@ -1171,12 +1172,10 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			// Descongela el resto de ofertas del activo
 			List<Oferta> listaOfertas = this.trabajoToOfertas(expediente.getTrabajo());
 			if (!Checks.esNulo(listaOfertas)) {
-
 				for (Oferta oferta : listaOfertas) {
-					if ((DDEstadoOferta.CODIGO_CONGELADA.equals(oferta.getEstadoOferta().getCodigo()))) {
-
-						ExpedienteComercial exp = expedienteComercialApi.findOneByOferta(oferta);
-
+					ExpedienteComercial exp = expedienteComercialApi.findOneByOferta(oferta);
+					descongelar = expedienteComercialApi.descongelaExpedienteGencat(exp);
+					if ((DDEstadoOferta.CODIGO_CONGELADA.equals(oferta.getEstadoOferta().getCodigo())) && descongelar) {
 						// HREOS-1937 - Si tiene expediente poner oferta
 						// ACEPTADA. Si no tiene poner oferta PENDIENTE
 						if (!Checks.esNulo(exp)) {
@@ -1186,25 +1185,24 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 							filtro = genericDao.createFilter(FilterType.EQUALS, "codigo",
 									DDEstadoOferta.CODIGO_PENDIENTE);
 						}
-
-						estado = genericDao.get(DDEstadoOferta.class, filtro);
-						oferta.setEstadoOferta(estado);
-						updateStateDispComercialActivosByOferta(oferta);
-						genericDao.save(Oferta.class, oferta);
-
-						if (!Checks.esNulo(exp) && !Checks.esNulo(exp.getTrabajo())) {
-							List<ActivoTramite> tramites = activoTramiteApi
-									.getTramitesActivoTrabajoList(exp.getTrabajo().getId());
-							if (!Checks.estaVacio(tramites)) {
-								Set<TareaActivo> tareasTramite = tramites.get(0).getTareas();
-								for (TareaActivo tarea : tareasTramite) {
-									// Si se ha borrado sin acabarse, al
-									// descongelar se vuelven a mostrar.
-									if (tarea.getAuditoria().isBorrado() && Checks.esNulo(tarea.getFechaFin())) {
-										tarea.getAuditoria().setBorrado(false);
+							estado = genericDao.get(DDEstadoOferta.class, filtro);
+							oferta.setEstadoOferta(estado);
+							updateStateDispComercialActivosByOferta(oferta);
+							genericDao.save(Oferta.class, oferta);
+	
+							if (!Checks.esNulo(exp) && !Checks.esNulo(exp.getTrabajo())) {
+								List<ActivoTramite> tramites = activoTramiteApi
+										.getTramitesActivoTrabajoList(exp.getTrabajo().getId());
+								if (!Checks.estaVacio(tramites)) {
+									Set<TareaActivo> tareasTramite = tramites.get(0).getTareas();
+									for (TareaActivo tarea : tareasTramite) {
+										// Si se ha borrado sin acabarse, al
+										// descongelar se vuelven a mostrar.
+										if (tarea.getAuditoria().isBorrado() && Checks.esNulo(tarea.getFechaFin())) {
+											tarea.getAuditoria().setBorrado(false);
+										}
 									}
 								}
-							}
 						}
 					}
 				}

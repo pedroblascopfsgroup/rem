@@ -1189,9 +1189,9 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 	}
 	
 	@Override
-	public boolean isActivoMatriz(Long idActivo) {
+	public boolean isActivoMatriz(Long idActivo) { 
 		HQLBuilder hb = new HQLBuilder("select count(*) from ActivoAgrupacionActivo aga where aga.agrupacion.fechaBaja is null and aga.activo.id = " + idActivo 
-				+ " and act.agrupacion.tipoAgrupacion.codigo = " + DDTipoAgrupacion.AGRUPACION_PROMOCION_ALQUILER 
+				+ " and aga.agrupacion.tipoAgrupacion.codigo = " + DDTipoAgrupacion.AGRUPACION_PROMOCION_ALQUILER 
 				+ " and aga.principal = 1");
 
    		return ((Long) getHibernateTemplate().find(hb.toString()).get(0)).intValue() > 0;

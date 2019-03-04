@@ -932,7 +932,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			} else if (activo.getSituacionPosesoria().getOcupado() != null
 					&& activo.getSituacionPosesoria().getOcupado().equals(Integer.valueOf(1))
 					&& activo.getSituacionPosesoria().getConTitulo() != null
-					&& activo.getSituacionPosesoria().getConTitulo().equals(Integer.valueOf(1))) {
+					&& activo.getSituacionPosesoria().getConTitulo().getCodigo().equals(DDTipoTituloActivoTPA.tipoTituloSi)) {
 				DDSituacionesPosesoria situacionPosesoriaOcupadoTitulo = (DDSituacionesPosesoria) utilDiccionarioApi
 						.dameValorDiccionarioByCod(DDSituacionesPosesoria.class,
 								DDSituacionesPosesoria.SITUACION_POSESORIA_OCUPADO_CON_TITULO);
@@ -940,7 +940,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			} else if (activo.getSituacionPosesoria().getOcupado() != null
 					&& activo.getSituacionPosesoria().getOcupado().equals(Integer.valueOf(1))
 					&& activo.getSituacionPosesoria().getConTitulo() != null
-					&& activo.getSituacionPosesoria().getConTitulo().equals(Integer.valueOf(0))) {
+					&& (activo.getSituacionPosesoria().getConTitulo().getCodigo().equals(DDTipoTituloActivoTPA.tipoTituloNo)
+						|| activo.getSituacionPosesoria().getConTitulo().getCodigo().equals(DDTipoTituloActivoTPA.tipoTituloNoConIndicios))) {
 				DDSituacionesPosesoria situacionPosesoriaOcupadoSinTitulo = (DDSituacionesPosesoria) utilDiccionarioApi
 						.dameValorDiccionarioByCod(DDSituacionesPosesoria.class,
 								DDSituacionesPosesoria.SITUACION_POSESORIA_OCUPADO_SIN_TITULO);

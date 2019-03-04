@@ -1153,21 +1153,23 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			///Comprobamos si la tarea Elevar a Sanción está activa
 			dto.setPermiteProponer(false);
 
-			List<ActivoTramite> tramitesActivo = tramiteDao.getTramitesActivoTrabajoList(expediente.getTrabajo().getId());
-			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", "T015_ElevarASancion");
-			Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
-			TareaProcedimiento tap = genericDao.get(TareaProcedimiento.class, filtro, filtroBorrado);
-
-			for(ActivoTramite actt : tramitesActivo){
-				if(!DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CANCELADO.equals(actt.getEstadoTramite().getCodigo()) &&
-				   !DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CERRADO.equals(actt.getEstadoTramite().getCodigo()) &&
-				   !ESTADO_PROCEDIMIENTO_FINALIZADO.equals(actt.getEstadoTramite().getCodigo())
-				){
-					List<TareaExterna> tareas = activoTareaExternaApi.getByIdTareaProcedimientoIdTramite(actt.getId(),tap.getId());
-					for(TareaExterna t : tareas){
-						if(t.getTareaPadre().getTareaFinalizada() && t.getTareaPadre().getAuditoria().isBorrado()){
-							dto.setPermiteProponer(true);
-							break;
+			if(expediente != null && expediente.getTrabajo() != null){
+				List<ActivoTramite> tramitesActivo = tramiteDao.getTramitesActivoTrabajoList(expediente.getTrabajo().getId());
+				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", "T015_ElevarASancion");
+				Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+				TareaProcedimiento tap = genericDao.get(TareaProcedimiento.class, filtro, filtroBorrado);
+	
+				for(ActivoTramite actt : tramitesActivo){
+					if(!DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CANCELADO.equals(actt.getEstadoTramite().getCodigo()) &&
+					   !DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CERRADO.equals(actt.getEstadoTramite().getCodigo()) &&
+					   !ESTADO_PROCEDIMIENTO_FINALIZADO.equals(actt.getEstadoTramite().getCodigo())
+					){
+						List<TareaExterna> tareas = activoTareaExternaApi.getByIdTareaProcedimientoIdTramite(actt.getId(),tap.getId());
+						for(TareaExterna t : tareas){
+							if(t.getTareaPadre().getTareaFinalizada() && t.getTareaPadre().getAuditoria().isBorrado()){
+								dto.setPermiteProponer(true);
+								break;
+							}
 						}
 					}
 				}
@@ -6858,12 +6860,6 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 							logger.debug(gexc.getMessage());
 						}
 
-					}
-					try {
-						throw gex;
-					} catch (GestorDocumentalException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
 					}
 				}
 			}else {

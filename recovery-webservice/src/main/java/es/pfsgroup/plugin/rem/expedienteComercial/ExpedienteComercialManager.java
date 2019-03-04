@@ -2278,13 +2278,13 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					condicionesActivo.setSituacionPosesoria(situacionPosesoriaLibre);
 
 				} else if (activo.getSituacionPosesoria().getOcupado() != null && activo.getSituacionPosesoria().getOcupado().equals(1) && activo.getSituacionPosesoria()
-				.getConTitulo() != null && activo.getSituacionPosesoria().getConTitulo().equals(1)) {
+				.getConTitulo() != null && activo.getSituacionPosesoria().getConTitulo().getCodigo().equals(DDTipoTituloActivoTPA.tipoTituloSi)) {
 					DDSituacionesPosesoria situacionPosesoriaOcupadoTitulo = (DDSituacionesPosesoria) utilDiccionarioApi.dameValorDiccionarioByCod(DDSituacionesPosesoria.class,
 					DDSituacionesPosesoria.SITUACION_POSESORIA_OCUPADO_CON_TITULO);
 					condicionesActivo.setSituacionPosesoria(situacionPosesoriaOcupadoTitulo);
 
 				} else if (activo.getSituacionPosesoria().getOcupado() != null && activo.getSituacionPosesoria().getOcupado().equals(1) && activo.getSituacionPosesoria()
-				.getConTitulo() != null && activo.getSituacionPosesoria().getConTitulo().equals(0)) {
+				.getConTitulo() != null && (activo.getSituacionPosesoria().getConTitulo().equals(DDTipoTituloActivoTPA.tipoTituloNo) || activo.getSituacionPosesoria().getConTitulo().equals(DDTipoTituloActivoTPA.tipoTituloNoConIndicios))) {
 					DDSituacionesPosesoria situacionPosesoriaOcupadoSinTitulo = (DDSituacionesPosesoria) utilDiccionarioApi.dameValorDiccionarioByCod(DDSituacionesPosesoria.class,
 					DDSituacionesPosesoria.SITUACION_POSESORIA_OCUPADO_SIN_TITULO);
 					condicionesActivo.setSituacionPosesoria(situacionPosesoriaOcupadoSinTitulo);
@@ -5746,11 +5746,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				resultado.setSituacionPosesoriaCodigoInformada("01");
 
 			} else if (activo.getSituacionPosesoria().getOcupado() != null && activo.getSituacionPosesoria().getOcupado().equals(1) && activo.getSituacionPosesoria().getConTitulo() != null &&
-					activo.getSituacionPosesoria().getConTitulo().equals(1)) {
+					activo.getSituacionPosesoria().getConTitulo().getCodigo().equals(DDTipoTituloActivoTPA.tipoTituloSi)) {
 				resultado.setSituacionPosesoriaCodigoInformada("02");
 
 			} else if (activo.getSituacionPosesoria().getOcupado() != null && activo.getSituacionPosesoria().getOcupado().equals(1) && activo.getSituacionPosesoria().getConTitulo() != null &&
-					activo.getSituacionPosesoria().getConTitulo().equals(0)) {
+					(activo.getSituacionPosesoria().getConTitulo().getCodigo().equals(DDTipoTituloActivoTPA.tipoTituloNo) || activo.getSituacionPosesoria().getConTitulo().getCodigo().equals(DDTipoTituloActivoTPA.tipoTituloNoConIndicios))) {
 				resultado.setSituacionPosesoriaCodigoInformada("03");
 			}
 		}
@@ -7487,7 +7487,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			Activo activo = activoTramite.getActivo();
 			DtoActivoSituacionPosesoria activoDto = new DtoActivoSituacionPosesoria();
 			if (activo != null){
-				BeanUtils.copyProperty(activoDto, "conTitulo", activo.getSituacionPosesoria().getConTitulo());
+				BeanUtils.copyProperty(activoDto, "conTitulo", activo.getSituacionPosesoria().getConTitulo().getCodigo());
 			}
 
 			if(!Checks.esNulo(activoDto) && activoDto.getConTituloTPA().equals("0")) {
@@ -7505,6 +7505,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		return ocupado;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<DtoActivosExpediente> getActivosPropagables(Long idExpediente) {
 		DtoPage dtopage = getActivosExpediente(idExpediente);

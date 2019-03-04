@@ -7660,7 +7660,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				for (ExpedienteAvisadorApi avisador : avisadores) {
 					DtoAviso aviso = avisador.getAviso(expediente, usuarioLogado);
 					if (!Checks.esNulo(aviso) && !Checks.esNulo(aviso.getDescripcion())) {
-						if (expedienteAnulado) {
+						if (!avisoPrioritario && expedienteAnulado) {
 							avisoPrioritario = true;
 							avisosFormateados.setDescripcion(avisosFormateados.getDescripcion() + "<div class='div-aviso red'>" + aviso.getDescripcion() + "</div>");
 						} else if (!avisoPrioritario && "Expediente bloqueado por GENCAT".equals(aviso.getDescripcion())) {

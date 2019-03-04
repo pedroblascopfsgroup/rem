@@ -2609,5 +2609,41 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 		return !"0".equals(resultado);
 	}
+	
+	@Override
+	public Boolean existeCodImpuesto(String idImpuesto){
+		if(Checks.esNulo(idImpuesto) || !StringUtils.isAlphanumeric(idImpuesto))
+			return false;
+
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+ "		 FROM DD_STG_SUBTIPOS_GASTO WHERE"
+				+ "		 DD_STG_CODIGO ="+idImpuesto+""
+				+ "		 	AND BORRADO = 0");
+		return !"0".equals(resultado);
+	}
+	
+	@Override
+	public Boolean existePeriodicidad(String codPeriodicidad) {
+		if(Checks.esNulo(codPeriodicidad))
+			return true;
+		
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+"		FROM DD_TPE_TIPOS_PERIOCIDAD"
+				+"		WHERE DD_TPE_CODIGO = "+codPeriodicidad+""
+				+"		AND BORRADO= 0");
+		return !"0".equals(resultado);
+	}
+
+	@Override
+	public Boolean existeCalculo(String codCalculo) {
+		if(Checks.esNulo(codCalculo))
+			return true;
+		
+		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
+				+"		FROM DD_CAI_CALCULO_IMPUESTO"
+				+"		WHERE DD_CAI_CODIGO = "+codCalculo+""
+				+"		AND BORRADO= 0");
+		return !"0".equals(resultado);
+	}
 
 }

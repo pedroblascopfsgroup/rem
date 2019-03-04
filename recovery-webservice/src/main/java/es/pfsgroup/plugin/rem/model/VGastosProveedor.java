@@ -138,7 +138,7 @@ public class VGastosProveedor implements Serializable {
 	
 	@Column(name="DD_CRA_DESCRIPCION")
 	private String entidadPropietariaDescripcion;
-
+	
 	@Column(name="PVE_ID_GESTORIA")
 	private String idGestoria;
 	
@@ -165,6 +165,9 @@ public class VGastosProveedor implements Serializable {
 	
 	@Column(name="MOTIVO_RECHAZO")
 	private String motivoRechazo;
+	
+	@Column(name="GGE_MOTIVO_RECHAZO_PROP")
+	private String motivoRechazoProp;
 	
 	@Transient
 	private boolean esGastoAgrupado; 
@@ -575,6 +578,14 @@ public class VGastosProveedor implements Serializable {
 
 	public void setMotivoRechazo(String motivoRechazo) {
 		this.motivoRechazo = motivoRechazo;
+	}
+
+	public String getMotivoRechazoProp() {
+		return motivoRechazoProp;
+	}
+
+	public void setMotivoRechazoProp(String motivoRechazoProp) {
+		this.motivoRechazoProp = motivoRechazoProp;
 	}
 	
 }

@@ -1,16 +1,17 @@
 --/*
 --##########################################
---## AUTOR=Juanjo Arbona
---## FECHA_CREACION=20180411
+--## AUTOR=Victor Olivares
+--## FECHA_CREACION=20190304
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=REMVIP-471
+--## INCIDENCIA_LINK=HREOS-5384
 --## PRODUCTO=NO
 --## Finalidad: DDL creación vista VI_BUSQUEDA_GASTOS_PROVEEDOR.
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
---##        0.1 Versión inicial
+--##        0.1 Versión inicial - Juanjo Arbona - 20180411 - REMVIP-471
+--##        0.2 Añadido campo GGE.GGE_MOTIVO_RECHAZO_PROP para motivo de rechazo bankia
 --##########################################
 --*/
 
@@ -93,6 +94,7 @@ BEGIN
 			PRO.PRO_NOMBRE,
 			PRO.PRO_DOCIDENTIF,
 			MRH.DD_MRH_DESCRIPCION AS MOTIVO_RECHAZO,
+			GGE.GGE_MOTIVO_RECHAZO_PROP,
 	        CRA.DD_CRA_CODIGO,
 	        CRA.DD_CRA_DESCRIPCION,
 			PVEG.PVE_ID AS PVE_ID_GESTORIA,  

@@ -1,5 +1,37 @@
 package es.pfsgroup.plugin.rem.expedienteComercial;
 
+import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.DecimalFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+
+import javax.annotation.Resource;
+
+import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.lang.BooleanUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.time.DateUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
+
 import edu.emory.mathcs.backport.java.util.Arrays;
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.exception.UserException;
@@ -42,7 +74,7 @@ import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoTramiteDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
-import es.pfsgroup.plugin.rem.api.*;
+import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
@@ -58,10 +90,22 @@ import es.pfsgroup.plugin.rem.controller.ExpedienteComercialController;
 import es.pfsgroup.plugin.rem.expedienteComercial.dao.ExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionService;
-import es.pfsgroup.plugin.rem.model.*;
+import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoAdjuntoActivo;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
+import es.pfsgroup.plugin.rem.model.ActivoOferta;
+import es.pfsgroup.plugin.rem.model.ActivoProveedor;
+import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
+import es.pfsgroup.plugin.rem.model.ActivoTramite;
+import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
+import es.pfsgroup.plugin.rem.model.AdjuntoExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.BloqueoActivoFormalizacion;
+import es.pfsgroup.plugin.rem.model.ComparecienteVendedor;
+import es.pfsgroup.plugin.rem.model.Comprador;
+import es.pfsgroup.plugin.rem.model.CompradorExpediente;
 import es.pfsgroup.plugin.rem.model.CompradorExpediente.CompradorExpedientePk;
-import es.pfsgroup.plugin.rem.model.dd.*;
-import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
+import es.pfsgroup.plugin.rem.model.ComunicacionGencat;
 import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
 import es.pfsgroup.plugin.rem.model.CondicionesActivo;
 import es.pfsgroup.plugin.rem.model.DtoActivoSituacionPosesoria;
@@ -93,6 +137,7 @@ import es.pfsgroup.plugin.rem.model.DtoModificarCompradores;
 import es.pfsgroup.plugin.rem.model.DtoNotarioContacto;
 import es.pfsgroup.plugin.rem.model.DtoObservacion;
 import es.pfsgroup.plugin.rem.model.DtoObtencionDatosFinanciacion;
+import es.pfsgroup.plugin.rem.model.DtoPlusvaliaVenta;
 import es.pfsgroup.plugin.rem.model.DtoPosicionamiento;
 import es.pfsgroup.plugin.rem.model.DtoReserva;
 import es.pfsgroup.plugin.rem.model.DtoSeguroRentas;
@@ -116,6 +161,7 @@ import es.pfsgroup.plugin.rem.model.ObservacionesExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.OfertaGencat;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
+import es.pfsgroup.plugin.rem.model.PlusvaliaVentaExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Posicionamiento;
 import es.pfsgroup.plugin.rem.model.Reserva;
 import es.pfsgroup.plugin.rem.model.ScoringAlquiler;
@@ -126,10 +172,13 @@ import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.TextosOferta;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VActivoOfertaImporte;
+import es.pfsgroup.plugin.rem.model.VActivosAgrupacion;
+import es.pfsgroup.plugin.rem.model.VActivosSubdivision;
 import es.pfsgroup.plugin.rem.model.VBusquedaCompradoresExpedienteDecorator;
 import es.pfsgroup.plugin.rem.model.VBusquedaCompradoresExpedienteDecoratorException;
 import es.pfsgroup.plugin.rem.model.VBusquedaDatosCompradorExpediente;
 import es.pfsgroup.plugin.rem.model.VListadoActivosExpediente;
+import es.pfsgroup.plugin.rem.model.VSubdivisionesAgrupacion;
 import es.pfsgroup.plugin.rem.model.Visita;
 import es.pfsgroup.plugin.rem.model.dd.DDAccionGastos;
 import es.pfsgroup.plugin.rem.model.dd.DDAdministracion;
@@ -155,6 +204,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDPaises;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
 import es.pfsgroup.plugin.rem.model.dd.DDResultadoCampo;
 import es.pfsgroup.plugin.rem.model.dd.DDResultadoTanteo;
+import es.pfsgroup.plugin.rem.model.dd.DDSancionGencat;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionesPosesoria;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoDocumentoExpediente;
@@ -170,6 +220,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedorHonorario;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoRiesgoClase;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTratamiento;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposArras;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposDocumentos;
@@ -177,29 +228,16 @@ import es.pfsgroup.plugin.rem.model.dd.DDTiposImpuesto;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPorCuenta;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposTextoOferta;
+import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
 import es.pfsgroup.plugin.rem.reserva.dao.ReservaDao;
-import es.pfsgroup.plugin.rem.rest.dto.*;
-import org.apache.commons.beanutils.BeanUtils;
-import org.apache.commons.lang.BooleanUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.time.DateUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
-
-import javax.annotation.Resource;
-import java.lang.reflect.InvocationTargetException;
-import java.math.BigDecimal;
-import java.text.DateFormat;
-import java.text.DecimalFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.*;
+import es.pfsgroup.plugin.rem.rest.dto.DatosClienteDto;
+import es.pfsgroup.plugin.rem.rest.dto.InstanciaDecisionDataDto;
+import es.pfsgroup.plugin.rem.rest.dto.InstanciaDecisionDto;
+import es.pfsgroup.plugin.rem.rest.dto.OfertaUVEMDto;
+import es.pfsgroup.plugin.rem.rest.dto.ResolucionComiteDto;
+import es.pfsgroup.plugin.rem.rest.dto.ResultadoInstanciaDecisionDto;
+import es.pfsgroup.plugin.rem.rest.dto.TitularDto;
+import es.pfsgroup.plugin.rem.rest.dto.TitularUVEMDto;
 
 @Service("expedienteComercialManager")
 public class ExpedienteComercialManager extends BusinessOperationOverrider<ExpedienteComercialApi> implements ExpedienteComercialApi {
@@ -2240,13 +2278,13 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					condicionesActivo.setSituacionPosesoria(situacionPosesoriaLibre);
 
 				} else if (activo.getSituacionPosesoria().getOcupado() != null && activo.getSituacionPosesoria().getOcupado().equals(1) && activo.getSituacionPosesoria()
-				.getConTitulo() != null && activo.getSituacionPosesoria().getConTitulo().equals(1)) {
+				.getConTitulo() != null && activo.getSituacionPosesoria().getConTitulo().getCodigo().equals(DDTipoTituloActivoTPA.tipoTituloSi)) {
 					DDSituacionesPosesoria situacionPosesoriaOcupadoTitulo = (DDSituacionesPosesoria) utilDiccionarioApi.dameValorDiccionarioByCod(DDSituacionesPosesoria.class,
 					DDSituacionesPosesoria.SITUACION_POSESORIA_OCUPADO_CON_TITULO);
 					condicionesActivo.setSituacionPosesoria(situacionPosesoriaOcupadoTitulo);
 
 				} else if (activo.getSituacionPosesoria().getOcupado() != null && activo.getSituacionPosesoria().getOcupado().equals(1) && activo.getSituacionPosesoria()
-				.getConTitulo() != null && activo.getSituacionPosesoria().getConTitulo().equals(0)) {
+				.getConTitulo() != null && (activo.getSituacionPosesoria().getConTitulo().equals(DDTipoTituloActivoTPA.tipoTituloNo) || activo.getSituacionPosesoria().getConTitulo().equals(DDTipoTituloActivoTPA.tipoTituloNoConIndicios))) {
 					DDSituacionesPosesoria situacionPosesoriaOcupadoSinTitulo = (DDSituacionesPosesoria) utilDiccionarioApi.dameValorDiccionarioByCod(DDSituacionesPosesoria.class,
 					DDSituacionesPosesoria.SITUACION_POSESORIA_OCUPADO_SIN_TITULO);
 					condicionesActivo.setSituacionPosesoria(situacionPosesoriaOcupadoSinTitulo);
@@ -5708,11 +5746,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				resultado.setSituacionPosesoriaCodigoInformada("01");
 
 			} else if (activo.getSituacionPosesoria().getOcupado() != null && activo.getSituacionPosesoria().getOcupado().equals(1) && activo.getSituacionPosesoria().getConTitulo() != null &&
-					activo.getSituacionPosesoria().getConTitulo().equals(1)) {
+					activo.getSituacionPosesoria().getConTitulo().getCodigo().equals(DDTipoTituloActivoTPA.tipoTituloSi)) {
 				resultado.setSituacionPosesoriaCodigoInformada("02");
 
 			} else if (activo.getSituacionPosesoria().getOcupado() != null && activo.getSituacionPosesoria().getOcupado().equals(1) && activo.getSituacionPosesoria().getConTitulo() != null &&
-					activo.getSituacionPosesoria().getConTitulo().equals(0)) {
+					(activo.getSituacionPosesoria().getConTitulo().getCodigo().equals(DDTipoTituloActivoTPA.tipoTituloNo) || activo.getSituacionPosesoria().getConTitulo().getCodigo().equals(DDTipoTituloActivoTPA.tipoTituloNoConIndicios))) {
 				resultado.setSituacionPosesoriaCodigoInformada("03");
 			}
 		}
@@ -7449,7 +7487,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			Activo activo = activoTramite.getActivo();
 			DtoActivoSituacionPosesoria activoDto = new DtoActivoSituacionPosesoria();
 			if (activo != null){
-				BeanUtils.copyProperty(activoDto, "conTitulo", activo.getSituacionPosesoria().getConTitulo());
+				BeanUtils.copyProperty(activoDto, "conTitulo", activo.getSituacionPosesoria().getConTitulo().getCodigo());
 			}
 
 			if(!Checks.esNulo(activoDto) && activoDto.getConTituloTPA().equals("0")) {
@@ -7467,6 +7505,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		return ocupado;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<DtoActivosExpediente> getActivosPropagables(Long idExpediente) {
 		DtoPage dtopage = getActivosExpediente(idExpediente);
@@ -7606,8 +7645,12 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	@Override
 	public DtoAviso getAvisosExpedienteById(Long id) {
 		boolean avisoPrioritario = false;
+		boolean expedienteAnulado = false;
 		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 		ExpedienteComercial expediente = findOne(id);
+		if (!Checks.esNulo(expediente)) {
+			expedienteAnulado = comprobarExpedienteAnuladoGencat(expediente);
+		}
 
 		DtoAviso avisosFormateados = new DtoAviso();
 		avisosFormateados.setDescripcion("");
@@ -7618,7 +7661,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				for (ExpedienteAvisadorApi avisador : avisadores) {
 					DtoAviso aviso = avisador.getAviso(expediente, usuarioLogado);
 					if (!Checks.esNulo(aviso) && !Checks.esNulo(aviso.getDescripcion())) {
-						if ("Expediente anulado por GENCAT".equals(aviso.getDescripcion())) {
+						if (!avisoPrioritario && expedienteAnulado) {
 							avisoPrioritario = true;
 							avisosFormateados.setDescripcion(avisosFormateados.getDescripcion() + "<div class='div-aviso red'>" + aviso.getDescripcion() + "</div>");
 						} else if (!avisoPrioritario && "Expediente bloqueado por GENCAT".equals(aviso.getDescripcion())) {
@@ -7642,5 +7685,72 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			}
 		}
 		return avisosFormateados;
+	}
+	
+	@Override
+	public boolean comprobarExpedienteAnuladoGencat(ExpedienteComercial expediente) {
+		boolean expedienteAnulado = false;
+		boolean expedienteBloqueado = false;
+		if(!Checks.esNulo(expediente) && !Checks.esNulo(expediente.getOferta())){
+			
+			Oferta oferta = expediente.getOferta();	
+			List<OfertaGencat> ofertaGencat = genericDao.getList(OfertaGencat.class,genericDao.createFilter(FilterType.EQUALS,"oferta", oferta));
+
+			if(ofertaGencat.size() > 0 && Checks.esNulo(ofertaGencat.get(0).getIdOfertaAnterior()) && !ofertaGencat.get(0).getAuditoria().isBorrado()) {
+				List<ActivoOferta> actOfrList = expediente.getOferta().getActivosOferta();
+				for (ActivoOferta actOfr : actOfrList){
+					Activo activo = actOfr.getPrimaryKey().getActivo();
+					Order order = new Order(OrderType.DESC,"id");
+					List<ComunicacionGencat> comGenLista = genericDao.getListOrdered(ComunicacionGencat.class, order ,genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId()));
+					if(!Checks.estaVacio(comGenLista)) {
+						ComunicacionGencat comGen = comGenLista.get(0);
+					
+						List<ActivoTramite> actTraList = genericDao.getList(ActivoTramite.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId()));
+						if(!Checks.estaVacio(actTraList)){
+							for (ActivoTramite activoTramite : actTraList) {
+								if(ActivoTramiteApi.CODIGO_TRAMITE_COMUNICACION_GENCAT.equals(activoTramite.getTipoTramite().getCodigo())){
+									if(!Checks.esNulo(activoTramite.getEstadoTramite()) && (DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CERRADO.equals(activoTramite.getEstadoTramite().getCodigo()) || DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CANCELADO.equals(activoTramite.getEstadoTramite().getCodigo()))){
+										expedienteBloqueado = true;
+									}else{
+										expedienteBloqueado = false;
+										break;
+									}
+								}
+							}
+						}
+						
+						if (!Checks.esNulo(comGen) && expedienteBloqueado && !Checks.esNulo(comGen.getSancion()) &&
+								DDSancionGencat.COD_EJERCE.equals(comGen.getSancion().getCodigo()) && activoApi.isAfectoGencat(activo)) {
+							expedienteAnulado = true;
+							break;
+						}
+					}
+				}
+			}
+		}
+		return expedienteAnulado;
+	}
+	
+	@Override
+	public boolean descongelaExpedienteGencat(ExpedienteComercial expediente) {
+		boolean descongelar = false;
+		boolean expedienteAnulado = false;
+				
+		expedienteAnulado = comprobarExpedienteAnuladoGencat(expediente);
+		Oferta oferta = expediente.getOferta();	
+		List<OfertaGencat> ofertaGencat = genericDao.getList(OfertaGencat.class,genericDao.createFilter(FilterType.EQUALS,"oferta", oferta));
+		
+		if(ofertaGencat.size() > 0 && expedienteAnulado) {
+			List<ActivoOferta> actOfrList = expediente.getOferta().getActivosOferta();
+			for (ActivoOferta actOfr : actOfrList){
+				Activo activo = actOfr.getPrimaryKey().getActivo();
+				if (activoApi.isAfectoGencat(activo)) {
+					return descongelar;
+				}
+			}
+		} else {
+			descongelar = true;
+		}	
+		return descongelar;
 	}
 }

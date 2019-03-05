@@ -517,6 +517,8 @@ public interface ParticularValidatorApi {
 	
 	Boolean esActivoSinComunicacionViva(Long numActivoHaya);
 	
+	Boolean esActivoConMultiplesComunicacionesVivas(Long numActivoHaya);
+	
 	Boolean esNIFValido(String nif);
 	
 	/**

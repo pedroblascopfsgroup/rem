@@ -41,6 +41,7 @@ public class MSVValidatorCargaMasivaComunicaciones extends MSVExcelValidatorAbst
 	private static final String ACTIVO_CON_COMUNICACION_EN_ESTADO_COMUNICADO = "msg.error.masivo.activo.con.comunicacion.comunicada";
 	private static final String ACTIVO_CON_COMUNICACION_NO_GENERADA = "msg.error.masivo.comunicacion.no.generada";
 	private static final String ACTIVO_CON_ADECUACION_NO_FINALIZADA = "msg.error.masivo.comunicacion.adecuacion.no.finalizada";
+	private static final String ACTIVO_CON_MULTIPLES_COMUNICACIONES_VIVAS = "msg.error.masivo.comunicacion.multiples.comunicaciones.vivas";
 	
 	private static final int POSICION_COLUMNA_NUMERO_ACTIVO  = 0;
 	
@@ -106,6 +107,7 @@ public class MSVValidatorCargaMasivaComunicaciones extends MSVExcelValidatorAbst
 			mapaErrores.put(messageServices.getMessage(ACTIVO_CON_COMUNICACION_EN_ESTADO_COMUNICADO), esActivoConComunicacionComunicada(exc));
 			mapaErrores.put(messageServices.getMessage(ACTIVO_CON_COMUNICACION_NO_GENERADA), esActivoConComunicacionGenerada(exc));
 			mapaErrores.put(messageServices.getMessage(ACTIVO_CON_ADECUACION_NO_FINALIZADA), esActivoConAdecuacionFinalizada(exc));
+			mapaErrores.put(messageServices.getMessage(ACTIVO_CON_MULTIPLES_COMUNICACIONES_VIVAS), esActivoConMultiplesComunicacionesVivas(exc));
 			// Validar NIF
 			// Activo sin comunicación viva
 
@@ -114,6 +116,7 @@ public class MSVValidatorCargaMasivaComunicaciones extends MSVExcelValidatorAbst
 					|| !mapaErrores.get(messageServices.getMessage(ACTIVO_CON_COMUNICACION_EN_ESTADO_COMUNICADO)).isEmpty()
 					|| !mapaErrores.get(messageServices.getMessage(ACTIVO_CON_COMUNICACION_NO_GENERADA)).isEmpty()
 					|| !mapaErrores.get(messageServices.getMessage(ACTIVO_CON_ADECUACION_NO_FINALIZADA)).isEmpty()
+					|| !mapaErrores.get(messageServices.getMessage(ACTIVO_CON_MULTIPLES_COMUNICACIONES_VIVAS)).isEmpty()
 					) {
 				dtoValidacionContenido.setFicheroTieneErrores(true);
 				exc = excelParser.getExcel(dtoFile.getExcelFile().getFileItem().getFile());
@@ -223,6 +226,27 @@ public class MSVValidatorCargaMasivaComunicaciones extends MSVExcelValidatorAbst
 			return listaFilas;
 		}
 	
+	private List<Integer> esActivoConMultiplesComunicacionesVivas(MSVHojaExcel exc) {
+		List<Integer> listaFilas = new ArrayList<Integer>();
+		
+		int i = 0;
+		try{
+			for(i=1; i<this.numFilasHoja;i++){
+				if(particularValidator.esActivoConMultiplesComunicacionesVivas(Long.valueOf(exc.dameCelda(i, POSICION_COLUMNA_NUMERO_ACTIVO)))) {
+					listaFilas.add(i);
+				}
+					
+			}
+		} catch (Exception e) {
+			if (i != 0) {
+				listaFilas.add(i);
+			}
+			logger.error(e.getMessage());
+			e.printStackTrace();
+		}
+		
+		return listaFilas;
+	}
 
 	//El activo existe
 	private List<Integer> activesNotExistsRows(MSVHojaExcel exc) {

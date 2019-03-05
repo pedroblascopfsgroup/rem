@@ -45,6 +45,9 @@ public class VOfertasActivosAgrupacion implements Serializable {
 	
 	@Column(name = "OFR_IMPORTE")
 	private String importeOferta;
+	
+	@Column(name = "OFR_IMPORTE_CONTRAOFERTA")
+	private String importeContraoferta;
 
 	@Column(name = "DD_EOF_DESCRIPCION")
 	private String estadoOferta;
@@ -205,6 +208,14 @@ public class VOfertasActivosAgrupacion implements Serializable {
 
 	public void setImporteOferta(String importeOferta) {
 		this.importeOferta = importeOferta;
+	}
+	
+	public String getImporteContraoferta() {
+		return importeContraoferta;
+	}
+
+	public void setImporteContraoferta(String importeContraoferta) {
+		this.importeContraoferta = importeContraoferta;
 	}
 
 	public String getEstadoOferta() {

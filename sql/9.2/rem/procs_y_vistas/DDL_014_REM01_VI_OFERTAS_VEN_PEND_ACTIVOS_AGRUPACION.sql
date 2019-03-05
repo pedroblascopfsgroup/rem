@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=RLB
---## FECHA_CREACION=20181130
+--## AUTOR=Rasul Akhmeddibirov
+--## FECHA_CREACION=20190225
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=REMVIP-2296
@@ -15,6 +15,7 @@
 --##        HREOS-2236: Nuevos filtros en buscador de ofertas.
 --##		REMVIP-1645 Optimización de la vista.
 --##		HREOS-4912: (20181204 - Alberto Checa) GENCAT - Aviso al crear un expediente comercial
+--##		REMVIP-3350 Añadir el campo importe contraoferta.
 --##########################################
 --*/
 
@@ -71,6 +72,7 @@ BEGIN
         0 AS PRECIO_PUBLICADO,
         LCO.LCO_GESTOR_COMERCIAL AS GESTOR_LOTE,
 		    OFR.OFR_IMPORTE,
+				OFR.OFR_IMPORTE_CONTRAOFERTA,
 		    EOF.DD_EOF_DESCRIPCION,
 				EOF.DD_EOF_CODIGO,
         TRO.DD_TRO_CODIGO,

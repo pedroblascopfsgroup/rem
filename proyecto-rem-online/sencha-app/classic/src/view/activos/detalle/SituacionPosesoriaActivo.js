@@ -21,7 +21,7 @@ Ext.define('HreRem.view.activos.detalle.SituacionPosesoriaActivo', {
         var me = this;
         var storeConTituloPosesionNo = Ext.create('Ext.data.Store', {
 					data : [{
-						"codigo" : "1",
+						"codigo" : "01",
 						"descripcion" : eval(String.fromCharCode(34, 83, 237,
 								34))
 					}, {

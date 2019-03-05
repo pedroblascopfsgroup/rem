@@ -127,10 +127,8 @@ public class OfertasController {
 		HashMap<Long,String> fechasReunionComite = new HashMap<Long, String>();
 		HashMap<Long,String> sancionadores = new HashMap<Long, String>();
 		
-		if(!Checks.esNulo(usuarioCartera) 
-				&& (DDCartera.CODIGO_CARTERA_LIBERBANK).equals(usuarioCartera.getCartera().getCodigo())
-				&& !Checks.esNulo(dtoCarteraCodigo)
-				&& (DDCartera.CODIGO_CARTERA_LIBERBANK.equals(dtoCarteraCodigo))){
+		if((!Checks.esNulo(usuarioCartera) && (DDCartera.CODIGO_CARTERA_LIBERBANK).equals(usuarioCartera.getCartera().getCodigo()))
+				|| (!Checks.esNulo(dtoCarteraCodigo) && (DDCartera.CODIGO_CARTERA_LIBERBANK.equals(dtoCarteraCodigo)))){
 			for(VOfertasActivosAgrupacion oferta : listaOfertas){
 				List<Long> TareasExternasId = activoTareaExternaDao.getTareasExternasIdByOfertaId(oferta.getId());
 				Filter filterTap01 = genericDao.createFilter(FilterType.EQUALS, "codigo", "T013_ResolucionComite");

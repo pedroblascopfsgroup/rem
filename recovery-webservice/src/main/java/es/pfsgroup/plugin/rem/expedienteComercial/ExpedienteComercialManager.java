@@ -2392,6 +2392,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					DDSituacionesPosesoria situacionPosesoriaOcupadoSinTitulo = (DDSituacionesPosesoria) utilDiccionarioApi
 							.dameValorDiccionarioByCod(DDSituacionesPosesoria.class,
 									DDSituacionesPosesoria.SITUACION_POSESORIA_OCUPADO_SIN_TITULO);
+									
 					condicionesActivo.setSituacionPosesoria(situacionPosesoriaOcupadoSinTitulo);
 				}
 			}
@@ -6255,6 +6256,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					&& activo.getSituacionPosesoria().getOcupado().equals(1)
 					&& activo.getSituacionPosesoria().getConTitulo() != null
 					&& activo.getSituacionPosesoria().getConTitulo().equals(0)) {
+
 				resultado.setSituacionPosesoriaCodigoInformada("03");
 			}
 		}
@@ -8179,7 +8181,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			DtoActivoSituacionPosesoria activoDto = new DtoActivoSituacionPosesoria();
 
 			if (activo != null){
-				BeanUtils.copyProperty(activoDto, "conTitulo", activo.getSituacionPosesoria().getConTitulo());
+				BeanUtils.copyProperty(activoDto, "conTitulo", activo.getSituacionPosesoria().getConTitulo().getCodigo());
 			}
 
 			if(!Checks.esNulo(activoDto) && activoDto.getConTituloTPA().equals("0")) {
@@ -8197,6 +8199,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		return ocupado;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<DtoActivosExpediente> getActivosPropagables(Long idExpediente) {
 		DtoPage dtopage = getActivosExpediente(idExpediente);

@@ -54,10 +54,8 @@ public class OfertasExcelReport extends AbstractExcelReport implements ExcelRepo
 		listaCabeceras.add("Ofertante");
 		listaCabeceras.add("Prescriptor");
 		listaCabeceras.add("Canal prescripcion");
-		if(!Checks.esNulo(usuarioCartera) 
-				&& (DDCartera.CODIGO_CARTERA_LIBERBANK).equals(usuarioCartera.getCartera().getCodigo())
-				&& !Checks.esNulo(dtoCarteraCodigo)
-				&& (DDCartera.CODIGO_CARTERA_LIBERBANK.equals(dtoCarteraCodigo))){
+		if(!Checks.esNulo(usuarioCartera) && (DDCartera.CODIGO_CARTERA_LIBERBANK).equals(usuarioCartera.getCartera().getCodigo())
+				|| (!Checks.esNulo(dtoCarteraCodigo) && (DDCartera.CODIGO_CARTERA_LIBERBANK.equals(dtoCarteraCodigo)))){
 			listaCabeceras.add("Comité interno sancionador");
 			listaCabeceras.add("Fecha reunión comité");
 		}
@@ -113,10 +111,8 @@ public class OfertasExcelReport extends AbstractExcelReport implements ExcelRepo
 //				}
 //			}
 			
-			if(!Checks.esNulo(usuarioCartera) 
-					&& (DDCartera.CODIGO_CARTERA_LIBERBANK).equals(usuarioCartera.getCartera().getCodigo())
-					&& !Checks.esNulo(dtoCarteraCodigo)
-					&& (DDCartera.CODIGO_CARTERA_LIBERBANK.equals(dtoCarteraCodigo))){
+			if(!Checks.esNulo(usuarioCartera) && (DDCartera.CODIGO_CARTERA_LIBERBANK).equals(usuarioCartera.getCartera().getCodigo())
+					|| (!Checks.esNulo(dtoCarteraCodigo) && (DDCartera.CODIGO_CARTERA_LIBERBANK.equals(dtoCarteraCodigo)))){
 				
 				if(!Checks.esNulo(sancionadores.get(oferta.getId()))){
 					String sancionador = "";

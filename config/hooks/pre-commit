@@ -111,19 +111,19 @@ function check_UTF8() {
 }
 
 function check_pitertul_format() {
-	file_content=$1
+	f=$1
+	expregular=$2
 	declare -A rule=(	[name]="Pitertul format"
 						[file]=$f
 						[problem]="El fichero no está en formato correcto para PITERTUL."
-						[solution]="Puedes encontrar ayuda en https://link-doc.pfsgroup.es/confluence/display/TEC/PITERTUL%3A+making+of"
+						[solution]="$3"
 					)
 	r=$(cat $f | tr '\n' ' ' | tr '\t' ' ' | tr -s [:space:] | tr -cd "[:print:]" | 
-		grep -a -E -i "\s*WHENEVER\s*SQLERROR\s*EXIT\s*SQL\.SQLCODE(;|)\s*SET\s*SERVEROUTPUT\s*ON(;|)(\s*SET\s*DEFINE\sOFF(;|)|)\s*(DECLARE|CREATE)\s*.*\s*BEGIN\s*.*EXCEPTION(.*)ROLLBACK;\s*RAISE;\s*END.*(;|)\s*.*\sEXIT(;|)\s*$")
+		grep -a -E -i "$expregular")
 	if [[ "x" == "x$r" ]]; then
 		paint_error rule
 		exit 1
 	fi
-
 }
 
 function check_pitertul_name() {
@@ -180,11 +180,17 @@ function SQL_rules() {
 	for f in `eval $modified_files | grep  -E \/D.*\.sql$ | grep -v ^reports/ | grep -v migracion | grep -v scripts | grep -v templates | grep -v rutinas`; do
 		check_pitertul_name $f
 		
-		file_content=$(cat $f);
 		check_UTF8 $f
 
 		# Comprueba formato de Pitertul
-		check_pitertul_format "$file_content"
+		exp="\s*WHENEVER\s*SQLERROR\s*EXIT\s*SQL\.SQLCODE(;|)\s*"
+		check_pitertul_format $f $exp "Debe incluir 'WHENEVER SQLERROR EXIT SQL.SQLCODE;'"
+		exp="SET\s*SERVEROUTPUT\s*ON(;|)"
+		check_pitertul_format $f $exp "Debe incluir 'SET SERVEROUTPUT ON;'"
+		exp="(DECLARE|CREATE)\s*.*\s*BEGIN\s*.*EXCEPTION(.*)ROLLBACK;\s*RAISE;\s*END;"
+		check_pitertul_format $f $exp "Debe incluir un bloque DECLARE o CREATE, con BEGIN, EXCEPTION, ROLLBACK, RAISE y END;"
+		exp="/\s*EXIT(;|)\s*$"
+		check_pitertul_format $f $exp "Debe finalizar con '/ y EXIT'"
 	done
 }
 

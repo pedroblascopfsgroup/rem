@@ -49,9 +49,6 @@ public class VListadoActivosExpediente implements Serializable {
 	
 	@Column(name = "BLOQUEO")
 	private Integer bloqueos;
-
-	@Column(name = "CONDICIONES")
-	private Integer condiciones;
 	
 	@Column(name = "CONDICIONANTE")
 	private Integer tanteos;
@@ -155,14 +152,6 @@ public class VListadoActivosExpediente implements Serializable {
 
 	public void setBloqueos(Integer bloqueos) {
 		this.bloqueos = bloqueos;
-	}
-
-	public Integer getCondiciones() {
-		return condiciones;
-	}
-
-	public void setCondiciones(Integer condiciones) {
-		this.condiciones = condiciones;
 	}
 
 	public Integer getTanteos() {

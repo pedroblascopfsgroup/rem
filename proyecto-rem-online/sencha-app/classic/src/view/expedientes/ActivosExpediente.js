@@ -28,23 +28,7 @@ Ext.define('HreRem.view.expedientes.ActivosExpediente', {
 
         	return '<div> <img src="resources/images/'+src+'" alt ="'+alt+'" width="15px"></div>';
         }; 
-        var tanteosRenderer =  function(value) {
-        	var src = '',
-        	alt = '';
-        	if (value=="1") {
-        		src = 'icono_OK.svg';
-        		alt = 'OK';
-        		return '<div> <img src="resources/images/'+src+'" alt ="'+alt+'" width="15px"></div>';
-        	} else if(value=="0") { 
-        		src = 'icono_KO.svg';
-        		alt = 'KO';
-        		return '<div> <img src="resources/images/'+src+'" alt ="'+alt+'" width="15px"></div>';
-        	} else if(value=="2") { 
-        		return '<b style=\"color:red\">EJERCIDO</b>'
-        	} else if(value=="3") { 
-        		return 'N/A'
-        	}   
-        }; 
+
         var bloqueosRenderer =  function(value) {
         	var src = '',
         	alt = '';
@@ -255,17 +239,6 @@ Ext.define('HreRem.view.expedientes.ActivosExpediente', {
 			       		renderer: bloqueosRenderer,	           
 			            flex: 0.5,
 			            dataIndex: 'bloqueos',
-			            align: 'center',
-			            bind: {
-			            	hidden: '{esTipoAlquiler}'
-			            },
-			            hideable: false
-			       },
-			       {   
-			       		text: HreRem.i18n("title.tanteo"),
-			       		renderer: tanteosRenderer,	           
-			            flex: 0.5,
-			            dataIndex: 'tanteos',
 			            align: 'center',
 			            bind: {
 			            	hidden: '{esTipoAlquiler}'

@@ -119,6 +119,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializar;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoEstadoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
@@ -1808,11 +1809,31 @@ public class AgrupacionAdapter {
 				return false;
 			}
 		} else {
-			if (Checks.esNulo(loteComercial.getUsuarioGestorComercial())) {
+			if((agr.getActivos().get(0).getActivo().getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_BANKIA)
+					|| agr.getActivos().get(0).getActivo().getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_SAREB))
+					&& isRetail(agr)){
+				if (Checks.esNulo(loteComercial.getUsuarioGestorComercial()) || Checks.esNulo(loteComercial.getUsuarioGestorComercialBackOffice())) {
+					return false;
+				}
+				
+			}else if (Checks.esNulo(loteComercial.getUsuarioGestorComercial())) {
 				return false;
 			}
 		}
 		return true;
+	}
+	
+	private boolean isRetail(ActivoAgrupacion agr){
+		boolean resultado = false;
+		if(agr != null && agr.getActivos() != null && agr.getActivos().size() > 0){
+			for(ActivoAgrupacionActivo activo : agr.getActivos()){
+				if(DDTipoComercializar.CODIGO_RETAIL.equals(activo.getActivo().getTipoComercializar().getCodigo())){
+					resultado = true;
+					break;
+				}
+			}
+		}
+		return resultado;
 	}
 
 	//@Transactional(readOnly = false)
@@ -3139,24 +3160,28 @@ public class AgrupacionAdapter {
 		VCondicionantesAgrDisponibilidad vCondicionantesAgrDisponibilidad = genericDao.get(VCondicionantesAgrDisponibilidad.class, idAgrupacionFilter);
 		Double precioWebVenta = 0.0;
 		Double precioWebAlquiler = 0.0;
-		Boolean tienePrecioVenta = true;
 
 		try {
-
-			for(ActivoAgrupacionActivo aga : agrupacion.getActivos()) {
-				if(Checks.esNulo(activoValoracionDao.getImporteValoracionVentaWebPorIdActivo(aga.getActivo().getId()))) {
-					tienePrecioVenta = false;
+			List<ActivoAgrupacionActivo> l_activos = agrupacion.getActivos();
+			
+			for (ActivoAgrupacionActivo aga : l_activos) { // Verificamos que todos los activos tengaun un precio de venta 
+				Double precioAuxVenta = activoValoracionDao.getImporteValoracionVentaWebPorIdActivo(aga.getActivo().getId());
+				if (Checks.esNulo(precioAuxVenta) || (!Checks.esNulo(precioAuxVenta) && precioAuxVenta == 0.0)) {
+					precioWebVenta = 0.0;
 					break;
+				} else {
+					precioWebVenta += precioAuxVenta;
 				}
 			}
-
-			for(ActivoAgrupacionActivo aga : agrupacion.getActivos()) {
-				if(tienePrecioVenta) {
-				precioWebVenta += !Checks.esNulo(activoValoracionDao.getImporteValoracionVentaWebPorIdActivo(aga.getActivo().getId()))
-						? activoValoracionDao.getImporteValoracionVentaWebPorIdActivo(aga.getActivo().getId()): 0.0;
+			
+			for (ActivoAgrupacionActivo aga : l_activos) { // Verificamos que todos los activos tengaun un precio de alquiler
+				Double precioAuxAlquiler = activoValoracionDao.getImporteValoracionRentaWebPorIdActivo(aga.getActivo().getId());
+				if (Checks.esNulo(precioAuxAlquiler) || (!Checks.esNulo(precioAuxAlquiler) && precioAuxAlquiler == 0.0)) {
+					precioWebAlquiler = 0.0;
+					break;
+				} else {
+					precioWebAlquiler += precioAuxAlquiler;
 				}
-				precioWebAlquiler += !Checks.esNulo(activoValoracionDao.getImporteValoracionRentaWebPorIdActivo(aga.getActivo().getId()))
-						? activoValoracionDao.getImporteValoracionRentaWebPorIdActivo(aga.getActivo().getId()): 0.0;
 			}
 
 		} catch (Exception e) {

@@ -103,7 +103,8 @@ public class DtoCondiciones extends WebDto {
 	private Boolean checkRevisionMercado;
 	private Date revisionMercadoFecha;
 	private Integer revisionMercadoMeses;
-
+	private Double	depositoReserva;
+	
 	//********Datos que vienen del activos (no se editan)********
 	private Date fechaUltimaActualizacion;
 	private Date fechaTomaPosesion;
@@ -113,8 +114,11 @@ public class DtoCondiciones extends WebDto {
 	private Integer vpo;
 	//********-------------------------------------------********
 	
+	
+
 	//Datos para el historico de condiciones, que se utilizan en el grid
 	private Date fechaMinima;
+
 	private Boolean insertarHistorico;
 	
 	public Integer getMesesFianza() {
@@ -831,6 +835,14 @@ public class DtoCondiciones extends WebDto {
 
 	public void setInsertarHistorico(Boolean insertarHistorico) {
 		this.insertarHistorico = insertarHistorico;
+	}
+	
+	public Double getDepositoReserva() {
+		return depositoReserva;
+	}
+
+	public void setDepositoReserva(Double depositoReserva) {
+		this.depositoReserva = depositoReserva;
 	}
 
 	

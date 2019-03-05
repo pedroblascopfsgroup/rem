@@ -257,7 +257,7 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 				r = mySheet.getRow(cellReference.getRow());
 				c = r.getCell(cellReference.getCol());
 				if (!Checks.esNulo(dtoPAB.getImporteTasacionFinal())) {
-					c.setCellValue(format.format(dtoPAB.getImporteTasacionFinal()));
+					c.setCellValue(dtoPAB.getImporteTasacionFinal().floatValue());
 				} else {
 					c.setCellValue("");
 				}
@@ -293,7 +293,7 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 				r = mySheet.getRow(cellReference.getRow());
 				c = r.getCell(cellReference.getCol());
 				if (!Checks.esNulo(dtoPAB.getImporteOferta())) { 
-					c.setCellValue(dtoPAB.getImporteOferta().toString());
+					c.setCellValue(dtoPAB.getImporteOferta().floatValue());
 				} else {
 					c.setCellValue("");
 				}
@@ -477,12 +477,12 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 				c.setCellType(XSSFCell.CELL_TYPE_FORMULA);
 				c.setCellFormula(formula);
 				
-				formula = "'"+numActivo.toString()+"'!B50";
-				cellReference = new CellReference("S" + Integer.toString(currentRow)); // PAX
-				r = mySheet.getRow(cellReference.getRow());
-				c = r.getCell(cellReference.getCol());
-				c.setCellType(XSSFCell.CELL_TYPE_FORMULA);
-				c.setCellFormula(formula);
+//				formula = "'"+numActivo.toString()+"'!B50";
+//				cellReference = new CellReference("S" + Integer.toString(currentRow)); // PAX SE DEJA EN BLANCO 
+//				r = mySheet.getRow(cellReference.getRow());
+//				c = r.getCell(cellReference.getCol());
+//				c.setCellType(XSSFCell.CELL_TYPE_FORMULA);
+//				c.setCellFormula(formula);
 			
 				formula = "'"+numActivo.toString()+"'!B49";
 				cellReference = new CellReference("T" + Integer.toString(currentRow)); // INGRESOS NETOS
@@ -564,6 +564,14 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 			c = r.getCell(cellReference.getCol());
 			c.setCellType(XSSFCell.CELL_TYPE_FORMULA);
 			c.setCellFormula(formula);
+			c.setCellStyle(style);
+			
+//			formula = "SUM(O6:O"+fila+")";
+			cellReference = new CellReference("S" + Integer.toString(currentRow)); // RENTA BONIFICADA
+			r = mySheet.getRow(cellReference.getRow());
+			c = r.getCell(cellReference.getCol());
+//			c.setCellType(XSSFCell.CELL_TYPE_FORMULA);
+//			c.setCellFormula(formula);
 			c.setCellStyle(style);
 			
 

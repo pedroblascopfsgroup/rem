@@ -933,7 +933,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			if (oferta.getOfertaExpress()) {
 				oferta.setEstadoOferta(genericDao.get(DDEstadoOferta.class,
 						genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoOferta.CODIGO_ACEPTADA)));
-
+				
 				// Congelar resto de ofertas
 				for (ActivoOferta actOfer : oferta.getActivoPrincipal().getOfertas()) {
 
@@ -975,6 +975,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				DDEstadosExpedienteComercial estadoExpCom = expedienteComercialApi
 						.getDDEstadosExpedienteComercialByCodigo(DDEstadosExpedienteComercial.APROBADO);
 				expComercial.setEstado(estadoExpCom);
+				expComercial.setFechaSancion(new Date());
 				
 				genericDao.update(ExpedienteComercial.class, expComercial);
 
@@ -3347,8 +3348,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	public List<DtoPropuestaAlqBankia> getListPropuestasAlqBankiaFromView(Long ecoId) {
 		List<DtoPropuestaAlqBankia> listaDto = expedienteComercialApi.getListaDtoPropuestaAlqBankiaByExpId(ecoId);
 		return listaDto;
-}
-
+	}
 
 	private void validacionesLote(HashMap<String, String> errorsList, Activo activo, DDCartera cartera, 
 			DDSubcartera subcartera, ActivoPropietario propietario, Integer geolocalizacion) {		
@@ -3358,6 +3358,5 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				|| activoApi.getGeolocalizacion(activo) != geolocalizacion) {
 			errorsList.put("activosLote", RestApi.REST_MSG_UNKNOWN_KEY);
 		}
-
 	}
 }

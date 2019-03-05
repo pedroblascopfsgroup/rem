@@ -15,10 +15,11 @@
 --##		0.3 Modificación para que los grestores de la tabla ACT_GES_DIST_GESTORES que no tengan cartera también los asigne al activo
 --##		0.4 Añadidos gestor de reserva para Cajamar - REMVIP-2129
 --##		0.5 Añadidos los nuevos gestores comerciales de alquiler (gestor y supervisor) - HREOS-5064
---##		0.6 HREOS-5049 Carlos López: Optimización
---##		0.7 HREOS-5160 Mariam Lliso: modificada la asignación de gestores
---##		0.8 HREOS-5239 Daniel Algaba: corrección multicartera CERBERUS
---##        0.9 HREOS-5443 Daniel Algaba: corrección para que no filtre por la TMP_GEST_CONT en activos con subcarteras
+--##        0.6 HREOS-5387 Daniel Algaba: añadimos el Supervisor comercial Backoffice Inmobiliario
+--##		0.7 HREOS-5049 Carlos López: Optimización
+--##		0.8 HREOS-5160 Mariam Lliso: modificada la asignación de gestores
+--##		0.9 HREOS-5239 Daniel Algaba: corrección multicartera CERBERUS
+--##        1.0 HREOS-5443 Daniel Algaba: corrección para que no filtre por la TMP_GEST_CONT en activos con subcarteras
 --##########################################
 --*/
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
@@ -32,10 +33,7 @@ CREATE OR REPLACE PROCEDURE #ESQUEMA#.SP_AGA_ASIGNA_GESTOR_ACTIVO_V3 (
     P_ACT_ID        IN #ESQUEMA#.act_activo.act_id%TYPE,
     P_ALL_ACTIVOS   IN NUMBER,
     P_CLASE_ACTIVO  IN VARCHAR2) AS
-
---v0.9
-
-
+--v1.0
 
     V_ESQUEMA VARCHAR2(15 CHAR) := '#ESQUEMA#';
     V_ESQUEMA_MASTER VARCHAR2(15 CHAR) := '#ESQUEMA_MASTER#';
@@ -47,11 +45,10 @@ CREATE OR REPLACE PROCEDURE #ESQUEMA#.SP_AGA_ASIGNA_GESTOR_ACTIVO_V3 (
     V_CLASE_ACTIVO VARCHAR (500 CHAR);
     V_CLASE_ACTIVO_NULL VARCHAR (500 CHAR);
 
-	
-    V_GESTOR_FINANCIERO VARCHAR2(4000 CHAR) := ' (''GPUBL'',''SPUBL'',''GCOM'',''SCOM'',''FVDNEG'',''FVDBACKOFR'',''FVDBACKVNT'',''SUPFVD'',''SFORM'',''GCODI'',''GCOINM'',''GCOIN'',''GLIBINVINM'',''GLIBSINTER'',''GLIBRES'',''GESRES'',''SUPRES'') ';
-    V_GESTOR_INMOBILIAR VARCHAR2(4000 CHAR) := ' (''GADM'',''SUPADM'',''GACT'',''SUPACT'',''GPREC'',''SPREC'',''GPUBL'',''SPUBL'',''GCOM'',''SCOM'',''FVDNEG'',''FVDBACKOFR'',''FVDBACKVNT'',''SUPFVD'',''SFORM'',''GGADM'',''GIAFORM'',''GTOCED'',''CERT'',''GIAADMT'',''PTEC'', ''GTREE'',''GCODI'',''GCOINM'',''GCOIN'',''GLIBINVINM'',''GLIBSINTER'',''GLIBRES'',''HAYAGBOINM'',''SBACKOFFICEINMLIBER'',''GEDI'', ''SUPEDI'', ''GSUE'', ''SUPSUE'',''GALQ'',''SUALQ'')';
+    V_GESTOR_FINANCIERO VARCHAR2(4000 CHAR) := ' (''GPUBL'',''SPUBL'',''GCOM'',''SCOM'',''FVDNEG'',''FVDBACKOFR'',''FVDBACKVNT'',''SUPFVD'',''SFORM'',''GCODI'',''GCOINM'',''GCOIN'',''GLIBINVINM'',''GLIBSINTER'',''GLIBRES'',''GESRES'',''SUPRES'',''HAYAGBOINM'',''HAYASBOINM'') ';
+    V_GESTOR_INMOBILIAR VARCHAR2(4000 CHAR) := ' (''GADM'',''SUPADM'',''GACT'',''SUPACT'',''GPREC'',''SPREC'',''GPUBL'',''SPUBL'',''GCOM'',''SCOM'',''FVDNEG'',''FVDBACKOFR'',''FVDBACKVNT'',''SUPFVD'',''SFORM'',''GGADM'',''GIAFORM'',''GTOCED'',''CERT'',''GIAADMT'',''PTEC'', ''GTREE'',''GCODI'',''GCOINM'',''GCOIN'',''GLIBINVINM'',''GLIBSINTER'',''GLIBRES'',''HAYAGBOINM'',''HAYASBOINM'',''SBACKOFFICEINMLIBER'',''GEDI'', ''SUPEDI'', ''GSUE'', ''SUPSUE'',''GALQ'',''SUALQ'', ''GESTCOMALQ'', ''SUPCOMALQ'')';
     V_GESTOR            VARCHAR2(4000 CHAR);
-    
+
     CURSOR C_LOG IS
        SELECT COUNT(1) NUM
             , TIPO_GESTOR
@@ -220,79 +217,79 @@ BEGIN
 
     IF V_COUNT_1 > 0 THEN
 
-	    V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.GEE_GESTOR_ENTIDAD (
-	            GEE_ID,
-	            USU_ID,
-	            DD_TGE_ID,
-	            VERSION,
-	            USUARIOCREAR,
-	            FECHACREAR,
-	            BORRADO)
-	        SELECT
-	            TMP.GEE_ID,
-	            TMP.USU_ID,
-	            TGE.DD_TGE_ID,
-	            0,
-	            '''||V_USUARIO||''',
-	            SYSDATE,
-	            0
-	        FROM '||V_ESQUEMA||'.TMP_GEST_ACT TMP
-	        JOIN '||V_ESQUEMA_MASTER||'.DD_TGE_TIPO_GESTOR TGE ON TGE.DD_TGE_CODIGO = TMP.TIPO_GESTOR';
+        V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.GEE_GESTOR_ENTIDAD (
+                GEE_ID,
+                USU_ID,
+                DD_TGE_ID,
+                VERSION,
+                USUARIOCREAR,
+                FECHACREAR,
+                BORRADO)
+            SELECT
+                TMP.GEE_ID,
+                TMP.USU_ID,
+                TGE.DD_TGE_ID,
+                0,
+                '''||V_USUARIO||''',
+                SYSDATE,
+                0
+            FROM '||V_ESQUEMA||'.TMP_GEST_ACT TMP
+            JOIN '||V_ESQUEMA_MASTER||'.DD_TGE_TIPO_GESTOR TGE ON TGE.DD_TGE_CODIGO = TMP.TIPO_GESTOR';
 
-	    EXECUTE IMMEDIATE V_MSQL;
+        EXECUTE IMMEDIATE V_MSQL;
 
-	    PL_OUTPUT := PL_OUTPUT || '   [INFO] - '||TO_CHAR(SYSDATE,'HH24:MI:SS')||' GEE_GESTOR_ENTIDAD cargada. '||SQL%ROWCOUNT||' Filas.'||CHR(10);
+        PL_OUTPUT := PL_OUTPUT || '   [INFO] - '||TO_CHAR(SYSDATE,'HH24:MI:SS')||' GEE_GESTOR_ENTIDAD cargada. '||SQL%ROWCOUNT||' Filas.'||CHR(10);
 
-	    V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.GAC_GESTOR_ADD_ACTIVO (
-	            GEE_ID,
-	            ACT_ID)
-	        SELECT
-	            TMP.GEE_ID,
-	            TMP.ACT_ID
-	        FROM '||V_ESQUEMA||'.TMP_GEST_ACT TMP';
+        V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.GAC_GESTOR_ADD_ACTIVO (
+                GEE_ID,
+                ACT_ID)
+            SELECT
+                TMP.GEE_ID,
+                TMP.ACT_ID
+            FROM '||V_ESQUEMA||'.TMP_GEST_ACT TMP';
 
-	    EXECUTE IMMEDIATE V_MSQL;
+        EXECUTE IMMEDIATE V_MSQL;
 
-	    PL_OUTPUT := PL_OUTPUT || '   [INFO] - '||TO_CHAR(SYSDATE,'HH24:MI:SS')||' GAC_GESTOR_ADD_ACTIVO cargada. '||SQL%ROWCOUNT||' Filas.'||CHR(10);
+        PL_OUTPUT := PL_OUTPUT || '   [INFO] - '||TO_CHAR(SYSDATE,'HH24:MI:SS')||' GAC_GESTOR_ADD_ACTIVO cargada. '||SQL%ROWCOUNT||' Filas.'||CHR(10);
 
-	    V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.GEH_GESTOR_ENTIDAD_HIST (
-	            GEH_ID,
-	            USU_ID,
-	            DD_TGE_ID,
-	            GEH_FECHA_DESDE,
-	            GEH_FECHA_HASTA,
-	            VERSION,
-	            USUARIOCREAR,
-	            FECHACREAR,
-	            BORRADO)
-	        SELECT
-	            TMP.GEH_ID,
-	            TMP.USU_ID,
-	            TGE.DD_TGE_ID,
-	            SYSDATE AS GEH_FECHA_DESDE,
-	            NULL AS GEH_FECHA_HASTA,
-	            1 AS VERSION,
-	            '''||V_USUARIO||''' AS USUARIOCREAR,
-	            SYSDATE AS FECHACREAR,
-	            0 AS BORRADO
-	        FROM '||V_ESQUEMA||'.TMP_GEST_ACT TMP
-	        JOIN '||V_ESQUEMA_MASTER||'.DD_TGE_TIPO_GESTOR TGE ON TGE.DD_TGE_CODIGO = TMP.TIPO_GESTOR';
+        V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.GEH_GESTOR_ENTIDAD_HIST (
+                GEH_ID,
+                USU_ID,
+                DD_TGE_ID,
+                GEH_FECHA_DESDE,
+                GEH_FECHA_HASTA,
+                VERSION,
+                USUARIOCREAR,
+                FECHACREAR,
+                BORRADO)
+            SELECT
+                TMP.GEH_ID,
+                TMP.USU_ID,
+                TGE.DD_TGE_ID,
+                SYSDATE AS GEH_FECHA_DESDE,
+                NULL AS GEH_FECHA_HASTA,
+                1 AS VERSION,
+                '''||V_USUARIO||''' AS USUARIOCREAR,
+                SYSDATE AS FECHACREAR,
+                0 AS BORRADO
+            FROM '||V_ESQUEMA||'.TMP_GEST_ACT TMP
+            JOIN '||V_ESQUEMA_MASTER||'.DD_TGE_TIPO_GESTOR TGE ON TGE.DD_TGE_CODIGO = TMP.TIPO_GESTOR';
 
-	    EXECUTE IMMEDIATE V_MSQL;
+        EXECUTE IMMEDIATE V_MSQL;
 
-	    PL_OUTPUT := PL_OUTPUT || '   [INFO] - '||TO_CHAR(SYSDATE,'HH24:MI:SS')||' GEH_GESTOR_ENTIDAD_HIST cargada. '||SQL%ROWCOUNT||' Filas.'||CHR(10);
+        PL_OUTPUT := PL_OUTPUT || '   [INFO] - '||TO_CHAR(SYSDATE,'HH24:MI:SS')||' GEH_GESTOR_ENTIDAD_HIST cargada. '||SQL%ROWCOUNT||' Filas.'||CHR(10);
 
-	    V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.GAH_GESTOR_ACTIVO_HISTORICO (
-	            GEH_ID,
-	            ACT_ID)
-	        SELECT
-	            TMP.GEH_ID,
-	            TMP.ACT_ID
-	        FROM '||V_ESQUEMA||'.TMP_GEST_ACT TMP';
+        V_MSQL := 'INSERT INTO '||V_ESQUEMA||'.GAH_GESTOR_ACTIVO_HISTORICO (
+                GEH_ID,
+                ACT_ID)
+            SELECT
+                TMP.GEH_ID,
+                TMP.ACT_ID
+            FROM '||V_ESQUEMA||'.TMP_GEST_ACT TMP';
 
-	    EXECUTE IMMEDIATE V_MSQL;
+        EXECUTE IMMEDIATE V_MSQL;
 
-	    PL_OUTPUT := PL_OUTPUT || '   [INFO] - '||TO_CHAR(SYSDATE,'HH24:MI:SS')||' GAH_GESTOR_ACTIVO_HISTORICO cargada. '||SQL%ROWCOUNT||' Filas.'||CHR(10);
+        PL_OUTPUT := PL_OUTPUT || '   [INFO] - '||TO_CHAR(SYSDATE,'HH24:MI:SS')||' GAH_GESTOR_ACTIVO_HISTORICO cargada. '||SQL%ROWCOUNT||' Filas.'||CHR(10);
       
       IF P_ACT_ID IS NULL THEN 
         #ESQUEMA#.OPERACION_DDL.DDL_TABLE('ANALYZE','GEE_GESTOR_ENTIDAD','2');
@@ -301,13 +298,13 @@ BEGIN
         #ESQUEMA#.OPERACION_DDL.DDL_TABLE('ANALYZE','GAH_GESTOR_ACTIVO_HISTORICO','2');
       END IF;
       
-	    PL_OUTPUT := PL_OUTPUT || '[FIN]'||CHR(10);
+        PL_OUTPUT := PL_OUTPUT || '[FIN]'||CHR(10);
 
-	  ELSE
+      ELSE
 
-		  PL_OUTPUT := PL_OUTPUT || '[FIN] - NO EXISTEN GESTORES A ASIGNAR.'||CHR(10);
+          PL_OUTPUT := PL_OUTPUT || '[FIN] - NO EXISTEN GESTORES A ASIGNAR.'||CHR(10);
 
-	  END IF;
+      END IF;
     
     COMMIT;
 

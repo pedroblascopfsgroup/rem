@@ -74,7 +74,12 @@ public class GenericaRestDaoImp extends AbstractEntityDao<Serializable, Serializ
 		query = this.getSessionFactory().getCurrentSession().createQuery("delete ActivoInfoComercial where id=:ID");
 		query.setParameter("ID", informeComerical.getId());
 		query.executeUpdate();	
+	
 		
+	}
+	
+	public void doFlush(){
+		this.getHibernateTemplate().flush();
 	}
 
 }

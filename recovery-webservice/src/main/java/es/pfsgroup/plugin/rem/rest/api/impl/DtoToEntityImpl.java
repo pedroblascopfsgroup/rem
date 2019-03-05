@@ -76,6 +76,8 @@ public class DtoToEntityImpl implements DtoToEntityApi {
 			}
 		}
 		guardarEntity(objetoEntitys,jsonFields,null);
+		//persistimos los cambios pendientes
+		genericaRestDaoImp.doFlush();
 		return objetoEntitys.get(0);
 	}
 

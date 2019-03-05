@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Guillermo Llidó
---## FECHA_CREACION=20180717
+--## FECHA_CREACION=20190214
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=REMVIP-1076
@@ -1021,5 +1021,3 @@ END SP_CAMBIAR_EST_EXP_RES_OFR;
 /
 
 EXIT;
-
-

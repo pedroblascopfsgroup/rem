@@ -12,6 +12,7 @@
 --## INSTRUCCIONES:  
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##		0.2 Resolución conflictos
 --#########################################
 --*/
 
@@ -36,6 +37,7 @@ AS
   TYPE T_VAR is table of VARCHAR2(250);
   TYPE T_ARRAY IS TABLE OF T_VAR;
   V_FUN T_ARRAY := T_ARRAY(
+
     ------    FUNCION   --------------------------------------  1- -2---3---4---5---6---7---8---9--10--11--12--13--14--15--16--17--18--19--20--21--22--23--24--25--26--27--28--29--31--31--32--33--34--35--36--37--38--39--40--41--42--43--44--45--46--47--48--49--50--51--
 T_VAR( 'TAB_BUSQUEDA_ACTIVOS','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','N','N','S','N','N','S'),
 
@@ -283,6 +285,7 @@ T_VAR( 'MENU_TOP_AVISOS','S','S','S','S','S','S','S','S','S','S','S','S','S','S'
 T_VAR( 'OPTIMIZACION_BUZON_TAREAS','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','N','N','S','N','N','S')
 
 );
+
 V_TMP_VAR T_VAR;
 
 BEGIN
@@ -461,6 +464,72 @@ BEGIN
                 FOR
                 PERFIL
                 IN (
+<<<<<<< HEAD
+                    HAYAGESTADM
+                    ,HAYASUPADM
+                    ,HAYAGESACT
+                    ,HAYASUPACT
+                    ,HAYACAL
+                    ,HAYASUPCAL
+                    ,HAYAGESTPREC
+                    ,HAYASUPPREC
+                    ,HAYAGESTPUBL
+                    ,HAYASUPPUBL
+                    ,HAYAFSV
+                    ,HAYAGBOINM
+                    ,HAYASBOINM
+                    ,HAYAGBOFIN
+                    ,HAYASBOFIN
+                    ,HAYAGESTCOMRET
+                    ,HAYASUPCOMRET
+                    ,HAYAGESTCOMSIN
+                    ,HAYASUPCOMSIN
+                    ,HAYAGESTFORM
+                    ,HAYASUPFORM
+                    ,HAYAADM
+                    ,HAYASADM
+                    ,HAYALLA
+                    ,HAYASLLA
+                    ,PERFGCCBANKIA
+                    ,PERFGCCLIBERBANK
+                    ,GESTOADM
+                    ,GESTIAFORM
+                    ,HAYAGESTADMT
+                    ,GESTOCED
+                    ,GESTOPLUS
+                    ,GESTOPDV
+                    ,HAYAPROV
+                    ,HAYACERTI
+                    ,HAYACONSU
+                    ,HAYASUPER
+                    ,HAYAGESTCOM
+                    ,HAYASUPCOM
+                    ,HAYAGOLDTREE
+                    ,FVDNEGOCIO
+                    ,FVDBACKOFERTA
+                    ,FVDBACKVENTA
+                    ,SUPFVD
+                    ,GESRES
+                    ,SUPRES
+                    ,GESMIN
+                    ,SUPMIN
+                    ,GESPROV
+                    ,GESTSUE
+                    ,GESTEDI
+                    ,VALORACIONES
+                    ,PMSVVC
+                    ,FTI
+                    ,HAYAGESTFORMADM
+		    ,APROBCERB
+                    ,SUPERFORM
+                    ,SUPERGESTACT
+                    ,SUPERADMIN
+                    ,SUPERPUBLI
+                    ,SUPERMIDDLE
+                    ,SUPERFRONT
+                    ,SUPERPLANIF
+                    ,GTOPOSTV
+=======
              HAYAGESTADM
 			,HAYASUPADM
 			,HAYAGESACT
@@ -514,6 +583,7 @@ BEGIN
 			,GESTEDI
             ,VALORACIONES
 			,PMSVVC
+>>>>>>> parent of 9b3ebdf... HREOS-5530 - Nueva Gestoría GTOPOSTV en SP_PERFILADO y TMP_FUN_PEF
                 )
               )
             )
@@ -563,6 +633,72 @@ BEGIN
                   PERFIL
                IN
                (
+<<<<<<< HEAD
+                HAYAGESTADM
+                ,HAYASUPADM
+                ,HAYAGESACT
+                ,HAYASUPACT
+                ,HAYACAL
+                ,HAYASUPCAL
+                ,HAYAGESTPREC
+                ,HAYASUPPREC
+                ,HAYAGESTPUBL
+                ,HAYASUPPUBL
+                ,HAYAFSV
+                ,HAYAGBOINM
+                ,HAYASBOINM
+                ,HAYAGBOFIN
+                ,HAYASBOFIN
+                ,HAYAGESTCOMRET
+                ,HAYASUPCOMRET
+                ,HAYAGESTCOMSIN
+                ,HAYASUPCOMSIN
+                ,HAYAGESTFORM
+                ,HAYASUPFORM
+                ,HAYAADM
+                ,HAYASADM
+                ,HAYALLA
+                ,HAYASLLA
+                ,PERFGCCBANKIA
+                ,PERFGCCLIBERBANK
+                ,GESTOADM
+                ,GESTIAFORM
+                ,HAYAGESTADMT
+                ,GESTOCED
+                ,GESTOPLUS
+                ,GESTOPDV
+                ,HAYAPROV
+                ,HAYACERTI
+                ,HAYACONSU
+                ,HAYASUPER
+                ,HAYAGESTCOM
+                ,HAYASUPCOM
+                ,HAYAGOLDTREE
+                ,FVDNEGOCIO
+                ,FVDBACKOFERTA
+                ,FVDBACKVENTA
+                ,SUPFVD
+                ,GESRES
+                ,SUPRES
+                ,GESMIN
+                ,SUPMIN
+                ,GESPROV
+                ,GESTSUE
+                ,GESTEDI
+                ,VALORACIONES
+                ,PMSVVC
+                ,FTI
+                ,HAYAGESTFORMADM
+		,APROBCERB
+                ,SUPERFORM
+                ,SUPERGESTACT
+                ,SUPERADMIN
+                ,SUPERPUBLI
+                ,SUPERMIDDLE
+                ,SUPERFRONT
+                ,SUPERPLANIF
+                ,GTOPOSTV
+=======
              HAYAGESTADM
 			,HAYASUPADM
 			,HAYAGESACT
@@ -616,6 +752,7 @@ BEGIN
 			,GESTEDI
             ,VALORACIONES
 			,PMSVVC
+>>>>>>> parent of 9b3ebdf... HREOS-5530 - Nueva Gestoría GTOPOSTV en SP_PERFILADO y TMP_FUN_PEF
                )
             )
           )
@@ -654,3 +791,4 @@ END;
 /
 
 EXIT
+

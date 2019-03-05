@@ -1083,6 +1083,18 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 
 	}
 	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ActivoCalificacionNegativa> getListActivoCalificacionNegativaByIdActivoBorradoFalse(Long idActivo) {
+		String hql = " from ActivoCalificacionNegativa acn ";
+		HQLBuilder hb = new HQLBuilder(hql);
+		hb.appendWhere(" acn.activo.id =  "+idActivo+" ");
+		hb.appendWhere(" acn.auditoria.borrado = false ");
+
+		return (List<ActivoCalificacionNegativa>) this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).list();
+
+	}
+	
 	@Override
 	public Page getListHistoricoOcupacionesIlegalesByActivo(WebDto dto, Long idActivo) {
 		//También se puede usar el genericDao en REM, pero hay que ver como devolver un Page porque no he encontrado casos así.
@@ -1166,4 +1178,5 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 	public void hibernateFlush() {
 		getHibernateTemplate().flush();
 	}
+
 }

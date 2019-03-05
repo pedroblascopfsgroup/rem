@@ -114,7 +114,6 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 	},	
 	    
    	onSaveFormularioCompletoForm: function(btn, form) {
-		debugger;
    		var me = this;
    		if(form.isFormValid()) {
 

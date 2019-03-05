@@ -10,6 +10,7 @@ import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
+import es.pfsgroup.plugin.rem.model.ActivoCalificacionNegativa;
 import es.pfsgroup.plugin.rem.model.ActivoCondicionEspecifica;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
@@ -176,7 +177,7 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	 *
 	 * @param activo
 	 */
-	public void finHistoricoDestinoComercial(Activo activo, Object[] extraArgs);
+	void finHistoricoDestinoComercial(Activo activo, Object[] extraArgs);
 
 	/**
 	 * Crea un nuevo registro de un activo en el Historico de destino comercial
@@ -184,9 +185,11 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	 *
 	 * @param activo
 	 */
-	public void crearHistoricoDestinoComercial(Activo activo, Object[] extraArgs);
+	void crearHistoricoDestinoComercial(Activo activo, Object[] extraArgs);
 
-	public List<VOfertasTramitadasPendientesActivosAgrupacion> getListOfertasTramitadasPendientesActivo(Long idActivo);
+	List<VOfertasTramitadasPendientesActivosAgrupacion> getListOfertasTramitadasPendientesActivo(Long idActivo);
+
+	List<ActivoCalificacionNegativa> getListActivoCalificacionNegativaByIdActivo(Long idActivo);
 
 
 	/**
@@ -200,9 +203,9 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	 */
 	Boolean publicarActivoSinHistorico(Long idActivo, String username, String eleccionUsuarioTipoPublicacionAlquiler,boolean doFlush);
 
-	public Page getListHistoricoOcupacionesIlegalesByActivo(WebDto dto, Long idActivo);
+	Page getListHistoricoOcupacionesIlegalesByActivo(WebDto dto, Long idActivo);
 
-	public void hibernateFlush();
+	void hibernateFlush();
 
 	/**
 	 * Comprueba en un activo si tiene ofertas de venta.
@@ -210,5 +213,7 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	 * @return boolean true or false
 	 */
 	Boolean existenOfertasVentaActivo(Long idActivo);
+	
+	Boolean todasLasOfertasEstanAnuladas(Long idActivo);
 
 }

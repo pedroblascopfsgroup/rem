@@ -74,6 +74,12 @@ public class MSVDDOperacionMasiva implements Serializable, Auditable, Dictionary
 	public static final String CODE_FILE_BULKUPLOAD_OCULTACION_VENTA_AGRUPACION_RESTRINGIDA = "OVAR";
 	public static final String CODE_FILE_BULKUPLOAD_CARGA_ACTIVOS_GASTOS_PORCENTAJE="AGP";
 	public static final String CODE_FILE_BULKUPLOAD_INFO_DETALLE_PRINEX_LBK = "PRINEX";
+	public static final String CODE_FILE_BULKUPLOAD_SITUACION_COMUNIDADEDES_PROPIETARIOS = "SCOM";
+	public static final String CODE_FILE_BULKUPLOAD_SITUACION_PLUSVALIA = "SPL";
+	public static final String CODE_FILE_BULKUPLOAD_SITUACION_IMPUESTOS = "SIMP";
+	public static final String CODE_FILE_BULKUPLOAD_INDICADOR_ACTIVO_VENTA = "MIAV";
+	public static final String CODE_FILE_BULKUPLOAD_INDICADOR_ACTIVO_ALQUILER = "MIAA";
+	public static final String CODE_FILE_BULKUPLOAD_VALIDADOR_CARGA_MASIVA_ADECUACION = "CMAD";
 	public static final String CODE_FILE_BULKUPLOAD_EXCLUSION_DWH = "EXDWH";
 	public static final String CODE_FILE_BULKUPLOAD_CARGA_MASIVA_SANCIONES = "CMSAN";
 	public static final String CODE_FILE_BULKUPLOAD_CARGA_MASIVA_RECLAMACIONES = "CMRE";
@@ -81,8 +87,7 @@ public class MSVDDOperacionMasiva implements Serializable, Auditable, Dictionary
 
 	private static final long serialVersionUID = 5938440720826995243L;
 
-	
-	
+
 	@Id
     @Column(name = "DD_OPM_ID")
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "MSVDDOperacionMasivaGenerator")

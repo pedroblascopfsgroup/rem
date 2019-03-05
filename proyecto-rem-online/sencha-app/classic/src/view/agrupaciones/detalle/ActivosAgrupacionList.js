@@ -54,6 +54,26 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
 
     initComponent: function () {
         var me = this;
+        
+        var estadoRenderer =  function(condicionado) {
+        	var src = '',
+        	alt = '';
+        	if (condicionado == '0') {
+        		src = 'icono_KO.svg';
+        		alt = 'KO';
+        		var ret= '<div> <img src="resources/images/'+src+'" alt ="'+alt+'" width="15px"></div>';
+        	} else if(condicionado == '1'){ 
+        		src = 'icono_OK.svg';
+        		alt = 'OK';
+        		var ret= '<div> <img src="resources/images/'+src+'" alt ="'+alt+'" width="15px"></div>';
+        	} else if(condicionado == '2'){
+        		src = 'icono_OKN.svg';
+        		alt = 'OKN';
+        		var ret= '<div> <img src="resources/images/'+src+'" alt ="'+alt+'" width="15px"></div>';
+        	}else var ret= '<div>-</div>';
+        	
+        	return ret;
+        }; 
 
         // Plugin edicion.
         me.rowEditing = new Ext.grid.plugin.RowEditing({
@@ -253,6 +273,37 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
 	            flex: 0.5
 	        },
 	        {
+	        	 text: HreRem.i18n('title.publicaciones.estadoPublicacion'),
+	        	 dataIndex: 'publicado',
+	        	 bind: {
+	        		 hidden: '{!esAgrupacionObraNuevaOrAsistida}'
+	        	 },
+	        	 hideable:  false,
+	        	 flex: 1
+	        },
+	        {
+	            dataIndex: 'condPublVenta',
+	            text: HreRem.i18n('header.condicionantes.publicacion.venta'),
+	            flex: 1,
+	            hideable: false,
+	            bind:{
+	            	hidden: '{!esAgrupacionObraNuevaOrAsistida}'
+	            },
+	            renderer: estadoRenderer
+	            
+	        },
+	        {
+	            dataIndex: 'condPublAlquiler',
+	            text: HreRem.i18n('header.condicionantes.publicacion.alquiler'),
+	            hideable: false,
+	            flex: 1,
+	            bind:{
+	            	hidden: '{!esAgrupacionObraNuevaOrAsistida}'
+	            },
+	            renderer: estadoRenderer
+	            
+	        },
+	        {
 	            dataIndex: 'puerta',
 	            text: HreRem.i18n('header.puerta'),
 	            hideable: false,
@@ -260,18 +311,6 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
 		        	hidden: '{!esAgrupacionObraNuevaOrAsistida}'
 		        },
 	            flex: 0.5
-	        },
-	        {   
-	        	dataIndex: 'condPublVenta',
-	            text: HreRem.i18n('header.condicionantes.publicacion.venta'),
-	            flex: 1,
-	            renderer: condPublRenderer
-	        },
-	        {
-	            dataIndex: 'condPublAlquiler',
-	            text: HreRem.i18n('header.condicionantes.publicacion.alquiler'),
-	            flex: 1,
-	            renderer: condPublRenderer
 	        },
 	        {
 	            dataIndex: 'situacionComercial',
@@ -320,7 +359,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
 	        	 dataIndex: 'activoGencat',
 		            hideable: false,
 		            bind: {
-			        	hidden: '{esAgrupacionLoteComercialOrRestringida}'
+			        	hidden: '{esAgrupacionLoteComercialOrRestringidaOrNotGencat}'
 			        },
 		            renderer: function(value) {
 		            	return Ext.isEmpty(value) ? "No" : value=='1' ? "Si"  : "No";

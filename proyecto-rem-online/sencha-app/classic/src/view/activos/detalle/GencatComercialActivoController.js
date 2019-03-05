@@ -33,7 +33,7 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoController', {
 		}
     	},
     	
-    	'documentosactivogencatlist': {
+    'documentosactivogencatlist': {
             //  abrirFormulario: 'abrirFormularioAdjuntarComunicacionActivo', 
             //onClickRemove: 'borrarDocumentoAdjunto',
             download: 'downloadDocumentoComunicacionActivo'//,
@@ -120,6 +120,36 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoController', {
 		me.fireEvent("downloadFile", config);
 	},
 	
+    onClickAbrirExpedienteComercial: function() { 
+		    	
+		    	var me = this;
+		    	var gencat = me.getViewModel().data.gencat;
+		    	var numOfertaGencat = gencat.data.ofertaGencat;
+		    	var data; 
+		    	
+		    	var url =  $AC.getRemoteUrl('expedientecomercial/getExpedienteByIdOferta');
+		  
+		    	Ext.Ajax.request({
+				     url: url,
+				     method: 'POST',
+				     params: {numOferta : numOfertaGencat},
+				     success: function(response, opts) {
+				    	data = Ext.decode(response.responseText);
+				    	if(data.data){
+				 		   me.getView().fireEvent('abrirDetalleExpedienteOferta', data.data);
+				    	}
+				    	else {
+				    		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+				    	}
+				    },
+				    
+				     failure: function (a, operation) {
+				 				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+				 	}
+			 });
+		    		    	     
+    },	
+	
 	abrirFormularioCrearNotificacion: function(grid) {
 		
 		var me = this;
@@ -182,59 +212,22 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoController', {
 		}
 		
 	},
-  
-  onClickAbrirVisitaActivo2: function() {
-  	var me = this;
-  	var gencat = me.getViewModel().data.gencat;
-  	var numVisita = gencat.data.idVisita;
-  	
-  	Ext.Ajax.request({
-		//url: $AC.getRemoteUrl('visitas/getVisitaById'),
-  	    url: $AC.getRemoteUrl('visitagencat/getVisitaByIdComunicacionGencat'),
-		params: {idComunicacionnGencat: numVisita},
-	     method: 'POST',
-	     success: function(response, opts){
-	    	 var record = JSON.parse(response.responseText);
-	    		if(record.success === 'true') {
-					var ventana = Ext.create('HreRem.view.comercial.visitas.VisitasComercialDetalle',{detallevisita: record});
-					me.getView().up('mainviewport').add(ventana);
-					ventana.show();
-				} else {
-					me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-				}
-			},
-	    
-	     failure: function (a, operation) {
-	 		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-
-	 	},
-	    callback: function(record, operation) {
-			me.getView().unmask();
-	    }
-	 });
-  		    	     
-  },
-  
-  
-  
-  onClickAbrirVisitaActivo: function(btn) {
+	
+  onClickAbrirVisitaActivo: function() {
 	  
 	  	var me = this;
 	  	var gencat = me.getViewModel().data.gencat;
-	  	var numVisita = gencat.data.idVisita;
-		var url =  $AC.getRemoteUrl('visitas/getVisitaByIdComunicacionGencat');
-		
+	  	var numVisita =  gencat.data.idVisita;
+		var url =  $AC.getRemoteUrl('visitas/getVisitaByIdVisitaGencat');
 		Ext.Ajax.request({
 		     url: url,
 		     method: 'POST',
-		     params: {idComunicacionnGencat: numVisita},
+		     params: {numVisita: numVisita},
 		     success: function(response, opts) {
 		    	 var record = JSON.parse(response.responseText);
 		    		if(record.success === 'true') {
 						var ventana = Ext.create('HreRem.view.comercial.visitas.VisitasComercialDetalle',{detallevisita: record});
 						me.getView().up('mainviewport').add(ventana);
-						me.getView().up('#activosdetalle-1267-body').add(ventana);
-						me.getView().add(ventana);
 						ventana.show();
 					} else {
 						me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
@@ -323,6 +316,7 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoController', {
             grid.getPlugin('rowEditing').editor.form.findField('fieldToDisable').disable();
     	}
     },
+
     ondblClickAbreExpediente: function(grid, record) {
     	var me = this;
     	var gencat = me.getViewModel().data.gencat;
@@ -378,13 +372,14 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoController', {
 	},
 	
 comprobarFormatoNIF: function(value) {
-		
+		var me = this;
+		value = me.lookupReference('nuevoCompradorNifref');
 		if (value.length == 9) { // Comprobamos NIF y NIE
 			var validChars = 'TRWAGMYFPDXBNJZSQVHLCKET';
 			var nifRexp = /^[0-9]{8}[TRWAGMYFPDXBNJZSQVHLCKET]{1}$/i;
 			var nieRexp = /^[XYZ]{1}[0-9]{7}[TRWAGMYFPDXBNJZSQVHLCKET]{1}$/i;
 			var str = value.toString().toUpperCase();
-
+   
 			var continuar = true;
 			if (!nifRexp.test(str) && !nieRexp.test(str))
 				continuar = false;
@@ -443,7 +438,6 @@ comprobarFormatoNIF: function(value) {
  	},
 	
  	onExisteDocumentoAnulacion: function(btn, newValue, oldValue, opts){
- 		
  		if(newValue){
  			var me = this;
  	 		
@@ -458,13 +452,13 @@ comprobarFormatoNIF: function(value) {
  	 		    	if(data.data == 'false'){
  	 		    		me.fireEvent("errorToast", HreRem.i18n("msg.falta.documento.anulacion"));
  	 		    		me.lookupReference('checkComunicadoAnulacion').setValue(false);
- 						//Ext.getCmp('checkComunicadoAnulacion').setValue(false);
+ 						Ext.getCmp('checkComunicadoAnulacion').setValue(false);
  	 		    	 }
  	 		    	 
  	 				},
  	 		    
  	 		     failure: function (a, operation) {
- 	 		 				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));334500
+ 	 		 				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
  	 		 	},
  	 		    callback: function(record, operation) {
  	 				me.getView().unmask();

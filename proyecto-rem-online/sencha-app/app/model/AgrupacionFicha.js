@@ -220,6 +220,9 @@ Ext.define('HreRem.model.AgrupacionFicha', {
 	            	name: 'estadoVentaCodigo'
 	            },
 	            {
+	            	name: 'tipoActivoPrincipalCodigo'
+	            },
+	            {
                     name: 'subTipoComercial'
                 },
                 {

@@ -207,12 +207,16 @@ public class DiccionarioTargetClassMap{
 		mapa.put("entidadesAvalistas", DDEntidadesAvalistas.class);
 		mapa.put("tiposDocumentoPromocion", DDTipoDocumentoPromocion.class);
 		mapa.put("estadosReserva", DDEstadosReserva.class);
+		mapa.put("situacionActivo", DDSituacionActivo.class);
+		mapa.put("calificacionNegativa", DDCalificacionNegativa.class);
+		mapa.put("motivosCalificacionNegativa", DDMotivoCalificacionNegativa.class);
+		mapa.put("tipoTituloActivoTPA", DDTipoTituloActivoTPA.class);
 		mapa.put("sancionGencat", DDSancionGencat.class);
 		mapa.put("estadoComunicacionGencat", DDEstadoComunicacionGencat.class);
 		mapa.put("tipoDocumentoGencat", DDTipoDocumentoGencat.class);
 		mapa.put("tipoNotificacionGencat", DDTipoNotificacionGencat.class);
 		mapa.put("tipoDocumentoComunicacion", DDTipoDocumentoComunicacion.class);
-		
+
 		return Collections.unmodifiableMap(mapa);
 	}
 	

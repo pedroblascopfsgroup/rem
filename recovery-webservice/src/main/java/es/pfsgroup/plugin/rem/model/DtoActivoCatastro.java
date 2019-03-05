@@ -15,6 +15,7 @@ public class DtoActivoCatastro extends WebDto {
 
 	private static final long serialVersionUID = 0L;
 
+	private Long idActivo;
 	private String numeroActivo;
 	private String refCatastral;
 	private String poligono;
@@ -33,8 +34,15 @@ public class DtoActivoCatastro extends WebDto {
 	private Date fechaBajaCatastro;
 	private String observaciones;
 	private String idCatastro;
+	private Date fechaSolicitud901;
+	private String resultadoSiNO;
 	
-	
+	public Long getIdActivo() {
+		return idActivo;
+	}
+	public void setIdActivo(Long idActivo) {
+		this.idActivo = idActivo;
+	}
 	public String getNumeroActivo() {
 		return numeroActivo;
 	}
@@ -137,6 +145,18 @@ public class DtoActivoCatastro extends WebDto {
 	}
 	public void setObservaciones(String observaciones) {
 		this.observaciones = observaciones;
+	}
+	public Date getFechaSolicitud901() {
+		return fechaSolicitud901;
+	}
+	public void setFechaSolicitud901(Date fechaSolicitud901) {
+		this.fechaSolicitud901 = fechaSolicitud901;
+	}
+	public String getResultadoSiNO() {
+		return resultadoSiNO;
+	}
+	public void setResultadoSiNO(String resultadoSiNO) {
+		this.resultadoSiNO = resultadoSiNO;
 	}
 	
 	

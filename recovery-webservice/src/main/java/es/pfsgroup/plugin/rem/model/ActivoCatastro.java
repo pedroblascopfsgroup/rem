@@ -97,6 +97,13 @@ public class ActivoCatastro implements Serializable, Auditable {
 	@Column(name = "CAT_OBSERVACIONES")
 	private String observaciones;
 	
+
+	@Column(name = "CAT_RESULTADO")
+	private String resultadoSiNO;
+	
+	@Column(name = "CAT_FECHA_SOLICITUD_901")
+	private Date fechaSolicitud901;
+	
 	
 	
 	
@@ -261,6 +268,26 @@ public class ActivoCatastro implements Serializable, Auditable {
 	public void setObservaciones(String observaciones) {
 		this.observaciones = observaciones;
 	}
+
+	public String getResultado() {
+		return resultadoSiNO;
+	}
+
+	public void setResultado(String resultadoSiNO) {
+		this.resultadoSiNO = resultadoSiNO;
+	}
+
+	public Date getFechaSolicitud901() {
+		return fechaSolicitud901;
+	}
+
+	public void setFechaSolicitud901(Date fechaSolicitud901) {
+		this.fechaSolicitud901 = fechaSolicitud901;
+	}
+	
+	
+	
+	
 
 
 

@@ -454,6 +454,9 @@ public class GencatController {
 
 		return createModelAndViewJson(model);
 	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)	
 	public ModelAndView comprobacionDocumentoAnulacion(Long idActivo, ModelMap model) {
 		
 		try {

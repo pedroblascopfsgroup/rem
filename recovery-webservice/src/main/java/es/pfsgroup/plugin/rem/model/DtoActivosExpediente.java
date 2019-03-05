@@ -10,6 +10,7 @@ public class DtoActivosExpediente extends WebDto {
 	private String tipoActivo;
 	private String subtipoActivo;
 	private Double precioMinimo;
+	private String subdivision;
 	private Double precioAprobadoVenta;
 	private Double porcentajeParticipacion;
 	private Double importeParticipacion;
@@ -21,6 +22,8 @@ public class DtoActivosExpediente extends WebDto {
 	private Integer bloqueos;
 	private Integer tanteos;
 	private Long idCondicion;
+	private String puerta;
+	private Float superficieConstruida;
 	
 
 	public Long getIdActivo() {
@@ -149,6 +152,30 @@ public class DtoActivosExpediente extends WebDto {
 
 	public void setFincaRegistral(String fincaRegistral) {
 		this.fincaRegistral = fincaRegistral;
+	}
+
+	public String getPuerta() {
+		return puerta;
+	}
+
+	public void setPuerta(String puerta) {
+		this.puerta = puerta;
+	}
+
+	public Float getSuperficieConstruida() {
+		return superficieConstruida;
+	}
+
+	public void setSuperficieConstruida(Float superficieConstruida) {
+		this.superficieConstruida = superficieConstruida;
+	}
+
+	public String getSubdivision() {
+		return subdivision;
+	}
+
+	public void setSubdivision(String subdivision) {
+		this.subdivision = subdivision;
 	}
 	
 }

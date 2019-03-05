@@ -65,6 +65,18 @@ public class VBusquedaPublicacionActivo implements Serializable {
     
     @Column(name="CARTERA_CODIGO")
     private String cartera;
+    
+    @Column(name="OKALQUILER")
+    private Boolean okalquiler;
+    
+    @Column(name="OKVENTA")
+    private Boolean okventa;
+    
+    @Column(name="MOTIVO_OCULTACION_ALQUILER")
+    private String motivoOcultacionAlquiler;
+    
+    @Column(name="MOTIVO_OCULTACION_VENTA")
+    private String motivoOcultacionVenta;
 
 	public Long getId() {
 		return id;
@@ -192,6 +204,38 @@ public class VBusquedaPublicacionActivo implements Serializable {
 
 	public void setCartera(String cartera) {
 		this.cartera = cartera;
+	}
+
+	public Boolean getOkalquiler() {
+		return okalquiler;
+	}
+
+	public void setOkalquiler(Boolean okalquiler) {
+		this.okalquiler = okalquiler;
+	}
+
+	public Boolean getOkventa() {
+		return okventa;
+	}
+
+	public void setOkventa(Boolean okventa) {
+		this.okventa = okventa;
+	}
+
+	public String getMotivoOcultacionAlquiler() {
+		return motivoOcultacionAlquiler;
+	}
+
+	public void setMotivoOcultacionAlquiler(String motivoOcultacionAlquiler) {
+		this.motivoOcultacionAlquiler = motivoOcultacionAlquiler;
+	}
+
+	public String getMotivoOcultacionVenta() {
+		return motivoOcultacionVenta;
+	}
+
+	public void setMotivoOcultacionVenta(String motivoOcultacionVenta) {
+		this.motivoOcultacionVenta = motivoOcultacionVenta;
 	}
     
 }

@@ -269,6 +269,53 @@ public class MSVHojaExcel {
 
 		return nombreFicheroErrores;
 	}
+	public String crearExcelErroresMejoradoByHojaAndFilaCabeceraConValores(Map<String, List<Integer>> mapaErrores, Map<String, List<String>> mapaValres, int numHoja,
+			int numFilaCabeceras) throws IllegalArgumentException, IOException, RowsExceededException, WriteException {
+		if (!isOpen) {
+			abrir();
+		}
+
+		String nombreFicheroErrores = getNombreFicheroErrores();
+
+		WritableWorkbook copy = Workbook.createWorkbook(new File(nombreFicheroErrores), libroExcel);
+		try {
+
+			WritableSheet hoja = copy.getSheet(numHoja);
+			int numColumnas = this.getNumeroColumnasByHojaAndFila(numHoja, numFilaCabeceras);
+			String nuevoValor =null;
+
+			Iterator<String> it = mapaErrores.keySet().iterator();
+			int columna = numColumnas;
+			while (it.hasNext()) {
+				String error = (String) it.next();
+				addTexto(hoja, columna, 0, "ERRORES");
+				for (int i = 0; i < mapaErrores.get(error).size(); i++) {
+					if (!Checks.esNulo(mapaValres.get(error))) {
+						if (!mapaValres.get(error).isEmpty()){
+							if (!Checks.esNulo(mapaValres.get(error).get(i))) {
+								nuevoValor  = mapaValres.get(error).get(i);
+		
+							}
+						}
+				 }
+					else {
+						nuevoValor = "";
+					}
+					if (!Checks.esNulo(mapaErrores.get(error).get(i)))
+					addTextoErrores(hoja, columna, mapaErrores.get(error).get(i), error+""+nuevoValor);
+				}
+				if (!mapaErrores.get(error).isEmpty()) {
+					// columna++;
+				}
+			}
+			copy.write();
+		} finally {
+			copy.close();
+		}
+		
+
+		return nombreFicheroErrores;
+	}
 	
 	public String crearExcelResultadosByHojaAndFilaCabecera(Map<String, String> mapaResultados, int numHoja,
 			int numFilaCabeceras) throws IllegalArgumentException, IOException, RowsExceededException, WriteException {

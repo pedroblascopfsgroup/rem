@@ -43,9 +43,14 @@ public class VActivosSubdivision implements Serializable {
 	@Column(name = "DD_AIC_DESCRIPCION")
 	private String estadoDisposicionInforme;
 	
-	@Column(name = "ESTADOPUBLICACION")
-	private String estadoPublicacionS;
+	@Column(name = "PUBLICADO")
+	private String publicaciones;
 	
+	@Column(name = "COND_PUBL_VENTA")
+	private String condPublVenta;
+	
+	@Column(name = "COND_PUBL_ALQUILER")
+	private String condPublAlquiler;
 	
 
 	public Long getIdSubdivision() {
@@ -112,12 +117,28 @@ public class VActivosSubdivision implements Serializable {
 		this.estadoDisposicionInforme = estadoDisposicionInforme;
 	}
 
-	public String getEstadoPublicacionS() {
-		return estadoPublicacionS;
+	public String getPublicaciones() {
+		return publicaciones;
 	}
 
-	public void setEstadoPublicacionS(String estadoPublicacionS) {
-		this.estadoPublicacionS = estadoPublicacionS;
+	public void setPublicaciones(String publicaciones) {
+		this.publicaciones = publicaciones;
+	}
+
+	public String getCondPublVenta() {
+		return condPublVenta;
+	}
+
+	public void setCondPublVenta(String condPublVenta) {
+		this.condPublVenta = condPublVenta;
+	}
+
+	public String getCondPublAlquiler() {
+		return condPublAlquiler;
+	}
+
+	public void setCondPublAlquiler(String condPublAlquiler) {
+		this.condPublAlquiler = condPublAlquiler;
 	}	
 
 

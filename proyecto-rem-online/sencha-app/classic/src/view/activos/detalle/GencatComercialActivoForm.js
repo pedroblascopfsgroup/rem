@@ -141,7 +141,7 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoForm', {
 									}
 				    			},
 				    			{
-				    				xtype: "datefield",
+				    				xtype: "datefieldbase",
 				    				fieldLabel: HreRem.i18n('fieldlabel.fecha.comunicacion'),
 				    				readOnly: true,
 				    				name: 'fechaComunicacion',
@@ -210,8 +210,8 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoForm', {
 													disabled: '{!gencat.estaActivadoCompradorNuevo}',
 													value: '{gencat.nuevoCompradorNif}'													
 												},
-												validator: function(value) {
-													return this.up('gencatcomercialactivo').getController().comprobarFormatoNIF(value);
+												listener:{
+													blur:'comprobarFormatoNIF'
 												}
 							    			},
 							    			{
@@ -276,7 +276,7 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoForm', {
 									}
 				    			},
 				    			{
-				    				xtype: "datefieldbase",
+				    				xtype: "datefield",
 				    				fieldLabel: HreRem.i18n('fieldlabel.fecha.anulacion'),
 				    				colspan: 2,
 				    				readOnly: true,
@@ -291,9 +291,9 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoForm', {
 				    				fieldLabel: HreRem.i18n('fieldlabel.comunicado.anulacion.gencat'),
 				    				name: 'comunicadoAnulacionAGencat',
 				    				reference:'checkComunicadoAnulacion',
-				    				//id: 'checkComunicadoAnulacion',
+				    				id: 'checkComunicadoAnulacion',
 				    				listeners: {
-				    					change: 'onExisteDocumentoAnulacion'
+				    					change : 'onExisteDocumentoAnulacion'
 				    				},
 									bind: {
 										readOnly: '{esSoloLecturaCheckAnularGencat}',
@@ -374,7 +374,7 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoForm', {
 							        click: {
 							            element: 'el', 
 							            fn: 'onClickAbrirVisitaActivo'
-							        }
+							        }        
 							    },
 							    style:{
 							    	cursor: 'pointer',

@@ -48,6 +48,7 @@ Ext.define('HreRem.view.comercial.visitas.VisitasComercialDetalle', {
     	var me = this;
     	me.buttons = [ { itemId: 'btnCerrar', text: 'Cerrar', handler: 'onClickBotonCerrarDetalleVisita'}];
     	var detallevisita= me.detallevisita.data;
+    	detallevisita.fechaSolicitud = new Date(detallevisita.fechaSolicitud);
     	me.items = [
 			{
 			    xtype: 'formBase',

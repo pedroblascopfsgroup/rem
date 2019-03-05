@@ -37,6 +37,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
 
 @Component
 public class UpdaterServiceSancionOfertaPosicionamientoYFirma implements UpdaterService {
@@ -154,11 +155,16 @@ public class UpdaterServiceSancionOfertaPosicionamientoYFirma implements Updater
 														
 							ActivoSituacionPosesoria situacionPosesoria = activo.getSituacionPosesoria();
 							
-							if((situacionPosesoria.getConTitulo() == 1) && (situacionPosesoria.getOcupado() == 1)){
-								situacionPosesoria.setConTitulo(1);
+							Filter tituloActivo;
+							DDTipoTituloActivoTPA tipoTitulo;
+							tituloActivo = genericDao.createFilter(FilterType.EQUALS, "codigo", valor.getValor());
+							tipoTitulo = genericDao.get(DDTipoTituloActivoTPA.class, tituloActivo);
+							
+							if(situacionPosesoria!= null && situacionPosesoria.getConTitulo() != null && (situacionPosesoria.getConTitulo().equals(DDTipoTituloActivoTPA.tipoTituloSi) && situacionPosesoria.getOcupado() == 1)){
+								situacionPosesoria.setConTitulo(tipoTitulo);
 								situacionPosesoria.setOcupado(1);
 							}else{
-								situacionPosesoria.setConTitulo(0);
+								situacionPosesoria.setConTitulo(tipoTitulo);
 								situacionPosesoria.setOcupado(0);
 							}
 							

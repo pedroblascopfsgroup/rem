@@ -42,6 +42,7 @@ import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ComunicacionGencat;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.OfertaGencat;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaTramitesActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
@@ -267,22 +268,26 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 										//Finaliza el trámite
 										activoAdapter.cerrarActivoTramite(usuarioLogado, activoTramite);
 									}
-									DDEstadoComunicacionGencat estado = new DDEstadoComunicacionGencat();
-									if(DDEstadoComunicacionGencat.COD_CREADO.equals(estadoComunicacion.getCodigo())){
-										Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoComunicacionGencat.COD_RECHAZADO);
-										estado = genericDao.get(DDEstadoComunicacionGencat.class, filtro);
-									}else {
-										Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoComunicacionGencat.COD_ANULADO);
-										estado = genericDao.get(DDEstadoComunicacionGencat.class, filtro);
+									/////COMO SABER A QUE OFERTA PERTENECE EL TRÁMITE
+									 OfertaGencat ofertaGencat = genericDao.get(OfertaGencat.class, genericDao.createFilter(FilterType.EQUALS,"oferta", expediente.getOferta()));
+									// finalizamos la tarea
+									if((!Checks.esNulo(ofertaGencat) && !Checks.esNulo(ofertaGencat.getIdOfertaAnterior())) || DDEstadoComunicacionGencat.COD_CREADO.equals(estadoComunicacion.getCodigo())) {
+										DDEstadoComunicacionGencat estado = new DDEstadoComunicacionGencat();
+										if(DDEstadoComunicacionGencat.COD_CREADO.equals(estadoComunicacion.getCodigo())){
+											Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoComunicacionGencat.COD_RECHAZADO);
+											estado = genericDao.get(DDEstadoComunicacionGencat.class, filtro);
+										}else {
+											Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoComunicacionGencat.COD_ANULADO);
+											estado = genericDao.get(DDEstadoComunicacionGencat.class, filtro);
+										}
+										comunicacionGencat.setEstadoComunicacion(estado);
+										comunicacionGencat.setFechaAnulacion(new Date());
+										if(!Checks.esNulo(estado) && (DDEstadoComunicacionGencat.COD_RECHAZADO.equals(estado.getCodigo()) || DDEstadoComunicacionGencat.COD_ANULADO.equals(estado.getCodigo()))) {
+											comunicacionGencat.setComunicadoAnulacionAGencat(true);
+										}
+										
+										genericDao.save(ComunicacionGencat.class, comunicacionGencat);
 									}
-									comunicacionGencat.setEstadoComunicacion(estado);
-									comunicacionGencat.setFechaAnulacion(new Date());
-									if(!Checks.esNulo(estado) && (DDEstadoComunicacionGencat.COD_RECHAZADO.equals(estado.getCodigo()) || DDEstadoComunicacionGencat.COD_ANULADO.equals(estado.getCodigo()))) {
-										comunicacionGencat.setComunicadoAnulacionAGencat(true);
-									}
-									
-									genericDao.save(ComunicacionGencat.class, comunicacionGencat);
-									
 									
 								} else if (DDEstadoComunicacionGencat.COD_COMUNICADO.equals(estadoComunicacion.getCodigo())) {
 									GestorEntidadDto gestorEntidadDto = new GestorEntidadDto();

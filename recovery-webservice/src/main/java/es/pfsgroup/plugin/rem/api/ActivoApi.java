@@ -22,6 +22,7 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoBancario;
+import es.pfsgroup.plugin.rem.model.ActivoCalificacionNegativa;
 import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
@@ -446,6 +447,14 @@ public interface ActivoApi {
 	 */
 	ActivoBancario getActivoBancarioByIdActivo(Long idActivo);
 
+	/**
+	 * Devuelve la calificacion negativa del ID de un activo dado
+	 *
+	 * @param idActivo
+	 * @return ActivoCalificacionNegativa
+	 */
+	List<ActivoCalificacionNegativa> getActivoCalificacionNegativaByIdActivo(Long idActivo);
+
 	PerimetroActivo saveOrUpdatePerimetroActivo(PerimetroActivo perimetroActivo);
 
 	/**
@@ -507,10 +516,10 @@ public interface ActivoApi {
 	 * @return
 	 */
 	public boolean isIntegradoAgrupacionAsistida(Activo activo);
-	
+
 	/**
 	 * Comprueba si el activo esta afecto a GENCAT
-	 * 
+	 *
 	 * @param activo
 	 * @return boolean
 	 */
@@ -884,7 +893,7 @@ public interface ActivoApi {
 	 * @return
 	 */
 	boolean isActivoConOfertasVivas(Activo activo);
-	
+
 	/**
 	 * Devuelve un lista con las ofertas en estado "Pendiente" o "Tramitada" de un activo
 	 *
@@ -892,8 +901,8 @@ public interface ActivoApi {
 	 * @return
 	 */
 	List<Oferta> getOfertasPendientesOTramitadasByActivo(Activo activo);
-	
-	
+
+
 	/**
 	 * Devuelve un lista con las ofertas en estado "Pendiente" o "Tramitada" de una agrupacion
 	 *
@@ -1005,7 +1014,7 @@ public interface ActivoApi {
 	boolean deleteImpuestos(DtoImpuestosActivo dtoImpuestosFilter);
 
 	boolean esLiberBank(Long idActivo);
-	
+
 	boolean esCajamar(Long idActivo);
 
 	DtoActivoFichaCabecera getActivosPropagables(Long idActivo);
@@ -1053,7 +1062,20 @@ public interface ActivoApi {
 	 */
 	boolean compruebaSiExisteActivoBienPorMatricula(Long idActivo, String matriculaActivo);
 
-	
+	/**
+	 * Recoge el activo relacionado con el proveedor a partir del id del proveedor.
+	 * @param idProveedor
+	 * @return
+	 */
+	public Activo getActivoByIdProveedor(Long idProveedor);
+
+	/**
+	 * Recoge el activo relacionado con el proveedor a partir del id del gasto del proveedor.
+	 * @param idGastoProveedor
+	 * @return
+	 */
+	public Activo getActivoByIdGastoProveedor(Long idGastoProveedor);
+
 	/**
 	 * Devuelve el activoPatrimonio a partir de la id de un activo.
 	 *
@@ -1072,7 +1094,7 @@ public interface ActivoApi {
 
 	/**
 	 * Devuelve true si tiene alguna comunicacion
-	 * 
+	 *
 	 * @param activo
 	 * @return
 	 */

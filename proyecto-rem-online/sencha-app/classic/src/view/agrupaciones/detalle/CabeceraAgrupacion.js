@@ -150,7 +150,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.CabeceraAgrupacion', {
 															cls: 'cabecera-info-field',
 															bind: {
 																hidden: '{!agrupacionficha.incluyeDestinoComercialVentaYIsRestringida}',
-																value: '{agrupacionficha.estadoVentaDescripcion}'
+																value: '{getValuePublicacionVentaAgrupacion}'
 															}
 														},
 														{
@@ -158,16 +158,9 @@ Ext.define('HreRem.view.agrupaciones.detalle.CabeceraAgrupacion', {
 															cls: 'cabecera-info-field',
 															bind: {
 																hidden: '{!agrupacionficha.incluyeDestinoComercialAlquilerYIsRestringida}',
-																value: '{agrupacionficha.estadoAlquilerDescripcion}'
+																value: '{getValuePublicacionAlquilerAgrupacion}'
 															}
 														},
-														{
-									                   		fieldLabel: HreRem.i18n('fieldlabel.enlace.externo'),
-									                   		bind: {
-									                   			hidden: '{!agrupacionRestringidaYPublicada}',
-									                   			value: '<a href="' + HreRem.i18n('fieldlabel.link.web.haya') + '{agrupacionficha.idNumActivoPrincipal}" target="_blank">' + HreRem.i18n('fieldlabel.web.haya') + '</a>'
-									                   		}
-									                   	},
 									                   	{
 									                   		fieldLabel: HreRem.i18n('fieldlabel.numero.agrupacion'),
 															bind:		'{agrupacionficha.numAgrupRem}'

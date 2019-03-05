@@ -1,7 +1,7 @@
 /*
 --##########################################
 --## AUTOR=Guillermo Llidó Parra
---## FECHA_CREACION=20190221
+--## FECHA_CREACION=20190226
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=REMVIP-XXXX
@@ -41,7 +41,6 @@ DECLARE
     
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
 	--------- NUM_ACTIVO , 
-    T_TIPO_DATA('5950609','ticket sara aragon','ticket sara aragon'),
 	T_TIPO_DATA('5965838','ticket sara aragon','ticket sara aragon'),
 	T_TIPO_DATA('6052965','Cartera MIREBEAU','Cartera MIREBEAU'),
 	T_TIPO_DATA('6055032','',''),

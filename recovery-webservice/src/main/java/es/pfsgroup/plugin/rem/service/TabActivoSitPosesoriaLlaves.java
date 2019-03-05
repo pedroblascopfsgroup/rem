@@ -98,7 +98,7 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 			}
 			
 			if (activo.getSituacionPosesoria().getConTitulo() != null) {
-				BeanUtils.copyProperty(activoDto, "conTituloTPA", activo.getSituacionPosesoria().getConTitulo().getCodigo());
+				BeanUtils.copyProperty(activoDto, "conTitulo", activo.getSituacionPosesoria().getConTitulo().getCodigo());
 			}
 			
 			if(!Checks.esNulo(activo.getCartera())) {
@@ -157,72 +157,61 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 	
 
 		DtoActivoSituacionPosesoria dto = (DtoActivoSituacionPosesoria) webDto;
+
+		if (activo.getSituacionPosesoria() == null) {
+			activo.setSituacionPosesoria(new ActivoSituacionPosesoria());
+			activo.getSituacionPosesoria().setActivo(activo);
+		}
 		
-		try {
-			
-			
-			beanUtilNotNull.copyProperties(activo.getSituacionPosesoria(), dto);			
-			if (activo.getSituacionPosesoria() == null) {
-				
-				activo.setSituacionPosesoria(new ActivoSituacionPosesoria());
-				activo.getSituacionPosesoria().setActivo(activo);
-				
-			}
-			
-			if (!Checks.esNulo(dto.getOcupado()) && !BooleanUtils.toBoolean(dto.getOcupado()) && dto.getOcupado() == 0) {
-				activo.getSituacionPosesoria().setConTitulo(null);
-			} else  if (Checks.esNulo(dto.getOcupado()) && !Checks.esNulo(dto.getConTituloTPA())) {
-				if (!Checks.esNulo(activo.getSituacionPosesoria().getOcupado()) && activo.getSituacionPosesoria().getOcupado() == 1) {
-					Filter tituloActivo = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getConTituloTPA());
-					DDTipoTituloActivoTPA tituloActivoTPA = genericDao.get(DDTipoTituloActivoTPA.class, tituloActivo);
-					activo.getSituacionPosesoria().setConTitulo(tituloActivoTPA);
-				}
-			}
-			
-			beanUtilNotNull.copyProperties(activo.getSituacionPosesoria(), dto);
+		if (!Checks.esNulo(dto.getOcupado())) {
+			activo.getSituacionPosesoria().setOcupado(dto.getOcupado());
+		}
+		
+		if (!Checks.esNulo(dto.getOcupado()) && !BooleanUtils.toBoolean(dto.getOcupado()) && dto.getOcupado() == 0) {
+			activo.getSituacionPosesoria().setConTitulo(null);
+		} else  if (!Checks.esNulo(dto.getConTitulo())) {
+			Filter tituloActivo = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getConTitulo());
+			DDTipoTituloActivoTPA tituloActivoTPA = genericDao.get(DDTipoTituloActivoTPA.class, tituloActivo);
+			activo.getSituacionPosesoria().setConTitulo(tituloActivoTPA);
+		}
 
-			if(!Checks.esNulo(dto.getFechaTomaPosesion())){
-				activo.getSituacionPosesoria().setEditadoFechaTomaPosesion(true);
-			}
-//			if(!Checks.esNulo(dto.getIndicaPosesion())){
-//				activo.getSituacionPosesoria().getSitaucionJuridica().setIndicaPosesion(dto.getIndicaPosesion());
-//			}
+		if(!Checks.esNulo(dto.getFechaTomaPosesion())){
+			activo.getSituacionPosesoria().setEditadoFechaTomaPosesion(true);
+		}
+//		if(!Checks.esNulo(dto.getIndicaPosesion())){
+//			activo.getSituacionPosesoria().getSitaucionJuridica().setIndicaPosesion(dto.getIndicaPosesion());
+//		}
+		
+		activo.setSituacionPosesoria(genericDao.save(ActivoSituacionPosesoria.class, activo.getSituacionPosesoria()));
+		
+		if (dto.getTipoTituloPosesorioCodigo() != null) {
 			
-			activo.setSituacionPosesoria(genericDao.save(ActivoSituacionPosesoria.class, activo.getSituacionPosesoria()));
-			
-			if (dto.getTipoTituloPosesorioCodigo() != null) {
-				
-				DDTipoTituloPosesorio tipoTitulo = (DDTipoTituloPosesorio) 
-						diccionarioApi.dameValorDiccionario(DDTipoTituloPosesorio.class,  new Long(dto.getTipoTituloPosesorioCodigo()));
-	
-				activo.getSituacionPosesoria().setTipoTituloPosesorio(tipoTitulo);
-				
-			}
+			DDTipoTituloPosesorio tipoTitulo = (DDTipoTituloPosesorio) 
+					diccionarioApi.dameValorDiccionario(DDTipoTituloPosesorio.class,  new Long(dto.getTipoTituloPosesorioCodigo()));
 
-			if (dto.getNecesarias()!=null)
-			{
-				activo.setLlavesNecesarias(dto.getNecesarias());
-			}
-			if (dto.getLlaveHre()!=null)
-			{
-				activo.setLlavesHre(dto.getLlaveHre());
-			}
+			activo.getSituacionPosesoria().setTipoTituloPosesorio(tipoTitulo);
 			
-			if (dto.getFechaRecepcionLlave()!=null)
-			{
-				activo.setFechaRecepcionLlaves(dto.getFechaRecepcionLlave());
-			}
-			if (dto.getNumJuegos()!=null)
-			{
-				activo.setNumJuegosLlaves(Integer.valueOf(dto.getNumJuegos()));
-			}
-			if (!Checks.esNulo(dto.getTieneOkTecnico())){
-				activo.setTieneOkTecnico(dto.getTieneOkTecnico());
-			}
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			e.printStackTrace();
+		}
+
+		if (dto.getNecesarias()!=null)
+		{
+			activo.setLlavesNecesarias(dto.getNecesarias());
+		}
+		if (dto.getLlaveHre()!=null)
+		{
+			activo.setLlavesHre(dto.getLlaveHre());
+		}
+		
+		if (dto.getFechaRecepcionLlave()!=null)
+		{
+			activo.setFechaRecepcionLlaves(dto.getFechaRecepcionLlave());
+		}
+		if (dto.getNumJuegos()!=null)
+		{
+			activo.setNumJuegosLlaves(Integer.valueOf(dto.getNumJuegos()));
+		}
+		if (!Checks.esNulo(dto.getTieneOkTecnico())){
+			activo.setTieneOkTecnico(dto.getTieneOkTecnico());
 		}
 		
 		return activo;
@@ -236,7 +225,7 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 
 		// Si ha cambiado la situacion juridica
 		if (!Checks.esNulo(dtoSitPos.getFechaTomaPosesion()) 
-					|| (!Checks.esNulo(dtoSitPos.getConTituloTPA()) &&	BooleanUtils.toBoolean(dtoSitPos.getConTituloTPA()))) {
+					|| (!Checks.esNulo(dtoSitPos.getConTitulo()) &&	DDTipoTituloActivoTPA.tipoTituloSi.equals(dtoSitPos.getConTitulo()))) {
 		
 			for(ActivoOferta oferta : ofertas){
 				// Si tiene expediente 

@@ -28,7 +28,7 @@ Ext.define('HreRem.model.ActivoSituacionPosesoria', {
             name:'accesoAntiocupa'
         },
         {
-            name:'conTituloTPA',
+            name:'conTitulo',
             convert: function(v, model){
                 if(model.get('ocupado')=='0'){
                     return null;

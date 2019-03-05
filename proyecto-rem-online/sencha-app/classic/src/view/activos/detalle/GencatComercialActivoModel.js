@@ -30,10 +30,7 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoModel', {
     			//Si las ofertas asociadas están anuladas, debe dejar modificarlo.
         		if(ofertasAsociadasEstanAnuladas){
 	    			//Si estadoComunicacion es COMUNICADO / RECHAZADO / ANULADO o bien SANCIONADO + estadoSancion NO EJERCE, y además el usuario tiene perfil HAYAGESTFORMADM / HAYASUPER
-	    			if ( ((estadoComunicacion === CONST.ESTADO_COMUNICACION_GENCAT['COMUNICADO'] ||
-	    					estadoComunicacion === CONST.ESTADO_COMUNICACION_GENCAT['RECHAZADO']  || 
-	    					estadoComunicacion === CONST.ESTADO_COMUNICACION_GENCAT['ANULADO'])   || 
-	    					(estadoComunicacion === CONST.ESTADO_COMUNICACION_GENCAT['SANCIONADO'] && estadoSancion === CONST.SANCION_GENCAT['NO_EJERCE'] )) &&
+	    			if((estadoComunicacion === CONST.ESTADO_COMUNICACION_GENCAT['COMUNICADO']) &&
 	    					($AU.userIsRol(CONST.PERFILES['HAYAGESTFORMADM']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER'])) ){
 	    				soloLectura = false
 	    			}

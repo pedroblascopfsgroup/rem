@@ -22,10 +22,6 @@ public class ActivoValoracionDaoImpl extends AbstractEntityDao<ActivoValoracione
 	public Double getImporteValoracionVentaWebPorIdActivo(Long idActivo) {
 		String sql = "SELECT " 
 							+"(CASE     "
-							+"       WHEN    " 
-							+"          MAX(NVL(ACTOFR.ACT_OFR_IMPORTE,0)) = 0   " 
-							+"        THEN      " 
-							+"          MAX(NVL(ACTOFR.ACT_OFR_IMPORTE,0))     " 
 							+"        WHEN      " 
 							+"          MAX(NVL(ACTOFR.ACT_OFR_IMPORTE,0)) >= MAX(DESCUENTO_WEB)      " 
 							+"        THEN      " 

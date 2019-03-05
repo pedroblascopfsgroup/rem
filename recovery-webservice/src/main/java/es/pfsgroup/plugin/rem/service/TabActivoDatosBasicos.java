@@ -649,7 +649,6 @@ public class TabActivoDatosBasicos implements TabActivoService {
 							
 							
 						}else if (agrupacionActivo.getAgrupacion().getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_PROMOCION_ALQUILER) && agrupacionActivo.getPrincipal() == 0) {
-							//TODO Añadir porcenaje de participación
 							activoDto.setPorcentajeParticipacion(agrupacionActivo.getParticipacionUA());
 							Filter filtroAgrupacion = genericDao.createFilter(FilterType.EQUALS, "AGR_ID", agrupacionActivo.getAgrupacion().getId());
 							List<ActivoAgrupacionActivo> UAsEnAgrupacion = genericDao.getList(ActivoAgrupacionActivo.class, filtroAgrupacion);

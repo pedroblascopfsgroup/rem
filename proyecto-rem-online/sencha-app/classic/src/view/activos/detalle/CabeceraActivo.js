@@ -244,7 +244,7 @@ Ext.define('HreRem.view.activos.detalle.CabeceraActivo', {
 										reference: 'numUnidadesAlquilablesRef', 
 										cls: 'cabecera-info-field',
 										bind: { 
-										hidden: '{!activo.isActivoMatriz}',
+										hidden: '{!activo.activoMatriz}',
 											value: '{activo.unidadesAlquilablesEnAgrupacion}'
 									}
 									},
@@ -254,7 +254,7 @@ Ext.define('HreRem.view.activos.detalle.CabeceraActivo', {
 										fieldLabel: HreRem.i18n('fieldlabel.activo.matriz'),
 										reference: 'activoMatrizRef',
 										bind: {
-											hidden: '{!activo.isUnidadAlquilable}',
+											hidden: '{!activo.unidadAlquilable}',
 											value: '{activo.numActivoMatriz}'
 										},
 										cls: 'show-text-as-link',
@@ -270,7 +270,7 @@ Ext.define('HreRem.view.activos.detalle.CabeceraActivo', {
 									reference: 'porcentajeParticipacionUaRef',
 									cls: 'cabecera-info-field',
 									bind: {
-										hidden: '{!activo.isUnidadAlquilable}',
+										hidden: '{!activo.unidadAlquilable}',
 										value: '{activo.porcentajeParticipacion} %'
 									}
 									},

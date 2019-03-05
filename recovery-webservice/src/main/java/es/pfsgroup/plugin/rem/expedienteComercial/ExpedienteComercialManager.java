@@ -7737,20 +7737,24 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		boolean expedienteAnulado = false;
 				
 		expedienteAnulado = comprobarExpedienteAnuladoGencat(expediente);
-		Oferta oferta = expediente.getOferta();	
-		List<OfertaGencat> ofertaGencat = genericDao.getList(OfertaGencat.class,genericDao.createFilter(FilterType.EQUALS,"oferta", oferta));
-		
-		if(ofertaGencat.size() > 0 && expedienteAnulado) {
-			List<ActivoOferta> actOfrList = expediente.getOferta().getActivosOferta();
-			for (ActivoOferta actOfr : actOfrList){
-				Activo activo = actOfr.getPrimaryKey().getActivo();
-				if (activoApi.isAfectoGencat(activo)) {
-					return descongelar;
+		if (!Checks.esNulo(expediente) && !Checks.esNulo(expediente.getOferta())) {
+			Oferta oferta = expediente.getOferta();	
+			List<OfertaGencat> ofertaGencat = genericDao.getList(OfertaGencat.class,genericDao.createFilter(FilterType.EQUALS,"oferta", oferta));
+			
+			if(ofertaGencat.size() > 0 && expedienteAnulado) {
+				List<ActivoOferta> actOfrList = expediente.getOferta().getActivosOferta();
+				for (ActivoOferta actOfr : actOfrList){
+					Activo activo = actOfr.getPrimaryKey().getActivo();
+					if (activoApi.isAfectoGencat(activo)) {
+						return descongelar;
+					}
 				}
+			} else {
+				descongelar = true;
 			}
 		} else {
-			descongelar = true;
-		}	
+			descongelar = true;	
+		}
 		return descongelar;
 	}
 }

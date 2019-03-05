@@ -3221,7 +3221,15 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		if (date2 != null && !date2.isEmpty()) {
 			datef2 = Long.valueOf(date2.replace("-", ""));
 		}
-
+		if(datef1 == null && datef2 == null){
+			return "IGUAL";
+		}
+		if(datef1 == null){
+			return "MENOR";
+		}
+		if(datef2 == null){
+			return "MAYOR";
+		}
 		if (datef1.equals(datef2)) {
 			return "IGUAL";
 		} else if (datef1 > datef2) {

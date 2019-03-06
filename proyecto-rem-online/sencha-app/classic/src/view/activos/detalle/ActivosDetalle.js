@@ -57,8 +57,40 @@ Ext.define('HreRem.view.activos.detalle.ActivosDetalle', {
             		tabPanel.evaluarBotonesEdicion(tabNext);
 				} else {
 						tabPanel.down("[itemId=botoneditar]").setVisible(false);
+				}
+				
+				//EDITANDO SUBPESTAÑAS¿?
+				if(tabNext.xtype != 'comercialactivo'){
+					if (tabPanel.lookupController().getViewModel().get("editing")) {
+						Ext.Msg.show({
+							title: HreRem.i18n('title.descartar.cambios'),
+							msg: HreRem.i18n('msg.desea.descartar'),
+							buttons: Ext.MessageBox.YESNO,
+							fn: function(buttonId) {
+								if (buttonId == 'yes') {
+									var btn = tabPanel.getActiveTab().down('[itemId=botoncancelar]');
+									Ext.callback(btn.handler, btn.scope, [btn, null], 0, btn);
+									tabPanel.getLayout().setActiveItem(tabNext);
+									if(Ext.isDefined(tabNext.getActiveTab)){
+										if(tabNext.getActiveTab().ocultarBotonesEdicion == false) {
+					   						tabNext.evaluarBotonesEdicion(tabNext.getActiveTab());
+					   					} else {
+					   						tabNext.getActiveTab().down("[itemId=botoneditar]").setVisible(false);
+						   				}
+	 
+						   				tabNext.getLayout().setActiveItem(tabNext.getActiveTab());
+					   				}
+								}
+							}
+						});
+						return false;
 					}
-
+					if(tabNext.ocultarBotonesEdicion == false) {
+   						tabNext.up("tabpanel").evaluarBotonesEdicion(tabNext);
+   					} else {
+   						tabNext.up("tabpanel").down("[itemId=botoneditar]").setVisible(false);
+   					}
+				}
             	return true;
         	}
         }

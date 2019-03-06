@@ -299,9 +299,9 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
 											}else{
 												codigoComite = DDComiteSancion.CODIGO_HAYA_SAREB;
 											}
-										} catch (Exception e) {
-											// TODO Auto-generated catch block
-											e.printStackTrace();
+										}
+										catch (Exception e) {
+											logger.error("error consultado comite", e);
 										}
 										if(!Checks.esNulo(codigoComite))
 											item.setValue(expedienteComercialApi.comiteSancionadorByCodigo(codigoComite).getDescripcion());
@@ -400,7 +400,7 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
 	            								item.setValue(resolucionComite.getImporteContraoferta().toString());
 	            						}
 	            					} catch (Exception e){
-	            						e.printStackTrace();
+	            						logger.error("error",e);
 	            					}
 	            				}
             				}else {
@@ -501,8 +501,7 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
 				            		    	item.setValue(formatoFecha.format(fecha));
 									}
 								} catch (Exception e) {
-									// TODO Auto-generated catch block
-									e.printStackTrace();
+									logger.error("error",e);
 								}
             				}
             			}
@@ -610,8 +609,7 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
 										item.setValue(this.getMapaEREtoRCO().get(resolucionComite.getEstadoResolucion().getCodigo()));
 									}
 								} catch (Exception e) {
-									// TODO Auto-generated catch block
-									e.printStackTrace();
+									logger.error("error",e);
 								}
             					
             					//ResolucionComiteBankia resolucion = genericDao.get(ResolucionComiteBankia.class, filtroExpediente);
@@ -664,7 +662,7 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
             								item.setValue(resolucionComite.getImporteContraoferta().toString());
             						}
             					} catch (Exception e){
-            						e.printStackTrace();
+            						logger.error("error",e);
             					}
             				}
             			}

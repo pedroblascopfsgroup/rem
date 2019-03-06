@@ -17,12 +17,14 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.LazyInitializationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.ModelMap;
 
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.utils.MessageUtils;
+import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.procesosJudiciales.model.TipoJuzgado;
@@ -126,6 +128,9 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 	
 	@Autowired
 	private OfertaApi ofertaApi;
+	
+	@Autowired
+	private UsuarioApi usuarioApi;
 
 	@Override
 	public String managerName() {
@@ -135,32 +140,38 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 	@Override
 	@BusinessOperationDefinition("genericManager.getAuthenticationData")
 	public AuthenticationData getAuthenticationData() {
-
-		Usuario usuario = adapter.getUsuarioLogado();
-
-		List<String> authorities = new ArrayList<String>();
-		List<String> roles = new ArrayList<String>();
-
-		for (Perfil perfil : usuario.getPerfiles()) {
-			for (Funcion funcion : perfil.getFunciones()) {
-				authorities.add(funcion.getDescripcion());
-			}
-			roles.add(perfil.getCodigo());
-		}
-
 		AuthenticationData authData = new AuthenticationData();
+		Usuario usuario = adapter.getUsuarioLogado();
+		if (usuario != null) {
+			List<String> authorities = new ArrayList<String>();
+			List<String> roles = new ArrayList<String>();
+			
+			/**
+			 * Al lanzar este método en un hilo diferente
+			 * al principal da un error lazy. Recargamos en la sesión el usuario logado
+			 */
+			try{
+				usuario.getPerfiles();
+			}catch(LazyInitializationException e){
+				usuario = usuarioApi.get(usuario.getId());
+			}
+			
 
-		authData.setUserName(usuario.getApellidoNombre());
-		authData.setAuthorities(authorities);
+			for (Perfil perfil : usuario.getPerfiles()) {
+				for (Funcion funcion : perfil.getFunciones()) {
+					authorities.add(funcion.getDescripcion());
+				}
+				roles.add(perfil.getCodigo());
+			}
+			authData.setUserName(usuario.getApellidoNombre());
+			authData.setAuthorities(authorities);
+			
+			authData.setUserId(usuario.getId());
+			authData.setRoles(roles);
+			authData.setCodigoGestor(gestorEntidad.getCodigoGestorPorUsuario(usuario.getId()));
 
-		Long id = usuario.getId();
-
-		authData.setUserId(id);
-		authData.setRoles(roles);
-
-		authData.setCodigoGestor(gestorEntidad.getCodigoGestorPorUsuario(id));
-
-		authData.setEsGestorSustituto(esGestorSustituto(usuario));
+			authData.setEsGestorSustituto(esGestorSustituto(usuario));
+		}
 
 		return authData;
 

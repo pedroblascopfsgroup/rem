@@ -1524,7 +1524,8 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 					+ "			INNER JOIN ${master.schema}.DD_TGE_TIPO_GESTOR tge on gcm.DD_GCM_CODIGO = tge.DD_TGE_CODIGO "
 					+ "			INNER JOIN DD_CRA_CARTERA cra on gcm.DD_CRA_ID = cra.DD_CRA_ID "
 					+ "			WHERE gcm.DD_GCM_CODIGO ='"+codigoGestor+"' "
-					+ "		 	AND cra.DD_CRA_ID = "+cartera+" ");
+					+ "		 	AND cra.DD_CRA_ID = "+cartera+" "
+					+ "			AND gcm.BORRADO = 0");
 			
 			if(!Checks.esNulo(numActivo)){
 				query= query.concat(" AND gcm.DD_GCM_ACTIVO = 1");

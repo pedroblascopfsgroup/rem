@@ -951,6 +951,20 @@ public class AgrupacionAdapter {
 					if (!Checks.esNulo(aga)) {
 						activoEstadoPublicacionApi.setDatosPublicacionAgrupacion(aga.getAgrupacion().getId(), dto);
 					}
+					
+					ActivoPublicacion activoPublicacionPrincipal = activoPublicacionDao.getActivoPublicacionPorIdActivo(agrupacion.getActivoPrincipal().getId());
+					ActivoPublicacion activoPublicacion = activoPublicacionDao.getActivoPublicacionPorIdActivo(activo.getId());
+					BeanUtils.copyProperty(activoPublicacion, "estadoPublicacionVenta", activoPublicacionPrincipal.getEstadoPublicacionVenta());
+					BeanUtils.copyProperty(activoPublicacion, "estadoPublicacionAlquiler", activoPublicacionPrincipal.getEstadoPublicacionAlquiler());
+					BeanUtils.copyProperty(activoPublicacion, "checkPublicarVenta", activoPublicacionPrincipal.getCheckPublicarVenta());
+					BeanUtils.copyProperty(activoPublicacion, "checkPublicarAlquiler", activoPublicacionPrincipal.getCheckPublicarAlquiler());
+					BeanUtils.copyProperty(activoPublicacion, "checkOcultarVenta", activoPublicacionPrincipal.getCheckOcultarVenta());
+					BeanUtils.copyProperty(activoPublicacion, "checkOcultarAlquiler", activoPublicacionPrincipal.getCheckOcultarAlquiler());
+					BeanUtils.copyProperty(activoPublicacion, "checkSinPrecioVenta", activoPublicacionPrincipal.getCheckSinPrecioVenta());
+					BeanUtils.copyProperty(activoPublicacion, "checkSinPrecioAlquiler", activoPublicacionPrincipal.getCheckSinPrecioAlquiler());
+					BeanUtils.copyProperty(activoPublicacion, "checkOcultarPrecioVenta", activoPublicacionPrincipal.getCheckOcultarPrecioVenta());
+					BeanUtils.copyProperty(activoPublicacion, "checkOcultarPrecioAlquiler", activoPublicacionPrincipal.getCheckOcultarPrecioAlquiler());
+					activoPublicacionDao.saveOrUpdate(activoPublicacion);
 				} else {
 					throw new JsonViewerException(BusinessValidators.ERROR_ESTADO_PUBLICACION_NOT_EQUAL);
 				}
@@ -971,8 +985,7 @@ public class AgrupacionAdapter {
 		} catch (JsonViewerException jve) {
 			throw jve;
 		} catch (Exception e) {
-			logger.error(e);
-			e.printStackTrace();
+			throw new JsonViewerException(e);
 		}
 	}
 	

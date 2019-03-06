@@ -3383,7 +3383,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     },
     
     createFormPropagableData: function(form, tabData) {
-    	
     	var me = this,
     	propagableData=null,
     	camposPropagables = [],
@@ -3698,12 +3697,35 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 					if (!Ext.isEmpty(tabPropagableData)) {
 						// sacamos el activo actual del listado
 						var activo = activosPropagables.splice(activosPropagables.findIndex(function(activo){return activo.activoId == me.getViewModel().get("activo.id")}),1)[0];
+						var tieneDatosPropagables = false;
+						if(!Ext.isEmpty(form)) {
+				    		
+				    		var fields = form.getForm().getFields();
 
-						// Abrimos la ventana de selección de activos
-						var ventanaOpcionesPropagacionCambios = Ext.create("HreRem.view.activos.detalle.OpcionesPropagacionCambios", {form: form, activoActual: activo, activos: activosPropagables, tabData: tabData, propagableData: tabPropagableData}).show();
-							me.getView().add(ventanaOpcionesPropagacionCambios);
-							me.getView().unmask();
-							return false;
+				    		fields.each(function(field) {
+				    			
+				    			if (!Ext.isEmpty(field) && !Ext.isEmpty(field.bind) && !Ext.isEmpty(field.bind.value) && !Ext.isEmpty(field.bind.value.stub)  ) {
+				    				var path = field.bind.value.stub.path;
+				    				var indexSeparator = path.indexOf(".");
+				    				var name = path.substring(0,indexSeparator);
+				    				var property = path.substring(indexSeparator+1, path.length);
+				    				
+				    				Ext.Array.each(tabPropagableData.models, function(model,index) {
+				    					if (model.type == name && model.data.hasOwnProperty(property)) {
+				    						tieneDatosPropagables = true;
+				    					}
+				    				});
+				    			}
+				    		});
+				    	}
+						
+						if(tieneDatosPropagables) {
+							// Abrimos la ventana de selección de activos
+							var ventanaOpcionesPropagacionCambios = Ext.create("HreRem.view.activos.detalle.OpcionesPropagacionCambios", {form: form, activoActual: activo, activos: activosPropagables, tabData: tabData, propagableData: tabPropagableData}).show();
+								me.getView().add(ventanaOpcionesPropagacionCambios);
+								me.getView().unmask();
+								return false;
+						}
 					}
 				}
 

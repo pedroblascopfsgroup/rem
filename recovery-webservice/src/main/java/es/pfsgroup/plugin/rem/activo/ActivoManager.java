@@ -1092,6 +1092,11 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class,
 					genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_CAJAMAR)));
 		}
+		// El combo "Comité seleccionado" vendrá informado para cartera Galeon
+		else if (oferta.getActivoPrincipal().getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_GALEON)) {
+			nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class,
+					genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_HAYA_GALEON)));
+		}
 
 		crearCompradores(oferta, nuevoExpediente);
 
@@ -5250,8 +5255,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		ActivoSituacionPosesoria posesoria=activo.getSituacionPosesoria();
 		Integer ocupado;
 		String conTitulo = "";
-		if(activoDto.getConTituloTPA() != null) {
-			conTitulo=activoDto.getConTituloTPA();
+		if(activoDto.getConTitulo() != null) {
+			conTitulo=activoDto.getConTitulo();
 		}else if(!Checks.esNulo(posesoria.getConTitulo())){
 			conTitulo = posesoria.getConTitulo().getCodigo();
 		}

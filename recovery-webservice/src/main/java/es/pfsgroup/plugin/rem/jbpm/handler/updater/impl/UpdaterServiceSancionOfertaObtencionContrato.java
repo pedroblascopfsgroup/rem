@@ -17,6 +17,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
+import es.pfsgroup.plugin.rem.api.ComunicacionGencatApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GencatApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
@@ -25,6 +26,7 @@ import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
+import es.pfsgroup.plugin.rem.model.ComunicacionGencat;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.OfertaGencat;
@@ -60,6 +62,9 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 	
 	@Autowired
 	private ActivoApi activoApi;
+	
+	@Autowired
+	private ComunicacionGencatApi comunicacionGencatApi;
 
 	private static final String CODIGO_T013_OBTENCION_CONTRATO_RESERVA = "T013_ObtencionContratoReserva";
 	private static final String FECHA_FIRMA = "fechaFirma";
@@ -101,9 +106,13 @@ public class UpdaterServiceSancionOfertaObtencionContrato implements UpdaterServ
 		if (!Checks.esNulo(ofertaAceptada)) {
 			List<ActivoOferta> listActivosOferta = expediente.getOferta().getActivosOferta();
 			for (ActivoOferta activoOferta : listActivosOferta) {
+				ComunicacionGencat comunicacionGencat = comunicacionGencatApi.getByIdActivo(activoOferta.getPrimaryKey().getActivo().getId());
 				if(!Checks.esNulo(expediente.getReserva()) && DDEstadosExpedienteComercial.APROBADO.equals(expediente.getEstado().getCodigo()) && activoApi.isAfectoGencat(activoOferta.getPrimaryKey().getActivo())){
 					Oferta oferta = expediente.getOferta();	
-					OfertaGencat ofertaGencat = genericDao.get(OfertaGencat.class,genericDao.createFilter(FilterType.EQUALS,"oferta", oferta));
+					OfertaGencat ofertaGencat = null;
+					if (!Checks.esNulo(comunicacionGencat)) {
+						ofertaGencat = genericDao.get(OfertaGencat.class,genericDao.createFilter(FilterType.EQUALS,"oferta", oferta), genericDao.createFilter(FilterType.EQUALS,"comunicacion", comunicacionGencat));
+					}
 					if(!Checks.esNulo(ofertaGencat)) {
 							if(Checks.esNulo(ofertaGencat.getIdOfertaAnterior()) && !ofertaGencat.getAuditoria().isBorrado()) {
 								gencatApi.bloqueoExpedienteGENCAT(expediente, activoOferta.getPrimaryKey().getActivo().getId());

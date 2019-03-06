@@ -269,7 +269,7 @@ public class UpdaterServiceSancionOfertaResolucionExpediente implements UpdaterS
 										activoAdapter.cerrarActivoTramite(usuarioLogado, activoTramite);
 									}
 									/////COMO SABER A QUE OFERTA PERTENECE EL TRÁMITE
-									 OfertaGencat ofertaGencat = genericDao.get(OfertaGencat.class, genericDao.createFilter(FilterType.EQUALS,"oferta", expediente.getOferta()));
+									 OfertaGencat ofertaGencat = genericDao.get(OfertaGencat.class, genericDao.createFilter(FilterType.EQUALS,"oferta", expediente.getOferta()), genericDao.createFilter(FilterType.EQUALS,"comunicacion", comunicacionGencat));
 									// finalizamos la tarea
 									if((!Checks.esNulo(ofertaGencat) && !Checks.esNulo(ofertaGencat.getIdOfertaAnterior())) || DDEstadoComunicacionGencat.COD_CREADO.equals(estadoComunicacion.getCodigo())) {
 										DDEstadoComunicacionGencat estado = new DDEstadoComunicacionGencat();

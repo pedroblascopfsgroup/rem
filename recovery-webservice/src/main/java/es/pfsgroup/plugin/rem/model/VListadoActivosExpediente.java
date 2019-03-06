@@ -50,9 +50,6 @@ public class VListadoActivosExpediente implements Serializable {
 	@Column(name = "BLOQUEO")
 	private Integer bloqueos;
 	
-	@Column(name = "CONDICIONANTE")
-	private Integer tanteos;
-	
 	@Column(name = "ACT_NUM_ACTIVO")
 	private String numActivo;
 	
@@ -152,14 +149,6 @@ public class VListadoActivosExpediente implements Serializable {
 
 	public void setBloqueos(Integer bloqueos) {
 		this.bloqueos = bloqueos;
-	}
-
-	public Integer getTanteos() {
-		return tanteos;
-	}
-
-	public void setTanteos(Integer tanteos) {
-		this.tanteos = tanteos;
 	}
 
 	public String getNumActivo() {

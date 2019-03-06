@@ -264,7 +264,7 @@ public class TabActivoPatrimonio implements TabActivoService {
 					activoSituacionPosesoria.setOcupado(1);
 				}
 
-				DDTipoTituloActivoTPA tipoTituloActivoTPA = (DDTipoTituloActivoTPA) utilDiccionarioApi.dameValorDiccionarioByCod(DDSituacionComercial.class, DDTipoTituloActivoTPA.tipoTituloSi);
+				DDTipoTituloActivoTPA tipoTituloActivoTPA = (DDTipoTituloActivoTPA) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoTituloActivoTPA.class, DDTipoTituloActivoTPA.tipoTituloSi);
 				activoSituacionPosesoria.setConTitulo(tipoTituloActivoTPA);
 
 				genericDao.save(ActivoSituacionPosesoria.class, activoSituacionPosesoria);

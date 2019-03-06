@@ -199,17 +199,6 @@ Ext.define('HreRem.view.activos.ActivosModel', {
 						extraParams: {diccionario: 'adecuaciones'}
 					}
 			},
-			
-			comboDDTipoTituloActivoTPA: {
-				model: 'HreRem.model.ComboBase',
-				proxy: {
-					type: 'uxproxy',
-					remoteUrl: 'generic/getDiccionario',
-					extraParams: {
-						diccionario: 'tipoTituloActivoTPA'
-					}
-				}
-			},
 
 			comboTipoTituloPosesorio: {
 				model: 'HreRem.model.ComboBase',

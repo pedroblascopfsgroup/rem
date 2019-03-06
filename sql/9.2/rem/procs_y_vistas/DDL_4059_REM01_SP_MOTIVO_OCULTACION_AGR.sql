@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Sergio Beleña
---## FECHA_CREACION=20181210
+--## AUTOR=Carles Molins
+--## FECHA_CREACION=20190306
 --## ARTEFACTO=batch
---## VERSION_ARTEFACTO=2.0.3
---## INCIDENCIA_LINK=HREOS-4931
+--## VERSION_ARTEFACTO=9.2
+--## INCIDENCIA_LINK=REMVIP-3532
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -82,17 +82,33 @@ create or replace PROCEDURE SP_MOTIVO_OCULTACION_AGR (nAGR_ID IN NUMBER
                                , 1 OCULTO
                                , MTO.DD_MTO_CODIGO
                                , MTO.DD_MTO_ORDEN ORDEN
-                                    FROM '|| V_ESQUEMA ||'.ACT_PTA_PATRIMONIO_ACTIVO ACT
+                                    FROM '|| V_ESQUEMA ||'.ACT_PTA_PATRIMONIO_ACTIVO PTA
                                     LEFT JOIN '|| V_ESQUEMA ||'.DD_MTO_MOTIVOS_OCULTACION MTO ON MTO.DD_MTO_CODIGO = ''05'' AND MTO.BORRADO = 0 /*No adecuado*/
-                                   WHERE (ACT.DD_ADA_ID = (SELECT DDADA.DD_ADA_ID
-                                                             FROM '|| V_ESQUEMA ||'.DD_ADA_ADECUACION_ALQUILER DDADA 
-                                                            WHERE DDADA.BORRADO = 0
-                                                              AND DDADA.DD_ADA_CODIGO = ''02''
-                                                           )
-                                          OR ACT.DD_ADA_ID IS NULL)
-                                     AND ACT.BORRADO = 0
-                                     AND ACT.CHECK_HPM = 1
-                                     AND ''A'' = '''||pTIPO||''' 
+                                   WHERE (PTA.DD_ADA_ID = (SELECT DDADA.DD_ADA_ID
+								                             FROM '|| V_ESQUEMA ||'.DD_ADA_ADECUACION_ALQUILER DDADA
+								                            WHERE DDADA.BORRADO = 0
+								                              AND DDADA.DD_ADA_CODIGO = ''02''
+								                           )
+								          OR PTA.DD_ADA_ID = (SELECT DDADA.DD_ADA_ID
+								                             FROM '|| V_ESQUEMA ||'.DD_ADA_ADECUACION_ALQUILER DDADA
+								                            WHERE DDADA.BORRADO = 0
+								                              AND DDADA.DD_ADA_CODIGO = ''04''
+								                           )
+								          OR PTA.DD_ADA_ID IS NULL)
+								          AND (PTA.DD_ADA_ID_ANTERIOR = (SELECT DDADA.DD_ADA_ID
+								                             FROM '|| V_ESQUEMA ||'.DD_ADA_ADECUACION_ALQUILER DDADA
+								                            WHERE DDADA.BORRADO = 0
+								                              AND DDADA.DD_ADA_CODIGO = ''01''
+								                           )
+								          OR PTA.DD_ADA_ID_ANTERIOR = (SELECT DDADA.DD_ADA_ID
+								                             FROM '|| V_ESQUEMA ||'.DD_ADA_ADECUACION_ALQUILER DDADA
+								                            WHERE DDADA.BORRADO = 0
+								                              AND DDADA.DD_ADA_CODIGO = ''03''
+								                           )
+								         )
+                                     AND PTA.BORRADO = 0
+                                     AND PTA.CHECK_HPM = 1
+                                     AND ''A'' = '''||pTIPO||'''
                                      AND EXISTS '||vQUERY||                                                                
                          ' UNION
                           SELECT ACT.ACT_ID
@@ -100,9 +116,13 @@ create or replace PROCEDURE SP_MOTIVO_OCULTACION_AGR (nAGR_ID IN NUMBER
                                , MTO.DD_MTO_CODIGO
                                , MTO.DD_MTO_ORDEN ORDEN
                                     FROM '|| V_ESQUEMA ||'.ACT_PAC_PERIMETRO_ACTIVO ACT
+                                    LEFT JOIN '|| V_ESQUEMA ||'.ACT_AGA_AGRUPACION_ACTIVO AGA ON AGA.ACT_ID = ACT.ACT_ID
+                                    LEFT JOIN '|| V_ESQUEMA ||'.ACT_AGR_AGRUPACION AGR ON AGR.AGR_ID = AGA.AGR_ID
+                                    LEFT JOIN '|| V_ESQUEMA ||'.DD_TAG_TIPO_AGRUPACION TAG ON TAG.DD_TAG_ID = AGR.DD_TAG_ID
                                     LEFT JOIN '|| V_ESQUEMA ||'.DD_MTO_MOTIVOS_OCULTACION MTO ON MTO.DD_MTO_CODIGO = ''01'' AND MTO.BORRADO = 0 /*No Publicable*/
-                                   WHERE ACT.BORRADO = 0
-                                     AND ACT.PAC_CHECK_PUBLICAR = 0
+                                   WHERE ACT.BORRADO = 0 
+										AND (ACT.PAC_CHECK_PUBLICAR = 0
+                                        	OR (TAG.DD_TAG_CODIGO = ''13'' AND AGR.AGR_FIN_VIGENCIA < SYSDATE))
                                      AND EXISTS '||vQUERY||                                    
                          ' UNION
                           SELECT ACT.ACT_ID
@@ -139,7 +159,7 @@ create or replace PROCEDURE SP_MOTIVO_OCULTACION_AGR (nAGR_ID IN NUMBER
                                     LEFT JOIN '|| V_ESQUEMA ||'.DD_MTO_MOTIVOS_OCULTACION MTO ON MTO.DD_MTO_CODIGO = ''03'' AND MTO.BORRADO = 0 /*Alquilado*/
                                    WHERE ACT.BORRADO = 0
                                      AND SPS.SPS_OCUPADO = 1 
-                                     AND SPS.SPS_CON_TITULO = 1 
+                                     AND SPS.DD_TPA_ID = (SELECT DD_TPA_ID FROM DD_TPA_TIPO_TITULO_ACT WHERE DD_TPA_CODIGO = ''01'')
                                      AND ((TRUNC(SPS.SPS_FECHA_TITULO) <= TRUNC(SYSDATE) AND TRUNC(SPS.SPS_FECHA_VENC_TITULO) >= TRUNC(sysdate)) OR (TRUNC(SPS.SPS_FECHA_TITULO) <= TRUNC(SYSDATE) AND SPS.SPS_FECHA_VENC_TITULO IS NULL))
                                      AND EXISTS '||vQUERY||                                                  
                          ' UNION

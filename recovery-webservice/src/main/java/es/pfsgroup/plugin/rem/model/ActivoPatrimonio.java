@@ -61,7 +61,7 @@ public class ActivoPatrimonio implements Serializable, Auditable {
 	@JoinColumn(name = "DD_ADA_ID_ANTERIOR")
 	private DDAdecuacionAlquiler adecuacionAlquilerAnterior;
 
-	@Column(name = "CHECK_HPM")
+	@Column(name = "CHECK_HPM") // Perimetro de alquiler
 	private Boolean checkHPM;
 	
 	@Column(name = "PTA_RENTA_ANTIGUA")

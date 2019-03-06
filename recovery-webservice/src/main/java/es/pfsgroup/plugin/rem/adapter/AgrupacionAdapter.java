@@ -98,6 +98,7 @@ import es.pfsgroup.plugin.rem.model.DtoOfertaActivo;
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
 import es.pfsgroup.plugin.rem.model.DtoUsuario;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.GestorActivo;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.Trabajo;
@@ -124,6 +125,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializar;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoEstadoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
 import es.pfsgroup.plugin.rem.oferta.NotificationOfertaManager;
 import es.pfsgroup.plugin.rem.thread.LiberarFichero;
@@ -1308,7 +1310,7 @@ public class AgrupacionAdapter {
 		}
 
 		return true;
-
+		
 	}
 
 	@Transactional(readOnly = false)
@@ -2307,6 +2309,107 @@ public class AgrupacionAdapter {
 		
 		return res;
 	}
+	
+	/**
+	 * Valida que un activo es válido para ser activo matriz.
+	 * @param activo id
+	 * @return Bool cuando es un activo válido para ser activo matriz devuelve true, si no devuelve falso y lanza una excepción.
+	 */
+	
+	public Boolean esActivoMatrizValido(Activo activo) {
+		if(!Checks.esNulo(activo)){
+			PerimetroActivo perimetroActivo = activoApi.getPerimetroByIdActivo(activo.getId());
+			if(!Checks.esNulo(perimetroActivo)) {
+				if(activoApi.isActivoIncluidoEnPerimetro(activo.getId())) {
+					if(!Checks.esNulo(activo.getSituacionComercial())) {
+						if(!DDSituacionComercial.CODIGO_VENDIDO.equals(activo.getSituacionComercial().getCodigo())) {
+							if(!DDTipoTituloActivo.UNIDAD_ALQUILABLE.equals(activo.getTipoTitulo().getCodigo())) {
+								if(!Checks.esNulo(activoApi.getActivoPatrimonio(activo.getId()))) {
+									if(!Checks.esNulo(activoApi.getActivoPatrimonio(activo.getId()).getCheckHPM())
+											&& activoApi.getActivoPatrimonio(activo.getId()).getCheckHPM()){
+										if(!particularValidator.existeActivoConOfertaViva(Long.toString(activo.getNumActivo()))){
+											if(!DDSituacionComercial.CODIGO_ALQUILADO.equals(activo.getSituacionComercial().getCodigo())) {
+												if (!Checks.estaVacio(activo.getAgrupaciones())) {
+													List<ActivoAgrupacionActivo> listaAgrupaciones = activo.getAgrupaciones();
+													
+													for (ActivoAgrupacionActivo activoAgrupacionActivo : listaAgrupaciones) {
+															
+														if (DDTipoAgrupacion.AGRUPACION_RESTRINGIDA.equals(activoAgrupacionActivo.getAgrupacion().getTipoAgrupacion().getCodigo())) {
+															throw new JsonViewerException("El activo pertenece a una agrupación restringida");
+														} else if (DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_VENTA.equals(activoAgrupacionActivo.getAgrupacion().getTipoAgrupacion().getCodigo())) {
+															throw new JsonViewerException("El activo pertenece a un lote comercial de venta");
+														} else if (DDTipoAgrupacion.AGRUPACION_LOTE_COMERCIAL_ALQUILER.equals(activoAgrupacionActivo.getAgrupacion().getTipoAgrupacion().getCodigo())) {
+															throw new JsonViewerException("El activo pertenece a una agrupación comercial de alquiler");
+														} else if (DDTipoAgrupacion.AGRUPACION_PROMOCION_ALQUILER.equals(activoAgrupacionActivo.getAgrupacion().getTipoAgrupacion().getCodigo())) {
+															throw new JsonViewerException("El activo ya pertenece a otra agrupación de promoción de alquiler");
+														}
+													}
+													List<GestorActivo> gestores = genericDao.getList(GestorActivo.class,genericDao.createFilter(FilterType.EQUALS,"activo.id", activo.getId()));
+													
+													if(!Checks.estaVacio(gestores)) {
+														for (GestorActivo gestorActivo : gestores) {
+															if (ActivoAdapter.CODIGO_SUPERVISOR_COMERCIAL_ALQUILER.equals(gestorActivo.getTipoGestor().getCodigo())
+																	|| ActivoAdapter.CODIGO_GESTOR_COMERCIAL_ALQUILER.equals(gestorActivo.getTipoGestor().getCodigo())) {
+																return true;
+															}
+		
+														}
+														throw new JsonViewerException("Este activo NO está bajo su gestión");
+													}else {
+														throw new JsonViewerException("El activo NO tiene gestores");
+													}
+												}
+											}else {
+												throw new JsonViewerException("Activo alquilado");
+											}
+										}else {
+											List <ActivoOferta> ofertasActivas = activo.getOfertas();
+											
+											for (ActivoOferta activoOferta : ofertasActivas) {
+													if(!Checks.esNulo(activoOferta.getPrimaryKey())
+															&& !Checks.esNulo(activoOferta.getPrimaryKey().getOferta())
+															&& !Checks.esNulo(activoOferta.getPrimaryKey().getOferta().getTipoOferta())){
+													if(DDTipoOferta.CODIGO_VENTA.equals(activoOferta.getPrimaryKey().getOferta().getTipoOferta().getCodigo())){
+														if(DDEstadoOferta.CODIGO_ACEPTADA.equals(activoOferta.getPrimaryKey().getOferta().getEstadoOferta().getCodigo())) {
+															throw new JsonViewerException("Activo con ofertas de venta vivas");
+														}
+													}else {
+														if(DDEstadoOferta.CODIGO_ACEPTADA.equals(activoOferta.getPrimaryKey().getOferta().getEstadoOferta().getCodigo())) {
+															throw new JsonViewerException("Activo con ofertas de alquiler vivas");
+														}
+													}
+												}
+											}
+										}
+									}else {
+										throw new JsonViewerException("Activo NO incluido en perímetro alquiler");
+									}
+								}else {
+									throw new JsonViewerException("El activo no tiene patrimonio activo");
+								}
+							}else {
+								throw new JsonViewerException("Tipo de activo NO permitido como activo Activo matriz");
+							}
+						}else {
+							throw new JsonViewerException("Activo vendido");
+						}
+					}else {
+						throw new JsonViewerException("El activo no tiene situación comercial");
+					}
+				}else {
+					throw new JsonViewerException("El activo fuera del perímetro HAYA");
+				}
+			}else {
+				throw new JsonViewerException("El activo no tiene perímetro");
+			}
+		}else{
+			throw new JsonViewerException("Activo inexistente");
+			
+		}
+		return false;
+	}
+	
+	
 
 	@Transactional(readOnly = false)
 	public String saveAgrupacion(DtoAgrupaciones dto, Long id) throws Exception {
@@ -2391,14 +2494,16 @@ public class AgrupacionAdapter {
 					if(!Checks.esNulo(dto.getActivoMatriz())) {
 						Activo act = activoDao.getActivoByNumActivo(dto.getActivoMatriz());
 						/*TODO: Validaciones HREOS-5596*/
-						act.setDescripcion(dto.getDescripcion());
-						ActivoAgrupacionActivo aga = new ActivoAgrupacionActivo();
-						aga.setActivo(act);
-						aga.setAgrupacion(pa);
-						aga.setFechaInclusion(new Date());
-						aga.setPrincipal(1);
-						
-						activoAgrupacionActivoDao.saveOrUpdate(aga);
+						if(esActivoMatrizValido(act)) {
+							act.setDescripcion(dto.getDescripcion());
+							ActivoAgrupacionActivo aga = new ActivoAgrupacionActivo();
+							aga.setActivo(act);
+							aga.setAgrupacion(pa);
+							aga.setFechaInclusion(new Date());
+							aga.setPrincipal(1);
+							
+							activoAgrupacionActivoDao.saveOrUpdate(aga);
+						}	
 					}
 					
 					activoAgrupacionApi.saveOrUpdate(pa);
@@ -2406,7 +2511,7 @@ public class AgrupacionAdapter {
 	
 			} catch (Exception e) {
 				logger.error("error en agrupacionAdapter", e);
-				return "false";
+				throw new JsonViewerException(e.getMessage());
 			}
 		}
 

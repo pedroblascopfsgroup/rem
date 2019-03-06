@@ -66,7 +66,7 @@ Ext.define('HreRem.model.Gencat', {
 		{
 			name:'usuarioValido',
 			calculate: function(data) {
-				if(data.estadoComunicacion === CONST.ESTADO_COMUNICACION_GENCAT['COMUNICADO'] && ($AU.userIsRol(CONST.PERFILES['HAYAGESTFORMADM']) || $AU.userIsRol(CONST.PERFILES['GESTIAFORM']))){
+				if(data.estadoComunicacion === CONST.ESTADO_COMUNICACION_GENCAT['COMUNICADO'] && ($AU.userIsRol(CONST.PERFILES['HAYAGESTFORMADM']) || $AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['GESTIAFORM']))){
 					return true
 				}else{
 					return false

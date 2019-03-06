@@ -199,14 +199,6 @@ Ext.define('HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaDetalle', {
 	    			    				colspan: 2
 									},
 				            	    {
-				            	    	xtype: 		'checkboxfieldbase',
-				            	    	fieldLabel:	HreRem.i18n('fieldlabel.dederechotanteo'),
-				            	    	name:		'dederechotanteo',
-				            	    	allowBlank:	false,
-				            	    	bind:		'{oferta.deDerechoTanteo}',
-							        	inputValue: true
-				            	    },
-				            	    {
 										xtype: 		'checkboxfieldbase',
 				            	    	fieldLabel:	HreRem.i18n('fieldlabel.intencionfinanciar'),
 				            	    	name:		'intencionfinanciar',

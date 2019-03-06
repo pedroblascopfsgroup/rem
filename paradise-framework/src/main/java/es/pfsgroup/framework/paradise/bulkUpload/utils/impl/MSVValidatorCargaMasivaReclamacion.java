@@ -35,10 +35,10 @@ import es.pfsgroup.framework.paradise.bulkUpload.utils.MSVExcelParser;
 @Component
 public class MSVValidatorCargaMasivaReclamacion extends MSVExcelValidatorAbstract {
 	
-	private static final String ACTIVO_NO_EXISTE = "msg.error.masivo.agrupar.activos.asistida.activo.noExiste";
-	private static final String ACTIVO_SIN_COMUNICACION_ACTIVA = "msg.error.masivo.activo.sin.comunicacion.viva";
-	private static final String ACTIVO_SIN_COMUNICACION_EN_ESTADO_COMUNICADO = "msg.error.masivo.activo.sin.comunicacion.comunicada";
-	private static final String ACTIVO_SIN_COMUNICACION_ACTIVA_RECLAMADA = "msg.error.masivo.comunicacion.reclamada";
+	private static final String ACTIVO_NO_EXISTE = "msg.error.masivo.reclamacion.activo.noExiste";
+	private static final String ACTIVO_SIN_COMUNICACION_ACTIVA = "msg.error.masivo.reclamacion.activo.sin.comunicacion.viva";
+	private static final String ACTIVO_SIN_COMUNICACION_EN_ESTADO_COMUNICADO = "msg.error.masivo.reclamacion.activo.sin.comunicacion.comunicada";
+	private static final String ACTIVO_SIN_COMUNICACION_ACTIVA_RECLAMADA = "msg.error.masivo.reclamacion.reclamada";
 	
 	private static final int POSICION_COLUMNA_NUMERO_ACTIVO = 0;
 	

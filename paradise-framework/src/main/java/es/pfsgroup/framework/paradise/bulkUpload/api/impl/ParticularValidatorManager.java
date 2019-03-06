@@ -1725,16 +1725,32 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		String activoEPU = rawDao.getExecuteSQL("SELECT COUNT(1) "
 		        + "        FROM ACT_ACTIVO ACT "
 				+ "        JOIN ACT_APU_ACTIVO_PUBLICACION APU ON ACT.ACT_ID = APU.ACT_ID "
-		        + "        WHERE ACT.ACT_NUM_ACTIVO = "+numActivo+" AND APU.DD_EPV_ID = (SELECT APU.DD_EPV_ID "
-				+ "                                   FROM ACT_APU_ACTIVO_PUBLICACION APU"
-		        + "                                   JOIN ACT_ACTIVO ACT ON APU.ACT_ID = ACT.ACT_ID"
-				+ "                                   JOIN ACT_AGR_AGRUPACION AGR ON ACT.ACT_ID = AGR.AGR_ACT_PRINCIPAL "
-				+ "                                   AND AGR.AGR_NUM_AGRUP_REM = "+numAgrupacion+") "
-				+ "        AND APU.DD_EPA_ID = (SELECT APU.DD_EPA_ID "
-				+ "									  FROM ACT_APU_ACTIVO_PUBLICACION APU "
-				+ "                                   JOIN ACT_ACTIVO ACT ON APU.ACT_ID = ACT.ACT_ID "
-				+ "                                   JOIN ACT_AGR_AGRUPACION AGR ON ACT.ACT_ID = AGR.AGR_ACT_PRINCIPAL "
-				+ "                                   AND AGR.AGR_NUM_AGRUP_REM = "+numAgrupacion+")");
+				+ "        WHERE ACT.ACT_NUM_ACTIVO = "+numActivo
+				+ "        AND (CASE"
+		        + "        		WHEN APU.DD_TCO_ID IN (SELECT DD_TCO_ID FROM DD_TCO_TIPO_COMERCIALIZACION WHERE DD_TCO_CODIGO IN ('01', '02')) THEN"
+				+ "             	CASE WHEN APU.DD_EPV_ID = ("
+				+ "                 	SELECT APU.DD_EPV_ID"
+				+ "						FROM ACT_APU_ACTIVO_PUBLICACION APU"
+				+ "						JOIN ACT_ACTIVO ACT ON APU.ACT_ID = ACT.ACT_ID" 
+				+ "            			JOIN ACT_AGR_AGRUPACION AGR ON ACT.ACT_ID = AGR.AGR_ACT_PRINCIPAL"
+				+ "            			AND AGR.AGR_NUM_AGRUP_REM = "+numAgrupacion+") THEN 1"
+				+ "					ELSE 0"
+				+ "					END"
+				+ "				ELSE 1"
+				+ "				END = 1"
+				+ "		   AND CASE"
+				+ "        		WHEN APU.DD_TCO_ID IN (SELECT DD_TCO_ID FROM DD_TCO_TIPO_COMERCIALIZACION WHERE DD_TCO_CODIGO IN ('02', '03')) THEN"
+				+ "         			CASE WHEN APU.DD_EPA_ID = ("
+				+ "            			SELECT APU.DD_EPA_ID"
+				+ "            			FROM ACT_APU_ACTIVO_PUBLICACION APU"
+				+ "            			JOIN ACT_ACTIVO ACT ON APU.ACT_ID = ACT.ACT_ID"
+				+ "            			JOIN ACT_AGR_AGRUPACION AGR ON ACT.ACT_ID = AGR.AGR_ACT_PRINCIPAL"
+				+ "            			AND AGR.AGR_NUM_AGRUP_REM = "+numAgrupacion+") THEN 1"
+				+ "        			ELSE 0"
+				+ "        			END"
+				+ "    	   		ELSE 1"
+				+ "    	   		END = 1)"
+		);
 
 		return activoEPU.equals("1");
 	}
@@ -1744,14 +1760,30 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		String activoEPU = rawDao.getExecuteSQL("SELECT COUNT(1) "
 		        + "        FROM ACT_ACTIVO ACT "
 				+ "        JOIN ACT_APU_ACTIVO_PUBLICACION APU ON ACT.ACT_ID = APU.ACT_ID "
-		        + "        WHERE ACT.ACT_NUM_ACTIVO = "+numActivo+" AND APU.DD_EPV_ID = (SELECT APU.DD_EPV_ID "
-				+ "                                   FROM ACT_APU_ACTIVO_PUBLICACION APU"
-		        + "                                   JOIN ACT_ACTIVO ACT ON APU.ACT_ID = ACT.ACT_ID"
-				+ "                                   AND ACT.ACT_NUM_ACTIVO = "+numActivoPrincipalExcel+") "
-				+ "        AND APU.DD_EPA_ID = (SELECT APU.DD_EPA_ID "
-				+ "									  FROM ACT_APU_ACTIVO_PUBLICACION APU "
-				+ "                                   JOIN ACT_ACTIVO ACT ON APU.ACT_ID = ACT.ACT_ID "
-				+ "                                   AND ACT.ACT_NUM_ACTIVO = "+numActivoPrincipalExcel+")");
+				+ "        WHERE ACT.ACT_NUM_ACTIVO = "+numActivo
+		        + "		   AND (CASE"
+		        + "       		WHEN APU.DD_TCO_ID IN (SELECT DD_TCO_ID FROM DD_TCO_TIPO_COMERCIALIZACION WHERE DD_TCO_CODIGO IN ('01', '02')) THEN"
+		        + "             	CASE WHEN APU.DD_EPV_ID = ("
+		        + "						SELECT APU.DD_EPV_ID"
+				+ "                     FROM ACT_APU_ACTIVO_PUBLICACION APU"
+		        + "                     JOIN ACT_ACTIVO ACT ON APU.ACT_ID = ACT.ACT_ID"
+				+ "                     AND ACT.ACT_NUM_ACTIVO = "+numActivoPrincipalExcel+") THEN 1"
+				+ "					ELSE 0"
+				+ "					END"
+				+ "				ELSE 1"
+				+ "				END = 1"
+				+ "		   AND CASE"
+				+ "        		WHEN APU.DD_TCO_ID IN (SELECT DD_TCO_ID FROM DD_TCO_TIPO_COMERCIALIZACION WHERE DD_TCO_CODIGO IN ('02', '03')) THEN"
+				+ "         		CASE WHEN APU.DD_EPA_ID = ("
+				+ "        				SELECT APU.DD_EPA_ID"
+				+ "						FROM ACT_APU_ACTIVO_PUBLICACION APU"
+				+ "                     JOIN ACT_ACTIVO ACT ON APU.ACT_ID = ACT.ACT_ID"
+				+ "                     AND ACT.ACT_NUM_ACTIVO = "+numActivoPrincipalExcel+") THEN 1"
+				+ "        			ELSE 0"
+				+ "        			END"
+				+ "    	   		ELSE 1"
+				+ "    	   		END = 1)"
+		);
 
 		return activoEPU.equals("1");
 	}
@@ -2578,6 +2610,18 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 
 		return "0".equals(resultado);
 
+	}
+	
+	public Boolean esActivoConMultiplesComunicacionesVivas(Long numActivoHaya) {
+		
+		String resultado = "0";
+		if(numActivoHaya != null) {
+			resultado = rawDao.getExecuteSQL("SELECT count(1) FROM ACT_CMG_COMUNICACION_GENCAT com " +
+			 		" WHERE com.ACT_ID = (SELECT ACT_ID FROM ACT_ACTIVO WHERE ACT_NUM_ACTIVO = '"+numActivoHaya+"') " +
+			 		" AND com.DD_ECG_ID IN ( SELECT DD_ECG_ID FROM DD_ECG_ESTADO_COM_GENCAT WHERE DD_ECG_CODIGO IN ('CREADO','COMUNICADO'))");
+		}
+
+		return Integer.parseInt(resultado)>1;
 	}
 
 	public Boolean esNIFValido(String nif) {

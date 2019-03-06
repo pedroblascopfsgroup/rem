@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Daniel Algaba
+--## AUTOR=Rasul Akhmeddibirov
 --## FECHA_CREACION=20190225
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-5630
+--## INCIDENCIA_LINK=REMVIP-3350
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -16,6 +16,8 @@
 --##		REMVIP-1645: Optimización de la vista.
 --##		HREOS-4912: (20181204 - Alberto Checa) GENCAT - Aviso al crear un expediente comercial
 --##		HREOS-5360: Se cambia la forma de calcular si un activo es afecto GENCAT
+--##		REMVIP-1645 Optimización de la vista.
+--##		REMVIP-3350 Añadir la columna contraoferta al grid.
 --##########################################
 --*/
 
@@ -70,6 +72,7 @@ BEGIN
         null AS PRECIO_PUBLICADO,
         LCO.LCO_GESTOR_COMERCIAL AS GESTOR_LOTE,
 		    OFR.OFR_IMPORTE,
+				OFR.OFR_IMPORTE_CONTRAOFERTA,
 		    EOF.DD_EOF_DESCRIPCION,
 				EOF.DD_EOF_CODIGO,
         TRO.DD_TRO_CODIGO,

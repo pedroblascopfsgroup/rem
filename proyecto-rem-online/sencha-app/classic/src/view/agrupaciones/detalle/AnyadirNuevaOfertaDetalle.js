@@ -59,16 +59,6 @@ Ext.define('HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaDetalle', {
 	    				            	},
 	    				            	displayField: 'descripcion',
 	    	    						valueField: 'codigo',
-	    	    						listeners: {
-	    	    							change: function(combo, value) {
-	    	    								var me = this;
-	    	    								var form = combo.up('form');
-	    	    								var checkTanteo = form.down('field[name=dederechotanteo]');
-	    	    								checkTanteo.reset();
-	    	    								checkTanteo.setDisabled(CONST.TIPOS_OFERTA['ALQUILER'] == value)
-	    	    								
-	    	    							}
-	    	    						},
 	    			    				colspan: 2
 									},
 									{
@@ -198,14 +188,6 @@ Ext.define('HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaDetalle', {
 	    	    						disabled: true,
 	    			    				colspan: 2
 									},
-				            	    {
-				            	    	xtype: 		'checkboxfieldbase',
-				            	    	fieldLabel:	HreRem.i18n('fieldlabel.dederechotanteo'),
-				            	    	name:		'dederechotanteo',
-				            	    	allowBlank:	false,
-				            	    	bind:		'{oferta.deDerechoTanteo}',
-							        	inputValue: true
-				            	    },
 				            	    {
 										xtype: 		'checkboxfieldbase',
 				            	    	fieldLabel:	HreRem.i18n('fieldlabel.intencionfinanciar'),

@@ -1251,21 +1251,23 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			///Comprobamos si la tarea Elevar a Sanción está activa
 			dto.setPermiteProponer(false);
 
-			List<ActivoTramite> tramitesActivo = tramiteDao.getTramitesActivoTrabajoList(expediente.getTrabajo().getId());
-			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", "T015_ElevarASancion");
-			Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
-			TareaProcedimiento tap = genericDao.get(TareaProcedimiento.class, filtro, filtroBorrado);
-
-			for(ActivoTramite actt : tramitesActivo){
-				if(!DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CANCELADO.equals(actt.getEstadoTramite().getCodigo()) &&
-				   !DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CERRADO.equals(actt.getEstadoTramite().getCodigo()) &&
-				   !ESTADO_PROCEDIMIENTO_FINALIZADO.equals(actt.getEstadoTramite().getCodigo())
-				){
-					List<TareaExterna> tareas = activoTareaExternaApi.getByIdTareaProcedimientoIdTramite(actt.getId(),tap.getId());
-					for(TareaExterna t : tareas){
-						if(t.getTareaPadre().getTareaFinalizada() && t.getTareaPadre().getAuditoria().isBorrado()){
-							dto.setPermiteProponer(true);
-							break;
+			if(expediente != null && expediente.getTrabajo() != null){
+				List<ActivoTramite> tramitesActivo = tramiteDao.getTramitesActivoTrabajoList(expediente.getTrabajo().getId());
+				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", "T015_ElevarASancion");
+				Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+				TareaProcedimiento tap = genericDao.get(TareaProcedimiento.class, filtro, filtroBorrado);
+	
+				for(ActivoTramite actt : tramitesActivo){
+					if(!DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CANCELADO.equals(actt.getEstadoTramite().getCodigo()) &&
+					   !DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CERRADO.equals(actt.getEstadoTramite().getCodigo()) &&
+					   !ESTADO_PROCEDIMIENTO_FINALIZADO.equals(actt.getEstadoTramite().getCodigo())
+					){
+						List<TareaExterna> tareas = activoTareaExternaApi.getByIdTareaProcedimientoIdTramite(actt.getId(),tap.getId());
+						for(TareaExterna t : tareas){
+							if(t.getTareaPadre().getTareaFinalizada() && t.getTareaPadre().getAuditoria().isBorrado()){
+								dto.setPermiteProponer(true);
+								break;
+							}
 						}
 					}
 				}
@@ -6933,12 +6935,6 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 						}
 
 					}
-					try {
-						throw gex;
-					} catch (GestorDocumentalException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
 				}
 			}else {
 				listaAdjuntos=getAdjuntosExp(exp.getId(),listaAdjuntos);
@@ -7490,7 +7486,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				BeanUtils.copyProperty(activoDto, "conTitulo", activo.getSituacionPosesoria().getConTitulo().getCodigo());
 			}
 
-			if(!Checks.esNulo(activoDto) && activoDto.getConTituloTPA().equals("0")) {
+			if(!Checks.esNulo(activoDto) && activoDto.getConTitulo().equals("0")) {
 				ocupado = false;
 			}
 
@@ -7737,20 +7733,24 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		boolean expedienteAnulado = false;
 				
 		expedienteAnulado = comprobarExpedienteAnuladoGencat(expediente);
-		Oferta oferta = expediente.getOferta();	
-		List<OfertaGencat> ofertaGencat = genericDao.getList(OfertaGencat.class,genericDao.createFilter(FilterType.EQUALS,"oferta", oferta));
-		
-		if(ofertaGencat.size() > 0 && expedienteAnulado) {
-			List<ActivoOferta> actOfrList = expediente.getOferta().getActivosOferta();
-			for (ActivoOferta actOfr : actOfrList){
-				Activo activo = actOfr.getPrimaryKey().getActivo();
-				if (activoApi.isAfectoGencat(activo)) {
-					return descongelar;
+		if (!Checks.esNulo(expediente) && !Checks.esNulo(expediente.getOferta())) {
+			Oferta oferta = expediente.getOferta();	
+			List<OfertaGencat> ofertaGencat = genericDao.getList(OfertaGencat.class,genericDao.createFilter(FilterType.EQUALS,"oferta", oferta));
+			
+			if(ofertaGencat.size() > 0 && expedienteAnulado) {
+				List<ActivoOferta> actOfrList = expediente.getOferta().getActivosOferta();
+				for (ActivoOferta actOfr : actOfrList){
+					Activo activo = actOfr.getPrimaryKey().getActivo();
+					if (activoApi.isAfectoGencat(activo)) {
+						return descongelar;
+					}
 				}
+			} else {
+				descongelar = true;
 			}
 		} else {
-			descongelar = true;
-		}	
+			descongelar = true;	
+		}
 		return descongelar;
 	}
 }

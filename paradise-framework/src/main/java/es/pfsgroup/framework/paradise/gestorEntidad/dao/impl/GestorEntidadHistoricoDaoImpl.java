@@ -10,8 +10,6 @@ import es.pfsgroup.framework.paradise.gestorEntidad.dao.GestorEntidadHistoricoDa
 import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
 import es.pfsgroup.framework.paradise.gestorEntidad.model.GestorEntidadHistorico;
 
-
-@Repository("GestorEntidadHistoricoDao")
 public class GestorEntidadHistoricoDaoImpl extends AbstractEntityDao<GestorEntidadHistorico, Long> implements GestorEntidadHistoricoDao {
 	
 	@SuppressWarnings("unchecked")

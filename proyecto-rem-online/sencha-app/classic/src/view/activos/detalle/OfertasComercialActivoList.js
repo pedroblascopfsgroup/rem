@@ -86,9 +86,22 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 		            flex: 1
 		        },
 		        {
+		        	xtype: 'numbercolumn',
 		            dataIndex: 'importeOferta',
 		            text: HreRem.i18n('header.oferta.importeOferta'),
-		            flex: 1
+		            flex: 1,                	
+			        decimalPrecision: 2,
+			        decimalSeparation: ',',
+			        thousandSeparation: '.'
+		        },
+		        {
+		        	xtype: 'numbercolumn',
+		            dataIndex: 'importeContraoferta',
+		            text: HreRem.i18n('header.oferta.importeContraoferta'),
+		            flex: 1,
+		            decimalPrecision: 2,
+			        decimalSeparation: ',',
+			        thousandSeparation: '.'
 		        },
 		        {
 		            dataIndex: 'codigoEstadoOferta',

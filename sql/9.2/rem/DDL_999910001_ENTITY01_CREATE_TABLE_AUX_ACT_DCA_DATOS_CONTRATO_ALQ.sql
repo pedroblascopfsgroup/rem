@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Sonia García
---## FECHA_CREACION=20190116
+--## FECHA_CREACION=20190305
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=func-rem-alquileres
---## INCIDENCIA_LINK=HREOS-5234
+--## INCIDENCIA_LINK=HREOS-5684
 --## PRODUCTO=NO
 --## 
 --## Finalidad: DDL

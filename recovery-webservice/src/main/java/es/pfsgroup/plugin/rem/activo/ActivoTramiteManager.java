@@ -7,7 +7,6 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.apache.commons.beanutils.BeanUtils;
-import org.eclipse.jdt.internal.core.CreateFieldOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,12 +43,10 @@ import es.pfsgroup.plugin.rem.model.ComunicacionGencat;
 import es.pfsgroup.plugin.rem.model.DtoActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.InformeJuridico;
-import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.OfertaGencat;
 import es.pfsgroup.plugin.rem.model.TanteoActivoExpediente;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.Trabajo;
-import es.pfsgroup.plugin.rem.model.VExpPreBloqueoGencat;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoComunicacionGencat;
 import es.pfsgroup.plugin.rem.model.dd.DDSancionGencat;
@@ -813,11 +810,11 @@ public class ActivoTramiteManager implements ActivoTramiteApi{
 	}
 	
 	@Override
-	public Boolean tieneTramiteGENCATVigenteByIdActivo(Long idActivo, Long idExpediente){
+	public boolean tieneTramiteGENCATVigenteByIdActivo(Long idActivo, Long idExpediente){
 		
-		Boolean tieneTramiteGENCAT = false;
-		Boolean exosteGencatActivo = false;
-		Boolean tieneOfertaCreadaPorGencat = false;
+		boolean tieneTramiteGENCAT = false;
+		boolean exosteGencatActivo = false;
+		boolean tieneOfertaCreadaPorGencat = false;
 		
 		if(!Checks.esNulo(idActivo)){
 			
@@ -886,5 +883,14 @@ public class ActivoTramiteManager implements ActivoTramiteApi{
 		}
 		
 		return tieneTramiteGENCAT;
+	}
+	
+	public boolean tieneTramiteGENCATVigenteByIdActivo(TareaExterna tareaExterna){
+		TareaActivo tareaActivo = tareaActivoApi.getByIdTareaExterna(tareaExterna.getId());
+		Long idActivo = tareaActivo.getActivo().getId();
+		Filter filtroTrabajo = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", tareaActivo.getTramite().getTrabajo().getId());
+		ExpedienteComercial expediente = genericDao.get(ExpedienteComercial.class, filtroTrabajo);
+		
+		return tieneTramiteGENCATVigenteByIdActivo(idActivo, expediente.getId());
 	}
 }

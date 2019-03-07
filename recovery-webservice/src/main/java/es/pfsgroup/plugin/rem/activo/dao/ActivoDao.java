@@ -236,5 +236,25 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	 * @param idActivo
 	 */
 	boolean isUnidadAlquilable(Long idActivo);
+	/**
+	 * Dado un id de Agrupacion devuelve el numero de los activos que la componen.
+	 * Nota: El count cuenta tambien el activo matriz.
+	 * @param idAgrupacion
+	 */
+	Long countUAsByIdAgrupacionPA(Long idAgrupacion);
+	/**
+	 * Dado un id de Agrupacion devuelve true si la agrupacion es de tipo de Promocion de alquiler.
+	 * 
+	 * @param idAgrupacion
+	 */
+	boolean isAgrupacionPromocionAlquiler ( Long idAgrupacion );
+	/**
+	 * Dado un id de Agrupacion devuelve el numero de los activos que tienen ofertas Vivas.
+	 * 
+	 * @param idAgrupacion
+	 */
+	boolean existenUAsconOfertasVivas( Long idAgrupacion );
+	
+	boolean existenUAsconTrabajos( Long idAgrupacion );
 
 }

@@ -632,7 +632,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		if (!Checks.esNulo(activo)) {
 			boolean isUnidadAlquilable = activoDao.isUnidadAlquilable(activo.getId());
 			boolean isActivoMatriz = activoDao.isActivoMatriz(activo.getId());
-			if (!Checks.esNulo(isUnidadAlquilable) && (isUnidadAlquilable || isActivoMatriz)) {
+			if (isUnidadAlquilable || isActivoMatriz) {
 
 				Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "ACT_ID", activo.getId());
 				List<ActivoAgrupacionActivo> activosAgrupacion = genericDao.getList(ActivoAgrupacionActivo.class, filtroActivo);
@@ -641,10 +641,9 @@ public class TabActivoDatosBasicos implements TabActivoService {
 						
 						if (agrupacionActivo.getAgrupacion().getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_PROMOCION_ALQUILER) && agrupacionActivo.getPrincipal() == 1) {
 							
-							activoDto.setActivoMatriz(activoDao.isActivoMatriz(activo.getId()));
+							activoDto.setActivoMatriz(true);
 							Filter filtroAgrupacion = genericDao.createFilter(FilterType.EQUALS, "AGR_ID", agrupacionActivo.getAgrupacion().getId());
-							List<ActivoAgrupacionActivo> UAsEnAgrupacion = genericDao.getList(ActivoAgrupacionActivo.class, filtroAgrupacion);
-							int countUnidadesAlquilables = UAsEnAgrupacion.size() -1;
+							Long countUnidadesAlquilables = activoDao.countUAsByIdAgrupacionPA(agrupacionActivo.getAgrupacion().getId());
 							activoDto.setUnidadesAlquilablesEnAgrupacion(countUnidadesAlquilables);
 							
 							

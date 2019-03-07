@@ -222,7 +222,7 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 		private Boolean activoMatriz;
 		private Long numActivoMatriz;
 		private Long porcentajeParticipacion;
-		private int unidadesAlquilablesEnAgrupacion;
+		private Long unidadesAlquilablesEnAgrupacion;
 	
 	
 	public Boolean getTieneOfertaAlquilerViva() {
@@ -1747,10 +1747,10 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 		this.porcentajeParticipacion = porcentajeParticipacion;
 	}
 
-	public int getUnidadesAlquilablesEnAgrupacion() {
+	public Long getUnidadesAlquilablesEnAgrupacion() {
 		return unidadesAlquilablesEnAgrupacion;
 	}
-	public void setUnidadesAlquilablesEnAgrupacion(int unidadesAlquilablesEnAgrupacion) {
+	public void setUnidadesAlquilablesEnAgrupacion(Long unidadesAlquilablesEnAgrupacion) {
 	this.unidadesAlquilablesEnAgrupacion = unidadesAlquilablesEnAgrupacion;
 	}
 	

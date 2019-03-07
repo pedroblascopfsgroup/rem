@@ -269,6 +269,10 @@ public class AgrupacionAdapter {
 	private static final String TIPO_GESTOR_COMERCIAL_VENTA = "GCOM";
 	private static final String TIPO_GESTOR_COMERCIAL_ALQUILER = "GESTCOMALQ";
 	public static final String AGRUPACION_CAMBIO_DEST_COMERCIAL_A_VENTA_CON_ALQUILADOS = "No se puede realizar el cambio de destino comercial debido a que la agrupación tiene activos alquilados con título";
+	
+	//Errores para la validacion de una agrupacion de PROMOCION DE ALQUILER
+	public static final String EXISTEN_UAS_CON_OFERTAS_VIVAS  = "Error: Hay Unidades Alquilables con ofertas vivas";
+	public static final String EXISTEN_UAS_CON_TRABAJOS_NO_FINALIZADOS  = "Error: Hay Unidades Alquilables con trabajos por finalizar";
 
 
 	public static final String SPLIT_VALUE = ";s;";
@@ -2426,6 +2430,8 @@ public class AgrupacionAdapter {
 			if (!Checks.esNulo(error)) {
 				throw new JsonViewerException(error);
 			}
+			
+			
 		}
 		if (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_ASISTIDA)) {
 			// si modificamos la vigencia nos guardamos la traza
@@ -2506,7 +2512,35 @@ public class AgrupacionAdapter {
 						}	
 					}
 					
+					
+					
 					activoAgrupacionApi.saveOrUpdate(pa);
+				}
+				if (!Checks.esNulo(dto.getFechaBaja())) {
+					List<ActivoAgrupacionActivo> activoAgrupacionPA = new ArrayList<ActivoAgrupacionActivo>();
+					Filter filtroAgrupacion = genericDao.createFilter(FilterType.EQUALS, "agrupacion.id", agrupacion.getId());
+					activoAgrupacionPA = genericDao.getList(ActivoAgrupacionActivo.class, filtroAgrupacion);
+					if (!Checks.estaVacio(activoAgrupacionPA)) {
+						
+						for (ActivoAgrupacionActivo activo : activoAgrupacionPA) {
+							Long idActivo = activo.getActivo().getId();
+							Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", idActivo);
+							Activo activoActual = activo.getActivo();
+							PerimetroActivo perimetroActivo = genericDao.get(PerimetroActivo.class, filtroActivo);
+							if (!Checks.esNulo(perimetroActivo)) {
+								perimetroActivo.setActivo(activoActual);
+								perimetroActivo.setIncluidoEnPerimetro(0);
+								perimetroActivo.setAplicaTramiteAdmision(0);
+								perimetroActivo.setAplicaGestion(0);
+								perimetroActivo.setAplicaAsignarMediador(0);
+								perimetroActivo.setAplicaComercializar(0);
+								perimetroActivo.setAplicaFormalizar(0);
+								perimetroActivo.setAplicaPublicar(false);
+								
+								genericDao.save(PerimetroActivo.class, perimetroActivo);
+							}
+						}
+					}	
 				}
 	
 			} catch (Exception e) {
@@ -3111,9 +3145,18 @@ public class AgrupacionAdapter {
 
 		String error = null;
 
-		if (existenOfertasActivasEnAgrupacion(agrupacion.getId())) {
+		if (existenOfertasActivasEnAgrupacion(agrupacion.getId())) {  
 			error = AGRUPACION_BAJA_ERROR_OFERTAS_VIVAS;
+		}else if (activoDao.isAgrupacionPromocionAlquiler(agrupacion.getId()) &&  ( activoDao.countUAsByIdAgrupacionPA(agrupacion.getId())> 0)) {
+			if (activoDao.existenUAsconOfertasVivas(agrupacion.getId())) {
+				error = EXISTEN_UAS_CON_OFERTAS_VIVAS;
+			}else if (activoDao.existenUAsconTrabajos(agrupacion.getId())) {
+				error = EXISTEN_UAS_CON_TRABAJOS_NO_FINALIZADOS;
+			}
+				
 		}
+		
+		
 
 		return error;
 	}

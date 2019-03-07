@@ -23,9 +23,11 @@ import es.capgemini.devon.message.MessageService;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.Localidad;
+import es.capgemini.pfs.gestorEntidad.model.GestorEntidad;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.capgemini.pfs.procesosJudiciales.TipoProcedimientoManager;
+import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
@@ -42,6 +44,8 @@ import es.pfsgroup.framework.paradise.bulkUpload.liberators.MSVLiberatorsFactory
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDocumentoMasivo;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVHojaExcel;
+import es.pfsgroup.framework.paradise.gestorEntidad.api.GestorEntidadApi;
+import es.pfsgroup.framework.paradise.gestorEntidad.dao.GestorEntidadDao;
 import es.pfsgroup.framework.paradise.jbpm.JBPMProcessManagerApi;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
@@ -245,6 +249,9 @@ public class AgrupacionAdapter {
 	@Autowired
 	private ActivoHistoricoPatrimonioDao activoHistoricoPatrimonioDao;
 	
+	@Autowired
+	private GestorEntidadDao gestorEntidadDao;
+	
 	@Resource(name = "entityTransactionManager")
     private PlatformTransactionManager transactionManager;
 
@@ -268,8 +275,9 @@ public class AgrupacionAdapter {
 	private static final String TIPO_COMERCIAL_ALQUILER = "Alquiler";
 	private static final String TIPO_GESTOR_COMERCIAL_VENTA = "GCOM";
 	private static final String TIPO_GESTOR_COMERCIAL_ALQUILER = "GESTCOMALQ";
+	private static final String TIPO_SUPERVISOR_COMERCIAL_ALQUILER = "SUPCOMALQ";
 	public static final String AGRUPACION_CAMBIO_DEST_COMERCIAL_A_VENTA_CON_ALQUILADOS = "No se puede realizar el cambio de destino comercial debido a que la agrupación tiene activos alquilados con título";
-	
+	private static final String usuarioSuper = "HAYASUPER";
 	//Errores para la validacion de una agrupacion de PROMOCION DE ALQUILER
 	public static final String EXISTEN_UAS_CON_OFERTAS_VIVAS  = "Error: Hay Unidades Alquilables con ofertas vivas";
 	public static final String EXISTEN_UAS_CON_TRABAJOS_NO_FINALIZADOS  = "Error: Hay Unidades Alquilables con trabajos por finalizar";
@@ -2348,20 +2356,54 @@ public class AgrupacionAdapter {
 															throw new JsonViewerException("El activo ya pertenece a otra agrupación de promoción de alquiler");
 														}
 													}
-													List<GestorActivo> gestores = genericDao.getList(GestorActivo.class,genericDao.createFilter(FilterType.EQUALS,"activo.id", activo.getId()));
+													Usuario usu=proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+													List <Perfil> perfiles = usu.getPerfiles();
+													if(!Checks.estaVacio(perfiles)) {
+														for (Perfil perfil : perfiles) {
+															if(usuarioSuper.equals(perfil.getCodigo())) {
+																return false;
+															}
+														}
+													}
 													
+													List<GestorActivo> gestores = genericDao.getList(GestorActivo.class,genericDao.createFilter(FilterType.EQUALS,"activo.id", activo.getId()),genericDao.createFilter(FilterType.EQUALS,"auditoria.borrado", false));
+													
+													Boolean esGestorOSupervisorAlquilerComercial = false;
 													if(!Checks.estaVacio(gestores)) {
 														for (GestorActivo gestorActivo : gestores) {
+															
 															if (ActivoAdapter.CODIGO_SUPERVISOR_COMERCIAL_ALQUILER.equals(gestorActivo.getTipoGestor().getCodigo())
-																	|| ActivoAdapter.CODIGO_GESTOR_COMERCIAL_ALQUILER.equals(gestorActivo.getTipoGestor().getCodigo())) {
-																return true;
-															}
-		
+															|| ActivoAdapter.CODIGO_GESTOR_COMERCIAL_ALQUILER.equals(gestorActivo.getTipoGestor().getCodigo())) {
+																esGestorOSupervisorAlquilerComercial = true;
+																break;
+															} 
 														}
-														throw new JsonViewerException("Este activo NO está bajo su gestión");
-													}else {
-														throw new JsonViewerException("El activo NO tiene gestores");
+													
+														if(esGestorOSupervisorAlquilerComercial) {
+														
+															List<Usuario> usuariosSupervisor = gestorEntidadDao.getListUsuariosGestoresPorTipoCodigo(TIPO_SUPERVISOR_COMERCIAL_ALQUILER);
+															List<Usuario> usuariosGestor = gestorEntidadDao.getListUsuariosGestoresPorTipoCodigo(TIPO_GESTOR_COMERCIAL_ALQUILER);
+															
+															if(!Checks.estaVacio(usuariosSupervisor)) {
+																for (Usuario usuario : usuariosSupervisor) {
+																	if(usu.getId().equals(usuario.getId())) {
+																		return false;
+																	}
+																}
+															}
+															
+															if(!Checks.estaVacio(usuariosGestor)) {
+																for (Usuario usuario : usuariosGestor) {
+																	if(usu.getId().equals(usuario.getId())) {
+																		return false;
+																	}
+																}
+															}
+															throw new JsonViewerException("Este activo NO está bajo su gestión");
+														}
+														throw new JsonViewerException("Este activo NO tiene los gestores adecuados para añadirlo a matriz de alquiler");
 													}
+													throw new JsonViewerException("El activo NO tiene gestores");
 												}
 											}else {
 												throw new JsonViewerException("Activo alquilado");
@@ -2412,6 +2454,7 @@ public class AgrupacionAdapter {
 		}
 		return false;
 	}
+	
 	
 	
 

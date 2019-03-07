@@ -24,11 +24,12 @@
 	<bean id="activoEndProcessActionHandler" class="es.pfsgroup.plugin.rem.jbpm.handler.ActivoEndProcessActionHandler"/>
 
 	<bean id="activarProrroga" class="es.pfsgroup.plugin.rem.jbpm.handler.ActivoProrrogarTareasActionHandler"/>
+	<bean id="tramiteActuacionTecnicaNodoOcultoHandler" class="es.pfsgroup.plugin.rem.jbpm.handler.TramiteActuacionTecnicaNodoOcultoHandler"/>
 
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteAdmision.xml" p:version="2033"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteDocumental.xml" p:version="2034"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteDocumentalCEE.xml" p:version="2042"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteActuacionTecnica.xml" p:version="2050"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteActuacionTecnica.xml" p:version="-1"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteTasacion.xml" p:version="2062"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteInforme.xml" p:version="2066"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteFacturacion.xml" p:version="2072"/>
@@ -239,6 +240,11 @@
             def mismoNumeroAdjuntosComoCompradoresExpedienteUGValidacion(String codigo, String unidadGestion, String cartera){
             	def activoTramiteManager = ctx.getBean("activoTramiteManager");
             	return activoTramiteManager.mismoNumeroAdjuntosComoCompradoresExpedienteUGValidacion(tareaExterna, codigo, unidadGestion, cartera);
+            }
+            
+            def mismoNumeroAdjuntosComoTareasTipoUGValidacion(String codigoDocAdjunto, String uGestion, Long idTareaProcedimiento){
+            	def activoTramiteManager = ctx.getBean("activoTramiteManager");
+            	return activoTramiteManager.mismoNumeroAdjuntosComoTareasTipoUGValidacion(tareaExterna, codigoDocAdjunto, uGestion, idTareaProcedimiento);
             }
             
             def checkFechaEmisionInformeJuridico() {
@@ -481,6 +487,34 @@
 			def esCajamar = {
 				def activoManager = ctx.getBean("activoManager");
             	return activoManager.esCajamar(idActivo);
+			}
+			def esCerberus = {
+				def activoManager = ctx.getBean("activoManager");
+            	return activoManager.esCerberus(idActivo);
+			}
+			def esSubcarteraJaipurInmobiliario = {
+				def activoManager = ctx.getBean("activoManager");
+            	return activoManager.esSubcarteraJaipurInmobiliario(idActivo);
+			}
+			def esSubcarteraAgoraInmobiliario = {
+				def activoManager = ctx.getBean("activoManager");
+            	return activoManager.esSubcarteraAgoraInmobiliario(idActivo);
+			}
+			def esSubcarteraEgeo = {
+				def activoManager = ctx.getBean("activoManager");
+            	return activoManager.esSubcarteraEgeo(idActivo);
+			}
+			def esEgeo = {
+				def activoManager = ctx.getBean("activoManager");
+            	return activoManager.esEgeo(idActivo);
+			}
+			def esSubcarteraZeus = {
+				def activoManager = ctx.getBean("activoManager");
+            	return activoManager.esSubcarteraZeus(idActivo);
+			}
+			def esSubcarteraPromontoria = {
+				def activoManager = ctx.getBean("activoManager");
+            	return activoManager.esSubcarteraPromontoria(idActivo);
 			}
 			def superaLimiteLiberbank = {
 				def trabajoManager = ctx.getBean("trabajoManager");

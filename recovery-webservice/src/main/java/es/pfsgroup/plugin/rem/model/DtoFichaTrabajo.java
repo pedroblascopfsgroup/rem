@@ -156,6 +156,8 @@ public class DtoFichaTrabajo {
     private Boolean requerimiento;
     
     private Boolean logadoGestorMantenimiento;
+    
+    private String codSubcartera;
 	
     public Long getIdTrabajo() {
 		return idTrabajo;
@@ -754,8 +756,12 @@ public class DtoFichaTrabajo {
 	public void setLogadoGestorMantenimiento(Boolean logadoGestorMantenimiento) {
 		this.logadoGestorMantenimiento = logadoGestorMantenimiento;
 	}
-	
-	
-	
-	
+
+	public String getCodSubcartera() {
+		return codSubcartera;
+	}
+
+	public void setCodSubcartera(String codSubcartera) {
+		this.codSubcartera = codSubcartera;
+	}
 }

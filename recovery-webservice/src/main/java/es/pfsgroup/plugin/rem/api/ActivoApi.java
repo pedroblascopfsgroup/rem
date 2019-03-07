@@ -1106,4 +1106,18 @@ public interface ActivoApi {
 	 * @return boolean
 	 */
 	boolean getMotivosCalificacionNegativaSubsanados(Long idActivo, String idMotivo);
+
+	boolean esCerberus(Long idActivo);
+
+	boolean esEgeo(Long idActivo);
+
+	boolean esSubcarteraJaipurInmobiliario(Long idActivo);
+
+	boolean esSubcarteraAgoraInmobiliario(Long idActivo);
+
+	boolean esSubcarteraEgeo(Long idActivo);
+
+	boolean esSubcarteraZeus(Long idActivo);
+
+	boolean esSubcarteraPromontoria(Long idActivo);
 }

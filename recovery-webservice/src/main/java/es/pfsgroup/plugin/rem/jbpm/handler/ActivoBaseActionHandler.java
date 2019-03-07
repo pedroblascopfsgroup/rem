@@ -63,6 +63,7 @@ import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.TimerTareaActivo;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 
 /**
@@ -86,6 +87,7 @@ public abstract class ActivoBaseActionHandler implements ActionHandler {
     private static final String CODIGO_T004_RESULTADO_TARIFICADA = "T004_ResultadoTarificada";
     private static final String CODIGO_T004_RESULTADO_NOTARIFICADA = "T004_ResultadoNoTarificada";
     public static final String CODIGO_FIN = "Fin";
+    private static final String CODIGO_T004_SOLICITUD_EXTRAORDINARIA = "T004_SolicitudExtraordinaria";
     
     protected final Log logger = LogFactory.getLog(getClass());
 
@@ -699,12 +701,23 @@ public abstract class ActivoBaseActionHandler implements ActionHandler {
 			responsableTrabajo = usuarioLogado;
 		}
 		
-
+		DDCartera cartera = activo.getCartera();
+		DDSubcartera subcartera = activo.getSubcartera();
+		
 		if(!Checks.esNulo(tareaExterna) && !Checks.esNulo(tareaExterna.getTareaProcedimiento()) && 
 				(!tareaExterna.getTareaProcedimiento().getTipoProcedimiento().getCodigo().equals("T004") ||
 				(CODIGO_T004_RESULTADO_TARIFICADA.equals(tareaExterna.getTareaProcedimiento().getCodigo()))||
 				(CODIGO_T004_RESULTADO_NOTARIFICADA.equals(tareaExterna.getTareaProcedimiento().getCodigo()))||
-				(CODIGO_T004_AUTORIZACION_PROPIETARIO.equals(tareaExterna.getTareaProcedimiento().getCodigo()) && DDCartera.CODIGO_CARTERA_LIBERBANK.equals(activo.getCartera().getCodigo())))){
+				(CODIGO_T004_AUTORIZACION_PROPIETARIO.equals(tareaExterna.getTareaProcedimiento().getCodigo()) && DDCartera.CODIGO_CARTERA_LIBERBANK.equals(activo.getCartera().getCodigo())) ||
+				(((DDCartera.CODIGO_CARTERA_CERBERUS.equals(cartera.getCodigo()) 
+						&& (DDSubcartera.CODIGO_JAIPUR_INMOBILIARIO.equals(subcartera.getCodigo()) 
+								|| DDSubcartera.CODIGO_AGORA_INMOBILIARIO.equals(subcartera.getCodigo())
+								|| DDSubcartera.CODIGO_EGEO.equals(subcartera.getCodigo())))
+				   || (DDCartera.CODIGO_CARTERA_EGEO.equals(cartera.getCodigo())
+						   && (DDSubcartera.CODIGO_ZEUS.equals(subcartera.getCodigo())
+								   || DDSubcartera.CODIGO_PROMONTORIA.equals(subcartera.getCodigo())))) 
+				&& (CODIGO_T004_SOLICITUD_EXTRAORDINARIA.equals(tareaExterna.getTareaProcedimiento().getCodigo()) 
+						|| CODIGO_T004_AUTORIZACION_PROPIETARIO.equals(tareaExterna.getTareaProcedimiento().getCodigo()))))){
 			supervisor = userAssigantionService.getSupervisor(tareaExterna);
 			Usuario gestor = userAssigantionService.getUser(tareaExterna); 
 			

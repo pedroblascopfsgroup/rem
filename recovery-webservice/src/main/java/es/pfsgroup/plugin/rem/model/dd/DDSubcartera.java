@@ -44,9 +44,13 @@ public class DDSubcartera implements Auditable, Dictionary {
 	public static final String CODIGO_BANKIA_SOLVIA = "14";
 	public static final String CODIGO_BANKIA_SAREB = "15";
 	public static final String CODIGO_BANKIA_SAREB_PRE_IBERO = "19";
+	public static final String CODIGO_JAIPUR_INMOBILIARIO = "37";
 	public static final String CODIGO_JAIPUR_FINANCIERO = "38";
 	public static final String CODIGO_AGORA_INMOBILIARIO = "135";
 	public static final String CODIGO_AGORA_FINANCIERO = "137";
+	public static final String CODIGO_EGEO = "39";
+	public static final String CODIGO_ZEUS = "41";
+	public static final String CODIGO_PROMONTORIA = "132";
 
 	@Id
 	@Column(name = "DD_SCR_ID")

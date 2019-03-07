@@ -181,6 +181,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
+import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
@@ -2023,6 +2024,27 @@ public class ActivoAdapter {
 							beanUtilNotNull.copyProperty(dtoTramite, "esTareaAutorizacionBankia", true);
 						}
 					}
+				}
+				
+				if(ActivoTramiteApi.CODIGO_TRAMITE_ACTUACION_TECNICA.equals(tramite.getTipoTramite().getCodigo())){
+					List<TareaExterna> tareasTramite = activoTareaExternaApi.getActivasByIdTramiteTodas(idTramite);
+					DDCartera cartera = tramite.getActivo().getCartera();
+					DDSubcartera subcartera = tramite.getActivo().getSubcartera();
+					if((DDCartera.CODIGO_CARTERA_CERBERUS.equals(cartera.getCodigo()) 
+							&& (DDSubcartera.CODIGO_JAIPUR_INMOBILIARIO.equals(subcartera.getCodigo()) 
+									|| DDSubcartera.CODIGO_AGORA_INMOBILIARIO.equals(subcartera.getCodigo())
+									|| DDSubcartera.CODIGO_EGEO.equals(subcartera.getCodigo())))
+					   || (DDCartera.CODIGO_CARTERA_EGEO.equals(cartera.getCodigo())
+							   && (DDSubcartera.CODIGO_ZEUS.equals(subcartera.getCodigo())
+									   || DDSubcartera.CODIGO_PROMONTORIA.equals(subcartera.getCodigo())))){
+						for (TareaExterna tarea : tareasTramite) {
+							if (TrabajoApi.CODIGO_T004_AUTORIZACION_PROPIETARIO.equals(tarea.getTareaProcedimiento().getCodigo())
+									|| TrabajoApi.CODIGO_T004_SOLICITUD_EXTRAORDINARIA.equals(tarea.getTareaProcedimiento().getCodigo())) {
+								dtoTramite.setEsTareaSolicitudOAutorizacion(true);
+							}
+						}
+					}
+					
 				}
 			}
 			if(DDEstadoProcedimiento.ESTADO_PROCEDIMIENTO_CANCELADO.equals(tramite.getEstadoTramite().getCodigo())

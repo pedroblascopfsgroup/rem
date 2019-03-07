@@ -5028,6 +5028,62 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 		return DDCartera.CODIGO_CARTERA_CAJAMAR.equals(activo.getCartera().getCodigo());
 	}
+	
+	@Override
+	public boolean esCerberus(Long idActivo){
+		Filter filterAct = genericDao.createFilter(FilterType.EQUALS, "id", idActivo);
+		Activo activo = genericDao.get(Activo.class, filterAct);
+		
+		return DDCartera.CODIGO_CARTERA_CERBERUS.equals(activo.getCartera().getCodigo());
+	}
+	
+	@Override
+	public boolean esSubcarteraJaipurInmobiliario(Long idActivo){
+		Filter filterAct = genericDao.createFilter(FilterType.EQUALS, "id", idActivo);
+		Activo activo = genericDao.get(Activo.class, filterAct);
+		
+		return DDSubcartera.CODIGO_JAIPUR_INMOBILIARIO.equals(activo.getSubcartera().getCodigo());
+	}
+	
+	@Override
+	public boolean esSubcarteraAgoraInmobiliario(Long idActivo){
+		Filter filterAct = genericDao.createFilter(FilterType.EQUALS, "id", idActivo);
+		Activo activo = genericDao.get(Activo.class, filterAct);
+		
+		return DDSubcartera.CODIGO_AGORA_INMOBILIARIO.equals(activo.getSubcartera().getCodigo());
+	}
+	
+	@Override
+	public boolean esSubcarteraEgeo(Long idActivo){
+		Filter filterAct = genericDao.createFilter(FilterType.EQUALS, "id", idActivo);
+		Activo activo = genericDao.get(Activo.class, filterAct);
+		
+		return DDSubcartera.CODIGO_EGEO.equals(activo.getSubcartera().getCodigo());
+	}
+	
+	@Override
+	public boolean esEgeo(Long idActivo){
+		Filter filterAct = genericDao.createFilter(FilterType.EQUALS, "id", idActivo);
+		Activo activo = genericDao.get(Activo.class, filterAct);
+		
+		return DDCartera.CODIGO_CARTERA_EGEO.equals(activo.getCartera().getCodigo());
+	}
+	
+	@Override
+	public boolean esSubcarteraZeus(Long idActivo){
+		Filter filterAct = genericDao.createFilter(FilterType.EQUALS, "id", idActivo);
+		Activo activo = genericDao.get(Activo.class, filterAct);
+		
+		return DDSubcartera.CODIGO_ZEUS.equals(activo.getSubcartera().getCodigo());
+	}
+	
+	@Override
+	public boolean esSubcarteraPromontoria(Long idActivo){
+		Filter filterAct = genericDao.createFilter(FilterType.EQUALS, "id", idActivo);
+		Activo activo = genericDao.get(Activo.class, filterAct);
+		
+		return DDSubcartera.CODIGO_PROMONTORIA.equals(activo.getSubcartera().getCodigo());
+	}
 
 	@Override
 	public DtoActivoFichaCabecera getActivosPropagables(Long idActivo) {

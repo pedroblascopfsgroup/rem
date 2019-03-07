@@ -1,7 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root-container name="activo_tramiteActuacionTecnica" width="1238" height="1189">
+<root-container name="activo_tramiteActuacionTecnica" width="1304" height="863">
   <node name="inicio" x="0" y="0" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="nodoOrigenTramiteActuacionTecnica" x="0" y="0" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="nodoOrigenTramiteActuacionTecnicaDecision" x="0" y="0" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -12,9 +25,6 @@
     </edge>
   </node>
   <node name="T004_AnalisisPeticionDecision" x="424" y="68" width="220" height="36">
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
     <edge>
       <label x="-46" y="-16"/>
     </edge>
@@ -28,62 +38,35 @@
       <label x="5" y="-10"/>
     </edge>
     <edge>
-      <label x="5" y="-10"/>
-    </edge>
-  </node>
-  <node name="T004_SolicitudPresupuestos" x="22" y="68" width="201" height="36">
-    <edge>
-      <label x="-84" y="-18"/>
-    </edge>
-  </node>
-  <node name="T004_EleccionPresupuesto" x="19" y="162" width="204" height="36">
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-  </node>
-  <node name="T004_EleccionPresupuestoDecision" x="3" y="277" width="241" height="36">
-    <edge>
-      <label x="-92" y="-34"/>
-    </edge>
-    <edge>
-      <label x="-111" y="76"/>
-      <bendpoint w1="189" h1="-130" w2="155" h2="77"/>
-    </edge>
-    <edge>
-      <label x="-91" y="-12"/>
-    </edge>
-    <edge>
-      <label x="-139" y="-76"/>
+      <label x="-46" y="-16"/>
     </edge>
     <edge>
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="T004_SolicitudExtraordinaria" x="762" y="577" width="204" height="36">
+  <node name="T004_SolicitudPresupuestos" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="T004_AutorizacionPropietario" x="758" y="636" width="215" height="36">
+  <node name="T004_EleccionPresupuesto" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="T004_AutorizacionPropietarioDecision" x="741" y="703" width="254" height="36">
-    <edge>
-      <label x="-25" y="7"/>
-      <bendpoint w1="170" h1="-3" w2="-97" h2="479"/>
-    </edge>
-    <edge>
-      <label x="1" y="-20"/>
-    </edge>
-  </node>
-  <node name="T004_FijacionPlazo" x="424" y="749" width="207" height="36">
+  <node name="T004_EleccionPresupuestoDecision" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
-  </node>
-  <node name="T004_FijacionPlazoDecision" x="432" y="811" width="198" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
     <edge>
       <label x="5" y="-10"/>
     </edge>
@@ -91,86 +74,82 @@
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="T004_ResultadoTarificada" x="354" y="910" width="180" height="36">
+  <node name="T004_SolicitudExtraordinaria" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="T004_ResultadoNoTarificada" x="579" y="880" width="207" height="36">
+  <node name="T004_AutorizacionPropietario" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="T004_ResultadoNoTarificadaDecision" x="561" y="937" width="250" height="36">
-    <edge>
-      <label x="-26" y="-20"/>
-    </edge>
+  <node name="T004_AutorizacionPropietarioDecision" x="0" y="0" width="132" height="36">
     <edge>
       <label x="5" y="-10"/>
-    </edge>
-  </node>
-  <node name="T004_SolicitudPresupuestoComplementario" x="832" y="1022" width="300" height="36">
-    <edge>
-      <label x="-57" y="253"/>
-      <bendpoint w1="109" h1="-149" w2="555" h2="562"/>
-      <bendpoint w1="126" h1="-513" w2="577" h2="-2"/>
-    </edge>
-  </node>
-  <node name="T004_ValidacionTrabajo" x="448" y="1026" width="200" height="36">
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-  </node>
-  <node name="T004_ValidacionTrabajoDecision" x="426" y="1088" width="243" height="36">
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="-133" y="148"/>
-      <bendpoint w1="276" h1="0" w2="14" h2="480"/>
-      <bendpoint w1="276" h1="-337" w2="296" h2="2"/>
-    </edge>
-  </node>
-  <node name="T004_CierreEconomico" x="451" y="1151" width="196" height="36">
-    <edge>
-      <label x="5" y="-10"/>
-      <bendpoint w1="594" h1="-1" w2="7" h2="699"/>
-    </edge>
-  </node>
-  <node name="T004_AutorizacionBankia" x="6" y="558" width="234" height="36">
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-  </node>
-  <node name="T004_AutorizacionBankiaDecision" x="-9" y="641" width="259" height="36">
-    <edge>
-      <label x="5" y="-10"/>
-    </edge>
-    <edge>
-      <label x="-9" y="-7"/>
-    </edge>
-  </node>
-  <node name="Fin" x="1094" y="68" width="132" height="36"/>
-  <node name="FIn2" x="57" y="856" width="132" height="36"/>
-  <node name="T004_EleccionProveedorYTarifaDecision" x="752" y="281" width="284" height="36">
-    <edge>
-      <label x="-16" y="-63"/>
     </edge>
     <edge>
       <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="T004_AutorizacionBankia" x="6" y="558" width="234" height="36">
+  <node name="T004_FijacionPlazo" x="0" y="0" width="132" height="36">
     <edge>
-      <label x="-48" y="-15"/>
-    </edge>
-    <edge>
-      <label x="-39" y="-7"/>
+      <label x="5" y="-10"/>
     </edge>
   </node>
-  <node name="T004_EleccionProveedorYTarifa" x="417" y="155" width="226" height="36">
+  <node name="T004_FijacionPlazoDecision" x="0" y="0" width="132" height="36">
     <edge>
-      <label x="-15" y="-16"/>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="T004_ResultadoTarificada" x="0" y="0" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="T004_ResultadoNoTarificada" x="0" y="0" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="T004_ResultadoNoTarificadaDecision" x="0" y="0" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="T004_SolicitudPresupuestoComplementario" x="0" y="0" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="T004_SolicitudPresupuestoComplementarioDecision" x="0" y="0" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="T004_ValidacionTrabajo" x="0" y="0" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+  </node>
+  <node name="T004_ValidacionTrabajoDecision" x="0" y="0" width="132" height="36">
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
+    </edge>
+    <edge>
+      <label x="5" y="-10"/>
     </edge>
   </node>
 </root-container>

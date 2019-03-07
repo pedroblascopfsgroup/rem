@@ -528,7 +528,11 @@ public class AgrupacionAdapter {
 
 				if(activoPrincipal != null) {
 					PerimetroActivo perimetroActivo = activoApi.getPerimetroByIdActivo(activoPrincipal.getId());
-
+					
+					if(!Checks.esNulo(activoPrincipal.getSubcartera())){
+						BeanUtils.copyProperty(dtoAgrupacion, "codSubcartera", activoPrincipal.getSubcartera().getCodigo());
+					}
+					
 					if (perimetroActivo != null) {
 						BeanUtils.copyProperty(dtoAgrupacion, "incluidoEnPerimetro", perimetroActivo.getIncluidoEnPerimetro() == 1);
 					}
@@ -593,6 +597,9 @@ public class AgrupacionAdapter {
 						BeanUtils.copyProperty(dtoAgrupacion, "cartera", agrupacion.getActivos().get(0).getActivo().getCartera().getDescripcion());
 						BeanUtils.copyProperty(dtoAgrupacion, "codigoCartera", agrupacion.getActivos().get(0).getActivo().getCartera().getCodigo());
 					}
+					 if(!Checks.estaVacio(agrupacion.getActivos()) && !Checks.esNulo(agrupacion.getActivos().get(0).getActivo().getSubcartera())){
+						 BeanUtils.copyProperty(dtoAgrupacion, "codSubcartera", agrupacion.getActivos().get(0).getActivo().getSubcartera().getCodigo());
+					 }
 					 if (!agrupacion.getActivos().isEmpty() && !Checks.esNulo(agrupacion.getActivos().get(0)) && agrupacion.getActivos().get(0).getActivo().getActivoPublicacion().getTipoComercializacion() != null) {
 						BeanUtils.copyProperty(dtoAgrupacion, "tipoComercializacionDescripcion", agrupacion.getActivos().get(0).getActivo().getActivoPublicacion().getTipoComercializacion().getDescripcion());
 						BeanUtils.copyProperty(dtoAgrupacion, "tipoComercializacionCodigo", agrupacion.getActivos().get(0).getActivo().getActivoPublicacion().getTipoComercializacion().getCodigo());

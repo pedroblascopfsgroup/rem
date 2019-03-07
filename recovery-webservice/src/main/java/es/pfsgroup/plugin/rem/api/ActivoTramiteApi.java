@@ -287,5 +287,8 @@ public interface ActivoTramiteApi {
 	public void reactivarTareaResultadoPBC(TareaExterna tareaExterna, ExpedienteComercial expediente);
 
 	List<TareaExterna> getListaTareaExternaByIdTramite(Long idTramite);
+	
+	String mismoNumeroAdjuntosComoTareasTipoUGValidacion(TareaExterna tareaExterna, String codigoDocAdjunto,
+			String uGestion, Long idTareaProcedimiento);
 }
 

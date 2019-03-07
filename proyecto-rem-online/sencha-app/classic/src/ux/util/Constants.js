@@ -171,9 +171,11 @@ Ext.define('HreRem.ux.util.Constants', {
     	BANKIA: '03',
     	TERCEROS: '04',
     	HYT: '06',
+    	CERBERUS: '07',
     	LIBERBANK: '08',
     	TANGO: '10',
     	GIANTS: '12',
+    	EGEO: '13',
     	GALEON:'15',
     	ZEUS: '14'
     },

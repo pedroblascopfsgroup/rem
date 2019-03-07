@@ -21,6 +21,7 @@ import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.TrabajoConfiguracionTarifa;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTrabajo;
 
@@ -70,6 +71,8 @@ public class ActuacionTecnicaUserAssignationService implements UserAssigantionSe
 		TareaActivo tareaActivo = (TareaActivo) tareaExterna.getTareaPadre();
 		Trabajo trabajo = tareaActivo.getTramite().getTrabajo();
 		String codigoTarea = tareaExterna.getTareaProcedimiento().getCodigo();
+		DDCartera cartera = trabajo.getActivo().getCartera();
+		DDSubcartera subcartera = trabajo.getActivo().getSubcartera();
 		if(CODIGO_T004_AUTORIZACION_PROPIETARIO.equals(codigoTarea)
 				&& DDCartera.CODIGO_CARTERA_LIBERBANK.equals(trabajo.getActivo().getCartera().getCodigo())){
 			List<ActivoTrabajo> listActivos = trabajo.getActivosTrabajo(); // Filtrar si uno o más activos
@@ -133,6 +136,22 @@ public class ActuacionTecnicaUserAssignationService implements UserAssigantionSe
 				DDTipoTrabajo.CODIGO_ACTUACION_TECNICA.equals(trabajo.getTipoTrabajo().getCodigo()) && DDSubtipoTrabajo.CODIGO_TOMA_DE_POSESION.equals(trabajo.getSubtipoTrabajo().getCodigo())) {
 			return trabajo.getSolicitante();
 				
+		}else if((DDCartera.CODIGO_CARTERA_CERBERUS.equals(cartera.getCodigo()) 
+				&& (DDSubcartera.CODIGO_JAIPUR_INMOBILIARIO.equals(subcartera.getCodigo()) 
+						|| DDSubcartera.CODIGO_AGORA_INMOBILIARIO.equals(subcartera.getCodigo())
+						|| DDSubcartera.CODIGO_EGEO.equals(subcartera.getCodigo())))
+		   || (DDCartera.CODIGO_CARTERA_EGEO.equals(cartera.getCodigo())
+				   && (DDSubcartera.CODIGO_ZEUS.equals(subcartera.getCodigo())
+						   || DDSubcartera.CODIGO_PROMONTORIA.equals(subcartera.getCodigo())))){
+			if(CODIGO_T004_SOLICITUD_EXTRAORDINARIA.equals(codigoTarea)){
+				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "username", "usugruhs");
+				Usuario user = genericDao.get(Usuario.class, filtro);
+				return user;
+			}else if(CODIGO_T004_AUTORIZACION_PROPIETARIO.equals(codigoTarea)){
+				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "username", "usugruce");
+				Usuario user = genericDao.get(Usuario.class, filtro);
+				return user;
+			}
 		}
 			
 		return gestorActivoApi.getGestorByActivoYTipo(trabajo.getActivo(), GestorActivoApi.CODIGO_GESTOR_ACTIVO);

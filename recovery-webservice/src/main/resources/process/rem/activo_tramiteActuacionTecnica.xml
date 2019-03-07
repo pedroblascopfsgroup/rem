@@ -3,8 +3,24 @@
 <process-definition xmlns="urn:jbpm.org:jpdl-3.2" name="activo_tramiteActuacionTecnica">
 
 	<start-state name="inicio">
-		<transition to="T004_AnalisisPeticion"></transition>
+		<transition to="nodoOrigenTramiteActuacionTecnica"></transition>
 	</start-state>
+	
+	<node name="nodoOrigenTramiteActuacionTecnica">
+		<action name="miTarea"
+				class="org.springmodules.workflow.jbpm31.JbpmHandlerProxy"
+				config-type="bean">
+			<targetBean>
+				tramiteActuacionTecnicaNodoOcultoHandler
+			</targetBean>
+		</action>
+		<transition to="nodoOrigenTramiteActuacionTecnicaDecision" name="avanzaBPM"></transition>
+	</node>
+	
+	<decision name="nodoOrigenTramiteActuacionTecnicaDecision" expression="#{nodoOrigenTramiteActuacionTecnicaDecision}">
+		<transition to="T004_AnalisisPeticion" name="SI"></transition>
+		<transition to="T004_SolicitudPresupuestos" name="NO"></transition>
+	</decision>
 	
 	<state name="T004_AnalisisPeticion">
 		<event type="node-enter">
@@ -84,6 +100,7 @@
 	
 	<decision name="T004_EleccionPresupuestoDecision" expression="#{T004_EleccionPresupuestoDecision}">
 		<transition to="T004_SolicitudExtraordinaria" name="SinSaldo"></transition>
+		<transition to="T004_SolicitudExtraordinaria" name="ComprobarAdvisoryNote"></transition>
 		<transition to="T004_SolicitudPresupuestos" name="PresupuestoInvalido"></transition>
 		<transition to="T004_AutorizacionBankia" name="ValidoSuperaLimiteBankia"></transition>
 		<transition to="T004_FijacionPlazo" name="ConSaldo"></transition>
@@ -269,9 +286,13 @@
 				</targetBean>
 			</action>
 		</event>
-		<transition to="T004_FijacionPlazo" name="avanzaBPM"></transition>
+		<transition to="T004_SolicitudPresupuestoComplementarioDecision" name="avanzaBPM"></transition>
 	</state>
 	
+	<decision name="T004_SolicitudPresupuestoComplementarioDecision" expression="#{T004_SolicitudPresupuestoComplementarioDecision}">
+		<transition to="T004_SolicitudExtraordinaria" name="ComprobarAdvisoryNote" ></transition>
+		<transition to="T004_FijacionPlazo" name="TramiteNormal" ></transition>
+	</decision>
 	
 	<state name="T004_ValidacionTrabajo">
 		<event type="node-enter">

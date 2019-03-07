@@ -1,12 +1,12 @@
 --/*
 --##########################################
 --## AUTOR=VICTOR OLIVARES
---## FECHA_CREACION=20190226
+--## FECHA_CREACION=20190306
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=v2.5.0-rem
+--## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-5654
 --## PRODUCTO=NO
---## Finalidad: Caracteres ampliados en TAP_TAREA_PROCEDIMIENTO -> TAP_SCRIPT_VALIDACION_JBPM 1200->2000        
+--## Finalidad: Campo nuevo en COE_CONDICIONANTES_EXPEDIENTE llamado COE_DEPOSITO_RESERVA        
 --## INSTRUCCIONES: 
 --## VERSIONES:
 --##        0.1 Versión inicial
@@ -31,8 +31,8 @@ DECLARE
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
     
-    V_COLUMN_NAME VARCHAR2(2400 CHAR) := 'TAP_SCRIPT_VALIDACION_JBPM'; -- Vble. auxiliar para almacenar el nombre de la columna a añadir.
-    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'TAP_TAREA_PROCEDIMIENTO'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
+    V_COLUMN_NAME VARCHAR2(2400 CHAR) := 'COE_DEPOSITO_RESERVA'; -- Vble. auxiliar para almacenar el nombre de la columna a añadir.
+    V_TEXT_TABLA VARCHAR2(2400 CHAR) := 'COE_CONDICIONANTES_EXPEDIENTE'; -- Vble. auxiliar para almacenar el nombre de la tabla de ref.
     
 BEGIN
 
@@ -41,9 +41,10 @@ BEGIN
     EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
     
     IF V_NUM_TABLAS = 1 THEN
-      EXECUTE IMMEDIATE 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' MODIFY ('||V_COLUMN_NAME||' VARCHAR2(2000 CHAR))';
+      DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||' '||V_COLUMN_NAME||'''... Ya existe');
     ELSE
-      EXECUTE IMMEDIATE 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD ('||V_COLUMN_NAME||' VARCHAR2(2000 CHAR))';
+      EXECUTE IMMEDIATE 'ALTER TABLE '||V_ESQUEMA||'.'||V_TEXT_TABLA||' ADD ('||V_COLUMN_NAME||' NUMBER(16,0))';
+      DBMS_OUTPUT.PUT_LINE('[INFO] '||V_ESQUEMA||'.'||V_TEXT_TABLA||'.'||V_COLUMN_NAME||'... Creada');
 
     END IF;
 COMMIT;

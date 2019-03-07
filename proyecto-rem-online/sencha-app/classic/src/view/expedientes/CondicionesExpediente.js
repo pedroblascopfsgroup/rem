@@ -77,7 +77,8 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 												 * alineados
 												 */ 
 									        	bind: {
-									        		hidden: '{esCarteraAgora}'
+									        		hidden: '{esCarteraAgora}',
+									        		readOnly: '{!esCarteraAgora}'
 												}
 											},
 									        {

@@ -1196,7 +1196,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 
    		return ((Long) getHibernateTemplate().find(hb.toString()).get(0)).intValue() > 0;
 	}
-	
+
 	@Override
 	public boolean isUnidadAlquilable(Long idActivo) {
 		boolean isUnidadAlquilable = false;
@@ -1209,5 +1209,55 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		}
 		
 		return isUnidadAlquilable;
+	}
+	
+	@Override
+	public Long countUAsByIdAgrupacionPA( Long idAgrupacion) { 
+		HQLBuilder hb = new HQLBuilder("select count(*) from ActivoAgrupacionActivo aga where aga.agrupacion.id = " + idAgrupacion
+				+" and aga.principal = 0"
+				+ " and aga.agrupacion.tipoAgrupacion.codigo = " + DDTipoAgrupacion.AGRUPACION_PROMOCION_ALQUILER);
+
+   		return (long) ((Long) getHibernateTemplate().find(hb.toString()).get(0)).intValue();
+	}
+	
+	@Override
+	public boolean isAgrupacionPromocionAlquiler (Long idAgrupacion ) {
+		HQLBuilder hb = new HQLBuilder ( "SELECT  count (*) FROM ActivoAgrupacion agr WHERE agr.id = " +idAgrupacion
+				+ " and  agr.tipoAgrupacion.codigo = " + DDTipoAgrupacion.AGRUPACION_PROMOCION_ALQUILER);
+		
+		return ((Long) getHibernateTemplate().find(hb.toString()).get(0)).intValue() > 0;
+	}
+
+	@Override
+	public boolean existenUAsconOfertasVivas(Long idAgrupacion) {
+		String sql = "SELECT count(*) " + 
+				"FROM ACT_AGA_AGRUPACION_ACTIVO aga " + 
+				"INNER JOIN ACT_OFR  actOfr ON  aga.ACT_ID =  actOfr.ACT_ID " + 
+				"INNER JOIN OFR_OFERTAS ofr ON actOfr.OFR_ID = ofr.OFR_ID " + 
+				"INNER JOIN ECO_EXPEDIENTE_COMERCIAL eco ON ofr.OFR_ID = eco.OFR_ID " + 
+				"WHERE aga.AGR_ID = " +idAgrupacion
+				+" AND ofr.DD_EOF_ID IN (SELECT DD_EOF_ID FROM DD_EOF_ESTADOS_OFERTA WHERE DD_EOF_CODIGO = '01') " + 
+				"AND eco.ECO_FECHA_INICIO_ALQUILER IS NULL";
+		
+		if (!Checks.esNulo(this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult())) {
+			return ((BigDecimal) this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult()).longValue() > 0;  
+		}
+		return false;
+		
+	}
+	
+	@Override
+	public boolean existenUAsconTrabajos(Long idAgrupacion) {
+		String sql = "SELECT count(*) "
+				+"FROM ACT_AGA_AGRUPACION_ACTIVO aga " 
+				+"INNER JOIN V_BUSQUEDA_ACTIVOS_TRABAJO vat ON aga.ACT_ID = vat.ACT_ID " 
+				+"WHERE aga.AGR_ID = " + idAgrupacion 
+				+" AND vat.DD_EST_CODIGO NOT IN ('02','03','12')";
+		
+		if (!Checks.esNulo(this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult())) {
+			return ((BigDecimal) this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult()).intValue() > 0;
+		}
+		return false;
+		
 	}
 }

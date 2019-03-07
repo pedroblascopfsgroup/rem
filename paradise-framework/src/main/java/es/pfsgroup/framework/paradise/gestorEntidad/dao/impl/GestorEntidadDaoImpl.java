@@ -61,4 +61,19 @@ public class GestorEntidadDaoImpl extends AbstractEntityDao<GestorEntidad, Long>
 		return codigosGestor.trim();
 	}
 	
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<Usuario> getListUsuariosGestoresPorTipoCodigo(String codigoTipoGestor) {
+		
+		HQLBuilder hb = new HQLBuilder("select distinct(gee.usuario) from GestorEntidad gee");
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "gee.auditoria.borrado", false);
+		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "gee.tipoGestor.codigo", codigoTipoGestor);
+		
+		Query query = getSession().createQuery(hb.toString());
+		HQLBuilder.parametrizaQuery(query, hb);
+		List<Usuario> listado = query.list();
+		
+		return listado;
+	}
+	
 }

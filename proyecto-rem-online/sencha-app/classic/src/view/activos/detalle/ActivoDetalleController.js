@@ -3764,8 +3764,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		},
 
 	onClickActivoMatriz: function(me){
+		var me = this;
 		var numActivo = me.getViewModel().get('activo.numActivoMatriz');
-		
 		if(numActivo != ""){
 		  	var url= $AC.getRemoteUrl('activo/getActivoExists');
         	var data;

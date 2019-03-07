@@ -1,7 +1,6 @@
 Ext.define('HreRem.view.activos.detalle.ReclamacionesActivoList', {
 	extend		: 'HreRem.view.common.GridBaseEditableRow',
     xtype		: 'reclamacionesactivolist',
-	id			: 'id',
     bind: {
         store: '{storeReclamacionesActivo}'
     },

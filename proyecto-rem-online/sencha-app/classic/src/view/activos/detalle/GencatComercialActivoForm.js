@@ -289,7 +289,6 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoForm', {
 				    				fieldLabel: HreRem.i18n('fieldlabel.comunicado.anulacion.gencat'),
 				    				name: 'comunicadoAnulacionAGencat',
 				    				reference:'checkComunicadoAnulacion',
-				    				id: 'checkComunicadoAnulacion',
 				    				listeners: {
 				    					change : 'onExisteDocumentoAnulacion'
 				    				},

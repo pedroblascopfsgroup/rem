@@ -376,7 +376,18 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 			 }
 			 return fechaFinal;
 			 
-		 }
+		 },
+		 esObligatorio: function(){
+		    	var me = this;
+		    	if(!Ext.isEmpty(me.getView().expediente)){
+		    		if(me.getView().expediente.data.tipoExpedienteCodigo == "01"){
+			    		return false;
+			    	}else{
+			    		return true;
+			    	}
+		    	}
+		    	
+		    }
 	 },
 
 

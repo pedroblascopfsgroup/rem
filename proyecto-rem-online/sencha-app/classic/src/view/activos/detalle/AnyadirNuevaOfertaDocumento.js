@@ -60,7 +60,10 @@ Ext.define('HreRem.view.activos.detalle.AnyadirNuevaOfertaDocumento', {
 		me.buttons = [ {
 			itemId : 'btnAvanza',
 			text : 'Continuar',
-			handler : 'existeCliente'
+			handler : 'existeCliente',
+			listeners: {
+				click: 'comprobarFormato'
+			}
 		},
 		{
 			itemId : 'btnCancelar',
@@ -77,6 +80,7 @@ Ext.define('HreRem.view.activos.detalle.AnyadirNuevaOfertaDocumento', {
 				xtype: 'comboboxfieldbase',
 	        	fieldLabel:  HreRem.i18n('fieldlabel.tipoDocumento'),
 	        	name: 'comboTipoDocumento',
+	        	reference: 'tipoDocumentoNuevoComprador',
 	        	allowBlank: false,
 	        	docked: 'top',
 	        	margin: '100px 0 0 150px',
@@ -88,6 +92,7 @@ Ext.define('HreRem.view.activos.detalle.AnyadirNuevaOfertaDocumento', {
 				xtype:'textfieldbase',
 				fieldLabel: HreRem.i18n('fieldlabel.documento.cliente'),
 				margin: '10px 0 0 150px',
+				reference: 'nuevoCompradorNumDoc',
     	    	name:		'numDocumentoCliente',
     	    	allowBlank: false
     	    } ]

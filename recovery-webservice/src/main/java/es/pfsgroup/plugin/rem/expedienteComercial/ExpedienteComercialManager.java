@@ -3599,6 +3599,17 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 						compradorExpediente.setTitularReserva(1);
 					}
 				}
+						// Nexos
+						if (!Checks.esNulo(dto.getCodEstadoCivil())) {
+							DDEstadosCiviles estadoCivil = (DDEstadosCiviles) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadosCiviles.class, dto.getCodEstadoCivil());
+							compradorExpediente.setEstadoCivil(estadoCivil);
+							reiniciarPBC = true;
+						}
+						
+						if (!Checks.esNulo(dto.getCodTipoDocumentoConyuge())) {
+							DDTipoDocumento tipoDocumento = (DDTipoDocumento) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoDocumento.class, dto.getCodTipoDocumentoConyuge());
+							compradorExpediente.setTipoDocumentoConyuge(tipoDocumento);
+						}
 
 				// Nexos
 				if (!Checks.esNulo(dto.getCodEstadoCivil())) {
@@ -4320,6 +4331,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					compradorExpediente.setEstadoCivil(estadoCivil);
 				}
 
+				if (!Checks.esNulo(dto.getCodTipoDocumentoConyuge())) {
+					DDTipoDocumento tipoDocumento = (DDTipoDocumento) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoDocumento.class, dto.getCodTipoDocumentoConyuge());
+					compradorExpediente.setTipoDocumentoConyuge(tipoDocumento);
+				}
+				
 				if (!Checks.esNulo(dto.getDocumentoConyuge())) {
 					compradorExpediente.setDocumentoConyuge(dto.getDocumentoConyuge());
 				}

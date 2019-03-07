@@ -52,7 +52,7 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 	    	me.buttonAlign = 'right';
 
 	    	if(!Ext.isEmpty(me.idComprador)){
-				me.buttons = [ { itemId: 'btnModificar', text: HreRem.i18n('btn.modificar'), handler: 'onClickBotonModificarComprador', bind:{disabled: !me.esEditable()}},
+				me.buttons = [ { itemId: 'btnModificar', text: HreRem.i18n('btn.modificar'), handler: 'onClickBotonModificarCompradorSinWizard', bind:{disabled: !me.esEditable()}, listeners: {click: 'comprobarFormato'}},
 	    					   { itemId: 'btnCancelar', text: HreRem.i18n('btn.cancelBtnText'), handler: 'onClickBotonCerrarComprador'}];
 				modoEdicion = true;
 
@@ -191,7 +191,7 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 													{
 														xtype: 'comboboxfieldbase',
 											        	fieldLabel: HreRem.i18n('fieldlabel.tipoDocumento'),
-														reference: 'tipoDocumento',
+														reference: 'tipoDocumentoNuevoComprador',
 											        	bind: {
 										            		store: '{comboTipoDocumento}',
 										            		value: '{comprador.codTipoDocumento}',
@@ -201,7 +201,7 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 											        },
 											        {
 											        	fieldLabel: HreRem.i18n('fieldlabel.numero.documento'),
-														reference: 'numeroDocumento',
+														reference: 'nuevoCompradorNumDoc',
 											        	bind: {
 										            		value: '{comprador.numDocumento}',
 										            		disabled: me.deshabilitarCamposDoc
@@ -229,7 +229,8 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 											        	fieldLabel:  HreRem.i18n('fieldlabel.direccion'),
 											        	reference: 'direccion',
 											        	bind: {
-										            		value: '{comprador.direccion}'
+										            		value: '{comprador.direccion}',
+										            		allowBlank: '{esObligatorio}'
 										            	}
 											        },
 	//										        {
@@ -249,7 +250,8 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 														chainedReference: 'municipioCombo',
 										            	bind: {
 										            		store: '{comboProvincia}',
-										            	    value: '{comprador.provinciaCodigo}'
+										            	    value: '{comprador.provinciaCodigo}',
+										            		allowBlank: '{esObligatorio}'
 										            	},
 							    						listeners: {
 															select: 'onChangeChainedCombo'
@@ -270,7 +272,8 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 										            	bind: {
 										            		store: '{comboMunicipio}',
 										            		value: '{comprador.municipioCodigo}',
-										            		disabled: '{!comprador.provinciaCodigo}'
+										            		disabled: '{!comprador.provinciaCodigo}',
+										            		allowBlank: '{esObligatorio}'
 										            	}
 													},
 											        {
@@ -301,7 +304,8 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 														reference: 'pais',
 										            	bind: {
 										            		store: '{comboPaises}',
-										            		value: '{comprador.codigoPais}'
+										            		value: '{comprador.codigoPais}',
+										            		allowBlank: '{esObligatorio}'
 										            	}
 													},
 											        {
@@ -405,6 +409,15 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 										            		change: 'comprobarObligatoriedadCamposNexos'										         
 										            	},
 										            	allowBlank:true
+							                		},
+							                		{
+							                			xtype: 'comboboxfieldbase',
+							                			fieldLabel: HreRem.i18n('fieldlabel.tipoDocumento'),
+							                			reference: 'tipoDocConyuge',
+							                			bind: {
+							                				store: '{comboTipoDocumento}',
+							                				value: '{comprador.codTipoDocumentoRte}'
+							                			}
 							                		},
 													{
 											        	fieldLabel:  HreRem.i18n('fieldlabel.num.reg.conyuge'),

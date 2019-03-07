@@ -66,6 +66,10 @@ public class CompradorExpediente implements Serializable {
     @JoinColumn(name = "DD_TDI_ID_RTE")
 	private DDTipoDocumento tipoDocumentoRepresentante;
     
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_TDI_ID_CONYUGE")
+	private DDTipoDocumento tipoDocumentoConyuge;
+    
     @Column(name = "CEX_DOCUMENTO_RTE")
     private String documentoRepresentante;
     
@@ -339,6 +343,14 @@ public class CompradorExpediente implements Serializable {
 
 	public void setRegimenMatrimonial(DDRegimenesMatrimoniales regimenMatrimonial) {
 		this.regimenMatrimonial = regimenMatrimonial;
+	}
+	
+	public DDTipoDocumento getTipoDocumentoConyuge() {
+		return tipoDocumentoConyuge;
+	}
+
+	public void setTipoDocumentoConyuge(DDTipoDocumento tipoDocumentoConyuge) {
+		this.tipoDocumentoConyuge = tipoDocumentoConyuge;
 	}
 
 	public String getDocumentoConyuge() {

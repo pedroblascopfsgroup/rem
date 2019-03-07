@@ -85,6 +85,12 @@ public class VBusquedaDatosCompradorExpediente implements Serializable {
 	@Column(name = "DESC_ESTADO_CIVIL")
 	private String descripcionEstadoCivil;
 	
+	@Column(name = "COD_TIPO_DOCUMENTO_CONYUGE")
+	private String codTipoDocumentoConyuge;
+	
+	@Column(name = "DESC_TIPO_DOCUMENTO_CONYUGE")
+	private String descripcionTipoDocumentoConyuge;
+	
 	@Column(name = "CEX_DOCUMENTO_CONYUGE")
 	private String documentoConyuge;
 	
@@ -380,6 +386,22 @@ public class VBusquedaDatosCompradorExpediente implements Serializable {
 
 	public void setDescripcionEstadoCivil(String descripcionEstadoCivil) {
 		this.descripcionEstadoCivil = descripcionEstadoCivil;
+	}
+	
+	public String getCodTipoDocumentoConyuge() {
+		return codTipoDocumentoConyuge;
+	}
+
+	public void setCodTipoDocumentoConyuge(String codTipoDocumentoConyuge) {
+		this.codTipoDocumentoConyuge = codTipoDocumentoConyuge;
+	}
+
+	public String getDescripcionTipoDocumentoConyuge() {
+		return descripcionTipoDocumentoConyuge;
+	}
+
+	public void setDescripcionTipoDocumentoConyuge(String descripcionTipoDocumentoConyuge) {
+		this.descripcionTipoDocumentoConyuge = descripcionTipoDocumentoConyuge;
 	}
 
 	public String getDocumentoConyuge() {

@@ -206,7 +206,8 @@ Ext.define('HreRem.view.expedientes.DatosCompradorWizard', {
 			        	reference: 'direccion',
 			        	padding: '5px',
 			        	bind: {
-		            		value: '{comprador.direccion}'
+		            		value: '{comprador.direccion}',
+		            		allowBlank: '{expediente.esObligatorio}'
 		            	}
 			        },
 
@@ -219,7 +220,8 @@ Ext.define('HreRem.view.expedientes.DatosCompradorWizard', {
 						chainedReference: 'municipioCombo',
 		            	bind: {
 		            		store: '{comboProvincia}',
-		            	    value: '{comprador.provinciaCodigo}'  
+		            	    value: '{comprador.provinciaCodigo}'  ,
+		            		allowBlank: '{expediente.esObligatorio}'
 		            	},
 		            	displayField: 'descripcion',
 						valueField: 'codigo',
@@ -246,7 +248,8 @@ Ext.define('HreRem.view.expedientes.DatosCompradorWizard', {
 		            	bind: {
 		            		store: '{comboMunicipio}',
 		            		value: '{comprador.municipioCodigo}',
-		            		disabled: '{!comprador.provinciaCodigo}'
+		            		disabled: '{!comprador.provinciaCodigo}',
+		            		allowBlank: '{expediente.esObligatorio}'
 		            	}
 					},
 			        { 
@@ -285,8 +288,12 @@ Ext.define('HreRem.view.expedientes.DatosCompradorWizard', {
 						padding: '5px',
 		            	bind: {
 		            		store: '{comboPaises}',
-		            		value: '{comprador.codigoPais}' 
-		            	}
+		            		value: '{comprador.codigoPais}',
+		            		allowBlank: '{expediente.esObligatorio}'
+		            	},
+		            	listeners: {
+							change: 'comprobarObligatoriedadRte'
+						}
 					},
 			        {
 			        	xtype      : 'container',
@@ -397,7 +404,17 @@ Ext.define('HreRem.view.expedientes.DatosCompradorWizard', {
 		            		change: 'comprobarObligatoriedadCamposNexos'
 		            	},
 		            	allowBlank:true
-          		},
+			        },
+			        { 
+			        	xtype: 'comboboxfieldbase',
+			        	fieldLabel:  HreRem.i18n('fieldlabel.tipoDocumento'),
+			        	reference: 'tipoDocConyuge',
+			        	padding: '5px',
+			        	bind: {
+			        		store: '{comboTipoDocumento}',
+		            		value: '{comprador.codTipoDocumentoConyuge}'
+		            	}
+			        },
 					{ 
 			        	fieldLabel:  HreRem.i18n('fieldlabel.num.reg.conyuge'),
 			        	reference: 'numRegConyuge',

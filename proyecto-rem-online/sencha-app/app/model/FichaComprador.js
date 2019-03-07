@@ -68,6 +68,12 @@ Ext.define('HreRem.model.FichaComprador', {
 		    	name: 'descripcionEstadoCivil'
 		},
 		{
+		    	name: 'codTipoDocumentoConyuge'
+		},
+		{
+	    		name: 'descripcionTipoDocumentoConyuge'
+		},
+		{
 		    	name: 'documentoConyuge'
 		},
 		{

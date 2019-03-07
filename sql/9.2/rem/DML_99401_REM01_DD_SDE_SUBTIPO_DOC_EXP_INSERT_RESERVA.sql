@@ -1,9 +1,9 @@
 --/*
 --########################################################
 --## AUTOR=VICTOR OLIVARES
---## FECHA_CREACION=20190226
+--## FECHA_CREACION=20190306
 --## ARTEFACTO=online
---## VERSION_ARTEFACTO=v2.5.0-rem
+--## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-5654
 --## PRODUCTO=NO
 --##

@@ -74,7 +74,7 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
 	public static final String TIPO_COMBOBOX_INICIAL = "comboboxinicial";
 	public static final String TIPO_COMBOBOX_INICIAL_ED = "comboboxinicialedi";
 	public static final String TIPO_CAMPO_NUMBER = "numberfield";
-	public static final String NO_APLICA = "No aplica";
+	public static final String NO_APLICA = "-1";
 	public static final String TIPO_CAMPO_TEXTFIELD = "textfield";
 	public static final String TIPO_CAMPO_COMBO_READONLY = "comboboxreadonly";
     protected final Log logger = LogFactory.getLog(getClass());
@@ -206,18 +206,14 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
 						e.printStackTrace();
 					}
 					if(!Checks.esNulo(codigoComite)) {
-						if(!Checks.esNulo(expediente.getComiteSancion())) {
-							if(!codigoComite.equals(expediente.getComiteSancion().getCodigo())) {
-								DDComiteSancion comite = expedienteComercialApi.comiteSancionadorByCodigo(codigoComite);
-								expediente.setComiteSancion(comite);
-								expediente.setComiteSuperior(comite);
-							}
-						}else {
-							valor.setValor(codigoComite);
+						if(!expediente.getComiteSancion().getCodigo().equals(codigoComite)) {
+							DDComiteSancion comite = expedienteComercialApi.comiteSancionadorByCodigo(codigoComite);
+							expediente.setComiteSancion(comite);
+							expediente.setComiteSuperior(comite);
 						}
 						valor.setValor(codigoComite);
 					}else {
-						valor.setValor(NO_APLICA);
+						valor.setValor("-1");
 					}
             	}else {
                 	valor.setValor(valores[i]);

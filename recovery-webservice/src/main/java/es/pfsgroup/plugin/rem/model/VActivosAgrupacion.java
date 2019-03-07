@@ -70,7 +70,13 @@ public class VActivosAgrupacion implements Serializable {
 	
 	@Column(name = "principal")
    	private Integer activoPrincipal;
-	
+   	
+   	@Column(name = "ACTIVO_MATRIZ") //Para identificar un activo matriz en una agrupación de tipo promoción alquiler. 
+   	private Integer activoMatriz;
+   	
+   	@Column(name = "BORRADO") 
+   	private Integer borrado;
+
 	@Column(name = "SITUACION_COMERCIAL")
 	private String situacionComercial;
 	
@@ -305,5 +311,21 @@ public class VActivosAgrupacion implements Serializable {
 
 	public void setCondPublAlquiler(String condPublAlquiler) {
 		this.condPublAlquiler = condPublAlquiler;
+	}
+	
+	public Integer getActivoMatriz() {
+		return activoMatriz;
+	}
+
+	public void setActivoMatriz(Integer activoMatriz) {
+		this.activoMatriz = activoMatriz;
+	}
+
+	public Integer getBorrado() {
+		return borrado;
+	}
+
+	public void setBorrado(Integer borrado) {
+		this.borrado = borrado;
 	}
 }

@@ -235,10 +235,23 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 
 		   	return get('esAgrupacionObraNueva') || get('esAgrupacionAsistida') || get('esAgrupacionProyecto');
 		 },
+		 
+		 habilitarComercial: function(get) {
+			 return get('esAgrupacionObraNueva') || get('esAgrupacionAsistida') || get('esAgrupacionProyecto') || get('esAgrupacionPromocionAlquiler');
+		 },
 
 	     esAgrupacionLoteComercialOrProyecto: function(get) {
 
 		  	return get('esAgrupacionLoteComercial') || get('esAgrupacionProyecto');
+		 },
+		 
+		 esActivoDadoDeBaja: function(get) {
+			 var existeFechaBaja = get('agrupacionficha.existeFechaBaja');
+			 return existeFechaBaja != null;
+		 },
+		 
+		 esAgrupacionObraNuevaOrAsistidaOrPromocionAlquiler: function(get) {
+			return get('esAgrupacionObraNueva') || get('esAgrupacionAsistida') || get('esAgrupacionPromocionAlquiler'); 
 		 },
 
 	     existeFechaBaja : function(get) {

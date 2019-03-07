@@ -101,9 +101,9 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionesDetalle', {
 		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'observacionesagrupacion', ocultarBotonesEdicion: true})}, ['TAB_OBSERVACIONES_AGRUPACION']),
 		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'documentosagrupacion', ocultarBotonesEdicion: true, bind: {disabled:'{!esAgrupacionProyecto}'},tabConfig: { bind: { hidden: '{esAgrupacionProyecto}' }}})}, ['TAB_DOCUMENTOS_AGRUPACION']),
 		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'seguimientoagrupacion', ocultarBotonesEdicion: true, bind: {disabled:'{!esAgrupacionProyecto}'}})}, ['TAB_SEGUIMIENTO_AGRUPACION']),
-		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'subdivisionesagrupacionmain', ocultarBotonesEdicion: true, bind: {disabled:'{!esAgrupacionObraNuevaOrAsistida}'},tabConfig: { bind: { hidden: '{esAgrupacionProyecto}' }}})}, ['TAB_SUBDIVISIONES_AGRUPACION']),
+		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'subdivisionesagrupacionmain', ocultarBotonesEdicion: true, bind: {disabled:'{!esAgrupacionObraNuevaOrAsistidaOrPromocionAlquiler}'},tabConfig: { bind: { hidden: '{esAgrupacionProyecto}' }}})}, ['TAB_SUBDIVISIONES_AGRUPACION']),
 		items.push({xtype: 'datospublicacionagrupacion', ocultarBotonesEdicion: false, bind: {disabled:'{!esAgrupacionRestringida}'}});
-		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'comercialagrupacion', ocultarBotonesEdicion: true, bind: {disabled:'{esAgrupacionObraNuevaOrAsistidaOrProyecto}'},tabConfig: { bind: { hidden: '{esAgrupacionProyecto}' }}})}, ['TAB_COMERCIAL_AGRUPACION'])
+		$AU.confirmFunToFunctionExecution(function(){items.push({xtype: 'comercialagrupacion', ocultarBotonesEdicion: true, bind: {disabled:'{habilitarComercial}'},tabConfig: { bind: { hidden: '{esAgrupacionProyecto}' }}})}, ['TAB_COMERCIAL_AGRUPACION'])
 
         me.addPlugin({ptype: 'lazyitems', items: items});
         me.callParent(); 

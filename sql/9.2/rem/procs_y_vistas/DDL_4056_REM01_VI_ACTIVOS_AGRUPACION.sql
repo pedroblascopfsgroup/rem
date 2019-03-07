@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Adrian Daniel Casiean
---## FECHA_CREACION=20181210
+--## AUTOR=Luis Adelantado Romero
+--## FECHA_CREACION=20190410
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-4907
+--## INCIDENCIA_LINK=HREOS-5586
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -18,6 +18,8 @@
 --##		0.6 Se modifica la vista para que tenga en cuenta el borrado lógico de las distribuciones
 --##		0.7 Se añaden las nuevas columnas de publicaciones
 --##		0.8 Se realiza un Join con la vista V_COND_PUBLICACION para sacar los campos COND_PUBL_VENTA, COND_PUBL_ALQUILER (HREOS-4907)
+--##		0.9 Habilitamos el campo AGR.AGA_PRINCIPAL para usarlo para identificar el activo matriz en una agrupación de tipo Promoción Alquiler,
+--## 			añadimos la columna borrado para colorear aquellos activos dados de baja en el listado de activos. (HREOS-5586)
 --##########################################
 --*/
 
@@ -25,6 +27,7 @@
 
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
 SET SERVEROUTPUT ON; 
+SET DEFINE OFF;
 
 DECLARE
     
@@ -77,7 +80,8 @@ BEGIN
 		(SELECT MAX (VAL2.VAL_IMPORTE) FROM '|| V_ESQUEMA ||'.ACT_VAL_VALORACIONES VAL2 WHERE VAL2.DD_TPC_ID = (SELECT DD_TPC_ID FROM '|| V_ESQUEMA ||'.DD_TPC_TIPO_PRECIO WHERE DD_TPC_CODIGO IN (''02'') AND BORRADO = 0) AND (VAL2.VAL_FECHA_FIN IS NULL OR TO_DATE(VAL2.VAL_FECHA_FIN,''DD/MM/YYYY'') >= TO_DATE(sysdate,''DD/MM/YYYY'')) AND VAL2.ACT_ID = ACT.ACT_ID AND VAL2.BORRADO = 0) AS VAL_IMPORTE_APROBADO_VENTA,
         (SELECT MAX (VAL2.VAL_IMPORTE) FROM '|| V_ESQUEMA ||'.ACT_VAL_VALORACIONES VAL2 WHERE VAL2.DD_TPC_ID = (SELECT DD_TPC_ID FROM '|| V_ESQUEMA ||'.DD_TPC_TIPO_PRECIO WHERE DD_TPC_CODIGO IN (''04'') AND BORRADO = 0) AND (VAL2.VAL_FECHA_FIN IS NULL OR TO_DATE(VAL2.VAL_FECHA_FIN,''DD/MM/YYYY'') >= TO_DATE(sysdate,''DD/MM/YYYY'')) AND VAL2.ACT_ID = ACT.ACT_ID AND VAL2.BORRADO = 0) AS VAL_IMPORTE_MINIMO_AUTORIZADO,
         (SELECT MAX (VAL2.VAL_IMPORTE) FROM '|| V_ESQUEMA ||'.ACT_VAL_VALORACIONES VAL2 WHERE VAL2.DD_TPC_ID = (SELECT DD_TPC_ID FROM '|| V_ESQUEMA ||'.DD_TPC_TIPO_PRECIO WHERE DD_TPC_CODIGO IN (''01'') AND BORRADO = 0) AND (VAL2.VAL_FECHA_FIN IS NULL OR TO_DATE(VAL2.VAL_FECHA_FIN,''DD/MM/YYYY'') >= TO_DATE(sysdate,''DD/MM/YYYY'')) AND VAL2.ACT_ID = ACT.ACT_ID AND VAL2.BORRADO = 0) AS VAL_NETO_CONTABLE,
-        --AGR.AGA_PRINCIPAL,
+        AGR.AGA_PRINCIPAL AS ACTIVO_MATRIZ,
+		AGR.BORRADO,
         SCM.DD_SCM_DESCRIPCION AS SITUACION_COMERCIAL,
         SPS.SPS_OCUPADO,
 		SPS.SPS_CON_TITULO,
@@ -142,7 +146,23 @@ BEGIN
     EXECUTE IMMEDIATE V_MSQL;
     DBMS_OUTPUT.PUT_LINE('CREATE VIEW '|| V_ESQUEMA ||'.V_ACTIVOS_AGRUPACION...Creada OK');
   
+EXCEPTION
+     
+    -- Opcional: Excepciones particulares que se quieran tratar
+    -- Como esta, por ejemplo:
+    -- WHEN TABLE_EXISTS_EXCEPTION THEN
+        -- DBMS_OUTPUT.PUT_LINE('Ya se ha realizado la copia en la tabla TMP_MOV_'||TODAY);
+ 
+ 
+    -- SIEMPRE DEBE HABER UN OTHERS
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(SQLCODE));
+        DBMS_OUTPUT.put_line('-----------------------------------------------------------');
+        DBMS_OUTPUT.put_line(SQLERRM);
+        ROLLBACK;
+        RAISE;
 END;
 /
+ 
 EXIT;
 

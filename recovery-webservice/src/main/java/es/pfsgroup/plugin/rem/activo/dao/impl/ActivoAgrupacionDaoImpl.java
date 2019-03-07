@@ -2,13 +2,13 @@ package es.pfsgroup.plugin.rem.activo.dao.impl;
 
 import java.math.BigDecimal;
 import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import es.capgemini.devon.hibernate.pagination.PaginationManager;
@@ -19,7 +19,9 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.DateFormat;
 import es.pfsgroup.commons.utils.HQLBuilder;
 import es.pfsgroup.commons.utils.HibernateQueryUtils;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionDao;
+import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
@@ -28,12 +30,19 @@ import es.pfsgroup.plugin.rem.model.AgrupacionesVigencias;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
 import es.pfsgroup.plugin.rem.model.DtoSubdivisiones;
 import es.pfsgroup.plugin.rem.model.DtoVigenciaAgrupacion;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 
 @Repository("ActivoAgrupacionDao")
 public class ActivoAgrupacionDaoImpl extends AbstractEntityDao<ActivoAgrupacion, Long> implements ActivoAgrupacionDao {
 
 	@Resource
 	private PaginationManager paginationManager;
+	
+	@Autowired
+	private ActivoAgrupacionApi activoAgrupacionApi;
+	
+	@Autowired
+	private ActivoAgrupacionActivoDao activoAgrupacionDao;
 
 	@Override
 	public Page getListAgrupaciones(DtoAgrupacionFilter dto, Usuario usuLogado) {
@@ -203,11 +212,20 @@ public class ActivoAgrupacionDaoImpl extends AbstractEntityDao<ActivoAgrupacion,
 	@Override
 	public Page getListActivosAgrupacionById(DtoAgrupacionFilter dto, Usuario usuLogado) {
 
-		HQLBuilder hb = new HQLBuilder(" from VActivosAgrupacion agr");
+		HQLBuilder hb = new HQLBuilder(" from VActivosAgrupacion aga");
+		ActivoAgrupacion agrupacion = activoAgrupacionApi.get(Long.valueOf(dto.getAgrupacionId()));
+		
 
 		if (dto.getAgrupacionId() != null) {
-			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "agr.agrId", Long.valueOf(dto.getAgrupacionId()));
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "aga.agrId", Long.valueOf(dto.getAgrupacionId()));
+
+		} 
+		
+		
+		if(DDTipoAgrupacion.AGRUPACION_PROMOCION_ALQUILER.equals(agrupacion.getTipoAgrupacion().getCodigo())) {
+			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "aga.activoMatriz", 0);
 		}
+		
 
 		if (dto.getSort() == null || dto.getSort().isEmpty()) {
 			hb.orderBy("activoPrincipal", HQLBuilder.ORDER_DESC);
@@ -414,12 +432,17 @@ public class ActivoAgrupacionDaoImpl extends AbstractEntityDao<ActivoAgrupacion,
 		List<ActivoFoto> lista = null;
 
 		try {
+			
+			ActivoAgrupacion agr = this.get(id);
+			if(!Checks.esNulo(agr.getTipoAgrupacion()) && DDTipoAgrupacion.AGRUPACION_PROMOCION_ALQUILER.equals(agr.getTipoAgrupacion().getCodigo())) {
+				Activo am = activoAgrupacionDao.getActivoMatrizByIdAgrupacion(id);
+				lista = am.getFotos();
+			} else {
+				HQLBuilder hb = new HQLBuilder(
+						"from ActivoFoto foto where foto.agrupacion.id = " + id + " and foto.subdivision is null");
 
-			HQLBuilder hb = new HQLBuilder(
-					"from ActivoFoto foto where foto.agrupacion.id = " + id + " and foto.subdivision is null");
-
-			lista = (List<ActivoFoto>) getHibernateTemplate().find(hb.toString());
-
+				lista = (List<ActivoFoto>) getHibernateTemplate().find(hb.toString());
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

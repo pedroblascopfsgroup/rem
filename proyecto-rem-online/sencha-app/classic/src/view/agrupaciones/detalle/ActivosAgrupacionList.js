@@ -116,8 +116,8 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
 		}
 
         // Botones genéricos de la barra del grid.
-        var configAddBtn = {iconCls:'x-fa fa-plus', itemId:'addButton', handler: 'onAddClick', scope: this};
-		var configRemoveBtn = {iconCls:'x-fa fa-minus', itemId:'removeButton', handler: 'onDeleteClick', scope: this, disabled: true};
+        var configAddBtn = {iconCls:'x-fa fa-plus', itemId:'addButton', bind: {hidden: 'esAgrupacionPromocionAlquiler'}, handler: 'onAddClick', scope: this};
+		var configRemoveBtn = {iconCls:'x-fa fa-minus', itemId:'removeButton',  handler: 'onDeleteClick', scope: this, disabled: true};
 
 		// Se configura manualmente la Top-Bar mostrándola si se dispone de alguno de los siguientes permisos.
 		if($AU.userHasFunction(['EDITAR_TAB_LISTA_ACTIVOS_AGRUPACION', 'EDITAR_TAB_PUBLICACION_LISTA_ACTIVOS_AGRUPACION'])) {
@@ -192,7 +192,15 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
         	else
         		return '<div> - </div>';
         };
-
+        
+        var coloredRender = function (value, meta, record) {
+    		var borrado = record.get('borrado');
+    		if (borrado == 1) {
+    			return '<span style="color: #DF0101;">'+value+'</span>';
+    		} else {
+    			return value;
+    		}
+    	};
  
         me.columns= [
         	{
@@ -225,7 +233,8 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
 				editor: {
 					xtype:'textfield',
 					maskRe: /[0-9]/
-				}
+				},
+				renderer: coloredRender
 
 	        },
 	        {   
@@ -250,7 +259,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
 	            text: HreRem.i18n('header.subdivision'),
 	            hideable: false,
 	            bind: {
-		        	hidden: '{!esAgrupacionObraNuevaOrAsistida}'
+		        	hidden: '{!esAgrupacionObraNuevaOrAsistidaOrPromocionAlquiler}'
 		        },
 	            flex: 2
 	        },
@@ -259,7 +268,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
 	            text: HreRem.i18n('header.direccion'),
 	            hideable: false,
 	            bind: {
-		        	hidden: '{esAgrupacionObraNuevaOrAsistida}'
+		        	hidden: '{esAgrupacionObraNuevaOrAsistidaOrPromocionAlquiler}'
 		        },
 	            flex: 1
 	        },
@@ -268,7 +277,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
 	            text: HreRem.i18n('header.finca.registral'),
 	            hideable: false,
 	            bind: {
-		        	hidden: '{!esAgrupacionObraNuevaOrAsistida}'
+		        	hidden: '{!esAgrupacionObraNuevaOrAsistidaOrPromocionAlquiler}'
 		        },
 	            flex: 0.5
 	        },
@@ -276,10 +285,19 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
 	        	 text: HreRem.i18n('title.publicaciones.estadoPublicacion'),
 	        	 dataIndex: 'publicado',
 	        	 bind: {
-	        		 hidden: '{!esAgrupacionObraNuevaOrAsistida}'
+	        		 hidden: '{!esAgrupacionObraNuevaOrAsistidaOrPromocionAlquiler}'
 	        	 },
 	        	 hideable:  false,
 	        	 flex: 1
+	       },
+	       {
+	            dataIndex: 'puerta',
+	            text: HreRem.i18n('header.puerta'),
+	            hideable: false,
+	            bind: {
+		        	hidden: '{!esAgrupacionObraNuevaOrAsistidaOrPromocionAlquiler}'
+		        },
+	            flex: 0.5
 	        },
 	        {
 	            dataIndex: 'condPublVenta',
@@ -287,7 +305,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
 	            flex: 1,
 	            hideable: false,
 	            bind:{
-	            	hidden: '{!esAgrupacionObraNuevaOrAsistida}'
+	            	hidden: '{!esAgrupacionObraNuevaOrAsistidaOrPromocionAlquiler}'
 	            },
 	            renderer: estadoRenderer
 	            
@@ -298,7 +316,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
 	            hideable: false,
 	            flex: 1,
 	            bind:{
-	            	hidden: '{!esAgrupacionObraNuevaOrAsistida}'
+	            	hidden: '{!esAgrupacionObraNuevaOrAsistidaOrPromocionAlquiler}'
 	            },
 	            renderer: estadoRenderer
 	            
@@ -308,9 +326,18 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
 	            text: HreRem.i18n('header.puerta'),
 	            hideable: false,
 	            bind: {
-		        	hidden: '{!esAgrupacionObraNuevaOrAsistida}'
+		        	hidden: '{!esAgrupacionObraNuevaOrAsistidaOrPromocionAlquiler}'
 		        },
 	            flex: 0.5
+	        },
+	        {
+	        	dataIndex: 'numPrinex',
+	        	text: HreRem.i18n('header.id.prinex.hpm'),
+	        	bind: {
+	        		hidden: '{!esAgrupacionPromocionAlquiler}'
+	        	},
+	        	flex: 1
+	        	
 	        },
 	        {
 	            dataIndex: 'situacionComercial',
@@ -348,7 +375,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
 	            dataIndex: 'superficieConstruida',
 	            hideable: false,
 	            bind: {
-		        	hidden: '{esAgrupacionObraNuevaOrAsistida}'
+		        	hidden: '{esAgrupacionObraNuevaOrAsistidaOrPromocionAlquiler}'
 		        },
 	            text: HreRem.i18n('header.superficie.construida'),
 	            flex: 1,
@@ -476,6 +503,8 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
     	var me = this;
     	var sePuedeBorrar;
     	var tipoAgrupacion = me.up('agrupacionesdetallemain').getViewModel().get('agrupacionficha').get('tipoAgrupacionCodigo');
+    	var ua = false;
+    	
     	
     	if((tipoAgrupacion != CONST.TIPOS_AGRUPACION['RESTRINGIDA'])){
     		sePuedeBorrar = true;
@@ -483,6 +512,15 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
     		sePuedeBorrar = true;
     	}else{
     		sePuedeBorrar = false;
+    	}
+    	
+    	//Si el activo es PA
+    	if((tipoAgrupacion == CONST.TIPOS_AGRUPACION['PROMOCION_ALQUILER'])) {
+    		//Validaciones RUFU-016
+        	if(me.selection.data.borrado == 1) { //Comprobamos si el activo ha sido previamente dado de baja
+        		sePuedeBorrar = false;
+        		ua = true;
+        	}	
     	}
     		    	
     	if(sePuedeBorrar){
@@ -529,8 +567,14 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
 				   }
 			});
     	}else{
-    		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.activoPrincipal"));
-    		me.deleteFailureFn();
+    		if(ua) {
+    			me.fireEvent("errorToast", HreRem.i18n("msg.operation.ko.activoDadoDeBaja"));
+        		me.deleteFailureFn();
+        	} else {
+        		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.activoPrincipal"));
+        		me.deleteFailureFn();
+        	}
+
     	}
     },
     

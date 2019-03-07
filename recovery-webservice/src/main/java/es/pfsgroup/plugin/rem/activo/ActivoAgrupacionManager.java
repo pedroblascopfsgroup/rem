@@ -537,7 +537,7 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", id);
 			ActivoAgrupacion agrupacion = genericDao.get(ActivoAgrupacion.class, filtro);
 			try {
-				if (agrupacion != null) {
+				if (agrupacion != null) { //TODO: Si el gestor documental activo traer las fotos del gestor documental del AM y no de la agrupación.
 					fileListResponse = gestorDocumentalFotos.get(PROPIEDAD.AGRUPACION, agrupacion.getNumAgrupRem());
 
 					if (fileListResponse.getError() == null || fileListResponse.getError().isEmpty()) {

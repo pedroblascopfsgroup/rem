@@ -1183,14 +1183,14 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 
 	@Override
 	public boolean isIntegradoEnAgrupacionPA(Long idActivo) {
-		HQLBuilder hb = new HQLBuilder("select count(*) from ActivoAgrupacionActivo act where act.agrupacion.fechaBaja is null and act.activo.id = " + idActivo + " and act.agrupacion.tipoAgrupacion.codigo = " + DDTipoAgrupacion.AGRUPACION_PROMOCION_ALQUILER);
+		HQLBuilder hb = new HQLBuilder("select count(*) from ActivoAgrupacionActivo act where act.activo.id = " + idActivo + " and act.agrupacion.tipoAgrupacion.codigo = " + DDTipoAgrupacion.AGRUPACION_PROMOCION_ALQUILER);
 
    		return ((Long) getHibernateTemplate().find(hb.toString()).get(0)).intValue() > 0;
 	}
 	
 	@Override
-	public boolean isActivoMatriz(Long idActivo) { 
-		HQLBuilder hb = new HQLBuilder("select count(*) from ActivoAgrupacionActivo aga where aga.agrupacion.fechaBaja is null and aga.activo.id = " + idActivo 
+	public boolean isActivoMatriz(Long idActivo) {  
+		HQLBuilder hb = new HQLBuilder("select count(*) from ActivoAgrupacionActivo aga where aga.activo.id = " + idActivo 
 				+ " and aga.agrupacion.tipoAgrupacion.codigo = " + DDTipoAgrupacion.AGRUPACION_PROMOCION_ALQUILER 
 				+ " and aga.principal = 1");
 
@@ -1202,8 +1202,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		boolean isUnidadAlquilable = false;
 		if (!Checks.esNulo(idActivo)) {
 			Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "id", idActivo);
-			Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
-			Activo activo = genericDao.get(Activo.class, filtroActivo, filtroBorrado);
+			Activo activo = genericDao.get(Activo.class, filtroActivo);
 			if (!Checks.esNulo(activo) && !Checks.esNulo(activo.getTipoTitulo()) && DDTipoTituloActivo.UNIDAD_ALQUILABLE.equals(activo.getTipoTitulo().getCodigo())) {
 				isUnidadAlquilable = true; 
 			}

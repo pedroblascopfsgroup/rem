@@ -101,6 +101,7 @@ import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.GestorActivo;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
+import es.pfsgroup.plugin.rem.model.PropuestaActivosVinculados;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.VBusquedaAgrupaciones;
@@ -151,6 +152,9 @@ public class AgrupacionAdapter {
 
 	@Autowired
 	private ActivoDao activoDao;
+	
+	@Autowired
+	private GenericAdapter genericAdapter;
 
 	@Autowired
 	private ActivoAdapter activoAdapter;
@@ -668,9 +672,11 @@ public class AgrupacionAdapter {
 		Usuario usuarioLogado = proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
 
 		filtro.setAgrupacionId(String.valueOf(id));
+		
 
 		try {
 			Page listaActivos = activoAgrupacionApi.getListActivosAgrupacionById(filtro, usuarioLogado);
+			
 			return listaActivos;
 		} catch (Exception e) {
 			logger.error("error en agrupacionAdapter", e);
@@ -1372,7 +1378,15 @@ public class AgrupacionAdapter {
 					genericDao.save(PerimetroActivo.class, perimetro);
 				}
 				activoAgrupacionActivoApi.delete(activoAgrupacionActivo);
-			} else {
+			} else if(activoAgrupacionActivo.getAgrupacion().getTipoAgrupacion().getCodigo()
+					.equals(DDTipoAgrupacion.AGRUPACION_PROMOCION_ALQUILER)) {
+
+					activoAgrupacionActivo.getAuditoria().setBorrado(true);
+					activoAgrupacionActivo.getAuditoria().setFechaBorrar(new Date());
+					activoAgrupacionActivo.getAuditoria().setUsuarioBorrar(genericAdapter.getUsuarioLogado().getUsername());
+					activoAgrupacionActivoApi.save(activoAgrupacionActivo);
+			}
+			else {
 				activoAgrupacionActivoApi.delete(activoAgrupacionActivo);
 			}
 			return true;
@@ -2496,6 +2510,7 @@ public class AgrupacionAdapter {
 						/*TODO: Validaciones HREOS-5596*/
 						if(esActivoMatrizValido(act)) {
 							act.setDescripcion(dto.getDescripcion());
+							act.setProvincia(dto.getProvinciaDescripcion());
 							ActivoAgrupacionActivo aga = new ActivoAgrupacionActivo();
 							aga.setActivo(act);
 							aga.setAgrupacion(pa);

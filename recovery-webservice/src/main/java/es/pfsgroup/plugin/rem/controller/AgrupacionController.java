@@ -522,7 +522,8 @@ public class AgrupacionController extends ParadiseJsonController {
 
 		if (agrupacion.getTipoAgrupacion() != null
 				&& (agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_OBRA_NUEVA)
-						|| agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_ASISTIDA))) {
+						|| agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_ASISTIDA) 
+						|| agrupacion.getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_PROMOCION_ALQUILER))) {
 
 			List<ActivoFoto> listaFotos = activoAgrupacionApi.getFotosAgrupacionById(id);
 

@@ -7,6 +7,7 @@ import java.util.List;
 import javax.annotation.Resource;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.eclipse.jdt.internal.core.CreateFieldOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,6 +49,7 @@ import es.pfsgroup.plugin.rem.model.OfertaGencat;
 import es.pfsgroup.plugin.rem.model.TanteoActivoExpediente;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
 import es.pfsgroup.plugin.rem.model.Trabajo;
+import es.pfsgroup.plugin.rem.model.VExpPreBloqueoGencat;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoComunicacionGencat;
 import es.pfsgroup.plugin.rem.model.dd.DDSancionGencat;
@@ -811,7 +813,7 @@ public class ActivoTramiteManager implements ActivoTramiteApi{
 	}
 	
 	@Override
-	public Boolean tieneTramiteGENCATVigenteByIdActivo(Long idActivo){
+	public Boolean tieneTramiteGENCATVigenteByIdActivo(Long idActivo, Long idExpediente){
 		
 		Boolean tieneTramiteGENCAT = false;
 		Boolean exosteGencatActivo = false;
@@ -854,9 +856,21 @@ public class ActivoTramiteManager implements ActivoTramiteApi{
 						tieneTramiteGENCAT = true;
 					}else {
 						if(!Checks.esNulo(comunicacionGencat)) {
-							if(DDEstadoComunicacionGencat.COD_CREADO.equals(comunicacionGencat.getEstadoComunicacion().getCodigo())
+							if(DDEstadoComunicacionGencat.COD_CREADO.equals(comunicacionGencat.getEstadoComunicacion().getCodigo()) 
 									|| DDEstadoComunicacionGencat.COD_COMUNICADO.equals(comunicacionGencat.getEstadoComunicacion().getCodigo())){
-								tieneTramiteGENCAT = true;
+								if (DDEstadoComunicacionGencat.COD_COMUNICADO.equals(comunicacionGencat.getEstadoComunicacion().getCodigo())) {
+									ExpedienteComercial expediente = genericDao.get(ExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS,"id", idExpediente));
+									if (!Checks.esNulo(expediente)) {
+										OfertaGencat ofertaGencat = genericDao.get(OfertaGencat.class,genericDao.createFilter(FilterType.EQUALS,"oferta.id", expediente.getOferta().getId()));
+										if (!Checks.esNulo(ofertaGencat)) {
+											tieneTramiteGENCAT = true;
+										} else {
+											tieneTramiteGENCAT = false;
+										}
+									}
+								} else {
+									tieneTramiteGENCAT = true;
+								}
 							}else{
 								if(!Checks.esNulo(comunicacionGencat.getSancion())&& DDSancionGencat.COD_EJERCE.equalsIgnoreCase(comunicacionGencat.getSancion().getCodigo())) {
 									tieneTramiteGENCAT = true;

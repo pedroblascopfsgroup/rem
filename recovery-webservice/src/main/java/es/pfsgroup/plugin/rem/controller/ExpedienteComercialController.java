@@ -1758,13 +1758,13 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView getIsExpedienteGencat(Long idActivo, ModelMap model){
+	public ModelAndView getIsExpedienteGencat(Long idActivo, Long idExpediente, ModelMap model){
 		try {
 			boolean tieneBloqueoGencat = false;
 			if(!Checks.esNulo(idActivo)) {
 				Activo activo = genericDao.get(Activo.class,genericDao.createFilter(FilterType.EQUALS,"id", idActivo));
 				if(activoApi.isAfectoGencat(activo)) {
-					tieneBloqueoGencat = activoTramiteApi.tieneTramiteGENCATVigenteByIdActivo(idActivo);
+					tieneBloqueoGencat = activoTramiteApi.tieneTramiteGENCATVigenteByIdActivo(idActivo, idExpediente);
 				}
 			}
 			model.put("data", tieneBloqueoGencat);

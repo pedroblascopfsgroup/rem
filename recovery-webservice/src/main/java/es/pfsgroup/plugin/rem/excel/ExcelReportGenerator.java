@@ -302,7 +302,7 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 				r = mySheet.getRow(cellReference.getRow());
 				c = r.getCell(cellReference.getCol());
 				if (!Checks.esNulo(dtoPAB.getCarenciaALquiler())) { 
-					c.setCellValue(Integer.toString(dtoPAB.getCarenciaALquiler()));
+					c.setCellValue(Integer.toString(dtoPAB.getCarenciaALquiler()*30));
 				} else {
 					c.setCellValue("");
 				}

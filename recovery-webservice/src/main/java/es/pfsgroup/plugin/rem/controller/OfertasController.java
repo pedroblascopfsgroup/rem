@@ -25,16 +25,19 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
+import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
 import es.pfsgroup.plugin.rem.excel.OfertasExcelReport;
+import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.DtoHonorariosOferta;
 import es.pfsgroup.plugin.rem.model.DtoOfertantesOferta;
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.TmpClienteGDPR;
 import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.oferta.NotificationOfertaManager;
@@ -61,6 +64,12 @@ public class OfertasController {
 	
 	@Autowired
 	private ActivoDao activoDao;
+	
+	@Autowired
+	private GenericAdapter genericAdapter;
+	
+	@Autowired
+	private GestorDocumentalAdapterApi gestorDocumentalAdapterApi;
 
 	private final Log logger = LogFactory.getLog(getClass());
 
@@ -298,29 +307,18 @@ public class OfertasController {
 
 	}
 
+	@Transactional
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView checkPedirDoc(Long idActivo,Long idAgrupacion, Long idExpediente, String dniComprador, String codtipoDoc, ModelMap model) {
+	public ModelAndView checkPedirDoc(Long idActivo, Long idAgrupacion, Long idExpediente, String dniComprador, String codtipoDoc, ModelMap model) {
 
 		try {
-			//Se realiza aqui la llamada al Maestro de Personas para que tenga tiempo de ejecutar el hilo. 
 			ofertaApi.llamadaMaestroPersonas(dniComprador, CLIENTE_HAYA);
 			model.put("data", ofertaApi.checkPedirDoc(idActivo,idAgrupacion,idExpediente, dniComprador, codtipoDoc));
 			model.put("comprador",ofertaApi.getClienteGDPRByTipoDoc(dniComprador, codtipoDoc));
 			model.put("compradorId", expedienteComercialApi.getCompradorIdByDocumento(dniComprador, codtipoDoc));
 			model.put("destinoComercial", ofertaApi.getDestinoComercialActivo(idActivo, idAgrupacion, idExpediente));
-			if(!Checks.esNulo(idActivo)) {
-				Activo activo = activoDao.get(idActivo);
-				if(DDCartera.CODIGO_CARTERA_CERBERUS.equals(activo.getCartera().getCodigo())
-						|| DDCartera.CODIGO_CARTERA_GIANTS.equals(activo.getCartera().getCodigo())
-						|| DDCartera.CODIGO_CARTERA_TANGO.equals(activo.getCartera().getCodigo())
-						|| DDCartera.CODIGO_CARTERA_GALEON.equals(activo.getCartera().getCodigo())) {
-					model.put("carteraInternacional", true);
-				} else {
-					model.put("carteraInternacional", false);
-				}
-				
-			}
+			model.put("carteraInternacional", ofertaApi.esCarteraInternacional(idActivo, idAgrupacion, idExpediente));
 			model.put("success", true);
 		} catch (Exception e) {
 			logger.error("Error en ofertasController", e);

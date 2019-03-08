@@ -185,7 +185,7 @@ Ext.define('HreRem.model.FichaComprador', {
 			name: 'idDocAdjunto'
 		},
 		{
-        	name: 'cesionDatosHaya',
+        	name: 'cesionDatos',
         	type : 'boolean'
         },
         {

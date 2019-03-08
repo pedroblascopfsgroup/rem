@@ -13,7 +13,9 @@ Ext.define('HreRem.view.expedientes.DatosCompradorWizard', {
 	listeners: {
 		boxready:'cargarDatosCompradorWizard'
 	},
-  
+	viewModel: {
+        type: 'expedientedetalle'
+    },
 
     initComponent: function() {
     	var me = this;
@@ -28,8 +30,8 @@ Ext.define('HreRem.view.expedientes.DatosCompradorWizard', {
 
     	 me.items = [{
     		xtype: 	'checkboxfieldbase', 
- 	    	name:		'cesionDatosHaya',
-			bind:		'{comprador.cesionDatosHaya}',
+ 	    	name:		'cesionDatos',
+			bind:		'{comprador.cesionDatos}',
 			hidden:		true
 	    },
 

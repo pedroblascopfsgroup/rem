@@ -1011,7 +1011,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		model = Ext.create('HreRem.model.FichaComprador', {
 			id : id,
 			idExpedienteComercial : idExpediente,
-			cesionDatosHaya: form.findField('cesionDatosHaya').getValue(),
+			cesionDatos: form.findField('cesionDatos').getValue(),
 			comunicacionTerceros: form.findField('comunicacionTerceros').getValue(),
 			transferenciasInternacionales: form.findField('transferenciasInternacionales').getValue(),
 			pedirDoc: form.findField('pedirDoc').getValue(),
@@ -1028,7 +1028,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 				params : {
 					id : id,
 					idExpedienteComercial : idExpediente,
-					cesionDatosHaya: form.findField('cesionDatosHaya').getValue(),
+					cesionDatos: form.findField('cesionDatos').getValue(),
 					comunicacionTerceros: form.findField('comunicacionTerceros').getValue(),
 					transferenciasInternacionales: form.findField('transferenciasInternacionales').getValue(),
 					pedirDoc: form.findField('pedirDoc').getValue(),
@@ -1549,7 +1549,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
         window = ventanaDetalle.up().xtype,
 	    form = ventanaDetalle.getForm(),
 		ventanaWizard = btn.up('wizardaltacomprador');
-
+		
 		ventanaWizard.height =  Ext.Element.getViewportHeight() > 500 ? 500 : Ext.Element.getViewportHeight()-100;
 		ventanaWizard.setY( Ext.Element.getViewportHeight()/2 - ((Ext.Element.getViewportHeight() > 500 ? 500 : Ext.Element.getViewportHeight() -100)/2));
 
@@ -1563,7 +1563,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 					url = $AC.getRemoteUrl('expedientecomercial/getListAdjuntosComprador');
 
                     idExpediente = comprador.data.idExpedienteComercial;
-                    var docCliente= comprador.data.numDocumento;
+                    var docCliente = comprador.data.numDocumento;
                     Ext.Ajax.request({
                          url: url,
                          method : 'GET',
@@ -1583,7 +1583,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
                          }
                     });
 
-                    ventanaWizard.down('anyadirnuevaofertaactivoadjuntardocumento').getForm().findField('cesionDatos').setValue(comprador.data.cesionDatosHaya);
+                    ventanaWizard.down('anyadirnuevaofertaactivoadjuntardocumento').getForm().findField('cesionDatos').setValue(comprador.data.cesionDatos);
                     ventanaWizard.down('anyadirnuevaofertaactivoadjuntardocumento').getForm().findField('comunicacionTerceros').setValue(comprador.data.comunicacionTerceros);
                     ventanaWizard.down('anyadirnuevaofertaactivoadjuntardocumento').getForm().findField('transferenciasInternacionales').setValue(comprador.data.transferenciasInternacionales);
 
@@ -1591,9 +1591,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
                     var layout = wizard.getLayout();
                     layout["next"]();
 				}
-
 			}else{
-
 				me.guardarComprador(form, ventanaWizard);
 			}
 
@@ -1602,9 +1600,9 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			var cesionDatos = ventanaDetalle.getForm().findField('cesionDatos').getValue(),
 			comunicacionTerceros = ventanaDetalle.getForm().findField('comunicacionTerceros').getValue(),
 			transferenciasInternacionales = ventanaDetalle.getForm().findField('transferenciasInternacionales').getValue();
-            ventanaDetalle.getForm().findField('cesionDatos').setValue(cesionDatos);
-            ventanaDetalle.getForm().findField('comunicacionTerceros').setValue(comunicacionTerceros);
-            ventanaDetalle.getForm().findField('transferenciasInternacionales').setValue(transferenciasInternacionales);
+            ventanaWizard.down('datoscompradorwizard').getForm().findField('cesionDatos').setValue(cesionDatos);
+            ventanaWizard.down('datoscompradorwizard').getForm().findField('comunicacionTerceros').setValue(comunicacionTerceros);
+            ventanaWizard.down('datoscompradorwizard').getForm().findField('transferenciasInternacionales').setValue(transferenciasInternacionales);
 
             me.guardarComprador(form, ventanaWizard);
 		}

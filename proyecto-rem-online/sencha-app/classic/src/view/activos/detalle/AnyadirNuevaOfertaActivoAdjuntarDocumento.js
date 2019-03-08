@@ -96,7 +96,7 @@ Ext.define('HreRem.view.activos.detalle.AnyadirNuevaOfertaActivoAdjuntarDocument
 						{
 							xtype:'checkboxfieldbase',
 							fieldLabel: HreRem.i18n('wizard.oferta.documento.cesionDatos'),							
-							bind:  '{oferta.cesionDatosHaya}',
+							bind:  '{oferta.cesionDatos}',
 							name:       'cesionDatos',
 							margin: '50px 0 0 200px',
 							reference: 'chkbxCesionDatosHaya',
@@ -108,6 +108,7 @@ Ext.define('HreRem.view.activos.detalle.AnyadirNuevaOfertaActivoAdjuntarDocument
 	                            	  btnGenerarDoc = ventanaWizard.down('button[itemId=btnGenerarDoc]'),
 	                            	  btnSubirDoc = ventanaWizard.down('button[itemId=btnSubirDoc]'),
 	                            	  btnFinalizar = ventanaWizard.down('button[itemId=btnFinalizar]');
+	                            	  var checkTransInternacionales = ventanaWizard.getForm().findField('transferenciasInternacionales').getValue();
 	                            	  if(checkbox.getValue()) {
 	                            		  if(esInternacional) {
 	                            			  if(checkTransInternacionales) {

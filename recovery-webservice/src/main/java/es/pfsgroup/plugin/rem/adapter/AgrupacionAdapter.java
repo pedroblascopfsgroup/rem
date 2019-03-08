@@ -2063,7 +2063,7 @@ public class AgrupacionAdapter {
 			TmpClienteGDPR tmpClienteGDPR = genericDao.get(TmpClienteGDPR.class,
 					genericDao.createFilter(FilterType.EQUALS, "numDocumento", dto.getNumDocumentoCliente()));
 			
-			if (!Checks.esNulo(tmpClienteGDPR)) {
+			if (!Checks.esNulo(tmpClienteGDPR) && !Checks.esNulo(tmpClienteGDPR.getIdPersonaHaya())) {
 				clienteComercial.setIdPersonaHaya(String.valueOf(tmpClienteGDPR.getIdPersonaHaya()));
 			}
 			

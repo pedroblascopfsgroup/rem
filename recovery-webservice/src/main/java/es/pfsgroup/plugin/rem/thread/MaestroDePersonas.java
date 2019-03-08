@@ -21,6 +21,7 @@ import es.pfsgroup.plugin.gestorDocumental.dto.PersonaOutputDto;
 import es.pfsgroup.plugin.gestorDocumental.manager.GestorDocumentalMaestroManager;
 import es.pfsgroup.plugin.rem.model.ClienteComercial;
 import es.pfsgroup.plugin.rem.model.ClienteGDPR;
+import es.pfsgroup.plugin.rem.model.Comprador;
 import es.pfsgroup.plugin.rem.model.CompradorExpediente;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.TmpClienteGDPR;
@@ -148,14 +149,18 @@ public class MaestroDePersonas  implements Runnable{
 				String documento = null, idPersonaHaya = null;
 				ClienteComercial clienteCom = null;
 				ClienteGDPR clienteGDPR = llamadaClienteGDPR(sessionObj);
+				Comprador comprador = llamadaComprador(sessionObj);
 				if(!Checks.esNulo(clienteGDPR)) {
 					clienteCom = llamadaClienteComercial(sessionObj, clienteGDPR);
 					documento = clienteCom.getDocumento();
 					idPersonaHaya = clienteCom.getIdPersonaHaya();
+				} else if(!Checks.esNulo(comprador)) {
+					documento = comprador.getDocumento();
+					idPersonaHaya = String.valueOf(comprador.getIdPersonaHaya());
 				} else {
 					documento = numDocCliente;
-				} 
-					if(Checks.esNulo(clienteCom) || Checks.esNulo(idPersonaHaya) || idPersonaHayaNoExiste.equals(idPersonaHaya)) {
+				}
+					if(Checks.esNulo(idPersonaHaya) || idPersonaHayaNoExiste.equals(idPersonaHaya)) {
 						personaDto.setEvent(PersonaInputDto.EVENTO_IDENTIFICADOR_PERSONA_ORIGEN);
 						personaDto.setIdPersonaOrigen(documento);
 						personaDto.setIdIntervinienteHaya(PersonaInputDto.ID_INTERVINIENTE_HAYA);
@@ -205,13 +210,21 @@ public class MaestroDePersonas  implements Runnable{
 							logger.error("[MAESTRO DE PERSONAS] EL ID RECUPERADO ES " + personaOutputDto.getIdIntervinienteHaya());
 						}
 							
-						if(!Checks.esNulo(personaOutputDto) && !Checks.esNulo(clienteCom)) {
+						if(!Checks.esNulo(personaOutputDto) && !Checks.esNulo(clienteCom)  && !Checks.esNulo(clienteGDPR)) {
 							if(!Checks.esNulo(personaOutputDto.getIdIntervinienteHaya())) {
 								clienteCom.setIdPersonaHaya(personaOutputDto.getIdIntervinienteHaya());
 							}else {
 								clienteCom.setIdPersonaHaya(idPersonaHayaNoExiste);
 							}
 							genericDao.update(ClienteComercial.class, clienteCom);
+							
+						} else if(!Checks.esNulo(personaOutputDto) && !Checks.esNulo(comprador)) {
+							if(!Checks.esNulo(personaOutputDto.getIdIntervinienteHaya())) {
+								comprador.setIdPersonaHaya(Long.parseLong(personaOutputDto.getIdIntervinienteHaya()));
+							}else {
+								comprador.setIdPersonaHaya(Long.parseLong(idPersonaHayaNoExiste));
+							}
+							genericDao.update(Comprador.class, comprador);
 						}
 					}
 			}
@@ -231,6 +244,12 @@ public class MaestroDePersonas  implements Runnable{
 		Criteria criteria = sessionObj.createCriteria(ClienteGDPR.class);
 		criteria.add(Restrictions.eq("numDocumento", numDocCliente));
 		return  HibernateUtils.castObject(ClienteGDPR.class, criteria.uniqueResult());
+	}
+	
+	private Comprador llamadaComprador(Session sessionObj) {
+		Criteria criteria = sessionObj.createCriteria(Comprador.class);
+		criteria.add(Restrictions.eq("documento", numDocCliente));
+		return  HibernateUtils.castObject(Comprador.class, criteria.uniqueResult());
 	}
 	
 	private ClienteComercial llamadaClienteComercial(Session sessionObj, ClienteGDPR clienteGDPR) {

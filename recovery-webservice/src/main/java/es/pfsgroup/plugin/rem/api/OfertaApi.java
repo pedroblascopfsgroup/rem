@@ -590,5 +590,18 @@ public interface OfertaApi {
 	 * @return String destino comercial del activo.
 	 */
 	public String getDestinoComercialActivo(Long idActivo, Long idAgrupacion, Long idExpediente);
+	
+	/**
+	 * Devuelve un booleano indicando si existe el cliente GDPR o el comprador.
+	 * @param idActivo
+	 * @param idAgrupacion
+	 * @param idExpediente
+	 * @param docCliente
+	 * @param codtipoDoc
+	 * @return boolean si existe el cliente o el comprador.
+	 */
+	public boolean existeClienteOComprador(Long idActivo, Long idAgrupacion, Long idExpediente, String docCliente, String codtipoDoc);
+	
+	public boolean esCarteraInternacional(Long idActivo, Long idAgrupacion, Long idExpediente);
 }
 

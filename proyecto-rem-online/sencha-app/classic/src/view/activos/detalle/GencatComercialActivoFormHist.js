@@ -1,18 +1,17 @@
-Ext.define('HreRem.view.activos.detalle.GencatComercialActivoForm', {
+Ext.define('HreRem.view.activos.detalle.GencatComercialActivoFormHist', {
 	extend: 'HreRem.view.common.FormBase',
-    xtype: 'gencatcomercialactivoform',
+    xtype: 'gencatcomercialactivoformhist',
     
     cls: 'panel-base shadow-panel',
     refreshAfterSave: true,
-    recordName: "gencat",
-	recordClass: "HreRem.model.Gencat",
+    recordName: "gencatHistorico",
+	recordClass: "HreRem.model.GencatHistorico",
     requires	: [
-    	'HreRem.model.Gencat',
-    	'HreRem.model.NotificacionGencat',
-    	'HreRem.view.activos.detalle.OfertasAsociadasActivoList',
-    	'HreRem.view.activos.detalle.DocumentosComunicacionGencatList',
-    	'HreRem.view.activos.detalle.ReclamacionesActivoList',
-    	'HreRem.view.activos.detalle.NotificacionesActivoList'
+    	'HreRem.model.GencatHistorico',
+    	'HreRem.view.activos.detalle.HistoricoOfertasAsociadasActivoList',
+    	'HreRem.view.activos.detalle.DocumentosComunicacionHistoricoGencatList',
+    	'HreRem.view.activos.detalle.HistoricoReclamacionesActivoList',
+    	'HreRem.view.activos.detalle.HistoricoNotificacionesActivoList'
     ],
     
     listeners: { 
@@ -22,9 +21,8 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoForm', {
     data: {
         idHComunicacion: -1
     },
-    
-    //url: $AC.getRemoteUrl("gencat/URL_GENCAT_GUARDAR_FORM"),
-    url: $AC.getRemoteUrl("gencat/saveDatosComunicacion"),
+
+    /*url: $AC.getRemoteUrl("gencat/saveDatosComunicacion"),*/
         
     initComponent: function () {
         
@@ -35,34 +33,39 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoForm', {
         var reclamacionesactivolist;
         var documentoscomunicaciongencatlist;
         var notificacionactivolist;
-
-
-    	title = HreRem.i18n('title.comunicacion.actual');
-    	me.recordClass = 'HreRem.model.Gencat';
-
+        	
+    	title = HreRem.i18n('title.comunicacion.historico');
+    	me.recordClass = 'HreRem.model.GencatHistorico';
+    	me.getModelInstance().getProxy().setExtraParam('idHComunicacion', me.idHComunicacion);
+    	
     	ofertasasociadasactivolist = {	
-			xtype: 'ofertasasociadasactivolist',
-			reference: 'ofertasasociadasactivolistref',
+			xtype: 'historicoofertasasociadasactivolist',
+			reference: 'historicoofertasasociadasactivolistref',
+			idHComunicacion: me.idHComunicacion,
 			width: '100%'
-    	}
+		}
     	
     	reclamacionesactivolist = {	
-			xtype: 'reclamacionesactivolist',
-			reference: 'reclamacionesactivolistref',
+			xtype: 'historicoreclamacionesactivolist',
+			reference: 'historicoreclamacionesactivolistref',
+			idHComunicacion: me.idHComunicacion,
 			width: '100%'
 		}
     	
     	documentoscomunicaciongencatlist = {	
-			xtype: 'documentoscomunicaciongencatlist',
-			reference: 'documentoscomunicaciongencatlistref',
+			xtype: 'documentoscomunicacionhistoricogencatlist',
+			reference: 'documentoscomunicacionhistoricogencatlistref',
+			idHComunicacion: me.idHComunicacion,
 			width: '100%'
 		}
     	
     	notificacionactivolist = {	
-			xtype: 'notificacionesactivolist',
-			reference: 'notificacionesactivolistref',
+			xtype: 'historiconotificacionesactivolist',
+			reference: 'historiconotificacionesactivolistref',
+			idHComunicacion: me.idHComunicacion,
 			width: '100%'
 		}
+        	
 
         var items = [
         	{
@@ -93,7 +96,7 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoForm', {
 				    				name: 'fechaPreBloqueo',
 				    				submitFormat:'Y-m-d',
 									bind: {
-										value: '{gencat.fechaPreBloqueo}'										
+										value: '{gencatHistorico.fechaPreBloqueo}'										
 									}
 				    			},
 				    			{
@@ -103,7 +106,7 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoForm', {
 				    				name: 'fechaComunicacion',
 				    				submitFormat:'Y-m-d',
 									bind: {
-										value: '{gencat.fechaComunicacion}'
+										value: '{gencatHistorico.fechaComunicacion}'
 										
 									}
 				    			},
@@ -114,7 +117,7 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoForm', {
 				    				name: 'fechaPrevistaSancion',
 			    				 	submitFormat:'Y-m-d',
 									bind: {										
-										value: '{gencat.fechaPrevistaSancion}'										
+										value: '{gencatHistorico.fechaPrevistaSancion}'										
 									}
 				    			},
 				    			{
@@ -124,22 +127,18 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoForm', {
 				    				name: 'fechaSancion',
 				    				submitFormat:'Y-m-d',
 									bind: {
-										readOnly: '{!gencat.IsUserAllowed}',
-										value: '{gencat.fechaSancion}',
-										disabled: '{gencat.fechaComunicacionVacia}'
+										value: '{gencatHistorico.fechaSancion}',
+										disabled: '{gencatHistorico.fechaComunicacionVacia}'
 									}
 				    			},
 				    			{
-				    				xtype: "comboboxfieldbase",
 				    				fieldLabel: HreRem.i18n('fieldlabel.sancion'),
 				    				colspan: 2,
 				    				name: 'sancion',
 				    				reference: 'sancionRef',
 									bind: {
-										readOnly: '{!gencat.IsUserAllowed}',
-										store: '{comboSancionGencat}',
-										value: '{gencat.sancion}',
-										disabled: '{gencat.fechaComunicacionVacia}'
+										value: '{gencatHistorico.sancion}',
+										disabled: '{gencatHistorico.fechaComunicacionVacia}'
 									},
 									listeners: {
 										change : 'comprobarCampoNifNombre'
@@ -155,16 +154,14 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoForm', {
 									defaults: {
 										width: 410
 								    },
-									items:
+									items: 
 										[
 											{
 							    				fieldLabel: HreRem.i18n('fieldlabel.nif'),
 							    				name: 'nuevoCompradorNif',
 							    				reference: 'nuevoCompradorNifref',
 												bind: {
-													readOnly: '{!gencat.IsUserAllowed}',
-													disabled: '{!gencat.estaActivadoCompradorNuevo}',
-													value: '{gencat.nuevoCompradorNif}'													
+													value: '{gencatHistorico.nuevoCompradorNif}'													
 												},
 												listener:{
 													blur:'comprobarFormatoNIF'
@@ -175,27 +172,21 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoForm', {
 							    				name: 'nuevoCompradorNombre',
 							    				reference: 'nuevoCompradorNombreref',
 												bind: {
-													readOnly: '{!gencat.IsUserAllowed}',
-													disabled: '{!gencat.estaActivadoCompradorNuevo}',
-													value: '{gencat.nuevoCompradorNombre}'													
+													value: '{gencatHistorico.nuevoCompradorNombre}'													
 												}
 							    			},
 							    			{
 							    				fieldLabel: HreRem.i18n('fieldlabel.primer.apellido'),
 							    				name: 'nuevoCompradorApellido1',
 												bind: {
-													readOnly: '{!gencat.IsUserAllowed}',
-													disabled: '{!gencat.estaActivadoCompradorNuevo}',
-													value: '{gencat.nuevoCompradorApellido1}'													
+													value: '{gencatHistorico.nuevoCompradorApellido1}'													
 												}
 							    			},
 							    			{
 							    				fieldLabel: HreRem.i18n('fieldlabel.segundo.apellido'),
 							    				name: 'nuevoCompradorApellido2',
 												bind: {
-													readOnly: '{!gencat.IsUserAllowed}',
-													disabled: '{!gencat.estaActivadoCompradorNuevo}',
-													value: '{gencat.nuevoCompradorApellido2}'												
+													value: '{gencatHistorico.nuevoCompradorApellido2}'												
 												}
 							    			}
 										]
@@ -204,8 +195,7 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoForm', {
 				    				fieldLabel: HreRem.i18n('fieldlabel.oferta.gencat'),
 				    				readOnly: true,
 									bind: {
-										value: '{gencat.ofertaGencat}',
-										visible: '{gencat.usuarioCompleto}'
+										value: '{gencatHistorico.ofertaGencat}'
 										
 									},
 									listeners: {
@@ -227,8 +217,7 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoForm', {
 				    				dataIndex: 'estadoComunicacion', // No borrar, aunque no es necesario para el modelo se usa en el calculo del boton anyadir notifiacion
 				    				name : 'estadoComunicacion',
 									bind: {
-										store: '{comboEstadoComunicacionGencat}',
-										value: '{estadoComunicacionField}'
+										value: '{estadoComunicacion}'
 									}
 				    			},
 				    			{
@@ -239,7 +228,7 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoForm', {
 				    				name: 'fechaAnulacion',
 				    				submitFormat:'Y-m-d',
 									bind: {
-										value: '{gencat.fechaAnulacion}'
+										value: '{gencatHistorico.fechaAnulacion}'
 									}
 				    			},
 				    			{
@@ -247,12 +236,13 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoForm', {
 				    				fieldLabel: HreRem.i18n('fieldlabel.comunicado.anulacion.gencat'),
 				    				name: 'comunicadoAnulacionAGencat',
 				    				reference:'checkComunicadoAnulacion',
+				    				id: 'checkComunicadoAnulacion',
 				    				listeners: {
 				    					change : 'onExisteDocumentoAnulacion'
 				    				},
 									bind: {
 										readOnly: '{esSoloLecturaCheckAnularGencat}',
-										value: '{gencat.comunicadoAnulacionAGencat}'
+										value: '{gencatHistorico.comunicadoAnulacionAGencat}'
 									}
 				    			}
 				    		]
@@ -273,7 +263,7 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoForm', {
 				    				name: 'necesitaReforma',
 									bind: {
 										store: '{comboSiNo}',
-										value: '{gencat.necesitaReforma}'
+										value: '{gencatHistorico.necesitaReforma}'
 									}
 				    			},
 				    			{
@@ -282,7 +272,7 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoForm', {
 				    				name: 'importeReforma',
 				    				readOnly: true,
 									bind: {
-										value: '{gencat.importeReforma}'										
+										value: '{gencatHistorico.importeReforma}'										
 									}
 				    			},
 				    			{
@@ -292,7 +282,7 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoForm', {
 				    				name: 'fechaRevision',
 				    				submitFormat:'Y-m-d',
 									bind: {
-										value: '{gencat.fechaRevision}'										
+										value: '{gencatHistorico.fechaRevision}'										
 									}
 				    			}
 							]
@@ -323,7 +313,7 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoForm', {
 			    				readOnly: true,
 			    				name: 'idVisita',
 			    				bind: {
-									value: '{gencat.idVisita}'									
+									value: '{gencatHistorico.idVisita}'									
 								},
 								listeners: {
 							        click: {
@@ -343,7 +333,7 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoForm', {
 			    				name: 'estadoVisita',
 								bind: {
 									store: '{comboEstadoVisita}',
-									value: '{gencat.estadoVisita}'									
+									value: '{gencatHistorico.estadoVisita}'									
 								}
 			    			},
 			    			{
@@ -351,7 +341,7 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoForm', {
 			    				readOnly: true,
 			    				name: 'apiRealizaLaVisita',
 								bind: {
-									value: '{gencat.apiRealizaLaVisita}'									
+									value: '{gencatHistorico.apiRealizaLaVisita}'									
 								}
 			    			},
 			    			{
@@ -361,7 +351,7 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoForm', {
 			    				name: 'fechaRealizacionVisita',
 			    				submitFormat:'Y-m-d',
 								bind: {
-									value: '{gencat.fechaRealizacionVisita}'									
+									value: '{gencatHistorico.fechaRealizacionVisita}'									
 								}
 			    			},
 			    			{ 

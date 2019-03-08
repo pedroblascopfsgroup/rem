@@ -2,7 +2,7 @@
 Ext.define('HreRem.view.activos.detalle.GencatComercialActivoController', {
     extend: 'Ext.app.ViewController',
     alias: 'controller.gencatcomercialactivo', 
-    requires: ['HreRem.controller.ActivosController'],
+    requires: ['HreRem.controller.ActivosController', 'HreRem.view.activos.detalle.GencatComercialActivoFormHist'],
     
     
     control: {
@@ -62,15 +62,14 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoController', {
     	
     	var fieldsetHistorico = dv.up().up();
     	var formHistorico = fieldsetHistorico.down('[reference=gencatcomercialactivoformhistoricoref]');
-    	
+    	debugger;
     	if (formHistorico != null) {
     		fieldsetHistorico.remove(formHistorico);
     	}
     	
     	var nuevoFormHistorico = {	
-			xtype: 'gencatcomercialactivoform',
+			xtype: 'gencatcomercialactivoformhist',
 			reference: 'gencatcomercialactivoformhistoricoref',
-			formDeHistorico: true,
 			idHComunicacion: record.id
 		};
     	

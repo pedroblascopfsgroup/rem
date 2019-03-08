@@ -16,7 +16,7 @@ public interface GestorActivoDao extends GestorEntidadDao{
 	
 	/**
 	 * Comprueba si el usuario es Gestor Externo, es decir, con perfiles:
-	 * 'HAYAFSV','PERFGCCBANKIA','GESTOADM','GESTIAFORM','HAYAGESTADMT','GESTOCED','GESTOPLUS','GESTOPDV','HAYAPROV','HAYACERTI','HAYACONSU'
+	 * 'HAYAFSV','PERFGCCBANKIA','GESTOADM','GESTIAFORM','HAYAGESTADMT','GESTOCED','GESTOPLUS','GTOPOSTV','GESTOPDV','HAYAPROV','HAYACERTI','HAYACONSU'
 	 * @param idUsuario
 	 * @return
 	 */
@@ -24,7 +24,7 @@ public interface GestorActivoDao extends GestorEntidadDao{
 	
 	/**
 	 * Comprueba si el usuario es Gestor Externo de tipo proveedor, es decir, con perfiles:
-	 * 'GESTOADM','GESTIAFORM','HAYAGESTADMT','GESTOCED','GESTOPLUS','GESTOPDV','HAYAPROV','HAYACERTI'
+	 * 'GESTOADM','GESTIAFORM','HAYAGESTADMT','GESTOCED','GESTOPLUS','GTOPOSTV','GESTOPDV','HAYAPROV','HAYACERTI'
 	 * @param idUsuario
 	 * @return
 	 */

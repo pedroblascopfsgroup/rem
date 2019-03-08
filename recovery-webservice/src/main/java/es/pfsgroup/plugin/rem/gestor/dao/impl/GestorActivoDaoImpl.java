@@ -65,7 +65,7 @@ public class GestorActivoDaoImpl extends GestorEntidadDaoImpl implements GestorA
 		String resultado = rawDao.getExecuteSQL("SELECT count(1) FROM ZON_PEF_USU zpu "
 				+ "	JOIN PEF_PERFILEs pef ON zpu.pef_id = pef.pef_id "
 				+ " WHERE zpu.usu_id = " + idUsuario
-				+ " AND pef.pef_codigo IN ('HAYAFSV','PERFGCCBANKIA','GESTOADM','GESTIAFORM','HAYAGESTADMT','GESTOCED','GESTOPLUS','GESTOPDV','HAYAPROV','HAYACERTI','HAYACONSU')");
+				+ " AND pef.pef_codigo IN ('HAYAFSV','PERFGCCBANKIA','GESTOADM','GESTIAFORM','HAYAGESTADMT','GESTOCED','GESTOPLUS','GTOPOSTV','GESTOPDV','HAYAPROV','HAYACERTI','HAYACONSU')");
 		
 		if("0".equals(resultado)) {
 			return false;
@@ -84,7 +84,7 @@ public class GestorActivoDaoImpl extends GestorEntidadDaoImpl implements GestorA
 				"join DD_TPR_TIPO_PROVEEDOR tpr on TPR.DD_TPR_ID=PVE.DD_TPR_ID " + 
 				"join zon_pef_usu zpu on zpu.usu_id=USU.USU_ID " + 
 				"join PEF_PERFILES pef on pef.pef_id=ZPU.PEF_ID " + 
-				"WHERE pef.pef_codigo IN ('GESTOADM','GESTIAFORM','GESTOCED', 'HAYAGESTADMT', 'GESTOPLUS','GESTOPDV','HAYAPROV','HAYACERTI') " + //tecnotramit y ogf
+				"WHERE pef.pef_codigo IN ('GESTOADM','GESTIAFORM','GESTOCED', 'HAYAGESTADMT', 'GESTOPLUS','GTOPOSTV','GESTOPDV','HAYAPROV','HAYACERTI') " + //tecnotramit y ogf
 				"and usu.usu_id = " + idUsuario +
 				"AND PVE.PVE_DOCIDENTIF not in ('B65737322', 'B82802075')");
 		

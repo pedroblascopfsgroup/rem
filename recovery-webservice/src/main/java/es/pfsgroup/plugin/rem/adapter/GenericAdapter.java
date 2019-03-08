@@ -250,13 +250,16 @@ public class GenericAdapter {
 
 		Perfil GESTOPLUS = genericDao.get(Perfil.class,
 				genericDao.createFilter(FilterType.EQUALS, "codigo", "GESTOPLUS"));
+		
+		Perfil GTOPOSTV = genericDao.get(Perfil.class,
+				genericDao.createFilter(FilterType.EQUALS, "codigo", "GTOPOSTV"));
 
 		Perfil GESTOPDV = genericDao.get(Perfil.class,
 				genericDao.createFilter(FilterType.EQUALS, "codigo", "GESTOPDV"));
 
 		return usuario.getPerfiles().contains(GESTOADM) || usuario.getPerfiles().contains(GESTIAFORM)
 				|| usuario.getPerfiles().contains(HAYAGESTADMT) || usuario.getPerfiles().contains(GESTOCED)
-				|| usuario.getPerfiles().contains(GESTOPLUS) || usuario.getPerfiles().contains(GESTOPDV);
+				|| usuario.getPerfiles().contains(GESTOPLUS) || usuario.getPerfiles().contains(GTOPOSTV) || usuario.getPerfiles().contains(GESTOPDV);
 	}
 
 	/**

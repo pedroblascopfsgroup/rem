@@ -3738,7 +3738,11 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		try {
 			beanUtilNotNull.copyProperty(activo, "fechaVentaExterna", dto.getFechaVenta());
 			beanUtilNotNull.copyProperty(activo, "importeVentaExterna", dto.getImporteVenta());
-			beanUtilNotNull.copyProperty(activo, "observacionesVentaExterna", dto.getObservaciones().replaceAll("(\n|\r)", " "));
+			if(!Checks.esNulo(dto.getObservaciones())) {
+				beanUtilNotNull.copyProperty(activo, "observacionesVentaExterna", dto.getObservaciones().replaceAll("(\n|\r)", " "));
+			}else {
+				beanUtilNotNull.copyProperty(activo, "observacionesVentaExterna", null);
+			}
 			dto.setVentaExterna(Checks.esNulo(activo.getFechaVentaExterna()));
 
 			// Si se ha introducido valores en fecha o importe de venta, se

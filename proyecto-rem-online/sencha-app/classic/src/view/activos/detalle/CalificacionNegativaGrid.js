@@ -17,45 +17,30 @@ Ext.define('HreRem.view.activos.detalle.CalificacionNegativaGrid', {
 
 		me.columns = [
 		        {
-		            dataIndex: 'fechaDesde',
-		            text: HreRem.i18n('title.publicaciones.mediador.fechaDesde'),
-		            flex: 0.5,
-		            formatter: 'date("d/m/Y")'
-		        },
-		        {
-		            dataIndex: 'fechaHasta',
-		            text: HreRem.i18n('title.publicaciones.mediador.fechaHasta'),
-		            flex: 0.5,
-		            formatter: 'date("d/m/Y")'
-		        },
-		        {
-		            dataIndex: 'codigo',
-		            text: HreRem.i18n('title.publicaciones.mediador.codigo'),
-		            editor: {
-		            	xtype: 'numberfield',
-		            	allowBlank: false
-		            },
+		            dataIndex: 'motivoCalificacionNegativa',
+		            text: HreRem.i18n('fieldlabel.calificacion.motivo'),
 		            flex: 0.5
 		        },
 		        {
-		            dataIndex: 'mediador',
-		            text: HreRem.i18n('title.publicaciones.mediador.mediador'),
-		            flex: 1
+		            dataIndex: 'estadoMotivoCalificacionNegativa',
+		            text: HreRem.i18n('fieldlabel.calificacion.estadomotivo.calificacion'),
+		            flex: 0.5
 		        },
 		        {
-		            dataIndex: 'telefono',
-		            text: HreRem.i18n('title.publicaciones.mediador.telefono'),
-		            flex: 1
+		            dataIndex: 'fechaSubsanacion',
+		            text: HreRem.i18n('fieldlabel.calificacion.fechaSubsanacion'),
+		            flex: 0.5,
+		            formatter: 'date("d/m/Y")'
 		        },
 		        {
-		        	dataIndex: 'email',
-		            text: HreRem.i18n('title.publicaciones.mediador.email'),
-		            flex: 1
+		            dataIndex: 'responsableSubsanar',
+		            text: HreRem.i18n('fieldlabel.calificacion.responsablesubsanar'),
+		            flex: 0.5
 		        },
 		        {
-		        	dataIndex: 'responsableCambio',
-		            text: HreRem.i18n('header.responsable.cambio'),
-		            flex: 1
+		            dataIndex: 'descripcionCalificacionNegativa',
+		            text: HreRem.i18n('fieldlabel.calificacion.descripcion'),
+		            flex: 0.5
 		        }
 		    ];
 

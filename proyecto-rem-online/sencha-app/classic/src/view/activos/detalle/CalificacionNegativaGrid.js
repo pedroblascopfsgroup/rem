@@ -8,7 +8,7 @@ Ext.define('HreRem.view.activos.detalle.CalificacionNegativaGrid', {
 	editOnSelect: false,
 	disabledDeleteBtn: true,
     bind: {
-        store: '{storeHistoricoMediador}' // TODO hay que hacerse un store y en ese store apuntar a los model
+        store: '{storeCalifiacionNegativa}' // TODO hay que hacerse un store y en ese store apuntar a los model
     },
 
     initComponent: function () {
@@ -17,44 +17,31 @@ Ext.define('HreRem.view.activos.detalle.CalificacionNegativaGrid', {
 
 		me.columns = [
 		        {
-		            dataIndex: 'fechaDesde',
-		            text: HreRem.i18n('title.publicaciones.mediador.fechaDesde'),
-		            flex: 0.5,
-		            formatter: 'date("d/m/Y")'
+		            dataIndex: 'MotivoCalificacionNegativa',
+		            text: HreRem.i18n('fieldlabel.calificacion.motivo'),
+		            flex: 0.5
+		           
 		        },
 		        {
-		            dataIndex: 'fechaHasta',
-		            text: HreRem.i18n('title.publicaciones.mediador.fechaHasta'),
-		            flex: 0.5,
-		            formatter: 'date("d/m/Y")'
+		            dataIndex: 'EstadoCalificacionNegativa',
+		            text: HreRem.i18n('fieldlabel.calificacion.estadomotivo.calificacion'),
+		            flex: 0.5
+		            
 		        },
 		        {
-		            dataIndex: 'codigo',
-		            text: HreRem.i18n('title.publicaciones.mediador.codigo'),
-		            editor: {
-		            	xtype: 'numberfield',
-		            	allowBlank: false
-		            },
+		            dataIndex: 'ResponsableSubsanar',
+		            text: HreRem.i18n('fieldlabel.calificacion.responsablesubsanar'),
 		            flex: 0.5
 		        },
 		        {
-		            dataIndex: 'mediador',
-		            text: HreRem.i18n('title.publicaciones.mediador.mediador'),
-		            flex: 1
+		            dataIndex: 'FechaSubsanar',
+		            text: HreRem.i18n('fieldlabel.calificacion.fechaSubsanacion'),
+		            flex: 1,
+		            formatter: 'date("d/m/Y")'
 		        },
 		        {
-		            dataIndex: 'telefono',
-		            text: HreRem.i18n('title.publicaciones.mediador.telefono'),
-		            flex: 1
-		        },
-		        {
-		        	dataIndex: 'email',
-		            text: HreRem.i18n('title.publicaciones.mediador.email'),
-		            flex: 1
-		        },
-		        {
-		        	dataIndex: 'responsableCambio',
-		            text: HreRem.i18n('header.responsable.cambio'),
+		            dataIndex: 'DescripcionCalificacionNegativa',
+		            text: HreRem.i18n('fieldlabel.calificacion.descripcion'),
 		            flex: 1
 		        }
 		    ];
@@ -67,7 +54,7 @@ Ext.define('HreRem.view.activos.detalle.CalificacionNegativaGrid', {
 		            inputItemWidth: 60,
 		            displayInfo: true,
 		            bind: {
-		                store: '{storeHistoricoMediador}'
+		                store: '{storeCalifiacionNegativa}'
 		            }
 		        }
 		    ];

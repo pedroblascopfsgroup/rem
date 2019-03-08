@@ -2680,6 +2680,12 @@ public class ActivoController extends ParadiseJsonController {
 
 		return createModelAndViewJson(model);
 	}
-	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getCalificacionNegativa(Long id, ModelMap model) {
+		model.put(RESPONSE_DATA_KEY, activoApi.getActivoCalificacionNegativaByIdActivo(id));
+
+		return createModelAndViewJson(model);
+	}
 	
 }

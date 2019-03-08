@@ -1811,6 +1811,16 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		        remoteUrl: 'activo/getHistoricoDestinoComercialByActivo',
 		        extraParams: {id: '{activo.id}'}
 	    	 }
-   		}
+   		},
+   		
+		storeCalifiacionNegativa:{
+			pageSize: $AC.getDefaultPageSize(),
+			model: 'HreRem.model.CalificacionNegativaModel',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'activo/getCalificacionNegativa',
+				extraParams: {id: '{activo.id}'}
+			}
+		}
      }
 });

@@ -30,6 +30,7 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivo', {
 				reference: 'gencatcomercialactivoformref'
 			},
         	{
+				
 				xtype:'fieldsettable',
 				defaultType: 'textfieldbase',
 				title: HreRem.i18n('title.historico.comunicaciones'),

@@ -1248,11 +1248,11 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 	
 	@Override
 	public boolean existenUAsconTrabajos(Long idAgrupacion) {
-		String sql = "SELECT count(*) "
-				+"FROM ACT_AGA_AGRUPACION_ACTIVO aga " 
-				+"INNER JOIN V_BUSQUEDA_ACTIVOS_TRABAJO vat ON aga.ACT_ID = vat.ACT_ID " 
-				+"WHERE aga.AGR_ID = " + idAgrupacion 
-				+" AND vat.DD_EST_CODIGO NOT IN ('02','03','12')";
+		String sql = "                SELECT count(*)  " + 
+				"				FROM REM01.ACT_AGA_AGRUPACION_ACTIVO aga   " + 
+				"				INNER JOIN REM01.V_BUSQUEDA_TRAMITES_ACTIVO VBTA ON aga.ACT_ID = VBTA.ACT_ID  " + 
+				"				WHERE aga.AGR_ID = "+ idAgrupacion 
+				+"				AND VBTA.ESTADO_CODIGO NOT IN ('04','05','11')";
 		
 		if (!Checks.esNulo(this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult())) {
 			return ((BigDecimal) this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult()).intValue() > 0;

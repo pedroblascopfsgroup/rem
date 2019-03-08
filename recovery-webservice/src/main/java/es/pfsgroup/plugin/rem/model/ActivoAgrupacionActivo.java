@@ -75,7 +75,7 @@ public class ActivoAgrupacionActivo implements Serializable , Auditable {
 	@Embedded
 	private Auditoria auditoria;
 
-	
+	 
 	
 	
 	public Long getId() {

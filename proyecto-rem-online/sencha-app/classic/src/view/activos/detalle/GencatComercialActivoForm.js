@@ -21,7 +21,7 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoForm', {
     ],
     
     listeners: { 
-		boxready:'cargarTabData'   
+		boxready:'cargarTabData'
     },
     
     data: {
@@ -104,7 +104,7 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoForm', {
 				width: '100%'
     		}
         	
-        }
+       }
 
         var items = [
         	{
@@ -208,10 +208,10 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoForm', {
 													disabled: '{!gencat.estaActivadoCompradorNuevo}',
 													value: '{gencat.nuevoCompradorNif}'													
 												},
-												listener:{
-													blur:'comprobarFormatoNIF'
+												validator: function (value) {
+													return this.up('gencatcomercialactivo').getController().comprobarFormatoNIF(value);
 												}
-							    			},
+											},
 							    			{
 							    				fieldLabel: HreRem.i18n('fieldlabel.nombre'),
 							    				name: 'nuevoCompradorNombre',

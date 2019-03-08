@@ -25,7 +25,7 @@ Ext.define('HreRem.view.activos.detalle.HistoricoReclamacionesActivoList', {
         me.store.getProxy().setExtraParam('idHComunicacion', me.idHComunicacion);
         me.store.load();
         
-        /*me.listeners = {	    	
+      /*  me.listeners = {	    	
 			rowdblclick: 'onVisitasListDobleClick'
 	    }*/
         

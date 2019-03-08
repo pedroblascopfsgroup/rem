@@ -180,7 +180,6 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoController', {
 		var window = btn.up('[reference=ventanacrearnotificacionRef]');
 		
 		var form = window.down('[reference=crearNotificacionFormRef]');
-		
 		if(form.isValid()){
     		
             form.submit({
@@ -189,8 +188,8 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoController', {
                 	idEntidad: window.idActivo,
                 	idActivo: window.idActivo
                 },
-                success: function(fp, o) {
 
+                success: function(fp, o) {
                 	if(o.result.success == "false") {
                 		window.fireEvent("errorToast", o.result.errorMessage);
                 	}
@@ -325,10 +324,9 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoController', {
 			campoFechaSancion.allowBlank = true;
 		}
 	},
-	
-comprobarFormatoNIF: function(value) {
+	 
+comprobarFormatoNIF:function(value) {
 		var me = this;
-		value = me.lookupReference('nuevoCompradorNifref');
 		if (value.length == 9) { // Comprobamos NIF y NIE
 			var validChars = 'TRWAGMYFPDXBNJZSQVHLCKET';
 			var nifRexp = /^[0-9]{8}[TRWAGMYFPDXBNJZSQVHLCKET]{1}$/i;
@@ -387,10 +385,11 @@ comprobarFormatoNIF: function(value) {
 		      return true;
 		    }
 		}
-
-		return HreRem
-				.i18n('msg.error.comprador.nif.incorrecto');
- 	},
+		 errMsg = "El formato del  NIF introducido no es correcto.";
+		
+		return errMsg;
+		
+		},
 	
  	onExisteDocumentoAnulacion: function(btn, newValue, oldValue, opts){
  		if(newValue){

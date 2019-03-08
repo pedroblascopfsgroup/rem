@@ -62,7 +62,6 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoController', {
     	
     	var fieldsetHistorico = dv.up().up();
     	var formHistorico = fieldsetHistorico.down('[reference=gencatcomercialactivoformhistoricoref]');
-    	debugger;
     	if (formHistorico != null) {
     		fieldsetHistorico.remove(formHistorico);
     	}

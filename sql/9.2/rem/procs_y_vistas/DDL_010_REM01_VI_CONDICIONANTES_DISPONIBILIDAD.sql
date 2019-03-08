@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=JINLI HU
---## FECHA_CREACION=20190220
+--## AUTOR=Carles Molins
+--## FECHA_CREACION=20190307
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-5562
+--## INCIDENCIA_LINK=REMVIP-3503
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -24,8 +24,9 @@
 --##		0.11 REMVIP-448 - Añadir condicion de poner nulos a 0
 --##		0.12 REMVIP-969 - Añadir condicionante "Sin acceso"
 --##		0.13 HREOS-4565 -SBG- Optimizar vista: evito hacer 7 LEFT con la tabla act_sps_sit_posesoria y 2 LEFT con la tabla dd_eac_estado_activo añadiendo CASE con las distintas opciones
---##    0.14 HREOS-5003 - Añadimos Obra nueva (Vandalizado) a VANDALIZADO
+--##    	0.14 HREOS-5003 - Añadimos Obra nueva (Vandalizado) a VANDALIZADO
 --##		0.15 HREOS-5562 - Ocultación Automática, motivo "Revisión publicación", comentar la linea "OR DECODE(VEI.DD_AIC_CODIGO ,''02'' ,0 , 1) = 1"
+--##		0.16 REMVIP-3503 - Correcciones cálculo ocupado_sin_titulo y ocupado_con_titulo (nueva columna DD_TPA_ID)
 --##########################################
 --*/
 
@@ -95,7 +96,7 @@ AS
 							ELSE 0 
 						END 
                 END AS sin_toma_posesion_inicial,        
-                CASE WHEN (sps1.sps_ocupado = 1 AND sps1.sps_con_titulo = 1) THEN 1 ELSE 0 END AS ocupado_contitulo,
+                CASE WHEN (sps1.sps_ocupado = 1 AND TPA.DD_TPA_CODIGO = ''01'') THEN 1 ELSE 0 END AS ocupado_contitulo,
                 NVL2 (tit.act_id, 0, 1) AS pendiente_inscripcion,
                 NVL2 (npa.act_id, 1, 0) AS proindiviso,
                 CASE WHEN sps1.sps_acc_tapiado = 1 THEN 1 ELSE 0 END AS tapiado, 
@@ -114,7 +115,7 @@ AS
 				0 AS procedimiento_judicial,                                                          --NO EXISTE EN REM
 				NVL2 (vcg.con_cargas, vcg.con_cargas, 0) AS con_cargas,
                 DECODE (ico.ico_posible_hacer_inf, 1, 0, 0, 1, 0) AS sin_acceso,                                                                                                            
-                CASE WHEN (sps1.sps_ocupado = 1 AND sps1.sps_con_titulo = 0) THEN 1 ELSE 0 END AS ocupado_sintitulo, 
+                CASE WHEN (sps1.sps_ocupado = 1 AND (TPA.DD_TPA_CODIGO = ''02'' OR TPA.DD_TPA_CODIGO = ''03'')) THEN 1 ELSE 0 END AS ocupado_sintitulo, 
                 CASE WHEN (sps1.sps_estado_portal_externo = 1) THEN 1 ELSE 0 END AS estado_portal_externo,  -- ESTADO PUBLICACION PORTALES EXTERNOS
                 CASE WHEN ( (sps1.sps_fecha_toma_posesion IS NULL AND aba2.dd_cla_id = 2)               -- SIN TOMA POSESION INICIAL
                            OR eac1.dd_eac_codigo=''05''                                                   -- RUINA
@@ -123,9 +124,9 @@ AS
                            OR NVL2 (eon.dd_eon_id, 1, 0) = 1
                            OR NVL2 (npa.act_id, 1, 0) = 1
                            OR (eac1.dd_eac_codigo = ''02''  OR   eac1.dd_eac_codigo = ''06'' OR eac1.dd_eac_codigo = ''07'')               -- OBRA NUEVA EN CONSTRUCCIÓN/VANDALIZADO
-                           OR (sps1.sps_ocupado = 1 AND sps1.sps_con_titulo = 1)                        -- OCUPADO CON TITULO
+                           OR (sps1.sps_ocupado = 1 AND TPA.DD_TPA_CODIGO = ''01'')                        -- OCUPADO CON TITULO
                            OR sps1.sps_acc_tapiado = 1                                                  -- TAPIADO
-                           OR (sps1.sps_ocupado = 1 AND sps1.sps_con_titulo = 0)                        -- OCUPADO SIN TITULO
+                           OR (sps1.sps_ocupado = 1 AND (TPA.DD_TPA_CODIGO = ''02'' OR TPA.DD_TPA_CODIGO = ''03''))                        -- OCUPADO SIN TITULO
                            OR NVL2 (reg2.reg_id, 1, 0) = 1
 
                            OR NVL2(sps1.sps_otro,1,0) = 1                                               -- OTROS MOTIVOS                           
@@ -141,6 +142,7 @@ AS
 				  LEFT JOIN '||V_ESQUEMA||'.DD_CRA_CARTERA cra ON cra.dd_cra_id = act.dd_cra_id 	
 				  LEFT JOIN '||V_ESQUEMA||'.dd_eac_estado_activo eac1 ON eac1.dd_eac_id = act.dd_eac_id                  
                   LEFT JOIN '||V_ESQUEMA||'.act_sps_sit_posesoria sps1 ON sps1.act_id = act.act_id                  
+				  LEFT JOIN '||V_ESQUEMA||'.DD_TPA_TIPO_TITULO_ACT TPA ON TPA.DD_TPA_ID = SPS1.DD_TPA_ID
 				  LEFT JOIN '||V_ESQUEMA||'.DD_SIJ_SITUACION_JURIDICA sij on  sij.dd_sij_id =sps1.dd_sij_id                   
 
 				  LEFT JOIN

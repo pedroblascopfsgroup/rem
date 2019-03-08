@@ -43,7 +43,7 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumento', {
 			proxy: {
 				type: 'uxproxy',
 				remoteUrl: 'generic/getDiccionarioTiposDocumento',
-				extraParams: {diccionario: 'tiposDocumento'}
+				extraParams: {diccionario: 'tiposDocumento', entidad: me.entidad}
 			}
     	});
 

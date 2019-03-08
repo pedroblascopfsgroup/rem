@@ -572,7 +572,17 @@ SELECT act.act_id,
             AND dist8.cod_cartera = dd_cra.dd_cra_codigo
             AND TO_NUMBER(dist8.cod_subcartera) = TO_NUMBER(DD_SCR.DD_SCR_CODIGO)
             AND dist8.tipo_gestor = ''GGADM'')
-    where act.borrado = 0
+    where act.borrado = 0 and 
+		( 		dist0.tipo_gestor = ''GGADM''
+			OR  dist1.tipo_gestor = ''GGADM''
+			OR  dist2.tipo_gestor = ''GGADM''
+			OR  dist3.tipo_gestor = ''GGADM''
+			OR  dist4.tipo_gestor = ''GGADM''
+			OR  dist5.tipo_gestor = ''GGADM''
+			OR  dist6.tipo_gestor = ''GGADM''
+			OR  dist7.tipo_gestor = ''GGADM''
+			OR  dist8.tipo_gestor = ''GGADM''
+		)
            UNION ALL
 /*Gestoría de administración*/
            SELECT DISTINCT act.act_id, 

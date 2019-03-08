@@ -23,8 +23,8 @@ Ext.define('HreRem.model.CalificacionNegativaModel', {
 	proxy: {
 		type: 'uxproxy',
 		api: {
-            read: 'activo/getHistoricoMediadorByActivo',
-            create: 'activo/createHistoricoMediador'
+            read: 'activo/getActivoCalificacionNegativaByIdActivo',
+            create: 'activo/createCalificacionNegativa'
         }
     }
 });

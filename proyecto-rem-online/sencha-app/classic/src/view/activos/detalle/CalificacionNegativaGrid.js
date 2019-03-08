@@ -6,7 +6,7 @@ Ext.define('HreRem.view.activos.detalle.CalificacionNegativaGrid', {
 	targetGrid	: 'calificacionNegativa',
 	idPrincipal : 'activo.id',
 	editOnSelect: false,
-	disabledDeleteBtn: true,
+	disabledDeleteBtn: false,
     bind: {
         store: '{storeCalifiacionNegativa}' // TODO hay que hacerse un store y en ese store apuntar a los model
     },

@@ -1226,8 +1226,7 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 				) {
 
 			// TODO eliminar metodo y añadir los DAO correspondientes
-			activoAgrupacionActivoDao.deleteTramiteGencatById(adecuacionGencat.getId(), ofertaGencat.getId(), null, 
-					null, null, comunicacionGencat.getId());
+			activoAgrupacionActivoDao.deleteTramiteGencat(comunicacionGencat);
 			
 		}
 	}

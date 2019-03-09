@@ -823,7 +823,7 @@ public class ActivoTramiteManager implements ActivoTramiteApi{
 				List <ActivoOferta> ofertas = comunicacionGencat.getActivo().getOfertas();
 				for (ActivoOferta activoOferta : ofertas) {
 					Long ofertaId = activoOferta.getOferta();	
-					OfertaGencat ofertaGencat = genericDao.get(OfertaGencat.class,genericDao.createFilter(FilterType.EQUALS,"oferta.id", ofertaId));
+					OfertaGencat ofertaGencat = genericDao.get(OfertaGencat.class,genericDao.createFilter(FilterType.EQUALS,"oferta.id", ofertaId),genericDao.createFilter(FilterType.EQUALS,"comunicacion.id", comunicacionGencat.getId()));
 					if((Checks.esNulo(ofertaGencat)) || (!Checks.esNulo(ofertaGencat) && Checks.esNulo(ofertaGencat.getIdOfertaAnterior()) && !ofertaGencat.getAuditoria().isBorrado())) {
 						tieneOfertaCreadaPorGencat = false;
 					}else {

@@ -1123,4 +1123,8 @@ public interface ExpedienteComercialApi {
 	public boolean comprobarExpedienteAnuladoGencat (ExpedienteComercial expediente);
 	
 	public boolean descongelaExpedienteGencat(ExpedienteComercial expediente);
+
+	public boolean comprobarExpedienteBloqueadoGencat(ExpedienteComercial expediente);
+
+	public boolean comprobarExpedientePreBloqueadoGencat(ExpedienteComercial expediente);
 }

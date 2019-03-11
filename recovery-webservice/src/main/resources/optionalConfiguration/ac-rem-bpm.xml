@@ -259,8 +259,8 @@
             	return validateJbpmManager.definicionOfertaT013(tareaExterna, codigo);
             }
             def tieneTramiteGENCATVigenteByIdActivo = {
-            	def validateJbpmManager = ctx.getBean("validateJbpmManager");
-            	return activoTramiteManager.tieneTramiteGENCATVigenteByIdActivo(idActivo);
+            	def activoTramiteManager = ctx.getBean("activoTramiteManager");
+            	return activoTramiteManager.tieneTramiteGENCATVigenteByIdActivo(tareaExterna);
             }
             def respuestaOfertanteT013(String importeOfertante) {
             	def validateJbpmManager = ctx.getBean("validateJbpmManager");

@@ -43,7 +43,6 @@ import es.pfsgroup.plugin.rem.model.ComunicacionGencat;
 import es.pfsgroup.plugin.rem.model.DtoActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.InformeJuridico;
-import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.OfertaGencat;
 import es.pfsgroup.plugin.rem.model.TanteoActivoExpediente;
 import es.pfsgroup.plugin.rem.model.TareaActivo;
@@ -811,11 +810,11 @@ public class ActivoTramiteManager implements ActivoTramiteApi{
 	}
 	
 	@Override
-	public Boolean tieneTramiteGENCATVigenteByIdActivo(Long idActivo){
+	public boolean tieneTramiteGENCATVigenteByIdActivo(Long idActivo, Long idExpediente){
 		
-		Boolean tieneTramiteGENCAT = false;
-		Boolean exosteGencatActivo = false;
-		Boolean tieneOfertaCreadaPorGencat = false;
+		boolean tieneTramiteGENCAT = false;
+		boolean exosteGencatActivo = false;
+		boolean tieneOfertaCreadaPorGencat = false;
 		
 		if(!Checks.esNulo(idActivo)){
 			
@@ -824,7 +823,7 @@ public class ActivoTramiteManager implements ActivoTramiteApi{
 				List <ActivoOferta> ofertas = comunicacionGencat.getActivo().getOfertas();
 				for (ActivoOferta activoOferta : ofertas) {
 					Long ofertaId = activoOferta.getOferta();	
-					OfertaGencat ofertaGencat = genericDao.get(OfertaGencat.class,genericDao.createFilter(FilterType.EQUALS,"oferta.id", ofertaId));
+					OfertaGencat ofertaGencat = genericDao.get(OfertaGencat.class,genericDao.createFilter(FilterType.EQUALS,"oferta.id", ofertaId),genericDao.createFilter(FilterType.EQUALS,"comunicacion.id", comunicacionGencat.getId()));
 					if((Checks.esNulo(ofertaGencat)) || (!Checks.esNulo(ofertaGencat) && Checks.esNulo(ofertaGencat.getIdOfertaAnterior()) && !ofertaGencat.getAuditoria().isBorrado())) {
 						tieneOfertaCreadaPorGencat = false;
 					}else {
@@ -854,9 +853,21 @@ public class ActivoTramiteManager implements ActivoTramiteApi{
 						tieneTramiteGENCAT = true;
 					}else {
 						if(!Checks.esNulo(comunicacionGencat)) {
-							if(DDEstadoComunicacionGencat.COD_CREADO.equals(comunicacionGencat.getEstadoComunicacion().getCodigo())
+							if(DDEstadoComunicacionGencat.COD_CREADO.equals(comunicacionGencat.getEstadoComunicacion().getCodigo()) 
 									|| DDEstadoComunicacionGencat.COD_COMUNICADO.equals(comunicacionGencat.getEstadoComunicacion().getCodigo())){
-								tieneTramiteGENCAT = true;
+								if (DDEstadoComunicacionGencat.COD_COMUNICADO.equals(comunicacionGencat.getEstadoComunicacion().getCodigo())) {
+									ExpedienteComercial expediente = genericDao.get(ExpedienteComercial.class, genericDao.createFilter(FilterType.EQUALS,"id", idExpediente));
+									if (!Checks.esNulo(expediente)) {
+										OfertaGencat ofertaGencat = genericDao.get(OfertaGencat.class,genericDao.createFilter(FilterType.EQUALS,"oferta.id", expediente.getOferta().getId()));
+										if (!Checks.esNulo(ofertaGencat)) {
+											tieneTramiteGENCAT = true;
+										} else {
+											tieneTramiteGENCAT = false;
+										}
+									}
+								} else {
+									tieneTramiteGENCAT = true;
+								}
 							}else{
 								if(!Checks.esNulo(comunicacionGencat.getSancion())&& DDSancionGencat.COD_EJERCE.equalsIgnoreCase(comunicacionGencat.getSancion().getCodigo())) {
 									tieneTramiteGENCAT = true;
@@ -872,5 +883,14 @@ public class ActivoTramiteManager implements ActivoTramiteApi{
 		}
 		
 		return tieneTramiteGENCAT;
+	}
+	
+	public boolean tieneTramiteGENCATVigenteByIdActivo(TareaExterna tareaExterna){
+		TareaActivo tareaActivo = tareaActivoApi.getByIdTareaExterna(tareaExterna.getId());
+		Long idActivo = tareaActivo.getActivo().getId();
+		Filter filtroTrabajo = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", tareaActivo.getTramite().getTrabajo().getId());
+		ExpedienteComercial expediente = genericDao.get(ExpedienteComercial.class, filtroTrabajo);
+		
+		return tieneTramiteGENCATVigenteByIdActivo(idActivo, expediente.getId());
 	}
 }

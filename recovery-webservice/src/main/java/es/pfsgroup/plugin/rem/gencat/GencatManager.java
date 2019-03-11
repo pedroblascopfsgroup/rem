@@ -1066,7 +1066,26 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 						if(!Checks.esNulo(comGencat.getEstadoComunicacion())
 							&& DDEstadoComunicacionGencat.COD_ANULADO.equals(comGencat.getEstadoComunicacion().getCodigo())) {
 								lanzarTramiteGENCAT(idActivo, oferta, expComercial);
-						}								
+						}
+						if(!Checks.esNulo(comGencat.getEstadoComunicacion())
+								&& DDEstadoComunicacionGencat.COD_COMUNICADO.equals(comGencat.getEstadoComunicacion().getCodigo())
+								&& !Checks.esNulo(comGencat.getFechaComunicacion())) {
+								OfertaGencat ofertaGencat = new OfertaGencat();
+								Auditoria auditoria = new Auditoria();
+								auditoria.setUsuarioCrear(genericAdapter.getUsuarioLogado().getUsername());
+								auditoria.setBorrado(false);
+								auditoria.setFechaCrear(new Date());
+								ofertaGencat.setOferta(expComercial.getOferta());
+								ofertaGencat.setComunicacion(comGencat);
+								ofertaGencat.setImporte(oferta.getImporteOferta());
+								if(!Checks.esNulo(expComercial.getCondicionante())) {
+									ofertaGencat.setSituacionPosesoria(expComercial.getCondicionante().getSituacionPosesoria());
+								}
+								ofertaGencat.setTiposPersona(oferta.getCliente().getTipoPersona());
+								ofertaGencat.setAuditoria(auditoria);
+								ofertaGencat.setVersion(0L);
+								genericDao.save(OfertaGencat.class, ofertaGencat);
+						} 
 					}else {
 						if(DDEstadoComunicacionGencat.COD_ANULADO.equals(comGencat.getEstadoComunicacion().getCodigo())) 
 						{
@@ -1229,8 +1248,7 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 				) {
 
 			// TODO eliminar metodo y añadir los DAO correspondientes
-			activoAgrupacionActivoDao.deleteTramiteGencatById(adecuacionGencat.getId(), ofertaGencat.getId(), null, 
-					null, null, comunicacionGencat.getId());
+			activoAgrupacionActivoDao.deleteTramiteGencat(comunicacionGencat);
 			
 		}
 	}

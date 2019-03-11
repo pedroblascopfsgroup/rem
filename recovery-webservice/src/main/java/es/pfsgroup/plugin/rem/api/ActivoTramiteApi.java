@@ -293,6 +293,6 @@ public interface ActivoTramiteApi {
 	 * @param idActivo
 	 * @return 
 	 */
-	public Boolean tieneTramiteGENCATVigenteByIdActivo(Long idActivo);
+	public boolean tieneTramiteGENCATVigenteByIdActivo(Long idActivo, Long idExpediente);
 }
 

@@ -3,7 +3,6 @@ package es.pfsgroup.plugin.rem.activo.dao.impl;
 import java.util.List;
 
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.pfs.dao.AbstractEntityDao;
 import es.pfsgroup.commons.utils.HQLBuilder;
@@ -11,6 +10,7 @@ import es.pfsgroup.commons.utils.HibernateQueryUtils;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
+import es.pfsgroup.plugin.rem.model.ComunicacionGencat;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 
@@ -52,14 +52,13 @@ public class ActivoAgrupacionActivoDaoImpl extends AbstractEntityDao<ActivoAgrup
 	}
     
     @Override
-    public void deleteTramiteGencatById(Long idAdecuacionGencat, Long idOfertaGencat, Long idNotificacionGencat, 
-    								Long idReclamacionGencat, Long idVisitaGencat, Long idComunicacionGencat) {
+    public void deleteTramiteGencat(ComunicacionGencat comunicacionGencat) {
     	StringBuilder sb;
     	
-    	sb = new StringBuilder("delete from AdecuacionGencat ag where ag.id = "+idAdecuacionGencat);		
+    	sb = new StringBuilder("delete from AdecuacionGencat ag where ag.comunicacion.id = "+comunicacionGencat.getId());		
 		this.getSessionFactory().getCurrentSession().createQuery(sb.toString()).executeUpdate();
     	
-		sb = new StringBuilder("delete from OfertaGencat og where og.id = "+idOfertaGencat);		
+		sb = new StringBuilder("delete from OfertaGencat og where og.comunicacion.id = "+comunicacionGencat.getId());		
 		this.getSessionFactory().getCurrentSession().createQuery(sb.toString()).executeUpdate();
 		
 //		sb = new StringBuilder("delete from NotificacionGencat ng where ng.id = "+idNotificacionGencat);		
@@ -71,7 +70,7 @@ public class ActivoAgrupacionActivoDaoImpl extends AbstractEntityDao<ActivoAgrup
 //		sb = new StringBuilder("delete from VisitaGencat vg where vg.id = "+idVisitaGencat);		
 //		this.getSessionFactory().getCurrentSession().createQuery(sb.toString()).executeUpdate();
 		
-		sb = new StringBuilder("delete from ComunicacionGencat cg where cg.id = "+idComunicacionGencat);		
+		sb = new StringBuilder("delete from ComunicacionGencat cg where cg.id = "+comunicacionGencat.getId());		
 		this.getSessionFactory().getCurrentSession().createQuery(sb.toString()).executeUpdate();
 		
 	}

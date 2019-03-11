@@ -2,7 +2,7 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoComunicacionHistoricoGe
 	extend		: 'HreRem.view.common.WindowBase',
     xtype		: 'adjuntardocumentocomunicacionhistoricogencat',
     
-    layout	: 'fit',
+    layout	: 'fit', 
     width	: Ext.Element.getViewportWidth() / 3,
    /* height	: Ext.Element.getViewportHeight() > 700 ? 700 : Ext.Element.getViewportHeight() - 50 ,*/
 	reference: 'adjuntardocumentocomunicaciongencatRef',
@@ -50,16 +50,15 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoComunicacionHistoricoGe
 			}
     	});*/
     	
-    	var comboTipoDocumento = new Ext.data.Store({
+    	var comboTipoDocumentoComunicacion = new Ext.data.Store({
 			model: 'HreRem.model.ComboBase',
 			proxy: {
 				type: 'uxproxy',
-				remoteUrl: 'generic/getDiccionarioTiposDocumento',
-				extraParams: {diccionario: 'tiposDocumento'}
+				remoteUrl: 'gencat/getTiposDocumentoComunicacion'
 			}
     	});
 
-		comboTipoDocumento.filter([
+		comboTipoDocumentoComunicacion.filter([
 			{
 		    fn: function(record) {
 					return me.tipoTrabajoCodigo == null || record.get('tipoTrabajoCodigos').indexOf(me.tipoTrabajoCodigo) != -1;
@@ -129,7 +128,7 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoComunicacionHistoricoGe
 						        	name: 'tipo',
 						        	editable: false,
 						        	msgTarget: 'side',
-					            	store: comboTipoDocumento,
+					            	store: comboTipoDocumentoComunicacion,
 					            	displayField: 'descripcion',
 								    valueField: 'codigo',
 									allowBlank: false,

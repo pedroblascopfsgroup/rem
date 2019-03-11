@@ -2,7 +2,7 @@
 Ext.define('HreRem.view.activos.detalle.GencatComercialActivoController', {
     extend: 'Ext.app.ViewController',
     alias: 'controller.gencatcomercialactivo', 
-    requires: ['HreRem.controller.ActivosController'],
+    requires: ['HreRem.controller.ActivosController', 'HreRem.view.activos.detalle.GencatComercialActivoFormHist'],
     
     
     control: {
@@ -64,15 +64,13 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoController', {
     	
     	var fieldsetHistorico = dv.up().up();
     	var formHistorico = fieldsetHistorico.down('[reference=gencatcomercialactivoformhistoricoref]');
-    	
     	if (formHistorico != null) {
     		fieldsetHistorico.remove(formHistorico);
     	}
     	
     	var nuevoFormHistorico = {	
-			xtype: 'gencatcomercialactivoform',
+			xtype: 'gencatcomercialactivoformhist',
 			reference: 'gencatcomercialactivoformhistoricoref',
-			formDeHistorico: true,
 			idHComunicacion: record.id
 		};
     	
@@ -81,7 +79,6 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoController', {
     },
     
     abrirFormularioAdjuntarDocumentoComunicacion: function(grid) {
-    	
 		var me = this;
 		var idActivo = me.getViewModel().get("activo.id");
 		var data = {
@@ -94,14 +91,21 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoController', {
 	},
 	
 	abrirFormularioAdjuntarComunicacionHistoricoActivo: function(grid) {
-    	
-		var me = this;
-		var idActivo = me.getViewModel().get("activo.id");
+		var me = this,	
+		idActivo = me.getViewModel().get("activo.id"),
+		comercialActivo = grid.up("gencatcomercialactivoform"),
+		comercialActivoFormHist =grid.up("gencatcomercialactivoformhist");
+		
+		if  (comercialActivo != undefined){
+			var gridActivo = comercialActivo;
+		}else{ 
+			var gridActivo = comercialActivoFormHist;
+		}	
 		var data = {
 			entidad: 'gencat', 
 			idEntidad: idActivo, 
 			parent: grid,
-			idHComunicacion: grid.up("gencatcomercialactivoform").idHComunicacion
+			idHComunicacion: gridActivo.idHComunicacion
 		};
 		Ext.create("HreRem.view.common.adjuntos.AdjuntarDocumentoComunicacionHistoricoGencat", data).show();
 		
@@ -182,7 +186,6 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoController', {
 		var window = btn.up('[reference=ventanacrearnotificacionRef]');
 		
 		var form = window.down('[reference=crearNotificacionFormRef]');
-		
 		if(form.isValid()){
     		
             form.submit({
@@ -191,8 +194,8 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoController', {
                 	idEntidad: window.idActivo,
                 	idActivo: window.idActivo
                 },
-                success: function(fp, o) {
 
+                success: function(fp, o) {
                 	if(o.result.success == "false") {
                 		window.fireEvent("errorToast", o.result.errorMessage);
                 	}
@@ -370,10 +373,9 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoController', {
 			campoFechaSancion.allowBlank = true;
 		}
 	},
-	
-comprobarFormatoNIF: function(value) {
+	 
+comprobarFormatoNIF:function(value) {
 		var me = this;
-		value = me.lookupReference('nuevoCompradorNifref');
 		if (value.length == 9) { // Comprobamos NIF y NIE
 			var validChars = 'TRWAGMYFPDXBNJZSQVHLCKET';
 			var nifRexp = /^[0-9]{8}[TRWAGMYFPDXBNJZSQVHLCKET]{1}$/i;
@@ -432,10 +434,11 @@ comprobarFormatoNIF: function(value) {
 		      return true;
 		    }
 		}
-
-		return HreRem
-				.i18n('msg.error.comprador.nif.incorrecto');
- 	},
+		 errMsg = "El formato del  NIF introducido no es correcto.";
+		
+		return errMsg;
+		
+		},
 	
  	onExisteDocumentoAnulacion: function(btn, newValue, oldValue, opts){
  		if(newValue){

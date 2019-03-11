@@ -402,7 +402,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		Ext.Ajax.request({
 		     url: url,
 		     method: 'POST',
-		     params: {idActivo: me.getViewModel().data.expediente.data.idActivo},
+		     params: {idActivo: me.getViewModel().data.expediente.data.idActivo, idExpediente: me.getViewModel().data.expediente.id},
 		     success: function(response, opts) {
 		    	data = Ext.decode(response.responseText);
 		    	if(data.data == "false"){

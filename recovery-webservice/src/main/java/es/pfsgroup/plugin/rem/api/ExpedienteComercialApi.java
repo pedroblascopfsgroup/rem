@@ -1153,4 +1153,9 @@ public interface ExpedienteComercialApi {
 	boolean checkDepositoRelleno(TareaExterna tareaExterna);
 
 	boolean checkDepositoDespublicacionSubido(TareaExterna tareaExterna);
+
+	/*
+	 * Comprobación de los campos de los compradores en una oferta de venta para poder avanzar la tarea.
+	 */
+	boolean checkCamposComprador(TareaExterna tareaExterna);
 }

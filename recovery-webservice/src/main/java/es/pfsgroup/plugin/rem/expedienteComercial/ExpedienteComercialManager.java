@@ -3792,6 +3792,69 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 	@Override
 	@Transactional(readOnly = false)
+	public boolean checkCamposComprador(TareaExterna tareaExterna){
+		
+		ExpedienteComercial expedienteComercial = tareaExternaToExpedienteComercial(tareaExterna);
+		
+		if(!Checks.esNulo(expedienteComercial)) {
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "idExpedienteComercial",Long.toString(expedienteComercial.getId()));
+			VBusquedaDatosCompradorExpediente comprador = genericDao.get(VBusquedaDatosCompradorExpediente.class, filtro); 
+			
+			//Campos comunes sin que dependa del tipo de persona						Campos del titular
+			if (!Checks.esNulo(comprador.getPorcentajeCompra())){						//Porcentaje de compra
+				if (!Checks.esNulo(comprador.getCodTipoDocumento())) {					//Tipo de documento
+					if (!Checks.esNulo(comprador.getNumDocumento())) {					//Número de documento
+						if (!Checks.esNulo(comprador.getProvinciaCodigo())) {			//Provincia
+							if (!Checks.esNulo(comprador.getMunicipioCodigo())) {		//Municipio
+								if (!Checks.esNulo(comprador.getDireccion())) {			//Dirección
+									if (!Checks.esNulo(comprador.getCodigoPais())) {	//País de residencia
+										
+										//Campos dependientes de si el tipo de persona es física
+										if (!Checks.esNulo(DDTiposPersona.CODIGO_TIPO_PERSONA_FISICA.equals(comprador.getCodTipoPersona()))) {							
+											if (!Checks.esNulo(comprador.getNombreRazonSocial())) {																		//Nombre
+												if (!Checks.esNulo(comprador.getApellidos())) {																			//Apellidos
+													if (!Checks.esNulo(DDEstadosCiviles.CODIGO_ESTADO_CIVIL_CASADO.equals(comprador.getCodEstadoCivil()) &&				//Si está casado en gananciales
+														!Checks.esNulo(DDRegimenesMatrimoniales.COD_GANANCIALES.equals(comprador.getCodigoRegimenMatrimonial())))) {
+														return true;
+													}
+												}
+											}
+										}
+				
+										//Campos dependientes de si el tipo de persona es jurídica
+										if (!Checks.esNulo(DDTiposPersona.CODIGO_TIPO_PERSONA_JURIDICA.equals(comprador.getCodTipoPersona()))) {						
+											if (!Checks.esNulo(comprador.getNombreRazonSocial())) {																		//Razón social (Titular)
+												if (!Checks.esNulo(comprador.getNombreRazonSocialRte())) {																//Nombre del representante
+													if (!Checks.esNulo(comprador.getApellidosRte())) {																	//Apellidos del representante
+														if (!Checks.esNulo(comprador.getCodTipoDocumentoRte())) {														//Tipo de documento del representante
+															if (!Checks.esNulo(comprador.getNumDocumentoRte())) {														//Número de documento del representante
+																if (!Checks.esNulo(DDPaises.CODIGO_PAIS_ESPANYA.equals(comprador.getCodigoPais())) &&					//Si el país del titular es España
+																	!Checks.esNulo(comprador.getProvinciaRteCodigo()) &&												//Provincia y Municipio del representante
+																	!Checks.esNulo(comprador.getMunicipioRteCodigo())) {												//son obligatorios
+																	if (!Checks.esNulo(comprador.getCodigoPaisRte())) {													//País de residencia del representante
+																		return true;
+																	}
+																}
+															}
+														}
+													}
+												}
+											}
+										}
+										
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		return false;
+	}
+
+	@Override
+	@Transactional(readOnly = false)
 	public void actualizarHonorariosPorExpediente(Long idExpediente) {
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "expediente.id", idExpediente);
 		List<GastosExpediente> gastosExpediente = genericDao.getList(GastosExpediente.class, filtro);

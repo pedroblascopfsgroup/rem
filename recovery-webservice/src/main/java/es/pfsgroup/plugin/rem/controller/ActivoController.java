@@ -49,6 +49,8 @@ import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.activo.ActivoPropagacionFieldTabMap;
+import es.pfsgroup.plugin.rem.activo.ActivoPropagacionUAsFieldTabMap;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
@@ -60,11 +62,11 @@ import es.pfsgroup.plugin.rem.excel.ActivoExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
 import es.pfsgroup.plugin.rem.excel.PublicacionExcelReport;
+import es.pfsgroup.plugin.rem.exception.RemUserException;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.ACCION_CODIGO;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.ENTIDAD_CODIGO;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.REQUEST_STATUS_CODE;
-import es.pfsgroup.plugin.rem.exception.RemUserException;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoFoto;
 import es.pfsgroup.plugin.rem.model.DtoActivoAdministracion;
@@ -156,6 +158,9 @@ public class ActivoController extends ParadiseJsonController {
 
 	@Autowired
 	private ActivoApi activoApi;
+	
+	@Autowired
+	private ActivoDao activoDao;
 
 	@Autowired
 	private OfertaApi ofertaApi;
@@ -2317,9 +2322,15 @@ public class ActivoController extends ParadiseJsonController {
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView propagarInformacion(@RequestParam() Long id, @RequestParam() String tab, ModelMap model) {
 		List<String> fields = new ArrayList<String>();
-
-		if (ActivoPropagacionFieldTabMap.map.get(tab) != null) {
-			fields.addAll(ActivoPropagacionFieldTabMap.map.get(tab));
+		
+		if(!activoDao.isActivoMatriz(id)) {
+			if(ActivoPropagacionFieldTabMap.map.get(tab) != null) {
+				fields.addAll(ActivoPropagacionFieldTabMap.map.get(tab));
+			}
+		}else {
+			if(ActivoPropagacionUAsFieldTabMap.mapUAs.get(tab) != null) {
+				fields.addAll(ActivoPropagacionUAsFieldTabMap.mapUAs.get(tab));
+			}
 		}
 
 		model.put("propagateFields", fields);

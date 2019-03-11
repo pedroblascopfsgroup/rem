@@ -41,21 +41,21 @@ DECLARE
   V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
 		--	  USER_NAME	 NOMBRE_USU	APELL1		APELL2		EMAIL      	PASS	  PEF_COD	USU GRUPO	DESPACHO_EXTERNO
 
-		T_TIPO_DATA('qipert04'  ,'Qipert','Plusvalía',''  ,'pruebashrem@gmail.com'  , '1234'  ,'GESTOPLUS'  ,''  ,'GESTOPLUS'),
-        T_TIPO_DATA('qipert05'  ,'Qipert','Postventa',''  ,'pruebashrem@gmail.com'  , '1234'  ,'GTOPOSTV'  ,''  ,'GTOPOSTV'),
-        T_TIPO_DATA('grupobc04'  ,'Grupo BC','Plusvalía',''  ,'pruebashrem@gmail.com'  , '1234'  ,'GESTOPLUS'  ,''  ,'GESTOPLUS'),
-        T_TIPO_DATA('grupobc05'  ,'Grupo BC','Postventa',''  ,'pruebashrem@gmail.com'  , '1234'  ,'GTOPOSTV'  ,''  ,'GTOPOSTV'),
-        T_TIPO_DATA('montalvo04'  ,'Montalvo','Plusvalía',''  ,'pruebashrem@gmail.com'  , '1234'  ,'GESTOPLUS'  ,''  ,'GESTOPLUS'),
-        T_TIPO_DATA('montalvo05'  ,'Montalvo','Postventa',''  ,'pruebashrem@gmail.com'  , '1234'  ,'GTOPOSTV'  ,''  ,'GTOPOSTV'),
-        T_TIPO_DATA('garsa04'  ,'Garsa','Plusvalía',''  ,'pruebashrem@gmail.com'  , '1234'  ,'GESTOPLUS'  ,''  ,'GESTOPLUS'),
-        T_TIPO_DATA('garsa05'  ,'Garsa','Postventa',''  ,'pruebashrem@gmail.com'  , '1234'  ,'GTOPOSTV'  ,''  ,'GTOPOSTV'),
-        T_TIPO_DATA('tecnotra05'  ,'Tecnotramit','Plusvalía',''  ,'pruebashrem@gmail.com'  , '1234'  ,'GESTOPLUS'  ,''  ,'GESTOPLUS'),
-        T_TIPO_DATA('tecnotra06'  ,'Tecnotramit','Postventa',''  ,'pruebashrem@gmail.com'  , '1234'  ,'GTOPOSTV'  ,''  ,'GTOPOSTV'),
-        T_TIPO_DATA('ogf06'  ,'OGF','Plusvalía',''  ,'pruebashrem@gmail.com'  , '1234'  ,'GESTOPLUS'  ,''  ,'GESTOPLUS'),
-        T_TIPO_DATA('ogf07'  ,'OGF','Postventa',''  ,'pruebashrem@gmail.com'  , '1234'  ,'GTOPOSTV'  ,''  ,'GTOPOSTV'),
-        T_TIPO_DATA('pinos05'  ,'Pinos','Plusvalía',''  ,'pruebashrem@gmail.com'  , '1234'  ,'GESTOPLUS'  ,''  ,'GESTOPLUS'),
-        T_TIPO_DATA('pinos06'  ,'Pinos','Postventa',''  ,'pruebashrem@gmail.com'  , '1234'  ,'GTOPOSTV'  ,''  ,'GTOPOSTV'),
-        T_TIPO_DATA('gl04'  ,'Glabrador','Plusvalía',''  ,'pruebashrem@gmail.com'  , '1234'  ,'GESTOPLUS'  ,''  ,'GESTOPLUS') 
+		T_TIPO_DATA('qipert06'  	,'Qipert','Plusvalía',''  ,'pruebashrem@gmail.com'  , '1234'  ,'GESTOPLUS'  ,''  ,'GESTOPLUS'),
+        T_TIPO_DATA('qipert07'  	,'Qipert','Postventa',''  ,'pruebashrem@gmail.com'  , '1234'  ,'GTOPOSTV'  ,''  ,'GTOPOSTV'),
+        T_TIPO_DATA('grupobc06' 	,'Grupo BC','Plusvalía',''  ,'pruebashrem@gmail.com'  , '1234'  ,'GESTOPLUS'  ,''  ,'GESTOPLUS'),
+        T_TIPO_DATA('grupobc07' 	,'Grupo BC','Postventa',''  ,'pruebashrem@gmail.com'  , '1234'  ,'GTOPOSTV'  ,''  ,'GTOPOSTV'),
+        T_TIPO_DATA('montalvo06'	,'Montalvo','Plusvalía',''  ,'pruebashrem@gmail.com'  , '1234'  ,'GESTOPLUS'  ,''  ,'GESTOPLUS'),
+        T_TIPO_DATA('montalvo07'  	,'Montalvo','Postventa',''  ,'pruebashrem@gmail.com'  , '1234'  ,'GTOPOSTV'  ,''  ,'GTOPOSTV'),
+        T_TIPO_DATA('garsa06'  		,'Garsa','Plusvalía',''  ,'pruebashrem@gmail.com'  , '1234'  ,'GESTOPLUS'  ,''  ,'GESTOPLUS'),
+        T_TIPO_DATA('garsa07'  		,'Garsa','Postventa',''  ,'pruebashrem@gmail.com'  , '1234'  ,'GTOPOSTV'  ,''  ,'GTOPOSTV'),
+        T_TIPO_DATA('tecnotra06'  	,'Tecnotramit','Plusvalía',''  ,'pruebashrem@gmail.com'  , '1234'  ,'GESTOPLUS'  ,''  ,'GESTOPLUS'),
+        T_TIPO_DATA('tecnotra07'  	,'Tecnotramit','Postventa',''  ,'pruebashrem@gmail.com'  , '1234'  ,'GTOPOSTV'  ,''  ,'GTOPOSTV'),
+        T_TIPO_DATA('ogf06'  		,'OGF'	,'Plusvalía',''  ,'pruebashrem@gmail.com'  , '1234'  ,'GESTOPLUS'  ,''  ,'GESTOPLUS'),
+        T_TIPO_DATA('ogf07'  		,'OGF'	,'Postventa',''  ,'pruebashrem@gmail.com'  , '1234'  ,'GTOPOSTV'  ,''  ,'GTOPOSTV'),
+        T_TIPO_DATA('pinos06'  		,'Pinos','Plusvalía',''  ,'pruebashrem@gmail.com'  , '1234'  ,'GESTOPLUS'  ,''  ,'GESTOPLUS'),
+        T_TIPO_DATA('pinos07'  		,'Pinos','Postventa',''  ,'pruebashrem@gmail.com'  , '1234'  ,'GTOPOSTV'  ,''  ,'GTOPOSTV'),
+        T_TIPO_DATA('gl06'  		,'Glabrador','Plusvalía',''  ,'pruebashrem@gmail.com'  , '1234'  ,'GESTOPLUS'  ,''  ,'GESTOPLUS') 
 	
   ); 
   V_TMP_TIPO_DATA T_TIPO_DATA;

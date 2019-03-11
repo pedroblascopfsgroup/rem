@@ -2370,55 +2370,54 @@ public class AgrupacionAdapter {
 															throw new JsonViewerException("El activo ya pertenece a otra agrupación de promoción de alquiler");
 														}
 													}
-													Usuario usu=proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
-													List <Perfil> perfiles = usu.getPerfiles();
-													if(!Checks.estaVacio(perfiles)) {
-														for (Perfil perfil : perfiles) {
-															if(usuarioSuper.equals(perfil.getCodigo())) {
-																return false;
-															}
-														}
-													}
-													
-													List<GestorActivo> gestores = genericDao.getList(GestorActivo.class,genericDao.createFilter(FilterType.EQUALS,"activo.id", activo.getId()),genericDao.createFilter(FilterType.EQUALS,"auditoria.borrado", false));
-													
-													Boolean esGestorOSupervisorAlquilerComercial = false;
-													if(!Checks.estaVacio(gestores)) {
-														for (GestorActivo gestorActivo : gestores) {
-															
-															if (ActivoAdapter.CODIGO_SUPERVISOR_COMERCIAL_ALQUILER.equals(gestorActivo.getTipoGestor().getCodigo())
-															|| ActivoAdapter.CODIGO_GESTOR_COMERCIAL_ALQUILER.equals(gestorActivo.getTipoGestor().getCodigo())) {
-																esGestorOSupervisorAlquilerComercial = true;
-																break;
-															} 
-														}
-													
-														if(esGestorOSupervisorAlquilerComercial) {
-														
-															List<Usuario> usuariosSupervisor = gestorEntidadDao.getListUsuariosGestoresPorTipoCodigo(TIPO_SUPERVISOR_COMERCIAL_ALQUILER);
-															List<Usuario> usuariosGestor = gestorEntidadDao.getListUsuariosGestoresPorTipoCodigo(TIPO_GESTOR_COMERCIAL_ALQUILER);
-															
-															if(!Checks.estaVacio(usuariosSupervisor)) {
-																for (Usuario usuario : usuariosSupervisor) {
-																	if(usu.getId().equals(usuario.getId())) {
-																		return false;
-																	}
-																}
-															}
-															
-															if(!Checks.estaVacio(usuariosGestor)) {
-																for (Usuario usuario : usuariosGestor) {
-																	if(usu.getId().equals(usuario.getId())) {
-																		return false;
-																	}
-																}
-															}
-															throw new JsonViewerException("Este activo NO está bajo su gestión");
-														}
-														throw new JsonViewerException("Este activo NO tiene los gestores adecuados para añadirlo a matriz de alquiler");
-													}
-													throw new JsonViewerException("El activo NO tiene gestores");
 												}
+												Usuario usu=proxyFactory.proxy(UsuarioApi.class).getUsuarioLogado();
+												List <Perfil> perfiles = usu.getPerfiles();
+												if(!Checks.estaVacio(perfiles)) {
+													for (Perfil perfil : perfiles) {
+														if(usuarioSuper.equals(perfil.getCodigo())) {
+															return true;
+														}
+													}
+												}
+													
+												List<GestorActivo> gestores = genericDao.getList(GestorActivo.class,genericDao.createFilter(FilterType.EQUALS,"activo.id", activo.getId()),genericDao.createFilter(FilterType.EQUALS,"auditoria.borrado", false));
+												
+												Boolean esGestorOSupervisorAlquilerComercial = false;
+												if(!Checks.estaVacio(gestores)) {
+													for (GestorActivo gestorActivo : gestores) {
+														if (ActivoAdapter.CODIGO_SUPERVISOR_COMERCIAL_ALQUILER.equals(gestorActivo.getTipoGestor().getCodigo())
+														|| ActivoAdapter.CODIGO_GESTOR_COMERCIAL_ALQUILER.equals(gestorActivo.getTipoGestor().getCodigo())) {
+															esGestorOSupervisorAlquilerComercial = true;
+															break;
+														} 
+													}
+													
+													if(esGestorOSupervisorAlquilerComercial) {
+													
+														List<Usuario> usuariosSupervisor = gestorEntidadDao.getListUsuariosGestoresPorTipoCodigo(TIPO_SUPERVISOR_COMERCIAL_ALQUILER);
+														List<Usuario> usuariosGestor = gestorEntidadDao.getListUsuariosGestoresPorTipoCodigo(TIPO_GESTOR_COMERCIAL_ALQUILER);
+														
+														if(!Checks.estaVacio(usuariosSupervisor)) {
+															for (Usuario usuario : usuariosSupervisor) {
+																if(usu.getId().equals(usuario.getId())) {
+																	return true;
+																}
+															}
+														}
+															
+														if(!Checks.estaVacio(usuariosGestor)) {
+															for (Usuario usuario : usuariosGestor) {
+																if(usu.getId().equals(usuario.getId())) {
+																	return true;
+																}
+															}
+														}
+														throw new JsonViewerException("Este activo NO está bajo su gestión");
+													}
+													throw new JsonViewerException("Este activo NO tiene los gestores adecuados para añadirlo a matriz de alquiler");
+												}
+												throw new JsonViewerException("El activo NO tiene gestores");									
 											}else {
 												throw new JsonViewerException("Activo alquilado");
 											}
@@ -2556,8 +2555,9 @@ public class AgrupacionAdapter {
 					
 					if(!Checks.esNulo(dto.getActivoMatriz())) {
 						Activo act = activoDao.getActivoByNumActivo(dto.getActivoMatriz());
+						Boolean esActivoMatrizValido = esActivoMatrizValido(act);
 						/*TODO: Validaciones HREOS-5596*/
-						if(esActivoMatrizValido(act)) {
+						if(esActivoMatrizValido) {
 							act.setDescripcion(dto.getDescripcion());
 							act.setProvincia(dto.getProvinciaDescripcion());
 							ActivoAgrupacionActivo aga = new ActivoAgrupacionActivo();

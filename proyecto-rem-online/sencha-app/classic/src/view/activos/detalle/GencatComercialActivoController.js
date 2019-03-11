@@ -77,7 +77,6 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoController', {
     },
     
     abrirFormularioAdjuntarDocumentoComunicacion: function(grid) {
-    	
 		var me = this;
 		var idActivo = me.getViewModel().get("activo.id");
 		var data = {
@@ -90,14 +89,21 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoController', {
 	},
 	
 	abrirFormularioAdjuntarComunicacionHistoricoActivo: function(grid) {
-    	
-		var me = this;
-		var idActivo = me.getViewModel().get("activo.id");
+		var me = this,	
+		idActivo = me.getViewModel().get("activo.id"),
+		comercialActivo = grid.up("gencatcomercialactivoform"),
+		comercialActivoFormHist =grid.up("gencatcomercialactivoformhist");
+		
+		if  (comercialActivo != undefined){
+			var gridActivo = comercialActivo;
+		}else{ 
+			var gridActivo = comercialActivoFormHist;
+		}	
 		var data = {
 			entidad: 'gencat', 
 			idEntidad: idActivo, 
 			parent: grid,
-			idHComunicacion: grid.up("gencatcomercialactivoform").idHComunicacion
+			idHComunicacion: gridActivo.idHComunicacion
 		};
 		Ext.create("HreRem.view.common.adjuntos.AdjuntarDocumentoComunicacionHistoricoGencat", data).show();
 		

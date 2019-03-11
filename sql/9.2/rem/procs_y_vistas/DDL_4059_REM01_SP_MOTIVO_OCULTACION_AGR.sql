@@ -82,32 +82,32 @@ create or replace PROCEDURE SP_MOTIVO_OCULTACION_AGR (nAGR_ID IN NUMBER
                                , 1 OCULTO
                                , MTO.DD_MTO_CODIGO
                                , MTO.DD_MTO_ORDEN ORDEN
-                                    FROM '|| V_ESQUEMA ||'.ACT_PTA_PATRIMONIO_ACTIVO PTA
+                                    FROM '|| V_ESQUEMA ||'.ACT_PTA_PATRIMONIO_ACTIVO ACT
                                     LEFT JOIN '|| V_ESQUEMA ||'.DD_MTO_MOTIVOS_OCULTACION MTO ON MTO.DD_MTO_CODIGO = ''05'' AND MTO.BORRADO = 0 /*No adecuado*/
-                                   WHERE (PTA.DD_ADA_ID = (SELECT DDADA.DD_ADA_ID
+                                   WHERE (ACT.DD_ADA_ID = (SELECT DDADA.DD_ADA_ID
 								                             FROM '|| V_ESQUEMA ||'.DD_ADA_ADECUACION_ALQUILER DDADA
 								                            WHERE DDADA.BORRADO = 0
 								                              AND DDADA.DD_ADA_CODIGO = ''02''
 								                           )
-								          OR PTA.DD_ADA_ID = (SELECT DDADA.DD_ADA_ID
+								          OR ACT.DD_ADA_ID = (SELECT DDADA.DD_ADA_ID
 								                             FROM '|| V_ESQUEMA ||'.DD_ADA_ADECUACION_ALQUILER DDADA
 								                            WHERE DDADA.BORRADO = 0
 								                              AND DDADA.DD_ADA_CODIGO = ''04''
 								                           )
-								          OR PTA.DD_ADA_ID IS NULL)
-								          AND (PTA.DD_ADA_ID_ANTERIOR = (SELECT DDADA.DD_ADA_ID
+								          OR ACT.DD_ADA_ID IS NULL)
+								          AND (ACT.DD_ADA_ID_ANTERIOR = (SELECT DDADA.DD_ADA_ID
 								                             FROM '|| V_ESQUEMA ||'.DD_ADA_ADECUACION_ALQUILER DDADA
 								                            WHERE DDADA.BORRADO = 0
 								                              AND DDADA.DD_ADA_CODIGO = ''01''
 								                           )
-								          OR PTA.DD_ADA_ID_ANTERIOR = (SELECT DDADA.DD_ADA_ID
+								          OR ACT.DD_ADA_ID_ANTERIOR = (SELECT DDADA.DD_ADA_ID
 								                             FROM '|| V_ESQUEMA ||'.DD_ADA_ADECUACION_ALQUILER DDADA
 								                            WHERE DDADA.BORRADO = 0
 								                              AND DDADA.DD_ADA_CODIGO = ''03''
 								                           )
 								         )
-                                     AND PTA.BORRADO = 0
-                                     AND PTA.CHECK_HPM = 1
+                                     AND ACT.BORRADO = 0
+                                     AND ACT.CHECK_HPM = 1
                                      AND ''A'' = '''||pTIPO||'''
                                      AND EXISTS '||vQUERY||                                                                
                          ' UNION

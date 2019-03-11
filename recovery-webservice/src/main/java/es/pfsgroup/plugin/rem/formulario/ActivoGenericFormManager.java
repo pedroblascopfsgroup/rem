@@ -206,10 +206,14 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
 						e.printStackTrace();
 					}
 					if(!Checks.esNulo(codigoComite)) {
-						if(!expediente.getComiteSancion().getCodigo().equals(codigoComite)) {
-							DDComiteSancion comite = expedienteComercialApi.comiteSancionadorByCodigo(codigoComite);
-							expediente.setComiteSancion(comite);
-							expediente.setComiteSuperior(comite);
+						if(!Checks.esNulo(expediente.getComiteSancion())) {
+							if(!codigoComite.equals(expediente.getComiteSancion().getCodigo())) {
+								DDComiteSancion comite = expedienteComercialApi.comiteSancionadorByCodigo(codigoComite);
+								expediente.setComiteSancion(comite);
+								expediente.setComiteSuperior(comite);
+							}
+						}else {
+							valor.setValor(codigoComite);
 						}
 						valor.setValor(codigoComite);
 					}else {

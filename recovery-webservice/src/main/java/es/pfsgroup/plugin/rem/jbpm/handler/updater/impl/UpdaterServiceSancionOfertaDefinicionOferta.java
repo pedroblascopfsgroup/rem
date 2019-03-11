@@ -19,7 +19,6 @@ import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.NotificacionApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
-import es.pfsgroup.plugin.rem.formulario.ActivoGenericFormManager;
 import es.pfsgroup.plugin.rem.jbpm.handler.updater.UpdaterService;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
@@ -54,7 +53,7 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 	private static final String COMBO_CONFLICTO = "comboConflicto";
 	private static final String COMBO_RIESGO = "comboRiesgo";
 	private static final String COMBO_COMITE_SUPERIOR = "comiteSuperior";
-	private static final String CAMPO_COMITE = "comite";
+	//private static final String CAMPO_COMITE = "comite";
 
 	SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -113,13 +112,12 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 				expediente.setEstado(estado);
 			}
 		}
-		boolean aplicaSuperior = false;
-		DDComiteSancion comite = null;
-		ExpedienteComercial expediente = null;
+		
 		for (TareaExternaValor valor : valores) {
-			Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());			
+			Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());
 			if (!Checks.esNulo(ofertaAceptada)) {
-				expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
+				ExpedienteComercial expediente = expedienteComercialApi
+						.expedienteComercialPorOferta(ofertaAceptada.getId());
 				if (COMBO_RIESGO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 					if (DDSiNo.SI.equals(valor.getValor())) {
 						expediente.setRiesgoReputacional(1);
@@ -140,7 +138,6 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 				}
 				if(COMBO_COMITE_SUPERIOR.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 					if (DDSiNo.SI.equals(valor.getValor())){
-						aplicaSuperior = true;
 						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_BANKIA_DGVIER);
 						DDComiteSancion comiteSuperior = genericDao.get(DDComiteSancion.class, filtro);
 						if(!Checks.esNulo(comiteSuperior)) {
@@ -148,21 +145,11 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 							expediente.setComiteSancion(comiteSuperior);
 						}
 						
-					}else {
-						aplicaSuperior = false;
-					}
-				}
-				if(CAMPO_COMITE.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
-					if(!valor.getValor().equals(ActivoGenericFormManager.NO_APLICA)) {
-						comite = expedienteComercialApi.comiteSancionadorByCodigo(valor.getValor());						
 					}
 				}
 			}
 		}
-		if(!Checks.esNulo(expediente) && !aplicaSuperior && !Checks.esNulo(comite)) {
-			expediente.setComiteSuperior(comite);
-			expediente.setComiteSancion(comite);
-		}
+		
 		
 
 	}

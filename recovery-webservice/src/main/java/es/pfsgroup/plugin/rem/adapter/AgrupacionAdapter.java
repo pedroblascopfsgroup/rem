@@ -546,25 +546,12 @@ public class AgrupacionAdapter {
 					Activo am = activoAgrupacionActivoDao.getActivoMatrizByIdAgrupacion(id);
 					
 					BeanUtils.copyProperties(dtoAgrupacion, agrupacionTemp);
-
-					if (agrupacionTemp.getLocalidad() != null) {
-						BeanUtils.copyProperty(dtoAgrupacion, "municipioDescripcion",
-								agrupacionTemp.getLocalidad().getDescripcion());
-						BeanUtils.copyProperty(dtoAgrupacion, "municipioCodigo",
-								agrupacionTemp.getLocalidad().getCodigo());
-					}
-
-					if (agrupacionTemp.getProvincia() != null) {
-						BeanUtils.copyProperty(dtoAgrupacion, "provinciaDescripcion",
-								agrupacionTemp.getProvincia().getDescripcion());
-						BeanUtils.copyProperty(dtoAgrupacion, "provinciaCodigo",
-								agrupacionTemp.getProvincia().getCodigo());
-					}
 					
 					if(!Checks.esNulo(am)) {
 						BeanUtils.copyProperty(dtoAgrupacion, "activoMatriz", am.getNumActivo());
 						BeanUtils.copyProperty(dtoAgrupacion, "codigoPostal", am.getCodPostal());
-						BeanUtils.copyProperty(dtoAgrupacion, "municipio", am.getMunicipio());
+						BeanUtils.copyProperty(dtoAgrupacion, "municipioCodigo", am.getMunicipio());
+						BeanUtils.copyProperty(dtoAgrupacion, "provinciaCodigo", am.getProvincia());
 					}
 				
 				}
@@ -2558,8 +2545,6 @@ public class AgrupacionAdapter {
 						Boolean esActivoMatrizValido = esActivoMatrizValido(act);
 						/*TODO: Validaciones HREOS-5596*/
 						if(esActivoMatrizValido) {
-							act.setDescripcion(dto.getDescripcion());
-							act.setProvincia(dto.getProvinciaDescripcion());
 							ActivoAgrupacionActivo aga = new ActivoAgrupacionActivo();
 							aga.setActivo(act);
 							aga.setAgrupacion(pa);

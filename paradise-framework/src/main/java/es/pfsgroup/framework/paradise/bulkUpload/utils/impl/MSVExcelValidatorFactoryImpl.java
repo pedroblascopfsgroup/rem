@@ -125,7 +125,10 @@ public class MSVExcelValidatorFactoryImpl {
 
 	@Autowired
 	private MSVValidadorCargaMasivaAdecuacion adecuacion;
-
+	
+	//Se libera en HREOS-5776 
+	/*@Autowired
+	private MSVValidatorAgrupacionPromocionAlquiler promocionAlquiler;*/
 
 	public MSVExcelValidator getForTipoValidador(String codTipoOperacion) {
 
@@ -249,6 +252,8 @@ public class MSVExcelValidatorFactoryImpl {
 			return adecuacion;
 		} else if (MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_EXCLUSION_DWH.equals(codTipoOperacion)) {
 			return excluirDwh;
+		} else if (MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_AGRUPACION_PROMOCION_ALQUILER.equals(codTipoOperacion)) {
+			//return promocionAlquiler;
 		}
 
 		return null;

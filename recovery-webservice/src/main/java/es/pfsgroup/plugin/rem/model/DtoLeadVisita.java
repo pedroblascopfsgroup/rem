@@ -6,6 +6,8 @@ package es.pfsgroup.plugin.rem.model;
  *
  */
 public class DtoLeadVisita {
+	
+	public static final int CODPCE = 2321;
 
 	@SuppressWarnings("unused")
 	private class Attributes {
@@ -44,12 +46,10 @@ public class DtoLeadVisita {
 		this.setCOD_ID_ACTIVO_ESP__c(dto.getIdActivo().intValue());
 		this.setPRIMER_APELLIDO__c(dto.getNombre());
 		this.setNUM_TELEFONO__c(dto.getTelefono());
+		this.setMAIL__c(dto.getEmail());
 		
-		String email = dto.getEmail();
-		if (dto.getObservaciones() != null) {
-			email = email.concat(dto.getObservaciones());
-		}
-		this.setMAIL__c(email);
+		/*TODO: settear el campo de observaciones cuando Haya nos habilite un campo en su WS para ello*/
+		this.CODPCE__c = DtoLeadVisita.CODPCE;
 		
 		Attributes attributes = new Attributes();
 		attributes.setReferenceId(dto.getIdActivo() + "");

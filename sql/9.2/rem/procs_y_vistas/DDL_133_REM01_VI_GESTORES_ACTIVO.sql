@@ -219,65 +219,13 @@ SELECT act.act_id, TO_NUMBER (dd_cra.dd_cra_codigo), TO_NUMBER (dd_eac.dd_eac_co
        JOIN bie_localizacion loc ON loc.bie_loc_id = aloc.bie_loc_id
        JOIN '||V_ESQUEMA_M||'.dd_loc_localidad dd_loc ON loc.dd_loc_id = dd_loc.dd_loc_id
        JOIN '||V_ESQUEMA_M||'.dd_prv_provincia dd_prov ON dd_prov.dd_prv_id = loc.dd_prv_id
-       JOIN '||V_ESQUEMA||'.dd_eac_estado_activo dd_eac ON dd_eac.dd_eac_id = act.dd_eac_id
-       JOIN '||V_ESQUEMA||'.dd_cra_cartera dd_cra ON dd_cra.dd_cra_id = act.dd_cra_id
-       JOIN '||V_ESQUEMA||'.dd_scr_subcartera dd_scr ON dd_scr.dd_cra_id = dd_cra.dd_cra_id AND dd_scr.dd_scr_id = act.dd_scr_id
-       LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist0 
-        ON (dist0.cod_estado_activo IS NULL
-            AND dist0.cod_cartera = dd_cra.dd_cra_codigo
-            AND dist0.cod_subcartera IS NULL
-            AND dist0.tipo_gestor = ''GGADM'')
-       LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist1 
-        ON (dist1.cod_estado_activo  = dd_eac.dd_eac_codigo 
-            AND dist1.cod_cartera = dd_cra.dd_cra_codigo
-            AND dist1.cod_subcartera IS NULL
-            AND dist1.tipo_gestor = ''GGADM'')
-       LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist2 
-        ON (dist2.cod_estado_activo  = dd_eac.dd_eac_codigo 
-            AND dist2.cod_cartera = dd_cra.dd_cra_codigo
-            AND TO_NUMBER(dist2.cod_subcartera) = TO_NUMBER(DD_SCR.DD_SCR_CODIGO)
-            AND dist2.tipo_gestor = ''GGADM'')
-       LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist3 
-        ON (dist3.cod_provincia  = dd_prov.dd_prv_codigo
-            AND dist3.cod_cartera = dd_cra.dd_cra_codigo
-            AND dist3.cod_subcartera IS NULL
-            AND dist3.tipo_gestor = ''GGADM'')
-       LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist4 
-        ON (dist4.cod_provincia = dd_prov.dd_prv_codigo 
-            AND dist4.cod_cartera = dd_cra.dd_cra_codigo
-            AND TO_NUMBER(dist4.cod_subcartera) = TO_NUMBER(DD_SCR.DD_SCR_CODIGO)
-            AND dist4.tipo_gestor = ''GGADM'')
-       LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist5 
-        ON (dist5.cod_municipio  = dd_loc.dd_loc_codigo  
-            AND dist5.cod_cartera = dd_cra.dd_cra_codigo
-            AND dist5.cod_subcartera IS NULL
-            AND dist5.tipo_gestor = ''GGADM'')
-       LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist6 
-        ON (dist6.cod_municipio = dd_loc.dd_loc_codigo 
-            AND dist6.cod_cartera = dd_cra.dd_cra_codigo
-            AND TO_NUMBER(dist6.cod_subcartera) = TO_NUMBER(DD_SCR.DD_SCR_CODIGO)
-            AND dist6.tipo_gestor = ''GGADM'')
-       LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist7 
-        ON (dist7.cod_postal = loc.bie_loc_cod_post 
-            AND dist7.cod_cartera = dd_cra.dd_cra_codigo
-            AND dist7.cod_subcartera IS NULL
-            AND dist7.tipo_gestor = ''GGADM'')
-       LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist8 
-        ON (dist8.cod_postal = loc.bie_loc_cod_post 
-            AND dist8.cod_cartera = dd_cra.dd_cra_codigo
-            AND TO_NUMBER(dist8.cod_subcartera) = TO_NUMBER(DD_SCR.DD_SCR_CODIGO)
-            AND dist8.tipo_gestor = ''GGADM'')
-    where act.borrado = 0 and 
-		( 		dist0.tipo_gestor = ''GGADM''
-			OR  dist1.tipo_gestor = ''GGADM''
-			OR  dist2.tipo_gestor = ''GGADM''
-			OR  dist3.tipo_gestor = ''GGADM''
-			OR  dist4.tipo_gestor = ''GGADM''
-			OR  dist5.tipo_gestor = ''GGADM''
-			OR  dist6.tipo_gestor = ''GGADM''
-			OR  dist7.tipo_gestor = ''GGADM''
-			OR  dist8.tipo_gestor = ''GGADM''
-		)
+       JOIN dd_eac_estado_activo dd_eac ON dd_eac.dd_eac_id = act.dd_eac_id
+       JOIN dd_cra_cartera dd_cra ON dd_cra.dd_cra_id = act.dd_cra_id
+       LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist1 ON (dd_eac.dd_eac_codigo = dist1.cod_estado_activo AND dist1.cod_cartera = dd_cra.dd_cra_codigo AND dist1.tipo_gestor = ''GGADM'')
+       LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist2 ON (dd_prov.dd_prv_codigo = dist2.cod_provincia AND dist2.cod_cartera = dd_cra.dd_cra_codigo AND dist2.tipo_gestor = ''GGADM'')
+       LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist3 ON (dd_loc.dd_loc_codigo = dist3.cod_municipio AND dist3.cod_cartera = dd_cra.dd_cra_codigo AND dist3.tipo_gestor = ''GGADM'')
+       LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist4 ON (loc.bie_loc_cod_post = dist4.cod_postal AND dist4.cod_cartera = dd_cra.dd_cra_codigo AND dist4.tipo_gestor = ''GGADM'')
+           where act.borrado = 0
            UNION ALL
 /*Gestoría de administración*/
            SELECT DISTINCT act.act_id, TO_NUMBER (dd_cra.dd_cra_codigo), TO_NUMBER (dd_eac.dd_eac_codigo), NULL dd_tcr_codigo, to_char(dist2.cod_provincia), dist3.cod_municipio, dist4.cod_postal,

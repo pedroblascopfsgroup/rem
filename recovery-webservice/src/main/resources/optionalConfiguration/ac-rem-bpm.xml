@@ -29,7 +29,7 @@
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteAdmision.xml" p:version="2033"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteDocumental.xml" p:version="2034"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteDocumentalCEE.xml" p:version="2042"/>
-	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteActuacionTecnica.xml" p:version="-1"/>
+	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteActuacionTecnica.xml" p:version="2051"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteTasacion.xml" p:version="2062"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteInforme.xml" p:version="2066"/>
 	<bean parent="bpm.processFactory" p:definitionLocation="classpath:process/rem/activo_tramiteFacturacion.xml" p:version="2072"/>

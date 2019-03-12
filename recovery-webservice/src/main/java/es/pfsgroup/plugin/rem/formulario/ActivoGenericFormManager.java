@@ -74,9 +74,9 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
 	public static final String TIPO_COMBOBOX_INICIAL = "comboboxinicial";
 	public static final String TIPO_COMBOBOX_INICIAL_ED = "comboboxinicialedi";
 	public static final String TIPO_CAMPO_NUMBER = "numberfield";
-	public static final String NO_APLICA = "No aplica";
+	public static final String NO_APLICA = "-1";
 	public static final String TIPO_CAMPO_TEXTFIELD = "textfield";
-	
+	public static final String TIPO_CAMPO_COMBO_READONLY = "comboboxreadonly";
     protected final Log logger = LogFactory.getLog(getClass());
 
     @Autowired
@@ -123,7 +123,7 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
     private OfertaManager ofertaManager;
     
     @Autowired
-    private TareaActivoApi tareaActivoApi;
+	private TareaActivoApi tareaActivoApi;
 
     
     /**
@@ -225,7 +225,6 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
             }else {
             	valor.setValor(valores[i]);
             }
-
             //listaValores.add(valor);
             tareaExternaValorDao.saveOrUpdate(valor);
 
@@ -322,45 +321,7 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
             	}
             	if(item.getType().equals(TIPO_CAMPO_INFORMATIVO))
             	{
-            		if(item.getNombre().equals("comite"))
-            		{
-            			Oferta ofertaAceptada = ofertaApi.tareaExternaToOferta(tareaExterna);
-            			if (!Checks.esNulo(ofertaAceptada)) {
-            				ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
-            				if (!Checks.esNulo(expediente)){
-            					if(trabajoApi.checkFormalizacion(tareaExterna)){
-            						String codigoComite = null;
-			            			if(trabajoApi.checkBankia(tareaExterna)){
-										try {
-											if(!expediente.getOferta().getVentaDirecta()){
-												codigoComite = expedienteComercialApi.consultarComiteSancionador(expediente.getId());
-											}else{
-												codigoComite = DDComiteSancion.CODIGO_HAYA_SAREB;
-											}
-										}
-										catch (Exception e) {
-											logger.error("error consultado comite", e);
-										}
-										if(!Checks.esNulo(codigoComite))
-											item.setValue(expedienteComercialApi.comiteSancionadorByCodigo(codigoComite).getDescripcion());
-			            			} else if(trabajoApi.checkLiberbank(tareaExterna)) {
-			            				DDComiteSancion comite = ofertaManager.calculoComiteLiberbank(ofertaAceptada);
-			            				if(!Checks.esNulo(comite)) {
-			            					codigoComite = comite.getCodigo();
-			            				}
-			            				if(!Checks.esNulo(codigoComite)) {
-											item.setValue(expedienteComercialApi.comiteSancionadorByCodigo(codigoComite).getDescripcion());
-			            				}
-			            			}else {
-			            				if(!Checks.esNulo(expediente.getComiteSancion()))
-			            					item.setValue(expediente.getComiteSancion().getDescripcion());
-				            		}
-            					}else{
-            						item.setValue(NO_APLICA);
-            					}
-            				}
-            			}
-            		}
+            		
             		if(item.getNombre().equals("cartera")){
             			Oferta ofertaAceptada = ofertaApi.tareaExternaToOferta(tareaExterna);
             			if(!Checks.esNulo(ofertaAceptada)){
@@ -654,26 +615,49 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
 
             				}
             			}
-            		}   
+            		} 
+            	}
+            	if(item.getType().equals(TIPO_CAMPO_COMBO_READONLY)) {
             		
-	        		if(item.getNombre().equals("comiteSuperior"))
-	        		{
-	        			Oferta ofertaAceptada = ofertaApi.tareaExternaToOferta(tareaExterna);
-	        			if (!Checks.esNulo(ofertaAceptada)) {
-	        				ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
-	        				if (!Checks.esNulo(expediente)){
-	        					if(trabajoApi.checkFormalizacion(tareaExterna)){
+            		if(item.getNombre().equals("comite"))
+            		{
+            			Oferta ofertaAceptada = ofertaApi.tareaExternaToOferta(tareaExterna);
+            			if (!Checks.esNulo(ofertaAceptada)) {
+            				ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
+            				if (!Checks.esNulo(expediente)){
+            					if(trabajoApi.checkFormalizacion(tareaExterna)){
+            						String codigoComite = null;
 			            			if(trabajoApi.checkBankia(tareaExterna)){
-
+										try {
+											if(!expediente.getOferta().getVentaDirecta()){
+												codigoComite = expedienteComercialApi.consultarComiteSancionador(expediente.getId());
+											}else{
+												codigoComite = DDComiteSancion.CODIGO_HAYA_SAREB;
+											}
+										}
+										catch (Exception e) {
+											logger.error("error consultado comite", e);
+										}
+										if(!Checks.esNulo(codigoComite))
+											item.setValue(expedienteComercialApi.comiteSancionadorByCodigo(codigoComite).getCodigo());
+			            			} else if(trabajoApi.checkLiberbank(tareaExterna)) {
+			            				DDComiteSancion comite = ofertaManager.calculoComiteLiberbank(ofertaAceptada);
+			            				if(!Checks.esNulo(comite)) {
+			            					codigoComite = comite.getCodigo();
+			            				}
+			            				if(!Checks.esNulo(codigoComite)) {
+											item.setValue(expedienteComercialApi.comiteSancionadorByCodigo(codigoComite).getCodigo());
+			            				}
+			            			}else {
 			            				if(!Checks.esNulo(expediente.getComiteSancion()))
-			            					item.setValue(expediente.getComiteSancion().getDescripcion());
-			            			}
-	        					}else{
-	        						item.setValue(NO_APLICA);
-	        					}
-		            		}
-	            		}
-	            	}
+			            					item.setValue(expediente.getComiteSancion().getCodigo());
+				            		}
+            					}else{
+            						item.setValue(NO_APLICA);
+            					}
+            				}
+            			}
+            		}
             	}
             	if(item.getType().equals(TIPO_CAMPO_NUMBER))
             	{

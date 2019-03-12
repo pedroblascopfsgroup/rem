@@ -3505,6 +3505,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     },
 
 	checkActivosToPropagate: function(idActivo, form, tabData, restringida){
+		debugger;
 		var me = this,
 		url =  $AC.getRemoteUrl('activo/getActivosPropagables');
 		Ext.Ajax.request({
@@ -3513,6 +3514,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     		params: {idActivo: idActivo},
 
     		success: function(response, opts){
+    			debugger;
     			var activosPropagables = Ext.decode(response.responseText).data.activosPropagables;
 				var tabPropagableData = null;
 
@@ -3523,6 +3525,52 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 						}
 					}
 				}
+				
+				url2 =  $AC.getRemoteUrl('activo/getIsActivoMatriz');
+				Ext.Ajax.request({
+		    		url: url2,
+					method : 'POST',
+		    		params: {idActivo: idActivo},
+
+		    		success: function(response, opts){
+		    			var isActivoMatriz = Ext.decode(response.responseText).data.isActivoMatriz;
+		    			if(isActivoMatriz){
+		    				
+		    			}
+		    			else{
+			    			if(activosPropagables.length > 0) {
+								tabPropagableData = me.createFormPropagableData(form, tabData);
+								if (!Ext.isEmpty(tabPropagableData)) {
+									// sacamos el activo actual del listado
+									var activo = activosPropagables.splice(activosPropagables.findIndex(function(activo){return activo.activoId == me.getViewModel().get("activo.id")}),1)[0];
+	
+									// Abrimos la ventana de selección de activos
+									var ventanaOpcionesPropagacionCambios = Ext.create("HreRem.view.activos.detalle.OpcionesPropagacionCambios", {form: form, activoActual: activo, activos: activosPropagables, tabData: tabData, propagableData: tabPropagableData}).show();
+										me.getView().add(ventanaOpcionesPropagacionCambios);
+										me.getView().unmask();
+										return false;
+								}
+							}
+	
+							var successFn = function(response, eOpts) {
+	
+								me.manageToastJsonResponse(me, response.responseText);
+								me.getView().unmask();
+								me.refrescarActivo(form.refreshAfterSave);
+								me.getView().fireEvent("refreshComponentOnActivate", "container[reference=tabBuscadorActivos]");
+								me.actualizarGridHistoricoDestinoComercial(form);
+							}
+	
+							if(restringida == true){
+								me.saveActivosAgrRestringida(tabData, successFn);
+							} else {
+								me.saveActivo(tabData, successFn);
+							}
+		    			}
+		    		},failure: function(record, operation) {
+				 		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+				    }
+				});
 				
 				if(activosPropagables.length > 0) {
 					tabPropagableData = me.createFormPropagableData(form, tabData);

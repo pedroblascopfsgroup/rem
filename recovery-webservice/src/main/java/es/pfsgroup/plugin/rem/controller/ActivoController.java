@@ -2621,4 +2621,18 @@ public class ActivoController extends ParadiseJsonController {
 
 		return createModelAndViewJson(model);
 	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView getIsActivoMatriz(String idActivo, ModelMap model){
+		try{
+			model.put(RESPONSE_DATA_KEY, activoDao.isActivoMatriz(Long.valueOf(idActivo)));
+		} catch (Exception e) {
+			logger.error("error en activoController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put(RESPONSE_ERROR_KEY, e.getMessage());
+		}
+
+		return createModelAndViewJson(model);
+	}
 }

@@ -54,7 +54,6 @@ public class RemCorreoUtils {
 	private static final String PWD_CORREO = "agendaMultifuncion.mail.pwd";
 	private static final String STARTTLS_ENABLE = "agendaMultifuncion.mail.starttls.enable";
 	private static final String AUTH = "agendaMultifuncion.mail.auth";
-
 	@Resource
 	private Properties appProperties;
 
@@ -67,7 +66,7 @@ public class RemCorreoUtils {
 	protected final Log logger = LogFactory.getLog(getClass());
 
 	public void enviarCorreoConAdjuntos(String emailFrom, List<String> mailsPara, List<String> direccionesMailCc,
-			String asuntoMail, String cuerpoEmail, List<DtoAdjuntoMail> list) {
+			String asuntoMail, String cuerpoEmail, List<DtoAdjuntoMail> list){
 		
 		CorreoSaliente traza = obtenerTrazaCorreoSaliente(emailFrom, mailsPara, direccionesMailCc, asuntoMail,
 				cuerpoEmail, list);

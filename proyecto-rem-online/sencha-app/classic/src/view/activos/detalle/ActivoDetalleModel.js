@@ -50,7 +50,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 
 	     esOcupacionLegal: function(get) {
 	     	var ocupado = get('situacionPosesoria.ocupado') == "1";
-	     	var conTitulo = get('situacionPosesoria.conTituloTPA') == "01";
+	     	var conTitulo = get('situacionPosesoria.conTitulo') == "01";
 	     	
 	     	return ocupado && conTitulo;
 	     },
@@ -61,7 +61,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 
 	     esOcupacionIlegal: function(get) {
 	     	var ocupado = get('situacionPosesoria.ocupado') == "1";
-	     	var conTitulo = get('situacionPosesoria.conTituloTPA') == "01";
+	     	var conTitulo = get('situacionPosesoria.conTitulo') == "01";
 	     	var gridHistoricoOcupacionesIlegales = this.getView().lookupReference('historicoocupacionesilegalesgridref');
 			var fieldHistoricoOcupacionesIlegales = this.getView().lookupReference('fieldHistoricoOcupacionesIlegales');
 			if(gridHistoricoOcupacionesIlegales != null && fieldHistoricoOcupacionesIlegales != null){
@@ -621,6 +621,13 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			var estadoAlquilerCodigo = get('situacionPosesoria.tipoEstadoAlquiler');
 
 			return (CONST.COMBO_ESTADO_ALQUILER["ALQUILADO"] == estadoAlquilerCodigo);
+		},
+		
+		disabledComboConTituloTPA: function(get){
+			var esTipoEstadoAlquilerAlquilado = get('esTipoEstadoAlquilerAlquilado');
+			var ocupado = get('situacionPosesoria.ocupado');
+
+			return esTipoEstadoAlquilerAlquilado || ocupado == CONST.COMBO_OCUPACION["NO"];
 		},
 
 		isCarteraLiberbank: function(get){
@@ -1818,6 +1825,15 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		        remoteUrl: 'activo/getHistoricoDestinoComercialByActivo',
 		        extraParams: {id: '{activo.id}'}
 	    	 }
-   		}
+   		},
+   		
+   		comboDDTipoTituloActivoTPA: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getComboTipoTituloActivoTPA',
+   				extraParams: {numActivo: '{activo.numActivo}'}
+			}
+		}
      }
 });

@@ -886,11 +886,15 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				nuevoCondicionante.setImporteReserva(oferta.getImporteOferta() * (new Double(3) / 100));
 				nuevoCondicionante.setPlazoFirmaReserva(5);
 			}
+
 			// HREOS-5392
 			// Activos de Cerberus->Agora(Financiero, Inmobiliario) debe haber reserva por porcentaje del 10%
 			if (DDCartera.CODIGO_CARTERA_CERBERUS.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
 				&& (DDSubcartera.CODIGO_AGORA_INMOBILIARIO.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo())) ||
-					(DDSubcartera.CODIGO_AGORA_FINANCIERO.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo()))) {
+					(DDSubcartera.CODIGO_AGORA_FINANCIERO.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo())))
+				&& (DDCartera.CODIGO_CARTERA_CERBERUS.equals(oferta.getActivoPrincipal().getCartera().getCodigo()) 
+				&& DDSubcartera.CODIGO_ZEUS_INMOBILIARIO.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo())) {
+
 				nuevoCondicionante.setSolicitaReserva(1);
 				DDTipoCalculo tipoCalculo = (DDTipoCalculo) utilDiccionarioApi
 						.dameValorDiccionarioByCod(DDTipoCalculo.class, DDTipoCalculo.TIPO_CALCULO_PORCENTAJE);
@@ -3755,7 +3759,11 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		try {
 			beanUtilNotNull.copyProperty(activo, "fechaVentaExterna", dto.getFechaVenta());
 			beanUtilNotNull.copyProperty(activo, "importeVentaExterna", dto.getImporteVenta());
-			beanUtilNotNull.copyProperty(activo, "observacionesVentaExterna", dto.getObservaciones().replaceAll("(\n|\r)", " "));
+			if(!Checks.esNulo(dto.getObservaciones())) {
+				beanUtilNotNull.copyProperty(activo, "observacionesVentaExterna", dto.getObservaciones().replaceAll("(\n|\r)", " "));
+			}else {
+				beanUtilNotNull.copyProperty(activo, "observacionesVentaExterna", null);
+			}
 			dto.setVentaExterna(Checks.esNulo(activo.getFechaVentaExterna()));
 
 			// Si se ha introducido valores en fecha o importe de venta, se
@@ -5036,7 +5044,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			return null;
 
 		List<Object> listaObj = rawDao.getExecuteSQLList(
-				"SELECT AGR_ID FROM ACT_AGA_AGRUPACION_ACTIVO WHERE ACT_ID = " + idActivo.toString());
+				"SELECT AGR_ID FROM ACT_AGA_AGRUPACION_ACTIVO WHERE ACT_ID = " + idActivo.toString() + "AND BORRADO = 0");
 
 		List<Long> listaAgr = new ArrayList<Long>();
 

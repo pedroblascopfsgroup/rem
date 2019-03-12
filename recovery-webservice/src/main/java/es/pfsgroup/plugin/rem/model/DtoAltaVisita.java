@@ -7,6 +7,7 @@ public class DtoAltaVisita extends WebDto {
 	private static final long serialVersionUID = 2395317605506666007L;
 	
 	private Long idActivo;
+	private Long idActivoHaya;
 	private String nombre;
 	private String telefono;
 	private String email;
@@ -41,6 +42,12 @@ public class DtoAltaVisita extends WebDto {
 	}
 	public void setObservaciones(String observaciones) {
 		this.observaciones = observaciones;
+	}
+	public Long getIdActivoHaya() {
+		return idActivoHaya;
+	}
+	public void setIdActivoHaya(Long idActivoHaya) {
+		this.idActivoHaya = idActivoHaya;
 	}
 	
 

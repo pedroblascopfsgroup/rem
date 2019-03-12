@@ -1854,6 +1854,10 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 		//Validacion
 		ComunicacionGencat comunicacionGencat = validateAltaVisita(dtoAltaVisita);
 		
+		//Se obtiene el id del activo en Haya
+		Activo activo = activoApi.get(dtoAltaVisita.getIdActivo());
+		dtoAltaVisita.setIdActivoHaya(activo.getNumActivo());
+		
 		//WS que dan da alta la visita en SF
 		SalesforceAuthDto auth = salesforceManager.getAuthtoken();
 		SalesforceResponseDto salesforceResponseDto = salesforceManager.altaVisita(auth, dtoAltaVisita);

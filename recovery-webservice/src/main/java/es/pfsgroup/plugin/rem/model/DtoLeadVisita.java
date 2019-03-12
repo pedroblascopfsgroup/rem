@@ -44,7 +44,7 @@ public class DtoLeadVisita {
 
 	public DtoLeadVisita (DtoAltaVisita dto) {
 
-		this.setCOD_ID_ACTIVO_ESP__c(dto.getIdActivo().intValue());
+		this.setCOD_ID_ACTIVO_ESP__c(dto.getIdActivoHaya().intValue());
 		this.setPRIMER_APELLIDO__c(dto.getNombre());
 		this.setNUM_TELEFONO__c(dto.getTelefono());
 		this.setMAIL__c(dto.getEmail());

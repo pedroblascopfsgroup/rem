@@ -40,6 +40,7 @@ public class DtoLeadVisita {
 	private String MAIL__c;
 	private boolean HAY_Es_Portal__c = true; // Campo obligatorio , se omite seter
 	private boolean HAY_NoProcesar__c = true; // Campo obligatorio , se omite seter
+	private String Comments__c;
 
 	public DtoLeadVisita (DtoAltaVisita dto) {
 
@@ -47,8 +48,8 @@ public class DtoLeadVisita {
 		this.setPRIMER_APELLIDO__c(dto.getNombre());
 		this.setNUM_TELEFONO__c(dto.getTelefono());
 		this.setMAIL__c(dto.getEmail());
+		this.setComments__c(dto.getEmail() + " - " + dto.getObservaciones());
 		
-		/*TODO: settear el campo de observaciones cuando Haya nos habilite un campo en su WS para ello*/
 		this.CODPCE__c = DtoLeadVisita.CODPCE;
 		
 		Attributes attributes = new Attributes();
@@ -113,6 +114,14 @@ public class DtoLeadVisita {
 
 	public boolean isHAY_NoProcesar__c() {
 		return HAY_NoProcesar__c;
+	}
+
+	public String getComments__c() {
+		return Comments__c;
+	}
+
+	public void setComments__c(String comments_c) {
+		Comments__c = comments_c;
 	}
 
 }

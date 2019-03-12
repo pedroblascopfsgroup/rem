@@ -1176,6 +1176,8 @@ public class ActivoAdapter {
 					e.printStackTrace();
 				} catch (InvocationTargetException e) {
 					e.printStackTrace();
+				} catch (Exception e) {
+					logger.error("Error en ActivoAdapter, ", e);
 				}
 				listaDtoAgrupaciones.add(dtoActivoAgrupaciones);
 

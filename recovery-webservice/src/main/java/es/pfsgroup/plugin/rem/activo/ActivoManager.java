@@ -886,13 +886,15 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				nuevoCondicionante.setImporteReserva(oferta.getImporteOferta() * (new Double(3) / 100));
 				nuevoCondicionante.setPlazoFirmaReserva(5);
 			}
+
 			// HREOS-5392
 			// Activos de Cerberus->Agora(Financiero, Inmobiliario) debe haber reserva por porcentaje del 10%
 			if (DDCartera.CODIGO_CARTERA_CERBERUS.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
 				&& (DDSubcartera.CODIGO_AGORA_INMOBILIARIO.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo())) ||
-					(DDSubcartera.CODIGO_AGORA_FINANCIERO.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo()))) 
+
+					(DDSubcartera.CODIGO_AGORA_FINANCIERO.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo()))
 			&& (DDCartera.CODIGO_CARTERA_CERBERUS.equals(oferta.getActivoPrincipal().getCartera().getCodigo()) 
-					&& DDSubcartera.CODIGO_ZEUS_INMOBILIARIO.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo())) {
+					&& DDSubcartera.CODIGO_ZEUS_INMOBILIARIO.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo())) ){
 
 				nuevoCondicionante.setSolicitaReserva(1);
 				DDTipoCalculo tipoCalculo = (DDTipoCalculo) utilDiccionarioApi

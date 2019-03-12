@@ -160,9 +160,11 @@ public class UpdaterServiceSancionOfertaPosicionamientoYFirma implements Updater
 							tituloActivo = genericDao.createFilter(FilterType.EQUALS, "codigo", valor.getValor());
 							tipoTitulo = genericDao.get(DDTipoTituloActivoTPA.class, tituloActivo);
 							
-							if(situacionPosesoria!= null && situacionPosesoria.getConTitulo() != null && (situacionPosesoria.getConTitulo().equals(DDTipoTituloActivoTPA.tipoTituloSi) && situacionPosesoria.getOcupado() == 1)){
+							if(!Checks.esNulo(situacionPosesoria) && !Checks.esNulo(situacionPosesoria.getConTitulo()) && (DDTipoTituloActivoTPA.tipoTituloSi.equals(situacionPosesoria.getConTitulo().getCodigo()) && situacionPosesoria.getOcupado() == 1)){
 								situacionPosesoria.setConTitulo(tipoTitulo);
 								situacionPosesoria.setOcupado(1);
+							}else if(!Checks.esNulo(situacionPosesoria) && !Checks.esNulo(situacionPosesoria.getConTitulo()) && (DDTipoTituloActivoTPA.tipoTituloNo.equals(situacionPosesoria.getConTitulo().getCodigo()) && situacionPosesoria.getOcupado() == 1)) {
+								//si esta okupado ilegalmente no se modifica la situación posesoria
 							}else{
 								situacionPosesoria.setConTitulo(tipoTitulo);
 								situacionPosesoria.setOcupado(0);

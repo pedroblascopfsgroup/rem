@@ -455,7 +455,6 @@ comprobarFormatoNIF:function(value) {
  	 		    	if(data.data == 'false'){
  	 		    		me.fireEvent("errorToast", HreRem.i18n("msg.falta.documento.anulacion"));
  	 		    		me.lookupReference('checkComunicadoAnulacion').setValue(false);
- 						Ext.getCmp('checkComunicadoAnulacion').setValue(false);
  	 		    	 }
  	 		    	 
  	 				},

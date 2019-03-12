@@ -420,7 +420,6 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoForm', {
 				]
         	}
         ];
-        
         me.addPlugin({ptype: 'lazyitems', items: items });
 		    
         me.callParent(); 

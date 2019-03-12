@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Ivan Castelló Cabrelles
---## FECHA_CREACION=20190308
+--## AUTOR=Oscar Diestre
+--## FECHA_CREACION=20190306
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=v2.4.0-rem
---## INCIDENCIA_LINK=REMVIP-3353
+--## INCIDENCIA_LINK=REMVIP-3493
 --## PRODUCTO=NO
 --##
 --## Finalidad: Insertar en la tabla DD_TPD_TIPO_DOCUMENTO
@@ -35,48 +35,7 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-
-T_TIPO_DATA('83','02'),
-T_TIPO_DATA('84','02'),
-T_TIPO_DATA('85','02'),
-T_TIPO_DATA('86','02'),
-T_TIPO_DATA('87','02'),
-T_TIPO_DATA('88','02'),
-T_TIPO_DATA('89','02'),
-T_TIPO_DATA('90','02'),
-T_TIPO_DATA('91','02'),
-T_TIPO_DATA('92','02'),
-T_TIPO_DATA('93','02'),
-T_TIPO_DATA('94','02'),
-T_TIPO_DATA('95','02'),
-T_TIPO_DATA('96','02'),
-T_TIPO_DATA('97','02'),
-T_TIPO_DATA('98','02'),
-T_TIPO_DATA('99','02'),
-T_TIPO_DATA('100','02'),
-T_TIPO_DATA('101','02'),
-T_TIPO_DATA('102','02'),
-T_TIPO_DATA('103','02'),
-T_TIPO_DATA('104','02'),
-T_TIPO_DATA('104','03'),
-T_TIPO_DATA('105','02'),
-T_TIPO_DATA('105','03'),
-T_TIPO_DATA('106','02'),
-T_TIPO_DATA('107','02'),
-T_TIPO_DATA('107','03'),
-T_TIPO_DATA('108','03'),
-T_TIPO_DATA('109','03'),
-T_TIPO_DATA('110','03'),
-T_TIPO_DATA('111','04'),
-T_TIPO_DATA('112','04'),
-T_TIPO_DATA('113','04'),
-T_TIPO_DATA('114','03'),
-T_TIPO_DATA('115','03'),
-T_TIPO_DATA('116','03'),
-T_TIPO_DATA('117','03'),
-T_TIPO_DATA('118','03'),
-T_TIPO_DATA('119','02'),
-T_TIPO_DATA('120','02')
+    T_TIPO_DATA('120','Justificante ocultación publicación','Justificante ocultación publicación','AI-05-ACUE-22')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     
@@ -85,28 +44,37 @@ BEGIN
 	DBMS_OUTPUT.PUT_LINE('[INICIO] ');
 
 	 
-    
-    
-	DBMS_OUTPUT.PUT_LINE('[INFO]: BORRAMOS LOS REGISTROS ACTUALES ');
-	EXECUTE IMMEDIATE 'TRUNCATE TABLE '|| V_ESQUEMA ||'.tpd_ttr';
-	
+    -- LOOP para MODIFICAR los valores en DD_TPD_TIPO_DOCUMENTO -----------------------------------------------------------------
     DBMS_OUTPUT.PUT_LINE('[INFO]: INSERCION EN DD_TPD_TIPO_DOCUMENTO ');
     FOR I IN V_TIPO_DATA.FIRST .. V_TIPO_DATA.LAST
       LOOP
       
         V_TMP_TIPO_DATA := V_TIPO_DATA(I);
  		
-            	
           
-          DBMS_OUTPUT.PUT_LINE('[INFO]: Insertamos EL REGISTRO '''|| TRIM(V_TMP_TIPO_DATA(1)) ||'''');
+          DBMS_OUTPUT.PUT_LINE('[INFO]: MODIFICAMOS EL REGISTRO '''|| TRIM(V_TMP_TIPO_DATA(1)) ||'''');
        	  V_MSQL := '
-                      INSERT INTO '|| V_ESQUEMA ||'.tpd_ttr (
+                      INSERT INTO '|| V_ESQUEMA ||'.dd_tpd_tipo_documento (
                         dd_tpd_id,
-                        dd_ttr_id,
-                        version
-                        ) VALUES (
-                        ( SELECT dd_tpd_id FROM '|| V_ESQUEMA ||'.DD_TPD_TIPO_DOCUMENTO WHERE DD_TPD_VISIBLE = 0 AND DD_TPD_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(1))||''' ),
-                        ( SELECT dd_ttr_id FROM '|| V_ESQUEMA ||'.DD_TTR_TIPO_TRABAJO WHERE DD_TTR_CODIGO = '''||TRIM(V_TMP_TIPO_DATA(2))||''' ),
+                        dd_tpd_codigo,
+                        dd_tpd_descripcion,
+                        dd_tpd_descripcion_larga,
+                        version,
+                        usuariocrear,
+                        fechacrear,
+                        borrado,
+                        dd_tpd_matricula_gd,
+                        dd_tpd_visible
+                      ) VALUES (
+                        '|| V_ESQUEMA ||'.S_DD_TPD_TIPO_DOCUMENTO.NEXTVAL,
+                        '''||TRIM(V_TMP_TIPO_DATA(1))||''',
+                        '''||TRIM(V_TMP_TIPO_DATA(2))||''',
+                        '''||TRIM(V_TMP_TIPO_DATA(3))||''',
+                        1,
+                        ''REMVIP-3493'',
+                        SYSDATE,
+                        0,
+                        '''||TRIM(V_TMP_TIPO_DATA(4))||''',
                         1
                       )';
 

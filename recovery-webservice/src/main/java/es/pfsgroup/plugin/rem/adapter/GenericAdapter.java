@@ -19,10 +19,8 @@ import es.capgemini.pfs.users.domain.Perfil;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
-import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.plugin.recovery.agendaMultifuncion.impl.dto.DtoAdjuntoMail;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
@@ -30,6 +28,7 @@ import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPeriocidad;
+import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.thread.EnvioCorreoAsync;
 import es.pfsgroup.plugin.rem.utils.DiccionarioTargetClassMap;
 
@@ -116,7 +115,6 @@ public class GenericAdapter {
 	
 	
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public List<Dictionary> getDiccionarioDeGastos(String diccionario) {
 		
 		Class<?> clase = null;
@@ -126,8 +124,6 @@ public class GenericAdapter {
 		List<Dictionary> listaImpuestos = new ArrayList<Dictionary>();
 			
 			clase = DiccionarioTargetClassMap.convertToTargetClass(diccionario);
-			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
-			Order order = new Order(OrderType.ASC,"descripcion");
 			DDSubtipoGasto impuestoRustico = (DDSubtipoGasto) diccionarioApi.dameValorDiccionarioByCod(clase, ibiRustica);
 			DDSubtipoGasto impuestoUrbano = (DDSubtipoGasto) diccionarioApi.dameValorDiccionarioByCod(clase, ibiUrbana);
 			DDSubtipoGasto impuestoOtrosAyuntamiento = (DDSubtipoGasto) diccionarioApi.dameValorDiccionarioByCod(clase, otrasTasas);
@@ -161,13 +157,19 @@ public class GenericAdapter {
 	 *            indicado en mailsPara y mailsCC
 	 * @param adjuntos Archivos adjuntos a manar por correo
 	 */
-	public void sendMail(List<String> mailsPara, List<String> mailsCC, String asunto, String cuerpo,
-			List<DtoAdjuntoMail> adjuntos) {
+	@Deprecated
+	public void sendMailSinc(List<String> mailsPara, List<String> mailsCC, String asunto, String cuerpo, List<DtoAdjuntoMail> adjuntos) {
 		remCorreoUtils.enviarCorreoConAdjuntos(null, mailsPara, mailsCC, asunto, cuerpo, adjuntos);
+		
 	}
 	
-	public void sendMailAsinc(List<String> mailsPara, List<String> mailsCC, String asunto, String cuerpo, List<DtoAdjuntoMail> adjuntos) {
-		Thread hiloCorreo = new Thread(new EnvioCorreoAsync(mailsPara, mailsCC, asunto, cuerpo, adjuntos));
+	public void sendMail(List<String> mailsPara, List<String> mailsCC, String asunto, String cuerpo, List<DtoAdjuntoMail> adjuntos) {
+		String usuarioLogado = RestApi.REST_LOGGED_USER_USERNAME;
+		if(this.getUsuarioLogado() != null){
+			usuarioLogado = this.getUsuarioLogado().getUsername();
+		}
+		Thread hiloCorreo = new Thread(new EnvioCorreoAsync(mailsPara, mailsCC, asunto, cuerpo, adjuntos,usuarioLogado));
+
 		hiloCorreo.start();	
 	}
 	

@@ -195,10 +195,12 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
         
         var coloredRender = function (value, meta, record) {
     		var borrado = record.get('borrado');
-    		if (borrado == 1) {
+    		var tipoAgrupacion = me.up('agrupacionesdetallemain').getViewModel().get('agrupacionficha').get('tipoAgrupacionCodigo');
+    		
+    		if (borrado == 1 && tipoAgrupacion == CONST.TIPOS_AGRUPACION['PROMOCION_ALQUILER']) {
     			return '<span style="color: #DF0101;">'+value+'</span>';
     		} else {
-    			return value;
+    			return value; 
     		}
     	};
  

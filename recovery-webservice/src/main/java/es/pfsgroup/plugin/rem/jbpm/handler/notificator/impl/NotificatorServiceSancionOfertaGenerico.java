@@ -734,91 +734,83 @@ public abstract class NotificatorServiceSancionOfertaGenerico extends AbstractNo
 		if (activoPropietario != null) {
 			propietario = activoPropietario.getPropietario();
 		}
-
-		try {
-
-			if (adjuntaInstrucciones) {
-				// ADJUNTOS SI ES CAJAMAR
-				if (DDCartera.CODIGO_CARTERA_CAJAMAR.equals(activo.getCartera().getCodigo())) {
-					if (propietario != null
-							&& (ActivoPropietario.CODIGO_FONDOS_TITULIZACION.equals(propietario.getCodigo())
-									|| ActivoPropietario.CODIGO_GIVP.equals(propietario.getCodigo())
-									|| ActivoPropietario.CODIGO_GIVP_II.equals(propietario.getCodigo()))) {
-						if (oferta.getOfertaExpress()) {
-							f1 = FileItemUtils.fromResource("docs/20181001_Instrucciones_Reserva_CAJAMAR.pdf");
-						} else {
-							f1 = FileItemUtils
-									.fromResource("docs/Instrucciones_Reserva_Formalizacion_estandar_072018.pdf");
-						}
-					} else {
+		if (adjuntaInstrucciones) {
+			// ADJUNTOS SI ES CAJAMAR
+			if (DDCartera.CODIGO_CARTERA_CAJAMAR.equals(activo.getCartera().getCodigo())) {
+				if (propietario != null && (ActivoPropietario.CODIGO_FONDOS_TITULIZACION.equals(propietario.getCodigo())
+						|| ActivoPropietario.CODIGO_GIVP.equals(propietario.getCodigo())
+						|| ActivoPropietario.CODIGO_GIVP_II.equals(propietario.getCodigo()))) {
+					if (oferta.getOfertaExpress()) {
 						f1 = FileItemUtils.fromResource("docs/20181001_Instrucciones_Reserva_CAJAMAR.pdf");
+					} else {
+						f1 = FileItemUtils.fromResource("docs/Instrucciones_Reserva_Formalizacion_estandar_072018.pdf");
 					}
-
-					f2 = FileItemUtils.fromResource("docs/ficha_cliente.xlsx");
-					f3 = FileItemUtils.fromResource("docs/manif_titular_real.doc");
-					if (f1 != null) {
-						adjuntos.add(createAdjunto(f1, "Instrucciones_Reserva_Formalizacion_Cajamar.pdf"));
-					}
-					if (f2 != null) {
-						adjuntos.add(createAdjunto(f2, "Ficha_cliente.xlsx"));
-					}
-					if (f3 != null) {
-						adjuntos.add(createAdjunto(f3, "Manif_Titular_Real.doc"));
-					}
-
+				} else {
+					f1 = FileItemUtils.fromResource("docs/20181001_Instrucciones_Reserva_CAJAMAR.pdf");
 				}
-				// ADJUNTOS SI ES SAREB
-				else if (activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_SAREB)) {
-					f1 = FileItemUtils.fromResource("docs/instrucciones_de_reserva.docx");
-					if (f1 != null) {
-						adjuntos.add(createAdjunto(f1, "Instrucciones_de_reserva.docx"));
-					}
 
+				f2 = FileItemUtils.fromResource("docs/ficha_cliente.xlsx");
+				f3 = FileItemUtils.fromResource("docs/manif_titular_real.doc");
+				if (f1 != null) {
+					adjuntos.add(createAdjunto(f1, "Instrucciones_Reserva_Formalizacion_Cajamar.pdf"));
 				}
-				// ADJUNTOS SI ES BANKIA
-				else if (activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_BANKIA)) {
-					f1 = FileItemUtils.fromResource("docs/instrucciones_reserva_Bankia_v7.docx");
-					if (f1 != null) {
-						adjuntos.add(createAdjunto(f1, "instrucciones_reserva_Bankia.docx"));
-					}
+				if (f2 != null) {
+					adjuntos.add(createAdjunto(f2, "Ficha_cliente.xlsx"));
+				}
+				if (f3 != null) {
+					adjuntos.add(createAdjunto(f3, "Manif_Titular_Real.doc"));
+				}
 
+			}
+			// ADJUNTOS SI ES SAREB
+			else if (activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_SAREB)) {
+				f1 = FileItemUtils.fromResource("docs/instrucciones_de_reserva.docx");
+				if (f1 != null) {
+					adjuntos.add(createAdjunto(f1, "Instrucciones_de_reserva.docx"));
 				}
-				// ADJUNTOS SI ES TANGO
-				else if (activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_TANGO)) {
-					f1 = FileItemUtils.fromResource("docs/contrato_reserva_Tango.docx");
-					if (f1 != null) {
-						adjuntos.add(createAdjunto(f1, "contrato_reserva_Tango.docx"));
-					}
-				}
-				// ADJUNTOS SI ES GIANTS
-				// Comentamos esta parte del código hasta que tengamos contrato
-				// de reserva de GIANTS
-				/*
-				 * else if(activo.getCartera().getCodigo().equals(DDCartera.
-				 * CODIGO_CARTERA_GIANTS)){ f1 = FileItemUtils.fromResource(
-				 * "docs/contrato_reserva_Giants.docx");
-				 * adjuntos.add(createAdjunto(f1,
-				 * "contrato_reserva_Giants.docx")); }
-				 */
-				// ADJUNTOS SI ES LIBERBANK
-				else if (activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_LIBERBANK)) {
-					f1 = FileItemUtils.fromResource("docs/instrucciones_reserva_y_formalizacion_Liberbank.docx");
-					if (f1 != null) {
-						adjuntos.add(createAdjunto(f1, "instrucciones_reserva_y_formalizacion_Liberbank.docx"));
-					}
 
+			}
+			// ADJUNTOS SI ES BANKIA
+			else if (activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_BANKIA)) {
+				f1 = FileItemUtils.fromResource("docs/instrucciones_reserva_Bankia_v7.docx");
+				if (f1 != null) {
+					adjuntos.add(createAdjunto(f1, "instrucciones_reserva_Bankia.docx"));
+				}
+
+			}
+			// ADJUNTOS SI ES TANGO
+			else if (activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_TANGO)) {
+				f1 = FileItemUtils.fromResource("docs/contrato_reserva_Tango.docx");
+				if (f1 != null) {
+					adjuntos.add(createAdjunto(f1, "contrato_reserva_Tango.docx"));
 				}
 			}
-			List<String> mailsPara = new ArrayList<String>();
-			if (destinatarios != null && destinatarios.length > 0) {
-				mailsPara = Arrays.asList(destinatarios);
-			}
+			// ADJUNTOS SI ES GIANTS
+			// Comentamos esta parte del código hasta que tengamos contrato
+			// de reserva de GIANTS
+			/*
+			 * else if(activo.getCartera().getCodigo().equals(DDCartera.
+			 * CODIGO_CARTERA_GIANTS)){ f1 = FileItemUtils.fromResource(
+			 * "docs/contrato_reserva_Giants.docx");
+			 * adjuntos.add(createAdjunto(f1, "contrato_reserva_Giants.docx"));
+			 * }
+			 */
+			// ADJUNTOS SI ES LIBERBANK
+			else if (activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_LIBERBANK)) {
+				f1 = FileItemUtils.fromResource("docs/instrucciones_reserva_y_formalizacion_Liberbank.docx");
+				if (f1 != null) {
+					adjuntos.add(createAdjunto(f1, "instrucciones_reserva_y_formalizacion_Liberbank.docx"));
+				}
 
-			genericAdapter.sendMail(mailsPara, mailsCC, asunto, cuerpoCorreo, adjuntos);
-		} finally {
-			deleteFile(f1);
-			deleteFile(f2);
+			}
 		}
+		List<String> mailsPara = new ArrayList<String>();
+		if (destinatarios != null && destinatarios.length > 0) {
+			mailsPara = Arrays.asList(destinatarios);
+		}
+
+		genericAdapter.sendMail(mailsPara, mailsCC, asunto, cuerpoCorreo, adjuntos);
+
 	}
 
 	private void deleteFile(FileItem fileitem) {

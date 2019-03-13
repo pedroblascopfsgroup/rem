@@ -4975,17 +4975,13 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				Activo activo = null;
 				ActivoCalificacionNegativa activoCalificacionNegativa = new ActivoCalificacionNegativa();
 //				dto.getNumeroActivo()
-				if (!Checks.esNulo(dto.getNumeroActivo())) {
-					activo = genericDao.get(Activo.class, genericDao.createFilter(FilterType.EQUALS, "numActivo",dto.getNumeroActivo()));
-					
-				} else if(!Checks.esNulo(dto.getIdActivo())){
-					activo = genericDao.get(Activo.class, genericDao.createFilter(FilterType.EQUALS, "id",dto.getIdActivo()));
+				if (!Checks.esNulo(dto.getIdActivo())) {
+					activo = genericDao.get(Activo.class, genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdActivo()));
+					activoCalificacionNegativa.setActivo(activo);
+				} else {
+					return false;
 				}
-				else {
-					activo = genericDao.get(Activo.class, genericDao.createFilter(FilterType.EQUALS, "numActivo",Long.valueOf("6876792")));
-					//return false;
-				} 
-				
+
 				List<ActivoCalificacionNegativa> activoCalificacionNegativaList = genericDao.getList(ActivoCalificacionNegativa.class, genericDao.createFilter(FilterType.EQUALS, "activo.id",activo.getId()));
 				if(!Checks.estaVacio(activoCalificacionNegativaList)){
 					for (ActivoCalificacionNegativa actCal : activoCalificacionNegativaList) { 

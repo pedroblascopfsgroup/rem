@@ -2537,8 +2537,9 @@ public class ActivoController extends ParadiseJsonController {
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
-	public ModelAndView createCalificacionNegativa(DtoActivoDatosRegistrales dtoActivosDatosRegistrales, ModelMap model) {
+	public ModelAndView createCalificacionNegativa(@RequestParam Long idEntidadPk, DtoActivoDatosRegistrales dtoActivosDatosRegistrales, ModelMap model) {
 		try {
+			dtoActivosDatosRegistrales.setIdActivo(idEntidadPk);
 			boolean success = activoApi.createCalificacionNegativa(dtoActivosDatosRegistrales);
 			model.put(RESPONSE_SUCCESS_KEY, success);
 		} catch (Exception e) {

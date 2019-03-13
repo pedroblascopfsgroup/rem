@@ -791,6 +791,7 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 							items :
 							[
 								{
+
 									xtype: "checkboxfieldbase", 
 									reference: "calificacionNegativaCheckbox",
 									name : 'calificacionNegativaCheckbox',

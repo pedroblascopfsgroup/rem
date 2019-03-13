@@ -59,7 +59,7 @@
     <property name="sessionFactory" ref="masterSessionFactory" />
   </bean>
   
-  <bean id="connectionPreparer" class="es.pfsgroup.commons.utils.ClientIdentifierConnectionPreparer" />
+  <bean id="connectionPreparer" class="es.capgemini.pfs.security.ClientIdentifierConnectionPreparer" />
 
 	<!-- según Spring, sólo aplica el primer tx:annotation-driven -->
   <tx:annotation-driven transaction-manager="entityTransactionManager" proxy-target-class="true" />

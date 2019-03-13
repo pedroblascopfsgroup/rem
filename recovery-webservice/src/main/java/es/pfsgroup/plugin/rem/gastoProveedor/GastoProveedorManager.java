@@ -2785,7 +2785,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 					if (!Checks.esNulo(activo.getSituacionPosesoria().getOcupado())
 							&& !Checks.esNulo(activo.getSituacionPosesoria().getConTitulo())) {
 						if (activo.getSituacionPosesoria().getOcupado() == 1
-								&& activo.getSituacionPosesoria().getConTitulo().equals(DDTipoTituloActivoTPA.tipoTituloSi)) {
+								&& DDTipoTituloActivoTPA.tipoTituloSi.equals(activo.getSituacionPosesoria().getConTitulo().getCodigo())) {
 							if (!Checks.esNulo(activo.getSituacionPosesoria().getTipoTituloPosesorio())) {
 								if (activo.getSituacionPosesoria().getTipoTituloPosesorio().getCodigo()
 										.equals(DDTipoTituloPosesorio.CODIGO_ARRENDAMIENTO)) {

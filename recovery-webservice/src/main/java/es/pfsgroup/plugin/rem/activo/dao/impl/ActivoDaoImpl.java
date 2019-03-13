@@ -264,87 +264,82 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		HQLBuilder hb = new HQLBuilder(" from VBusquedaActivos act");
 
 		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.numActivo", dto.getNumActivo());
+		
+   		if (dto.getEntidadPropietariaCodigo() != null)
+   			HQLBuilder.addFiltroLikeSiNotNull(hb, "act.entidadPropietariaCodigo", dto.getEntidadPropietariaCodigo(), true);
 
-		if (dto.getEntidadPropietariaCodigo() != null)
-			HQLBuilder.addFiltroLikeSiNotNull(hb, "act.entidadPropietariaCodigo", dto.getEntidadPropietariaCodigo(),
-					true);
+   		if (dto.getTipoTituloActivoCodigo() != null)
+   			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.tipoTituloActivoCodigo", dto.getTipoTituloActivoCodigo());
 
-		if (dto.getTipoTituloActivoCodigo() != null)
-			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.tipoTituloActivoCodigo", dto.getTipoTituloActivoCodigo());
+   		if (dto.getSubtipoActivoCodigo() != null)
+   			HQLBuilder.addFiltroLikeSiNotNull(hb, "act.subtipoActivoCodigo", dto.getSubtipoActivoCodigo(), true);
+   		HQLBuilder.addFiltroLikeSiNotNull(hb, "act.refCatastral", dto.getRefCatastral(), true);
+   		HQLBuilder.addFiltroLikeSiNotNull(hb, "act.finca", dto.getFinca(), true);
+   		if (dto.getProvinciaCodigo() != null)
+   			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.provinciaCodigo", dto.getProvinciaCodigo());
+   		
+   		HQLBuilder.addFiltroLikeSiNotNull(hb, "act.localidadDescripcion", dto.getLocalidadDescripcion(), true);
+   		if(dto.getCodigoPromocionPrinex() != null) {
+   			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.codigoPromocionPrinex", dto.getCodigoPromocionPrinex());
+   		}
+   		//Parámteros para la búsqueda avanzada
+   		if (dto.getNumActivoRem() != null)
+   			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.numActivoRem", dto.getNumActivoRem());
+   		
+   		if (dto.getIdProp() != null && StringUtils.isNumeric(dto.getIdProp()))
+   			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.numActivoPrinex", Long.valueOf(dto.getIdProp()));
+   		
+   		if (dto.getIdRecovery() != null && StringUtils.isNumeric(dto.getIdRecovery()))
+   			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.idRecovery", Long.valueOf(dto.getIdRecovery()));
+   		
+   		if (dto.getIdUvem() != null && StringUtils.isNumeric(dto.getIdUvem()))
+   			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.numActivoUvem", Long.valueOf(dto.getIdUvem()));
+   		
+   		if (dto.getEstadoActivoCodigo() != null)
+   			HQLBuilder.addFiltroLikeSiNotNull(hb, "act.estadoActivoCodigo", dto.getEstadoActivoCodigo());
+   		
+   		if (dto.getTipoViaCodigo() != null)
+   			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.tipoViaCodigo", dto.getTipoViaCodigo());
+   		
+   		if (dto.getNombreVia() != null)
+   			HQLBuilder.addFiltroLikeSiNotNull(hb, "act.nombreVia", dto.getNombreVia(), true);
+   		
+   		if (dto.getCodPostal() != null)
+   			HQLBuilder.addFiltroLikeSiNotNull(hb, "act.codPostal", dto.getCodPostal(), true);
+   		
+   		if (dto.getProvinciaAvanzada() != null)
+   			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.provinciaCodigo", dto.getProvinciaAvanzada());
+   		
+   		if (dto.getMunicipio() != null)
+   			HQLBuilder.addFiltroLikeSiNotNull(hb, "act.localidadDescripcion", dto.getMunicipio(), true);
+   		
+   		/*if (dto.getUnidadInferior() != null)
+   			HQLBuilder.addFiltroLikeSiNotNull(hb, "act.unidadPoblacional.descripcion", dto.getUnidadInferior(), true);*/
+   		
+   		if (dto.getPaisCodigo() != null)
+   			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.paisCodigo", dto.getPaisCodigo());
+   		
+   		if (dto.getNumRegistro() != null)
+   			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.numRegistro", dto.getNumRegistro());
+   		
+   		if (dto.getLocalidadRegistroDescripcion() != null)
+   			HQLBuilder.addFiltroLikeSiNotNull(hb, "act.localidadRegistroDescripcion", dto.getLocalidadRegistroDescripcion(), true);
+   		
+   		if (dto.getIdufir() != null)
+   			HQLBuilder.addFiltroLikeSiNotNull(hb, "act.idufir", dto.getIdufir(), true);
+   		
+   		if (dto.getFincaAvanzada() != null)
+   			HQLBuilder.addFiltroLikeSiNotNull(hb, "act.finca", dto.getFincaAvanzada(), true);
+   		
+   		if (dto.getOcupado() != null)
+   			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.ocupado", dto.getOcupado());
+   		
+   		if (dto.getConTitulo() != null)
+   			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.conTitulo", dto.getConTitulo());
 
-		if (dto.getSubtipoActivoCodigo() != null)
-			HQLBuilder.addFiltroLikeSiNotNull(hb, "act.subtipoActivoCodigo", dto.getSubtipoActivoCodigo(), true);
-		HQLBuilder.addFiltroLikeSiNotNull(hb, "act.refCatastral", dto.getRefCatastral(), true);
-		HQLBuilder.addFiltroLikeSiNotNull(hb, "act.finca", dto.getFinca(), true);
-		if (dto.getProvinciaCodigo() != null)
-			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.provinciaCodigo", dto.getProvinciaCodigo());
-
-		HQLBuilder.addFiltroLikeSiNotNull(hb, "act.localidadDescripcion", dto.getLocalidadDescripcion(), true);
-		if (dto.getCodigoPromocionPrinex() != null) {
-			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.codigoPromocionPrinex", dto.getCodigoPromocionPrinex());
-		}
-		// Parámteros para la búsqueda avanzada
-		if (dto.getNumActivoRem() != null)
-			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.numActivoRem", dto.getNumActivoRem());
-
-		if (dto.getIdProp() != null)
-			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.numActivoPrinex", Long.valueOf(dto.getIdProp()));
-
-		if (dto.getIdRecovery() != null)
-			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.idRecovery", Long.valueOf(dto.getIdRecovery()));
-
-		if (dto.getIdUvem() != null)
-			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.numActivoUvem", Long.valueOf(dto.getIdUvem()));
-
-		if (dto.getEstadoActivoCodigo() != null)
-			HQLBuilder.addFiltroLikeSiNotNull(hb, "act.estadoActivoCodigo", dto.getEstadoActivoCodigo());
-
-		if (dto.getTipoViaCodigo() != null)
-			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.tipoViaCodigo", dto.getTipoViaCodigo());
-
-		if (dto.getNombreVia() != null)
-			HQLBuilder.addFiltroLikeSiNotNull(hb, "act.nombreVia", dto.getNombreVia(), true);
-
-		if (dto.getCodPostal() != null)
-			HQLBuilder.addFiltroLikeSiNotNull(hb, "act.codPostal", dto.getCodPostal(), true);
-
-		if (dto.getProvinciaAvanzada() != null)
-			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.provinciaCodigo", dto.getProvinciaAvanzada());
-
-		if (dto.getMunicipio() != null)
-			HQLBuilder.addFiltroLikeSiNotNull(hb, "act.localidadDescripcion", dto.getMunicipio(), true);
-
-		/*
-		 * if (dto.getUnidadInferior() != null)
-		 * HQLBuilder.addFiltroLikeSiNotNull(hb,
-		 * "act.unidadPoblacional.descripcion", dto.getUnidadInferior(), true);
-		 */
-
-		if (dto.getPaisCodigo() != null)
-			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.paisCodigo", dto.getPaisCodigo());
-
-		if (dto.getNumRegistro() != null)
-			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.numRegistro", dto.getNumRegistro());
-
-		if (dto.getLocalidadRegistroDescripcion() != null)
-			HQLBuilder.addFiltroLikeSiNotNull(hb, "act.localidadRegistroDescripcion",
-					dto.getLocalidadRegistroDescripcion(), true);
-
-		if (dto.getIdufir() != null)
-			HQLBuilder.addFiltroLikeSiNotNull(hb, "act.idufir", dto.getIdufir(), true);
-
-		if (dto.getFincaAvanzada() != null)
-			HQLBuilder.addFiltroLikeSiNotNull(hb, "act.finca", dto.getFincaAvanzada(), true);
-
-		if (dto.getOcupado() != null)
-			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.ocupado", dto.getOcupado());
-
-		if (dto.getConTitulo() != null)
-			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.conTitulo", dto.getConTitulo());
-
-		if (dto.getComboSelloCalidad() != null)
-			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.selloCalidad", dto.getComboSelloCalidad());
-
+   		if (dto.getComboSelloCalidad() != null)
+   			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.selloCalidad", dto.getComboSelloCalidad());
+   		
 		return HibernateQueryUtils.list(this, hb);
 
 	}
@@ -1062,6 +1057,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<ActivoCalificacionNegativa> getListActivoCalificacionNegativaByIdActivo(Long idActivo) {
 		String hql = " from ActivoCalificacionNegativa acn ";

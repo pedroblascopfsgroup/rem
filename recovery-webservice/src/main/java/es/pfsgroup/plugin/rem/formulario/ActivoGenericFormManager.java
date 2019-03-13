@@ -37,6 +37,7 @@ import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.PreciosApi;
 import es.pfsgroup.plugin.rem.api.ResolucionComiteApi;
+import es.pfsgroup.plugin.rem.api.TareaActivoApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.formulario.dao.ActivoGenericFormItemDao;
 import es.pfsgroup.plugin.rem.jbpm.activo.JBPMActivoScriptExecutorApi;
@@ -120,6 +121,9 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
     
     @Autowired
     private OfertaManager ofertaManager;
+    
+    @Autowired
+    private TareaActivoApi tareaActivoApi;
 
     
     /**
@@ -182,7 +186,41 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
             TareaExternaValor valor = new TareaExternaValor();
             valor.setTareaExterna(tarea);
             valor.setNombre(item.getNombre());
-            valor.setValor(valores[i]);
+            
+            if(item.getNombre().equals("comite")) {
+            	TareaActivo tareaActivo = tareaActivoApi.getByIdTareaExterna(tarea.getId());
+            	if(DDCartera.CODIGO_CARTERA_BANKIA.equals(tareaActivo.getActivo().getCartera().getCodigo())) {
+	        		Filter filtroTrabajo = genericDao.createFilter(FilterType.EQUALS, "trabajo.id",
+	        				tareaActivo.getTramite().getTrabajo().getId());
+	        		ExpedienteComercial expediente = genericDao.get(ExpedienteComercial.class, filtroTrabajo);
+	            	
+	            	String codigoComite = null;
+					try {
+						codigoComite = expedienteComercialApi.consultarComiteSancionador(expediente.getId());
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					if(!Checks.esNulo(codigoComite)) {
+						if(!Checks.esNulo(expediente.getComiteSancion())) {
+							if(!codigoComite.equals(expediente.getComiteSancion().getCodigo())) {
+								DDComiteSancion comite = expedienteComercialApi.comiteSancionadorByCodigo(codigoComite);
+								expediente.setComiteSancion(comite);
+								expediente.setComiteSuperior(comite);
+							}
+						}else {
+							valor.setValor(codigoComite);
+						}
+						valor.setValor(codigoComite);
+					}else {
+						valor.setValor("-1");
+					}
+            	}else {
+                	valor.setValor(valores[i]);
+                }
+            }else {
+            	valor.setValor(valores[i]);
+            }
+
             //listaValores.add(valor);
             tareaExternaValorDao.saveOrUpdate(valor);
 

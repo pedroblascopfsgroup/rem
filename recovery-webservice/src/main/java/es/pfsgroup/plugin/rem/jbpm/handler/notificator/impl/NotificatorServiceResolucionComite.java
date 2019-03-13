@@ -374,7 +374,7 @@ public class NotificatorServiceResolucionComite extends AbstractNotificatorServi
 		
 		dtoSendNotificator.setNumActivo(tramite.getActivo().getNumActivo());
 		dtoSendNotificator.setDireccion(this.generateDireccion(tramite.getActivo()));
-		if(!Checks.esNulo(tramite.getTrabajo().getAgrupacion()))
+		if(tramite.getTrabajo() != null && !Checks.esNulo(tramite.getTrabajo().getAgrupacion()))
 			dtoSendNotificator.setNumAgrupacion(tramite.getTrabajo().getAgrupacion().getNumAgrupRem());
 		
 		return dtoSendNotificator;

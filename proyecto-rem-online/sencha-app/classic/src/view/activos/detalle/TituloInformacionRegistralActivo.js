@@ -854,11 +854,11 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
    		}
 
 
-   		if(motivoCalNegativa.getValue().length == 0) {
+   		/*if(motivoCalNegativa.getValue().length == 0) {
    			error = HreRem.i18n("txt.validacion.motivo.obligatorio");
    			errores.push(error);
    			motivoCalNegativa.markInvalid(error);
-   		}
+   		}*/
 
 
    		if(superficieUtil.getValue() > superficieConstruida.getValue()) {

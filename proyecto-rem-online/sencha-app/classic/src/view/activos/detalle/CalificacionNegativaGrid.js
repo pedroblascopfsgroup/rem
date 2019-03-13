@@ -147,15 +147,14 @@ Ext.define('HreRem.view.activos.detalle.CalificacionNegativaGrid', {
                   },
                   
 					failure: function (a, operation) {
-                  	
                   	context.store.load();
                   	try {
                   		var response = Ext.JSON.decode(operation.getResponse().responseText)
                   		
                   	}catch(err) {}
                   	
-                  	if(!Ext.isEmpty(response) && !Ext.isEmpty(response.msg)) {
-                  		me.fireEvent("errorToast", response.msg);
+                  	if(!Ext.isEmpty(response) && !Ext.isEmpty(response.msgError)) {
+                  		me.fireEvent("errorToast", response.msgError);
                   	} else {
                   		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
                   	}                        	

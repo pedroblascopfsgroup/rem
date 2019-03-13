@@ -12,6 +12,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -3331,7 +3332,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				if (!Checks.esNulo(dto.getEmail())) {
 					comprador.setEmail(dto.getEmail());
 				}
-
+				
 				Filter filtroExpedienteComercial = genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(dto.getIdExpedienteComercial()));
 				ExpedienteComercial expedienteComercial = genericDao.get(ExpedienteComercial.class, filtroExpedienteComercial);
 
@@ -7662,16 +7663,18 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				for (ExpedienteAvisadorApi avisador : avisadores) {
 					DtoAviso aviso = avisador.getAviso(expediente, usuarioLogado);
 					if (!Checks.esNulo(aviso) && !Checks.esNulo(aviso.getDescripcion())) {
-						if (!disclaimerGencat && expedienteAnulado) {
-							disclaimerGencat = true;
-							avisosFormateados.setDescripcion(avisosFormateados.getDescripcion() + "<div class='div-aviso red'>" + aviso.getDescripcion() + "</div>");
-						} else if (!disclaimerGencat && !expedienteAnulado && expedienteBloqueado) {
-							disclaimerGencat = true;
-							avisosFormateados.setDescripcion(avisosFormateados.getDescripcion() + "<div class='div-aviso red'>" + aviso.getDescripcion() + "</div>");
-						} else if (!disclaimerGencat && !expedienteAnulado && !expedienteBloqueado && expedientePreBloqueado){
-							disclaimerGencat = true;
-							avisosFormateados.setDescripcion(avisosFormateados.getDescripcion() + "<div class='div-aviso red'>" + aviso.getDescripcion() + "</div>");
-						} else if (!aviso.getDescripcion().contains("GENCAT")){
+						if (aviso.getDescripcion().contains("GENCAT") && !disclaimerGencat) {
+							if (expedienteAnulado) {
+								disclaimerGencat = true;
+								avisosFormateados.setDescripcion(avisosFormateados.getDescripcion() + "<div class='div-aviso red'>" + aviso.getDescripcion() + "</div>");
+							} else if (!expedienteAnulado && expedienteBloqueado) {
+								disclaimerGencat = true;
+								avisosFormateados.setDescripcion(avisosFormateados.getDescripcion() + "<div class='div-aviso red'>" + aviso.getDescripcion() + "</div>");
+							} else if (!expedienteAnulado && !expedienteBloqueado && expedientePreBloqueado){
+								disclaimerGencat = true;
+								avisosFormateados.setDescripcion(avisosFormateados.getDescripcion() + "<div class='div-aviso red'>" + aviso.getDescripcion() + "</div>");
+							} 
+						} else if (!aviso.getDescripcion().contains("GENCAT")) {
 							avisosFormateados.setDescripcion(avisosFormateados.getDescripcion() + "<div class='div-aviso red'>" + aviso.getDescripcion() + "</div>");
 						}
 					}

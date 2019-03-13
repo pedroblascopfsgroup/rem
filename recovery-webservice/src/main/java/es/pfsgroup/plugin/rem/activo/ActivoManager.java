@@ -262,6 +262,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	private static final String AVISO_MENSAJE_EXISTEN_OFERTAS_VENTA = "activo.motivo.oferta.existe.venta";
 	private static final String AVISO_MENSAJE_ACITVO_ALQUILADO_O_OCUPADO = "activo.motivo.oferta.alquilado.ocupado";
 	private static final String MAESTRO_ORIGEN_WCOM="WCOM";
+	private static final String AVISO_MENSAJE_MOTIVO_CALIFICACION = "activo.aviso.motivo.calificacion.duplicado";
 	private SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 	private BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 	private static final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
@@ -2475,7 +2476,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				if(!Checks.esNulo(activo.getEstadoMotivoCalificacionNegativa())) {
 					beanUtilNotNull.copyProperty(dto, "estadoMotivoCalificacionNegativa", activo.getEstadoMotivoCalificacionNegativa().getDescripcion());
 				}
-				beanUtilNotNull.copyProperty(dto, "responsableSubsanar", activo.getResponsableSubsanar().getDescripcion());
+				if(!Checks.esNulo(activo.getResponsableSubsanar())){
+					beanUtilNotNull.copyProperty(dto, "responsableSubsanar", activo.getResponsableSubsanar().getDescripcion());
+				}
 				beanUtilNotNull.copyProperty(dto, "fechaSubsanacion", activo.getFechaSubsanacion());
 				beanUtilNotNull.copyProperty(dto, "descripcionCalificacionNegativa", activo.getDescripcion());
 				
@@ -4964,20 +4967,34 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	
 	@Override
 	@Transactional
-	public boolean createCalificacionNegativa(DtoActivoDatosRegistrales dto) {
+	public boolean createCalificacionNegativa(DtoActivoDatosRegistrales dto) throws JsonViewerException, Exception{
 		try {
 			
 			if (!Checks.esNulo(dto)) {
 				
+				Activo activo = null;
 				ActivoCalificacionNegativa activoCalificacionNegativa = new ActivoCalificacionNegativa();
 //				dto.getNumeroActivo()
-				//activoCalificacionNegativa.getMotivoCalificacionNegativa().getCodigo()BORRAR
-				if (true) {
-					Activo activo = genericDao.get(Activo.class, genericDao.createFilter(FilterType.EQUALS, "numActivo",Long.valueOf("62920")));
-					activoCalificacionNegativa.setActivo(activo);
-				} else {
-					return false;
+				if (!Checks.esNulo(dto.getNumeroActivo())) {
+					activo = genericDao.get(Activo.class, genericDao.createFilter(FilterType.EQUALS, "numActivo",dto.getNumeroActivo()));
+					
+				} else if(!Checks.esNulo(dto.getIdActivo())){
+					activo = genericDao.get(Activo.class, genericDao.createFilter(FilterType.EQUALS, "id",dto.getIdActivo()));
 				}
+				else {
+					activo = genericDao.get(Activo.class, genericDao.createFilter(FilterType.EQUALS, "numActivo",Long.valueOf("6876792")));
+					//return false;
+				} 
+				
+				List<ActivoCalificacionNegativa> activoCalificacionNegativaList = genericDao.getList(ActivoCalificacionNegativa.class, genericDao.createFilter(FilterType.EQUALS, "activo.id",activo.getId()));
+				if(!Checks.estaVacio(activoCalificacionNegativaList)){
+					for (ActivoCalificacionNegativa actCal : activoCalificacionNegativaList) { 
+						if(dto.getMotivoCalificacionNegativa().equalsIgnoreCase(actCal.getMotivoCalificacionNegativa().getCodigo())){
+							throw new JsonViewerException(messageServices.getMessage(AVISO_MENSAJE_MOTIVO_CALIFICACION));
+						}
+					}
+				}
+				activoCalificacionNegativa.setActivo(activo);
 				
 				
 				if (!Checks.esNulo(dto.getMotivoCalificacionNegativa())) {
@@ -5003,6 +5020,10 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					activoCalificacionNegativa.setFechaSubsanacion(dto.getFechaSubsanacion());
 				}
 				
+				if (!Checks.esNulo(dto.getDescripcionCalificacionNegativa())) {
+					activoCalificacionNegativa.setDescripcion(dto.getDescripcionCalificacionNegativa());
+				}
+				
 				DDCalificacionNegativa calificacionNegativa = genericDao.get(DDCalificacionNegativa.class, genericDao.createFilter(FilterType.EQUALS, "codigo","02"));
 				activoCalificacionNegativa.setCalificacionNegativa(calificacionNegativa);
 				
@@ -5015,6 +5036,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			
 		} catch (Exception ex) {
 			logger.error("Error en updateCalificacionNegativa", ex);
+			throw new JsonViewerException(ex.getMessage());
 		}
 		
 		return false;

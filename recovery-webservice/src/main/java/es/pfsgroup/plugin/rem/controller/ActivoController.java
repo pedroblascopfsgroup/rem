@@ -2544,7 +2544,7 @@ public class ActivoController extends ParadiseJsonController {
 		} catch (Exception e) {
 			logger.error("error en CalificacionNegativa", e);
 			model.put(RESPONSE_SUCCESS_KEY, false);
-			model.put(RESPONSE_ERROR_KEY, e.getMessage());
+			model.put(RESPONSE_ERROR_MESSAGE_KEY, e.getMessage());
 		}
 		
 		return createModelAndViewJson(model);

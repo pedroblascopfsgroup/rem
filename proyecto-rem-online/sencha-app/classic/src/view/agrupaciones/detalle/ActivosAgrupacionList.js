@@ -195,10 +195,12 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
         
         var coloredRender = function (value, meta, record) {
     		var borrado = record.get('borrado');
-    		if (borrado == 1) {
+    		var tipoAgrupacion = me.up('agrupacionesdetallemain').getViewModel().get('agrupacionficha').get('tipoAgrupacionCodigo');
+    		
+    		if (borrado == 1 && tipoAgrupacion == CONST.TIPOS_AGRUPACION['PROMOCION_ALQUILER']) {
     			return '<span style="color: #DF0101;">'+value+'</span>';
     		} else {
-    			return value;
+    			return value; 
     		}
     	};
  
@@ -291,15 +293,6 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
 	        	 flex: 1
 	       },
 	       {
-	            dataIndex: 'puerta',
-	            text: HreRem.i18n('header.puerta'),
-	            hideable: false,
-	            bind: {
-		        	hidden: '{!esAgrupacionObraNuevaOrAsistidaOrPromocionAlquiler}'
-		        },
-	            flex: 0.5
-	        },
-	        {
 	            dataIndex: 'condPublVenta',
 	            text: HreRem.i18n('header.condicionantes.publicacion.venta'),
 	            flex: 1,

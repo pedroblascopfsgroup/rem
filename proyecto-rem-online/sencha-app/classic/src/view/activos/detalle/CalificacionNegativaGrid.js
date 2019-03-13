@@ -18,12 +18,6 @@ Ext.define('HreRem.view.activos.detalle.CalificacionNegativaGrid', {
 
 		me.columns = [
 				{
-					text: 'id calificacion negativa',
-					dataIndex: 'idMotivo',
-					hidden: true,
-					hideable: false
-				},
-				{
 					text: 'Id Activo',
 					dataIndex: 'idActivo',
 					hidden: true,

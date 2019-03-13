@@ -193,7 +193,7 @@ public class GestorDocToRecoveryAssembler {
 		
 		File fileSalidaTemporal = null;
 		FileItem resultado = new FileItem();
-		InputStream stream =  new ByteArrayInputStream(ArrayUtils.toPrimitive(descargar.getContenido()));
+		InputStream stream =  new ByteArrayInputStream(descargar.getContenido());
 		
 		fileSalidaTemporal = File.createTempFile(nomFichero, ext);
 		fileSalidaTemporal.deleteOnExit();

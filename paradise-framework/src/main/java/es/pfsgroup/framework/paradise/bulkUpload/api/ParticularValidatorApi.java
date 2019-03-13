@@ -553,4 +553,22 @@ public interface ParticularValidatorApi {
 
 
 	public Boolean isActivoFinanciero(String numActivo);
+
+	Boolean esAgrupacionVigente(String numAgrupacion);
+
+	Boolean tieneActivoMatriz(String numAgrupacion);
+
+	String getGestorComercialAlquilerByAgrupacion(String numAgrupacion);
+
+	String getSupervisorComercialAlquilerByAgrupacion(String numAgrupacion);
+
+	String getSuperficieConstruidaActivoMatrizByAgrupacion(String numAgrupacion);
+
+	String getSuperficieConstruidaPromocionAlquilerByAgrupacion(String numAgrupacion);
+
+	String getSuperficieUtilActivoMatrizByAgrupacion(String numAgrupacion);
+
+	String getSuperficieUtilPromocionAlquilerByAgrupacion(String numAgrupacion);
+
+	String getProcentajeTotalActualPromocionAlquiler(String numAgrupacion);
 }

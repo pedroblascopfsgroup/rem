@@ -93,11 +93,11 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 			activoApi.calcularFechaTomaPosesion(activo);
 			beanUtilNotNull.copyProperties(activoDto, activo.getSituacionPosesoria());
 			
-			if (activo.getSituacionPosesoria().getTipoTituloPosesorio() != null) {
+			if (!Checks.esNulo(activo.getSituacionPosesoria().getTipoTituloPosesorio())) {
 				BeanUtils.copyProperty(activoDto, "tipoTituloPosesorioCodigo", activo.getSituacionPosesoria().getTipoTituloPosesorio().getCodigo());
 			}
 			
-			if (activo.getSituacionPosesoria().getConTitulo() != null) {
+			if (!Checks.esNulo(activo.getSituacionPosesoria().getConTitulo())) {
 				BeanUtils.copyProperty(activoDto, "conTitulo", activo.getSituacionPosesoria().getConTitulo().getCodigo());
 			}
 			

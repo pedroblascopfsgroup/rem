@@ -27,18 +27,13 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.framework.paradise.agenda.controller.TareaController;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.rem.adapter.AgendaAdapter;
-import es.pfsgroup.plugin.rem.api.ActivoApi;
-import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
-import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
-import es.pfsgroup.plugin.rem.api.TareaActivoApi;
 import es.pfsgroup.plugin.rem.api.UvemManagerApi;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
 import es.pfsgroup.plugin.rem.excel.TareaExcelReport;
 import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionService;
-import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.DtoAgendaMultifuncion;
 import es.pfsgroup.plugin.rem.model.DtoReasignarTarea;
@@ -55,9 +50,7 @@ public class AgendaController extends TareaController {
 	@Autowired
 	private AgendaAdapter adapter;
 
-	@Autowired
-	private ActivoEstadoPublicacionApi activoEstadoPublicacionApi;
-
+	
 	@Resource
 	Properties appProperties;
 
@@ -73,8 +66,6 @@ public class AgendaController extends TareaController {
 	@Autowired
 	private UvemManagerApi uvemManagerApi;
 	
-	@Autowired
-	private TareaActivoApi activoTareaApi;
 	
 	
 	private final Log logger = LogFactory.getLog(getClass());
@@ -100,30 +91,35 @@ public class AgendaController extends TareaController {
 
 	}
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView getFormularioTarea(Long idTarea, ModelMap model) {
 		model.put("data", adapter.getFormularioTarea(idTarea));
 		return createModelAndViewJson(model);
 	}
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView getValidacionPrevia(Long idTarea, ModelMap model) {
 		model.put("data", adapter.getValidacionPrevia(idTarea));
 		return createModelAndViewJson(model);
 	}
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView getIdActivoTarea(Long idTarea, ModelMap model) {
 		model.put("idActivoTarea", adapter.getIdActivoTarea(idTarea));
 		return createModelAndViewJson(model);
 	}
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView getIdTrabajoTarea(Long idTarea, ModelMap model) {
 		model.put("idTrabajoTarea", adapter.getIdTrabajoTarea(idTarea));
 		return createModelAndViewJson(model);
 	}
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView getNumIdExpediente(Long idTarea, ModelMap model) {
 		model.put("idExpediente", adapter.getIdExpediente(idTarea));
@@ -131,12 +127,14 @@ public class AgendaController extends TareaController {
 		return createModelAndViewJson(model);
 	}
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView getTipoTituloActivoByIdTarea(Long idTarea, ModelMap model) {
 		model.put("tipoTituloActivo", adapter.getTipoTituloActivoByIdTarea(idTarea));
 		return createModelAndViewJson(model);
 	}
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView getCodigoTramiteTarea(Long idTarea, ModelMap model) {
 		model.put("codigoTramite", adapter.getCodigoTramiteTarea(idTarea));
@@ -152,6 +150,7 @@ public class AgendaController extends TareaController {
 
 	}
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView save(WebRequest request, ModelMap model) {
 
@@ -164,7 +163,6 @@ public class AgendaController extends TareaController {
 			model.put("errorValidacionGuardado", getMensajeInvalidDataAccessExcepcion(e));
 
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			model.put("errorValidacionGuardado", e.getMessage());
 		}
 
@@ -173,6 +171,7 @@ public class AgendaController extends TareaController {
 		return createModelAndViewJson(model);
 	}
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView tareasPendientes(WebRequest request, ModelMap model) {
 		boolean success = true;
@@ -190,6 +189,7 @@ public class AgendaController extends TareaController {
 	// return createModelAndViewJson(model);
 	// }
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView alertasPendientes(WebRequest request, ModelMap model) {
 		boolean success = true;
@@ -198,6 +198,7 @@ public class AgendaController extends TareaController {
 		return createModelAndViewJson(model);
 	}
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView avisosPendientes(WebRequest request, ModelMap model) {
 		boolean success = true;
@@ -206,6 +207,7 @@ public class AgendaController extends TareaController {
 		return createModelAndViewJson(model);
 	}
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getComboNombreTarea(Long idTipoTramite, WebDto webDto, ModelMap model) {
 
@@ -215,6 +217,7 @@ public class AgendaController extends TareaController {
 
 	}
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView getAdvertenciaTarea(@RequestParam Long idTarea, ModelMap model) {
 
@@ -232,6 +235,7 @@ public class AgendaController extends TareaController {
 
 	}
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView getAdvertenciaTareaComercial(@RequestParam Long idTarea, ModelMap model) {
 
@@ -262,6 +266,7 @@ public class AgendaController extends TareaController {
 
 	}
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getTiposProcedimientoAgenda(ModelMap model) {
 		model.put("data", adapter.getTiposProcedimientoAgenda());
@@ -269,6 +274,7 @@ public class AgendaController extends TareaController {
 		return createModelAndViewJson(model);
 	}
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView generarAutoprorroga(DtoSolicitarProrrogaTarea dtoSolicitarProrroga, ModelMap model) {
 		model.put("success", adapter.generarAutoprorroga(dtoSolicitarProrroga));
@@ -344,6 +350,7 @@ public class AgendaController extends TareaController {
 		return createModelAndViewJson(model);
 	}
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView anulacionDevolucionReservaByIdExp(Long idExpediente, ModelMap model) {
 
@@ -371,43 +378,45 @@ public class AgendaController extends TareaController {
 
 				List<TareaExterna> listaTareas = activoTramiteApi
 						.getListaTareaExternaActivasByIdTramite(listaTramites.get(0).getId());
-				for (int i = 0; i < listaTareas.size(); i++) {
-					TareaExterna tarea = listaTareas.get(i);
-					if (!Checks.esNulo(tarea) && ComercialUserAssigantionService.CODIGO_T013_RESPUESTA_BANKIA_DEVOLUCION.equals(tarea.getTareaProcedimiento().getCodigo())) {
-						//Salto a tarea anterior y llamada a UVEM cosem1: 4
-						TareaExterna tareaSalto = activoTramiteApi.getTareaAnteriorByCodigoTarea(listaTramites.get(0).getId(), ComercialUserAssigantionService.CODIGO_T013_RESOLUCION_EXPEDIENTE);
-						salto = adapter.saltoTareaByCodigo(tarea.getId(), tareaSalto.getTareaProcedimiento().getCodigo());
-						if(salto){
-							//Se entiende que cuando salta a la tarea anterior a Resolución Expendiente, la reserva y el expediente han llegado en los siguientes estados
-							expedienteComercialApi.updateExpedienteComercialEstadoPrevioResolucionExpediente(eco, ComercialUserAssigantionService.CODIGO_T013_RESPUESTA_BANKIA_DEVOLUCION, tareaSalto.getTareaProcedimiento().getCodigo(), true);
-							uvemManagerApi.notificarDevolucionReserva(eco.getOferta().getNumOferta().toString(), UvemManagerApi.MOTIVO_ANULACION.NO_APLICA,
-									UvemManagerApi.INDICADOR_DEVOLUCION_RESERVA.NO_APLICA, UvemManagerApi.CODIGO_SERVICIO_MODIFICACION.ANULACION_PROPUESTA_ANULACION_RESERVA_FIRMADA);
+				if(listaTareas != null && listaTareas.size() > 0){
+					for (TareaExterna tarea : listaTareas) {
+						if (!Checks.esNulo(tarea) && ComercialUserAssigantionService.CODIGO_T013_RESPUESTA_BANKIA_DEVOLUCION.equals(tarea.getTareaProcedimiento().getCodigo())) {
+							//Salto a tarea anterior y llamada a UVEM cosem1: 4
+							TareaExterna tareaSalto = activoTramiteApi.getTareaAnteriorByCodigoTarea(listaTramites.get(0).getId(), ComercialUserAssigantionService.CODIGO_T013_RESOLUCION_EXPEDIENTE);
+							salto = adapter.saltoTareaByCodigo(tarea.getId(), tareaSalto.getTareaProcedimiento().getCodigo());
+							if(salto){
+								//Se entiende que cuando salta a la tarea anterior a Resolución Expendiente, la reserva y el expediente han llegado en los siguientes estados
+								expedienteComercialApi.updateExpedienteComercialEstadoPrevioResolucionExpediente(eco, ComercialUserAssigantionService.CODIGO_T013_RESPUESTA_BANKIA_DEVOLUCION, tareaSalto.getTareaProcedimiento().getCodigo(), true);
+								uvemManagerApi.notificarDevolucionReserva(eco.getOferta().getNumOferta().toString(), UvemManagerApi.MOTIVO_ANULACION.NO_APLICA,
+										UvemManagerApi.INDICADOR_DEVOLUCION_RESERVA.NO_APLICA, UvemManagerApi.CODIGO_SERVICIO_MODIFICACION.ANULACION_PROPUESTA_ANULACION_RESERVA_FIRMADA);
+							}
+							else{
+								logger.error("Error al saltar a tarea anterior a Resolución Expediente");
+								throw new Exception();
+							}
+							break;
 						}
 						else{
-							logger.error("Error al saltar a tarea anterior a Resolución Expediente");
-							throw new Exception();
+							throw new JsonViewerException("No se encuentra en la tarea para realizar esta acción");
 						}
-						break;
-					}
-					else{
-						throw new JsonViewerException("No se encuentra en la tarea para realizar esta acción");
 					}
 				}
 			}
 			model.put("success", salto);
 
 		} catch (JsonViewerException e) {
-			logger.error("Error al saltar a tarea anterior a Resolución Expediente", e);
 			model.put("success", salto);
 			model.put("msgError", e.getMessage());
 
 		} catch (Exception e) {
+			logger.error("Error al saltar", e);
 			model.put("success", salto);
 		}
 
 		return createModelAndViewJson(model);
 	}
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView solicitarAnulacionDevolucionReservaByIdExp(Long idExpediente, ModelMap model) {
 
@@ -435,40 +444,44 @@ public class AgendaController extends TareaController {
 
 				List<TareaExterna> listaTareas = activoTramiteApi
 						.getListaTareaExternaActivasByIdTramite(listaTramites.get(0).getId());
-				for (int i = 0; i < listaTareas.size(); i++) {
-					TareaExterna tarea = listaTareas.get(i);
-					if (!Checks.esNulo(tarea) && ComercialUserAssigantionService.CODIGO_T013_PENDIENTE_DEVOLUCION.equals(tarea.getTareaProcedimiento().getCodigo())) {
-						//Salto a la tarea Respuesta Bankia Anulacion Devolucion y llamada UVEM cosem1: 6
-						salto = adapter.saltoRespuestaBankiaAnulacionDevolucion(tarea.getId());
-						if(salto){
-							uvemManagerApi.notificarDevolucionReserva(eco.getOferta().getNumOferta().toString(), UvemManagerApi.MOTIVO_ANULACION.NO_APLICA,
-									UvemManagerApi.INDICADOR_DEVOLUCION_RESERVA.NO_APLICA, UvemManagerApi.CODIGO_SERVICIO_MODIFICACION.SOLICITUD_ANULACION_PROPUESTA_ANULACION_RESERVA_FIRMADA);
+				if (listaTareas != null && listaTareas.size() > 0) {
+					for (TareaExterna tarea : listaTareas) {
+						if (!Checks.esNulo(tarea) && ComercialUserAssigantionService.CODIGO_T013_PENDIENTE_DEVOLUCION
+								.equals(tarea.getTareaProcedimiento().getCodigo())) {
+							// Salto a la tarea Respuesta Bankia Anulacion
+							// Devolucion y llamada UVEM cosem1: 6
+							salto = adapter.saltoRespuestaBankiaAnulacionDevolucion(tarea.getId());
+							if (salto) {
+								uvemManagerApi.notificarDevolucionReserva(eco.getOferta().getNumOferta().toString(),
+										UvemManagerApi.MOTIVO_ANULACION.NO_APLICA,
+										UvemManagerApi.INDICADOR_DEVOLUCION_RESERVA.NO_APLICA,
+										UvemManagerApi.CODIGO_SERVICIO_MODIFICACION.SOLICITUD_ANULACION_PROPUESTA_ANULACION_RESERVA_FIRMADA);
+							} else {
+								logger.error("Error al saltar a tarea anterior a Resolución Expediente");
+								throw new Exception();
+							}
+							break;
+						} else {
+							throw new JsonViewerException("No se encuentra en la tarea para realizar esta acción");
 						}
-						else{
-							logger.error("Error al saltar a tarea anterior a Resolución Expediente");
-							throw new Exception();
-						}
-						break;
-					}
-					else{
-						throw new JsonViewerException("No se encuentra en la tarea para realizar esta acción");
 					}
 				}
 			}
 			model.put("success", salto);
 
 		} catch (JsonViewerException e) {
-			logger.error("Error al saltar a la tarea Respuesta Bankia Anulacion Devolucion", e);
 			model.put("success", salto);
 			model.put("msgError", e.getMessage());
 
 		} catch (Exception e) {
+			logger.error("Error al saltar", e);
 			model.put("success", salto);
 		}
 
 		return createModelAndViewJson(model);
 	}
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView anularSolicitudAnulacionDevolucionReservaByIdExp(Long idExpediente, ModelMap model) {
 
@@ -496,40 +509,45 @@ public class AgendaController extends TareaController {
 
 				List<TareaExterna> listaTareas = activoTramiteApi
 						.getListaTareaExternaActivasByIdTramite(listaTramites.get(0).getId());
-				for (int i = 0; i < listaTareas.size(); i++) {
-					TareaExterna tarea = listaTareas.get(i);
-					if (!Checks.esNulo(tarea) && ComercialUserAssigantionService.CODIGO_T013_RESPUESTA_BANKIA_ANULACION_DEVOLUCION.equals(tarea.getTareaProcedimiento().getCodigo())) {
-						//Salto a la tarea Pendiente Devolucion y llamada UVEM cosem1: 7
-						salto = adapter.saltoPendienteDevolucion(tarea.getId());
-						if(salto){
-							uvemManagerApi.notificarDevolucionReserva(eco.getOferta().getNumOferta().toString(), UvemManagerApi.MOTIVO_ANULACION.NO_APLICA,
-									UvemManagerApi.INDICADOR_DEVOLUCION_RESERVA.NO_APLICA, UvemManagerApi.CODIGO_SERVICIO_MODIFICACION.ANULAR_SOLICITUD_ANULACION_PROPUESTA_ANULACION_RESERVA_FIRMADA);
+				if (listaTareas != null && listaTareas.size() > 0) {
+					for (TareaExterna tarea : listaTareas) {
+						if (!Checks.esNulo(tarea)
+								&& ComercialUserAssigantionService.CODIGO_T013_RESPUESTA_BANKIA_ANULACION_DEVOLUCION
+										.equals(tarea.getTareaProcedimiento().getCodigo())) {
+							// Salto a la tarea Pendiente Devolucion y llamada
+							// UVEM cosem1: 7
+							salto = adapter.saltoPendienteDevolucion(tarea.getId());
+							if (salto) {
+								uvemManagerApi.notificarDevolucionReserva(eco.getOferta().getNumOferta().toString(),
+										UvemManagerApi.MOTIVO_ANULACION.NO_APLICA,
+										UvemManagerApi.INDICADOR_DEVOLUCION_RESERVA.NO_APLICA,
+										UvemManagerApi.CODIGO_SERVICIO_MODIFICACION.ANULAR_SOLICITUD_ANULACION_PROPUESTA_ANULACION_RESERVA_FIRMADA);
+							} else {
+								logger.error("Error al saltar a tarea anterior a Resolución Expediente");
+								throw new Exception();
+							}
+							break;
+						} else {
+							throw new JsonViewerException("No se encuentra en la tarea para realizar esta acción");
 						}
-						else{
-							logger.error("Error al saltar a tarea anterior a Resolución Expediente");
-							throw new Exception();
-						}
-						break;
-					}
-					else{
-						throw new JsonViewerException("No se encuentra en la tarea para realizar esta acción");
 					}
 				}
 			}
 			model.put("success", salto);
 
 		} catch (JsonViewerException e) {
-			logger.error("Error al saltar a la tarea Pendiente Devolución", e);
 			model.put("success", salto);
 			model.put("msgError", e.getMessage());
 
 		} catch (Exception e) {
+			logger.error("Error al saltar", e);
 			model.put("success", salto);
 		}
 
 		return createModelAndViewJson(model);
 	}
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView anularTramite(Long idTramite, ModelMap model) {
 		Boolean anulado = false;
@@ -542,7 +560,6 @@ public class AgendaController extends TareaController {
 			model.put("success", anulado);
 			
 		} catch (JsonViewerException jve) {
-			logger.error("Error al anular el trámite", jve);
 			model.put("success", anulado);
 			model.put("msgError", jve.getMessage());
 		} catch (Exception e) {
@@ -553,6 +570,7 @@ public class AgendaController extends TareaController {
 		return createModelAndViewJson(model);
 	}
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView anularTramiteAlquiler(Long idTramite, String motivo, ModelMap model) {
 		Boolean anulado = false;
@@ -565,7 +583,6 @@ public class AgendaController extends TareaController {
 			model.put("success", anulado);
 			
 		} catch (JsonViewerException jve) {
-			logger.error("Error al anular el trámite", jve);
 			model.put("success", anulado);
 			model.put("msgError", jve.getMessage());
 		} catch (Exception e) {
@@ -607,6 +624,7 @@ public class AgendaController extends TareaController {
 		return createModelAndViewJson(model);
 	}
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView lanzarTareaAdministrativa(DtoSaltoTarea dto, ModelMap model) {
 
@@ -616,6 +634,7 @@ public class AgendaController extends TareaController {
 			success = adapter.lanzarTareaAdministrativa(dto);
 
 		} catch (Exception e) {
+			logger.error("Error lanzarTareaAdministrativa: ", e);
 			model.put("errorValidacionGuardado", e.getMessage());
 		}
 
@@ -637,19 +656,21 @@ public class AgendaController extends TareaController {
 			model.put("totalCount", page.getTotalCount());
 			
 		}catch (Exception e){
-			e.printStackTrace();
+			logger.error("Error obteniendo tareas gestor sustituto", e);
 			model.put("succes", false);
 		}
 		return createModelAndViewJson(model);
 	}
 	
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView getIdActivoByNumActivo(Long idNumAct, ModelMap model) {
 		model.put("idActivoTarea", adapter.getIdActivoByNumActivo(idNumAct));
 		return createModelAndViewJson(model);
 	}
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView getIdAgrByNumAgr(Long idNumAgr, ModelMap model) {
 		model.put("idAgrTarea", adapter.getIdAgrByNumAgr(idNumAgr));

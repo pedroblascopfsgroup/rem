@@ -1079,7 +1079,8 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		hb.appendWhere(" acn.activo.id =  "+idActivo+" ");
 		hb.appendWhere(" acn.auditoria.borrado = 0 ");
 
-		return (List<ActivoCalificacionNegativa>) this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).list();
+//		return (List<ActivoCalificacionNegativa>) this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).list();
+		return  HibernateUtils.castList(ActivoCalificacionNegativa.class, this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).list());
 
 	}
 	

@@ -2519,6 +2519,36 @@ public class ActivoController extends ParadiseJsonController {
 
 		return createModelAndViewJson(model);
 	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView updateCalificacionNegativa(DtoActivoDatosRegistrales dtoActivosDatosRegistrales, ModelMap model) {
+		try {
+			boolean success = activoApi.updateCalificacionNegativa(dtoActivosDatosRegistrales);
+			model.put(RESPONSE_SUCCESS_KEY, success);
+		} catch (Exception e) {
+			logger.error("error en updateCalificacionNegativa", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put(RESPONSE_ERROR_KEY, e.getMessage());
+		}
+		
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView createCalificacionNegativa(DtoActivoDatosRegistrales dtoActivosDatosRegistrales, ModelMap model) {
+		try {
+			boolean success = activoApi.createCalificacionNegativa(dtoActivosDatosRegistrales);
+			model.put(RESPONSE_SUCCESS_KEY, success);
+		} catch (Exception e) {
+			logger.error("error en CalificacionNegativa", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put(RESPONSE_ERROR_KEY, e.getMessage());
+		}
+		
+		return createModelAndViewJson(model);
+	}
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
@@ -2608,7 +2638,7 @@ public class ActivoController extends ParadiseJsonController {
 	}
 	
 	@SuppressWarnings("unchecked")
-	@RequestMapping(method = RequestMethod.POST)
+	@RequestMapping(method = RequestMethod.POST) // TODO --> BORRAR
 	public ModelAndView getCalificacionNegativaMotivo( Long idActivo, String idMotivo, ModelMap model) {
 
 		try {
@@ -2627,7 +2657,7 @@ public class ActivoController extends ParadiseJsonController {
 	}
 	
 	@SuppressWarnings("unchecked")
-	@RequestMapping(method = RequestMethod.POST)
+	@RequestMapping(method = RequestMethod.POST) // TODO --> BORRAR
 	public ModelAndView saveCalificacionNegativaMotivo(Long idActivo, String idMotivo, String calificacionNegativa, String estadoMotivoCalificacionNegativa, 
 			String responsableSubsanar, String descripcionCalificacionNegativa, String fechaSubsanacion, ModelMap model) {
 		
@@ -2663,7 +2693,7 @@ public class ActivoController extends ParadiseJsonController {
 	}
 	
 	@SuppressWarnings("unchecked")
-	@RequestMapping(method = RequestMethod.POST)
+	@RequestMapping(method = RequestMethod.POST) // TODO --> BORRAR ?? 
 	public ModelAndView getMotivosCalificacionNegativaSubsanados( Long idActivo, String idMotivo, ModelMap model) {
 
 		try {
@@ -2683,7 +2713,7 @@ public class ActivoController extends ParadiseJsonController {
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getCalificacionNegativa(Long id, ModelMap model) {
-		model.put(RESPONSE_DATA_KEY, activoApi.getActivoCalificacionNegativaByIdActivo(id));
+		model.put(RESPONSE_DATA_KEY, activoApi.getActivoCalificacionNegativa(id));
 
 		return createModelAndViewJson(model);
 	}

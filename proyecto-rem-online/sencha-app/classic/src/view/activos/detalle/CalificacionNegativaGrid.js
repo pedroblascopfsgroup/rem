@@ -4,44 +4,106 @@ Ext.define('HreRem.view.activos.detalle.CalificacionNegativaGrid', {
 	topBar		: true,
 	propagationButton: true,
 	targetGrid	: 'calificacionNegativa',
-	idPrincipal : 'activo.id',
-	editOnSelect: false,
+	idPrincipal : 'idMotivo',
+	idSecundaria: 'activo.id',
+	editOnSelect: true,
 	disabledDeleteBtn: false,
     bind: {
         store: '{storeCalifiacionNegativa}' // TODO hay que hacerse un store y en ese store apuntar a los model
     },
 
     initComponent: function () {
-
+    	
      	var me = this;
 
 		me.columns = [
+				{
+					text: 'id calificacion negativa',
+					dataIndex: 'idMotivo',
+					hidden: true,
+					hideable: false
+				},
+				{
+					text: 'Id Activo',
+					dataIndex: 'idActivo',
+					hidden: true,
+					hideable: false
+				},
 		        {
-		            dataIndex: 'MotivoCalificacionNegativa',
+		            dataIndex: 'motivoCalificacionNegativa',
 		            text: HreRem.i18n('fieldlabel.calificacion.motivo'),
+		            editor: {
+						xtype: 'combobox',								        		
+						store: new Ext.data.Store({
+							model: 'HreRem.model.ComboBase',
+							proxy: {
+								type: 'uxproxy',
+								remoteUrl: 'generic/getDiccionario',
+								extraParams: {diccionario: 'motivosCalificacionNegativa'}
+							},
+							autoLoad: true
+						}),
+						displayField: 'descripcion',
+    					valueField: 'codigo'
+					},
 		            flex: 0.5
 		           
 		        },
 		        {
-		            dataIndex: 'EstadoCalificacionNegativa',
+		            dataIndex: 'estadoMotivoCalificacionNegativa',
 		            text: HreRem.i18n('fieldlabel.calificacion.estadomotivo.calificacion'),
+		            editor: {
+						xtype: 'combobox',								        		
+						store: new Ext.data.Store({
+							model: 'HreRem.model.ComboBase',
+							proxy: {
+								type: 'uxproxy',
+								remoteUrl: 'generic/getDiccionario',
+								extraParams: {diccionario: 'estadoMotivoCalificacionNegativa'}
+							},
+							autoLoad: true
+						}),
+						displayField: 'descripcion',
+    					valueField: 'codigo'
+					},
 		            flex: 0.5
 		            
 		        },
 		        {
-		            dataIndex: 'ResponsableSubsanar',
+		            dataIndex: 'responsableSubsanar',
 		            text: HreRem.i18n('fieldlabel.calificacion.responsablesubsanar'),
+		            editor: {
+						xtype: 'combobox',								        		
+						store: new Ext.data.Store({
+							model: 'HreRem.model.ComboBase',
+							proxy: {
+								type: 'uxproxy',
+								remoteUrl: 'generic/getDiccionario',
+								extraParams: {diccionario: 'responsableSubsanar'}
+							},
+							autoLoad: true
+						}),
+						displayField: 'descripcion',
+    					valueField: 'codigo'
+					},
 		            flex: 0.5
 		        },
 		        {
-		            dataIndex: 'FechaSubsanar',
+		            dataIndex: 'fechaSubsanacion',
 		            text: HreRem.i18n('fieldlabel.calificacion.fechaSubsanacion'),
+		            editor: {
+		        		xtype: 'datefield',
+		        		cls: 'grid-no-seleccionable-field-editor'
+		        	},
 		            flex: 1,
 		            formatter: 'date("d/m/Y")'
 		        },
 		        {
-		            dataIndex: 'DescripcionCalificacionNegativa',
+		            dataIndex: 'descripcionCalificacionNegativa',
 		            text: HreRem.i18n('fieldlabel.calificacion.descripcion'),
+		            editor: {
+		        		xtype: 'textareafield'
+		        	},
 		            flex: 1
 		        }
 		    ];

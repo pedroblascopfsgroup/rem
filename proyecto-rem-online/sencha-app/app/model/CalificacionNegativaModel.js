@@ -4,27 +4,36 @@ Ext.define('HreRem.model.CalificacionNegativaModel', {
 
     fields: [
     		{
-    			name:'MotivoCalificacionNegativa'
+    			name:'idMotivo'
     		},
     		{
-    			name:'EstadoCalificacionNegativa'
+    			name:'idActivo'
     		},
     		{
-    			name:'ResponsableSubsanar'
+    			name:'motivoCalificacionNegativa'
     		},
     		{
-    			name:'FechaSubsanar'
+    			name:'estadoMotivoCalificacionNegativa'
     		},
     		{
-    			name:'DescripcionCalificacionNegativa'
+    			name:'responsableSubsanar'
+    		},
+    		{
+    			name:'fechaSubsanacion',
+               	type: 'date',
+        		dateFormat: 'c'
+    		},
+    		{
+    			name:'descripcionCalificacionNegativa'
     		}
     ],
 
 	proxy: {
 		type: 'uxproxy',
 		api: {
-            read: 'activo/getActivoCalificacionNegativaByIdActivo',
-            create: 'activo/createCalificacionNegativa'
+            // read: 'activo/getActivoCalificacionNegativa',
+            create: 'activo/createCalificacionNegativa',
+            update: 'activo/updateCalificacionNegativa'
         }
     }
 });

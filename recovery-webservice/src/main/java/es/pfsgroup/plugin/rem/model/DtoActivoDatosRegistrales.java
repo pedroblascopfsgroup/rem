@@ -12,7 +12,7 @@ import java.util.Date;
 public class DtoActivoDatosRegistrales extends DtoTabActivo {
 
 	private static final long serialVersionUID = 0L;
-
+	private Long idActivo;
 	private String numeroActivo;
 	private String numRegistro;
 	private String numFinca;
@@ -688,6 +688,12 @@ public class DtoActivoDatosRegistrales extends DtoTabActivo {
 	}
 	public void setCodigoMotivoCalificacionNegativa(String codigoMotivoCalificacionNegativa) {
 		this.codigoMotivoCalificacionNegativa = codigoMotivoCalificacionNegativa;
+	}
+	public Long getIdActivo() {
+		return idActivo;
+	}
+	public void setIdActivo(Long idActivo) {
+		this.idActivo = idActivo;
 	}
 
 

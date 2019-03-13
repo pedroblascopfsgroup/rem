@@ -89,6 +89,7 @@ import es.pfsgroup.plugin.rem.condiciontanteo.CondicionTanteoApi;
 import es.pfsgroup.plugin.rem.factory.TabActivoFactoryApi;
 import es.pfsgroup.plugin.rem.gestor.dao.GestorExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
+import es.pfsgroup.plugin.rem.jbpm.handler.ActivoComprobarDatosActionHandler;
 import es.pfsgroup.plugin.rem.jbpm.handler.notificator.impl.NotificatorServiceSancionOfertaAceptacionYRechazo;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjuntoActivo;
@@ -263,6 +264,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	private static final String MAESTRO_ORIGEN_WCOM="WCOM";
 	private SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 	private BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
+	private static final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
 	
 
 	@Resource
@@ -2446,12 +2448,46 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 		return activoBancario;
 	}
-
+	
 	@Override
 	public List<ActivoCalificacionNegativa> getActivoCalificacionNegativaByIdActivo(Long idActivo){
+		// Obtiene el registro de ActivoCalificacionNegativa para el activo dado
 		List<ActivoCalificacionNegativa> activoCNList = activoDao.getListActivoCalificacionNegativaByIdActivo(idActivo);
-
+		
 		return activoCNList;
+	}
+
+	@Override
+	public List<DtoActivoDatosRegistrales> getActivoCalificacionNegativa(Long idActivo){		
+		List<ActivoCalificacionNegativa> activoCNList = activoDao.getListActivoCalificacionNegativaByIdActivo(idActivo);
+		List<DtoActivoDatosRegistrales> activoCNListDto = new ArrayList<DtoActivoDatosRegistrales>();
+			
+		try {
+			
+			for (ActivoCalificacionNegativa activo : activoCNList) {
+				DtoActivoDatosRegistrales dto = new DtoActivoDatosRegistrales();
+				
+				beanUtilNotNull.copyProperty(dto, "idActivo", idActivo);
+				beanUtilNotNull.copyProperty(dto, "idMotivo", activo.getId());
+				if(!Checks.esNulo(activo.getMotivoCalificacionNegativa())) {
+					beanUtilNotNull.copyProperty(dto, "motivoCalificacionNegativa", activo.getMotivoCalificacionNegativa().getDescripcion());
+				}
+				if(!Checks.esNulo(activo.getEstadoMotivoCalificacionNegativa())) {
+					beanUtilNotNull.copyProperty(dto, "estadoMotivoCalificacionNegativa", activo.getEstadoMotivoCalificacionNegativa().getDescripcion());
+				}
+				beanUtilNotNull.copyProperty(dto, "responsableSubsanar", activo.getResponsableSubsanar().getDescripcion());
+				beanUtilNotNull.copyProperty(dto, "fechaSubsanacion", activo.getFechaSubsanacion());
+				beanUtilNotNull.copyProperty(dto, "descripcionCalificacionNegativa", activo.getDescripcion());
+				
+				activoCNListDto.add(dto);
+			}
+			
+		} catch (Exception ex) {
+			logger.error("Error en activoManager", ex);
+		}
+
+
+		return activoCNListDto;
 	}
 
 	@Override
@@ -4881,6 +4917,105 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		}
 
 		return false;
+	}
+	
+	@Override
+	@Transactional
+	public boolean updateCalificacionNegativa(DtoActivoDatosRegistrales dto) {
+		try {
+			
+			if (!Checks.esNulo(dto)) {
+				ActivoCalificacionNegativa activoCalificacionNegativa = genericDao.get(ActivoCalificacionNegativa.class, genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdMotivo()));
+				
+				String codigoMotivoCalificacionNegativa = dto.getMotivoCalificacionNegativa();
+				if (!Checks.esNulo(codigoMotivoCalificacionNegativa)) {
+					beanUtilNotNull.copyProperty(activoCalificacionNegativa, "motivoCalificacionNegativa",
+							genericDao.get(DDMotivoCalificacionNegativa.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigoMotivoCalificacionNegativa)));
+				}
+				
+				String codigoEstadoMotivoCalificacionNegativa = dto.getEstadoMotivoCalificacionNegativa();		
+				if (!Checks.esNulo(codigoEstadoMotivoCalificacionNegativa)) {
+					beanUtilNotNull.copyProperty(activoCalificacionNegativa, "estadoMotivoCalificacioNegativa",
+							genericDao.get(DDEstadoMotivoCalificacionNegativa.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigoEstadoMotivoCalificacionNegativa)));
+				}
+				
+				String codigoResponsableSubsanar = dto.getResponsableSubsanar();
+				if (!Checks.esNulo(codigoResponsableSubsanar)) {
+					beanUtilNotNull.copyProperty(activoCalificacionNegativa, "responsableSubsanar",
+							genericDao.get(DDResponsableSubsanar.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigoResponsableSubsanar)));
+				}
+				
+				beanUtilNotNull.copyProperty(activoCalificacionNegativa, "fechaSubsanacion", dto.getFechaSubsanacion());
+				
+				beanUtilNotNull.copyProperty(activoCalificacionNegativa, "descripcion", dto.getDescripcionCalificacionNegativa());
+				
+				genericDao.update(ActivoCalificacionNegativa.class, activoCalificacionNegativa);
+				return true;
+			}
+			
+			
+		} catch (Exception ex) {
+			logger.error("Error en updateCalificacionNegativa", ex);
+		}
+		
+		return false;
+		
+	}
+	
+	@Override
+	@Transactional
+	public boolean createCalificacionNegativa(DtoActivoDatosRegistrales dto) {
+		try {
+			
+			if (!Checks.esNulo(dto)) {
+				
+				ActivoCalificacionNegativa activoCalificacionNegativa = new ActivoCalificacionNegativa();
+//				dto.getNumeroActivo()
+				if (true) {
+					Activo activo = genericDao.get(Activo.class, genericDao.createFilter(FilterType.EQUALS, "numActivo",Long.valueOf("62597")));
+					activoCalificacionNegativa.setActivo(activo);
+				} else {
+					return false;
+				}
+				
+				
+				if (!Checks.esNulo(dto.getMotivoCalificacionNegativa())) {
+					activoCalificacionNegativa.setMotivoCalificacionNegativa(genericDao.get(DDMotivoCalificacionNegativa.class, 
+							genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getMotivoCalificacionNegativa())));
+				}
+				
+				if (!Checks.esNulo(dto.getDescripcionCalificacionNegativa())) {
+					activoCalificacionNegativa.setDescripcion(dto.getDescripcionCalificacionNegativa());
+				}
+				
+				if (!Checks.esNulo(dto.getEstadoMotivoCalificacionNegativa())) {
+					activoCalificacionNegativa.setEstadoMotivoCalificacionNegativa(genericDao.get(DDEstadoMotivoCalificacionNegativa.class, 
+							genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getEstadoMotivoCalificacionNegativa())));
+				}
+				
+				if (!Checks.esNulo(dto.getResponsableSubsanar())) {
+					activoCalificacionNegativa.setResponsableSubsanar(genericDao.get(DDResponsableSubsanar.class, 
+							genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getResponsableSubsanar())));
+				}
+				
+				if (!Checks.esNulo(dto.getFechaSubsanacion())) {
+					activoCalificacionNegativa.setFechaSubsanacion(dto.getFechaSubsanacion());
+				}
+				
+				DDCalificacionNegativa calificacionNegativa = genericDao.get(DDCalificacionNegativa.class, genericDao.createFilter(FilterType.EQUALS, "codigo","02"));
+				activoCalificacionNegativa.setCalificacionNegativa(calificacionNegativa);
+				
+				genericDao.save(ActivoCalificacionNegativa.class, activoCalificacionNegativa);
+				return true;
+			}
+			
+			
+		} catch (Exception ex) {
+			logger.error("Error en updateCalificacionNegativa", ex);
+		}
+		
+		return false;
+		
 	}
 
 	@Override

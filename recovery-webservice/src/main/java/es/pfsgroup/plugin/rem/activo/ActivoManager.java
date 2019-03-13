@@ -908,6 +908,16 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				nuevoCondicionante.setImporteReserva(oferta.getImporteOferta() * (new Double(3) / 100));
 				nuevoCondicionante.setPlazoFirmaReserva(5);
 			}
+			
+			if (DDCartera.CODIGO_CARTERA_CERBERUS.equals(oferta.getActivoPrincipal().getCartera().getCodigo()) 
+					&& DDSubcartera.CODIGO_ZEUS_INMOBILIARIO.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo())) {
+				nuevoCondicionante.setSolicitaReserva(1);
+				DDTipoCalculo tipoCalculo = (DDTipoCalculo) utilDiccionarioApi
+						.dameValorDiccionarioByCod(DDTipoCalculo.class, DDTipoCalculo.TIPO_CALCULO_PORCENTAJE);
+				nuevoCondicionante.setTipoCalculoReserva(tipoCalculo);
+				nuevoCondicionante.setPorcentajeReserva(new Double(5));
+				nuevoCondicionante.setImporteReserva(oferta.getImporteOferta() * (new Double(5) / 100));
+			}
 		}
 
 		Activo activo = oferta.getActivoPrincipal();
@@ -931,7 +941,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				nuevoCondicionante.setSituacionPosesoria(situacionPosesoriaLibre);
 			} else if (activo.getSituacionPosesoria().getOcupado() != null
 					&& activo.getSituacionPosesoria().getOcupado().equals(Integer.valueOf(1))
-					&& activo.getSituacionPosesoria().getConTitulo() != null
+					&& !Checks.esNulo(activo.getSituacionPosesoria().getConTitulo())
 					&& activo.getSituacionPosesoria().getConTitulo().getCodigo().equals(DDTipoTituloActivoTPA.tipoTituloSi)) {
 				DDSituacionesPosesoria situacionPosesoriaOcupadoTitulo = (DDSituacionesPosesoria) utilDiccionarioApi
 						.dameValorDiccionarioByCod(DDSituacionesPosesoria.class,
@@ -1074,6 +1084,11 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		else if (oferta.getActivoPrincipal().getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_CAJAMAR)) {
 			nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class,
 					genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_CAJAMAR)));
+		}
+		// El combo "Comité seleccionado" vendrá informado para cartera Galeon
+		else if (oferta.getActivoPrincipal().getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_GALEON)) {
+			nuevoExpediente.setComiteSancion(genericDao.get(DDComiteSancion.class,
+					genericDao.createFilter(FilterType.EQUALS, "codigo", DDComiteSancion.CODIGO_HAYA_GALEON)));
 		}
 
 		crearCompradores(oferta, nuevoExpediente);
@@ -2792,7 +2807,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	{
 		ActivoSituacionPosesoria activoSitPos = activo.getSituacionPosesoria();
 		boolean tieneAdjunto = false;
-		if(!Checks.esNulo(activoSitPos) && (!Checks.esNulo(activoSitPos.getOcupado()) && !Checks.esNulo(activoSitPos.getConTitulo()) && (1 == activoSitPos.getOcupado() && activoSitPos.getConTitulo().equals(DDTipoTituloActivoTPA.tipoTituloNo))))
+		if(!Checks.esNulo(activoSitPos) && (!Checks.esNulo(activoSitPos.getOcupado()) && !Checks.esNulo(activoSitPos.getConTitulo()) && (1 == activoSitPos.getOcupado() && DDTipoTituloActivoTPA.tipoTituloNo.equals(activoSitPos.getConTitulo().getCodigo()))))
 		{
 			List<ActivoAdjuntoActivo> listAdjuntos = activo.getAdjuntos();
 
@@ -3841,7 +3856,11 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		try {
 			beanUtilNotNull.copyProperty(activo, "fechaVentaExterna", dto.getFechaVenta());
 			beanUtilNotNull.copyProperty(activo, "importeVentaExterna", dto.getImporteVenta());
-			beanUtilNotNull.copyProperty(activo, "observacionesVentaExterna", dto.getObservaciones().replaceAll("(\n|\r)", " "));
+			if(!Checks.esNulo(dto.getObservaciones())) {
+				beanUtilNotNull.copyProperty(activo, "observacionesVentaExterna", dto.getObservaciones().replaceAll("(\n|\r)", " "));
+			}else {
+				beanUtilNotNull.copyProperty(activo, "observacionesVentaExterna", null);
+			}
 			dto.setVentaExterna(Checks.esNulo(activo.getFechaVentaExterna()));
 
 			// Si se ha introducido valores en fecha o importe de venta, se
@@ -5122,7 +5141,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			return null;
 
 		List<Object> listaObj = rawDao.getExecuteSQLList(
-				"SELECT AGR_ID FROM ACT_AGA_AGRUPACION_ACTIVO WHERE ACT_ID = " + idActivo.toString());
+				"SELECT AGR_ID FROM ACT_AGA_AGRUPACION_ACTIVO WHERE ACT_ID = " + idActivo.toString() + "AND BORRADO = 0");
 
 		List<Long> listaAgr = new ArrayList<Long>();
 
@@ -5233,8 +5252,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		ActivoSituacionPosesoria posesoria=activo.getSituacionPosesoria();
 		Integer ocupado;
 		String conTitulo = "";
-		if(activoDto.getConTituloTPA() != null) {
-			conTitulo=activoDto.getConTituloTPA();
+		if(activoDto.getConTitulo() != null) {
+			conTitulo=activoDto.getConTitulo();
 		}else if(!Checks.esNulo(posesoria.getConTitulo())){
 			conTitulo = posesoria.getConTitulo().getCodigo();
 		}

@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=pier gotta
---## FECHA_CREACION=20181126
+--## AUTOR=Rasul Akhmeddibirov
+--## FECHA_CREACION=20190225
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-2551
+--## INCIDENCIA_LINK=REMVIP-3350
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -14,6 +14,7 @@
 --##		HREOS-2030: Nuevos filtros en buscador de ofertas.
 --##        HREOS-2236: Nuevos filtros en buscador de ofertas.
 --##		REMVIP-1645 Optimización de la vista.
+--##		REMVIP-3350 Añadir la columna contraoferta al grid.
 --##########################################
 --*/
 
@@ -68,6 +69,7 @@ BEGIN
         null AS PRECIO_PUBLICADO,
         LCO.LCO_GESTOR_COMERCIAL AS GESTOR_LOTE,
 		    OFR.OFR_IMPORTE,
+				OFR.OFR_IMPORTE_CONTRAOFERTA,
 		    EOF.DD_EOF_DESCRIPCION,
 				EOF.DD_EOF_CODIGO,
         TRO.DD_TRO_CODIGO,

@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import es.capgemini.devon.dto.WebDto;
+import es.capgemini.devon.exception.UserException;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.pagination.Page;
@@ -90,6 +91,25 @@ import es.pfsgroup.plugin.rem.model.DtoTipoDocExpedientes;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.TmpClienteGDPR;
 import es.pfsgroup.plugin.rem.model.VBusquedaDatosCompradorExpediente;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
+
+import javax.annotation.Resource;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.util.List;
+import java.util.Properties;
+
 
 @Controller
 public class ExpedienteComercialController extends ParadiseJsonController {
@@ -472,13 +492,11 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 		String key = appProperties.getProperty(CONSTANTE_REST_CLIENT);
 		Downloader dl = downloaderFactoryApi.getDownloader(key);
 		String nombreDocumento = request.getParameter("nombreDocumento");
-
+		ServletOutputStream salida = null;
 		try {
 			FileItem fileItem = dl.getFileItem(id, nombreDocumento);
-			
-			if(fileItem != null){
-				ServletOutputStream salida = response.getOutputStream();
-	
+			salida = response.getOutputStream();
+			if(fileItem != null){	
 				response.setHeader("Content-disposition", "attachment; filename=" + fileItem.getFileName());
 				response.setHeader("Cache-Control", "must-revalidate, post-check=0,pre-check=0");
 				response.setHeader("Cache-Control", "max-age=0");
@@ -488,13 +506,25 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 				response.setContentType(fileItem.getContentType());
 	
 				// Write
-				FileUtils.copy(fileItem.getInputStream(), salida);
-				salida.flush();
-				salida.close();
+				FileUtils.copy(fileItem.getInputStream(), salida);				
 			}
 
+		} catch(UserException ex) {
+			try {
+				salida.write(ex.toString().getBytes(Charset.forName("UTF-8")));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+	
 		} catch (Exception e) {
 			logger.error("Error en ExpedienteComercialController", e);
+		}finally {
+			try {
+				salida.flush();			
+				salida.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 	@SuppressWarnings("unchecked")

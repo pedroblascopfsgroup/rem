@@ -14,15 +14,18 @@ import java.util.Set;
 import javax.annotation.Resource;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.LazyInitializationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.ModelMap;
 
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.devon.utils.MessageUtils;
+import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.procesosJudiciales.model.TipoJuzgado;
@@ -61,6 +64,7 @@ import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.GestorSustituto;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDCondicionIndicadorPrecio;
@@ -81,6 +85,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoRechazoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPorCuenta;
 import es.pfsgroup.plugin.rem.trabajo.dao.DDSubtipoTrabajoDao;
@@ -126,6 +131,9 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 	
 	@Autowired
 	private OfertaApi ofertaApi;
+	
+	@Autowired
+	private UsuarioApi usuarioApi;
 
 	@Override
 	public String managerName() {
@@ -135,32 +143,38 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 	@Override
 	@BusinessOperationDefinition("genericManager.getAuthenticationData")
 	public AuthenticationData getAuthenticationData() {
-
-		Usuario usuario = adapter.getUsuarioLogado();
-
-		List<String> authorities = new ArrayList<String>();
-		List<String> roles = new ArrayList<String>();
-
-		for (Perfil perfil : usuario.getPerfiles()) {
-			for (Funcion funcion : perfil.getFunciones()) {
-				authorities.add(funcion.getDescripcion());
-			}
-			roles.add(perfil.getCodigo());
-		}
-
 		AuthenticationData authData = new AuthenticationData();
+		Usuario usuario = adapter.getUsuarioLogado();
+		if (usuario != null) {
+			List<String> authorities = new ArrayList<String>();
+			List<String> roles = new ArrayList<String>();
+			
+			/**
+			 * Al lanzar este método en un hilo diferente
+			 * al principal da un error lazy. Recargamos en la sesión el usuario logado
+			 */
+			try{
+				usuario.getPerfiles();
+			}catch(LazyInitializationException e){
+				usuario = usuarioApi.get(usuario.getId());
+			}
+			
 
-		authData.setUserName(usuario.getApellidoNombre());
-		authData.setAuthorities(authorities);
+			for (Perfil perfil : usuario.getPerfiles()) {
+				for (Funcion funcion : perfil.getFunciones()) {
+					authorities.add(funcion.getDescripcion());
+				}
+				roles.add(perfil.getCodigo());
+			}
+			authData.setUserName(usuario.getApellidoNombre());
+			authData.setAuthorities(authorities);
+			
+			authData.setUserId(usuario.getId());
+			authData.setRoles(roles);
+			authData.setCodigoGestor(gestorEntidad.getCodigoGestorPorUsuario(usuario.getId()));
 
-		Long id = usuario.getId();
-
-		authData.setUserId(id);
-		authData.setRoles(roles);
-
-		authData.setCodigoGestor(gestorEntidad.getCodigoGestorPorUsuario(id));
-
-		authData.setEsGestorSustituto(esGestorSustituto(usuario));
+			authData.setEsGestorSustituto(esGestorSustituto(usuario));
+		}
 
 		return authData;
 
@@ -1059,5 +1073,42 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		List<DDTipoAgrupacion> listaTipoAgrupaciones = genericDao.getList(DDTipoAgrupacion.class, filtroBorrado,
 				filtroBorrado);
 		return listaTipoAgrupaciones;
+	}
+	
+	@Override
+	public List<DDTipoTituloActivoTPA> getComboTipoTituloActivoTPA(Long numActivo) {
+
+		Activo activo = activoApi.getByNumActivo(numActivo);
+		List<DDTipoTituloActivoTPA> combo = new ArrayList<DDTipoTituloActivoTPA>();
+		
+		DDTipoTituloActivoTPA tipoTituloSi = (DDTipoTituloActivoTPA) utilDiccionarioApi
+				.dameValorDiccionarioByCod(DDTipoTituloActivoTPA.class, DDTipoTituloActivoTPA.tipoTituloSi);
+		DDTipoTituloActivoTPA tipoTituloNo = (DDTipoTituloActivoTPA) utilDiccionarioApi
+				.dameValorDiccionarioByCod(DDTipoTituloActivoTPA.class, DDTipoTituloActivoTPA.tipoTituloNo);
+		DDTipoTituloActivoTPA tipoTituloNoConIndicios = (DDTipoTituloActivoTPA) utilDiccionarioApi
+				.dameValorDiccionarioByCod(DDTipoTituloActivoTPA.class, DDTipoTituloActivoTPA.tipoTituloNoConIndicios);
+		
+		combo.add(tipoTituloSi);
+		
+		if(!Checks.esNulo(activo.getCartera())) {
+			if(DDCartera.CODIGO_CARTERA_BANKIA.equals(activo.getCartera().getCodigo())) {
+				if(!Checks.esNulo(activo.getSituacionPosesoria().getSitaucionJuridica())) {
+					if (activo.getSituacionPosesoria().getSitaucionJuridica().getIndicaPosesion() == 1) {
+						combo.add(tipoTituloNo);
+					} else {
+						combo.add(tipoTituloNoConIndicios);
+					}
+				}					
+			} else {
+				if (!Checks.esNulo(activo.getSituacionPosesoria().getFechaRevisionEstado())
+						|| !Checks.esNulo(activo.getSituacionPosesoria().getFechaTomaPosesion())) {
+					combo.add(tipoTituloNo);
+				} else {
+					combo.add(tipoTituloNoConIndicios);
+				}
+			}
+		}
+		
+		return combo;
 	}
 }

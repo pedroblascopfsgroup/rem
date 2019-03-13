@@ -289,7 +289,7 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 				)
 			)){
 			
-			HQLBuilder.addFiltroIsNull(hb, "idAgrupacion");
+			HQLBuilder.addFiltroIsNull(hb, "voferta.idAgrupacion");
 		}
 		
 		Page pageVisitas = HibernateQueryUtils.page(this, hb, dtoOfertasFilter);

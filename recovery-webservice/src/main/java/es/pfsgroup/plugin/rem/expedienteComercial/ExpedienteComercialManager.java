@@ -103,6 +103,8 @@ import es.pfsgroup.plugin.rem.model.AdjuntoComprador;
 import es.pfsgroup.plugin.rem.model.AdjuntoExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.BloqueoActivoFormalizacion;
 import es.pfsgroup.plugin.rem.model.ClienteCompradorGDPR;
+import es.pfsgroup.plugin.rem.model.AdjuntoExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.BloqueoActivoFormalizacion;
 import es.pfsgroup.plugin.rem.model.ComparecienteVendedor;
 import es.pfsgroup.plugin.rem.model.Comprador;
 import es.pfsgroup.plugin.rem.model.CompradorExpediente;
@@ -2341,14 +2343,14 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 									DDSituacionesPosesoria.SITUACION_POSESORIA_LIBRE);
 					condicionesActivo.setSituacionPosesoria(situacionPosesoriaLibre);
 
-				} else if (activo.getSituacionPosesoria().getOcupado() != null && activo.getSituacionPosesoria().getOcupado().equals(1) && activo.getSituacionPosesoria()
-				.getConTitulo() != null && activo.getSituacionPosesoria().getConTitulo().getCodigo().equals(DDTipoTituloActivoTPA.tipoTituloSi)) {
+				} else if (activo.getSituacionPosesoria().getOcupado() != null && activo.getSituacionPosesoria().getOcupado().equals(1) && !Checks.esNulo(activo.getSituacionPosesoria()
+				.getConTitulo()) && activo.getSituacionPosesoria().getConTitulo().getCodigo().equals(DDTipoTituloActivoTPA.tipoTituloSi)) {
 					DDSituacionesPosesoria situacionPosesoriaOcupadoTitulo = (DDSituacionesPosesoria) utilDiccionarioApi.dameValorDiccionarioByCod(DDSituacionesPosesoria.class,
 					DDSituacionesPosesoria.SITUACION_POSESORIA_OCUPADO_CON_TITULO);
 					condicionesActivo.setSituacionPosesoria(situacionPosesoriaOcupadoTitulo);
 
 				} else if (activo.getSituacionPosesoria().getOcupado() != null && activo.getSituacionPosesoria().getOcupado().equals(1) && activo.getSituacionPosesoria()
-				.getConTitulo() != null && (activo.getSituacionPosesoria().getConTitulo().equals(DDTipoTituloActivoTPA.tipoTituloNo) || activo.getSituacionPosesoria().getConTitulo().equals(DDTipoTituloActivoTPA.tipoTituloNoConIndicios))) {
+				.getConTitulo() != null && (DDTipoTituloActivoTPA.tipoTituloNo.equals(activo.getSituacionPosesoria().getConTitulo().getCodigo()) || activo.getSituacionPosesoria().getConTitulo().equals(DDTipoTituloActivoTPA.tipoTituloNoConIndicios))) {
 					DDSituacionesPosesoria situacionPosesoriaOcupadoSinTitulo = (DDSituacionesPosesoria) utilDiccionarioApi.dameValorDiccionarioByCod(DDSituacionesPosesoria.class,
 					DDSituacionesPosesoria.SITUACION_POSESORIA_OCUPADO_SIN_TITULO);
 
@@ -3068,8 +3070,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	 * @param resolucionDto:
 	 *            objeto dto al que rellenar con los datos de las tareas.
 	 */
+
 	private void rellenarDatosVentaFormalizacion(Formalizacion formalizacion,
 			DtoFormalizacionResolucion resolucionDto) {
+		if(formalizacion != null && formalizacion.getExpediente() != null && formalizacion.getExpediente().getTrabajo() != null){
 		List<ActivoTramite> listaTramites = tramiteDao.getTramitesByTipoAndTrabajo(
 				formalizacion.getExpediente().getTrabajo().getId(), ActivoTramiteApi.CODIGO_TRAMITE_COMERCIAL_VENTA);
 
@@ -3092,15 +3096,13 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					if (!Checks.esNulo(fechaFirma)) {
 						resolucionDto.setFechaVenta(df.parse(fechaFirma));
 					}
-
-				} catch (ParseException e) {
-					logger.error("error en expedienteComercialManager", e);
+	
+					resolucionDto.setNumProtocolo(activoTramiteApi.getTareaValorByNombre(tex.getValores(), "numProtocolo"));
 				}
-
-				resolucionDto.setNumProtocolo(activoTramiteApi.getTareaValorByNombre(tex.getValores(), "numProtocolo"));
 			}
 		}
 	}
+}
 
 	@Override
 	@Transactional(readOnly = true)
@@ -6219,11 +6221,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					&& activo.getSituacionPosesoria().getOcupado().equals(Integer.valueOf(0))) {
 				resultado.setSituacionPosesoriaCodigoInformada("01");
 
-			} else if (activo.getSituacionPosesoria().getOcupado() != null && activo.getSituacionPosesoria().getOcupado().equals(1) && activo.getSituacionPosesoria().getConTitulo() != null &&
+			} else if (!Checks.esNulo(activo.getSituacionPosesoria().getOcupado()) && activo.getSituacionPosesoria().getOcupado().equals(1) && !Checks.esNulo(activo.getSituacionPosesoria().getConTitulo()) &&
 					activo.getSituacionPosesoria().getConTitulo().getCodigo().equals(DDTipoTituloActivoTPA.tipoTituloSi)) {
 				resultado.setSituacionPosesoriaCodigoInformada("02");
 
-			} else if (activo.getSituacionPosesoria().getOcupado() != null && activo.getSituacionPosesoria().getOcupado().equals(1) && activo.getSituacionPosesoria().getConTitulo() != null &&
+			} else if (!Checks.esNulo(activo.getSituacionPosesoria().getOcupado()) && activo.getSituacionPosesoria().getOcupado().equals(1) && !Checks.esNulo(activo.getSituacionPosesoria().getConTitulo()) &&
 					(activo.getSituacionPosesoria().getConTitulo().getCodigo().equals(DDTipoTituloActivoTPA.tipoTituloNo) || activo.getSituacionPosesoria().getConTitulo().getCodigo().equals(DDTipoTituloActivoTPA.tipoTituloNoConIndicios))) {
 				
 				resultado.setSituacionPosesoriaCodigoInformada("03");
@@ -7533,12 +7535,6 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 						}
 
 					}
-					try {
-						throw gex;
-					} catch (GestorDocumentalException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
 				}
 			} else {
 				listaAdjuntos = getAdjuntosExp(exp.getId(), listaAdjuntos);
@@ -8106,7 +8102,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				BeanUtils.copyProperty(activoDto, "conTitulo", activo.getSituacionPosesoria().getConTitulo().getCodigo());
 			}
 
-			if(!Checks.esNulo(activoDto) && activoDto.getConTituloTPA().equals("0")) {
+			if(!Checks.esNulo(activoDto) && activoDto.getConTitulo().equals("0")) {
 				ocupado = false;
 			}
 

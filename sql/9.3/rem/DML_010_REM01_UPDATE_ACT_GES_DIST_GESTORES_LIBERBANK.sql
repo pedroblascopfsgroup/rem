@@ -1,6 +1,6 @@
 --/*
 --##########################################
---## AUTOR=SIMEON SHOPOV
+--## AUTOR=GUILLEM REY
 --## FECHA_CREACION=20190313
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2

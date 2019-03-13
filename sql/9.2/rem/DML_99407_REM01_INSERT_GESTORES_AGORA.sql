@@ -2,10 +2,10 @@
 --/*
 --###########################################
 --## AUTOR=VICTOR OLIVARES
---## FECHA_CREACION=20190307
+--## FECHA_CREACION=20190313
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-5575
+--## INCIDENCIA_LINK=HREOS-5803
 --## PRODUCTO=NO
 --## 
 --## Finalidad: Carga gestores para la cartera Agora
@@ -29,7 +29,7 @@ DECLARE
 	ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
 	ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
  
-	V_TICKET VARCHAR2(25 CHAR) := 'HREOS-5575';
+	V_TICKET VARCHAR2(25 CHAR) := 'HREOS-5803';
 	V_AUX VARCHAR(25 CHAR);
 	V_AUX_USU VARCHAR(25 CHAR);
 
@@ -53,9 +53,9 @@ DECLARE
 		T_TIPO_DATA('GIAFORM',07,135,null,null,'ogf03','OGF Formalización'),
 		T_TIPO_DATA('GTOADM',07,135,null,null,'ogf01','OGF Admisión'),
 		T_TIPO_DATA('GCOMAG',07,135,null,null,'rjimeno','Raúl Jimeno'),
-		T_TIPO_DATA('GCOMAG',07,135,null,null,'pgarcia','Pedro García'),
+		T_TIPO_DATA('GCOMAG',07,135,null,null,'pgarciad','Pedro García'),
 		T_TIPO_DATA('PTEC',07,135,null,null,'A82451410','HOMESERVE ASISTENCIA SPAIN, S.A.U.'),
-		T_TIPO_DATA('GPUBL',07,135,null,null,'arueda','Anselmo Rueda'),
+		T_TIPO_DATA('GPUBL',07,135,null,null,'aruedag','Anselmo Rueda'),
 		T_TIPO_DATA('SFORM',07,135,null,null,'lsoriano','Lucía Soriano'),
 		T_TIPO_DATA('GACT',07,137,null,null,'amonge','Alfredo Leonardo Monge'),
 		T_TIPO_DATA('GALQ',07,137,null,null,'dleganes','Daniel Leganés'),
@@ -65,9 +65,9 @@ DECLARE
 		T_TIPO_DATA('GIAFORM',07,137,null,null,'ogf03','OGF Formalización'),
 		T_TIPO_DATA('GTOADM',07,137,null,null,'ogf01','OGF Admisión'),
 		T_TIPO_DATA('GCOMAG',07,137,null,null,'rjimeno','Raúl Jimeno'),
-		T_TIPO_DATA('GCOMAG',07,137,null,null,'pgarcia','Pedro García'),
+		T_TIPO_DATA('GCOMAG',07,137,null,null,'pgarciad','Pedro García'),
 		T_TIPO_DATA('PTEC',07,137,null,null,'A82451410','HOMESERVE ASISTENCIA SPAIN, S.A.U.'),
-		T_TIPO_DATA('GPUBL',07,137,null,null,'arueda','Anselmo Rueda'),
+		T_TIPO_DATA('GPUBL',07,137,null,null,'aruedag','Anselmo Rueda'),
 		T_TIPO_DATA('SFORM',07,137,null,null,'lsoriano','Lucía Soriano')
 
 
@@ -82,7 +82,7 @@ DECLARE
 	IN_ACT_GES VARCHAR2 (32000) := q'[INSERT INTO #ESQUEMA#.ACT_GES_DIST_GESTORES 
 					(ID,TIPO_GESTOR,COD_CARTERA,COD_SUBCARTERA,COD_PROVINCIA,COD_MUNICIPIO,USERNAME,NOMBRE_USUARIO,VERSION,USUARIOCREAR,FECHACREAR,BORRADO) 
 					VALUES 
-					(#ESQUEMA#.S_ACT_GES_DIST_GESTORES.NEXTVAL,:1,:2,:3,:4,:5,:6,:7,0,'HREOS-5575',sysdate,0)]';
+					(#ESQUEMA#.S_ACT_GES_DIST_GESTORES.NEXTVAL,:1,:2,:3,:4,:5,:6,:7,0,'HREOS-5803',sysdate,0)]';
 
 	SEL_USU VARCHAR2 (32000) := q'[SELECT COUNT(1) FROM #ESQUEMA_MASTER#.USU_USUARIOS WHERE USU_USERNAME = :1]';
 

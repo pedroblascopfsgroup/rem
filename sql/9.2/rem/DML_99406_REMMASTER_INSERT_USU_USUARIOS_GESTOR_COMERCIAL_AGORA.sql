@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=VICTOR OLIVARES
---## FECHA_CREACION=20190307
+--## FECHA_CREACION=20190313
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-5575
+--## INCIDENCIA_LINK=HREOS-5803
 --## PRODUCTO=NO
 --##
 --## Finalidad: Script que añade en USU_USUARIOS los datos añadidos en T_ARRAY_DATA
@@ -38,7 +38,7 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-    	T_TIPO_DATA('GCOMAG', 1234, 'Gestor Comercial AGORA')
+    	T_TIPO_DATA('GCOMAG',null, 'Gestor Comercial AGORA')
     	); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     
@@ -62,7 +62,7 @@ BEGIN
         IF V_NUM_TABLAS > 0 THEN				         
   		  DBMS_OUTPUT.PUT_LINE('[INFO]: MODIFICAMOS EL REGISTRO '''|| TRIM(V_TMP_TIPO_DATA(1)) ||''''); 
   			V_MSQL := 'UPDATE '|| V_ESQUEMA_M ||'.USU_USUARIOS ' ||
-                  'SET USU_FECHA_VIGENCIA_PASS = SYSDATE+730 ' ||
+                  'SET USU_FECHA_VIGENCIA_PASS = SYSDATE+730, USU_PASSWORD = '''|| TRIM(V_TMP_TIPO_DATA(2)) ||''' '||
                   'WHERE USU_USERNAME = ''GCOMAG''';
         DBMS_OUTPUT.PUT_LINE(V_MSQL);          
         EXECUTE IMMEDIATE V_MSQL;
@@ -75,7 +75,7 @@ BEGIN
            
            V_MSQL := 'INSERT INTO '|| V_ESQUEMA_M ||'.USU_USUARIOS (' ||
                       'USU_ID, ENTIDAD_ID, USU_USERNAME, USU_PASSWORD, USU_NOMBRE, USU_MAIL, VERSION, USUARIOCREAR, FECHACREAR, BORRADO, USU_FECHA_VIGENCIA_PASS, USU_GRUPO ) ' ||
-                      'SELECT '|| V_ID || ', 1,'''||TRIM(V_TMP_TIPO_DATA(1))||''','''||TRIM(V_TMP_TIPO_DATA(2))||''','''||TRIM(V_TMP_TIPO_DATA(3))||''', ''pruebashrem@gmail.com'',0,''HREOS-5575'',SYSDATE,0, SYSDATE+730, 1  FROM DUAL';
+                      'SELECT '|| V_ID || ', 1,'''||TRIM(V_TMP_TIPO_DATA(1))||''','''||TRIM(V_TMP_TIPO_DATA(2))||''','''||TRIM(V_TMP_TIPO_DATA(3))||''', ''pruebashrem@gmail.com'',0,''HREOS-5803'',SYSDATE,0, SYSDATE+730, 1  FROM DUAL';
           
                       
           EXECUTE IMMEDIATE V_MSQL;

@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=VICTOR OLIVARES
---## FECHA_CREACION=20190307
+--## FECHA_CREACION=20190313
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-5575
+--## INCIDENCIA_LINK=HREOS-5803
 --## PRODUCTO=NO
 --##
 --## Finalidad: Script que añade en GRU_GRUPOS_USUARIOS los datos añadidos en T_ARRAY_DATA para cartera AGORA.
@@ -30,7 +30,7 @@ DECLARE
     ERR_NUM NUMBER(25);  -- Vble. auxiliar para registrar errores en el script.
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
 	
-    V_USUARIO VARCHAR2(50 CHAR) := 'HREOS-5575'; -- USUARIO CREAR/MODIFICAR
+    V_USUARIO VARCHAR2(50 CHAR) := 'HREOS-5803'; -- USUARIO CREAR/MODIFICAR
     V_TABLA VARCHAR2(50 CHAR) := 'GRU_GRUPOS_USUARIOS';
     V_ENTIDAD_ID NUMBER(16);
     V_ID NUMBER(16);

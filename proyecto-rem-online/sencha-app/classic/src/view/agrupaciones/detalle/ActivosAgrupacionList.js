@@ -324,7 +324,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.ActivosAgrupacionList', {
 	            flex: 0.5
 	        },
 	        {
-	        	dataIndex: 'numPrinex',
+	        	dataIndex: 'idPrinexHPM',
 	        	text: HreRem.i18n('header.id.prinex.hpm'),
 	        	bind: {
 	        		hidden: '{!esAgrupacionPromocionAlquiler}'

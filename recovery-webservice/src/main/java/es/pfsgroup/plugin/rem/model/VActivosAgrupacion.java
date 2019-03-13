@@ -103,6 +103,9 @@ public class VActivosAgrupacion implements Serializable {
 
 	@Column(name = "COND_PUBL_ALQUILER")
 	private String condPublAlquiler;
+	
+	@Column(name = "ID_PRINEX_HPM")
+	private Long idPrinexHPM;
 
 
 	public Long getId() {
@@ -328,4 +331,13 @@ public class VActivosAgrupacion implements Serializable {
 	public void setBorrado(Integer borrado) {
 		this.borrado = borrado;
 	}
+
+	public Long getIdPrinexHPM() {
+		return idPrinexHPM;
+	}
+
+	public void setIdPrinexHPM(Long idPrinexHPM) {
+		this.idPrinexHPM = idPrinexHPM;
+	}
+	
 }

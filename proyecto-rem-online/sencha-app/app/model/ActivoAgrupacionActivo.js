@@ -60,6 +60,9 @@ Ext.define('HreRem.model.ActivoAgrupacionActivo', {
     			name:'condPublVenta'
     		},
     		{
+    			name:'idPrinexHPM'
+    		},
+    		{
     			name:'condPublAlquiler'
     		}
     ],

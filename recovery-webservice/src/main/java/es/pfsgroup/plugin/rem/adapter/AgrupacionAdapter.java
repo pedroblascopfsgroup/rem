@@ -2519,12 +2519,9 @@ public class AgrupacionAdapter {
 			ActivoPromocionAlquiler pa = (ActivoPromocionAlquiler) agrupacion;
 	
 			try {
-				if(!permiteCambiarDestinoComercial(pa))
-				{
+				if (!permiteCambiarDestinoComercial(pa)) {
 					return "false"+SPLIT_VALUE+OFERTA_INCOMPATIBLE_AGR_MSG;
-				}
-				else
-				{
+				} else {
 					beanUtilNotNull.copyProperties(pa, dto);
 	
 					if (dto.getMunicipioCodigo() != null) {
@@ -2534,17 +2531,7 @@ public class AgrupacionAdapter {
 	
 						pa.setLocalidad(municipioNuevo);
 					}
-					/*
-					if (dto.getEstadoObraNuevaCodigo() != null) {
-	
-						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo",
-								dto.getEstadoObraNuevaCodigo());
-						DDEstadoObraNueva estadoNuevo = (DDEstadoObraNueva) genericDao.get(DDEstadoObraNueva.class, filtro);
-	
-						pa.setEstadoObraNueva(estadoNuevo);
-	
-					}
-					*/
+
 					if (dto.getProvinciaCodigo() != null) {
 	
 						Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getProvinciaCodigo());
@@ -2556,7 +2543,6 @@ public class AgrupacionAdapter {
 					if(!Checks.esNulo(dto.getActivoMatriz())) {
 						Activo act = activoDao.getActivoByNumActivo(dto.getActivoMatriz());
 						Boolean esActivoMatrizValido = esActivoMatrizValido(act);
-						/*TODO: Validaciones HREOS-5596*/
 						if(esActivoMatrizValido) {
 							ActivoAgrupacionActivo aga = new ActivoAgrupacionActivo();
 							aga.setActivo(act);
@@ -2572,6 +2558,7 @@ public class AgrupacionAdapter {
 					
 					activoAgrupacionApi.saveOrUpdate(pa);
 				}
+				
 				if (!Checks.esNulo(dto.getFechaBaja())) {
 					List<ActivoAgrupacionActivo> activoAgrupacionPA = new ArrayList<ActivoAgrupacionActivo>();
 					Filter filtroAgrupacion = genericDao.createFilter(FilterType.EQUALS, "agrupacion.id", agrupacion.getId());

@@ -2635,7 +2635,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 						activoOferta.getPrimaryKey().getOferta().getId());
 				ExpedienteComercial expediente = genericDao.get(ExpedienteComercial.class, filtro);
 				if (!Checks.esNulo(expediente)) {
-					if (!Checks.esNulo(expediente.getFechaVenta()) && DDTipoOferta.CODIGO_ALQUILER.equals(activoOferta.getPrimaryKey().getOferta().getTipoOferta().getCodigo()))
+					if (!Checks.esNulo(expediente.getFechaInicioAlquiler()) && DDTipoOferta.CODIGO_ALQUILER.equals(activoOferta.getPrimaryKey().getOferta().getTipoOferta().getCodigo()))
 						return true;
 				}
 			}

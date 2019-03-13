@@ -2423,21 +2423,29 @@ public class AgrupacionAdapter {
 											}
 										}else {
 											List <ActivoOferta> ofertasActivas = activo.getOfertas();
-											
+											boolean ventaVivas = false;
 											for (ActivoOferta activoOferta : ofertasActivas) {
 													if(!Checks.esNulo(activoOferta.getPrimaryKey())
 															&& !Checks.esNulo(activoOferta.getPrimaryKey().getOferta())
 															&& !Checks.esNulo(activoOferta.getPrimaryKey().getOferta().getTipoOferta())){
 													if(DDTipoOferta.CODIGO_VENTA.equals(activoOferta.getPrimaryKey().getOferta().getTipoOferta().getCodigo())){
 														if(DDEstadoOferta.CODIGO_ACEPTADA.equals(activoOferta.getPrimaryKey().getOferta().getEstadoOferta().getCodigo())) {
-															throw new JsonViewerException("Activo con ofertas de venta vivas");
+															ventaVivas = true;
+															
 														}
 													}else {
 														if(DDEstadoOferta.CODIGO_ACEPTADA.equals(activoOferta.getPrimaryKey().getOferta().getEstadoOferta().getCodigo())) {
-															throw new JsonViewerException("Activo con ofertas de alquiler vivas");
+															ventaVivas = false;
+															
 														}
 													}
 												}
+											}
+											
+											if (ventaVivas) {
+												throw new JsonViewerException("Activo con ofertas de venta vivas");
+											}else {
+												throw new JsonViewerException("Activo con ofertas de alquiler vivas");
 											}
 										}
 									}else {
@@ -2465,7 +2473,7 @@ public class AgrupacionAdapter {
 			throw new JsonViewerException("Activo inexistente");
 			
 		}
-		return false;
+
 	}
 	
 	
@@ -2542,7 +2550,8 @@ public class AgrupacionAdapter {
 					
 					if(!Checks.esNulo(dto.getActivoMatriz())) {
 						Activo act = activoDao.getActivoByNumActivo(dto.getActivoMatriz());
-						Boolean esActivoMatrizValido = esActivoMatrizValido(act);
+						boolean esActivoMatrizValido = false;
+						esActivoMatrizValido = esActivoMatrizValido(act);
 						if(esActivoMatrizValido) {
 							ActivoAgrupacionActivo aga = new ActivoAgrupacionActivo();
 							aga.setActivo(act);

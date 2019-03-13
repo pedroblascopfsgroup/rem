@@ -29,6 +29,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
+import es.capgemini.devon.files.FileItem;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.plugin.recovery.agendaMultifuncion.impl.dto.DtoAdjuntoMail;
@@ -115,9 +116,28 @@ public class RemCorreoUtils {
 			traza.setError(errors.toString());
 			logger.error("Error enviando correo", e);
 		} finally {
+			if(list != null && list.size() > 0){
+				for(int i = 0; i < list.size(); i++){
+					if(list.get(i) != null && list.get(i).getAdjunto() != null){
+						deleteFile(list.get(i).getAdjunto().getFileItem());
+					}
+					
+				}
+			}
 			persistirTrazaCorreoSaliente(traza);
 		}
 
+	}
+	
+	private void deleteFile(FileItem fileitem) {
+		if ((fileitem != null) && (fileitem.getFile() != null)) {
+			boolean deleted = fileitem.getFile().delete();
+			// boolean deleted = false;
+			if (!deleted) {
+				logger.warn("No se ha borrado el fichero: " + fileitem.getFile().getAbsolutePath()
+						+ ". Se ha quedado basurilla.");
+			}
+		}
 	}
 
 	private CorreoSaliente obtenerTrazaCorreoSaliente(String emailFrom, List<String> mailsPara,

@@ -123,7 +123,7 @@ public class DtoActivoDatosRegistrales extends DtoTabActivo {
 	private String codigoResponsableSubsanar;
 	
 	private Date fechaSubsanacion;
-	private Long idMotivo;
+	private String idMotivo;
 	
 	/*
 
@@ -677,10 +677,10 @@ public class DtoActivoDatosRegistrales extends DtoTabActivo {
 	public void setCodigoResponsableSubsanar(String codigoResponsableSubsanar) {
 		this.codigoResponsableSubsanar = codigoResponsableSubsanar;
 	}
-	public Long getIdMotivo() {
+	public String getIdMotivo() {
 		return idMotivo;
 	}
-	public void setIdMotivo(Long idMotivo) {
+	public void setIdMotivo(String idMotivo) {
 		this.idMotivo = idMotivo;
 	}
 	public String getCodigoMotivoCalificacionNegativa() {

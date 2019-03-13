@@ -2468,7 +2468,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				DtoActivoDatosRegistrales dto = new DtoActivoDatosRegistrales();
 				
 				beanUtilNotNull.copyProperty(dto, "idActivo", idActivo);
-				beanUtilNotNull.copyProperty(dto, "idMotivo", activo.getId());
+				beanUtilNotNull.copyProperty(dto, "idMotivo", String.valueOf(activo.getId()));
 				if(!Checks.esNulo(activo.getMotivoCalificacionNegativa())) {
 					beanUtilNotNull.copyProperty(dto, "motivoCalificacionNegativa", activo.getMotivoCalificacionNegativa().getDescripcion());
 				}
@@ -4925,7 +4925,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		try {
 			
 			if (!Checks.esNulo(dto)) {
-				ActivoCalificacionNegativa activoCalificacionNegativa = genericDao.get(ActivoCalificacionNegativa.class, genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdMotivo()));
+				ActivoCalificacionNegativa activoCalificacionNegativa = genericDao.get(ActivoCalificacionNegativa.class, genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(dto.getIdMotivo())));
 				
 				String codigoMotivoCalificacionNegativa = dto.getMotivoCalificacionNegativa();
 				if (!Checks.esNulo(codigoMotivoCalificacionNegativa)) {
@@ -4972,7 +4972,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				ActivoCalificacionNegativa activoCalificacionNegativa = new ActivoCalificacionNegativa();
 //				dto.getNumeroActivo()
 				if (true) {
-					Activo activo = genericDao.get(Activo.class, genericDao.createFilter(FilterType.EQUALS, "numActivo",Long.valueOf("62597")));
+					Activo activo = genericDao.get(Activo.class, genericDao.createFilter(FilterType.EQUALS, "numActivo",Long.valueOf("62920")));
 					activoCalificacionNegativa.setActivo(activo);
 				} else {
 					return false;

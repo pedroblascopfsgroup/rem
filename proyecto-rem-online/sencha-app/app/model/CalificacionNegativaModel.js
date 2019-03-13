@@ -1,11 +1,8 @@
 Ext.define('HreRem.model.CalificacionNegativaModel', {
     extend: 'HreRem.model.Base',
-    idProperty: 'id',
+    idProperty: 'idMotivo',
 
     fields: [
-    		{
-    			name:'idMotivo'
-    		},
     		{
     			name:'idActivo'
     		},

@@ -36,6 +36,7 @@ DECLARE
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
 
+T_TIPO_DATA('83','Certificado sustitutivo de Cédula de Habitabilidad','Certificado sustitutivo de Cédula de Habitabilidad','OP-13-LIPR-14'),
 T_TIPO_DATA('84','CEE (Etiqueta de eficiencia energética)','Eficiencia energética: etiqueta','OP-13-CERT-25'),
 T_TIPO_DATA('85','CEE (Justificante de presentación en registro)','Tasa de inscripción en el Registro del Certificado Energético (CEE)','OP-13-CERA-71'),
 T_TIPO_DATA('86','Boletín gas','Instalación gas: boletín suministro','OP-13-CERT-11'),

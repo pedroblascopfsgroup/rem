@@ -351,10 +351,6 @@ public abstract class AbstractNotificatorService {
 	}
 
 	public String creaCuerpoPropuestaOferta(Oferta oferta) {
-
-public String creaCuerpoPropuestaOferta(Oferta oferta){
-	
-	
 		Activo activo = oferta.getActivoPrincipal();
 		DtoSendNotificator dtoSendNotificator = new DtoSendNotificator();
 		Filter filterAct = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
@@ -369,16 +365,6 @@ public String creaCuerpoPropuestaOferta(Oferta oferta){
 		
 		cuerpo = cuerpo + ".</p>";
 
-		Filter filterAct = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
-		List<ActivoTramite> tramites = genericDao.getList(ActivoTramite.class, filterAct);
-
-		Integer numTramites = tramites.size();
-
-		ActivoTramite tramite = tramites.get(numTramites - 1);
-
-		String asunto = "Notificación de propuesta de la oferta " + oferta.getNumOferta();
-		String cuerpo = "<p>Nos complace mandarle la información de la propuesta de oferta " + oferta.getNumOferta();
-
 		Integer numTramites = tramites.size();
 		
 		if(!Checks.estaVacio(tramites)) {
@@ -386,12 +372,6 @@ public String creaCuerpoPropuestaOferta(Oferta oferta){
 			dtoSendNotificator = this.rellenaDtoSendNotificator(tramite);
 			dtoSendNotificator.setTitulo(asunto);
 		}
-	
-
-		cuerpo = cuerpo + ". Adjunto a este correo encontrará el documento con las información de la propuesta";
-
-		cuerpo = cuerpo + ".</p>";
-
 
 		cuerpo = cuerpo + "<p>Quedamos a su disposición para cualquier consulta o aclaración. Saludos cordiales.</p>";
 
@@ -403,9 +383,6 @@ public String creaCuerpoPropuestaOferta(Oferta oferta){
 				(gestorComercial != null) ? gestorComercial.getApellidoNombre() : STR_MISSING_VALUE);
 		cuerpo = cuerpo + String.format("<p>%s</p>",
 				(gestorComercial != null) ? gestorComercial.getEmail() : STR_MISSING_VALUE);
-
-		DtoSendNotificator dtoSendNotificator = this.rellenaDtoSendNotificator(oferta,tramite);
-		dtoSendNotificator.setTitulo(asunto);
 
 		String cuerpoCorreo = this.generateCuerpo(dtoSendNotificator, cuerpo);
 

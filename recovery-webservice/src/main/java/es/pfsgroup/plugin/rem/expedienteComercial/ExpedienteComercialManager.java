@@ -3103,9 +3103,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	 * @param resolucionDto:
 	 *            objeto dto al que rellenar con los datos de las tareas.
 	 */
-
-	private void rellenarDatosVentaFormalizacion(Formalizacion formalizacion,
-			DtoFormalizacionResolucion resolucionDto) {
+	private void rellenarDatosVentaFormalizacion(Formalizacion formalizacion, DtoFormalizacionResolucion resolucionDto) {
 		if(formalizacion != null && formalizacion.getExpediente() != null && formalizacion.getExpediente().getTrabajo() != null){
 			List<ActivoTramite> listaTramites = tramiteDao.getTramitesByTipoAndTrabajo(
 					formalizacion.getExpediente().getTrabajo().getId(), ActivoTramiteApi.CODIGO_TRAMITE_COMERCIAL_VENTA);
@@ -3123,16 +3121,16 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 				if (!Checks.esNulo(tex)) {
 					SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-
 					try {
 						String fechaFirma = activoTramiteApi.getTareaValorByNombre(tex.getValores(), "fechaFirma");
 						if (!Checks.esNulo(fechaFirma)) {
 							resolucionDto.setFechaVenta(df.parse(fechaFirma));
 						}
-		
 						resolucionDto.setNumProtocolo(activoTramiteApi.getTareaValorByNombre(tex.getValores(), "numProtocolo"));
-						}
-				}	
+					} catch (ParseException e) {
+						logger.error("error en expedienteComercialManager", e);
+					}
+				}
 			}
 		}
 	}
@@ -8524,7 +8522,12 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			if(expediente.getOferta().getTipoOferta().getCodigo().equals(codigoVenta)) {
 				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "tipoDocumentoExpediente.codigo", valorCombo);
 				listaDDSubtipoDocExp  = genericDao.getList(DDSubtipoDocumentoExpediente.class, filtro);
-				listDtoTipoDocExpediente = generateListSubtipoExpediente(listaDDSubtipoDocExp);
+				if(DDSubcartera.CODIGO_AGORA_FINANCIERO.equals(expediente.getOferta().getActivoPrincipal().getSubcartera().getCodigo())|| 
+					DDSubcartera.CODIGO_AGORA_INMOBILIARIO.equals(expediente.getOferta().getActivoPrincipal().getSubcartera().getCodigo())) {
+					listDtoTipoDocExpediente = generateListSubtipoExpediente(listaDDSubtipoDocExp);
+				} else {
+					listDtoTipoDocExpediente = generateListSubtipoExpedienteNoAgora(listaDDSubtipoDocExp);
+				}
 			} else {
 				if(expediente.getOferta().getTipoOferta().getCodigo().equals(codigoAlquiler)) {
 					DDSubtipoDocumentoExpediente codRenovacionContrato =
@@ -8633,5 +8636,25 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			return null;
 		}
 	}
+	
+	private List<DtoTipoDocExpedientes> generateListSubtipoExpedienteNoAgora(List <DDSubtipoDocumentoExpediente> listadoDDSubtipoDoc) {
 
+		List <DtoTipoDocExpedientes> listDtoTipoDocExpediente = new ArrayList <DtoTipoDocExpedientes>();
+
+		for (DDSubtipoDocumentoExpediente tipDocExp : listadoDDSubtipoDoc) {
+			DtoTipoDocExpedientes aux= new DtoTipoDocExpedientes();
+			aux.setId(tipDocExp.getId());
+			aux.setCodigo(tipDocExp.getCodigo());
+			aux.setDescripcion(tipDocExp.getDescripcion());
+			aux.setDescripcionLarga(tipDocExp.getDescripcionLarga());
+			aux.setVinculable(tipDocExp.getVinculable());
+			if(!DDSubtipoDocumentoExpediente.CODIGO_CONTRATO_ARRAS_PENITENCIALES.equals(aux.getCodigo())) {
+				if(!DDSubtipoDocumentoExpediente.CODIGO_DEPOSITO_DESPUBLICACION_ACTIVO.equals(aux.getCodigo())){
+				listDtoTipoDocExpediente.add(aux);
+				}
+			}
+		}
+
+		return listDtoTipoDocExpediente;
+	}
 }

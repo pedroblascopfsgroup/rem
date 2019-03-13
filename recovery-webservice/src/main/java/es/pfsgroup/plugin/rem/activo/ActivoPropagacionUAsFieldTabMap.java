@@ -34,7 +34,7 @@ public class ActivoPropagacionUAsFieldTabMap {
     			Arrays.asList(
     					// identificacion	
     	    		"estadoActivoCodigo",
-    	    		"tipoUsoDestino",    // ?? DDTipoUsoDestino
+    	    		"tipoUsoDestino",    // ?? DDTipoUsoDestino					NO
     	    		"motivoActivo",
     	    			// direccion
     	    		"comunidadAutonomaCodigo", // ?? Se saca a partir de la provincia
@@ -87,10 +87,8 @@ public class ActivoPropagacionUAsFieldTabMap {
 					"localidadAnteriorCodigo",
 					
 					//Informacion Registral
-					"superficieUtil",
-					"superficieParcela",
+					
 						//"conRepercusion"		??
-					"superficieConstruida",
 					"divHorizontal",
 					"divHorInscrito",
 					"estadoDivHorizontalCodigo",

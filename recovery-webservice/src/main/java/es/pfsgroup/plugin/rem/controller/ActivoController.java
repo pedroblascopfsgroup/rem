@@ -38,8 +38,10 @@ import es.capgemini.devon.pagination.Page;
 import es.capgemini.devon.utils.FileUtils;
 import es.capgemini.pfs.config.ConfigManager;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
@@ -50,8 +52,10 @@ import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.activo.ActivoPropagacionFieldTabMap;
 import es.pfsgroup.plugin.rem.activo.ActivoPropagacionUAsFieldTabMap;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
+import es.pfsgroup.plugin.rem.api.ActivoAgrupacionActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoEstadoPublicacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoPropagacionApi;
@@ -68,6 +72,7 @@ import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.ACCION_CODIGO;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.ENTIDAD_CODIGO;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.REQUEST_STATUS_CODE;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoFoto;
 import es.pfsgroup.plugin.rem.model.DtoActivoAdministracion;
 import es.pfsgroup.plugin.rem.model.DtoActivoCargas;
@@ -125,6 +130,7 @@ import es.pfsgroup.plugin.rem.model.VBusquedaActivos;
 import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaPublicacionActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDRatingActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoHabitaculo;
 import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
 import es.pfsgroup.plugin.rem.service.TabActivoService;
@@ -161,6 +167,9 @@ public class ActivoController extends ParadiseJsonController {
 	
 	@Autowired
 	private ActivoDao activoDao;
+	
+	@Autowired
+	private ActivoAgrupacionActivoDao activoAgrupacionActivoDao;
 
 	@Autowired
 	private OfertaApi ofertaApi;
@@ -2626,7 +2635,7 @@ public class ActivoController extends ParadiseJsonController {
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView getIsActivoMatriz(String idActivo, ModelMap model){
 		try{
-			model.put(RESPONSE_DATA_KEY, activoDao.isActivoMatriz(Long.valueOf(idActivo)));
+			model.put(RESPONSE_DATA_KEY, activoDao.isActivoMatriz(Long.parseLong(idActivo)));
 		} catch (Exception e) {
 			logger.error("error en activoController", e);
 			model.put(RESPONSE_SUCCESS_KEY, false);
@@ -2635,4 +2644,70 @@ public class ActivoController extends ParadiseJsonController {
 
 		return createModelAndViewJson(model);
 	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView propagarActivosMatriz(String idActivo, ModelMap model){
+		try{
+			
+			
+			Activo activoActual = activoApi.get(Long.parseLong(idActivo));
+			//Comprobaciones
+			DDTipoComercializacion comercializacionAlquiler = genericDao.get(DDTipoComercializacion.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDTipoComercializacion.CODIGOS_ALQUILER));
+			activoActual.setTipoComercializacion(comercializacionAlquiler);
+			activoActual.setBloqueoTipoComercializacionAutomatico(true);
+			
+			ActivoAgrupacion agr = activoDao.getAgrupacionPAByIdActivo(activoActual.getId());
+			List<Activo> listaUAs = activoAgrupacionActivoDao.getListUAsByIdAgrupacion(agr.getId());
+			float superficie_parcela = 0;
+			float superficie_util = 0;
+			float superficie_bajoRasante = 0;
+			float superficie_sobreRasante = 0;
+			
+			for (Activo activo : listaUAs) {
+				superficie_parcela += activo.getInfoRegistral().getSuperficieParcela();
+				superficie_util += activo.getInfoRegistral().getSuperficieUtil();
+				superficie_bajoRasante += activo.getInfoRegistral().getSuperficieBajoRasante();
+				superficie_sobreRasante += activo.getInfoRegistral().getSuperficieSobreRasante();
+			}
+			
+			if(superficie_parcela > activoActual.getInfoRegistral().getSuperficieParcela()) {
+				throw new JsonViewerException("La superficie de la parcela del activo es menor que la superficie de la parcela todal de las UAs");
+			}else if(superficie_util > activoActual.getInfoRegistral().getSuperficieUtil()) {
+				throw new JsonViewerException("La superficie útil del activo es menor que la superficie de útil todal de las UAs");
+			}else if(superficie_bajoRasante > activoActual.getInfoRegistral().getSuperficieUtil()) {
+				throw new JsonViewerException("La superficie bajo rasante  del activo es menor que la superficie de bajo rasante todal de las UAs");
+			}else if(superficie_sobreRasante > activoActual.getInfoRegistral().getSuperficieUtil()) {
+				throw new JsonViewerException("La superficie sobre rasante  del activo es menor que la superficie de sobre rasante todal de las UAs");
+			}
+			
+			List<String> fields = new ArrayList<String>();
+			
+//			if(ActivoPropagacionUAsFieldTabMap.mapUAs.get(tabData) != null) {
+//				fields.addAll(ActivoPropagacionUAsFieldTabMap.mapUAs.get(tabData));
+//			}
+			
+		} catch (Exception e) {
+			logger.error("error en activoController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put(RESPONSE_ERROR_KEY, e.getMessage());
+		}
+
+		return createModelAndViewJson(model);
+	}
+
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView getisActivoUa(String idActivo, ModelMap model){
+		try{
+			model.put(RESPONSE_DATA_KEY, activoDao.isUnidadAlquilable(Long.parseLong(idActivo)));
+		} catch (Exception e) {
+			logger.error("error en activoController", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put(RESPONSE_ERROR_KEY, e.getMessage());
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
 }

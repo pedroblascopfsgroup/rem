@@ -4971,6 +4971,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				
 				ActivoCalificacionNegativa activoCalificacionNegativa = new ActivoCalificacionNegativa();
 //				dto.getNumeroActivo()
+				//activoCalificacionNegativa.getMotivoCalificacionNegativa().getCodigo()BORRAR
 				if (true) {
 					Activo activo = genericDao.get(Activo.class, genericDao.createFilter(FilterType.EQUALS, "numActivo",Long.valueOf("62597")));
 					activoCalificacionNegativa.setActivo(activo);
@@ -5006,6 +5007,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				activoCalificacionNegativa.setCalificacionNegativa(calificacionNegativa);
 				
 				genericDao.save(ActivoCalificacionNegativa.class, activoCalificacionNegativa);
+				
+				
 				return true;
 			}
 			

@@ -442,6 +442,14 @@ Ext.define('HreRem.model.ActivoDatosRegistrales', {
     			name: 'responsableSubsanar'
     		},
     		{
+    			name: 'puedeEditarCalificacionNegativa',
+    			type: 'boolean'
+    		},
+    		{
+    			name: 'isCalificacionNegativaEnabled',
+    			type: 'boolean'
+    		},
+    		{
     			name: 'fechaSubsanacion',
     			type:'date',
     			dateWriteFormat: 'Y-m.d',

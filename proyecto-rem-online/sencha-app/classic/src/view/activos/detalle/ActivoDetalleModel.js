@@ -623,7 +623,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			 }
 			 return false;
 		 }
-
 	},
 	
     stores: {

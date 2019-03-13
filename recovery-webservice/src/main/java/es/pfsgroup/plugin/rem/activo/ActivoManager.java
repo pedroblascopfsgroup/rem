@@ -4938,8 +4938,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				
 				String codigoEstadoMotivoCalificacionNegativa = dto.getEstadoMotivoCalificacionNegativa();		
 				if (!Checks.esNulo(codigoEstadoMotivoCalificacionNegativa)) {
-					beanUtilNotNull.copyProperty(activoCalificacionNegativa, "estadoMotivoCalificacioNegativa",
-							genericDao.get(DDEstadoMotivoCalificacionNegativa.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigoEstadoMotivoCalificacionNegativa)));
+					//beanUtilNotNull.copyProperty(activoCalificacionNegativa, "estadoMotivoCalificacioNegativa",genericDao.get(DDEstadoMotivoCalificacionNegativa.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigoEstadoMotivoCalificacionNegativa)));
+					activoCalificacionNegativa.setEstadoMotivoCalificacionNegativa(genericDao.get(DDEstadoMotivoCalificacionNegativa.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigoEstadoMotivoCalificacionNegativa)));
 				}
 				
 				String codigoResponsableSubsanar = dto.getResponsableSubsanar();

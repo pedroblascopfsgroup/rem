@@ -8524,7 +8524,12 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			if(expediente.getOferta().getTipoOferta().getCodigo().equals(codigoVenta)) {
 				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "tipoDocumentoExpediente.codigo", valorCombo);
 				listaDDSubtipoDocExp  = genericDao.getList(DDSubtipoDocumentoExpediente.class, filtro);
-				listDtoTipoDocExpediente = generateListSubtipoExpediente(listaDDSubtipoDocExp);
+				if(DDSubcartera.CODIGO_AGORA_FINANCIERO.equals(expediente.getOferta().getActivoPrincipal().getSubcartera().getCodigo())|| 
+					DDSubcartera.CODIGO_AGORA_INMOBILIARIO.equals(expediente.getOferta().getActivoPrincipal().getSubcartera().getCodigo())) {
+					listDtoTipoDocExpediente = generateListSubtipoExpediente(listaDDSubtipoDocExp);
+				} else {
+					listDtoTipoDocExpediente = generateListSubtipoExpedienteNoAgora(listaDDSubtipoDocExp);
+				}
 			} else {
 				if(expediente.getOferta().getTipoOferta().getCodigo().equals(codigoAlquiler)) {
 					DDSubtipoDocumentoExpediente codRenovacionContrato =
@@ -8633,5 +8638,25 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			return null;
 		}
 	}
+	
+	private List<DtoTipoDocExpedientes> generateListSubtipoExpedienteNoAgora(List <DDSubtipoDocumentoExpediente> listadoDDSubtipoDoc) {
 
+		List <DtoTipoDocExpedientes> listDtoTipoDocExpediente = new ArrayList <DtoTipoDocExpedientes>();
+
+		for (DDSubtipoDocumentoExpediente tipDocExp : listadoDDSubtipoDoc) {
+			DtoTipoDocExpedientes aux= new DtoTipoDocExpedientes();
+			aux.setId(tipDocExp.getId());
+			aux.setCodigo(tipDocExp.getCodigo());
+			aux.setDescripcion(tipDocExp.getDescripcion());
+			aux.setDescripcionLarga(tipDocExp.getDescripcionLarga());
+			aux.setVinculable(tipDocExp.getVinculable());
+			if(!DDSubtipoDocumentoExpediente.CODIGO_CONTRATO_ARRAS_PENITENCIALES.equals(aux.getCodigo())) {
+				if(!DDSubtipoDocumentoExpediente.CODIGO_DEPOSITO_DESPUBLICACION_ACTIVO.equals(aux.getCodigo())){
+				listDtoTipoDocExpediente.add(aux);
+				}
+			}
+		}
+
+		return listDtoTipoDocExpediente;
+	}
 }

@@ -4930,6 +4930,16 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			if (!Checks.esNulo(dto)) {
 				ActivoCalificacionNegativa activoCalificacionNegativa = genericDao.get(ActivoCalificacionNegativa.class, genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(dto.getIdMotivo())));
 				
+				//comprobamos el motivo
+				List<ActivoCalificacionNegativa> activoCalificacionNegativaList = genericDao.getList(ActivoCalificacionNegativa.class, genericDao.createFilter(FilterType.EQUALS, "activo.id",activoCalificacionNegativa.getActivo().getId()));
+				if(!Checks.estaVacio(activoCalificacionNegativaList)){
+					for (ActivoCalificacionNegativa actCal : activoCalificacionNegativaList) { 
+						if(dto.getMotivoCalificacionNegativa().equalsIgnoreCase(actCal.getMotivoCalificacionNegativa().getCodigo())){
+							throw new JsonViewerException(messageServices.getMessage(AVISO_MENSAJE_MOTIVO_CALIFICACION));
+						}
+					}
+				}
+				
 				String codigoMotivoCalificacionNegativa = dto.getMotivoCalificacionNegativa();
 				if (!Checks.esNulo(codigoMotivoCalificacionNegativa)) {
 					beanUtilNotNull.copyProperty(activoCalificacionNegativa, "motivoCalificacionNegativa",
@@ -4959,6 +4969,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			
 		} catch (Exception ex) {
 			logger.error("Error en updateCalificacionNegativa", ex);
+			throw new JsonViewerException(ex.getMessage());
 		}
 		
 		return false;

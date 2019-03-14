@@ -5049,7 +5049,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				
 				if(DDEstadoMotivoCalificacionNegativa.DD_SUBSANADO_CODIGO.equals(activoCalificacionNegativa.getEstadoMotivoCalificacionNegativa().getCodigo())) {
 					if (!Checks.esNulo(dto.getFechaSubsanacion())) {
-						activoCalificacionNegativa.setFechaSubsanacion(dto.getFechaSubsanacion());
+						beanUtilNotNull.copyProperty(activoCalificacionNegativa, "fechaSubsanacion", dto.getFechaSubsanacion());
 					}
 				}
 				

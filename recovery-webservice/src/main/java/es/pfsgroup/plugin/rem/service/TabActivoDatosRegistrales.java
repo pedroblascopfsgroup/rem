@@ -14,11 +14,14 @@ import org.springframework.stereotype.Component;
 
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.procesosJudiciales.model.DDFavorable;
 import es.capgemini.pfs.procesosJudiciales.model.TipoJuzgado;
 import es.capgemini.pfs.procesosJudiciales.model.TipoPlaza;
+import es.capgemini.pfs.users.domain.Perfil;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
@@ -85,7 +88,15 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 	private ActivoApi activoApi;
 	
 	@Autowired
+	private UsuarioApi usuarioApi;
+	
+	@Autowired
 	private ActivoDao activoDao;
+	
+	private final String PERFIL_HAYASUPER = "HAYASUPER";
+	private final String PERFIL_HAYAGESTADM = "HAYAGESTADM";
+	private final String PERFIL_HAYASUPADM = "HAYASUPADM";
+	private final String PERFIL_GESTOADM = "GESTOADM";
 	
 	protected static final Log logger = LogFactory.getLog(TabActivoDatosRegistrales.class);
 	
@@ -232,7 +243,7 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 			if (!Checks.estaVacio(motivosVigentes) && motivosVigentes.get(0).getCalificacionNegativa() != null) {
 				BeanUtils.copyProperty(activoDto, "calificacionNegativa", motivosVigentes.get(0).getCalificacionNegativa().getCodigo());
 				
-				if (!Checks.esNulo(motivosVigentes.get(0).getEstadoMotivoCalificacionNegativa().getCodigo()) && !Checks.esNulo(motivosVigentes.get(0).getResponsableSubsanar().getCodigo())) {
+				if (!Checks.esNulo(motivosVigentes.get(0).getEstadoMotivoCalificacionNegativa().getCodigo()) && !Checks.esNulo(motivosVigentes.get(0).getResponsableSubsanar()) && !Checks.esNulo(motivosVigentes.get(0).getResponsableSubsanar().getCodigo())) {
 					BeanUtils.copyProperty(activoDto, "estadoMotivoCalificacionNegativa", motivosVigentes.get(0).getEstadoMotivoCalificacionNegativa().getCodigo());
 					BeanUtils.copyProperty(activoDto, "responsableSubsanar", motivosVigentes.get(0).getResponsableSubsanar().getCodigo());
 				}else {
@@ -275,7 +286,23 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 
 		activoDto.setPuedeEditarCalificacionNegativa(campoMarcado);
 		activoDto.setIsCalificacionNegativaEnabled(puedeEditar);
-		if(!Checks.esNulo(activo.getTitulo()) && !Checks.esNulo(activo.getTitulo().getEstado()) && !DDEstadoTitulo.ESTADO_INSCRITO.equals(activo.getTitulo().getEstado().getCodigo())){
+		Usuario usuario = usuarioApi.getUsuarioLogado();
+		List<Perfil> perfiles = usuario.getPerfiles();
+		Boolean tienePerfil = false;
+		for (Perfil perfil : perfiles) {
+			if(PERFIL_HAYASUPER.equalsIgnoreCase(perfil.getCodigo())
+					|| PERFIL_GESTOADM.equalsIgnoreCase(perfil.getCodigo())
+					|| PERFIL_HAYAGESTADM.equalsIgnoreCase(perfil.getCodigo())
+					|| PERFIL_HAYASUPADM.equalsIgnoreCase(perfil.getCodigo())){
+				tienePerfil = true;
+				break;
+			}
+		}
+		
+		if(!Checks.esNulo(activo.getTitulo()) 
+				&& !Checks.esNulo(activo.getTitulo().getEstado()) 
+				&& !DDEstadoTitulo.ESTADO_INSCRITO.equals(activo.getTitulo().getEstado().getCodigo())
+				&& tienePerfil){
 			activoDto.setNoEstaInscrito(true);
 		}else{
 			activoDto.setNoEstaInscrito(false);

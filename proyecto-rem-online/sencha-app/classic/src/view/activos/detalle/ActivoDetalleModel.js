@@ -563,21 +563,28 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 
 		},
 		onInitChangePrecioWebAlquiler: function (get){
-			var noMostrarPrecioVenta = get('datospublicacionactivo.noMostrarPrecioVenta');
 			var noMostrarPrecioAlquiler = get('datospublicacionactivo.noMostrarPrecioAlquiler');
 			var precioWebVentaAlquiler = get('datospublicacionactivo.precioWebAlquiler');
-			var precioWebVenta  = get('datospublicacionactivo.precioWebVenta');
-				if (noMostrarPrecioAlquiler || noMostrarPrecioVenta)
-					return 0;
+			
+				if (noMostrarPrecioAlquiler)
+					return 0; 
 				else{
 					if (precioWebVentaAlquiler != undefined) 
 						return precioWebVentaAlquiler
-					else if (precioWebVenta != undefined) 
+					}
+				
+		},
+		onInitChangePrecioWebVenta: function (get){
+			var noMostrarPrecioVenta = get('datospublicacionactivo.noMostrarPrecioVenta');
+			var precioWebVenta  = get('datospublicacionactivo.precioWebVenta');
+			
+				if (noMostrarPrecioVenta)
+					return 0; 
+				else{
+					if (precioWebVenta != undefined) 
 						return precioWebVenta
-						
 				}
-			
-			
+				
 		},
 		esVisibleTipoPublicacionAlquiler: function(get){
 			var estadoAlquiler = get('datospublicacionactivo.estadoPublicacionAlquiler');

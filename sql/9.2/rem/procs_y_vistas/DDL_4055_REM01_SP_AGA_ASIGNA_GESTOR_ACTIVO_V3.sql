@@ -15,11 +15,12 @@
 --##		0.3 Modificación para que los grestores de la tabla ACT_GES_DIST_GESTORES que no tengan cartera también los asigne al activo
 --##		0.4 Añadidos gestor de reserva para Cajamar - REMVIP-2129
 --##		0.5 Añadidos los nuevos gestores comerciales de alquiler (gestor y supervisor) - HREOS-5064
---##        0.6 HREOS-5387 Daniel Algaba: añadimos el Supervisor comercial Backoffice Inmobiliario
---##		0.7 HREOS-5049 Carlos López: Optimización
---##		0.8 HREOS-5160 Mariam Lliso: modificada la asignación de gestores
+--##		0.6 HREOS-5049 Carlos López: Optimización
+--##		0.7 HREOS-5160 Mariam Lliso: modificada la asignación de gestores
+--##        0.8 HREOS-5387 Daniel Algaba: añadimos el Supervisor comercial Backoffice Inmobiliario
 --##		0.9 HREOS-5239 Daniel Algaba: corrección multicartera CERBERUS
 --##        1.0 HREOS-5443 Daniel Algaba: corrección para que no filtre por la TMP_GEST_CONT en activos con subcarteras
+--##		1.1 HREOS-5838 Guillermo Llidó : se añaden las subcarteras de Agora para que pueda asignar gestores
 --##########################################
 --*/
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE

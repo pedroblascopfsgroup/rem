@@ -45,6 +45,10 @@ public class GenericController extends ParadiseJsonController{
 
 	@Autowired
 	private LogTrustAcceso trustMe;
+	
+	private static final String DICCIONARIO_TIPO_DOCUMENTO = "tiposDocumento";
+	
+	private static final String DICCIONARIO_TIPO_DOCUMENTO_ENTIDAD_ACTIVO = "activo";
 
 
 	/**
@@ -93,16 +97,25 @@ public class GenericController extends ParadiseJsonController{
 	}
 
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getDiccionarioTiposDocumento(String diccionario) {	
+	public ModelAndView getDiccionarioTiposDocumento(String diccionario, String entidad) {	
 
-		if ("tiposDocumento".equals(diccionario)) {
+		if (GenericController.DICCIONARIO_TIPO_DOCUMENTO.equals(diccionario)) {
 			List<Dictionary> result = adapter.getDiccionario(diccionario);
 
 			List<DDTipoDocumentoActivoDto> out = new ArrayList<DDTipoDocumentoActivoDto>();
 
+			//si es un ñapa... lo se. Si el flag visible es 1, son docs del activo, sino, son del trabajo
 			for (Dictionary ddTipoDocumentoActivo : result) {
-				if(((DDTipoDocumentoActivo)ddTipoDocumentoActivo).getVisible())
-					out.add(new DDTipoDocumentoActivoDto((DDTipoDocumentoActivo) ddTipoDocumentoActivo));
+				if(entidad == null || entidad.equals(GenericController.DICCIONARIO_TIPO_DOCUMENTO_ENTIDAD_ACTIVO)){
+					if(((DDTipoDocumentoActivo)ddTipoDocumentoActivo).getVisible()){
+						out.add(new DDTipoDocumentoActivoDto((DDTipoDocumentoActivo) ddTipoDocumentoActivo));
+					}						
+				}else{
+					if(!((DDTipoDocumentoActivo)ddTipoDocumentoActivo).getVisible()){
+						out.add(new DDTipoDocumentoActivoDto((DDTipoDocumentoActivo) ddTipoDocumentoActivo));
+					}						
+				}
+				
 			}
 
 			return createModelAndViewJson(new ModelMap("data", out));	
@@ -380,6 +393,11 @@ public class GenericController extends ParadiseJsonController{
 	public ModelAndView getTodosComboTipoAgrupacion()
 	{
 		return createModelAndViewJson(new ModelMap("data", genericApi.getTodosComboTipoAgrupacion()));
+	}
+	
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getComboTipoTituloActivoTPA(Long numActivo){
+		return createModelAndViewJson(new ModelMap("data", genericApi.getComboTipoTituloActivoTPA(numActivo)));	
 	}
 
 }

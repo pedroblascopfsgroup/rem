@@ -429,9 +429,9 @@ Ext.define('HreRem.model.ActivoDatosRegistrales', {
     		{
     			name:'calificacionNegativa'
     		},
-    		{
+    		/*{
     			name:'motivoCalificacionNegativa'
-    		},
+    		},*/
     		{
     			name:'descripcionCalificacionNegativa'
     		},

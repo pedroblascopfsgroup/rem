@@ -1491,18 +1491,20 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		String cartera=null;
 		String query;
 		
-		if(!Checks.esNulo(numActivo) || !Checks.esNulo(numAgrupacion)){
-			query= ("SELECT DISTINCT(act.DD_CRA_ID) "
-				+ "		 FROM ACT_AGR_AGRUPACION agr "
-				+ "			INNER JOIN ACT_AGA_AGRUPACION_ACTIVO aga on agr.AGR_ID = aga.AGR_ID "
-				+ "			INNER JOIN ACT_ACTIVO act on aga.ACT_ID = act.ACT_ID ");
-			
-			if(!Checks.esNulo(numActivo)){
-				query= query.concat(" WHERE act.ACT_NUM_ACTIVO_REM ="+numActivo+" ");
-			}
-			else if(!Checks.esNulo(numAgrupacion)){
-				query= query.concat(" WHERE agr.AGR_NUM_AGRUP_REM ="+numAgrupacion+" ");
-			}
+		
+		
+		
+		
+		if(!Checks.esNulo(numActivo)){
+			query= "SELECT DISTINCT(act.DD_CRA_ID) "
+				+ "		 FROM ACT_ACTIVO act ";
+			query= query.concat(" WHERE act.ACT_NUM_ACTIVO ="+numActivo+" ");
+			cartera= rawDao.getExecuteSQL(query);
+		}		
+		else if(!Checks.esNulo(numAgrupacion)){
+			query= "SELECT DISTINCT(act.DD_CRA_ID) "
+				+ "		 FROM ACT_AGR_AGRUPACION agr ";
+			query= query.concat(" WHERE agr.AGR_NUM_AGRUP_REM ="+numAgrupacion+" ");
 			cartera= rawDao.getExecuteSQL(query);
 		}
 		

@@ -25,10 +25,11 @@ public class DtoActivoPatrimonioContrato extends DtoTabActivo {
 	private String inquilino;
 	private Long deudaPendiente;
 	private Long recibosPendientes;
-	private Long cuota;
+	private Double cuota;
 	private Date ultimoReciboPagado;
 	private Date ultimoReciboAdeudado;
 	private Boolean multiplesResultados;
+	private Boolean tieneRegistro;
 	private String numeroActivoHaya;
 	private Long ofertaREM;
 	private Long idExpediente;
@@ -100,10 +101,10 @@ public class DtoActivoPatrimonioContrato extends DtoTabActivo {
 	public void setRecibosPendientes(Long recibosPendientes) {
 		this.recibosPendientes = recibosPendientes;
 	}
-	public Long getCuota() {
+	public Double getCuota() {
 		return cuota;
 	}
-	public void setCuota(Long cuota) {
+	public void setCuota(Double cuota) {
 		this.cuota = cuota;
 	}
 	public Date getUltimoReciboPagado() {
@@ -142,5 +143,10 @@ public class DtoActivoPatrimonioContrato extends DtoTabActivo {
 	public void setIdExpediente(Long idExpediente) {
 		this.idExpediente = idExpediente;
 	}
-	
+	public Boolean getTieneRegistro() {
+		return tieneRegistro;
+	}
+	public void setTieneRegistro(Boolean tieneRegistro) {
+		this.tieneRegistro = tieneRegistro;
+	}	
 }

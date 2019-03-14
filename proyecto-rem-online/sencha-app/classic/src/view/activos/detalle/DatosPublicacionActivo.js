@@ -82,7 +82,7 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 												xtype: 'currencyfieldbase',
 												fieldLabel:  HreRem.i18n('fieldlabel.datos.publicacion.estados.precio.web'),
 												reference: 'precioWebVenta',
-												bind: '{datospublicacionactivo.precioWebVenta}',
+												bind: '{onInitChangePrecioWebVenta}',
 												readOnly: true
 											},
 											{

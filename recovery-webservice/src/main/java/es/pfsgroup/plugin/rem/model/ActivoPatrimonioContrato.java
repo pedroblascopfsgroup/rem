@@ -53,7 +53,7 @@ public class ActivoPatrimonioContrato implements Serializable, Auditable {
 	private Date fechaCreacion;
 	
 	@Column(name = "DCA_CUOTA")
-	private Long cuota;
+	private Double cuota;
 
 	@Column(name = "DCA_NOM_PRINEX")
 	private String nomPrinex;
@@ -120,11 +120,11 @@ public class ActivoPatrimonioContrato implements Serializable, Auditable {
 		this.fechaCreacion = fechaCreacion;
 	}
 
-	public Long getCuota() {
+	public Double getCuota() {
 		return cuota;
 	}
 
-	public void setCuota(Long cuota) {
+	public void setCuota(Double cuota) {
 		this.cuota = cuota;
 	}
 

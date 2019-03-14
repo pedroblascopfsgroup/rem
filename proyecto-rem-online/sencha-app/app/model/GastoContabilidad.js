@@ -38,12 +38,15 @@ Ext.define('HreRem.model.GastoContabilidad', {
    			name: 'cuentaContableEspecial'
    		},
     	{
-    		name: 'fechaContabilizacion',
+    		name: 'fechaContabilizacion', 
     		type : 'date',
 			dateFormat: 'c'
     	},
     	{
     		name: 'contabilizadoPor'
+    	},
+    	{
+    		name: 'cartera'
     	}
     ],
     

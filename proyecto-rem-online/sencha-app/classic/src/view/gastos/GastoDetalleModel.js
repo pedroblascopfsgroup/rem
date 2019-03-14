@@ -242,9 +242,35 @@ Ext.define('HreRem.view.gastos.GastoDetalleModel', {
 	     	var tipoOperacionDescripcion = get('gasto.tipoOperacionDescripcion');
 	     	return Ext.isEmpty(tipoOperacionDescripcion) ? "" : " - " + tipoOperacionDescripcion;
 	     	
-	     }
+	     },
 	     
-		
+	     marcaObligatorioCuenta: function(get){
+	    	 
+	    	 if(this.getData().gasto != null){
+	    		 var cartera = this.getData().gasto.get('cartera');
+		    	 
+		    	 if(cartera == CONST.CARTERA['BANKIA'] || cartera == CONST.CARTERA['LIBERBANK']){
+		    		 return HreRem.i18n('fieldlabel.gasto.contabilidad.cuenta.contable');
+		    	 }else{
+		    		 return HreRem.i18n('fieldlabel.gasto.contabilidad.cuenta.contable') + ' *';
+		    	 }
+	    	 }
+	    	 
+	     },
+	     
+	     marcaObligatorioPartida: function(get){
+	    	 
+	    	 if(this.getData().gasto != null){
+	    		 var cartera = this.getData().gasto.get('cartera');
+		    	 
+		    	 if(cartera == CONST.CARTERA['LIBERBANK']){
+		    		 return HreRem.i18n('fieldlabel.gasto.contabilidad.partidaPresupuestaria');
+		    	 }else{
+		    		 return HreRem.i18n('fieldlabel.gasto.contabilidad.partidaPresupuestaria') + ' *';
+		    	 } 
+	    	 }
+	    	 
+	     }
 	 },
 
 

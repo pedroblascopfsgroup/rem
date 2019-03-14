@@ -61,12 +61,12 @@ public class CheckReglaCambioEstado {
 
 	private void verificaCambio(String estadoInicial, boolean coniva, String matricula, String estadoFinal) {
 		assertEquals("El cambio de estado no es el esperado, para estado=\"" + estadoInicial + "\", matricula=\""
-				+ matricula + "\"", estadoFinal, manager.checkReglaCambioEstado(estadoInicial, coniva, matricula));
+				+ matricula + "\"", estadoFinal, manager.checkReglaCambioEstado(estadoInicial, coniva, matricula, null));
 	}
 	
 	private void verificaSinCambio(String estadoInicial, boolean coniva, String matricula, String motivo) {
 		assertNull("Estado=\"" + estadoInicial + "\", matricula=\""
-				+ matricula + "\": " + motivo, manager.checkReglaCambioEstado(estadoInicial, coniva, matricula));
+				+ matricula + "\": " + motivo, manager.checkReglaCambioEstado(estadoInicial, coniva, matricula, null));
 	}
 
 }

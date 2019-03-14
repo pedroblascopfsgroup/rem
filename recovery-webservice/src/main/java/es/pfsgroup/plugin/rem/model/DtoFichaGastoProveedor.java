@@ -63,6 +63,7 @@ public class DtoFichaGastoProveedor extends WebDto {
    	private Double importeTotal;
    	private String nombreGestoria;
    	private String codigoImpuestoIndirecto;
+   	private String cartera;
 	
 	public Long getIdGasto() {
 		return idGasto;
@@ -318,6 +319,12 @@ public class DtoFichaGastoProveedor extends WebDto {
 	}
 	public void setCodigoImpuestoIndirecto(String codigoImpuestoIndirecto) {
 		this.codigoImpuestoIndirecto = codigoImpuestoIndirecto;
+	}
+	public String getCartera() {
+		return cartera;
+	}
+	public void setCartera(String cartera) {
+		this.cartera = cartera;
 	}
 	
 }

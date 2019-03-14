@@ -95,7 +95,9 @@ public class GestorDocumentalMaestroManager extends BaseWS implements GestorDocu
 				
 				
 			}else {
-				return null;
+				PersonaOutputDto outputSimulacion = new PersonaOutputDto();
+				outputSimulacion.setResultDescription("simulacion");;
+				return outputSimulacion;
 			}
 		} catch (MalformedURLException e) {
 			logger.error("Error en el método al invocarServicio", e);

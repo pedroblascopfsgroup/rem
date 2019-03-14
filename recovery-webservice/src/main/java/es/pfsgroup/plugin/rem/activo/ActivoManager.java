@@ -4942,9 +4942,11 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				//comprobamos el motivo
 				List<ActivoCalificacionNegativa> activoCalificacionNegativaList = genericDao.getList(ActivoCalificacionNegativa.class, genericDao.createFilter(FilterType.EQUALS, "activo.id",activoCalificacionNegativa.getActivo().getId()));
 				if(!Checks.estaVacio(activoCalificacionNegativaList)){
-					for (ActivoCalificacionNegativa actCal : activoCalificacionNegativaList) {
-						if(dto.getMotivoCalificacionNegativa().equalsIgnoreCase(actCal.getMotivoCalificacionNegativa().getCodigo())){
-							throw new JsonViewerException(messageServices.getMessage(AVISO_MENSAJE_MOTIVO_CALIFICACION));
+					if(!Checks.esNulo(dto.getMotivoCalificacionNegativa())){
+						for (ActivoCalificacionNegativa actCal : activoCalificacionNegativaList) {
+							if(dto.getMotivoCalificacionNegativa().equalsIgnoreCase(actCal.getMotivoCalificacionNegativa().getCodigo())){
+								throw new JsonViewerException(messageServices.getMessage(AVISO_MENSAJE_MOTIVO_CALIFICACION));
+							}
 						}
 					}
 				}

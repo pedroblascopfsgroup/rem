@@ -78,7 +78,7 @@ public class TabActivoPatrimonioContrato implements TabActivoService {
 								if(Checks.esNulo(aux)) {
 									aux = expComercial;
 								} else {
-									if(aux.getFechaVenta().before(expComercial.getFechaVenta())) { //Nos quedamos con el más reciente
+									if(!Checks.esNulo(aux.getFechaVenta()) && aux.getFechaVenta().before(expComercial.getFechaVenta())) { //Nos quedamos con el más reciente
 										aux = expComercial;
 									}
 								}
@@ -86,8 +86,10 @@ public class TabActivoPatrimonioContrato implements TabActivoService {
 						}
 					}
 				}
-				activoPatrimonioContratoDto.setOfertaREM(aux.getOferta().getNumOferta());
-				activoPatrimonioContratoDto.setIdExpediente(aux.getId());
+				if(!Checks.esNulo(aux)) {
+					activoPatrimonioContratoDto.setOfertaREM(aux.getOferta().getNumOferta());
+					activoPatrimonioContratoDto.setIdExpediente(aux.getId());
+				}
 			}
 		}
 		

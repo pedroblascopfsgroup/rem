@@ -652,7 +652,7 @@ Ext.define('HreRem.ux.util.Constants', {
 	},
 	COMBO_MOTIVO_CALIFICACION_NEGATIVA:{
  		OTROS: 'OTROS',
- 		COD_OTROS: '21',
+ 		COD_OTROS: '21'
  	},
  	COMBO_ESTADO_CALIFICACION_NEGATIVA:{
  		PENDIENTE: 'Pendiente',

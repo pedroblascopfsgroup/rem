@@ -132,20 +132,18 @@ public class ActivoAvisadorManager implements ActivoAvisadorApi {
 		}
 		
 		// Aviso 3 / 4: Situación posesoria OCUPADO + Con o sín título
-		if (activo.getSituacionPosesoria() != null && !Checks.esNulo(activo.getSituacionPosesoria().getOcupado())) {
-			if (activo.getSituacionPosesoria().getOcupado() == 1) {
-				if (DDTipoTituloActivoTPA.tipoTituloSi.equals(activo.getSituacionPosesoria().getConTitulo().getCodigo())) {
-
-					DtoAviso dtoAviso = new DtoAviso();
-					dtoAviso.setDescripcion("Situación posesoria ocupado con título");
-					dtoAviso.setId(String.valueOf(id));
-					listaAvisos.add(dtoAviso);
-				} else {
-					DtoAviso dtoAviso = new DtoAviso();
-					dtoAviso.setDescripcion("Situación posesoria ocupado sin título");
-					dtoAviso.setId(String.valueOf(id));
-					listaAvisos.add(dtoAviso);
-				}
+		if (activo.getSituacionPosesoria() != null && !Checks.esNulo(activo.getSituacionPosesoria().getOcupado())
+				&& activo.getSituacionPosesoria().getOcupado() == 1 && !Checks.esNulo(activo.getSituacionPosesoria().getConTitulo())) {
+			if (DDTipoTituloActivoTPA.tipoTituloSi.equals(activo.getSituacionPosesoria().getConTitulo().getCodigo())) {
+				DtoAviso dtoAviso = new DtoAviso();
+				dtoAviso.setDescripcion("Situación posesoria ocupado con título");
+				dtoAviso.setId(String.valueOf(id));
+				listaAvisos.add(dtoAviso);
+			} else {
+				DtoAviso dtoAviso = new DtoAviso();
+				dtoAviso.setDescripcion("Situación posesoria ocupado sin título");
+				dtoAviso.setId(String.valueOf(id));
+				listaAvisos.add(dtoAviso);
 			}
 		}
 		

@@ -12,6 +12,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -2280,14 +2281,14 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					.SITUACION_POSESORIA_LIBRE);
 					condicionesActivo.setSituacionPosesoria(situacionPosesoriaLibre);
 
-				} else if (activo.getSituacionPosesoria().getOcupado() != null && activo.getSituacionPosesoria().getOcupado().equals(1) && activo.getSituacionPosesoria()
-				.getConTitulo() != null && activo.getSituacionPosesoria().getConTitulo().getCodigo().equals(DDTipoTituloActivoTPA.tipoTituloSi)) {
+				} else if (activo.getSituacionPosesoria().getOcupado() != null && activo.getSituacionPosesoria().getOcupado().equals(1) && !Checks.esNulo(activo.getSituacionPosesoria()
+				.getConTitulo()) && activo.getSituacionPosesoria().getConTitulo().getCodigo().equals(DDTipoTituloActivoTPA.tipoTituloSi)) {
 					DDSituacionesPosesoria situacionPosesoriaOcupadoTitulo = (DDSituacionesPosesoria) utilDiccionarioApi.dameValorDiccionarioByCod(DDSituacionesPosesoria.class,
 					DDSituacionesPosesoria.SITUACION_POSESORIA_OCUPADO_CON_TITULO);
 					condicionesActivo.setSituacionPosesoria(situacionPosesoriaOcupadoTitulo);
 
 				} else if (activo.getSituacionPosesoria().getOcupado() != null && activo.getSituacionPosesoria().getOcupado().equals(1) && activo.getSituacionPosesoria()
-				.getConTitulo() != null && (activo.getSituacionPosesoria().getConTitulo().equals(DDTipoTituloActivoTPA.tipoTituloNo) || activo.getSituacionPosesoria().getConTitulo().equals(DDTipoTituloActivoTPA.tipoTituloNoConIndicios))) {
+				.getConTitulo() != null && (DDTipoTituloActivoTPA.tipoTituloNo.equals(activo.getSituacionPosesoria().getConTitulo().getCodigo()) || activo.getSituacionPosesoria().getConTitulo().equals(DDTipoTituloActivoTPA.tipoTituloNoConIndicios))) {
 					DDSituacionesPosesoria situacionPosesoriaOcupadoSinTitulo = (DDSituacionesPosesoria) utilDiccionarioApi.dameValorDiccionarioByCod(DDSituacionesPosesoria.class,
 					DDSituacionesPosesoria.SITUACION_POSESORIA_OCUPADO_SIN_TITULO);
 					condicionesActivo.setSituacionPosesoria(situacionPosesoriaOcupadoSinTitulo);
@@ -2946,33 +2947,35 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	 * @param resolucionDto: objeto dto al que rellenar con los datos de las tareas.
 	 */
 	private void rellenarDatosVentaFormalizacion(Formalizacion formalizacion, DtoFormalizacionResolucion resolucionDto) {
-		List<ActivoTramite> listaTramites = tramiteDao.getTramitesByTipoAndTrabajo(formalizacion.getExpediente().getTrabajo().getId(), ActivoTramiteApi.CODIGO_TRAMITE_COMERCIAL_VENTA);
-
-		if (!Checks.estaVacio(listaTramites)) {
-			List<TareaExterna> listaTareas = activoTareaExternaApi.getTareasByIdTramite(listaTramites.get(0).getId());
-			TareaExterna tex = null;
-
-			for (TareaExterna tarea : listaTareas) {
-				if (tarea.getTareaProcedimiento() != null && tarea.getTareaProcedimiento().getCodigo().equals("T013_FirmaPropietario")) {
-					tex = tarea;
-					break;
-				}
-			}
-
-			if (!Checks.esNulo(tex)) {
-				SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-
-				try {
-					String fechaFirma = activoTramiteApi.getTareaValorByNombre(tex.getValores(), "fechaFirma");
-					if(!Checks.esNulo(fechaFirma)){
-						resolucionDto.setFechaVenta(df.parse(fechaFirma));
+		if(formalizacion != null && formalizacion.getExpediente() != null && formalizacion.getExpediente().getTrabajo() != null){
+			List<ActivoTramite> listaTramites = tramiteDao.getTramitesByTipoAndTrabajo(formalizacion.getExpediente().getTrabajo().getId(), ActivoTramiteApi.CODIGO_TRAMITE_COMERCIAL_VENTA);
+	
+			if (!Checks.estaVacio(listaTramites)) {
+				List<TareaExterna> listaTareas = activoTareaExternaApi.getTareasByIdTramite(listaTramites.get(0).getId());
+				TareaExterna tex = null;
+	
+				for (TareaExterna tarea : listaTareas) {
+					if (tarea.getTareaProcedimiento() != null && tarea.getTareaProcedimiento().getCodigo().equals("T013_FirmaPropietario")) {
+						tex = tarea;
+						break;
 					}
-
-				} catch (ParseException e) {
-					logger.error("error en expedienteComercialManager", e);
 				}
-
-				resolucionDto.setNumProtocolo(activoTramiteApi.getTareaValorByNombre(tex.getValores(), "numProtocolo"));
+	
+				if (!Checks.esNulo(tex)) {
+					SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+	
+					try {
+						String fechaFirma = activoTramiteApi.getTareaValorByNombre(tex.getValores(), "fechaFirma");
+						if(!Checks.esNulo(fechaFirma)){
+							resolucionDto.setFechaVenta(df.parse(fechaFirma));
+						}
+	
+					} catch (ParseException e) {
+						logger.error("error en expedienteComercialManager", e);
+					}
+	
+					resolucionDto.setNumProtocolo(activoTramiteApi.getTareaValorByNombre(tex.getValores(), "numProtocolo"));
+				}
 			}
 		}
 	}
@@ -3331,7 +3334,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				if (!Checks.esNulo(dto.getEmail())) {
 					comprador.setEmail(dto.getEmail());
 				}
-
+				
 				Filter filtroExpedienteComercial = genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(dto.getIdExpedienteComercial()));
 				ExpedienteComercial expedienteComercial = genericDao.get(ExpedienteComercial.class, filtroExpedienteComercial);
 
@@ -5748,11 +5751,11 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					&& activo.getSituacionPosesoria().getOcupado().equals(Integer.valueOf(0))) {
 				resultado.setSituacionPosesoriaCodigoInformada("01");
 
-			} else if (activo.getSituacionPosesoria().getOcupado() != null && activo.getSituacionPosesoria().getOcupado().equals(1) && activo.getSituacionPosesoria().getConTitulo() != null &&
+			} else if (!Checks.esNulo(activo.getSituacionPosesoria().getOcupado()) && activo.getSituacionPosesoria().getOcupado().equals(1) && !Checks.esNulo(activo.getSituacionPosesoria().getConTitulo()) &&
 					activo.getSituacionPosesoria().getConTitulo().getCodigo().equals(DDTipoTituloActivoTPA.tipoTituloSi)) {
 				resultado.setSituacionPosesoriaCodigoInformada("02");
 
-			} else if (activo.getSituacionPosesoria().getOcupado() != null && activo.getSituacionPosesoria().getOcupado().equals(1) && activo.getSituacionPosesoria().getConTitulo() != null &&
+			} else if (!Checks.esNulo(activo.getSituacionPosesoria().getOcupado()) && activo.getSituacionPosesoria().getOcupado().equals(1) && !Checks.esNulo(activo.getSituacionPosesoria().getConTitulo()) &&
 					(activo.getSituacionPosesoria().getConTitulo().getCodigo().equals(DDTipoTituloActivoTPA.tipoTituloNo) || activo.getSituacionPosesoria().getConTitulo().getCodigo().equals(DDTipoTituloActivoTPA.tipoTituloNoConIndicios))) {
 				resultado.setSituacionPosesoriaCodigoInformada("03");
 			}
@@ -7662,16 +7665,18 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				for (ExpedienteAvisadorApi avisador : avisadores) {
 					DtoAviso aviso = avisador.getAviso(expediente, usuarioLogado);
 					if (!Checks.esNulo(aviso) && !Checks.esNulo(aviso.getDescripcion())) {
-						if (!disclaimerGencat && expedienteAnulado) {
-							disclaimerGencat = true;
-							avisosFormateados.setDescripcion(avisosFormateados.getDescripcion() + "<div class='div-aviso red'>" + aviso.getDescripcion() + "</div>");
-						} else if (!disclaimerGencat && !expedienteAnulado && expedienteBloqueado) {
-							disclaimerGencat = true;
-							avisosFormateados.setDescripcion(avisosFormateados.getDescripcion() + "<div class='div-aviso red'>" + aviso.getDescripcion() + "</div>");
-						} else if (!disclaimerGencat && !expedienteAnulado && !expedienteBloqueado && expedientePreBloqueado){
-							disclaimerGencat = true;
-							avisosFormateados.setDescripcion(avisosFormateados.getDescripcion() + "<div class='div-aviso red'>" + aviso.getDescripcion() + "</div>");
-						} else if (!aviso.getDescripcion().contains("GENCAT")){
+						if (aviso.getDescripcion().contains("GENCAT") && !disclaimerGencat) {
+							if (expedienteAnulado) {
+								disclaimerGencat = true;
+								avisosFormateados.setDescripcion(avisosFormateados.getDescripcion() + "<div class='div-aviso red'>" + aviso.getDescripcion() + "</div>");
+							} else if (!expedienteAnulado && expedienteBloqueado) {
+								disclaimerGencat = true;
+								avisosFormateados.setDescripcion(avisosFormateados.getDescripcion() + "<div class='div-aviso red'>" + aviso.getDescripcion() + "</div>");
+							} else if (!expedienteAnulado && !expedienteBloqueado && expedientePreBloqueado){
+								disclaimerGencat = true;
+								avisosFormateados.setDescripcion(avisosFormateados.getDescripcion() + "<div class='div-aviso red'>" + aviso.getDescripcion() + "</div>");
+							} 
+						} else if (!aviso.getDescripcion().contains("GENCAT")) {
 							avisosFormateados.setDescripcion(avisosFormateados.getDescripcion() + "<div class='div-aviso red'>" + aviso.getDescripcion() + "</div>");
 						}
 					}

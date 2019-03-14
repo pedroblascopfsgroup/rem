@@ -7792,12 +7792,23 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					stringAux = stringAux + dto.getMunicipio();
 				}
 				dto.setCodPostMunicipio(stringAux);
-				stringAux = "";
 				
-				if(Checks.esNulo(dto.getCalle())) {
+				stringAux = "";
+				if(Checks.esNulo(dto.getTipoVia())) {
 					stringAux="";
+				}else {
+					stringAux = dto.getTipoVia() + " ";
+				}
+				if(Checks.esNulo(dto.getCalle())) {
+					stringAux= stringAux + "";
+				}else{
+					stringAux = stringAux + dto.getCalle() + " ";
+				}
+				if(Checks.esNulo(dto.getNumDomicilio())){
+					stringAux = stringAux + "";
 				}else{
 					stringAux = dto.getCalle() + " ";
+					stringAux = stringAux + dto.getNumDomicilio() + " ";
 				}
 				if(Checks.esNulo(dto.getPiso())){
 					stringAux= stringAux + "";

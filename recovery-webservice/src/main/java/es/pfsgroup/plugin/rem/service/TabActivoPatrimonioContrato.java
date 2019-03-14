@@ -51,7 +51,7 @@ public class TabActivoPatrimonioContrato implements TabActivoService {
 	public DtoActivoPatrimonioContrato getTabData(Activo activo) throws IllegalAccessException, InvocationTargetException {
 		DtoActivoPatrimonioContrato activoPatrimonioContratoDto = new DtoActivoPatrimonioContrato();		
 		List<ActivoPatrimonioContrato> listActivoPatrimonioContrato = activoPatrimonioDao.getActivoPatrimonioContratoByActivo(activo.getId());
-		List<Oferta> listadoOfertas = ofertaApi.getListaOfertasByActivo(activo); //Listado de ofertas del activo
+		List<Oferta> listadoOfertas = ofertaApi.getListaOfertasByActivo(activo);
 		
 		if(!Checks.estaVacio(listActivoPatrimonioContrato)) {
 			ActivoPatrimonioContrato activoPatrimonioContrato = listActivoPatrimonioContrato.get(0);
@@ -62,7 +62,6 @@ public class TabActivoPatrimonioContrato implements TabActivoService {
 				}
 			}	
 			activoPatrimonioContratoDto.setMultiplesResultados(listActivoPatrimonioContrato.size() > 1);
-			activoPatrimonioContratoDto.setTieneRegistro(listActivoPatrimonioContrato.size() >= 1); //Tiene más de un registro
 		}
 		
 		if(!Checks.estaVacio(listadoOfertas)) {
@@ -90,9 +89,10 @@ public class TabActivoPatrimonioContrato implements TabActivoService {
 					activoPatrimonioContratoDto.setOfertaREM(aux.getOferta().getNumOferta());
 					activoPatrimonioContratoDto.setIdExpediente(aux.getId());
 				}
+
 			}
 		}
-		
+				
 		return activoPatrimonioContratoDto;
 	}
 

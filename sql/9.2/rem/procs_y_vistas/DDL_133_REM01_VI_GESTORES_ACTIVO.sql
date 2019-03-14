@@ -1,10 +1,10 @@
 --/*
 --##########################################
 --## AUTOR=Guillermo Llidó Parra
---## FECHA_CREACION=20190306
+--## FECHA_CREACION=20190314
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-5553
+--## INCIDENCIA_LINK=HREOS-5838
 --## PRODUCTO=NO
 --## Finalidad: Crear vista gestores activo
 --##           
@@ -21,6 +21,7 @@
 --##    0.9 Se añade filtro tipo comercializar para Backoffice Inmobiliario
 --##    0.10 Se añade filtro codigo postal para Backoffice Inmobiliario
 --##	0.11 Se modifica la vista entera para añadirle el código de la subcartera
+--##	0.12 Se modifica la vista para que no saque registros nulos
 --##########################################
 --*/
 
@@ -182,9 +183,9 @@ SELECT  act.act_id ,
                     AND dist2.cod_cartera = cra.dd_cra_codigo
                     AND dist2.cod_subcartera = scr.dd_scr_codigo)
             where act.borrado = 0 
-                    AND (dist0.tipo_gestor = ''GBACKOFFICE'' 
-                      OR dist1.tipo_gestor = ''GBACKOFFICE'' 
-                      OR dist2.tipo_gestor = ''GBACKOFFICE'') 
+                    AND (dist0.tipo_gestor = TGE.DD_TGE_CODIGO
+                      OR dist1.tipo_gestor = TGE.DD_TGE_CODIGO 
+                      OR dist2.tipo_gestor = TGE.DD_TGE_CODIGO) 
            UNION ALL
 /*Gestor de grupo - SUPERVISOR COMERCIAL BACKOFFICE LIBERBANK*/
 SELECT  act.act_id, 
@@ -207,8 +208,8 @@ SELECT  act.act_id,
                         AND TO_NUMBER(dist1.cod_cartera) = TO_NUMBER(cra.dd_cra_codigo)
                         AND TO_NUMBER(dist1.cod_subcartera) = TO_NUMBER(scr.dd_scr_codigo))
                 where act.borrado = 0 
-                    AND (dist0.tipo_gestor = ''SBACKOFFICEINMLIBER'' 
-                      OR dist1.tipo_gestor = ''SBACKOFFICEINMLIBER'')
+                    AND (dist0.tipo_gestor = TGE.DD_TGE_CODIGO
+                      OR dist1.tipo_gestor = TGE.DD_TGE_CODIGO)
            UNION ALL
 /*Gestor capa de control*/
            SELECT act.act_id, 
@@ -231,8 +232,8 @@ SELECT  act.act_id,
                         AND dist1.cod_subcartera = dd_scr.dd_scr_codigo 
                         AND dist1.tipo_gestor = TGE.DD_TGE_CODIGO)
            where act.borrado = 0 
-                AND (DIST0.TIPO_GESTOR = ''GCCBANKIA'' 
-                  OR DIST1.TIPO_GESTOR = ''GCCBANKIA'')
+                AND (DIST0.TIPO_GESTOR = TGE.DD_TGE_CODIGO 
+                  OR DIST1.TIPO_GESTOR = TGE.DD_TGE_CODIGO)
            UNION ALL
 /*Gestor Comercial BackOffice Inmobiliario*/
            SELECT act.act_id, 
@@ -249,10 +250,11 @@ SELECT  act.act_id,
                   LEFT JOIN '||V_ESQUEMA||'.dd_tcr_tipo_comercializar dd_tcr ON dd_tcr.dd_tcr_id = act.dd_tcr_id
                   JOIN '||V_ESQUEMA_M||'.DD_PRV_PROVINCIA PRV ON PRV.DD_PRV_ID = BL.DD_PRV_ID 
                   LEFT JOIN '||V_ESQUEMA_M||'.DD_LOC_LOCALIDAD LOC ON LOC.DD_LOC_ID = BL.DD_LOC_ID 
+                  JOIN '||V_ESQUEMA_M||'.DD_TGE_TIPO_GESTOR TGE ON TGE.DD_TGE_CODIGO = ''HAYAGBOINM''
                   LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist0 
                     ON (dist0.cod_cartera = dd_cra.dd_cra_codigo 
                         AND dist0.cod_subcartera IS NULL
-                        AND dist0.tipo_gestor = ''HAYAGBOINM'' 
+                        AND dist0.tipo_gestor = TGE.DD_TGE_CODIGO
                         AND PRV.DD_PRV_CODIGO = dist0.COD_PROVINCIA 
                         AND LOC.DD_LOC_CODIGO = NVL(dist0.COD_MUNICIPIO,LOC.DD_LOC_CODIGO)  
                         AND (dist0.COD_TIPO_COMERZIALZACION IS NULL OR DD_TCR.DD_TCR_CODIGO = NVL(dist0.COD_TIPO_COMERZIALZACION,DD_TCR.DD_TCR_CODIGO))
@@ -260,12 +262,17 @@ SELECT  act.act_id,
                   LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist1 
                     ON (dist1.cod_cartera = dd_cra.dd_cra_codigo 
                         AND dist1.cod_subcartera = dd_scr.dd_scr_codigo 
-                        AND dist1.tipo_gestor = ''HAYAGBOINM'' 
+                        AND dist1.tipo_gestor = TGE.DD_TGE_CODIGO
                         AND PRV.DD_PRV_CODIGO = dist1.COD_PROVINCIA 
                         AND LOC.DD_LOC_CODIGO = NVL(dist1.COD_MUNICIPIO,LOC.DD_LOC_CODIGO)  
                         AND (DIST1.COD_TIPO_COMERZIALZACION IS NULL OR DD_TCR.DD_TCR_CODIGO = NVL(dist1.COD_TIPO_COMERZIALZACION,DD_TCR.DD_TCR_CODIGO))
                         AND (DIST1.COD_POSTAL IS NULL OR BL.BIE_LOC_COD_POST = NVL(DIST1.COD_POSTAL,BL.BIE_LOC_COD_POST)))
            where act.borrado = 0
+<<<<<<< HEAD
+=======
+				and (DIST0.TIPO_GESTOR = TGE.DD_TGE_CODIGO
+                  OR DIST1.TIPO_GESTOR = TGE.DD_TGE_CODIGO)
+>>>>>>> 291b434... HREOS-5838 Se añaden controles de nulos
            UNION ALL
 /*Supervisor Comercial BackOffice Inmobiliario*/
            SELECT act.act_id, 
@@ -282,21 +289,28 @@ SELECT  act.act_id,
 				  JOIN '||V_ESQUEMA||'.dd_tcr_tipo_comercializar dd_tcr ON dd_tcr.dd_tcr_id = act.dd_tcr_id
                   JOIN '||V_ESQUEMA_M||'.DD_PRV_PROVINCIA PRV ON PRV.DD_PRV_ID = BL.DD_PRV_ID
                   LEFT JOIN '||V_ESQUEMA_M||'.DD_LOC_LOCALIDAD LOC ON LOC.DD_LOC_ID = BL.DD_LOC_ID
+                  JOIN '||V_ESQUEMA_M||'.DD_TGE_TIPO_GESTOR TGE ON TGE.DD_TGE_CODIGO = ''HAYASBOINM''
                   LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist0
                         ON (dist0.cod_cartera = dd_cra.dd_cra_codigo  
                             AND dist0.cod_subcartera IS NULL
-                            AND dist0.tipo_gestor = ''HAYASBOINM'' 
+                            AND dist0.tipo_gestor = TGE.DD_TGE_CODIGO
                             AND PRV.DD_PRV_CODIGO = dist0.COD_PROVINCIA 
                             AND LOC.DD_LOC_CODIGO = NVL(dist0.COD_MUNICIPIO,LOC.DD_LOC_CODIGO) 
                             AND (DIST0.COD_TIPO_COMERZIALZACION IS NULL OR DD_TCR.DD_TCR_CODIGO = NVL(dist0.COD_TIPO_COMERZIALZACION,DD_TCR.DD_TCR_CODIGO)))
                   LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist1 
                         ON (dist1.cod_cartera = dd_cra.dd_cra_codigo  
                             AND dist1.cod_subcartera = dd_scr.dd_scr_codigo 
-                            AND dist1.tipo_gestor = ''HAYASBOINM'' 
+                            AND dist1.tipo_gestor = TGE.DD_TGE_CODIGO
                             AND PRV.DD_PRV_CODIGO = dist1.COD_PROVINCIA 
                             AND LOC.DD_LOC_CODIGO = NVL(dist1.COD_MUNICIPIO,LOC.DD_LOC_CODIGO) 
                             AND (DIST1.COD_TIPO_COMERZIALZACION IS NULL OR DD_TCR.DD_TCR_CODIGO = NVL(dist1.COD_TIPO_COMERZIALZACION,DD_TCR.DD_TCR_CODIGO)))          
+<<<<<<< HEAD
            where act.borrado = 0
+=======
+           where act.borrado = 0 
+				and (DIST0.TIPO_GESTOR = TGE.DD_TGE_CODIGO 
+                  OR DIST1.TIPO_GESTOR = TGE.DD_TGE_CODIGO)
+>>>>>>> 291b434... HREOS-5838 Se añaden controles de nulos
            UNION ALL
 /*Gestor del activo*/
 SELECT act.act_id,
@@ -318,6 +332,7 @@ SELECT act.act_id,
        LEFT JOIN '||V_ESQUEMA||'.dd_eac_estado_activo dd_eac ON dd_eac.dd_eac_id = act.dd_eac_id
        JOIN '||V_ESQUEMA||'.dd_cra_cartera dd_cra ON dd_cra.dd_cra_id = act.dd_cra_id
        JOIN '||V_ESQUEMA||'.dd_scr_subcartera dd_scr ON dd_scr.dd_cra_id = dd_cra.dd_cra_id AND dd_scr.dd_scr_id = act.dd_scr_id
+       JOIN '||V_ESQUEMA_M||'.DD_TGE_TIPO_GESTOR TGE ON TGE.DD_TGE_CODIGO = ''GACT''
             LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist0
                 ON (dist0.cod_estado_activo IS NULL
                   AND dist0.cod_cartera = dd_cra.dd_cra_codigo
@@ -325,7 +340,7 @@ SELECT act.act_id,
                     AND dist0.cod_provincia = dd_prov.dd_prv_codigo
                     AND dist0.cod_municipio IS NULL
                     AND dist0.cod_postal IS NULL
-                    AND dist0.tipo_gestor = ''GACT''
+                    AND dist0.tipo_gestor = TGE.DD_TGE_CODIGO
                     ) 
             LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist1
                 ON (dist1.cod_estado_activo IS NULL
@@ -334,7 +349,7 @@ SELECT act.act_id,
                     AND dist1.cod_provincia = dd_prov.dd_prv_codigo
                     AND dist1.cod_municipio IS NULL
                     AND dist1.cod_postal IS NULL
-                    AND dist1.tipo_gestor = ''GACT''
+                    AND dist1.tipo_gestor = TGE.DD_TGE_CODIGO
                     ) 
            left JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist2
            ON (dist2.cod_estado_activo = dd_eac.dd_eac_codigo 
@@ -343,7 +358,7 @@ SELECT act.act_id,
                AND dist2.cod_provincia = dd_prov.dd_prv_codigo
                AND dist2.cod_municipio IS NULL
                AND dist2.cod_postal IS NULL
-               AND dist2.tipo_gestor = ''GACT''
+               AND dist2.tipo_gestor = TGE.DD_TGE_CODIGO
               )
            left JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist3
            ON (dist3.cod_estado_activo = dd_eac.dd_eac_codigo 
@@ -352,7 +367,7 @@ SELECT act.act_id,
                AND dist3.cod_provincia = dd_prov.dd_prv_codigo
                AND dist3.cod_municipio IS NULL
                AND dist3.cod_postal IS NULL
-               AND dist3.tipo_gestor = ''GACT''
+               AND dist3.tipo_gestor = TGE.DD_TGE_CODIGO
               )
            left JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist4
            ON (dist4.cod_estado_activo IS NULL
@@ -361,7 +376,7 @@ SELECT act.act_id,
                AND dist4.cod_provincia = dd_prov.dd_prv_codigo
                AND dist4.cod_municipio = dd_loc.dd_loc_codigo
                AND dist4.cod_postal IS NULL
-               AND dist4.tipo_gestor = ''GACT''
+               AND dist4.tipo_gestor = TGE.DD_TGE_CODIGO
               )
            left JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist5
            ON (dist5.cod_estado_activo IS NULL
@@ -370,7 +385,7 @@ SELECT act.act_id,
                AND dist5.cod_provincia = dd_prov.dd_prv_codigo
                AND dist5.cod_municipio = dd_loc.dd_loc_codigo
                AND dist5.cod_postal IS NULL
-               AND dist5.tipo_gestor = ''GACT''
+               AND dist5.tipo_gestor = TGE.DD_TGE_CODIGO
               )
            left JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist6
            ON (dist6.cod_estado_activo = dd_eac.dd_eac_codigo 
@@ -379,7 +394,7 @@ SELECT act.act_id,
                AND dist6.cod_provincia = dd_prov.dd_prv_codigo
                AND dist6.cod_municipio = dd_loc.dd_loc_codigo
                AND dist6.cod_postal IS NULL
-               AND dist6.tipo_gestor = ''GACT''
+               AND dist6.tipo_gestor = TGE.DD_TGE_CODIGO
               )
               left JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist7
            ON (dist7.cod_estado_activo = dd_eac.dd_eac_codigo 
@@ -388,7 +403,7 @@ SELECT act.act_id,
                AND dist7.cod_provincia = dd_prov.dd_prv_codigo
                AND dist7.cod_municipio = dd_loc.dd_loc_codigo
                AND dist7.cod_postal IS NULL
-               AND dist7.tipo_gestor = ''GACT''
+               AND dist7.tipo_gestor = TGE.DD_TGE_CODIGO
               )
             left JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist8
                ON (dist8.cod_estado_activo = dd_eac.dd_eac_codigo 
@@ -397,7 +412,7 @@ SELECT act.act_id,
                    AND dist8.cod_provincia = dd_prov.dd_prv_codigo 
                    AND dist8.cod_municipio = dd_loc.dd_loc_codigo
                    AND dist8.cod_postal  = loc.BIE_LOC_COD_POST
-                   AND dist8.tipo_gestor = ''GACT''
+                   AND dist8.tipo_gestor = TGE.DD_TGE_CODIGO
                   )
            left JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist9
            ON (dist9.cod_estado_activo = dd_eac.dd_eac_codigo 
@@ -406,9 +421,20 @@ SELECT act.act_id,
                AND dist9.cod_provincia = dd_prov.dd_prv_codigo
                AND dist9.cod_municipio = dd_loc.dd_loc_codigo
                AND dist9.cod_postal  = loc.BIE_LOC_COD_POST
-               AND dist9.tipo_gestor = ''GACT''
+               AND dist9.tipo_gestor = TGE.DD_TGE_CODIGO
               )   
-          where act.borrado = 0             
+          where act.borrado = 0  and 
+		( 		dist0.tipo_gestor = TGE.DD_TGE_CODIGO
+			OR  dist1.tipo_gestor = TGE.DD_TGE_CODIGO
+			OR  dist2.tipo_gestor = TGE.DD_TGE_CODIGO
+			OR  dist3.tipo_gestor = TGE.DD_TGE_CODIGO
+			OR  dist4.tipo_gestor = TGE.DD_TGE_CODIGO
+			OR  dist5.tipo_gestor = TGE.DD_TGE_CODIGO
+			OR  dist6.tipo_gestor = TGE.DD_TGE_CODIGO
+			OR  dist7.tipo_gestor = TGE.DD_TGE_CODIGO
+			OR  dist8.tipo_gestor = TGE.DD_TGE_CODIGO
+			OR  dist9.tipo_gestor = TGE.DD_TGE_CODIGO
+		)           
            UNION ALL
 /*supervisor del activo*/
 SELECT act.act_id, 
@@ -430,6 +456,7 @@ SELECT act.act_id,
        LEFT JOIN '||V_ESQUEMA||'.dd_eac_estado_activo dd_eac ON dd_eac.dd_eac_id = act.dd_eac_id
        JOIN '||V_ESQUEMA||'.dd_cra_cartera dd_cra ON dd_cra.dd_cra_id = act.dd_cra_id
        JOIN '||V_ESQUEMA||'.dd_scr_subcartera dd_scr ON dd_scr.dd_cra_id = dd_cra.dd_cra_id AND dd_scr.dd_scr_id = act.dd_scr_id
+       JOIN '||V_ESQUEMA_M||'.DD_TGE_TIPO_GESTOR TGE ON TGE.DD_TGE_CODIGO = ''SUPACT''
     LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist0
         ON (dist0.cod_estado_activo IS NULL
             AND dist0.cod_cartera = dd_cra.dd_cra_codigo
@@ -437,7 +464,7 @@ SELECT act.act_id,
             AND dist0.cod_provincia = dd_prov.dd_prv_codigo 
             AND dist0.cod_municipio IS NULL
             AND dist0.cod_postal IS NULL
-            AND dist0.tipo_gestor = ''SUPACT''
+            AND dist0.tipo_gestor = TGE.DD_TGE_CODIGO
             )
     LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist1
         ON (dist1.cod_estado_activo IS NULL
@@ -446,7 +473,7 @@ SELECT act.act_id,
             AND dist1.cod_provincia = dd_prov.dd_prv_codigo 
             AND dist1.cod_municipio IS NULL
             AND dist1.cod_postal IS NULL
-            AND dist1.tipo_gestor = ''SUPACT''
+            AND dist1.tipo_gestor = TGE.DD_TGE_CODIGO
             )
         left JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist2
        ON (dist2.cod_estado_activo = dd_eac.dd_eac_codigo 
@@ -455,7 +482,7 @@ SELECT act.act_id,
             AND dist2.cod_provincia = dd_prov.dd_prv_codigo 
             AND dist2.cod_municipio IS NULL
             AND dist2.cod_postal IS NULL
-            AND dist2.tipo_gestor = ''SUPACT''
+            AND dist2.tipo_gestor = TGE.DD_TGE_CODIGO
             )
         left JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist3
        ON (dist3.cod_estado_activo = dd_eac.dd_eac_codigo 
@@ -464,7 +491,7 @@ SELECT act.act_id,
             AND dist3.cod_provincia = dd_prov.dd_prv_codigo 
             AND dist3.cod_municipio IS NULL
             AND dist3.cod_postal IS NULL
-            AND dist3.tipo_gestor = ''SUPACT''
+            AND dist3.tipo_gestor = TGE.DD_TGE_CODIGO
             )
         left JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist4
         ON (dist4.cod_estado_activo = dd_eac.dd_eac_codigo
@@ -473,7 +500,7 @@ SELECT act.act_id,
             AND dist4.cod_provincia = dd_prov.dd_prv_codigo
             AND dist4.cod_municipio = dd_loc.dd_loc_codigo
             AND dist4.cod_postal IS NULL
-            AND dist4.tipo_gestor = ''SUPACT''
+            AND dist4.tipo_gestor = TGE.DD_TGE_CODIGO
             )
         left JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist5
         ON (dist5.cod_estado_activo = dd_eac.dd_eac_codigo
@@ -482,7 +509,7 @@ SELECT act.act_id,
             AND dist5.cod_provincia = dd_prov.dd_prv_codigo
             AND dist5.cod_municipio = dd_loc.dd_loc_codigo
             AND dist5.cod_postal IS NULL
-            AND dist5.tipo_gestor = ''SUPACT''
+            AND dist5.tipo_gestor = TGE.DD_TGE_CODIGO
             )
         left JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist6
         ON (dist6.cod_estado_activo = dd_eac.dd_eac_codigo 
@@ -491,7 +518,7 @@ SELECT act.act_id,
             AND dist6.cod_provincia = dd_prov.dd_prv_codigo 
             AND dist6.cod_municipio = dd_loc.dd_loc_codigo
             AND dist6.cod_postal  = loc.BIE_LOC_COD_POST
-            AND dist6.tipo_gestor = ''SUPACT''
+            AND dist6.tipo_gestor = TGE.DD_TGE_CODIGO
             ) 
         left JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist7
         ON (dist7.cod_estado_activo = dd_eac.dd_eac_codigo
@@ -500,9 +527,18 @@ SELECT act.act_id,
             AND dist7.cod_provincia = dd_prov.dd_prv_codigo 
             AND dist7.cod_municipio = dd_loc.dd_loc_codigo
             AND dist7.cod_postal  = loc.BIE_LOC_COD_POST
-            AND dist7.tipo_gestor = ''SUPACT''
+            AND dist7.tipo_gestor = TGE.DD_TGE_CODIGO
             )   
-          where act.borrado = 0                 
+          where act.borrado = 0 and 
+		( 		dist0.tipo_gestor = TGE.DD_TGE_CODIGO
+			OR  dist1.tipo_gestor = TGE.DD_TGE_CODIGO
+			OR  dist2.tipo_gestor = TGE.DD_TGE_CODIGO
+			OR  dist3.tipo_gestor = TGE.DD_TGE_CODIGO
+			OR  dist4.tipo_gestor = TGE.DD_TGE_CODIGO
+			OR  dist5.tipo_gestor = TGE.DD_TGE_CODIGO
+			OR  dist6.tipo_gestor = TGE.DD_TGE_CODIGO
+			OR  dist7.tipo_gestor = TGE.DD_TGE_CODIGO
+		)                 
            )';
 
 V_MSQL2 := ' CREATE OR REPLACE FORCE VIEW '||V_ESQUEMA||'.'||V_2||' AS 
@@ -524,6 +560,7 @@ SELECT act.act_id,
        JOIN '||V_ESQUEMA||'.bie_localizacion loc ON loc.bie_loc_id = aloc.bie_loc_id
        JOIN '||V_ESQUEMA_M||'.dd_loc_localidad dd_loc ON loc.dd_loc_id = dd_loc.dd_loc_id
        JOIN '||V_ESQUEMA_M||'.dd_prv_provincia dd_prov ON dd_prov.dd_prv_id = loc.dd_prv_id
+<<<<<<< HEAD
        JOIN dd_eac_estado_activo dd_eac ON dd_eac.dd_eac_id = act.dd_eac_id
        JOIN dd_cra_cartera dd_cra ON dd_cra.dd_cra_id = act.dd_cra_id
        LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist1 ON (dd_eac.dd_eac_codigo = dist1.cod_estado_activo AND dist1.cod_cartera = dd_cra.dd_cra_codigo AND dist1.tipo_gestor = ''GGADM'')
@@ -531,6 +568,71 @@ SELECT act.act_id,
        LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist3 ON (dd_loc.dd_loc_codigo = dist3.cod_municipio AND dist3.cod_cartera = dd_cra.dd_cra_codigo AND dist3.tipo_gestor = ''GGADM'')
        LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist4 ON (loc.bie_loc_cod_post = dist4.cod_postal AND dist4.cod_cartera = dd_cra.dd_cra_codigo AND dist4.tipo_gestor = ''GGADM'')
            where act.borrado = 0
+=======
+       JOIN '||V_ESQUEMA||'.dd_eac_estado_activo dd_eac ON dd_eac.dd_eac_id = act.dd_eac_id
+       JOIN '||V_ESQUEMA||'.dd_cra_cartera dd_cra ON dd_cra.dd_cra_id = act.dd_cra_id
+       JOIN '||V_ESQUEMA||'.dd_scr_subcartera dd_scr ON dd_scr.dd_cra_id = dd_cra.dd_cra_id AND dd_scr.dd_scr_id = act.dd_scr_id
+       JOIN '||V_ESQUEMA_M||'.DD_TGE_TIPO_GESTOR TGE ON TGE.DD_TGE_CODIGO = ''GGADM''
+       LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist0 
+        ON (dist0.cod_estado_activo IS NULL
+            AND dist0.cod_cartera = dd_cra.dd_cra_codigo
+            AND dist0.cod_provincia IS NULL
+            AND dist0.cod_municipio IS NULL
+            AND dist0.cod_postal IS NULL
+            AND dist0.cod_subcartera IS NULL
+            AND dist0.tipo_gestor = TGE.DD_TGE_CODIGO)
+       LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist1 
+        ON (dist1.cod_estado_activo  = dd_eac.dd_eac_codigo 
+            AND dist1.cod_cartera = dd_cra.dd_cra_codigo
+            AND dist1.cod_subcartera IS NULL
+            AND dist1.tipo_gestor = TGE.DD_TGE_CODIGO)
+       LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist2 
+        ON (dist2.cod_estado_activo  = dd_eac.dd_eac_codigo 
+            AND dist2.cod_cartera = dd_cra.dd_cra_codigo
+            AND TO_NUMBER(dist2.cod_subcartera) = TO_NUMBER(DD_SCR.DD_SCR_CODIGO)
+            AND dist2.tipo_gestor = TGE.DD_TGE_CODIGO)
+       LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist3 
+        ON (dist3.cod_provincia  = dd_prov.dd_prv_codigo
+            AND dist3.cod_cartera = dd_cra.dd_cra_codigo
+            AND dist3.cod_subcartera IS NULL
+            AND dist3.tipo_gestor = TGE.DD_TGE_CODIGO)
+       LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist4 
+        ON (dist4.cod_provincia = dd_prov.dd_prv_codigo 
+            AND dist4.cod_cartera = dd_cra.dd_cra_codigo
+            AND TO_NUMBER(dist4.cod_subcartera) = TO_NUMBER(DD_SCR.DD_SCR_CODIGO)
+            AND dist4.tipo_gestor = TGE.DD_TGE_CODIGO)
+       LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist5 
+        ON (dist5.cod_municipio  = dd_loc.dd_loc_codigo  
+            AND dist5.cod_cartera = dd_cra.dd_cra_codigo
+            AND dist5.cod_subcartera IS NULL
+            AND dist5.tipo_gestor = TGE.DD_TGE_CODIGO)
+       LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist6 
+        ON (dist6.cod_municipio = dd_loc.dd_loc_codigo 
+            AND dist6.cod_cartera = dd_cra.dd_cra_codigo
+            AND TO_NUMBER(dist6.cod_subcartera) = TO_NUMBER(DD_SCR.DD_SCR_CODIGO)
+            AND dist6.tipo_gestor = TGE.DD_TGE_CODIGO)
+       LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist7 
+        ON (dist7.cod_postal = loc.bie_loc_cod_post 
+            AND dist7.cod_cartera = dd_cra.dd_cra_codigo
+            AND dist7.cod_subcartera IS NULL
+            AND dist7.tipo_gestor = TGE.DD_TGE_CODIGO)
+       LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist8 
+        ON (dist8.cod_postal = loc.bie_loc_cod_post 
+            AND dist8.cod_cartera = dd_cra.dd_cra_codigo
+            AND TO_NUMBER(dist8.cod_subcartera) = TO_NUMBER(DD_SCR.DD_SCR_CODIGO)
+            AND dist8.tipo_gestor = TGE.DD_TGE_CODIGO)
+    where act.borrado = 0 and 
+		( 		dist0.tipo_gestor = TGE.DD_TGE_CODIGO
+			OR  dist1.tipo_gestor = TGE.DD_TGE_CODIGO
+			OR  dist2.tipo_gestor = TGE.DD_TGE_CODIGO
+			OR  dist3.tipo_gestor = TGE.DD_TGE_CODIGO
+			OR  dist4.tipo_gestor = TGE.DD_TGE_CODIGO
+			OR  dist5.tipo_gestor = TGE.DD_TGE_CODIGO
+			OR  dist6.tipo_gestor = TGE.DD_TGE_CODIGO
+			OR  dist7.tipo_gestor = TGE.DD_TGE_CODIGO
+			OR  dist8.tipo_gestor = TGE.DD_TGE_CODIGO
+		)
+>>>>>>> 291b434... HREOS-5838 Se añaden controles de nulos
            UNION ALL
 /*Gestoría de administración*/
            SELECT DISTINCT act.act_id, 
@@ -552,57 +654,69 @@ SELECT act.act_id,
             JOIN '||V_ESQUEMA||'.dd_scr_subcartera dd_scr ON dd_scr.dd_cra_id = dd_cra.dd_cra_id AND dd_scr.dd_scr_id = act.dd_scr_id
             LEFT JOIN '||V_ESQUEMA||'.dd_eac_estado_activo dd_eac ON dd_eac.dd_eac_id = act.dd_eac_id
             LEFT JOIN '||V_ESQUEMA_M||'.dd_loc_localidad dd_loc ON loc.dd_loc_id = dd_loc.dd_loc_id
+            JOIN '||V_ESQUEMA_M||'.DD_TGE_TIPO_GESTOR TGE ON TGE.DD_TGE_CODIGO = ''GIAADMT''
             LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist0 
                 ON (dist0.cod_estado_activo IS NULL
                     AND dist0.cod_cartera = dd_cra.dd_cra_codigo 
                     AND dist0.cod_subcartera IS NULL
-                    AND dist0.tipo_gestor = ''GIAADMT'')
+                    AND dist0.tipo_gestor = TGE.DD_TGE_CODIGO )
             LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist1 
                 ON (dist1.cod_estado_activo IS NULL
                     AND dist1.cod_cartera = dd_cra.dd_cra_codigo 
                     AND dist1.cod_subcartera = dd_scr.dd_scr_codigo
-                    AND dist1.tipo_gestor = ''GIAADMT'')
+                    AND dist1.tipo_gestor = TGE.DD_TGE_CODIGO )
             LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist2 
                 ON (dist2.cod_estado_activo = dd_eac.dd_eac_codigo 
                     AND dist2.cod_cartera = dd_cra.dd_cra_codigo 
                     AND dist2.cod_subcartera IS NULL
-                    AND dist2.tipo_gestor = ''GIAADMT'')
+                    AND dist2.tipo_gestor = TGE.DD_TGE_CODIGO )
             LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist3 
                 ON (dist3.cod_estado_activo = dd_eac.dd_eac_codigo  
                     AND dist3.cod_cartera = dd_cra.dd_cra_codigo 
                     AND dist3.cod_subcartera = dd_scr.dd_scr_codigo 
-                    AND dist3.tipo_gestor = ''GIAADMT'')
+                    AND dist3.tipo_gestor = TGE.DD_TGE_CODIGO )
             LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist4 
                 ON (dist4.cod_provincia = dd_prov.dd_prv_codigo 
                     AND dist4.cod_cartera = dd_cra.dd_cra_codigo 
                     AND dist4.cod_subcartera IS NULL
-                    AND dist4.tipo_gestor = ''GIAADMT'')
+                    AND dist4.tipo_gestor = TGE.DD_TGE_CODIGO )
             LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist5 
                 ON (dist5.cod_provincia = dd_prov.dd_prv_codigo 
                     AND dist5.cod_cartera = dd_cra.dd_cra_codigo 
                     AND dist5.cod_subcartera = dd_scr.dd_scr_codigo 
-                    AND dist5.tipo_gestor = ''GIAADMT'')
+                    AND dist5.tipo_gestor = TGE.DD_TGE_CODIGO )
             LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist6 
                 ON (dist6.cod_municipio = dd_loc.dd_loc_codigo  
                     AND dist6.cod_cartera = dd_cra.dd_cra_codigo 
                     AND dist6.cod_subcartera IS NULL
-                    AND dist6.tipo_gestor = ''GIAADMT'')
+                    AND dist6.tipo_gestor = TGE.DD_TGE_CODIGO )
             LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist7 
                 ON (dist7.cod_municipio = dd_loc.dd_loc_codigo  
                     AND dist7.cod_cartera = dd_cra.dd_cra_codigo 
                     AND dist7.cod_subcartera = dd_scr.dd_scr_codigo 
-                    AND dist7.tipo_gestor = ''GIAADMT'')
+                    AND dist7.tipo_gestor = TGE.DD_TGE_CODIGO )
             LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist8 
                 ON (dist8.cod_postal = loc.bie_loc_cod_post  
                     AND dist8.cod_cartera = dd_cra.dd_cra_codigo 
                     AND dist8.cod_subcartera IS NULL
-                    AND dist8.tipo_gestor = ''GIAADMT'')
+                    AND dist8.tipo_gestor = TGE.DD_TGE_CODIGO )
             LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist9 
                 ON (dist9.cod_postal = loc.bie_loc_cod_post  
                     AND dist9.cod_cartera = dd_cra.dd_cra_codigo 
                     AND dist9.cod_subcartera = dd_scr.dd_scr_codigo 
-                    AND dist9.tipo_gestor = ''GIAADMT'')
-            where act.borrado = 0
+                    AND dist9.tipo_gestor = TGE.DD_TGE_CODIGO )
+            where act.borrado = 0 and 
+				( 		dist0.tipo_gestor = TGE.DD_TGE_CODIGO 
+					OR  dist1.tipo_gestor = TGE.DD_TGE_CODIGO 
+					OR  dist2.tipo_gestor = TGE.DD_TGE_CODIGO 
+					OR  dist3.tipo_gestor = TGE.DD_TGE_CODIGO 
+					OR  dist4.tipo_gestor = TGE.DD_TGE_CODIGO 
+					OR  dist5.tipo_gestor = TGE.DD_TGE_CODIGO 
+					OR  dist6.tipo_gestor = TGE.DD_TGE_CODIGO 
+					OR  dist7.tipo_gestor = TGE.DD_TGE_CODIGO 
+					OR  dist8.tipo_gestor = TGE.DD_TGE_CODIGO 
+					OR  dist9.tipo_gestor = TGE.DD_TGE_CODIGO 
+				)
            UNION ALL
 /*Gestoría de formalización*/
            SELECT act.act_id, 
@@ -624,58 +738,71 @@ SELECT act.act_id,
     JOIN '||V_ESQUEMA||'.dd_eac_estado_activo dd_eac ON dd_eac.dd_eac_id = act.dd_eac_id
     JOIN '||V_ESQUEMA||'.dd_cra_cartera dd_cra ON dd_cra.dd_cra_id = act.dd_cra_id
     JOIN '||V_ESQUEMA||'.dd_scr_subcartera dd_scr ON dd_scr.dd_cra_id = dd_cra.dd_cra_id AND dd_scr.dd_scr_id = act.dd_scr_id
+    JOIN '||V_ESQUEMA_M||'.DD_TGE_TIPO_GESTOR TGE ON TGE.DD_TGE_CODIGO = ''GIAFORM''
 	LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist0 
        ON (dist0.cod_cartera = dd_cra.dd_cra_codigo 
            AND dist0.cod_subcartera IS NULL
-           AND dist0.tipo_gestor = ''GIAFORM'' 
+           AND dist0.tipo_gestor = TGE.DD_TGE_CODIGO
            AND dist0.cod_provincia is null
            )
     LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist1 
         ON (dist1.cod_cartera = dd_cra.dd_cra_codigo 
             AND dist1.cod_subcartera = dd_scr.dd_scr_codigo 
-            AND dist1.tipo_gestor = ''GIAFORM'' 
+            AND dist1.tipo_gestor = TGE.DD_TGE_CODIGO
             )
     LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist2 
         ON (dist2.cod_postal = loc.bie_loc_cod_post
             AND dist2.cod_cartera = dd_cra.dd_cra_codigo 
             AND dist2.cod_subcartera IS NULL
-            AND dist2.tipo_gestor = ''GIAFORM'')
+            AND dist2.tipo_gestor = TGE.DD_TGE_CODIGO)
     LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist3 
         ON (dist3.cod_postal = loc.bie_loc_cod_post  
             AND dist3.cod_cartera = dd_cra.dd_cra_codigo 
             AND dist3.cod_subcartera = dd_scr.dd_scr_codigo 
-            AND dist3.tipo_gestor = ''GIAFORM'')
+            AND dist3.tipo_gestor = TGE.DD_TGE_CODIGO)
     LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist4 
         ON (dist4.cod_municipio = dd_loc.dd_loc_codigo 
             AND dist4.cod_cartera = dd_cra.dd_cra_codigo 
             AND dist4.cod_subcartera IS NULL
-            AND dist4.tipo_gestor = ''GIAFORM'')
+            AND dist4.tipo_gestor = TGE.DD_TGE_CODIGO)
     LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist5 
         ON (dist5.cod_municipio = dd_loc.dd_loc_codigo  
             AND dist5.cod_cartera = dd_cra.dd_cra_codigo 
             AND dist5.cod_subcartera = dd_scr.dd_scr_codigo 
-            AND dist5.tipo_gestor = ''GIAFORM'')
+            AND dist5.tipo_gestor = TGE.DD_TGE_CODIGO)
     LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist6 
         ON (dist6.cod_provincia = dd_prov.dd_prv_codigo 
             AND dist6.cod_cartera = dd_cra.dd_cra_codigo 
             AND dist6.cod_subcartera IS NULL
-            AND dist6.tipo_gestor = ''GIAFORM'')
+            AND dist6.tipo_gestor = TGE.DD_TGE_CODIGO)
     LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist7 
         ON (dist7.cod_provincia = dd_prov.dd_prv_codigo 
             AND dist7.cod_cartera = dd_cra.dd_cra_codigo 
             AND dist7.cod_subcartera = dd_scr.dd_scr_codigo 
-            AND dist7.tipo_gestor = ''GIAFORM'')
+            AND dist7.tipo_gestor = TGE.DD_TGE_CODIGO)
     LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist8 
         ON (dist8.cod_estado_activo = dd_eac.dd_eac_codigo
             AND dist8.cod_cartera = dd_cra.dd_cra_codigo 
             AND dist8.cod_subcartera IS NULL
-            AND dist8.tipo_gestor = ''GIAFORM'')
+            AND dist8.tipo_gestor = TGE.DD_TGE_CODIGO)
     LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist9 
         ON (dist9.cod_estado_activo = dd_eac.dd_eac_codigo 
             AND dist9.cod_cartera = dd_cra.dd_cra_codigo 
             AND dist9.cod_subcartera = dd_scr.dd_scr_codigo 
-            AND dist9.tipo_gestor = ''GIAFORM'')
-where act.borrado = 0 )';
+            AND dist9.tipo_gestor = TGE.DD_TGE_CODIGO) 
+where act.borrado = 0 and 
+		( 		dist0.tipo_gestor = TGE.DD_TGE_CODIGO
+			OR  dist1.tipo_gestor = TGE.DD_TGE_CODIGO
+			OR  dist2.tipo_gestor = TGE.DD_TGE_CODIGO
+			OR  dist3.tipo_gestor = TGE.DD_TGE_CODIGO
+			OR  dist4.tipo_gestor = TGE.DD_TGE_CODIGO
+			OR  dist5.tipo_gestor = TGE.DD_TGE_CODIGO
+			OR  dist6.tipo_gestor = TGE.DD_TGE_CODIGO
+			OR  dist7.tipo_gestor = TGE.DD_TGE_CODIGO
+			OR  dist8.tipo_gestor = TGE.DD_TGE_CODIGO
+			OR  dist9.tipo_gestor = TGE.DD_TGE_CODIGO
+		)
+	)';
 
 V_MSQL3 := 'CREATE OR REPLACE FORCE VIEW '||V_ESQUEMA||'.'||V_3||' AS 
 				SELECT ACT_ID , DD_CRA_CODIGO, DD_SCR_CODIGO, DD_EAC_CODIGO, DD_TCR_CODIGO, DD_PRV_CODIGO, DD_LOC_CODIGO, COD_POSTAL, TIPO_GESTOR, USERNAME, NOMBRE 
@@ -696,28 +823,34 @@ SELECT  act.act_id,
     JOIN '||V_ESQUEMA_M||'.dd_prv_provincia dd_prov ON dd_prov.dd_prv_id = loc.dd_prv_id
     JOIN '||V_ESQUEMA||'.dd_cra_cartera dd_cra ON dd_cra.dd_cra_id = act.dd_cra_id
     JOIN '||V_ESQUEMA||'.dd_scr_subcartera dd_scr ON dd_scr.dd_cra_id = dd_cra.dd_cra_id AND dd_scr.dd_scr_id = act.dd_scr_id
+    JOIN '||V_ESQUEMA_M||'.DD_TGE_TIPO_GESTOR TGE ON TGE.DD_TGE_CODIGO = ''GFORM''
     LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist0 
         ON (dist0.cod_cartera = dd_cra.dd_cra_codigo 
             AND dist0.cod_subcartera IS NULL
-            AND dist0.tipo_gestor = ''GFORM'' 
+            AND dist0.tipo_gestor = TGE.DD_TGE_CODIGO  
             AND dist0.username IS NULL
             AND dist0.cod_provincia IS NULL)
     LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist1 
         ON (dist1.cod_cartera = dd_cra.dd_cra_codigo 
             AND dist1.cod_subcartera = dd_scr.dd_scr_codigo 
-            AND dist1.tipo_gestor = ''GFORM'' 
+            AND dist1.tipo_gestor = TGE.DD_TGE_CODIGO 
             AND dist1.username IS NULL)
     LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist2 
         ON (dist2.cod_cartera = dd_cra.dd_cra_codigo 
             AND dist2.cod_subcartera IS NULL
             AND dist2.cod_provincia = dd_prov.dd_prv_codigo 
-            AND dist2.tipo_gestor = ''GFORM'')
+            AND dist2.tipo_gestor = TGE.DD_TGE_CODIGO )
     LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist3 
         ON (dist3.cod_cartera = dd_cra.dd_cra_codigo 
             AND dist3.cod_subcartera = dd_scr.dd_scr_codigo 
             AND dist3.cod_provincia = dd_prov.dd_prv_codigo   
-            AND dist3.tipo_gestor = ''GFORM'') 
-    where act.borrado = 0
+            AND dist3.tipo_gestor = TGE.DD_TGE_CODIGO ) 
+    where act.borrado = 0 and 
+		( 		dist0.tipo_gestor = TGE.DD_TGE_CODIGO 
+			OR  dist1.tipo_gestor = TGE.DD_TGE_CODIGO 
+			OR  dist2.tipo_gestor = TGE.DD_TGE_CODIGO 
+			OR  dist3.tipo_gestor = TGE.DD_TGE_CODIGO 
+		)
             UNION ALL
 /*Supervisor de formalizacion*/
 SELECT  act.act_id, 
@@ -735,27 +868,33 @@ SELECT  act.act_id,
     JOIN '||V_ESQUEMA_M||'.dd_prv_provincia dd_prov ON dd_prov.dd_prv_id = loc.dd_prv_id
     JOIN '||V_ESQUEMA||'.dd_cra_cartera dd_cra ON dd_cra.dd_cra_id = act.dd_cra_id
     JOIN '||V_ESQUEMA||'.dd_scr_subcartera dd_scr ON dd_scr.dd_cra_id = dd_cra.dd_cra_id AND dd_scr.dd_scr_id = act.dd_scr_id
+    JOIN '||V_ESQUEMA_M||'.DD_TGE_TIPO_GESTOR TGE ON TGE.DD_TGE_CODIGO = ''SFORM''
     LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist0 
         ON (dist0.cod_cartera = dd_cra.dd_cra_codigo 
             AND dist0.cod_subcartera IS NULL 
-            AND dist0.tipo_gestor = ''SFORM'' 
+            AND dist0.tipo_gestor = TGE.DD_TGE_CODIGO 
             AND dist0.username IS NULL)
     LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist1 
         ON (dist1.cod_cartera = dd_cra.dd_cra_codigo 
             AND dist1.cod_subcartera = dd_scr.dd_scr_codigo 
-            AND dist1.tipo_gestor = ''SFORM'' 
+            AND dist1.tipo_gestor = TGE.DD_TGE_CODIGO 
             AND dist1.username IS NULL)
     LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist2 
         ON (dist2.cod_cartera = dd_cra.dd_cra_codigo 
             AND dist2.cod_subcartera IS NULL
             AND dist2.cod_provincia = dd_prov.dd_prv_codigo 
-            AND dist2.tipo_gestor = ''SFORM'')
+            AND dist2.tipo_gestor = TGE.DD_TGE_CODIGO )
     LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist3 
         ON (dist3.cod_cartera = dd_cra.dd_cra_codigo 
             AND dist3.cod_subcartera = dd_scr.dd_scr_codigo 
             AND dist3.cod_provincia = dd_prov.dd_prv_codigo  
-            AND dist3.tipo_gestor = ''SFORM'')    
-where act.borrado = 0
+            AND dist3.tipo_gestor = TGE.DD_TGE_CODIGO )    
+where act.borrado = 0 and 
+		( 		dist0.tipo_gestor = TGE.DD_TGE_CODIGO 
+			OR  dist1.tipo_gestor = TGE.DD_TGE_CODIGO 
+			OR  dist2.tipo_gestor = TGE.DD_TGE_CODIGO 
+			OR  dist3.tipo_gestor = TGE.DD_TGE_CODIGO 
+		)
             UNION ALL
 /*Gestor comercial*/
  SELECT act.act_id, 
@@ -777,6 +916,7 @@ where act.borrado = 0
        JOIN '||V_ESQUEMA||'.dd_tcr_tipo_comercializar dd_tcr ON dd_tcr.dd_tcr_id = act.dd_tcr_id
        JOIN '||V_ESQUEMA||'.dd_cra_cartera dd_cra ON dd_cra.dd_cra_id = act.dd_cra_id
        JOIN '||V_ESQUEMA||'.dd_scr_subcartera dd_scr ON dd_scr.dd_cra_id = dd_cra.dd_cra_id AND dd_scr.dd_scr_id = act.dd_scr_id
+       JOIN '||V_ESQUEMA_M||'.DD_TGE_TIPO_GESTOR TGE ON TGE.DD_TGE_CODIGO = ''GCOM''
        left JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist0
        ON (dist0.cod_tipo_comerzialzacion IS NULL
            AND dist0.cod_cartera = dd_cra.dd_cra_codigo
@@ -784,7 +924,7 @@ where act.borrado = 0
            AND dist0.cod_provincia IS NULL
            AND dist0.cod_municipio IS NULL
            AND dist0.cod_postal IS NULL
-           AND dist0.tipo_gestor = ''GCOM''
+           AND dist0.tipo_gestor = TGE.DD_TGE_CODIGO
           )
        left JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist1
        ON (dist1.cod_tipo_comerzialzacion IS NULL
@@ -793,7 +933,7 @@ where act.borrado = 0
            AND dist1.cod_provincia IS NULL
            AND dist1.cod_municipio IS NULL
            AND dist1.cod_postal IS NULL
-           AND dist1.tipo_gestor = ''GCOM''
+           AND dist1.tipo_gestor = TGE.DD_TGE_CODIGO
           )
        left JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist2
        ON (dist2.cod_tipo_comerzialzacion = dd_tcr.dd_tcr_codigo  
@@ -802,7 +942,7 @@ where act.borrado = 0
            AND dist2.cod_provincia = dd_prov.dd_prv_codigo 
            AND dist2.cod_municipio IS NULL
            AND dist2.cod_postal IS NULL
-           AND dist2.tipo_gestor = ''GCOM''
+           AND dist2.tipo_gestor = TGE.DD_TGE_CODIGO
           )
        left JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist3
        ON (dist3.cod_tipo_comerzialzacion = dd_tcr.dd_tcr_codigo 
@@ -811,7 +951,7 @@ where act.borrado = 0
            AND dist3.cod_provincia = dd_prov.dd_prv_codigo 
            AND dist3.cod_municipio IS NULL
            AND dist3.cod_postal IS NULL
-           AND dist3.tipo_gestor = ''GCOM''
+           AND dist3.tipo_gestor = TGE.DD_TGE_CODIGO
           )
        left JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist4
        ON (dist4.cod_tipo_comerzialzacion = dd_tcr.dd_tcr_codigo  
@@ -820,7 +960,7 @@ where act.borrado = 0
            AND dist4.cod_provincia = dd_prov.dd_prv_codigo  
            AND dist4.cod_municipio = dd_loc.dd_loc_codigo
            AND dist4.cod_postal IS NULL
-           AND dist4.tipo_gestor = ''GCOM''
+           AND dist4.tipo_gestor =  TGE.DD_TGE_CODIGO
           )   
        left JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist5
        ON (dist5.cod_tipo_comerzialzacion = dd_tcr.dd_tcr_codigo  
@@ -829,7 +969,7 @@ where act.borrado = 0
            AND dist5.cod_provincia = dd_prov.dd_prv_codigo 
            AND dist5.cod_municipio = dd_loc.dd_loc_codigo
            AND dist5.cod_postal IS NULL
-           AND dist5.tipo_gestor = ''GCOM''
+           AND dist5.tipo_gestor = TGE.DD_TGE_CODIGO
           )
        left JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist6
        ON (dist6.cod_tipo_comerzialzacion = dd_tcr.dd_tcr_codigo 
@@ -838,7 +978,7 @@ where act.borrado = 0
            AND dist6.cod_provincia = dd_prov.dd_prv_codigo  
            AND dist6.cod_municipio = dd_loc.dd_loc_codigo
            AND dist6.cod_postal = loc.BIE_LOC_COD_POST
-           AND dist6.tipo_gestor = ''GCOM''
+           AND dist6.tipo_gestor = TGE.DD_TGE_CODIGO
           )   
        left JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist7
        ON (dist7.cod_tipo_comerzialzacion = dd_tcr.dd_tcr_codigo 
@@ -847,9 +987,18 @@ where act.borrado = 0
            AND dist7.cod_provincia = dd_prov.dd_prv_codigo  
            AND dist7.cod_municipio = dd_loc.dd_loc_codigo
            AND dist7.cod_postal = loc.BIE_LOC_COD_POST
-           AND dist7.tipo_gestor = ''GCOM''
+           AND dist7.tipo_gestor = TGE.DD_TGE_CODIGO
           )
-          where act.borrado = 0
+          where act.borrado = 0 and 
+		( 		dist0.tipo_gestor = TGE.DD_TGE_CODIGO
+			OR  dist1.tipo_gestor = TGE.DD_TGE_CODIGO
+			OR  dist2.tipo_gestor = TGE.DD_TGE_CODIGO
+			OR  dist3.tipo_gestor = TGE.DD_TGE_CODIGO
+			OR  dist4.tipo_gestor = TGE.DD_TGE_CODIGO
+			OR  dist5.tipo_gestor = TGE.DD_TGE_CODIGO
+			OR  dist6.tipo_gestor = TGE.DD_TGE_CODIGO
+			OR  dist7.tipo_gestor = TGE.DD_TGE_CODIGO
+		)
     UNION ALL
 /* SUPERVISOR COMERCIAL */
 SELECT act.act_id, 
@@ -871,6 +1020,7 @@ SELECT act.act_id,
        JOIN '||V_ESQUEMA||'.dd_tcr_tipo_comercializar dd_tcr ON dd_tcr.dd_tcr_id = act.dd_tcr_id
        JOIN '||V_ESQUEMA||'.dd_cra_cartera dd_cra ON dd_cra.dd_cra_id = act.dd_cra_id
        JOIN '||V_ESQUEMA||'.dd_scr_subcartera dd_scr ON dd_scr.dd_cra_id = dd_cra.dd_cra_id AND dd_scr.dd_scr_id = act.dd_scr_id
+       JOIN '||V_ESQUEMA_M||'.DD_TGE_TIPO_GESTOR TGE ON TGE.DD_TGE_CODIGO = ''SCOM''
        left JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist0
        ON (dist0.cod_tipo_comerzialzacion = dd_tcr.dd_tcr_codigo 
            AND dist0.cod_cartera = dd_cra.dd_cra_codigo
@@ -878,7 +1028,7 @@ SELECT act.act_id,
            AND dist0.cod_provincia = dd_prov.dd_prv_codigo 
            AND dist0.cod_municipio IS NULL
            AND dist0.cod_postal IS NULL
-           AND dist0.tipo_gestor = ''SCOM''
+           AND dist0.tipo_gestor = TGE.DD_TGE_CODIGO
           )
        left JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist1
        ON (dist1.cod_tipo_comerzialzacion = dd_tcr.dd_tcr_codigo 
@@ -887,7 +1037,7 @@ SELECT act.act_id,
            AND dist1.cod_provincia = dd_prov.dd_prv_codigo  
            AND dist1.cod_municipio IS NULL
            AND dist1.cod_postal IS NULL
-           AND dist1.tipo_gestor = ''SCOM''
+           AND dist1.tipo_gestor = TGE.DD_TGE_CODIGO
           )
        left JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist2
        ON (dist2.cod_tipo_comerzialzacion = dd_tcr.dd_tcr_codigo  
@@ -896,7 +1046,7 @@ SELECT act.act_id,
            AND dist2.cod_provincia = dd_prov.dd_prv_codigo  
            AND dist2.cod_municipio = dd_loc.dd_loc_codigo
            AND dist2.cod_postal IS NULL
-           AND dist2.tipo_gestor = ''SCOM''
+           AND dist2.tipo_gestor = TGE.DD_TGE_CODIGO
           )
        left JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist3
        ON (dist3.cod_tipo_comerzialzacion = dd_tcr.dd_tcr_codigo  
@@ -905,7 +1055,7 @@ SELECT act.act_id,
            AND dist3.cod_provincia = dd_prov.dd_prv_codigo 
            AND dist3.cod_municipio = dd_loc.dd_loc_codigo
            AND dist3.cod_postal IS NULL
-           AND dist3.tipo_gestor = ''SCOM''
+           AND dist3.tipo_gestor = TGE.DD_TGE_CODIGO
           )
        left JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist4
        ON (dist4.cod_tipo_comerzialzacion = dd_tcr.dd_tcr_codigo 
@@ -914,7 +1064,7 @@ SELECT act.act_id,
            AND dist4.cod_provincia = dd_prov.dd_prv_codigo 
            AND dist4.cod_municipio = dd_loc.dd_loc_codigo
            AND dist4.cod_postal = loc.BIE_LOC_COD_POST
-           AND dist4.tipo_gestor = ''SCOM''
+           AND dist4.tipo_gestor = TGE.DD_TGE_CODIGO
           )
        left JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist5
        ON (dist5.cod_tipo_comerzialzacion = dd_tcr.dd_tcr_codigo 
@@ -923,9 +1073,16 @@ SELECT act.act_id,
            AND dist5.cod_provincia = dd_prov.dd_prv_codigo 
            AND dist5.cod_municipio = dd_loc.dd_loc_codigo
            AND dist5.cod_postal = loc.BIE_LOC_COD_POST
-           AND dist5.tipo_gestor = ''SCOM''
+           AND dist5.tipo_gestor = TGE.DD_TGE_CODIGO
           )
-          where act.borrado = 0   
+          where act.borrado = 0 and 
+		( 		dist0.tipo_gestor = TGE.DD_TGE_CODIGO
+			OR  dist1.tipo_gestor = TGE.DD_TGE_CODIGO
+			OR  dist2.tipo_gestor = TGE.DD_TGE_CODIGO
+			OR  dist3.tipo_gestor = TGE.DD_TGE_CODIGO
+			OR  dist4.tipo_gestor = TGE.DD_TGE_CODIGO
+			OR  dist5.tipo_gestor = TGE.DD_TGE_CODIGO
+		)   
     UNION ALL
 /*Gestor de Reserva (Cajamar)*/ 
 SELECT act.act_id, 
@@ -947,6 +1104,7 @@ SELECT act.act_id,
        JOIN '||V_ESQUEMA||'.dd_tcr_tipo_comercializar dd_tcr ON dd_tcr.dd_tcr_id = act.dd_tcr_id
        JOIN '||V_ESQUEMA||'.dd_cra_cartera dd_cra ON dd_cra.dd_cra_id = act.dd_cra_id
        JOIN '||V_ESQUEMA||'.dd_scr_subcartera dd_scr ON dd_scr.dd_cra_id = dd_cra.dd_cra_id AND dd_scr.dd_scr_id = act.dd_scr_id
+       JOIN '||V_ESQUEMA_M||'.DD_TGE_TIPO_GESTOR TGE ON TGE.DD_TGE_CODIGO = ''GESRES''
        left JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist0
        ON (dist0.cod_tipo_comerzialzacion IS NULL
            AND dist0.cod_cartera = dd_cra.dd_cra_codigo
@@ -954,7 +1112,7 @@ SELECT act.act_id,
            AND dist0.cod_provincia IS NULL
            AND dist0.cod_municipio IS NULL
            AND dist0.cod_postal IS NULL
-           AND dist0.tipo_gestor = ''GESRES''
+           AND dist0.tipo_gestor = TGE.DD_TGE_CODIGO
           )
        left JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist1
        ON (dist1.cod_tipo_comerzialzacion IS NULL
@@ -963,7 +1121,7 @@ SELECT act.act_id,
            AND dist1.cod_provincia IS NULL
            AND dist1.cod_municipio IS NULL
            AND dist1.cod_postal IS NULL
-           AND dist1.tipo_gestor = ''GESRES''
+           AND dist1.tipo_gestor = TGE.DD_TGE_CODIGO
           )
        left JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist2
        ON (dist2.cod_tipo_comerzialzacion = dd_tcr.dd_tcr_codigo  
@@ -972,7 +1130,7 @@ SELECT act.act_id,
            AND dist2.cod_provincia = dd_prov.dd_prv_codigo  
            AND dist2.cod_municipio IS NULL
            AND dist2.cod_postal IS NULL
-           AND dist2.tipo_gestor = ''GESRES''
+           AND dist2.tipo_gestor = TGE.DD_TGE_CODIGO
           )
        left JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist3
        ON (dist3.cod_tipo_comerzialzacion = dd_tcr.dd_tcr_codigo  
@@ -981,7 +1139,7 @@ SELECT act.act_id,
            AND dist3.cod_provincia = dd_prov.dd_prv_codigo  
            AND dist3.cod_municipio IS NULL
            AND dist3.cod_postal IS NULL
-           AND dist3.tipo_gestor = ''GESRES''
+           AND dist3.tipo_gestor = TGE.DD_TGE_CODIGO
           )
        left JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist4
        ON (dist4.cod_tipo_comerzialzacion = dd_tcr.dd_tcr_codigo  
@@ -990,7 +1148,7 @@ SELECT act.act_id,
            AND dist4.cod_provincia = dd_prov.dd_prv_codigo  
            AND dist4.cod_municipio = dd_loc.dd_loc_codigo
            AND dist4.cod_postal IS NULL
-           AND dist4.tipo_gestor = ''GESRES''
+           AND dist4.tipo_gestor = TGE.DD_TGE_CODIGO
           )
        left JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist5
        ON (dist5.cod_tipo_comerzialzacion = dd_tcr.dd_tcr_codigo  
@@ -999,7 +1157,7 @@ SELECT act.act_id,
            AND dist5.cod_provincia = dd_prov.dd_prv_codigo  
            AND dist5.cod_municipio = dd_loc.dd_loc_codigo
            AND dist5.cod_postal IS NULL
-           AND dist5.tipo_gestor = ''GESRES''
+           AND dist5.tipo_gestor = TGE.DD_TGE_CODIGO
           )
        left JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist6
        ON (dist6.cod_tipo_comerzialzacion = dd_tcr.dd_tcr_codigo
@@ -1008,7 +1166,7 @@ SELECT act.act_id,
            AND dist6.cod_provincia = dd_prov.dd_prv_codigo  
            AND dist6.cod_municipio = dd_loc.dd_loc_codigo
            AND dist6.cod_postal = loc.BIE_LOC_COD_POST
-           AND dist6.tipo_gestor = ''GESRES''
+           AND dist6.tipo_gestor = TGE.DD_TGE_CODIGO
           )   
        left JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist7
        ON (dist7.cod_tipo_comerzialzacion = dd_tcr.dd_tcr_codigo 
@@ -1017,9 +1175,18 @@ SELECT act.act_id,
            AND dist7.cod_provincia = dd_prov.dd_prv_codigo  
            AND dist7.cod_municipio = dd_loc.dd_loc_codigo
            AND dist7.cod_postal = loc.BIE_LOC_COD_POST
-           AND dist7.tipo_gestor = ''GESRES''
+           AND dist7.tipo_gestor = TGE.DD_TGE_CODIGO
           )
-          where act.borrado = 0
+          where act.borrado = 0 and 
+		( 		dist0.tipo_gestor = TGE.DD_TGE_CODIGO
+			OR  dist1.tipo_gestor = TGE.DD_TGE_CODIGO
+			OR  dist2.tipo_gestor = TGE.DD_TGE_CODIGO
+			OR  dist3.tipo_gestor = TGE.DD_TGE_CODIGO
+			OR  dist4.tipo_gestor = TGE.DD_TGE_CODIGO
+			OR  dist5.tipo_gestor = TGE.DD_TGE_CODIGO
+			OR  dist6.tipo_gestor = TGE.DD_TGE_CODIGO
+			OR  dist7.tipo_gestor = TGE.DD_TGE_CODIGO
+		) 
     and act.dd_cra_id in (select dd_cra_id from '||V_ESQUEMA||'.dd_cra_cartera where dd_cra_codigo = ''01'')
     and act.dd_scm_id in (select dd_scm_id from '||V_ESQUEMA||'.dd_scm_situacion_comercial  where dd_scm_codigo <> ''05'')
     
@@ -1052,6 +1219,7 @@ V_MSQL4 := 'CREATE OR REPLACE FORCE VIEW '||V_ESQUEMA||'.'||V_4||' AS
        JOIN '||V_ESQUEMA||'.dd_tcr_tipo_comercializar dd_tcr ON dd_tcr.dd_tcr_id = act.dd_tcr_id
        JOIN '||V_ESQUEMA||'.dd_cra_cartera dd_cra ON dd_cra.dd_cra_id = act.dd_cra_id
        JOIN '||V_ESQUEMA||'.dd_scr_subcartera dd_scr ON dd_scr.dd_cra_id = dd_cra.dd_cra_id AND dd_scr.dd_scr_id = act.dd_scr_id
+       JOIN '||V_ESQUEMA_M||'.DD_TGE_TIPO_GESTOR TGE ON TGE.DD_TGE_CODIGO = ''SUPRES''
        left JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist0
        ON (dist0.cod_tipo_comerzialzacion IS NULL
            AND dist0.cod_cartera = dd_cra.dd_cra_codigo
@@ -1059,7 +1227,7 @@ V_MSQL4 := 'CREATE OR REPLACE FORCE VIEW '||V_ESQUEMA||'.'||V_4||' AS
            AND dist0.cod_provincia IS NULL
            AND dist0.cod_municipio IS NULL
            AND dist0.cod_postal IS NULL
-           AND dist0.tipo_gestor = ''SUPRES''
+           AND dist0.tipo_gestor = TGE.DD_TGE_CODIGO 
           )
        left JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist1
        ON (dist1.cod_tipo_comerzialzacion IS NULL
@@ -1068,7 +1236,7 @@ V_MSQL4 := 'CREATE OR REPLACE FORCE VIEW '||V_ESQUEMA||'.'||V_4||' AS
            AND dist1.cod_provincia IS NULL
            AND dist1.cod_municipio IS NULL
            AND dist1.cod_postal IS NULL
-           AND dist1.tipo_gestor = ''SUPRES''
+           AND dist1.tipo_gestor = TGE.DD_TGE_CODIGO 
           )
        left JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist2
        ON (dist2.cod_tipo_comerzialzacion = dd_tcr.dd_tcr_codigo  
@@ -1077,7 +1245,7 @@ V_MSQL4 := 'CREATE OR REPLACE FORCE VIEW '||V_ESQUEMA||'.'||V_4||' AS
            AND dist2.cod_provincia = dd_prov.dd_prv_codigo 
            AND dist2.cod_municipio IS NULL
            AND dist2.cod_postal IS NULL
-           AND dist2.tipo_gestor = ''SUPRES''
+           AND dist2.tipo_gestor = TGE.DD_TGE_CODIGO 
           )
        left JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist3
        ON (dist3.cod_tipo_comerzialzacion = dd_tcr.dd_tcr_codigo 
@@ -1086,7 +1254,7 @@ V_MSQL4 := 'CREATE OR REPLACE FORCE VIEW '||V_ESQUEMA||'.'||V_4||' AS
            AND dist3.cod_provincia = dd_prov.dd_prv_codigo
            AND dist3.cod_municipio IS NULL
            AND dist3.cod_postal IS NULL
-           AND dist3.tipo_gestor = ''SUPRES''
+           AND dist3.tipo_gestor = TGE.DD_TGE_CODIGO 
           )
        left JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist4
        ON (dist4.cod_tipo_comerzialzacion = dd_tcr.dd_tcr_codigo 
@@ -1095,7 +1263,7 @@ V_MSQL4 := 'CREATE OR REPLACE FORCE VIEW '||V_ESQUEMA||'.'||V_4||' AS
            AND dist4.cod_provincia = dd_prov.dd_prv_codigo 
            AND dist4.cod_municipio = dd_loc.dd_loc_codigo
            AND dist4.cod_postal IS NULL
-           AND dist4.tipo_gestor = ''SUPRES''
+           AND dist4.tipo_gestor = TGE.DD_TGE_CODIGO 
           )
        left JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist5
        ON (dist5.cod_tipo_comerzialzacion = dd_tcr.dd_tcr_codigo 
@@ -1104,7 +1272,7 @@ V_MSQL4 := 'CREATE OR REPLACE FORCE VIEW '||V_ESQUEMA||'.'||V_4||' AS
            AND dist5.cod_provincia = dd_prov.dd_prv_codigo 
            AND dist5.cod_municipio = dd_loc.dd_loc_codigo
            AND dist5.cod_postal IS NULL
-           AND dist5.tipo_gestor = ''SUPRES''
+           AND dist5.tipo_gestor = TGE.DD_TGE_CODIGO 
           )
        left JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist6
        ON (dist6.cod_tipo_comerzialzacion = dd_tcr.dd_tcr_codigo 
@@ -1113,7 +1281,7 @@ V_MSQL4 := 'CREATE OR REPLACE FORCE VIEW '||V_ESQUEMA||'.'||V_4||' AS
            AND dist6.cod_provincia = dd_prov.dd_prv_codigo  
            AND dist6.cod_municipio = dd_loc.dd_loc_codigo
            AND dist6.cod_postal = loc.BIE_LOC_COD_POST
-           AND dist6.tipo_gestor = ''SUPRES''
+           AND dist6.tipo_gestor = TGE.DD_TGE_CODIGO 
           )
        left JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist7
        ON (dist7.cod_tipo_comerzialzacion = dd_tcr.dd_tcr_codigo  
@@ -1122,9 +1290,18 @@ V_MSQL4 := 'CREATE OR REPLACE FORCE VIEW '||V_ESQUEMA||'.'||V_4||' AS
            AND dist7.cod_provincia = dd_prov.dd_prv_codigo 
            AND dist7.cod_municipio = dd_loc.dd_loc_codigo
            AND dist7.cod_postal = loc.BIE_LOC_COD_POST
-           AND dist7.tipo_gestor = ''SUPRES''
+           AND dist7.tipo_gestor = TGE.DD_TGE_CODIGO 
           )
-          where act.borrado = 0
+          where act.borrado = 0 and 
+		( 		dist0.tipo_gestor = TGE.DD_TGE_CODIGO 
+			OR  dist1.tipo_gestor = TGE.DD_TGE_CODIGO 
+			OR  dist2.tipo_gestor = TGE.DD_TGE_CODIGO 
+			OR  dist3.tipo_gestor = TGE.DD_TGE_CODIGO 
+			OR  dist4.tipo_gestor = TGE.DD_TGE_CODIGO 
+			OR  dist5.tipo_gestor = TGE.DD_TGE_CODIGO 
+			OR  dist6.tipo_gestor = TGE.DD_TGE_CODIGO 
+			OR  dist7.tipo_gestor = TGE.DD_TGE_CODIGO 
+		) 
     and act.dd_cra_id in (select dd_cra_id from '||V_ESQUEMA||'.dd_cra_cartera where dd_cra_codigo = ''01'')
     and act.dd_scm_id in (select dd_scm_id from '||V_ESQUEMA||'.dd_scm_situacion_comercial  where dd_scm_codigo <> ''05'')
     UNION ALL
@@ -1160,8 +1337,8 @@ SELECT act.act_id,
            AND dist1.tipo_gestor = TGE.DD_TGE_CODIGO
           )
           where act.borrado = 0 
-            AND (dist0.tipo_gestor = ''PTEC'' 
-              OR dist1.tipo_gestor = ''PTEC'')
+            AND (dist0.tipo_gestor = TGE.DD_TGE_CODIGO 
+              OR dist1.tipo_gestor = TGE.DD_TGE_CODIGO)
     union all
 /*GOLDEN TREE */
 SELECT act.act_id, 
@@ -1192,8 +1369,8 @@ SELECT act.act_id,
             AND dist1.cod_subcartera = dd_scr.dd_scr_codigo 
             AND dist1.tipo_gestor = tge.dd_tge_codigo)
     where act.borrado = 0
-            AND (DIST0.TIPO_GESTOR = ''GTREE'' 
-              OR DIST1.TIPO_GESTOR = ''GTREE'')
+            AND (DIST0.TIPO_GESTOR = TGE.DD_TGE_CODIGO 
+              OR DIST1.TIPO_GESTOR = TGE.DD_TGE_CODIGO)
                            
   UNION ALL
   /*Gestor Liberbank Residencial (Liberbank)*/
@@ -1207,15 +1384,19 @@ SELECT act.act_id,
              FROM '||V_ESQUEMA||'.act_activo act 
 				  JOIN '||V_ESQUEMA||'.dd_cra_cartera dd_cra ON dd_cra.dd_cra_id = act.dd_cra_id
 				  JOIN '||V_ESQUEMA||'.dd_scr_subcartera dd_scr ON dd_scr.dd_cra_id = dd_cra.dd_cra_id AND dd_scr.dd_scr_id = act.dd_scr_id
+				  JOIN '||V_ESQUEMA_M||'.DD_TGE_TIPO_GESTOR TGE ON TGE.DD_TGE_CODIGO = ''GLIBRES''
                   JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist0 
                     ON (dist0.cod_cartera = dd_cra.dd_cra_codigo 
                         AND dist0.cod_subcartera IS NULL 
-                        AND dist0.tipo_gestor = ''GLIBRES'')
+                        AND dist0.tipo_gestor = TGE.DD_TGE_CODIGO)
                   JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist1 
                     ON (dist1.cod_cartera = dd_cra.dd_cra_codigo 
                         AND dist1.cod_subcartera = dd_scr.dd_scr_codigo 
-                        AND dist1.tipo_gestor = ''GLIBRES'')
-           where act.borrado = 0
+                        AND dist1.tipo_gestor = TGE.DD_TGE_CODIGO)
+           where act.borrado = 0 and 
+		( 		dist0.tipo_gestor = TGE.DD_TGE_CODIGO
+			OR  dist1.tipo_gestor = TGE.DD_TGE_CODIGO
+		)
 
   UNION ALL
   /*Gestor Inversión Inmobiliaria (Liberbank)*/
@@ -1229,15 +1410,19 @@ SELECT act.act_id,
              FROM '||V_ESQUEMA||'.act_activo act 
 				  JOIN '||V_ESQUEMA||'.dd_cra_cartera dd_cra ON dd_cra.dd_cra_id = act.dd_cra_id
 				  JOIN '||V_ESQUEMA||'.dd_scr_subcartera dd_scr ON dd_scr.dd_cra_id = dd_cra.dd_cra_id AND dd_scr.dd_scr_id = act.dd_scr_id
+				  JOIN '||V_ESQUEMA_M||'.DD_TGE_TIPO_GESTOR TGE ON TGE.DD_TGE_CODIGO = ''GLIBINVINM''
                   JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist0 
                     ON (dist0.cod_cartera = dd_cra.dd_cra_codigo 
                         AND dist0.cod_subcartera IS NULL 
-                        AND dist0.tipo_gestor = ''GLIBINVINM'')
+                        AND dist0.tipo_gestor = TGE.DD_TGE_CODIGO)
                   JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist1 
                     ON (dist1.cod_cartera = dd_cra.dd_cra_codigo 
                         AND dist1.cod_subcartera = dd_scr.dd_scr_codigo 
-                        AND dist1.tipo_gestor = ''GLIBINVINM'')
-           where act.borrado = 0
+                        AND dist1.tipo_gestor = TGE.DD_TGE_CODIGO)
+           where act.borrado = 0 and 
+			( 		dist0.tipo_gestor = TGE.DD_TGE_CODIGO
+				OR  dist1.tipo_gestor = TGE.DD_TGE_CODIGO
+			)
     UNION ALL
   /*Gestor Singular/Terciario (Liberbank)*/
            SELECT act.act_id, 
@@ -1250,15 +1435,19 @@ SELECT act.act_id,
              FROM '||V_ESQUEMA||'.act_activo act 
 				  JOIN '||V_ESQUEMA||'.dd_cra_cartera dd_cra ON dd_cra.dd_cra_id = act.dd_cra_id
 				  JOIN '||V_ESQUEMA||'.dd_scr_subcartera dd_scr ON dd_scr.dd_cra_id = dd_cra.dd_cra_id AND dd_scr.dd_scr_id = act.dd_scr_id
+				  JOIN '||V_ESQUEMA_M||'.DD_TGE_TIPO_GESTOR TGE ON TGE.DD_TGE_CODIGO = ''GLIBSINTER''
                   JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist0 
                     ON (dist0.cod_cartera = dd_cra.dd_cra_codigo 
                         AND dist0.cod_subcartera IS NULL 
-                        AND dist0.tipo_gestor = ''GLIBSINTER'')
+                        AND dist0.tipo_gestor = TGE.DD_TGE_CODIGO)
                   JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist1 
                     ON (dist1.cod_cartera = dd_cra.dd_cra_codigo 
                         AND dist1.cod_subcartera = dd_scr.dd_scr_codigo 
-                        AND dist1.tipo_gestor = ''GLIBSINTER'')
-           where act.borrado = 0
+                        AND dist1.tipo_gestor = TGE.DD_TGE_CODIGO)
+           where act.borrado = 0 and 
+			( 		dist0.tipo_gestor = TGE.DD_TGE_CODIGO
+				OR  dist1.tipo_gestor = TGE.DD_TGE_CODIGO
+			)
   UNION ALL
   /*Gestor Comité de Inversiones Inmobiliarias (Liberbank)*/
            SELECT act.act_id, 
@@ -1271,15 +1460,19 @@ SELECT act.act_id,
              FROM '||V_ESQUEMA||'.act_activo act 
 				  JOIN '||V_ESQUEMA||'.dd_cra_cartera dd_cra ON dd_cra.dd_cra_id = act.dd_cra_id
 				  JOIN '||V_ESQUEMA||'.dd_scr_subcartera dd_scr ON dd_scr.dd_cra_id = dd_cra.dd_cra_id AND dd_scr.dd_scr_id = act.dd_scr_id
+				  JOIN '||V_ESQUEMA_M||'.DD_TGE_TIPO_GESTOR TGE ON TGE.DD_TGE_CODIGO = ''GCOIN''
                   JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist0 
                     ON (dist0.cod_cartera = dd_cra.dd_cra_codigo 
                         AND dist0.cod_subcartera IS NULL 
-                        AND dist0.tipo_gestor = ''GCOIN'')
+                        AND dist0.tipo_gestor = TGE.DD_TGE_CODIGO)
                   JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist1 
                     ON (dist1.cod_cartera = dd_cra.dd_cra_codigo 
                         AND dist1.cod_subcartera = dd_scr.dd_scr_codigo 
-                        AND dist1.tipo_gestor = ''GCOIN'')
-           where act.borrado = 0
+                        AND dist1.tipo_gestor = TGE.DD_TGE_CODIGO)
+           where act.borrado = 0 and 
+			( 		dist0.tipo_gestor = TGE.DD_TGE_CODIGO
+				OR  dist1.tipo_gestor = TGE.DD_TGE_CODIGO
+			)
 
   UNION ALL
   /*Gestor Comité Inmobiliario (Liberbank)*/
@@ -1293,15 +1486,19 @@ SELECT act.act_id,
              FROM '||V_ESQUEMA||'.act_activo act 
 				  JOIN '||V_ESQUEMA||'.dd_cra_cartera dd_cra ON dd_cra.dd_cra_id = act.dd_cra_id
 				  JOIN '||V_ESQUEMA||'.dd_scr_subcartera dd_scr ON dd_scr.dd_cra_id = dd_cra.dd_cra_id AND dd_scr.dd_scr_id = act.dd_scr_id
+				  JOIN '||V_ESQUEMA_M||'.DD_TGE_TIPO_GESTOR TGE ON TGE.DD_TGE_CODIGO = ''GCOINM''
                   JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist0 
                     ON (dist0.cod_cartera = dd_cra.dd_cra_codigo 
                         AND dist0.cod_subcartera IS NULL 
-                        AND dist0.tipo_gestor = ''GCOINM'')
+                        AND dist0.tipo_gestor = TGE.DD_TGE_CODIGO)
                   JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist1 
                     ON (dist1.cod_cartera = dd_cra.dd_cra_codigo 
                         AND dist1.cod_subcartera = dd_scr.dd_scr_codigo 
-                        AND dist1.tipo_gestor = ''GCOINM'')
-           where act.borrado = 0
+                        AND dist1.tipo_gestor = TGE.DD_TGE_CODIGO)
+           where act.borrado = 0 and 
+			( 		dist0.tipo_gestor = TGE.DD_TGE_CODIGO
+				OR  dist1.tipo_gestor = TGE.DD_TGE_CODIGO
+			)
 
   UNION ALL
   /*Gestor Comité de Dirección (Liberbank)*/
@@ -1315,15 +1512,20 @@ SELECT act.act_id,
              FROM '||V_ESQUEMA||'.act_activo act 
 				  JOIN '||V_ESQUEMA||'.dd_cra_cartera dd_cra ON dd_cra.dd_cra_id = act.dd_cra_id
 				  JOIN '||V_ESQUEMA||'.dd_scr_subcartera dd_scr ON dd_scr.dd_cra_id = dd_cra.dd_cra_id AND dd_scr.dd_scr_id = act.dd_scr_id
+				  JOIN '||V_ESQUEMA_M||'.DD_TGE_TIPO_GESTOR TGE ON TGE.DD_TGE_CODIGO = ''GCODI''
                   JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist0 
                     ON (dist0.cod_cartera = dd_cra.dd_cra_codigo 
                         AND dist0.cod_subcartera IS NULL 
-                        AND dist0.tipo_gestor = ''GCODI'')
+                        AND dist0.tipo_gestor = TGE.DD_TGE_CODIGO)
                   JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist1 
                     ON (dist1.cod_cartera = dd_cra.dd_cra_codigo 
                         AND dist1.cod_subcartera = dd_scr.dd_scr_codigo 
-                        AND dist1.tipo_gestor = ''GCODI'')
-           where act.borrado = 0
+                        AND dist1.tipo_gestor = TGE.DD_TGE_CODIGO)
+           where act.borrado = 0 and 
+			( 		dist0.tipo_gestor = TGE.DD_TGE_CODIGO
+				OR  dist1.tipo_gestor = TGE.DD_TGE_CODIGO
+			)
+
 				)';
   
 V_MSQL5 := ' CREATE OR REPLACE FORCE VIEW '||V_ESQUEMA||'.'||V_5||' AS 
@@ -1415,7 +1617,16 @@ V_MSQL5 := ' CREATE OR REPLACE FORCE VIEW '||V_ESQUEMA||'.'||V_5||' AS
                 AND dist7.tipo_gestor = TGE.DD_TGE_CODIGO
             )   
         WHERE 
-            act.borrado = 0 
+            act.borrado = 0 and 
+			( 		dist0.tipo_gestor = TGE.DD_TGE_CODIGO
+				OR  dist1.tipo_gestor = TGE.DD_TGE_CODIGO
+				OR  dist2.tipo_gestor = TGE.DD_TGE_CODIGO
+				OR  dist3.tipo_gestor = TGE.DD_TGE_CODIGO
+				OR  dist4.tipo_gestor = TGE.DD_TGE_CODIGO
+				OR  dist5.tipo_gestor = TGE.DD_TGE_CODIGO
+				OR  dist6.tipo_gestor = TGE.DD_TGE_CODIGO
+				OR  dist7.tipo_gestor = TGE.DD_TGE_CODIGO
+			)
             AND act.DD_TPA_ID = (SELECT DD_TPA_ID FROM '||V_ESQUEMA||'.DD_TPA_TIPO_ACTIVO WHERE DD_TPA_CODIGO = ''01'')
             AND act.DD_EAC_ID = (SELECT DD_EAC_ID FROM '||V_ESQUEMA||'.DD_EAC_ESTADO_ACTIVO WHERE DD_EAC_CODIGO = ''01'')
     UNION ALL
@@ -1505,7 +1716,16 @@ V_MSQL5 := ' CREATE OR REPLACE FORCE VIEW '||V_ESQUEMA||'.'||V_5||' AS
                 AND dist7.tipo_gestor = TGE.DD_TGE_CODIGO
             )   
         WHERE 
-            act.borrado = 0 
+            act.borrado = 0 and 
+			( 		dist0.tipo_gestor = TGE.DD_TGE_CODIGO
+				OR  dist1.tipo_gestor = TGE.DD_TGE_CODIGO
+				OR  dist2.tipo_gestor = TGE.DD_TGE_CODIGO
+				OR  dist3.tipo_gestor = TGE.DD_TGE_CODIGO
+				OR  dist4.tipo_gestor = TGE.DD_TGE_CODIGO
+				OR  dist5.tipo_gestor = TGE.DD_TGE_CODIGO
+				OR  dist6.tipo_gestor = TGE.DD_TGE_CODIGO
+				OR  dist7.tipo_gestor = TGE.DD_TGE_CODIGO
+			)
             AND act.DD_TPA_ID = (SELECT DD_TPA_ID FROM '||V_ESQUEMA||'.DD_TPA_TIPO_ACTIVO WHERE DD_TPA_CODIGO = ''01'')
             AND act.DD_EAC_ID = (SELECT DD_EAC_ID FROM '||V_ESQUEMA||'.DD_EAC_ESTADO_ACTIVO WHERE DD_EAC_CODIGO = ''01'')
         
@@ -1596,7 +1816,16 @@ V_MSQL5 := ' CREATE OR REPLACE FORCE VIEW '||V_ESQUEMA||'.'||V_5||' AS
                 AND dist7.tipo_gestor = TGE.DD_TGE_CODIGO
             )   
         WHERE 
-            act.borrado = 0 
+            act.borrado = 0 and 
+			( 		dist0.tipo_gestor = TGE.DD_TGE_CODIGO
+				OR  dist1.tipo_gestor = TGE.DD_TGE_CODIGO
+				OR  dist2.tipo_gestor = TGE.DD_TGE_CODIGO
+				OR  dist3.tipo_gestor = TGE.DD_TGE_CODIGO
+				OR  dist4.tipo_gestor = TGE.DD_TGE_CODIGO
+				OR  dist5.tipo_gestor = TGE.DD_TGE_CODIGO
+				OR  dist6.tipo_gestor = TGE.DD_TGE_CODIGO
+				OR  dist7.tipo_gestor = TGE.DD_TGE_CODIGO
+			)
             AND act.DD_TPA_ID != (SELECT DD_TPA_ID FROM '||V_ESQUEMA||'.DD_TPA_TIPO_ACTIVO WHERE DD_TPA_CODIGO = ''01'')
             AND act.DD_EAC_ID IN (SELECT DD_EAC_ID FROM '||V_ESQUEMA||'.DD_EAC_ESTADO_ACTIVO WHERE DD_EAC_CODIGO IN (''09'', ''02'', ''06'', ''11'', ''10'', ''05'', ''08'', ''07''))
     UNION ALL
@@ -1686,7 +1915,16 @@ V_MSQL5 := ' CREATE OR REPLACE FORCE VIEW '||V_ESQUEMA||'.'||V_5||' AS
                 AND dist7.tipo_gestor = TGE.DD_TGE_CODIGO
             )   
         WHERE 
-            act.borrado = 0 
+            act.borrado = 0 and 
+			( 		dist0.tipo_gestor = TGE.DD_TGE_CODIGO
+				OR  dist1.tipo_gestor = TGE.DD_TGE_CODIGO
+				OR  dist2.tipo_gestor = TGE.DD_TGE_CODIGO
+				OR  dist3.tipo_gestor = TGE.DD_TGE_CODIGO
+				OR  dist4.tipo_gestor = TGE.DD_TGE_CODIGO
+				OR  dist5.tipo_gestor = TGE.DD_TGE_CODIGO
+				OR  dist6.tipo_gestor = TGE.DD_TGE_CODIGO
+				OR  dist7.tipo_gestor = TGE.DD_TGE_CODIGO
+			)
             AND act.DD_TPA_ID != (SELECT DD_TPA_ID FROM '||V_ESQUEMA||'.DD_TPA_TIPO_ACTIVO WHERE DD_TPA_CODIGO = ''01'')
             AND act.DD_EAC_ID IN (SELECT DD_EAC_ID FROM '||V_ESQUEMA||'.DD_EAC_ESTADO_ACTIVO WHERE DD_EAC_CODIGO IN (''09'', ''02'', ''06'', ''11'', ''10'', ''05'', ''08'', ''07''))
 UNION ALL
@@ -1721,8 +1959,8 @@ UNION ALL
                             AND dist1.cod_cartera = dd_cra.dd_cra_codigo
                             AND dist1.cod_subcartera = dd_scr.dd_scr_codigo)
          where act.borrado = 0 
-			AND (dist0.tipo_gestor = ''GESTCOMALQ''
-			  OR dist1.tipo_gestor = ''GESTCOMALQ'')
+			AND (dist0.tipo_gestor = TGE.DD_TGE_CODIGO
+			  OR dist1.tipo_gestor = TGE.DD_TGE_CODIGO)
  )';
 
 V_MSQL6 := '  CREATE OR REPLACE FORCE VIEW '||V_ESQUEMA||'.'||V_6||' AS 
@@ -1749,8 +1987,8 @@ V_MSQL6 := '  CREATE OR REPLACE FORCE VIEW '||V_ESQUEMA||'.'||V_6||' AS
                             AND dist1.cod_cartera = dd_cra.dd_cra_codigo
                             AND dist1.cod_subcartera = dd_scr.dd_scr_codigo)
          where act.borrado = 0
-			AND (dist0.tipo_gestor = ''SUPCOMALQ''
-			  OR dist1.tipo_gestor = ''SUPCOMALQ'')
+			AND (dist0.tipo_gestor = TGE.DD_TGE_CODIGO
+			  OR dist1.tipo_gestor = TGE.DD_TGE_CODIGO)
 
 UNION ALL
 /*Gestor de publicaciones*/
@@ -1841,14 +2079,15 @@ SELECT
             AND dist7.tipo_gestor = TGE.DD_TGE_CODIGO
     )
     WHERE act.borrado = 0 
-		AND (dist0.tipo_gestor = ''GPUBL''
-	      OR dist1.tipo_gestor = ''GPUBL''
-	      OR dist2.tipo_gestor = ''GPUBL''
-	      OR dist3.tipo_gestor = ''GPUBL''
-	      OR dist4.tipo_gestor = ''GPUBL''
-	      OR dist5.tipo_gestor = ''GPUBL''
-          OR dist6.tipo_gestor = ''GPUBL''
-          OR dist7.tipo_gestor = ''GPUBL'')
+		AND   (dist0.tipo_gestor = TGE.DD_TGE_CODIGO
+			OR dist1.tipo_gestor = TGE.DD_TGE_CODIGO
+			OR dist2.tipo_gestor = TGE.DD_TGE_CODIGO
+			OR dist3.tipo_gestor = TGE.DD_TGE_CODIGO
+			OR dist4.tipo_gestor = TGE.DD_TGE_CODIGO
+			OR dist5.tipo_gestor = TGE.DD_TGE_CODIGO
+			OR dist6.tipo_gestor = TGE.DD_TGE_CODIGO
+			OR dist7.tipo_gestor = TGE.DD_TGE_CODIGO)
+			)
 UNION ALL
 /*Supervisor de publicaciones*/
 SELECT
@@ -1945,16 +2184,16 @@ SELECT
             AND dist8.tipo_gestor = TGE.DD_TGE_CODIGO
     )
     WHERE act.borrado = 0 
-		AND (dist0.tipo_gestor = ''SPUBL''
-	      OR dist1.tipo_gestor = ''SPUBL''
-	      OR dist2.tipo_gestor = ''SPUBL''
-	      OR dist3.tipo_gestor = ''SPUBL''
-	      OR dist4.tipo_gestor = ''SPUBL''
-	      OR dist5.tipo_gestor = ''SPUBL''
-          OR dist6.tipo_gestor = ''SPUBL''
-          OR dist7.tipo_gestor = ''SPUBL''
-          OR dist8.tipo_gestor = ''SPUBL'')
-)';
+		AND   (dist0.tipo_gestor = TGE.DD_TGE_CODIGO
+			OR dist1.tipo_gestor = TGE.DD_TGE_CODIGO
+			OR dist2.tipo_gestor = TGE.DD_TGE_CODIGO
+			OR dist3.tipo_gestor = TGE.DD_TGE_CODIGO
+			OR dist4.tipo_gestor = TGE.DD_TGE_CODIGO
+			OR dist5.tipo_gestor = TGE.DD_TGE_CODIGO
+			OR dist6.tipo_gestor = TGE.DD_TGE_CODIGO
+			OR dist7.tipo_gestor = TGE.DD_TGE_CODIGO
+			OR dist8.tipo_gestor = TGE.DD_TGE_CODIGO)
+';
 
 --  DBMS_OUTPUT.PUT_LINE (V_MSQL1 );
 DBMS_OUTPUT.PUT_LINE('[INFO] Empieza '||V_1||' - '||LENGTH(V_MSQL1)||' ');
@@ -1964,7 +2203,7 @@ DBMS_OUTPUT.PUT_LINE('[INFO] Empieza '||V_2||' - '||LENGTH(V_MSQL2)||' ');
 EXECUTE IMMEDIATE V_MSQL2;
 COMMIT;
 
---DBMS_OUTPUT.PUT_LINE (V_MSQL3);
+-- DBMS_OUTPUT.PUT_LINE (V_MSQL3);
 DBMS_OUTPUT.PUT_LINE('[INFO] Empieza '||V_3||' - '||LENGTH(V_MSQL3)||' ');
 EXECUTE IMMEDIATE V_MSQL3  ;	
 --	DBMS_OUTPUT.PUT_LINE (V_MSQL4 );

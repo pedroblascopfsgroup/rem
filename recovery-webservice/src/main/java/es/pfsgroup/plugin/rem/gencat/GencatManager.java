@@ -742,7 +742,12 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 					adjuntoComunicacion.setAdjunto(adj);
 				}
 				
-				adjuntoComunicacion.setComunicacionGencat(comunicacionGencat);
+				if (!Checks.esNulo(webFileItem.getParameter("idHComunicacion"))) {
+					HistoricoComunicacionGencat historicoComunicacionGencat = genericDao.get(HistoricoComunicacionGencat.class, genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(webFileItem.getParameter("idHComunicacion"))));
+					adjuntoComunicacion.setHistoricoComunicacionGencat(historicoComunicacionGencat);
+				} else {
+					adjuntoComunicacion.setComunicacionGencat(comunicacionGencat);
+				}
 
 				adjuntoComunicacion.setIdDocRestClient(idDocRestClient);
 

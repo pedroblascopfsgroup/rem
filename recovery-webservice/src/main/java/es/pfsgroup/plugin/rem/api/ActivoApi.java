@@ -1032,6 +1032,8 @@ public interface ActivoApi {
 	boolean updateCalificacionNegativa(DtoActivoDatosRegistrales dto);
 	
 	boolean createCalificacionNegativa(DtoActivoDatosRegistrales dto) throws JsonViewerException, Exception;
+	
+	boolean destroyCalificacionNegativa(DtoActivoDatosRegistrales dto);
 
 	DtoActivoFichaCabecera getActivosAgrupacionRestringida(Long idActivo);
 

@@ -5060,6 +5060,18 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		return false;
 		
 	}
+	
+	@Override
+	@Transactional
+	public boolean destroyCalificacionNegativa(DtoActivoDatosRegistrales dto) {
+		if (!Checks.esNulo(dto.getIdMotivo())) {
+			genericDao.deleteById(ActivoCalificacionNegativa.class, Long.valueOf(dto.getIdMotivo()));
+
+			return true;
+		}
+
+		return false;
+	}
 
 	@Override
 	public DtoComunidadpropietariosActivo getComunidadPropietariosActivo(Long idActivo) {

@@ -30,7 +30,8 @@ Ext.define('HreRem.model.CalificacionNegativaModel', {
 		api: {
             // read: 'activo/getActivoCalificacionNegativa',
             create: 'activo/createCalificacionNegativa',
-            update: 'activo/updateCalificacionNegativa'
+            update: 'activo/updateCalificacionNegativa',
+            destroy: 'activo/destroyCalificacionNegativa'
         }
     }
 });

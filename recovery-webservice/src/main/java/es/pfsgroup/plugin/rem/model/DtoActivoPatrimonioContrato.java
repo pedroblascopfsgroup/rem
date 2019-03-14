@@ -23,7 +23,7 @@ public class DtoActivoPatrimonioContrato extends DtoTabActivo {
 	private Date fechaFirma;
 	private Date fechaFinContrato;
 	private String inquilino;
-	private Long deudaPendiente;
+	private Double deudaPendiente;
 	private Long recibosPendientes;
 	private Double cuota;
 	private Date ultimoReciboPagado;
@@ -89,10 +89,10 @@ public class DtoActivoPatrimonioContrato extends DtoTabActivo {
 	public void setInquilino(String inquilino) {
 		this.inquilino = inquilino;
 	}
-	public Long getDeudaPendiente() {
+	public Double getDeudaPendiente() {
 		return deudaPendiente;
 	}
-	public void setDeudaPendiente(Long deudaPendiente) {
+	public void setDeudaPendiente(Double deudaPendiente) {
 		this.deudaPendiente = deudaPendiente;
 	}
 	public Long getRecibosPendientes() {

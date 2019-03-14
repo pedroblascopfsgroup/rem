@@ -77,7 +77,7 @@ public class ActivoPatrimonioContrato implements Serializable, Auditable {
 	private String inquilino;
 	
 	@Column(name = "DCA_DEUDA_PENDIENTE")
-	private Long deudaPendiente;
+	private Double deudaPendiente;
 	
 	@Column(name = "DCA_RECIBOS_PENDIENTES")
 	private Long recibosPendientes;
@@ -184,11 +184,11 @@ public class ActivoPatrimonioContrato implements Serializable, Auditable {
 		this.inquilino = inquilino;
 	}
 
-	public Long getDeudaPendiente() {
+	public Double getDeudaPendiente() {
 		return deudaPendiente;
 	}
 
-	public void setDeudaPendiente(Long deudaPendiente) {
+	public void setDeudaPendiente(Double deudaPendiente) {
 		this.deudaPendiente = deudaPendiente;
 	}
 

@@ -275,6 +275,12 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 
 		activoDto.setPuedeEditarCalificacionNegativa(campoMarcado);
 		activoDto.setIsCalificacionNegativaEnabled(puedeEditar);
+		if(!Checks.esNulo(activo.getTitulo()) && !Checks.esNulo(activo.getTitulo().getEstado()) && !DDEstadoTitulo.ESTADO_INSCRITO.equals(activo.getTitulo().getEstado().getCodigo())){
+			activoDto.setNoEstaInscrito(true);
+		}else{
+			activoDto.setNoEstaInscrito(false);
+		}
+		
 		
 		return activoDto;
 	}

@@ -788,6 +788,9 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 							reference:'calificacionNegativa',
 							hidden: false, 
 							title: HreRem.i18n("title.calificacion.negativa"),
+							bind:{
+								disabled:'{!datosRegistrales.noEstaInscrito}'
+							},
 							items :
 							[
 								{

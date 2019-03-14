@@ -450,6 +450,10 @@ Ext.define('HreRem.model.ActivoDatosRegistrales', {
     			type: 'boolean'
     		},
     		{
+    			name: 'noEstaInscrito',
+    			type: 'boolean'
+    		},
+    		{
     			name: 'fechaSubsanacion',
     			type:'date',
     			dateWriteFormat: 'Y-m.d',

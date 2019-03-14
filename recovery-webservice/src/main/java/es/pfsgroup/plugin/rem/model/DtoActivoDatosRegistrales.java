@@ -113,6 +113,7 @@ public class DtoActivoDatosRegistrales extends DtoTabActivo {
 	private String descripcionCalificacionNegativa;
 	private Boolean puedeEditarCalificacionNegativa;
 	private Boolean isCalificacionNegativaEnabled;
+	private Boolean noEstaInscrito;
 	
 	//Motivo Estado Calificación negativa
 	private String estadoMotivoCalificacionNegativa;
@@ -707,6 +708,12 @@ public class DtoActivoDatosRegistrales extends DtoTabActivo {
 	}
 	public void setIsCalificacionNegativaEnabled(Boolean isCalificacionNegativaEnabled) {
 		this.isCalificacionNegativaEnabled = isCalificacionNegativaEnabled;
+	}
+	public Boolean getNoEstaInscrito() {
+		return noEstaInscrito;
+	}
+	public void setNoEstaInscrito(Boolean noEstaInscrito) {
+		this.noEstaInscrito = noEstaInscrito;
 	}
 
 

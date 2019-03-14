@@ -17,6 +17,7 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.plugin.rem.activo.dao.impl.ActivoDaoImpl;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.model.Activo;
@@ -47,6 +48,9 @@ public abstract class AbstractNotificatorService {
 
 	@Autowired
 	private GestorActivoApi gestorActivoManager;
+	
+	@Autowired
+	private ActivoDaoImpl activodao;
 
 	@Autowired
 	private ExpedienteComercialApi expedienteComercialApi;
@@ -103,8 +107,52 @@ public abstract class AbstractNotificatorService {
 		String notificacionAutomatica = "<td style=\"vertical-align:middle;text-align:center;color:#0a94d6;font-size:x-small;font-weight:bold;padding:0px;border-collapse:collapse;margin-bottom:25px\"> ESTE MENSAJE ES UNA NOTIFICACIÓN AUTOMÁTICA. NO RESPONDA A ESTE CORREO.</td>";
 		return notificacionAutomatica;
 	}
+	protected String generateCuerpo(DtoSendNotificator dtoSendNotificator, String contenido){
+		Activo activo = activodao.getActivoByNumActivo(dtoSendNotificator.getNumActivo());
+		if(activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_BANKIA)){
+			return generateCuerpoBankia(dtoSendNotificator, contenido);
+		} else {
+			return generateCuerpoEstandar(dtoSendNotificator, contenido);
+		}
+		
+	}
+	
+	protected String generateCuerpoBankia(DtoSendNotificator dtoSendNotificator, String contenido){
+		String cuerpo = "<html>" + "<!DOCTYPE HTML PUBLIC '-//W3C//DTD HTML 4.01 Transitional//EN'>" + "<html>"
+				+ "<head>" + "<META http-equiv='Content-Type' content='text/html; charset=utf-8'>" + "</head>"
+				+ "<body>" + "	<div>" + "		<div style='font-family: Arial,&amp; amp;'>"
+				+ "			<div style='border-radius: 12px 12px 0px 0px; background: #b7ddf0; width: 300px; height: 60px; display: table'>"
+				+ "				<img src='" + this.getUrlImagenes() + "ico_notificacion.png' "
+				+ "					style='display: table-cell; padding: 12px; display: inline-block' />"
+				+ "				<div style='font-size: 20px; vertical-align: top; color: #333; display: table-cell; padding: 12px'> "
+				+ dtoSendNotificator.getTitulo() + "</div>" + "			</div>"
+				+ "			<div style='background: #b7ddf0; width: 785px; min-height: 600px; border-radius: 0px 20px 20px 20px; padding: 20px'>"
+				+ "				<div style='background: #054664; width: 600px; height: 375px; border-radius: 20px; color: #fff; display: inline-block'>"
+				+ "					<div style='display: table; margin: 20px;'>"
+		
+				+ "							</div>" + "						</div>"
+				+ "					</div>" + "				</div>"
+				+ "				<div style='display: inline-block; width: 140px; vertical-align: top'>"
+				+ "					<img src='" + this.getUrlImagenes() + "logo_haya.png' "
+				+ "						style='display: block; margin: 30px auto' /> " + "					<img src='"
+				+ this.getUrlImagenes() + "logo_rem.png' "
+				+ "						style='display: block; margin: 30px auto' /> " + "				</div>"
+				+ "				<div style='background: #fff; color: #333; border-radius: 20px; padding: 25px; line-height: 22px; text-align: justify; margin-top: 20px; font-size: 16px'>"
+				+ contenido + "				</div>"
+				+ "				<div style='color: #333; margin: 23px 0px 0px 65px; font-size: 16px; display: table;'>"
+				+ "					<div style='display: table-cell'>" + "						<img src='"
+				+ this.getUrlImagenes() + "ico_advertencia.png' />" + "					</div>"
+				+ "					<div style='display: table-cell; vertical-align: middle; padding: 5px;'>"
+				+ "						Este mensaje es una notificación automática. No responda a este correo.</div>"
+				+ "				</div>" + "			</div>" + "</body>" + "</html>";
 
-	protected String generateCuerpo(DtoSendNotificator dtoSendNotificator, String contenido) {
+				return cuerpo;
+		
+		
+	}
+
+
+	protected String generateCuerpoEstandar(DtoSendNotificator dtoSendNotificator, String contenido) {
 		String cuerpo = "<html>" + "<!DOCTYPE HTML PUBLIC '-//W3C//DTD HTML 4.01 Transitional//EN'>" + "<html>"
 				+ "<head>" + "<META http-equiv='Content-Type' content='text/html; charset=utf-8'>" + "</head>"
 				+ "<body>" + "	<div>" + "		<div style='font-family: Arial,&amp; amp;'>"
@@ -373,17 +421,11 @@ public abstract class AbstractNotificatorService {
 		
 		if(!Checks.estaVacio(tramites)) {
 			tramite = tramites.get(numTramites-1);
-			dtoSendNotificator = this.rellenaDtoSendNotificator(tramite);
+			dtoSendNotificator = this.rellenaDtoSendNotificator(oferta, tramite);
 			dtoSendNotificator.setTitulo(asunto);
 		}
 
-		tramite = tramites.get(numTramites - 1);		
-		
-		if(!Checks.estaVacio(tramites)) {
-			tramite = tramites.get(numTramites-1);
-			dtoSendNotificator = this.rellenaDtoSendNotificator(tramite);
-			dtoSendNotificator.setTitulo(asunto);
-		}
+
 
 		cuerpo = cuerpo + "<p>Quedamos a su disposición para cualquier consulta o aclaración. Saludos cordiales.</p>";
 

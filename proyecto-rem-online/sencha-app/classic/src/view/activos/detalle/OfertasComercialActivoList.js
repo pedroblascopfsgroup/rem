@@ -360,7 +360,12 @@ Ext.define('HreRem.view.activos.detalle.OfertasComercialActivoList', {
 		}
 		
 		var codigoEstadoNuevo = record.data.codigoEstadoOferta;
-		if(hayOfertaAceptada && CONST.ESTADOS_OFERTA['ACEPTADA'] == codigoEstadoNuevo){
+		
+		if(me.lookupViewModel().get('activo.tipoEstadoAlquiler') == CONST.COMBO_ESTADO_ALQUILER['LIBRE'] 
+		&& (me.lookupViewModel().get('activo.situacionComercialCodigo') != CONST.SITUACION_COMERCIAL['DISPONIBLE_VENTA_ALQUILER'] || me.lookupViewModel().get('activo.situacionComercialCodigo') != CONST.SITUACION_COMERCIAL['DISPONIBLE_ALQUILER'])) {
+			return true;
+		}
+		else if(hayOfertaAceptada && CONST.ESTADOS_OFERTA['ACEPTADA'] == codigoEstadoNuevo){
 			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.guardar.oferta.ya.aceptada"));
 			return false;
 		} else if(hayOfertaAceptada && CONST.ESTADOS_OFERTA['RECHAZADA'] != codigoEstadoNuevo){

@@ -64,7 +64,7 @@ public class ActivoAgrupacionActivo implements Serializable , Auditable {
 	private Integer principal;
 		
 	@Column(name = "ACT_AGA_PARTICIPACION_UA")
-	private Long participacionUA;
+	private Double participacionUA;
 
 	@Column(name = "ACT_AGA_ID_PRINEX_HPM")
 	private Long idPrinexHPM;
@@ -136,11 +136,11 @@ public class ActivoAgrupacionActivo implements Serializable , Auditable {
 		this.auditoria = auditoria;
 	}
 	
-	public Long getParticipacionUA() {
+	public Double getParticipacionUA() {
 		return participacionUA;
 	}
 
-	public void setParticipacionUA(Long participacionUA) {
+	public void setParticipacionUA(Double participacionUA) {
 		this.participacionUA = participacionUA;
 	}
 

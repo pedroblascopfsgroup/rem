@@ -221,7 +221,7 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 		private Boolean unidadAlquilable;
 		private Boolean activoMatriz;
 		private Long numActivoMatriz;
-		private Long porcentajeParticipacion;
+		private Double porcentajeParticipacion;
 		private Long unidadesAlquilablesEnAgrupacion;
 	
 	
@@ -1739,11 +1739,11 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 		this.numActivoMatriz = numActivoMatriz;
 	}
 
-	public Long getPorcentajeParticipacion() {
+	public Double getPorcentajeParticipacion() {
 		return porcentajeParticipacion;
 	}
 
-	public void setPorcentajeParticipacion(Long porcentajeParticipacion) {
+	public void setPorcentajeParticipacion(Double porcentajeParticipacion) {
 		this.porcentajeParticipacion = porcentajeParticipacion;
 	}
 

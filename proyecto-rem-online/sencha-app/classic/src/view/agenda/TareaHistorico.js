@@ -302,6 +302,13 @@ Ext.define('HreRem.view.agenda.TareaHistorico',{
 				        	me.ocultarCampo(me.down('[name=comboAmpliacionYAutorizacion]'));
 				        }
 				    },
+				    
+				    T013_DefinicionOfertaValidacion: function() {		
+						var me = this;
+						var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
+						var comiteSuperior = me.down('[name=comiteSuperior]');
+						var comite = me.down('[name=comite]');
+					},
 					
 					ocultarCampo: function(campo) {
 				        var me = this;

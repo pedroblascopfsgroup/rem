@@ -93,11 +93,11 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 			activoApi.calcularFechaTomaPosesion(activo);
 			beanUtilNotNull.copyProperties(activoDto, activo.getSituacionPosesoria());
 			
-			if (activo.getSituacionPosesoria().getTipoTituloPosesorio() != null) {
+			if (!Checks.esNulo(activo.getSituacionPosesoria().getTipoTituloPosesorio())) {
 				BeanUtils.copyProperty(activoDto, "tipoTituloPosesorioCodigo", activo.getSituacionPosesoria().getTipoTituloPosesorio().getCodigo());
 			}
 			
-			if (activo.getSituacionPosesoria().getConTitulo() != null) {
+			if (!Checks.esNulo(activo.getSituacionPosesoria().getConTitulo())) {
 				BeanUtils.copyProperty(activoDto, "conTitulo", activo.getSituacionPosesoria().getConTitulo().getCodigo());
 			}
 			
@@ -182,8 +182,6 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 //			activo.getSituacionPosesoria().getSitaucionJuridica().setIndicaPosesion(dto.getIndicaPosesion());
 //		}
 		
-		activo.setSituacionPosesoria(genericDao.save(ActivoSituacionPosesoria.class, activo.getSituacionPosesoria()));
-		
 		if (dto.getTipoTituloPosesorioCodigo() != null) {
 			
 			DDTipoTituloPosesorio tipoTitulo = (DDTipoTituloPosesorio) 
@@ -192,7 +190,31 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 			activo.getSituacionPosesoria().setTipoTituloPosesorio(tipoTitulo);
 			
 		}
-
+		
+		if(dto.getFechaAccesoTapiado() != null){
+			activo.getSituacionPosesoria().setFechaAccesoTapiado(dto.getFechaAccesoTapiado());
+		}
+		
+		if(dto.getFechaAccesoAntiocupa() != null){
+			activo.getSituacionPosesoria().setFechaAccesoAntiocupa(dto.getFechaAccesoAntiocupa());
+		}
+		
+		if(dto.getAccesoTapiado() != null){
+			activo.getSituacionPosesoria().setAccesoTapiado(dto.getAccesoTapiado());
+			if(dto.getAccesoTapiado() == 0){
+				activo.getSituacionPosesoria().setFechaAccesoTapiado(null);
+			}
+		}
+		
+		if(dto.getAccesoAntiocupa() != null){
+			activo.getSituacionPosesoria().setAccesoAntiocupa(dto.getAccesoAntiocupa());
+			if(dto.getAccesoAntiocupa() == 0){
+				activo.getSituacionPosesoria().setFechaAccesoAntiocupa(null);
+			}
+		}
+		
+		activo.setSituacionPosesoria(genericDao.save(ActivoSituacionPosesoria.class, activo.getSituacionPosesoria()));
+		
 		if (dto.getNecesarias()!=null)
 		{
 			activo.setLlavesNecesarias(dto.getNecesarias());

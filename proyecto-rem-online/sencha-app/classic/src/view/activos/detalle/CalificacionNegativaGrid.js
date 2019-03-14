@@ -25,6 +25,7 @@ Ext.define('HreRem.view.activos.detalle.CalificacionNegativaGrid', {
 				},
 		        {
 		            dataIndex: 'motivoCalificacionNegativa',
+		            reference: 'motivoCalificacionNegativa',
 		            text: HreRem.i18n('fieldlabel.calificacion.motivo'),
 		            editor: {
 						xtype: 'combobox',								        		
@@ -99,6 +100,7 @@ Ext.define('HreRem.view.activos.detalle.CalificacionNegativaGrid', {
 		        		xtype: 'textareafield'
 		        	},
 		            flex: 1
+		         
 		        }
 		    ];
 
@@ -127,9 +129,19 @@ Ext.define('HreRem.view.activos.detalle.CalificacionNegativaGrid', {
    editFuncion: function(editor, context){
  		var me= this;
 		me.mask(HreRem.i18n("msg.mask.espere"));
+		
 
-			if (me.isValidRecord(context.record)) {				
-			
+			if (me.isValidRecord(context.record)) {		
+				
+				var motivo = context.record.data.motivoCalificacionNegativa;
+				var estado = context.record.data.estadoMotivoCalificacionNegativa;
+				
+				 if(motivo !=  CONST.COMBO_MOTIVO_CALIFICACION_NEGATIVA["OTROS"] && motivo != CONST.COMBO_MOTIVO_CALIFICACION_NEGATIVA["COD_OTROS"]){
+					 context.record.data.descripcionCalificacionNegativa = " ";
+				 }
+				 if(estado != CONST.COMBO_ESTADO_CALIFICACION_NEGATIVA["SUBSANADO"] && estado != CONST.COMBO_ESTADO_CALIFICACION_NEGATIVA["COD_SUBSANADO"] ){
+					 context.record.data.fechaSubsanacion = "";
+				 }
       		context.record.save({
       				
                   params: {

@@ -3098,6 +3098,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					}
 	
 					resolucionDto.setNumProtocolo(activoTramiteApi.getTareaValorByNombre(tex.getValores(), "numProtocolo"));
+				} catch (ParseException e) {
+					logger.error("error en expedienteComercialManager", e);
 				}
 			}
 		}

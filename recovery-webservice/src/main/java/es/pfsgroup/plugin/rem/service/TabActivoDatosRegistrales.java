@@ -27,6 +27,7 @@ import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDEntidadAdjudicataria;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBAdjudicacionBien;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBInformacionRegistralBien;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
@@ -82,6 +83,9 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 	
 	@Autowired
 	private ActivoApi activoApi;
+	
+	@Autowired
+	private ActivoDao activoDao;
 	
 	protected static final Log logger = LogFactory.getLog(TabActivoDatosRegistrales.class);
 	
@@ -258,8 +262,21 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 		// HREOS-2761: Buscamos los campos que pueden ser propagados para esta pestaña
 		activoDto.setCamposPropagables(TabActivoService.TAB_DATOS_REGISTRALES);
 		
-		return activoDto;
+		List<ActivoCalificacionNegativa> activoCNList = activoDao.getListActivoCalificacionNegativaByIdActivo(activo.getId());
+		Boolean puedeEditar = false, campoMarcado = false;
 		
+		for(ActivoCalificacionNegativa acn : activoCNList) {
+			if(DDEstadoMotivoCalificacionNegativa.DD_PENDIENTE_CODIGO.equals(acn.getEstadoMotivoCalificacionNegativa().getCodigo())) {
+				puedeEditar = true;
+				campoMarcado = true;
+				break;
+			}
+		}
+
+		activoDto.setPuedeEditarCalificacionNegativa(campoMarcado);
+		activoDto.setIsCalificacionNegativaEnabled(puedeEditar);
+		
+		return activoDto;
 	}
 
 	@Override

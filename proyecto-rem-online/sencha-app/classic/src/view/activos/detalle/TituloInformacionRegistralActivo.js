@@ -784,131 +784,36 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 						{
 							xtype:'fieldsettable',
 							defaultType: 'textfieldbase',
-							colspan: 4,
+							colspan: 3,
 							reference:'calificacionNegativa',
 							hidden: false, 
 							title: HreRem.i18n("title.calificacion.negativa"),
 							items :
 							[
 								{
-									xtype:'fieldsettable',
-									defaultType: 'textfieldbase',
-									rowspan: 2,
-									colspan: 2,
-									reference:'calificacionNegativaTable1',
-									hidden: false, 
-									collapsible: false,
-									border: false,
-									items :
-									[
-										{
-								        	xtype: 'comboboxfieldbase',
-								        	reference: 'comboBoxCalificacionNegativa',
-									 		fieldLabel: HreRem.i18n('fieldlabel.calificacion.negativa'),
-								        	name: 'comboCalificacionNegativa',
-								        	reference: 'comboCalificacionNegativaRef',
-								        	bind: {
-							            		store: '{comboCalificacionNegativa}',
-							            		value: '{datosRegistrales.calificacionNegativa}'
-							            	},
-								        	listeners : {
-								        	    change: 'onChangeCalificacionNegativa'
-								        								        	
-								        	}
-								        },
-								        {
-											xtype:'itemselectorbase',
-											reference: 'itemselMotivo',
-											fieldLabel: HreRem.i18n('fieldlabel.calificacion.motivo'),
-		            						store: {
-		            							model: 'HreRem.model.ComboBase',
-												proxy: {
-												type: 'uxproxy',
-												remoteUrl: 'generic/getDiccionario',
-												extraParams: {diccionario: 'motivosCalificacionNegativa'}
-												},
-												autoLoad: true
-											},
-		            						bind: {
-							            		value: '{datosRegistrales.motivoCalificacionNegativa}'
-							            		
-							            	},
-								            listeners:{
-								            	change: 'onChangeMotivoCalificacionNegativa',
-								            	click: {
-								                    element: 'el', //bind to the underlying el property on the panel
-								                    fn:  'onClickMotivoSelected'
-								                }
-								            }
-										}
-									]
+
+									xtype: "checkboxfieldbase", 
+									reference: "calificacionNegativaCheckbox",
+									name : 'calificacionNegativaCheckbox',
+									fieldLabel: 'Calificación Negativa:',
+						            colspan: 3,
+						            bind:{
+						            	value:'{datosRegistrales.puedeEditarCalificacionNegativa}',
+						            	readOnly:'{datosRegistrales.isCalificacionNegativaEnabled}'
+						            },
+						            addUxReadOnlyEditFieldPlugin: true
+						            
+						            
 								},
 								{
-									xtype:'fieldsettable',
-									defaultType: 'textfieldbase',
-									rowspan: 2,
-									colspan: 2,
-									border: false,
-									reference:'calificacionNegativaTable2',
-									hidden: false, 
-									collapsible: false,
-									items :
-									[
-										{
-								        	xtype: 'comboboxfieldbase', 
-									 		fieldLabel: HreRem.i18n('fieldlabel.calificacion.estadomotivo.calificacion'),
-									 		reference: 'motivoCalificacionNegativa',
-								        	name: 'comboMotivoCalificacionNegativa',
-								        	disabled: true,
-								        	allowBlank:true,
-								        	colspan: 2,
-								        	bind: {
-							            		store: '{comboMotivoCalificacionNegativa}',
-							            		value: '{datosRegistrales.estadoMotivoCalificacionNegativa}'
-							            	},
-								        	listeners : {
-								        		change: 'onChangeEstadoMotivo'
-								        	}
-								        },
-								    	{
-								        	xtype: 'comboboxfieldbase',
-									 		fieldLabel: HreRem.i18n('fieldlabel.calificacion.responsablesubsanar'),
-									 		reference: 'responsableSubsanar',
-									 		name: 'responsableSubsanar',
-									 		disabled: true,
-									 		allowBlank:true,
-									 		colspan: 2,
-								        	name: 'comboResponsableSubsanar',
-								        	bind: {
-							            		store: '{comboResponsableSubsanar}',
-							            		value: '{datosRegistrales.responsableSubsanar}'
-							            	},
-								        	listeners : {
-								        		//Eventos
-								        	}
-								        },
-								        {
-											xtype:'datefieldbase',
-									 		fieldLabel: HreRem.i18n('fieldlabel.calificacion.fechaSubsanacion'),
-									 		reference: 'fechaSubsanacion',
-									 		name: 'fechaSubsanacion',
-									 		allowBlank: true,
-									 		disabled: true,
-									 		colspan: 2,
-									 		bind: '{datosRegistrales.fechaSubsanacion}'
-										},
-										{
-											reference: 'descMotivo',
-											name: 'descMotivo',
-											allowBlank: true,
-											colspan: 2,
-									 		fieldLabel: HreRem.i18n('fieldlabel.calificacion.descripcion'),
-									 		bind: '{datosRegistrales.descripcionCalificacionNegativa}'
-
-										}
-									]
+									xtype: "calificacionnegativagrid", 
+									// TODO Falta una funcion aqui que esta en informeComercialActivo de ese estilo
+									reference: "calificacionnegativagrid", 
+									colspan: 3,
+									bind:{
+										disabled:'{!datosRegistrales.puedeEditarCalificacionNegativa}'
+									}
 								}
-
 							]
 		           		}
 
@@ -949,11 +854,11 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
    		}
 
 
-   		if(motivoCalNegativa.getValue().length == 0) {
+   		/*if(motivoCalNegativa.getValue().length == 0) {
    			error = HreRem.i18n("txt.validacion.motivo.obligatorio");
    			errores.push(error);
    			motivoCalNegativa.markInvalid(error);
-   		}
+   		}*/
 
 
    		if(superficieUtil.getValue() > superficieConstruida.getValue()) {

@@ -3001,6 +3001,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	},
 
 	onClickGuardarPropagarCambios: function(btn) {
+		
     	var me = this,
 	   	window = btn.up("window"),
     	grid = me.lookupReference("listaActivos"),
@@ -3079,6 +3080,14 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		            me.getView().fireEvent("refreshComponentOnActivate", "container[reference=tabBuscadorActivos]");
 		        };
 		        me.saveActivo(me.createTabDataCondicionesEspecificas(activosSeleccionados, window.tabData), successFn);
+			} else if (targetGrid=='calificacionNegativa') {
+				var successFn = function(record, operation) {
+		            window.destroy();
+		            me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+		            me.getView().unmask();
+		            me.getView().fireEvent("refreshComponentOnActivate", "container[reference=tabBuscadorActivos]");
+		        };
+		        me.saveActivo(me.createTabDataCalificacionesNegativas(activosSeleccionados), successFn);
 			}
 	    }
 	     window.mask("Guardando activos 1 de " + (activosSeleccionados.length + 1));
@@ -3199,6 +3208,22 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	          model.name = 'condicionesespecificas';
 	          model.type = 'activo';
 	          model.data = {texto: data.texto};
+	          model.data.idActivo = record.data.activoId;
+	          tabData.models.push(model);
+	        });
+	    return tabData;
+	},
+	
+	createTabDataCalificacionesNegativas : function(listadoActivos) {
+		var me = this, tabData = {};
+	    tabData.id = me.getViewModel().get("activo.id");
+	    tabData.models = [];
+	    
+	    Ext.Array.each(list, function(record, index) {
+	          var model = {};
+	          model.name = 'calificacionNegativa';
+	          model.type = 'activo';
+	          model.data = {};
 	          model.data.idActivo = record.data.activoId;
 	          tabData.models.push(model);
 	        });
@@ -3769,8 +3794,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
             comboMotivo.setDisabled(false);
         } else if(nValue =="02" && oValue == "01"){
 			/* HREOS-5432 - NO SE HACE NADA POR LA SIGUIENTE COMPROBACION :
-			 * Si al cambiar el "Estado" de un motivo a "Subsanado" se debe de comprobar si todos los "Motivos" están "Subsanados",
-			 *  de ser así el valor del campo "Calificación negativa" pasará a ser "No", sin bloquearlo y permitiendo editar.
+			 * Si al cambiar el "Estado" de un motivo a "Subsanado" se debe de comprobar si todos los "Motivos" estï¿½n "Subsanados",
+			 *  de ser asï¿½ el valor del campo "Calificaciï¿½n negativa" pasarï¿½ a ser "No", sin bloquearlo y permitiendo editar.
 			 * */
         }else{
         	comboEstadoMotivo.setDisabled(true);
@@ -3841,7 +3866,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	            fechaSubsanacion.setDisabled(false);
 	            fechaSubsanacion.setAllowBlank(false);
 
-				//SI ES LA 1º VEZ QUE SE SELECCIONA UN ELEMENTO EN EL COMBO SELECCIONADO
+				//SI ES LA 1ï¿½ VEZ QUE SE SELECCIONA UN ELEMENTO EN EL COMBO SELECCIONADO
 				if(numeroClicks == 0){
 					this.cargarDataCalificacionNegativa(url,idActivo,codMotivoClicked,comboEstadoMotivo,comboResponsableSubsanar,fechaSubsanacion,descMotivoInput);
 					this.lookupReference('tituloinformacionregistralactivo').getViewModel().data.codMotivoClicked = codMotivoClicked;

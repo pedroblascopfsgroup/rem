@@ -268,11 +268,8 @@ SELECT  act.act_id,
                         AND (DIST1.COD_TIPO_COMERZIALZACION IS NULL OR DD_TCR.DD_TCR_CODIGO = NVL(dist1.COD_TIPO_COMERZIALZACION,DD_TCR.DD_TCR_CODIGO))
                         AND (DIST1.COD_POSTAL IS NULL OR BL.BIE_LOC_COD_POST = NVL(DIST1.COD_POSTAL,BL.BIE_LOC_COD_POST)))
            where act.borrado = 0
-<<<<<<< HEAD
-=======
 				and (DIST0.TIPO_GESTOR = TGE.DD_TGE_CODIGO
                   OR DIST1.TIPO_GESTOR = TGE.DD_TGE_CODIGO)
->>>>>>> 291b434... HREOS-5838 Se añaden controles de nulos
            UNION ALL
 /*Supervisor Comercial BackOffice Inmobiliario*/
            SELECT act.act_id, 
@@ -304,13 +301,9 @@ SELECT  act.act_id,
                             AND PRV.DD_PRV_CODIGO = dist1.COD_PROVINCIA 
                             AND LOC.DD_LOC_CODIGO = NVL(dist1.COD_MUNICIPIO,LOC.DD_LOC_CODIGO) 
                             AND (DIST1.COD_TIPO_COMERZIALZACION IS NULL OR DD_TCR.DD_TCR_CODIGO = NVL(dist1.COD_TIPO_COMERZIALZACION,DD_TCR.DD_TCR_CODIGO)))          
-<<<<<<< HEAD
-           where act.borrado = 0
-=======
            where act.borrado = 0 
 				and (DIST0.TIPO_GESTOR = TGE.DD_TGE_CODIGO 
                   OR DIST1.TIPO_GESTOR = TGE.DD_TGE_CODIGO)
->>>>>>> 291b434... HREOS-5838 Se añaden controles de nulos
            UNION ALL
 /*Gestor del activo*/
 SELECT act.act_id,
@@ -560,15 +553,6 @@ SELECT act.act_id,
        JOIN '||V_ESQUEMA||'.bie_localizacion loc ON loc.bie_loc_id = aloc.bie_loc_id
        JOIN '||V_ESQUEMA_M||'.dd_loc_localidad dd_loc ON loc.dd_loc_id = dd_loc.dd_loc_id
        JOIN '||V_ESQUEMA_M||'.dd_prv_provincia dd_prov ON dd_prov.dd_prv_id = loc.dd_prv_id
-<<<<<<< HEAD
-       JOIN dd_eac_estado_activo dd_eac ON dd_eac.dd_eac_id = act.dd_eac_id
-       JOIN dd_cra_cartera dd_cra ON dd_cra.dd_cra_id = act.dd_cra_id
-       LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist1 ON (dd_eac.dd_eac_codigo = dist1.cod_estado_activo AND dist1.cod_cartera = dd_cra.dd_cra_codigo AND dist1.tipo_gestor = ''GGADM'')
-       LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist2 ON (dd_prov.dd_prv_codigo = dist2.cod_provincia AND dist2.cod_cartera = dd_cra.dd_cra_codigo AND dist2.tipo_gestor = ''GGADM'')
-       LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist3 ON (dd_loc.dd_loc_codigo = dist3.cod_municipio AND dist3.cod_cartera = dd_cra.dd_cra_codigo AND dist3.tipo_gestor = ''GGADM'')
-       LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist4 ON (loc.bie_loc_cod_post = dist4.cod_postal AND dist4.cod_cartera = dd_cra.dd_cra_codigo AND dist4.tipo_gestor = ''GGADM'')
-           where act.borrado = 0
-=======
        JOIN '||V_ESQUEMA||'.dd_eac_estado_activo dd_eac ON dd_eac.dd_eac_id = act.dd_eac_id
        JOIN '||V_ESQUEMA||'.dd_cra_cartera dd_cra ON dd_cra.dd_cra_id = act.dd_cra_id
        JOIN '||V_ESQUEMA||'.dd_scr_subcartera dd_scr ON dd_scr.dd_cra_id = dd_cra.dd_cra_id AND dd_scr.dd_scr_id = act.dd_scr_id
@@ -632,8 +616,7 @@ SELECT act.act_id,
 			OR  dist7.tipo_gestor = TGE.DD_TGE_CODIGO
 			OR  dist8.tipo_gestor = TGE.DD_TGE_CODIGO
 		)
->>>>>>> 291b434... HREOS-5838 Se añaden controles de nulos
-           UNION ALL
+          UNION ALL
 /*Gestoría de administración*/
            SELECT DISTINCT act.act_id, 
                 TO_NUMBER (COALESCE (dist9.cod_cartera, dist8.cod_cartera, dist7.cod_cartera, dist6.cod_cartera, dist5.cod_cartera, dist4.cod_cartera, dist3.cod_cartera, dist2.cod_cartera, dist1.cod_cartera, dist0.cod_cartera)) cod_cartera, 

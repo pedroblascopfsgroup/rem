@@ -565,11 +565,6 @@ SELECT act.act_id,
             AND dist0.cod_postal IS NULL
             AND dist0.cod_subcartera IS NULL
             AND dist0.tipo_gestor = TGE.DD_TGE_CODIGO)
-       LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist0 
-        ON (dist0.cod_estado_activo IS NULL
-            AND dist0.cod_cartera = dd_cra.dd_cra_codigo
-            AND dist0.cod_subcartera IS NULL
-            AND dist0.tipo_gestor = TGE.DD_TGE_CODIGO)
        LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist1 
         ON (dist1.cod_estado_activo  = dd_eac.dd_eac_codigo 
             AND dist1.cod_cartera = dd_cra.dd_cra_codigo

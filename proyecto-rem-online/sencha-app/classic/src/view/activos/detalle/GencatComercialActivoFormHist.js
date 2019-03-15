@@ -195,13 +195,13 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoFormHist', {
 				    				fieldLabel: HreRem.i18n('fieldlabel.oferta.gencat'),
 				    				readOnly: true,
 									bind: {
-										value: '{gencatHistorico.ofertaGencat}'
-										
+										value: '{gencatHistorico.ofertaGencat}',
+										visible: '{gencatHistorico.usuarioCompleto}'
 									},
 									listeners: {
 								        click: {
 								            element: 'el', 
-								            fn: 'onClickAbrirExpedienteComercial'
+								            fn: 'onClickAbrirExpedienteComercialHistorico'
 								        }
 								    },
 								    style:{

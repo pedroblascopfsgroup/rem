@@ -780,14 +780,14 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 		try {
 			if(Arrays.asList(DDTipoComercializacion.CODIGOS_VENTA).contains(activoPublicacion.getTipoComercializacion().getCodigo()) &&
 					(!Checks.esNulo(dto.getMotivoOcultacionVentaCodigo()) || !Checks.esNulo(dto.getMotivoOcultacionManualVenta()) || !Checks.esNulo(dto.getPublicarVenta()) ||
-					!Checks.esNulo(dto.getOcultarVenta()) || (!Checks.esNulo(dto.getPublicarSinPrecioVenta()) && !Checks.esNulo(activoPublicacion.getMotivoOcultacionVenta())) || !Checks.esNulo(dto.getNoMostrarPrecioVenta()))) {
+					!Checks.esNulo(dto.getOcultarVenta()) || (!Checks.esNulo(dto.getPublicarSinPrecioVenta()) && !Checks.esNulo(activoPublicacion.getMotivoOcultacionVenta())))) {
 				ActivoPublicacionHistorico activoPublicacionHistoricoVenta = activoPublicacionHistoricoDao.getActivoPublicacionHistoricoActualVenta(activoPublicacion.getActivo().getId());
 				activoPublicacionHistoricoVenta.setFechaFinVenta(new Date(System.currentTimeMillis() + 3600 * 1000));
 				activoPublicacionHistoricoDao.saveOrUpdate(activoPublicacionHistoricoVenta);
 			}
 			if(Arrays.asList(DDTipoComercializacion.CODIGOS_ALQUILER).contains(activoPublicacion.getTipoComercializacion().getCodigo()) &&
 					(!Checks.esNulo(dto.getMotivoOcultacionAlquilerCodigo()) || !Checks.esNulo(dto.getMotivoOcultacionManualAlquiler()) || !Checks.esNulo(dto.getPublicarAlquiler()) ||
-					!Checks.esNulo(dto.getOcultarAlquiler()) || (!Checks.esNulo(dto.getPublicarSinPrecioAlquiler()) && !Checks.esNulo(activoPublicacion.getMotivoOcultacionAlquiler())) || !Checks.esNulo(dto.getNoMostrarPrecioAlquiler()) ||
+					!Checks.esNulo(dto.getOcultarAlquiler()) || (!Checks.esNulo(dto.getPublicarSinPrecioAlquiler()) && !Checks.esNulo(activoPublicacion.getMotivoOcultacionAlquiler())) ||
 					(!Checks.esNulo(dto.getEleccionUsuarioTipoPublicacionAlquiler()) && (DDEstadoPublicacionAlquiler.CODIGO_PRE_PUBLICADO_ALQUILER.equals(activoPublicacion.getEstadoPublicacionAlquiler().getCodigo()) && !dto.getEleccionUsuarioTipoPublicacionAlquiler().equals("0"))) )) {
 				ActivoPublicacionHistorico activoPublicacionHistoricoAlquiler = activoPublicacionHistoricoDao.getActivoPublicacionHistoricoActualAlquiler(activoPublicacion.getActivo().getId());
 				activoPublicacionHistoricoAlquiler.setFechaFinAlquiler(new Date(System.currentTimeMillis() + 3600 * 1000));

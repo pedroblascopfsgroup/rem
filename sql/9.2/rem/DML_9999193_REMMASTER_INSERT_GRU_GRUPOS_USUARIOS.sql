@@ -1,19 +1,20 @@
 --/*
 --##########################################
 --## AUTOR=Mariam Lliso
---## FECHA_CREACION=20190124
+--## FECHA_CREACION=20190315
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-5274
+--## INCIDENCIA_LINK=HREOS-5854
 --## PRODUCTO=NO
 --##
 --## Finalidad: Script que añade en GRU_GRUPOS_USUARIOS los datos añadidos en T_ARRAY_FUNCION
 --## INSTRUCCIONES:
 --## VERSIONES:
 --##        0.1 Versión inicial
---##        0.2 HREOS-5274
+--##        0.2 HREOS-5854 -> añadimos nuevos usuarios al grupo gruforadmto
 --##########################################
 --*/
+
 
 
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
@@ -37,7 +38,9 @@ DECLARE
     TYPE T_FUNCION IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_FUNCION IS TABLE OF T_FUNCION;
     V_FUNCION T_ARRAY_FUNCION := T_ARRAY_FUNCION(
-      T_FUNCION('achillon', 'achillon')
+      T_FUNCION('achillon', 'gruforadmto'),
+      T_FUNCION('gruforadmto', 'gruforadmto'),
+      T_FUNCION('vmoreno', 'gruforadmto')
     ); 
     V_TMP_FUNCION T_FUNCION;
     V_PERFILES VARCHAR2(100 CHAR) := '%';  -- Cambiar por ALGÚN PERFIL para otorgar permisos a ese perfil.

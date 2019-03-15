@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Sonia Garcia
---## FECHA_CREACION=20190219
+--## FECHA_CREACION=20190315
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
 --## INCIDENCIA_LINK=HREOS-5530
@@ -11,6 +11,7 @@
 --## INSTRUCCIONES:
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##	    0.2 Cambio nombre script
 --##########################################
 --*/
 

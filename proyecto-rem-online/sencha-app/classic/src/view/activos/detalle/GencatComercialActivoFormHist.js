@@ -211,13 +211,11 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoFormHist', {
 								    
 				    			},
 				    			{
-				    				xtype: "comboboxfieldbase",
 				    				fieldLabel: HreRem.i18n('fieldlabel.estado.comunicacion'),
 				    				readOnly: true,
-				    				dataIndex: 'estadoComunicacion', // No borrar, aunque no es necesario para el modelo se usa en el calculo del boton anyadir notifiacion
 				    				name : 'estadoComunicacion',
 									bind: {
-										value: '{estadoComunicacion}'
+										value: '{gencatHistorico.estadoComunicacion}'
 									}
 				    			},
 				    			{

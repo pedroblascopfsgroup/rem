@@ -517,9 +517,42 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 		
 		if (hComunicacionGencat != null) {
 			try {
+				
+				// Comrpueba que los datos minimos del usuario nuevo esten completos
+				if (!Checks.esNulo(hComunicacionGencat.getNifComprador()) && !Checks.esNulo(hComunicacionGencat.getNombreComprador())) {
+					gencatDto.setUsuarioCompleto(true);
+				} else {
+					gencatDto.setUsuarioCompleto(false);
+				}
+				
 				BeanUtils.copyProperties(gencatDto, hComunicacionGencat);
-				gencatDto.setSancion(hComunicacionGencat.getSancion() != null ? hComunicacionGencat.getSancion().getCodigo() : null);
-				gencatDto.setEstadoComunicacion(hComunicacionGencat.getEstadoComunicacion() != null ? hComunicacionGencat.getEstadoComunicacion().getCodigo() : null);
+				if(!Checks.esNulo(hComunicacionGencat.getSancion())) {
+					gencatDto.setSancion(hComunicacionGencat.getSancion().getDescripcion());
+				}
+				if(!Checks.esNulo(hComunicacionGencat.getEstadoComunicacion())) {
+					gencatDto.setEstadoComunicacion(hComunicacionGencat.getEstadoComunicacion().getDescripcion());
+				}
+				if(!Checks.esNulo(hComunicacionGencat.getFechaPrevSancion())) {
+					gencatDto.setFechaPrevistaSancion(hComunicacionGencat.getFechaPrevSancion());
+				}
+				if(!Checks.esNulo(hComunicacionGencat.getNifComprador())) {
+					gencatDto.setNuevoCompradorNif(hComunicacionGencat.getNifComprador());
+				}
+				if(!Checks.esNulo(hComunicacionGencat.getNombreComprador())) {
+					gencatDto.setNuevoCompradorNombre(hComunicacionGencat.getNombreComprador());
+				}
+				if(!Checks.esNulo(hComunicacionGencat.getCompradorApellido1())) {
+					gencatDto.setNuevoCompradorApellido1(hComunicacionGencat.getCompradorApellido1());
+				}
+				if(!Checks.esNulo(hComunicacionGencat.getCompradorApellido2())) {
+					gencatDto.setNuevoCompradorApellido2(hComunicacionGencat.getCompradorApellido2());
+				}
+				if(!Checks.esNulo(hComunicacionGencat.getSancion())) {
+					if(!hComunicacionGencat.getSancion().getCodigo().equals(hComunicacionGencat.getSancion().COD_EJERCE)) {
+						gencatDto.setOfertaGencat(null);
+					}
+				}
+				
 				
 				Filter filtroIdComunicacion = genericDao.createFilter(FilterType.EQUALS, "historicoComunicacion.id", hComunicacionGencat.getId());
 				Order orderByFechaCrear = new Order(OrderType.DESC, "auditoria.fechaCrear");
@@ -554,7 +587,15 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 					HistoricoOfertaGencat ofertaGencat = resultOfertaGencatGencat.get(0);
 					Oferta oferta = ofertaGencat.getOferta();
 					if (oferta != null) {
-						gencatDto.setOfertaGencat(oferta.getNumOferta());
+						if(!Checks.esNulo(hComunicacionGencat.getSancion())) {
+							if(hComunicacionGencat.getSancion().getCodigo().equals(hComunicacionGencat.getSancion().COD_EJERCE)) {
+								gencatDto.setOfertaGencat(oferta.getNumOferta());
+							}else {
+								gencatDto.setOfertaGencat(null);
+							}
+						}else {
+							gencatDto.setOfertaGencat(null);
+						}
 					}
 				}
 				

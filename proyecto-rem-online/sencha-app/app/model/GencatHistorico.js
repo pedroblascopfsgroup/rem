@@ -129,6 +129,10 @@ Ext.define('HreRem.model.GencatHistorico', {
 			name:'cierreNotificacion',
 			type:'date',
 			dateFormat: 'c'
+		},
+		{
+			name:'usuarioCompleto',
+			type:'boolean'
 		}
 		
     ],

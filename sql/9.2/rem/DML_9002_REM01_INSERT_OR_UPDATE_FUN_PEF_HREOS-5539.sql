@@ -149,7 +149,6 @@ BEGIN
     
     COMMIT;
 
-
 EXCEPTION
      WHEN OTHERS THEN
           ERR_NUM := SQLCODE;

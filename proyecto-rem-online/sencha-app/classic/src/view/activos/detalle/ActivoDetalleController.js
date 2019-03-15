@@ -3512,7 +3512,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			method : 'POST',
     		params: {idActivo: idActivo},
     		success: function(response, opts){
-    			debugger;
+    			//debugger;
     			var activosPropagables = Ext.decode(response.responseText).data.activosPropagables;
 				var tabPropagableData = null;
 				if(me.getViewModel() != null){
@@ -3530,7 +3530,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		    		params: {idActivo: idActivo},
 
 		    		success: function(response, opts){
-		    			debugger;
+		    			//debugger;
 		    			var isActivoMatriz = Ext.decode(response.responseText).data;
 		    			if(isActivoMatriz == "true"){
 		    				url3 =  $AC.getRemoteUrl('activo/propagarActivosMatriz');
@@ -3540,7 +3540,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		    		    		params: {idActivo: idActivo},
 
 		    		    		success: function(response, opts){
-		    		    			debugger;
+		    		    			
 		    		    			
 		    		    		},failure: function(record, operation) {
 		    				 		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
@@ -3554,7 +3554,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		    					params: {idActivo: idActivo},
 		    					
 		    		    		success: function(response, opts){
-		    		    			debugger;
+		    		    			//debugger;
 		    		    			var isActivoUa = Ext.decode(response.responseText).data;
 		    		    			if(isActivoUa != "true"){
 		    		    				if(activosPropagables != null){
@@ -3570,25 +3570,33 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			    										me.getView().unmask();
 			    										return false;
 			    								}
-			    							
+			    		    				}
 			    	
-			    								var successFn = function(response, eOpts) {
+		    								var successFn = function(response, eOpts) {
 			    		
-			    									me.manageToastJsonResponse(me, response.responseText);
-			    									me.getView().unmask();
-			    									me.refrescarActivo(form.refreshAfterSave);
-			    									me.getView().fireEvent("refreshComponentOnActivate", "container[reference=tabBuscadorActivos]");
-			    									me.actualizarGridHistoricoDestinoComercial(form);
-			    								}
-			    		
-			    								if(restringida == true){
-			    									me.saveActivosAgrRestringida(tabData, successFn);
-			    								} else {
-			    									me.getView().fireEvent("No hay activos propagables");
-			    									me.saveActivo(tabData, successFn);
-			    								}
-			    			    			}
+		    									me.manageToastJsonResponse(me, response.responseText);
+			   									me.getView().unmask();
+			   									me.refrescarActivo(form.refreshAfterSave);
+			   									me.getView().fireEvent("refreshComponentOnActivate", "container[reference=tabBuscadorActivos]");
+			   									me.actualizarGridHistoricoDestinoComercial(form);
+			    							}
+			    	
+			    							if(restringida == true){
+			    								me.saveActivosAgrRestringida(tabData, successFn);
+			    							} else {
+			    								me.getView().fireEvent("No hay activos propagables");
+			    								me.saveActivo(tabData, successFn);
+			    							}
 		    		    				}else{
+		    		    					var successFn = function(response, eOpts) {
+		    		    			    		
+		    									me.manageToastJsonResponse(me, response.responseText);
+		    									me.getView().unmask();
+		    									me.refrescarActivo(form.refreshAfterSave);
+		    									me.getView().fireEvent("refreshComponentOnActivate", "container[reference=tabBuscadorActivos]");
+		    									me.actualizarGridHistoricoDestinoComercial(form);
+		    								}
+		    		    					me.saveActivo(tabData, successFn);
 		    			    				me.getView().unmask();
 		    			    			}
 		    		    			}else{

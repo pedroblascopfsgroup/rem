@@ -48,9 +48,6 @@ public abstract class AbstractNotificatorService {
 
 	@Autowired
 	private GestorActivoApi gestorActivoManager;
-	
-	@Autowired
-	private ActivoDaoImpl activodao;
 
 	@Autowired
 	private ExpedienteComercialApi expedienteComercialApi;
@@ -107,43 +104,9 @@ public abstract class AbstractNotificatorService {
 		String notificacionAutomatica = "<td style=\"vertical-align:middle;text-align:center;color:#0a94d6;font-size:x-small;font-weight:bold;padding:0px;border-collapse:collapse;margin-bottom:25px\"> ESTE MENSAJE ES UNA NOTIFICACIÓN AUTOMÁTICA. NO RESPONDA A ESTE CORREO.</td>";
 		return notificacionAutomatica;
 	}
-	protected String generateCuerpo(DtoSendNotificator dtoSendNotificator, String contenido){
-		Activo activo = activodao.getActivoByNumActivo(dtoSendNotificator.getNumActivo());
-		if(activo.getCartera().getCodigo().equals(DDCartera.CODIGO_CARTERA_BANKIA)){
-			return generateCuerpoBankia(dtoSendNotificator, contenido);
-		} else {
-			return generateCuerpoEstandar(dtoSendNotificator, contenido);
-		}
-		
-	}
-	
-	protected String generateCuerpoBankia(DtoSendNotificator dtoSendNotificator, String contenido){
-		String cuerpo = "<html>" + "<!DOCTYPE HTML PUBLIC '-//W3C//DTD HTML 4.01 Transitional//EN'>" + "<html>"
-				+ "<head>" + "<META http-equiv='Content-Type' content='text/html; charset=utf-8'>" + "</head>"
-				+ "<body>" + "	<div>" + "		<div style='font-family: Arial,&amp; amp;'>"
-				+ "			<div style='background: #b7ddf0; width: 550px; height: 60px; display: table'>"
-				+ "				<img src='" + this.getUrlImagenes() + "ico_notificacion.png' "
-				+ "					style='display: table-cell; padding: 12px; display: inline-block' />"
-				+ "				<div style='font-size: 20px; vertical-align: top; align-content:left; color: #333; display: table-cell; padding: 12px'> "
-				+ dtoSendNotificator.getTitulo() + "</div>" + "			</div>"
-				+ "							</div>"
-				+ "				<div style='background: #fff; color: #333; border-radius: 20px; padding: 25px; line-height: 22px; text-align: justify; margin-top: 10px; font-size: 16px'>"
-				+ contenido + "				</div>"
-				+ "				<div style='color: #333; margin: 23px 0px 0px 65px; font-size: 16px; display: table;'>"
-				+ "					<div style='display: table-cell'>"  + "					</div>"
-				+ "					<div style='display: table-cell; vertical-align: middle; background: #b7ddf0; padding: 12px;'>"
-				+ "						<img src='"
-				+ this.getUrlImagenes() + "ico_advertencia.png' />"
-				+ "						Este mensaje es una notificación automática. No responda a este correo.</div>"
-				+ "				</div>" + "			</div>" + "</body>" + "</html>";
-
-				return cuerpo;
-		
-		
-	}
 
 
-	protected String generateCuerpoEstandar(DtoSendNotificator dtoSendNotificator, String contenido) {
+	protected String generateCuerpo(DtoSendNotificator dtoSendNotificator, String contenido) {
 		String cuerpo = "<html>" + "<!DOCTYPE HTML PUBLIC '-//W3C//DTD HTML 4.01 Transitional//EN'>" + "<html>"
 				+ "<head>" + "<META http-equiv='Content-Type' content='text/html; charset=utf-8'>" + "</head>"
 				+ "<body>" + "	<div>" + "		<div style='font-family: Arial,&amp; amp;'>"

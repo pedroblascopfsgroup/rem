@@ -61,7 +61,7 @@ public class OfertaDto implements Serializable {
 	private String lugarFirma;
 	private Date fechaFirma;
 	private Boolean firmado;
-	private List<Long> activosLote;
+	private List<ActivosLoteOfertaDto> activosLote;
 	private Boolean indicadorOfertaLote;
 	private Long idAgrupacionComercialWebcom;
 	private Long codigoAgrupacionComercialRem;
@@ -223,10 +223,10 @@ public class OfertaDto implements Serializable {
 	public void setFirmado(Boolean firmado) {
 		this.firmado = firmado;
 	}
-	public List<Long> getActivosLote() {
+	public List<ActivosLoteOfertaDto> getActivosLote() {
 		return activosLote;
 	}
-	public void setActivosLote(List<Long> activosLote) {
+	public void setActivosLote(List<ActivosLoteOfertaDto> activosLote) {
 		this.activosLote = activosLote;
 	}
 	public Boolean getIndicadorOfertaLote() {

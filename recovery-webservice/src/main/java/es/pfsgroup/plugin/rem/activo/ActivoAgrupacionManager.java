@@ -59,6 +59,7 @@ import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PRINCIPAL;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.PROPIEDAD;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.SITUACION;
 import es.pfsgroup.plugin.rem.rest.api.GestorDocumentalFotosApi.TIPO;
+import es.pfsgroup.plugin.rem.rest.dto.ActivosLoteOfertaDto;
 import es.pfsgroup.plugin.rem.rest.dto.File;
 import es.pfsgroup.plugin.rem.rest.dto.FileListResponse;
 import es.pfsgroup.plugin.rem.rest.dto.FileResponse;
@@ -707,13 +708,13 @@ public class ActivoAgrupacionManager implements ActivoAgrupacionApi {
 	
 	}
 	@Override
-	public Usuario getGestorComercialAgrupacion(List<Long> numActivos) {
+	public Usuario getGestorComercialAgrupacion(List<ActivosLoteOfertaDto> dtoActivos) {
 		EXTDDTipoGestor tipoGestor = genericDao.get(EXTDDTipoGestor.class, genericDao.createFilter(FilterType.EQUALS, "codigo", "GCOM"));
 		Usuario gestorComercial = null;
 		Usuario gestorAux = null;
 				
-		for (int i=0; i<numActivos.size(); i++) {
-			Activo activo = activoApi.getByNumActivo(numActivos.get(i));
+		for (int i=0; i<dtoActivos.size(); i++) {
+			Activo activo = activoApi.getByNumActivo(dtoActivos.get(i).getIdActivoHaya());
 			if (i==0) {
 				gestorComercial = gestorActivoApi.getGestorByActivoYTipo(activo, tipoGestor.getId());
 			} else {

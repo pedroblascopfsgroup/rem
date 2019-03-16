@@ -462,6 +462,16 @@ public interface ActivoApi {
 	 * @return DtoActivoDatosRegistrales
 	 */
 	List<DtoActivoDatosRegistrales> getActivoCalificacionNegativa(Long idActivo);
+	
+	
+	/**
+	 * Devuelve un dto con los codigos de calificacion negativa del ID de un activo dado
+	 *
+	 * @param idActivo
+	 * @return DtoActivoDatosRegistrales
+	 */
+	List<DtoActivoDatosRegistrales> getActivoCalificacionNegativaCodigos(Long idActivo);
+	
 
 	PerimetroActivo saveOrUpdatePerimetroActivo(PerimetroActivo perimetroActivo);
 

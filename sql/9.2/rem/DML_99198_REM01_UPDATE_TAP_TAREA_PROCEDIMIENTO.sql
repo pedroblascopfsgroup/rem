@@ -43,9 +43,18 @@ BEGIN
 
             V_MSQL := 'UPDATE '||V_ESQUEMA||'.'||V_TEXT_TABLA||'
                     SET DD_TGE_ID = (SELECT DD_TGE_ID FROM '||V_ESQUEMA_M||'.DD_TGE_TIPO_GESTOR WHERE DD_TGE_CODIGO = ''GACT'')
+                      , DD_STA_ID = (SELECT DD_STA_ID FROM '||V_ESQUEMA_M||'.DD_STA_SUBTIPO_TAREA_BASE WHERE DD_STA_CODIGO = ''39'')
 					, USUARIOMODIFICAR = '''||V_USUARIO||'''
 					, FECHAMODIFICAR = SYSDATE
             		WHERE TAP_CODIGO = ''T016_ProcesoAdecuacion''';
+            EXECUTE IMMEDIATE V_MSQL;
+
+            V_MSQL := 'UPDATE '||V_ESQUEMA||'.'||V_TEXT_TABLA||'
+                    SET DD_TGE_ID = (SELECT DD_TGE_ID FROM '||V_ESQUEMA_M||'.DD_TGE_TIPO_GESTOR WHERE DD_TGE_CODIGO = ''GFORMADM'')
+                      , DD_STA_ID = (SELECT DD_STA_ID FROM '||V_ESQUEMA_M||'.DD_STA_SUBTIPO_TAREA_BASE WHERE DD_STA_CODIGO = ''39'')
+          , USUARIOMODIFICAR = '''||V_USUARIO||'''
+          , FECHAMODIFICAR = SYSDATE
+                WHERE TAP_CODIGO = ''T016_ComunicarGENCAT''';
             EXECUTE IMMEDIATE V_MSQL;
         
     COMMIT;

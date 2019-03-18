@@ -2815,10 +2815,11 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     },
 
   onClickPropagation : function(btn) {
-    var me = this;
-    var idActivo = btn.up('tabpanel').getActiveTab().getBindRecord().activo.id,
-    url = $AC.getRemoteUrl('activo/getActivosPropagables'),
-    form = btn.up('form');
+	
+	  var me = this,
+	    idActivo = me.getViewModel().get('activo').id,
+	    url = $AC.getRemoteUrl('activo/getActivosPropagables'),
+	    form = btn.up('form');
 
     form.mask(HreRem.i18n("msg.mask.espere"));
 
@@ -2845,6 +2846,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	            }), 1)[0];
 	        var grid = btn.up().up();
 	        // Abrimos la ventana de selección de activos
+	        
 		    var ventanaOpcionesPropagacionCambios = Ext.create("HreRem.view.activos.detalle.OpcionesPropagacionCambios", {
 		          form : null,
 		          activoActual : activo,
@@ -3293,6 +3295,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     				propagableData = me.createTabDataHistoricoMediadores(activos);
     				// Los lanzamos todos de golpe sin necesidad de iterar
     				activos = [];
+    			} else if (targetGrid=='calificacionNegativa') {
+    				propagableData = me.createTabDataCalificacionesNegativas(activos);
+    				activos = []
     			}
     		}
 
@@ -3377,7 +3382,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	    return tabData;
 	},
 	
-	createTabDataCalificacionesNegativas : function(listadoActivos) {
+	createTabDataCalificacionesNegativas : function(list) {
 		var me = this, tabData = {};
 	    tabData.id = me.getViewModel().get("activo.id");
 	    tabData.models = [];

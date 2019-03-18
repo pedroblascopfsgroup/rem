@@ -2578,17 +2578,56 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			
 			for (ActivoCalificacionNegativa activo : activoCNList) {
 				DtoActivoDatosRegistrales dto = new DtoActivoDatosRegistrales();
-				
+
 				beanUtilNotNull.copyProperty(dto, "idActivo", idActivo);
 				beanUtilNotNull.copyProperty(dto, "idMotivo", String.valueOf(activo.getId()));
 				if(!Checks.esNulo(activo.getMotivoCalificacionNegativa())) {
 					beanUtilNotNull.copyProperty(dto, "motivoCalificacionNegativa", activo.getMotivoCalificacionNegativa().getDescripcion());
+					beanUtilNotNull.copyProperty(dto, "codigoMotivoCalificacionNegativa", activo.getMotivoCalificacionNegativa().getCodigo());
 				}
 				if(!Checks.esNulo(activo.getEstadoMotivoCalificacionNegativa())) {
 					beanUtilNotNull.copyProperty(dto, "estadoMotivoCalificacionNegativa", activo.getEstadoMotivoCalificacionNegativa().getDescripcion());
+					beanUtilNotNull.copyProperty(dto, "codigoEstadoMotivoCalificacionNegativa", activo.getEstadoMotivoCalificacionNegativa().getCodigo());
 				}
 				if(!Checks.esNulo(activo.getResponsableSubsanar())){
 					beanUtilNotNull.copyProperty(dto, "responsableSubsanar", activo.getResponsableSubsanar().getDescripcion());
+					beanUtilNotNull.copyProperty(dto, "codigoResponsableSubsanar", activo.getResponsableSubsanar().getCodigo());
+				}
+				beanUtilNotNull.copyProperty(dto, "fechaSubsanacion", activo.getFechaSubsanacion());
+				beanUtilNotNull.copyProperty(dto, "descripcionCalificacionNegativa", activo.getDescripcion());
+				
+				activoCNListDto.add(dto);
+			}
+			
+		} catch (Exception ex) {
+			logger.error("Error en activoManager", ex);
+		}
+
+
+		return activoCNListDto;
+	}
+	
+	
+	@Override
+	public List<DtoActivoDatosRegistrales> getActivoCalificacionNegativaCodigos(Long idActivo){		
+		List<ActivoCalificacionNegativa> activoCNList = activoDao.getListActivoCalificacionNegativaByIdActivo(idActivo);
+		List<DtoActivoDatosRegistrales> activoCNListDto = new ArrayList<DtoActivoDatosRegistrales>();
+			
+		try {
+			
+			for (ActivoCalificacionNegativa activo : activoCNList) {
+				DtoActivoDatosRegistrales dto = new DtoActivoDatosRegistrales();
+
+				beanUtilNotNull.copyProperty(dto, "idActivo", idActivo);
+				beanUtilNotNull.copyProperty(dto, "idMotivo", String.valueOf(activo.getId()));
+				if(!Checks.esNulo(activo.getMotivoCalificacionNegativa())) {
+					beanUtilNotNull.copyProperty(dto, "motivoCalificacionNegativa", activo.getMotivoCalificacionNegativa().getCodigo());
+				}
+				if(!Checks.esNulo(activo.getEstadoMotivoCalificacionNegativa())) {
+					beanUtilNotNull.copyProperty(dto, "estadoMotivoCalificacionNegativa", activo.getEstadoMotivoCalificacionNegativa().getCodigo());
+				}
+				if(!Checks.esNulo(activo.getResponsableSubsanar())){
+					beanUtilNotNull.copyProperty(dto, "responsableSubsanar", activo.getResponsableSubsanar().getCodigo());
 				}
 				beanUtilNotNull.copyProperty(dto, "fechaSubsanacion", activo.getFechaSubsanacion());
 				beanUtilNotNull.copyProperty(dto, "descripcionCalificacionNegativa", activo.getDescripcion());
@@ -5120,7 +5159,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				if(!Checks.estaVacio(activoCalificacionNegativaList)){
 					for (ActivoCalificacionNegativa actCal : activoCalificacionNegativaList) { 
 						if(dto.getMotivoCalificacionNegativa().equalsIgnoreCase(actCal.getMotivoCalificacionNegativa().getCodigo())){
-							throw new JsonViewerException(messageServices.getMessage(AVISO_MENSAJE_MOTIVO_CALIFICACION));
+							return false;
 						}
 					}
 				}

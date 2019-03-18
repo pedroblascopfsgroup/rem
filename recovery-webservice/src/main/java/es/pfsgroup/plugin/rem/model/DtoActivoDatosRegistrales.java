@@ -12,7 +12,7 @@ import java.util.Date;
 public class DtoActivoDatosRegistrales extends DtoTabActivo {
 
 	private static final long serialVersionUID = 0L;
-
+	private Long idActivo;
 	private String numeroActivo;
 	private String numRegistro;
 	private String numFinca;
@@ -111,7 +111,9 @@ public class DtoActivoDatosRegistrales extends DtoTabActivo {
 	private String motivoCalificacionNegativa;
 	private String codigoMotivoCalificacionNegativa;
 	private String descripcionCalificacionNegativa;
-	
+	private Boolean puedeEditarCalificacionNegativa;
+	private Boolean isCalificacionNegativaEnabled;
+	private Boolean noEstaInscrito;
 	
 	//Motivo Estado Calificación negativa
 	private String estadoMotivoCalificacionNegativa;
@@ -123,7 +125,7 @@ public class DtoActivoDatosRegistrales extends DtoTabActivo {
 	private String codigoResponsableSubsanar;
 	
 	private Date fechaSubsanacion;
-	private Long idMotivo;
+	private String idMotivo;
 	
 	/*
 
@@ -677,10 +679,10 @@ public class DtoActivoDatosRegistrales extends DtoTabActivo {
 	public void setCodigoResponsableSubsanar(String codigoResponsableSubsanar) {
 		this.codigoResponsableSubsanar = codigoResponsableSubsanar;
 	}
-	public Long getIdMotivo() {
+	public String getIdMotivo() {
 		return idMotivo;
 	}
-	public void setIdMotivo(Long idMotivo) {
+	public void setIdMotivo(String idMotivo) {
 		this.idMotivo = idMotivo;
 	}
 	public String getCodigoMotivoCalificacionNegativa() {
@@ -688,6 +690,30 @@ public class DtoActivoDatosRegistrales extends DtoTabActivo {
 	}
 	public void setCodigoMotivoCalificacionNegativa(String codigoMotivoCalificacionNegativa) {
 		this.codigoMotivoCalificacionNegativa = codigoMotivoCalificacionNegativa;
+	}
+	public Long getIdActivo() {
+		return idActivo;
+	}
+	public void setIdActivo(Long idActivo) {
+		this.idActivo = idActivo;
+	}
+	public Boolean getPuedeEditarCalificacionNegativa() {
+		return puedeEditarCalificacionNegativa;
+	}
+	public void setPuedeEditarCalificacionNegativa(Boolean puedeEditarCalificacionNegativa) {
+		this.puedeEditarCalificacionNegativa = puedeEditarCalificacionNegativa;
+	}
+	public Boolean getIsCalificacionNegativaEnabled() {
+		return isCalificacionNegativaEnabled;
+	}
+	public void setIsCalificacionNegativaEnabled(Boolean isCalificacionNegativaEnabled) {
+		this.isCalificacionNegativaEnabled = isCalificacionNegativaEnabled;
+	}
+	public Boolean getNoEstaInscrito() {
+		return noEstaInscrito;
+	}
+	public void setNoEstaInscrito(Boolean noEstaInscrito) {
+		this.noEstaInscrito = noEstaInscrito;
 	}
 
 

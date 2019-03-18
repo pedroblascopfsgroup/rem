@@ -3,10 +3,8 @@ Ext.define('HreRem.view.activos.detalle.PatrimonioActivoTabPanel', {
     xtype		: 'patrimonioactivotabpanel',
 	cls			: 'panel-base shadow-panel tabPanel-tercer-nivel',
     reference	: 'tabpanelPatrimonio',
-	recordName: 'contrato',
-	habilitar: '{!contrato.tieneRegistro}',
     layout		: 'fit',
-    requires	: ['HreRem.view.activos.detalle.DatosPatrimonio', 'HreRem.view.activos.detalle.ContratosPatrimonio', 'HreRem.model.ContratosPatrimonioModel'],
+    requires	: ['HreRem.view.activos.detalle.DatosPatrimonio', 'HreRem.view.activos.detalle.ContratosPatrimonio'],
     listeners	: {
     	boxready: function (tabPanel) {
 			if(tabPanel.items.length > 0 && tabPanel.items.items.length > 0) {
@@ -20,8 +18,6 @@ Ext.define('HreRem.view.activos.detalle.PatrimonioActivoTabPanel', {
 			} else {
 				tabPanel.evaluarBotonesEdicion(tab);
 			}
-			
-			
 
 			
 		},
@@ -96,8 +92,8 @@ Ext.define('HreRem.view.activos.detalle.PatrimonioActivoTabPanel', {
 	     var me = this;
 	     me.callParent();
 	     me.add({xtype: 'datospatrimonio', ocultarBotonesEdicion: false, title: HreRem.i18n('title.datos.basicos')})
-	     me.add({xtype: 'contratospatrimonio', ocultarBotonesEdicion: true, bind: {disabled: me.lookupViewModel().get('activo.tieneRegistroContrato')=="false"}, title: HreRem.i18n('title.patrimonio.datos.patrimonio.contratos')})
-	},
+	     me.add({xtype: 'contratospatrimonio', ocultarBotonesEdicion: true, bind: {disabled:'{!esActivoAlquilado}'}, title: HreRem.i18n('title.patrimonio.datos.patrimonio.contratos')})
+	 },
 
     evaluarBotonesEdicion: function(tab) {    	
 		var me = this;

@@ -7,7 +7,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
     'HreRem.model.Carga', 'HreRem.model.Llaves', 'HreRem.model.PreciosVigentes','HreRem.model.VisitasActivo',
     'HreRem.model.OfertaActivo', 'HreRem.model.PropuestaActivosVinculados', 'HreRem.model.HistoricoMediadorModel','HreRem.model.AdjuntoActivoPromocion',
     'HreRem.model.MediadorModel', 'HreRem.model.MovimientosLlave', 'HreRem.model.ActivoPatrimonio', 'HreRem.model.HistoricoAdecuacionesPatrimonioModel',
-    'HreRem.model.ImpuestosActivo','HreRem.model.OcupacionIlegal','HreRem.model.HistoricoDestinoComercialModel','HreRem.model.ActivosAsociados'],
+    'HreRem.model.ImpuestosActivo','HreRem.model.OcupacionIlegal','HreRem.model.HistoricoDestinoComercialModel','HreRem.model.ActivosAsociados','HreRem.model.CalificacionNegativaModel'],
 
     data: {
     	activo: null,
@@ -50,7 +50,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 
 	     esOcupacionLegal: function(get) {
 	     	var ocupado = get('situacionPosesoria.ocupado') == "1";
-	     	var conTitulo = get('situacionPosesoria.conTituloTPA') == "01";
+	     	var conTitulo = get('situacionPosesoria.conTitulo') == "01";
 	     	
 	     	return ocupado && conTitulo;
 	     },
@@ -61,7 +61,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 
 	     esOcupacionIlegal: function(get) {
 	     	var ocupado = get('situacionPosesoria.ocupado') == "1";
-	     	var conTitulo = get('situacionPosesoria.conTituloTPA') == "01";
+	     	var conTitulo = get('situacionPosesoria.conTitulo') == "01";
 	     	var gridHistoricoOcupacionesIlegales = this.getView().lookupReference('historicoocupacionesilegalesgridref');
 			var fieldHistoricoOcupacionesIlegales = this.getView().lookupReference('fieldHistoricoOcupacionesIlegales');
 			if(gridHistoricoOcupacionesIlegales != null && fieldHistoricoOcupacionesIlegales != null){
@@ -563,21 +563,28 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 
 		},
 		onInitChangePrecioWebAlquiler: function (get){
-			var noMostrarPrecioVenta = get('datospublicacionactivo.noMostrarPrecioVenta');
 			var noMostrarPrecioAlquiler = get('datospublicacionactivo.noMostrarPrecioAlquiler');
 			var precioWebVentaAlquiler = get('datospublicacionactivo.precioWebAlquiler');
-			var precioWebVenta  = get('datospublicacionactivo.precioWebVenta');
-				if (noMostrarPrecioAlquiler || noMostrarPrecioVenta)
-					return 0;
+			
+				if (noMostrarPrecioAlquiler)
+					return 0; 
 				else{
 					if (precioWebVentaAlquiler != undefined) 
 						return precioWebVentaAlquiler
-					else if (precioWebVenta != undefined) 
+					}
+				
+		},
+		onInitChangePrecioWebVenta: function (get){
+			var noMostrarPrecioVenta = get('datospublicacionactivo.noMostrarPrecioVenta');
+			var precioWebVenta  = get('datospublicacionactivo.precioWebVenta');
+			
+				if (noMostrarPrecioVenta)
+					return 0; 
+				else{
+					if (precioWebVenta != undefined) 
 						return precioWebVenta
-						
 				}
-			
-			
+				
 		},
 		esVisibleTipoPublicacionAlquiler: function(get){
 			var estadoAlquiler = get('datospublicacionactivo.estadoPublicacionAlquiler');
@@ -622,6 +629,13 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 
 			return (CONST.COMBO_ESTADO_ALQUILER["ALQUILADO"] == estadoAlquilerCodigo);
 		},
+		
+		disabledComboConTituloTPA: function(get){
+			var esTipoEstadoAlquilerAlquilado = get('esTipoEstadoAlquilerAlquilado');
+			var ocupado = get('situacionPosesoria.ocupado');
+
+			return esTipoEstadoAlquilerAlquilado || ocupado == CONST.COMBO_OCUPACION["NO"];
+		},
 
 		isCarteraLiberbank: function(get){
 			 var isLiberbank = get('activo.isCarteraLiberbank');
@@ -630,7 +644,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			 }
 			 return false;
 		 }
-
 	},
 	
     stores: {
@@ -1809,6 +1822,25 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 		        remoteUrl: 'activo/getHistoricoDestinoComercialByActivo',
 		        extraParams: {id: '{activo.id}'}
 	    	 }
-   		}
+   		},
+   		
+		storeCalifiacionNegativa:{
+			pageSize: $AC.getDefaultPageSize(),
+			model: 'HreRem.model.CalificacionNegativaModel',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'activo/getCalificacionNegativa',
+				extraParams: {id: '{activo.id}'}
+			}
+		},
+		
+   		comboDDTipoTituloActivoTPA: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getComboTipoTituloActivoTPA',
+   				extraParams: {numActivo: '{activo.numActivo}'}
+			}
+		}
      }
 });

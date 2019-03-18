@@ -108,10 +108,10 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
    		if (dto.getIdProp() != null && StringUtils.isNumeric(dto.getIdProp()))
    			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.numActivoPrinex", Long.valueOf(dto.getIdProp()));
    		
-   		if (dto.getIdRecovery() != null)
+   		if (dto.getIdRecovery() != null && StringUtils.isNumeric(dto.getIdRecovery()))
    			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.idRecovery", Long.valueOf(dto.getIdRecovery()));
    		
-   		if (dto.getIdUvem() != null)
+   		if (dto.getIdUvem() != null && StringUtils.isNumeric(dto.getIdUvem()))
    			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.numActivoUvem", Long.valueOf(dto.getIdUvem()));
    		
    		if (dto.getEstadoActivoCodigo() != null)
@@ -279,13 +279,13 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
    		if (dto.getNumActivoRem() != null)
    			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.numActivoRem", dto.getNumActivoRem());
    		
-   		if (dto.getIdProp() != null)
+   		if (dto.getIdProp() != null && StringUtils.isNumeric(dto.getIdProp()))
    			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.numActivoPrinex", Long.valueOf(dto.getIdProp()));
    		
-   		if (dto.getIdRecovery() != null)
+   		if (dto.getIdRecovery() != null && StringUtils.isNumeric(dto.getIdRecovery()))
    			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.idRecovery", Long.valueOf(dto.getIdRecovery()));
    		
-   		if (dto.getIdUvem() != null)
+   		if (dto.getIdUvem() != null && StringUtils.isNumeric(dto.getIdUvem()))
    			HQLBuilder.addFiltroIgualQueSiNotNull(hb, "act.numActivoUvem", Long.valueOf(dto.getIdUvem()));
    		
    		if (dto.getEstadoActivoCodigo() != null)
@@ -1072,14 +1072,16 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<ActivoCalificacionNegativa> getListActivoCalificacionNegativaByIdActivo(Long idActivo) {
 		String hql = " from ActivoCalificacionNegativa acn ";
 		HQLBuilder hb = new HQLBuilder(hql);
 		hb.appendWhere(" acn.activo.id =  "+idActivo+" ");
-		hb.appendWhere(" acn.auditoria.borrado IS NOT NULL ");
+		hb.appendWhere(" acn.auditoria.borrado = 0 ");
 
-		return (List<ActivoCalificacionNegativa>) this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).list();
+//		return (List<ActivoCalificacionNegativa>) this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).list();
+		return  HibernateUtils.castList(ActivoCalificacionNegativa.class, this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).list());
 
 	}
 	

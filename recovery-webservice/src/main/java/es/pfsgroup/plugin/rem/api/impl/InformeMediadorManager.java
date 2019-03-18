@@ -1240,18 +1240,18 @@ public class InformeMediadorManager implements InformeMediadorApi {
 			if (infoAux != null && infoAux.getId() != null) {
 				if ((infoAux.getId() != null && infoAux.getTipoActivo() != null && informe.getCodTipoActivo() != null
 						&& !infoAux.getTipoActivo().getCodigo().equals(informe.getCodTipoActivo()))
-						|| (infoAux.getId() != null && infoAux.getTipoActivo() == null)
+						|| (infoAux.getId() != null && infoAux.getTipoActivo() == null
+								&& !infoAux.getActivo().getTipoActivo().getCodigo().equals(informe.getCodTipoActivo()))
 						|| ((ActivoInfoComercial) objeto).getId() == null) {
-					if(infoAux.getMediadorInforme() != null){
+					if (infoAux.getMediadorInforme() != null) {
 						idProveedor = infoAux.getMediadorInforme().getId();
 					}
-					
+
 					genericaRestDaoImp.deleteInformeMediador(infoAux);
-					//((ActivoInfoComercial) objeto).setAuditoria(null);
-					//((ActivoInfoComercial) objeto).setId(null);
 				}
 			}
 		}
+
 		return idProveedor;
 	}
 

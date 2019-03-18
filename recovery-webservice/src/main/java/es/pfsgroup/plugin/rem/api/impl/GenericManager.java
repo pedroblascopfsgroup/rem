@@ -14,6 +14,7 @@ import java.util.Set;
 import javax.annotation.Resource;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -63,6 +64,7 @@ import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.GestorSustituto;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDCondicionIndicadorPrecio;
@@ -83,6 +85,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoRechazoOferta;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPorCuenta;
 import es.pfsgroup.plugin.rem.trabajo.dao.DDSubtipoTrabajoDao;
@@ -590,7 +593,7 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 				// OBTENCION DOCUMENTAL
 				// cuando el activo no tiene condicion de gestion en el
 				// perimetro (check gestion = false)
-				if (act.getEnTramite()==1) {
+				if (!Checks.esNulo(act.getEnTramite()) && act.getEnTramite()==1) {
 					if (!Checks.esNulo(tipoTrabajo.getFiltroEnTramite()) && tipoTrabajo.getFiltroEnTramite()) {
 						tiposTrabajoFiltered.add(tipoTrabajo);
 					}
@@ -1070,5 +1073,42 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		List<DDTipoAgrupacion> listaTipoAgrupaciones = genericDao.getList(DDTipoAgrupacion.class, filtroBorrado,
 				filtroBorrado);
 		return listaTipoAgrupaciones;
+	}
+	
+	@Override
+	public List<DDTipoTituloActivoTPA> getComboTipoTituloActivoTPA(Long numActivo) {
+
+		Activo activo = activoApi.getByNumActivo(numActivo);
+		List<DDTipoTituloActivoTPA> combo = new ArrayList<DDTipoTituloActivoTPA>();
+		
+		DDTipoTituloActivoTPA tipoTituloSi = (DDTipoTituloActivoTPA) utilDiccionarioApi
+				.dameValorDiccionarioByCod(DDTipoTituloActivoTPA.class, DDTipoTituloActivoTPA.tipoTituloSi);
+		DDTipoTituloActivoTPA tipoTituloNo = (DDTipoTituloActivoTPA) utilDiccionarioApi
+				.dameValorDiccionarioByCod(DDTipoTituloActivoTPA.class, DDTipoTituloActivoTPA.tipoTituloNo);
+		DDTipoTituloActivoTPA tipoTituloNoConIndicios = (DDTipoTituloActivoTPA) utilDiccionarioApi
+				.dameValorDiccionarioByCod(DDTipoTituloActivoTPA.class, DDTipoTituloActivoTPA.tipoTituloNoConIndicios);
+		
+		combo.add(tipoTituloSi);
+		
+		if(!Checks.esNulo(activo.getCartera())) {
+			if(DDCartera.CODIGO_CARTERA_BANKIA.equals(activo.getCartera().getCodigo())) {
+				if(!Checks.esNulo(activo.getSituacionPosesoria().getSitaucionJuridica())) {
+					if (activo.getSituacionPosesoria().getSitaucionJuridica().getIndicaPosesion() == 1) {
+						combo.add(tipoTituloNo);
+					} else {
+						combo.add(tipoTituloNoConIndicios);
+					}
+				}					
+			} else {
+				if (!Checks.esNulo(activo.getSituacionPosesoria().getFechaRevisionEstado())
+						|| !Checks.esNulo(activo.getSituacionPosesoria().getFechaTomaPosesion())) {
+					combo.add(tipoTituloNo);
+				} else {
+					combo.add(tipoTituloNoConIndicios);
+				}
+			}
+		}
+		
+		return combo;
 	}
 }

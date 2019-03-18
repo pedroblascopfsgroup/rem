@@ -3164,6 +3164,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	},
 
 	onClickGuardarPropagarCambios: function(btn) {
+		
     	var me = this,
     	window = btn.up("window"),
     	grid = me.lookupReference("listaActivos"),
@@ -3242,6 +3243,14 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		            me.getView().fireEvent("refreshComponentOnActivate", "container[reference=tabBuscadorActivos]");
 		        };
 		        me.saveActivo(me.createTabDataCondicionesEspecificas(activosSeleccionados, window.tabData), successFn);
+			} else if (targetGrid=='calificacionNegativa') {
+				var successFn = function(record, operation) {
+		            window.destroy();
+		            me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+		            me.getView().unmask();
+		            me.getView().fireEvent("refreshComponentOnActivate", "container[reference=tabBuscadorActivos]");
+		        };
+		        me.saveActivo(me.createTabDataCalificacionesNegativas(activosSeleccionados), successFn);
 			}
 	    }
 	     window.mask("Guardando activos 1 de " + (activosSeleccionados.length + 1));
@@ -3362,6 +3371,22 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	          model.name = 'condicionesespecificas';
 	          model.type = 'activo';
 	          model.data = {texto: data.texto};
+	          model.data.idActivo = record.data.activoId;
+	          tabData.models.push(model);
+	        });
+	    return tabData;
+	},
+	
+	createTabDataCalificacionesNegativas : function(listadoActivos) {
+		var me = this, tabData = {};
+	    tabData.id = me.getViewModel().get("activo.id");
+	    tabData.models = [];
+	    
+	    Ext.Array.each(list, function(record, index) {
+	          var model = {};
+	          model.name = 'calificacionNegativa';
+	          model.type = 'activo';
+	          model.data = {};
 	          model.data.idActivo = record.data.activoId;
 	          tabData.models.push(model);
 	        });

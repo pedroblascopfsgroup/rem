@@ -634,6 +634,7 @@ public class AgendaController extends TareaController {
 			success = adapter.lanzarTareaAdministrativa(dto);
 
 		} catch (Exception e) {
+			logger.error("Error lanzarTareaAdministrativa: ", e);
 			model.put("errorValidacionGuardado", e.getMessage());
 		}
 

@@ -52,7 +52,7 @@ Ext.define('HreRem.view.common.WindowBase', {
     		                 success: function(fp, o) {
 
     		                 	if(o.result.success == "false") {    		                 		
-    		                 		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+    		                 		me.fireEvent("errorToast", HreRem.i18n("msg.falta.permisos"));
     		                 	}else{
     		                 		me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
     		                 	}

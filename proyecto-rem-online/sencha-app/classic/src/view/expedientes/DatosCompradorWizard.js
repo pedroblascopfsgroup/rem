@@ -22,7 +22,7 @@ Ext.define('HreRem.view.expedientes.DatosCompradorWizard', {
 			me.buttons = [ { itemId: 'btnModificar', text: HreRem.i18n('btn.modificar'), handler: 'onClickBotonModificarComprador', bind:{disabled: !me.esEditable()}},
     					   { itemId: 'btnCancelar', text: HreRem.i18n('btn.cancelBtnText'), handler: 'onClickBotonCancelarWizardComprador'}];
     	} else {
-    		me.buttons = [ { itemId: 'btnCrear', text: HreRem.i18n('btn.crear.comprador'), handler: 'onClickBotonCrearComprador'},
+    		me.buttons = [ { itemId: 'btnCrear', text: HreRem.i18n('btn.crear.comprador'), handler: 'onClickBotonCrearComprador', listeners: {click: 'comprobarFormato'}},
     					   { itemId: 'btnCancelar', text: HreRem.i18n('btn.cancelBtnText'), handler: 'onClickBotonCancelarWizardComprador'}];
     	}
 

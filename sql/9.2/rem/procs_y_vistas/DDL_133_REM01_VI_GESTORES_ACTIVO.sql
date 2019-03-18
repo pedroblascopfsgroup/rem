@@ -617,6 +617,7 @@ SELECT act.act_id,
 			OR  dist8.tipo_gestor = TGE.DD_TGE_CODIGO
 		)
           UNION ALL
+
 /*Gestoría de administración*/
            SELECT DISTINCT act.act_id, 
                 TO_NUMBER (COALESCE (dist9.cod_cartera, dist8.cod_cartera, dist7.cod_cartera, dist6.cod_cartera, dist5.cod_cartera, dist4.cod_cartera, dist3.cod_cartera, dist2.cod_cartera, dist1.cod_cartera, dist0.cod_cartera)) cod_cartera, 

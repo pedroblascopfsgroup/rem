@@ -51,8 +51,8 @@ Ext.define('HreRem.view.common.WindowBase', {
     		                 params: params,
     		                 success: function(fp, o) {
 
-    		                 	if(o.result.success == "false") {
-    		                 		me.fireEvent("errorToast", o.result.errorMessage);
+    		                 	if(o.result.success == "false") {    		                 		
+    		                 		me.fireEvent("errorToast", HreRem.i18n("msg.falta.permisos"));
     		                 	}else{
     		                 		me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
     		                 	}
@@ -67,7 +67,7 @@ Ext.define('HreRem.view.common.WindowBase', {
     		                 	}
     		                 },
     		                 progress: function(action, progress, event) {
-    		                	 
+
     		                 	if(limite > 0 && event.total/1000/1000 > limite){
     		                 		Ext.Ajax.getLatest().abort();
     		                 		me.fireEvent("errorToast", "No se puede subir ficheros mayores de "+limite+"Mb.");

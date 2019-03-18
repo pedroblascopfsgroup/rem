@@ -34,6 +34,9 @@ Ext.define('HreRem.model.GestionEconomicaTrabajo', {
     			name: 'carteraCodigo'
     		},
     		{
+    			name: 'subcarteraCodigo'
+    		},
+    		{
     			name: 'esTarificado',
     		    convert: function (value) {
    		         	return Ext.isEmpty(value) ? null : value === "true";

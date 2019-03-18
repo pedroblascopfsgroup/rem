@@ -62,6 +62,8 @@ public class DtoGestionEconomicaTrabajo extends WebDto {
 	private String codigoTarifaTrabajo;
 	
 	private String descripcionTarifaTrabajo;
+	
+	private String subcarteraCodigo;
 
 	public Long getIdTrabajo() {
 		return idTrabajo;
@@ -255,4 +257,12 @@ public class DtoGestionEconomicaTrabajo extends WebDto {
 		this.descripcionTarifaTrabajo = descripcionTarifaTrabajo;
 	}
 	
+
+	public String getSubcarteraCodigo() {
+		return subcarteraCodigo;
+	}
+
+	public void setSubcarteraCodigo(String subcarteraCodigo) {
+		this.subcarteraCodigo = subcarteraCodigo;
+	}
 }

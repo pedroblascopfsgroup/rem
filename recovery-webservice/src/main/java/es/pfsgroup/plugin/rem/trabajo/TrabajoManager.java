@@ -1743,8 +1743,13 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		// esté relacionado directamente con la agrupación (de momento no)
 		if (trabajo.getActivo() != null && trabajo.getActivo().getCartera() != null) {
 			dtoTrabajo.setCarteraCodigo(trabajo.getActivo().getCartera().getCodigo());
+			
+			if (trabajo.getActivo().getSubcartera() != null) {
+				dtoTrabajo.setSubcarteraCodigo(trabajo.getActivo().getSubcartera().getCodigo());
+			}
 		}
 
+		
 		dtoTrabajo.setDiasRetrasoOrigen(trabajo.getDiasRetrasoOrigen());
 
 		dtoTrabajo.setDiasRetrasoMesCurso(trabajo.getDiasRetrasoMesCurso());
@@ -2468,8 +2473,8 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
 		filtro.setCarteraCodigo(cartera);
 		filtro.setTipoTrabajoCodigo(tipoTrabajo);
-		filtro.setSubtipoTrabajoCodigo(subtipoTrabajo);
-
+		filtro.setSubtipoTrabajoCodigo(subtipoTrabajo);	
+		
 		if (!Checks.esNulo(filtro.getIdTrabajo())) {
 			Trabajo trabajo = findOne(filtro.getIdTrabajo());
 			if (!Checks.esNulo(trabajo.getProveedorContacto())
@@ -4028,5 +4033,7 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 		Activo activo = activoApi.get(idActivo);
 		return activo.getEnTramite() == 1;
 	}
+	
+
 
 }

@@ -565,6 +565,11 @@ SELECT act.act_id,
             AND dist0.cod_postal IS NULL
             AND dist0.cod_subcartera IS NULL
             AND dist0.tipo_gestor = TGE.DD_TGE_CODIGO)
+       LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist0 
+        ON (dist0.cod_estado_activo IS NULL
+            AND dist0.cod_cartera = dd_cra.dd_cra_codigo
+            AND dist0.cod_subcartera IS NULL
+            AND dist0.tipo_gestor = TGE.DD_TGE_CODIGO)
        LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist1 
         ON (dist1.cod_estado_activo  = dd_eac.dd_eac_codigo 
             AND dist1.cod_cartera = dd_cra.dd_cra_codigo
@@ -617,6 +622,7 @@ SELECT act.act_id,
 			OR  dist8.tipo_gestor = TGE.DD_TGE_CODIGO
 		)
           UNION ALL
+
 /*Gestoría de administración*/
            SELECT DISTINCT act.act_id, 
                 TO_NUMBER (COALESCE (dist9.cod_cartera, dist8.cod_cartera, dist7.cod_cartera, dist6.cod_cartera, dist5.cod_cartera, dist4.cod_cartera, dist3.cod_cartera, dist2.cod_cartera, dist1.cod_cartera, dist0.cod_cartera)) cod_cartera, 

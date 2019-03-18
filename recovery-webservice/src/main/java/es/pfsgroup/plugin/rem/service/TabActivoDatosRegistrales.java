@@ -299,14 +299,15 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 			}
 		}
 		
-		if(!Checks.esNulo(activo.getTitulo()) 
+		/*if(!Checks.esNulo(activo.getTitulo()) 
 				&& !Checks.esNulo(activo.getTitulo().getEstado()) 
 				&& !DDEstadoTitulo.ESTADO_INSCRITO.equals(activo.getTitulo().getEstado().getCodigo())
 				&& tienePerfil){
 			activoDto.setNoEstaInscrito(true);
 		}else{
 			activoDto.setNoEstaInscrito(false);
-		}
+		}*/
+		activoDto.setNoEstaInscrito(false);
 		
 		
 		return activoDto;

@@ -7,7 +7,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
     'HreRem.model.Carga', 'HreRem.model.Llaves', 'HreRem.model.PreciosVigentes','HreRem.model.VisitasActivo',
     'HreRem.model.OfertaActivo', 'HreRem.model.PropuestaActivosVinculados', 'HreRem.model.HistoricoMediadorModel','HreRem.model.AdjuntoActivoPromocion',
     'HreRem.model.MediadorModel', 'HreRem.model.MovimientosLlave', 'HreRem.model.ActivoPatrimonio', 'HreRem.model.HistoricoAdecuacionesPatrimonioModel',
-    'HreRem.model.ImpuestosActivo','HreRem.model.OcupacionIlegal','HreRem.model.HistoricoDestinoComercialModel','HreRem.model.ActivosAsociados'],
+    'HreRem.model.ImpuestosActivo','HreRem.model.OcupacionIlegal','HreRem.model.HistoricoDestinoComercialModel','HreRem.model.ActivosAsociados','HreRem.model.CalificacionNegativaModel'],
 
     data: {
     	activo: null,
@@ -562,7 +562,30 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			}
 
 		},
-
+		onInitChangePrecioWebAlquiler: function (get){
+			var noMostrarPrecioAlquiler = get('datospublicacionactivo.noMostrarPrecioAlquiler');
+			var precioWebVentaAlquiler = get('datospublicacionactivo.precioWebAlquiler');
+			
+				if (noMostrarPrecioAlquiler)
+					return 0; 
+				else{
+					if (precioWebVentaAlquiler != undefined) 
+						return precioWebVentaAlquiler
+					}
+				
+		},
+		onInitChangePrecioWebVenta: function (get){
+			var noMostrarPrecioVenta = get('datospublicacionactivo.noMostrarPrecioVenta');
+			var precioWebVenta  = get('datospublicacionactivo.precioWebVenta');
+			
+				if (noMostrarPrecioVenta)
+					return 0; 
+				else{
+					if (precioWebVenta != undefined) 
+						return precioWebVenta
+				}
+				
+		},
 		esVisibleTipoPublicacionAlquiler: function(get){
 			var estadoAlquiler = get('datospublicacionactivo.estadoPublicacionAlquiler');
 			var tipoPublicacionAlquiler = get('datospublicacionactivo.tipoPublicacionAlquilerDescripcion');
@@ -621,7 +644,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			 }
 			 return false;
 		 }
-
 	},
 	
     stores: {
@@ -1811,6 +1833,16 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 	    	 }
    		},
    		
+		storeCalifiacionNegativa:{
+			pageSize: $AC.getDefaultPageSize(),
+			model: 'HreRem.model.CalificacionNegativaModel',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'activo/getCalificacionNegativa',
+				extraParams: {id: '{activo.id}'}
+			}
+		},
+		
    		comboDDTipoTituloActivoTPA: {
 			model: 'HreRem.model.ComboBase',
 			proxy: {

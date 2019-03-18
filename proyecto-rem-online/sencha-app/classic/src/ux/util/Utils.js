@@ -67,7 +67,6 @@ Ext.define('HreRem.ux.util.Utils', {
 	 * @param {} afterFailureFn Funcion que se ejecutará después de las operaciones por defecto.
 	 */
    defaultOperationFailure: function (a, operation, form, beforeFailureFn, afterFailureFn) {
-		
 		var response;		
    		try{
 			response = Ext.decode(operation.getResponse().responseText);
@@ -102,7 +101,6 @@ Ext.define('HreRem.ux.util.Utils', {
 	* @param {} afterFailureFn Funcion que se ejecutará después de las operaciones por defecto.
     */
    defaultRequestFailure: function (response, opts, beforeFailureFn, afterFailureFn) {
-
    		var response;		
    		try{
 			response = Ext.decode(response.responseText);

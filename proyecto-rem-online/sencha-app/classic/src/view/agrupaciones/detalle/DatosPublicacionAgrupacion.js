@@ -76,7 +76,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.DatosPublicacionAgrupacion', {
 							{
 								xtype: 'currencyfieldbase',
 								fieldLabel:  HreRem.i18n('fieldlabel.datos.publicacion.estados.precio.web'),
-								bind: '{datospublicacionagrupacion.precioWebVenta}',
+								bind: '{onInitChangePrecioWebVenta}',
 								readOnly: true
 							},
 							{
@@ -240,7 +240,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.DatosPublicacionAgrupacion', {
 							{
 								xtype: 'currencyfieldbase',
 								fieldLabel:  HreRem.i18n('fieldlabel.datos.publicacion.estados.precio.web'),
-								bind: '{datospublicacionagrupacion.precioWebAlquiler}',
+								bind: '{onInitChangePrecioWebAlquiler}',
 								readOnly: true
 							},
                             {

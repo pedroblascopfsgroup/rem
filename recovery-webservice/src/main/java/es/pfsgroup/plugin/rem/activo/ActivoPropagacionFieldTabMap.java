@@ -436,7 +436,13 @@ public class ActivoPropagacionFieldTabMap {
 					"estadoAdjudicacionCodigo",
 					"tipoPlazaCodigo",
 					"entidadAdjudicatariaCodigo",
-					"entidadEjecutanteCodigo"
+					"entidadEjecutanteCodigo",
+					"calificacionNegativa",
+					"motivoCalificacionNegativa",
+					"descripcionCalificacionNegativa",
+					"estadoMotivoCalificacionNegativa",
+					"responsableSubsanar",
+					"fechaSubsanacion"
     			));
 
     	pmap.put(TAB_INFO_ADMINISTRATIVA,

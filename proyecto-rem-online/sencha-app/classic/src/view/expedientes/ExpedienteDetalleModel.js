@@ -115,6 +115,12 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 			 return CONST.CARTERA['GALEON'] == carteraCodigo || CONST.CARTERA['ZEUS'] == carteraCodigo;
 		 },
 	     
+		 esCarteraAgora: function(get) {
+			 var carteraCodigo = get('expediente.entidadPropietariaCodigo');
+			 var subcarteraCodigo = get('expediente.subcarteraCodigo');
+			 return CONST.CARTERA['CERBERUS'] == carteraCodigo && (CONST.SUBCARTERA['AGORAINMOBILIARIO'] == subcarteraCodigo || CONST.SUBCARTERA['AGORAFINANCIERO'] == subcarteraCodigo) ;
+		 },
+		 
 	     esCarteraCajamar: function(get) {
 		     	
 	     	var carteraCodigo = get('expediente.entidadPropietariaCodigo');

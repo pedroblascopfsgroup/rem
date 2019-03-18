@@ -597,7 +597,7 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 				// OBTENCION DOCUMENTAL
 				// cuando el activo no tiene condicion de gestion en el
 				// perimetro (check gestion = false)
-				if (act.getEnTramite()==1) {
+				if (!Checks.esNulo(act.getEnTramite()) && act.getEnTramite()==1) {
 					if (!Checks.esNulo(tipoTrabajo.getFiltroEnTramite()) && tipoTrabajo.getFiltroEnTramite()) {
 						tiposTrabajoFiltered.add(tipoTrabajo);
 					}

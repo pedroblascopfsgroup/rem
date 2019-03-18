@@ -14,11 +14,14 @@ import org.springframework.stereotype.Component;
 
 import es.capgemini.devon.dto.WebDto;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.procesosJudiciales.model.DDFavorable;
 import es.capgemini.pfs.procesosJudiciales.model.TipoJuzgado;
 import es.capgemini.pfs.procesosJudiciales.model.TipoPlaza;
+import es.capgemini.pfs.users.domain.Perfil;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
@@ -27,6 +30,7 @@ import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDEntidadAdjudicataria;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBAdjudicacionBien;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBInformacionRegistralBien;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
@@ -49,9 +53,11 @@ import es.pfsgroup.plugin.rem.model.dd.DDCalificacionNegativa;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadEjecutante;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoAdjudicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoDivHorizontal;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoMotivoCalificacionNegativa;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoObraNueva;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTitulo;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoCalificacionNegativa;
+import es.pfsgroup.plugin.rem.model.dd.DDResponsableSubsanar;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTituloActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 
@@ -80,6 +86,17 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 	
 	@Autowired
 	private ActivoApi activoApi;
+	
+	@Autowired
+	private UsuarioApi usuarioApi;
+	
+	@Autowired
+	private ActivoDao activoDao;
+	
+	private final String PERFIL_HAYASUPER = "HAYASUPER";
+	private final String PERFIL_HAYAGESTADM = "HAYAGESTADM";
+	private final String PERFIL_HAYASUPADM = "HAYASUPADM";
+	private final String PERFIL_GESTOADM = "GESTOADM";
 	
 	protected static final Log logger = LogFactory.getLog(TabActivoDatosRegistrales.class);
 	
@@ -226,6 +243,14 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 			if (!Checks.estaVacio(motivosVigentes) && motivosVigentes.get(0).getCalificacionNegativa() != null) {
 				BeanUtils.copyProperty(activoDto, "calificacionNegativa", motivosVigentes.get(0).getCalificacionNegativa().getCodigo());
 				
+				if (!Checks.esNulo(motivosVigentes.get(0).getEstadoMotivoCalificacionNegativa().getCodigo()) && !Checks.esNulo(motivosVigentes.get(0).getResponsableSubsanar()) && !Checks.esNulo(motivosVigentes.get(0).getResponsableSubsanar().getCodigo())) {
+					BeanUtils.copyProperty(activoDto, "estadoMotivoCalificacionNegativa", motivosVigentes.get(0).getEstadoMotivoCalificacionNegativa().getCodigo());
+					BeanUtils.copyProperty(activoDto, "responsableSubsanar", motivosVigentes.get(0).getResponsableSubsanar().getCodigo());
+				}else {
+					BeanUtils.copyProperty(activoDto, "estadoMotivoCalificacionNegativa", null);
+					BeanUtils.copyProperty(activoDto, "responsableSubsanar", null);
+				}
+				
 				StringBuffer codigos = new StringBuffer();
 				for(ActivoCalificacionNegativa act : motivosVigentes) {
 					if(!Checks.esNulo(act.getMotivoCalificacionNegativa())) {
@@ -240,13 +265,52 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 			} else {
 				BeanUtils.copyProperty(activoDto, "calificacionNegativa", DDCalificacionNegativa.CODIGO_NO);
 			}
-			
 		
+			
+			//El estado del motivo de calificacion negativa predeterminadamente es siempre Pendiente
+			
+			//BeanUtils.copyProperty(activoDto, "estadoMotivoCalificacionNegativa", DDEstadoMotivoCalificacionNegativa.DD_PENDIENTE_CODIGO);
 		// HREOS-2761: Buscamos los campos que pueden ser propagados para esta pestaña
 		activoDto.setCamposPropagables(TabActivoService.TAB_DATOS_REGISTRALES);
 		
-		return activoDto;
+		List<ActivoCalificacionNegativa> activoCNList = activoDao.getListActivoCalificacionNegativaByIdActivo(activo.getId());
+		Boolean puedeEditar = false, campoMarcado = false;
 		
+		for(ActivoCalificacionNegativa acn : activoCNList) {
+			if(DDEstadoMotivoCalificacionNegativa.DD_PENDIENTE_CODIGO.equals(acn.getEstadoMotivoCalificacionNegativa().getCodigo())) {
+				puedeEditar = true;
+				campoMarcado = true;
+				break;
+			}
+		}
+
+		activoDto.setPuedeEditarCalificacionNegativa(campoMarcado);
+		activoDto.setIsCalificacionNegativaEnabled(puedeEditar);
+		Usuario usuario = usuarioApi.getUsuarioLogado();
+		List<Perfil> perfiles = usuario.getPerfiles();
+		Boolean tienePerfil = false;
+		for (Perfil perfil : perfiles) {
+			if(PERFIL_HAYASUPER.equalsIgnoreCase(perfil.getCodigo())
+					|| PERFIL_GESTOADM.equalsIgnoreCase(perfil.getCodigo())
+					|| PERFIL_HAYAGESTADM.equalsIgnoreCase(perfil.getCodigo())
+					|| PERFIL_HAYASUPADM.equalsIgnoreCase(perfil.getCodigo())){
+				tienePerfil = true;
+				break;
+			}
+		}
+		
+		/*if(!Checks.esNulo(activo.getTitulo()) 
+				&& !Checks.esNulo(activo.getTitulo().getEstado()) 
+				&& !DDEstadoTitulo.ESTADO_INSCRITO.equals(activo.getTitulo().getEstado().getCodigo())
+				&& tienePerfil){
+			activoDto.setNoEstaInscrito(true);
+		}else{
+			activoDto.setNoEstaInscrito(false);
+		}*/
+		activoDto.setNoEstaInscrito(false);
+		
+		
+		return activoDto;
 	}
 
 	@Override
@@ -490,17 +554,7 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 			
 			Filter filterActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
 			
-			if (DDCalificacionNegativa.CODIGO_NO.equals(dto.getCalificacionNegativa())){
-				
-				Filter filterBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
-				List<ActivoCalificacionNegativa> acnList = genericDao.getList(ActivoCalificacionNegativa.class, filterActivo, filterBorrado);
-				
-				for (ActivoCalificacionNegativa acn : acnList){
-					acn.getAuditoria().setBorrado(true);
-					genericDao.update(ActivoCalificacionNegativa.class, acn);
-				}
-			
-			} else if (Checks.esNulo(dto.getCalificacionNegativa())){
+			if (Checks.esNulo(dto.getCalificacionNegativa())){
 					Filter filterNoBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
 					List<ActivoCalificacionNegativa> acnList = genericDao.getList(ActivoCalificacionNegativa.class, filterActivo, filterNoBorrado);
 					if (!Checks.estaVacio(acnList) && !Checks.esNulo(acnList.get(0).getCalificacionNegativa())){
@@ -543,6 +597,20 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 												if (DDMotivoCalificacionNegativa.CODIGO_OTROS.equals(motivo)){
 													activoCalificacion.setDescripcion(dto.getDescripcionCalificacionNegativa());
 												}
+												
+											if (!Checks.esNulo(dto.getEstadoMotivoCalificacionNegativa()) && !Checks.esNulo(dto.getResponsableSubsanar())) {
+												DDEstadoMotivoCalificacionNegativa estMotNegativa = genericDao.get(DDEstadoMotivoCalificacionNegativa.class,genericDao.createFilter(FilterType.EQUALS, "codigo",  dto.getEstadoMotivoCalificacionNegativa()));
+												DDResponsableSubsanar responSubsanar = genericDao.get(DDResponsableSubsanar.class, genericDao.createFilter(FilterType.EQUALS, "codigo",  dto.getResponsableSubsanar()));
+												activoCalificacion.setEstadoMotivoCalificacionNegativa(estMotNegativa);
+												activoCalificacion.setResponsableSubsanar(responSubsanar);
+												
+											}else if (Checks.esNulo(dto.getEstadoMotivoCalificacionNegativa()) && !Checks.esNulo(dto.getResponsableSubsanar())) {
+												DDEstadoMotivoCalificacionNegativa estMotNegativa = genericDao.get(DDEstadoMotivoCalificacionNegativa.class,genericDao.createFilter(FilterType.EQUALS, "codigo",  DDEstadoMotivoCalificacionNegativa.DD_PENDIENTE_CODIGO));
+												DDResponsableSubsanar responSubsanar = genericDao.get(DDResponsableSubsanar.class, genericDao.createFilter(FilterType.EQUALS, "codigo",  dto.getResponsableSubsanar()));
+												activoCalificacion.setEstadoMotivoCalificacionNegativa(estMotNegativa);
+												activoCalificacion.setResponsableSubsanar(responSubsanar);												
+											} 
+										
 											genericDao.save(ActivoCalificacionNegativa.class, activoCalificacion);
 										} else if (!motivosVigentes.contains(motivo) && motivosBorrados.contains(motivo)){
 											
@@ -620,7 +688,22 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 									if (DDMotivoCalificacionNegativa.CODIGO_OTROS.equals(motivo)){
 										activoCalificacion.setDescripcion(dto.getDescripcionCalificacionNegativa());
 									}
-									genericDao.save(ActivoCalificacionNegativa.class, activoCalificacion);
+									
+									if (!Checks.esNulo(dto.getEstadoMotivoCalificacionNegativa()) && !Checks.esNulo(dto.getResponsableSubsanar())) {
+										DDEstadoMotivoCalificacionNegativa estMotNegativa = genericDao.get(DDEstadoMotivoCalificacionNegativa.class,genericDao.createFilter(FilterType.EQUALS, "codigo",  dto.getEstadoMotivoCalificacionNegativa()));
+										DDResponsableSubsanar responSubsanar = genericDao.get(DDResponsableSubsanar.class, genericDao.createFilter(FilterType.EQUALS, "codigo",  dto.getResponsableSubsanar()));
+										activoCalificacion.setEstadoMotivoCalificacionNegativa(estMotNegativa);
+										activoCalificacion.setResponsableSubsanar(responSubsanar);
+										
+									}else if (Checks.esNulo(dto.getEstadoMotivoCalificacionNegativa()) && !Checks.esNulo(dto.getResponsableSubsanar())) {
+										DDEstadoMotivoCalificacionNegativa estMotNegativa = genericDao.get(DDEstadoMotivoCalificacionNegativa.class,genericDao.createFilter(FilterType.EQUALS, "codigo",  DDEstadoMotivoCalificacionNegativa.DD_PENDIENTE_CODIGO));
+										DDResponsableSubsanar responSubsanar = genericDao.get(DDResponsableSubsanar.class, genericDao.createFilter(FilterType.EQUALS, "codigo",  dto.getResponsableSubsanar()));
+										activoCalificacion.setEstadoMotivoCalificacionNegativa(estMotNegativa);
+										activoCalificacion.setResponsableSubsanar(responSubsanar);												
+									}
+									if (!Checks.esNulo(activoCalificacion.getEstadoMotivoCalificacionNegativa()) && !Checks.esNulo(activoCalificacion.getResponsableSubsanar())) {
+										genericDao.save(ActivoCalificacionNegativa.class, activoCalificacion);
+									}
 								} else if (!motivosVigentes.contains(motivo) && motivosBorrados.contains(motivo)){
 									
 									Filter filterCodigo = genericDao.createFilter(FilterType.EQUALS, "motivoCalificacionNegativa.codigo", motivo);
@@ -681,6 +764,7 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 						}
 					}
 				}
+			
 			
 		} catch (IllegalAccessException e) {
 			e.printStackTrace();

@@ -193,6 +193,22 @@ Ext.define('HreRem.view.common.GenericViewModel', {
 					extraParams: {diccionario: 'calificacionNegativa'}
 				}
     		},
+    		comboMotivoCalificacionNegativa: {
+				model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDiccionario',
+					extraParams: {diccionario: 'estadoMotivoCalificacionNegativa'}
+				}
+    		},
+    		comboResponsableSubsanar: {
+				model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDiccionario',
+					extraParams: {diccionario: 'responsableSubsanar'}
+				}
+    		},
     		comboAdministracion: {
 				model: 'HreRem.model.ComboBase',
 				proxy: {

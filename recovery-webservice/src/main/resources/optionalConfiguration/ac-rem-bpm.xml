@@ -530,6 +530,18 @@
 				def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
             	return expedienteComercialManager.checkConOpcionCompra(tareaExterna);
 			}
+            def checkDepositoDespublicacionSubido = {
+            	def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
+            	return expedienteComercialManager.checkDepositoDespublicacionSubido(tareaExterna);
+            }
+	        def esAgora = {
+				def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
+            	return expedienteComercialManager.esAgora(tareaExterna);
+			}
+			def checkDepositoRelleno = {
+            	def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
+            	return expedienteComercialManager.checkDepositoRelleno(tareaExterna);
+            }
   			 ]]></value>
   		</list>
   	</property>

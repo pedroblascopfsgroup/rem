@@ -5,6 +5,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
 
 import es.capgemini.pfs.users.domain.Usuario;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.api.TrabajoAvisadorApi;
 import es.pfsgroup.plugin.rem.model.DtoAviso;
 import es.pfsgroup.plugin.rem.model.Trabajo;
@@ -26,7 +27,7 @@ public class TrabajoAvisoOcupado implements TrabajoAvisadorApi {
 			
 			if (trabajo.getActivo().getSituacionPosesoria().getOcupado() == 1) {
 				
-				if (trabajo.getActivo().getSituacionPosesoria().getConTitulo().equals(DDTipoTituloActivoTPA.tipoTituloSi)) {
+				if (!Checks.esNulo(trabajo.getActivo().getSituacionPosesoria().getConTitulo()) && DDTipoTituloActivoTPA.tipoTituloSi.equals(trabajo.getActivo().getSituacionPosesoria().getConTitulo().getCodigo())) {
 
 					dtoAviso.setDescripcion("Activo ocupado con título");
 					dtoAviso.setId(String.valueOf(trabajo.getId()));

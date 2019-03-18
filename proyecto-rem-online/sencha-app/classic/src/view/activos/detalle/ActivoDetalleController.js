@@ -2651,10 +2651,11 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     },
 
   onClickPropagation : function(btn) {
-    var me = this;
-    var idActivo = btn.up('tabpanel').getActiveTab().getBindRecord().activo.id,
-    url = $AC.getRemoteUrl('activo/getActivosPropagables'),
-    form = btn.up('form');
+	
+	  var me = this,
+	    idActivo = me.getViewModel().get('activo').id,
+	    url = $AC.getRemoteUrl('activo/getActivosPropagables'),
+	    form = btn.up('form');
 
     form.mask(HreRem.i18n("msg.mask.espere"));
 
@@ -2681,6 +2682,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	            }), 1)[0];
 	        var grid = btn.up().up();
 	        // Abrimos la ventana de selección de activos
+	        
 		    var ventanaOpcionesPropagacionCambios = Ext.create("HreRem.view.activos.detalle.OpcionesPropagacionCambios", {
 		          form : null,
 		          activoActual : activo,
@@ -3001,6 +3003,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	},
 
 	onClickGuardarPropagarCambios: function(btn) {
+		
     	var me = this,
 	   	window = btn.up("window"),
     	grid = me.lookupReference("listaActivos"),
@@ -3079,6 +3082,14 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		            me.getView().fireEvent("refreshComponentOnActivate", "container[reference=tabBuscadorActivos]");
 		        };
 		        me.saveActivo(me.createTabDataCondicionesEspecificas(activosSeleccionados, window.tabData), successFn);
+			} else if (targetGrid=='calificacionNegativa') {
+				var successFn = function(record, operation) {
+		            window.destroy();
+		            me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+		            me.getView().unmask();
+		            me.getView().fireEvent("refreshComponentOnActivate", "container[reference=tabBuscadorActivos]");
+		        };
+		        me.saveActivo(me.createTabDataCalificacionesNegativas(activosSeleccionados), successFn);
 			}
 	    }
 	     window.mask("Guardando activos 1 de " + (activosSeleccionados.length + 1));
@@ -3121,6 +3132,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     				propagableData = me.createTabDataHistoricoMediadores(activos);
     				// Los lanzamos todos de golpe sin necesidad de iterar
     				activos = [];
+    			} else if (targetGrid=='calificacionNegativa') {
+    				propagableData = me.createTabDataCalificacionesNegativas(activos);
+    				activos = []
     			}
     		}
 
@@ -3199,6 +3213,22 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	          model.name = 'condicionesespecificas';
 	          model.type = 'activo';
 	          model.data = {texto: data.texto};
+	          model.data.idActivo = record.data.activoId;
+	          tabData.models.push(model);
+	        });
+	    return tabData;
+	},
+	
+	createTabDataCalificacionesNegativas : function(list) {
+		var me = this, tabData = {};
+	    tabData.id = me.getViewModel().get("activo.id");
+	    tabData.models = [];
+	    
+	    Ext.Array.each(list, function(record, index) {
+	          var model = {};
+	          model.name = 'calificacionNegativa';
+	          model.type = 'activo';
+	          model.data = {};
 	          model.data.idActivo = record.data.activoId;
 	          tabData.models.push(model);
 	        });
@@ -3629,22 +3659,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
         }
 	},
 
-    onChangeCalificacionNegativa: function(me, oValue, nValue){
-        var comboCalificacion = me.value;
-        var comboMotivo = me.up('tituloinformacionregistralactivo').down('[reference="itemselMotivo"]');
-        var campoDescripcion = me.up('tituloinformacionregistralactivo').down('[reference="descMotivo"]');
-
-        if (comboCalificacion == "01") {
-            comboMotivo.setDisabled(false);
-            if (comboMotivo.getValue().includes(CONST.MOTIVOS_CAL_NEGATIVA["OTROS"])) {
-            	campoDescripcion.setDisabled(false);
-            }
-        } else {
-            comboMotivo.setDisabled(true);
-            campoDescripcion.setDisabled(true);
-        }
-    },
-
     actualizarGridHistoricoDestinoComercial : function(form) {
 
         if (form.down('historicodestinocomercialactivoform')
@@ -3753,6 +3767,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	 },
 
 	 onChangeCheckPerimetroAlquiler: function(checkbox, newValue, oldValue, eOpts) {
+		 
 		 var me = this;
 		 var comboTipoAlquiler = me.lookupReference('comboTipoAlquilerRef');
 		 var comboAdecuacion = me.lookupReference('comboAdecuacionRef');
@@ -3765,16 +3780,41 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	   	 checkbox.setReadOnly(this.enableChkPerimetroAlquiler());
 	},
 
-    onChangeCalificacionNegativa: function(me, oValue, nValue){
-        var comboCalificacion = me.value;
-        var comboMotivo = me.up('tituloinformacionregistralactivo').down('[reference="itemselMotivo"]');
+	
 
-        if (comboCalificacion == "01") {
+    onChangeCalificacionNegativa: function(me, nValue, oValue){
+    	
+    	var comboCalificacion = nValue;
+        var comboMotivo = me.lookupController('activodetalle').lookupReference('itemselMotivo');
+        var comboEstadoMotivo = me.lookupController('activodetalle').lookupReference('motivoCalificacionNegativa');
+        var comboResponsableSubsanar = me.lookupController('activodetalle').lookupReference('responsableSubsanar');
+        var descMotivoInput = me.lookupController('activodetalle').lookupReference('descMotivo');
+        var fechaSubsanacion = me.lookupController('activodetalle').lookupReference('fechaSubsanacion');
+        
+        //En la primera carga del componente la oValue tiene valor y la nValue se inicializa a null. 
+        if (nValue =="01" && oValue == null)  {
+		    comboMotivo.setDisabled(false);
+    	}else if (comboCalificacion == "01") {
+    		//Combo Motivo
             comboMotivo.setDisabled(false);
-        } else {
+        } else if(nValue =="02" && oValue == "01"){
+			/* HREOS-5432 - NO SE HACE NADA POR LA SIGUIENTE COMPROBACION :
+			 * Si al cambiar el "Estado" de un motivo a "Subsanado" se debe de comprobar si todos los "Motivos" est�n "Subsanados",
+			 *  de ser as� el valor del campo "Calificaci�n negativa" pasar� a ser "No", sin bloquearlo y permitiendo editar.
+			 * */
+        }else{
+        	comboEstadoMotivo.setDisabled(true);
+            comboEstadoMotivo.setValue("00");
+            comboEstadoMotivo.setAllowBlank(true);
+            comboResponsableSubsanar.setDisabled(true);
+            comboResponsableSubsanar.setAllowBlank(true);
+            comboResponsableSubsanar.setValue(null);
             comboMotivo.setDisabled(true);
+            descMotivoInput.setDisabled(true);
+            fechaSubsanacion.setDisabled(true);
         }
     },
+    
 	 onEnlaceAbrirOferta: function(button) {
 	    	var me = this;
 	    	var idExpediente = me.getViewModel().get('contrato.idExpediente');
@@ -3782,5 +3822,228 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			if(!Ext.isEmpty(idExpediente)){
 				me.getView().fireEvent('abrirDetalleExpedienteById', idExpediente, null, button.reflinks);
 			}
+	},
+	
+	onChangeMotivoCalificacionNegativa: function(me, nValue,oValue){
+		
+		var campoDesc = me.lookupController('activodetalle').lookupReference('descMotivo');
+		
+			campoDesc.setDisabled(true);
+			campoDesc.allowBlank = true;
+			campoDesc.setReadOnly(true);
+			campoDesc.setDisabled(true);
+			campoDesc.fireEvent('cancel');
+		
+		
+		if (me.getValue().length == 0){
+			var comboEstadoCalNegativa = me.lookupController('activodetalle').lookupReference('comboCalificacionNegativaRef');
+			comboEstadoCalNegativa.setValue('02');
 		}
+		this.lookupReference('tituloinformacionregistralactivo').getViewModel().data.nClicks=0;
+	},
+	
+	onClickMotivoSelected: function(me,a,b){
+		
+		var activoDetalleController = this;
+		var itemSelMotivo = this.lookupReference('itemselMotivo');
+		
+		if(!Ext.isEmpty(me.record)){
+			
+			var codMotivoClicked = me.record.data.codigo;
+			
+	        var comboEstadoMotivo = this.lookupReference('motivoCalificacionNegativa');
+	        var comboResponsableSubsanar = this.lookupReference('responsableSubsanar');
+	        var descMotivoInput = this.lookupReference('descMotivo');
+	        var fechaSubsanacion = this.lookupReference('fechaSubsanacion');
+			
+			//SE COMPRUEBA SI EL ELEMENTO ESTA EN EL COMBO SELECCIONADO.
+			if(itemSelMotivo.value.indexOf(codMotivoClicked) >= 0){
+				var numeroClicks = this.lookupReference('tituloinformacionregistralactivo').getViewModel().data.nClicks;
+				var idActivo = this.getViewModel().get("activo.id");
+				var url = $AC.getRemoteUrl('activo/getCalificacionNegativaMotivo');
+				var tituloInfoRegActivo = this.lookupReference('tituloinformacionregistralactivo');
+	            comboEstadoMotivo.setDisabled(false);
+	            comboEstadoMotivo.setAllowBlank(false);
+
+	            comboResponsableSubsanar.setDisabled(false);
+	            comboResponsableSubsanar.setAllowBlank(false);
+	            
+	            fechaSubsanacion.setDisabled(false);
+	            fechaSubsanacion.setAllowBlank(false);
+
+				//SI ES LA 1� VEZ QUE SE SELECCIONA UN ELEMENTO EN EL COMBO SELECCIONADO
+				if(numeroClicks == 0){
+					this.cargarDataCalificacionNegativa(url,idActivo,codMotivoClicked,comboEstadoMotivo,comboResponsableSubsanar,fechaSubsanacion,descMotivoInput);
+					this.lookupReference('tituloinformacionregistralactivo').getViewModel().data.codMotivoClicked = codMotivoClicked;
+				}else{
+					if(this.lookupReference('tituloinformacionregistralactivo').getViewModel().data.codMotivoClicked != codMotivoClicked){
+						
+						Ext.Msg.confirm(
+								"Modificar cambios"/*HreRem.i18n("title.agrupacion.restringida")*/,
+								"&#191;Desea guardar los cambios modificados del motivo seleccionado?"/*HreRem.i18n("msg.confirm.agrupacion.restringida")*/,
+								function(btnConfirm){
+									if (btnConfirm == "yes"){
+										
+										activoDetalleController.guardarMotivoCalificacionNegativa(me,tituloInfoRegActivo.getViewModel().data.codMotivoClicked);
+										activoDetalleController.cargarDataCalificacionNegativa(url,idActivo,codMotivoClicked,comboEstadoMotivo,comboResponsableSubsanar,fechaSubsanacion,descMotivoInput);
+									}else{
+										activoDetalleController.cargarDataCalificacionNegativa(url,idActivo,codMotivoClicked,comboEstadoMotivo,comboResponsableSubsanar,fechaSubsanacion,descMotivoInput);
+									}
+									tituloInfoRegActivo.getViewModel().data.codMotivoClicked = codMotivoClicked;
+								}
+						);
+					}
+					
+				}
+				
+				this.lookupReference('tituloinformacionregistralactivo').getViewModel().data.nClicks=1;
+			}else{
+				comboEstadoMotivo.setDisabled(true);
+	            comboEstadoMotivo.setAllowBlank(true);
+	            comboEstadoMotivo.setValue("00");
+
+	            comboResponsableSubsanar.setDisabled(true);
+	            comboResponsableSubsanar.setAllowBlank(true);
+	            comboResponsableSubsanar.setValue("");
+	            
+	            fechaSubsanacion.setDisabled(true);
+	            fechaSubsanacion.setAllowBlank(true);
+	            fechaSubsanacion.setValue(null);
+	        	this.lookupReference('tituloinformacionregistralactivo').getViewModel().data.nClicks=0;
+			}
+		}
+		
+	},
+	
+	cargarDataCalificacionNegativa: function(url,idActivo,codMotivoClicked,comboEstadoMotivo,comboResponsableSubsanar,fechaSubsanacion,descMotivoInput){
+		
+		Ext.Ajax.request({
+    		url: url,
+    		params: {idActivo: idActivo, idMotivo:codMotivoClicked},
+    		method: 'POST',
+    		success: function(response, opts){
+    			
+	    		var datos = Ext.decode(response.responseText);
+	    		
+	    		if(!Ext.isEmpty(datos.data)){
+	    			
+	    			if(codMotivoClicked.indexOf(CONST.MOTIVOS_CAL_NEGATIVA["OTROS"]) >= 0){
+	    				descMotivoInput.setDisabled(false);
+	    			}else{
+	    				descMotivoInput.setDisabled(true);
+	    			}
+	    			
+	    			if(!Ext.isEmpty(datos.data.codigoEstadoMotivoCalificacionNegativa)){
+		    			comboEstadoMotivo.setValue(datos.data.codigoEstadoMotivoCalificacionNegativa);
+		    		}else{
+		    			comboEstadoMotivo.setValue(null);
+		    		}
+		    		
+		    		if(!Ext.isEmpty(datos.data.codigoResponsableSubsanar)){
+		    			comboResponsableSubsanar.setValue(datos.data.codigoResponsableSubsanar);
+		    		}else{
+		    			comboResponsableSubsanar.setValue(null);
+		    		}
+		    		
+		    		if(!Ext.isEmpty(datos.data.fechaSubsanacion)){
+		    			fechaSubsanacion.setValue(new Date(datos.data.fechaSubsanacion));
+		    		}else{
+		    			fechaSubsanacion.setValue(null);
+		    		}
+		    		
+		    		descMotivoInput.setValue(datos.data.descripcionCalificacionNegativa);
+		    		
+		    		descMotivoInput.lookupController('tituloinformacionregistralactivo').getViewModel().data.codigoMotivo= datos.data.codigoMotivoCalificacionNegativa;
+	    		
+	    		}else{
+	    			comboEstadoMotivo.setValue("");
+	    			comboResponsableSubsanar.setValue("");
+	    			fechaSubsanacion.setValue("");
+	    			descMotivoInput.setValue("");
+	    			descMotivoInput.setDisabled(true);
+	    		}
+	    		
+    		}
+    	});
+	},
+	
+	guardarMotivoCalificacionNegativa: function(me,codigoMotivoClicked){
+		
+		var ventana = this.lookupReference('tituloinformacionregistralactivo');
+		var record = ventana.getBindRecord();
+		var fecha = null;
+		
+		var url = $AC.getRemoteUrl('activo/saveCalificacionNegativaMotivo');
+		if(!Ext.isEmpty(ventana.getForm().getValues().fechaSubsanacion)){
+			fecha = new Date(record.data.fechaSubsanacion);
+			fecha.setHours(fecha.getHours()+5);//FIX SOLUCION AL PROBLEMA DE LA ZONA HORARIA.	
+		}
+		var codigoMotivo = ventana.getViewModel().data.codigoMotivo;
+		
+		Ext.Ajax.request({
+    		url: url,
+    		params: {
+    			idActivo:record.id
+    			,idMotivo: codigoMotivoClicked
+    			,calificacionNegativa: record.data.calificacionNegativa
+    			,estadoMotivoCalificacionNegativa: record.data.estadoMotivoCalificacionNegativa
+    			,responsableSubsanar: record.data.responsableSubsanar
+    			,descripcionCalificacionNegativa: record.data.descripcionCalificacionNegativa
+    			,fechaSubsanacion: fecha
+    		},
+    		method: 'POST',
+    		success: function(response, opts){
+    			
+    			var resultado = Ext.decode(response.responseText).success;
+    			if(resultado){
+    				ventana.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+    			}else{
+    				ventana.fireEvent("errorToast", "No se puede guardar el motivo de calificaci&oacute;n negativa sin datos"/*HreRem.i18n("msg.operacion.ko")*/); 
+    			}
+    			
+    		},
+		 	failure: function(record, operation) {
+		 		ventana.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko")); 
+		    }
+    	});
+		
+	},
+	
+	onChangeEstadoMotivo: function(me,nValue,oValue){
+		
+		var comboEstadoCalNegativa = me.lookupController('activodetalle').lookupReference('comboCalificacionNegativaRef');
+		var fechaSubsanacion = me.lookupController('activodetalle').lookupReference('fechaSubsanacion');
+		var ventana = this.lookupReference('tituloinformacionregistralactivo');
+		var record = ventana.getBindRecord();
+		
+		if(!Ext.isEmpty(me.getValue())){
+			if(me.getValue().indexOf(CONST.ESTADOS_MOTIVOS_CAL_NEGATIVA["PENDIENTE"]) >= 0){
+				comboEstadoCalNegativa.setValue('01');
+				  fechaSubsanacion.setAllowBlank(true);
+			}else if(me.getValue().indexOf(CONST.ESTADOS_MOTIVOS_CAL_NEGATIVA["SUBSANADO"]) >= 0){
+				fechaSubsanacion.setAllowBlank(false);
+				//COMPROBAR SI TODOS MOTIVOS TIENEN ESTADO MOTIVO SUBSANACION INCLUIDO EL QUE SE ACABA DE MODIFICAR
+				var url = $AC.getRemoteUrl('activo/getMotivosCalificacionNegativaSubsanados');
+				Ext.Ajax.request({
+		    		url: url,
+		    		params: {
+		    			idActivo:record.id
+		    			,idMotivo: ventana.getViewModel().data.codMotivoClicked
+		    		},
+		    		method: 'POST',
+		    		success: function(response, opts){
+		    			
+		    			var resultado = Ext.decode(response.responseText).data;
+		    			if(resultado == "true"){
+		    				comboEstadoCalNegativa.setValue('02');
+		    			}
+		    		},
+				 	failure: function(record, operation) {
+				 		ventana.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko")); 
+				    }
+		    	});
+
+			}
+		}
+	}
 });

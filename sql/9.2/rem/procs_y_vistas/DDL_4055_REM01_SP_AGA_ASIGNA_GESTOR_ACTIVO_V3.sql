@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Daniel Algaba
---## FECHA_CREACION=20190213
+--## AUTOR=Guillermo Llidó Parra 
+--## FECHA_CREACION=20190216
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-5443
+--## INCIDENCIA_LINK=HREOS-5838
 --## PRODUCTO=NO
 --## Finalidad: Procedimiento almacenado que asigna Gestores de todos los tipos.
 --##           
@@ -66,7 +66,7 @@ BEGIN
         V_GESTOR := V_GESTOR_FINANCIERO;
         V_CLASE_ACTIVO :=  'JOIN '||V_ESQUEMA||'.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = ACT.DD_CRA_ID
             JOIN '||V_ESQUEMA||'.DD_SCR_SUBCARTERA SCR ON SCR.DD_CRA_ID = CRA.DD_CRA_ID AND SCR.DD_SCR_ID = ACT.DD_SCR_ID
-            WHERE SCR.DD_SCR_CODIGO IN (''01'',''03'',''05'',''10'',''12'',''21'',''134'',''38'',''00'')';
+            WHERE SCR.DD_SCR_CODIGO = DECODE (CRA.DD_CRA_CODIGO, ''01'',''01'',''02'',''03'',''03'',''05'',''04'',''10'',''05'',''12'',''09'',''21'',''07'',''134'',''07'',''38'',''00'',''137'')';
         V_CLASE_ACTIVO_NULL :=  'LEFT JOIN '||V_ESQUEMA||'.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = ACT.DD_CRA_ID
             LEFT JOIN '||V_ESQUEMA||'.DD_SCR_SUBCARTERA SCR ON SCR.DD_CRA_ID = CRA.DD_CRA_ID AND SCR.DD_SCR_ID = ACT.DD_SCR_ID
             WHERE SCR.DD_SCR_CODIGO IS NULL';
@@ -74,7 +74,7 @@ BEGIN
         V_GESTOR := V_GESTOR_INMOBILIAR;
         V_CLASE_ACTIVO := 'JOIN '||V_ESQUEMA||'.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = ACT.DD_CRA_ID
             JOIN '||V_ESQUEMA||'.DD_SCR_SUBCARTERA SCR ON SCR.DD_CRA_ID = CRA.DD_CRA_ID AND SCR.DD_SCR_ID = ACT.DD_SCR_ID
-            WHERE SCR.DD_SCR_CODIGO NOT IN (''01'',''03'',''05'',''10'',''12'',''21'',''134'',''38'',''00'')';
+            WHERE SCR.DD_SCR_CODIGO <> DECODE (CRA.DD_CRA_CODIGO, ''01'',''01'',''02'',''03'',''03'',''05'',''04'',''10'',''05'',''12'',''09'',''21'',''07'',''134'',''07'',''38'',''00'',''135'')';
         V_CLASE_ACTIVO_NULL := 'LEFT JOIN '||V_ESQUEMA||'.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = ACT.DD_CRA_ID
             LEFT JOIN '||V_ESQUEMA||'.DD_SCR_SUBCARTERA SCR ON SCR.DD_CRA_ID = CRA.DD_CRA_ID AND SCR.DD_SCR_ID = ACT.DD_SCR_ID
             WHERE SCR.DD_SCR_CODIGO IS NULL';

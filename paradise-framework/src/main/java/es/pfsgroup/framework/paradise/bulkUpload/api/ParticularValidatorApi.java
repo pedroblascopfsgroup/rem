@@ -485,8 +485,6 @@ public interface ParticularValidatorApi {
 
 	Boolean existeSituacion(String idSituacion);
 
-	Boolean existeImpuesto(String idImpuesto);
-
 	Boolean existeActivoEnPropietarios(String numActivo, String idPropietarios);
 
 	
@@ -553,4 +551,25 @@ public interface ParticularValidatorApi {
 
 
 	public Boolean isActivoFinanciero(String numActivo);
+
+	/**
+	 * 
+	 * @param idImpuesto
+	 * @return true si existe, false si no existe o es nulo
+	 */
+	public Boolean existeCodImpuesto(String idImpuesto);
+
+	/**
+	 * 
+	 * @param codPeriodicidad
+	 * @return true si existe, false si no existe o es nulo
+	 */
+	public Boolean existePeriodicidad(String codPeriodicidad);
+	
+	/**
+	 * 
+	 * @param codCalculo
+	 * @return true si existe, false si no existe o es nulo
+	 */
+	public Boolean existeCalculo(String codCalculo);
 }

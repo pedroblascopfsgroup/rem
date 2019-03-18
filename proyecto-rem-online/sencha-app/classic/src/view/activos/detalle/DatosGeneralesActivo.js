@@ -10,7 +10,7 @@ Ext.define('HreRem.view.activos.detalle.DatosGeneralesActivo', {
     layout: 'fit',
 	listeners: {
     	boxready: function (tabPanel) {   		
-			if(tabPanel.items.length > 0 && tabPanel.items.items.length > 0) {
+    		if(tabPanel.items.length > 0 && tabPanel.items.items.length > 0) {
 				var tab = tabPanel.items.items[0];
 				tabPanel.setActiveTab(tab);
 			}
@@ -165,7 +165,7 @@ Ext.define('HreRem.view.activos.detalle.DatosGeneralesActivo', {
      },
      
      evaluarBotonesEdicion: function(tab) {    	
-		var me = this;
+     	var me = this;
 		me.down("[itemId=botoneditar]").setVisible(false);
 		var editionEnabled = function() {
 			me.down("[itemId=botoneditar]").setVisible(true);

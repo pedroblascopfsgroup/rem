@@ -131,7 +131,6 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
             }
 
             me.campos[i].msgTarget = 'side';
-
             //Este switch seg�n el caso reutiliza las propiedades de items que se han
             // definido en el array "me.campos[]" o crean arrays de items nuevos.
             // Si creas un nuevo "case" y decides crear un array nuevo en lugar de reutilizar
@@ -1136,16 +1135,11 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 		var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
 		var comiteSuperior = me.down('[name=comiteSuperior]');
 		var comite = me.down('[name=comite]');
+
 		if(CONST.CARTERA['BANKIA'] == codigoCartera) {
 			me.desocultarCampo(comiteSuperior);
 		}else{
 			me.ocultarCampo(comiteSuperior);
-		}
-		
-		if(CONST.CARTERA['LIBERBANK'] == codigoCartera) {
-			me.bloquearCampo(comite);
-		} else {
-			me.desbloquearCampo(comite);
 		}
 	},
 	T013_DocumentosPostVentaValidacion: function() {
@@ -1233,7 +1227,10 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 			me.down('[name=numImporteContra]').setReadOnly(false);
 			me.down('[name=fechaRespuesta]').setReadOnly(false);
         }
-		
+		if(CONST.CARTERA['LIBERBANK'] != codigoCartera) {
+			me.down('[name=fechaReunionComite]').hide();
+			me.down('[name=comiteInternoSancionador]').hide();
+		}
         me.down('[name=comboResolucion]').addListener('change', function(combo) {
             if (combo.value == '03') {
                 me.habilitarCampo(me.down('[name=numImporteContra]'));
@@ -1986,6 +1983,7 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
     
     T015_ResolucionExpedienteValidacion: function(){
     	var me = this;
+    	var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
     	me.deshabilitarCampo(me.down('[name=motivo]'));
     	me.deshabilitarCampo(me.down('[name=importeContraoferta]'));
     	
@@ -2020,6 +2018,11 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
     		}
 
     	});
+    	
+    	if(CONST.CARTERA['LIBERBANK'] != codigoCartera) {
+			me.down('[name=fechaReunionComite]').hide();
+			me.down('[name=comiteInternoSancionador]').hide();
+		}
     	
     },
     

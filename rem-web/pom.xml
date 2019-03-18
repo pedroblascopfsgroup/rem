@@ -942,6 +942,11 @@
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
+		    <groupId>org.apache.poi</groupId>
+		    <artifactId>poi-ooxml</artifactId>
+		    <version>3.7</version>
+		</dependency>
+		<dependency>
 			<groupId>es.pfsgroup.recovery.framework.libs</groupId>
 			<artifactId>log4j</artifactId>
 			<version>UNKNOWN</version>

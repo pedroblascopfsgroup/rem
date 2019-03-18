@@ -320,7 +320,8 @@ public class ActivoAdapter {
 	@Autowired
 	private UsuarioManager usuarioManager;
 	
-	@Autowired
+
+	@Autowired 
     private ActivoAgrupacionDao activoAgrupacionDao;
 
 	private static final String CONSTANTE_REST_CLIENT = "rest.client.gestor.documental.constante";
@@ -1167,6 +1168,8 @@ public class ActivoAdapter {
 					e.printStackTrace();
 				} catch (InvocationTargetException e) {
 					e.printStackTrace();
+				} catch (Exception e) {
+					logger.error("Error en ActivoAdapter, ", e);
 				}
 				listaDtoAgrupaciones.add(dtoActivoAgrupaciones);
 

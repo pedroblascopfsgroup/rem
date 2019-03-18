@@ -1283,9 +1283,7 @@ ELSE
                 LEFT JOIN '|| V_ESQUEMA ||'.DD_TPU_TIPO_PUBLICACION TPU_A ON TPU_A.DD_TPU_ID = ACT.DD_TPU_A_ID
                 WHERE ACT.ACT_ID = '|| replace(vQUERY_ACTPRIN,'AUX','')||'
                     AND ACT.BORRADO = 0) SS
-            WHERE RN = 1';
-            
-        DBMS_OUTPUT.PUT_LINE( V_MSQL );              
+            WHERE RN = 1';           
           
         EXECUTE IMMEDIATE V_MSQL INTO hDD_TCO_CODIGO, hCODIGO_ESTADO_V, hCODIGO_ESTADO_A
             , hDD_MTO_CODIGO_V, hDD_MTO_CODIGO_A, hCHECK_OCULTAR_V, hCHECK_OCULTAR_A;                  

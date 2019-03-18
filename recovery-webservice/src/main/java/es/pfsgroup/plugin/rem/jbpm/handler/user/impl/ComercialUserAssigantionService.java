@@ -298,7 +298,7 @@ public class ComercialUserAssigantionService implements UserAssigantionService  
 	
 	private boolean isRetailActivo(TareaActivo tareaActivo) {
 		Activo activo = tareaActivo.getActivo();
-		if(DDTipoComercializar.CODIGO_RETAIL.equals(activo.getTipoComercializar().getCodigo())) {
+		if(activo.getTipoComercializar() != null && DDTipoComercializar.CODIGO_RETAIL.equals(activo.getTipoComercializar().getCodigo())) {
 			return true;
 		}
 		return false;

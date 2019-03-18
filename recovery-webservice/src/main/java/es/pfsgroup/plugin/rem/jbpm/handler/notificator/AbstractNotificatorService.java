@@ -17,6 +17,7 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.plugin.rem.activo.dao.impl.ActivoDaoImpl;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.model.Activo;
@@ -103,6 +104,7 @@ public abstract class AbstractNotificatorService {
 		String notificacionAutomatica = "<td style=\"vertical-align:middle;text-align:center;color:#0a94d6;font-size:x-small;font-weight:bold;padding:0px;border-collapse:collapse;margin-bottom:25px\"> ESTE MENSAJE ES UNA NOTIFICACIÓN AUTOMÁTICA. NO RESPONDA A ESTE CORREO.</td>";
 		return notificacionAutomatica;
 	}
+
 
 	protected String generateCuerpo(DtoSendNotificator dtoSendNotificator, String contenido) {
 		String cuerpo = "<html>" + "<!DOCTYPE HTML PUBLIC '-//W3C//DTD HTML 4.01 Transitional//EN'>" + "<html>"
@@ -351,22 +353,33 @@ public abstract class AbstractNotificatorService {
 	}
 
 	public String creaCuerpoPropuestaOferta(Oferta oferta) {
-
+	
+	
 		Activo activo = oferta.getActivoPrincipal();
-
+		DtoSendNotificator dtoSendNotificator = new DtoSendNotificator();
 		Filter filterAct = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
 		List<ActivoTramite> tramites = genericDao.getList(ActivoTramite.class, filterAct);
-
-		Integer numTramites = tramites.size();
-
-		ActivoTramite tramite = tramites.get(numTramites - 1);
-
+		ActivoTramite tramite;
+		
+		
 		String asunto = "Notificación de propuesta de la oferta " + oferta.getNumOferta();
 		String cuerpo = "<p>Nos complace mandarle la información de la propuesta de oferta " + oferta.getNumOferta();
-
+		
 		cuerpo = cuerpo + ". Adjunto a este correo encontrará el documento con las información de la propuesta";
-
+		
 		cuerpo = cuerpo + ".</p>";
+
+
+
+		Integer numTramites = tramites.size();
+		
+		if(!Checks.estaVacio(tramites)) {
+			tramite = tramites.get(numTramites-1);
+			dtoSendNotificator = this.rellenaDtoSendNotificator(oferta, tramite);
+			dtoSendNotificator.setTitulo(asunto);
+		}
+
+
 
 		cuerpo = cuerpo + "<p>Quedamos a su disposición para cualquier consulta o aclaración. Saludos cordiales.</p>";
 
@@ -378,9 +391,6 @@ public abstract class AbstractNotificatorService {
 				(gestorComercial != null) ? gestorComercial.getApellidoNombre() : STR_MISSING_VALUE);
 		cuerpo = cuerpo + String.format("<p>%s</p>",
 				(gestorComercial != null) ? gestorComercial.getEmail() : STR_MISSING_VALUE);
-
-		DtoSendNotificator dtoSendNotificator = this.rellenaDtoSendNotificator(oferta,tramite);
-		dtoSendNotificator.setTitulo(asunto);
 
 		String cuerpoCorreo = this.generateCuerpo(dtoSendNotificator, cuerpo);
 

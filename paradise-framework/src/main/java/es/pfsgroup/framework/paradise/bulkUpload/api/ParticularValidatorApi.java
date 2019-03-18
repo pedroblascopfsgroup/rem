@@ -485,8 +485,6 @@ public interface ParticularValidatorApi {
 
 	Boolean existeSituacion(String idSituacion);
 
-	Boolean existeImpuesto(String idImpuesto);
-
 	Boolean existeActivoEnPropietarios(String numActivo, String idPropietarios);
 
 	
@@ -553,4 +551,5 @@ public interface ParticularValidatorApi {
 
 
 	public Boolean isActivoFinanciero(String numActivo);
+
 }

@@ -1227,7 +1227,10 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 			me.down('[name=numImporteContra]').setReadOnly(false);
 			me.down('[name=fechaRespuesta]').setReadOnly(false);
         }
-		
+		if(CONST.CARTERA['LIBERBANK'] != codigoCartera) {
+			me.down('[name=fechaReunionComite]').hide();
+			me.down('[name=comiteInternoSancionador]').hide();
+		}
         me.down('[name=comboResolucion]').addListener('change', function(combo) {
             if (combo.value == '03') {
                 me.habilitarCampo(me.down('[name=numImporteContra]'));
@@ -1980,6 +1983,7 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
     
     T015_ResolucionExpedienteValidacion: function(){
     	var me = this;
+    	var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
     	me.deshabilitarCampo(me.down('[name=motivo]'));
     	me.deshabilitarCampo(me.down('[name=importeContraoferta]'));
     	
@@ -2014,6 +2018,11 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
     		}
 
     	});
+    	
+    	if(CONST.CARTERA['LIBERBANK'] != codigoCartera) {
+			me.down('[name=fechaReunionComite]').hide();
+			me.down('[name=comiteInternoSancionador]').hide();
+		}
     	
     },
     

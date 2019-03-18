@@ -272,10 +272,6 @@ public class Reserva implements Serializable, Auditable {
 
 	public void setDevolucionReserva(DDDevolucionReserva devolucionReserva) {
 		this.devolucionReserva = devolucionReserva;
-	}
-    
-	
-    
-    
+	} 
    
 }

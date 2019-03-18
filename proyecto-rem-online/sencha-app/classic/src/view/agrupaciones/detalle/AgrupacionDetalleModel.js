@@ -440,6 +440,28 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
                 this.getData().comboMotivosOcultacionAlquiler.clearFilter();
             }
         },
+        onInitChangePrecioWebAlquiler: function (get){
+			var noMostrarPrecioAlquiler = get('datospublicacionagrupacion.noMostrarPrecioAlquiler');
+			var precioWebAlquiler = get('datospublicacionagrupacion.precioWebAlquiler');
+			
+				if (noMostrarPrecioAlquiler)
+					return 0; 
+				else {
+					if (precioWebAlquiler != undefined) 
+						return precioWebAlquiler
+					}
+        },
+        onInitChangePrecioWebVenta: function (get){
+			var noMostrarPrecioVenta = get('datospublicacionagrupacion.noMostrarPrecioVenta');
+			var precioWebVenta  = get('datospublicacionagrupacion.precioWebVenta');
+			
+				if (noMostrarPrecioVenta)
+					return 0; 
+				else {
+					if (precioWebVenta != undefined) 
+						return precioWebVenta
+					}
+		},
 	     agrupacionRestringidaYPublicada: function(get) {
 	    	 var tipoAgrupacion = get('agrupacionficha.tipoAgrupacionCodigo');
 		     	if((tipoAgrupacion == CONST.TIPOS_AGRUPACION['RESTRINGIDA'])) {

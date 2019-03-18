@@ -18,6 +18,7 @@ import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
+//import es.pfsgroup.plugin.rem.activo.DtoCalificacionNegativa;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
@@ -29,6 +30,7 @@ import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.DtoActivoCargas;
 import es.pfsgroup.plugin.rem.model.DtoActivoCargasTab;
+import es.pfsgroup.plugin.rem.model.DtoActivoDatosRegistrales;
 import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoActivoIntegrado;
@@ -454,6 +456,14 @@ public interface ActivoApi {
 	 * @return ActivoCalificacionNegativa
 	 */
 	List<ActivoCalificacionNegativa> getActivoCalificacionNegativaByIdActivo(Long idActivo);
+	
+	/**
+	 * Devuelve un dto con la calificacion negativa del ID de un activo dado
+	 *
+	 * @param idActivo
+	 * @return DtoActivoDatosRegistrales
+	 */
+	List<DtoActivoDatosRegistrales> getActivoCalificacionNegativa(Long idActivo);
 
 	PerimetroActivo saveOrUpdatePerimetroActivo(PerimetroActivo perimetroActivo);
 
@@ -1039,6 +1049,12 @@ public interface ActivoApi {
 	boolean isActivoEnPuja(Activo activo);
 
 	boolean updateImpuestos(DtoImpuestosActivo dtoImpuestosFilter) throws ParseException;
+	
+	boolean updateCalificacionNegativa(DtoActivoDatosRegistrales dto);
+	
+	boolean createCalificacionNegativa(DtoActivoDatosRegistrales dto) throws JsonViewerException, Exception;
+	
+	boolean destroyCalificacionNegativa(DtoActivoDatosRegistrales dto);
 
 	DtoActivoFichaCabecera getActivosAgrupacionRestringida(Long idActivo);
 
@@ -1092,6 +1108,7 @@ public interface ActivoApi {
 	 */
 	List<DtoMotivoAnulacionExpediente> getMotivoAnulacionExpediente();
 
+
 	/**
 	 * Devuelve true si tiene alguna comunicacion
 	 *
@@ -1102,4 +1119,26 @@ public interface ActivoApi {
 
 	public boolean isActivoBloqueadoGencat(Activo activo);
 
+	
+	/**
+	 * Devuelve la calificacion negativa de un activo a partir de un motivo
+	 * @param idActivo
+	 * @param idMotivo
+	 * @return
+	 */
+	DtoActivoDatosRegistrales getCalificacionNegativoByidActivoIdMotivo(Long idActivo, String idMotivo);
+	
+	/**
+	 * Guarda la calificacion negativa de un motivo en un activo
+	 * @param dto
+	 * @return boolean 
+	 */
+	boolean saveCalificacionNegativoMotivo(DtoActivoDatosRegistrales dto);
+	
+	/**
+	 * Devuelve un boolean al comprobar si los motivos de calificacion negativa tienen como estado subsanado.
+	 * @param idActivo
+	 * @return boolean
+	 */
+	boolean getMotivosCalificacionNegativaSubsanados(Long idActivo, String idMotivo);
 }

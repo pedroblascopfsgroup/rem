@@ -171,7 +171,6 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 
 	Boolean publicarAgrupacionSinHistorico(Long idAgrupacion, String username, String eleccionUsuarioTipoPublicacionAlquiler, boolean doFlush);
 
-
 	/**
 	 * Establece la fecha fin de los registros de un activo en el Historico de destino comercial
 	 *
@@ -216,4 +215,5 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	
 	Boolean todasLasOfertasEstanAnuladas(Long idActivo);
 
+	List<ActivoCalificacionNegativa> getListActivoCalificacionNegativaByIdActivoBorradoFalse(Long idActivo);
 }

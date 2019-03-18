@@ -17,6 +17,7 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.plugin.rem.activo.dao.impl.ActivoDaoImpl;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.model.Activo;
@@ -124,7 +125,7 @@ public abstract class AbstractNotificatorService {
 	}
 	
 
-		protected String generateCuerpoCorreoNotificacionAutomatica(String contenido){
+	protected String generateCuerpoCorreoNotificacionAutomatica(String contenido){
 			String cuerpo = "<table cellspacing='0' cellpadding='0' border='0' width='100%' style='border-collapse:collapse;border-spacing:0;border-collapse:separate'>"
 				      + "<tbody>"
 				      + "<tr><td style='padding:0px;border-collapse:collapse;border-left:0;border-right:0;border-top:0;border-bottom:0;padding:0 15px 0 16px;background-color:#fff;border-bottom:none;padding-bottom:0'>"
@@ -139,17 +140,12 @@ public abstract class AbstractNotificatorService {
 					  + "</tr>"
 					  + "</tbody></table>";
 			return cuerpo;
-		}
-	protected String generateCuerpo(DtoSendNotificator dtoSendNotificator, String contenido){
-		String cuerpo = "<html>"
-				+ "<!DOCTYPE HTML PUBLIC '-//W3C//DTD HTML 4.01 Transitional//EN'>"
-				+ "<html>"
-				+ "<head>"
-				+ "<META http-equiv='Content-Type' content='text/html; charset=utf-8'>"
-				+ "</head>"
-				+ "<body>"
-				+ "	<div>"
-				+ "		<div style='font-family: Arial,&amp; amp;'>"
+	}
+
+	protected String generateCuerpo(DtoSendNotificator dtoSendNotificator, String contenido) {
+		String cuerpo = "<html>" + "<!DOCTYPE HTML PUBLIC '-//W3C//DTD HTML 4.01 Transitional//EN'>" + "<html>"
+				+ "<head>" + "<META http-equiv='Content-Type' content='text/html; charset=utf-8'>" + "</head>"
+				+ "<body>" + "	<div>" + "		<div style='font-family: Arial,&amp; amp;'>"
 				+ "			<div style='border-radius: 12px 12px 0px 0px; background: #b7ddf0; width: 300px; height: 60px; display: table'>"
 				+ "				<img src='" + this.getUrlImagenes() + "ico_notificacion.png' "
 				+ "					style='display: table-cell; padding: 12px; display: inline-block' />"
@@ -393,22 +389,33 @@ public abstract class AbstractNotificatorService {
 	}
 
 	public String creaCuerpoPropuestaOferta(Oferta oferta) {
-
+	
+	
 		Activo activo = oferta.getActivoPrincipal();
-
+		DtoSendNotificator dtoSendNotificator = new DtoSendNotificator();
 		Filter filterAct = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
 		List<ActivoTramite> tramites = genericDao.getList(ActivoTramite.class, filterAct);
-
-		Integer numTramites = tramites.size();
-
-		ActivoTramite tramite = tramites.get(numTramites - 1);
-
+		ActivoTramite tramite;
+		
+		
 		String asunto = "Notificación de propuesta de la oferta " + oferta.getNumOferta();
 		String cuerpo = "<p>Nos complace mandarle la información de la propuesta de oferta " + oferta.getNumOferta();
-
+		
 		cuerpo = cuerpo + ". Adjunto a este correo encontrará el documento con las información de la propuesta";
-
+		
 		cuerpo = cuerpo + ".</p>";
+
+
+
+		Integer numTramites = tramites.size();
+		
+		if(!Checks.estaVacio(tramites)) {
+			tramite = tramites.get(numTramites-1);
+			dtoSendNotificator = this.rellenaDtoSendNotificator(oferta, tramite);
+			dtoSendNotificator.setTitulo(asunto);
+		}
+
+
 
 		cuerpo = cuerpo + "<p>Quedamos a su disposición para cualquier consulta o aclaración. Saludos cordiales.</p>";
 
@@ -420,9 +427,6 @@ public abstract class AbstractNotificatorService {
 				(gestorComercial != null) ? gestorComercial.getApellidoNombre() : STR_MISSING_VALUE);
 		cuerpo = cuerpo + String.format("<p>%s</p>",
 				(gestorComercial != null) ? gestorComercial.getEmail() : STR_MISSING_VALUE);
-
-		DtoSendNotificator dtoSendNotificator = this.rellenaDtoSendNotificator(oferta,tramite);
-		dtoSendNotificator.setTitulo(asunto);
 
 		String cuerpoCorreo = this.generateCuerpo(dtoSendNotificator, cuerpo);
 

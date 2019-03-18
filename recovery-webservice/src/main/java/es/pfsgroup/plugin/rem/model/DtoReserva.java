@@ -48,6 +48,16 @@ public class DtoReserva extends WebDto {
 	private String sucursal;
 	
 	private String estadoReservaCodigo;
+	
+	private Double depositoReserva;
+
+	public Double getDepositoReserva() {
+		return depositoReserva;
+	}
+
+	public void setDepositoReserva(Double depositoReserva) {
+		this.depositoReserva = depositoReserva;
+	}
 
 	public Long getIdReserva() {
 		return idReserva;

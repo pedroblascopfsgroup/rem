@@ -346,6 +346,9 @@ Ext.define('HreRem.model.CondicionesExpediente', {
 		},
 		{
 			name: 'revisionMercadoMeses'  
+		},
+		{
+			name: 'depositoReserva'  
 		}
 	    
     ],

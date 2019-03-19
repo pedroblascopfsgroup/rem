@@ -144,36 +144,40 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 	@BusinessOperationDefinition("genericManager.getAuthenticationData")
 	public AuthenticationData getAuthenticationData() {
 		AuthenticationData authData = new AuthenticationData();
-		Usuario usuario = adapter.getUsuarioLogado();
-		if (usuario != null) {
-			List<String> authorities = new ArrayList<String>();
-			List<String> roles = new ArrayList<String>();
-			
-			/**
-			 * Al lanzar este método en un hilo diferente
-			 * al principal da un error lazy. Recargamos en la sesión el usuario logado
-			 */
-			try{
-				usuario.getPerfiles();
-			}catch(LazyInitializationException e){
-				usuario = usuarioApi.get(usuario.getId());
-			}
-			
-
-			for (Perfil perfil : usuario.getPerfiles()) {
-				for (Funcion funcion : perfil.getFunciones()) {
-					authorities.add(funcion.getDescripcion());
+		try{
+			Usuario usuario = adapter.getUsuarioLogado();
+			if (usuario != null) {
+				List<String> authorities = new ArrayList<String>();
+				List<String> roles = new ArrayList<String>();
+				
+				/**
+				 * Al lanzar este método en un hilo diferente
+				 * al principal da un error lazy. Recargamos en la sesión el usuario logado
+				 */
+				try{
+					usuario.getPerfiles();
+				}catch(LazyInitializationException e){
+					usuario = usuarioApi.get(usuario.getId());
 				}
-				roles.add(perfil.getCodigo());
+				
+	
+				for (Perfil perfil : usuario.getPerfiles()) {
+					for (Funcion funcion : perfil.getFunciones()) {
+						authorities.add(funcion.getDescripcion());
+					}
+					roles.add(perfil.getCodigo());
+				}
+				authData.setUserName(usuario.getApellidoNombre());
+				authData.setAuthorities(authorities);
+				
+				authData.setUserId(usuario.getId());
+				authData.setRoles(roles);
+				authData.setCodigoGestor(gestorEntidad.getCodigoGestorPorUsuario(usuario.getId()));
+	
+				authData.setEsGestorSustituto(esGestorSustituto(usuario));
 			}
-			authData.setUserName(usuario.getApellidoNombre());
-			authData.setAuthorities(authorities);
-			
-			authData.setUserId(usuario.getId());
-			authData.setRoles(roles);
-			authData.setCodigoGestor(gestorEntidad.getCodigoGestorPorUsuario(usuario.getId()));
-
-			authData.setEsGestorSustituto(esGestorSustituto(usuario));
+		}catch(LazyInitializationException e){
+			logger.info(e.getMessage());
 		}
 
 		return authData;

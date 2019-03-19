@@ -765,7 +765,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				errorsList = avanzaTarea(oferta, ofertaDto, errorsList);
 			}
 
-			notificationOfertaManager.sendNotification(oferta);
+			if(DDTipoOferta.CODIGO_ALQUILER.equals(oferta.getTipoOferta().getCodigo())) {
+				notificationOfertaManager.enviarPropuestaOfertaTipoAlquiler(oferta);
+			}else {
+				notificationOfertaManager.sendNotification(oferta);
+			}
 		}
 
 		return errorsList;
@@ -1706,7 +1710,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					if (trabajoApi.checkBankia(tareaExterna)) {
 						String codigoComite = null;
 						try {
-							codigoComite = expedienteComercialApi.consultarComiteSancionador(expediente.getId());
+							codigoComite = expedienteComercialApi.consultarComiteSancionador(expediente.getId());							
 						} catch (Exception e) {
 							logger.error("error en OfertasManager", e);
 						}
@@ -1890,9 +1894,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				codigoComite = resultadoDto.getCodigoComite();
 			}
 			this.guardarUvemCodigoAgrupacionInmueble(expediente, resultadoDto);
-			DDComiteSancion comite = expedienteComercialApi.comiteSancionadorByCodigo(codigoComite);
-			expediente.setComiteSancion(comite);
-			expediente.setComiteSuperior(comite);
+//			DDComiteSancion comite = expedienteComercialApi.comiteSancionadorByCodigo(codigoComite);
+//			expediente.setComiteSancion(comite);
+//			expediente.setComiteSuperior(comite);
 
 			if(!Checks.esNulo(resultadoDto.getCodigoOfertaUvem())){
 				if(!Checks.esNulo(expediente.getOferta())){

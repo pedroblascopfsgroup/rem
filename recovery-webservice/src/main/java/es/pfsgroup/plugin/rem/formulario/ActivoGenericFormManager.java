@@ -206,7 +206,7 @@ public class ActivoGenericFormManager implements ActivoGenericFormManagerApi{
 						e.printStackTrace();
 					}
 					if(!Checks.esNulo(codigoComite)) {
-						if(!expediente.getComiteSancion().getCodigo().equals(codigoComite)) {
+						if(expediente.getComiteSancion() == null || !expediente.getComiteSancion().getCodigo().equals(codigoComite)) {
 							DDComiteSancion comite = expedienteComercialApi.comiteSancionadorByCodigo(codigoComite);
 							expediente.setComiteSancion(comite);
 							expediente.setComiteSuperior(comite);

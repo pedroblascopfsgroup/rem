@@ -114,13 +114,12 @@ public  class ExpedienteComercialDaoImpl extends AbstractEntityDao<ExpedienteCom
 
 	@Override
 	public ExpedienteComercial getExpedienteComercialByNumExpediente(Long numeroExpediente) {
-		Session session = getSession();
+		Session session = this.getSessionFactory().getCurrentSession();
 		Criteria criteria = session.createCriteria(ExpedienteComercial.class);
 		criteria.add(Restrictions.eq("numExpediente", numeroExpediente));
 
 		ExpedienteComercial expedienteComercial = HibernateUtils.castObject(ExpedienteComercial.class, criteria.uniqueResult());
-		session.disconnect();
-
+	
 		return expedienteComercial;
 	}
 

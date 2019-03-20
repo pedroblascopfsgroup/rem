@@ -4150,10 +4150,22 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
     	}
     	campoProvinciaRte = me.lookupReference('provinciaComboRte');
 		campoMunicipioRte = me.lookupReference('municipioComboRte');
+		campoDireccion = me.lookupReference('direccion');
+		campoProvincia = me.lookupReference('provinciaCombo');
+		campoMunicipio = me.lookupReference('municipioCombo');
 
     	if(me.getViewModel().get('expediente.tipoExpedienteCodigo') == "01" || venta == true){
     		if(me.lookupReference('tipoPersona').getValue() === "2" ) {
     			if(me.lookupReference('pais').getValue() == "28"){
+    				if(!Ext.isEmpty(campoDireccion)){
+						campoProvinciaRte.allowBlank = false;
+					}
+    				if(!Ext.isEmpty(campoProvincia)){
+						campoProvinciaRte.allowBlank = false;
+					}
+    				if(!Ext.isEmpty(campoMunicipio)){
+						campoProvinciaRte.allowBlank = false;
+					}
 					if(!Ext.isEmpty(campoProvinciaRte)){
 						campoProvinciaRte.allowBlank = false;
 					}
@@ -4161,6 +4173,44 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 						campoMunicipioRte.allowBlank = false;
 					}
 					
+				}else{
+					if(!Ext.isEmpty(campoDireccion)){
+						campoDireccion.allowBlank = true;
+					}
+    				if(!Ext.isEmpty(campoProvincia)){
+    					campoProvincia.allowBlank = true;
+					}
+    				if(!Ext.isEmpty(campoMunicipio)){
+    					campoMunicipio.allowBlank = true;
+					}
+					if(!Ext.isEmpty(campoProvinciaRte)){
+						campoProvinciaRte.allowBlank = true;
+					}
+					if(!Ext.isEmpty(campoMunicipioRte)){
+						campoMunicipioRte.allowBlank = true;
+					}
+				}
+    		}else if (me.lookupReference('tipoPersona').getValue() === "1"){
+    			if(me.lookupReference('pais').getValue() == "28"){
+    				if(!Ext.isEmpty(campoDireccion)){
+    					campoDireccion.allowBlank = false;
+					}
+    				if(!Ext.isEmpty(campoProvincia)){
+    					campoProvincia.allowBlank = false;
+					}
+    				if(!Ext.isEmpty(campoMunicipio)){
+    					campoMunicipio.allowBlank = false;
+					}
+				}else{
+					if(!Ext.isEmpty(campoDireccion)){
+    					campoDireccion.allowBlank = true;
+					}
+    				if(!Ext.isEmpty(campoProvincia)){
+    					campoProvincia.allowBlank = true;
+					}
+    				if(!Ext.isEmpty(campoMunicipio)){
+    					campoMunicipio.allowBlank = true;
+					}
 				}
     		}
     	}

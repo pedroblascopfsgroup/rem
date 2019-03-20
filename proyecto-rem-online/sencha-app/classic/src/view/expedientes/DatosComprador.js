@@ -231,8 +231,7 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 											        	fieldLabel:  HreRem.i18n('fieldlabel.direccion'),
 											        	reference: 'direccion',
 											        	bind: {
-										            		value: '{comprador.direccion}',
-										            		allowBlank: '{esObligatorio}'
+										            		value: '{comprador.direccion}'
 										            	}
 											        },
 	//										        {
@@ -252,8 +251,7 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 														chainedReference: 'municipioCombo',
 										            	bind: {
 										            		store: '{comboProvincia}',
-										            	    value: '{comprador.provinciaCodigo}',
-										            		allowBlank: '{esObligatorio}'
+										            	    value: '{comprador.provinciaCodigo}'
 										            	},
 							    						listeners: {
 															select: 'onChangeChainedCombo'
@@ -274,8 +272,7 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 										            	bind: {
 										            		store: '{comboMunicipio}',
 										            		value: '{comprador.municipioCodigo}',
-										            		disabled: '{!comprador.provinciaCodigo}',
-										            		allowBlank: '{esObligatorio}'
+										            		disabled: '{!comprador.provinciaCodigo}'
 										            	}
 													},
 											        {

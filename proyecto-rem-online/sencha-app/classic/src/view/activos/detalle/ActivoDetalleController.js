@@ -4550,9 +4550,11 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     },
 	
 	comprobarFormato: function() {
+		
 		var me = this;
 		value = me.lookupReference('nuevoCompradorNumDoc');
-		if(me.getViewModel().get('expediente.tipoExpedienteCodigo') == "01"){
+		
+		if(Ext.isEmpty(me.getViewModel().get('expediente.tipoExpedienteCodigo'))){
 			if(value != null){
 				if(me.lookupReference('tipoDocumentoNuevoComprador').value == "01" || me.lookupReference('tipoDocumentoNuevoComprador').value == "15"
 					|| me.lookupReference('tipoDocumentoNuevoComprador').value == "03"){
@@ -4642,8 +4644,100 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 				}
 			}
 		}else{
-			return true;
+			if(me.getViewModel().get('expediente.tipoExpedienteCodigo') == "01"){
+				if(value != null){
+					if(me.lookupReference('tipoDocumentoNuevoComprador').value == "01" || me.lookupReference('tipoDocumentoNuevoComprador').value == "15"
+						|| me.lookupReference('tipoDocumentoNuevoComprador').value == "03"){
+
+						 var validChars = 'TRWAGMYFPDXBNJZSQVHLCKET';
+						 var nifRexp = /^[0-9]{8}[TRWAGMYFPDXBNJZSQVHLCKET]{1}$/i;
+						 var nieRexp = /^[XYZ]{1}[0-9]{7}[TRWAGMYFPDXBNJZSQVHLCKET]{1}$/i;
+						 var str = value.value.toString().toUpperCase();
+
+						 if (!nifRexp.test(str) && !nieRexp.test(str)){
+							 me.fireEvent("errorToast", HreRem.i18n("msg.numero.documento.incorrecto"));
+							 return false;
+						 }
+
+						 var nie = str
+						     .replace(/^[X]/, '0')
+						     .replace(/^[Y]/, '1')
+						     .replace(/^[Z]/, '2');
+
+						 var letter = str.substr(-1);
+						 var charIndex = parseInt(nie.substr(0, 8)) % 23;
+
+						 if (validChars.charAt(charIndex) === letter){
+							 return true;
+						 }else{
+							 me.fireEvent("errorToast", HreRem.i18n("msg.numero.documento.incorrecto"));
+							 return false;
+						 }
+
+					}else if(me.lookupReference('tipoDocumentoNuevoComprador').value == "02"){
+						var texto=value.value;
+				        var pares = 0; 
+				        var impares = 0; 
+				        var suma; 
+				        var ultima; 
+				        var unumero; 
+				        var uletra = new Array("J", "A", "B", "C", "D", "E", "F", "G", "H", "I"); 
+				        var xxx; 
+				         
+				        texto = texto.toUpperCase(); 
+				         
+				        var regular = new RegExp(/^[ABCDEFGHKLMNPQS]\d\d\d\d\d\d\d[0-9,A-J]$/g); 
+				         	if (!regular.exec(texto)) {
+				         		me.fireEvent("errorToast", HreRem.i18n("msg.numero.documento.incorrecto"));
+								return false;		
+							}
+		   
+				         ultima = texto.substr(8,1); 
+				 
+				         for (var cont = 1 ; cont < 7 ; cont ++){ 
+				             xxx = (2 * parseInt(texto.substr(cont++,1))).toString() + "0"; 
+				             impares += parseInt(xxx.substr(0,1)) + parseInt(xxx.substr(1,1)); 
+				             pares += parseInt(texto.substr(cont,1)); 
+				         } 
+				         
+				         xxx = (2 * parseInt(texto.substr(cont,1))).toString() + "0"; 
+				         impares += parseInt(xxx.substr(0,1)) + parseInt(xxx.substr(1,1)); 
+				          
+				         suma = (pares + impares).toString(); 
+				         unumero = parseInt(suma.substr(suma.length - 1, 1)); 
+				         unumero = (10 - unumero).toString(); 
+				         if(unumero == 10){
+				        	 unumero = 0; 
+				         }
+				          
+				         if ((ultima == unumero) || (ultima == uletra[unumero])) {
+				             return true; 
+				         }else{
+				        	 me.fireEvent("errorToast", HreRem.i18n("msg.numero.documento.incorrecto"));
+							 return false;	
+				         }
+					}else if(me.lookupReference('tipoDocumentoNuevoComprador').value == "04"){
+						
+					    var expr = /^[a-z]{3}[0-9]{6}[a-z]?$/i;
+
+					    value.value = value.value.toLowerCase();
+
+					    if(!expr.test (value.value)){
+					    	me.fireEvent("errorToast", HreRem.i18n("msg.numero.documento.incorrecto"));
+					    	return false;
+					    }else{
+					    	return true;
+					    }
+
+					}else{
+						return true;
+					}
+				}
+			}else{
+				return true;
+			}
 		}
+		
 		
 			
 			

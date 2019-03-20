@@ -809,13 +809,12 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 
 	@Override
 	public Activo getActivoByNumActivo(Long activoVinculado) {
-		Session session = getSession();
+    	Session session = this.getSessionFactory().getCurrentSession();
 		Criteria criteria = session.createCriteria(Activo.class);
 		criteria.add(Restrictions.eq("numActivo", activoVinculado));
 
-		Activo activo = HibernateUtils.castObject(Activo.class, criteria.uniqueResult());
-		session.disconnect();
-
+		Activo activo =  HibernateUtils.castObject(Activo.class, criteria.uniqueResult());
+		
 		return activo;
 	}
 

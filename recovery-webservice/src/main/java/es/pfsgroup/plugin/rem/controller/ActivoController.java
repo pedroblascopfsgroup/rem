@@ -7,6 +7,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Date;
@@ -60,11 +62,11 @@ import es.pfsgroup.plugin.rem.excel.ActivoExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
 import es.pfsgroup.plugin.rem.excel.PublicacionExcelReport;
+import es.pfsgroup.plugin.rem.exception.RemUserException;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.ACCION_CODIGO;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.ENTIDAD_CODIGO;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.REQUEST_STATUS_CODE;
-import es.pfsgroup.plugin.rem.exception.RemUserException;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoFoto;
 import es.pfsgroup.plugin.rem.model.DtoActivoAdministracion;
@@ -2523,6 +2525,52 @@ public class ActivoController extends ParadiseJsonController {
 
 		return createModelAndViewJson(model);
 	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView updateCalificacionNegativa(DtoActivoDatosRegistrales dtoActivosDatosRegistrales, ModelMap model) {
+		try {
+			boolean success = activoApi.updateCalificacionNegativa(dtoActivosDatosRegistrales);
+			model.put(RESPONSE_SUCCESS_KEY, success);
+		} catch (Exception e) {
+			logger.error("error en updateCalificacionNegativa", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put(RESPONSE_ERROR_MESSAGE_KEY, e.getMessage());
+		}
+		
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView createCalificacionNegativa(@RequestParam Long idEntidadPk, DtoActivoDatosRegistrales dtoActivosDatosRegistrales, ModelMap model) {
+		try {
+			dtoActivosDatosRegistrales.setIdActivo(idEntidadPk);
+			boolean success = activoApi.createCalificacionNegativa(dtoActivosDatosRegistrales);
+			model.put(RESPONSE_SUCCESS_KEY, success);
+		} catch (Exception e) {
+			logger.error("error en CalificacionNegativa", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put(RESPONSE_ERROR_MESSAGE_KEY, e.getMessage());
+		}
+		
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView destroyCalificacionNegativa(DtoActivoDatosRegistrales dtoActivosDatosRegistrales, ModelMap model) {
+		try {
+			boolean success = activoApi.destroyCalificacionNegativa(dtoActivosDatosRegistrales);
+			model.put(RESPONSE_SUCCESS_KEY, success);
+
+		} catch (Exception e) {
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.error("error en destroyCalificacionNegativa", e);
+		}
+
+		return createModelAndViewJson(model);
+	}
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
@@ -2610,4 +2658,86 @@ public class ActivoController extends ParadiseJsonController {
 
 		return createModelAndViewJson(model);
 	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST) // TODO --> BORRAR
+	public ModelAndView getCalificacionNegativaMotivo( Long idActivo, String idMotivo, ModelMap model) {
+
+		try {
+			
+			DtoActivoDatosRegistrales dtoActCalNeg = activoApi.getCalificacionNegativoByidActivoIdMotivo(idActivo, idMotivo);
+
+			model.put("data", dtoActCalNeg);
+			model.put("success", true);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST) // TODO --> BORRAR
+	public ModelAndView saveCalificacionNegativaMotivo(Long idActivo, String idMotivo, String calificacionNegativa, String estadoMotivoCalificacionNegativa, 
+			String responsableSubsanar, String descripcionCalificacionNegativa, String fechaSubsanacion, ModelMap model) {
+		
+		DtoActivoDatosRegistrales dto = new DtoActivoDatosRegistrales();
+		dto.setNumeroActivo(idActivo.toString());
+		dto.setMotivoCalificacionNegativa(idMotivo);
+		dto.setCodigoMotivoCalificacionNegativa(idMotivo);
+		dto.setCalificacionNegativa(calificacionNegativa);
+		dto.setEstadoMotivoCalificacionNegativa(estadoMotivoCalificacionNegativa);
+		dto.setResponsableSubsanar(responsableSubsanar);
+		dto.setDescripcionCalificacionNegativa(descripcionCalificacionNegativa);
+		if(!Checks.esNulo(fechaSubsanacion)) {
+			
+			try {
+				SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+				Date fecha = format.parse(fechaSubsanacion);
+				dto.setFechaSubsanacion(fecha);
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+			
+		}
+		
+		
+		try {
+			model.put("success", activoApi.saveCalificacionNegativoMotivo(dto));
+		}catch(Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}
+		
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST) // TODO --> BORRAR ?? 
+	public ModelAndView getMotivosCalificacionNegativaSubsanados( Long idActivo, String idMotivo, ModelMap model) {
+
+		try {
+			
+			boolean resultado = activoApi.getMotivosCalificacionNegativaSubsanados(idActivo,idMotivo);
+
+			model.put("data", resultado);
+			model.put("success", true);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}
+
+		return createModelAndViewJson(model);
+	}
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getCalificacionNegativa(Long id, ModelMap model) {
+		model.put(RESPONSE_DATA_KEY, activoApi.getActivoCalificacionNegativa(id));
+
+		return createModelAndViewJson(model);
+	}
+	
 }

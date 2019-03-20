@@ -391,13 +391,17 @@ Ext.define('HreRem.view.agrupaciones.detalle.FichaAgrupacion', {
 				        	reference	: 'cbGestorComercial',
 				        	displayField: 'apellidoNombre',
 				        	valueField	: 'id',
+				        	editable    : true,
 		            		
 				        	bind		: {
 			            		store: '{comboGestorComercialTipo}',
 			            		value: '{agrupacionficha.codigoGestorComercial}',
 			            		hidden: '{esAgrupacionLiberbank}',
 			            		readOnly:'{agrupacionProyectoTieneActivos}'
-			            	}
+			            	},
+			            	minChars: 0,
+			            	anyMatch: true,
+			            	queryMode: 'local'
 						},
 						{
 							xtype		: 'comboboxfieldbase',

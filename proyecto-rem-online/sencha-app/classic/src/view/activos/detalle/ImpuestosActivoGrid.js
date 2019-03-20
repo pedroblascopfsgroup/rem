@@ -171,7 +171,6 @@ Ext.define('HreRem.view.activos.detalle.ImpuestosActivoGrid', {
    },
    
    editFuncion: function(editor, context){
-  		
   		var me= this;
 		me.mask(HreRem.i18n("msg.mask.espere"));
 

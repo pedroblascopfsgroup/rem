@@ -53,7 +53,7 @@ public class ActivoPatrimonioContrato implements Serializable, Auditable {
 	private Date fechaCreacion;
 	
 	@Column(name = "DCA_CUOTA")
-	private Long cuota;
+	private Double cuota;
 
 	@Column(name = "DCA_NOM_PRINEX")
 	private String nomPrinex;
@@ -77,7 +77,7 @@ public class ActivoPatrimonioContrato implements Serializable, Auditable {
 	private String inquilino;
 	
 	@Column(name = "DCA_DEUDA_PENDIENTE")
-	private Long deudaPendiente;
+	private Double deudaPendiente;
 	
 	@Column(name = "DCA_RECIBOS_PENDIENTES")
 	private Long recibosPendientes;
@@ -120,11 +120,11 @@ public class ActivoPatrimonioContrato implements Serializable, Auditable {
 		this.fechaCreacion = fechaCreacion;
 	}
 
-	public Long getCuota() {
+	public Double getCuota() {
 		return cuota;
 	}
 
-	public void setCuota(Long cuota) {
+	public void setCuota(Double cuota) {
 		this.cuota = cuota;
 	}
 
@@ -184,11 +184,11 @@ public class ActivoPatrimonioContrato implements Serializable, Auditable {
 		this.inquilino = inquilino;
 	}
 
-	public Long getDeudaPendiente() {
+	public Double getDeudaPendiente() {
 		return deudaPendiente;
 	}
 
-	public void setDeudaPendiente(Long deudaPendiente) {
+	public void setDeudaPendiente(Double deudaPendiente) {
 		this.deudaPendiente = deudaPendiente;
 	}
 

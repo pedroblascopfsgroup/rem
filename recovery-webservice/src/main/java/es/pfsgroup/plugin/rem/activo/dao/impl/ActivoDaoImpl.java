@@ -787,12 +787,11 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 
 	@Override
 	public Activo getActivoByNumActivo(Long activoVinculado) {
-    	Session session = getSession();
+    	Session session = this.getSessionFactory().getCurrentSession();
 		Criteria criteria = session.createCriteria(Activo.class);
 		criteria.add(Restrictions.eq("numActivo", activoVinculado));
 
 		Activo activo =  HibernateUtils.castObject(Activo.class, criteria.uniqueResult());
-		session.disconnect();
 
 		return activo;
 	}
@@ -1080,7 +1079,20 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		String hql = " from ActivoCalificacionNegativa acn ";
 		HQLBuilder hb = new HQLBuilder(hql);
 		hb.appendWhere(" acn.activo.id =  "+idActivo+" ");
-		hb.appendWhere(" acn.auditoria.borrado IS NOT NULL ");
+		hb.appendWhere(" acn.auditoria.borrado = 0 ");
+
+//		return (List<ActivoCalificacionNegativa>) this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).list();
+		return  HibernateUtils.castList(ActivoCalificacionNegativa.class, this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).list());
+
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ActivoCalificacionNegativa> getListActivoCalificacionNegativaByIdActivoBorradoFalse(Long idActivo) {
+		String hql = " from ActivoCalificacionNegativa acn ";
+		HQLBuilder hb = new HQLBuilder(hql);
+		hb.appendWhere(" acn.activo.id =  "+idActivo+" ");
+		hb.appendWhere(" acn.auditoria.borrado = false ");
 
 		return (List<ActivoCalificacionNegativa>) this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).list();
 
@@ -1261,4 +1273,5 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		return false;
 		
 	}
+
 }

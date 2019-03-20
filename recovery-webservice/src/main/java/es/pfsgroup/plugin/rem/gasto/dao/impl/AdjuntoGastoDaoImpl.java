@@ -18,7 +18,7 @@ public class AdjuntoGastoDaoImpl extends AbstractEntityDao<AdjuntoGasto, Long> i
 
     @Override
     public Boolean existeAdjuntoPorNombreYTipoDocumentoYNumeroHayaGasto(String nombreAdjunto, String matriculaDocumento, Long numHayaGasto) {
-        Session session = getSession();
+        Session session = this.getSessionFactory().getCurrentSession();
         Criteria criteriaCount = session.createCriteria(AdjuntoGasto.class);
         criteriaCount.setProjection(Projections.rowCount());
 
@@ -28,8 +28,7 @@ public class AdjuntoGastoDaoImpl extends AbstractEntityDao<AdjuntoGasto, Long> i
         criteriaCount.createCriteria("tipoDocumentoGasto").add(Restrictions.eq("matricula", matriculaDocumento));
 
         Integer totalCount = HibernateUtils.castObject(Integer.class, criteriaCount.uniqueResult());
-        session.disconnect();
-
+        
         return totalCount > 0;
     }
 }

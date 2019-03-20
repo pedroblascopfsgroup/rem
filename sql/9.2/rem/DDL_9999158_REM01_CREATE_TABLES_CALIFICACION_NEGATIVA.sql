@@ -1,16 +1,17 @@
 --/*
 --##########################################
---## AUTOR=Maria Presencia
---## FECHA_CREACION=20181115
+--## AUTOR=Ivan Rubio
+--## FECHA_CREACION=20190219
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-4702
+--## INCIDENCIA_LINK=HREOS-5432
 --## PRODUCTO=NO
 --## Finalidad: Tabla para gestionar el defecto inscripción.
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
---##        0.1 Versión inicial
+--##        0.1 Versión inicial Maria Presencia 20181115 HREOS-4702
+--##		0.2 Modificación DDL añadir columna nueva ACT_FECHA_SUBSANACION y FKs  DD_MCN_ID y DD_CAN_ID a la tabla ACT_CAN_CALIFICACION_NEG
 --##########################################
 --*/
 
@@ -40,6 +41,14 @@ DECLARE
     V_COMMENT_TABLE VARCHAR2(500 CHAR):= 'Tabla diccionario de motivos de calificación negativa.'; -- Vble. para los comentarios de las tablas
     V_COMMENT_TABLE2 VARCHAR2(500 CHAR):= 'Tabla diccionario de calificación negativa.'; -- Vble. para los comentarios de las tablas
     V_COMMENT_TABLE3 VARCHAR2(500 CHAR):= 'Tabla activos con calificacion negativa y motivo'; -- Vble. para los comentarios de las tablas
+    
+    V_NOMBRE_COL VARCHAR2(50 CHAR) := 'ACT_FECHA_SUBSANACION'; -- Vble. auxiliar para el nombre de la columna.
+    V_NOMBRE_TABLA VARCHAR2(50 CHAR) := 'ACT_CAN_CALIFICACION_NEG'; -- Vble. auxiliar para el nombre de la tabla.
+    V_NOMBRE_TABLA_REF1 VARCHAR2(50 CHAR) := 'DD_MCN_MOTIVO_CALIFIC_NEG';
+    V_NOMBRE_TABLA_REF2 VARCHAR2(50 CHAR) := 'DD_CAN_CALIFICACION_NEG';
+    V_NOMBRE_COL_1 VARCHAR2(50 CHAR) := 'DD_MCN_ID'; -- Vble. auxiliar para el nombre de la columna.
+    V_NOMBRE_COL_2 VARCHAR2(50 CHAR) := 'DD_CAN_ID'; -- Vble. auxiliar para el nombre de la columna.
+    V_TEXT1 VARCHAR2(2400 CHAR); -- Vble. auxiliar
 
 
 BEGIN
@@ -265,6 +274,7 @@ BEGIN
 		DD_MCN_ID					NUMBER(16)                  NOT NULL,		
 		DD_CAN_ID					NUMBER(16)                  NOT NULL,
 		CAN_DESCRIPCION				VARCHAR2(500 CHAR),
+		ACT_FECHA_SUBSANACION		DATE,
 		VERSION 					NUMBER(38,0) 				DEFAULT 0 NOT NULL ENABLE, 
 		USUARIOCREAR 				VARCHAR2(50 CHAR) 			NOT NULL ENABLE, 
 		FECHACREAR 					TIMESTAMP (6) 				NOT NULL ENABLE, 
@@ -330,6 +340,75 @@ BEGIN
 	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TABLA3||'... Comentario creado.');
 	
 	DBMS_OUTPUT.PUT_LINE('[INFO] ' ||V_ESQUEMA||'.'||V_TABLA3||'... OK');
+	
+	
+	--Restricciones FK
+   
+    DBMS_OUTPUT.PUT_LINE('[INFO] Añadiendo las restricciones a las columnas indicadas. ');
+       
+    
+    V_SQL := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE TABLE_NAME ='''||V_NOMBRE_TABLA||''' AND OWNER = '''||V_ESQUEMA||''' AND COLUMN_NAME = '''|| V_NOMBRE_COL_1||''' ';
+    
+    EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+    
+    IF V_NUM_TABLAS = 1 THEN
+    
+    	V_SQL := 'SELECT COUNT(CONSTRAINT_NAME) FROM USER_CONS_COLUMNS WHERE TABLE_NAME = '''||V_NOMBRE_TABLA||''' AND OWNER = '''||V_ESQUEMA||''' AND COLUMN_NAME = '''|| V_NOMBRE_COL_1||''' AND CONSTRAINT_NAME = ''FK_'|| V_NOMBRE_COL_1||''' '; 
+    	EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+    	
+    	IF V_NUM_TABLAS = 0 THEN
+    	
+		    V_SQL := 'ALTER TABLE '||V_ESQUEMA ||'.'|| V_NOMBRE_TABLA||' ADD CONSTRAINT FK_'||V_NOMBRE_COL_1||' FOREIGN KEY ('||V_NOMBRE_COL_1||') REFERENCES   '||V_NOMBRE_TABLA_REF1||' ('||V_NOMBRE_COL_1||')';
+		    
+		    EXECUTE IMMEDIATE V_SQL;
+		        
+		    DBMS_OUTPUT.PUT_LINE('[INFO] FK  '||V_NOMBRE_COL_1||' creada.');
+		ELSE
+			DBMS_OUTPUT.PUT_LINE('[INFO] La columna ' || V_NOMBRE_COL_1 || ' ya posee la restriccion pertinente');
+		END IF;
+		
+	ELSE
+	
+	DBMS_OUTPUT.PUT_LINE('[INFO] NO existe la columna '|| V_NOMBRE_COL_1);
+	
+	END IF;
+	
+           
+	V_SQL := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE TABLE_NAME ='''||V_NOMBRE_TABLA||''' AND OWNER = '''||V_ESQUEMA||''' AND COLUMN_NAME = '''|| V_NOMBRE_COL_2||''' ';
+    
+	EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+    
+	IF V_NUM_TABLAS = 1 THEN
+     
+     	V_SQL := 'SELECT COUNT(CONSTRAINT_NAME) FROM USER_CONS_COLUMNS WHERE TABLE_NAME = '''||V_NOMBRE_TABLA||''' AND OWNER = '''||V_ESQUEMA||''' AND COLUMN_NAME = '''|| V_NOMBRE_COL_2||''' AND CONSTRAINT_NAME = ''FK_'|| V_NOMBRE_COL_2||''' '; 
+    	EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+    	
+    	IF V_NUM_TABLAS = 0 THEN
+     
+	        V_SQL := 'ALTER TABLE '||V_ESQUEMA ||'.'|| V_NOMBRE_TABLA||' ADD CONSTRAINT FK_'||V_NOMBRE_COL_2||' FOREIGN KEY ('||V_NOMBRE_COL_2||') REFERENCES   '||V_NOMBRE_TABLA_REF2||' ('||V_NOMBRE_COL_2||')';
+	        EXECUTE IMMEDIATE V_SQL;
+	         DBMS_OUTPUT.PUT_LINE('[INFO] FK  '||V_NOMBRE_COL_2||' creada.');
+	    ELSE
+			DBMS_OUTPUT.PUT_LINE('[INFO] La columna ' || V_NOMBRE_COL_1 || ' ya posee la restriccion pertinente');
+		END IF;
+		
+	ELSE
+	
+		DBMS_OUTPUT.PUT_LINE('[INFO] NO existe la columna '|| V_NOMBRE_COL_2);
+	    
+    END IF;
+   
+    
+    --Comentarios
+    DBMS_OUTPUT.PUT_LINE('[INFO] Añadiendo los comentarios a las columnas añadidas ');
+    
+	V_SQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_NOMBRE_TABLA||'.'||V_NOMBRE_COL||' IS ''Fecha subsanacion calificacion negativa.''';    EXECUTE IMMEDIATE V_SQL;
+
+	V_SQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_NOMBRE_TABLA||'.'||V_NOMBRE_COL_1||' IS ''Clave ajena '||V_NOMBRE_TABLA_REF1||'.''';    EXECUTE IMMEDIATE V_SQL;
+       
+    V_SQL := 'COMMENT ON COLUMN '||V_ESQUEMA||'.'||V_NOMBRE_TABLA||'.'||V_NOMBRE_COL_2||' IS ''Clave ajena '||V_NOMBRE_TABLA_REF2||'.''';    EXECUTE IMMEDIATE V_SQL;
+	
+	
 	
 	COMMIT;
 

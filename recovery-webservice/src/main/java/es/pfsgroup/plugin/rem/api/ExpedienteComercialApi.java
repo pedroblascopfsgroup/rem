@@ -1123,4 +1123,6 @@ public interface ExpedienteComercialApi {
 	boolean checkDepositoRelleno(TareaExterna tareaExterna);
 
 	boolean checkDepositoDespublicacionSubido(TareaExterna tareaExterna);
+
+	boolean esApple(TareaExterna tareaExterna);
 }

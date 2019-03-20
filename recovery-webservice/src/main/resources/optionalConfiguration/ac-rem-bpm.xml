@@ -542,6 +542,11 @@
             	def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
             	return expedienteComercialManager.checkDepositoRelleno(tareaExterna);
             }
+            
+             def esApple = {
+				def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
+            	return expedienteComercialManager.esApple(tareaExterna);
+			}
   			 ]]></value>
   		</list>
   	</property>

@@ -11,14 +11,13 @@
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
---##        0.2 SHG -> Añadimos salida de control de errores
 --##########################################
 --*/ 
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
 SET SERVEROUTPUT ON; 
 SET DEFINE OFF;
 
-CREATE OR REPLACE PROCEDURE REM01.AGR_ASISTIDA_PROCESO_FIN (PL_OUTPUT OUT VARCHAR2) AUTHID CURRENT_USER AS 
+CREATE OR REPLACE PROCEDURE REM01.AGR_ASISTIDA_PROCESO_FIN IS
 
     V_ESQUEMA VARCHAR2(25 CHAR):= 'REM01'; -- Configuracion Esquema.
     V_ESQUEMA_M VARCHAR2(25 CHAR):= 'REMMASTER'; -- Configuracion Esquema Master.
@@ -26,11 +25,11 @@ CREATE OR REPLACE PROCEDURE REM01.AGR_ASISTIDA_PROCESO_FIN (PL_OUTPUT OUT VARCHA
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
     USUARIO VARCHAR2(50 CHAR) := 'AGR_ASISTIDA_PROCESO_FIN';
     V_MSQL VARCHAR2(20000 CHAR);
-    result number;
+
 
 BEGIN
 
-     PL_OUTPUT := ' '; -- Variable de salida para errores
+     --PL_OUTPUT := ' '; -- Variable de salida para errores
 
     --OFERTAS ACTIVAS
     EXECUTE IMMEDIATE 'TRUNCATE TABLE '||V_ESQUEMA||'.AUX_OFERTAS_ACTIVAS';
@@ -582,10 +581,9 @@ EXCEPTION
         DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(ERR_NUM));
         DBMS_OUTPUT.put_line('-----------------------------------------------------------');
         DBMS_OUTPUT.put_line(ERR_MSG);
-        PL_OUTPUT := 'Error: '||TO_CHAR(err_num)||'['||err_msg||']'; -- Devolvemos errores
         ROLLBACK;
         RAISE;
 
-END;
+END AGR_ASISTIDA_PROCESO_FIN;
 /
 EXIT

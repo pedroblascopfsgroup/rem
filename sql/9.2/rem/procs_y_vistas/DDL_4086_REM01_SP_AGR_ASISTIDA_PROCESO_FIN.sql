@@ -30,7 +30,7 @@ CREATE OR REPLACE PROCEDURE REM01.AGR_ASISTIDA_PROCESO_FIN (PL_OUTPUT OUT VARCHA
 
 BEGIN
 
-     PL_OUTPUT := ''; -- Variable de salida para errores
+     PL_OUTPUT := ' '; -- Variable de salida para errores
 
     --OFERTAS ACTIVAS
     EXECUTE IMMEDIATE 'TRUNCATE TABLE '||V_ESQUEMA||'.AUX_OFERTAS_ACTIVAS';

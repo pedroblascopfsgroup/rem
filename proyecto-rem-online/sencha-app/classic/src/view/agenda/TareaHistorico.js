@@ -124,6 +124,20 @@ Ext.define('HreRem.view.agenda.TareaHistorico',{
 								camposFiltrados.push(combo);
 								break;
 								
+							case 'comboboxreadonly':
+			                    var combo = {};
+			                    combo.xtype = 'genericcombo';
+			                    combo.name = me.campos[i].name;
+			                    combo.diccionario = me.campos[i].store;
+			                    combo.fieldLabel = me.campos[i].fieldLabel;
+			                    combo.value = me.campos[i].value;
+			                    combo.readOnly = true;
+			                    combo.allowBlank = me.campos[i].noObligatorio;
+			                    combo.blankText = me.campos[i].blankText;
+			                    combo.msgTarget = me.campos[i].msgTarget;
+			                    camposFiltrados.push(combo);
+			                    break;	
+			                    
 							case 'numberfield':
 								me.campos[i].hideTrigger = true;
 								me.campos[i].minValue = 0;
@@ -288,6 +302,13 @@ Ext.define('HreRem.view.agenda.TareaHistorico',{
 				        	me.ocultarCampo(me.down('[name=comboAmpliacionYAutorizacion]'));
 				        }
 				    },
+				    
+				    T013_DefinicionOfertaValidacion: function() {		
+						var me = this;
+						var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
+						var comiteSuperior = me.down('[name=comiteSuperior]');
+						var comite = me.down('[name=comite]');
+					},
 					
 					ocultarCampo: function(campo) {
 				        var me = this;

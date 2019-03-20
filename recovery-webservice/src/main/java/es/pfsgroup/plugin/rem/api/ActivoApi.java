@@ -20,6 +20,7 @@ import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
+//import es.pfsgroup.plugin.rem.activo.DtoCalificacionNegativa;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoBancario;
@@ -456,6 +457,24 @@ public interface ActivoApi {
 	 * @return ActivoCalificacionNegativa
 	 */
 	List<ActivoCalificacionNegativa> getActivoCalificacionNegativaByIdActivo(Long idActivo);
+	
+	/**
+	 * Devuelve un dto con la calificacion negativa del ID de un activo dado
+	 *
+	 * @param idActivo
+	 * @return DtoActivoDatosRegistrales
+	 */
+	List<DtoActivoDatosRegistrales> getActivoCalificacionNegativa(Long idActivo);
+	
+	
+	/**
+	 * Devuelve un dto con los codigos de calificacion negativa del ID de un activo dado
+	 *
+	 * @param idActivo
+	 * @return DtoActivoDatosRegistrales
+	 */
+	List<DtoActivoDatosRegistrales> getActivoCalificacionNegativaCodigos(Long idActivo);
+	
 
 	PerimetroActivo saveOrUpdatePerimetroActivo(PerimetroActivo perimetroActivo);
 
@@ -1022,6 +1041,12 @@ public interface ActivoApi {
 	boolean isActivoEnPuja(Activo activo);
 
 	boolean updateImpuestos(DtoImpuestosActivo dtoImpuestosFilter) throws ParseException;
+	
+	boolean updateCalificacionNegativa(DtoActivoDatosRegistrales dto);
+	
+	boolean createCalificacionNegativa(DtoActivoDatosRegistrales dto) throws JsonViewerException, Exception;
+	
+	boolean destroyCalificacionNegativa(DtoActivoDatosRegistrales dto);
 
 	DtoActivoFichaCabecera getActivosAgrupacionRestringida(Long idActivo);
 

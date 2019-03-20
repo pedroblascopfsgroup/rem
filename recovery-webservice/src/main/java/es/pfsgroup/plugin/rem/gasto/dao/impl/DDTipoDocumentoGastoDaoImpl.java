@@ -18,21 +18,21 @@ public class DDTipoDocumentoGastoDaoImpl extends AbstractEntityDao<DDTipoDocumen
 
     @Override
     public DDTipoDocumentoGasto getTipoDocumentoGastoPorMatricula(String matriculaDocumento) {
-        Session session = getSession();
+        Session session = this.getSessionFactory().getCurrentSession();;
         Criteria criteria = session.createCriteria(DDTipoDocumentoGasto.class);
         criteria.add(Restrictions.eq("matricula", matriculaDocumento));
         criteria.add(Restrictions.eq("auditoria.borrado", AUDITORIA_SIN_BORRAR));
 
         // Debería existir un solo resultado, pero existen casos de matrícula compartida por diferentes documentos.
         DDTipoDocumentoGasto ddTipoDocumentoGasto = HibernateUtils.castObject(DDTipoDocumentoGasto.class, criteria.list().get(0));
-        session.disconnect();
+        
 
         return ddTipoDocumentoGasto;
     }
 
     @Override
     public Boolean existeMatriculaRegistradaEnTipoDocumento(String matricula) {
-        Session session = getSession();
+        Session session = this.getSessionFactory().getCurrentSession();
         Criteria criteriaCount = session.createCriteria(DDTipoDocumentoGasto.class);
         criteriaCount.setProjection(Projections.rowCount());
 
@@ -40,8 +40,7 @@ public class DDTipoDocumentoGastoDaoImpl extends AbstractEntityDao<DDTipoDocumen
         criteriaCount.add(Restrictions.eq("auditoria.borrado", AUDITORIA_SIN_BORRAR));
 
         Integer totalCount = HibernateUtils.castObject(Integer.class, criteriaCount.uniqueResult());
-        session.disconnect();
-
+        
         return totalCount > 0;
     }
 }

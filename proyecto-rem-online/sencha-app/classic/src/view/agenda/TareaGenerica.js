@@ -131,7 +131,6 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
             }
 
             me.campos[i].msgTarget = 'side';
-
             //Este switch seg�n el caso reutiliza las propiedades de items que se han
             // definido en el array "me.campos[]" o crean arrays de items nuevos.
             // Si creas un nuevo "case" y decides crear un array nuevo en lugar de reutilizar
@@ -1145,12 +1144,6 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 			me.desocultarCampo(comiteSuperior);
 		}else{
 			me.ocultarCampo(comiteSuperior);
-		}
-		
-		if(CONST.CARTERA['LIBERBANK'] == codigoCartera) {
-			me.bloquearCampo(comite);
-		} else {
-			me.desbloquearCampo(comite);
 		}
 	},
 	T013_DocumentosPostVentaValidacion: function() {

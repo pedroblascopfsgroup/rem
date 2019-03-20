@@ -17,6 +17,7 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.plugin.rem.activo.dao.impl.ActivoDaoImpl;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.model.Activo;
@@ -103,6 +104,7 @@ public abstract class AbstractNotificatorService {
 		String notificacionAutomatica = "<td style=\"vertical-align:middle;text-align:center;color:#0a94d6;font-size:x-small;font-weight:bold;padding:0px;border-collapse:collapse;margin-bottom:25px\"> ESTE MENSAJE ES UNA NOTIFICACIÓN AUTOMÁTICA. NO RESPONDA A ESTE CORREO.</td>";
 		return notificacionAutomatica;
 	}
+
 
 	protected String generateCuerpo(DtoSendNotificator dtoSendNotificator, String contenido) {
 		String cuerpo = "<html>" + "<!DOCTYPE HTML PUBLIC '-//W3C//DTD HTML 4.01 Transitional//EN'>" + "<html>"
@@ -369,7 +371,7 @@ public abstract class AbstractNotificatorService {
 		
 		if(!Checks.estaVacio(tramites)) {
 			tramite = tramites.get(numTramites-1);
-			dtoSendNotificator = this.rellenaDtoSendNotificator(tramite);
+			dtoSendNotificator = this.rellenaDtoSendNotificator(oferta, tramite);
 			dtoSendNotificator.setTitulo(asunto);
 		}
 

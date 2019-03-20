@@ -178,6 +178,32 @@ class ActivoControllerDispachableMethods {
 				}
 			}
 		});
+		
+		/*
+		 * TAB_CALIFICACION_NEGATIVA
+		 */
+		dispachableMethods.put(ActivoPropagacionFieldTabMap.TAB_CALIFICACION_NEGATIVA, new DispachableMethod<DtoActivoDatosRegistrales>() {
+
+			@Override
+			public Class<DtoActivoDatosRegistrales> getArgumentType() {
+				return DtoActivoDatosRegistrales.class;
+			}
+
+			@Override
+			public void execute(Long id, DtoActivoDatosRegistrales dto, HttpServletRequest request) {
+				if (dto != null ){
+					List<DtoActivoDatosRegistrales> l_DatosRegistrales = this.controller.getCalificacionNegativabyId(id);
+					
+					int counter = 0;
+					for (DtoActivoDatosRegistrales auxDto : l_DatosRegistrales) {
+						l_DatosRegistrales.get(counter).setIdActivo(dto.getIdActivo());
+						this.controller.createCalificacionNegativa(dto.getIdActivo(), l_DatosRegistrales.get(counter), new ModelMap());
+						counter++;
+					}
+				}
+				
+			}
+		});
 
 		/*
 		 * TAB_CONDICIONES_ESPECIFICAS
@@ -332,7 +358,7 @@ class ActivoControllerDispachableMethods {
 	private ActivoController controller;
 
 	ActivoControllerDispachableMethods(ActivoController c) {
-		this.controller = c;
+		this.controller = c;	
 	}
 
 	DispachableMethod findDispachableMethod(String modelName) {

@@ -17,29 +17,27 @@ public class DDTipoDocumentoActivoDaoImpl extends AbstractEntityDao<DDTipoDocume
 
     @Override
     public DDTipoDocumentoActivo getDDTipoDocumentoActivoPorMatricula(String matriculaDocumento) {
-        Session session = getSession();
+        Session session = this.getSessionFactory().getCurrentSession();
         Criteria criteria = session.createCriteria(DDTipoDocumentoActivo.class);
         criteria.add(Restrictions.eq("matricula", matriculaDocumento));
         criteria.add(Restrictions.eq("auditoria.borrado", AUDITORIA_SIN_BORRAR));
 
         // Debería existir un solo resultado, pero existen casos de matrícula compartida por diferentes documentos (Ej: AI-01-NOTS-01).
         DDTipoDocumentoActivo ddTipoDocumentoActivo = HibernateUtils.castObject(DDTipoDocumentoActivo.class, criteria.list().get(0));
-        session.disconnect();
-
+        
         return ddTipoDocumentoActivo;
     }
 
     @Override
     public Boolean existeMatriculaRegistradaEnTipoDocumento(String matricula) {
-        Session session = getSession();
+        Session session = this.getSessionFactory().getCurrentSession();
         Criteria criteriaCount = session.createCriteria(DDTipoDocumentoActivo.class);
         criteriaCount.setProjection(Projections.rowCount());
         criteriaCount.add(Restrictions.eq("matricula", matricula));
         criteriaCount.add(Restrictions.eq("auditoria.borrado", AUDITORIA_SIN_BORRAR));
 
         Integer totalCount = HibernateUtils.castObject(Integer.class, criteriaCount.uniqueResult());
-        session.disconnect();
-
+       
         return totalCount > 0;
     }
 }

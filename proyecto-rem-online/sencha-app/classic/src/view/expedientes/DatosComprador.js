@@ -52,7 +52,7 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 	    	me.buttonAlign = 'right';
 
 	    	if(!Ext.isEmpty(me.idComprador)){
-				me.buttons = [ { itemId: 'btnModificar', text: HreRem.i18n('btn.modificar'), handler: 'onClickBotonModificarCompradorSinWizard', bind:{disabled: !me.esEditable()}, listeners: {click: 'comprobarFormato'}},
+				me.buttons = [ { itemId: 'btnModificar', text: HreRem.i18n('btn.modificar'), handler: 'onClickBotonModificarCompradorSinWizard', bind:{disabled: !me.esEditable()}, listeners: {click: 'comprobarFormatoModificar'}},
 	    					   { itemId: 'btnCancelar', text: HreRem.i18n('btn.cancelBtnText'), handler: 'onClickBotonCerrarComprador'}];
 				modoEdicion = true;
 
@@ -216,14 +216,16 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 											        	reference: 'nombreRazonSocial',
 											        	bind: {
 										            		value: '{comprador.nombreRazonSocial}'
-										            	}
+										            	},
+										            	allowBlank: false
 											        },
 											        {
 											        	fieldLabel:  HreRem.i18n('fieldlabel.apellidos'),
 											        	reference: 'apellidos',
 											        	bind: {
 										            		value: '{comprador.apellidos}'
-										            	}
+										            	},
+										            	allowBlank: false
 											        },
 											        {
 											        	fieldLabel:  HreRem.i18n('fieldlabel.direccion'),
@@ -306,7 +308,10 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 										            		store: '{comboPaises}',
 										            		value: '{comprador.codigoPais}',
 										            		allowBlank: '{esObligatorio}'
-										            	}
+										            	},
+										            	listeners: {
+															change: 'comprobarObligatoriedadRte'
+														}
 													},
 											        {
 											        	xtype      : 'container',
@@ -416,7 +421,7 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 							                			reference: 'tipoDocConyuge',
 							                			bind: {
 							                				store: '{comboTipoDocumento}',
-							                				value: '{comprador.codTipoDocumentoRte}'
+							                				value: '{comprador.codTipoDocumentoConyuge}'
 							                			}
 							                		},
 													{

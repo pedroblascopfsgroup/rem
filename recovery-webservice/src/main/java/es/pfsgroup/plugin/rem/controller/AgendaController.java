@@ -163,6 +163,7 @@ public class AgendaController extends TareaController {
 			model.put("errorValidacionGuardado", getMensajeInvalidDataAccessExcepcion(e));
 
 		} catch (Exception e) {
+			e.printStackTrace();
 			model.put("errorValidacionGuardado", e.getMessage());
 		}
 

@@ -206,8 +206,7 @@ Ext.define('HreRem.view.expedientes.DatosCompradorWizard', {
 			        	reference: 'direccion',
 			        	padding: '5px',
 			        	bind: {
-		            		value: '{comprador.direccion}',
-		            		allowBlank: '{expediente.esObligatorio}'
+		            		value: '{comprador.direccion}'
 		            	}
 			        },
 
@@ -220,8 +219,7 @@ Ext.define('HreRem.view.expedientes.DatosCompradorWizard', {
 						chainedReference: 'municipioCombo',
 		            	bind: {
 		            		store: '{comboProvincia}',
-		            	    value: '{comprador.provinciaCodigo}'  ,
-		            		allowBlank: '{expediente.esObligatorio}'
+		            	    value: '{comprador.provinciaCodigo}'
 		            	},
 		            	displayField: 'descripcion',
 						valueField: 'codigo',
@@ -248,8 +246,7 @@ Ext.define('HreRem.view.expedientes.DatosCompradorWizard', {
 		            	bind: {
 		            		store: '{comboMunicipio}',
 		            		value: '{comprador.municipioCodigo}',
-		            		disabled: '{!comprador.provinciaCodigo}',
-		            		allowBlank: '{expediente.esObligatorio}'
+		            		disabled: '{!comprador.provinciaCodigo}'
 		            	}
 					},
 			        { 

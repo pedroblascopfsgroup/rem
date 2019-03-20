@@ -187,7 +187,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaDetalle', {
 	    					        	itemId: 'comboTipoPersona',
 	    					        	name: 'comboTipoPersona',
 	    					        	flex:	1,
-	    					        	allowBlank: true,
+	    					        	allowBlank: false,
 	    					        	bind: {
 	    				            		store: '{comboTipoPersona}',
 	    				            		value: '{oferta.tipoPersona}'
@@ -202,9 +202,11 @@ Ext.define('HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaDetalle', {
 	    	    								var regimen = form.down('field[name=comboRegimenMatrimonial]');
 	    	    								if(value=="1"){
 	    	    									estadoCivil.setDisabled(false);
+	    	    									estadoCivil.allowBlank = false;
 	    	    								}else{
 	    	    									estadoCivil.setDisabled(true);
 	    	    									regimen.setDisabled(true);
+	    	    									estadoCivil.allowBlank = true;
 	    	    									
 	    	    									estadoCivil.reset();
 	    	    									regimen.reset();
@@ -235,8 +237,10 @@ Ext.define('HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaDetalle', {
 	    	    								var regimen = form.down('field[name=comboRegimenMatrimonial]');
 	    	    								if(value=="02"){
 	    	    									regimen.setDisabled(false);
+	    	    									regimen.allowBlank = false;
 	    	    								}else{
 	    	    									regimen.setDisabled(true);
+	    	    									regimen.allowBlank = true;
 	    	    									regimen.reset();
 	    	    								}
 	    	    								

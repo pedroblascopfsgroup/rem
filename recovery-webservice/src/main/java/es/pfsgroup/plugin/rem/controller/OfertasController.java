@@ -370,7 +370,8 @@ public class OfertasController {
 		try {
 			//Se realiza aqui la llamada al Maestro de Personas para que tenga tiempo de ejecutar el hilo. 
 			ofertaApi.llamadaMaestroPersonas(dniComprador, CLIENTE_HAYA);
-			model.put("data", ofertaApi.checkPedirDoc(idActivo,idAgrupacion,idExpediente, dniComprador, codtipoDoc));
+			//model.put("data", ofertaApi.checkPedirDoc(idActivo,idAgrupacion,idExpediente, dniComprador, codtipoDoc));
+			model.put("data", false);
 			model.put("comprador",ofertaApi.getClienteGDPRByTipoDoc(dniComprador, codtipoDoc));
 			model.put("compradorId", expedienteComercialApi.getCompradorIdByDocumento(dniComprador, codtipoDoc));
 			model.put("destinoComercial", ofertaApi.getDestinoComercialActivo(idActivo, idAgrupacion, idExpediente));

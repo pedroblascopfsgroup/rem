@@ -241,5 +241,16 @@ public class ActivoOfertaAdapter {
 			}
 		return borrado;		
 	}
+	
+	public boolean deleteAdjunto(Long idRemoto) {
+		boolean borrado = false;
+		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+		if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
+			borrado = gestorDocumentalAdapterApi.borrarAdjunto(idRemoto, usuarioLogado.getUsername());
+		}else{
+			borrado = true;
+		}
+		return borrado;
+	}
 
 }

@@ -4445,13 +4445,17 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
                              params: {docCliente: docCliente, idActivo: idActivo, idAgrupacion: idAgrupacion},
 
                              success: function(response, opts) {
-                                 data = Ext.decode(response.responseText);
+                             	 data = Ext.decode(response.responseText);
                                  if(!Ext.isEmpty(data.data)){
                                     var ventanaWizardAdjuntarDocumento = ventanaWizard.down('anyadirnuevaofertaactivoadjuntardocumento'),
                                     esInternacional = ventanaWizardAdjuntarDocumento.getForm().findField('carteraInternacional').getValue(),
                                     cesionDatos = ventanaWizardAdjuntarDocumento.getForm().findField('cesionDatos'),
                                     transferenciasInternacionales = ventanaWizardAdjuntarDocumento.getForm().findField('transferenciasInternacionales'),
                                     btnGenerarDoc = ventanaWizardAdjuntarDocumento.down('button[itemId=btnGenerarDoc]');
+                                    btnFinalizar =  ventanaWizardAdjuntarDocumento.down('button[itemId=btnFinalizar]');
+                                    if(cesionDatos.getValue()){
+                                    	btnFinalizar.enable();
+                                    }                                    
 
                                     ventanaWizardAdjuntarDocumento.getForm().findField('docOfertaComercial').setValue(data.data[0].nombre);
                                     ventanaWizardAdjuntarDocumento.down().down('panel').down('button').show();

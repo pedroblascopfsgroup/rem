@@ -552,6 +552,8 @@ public class AgrupacionAdapter {
 						BeanUtils.copyProperty(dtoAgrupacion, "codigoPostal", am.getCodPostal());
 						BeanUtils.copyProperty(dtoAgrupacion, "municipioCodigo", am.getMunicipio());
 						BeanUtils.copyProperty(dtoAgrupacion, "provinciaCodigo", am.getProvincia());
+						BeanUtils.copyProperty(dtoAgrupacion, "provinciaDescripcion", am.getLocalizacion().getLocalizacionBien().getProvincia().getDescripcion());
+						BeanUtils.copyProperty(dtoAgrupacion, "municipioDescripcion", am.getLocalizacion().getLocalizacionBien().getLocalidad().getDescripcion());
 					}
 				
 				}

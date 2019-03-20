@@ -81,7 +81,8 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 											{
 												xtype: 'currencyfieldbase',
 												fieldLabel:  HreRem.i18n('fieldlabel.datos.publicacion.estados.precio.web'),
-												bind: '{datospublicacionactivo.precioWebVenta}',
+												reference: 'precioWebVenta',
+												bind: '{onInitChangePrecioWebVenta}',
 												readOnly: true
 											},
 											{
@@ -161,6 +162,7 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 													readOnly: '{datospublicacionactivo.deshabilitarCheckNoMostrarPrecioVenta}',
 													value: '{datospublicacionactivo.noMostrarPrecioVenta}'
 												}
+												
 											},
 											{
 												xtype: 'label',
@@ -248,7 +250,7 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 											{
 												xtype: 'currencyfieldbase',
 												fieldLabel:  HreRem.i18n('fieldlabel.datos.publicacion.estados.precio.web'),
-												bind: '{datospublicacionactivo.precioWebAlquiler}',
+												bind: '{onInitChangePrecioWebAlquiler}',
 												readOnly: true
 											},
 	                                        {

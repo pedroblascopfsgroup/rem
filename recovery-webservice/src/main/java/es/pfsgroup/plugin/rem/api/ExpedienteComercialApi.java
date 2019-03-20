@@ -1073,12 +1073,12 @@ public interface ExpedienteComercialApi {
 	 * @return
 	 */
 	boolean checkPrecontratoSubido(TareaExterna tareaExterna);
-
+	
 	/**
 	 * Método que saca el expediente comercial a partir de una tarea externa
 	 *
 	 * @param tareaExterna
-	 * @return ExpedienteComercial
+	 * @return 
 	 */
 	ExpedienteComercial tareaExternaToExpedienteComercial(TareaExterna tareaExterna);
 
@@ -1107,6 +1107,8 @@ public interface ExpedienteComercialApi {
 	boolean checkEstadoOcupadoTramite(Long idExpediente);
 
 	boolean checkConTituloTramite(Long idTramite);
+	
+	List<DtoPropuestaAlqBankia> getListaDtoPropuestaAlqBankiaByExpId (Long ecoId);
 
 
 	List<DtoActivosExpediente> getActivosPropagables(Long idExpediente);
@@ -1115,4 +1117,10 @@ public interface ExpedienteComercialApi {
 
 
 	boolean guardarCondicionesActivosExpediente(DtoCondicionesActivoExpediente condiciones);
+
+	boolean esAgora(TareaExterna tareaExterna);
+
+	boolean checkDepositoRelleno(TareaExterna tareaExterna);
+
+	boolean checkDepositoDespublicacionSubido(TareaExterna tareaExterna);
 }

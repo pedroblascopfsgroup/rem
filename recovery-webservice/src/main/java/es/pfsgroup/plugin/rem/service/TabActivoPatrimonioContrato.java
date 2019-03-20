@@ -65,17 +65,31 @@ public class TabActivoPatrimonioContrato implements TabActivoService {
 		}
 		
 		if(!Checks.estaVacio(listadoOfertas)) {
-			if(!Checks.esNulo(activoPatrimonioContratoDto.getIdContrato())) {
-				String contrato = activoPatrimonioContratoDto.getIdContrato();
-				
-				for (Oferta tipoOferta : listadoOfertas) {	
-					ExpedienteComercial expComercial = expedienteComercialApi.findOneByOferta(tipoOferta);
-					if(contrato.equals(tipoOferta.getNumContratoPrinex())
-							&& DDTipoOferta.CODIGO_ALQUILER.equals(expComercial.getOferta().getTipoOferta().getCodigo())) {
-						activoPatrimonioContratoDto.setOfertaREM(tipoOferta.getNumOferta());	
-						activoPatrimonioContratoDto.setIdExpediente(expComercial.getId());
+			String idContrato = activoPatrimonioContratoDto.getIdContrato(); 
+			if(!Checks.esNulo(idContrato)) {
+				ExpedienteComercial aux = null;
+				for (Oferta oferta : listadoOfertas) {	//Lista de ofertas del activo con un expediente relacionado
+					ExpedienteComercial expComercial = expedienteComercialApi.findOneByOferta(oferta);
+					if(!Checks.esNulo(expComercial)) {
+						String numContratoAlquiler = expComercial.getNumContratoAlquiler(); 
+						if(!Checks.esNulo(numContratoAlquiler)) {
+							if(numContratoAlquiler.equals(idContrato)) { //Expedientes con el mismo contrato que el activo
+								if(Checks.esNulo(aux)) {
+									aux = expComercial;
+								} else {
+									if(!Checks.esNulo(aux.getFechaVenta()) && aux.getFechaVenta().before(expComercial.getFechaVenta())) { //Nos quedamos con el más reciente
+										aux = expComercial;
+									}
+								}
+							}
+						}
 					}
 				}
+				if(!Checks.esNulo(aux)) {
+					activoPatrimonioContratoDto.setOfertaREM(aux.getOferta().getNumOferta());
+					activoPatrimonioContratoDto.setIdExpediente(aux.getId());
+				}
+
 			}
 		}
 				

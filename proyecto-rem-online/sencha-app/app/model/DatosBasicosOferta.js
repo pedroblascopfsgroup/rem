@@ -115,6 +115,9 @@ Ext.define('HreRem.model.DatosBasicosOferta', {
 	    				}
     				}
     			}
+    		},
+    		{
+    			name:'idEco'
     		}
     ],
     

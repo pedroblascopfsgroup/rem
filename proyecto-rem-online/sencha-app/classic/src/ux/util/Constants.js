@@ -350,7 +350,9 @@ Ext.define('HreRem.ux.util.Constants', {
 	},
 
 	SUBCARTERA: {
-		BH: '06'
+		BH: '06',
+		AGORAINMOBILIARIO: '135',
+		AGORAFINANCIERO: '137'
 	},
 
 	NOMBRE_CARTERA:	{
@@ -623,6 +625,11 @@ Ext.define('HreRem.ux.util.Constants', {
 	MOTIVOS_CAL_NEGATIVA:{
 		OTROS: '21'
 	},
+	
+	ESTADOS_MOTIVOS_CAL_NEGATIVA:{
+		PENDIENTE: '01',
+		SUBSANADO: '02'
+	},
     
     TAREAS:{
     	T015_DEFINICIONOFERTA : 'T015_DefinicionOferta',
@@ -643,5 +650,15 @@ Ext.define('HreRem.ux.util.Constants', {
 		AVAL_BANCARIO: '52',
 		JUSTIFICANTE_INGRESOS: '53',
 		ALQUILER_CON_OPCION_A_COMPRA: '54'
-	}
+	},
+	COMBO_MOTIVO_CALIFICACION_NEGATIVA:{
+ 		OTROS: 'OTROS',
+ 		COD_OTROS: '21'
+ 	},
+ 	COMBO_ESTADO_CALIFICACION_NEGATIVA:{
+ 		PENDIENTE: 'Pendiente',
+ 		SUBSANADO: 'Subsanado',
+ 		COD_PENDIENTE: '01',
+ 		COD_SUBSANADO: '02'
+ 	}
 });

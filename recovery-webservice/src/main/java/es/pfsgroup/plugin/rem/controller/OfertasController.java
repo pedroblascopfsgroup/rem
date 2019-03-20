@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.rem.controller;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -20,9 +21,17 @@ import org.springframework.web.servlet.ModelAndView;
 
 import es.capgemini.devon.exception.UserException;
 import es.capgemini.devon.files.FileItem;
+import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
+import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
+import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
+import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
+import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
@@ -30,13 +39,17 @@ import es.pfsgroup.plugin.rem.excel.OfertasExcelReport;
 import es.pfsgroup.plugin.rem.model.DtoHonorariosOferta;
 import es.pfsgroup.plugin.rem.model.DtoOfertantesOferta;
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
+import es.pfsgroup.plugin.rem.model.DtoPropuestaAlqBankia;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.oferta.NotificationOfertaManager;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaDto;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaRequestDto;
 import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
+import es.pfsgroup.plugin.rem.tareasactivo.dao.ActivoTareaExternaDao;
 import net.sf.json.JSONObject;
 
 @Controller
@@ -55,10 +68,18 @@ public class OfertasController {
 
 	@Autowired
 	GenericABMDao genericDao;
-	
 		
 	@Autowired
 	private NotificationOfertaManager notificationOferta;
+	
+	@Autowired
+	private GenericAdapter genericAdapter;
+	
+	@Autowired
+	private ActivoTareaExternaDao activoTareaExternaDao;
+	
+	@Autowired
+	private ActivoTareaExternaApi activoTareaExternaApi;
 
 	
 	@SuppressWarnings("unchecked")
@@ -87,14 +108,64 @@ public class OfertasController {
 	public void generateExcel(DtoOfertasFilter dtoOfertasFilter, HttpServletRequest request, HttpServletResponse response) throws IOException {
 		dtoOfertasFilter.setStart(excelReportGeneratorApi.getStart());
 		dtoOfertasFilter.setLimit(excelReportGeneratorApi.getLimit());
-
+		
+		String dtoCarteraCodigo = dtoOfertasFilter.getCarteraCodigo();
+		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+		UsuarioCartera usuarioCartera = genericDao.get(UsuarioCartera.class,
+				genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioLogado.getId()));
 		List<VOfertasActivosAgrupacion> listaOfertas = (List<VOfertasActivosAgrupacion>) ofertaApi.getListOfertasUsuario(dtoOfertasFilter).getResults();
-
-		ExcelReport report = new OfertasExcelReport(listaOfertas);
+		HashMap<Long,String> fechasReunionComite = new HashMap<Long, String>();
+		HashMap<Long,String> sancionadores = new HashMap<Long, String>();
+		
+		if((!Checks.esNulo(usuarioCartera) && (DDCartera.CODIGO_CARTERA_LIBERBANK).equals(usuarioCartera.getCartera().getCodigo()))
+				|| (!Checks.esNulo(dtoCarteraCodigo) && (DDCartera.CODIGO_CARTERA_LIBERBANK.equals(dtoCarteraCodigo)))){
+			for(VOfertasActivosAgrupacion oferta : listaOfertas){
+				List<Long> TareasExternasId = activoTareaExternaDao.getTareasExternasIdByOfertaId(oferta.getId());
+				Filter filterTap01 = genericDao.createFilter(FilterType.EQUALS, "codigo", "T013_ResolucionComite");
+				Long idResolucionComite = genericDao.get(TareaProcedimiento.class, filterTap01).getId();
+				Filter filterTap02 = genericDao.createFilter(FilterType.EQUALS, "codigo", "T015_ResolucionExpediente");
+				Long idResolucionExpediente = genericDao.get(TareaProcedimiento.class, filterTap02).getId();
+				
+				//01->Venta, 02->Alquiler
+				if(("01").equals(oferta.getCodigoTipoOferta())){
+					for(Long tareaExternaId : TareasExternasId){
+						TareaExterna tareaExterna = activoTareaExternaApi.get(tareaExternaId);
+						if((idResolucionComite).equals(tareaExterna.getTareaProcedimiento().getId())){
+							List<TareaExternaValor> valores = activoTareaExternaDao.getByTareaExterna(tareaExterna.getId());
+							for(TareaExternaValor valor : valores){
+								if(("fechaReunionComite").equals(valor.getNombre())){
+									fechasReunionComite.put(oferta.getId(), valor.getValor());
+								}
+								if(("comiteInternoSancionador").equals(valor.getNombre())){
+									sancionadores.put(oferta.getId(), valor.getValor());
+								}
+							}
+						}
+					}
+				}else if(("02").equals(oferta.getCodigoTipoOferta())){
+					for(Long tareaExternaId : TareasExternasId){
+						TareaExterna tareaExterna = activoTareaExternaApi.get(tareaExternaId);
+						if((idResolucionExpediente).equals(tareaExterna.getTareaProcedimiento().getId())){
+							List<TareaExternaValor> valores = activoTareaExternaDao.getByTareaExterna(tareaExterna.getId());
+							for(TareaExternaValor valor : valores){
+								if(("fechaReunionComite").equals(valor.getNombre())){
+									fechasReunionComite.put(oferta.getId(), valor.getValor());
+								}
+								if(("comiteInternoSancionador").equals(valor.getNombre())){
+									sancionadores.put(oferta.getId(), valor.getValor());
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		ExcelReport report = new OfertasExcelReport(listaOfertas, dtoCarteraCodigo, usuarioCartera, fechasReunionComite, sancionadores);
 
 		excelReportGeneratorApi.generateAndSend(report, response);
 	}
-
+	
 	private ModelAndView createModelAndViewJson(ModelMap model) {
 
 		return new ModelAndView("jsonView", model);
@@ -243,17 +314,49 @@ public class OfertasController {
 	
 	
 	@RequestMapping(method = RequestMethod.GET)
-	public void generateExcelOferta(Long idOferta, HttpServletRequest request, HttpServletResponse response) throws IOException {
+	public void generateExcelOferta(Long idEco, Long idOferta, HttpServletRequest request, HttpServletResponse response) throws IOException {
 		
-		DtoOfertasFilter dto = new DtoOfertasFilter();
-		dto.setIdOferta(idOferta);
-		ExcelReport report = new OfertasExcelReport(ofertaApi.getListOfertasFromView(dto));
-		File file = excelReportGeneratorApi.generateReport(report);
+//		DtoOfertasFilter dto = new DtoOfertasFilter();
+//		dto.setIdOferta(idOferta);
+//		ExcelReport report = new OfertasExcelReport(ofertaApi.getListOfertasFromView(dto));
+//		File file = excelReportGeneratorApi.generateReport(report);
+//		
+//		Oferta oferta = ofertaApi.getOfertaById(idOferta);
+//		notificationOferta.sendNotificationPropuestaOferta(oferta, new FileItem(file));
+//		
+//		excelReportGeneratorApi.sendReport(file, response);
+		Long prueba = (long) 72;//3199;
+		List <DtoPropuestaAlqBankia> listaPropuestaAlquilerBankia = ofertaApi.getListPropuestasAlqBankiaFromView(idEco);
 		
+		//List<DtoPropuestaAlqBankia> l_dtoBankia = ofertaApi.getListPropuestasAlqBankiaFromView(3199L);
+//		DtoPropuestaAlqBankia dtoA = new DtoPropuestaAlqBankia();
+//		DtoPropuestaAlqBankia dtoB = new DtoPropuestaAlqBankia();
+//		dtoA.setNumActivoUvem(2L);
+//		dtoA.setTipoActivo("Normal?");
+//		dtoA.setDescripcionEstadoPatrimonio("JEJEJEJ");
+//		dtoA.setFechaAltaOferta(new Date());
+//		dtoA.setFechaPublicacionWeb(new Date());
+//		dtoA.setNombreCompleto("MG");
+//		dtoA.setDireccionCompleta("Calle Falsa 1 2 3");
+//		dtoA.setCodPostMunicipio("123423141 Alman");
+//		dtoA.setNombrePropietario("JUJUJ INC.");
+//		dtoA.setCompradorDocumento("2150L");
+//		dtoA.setFechaUltimaTasacion(new Date());
+//		dtoA.setImporteTasacionFinal(new BigDecimal(2));
+//		dtoA.setImporteOferta(new BigDecimal(3));
+//		dtoA.setTextoOferta("ddfaofjaiojidfsji");
+//		dtoB.setNumActivoUvem(1L);
+//		dtoB.setTipoActivo("NoTanNormal");
+//		
+//		List<DtoPropuestaAlqBankia> l_dtoBankia = new ArrayList<DtoPropuestaAlqBankia>();
+//		l_dtoBankia.add(dtoB);
+//		l_dtoBankia.add(dtoA);
+		
+		File file = excelReportGeneratorApi.generateBankiaReport(listaPropuestaAlquilerBankia, request);
+
+		excelReportGeneratorApi.sendReport(file, response);
 		Oferta oferta = ofertaApi.getOfertaById(idOferta);
 		notificationOferta.sendNotificationPropuestaOferta(oferta, new FileItem(file));
-		
-		excelReportGeneratorApi.sendReport(file, response);
 	}
 	
 	@SuppressWarnings("unchecked")

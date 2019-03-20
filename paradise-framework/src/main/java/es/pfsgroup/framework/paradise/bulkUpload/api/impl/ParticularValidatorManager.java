@@ -280,19 +280,6 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	}
 
 	@Override
-	public Boolean existeImpuesto(String idImpuesto){
-		if(Checks.esNulo(idImpuesto) || !StringUtils.isAlphanumeric(idImpuesto))
-			return false;
-
-		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
-				+ "		 FROM DD_TIT_TIPOS_IMPUESTO WHERE"
-				+ "		 DD_TIT_CODIGO ='0"+idImpuesto+"' "
-				+ "		 	AND BORRADO = 0");
-		return !"0".equals(resultado);
-	}
-
-
-	@Override
 	public Boolean existeSituacion(String idSituacion){
 		if(Checks.esNulo(idSituacion) || !StringUtils.isAlphanumeric(idSituacion))
 			return false;
@@ -303,12 +290,6 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 				+ "		 	AND BORRADO = 0");
 		return !"0".equals(resultado);
 	}
-
-
-
-
-
-
 
 	@Override
 	public Boolean isActivoPrePublicable(String numActivo){
@@ -2574,7 +2555,6 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		return !"0".equals(resultado);
 	}
 
-
 	@Override
 	public Boolean isAgrupacionSinActivoPrincipal(String mumAgrupacionRem) {
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(1)" 
@@ -2598,7 +2578,7 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 		
 		return !"0".equals(resultado);
 	}
-	
+
 	@Override
 	public Boolean isActivoIncluidoPerimetroAlquiler(String numActivo) {
 			String resultado = rawDao.getExecuteSQL( "SELECT COUNT(1)"

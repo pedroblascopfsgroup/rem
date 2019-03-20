@@ -81,7 +81,8 @@ public class NotificatorServiceGtam extends AbstractNotificatorService implement
 			}
 		}
 		
-		if (expediente.getOferta() != null && expediente.getOferta().getActivoPrincipal() != null
+		if (expediente != null && expediente.getOferta() != null && expediente.getOferta().getActivoPrincipal() != null
+				&& expediente.getOferta().getActivoPrincipal().getCartera() != null
 				&& DDCartera.CODIGO_CARTERA_GIANTS.equals(expediente.getOferta().getActivoPrincipal().getCartera().getCodigo()) && enviar) {
 			
 			String gestorNombre = "SIN_DATOS_NOMBRE_APELLIDO_GESTOR";

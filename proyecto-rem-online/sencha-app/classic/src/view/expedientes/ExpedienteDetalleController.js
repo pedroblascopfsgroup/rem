@@ -4157,9 +4157,6 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
     	if(me.getViewModel().get('expediente.tipoExpedienteCodigo') == "01" || venta == true){
     		if(me.lookupReference('tipoPersona').getValue() === "2" ) {
     			if(me.lookupReference('pais').getValue() == "28"){
-    				if(!Ext.isEmpty(campoDireccion)){
-						campoProvinciaRte.allowBlank = false;
-					}
     				if(!Ext.isEmpty(campoProvincia)){
 						campoProvinciaRte.allowBlank = false;
 					}
@@ -4174,9 +4171,6 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 					}
 					
 				}else{
-					if(!Ext.isEmpty(campoDireccion)){
-						campoDireccion.allowBlank = true;
-					}
     				if(!Ext.isEmpty(campoProvincia)){
     					campoProvincia.allowBlank = true;
 					}
@@ -4192,9 +4186,6 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 				}
     		}else if (me.lookupReference('tipoPersona').getValue() === "1"){
     			if(me.lookupReference('pais').getValue() == "28"){
-    				if(!Ext.isEmpty(campoDireccion)){
-    					campoDireccion.allowBlank = false;
-					}
     				if(!Ext.isEmpty(campoProvincia)){
     					campoProvincia.allowBlank = false;
 					}
@@ -4202,9 +4193,6 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
     					campoMunicipio.allowBlank = false;
 					}
 				}else{
-					if(!Ext.isEmpty(campoDireccion)){
-    					campoDireccion.allowBlank = true;
-					}
     				if(!Ext.isEmpty(campoProvincia)){
     					campoProvincia.allowBlank = true;
 					}

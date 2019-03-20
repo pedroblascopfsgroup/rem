@@ -206,7 +206,8 @@ Ext.define('HreRem.view.expedientes.DatosCompradorWizard', {
 			        	reference: 'direccion',
 			        	padding: '5px',
 			        	bind: {
-		            		value: '{comprador.direccion}'
+		            		value: '{comprador.direccion}',
+		            		allowBlank: '{esObligatorio}'
 		            	}
 			        },
 

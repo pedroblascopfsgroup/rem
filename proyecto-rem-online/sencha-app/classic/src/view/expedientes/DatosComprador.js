@@ -231,7 +231,8 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 											        	fieldLabel:  HreRem.i18n('fieldlabel.direccion'),
 											        	reference: 'direccion',
 											        	bind: {
-										            		value: '{comprador.direccion}'
+										            		value: '{comprador.direccion}',
+										            		allowBlank: '{esObligatorio}'
 										            	}
 											        },
 	//										        {

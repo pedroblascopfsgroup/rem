@@ -210,6 +210,8 @@ public class DiccionarioTargetClassMap{
 		mapa.put("calificacionNegativa", DDCalificacionNegativa.class);
 		mapa.put("motivosCalificacionNegativa", DDMotivoCalificacionNegativa.class);
 		mapa.put("tipoTituloActivoTPA", DDTipoTituloActivoTPA.class);
+		mapa.put("estadoMotivoCalificacionNegativa", DDEstadoMotivoCalificacionNegativa.class);
+		mapa.put("responsableSubsanar", DDResponsableSubsanar.class);
 		
 		return Collections.unmodifiableMap(mapa);
 	}

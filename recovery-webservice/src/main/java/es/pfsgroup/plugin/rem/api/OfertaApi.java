@@ -17,6 +17,7 @@ import es.pfsgroup.plugin.rem.model.DtoGastoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoHonorariosOferta;
 import es.pfsgroup.plugin.rem.model.DtoOfertantesOferta;
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
+import es.pfsgroup.plugin.rem.model.DtoPropuestaAlqBankia;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.Trabajo;
@@ -570,5 +571,7 @@ public interface OfertaApi {
 	boolean estaViva(Oferta oferta);
 	
 	public List<Oferta> getListaOfertasByActivo(Activo activo);
+
+	public List<DtoPropuestaAlqBankia> getListPropuestasAlqBankiaFromView(Long ecoId);
 }
 

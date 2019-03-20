@@ -485,8 +485,6 @@ public interface ParticularValidatorApi {
 
 	Boolean existeSituacion(String idSituacion);
 
-	Boolean existeImpuesto(String idImpuesto);
-
 	Boolean existeActivoEnPropietarios(String numActivo, String idPropietarios);
 
 	
@@ -571,4 +569,5 @@ public interface ParticularValidatorApi {
 	String getSuperficieUtilPromocionAlquilerByAgrupacion(String numAgrupacion);
 
 	String getProcentajeTotalActualPromocionAlquiler(String numAgrupacion);
+
 }

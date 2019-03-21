@@ -73,6 +73,16 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 					        	bind:{	value: '{activo.codPromocionFinal}',
 					        			hidden: '{!activo.isCarteraLiberbank}'
 					        	}
+			                },
+			                {
+			                	xtype: 'textfieldbase',
+					        	fieldLabel:  HreRem.i18n('fieldlabel.numero.activo.prinex'),
+					        	name:'idPrinexHPM',
+					        	bind:{	
+					        		value: '{activo.idPrinexHPM}',
+					        		readOnly : '{!esUA}',
+					        		hidden: '{!esUA}'
+					        	}
 			                }
 						]
 					},
@@ -95,6 +105,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 					        	chainedStore: 'comboSubtipoActivo',
 								chainedReference: 'subtipoActivoCombo',
 					        	bind: {
+					        		readOnly : '{!esUA}',
 				            		store: '{comboTipoActivo}',
 				            		value: '{activo.tipoActivoCodigo}'
 				            	},
@@ -108,6 +119,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 					        	fieldLabel:  HreRem.i18n('fieldlabel.subtipo.activo'),
 					        	reference: 'subtipoActivoCombo',
 					        	bind: {
+					        		readOnly : '{!esUA}',
 				            		store: '{comboSubtipoActivo}',
 				            		value: '{activo.subtipoActivoCodigo}',
 				            		disabled: '{!activo.tipoActivoCodigo}'
@@ -119,6 +131,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 					        	fieldLabel:  HreRem.i18n('fieldlabel.tipo.activo.bde'),
 					        	reference: 'tipoActivoBde',
 					        	bind: {
+					        		readOnly : '{esUA}',
 				            		store: '{comboTipoActivoBde}',
 				            		value: '{activo.tipoActivoCodigoBde}',
 				            		hidden: '{!activo.isCarteraLiberbank}'
@@ -130,6 +143,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 					        	fieldLabel: HreRem.i18n('fieldlabel.subtipo.activo.bde'),
 								reference: 'subtipoActivoComboBde',
 					        	bind: {
+					        		readOnly : '{esUA}',
 				            		store: '{comboSubtipoActivoBde}',
 				            		value: '{activo.subtipoActivoCodigoBde}',
 				            		hidden: '{!activo.isCarteraLiberbank}'
@@ -140,6 +154,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 					        	fieldLabel:  HreRem.i18n('fieldlabel.estado.fisico.activo'),
 					        	name: 'estadoActivoCodigo',
 					        	bind: {
+					        		readOnly : '{esUA}',
 				            		store: '{comboEstadoActivo}',
 				            		value: '{activo.estadoActivoCodigo}'
 				            	}
@@ -149,6 +164,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 					        	fieldLabel:  HreRem.i18n('fieldlabel.uso.dominante'),
 					        	name: 'tipoUsoDestinoCodigo',
 			                	bind: {
+			                		readOnly : '{esUA}',
 				            		store: '{comboTipoUsoDestino}',
 				            		value: '{activo.tipoUsoDestinoCodigo}'
 				            	}
@@ -158,9 +174,21 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 			                	fieldLabel: HreRem.i18n('fieldlabel.motivorechazoform.motivo'),
 			                	name: 'motivoActivo',
 			                	bind: {
+			                		readOnly : '{esUA}',
 			                		value: '{activo.motivoActivo}'
 			                	},
 			                	maxLength: 50
+			                },
+			                {
+			                	xtype: 'textfieldbase',
+					        	fieldLabel:  HreRem.i18n('fieldlabel.porcentaje.participacion'),
+					        	name: 'porcentajeParticipacion',
+					        	bind:{	
+					        		value: '{activo.porcentajeParticipacion}',
+					        		readOnly : '{!esUA}',
+					        		hidden: '{!esUA}'
+					        	},
+					        	handler: 'checkVerificarPorcentajeParticipacion'
 			                }
 						]
 					},{ // Columna 3
@@ -174,7 +202,10 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 			                	height: 160,
 			                	labelAlign: 'top',
 			                	fieldLabel: HreRem.i18n('fieldlabel.breve.descripcion.activo'),
-			                	bind:		'{activo.descripcion}'
+			                	bind:{
+			                		value: '{activo.descripcion}',
+			                		readOnly : '{!esUA}'
+			                	}
 			                }
 						]
 					}]
@@ -192,6 +223,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 							xtype: 'comboboxfieldbase',
 							fieldLabel:  HreRem.i18n('fieldlabel.tipo.via'),
 				        	bind: {
+				        		readOnly : '{!esUA}',
 			            		store: '{comboTipoVia}',
 			            		value: '{activo.tipoViaCodigo}'			            		
 			            	},
@@ -204,6 +236,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 							chainedStore: 'comboMunicipio',
 							chainedReference: 'municipioCombo',
 			            	bind: {
+			            		readOnly : '{esUA}',
 			            		store: '{comboProvincia}',
 			            	    value: '{activo.provinciaCodigo}'
 			            	},
@@ -223,7 +256,10 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 						
 						{ 
 							fieldLabel:  HreRem.i18n('fieldlabel.nombre.via'),
-		                	bind:		'{activo.nombreVia}',
+		                	bind:{
+		                		value: '{activo.nombreVia}',
+		                		readOnly : '{!esUA}'
+		                	},
 		                	allowBlank: false
 		                },
 		                {
@@ -233,6 +269,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 							chainedStore: 'comboInferiorMunicipio',
 							chainedReference: 'inferiorMunicipioCombo',
 			            	bind: {
+			            		readOnly : '{esUA}',
 			            		store: '{comboMunicipio}',
 			            		value: '{activo.municipioCodigo}',
 			            		disabled: '{!activo.provinciaCodigo}'
@@ -250,13 +287,17 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 		                // fila 3               
 		                { 
 		                	fieldLabel: HreRem.i18n('fieldlabel.numero'),
-		                	bind:		'{activo.numeroDomicilio}'
+		                	bind:{
+		                		value: '{activo.numeroDomicilio}',
+		                		readOnly : '{!esUA}'
+		                	}
 		                },
 		                {
 							xtype: 'comboboxfieldbase',
 							fieldLabel:  HreRem.i18n('fieldlabel.unidad.poblacional'),
 							reference: 'inferiorMunicipioCombo',
 			            	bind: {
+			            		readOnly : '{esUA}',
 			            		store: '{comboInferiorMunicipio}',
 			            		value: '{activo.inferiorMunicipioCodigo}',
 			            		disabled: '{!activo.municipioCodigo}'
@@ -287,7 +328,10 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 		                // fila 4
 		                {
 							fieldLabel:  HreRem.i18n('fieldlabel.escalera'),
-			                bind:		'{activo.escalera}'
+			                bind:{
+			                	value: '{activo.escalera}',
+			                	readOnly : '{!esUA}'
+			                }
 						},
 				        { 
 				        	xtype: 'comboboxfieldbase',
@@ -305,13 +349,17 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 						 // fila 5
  						{ 
 		                	fieldLabel:  HreRem.i18n('fieldlabel.planta'),
-		                	bind:		'{activo.piso}'
+		                	bind:{
+		                		value: '{activo.piso}',
+		                		readOnly : '{!esUA}'
+		                	}
 		                },	               
 		                {
 							xtype: 'comboboxfieldbase',
 							reference: 'pais',
 							fieldLabel: HreRem.i18n('fieldlabel.pais'),
 			            	bind: {
+			            		readOnly : '{esUA}',
 			            		store: '{comboCountries}',
 			            		value: '{activo.paisCodigo}'
 			            	},
@@ -322,11 +370,17 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 						// fila 6
 						 { 
 		                	fieldLabel:  HreRem.i18n('fieldlabel.puerta'),
-		                	bind:		'{activo.puerta}'
+		                	bind:{
+		                		value: '{activo.puerta}',
+		                		readOnly : '{!esUA}'
+		                	}
 		                },
 		                {
 							fieldLabel: HreRem.i18n('fieldlabel.codigo.postal'),
-							bind:		'{activo.codPostal}',
+							bind:{
+								value: '{activo.codPostal}',
+								readOnly : '{esUA}'
+							},
 							colspan: 2,
 							vtype: 'codigoPostal',
 							maskRe: /^\d*$/, 
@@ -412,7 +466,10 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 							{
 								xtype:'checkboxfieldbase',
 								fieldLabel: HreRem.i18n('fieldlabel.perimetro.check.gestion'),
-								bind:		'{activo.aplicaGestion}',
+								bind:{
+									value: '{activo.aplicaGestion}',
+									readOnly : '{!activo.activoMatriz}'
+								},
 								reference: 'chkbxPerimetroGestion',
 								listeners: {
 									change: 'onChkbxPerimetroChange'
@@ -427,7 +484,10 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 							{
 								xtype: 'textfieldbase',
 								reference: 'textFieldPerimetroGestion',
-								bind:		'{activo.motivoAplicaGestion}'
+								bind:{
+									value: '{activo.motivoAplicaGestion}',
+									readOnly: '{esUA}'
+								}		
 							},
 							
 							//Fila mediador  (Siempre oculto por el momento)
@@ -460,7 +520,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								fieldLabel: HreRem.i18n('fieldlabel.perimetro.check.publicacion'),
 								reference: 'chkbxPerimetroPublicar',
 								bind: {
-									readOnly: '{activo.isVendido}',
+									readOnly: '{!activo.activoMatriz}',
 									value: '{activo.aplicaPublicar}'
 								}
 							},
@@ -474,7 +534,8 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								xtype: 'textfieldbase',
 								reference: 'textFieldPerimetroPublicar',
 								bind: {
-									value: '{activo.motivoAplicaPublicar}'
+									value: '{activo.motivoAplicaPublicar}',
+									readOnly: '{esUA}'
 								}
 							},
 
@@ -484,7 +545,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								fieldLabel: HreRem.i18n('fieldlabel.perimetro.check.comercial'),
 								reference: 'chkbxPerimetroComercializar',
 								bind: {
-									readOnly: '{activo.isVendidoOEntramite}',
+									readOnly : '{!activo.activoMatriz}',
 									value: '{activo.aplicaComercializar}'
 								},
 								listeners: {
@@ -503,6 +564,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								bind: {
 									store: '{comboMotivoAplicaComercializarActivo}',
 									value: '{activo.motivoAplicaComercializarCodigo}',
+									readOnly: '{esUA}',
 									visible: '{activo.aplicaComercializar}'
 								}
 							},
@@ -522,9 +584,8 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								xtype:'checkboxfieldbase',
 								fieldLabel: HreRem.i18n('fieldlabel.perimetro.check.formalizar'),
 								reference: 'chkbxPerimetroFormalizar',
-
 								bind: {
-									readOnly: '{activo.isActivoEnTramite}',
+									readOnly: '{!activo.activoMatriz}',
 									value: '{activo.aplicaFormalizar}'
 								},
 								listeners: {
@@ -541,8 +602,8 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								xtype: 'textfieldbase',
 								reference: 'textFieldPerimetroFormalizar',
 								bind: {
-									value: '{activo.motivoAplicaFormalizar}'
-
+									value: '{activo.motivoAplicaFormalizar}',
+									readOnly: '{esUA}'
 								}
 							},
 							//Bloque Comercialización
@@ -561,6 +622,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 										xtype: 'comboboxfieldbase',
 										fieldLabel: HreRem.i18n('fieldlabel.perimetro.tipo.comercializacion'),
 										bind: {
+											readOnly: '{esUA}',
 											store: '{comboTipoComercializarActivo}',
 											value: '{activo.tipoComercializarCodigo}'
 										}
@@ -569,6 +631,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 										xtype: 'comboboxfieldbase',
 										fieldLabel: HreRem.i18n('fieldlabel.perimetro.destino.comercial'),
 										bind: {
+											readOnly : '{esUA}',
 											store: '{comboTipoDestinoComercialCreaFiltered}',
 											value: '{activo.tipoComercializacionCodigo}'
 										}
@@ -578,6 +641,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 										fieldLabel: HreRem.i18n('fieldlabel.perimetro.check.bloqueo.tipo.comercializacion'),
 										labelWidth: 200,
 										bind: {
+											readOnly: '{esUA}',
 											store : '{comboSiNoBoolean}',
 											value: '{activo.bloqueoTipoComercializacionAutomatico}'
 										}
@@ -663,6 +727,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 					        	chainedStore: 'comboSubtipoClaseActivoBancario',
 								chainedReference: 'subtipoClaseActivoBancarioCombo',
 								bind: {
+									readOnly : '{esUA}',
 									store: '{comboClaseActivoBancario}',
 									value: '{activo.claseActivoCodigo}'
 								},
@@ -674,18 +739,25 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 							{
 								xtype: 'textfieldbase',
 								fieldLabel: HreRem.i18n('fieldlabel.bancario.expediente.num'),
-								bind: '{activo.numExpRiesgo}'
+								bind:{
+									readOnly : '{esUA}',
+									value: '{activo.numExpRiesgo}' 
+								}
 							},
 							{
 								xtype:'textfieldbase',
 								fieldLabel: HreRem.i18n('fieldlabel.bancario.producto.tipo'),
-								bind: '{activo.productoDescripcion}'
+								bind:{
+									value: '{activo.productoDescripcion}',
+									readOnly : '{esUA}'
+								}
                             },
 							{
 								xtype:'comboboxfieldbase',
 								fieldLabel: HreRem.i18n('fieldlabel.bancario.subtipo'),
 								reference: 'subtipoClaseActivoBancarioCombo',
 								bind: {
+									readOnly : '{esUA}',
 									store: '{comboSubtipoClaseActivoBancario}',
 									value: '{activo.subtipoClaseActivoCodigo}',
 									disabled: '{!activo.claseActivoCodigo}'
@@ -695,6 +767,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								xtype:'comboboxfieldbase',
 								fieldLabel: HreRem.i18n('fieldlabel.bancario.expediente.estado'),
 								bind: {
+									readOnly : '{esUA}',
 									store: '{comboEstadoExpRiesgoBancario}',
 									value: '{activo.estadoExpRiesgoCodigo}'
 								}
@@ -703,6 +776,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								xtype:'comboboxfieldbase',
 								fieldLabel: HreRem.i18n('fieldlabel.bancario.incorriente.estado'),
 								bind: {
+									readOnly : '{esUA}',
 									store: '{comboEstadoExpIncorrienteBancario}',
 									value: '{activo.estadoExpIncorrienteCodigo}'
 								}
@@ -711,6 +785,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								xtype:'comboboxfieldbase',
 								fieldLabel: HreRem.i18n('fieldlabel.bancario.entrada.activo.bankia.coenae'),
 								bind: {
+									readOnly : '{esUA}',
 									store: '{comboEntradaActivoBankia}',
 									hidden: '{!activo.isCarteraBankia}',
 									value: '{activo.entradaActivoBankiaCodigo}'

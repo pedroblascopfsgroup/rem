@@ -2,7 +2,7 @@
 --##########################################
 --## AUTOR=Sonia Garcia
 --## FECHA_CREACION=20190315
---## ARTEFACTO=batch
+--## ARTEFACTO=batch 
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-5823
 --## PRODUCTO=NO

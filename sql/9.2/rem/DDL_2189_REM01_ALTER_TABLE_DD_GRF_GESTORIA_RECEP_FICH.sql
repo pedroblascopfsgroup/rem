@@ -3,7 +3,7 @@
 --## AUTOR=Sonia Garcia
 --## FECHA_CREACION=20190315
 --## ARTEFACTO=batch
---## VERSION_ARTEFACTO=9.2
+--## VERSION_ARTEFACTO=9.2 
 --## INCIDENCIA_LINK=HREOS-5823
 --## PRODUCTO=NO
 --## Finalidad: Añadimos a la tabla de diccionario DD_GRF_GESTORIA_RECEP_FICH los campos que asignan a una gestoria el nombre de usuario (username) de tipo gestor de gestoría de plusvalía y postventa.

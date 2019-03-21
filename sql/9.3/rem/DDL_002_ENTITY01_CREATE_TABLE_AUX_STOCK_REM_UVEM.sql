@@ -210,7 +210,7 @@ BEGIN
     EXECUTE IMMEDIATE 'COMMENT ON COLUMN '||V_TEXT_TABLA||'.TIPO_GESTORIA IS '' 01 Administracion, 02 Plusvalia, 03 Postventa''';
     
     
-
+ 
 COMMIT;
 
 

@@ -4,7 +4,7 @@
 --## FECHA_CREACION=20190320
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.3
---## INCIDENCIA_LINK=HREOS-5530
+--## INCIDENCIA_LINK=HREOS-5530 
 --## PRODUCTO=NO
 --##
 --## Finalidad: Se crea nuevos motivos de rechazos

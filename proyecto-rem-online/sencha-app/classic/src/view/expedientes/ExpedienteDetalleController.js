@@ -1608,7 +1608,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
                          }
                     });
 
-                    ventanaWizard.down('anyadirnuevaofertaactivoadjuntardocumento').getForm().findField('cesionDatos').setValue(comprador.data.cesionDatosHaya);
+                    ventanaWizard.down('anyadirnuevaofertaactivoadjuntardocumento').getForm().findField('cesionDatosHaya').setValue(comprador.data.cesionDatosHaya);
                     ventanaWizard.down('anyadirnuevaofertaactivoadjuntardocumento').getForm().findField('comunicacionTerceros').setValue(comprador.data.comunicacionTerceros);
                     ventanaWizard.down('anyadirnuevaofertaactivoadjuntardocumento').getForm().findField('transferenciasInternacionales').setValue(comprador.data.transferenciasInternacionales);
 
@@ -1624,10 +1624,10 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 
 		}else{
 
-			var cesionDatos = ventanaDetalle.getForm().findField('cesionDatos').getValue(),
+			var cesionDatos = ventanaDetalle.getForm().findField('cesionDatosHaya').getValue(),
 			comunicacionTerceros = ventanaDetalle.getForm().findField('comunicacionTerceros').getValue(),
 			transferenciasInternacionales = ventanaDetalle.getForm().findField('transferenciasInternacionales').getValue();
-            ventanaDetalle.getForm().findField('cesionDatos').setValue(cesionDatos);
+            ventanaDetalle.getForm().findField('cesionDatosHaya').setValue(cesionDatos);
             ventanaDetalle.getForm().findField('comunicacionTerceros').setValue(comunicacionTerceros);
             ventanaDetalle.getForm().findField('transferenciasInternacionales').setValue(transferenciasInternacionales);
 

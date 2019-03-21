@@ -2650,10 +2650,8 @@ public class ActivoController extends ParadiseJsonController {
 	public ModelAndView propagarActivosMatriz(String idActivo, ModelMap model){
 		try{
 			
-			
-			Activo activoActual = activoApi.get(Long.parseLong(idActivo));
-			//Comprobaciones
-			DDTipoComercializacion comercializacionAlquiler = genericDao.get(DDTipoComercializacion.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDTipoComercializacion.CODIGOS_ALQUILER));
+			//Comprobaciones que se pedirán en la segunda parte del item HREOS-5784
+			/*DDTipoComercializacion comercializacionAlquiler = genericDao.get(DDTipoComercializacion.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDTipoComercializacion.CODIGOS_ALQUILER));
 			activoActual.setTipoComercializacion(comercializacionAlquiler);
 			activoActual.setBloqueoTipoComercializacionAutomatico(true);
 			
@@ -2681,12 +2679,10 @@ public class ActivoController extends ParadiseJsonController {
 				throw new JsonViewerException("La superficie sobre rasante  del activo es menor que la superficie de sobre rasante todal de las UAs");
 			}
 			
-			List<String> fields = new ArrayList<String>();
+
+ */	
 			
-//			if(ActivoPropagacionUAsFieldTabMap.mapUAs.get(tabData) != null) {
-//				fields.addAll(ActivoPropagacionUAsFieldTabMap.mapUAs.get(tabData));
-//			}
-			
+			model.put(RESPONSE_DATA_KEY, activoApi.getActivosPropagables(Long.valueOf(idActivo)));
 		} catch (Exception e) {
 			logger.error("error en activoController", e);
 			model.put(RESPONSE_SUCCESS_KEY, false);

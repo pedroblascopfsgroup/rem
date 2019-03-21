@@ -12,6 +12,7 @@ import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.activo.ActivoManager;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.factory.TabActivoFactoryApi;
 import es.pfsgroup.plugin.rem.model.Activo;
@@ -32,6 +33,9 @@ public class TabActivoDatosComunidad implements TabActivoService {
 	
 	@Autowired
 	private ActivoApi activoApi;
+	
+	@Autowired
+	private ActivoDao activoDao;
 
 	@Override
 	public String[] getKeys() {
@@ -101,7 +105,13 @@ public class TabActivoDatosComunidad implements TabActivoService {
 				
 				
 			}
-			datosComunidad.setCamposPropagables(TabActivoService.TAB_COMUNIDAD_PROPIETARIOS);
+			
+			if(!Checks.esNulo(activo) && activoDao.isActivoMatriz(activo.getId())) {	
+				datosComunidad.setCamposPropagablesUas(TabActivoService.TAB_COMUNIDAD_PROPIETARIOS);
+			}else {
+				// Buscamos los campos que pueden ser propagados para esta pestaña
+				datosComunidad.setCamposPropagables(TabActivoService.TAB_COMUNIDAD_PROPIETARIOS);
+			}
 
 		} catch (IllegalAccessException e) {
 			e.printStackTrace();

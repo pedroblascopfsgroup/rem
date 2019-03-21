@@ -75,7 +75,13 @@ public class TabActivoCondicionantesDisponibilidad implements TabActivoService {
 			BeanUtils.copyProperties(activoCondicionantesDisponibilidadDto, condicionantesDisponibilidad);
 		}
 		
-		activoCondicionantesDisponibilidadDto.setCamposPropagables(TabActivoService.TAB_ACTIVO_CONDICIONANTES_DISPONIBILIDAD);
+		if(!Checks.esNulo(activo) && activoDao.isActivoMatriz(activo.getId())) {	
+			activoCondicionantesDisponibilidadDto.setCamposPropagablesUas(TabActivoService.TAB_ACTIVO_CONDICIONANTES_DISPONIBILIDAD);
+		}else {
+			// Buscamos los campos que pueden ser propagados para esta pestaña
+			activoCondicionantesDisponibilidadDto.setCamposPropagables(TabActivoService.TAB_ACTIVO_CONDICIONANTES_DISPONIBILIDAD);
+		}
+		
 		return activoCondicionantesDisponibilidadDto;
 	}
 

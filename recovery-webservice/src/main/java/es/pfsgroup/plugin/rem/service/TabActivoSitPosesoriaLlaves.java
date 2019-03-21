@@ -16,6 +16,7 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoPatrimonioDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
@@ -57,6 +58,8 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 	@Autowired
 	private NotificatorServiceDesbloqExpCambioSitJuridica notificatorServiceDesbloqueoExpediente;
 	
+	@Autowired
+	private ActivoDao activoDao;
 	
 	@Autowired
 	private ActivoApi activoApi;
@@ -146,8 +149,13 @@ public class TabActivoSitPosesoriaLlaves implements TabActivoService {
 		
 
 		// HREOS-2761: Buscamos los campos que pueden ser propagados para esta pestaña
-		 activoDto.setCamposPropagables(TabActivoService.TAB_SIT_POSESORIA_LLAVES);
-		
+		if(!Checks.esNulo(activo) && activoDao.isActivoMatriz(activo.getId())) {	
+			activoDto.setCamposPropagablesUas(TabActivoService.TAB_SIT_POSESORIA_LLAVES);
+		}else {
+			// Buscamos los campos que pueden ser propagados para esta pestaña
+			activoDto.setCamposPropagables(TabActivoService.TAB_SIT_POSESORIA_LLAVES);
+		}
+	
 		return activoDto;
 		
 	}

@@ -27,6 +27,7 @@ import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDEntidadAdjudicataria;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBAdjudicacionBien;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBInformacionRegistralBien;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
@@ -77,6 +78,8 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 	@Autowired
 	private NotificatorServiceDesbloqExpCambioSitJuridica notificatorServiceDesbloqueoExpediente;
 	
+	@Autowired
+	private ActivoDao activoDao;
 	
 	@Autowired
 	private ActivoApi activoApi;
@@ -241,9 +244,14 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 				BeanUtils.copyProperty(activoDto, "calificacionNegativa", DDCalificacionNegativa.CODIGO_NO);
 			}
 			
-		
+			
 		// HREOS-2761: Buscamos los campos que pueden ser propagados para esta pestaña
-		activoDto.setCamposPropagables(TabActivoService.TAB_DATOS_REGISTRALES);
+			if(!Checks.esNulo(activo) && activoDao.isActivoMatriz(activo.getId())) {	
+				activoDto.setCamposPropagablesUas(TabActivoService.TAB_DATOS_REGISTRALES);
+			}else {
+				// Buscamos los campos que pueden ser propagados para esta pestaña
+				activoDto.setCamposPropagables(TabActivoService.TAB_DATOS_REGISTRALES);
+			}
 		
 		return activoDto;
 		

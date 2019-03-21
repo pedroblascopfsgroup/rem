@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import es.capgemini.devon.dto.WebDto;
+import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.api.ActivoCargasApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.DtoActivoCargasTab;
@@ -16,7 +18,9 @@ public class TabActivoCargas implements TabActivoService {
     
 	@Autowired
 	private ActivoCargasApi activoCargasApi;
-
+	
+	@Autowired
+	private ActivoDao activoDao;
 
 	@Override
 	public String[] getKeys() {
@@ -41,7 +45,13 @@ public class TabActivoCargas implements TabActivoService {
 			}
 		
 		// HREOS-2761: Buscamos los campos que pueden ser propagados para esta pestaña
-		activoDto.setCamposPropagables(TabActivoService.TAB_CARGAS_ACTIVO);
+			if(!Checks.esNulo(activo) && activoDao.isActivoMatriz(activo.getId())) {	
+				activoDto.setCamposPropagablesUas(TabActivoService.TAB_CARGAS_ACTIVO);
+			}else {
+				// Buscamos los campos que pueden ser propagados para esta pestaña
+				activoDto.setCamposPropagables(TabActivoService.TAB_CARGAS_ACTIVO);
+			}
+	
 		
 		return activoDto;
 	}

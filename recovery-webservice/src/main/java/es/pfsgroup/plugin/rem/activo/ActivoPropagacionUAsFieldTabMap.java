@@ -34,11 +34,10 @@ public class ActivoPropagacionUAsFieldTabMap {
     			Arrays.asList(
     					// identificacion	
     	    		"estadoActivoCodigo",
-    	    		"tipoUsoDestino",    // ?? DDTipoUsoDestino					NO
+    	    		"tipoUsoDestino",    
     	    		"motivoActivo",
     	    			// direccion
     	    		"comunidadAutonomaCodigo", // ?? Se saca a partir de la provincia
-    	    			
     	    		"inferiorMunicipioCodigo",
     	    		"municipioCodigo",
     	    		"provinciaCodigo",			
@@ -46,8 +45,10 @@ public class ActivoPropagacionUAsFieldTabMap {
     	    		"longitud",
     	    		"latitud",
     	    		"codPostal",
-    	    		"pais",
-
+    	    		"pais"
+ /*
+  * CAMPOS QUE SE VAN A PEDIR PROPAGAR EN SEGUNDAS PARTES DEL ITEM HREOS-5784
+  * 
     	    			// perimetro
     	    		"incluidoEnPerimetro",	//PerimetroHaya
 
@@ -63,16 +64,16 @@ public class ActivoPropagacionUAsFieldTabMap {
     				"numExpRiesgo",
     				"estadoExpRiesgoCodigo",
     				"productoDescripcion",
-    				"estadoExpIncorrienteCodigo"
+    				"estadoExpIncorrienteCodigo"*/
     			));
 
 
     	
-    	pmap.put(TAB_DATOS_REGISTRALES,
+    /*	pmap.put(TAB_DATOS_REGISTRALES,
     			Arrays.asList(
 
 					//Datos de inscripcion
-					"provinciaRegistro",
+					"provinciaRegistro" ,
 					"poblacionRegistro",
 					"numRegistro",
 					"tomo",
@@ -98,7 +99,7 @@ public class ActivoPropagacionUAsFieldTabMap {
 
     	pmap.put(TAB_SIT_POSESORIA,
     			Arrays.asList(
-			    	"fechaRevisionEstado",
+			    	"fechaRevisionEstado" /*,
 			    	"ocupado",
 			    	"riesgoOcupacion",
 			    	"conTituloTPA",
@@ -111,7 +112,7 @@ public class ActivoPropagacionUAsFieldTabMap {
 
     	pmap.put(TAB_INFORME_COMERCIAL,
     			Arrays.asList(
-					"descripcionComercial",
+					"descripcionComercial" /*,
 					"anyoConstruccion",
 					"anyoRehabilitacion",
 					"aptoPublicidad",
@@ -388,19 +389,19 @@ public class ActivoPropagacionUAsFieldTabMap {
 
     	pmap.put(TAB_INFO_ADMINISTRATIVA,
     			Arrays.asList(
-    				"sujetoAExpediente",
+    				"sujetoAExpediente"/*,
     				"promocionVpo"
     			));
 
     	pmap.put(TAB_CARGAS_ACTIVO,
     			Arrays.asList(
-    				"fechaRevisionCarga",
+    				"fechaRevisionCarga" /*,
     				"conCargas"
     			));
 
     	pmap.put(TAB_DATOS_PUBLICACION,
     			Arrays.asList(
-    				"idActivo",
+    				"idActivo"  /*,
     				"estadoPublicacionVenta",
     				"estadoPublicacionAlquiler",
     				"precioWebVenta",
@@ -432,7 +433,7 @@ public class ActivoPropagacionUAsFieldTabMap {
 
 	    pmap.put(TAB_TASACION,
 			    Arrays.asList(
-					    "id",
+					    "id" /*,
 					    "fechaValorTasacion",
 					    "fechaSolicitudTasacion",
 					    "fechaRecepcionTasacion",
@@ -442,7 +443,7 @@ public class ActivoPropagacionUAsFieldTabMap {
 
     	pmap.put(TAB_ACTIVO_CONDICIONANTES_DISPONIBILIDAD,
     			Arrays.asList(
-    					"idActivo",
+    					"idActivo" /*,
     					"ruina",
     					"pendienteInscripcion",
     					"obraNuevaSinDeclarar",
@@ -458,7 +459,7 @@ public class ActivoPropagacionUAsFieldTabMap {
 
     	pmap.put(TAB_COMERCIAL,
     			Arrays.asList(
-					"id", // ID de activo.
+					"id" /*, // ID de activo.
 					"situacionComercialCodigo",
 					"fechaVenta",
 					"expedienteComercialVivo",
@@ -469,13 +470,13 @@ public class ActivoPropagacionUAsFieldTabMap {
 
     	pmap.put(TAB_ADMINISTRACION,
     			Arrays.asList(
-    				"numActivo",
+    				"numActivo"/*,
     				"ibiExento"
     			));
 
     	pmap.put(TAB_COMUNIDAD_PROPIETARIOS,
     			Arrays.asList(
-    				"fechaComunicacionComunidad",
+    				"fechaComunicacionComunidad" /*,
     				"envioCartas",
     				"numCartas",
     				"contactoTel",
@@ -489,13 +490,13 @@ public class ActivoPropagacionUAsFieldTabMap {
 
       	pmap.put(TAB_PLUSVALIA_VENTA,
     			Arrays.asList(
-    				"exento",
+    				"exento" /*,
     				"autoliquidacion",
     				"fechaEscritoAyt",
     				"observaciones"
 
     			));
-
+*/
         mapUAs = Collections.unmodifiableMap(pmap);
     }
 }

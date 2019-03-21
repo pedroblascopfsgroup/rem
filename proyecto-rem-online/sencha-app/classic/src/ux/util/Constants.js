@@ -548,7 +548,8 @@ Ext.define('HreRem.ux.util.Constants', {
 	TIPO_TITULO_ACTIVO: {
 		JUDICIAL: '01',
 		NO_JUDICIAL: '02',
-		PDV: '03'
+		PDV: '03',
+		UNIDAD_ALQUILABLE: '05'		
 	},
 
 	TIPO_RESOLUCION_COMITE: {

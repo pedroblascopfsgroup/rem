@@ -501,6 +501,26 @@ public class ActivoAgrupacionDaoImpl extends AbstractEntityDao<ActivoAgrupacion,
 
 		return resultado;
 	}
+
+	@Override
+	public Double getPorcentajeParticipacionUATotalDeUnAMById(Long id) {
+		Double porcentajeUAs = 0.00;
+		try {
+			HQLBuilder hb = new HQLBuilder("SELECT SUM(participacionUA) FROM ActivoAgrupacionActivo AGA WHERE AGA.agrupacion.id = " + id + " AND AGA.principal = 0");
+
+			List<Double> listPorcentajeUAs = (List<Double>) getHibernateTemplate().find(hb.toString());
+			
+			if (!Checks.estaVacio(listPorcentajeUAs)) {
+				porcentajeUAs = listPorcentajeUAs.get(0);
+			}
+			
+			return porcentajeUAs;
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
 	
 	/*@Override
 	public Page getListActivosAgrupacionByIdAgrupacion(DtoAgrupacionFilter dto, Usuario usuLogado) {

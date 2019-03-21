@@ -219,11 +219,12 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private Boolean esGestorAlquiler;
 	
 	//HREOS-5573
-		private Boolean unidadAlquilable;
-		private Boolean activoMatriz;
-		private Long numActivoMatriz;
-		private Double porcentajeParticipacion;
-		private Long unidadesAlquilablesEnAgrupacion;
+	private Boolean unidadAlquilable;
+	private Boolean activoMatriz;
+	private Long numActivoMatriz;
+	private Double porcentajeParticipacion;
+	private Long unidadesAlquilablesEnAgrupacion;
+	private Long idPrinexHPM;
 	
 	
 	public Boolean getTieneOfertaAlquilerViva() {
@@ -1761,6 +1762,14 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 
 	public void setActivosPropagablesUas(List<Activo> activosPropagablesUas) {
 		this.activosPropagablesUas = activosPropagablesUas;
+	}
+
+	public Long getIdPrinexHPM() {
+		return idPrinexHPM;
+	}
+
+	public void setIdPrinexHPM(Long idPrinexHPM) {
+		this.idPrinexHPM = idPrinexHPM;
 	}
 	
 }

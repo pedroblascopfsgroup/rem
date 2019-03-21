@@ -31,6 +31,8 @@ import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDCicCodigoIsoCirbeBKP;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBLocalizacionesBien;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoPatrimonioDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
@@ -44,6 +46,7 @@ import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.TareaActivoApi;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoBancario;
 import es.pfsgroup.plugin.rem.model.ActivoEstadosInformeComercialHistorico;
@@ -92,6 +95,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 	private static final String AVISO_MENSAJE_GESTOR_COMERCIAL = "activo.aviso.descripcion.cambio.gestor.comercial";
 	private static final String MSG_ERROR_DESTINO_COMERCIAL_OFERTAS_VIVAS_VENTA = "msg.error.tipo.comercializacion.ofertas.vivas";
 	private static final String MSG_ERROR_DESTINO_COMERCIAL_OFERTAS_VIVAS_ALQUILER = "msg.error.tipo.comercializacion.ofertas.vivas";
+	private static final String ERROR_PORCENTAJE_PARTICIPACION="msg.error.porcentaje.participacion";
 
 
 	@Autowired
@@ -149,6 +153,12 @@ public class TabActivoDatosBasicos implements TabActivoService {
 
 	@Resource
 	private MessageService messageServices;
+	
+	@Autowired
+	private ActivoAgrupacionDao activoAgrupacionDao;
+	
+	@Autowired
+	private ActivoAgrupacionActivoDao activoAgrupacionActivoDao;
 	
 	protected static final Log logger = LogFactory.getLog(TabActivoDatosBasicos.class);	
 
@@ -464,7 +474,18 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		activoDto.setEstadoAlquiler(activoEstadoPublicacionApi.getEstadoIndicadorPublicacionAlquiler(activo));
 
 		// Datos de activo bancario del activo al Dto de datos basicos
+		boolean esUA = activoDao.isUnidadAlquilable(activo.getId());
 		ActivoBancario activoBancario = activoApi.getActivoBancarioByIdActivo(activo.getId());
+		
+		if(esUA) {
+			//Cuando es una UA, cargamos los datos de su AM
+			ActivoAgrupacion agrupacion = activoDao.getAgrupacionPAByIdActivo(activo.getId());
+			Activo activoMatriz = activoAgrupacionActivoDao.getActivoMatrizByIdAgrupacion(agrupacion.getId());
+			
+			if (!Checks.esNulo(activoMatriz)) {
+				activoBancario = activoApi.getActivoBancarioByIdActivo(activoMatriz.getId());
+			}
+		}
 		
 		if(!Checks.esNulo(activoBancario) && !Checks.esNulo(activoBancario.getClaseActivo())) {
 			BeanUtils.copyProperty(activoDto, "claseActivoCodigo", activoBancario.getClaseActivo().getCodigo());
@@ -653,6 +674,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 							
 						}else if (agrupacionActivo.getAgrupacion().getTipoAgrupacion().getCodigo().equals(DDTipoAgrupacion.AGRUPACION_PROMOCION_ALQUILER) && agrupacionActivo.getPrincipal() == 0) {
 							activoDto.setPorcentajeParticipacion(agrupacionActivo.getParticipacionUA());
+							activoDto.setIdPrinexHPM(agrupacionActivo.getIdPrinexHPM());
 							Filter filtroAgrupacion = genericDao.createFilter(FilterType.EQUALS, "AGR_ID", agrupacionActivo.getAgrupacion().getId());
 							List<ActivoAgrupacionActivo> UAsEnAgrupacion = genericDao.getList(ActivoAgrupacionActivo.class, filtroAgrupacion);
 							if (!Checks.estaVacio(UAsEnAgrupacion)) {
@@ -1002,6 +1024,30 @@ public class TabActivoDatosBasicos implements TabActivoService {
 					ofertaApi.resetPBC(expediente, false);
 				}
 			}
+			
+
+			if (!Checks.esNulo(activo)) {
+				boolean isUnidadAlquilable = activoDao.isUnidadAlquilable(activo.getId());
+				
+				if(isUnidadAlquilable) {
+					ActivoAgrupacion agrupacion = activoDao.getAgrupacionPAByIdActivo(activo.getId());
+					
+					if(!Checks.esNulo(agrupacion)) {
+						//Los porcentajes de participación se encuentran en la tabla que relaciona agrupaciones con activos (AGA).
+						Double porcentajeUAs = activoAgrupacionDao.getPorcentajeParticipacionUATotalDeUnAMById(agrupacion.getId());			//Obtenemos la suma de porcentajes
+						Filter filterIdActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
+						Filter filterIdAgrupacion = genericDao.createFilter(FilterType.EQUALS, "agrupacion.id", agrupacion.getId());
+						ActivoAgrupacionActivo aga = genericDao.get(ActivoAgrupacionActivo.class, filterIdActivo, filterIdAgrupacion);		//Filtramos las agas en función del idAgrupacion y el idActivo
+						
+						//Si el porcentaje total se pasa de 100
+						if(porcentajeUAs - aga.getParticipacionUA() + dto.getPorcentajeParticipacion() > 100) {
+							throw new JsonViewerException(messageServices.getMessage(ERROR_PORCENTAJE_PARTICIPACION));
+						} else {
+							aga.setParticipacionUA(dto.getPorcentajeParticipacion());							
+						}
+					}
+				}
+			}		
 
 		} catch(JsonViewerException jve) {
 			throw jve;

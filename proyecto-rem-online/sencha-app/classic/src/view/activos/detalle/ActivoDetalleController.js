@@ -3719,7 +3719,10 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			var data = JSON.parse(jsonData);
 
 			if (data.success !== null && data.success !== undefined && data.success === "false") {
-				me.getViewModel().getData().situacionPosesoria.reject();
+				if (me.getViewModel().getData().situacionPosesoria != undefined)
+					me.getViewModel().getData().situacionPosesoria.reject();
+				if (me.getViewModel().getData().patrimonio != undefined)
+					me.getViewModel().getData().patrimonio.reject();
 				me.getViewModel().getData().activo.reject();
 				scope.fireEvent("errorToast", data.msgError);
 			} else {

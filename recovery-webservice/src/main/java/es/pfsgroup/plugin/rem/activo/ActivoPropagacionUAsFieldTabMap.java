@@ -34,7 +34,7 @@ public class ActivoPropagacionUAsFieldTabMap {
     			Arrays.asList(
     					// identificacion	
     	    		"estadoActivoCodigo",
-    	    		"tipoUsoDestino",    
+    	    		"tipoUsoDestinoCodigo",  //TipoUsoDestino    
     	    		"motivoActivo",
     	    			// direccion
     	    		"comunidadAutonomaCodigo", // ?? Se saca a partir de la provincia
@@ -45,7 +45,7 @@ public class ActivoPropagacionUAsFieldTabMap {
     	    		"longitud",
     	    		"latitud",
     	    		"codPostal",
-    	    		"pais"
+    	    		"paisCodigo"
  /*
   * CAMPOS QUE SE VAN A PEDIR PROPAGAR EN SEGUNDAS PARTES DEL ITEM HREOS-5784
   * 

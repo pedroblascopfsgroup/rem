@@ -88,12 +88,8 @@ Ext.define('HreRem.view.activos.detalle.OpcionesPropagacionCambiosMatrizExpedien
     		items: [
     			{
                   xtype: 'label',
-                  html: HreRem.i18n("txt.instrucciones.cambios.activo.masivo2") + "</br></br>"
+                  html: HreRem.i18n("txt.instrucciones.cambios.activo.masivo.UAS") + "</br></br>"
 			    },  
-			    {
-	                xtype: 'label',
-	                html: HreRem.i18n("Va usted a propagar los cambios realizados en el activo, sobre sus UA's asociadas.") + "</br></br>"
-				 }, 
 	    		{
 			        xtype: 'radiogroup',
 			        reference: 'opcionesPropagacion',

@@ -61,10 +61,6 @@ Ext.define('HreRem.model.ContratosPatrimonioModel', {
     			type: 'boolean'
     		},
     		{
-    			name: 'tieneRegistro',
-    			type: 'boolean'
-    		},
-    		{
     			name: 'numeroActivoHaya'
     		},
     		{

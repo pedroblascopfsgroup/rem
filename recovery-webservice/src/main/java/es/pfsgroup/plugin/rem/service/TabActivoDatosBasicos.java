@@ -31,7 +31,6 @@ import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDCicCodigoIsoCirbeBKP;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBLocalizacionesBien;
-import es.pfsgroup.plugin.rem.activo.dao.ActivoPatrimonioContratoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoPatrimonioDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
@@ -50,7 +49,6 @@ import es.pfsgroup.plugin.rem.model.ActivoEstadosInformeComercialHistorico;
 import es.pfsgroup.plugin.rem.model.ActivoInfoLiberbank;
 import es.pfsgroup.plugin.rem.model.ActivoLocalizacion;
 import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
-import es.pfsgroup.plugin.rem.model.ActivoPatrimonioContrato;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
 import es.pfsgroup.plugin.rem.model.DtoEstadosInformeComercialHistorico;
@@ -145,9 +143,6 @@ public class TabActivoDatosBasicos implements TabActivoService {
 	@Autowired
 	private TareaActivoApi tareaActivoApi;
 
-	@Autowired
-	private ActivoPatrimonioContratoDao activoPatrimonioContratoDao;
-	
 	@Resource
 	private MessageService messageServices;
 	
@@ -628,15 +623,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 				break;
 			}
 		}
-		
-		Boolean tieneRegistro = false;
-		List<ActivoPatrimonioContrato> listActivoPatrimonioContrato = activoPatrimonioContratoDao.getActivoPatrimonioContratoByActivo(activo.getId());
-		if(!Checks.estaVacio(listActivoPatrimonioContrato)) {
-			tieneRegistro = true;
-		} 
-		activoDto.setTieneRegistroContrato(tieneRegistro);
-		
-		
+
 		return activoDto;
 	}
 

@@ -176,18 +176,28 @@ public class ActivoOfertaController extends ParadiseJsonController {
 			e.printStackTrace();
 		}
 		
-		Filter filtroDoc;
-		if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
-			filtroDoc = genericDao.createFilter(FilterType.EQUALS, "idDocRestClient", listaAdjuntos.get(0).getId());
-		} else {
-			filtroDoc = genericDao.createFilter(FilterType.EQUALS, "id", listaAdjuntos.get(0).getId());
+		if(listaAdjuntos != null && listaAdjuntos.size() > 0){
+			Filter filtroDoc;
+			if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
+				filtroDoc = genericDao.createFilter(FilterType.EQUALS, "idDocRestClient", listaAdjuntos.get(0).getId());
+			} else {
+				filtroDoc = genericDao.createFilter(FilterType.EQUALS, "id", listaAdjuntos.get(0).getId());
+			}
+			
+			Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
+			AdjuntoComprador adjComprador = genericDao.get(AdjuntoComprador.class, filtroDoc, filtroBorrado);
+	
+			boolean success = false;
+			if(adjComprador != null){
+				//esta en el ggdd y en el modelo de datos
+				success = activoOfertaAdapter.deleteAdjunto(adjComprador, clienteGDPR);
+			}else{
+				//esta en el ggdd pero no en el modelo
+				success = activoOfertaAdapter.deleteAdjunto(listaAdjuntos.get(0).getId());
+			}
+			
+			model.put(RESPONSE_SUCCESS_KEY, success);
 		}
-		
-		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
-		AdjuntoComprador adjComprador = genericDao.get(AdjuntoComprador.class, filtroDoc, filtroBorrado);
-
-		boolean success = activoOfertaAdapter.deleteAdjunto(adjComprador, clienteGDPR);
-		model.put(RESPONSE_SUCCESS_KEY, success);
 
 		return createModelAndViewJson(model);
 	}

@@ -22,7 +22,7 @@ Ext.define('HreRem.view.expedientes.DatosCompradorWizard', {
 			me.buttons = [ { itemId: 'btnModificar', text: HreRem.i18n('btn.modificar'), handler: 'onClickBotonModificarComprador', bind:{disabled: !me.esEditable()}},
     					   { itemId: 'btnCancelar', text: HreRem.i18n('btn.cancelBtnText'), handler: 'onClickBotonCancelarWizardComprador'}];
     	} else {
-    		me.buttons = [ { itemId: 'btnCrear', text: HreRem.i18n('btn.crear.comprador'), handler: 'onClickBotonCrearComprador'},
+    		me.buttons = [ { itemId: 'btnCrear', text: HreRem.i18n('btn.crear.comprador'), handler: 'onClickBotonCrearComprador', listeners: {click: 'comprobarFormato'}},
     					   { itemId: 'btnCancelar', text: HreRem.i18n('btn.cancelBtnText'), handler: 'onClickBotonCancelarWizardComprador'}];
     	}
 
@@ -207,7 +207,7 @@ Ext.define('HreRem.view.expedientes.DatosCompradorWizard', {
 			        	padding: '5px',
 			        	bind: {
 		            		value: '{comprador.direccion}',
-		            		allowBlank: '{expediente.esObligatorio}'
+		            		allowBlank: '{esObligatorio}'
 		            	}
 			        },
 
@@ -220,8 +220,7 @@ Ext.define('HreRem.view.expedientes.DatosCompradorWizard', {
 						chainedReference: 'municipioCombo',
 		            	bind: {
 		            		store: '{comboProvincia}',
-		            	    value: '{comprador.provinciaCodigo}'  ,
-		            		allowBlank: '{expediente.esObligatorio}'
+		            	    value: '{comprador.provinciaCodigo}'
 		            	},
 		            	displayField: 'descripcion',
 						valueField: 'codigo',
@@ -248,8 +247,7 @@ Ext.define('HreRem.view.expedientes.DatosCompradorWizard', {
 		            	bind: {
 		            		store: '{comboMunicipio}',
 		            		value: '{comprador.municipioCodigo}',
-		            		disabled: '{!comprador.provinciaCodigo}',
-		            		allowBlank: '{expediente.esObligatorio}'
+		            		disabled: '{!comprador.provinciaCodigo}'
 		            	}
 					},
 			        { 

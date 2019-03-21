@@ -357,13 +357,12 @@ public class GastoDaoImpl extends AbstractEntityDao<GastoProveedor, Long> implem
 
 	@Override
 	public GastoProveedor getGastoPorNumeroGastoHaya(Long numeroGastoHaya) {
-		Session session = getSession();
+		Session session = this.getSessionFactory().getCurrentSession();
 		Criteria criteria = session.createCriteria(GastoProveedor.class);
 		criteria.add(Restrictions.eq("numGastoHaya", numeroGastoHaya));
 
 		GastoProveedor gastoProveedor = HibernateUtils.castObject(GastoProveedor.class, criteria.uniqueResult());
-		session.disconnect();
-
+		
 		return gastoProveedor;
 	}
 }

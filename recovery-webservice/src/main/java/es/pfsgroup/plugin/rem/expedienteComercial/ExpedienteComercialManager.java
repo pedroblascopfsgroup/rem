@@ -3795,8 +3795,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			if (!Checks.esNulo(comprador.getPorcentajeCompra())){						//Porcentaje de compra
 				if (!Checks.esNulo(comprador.getCodTipoDocumento())) {					//Tipo de documento
 					if (!Checks.esNulo(comprador.getNumDocumento())) {					//Número de documento
-						if (!Checks.esNulo(comprador.getProvinciaCodigo())) {			//Provincia
-							if (!Checks.esNulo(comprador.getMunicipioCodigo())) {		//Municipio
+						if (!Checks.esNulo(comprador.getProvinciaCodigo()) || !DDPaises.CODIGO_PAIS_ESPANYA.equals(comprador.getCodigoPais())) {			//Provincia
+							if (!Checks.esNulo(comprador.getMunicipioCodigo()) || !DDPaises.CODIGO_PAIS_ESPANYA.equals(comprador.getCodigoPais())) {		//Municipio
 								if (!Checks.esNulo(comprador.getDireccion())) {			//Dirección
 									if (!Checks.esNulo(comprador.getCodigoPais())) {	//País de residencia
 										
@@ -8457,12 +8457,23 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					stringAux = stringAux + dto.getMunicipio();
 				}
 				dto.setCodPostMunicipio(stringAux);
-				stringAux = "";
 				
-				if(Checks.esNulo(dto.getCalle())) {
+				stringAux = "";
+				if(Checks.esNulo(dto.getTipoVia())) {
 					stringAux="";
+				}else {
+					stringAux = dto.getTipoVia() + " ";
+				}
+				if(Checks.esNulo(dto.getCalle())) {
+					stringAux= stringAux + "";
+				}else{
+					stringAux = stringAux + dto.getCalle() + " ";
+				}
+				if(Checks.esNulo(dto.getNumDomicilio())){
+					stringAux = stringAux + "";
 				}else{
 					stringAux = dto.getCalle() + " ";
+					stringAux = stringAux + dto.getNumDomicilio() + " ";
 				}
 				if(Checks.esNulo(dto.getPiso())){
 					stringAux= stringAux + "";

@@ -155,8 +155,6 @@ public class ExcelReportGenerator implements ExcelReportGeneratorApi {
 				
 				DtoPropuestaAlqBankia dtoPAB = l_DtoPropuestaAlq.get(i);
 				
-//				dtoPAB.setCompradorDocumento("21800125S");
-//				dtoPAB.setNombreCompleto("adhashdojiasdasojidoji");
 				
 				if (primero) {
 					myWorkBook.setSheetName(1, dtoPAB.getNumActivoUvem().toString());

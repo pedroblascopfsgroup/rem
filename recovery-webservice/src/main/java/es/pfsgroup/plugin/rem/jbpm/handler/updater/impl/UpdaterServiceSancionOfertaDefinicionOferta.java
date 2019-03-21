@@ -142,14 +142,10 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 				 
 				expediente.setEstado(estado);
 			}
-		}
-		boolean aplicaSuperior = false;
-		DDComiteSancion comite = null;
-		ExpedienteComercial expediente = null;
-		for (TareaExternaValor valor : valores) {
-			Oferta ofertaAceptada = ofertaApi.trabajoToOferta(tramite.getTrabajo());			
-			if (!Checks.esNulo(ofertaAceptada)) {
-				expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
+			
+			boolean aplicaSuperior = false;
+			DDComiteSancion comite = null;
+			for (TareaExternaValor valor : valores) {			
 				if (COMBO_RIESGO.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 					if (DDSiNo.SI.equals(valor.getValor())) {
 						expediente.setRiesgoReputacional(1);
@@ -188,13 +184,12 @@ public class UpdaterServiceSancionOfertaDefinicionOferta implements UpdaterServi
 					}
 				}
 			}
-		}
 
-		if(!Checks.esNulo(expediente) && !aplicaSuperior && !Checks.esNulo(comite)) {
-			expediente.setComiteSuperior(comite);
-			expediente.setComiteSancion(comite);
+			if(!aplicaSuperior && !Checks.esNulo(comite)) {
+				expediente.setComiteSuperior(comite);
+				expediente.setComiteSancion(comite);
+			}
 		}
-		
 	}
 
 	public String[] getCodigoTarea() {

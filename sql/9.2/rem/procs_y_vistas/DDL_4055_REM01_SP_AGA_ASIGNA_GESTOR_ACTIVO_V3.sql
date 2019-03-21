@@ -1,25 +1,27 @@
 --/*
 --##########################################
 --## AUTOR=Daniel Algaba
---## FECHA_CREACION=20190213
+--## FECHA_CREACION=20190321
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-5443
+--## INCIDENCIA_LINK=HREOS-5838
 --## PRODUCTO=NO
 --## Finalidad: Procedimiento almacenado que asigna Gestores de todos los tipos.
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial Pau Serrano
---##		0.2 Añadidos gestor comercial backoffice liberbank SOG
---##		0.3 Modificación para que los grestores de la tabla ACT_GES_DIST_GESTORES que no tengan cartera también los asigne al activo
---##		0.4 Añadidos gestor de reserva para Cajamar - REMVIP-2129
---##		0.5 Añadidos los nuevos gestores comerciales de alquiler (gestor y supervisor) - HREOS-5064
---##        0.6 HREOS-5387 Daniel Algaba: añadimos el Supervisor comercial Backoffice Inmobiliario
---##		0.7 HREOS-5049 Carlos López: Optimización
---##		0.8 HREOS-5160 Mariam Lliso: modificada la asignación de gestores
---##		0.9 HREOS-5239 Daniel Algaba: corrección multicartera CERBERUS
+--##        0.2 Añadidos gestor comercial backoffice liberbank SOG
+--##        0.3 Modificación para que los grestores de la tabla ACT_GES_DIST_GESTORES que no tengan cartera también los asigne al activo
+--##        0.4 Añadidos gestor de reserva para Cajamar - REMVIP-2129
+--##        0.5 Añadidos los nuevos gestores comerciales de alquiler (gestor y supervisor) - HREOS-5064
+--##        0.6 HREOS-5049 Carlos López: Optimización
+--##        0.7 HREOS-5160 Mariam Lliso: modificada la asignación de gestores
+--##        0.8 HREOS-5387 Daniel Algaba: añadimos el Supervisor comercial Backoffice Inmobiliario
+--##        0.9 HREOS-5239 Daniel Algaba: corrección multicartera CERBERUS
 --##        1.0 HREOS-5443 Daniel Algaba: corrección para que no filtre por la TMP_GEST_CONT en activos con subcarteras
+--##        1.1 HREOS-5838 Guillermo Llidó : se añaden las subcarteras de Agora para que pueda asignar gestores
+--##        1.2 HREOS-5838 Daniel Algaba : corrección subcarteras
 --##########################################
 --*/
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
@@ -66,7 +68,7 @@ BEGIN
         V_GESTOR := V_GESTOR_FINANCIERO;
         V_CLASE_ACTIVO :=  'JOIN '||V_ESQUEMA||'.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = ACT.DD_CRA_ID
             JOIN '||V_ESQUEMA||'.DD_SCR_SUBCARTERA SCR ON SCR.DD_CRA_ID = CRA.DD_CRA_ID AND SCR.DD_SCR_ID = ACT.DD_SCR_ID
-            WHERE SCR.DD_SCR_CODIGO IN (''01'',''03'',''05'',''10'',''12'',''21'',''134'',''38'',''00'')';
+            WHERE SCR.DD_SCR_CODIGO IN (''01'',''03'',''05'',''10'',''12'',''21'',''134'',''38'',''137'')';
         V_CLASE_ACTIVO_NULL :=  'LEFT JOIN '||V_ESQUEMA||'.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = ACT.DD_CRA_ID
             LEFT JOIN '||V_ESQUEMA||'.DD_SCR_SUBCARTERA SCR ON SCR.DD_CRA_ID = CRA.DD_CRA_ID AND SCR.DD_SCR_ID = ACT.DD_SCR_ID
             WHERE SCR.DD_SCR_CODIGO IS NULL';
@@ -74,7 +76,7 @@ BEGIN
         V_GESTOR := V_GESTOR_INMOBILIAR;
         V_CLASE_ACTIVO := 'JOIN '||V_ESQUEMA||'.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = ACT.DD_CRA_ID
             JOIN '||V_ESQUEMA||'.DD_SCR_SUBCARTERA SCR ON SCR.DD_CRA_ID = CRA.DD_CRA_ID AND SCR.DD_SCR_ID = ACT.DD_SCR_ID
-            WHERE SCR.DD_SCR_CODIGO NOT IN (''01'',''03'',''05'',''10'',''12'',''21'',''134'',''38'',''00'')';
+            WHERE SCR.DD_SCR_CODIGO NOT IN (''01'',''03'',''05'',''10'',''12'',''21'',''134'',''38'',''137'')';
         V_CLASE_ACTIVO_NULL := 'LEFT JOIN '||V_ESQUEMA||'.DD_CRA_CARTERA CRA ON CRA.DD_CRA_ID = ACT.DD_CRA_ID
             LEFT JOIN '||V_ESQUEMA||'.DD_SCR_SUBCARTERA SCR ON SCR.DD_CRA_ID = CRA.DD_CRA_ID AND SCR.DD_SCR_ID = ACT.DD_SCR_ID
             WHERE SCR.DD_SCR_CODIGO IS NULL';

@@ -375,8 +375,7 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 		idSistemaOrigen = trabajo.getActivo().getNumActivo().toString();
 		DDCartera cartera = trabajo.getActivo().getCartera();
 		DDSubcartera subcartera = trabajo.getActivo().getSubcartera();
-		ActivoPropietario actPro = trabajo.getActivo().getPropietarioPrincipal();
-		cliente = getClienteByCarteraySubcarterayPropietario(cartera, subcartera,actPro);
+		cliente = getClienteByCarteraySubcartera(cartera, subcartera);
 				
 		String estadoTrabajo = Checks.esNulo(trabajo.getEstado()) ? null : trabajo.getEstado().getCodigo();
 		String codClase = GestorDocumentalConstants.CODIGO_CLASE_ACTUACION_TECNICA;
@@ -569,8 +568,7 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 				idSistemaOrigen = actOfe.getPrimaryKey().getActivo().getNumActivo().toString();
 				DDCartera cartera = actOfe.getPrimaryKey().getActivo().getCartera();
 				DDSubcartera subcartera = actOfe.getPrimaryKey().getActivo().getSubcartera();
-				ActivoPropietario actPro = actOfe.getPrimaryKey().getActivo().getPropietarioPrincipal();
-				cliente = getClienteByCarteraySubcarterayPropietario(cartera, subcartera,actPro);
+				cliente = getClienteByCarteraySubcartera(cartera, subcartera);
 			}
 		}
 		String estadoExpediente = "Alta";
@@ -604,36 +602,22 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 		return idExpediente;	
 	}
 
-	private String getClienteByCarteraySubcarterayPropietario(DDCartera cartera, DDSubcartera subcartera, ActivoPropietario actPro) {
+	private String getClienteByCarteraySubcartera(DDCartera cartera, DDSubcartera subcartera) {
 		if(Checks.esNulo(subcartera)) {
 			return "";
 		}
 
 		MapeoGestorDocumental mgd = new MapeoGestorDocumental();
-		if(Checks.esNulo(actPro)){
-			if(!Checks.esNulo(cartera)) {
-				mgd = genericDao.get(MapeoGestorDocumental.class, genericDao.createFilter(FilterType.EQUALS, "cartera", cartera),
-						genericDao.createFilter(FilterType.EQUALS, "subcartera", subcartera));
-				if(!Checks.esNulo(mgd)){
-					if(Checks.esNulo(mgd.getClienteGestorDocumental())) {
-						return "";
-					}
-				}else{
+
+		if(!Checks.esNulo(cartera)) {
+			mgd = genericDao.get(MapeoGestorDocumental.class, genericDao.createFilter(FilterType.EQUALS, "cartera", cartera),
+					genericDao.createFilter(FilterType.EQUALS, "subcartera", subcartera));
+			if(!Checks.esNulo(mgd)){
+				if(Checks.esNulo(mgd.getClienteGestorDocumental())) {
 					return "";
 				}
-			}
-		} else {
-			if(!Checks.esNulo(cartera)) {
-				mgd = genericDao.get(MapeoGestorDocumental.class, genericDao.createFilter(FilterType.EQUALS, "cartera", cartera),
-						genericDao.createFilter(FilterType.EQUALS, "subcartera", subcartera),
-						genericDao.createFilter(FilterType.EQUALS, "activoPropietario", actPro));
-				if(!Checks.esNulo(mgd)){
-					if(Checks.esNulo(mgd.getClienteGestorDocumental())) {
-						return "";
-					}
-				}else{
-					return "";
-				}
+			}else{
+				return "";
 			}
 		}
 		

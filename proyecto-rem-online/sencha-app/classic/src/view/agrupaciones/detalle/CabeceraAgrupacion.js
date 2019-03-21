@@ -180,7 +180,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.CabeceraAgrupacion', {
 										                	fieldLabel: HreRem.i18n('header.numero.agrupacion.prinex'),
 										                	bind: {
 										                		hidden: '{!esAgrupacionPromocionAlquiler}',
-										                		value: '{agrupacionficha.numAgrupUvem}'
+										                		value: '{agrupacionficha.numAgrupPrinexHPM}'
 										                	}		
 										                },
 										                { 

@@ -179,7 +179,10 @@ Ext.define('HreRem.model.Activo', {
     		}, 
     		{
     			name:'idUvem'
-    		}, 
+    		},
+    		{
+    			name:'idPrinexHPM'
+    		},
     		{
     			name:'tipoActivoCodigo'
     		}, 
@@ -759,11 +762,21 @@ Ext.define('HreRem.model.Activo', {
     			name: 'motivoActivo'
     		},
     		{
+    			name: 'porcentajeParticipacion'
+    		},
+    		{
     			name: 'tipoAlquilerCodigo'
     		},
     		{
     			name: 'tieneCEE',
     			type: 'boolean'
+    		},
+    		{
+    			name: 'unidadAlquilable',
+    			type: 'boolean'
+    		},
+    		{
+    			name: 'activoMatriz'
     		}
     ],
     

@@ -552,6 +552,8 @@ public class AgrupacionAdapter {
 						BeanUtils.copyProperty(dtoAgrupacion, "codigoPostal", am.getCodPostal());
 						BeanUtils.copyProperty(dtoAgrupacion, "municipioCodigo", am.getMunicipio());
 						BeanUtils.copyProperty(dtoAgrupacion, "provinciaCodigo", am.getProvincia());
+						BeanUtils.copyProperty(dtoAgrupacion, "provinciaDescripcion", am.getLocalizacion().getLocalizacionBien().getProvincia().getDescripcion());
+						BeanUtils.copyProperty(dtoAgrupacion, "municipioDescripcion", am.getLocalizacion().getLocalizacionBien().getLocalidad().getDescripcion());
 					}
 				
 				}
@@ -3477,24 +3479,28 @@ public class AgrupacionAdapter {
 		VCondicionantesAgrDisponibilidad vCondicionantesAgrDisponibilidad = genericDao.get(VCondicionantesAgrDisponibilidad.class, idAgrupacionFilter);
 		Double precioWebVenta = 0.0;
 		Double precioWebAlquiler = 0.0;
-		Boolean tienePrecioVenta = true;
 
 		try {
-
-			for(ActivoAgrupacionActivo aga : agrupacion.getActivos()) {
-				if(Checks.esNulo(activoValoracionDao.getImporteValoracionVentaWebPorIdActivo(aga.getActivo().getId()))) {
-					tienePrecioVenta = false;
+			List<ActivoAgrupacionActivo> l_activos = agrupacion.getActivos();
+			
+			for (ActivoAgrupacionActivo aga : l_activos) { // Verificamos que todos los activos tengaun un precio de venta 
+				Double precioAuxVenta = activoValoracionDao.getImporteValoracionVentaWebPorIdActivo(aga.getActivo().getId());
+				if (Checks.esNulo(precioAuxVenta) || (!Checks.esNulo(precioAuxVenta) && precioAuxVenta == 0.0)) {
+					precioWebVenta = 0.0;
 					break;
+				} else {
+					precioWebVenta += precioAuxVenta;
 				}
 			}
-
-			for(ActivoAgrupacionActivo aga : agrupacion.getActivos()) {
-				if(tienePrecioVenta) {
-				precioWebVenta += !Checks.esNulo(activoValoracionDao.getImporteValoracionVentaWebPorIdActivo(aga.getActivo().getId()))
-						? activoValoracionDao.getImporteValoracionVentaWebPorIdActivo(aga.getActivo().getId()): 0.0;
+			
+			for (ActivoAgrupacionActivo aga : l_activos) { // Verificamos que todos los activos tengaun un precio de alquiler
+				Double precioAuxAlquiler = activoValoracionDao.getImporteValoracionRentaWebPorIdActivo(aga.getActivo().getId());
+				if (Checks.esNulo(precioAuxAlquiler) || (!Checks.esNulo(precioAuxAlquiler) && precioAuxAlquiler == 0.0)) {
+					precioWebAlquiler = 0.0;
+					break;
+				} else {
+					precioWebAlquiler += precioAuxAlquiler;
 				}
-				precioWebAlquiler += !Checks.esNulo(activoValoracionDao.getImporteValoracionRentaWebPorIdActivo(aga.getActivo().getId()))
-						? activoValoracionDao.getImporteValoracionRentaWebPorIdActivo(aga.getActivo().getId()): 0.0;
 			}
 
 		} catch (Exception e) {

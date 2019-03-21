@@ -24,6 +24,8 @@ public class DtoDatosBasicosOferta extends WebDto {
 	
     private Long idOferta;
     
+    private Long idEco;
+    
     private Long numOferta;
     
     private String tipoOfertaDescripcion;
@@ -321,6 +323,14 @@ public class DtoDatosBasicosOferta extends WebDto {
 
 	public void setComiteSancionadorCodigoAlquiler(String comiteSancionadorCodigoAlquiler) {
 		this.comiteSancionadorCodigoAlquiler = comiteSancionadorCodigoAlquiler;
+	}
+
+	public Long getIdEco() {
+		return idEco;
+	}
+
+	public void setIdEco(Long idEco) {
+		this.idEco = idEco;
 	}
 
 }

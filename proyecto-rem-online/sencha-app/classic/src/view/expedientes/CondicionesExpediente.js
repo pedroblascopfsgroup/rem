@@ -68,9 +68,31 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 								            		change: 'onHaCambiadoSolicitaReserva'
 								            	},
 								            	displayField: 'descripcion',
-					    						valueField: 'codigo',
-					    						colspan: 2
+					    						valueField: 'codigo'
 									        },
+									        {	
+												/*
+												 * Esto es un campo en blanco para que, en caso de que el activo
+												 * no sea cartera Agora, los campos de Reserva queden correctamente
+												 * alineados
+												 */ 
+									        	bind: {
+									        		hidden: '{esCarteraAgora}',
+									        		readOnly: '{!esCarteraAgora}'
+												}
+											},
+									        {
+												xtype : 'numberfieldbase',
+												reference : 'depositoReserva',
+												symbol : HreRem.i18n("symbol.euro"),
+												fieldLabel : HreRem.i18n('fieldlabel.deposito.reserva'),
+												bind : {
+													value: '{condiciones.depositoReserva}',
+													hidden: '{!esCarteraAgora}'
+												},
+												maxValue : 3000,
+												minValue : 0
+											},
 											{ 
 												xtype: 'comboboxfieldbase',
 							                	fieldLabel:  HreRem.i18n('fieldlabel.calculo.reserva'),
@@ -122,6 +144,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 										 		reference: 'importeReserva',
 										 		disabled: true
 											}
+							                
 				
 										]
 								},

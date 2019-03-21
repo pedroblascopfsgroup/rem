@@ -87,13 +87,14 @@ public class DDSubtipoDocumentoExpediente implements Auditable, Dictionary {
     public static final String CODIGO_AVAL_BANCARIO= "52";
     public static final String CODIGO_JUSTIFICANTE_INGRESOS= "53";
     public static final String CODIGO_ALQUILER_CON_OPCION_A_COMPRA= "54";
-    
+    public static final String MATRICULA_CONTRATO_ALQUILER_CON_OPCION_A_COMPRA = "OP-29-CNCV-05";
+    public static final String CODIGO_CONTRATO_ARRAS_PENITENCIALES= "55";
+    public static final String CODIGO_DEPOSITO_DESPUBLICACION_ACTIVO= "56";
     public static final String MATRICULA_PRE_CONTRATO = "OP-29-CNCV-86";
     public static final String MATRICULA_CONTRATO = "OP-29-CNCV-04";
-    public static final String MATRICULA_CONTRATO_ALQUILER_CON_OPCION_A_COMPRA = "OP-29-CNCV-05";
-	/**
-	 * 
-	 */
+    public static final String MATRICULA_CONTRATO_ARRAS_PENITENCIALES= "OP-08-CNCV-90";
+    public static final String MATRICULA_DEPOSITO_DESPUBLICACION_ACTIVO= "OP-08-CERA-DE";
+
 	private static final long serialVersionUID = 5218121084059952387L;
 
 	@Id

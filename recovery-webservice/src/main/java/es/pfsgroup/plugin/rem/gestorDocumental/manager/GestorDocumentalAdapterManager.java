@@ -424,7 +424,7 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 				codigoEstado = "06";
 			}
 		}		
-		
+
 		CabeceraPeticionRestClientDto cabecera = recoveryToGestorDocAssembler.getCabeceraPeticionRestClient(
 				expedienteComercial.getNumExpediente().toString(), GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_OPERACIONES, codigoEstado);
 		CrearDocumentoDto crearDoc = recoveryToGestorDocAssembler.getCrearDocumentoDto(webFileItem, userLogin, matricula);

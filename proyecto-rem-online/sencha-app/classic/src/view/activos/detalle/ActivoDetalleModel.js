@@ -7,7 +7,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
     'HreRem.model.Carga', 'HreRem.model.Llaves', 'HreRem.model.PreciosVigentes','HreRem.model.VisitasActivo',
     'HreRem.model.OfertaActivo', 'HreRem.model.PropuestaActivosVinculados', 'HreRem.model.HistoricoMediadorModel','HreRem.model.AdjuntoActivoPromocion',
     'HreRem.model.MediadorModel', 'HreRem.model.MovimientosLlave', 'HreRem.model.ActivoPatrimonio', 'HreRem.model.HistoricoAdecuacionesPatrimonioModel',
-    'HreRem.model.ImpuestosActivo','HreRem.model.OcupacionIlegal','HreRem.model.HistoricoDestinoComercialModel','HreRem.model.ActivosAsociados'],
+    'HreRem.model.ImpuestosActivo','HreRem.model.OcupacionIlegal','HreRem.model.HistoricoDestinoComercialModel','HreRem.model.ActivosAsociados','HreRem.model.CalificacionNegativaModel'],
 
     data: {
     	activo: null,
@@ -562,7 +562,30 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			}
 
 		},
-
+		onInitChangePrecioWebAlquiler: function (get){
+			var noMostrarPrecioAlquiler = get('datospublicacionactivo.noMostrarPrecioAlquiler');
+			var precioWebVentaAlquiler = get('datospublicacionactivo.precioWebAlquiler');
+			
+				if (noMostrarPrecioAlquiler)
+					return 0; 
+				else{
+					if (precioWebVentaAlquiler != undefined) 
+						return precioWebVentaAlquiler
+					}
+				
+		},
+		onInitChangePrecioWebVenta: function (get){
+			var noMostrarPrecioVenta = get('datospublicacionactivo.noMostrarPrecioVenta');
+			var precioWebVenta  = get('datospublicacionactivo.precioWebVenta');
+			
+				if (noMostrarPrecioVenta)
+					return 0; 
+				else{
+					if (precioWebVenta != undefined) 
+						return precioWebVenta
+				}
+				
+		},
 		esVisibleTipoPublicacionAlquiler: function(get){
 			var estadoAlquiler = get('datospublicacionactivo.estadoPublicacionAlquiler');
 			var tipoPublicacionAlquiler = get('datospublicacionactivo.tipoPublicacionAlquilerDescripcion');
@@ -621,29 +644,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			 }
 			 return false;
 		 },
-		 /*
-		  * 	    comboTipoOferta: {
-			model: 'HreRem.model.ComboBase',
-			proxy: {
-				type: 'uxproxy',
-				remoteUrl: 'generic/getDiccionario',
-				extraParams: {diccionario: 'tiposOfertas'}
-			}   	
-	    },
-
-		store: new Ext.data.Store({
-	model: 'HreRem.model.ComboBase',
-	proxy: {
-		type: 'uxproxy',
-		remoteUrl: 'generic/getDiccionarioDeGastos',
-		extraParams: {diccionario: 'subtiposGasto'}
-	},
-	autoLoad: true
-}),
-		  * */
-		 isUnidadAlquilable: function (get) {
-		 	var unidadAlquilable = get('activo.unidadAlquilable'),
-			tiposDeOferta = new Ext.data.Store({
+		 getTiposOfertasUAs: function (get) {
+			var unidadAlquilable = get('activo.unidadAlquilable');
+		 	tiposDeOferta = new Ext.data.Store({
 				model: 'HreRem.model.ComboBase',
 				proxy: {
 					type: 'uxproxy',
@@ -653,7 +656,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			});
             	tiposDeOferta.filter([{
 		    	filterFn: function(rec){
-			    	if (get('activo.unidadAlquilable') == 'true' ) {
+			    	if (unidadAlquilable) {
 			    		if (rec.getData().codigo == '02') return true; 
 			    		else return false;
 			    	}else {
@@ -661,12 +664,22 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			    	}
 		    	}
 		}]);
-					
+				console.log(tiposDeOferta.getData());
 				return tiposDeOferta;
-
-		 }
+		},
+				
+		esUA: function(){
+			var me = this; 
+			var esUA = false;
+			var vendido = false;
+			
+			if(me.get('activo.unidadAlquilable') != undefined)
+				esUA = me.get('activo.unidadAlquilable');
+			if(me.get('activo.isVendidoOEntramite') != undefined)
+				vendido = me.get('activo.isVendidoOEntramite');
+			return (vendido === true || esUA === true);
+		}
 	 },
-
 	
     stores: {
     		
@@ -1861,6 +1874,16 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 	    	 }
    		},
    		
+		storeCalifiacionNegativa:{
+			pageSize: $AC.getDefaultPageSize(),
+			model: 'HreRem.model.CalificacionNegativaModel',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'activo/getCalificacionNegativa',
+				extraParams: {id: '{activo.id}'}
+			}
+		},
+		
    		comboDDTipoTituloActivoTPA: {
 			model: 'HreRem.model.ComboBase',
 			proxy: {

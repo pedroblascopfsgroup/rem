@@ -323,7 +323,8 @@ public class ActivoAdapter {
 	@Autowired
 	private UsuarioManager usuarioManager;
 	
-	@Autowired
+
+	@Autowired 
     private ActivoAgrupacionDao activoAgrupacionDao;
 
 	private static final String CONSTANTE_REST_CLIENT = "rest.client.gestor.documental.constante";
@@ -818,9 +819,9 @@ public class ActivoAdapter {
 					}
 
 				} catch (IllegalAccessException e) {
-					e.printStackTrace();
+					logger.error("Error en ActivoAdapter", e);
 				} catch (InvocationTargetException e) {
-					e.printStackTrace();
+					logger.error("Error en ActivoAdapter", e);
 				}
 				listaDtoCarga.add(cargaDto);
 			}
@@ -966,9 +967,9 @@ public class ActivoAdapter {
 					cargaSeleccionada.getDescripcionCarga());
 
 		} catch (IllegalAccessException e) {
-			e.printStackTrace();
+			logger.error("Error en ActivoAdapter", e);
 		} catch (InvocationTargetException e) {
-			e.printStackTrace();
+			logger.error("Error en ActivoAdapter", e);
 		}
 
 		return dtoCarga;
@@ -1051,9 +1052,9 @@ public class ActivoAdapter {
 						distribucionDto.setTipoHabitaculoDescripcion(distribucion.getTipoHabitaculo().getDescripcion());
 					}
 				} catch (IllegalAccessException e) {
-					e.printStackTrace();
+					logger.error("Error en ActivoAdapter", e);
 				} catch (InvocationTargetException e) {
-					e.printStackTrace();
+					logger.error("Error en ActivoAdapter", e);
 				}
 				listaDtoDistribucion.add(distribucionDto);
 			}
@@ -1095,9 +1096,9 @@ public class ActivoAdapter {
 						BeanUtils.copyProperty(observacionDto, "idUsuario", idUsuario);
 					}
 				} catch (IllegalAccessException e) {
-					e.printStackTrace();
+					logger.error("Error en ActivoAdapter", e);
 				} catch (InvocationTargetException e) {
-					e.printStackTrace();
+					logger.error("Error en ActivoAdapter", e);
 				}
 				listaDtoObservaciones.add(observacionDto);
 			}
@@ -1113,19 +1114,21 @@ public class ActivoAdapter {
 		Page page = null;
 		List<DtoActivoVistaPatrimonioContrato> lista = null;
 		try {
-			BeanUtils.copyProperty(dto, "idContrato", activoActual.getIdContrato());
-			BeanUtils.copyProperty(dto, "nombrePrinex", activoActual.getNombrePrinex());
-			page = actPatrimonioDao.getActivosRelacionados(dto);
-			lista = new ArrayList<DtoActivoVistaPatrimonioContrato>();
-			for (VActivoPatrimonioContrato activo: (List<VActivoPatrimonioContrato>) page.getResults()) {
-				DtoActivoVistaPatrimonioContrato dtoActivo =  new DtoActivoVistaPatrimonioContrato();
-				BeanUtils.copyProperties(dtoActivo, activo);
-				lista.add(dtoActivo);
+			if(activoActual != null){
+				BeanUtils.copyProperty(dto, "idContrato", activoActual.getIdContrato());
+				BeanUtils.copyProperty(dto, "nombrePrinex", activoActual.getNombrePrinex());
+				page = actPatrimonioDao.getActivosRelacionados(dto);
+				lista = new ArrayList<DtoActivoVistaPatrimonioContrato>();
+				for (VActivoPatrimonioContrato activo: (List<VActivoPatrimonioContrato>) page.getResults()) {
+					DtoActivoVistaPatrimonioContrato dtoActivo =  new DtoActivoVistaPatrimonioContrato();
+					BeanUtils.copyProperties(dtoActivo, activo);
+					lista.add(dtoActivo);
+				}
 			}
 		} catch (IllegalAccessException e) {
-			e.printStackTrace();
+			logger.error("Error en ActivoAdapter", e);
 		} catch (InvocationTargetException e) {
-			e.printStackTrace();
+			logger.error("Error en ActivoAdapter", e);
 		}
 		
 		return new DtoPage(lista,page.getTotalCount());
@@ -1167,9 +1170,9 @@ public class ActivoAdapter {
 							calcAgrupacion.getNumActivosPublicados());
 
 				} catch (IllegalAccessException e) {
-					e.printStackTrace();
+					logger.error("Error en ActivoAdapter", e);
 				} catch (InvocationTargetException e) {
-					e.printStackTrace();
+					logger.error("Error en ActivoAdapter", e);
 				} catch (Exception e) {
 					logger.error("Error en ActivoAdapter, ", e);
 				}
@@ -1279,9 +1282,9 @@ public class ActivoAdapter {
 						activo.getGestorBloqueoPrecio().getApellidoNombre());
 			}
 		} catch (IllegalAccessException e) {
-			e.printStackTrace();
+			logger.error("Error en ActivoAdapter", e);
 		} catch (InvocationTargetException e) {
-			e.printStackTrace();
+			logger.error("Error en ActivoAdapter", e);
 		}
 
 		return valoracionesDto;
@@ -1302,9 +1305,9 @@ public class ActivoAdapter {
 					BeanUtils.copyProperty(ocupanteLegalDto, "idActivoOcupanteLegal",
 							activo.getSituacionPosesoria().getActivoOcupanteLegal().get(i).getId());
 				} catch (IllegalAccessException e) {
-					e.printStackTrace();
+					logger.error("Error en ActivoAdapter", e);
 				} catch (InvocationTargetException e) {
-					e.printStackTrace();
+					logger.error("Error en ActivoAdapter", e);
 				}
 				listaDtoOcupanteLegal.add(ocupanteLegalDto);
 
@@ -1368,9 +1371,9 @@ public class ActivoAdapter {
 							activo.getFotos().get(i).getAdjunto().getFileItem().getFile().getPath());
 
 				} catch (IllegalAccessException e) {
-					e.printStackTrace();
+					logger.error("Error en ActivoAdapter", e);
 				} catch (InvocationTargetException e) {
-					e.printStackTrace();
+					logger.error("Error en ActivoAdapter", e);
 				}
 				listaFotos.add(fotoDto);
 
@@ -1399,9 +1402,9 @@ public class ActivoAdapter {
 							tasacionSeleccionada.getTipoTasacion().getDescripcion());
 				}
 			} catch (IllegalAccessException e) {
-				e.printStackTrace();
+				logger.error("Error en ActivoAdapter", e);
 			} catch (InvocationTargetException e) {
-				e.printStackTrace();
+				logger.error("Error en ActivoAdapter", e);
 			}
 		}
 
@@ -1488,9 +1491,9 @@ public class ActivoAdapter {
 					listaUsuariosDto.add(dtoUsuario);
 				}
 			} catch (IllegalAccessException e) {
-				e.printStackTrace();
+				logger.error("Error en ActivoAdapter", e);
 			} catch (InvocationTargetException e) {
-				e.printStackTrace();
+				logger.error("Error en ActivoAdapter", e);
 			}
 		}
 		
@@ -1517,9 +1520,9 @@ public class ActivoAdapter {
 					}
 				}
 			} catch (IllegalAccessException e) {
-				e.printStackTrace();
+				logger.error("Error en ActivoAdapter", e);
 			} catch (InvocationTargetException e) {
-				e.printStackTrace();
+				logger.error("Error en ActivoAdapter", e);
 			}
 		}
 
@@ -1580,9 +1583,9 @@ public class ActivoAdapter {
 								.concat(gestorSustituto.getUsuarioGestorSustituto().getApellidoNombre()).concat(")"));
 					}
 				} catch (IllegalAccessException e) {
-					e.printStackTrace();
+					logger.error("Error en ActivoAdapter", e);
 				} catch (InvocationTargetException e) {
-					e.printStackTrace();
+					logger.error("Error en ActivoAdapter", e);
 				}
 
 				listadoGestoresDto.add(dtoGestor);
@@ -1640,9 +1643,9 @@ public class ActivoAdapter {
 								.concat(gestorSustituto.getUsuarioGestorSustituto().getApellidoNombre()).concat(")"));
 					}
 				} catch (IllegalAccessException e) {
-					e.printStackTrace();
+					logger.error("Error en ActivoAdapter", e);
 				} catch (InvocationTargetException e) {
-					e.printStackTrace();
+					logger.error("Error en ActivoAdapter", e);
 				}
 
 				listadoGestoresDto.add(dtoGestor);
@@ -1673,9 +1676,9 @@ public class ActivoAdapter {
 				beanUtilNotNull.copyProperties(dtoTramite, tramite);
 
 			} catch (IllegalAccessException e) {
-				e.printStackTrace();
+				logger.error("Error en ActivoAdapter", e);
 			} catch (InvocationTargetException e) {
-				e.printStackTrace();
+				logger.error("Error en ActivoAdapter", e);
 			}
 			listadoTramitesDto.add(dtoTramite);
 		}
@@ -1733,9 +1736,9 @@ public class ActivoAdapter {
 							"Principal");
 
 				} catch (IllegalAccessException e) {
-					e.printStackTrace();
+					logger.error("Error en ActivoAdapter", e);
 				} catch (InvocationTargetException e) {
-					e.printStackTrace();
+					logger.error("Error en ActivoAdapter", e);
 				}
 				listaDtoPropietarios.add(propietarioDto);
 			}
@@ -1786,9 +1789,9 @@ public class ActivoAdapter {
 							"Copropietario");
 
 				} catch (IllegalAccessException e) {
-					e.printStackTrace();
+					logger.error("Error en ActivoAdapter", e);
 				} catch (InvocationTargetException e) {
-					e.printStackTrace();
+					logger.error("Error en ActivoAdapter", e);
 				}
 				listaDtoPropietarios.add(propietarioDto);
 			}
@@ -1817,9 +1820,9 @@ public class ActivoAdapter {
 							activo.getValoracion().get(i).getTipoPrecio().getDescripcion());
 
 				} catch (IllegalAccessException e) {
-					e.printStackTrace();
+					logger.error("Error en ActivoAdapter", e);
 				} catch (InvocationTargetException e) {
-					e.printStackTrace();
+					logger.error("Error en ActivoAdapter", e);
 				}
 				listaDtoValoracion.add(valoracionDto);
 			}
@@ -1858,9 +1861,9 @@ public class ActivoAdapter {
 								activo.getTasacion().get(i).getImporteTasacionFin());
 					}
 				} catch (IllegalAccessException e) {
-					e.printStackTrace();
+					logger.error("Error en ActivoAdapter", e);
 				} catch (InvocationTargetException e) {
-					e.printStackTrace();
+					logger.error("Error en ActivoAdapter", e);
 				}
 				listaDtoTasacion.add(tasacionDto);
 			}
@@ -1896,9 +1899,9 @@ public class ActivoAdapter {
 								activo.getTasacion().get(i).getImporteTasacionFin());
 					}
 				} catch (IllegalAccessException e) {
-					e.printStackTrace();
+					logger.error("Error en ActivoAdapter", e);
 				} catch (InvocationTargetException e) {
-					e.printStackTrace();
+					logger.error("Error en ActivoAdapter", e);
 				}
 				
 				if (!Checks.esNulo(tasacionDto.getCodigoFirma())) {
@@ -2070,7 +2073,7 @@ public class ActivoAdapter {
 			beanUtilNotNull.copyProperty(dtoTramite, "activoAplicaGestion", aplicaGestion);
 			
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("Error en ActivoAdapter", e);
 		}
 
 		return dtoTramite;
@@ -2122,9 +2125,9 @@ public class ActivoAdapter {
 						tarea.getTareaProcedimiento().getCodigo());
 
 			} catch (IllegalAccessException e) {
-				e.printStackTrace();
+				logger.error("Error en ActivoAdapter", e);
 			} catch (InvocationTargetException e) {
-				e.printStackTrace();
+				logger.error("Error en ActivoAdapter", e);
 			}
 			tareasTramiteDto.add(dtoListadoTareas);
 		}
@@ -2173,9 +2176,9 @@ public class ActivoAdapter {
 				}
 
 			} catch (IllegalAccessException e) {
-				e.printStackTrace();
+				logger.error("Error en ActivoAdapter", e);
 			} catch (InvocationTargetException e) {
-				e.printStackTrace();
+				logger.error("Error en ActivoAdapter", e);
 			}
 			tareasTramiteDto.add(dtoListadoTareas);
 		}
@@ -2221,8 +2224,8 @@ public class ActivoAdapter {
 	 * "subtipoTareaCodigoSubtarea",
 	 * tareaActivo.getSubtipoTarea().getCodigoSubtarea());
 	 * 
-	 * } catch (IllegalAccessException e) { e.printStackTrace(); } catch
-	 * (InvocationTargetException e) { e.printStackTrace(); }
+	 * } catch (IllegalAccessException e) { logger.error("Error en ActivoAdapter", e); } catch
+	 * (InvocationTargetException e) { logger.error("Error en ActivoAdapter", e); }
 	 * tareasTramiteDto.add(dtoListadoTareas); }
 	 * 
 	 * return tareasTramiteDto;
@@ -2428,9 +2431,9 @@ public class ActivoAdapter {
 			}
 			
 		} catch (IllegalAccessException e) {
-			e.printStackTrace();
+			logger.error("Error en ActivoAdapter", e);
 		} catch (InvocationTargetException e) {
-			e.printStackTrace();
+			logger.error("Error en ActivoAdapter", e);
 		}
 
 	}
@@ -2551,7 +2554,7 @@ public class ActivoAdapter {
 			try {
 				borrado = gestorDocumentalAdapterApi.borrarAdjunto(dtoAdjunto.getId(), usuarioLogado.getUsername());
 			} catch (Exception e) {
-				e.printStackTrace();
+				logger.error("Error en ActivoAdapter", e);
 			}
 		} else {
 			borrado = activoApi.deleteAdjunto(dtoAdjunto);
@@ -2835,9 +2838,9 @@ public class ActivoAdapter {
 				}
 
 			} catch (IllegalAccessException e) {
-				e.printStackTrace();
+				logger.error("Error en ActivoAdapter", e);
 			} catch (InvocationTargetException e) {
-				e.printStackTrace();
+				logger.error("Error en ActivoAdapter", e);
 			}
 
 			listaDto.add(dtoPresupuesto);
@@ -3548,10 +3551,10 @@ public class ActivoAdapter {
 				beanUtilNotNull.copyProperty(llave, "motivoIncompleto", dto.getMotivoIncompleto());
 
 			} catch (IllegalAccessException e) {
-				e.printStackTrace();
+				logger.error("Error en ActivoAdapter", e);
 				return false;
 			} catch (InvocationTargetException e) {
-				e.printStackTrace();
+				logger.error("Error en ActivoAdapter", e);
 				return false;
 			}
 		}
@@ -3605,10 +3608,10 @@ public class ActivoAdapter {
 			llave = genericDao.save(ActivoLlave.class, llave);
 
 		} catch (IllegalAccessException e) {
-			e.printStackTrace();
+			logger.error("Error en ActivoAdapter", e);
 			return false;
 		} catch (InvocationTargetException e) {
-			e.printStackTrace();
+			logger.error("Error en ActivoAdapter", e);
 			return false;
 		}
 
@@ -3638,10 +3641,10 @@ public class ActivoAdapter {
 			genericDao.save(ActivoMovimientoLlave.class, movimiento);
 
 		} catch (IllegalAccessException e) {
-			e.printStackTrace();
+			logger.error("Error en ActivoAdapter", e);
 			return false;
 		} catch (InvocationTargetException e) {
-			e.printStackTrace();
+			logger.error("Error en ActivoAdapter", e);
 			return false;
 		}
 
@@ -3678,10 +3681,10 @@ public class ActivoAdapter {
 				}
 
 			} catch (IllegalAccessException e) {
-				e.printStackTrace();
+				logger.error("Error en ActivoAdapter", e);
 				return false;
 			} catch (InvocationTargetException e) {
-				e.printStackTrace();
+				logger.error("Error en ActivoAdapter", e);
 				return false;
 			}
 		}
@@ -3936,7 +3939,7 @@ public class ActivoAdapter {
 				}
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("Error en ActivoAdapter", e);
 		}
 
 		return null;

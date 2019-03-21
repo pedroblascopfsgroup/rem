@@ -7,11 +7,13 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
     reference: 'tituloinformacionregistralactivo',
     scrollable	: 'y',
     recargar: false,
-    
+    viewModel: {
+        type: 'activodetalle'
+    },
     listeners: {
 			boxready:'cargarTabData'
 	},
-
+	
 	recordName: "datosRegistrales",
 	
 	recordClass: "HreRem.model.ActivoDatosRegistrales",
@@ -19,9 +21,9 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
     requires: ['HreRem.model.ActivoDatosRegistrales', 'HreRem.view.common.FieldSetTable', 'HreRem.view.common.TextFieldBase', 'HreRem.view.common.ComboBoxFieldBase', 'HreRem.model.ActivoPropietario'],
 
     initComponent: function () {
-    	    	
         var me = this;   
         me.setTitle(HreRem.i18n('title.titulo.informacion.registral'));
+        me.getViewModel().data.nClicks=0;
         var items= [
 
 			{    
@@ -423,19 +425,13 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 							ventana.show();
 					 	    				    	
 					 	},
-					 	onDeleteClick: function (btn) {					 		
+					 	onDeleteClick: function (btn) {		
 					 		var me = this;	
 							var url =  $AC.getRemoteUrl('activo/deleteActivoPropietarioTab');
 							var propietario = me.up().down('grid').getSelection();
 							var activo = me.lookupController().getViewModel().get('activo');
 							if (propietario[0].get('tipoPropietario') == "Principal"){
-								Ext.toast({
-									 html: 'No se puede eliminar el propietario principal',
-									 width: 400,
-									 height: 100,
-									 align: 't'									     
-								  });
-								
+								me.fireEvent("errorToast",'No se puede eliminar el propietario principal' );
 							}else {
 								var params={};
 								params["idActivo"]=activo.get('id');
@@ -788,74 +784,41 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 						{
 							xtype:'fieldsettable',
 							defaultType: 'textfieldbase',
-							colspan: 4,
+							colspan: 3,
 							reference:'calificacionNegativa',
-							hidden: true,
+							hidden: false, 
 							title: HreRem.i18n("title.calificacion.negativa"),
+							bind:{
+								disabled:'{!datosRegistrales.noEstaInscrito}'
+							},
 							items :
 							[
 								{
-						        	xtype: 'comboboxfieldbase',
-							 		fieldLabel: HreRem.i18n('fieldlabel.calificacion.negativa'),
-						        	name: 'comboCalificacionNegativa',
-						        	reference: 'comboCalificacionNegativaRef',
-						        	bind: {
-					            		store: '{comboCalificacionNegativa}',
-					            		value: '{datosRegistrales.calificacionNegativa}'
-					            	},
-						        	listeners : {
-						        		change: 'onChangeCalificacionNegativa'
-						        	}
-						        },
-						        {
-									xtype:'itemselectorbase',
-									reference: 'itemselMotivo',
-									fieldLabel: HreRem.i18n('fieldlabel.calificacion.motivo'),
-            						store: {
-            							model: 'HreRem.model.ComboBase',
-										proxy: {
-										type: 'uxproxy',
-										remoteUrl: 'generic/getDiccionario',
-										extraParams: {diccionario: 'motivosCalificacionNegativa'}
-										},
-										autoLoad: true
-									},
-            						bind: {
-					            		value: '{datosRegistrales.motivoCalificacionNegativa}'
-					            		
-					            	},
-									            listeners:{
-									            	change: function(){
-									            		var me = this;
-									            		var campoDesc = me.lookupController('activodetalle').lookupReference('descMotivo');
-									            		if(me.getValue().includes(CONST.MOTIVOS_CAL_NEGATIVA["OTROS"])){
-									            			campoDesc.allowBlank = false;
-									            			campoDesc.setReadOnly(false);
-									            			campoDesc.setDisabled(false);
-									            			if(me.up('activosdetallemain').getViewModel().get("editing")){
-									            				campoDesc.fireEvent('edit');
-									            			}else{
-									            				campoDesc.fireEvent('cancel');
-									            			}
-									            		}else{
-									            			campoDesc.allowBlank = true;
-									            			campoDesc.setReadOnly(true);
-									            			campoDesc.setDisabled(true);
-									            			campoDesc.fireEvent('cancel');
-									            		}
-									            	}
-									            }
+
+									xtype: "checkboxfieldbase", 
+									reference: "calificacionNegativaCheckbox",
+									name : 'calificacionNegativaCheckbox',
+									fieldLabel: 'Calificación Negativa:',
+						            colspan: 3,
+						            bind:{
+						            	value:'{datosRegistrales.puedeEditarCalificacionNegativa}',
+						            	readOnly:'{datosRegistrales.isCalificacionNegativaEnabled}'
+						            },
+						            addUxReadOnlyEditFieldPlugin: true
+						            
+						            
 								},
 								{
-									reference: 'descMotivo',
-									allowBlank: true,
-							 		fieldLabel: HreRem.i18n('fieldlabel.calificacion.descripcion'),
-							 		bind: '{datosRegistrales.descripcionCalificacionNegativa}'
-
+									xtype: "calificacionnegativagrid", 
+									// TODO Falta una funcion aqui que esta en informeComercialActivo de ese estilo
+									reference: "calificacionnegativagrid", 
+									colspan: 3,
+									bind:{
+										disabled:'{!datosRegistrales.puedeEditarCalificacionNegativa}'
+									}
 								}
 							]
 		           		}
-
 
 					]
 			}
@@ -894,11 +857,11 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
    		}
 
 
-   		if(motivoCalNegativa.getValue().length == 0) {
+   		/*if(motivoCalNegativa.getValue().length == 0) {
    			error = HreRem.i18n("txt.validacion.motivo.obligatorio");
    			errores.push(error);
    			motivoCalNegativa.markInvalid(error);
-   		}
+   		}*/
 
 
    		if(superficieUtil.getValue() > superficieConstruida.getValue()) {
@@ -935,6 +898,7 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
    funcionRecargar: function() {
 		var me = this; 
 		me.recargar = false;
+		me.getViewModel().data.nClicks=0;
 		me.lookupController().cargarTabData(me);
 		me.down('grid').getStore().load();
    }

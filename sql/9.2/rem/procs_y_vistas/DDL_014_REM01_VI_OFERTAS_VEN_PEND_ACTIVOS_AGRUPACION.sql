@@ -154,7 +154,15 @@ BEGIN
   EXECUTE IMMEDIATE 'COMMENT ON COLUMN ' || V_ESQUEMA || '.VI_OFERTAS_ACTIVOS_AGRUPACION.GENCAT IS ''Activos que pertenecen a GENCAT.''';
   
   DBMS_OUTPUT.PUT_LINE('Creados los comentarios en CREATE VIEW '|| V_ESQUEMA ||'.VI_OFERTAS_ACTIVOS_AGRUPACION...Creada OK');
-  
+  EXCEPTION
+  WHEN OTHERS THEN
+    ERR_NUM := SQLCODE;
+    ERR_MSG := SQLERRM;
+    DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(ERR_NUM));
+    DBMS_OUTPUT.put_line('-----------------------------------------------------------'); 
+    DBMS_OUTPUT.put_line(ERR_MSG);
+    ROLLBACK;
+    RAISE; 
 END;
 /
 

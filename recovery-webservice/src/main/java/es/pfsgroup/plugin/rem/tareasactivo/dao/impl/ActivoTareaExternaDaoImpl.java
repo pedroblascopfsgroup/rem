@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import es.capgemini.pfs.dao.AbstractEntityDao;
@@ -11,9 +12,9 @@ import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
-import es.pfsgroup.commons.utils.Conversiones;
 import es.pfsgroup.commons.utils.HQLBuilder;
 import es.pfsgroup.commons.utils.HibernateQueryUtils;
+import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVRawSQLDao;
 import es.pfsgroup.plugin.rem.tareasactivo.dao.ActivoTareaExternaDao;
 import es.pfsgroup.recovery.ext.impl.multigestor.model.EXTGrupoUsuarios;
 
@@ -23,6 +24,9 @@ import es.pfsgroup.recovery.ext.impl.multigestor.model.EXTGrupoUsuarios;
  */
 @Repository("EXTActivoTareaNotificacionDao")
 public class ActivoTareaExternaDaoImpl extends AbstractEntityDao<TareaExterna, Long> implements ActivoTareaExternaDao{
+	
+	@Autowired
+	private MSVRawSQLDao rawDao;
 
 	/**
 	 * Devuelve las tareas asociadas a un trámite y que se encuentren activas para un usuario en particular
@@ -165,6 +169,28 @@ public class ActivoTareaExternaDaoImpl extends AbstractEntityDao<TareaExterna, L
 
         List<TareaExternaValor> list = getHibernateTemplate().find(hql, new Object[] { idTareaExterna });
         return list;
+    }
+    
+    @Override
+    public List<Long> getTareasExternasIdByOfertaId(Long idOferta) {
+    	
+    	String idOfertaStr = String.valueOf(idOferta);
+    	
+    	List<Object> objetosLista = rawDao.getExecuteSQLList("SELECT TEX_ID "
+    			+ "FROM TEX_TAREA_EXTERNA TEX "
+    			+ "JOIN TAC_TAREAS_ACTIVOS TAC ON TAC.TAR_ID = TEX.TAR_ID "
+    			+ "JOIN ACT_TRA_TRAMITE TRA ON TRA.TRA_ID = TAC.TRA_ID "
+    			+ "JOIN ECO_EXPEDIENTE_COMERCIAL ECO ON ECO.TBJ_ID = TRA.TBJ_ID "
+    			+ "WHERE ECO.OFR_ID = "+idOfertaStr);
+    	
+    	List<Long> tareasExternasId = new ArrayList<Long>();
+    	
+    	for(Object o:objetosLista){
+    		String objetoString = o.toString();
+    		tareasExternasId.add(Long.valueOf(objetoString));
+    	}
+    	
+		return tareasExternasId;
     }
 
 }

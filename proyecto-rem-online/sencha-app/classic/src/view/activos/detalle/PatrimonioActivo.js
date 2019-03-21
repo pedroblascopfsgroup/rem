@@ -91,10 +91,9 @@ Ext.define('HreRem.view.activos.detalle.PatrimonioActivo', {
 	initComponent: function () {
 	     var me = this;
 	     me.setTitle(HreRem.i18n('title.patrimonio.activo'));
-	     var items = [{xtype: 'datospatrimonio', ocultarBotonesEdicion: false, title: HreRem.i18n('title.datos.basicos')},
-	    	 {xtype: 'contratospatrimonio', ocultarBotonesEdicion: true, bind: {disabled:'{!esActivoAlquilado}'}, title: HreRem.i18n('title.patrimonio.datos.patrimonio.contratos')}];     
-	     me.addPlugin({ptype: 'lazyitems', items: items });
-	     me.callParent();
+	    me.callParent();
+	     me.add({xtype: 'datospatrimonio', ocultarBotonesEdicion: false, title: HreRem.i18n('title.datos.basicos')})
+	     me.add({xtype: 'contratospatrimonio', ocultarBotonesEdicion: true, bind: {disabled: me.lookupViewModel().get('activo.tieneRegistroContrato')=="false"}, title: HreRem.i18n('title.patrimonio.datos.patrimonio.contratos')})
 	 },
 
     funcionRecargar: function() {

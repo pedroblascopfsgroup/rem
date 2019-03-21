@@ -32,9 +32,14 @@ if [ $? = 0 ]; then
   mput $DIR_SALIDA/RUSTOCK.txt
   bye
 EOF
-echo "Buenas tardes,"
-echo "Cadenas acabadas correctamente"
-echo "Ficheros en el servidor:"
+	if [ $2 = 0 ]; then
+		echo "Buenas tardes,"
+		echo "Cadenas acabadas correctamente"
+		echo "Ficheros en el servidor:"
+	else
+		echo "Buenas tardes,"
+		echo "A falta de las altas de hoy, los tiempos de entrega de los ficheros en el ftp de intercambio con Uvem son los siguientes:"	
+	fi
 
    lftp -c "open -u ftpsocpart,tempo.99 -p 2153 sftp://192.168.235.59; ls /datos/usuarios/socpart/CISA/in | grep RUFACTUSP.txt"
    lftp -c "open -u ftpsocpart,tempo.99 -p 2153 sftp://192.168.235.59; ls /datos/usuarios/socpart/CISA/in | grep RUFACTUCP.txt"

@@ -18,7 +18,7 @@ public class ActivoAdjuntoActivoDaoImpl extends AbstractEntityDao<ActivoAdjuntoA
 
     @Override
     public Boolean existeAdjuntoPorNombreYTipoDocumentoYNumActivo(String nombreAdjunto, String matriculaDocumento, Long numActivo) {
-        Session session = getSession();
+        Session session = this.getSessionFactory().getCurrentSession();;
         Criteria criteriaCount = session.createCriteria(ActivoAdjuntoActivo.class);
         criteriaCount.setProjection(Projections.rowCount());
 
@@ -28,8 +28,7 @@ public class ActivoAdjuntoActivoDaoImpl extends AbstractEntityDao<ActivoAdjuntoA
         criteriaCount.createCriteria("tipoDocumentoActivo").add(Restrictions.eq("matricula", matriculaDocumento));
 
         Integer totalCount = HibernateUtils.castObject(Integer.class, criteriaCount.uniqueResult());
-        session.disconnect();
-
+       
         return totalCount > 0;
     }
 }

@@ -216,7 +216,8 @@ public class DiccionarioTargetClassMap{
 		mapa.put("tipoDocumentoGencat", DDTipoDocumentoGencat.class);
 		mapa.put("tipoNotificacionGencat", DDTipoNotificacionGencat.class);
 		mapa.put("tipoDocumentoComunicacion", DDTipoDocumentoComunicacion.class);
-
+		mapa.put("estadoMotivoCalificacionNegativa", DDEstadoMotivoCalificacionNegativa.class);
+		mapa.put("responsableSubsanar", DDResponsableSubsanar.class);
 		return Collections.unmodifiableMap(mapa);
 	}
 	

@@ -45,6 +45,9 @@ public class ActivoOferta implements Serializable {
 	private Double porcentajeParticipacion;
 	
 	
+	public Long getActivoId() {
+		return activo;
+	}
 	public Long getOferta() {
 		return oferta;
 	}
@@ -162,9 +165,8 @@ public class ActivoOferta implements Serializable {
 		public void setOferta(Oferta oferta) {
 			this.oferta = oferta;
 		}
-        
-        
 
+	
      
     }
 

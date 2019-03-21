@@ -83,6 +83,7 @@ import es.pfsgroup.plugin.rem.model.DtoHonorariosOferta;
 import es.pfsgroup.plugin.rem.model.DtoOferta;
 import es.pfsgroup.plugin.rem.model.DtoOfertantesOferta;
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
+import es.pfsgroup.plugin.rem.model.DtoPropuestaAlqBankia;
 import es.pfsgroup.plugin.rem.model.DtoTanteoActivoExpediente;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
@@ -761,7 +762,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				errorsList = avanzaTarea(oferta, ofertaDto, errorsList);
 			}
 
-			notificationOfertaManager.sendNotification(oferta);
+			if(DDTipoOferta.CODIGO_ALQUILER.equals(oferta.getTipoOferta().getCodigo())) {
+				notificationOfertaManager.enviarPropuestaOfertaTipoAlquiler(oferta);
+			}else {
+				notificationOfertaManager.sendNotification(oferta);
+			}
 		}
 
 		return errorsList;
@@ -1697,7 +1702,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					if (trabajoApi.checkBankia(tareaExterna)) {
 						String codigoComite = null;
 						try {
-							codigoComite = expedienteComercialApi.consultarComiteSancionador(expediente.getId());
+							codigoComite = expedienteComercialApi.consultarComiteSancionador(expediente.getId());							
 						} catch (Exception e) {
 							logger.error("error en OfertasManager", e);
 						}
@@ -1881,9 +1886,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				codigoComite = resultadoDto.getCodigoComite();
 			}
 			this.guardarUvemCodigoAgrupacionInmueble(expediente, resultadoDto);
-			DDComiteSancion comite = expedienteComercialApi.comiteSancionadorByCodigo(codigoComite);
-			expediente.setComiteSancion(comite);
-			expediente.setComiteSuperior(comite);
+//			DDComiteSancion comite = expedienteComercialApi.comiteSancionadorByCodigo(codigoComite);
+//			expediente.setComiteSancion(comite);
+//			expediente.setComiteSuperior(comite);
 
 			if(!Checks.esNulo(resultadoDto.getCodigoOfertaUvem())){
 				if(!Checks.esNulo(expediente.getOferta())){
@@ -3350,9 +3355,16 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		return minus;
 	}
 
-	private void validacionesLote(HashMap<String, String> errorsList, Activo activo, DDCartera cartera,
-			DDSubcartera subcartera, ActivoPropietario propietario, Integer geolocalizacion) {
-		if (activo.getCartera() != cartera
+
+	@Override
+	public List<DtoPropuestaAlqBankia> getListPropuestasAlqBankiaFromView(Long ecoId) {
+		List<DtoPropuestaAlqBankia> listaDto = expedienteComercialApi.getListaDtoPropuestaAlqBankiaByExpId(ecoId);
+		return listaDto;
+	}
+
+	private void validacionesLote(HashMap<String, String> errorsList, Activo activo, DDCartera cartera, 
+			DDSubcartera subcartera, ActivoPropietario propietario, Integer geolocalizacion) {		
+		if (activo.getCartera() != cartera 
 				|| activo.getSubcartera() != subcartera
 				|| activo.getPropietarioPrincipal() != propietario
 				|| activoApi.getGeolocalizacion(activo) != geolocalizacion) {

@@ -3722,8 +3722,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 					}
 				}
 				
-					if (activosPropagables.length > 0 && tabData.models[0].name != "datospublicacion") {
-						tabPropagableData = me.createFormPropagableData(form, tabData);
+				if (activosPropagables.length > 0) {
+					tabPropagableData = me.createFormPropagableData(form, tabData);
 					if (!Ext.isEmpty(tabPropagableData)) {
 						// sacamos el activo actual del listado
 						var activo = activosPropagables.splice(activosPropagables.findIndex(function(activo){return activo.activoId == me.getViewModel().get("activo.id")}),1)[0];
@@ -3773,7 +3773,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 				} else {
 					me.saveActivo(tabData, successFn);
 				}
-				me.saveActivo(tabData, successFn);
     		},
 		 	failure: function(record, operation) {
 		 		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));

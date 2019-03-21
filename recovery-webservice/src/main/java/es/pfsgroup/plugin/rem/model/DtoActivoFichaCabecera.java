@@ -190,6 +190,7 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private String codigoPromocionPrinex;
 
 	private List<?> activosPropagables;
+	private List<Activo> activosPropagablesUas;
 
 	private Boolean tienePosibleInformeMediador;
 
@@ -1752,6 +1753,14 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	}
 	public void setUnidadesAlquilablesEnAgrupacion(Long unidadesAlquilablesEnAgrupacion) {
 	this.unidadesAlquilablesEnAgrupacion = unidadesAlquilablesEnAgrupacion;
+	}
+
+	public List<Activo> getActivosPropagablesUas() {
+		return activosPropagablesUas;
+	}
+
+	public void setActivosPropagablesUas(List<Activo> activosPropagablesUas) {
+		this.activosPropagablesUas = activosPropagablesUas;
 	}
 	
 }

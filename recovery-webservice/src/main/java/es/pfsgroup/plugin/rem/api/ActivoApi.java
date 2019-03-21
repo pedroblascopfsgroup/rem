@@ -1007,6 +1007,8 @@ public interface ActivoApi {
 	boolean esCajamar(Long idActivo);
 
 	DtoActivoFichaCabecera getActivosPropagables(Long idActivo);
+	
+	DtoActivoFichaCabecera getActivosPropagablesUas(Long idActivo);
 
 	List<VTasacionCalculoLBK> getVistaTasacion(Long idAgrupacion);
 

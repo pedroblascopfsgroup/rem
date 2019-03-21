@@ -632,7 +632,15 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 						return "";
 					}
 				}else{
-					return "";
+					mgd = genericDao.get(MapeoGestorDocumental.class, genericDao.createFilter(FilterType.EQUALS, "cartera", cartera),
+							genericDao.createFilter(FilterType.EQUALS, "subcartera", subcartera));
+					if(!Checks.esNulo(mgd)){
+						if(Checks.esNulo(mgd.getClienteGestorDocumental())) {
+							return "";
+						}
+					}else{
+						return "";
+					}
 				}
 			}
 		}

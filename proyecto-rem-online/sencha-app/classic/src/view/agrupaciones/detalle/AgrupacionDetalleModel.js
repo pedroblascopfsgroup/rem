@@ -588,6 +588,10 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
 		 	}else {
 		 		return get('agrupacionficha.estadoAlquilerDescripcion')
 		 	}
+		 },
+		 
+		 isUnidadAlquilable: function get() {
+		 	var isUa = get('activo.unidadAlquilable');
 		 }
     },
 

@@ -2340,9 +2340,10 @@ public class ActivoController extends ParadiseJsonController {
 			} catch (JsonViewerException jvex) {
 				model.put(RESPONSE_SUCCESS_KEY, false);
 				model.put(RESPONSE_ERROR_MESSAGE_KEY, jvex.getMessage());
+				model.put(RESPONSE_MESSAGE_KEY, jvex.getMessage());
 			} catch (Exception e) {
-				logger.error("No se ha podido guardar el activo", e);
-				model.put(RESPONSE_ERROR_KEY, e.getMessage());
+				logger.error("No se ha podido guardar el activo", e); 
+				model.put(RESPONSE_ERROR_KEY, e.getMessage()); 
 			}
 		}
 
@@ -2430,6 +2431,7 @@ public class ActivoController extends ParadiseJsonController {
 		} catch (JsonViewerException jvex) {
 			model.put(RESPONSE_SUCCESS_KEY, false);
 			model.put(RESPONSE_ERROR_MESSAGE_KEY, jvex.getMessage());
+			throw new JsonViewerException(jvex.getMessage());
 
 		} catch (Exception e) {
 			logger.error("error en activoController", e);
@@ -2610,4 +2612,21 @@ public class ActivoController extends ParadiseJsonController {
 
 		return createModelAndViewJson(model);
 	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getIsUnidadAlquilable(Long idActivo,ModelMap model) {
+		
+		try {
+			model.put(RESPONSE_DATA_KEY, activoAdapter.isUnidadAlquilable(idActivo));
+			model.put("success", true);
+			
+		}catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}
+	
+		return createModelAndViewJson(model);
+	}
+	
 }

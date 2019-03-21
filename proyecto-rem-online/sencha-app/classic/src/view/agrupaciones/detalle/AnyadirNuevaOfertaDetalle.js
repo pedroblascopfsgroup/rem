@@ -54,7 +54,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaDetalle', {
 	    					        	flex:	1,
 	    					        	allowBlank: false,
 	    					        	bind: {
-	    				            		store: '{comboTipoOferta}',
+	    				            		store: '{isUnidadAlquilable}',
 	    				            		value: '{oferta.tipoOferta}'
 	    				            	},
 	    				            	displayField: 'descripcion',

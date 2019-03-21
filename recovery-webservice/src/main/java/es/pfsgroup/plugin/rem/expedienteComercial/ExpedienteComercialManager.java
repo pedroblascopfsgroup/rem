@@ -71,6 +71,7 @@ import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.recovery.agendaMultifuncion.impl.dto.DtoAdjuntoMail;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoTramiteDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
@@ -273,6 +274,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	@Autowired
 	private GenericABMDao genericDao;
 
+	@Autowired
+	private ActivoDao	activoDao;
 	@Autowired
 	private GenericAdapter genericAdapter;
 
@@ -7634,6 +7637,24 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 
 		return listDtoTipoDocExpediente;
+	}
+	
+	public boolean checkAmConUasConOfertasVivas(TareaExterna tareaExterna) { 
+		boolean existenOfertasVivas = false;
+		TareaActivo tareaActivo = tareaActivoApi.getByIdTareaExterna(tareaExterna.getId());
+		Filter filtroTrabajo = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", tareaActivo.getTramite().getTrabajo().getId());
+		ExpedienteComercial expediente = genericDao.get(ExpedienteComercial.class, filtroTrabajo);
+		Filter filtroOferta = genericDao.createFilter(FilterType.EQUALS, "id", expediente.getOferta().getId());
+		Oferta oferta = genericDao.get(Oferta.class, filtroOferta); 
+		ActivoAgrupacion agrupacion = oferta.getAgrupacion();
+		Long idActivo = tareaActivo.getActivo().getId();
+		if (!Checks.esNulo(agrupacion) && !Checks.esNulo(idActivo)) {
+			if (DDTipoAgrupacion.AGRUPACION_PROMOCION_ALQUILER.equals(agrupacion.getTipoAgrupacion().getCodigo()) && activoDao.isActivoMatriz(idActivo)) {
+				existenOfertasVivas = activoDao.existenUAsconOfertasVivas(agrupacion.getId());
+			}
+		}
+  
+		return existenOfertasVivas;
 	}
 }
 

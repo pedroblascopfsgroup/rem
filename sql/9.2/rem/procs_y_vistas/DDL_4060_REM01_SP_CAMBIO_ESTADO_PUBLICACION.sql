@@ -1,10 +1,10 @@
---/*
+--/* 
 --##########################################
---## AUTOR=Oscar Diestre
---## FECHA_CREACION=20190201
+--## AUTOR=Sergio Salt
+--## FECHA_CREACION=20190321
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=2.0.3
---## INCIDENCIA_LINK=HREOS-5358
+--## INCIDENCIA_LINK=HREOS-5599
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -17,6 +17,7 @@
 --##		0.5 Añade insert en la tabla AHP del estado actual (APU) Carles Molins HREOS-4683
 --##		0.6 Sergio B HREOS-4931 - Optmización de tiempos
 --##		0.7 Sergio B HREOS-5358 - Tratamiento de activos asociados a agrupaciones asistidas vencidas
+--##    0.8 Sergio S HREOS-5599 - Ocultacion de unidades alquilables con activo matriz alquilado
 --##########################################
 --*/
 
@@ -93,6 +94,7 @@ create or replace PROCEDURE REM01.SP_CAMBIO_ESTADO_PUBLICACION (pACT_ID IN NUMBE
     vACTUALIZAR_COND  VARCHAR2(1 CHAR);
     vUSUARIOMODIFICAR VARCHAR2(50 CHAR);
     vCondAlquiler     VARCHAR2(1 CHAR);
+    V_AUX             VARCHAR2(50 CHAR);
 
     TYPE CurTyp IS REF CURSOR;
     v_cursor    CurTyp;
@@ -153,6 +155,11 @@ create or replace PROCEDURE REM01.SP_CAMBIO_ESTADO_PUBLICACION (pACT_ID IN NUMBE
     IF SQL%ROWCOUNT > 0 THEN
       vACTUALIZADO := 'S';
     END IF;
+
+
+
+
+    
   END;
 
   PROCEDURE PLP$CAMBIO_ESTADO_VENTA(nACT_ID NUMBER, pESTADO VARCHAR2, pUSUARIOMODIFICAR VARCHAR2) IS
@@ -1111,8 +1118,34 @@ END IF;
 		    EXECUTE IMMEDIATE V_MSQL;
         END IF;
         
+           V_MSQL :=' SELECT count(1) 
+            FROM ACT_ACTIVO act
+            INNER JOIN ACT_AGA_AGRUPACION_ACTIVO aga ON aga.ACT_ID = act.ACT_ID
+            WHERE act.ACT_ID = '||nACT_ID||' 
+            AND DD_SCM_ID = (SELECT DD_SCM_ID FROM DD_SCM_SITUACION_COMERCIAL WHERE DD_SCM_CODIGO = ''10'')
+            AND aga.AGA_PRINCIPAL = 1';
+          EXECUTE IMMEDIATE V_MSQL INTO V_AUX;
+          IF V_AUX > 0 THEN
 
-
+            V_MSQL :='MERGE INTO ACT_APU_ACTIVO_PUBLICACION apu
+              USING (
+              SELECT ACT_ID
+              FROM ACT_AGA_AGRUPACION_ACTIVO aga
+              INNER JOIN 
+              (SELECT AGR_ID 
+              FROM ACT_AGA_AGRUPACION_ACTIVO
+              WHERE ACT_ID = '||nACT_ID||' ) agaFilter ON aga.AGR_ID = agaFilter.AGR_ID
+              AND aga.AGA_PRINCIPAL = 0
+              ) filtroUAs ON (filtroUas.ACT_ID = apu.ACT_ID)
+              WHEN MATCHED 
+              THEN UPDATE SET 
+              apu.APU_CHECK_OCULTAR_A = 1
+              ,apu.DD_MTO_A_ID = (SELECT DD_MTO_ID FROM DD_MTO_MOTIVOS_OCULTACION WHERE DD_MTO_CODIGO = ''16'')
+              ,apu.APU_MOT_OCULTACION_MANUAL_A = 0
+              ,apu.FECHAMODIFICAR = SYSDATE
+              ,apu.USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''';
+            EXECUTE IMMEDIATE V_MSQL;
+        END IF;
         /**************/
         /*HISTORIFICAR*/
         /**************/

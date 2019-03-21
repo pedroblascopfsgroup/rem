@@ -4,6 +4,7 @@ Ext.define('HreRem.view.activos.detalle.PatrimonioActivo', {
 	cls			: 'panel-base shadow-panel tabPanel-tercer-nivel',
     reference	: 'patrimonio',
     layout		: 'fit',
+    refreshAfterSave: true,
     requires	: ['HreRem.view.activos.detalle.DatosPatrimonio', 'HreRem.view.activos.detalle.ContratosPatrimonio'],
     listeners	: {
     	boxready: function (tabPanel) {
@@ -34,7 +35,7 @@ Ext.define('HreRem.view.activos.detalle.PatrimonioActivo', {
         			   title: HreRem.i18n('title.descartar.cambios'),
         			   msg: HreRem.i18n('msg.desea.descartar'),
         			   buttons: Ext.MessageBox.YESNO,
-        			   fn: function(buttonId) {
+        			   fn: function(buttonId) { 
         			        if (buttonId == 'yes') {
         			        	var btn = tabPanel.down('button[itemId=botoncancelar]');
         			        	Ext.callback(btn.handler, btn.scope, [btn, null], 0, btn);

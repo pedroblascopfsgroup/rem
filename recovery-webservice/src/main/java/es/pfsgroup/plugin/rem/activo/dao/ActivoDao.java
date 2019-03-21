@@ -256,5 +256,15 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	boolean existenUAsconOfertasVivas( Long idAgrupacion );
 	
 	boolean existenUAsconTrabajos( Long idAgrupacion );
+	/**
+	 * Dado un id de activo devuelve el si tiene ofertas vivas.
+	 * 
+	 * @param idActivo
+	 */
+	boolean existeAMconOfertasVivas(Long idAgrupacion);
+
+	Long getIdActivoMatriz(Long idAgrupacion);
+	
+	void validateAgrupacion(Long idActivo);
 
 }

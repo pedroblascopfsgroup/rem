@@ -620,8 +620,51 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				 return true;
 			 }
 			 return false;
-		 }		 
+		 },
+		 /*
+		  * 	    comboTipoOferta: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tiposOfertas'}
+			}   	
+	    },
 
+		store: new Ext.data.Store({
+	model: 'HreRem.model.ComboBase',
+	proxy: {
+		type: 'uxproxy',
+		remoteUrl: 'generic/getDiccionarioDeGastos',
+		extraParams: {diccionario: 'subtiposGasto'}
+	},
+	autoLoad: true
+}),
+		  * */
+		 isUnidadAlquilable: function (get) {
+		 	var unidadAlquilable = get('activo.unidadAlquilable'),
+			tiposDeOferta = new Ext.data.Store({
+				model: 'HreRem.model.ComboBase',
+				proxy: {
+					type: 'uxproxy',
+					remoteUrl: 'generic/getDiccionario',
+					extraParams: {diccionario: 'tiposOfertas'}
+				}
+			});
+            	tiposDeOferta.filter([{
+		    	filterFn: function(rec){
+			    	if (get('activo.unidadAlquilable') == 'true' ) {
+			    		if (rec.getData().codigo == '02') return true; 
+			    		else return false;
+			    	}else {
+			    		return true
+			    	}
+		    	}
+		}]);
+					
+				return tiposDeOferta;
+
+		 }
 	 },
 
 	
@@ -645,7 +688,14 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 				}
     		},
     		
-    		    		
+    		comboTipoOferta: {
+			model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'tiposOfertas'}
+				}
+    		},    		    		
     		comboInferiorMunicipio: {
 					model: 'HreRem.model.ComboBase',
 					proxy: {
@@ -1489,16 +1539,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			autoLoad: true
 
 	    },
-
-	    comboTipoOferta: {
-			model: 'HreRem.model.ComboBase',
-			proxy: {
-				type: 'uxproxy',
-				remoteUrl: 'generic/getDiccionario',
-				extraParams: {diccionario: 'tiposOfertas'}
-			}   	
-	    },
-
 	    comboTipoRechazoOferta: {
 			model: 'HreRem.model.ComboBase',
 			proxy: {

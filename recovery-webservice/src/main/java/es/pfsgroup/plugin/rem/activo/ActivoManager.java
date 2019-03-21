@@ -256,6 +256,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	private static final String AVISO_MENSAJE_EXISTEN_OFERTAS_VENTA = "activo.motivo.oferta.existe.venta";
 	private static final String AVISO_MENSAJE_ACITVO_ALQUILADO_O_OCUPADO = "activo.motivo.oferta.alquilado.ocupado";
 	private static final String MAESTRO_ORIGEN_WCOM="WCOM";
+	private static final String EXISTEN_UNIDADES_ALQUILABLES_CON_OFERTAS_VIVAS ="activo.matriz.con.unidades.alquilables.ofertas.vivas";
+	private static final String EXISTE_ACTIVO_MATRIZ_CON_OFERTAS_VIVAS ="activo.unidad.alquilable.con.activo.matriz.ofertas.vivas";
 	private SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 	private BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 	
@@ -616,8 +618,24 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 				}
 			}
-
+			
 		}
+		
+		if (!Checks.esNulo(dto.getIdActivo()) && activoDao.isIntegradoEnAgrupacionPA(dto.getIdActivo()) && activoDao.isActivoMatriz(dto.getIdActivo())) {
+			ActivoAgrupacion agrupacion = activoDao.getAgrupacionPAByIdActivo(dto.getIdActivo()); 
+			if (activoDao.existenUAsconOfertasVivas(agrupacion.getId())) {
+				throw new JsonViewerException(messageServices.getMessage(EXISTEN_UNIDADES_ALQUILABLES_CON_OFERTAS_VIVAS));
+			}
+		}else if (!Checks.esNulo(dto.getIdActivo()) && activoDao.isIntegradoEnAgrupacionPA(dto.getIdActivo()) && activoDao.isUnidadAlquilable(dto.getIdActivo())) {
+			ActivoAgrupacion agrupacion = activoDao.getAgrupacionPAByIdActivo(dto.getIdActivo()); 
+			if (activoDao.existeAMconOfertasVivas(agrupacion.getId())) {
+				throw new JsonViewerException(messageServices.getMessage(EXISTE_ACTIVO_MATRIZ_CON_OFERTAS_VIVAS ));
+			}
+		}
+		
+		
+		
+		
 
 	}
 	

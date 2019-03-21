@@ -10,6 +10,8 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import javax.annotation.Resource;
+
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Criteria;
@@ -20,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import es.capgemini.devon.dto.WebDto;
+import es.capgemini.devon.message.MessageService;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.dao.AbstractEntityDao;
 import es.capgemini.pfs.users.domain.Usuario;
@@ -32,9 +35,11 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.hibernate.HibernateUtils;
 import es.pfsgroup.framework.paradise.bulkUpload.bvfactory.MSVRawSQLDao;
+import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
+import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
@@ -66,6 +71,9 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 
 	private static final String REST_USER_USERNAME = "REST-USER";
 	private static final String REST_USER_HDC_NAME = "Proceso Excel Masivo";
+	
+	@Resource
+	private MessageService messageServices;
 
 	@Autowired
 	private MSVRawSQLDao rawDao;
@@ -75,6 +83,9 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 
 	@Autowired
 	private GenericAdapter adapter;
+	
+	private static final String EXISTEN_UNIDADES_ALQUILABLES_CON_OFERTAS_VIVAS ="activo.matriz.con.unidades.alquilables.ofertas.vivas";
+	private static final String EXISTE_ACTIVO_MATRIZ_CON_OFERTAS_VIVAS ="activo.unidad.alquilable.con.activo.matriz.ofertas.vivas";
 
     @Override
 	public Page getListActivos(DtoActivoFilter dto, Usuario usuLogado) {
@@ -421,6 +432,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
     		return 0;
     	}
 	}
+    
     
     @Override
    	public Long getPresupuestoActual(Long id) {
@@ -1170,9 +1182,9 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		getHibernateTemplate().flush();
 	}
 	
-	@Override
+	@Override 
 	public ActivoAgrupacion getAgrupacionPAByIdActivo(Long idActivo) {
-		HQLBuilder hb = new HQLBuilder("select act.agrupacion. from ActivoAgrupacionActivo act where act.agrupacion.fechaBaja is null and act.activo.id = " + idActivo + " and act.agrupacion.tipoAgrupacion.codigo = " + DDTipoAgrupacion.AGRUPACION_PROMOCION_ALQUILER);
+		HQLBuilder hb = new HQLBuilder("select act.agrupacion from ActivoAgrupacionActivo act where act.agrupacion.fechaBaja is null and act.activo.id = " + idActivo + " and act.agrupacion.tipoAgrupacion.codigo = " + DDTipoAgrupacion.AGRUPACION_PROMOCION_ALQUILER);
 		List<ActivoAgrupacion> lista = getHibernateTemplate().find(hb.toString());
 		
 		if (!Checks.estaVacio(lista)) {
@@ -1197,7 +1209,19 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 
    		return ((Long) getHibernateTemplate().find(hb.toString()).get(0)).intValue() > 0;
 	}
-
+    @Override
+    public Long getIdActivoMatriz (Long idAgrupacion) {
+    	
+    	String sql = "SELECT aga.ACT_ID "
+    			+"FROM ACT_AGA_AGRUPACION_ACTIVO aga " 
+    			+"WHERE aga.AGA_PRINCIPAL = 1 " 
+    			+"AND aga.AGR_ID  = "+ idAgrupacion; 
+    	
+		if (!Checks.esNulo(this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult())) {
+			return ((BigDecimal) this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult()).longValue();  
+		}
+		return null; 
+    }
 	@Override
 	public boolean isUnidadAlquilable(Long idActivo) {
 		boolean isUnidadAlquilable = false;
@@ -1230,15 +1254,17 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 	}
 
 	@Override
-	public boolean existenUAsconOfertasVivas(Long idAgrupacion) {
-		String sql = "SELECT count(*) " + 
+	public boolean existenUAsconOfertasVivas(Long idAgrupacion) {   
+		String sql = "SELECT count(1) " + 
 				"FROM ACT_AGA_AGRUPACION_ACTIVO aga " + 
 				"INNER JOIN ACT_OFR  actOfr ON  aga.ACT_ID =  actOfr.ACT_ID " + 
 				"INNER JOIN OFR_OFERTAS ofr ON actOfr.OFR_ID = ofr.OFR_ID " + 
 				"INNER JOIN ECO_EXPEDIENTE_COMERCIAL eco ON ofr.OFR_ID = eco.OFR_ID " + 
-				"WHERE aga.AGR_ID = " +idAgrupacion
-				+" AND ofr.DD_EOF_ID IN (SELECT DD_EOF_ID FROM DD_EOF_ESTADOS_OFERTA WHERE DD_EOF_CODIGO = '01') " + 
-				"AND eco.ECO_FECHA_INICIO_ALQUILER IS NULL";
+				"INNER JOIN ACT_ACTIVO act ON actOfr.ACT_ID = act.ACT_ID " + 
+				"WHERE aga.AGR_ID =  "+idAgrupacion +  
+				"AND ofr.DD_EOF_ID  IN  (SELECT DD_EOF_ID FROM DD_EOF_ESTADOS_OFERTA WHERE DD_EOF_CODIGO = '01') " + 
+				"AND aga.AGA_PRINCIPAL = 0 " + 
+				"AND act.DD_TTA_ID  = ( SELECT DD_TTA_ID FROM DD_TTA_TIPO_TITULO_ACTIVO WHERE DD_TTA_CODIGO = '05')  ";
 		
 		if (!Checks.esNulo(this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult())) {
 			return ((BigDecimal) this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult()).longValue() > 0;  
@@ -1261,4 +1287,45 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		return false;
 		
 	}
+	
+
+	@Override
+	public boolean existeAMconOfertasVivas(Long idAgrupacion) { 
+		String sql = "SELECT count(*)    " + 
+				"	 			 FROM ACT_AGA_AGRUPACION_ACTIVO aga     " + 
+				"	 			 INNER JOIN ACT_OFR  actOfr ON  aga.ACT_ID =  actOfr.ACT_ID     " + 
+				"	 			 INNER JOIN OFR_OFERTAS ofr ON actOfr.OFR_ID = ofr.OFR_ID     " + 
+				"	 			 INNER JOIN ECO_EXPEDIENTE_COMERCIAL eco ON ofr.OFR_ID = eco.OFR_ID     " + 
+				"	 			 WHERE aga.AGR_ID = " + idAgrupacion + 
+				"	 			  AND aga.AGA_PRINCIPAL = 1   " + 
+				"	 			  AND ofr.DD_EOF_ID IN (SELECT DD_EOF_ID FROM DD_EOF_ESTADOS_OFERTA WHERE DD_EOF_CODIGO = '01')" ;
+		
+		
+		if (!Checks.esNulo(this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult())) {
+			return ((BigDecimal) this.getSessionFactory().getCurrentSession().createSQLQuery(sql).uniqueResult()).intValue() > 0;
+		}
+		return false;
+	}
+	
+	
+	public void validateAgrupacion(Long idActivo) {
+		if (isActivoMatriz(idActivo)) {
+			ActivoAgrupacion agrupacion = getAgrupacionPAByIdActivo(idActivo);
+			if (existenUAsconOfertasVivas(agrupacion.getId())) {
+				logger.error(EXISTEN_UNIDADES_ALQUILABLES_CON_OFERTAS_VIVAS);
+				throw new JsonViewerException(messageServices.getMessage(EXISTEN_UNIDADES_ALQUILABLES_CON_OFERTAS_VIVAS));
+				
+			}
+		}else if (isUnidadAlquilable(idActivo)) {
+			ActivoAgrupacion agrupacion = getAgrupacionPAByIdActivo(idActivo);
+			if (existeAMconOfertasVivas(agrupacion.getId())) {
+				logger.error(EXISTE_ACTIVO_MATRIZ_CON_OFERTAS_VIVAS);
+				throw new JsonViewerException(messageServices.getMessage(EXISTE_ACTIVO_MATRIZ_CON_OFERTAS_VIVAS));
+				
+			}
+		}
+	}
+
+	
+	
 }

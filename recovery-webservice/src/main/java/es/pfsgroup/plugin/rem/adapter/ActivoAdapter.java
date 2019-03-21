@@ -4127,5 +4127,9 @@ public class ActivoAdapter {
 		}		
 		return StoreOrigenActivos;
 	}
+	
+	public boolean isUnidadAlquilable (Long idActivo) {
+		return activoDao.isUnidadAlquilable(idActivo);
+	}
 
 }

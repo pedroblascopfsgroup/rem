@@ -3615,12 +3615,14 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		}
 
 		if (!Ext.isEmpty(jsonData)) {
-
 			var data = JSON.parse(jsonData);
-
 			if (data.success !== null && data.success !== undefined && data.success === "false") {
-				me.getViewModel().getData().situacionPosesoria.reject();
-				me.getViewModel().getData().activo.reject();
+				var modelData = me.getViewModel().getData();
+				for ( var entry in modelData) {
+					if ((modelData[entry] != null && modelData[entry] != undefined) && modelData[entry].isModel){
+						modelData[entry].reject();
+					}
+				}
 				scope.fireEvent("errorToast", data.msgError);
 			} else {
 				scope.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
@@ -3811,5 +3813,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			
 		}
 			
-	}
+	},
+
 })

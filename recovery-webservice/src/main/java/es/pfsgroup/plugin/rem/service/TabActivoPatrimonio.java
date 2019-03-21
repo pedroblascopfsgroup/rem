@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.annotation.Resource;
+
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
 import es.pfsgroup.plugin.rem.model.dd.*;
 import org.apache.commons.beanutils.BeanUtils;
@@ -13,15 +15,18 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.dto.WebDto;
+import es.capgemini.devon.message.MessageService;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoHistoricoPatrimonioDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoPatrimonioDao;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoHistoricoPatrimonio;
 import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
 import es.pfsgroup.plugin.rem.model.ActivoPublicacion;
@@ -30,7 +35,6 @@ import es.pfsgroup.plugin.rem.model.DtoActivoPatrimonio;
 
 @Component
 public class TabActivoPatrimonio implements TabActivoService {
-
 	@Autowired
 	private GenericABMDao genericDao;
 
@@ -59,7 +63,6 @@ public class TabActivoPatrimonio implements TabActivoService {
 	public String[] getCodigoTab() {
 		return new String[]{TabActivoService.TAB_PATRIMONIO};
 	}
-
 	public DtoActivoPatrimonio getTabData(Activo activo) throws IllegalAccessException, InvocationTargetException {
 		DtoActivoPatrimonio activoPatrimonioDto = new DtoActivoPatrimonio();
 
@@ -100,16 +103,19 @@ public class TabActivoPatrimonio implements TabActivoService {
 	@Transactional()
 	@Override
 	public Activo saveTabActivo(Activo activo, WebDto dto) {
+		
 		List<ActivoHistoricoPatrimonio> listHistPatrimonio = activoHistoricoPatrimonioDao.getHistoricoAdecuacionesAlquilerByActivo(activo.getId());
 		ArrayList<Long> idActivoActualizarPublicacion = new ArrayList<Long>();
-
 		DtoActivoPatrimonio activoPatrimonioDto = (DtoActivoPatrimonio) dto;
 		ActivoPatrimonio activoPatrimonio = genericDao.get(ActivoPatrimonio.class, genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId()));
 		ActivoSituacionPosesoria activoSituacionPosesoria;
-
+	 
+		activoDao.validateAgrupacion(activo.getId());
 		if(Checks.esNulo(activoPatrimonio)) {
 			activoPatrimonio = new ActivoPatrimonio();
 			activoPatrimonio.setActivo(activo);
+			
+			
 			if(!Checks.esNulo(activoPatrimonioDto.getChkPerimetroAlquiler())) {
 				activoPatrimonio.setCheckHPM(activoPatrimonioDto.getChkPerimetroAlquiler());
 			}

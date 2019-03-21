@@ -1103,8 +1103,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 						align : 't'
 					});
 					var ventanaWizard = grid.up('anyadirnuevaofertaactivoadjuntardocumento');
-					ventanaWizard.down('button[itemId=btnFinalizar]').disable();
-					ventanaWizard.down('button[itemId=btnSubirDoc]').disable();
+					//ventanaWizard.down('button[itemId=btnFinalizar]').disable();
+					//ventanaWizard.down('button[itemId=btnSubirDoc]').disable();
 					ventanaWizard.down('button[itemId=btnGenerarDoc]').enable();
 					ventanaWizard.getForm().findField('comunicacionTerceros').enable();
 					ventanaWizard.getForm().findField('cesionDatos').enable();

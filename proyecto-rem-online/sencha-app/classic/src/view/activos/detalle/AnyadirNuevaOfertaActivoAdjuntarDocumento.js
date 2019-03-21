@@ -69,7 +69,7 @@ Ext.define('HreRem.view.activos.detalle.AnyadirNuevaOfertaActivoAdjuntarDocument
 	          		ventanaWizard.getForm().findField('transferenciasInternacionales').enable();
 	          	  }
     			
-    			wizard.down('anyadirnuevaofertaactivoadjuntardocumento').down('button[itemId=btnSubirDoc]').disable();
+    			//wizard.down('anyadirnuevaofertaactivoadjuntardocumento').down('button[itemId=btnSubirDoc]').disable();
     			wizard.down('anyadirnuevaofertaactivoadjuntardocumento').down('button[itemId=btnFinalizar]').disable();
     			
     			layout["prev"]();

@@ -65,8 +65,6 @@ BEGIN
 	ELSE
 		DBMS_OUTPUT.PUT_LINE('NINGÚN ACTIVO QUE ACTUALIZAR!');
 	END IF;
-    --DBMS_OUTPUT.PUT_LINE('COMENZANDO EL PROCESO DE ACTUALIZACIÓN');
-    EXECUTE IMMEDIATE 'UPDATE '||V_ESQUEMA||'.TAP_TAREA_PROCEDIMIENTO SET TAP_SCRIPT_VALIDACION_JBPM = ''existeAdjuntoUGCarteraValidacion("36", "E", "01") == null ? valores[''''T013_DefinicionOferta''''][''''comboConflicto''''] == DDSiNo.SI || valores[''''T013_DefinicionOferta''''][''''comboRiesgo''''] == DDSiNo.SI  ?  ''''El estado de la responsabilidad corporativa no es el correcto para poder avanzar.'''' : comprobarComiteLiberbankPlantillaPropuesta() ? existeAdjuntoUGCarteraValidacion("36", "E", "08") : definicionOfertaT013(valores[''''T013_DefinicionOferta''''][''''comite''''])  : existeAdjuntoUGCarteraValidacion("36", "E", "01")'', USUARIOMODIFICAR = ''REMVIP-3449'', FECHAMODIFICAR = SYSDATE WHERE TAP_CODIGO = ''T013_DefinicionOferta''';    
     COMMIT;
 
 EXCEPTION

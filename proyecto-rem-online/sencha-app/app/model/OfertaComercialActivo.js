@@ -29,7 +29,55 @@ Ext.define('HreRem.model.OfertaComercialActivo', {
     		},
     		{
     			name:'importeOferta'
-    		}
+    		},
+    		{
+    			name:'nombreCliente'
+    		},
+    		{
+    			name:'razonSocialCliente'
+    		},
+    		{
+    			name:'apellidosCliente'
+    		},
+    		{
+    			name:'numDocumentoCliente'
+    		},
+    		{
+    			name:'tipoDocumento'
+    		},
+    		{
+    			name:'deDerechoTanteo'
+    		},
+    		{
+            	name: 'tipoPersona'
+            },
+            {
+            	name: 'estadoCivil'
+            },
+            {
+            	name: 'regimenMatrimonial'
+            },
+            {
+            	name: 'intencionFinanciar'
+            },
+            {
+            	name: 'codigoPrescriptor'
+            },
+            {
+            	name: 'codigoSucursal'
+            },
+            {
+            	name: 'cesionDatos',
+            	type : 'boolean'
+            },
+            {
+            	name: 'comunicacionTerceros',
+            	type : 'boolean'
+            },
+            {
+            	name: 'transferenciasInternacionales',
+            	type : 'boolean'
+            }
     ],
     
 	proxy: {

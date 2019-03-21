@@ -34,6 +34,10 @@ public class DDPaises implements Auditable, Dictionary {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	
+	public static final String CODIGO_PAIS_ESPANA  = "28";
+	public static final String CODIGO_PAIS_ESPANYA = "28";
+	public static final String CODIGO_PAIS_SPAIN   = "28";
 
 	@Id
 	@Column(name = "DD_PAI_ID")

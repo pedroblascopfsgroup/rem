@@ -26,6 +26,8 @@ public class ActivoPropagacionFieldTabMap {
     public static final String TAB_COMERCIAL = "comercial";
     public static final String TAB_ADMINISTRACION = "administracion";
     public static final String TAB_PATRIMONIO = "patrimonio";
+    public static final String TAB_CALIFICACION_NEGATIVA = "calificacionNegativa";
+
 
     static {
     	Map<String, List<String>> pmap = new HashMap<String, List<String>>();
@@ -442,7 +444,9 @@ public class ActivoPropagacionFieldTabMap {
 					"descripcionCalificacionNegativa",
 					"estadoMotivoCalificacionNegativa",
 					"responsableSubsanar",
-					"fechaSubsanacion"
+					"fechaSubsanacion",
+					"codigoMotivoCalificacionNegativa",
+					"codigoEstadoMotivoCalificacionNegativa"
     			));
 
     	pmap.put(TAB_INFO_ADMINISTRATIVA,

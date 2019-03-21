@@ -12,6 +12,7 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
@@ -41,7 +42,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDUsosActivo;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Inheritance(strategy=InheritanceType.JOINED)
 public class CompradorExpediente implements Serializable {
-	
     /**
 	 * 
 	 */
@@ -65,6 +65,10 @@ public class CompradorExpediente implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "DD_TDI_ID_RTE")
 	private DDTipoDocumento tipoDocumentoRepresentante;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_TDI_ID_CONYUGE")
+	private DDTipoDocumento tipoDocumentoConyuge;
     
     @Column(name = "CEX_DOCUMENTO_RTE")
     private String documentoRepresentante;
@@ -172,8 +176,16 @@ public class CompradorExpediente implements Serializable {
     @JoinColumn(name = "DD_PAI_ID_RTE")
     private DDPaises paisRte;
     
+
     @Column(name = "CEX_ID_PERSONA_HAYA")
     private String idPersonaHaya;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ADCOM_ID")
+    private AdjuntoComprador documentoAdjunto;
+    
+    
+
     
 	@Version   
 	private Long version;
@@ -332,6 +344,14 @@ public class CompradorExpediente implements Serializable {
 	public void setRegimenMatrimonial(DDRegimenesMatrimoniales regimenMatrimonial) {
 		this.regimenMatrimonial = regimenMatrimonial;
 	}
+	
+	public DDTipoDocumento getTipoDocumentoConyuge() {
+		return tipoDocumentoConyuge;
+	}
+
+	public void setTipoDocumentoConyuge(DDTipoDocumento tipoDocumentoConyuge) {
+		this.tipoDocumentoConyuge = tipoDocumentoConyuge;
+	}
 
 	public String getDocumentoConyuge() {
 		return documentoConyuge;
@@ -445,8 +465,16 @@ public class CompradorExpediente implements Serializable {
 		this.fechaFactura = fechaFactura;
 	}
 
+	
 
 
+	public AdjuntoComprador getDocumentoAdjunto() {
+		return documentoAdjunto;
+	}
+
+	public void setDocumentoAdjunto(AdjuntoComprador documentoAdjunto) {
+		this.documentoAdjunto = documentoAdjunto;
+	}
 
 	public String getIdPersonaHaya() {
 		return idPersonaHaya;

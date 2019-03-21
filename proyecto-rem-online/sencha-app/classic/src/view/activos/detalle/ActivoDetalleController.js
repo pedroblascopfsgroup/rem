@@ -4454,23 +4454,19 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
                                     btnFinalizar =  ventanaWizardAdjuntarDocumento.down('button[itemId=btnFinalizar]');
                                     if(cesionDatos.getValue()){
                                     	btnFinalizar.enable();
-                                    }                                    
+                                    }     
+                                    if (esInternacional) {
+										if (cesionDatos.getValue() && transferenciasInternacionales.getValue()) {
+											btnFinalizar.enable();
+										}
+									} else {
+										if (cesionDatos.getValue()) {
+											btnFinalizar.enable();
+										}
+									}
 
                                     ventanaWizardAdjuntarDocumento.getForm().findField('docOfertaComercial').setValue(data.data[0].nombre);
                                     ventanaWizardAdjuntarDocumento.down().down('panel').down('button').show();
-
-                                    if(cesionDatos.getValue()) {
-                                          if(esInternacional) {
-                                                if(transferenciasInternacionales.getValue())
-                                                    btnGenerarDoc.enable();
-                                                else
-                                                    btnGenerarDoc.disable();
-                                          } else {
-                                            btnGenerarDoc.enable();
-                                          }
-                                      } else {
-                                        btnGenerarDoc.disable();
-                                      }
                                  }
                              },
 
@@ -4549,7 +4545,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
                documento:numDoc,nombre:nombre,direccion:direccion,email:email,idExpediente:idExpediente, telefono:telefono};
         me.fireEvent("downloadFile", config);
 
-        ventana3.down('button[itemId=btnSubirDoc]').enable();
+        //ventana3.down('button[itemId=btnSubirDoc]').enable();
     },
 	
 	comprobarFormato: function() {

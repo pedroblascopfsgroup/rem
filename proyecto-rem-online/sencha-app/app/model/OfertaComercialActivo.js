@@ -67,7 +67,7 @@ Ext.define('HreRem.model.OfertaComercialActivo', {
             	name: 'codigoSucursal'
             },
             {
-            	name: 'cesionDatos',
+            	name: 'cesionDatosHaya',
             	type : 'boolean'
             },
             {

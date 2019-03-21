@@ -7,8 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import es.capgemini.devon.dto.WebDto;
+import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoInfAdministrativa;
 import es.pfsgroup.plugin.rem.model.DtoActivoInformacionAdministrativa;
@@ -23,7 +25,8 @@ public class TabActivoInfoAdministrativa implements TabActivoService {
 	@Autowired
 	private UtilDiccionarioApi diccionarioApi;
 	
-	
+	@Autowired
+	private ActivoDao activoDao;
 	
 
 	@Override
@@ -53,7 +56,12 @@ public class TabActivoInfoAdministrativa implements TabActivoService {
 		BeanUtils.copyProperty(activoDto, "vpo", activo.getVpo());
 		
 		// HREOS-2761: Buscamos los campos que pueden ser propagados para esta pestaña
-		activoDto.setCamposPropagables(TabActivoService.TAB_INFO_ADMINISTRATIVA);
+		if(!Checks.esNulo(activo) && activoDao.isActivoMatriz(activo.getId())) {	
+			activoDto.setCamposPropagablesUas(TabActivoService.TAB_INFO_ADMINISTRATIVA);
+		}else {
+			// Buscamos los campos que pueden ser propagados para esta pestaña
+			activoDto.setCamposPropagables(TabActivoService.TAB_INFO_ADMINISTRATIVA);
+		}
 		
 		return activoDto;		
 	}

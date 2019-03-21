@@ -83,6 +83,8 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 	@Autowired
 	private NotificatorServiceDesbloqExpCambioSitJuridica notificatorServiceDesbloqueoExpediente;
 	
+	@Autowired
+	private ActivoDao activoDao;
 	
 	@Autowired
 	private ActivoApi activoApi;
@@ -90,8 +92,6 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 	@Autowired
 	private UsuarioApi usuarioApi;
 	
-	@Autowired
-	private ActivoDao activoDao;
 	
 	private final String PERFIL_HAYASUPER = "HAYASUPER";
 	private final String PERFIL_HAYAGESTADM = "HAYAGESTADM";
@@ -265,13 +265,15 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 			} else {
 				BeanUtils.copyProperty(activoDto, "calificacionNegativa", DDCalificacionNegativa.CODIGO_NO);
 			}
-		
-			
-			//El estado del motivo de calificacion negativa predeterminadamente es siempre Pendiente
-			
-			//BeanUtils.copyProperty(activoDto, "estadoMotivoCalificacionNegativa", DDEstadoMotivoCalificacionNegativa.DD_PENDIENTE_CODIGO);
+
+
 		// HREOS-2761: Buscamos los campos que pueden ser propagados para esta pestaña
-		activoDto.setCamposPropagables(TabActivoService.TAB_DATOS_REGISTRALES);
+			if(!Checks.esNulo(activo) && activoDao.isActivoMatriz(activo.getId())) {	
+				activoDto.setCamposPropagablesUas(TabActivoService.TAB_DATOS_REGISTRALES);
+			}else {
+				// Buscamos los campos que pueden ser propagados para esta pestaña
+				activoDto.setCamposPropagables(TabActivoService.TAB_DATOS_REGISTRALES);
+			}
 		
 		List<ActivoCalificacionNegativa> activoCNList = activoDao.getListActivoCalificacionNegativaByIdActivo(activo.getId());
 		Boolean puedeEditar = false, campoMarcado = false;

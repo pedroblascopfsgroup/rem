@@ -190,6 +190,7 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	private String codigoPromocionPrinex;
 
 	private List<?> activosPropagables;
+	private List<Activo> activosPropagablesUas;
 
 	private Boolean tienePosibleInformeMediador;
 
@@ -1755,6 +1756,14 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	this.unidadesAlquilablesEnAgrupacion = unidadesAlquilablesEnAgrupacion;
 	}
 
+	public List<Activo> getActivosPropagablesUas() {
+		return activosPropagablesUas;
+	}
+
+	public void setActivosPropagablesUas(List<Activo> activosPropagablesUas) {
+		this.activosPropagablesUas = activosPropagablesUas;
+	}
+
 	public Long getIdPrinexHPM() {
 		return idPrinexHPM;
 	}
@@ -1762,6 +1771,5 @@ public class DtoActivoFichaCabecera extends DtoTabActivo {
 	public void setIdPrinexHPM(Long idPrinexHPM) {
 		this.idPrinexHPM = idPrinexHPM;
 	}
-	
 	
 }

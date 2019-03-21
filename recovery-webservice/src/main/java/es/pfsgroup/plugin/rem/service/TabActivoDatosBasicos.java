@@ -569,10 +569,14 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			BeanUtils.copyProperty(activoDto, "estadoAlquilerCodigo", !Checks.esNulo(activo.getActivoPublicacion().getEstadoPublicacionAlquiler()) ? activo.getActivoPublicacion().getEstadoPublicacionAlquiler().getCodigo() : "");
 			BeanUtils.copyProperty(activoDto, "estadoVentaCodigo", !Checks.esNulo(activo.getActivoPublicacion().getEstadoPublicacionVenta()) ? activo.getActivoPublicacion().getEstadoPublicacionVenta().getCodigo(): "");
 		}
-
-		// Buscamos los campos que pueden ser propagados para esta pestaña
-		activoDto.setCamposPropagables(TabActivoService.TAB_DATOS_BASICOS);
-
+		
+		if(!Checks.esNulo(activo) && activoDao.isActivoMatriz(activo.getId())) {	
+			activoDto.setCamposPropagablesUas(TabActivoService.TAB_DATOS_BASICOS);
+		}else {
+			// Buscamos los campos que pueden ser propagados para esta pestaña
+			activoDto.setCamposPropagables(TabActivoService.TAB_DATOS_BASICOS);
+		}
+		
 		if (!Checks.esNulo(activo.getSituacionPosesoria()) && !Checks.esNulo(activo.getSituacionPosesoria().getOcupado())) {
 			activoDto.setOcupado(activo.getSituacionPosesoria().getOcupado());
 		} else {

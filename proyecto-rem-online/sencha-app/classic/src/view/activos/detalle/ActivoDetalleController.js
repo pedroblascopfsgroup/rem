@@ -2,7 +2,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     extend: 'Ext.app.ViewController',
     alias: 'controller.activodetalle',
     requires: ['HreRem.view.activos.detalle.AnyadirEntidadActivo' , 'HreRem.view.activos.detalle.CargaDetalle',
-            'HreRem.view.activos.detalle.OpcionesPropagacionCambios', 'HreRem.view.activos.detalle.VentanaEleccionTipoPublicacion'],
+            'HreRem.view.activos.detalle.OpcionesPropagacionCambios', 'HreRem.view.activos.detalle.VentanaEleccionTipoPublicacion', 'HreRem.view.agrupaciones.detalle.DatosPublicacionAgrupacion'],
 
     control: {
          'documentosactivosimple gridBase': {
@@ -3528,83 +3528,158 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	record = grid.getStore().getAt(rowIndex);
     },
 
-	checkActivosToPropagate: function(idActivo, form, tabData, restringida){
-		var me = this,
-		url =  $AC.getRemoteUrl('activo/getActivosPropagables');
+    checkActivosToPropagate: function(idActivo, form, tabData, restringida){
+    	var me = this,		
+		url2 =  $AC.getRemoteUrl('activo/getIsActivoMatriz');
 		Ext.Ajax.request({
-    		url: url,
+		 	url: url2,
 			method : 'POST',
-    		params: {idActivo: idActivo},
-
+			params: {idActivo: idActivo},
     		success: function(response, opts){
-    			var activosPropagables = Ext.decode(response.responseText).data.activosPropagables;
-				var tabPropagableData = null;
-
-				if(me.getViewModel() != null){
-					if(me.getViewModel().get('activo') != null){
-						if(me.getViewModel().get('activo').data != null){
-							me.getViewModel().get('activo').data.activosPropagables = activosPropagables;
-						}
-					}
+    			var isActivoMatriz = Ext.decode(response.responseText).data;
+				if(isActivoMatriz == "true"){
+					url3 =  $AC.getRemoteUrl('activo/propagarActivosMatriz');
+		    		Ext.Ajax.request({
+		        		url: url3,
+		    			method : 'POST',
+		        		params: {idActivo: idActivo},
+	    		    		success: function(response, opts){	
+	    		    			var activosSeleccionados = Ext.decode(response.responseText).data.activosPropagables;
+		    		    			if(me.getViewModel() != null){
+	    		    					if(me.getViewModel().get('activo') != null){
+	    		    						if(me.getViewModel().get('activo').data != null){
+		    									me.getViewModel().get('activo').data.activosPropagables = activosSeleccionados;
+		    								}
+		    							}
+		    						}
+	    		    				if(activosSeleccionados.length > 0) {
+	    								tabPropagableData = me.createFormPropagableData(form, tabData);
+	    								if (!Ext.isEmpty(tabPropagableData)) {
+	    									// sacamos el activo actual del listado
+	    								
+	    									var activo = function(activo){return activo.activoId == me.getViewModel().get("activo.id")};
+	    								
+	    									// Abrimos la ventana de selección de activos
+	    									var ventanaOpcionesPropagacionCambios = Ext.create("HreRem.view.activos.detalle.OpcionesPropagacionCambiosMatrizExpediente", {form: form, activoActual: activo, activos: activosSeleccionados, tabData: tabData, propagableData: tabPropagableData}).show();
+	    										me.getView().add(ventanaOpcionesPropagacionCambios);
+	    										me.getView().unmask();
+	    										return false;
+	    								}
+	    		    				}
+	    	
+    								var successFn = function(response, eOpts) {
+	    		
+										me.manageToastJsonResponse(me, response.responseText);
+	   									me.getView().unmask();
+	   									me.refrescarActivo(form.refreshAfterSave);
+	   									me.getView().fireEvent("refreshComponentOnActivate", "container[reference=tabBuscadorActivos]");
+	   									me.actualizarGridHistoricoDestinoComercial(form);
+	    							}
+	    	
+									if(restringida == true){
+	    								me.saveActivosAgrRestringida(tabData, successFn);
+	    							} else {
+	    								me.getView().fireEvent("No hay activos propagables");
+	    								me.saveActivo(tabData, successFn);
+	    							}
+	    		    			me.getView().unmask();
+	    		    		},failure: function(record, operation) {
+	    		    			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+	    		    		}
+		    		});
+				}else{
+					url4 =  $AC.getRemoteUrl('activo/getisActivoUa');
+	    			Ext.Ajax.request({
+	    		   		url: url4,
+	    				method : 'POST',
+	    				params: {idActivo: idActivo},
+	    		   		success: function(response, opts){
+	    		   			var isActivoUa = Ext.decode(response.responseText).data;
+	    		    		if(isActivoUa != "true"){
+								url =  $AC.getRemoteUrl('activo/getActivosPropagables');
+								Ext.Ajax.request({
+									url: url,
+									method : 'POST',
+									params: {idActivo: idActivo},
+									success: function(response, opts){
+											var activosPropagables = Ext.decode(response.responseText).data.activosPropagables;
+											var tabPropagableData = null;
+											if(me.getViewModel() != null){
+												if(me.getViewModel().get('activo') != null){
+													if(me.getViewModel().get('activo').data != null){
+														me.getViewModel().get('activo').data.activosPropagables = activosPropagables;
+													}
+												}
+											}
+											if(activosPropagables != null){
+													if(activosPropagables.length > 0) {
+														tabPropagableData = me.createFormPropagableData(form, tabData);
+														if (!Ext.isEmpty(tabPropagableData)) {
+															// sacamos el activo actual del listado
+															var activo = activosPropagables.splice(activosPropagables.findIndex(function(activo){return activo.activoId == me.getViewModel().get("activo.id")}),1)[0];
+							
+															// Abrimos la ventana de selección de activos
+															var ventanaOpcionesPropagacionCambios = Ext.create("HreRem.view.activos.detalle.OpcionesPropagacionCambios", {form: form, activoActual: activo, activos: activosPropagables, tabData: tabData, propagableData: tabPropagableData}).show();
+																me.getView().add(ventanaOpcionesPropagacionCambios);
+																me.getView().unmask();
+																return false;
+														}
+													}
+							
+													var successFn = function(response, eOpts) {
+								
+														me.manageToastJsonResponse(me, response.responseText);
+														me.getView().unmask();
+														me.refrescarActivo(form.refreshAfterSave);
+														me.getView().fireEvent("refreshComponentOnActivate", "container[reference=tabBuscadorActivos]");
+														me.actualizarGridHistoricoDestinoComercial(form);
+													}
+							
+													if(restringida == true){
+														me.saveActivosAgrRestringida(tabData, successFn);
+													} else {
+														me.getView().fireEvent("No hay activos propagables");
+														me.saveActivo(tabData, successFn);
+													}
+											}else{
+												var successFn = function(response, eOpts) {
+													
+													me.manageToastJsonResponse(me, response.responseText);
+													me.getView().unmask();
+													me.refrescarActivo(form.refreshAfterSave);
+													me.getView().fireEvent("refreshComponentOnActivate", "container[reference=tabBuscadorActivos]");
+													me.actualizarGridHistoricoDestinoComercial(form);
+												}
+												me.saveActivo(tabData, successFn);
+												me.getView().unmask();
+											}
+									
+									},failure: function(record, operation) {
+										me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+				    				}
+				    			});
+	    		    		}else{
+	    		    			var successFn = function(response, eOpts) {
+	    		    				me.manageToastJsonResponse(me, response.responseText);
+    								me.getView().unmask();
+    								me.refrescarActivo(form.refreshAfterSave);
+    								me.getView().fireEvent("refreshComponentOnActivate", "container[reference=tabBuscadorActivos]");
+    								me.actualizarGridHistoricoDestinoComercial(form);
+    							}		
+	    		    			me.saveActivo(tabData, successFn)	
+							}
+	    		   		
+	    		   		},failure: function(record, operation) {
+	    		   			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+	    				}
+	    			});
 				}
-				
-				if(activosPropagables.length > 0) {
-					tabPropagableData = me.createFormPropagableData(form, tabData);
-					if (!Ext.isEmpty(tabPropagableData)) {
-						// sacamos el activo actual del listado
-						var activo = activosPropagables.splice(activosPropagables.findIndex(function(activo){return activo.activoId == me.getViewModel().get("activo.id")}),1)[0];
-						var tieneDatosPropagables = false;
-						if(!Ext.isEmpty(form)) {
-				    		
-				    		var fields = form.getForm().getFields();
-
-				    		fields.each(function(field) {
-				    			
-				    			if (!Ext.isEmpty(field) && !Ext.isEmpty(field.bind) && !Ext.isEmpty(field.bind.value) && !Ext.isEmpty(field.bind.value.stub)  ) {
-				    				var path = field.bind.value.stub.path;
-				    				var indexSeparator = path.indexOf(".");
-				    				var name = path.substring(0,indexSeparator);
-				    				var property = path.substring(indexSeparator+1, path.length);
-				    				
-				    				Ext.Array.each(tabPropagableData.models, function(model,index) {
-				    					if (model.type == name && model.data.hasOwnProperty(property)) {
-				    						tieneDatosPropagables = true;
-				    					}
-				    				});
-				    			}
-				    		});
-				    	}
-						
-						if(tieneDatosPropagables) {
-							// Abrimos la ventana de selección de activos
-							var ventanaOpcionesPropagacionCambios = Ext.create("HreRem.view.activos.detalle.OpcionesPropagacionCambios", {form: form, activoActual: activo, activos: activosPropagables, tabData: tabData, propagableData: tabPropagableData}).show();
-								me.getView().add(ventanaOpcionesPropagacionCambios);
-								me.getView().unmask();
-								return false;
-						}
-					}
-				}
-
-				var successFn = function(response, eOpts) {
-
-					me.manageToastJsonResponse(me, response.responseText);
-					me.getView().unmask();
-					me.refrescarActivo(form.refreshAfterSave);
-					me.getView().fireEvent("refreshComponentOnActivate", "container[reference=tabBuscadorActivos]");
-					me.actualizarGridHistoricoDestinoComercial(form);
-				}
-
-				if(restringida == true){
-					me.saveActivosAgrRestringida(tabData, successFn);
-				} else {
-					me.saveActivo(tabData, successFn);
-				}
-    		},
-
-		 	failure: function(record, operation) {
-		 		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-		    }
-    	});
+    		    			
+    			
+    		},failure: function(record, operation) {
+    			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+			}
+		});
 	},
 
     onSaveFormularioCompletoTabPatrimonio: function(btn, form){

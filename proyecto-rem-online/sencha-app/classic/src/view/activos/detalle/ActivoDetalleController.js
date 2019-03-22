@@ -4456,7 +4456,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
                                     	Ext.global.console.log("internacional");
                                     	Ext.global.console.log("cesion datos "+cesionDatos.getValue());
                                     	Ext.global.console.log("transferenciasInternacionales datos "+transferenciasInternacionales.getValue());
-										if (cesionDatos.getValue() && transferenciasInternacionales.getValue()) {
+										if (transferenciasInternacionales.getValue()) {
 											btnFinalizar.enable();
 										}else{
 											btnFinalizar.disable();

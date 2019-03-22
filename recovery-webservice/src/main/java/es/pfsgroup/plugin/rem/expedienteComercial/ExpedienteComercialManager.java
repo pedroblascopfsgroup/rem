@@ -1123,7 +1123,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					dto.setFechaVenta(expediente.getFechaVenta());
 				}
 
-				if (!Checks.esNulo(activo.getTipoComercializacion())) {
+				if (!Checks.esNulo(activo.getActivoPublicacion().getTipoComercializacion())) {
 					// DDTipoAlquiler tipoAlquiler = (DDTipoAlquiler)
 					// utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoAlquiler.class,
 					// DDTipoAlquiler.CODIGO_ALQUILER_OPCION_COMPRA);

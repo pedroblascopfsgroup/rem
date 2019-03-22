@@ -160,8 +160,8 @@ public class UpdaterStateManager implements UpdaterStateApi{
 			codigo = DDSituacionComercial.CODIGO_DISPONIBLE_VENTA_RESERVA;
 		}
 		else if(activoApi.isActivoConOfertaByEstado(activo,DDEstadoOferta.CODIGO_ACEPTADA)) {
-			if (!Checks.esNulo(activo.getTipoComercializacion())) {
-				switch(Integer.parseInt(activo.getTipoComercializacion().getCodigo())) {
+			if (!Checks.esNulo(activo.getActivoPublicacion().getTipoComercializacion())) {
+				switch(Integer.parseInt(activo.getActivoPublicacion().getTipoComercializacion().getCodigo())) {
 					case 1:
 						codigo = DDSituacionComercial.CODIGO_DISPONIBLE_VENTA_OFERTA;
 						break;

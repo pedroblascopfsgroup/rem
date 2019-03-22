@@ -4411,7 +4411,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
                 }
             }
 
-
             if(destinoComercialActivo === valueDestComercial || destinoComercialActivo === CONST.TIPO_COMERCIALIZACION_ACTIVO["ALQUILER_VENTA"]){
                 if (ventanaDetalle.config.xtype.indexOf('activoadjuntardocumento') >= 0 && ventanaAlta.indexOf('wizardaltacomprador') < 0) {
                     ventanaDetalle.setController('activodetalle');

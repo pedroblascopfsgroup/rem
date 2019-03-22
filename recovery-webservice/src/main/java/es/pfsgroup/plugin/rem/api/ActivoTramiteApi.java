@@ -294,5 +294,9 @@ public interface ActivoTramiteApi {
 	 * @return 
 	 */
 	public boolean tieneTramiteGENCATVigenteByIdActivo(Long idActivo, Long idExpediente);
+
+	String mismoNumeroAdjuntosComoTareasTipoUGValidacion(TareaExterna tareaExterna, String codigoDocAdjunto,
+			String uGestion, Long idTareaProcedimiento);
+
 }
 

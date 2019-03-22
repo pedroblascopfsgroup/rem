@@ -256,7 +256,11 @@ Ext.define('HreRem.model.AgrupacionFicha', {
 	        			return true;
 	        		},
 	        		depends: ['tipoAgrupacionCodigo','activosGencat']
-		    	}
+		    	},
+		    	{
+                	name: 'codSubcartera'
+                }
+
     ],
     
 	proxy: {

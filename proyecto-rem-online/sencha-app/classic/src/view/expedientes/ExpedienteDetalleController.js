@@ -3,7 +3,8 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
     alias: 'controller.expedientedetalle',  
     requires: ['HreRem.view.expedientes.NotarioSeleccionado', 'HreRem.view.expedientes.DatosComprador', 
     'HreRem.view.expedientes.DatosClienteUrsus',"HreRem.model.ActivoExpedienteCondicionesModel",
-    "HreRem.view.common.adjuntos.AdjuntarDocumentoExpediente", 'HreRem.view.activos.detalle.OpcionesPropagacionCambios'],
+    "HreRem.view.common.adjuntos.AdjuntarDocumentoExpediente", 'HreRem.view.activos.detalle.OpcionesPropagacionCambios',
+    'HreRem.view.expedientes.WizardAltaComprador'],
     
     control: {
     	'documentosexpediente gridBase': {
@@ -21,6 +22,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
         
         'compradoresexpediente gridBase': {
             onClickRemove: 'borrarComprador',
+			download: 'downloadDocumentoAdjuntoGDPR',
             afterdelete: function(grid) {
             	grid.getStore().load();
             }
@@ -239,8 +241,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			            	var data = {};
 			                try {
 			                	data = Ext.decode(operation._response.responseText);
-			                }
-			                catch (e){ };
+			                } catch (e){ };
 			                if (!Ext.isEmpty(data.msg)) {
 			                	me.fireEvent("errorToast", data.msg);
 			                	// Si recibimos un error controlado, continuamos editando.
@@ -301,8 +302,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			            	var data = {};
 			                try {
 			                	data = Ext.decode(operation._response.responseText);
-			                }
-			                catch (e){ };
+			                } catch (e){ };
 			                if (!Ext.isEmpty(data.msg)) {
 			                	me.fireEvent("errorToast", data.msg);
 			                	// Si recibimos un error controlado, continuamos editando.
@@ -577,9 +577,15 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	
 	refrescarExpediente: function(refrescarTabActiva) {
 		var me = this,
-		refrescarTabActiva = Ext.isEmpty(refrescarTabActiva) ? false: refrescarTabActiva,
-		activeTab = me.getView().down("tabpanel").getActiveTab();		
-  		
+	    activeTab = null,
+	    refrescarTabActiva = Ext.isEmpty(refrescarTabActiva) ? false : refrescarTabActiva;
+
+	    if(!Ext.isEmpty(me.getView().down("tabpanel"))){
+	         activeTab = me.getView().down("tabpanel").getActiveTab();
+	    }else {
+	        activeTab = me.getView().up("tabpanel").getActiveTab();
+	    }
+
 		// Marcamos todas los componentes para refrescar, de manera que se vayan actualizando conforme se vayan mostrando.
 		Ext.Array.each(me.getView().query('component[funcionRecargar]'), function(component) {
   			if(component.rendered) {
@@ -659,10 +665,8 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	},
 	
 	downloadDocumentoAdjunto: function(grid, record) {
-		
 		var me = this,
 		config = {};
-		
 		config.url=$AC.getWebPath()+"expedientecomercial/bajarAdjuntoExpediente."+$AC.getUrlPattern();
 		config.params = {};
 		config.params.id=record.get('id');
@@ -670,14 +674,59 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		config.params.nombreDocumento=record.get("nombre");
 		me.fireEvent("downloadFile", config);
 	},
-	
-	onListadoTramitesTareasExpedienteDobleClick : function(gridView,record) {
+
+	downloadDocumentoAdjuntoGDPR: function(grid, record) {
+		var url =$AC.getRemoteUrl('expedientecomercial/existeDocumentoGDPR');
+		var idPersonaHaya = record.get("idPersonaHaya");
+		var idDocAdjunto =  record.get("idDocAdjunto");
+		var idDocRestClient = record.get("idDocRestClient");
+		var nombreAdjunto = record.get("nombreAdjunto");
+		var data;
 		var me = this;
-		
-		if(Ext.isEmpty(record.get("fechaFin"))) { // Si la tarea está activa
-			me.getView().fireEvent('abrirDetalleTramiteTarea',gridView,record);
+
+		Ext.Ajax.request({
+		     url: url,
+		     params: {idPersonaHaya : idPersonaHaya , idDocAdjunto : idDocAdjunto , idDocRestClient : idDocRestClient , nombreAdjunto : nombreAdjunto},
+		     success: function(response, opts) {
+		         data = Ext.decode(response.responseText);
+		         if(data.success == "true"){
+
+		            var config = {};
+		                config.url=$AC.getWebPath()+"expedientecomercial/bajarAdjuntoExpedienteGDPR."+$AC.getUrlPattern();
+		                config.params = {};
+		                config.params.idPersonaHaya=record.get("idPersonaHaya");
+		                config.params.idExpediente=record.get("idExpediente");
+		                config.params.idDocAdjunto = record.get("idDocAdjunto");
+		                config.params.idDocRestClient=record.get("idDocRestClient");
+		                config.params.nombreAdjunto=record.get("nombreAdjunto");
+
+		                me.fireEvent("downloadFile", config);
+		         }else{
+                 me.fireEvent("errorToast", data.error);
+		         }
+
+		     },
+		     failure: function(response) {
+		         me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+		     }
+		 });
+
+	},
+
+	onListadoTramitesTareasExpedienteDobleClick : function(
+			gridView, record) {
+		var me = this;
+
+		if (Ext.isEmpty(record.get("fechaFin"))) { // Si la
+													// tarea
+													// está
+													// activa
+			me.getView().fireEvent('abrirDetalleTramiteTarea',
+					gridView, record);
 		} else {
-			me.getView().fireEvent('abrirDetalleTramiteHistoricoTarea',gridView,record);
+			me.getView().fireEvent(
+					'abrirDetalleTramiteHistoricoTarea',
+					gridView, record);
 		}
 	},
 	
@@ -882,32 +931,6 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		}
 	},
 
-//	Para la búsqueda de Comparecientes en nombre del vendedor	
-//		
-//	onClickBotonCancelarBusquedaCompareciente: function(btn) {	
-//		var me = this,
-//		window = btn.up('window');
-//    	window.close();
-//	},
-//	
-//	onClickBotonBuscarCompareciente: function(btn){
-//		var me= this;
-//		var initialData = {};
-//
-//		var searchForm = btn.up('formBase');
-//		
-//		if (searchForm.isValid()) {
-//			var criteria = Ext.apply(initialData, searchForm ? searchForm.getValues() : {});
-//			
-//			Ext.Object.each(criteria, function(key, val) {
-//				if (Ext.isEmpty(val)) {
-//					delete criteria[key];
-//				}
-//			});
-//			this.lookupReference('listadocomparecientesnombrevendedor').getStore().loadPage(1);
-//        }
-//		
-//	}
 	onNotarioDblClick: function(grid, rec){
 		var me= this;
 		var detalle= Ext.create('HreRem.view.expedientes.NotarioSeleccionado',{grid:grid, notario:rec}).show();
@@ -996,20 +1019,78 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		}
 	},
 	
-	onClickBotonModificarComprador: function(btn){
+	cargarDatosCompradorWizard : function(window) {
 		var me = this,
-		window = btn.up("window"),
-		form = window.down("form");
-		
-		form.recordName = "comprador";
-		form.recordClass = "HreRem.model.FichaComprador";
-		
-		var success = function(record, operation) {
-			me.getView().unmask();
-	    	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-	    	window.destroy();
-//	    	window.parent.funcionRecargar();
-//	    	window.hide();
+		    model = null,
+		    id = window.idComprador,
+		    idExpediente = window.up().expediente.get("id");
+
+		form = window.getForm();
+
+		model = Ext.create('HreRem.model.FichaComprador', {
+			id : id,
+			idExpedienteComercial : idExpediente,
+			cesionDatosHaya: form.findField('cesionDatosHaya').getValue(),
+			comunicacionTerceros: form.findField('comunicacionTerceros').getValue(),
+			transferenciasInternacionales: form.findField('transferenciasInternacionales').getValue(),
+			pedirDoc: form.findField('pedirDoc').getValue(),
+			numDocumento: form.findField('numDocumento').getValue(),
+			codTipoDocumento: form.findField('codTipoDocumento').getValue()
+		});
+
+		window.mask(HreRem.i18n("msg.mask.loading"));
+
+		me.getViewModel().set('comprador', model);
+
+		if (!Ext.isEmpty(id)) {
+			model.load({
+				params : {
+					id : id,
+					idExpedienteComercial : idExpediente,
+					cesionDatosHaya: form.findField('cesionDatosHaya').getValue(),
+					comunicacionTerceros: form.findField('comunicacionTerceros').getValue(),
+					transferenciasInternacionales: form.findField('transferenciasInternacionales').getValue(),
+					pedirDoc: form.findField('pedirDoc').getValue(),
+					numDocumento: form.findField('numDocumento').getValue(),
+					codTipoDocumento: form.findField('codTipoDocumento').getValue()
+				},
+				success : function(record) {
+					window.unmask();
+					form.findField('numDocumento').setDisabled(true);
+					form.findField('codTipoDocumento').setDisabled(true);
+				},
+				failure : function(record, operation) {
+					console.log("Failure: no ha sido posible cargar los datos del comprador.");
+				}
+			});
+		}else{
+			window.unmask();
+		}
+
+		// Funcionalidad que permite editar los campos
+		Ext.Array.each(window.query('field[isReadOnlyEdit]'),
+				function(field, index) {
+					field.fireEvent('edit');
+					if (index == 0)
+						field.focus();
+					field.setReadOnly(!window.modoEdicion)
+			});
+		},
+
+		onClickBotonModificarComprador : function(btn) {
+			var me = this, window = btn.up("window"), form = window.down("form"), ventanaWizard = btn.up('wizardaltacomprador');
+
+			form.recordName = "comprador";
+			form.recordClass = "HreRem.model.FichaComprador";
+
+			ventanaWizard.width = Ext.Element.getViewportWidth()/2;
+			ventanaWizard.height = Ext.Element.getViewportHeight() > 500 ? 500 : Ext.Element.getViewportHeight()-100;
+
+			var success = function(record, operation) {
+				me.getView().unmask();
+				me.fireEvent("infoToast", HreRem
+						.i18n("msg.operacion.ok"));
+				window.destroy();
 
 		};
 		
@@ -1017,14 +1098,37 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			me.getView().unmask();
 			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
 	    	window.destroy();
-//	    	window.parent.funcionRecargar();
-//	    	window.hide();
 
 		};
 
 		//En este caso, actualizar
 		me.onSaveFormularioCompletoComprador(form, success, failure);
 	},
+	
+	onClickBotonModificarCompradorSinWizard : function(btn) {
+		var me = this, window = btn.up("window"), form = window.down("form");
+
+		form.recordName = "comprador";
+		form.recordClass = "HreRem.model.FichaComprador";
+
+		var success = function(record, operation) {
+			me.getView().unmask();
+			me.fireEvent("infoToast", HreRem
+					.i18n("msg.operacion.ok"));
+			window.destroy();
+
+	};
+	
+	var failure = function(record, operation) {
+		me.getView().unmask();
+		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+    	window.destroy();
+
+	};
+
+	//En este caso, actualizar
+	me.onSaveFormularioCompletoComprador(form, success, failure);
+},
 	
 	onSaveFormularioCompletoComprador: function(form, success, failure) {
 		var me = this,
@@ -1119,8 +1223,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	    					var data = {};
 			                try {
 			                	data = Ext.decode(operation._response.responseText);
-			                }
-			                catch (e){ };
+			                } catch (e){ };
 			                if (!Ext.isEmpty(data.msg)) {
 			                	me.fireEvent("errorToast", data.msg);
 			                } else {
@@ -1128,7 +1231,6 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			                }
 	    				},
 	    				callback: function(records, operation, success) {
-//	    					form.reset();
 	    					window.parent.funcionRecargar();
 	    					window.close();
 	    				}
@@ -1433,55 +1535,161 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			
 			me.lookupReference('tipoCalculo').setDisabled(true);		
 			me.lookupReference('tipoCalculo').setValue(null);
-		
 		}
-		
-	
+
 	},
 	
 	onClickBotonCerrarComprador: function(btn){
 		var me = this;
 		var window = btn.up("window");
-		window.destroy();
+		window.close();
+	},
+
+	onClickBotonCancelarWizardComprador : function(btn) {
+
+		var me = this, window = btn.up('window');
+		var form1 = window.down('anyadirnuevaofertadocumento');
+		var form2 = window.down('datoscompradorwizard');
+		var form3 = window.down('anyadirnuevaofertaactivoadjuntardocumento');
+		var docCliente = form2.getForm().findField('numDocumento').getValue();
+		Ext.Msg.show({
+			title : HreRem.i18n('wizard.msg.show.title'),
+			msg : HreRem.i18n('wizard.msh.show.text'),
+			buttons : Ext.MessageBox.YESNO,
+			fn : function(buttonId) {
+				if (buttonId == 'yes') {
+					var url = $AC.getRemoteUrl('expedientecomercial/deleteTmpClienteByDocumento');
+					Ext.Ajax.request({
+                         url: url,
+                         method : 'POST',
+                         params: {docCliente: docCliente},
+                         success: function(response, opts) {
+                            //me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+                         },
+                         failure: function(record, operation) {
+                            //me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+                         }
+                    });
+
+					if (!Ext.isEmpty(form1)) {
+						form1.reset();
+					}
+					/*if (!Ext.isEmpty(form2)) {
+						form2.reset();
+					}*/
+					if (!Ext.isEmpty(form3)) {
+						form3.reset();
+					}
+					window.close();
+				}
+			}
+		});
 	},
 	
 	onClickBotonCrearComprador: function(btn){
-		var me = this;	
-		var idExpediente = btn.up('datoscompradorwindow').idExpediente;
-		var window = btn.up().up();
-		var form = window.down("formBase");
 
-		if(form.isFormValid()) {
-			form.mask(HreRem.i18n("msg.mask.espere"));
-			
-			if(Ext.isDefined(form.getModelInstance().getProxy().getApi().create)){
-	    			form.getModelInstance().getProxy().extraParams.idExpediente = idExpediente;
-	    			form.getBindRecord().save({
-	    				success: function(a, operation, c){
-	    					me.getView().unmask();
-	    					me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-	    					form.reset();
-	    					window.parent.funcionRecargar();
-	    					window.hide();
-	    					me.getView().fireEvent("refrescarExpediente", me.getView());
-	    				},
-	    				failure: function(a, operation){
-	    					me.getView().unmask();
-							me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-	    					form.reset();
-	    					window.parent.funcionRecargar();
-	    					window.hide();
-	    				}
-	    			})
-	    		}
+		var me = this,
+		ventanaDetalle = btn.up().up(),
+        window = ventanaDetalle.up().xtype,
+	    form = ventanaDetalle.getForm(),
+		ventanaWizard = btn.up('wizardaltacomprador');
+
+		ventanaWizard.height =  Ext.Element.getViewportHeight() > 500 ? 500 : Ext.Element.getViewportHeight()-100;
+		ventanaWizard.setY( Ext.Element.getViewportHeight()/2 - ((Ext.Element.getViewportHeight() > 500 ? 500 : Ext.Element.getViewportHeight() -100)/2));
+
+		if(ventanaDetalle.config.xtype.indexOf('datoscompradorwizard') >=0){
+			pedirDocValor = ventanaDetalle.getForm().findField('pedirDoc').getValue();
+			comprador = ventanaDetalle.getBindRecord().comprador;
+
+			if (pedirDocValor == 'false'){
+
+				if (form.isValid()) {
+					url = $AC.getRemoteUrl('expedientecomercial/getListAdjuntosComprador');
+
+                    idExpediente = comprador.data.idExpedienteComercial;
+                    var docCliente= comprador.data.numDocumento;
+                    Ext.Ajax.request({
+                         url: url,
+                         method : 'GET',
+                         waitMsg: HreRem.i18n('msg.mask.loading'),
+                         params: {docCliente: docCliente, idExpediente: idExpediente},
+
+                         success: function(response, opts) {
+                             data = Ext.decode(response.responseText);
+                             if(!Ext.isEmpty(data.data)){
+                                 ventanaWizard.down('anyadirnuevaofertaactivoadjuntardocumento').getForm().findField('docOfertaComercial').setValue(data.data[0].nombre);
+                                 ventanaWizard.down('anyadirnuevaofertaactivoadjuntardocumento').down().down('panel').down('button').show();
+                             }
+                         },
+
+                         failure: function(record, operation) {
+                            me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+                         }
+                    });
+
+                   // ventanaWizard.down('anyadirnuevaofertaactivoadjuntardocumento').getForm().findField('cesionDatosHaya').setValue(comprador.data.cesionDatosHaya);
+                   // ventanaWizard.down('anyadirnuevaofertaactivoadjuntardocumento').getForm().findField('comunicacionTerceros').setValue(comprador.data.comunicacionTerceros);
+                   // ventanaWizard.down('anyadirnuevaofertaactivoadjuntardocumento').getForm().findField('transferenciasInternacionales').setValue(comprador.data.transferenciasInternacionales);
+                    
+                    ventanaDetalle.getForm().findField('cesionDatosHaya').setValue(comprador.data.cesionDatosHaya);
+            		ventanaDetalle.getForm().findField('comunicacionTerceros').setValue(comprador.data.comunicacionTerceros);
+            		ventanaDetalle.getForm().findField('transferenciasInternacionales').setValue(comprador.data.transferenciasInternacionales);
+
+                    var wizard = btn.up().up().up();
+                    var layout = wizard.getLayout();
+                    layout["next"]();
+				}
+
+			}else{
+
+				me.guardarComprador(form, ventanaWizard);
+			}
+
+		}else{
+
+			/*var cesionDatos = ventanaDetalle.getForm().findField('cesionDatosHaya').getValue(),
+			comunicacionTerceros = ventanaDetalle.getForm().findField('comunicacionTerceros').getValue(),
+			transferenciasInternacionales = ventanaDetalle.getForm().findField('transferenciasInternacionales').getValue();
+            ventanaDetalle.getForm().findField('cesionDatosHaya').setValue(cesionDatos);
+            ventanaDetalle.getForm().findField('comunicacionTerceros').setValue(comunicacionTerceros);
+            ventanaDetalle.getForm().findField('transferenciasInternacionales').setValue(transferenciasInternacionales);*/
+
+            me.guardarComprador(form, ventanaWizard);
+		}
+	},
+
+	guardarComprador: function(form, ventanaWizard) {
+
+		var me = this;
+		if (form.isValid()) {
+
+			model = this.getViewModel().get('comprador');
+			ventanaWizard.mask(HreRem.i18n("msg.mask.espere"));
+
+			model.save({
+				success : function(a, operation, c) {
+					me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+					form.reset();
+					ventanaWizard.hide();
+				    me.getView().unmask();
+					me.refrescarExpediente(true);
+				},
+				failure : function(a, operation) {
+					ventanaWizard.unmask();
+					me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+					//form.reset();
+					//ventanaWizard.hide();
+				}
+			});
+
+
 		} else {
-		
+
 			me.fireEvent("errorToast", HreRem.i18n("msg.form.invalido"));
 		}
 	},
 
 	abrirFormularioCrearComprador: function(grid) {
-		
 		var me = this,
 		idExpediente = me.getViewModel().get("expediente.id"),
 		codigoEstado = me.getViewModel().get("expediente.codigoEstado"),
@@ -1491,35 +1699,48 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		tipoOrigenWCOM = CONST.TIPOS_ORIGEN["WCOM"],
 		fechaSancion = me.getViewModel().get('expediente.fechaSancion');
 
-		if(!bloqueado){
-			if(CONST.ESTADOS_EXPEDIENTE['VENDIDO'] != codigoEstado){
-				if(CONST.TIPOS_EXPEDIENTE_COMERCIAL['ALQUILER'] == tipoExpedienteCodigo){
-					if(tipoOrigenWCOM == origen && !Ext.isEmpty(fechaSancion)){
-						me.fireEvent("errorToast","Expediente con origen WCOM");
+		if (!bloqueado) {
+			if (CONST.ESTADOS_EXPEDIENTE['VENDIDO'] != codigoEstado) {
+				if (CONST.TIPOS_EXPEDIENTE_COMERCIAL['ALQUILER'] == tipoExpedienteCodigo) {
+					if (tipoOrigenWCOM == origen
+							&& !Ext.isEmpty(fechaSancion)) {
+						me.fireEvent("errorToast",
+								"Expediente con origen WCOM");
 						return;
 					}
-					if(Ext.isEmpty(fechaSancion)){
-						var ventanaCompradores= grid.up().up();
-						var expediente= me.getViewModel().get("expediente");
-						Ext.create('HreRem.view.expedientes.DatosComprador',{idExpediente: idExpediente, parent: ventanaCompradores, expediente: expediente, deshabilitarCamposDoc: false}).show();
+					if (Ext.isEmpty(fechaSancion)) {
+						var ventanaCompradores = grid.up().up();
+						var expediente = me.getViewModel().get("expediente");
+						Ext.create('HreRem.view.expedientes.WizardAltaComprador', {
+							idExpediente : idExpediente,
+							parent : ventanaCompradores,
+							expediente : expediente,
+							deshabilitarCamposDoc : false
+						}).show();
 						me.onClickBotonRefrescar();
 					} else {
-						me.fireEvent("errorToast","Expediente sancionado");
+						me.fireEvent("errorToast",
+								"Expediente sancionado");
 					}
 					return;
 				}
-				if(CONST.TIPOS_EXPEDIENTE_COMERCIAL['VENTA'] == tipoExpedienteCodigo){
-					var ventanaCompradores= grid.up().up();
-					var expediente= me.getViewModel().get("expediente");
-					Ext.create('HreRem.view.expedientes.DatosComprador',{idExpediente: idExpediente, parent: ventanaCompradores, expediente: expediente,deshabilitarCamposDoc: false}).show();
+				if (CONST.TIPOS_EXPEDIENTE_COMERCIAL['VENTA'] == tipoExpedienteCodigo) {
+					var ventanaCompradores = grid.up().up();
+					var expediente = me.getViewModel().get("expediente");
+					Ext.create('HreRem.view.expedientes.WizardAltaComprador', {
+						idExpediente : idExpediente,
+						parent : ventanaCompradores,
+						expediente : expediente,
+						deshabilitarCamposDoc : false
+					}).show();
 					me.onClickBotonRefrescar();
 					return;
 				}
-			} else{
+			} else {
 				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.expediente.vendido"));
 			}
-		} else{
-			me.fireEvent("errorToast","Expediente bloqueado");
+		} else {
+			me.fireEvent("errorToast", "Expediente bloqueado");
 		}
 	},
 
@@ -1616,22 +1837,83 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	                }
 			     },
 
-			     failure: function(response, opts) {
-			     	if(data.errorUvem == "true"){
-	                	me.fireEvent("errorToast", data.msg);		
-	                }
-	                else{
-	                	Utils.defaultRequestFailure(response, opts);
-	                }
-			     },
+		        failure: function(response, opts) {
+			        if(data.errorUvem == "true"){
+						me.fireEvent("errorToast",
+													data.msg);
+					} else {
+						Utils.defaultRequestFailure(
+								response, opts);
+					}
+				},
 
-			     callback: function() {
-			     	me.getView().unmask();
-			     }
-	    	});		
-	},
-	
-	enviarHonorariosUvem: function(btn){
+				callback : function() {
+					me.getView().unmask();
+				}
+			});
+		},
+
+		borrarComprador: function(grid, record) {
+			var me = this;
+			var idExpediente = me.getViewModel().get("expediente.id");
+			var codigoEstado= me.getViewModel().get("expediente.codigoEstado");
+			var idComprador= record.get('id');
+			var tipoExpedienteCodigo = me.getViewModel().get("expediente.tipoExpedienteCodigo");
+			var origen = me.getViewModel().get("expediente.origen");
+			var bloqueado = me.getViewModel().get("expediente.bloqueado");
+			var fechaSancion = me.getViewModel().get('expediente.fechaSancion');
+			var tipoOrigenWCOM = CONST.TIPOS_ORIGEN["WCOM"];
+			var llamada = false;
+
+			if(CONST.TIPOS_EXPEDIENTE_COMERCIAL['VENTA'] == tipoExpedienteCodigo) {
+				if(!bloqueado) {
+					if(CONST.ESTADOS_EXPEDIENTE['VENDIDO']!=codigoEstado) {
+						llamada = true;
+					} else {
+						me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.expediente.vendido"));
+					}
+				} else {
+					me.fireEvent("errorToast", "Expediente bloqueado");
+				}
+			} else if(CONST.TIPOS_EXPEDIENTE_COMERCIAL['ALQUILER'] == tipoExpedienteCodigo) {
+				if(tipoOrigenWCOM != origen) {
+					if(Ext.isEmpty(fechaSancion)) {
+						llamada = true;
+					} else {
+						me.fireEvent("errorToast","Expediente sancionado");
+					}
+				} else {
+	                me.fireEvent("errorToast","Expediente con origen WCOM");
+	            }
+			}
+
+			if(llamada == true) {
+				record.erase({
+					params: {idExpediente: idExpediente, idComprador: idComprador},
+		            success: function(record, operation) {
+		                me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+		                grid.fireEvent("afterdelete", grid);
+		                me.onClickBotonRefrescar();
+		            },
+					failure: function(record, operation) {
+		                var data = {};
+					    try {
+					        data = Ext.decode(operation._response.responseText);
+					    }
+					    catch (e){ };
+				        if (!Ext.isEmpty(data.msg)) {
+				            me.fireEvent("errorToast", data.msg);
+				        }
+				        else {
+				            me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+				        }
+		                grid.fireEvent("afterdelete", grid);
+		            }
+				});
+			}
+		},
+
+	enviarHonorariosUvem : function(btn) {
 		var me = this;
 		var url = $AC.getRemoteUrl('expedientecomercial/enviarHonorariosUvem');
 		me.getView().mask(HreRem.i18n("msg.mask.espere"));
@@ -1664,8 +1946,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		     failure: function(response, opts) {
 		    	 if(data.errorUvem == "true"){
 		    		 me.fireEvent("errorToast", data.msg);		
-		    	 }
-		    	 else{
+		    	 } else {
 		    		 Utils.defaultRequestFailure(response, opts);
 		    	 }
 		     },
@@ -1678,35 +1959,49 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	
 	buscarClientesUrsus: function(field, e){
 		var me = this;
-		var parent = field.up('datoscompradorwindow');
-		var tipoDocumento= field.up('formBase').down('[reference=tipoDocumento]').getValue();
-		var numeroDocumento= field.up('formBase').down('[reference=numeroDocumento]').getValue();
-		var fichaComprador= field.up('[xtype=formBase]');
-		var idExpediente = me.getViewModel().get("expediente.id");
-		if(idExpediente == null){
-			idExpediente = fichaComprador.getBindRecord().get('idExpedienteComercial');
+		var parent = field.up('datoscompradorwizard');
+		if(Ext.isEmpty(parent)){
+			parent = field.up('datoscompradorwindow');
 		}
-		
-		if(!Ext.isEmpty(tipoDocumento) && !Ext.isEmpty(numeroDocumento) && !Ext.isEmpty(idExpediente)) {
-			var form = parent.down('formBase');
-    	 	var fieldClientesUrsus = form.down('[reference=seleccionClienteUrsus]');
-    	 	var store = fieldClientesUrsus.getStore();
-    	 	
-    	 	if(Ext.isEmpty(store.getData().items) || fieldClientesUrsus.recargarField) {
-    	 		store.removeAll();
-    	 		store.getProxy().setExtraParams({numeroDocumento: numeroDocumento, tipoDocumento: tipoDocumento, idExpediente: idExpediente});    
-        	 	store.load({
-        	 		callback: function(records, operation, success) {
-				        if(success) {
-				        	fieldClientesUrsus.recargarField = false;
-				        } else {
-				        	Utils.defaultRequestFailure(operation.getResponse());
-				        }			        	
-				    }      	 	
-        	 	});
-    	 	}
+		var tipoDocumento = field.up('formBase').down(
+				'[reference=tipoDocumento]').getValue();
+		var numeroDocumento = field.up('formBase').down(
+				'[reference=numeroDocumento]').getValue();
+		var fichaComprador = field.up('[xtype=formBase]');
+		var idExpediente = me.getViewModel().get(
+				"expediente.id");
+		if (idExpediente == null) {
+			idExpediente = fichaComprador.getBindRecord().get(
+					'idExpedienteComercial');
+		}
+
+		if (!Ext.isEmpty(tipoDocumento)
+				&& !Ext.isEmpty(numeroDocumento)
+				&& !Ext.isEmpty(idExpediente)) {
+			//var form = parent.down('formBase');
+			var fieldClientesUrsus = parent.down('[reference=seleccionClienteUrsus]');
+			var store = fieldClientesUrsus.getStore();
+
+			if (Ext.isEmpty(store.getData().items)
+					|| fieldClientesUrsus.recargarField) {
+				store.removeAll();
+				store.getProxy().setExtraParams({
+					numeroDocumento : numeroDocumento,
+					tipoDocumento : tipoDocumento,
+					idExpediente : idExpediente
+				});
+				store.load({
+					callback : function(records, operation, success) {
+						if (success) {
+							fieldClientesUrsus.recargarField = false;
+						} else {
+							Utils.defaultRequestFailure(operation.getResponse());
+						}
+					}
+				});
+			}
 		} else {
-			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.ursus.necesita.tipo.documento"));	
+			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.ursus.necesita.tipo.documento"));
 		}
 	},
 	
@@ -1722,19 +2017,24 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	
 	establecerNumClienteURSUS: function(field, e) {
 		var me = this;
-		var numeroUrsus = field.up('formBase').down('[reference=seleccionClienteUrsus]').getValue();
-	 	var fieldNumeroClienteUrsus = field.up('formBase').down('[reference=numeroClienteUrsusRef]');
-	 	var fieldNumeroClienteUrsusBh = field.up('formBase').down('[reference=numeroClienteUrsusBhRef]');
-	 	var btnDatosClienteUrsus = field.up('formBase').down('[reference=btnVerDatosClienteUrsus]');
-	 	var fichaComprador= field.up('[xtype=formBase]');
-	 	var esBH = fichaComprador.getBindRecord().get('esBH');
+		var parent = field.up('datoscompradorwizard');
+		if(Ext.isEmpty(parent)){
+			parent = field.up('formBase');
+		}
+		var numeroUrsus = parent.down('[reference=seleccionClienteUrsus]').getValue();
+	 	var fieldNumeroClienteUrsus = parent.down('[reference=numeroClienteUrsusRef]');
+	 	var fieldNumeroClienteUrsusBh = parent.down('[reference=numeroClienteUrsusBhRef]');
+	 	var btnDatosClienteUrsus = parent.down('[reference=btnVerDatosClienteUrsus]');
+	 	//var fichaComprador= field.up('[xtype=formBase]');
 	 	btnDatosClienteUrsus.setDisabled(false);
 	 	
-	 	if(esBH=="true"){
+	 	if(!Ext.isEmpty(fieldNumeroClienteUrsus)){
 	 		fieldNumeroClienteUrsusBh.setValue(numeroUrsus);
-	 	}else{
+	 	}
+	 	if(!Ext.isEmpty(fieldNumeroClienteUrsus)){
 	 		fieldNumeroClienteUrsus.setValue(numeroUrsus);
-	 	} 	
+	 	}	 	
+	 	
 	},
 
 	mostrarDetallesClienteUrsus: function(field, newValue ,oldValue ,eOpts){
@@ -1796,8 +2096,6 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		}
 	},
 
-
-
 	borrarComprador: function(grid, record) {
 		var me = this;
 		var idExpediente = me.getViewModel().get("expediente.id");
@@ -1813,9 +2111,13 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		if(CONST.TIPOS_EXPEDIENTE_COMERCIAL['VENTA'] == tipoExpedienteCodigo) {
 			if(!bloqueado) {
 				if(CONST.ESTADOS_EXPEDIENTE['VENDIDO']!=codigoEstado) {
-					llamada = true;
+					if (tipoOrigenWCOM != origen) {
+						llamada = true;
+					} else {
+						me.fireEvent("errorToast", "Expediente con origen WCOM");
+					}
 				} else {
-					me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.expediente.vendido"));
+					me.fireEvent("errorToast",HreRem.i18n("msg.operacion.ko.expediente.vendido"));
 				}
 			} else {
 				me.fireEvent("errorToast", "Expediente bloqueado");
@@ -1844,8 +2146,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	            	var data = {};
 				    try {
 				    	data = Ext.decode(operation._response.responseText);
-				    }
-				    catch (e){ };
+				    } catch (e){ };
 			    	if (!Ext.isEmpty(data.msg)) {
 			        	me.fireEvent("errorToast", data.msg);
 			        } 
@@ -2044,235 +2345,199 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 
 	comprobarObligatoriedadCamposNexos: function() {
 		try{
-			var me = this,
+			var me = this;
+			
+			var venta = null;
+	    	if(me.getViewModel().get('expediente.tipoExpedienteCodigo') == null){
+	    		if (me.getViewModel().data.esOfertaVentaFicha == true){
+	    			venta = true;
+	    		}else{
+	    			venta = false;
+	    		}
+	    	}
 			
 			campoEstadoCivil = me.lookupReference('estadoCivil'),
 			campoRegEconomico = me.lookupReference('regimenMatrimonial'),
 			campoNumConyuge = me.lookupReference('numRegConyuge'),
+			campoTipoConyuge = me.lookupReference('tipoDocConyuge'),
+			campoNombreRte = me.lookupReference('nombreRazonSocialRte'),
+			campoTipoRte = me.lookupReference('tipoDocumentoRte'),
+			campoNumRte = me.lookupReference('numeroDocumentoRte'),
+			campoPaisRte = me.lookupReference('paisRte'),
+			campoApellidosRte = me.lookupReference('apellidosRte'),	
+			campoProvinciaRte = me.lookupReference('provinciaComboRte'),
+			campoMunicipioRte = me.lookupReference('municipioComboRte'),
 			campoApellidos = me.lookupReference('apellidos');
-			
-			// Si el tipo de persona es FÍSICA, entonces el campos Estado civil es obligatorio y se habilitan campos dependientes.
-			if(me.lookupReference('tipoPersona').getValue() === "1" ) {
-				if(!Ext.isEmpty(campoApellidos)){
-					campoApellidos.setDisabled(false);
-				}
-				if(!Ext.isEmpty(campoEstadoCivil)){
-					campoEstadoCivil.allowBlank = false;
-					campoEstadoCivil.validate();
-					if(campoEstadoCivil.getValue() === "02") {
-						// Si el Estado civil es 'Casado', entonces Reg. económico es obligatorio.
-						if(!Ext.isEmpty(campoRegEconomico)){
-							campoRegEconomico.allowBlank = false;
-							campoRegEconomico.validate();
-						}
-						if(me.getViewModel().get('esCarteraLiberbank')|| me.getViewModel().get('comprador.entidadPropietariaCodigo') == CONST.CARTERA['LIBERBANK']){
-							if(!Ext.isEmpty(campoNumConyuge)){
-								campoNumConyuge.allowBlank = false;
-								campoNumConyuge.validate();
+			campoDireccion = me.lookupReference('direccion');
+			campoProvincia = me.lookupReference('provinciaCombo');
+			campoMunicipio = me.lookupReference('municipioCombo');
+			campoPais = me.lookupReference('pais');
+
+			//Si el expediente es de tipo alquiler
+			if(me.getViewModel().get('expediente.tipoExpedienteCodigo') == "02" || venta == false){
+				// Si el tipo de persona es FÍSICA, entonces el campos Estado civil es obligatorio y se habilitan campos dependientes.
+				if(me.lookupReference('tipoPersona').getValue() === "1" ) {
+					if(!Ext.isEmpty(campoApellidos)){
+						campoApellidos.setDisabled(false);
+					}
+					if(!Ext.isEmpty(campoEstadoCivil)){
+						campoEstadoCivil.allowBlank = false;
+						campoEstadoCivil.validate();
+						if(campoEstadoCivil.getValue() === "02") {
+							// Si el Estado civil es 'Casado', entonces Reg. económico es obligatorio.
+							if(!Ext.isEmpty(campoRegEconomico)){
+								campoRegEconomico.allowBlank = false;
+								campoRegEconomico.validate();
 							}
-							if(!Ext.isEmpty(campoRegEconomico) && !Ext.isEmpty(campoNumConyuge)){
-								if(campoRegEconomico.getValue() === "01" || campoRegEconomico.getValue() === "03"){
+							if(me.getViewModel().get('esCarteraLiberbank')|| me.getViewModel().get('comprador.entidadPropietariaCodigo') == CONST.CARTERA['LIBERBANK']){
+								if(!Ext.isEmpty(campoNumConyuge)){
 									campoNumConyuge.allowBlank = false;
 									campoNumConyuge.validate();
-								}else if(campoRegEconomico.getValue() === "02" ){
+								}
+								if(!Ext.isEmpty(campoRegEconomico) && !Ext.isEmpty(campoNumConyuge)){
+									if(campoRegEconomico.getValue() === "01" || campoRegEconomico.getValue() === "03"){
+										campoNumConyuge.allowBlank = false;
+										campoNumConyuge.validate();
+									}else if(campoRegEconomico.getValue() === "02" ){
+										campoNumConyuge.allowBlank = true;
+									}
+								}
+							}else{
+								if(!Ext.isEmpty(campoNumConyuge)){
 									campoNumConyuge.allowBlank = true;
 								}
 							}
-						}else{
+						} else {
+							if(!Ext.isEmpty(campoRegEconomico)){
+								campoRegEconomico.allowBlank = true;
+							}
 							if(!Ext.isEmpty(campoNumConyuge)){
 								campoNumConyuge.allowBlank = true;
 							}
 						}
-					} else {
-						if(!Ext.isEmpty(campoRegEconomico)){
-							campoRegEconomico.allowBlank = true;
-						}
-						if(!Ext.isEmpty(campoNumConyuge)){
-							campoNumConyuge.allowBlank = true;
-						}
+					}
+					
+					
+				} else {
+					//  Si el tipo de persona es 'Jurídica' entonces desactivar los campos dependientes del otro estado.
+					if(!Ext.isEmpty(campoEstadoCivil)){
+						campoEstadoCivil.allowBlank = true;
+					}
+					if(!Ext.isEmpty(campoRegEconomico)){
+						campoRegEconomico.allowBlank = true;
+					}
+					if(!Ext.isEmpty(campoApellidos)){
+						campoApellidos.setDisabled(true);
 					}
 				}
-				
-				
-			} else {
-				//  Si el tipo de persona es 'Jurídica' entonces desactivar los campos dependientes del otro estado.
+		
+				// Validar campos para que se muestre o desaparezca la visual roja.
 				if(!Ext.isEmpty(campoEstadoCivil)){
-					campoEstadoCivil.allowBlank = true;
+					campoEstadoCivil.validate();
 				}
 				if(!Ext.isEmpty(campoRegEconomico)){
-					campoRegEconomico.allowBlank = true;
+					campoRegEconomico.validate();
 				}
-				if(!Ext.isEmpty(campoApellidos)){
-					campoApellidos.setDisabled(true);
+				if(!Ext.isEmpty(campoNumConyuge)){
+					campoNumConyuge.validate();
+				}
+			} else {
+
+				//Si el tipo de expediente es de tipo venta
+				if(me.lookupReference('tipoPersona').getValue() === "1" ) {
+					
+					if(!Ext.isEmpty(campoNombreRte)){
+						campoNombreRte.allowBlank = true;
+					}
+					if(!Ext.isEmpty(campoApellidosRte)){
+						campoApellidosRte.allowBlank = true;
+					}
+					if(!Ext.isEmpty(campoTipoRte)){
+						campoTipoRte.allowBlank = true;
+					}
+					if(!Ext.isEmpty(campoNumRte)){
+						campoNumRte.allowBlank = true;
+					}
+					if(!Ext.isEmpty(campoPaisRte)){
+						campoPaisRte.allowBlank = true;
+					}
+					
+					if(!Ext.isEmpty(campoApellidos)){
+						campoApellidos.setDisabled(false);
+						campoApellidos.allowBank = false;
+					}
+					if(!Ext.isEmpty(campoEstadoCivil)){
+						campoEstadoCivil.allowBlank = false;
+						campoEstadoCivil.validate();
+						if(campoEstadoCivil.getValue() === "02") {
+							// Si el Estado civil es 'Casado', entonces Reg. económico es obligatorio.
+							if(!Ext.isEmpty(campoRegEconomico)){
+								campoRegEconomico.allowBlank = false;
+								campoRegEconomico.validate();
+								campoRegEconomico.setDisabled(false);
+								if(campoRegEconomico.getValue() == "01"){
+									campoTipoConyuge.allowBlank = false;
+									campoNumConyuge.allowBlank = false;
+								}
+							}
+							
+						} else {
+							if(!Ext.isEmpty(campoRegEconomico)){
+								campoRegEconomico.allowBlank = true;
+							}
+							if(!Ext.isEmpty(campoNumConyuge)){
+								campoNumConyuge.allowBlank = true;
+							}
+						}
+					}
+					
+					
+				} else {
+					//  Si el tipo de persona es 'Jurídica'
+					if(!Ext.isEmpty(campoEstadoCivil)){
+						campoEstadoCivil.allowBlank = true;
+					}
+					if(!Ext.isEmpty(campoRegEconomico)){
+						campoRegEconomico.allowBlank = true;
+					}
+					if(!Ext.isEmpty(campoApellidos)){
+						campoApellidos.setDisabled(true);
+					}
+					
+					if(!Ext.isEmpty(campoNombreRte)){
+						campoNombreRte.allowBlank = false;
+					}
+					if(!Ext.isEmpty(campoApellidosRte)){
+						campoApellidosRte.allowBlank = false;
+					}
+					if(!Ext.isEmpty(campoTipoRte)){
+						campoTipoRte.allowBlank = false;
+					}
+					if(!Ext.isEmpty(campoNumRte)){
+						campoNumRte.allowBlank = false;
+					}
+					if(!Ext.isEmpty(campoPaisRte)){
+						campoPaisRte.allowBlank = false;
+					}
+				}
+		
+				// Validar campos para que se muestre o desaparezca la visual roja.
+				if(!Ext.isEmpty(campoEstadoCivil)){
+					campoEstadoCivil.validate();
+				}
+				if(!Ext.isEmpty(campoRegEconomico)){
+					campoRegEconomico.validate();
+				}
+				if(!Ext.isEmpty(campoNumConyuge)){
+					campoNumConyuge.validate();
 				}
 			}
-	
-			// Validar campos para que se muestre o desaparezca la visual roja.
-			if(!Ext.isEmpty(campoEstadoCivil)){
-				campoEstadoCivil.validate();
-			}
-			if(!Ext.isEmpty(campoRegEconomico)){
-				campoRegEconomico.validate();
-			}
-			if(!Ext.isEmpty(campoNumConyuge)){
-				campoNumConyuge.validate();
-			}
+				
 		}catch(err) {
 			Ext.global.console.log(err);
 		}
 	},
 
-	onClickGenerarHojaExcel: function(btn) {
-
-    	var me = this,
-		config = {};
-
-		config.params = {};
-		config.params.numExpediente=me.getViewModel().get("expediente.numExpediente");
-		config.url= $AC.getRemoteUrl("operacionventa/operacionVentaPDFByOfertaHRE");
-
-		me.fireEvent("downloadFile", config);		
-	},
-	
-	onClickGenerarFacturaPdf: function(btn) {
-		var me = this,
-		config = {};
-
-		config.params = {};
-		config.params.numExpediente=me.getViewModel().get("expediente.numExpediente");
-		config.url= $AC.getRemoteUrl("operacionventa/operacionVentaFacturaPDF");
-
-		me.fireEvent("downloadFile", config);		
-	},
-	
-	onAgregarGestoresClick: function(btn){
-		
-		var me = this;
-
-    	var url =  $AC.getRemoteUrl('expedientecomercial/insertarGestorAdicional');
-    	var parametros = btn.up("combogestoresexpediente").getValues();
-    	parametros.idExpediente = me.getViewModel().get("expediente.id");
-
-    	Ext.Ajax.request({
-    		
-    	     url: url,
-    	     params: parametros,
-
-    	     success: function(response, opts) {
-    	    	 btn.up("gestoresexpediente").down("[reference=listadoGestoresExpediente]").getStore().load();
-    	         btn.up("gestoresexpediente").down("form").reset();
-    	         /*
-    	         if(Ext.decode(response.responseText).success == "false") {
-					me.fireEvent("errorToast", HreRem.i18n("msg.activo.gestores.noasignar.tramite.multiactivo"));
-    	         }*/
-    	     }
-    	 });
-    },
-	onClickBotonCancelar: function(btn) {
-		var me = this,
-		activeTab = btn.up('tabpanel').getActiveTab();
-		btn.hide();
-		btn.up('tabbar').down('button[itemId=botonguardar]').hide();
-		btn.up('tabbar').down('button[itemId=botoneditar]').show();
-		
-		Ext.Array.each(activeTab.query('field[isReadOnlyEdit]'),
-						function (field, index) 
-							{ 
-								field.fireEvent('save');
-								field.fireEvent('update');});
-
-		if(Ext.isDefined(btn.name) && btn.name === 'firstLevel') {
- 			me.getViewModel().set("editingFirstLevel", false);
- 		} else {
- 			me.getViewModel().set("editing", false);
- 		}
-	},
-    
-    onClickBloquearExpediente: function(btn) {
-
-    	var me = this;
-    	var idExpediente = me.getViewModel().get("expediente.id");
-    	var url =  $AC.getRemoteUrl('expedientecomercial/bloqueoExpediente');
-    	var parametros = {idExpediente : idExpediente};
-    	me.getView().mask();
-    	Ext.Ajax.request({
-    		
-    	     url: url,
-    	     params: parametros,
-
-    	     success: function(response, opts) {
-    	    	 if(Ext.decode(response.responseText).success == "false") {
-    	    		me.fireEvent("errorToast", HreRem.i18n(Ext.decode(response.responseText).errorCode));
-    	    		me.getView().unmask();
-    	         }else if (Ext.decode(response.responseText).success == "true"){
-    	        	me.getView().unmask();
-    	        	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-	 				me.refrescarExpediente(true);	
-				 }
-    	     }
-    	 });		
-	},
-	sendDesbloquearExpediente: function(btn) {
-		var me = this;
-		var window = btn.up().up();
-		var form = window.down("formBase").getForm();
-		var idExpediente = btn.up('desbloquearwindow').idExpediente;
-    	var url =  $AC.getRemoteUrl('expedientecomercial/desbloqueoExpediente');
-    	if(me.validarActivarForm(form)) {
-    		var parametros = {idExpediente : idExpediente,motivoCodigo : form.findField("motivo").getValue(),motivoDescLibre : form.findField("motivoDescLibre").getValue()};
-    		me.getView().mask();
-	    	Ext.Ajax.request({
-	    		
-	    	     url: url,
-	    	     params: parametros,
-	
-	    	     success: function(response, opts) {
-	    	    	 if(Ext.decode(response.responseText).success == "false") {
-	    	    		me.fireEvent("errorToast", HreRem.i18n(Ext.decode(response.responseText).errorCode));
-	    	    		me.getView().unmask();
-	    	         }else if (Ext.decode(response.responseText).success == "true"){
-	    	        	me.getView().unmask();
-	    	        	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-	    	        	window.parent.funcionReloadExp();
-	    	        	window.hide();
-						
-					 }
-	    	     }
-	    	 });	
-    	}else{
-    		me.fireEvent("errorToast", HreRem.i18n("msg.form.invalido"));
-    	}
-	},
-	onClickDesbloquearExpediente: function(btn) {
-		var me = this;
-		var idExpediente = me.getViewModel().get("expediente.id");
-		var ventanaFormalizacion= btn.up().up();
-		Ext.create('HreRem.view.expedientes.Desbloquear',{idExpediente: idExpediente,parent: ventanaFormalizacion}).show();    	
-	},
-	validarActivarForm: function(form){
-		var motivoCodigo = form.findField("motivo").getValue();
-		var motivoDescLibre = form.findField("motivoDescLibre").getValue()
-		if(motivoCodigo == undefined || motivoCodigo == ""){
-			return false;
-		}else if(motivoCodigo =="04" && (motivoDescLibre == undefined || motivoDescLibre =="")){
-			return false;
-		}else{
-			return true;
-		}
-		
-	},
-	
-	onClickGenerarHojaExcelActivos: function(btn) {
-    	var me = this,
-		config = {};
-
-		config.params = {};
-		config.params.idExpediente=me.getViewModel().get("expediente.id");
-		config.url= $AC.getRemoteUrl("expedientecomercial/getExcelActivosExpediente");
-
-		me.fireEvent("downloadFile", config);		
-	},
-	
 	validarFechaPosicionamiento: function(value){
 		/*var hoy= new Date();
 		hoy.setHours(0,0,0,0);
@@ -2579,11 +2844,9 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 				HreRem.i18n("msg.propuesta.oferta"),
 				function(btn){
 					if (btn == "yes"){
-
 						me.fireEvent("downloadFile", config);
 					}
-				}
-			);
+				});
 	},
 
 	onClickEnviarMailAprobacion: function(btn) {
@@ -2622,47 +2885,605 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			);
 	},
 	
-	onClickEnviarEmailAsegurador: function(btn) {
-		
-		var me = this;
-		
-		Ext.Msg.confirm(
-				HreRem.i18n("title.enviar.email.a.la.aseguradora"),
-				HreRem.i18n("msg.header.enviar.mail.a.la.aseguradora"),
-				function(btn){
-					if (btn == "yes"){
-						
-						var url = $AC.getRemoteUrl("expedientecomercial/enviarCorreoAsegurador");
-						var parametros = {
-								idExpediente : me.getViewModel().get('expediente.id')
-						};
-						
-						me.getView().mask();
-						Ext.Ajax.request({
-				    	     url: url,
-				    	     params: parametros,
-				    	     success: function(response, opts) {
-				    	    	 console.log("success");
-				    	    	 if(Ext.decode(response.responseText).success == "false") {
-				    	    		me.fireEvent("errorToast", Ext.decode(response.responseText).errorCode);
-				    	    		me.getView().unmask();
-				    	         }
-				    	    	 else if (Ext.decode(response.responseText).success == "true"){
-				    	        	me.getView().unmask();
-				    	        	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-								 }
-				    	     },
-				    	     failure:  function(response, opts) {
-				    	     	me.getView().unmask();
-				    	     	me.fireEvent("errorToast",  HreRem.i18n("msg.operacion.ko") );
-				    	     }
-				    	 });
-						
-					}
-				}
-			);
+	onClickGenerarFacturaPdf : function(btn) {
+		var me = this, config = {};
+
+		config.params = {};
+		config.params.numExpediente = me.getViewModel().get(
+				"expediente.numExpediente");
+		config.url = $AC
+				.getRemoteUrl("operacionventa/operacionVentaFacturaPDF");
+
+		me.fireEvent("downloadFile", config);
 	},
-	
+
+	onAgregarGestoresClick : function(btn) {
+
+		var me = this;
+
+		var url = $AC
+				.getRemoteUrl('expedientecomercial/insertarGestorAdicional');
+		var parametros = btn.up("combogestoresexpediente")
+				.getValues();
+		parametros.idExpediente = me.getViewModel().get(
+				"expediente.id");
+
+		Ext.Ajax
+				.request({
+
+					url : url,
+					params : parametros,
+
+					success : function(response, opts) {
+						btn
+								.up("gestoresexpediente")
+								.down(
+										"[reference=listadoGestoresExpediente]")
+								.getStore().load();
+						btn.up("gestoresexpediente").down(
+								"form").reset();
+						/*
+						 * if(Ext.decode(response.responseText).success ==
+						 * "false") { me.fireEvent("errorToast",
+						 * HreRem.i18n("msg.activo.gestores.noasignar.tramite.multiactivo")); }
+						 */
+					}
+				});
+	},
+	onClickBotonCancelar : function(btn) {
+		var me = this, activeTab = btn.up('tabpanel')
+				.getActiveTab();
+		btn.hide();
+		btn.up('tabbar').down('button[itemId=botonguardar]')
+				.hide();
+		btn.up('tabbar').down('button[itemId=botoneditar]')
+				.show();
+
+		Ext.Array.each(
+				activeTab.query('field[isReadOnlyEdit]'),
+				function(field, index) {
+					field.fireEvent('save');
+					field.fireEvent('update');
+				});
+
+		if (Ext.isDefined(btn.name)
+				&& btn.name === 'firstLevel') {
+			me.getViewModel().set("editingFirstLevel", false);
+		} else {
+			me.getViewModel().set("editing", false);
+		}
+	},
+
+	onClickBloquearExpediente : function(btn) {
+
+		var me = this;
+		var idExpediente = me.getViewModel().get(
+				"expediente.id");
+		var url = $AC
+				.getRemoteUrl('expedientecomercial/bloqueoExpediente');
+		var parametros = {
+			idExpediente : idExpediente
+		};
+		me.getView().mask();
+		Ext.Ajax
+				.request({
+
+					url : url,
+					params : parametros,
+
+					success : function(response, opts) {
+						if (Ext.decode(response.responseText).success == "false") {
+							me
+									.fireEvent(
+											"errorToast",
+											HreRem
+													.i18n(Ext
+															.decode(response.responseText).errorCode));
+							me.getView().unmask();
+						} else if (Ext
+								.decode(response.responseText).success == "true") {
+							me.getView().unmask();
+							me.fireEvent("infoToast", HreRem
+									.i18n("msg.operacion.ok"));
+							me.refrescarExpediente(true);
+						}
+					}
+				});
+	},
+	sendDesbloquearExpediente : function(btn) {
+		var me = this;
+		var window = btn.up().up();
+		var form = window.down("formBase").getForm();
+		var idExpediente = btn.up('desbloquearwindow').idExpediente;
+		var url = $AC
+				.getRemoteUrl('expedientecomercial/desbloqueoExpediente');
+		if (me.validarActivarForm(form)) {
+			var parametros = {
+				idExpediente : idExpediente,
+				motivoCodigo : form.findField("motivo")
+						.getValue(),
+				motivoDescLibre : form.findField(
+						"motivoDescLibre").getValue()
+			};
+			me.getView().mask();
+			Ext.Ajax
+					.request({
+
+						url : url,
+						params : parametros,
+
+						success : function(response, opts) {
+							if (Ext
+									.decode(response.responseText).success == "false") {
+								me
+										.fireEvent(
+												"errorToast",
+												HreRem
+														.i18n(Ext
+																.decode(response.responseText).errorCode));
+								me.getView().unmask();
+							} else if (Ext
+									.decode(response.responseText).success == "true") {
+								me.getView().unmask();
+								me
+										.fireEvent(
+												"infoToast",
+												HreRem
+														.i18n("msg.operacion.ok"));
+								window.parent
+										.funcionReloadExp();
+								window.hide();
+
+							}
+						}
+					});
+		} else {
+			me.fireEvent("errorToast", HreRem
+					.i18n("msg.form.invalido"));
+		}
+	},
+	onClickDesbloquearExpediente : function(btn) {
+		var me = this;
+		var idExpediente = me.getViewModel().get(
+				"expediente.id");
+		var ventanaFormalizacion = btn.up().up();
+		Ext.create('HreRem.view.expedientes.Desbloquear', {
+			idExpediente : idExpediente,
+			parent : ventanaFormalizacion
+		}).show();
+	},
+	validarActivarForm : function(form) {
+		var motivoCodigo = form.findField("motivo").getValue();
+		var motivoDescLibre = form.findField("motivoDescLibre")
+				.getValue()
+		if (motivoCodigo == undefined || motivoCodigo == "") {
+			return false;
+		} else if (motivoCodigo == "04"
+				&& (motivoDescLibre == undefined || motivoDescLibre == "")) {
+			return false;
+		} else {
+			return true;
+		}
+
+	},
+
+	onClickGenerarHojaExcelActivos : function(btn) {
+		var me = this, config = {};
+
+		config.params = {};
+		config.params.idExpediente = me.getViewModel().get(
+				"expediente.id");
+		config.url = $AC
+				.getRemoteUrl("expedientecomercial/getExcelActivosExpediente");
+
+		me.fireEvent("downloadFile", config);
+	},
+
+	validarFechaPosicionamiento : function(value) {
+		/*
+		 * var hoy= new Date(); hoy.setHours(0,0,0,0); var from =
+		 * value.split("/"); var fechaPosiString = new
+		 * Date(from[2], from[1] - 1, from[0]); var
+		 * fechaPosiDate= new Date(fechaPosiString);
+		 *
+		 * if(fechaPosiDate<hoy){ return
+		 * HreRem.i18n('info.msg.fecha.posicionamiento.mayor.hoy');; }
+		 * else{ return true; }
+		 */
+		return true;
+
+	},
+	buscarSucursal : function(field, e) {
+		var me = this;
+		var url = $AC
+				.getRemoteUrl('proveedores/searchProveedorCodigoUvem');
+		var cartera = me.getViewModel().get('reserva.cartera');
+		var codSucursal = '';
+		var nombreSucursal = '';
+		if (cartera == CONST.CARTERA['BANKIA']) {
+			codSucursal = '2038' + field.getValue();
+			nombreSucursal = ' (Oficina Bankia)';
+		} else if (cartera == CONST.CARTERA['CAJAMAR']) {
+			codSucursal = '3058' + field.getValue();
+			nombreSucursal = ' (Oficina Cajamar)'
+		}
+		var data;
+		var re = new RegExp("^[0-9]{8}$");
+
+		Ext.Ajax
+				.request({
+
+					url : url,
+					params : {
+						codigoProveedorUvem : codSucursal
+					},
+
+					success : function(response, opts) {
+						data = Ext
+								.decode(response.responseText);
+						var buscadorSucursal = field.up(
+								'formBase').down(
+								'[name=buscadorSucursales]'), nombreSucursalField = field
+								.up('formBase')
+								.down('[name=nombreSucursal]');
+						if (!Utils.isEmptyJSON(data.data)) {
+							var id = data.data.id;
+							nombreSucursal = data.data.nombre
+									+ nombreSucursal;
+
+							if (re.test(codSucursal)
+									&& nombreSucursal != null
+									&& nombreSucursal != '') {
+								if (!Ext
+										.isEmpty(nombreSucursalField)) {
+									nombreSucursalField
+											.setValue(nombreSucursal);
+								}
+							} else {
+								nombreSucursalField
+										.setValue('');
+								me
+										.fireEvent(
+												"errorToast",
+												"El código de la Sucursal introducido no corresponde con ninguna Oficina");
+							}
+						} else {
+							if (!Ext
+									.isEmpty(nombreSucursalField)) {
+								nombreSucursalField
+										.setValue('');
+							}
+							me
+									.fireEvent(
+											"errorToast",
+											HreRem
+													.i18n("msg.buscador.no.encuentra.sucursal.codigo"));
+							buscadorSucursal
+									.markInvalid(HreRem
+											.i18n("msg.buscador.no.encuentra.sucursal.codigo"));
+						}
+					},
+					failure : function(response) {
+						me.fireEvent("errorToast", HreRem
+								.i18n("msg.operacion.ko"));
+					},
+					callback : function(options, success,
+							response) {
+					}
+				});
+	},
+
+	onCambioTipoImpuesto : function(combo, value, oldValue,
+			eOpts) {
+		try {
+			if (!Ext.isEmpty(oldValue)) {
+				var me = this, tipoAplicable = me
+						.lookupReference('tipoAplicable'), operacionExenta = me
+						.lookupReference('chkboxOperacionExenta'), inversionSujetoPasivo = me
+						.lookupReference('chkboxInversionSujetoPasivo'), renunciaExencion = me
+						.lookupReference('chkboxRenunciaExencion');
+
+				if (CONST.TIPO_IMPUESTO['ITP'] == value) {
+					tipoAplicable.reset();
+					tipoAplicable.setDisabled(true);
+					tipoAplicable.allowBlank = true;
+					tipoAplicable.setValue(0);
+					operacionExenta.reset();
+					operacionExenta.setReadOnly(true);
+					inversionSujetoPasivo.reset();
+					inversionSujetoPasivo.setReadOnly(true);
+					renunciaExencion.reset();
+					renunciaExencion.setReadOnly(true);
+				} else {
+					tipoAplicable.setDisabled(false);
+					tipoAplicable.allowBlank = false;
+					operacionExenta.setReadOnly(false);
+					inversionSujetoPasivo.setReadOnly(false);
+				}
+			}
+		} catch (err) {
+			Ext.global.console
+					.log('Error en onCambioTipoImpuesto: '
+							+ err)
+		}
+	},
+
+	onCambioOperacionExenta : function(checkbox, newValue,
+			oldValue, eOpts) {
+		if (!Ext.isEmpty(oldValue)) {
+			var me = this, renunciaExencion = me
+					.lookupReference('chkboxRenunciaExencion'), tipoAplicable = me
+					.lookupReference('tipoAplicable');
+
+			if (newValue == true) {
+				tipoAplicable.reset();
+				tipoAplicable.allowBlank = true;
+				tipoAplicable.setDisabled(true);
+				renunciaExencion.setReadOnly(false);
+			} else {
+				tipoAplicable.setDisabled(false);
+				tipoAplicable.allowBlank = false;
+				renunciaExencion.reset();
+				renunciaExencion.setReadOnly(true);
+			}
+		}
+	},
+
+	onCambioRenunciaExencion : function(checkbox, newValue,
+			oldValue, eOpts) {
+		if (!Ext.isEmpty(oldValue)) {
+			var me = this, tipoAplicable = me
+					.lookupReference('tipoAplicable');
+
+			if (newValue == false) {
+				tipoAplicable.reset();
+				tipoAplicable.allowBlank = true;
+				tipoAplicable.setDisabled(true);
+			} else {
+				tipoAplicable.setDisabled(false);
+				tipoAplicable.allowBlank = false;
+			}
+		}
+	},
+	onCambioCheckPorcentual : function(checkbox, newValue,
+			oldValue, eOpts) {
+		var me = this, ipc = me.lookupReference('checkboxIPC');
+		porcentaje = me
+				.lookupReference('escaladoRentaPorcentaje');
+
+		if (newValue) {
+			ipc.show();
+			porcentaje.show();
+		} else {
+			ipc.hide();
+			porcentaje.hide();
+
+		}
+	},
+	onCambioCheckRevMercado : function(checkbox, newValue,
+			oldValue, eOpts) {
+		var me = this, fecha = me
+				.lookupReference('revisionMercadoFecha');
+		cadaMes = me.lookupReference('escaladoRentasMeses');
+		if (newValue) {
+			fecha.show();
+			cadaMes.show();
+		} else {
+			fecha.hide();
+			cadaMes.hide();
+		}
+	},
+	onCambioCheckEscaladoFijo : function(checkbox, newValue,
+			oldValue, eOpts) {
+		var me = this, fijoFecha = me
+				.lookupReference('tipoEscaladoFecha');
+		fijoIncremento = me
+				.lookupReference('tipoEscaladoIncremento');
+		grid = me.lookupReference('historicoCondicones');
+		if (newValue) {
+			grid.disableAddButton(false);
+		} else {
+			grid.disableAddButton(true);
+		}
+	},
+	onCambioInversionSujetoPasivo : function(checkbox,
+			newValue, oldValue, eOpts) {
+		if (!Ext.isEmpty(oldValue)) {
+			var me = this, operacionExenta = me
+					.lookupReference('chkboxOperacionExenta'), renunciaExencion = me
+					.lookupReference('chkboxRenunciaExencion'), tipoAplicable = me
+					.lookupReference('tipoAplicable');
+
+			if (newValue == true) {
+				operacionExenta.reset();
+				operacionExenta.setReadOnly(true);
+				renunciaExencion.reset();
+				renunciaExencion.setReadOnly(true);
+				tipoAplicable.reset();
+				tipoAplicable.allowBlank = true;
+				tipoAplicable.setDisabled(true);
+			} else {
+				operacionExenta.setReadOnly(false);
+				tipoAplicable.allowBlank = false;
+				tipoAplicable.setDisabled(false);
+			}
+		}
+	},
+
+	onchkbxEnRevisionChange : function(checkbox, newValue,
+			oldValue, eOpts) {
+		var me = this;
+		seguroComentario = me
+				.lookupReference('textareafieldsegurocomentarios');
+		if (newValue == false) {
+			seguroComentario.setDisabled(true);
+		} else {
+			seguroComentario.setDisabled(false);
+		}
+
+	},
+
+	habilitarcheckrevisionOnChange : function(combo, newValue) {
+		var me = this;
+		enRevision = me.lookupReference('chkboxEnRevision');
+		seguroComentario = me
+				.lookupReference('textareafieldsegurocomentarios');
+		// Si el estado es pendiente(01), habilitamos el check
+		// de revision
+		if (newValue === '01') {
+			enRevision.setDisabled(false);
+			enRevision.setReadOnly(false);
+		} else {
+			enRevision.setDisabled(true);
+			seguroComentario.setDisabled(true);
+		}
+	},
+
+	onHaCambiadoFechaResolucion : function(field, newDate,
+			oldDate, eOpts) {
+		var me = this;
+		var resultado = me
+				.lookupReference('comboResultadoTanteoForm');
+		if (!Ext.isEmpty(newDate)) {
+			resultado.allowBlank = false;
+		} else {
+			resultado.allowBlank = true;
+		}
+	},
+
+	onHaCambiadoResultadoTanteo : function(combo, value) {
+		var me = this;
+		var fechaResolucion = me
+				.lookupReference('fechaResolucionForm');
+		if (!Ext.isEmpty(value)) {
+			fechaResolucion.allowBlank = false;
+		} else {
+			fechaResolucion.allowBlank = true;
+		}
+	},
+
+	enviarCondicionantesEconomicosUvem : function(btn) {
+		var me = this;
+		var url = $AC.getRemoteUrl('expedientecomercial/enviarCondicionantesEconomicosUvem');
+		me.getView().mask(HreRem.i18n("msg.mask.espere"));
+
+		Ext.Ajax.request({
+					url : url,
+					params : {idExpediente : me.getViewModel().get("expediente.id")},
+					success : function(response, opts) {
+						var data = {};
+						try {
+							data = Ext.decode(response.responseText);
+						} catch (e) {};
+
+						if (data.success === "true") {
+							me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+						} else {
+							if (data.errorUvem == "true") {
+								me.fireEvent("errorToast",data.msg);
+							} else {
+								Utils.defaultRequestFailure(response, opts);
+							}
+						}
+					},
+
+					failure : function(response, opts) {
+						if (data.errorUvem == "true") {
+							me.fireEvent("errorToast",data.msg);
+						} else {
+							Utils.defaultRequestFailure(response, opts);
+						}
+					},
+
+					callback : function() {
+						me.getView().unmask();
+					}
+				});
+	},
+
+	onClickGeneraOfertarHojaExcel : function(btn) {
+		var me = this, config = {};
+
+		config.params = {};
+		config.params.idOferta = me.getViewModel().get(
+				"datosbasicosoferta.idOferta");
+		config.url = $AC
+				.getRemoteUrl("ofertas/generateExcelOferta");
+
+		Ext.Msg.confirm(HreRem.i18n("title.propuesta.oferta"),HreRem.i18n("msg.propuesta.oferta"),
+		 function(btn) {
+			if (btn == "yes") {
+
+				me.fireEvent("downloadFile", config);
+			}
+		});
+	},
+
+	onClickEnviarMailAprobacion : function(btn) {
+		var me = this;
+
+		Ext.Msg.confirm(HreRem.i18n("title.enviar.email.de.aprobacion"),HreRem.i18n("msg.enviar.mail.aprobacion"),
+			function(btn) {
+				if (btn == "yes") {
+					var url = $AC.getRemoteUrl("ofertas/enviarMailAprobacion");
+					var parametros = {
+						idOferta : me.getViewModel().get("datosbasicosoferta.idOferta")
+					};
+
+					me.getView().mask();
+					Ext.Ajax.request({
+						url : url,
+						params : parametros,
+						success : function(
+								response,opts) {
+							if (Ext.decode(response.responseText).success == "false") {
+								me.fireEvent("errorToast",Ext.decode(response.responseText).errorCode);
+								me.getView().unmask();
+							} else if (Ext.decode(response.responseText).success == "true") {
+								me.getView().unmask();
+								me.fireEvent("infoToast",HreRem.i18n("msg.operacion.ok"));
+							}
+						}
+					});
+				}
+			});
+	},
+
+	onClickEnviarEmailAsegurador : function(btn) {
+		var me = this;
+
+		Ext.Msg.confirm(HreRem.i18n("title.enviar.email.a.la.aseguradora"),HreRem.i18n("msg.header.enviar.mail.a.la.aseguradora"),
+			function(btn) {
+				if (btn == "yes") {
+					var url = $AC.getRemoteUrl("expedientecomercial/enviarCorreoAsegurador");
+					var parametros = {
+						idExpediente : me.getViewModel().get('expediente.id')
+					};
+
+					me.getView().mask();
+					Ext.Ajax.request({
+						url : url,
+						params : parametros,
+						success : function(response,opts) {
+							console.log("success");
+							if (Ext.decode(response.responseText).success == "false") {
+								me.fireEvent("errorToast",Ext.decode(response.responseText).errorCode);
+								me.getView().unmask();
+							} else if (Ext.decode(response.responseText).success == "true") {
+								me.getView().unmask();
+								me.fireEvent("infoToast",HreRem.i18n("msg.operacion.ok"));
+							}
+						},
+						failure : function(
+								response,
+								opts) {
+							me.getView().unmask();
+							me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+						}
+					});
+				}
+			});
+	},
 
 	onClickEnviarComercializadora: function(rec){
 		var me = this;
@@ -2670,28 +3491,23 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		var idExpediente = me.getViewModel().get('expediente.id');
 		var observacion = rec.getData().observacion
 
-
 		Ext.Ajax.request({
-			
 		    url: url,
 		    params: {
-		     			cuerpoEmail: observacion,
-		     			idExpediente: idExpediente
-		     		}
-			
+                cuerpoEmail: observacion,
+                idExpediente: idExpediente
+            }
 		   ,success: function (a, operation, context) {
                	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
 				me.getView().unmask();
            },
-           
            failure: function (a, operation, context) {
            	 	me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
 				me.getView().unmask();
            }
-	     
 		});
 	},
-	
+
 	onChangeRevision: function(checkbox, newVal, oldVal) {
 		var me = this;
 		var scoringComentarios= me.lookupReference('scoringComentarios');
@@ -2980,9 +3796,6 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		                		data = Ext.decode(response.responseText).data;
 		                		activosPropagables = data;
 		                } catch (e){ };
-
-
-
 
 		    			var tabData = me.createTabData(form);
 		    			var tabPropagableData = null;
@@ -3276,7 +4089,6 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 
     	} else {
     		Ext.ComponentQuery.query('opcionespropagacioncambios')[0].destroy();
-    		/*me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));*/
 			me.getView().unmask();
     		return false;
     	}
@@ -3339,6 +4151,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	},
 
 
+
 	onClickAbrirExpedienteComercial: function() {
 
     	var me = this;
@@ -3365,6 +4178,844 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		 				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
 		 	}
 	 });
-  }
+  },
+	
+	esObligatorio: function(){
+		
+    	var me = this;
+    	var venta = null;
+    	if(me.getViewModel().get('expediente.tipoExpedienteCodigo') == null){
+    		if (me.getViewModel().data.esOfertaVentaFicha == true){
+    			venta = true;
+    		}else{
+    			venta = false;
+    		}
+    	}
+    	if(me.getViewModel().get('expediente.tipoExpedienteCodigo') == "01" || venta == true){
+    		return false;
+    	}else{
+    		return true;
+    	}
+    },
+    
+    comprobarObligatoriedadRte: function(){
+    	
+    	var me = this;
+    	var venta = null;
+    	if(me.getViewModel().get('expediente.tipoExpedienteCodigo') == null){
+    		if (me.getViewModel().data.esOfertaVentaFicha == true){
+    			venta = true;
+    		}else{
+    			venta = false;
+    		}
+    	}
+    	campoProvinciaRte = me.lookupReference('provinciaComboRte');
+		campoMunicipioRte = me.lookupReference('municipioComboRte');
+		campoDireccion = me.lookupReference('direccion');
+		campoProvincia = me.lookupReference('provinciaCombo');
+		campoMunicipio = me.lookupReference('municipioCombo');
+
+    	if(me.getViewModel().get('expediente.tipoExpedienteCodigo') == "01" || venta == true){
+    		if(me.lookupReference('tipoPersona').getValue() === "2" ) {
+    			if(me.lookupReference('pais').getValue() == "28"){
+    				if(!Ext.isEmpty(campoProvincia)){
+						campoProvinciaRte.allowBlank = false;
+					}
+    				if(!Ext.isEmpty(campoMunicipio)){
+						campoProvinciaRte.allowBlank = false;
+					}
+					if(!Ext.isEmpty(campoProvinciaRte)){
+						campoProvinciaRte.allowBlank = false;
+					}
+					if(!Ext.isEmpty(campoMunicipioRte)){
+						campoMunicipioRte.allowBlank = false;
+					}
+					
+				}else{
+    				if(!Ext.isEmpty(campoProvincia)){
+    					campoProvincia.allowBlank = true;
+					}
+    				if(!Ext.isEmpty(campoMunicipio)){
+    					campoMunicipio.allowBlank = true;
+					}
+					if(!Ext.isEmpty(campoProvinciaRte)){
+						campoProvinciaRte.allowBlank = true;
+					}
+					if(!Ext.isEmpty(campoMunicipioRte)){
+						campoMunicipioRte.allowBlank = true;
+					}
+				}
+    		}else if (me.lookupReference('tipoPersona').getValue() === "1"){
+    			if(me.lookupReference('pais').getValue() == "28"){
+    				if(!Ext.isEmpty(campoProvincia)){
+    					campoProvincia.allowBlank = false;
+					}
+    				if(!Ext.isEmpty(campoMunicipio)){
+    					campoMunicipio.allowBlank = false;
+					}
+				}else{
+    				if(!Ext.isEmpty(campoProvincia)){
+    					campoProvincia.allowBlank = true;
+					}
+    				if(!Ext.isEmpty(campoMunicipio)){
+    					campoMunicipio.allowBlank = true;
+					}
+				}
+    		}
+    	}
+    },
+    
+    comprobarFormato: function() {
+    	
+		var me = this;
+		valueComprador = me.lookupReference('nuevoCompradorNumDoc');
+		valueConyuge = me.lookupReference('numRegConyuge');
+		valueRte = me.lookupReference('numeroDocumentoRte');
+		
+		if(me.lookupReference('tipoPersona').getValue() === "1"){
+			if(valueComprador != null){
+				if(me.lookupReference('tipoDocumentoNuevoComprador').value == "01" || me.lookupReference('tipoDocumentoNuevoComprador').value == "15"
+					|| me.lookupReference('tipoDocumentoNuevoComprador').value == "03"){
+
+					 var validChars = 'TRWAGMYFPDXBNJZSQVHLCKET';
+					 var nifRexp = /^[0-9]{8}[TRWAGMYFPDXBNJZSQVHLCKET]{1}$/i;
+					 var nieRexp = /^[XYZ]{1}[0-9]{7}[TRWAGMYFPDXBNJZSQVHLCKET]{1}$/i;
+					 var str = valueComprador.value.toString().toUpperCase();
+
+					 if (!nifRexp.test(str) && !nieRexp.test(str)){
+						 me.fireEvent("errorToast", HreRem.i18n("msg.numero.documento.comprador.incorrecto"));
+						 return false;
+					 }
+
+					 var nie = str
+					     .replace(/^[X]/, '0')
+					     .replace(/^[Y]/, '1')
+					     .replace(/^[Z]/, '2');
+
+					 var letter = str.substr(-1);
+					 var charIndex = parseInt(nie.substr(0, 8)) % 23;
+
+					 if (validChars.charAt(charIndex) === letter){
+						 return true;
+					 }else{
+						 me.fireEvent("errorToast", HreRem.i18n("msg.numero.documento.comprador.incorrecto"));
+						 return false;
+					 }
+
+				}else if(me.lookupReference('tipoDocumentoNuevoComprador').value == "02"){
+
+					var texto=valueComprador.value;
+			        var pares = 0; 
+			        var impares = 0; 
+			        var suma; 
+			        var ultima; 
+			        var unumero; 
+			        var uletra = new Array("J", "A", "B", "C", "D", "E", "F", "G", "H", "I"); 
+			        var xxx; 
+			         
+			        texto = texto.toUpperCase(); 
+			         
+			        var regular = new RegExp(/^[ABCDEFGHKLMNPQS]\d\d\d\d\d\d\d[0-9,A-J]$/g); 
+			         	if (!regular.exec(texto)) {
+			         		me.fireEvent("errorToast", HreRem.i18n("msg.numero.documento.comprador.incorrecto"));
+							return false;		
+						}
+	   
+			         ultima = texto.substr(8,1); 
+			 
+			         for (var cont = 1 ; cont < 7 ; cont ++){ 
+			             xxx = (2 * parseInt(texto.substr(cont++,1))).toString() + "0"; 
+			             impares += parseInt(xxx.substr(0,1)) + parseInt(xxx.substr(1,1)); 
+			             pares += parseInt(texto.substr(cont,1)); 
+			         } 
+			         
+			         xxx = (2 * parseInt(texto.substr(cont,1))).toString() + "0"; 
+			         impares += parseInt(xxx.substr(0,1)) + parseInt(xxx.substr(1,1)); 
+			          
+			         suma = (pares + impares).toString(); 
+			         unumero = parseInt(suma.substr(suma.length - 1, 1)); 
+			         unumero = (10 - unumero).toString(); 
+			         if(unumero == 10){
+			        	 unumero = 0; 
+			         }
+			          
+			         if ((ultima == unumero) || (ultima == uletra[unumero])) {
+			             return true; 
+			         }else{
+			        	 me.fireEvent("errorToast", HreRem.i18n("msg.numero.documento.comprador.incorrecto"));
+						 return false;	
+			         }
+				}else if(me.lookupReference('tipoDocumentoNuevoComprador').value == "04"){
+					
+				    var expr = /^[a-z]{3}[0-9]{6}[a-z]?$/i;
+
+				    valueComprador.value = valueComprador.value.toLowerCase();
+
+				    if(!expr.test (valueComprador.value)){
+				    	me.fireEvent("errorToast", HreRem.i18n("msg.numero.documento.comprador.incorrecto"));
+				    	return false;
+				    }else{
+				    	return true;
+				    }
+
+				}else{
+					return true;
+				}
+			}else if(valueConyuge != null){
+				if(me.lookupReference('tipoDocConyuge').value == "01" || me.lookupReference('tipoDocConyuge').value == "15"
+					|| me.lookupReference('tipoDocConyuge').value == "03"){
+
+					 var validChars = 'TRWAGMYFPDXBNJZSQVHLCKET';
+					 var nifRexp = /^[0-9]{8}[TRWAGMYFPDXBNJZSQVHLCKET]{1}$/i;
+					 var nieRexp = /^[XYZ]{1}[0-9]{7}[TRWAGMYFPDXBNJZSQVHLCKET]{1}$/i;
+					 var str = valueConyuge.value.toString().toUpperCase();
+
+					 if (!nifRexp.test(str) && !nieRexp.test(str)){
+						 me.fireEvent("errorToast", HreRem.i18n("msg.numero.documento.conyuge.incorrecto"));
+						 return false;
+					 }
+
+					 var nie = str
+					     .replace(/^[X]/, '0')
+					     .replace(/^[Y]/, '1')
+					     .replace(/^[Z]/, '2');
+
+					 var letter = str.substr(-1);
+					 var charIndex = parseInt(nie.substr(0, 8)) % 23;
+
+					 if (validChars.charAt(charIndex) === letter){
+						 return true;
+					 }else{
+						 me.fireEvent("errorToast", HreRem.i18n("msg.numero.documento.conyuge.incorrecto"));
+						 return false;
+					 }
+
+				}else if(me.lookupReference('tipoDocConyuge').value == "02"){
+					var texto=valueConyuge.value;
+			        var pares = 0; 
+			        var impares = 0; 
+			        var suma; 
+			        var ultima; 
+			        var unumero; 
+			        var uletra = new Array("J", "A", "B", "C", "D", "E", "F", "G", "H", "I"); 
+			        var xxx; 
+			         
+			        texto = texto.toUpperCase(); 
+			         
+			        var regular = new RegExp(/^[ABCDEFGHKLMNPQS]\d\d\d\d\d\d\d[0-9,A-J]$/g); 
+			         	if (!regular.exec(texto)) {
+			         		me.fireEvent("errorToast", HreRem.i18n("msg.numero.documento.conyuge.incorrecto"));
+							return false;		
+						}
+	   
+			         ultima = texto.substr(8,1); 
+			 
+			         for (var cont = 1 ; cont < 7 ; cont ++){ 
+			             xxx = (2 * parseInt(texto.substr(cont++,1))).toString() + "0"; 
+			             impares += parseInt(xxx.substr(0,1)) + parseInt(xxx.substr(1,1)); 
+			             pares += parseInt(texto.substr(cont,1)); 
+			         } 
+			         
+			         xxx = (2 * parseInt(texto.substr(cont,1))).toString() + "0"; 
+			         impares += parseInt(xxx.substr(0,1)) + parseInt(xxx.substr(1,1)); 
+			          
+			         suma = (pares + impares).toString(); 
+			         unumero = parseInt(suma.substr(suma.length - 1, 1)); 
+			         unumero = (10 - unumero).toString(); 
+			         if(unumero == 10){
+			        	 unumero = 0; 
+			         }
+			          
+			         if ((ultima == unumero) || (ultima == uletra[unumero])) {
+			             return true; 
+			         }else{
+			        	 me.fireEvent("errorToast", HreRem.i18n("msg.numero.documento.conyuge.incorrecto"));
+						 return false;	
+			         }
+				}else if(me.lookupReference('tipoDocConyuge').value == "04"){
+					
+				    var expr = /^[a-z]{3}[0-9]{6}[a-z]?$/i;
+
+				    valueConyuge.value = valueConyuge.value.toLowerCase();
+
+				    if(!expr.test (valueConyuge.value)){
+				    	me.fireEvent("errorToast", HreRem.i18n("msg.numero.documento.conyuge.incorrecto"));
+				    	return false;
+				    }else{
+				    	return true;
+				    }
+
+				}else{
+					return true;
+				}
+			}
+		}else{
+			
+			if(valueComprador != null){
+				if(me.lookupReference('tipoDocumentoNuevoComprador').value == "01" || me.lookupReference('tipoDocumentoNuevoComprador').value == "15"
+					|| me.lookupReference('tipoDocumentoNuevoComprador').value == "03"){
+
+					 var validChars = 'TRWAGMYFPDXBNJZSQVHLCKET';
+					 var nifRexp = /^[0-9]{8}[TRWAGMYFPDXBNJZSQVHLCKET]{1}$/i;
+					 var nieRexp = /^[XYZ]{1}[0-9]{7}[TRWAGMYFPDXBNJZSQVHLCKET]{1}$/i;
+					 var str = valueComprador.value.toString().toUpperCase();
+
+					 if (!nifRexp.test(str) && !nieRexp.test(str)){
+						 me.fireEvent("errorToast", HreRem.i18n("msg.numero.documento.comprador.incorrecto"));
+						 return false;
+					 }
+
+					 var nie = str
+					     .replace(/^[X]/, '0')
+					     .replace(/^[Y]/, '1')
+					     .replace(/^[Z]/, '2');
+
+					 var letter = str.substr(-1);
+					 var charIndex = parseInt(nie.substr(0, 8)) % 23;
+
+					 if (validChars.charAt(charIndex) === letter){
+						 return true;
+					 }else{
+						 me.fireEvent("errorToast", HreRem.i18n("msg.numero.documento.comprador.incorrecto"));
+						 return false;
+					 }
+
+				}else if(me.lookupReference('tipoDocumentoNuevoComprador').value == "02"){
+
+					var texto=valueComprador.value;
+			        var pares = 0; 
+			        var impares = 0; 
+			        var suma; 
+			        var ultima; 
+			        var unumero; 
+			        var uletra = new Array("J", "A", "B", "C", "D", "E", "F", "G", "H", "I"); 
+			        var xxx; 
+			         
+			        texto = texto.toUpperCase(); 
+			         
+			        var regular = new RegExp(/^[ABCDEFGHKLMNPQS]\d\d\d\d\d\d\d[0-9,A-J]$/g); 
+			         	if (!regular.exec(texto)) {
+			         		me.fireEvent("errorToast", HreRem.i18n("msg.numero.documento.comprador.incorrecto"));
+							return false;		
+						}
+	   
+			         ultima = texto.substr(8,1); 
+			 
+			         for (var cont = 1 ; cont < 7 ; cont ++){ 
+			             xxx = (2 * parseInt(texto.substr(cont++,1))).toString() + "0"; 
+			             impares += parseInt(xxx.substr(0,1)) + parseInt(xxx.substr(1,1)); 
+			             pares += parseInt(texto.substr(cont,1)); 
+			         } 
+			         
+			         xxx = (2 * parseInt(texto.substr(cont,1))).toString() + "0"; 
+			         impares += parseInt(xxx.substr(0,1)) + parseInt(xxx.substr(1,1)); 
+			          
+			         suma = (pares + impares).toString(); 
+			         unumero = parseInt(suma.substr(suma.length - 1, 1)); 
+			         unumero = (10 - unumero).toString(); 
+			         if(unumero == 10){
+			        	 unumero = 0; 
+			         }
+			          
+			         if ((ultima == unumero) || (ultima == uletra[unumero])) {
+			             return true; 
+			         }else{
+			        	 me.fireEvent("errorToast", HreRem.i18n("msg.numero.documento.comprador.incorrecto"));
+						 return false;	
+			         }
+				}else if(me.lookupReference('tipoDocumentoNuevoComprador').value == "04"){
+					
+				    var expr = /^[a-z]{3}[0-9]{6}[a-z]?$/i;
+
+				    valueComprador.value = valueComprador.value.toLowerCase();
+
+				    if(!expr.test (valueComprador.value)){
+				    	me.fireEvent("errorToast", HreRem.i18n("msg.numero.documento.comprador.incorrecto"));
+				    	return false;
+				    }else{
+				    	return true;
+				    }
+
+				}else{
+					return true;
+				}
+			}else if(valueRte != null){
+				
+				if(me.lookupReference('tipoDocumentoRte').value == "01" || me.lookupReference('tipoDocumentoRte').value == "15"
+					|| me.lookupReference('tipoDocumentoRte').value == "03"){
+
+					 var validChars = 'TRWAGMYFPDXBNJZSQVHLCKET';
+					 var nifRexp = /^[0-9]{8}[TRWAGMYFPDXBNJZSQVHLCKET]{1}$/i;
+					 var nieRexp = /^[XYZ]{1}[0-9]{7}[TRWAGMYFPDXBNJZSQVHLCKET]{1}$/i;
+					 var str = valueRte.value.toString().toUpperCase();
+
+					 if (!nifRexp.test(str) && !nieRexp.test(str)){
+						 me.fireEvent("errorToast", HreRem.i18n("msg.numero.documento.rte.incorrecto"));
+						 return false;
+					 }
+
+					 var nie = str
+					     .replace(/^[X]/, '0')
+					     .replace(/^[Y]/, '1')
+					     .replace(/^[Z]/, '2');
+
+					 var letter = str.substr(-1);
+					 var charIndex = parseInt(nie.substr(0, 8)) % 23;
+
+					 if (validChars.charAt(charIndex) === letter){
+						 return true;
+					 }else{
+						 me.fireEvent("errorToast", HreRem.i18n("msg.numero.documento.rte.incorrecto"));
+						 return false;
+					 }
+
+				}else if(me.lookupReference('tipoDocumentoRte').value == "02"){
+					
+					var texto=valueRte.value;
+			        var pares = 0; 
+			        var impares = 0; 
+			        var suma; 
+			        var ultima; 
+			        var unumero; 
+			        var uletra = new Array("J", "A", "B", "C", "D", "E", "F", "G", "H", "I"); 
+			        var xxx; 
+			         
+			        texto = texto.toUpperCase(); 
+			         
+			        var regular = new RegExp(/^[ABCDEFGHKLMNPQS]\d\d\d\d\d\d\d[0-9,A-J]$/g); 
+			         	if (!regular.exec(texto)) {
+			         		me.fireEvent("errorToast", HreRem.i18n("msg.numero.documento.rte.incorrecto"));
+							return false;		
+						}
+	   
+			         ultima = texto.substr(8,1); 
+			 
+			         for (var cont = 1 ; cont < 7 ; cont ++){ 
+			             xxx = (2 * parseInt(texto.substr(cont++,1))).toString() + "0"; 
+			             impares += parseInt(xxx.substr(0,1)) + parseInt(xxx.substr(1,1)); 
+			             pares += parseInt(texto.substr(cont,1)); 
+			         } 
+			         
+			         xxx = (2 * parseInt(texto.substr(cont,1))).toString() + "0"; 
+			         impares += parseInt(xxx.substr(0,1)) + parseInt(xxx.substr(1,1)); 
+			          
+			         suma = (pares + impares).toString(); 
+			         unumero = parseInt(suma.substr(suma.length - 1, 1)); 
+			         unumero = (10 - unumero).toString(); 
+			         if(unumero == 10){
+			        	 unumero = 0; 
+			         }
+			          
+			         if ((ultima == unumero) || (ultima == uletra[unumero])) {
+			             return true; 
+			         }else{
+			        	 me.fireEvent("errorToast", HreRem.i18n("msg.numero.documento.rte.incorrecto"));
+						 return false;	
+			         }
+				}else if(me.lookupReference('tipoDocumentoRte').value == "04"){
+					
+				    var expr = /^[a-z]{3}[0-9]{6}[a-z]?$/i;
+
+				    valueRte.value = valueRte.value.toLowerCase();
+
+				    if(!expr.test (valueRte.value)){
+				    	me.fireEvent("errorToast", HreRem.i18n("msg.numero.documento.rte.incorrecto"));
+				    	return false;
+				    }else{
+				    	return true;
+				    }
+
+				}else{
+					return true;
+				}
+			}
+			
+		}
+			
+			
+	},
+	
+comprobarFormatoModificar: function() {
+    	
+		var me = this;
+		valueComprador = me.lookupReference('nuevoCompradorNumDoc');
+		valueConyuge = me.lookupReference('numRegConyuge');
+		valueRte = me.lookupReference('numeroDocumentoRte');
+		validaciones = 0;
+		
+		if(me.lookupReference('tipoPersona').getValue() === "1"){
+			if(valueComprador != null){
+				if(me.lookupReference('tipoDocumentoNuevoComprador').value == "01" || me.lookupReference('tipoDocumentoNuevoComprador').value == "15"
+					|| me.lookupReference('tipoDocumentoNuevoComprador').value == "03"){
+
+					 var validChars = 'TRWAGMYFPDXBNJZSQVHLCKET';
+					 var nifRexp = /^[0-9]{8}[TRWAGMYFPDXBNJZSQVHLCKET]{1}$/i;
+					 var nieRexp = /^[XYZ]{1}[0-9]{7}[TRWAGMYFPDXBNJZSQVHLCKET]{1}$/i;
+					 var str = valueComprador.value.toString().toUpperCase();
+
+					 if (!nifRexp.test(str) && !nieRexp.test(str)){
+						 me.fireEvent("errorToast", HreRem.i18n("msg.numero.documento.comprador.incorrecto"));
+						 return false;
+					 }
+
+					 var nie = str
+					     .replace(/^[X]/, '0')
+					     .replace(/^[Y]/, '1')
+					     .replace(/^[Z]/, '2');
+
+					 var letter = str.substr(-1);
+					 var charIndex = parseInt(nie.substr(0, 8)) % 23;
+
+					 if (validChars.charAt(charIndex) === letter){
+						 validaciones = validaciones + 1;
+					 }else{
+						 me.fireEvent("errorToast", HreRem.i18n("msg.numero.documento.comprador.incorrecto"));
+						 return false;
+					 }
+
+				}else if(me.lookupReference('tipoDocumentoNuevoComprador').value == "02"){
+
+					var texto=valueComprador.value;
+			        var pares = 0; 
+			        var impares = 0; 
+			        var suma; 
+			        var ultima; 
+			        var unumero; 
+			        var uletra = new Array("J", "A", "B", "C", "D", "E", "F", "G", "H", "I"); 
+			        var xxx; 
+			         
+			        texto = texto.toUpperCase(); 
+			         
+			        var regular = new RegExp(/^[ABCDEFGHKLMNPQS]\d\d\d\d\d\d\d[0-9,A-J]$/g); 
+			         	if (!regular.exec(texto)) {
+			         		me.fireEvent("errorToast", HreRem.i18n("msg.numero.documento.comprador.incorrecto"));
+							return false;		
+						}
+	   
+			         ultima = texto.substr(8,1); 
+			 
+			         for (var cont = 1 ; cont < 7 ; cont ++){ 
+			             xxx = (2 * parseInt(texto.substr(cont++,1))).toString() + "0"; 
+			             impares += parseInt(xxx.substr(0,1)) + parseInt(xxx.substr(1,1)); 
+			             pares += parseInt(texto.substr(cont,1)); 
+			         } 
+			         
+			         xxx = (2 * parseInt(texto.substr(cont,1))).toString() + "0"; 
+			         impares += parseInt(xxx.substr(0,1)) + parseInt(xxx.substr(1,1)); 
+			          
+			         suma = (pares + impares).toString(); 
+			         unumero = parseInt(suma.substr(suma.length - 1, 1)); 
+			         unumero = (10 - unumero).toString(); 
+			         if(unumero == 10){
+			        	 unumero = 0; 
+			         }
+			          
+			         if ((ultima == unumero) || (ultima == uletra[unumero])) {
+			        	 validaciones = validaciones + 1; 
+			         }else{
+			        	 me.fireEvent("errorToast", HreRem.i18n("msg.numero.documento.comprador.incorrecto"));
+						 return false;	
+			         }
+				}else if(me.lookupReference('tipoDocumentoNuevoComprador').value == "04"){
+					
+				    var expr = /^[a-z]{3}[0-9]{6}[a-z]?$/i;
+
+				    valueComprador.value = valueComprador.value.toLowerCase();
+
+				    if(!expr.test (valueComprador.value)){
+				    	me.fireEvent("errorToast", HreRem.i18n("msg.numero.documento.comprador.incorrecto"));
+				    	validaciones = validaciones + 1;
+				    }else{
+				    	return true;
+				    }
+
+				}else{
+					validaciones = validaciones + 1;
+				}
+			}
+			
+			if(valueConyuge != null){
+				if(me.lookupReference('tipoDocConyuge').value == "01" || me.lookupReference('tipoDocConyuge').value == "15"
+					|| me.lookupReference('tipoDocConyuge').value == "03"){
+
+					 var validChars = 'TRWAGMYFPDXBNJZSQVHLCKET';
+					 var nifRexp = /^[0-9]{8}[TRWAGMYFPDXBNJZSQVHLCKET]{1}$/i;
+					 var nieRexp = /^[XYZ]{1}[0-9]{7}[TRWAGMYFPDXBNJZSQVHLCKET]{1}$/i;
+					 var str = valueConyuge.value.toString().toUpperCase();
+
+					 if (!nifRexp.test(str) && !nieRexp.test(str)){
+						 me.fireEvent("errorToast", HreRem.i18n("msg.numero.documento.conyuge.incorrecto"));
+						 return false;
+					 }
+
+					 var nie = str
+					     .replace(/^[X]/, '0')
+					     .replace(/^[Y]/, '1')
+					     .replace(/^[Z]/, '2');
+
+					 var letter = str.substr(-1);
+					 var charIndex = parseInt(nie.substr(0, 8)) % 23;
+
+					 if (validChars.charAt(charIndex) === letter){
+						 validaciones = validaciones + 1;
+					 }else{
+						 me.fireEvent("errorToast", HreRem.i18n("msg.numero.documento.conyuge.incorrecto"));
+						 return false;
+					 }
+
+				}else if(me.lookupReference('tipoDocConyuge').value == "02"){
+					var texto=valueConyuge.value;
+			        var pares = 0; 
+			        var impares = 0; 
+			        var suma; 
+			        var ultima; 
+			        var unumero; 
+			        var uletra = new Array("J", "A", "B", "C", "D", "E", "F", "G", "H", "I"); 
+			        var xxx; 
+			         
+			        texto = texto.toUpperCase(); 
+			         
+			        var regular = new RegExp(/^[ABCDEFGHKLMNPQS]\d\d\d\d\d\d\d[0-9,A-J]$/g); 
+			         	if (!regular.exec(texto)) {
+			         		me.fireEvent("errorToast", HreRem.i18n("msg.numero.documento.conyuge.incorrecto"));
+							return false;		
+						}
+	   
+			         ultima = texto.substr(8,1); 
+			 
+			         for (var cont = 1 ; cont < 7 ; cont ++){ 
+			             xxx = (2 * parseInt(texto.substr(cont++,1))).toString() + "0"; 
+			             impares += parseInt(xxx.substr(0,1)) + parseInt(xxx.substr(1,1)); 
+			             pares += parseInt(texto.substr(cont,1)); 
+			         } 
+			         
+			         xxx = (2 * parseInt(texto.substr(cont,1))).toString() + "0"; 
+			         impares += parseInt(xxx.substr(0,1)) + parseInt(xxx.substr(1,1)); 
+			          
+			         suma = (pares + impares).toString(); 
+			         unumero = parseInt(suma.substr(suma.length - 1, 1)); 
+			         unumero = (10 - unumero).toString(); 
+			         if(unumero == 10){
+			        	 unumero = 0; 
+			         }
+			          
+			         if ((ultima == unumero) || (ultima == uletra[unumero])) {
+			        	 validaciones = validaciones + 1; 
+			         }else{
+			        	 me.fireEvent("errorToast", HreRem.i18n("msg.numero.documento.conyuge.incorrecto"));
+						 return false;	
+			         }
+				}else if(me.lookupReference('tipoDocConyuge').value == "04"){
+					
+				    var expr = /^[a-z]{3}[0-9]{6}[a-z]?$/i;
+
+				    valueConyuge.value = valueConyuge.value.toLowerCase();
+
+				    if(!expr.test (valueConyuge.value)){
+				    	me.fireEvent("errorToast", HreRem.i18n("msg.numero.documento.conyuge.incorrecto"));
+				    	return false;
+				    }else{
+				    	validaciones = validaciones + 1;
+				    }
+
+				}else{
+					validaciones = validaciones + 1;
+				}
+			}
+			
+			if(validaciones == 2){
+				return true;
+			}
+		}else{
+			
+			if(valueComprador != null){
+				if(me.lookupReference('tipoDocumentoNuevoComprador').value == "01" || me.lookupReference('tipoDocumentoNuevoComprador').value == "15"
+					|| me.lookupReference('tipoDocumentoNuevoComprador').value == "03"){
+
+					 var validChars = 'TRWAGMYFPDXBNJZSQVHLCKET';
+					 var nifRexp = /^[0-9]{8}[TRWAGMYFPDXBNJZSQVHLCKET]{1}$/i;
+					 var nieRexp = /^[XYZ]{1}[0-9]{7}[TRWAGMYFPDXBNJZSQVHLCKET]{1}$/i;
+					 var str = valueComprador.value.toString().toUpperCase();
+
+					 if (!nifRexp.test(str) && !nieRexp.test(str)){
+						 me.fireEvent("errorToast", HreRem.i18n("msg.numero.documento.comprador.incorrecto"));
+						 return false;
+					 }
+
+					 var nie = str
+					     .replace(/^[X]/, '0')
+					     .replace(/^[Y]/, '1')
+					     .replace(/^[Z]/, '2');
+
+					 var letter = str.substr(-1);
+					 var charIndex = parseInt(nie.substr(0, 8)) % 23;
+
+					 if (validChars.charAt(charIndex) === letter){
+						 validaciones = validaciones + 1;
+					 }else{
+						 me.fireEvent("errorToast", HreRem.i18n("msg.numero.documento.comprador.incorrecto"));
+						 return false;
+					 }
+
+				}else if(me.lookupReference('tipoDocumentoNuevoComprador').value == "02"){
+
+					var texto=valueComprador.value;
+			        var pares = 0; 
+			        var impares = 0; 
+			        var suma; 
+			        var ultima; 
+			        var unumero; 
+			        var uletra = new Array("J", "A", "B", "C", "D", "E", "F", "G", "H", "I"); 
+			        var xxx; 
+			         
+			        texto = texto.toUpperCase(); 
+			         
+			        var regular = new RegExp(/^[ABCDEFGHKLMNPQS]\d\d\d\d\d\d\d[0-9,A-J]$/g); 
+			         	if (!regular.exec(texto)) {
+			         		me.fireEvent("errorToast", HreRem.i18n("msg.numero.documento.comprador.incorrecto"));
+							return false;		
+						}
+	   
+			         ultima = texto.substr(8,1); 
+			 
+			         for (var cont = 1 ; cont < 7 ; cont ++){ 
+			             xxx = (2 * parseInt(texto.substr(cont++,1))).toString() + "0"; 
+			             impares += parseInt(xxx.substr(0,1)) + parseInt(xxx.substr(1,1)); 
+			             pares += parseInt(texto.substr(cont,1)); 
+			         } 
+			         
+			         xxx = (2 * parseInt(texto.substr(cont,1))).toString() + "0"; 
+			         impares += parseInt(xxx.substr(0,1)) + parseInt(xxx.substr(1,1)); 
+			          
+			         suma = (pares + impares).toString(); 
+			         unumero = parseInt(suma.substr(suma.length - 1, 1)); 
+			         unumero = (10 - unumero).toString(); 
+			         if(unumero == 10){
+			        	 unumero = 0; 
+			         }
+			          
+			         if ((ultima == unumero) || (ultima == uletra[unumero])) {
+			        	 validaciones = validaciones + 1; 
+			         }else{
+			        	 me.fireEvent("errorToast", HreRem.i18n("msg.numero.documento.comprador.incorrecto"));
+						 return false;	
+			         }
+				}else if(me.lookupReference('tipoDocumentoNuevoComprador').value == "04"){
+					
+				    var expr = /^[a-z]{3}[0-9]{6}[a-z]?$/i;
+
+				    valueComprador.value = valueComprador.value.toLowerCase();
+
+				    if(!expr.test (valueComprador.value)){
+				    	me.fireEvent("errorToast", HreRem.i18n("msg.numero.documento.comprador.incorrecto"));
+				    	return false;
+				    }else{
+				    	validaciones = validaciones + 1;
+				    }
+
+				}else{
+					return true;
+				}
+			}
+			
+			if(valueRte != null){
+				
+				if(me.lookupReference('tipoDocumentoRte').value == "01" || me.lookupReference('tipoDocumentoRte').value == "15"
+					|| me.lookupReference('tipoDocumentoRte').value == "03"){
+
+					 var validChars = 'TRWAGMYFPDXBNJZSQVHLCKET';
+					 var nifRexp = /^[0-9]{8}[TRWAGMYFPDXBNJZSQVHLCKET]{1}$/i;
+					 var nieRexp = /^[XYZ]{1}[0-9]{7}[TRWAGMYFPDXBNJZSQVHLCKET]{1}$/i;
+					 var str = valueRte.value.toString().toUpperCase();
+
+					 if (!nifRexp.test(str) && !nieRexp.test(str)){
+						 me.fireEvent("errorToast", HreRem.i18n("msg.numero.documento.rte.incorrecto"));
+						 return false;
+					 }
+
+					 var nie = str
+					     .replace(/^[X]/, '0')
+					     .replace(/^[Y]/, '1')
+					     .replace(/^[Z]/, '2');
+
+					 var letter = str.substr(-1);
+					 var charIndex = parseInt(nie.substr(0, 8)) % 23;
+
+					 if (validChars.charAt(charIndex) === letter){
+						 validaciones = validaciones + 1;
+					 }else{
+						 me.fireEvent("errorToast", HreRem.i18n("msg.numero.documento.rte.incorrecto"));
+						 return false;
+					 }
+
+				}else if(me.lookupReference('tipoDocumentoRte').value == "02"){
+					
+					var texto=valueRte.value;
+			        var pares = 0; 
+			        var impares = 0; 
+			        var suma; 
+			        var ultima; 
+			        var unumero; 
+			        var uletra = new Array("J", "A", "B", "C", "D", "E", "F", "G", "H", "I"); 
+			        var xxx; 
+			         
+			        texto = texto.toUpperCase(); 
+			         
+			        var regular = new RegExp(/^[ABCDEFGHKLMNPQS]\d\d\d\d\d\d\d[0-9,A-J]$/g); 
+			         	if (!regular.exec(texto)) {
+			         		me.fireEvent("errorToast", HreRem.i18n("msg.numero.documento.rte.incorrecto"));
+							return false;		
+						}
+	   
+			         ultima = texto.substr(8,1); 
+			 
+			         for (var cont = 1 ; cont < 7 ; cont ++){ 
+			             xxx = (2 * parseInt(texto.substr(cont++,1))).toString() + "0"; 
+			             impares += parseInt(xxx.substr(0,1)) + parseInt(xxx.substr(1,1)); 
+			             pares += parseInt(texto.substr(cont,1)); 
+			         } 
+			         
+			         xxx = (2 * parseInt(texto.substr(cont,1))).toString() + "0"; 
+			         impares += parseInt(xxx.substr(0,1)) + parseInt(xxx.substr(1,1)); 
+			          
+			         suma = (pares + impares).toString(); 
+			         unumero = parseInt(suma.substr(suma.length - 1, 1)); 
+			         unumero = (10 - unumero).toString(); 
+			         if(unumero == 10){
+			        	 unumero = 0; 
+			         }
+			          
+			         if ((ultima == unumero) || (ultima == uletra[unumero])) {
+			        	 validaciones = validaciones + 1; 
+			         }else{
+			        	 me.fireEvent("errorToast", HreRem.i18n("msg.numero.documento.rte.incorrecto"));
+						 return false;	
+			         }
+				}else if(me.lookupReference('tipoDocumentoRte').value == "04"){
+					
+				    var expr = /^[a-z]{3}[0-9]{6}[a-z]?$/i;
+
+				    valueRte.value = valueRte.value.toLowerCase();
+
+				    if(!expr.test (valueRte.value)){
+				    	me.fireEvent("errorToast", HreRem.i18n("msg.numero.documento.rte.incorrecto"));
+				    	return false;
+				    }else{
+				    	validaciones = validaciones + 1;
+				    }
+
+				}else{
+					validaciones = validaciones + 1;
+				}
+			}
+			
+			if(validaciones == 2){
+				return true;
+			}
+			
+		}
+			
+			
+	}
 
 });

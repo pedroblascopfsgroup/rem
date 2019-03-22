@@ -116,6 +116,15 @@ public class Comprador implements Serializable, Auditable {
 	@Embedded
 	private Auditoria auditoria;
     
+	//Se añaden nuevos atributos. HREOS-4851
+    @Column(name = "COM_CESION_DATOS")
+    private Boolean cesionDatos;
+    
+    @Column(name = "COM_TRANSF_INTER")
+    private Boolean comunicacionTerceros;
+    
+    @Column(name = "COM_COMUNI_TERCEROS")
+    private Boolean transferenciasInternacionales;
 
 	
 	public Long getId() {
@@ -283,5 +292,29 @@ public class Comprador implements Serializable, Auditable {
 
 	public void setCompradorEnviado(Date compradorEnviado) {
 		this.compradorEnviado = compradorEnviado;
+	}
+
+	public Boolean getCesionDatos() {
+		return cesionDatos;
+	}
+
+	public void setCesionDatos(Boolean cesionDatos) {
+		this.cesionDatos = cesionDatos;
+	}
+
+	public Boolean getComunicacionTerceros() {
+		return comunicacionTerceros;
+	}
+
+	public void setComunicacionTerceros(Boolean comunicacionTerceros) {
+		this.comunicacionTerceros = comunicacionTerceros;
+	}
+
+	public Boolean getTransferenciasInternacionales() {
+		return transferenciasInternacionales;
+	}
+
+	public void setTransferenciasInternacionales(Boolean transferenciasInternacionales) {
+		this.transferenciasInternacionales = transferenciasInternacionales;
 	}
 }

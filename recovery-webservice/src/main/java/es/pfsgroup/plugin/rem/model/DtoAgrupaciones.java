@@ -64,6 +64,7 @@ public class DtoAgrupaciones extends WebDto {
 	private String cartera;
 	private String tipoActivoPrincipalCodigo;
 	private Integer activosGencat;
+	private String codSubcartera;
 
 
 	public Boolean getEstaCaducada() {
@@ -384,5 +385,11 @@ public class DtoAgrupaciones extends WebDto {
 	}
 	public void setCartera(String cartera) {
 		this.cartera = cartera;
+	}
+	public String getCodSubcartera() {
+		return codSubcartera;
+	}
+	public void setCodSubcartera(String codSubcartera) {
+		this.codSubcartera = codSubcartera;
 	}
 }

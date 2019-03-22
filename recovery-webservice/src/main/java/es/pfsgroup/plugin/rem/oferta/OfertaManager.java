@@ -3530,7 +3530,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			Filter filterCodigoTpoDoc = genericDao.createFilter(FilterType.EQUALS, "tipoDocumento.codigo",
 					codtipoDoc);
 
-			clienteGDPR = genericDao.get(ClienteGDPR.class, filterComprador,filterCodigoTpoDoc);
+			List<ClienteGDPR> clientesGDPR = genericDao.getList(ClienteGDPR.class, filterComprador,filterCodigoTpoDoc);
+			
+			if(!clientesGDPR.isEmpty()) {
+				clienteGDPR = clientesGDPR.get(0);
+			}
 		}
 		if(!Checks.esNulo(clienteGDPR)) {
 			clienteCom = clienteGDPR.getCliente();

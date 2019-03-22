@@ -1039,11 +1039,13 @@ public class TabActivoDatosBasicos implements TabActivoService {
 						Filter filterIdAgrupacion = genericDao.createFilter(FilterType.EQUALS, "agrupacion.id", agrupacion.getId());
 						ActivoAgrupacionActivo aga = genericDao.get(ActivoAgrupacionActivo.class, filterIdActivo, filterIdAgrupacion);		//Filtramos las agas en función del idAgrupacion y el idActivo
 						
-						//Si el porcentaje total se pasa de 100
-						if(porcentajeUAs - aga.getParticipacionUA() + dto.getPorcentajeParticipacion() > 100) {
-							throw new JsonViewerException(messageServices.getMessage(ERROR_PORCENTAJE_PARTICIPACION));
-						} else {
-							aga.setParticipacionUA(dto.getPorcentajeParticipacion());							
+						if(!Checks.esNulo(dto.getPorcentajeParticipacion())) {
+							//Si el porcentaje total se pasa de 100
+							if(porcentajeUAs - aga.getParticipacionUA() + dto.getPorcentajeParticipacion() > 100) {
+								throw new JsonViewerException(messageServices.getMessage(ERROR_PORCENTAJE_PARTICIPACION));
+							} else {
+								aga.setParticipacionUA(dto.getPorcentajeParticipacion());							
+							}
 						}
 					}
 				}

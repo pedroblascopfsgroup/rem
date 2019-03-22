@@ -658,7 +658,8 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 			}
 			
 			activoPublicacion.setMotivoPublicacion(dto.getMotivoPublicacion());
-
+			activoPublicacion.setMotivoPublicacionAlquiler(dto.getMotivoPublicacionAlquiler());
+			
 			activoPublicacionDao.save(activoPublicacion);
 			
 			if((Checks.esNulo(dto.getOcultarVenta()) && !Checks.esNulo(dto.getMotivoOcultacionVentaCodigo())) || (Checks.esNulo(dto.getOcultarAlquiler()) && !Checks.esNulo(dto.getMotivoOcultacionAlquilerCodigo()))) {
@@ -724,6 +725,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 				}
 				
 				activoPublicacion.setMotivoPublicacion(dto.getMotivoPublicacion());
+				activoPublicacion.setMotivoPublicacionAlquiler(dto.getMotivoPublicacionAlquiler());
 	
 				activoPublicacionDao.save(activoPublicacion);
 			}

@@ -36,6 +36,7 @@ public class ProvisionGastosManager extends BusinessOperationOverrider<Provision
 	
 	private static final String COD_PEF_GESTORIA_ADMINISTRACION = "HAYAGESTADMT";
 	private static final String COD_PEF_GESTORIA_PLUSVALIA = "GESTOPLUS";
+	private static final String COD_PEF_GESTORIA_POSTVENTA = "GTOPOSTV";
 	private static final String COD_PEF_USUARIO_CERTIFICADOR = "HAYACERTI";
 	private static final String COD_PEF_GESTOR_ADMINISTRACION = "HAYAADM";
 	
@@ -78,7 +79,7 @@ public class ProvisionGastosManager extends BusinessOperationOverrider<Provision
 			// Si es externo, pero es gestoría de administración, plusvalia o certificación puede ver gastos en los que conste como gestoría, si no, no puede verlos
 			
 			Boolean isGestoria = genericAdapter.tienePerfil(COD_PEF_GESTORIA_ADMINISTRACION, usuarioLogado) 
-					|| genericAdapter.tienePerfil(COD_PEF_GESTORIA_PLUSVALIA, usuarioLogado)
+					|| genericAdapter.tienePerfil(COD_PEF_GESTORIA_PLUSVALIA, usuarioLogado) || genericAdapter.tienePerfil(COD_PEF_GESTORIA_POSTVENTA, usuarioLogado)
 					|| genericAdapter.tienePerfil(COD_PEF_USUARIO_CERTIFICADOR, usuarioLogado);			
 			
 			if(isGestoria){

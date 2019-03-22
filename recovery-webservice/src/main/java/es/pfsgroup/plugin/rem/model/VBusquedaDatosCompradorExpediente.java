@@ -6,6 +6,7 @@ import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Table;
 
 @Entity
@@ -83,6 +84,12 @@ public class VBusquedaDatosCompradorExpediente implements Serializable {
 	
 	@Column(name = "DESC_ESTADO_CIVIL")
 	private String descripcionEstadoCivil;
+	
+	@Column(name = "COD_TIPO_DOCUMENTO_CONYUGE")
+	private String codTipoDocumentoConyuge;
+	
+	@Column(name = "DESC_TIPO_DOCUMENTO_CONYUGE")
+	private String descripcionTipoDocumentoConyuge;
 	
 	@Column(name = "CEX_DOCUMENTO_CONYUGE")
 	private String documentoConyuge;
@@ -197,6 +204,20 @@ public class VBusquedaDatosCompradorExpediente implements Serializable {
 	
 	@Column(name = "DESC_PAIS_RTE")
 	private String descripcionPaisRte;
+
+	@Column(name = "COM_CESION_DATOS")
+	private Boolean cesionDatos;
+	    
+	@Column(name = "COM_COMUNI_TERCEROS")
+	private Boolean comunicacionTerceros;
+	    
+	@Column(name = "COM_TRANSF_INTER")
+	private Boolean transferenciasInternacionales;
+	
+	@Column(name = "ADCOM_ID")
+	private Long idDocAdjunto;
+	
+
     
 
 	public String getId() {
@@ -365,6 +386,22 @@ public class VBusquedaDatosCompradorExpediente implements Serializable {
 
 	public void setDescripcionEstadoCivil(String descripcionEstadoCivil) {
 		this.descripcionEstadoCivil = descripcionEstadoCivil;
+	}
+	
+	public String getCodTipoDocumentoConyuge() {
+		return codTipoDocumentoConyuge;
+	}
+
+	public void setCodTipoDocumentoConyuge(String codTipoDocumentoConyuge) {
+		this.codTipoDocumentoConyuge = codTipoDocumentoConyuge;
+	}
+
+	public String getDescripcionTipoDocumentoConyuge() {
+		return descripcionTipoDocumentoConyuge;
+	}
+
+	public void setDescripcionTipoDocumentoConyuge(String descripcionTipoDocumentoConyuge) {
+		this.descripcionTipoDocumentoConyuge = descripcionTipoDocumentoConyuge;
 	}
 
 	public String getDocumentoConyuge() {
@@ -678,6 +715,39 @@ public class VBusquedaDatosCompradorExpediente implements Serializable {
 
 	public void setDescripcionPaisRte(String descripcionPaisRte) {
 		this.descripcionPaisRte = descripcionPaisRte;
+	}
+
+	//HREOS-4937
+	public Boolean getCesionDatos() {
+		return cesionDatos;
+	}
+
+	public void setCesionDatos(Boolean cesionDatos) {
+		this.cesionDatos = cesionDatos;
+	}
+
+	public Boolean getComunicacionTerceros() {
+		return comunicacionTerceros;
+	}
+
+	public void setComunicacionTerceros(Boolean comunicacionTerceros) {
+		this.comunicacionTerceros = comunicacionTerceros;
+	}
+
+	public Boolean getTransferenciasInternacionales() {
+		return transferenciasInternacionales;
+	}
+
+	public void setTransferenciasInternacionales(Boolean transferenciasInternacionales) {
+		this.transferenciasInternacionales = transferenciasInternacionales;
+	}
+
+	public Long getIdDocAdjunto() {
+		return idDocAdjunto;
+	}
+
+	public void setIdDocAdjunto(Long idDocAdjunto) {
+		this.idDocAdjunto = idDocAdjunto;
 	}
 
 

@@ -5,7 +5,10 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -74,6 +77,21 @@ public class VBusquedaCompradoresExpediente implements Serializable {
     
     @Column(name = "DESC_GRADO_PROPIEDAD")
     private String descripcionGradoPropiedad;
+    
+    @Column(name = "ADC_NAME")
+    private String nombreAdjunto;
+    
+    @Column(name = "CEX_ID_PERSONA_HAYA")
+    private String idPersonaHaya;
+    
+    @Column(name = "ADCOM_ID")
+    private Long idDocAdjunto;
+    
+    @Column(name = "ADC_ID_DOCUMENTO_REST")
+    private Long idDocRestClient;
+    
+    
+    
 	
 	
 	public String getId() {
@@ -226,6 +244,38 @@ public class VBusquedaCompradoresExpediente implements Serializable {
 
 	public void setDescripcionGradoPropiedad(String descripcionGradoPropiedad) {
 		this.descripcionGradoPropiedad = descripcionGradoPropiedad;
+	}
+	
+	
+	public String getNombreAdjunto() {
+		return nombreAdjunto;
+	}
+
+	public void setNombreAdjunto(String nombreAdjunto) {
+		this.nombreAdjunto = nombreAdjunto;
+	}
+
+	public String getIdPersonaHaya() {
+		return idPersonaHaya;
+	}
+
+	public void setIdPersonaHaya(String idPersonaHaya) {
+		this.idPersonaHaya = idPersonaHaya;
+	}
+	public Long getIdDocAdjunto() {
+		return idDocAdjunto;
+	}
+
+	public Long getIdDocRestClient() {
+		return idDocRestClient;
+	}
+
+	public void setIdDocRestClient(Long idDocRestClient) {
+		this.idDocRestClient = idDocRestClient;
+	}
+
+	public void setIdDocAdjunto(Long idDocAdjunto) {
+		this.idDocAdjunto = idDocAdjunto;
 	}
 	
 }

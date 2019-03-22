@@ -353,14 +353,12 @@ public abstract class AbstractNotificatorService {
 	}
 
 	public String creaCuerpoPropuestaOferta(Oferta oferta) {
-	
-	
+
 		Activo activo = oferta.getActivoPrincipal();
 		DtoSendNotificator dtoSendNotificator = new DtoSendNotificator();
 		Filter filterAct = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
 		List<ActivoTramite> tramites = genericDao.getList(ActivoTramite.class, filterAct);
 		ActivoTramite tramite;
-		
 		
 		String asunto = "Notificación de propuesta de la oferta " + oferta.getNumOferta();
 		String cuerpo = "<p>Nos complace mandarle la información de la propuesta de oferta " + oferta.getNumOferta();
@@ -369,8 +367,6 @@ public abstract class AbstractNotificatorService {
 		
 		cuerpo = cuerpo + ".</p>";
 
-
-
 		Integer numTramites = tramites.size();
 		
 		if(!Checks.estaVacio(tramites)) {
@@ -378,8 +374,6 @@ public abstract class AbstractNotificatorService {
 			dtoSendNotificator = this.rellenaDtoSendNotificator(oferta, tramite);
 			dtoSendNotificator.setTitulo(asunto);
 		}
-
-
 
 		cuerpo = cuerpo + "<p>Quedamos a su disposición para cualquier consulta o aclaración. Saludos cordiales.</p>";
 

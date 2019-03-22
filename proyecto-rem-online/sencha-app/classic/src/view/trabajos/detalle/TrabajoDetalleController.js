@@ -383,12 +383,16 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleController', {
 		idAgrupacion = window.idAgrupacion,
 		idActivo = window.idActivo,
 		idProceso = window.idProceso;
+		codCartera = window.codCartera;
+		codSubcartera = window.codSubcartera;
 		
 		form.getBindRecord().set("idActivo", idActivo);
 		form.getBindRecord().set("idAgrupacion", idAgrupacion);
 		form.getBindRecord().set("idProceso", idProceso);
 		form.getBindRecord().set("idsActivos", arraySelection);
 		form.getBindRecord().set("codigoPromocionPrinex", codigoPromocionPrinex);
+		form.getBindRecord().set("codCartera", codCartera);
+		form.getBindRecord().set("codSubcartera", codSubcartera);
 				
 		var success = function(record, operation) {
 			me.getView().unmask();

@@ -133,6 +133,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 
 	private static final String COD_PEF_GESTORIA_ADMINISTRACION = "HAYAGESTADMT";
 	private static final String COD_PEF_GESTORIA_PLUSVALIA = "GESTOPLUS";
+	private static final String COD_PEF_GESTORIA_POSTVENTA = "GTOPOSTV";
 	private static final String COD_PEF_USUARIO_CERTIFICADOR = "HAYACERTI";
 
 	@Autowired
@@ -239,7 +240,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		// Ademas si es un tipo de gestoria concreto, se filtrará los gastos que le pertenezcan como gestoria.
 		if (gestorActivoDao.isUsuarioGestorExternoProveedor(usuarioLogado.getId())) {
 			Boolean isGestoria = genericAdapter.tienePerfil(COD_PEF_GESTORIA_ADMINISTRACION, usuarioLogado) 
-					|| genericAdapter.tienePerfil(COD_PEF_GESTORIA_PLUSVALIA, usuarioLogado)
+					|| genericAdapter.tienePerfil(COD_PEF_GESTORIA_PLUSVALIA, usuarioLogado) || genericAdapter.tienePerfil(COD_PEF_GESTORIA_POSTVENTA, usuarioLogado)
 					|| genericAdapter.tienePerfil(COD_PEF_USUARIO_CERTIFICADOR, usuarioLogado);
 			return gastoDao.getListGastosFilteredByProveedorContactoAndGestoria(dtoGastosFilter, usuarioLogado.getId(), isGestoria, false);
 		}
@@ -265,7 +266,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		// Ademas si es un tipo de gestoria concreto, se filtrará los gastos que le pertenezcan como gestoria.
 		if (gestorActivoDao.isUsuarioGestorExternoProveedor(usuarioLogado.getId())) {
 			Boolean isGestoria = genericAdapter.tienePerfil(COD_PEF_GESTORIA_ADMINISTRACION, usuarioLogado) 
-					|| genericAdapter.tienePerfil(COD_PEF_GESTORIA_PLUSVALIA, usuarioLogado)
+					|| genericAdapter.tienePerfil(COD_PEF_GESTORIA_PLUSVALIA, usuarioLogado) || genericAdapter.tienePerfil(COD_PEF_GESTORIA_POSTVENTA, usuarioLogado)
 					|| genericAdapter.tienePerfil(COD_PEF_USUARIO_CERTIFICADOR, usuarioLogado);
 			return gastoDao.getListGastosFilteredByProveedorContactoAndGestoria(dtoGastosFilter, usuarioLogado.getId(), isGestoria, true);
 		}

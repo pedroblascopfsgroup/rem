@@ -41,8 +41,7 @@ DECLARE
         
                 --CODIGO GESTOR		   --CARTERA	--DD_GCM_ACTIVO		--DD_GCM_EXPEDIENTE		--DD_GCM_AGRUPACION
         T_CUENTA('GCOM',			    '15',				1,						0,					0),
-        T_CUENTA('HAYAGBOINM',			'03',				1,						0,					0),
-        T_CUENTA('MED',			        '15',				1,						0,					0)
+        T_CUENTA('HAYAGBOINM',			'03',				1,						0,					0)
     );
     V_TMP_CUENTA T_CUENTA;
 

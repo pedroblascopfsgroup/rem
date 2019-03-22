@@ -1,7 +1,7 @@
 --/*
 --##########################################
---## AUTOR=JINLI HU
---## FECHA_CREACION=20190311
+--## AUTOR=Juan Ruiz
+--## FECHA_CREACION=20190314
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-5774
@@ -35,7 +35,7 @@ DECLARE
     TYPE T_FUNCION IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_FUNCION IS TABLE OF T_FUNCION;
     V_FUNCION T_ARRAY_FUNCION := T_ARRAY_FUNCION(
-	  T_FUNCION('AGAPA', 'Agrupaciones: Agrupar activos(Promoción Alquiler)', 'Agrupaciones: Agrupar activos(Promoción Alquiler)','MASIVO_AGRUPAR_ACTIVOS_PROMOCION_ALQUILER','n*,n*,n*,n*,s,s,s,s,s,s,s,n*,n*,n*')
+	  T_FUNCION('AGAPA', 'Agrupaciones: Agrupar activos(Promoción Alquiler)', 'Agrupaciones: Agrupar activos (Promoción Alquiler)','MASIVO_AGRUPAR_ACTIVOS_PROMOCION_ALQUILER','nT*,n*,n*,n*,s,s,s,s,s,s,s,i*,i*,i*')
     ); 
     V_TMP_FUNCION T_FUNCION;
     V_PERFILES VARCHAR2(100 CHAR) := '%';  -- Cambiar por ALGÚN PERFIL para otorgar permisos a ese perfil.

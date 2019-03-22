@@ -191,7 +191,7 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 													{
 														xtype: 'comboboxfieldbase',
 											        	fieldLabel: HreRem.i18n('fieldlabel.tipoDocumento'),
-														reference: 'tipoDocumentoNuevoComprador',
+														reference: 'tipoDocumento',
 											        	bind: {
 										            		store: '{comboTipoDocumento}',
 										            		value: '{comprador.codTipoDocumento}',
@@ -201,7 +201,7 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 											        },
 											        {
 											        	fieldLabel: HreRem.i18n('fieldlabel.numero.documento'),
-														reference: 'nuevoCompradorNumDoc',
+														reference: 'numeroDocumento',
 											        	bind: {
 										            		value: '{comprador.numDocumento}',
 										            		disabled: me.deshabilitarCamposDoc

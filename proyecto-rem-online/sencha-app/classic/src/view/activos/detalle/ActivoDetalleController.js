@@ -1103,8 +1103,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 						align : 't'
 					});
 					var ventanaWizard = grid.up('anyadirnuevaofertaactivoadjuntardocumento');
-					ventanaWizard.down('button[itemId=btnFinalizar]').disable();
-					ventanaWizard.down('button[itemId=btnSubirDoc]').disable();
+					//ventanaWizard.down('button[itemId=btnFinalizar]').disable();
+					//ventanaWizard.down('button[itemId=btnSubirDoc]').disable();
 					ventanaWizard.down('button[itemId=btnGenerarDoc]').enable();
 					ventanaWizard.getForm().findField('comunicacionTerceros').enable();
 					ventanaWizard.getForm().findField('cesionDatos').enable();
@@ -3722,8 +3722,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 					}
 				}
 				
-					if (activosPropagables.length > 0 && tabData.models[0].name != "datospublicacion") {
-						tabPropagableData = me.createFormPropagableData(form, tabData);
+				if (activosPropagables.length > 0) {
+					tabPropagableData = me.createFormPropagableData(form, tabData);
 					if (!Ext.isEmpty(tabPropagableData)) {
 						// sacamos el activo actual del listado
 						var activo = activosPropagables.splice(activosPropagables.findIndex(function(activo){return activo.activoId == me.getViewModel().get("activo.id")}),1)[0];
@@ -3773,7 +3773,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 				} else {
 					me.saveActivo(tabData, successFn);
 				}
-				me.saveActivo(tabData, successFn);
     		},
 		 	failure: function(record, operation) {
 		 		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
@@ -4455,23 +4454,19 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
                                     btnFinalizar =  ventanaWizardAdjuntarDocumento.down('button[itemId=btnFinalizar]');
                                     if(cesionDatos.getValue()){
                                     	btnFinalizar.enable();
-                                    }                                    
+                                    }     
+                                    if (esInternacional) {
+										if (cesionDatos.getValue() && transferenciasInternacionales.getValue()) {
+											btnFinalizar.enable();
+										}
+									} else {
+										if (cesionDatos.getValue()) {
+											btnFinalizar.enable();
+										}
+									}
 
                                     ventanaWizardAdjuntarDocumento.getForm().findField('docOfertaComercial').setValue(data.data[0].nombre);
                                     ventanaWizardAdjuntarDocumento.down().down('panel').down('button').show();
-
-                                    if(cesionDatos.getValue()) {
-                                          if(esInternacional) {
-                                                if(transferenciasInternacionales.getValue())
-                                                    btnGenerarDoc.enable();
-                                                else
-                                                    btnGenerarDoc.disable();
-                                          } else {
-                                            btnGenerarDoc.enable();
-                                          }
-                                      } else {
-                                        btnGenerarDoc.disable();
-                                      }
                                  }
                              },
 
@@ -4550,7 +4545,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
                documento:numDoc,nombre:nombre,direccion:direccion,email:email,idExpediente:idExpediente, telefono:telefono};
         me.fireEvent("downloadFile", config);
 
-        ventana3.down('button[itemId=btnSubirDoc]').enable();
+        //ventana3.down('button[itemId=btnSubirDoc]').enable();
     },
 	
 	comprobarFormato: function() {

@@ -452,7 +452,7 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 																					// comercial
 																					// alquiler
 			Activo activo = activoApi.get(Long.parseLong(idActivo));
-			String tipoComercializacion = activo.getTipoComercializacion().getCodigo();
+			String tipoComercializacion = activo.getActivoPublicacion().getTipoComercializacion().getCodigo();
 			String codigoTipoActivo = activo.getTipoActivo().getCodigo();
 			ActivoPatrimonio actPatrimonio = activoPatrimonio.getActivoPatrimonioByActivo(activo.getId());
 

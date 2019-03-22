@@ -3609,17 +3609,17 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	public String getDestinoComercialActivo(Long idActivo, Long idAgrupacion, Long idExpediente) {
 		String destinoComercial = "";
 		if (!Checks.esNulo(idActivo) && Checks.esNulo(idAgrupacion)) {
-			destinoComercial = activoApi.get(idActivo).getTipoComercializacion().getDescripcion();
+			destinoComercial = activoApi.get(idActivo).getActivoPublicacion().getTipoComercializacion().getDescripcion();
 		} else if (Checks.esNulo(idActivo) && !Checks.esNulo(idAgrupacion)) {
 			ActivoAgrupacion agr = activoAgrupacionApi.get(idAgrupacion);
 			if(!Checks.esNulo(agr.getActivoPrincipal())) {
-				destinoComercial = agr.getActivoPrincipal().getTipoComercializacion().getDescripcion();
+				destinoComercial = agr.getActivoPrincipal().getActivoPublicacion().getTipoComercializacion().getDescripcion();
 			} else {
-				destinoComercial = agr.getActivos().get(0).getActivo().getTipoComercializacion().getDescripcion();
+				destinoComercial = agr.getActivos().get(0).getActivo().getActivoPublicacion().getTipoComercializacion().getDescripcion();
 			}
 		} else {
 			ExpedienteComercial exp = expedienteComercialApi.findOne(idExpediente);
-			destinoComercial = exp.getOferta().getActivoPrincipal().getTipoComercializacion().getDescripcion();
+			destinoComercial = exp.getOferta().getActivoPrincipal().getActivoPublicacion().getTipoComercializacion().getDescripcion();
 		}
 		
 	return destinoComercial;

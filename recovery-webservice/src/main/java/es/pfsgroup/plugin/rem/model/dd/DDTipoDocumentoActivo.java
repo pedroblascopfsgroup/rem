@@ -38,24 +38,26 @@ import es.capgemini.pfs.diccionarios.Dictionary;
 public class DDTipoDocumentoActivo implements Auditable, Dictionary {
 
     public static final String CODIGO_INFORME_COMERCIAL = "01";
-    public static final String CODIGO_DECRETO_ADJUDICACION = "02";
+    public static final String CODIGO_DECRETO_ADJUDICACION = "103";
     public static final String CODIGO_ESCRITURA_PUBLICA = "03";
     public static final String CODIGO_DILIGENCIA_TOMA_POSESION = "04";
-    public static final String CODIGO_NOTA_SIMPLE_SIN_CARGAS = "05";
-    public static final String CODIGO_NOTA_SIMPLE_ACTUALIZADA = "06";
-    public static final String CODIGO_TASACION_ADJUDICACION = "07";
-    public static final String CODIGO_VPO_SOLICITUD_AUTORIZACION = "08";
-    public static final String CODIGO_VPO_NOTIFICACION_ADJUDICACION = "09";
-    public static final String CODIGO_VPO_SOLICITUD_IMPORTE = "10";
-    public static final String CODIGO_CEE = "11";
-    public static final String CODIGO_LPO = "12";
-    public static final String CODIGO_CEDULA_HABITABILIDAD = "13";
-    public static final String CODIGO_CFO = "14";
-    public static final String CODIGO_BOLETIN_AGUA = "15";
-    public static final String CODIGO_BOLETIN_ELECTRICIDAD = "16";
-    public static final String CODIGO_BOLETIN_GAS = "17";
+    public static final String CODIGO_NOTA_SIMPLE_SIN_CARGAS = "98";
+    public static final String CODIGO_NOTA_SIMPLE_ACTUALIZADA = "97";
+    public static final String CODIGO_TASACION_ADJUDICACION = "96";
+    public static final String CODIGO_VPO_SOLICITUD_AUTORIZACION = "95";
+    public static final String CODIGO_VPO_NOTIFICACION_ADJUDICACION = "94";
+    public static final String CODIGO_VPO_SOLICITUD_IMPORTE = "93";
+    public static final String CODIGO_CEE = "92";
+    public static final String CODIGO_LPO = "91";
+    public static final String CODIGO_CEDULA_HABITABILIDAD = "90";
+    public static final String CODIGO_CFO = "89";
+    public static final String CODIGO_BOLETIN_AGUA = "88";
+    public static final String CODIGO_BOLETIN_ELECTRICIDAD = "87";
+    public static final String CODIGO_BOLETIN_GAS = "86";
     public static final String CODIGO_LISTADO_PROPUESTA_PRECIOS = "21";
-    public static final String CODIGO_INFORME_OCUPACION_DESOCUPACION = "52";
+    public static final String CODIGO_CONSENTIMIENTO_PROTECCION_DATOS = "77";
+    public static final String CODIGO_INFORME_OCUPACION_DESOCUPACION = "100";
+    public static final String CODIGO_PROPUESTA_PRECIOS_SANCIONADA = "110";
     
 	/**
 	 * 

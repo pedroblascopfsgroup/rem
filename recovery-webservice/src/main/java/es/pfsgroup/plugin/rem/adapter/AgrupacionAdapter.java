@@ -68,6 +68,7 @@ import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.ProveedoresApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
+import es.pfsgroup.plugin.rem.clienteComercial.dao.ClienteComercialDao;
 import es.pfsgroup.plugin.rem.jbpm.handler.notificator.impl.NotificatorServiceSancionOfertaAceptacionYRechazo;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
@@ -88,8 +89,11 @@ import es.pfsgroup.plugin.rem.model.ActivoProyecto;
 import es.pfsgroup.plugin.rem.model.ActivoPublicacion;
 import es.pfsgroup.plugin.rem.model.ActivoRestringida;
 import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
+import es.pfsgroup.plugin.rem.model.AdjuntoComprador;
 import es.pfsgroup.plugin.rem.model.AgrupacionesVigencias;
 import es.pfsgroup.plugin.rem.model.ClienteComercial;
+import es.pfsgroup.plugin.rem.model.ClienteCompradorGDPR;
+import es.pfsgroup.plugin.rem.model.ClienteGDPR;
 import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
 import es.pfsgroup.plugin.rem.model.DtoAgrupaciones;
@@ -106,6 +110,7 @@ import es.pfsgroup.plugin.rem.model.GestorActivo;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.PropuestaActivosVinculados;
+import es.pfsgroup.plugin.rem.model.TmpClienteGDPR;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.VBusquedaAgrupaciones;
@@ -255,7 +260,10 @@ public class AgrupacionAdapter {
 	
 	@Autowired
 	private GestorEntidadDao gestorEntidadDao;
-	
+
+	@Autowired
+	private ClienteComercialDao clienteComercialDao;
+
 	@Resource(name = "entityTransactionManager")
     private PlatformTransactionManager transactionManager;
 
@@ -566,7 +574,11 @@ public class AgrupacionAdapter {
 
 				if(activoPrincipal != null) {
 					PerimetroActivo perimetroActivo = activoApi.getPerimetroByIdActivo(activoPrincipal.getId());
-
+					
+					if(!Checks.esNulo(activoPrincipal.getSubcartera())){
+						BeanUtils.copyProperty(dtoAgrupacion, "codSubcartera", activoPrincipal.getSubcartera().getCodigo());
+					}
+					
 					if (perimetroActivo != null) {
 						BeanUtils.copyProperty(dtoAgrupacion, "incluidoEnPerimetro", perimetroActivo.getIncluidoEnPerimetro() == 1);
 					}
@@ -631,6 +643,9 @@ public class AgrupacionAdapter {
 						BeanUtils.copyProperty(dtoAgrupacion, "cartera", agrupacion.getActivos().get(0).getActivo().getCartera().getDescripcion());
 						BeanUtils.copyProperty(dtoAgrupacion, "codigoCartera", agrupacion.getActivos().get(0).getActivo().getCartera().getCodigo());
 					}
+					 if(!Checks.estaVacio(agrupacion.getActivos()) && !Checks.esNulo(agrupacion.getActivos().get(0).getActivo().getSubcartera())){
+						 BeanUtils.copyProperty(dtoAgrupacion, "codSubcartera", agrupacion.getActivos().get(0).getActivo().getSubcartera().getCodigo());
+					 }
 					 if (!agrupacion.getActivos().isEmpty() && !Checks.esNulo(agrupacion.getActivos().get(0)) && agrupacion.getActivos().get(0).getActivo().getActivoPublicacion().getTipoComercializacion() != null) {
 						BeanUtils.copyProperty(dtoAgrupacion, "tipoComercializacionDescripcion", agrupacion.getActivos().get(0).getActivo().getActivoPublicacion().getTipoComercializacion().getDescripcion());
 						BeanUtils.copyProperty(dtoAgrupacion, "tipoComercializacionCodigo", agrupacion.getActivos().get(0).getActivo().getActivoPublicacion().getTipoComercializacion().getCodigo());
@@ -2125,6 +2140,25 @@ public class AgrupacionAdapter {
 				}
 			}
 			
+			if (!Checks.esNulo(dto.getCesionDatos())) {
+				clienteComercial.setCesionDatos(dto.getCesionDatos());
+			}
+			
+			if (!Checks.esNulo(dto.getTransferenciasInternacionales())) {
+				clienteComercial.setTransferenciasInternacionales(dto.getTransferenciasInternacionales());
+			}
+			
+			if (!Checks.esNulo(dto.getComunicacionTerceros())) {
+				clienteComercial.setComunicacionTerceros(dto.getComunicacionTerceros());
+			}
+			
+			TmpClienteGDPR tmpClienteGDPR = genericDao.get(TmpClienteGDPR.class,
+					genericDao.createFilter(FilterType.EQUALS, "numDocumento", dto.getNumDocumentoCliente()));
+			
+			if (!Checks.esNulo(tmpClienteGDPR)) {
+				clienteComercial.setIdPersonaHaya(String.valueOf(tmpClienteGDPR.getIdPersonaHaya()));
+			}
+			
 			genericDao.save(ClienteComercial.class, clienteComercial);
 
 			Oferta oferta = new Oferta();
@@ -2177,6 +2211,72 @@ public class AgrupacionAdapter {
 						}
 					}
 				}
+			}
+			
+			// HREOS-4937 -- 'General Data Protection Regulation'
+
+			// Comprobamos si existe en la tabla CGD_CLIENTE_GDPR un registro con el mismo
+			// número y tipo de documento
+			ClienteGDPR cliGDPR = genericDao.get(ClienteGDPR.class,
+					genericDao.createFilter(FilterType.EQUALS, "tipoDocumento.id", tipoDocumento.getId()),
+					genericDao.createFilter(FilterType.EQUALS, "numDocumento", dto.getNumDocumentoCliente()));
+
+			AdjuntoComprador docAdjunto = null;
+			if (!Checks.esNulo(dto.getIdDocAdjunto())) {
+				docAdjunto = genericDao.get(AdjuntoComprador.class,
+						genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdDocAdjunto()));
+			} 
+			
+			// Si existe pasamos la información al histórico y actualizamos el objeto con
+			// los nuevos datos
+			if (!Checks.esNulo(cliGDPR)) {
+
+				// Primero historificamos los datos de ClienteGDPR en ClienteCompradorGDPR
+				ClienteCompradorGDPR clienteCompradorGDPR = new ClienteCompradorGDPR();
+				clienteCompradorGDPR.setTipoDocumento(cliGDPR.getTipoDocumento());
+				clienteCompradorGDPR.setNumDocumento(cliGDPR.getNumDocumento());
+				clienteCompradorGDPR.setCesionDatos(cliGDPR.getCesionDatos());
+				clienteCompradorGDPR.setComunicacionTerceros(cliGDPR.getComunicacionTerceros());
+				clienteCompradorGDPR.setTransferenciasInternacionales(cliGDPR.getTransferenciasInternacionales());
+				if (!Checks.esNulo(cliGDPR.getAdjuntoComprador())) {
+					clienteCompradorGDPR.setAdjuntoComprador(cliGDPR.getAdjuntoComprador());
+				}
+
+				genericDao.save(ClienteCompradorGDPR.class, clienteCompradorGDPR);
+
+				// Despues se hace el update en ClienteGDPR
+				cliGDPR.setCliente(clienteComercial);
+				cliGDPR.setCesionDatos(dto.getCesionDatos());
+				cliGDPR.setComunicacionTerceros(dto.getComunicacionTerceros());
+				cliGDPR.setTransferenciasInternacionales(dto.getTransferenciasInternacionales());
+
+				if (!Checks.esNulo(docAdjunto)) {
+					cliGDPR.setAdjuntoComprador(docAdjunto);
+				}
+				genericDao.update(ClienteGDPR.class, cliGDPR);
+
+				clienteComercialDao.deleteTmpClienteByDocumento(cliGDPR.getNumDocumento());
+
+				// Si no existe simplemente creamos e insertamos un nuevo objeto ClienteGDPR
+			} else {
+				ClienteGDPR clienteGDPR =  new ClienteGDPR();
+				clienteGDPR.setCliente(clienteComercial);
+				clienteGDPR.setTipoDocumento(tipoDocumento);
+				clienteGDPR.setNumDocumento(dto.getNumDocumentoCliente());
+				clienteGDPR.setCesionDatos(dto.getCesionDatos());
+				clienteGDPR.setComunicacionTerceros(dto.getComunicacionTerceros());
+				clienteGDPR.setTransferenciasInternacionales(dto.getTransferenciasInternacionales());
+				
+				if(!Checks.esNulo(tmpClienteGDPR.getIdAdjunto())) {
+					docAdjunto = genericDao.get(AdjuntoComprador.class,
+							genericDao.createFilter(FilterType.EQUALS, "id", tmpClienteGDPR.getIdAdjunto()));
+				}
+				if (!Checks.esNulo(docAdjunto)) {
+					clienteGDPR.setAdjuntoComprador(docAdjunto);
+				}
+				genericDao.save(ClienteGDPR.class, clienteGDPR);
+								
+				clienteComercialDao.deleteTmpClienteByDocumento(clienteGDPR.getNumDocumento());
 			}
 
 		} catch (Exception ex) {

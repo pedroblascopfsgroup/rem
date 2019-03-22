@@ -67,6 +67,13 @@ public class DtoOfertasFilter extends WebDto {
 	private Boolean agrupacionesVinculadas;	
 	private Boolean ventaDirecta;
 	private Long idUvem;
+	private Long idCliente;
+	
+	//HREOS-4937
+	private Boolean cesionDatos;
+	private Boolean comunicacionTerceros;
+	private Boolean transferenciasInternacionales;
+	private Long idDocAdjunto;
 		
 	public Long getNumOferta() {
 		return numOferta;
@@ -403,6 +410,38 @@ public class DtoOfertasFilter extends WebDto {
 	}
 	public void setTipoGestor(String tipoGestor) {
 		this.tipoGestor = tipoGestor;
+	}
+	
+	//HREOS-4937
+	public Boolean getCesionDatos() {
+		return cesionDatos;
+	}
+	public void setCesionDatos(Boolean cesionDatos) {
+		this.cesionDatos = cesionDatos;
+	}
+	public Boolean getComunicacionTerceros() {
+		return comunicacionTerceros;
+	}
+	public void setComunicacionTerceros(Boolean comunicacionTerceros) {
+		this.comunicacionTerceros = comunicacionTerceros;
+	}
+	public Boolean getTransferenciasInternacionales() {
+		return transferenciasInternacionales;
+	}
+	public void setTransferenciasInternacionales(Boolean transferenciasInternacionales) {
+		this.transferenciasInternacionales = transferenciasInternacionales;
+	}
+	public Long getIdDocAdjunto() {
+		return idDocAdjunto;
+	}
+	public void setIdDocAdjunto(Long idDocAdjunto) {
+		this.idDocAdjunto = idDocAdjunto;
+	}
+	public Long getIdCliente() {
+		return idCliente;
+	}
+	public void setIdCliente(Long idCliente) {
+		this.idCliente = idCliente;
 	}
 		
 }

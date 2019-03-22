@@ -156,8 +156,8 @@ public class VBusquedaActivos implements Serializable {
     @Column(name = "ENTIDADPROPIETARIADESCRIPCION")
     private String entidadPropietariaDescripcion;
 	
-	
-
+	@Column(name = "SUBCARTERACODIGO")
+	private String subcarteraCodigo;
 	
 	@Column(name = "REFERENCIA_CATASTRAL")
 	private String refCatastral;
@@ -534,6 +534,14 @@ public class VBusquedaActivos implements Serializable {
 	public void setEntidadPropietariaDescripcion(
 			String entidadPropietariaDescripcion) {
 		this.entidadPropietariaDescripcion = entidadPropietariaDescripcion;
+	}
+	
+	public String getSubcarteraCodigo() {
+		return subcarteraCodigo;
+	}
+
+	public void setSubcarteraCodigo(String subcarteraCodigo) {
+		this.subcarteraCodigo = subcarteraCodigo;
 	}
 
 	public String getLocalidadCodigo() {

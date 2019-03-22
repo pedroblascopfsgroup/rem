@@ -19,6 +19,7 @@ import javax.persistence.Version;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Where;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
@@ -35,6 +36,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDResponsableSubsanar;
 @Entity
 @Table(name = "ACT_CAN_CALIFICACION_NEG", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@Where(clause = Auditoria.UNDELETED_RESTICTION)
 public class ActivoCalificacionNegativa implements Serializable, Auditable {
 
 

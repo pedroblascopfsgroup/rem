@@ -65,6 +65,7 @@ public class DtoAgrupaciones extends WebDto {
 	private Long activoMatriz;
 	private String tipoActivoPrincipalCodigo;
 	private Long numAgrupPrinexHPM;
+	private String codSubcartera;
 
 	public Boolean getEstaCaducada() {
 		return estaCaducada;
@@ -389,5 +390,12 @@ public class DtoAgrupaciones extends WebDto {
 	public void setNumAgrupPrinexHPM(Long numAgrupPrinexHPM) {
 		this.numAgrupPrinexHPM = numAgrupPrinexHPM;
 	}
-	
+
+	public String getCodSubcartera() {
+		return codSubcartera;
+	}
+	public void setCodSubcartera(String codSubcartera) {
+		this.codSubcartera = codSubcartera;
+	}
+
 }

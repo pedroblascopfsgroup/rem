@@ -242,6 +242,9 @@ Ext.define('HreRem.model.AgrupacionFicha', {
                 },
                 {
                     name:'subtipoActivoCodigo'
+                },
+                {
+                	name: 'codSubcartera'
                 }
     ],
     

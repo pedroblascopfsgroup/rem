@@ -58,6 +58,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
     	var idActivo = me.getViewModel().get("activo.id");
 	  	var idAgrupacion = me.getViewModel().get("agrupacionficha.id");
 	  	var codCartera = me.getViewModel().get("agrupacionficha.codigoCartera");
+	  	var codSubcartera = me.getViewModel().get("agrupacionficha.codSubcartera");
 	  	var url= $AC.getRemoteUrl('trabajo/getSupervisorGestorTrabajo');
     	var tipoAgrupacionCodigo= me.getViewModel().get("agrupacionficha.tipoAgrupacionCodigo");
     	
@@ -67,11 +68,11 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 		     params: {idActivo : idActivo, idAgrupacion : idAgrupacion},
 		     success: function(response, opts) {
 		    	 data = Ext.decode(response.responseText);
-		    	 me.getView().fireEvent('openModalWindow',"HreRem.view.trabajos.detalle.CrearTrabajo",{idActivo: null, idAgrupacion: idAgrupacion, codCartera: codCartera,idGestor: data.data.GACT, idSupervisor: data.data.SUPACT, tipoAgrupacionCodigo: tipoAgrupacionCodigo,logadoGestorMantenimiento: true});
+		    	 me.getView().fireEvent('openModalWindow',"HreRem.view.trabajos.detalle.CrearTrabajo",{idActivo: null, idAgrupacion: idAgrupacion, codCartera: codCartera, codSubcartera: codSubcartera, idGestor: data.data.GACT, idSupervisor: data.data.SUPACT, tipoAgrupacionCodigo: tipoAgrupacionCodigo,logadoGestorMantenimiento: true});
 		         
 		     },
 		     failure: function(response) {
-		    	 me.getView().fireEvent('openModalWindow',"HreRem.view.trabajos.detalle.CrearTrabajo",{idActivo: null, idAgrupacion: idAgrupacion, codCartera: codCartera,idUsuario: null, tipoAgrupacionCodigo: tipoAgrupacionCodigo,logadoGestorMantenimiento: true});
+		    	 me.getView().fireEvent('openModalWindow',"HreRem.view.trabajos.detalle.CrearTrabajo",{idActivo: null, idAgrupacion: idAgrupacion, codCartera: codCartera, codSubcartera: codSubcartera, idUsuario: null, tipoAgrupacionCodigo: tipoAgrupacionCodigo,logadoGestorMantenimiento: true});
 		     }
 		 });   	    	
     },
@@ -90,8 +91,12 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleController', {
 	
 	refrescarAgrupacion: function(refrescarPestanyaActiva) {
 		
-		var me = this,
-		activeTab = me.getView().down("tabpanel").getActiveTab();		
+		var me = this;
+		if(!Ext.isEmpty(me.getView().down("tabpanel"))){
+	    	 activeTab = me.getView().down("tabpanel").getActiveTab();
+	    }else {
+	    	activeTab = me.getView().up("tabpanel").getActiveTab();
+	    }
 		// Marcamos todas los componentes para refrescar, de manera que se vayan actualizando conforme se vayan mostrando.
 		Ext.Array.each(me.getView().query('component[funcionRecargar]'), function(component) {
   			if(component.rendered) {

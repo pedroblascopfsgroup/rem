@@ -129,6 +129,9 @@ public class MSVExcelValidatorFactoryImpl {
 	@Autowired
 	private MSVValidatorAgrupacionPromocionAlquiler promocionAlquiler;
 
+	@Autowired
+	private MSVEnvioBurofaxExcelValidator envioBurofax;
+
 	public MSVExcelValidator getForTipoValidador(String codTipoOperacion) {
 
 		if (MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_AGRUPATION_RESTRICTED.equals(codTipoOperacion)) {
@@ -253,6 +256,8 @@ public class MSVExcelValidatorFactoryImpl {
 			return excluirDwh;
 		} else if (MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_AGRUPACION_PROMOCION_ALQUILER.equals(codTipoOperacion)) {
 			return promocionAlquiler;
+		} else if (MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_VALIDADOR_CARGA_MASIVA_ENVIO_BUROFAX.equals(codTipoOperacion)) {
+			return envioBurofax;
 		}
 
 		return null;

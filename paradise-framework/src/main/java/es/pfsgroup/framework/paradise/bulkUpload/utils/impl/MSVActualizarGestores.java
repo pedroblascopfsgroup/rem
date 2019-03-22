@@ -370,7 +370,7 @@ public class MSVActualizarGestores extends MSVExcelValidatorAbstract {
 					String numExpediente= exc.dameCelda(i, 4);
 					String codigoTipoGestor= exc.dameCelda(i, 0);
 					
-					if(!Checks.esNulo(numAgrupacion) || !Checks.esNulo(numExpediente) || !Checks.esNulo(numActivo)){
+					if((!CODIGO_MEDIADOR.equals(codigoTipoGestor.toUpperCase())) && (!Checks.esNulo(numAgrupacion) || !Checks.esNulo(numExpediente) || !Checks.esNulo(numActivo))){
 						if(!particularValidator.combinacionGestorCarteraAcagexValida(codigoTipoGestor,numActivo,numAgrupacion,numExpediente)){
 							listaFilas.add(i);
 						}

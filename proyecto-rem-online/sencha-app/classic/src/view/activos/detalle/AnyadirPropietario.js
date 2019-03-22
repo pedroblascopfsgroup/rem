@@ -163,7 +163,7 @@ Ext.define('HreRem.view.activos.detalle.AnyadirPropietario', {
 	    		    						},
 											{
 												fieldLabel: HreRem.i18n('fieldlabel.numero.documento'),
-												name: 'numDoc',
+												name: 'numDoc',												
                                                 readOnly: true
 			    					        },
 			    					        {

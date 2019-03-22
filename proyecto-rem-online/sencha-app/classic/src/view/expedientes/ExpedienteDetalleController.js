@@ -1608,9 +1608,13 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
                          }
                     });
 
-                    ventanaWizard.down('anyadirnuevaofertaactivoadjuntardocumento').getForm().findField('cesionDatos').setValue(comprador.data.cesionDatosHaya);
-                    ventanaWizard.down('anyadirnuevaofertaactivoadjuntardocumento').getForm().findField('comunicacionTerceros').setValue(comprador.data.comunicacionTerceros);
-                    ventanaWizard.down('anyadirnuevaofertaactivoadjuntardocumento').getForm().findField('transferenciasInternacionales').setValue(comprador.data.transferenciasInternacionales);
+                   // ventanaWizard.down('anyadirnuevaofertaactivoadjuntardocumento').getForm().findField('cesionDatosHaya').setValue(comprador.data.cesionDatosHaya);
+                   // ventanaWizard.down('anyadirnuevaofertaactivoadjuntardocumento').getForm().findField('comunicacionTerceros').setValue(comprador.data.comunicacionTerceros);
+                   // ventanaWizard.down('anyadirnuevaofertaactivoadjuntardocumento').getForm().findField('transferenciasInternacionales').setValue(comprador.data.transferenciasInternacionales);
+                    
+                    ventanaDetalle.getForm().findField('cesionDatosHaya').setValue(comprador.data.cesionDatosHaya);
+            		ventanaDetalle.getForm().findField('comunicacionTerceros').setValue(comprador.data.comunicacionTerceros);
+            		ventanaDetalle.getForm().findField('transferenciasInternacionales').setValue(comprador.data.transferenciasInternacionales);
 
                     var wizard = btn.up().up().up();
                     var layout = wizard.getLayout();
@@ -1624,12 +1628,12 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 
 		}else{
 
-			var cesionDatos = ventanaDetalle.getForm().findField('cesionDatos').getValue(),
+			/*var cesionDatos = ventanaDetalle.getForm().findField('cesionDatosHaya').getValue(),
 			comunicacionTerceros = ventanaDetalle.getForm().findField('comunicacionTerceros').getValue(),
 			transferenciasInternacionales = ventanaDetalle.getForm().findField('transferenciasInternacionales').getValue();
-            ventanaDetalle.getForm().findField('cesionDatos').setValue(cesionDatos);
+            ventanaDetalle.getForm().findField('cesionDatosHaya').setValue(cesionDatos);
             ventanaDetalle.getForm().findField('comunicacionTerceros').setValue(comunicacionTerceros);
-            ventanaDetalle.getForm().findField('transferenciasInternacionales').setValue(transferenciasInternacionales);
+            ventanaDetalle.getForm().findField('transferenciasInternacionales').setValue(transferenciasInternacionales);*/
 
             me.guardarComprador(form, ventanaWizard);
 		}
@@ -1937,6 +1941,9 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	buscarClientesUrsus: function(field, e){
 		var me = this;
 		var parent = field.up('datoscompradorwizard');
+		if(Ext.isEmpty(parent)){
+			parent = field.up('datoscompradorwindow');
+		}
 		var tipoDocumento = field.up('formBase').down(
 				'[reference=tipoDocumento]').getValue();
 		var numeroDocumento = field.up('formBase').down(
@@ -1991,19 +1998,24 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	
 	establecerNumClienteURSUS: function(field, e) {
 		var me = this;
-		var numeroUrsus = field.up('formBase').down('[reference=seleccionClienteUrsus]').getValue();
-	 	var fieldNumeroClienteUrsus = field.up('formBase').down('[reference=numeroClienteUrsusRef]');
-	 	var fieldNumeroClienteUrsusBh = field.up('formBase').down('[reference=numeroClienteUrsusBhRef]');
-	 	var btnDatosClienteUrsus = field.up('formBase').down('[reference=btnVerDatosClienteUrsus]');
-	 	var fichaComprador= field.up('[xtype=formBase]');
-	 	var esBH = fichaComprador.getBindRecord().get('esBH');
+		var parent = field.up('datoscompradorwizard');
+		if(Ext.isEmpty(parent)){
+			parent = field.up('formBase');
+		}
+		var numeroUrsus = parent.down('[reference=seleccionClienteUrsus]').getValue();
+	 	var fieldNumeroClienteUrsus = parent.down('[reference=numeroClienteUrsusRef]');
+	 	var fieldNumeroClienteUrsusBh = parent.down('[reference=numeroClienteUrsusBhRef]');
+	 	var btnDatosClienteUrsus = parent.down('[reference=btnVerDatosClienteUrsus]');
+	 	//var fichaComprador= field.up('[xtype=formBase]');
 	 	btnDatosClienteUrsus.setDisabled(false);
 	 	
-	 	if(esBH=="true"){
+	 	if(!Ext.isEmpty(fieldNumeroClienteUrsus)){
 	 		fieldNumeroClienteUrsusBh.setValue(numeroUrsus);
-	 	}else{
+	 	}
+	 	if(!Ext.isEmpty(fieldNumeroClienteUrsus)){
 	 		fieldNumeroClienteUrsus.setValue(numeroUrsus);
-	 	} 	
+	 	}	 	
+	 	
 	},
 
 	mostrarDetallesClienteUrsus: function(field, newValue ,oldValue ,eOpts){

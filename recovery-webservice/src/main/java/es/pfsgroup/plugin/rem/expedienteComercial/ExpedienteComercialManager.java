@@ -4502,7 +4502,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				} else {
 					TmpClienteGDPR tmpClienteGDPR = genericDao.get(TmpClienteGDPR.class,
 							genericDao.createFilter(FilterType.EQUALS, "numDocumento", dto.getNumDocumento()));
-					if(!Checks.esNulo(tmpClienteGDPR.getIdAdjunto())) {
+					if(tmpClienteGDPR != null && !Checks.esNulo(tmpClienteGDPR.getIdAdjunto())) {
 						docAdjunto = genericDao.get(AdjuntoComprador.class,
 								genericDao.createFilter(FilterType.EQUALS, "id", tmpClienteGDPR.getIdAdjunto()));
 					}
@@ -4543,7 +4543,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				ofertaApi.resetPBC(expediente, true);
 				
 				TmpClienteGDPR tmpClienteGDPR = genericDao.get(TmpClienteGDPR.class, genericDao.createFilter(FilterType.EQUALS, "numDocumento", comprador.getDocumento()));
-				clienteComercialDao.deleteTmpClienteByDocumento(tmpClienteGDPR.getNumDocumento());
+				if(tmpClienteGDPR != null){
+					clienteComercialDao.deleteTmpClienteByDocumento(tmpClienteGDPR.getNumDocumento());
+				}
 
 				return true; 
 

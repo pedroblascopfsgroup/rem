@@ -48,13 +48,17 @@ Ext.define('HreRem.view.activos.detalle.CargasActivo', {
                     name : 'estadoActivoCodigo',
                     bind : {
                       store : '{comboSiNoRem}',
-                      value : '{cargaTab.conCargas}'
+                      value : '{cargaTab.conCargas}',
+                      readOnly: '{cargaTab.unidadAlquilable}'
                     },
                     readOnly : true
                   }, {
                     xtype : 'datefieldbase',
                     fieldLabel : HreRem.i18n('fieldlabel.fecha.revision.cargas'),
-                    bind : '{cargaTab.fechaRevisionCarga}'
+                    bind : {
+                    	value: '{cargaTab.fechaRevisionCarga}',
+                    	readOnly: '{cargaTab.unidadAlquilable}'
+                    }
                   }
 
               ]
@@ -66,7 +70,8 @@ Ext.define('HreRem.view.activos.detalle.CargasActivo', {
               //propagationButton : true, <- HREOS-2775 Este item se queda es standby 
               cls : 'panel-base shadow-panel',
               bind : {
-                store : '{storeCargas}'
+                store : '{storeCargas}',
+                topBar: '{!cargaTab.unidadAlquilable}'
               },
               selModel : {
                 type : 'checkboxmodel'

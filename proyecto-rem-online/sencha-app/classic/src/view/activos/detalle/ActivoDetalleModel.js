@@ -603,8 +603,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 
 			var isSareb = get('activo.isCarteraSareb');
 	    	var isCerberus = get('activo.isCarteraCerberus');
+	    	var unidadAlquilable = get('activo.unidadAlquilable');
 
-			if(isSareb || isCerberus){
+			if(isSareb || isCerberus || unidadAlquilable){
 				return true;
 			}
 

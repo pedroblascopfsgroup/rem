@@ -276,11 +276,15 @@ public class ActivoController extends ParadiseJsonController {
 			boolean success = adapter.saveTabActivo(activoDto, id, TabActivoService.TAB_DATOS_REGISTRALES);
 			if (success) adapter.actualizarEstadoPublicacionActivo(id);
 			model.put(RESPONSE_SUCCESS_KEY, success);
-
+		} catch (JsonViewerException jvex) {
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put(RESPONSE_ERROR_MESSAGE_KEY, jvex.getMessage());
+			logger.error(jvex.getMessage());
+			throw new JsonViewerException(jvex.getMessage());
 		} catch (Exception e) {
 			logger.error("error en activoController", e);
 			model.put(RESPONSE_SUCCESS_KEY, false);
-		}
+		} 
 
 		return createModelAndViewJson(model);
 	}

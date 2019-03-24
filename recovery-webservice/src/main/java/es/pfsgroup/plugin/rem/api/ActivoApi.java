@@ -716,7 +716,7 @@ public interface ActivoApi {
 	 * @param dtoActivoIntegrado
 	 * @return
 	 */
-	List<DtoActivoIntegrado> getProveedoresByActivoIntegrado(DtoActivoIntegrado dtoActivoIntegrado);
+	List<DtoActivoIntegrado> getProveedoresByActivoIntegrado(DtoActivoIntegrado dtoActivoIntegrado) throws IllegalAccessException, InvocationTargetException;
 
 	/**
 	 * @param idActivo

@@ -3397,7 +3397,18 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<DtoActivoIntegrado> getProveedoresByActivoIntegrado(DtoActivoIntegrado dtoActivoIntegrado) {
+	public List<DtoActivoIntegrado> getProveedoresByActivoIntegrado(DtoActivoIntegrado dtoActivoIntegrado) throws IllegalAccessException, InvocationTargetException {
+		boolean esUA = activoDao.isUnidadAlquilable(Long.parseLong(dtoActivoIntegrado.getIdActivo()));
+		ActivoAgrupacion agrupacion = activoDao.getAgrupacionPAByIdActivo(Long.parseLong(dtoActivoIntegrado.getIdActivo()));
+		Activo activoMatriz = null;
+		if (!Checks.esNulo(agrupacion)) {
+			activoMatriz = activoAgrupacionActivoDao.getActivoMatrizByIdAgrupacion(agrupacion.getId());
+		}
+		if (esUA) {
+			BeanUtils.copyProperties(dtoActivoIntegrado, activoMatriz);
+			dtoActivoIntegrado.setIdActivo(activoMatriz.getId().toString());
+		}
+		
 		Filter activoIDFilter = genericDao.createFilter(FilterType.EQUALS, "activo.id",
 				Long.parseLong(dtoActivoIntegrado.getIdActivo()));
 		Page page = genericDao.getPage(ActivoIntegrado.class, dtoActivoIntegrado, activoIDFilter);
@@ -3407,7 +3418,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		Filter filterAct = genericDao.createFilter(FilterType.EQUALS, "id",
 				Long.parseLong(dtoActivoIntegrado.getIdActivo()));
 		Activo activo = genericDao.get(Activo.class, filterAct);
-
+		
 		ActivoComunidadPropietarios comunidadPropietarios = activo.getComunidadPropietarios();
 
 		for (ActivoIntegrado activoIntegrado : activosIntegrados) {
@@ -6027,6 +6038,5 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 		return resultado;
 	}
-	
-	
+
 }

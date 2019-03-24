@@ -8,9 +8,11 @@ import org.springframework.stereotype.Component;
 
 import es.capgemini.devon.dto.WebDto;
 import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.api.ActivoCargasApi;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.DtoActivoCargasTab;
 
 @Component
@@ -21,6 +23,9 @@ public class TabActivoCargas implements TabActivoService {
 	
 	@Autowired
 	private ActivoDao activoDao;
+	
+	@Autowired
+	private ActivoAgrupacionActivoDao activoAgrupacionActivoDao;
 
 	@Override
 	public String[] getKeys() {
@@ -34,8 +39,20 @@ public class TabActivoCargas implements TabActivoService {
 	
 	public DtoActivoCargasTab getTabData(Activo activo) throws IllegalAccessException, InvocationTargetException {
 		DtoActivoCargasTab activoDto = new DtoActivoCargasTab();
+		boolean esUA = activoDao.isUnidadAlquilable(activo.getId());
+		ActivoAgrupacion agrupacion = activoDao.getAgrupacionPAByIdActivo(activo.getId());
+		Activo activoMatriz = activoAgrupacionActivoDao.getActivoMatrizByIdAgrupacion(agrupacion.getId());
 		BeanUtils.copyProperties(activoDto, activo);
 		
+		beanUtilNotNull.copyProperty(activoDto, "unidadAlquilable", esUA);
+		if(esUA) {
+			BeanUtils.copyProperties(activoDto, activoMatriz);
+			if(activoCargasApi.esActivoConCargasNoCanceladas(activoMatriz.getId())) {
+				activoDto.setConCargas(1);
+			} else {
+				activoDto.setConCargas(0);
+			}
+		} else {
 		// Establecemos el estado de las cargas manualmente.
 		// if(activoCargasApi.esActivoConCargasNoCanceladasRegistral(activo.getId()) || activoCargasApi.esActivoConCargasNoCanceladasEconomica(activo.getId())) {
 			if(activoCargasApi.esActivoConCargasNoCanceladas(activo.getId())) {
@@ -43,7 +60,7 @@ public class TabActivoCargas implements TabActivoService {
 			} else {
 				activoDto.setConCargas(0);
 			}
-		
+		}
 		// HREOS-2761: Buscamos los campos que pueden ser propagados para esta pestaña
 			if(!Checks.esNulo(activo) && activoDao.isActivoMatriz(activo.getId())) {	
 				activoDto.setCamposPropagablesUas(TabActivoService.TAB_CARGAS_ACTIVO);

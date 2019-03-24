@@ -672,6 +672,16 @@ public class ActivoAdapter {
 
 		Activo activo = activoApi.get(id);
 		List<DtoActivoCargas> listaDtoCarga = new ArrayList<DtoActivoCargas>();
+		boolean esUA = activoDao.isUnidadAlquilable(activo.getId());
+		ActivoAgrupacion agrupacion = activoDao.getAgrupacionPAByIdActivo(activo.getId());
+		Activo activoMatriz = null;
+		if (!Checks.esNulo(agrupacion)) {
+			activoMatriz = activoAgrupacionActivoDao.getActivoMatrizByIdAgrupacion(agrupacion.getId());
+		}
+		
+		if (esUA) {
+			activo = activoMatriz;
+		}
 
 		if (activo.getCargas() != null) {
 
@@ -1698,6 +1708,16 @@ public class ActivoAdapter {
 
 		Activo activo = activoApi.get(id);
 		List<DtoPropietario> listaDtoPropietarios = new ArrayList<DtoPropietario>();
+		boolean esUA = activoDao.isUnidadAlquilable(activo.getId());
+		ActivoAgrupacion agrupacion = activoDao.getAgrupacionPAByIdActivo(activo.getId());
+		Activo activoMatriz = null;
+		if (!Checks.esNulo(agrupacion)) {
+			activoMatriz = activoAgrupacionActivoDao.getActivoMatrizByIdAgrupacion(agrupacion.getId());
+		}
+		
+		if (esUA) {
+			activo = activoMatriz;
+		}
 
 		for (int i = 0; i < activo.getPropietariosActivo().size(); i++) {
 			if (activo.getPropietariosActivo() != null && activo.getPropietariosActivo().size() > 0) {

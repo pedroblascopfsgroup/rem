@@ -127,6 +127,8 @@ public class DtoActivoDatosRegistrales extends DtoTabActivo {
 	private Date fechaSubsanacion;
 	private String idMotivo;
 	
+	private Boolean unidadAlquilable;
+	
 	/*
 
     private NMBAdjudicacionBien adjudicacionBien;
@@ -714,6 +716,12 @@ public class DtoActivoDatosRegistrales extends DtoTabActivo {
 	}
 	public void setNoEstaInscrito(Boolean noEstaInscrito) {
 		this.noEstaInscrito = noEstaInscrito;
+	}
+	public Boolean getUnidadAlquilable() {
+		return unidadAlquilable;
+	}
+	public void setUnidadAlquilable(Boolean unidadAlquilable) {
+		this.unidadAlquilable = unidadAlquilable;
 	}
 
 

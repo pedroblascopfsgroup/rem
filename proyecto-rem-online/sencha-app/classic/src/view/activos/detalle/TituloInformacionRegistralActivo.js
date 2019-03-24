@@ -41,7 +41,8 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 							chainedReference: 'poblacionRegistro',
 			            	bind: {
 			            		store: '{comboProvincia}',
-			            	    value: '{datosRegistrales.provinciaRegistro}'
+			            	    value: '{datosRegistrales.provinciaRegistro}',
+			            	    readOnly: '{datosRegistrales.unidadAlquilable}'
 			            	},
     						listeners: {
 								select: 'onChangeChainedCombo'
@@ -50,7 +51,10 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 						},
 						{ 
 		                	fieldLabel: HreRem.i18n('fieldlabel.finca'),
-		                	bind: '{datosRegistrales.numFinca}'
+		                	bind: {
+		                		value: '{datosRegistrales.numFinca}',
+		                		readOnly: '{datosRegistrales.unidadAlquilable}'
+		                	}
 		                },	
 		                { 
 				        	xtype: 'comboboxfieldbase',				        	
@@ -58,7 +62,8 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 				        	labelWidth:	200,
 				        	bind: {
 			            		store: '{comboSiNoRem}',
-			            	    value: '{datosRegistrales.hanCambiado}'
+			            	    value: '{datosRegistrales.hanCambiado}',
+			            	    readOnly: '{datosRegistrales.unidadAlquilable}'
 			            	},
     						listeners: {
 			                	change:  'onHanCambiadoSelect'
@@ -72,13 +77,17 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 			            	bind: {
 			            		store: '{comboMunicipioRegistro}',
 			            		value: '{datosRegistrales.poblacionRegistro}',
-			            		disabled: '{!datosRegistrales.provinciaRegistro}'
+			            		disabled: '{!datosRegistrales.provinciaRegistro}',
+			            		readOnly: '{datosRegistrales.unidadAlquilable}'
 			            	}
                       },
 		                { 
 		                	fieldLabel: HreRem.i18n('fieldlabel.idufir'),
 		                	reference: 'idufir',
-		                	bind: '{datosRegistrales.idufir}',
+		                	bind: {
+		                		value: '{datosRegistrales.idufir}',
+		                		readOnly: '{datosRegistrales.unidadAlquilable}'
+		                	},
 		                	maskRe: /^\d*$/, 
 		                	vtype: 'idufir',
 		                	maxLength: 14
@@ -106,7 +115,8 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 										reference: 'poblacionAnterior',
 						            	bind: {
 						            		store: '{comboMunicipio}',
-						            		value: '{localidadAnteriorCodigo}'
+						            		value: '{localidadAnteriorCodigo}',
+						            		readOnly: '{datosRegistrales.unidadAlquilable}'
 						            	}
 									},
 				
@@ -116,42 +126,63 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 										reference: 'numRegistroAnterior',
 										labelWidth:	200,
 					                	maskRe: /^\d*$/,
-					                	bind: '{datosRegistrales.numAnterior}'
+					                	bind: {
+					                		value: '{datosRegistrales.numAnterior}',
+					                		readOnly: '{datosRegistrales.unidadAlquilable}'
+					                	}
 					                },
 					                { 
 					                	disabled: true,
 					                	fieldLabel: HreRem.i18n('fieldlabel.finca.anterior'),
 										labelWidth:	200,
 					                	reference: 'numFincaAnterior',
-					                	bind: '{datosRegistrales.numFincaAnterior}'
+					                	bind: {
+					                		value: '{datosRegistrales.numFincaAnterior}',
+					                		readOnly: '{datosRegistrales.unidadAlquilable}'
+					                	}
 					                }
 
 								]
 				        },
 		                { 
 							fieldLabel: HreRem.i18n('fieldlabel.numero.registro'),
-		                	bind:		'{datosRegistrales.numRegistro}',
+		                	bind: {
+		                		value: '{datosRegistrales.numRegistro}',
+		                		readOnly: '{datosRegistrales.unidadAlquilable}'
+		                	},
 		                	maskRe: /^\d*$/
 		                },
 		                { 
 		                	fieldLabel: HreRem.i18n('fieldlabel.num.departamento'),
-		                	bind: '{datosRegistrales.numDepartamento}',
+		                	bind: {
+		                		value:'{datosRegistrales.numDepartamento}',
+		                		readOnly: '{datosRegistrales.unidadAlquilable}'
+		                	},
 		                	maskRe: /^\d*$/
 		                },
 		                { 
 		                	fieldLabel: HreRem.i18n('fieldlabel.tomo'),
 		                	colspan: 2,
-		                	bind: '{datosRegistrales.tomo}'
+		                	bind: {
+		                		value: '{datosRegistrales.tomo}',
+		                		readOnly: '{datosRegistrales.unidadAlquilable}'
+		                	}
                         },
 		                { 
 					 		fieldLabel: HreRem.i18n('fieldlabel.libro'),
 					 		colspan: 2,
-					 		bind: '{datosRegistrales.libro}'
+					 		bind: {
+					 			value: '{datosRegistrales.libro}',
+					 			readOnly: '{datosRegistrales.unidadAlquilable}'
+					 		}
 						},
 						{ 
 							fieldLabel: HreRem.i18n('fieldlabel.folio'),
 							colspan: 2,
-							bind: '{datosRegistrales.folio}'
+							bind: {
+								value: '{datosRegistrales.folio}',
+								readOnly: '{datosRegistrales.unidadAlquilable}'
+							}
 		                }
 					]
 			},
@@ -224,7 +255,8 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 							        	reference: 'combodivisionhorizontalref',
 							        	bind: {
 						            		store: '{comboSiNoRem}',
-						            		value: '{datosRegistrales.divHorizontal}'
+						            		value: '{datosRegistrales.divHorizontal}',
+						            		readOnly: '{datosRegistrales.unidadAlquilable}'
 						            	},
 			    						listeners: {
 						                	change: 'onDivisionHorizontalSelect'
@@ -236,7 +268,8 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 							        	reference: 'estadoDivHorizontal',
 							        	bind: {
 						            		store: '{comboInscritaNoInscrita}',
-						            		value: '{datosRegistrales.divHorInscrito}'
+						            		value: '{datosRegistrales.divHorInscrito}',
+						            		readOnly: '{datosRegistrales.unidadAlquilable}'
 						            	},
 			    						listeners: {
 						                	change: 'onEstadoDivHorizontalSelect'
@@ -248,7 +281,8 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 										reference: 'estadoDivHorizontalNoInscrita',
 						            	bind: {
 						            		store: '{comboEstadoDivHorizontal}',
-						            		value: '{datosRegistrales.estadoDivHorizontalCodigo}'
+						            		value: '{datosRegistrales.estadoDivHorizontalCodigo}',
+						            		readOnly: '{datosRegistrales.unidadAlquilable}'
 						            	}
 									}				              
 									
@@ -270,14 +304,18 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 									fieldLabel: HreRem.i18n('fieldlabel.estado'),
 					                bind: {
 					                    store: '{comboEstadoObraNueva}',
-					                    value: '{datosRegistrales.estadoObraNuevaCodigo}'
+					                    value: '{datosRegistrales.estadoObraNuevaCodigo}',
+					                    readOnly: '{datosRegistrales.unidadAlquilable}'
 					                }
 								},
 				                {
 									xtype:'datefieldbase',
 									formatter: 'date("d/m/Y")',
 							        fieldLabel: HreRem.i18n('fieldlabel.fecha.cfo'),
-							        bind: '{datosRegistrales.fechaCfo}'
+							        bind: {
+							        	value: '{datosRegistrales.fechaCfo}',
+							        	readOnly: '{datosRegistrales.unidadAlquilable}'
+							        }
 								}
 							]
 				        }
@@ -306,7 +344,8 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 		            	bind: {
 		            		//store: '{comboTipoTitulo}',
 		            		store: '{storeTituloOrigenActivo}',
-		            		value: '{datosRegistrales.tipoTituloCodigo}'
+		            		value: '{datosRegistrales.tipoTituloCodigo}',
+		            		readOnly: '{datosRegistrales.unidadAlquilable}'
 		            	},
 		            	listeners: {
 							change: 'onChangeTipoTitulo'
@@ -318,7 +357,8 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 						forceSelection: true,
 		            	bind: {
 		            		store: '{comboSubtipoTitulo}',
-		            		value: '{datosRegistrales.subtipoTituloCodigo}'
+		            		value: '{datosRegistrales.subtipoTituloCodigo}',
+		            		readOnly: '{datosRegistrales.unidadAlquilable}'
 		            	}
 					},
 				 	{ 
@@ -327,7 +367,8 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 			        	fieldLabel: HreRem.i18n('fieldlabel.vpo'),
 			        	bind: {
 		            		store: '{comboSiNoRem}',
-							value: '{datosRegistrales.vpo}'	            		
+							value: '{datosRegistrales.vpo}',
+							readOnly: '{datosRegistrales.unidadAlquilable}'
 		            	},
 		            	allowBlank: true
 			        },
@@ -338,7 +379,8 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 					    topBar : true,
 						cls	: 'panel-base shadow-panel',
 						bind: {
-							store: '{storePropietario}'
+							store: '{storePropietario}',
+							topBar: '{!datosRegistrales.unidadAlquilable}'
 						},
 						listeners: {
 							rowdblclick: 'onListadoPropietariosDobleClick'
@@ -471,7 +513,8 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 								fieldLabel: HreRem.i18n('fieldlabel.entidad.ejecutante.hipoteca'),								
 				            	bind: {
 				            		store: '{comboEntidadesEjecutantes}',
-				            		value: '{datosRegistrales.entidadEjecutanteCodigo}'
+				            		value: '{datosRegistrales.entidadEjecutanteCodigo}',
+				            		readOnly: '{datosRegistrales.unidadAlquilable}'
 				            	}
 
 							},
@@ -481,7 +524,8 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 								fieldLabel: HreRem.i18n('fieldlabel.estado.adjudicacion'),								
 				            	bind: {
 				            		store: '{comboEstadoAdjudicacion}',
-				            		value: '{datosRegistrales.estadoAdjudicacionCodigo}'
+				            		value: '{datosRegistrales.estadoAdjudicacionCodigo}',
+				            		readOnly: '{datosRegistrales.unidadAlquilable}'
 				            	}
                                  
 							},
@@ -489,27 +533,35 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 			                	xtype: 'datefieldbase',
 			                	reference: 'fechaAutoAdjudicacion',
 			                	fieldLabel: HreRem.i18n('fieldlabel.fecha.auto.adjudicacion'),
-								bind: '{datosRegistrales.fechaAdjudicacion}'
+								bind: {
+									value: '{datosRegistrales.fechaAdjudicacion}',
+									readOnly: '{datosRegistrales.unidadAlquilable}'
+								}
                                  
 			                },
 			                {
 			                	xtype: 'datefieldbase',
 			                	reference: 'fechaFirmezaAutoAdjudicacion',
 			                	fieldLabel: HreRem.i18n('fieldlabel.fecha.firmeza.auto.adjudicacion'),			                	
-								bind: '{datosRegistrales.fechaDecretoFirme}'
+								bind: {
+									value: '{datosRegistrales.fechaDecretoFirme}',
+									readOnly: '{datosRegistrales.unidadAlquilable}'
+								}
                                  
 			                },
 			                {
 			                	xtype: 'datefieldbase',
 			                	reference: 'fechaSenyalamientoPosesion',
 			                	fieldLabel: HreRem.i18n('fieldlabel.fecha.senyalamiento.posesion'),			                	
-								bind: '{datosRegistrales.fechaSenalamientoPosesion}'
+								bind: {
+									value: '{datosRegistrales.fechaSenalamientoPosesion}',
+									readOnly: '{datosRegistrales.unidadAlquilable}'
+								}
 			                },
 			                {
 			                	xtype: 'datefieldbase',
 			                	reference: 'fechaRealizacionPosesion',
-			                	fieldLabel: HreRem.i18n('fieldlabel.fecha.realizacion.posesion'),			                	
-								bind: '{datosRegistrales.fechaRealizacionPosesion}',
+			                	fieldLabel: HreRem.i18n('fieldlabel.fecha.realizacion.posesion'),
 								bind: {
 									value: '{datosRegistrales.fechaRealizacionPosesion}',
 									readOnly: '{isReadOnlyFechaRealizacionPosesion}',
@@ -521,7 +573,8 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 								fieldLabel: HreRem.i18n('fieldlabel.lanzamiento.necesario'),								
 				            	bind: {
 				            		store: '{comboSiNoRem}',
-				            		value: '{datosRegistrales.lanzamientoNecesario}'
+				            		value: '{datosRegistrales.lanzamientoNecesario}',
+				            		readOnly: '{datosRegistrales.unidadAlquilable}'
 				            	},
 				            	displayField: 'descripcion',
 								valueField: 'codigo'
@@ -530,39 +583,56 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 			                	xtype: 'datefieldbase',
 			                	reference: 'fechaSenyalamientoLanzamiento',
 			                	fieldLabel: HreRem.i18n('fieldlabel.fecha.senyalamiento.lanzamiento'),			                	
-								bind: '{datosRegistrales.fechaSenalamientoLanzamiento}'
+								bind: {
+									value: '{datosRegistrales.fechaSenalamientoLanzamiento}',
+									readOnly: '{datosRegistrales.unidadAlquilable}'
+								}
 			                },
 			                {
 			                	xtype: 'datefieldbase',
 			                	reference: 'fechaLanzamientoEfectuado',
 			                	fieldLabel: HreRem.i18n('fieldlabel.fecha.lanzamiento.efectuado'),			                	
-								bind: '{datosRegistrales.fechaRealizacionLanzamiento}'
+								bind: {
+									value: '{datosRegistrales.fechaRealizacionLanzamiento}',
+									readOnly: '{datosRegistrales.unidadAlquilable}'
+								}
 			                },
 			                {
 			                	xtype: 'datefieldbase',
 			                	reference: 'fechaSolicitudMoratoria',
 			                	fieldLabel: HreRem.i18n('fieldlabel.fecha.solicitud.moratoria'),			                	
-								bind: '{datosRegistrales.fechaSolicitudMoratoria}'
+								bind: {
+									value: '{datosRegistrales.fechaSolicitudMoratoria}',
+									readOnly: '{datosRegistrales.unidadAlquilable}'
+								}
 			                },
 			                {
 								xtype: 'comboboxfieldbase',
 								fieldLabel: HreRem.i18n('fieldlabel.resolucion.moratoria'),								
 				            	bind: {
 				            		store: '{comboFavorableDesfavorable}',
-				            		value: '{datosRegistrales.resolucionMoratoriaCodigo}'
+				            		value: '{datosRegistrales.resolucionMoratoriaCodigo}',
+				            		readOnly: '{datosRegistrales.unidadAlquilable}'
 				            	}
 							},
 							{
 			                	xtype: 'datefieldbase',
 			                	reference: 'fechaResolucionMoratoria',
 			                	fieldLabel: HreRem.i18n('fieldlabel.fecha.resolucion.moratoria'),			                	
-								bind: '{datosRegistrales.fechaResolucionMoratoria}'
+								bind: {
+									value: '{datosRegistrales.fechaResolucionMoratoria}',
+									readOnly: '{datosRegistrales.unidadAlquilable}'
+								}
+								
 			                },
 			                
 							{ 
 								xtype: 'currencyfieldbase',
 								fieldLabel: HreRem.i18n('fieldlabel.importe.adjudicacion'),
-								bind: '{datosRegistrales.importeAdjudicacion}'
+								bind: {
+									value: '{datosRegistrales.importeAdjudicacion}',
+									readOnly: '{datosRegistrales.unidadAlquilable}'
+								}
 			                },
 			                {
 								xtype: 'comboboxfieldbase',
@@ -573,7 +643,8 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 								selectFirst: true,
 				            	bind: {
 				            		store: '{comboTiposJuzgadoPlaza}',
-				            		value: '{datosRegistrales.tipoJuzgadoCodigo}'
+				            		value: '{datosRegistrales.tipoJuzgadoCodigo}',
+				            		readOnly: '{datosRegistrales.unidadAlquilable}'
 				            	}
 							},
 			                {
@@ -583,7 +654,8 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 			                	fieldLabel: HreRem.i18n('fieldlabel.poblacion.juzgado'),
 				            	bind: {
 				            		store: '{comboTiposPlaza}',
-				            		value: '{datosRegistrales.tipoPlazaCodigo}'
+				            		value: '{datosRegistrales.tipoPlazaCodigo}',
+				            		readOnly: '{datosRegistrales.unidadAlquilable}'
 				            	},
 								chainedStore: 'comboTiposJuzgadoPlaza',
 								chainedReference: 'comboJuzgado',
@@ -593,25 +665,40 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 							},
 			                { 
 			                	fieldLabel: HreRem.i18n('fieldlabel.numero.autos'),
-			                	bind: '{datosRegistrales.numAuto}'
+			                	bind: {
+			                		value: '{datosRegistrales.numAuto}',
+			                		readOnly: '{datosRegistrales.unidadAlquilable}'
+			                	}
 			                },
 			                { 
 			                	fieldLabel: HreRem.i18n('fieldlabel.procurador'),
-			                	bind: '{datosRegistrales.procurador}'
+			                	bind: {
+			                		value: '{datosRegistrales.procurador}',
+			                		readOnly: '{datosRegistrales.unidadAlquilable}'
+			                	}
 			                },
 			                { 
 						 		fieldLabel: HreRem.i18n('fieldlabel.letrado'),
-						 		bind: '{datosRegistrales.letrado}'
+						 		bind: {
+						 			value: '{datosRegistrales.letrado}',
+						 			readOnly: '{datosRegistrales.unidadAlquilable}'
+						 		}
 							},
 			                { 
 			                	fieldLabel: HreRem.i18n('fieldlabel.id.asunto.recovery'),
-			                	bind: '{datosRegistrales.idAsunto}'
+			                	bind: {
+			                		value: '{datosRegistrales.idAsunto}',
+			                		readOnly: '{datosRegistrales.unidadAlquilable}'
+			                	}
 			                },
 			                {
 			                	xtype: 'numberfieldbase',
 			                	maxLength: 4,
 			                	fieldLabel: HreRem.i18n('fieldlabel.expedientes.con.defectos.testimonio'),
-			                	bind: '{datosRegistrales.defectosTestimonio}'
+			                	bind: {
+			                		value: '{datosRegistrales.defectosTestimonio}',
+			                		readOnly: '{datosRegistrales.unidadAlquilable}'
+			                	}
 			                }
 						]
 
@@ -630,7 +717,8 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 						 		hidden: true,
 					        	bind: {
 				            		store: '{comboSiNoRem}',
-				            		value: '{datosRegistrales.gestionHre}'
+				            		value: '{datosRegistrales.gestionHre}',
+				            		readOnly: '{datosRegistrales.unidadAlquilable}'
 				            	},
 				            	allowBlank: false
 					        },
@@ -638,33 +726,51 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 								xtype:'datefieldbase',
 						 		fieldLabel: HreRem.i18n('fieldlabel.fecha.titulo'),
 						 		reference: 'fechaTitulo',
-						 		bind: '{datosRegistrales.fechaTitulo}'
+						 		bind: {
+						 			value: '{datosRegistrales.fechaTitulo}',
+						 			readOnly: '{datosRegistrales.unidadAlquilable}'
+						 		}
 							},
 							{
 								xtype:'datefieldbase',
 								reference: 'fechaFirmezaTitulo',
 								fieldLabel: HreRem.i18n('fieldlabel.fecha.firmeza.titulo'),
-						 		bind: '{datosRegistrales.fechaFirmaTitulo}'
+						 		bind: {
+						 			value: '{datosRegistrales.fechaFirmaTitulo}',
+						 			readOnly: '{datosRegistrales.unidadAlquilable}'
+						 		}
 							},
 			                { 
 								xtype:'currencyfieldbase',
 						 		fieldLabel: HreRem.i18n('fieldlabel.valor.adquisicion'),
-						 		bind: '{datosRegistrales.valorAdquisicion}'
+						 		bind: {
+						 			value: '{datosRegistrales.valorAdquisicion}',
+						 			readOnly: '{datosRegistrales.unidadAlquilable}'
+						 		}
 							},
 			                { 
 						 		fieldLabel: HreRem.i18n('fieldlabel.notario.juzgado.organo.administrativo'),
-						 		bind: '{datosRegistrales.tramitadorTitulo}'
+						 		bind: {
+						 			value: '{datosRegistrales.tramitadorTitulo}',
+						 			readOnly: '{datosRegistrales.unidadAlquilable}'
+						 		}
 
 							},
 			                { 
 						 		fieldLabel: HreRem.i18n('fieldlabel.protocolo.autos.numero.expediente'),
-						 		bind: '{datosRegistrales.numReferencia}'
+						 		bind: {
+						 			value: '{datosRegistrales.numReferencia}',
+						 			readOnly: '{datosRegistrales.unidadAlquilable}'
+						 		}
 							},
                             {
                                 xtype: 'numberfieldbase',
                                 maxLength: 4,
                                 fieldLabel: HreRem.i18n('fieldlabel.expedientes.con.defectos.testimonio'),
-                                bind: '{datosRegistrales.defectosTestimonio}'
+                                bind: {
+                                	value: '{datosRegistrales.defectosTestimonio}',
+                                	readOnly: '{datosRegistrales.unidadAlquilable}'
+                                }
                             }
 						]
 
@@ -723,7 +829,8 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 					 		fieldLabel: HreRem.i18n('fieldlabel.situacion.titulo'),
 				        	bind: {
 			            		store: '{comboEstadoTitulo}',
-			            		value: '{datosRegistrales.estadoTitulo}'
+			            		value: '{datosRegistrales.estadoTitulo}',
+			            		readOnly: '{datosRegistrales.unidadAlquilable}'
 
 			            	},
 
@@ -732,33 +839,51 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 				        {
 							xtype:'datefieldbase',
 							fieldLabel: HreRem.i18n('fieldlabel.fecha.entrega.titulo.gestoria'),
-					 		bind: '{datosRegistrales.fechaEntregaGestoria}'
+					 		bind: {
+					 			value: '{datosRegistrales.fechaEntregaGestoria}',
+					 			readOnly: '{datosRegistrales.unidadAlquilable}'
+					 		}
                        },
 						{
 							xtype:'datefieldbase',
 					 		fieldLabel: HreRem.i18n('fieldlabel.fecha.presentacion.hacienda'),
-					 		bind: '{datosRegistrales.fechaPresHacienda}'
+					 		bind: {
+					 			value: '{datosRegistrales.fechaPresHacienda}',
+					 			readOnly: '{datosRegistrales.unidadAlquilable}'
+					 		}
 
 						},
 						{
 							xtype:'datefieldbase',
 					 		fieldLabel: HreRem.i18n('fieldlabel.fecha.presentacion.registro'),
-					 		bind: '{datosRegistrales.fechaPres1Registro}'
+					 		bind: {
+					 			value: '{datosRegistrales.fechaPres1Registro}',
+					 			readOnly: '{datosRegistrales.unidadAlquilable}'
+					 		}
 						},
 						{
 							xtype:'datefieldbase',
 					 		fieldLabel: HreRem.i18n('fieldlabel.fecha.envio.auto.adicion'),
-					 		bind: '{datosRegistrales.fechaEnvioAuto}'
+					 		bind: {
+					 			value: '{datosRegistrales.fechaEnvioAuto}',
+					 			readOnly: '{datosRegistrales.unidadAlquilable}'
+					 		}
 						},
 						{
 							xtype:'datefieldbase',
 							fieldLabel: HreRem.i18n('fieldlabel.fecha.segunda.presentacion.registro'),
-					 		bind: '{datosRegistrales.fechaPres2Registro}'
+					 		bind: {
+					 			value: '{datosRegistrales.fechaPres2Registro}',
+					 			readOnly: '{datosRegistrales.unidadAlquilable}'
+					 		}
 						},
 						{
 							xtype:'datefieldbase',
 		                	fieldLabel: HreRem.i18n('fieldlabel.fecha.inscripcion.registro'),
-					 		bind: '{datosRegistrales.fechaInscripcionReg}', 
+					 		bind: {
+					 			value: '{datosRegistrales.fechaInscripcionReg}', 
+					 			readOnly: '{datosRegistrales.unidadAlquilable}'
+					 		},
 					 		listeners: {
 					 			change: function () {
 						 			me = this;
@@ -774,13 +899,19 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 						{
 							xtype:'datefieldbase',
 		                	fieldLabel: HreRem.i18n('fieldlabel.fecha.retirada.definitiva.registro'),
-					 		bind: '{datosRegistrales.fechaRetiradaReg}'
+					 		bind: {
+					 			value: '{datosRegistrales.fechaRetiradaReg}',
+					 			readOnly: '{datosRegistrales.unidadAlquilable}'
+					 		}
 						},
 						{
 							xtype:'datefieldbase',
 		                	fieldLabel: HreRem.i18n('fieldlabel.fecha.nota.simple'),
 
-					 		bind: '{datosRegistrales.fechaNotaSimple}'
+					 		bind: {
+					 			value: '{datosRegistrales.fechaNotaSimple}',
+					 			readOnly: '{datosRegistrales.unidadAlquilable}'
+					 		}
 						},
 						{
 							xtype:'fieldsettable',

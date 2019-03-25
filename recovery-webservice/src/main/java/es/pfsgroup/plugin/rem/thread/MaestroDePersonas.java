@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.thread;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -229,10 +230,19 @@ public class MaestroDePersonas  implements Runnable{
 	
 	private ClienteGDPR llamadaClienteGDPR(Session sessionObj) {
 		Criteria criteria = sessionObj.createCriteria(ClienteGDPR.class);
+		List<ClienteGDPR> listadoClientes = null;
 		criteria.add(Restrictions.eq("numDocumento", numDocCliente));
 		criteria.setFirstResult(0);
 		criteria.setMaxResults(1);
-		return  HibernateUtils.castObject(ClienteGDPR.class, criteria.list().get(0));
+		
+		listadoClientes = criteria.list();
+		
+		if (!Checks.esNulo(listadoClientes) && !Checks.estaVacio(listadoClientes)) {
+			return listadoClientes.get(0);
+		}
+		
+		return null;
+		
 	}
 	
 	private ClienteComercial llamadaClienteComercial(Session sessionObj, ClienteGDPR clienteGDPR) {

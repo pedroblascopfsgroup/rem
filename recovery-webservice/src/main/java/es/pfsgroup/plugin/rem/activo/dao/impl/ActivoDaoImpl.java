@@ -1136,7 +1136,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 
 		hdc.setGestorActualizacion(getGestorActualizacionHistoricoDestinoComercial(extraArgs));
 
-		hdc.setTipoComercializacion(activo.getTipoComercializacion());
+		hdc.setTipoComercializacion(activo.getActivoPublicacion().getTipoComercializacion());
 
 		genericDao.save(HistoricoDestinoComercial.class, hdc);
 

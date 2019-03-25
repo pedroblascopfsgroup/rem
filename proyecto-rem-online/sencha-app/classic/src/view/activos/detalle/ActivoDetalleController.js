@@ -1103,16 +1103,17 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 						align : 't'
 					});
 					var ventanaWizard = grid.up('anyadirnuevaofertaactivoadjuntardocumento');
-					//ventanaWizard.down('button[itemId=btnFinalizar]').disable();
+					ventanaWizard.down('button[itemId=btnFinalizar]').disable();
 					//ventanaWizard.down('button[itemId=btnSubirDoc]').disable();
 					ventanaWizard.down('button[itemId=btnGenerarDoc]').enable();
 					ventanaWizard.getForm().findField('comunicacionTerceros').enable();
 					ventanaWizard.getForm().findField('cesionDatos').enable();
 					ventanaWizard.getForm().findField('transferenciasInternacionales').enable();
+					
 				},
 				failure : function(a, operation, context) {
 					Ext.toast({
-						html : 'NO HA SIDO POSIBLE REALIZAR LA OPERACIÃN',
+						html : 'NO HA SIDO POSIBLE REALIZAR LA OPERACION',
 						width : 360,
 						height : 100,
 						align : 't'
@@ -4410,7 +4411,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
                 }
             }
 
-
             if(destinoComercialActivo === valueDestComercial || destinoComercialActivo === CONST.TIPO_COMERCIALIZACION_ACTIVO["ALQUILER_VENTA"]){
                 if (ventanaDetalle.config.xtype.indexOf('activoadjuntardocumento') >= 0 && ventanaAlta.indexOf('wizardaltacomprador') < 0) {
                     ventanaDetalle.setController('activodetalle');
@@ -4452,16 +4452,23 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
                                     transferenciasInternacionales = ventanaWizardAdjuntarDocumento.getForm().findField('transferenciasInternacionales'),
                                     btnGenerarDoc = ventanaWizardAdjuntarDocumento.down('button[itemId=btnGenerarDoc]');
                                     btnFinalizar =  ventanaWizardAdjuntarDocumento.down('button[itemId=btnFinalizar]');
-                                    if(cesionDatos.getValue()){
-                                    	btnFinalizar.enable();
-                                    }     
                                     if (esInternacional) {
-										if (cesionDatos.getValue() && transferenciasInternacionales.getValue()) {
+                                    	Ext.global.console.log("internacional");
+                                    	Ext.global.console.log("cesion datos "+cesionDatos.getValue());
+                                    	Ext.global.console.log("transferenciasInternacionales datos "+transferenciasInternacionales.getValue());
+										if (transferenciasInternacionales.getValue()) {
 											btnFinalizar.enable();
+										}else{
+											btnFinalizar.disable();
 										}
 									} else {
+										Ext.global.console.log("no internacional");
+										Ext.global.console.log("cesion datos "+cesionDatos.getValue());
+                                    	Ext.global.console.log("transferenciasInternacionales datos "+transferenciasInternacionales.getValue());
 										if (cesionDatos.getValue()) {
 											btnFinalizar.enable();
+										}else{
+											btnFinalizar.disable();
 										}
 									}
 

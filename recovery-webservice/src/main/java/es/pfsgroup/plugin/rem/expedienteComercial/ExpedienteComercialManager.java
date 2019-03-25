@@ -1123,7 +1123,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					dto.setFechaVenta(expediente.getFechaVenta());
 				}
 
-				if (!Checks.esNulo(activo.getTipoComercializacion())) {
+				if (!Checks.esNulo(activo.getActivoPublicacion().getTipoComercializacion())) {
 					// DDTipoAlquiler tipoAlquiler = (DDTipoAlquiler)
 					// utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoAlquiler.class,
 					// DDTipoAlquiler.CODIGO_ALQUILER_OPCION_COMPRA);
@@ -1839,7 +1839,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 						.equals(adjuntoExpediente.getSubtipoDocumentoExpediente().getCodigo())
 						 && DDCartera.CODIGO_CARTERA_CERBERUS.equals(activo.getCartera().getCodigo()) &&
 							((DDSubcartera.CODIGO_AGORA_INMOBILIARIO.equals(activo.getSubcartera().getCodigo())) ||
-							(DDSubcartera.CODIGO_AGORA_FINANCIERO.equals(activo.getSubcartera().getCodigo())))) {
+							(DDSubcartera.CODIGO_AGORA_FINANCIERO.equals(activo.getSubcartera().getCodigo())) ||
+							(DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo())))) {
 							activo.setSituacionComercial(genericDao.get(DDSituacionComercial.class, genericDao.createFilter(FilterType.EQUALS, "codigo", DDSituacionComercial.CODIGO_DISPONIBLE_VENTA_RESERVA)));
 							activoDaoImpl.publicarActivoConHistorico(activo.getId(), genericAdapter.getUsuarioLogado().getUsername(), true);
 				}
@@ -8536,7 +8537,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "tipoDocumentoExpediente.codigo", valorCombo);
 				listaDDSubtipoDocExp  = genericDao.getList(DDSubtipoDocumentoExpediente.class, filtro);
 				if(DDSubcartera.CODIGO_AGORA_FINANCIERO.equals(expediente.getOferta().getActivoPrincipal().getSubcartera().getCodigo())|| 
-					DDSubcartera.CODIGO_AGORA_INMOBILIARIO.equals(expediente.getOferta().getActivoPrincipal().getSubcartera().getCodigo())) {
+					DDSubcartera.CODIGO_AGORA_INMOBILIARIO.equals(expediente.getOferta().getActivoPrincipal().getSubcartera().getCodigo()) || 
+					DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(expediente.getOferta().getActivoPrincipal().getSubcartera().getCodigo()) 
+					) {
 					listDtoTipoDocExpediente = generateListSubtipoExpediente(listaDDSubtipoDocExp);
 				} else {
 					listDtoTipoDocExpediente = generateListSubtipoExpedienteNoAgora(listaDDSubtipoDocExp);
@@ -8669,5 +8672,20 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 
 		return listDtoTipoDocExpediente;
+	}
+	
+	@Override
+	public boolean esApple(TareaExterna tareaExterna) {
+		ExpedienteComercial expedienteComercial = tareaExternaToExpedienteComercial(tareaExterna);
+		boolean esApple = false;
+		for (ActivoOferta activoOferta : expedienteComercial.getOferta().getActivosOferta()) {
+			Activo activo = activoApi.get(activoOferta.getPrimaryKey().getActivo().getId());
+			esApple=false;
+			if (DDCartera.CODIGO_CARTERA_CERBERUS.equals(activo.getCartera().getCodigo()) &&
+				DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo())) {
+				esApple = true;
+			}
+		}
+		return esApple;
 	}
 }

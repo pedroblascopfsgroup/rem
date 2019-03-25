@@ -1184,7 +1184,11 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				ClienteGDPR clienteGDPR = genericDao.get(ClienteGDPR.class,
 						genericDao.createFilter(FilterType.EQUALS, "cliente.id", oferta.getCliente().getId()));
 				
-				compradorExpedienteNuevo.setDocumentoAdjunto(clienteGDPR.getAdjuntoComprador());
+				if(clienteGDPR != null){
+					compradorExpedienteNuevo.setDocumentoAdjunto(clienteGDPR.getAdjuntoComprador());
+				}
+				
+				
 
 				listaCompradoresExpediente.add(compradorExpedienteNuevo);
 			} else { // Si no existe un comprador con dicho dni, lo crea, añade
@@ -1260,7 +1264,10 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				if (!Checks.esNulo(oferta.getCliente().getRegimenMatrimonial())) {
 					compradorExpedienteNuevo.setRegimenMatrimonial(oferta.getCliente().getRegimenMatrimonial());
 				}
-				compradorExpedienteNuevo.setDocumentoAdjunto(clienteGDPR.getAdjuntoComprador());
+				
+				if(clienteGDPR != null){
+					compradorExpedienteNuevo.setDocumentoAdjunto(clienteGDPR.getAdjuntoComprador());
+				}				
 
 				listaCompradoresExpediente.add(compradorExpedienteNuevo);
 								

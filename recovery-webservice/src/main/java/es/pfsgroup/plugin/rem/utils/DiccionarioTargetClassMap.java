@@ -218,6 +218,8 @@ public class DiccionarioTargetClassMap{
 		mapa.put("tipoDocumentoComunicacion", DDTipoDocumentoComunicacion.class);
 		mapa.put("estadoMotivoCalificacionNegativa", DDEstadoMotivoCalificacionNegativa.class);
 		mapa.put("responsableSubsanar", DDResponsableSubsanar.class);
+		mapa.put("clasificacionApple", DDClasificacionApple.class);
+		
 		return Collections.unmodifiableMap(mapa);
 	}
 	

@@ -368,9 +368,9 @@ public class AgrupacionAdapter {
 							if(!Checks.esNulo(act.getCartera())){
 								BeanUtils.copyProperty(dtoAgrupacion, "codigoCartera", act.getCartera().getCodigo());
 							}
-							if(!Checks.esNulo(act.getTipoComercializacion())){
-								BeanUtils.copyProperty(dtoAgrupacion, "tipoComercializacionCodigo", act.getTipoComercializacion().getCodigo());
-								BeanUtils.copyProperty(dtoAgrupacion, "tipoComercializacionDescripcion", act.getTipoComercializacion().getDescripcion());
+							if(!Checks.esNulo(act.getActivoPublicacion().getTipoComercializacion())){
+								BeanUtils.copyProperty(dtoAgrupacion, "tipoComercializacionCodigo", act.getActivoPublicacion().getTipoComercializacion().getCodigo());
+								BeanUtils.copyProperty(dtoAgrupacion, "tipoComercializacionDescripcion", act.getActivoPublicacion().getTipoComercializacion().getDescripcion());
 							}
 						}
 					}

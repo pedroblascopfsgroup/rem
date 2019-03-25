@@ -2884,6 +2884,18 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 				}
 			);
 	},
+
+	onClickGenerarHojaExcel: function(btn) {
+
+    	var me = this,
+		config = {};
+
+		config.params = {};
+		config.params.numExpediente=me.getViewModel().get("expediente.numExpediente");
+		config.url= $AC.getRemoteUrl("operacionventa/operacionVentaPDFByOfertaHRE");
+
+		me.fireEvent("downloadFile", config);		
+	},
 	
 	onClickGenerarFacturaPdf : function(btn) {
 		var me = this, config = {};

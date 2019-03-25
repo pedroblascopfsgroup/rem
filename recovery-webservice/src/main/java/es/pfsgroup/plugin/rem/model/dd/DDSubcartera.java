@@ -58,6 +58,7 @@ public class DDSubcartera implements Auditable, Dictionary {
 	public static final String CODIGO_PROMONTORIA = "132";
 	public static final String CODIGO_ZEUS_INMOBILIARIO = "133";
 	public static final String CODIGO_ZEUS_FINANCIERO = "134";
+	public static final String CODIGO_APPLE_INMOBILIARIO = "138";
 
 	@Id
 	@Column(name = "DD_SCR_ID")

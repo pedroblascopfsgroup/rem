@@ -124,13 +124,19 @@ public class ActivoOfertaController extends ParadiseJsonController {
 		
 		try {
 			WebFileItem fileItem = uploadAdapter.getWebFileItem(request);
+			if(idPersonaHaya != null && !idPersonaHaya.isEmpty()){
+				List<DtoAdjunto> listaAdjuntos = activoOfertaAdapter.getAdjunto(idPersonaHaya, docCliente, null, null);
+				String errores = null;
+				if(listaAdjuntos.size() <= 0) {
+					errores = activoOfertaAdapter.uploadDocumento(fileItem, idPersonaHaya);
+					model.put("errores", errores);
+					model.put(RESPONSE_SUCCESS_KEY, errores==null);
+				}else{
+					model.put("errores", errores);
+					model.put(RESPONSE_SUCCESS_KEY, errores==null);
+				}
+			}			
 			
-			List<DtoAdjunto> listaAdjuntos = activoOfertaAdapter.getAdjunto(idPersonaHaya, docCliente, null, null);
-			if(listaAdjuntos.size() <= 0) {
-				String errores = activoOfertaAdapter.uploadDocumento(fileItem, idPersonaHaya);
-				model.put("errores", errores);
-				model.put(RESPONSE_SUCCESS_KEY, errores==null);
-			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			model.put(RESPONSE_SUCCESS_KEY, false);

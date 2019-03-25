@@ -3390,7 +3390,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	
 	@Override
 	public boolean checkPedirDoc(Long idActivo, Long idAgrupacion, Long idExpediente, String dniComprador, String codtipoDoc) {
-		ClienteGDPR clienteGDPR = null; Comprador comprador = null;
+		List<ClienteGDPR> clienteGDPR = null; Comprador comprador = null;
 		ClienteComercial clienteCom = null; ActivoAgrupacion agrupacion = null;
 		Activo activo = null; ExpedienteComercial expedienteCom = null;
 		boolean esCarteraInternacional = false;
@@ -3401,7 +3401,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		
 			if ((!Checks.esNulo(idActivo) || !Checks.esNulo(idAgrupacion)) && Checks.esNulo(idExpediente)) {
 				filterComprador = genericDao.createFilter(FilterType.EQUALS, "numDocumento", dniComprador);
-				clienteGDPR = genericDao.get(ClienteGDPR.class, filterComprador, filterCodigoTpoDoc);
+				clienteGDPR = genericDao.getList(ClienteGDPR.class, filterComprador, filterCodigoTpoDoc);
 				
 				if (Checks.esNulo(idActivo) && !Checks.esNulo(idAgrupacion)) {
 					agrupacion = genericDao.get(ActivoAgrupacion.class, genericDao.createFilter(FilterType.EQUALS, "id", idAgrupacion));
@@ -3424,8 +3424,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			}
 		}
 		
-		if (!Checks.esNulo(clienteGDPR) && !Checks.esNulo(clienteGDPR.getCliente())) {
-			clienteCom = clienteGDPR.getCliente();
+		if (!Checks.estaVacio(clienteGDPR)) {
+			clienteCom = clienteGDPR.get(0).getCliente();
 		}
 		
 		//Se comprueba si es una cartera internacional.
@@ -3441,7 +3441,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		// True = Tiene documento adjunto, por lo tanto NO hay que pedirlo.
 		// False = NO tiene documento adjunto, por lo tanto hay que pedirlo.
 		if (!Checks.esNulo(clienteGDPR) && !Checks.esNulo(clienteCom)) {
-			if (!Checks.esNulo(clienteGDPR.getNumDocumento()) && !Checks.esNulo(clienteCom.getDocumento()) && clienteCom.getDocumento().equals(clienteGDPR.getNumDocumento())) {
+			if (!Checks.esNulo(clienteGDPR.get(0).getNumDocumento()) && !Checks.esNulo(clienteCom.getDocumento()) && clienteCom.getDocumento().equals(clienteGDPR.get(0).getNumDocumento())) {
 				if (!Checks.esNulo(clienteCom.getCesionDatos()) && clienteCom.getCesionDatos()) {
 					if ((esCarteraInternacional && !Checks.esNulo(clienteCom.getTransferenciasInternacionales()) && clienteCom.getTransferenciasInternacionales()) ||
 							!esCarteraInternacional) {

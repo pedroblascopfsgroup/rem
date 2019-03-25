@@ -1315,9 +1315,14 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 						listaCompradoresExpediente.add(compradorExpedienteAdicionalNuevo);
 
 					} else {
-						ClienteGDPR cliGDPR = genericDao.get(ClienteGDPR.class,
+						ClienteGDPR cliGDPR = null;
+						List<ClienteGDPR> cliGDPRLista = genericDao.getList(ClienteGDPR.class,
 								genericDao.createFilter(FilterType.EQUALS, "tipoDocumento.id", titularAdicional.getTipoDocumento().getId()),
 								genericDao.createFilter(FilterType.EQUALS, "numDocumento", titularAdicional.getDocumento()));
+						
+						if(cliGDPRLista != null && cliGDPRLista.size() > 0){
+							cliGDPR = cliGDPRLista.get(0);
+						}
 						
 						Comprador nuevoCompradorAdicional = new Comprador();
 						CompradorExpediente compradorExpedienteAdicionalNuevo = new CompradorExpediente();

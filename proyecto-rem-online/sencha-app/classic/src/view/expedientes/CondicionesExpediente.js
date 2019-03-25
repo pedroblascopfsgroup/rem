@@ -77,8 +77,8 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 												 * alineados
 												 */ 
 									        	bind: {
-									        		hidden: '{esCarteraAgora}',
-									        		readOnly: '{!esCarteraAgora}'
+									        		hidden: '{esCarteraAppleOAgora}',
+									        		readOnly: '{!esCarteraAppleOAgora}'
 												}
 											},
 									        {
@@ -88,7 +88,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 												fieldLabel : HreRem.i18n('fieldlabel.deposito.reserva'),
 												bind : {
 													value: '{condiciones.depositoReserva}',
-													hidden: '{!esCarteraAgora}'
+													hidden: '{!esCarteraAppleOAgora}'
 												},
 												maxValue : 3000,
 												minValue : 0

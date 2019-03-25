@@ -749,8 +749,9 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					oferta.setFdv(fdv);
 				}
 			}
-			if (!Checks.esNulo(ofertaDto.getTitularesAdicionales())) {
-				saveOrUpdateListaTitualesAdicionalesOferta(ofertaDto, oferta);
+			
+			if (!Checks.esNulo(oferta.getTitularesAdicionales())) {
+				oferta.setTitularesAdicionales(null);
 			}
 
 			if (!Checks.esNulo(ofertaDto.getObservaciones())) {
@@ -768,8 +769,10 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			Long idOferta = this.saveOferta(oferta);
 			if (!Checks.esNulo(ofertaDto.getTitularesAdicionales()) && !Checks.estaVacio(ofertaDto.getTitularesAdicionales())) {
 				oferta.setId(idOferta);
-				saveOrUpdateListaTitualesAdicionalesOferta(ofertaDto, oferta);
+				oferta.setTitularesAdicionales(null);
+				saveOrUpdateListaTitualesAdicionalesOferta(ofertaDto, oferta, false);
 			}
+			
 			oferta = updateEstadoOferta(idOferta, ofertaDto.getFechaAccion());
 			this.updateStateDispComercialActivosByOferta(oferta);
 
@@ -797,11 +800,11 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 	}
 	
 	@Transactional(readOnly = false)
-	private void saveOrUpdateListaTitualesAdicionalesOferta(OfertaDto ofertaDto, Oferta oferta){
+	private void saveOrUpdateListaTitualesAdicionalesOferta(OfertaDto ofertaDto, Oferta oferta, Boolean update){
 		List<TitularesAdicionalesOferta> listaTit = new ArrayList<TitularesAdicionalesOferta>();
 
-		if (!Checks.esNulo(oferta.getId())) {
-			ofertaDao.deleteTitularesAdicionales(oferta.getId());
+		if (!Checks.esNulo(oferta) && update) {
+			ofertaDao.deleteTitularesAdicionales(oferta);
 		}
 
 		for (int i = 0; i < ofertaDto.getTitularesAdicionales().size(); i++) {
@@ -855,7 +858,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		if (errorsList.isEmpty()) {
 			boolean modificado = false;
 			if (!Checks.esNulo(ofertaDto.getTitularesAdicionales())) {
-				saveOrUpdateListaTitualesAdicionalesOferta(ofertaDto, oferta);
+				saveOrUpdateListaTitualesAdicionalesOferta(ofertaDto, oferta, true);
 				modificado = true;
 			}
 

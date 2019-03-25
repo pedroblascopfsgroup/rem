@@ -45,7 +45,7 @@ public class MSVValidatorAgrupacionPromocionAlquiler extends MSVExcelValidatorAb
 	public static final String TIPOLOGIA_SUBTIPOLOGIA_ERRONEA = "Tipología/Subtipología del activo errónea";
 	public static final String VIA_ERRONEA = "Tipo de vía erróneo";
 	public static final String DIRECCION_INCOMPLETA = "Dirección incompleta";
-	public static final String SUPERFICIES_CONSTRUIDA = "Sumatorio de las superficies contruidas superial a la del activo matriz";
+	public static final String SUPERFICIES_CONSTRUIDA = "Sumatorio de las superficies construidas superior a la del activo matriz";
 	public static final String SUPERFICIES_UTIL = "Sumatorio de las superficies útiles superior a la del activo matriz";
 	public static final String PORCENTAJE_PARTICIPACION = "% de participación erróneo";
 	public static final String PARTICIPACION_TOTAL= "El % de participación de las UAs supera el 100%";

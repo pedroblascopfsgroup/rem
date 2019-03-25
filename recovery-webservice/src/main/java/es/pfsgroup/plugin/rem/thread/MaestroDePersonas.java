@@ -230,7 +230,9 @@ public class MaestroDePersonas  implements Runnable{
 	private ClienteGDPR llamadaClienteGDPR(Session sessionObj) {
 		Criteria criteria = sessionObj.createCriteria(ClienteGDPR.class);
 		criteria.add(Restrictions.eq("numDocumento", numDocCliente));
-		return  HibernateUtils.castObject(ClienteGDPR.class, criteria.uniqueResult());
+		criteria.setFirstResult(0);
+		criteria.setMaxResults(1);
+		return  HibernateUtils.castObject(ClienteGDPR.class, criteria.list().get(0));
 	}
 	
 	private ClienteComercial llamadaClienteComercial(Session sessionObj, ClienteGDPR clienteGDPR) {

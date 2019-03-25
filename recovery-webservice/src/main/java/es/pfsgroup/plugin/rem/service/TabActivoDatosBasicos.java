@@ -1047,6 +1047,10 @@ public class TabActivoDatosBasicos implements TabActivoService {
 								aga.setParticipacionUA(dto.getPorcentajeParticipacion());							
 							}
 						}
+						
+						if(!Checks.esNulo(dto.getIdPrinexHPM())) {
+							aga.setIdPrinexHPM(dto.getIdPrinexHPM());
+						}
 					}
 				}
 			}		

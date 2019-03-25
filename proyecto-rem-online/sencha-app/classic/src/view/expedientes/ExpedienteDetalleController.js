@@ -3279,29 +3279,6 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			grid.disableAddButton(true);
 		}
 	},
-	onCambioInversionSujetoPasivo : function(checkbox,
-			newValue, oldValue, eOpts) {
-		if (!Ext.isEmpty(oldValue)) {
-			var me = this, operacionExenta = me
-					.lookupReference('chkboxOperacionExenta'), renunciaExencion = me
-					.lookupReference('chkboxRenunciaExencion'), tipoAplicable = me
-					.lookupReference('tipoAplicable');
-
-			if (newValue == true) {
-				operacionExenta.reset();
-				operacionExenta.setReadOnly(true);
-				renunciaExencion.reset();
-				renunciaExencion.setReadOnly(true);
-				tipoAplicable.reset();
-				tipoAplicable.allowBlank = true;
-				tipoAplicable.setDisabled(true);
-			} else {
-				operacionExenta.setReadOnly(false);
-				tipoAplicable.allowBlank = false;
-				tipoAplicable.setDisabled(false);
-			}
-		}
-	},
 
 	onchkbxEnRevisionChange : function(checkbox, newValue,
 			oldValue, eOpts) {

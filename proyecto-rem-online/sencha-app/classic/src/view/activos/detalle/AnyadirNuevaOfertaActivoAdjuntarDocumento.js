@@ -104,24 +104,8 @@ Ext.define('HreRem.view.activos.detalle.AnyadirNuevaOfertaActivoAdjuntarDocument
 							listeners: {
 	                              change: function (checkbox, newVal, oldVal) {
 	                              	  var ventanaWizard = checkbox.up('anyadirnuevaofertaactivoadjuntardocumento'),
-	                            	  checkTransInternacionales = ventanaWizard.getForm().findField('transferenciasInternacionales').getValue(),
-	                            	  esInternacional = ventanaWizard.getForm().findField('carteraInternacional').getValue(),
-	                            	  cesionDatos = ventanaWizard.getForm().findField('cesionDatos').getValue(),
 	                            	  btnFinalizar = ventanaWizard.down('button[itemId=btnFinalizar]');
-	                            	  
-	                            	  if(esInternacional){
-	                            	  	 if (checkbox.getValue() && checkTransInternacionales){
-	                            	  	 	btnFinalizar.enable();
-	                            	  	 }else{
-	                            	  	 	btnFinalizar.disable();
-	                            	  	 }
-	                            	  }else{
-	                            	  	 if (checkbox.getValue()){
-	                            	  	 	btnFinalizar.enable();
-	                            	  	 }else{
-	                            	  	 	btnFinalizar.disable();
-	                            	  	 }
-	                            	  }	                            	
+	                            	  btnFinalizar.disable();     	
 	                              }
 	                          }
 						},
@@ -132,7 +116,14 @@ Ext.define('HreRem.view.activos.detalle.AnyadirNuevaOfertaActivoAdjuntarDocument
 							name:       'comunicacionTerceros',
 							margin: '10px 0 0 200px',
 							reference: 'chkbxcComunicacionTerceros',
-							readOnly: false
+							readOnly: false,
+							listeners: {
+	                              change: function (checkbox, newVal, oldVal) {
+	                            	  var ventanaWizard = checkbox.up('anyadirnuevaofertaactivoadjuntardocumento'),
+	                            	  btnFinalizar = ventanaWizard.down('button[itemId=btnFinalizar]');
+	                            	  btnFinalizar.disable();
+	                              }
+	                          }
 						},
 						{
 							xtype:'checkboxfieldbase',
@@ -145,19 +136,8 @@ Ext.define('HreRem.view.activos.detalle.AnyadirNuevaOfertaActivoAdjuntarDocument
 							listeners: {
 	                              change: function (checkbox, newVal, oldVal) {
 	                            	  var ventanaWizard = checkbox.up('anyadirnuevaofertaactivoadjuntardocumento'),
-	                            	  esInternacional = ventanaWizard.getForm().findField('carteraInternacional').getValue(),
-	                            	  cesionDatos = ventanaWizard.getForm().findField('cesionDatos').getValue(),
 	                            	  btnFinalizar = ventanaWizard.down('button[itemId=btnFinalizar]');
-	                            	  
-	                            	
-	                            	  
-	                            	   if(esInternacional){
-	                            	  	 if (checkbox.getValue() && cesionDatos){
-	                            	  	 	btnFinalizar.enable();
-	                            	  	 }else{
-	                            	  	 	btnFinalizar.disable();
-	                            	  	 }
-	                            	  }
+	                            	  btnFinalizar.disable();
 	                              }
 	                          }
 						},

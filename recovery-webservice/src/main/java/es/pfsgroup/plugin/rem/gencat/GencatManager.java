@@ -1102,7 +1102,7 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 							        fecha2MesesMasSancion = cal.getTime();
 								}else{
 									fecha2MesesMasSancion = fechaActual;
-								}
+								} 
 								if(fechaActual.after(fecha2MesesMasSancion) || Checks.esNulo(comGencat.getFechaSancion())){  
 									lanzarTramiteGENCAT(idActivo, oferta, expComercial);
 								}

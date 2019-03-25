@@ -229,9 +229,6 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 
 	@Autowired
 	ActivoTareaExternaApi activoTareaExternaApi;
-	
-	@Autowired
-	private ExpedienteComercialDao expedienteComercialDao;
 
 	@Autowired
 	private ActivoAdapter activoAdapterApi;

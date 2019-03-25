@@ -3557,8 +3557,8 @@ public class ActivoAdapter {
 			oferta.setTipoOferta(tipoOferta);
 			oferta.setFechaAlta(new Date());
 
-			if (!Checks.esNulo(dto.getDeDerechoTanteo())) {
-			    oferta.setDesdeTanteo(dto.getDeDerechoTanteo());
+			if (!Checks.esNulo(dto.getDerechoTanteo())) {
+			    oferta.setDesdeTanteo(dto.getDerechoTanteo());
 			}
 			
 			listaActOfr = ofertaApi.buildListaActivoOferta(activo, null, oferta);
@@ -3635,7 +3635,7 @@ public class ActivoAdapter {
 				clienteGDPR.setComunicacionTerceros(dto.getComunicacionTerceros());
 				clienteGDPR.setTransferenciasInternacionales(dto.getTransferenciasInternacionales());
 				
-				if(!Checks.esNulo(tmpClienteGDPR.getIdAdjunto())) {
+				if(!Checks.esNulo(tmpClienteGDPR) && !Checks.esNulo(tmpClienteGDPR.getIdAdjunto())) {
 					docAdjunto = genericDao.get(AdjuntoComprador.class,
 							genericDao.createFilter(FilterType.EQUALS, "id", tmpClienteGDPR.getIdAdjunto()));
 				}

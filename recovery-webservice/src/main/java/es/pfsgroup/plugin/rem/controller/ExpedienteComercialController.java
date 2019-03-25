@@ -200,9 +200,6 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	@Autowired
 	private ExpedienteApi expedienteApi;
 
-	@Autowired
-	private GenericABMDao genericDao;
-
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getTabExpediente(Long id, String tab, ModelMap model, HttpServletRequest request) {

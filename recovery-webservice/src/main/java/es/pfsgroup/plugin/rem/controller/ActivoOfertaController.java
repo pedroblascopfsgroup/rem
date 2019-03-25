@@ -101,28 +101,28 @@ public class ActivoOfertaController extends ParadiseJsonController {
 		
 		TmpClienteGDPR tmpClienteGDPR;
 		String idPersonaHaya = null;
-		
-		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "numDocumento", docCliente);
-		ClienteGDPR clienteGDPR = genericDao.get(ClienteGDPR.class, filtro);
-		if(!Checks.esNulo(clienteGDPR)) {
-			ClienteComercial clienteCom = clienteGDPR.getCliente();
-			if(!Checks.esNulo(clienteCom)) {
-				idPersonaHaya = clienteCom.getIdPersonaHaya();
-			} else {
-				tmpClienteGDPR = genericDao.get(TmpClienteGDPR.class, genericDao.createFilter(FilterType.EQUALS, "numDocumento", docCliente));
-				
-				if(!Checks.esNulo(tmpClienteGDPR)) {
-					idPersonaHaya = String.valueOf(tmpClienteGDPR.getIdPersonaHaya());
-				}
-			}
-		} else {
-			tmpClienteGDPR = genericDao.get(TmpClienteGDPR.class, genericDao.createFilter(FilterType.EQUALS, "numDocumento", docCliente));
-			idPersonaHaya = String.valueOf(tmpClienteGDPR.getIdPersonaHaya());
-		}
-		
 		ModelMap model = new ModelMap();
 		
 		try {
+			
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "numDocumento", docCliente);
+			ClienteGDPR clienteGDPR = genericDao.get(ClienteGDPR.class, filtro);
+			if(!Checks.esNulo(clienteGDPR)) {
+				ClienteComercial clienteCom = clienteGDPR.getCliente();
+				if(!Checks.esNulo(clienteCom)) {
+					idPersonaHaya = clienteCom.getIdPersonaHaya();
+				} else {
+					tmpClienteGDPR = genericDao.get(TmpClienteGDPR.class, genericDao.createFilter(FilterType.EQUALS, "numDocumento", docCliente));
+					
+					if(!Checks.esNulo(tmpClienteGDPR)) {
+						idPersonaHaya = String.valueOf(tmpClienteGDPR.getIdPersonaHaya());
+					}
+				}
+			} else {
+				tmpClienteGDPR = genericDao.get(TmpClienteGDPR.class, genericDao.createFilter(FilterType.EQUALS, "numDocumento", docCliente));
+				idPersonaHaya = String.valueOf(tmpClienteGDPR.getIdPersonaHaya());
+			}
+			
 			WebFileItem fileItem = uploadAdapter.getWebFileItem(request);
 			if(idPersonaHaya != null && !idPersonaHaya.isEmpty()){
 				List<DtoAdjunto> listaAdjuntos = activoOfertaAdapter.getAdjunto(idPersonaHaya, docCliente, null, null);
@@ -135,7 +135,9 @@ public class ActivoOfertaController extends ParadiseJsonController {
 					model.put("errores", errores);
 					model.put(RESPONSE_SUCCESS_KEY, errores==null);
 				}
-			}			
+			}
+			
+			logger.info(DOC_ADJUNTO_CREAR_OFERTA);
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -143,8 +145,6 @@ public class ActivoOfertaController extends ParadiseJsonController {
 			model.put(RESPONSE_ERROR_KEY, e.getMessage());
 		}
 		
-		logger.info(DOC_ADJUNTO_CREAR_OFERTA);
-
 		return createModelAndViewJson(model);
 	}
 	

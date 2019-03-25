@@ -199,7 +199,7 @@ public class ActivoOfertaController extends ParadiseJsonController {
 			boolean success = false;
 			if(adjComprador != null){
 				//esta en el ggdd y en el modelo de datos
-				success = activoOfertaAdapter.deleteAdjunto(adjComprador, clienteGDPR);
+				success = activoOfertaAdapter.deleteAdjunto(adjComprador, clienteGDPR.get(0));
 			}else{
 				//esta en el ggdd pero no en el modelo
 				success = activoOfertaAdapter.deleteAdjunto(listaAdjuntos.get(0).getId());

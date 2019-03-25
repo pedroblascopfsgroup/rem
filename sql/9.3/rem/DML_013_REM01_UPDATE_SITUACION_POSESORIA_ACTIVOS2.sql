@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=GUILLEM REY
---## FECHA_CREACION=20190318
+--## FECHA_CREACION=20190325
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=REMVIP-3495

@@ -155,10 +155,9 @@ public class MaestroDePersonas implements Runnable {
 				}
 			} else if (!Checks.esNulo(numDocCliente)) {
 				String documento = null, idPersonaHaya = null;
-				List<ClienteComercial> clienteCom = null;
+				List<ClienteComercial> clienteCom = llamadaClienteComercial(sessionObj, numDocCliente);
 				ClienteGDPR clienteGDPR = llamadaClienteGDPR(sessionObj);
 				if (!Checks.esNulo(clienteGDPR)) {
-					clienteCom = llamadaClienteComercial(sessionObj, numDocCliente);
 					documento = numDocCliente;
 					for (ClienteComercial clc : clienteCom) {
 						if (clc.getIdPersonaHaya() != null) {

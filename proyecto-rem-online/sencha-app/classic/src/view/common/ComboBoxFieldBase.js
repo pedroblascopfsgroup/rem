@@ -52,7 +52,13 @@ Ext.define('HreRem.view.common.ComboBoxFieldBase', {
 					});
 				}*/
 			}
+			
 	        binding.syncing = (binding.syncing + 1) || 1;
+	        if(!Ext.isEmpty(binding.stub)){
+	        	 if(!Ext.isEmpty(binding.stub.name)){
+	        		 Ext.logger.info(binding.stub.name);
+	        	 }
+			}
 	        this[binding._config.names.set](value);
 	        --binding.syncing;
 	        this.fireEvent("afterbind", this, value);

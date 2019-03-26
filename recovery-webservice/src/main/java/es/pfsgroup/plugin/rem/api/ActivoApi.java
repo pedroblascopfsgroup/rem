@@ -1145,4 +1145,6 @@ public interface ActivoApi {
 	boolean esSubcarteraZeus(Long idActivo);
 
 	boolean esSubcarteraPromontoria(Long idActivo);
+
+	boolean esSubcarteraApple(Long idActivo);
 }

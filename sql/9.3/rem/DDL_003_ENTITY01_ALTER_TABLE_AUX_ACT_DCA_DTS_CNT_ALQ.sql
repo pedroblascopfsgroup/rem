@@ -1,10 +1,10 @@
 --/* 
 --##########################################
---## AUTOR=Sonia Garcia
---## FECHA_CREACION=20190117
+--## AUTOR=Oscar Diestre
+--## FECHA_CREACION=20190326
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=func-rem-alquileres
---## INCIDENCIA_LINK=HREOS-5234
+--## INCIDENCIA_LINK=REMVIP-3666
 --## PRODUCTO=NO
 --##
 --## Finalidad: Añadir un nuevo campo en la tabla AUX_ACT_DCA_DTS_CNT_ALQ
@@ -29,7 +29,9 @@ DECLARE
     ERR_MSG VARCHAR2(1024 CHAR); -- Vble. auxiliar para registrar errores en el script.
 	V_TABLA VARCHAR2(50 CHAR):= 'AUX_ACT_DCA_DTS_CNT_ALQ'; -- Nombre de la tabla a crear
 	V_COL VARCHAR2(50 CHAR):= 'ID_AAII'; --Nombre de la columna
+	V_COL1 VARCHAR2(50 CHAR):= 'ID_PRINEX'; --Nombre de la columna
 	 V_TIPO VARCHAR2(250 CHAR):= 'NUMBER(16,0) DEFAULT 0 NOT NULL ENABLE';--Tipo nuevo campo
+ 	V_TIPO1 VARCHAR2(250 CHAR):= 'NUMBER(16,0)';--Tipo nuevo campo
  	V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.
     
 BEGIN   
@@ -55,6 +57,34 @@ BEGIN
                 EXECUTE IMMEDIATE 'ALTER TABLE '||V_ESQUEMA||'.'||V_TABLA||' ADD '||V_COL||' '||V_TIPO||'';        
             ELSE
                 DBMS_OUTPUT.PUT_LINE('  [INFO] El campo '||V_TABLA||'.'||V_COL||'... YA existe.');
+            END IF;    
+
+    
+  ELSE
+      DBMS_OUTPUT.PUT_LINE(' [INFO] '''||V_TABLA||'''... No existe.');  
+  END IF;
+  DBMS_OUTPUT.PUT_LINE('[FIN CAMPOS]');
+
+  DBMS_OUTPUT.PUT_LINE('[INICIO CAMPOS]');  
+
+--Comprobacion de la tabla
+  V_SQL := 'SELECT COUNT(1) FROM ALL_TABLES WHERE OWNER = '''||V_ESQUEMA||''' AND TABLE_NAME = '''||V_TABLA||'''';
+  EXECUTE IMMEDIATE V_SQL INTO V_NUM_TABLAS;
+  
+  IF V_NUM_TABLAS > 0 THEN  
+
+                             
+            -- Verificar si el campo ya existe
+            V_MSQL := 'SELECT COUNT(1) FROM ALL_TAB_COLUMNS WHERE OWNER = '''||V_ESQUEMA||''' AND TABLE_NAME = '''||V_TABLA||''' AND COLUMN_NAME = '''||V_COL1||'''';
+            EXECUTE IMMEDIATE V_MSQL INTO V_NUM_TABLAS; 
+            
+            IF V_NUM_TABLAS = 0 THEN
+                DBMS_OUTPUT.PUT_LINE('  [INFO] Insertamos los campos '||V_COL1||'');  
+                
+                -- Añadimos el campo
+                EXECUTE IMMEDIATE 'ALTER TABLE '||V_ESQUEMA||'.'||V_TABLA||' ADD '||V_COL1||' '||V_TIPO1||'';        
+            ELSE
+                DBMS_OUTPUT.PUT_LINE('  [INFO] El campo '||V_TABLA||'.'||V_COL1||'... YA existe.');
             END IF;    
 
     

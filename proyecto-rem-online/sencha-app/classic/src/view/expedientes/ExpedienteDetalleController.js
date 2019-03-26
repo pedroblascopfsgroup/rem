@@ -728,8 +728,8 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			if(me.getViewModel().get('expediente.tipoExpedienteCodigo') === tipoExpedienteAlquiler){
 				deshabilitarCamposDoc = true;
 			}
-
-			Ext.create("HreRem.view.expedientes.DatosComprador", {idComprador: idCliente, modoEdicion: edicion, storeGrid:storeGrid, expediente: expediente,deshabilitarCamposDoc: deshabilitarCamposDoc }).show();
+			me.getView().fireEvent('openModalWindow', "HreRem.view.expedientes.DatosComprador",{idComprador: idCliente, modoEdicion: edicion, storeGrid:storeGrid, expediente: expediente,deshabilitarCamposDoc: deshabilitarCamposDoc });
+			
 		}
 		if (me.getViewModel().get('expediente.tipoExpedienteCodigo') === tipoExpedienteAlquiler && !Ext.isEmpty(fechaPosicionamiento)){
 			me.fireEvent("errorToast", "Se ha avanzado la tarea Posicionamiento, no se puede editar los inquilinos");
@@ -1071,14 +1071,14 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 				me.getView().unmask();
 				me.fireEvent("infoToast", HreRem
 						.i18n("msg.operacion.ok"));
-				window.destroy();
+				window.hide();
 
 		};
 		
 		var failure = function(record, operation) {
 			me.getView().unmask();
 			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-	    	window.destroy();
+	    	//window.destroy();
 
 		};
 
@@ -1096,14 +1096,14 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			me.getView().unmask();
 			me.fireEvent("infoToast", HreRem
 					.i18n("msg.operacion.ok"));
-			window.destroy();
+			window.hide();
 
 	};
 	
 	var failure = function(record, operation) {
 		me.getView().unmask();
 		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-    	window.destroy();
+    	//window.destroy();
 
 	};
 
@@ -1523,7 +1523,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	onClickBotonCerrarComprador: function(btn){
 		var me = this;
 		var window = btn.up("window");
-		window.close();
+		window.hide();
 	},
 
 	onClickBotonCancelarWizardComprador : function(btn) {
@@ -1561,7 +1561,8 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 					if (!Ext.isEmpty(form3)) {
 						form3.reset();
 					}
-					window.close();
+					
+					window.hide();
 				}
 			}
 		});
@@ -1636,6 +1637,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
             ventanaDetalle.getForm().findField('transferenciasInternacionales').setValue(transferenciasInternacionales);*/
 
             me.guardarComprador(form, ventanaWizard);
+            
 		}
 	},
 
@@ -1692,13 +1694,14 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 					if (Ext.isEmpty(fechaSancion)) {
 						var ventanaCompradores = grid.up().up();
 						var expediente = me.getViewModel().get("expediente");
-						Ext.create('HreRem.view.expedientes.WizardAltaComprador', {
+						me.getView().fireEvent('openModalWindow', 'HreRem.view.expedientes.WizardAltaComprador',{
 							idExpediente : idExpediente,
 							parent : ventanaCompradores,
 							expediente : expediente,
 							deshabilitarCamposDoc : false
-						}).show();
-						me.onClickBotonRefrescar();
+						});
+						
+						//me.onClickBotonRefrescar();
 					} else {
 						me.fireEvent("errorToast",
 								"Expediente sancionado");
@@ -1708,13 +1711,13 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 				if (CONST.TIPOS_EXPEDIENTE_COMERCIAL['VENTA'] == tipoExpedienteCodigo) {
 					var ventanaCompradores = grid.up().up();
 					var expediente = me.getViewModel().get("expediente");
-					Ext.create('HreRem.view.expedientes.WizardAltaComprador', {
+					me.getView().fireEvent('openModalWindow', 'HreRem.view.expedientes.WizardAltaComprador',{
 						idExpediente : idExpediente,
 						parent : ventanaCompradores,
 						expediente : expediente,
 						deshabilitarCamposDoc : false
-					}).show();
-					me.onClickBotonRefrescar();
+					});
+					//me.onClickBotonRefrescar();
 					return;
 				}
 			} else {

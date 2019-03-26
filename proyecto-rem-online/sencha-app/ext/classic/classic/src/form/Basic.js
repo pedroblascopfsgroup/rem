@@ -1164,11 +1164,7 @@ Ext.define('Ext.form.Basic', {
             fLen   = fields.length;
 
         for (f = 0; f < fLen; f++) {
-        	try{
-        		fields[f].reset();
-        	}catch(error){
-        		Ext.global.console.log(error);
-        	}
+        	fields[f].reset();
         }
 
         Ext.resumeLayouts(true);

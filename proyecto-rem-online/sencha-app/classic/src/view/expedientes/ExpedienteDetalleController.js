@@ -717,7 +717,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		fechaPosicionamiento = me.getViewModel().get("expediente.fechaPosicionamiento"),
 		tipoExpedienteAlquiler = CONST.TIPOS_EXPEDIENTE_COMERCIAL["ALQUILER"],
 		tipoExpedienteVenta = CONST.TIPOS_EXPEDIENTE_COMERCIAL["VENTA"];
-		me.getView().fireEvent("refrescarExpediente", me.getView());
+		//me.getView().fireEvent("refrescarExpediente", me.getView());
 		if((codigoEstado!=CONST.ESTADOS_EXPEDIENTE['VENDIDO'] && me.getViewModel().get('expediente.tipoExpedienteCodigo') === tipoExpedienteVenta)
 				||  (me.getViewModel().get('expediente.tipoExpedienteCodigo') === tipoExpedienteAlquiler && Ext.isEmpty(fechaPosicionamiento))){
 			var idCliente = record.get("id"),
@@ -3277,29 +3277,6 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			grid.disableAddButton(false);
 		} else {
 			grid.disableAddButton(true);
-		}
-	},
-	onCambioInversionSujetoPasivo : function(checkbox,
-			newValue, oldValue, eOpts) {
-		if (!Ext.isEmpty(oldValue)) {
-			var me = this, operacionExenta = me
-					.lookupReference('chkboxOperacionExenta'), renunciaExencion = me
-					.lookupReference('chkboxRenunciaExencion'), tipoAplicable = me
-					.lookupReference('tipoAplicable');
-
-			if (newValue == true) {
-				operacionExenta.reset();
-				operacionExenta.setReadOnly(true);
-				renunciaExencion.reset();
-				renunciaExencion.setReadOnly(true);
-				tipoAplicable.reset();
-				tipoAplicable.allowBlank = true;
-				tipoAplicable.setDisabled(true);
-			} else {
-				operacionExenta.setReadOnly(false);
-				tipoAplicable.allowBlank = false;
-				tipoAplicable.setDisabled(false);
-			}
 		}
 	},
 

@@ -1,0 +1,30 @@
+TABLAS
+GFM_MAPEO : MAPEO DE LOS DIFERENTES NOMBRES DE LA INTERFAZ -> GFM_MAPEO_INTERFACES
+GFM_GENERA_FICHEROS_MIGRACION: tEMPORAL DE CARGA DE INTERFAZ -> GFM_TMP_INTERFAZ
+
+GFM_GENERA_FICHERO_MIGRACION
+por cada interfaz lanza la generacion de sus ficheros 
+la prueba si esta activado.
+mueve ficheros.
+
+
+GFM_INICIALIZACION.sh: Requisitos iniciales 
+GFM_MAPEO
+Tablas VALIDACION creacion y carga
+GFM_GENERA_FICHEROS_MIGRACION (TMP_INTERFAZ) Nuevo nombre (GFM_TMP_INTERFAZ) (CREACION)
+
+GFM_GENERAR_FICHEROS.sh (Genera los ficheros .dat, .ddl, .ctl y .plan)
+Carga la tabla temporal con los datos de la interface 
+genera .dat
+genera .ctl
+genera .ddl
+genera .plan
+
+
+GFM_Probar.sh
+ejecuta DDL
+lanza loader de .dat con .ctl
+
+revison/COMPLETAR
+pRUEBA, INICIALIZACION
+

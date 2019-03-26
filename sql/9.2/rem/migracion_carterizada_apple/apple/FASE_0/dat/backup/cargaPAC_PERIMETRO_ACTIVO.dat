@@ -1,0 +1,21 @@
+ORDEN;INTERFAZ;NOMBRE_CAMPO;TIPO_CAMPO;REQUERIDO;REQUERIDO_BOL;COMENTARIO
+1;PAC_PERIMETRO_ACTIVO;PAC_NUMERO_ACTIVO;NUMBER(16,0);SI;;Código identificador único del Activo.
+2;PAC_PERIMETRO_ACTIVO;PAC_IND_INCLUIDO;NUMBER(1,0);SI;;Indicador de si el Activo está incluido en el Perímetro HAYA.
+3;PAC_PERIMETRO_ACTIVO;PAC_IND_CHECK_TRA_ADMISION;NUMBER(1,0);SI;;Indicador si aplica trámite de admisión.
+4;PAC_PERIMETRO_ACTIVO;PAC_FECHA_TRA_ADMISION;DATE;NO;;Fecha de inclusión/exclusión del trámite de admisión.
+5;PAC_PERIMETRO_ACTIVO;PAC_IND_CHECK_GESTIONAR;NUMBER(1,0);SI;;Indicador si aplica gestionar (mantenimiento).
+6;PAC_PERIMETRO_ACTIVO;PAC_FECHA_GESTIONAR;DATE;NO;;Fecha de inclusión/exclusión del trámite de admisión.
+7;PAC_PERIMETRO_ACTIVO;PAC_MOTIVO_GESTIONAR;VARCHAR(255 CHAR);NO;;Motivo de inclusión/exclusión de gestionar (mantenimiento).
+8;PAC_PERIMETRO_ACTIVO;PAC_IND_CHECK_ASIGNAR_MEDIADOR;NUMBER(1,0);SI;;Indicador si aplica asignar mediador.
+9;PAC_PERIMETRO_ACTIVO;PAC_FECHA_ASIGNAR_MEDIADOR;DATE;NO;;Fecha de inclusión/exclusión de asignar mediador.
+10;PAC_PERIMETRO_ACTIVO;PAC_MOTIVO_ASIGNAR_MEDIADOR;VARCHAR(255 CHAR);NO;;Motivo de inclusión/exclusión de asignar mediador.
+11;PAC_PERIMETRO_ACTIVO;PAC_IND_CHECK_COMERCIALIZAR;NUMBER(1,0);SI;;Indicador si aplica comercializar
+12;PAC_PERIMETRO_ACTIVO;PAC_FECHA_COMERCIALIZAR;DATE;NO;;Fecha de inclusión/exclusión de comercializar.
+13;PAC_PERIMETRO_ACTIVO;PAC_COD_MOTIVO_COMERCIAL;VARCHAR2(20 CHAR);NO;;Código del Motivo de inclusión de comercializar (Código según Dic. Datos).
+14;PAC_PERIMETRO_ACTIVO;PAC_COD_MOTIVO_NOCOMERCIAL;VARCHAR2(20 CHAR);NO;;Código del Motivo de Exclusión de comercializar (Código según Dic. Datos).
+15;PAC_PERIMETRO_ACTIVO;PAC_IND_CHECK_FORMALIZAR;NUMBER(1,0);SI;;Indicador si aplica Formalizar
+16;PAC_PERIMETRO_ACTIVO;PAC_FECHA_FORMALIZAR;DATE;NO;;Fecha de inclusión/exclusión de formalizar.
+17;PAC_PERIMETRO_ACTIVO;PAC_MOTIVO_FORMALIZAR;VARCHAR(255 CHAR);NO;;Motivo de inclusión/exclusión de formalizar
+18;PAC_PERIMETRO_ACTIVO;PAC_IND_CHECK_PUBLICAR;NUMBER(1,0);SI;;
+19;PAC_PERIMETRO_ACTIVO;PAC_FECHA_PUBLICAR;DATE;NO;;
+20;PAC_PERIMETRO_ACTIVO;PAC_MOTIVO_PUBLICAR;VARCHAR2(255 CHAR);NO;;

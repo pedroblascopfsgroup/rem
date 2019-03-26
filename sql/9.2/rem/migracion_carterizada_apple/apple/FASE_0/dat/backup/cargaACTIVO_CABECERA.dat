@@ -1,0 +1,24 @@
+ORDEN;INTERFAZ;NOMBRE_CAMPO;TIPO_CAMPO;REQUERIDO;REQUERIDO_BOL;COMENTARIO
+1;ACTIVO_CABECERA;ACT_NUMERO_ACTIVO;NUMBER(16,0);SI;;Código identificador único del activo.
+2;ACTIVO_CABECERA;ACT_NUMERO_EXTERNO;NUMBER(16,0);SI;;Código identificador único del activo en Origen.
+3;ACTIVO_CABECERA;ENTIDAD_PROPIETARIA;VARCHAR2(20 CHAR);SI;;Entidad / Cartera (Código según Dic. Datos).
+4;ACTIVO_CABECERA;ENTIDAD_ORIGEN;VARCHAR2(20 CHAR);SI;;Entidad origen de la operación financiera (Código según Dic. Datos).
+5;ACTIVO_CABECERA;ENTIDAD_ORIGEN_ANTERIOR;VARCHAR2(20 CHAR);SI;;Entidad origen anterior de la operación financiera (Sociedad Patrimonial) (Código según Dic. Datos).
+6;ACTIVO_CABECERA;ACT_DESCRIPCION;VARCHAR2(250 CHAR);NO;;Descripción del activo.
+7;ACTIVO_CABECERA;ACT_RATING;VARCHAR2(20 CHAR);NO;;Valoración del activo (Código según Dic. Datos).
+8;ACTIVO_CABECERA;ACT_DIVISION_HORIZONTAL;NUMBER(1,0);NO;;Indicador de si el activo está en división horizontal.
+9;ACTIVO_CABECERA;ACT_FECHA_REV_CARGAS;DATE;SI;;Última fecha de revisión de las cargas del activo.
+10;ACTIVO_CABECERA;ACT_ CON_CARGAS;NUMBER(1,0);SI;;Indicador de si el activo tiene cargas.
+11;ACTIVO_CABECERA;TIPO_ACTIVO;VARCHAR2(20 CHAR);SI;;Tipo de activo (Código según Dic. Datos).
+12;ACTIVO_CABECERA;SUBTIPO_ACTIVO;VARCHAR2(20 CHAR);SI;;Subtipo activo (Código según Dic. Datos).
+13;ACTIVO_CABECERA;ESTADO_ACTIVO;VARCHAR2(20 CHAR);SI;;Estado del activo (Código según Dic. Datos).
+14;ACTIVO_CABECERA;USO_ACTIVO;VARCHAR2(20 CHAR);SI;;Uso (destino) del activo (Código según Dic. Datos).
+15;ACTIVO_CABECERA;TIPO_TITULO;VARCHAR2(20 CHAR);SI;;Catalogación del tipo de título del activo. (Código según Dic. Datos).
+16;ACTIVO_CABECERA;SUBTIPO_TITULO;VARCHAR2(20 CHAR);SI;;Catalogación del subtipo de título del activo. (Código según Dic. Datos).
+17;ACTIVO_CABECERA;ACT_VPO;NUMBER(1,0);SI;;Indicador de si el activo es de vpo o no.
+18;ACTIVO_CABECERA;ESTADO_ADMISION;NUMBER(1,0);SI;;Estado de admisión departamento  de Admisión.
+19;ACTIVO_CABECERA;ESTADO _GESTION;NUMBER(1,0);SI;;Estado de gestión  departamento  de Gestión.
+20;ACTIVO_CABECERA;GESTION_HRE;NUMBER(1,0);NO;;Indicador control de gestión por Haya.
+21;ACTIVO_CABECERA;SELLO_CALIDAD;NUMBER(1,0);NO;;Indicador estado calidad (sello calidad).
+22;ACTIVO_CABECERA;SITUACION_COMERCIAL;VARCHAR2(20 CHAR);SI;;Situación comercial del activo (Código según Dic. Datos).
+23;ACTIVO_CABECERA;ACT_COD_PROMOCION_EXTERNO;VARCHAR2(50 CHAR);NO;;Código de promoción Externo

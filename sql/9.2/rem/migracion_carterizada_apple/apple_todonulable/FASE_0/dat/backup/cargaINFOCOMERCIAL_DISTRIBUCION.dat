@@ -1,0 +1,7 @@
+ORDEN;INTERFAZ;NOMBRE_CAMPO;TIPO_CAMPO;REQUERIDO;REQUERIDO_BOL;COMENTARIO
+1;INFOCOMERCIAL_DISTRIBUCION;ACT_NUMERO_ACTIVO;NUMBER(16,0);NO;;Código identificador único del activo.
+2;INFOCOMERCIAL_DISTRIBUCION;DIS_NUM_PLANTA;NUMBER(16,0);NO;;Número de planta del activo.
+3;INFOCOMERCIAL_DISTRIBUCION;TIPO_HABITACULO;VARCHAR2(20 CHAR);NO;;Catalogación del tipo de habitáculo (estancia) de la planta del activo (Código según Dic. Datos).
+4;INFOCOMERCIAL_DISTRIBUCION;DIS_CANTIDAD;NUMBER(8,0);NO;;Cantidad de habitáculos (estancias) de un tipo en la planta del activo.
+5;INFOCOMERCIAL_DISTRIBUCION;DIS_SUPERFICIE;NUMBER(16,2);NO;;Superficie en metros de cada habitáculo (estancia) en cada planta del activo.
+6;INFOCOMERCIAL_DISTRIBUCION;DIS_DESCRIPCION;VARCHAR(150 CHAR);NO;;Descripción habitaculo.

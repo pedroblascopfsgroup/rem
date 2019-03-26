@@ -1,0 +1,138 @@
+--/*
+--##########################################
+--## AUTOR= Miguel Sanchez
+--## FECHA_CREACION=20181204
+--## ARTEFACTO=batch
+--## VERSION_ARTEFACTO=MIGRACION-APPLE
+--## INCIDENCIA_LINK=HREOS-4932
+--## PRODUCTO=NO
+--## 
+--## Finalidad: GFM
+--## INSTRUCCIONES:  
+--## VERSIONES:
+--##        0.1 Versión inicial
+--##########################################
+--*/
+WHENEVER SQLERROR EXIT SQL.SQLCODE;
+SET SERVEROUTPUT ON;
+SET DEFINE OFF;
+SET LINESIZE 32767;
+SET PAGESIZE 32767;
+SET LONG 32767;
+
+DECLARE
+/* ESTE SQL DEBE DEVOLVER UNA PLANTILLA COMO ESTA
+
+[FILADAT][SL]
+TIPO1TAM--------[SL]
+TIPO2TAM--------[SL]
+TIPO3TAM--------[SL]
+TIPONTAM--------[SL]
+[FILADAT]
+
+Donde FILADAT es el inicio y final de la linea generada, y SL indica un salto de linea generado por sql que debe de ser borrado mediante shell
+*/ 
+V_INPUT VARCHAR2(32767 CHAR);
+V_INPUT_VALOR VARCHAR2(32767 CHAR);
+V_INPUT_TIPO VARCHAR2(32767 CHAR);
+V_INPUT_TIPO_CAMPO VARCHAR2(32767 CHAR);
+V_INPUT_INTERFAZ VARCHAR2(32767 CHAR);
+V_INPUT_CAMPO VARCHAR2(32767 CHAR);
+V_SQL VARCHAR2(32767 CHAR);
+V_VALOR_SQL VARCHAR2(32767 CHAR);
+V_VALOR VARCHAR2(32767 CHAR);
+V_INPUT_TAMANO VARCHAR2(32767 CHAR);
+
+--CURSOR QUE DEVUELVE POR CADA CAMPO DE LA TABLA SU TIPO DE CAMPO Y TAMAÑO. 
+CURSOR C IS
+WITH TAMANO AS (
+    SELECT ORDEN,
+        CASE 
+            WHEN TIPO_CAMPO LIKE '%NUMBER%' AND TIPO_CAMPO LIKE '%,%' THEN 
+                to_char(REPLACE(REPLACE(SUBSTR(TIPO_CAMPO, 1, INSTR(REPLACE(TIPO_CAMPO,'NUMBER (',''),',')-1),'NUMBER(',''),')','')+1)
+            WHEN TIPO_CAMPO LIKE '%NUMBER%' THEN 
+                to_char(REPLACE(REPLACE(REPLACE(TIPO_CAMPO,'NUMBER (',''),'NUMBER(',''),')','')+1)
+            WHEN TIPO_CAMPO LIKE '%CHAR%' THEN 
+                REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(TIPO_CAMPO,'VARCHAR (',''),'VARCHAR2(',''),'VARCHAR(',''),'CHAR(',''),')',''),' CHAR','')
+            WHEN TIPO_CAMPO LIKE '%DATE%' THEN 
+                '8' 
+        END AS TAMANO
+    FROM GFM_GENERA_FICHEROS_MIGRACION
+)
+SELECT 
+  
+        CASE 
+            WHEN UPPER(TIPO_CAMPO) LIKE '%CHAR%' THEN SUBSTR('TEXTO'||TAM.TAMANO,1,TAM.TAMANO) 
+            WHEN UPPER(TIPO_CAMPO) LIKE '%NUMBER%' THEN SUBSTR('NUMERO'||(TAM.TAMANO-1)||'+1',1,(TAM.TAMANO-1)) 
+            WHEN UPPER(TIPO_CAMPO) LIKE '%DATE%' THEN 'DATE'||TAM.TAMANO             
+        END
+
+    , GFM.TIPO_CAMPO AS TIPO_CAMPO
+FROM GFM_GENERA_FICHEROS_MIGRACION GFM
+    JOIN TAMANO TAM ON TAM.ORDEN=GFM.ORDEN
+ORDER BY GFM.ORDEN;
+  --POR CADA CAMPO DEVUELTO POR EL CURSOR
+BEGIN
+ DBMS_OUTPUT.PUT_LINE('[FILADAT][SL]');
+    OPEN C;
+    LOOP
+        FETCH C INTO V_INPUT,V_INPUT_TIPO_CAMPO;
+        EXIT WHEN C%NOTFOUND;
+        V_INPUT_VALOR:=REPLACE(REPLACE(REPLACE(REPLACE(V_INPUT,'[DD]',''),'[DUP]',''),'[DEP]',''),'[V_INPUT]','');
+
+--OBTENEMOS EL TIPO Y EL TAMAÑO DEPENDIENDO DE SU TIPO DE DATO
+        IF UPPER(V_INPUT_TIPO_CAMPO) LIKE '%NUMBER%' THEN
+            V_INPUT_TIPO:='NUMBER';
+            IF UPPER(V_INPUT_TIPO_CAMPO) LIKE '%,%' THEN
+                V_INPUT_TAMANO:=SUBSTR(V_INPUT_TIPO_CAMPO, 1, INSTR(V_INPUT_TIPO_CAMPO,',')-1);
+            ELSE
+                V_INPUT_TAMANO:=SUBSTR(V_INPUT_TIPO_CAMPO, 1, INSTR(V_INPUT_TIPO_CAMPO,')')-1);
+            END IF;
+            V_INPUT_TAMANO:=REPLACE(REPLACE(V_INPUT_TAMANO,'NUMBER (',''),'NUMBER(','');
+        ELSIF UPPER(V_INPUT_TIPO_CAMPO) LIKE '%CHAR%' THEN
+            V_INPUT_TIPO:='CHAR';
+            V_INPUT_TAMANO:=REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(V_INPUT_TIPO_CAMPO,'VARCHAR (',''),'CHAR)',''),')',''),'VARCHAR(',''),'CHAR(',''),'VARCHAR2(','');                       
+        ELSIF UPPER(V_INPUT_TIPO_CAMPO) LIKE '%DATE%' THEN 
+            V_INPUT_TIPO:='DATE';
+            V_INPUT_TAMANO:=8;
+        END IF;
+    
+ 
+
+ 
+-- SE TRANSFORMA EL DATO EN EL CURSOR DEPENDIENDO DE SU TIPO.                      
+        IF  UPPER(V_INPUT_TIPO) = 'CHAR' or UPPER(V_INPUT_TIPO) = 'DATE' THEN
+                IF V_INPUT_VALOR = '' THEN
+                V_INPUT_VALOR:='-';
+                END IF;
+                V_SQL := ' SELECT LPAD(NVL('''||V_INPUT_VALOR||''',''-''),'||(V_INPUT_TAMANO-1)||',''-'') FROM DUAL';  
+                EXECUTE IMMEDIATE V_SQL INTO V_VALOR;       
+        ELSIF UPPER(V_INPUT_TIPO) =  'NUMBER' THEN
+                    V_SQL := ' SELECT LPAD(NVL('''||V_INPUT_VALOR||''',''-''),'||(V_INPUT_TAMANO)||',''-'') FROM DUAL'; 
+                    EXECUTE IMMEDIATE V_SQL INTO V_VALOR;
+                    V_VALOR:=V_VALOR;    
+        END IF;
+        V_VALOR:= '/'||V_VALOR;
+        DBMS_OUTPUT.PUT_LINE(V_VALOR||'[SL]');
+
+    END LOOP;
+ DBMS_OUTPUT.PUT_LINE('[FILADAT]');
+
+  EXCEPTION
+
+    -- Opcional: Excepciones particulares que se quieran tratar
+    -- Como esta, por ejemplo:
+    -- WHEN TABLE_EXISTS_EXCEPTION THEN
+        -- DBMS_OUTPUT.PUT_LINE('Ya se ha realizado la copia en la tabla TMP_MOV_'||TODAY);
+
+    -- SIEMPRE DEBE HABER UN OTHERS
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.put_line('[ERROR] Se ha producido un error en la ejecución:'||TO_CHAR(SQLCODE));
+        DBMS_OUTPUT.put_line('-----------------------------------------------------------');
+        DBMS_OUTPUT.put_line(SQLERRM);
+        ROLLBACK;
+        RAISE;
+END;
+/
+
+EXIT;

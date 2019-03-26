@@ -1,0 +1,26 @@
+ORDEN;INTERFAZ;NOMBRE_CAMPO;TIPO_CAMPO;REQUERIDO;REQUERIDO_BOL;COMENTARIO
+1;AGRUPACIONES;AGR_EXTERNO;NUMBER(16,0);SI;;Código identificador único de la agrupación en origen
+2;AGRUPACIONES;AGR_GESTOR;NUMBER(16,0);SI*;;Código gestor de la agrupación
+3;AGRUPACIONES;AGR_MEDIADOR;NUMBER(16,0);NO;;Código mediador de la agrupación
+4;AGRUPACIONES;TIPO_AGRUPACION;VARCHAR2(20 CHAR);SI;;Tipo de agrupación (Código según Dic. Datos).
+5;AGRUPACIONES;AGR_NOMBRE;VARCHAR2(250 CHAR);SI;;Nombre descriptivo de la agrupación.
+6;AGRUPACIONES;AGR_DESCRIPCION;VARCHAR2(250 CHAR);NO;;Descripción breve de la agrupación.
+7;AGRUPACIONES;AGR_FECHA_ALTA;DATE;NO;;Fecha de creación de la agrupación.
+8;AGRUPACIONES;AGR_ELIMINADO;NUMBER(1,0);NO;;Indicador de si la agrupación ha sido dada de baja o no.
+9;AGRUPACIONES;AGR_FECHA_BAJA;DATE;NO;;Fecha de baja de la agrupación.
+10;AGRUPACIONES;AGR_PUBLICADO;NUMBER(1,0);SI;;Indicador de si la agrupación ha sido publicada en la web o no.
+11;AGRUPACIONES;AGR_TEXTO_WEB;VARCHAR2(512 CHAR);SI;;Texto descriptivo para la web.
+12;AGRUPACIONES;AGR_ACT_PRINCIPAL;NUMBER(16,0);SI*;;Código identificador único del activo principal.
+13;AGRUPACIONES;LOC_AGRUP_OBRA_NUEVA;VARCHAR2(20 CHAR);SI*;;Localidad (municipio) de la agrupación de obra nueva (Código según Dic. Datos).
+14;AGRUPACIONES;PROV_AGRUP_OBRA_NUEVA;VARCHAR2(20 CHAR);SI*;;Provincia de la agrupación de obra nueva (Código según Dic. Datos).
+15;AGRUPACIONES;ESTADO_AGRUP_OBRA_NUEVA;VARCHAR2(20 CHAR);SI*;;Estado de la agrupación de obra nueva (Código según Dic. Datos).
+16;AGRUPACIONES;ONV_DIR_AGRUP_OBRA_NUEVA;VARCHAR2(255 CHAR);SI*;;Dirección de la agrupación de obra nueva.
+17;AGRUPACIONES;ONV_CP_AGRUP_OBRA_NUEVA;NUMBER(8,0);SI*;;Código postal de la agrupación de obra nueva.
+18;AGRUPACIONES;ONV_ACRE_PDV_AGRUP_OBRA_NUEVA;VARCHAR2(255 CHAR);NO;;Acreedor de la agrupación de obra nueva.
+19;AGRUPACIONES;LOC_AGRUP_LOTE_RESTRINGIDO;VARCHAR2(20 CHAR);SI*;;Localidad (municipio)  de la agrupación de lote restringido (Código según Dic. Datos).
+20;AGRUPACIONES;PRO_AGRUP_LOTE_RESTRINGIDO;VARCHAR2(20 CHAR);SI*;;Provincia de la agrupación de lote restringido (Código según Dic. Datos).
+21;AGRUPACIONES;RES_DIR_AGRUP_LOTE_RESTRINGIDO;VARCHAR2(255 CHAR);SI*;;Dirección de la agrupación de lote restringido.
+22;AGRUPACIONES;RES_CP_AGRUP_LOTE_RESTRINGIDO;NUMBER(8,0);SI*;;Código postal de la agrupación de lote restringido.
+23;AGRUPACIONES;AGR_FECHA_FIRMA;DATE;SI*;;Fecha firma para Asistidas
+24;AGRUPACIONES;AGR_FECHA_VENCIMIENTO;DATE;SI*;;Fecha vencimiento para Asistidas
+25;AGRUPACIONES;AGR_IS_FORMALIZACION;NUMBER(1,0);SI*;;Es de tipo formalizacion

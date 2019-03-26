@@ -452,7 +452,7 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 																					// comercial
 																					// alquiler
 			Activo activo = activoApi.get(Long.parseLong(idActivo));
-			String tipoComercializacion = activo.getTipoComercializacion().getCodigo();
+			String tipoComercializacion = activo.getActivoPublicacion().getTipoComercializacion().getCodigo();
 			String codigoTipoActivo = activo.getTipoActivo().getCodigo();
 			ActivoPatrimonio actPatrimonio = activoPatrimonio.getActivoPatrimonioByActivo(activo.getId());
 
@@ -664,7 +664,7 @@ public class GenericManager extends BusinessOperationOverrider<GenericApi> imple
 		
 		if (!Checks.esNulo(idActivo)) {
 			Activo activo = activoApi.get(idActivo);
-			if (activo.getEnTramite()==1) {
+			if (!Checks.esNulo(activo.getEnTramite()) && activo.getEnTramite()==1) {
 				Usuario gestorProveedorTecnico = gestorActivoApi.getGestorByActivoYTipo(activo, "PTEC");
 				if (!Checks.esNulo(gestorProveedorTecnico)) {
 

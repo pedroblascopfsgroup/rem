@@ -35,6 +35,8 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
+
+T_TIPO_DATA('83','Certificado sustitutivo de Cédula de Habitabilidad','Certificado sustitutivo de Cédula de Habitabilidad','OP-13-LIPR-14'),
 T_TIPO_DATA('84','CEE (Etiqueta de eficiencia energética)','Eficiencia energética: etiqueta','OP-13-CERT-25'),
 T_TIPO_DATA('85','CEE (Justificante de presentación en registro)','Tasa de inscripción en el Registro del Certificado Energético (CEE)','OP-13-CERA-71'),
 T_TIPO_DATA('86','Boletín gas','Instalación gas: boletín suministro','OP-13-CERT-11'),
@@ -72,6 +74,7 @@ T_TIPO_DATA('117','Proyecto ejecución: certificado de eficiencia energética','
 T_TIPO_DATA('118','Eficiencia energética:No Calificable CEE','Eficiencia energética:No Calificable CEE','OP-13-CERT-30'),
 T_TIPO_DATA('119','Advisory Note aceptación de presupuestos','Advisory Note aceptación de presupuestos','OP-13-ACUE-21'),
 T_TIPO_DATA('120','Certificado sustitutivo de Cédula de Habitabilidad','Certificado sustitutivo de Cédula de Habitabilidad','OP-13-LIPR-14')
+
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     

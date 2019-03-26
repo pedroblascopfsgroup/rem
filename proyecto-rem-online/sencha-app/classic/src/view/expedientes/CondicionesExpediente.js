@@ -77,8 +77,8 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 												 * alineados
 												 */ 
 									        	bind: {
-									        		hidden: '{esCarteraAgora}',
-									        		readOnly: '{!esCarteraAgora}'
+									        		hidden: '{esCarteraAppleOAgora}',
+									        		readOnly: '{!esCarteraAppleOAgora}'
 												}
 											},
 									        {
@@ -88,7 +88,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 												fieldLabel : HreRem.i18n('fieldlabel.deposito.reserva'),
 												bind : {
 													value: '{condiciones.depositoReserva}',
-													hidden: '{!esCarteraAgora}'
+													hidden: '{!esCarteraAppleOAgora}'
 												},
 												maxValue : 3000,
 												minValue : 0
@@ -692,7 +692,7 @@ Ext.define('HreRem.view.expedientes.CondicionesExpediente', {
 							},
 							{
 								xtype : 'numberfieldbase',
-								reference : 'tipoAplicable',
+								reference : 'tipoAplicable2',
 								symbol : HreRem.i18n("symbol.porcentaje"),
 								fieldLabel : HreRem.i18n('fieldlabel.tipo.aplicable'),
 								bind : {

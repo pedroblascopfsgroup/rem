@@ -51,8 +51,15 @@ public interface GestorDocumentalAdapterApi {
 	Long uploadDocumentoPromociones(String codPromo, WebFileItem webFileItem, String userLogin, String matricula) throws Exception;
 	
 	List<DtoAdjuntoPromocion> getAdjuntosPromociones (String codPromo) throws GestorDocumentalException;
+
+	Long uploadDocumentoEntidadComprador(String idIntervinienteHaya, WebFileItem webFileItem, String userLogin,
+			String matricula) throws GestorDocumentalException;
+
+	List<DtoAdjunto> getAdjuntosEntidadComprador(String idIntervinienteHaya) throws GestorDocumentalException;
+
+	Integer crearEntidadComprador(String idIntervinienteHaya, String usuarioLogado, Long idActivo, Long idAgrupacion,
+			Long idExpediente) throws GestorDocumentalException;
 	
 	public void crearRelacionTrabajosActivo(Trabajo trabajo, Long idDocRestClient, String activo, String login,
-			CrearRelacionExpedienteDto crearRelacionExpedienteDto) throws GestorDocumentalException ;
-
+			CrearRelacionExpedienteDto crearRelacionExpedienteDto) throws GestorDocumentalException;
 }

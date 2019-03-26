@@ -132,7 +132,12 @@ Ext.define('HreRem.view.administracion.gastos.GestionGastosList', {
 	    	                     	text: HreRem.i18n('fieldlabel.motivo.rechazo'),
 	    	                     	flex: 0.5,
 	    	                     	dataIndex: 'motivoRechazo'
-		    	                 },{
+		    	                 },
+		    	                 {
+	    	                     	text: HreRem.i18n('fieldlabel.motivo.rechazo.prop'),
+	    	                     	flex: 0.5,
+	    	                     	dataIndex: 'motivoRechazoProp'
+			    	             },{
                              width: 30,
                              menuDisabled: true,
                              hideable: false,

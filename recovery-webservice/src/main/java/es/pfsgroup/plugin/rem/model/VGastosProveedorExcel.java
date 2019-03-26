@@ -171,6 +171,9 @@ public class VGastosProveedorExcel implements Serializable {
 	@Column(name="MOTIVO_RECHAZO")
 	private String motivoRechazo;
 	
+	@Column(name="GGE_MOTIVO_RECHAZO_PROP")
+	private String motivoRechazoProp;
+	
 	@Column(name="ACT_NUM_ACTIVO")
 	private String numActivo;
 	
@@ -600,5 +603,14 @@ public class VGastosProveedorExcel implements Serializable {
 	public void setNumActivo(String numActivo) {
 		this.numActivo = numActivo;
 	}
+
+	public String getMotivoRechazoProp() {
+		return motivoRechazoProp;
+	}
+
+	public void setMotivoRechazoProp(String motivoRechazoProp) {
+		this.motivoRechazoProp = motivoRechazoProp;
+	}
+	
 	
 }

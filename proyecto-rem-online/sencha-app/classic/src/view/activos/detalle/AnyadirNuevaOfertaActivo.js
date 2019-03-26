@@ -45,7 +45,7 @@ Ext.define('HreRem.view.activos.detalle.AnyadirNuevaOfertaActivo', {
     	
     	var me = this;
     	
-    	me.buttons = [ { itemId: 'btnGuardar', text: 'Crear', handler: 'onClickBotonGuardarOferta'},  { itemId: 'btnCancelar', text: 'Cancelar', handler: 'onClickBotonCancelarOferta'}];
+    	me.buttons = [ { itemId: 'btnGuardar', text: 'Crear', handler: 'onClickBotonGuardarOferta', listeners: {click: 'comprobarFormato'}},  { itemId: 'btnCancelar', text: 'Cancelar', handler: 'onClickBotonCancelarOferta'}];
     	
     	me.items = [
 					{

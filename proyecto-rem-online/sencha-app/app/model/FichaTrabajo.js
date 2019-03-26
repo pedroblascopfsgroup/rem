@@ -242,6 +242,9 @@ Ext.define('HreRem.model.FichaTrabajo', {
     		{
     			name: 'logadoGestorMantenimiento',
     			type: 'boolean'
+    		},
+    		{
+    			name: 'codSubcartera'
     		}
     		
     ],

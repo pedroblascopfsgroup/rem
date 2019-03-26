@@ -126,6 +126,7 @@ Ext.define('HreRem.view.activos.ActivosController', {
 			var me = this;
 			var idActivo = null;
 			var codCartera = null;
+			var codSubcartera = null;
 			var grid = me.getView().down('grid');
 			if(Ext.isEmpty(grid)){ 
 				return true;
@@ -136,8 +137,9 @@ Ext.define('HreRem.view.activos.ActivosController', {
 			
 				idActivo = selected[0].getData().id;
 		  		codCartera = selected[0].getData().entidadPropietariaCodigo;
+		  		codSubcartera = selected[0].getData().subcarteraCodigo;
 		  	}
-			 me.getView().fireEvent('openModalWindow',"HreRem.view.trabajos.detalle.CrearTrabajo",{idActivo: idActivo, codCartera: codCartera,logadoGestorMantenimiento: true,idAgrupacion: null, idGestor: null});    	
+			 me.getView().fireEvent('openModalWindow',"HreRem.view.trabajos.detalle.CrearTrabajo",{idActivo: idActivo, codCartera: codCartera, codSubcartera: codSubcartera, logadoGestorMantenimiento: true,idAgrupacion: null, idGestor: null});    	
 		},
 
 	onChangeChainedCombo: function(combo) {

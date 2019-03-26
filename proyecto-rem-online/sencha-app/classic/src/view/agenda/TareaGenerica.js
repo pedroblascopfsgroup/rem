@@ -798,9 +798,14 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 
     T004_FijacionPlazoValidacion: function() {
         var me = this;
+        var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
         
         me.down('[name=fechaTope]').allowBlank = true;
-        me.down('[name=fechaConcreta]').allowBlank = true;
+        if(CONST.CARTERA['CERBERUS'] == codigoCartera || CONST.CARTERA['EGEO'] == codigoCartera){
+        	me.down('[name=fechaConcreta]').allowBlank = false;
+        }else{
+        	me.down('[name=fechaConcreta]').allowBlank = true;
+        }
         me.down('[name=horaConcreta]').allowBlank = true;
         
         if (me.down('[name=fechaTope]').value != null) {
@@ -1135,7 +1140,6 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 		var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
 		var comiteSuperior = me.down('[name=comiteSuperior]');
 		var comite = me.down('[name=comite]');
-
 		if(CONST.CARTERA['BANKIA'] == codigoCartera) {
 			me.desocultarCampo(comiteSuperior);
 		}else{

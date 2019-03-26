@@ -161,6 +161,17 @@ Ext.define('HreRem.model.Tramite', {
     	{
     		name: 'tramiteAlquilerAnulado',
     		type: 'boolean'
+    	},
+    	{
+    		name: 'esTareaSolicitudOAutorizacion', //backend aplicado filtro cartera cerberus y Egeo
+    		type: 'boolean'
+    	},
+    	{
+    		name: 'evaluarBtnReasignar',
+    		calculate: function(data) {
+    			return data.esTareaAutorizacionBankia == true || data.esTareaSolicitudOAutorizacion == true;
+    		},
+    		depends:['esTareaAutorizacionBankia','esTareaSolicitudOAutorizacion']
     	}
     ],
 

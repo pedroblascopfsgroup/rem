@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import javax.validation.constraints.Size;
 
+import es.capgemini.devon.beans.Service;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
@@ -12,6 +13,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
 import es.pfsgroup.plugin.rem.rest.validator.groups.Insert;
 import es.pfsgroup.plugin.rem.rest.validator.groups.Update;
+
 
 public class OfertaTitularAdicionalDto implements Serializable {
 
@@ -46,8 +48,28 @@ public class OfertaTitularAdicionalDto implements Serializable {
 			Update.class })
 	private String codigoRegimenEconomico;
 	
+	private Boolean rechazarCesionDatosPublicidad;
+	private Boolean rechazarCesionDatosPropietario;
+	private Boolean rechazarCesionDatosProveedores;
 	
-	
+	public Boolean getRechazarCesionDatosPublicidad() {
+		return rechazarCesionDatosPublicidad;
+	}
+	public void setRechazarCesionDatosPublicidad(Boolean rechazarCesionDatosPublicidad) {
+		this.rechazarCesionDatosPublicidad = rechazarCesionDatosPublicidad;
+	}
+	public Boolean getRechazarCesionDatosPropietario() {
+		return rechazarCesionDatosPropietario;
+	}
+	public void setRechazarCesionDatosPropietario(Boolean rechazarCesionDatosPropietario) {
+		this.rechazarCesionDatosPropietario = rechazarCesionDatosPropietario;
+	}
+	public Boolean getRechazarCesionDatosProveedores() {
+		return rechazarCesionDatosProveedores;
+	}
+	public void setRechazarCesionDatosProveedores(Boolean rechazarCesionDatosProveedires) {
+		this.rechazarCesionDatosProveedores = rechazarCesionDatosProveedires;
+	}
 	public String getNombre() {
 		return nombre;
 	}

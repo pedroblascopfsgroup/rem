@@ -37,6 +37,7 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBien;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBDDOrigenBien;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBLocalizacionesBien;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDClasificacionApple;
 import es.pfsgroup.plugin.rem.model.dd.DDEntidadOrigen;
 import es.pfsgroup.plugin.rem.model.dd.DDEntradaActivoBankia;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoActivo;
@@ -424,16 +425,18 @@ public class Activo implements Serializable, Auditable {
     private Boolean estaEnPuja;
     
     @Column(name = "ACT_EXCLUIR_DWH")
-    private Boolean excluirDwh;
-	
-	
-    // Getters del activo --------------------------------------------
-    
+    private Boolean excluirDwh;    
 
     @Column(name = "ACT_MOTIVO")
     private String motivoActivo;
 
-
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "DD_CAP_ID")
+    private DDClasificacionApple clasificacionApple;
+    
+	
+    // Getters del activo --------------------------------------------
+    
     public Long getId() {
 		return id;
 	}
@@ -1738,4 +1741,14 @@ public class Activo implements Serializable, Auditable {
 	public void setMotivoActivo(String motivoActivo) {
 		this.motivoActivo = motivoActivo;
 	}
+
+	public DDClasificacionApple getClasificacionApple() {
+		return clasificacionApple;
+	}
+
+	public void setClasificacionApple(DDClasificacionApple clasificacionApple) {
+		this.clasificacionApple = clasificacionApple;
+	}
+	
+	
 }

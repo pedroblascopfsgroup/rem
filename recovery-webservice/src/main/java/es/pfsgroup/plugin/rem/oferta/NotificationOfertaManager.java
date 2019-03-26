@@ -439,8 +439,15 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 			para.add(buzonPfs.getEmail());
 		}
 		
-		String tipoDocIndentificacion= oferta.getCliente().getTipoDocumento().getDescripcion();
-		String docIdentificacion= oferta.getCliente().getDocumento();
+		String tipoDocIndentificacion=null;
+		String docIdentificacion=null;
+		if(!Checks.esNulo(oferta.getCliente())) {
+			if(!Checks.esNulo(oferta.getCliente().getTipoDocumento())) {
+				tipoDocIndentificacion= oferta.getCliente().getTipoDocumento().getDescripcion();
+			}
+			docIdentificacion= oferta.getCliente().getDocumento();
+		}
+		
 		String codigoPrescriptor= oferta.getPrescriptor().getCodigoProveedorRem().toString();
 		String nombrePrescriptor= oferta.getPrescriptor().getNombre();
 		List<DtoAdjuntoMail> adjuntos = new ArrayList<DtoAdjuntoMail>();

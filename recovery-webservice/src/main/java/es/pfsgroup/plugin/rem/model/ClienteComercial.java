@@ -21,6 +21,7 @@ import javax.persistence.Version;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Where;
+import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
@@ -178,19 +179,24 @@ public class ClienteComercial implements Serializable, Auditable {
 	@JoinColumn(name = "DD_REM_ID")
 	private DDRegimenesMatrimoniales regimenMatrimonial;
     
+	//Se añaden nuevos atributos. HREOS-4851
+    @Column(name = "CLC_CESION_DATOS")
+    private Boolean cesionDatos;
+    
+    @Column(name = "CLC_COMUNI_TERCEROS")
+    private Boolean comunicacionTerceros;
+    
+    @Column(name = "CLC_TRANSF_INTER")
+    private Boolean transferenciasInternacionales;
 	
-	
-	
+    @Column(name = "CLC_ID_PERSONA_HAYA")
+    private String idPersonaHaya;
+
 	@Version   
 	private Long version;
 
 	@Embedded
 	private Auditoria auditoria;
-    
-
-	
-	
-	
 
 	public Long getId() {
 		return id;
@@ -508,6 +514,36 @@ public class ClienteComercial implements Serializable, Auditable {
 	public void setRegimenMatrimonial(DDRegimenesMatrimoniales regimenMatrimonial) {
 		this.regimenMatrimonial = regimenMatrimonial;
 	}
+	
+	public Boolean getCesionDatos() {
+		return cesionDatos;
+	}
+//Get and Set de los objetos creados en HREOS-4851
+	public void setCesionDatos(Boolean cesionDatos) {
+		this.cesionDatos = cesionDatos;
+	}
 
-   
+	public Boolean getComunicacionTerceros() {
+		return comunicacionTerceros;
+	}
+
+	public void setComunicacionTerceros(Boolean comunicacionTerceros) {
+		this.comunicacionTerceros = comunicacionTerceros;
+	}
+
+	public Boolean getTransferenciasInternacionales() {
+		return transferenciasInternacionales;
+	}
+
+	public void setTransferenciasInternacionales(Boolean transferenciasInternacionales) {
+		this.transferenciasInternacionales = transferenciasInternacionales;
+	}
+	
+	public String getIdPersonaHaya() {
+		return idPersonaHaya;
+	}
+
+	public void setIdPersonaHaya(String idPersonaHaya) {
+		this.idPersonaHaya = idPersonaHaya;
+	}   
 }

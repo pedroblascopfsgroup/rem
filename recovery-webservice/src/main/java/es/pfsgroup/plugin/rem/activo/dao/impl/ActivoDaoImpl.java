@@ -785,12 +785,11 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 
 	@Override
 	public Activo getActivoByNumActivo(Long activoVinculado) {
-    	Session session = getSession();
+    	Session session = this.getSessionFactory().getCurrentSession();
 		Criteria criteria = session.createCriteria(Activo.class);
 		criteria.add(Restrictions.eq("numActivo", activoVinculado));
 
 		Activo activo =  HibernateUtils.castObject(Activo.class, criteria.uniqueResult());
-		session.disconnect();
 
 		return activo;
 	}
@@ -1075,13 +1074,17 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<ActivoCalificacionNegativa> getListActivoCalificacionNegativaByIdActivo(Long idActivo) {
-		String hql = " from ActivoCalificacionNegativa acn ";
+		String hql = "select acn from ActivoCalificacionNegativa acn ";
 		HQLBuilder hb = new HQLBuilder(hql);
 		hb.appendWhere(" acn.activo.id =  "+idActivo+" ");
 		hb.appendWhere(" acn.auditoria.borrado = 0 ");
 
-//		return (List<ActivoCalificacionNegativa>) this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).list();
-		return  HibernateUtils.castList(ActivoCalificacionNegativa.class, this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).list());
+		List<ActivoCalificacionNegativa> lista = (List<ActivoCalificacionNegativa>) this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).list();
+		if(!Checks.estaVacio(lista)) {
+			return HibernateUtils.castList(ActivoCalificacionNegativa.class, lista);
+		}
+		return lista;
+		//return  HibernateUtils.castList(ActivoCalificacionNegativa.class, this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).list());
 
 	}
 	
@@ -1133,7 +1136,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 
 		hdc.setGestorActualizacion(getGestorActualizacionHistoricoDestinoComercial(extraArgs));
 
-		hdc.setTipoComercializacion(activo.getTipoComercializacion());
+		hdc.setTipoComercializacion(activo.getActivoPublicacion().getTipoComercializacion());
 
 		genericDao.save(HistoricoDestinoComercial.class, hdc);
 

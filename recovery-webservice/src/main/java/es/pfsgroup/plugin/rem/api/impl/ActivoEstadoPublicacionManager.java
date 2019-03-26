@@ -353,7 +353,8 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 
 	// Comprobación mínima.
 	private Boolean tienePrecioVenta(Long idActivo) {
-		return !Checks.esNulo(activoValoracionDao.getImporteValoracionVentaWebPorIdActivo(idActivo));
+		Double tienePrecioVenta = activoValoracionDao.getImporteValoracionVentaWebPorIdActivo(idActivo);
+		return !Checks.esNulo(tienePrecioVenta) && tienePrecioVenta != 0.0;
 	}
 
 	// Comprobación mínima.

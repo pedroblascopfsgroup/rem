@@ -36,6 +36,7 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.AdjuntoExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.AdjuntoTrabajo;
 import es.pfsgroup.plugin.rem.model.CompradorExpediente;
 import es.pfsgroup.plugin.rem.model.DtoActivoTramite;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
@@ -49,6 +50,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoGasto;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoProveedor;
 import es.pfsgroup.plugin.rem.tareasactivo.TareaActivoManager;
+import es.pfsgroup.plugin.rem.tareasactivo.dao.ActivoTareaExternaDao;
 import es.pfsgroup.plugin.rem.utils.DiccionarioTargetClassMap;
 
 /**
@@ -94,6 +96,9 @@ public class ActivoTramiteManager implements ActivoTramiteApi{
     
     @Autowired
 	private TareaActivoManager tareaActivoManager;
+    
+    @Autowired
+    private ActivoTareaExternaDao activoTareaExternaDao;
     
 	
 	public ActivoTramite get(Long idTramite){
@@ -493,7 +498,42 @@ public class ActivoTramiteManager implements ActivoTramiteApi{
 		return mensajeValidacion;
 	}
 	
-	
+	@Override
+	public String mismoNumeroAdjuntosComoTareasTipoUGValidacion(TareaExterna tareaExterna, String codigoDocAdjunto, String uGestion, Long idTareaProcedimiento){
+		// Mensaje de validación
+		String mensajeValidacion = "";
+		if(Checks.esNulo(tareaExterna)){
+			mensajeValidacion = mensajeValidacion.concat(messageServices.getMessage("trabajo.adjuntos.validacion.advertencia.tareaInvalida").concat(" "));
+		}else{
+			Trabajo tbj = trabajoApi.getTrabajoByTareaExterna(tareaExterna);
+			if(Checks.esNulo(tbj)){
+				mensajeValidacion = mensajeValidacion.concat(messageServices.getMessage("trabajo.adjuntos.validacion.advertencia.tareaInvalida").concat(" "));
+			}else{
+				//Obtenemos el tipo de documento exigido
+				DDTipoDocumentoActivo tipoFicheroAdjuntoT = genericDao.get(DDTipoDocumentoActivo.class, genericDao.createFilter(FilterType.EQUALS, "codigo", codigoDocAdjunto));
+				
+				//Obtenemos la lista de documentos del tipo pasado por parámetro 
+				Filter filtroTrabajo = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", tbj.getId());
+				Filter filtroTipoDoc = genericDao.createFilter(FilterType.EQUALS, "tipoDocumentoActivo.codigo", codigoDocAdjunto);
+				List<AdjuntoTrabajo> listaAdjuntosTrabjo = genericDao.getList(AdjuntoTrabajo.class, filtroTrabajo, filtroTipoDoc);
+				
+				Long tramiteId = ((TareaActivo) tareaExterna.getTareaPadre()).getTramite().getId();
+				
+				//Obtenemos la lista de tareas externas de tipo (idTareaProcedimiento)
+				List<TareaExterna> listaTareas = activoTareaExternaDao.getTareasTramiteTipo(tramiteId, idTareaProcedimiento);
+				
+				if(listaAdjuntosTrabjo.size() < listaTareas.size()){
+					Object[] obj = new Object[3];
+					obj[0] = tipoFicheroAdjuntoT.getDescripcion();
+					obj[1] = listaTareas.size();
+					obj[2] = listaAdjuntosTrabjo.size();
+					
+					mensajeValidacion = mensajeValidacion.concat(messageServices.getMessage("trabajo.adjuntos.validacion.advertencia.solicitudExtraordinaria.numDocsInvalido", obj));
+				}
+			}
+		}
+		return mensajeValidacion;
+	}
 	
 	@Override
 	public Boolean checkFechaEmisionInformeJuridico(TareaExterna tareaExterna){

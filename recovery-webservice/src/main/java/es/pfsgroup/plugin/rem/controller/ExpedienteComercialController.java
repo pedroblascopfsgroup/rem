@@ -27,7 +27,6 @@ import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.devon.utils.FileUtils;
 import es.capgemini.pfs.adjunto.model.Adjunto;
-import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
@@ -39,15 +38,9 @@ import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.rem.adapter.ExpedienteComercialAdapter;
-import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.adapter.TrabajoAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
-import es.pfsgroup.plugin.rem.api.ExpedienteAvisadorApi;
-import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
-import es.pfsgroup.plugin.rem.api.OfertaApi;
-import es.pfsgroup.plugin.rem.api.ClienteComercialApi;
-import es.pfsgroup.plugin.rem.api.ExpedienteAvisadorApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.clienteComercial.dao.ClienteComercialDao;
 import es.pfsgroup.plugin.rem.excel.ActivosExpedienteExcelReport;
@@ -74,7 +67,6 @@ import es.pfsgroup.plugin.rem.model.DtoDiccionario;
 import es.pfsgroup.plugin.rem.model.DtoEntregaReserva;
 import es.pfsgroup.plugin.rem.model.DtoExpedienteHistScoring;
 import es.pfsgroup.plugin.rem.model.DtoExpedienteScoring;
-import es.pfsgroup.plugin.rem.model.DtoExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.DtoFichaExpediente;
 import es.pfsgroup.plugin.rem.model.DtoFormalizacionFinanciacion;
 import es.pfsgroup.plugin.rem.model.DtoGastoExpediente;
@@ -95,31 +87,8 @@ import es.pfsgroup.plugin.rem.model.DtoTanteoYRetractoOferta;
 import es.pfsgroup.plugin.rem.model.DtoTextosOferta;
 import es.pfsgroup.plugin.rem.model.DtoTipoDocExpedientes;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.Oferta;
-import es.pfsgroup.plugin.rem.model.VBusquedaDatosCompradorExpediente;
-import es.pfsgroup.recovery.api.ExpedienteApi;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.ModelAndView;
 import es.pfsgroup.plugin.rem.model.TmpClienteGDPR;
 import es.pfsgroup.plugin.rem.model.VBusquedaDatosCompradorExpediente;
-
-
-import javax.annotation.Resource;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.util.List;
-import java.util.Properties;
 
 
 @Controller
@@ -156,15 +125,6 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	private ExpedienteComercialApi expedienteComercialApi;
 
 	@Autowired
-	private ClienteComercialApi clienteComercialApi;
-
-	@Autowired
-	private GenericAdapter genericAdapter;
-
-	@Autowired
-	private List<ExpedienteAvisadorApi> avisadores;
-
-	@Autowired
 	private UploadAdapter uploadAdapter;
 
 	@Autowired
@@ -189,16 +149,10 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	private LogTrustEvento trustMe;
 
 	@Autowired
-	private OfertaApi ofertaApi;
-
-	@Autowired
 	private ActivoTramiteApi activoTramiteApi;
 
 	@Autowired
 	private ActivoApi activoApi;
-
-	@Autowired
-	private ExpedienteApi expedienteApi;
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
@@ -223,20 +177,13 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getAvisosExpedienteById(Long id, WebDto webDto, ModelMap model) {
 
-		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
-		ExpedienteComercial expediente = expedienteComercialApi.findOne(id);
-
-		DtoAviso avisosFormateados = new DtoAviso();
-		avisosFormateados.setDescripcion("");
-		avisosFormateados.setId(id.toString());
-
-		for (ExpedienteAvisadorApi avisador : avisadores) {
-			DtoAviso aviso = avisador.getAviso(expediente, usuarioLogado);
-			if (!Checks.esNulo(aviso) && !Checks.esNulo(aviso.getDescripcion())) {
-				avisosFormateados.setDescripcion(avisosFormateados.getDescripcion() + "<div class='div-aviso red'>"
-						+ aviso.getDescripcion() + "</div>");
-			}
-			
+		try {
+			DtoAviso avisosFormateados = expedienteComercialApi.getAvisosExpedienteById(id);
+			model.put(RESPONSE_DATA_KEY, avisosFormateados);
+			model.put(RESPONSE_SUCCESS_KEY, true);
+		} catch (Exception e) {
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.error("Error en ExpedienteComercialController", e);
 		}
 
 		return createModelAndViewJson(model);

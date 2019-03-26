@@ -2706,12 +2706,12 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 				renunciaExencion.reset();
 	    		renunciaExencion.setReadOnly(true);
 	    		tipoAplicable.reset();
-	    		tipoAplicable.allowBlank = true;
 	    		tipoAplicable.setDisabled(true);
+	    		tipoAplicable.allowBlank = true;
 			} else {
 				operacionExenta.setReadOnly(false);
-				tipoAplicable.allowBlank = false;
 				tipoAplicable.setDisabled(false);
+				tipoAplicable.allowBlank = false;
 			}
 		}
 	},

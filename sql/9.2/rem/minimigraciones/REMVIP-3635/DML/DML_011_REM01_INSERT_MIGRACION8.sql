@@ -94,7 +94,8 @@ BEGIN
 
   END IF;
   
-  
+     COMMIT;	  
+
       V_SENTENCIA := 'BEGIN '||V_ESQUEMA||'.OPERACION_DDL.DDL_TABLE(''ANALYZE'','''||V_TABLA||''',''10''); END;';
       EXECUTE IMMEDIATE V_SENTENCIA;
   

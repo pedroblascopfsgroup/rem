@@ -5334,6 +5334,14 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		
 		return DDSubcartera.CODIGO_PROMONTORIA.equals(activo.getSubcartera().getCodigo());
 	}
+	
+	@Override
+	public boolean esSubcarteraApple(Long idActivo){
+		Filter filterAct = genericDao.createFilter(FilterType.EQUALS, "id", idActivo);
+		Activo activo = genericDao.get(Activo.class, filterAct);
+		
+		return DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo());
+	}
 
 	@Override
 	public DtoActivoFichaCabecera getActivosPropagables(Long idActivo) {

@@ -619,6 +619,7 @@ Ext.define('HreRem.view.expedientes.DatosCompradorWizard', {
     },
     
     esEditable: function(){
+    	
     	var me = this;
     	
     	if($AU.userIsRol("HAYASUPER")){
@@ -636,10 +637,13 @@ Ext.define('HreRem.view.expedientes.DatosCompradorWizard', {
     },
     
     checkCoe: function(){
+    	
     	var me = this;
     	
-    	var estadoExpediente = me.expediente.data.codigoEstado;
-    	var solicitaReserva = me.expediente.data.solicitaReserva;
+    	me = me.lookupController().getViewModel().get('expediente');
+    	
+    	var estadoExpediente = me.data.codigoEstado;
+    	var solicitaReserva = me.data.solicitaReserva;
     	if((solicitaReserva == 0 || solicitaReserva == null) && (estadoExpediente == CONST.ESTADOS_EXPEDIENTE['RESERVADO'] || estadoExpediente == CONST.ESTADOS_EXPEDIENTE['APROBADO']
     	|| estadoExpediente == CONST.ESTADOS_EXPEDIENTE['FIRMADO'] || estadoExpediente == CONST.ESTADOS_EXPEDIENTE['ANULADO'] || estadoExpediente == CONST.ESTADOS_EXPEDIENTE['VENDIDO'])){
     		return true;

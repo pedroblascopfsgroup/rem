@@ -2152,7 +2152,7 @@ public class AgrupacionAdapter {
 
 			// Comprobamos si existe en la tabla CGD_CLIENTE_GDPR un registro con el mismo
 			// número y tipo de documento
-			ClienteGDPR cliGDPR = genericDao.get(ClienteGDPR.class,
+			List<ClienteGDPR> cliGDPR = genericDao.getList(ClienteGDPR.class,
 					genericDao.createFilter(FilterType.EQUALS, "tipoDocumento.id", tipoDocumento.getId()),
 					genericDao.createFilter(FilterType.EQUALS, "numDocumento", dto.getNumDocumentoCliente()));
 
@@ -2164,33 +2164,36 @@ public class AgrupacionAdapter {
 			
 			// Si existe pasamos la información al histórico y actualizamos el objeto con
 			// los nuevos datos
-			if (!Checks.esNulo(cliGDPR)) {
+			if (!Checks.estaVacio(cliGDPR) && cliGDPR.size() > 0) {
 
 				// Primero historificamos los datos de ClienteGDPR en ClienteCompradorGDPR
 				ClienteCompradorGDPR clienteCompradorGDPR = new ClienteCompradorGDPR();
-				clienteCompradorGDPR.setTipoDocumento(cliGDPR.getTipoDocumento());
-				clienteCompradorGDPR.setNumDocumento(cliGDPR.getNumDocumento());
-				clienteCompradorGDPR.setCesionDatos(cliGDPR.getCesionDatos());
-				clienteCompradorGDPR.setComunicacionTerceros(cliGDPR.getComunicacionTerceros());
-				clienteCompradorGDPR.setTransferenciasInternacionales(cliGDPR.getTransferenciasInternacionales());
-				if (!Checks.esNulo(cliGDPR.getAdjuntoComprador())) {
-					clienteCompradorGDPR.setAdjuntoComprador(cliGDPR.getAdjuntoComprador());
+				clienteCompradorGDPR.setTipoDocumento(cliGDPR.get(0).getTipoDocumento());
+				clienteCompradorGDPR.setNumDocumento(cliGDPR.get(0).getNumDocumento());
+				clienteCompradorGDPR.setCesionDatos(cliGDPR.get(0).getCesionDatos());
+				clienteCompradorGDPR.setComunicacionTerceros(cliGDPR.get(0).getComunicacionTerceros());
+				clienteCompradorGDPR.setTransferenciasInternacionales(cliGDPR.get(0).getTransferenciasInternacionales());
+				if (!Checks.esNulo(cliGDPR.get(0).getAdjuntoComprador())) {
+					clienteCompradorGDPR.setAdjuntoComprador(cliGDPR.get(0).getAdjuntoComprador());
 				}
 
 				genericDao.save(ClienteCompradorGDPR.class, clienteCompradorGDPR);
 
-				// Despues se hace el update en ClienteGDPR
-				cliGDPR.setCliente(clienteComercial);
-				cliGDPR.setCesionDatos(dto.getCesionDatos());
-				cliGDPR.setComunicacionTerceros(dto.getComunicacionTerceros());
-				cliGDPR.setTransferenciasInternacionales(dto.getTransferenciasInternacionales());
-
-				if (!Checks.esNulo(docAdjunto)) {
-					cliGDPR.setAdjuntoComprador(docAdjunto);
+				for(ClienteGDPR clc : cliGDPR){
+					// Despues se hace el update en ClienteGDPR
+					clc.setCliente(clienteComercial);
+					clc.setCesionDatos(dto.getCesionDatos());
+					clc.setComunicacionTerceros(dto.getComunicacionTerceros());
+					clc.setTransferenciasInternacionales(dto.getTransferenciasInternacionales());
+	
+					if (!Checks.esNulo(docAdjunto)) {
+						clc.setAdjuntoComprador(docAdjunto);
+					}
+					genericDao.update(ClienteGDPR.class, clc);
+	
+					
 				}
-				genericDao.update(ClienteGDPR.class, cliGDPR);
-
-				clienteComercialDao.deleteTmpClienteByDocumento(cliGDPR.getNumDocumento());
+				clienteComercialDao.deleteTmpClienteByDocumento(cliGDPR.get(0).getNumDocumento());
 
 				// Si no existe simplemente creamos e insertamos un nuevo objeto ClienteGDPR
 			} else {

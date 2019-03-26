@@ -57,6 +57,7 @@ public class MaestroDePersonas implements Runnable {
 	private static final String ID_ORIGEN_REM = "REM";
 	private static final String ID_TIPO_IDENTIFICADOR_NIF_CIF = "NIF/CIF";
 	private static final String ID_ROL_16 = "16";
+	private static final String ID_PERSONA_SIMULACION = "simulacion";
 
 	private PersonaInputDto personaDto = new PersonaInputDto();
 
@@ -80,6 +81,7 @@ public class MaestroDePersonas implements Runnable {
 	public void run() {
 		Session sessionObj = null;
 		List<CompradorExpediente> listaPersonas = null;
+		Integer idPersonaSimulado = (int) (Math.random() * 1000000) + 1;
 		try {
 			restApi.doSessionConfig(this.userName);
 			Thread.sleep(5000);
@@ -136,6 +138,19 @@ public class MaestroDePersonas implements Runnable {
 											Long.parseLong(personaOutputDto.getIdIntervinienteHaya()));
 									tmpClienteGDPR.setNumDocumento(personaDto.getIdPersonaOrigen());
 									genericDao.save(TmpClienteGDPR.class, tmpClienteGDPR);
+								} else if (ID_PERSONA_SIMULACION.equals(personaOutputDto.getResultDescription())) {
+									Criteria criteria = sessionObj.createCriteria(TmpClienteGDPR.class);
+									criteria.add(Restrictions.eq("numDocumento",
+											compradorExpediente.getPrimaryKey().getComprador().getDocumento()));
+									TmpClienteGDPR tmpClienteGDPR = HibernateUtils.castObject(TmpClienteGDPR.class,
+											criteria.uniqueResult());
+
+									if (Checks.esNulo(tmpClienteGDPR)) {
+										tmpClienteGDPR = new TmpClienteGDPR();
+										tmpClienteGDPR.setIdPersonaHaya(Long.parseLong(idPersonaSimulado.toString()));
+										tmpClienteGDPR.setNumDocumento(personaDto.getIdPersonaOrigen());
+										genericDao.save(TmpClienteGDPR.class, tmpClienteGDPR);
+									}
 								}
 							} else {
 								logger.error("[MAESTRO DE PERSONAS] EL ID RECUPERADO ES "
@@ -145,6 +160,8 @@ public class MaestroDePersonas implements Runnable {
 							if (!Checks.esNulo(personaOutputDto)) {
 								if (!Checks.esNulo(personaOutputDto.getIdIntervinienteHaya())) {
 									compradorExpediente.setIdPersonaHaya(personaOutputDto.getIdIntervinienteHaya());
+								} else if (ID_PERSONA_SIMULACION.equals(personaOutputDto.getResultDescription())) {
+									compradorExpediente.setIdPersonaHaya(idPersonaSimulado.toString());
 								} else {
 									compradorExpediente.setIdPersonaHaya(idPersonaHayaNoExiste);
 								}
@@ -225,7 +242,7 @@ public class MaestroDePersonas implements Runnable {
 					}
 
 					if (!Checks.esNulo(personaOutputDto) && !Checks.esNulo(clienteCom) && clienteCom.size() > 0) {
-						
+
 						for (ClienteComercial clc : clienteCom) {
 							if (!Checks.esNulo(personaOutputDto.getIdIntervinienteHaya())) {
 								clc.setIdPersonaHaya(personaOutputDto.getIdIntervinienteHaya());
@@ -233,13 +250,15 @@ public class MaestroDePersonas implements Runnable {
 								clc.setIdPersonaHaya(idPersonaHayaNoExiste);
 							}
 							genericDao.update(ClienteComercial.class, clc);
-						}						
-						
+						}
+
 					}
 				}
 			}
 			sessionObj.close();
-		} catch (Exception e) {
+		} catch (
+
+		Exception e) {
 			logger.error("Error maestro de personas", e);
 		}
 	}

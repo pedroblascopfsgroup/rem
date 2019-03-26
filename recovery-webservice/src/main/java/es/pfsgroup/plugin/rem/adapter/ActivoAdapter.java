@@ -2037,7 +2037,8 @@ public class ActivoAdapter {
 					if((DDCartera.CODIGO_CARTERA_CERBERUS.equals(cartera.getCodigo()) 
 							&& (DDSubcartera.CODIGO_JAIPUR_INMOBILIARIO.equals(subcartera.getCodigo()) 
 									|| DDSubcartera.CODIGO_AGORA_INMOBILIARIO.equals(subcartera.getCodigo())
-									|| DDSubcartera.CODIGO_EGEO.equals(subcartera.getCodigo())))
+									|| DDSubcartera.CODIGO_EGEO.equals(subcartera.getCodigo())
+									|| DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(subcartera.getCodigo())))
 					   || (DDCartera.CODIGO_CARTERA_EGEO.equals(cartera.getCodigo())
 							   && (DDSubcartera.CODIGO_ZEUS.equals(subcartera.getCodigo())
 									   || DDSubcartera.CODIGO_PROMONTORIA.equals(subcartera.getCodigo())))){

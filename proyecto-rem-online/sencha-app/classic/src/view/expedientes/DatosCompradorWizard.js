@@ -11,7 +11,7 @@ Ext.define('HreRem.view.expedientes.DatosCompradorWizard', {
 	modoEdicion: true, // Inicializado para evitar errores.
 	scrollable	: 'y',
 	listeners: {
-		boxready:'cargarDatosCompradorWizard'
+		show:'cargarDatosCompradorWizard'
 	},
   
 

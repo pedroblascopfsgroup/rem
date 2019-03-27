@@ -1319,7 +1319,11 @@ public class ActivoController extends ParadiseJsonController {
 				if (activoApi.isVendido(idActivo)) {
 					model.put("errorCreacion", "No se puede lanzar un trámite de admisión de un activo vendido");
 					model.put(RESPONSE_SUCCESS_KEY, false);
-				} else {
+				}else if(activoDao.isUnidadAlquilable(idActivo)) {
+					model.put("errorCreacion", "No se puede lanzar un trámite de admisión de una unidad alquilable");
+					model.put(RESPONSE_SUCCESS_KEY, false);
+				}
+				else {
 					model.put(RESPONSE_DATA_KEY, adapter.crearTramiteAdmision(idActivo));
 				}
 			}

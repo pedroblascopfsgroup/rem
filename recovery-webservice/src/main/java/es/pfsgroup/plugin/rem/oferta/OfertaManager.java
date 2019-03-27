@@ -3542,7 +3542,16 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 			List<ClienteGDPR> clientesGDPR = genericDao.getList(ClienteGDPR.class, filterComprador,filterCodigoTpoDoc);
 			
 			if(!clientesGDPR.isEmpty()) {
-				clienteGDPR = clientesGDPR.get(0);
+				for(ClienteGDPR cl : clientesGDPR){
+					if(cl.getCliente() != null && !Checks.esNulo(cl.getCliente().getIdPersonaHaya())){
+						clienteGDPR = cl;
+						break;
+					}
+				}
+				if(clienteGDPR == null){
+					clienteGDPR = clientesGDPR.get(0);
+				}
+				
 			}
 		}
 		if(!Checks.esNulo(clienteGDPR)) {

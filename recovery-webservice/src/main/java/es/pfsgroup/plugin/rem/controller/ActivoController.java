@@ -2604,7 +2604,7 @@ public class ActivoController extends ParadiseJsonController {
 	public ModelAndView getActivoExists(String numActivo, ModelMap model) {
 
 		try {
-			Long idActivo = activoApi.getIdByNumActivo(Long.parseLong(numActivo));
+			Long idActivo = activoApi.getActivoExists(Long.parseLong(numActivo));
 
 			if(!Checks.esNulo(idActivo)) {
 				model.put("success", true);

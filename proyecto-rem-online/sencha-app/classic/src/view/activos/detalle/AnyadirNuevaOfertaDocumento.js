@@ -8,7 +8,6 @@ Ext.define('HreRem.view.activos.detalle.AnyadirNuevaOfertaDocumento', {
 	listeners: {    
 		boxready: function(window) {
 			var me = this;
-			
 			var wizard = me.up();
 			
 			Ext.Array.each(window.down('fieldset').query('field[isReadOnlyEdit]'),
@@ -24,11 +23,18 @@ Ext.define('HreRem.view.activos.detalle.AnyadirNuevaOfertaDocumento', {
 			}
 			
 			
+			
 		},
 			
 		show: function() {
 			var me = this;
-			me.resetWindow();			
+			var wizard = me.up();
+			
+			if(wizard.xtype.indexOf("wizardaltacomprador") >= 0){
+				window.setViewModel(me.up('wizardaltacomprador').down('datoscompradorwizard').getViewModel());
+			}
+			me.resetWindow();	
+
 		}
 	},
 	    

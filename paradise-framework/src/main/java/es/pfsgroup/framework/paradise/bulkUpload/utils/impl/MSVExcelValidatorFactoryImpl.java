@@ -138,6 +138,9 @@ public class MSVExcelValidatorFactoryImpl {
 	@Autowired
 	private MSVEnvioBurofaxExcelValidator envioBurofax;
 
+	@Autowired
+	private MSVImpuestosExcelValidator cargaMasivaImpuestos;
+
 
 	public MSVExcelValidator getForTipoValidador(String codTipoOperacion) {
 
@@ -263,6 +266,8 @@ public class MSVExcelValidatorFactoryImpl {
 			return excluirDwh;
 		} else if (MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_VALIDADOR_CARGA_MASIVA_ENVIO_BUROFAX.equals(codTipoOperacion)) {
 			return envioBurofax;
+		} else if (MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_VALIDADOR_CARGA_MASIVA_IMPUESTOS.equals(codTipoOperacion)) {
+			return cargaMasivaImpuestos;
 		}
 		else if(MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_CARGA_MASIVA_SANCIONES.equals(codTipoOperacion)) {
 			return cargaMasivaSancionValidator;

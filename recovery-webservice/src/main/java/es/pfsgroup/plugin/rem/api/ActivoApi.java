@@ -1071,7 +1071,7 @@ public interface ActivoApi {
 
 	DtoActivoFichaCabecera getActivosAgrupacionRestringida(Long idActivo);
 
-	Long getIdByNumActivo(Long numActivo);
+	Long getActivoExists(Long numActivo);
 
 	Integer getGeolocalizacion(Activo activo);
 
@@ -1177,4 +1177,6 @@ public interface ActivoApi {
 	boolean esSubcarteraZeus(Long idActivo);
 
 	boolean esSubcarteraPromontoria(Long idActivo);
+
+	boolean esSubcarteraApple(Long idActivo);
 }

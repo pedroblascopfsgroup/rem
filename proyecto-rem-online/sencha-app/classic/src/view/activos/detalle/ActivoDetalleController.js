@@ -1610,22 +1610,23 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	                     method : 'POST',
 	                     params: {docCliente: docCliente},
 	                     success: function(response, opts) {
+	                    	 if (!Ext.isEmpty(form1)) {
+	     						form1.reset();
+	     					}
+	     					if (!Ext.isEmpty(form2)) {
+	     						form2.reset();
+	     					}
+	     					if (!Ext.isEmpty(form3)) {
+	     						form3.reset();
+	     					}
+	     					window.hide();
 	                        //me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
 	                     },
 	                     failure: function(record, operation) {
-	                        //me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+	                        me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
 	                     }
 	                });
-					if (!Ext.isEmpty(form1)) {
-						form1.reset();
-					}
-					if (!Ext.isEmpty(form2)) {
-						form2.reset();
-					}
-					if (!Ext.isEmpty(form3)) {
-						form3.reset();
-					}
-					window.close();
+					
 				}
 			}
 		});

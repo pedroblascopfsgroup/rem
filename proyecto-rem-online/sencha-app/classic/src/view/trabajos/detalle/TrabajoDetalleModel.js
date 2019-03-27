@@ -143,7 +143,8 @@ Ext.define('HreRem.view.trabajos.detalle.TrabajoDetalleModel', {
 				 proxy: {
 				    type: 'uxproxy',
 					remoteUrl: 'trabajo/getListActivos',
-					extraParams: {idTrabajo: '{trabajo.id}'}
+					extraParams: {idTrabajo: '{trabajo.id}'},
+					timeout: 120000
 				 }
     		},
     	

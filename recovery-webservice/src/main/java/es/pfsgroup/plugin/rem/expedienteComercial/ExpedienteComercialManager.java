@@ -8692,4 +8692,16 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 		return esApple;
 	}
+	
+	@SuppressWarnings("unused")
+	private Boolean checkPaseDirectoPendDevol(TareaExterna tareaExterna) {
+		
+		ExpedienteComercial expedienteComercial = tareaExternaToExpedienteComercial(tareaExterna);
+		
+		if(expedienteComercial.getCorrecw() == 1) {
+			return true;
+		}
+		
+		return false;
+	}
 }

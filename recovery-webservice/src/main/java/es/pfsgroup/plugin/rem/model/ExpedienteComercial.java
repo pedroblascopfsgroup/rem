@@ -258,6 +258,12 @@ public class ExpedienteComercial implements Serializable, Auditable {
     
     @Column(name="ECO_ASISTENCIA_PBC_DESCRIPCION")
     private String obsAsisPbc;
+    
+    @Column(name="ECO_CORRECW")
+    private Long correcw;
+    
+    @Column(name="ECO_COMOA3")
+    private Long comoa3;
 
     @Version   
 	private Long version;
@@ -774,5 +780,21 @@ public class ExpedienteComercial implements Serializable, Auditable {
 
 	public void setObsAsisPbc(String obsAsisPbc) {
 		this.obsAsisPbc = obsAsisPbc;
+	}
+
+	public Long getCorrecw() {
+		return correcw;
+	}
+
+	public void setCorrecw(Long correcw) {
+		this.correcw = correcw;
+	}
+
+	public Long getComoa3() {
+		return comoa3;
+	}
+
+	public void setComoa3(Long comoa3) {
+		this.comoa3 = comoa3;
 	}
 }

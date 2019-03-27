@@ -81,6 +81,8 @@ public class ActivoControllerDispatcher {
 			dto = clazz.newInstance();
 			for (Field f : getAllFields(new LinkedList<Field>(), clazz)) {
 				if (json.containsKey(f.getName())) {
+//					if ("idsMotivo".equals(f.getName()))
+//						f.setAccessible(true);
 					f.setAccessible(true);
 					f.set(dto, convertToType(f.getType(), json.get(f.getName())));
 				}
@@ -111,6 +113,8 @@ public class ActivoControllerDispatcher {
 					value = Boolean.parseBoolean(object.toString());
 				} else if (Double.class.isAssignableFrom(type)) {
 					value = Double.parseDouble(object.toString());
+				} else if (List.class.isAssignableFrom(type)) {
+					value = object;
 				}
 			} catch (Exception e) {
 				logger.warn("No se va a setear el valor", e);

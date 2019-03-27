@@ -359,7 +359,8 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 
 	// Comprobación mínima.
 	private Boolean tienePrecioRenta(Long idActivo) {
-		return !Checks.esNulo(activoValoracionDao.getImporteValoracionRentaWebPorIdActivo(idActivo));
+		Double tienePrecioRenta = activoValoracionDao.getImporteValoracionRentaWebPorIdActivo(idActivo);
+		return !Checks.esNulo(tienePrecioRenta) && tienePrecioRenta != 0.0;
 	}
 
 	// Comprobación mínima.

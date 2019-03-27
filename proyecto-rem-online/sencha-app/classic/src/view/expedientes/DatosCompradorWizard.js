@@ -119,7 +119,7 @@ Ext.define('HreRem.view.expedientes.DatosCompradorWizard', {
 			        {
             			xtype: 'comboboxfieldbase',
 			        	fieldLabel: HreRem.i18n('fieldlabel.titular.contratacion'),
-						reference: 'titularContratacion',
+						reference: 'titularContratacionWizard',
 						padding: '5px',
 			        	bind: {
 		            		store: '{comboSiNoRem}',

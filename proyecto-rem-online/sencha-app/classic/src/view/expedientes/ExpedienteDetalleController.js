@@ -1005,7 +1005,6 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		    model = null,
 		    id = window.idComprador,
 		    idExpediente = window.up().expediente.get("id");
-
 		form = window.getForm();
 
 		model = Ext.create('HreRem.model.FichaComprador', {

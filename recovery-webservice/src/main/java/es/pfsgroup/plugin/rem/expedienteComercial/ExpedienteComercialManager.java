@@ -3572,6 +3572,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 				if (Checks.esNulo(compradorExpediente)) { 
 					compradorExpediente = new CompradorExpediente();
+					compradorExpediente.setBorrado(false);
 				
 					CompradorExpedientePk pk = new CompradorExpedientePk();
 					pk.setComprador(comprador);
@@ -3791,8 +3792,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		ExpedienteComercial expedienteComercial = tareaExternaToExpedienteComercial(tareaExterna);
 		
 		if(!Checks.esNulo(expedienteComercial)) {
-			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "idExpedienteComercial",Long.toString(expedienteComercial.getId()));
-			VBusquedaDatosCompradorExpediente comprador = genericDao.get(VBusquedaDatosCompradorExpediente.class, filtro); 
+			Filter filtroId = genericDao.createFilter(FilterType.EQUALS, "idExpedienteComercial",Long.toString(expedienteComercial.getId()));
+			Filter filtroTitular = genericDao.createFilter(FilterType.EQUALS, "titularContratacion",1);
+			VBusquedaDatosCompradorExpediente comprador = genericDao.get(VBusquedaDatosCompradorExpediente.class, filtroId, filtroTitular); 
 			
 			//Campos comunes sin que dependa del tipo de persona						Campos del titular
 			if (!Checks.esNulo(comprador.getPorcentajeCompra())){						//Porcentaje de compra

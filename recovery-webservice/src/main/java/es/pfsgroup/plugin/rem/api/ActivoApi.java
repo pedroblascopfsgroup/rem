@@ -1050,7 +1050,7 @@ public interface ActivoApi {
 
 	DtoActivoFichaCabecera getActivosAgrupacionRestringida(Long idActivo);
 
-	Long getIdByNumActivo(Long numActivo);
+	Long getActivoExists(Long numActivo);
 
 	Integer getGeolocalizacion(Activo activo);
 

@@ -284,7 +284,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			dto.setNumGastoHaya(gasto.getNumGastoHaya());
 			dto.setNumGastoGestoria(gasto.getNumGastoGestoria());
 			dto.setReferenciaEmisor(gasto.getReferenciaEmisor());
-			dto.setCartera(gasto.getCartera().getCodigo());
+			dto.setCartera(gasto.getPropietario().getCartera().getCodigo());
 
 			if (!Checks.esNulo(gasto.getTipoGasto())) {
 				dto.setTipoGastoCodigo(gasto.getTipoGasto().getCodigo());
@@ -541,18 +541,6 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		if (!Checks.esNulo(dto.getPeriodicidad())) {
 			DDTipoPeriocidad periodicidad = (DDTipoPeriocidad) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoPeriocidad.class, dto.getPeriodicidad());
 			gastoProveedor.setTipoPeriocidad(periodicidad);
-		}
-			
-		if (!Checks.esNulo(dto.getFechaEmision())) {	
-			try {
-				beanUtilNotNull.copyProperty(gastoProveedor, "fechaEmision", dto.getFechaEmision());
-			} catch (IllegalAccessException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (InvocationTargetException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 		}
 		if (!Checks.esNulo(dto.getTipoOperacionCodigo())) {
 			DDTipoOperacionGasto tipoOperacion = (DDTipoOperacionGasto) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoOperacionGasto.class, dto.getTipoOperacionCodigo());

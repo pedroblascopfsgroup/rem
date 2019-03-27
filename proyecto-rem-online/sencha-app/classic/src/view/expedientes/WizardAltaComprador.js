@@ -10,7 +10,8 @@ Ext.define('HreRem.view.expedientes.WizardAltaComprador', {
     y			: Ext.Element.getViewportHeight()/2 - ((Ext.Element.getViewportHeight() > 500 ? 500 : Ext.Element.getViewportHeight() -100)/2),
 	closable : false,
 	requires: ['HreRem.view.expedientes.DatosCompradorWizard', 'HreRem.view.activos.detalle.AnyadirNuevaOfertaDocumento', 
-		'HreRem.view.activos.detalle.AnyadirNuevaOfertaActivoAdjuntarDocumento'],
+		'HreRem.view.activos.detalle.AnyadirNuevaOfertaActivoAdjuntarDocumento', 'HreRem.model.FichaComprador'],
+	controller: 'expedientedetalle',
 	viewModel: {
         type: 'expedientedetalle'
     },

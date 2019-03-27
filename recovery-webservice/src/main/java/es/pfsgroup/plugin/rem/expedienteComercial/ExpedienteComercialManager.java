@@ -3572,6 +3572,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 				if (Checks.esNulo(compradorExpediente)) { 
 					compradorExpediente = new CompradorExpediente();
+					compradorExpediente.setBorrado(false);
 				
 					CompradorExpedientePk pk = new CompradorExpedientePk();
 					pk.setComprador(comprador);

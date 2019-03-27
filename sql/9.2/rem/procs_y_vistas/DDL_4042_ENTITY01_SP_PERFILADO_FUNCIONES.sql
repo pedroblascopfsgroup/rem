@@ -1,10 +1,26 @@
 --/*
 --######################################### 
+<<<<<<< HEAD
 --## AUTOR=JINLI HU
 --## FECHA_CREACION=20190311
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-5774
+=======
+<<<<<<< HEAD
+--## AUTOR=Sonia Garcia
+--## FECHA_CREACION=20190221
+--## ARTEFACTO=batch
+--## VERSION_ARTEFACTO=9.2
+--## INCIDENCIA_LINK=HREOS-5530
+=======
+--## AUTOR=MARIAM LLISO
+--## FECHA_CREACION=20190228
+--## ARTEFACTO=batch
+--## VERSION_ARTEFACTO=9.2
+--## INCIDENCIA_LINK=HREOS-5539
+>>>>>>> 22975ff... HREOS-5539 REM: Comunidad de Propietarios: Nueva Carga masiva Impuestos
+>>>>>>> 2.7.0-19032601-rem
 --## PRODUCTO=NO
 --## 
 --## Finalidad: Procedimiento encargado de perfilar las funciones.
@@ -272,8 +288,11 @@ T_VAR( 'MASIVO_COMUNICACIONES','N','N','N','N','N','N','N','N','N','N','N','N','
 T_VAR( 'SUBIR_CARGA_GESTORES','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','S','S','S','S','N','N','S',''),
 T_VAR( 'PERIMETRO_ACTUALIZAR','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','N','N','N','S','N','N','N',''),
 T_VAR( 'CARGA_MASIVA_IMPUESTOS','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','N','N','N','S','N','N','N','S','N','N','S','S','S','S','N','S','S','S','S','S','S','S','S','S','N','N','S','N','N','S','N','N','N','N','N','N','N','N','N'),
+<<<<<<< HEAD
 T_VAR( 'CARGA_MASIVA_ENVIO_BUROFAX','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N'),
 T_VAR( 'MASIVO_AGRUPAR_ACTIVOS_PROMOCION_ALQUILER','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','S','S','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N'),
+=======
+>>>>>>> 2.7.0-19032601-rem
 
 T_VAR( 'MENU_DASHBOARD','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N'),
 T_VAR( 'MENU_AGENDA','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','N','S','S','S','S','S','S','S','S','S','S','S','S','N','N','N','N','N','N','S','N','N','N','N','N','N','N','N','S'),
@@ -289,6 +308,11 @@ T_VAR( 'MENU_ACTIVOS','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S
 T_VAR( 'MENU_TOP_ALERTAS','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','N','N','S','N','N','S','N','N','N','N','N','N','N','N','S'),
 T_VAR( 'MENU_TOP_TAREAS','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','N','N','S','N','N','S','N','N','N','N','N','N','N','N','S'),
 T_VAR( 'MENU_TOP_AVISOS','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','N','N','S','N','N','S','N','N','N','N','N','N','N','N','S'),
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+
+>>>>>>> 2.7.0-19032601-rem
 T_VAR( 'OPTIMIZACION_BUZON_TAREAS','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','N','N','S','N','N','S','N','N','N','N','N','N','N','N','S'),
 
 
@@ -296,7 +320,15 @@ T_VAR( 'OPTIMIZACION_BUZON_TAREAS','S','S','S','S','S','S','S','S','S','S','S','
 
 
 T_VAR( '"EN_CODIGO"','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','S','S','N','N','N','N','N','N','N','S','N','N','N','N','N','N','N','S','N','N','N','N','N','N','N','N','N','N','N','','','','N','','','S','','','','','','','','','N')
+<<<<<<< HEAD
 );
+=======
+=======
+T_VAR( 'OPTIMIZACION_BUZON_TAREAS','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','S','N','N','S','N','N','S','N','N','N','N','N','N','N','N','S')
+  
+);
+>>>>>>> 22975ff... HREOS-5539 REM: Comunidad de Propietarios: Nueva Carga masiva Impuestos
+>>>>>>> 2.7.0-19032601-rem
 
 V_TMP_VAR T_VAR;
 

@@ -5368,6 +5368,14 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		
 		return DDSubcartera.CODIGO_PROMONTORIA.equals(activo.getSubcartera().getCodigo());
 	}
+	
+	@Override
+	public boolean esSubcarteraApple(Long idActivo){
+		Filter filterAct = genericDao.createFilter(FilterType.EQUALS, "id", idActivo);
+		Activo activo = genericDao.get(Activo.class, filterAct);
+		
+		return DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo());
+	}
 
 	@Override
 	public DtoActivoFichaCabecera getActivosPropagables(Long idActivo) {
@@ -5573,20 +5581,29 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		return false;
 	}
 
-	public Long getIdByNumActivo(Long numActivo) {
+	public Long getActivoExists(Long numActivo) {
 
-		Long idActivo = null;
+		String idActivo = null;
+		String idCartera = null;
 
 		try {
 
-			idActivo = Long.parseLong(rawDao.getExecuteSQL(
-					"SELECT ACT_ID FROM ACT_ACTIVO WHERE ACT_NUM_ACTIVO = " + numActivo + " AND BORRADO = 0"));
+			idCartera = rawDao.getExecuteSQL(
+					"SELECT DD_CRA_ID FROM UCA_USUARIO_CARTERA WHERE USU_ID = " + genericAdapter.getUsuarioLogado().getId());
+			
+			if(!Checks.esNulo(idCartera)) {
+				idActivo = rawDao.getExecuteSQL(
+						"SELECT ACT_ID FROM ACT_ACTIVO WHERE ACT_NUM_ACTIVO = " + numActivo + " AND DD_CRA_ID = " + idCartera + " AND BORRADO = 0");
+			} else {
+				idActivo = rawDao.getExecuteSQL(
+						"SELECT ACT_ID FROM ACT_ACTIVO WHERE ACT_NUM_ACTIVO = " + numActivo + " AND BORRADO = 0");
+			}
+			
+			return Long.parseLong(idActivo);
 
 		} catch (Exception e) {
 			return null;
 		}
-
-		return idActivo;
 	}
 
 	@Override

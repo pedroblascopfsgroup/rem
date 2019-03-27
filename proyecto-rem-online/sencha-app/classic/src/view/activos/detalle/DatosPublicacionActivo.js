@@ -136,8 +136,9 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 												fieldLabel: HreRem.i18n('fieldlabel.datos.publicacion.estados.ocultar'),
 												reference: 'chkbxocultarventa',
 												comboRefChained: 'comboMotivoOcultacionVenta',
+												disabled:false,
 												bind: {
-													readOnly: '{datospublicacionactivo.deshabilitarCheckOcultarVenta}',
+													readOnly: '{datospublicacionactivo.onChangeCheckboxOcultar}',
 													value: '{datospublicacionactivo.ocultarVenta}'
 												},
 												listeners: {
@@ -173,10 +174,10 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 												fieldLabel: HreRem.i18n('fieldlabel.datos.publicacion.estados.motivos.ocultacion'),
 												reference: 'comboMotivoOcultacionVenta',
 												textareaRefChained: 'textareaMotivoOcultacionManualVenta',
-												disabled: true,
 												bind: {
 													store: '{comboMotivosOcultacionVenta}',
-													value: '{datospublicacionactivo.motivoOcultacionVentaCodigo}'
+													value: '{datospublicacionactivo.motivoOcultacionVentaCodigo}',
+													disabled: '{!datospublicacionactivo.ocultarVenta}'
 												},
 												listeners: {
 													change: 'onChangeComboMotivoOcultacionVenta'
@@ -194,12 +195,16 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 												xtype: 'textareafieldbase',
 												reference: 'textareaMotivoPublicacionVenta',
 												textareaRefChained: 'chkbxpublicarventa',
+												flex:1,
 												disabled: true,
 												bind: {
-													value: '{datospublicacionactivo.motivoPublicacion}'
+													value: '{datospublicacionactivo.motivoPublicacion}',
+													disabled: '{!datospublicacionactivo.publicarVenta}'
 												},
 												maxLength: 200,
-												height: 80
+												width: 400,
+												height: 80,
+												style:'margin-bottom:10px'
 											},
 											{
 												xtype: 'textareafieldbase',
@@ -209,7 +214,9 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 													value: '{datospublicacionactivo.motivoOcultacionManualVenta}'
 												},
 												maxLength: 200,
-												height: 80
+												width: 400,
+												height: 80,
+												style:'margin-bottom:10px'
 											}
 										]
 								}
@@ -313,7 +320,7 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 												reference: 'chkbxocultaralquiler',
 												comboRefChained: 'comboMotivoOcultacionAlquiler',
 												bind: {
-													readOnly: '{datospublicacionactivo.deshabilitarCheckOcultarAlquiler}',
+													readOnly: '{datospublicacionactivo.onChangeCheckboxOcultar}',
 													value: '{datospublicacionactivo.ocultarAlquiler}'
 												},
 												listeners: {
@@ -348,10 +355,10 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 									        	fieldLabel: HreRem.i18n('fieldlabel.datos.publicacion.estados.motivos.ocultacion'),
 												reference: 'comboMotivoOcultacionAlquiler',
 												textareaRefChained: 'textareaMotivoOcultacionManualAlquiler',
-												disabled: true,
 												bind: {
 								            		store: '{comboMotivosOcultacionAlquiler}',
-								            		value: '{datospublicacionactivo.motivoOcultacionAlquilerCodigo}'
+								            		value: '{datospublicacionactivo.motivoOcultacionAlquilerCodigo}',
+								            		disabled: '{!datospublicacionactivo.ocultarAlquiler}'
 								            	},
 												listeners: {
 													change: 'onChangeComboMotivoOcultacionAlquiler'
@@ -359,11 +366,26 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 									        },
 									        {
 												xtype: 'label',
-												colspan: 2
+												colspan: 1
 											},
 											{
 												xtype: 'label',
 												colspan: 1
+											},
+											{
+												xtype: 'textareafieldbase',
+												reference: 'textareaMotivoPublicacionAlquiler',
+												textareaRefChained: 'chkbxpublicaralquiler',
+												flex:1,
+												disabled: true,
+												bind: {
+													value: '{datospublicacionactivo.motivoPublicacionAlquiler}',
+													disabled: '{!datospublicacionactivo.publicarAlquiler}'
+												},
+												maxLength: 200,
+												width: 400,
+												height: 80,
+												style:'margin-bottom:10px'
 											},
 											{
 												xtype: 'textareafieldbase',
@@ -373,7 +395,9 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 													value: '{datospublicacionactivo.motivoOcultacionManualAlquiler}'
 												},
 												maxLength: 200,
-												height: 80
+												width: 400,
+												height: 80,
+												style:'margin-bottom:10px'
 											}
 										]
 								}

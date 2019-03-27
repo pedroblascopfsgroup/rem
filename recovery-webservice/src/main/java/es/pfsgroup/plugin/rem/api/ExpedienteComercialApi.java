@@ -1154,6 +1154,7 @@ public interface ExpedienteComercialApi {
 
 	boolean checkDepositoDespublicacionSubido(TareaExterna tareaExterna);
 
+	boolean esApple(TareaExterna tareaExterna);
 	/*
 	 * Comprobación de los campos de los compradores en una oferta de venta para poder avanzar la tarea.
 	 */

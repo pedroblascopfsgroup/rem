@@ -922,8 +922,12 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			if (DDCartera.CODIGO_CARTERA_CERBERUS.equals(oferta.getActivoPrincipal().getCartera().getCodigo())
 				&& (DDSubcartera.CODIGO_AGORA_INMOBILIARIO.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo())) ||
 					(DDSubcartera.CODIGO_AGORA_FINANCIERO.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo()))
-				&& (DDCartera.CODIGO_CARTERA_CERBERUS.equals(oferta.getActivoPrincipal().getCartera().getCodigo()) 
-					&& DDSubcartera.CODIGO_ZEUS_INMOBILIARIO.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo()))) {
+			&& (DDCartera.CODIGO_CARTERA_CERBERUS.equals(oferta.getActivoPrincipal().getCartera().getCodigo()) 
+					&& DDSubcartera.CODIGO_ZEUS_INMOBILIARIO.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo())) ||
+			DDCartera.CODIGO_CARTERA_CERBERUS.equals(oferta.getActivoPrincipal().getCartera().getCodigo()) 
+			&& (DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(oferta.getActivoPrincipal().getSubcartera().getCodigo()))
+					){
+
 				nuevoCondicionante.setSolicitaReserva(1);
 				DDTipoCalculo tipoCalculo = (DDTipoCalculo) utilDiccionarioApi
 						.dameValorDiccionarioByCod(DDTipoCalculo.class, DDTipoCalculo.TIPO_CALCULO_PORCENTAJE);
@@ -1177,11 +1181,14 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				compradorExpedienteNuevo.setPorcionCompra(parteCompraPrincipal);
 				compradorExpedienteNuevo.setBorrado(false);
 				
-				ClienteGDPR clienteGDPR = genericDao.get(ClienteGDPR.class, 
-						genericDao.createFilter(FilterType.EQUALS, "numDocumento", compradorBusqueda.getDocumento()),
-						genericDao.createFilter(FilterType.EQUALS, "tipoDocumento.codigo", compradorBusqueda.getTipoDocumento().getCodigo()));
+				ClienteGDPR clienteGDPR = genericDao.get(ClienteGDPR.class,
+						genericDao.createFilter(FilterType.EQUALS, "cliente.id", oferta.getCliente().getId()));
 				
-				compradorExpedienteNuevo.setDocumentoAdjunto(clienteGDPR.getAdjuntoComprador());
+				if(clienteGDPR != null){
+					compradorExpedienteNuevo.setDocumentoAdjunto(clienteGDPR.getAdjuntoComprador());
+				}
+				
+				
 
 				listaCompradoresExpediente.add(compradorExpedienteNuevo);
 			} else { // Si no existe un comprador con dicho dni, lo crea, añade
@@ -1257,7 +1264,10 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				if (!Checks.esNulo(oferta.getCliente().getRegimenMatrimonial())) {
 					compradorExpedienteNuevo.setRegimenMatrimonial(oferta.getCliente().getRegimenMatrimonial());
 				}
-				compradorExpedienteNuevo.setDocumentoAdjunto(clienteGDPR.getAdjuntoComprador());
+				
+				if(clienteGDPR != null){
+					compradorExpedienteNuevo.setDocumentoAdjunto(clienteGDPR.getAdjuntoComprador());
+				}				
 
 				listaCompradoresExpediente.add(compradorExpedienteNuevo);
 								
@@ -1312,9 +1322,14 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 						listaCompradoresExpediente.add(compradorExpedienteAdicionalNuevo);
 
 					} else {
-						ClienteGDPR cliGDPR = genericDao.get(ClienteGDPR.class,
+						ClienteGDPR cliGDPR = null;
+						List<ClienteGDPR> cliGDPRLista = genericDao.getList(ClienteGDPR.class,
 								genericDao.createFilter(FilterType.EQUALS, "tipoDocumento.id", titularAdicional.getTipoDocumento().getId()),
 								genericDao.createFilter(FilterType.EQUALS, "numDocumento", titularAdicional.getDocumento()));
+						
+						if(cliGDPRLista != null && cliGDPRLista.size() > 0){
+							cliGDPR = cliGDPRLista.get(0);
+						}
 						
 						Comprador nuevoCompradorAdicional = new Comprador();
 						CompradorExpediente compradorExpedienteAdicionalNuevo = new CompradorExpediente();
@@ -2824,7 +2839,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 						activoOferta.getPrimaryKey().getOferta().getId());
 				ExpedienteComercial expediente = genericDao.get(ExpedienteComercial.class, filtro);
 				if (!Checks.esNulo(expediente)) {
-					if (!Checks.esNulo(expediente.getFechaVenta()) && DDTipoOferta.CODIGO_ALQUILER.equals(activoOferta.getPrimaryKey().getOferta().getTipoOferta().getCodigo()))
+					if (!Checks.esNulo(expediente.getFechaInicioAlquiler()) && Checks.esNulo(expediente.getFechaFinAlquiler()) && DDTipoOferta.CODIGO_ALQUILER.equals(activoOferta.getPrimaryKey().getOferta().getTipoOferta().getCodigo()))
 						return true;
 				}
 			}
@@ -5319,6 +5334,14 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		
 		return DDSubcartera.CODIGO_PROMONTORIA.equals(activo.getSubcartera().getCodigo());
 	}
+	
+	@Override
+	public boolean esSubcarteraApple(Long idActivo){
+		Filter filterAct = genericDao.createFilter(FilterType.EQUALS, "id", idActivo);
+		Activo activo = genericDao.get(Activo.class, filterAct);
+		
+		return DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo());
+	}
 
 	@Override
 	public DtoActivoFichaCabecera getActivosPropagables(Long idActivo) {
@@ -5503,20 +5526,29 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		return false;
 	}
 
-	public Long getIdByNumActivo(Long numActivo) {
+	public Long getActivoExists(Long numActivo) {
 
-		Long idActivo = null;
+		String idActivo = null;
+		String idCartera = null;
 
 		try {
 
-			idActivo = Long.parseLong(rawDao.getExecuteSQL(
-					"SELECT ACT_ID FROM ACT_ACTIVO WHERE ACT_NUM_ACTIVO = " + numActivo + " AND BORRADO = 0"));
+			idCartera = rawDao.getExecuteSQL(
+					"SELECT DD_CRA_ID FROM UCA_USUARIO_CARTERA WHERE USU_ID = " + genericAdapter.getUsuarioLogado().getId());
+			
+			if(!Checks.esNulo(idCartera)) {
+				idActivo = rawDao.getExecuteSQL(
+						"SELECT ACT_ID FROM ACT_ACTIVO WHERE ACT_NUM_ACTIVO = " + numActivo + " AND DD_CRA_ID = " + idCartera + " AND BORRADO = 0");
+			} else {
+				idActivo = rawDao.getExecuteSQL(
+						"SELECT ACT_ID FROM ACT_ACTIVO WHERE ACT_NUM_ACTIVO = " + numActivo + " AND BORRADO = 0");
+			}
+			
+			return Long.parseLong(idActivo);
 
 		} catch (Exception e) {
 			return null;
 		}
-
-		return idActivo;
 	}
 
 	@Override

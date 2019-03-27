@@ -391,10 +391,7 @@ public class OfertaDaoImpl extends AbstractEntityDao<Oferta, Long> implements Of
 		
 	}
 	
-	public void deleteTitularesAdicionales(Long idOferta){
-		Filter f1 = genericDao.createFilter(FilterType.EQUALS, "id", idOferta);
-		Oferta oferta = genericDao.get(Oferta.class, f1);
-		
+	public void deleteTitularesAdicionales(Oferta oferta){
 		List<TitularesAdicionalesOferta> titularesAdicionales = oferta.getTitularesAdicionales();
 		
 		for(TitularesAdicionalesOferta titularAdicional : titularesAdicionales){

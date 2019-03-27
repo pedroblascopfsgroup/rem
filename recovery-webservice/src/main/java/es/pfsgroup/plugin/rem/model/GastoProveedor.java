@@ -258,11 +258,11 @@ public class GastoProveedor implements Serializable, Auditable {
 	}
 
 	public Date getFechaEmision() {
-		return fechaEmision;
+		return (Date) fechaEmision.clone();
 	}
 
 	public void setFechaEmision(Date fechaEmision) {
-		this.fechaEmision = fechaEmision;
+		this.fechaEmision = (Date) fechaEmision.clone();
 	}
 
 	public Date getFechaNotificacion() {

@@ -359,7 +359,8 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 
 	// Comprobación mínima.
 	private Boolean tienePrecioRenta(Long idActivo) {
-		return !Checks.esNulo(activoValoracionDao.getImporteValoracionRentaWebPorIdActivo(idActivo));
+		Double tienePrecioRenta = activoValoracionDao.getImporteValoracionRentaWebPorIdActivo(idActivo);
+		return !Checks.esNulo(tienePrecioRenta) && tienePrecioRenta != 0.0;
 	}
 
 	// Comprobación mínima.
@@ -659,7 +660,8 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 			}
 			
 			activoPublicacion.setMotivoPublicacion(dto.getMotivoPublicacion());
-
+			activoPublicacion.setMotivoPublicacionAlquiler(dto.getMotivoPublicacionAlquiler());
+			
 			activoPublicacionDao.save(activoPublicacion);
 			
 			if((Checks.esNulo(dto.getOcultarVenta()) && !Checks.esNulo(dto.getMotivoOcultacionVentaCodigo())) || (Checks.esNulo(dto.getOcultarAlquiler()) && !Checks.esNulo(dto.getMotivoOcultacionAlquilerCodigo()))) {
@@ -725,6 +727,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 				}
 				
 				activoPublicacion.setMotivoPublicacion(dto.getMotivoPublicacion());
+				activoPublicacion.setMotivoPublicacionAlquiler(dto.getMotivoPublicacionAlquiler());
 	
 				activoPublicacionDao.save(activoPublicacion);
 			}

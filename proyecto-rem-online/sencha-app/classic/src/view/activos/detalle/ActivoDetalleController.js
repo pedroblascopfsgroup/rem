@@ -20,7 +20,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 
          'documentosactivopromocion gridBase': {
              abrirFormulario: 'abrirFormularioAdjuntarDocPromo',
-             //onClickRemove: 'borrarDocumentoAdjunto',
+             // onClickRemove: 'borrarDocumentoAdjunto',
              download: 'downloadDocumentoAdjuntoPromocion',
              afterupload: function(grid) {
              	grid.getStore().load();
@@ -190,7 +190,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
    	onSaveFormularioCompleto: function(btn, form, restringida) {
 		var me = this;
 		me.getView().mask(HreRem.i18n("msg.mask.loading"));
-		//disableValidation: Atributo para indicar si el guardado del formulario debe aplicar o no, las validaciones.
+		// disableValidation: Atributo para indicar si el guardado del formulario debe aplicar o no,
+		// las validaciones.
 		if(form.isFormValid() || form.disableValidation) {
 			
 			Ext.Array.each(form.query('component[isReadOnlyEdit]'),
@@ -221,7 +222,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 						fechaInscripcionReg = new Date(from[2], from[1] - 1, from[0])
     				}
 					if(fechaInscripcionReg != null){
-						//tabData.models[0].data.fechaInscripcionReg = new Date(fechaInscripcionReg);
+						// tabData.models[0].data.fechaInscripcionReg = new
+						// Date(fechaInscripcionReg);
 					}
 				} else if (tabData.models[0].name == "informecomercial"){
 					record = form.getBindRecord();
@@ -261,7 +263,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
    	onSaveFormularioCompletoDistribuciones: function(btn, form) {
 		var me = this;
 		me.getView().mask(HreRem.i18n("msg.mask.loading"));
-		//disableValidation: Atributo para indicar si el guardado del formulario debe aplicar o no, las validaciones.
+		// disableValidation: Atributo para indicar si el guardado del formulario debe aplicar o no,
+		// las validaciones.
 		if(form.isFormValid() || form.disableValidation) {
 	
 			Ext.Array.each(form.query('field[isReadOnlyEdit]'),
@@ -691,7 +694,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	         
     	         if(Ext.decode(response.responseText).success == "false") {
 					me.fireEvent("errorToast", HreRem.i18n(Ext.decode(response.responseText).errorCode));
-					//me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+					// me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
     	         }
     	     },
     	     failure: function (a, operation, context) {
@@ -959,7 +962,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	
 	onTramitesListDobleClick : function(grid,record) {
     	var me = this;
-    	//HREOS-846 Si el activo esta fuera del perimetro Haya, no debe poder abrir tramites desde el activo
+    	// HREOS-846 Si el activo esta fuera del perimetro Haya, no debe poder abrir tramites desde
+		// el activo
     	if(me.getViewModel().get('activo').get('incluidoEnPerimetro')=="false") {
     		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.activo.fuera.perimetro.abrir.tramite.ko"));
    		}
@@ -985,10 +989,10 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     },
 
      /**
-     * FunciÃ³n que refresca la pestaña activa, y marca el resto de componentes para referescar.
-     * Para que un componente sea marcado para refrescar, es necesario que implemente la funciÃ³n 
-     * funciÃ³nRecargar con el cÃ³digo necesario para refrescar los datos.
-     */
+		 * FunciÃ³n que refresca la pestaña activa, y marca el resto de componentes para referescar.
+		 * Para que un componente sea marcado para refrescar, es necesario que implemente la
+		 * funciÃ³n funciÃ³nRecargar con el cÃ³digo necesario para refrescar los datos.
+		 */
 	onClickBotonRefrescar: function (btn) {
 		var me = this;
 		me.refrescarActivo(true);
@@ -999,14 +1003,15 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		var me = this,
 		refrescarPestanyaActiva = Ext.isEmpty(refrescarPestanyaActiva) ? false: refrescarPestanyaActiva,
 		activeTab = me.getView().down("tabpanel").getActiveTab();
-		// Marcamos todas los componentes para refrescar, de manera que se vayan actualizando conforme se vayan mostrando.
+		// Marcamos todas los componentes para refrescar, de manera que se vayan actualizando
+		// conforme se vayan mostrando.
 		Ext.Array.each(me.getView().query('component[funcionRecargar]'), function(component) {
   			if(component.rendered) {
   				component.recargar=true;
   			}
   		});
   		
-  		// Actualizamos la pestaña actual si tiene funciÃ³n de recargar 
+  		// Actualizamos la pestaña actual si tiene funciÃ³n de recargar
 		if(refrescarPestanyaActiva && activeTab.funcionRecargar) {
   			activeTab.funcionRecargar();
 		}
@@ -1107,16 +1112,17 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 						align : 't'
 					});
 					var ventanaWizard = grid.up('anyadirnuevaofertaactivoadjuntardocumento');
-					//ventanaWizard.down('button[itemId=btnFinalizar]').disable();
+					ventanaWizard.down('button[itemId=btnFinalizar]').disable();
 					//ventanaWizard.down('button[itemId=btnSubirDoc]').disable();
 					ventanaWizard.down('button[itemId=btnGenerarDoc]').enable();
 					ventanaWizard.getForm().findField('comunicacionTerceros').enable();
 					ventanaWizard.getForm().findField('cesionDatos').enable();
 					ventanaWizard.getForm().findField('transferenciasInternacionales').enable();
+					
 				},
 				failure : function(a, operation, context) {
 					Ext.toast({
-						html : 'NO HA SIDO POSIBLE REALIZAR LA OPERACIÃN',
+						html : 'NO HA SIDO POSIBLE REALIZAR LA OPERACION',
 						width : 360,
 						height : 100,
 						align : 't'
@@ -1167,8 +1173,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			if (store.getData().items[i].data.orden != orden) {
 				store.getAt(i).data.orden = orden;
 				
-				//FIXME: Â¿Poner mÃ¡scara?
-				//me.getView().mask(HreRem.i18n("msg.mask.loading"));
+				// FIXME: Â¿Poner mÃ¡scara?
+				// me.getView().mask(HreRem.i18n("msg.mask.loading"));
 				var url =  $AC.getRemoteUrl('activo/updateFotosById');
     			Ext.Ajax.request({
     			
@@ -1183,14 +1189,11 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	                    if (me.ordenGuardado >= me.storeGuardado.getData().items.length && me.refrescarGuardado) {
 	                    	me.storeGuardado.load();
 	                    	me.refrescarGuardado = false;
-	                    	/* //FIXME: Â¿Poner mÃ¡scara?
-	                    	Ext.toast({
-							     html: 'LA OPERACIÃN SE HA REALIZADO CORRECTAMENTE',
-							     width: 360,
-							     height: 100,
-							     align: 't'
-							});*/
-							//me.getView().unmask();
+	                    	/*
+							 * //FIXME: Â¿Poner mÃ¡scara? Ext.toast({ html: 'LA OPERACIÃN SE HA
+							 * REALIZADO CORRECTAMENTE', width: 360, height: 100, align: 't' });
+							 */
+							// me.getView().unmask();
 	                    }
 
 	                },
@@ -1374,7 +1377,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	},
 	
 	
-	//FIXME: Funciones para el grÃ¡fico de presupuestos. Llevar a otro controlador aparte.
+	// FIXME: Funciones para el grÃ¡fico de presupuestos. Llevar a otro controlador aparte.
 	onAxisLabelRender: function (axis, label, layoutContext) {
         // Custom renderer overrides the native axis label renderer.
         // Since we don't want to do anything fancy with the value
@@ -1620,22 +1623,24 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	                     method : 'POST',
 	                     params: {docCliente: docCliente},
 	                     success: function(response, opts) {
+
+	                    	if (!Ext.isEmpty(form1)) {
+	     						form1.reset();
+	     					}
+	     					if (!Ext.isEmpty(form2)) {
+	     						form2.reset();
+	     					}
+	     					if (!Ext.isEmpty(form3)) {
+	     						form3.reset();
+	     					}
+	     					window.hide();
 	                        //me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
 	                     },
 	                     failure: function(record, operation) {
-	                        //me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+	                        me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
 	                     }
 	                });
-					if (!Ext.isEmpty(form1)) {
-						form1.reset();
-					}
-					if (!Ext.isEmpty(form2)) {
-						form2.reset();
-					}
-					if (!Ext.isEmpty(form3)) {
-						form3.reset();
-					}
-					window.close();
+					
 				}
 			}
 		});
@@ -1716,7 +1721,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	store.load();
 	},
 	
-	// Este mÃ©todo copia los valores de los campos de 'Datos Mediador' a los campos de 'Datos admisiÃ³n'.
+	// Este mÃ©todo copia los valores de los campos de 'Datos Mediador' a los campos de 'Datos
+	// admisiÃ³n'.
 	onClickCopiarDatosDelMediador: function(btn) {
 		var me =this;
 		var view = me.getView();
@@ -1765,7 +1771,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 					else {
 						window.setController('agrupaciondetalle');
 						window.getController().refrescarAgrupacion(true);
-						//window.parent.up('agrupacionesdetalle').lookupController().refrescarAgrupacion(true);
+						// window.parent.up('agrupacionesdetalle').lookupController().refrescarAgrupacion(true);
 					}
 					me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
 					window.destroy();
@@ -1773,8 +1779,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 				failure : function(record, operation) {
 						me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
 						window.unmask();
-						//form.reset();
-						//ofertaForm.reset();
+						// form.reset();
+						// ofertaForm.reset();
 				}
 
 			});
@@ -1794,7 +1800,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	me.getView().fireEvent('abrirDetalleActivo', record.get('idActivo'), "Activo " + record.get("numActivo"));
 	},
 	
-	// Este mÃ©todo comprueba si el campo fechaHasta o UsuarioBaja tiene datos, lo que supone que el registro
+	// Este mÃ©todo comprueba si el campo fechaHasta o UsuarioBaja tiene datos, lo que supone que el
+	// registro
 	// ya se encuentra dado de baja y no se permite volver a dar de baja.
 	onGridCondicionesEspecificasRowClick: function(grid , record , tr , rowIndex) {
 		if(!Ext.isEmpty(record.getData().fechaHasta) || !Ext.isEmpty(record.getData().usuarioBaja)){
@@ -1802,7 +1809,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		}
 	},
 	
-	//MÃ©todo para borrar/anular un precio vigente sin guardar en el Historico
+	// MÃ©todo para borrar/anular un precio vigente sin guardar en el Historico
 	onDeletePrecioVigenteClick: function(tableView, indiceFila, indiceColumna) {
 
     	var me = this;
@@ -1905,20 +1912,20 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	},
 	
 	onProveedoresListClick: function(gridView, record){
-//		var me=this,
-//		idCliente = record.get("id"),
-//		model = Ext.create('HreRem.model.FichaComprador');
+// var me=this,
+// idCliente = record.get("id"),
+// model = Ext.create('HreRem.model.FichaComprador');
 //		
-//		var fieldset =  me.lookupReference('estadoPbcCompradoRef');
-//		fieldset.mask(HreRem.i18n("msg.mask.loading"));
+// var fieldset = me.lookupReference('estadoPbcCompradoRef');
+// fieldset.mask(HreRem.i18n("msg.mask.loading"));
 //	
-//		model.setId(idCliente);
-//		model.load({			
-//		    success: function(record) {	
-//		    	me.getViewModel().set("detalleComprador", record);
-//		    	fieldset.unmask();
-//		    }
-//		});
+// model.setId(idCliente);
+// model.load({
+// success: function(record) {
+// me.getViewModel().set("detalleComprador", record);
+// fieldset.unmask();
+// }
+// });
 		var me=this;
 		idProveedor= record.get('id');
 		idActivo= record.get('idActivo');
@@ -1962,13 +1969,14 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	    var record = grid.store.getAt(indiceFila);
 	    grid.setSelection(record);
 	    if(!Ext.isEmpty(record.get('id'))){
-//	   		me.redirectTo('activos', true);
+// me.redirectTo('activos', true);
 	    	record.setId(record.data.idGasto);
 	    	me.getView().fireEvent('abrirDetalleGasto', record);
 	    }
 	},
 
-	//Este mÃ©todo obtiene los valores de las fechas fin e inicio de la fila que se estÃ¡ editando y comprueba las validaciones oportunas.
+	// Este mÃ©todo obtiene los valores de las fechas fin e inicio de la fila que se estÃ¡ editando
+	// y comprueba las validaciones oportunas.
 	validateFechas: function(datefield, value){
 		var me = this;
 		var grid = me.lookupReference('gridPreciosVigentes');
@@ -1990,7 +1998,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		var tipoDescuentoAprobado = '07';
 		var tipoDescuentoPublicadoWeb = '13';
 
-		// Recogemos los valores actuales del grid y los mismos almacenados en el store segÃºn casos.
+		// Recogemos los valores actuales del grid y los mismos almacenados en el store segÃºn
+		// casos.
 		var fechaInicioMinimo = fechaInicioActualRow.getEditor().value;
 		var fechaInicioExistenteMinimo = grid.getStore().findRecord('codigoTipoPrecio', tipoMinimoAutorizado).getData().fechaInicio;
 		var fechaFinMinimo = grid.getStore().findRecord('codigoTipoPrecio', tipoMinimoAutorizado).getData().fechaFin;
@@ -2024,11 +2033,13 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 					}
 				}
 				return true;
-			case tipoAprobadoVentaWeb: // La fecha de fin de aprobado venta(web) debe ser menor o igual a la fecha fin mÃ­nimo.
+			case tipoAprobadoVentaWeb: // La fecha de fin de aprobado venta(web) debe ser menor o
+										// igual a la fecha fin mÃ­nimo.
 				if(datefield.dataIndex === 'fechaFin') {
 					// La fecha de fin
 					if(Ext.isEmpty(fechaFinMinimo) || Ext.isEmpty(fechaFinAprobadoVentaWeb)) {
-						// Si la fecha contra la que compara o la misma no estÃ¡n definidas, se valida positivo.
+						// Si la fecha contra la que compara o la misma no estÃ¡n definidas, se
+						// valida positivo.
 						return true;
 					}
 					if(fechaFinAprobadoVentaWeb > fechaFinMinimo) {
@@ -2040,7 +2051,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 					if(!Ext.isEmpty(fechaInicioExistenteMinimo)) {
 						// Si la fecha inicio mÃ­nimo estÃ¡ definida
 						if(!Ext.isEmpty(fechaInicioAprobadoVentaWeb) && fechaInicioAprobadoVentaWeb < fechaInicioExistenteMinimo) {
-							// Si la propia fecha estÃ¡ definida, ha de ser mayor o igual que la fecha inicio mÃ­nimo
+							// Si la propia fecha estÃ¡ definida, ha de ser mayor o igual que la
+							// fecha inicio mÃ­nimo
 							return HreRem.i18n('info.datefield.begin.date.pav.msg.validacion');
 						}
 					}
@@ -2094,10 +2106,11 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 						// Ha de ser menor o igual que la fecha inicio descuento aprobado, si existe
 						return HreRem.i18n('info.datefield.begin.date.pdw.msg.validacion');
 					}
-//					if(!Ext.isEmpty(fechaFinExistenteAprobadoVentaWeb) && fechaInicioDescuentoPublicadoWeb > fechaFinExistenteAprobadoVentaWeb) {
-//						// Ha de ser menor o igual que la fecha inicio aprobado venta web, si existe
-//						return HreRem.i18n('info.datefield.begin.date.pdw.msg.validacion.dos');
-//					}
+// if(!Ext.isEmpty(fechaFinExistenteAprobadoVentaWeb) && fechaInicioDescuentoPublicadoWeb >
+// fechaFinExistenteAprobadoVentaWeb) {
+// // Ha de ser menor o igual que la fecha inicio aprobado venta web, si existe
+// return HreRem.i18n('info.datefield.begin.date.pdw.msg.validacion.dos');
+// }
 				}
 				return true;
 			default:
@@ -2105,7 +2118,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		}
 	},
 
-	// Este mÃ©todo obtiene el valor del campo importe que se estÃ¡ editando y comprueba las validaciones oportunas.
+	// Este mÃ©todo obtiene el valor del campo importe que se estÃ¡ editando y comprueba las
+	// validaciones oportunas.
   // comprueba las validaciones oportunas.
 	validatePreciosVigentes: function(value) {
 		var me = this;
@@ -2153,13 +2167,15 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 				return HreRem.i18n('info.precio.importe.descuentoAprobado.msg.validacion');
 			}
 //
-//			if(!Ext.isEmpty(importeActualDescuentoAprobado) && !Ext.isEmpty(importeAprobadoVentaWeb) && (importeActualDescuentoAprobado > importeAprobadoVentaWeb)){
-//				return HreRem.i18n('info.precio.importe.descuentoAprobado.msg.validacion');
-//			}
+// if(!Ext.isEmpty(importeActualDescuentoAprobado) && !Ext.isEmpty(importeAprobadoVentaWeb) &&
+// (importeActualDescuentoAprobado > importeAprobadoVentaWeb)){
+// return HreRem.i18n('info.precio.importe.descuentoAprobado.msg.validacion');
+// }
 
 			return true;
 
-		case tipoDescuentoPublicadoWeb: // Descuento aprobado <= Descuento Web <= Aprobado venta web.
+		case tipoDescuentoPublicadoWeb: // Descuento aprobado <= Descuento Web <= Aprobado venta
+										// web.
 
 			var importeActualDescuentoWeb = importeActualColumn.getEditor().value;
 
@@ -2167,9 +2183,10 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 				return HreRem.i18n('info.precio.importe.descuentoPublicadoWeb.msg.validacion');
 			}
 
-//			if(!Ext.isEmpty(importeActualDescuentoWeb) && !Ext.isEmpty(importeAprobadoVentaWeb) && (importeActualDescuentoWeb > importeAprobadoVentaWeb)) {
-//				return HreRem.i18n('info.precio.importe.descuentoPublicadoWeb.msg.validacion');
-//			}
+// if(!Ext.isEmpty(importeActualDescuentoWeb) && !Ext.isEmpty(importeAprobadoVentaWeb) &&
+// (importeActualDescuentoWeb > importeAprobadoVentaWeb)) {
+// return HreRem.i18n('info.precio.importe.descuentoPublicadoWeb.msg.validacion');
+// }
 
 			return true;
 
@@ -2181,13 +2198,15 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 				return HreRem.i18n('info.precio.importe.aprobadoVenta.msg.validacion');
 			}
 
-//			if(!Ext.isEmpty(importeActualAprobadoVentaWeb) && !Ext.isEmpty(importeDescuentoAprobado) && (importeActualAprobadoVentaWeb < importeDescuentoAprobado)) {
-//				return HreRem.i18n('info.precio.importe.aprobadoVenta.msg.validacion');
-//			}
+// if(!Ext.isEmpty(importeActualAprobadoVentaWeb) && !Ext.isEmpty(importeDescuentoAprobado) &&
+// (importeActualAprobadoVentaWeb < importeDescuentoAprobado)) {
+// return HreRem.i18n('info.precio.importe.aprobadoVenta.msg.validacion');
+// }
 
-//			if(!Ext.isEmpty(importeActualAprobadoVentaWeb) && !Ext.isEmpty(importeDecuentoPublicadoWeb) && (importeActualAprobadoVentaWeb < importeDecuentoPublicadoWeb)) {
-//				return HreRem.i18n('info.precio.importe.aprobadoVenta.msg.validacion');
-//			}
+// if(!Ext.isEmpty(importeActualAprobadoVentaWeb) && !Ext.isEmpty(importeDecuentoPublicadoWeb) &&
+// (importeActualAprobadoVentaWeb < importeDecuentoPublicadoWeb)) {
+// return HreRem.i18n('info.precio.importe.aprobadoVenta.msg.validacion');
+// }
 
 			return true;
 
@@ -2196,7 +2215,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		}
 	},
 
-	// Este mÃ©todo desmarca el checkbox de formalizar cuando el checkbox de comercializar se desmarca.
+	// Este mÃ©todo desmarca el checkbox de formalizar cuando el checkbox de comercializar se
+	// desmarca.
 	onChkbxPerimetroChange: function(chkbx) {
 		var me = this;
 		var ref = chkbx.getReference();
@@ -2316,11 +2336,11 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		var me= this;
 		var window= btn.up('window'),
 		form= window.down('formBase');
-//		var success = function (a, operation, c) {
-//					me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-//					me.getView().unmask();
-//					me.refrescarGasto(btn.up('tabpanel').getActiveTab().refreshAfterSave);
-//		};
+// var success = function (a, operation, c) {
+// me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+// me.getView().unmask();
+// me.refrescarGasto(btn.up('tabpanel').getActiveTab().refreshAfterSave);
+// };
 		
 		me.onSaveFormularioCompletoActivoIntegrado(null, form);				
 	},
@@ -2328,7 +2348,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	onSaveFormularioCompletoActivoIntegrado: function(btn, form){
 		var me = this;
 		var window = form.up('window');
-		//disableValidation: Atributo para indicar si el guardado del formulario debe aplicar o no, las validaciones.
+		// disableValidation: Atributo para indicar si el guardado del formulario debe aplicar o no,
+		// las validaciones.
 		if(form.isFormValid() || form.disableValidation) {
 			
 			Ext.Array.each(form.query('field[isReadOnlyEdit]'),
@@ -2373,7 +2394,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			            }
 					});
 				}
-			//Guardamos mÃºltiples records	
+			// Guardamos mÃºltiples records
 			} else {
 				var records = form.getBindRecords();
 				var contador = 0;
@@ -2506,7 +2527,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		}
 	},
 	
-	//Llamar desde cualquier GridEditableRow, y asÃ­ se desactivaran las ediciones.
+	// Llamar desde cualquier GridEditableRow, y asÃ­ se desactivaran las ediciones.
 	quitarEdicionEnGridEditablePorFueraPerimetro: function(grid,record) {
 		var me = this; 
 		
@@ -2543,7 +2564,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 
     },
     
-    //Activa o desactiva el campo
+    // Activa o desactiva el campo
     activarDesactivarCampo: function(campo, activar) {
     	
     	if(activar) {
@@ -2558,7 +2579,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	}
     },
     
-    //Este mÃ©todo se usa para marcar en rojo el campo en primera instancia, o vaciar su contenido
+    // Este mÃ©todo se usa para marcar en rojo el campo en primera instancia, o vaciar su contenido
     vaciarCampoMostrarRojoObligatoriedad: function(campo, mostrarObligatoriedad, vaciarCampo) {
     	if(mostrarObligatoriedad) {
     		campo.setValue(' ');
@@ -2568,7 +2589,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     		campo.setValue();
     },
 
-    // Este mÃ©todo es llamado cuando se pulsa el botÃ³n 'ver' del ID de visita en el detalle de una oferta
+    // Este mÃ©todo es llamado cuando se pulsa el botÃ³n 'ver' del ID de visita en el detalle de una
+	// oferta
     // y abre un pop-up con informaciÃ³n sobre la visita.
     onClickMostrarVisita: function(btn) {
     	var me = this;
@@ -2656,7 +2678,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		});		
 	},
 	
-	// Este mÃ©todo abre el activo o agrupaciÃ³n asociado a la oferta en el grid de ofertas del activo.
+	// Este mÃ©todo abre el activo o agrupaciÃ³n asociado a la oferta en el grid de ofertas del
+	// activo.
 	onClickAbrirActivoAgrupacion: function(tableView, indiceFila, indiceColumna) {
 		var me = this;
 		var grid = tableView.up('grid');
@@ -2771,7 +2794,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	
 	onRenderCargasList: function(grid) {
 		var me = this,
-		//isCarteraCajamar = me.getViewModel().get("activo.isCarteraCajamar"),
+		// isCarteraCajamar = me.getViewModel().get("activo.isCarteraCajamar"),
 		items = grid.getDockedItems('toolbar[dock=top]');
 		if (items.length > 0){
 			items[0].setVisible(true);
@@ -3294,7 +3317,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 
 		        var successFn = function(record, operation) {
 		            window.destroy();
-		            /*me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));*/
+		            /* me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok")); */
 		            me.manageToastJsonResponse(me, record.responseText);
 		            me.getView().unmask();
 		            me.getView().fireEvent("refreshComponentOnActivate", "container[reference=tabBuscadorActivos]");
@@ -3324,9 +3347,13 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	
     
 	/**
-	 * Replica una operación ya realizada sobre un activo, utilizando el array de activos que recibe y llamandose recursivamente hasta que no quedan activos .
-	 * @param {} config - url y parametros comunes para guardar(datos modificados y tab) 
-	 * @param {} activos
+	 * Replica una operación ya realizada sobre un activo, utilizando el array de activos que recibe
+	 * y llamandose recursivamente hasta que no quedan activos .
+	 * 
+	 * @param {}
+	 *            config - url y parametros comunes para guardar(datos modificados y tab)
+	 * @param {}
+	 *            activos
 	 * @return {Boolean}
 	 */
     propagarCambios: function(window, activos, jsonResponse) {
@@ -3554,9 +3581,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     		grid.disableAddButton(false);
     		grid.disablePagingToolBar(false);
     		grid.getSelectionModel().deselectAll();
-// TODO: Encontrar la manera de realizar esto que me ha obligado a 
+// TODO: Encontrar la manera de realizar esto que me ha obligado a
 // duplicar este save del record y en este punto "editor" es indefinido
-//    		editor.isNew = false;
+// editor.isNew = false;
 		} else {
 		   grid.getStore().load(); 	
 		}
@@ -3591,6 +3618,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     },
 
     onChangeComboMotivoOcultacionVenta: function() {
+   
     	var me = this;
     	var combo = me.lookupReference('comboMotivoOcultacionVenta');
     	var textArea = me.lookupReference(combo.textareaRefChained);
@@ -3598,7 +3626,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	if(combo && combo.value === CONST.MOTIVO_OCULTACION['OTROS']) {
     		textArea.setDisabled(false);
     	} else {
+    		textArea.setValue('');
     		textArea.setDisabled(true);
+    		
     	}
     },
 
@@ -3610,6 +3640,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	if(combo && combo.value === CONST.MOTIVO_OCULTACION['OTROS']) {
     		textArea.setDisabled(false);
     	} else {
+    		textArea.setValue('');
     		textArea.setDisabled(true);
     	}
     },
@@ -4474,7 +4505,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
                 }
             }
 
-
             if(destinoComercialActivo === valueDestComercial || destinoComercialActivo === CONST.TIPO_COMERCIALIZACION_ACTIVO["ALQUILER_VENTA"]){
                 if (ventanaDetalle.config.xtype.indexOf('activoadjuntardocumento') >= 0 && ventanaAlta.indexOf('wizardaltacomprador') < 0) {
                     ventanaDetalle.setController('activodetalle');
@@ -4516,16 +4546,23 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
                                     transferenciasInternacionales = ventanaWizardAdjuntarDocumento.getForm().findField('transferenciasInternacionales'),
                                     btnGenerarDoc = ventanaWizardAdjuntarDocumento.down('button[itemId=btnGenerarDoc]');
                                     btnFinalizar =  ventanaWizardAdjuntarDocumento.down('button[itemId=btnFinalizar]');
-                                    if(cesionDatos.getValue()){
-                                    	btnFinalizar.enable();
-                                    }     
                                     if (esInternacional) {
-										if (cesionDatos.getValue() && transferenciasInternacionales.getValue()) {
+                                    	Ext.global.console.log("internacional");
+                                    	Ext.global.console.log("cesion datos "+cesionDatos.getValue());
+                                    	Ext.global.console.log("transferenciasInternacionales datos "+transferenciasInternacionales.getValue());
+										if (transferenciasInternacionales.getValue()) {
 											btnFinalizar.enable();
+										}else{
+											btnFinalizar.disable();
 										}
 									} else {
+										Ext.global.console.log("no internacional");
+										Ext.global.console.log("cesion datos "+cesionDatos.getValue());
+                                    	Ext.global.console.log("transferenciasInternacionales datos "+transferenciasInternacionales.getValue());
 										if (cesionDatos.getValue()) {
 											btnFinalizar.enable();
+										}else{
+											btnFinalizar.disable();
 										}
 									}
 

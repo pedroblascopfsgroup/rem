@@ -284,6 +284,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			dto.setNumGastoHaya(gasto.getNumGastoHaya());
 			dto.setNumGastoGestoria(gasto.getNumGastoGestoria());
 			dto.setReferenciaEmisor(gasto.getReferenciaEmisor());
+			dto.setCartera(gasto.getCartera().getCodigo());
 
 			if (!Checks.esNulo(gasto.getTipoGasto())) {
 				dto.setTipoGastoCodigo(gasto.getTipoGasto().getCodigo());
@@ -505,7 +506,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", id);
 		GastoProveedor gastoProveedor = genericDao.get(GastoProveedor.class, filtro);
 		DtoFichaGastoProveedor dtoIni = gastoToDtoFichaGasto(gastoProveedor);
-
+		
 		try {
 			beanUtilNotNull.copyProperties(gastoProveedor, dto);
 
@@ -540,6 +541,18 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		if (!Checks.esNulo(dto.getPeriodicidad())) {
 			DDTipoPeriocidad periodicidad = (DDTipoPeriocidad) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoPeriocidad.class, dto.getPeriodicidad());
 			gastoProveedor.setTipoPeriocidad(periodicidad);
+		}
+			
+		if (!Checks.esNulo(dto.getFechaEmision())) {	
+			try {
+				beanUtilNotNull.copyProperty(gastoProveedor, "fechaEmision", dto.getFechaEmision());
+			} catch (IllegalAccessException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (InvocationTargetException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		if (!Checks.esNulo(dto.getTipoOperacionCodigo())) {
 			DDTipoOperacionGasto tipoOperacion = (DDTipoOperacionGasto) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoOperacionGasto.class, dto.getTipoOperacionCodigo());
@@ -2172,7 +2185,7 @@ public class GastoProveedorManager implements GastoProveedorApi {
 
 			boolean tieneIva = Checks.esNulo(gasto.getGestoria());
 			String nuevoEstado = checkReglaCambioEstado(gasto.getEstadoGasto().getCodigo(), tieneIva,
-  					tipoDocumento.getMatricula());
+  					tipoDocumento.getMatricula(), gasto);
 			updateExisteDocumentoGasto(gasto, 1);
   			//if (!Checks.esNulo(nuevoEstado)) {
   				updaterStateApi.updaterStates(gasto, nuevoEstado);
@@ -3039,11 +3052,11 @@ public class GastoProveedorManager implements GastoProveedorApi {
 		}
 	}
 	
-	public String checkReglaCambioEstado(String codigoEstado, boolean coniva, String matriculaTipoDoc) {
+	public String checkReglaCambioEstado(String codigoEstado, boolean coniva, String matriculaTipoDoc, GastoProveedor gasto) {
 		Pattern factPattern = Pattern.compile(".*-FACT-.*");
 		Pattern justPattern = Pattern.compile(".*-CERA-.*");
 
-		if (factPattern.matcher(matriculaTipoDoc).matches() && DDEstadoGasto.INCOMPLETO.equals(codigoEstado)) {
+		if (factPattern.matcher(matriculaTipoDoc).matches() && Checks.esNulo(updaterStateApi.validarCamposMinimos(gasto)) && DDEstadoGasto.INCOMPLETO.equals(codigoEstado)) {
 			return DDEstadoGasto.PENDIENTE;
 
 		} else if (justPattern.matcher(matriculaTipoDoc).matches()

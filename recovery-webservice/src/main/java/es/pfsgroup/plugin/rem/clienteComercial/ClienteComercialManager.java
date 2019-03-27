@@ -5,8 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import net.sf.json.JSONObject;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,24 +19,22 @@ import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.bo.BusinessOperationOverrider;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.rem.api.ClienteComercialApi;
 import es.pfsgroup.plugin.rem.clienteComercial.dao.ClienteComercialDao;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
-import es.pfsgroup.plugin.rem.model.AdjuntoComprador;
 import es.pfsgroup.plugin.rem.model.ClienteComercial;
 import es.pfsgroup.plugin.rem.model.ClienteCompradorGDPR;
 import es.pfsgroup.plugin.rem.model.ClienteGDPR;
-import es.pfsgroup.plugin.rem.model.Comprador;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi.TIPO_VALIDACION;
 import es.pfsgroup.plugin.rem.rest.dto.ClienteDto;
+import net.sf.json.JSONObject;
 
 @Service("clienteComercialManager")
 public class ClienteComercialManager extends BusinessOperationOverrider<ClienteComercialApi>
@@ -507,58 +503,62 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 			clienteComercialDao.saveOrUpdate(cliente);
 			
 			// HREOS-4937 
-			ClienteGDPR clienteGDPR = genericDao.get(ClienteGDPR.class,
+			List<ClienteGDPR> clienteGDPR = genericDao.getList(ClienteGDPR.class,
 					genericDao.createFilter(FilterType.EQUALS, "tipoDocumento.id", cliente.getTipoDocumento().getId()),
 					genericDao.createFilter(FilterType.EQUALS, "numDocumento", cliente.getDocumento()));
 			
-			if (!Checks.esNulo(clienteGDPR)) {
+			if (!Checks.estaVacio(clienteGDPR)) {
 				// Primero historificamos los datos de ClienteGDPR en ClienteCompradorGDPR
 				ClienteCompradorGDPR clienteCompradorGDPR = new ClienteCompradorGDPR();
-				clienteCompradorGDPR.setTipoDocumento(clienteGDPR.getTipoDocumento());
-				clienteCompradorGDPR.setNumDocumento(clienteGDPR.getNumDocumento());
-				clienteCompradorGDPR.setCesionDatos(clienteGDPR.getCesionDatos());
-				clienteCompradorGDPR.setComunicacionTerceros(clienteGDPR.getComunicacionTerceros());
-				clienteCompradorGDPR.setTransferenciasInternacionales(clienteGDPR.getTransferenciasInternacionales());
-				clienteCompradorGDPR.setAdjuntoComprador(clienteGDPR.getAdjuntoComprador());							
+				clienteCompradorGDPR.setTipoDocumento(clienteGDPR.get(0).getTipoDocumento());
+				clienteCompradorGDPR.setNumDocumento(clienteGDPR.get(0).getNumDocumento());
+				clienteCompradorGDPR.setCesionDatos(clienteGDPR.get(0).getCesionDatos());
+				clienteCompradorGDPR.setComunicacionTerceros(clienteGDPR.get(0).getComunicacionTerceros());
+				clienteCompradorGDPR.setTransferenciasInternacionales(clienteGDPR.get(0).getTransferenciasInternacionales());
+				clienteCompradorGDPR.setAdjuntoComprador(clienteGDPR.get(0).getAdjuntoComprador());							
 
 				genericDao.save(ClienteCompradorGDPR.class, clienteCompradorGDPR);
 
 				// Despues se hace el update en ClienteGDPR
-				clienteGDPR.setCliente(cliente);
+				
+				for(ClienteGDPR clc: clienteGDPR){
+					clc.setCliente(cliente);
 
-				if (((JSONObject) jsonFields).containsKey("cesionDatos")) {
-					clienteGDPR.setCesionDatos(clienteDto.getCesionDatos());
-				}
-				if (((JSONObject) jsonFields).containsKey("comunicacionTerceros")) {
-					clienteGDPR.setComunicacionTerceros(clienteDto.getComunicacionTerceros());
-				}
-				if (((JSONObject) jsonFields).containsKey("transferenciasInternacionales")) {
-					clienteGDPR.setTransferenciasInternacionales(clienteDto.getTransferenciasInternacionales());
-				}				
+					if (((JSONObject) jsonFields).containsKey("cesionDatos")) {
+						clc.setCesionDatos(clienteDto.getCesionDatos());
+					}
+					if (((JSONObject) jsonFields).containsKey("comunicacionTerceros")) {
+						clc.setComunicacionTerceros(clienteDto.getComunicacionTerceros());
+					}
+					if (((JSONObject) jsonFields).containsKey("transferenciasInternacionales")) {
+						clc.setTransferenciasInternacionales(clienteDto.getTransferenciasInternacionales());
+					}				
 
-				genericDao.update(ClienteGDPR.class, clienteGDPR);
+					genericDao.update(ClienteGDPR.class, clc);					
+				}
+				
 
 			} else {
-				clienteGDPR = new ClienteGDPR();
-				clienteGDPR.setCliente(cliente);
+				ClienteGDPR clienteGDPRNew = new ClienteGDPR();
+				clienteGDPRNew.setCliente(cliente);
 				
 				if (!Checks.esNulo(cliente.getTipoDocumento())) {
-					clienteGDPR.setTipoDocumento(cliente.getTipoDocumento());
+					clienteGDPRNew.setTipoDocumento(cliente.getTipoDocumento());
 				}				
 				if (!Checks.esNulo(cliente.getDocumento())) {
-					clienteGDPR.setNumDocumento(cliente.getDocumento());
+					clienteGDPRNew.setNumDocumento(cliente.getDocumento());
 				}		
 				if (((JSONObject) jsonFields).containsKey("cesionDatos")) {
-					clienteGDPR.setCesionDatos(clienteDto.getCesionDatos());
+					clienteGDPRNew.setCesionDatos(clienteDto.getCesionDatos());
 				}
 				if (((JSONObject) jsonFields).containsKey("comunicacionTerceros")) {
-					clienteGDPR.setComunicacionTerceros(clienteDto.getComunicacionTerceros());
+					clienteGDPRNew.setComunicacionTerceros(clienteDto.getComunicacionTerceros());
 				}
 				if (((JSONObject) jsonFields).containsKey("transferenciasInternacionales")) {
-					clienteGDPR.setTransferenciasInternacionales(clienteDto.getTransferenciasInternacionales());
+					clienteGDPRNew.setTransferenciasInternacionales(clienteDto.getTransferenciasInternacionales());
 				}
 				
-				genericDao.save(ClienteGDPR.class, clienteGDPR);
+				genericDao.save(ClienteGDPR.class, clienteGDPRNew);
 			}
 			
 

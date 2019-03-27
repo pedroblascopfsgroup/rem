@@ -3574,8 +3574,7 @@ public class ActivoAdapter {
 			// Comprobamos si existe en la tabla CGD_CLIENTE_GDPR un registro con el mismo
 			// número y tipo de documento
 			ClienteGDPR cliGDPR = genericDao.get(ClienteGDPR.class,
-					genericDao.createFilter(FilterType.EQUALS, "tipoDocumento.id", tipoDocumento.getId()),
-					genericDao.createFilter(FilterType.EQUALS, "numDocumento", dto.getNumDocumentoCliente()));
+					genericDao.createFilter(FilterType.EQUALS, "cliente.id", clienteComercial.getId()));
 
 			AdjuntoComprador docAdjunto = null;
 			if (!Checks.esNulo(dto.getIdDocAdjunto())) {
@@ -3616,7 +3615,7 @@ public class ActivoAdapter {
 				clienteGDPR.setComunicacionTerceros(dto.getComunicacionTerceros());
 				clienteGDPR.setTransferenciasInternacionales(dto.getTransferenciasInternacionales());
 				
-				if(!Checks.esNulo(tmpClienteGDPR.getIdAdjunto())) {
+				if(!Checks.esNulo(tmpClienteGDPR) && !Checks.esNulo(tmpClienteGDPR.getIdAdjunto())) {
 					docAdjunto = genericDao.get(AdjuntoComprador.class,
 							genericDao.createFilter(FilterType.EQUALS, "id", tmpClienteGDPR.getIdAdjunto()));
 				}

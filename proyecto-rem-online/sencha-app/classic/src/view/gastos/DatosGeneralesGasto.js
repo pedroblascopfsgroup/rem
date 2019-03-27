@@ -230,12 +230,9 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 								items: [
 										{
 								        	xtype:'datefieldbase',
-											formatter: 'date("d/m/Y")',
 											reference: 'fechaEmision',
-									       	fieldLabel: HreRem.i18n('fieldlabel.gasto.fecha.emision'),
-									       	bind: '{gasto.fechaEmision}',
-									       	maxValue: null,
-									       	allowBlank: false
+									       	fieldLabel: HreRem.i18n('fieldlabel.gasto.fecha.emision')+' *',
+									       	bind: '{gasto.fechaEmision}'
 									    },
 									    { 
 											xtype: 'comboboxfieldbase',
@@ -248,7 +245,7 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 									    },
 						                { 
 											xtype: 'comboboxfieldbase',
-							               	fieldLabel:  HreRem.i18n('fieldlabel.gasto.periodicidad'),
+							               	fieldLabel:  HreRem.i18n('fieldlabel.gasto.periodicidad')+' *',
 							               	reference: 'cboxPeriodicidad',
 							               	//editable: true,
 									      	bind: {
@@ -258,12 +255,12 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 									    },
 										{
 											xtype: 'textfieldbase',
-											fieldLabel: HreRem.i18n('fieldlabel.gasto.concepto'),
+											fieldLabel: HreRem.i18n('fieldlabel.gasto.concepto')+' *',
 											bind: '{gasto.concepto}'
 										},
 									    { 
 											xtype: 'comboboxfieldbase',
-							               	fieldLabel:  HreRem.i18n('fieldlabel.gasto.tipo.operacion'),
+							               	fieldLabel:  HreRem.i18n('fieldlabel.gasto.tipo.operacion')+' *',
 									      	bind: {
 								           		store: '{comboTipoOperacion}',
 								           		value: '{gasto.tipoOperacionCodigo}'

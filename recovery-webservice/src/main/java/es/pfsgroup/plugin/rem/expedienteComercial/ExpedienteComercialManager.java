@@ -3106,33 +3106,31 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	 */
 	private void rellenarDatosVentaFormalizacion(Formalizacion formalizacion, DtoFormalizacionResolucion resolucionDto) {
 		if(formalizacion != null && formalizacion.getExpediente() != null && formalizacion.getExpediente().getTrabajo() != null){
-			List<ActivoTramite> listaTramites = tramiteDao.getTramitesByTipoAndTrabajo(formalizacion.getExpediente().getTrabajo().getId(), ActivoTramiteApi.CODIGO_TRAMITE_COMERCIAL_VENTA);
-	
+			List<ActivoTramite> listaTramites = tramiteDao.getTramitesByTipoAndTrabajo(
+					formalizacion.getExpediente().getTrabajo().getId(), ActivoTramiteApi.CODIGO_TRAMITE_COMERCIAL_VENTA);
+
 			if (!Checks.estaVacio(listaTramites)) {
 				List<TareaExterna> listaTareas = activoTareaExternaApi.getTareasByIdTramite(listaTramites.get(0).getId());
 				TareaExterna tex = null;
-	
+
 				for (TareaExterna tarea : listaTareas) {
 					if (tarea.getTareaProcedimiento() != null && tarea.getTareaProcedimiento().getCodigo().equals("T013_FirmaPropietario")) {
 						tex = tarea;
 						break;
 					}
 				}
-	
+
 				if (!Checks.esNulo(tex)) {
 					SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-	
 					try {
 						String fechaFirma = activoTramiteApi.getTareaValorByNombre(tex.getValores(), "fechaFirma");
-						if(!Checks.esNulo(fechaFirma)){
+						if (!Checks.esNulo(fechaFirma)) {
 							resolucionDto.setFechaVenta(df.parse(fechaFirma));
 						}
-	
+						resolucionDto.setNumProtocolo(activoTramiteApi.getTareaValorByNombre(tex.getValores(), "numProtocolo"));
 					} catch (ParseException e) {
 						logger.error("error en expedienteComercialManager", e);
 					}
-	
-					resolucionDto.setNumProtocolo(activoTramiteApi.getTareaValorByNombre(tex.getValores(), "numProtocolo"));
 				}
 			}
 		}
@@ -3791,8 +3789,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		ExpedienteComercial expedienteComercial = tareaExternaToExpedienteComercial(tareaExterna);
 		
 		if(!Checks.esNulo(expedienteComercial)) {
-			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "idExpedienteComercial",Long.toString(expedienteComercial.getId()));
-			VBusquedaDatosCompradorExpediente comprador = genericDao.get(VBusquedaDatosCompradorExpediente.class, filtro); 
+			Filter filtroId = genericDao.createFilter(FilterType.EQUALS, "idExpedienteComercial",Long.toString(expedienteComercial.getId()));
+			Filter filtroTitular = genericDao.createFilter(FilterType.EQUALS, "titularContratacion",1);
+			VBusquedaDatosCompradorExpediente comprador = genericDao.get(VBusquedaDatosCompradorExpediente.class, filtroId, filtroTitular); 
 			
 			//Campos comunes sin que dependa del tipo de persona						Campos del titular
 			if (!Checks.esNulo(comprador.getPorcentajeCompra())){						//Porcentaje de compra

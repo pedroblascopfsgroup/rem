@@ -1184,7 +1184,11 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				ClienteGDPR clienteGDPR = genericDao.get(ClienteGDPR.class,
 						genericDao.createFilter(FilterType.EQUALS, "cliente.id", oferta.getCliente().getId()));
 				
-				compradorExpedienteNuevo.setDocumentoAdjunto(clienteGDPR.getAdjuntoComprador());
+				if(clienteGDPR != null){
+					compradorExpedienteNuevo.setDocumentoAdjunto(clienteGDPR.getAdjuntoComprador());
+				}
+				
+				
 
 				listaCompradoresExpediente.add(compradorExpedienteNuevo);
 			} else { // Si no existe un comprador con dicho dni, lo crea, añade
@@ -1260,7 +1264,10 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				if (!Checks.esNulo(oferta.getCliente().getRegimenMatrimonial())) {
 					compradorExpedienteNuevo.setRegimenMatrimonial(oferta.getCliente().getRegimenMatrimonial());
 				}
-				compradorExpedienteNuevo.setDocumentoAdjunto(clienteGDPR.getAdjuntoComprador());
+				
+				if(clienteGDPR != null){
+					compradorExpedienteNuevo.setDocumentoAdjunto(clienteGDPR.getAdjuntoComprador());
+				}				
 
 				listaCompradoresExpediente.add(compradorExpedienteNuevo);
 								
@@ -1315,9 +1322,14 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 						listaCompradoresExpediente.add(compradorExpedienteAdicionalNuevo);
 
 					} else {
-						ClienteGDPR cliGDPR = genericDao.get(ClienteGDPR.class,
+						ClienteGDPR cliGDPR = null;
+						List<ClienteGDPR> cliGDPRLista = genericDao.getList(ClienteGDPR.class,
 								genericDao.createFilter(FilterType.EQUALS, "tipoDocumento.id", titularAdicional.getTipoDocumento().getId()),
 								genericDao.createFilter(FilterType.EQUALS, "numDocumento", titularAdicional.getDocumento()));
+						
+						if(cliGDPRLista != null && cliGDPRLista.size() > 0){
+							cliGDPR = cliGDPRLista.get(0);
+						}
 						
 						Comprador nuevoCompradorAdicional = new Comprador();
 						CompradorExpediente compradorExpedienteAdicionalNuevo = new CompradorExpediente();
@@ -2827,7 +2839,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 						activoOferta.getPrimaryKey().getOferta().getId());
 				ExpedienteComercial expediente = genericDao.get(ExpedienteComercial.class, filtro);
 				if (!Checks.esNulo(expediente)) {
-					if (!Checks.esNulo(expediente.getFechaVenta()) && DDTipoOferta.CODIGO_ALQUILER.equals(activoOferta.getPrimaryKey().getOferta().getTipoOferta().getCodigo()))
+					if (!Checks.esNulo(expediente.getFechaInicioAlquiler()) && DDTipoOferta.CODIGO_ALQUILER.equals(activoOferta.getPrimaryKey().getOferta().getTipoOferta().getCodigo()))
 						return true;
 				}
 			}

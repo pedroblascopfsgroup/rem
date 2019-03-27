@@ -20,6 +20,8 @@ Ext.define('HreRem.view.trabajos.detalle.SeleccionTarifasTrabajo', {
     
     carteraCodigo: null,
     
+    subcarteraCodigo: null,
+    
     tipoTrabajoCodigo: null,
     
     subtipoTrabajoCodigo: null,
@@ -52,6 +54,7 @@ Ext.define('HreRem.view.trabajos.detalle.SeleccionTarifasTrabajo', {
 			
 			me.getViewModel().set('trabajo.id', me.idTrabajo);
 	    	me.getViewModel().set('trabajo.carteraCodigo', me.carteraCodigo);
+	    	me.getViewModel().set('trabajo.subcarteraCodigo', me.subcarteraCodigo);
 	    	me.getViewModel().set('trabajo.tipoTrabajoCodigo', me.tipoTrabajoCodigo);
 	    	me.getViewModel().set('trabajo.subtipoTrabajoCodigo', me.subtipoTrabajoCodigo);
 	    	me.getViewModel().set('trabajo.codigoTarifaTrabajo', me.codigoTarifaTrabajo);
@@ -73,6 +76,7 @@ Ext.define('HreRem.view.trabajos.detalle.SeleccionTarifasTrabajo', {
     		   {
 	            	xtype: 'fieldsettable',
 	            	defaultType: 'comboboxfieldbase',
+	            	height: 114,
 	            	items: [
 						{
 							fieldLabel:  HreRem.i18n('fieldlabel.entidad.propietaria'),
@@ -94,6 +98,18 @@ Ext.define('HreRem.view.trabajos.detalle.SeleccionTarifasTrabajo', {
 							bind: {
 			            		store: '{comboTipoTrabajo}',
 			            		value: '{trabajo.tipoTrabajoCodigo}'
+			            	},
+			            	displayField: 'descripcion',
+    						valueField: 'codigo'
+						},
+						{
+							fieldLabel:  HreRem.i18n('fieldlabel.proveedores.subcartera'), // SUBCARTERA
+							flex: 1,
+							readOnly: true,
+							//width: 		260,
+							bind: {
+			            		store: '{comboSubentidadPropietaria}',
+			            		value: '{trabajo.subcarteraCodigo}'
 			            	},
 			            	displayField: 'descripcion',
     						valueField: 'codigo'

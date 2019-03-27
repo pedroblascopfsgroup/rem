@@ -24,6 +24,7 @@ import org.hibernate.annotations.Where;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTarifa;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTrabajo;
@@ -79,6 +80,10 @@ public class ConfiguracionTarifa implements Serializable, Auditable {
     @JoinColumn(name = "PVE_ID")
 	private ActivoProveedor proveedor;
     
+    @ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name="DD_SCR_ID")
+	private DDSubcartera subcartera;
+    
 	@Version   
 	private Long version;
 	
@@ -127,6 +132,14 @@ public class ConfiguracionTarifa implements Serializable, Auditable {
 
 	public void setCartera(DDCartera cartera) {
 		this.cartera = cartera;
+	}
+	
+	public DDSubcartera getSubcartera() {
+		return subcartera;
+	}
+
+	public void setSubcartera(DDSubcartera subcartera) {
+		this.subcartera = subcartera;
 	}
 
 	public Float getPrecioUnitario() {

@@ -1052,7 +1052,7 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 		Oferta oferta = expComercial.getOferta();
 		Comprador comprador = new Comprador();
 		
-		CompradorExpediente compradorExp = genericDao.get(CompradorExpediente.class, genericDao.createFilter(FilterType.EQUALS,"expediente",expComercial.getId()));
+		CompradorExpediente compradorExp = genericDao.get(CompradorExpediente.class, genericDao.createFilter(FilterType.EQUALS,"expediente",expComercial.getId()), genericDao.createFilter(FilterType.EQUALS, "borrado", false), genericDao.createFilter(FilterType.EQUALS, "titularContratacion", 1));
 		
 		if(!Checks.esNulo(compradorExp)) {
 			comprador = genericDao.get(Comprador.class, genericDao.createFilter(FilterType.EQUALS,"id",compradorExp.getComprador()));

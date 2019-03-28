@@ -369,7 +369,7 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 												        reference: 'numeroClienteUrsusBhRef',
 												        bind: {
 											            	value: '{comprador.numeroClienteUrsusBh}',
-											            	hidden: '{!esBankiaHabitat}'
+											            	hidden: '{!comprador.esBH}'
 											            },
 											            editable: true
 						                            }

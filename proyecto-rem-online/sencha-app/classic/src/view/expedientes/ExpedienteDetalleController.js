@@ -1025,6 +1025,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		    id = window.idComprador,
 		    idExpediente = window.up().expediente.get("id");
 		form = window.getForm();
+		window.mask(HreRem.i18n("msg.mask.loading"));
 
 		model = Ext.create('HreRem.model.FichaComprador', {
 			id : id,
@@ -1037,7 +1038,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			codTipoDocumento: form.findField('codTipoDocumento').getValue()
 		});
 
-		window.mask(HreRem.i18n("msg.mask.loading"));
+		
 
 		me.getViewModel().set('comprador', model);
 
@@ -2041,11 +2042,11 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 
 	mostrarDetallesClienteUrsus: function(field, newValue ,oldValue ,eOpts){
 		var me = this;
+		var form = field.up('formBase');
 		var url =  $AC.getRemoteUrl('expedientecomercial/buscarDatosClienteNumeroUrsus');
-		var numeroUrsus = field.up('formBase').down('[reference=seleccionClienteUrsus]').getValue();
-		var fichaComprador= field.up('[xtype=formBase]');
-		var idExpediente = fichaComprador.getBindRecord().get('idExpedienteComercial');
-		var parent = field.up('datoscompradorwindow');
+		var numeroUrsus = form.down('[reference=seleccionClienteUrsus]').getValue();
+		var idExpediente = form.getBindRecord().get('idExpedienteComercial');
+		var parent = field.up('windowBase');
 
 		parent.mask(HreRem.i18n("msg.mask.loading"));
 		

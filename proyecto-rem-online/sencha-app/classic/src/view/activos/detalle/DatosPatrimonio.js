@@ -4,6 +4,7 @@ Ext.define('HreRem.view.activos.detalle.DatosPatrimonio', {
     cls			: 'panel-base shadow-panel',
     collapsed	: false,
     reference	: 'datospatrimonio',
+    refreshaftersave: true,
 	scrollable	: 'y',
 	recordName	: 'patrimonio',
 	recordClass : 'HreRem.model.ActivoPatrimonio',

@@ -3612,7 +3612,15 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					reiniciarPBC = true;
 				}
 
-				compradorExpediente.setDocumentoConyuge(dto.getDocumentoConyuge());
+				if(!Checks.esNulo(dto.getDocumentoConyuge())) {
+					compradorExpediente.setDocumentoConyuge(dto.getDocumentoConyuge());
+				}
+				
+				if(!Checks.esNulo(dto.getCodTipoDocumentoConyuge())) {
+					compradorExpediente.setTipoDocumentoConyuge((DDTipoDocumento) utilDiccionarioApi
+							.dameValorDiccionarioByCod(DDTipoDocumento.class,
+									dto.getCodTipoDocumentoConyuge()));
+				}
 
 				if (!Checks.esNulo(dto.getRelacionAntDeudor())) {
 					compradorExpediente.setRelacionAntDeudor(dto.getRelacionAntDeudor());

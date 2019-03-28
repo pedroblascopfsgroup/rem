@@ -353,7 +353,7 @@ Ext.define('HreRem.view.expedientes.DatosCompradorWizard', {
 				        padding: '5px',
 				        bind: {
 			            	value: '{comprador.numeroClienteUrsusBh}',
-			            	hidden: '{!esBankiaHabitat}'
+			            	hidden: '{!comprador.esBH}'
 			            },
 			            editable: true
                    }

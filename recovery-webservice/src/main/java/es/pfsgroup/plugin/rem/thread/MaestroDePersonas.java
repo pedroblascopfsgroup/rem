@@ -177,7 +177,10 @@ public class MaestroDePersonas implements Runnable {
 
 					logger.error("[MAESTRO DE PERSONAS] LLAMAMOS A EJECUTAR PERSONA");
 					logger.error("[MAESTRO DE PERSONAS] Datos de la llamada: ".concat(personaDto.toString()));
+					
 					PersonaOutputDto personaOutputDto = gestorDocumentalMaestroManager.ejecutarPersona(personaDto);
+					//PersonaOutputDto personaOutputDto = new PersonaOutputDto();
+					
 					logger.error("[MAESTRO DE PERSONAS] VOLVEMOS DE EJECUTAR PERSONA");
 					logger.error("[MAESTRO DE PERSONAS] Datos de la respuesta: ".concat(personaOutputDto.toString()));
 
@@ -200,6 +203,7 @@ public class MaestroDePersonas implements Runnable {
 						personaDto.setIdRol(ID_ROL_16);
 
 						personaOutputDto = gestorDocumentalMaestroManager.ejecutarPersona(personaDto);
+						//personaOutputDto.setIdIntervinienteHaya("123456789");
 
 						logger.error("[MAESTRO DE PERSONAS] EL ID RECUPERADO ES "
 								+ personaOutputDto.getIdIntervinienteHaya());

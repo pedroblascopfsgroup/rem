@@ -232,7 +232,7 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 								        	xtype:'datefieldbase',
 								        	formatter: 'date("d/m/Y")',
 											reference: 'fechaEmision',
-									       	fieldLabel: HreRem.i18n('fieldlabel.gasto.fecha.emision'),
+									       	fieldLabel: HreRem.i18n('fieldlabel.gasto.fecha.emision')+' *',
 									       	bind: '{gasto.fechaEmision}',
 									       	maxValue: null,
 									       	allowBlank: false

@@ -3703,7 +3703,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
         if (checkbox.getValue() && me.getViewModel().get('debePreguntarPorTipoPublicacionAlquiler')) {
 			Ext.create('HreRem.view.activos.detalle.VentanaEleccionTipoPublicacion').show();
         }
-
+        
 		var estadoPubAlquilerPublicado = me.getViewModel().get('activo').getData().estadoAlquilerCodigo === CONST.ESTADO_PUBLICACION_ALQUILER['PUBLICADO'] ||
 		me.getViewModel().get('activo').getData().estadoAlquilerCodigo === CONST.ESTADO_PUBLICACION_ALQUILER['OCULTO'];
         if(!isDirty && estadoPubAlquilerPublicado) {
@@ -3711,6 +3711,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
             checkbox.setReadOnly(readOnly);
             checkbox.setValue(true);
 		}
+        if(!checkbox.getValue()){
+        	checkbox.up('activosdetallemain').lookupReference('textareaMotivoPublicacionAlquiler').reset();
+        }
     },
 
 	onChangeCheckboxPublicarSinPrecioVenta: function(checkbox, isDirty) {

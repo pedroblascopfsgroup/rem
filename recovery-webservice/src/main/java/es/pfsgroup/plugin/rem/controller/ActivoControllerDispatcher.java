@@ -114,7 +114,7 @@ public class ActivoControllerDispatcher {
 				} else if (Double.class.isAssignableFrom(type)) {
 					value = Double.parseDouble(object.toString());
 				} else if (List.class.isAssignableFrom(type)) {
-					value = object;
+					value = (List<?>) object;
 				}
 			} catch (Exception e) {
 				logger.warn("No se va a setear el valor", e);

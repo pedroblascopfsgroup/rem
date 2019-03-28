@@ -208,13 +208,6 @@ class ActivoControllerDispachableMethods {
 						this.controller.createCalificacionNegativa(dto.getIdActivo(), l_DatosRegistrales.get(i), new ModelMap());
 					}
 					
-					
-//					int counter = 0;
-//					for (DtoActivoDatosRegistrales auxDto : l_DatosRegistrales) {
-//						l_DatosRegistrales.get(counter).setIdActivo(dto.getIdActivo());
-//						this.controller.createCalificacionNegativa(dto.getIdActivo(), l_DatosRegistrales.get(counter), new ModelMap());
-//						counter++;
-//					}
 				}
 				
 			}

@@ -219,6 +219,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoMotivoCalificacionNegativa;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoProveedor;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoTitulo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosVisitaOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoAnulacionExpediente;
@@ -5167,6 +5168,10 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					activo = genericDao.get(Activo.class, genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdActivo()));
 					activoCalificacionNegativa.setActivo(activo);
 				} else {
+					return false;
+				}
+				
+				if (DDEstadoTitulo.ESTADO_INSCRITO.equals(dto.getEstadoTitulo())) {
 					return false;
 				}
 

@@ -1046,6 +1046,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 				}
 			});
 		}else{
+			me.getViewModel().set('comprador', model);
 			window.unmask();
 		}
 
@@ -1588,8 +1589,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 
 				if (form.isValid()) {
 					url = $AC.getRemoteUrl('expedientecomercial/getListAdjuntosComprador');
-
-                    idExpediente = comprador.data.idExpedienteComercial;
+				    idExpediente = comprador.data.idExpedienteComercial;
                     var docCliente= comprador.data.numDocumento;
                     Ext.Ajax.request({
                          url: url,

@@ -185,7 +185,8 @@ Ext.define('HreRem.model.FichaComprador', {
 			name: 'codigoPaisRte'
 		},
 		{
-			name: 'esBH'
+			name: 'esBH',
+			type : 'boolean'
 		},
 		{
 			name: 'idDocAdjunto'

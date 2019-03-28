@@ -24,9 +24,10 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
     requires: ['HreRem.model.FichaComprador'],
     
 	listeners: {
-		boxready: 'cargarDatosComprador',
+		//boxready: 'cargarDatosComprador',
 		show: function() {
 			var me = this;
+			this.lookupController().cargarDatosComprador(this);
 		}
 	},
 
@@ -368,7 +369,7 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 												        reference: 'numeroClienteUrsusBhRef',
 												        bind: {
 											            	value: '{comprador.numeroClienteUrsusBh}',
-											            	hidden: '{!esBankiaHabitat}'
+											            	hidden: '{!comprador.esBH}'
 											            },
 											            editable: true
 						                            }

@@ -173,18 +173,20 @@ public class ActivoOfertaAdapter {
 			if (!Checks.esNulo(filtroDocumento))
 				adjuntoComprador = genericDao.get(AdjuntoComprador.class, filtroDocumento);
 			
-			ClienteGDPR clienteGDPR = null;
+			List<ClienteGDPR> clienteGDPR = null;
 			
 			if(!Checks.esNulo(clienteCom)) {
 				//Filtro para conseguir el ClienteGDPR a traves del Cliente Comercial
 				Filter filtroCliente = genericDao.createFilter(FilterType.EQUALS, "numDocumento", clienteCom.getDocumento());
-				clienteGDPR = genericDao.get(ClienteGDPR.class, filtroCliente);
+				clienteGDPR = genericDao.getList(ClienteGDPR.class, filtroCliente);
 				
-				if(!Checks.esNulo(clienteGDPR)) {
-					//Actualizacion de cliente para adjuntar documento
-					clienteGDPR.setAdjuntoComprador(adjuntoComprador);
-					Auditoria.save(clienteGDPR);
-					genericDao.update(ClienteGDPR.class, clienteGDPR);
+				if(!Checks.estaVacio(clienteGDPR)) {
+					for(ClienteGDPR clc : clienteGDPR){
+						clc.setAdjuntoComprador(adjuntoComprador);
+						Auditoria.save(clc);
+						genericDao.update(ClienteGDPR.class, clc);
+					}
+					
 				}
 			} else {
 				filtroPersona = genericDao.createFilter(FilterType.EQUALS, "idPersonaHaya", Long.parseLong(idIntervinienteHaya));

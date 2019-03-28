@@ -717,7 +717,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		fechaPosicionamiento = me.getViewModel().get("expediente.fechaPosicionamiento"),
 		tipoExpedienteAlquiler = CONST.TIPOS_EXPEDIENTE_COMERCIAL["ALQUILER"],
 		tipoExpedienteVenta = CONST.TIPOS_EXPEDIENTE_COMERCIAL["VENTA"];
-		me.getView().fireEvent("refrescarExpediente", me.getView());
+		//me.getView().fireEvent("refrescarExpediente", me.getView());
 		if((codigoEstado!=CONST.ESTADOS_EXPEDIENTE['VENDIDO'] && me.getViewModel().get('expediente.tipoExpedienteCodigo') === tipoExpedienteVenta)
 				||  (me.getViewModel().get('expediente.tipoExpedienteCodigo') === tipoExpedienteAlquiler && Ext.isEmpty(fechaPosicionamiento))){
 			var idCliente = record.get("id"),
@@ -728,8 +728,8 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			if(me.getViewModel().get('expediente.tipoExpedienteCodigo') === tipoExpedienteAlquiler){
 				deshabilitarCamposDoc = true;
 			}
-
-			Ext.create("HreRem.view.expedientes.DatosComprador", {idComprador: idCliente, modoEdicion: edicion, storeGrid:storeGrid, expediente: expediente,deshabilitarCamposDoc: deshabilitarCamposDoc }).show();
+			me.getView().fireEvent('openModalWindow', "HreRem.view.expedientes.DatosComprador",{idComprador: idCliente, modoEdicion: edicion, storeGrid:storeGrid, expediente: expediente,deshabilitarCamposDoc: deshabilitarCamposDoc });
+			
 		}
 		if (me.getViewModel().get('expediente.tipoExpedienteCodigo') === tipoExpedienteAlquiler && !Ext.isEmpty(fechaPosicionamiento)){
 			me.fireEvent("errorToast", "Se ha avanzado la tarea Posicionamiento, no se puede editar los inquilinos");
@@ -1005,8 +1005,8 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		    model = null,
 		    id = window.idComprador,
 		    idExpediente = window.up().expediente.get("id");
-
 		form = window.getForm();
+		window.mask(HreRem.i18n("msg.mask.loading"));
 
 		model = Ext.create('HreRem.model.FichaComprador', {
 			id : id,
@@ -1019,7 +1019,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			codTipoDocumento: form.findField('codTipoDocumento').getValue()
 		});
 
-		window.mask(HreRem.i18n("msg.mask.loading"));
+		
 
 		me.getViewModel().set('comprador', model);
 
@@ -1071,14 +1071,14 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 				me.getView().unmask();
 				me.fireEvent("infoToast", HreRem
 						.i18n("msg.operacion.ok"));
-				window.destroy();
+				window.hide();
 
 		};
 		
 		var failure = function(record, operation) {
 			me.getView().unmask();
 			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-	    	window.destroy();
+	    	//window.destroy();
 
 		};
 
@@ -1096,14 +1096,14 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			me.getView().unmask();
 			me.fireEvent("infoToast", HreRem
 					.i18n("msg.operacion.ok"));
-			window.destroy();
+			window.hide();
 
 	};
 	
 	var failure = function(record, operation) {
 		me.getView().unmask();
 		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-    	window.destroy();
+    	//window.destroy();
 
 	};
 
@@ -1523,7 +1523,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	onClickBotonCerrarComprador: function(btn){
 		var me = this;
 		var window = btn.up("window");
-		window.close();
+		window.hide();
 	},
 
 	onClickBotonCancelarWizardComprador : function(btn) {
@@ -1561,7 +1561,8 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 					if (!Ext.isEmpty(form3)) {
 						form3.reset();
 					}
-					window.close();
+					
+					window.hide();
 				}
 			}
 		});
@@ -1636,6 +1637,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
             ventanaDetalle.getForm().findField('transferenciasInternacionales').setValue(transferenciasInternacionales);*/
 
             me.guardarComprador(form, ventanaWizard);
+            
 		}
 	},
 
@@ -1692,13 +1694,14 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 					if (Ext.isEmpty(fechaSancion)) {
 						var ventanaCompradores = grid.up().up();
 						var expediente = me.getViewModel().get("expediente");
-						Ext.create('HreRem.view.expedientes.WizardAltaComprador', {
+						me.getView().fireEvent('openModalWindow', 'HreRem.view.expedientes.WizardAltaComprador',{
 							idExpediente : idExpediente,
 							parent : ventanaCompradores,
 							expediente : expediente,
 							deshabilitarCamposDoc : false
-						}).show();
-						me.onClickBotonRefrescar();
+						});
+						
+						//me.onClickBotonRefrescar();
 					} else {
 						me.fireEvent("errorToast",
 								"Expediente sancionado");
@@ -1708,13 +1711,13 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 				if (CONST.TIPOS_EXPEDIENTE_COMERCIAL['VENTA'] == tipoExpedienteCodigo) {
 					var ventanaCompradores = grid.up().up();
 					var expediente = me.getViewModel().get("expediente");
-					Ext.create('HreRem.view.expedientes.WizardAltaComprador', {
+					me.getView().fireEvent('openModalWindow', 'HreRem.view.expedientes.WizardAltaComprador',{
 						idExpediente : idExpediente,
 						parent : ventanaCompradores,
 						expediente : expediente,
 						deshabilitarCamposDoc : false
-					}).show();
-					me.onClickBotonRefrescar();
+					});
+					//me.onClickBotonRefrescar();
 					return;
 				}
 			} else {
@@ -2020,11 +2023,11 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 
 	mostrarDetallesClienteUrsus: function(field, newValue ,oldValue ,eOpts){
 		var me = this;
+		var form = field.up('formBase');
 		var url =  $AC.getRemoteUrl('expedientecomercial/buscarDatosClienteNumeroUrsus');
-		var numeroUrsus = field.up('formBase').down('[reference=seleccionClienteUrsus]').getValue();
-		var fichaComprador= field.up('[xtype=formBase]');
-		var idExpediente = fichaComprador.getBindRecord().get('idExpedienteComercial');
-		var parent = field.up('datoscompradorwindow');
+		var numeroUrsus = form.down('[reference=seleccionClienteUrsus]').getValue();
+		var idExpediente = form.getBindRecord().get('idExpedienteComercial');
+		var parent = field.up('windowBase');
 
 		parent.mask(HreRem.i18n("msg.mask.loading"));
 		
@@ -2706,12 +2709,12 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 				renunciaExencion.reset();
 	    		renunciaExencion.setReadOnly(true);
 	    		tipoAplicable.reset();
-	    		tipoAplicable.allowBlank = true;
 	    		tipoAplicable.setDisabled(true);
+	    		tipoAplicable.allowBlank = true;
 			} else {
 				operacionExenta.setReadOnly(false);
-				tipoAplicable.allowBlank = false;
 				tipoAplicable.setDisabled(false);
+				tipoAplicable.allowBlank = false;
 			}
 		}
 	},
@@ -3277,29 +3280,6 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			grid.disableAddButton(false);
 		} else {
 			grid.disableAddButton(true);
-		}
-	},
-	onCambioInversionSujetoPasivo : function(checkbox,
-			newValue, oldValue, eOpts) {
-		if (!Ext.isEmpty(oldValue)) {
-			var me = this, operacionExenta = me
-					.lookupReference('chkboxOperacionExenta'), renunciaExencion = me
-					.lookupReference('chkboxRenunciaExencion'), tipoAplicable = me
-					.lookupReference('tipoAplicable');
-
-			if (newValue == true) {
-				operacionExenta.reset();
-				operacionExenta.setReadOnly(true);
-				renunciaExencion.reset();
-				renunciaExencion.setReadOnly(true);
-				tipoAplicable.reset();
-				tipoAplicable.allowBlank = true;
-				tipoAplicable.setDisabled(true);
-			} else {
-				operacionExenta.setReadOnly(false);
-				tipoAplicable.allowBlank = false;
-				tipoAplicable.setDisabled(false);
-			}
 		}
 	},
 

@@ -1181,10 +1181,14 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				compradorExpedienteNuevo.setPorcionCompra(parteCompraPrincipal);
 				compradorExpedienteNuevo.setBorrado(false);
 				
-				ClienteGDPR clienteGDPR = genericDao.get(ClienteGDPR.class,
+				List<ClienteGDPR> clienteGDPR = genericDao.getList(ClienteGDPR.class,
 						genericDao.createFilter(FilterType.EQUALS, "cliente.id", oferta.getCliente().getId()));
 				
-				compradorExpedienteNuevo.setDocumentoAdjunto(clienteGDPR.getAdjuntoComprador());
+				if(clienteGDPR != null && clienteGDPR.size()>0){
+					compradorExpedienteNuevo.setDocumentoAdjunto(clienteGDPR.get(0).getAdjuntoComprador());
+				}
+				
+				
 
 				listaCompradoresExpediente.add(compradorExpedienteNuevo);
 			} else { // Si no existe un comprador con dicho dni, lo crea, añade
@@ -1229,17 +1233,17 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				}
 								
 				// HREOS - 4937
-				ClienteGDPR clienteGDPR = genericDao.get(ClienteGDPR.class,
+				List<ClienteGDPR> clienteGDPR = genericDao.getList(ClienteGDPR.class,
 						genericDao.createFilter(FilterType.EQUALS, "cliente.id", oferta.getCliente().getId()));
-				if (!Checks.esNulo(clienteGDPR)) {
-					if (!Checks.esNulo(clienteGDPR.getCesionDatos())) {
-						nuevoComprador.setCesionDatos(clienteGDPR.getCesionDatos());
+				if (!Checks.estaVacio(clienteGDPR)) {
+					if (!Checks.esNulo(clienteGDPR.get(0).getCesionDatos())) {
+						nuevoComprador.setCesionDatos(clienteGDPR.get(0).getCesionDatos());
 					}
-					if (!Checks.esNulo(clienteGDPR.getComunicacionTerceros())) {
-						nuevoComprador.setComunicacionTerceros(clienteGDPR.getComunicacionTerceros());
+					if (!Checks.esNulo(clienteGDPR.get(0).getComunicacionTerceros())) {
+						nuevoComprador.setComunicacionTerceros(clienteGDPR.get(0).getComunicacionTerceros());
 					}
-					if (!Checks.esNulo(clienteGDPR.getTransferenciasInternacionales())) {
-						nuevoComprador.setTransferenciasInternacionales(clienteGDPR.getTransferenciasInternacionales());
+					if (!Checks.esNulo(clienteGDPR.get(0).getTransferenciasInternacionales())) {
+						nuevoComprador.setTransferenciasInternacionales(clienteGDPR.get(0).getTransferenciasInternacionales());
 					}
 				}
 
@@ -1260,7 +1264,10 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				if (!Checks.esNulo(oferta.getCliente().getRegimenMatrimonial())) {
 					compradorExpedienteNuevo.setRegimenMatrimonial(oferta.getCliente().getRegimenMatrimonial());
 				}
-				compradorExpedienteNuevo.setDocumentoAdjunto(clienteGDPR.getAdjuntoComprador());
+				
+				if(clienteGDPR != null && clienteGDPR.size() > 0){
+					compradorExpedienteNuevo.setDocumentoAdjunto(clienteGDPR.get(0).getAdjuntoComprador());
+				}				
 
 				listaCompradoresExpediente.add(compradorExpedienteNuevo);
 								
@@ -1269,17 +1276,17 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				clienteCompradorGDPR.setTipoDocumento(nuevoComprador.getTipoDocumento());
 				clienteCompradorGDPR.setNumDocumento(nuevoComprador.getDocumento());
 				if (!Checks.esNulo(clienteGDPR)) {
-					if (!Checks.esNulo(clienteGDPR.getCesionDatos())) {
-						clienteCompradorGDPR.setCesionDatos(clienteGDPR.getCesionDatos());
+					if (!Checks.esNulo(clienteGDPR.get(0).getCesionDatos())) {
+						clienteCompradorGDPR.setCesionDatos(clienteGDPR.get(0).getCesionDatos());
 					}
-					if (!Checks.esNulo(clienteGDPR.getComunicacionTerceros())) {
-						clienteCompradorGDPR.setComunicacionTerceros(clienteGDPR.getComunicacionTerceros());
+					if (!Checks.esNulo(clienteGDPR.get(0).getComunicacionTerceros())) {
+						clienteCompradorGDPR.setComunicacionTerceros(clienteGDPR.get(0).getComunicacionTerceros());
 					}
-					if (!Checks.esNulo(clienteGDPR.getTransferenciasInternacionales())) {
-						clienteCompradorGDPR.setTransferenciasInternacionales(clienteGDPR.getTransferenciasInternacionales());								
+					if (!Checks.esNulo(clienteGDPR.get(0).getTransferenciasInternacionales())) {
+						clienteCompradorGDPR.setTransferenciasInternacionales(clienteGDPR.get(0).getTransferenciasInternacionales());								
 					}
-					if (!Checks.esNulo(clienteGDPR.getAdjuntoComprador())) {
-						clienteCompradorGDPR.setAdjuntoComprador(clienteGDPR.getAdjuntoComprador());
+					if (!Checks.esNulo(clienteGDPR.get(0).getAdjuntoComprador())) {
+						clienteCompradorGDPR.setAdjuntoComprador(clienteGDPR.get(0).getAdjuntoComprador());
 					}
 				}				
 				genericDao.save(ClienteCompradorGDPR.class, clienteCompradorGDPR);				
@@ -1315,9 +1322,14 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 						listaCompradoresExpediente.add(compradorExpedienteAdicionalNuevo);
 
 					} else {
-						ClienteGDPR cliGDPR = genericDao.get(ClienteGDPR.class,
+						ClienteGDPR cliGDPR = null;
+						List<ClienteGDPR> cliGDPRLista = genericDao.getList(ClienteGDPR.class,
 								genericDao.createFilter(FilterType.EQUALS, "tipoDocumento.id", titularAdicional.getTipoDocumento().getId()),
 								genericDao.createFilter(FilterType.EQUALS, "numDocumento", titularAdicional.getDocumento()));
+						
+						if(cliGDPRLista != null && cliGDPRLista.size() > 0){
+							cliGDPR = cliGDPRLista.get(0);
+						}
 						
 						Comprador nuevoCompradorAdicional = new Comprador();
 						CompradorExpediente compradorExpedienteAdicionalNuevo = new CompradorExpediente();
@@ -5322,6 +5334,14 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		
 		return DDSubcartera.CODIGO_PROMONTORIA.equals(activo.getSubcartera().getCodigo());
 	}
+	
+	@Override
+	public boolean esSubcarteraApple(Long idActivo){
+		Filter filterAct = genericDao.createFilter(FilterType.EQUALS, "id", idActivo);
+		Activo activo = genericDao.get(Activo.class, filterAct);
+		
+		return DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(activo.getSubcartera().getCodigo());
+	}
 
 	@Override
 	public DtoActivoFichaCabecera getActivosPropagables(Long idActivo) {
@@ -5506,20 +5526,29 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		return false;
 	}
 
-	public Long getIdByNumActivo(Long numActivo) {
+	public Long getActivoExists(Long numActivo) {
 
-		Long idActivo = null;
+		String idActivo = null;
+		String idCartera = null;
 
 		try {
 
-			idActivo = Long.parseLong(rawDao.getExecuteSQL(
-					"SELECT ACT_ID FROM ACT_ACTIVO WHERE ACT_NUM_ACTIVO = " + numActivo + " AND BORRADO = 0"));
+			idCartera = rawDao.getExecuteSQL(
+					"SELECT DD_CRA_ID FROM UCA_USUARIO_CARTERA WHERE USU_ID = " + genericAdapter.getUsuarioLogado().getId());
+			
+			if(!Checks.esNulo(idCartera)) {
+				idActivo = rawDao.getExecuteSQL(
+						"SELECT ACT_ID FROM ACT_ACTIVO WHERE ACT_NUM_ACTIVO = " + numActivo + " AND DD_CRA_ID = " + idCartera + " AND BORRADO = 0");
+			} else {
+				idActivo = rawDao.getExecuteSQL(
+						"SELECT ACT_ID FROM ACT_ACTIVO WHERE ACT_NUM_ACTIVO = " + numActivo + " AND BORRADO = 0");
+			}
+			
+			return Long.parseLong(idActivo);
 
 		} catch (Exception e) {
 			return null;
 		}
-
-		return idActivo;
 	}
 
 	@Override

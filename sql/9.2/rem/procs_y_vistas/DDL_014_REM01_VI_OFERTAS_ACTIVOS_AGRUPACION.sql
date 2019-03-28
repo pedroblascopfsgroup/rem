@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Rasul Akhmeddibirov
---## FECHA_CREACION=20190225
+--## AUTOR=Daniel Algaba
+--## FECHA_CREACION=20190328
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=REMVIP-3350
+--## INCIDENCIA_LINK=HREOS-5997
 --## PRODUCTO=NO
 --## Finalidad: DDL
 --##           
@@ -18,6 +18,7 @@
 --##		HREOS-5360: Se cambia la forma de calcular si un activo es afecto GENCAT
 --##		REMVIP-1645 Optimización de la vista.
 --##		REMVIP-3350 Añadir la columna contraoferta al grid.
+--##		HREOS-5997 Correción GENCAT
 --##########################################
 --*/
 
@@ -102,8 +103,11 @@ BEGIN
 				OFR.OFR_OFERTA_EXPRESS AS OFERTA_EXPRESS,
 				OFR.OFR_NECESITA_FINANCIACION AS NECESITA_FINANCIACION,
                 OFR.OFR_OBSERVACIONES AS OBSERVACIONES,
-				CASE WHEN GEN.ACT_ID IS NOT NULL THEN 1
-                ELSE 0 END AS GENCAT
+				CASE WHEN (SELECT count(OFR.OFR_ID) FROM OFR_OFERTAS AUX_OFR
+                         	JOIN ACT_OFR ON AUX_OFR.OFR_ID = ACT_OFR.OFR_ID
+                            LEFT JOIN REM01.VI_ACTIVOS_AFECTOS_GENCAT GEN ON GEN.ACT_ID = ACT_OFR.ACT_ID
+                            WHERE AUX_OFR.OFR_ID = OFR.OFR_ID AND GEN.ACT_ID IS NOT NULL) > 0 THEN 1
+        		ELSE 0 END AS GENCAT
 		FROM '|| V_ESQUEMA ||'.OFR_OFERTAS OFR
 		JOIN '|| V_ESQUEMA ||'.V_FIRST_ACTIVO_OFERTA VAO ON VAO.OFR_ID = OFR.OFR_ID
 		INNER JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT ON ACT.ACT_ID = VAO.ACT_ID and act.borrado = 0
@@ -134,7 +138,6 @@ BEGIN
 		LEFT JOIN '|| V_ESQUEMA ||'.ACT_AGR_AGRUPACION AGR on AGR.AGR_ID = OFR.AGR_ID and agr.borrado = 0
 			LEFT JOIN '|| V_ESQUEMA ||'.DD_CAP_CANAL_PRESCRIPCION CAP ON CAP.DD_CAP_ID = OFR.DD_CAP_ID
 		LEFT JOIN '|| V_ESQUEMA ||'.ACT_LCO_LOTE_COMERCIAL LCO ON OFR.AGR_ID = LCO.AGR_ID
-        LEFT JOIN '|| V_ESQUEMA ||'.VI_ACTIVOS_AFECTOS_GENCAT GEN ON GEN.ACT_ID = ACT.ACT_ID
 		WHERE OFR.BORRADO  = 0 ';
         
   EXECUTE IMMEDIATE	V_MSQL;

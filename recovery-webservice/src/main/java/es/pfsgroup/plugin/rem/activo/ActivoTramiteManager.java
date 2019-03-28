@@ -924,11 +924,22 @@ public class ActivoTramiteManager implements ActivoTramiteApi{
 	}
 	
 	public boolean tieneTramiteGENCATVigenteByIdActivo(TareaExterna tareaExterna){
+		boolean tramiteGencatActivo = false;
+		boolean tieneTramiteGENCAT = false;
 		TareaActivo tareaActivo = tareaActivoApi.getByIdTareaExterna(tareaExterna.getId());
 		Long idActivo = tareaActivo.getActivo().getId();
 		Filter filtroTrabajo = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", tareaActivo.getTramite().getTrabajo().getId());
 		ExpedienteComercial expediente = genericDao.get(ExpedienteComercial.class, filtroTrabajo);
+		List<ActivoOferta> listaActivos = expediente.getOferta().getActivosOferta();
+		if (!Checks.estaVacio(listaActivos)) {
+			for (ActivoOferta activoOferta : listaActivos) {
+				tieneTramiteGENCAT = tieneTramiteGENCATVigenteByIdActivo(activoOferta.getActivoId(), expediente.getId());
+				if (tieneTramiteGENCAT) {
+					tramiteGencatActivo = true;
+				}
+			}
+		}
 		
-		return tieneTramiteGENCATVigenteByIdActivo(idActivo, expediente.getId());
+		return tramiteGencatActivo;
 	}
 }

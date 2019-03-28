@@ -56,7 +56,10 @@ Ext.define('HreRem.model.OfertasAgrupacion', {
     	},
     	{
     		name : 'descripcionEstadoExpediente'
-    	}  
+    	},
+    	{
+    		name: 'gencat'
+    	}
     		
     ],
     

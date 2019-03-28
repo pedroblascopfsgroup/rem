@@ -7486,6 +7486,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			
 			comprador.setEsBH(esBH(vista.getIdExpedienteComercial()));
 			comprador.setEntidadPropietariaCodigo(getCodigoCarteraExpediente(vista.getIdExpedienteComercial()));
+			comprador.setEsCarteraBankia(getCodigoCarteraExpediente(vista.getIdExpedienteComercial())==DDCartera.CODIGO_CARTERA_BANKIA);
 
 		} catch (Exception e) {
 			logger.error("vistaCrearComprador", e);

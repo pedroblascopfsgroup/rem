@@ -75,8 +75,8 @@ Ext.define('HreRem.view.activos.detalle.AnyadirNuevaOfertaActivoAdjuntarDocument
     			layout["prev"]();
     		}
     	},
-    		{ itemId: 'btnGenerarDoc', text: 'Generar Documento', handler: 'onClickBotonGenerarDoc', disabled: false},
-    		{ itemId: 'btnSubirDoc', text: 'Subir Documento', handler: 'abrirFormularioAdjuntarDocumentoOferta', disabled: false},
+    		{ itemId: 'btnGenerarDoc', text: 'Generar Documento', handler: 'onClickBotonGenerarDoc', disabled: true},
+    		{ itemId: 'btnSubirDoc', text: 'Subir Documento', handler: 'abrirFormularioAdjuntarDocumentoOferta', disabled: true},
     		{ itemId: 'btnFinalizar', text: 'Finalizar', handler: 'onClickCrearOferta', disabled: true}];
     	
     	me.items = [
@@ -104,8 +104,17 @@ Ext.define('HreRem.view.activos.detalle.AnyadirNuevaOfertaActivoAdjuntarDocument
 							listeners: {
 	                              change: function (checkbox, newVal, oldVal) {
 	                              	  var ventanaWizard = checkbox.up('anyadirnuevaofertaactivoadjuntardocumento'),
-	                            	  btnFinalizar = ventanaWizard.down('button[itemId=btnFinalizar]');
-	                            	  btnFinalizar.disable();     	
+	                            	  btnFinalizar = ventanaWizard.down('button[itemId=btnFinalizar]'),
+	                              	  btnGenerarDoc = ventanaWizard.down('button[itemId=btnGenerarDoc]'),
+	                            	  btnSubirDoc = ventanaWizard.down('button[itemId=btnSubirDoc]');
+	                              	  if(checkbox.getValue()){
+	                              		  btnGenerarDoc.enable();
+		                              	  btnSubirDoc.enable();
+	                              	  } else {
+	                              		  btnGenerarDoc.disable();
+		                              	  btnSubirDoc.disable();
+	                              	  }
+	                            	  btnFinalizar.disable();
 	                              }
 	                          }
 						},

@@ -1199,11 +1199,11 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				compradorExpedienteNuevo.setPorcionCompra(parteCompraPrincipal);
 				compradorExpedienteNuevo.setBorrado(false);
 				
-				ClienteGDPR clienteGDPR = genericDao.get(ClienteGDPR.class,
+				List<ClienteGDPR> clienteGDPR = genericDao.getList(ClienteGDPR.class,
 						genericDao.createFilter(FilterType.EQUALS, "cliente.id", oferta.getCliente().getId()));
 				
-				if(clienteGDPR != null){
-					compradorExpedienteNuevo.setDocumentoAdjunto(clienteGDPR.getAdjuntoComprador());
+				if(clienteGDPR != null && clienteGDPR.size()>0){
+					compradorExpedienteNuevo.setDocumentoAdjunto(clienteGDPR.get(0).getAdjuntoComprador());
 				}
 				
 				
@@ -1251,17 +1251,17 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				}
 								
 				// HREOS - 4937
-				ClienteGDPR clienteGDPR = genericDao.get(ClienteGDPR.class,
+				List<ClienteGDPR> clienteGDPR = genericDao.getList(ClienteGDPR.class,
 						genericDao.createFilter(FilterType.EQUALS, "cliente.id", oferta.getCliente().getId()));
-				if (!Checks.esNulo(clienteGDPR)) {
-					if (!Checks.esNulo(clienteGDPR.getCesionDatos())) {
-						nuevoComprador.setCesionDatos(clienteGDPR.getCesionDatos());
+				if (!Checks.estaVacio(clienteGDPR)) {
+					if (!Checks.esNulo(clienteGDPR.get(0).getCesionDatos())) {
+						nuevoComprador.setCesionDatos(clienteGDPR.get(0).getCesionDatos());
 					}
-					if (!Checks.esNulo(clienteGDPR.getComunicacionTerceros())) {
-						nuevoComprador.setComunicacionTerceros(clienteGDPR.getComunicacionTerceros());
+					if (!Checks.esNulo(clienteGDPR.get(0).getComunicacionTerceros())) {
+						nuevoComprador.setComunicacionTerceros(clienteGDPR.get(0).getComunicacionTerceros());
 					}
-					if (!Checks.esNulo(clienteGDPR.getTransferenciasInternacionales())) {
-						nuevoComprador.setTransferenciasInternacionales(clienteGDPR.getTransferenciasInternacionales());
+					if (!Checks.esNulo(clienteGDPR.get(0).getTransferenciasInternacionales())) {
+						nuevoComprador.setTransferenciasInternacionales(clienteGDPR.get(0).getTransferenciasInternacionales());
 					}
 				}
 
@@ -1283,8 +1283,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					compradorExpedienteNuevo.setRegimenMatrimonial(oferta.getCliente().getRegimenMatrimonial());
 				}
 				
-				if(clienteGDPR != null){
-					compradorExpedienteNuevo.setDocumentoAdjunto(clienteGDPR.getAdjuntoComprador());
+				if(clienteGDPR != null && clienteGDPR.size() > 0){
+					compradorExpedienteNuevo.setDocumentoAdjunto(clienteGDPR.get(0).getAdjuntoComprador());
 				}				
 
 				listaCompradoresExpediente.add(compradorExpedienteNuevo);
@@ -1294,17 +1294,17 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				clienteCompradorGDPR.setTipoDocumento(nuevoComprador.getTipoDocumento());
 				clienteCompradorGDPR.setNumDocumento(nuevoComprador.getDocumento());
 				if (!Checks.esNulo(clienteGDPR)) {
-					if (!Checks.esNulo(clienteGDPR.getCesionDatos())) {
-						clienteCompradorGDPR.setCesionDatos(clienteGDPR.getCesionDatos());
+					if (!Checks.esNulo(clienteGDPR.get(0).getCesionDatos())) {
+						clienteCompradorGDPR.setCesionDatos(clienteGDPR.get(0).getCesionDatos());
 					}
-					if (!Checks.esNulo(clienteGDPR.getComunicacionTerceros())) {
-						clienteCompradorGDPR.setComunicacionTerceros(clienteGDPR.getComunicacionTerceros());
+					if (!Checks.esNulo(clienteGDPR.get(0).getComunicacionTerceros())) {
+						clienteCompradorGDPR.setComunicacionTerceros(clienteGDPR.get(0).getComunicacionTerceros());
 					}
-					if (!Checks.esNulo(clienteGDPR.getTransferenciasInternacionales())) {
-						clienteCompradorGDPR.setTransferenciasInternacionales(clienteGDPR.getTransferenciasInternacionales());								
+					if (!Checks.esNulo(clienteGDPR.get(0).getTransferenciasInternacionales())) {
+						clienteCompradorGDPR.setTransferenciasInternacionales(clienteGDPR.get(0).getTransferenciasInternacionales());								
 					}
-					if (!Checks.esNulo(clienteGDPR.getAdjuntoComprador())) {
-						clienteCompradorGDPR.setAdjuntoComprador(clienteGDPR.getAdjuntoComprador());
+					if (!Checks.esNulo(clienteGDPR.get(0).getAdjuntoComprador())) {
+						clienteCompradorGDPR.setAdjuntoComprador(clienteGDPR.get(0).getAdjuntoComprador());
 					}
 				}				
 				genericDao.save(ClienteCompradorGDPR.class, clienteCompradorGDPR);				

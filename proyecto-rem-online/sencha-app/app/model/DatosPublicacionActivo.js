@@ -44,9 +44,10 @@ Ext.define('HreRem.model.DatosPublicacionActivo', {
 		},
 		{
 			name:'motivoOcultacionVentaCodigo'
+				
 		},
 		{
-			name:'motivoOcultacionManualVenta'
+			name:'motivoOcultacionManualVenta',
 		},
 		{
 			name: 'publicarAlquiler',
@@ -129,6 +130,9 @@ Ext.define('HreRem.model.DatosPublicacionActivo', {
 	    },
 	    {
 	    	name:'motivoPublicacion'
+	    },
+	    {
+	    	name:'motivoPublicacionAlquiler'
 	    }
 
 	],

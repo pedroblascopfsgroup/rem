@@ -58,9 +58,9 @@ public class ActivoOfertaController extends ParadiseJsonController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
-	public ModelAndView getListAdjuntos(String docCliente, Long idActivo, Long idAgrupacion){
+	public ModelAndView getListAdjuntos(String docCliente, Long idActivo, Long idAgrupacion) {
 		
-		TmpClienteGDPR tmpClienteGDPR;
+		TmpClienteGDPR tmpClienteGDPR = null;
 		String idPersonaHaya = null;
 		
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "numDocumento", docCliente);
@@ -72,20 +72,23 @@ public class ActivoOfertaController extends ParadiseJsonController {
 				idPersonaHaya = clienteCom.getIdPersonaHaya();
 			} else {
 				tmpClienteGDPR = genericDao.get(TmpClienteGDPR.class, genericDao.createFilter(FilterType.EQUALS, "numDocumento", docCliente));
-
-				if(!Checks.esNulo(tmpClienteGDPR)) {
+				
+				if(!Checks.esNulo(tmpClienteGDPR) && !Checks.esNulo(tmpClienteGDPR.getIdPersonaHaya())) {
 					idPersonaHaya = String.valueOf(tmpClienteGDPR.getIdPersonaHaya());
 				}
 			}
 		} else {
 			tmpClienteGDPR = genericDao.get(TmpClienteGDPR.class, genericDao.createFilter(FilterType.EQUALS, "numDocumento", docCliente));
-			idPersonaHaya = String.valueOf(tmpClienteGDPR.getIdPersonaHaya());
+			
+			if(!Checks.esNulo(tmpClienteGDPR) && !Checks.esNulo(tmpClienteGDPR.getIdPersonaHaya())) {
+				idPersonaHaya = String.valueOf(tmpClienteGDPR.getIdPersonaHaya());
+			}
 		}
 		
 		ModelMap model = new ModelMap();
 		
 		try {
-			model.put(RESPONSE_DATA_KEY, activoOfertaAdapter.getAdjunto(idPersonaHaya, docCliente, idActivo, idAgrupacion));
+			model.put(RESPONSE_DATA_KEY, activoOfertaAdapter.getAdjunto(idPersonaHaya, docCliente, idActivo, idAgrupacion/*, idClienteTmp*/));
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 			model.put(RESPONSE_SUCCESS_KEY, false);
@@ -100,7 +103,7 @@ public class ActivoOfertaController extends ParadiseJsonController {
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView saveDocumentoAdjuntoOferta(String docCliente, String idEntidad, HttpServletRequest request) {
 		
-		TmpClienteGDPR tmpClienteGDPR;
+		TmpClienteGDPR tmpClienteGDPR = null;
 		String idPersonaHaya = null;
 		ModelMap model = new ModelMap();
 		
@@ -130,7 +133,7 @@ public class ActivoOfertaController extends ParadiseJsonController {
 				List<DtoAdjunto> listaAdjuntos = activoOfertaAdapter.getAdjunto(idPersonaHaya, docCliente, null, null);
 				String errores = null;
 				if(listaAdjuntos.size() <= 0) {
-					errores = activoOfertaAdapter.uploadDocumento(fileItem, idPersonaHaya);
+					errores = activoOfertaAdapter.uploadDocumento(fileItem, idPersonaHaya, docCliente);
 					model.put("errores", errores);
 					model.put(RESPONSE_SUCCESS_KEY, errores==null);
 				}else{
@@ -154,7 +157,7 @@ public class ActivoOfertaController extends ParadiseJsonController {
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView eliminarDocumentoAdjuntoOferta(String docCliente) {
 		
-		TmpClienteGDPR tmpClienteGDPR;
+		TmpClienteGDPR tmpClienteGDPR = null;
 		String idPersonaHaya = null;
 		
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "numDocumento", docCliente);
@@ -166,14 +169,16 @@ public class ActivoOfertaController extends ParadiseJsonController {
 				idPersonaHaya = clienteCom.getIdPersonaHaya();
 			} else {
 				tmpClienteGDPR = genericDao.get(TmpClienteGDPR.class, genericDao.createFilter(FilterType.EQUALS, "numDocumento", docCliente));
-				
-				if(!Checks.esNulo(tmpClienteGDPR)) {
+				if(!Checks.esNulo(tmpClienteGDPR) && !Checks.esNulo(tmpClienteGDPR.getIdPersonaHaya())) {
 					idPersonaHaya = String.valueOf(tmpClienteGDPR.getIdPersonaHaya());
 				}
 			}
 		} else {
 			tmpClienteGDPR = genericDao.get(TmpClienteGDPR.class, genericDao.createFilter(FilterType.EQUALS, "numDocumento", docCliente));
-			idPersonaHaya = String.valueOf(tmpClienteGDPR.getIdPersonaHaya());
+			
+			if(!Checks.esNulo(tmpClienteGDPR) && !Checks.esNulo(tmpClienteGDPR.getIdPersonaHaya())) {
+				idPersonaHaya = String.valueOf(tmpClienteGDPR.getIdPersonaHaya());
+			}
 		}
 		
 		ModelMap model = new ModelMap();

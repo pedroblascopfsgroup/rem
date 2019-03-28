@@ -96,25 +96,38 @@ Ext.define('HreRem.view.activos.detalle.AnyadirNuevaOfertaActivoAdjuntarDocument
 						{
 							xtype:'checkboxfieldbase',
 							fieldLabel: HreRem.i18n('wizard.oferta.documento.cesionDatos'),							
-							bind:  '{oferta.cesionDatosHaya}',
+							bind:  '{oferta.cesionDatos}',
 							name:       'cesionDatos',
 							margin: '50px 0 0 200px',
 							reference: 'chkbxCesionDatosHaya',
 							readOnly: false,
 							listeners: {
 	                              change: function (checkbox, newVal, oldVal) {
-	                              	  var ventanaWizard = checkbox.up('anyadirnuevaofertaactivoadjuntardocumento'),
-	                            	  btnFinalizar = ventanaWizard.down('button[itemId=btnFinalizar]'),
-	                              	  btnGenerarDoc = ventanaWizard.down('button[itemId=btnGenerarDoc]'),
-	                            	  btnSubirDoc = ventanaWizard.down('button[itemId=btnSubirDoc]');
-	                              	  if(checkbox.getValue()){
-	                              		  btnGenerarDoc.enable();
-		                              	  btnSubirDoc.enable();
-	                              	  } else {
-	                              		  btnGenerarDoc.disable();
-		                              	  btnSubirDoc.disable();
-	                              	  }
-	                            	  btnFinalizar.disable();
+	                            	  var ventanaWizard = checkbox.up('anyadirnuevaofertaactivoadjuntardocumento'),
+	                            	  esInternacional = ventanaWizard.getForm().findField('carteraInternacional').getValue(),
+	                            	  btnGenerarDoc = ventanaWizard.down('button[itemId=btnGenerarDoc]'),
+	                            	  btnSubirDoc = ventanaWizard.down('button[itemId=btnSubirDoc]'),
+	                            	  btnFinalizar = ventanaWizard.down('button[itemId=btnFinalizar]');
+	                            	  var checkTransInternacionales = ventanaWizard.getForm().findField('transferenciasInternacionales').getValue();
+	                            	  if(checkbox.getValue()) {
+	                            		  if(esInternacional) {
+	                            			  if(checkTransInternacionales) {
+	                            				  btnGenerarDoc.enable();
+	                            			  } else {
+	                            				  btnGenerarDoc.disable();
+	                            			  	  btnSubirDoc.disable();
+	                            			  }
+	                            		  } else {
+	                            			  btnGenerarDoc.enable();
+	                            		  }
+	                            	  } else {
+	                            		  checkbox.enable();
+	                            		  btnGenerarDoc.disable();
+	                            		  btnSubirDoc.disable();
+	                            		  btnFinalizar.disable();
+	                            		  ventanaWizard.getForm().findField('comunicacionTerceros').enable();
+	                            		  ventanaWizard.getForm().findField('transferenciasInternacionales').enable();
+	                            	  }
 	                              }
 	                          }
 						},

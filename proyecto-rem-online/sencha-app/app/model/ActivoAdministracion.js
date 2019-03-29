@@ -1,5 +1,5 @@
 /**
- *  Modelo para el tab Administración de Activos 
+ *  Modelo para el tab Administraciï¿½n de Activos 
  */
 Ext.define('HreRem.model.ActivoAdministracion', {
     extend: 'HreRem.model.Base',
@@ -14,6 +14,10 @@ Ext.define('HreRem.model.ActivoAdministracion', {
     		},
     		{
     			name:'ibiExento',
+    			type: 'boolean'
+    		},
+    		{
+    			name:'isUnidadAlquilable',
     			type: 'boolean'
     		}
     		

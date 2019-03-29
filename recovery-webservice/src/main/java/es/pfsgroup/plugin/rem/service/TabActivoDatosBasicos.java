@@ -656,7 +656,9 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		
 		if (!Checks.esNulo(activo)) {
 			boolean isUnidadAlquilable = activoDao.isUnidadAlquilable(activo.getId());
+			activoDto.setUnidadAlquilable(isUnidadAlquilable);
 			boolean isActivoMatriz = activoDao.isActivoMatriz(activo.getId());
+			
 			if (isUnidadAlquilable || isActivoMatriz) {
 
 				Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "ACT_ID", activo.getId());
@@ -683,7 +685,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 										activoDto.setNumActivoMatriz(aga.getActivo().getNumActivo());
 								}
 							}
-							activoDto.setUnidadAlquilable(activoDao.isUnidadAlquilable(activo.getId()));
+							activoDto.setUnidadAlquilable(isUnidadAlquilable);
 						}
 					}
 				}

@@ -1233,7 +1233,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 								
 				// HREOS - 4937
 				List<ClienteGDPR> clienteGDPR = genericDao.getList(ClienteGDPR.class,
-						genericDao.createFilter(FilterType.EQUALS, "cliente.id", oferta.getCliente().getId()));
+						genericDao.createFilter(FilterType.EQUALS, "cliente.numDocumento", oferta.getCliente().getDocumento())
+						,genericDao.createFilter(FilterType.EQUALS, "cliente.tipoDocumento.codigo", oferta.getCliente().getTipoDocumento().getCodigo()));
+				
 				if (!Checks.estaVacio(clienteGDPR)) {
 					if (!Checks.esNulo(clienteGDPR.get(0).getCesionDatos())) {
 						nuevoComprador.setCesionDatos(clienteGDPR.get(0).getCesionDatos());

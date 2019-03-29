@@ -615,7 +615,7 @@ Ext.define('HreRem.view.expedientes.DatosCompradorWizard', {
 		            		change: function(combo, value) {
 		            			try{
 		            				var me = this;
-			            			if(value) {
+			            			if(value == '28') {
 			            				me.up('formBase').down('[reference=provinciaComboRte]').allowBlank = false;
 			            				me.up('formBase').down('[reference=municipioComboRte]').allowBlank = false;
 			            			} 

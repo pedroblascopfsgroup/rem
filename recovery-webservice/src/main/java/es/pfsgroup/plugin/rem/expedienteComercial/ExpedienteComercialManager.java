@@ -7466,9 +7466,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 			comprador.setEsBH(esBH(vista.getIdExpedienteComercial()));
 			comprador.setEntidadPropietariaCodigo(getCodigoCarteraExpediente(vista.getIdExpedienteComercial()));
+			comprador.setEsCarteraBankia(getCodigoCarteraExpediente(vista.getIdExpedienteComercial())==DDCartera.CODIGO_CARTERA_BANKIA);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("vistaADtoModCompradores", e);
 		}
 
 		return comprador;
@@ -7480,9 +7481,13 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 		try {
 			beanUtilNotNull.copyProperties(comprador, vista);
+			
+			comprador.setEsBH(esBH(vista.getIdExpedienteComercial()));
+			comprador.setEntidadPropietariaCodigo(getCodigoCarteraExpediente(vista.getIdExpedienteComercial()));
+			comprador.setEsCarteraBankia(getCodigoCarteraExpediente(vista.getIdExpedienteComercial())==DDCartera.CODIGO_CARTERA_BANKIA);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("vistaCrearComprador", e);
 		}
 
 		return comprador;

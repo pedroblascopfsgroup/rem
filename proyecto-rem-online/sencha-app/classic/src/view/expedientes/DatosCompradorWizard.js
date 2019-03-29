@@ -305,7 +305,7 @@ Ext.define('HreRem.view.expedientes.DatosCompradorWizard', {
 								padding: '5px',
 					        	bind: {
 				            		store: '{comboClienteUrsus}',
-				            		hidden: '{!esCarteraBankia}'
+				            		hidden: '{!comprador.esCarteraBankia}'
 				            	},
 				            	listeners: {
 				            		change: 'establecerNumClienteURSUS',
@@ -324,7 +324,7 @@ Ext.define('HreRem.view.expedientes.DatosCompradorWizard', {
 					            handler: 'mostrarDetallesClienteUrsus',
 					            padding: '5px',
 					            bind: {
-					            	hidden: '{!esCarteraBankia}'
+					            	hidden: '{!comprador.esCarteraBankia}'
 					            },
 					            reference: 'btnVerDatosClienteUrsus',
 					            disabled: true,
@@ -341,7 +341,7 @@ Ext.define('HreRem.view.expedientes.DatosCompradorWizard', {
 				        padding: '5px',
 				        bind: {
 			            	value: '{comprador.numeroClienteUrsus}',
-			            	hidden: '{!esCarteraBankia}'
+			            	hidden: '{!comprador.esCarteraBankia}'
 			            },
 			            editable: true
                    },

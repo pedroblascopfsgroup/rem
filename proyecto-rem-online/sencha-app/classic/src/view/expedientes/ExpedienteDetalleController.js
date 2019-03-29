@@ -1023,8 +1023,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 
 		
 
-		if (!Ext.isEmpty(id)) {
-			model.load({
+		model.load({
 				params : {
 					id : id,
 					idExpedienteComercial : idExpediente,
@@ -1044,12 +1043,8 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 				failure : function(record, operation) {
 					console.log("Failure: no ha sido posible cargar los datos del comprador.");
 				}
-			});
-		}else{
-			me.getViewModel().set('comprador', model);
-			window.unmask();
-		}
-
+		});
+		
 		// Funcionalidad que permite editar los campos
 		Ext.Array.each(window.query('field[isReadOnlyEdit]'),
 				function(field, index) {

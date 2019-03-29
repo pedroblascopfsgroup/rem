@@ -1012,7 +1012,14 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView saveFichaComprador(ModelMap model, VBusquedaDatosCompradorExpediente vDatosComprador, @RequestParam Long id) {
 		try {
-			boolean success = expedienteComercialApi.saveFichaComprador(vDatosComprador);
+			boolean success = false;
+			if(vDatosComprador.getId()==null || vDatosComprador.getId().isEmpty()){
+				this.createComprador(model, vDatosComprador, Long.valueOf(vDatosComprador.getIdExpedienteComercial()));
+				success = true;
+			}else{
+				success = expedienteComercialApi.saveFichaComprador(vDatosComprador);
+			}
+			
 			model.put(RESPONSE_SUCCESS_KEY, success);
 
 		} catch (Exception e) {

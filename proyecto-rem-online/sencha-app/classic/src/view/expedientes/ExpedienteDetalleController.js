@@ -1035,6 +1035,9 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 					codTipoDocumento: form.findField('codTipoDocumento').getValue()
 				},
 				success : function(record) {
+					if (Ext.isEmpty(id)) {
+						model.setId(undefined);
+					}
 					me.getViewModel().set('comprador', model);
 					form.findField('numDocumento').setDisabled(true);
 					form.findField('codTipoDocumento').setDisabled(true);

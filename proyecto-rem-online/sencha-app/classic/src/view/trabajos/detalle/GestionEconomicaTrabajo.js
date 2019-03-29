@@ -142,9 +142,10 @@ Ext.define('HreRem.view.trabajos.detalle.GestionEconomicaTrabajo', {
 	    				    	carteraCodigo = me.up('gestioneconomicatrabajo').getBindRecord().get('carteraCodigo'),
 	    				    	tipoTrabajoCodigo = me.up('gestioneconomicatrabajo').getBindRecord().get('tipoTrabajoCodigo'),
 	    				    	subtipoTrabajoCodigo = me.up('gestioneconomicatrabajo').getBindRecord().get('subtipoTrabajoCodigo');
+	    				    	subcarteraCodigo = me.up('gestioneconomicatrabajo').getBindRecord().get('subcarteraCodigo');
 	    				    	// HREOS-1811 Errores modalwindow seleccion tarifas por esconder la ventana y abrir entre 2 trabajos distintos
 	    				    	// me.up('formBase').fireEvent('openModalWindow',"HreRem.view.trabajos.detalle.SeleccionTarifasTrabajo",{idTrabajo: idTrabajo, carteraCodigo: carteraCodigo, tipoTrabajoCodigo: tipoTrabajoCodigo, subtipoTrabajoCodigo: subtipoTrabajoCodigo, parent: me.up('gestioneconomicatrabajo')});
-	    				    	Ext.create("HreRem.view.trabajos.detalle.SeleccionTarifasTrabajo",{idTrabajo: idTrabajo, carteraCodigo: carteraCodigo, tipoTrabajoCodigo: tipoTrabajoCodigo, subtipoTrabajoCodigo: subtipoTrabajoCodigo, parent: me.up('gestioneconomicatrabajo')}).show();
+	    				    	Ext.create("HreRem.view.trabajos.detalle.SeleccionTarifasTrabajo",{idTrabajo: idTrabajo, carteraCodigo: carteraCodigo, tipoTrabajoCodigo: tipoTrabajoCodigo, subtipoTrabajoCodigo: subtipoTrabajoCodigo, subcarteraCodigo: subcarteraCodigo, parent: me.up('gestioneconomicatrabajo')}).show();
 		    					
 	    					},		    					
 	    					saveSuccessFn: function () {

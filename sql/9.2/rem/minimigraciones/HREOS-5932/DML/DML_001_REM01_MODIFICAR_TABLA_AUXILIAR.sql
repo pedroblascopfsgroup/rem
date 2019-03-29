@@ -63,7 +63,7 @@ BEGIN
 	
 	EXECUTE IMMEDIATE V_MSQL INTO V_COUNT;
 
-	DBMS_OUTPUT.PUT_LINE('	[INFO] Numero activos que no estén en la excel y que compartan agrupación restringida con un activo que sí esté en la excel '||V_COUNT||'');
+	DBMS_OUTPUT.PUT_LINE('	[INFO] Numero activos que no esten en la excel y que compartan agrupacion restringida con un activo que si este en la excel '||V_COUNT||'');
 	
 	--DD_TCO_TIPO_COMERCIALIZACION
 	EXECUTE IMMEDIATE  'UPDATE '||V_ESQUEMA||'.AUX_HREOS_5932 SET DESTINO_COMERCIAL = ''02'' WHERE DESTINO_COMERCIAL = ''Alquiler y venta''';

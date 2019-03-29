@@ -130,9 +130,13 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoOfertacomercial', {
     	var me = this,
     	form = me.down("form"),
     	params = {};
-    	var url = $AC.getRemoteUrl("expedientecomercial/saveDocumentoComprador");
+    	var url = $AC.getRemoteUrl("expedientecomercial/saveDocumentoComprador"),
+    	ventanaWizard = null;
     	if(btn.up('anyadirnuevaofertaactivoadjuntardocumento').up().xtype.indexOf('oferta') >= 0) {
-    		url = $AC.getRemoteUrl("activooferta/saveDocumentoAdjuntoOferta");
+    		url = $AC.getRemoteUrl("activooferta/saveDocumentoAdjuntoOferta"),
+    		ventanaWizard = btn.up('wizardaltaoferta');
+    	} else {
+    		ventanaWizard = btn.up('wizardaltacomprador');
     	}
 
     		if(form.isValid()){
@@ -144,16 +148,14 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoOfertacomercial', {
 	                	if(o.result.success == "false") {
 	                	me.fireEvent("errorToast", o.result.errorMessage);
 	                	}else{
-	                		var url = null, ventanaWizard = null;
+	                		var url = null;
 	                		if(btn.up('anyadirnuevaofertaactivoadjuntardocumento').up().xtype.indexOf('oferta') >= 0) {
 	                			url = $AC.getRemoteUrl('activooferta/getListAdjuntos');
-	                			ventanaWizard = btn.up('wizardaltaoferta');
 	                			params.docCliente = me.docCliente;
 	                			params.idActivo = ventanaWizard.oferta.data.idActivo;
 	                			params.idAgrupacion = ventanaWizard.oferta.data.idAgrupacion;
 	                		} else {
 	                			url = $AC.getRemoteUrl('expedientecomercial/getListAdjuntosComprador');
-	                			ventanaWizard = btn.up('wizardaltacomprador');
 	                			params.docCliente = me.docCliente;
 	                			params.idExpediente = ventanaWizard.down('datoscompradorwizard').getBindRecord().comprador.data.idExpedienteComercial;
 	                		}

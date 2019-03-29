@@ -102,6 +102,10 @@ public class ActivoPublicacion implements Serializable, Auditable {
 	
 	@Column(name = "APU_MOTIVO_PUBLICACION")
 	private String motivoPublicacion;
+	
+	@Column(name = "APU_MOTIVO_PUBLICACION_ALQ")
+	private String motivoPublicacionAlquiler;
+	
 
 	@Version
 	private Long version;
@@ -309,4 +313,12 @@ public class ActivoPublicacion implements Serializable, Auditable {
 		this.motivoPublicacion = motivoPublicacion;
 	}
 
+	public String getMotivoPublicacionAlquiler() {
+		return motivoPublicacionAlquiler;
+	}
+
+	public void setMotivoPublicacionAlquiler(String motivoPublicacionAlquiler) {
+		this.motivoPublicacionAlquiler = motivoPublicacionAlquiler;
+	}
+	
 }

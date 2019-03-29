@@ -1011,7 +1011,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		model = Ext.create('HreRem.model.FichaComprador', {
 			id : id,
 			idExpedienteComercial : idExpediente,
-			cesionDatosHaya: form.findField('cesionDatosHaya').getValue(),
+			cesionDatos: form.findField('cesionDatos').getValue(),
 			comunicacionTerceros: form.findField('comunicacionTerceros').getValue(),
 			transferenciasInternacionales: form.findField('transferenciasInternacionales').getValue(),
 			pedirDoc: form.findField('pedirDoc').getValue(),
@@ -1027,7 +1027,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 				params : {
 					id : id,
 					idExpedienteComercial : idExpediente,
-					cesionDatosHaya: form.findField('cesionDatosHaya').getValue(),
+					cesionDatos: form.findField('cesionDatos').getValue(),
 					comunicacionTerceros: form.findField('comunicacionTerceros').getValue(),
 					transferenciasInternacionales: form.findField('transferenciasInternacionales').getValue(),
 					pedirDoc: form.findField('pedirDoc').getValue(),
@@ -1572,7 +1572,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
         window = ventanaDetalle.up().xtype,
 	    form = ventanaDetalle.getForm(),
 		ventanaWizard = btn.up('wizardaltacomprador');
-
+		
 		ventanaWizard.height =  Ext.Element.getViewportHeight() > 500 ? 500 : Ext.Element.getViewportHeight()-100;
 		ventanaWizard.setY( Ext.Element.getViewportHeight()/2 - ((Ext.Element.getViewportHeight() > 500 ? 500 : Ext.Element.getViewportHeight() -100)/2));
 
@@ -1584,8 +1584,9 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 
 				if (form.isValid()) {
 					url = $AC.getRemoteUrl('expedientecomercial/getListAdjuntosComprador');
-				    idExpediente = comprador.data.idExpedienteComercial;
-                    var docCliente= comprador.data.numDocumento;
+                    idExpediente = comprador.data.idExpedienteComercial;
+                    var docCliente = comprador.data.numDocumento;
+
                     Ext.Ajax.request({
                          url: url,
                          method : 'GET',
@@ -1617,23 +1618,20 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
                     var layout = wizard.getLayout();
                     layout["next"]();
 				}
-
 			}else{
-
 				me.guardarComprador(form, ventanaWizard);
 			}
 
 		}else{
-
-			/*var cesionDatos = ventanaDetalle.getForm().findField('cesionDatosHaya').getValue(),
+			var cesionDatos = ventanaDetalle.getForm().findField('cesionDatosHaya').getValue(),
 			comunicacionTerceros = ventanaDetalle.getForm().findField('comunicacionTerceros').getValue(),
 			transferenciasInternacionales = ventanaDetalle.getForm().findField('transferenciasInternacionales').getValue();
-            ventanaDetalle.getForm().findField('cesionDatosHaya').setValue(cesionDatos);
-            ventanaDetalle.getForm().findField('comunicacionTerceros').setValue(comunicacionTerceros);
-            ventanaDetalle.getForm().findField('transferenciasInternacionales').setValue(transferenciasInternacionales);*/
 
-            me.guardarComprador(form, ventanaWizard);
-            
+            ventanaWizard.down('datoscompradorwizard').getForm().findField('cesionDatos').setValue(cesionDatos);
+            ventanaWizard.down('datoscompradorwizard').getForm().findField('comunicacionTerceros').setValue(comunicacionTerceros);
+            ventanaWizard.down('datoscompradorwizard').getForm().findField('transferenciasInternacionales').setValue(transferenciasInternacionales);
+
+            me.guardarComprador(form, ventanaWizard);      
 		}
 	},
 

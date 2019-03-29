@@ -1607,14 +1607,16 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
                          }
                     });
 
-                   // ventanaWizard.down('anyadirnuevaofertaactivoadjuntardocumento').getForm().findField('cesionDatos').setValue(comprador.data.cesionDatos);
-                   // ventanaWizard.down('anyadirnuevaofertaactivoadjuntardocumento').getForm().findField('comunicacionTerceros').setValue(comprador.data.comunicacionTerceros);
-                   // ventanaWizard.down('anyadirnuevaofertaactivoadjuntardocumento').getForm().findField('transferenciasInternacionales').setValue(comprador.data.transferenciasInternacionales);
+                    ventanaWizard.down('anyadirnuevaofertaactivoadjuntardocumento').getForm().findField('cesionDatos').setValue(comprador.data.cesionDatos);
+                    ventanaWizard.down('anyadirnuevaofertaactivoadjuntardocumento').getForm().findField('comunicacionTerceros').setValue(comprador.data.comunicacionTerceros);
+                    ventanaWizard.down('anyadirnuevaofertaactivoadjuntardocumento').getForm().findField('transferenciasInternacionales').setValue(comprador.data.transferenciasInternacionales);
                     
-                    ventanaDetalle.getForm().findField('cesionDatos').setValue(comprador.data.cesionDatos);
-            		ventanaDetalle.getForm().findField('comunicacionTerceros').setValue(comprador.data.comunicacionTerceros);
-            		ventanaDetalle.getForm().findField('transferenciasInternacionales').setValue(comprador.data.transferenciasInternacionales);
-
+                    if(comprador.data.cesionDatos) {
+                    	ventanaWizard.down('anyadirnuevaofertaactivoadjuntardocumento').down('button[itemId=btnGenerarDoc]').disable();
+                    	ventanaWizard.down('anyadirnuevaofertaactivoadjuntardocumento').down('button[itemId=btnSubirDoc]').disable();
+                    	ventanaWizard.down('anyadirnuevaofertaactivoadjuntardocumento').down('button[itemId=btnFinalizar]').enable();
+                    }
+                    
                     var wizard = btn.up().up().up();
                     var layout = wizard.getLayout();
                     layout["next"]();

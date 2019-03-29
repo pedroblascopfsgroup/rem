@@ -610,6 +610,20 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 										            	bind: {
 										            		store: '{comboPaises}',
 										            		value: '{comprador.codigoPaisRte}'
+										            	},
+										            	listeners : {
+										            		change: function(combo, value) {
+										            			try{
+										            				var me = this;
+											            			if(value == '28') {
+											            				me.up('formBase').down('[reference=provinciaComboRte]').allowBlank = false;
+											            				me.up('formBase').down('[reference=municipioComboRte]').allowBlank = false;
+											            			} 
+										            			}catch (err){
+										            				Ext.global.console.log(err);
+										            			}
+										            			
+										            		}
 										            	}
 													}
 												]

@@ -2331,6 +2331,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	},
 
 	comprobarObligatoriedadCamposNexos: function() {
+
 		try{
 			var me = this;
 			
@@ -2369,22 +2370,22 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 					}
 					if(!Ext.isEmpty(campoEstadoCivil)){
 						campoEstadoCivil.allowBlank = false;
-						campoEstadoCivil.validate();
+						//campoEstadoCivil.validate();
 						if(campoEstadoCivil.getValue() === "02") {
 							// Si el Estado civil es 'Casado', entonces Reg. económico es obligatorio.
 							if(!Ext.isEmpty(campoRegEconomico)){
 								campoRegEconomico.allowBlank = false;
-								campoRegEconomico.validate();
+								//campoRegEconomico.validate();
 							}
 							if(me.getViewModel().get('esCarteraLiberbank')|| me.getViewModel().get('comprador.entidadPropietariaCodigo') == CONST.CARTERA['LIBERBANK']){
 								if(!Ext.isEmpty(campoNumConyuge)){
 									campoNumConyuge.allowBlank = false;
-									campoNumConyuge.validate();
+									//campoNumConyuge.validate();
 								}
 								if(!Ext.isEmpty(campoRegEconomico) && !Ext.isEmpty(campoNumConyuge)){
 									if(campoRegEconomico.getValue() === "01" || campoRegEconomico.getValue() === "03"){
 										campoNumConyuge.allowBlank = false;
-										campoNumConyuge.validate();
+										//campoNumConyuge.validate();
 									}else if(campoRegEconomico.getValue() === "02" ){
 										campoNumConyuge.allowBlank = true;
 									}
@@ -2395,12 +2396,14 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 								}
 							}
 						} else {
-							if(!Ext.isEmpty(campoRegEconomico)){
+								campoRegEconomico.reset();
 								campoRegEconomico.allowBlank = true;
-							}
-							if(!Ext.isEmpty(campoNumConyuge)){
+							
+								campoTipoConyuge.reset();
+								campoNumConyuge.reset();
 								campoNumConyuge.allowBlank = true;
-							}
+								campoTipoConyuge.allowBlank = true;
+							
 						}
 					}
 					
@@ -2455,12 +2458,12 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 					}
 					if(!Ext.isEmpty(campoEstadoCivil)){
 						campoEstadoCivil.allowBlank = false;
-						campoEstadoCivil.validate();
+						//campoEstadoCivil.validate();
 						if(campoEstadoCivil.getValue() === "02") {
 							// Si el Estado civil es 'Casado', entonces Reg. económico es obligatorio.
 							if(!Ext.isEmpty(campoRegEconomico)){
 								campoRegEconomico.allowBlank = false;
-								campoRegEconomico.validate();
+								//campoRegEconomico.validate();
 								campoRegEconomico.setDisabled(false);
 								if(campoRegEconomico.getValue() == "01"){
 									campoTipoConyuge.allowBlank = false;
@@ -2468,13 +2471,15 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 								}
 							}
 							
-						} else {
-							if(!Ext.isEmpty(campoRegEconomico)){
-								campoRegEconomico.allowBlank = true;
-							}
-							if(!Ext.isEmpty(campoNumConyuge)){
+						} else {							
+								campoRegEconomico.reset();
+								campoRegEconomico.allowBlank = true;							
+							
+								campoTipoConyuge.reset();
+								campoNumConyuge.reset();
 								campoNumConyuge.allowBlank = true;
-							}
+								campoTipoConyuge.allowBlank = true;
+							
 						}
 					}
 					
@@ -2509,15 +2514,15 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 				}
 		
 				// Validar campos para que se muestre o desaparezca la visual roja.
-				if(!Ext.isEmpty(campoEstadoCivil)){
-					campoEstadoCivil.validate();
-				}
-				if(!Ext.isEmpty(campoRegEconomico)){
-					campoRegEconomico.validate();
-				}
-				if(!Ext.isEmpty(campoNumConyuge)){
-					campoNumConyuge.validate();
-				}
+//				if(!Ext.isEmpty(campoEstadoCivil)){
+//					campoEstadoCivil.validate();
+//				}
+//				if(!Ext.isEmpty(campoRegEconomico)){
+//					campoRegEconomico.validate();
+//				}
+//				if(!Ext.isEmpty(campoNumConyuge)){
+//					campoNumConyuge.validate();
+//				}
 			}
 				
 		}catch(err) {

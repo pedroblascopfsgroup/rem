@@ -186,7 +186,7 @@ public class MaestroDePersonas implements Runnable {
 					//PersonaOutputDto personaOutputDto = new PersonaOutputDto();
 					
 					logger.error("[MAESTRO DE PERSONAS] VOLVEMOS DE EJECUTAR PERSONA");
-					logger.error("[MAESTRO DE PERSONAS] Datos de la respuesta: ".concat(personaOutputDto.toString()));
+					logger.error("[MAESTRO DE PERSONAS] Datos de la respuesta: ".concat(!Checks.esNulo(personaOutputDto) ? personaOutputDto.toString() : "NULL"));
 
 					if (Checks.esNulo(personaOutputDto)) {
 						logger.error("[MAESTRO DE PERSONAS] personaOutputDto ES NULO");

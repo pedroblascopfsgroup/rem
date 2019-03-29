@@ -29,10 +29,6 @@ Ext.define('HreRem.view.activos.detalle.AnyadirNuevaOfertaDocumento', {
 		show: function() {
 			var me = this;
 			var wizard = me.up();
-			
-			if(wizard.xtype.indexOf("wizardaltacomprador") >= 0){
-				window.setViewModel(me.up('wizardaltacomprador').down('datoscompradorwizard').getViewModel());
-			}
 			me.resetWindow();	
 
 		}

@@ -11,7 +11,7 @@ Ext.define('HreRem.view.expedientes.DatosCompradorWizard', {
 	modoEdicion: true, // Inicializado para evitar errores.
 	scrollable	: 'y',
 	listeners: {
-		show:'cargarDatosCompradorWizard'
+		boxready:'cargarDatosCompradorWizard'
 	},
 	viewModel: {
         type: 'expedientedetalle'
@@ -151,7 +151,8 @@ Ext.define('HreRem.view.expedientes.DatosCompradorWizard', {
 			layout: {
 		        type: 'table',
 		        columns: 2,
-			    trAttrs: {width: '25%'}
+			    trAttrs: {width: '25%'},
+		        tdAttrs: {width: '25%'}
 			},
 			items :
 				[
@@ -297,14 +298,17 @@ Ext.define('HreRem.view.expedientes.DatosCompradorWizard', {
 					},
 			        {
 			        	xtype      : 'container',
-                       layout: 'box',
+			        	layout: {
+					        type: 'table',
+					        columns: 2
+						},
+                       padding: '5px',
                        items: [
                        	{ 
 								xtype: 'comboboxfieldbase',   
-								width: 360,
 					        	fieldLabel: HreRem.i18n('title.windows.datos.cliente.ursus'),
 								reference: 'seleccionClienteUrsus',
-								padding: '5px',
+								
 					        	bind: {
 				            		store: '{comboClienteUrsus}',
 				            		hidden: '{!comprador.esCarteraBankia}'
@@ -323,8 +327,7 @@ Ext.define('HreRem.view.expedientes.DatosCompradorWizard', {
 					        },
                            {
                                xtype: 'button',
-					            handler: 'mostrarDetallesClienteUrsus',
-					            padding: '5px',
+					            handler: 'mostrarDetallesClienteUrsus',					            
 					            bind: {
 					            	hidden: '{!comprador.esCarteraBankia}'
 					            },
@@ -607,6 +610,20 @@ Ext.define('HreRem.view.expedientes.DatosCompradorWizard', {
 		            	bind: {
 		            		store: '{comboPaises}',
 		            		value: '{comprador.codigoPaisRte}'
+		            	},
+		            	listeners : {
+		            		change: function(combo, value) {
+		            			try{
+		            				var me = this;
+			            			if(value) {
+			            				me.up('formBase').down('[reference=provinciaComboRte]').allowBlank = false;
+			            				me.up('formBase').down('[reference=municipioComboRte]').allowBlank = false;
+			            			} 
+		            			}catch (err){
+		            				Ext.global.console.log(err);
+		            			}
+		            			
+		            		}
 		            	}
 					}
 				]

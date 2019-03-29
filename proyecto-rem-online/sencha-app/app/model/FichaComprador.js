@@ -193,7 +193,8 @@ Ext.define('HreRem.model.FichaComprador', {
 			type : 'boolean'
 		},
 		{
-    		name: 'esCarteraBankia'  		
+    		name: 'esCarteraBankia', 
+    		type : 'boolean'
     			
     	},
 		{

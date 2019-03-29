@@ -130,6 +130,8 @@ public class DtoModificarCompradores {
 	private String descripcionPaisRte;
 	
 	private Boolean esBH;
+	
+	private Boolean esCarteraBankia;
 
 	public String getId() {
 		return id;
@@ -634,5 +636,15 @@ public class DtoModificarCompradores {
 	public void setEsBH(Boolean esBH) {
 		this.esBH = esBH;
 	}
+
+	public Boolean getEsCarteraBankia() {
+		return esCarteraBankia;
+	}
+
+	public void setEsCarteraBankia(Boolean esCarteraBankia) {
+		this.esCarteraBankia = esCarteraBankia;
+	}
+	
+	
 
 }

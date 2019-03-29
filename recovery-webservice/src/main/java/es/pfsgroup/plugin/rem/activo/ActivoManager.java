@@ -1180,8 +1180,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				compradorExpedienteNuevo.setBorrado(false);
 				
 				List<ClienteGDPR> clienteGDPR = genericDao.getList(ClienteGDPR.class,
-						genericDao.createFilter(FilterType.EQUALS, "cliente.numDocumento", oferta.getCliente().getDocumento())
-						,genericDao.createFilter(FilterType.EQUALS, "cliente.tipoDocumento.codigo", oferta.getCliente().getTipoDocumento().getCodigo()));
+						genericDao.createFilter(FilterType.EQUALS, "numDocumento", oferta.getCliente().getDocumento())
+						,genericDao.createFilter(FilterType.EQUALS, "tipoDocumento.codigo", oferta.getCliente().getTipoDocumento().getCodigo()));
 				
 				if(clienteGDPR != null && clienteGDPR.size()>0){
 					compradorExpedienteNuevo.setDocumentoAdjunto(clienteGDPR.get(0).getAdjuntoComprador());
@@ -1233,8 +1233,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 								
 				// HREOS - 4937
 				List<ClienteGDPR> clienteGDPR = genericDao.getList(ClienteGDPR.class,
-						genericDao.createFilter(FilterType.EQUALS, "cliente.numDocumento", oferta.getCliente().getDocumento())
-						,genericDao.createFilter(FilterType.EQUALS, "cliente.tipoDocumento.codigo", oferta.getCliente().getTipoDocumento().getCodigo()));
+						genericDao.createFilter(FilterType.EQUALS, "numDocumento", oferta.getCliente().getDocumento())
+						,genericDao.createFilter(FilterType.EQUALS, "tipoDocumento.codigo", oferta.getCliente().getTipoDocumento().getCodigo()));
 				
 				if (!Checks.estaVacio(clienteGDPR)) {
 					if (!Checks.esNulo(clienteGDPR.get(0).getCesionDatos())) {

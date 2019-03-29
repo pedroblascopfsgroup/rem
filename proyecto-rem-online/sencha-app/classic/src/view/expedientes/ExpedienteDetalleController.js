@@ -1040,7 +1040,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 
 		
 
-		me.getViewModel().set('comprador', model);
+		
 
 		if (!Ext.isEmpty(id)) {
 			model.load({
@@ -1055,15 +1055,17 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 					codTipoDocumento: form.findField('codTipoDocumento').getValue()
 				},
 				success : function(record) {
-					window.unmask();
+					me.getViewModel().set('comprador', model);
 					form.findField('numDocumento').setDisabled(true);
 					form.findField('codTipoDocumento').setDisabled(true);
+					window.unmask();
 				},
 				failure : function(record, operation) {
 					console.log("Failure: no ha sido posible cargar los datos del comprador.");
 				}
 			});
 		}else{
+			me.getViewModel().set('comprador', model);
 			window.unmask();
 		}
 
@@ -1606,8 +1608,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 
 				if (form.isValid()) {
 					url = $AC.getRemoteUrl('expedientecomercial/getListAdjuntosComprador');
-
-                    idExpediente = comprador.data.idExpedienteComercial;
+				    idExpediente = comprador.data.idExpedienteComercial;
                     var docCliente= comprador.data.numDocumento;
                     Ext.Ajax.request({
                          url: url,

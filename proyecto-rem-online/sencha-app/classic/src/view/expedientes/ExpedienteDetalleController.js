@@ -1571,7 +1571,6 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 
 		var me = this,
 		ventanaDetalle = btn.up().up(),
-        window = ventanaDetalle.up().xtype,
 	    form = ventanaDetalle.getForm(),
 		ventanaWizard = btn.up('wizardaltacomprador');
 		
@@ -1579,15 +1578,15 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		ventanaWizard.setY( Ext.Element.getViewportHeight()/2 - ((Ext.Element.getViewportHeight() > 500 ? 500 : Ext.Element.getViewportHeight() -100)/2));
 
 		if(ventanaDetalle.config.xtype.indexOf('datoscompradorwizard') >=0){
-			pedirDocValor = ventanaDetalle.getForm().findField('pedirDoc').getValue();
+			var pedirDocValor = ventanaDetalle.getForm().findField('pedirDoc').getValue(),
 			comprador = ventanaDetalle.getBindRecord().comprador;
 
 			if (pedirDocValor == 'false'){
 
 				if (form.isValid()) {
-					url = $AC.getRemoteUrl('expedientecomercial/getListAdjuntosComprador');
-                    idExpediente = comprador.data.idExpedienteComercial;
-                    var docCliente = comprador.data.numDocumento;
+					var url = $AC.getRemoteUrl('expedientecomercial/getListAdjuntosComprador'),
+                    idExpediente = comprador.data.idExpedienteComercial,
+                    docCliente = comprador.data.numDocumento;
 
                     Ext.Ajax.request({
                          url: url,
@@ -1596,7 +1595,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
                          params: {docCliente: docCliente, idExpediente: idExpediente},
 
                          success: function(response, opts) {
-                             data = Ext.decode(response.responseText);
+                             var data = Ext.decode(response.responseText);
                              if(!Ext.isEmpty(data.data)){
                                  ventanaWizard.down('anyadirnuevaofertaactivoadjuntardocumento').getForm().findField('docOfertaComercial').setValue(data.data[0].nombre);
                                  ventanaWizard.down('anyadirnuevaofertaactivoadjuntardocumento').down().down('panel').down('button').show();
@@ -1608,11 +1607,11 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
                          }
                     });
 
-                   // ventanaWizard.down('anyadirnuevaofertaactivoadjuntardocumento').getForm().findField('cesionDatosHaya').setValue(comprador.data.cesionDatosHaya);
+                   // ventanaWizard.down('anyadirnuevaofertaactivoadjuntardocumento').getForm().findField('cesionDatos').setValue(comprador.data.cesionDatos);
                    // ventanaWizard.down('anyadirnuevaofertaactivoadjuntardocumento').getForm().findField('comunicacionTerceros').setValue(comprador.data.comunicacionTerceros);
                    // ventanaWizard.down('anyadirnuevaofertaactivoadjuntardocumento').getForm().findField('transferenciasInternacionales').setValue(comprador.data.transferenciasInternacionales);
                     
-                    ventanaDetalle.getForm().findField('cesionDatosHaya').setValue(comprador.data.cesionDatosHaya);
+                    ventanaDetalle.getForm().findField('cesionDatos').setValue(comprador.data.cesionDatos);
             		ventanaDetalle.getForm().findField('comunicacionTerceros').setValue(comprador.data.comunicacionTerceros);
             		ventanaDetalle.getForm().findField('transferenciasInternacionales').setValue(comprador.data.transferenciasInternacionales);
 
@@ -1625,7 +1624,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			}
 
 		}else{
-			var cesionDatos = ventanaDetalle.getForm().findField('cesionDatosHaya').getValue(),
+			var cesionDatos = ventanaDetalle.getForm().findField('cesionDatos').getValue(),
 			comunicacionTerceros = ventanaDetalle.getForm().findField('comunicacionTerceros').getValue(),
 			transferenciasInternacionales = ventanaDetalle.getForm().findField('transferenciasInternacionales').getValue();
 

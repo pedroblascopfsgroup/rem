@@ -20,7 +20,9 @@
 WHENEVER SQLERROR EXIT SQL.SQLCODE;
 SET SERVEROUTPUT ON;
 SET DEFINE OFF;
+DECLARE
 
+V_NUM_TABLAS NUMBER(16); -- Vble. para validar la existencia de una tabla.  
 
 BEGIN
 

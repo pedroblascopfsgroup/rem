@@ -113,12 +113,14 @@ Ext.define('HreRem.view.activos.detalle.AnyadirNuevaOfertaActivoAdjuntarDocument
 	                            		  if(esInternacional) {
 	                            			  if(checkTransInternacionales) {
 	                            				  btnGenerarDoc.enable();
+	                            				  btnSubirDoc.enable();
 	                            			  } else {
 	                            				  btnGenerarDoc.disable();
 	                            			  	  btnSubirDoc.disable();
 	                            			  }
 	                            		  } else {
 	                            			  btnGenerarDoc.enable();
+	                            			  btnSubirDoc.enable();
 	                            		  }
 	                            	  } else {
 	                            		  checkbox.enable();
@@ -142,7 +144,14 @@ Ext.define('HreRem.view.activos.detalle.AnyadirNuevaOfertaActivoAdjuntarDocument
 							listeners: {
 	                              change: function (checkbox, newVal, oldVal) {
 	                            	  var ventanaWizard = checkbox.up('anyadirnuevaofertaactivoadjuntardocumento'),
+	                            	  cesionDatos = ventanaWizard.getForm().findField('cesionDatos').getValue(),
+	                            	  btnGenerarDoc = ventanaWizard.down('button[itemId=btnGenerarDoc]'),
+	                            	  btnSubirDoc = ventanaWizard.down('button[itemId=btnSubirDoc]'),
 	                            	  btnFinalizar = ventanaWizard.down('button[itemId=btnFinalizar]');
+	                            	  if(cesionDatos) {
+	                            		  btnGenerarDoc.enable();
+                        				  btnSubirDoc.enable();
+	                            	  }
 	                            	  btnFinalizar.disable();
 	                              }
 	                          }
@@ -158,7 +167,14 @@ Ext.define('HreRem.view.activos.detalle.AnyadirNuevaOfertaActivoAdjuntarDocument
 							listeners: {
 	                              change: function (checkbox, newVal, oldVal) {
 	                            	  var ventanaWizard = checkbox.up('anyadirnuevaofertaactivoadjuntardocumento'),
+	                            	  cesionDatos = ventanaWizard.getForm().findField('cesionDatos').getValue(),
+	                            	  btnGenerarDoc = ventanaWizard.down('button[itemId=btnGenerarDoc]'),
+	                            	  btnSubirDoc = ventanaWizard.down('button[itemId=btnSubirDoc]'),
 	                            	  btnFinalizar = ventanaWizard.down('button[itemId=btnFinalizar]');
+	                            	  if(cesionDatos) {
+	                            		  btnGenerarDoc.enable();
+                        				  btnSubirDoc.enable();
+	                            	  }
 	                            	  btnFinalizar.disable();
 	                              }
 	                          }

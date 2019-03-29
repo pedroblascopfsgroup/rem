@@ -323,7 +323,7 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 																reference: 'seleccionClienteUrsus',
 													        	bind: {
 												            		store: '{comboClienteUrsus}',
-												            		hidden: '{!esCarteraBankia}'
+												            		hidden: '{!comprador.esCarteraBankia}'
 												            	},
 												            	listeners: {
 												            		change: 'establecerNumClienteURSUS',
@@ -342,7 +342,7 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 	//												            cls: 'searchfield-input sf-con-borde',
 													            handler: 'mostrarDetallesClienteUrsus',
 													            bind: {
-													            	hidden: '{!esCarteraBankia}'
+													            	hidden: '{!comprador.esCarteraBankia}'
 													            },
 													            reference: 'btnVerDatosClienteUrsus',
 													            disabled: true,
@@ -358,7 +358,7 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 												        reference: 'numeroClienteUrsusRef',
 												        bind: {
 											            	value: '{comprador.numeroClienteUrsus}',
-											            	hidden: '{!esCarteraBankia}'
+											            	hidden: '{!comprador.esCarteraBankia}'
 											            },
 											            editable: true
 								                    },

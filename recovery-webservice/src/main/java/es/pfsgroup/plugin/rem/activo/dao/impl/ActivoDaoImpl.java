@@ -1345,10 +1345,19 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<VBusquedaProveedoresActivo> getListProveedor(Long idActivo) {
+	public List<VBusquedaProveedoresActivo> getListProveedor(List<String> listaIds) {
 		String hql = " from VBusquedaProveedoresActivo acn ";
+		String ids = "";
 		HQLBuilder hb = new HQLBuilder(hql);
-		hb.appendWhere(" acn.idActivo =  "+idActivo+" ");
+		
+		for (int i = 0; i<listaIds.size();i++) {
+			ids+=listaIds.get(i);
+			if(i+1 != listaIds.size()){
+				ids+=", ";
+			}
+		}
+		hb.appendWhereIN("acn.idActivo", ids);
+		
 
 		return (List<VBusquedaProveedoresActivo>) this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).list();
 

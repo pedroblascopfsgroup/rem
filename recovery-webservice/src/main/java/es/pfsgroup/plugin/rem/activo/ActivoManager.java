@@ -3288,26 +3288,25 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	}
 
 	public List<VBusquedaProveedoresActivo> getProveedorByActivo(Long idActivo) {
-		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "idActivo", idActivo.toString());
-		//List<VBusquedaProveedoresActivo> listadoProveedores = genericDao.getList(VBusquedaProveedoresActivo.class,filtro);
-		List<VBusquedaProveedoresActivo> listadoProveedores = activoDao.getListProveedor(idActivo);
+		
+		List<VBusquedaProveedoresActivo> listadoProveedores = null;
 		//si es activo matriz, hay que devolver los datos de todas sus UAS
 		if(activoDao.isActivoMatriz(idActivo)) {
 			ActivoAgrupacion agr = activoDao.getAgrupacionPAByIdActivo(idActivo);
 			if(!Checks.esNulo(agr)) {
-				List<VBusquedaProveedoresActivo> listadoProveedoresUa = null;
 				List<Activo> listaUAs = activoAgrupacionActivoDao.getListUAsByIdAgrupacion(agr.getId());
+				List<String> listaIds = new ArrayList<String>(); 
+				listaIds.add(idActivo.toString());
 				for (Activo activo : listaUAs) {
-					listadoProveedoresUa = new ArrayList<VBusquedaProveedoresActivo>();
-					Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "idActivo", activo.getId().toString());
-					listadoProveedoresUa = activoDao.getListProveedor( activo.getId());
-					if(!Checks.estaVacio(listadoProveedoresUa)) {
-						listadoProveedores.addAll(listadoProveedoresUa);
-					}
+					listaIds.add(activo.getId().toString());
 				}
+				listadoProveedores = activoDao.getListProveedor(listaIds);
 			}
+		}else {
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "idActivo", idActivo.toString());
+			listadoProveedores = genericDao.getList(VBusquedaProveedoresActivo.class,filtro);
 		}
-		//
+		
 		return listadoProveedores;
 	}
 

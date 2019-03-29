@@ -971,22 +971,34 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getCompradorById(VBusquedaDatosCompradorExpediente dto, ModelMap model) {
 		try {
-			VBusquedaDatosCompradorExpediente vistaConExp = expedienteComercialApi.getDatosCompradorById(dto.getId(),
-					dto.getIdExpedienteComercial());
-			if (!Checks.esNulo(vistaConExp)) {
-				DtoModificarCompradores comprador = expedienteComercialApi.vistaADtoModCompradores(vistaConExp);
-				model.put(RESPONSE_DATA_KEY, comprador);
-				model.put(RESPONSE_SUCCESS_KEY, true);
-			} else {
-				VBusquedaDatosCompradorExpediente vistaSinExp = expedienteComercialApi.getDatCompradorById(dto.getId());
-				if (!Checks.esNulo(vistaSinExp)) {
-					if (!Checks.esNulo(dto.getIdExpedienteComercial())) {
-						vistaSinExp.setIdExpedienteComercial(dto.getIdExpedienteComercial());
-					}
-					DtoModificarCompradores comprador = expedienteComercialApi.vistaCrearComprador(vistaSinExp); 
+			if (!Checks.esNulo(dto.getId())) {
+				VBusquedaDatosCompradorExpediente vistaConExp = expedienteComercialApi
+						.getDatosCompradorById(dto.getId(), dto.getIdExpedienteComercial());
+				if (!Checks.esNulo(vistaConExp)) {
+					DtoModificarCompradores comprador = expedienteComercialApi.vistaADtoModCompradores(vistaConExp);
 					model.put(RESPONSE_DATA_KEY, comprador);
 					model.put(RESPONSE_SUCCESS_KEY, true);
+				} else {
+					VBusquedaDatosCompradorExpediente vistaSinExp = expedienteComercialApi
+							.getDatCompradorById(dto.getId());
+					if (!Checks.esNulo(vistaSinExp)) {
+						if (!Checks.esNulo(dto.getIdExpedienteComercial())) {
+							vistaSinExp.setIdExpedienteComercial(dto.getIdExpedienteComercial());
+						}
+						DtoModificarCompradores comprador = expedienteComercialApi.vistaCrearComprador(vistaSinExp);
+						model.put(RESPONSE_DATA_KEY, comprador);
+						model.put(RESPONSE_SUCCESS_KEY, true);
+					}
 				}
+			}else{
+				VBusquedaDatosCompradorExpediente vistaSinComprador = new VBusquedaDatosCompradorExpediente();
+				vistaSinComprador.setIdExpedienteComercial(dto.getIdExpedienteComercial());
+				vistaSinComprador.setNumDocumento(dto.getNumDocumento());
+				vistaSinComprador.setCodTipoDocumento(dto.getCodTipoDocumento());
+				DtoModificarCompradores comprador = expedienteComercialApi.vistaCrearComprador(vistaSinComprador);
+				model.put(RESPONSE_DATA_KEY, comprador);
+				model.put(RESPONSE_SUCCESS_KEY, true);
+				
 			}
 		} catch (Exception e) {
 			model.put(RESPONSE_SUCCESS_KEY, false);

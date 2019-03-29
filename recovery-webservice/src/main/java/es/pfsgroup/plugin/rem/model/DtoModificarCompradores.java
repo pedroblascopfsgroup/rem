@@ -130,7 +130,13 @@ public class DtoModificarCompradores {
 	private String descripcionPaisRte;
 	
 	private Boolean esBH;
+
+	private Boolean cesionDatos;
 	
+	private Boolean comunicacionTerceros;
+	
+	private Boolean transferenciasInternacionales;
+
 	private Boolean esCarteraBankia;
 
 	public String getId() {
@@ -635,6 +641,29 @@ public class DtoModificarCompradores {
 
 	public void setEsBH(Boolean esBH) {
 		this.esBH = esBH;
+	}
+	public Boolean getCesionDatos() {
+		return cesionDatos;
+	}
+
+	public void setCesionDatos(Boolean cesionDatos) {
+		this.cesionDatos = cesionDatos;
+	}
+
+	public Boolean getComunicacionTerceros() {
+		return comunicacionTerceros;
+	}
+
+	public void setComunicacionTerceros(Boolean comunicacionTerceros) {
+		this.comunicacionTerceros = comunicacionTerceros;
+	}
+
+	public Boolean getTransferenciasInternacionales() {
+		return transferenciasInternacionales;
+	}
+
+	public void setTransferenciasInternacionales(Boolean transferenciasInternacionales) {
+		this.transferenciasInternacionales = transferenciasInternacionales;
 	}
 
 	public Boolean getEsCarteraBankia() {

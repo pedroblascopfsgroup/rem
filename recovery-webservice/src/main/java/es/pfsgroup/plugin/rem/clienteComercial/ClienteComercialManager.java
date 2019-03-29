@@ -23,7 +23,6 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.rem.api.ClienteComercialApi;
-import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.clienteComercial.dao.ClienteComercialDao;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ClienteComercial;
@@ -52,10 +51,10 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 	@Autowired
 	private ClienteComercialDao clienteComercialDao;
 	
-	@Autowired
+	/*@Autowired
 	private OfertaApi ofertaApi;
 	
-	private final static String CLIENTE_HAYA = "HAYA";
+	private final static String CLIENTE_HAYA = "HAYA";*/
 
 	@Override
 	public String managerName() {
@@ -664,7 +663,7 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 				map.put("idClienteWebcom", cliente.getIdClienteWebcom());
 				map.put("idClienteRem", cliente.getIdClienteRem());
 				map.put("success", true);
-				ofertaApi.llamadaMaestroPersonas(cliente.getDocumento(), CLIENTE_HAYA);
+				//ofertaApi.llamadaMaestroPersonas(cliente.getDocumento(), CLIENTE_HAYA);
 			} else {
 				map.put("idClienteWebcom", clienteDto.getIdClienteWebcom());
 				map.put("idClienteRem", clienteDto.getIdClienteRem());

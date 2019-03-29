@@ -1276,7 +1276,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				ClienteCompradorGDPR clienteCompradorGDPR = new ClienteCompradorGDPR();
 				clienteCompradorGDPR.setTipoDocumento(nuevoComprador.getTipoDocumento());
 				clienteCompradorGDPR.setNumDocumento(nuevoComprador.getDocumento());
-				if (!Checks.esNulo(clienteGDPR)) {
+				if(clienteGDPR != null && clienteGDPR.size()>0){
 					if (!Checks.esNulo(clienteGDPR.get(0).getCesionDatos())) {
 						clienteCompradorGDPR.setCesionDatos(clienteGDPR.get(0).getCesionDatos());
 					}

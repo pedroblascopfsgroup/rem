@@ -1063,8 +1063,8 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			form.recordName = "comprador";
 			form.recordClass = "HreRem.model.FichaComprador";
 
-			ventanaWizard.width = Ext.Element.getViewportWidth()/2;
-			ventanaWizard.height = Ext.Element.getViewportHeight() > 500 ? 500 : Ext.Element.getViewportHeight()-100;
+			//ventanaWizard.width = Ext.Element.getViewportWidth()/2;
+			//ventanaWizard.height = Ext.Element.getViewportHeight() > 500 ? 500 : Ext.Element.getViewportHeight()-100;
 
 			var success = function(record, operation) {
 				me.getView().unmask();
@@ -2023,8 +2023,14 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		var form = field.up('formBase');
 		var url =  $AC.getRemoteUrl('expedientecomercial/buscarDatosClienteNumeroUrsus');
 		var numeroUrsus = form.down('[reference=seleccionClienteUrsus]').getValue();
-		var idExpediente = form.getBindRecord().get('idExpedienteComercial');
 		var parent = field.up('windowBase');
+		var idExpediente;
+		try{
+			idExpediente = form.getBindRecord().get('idExpedienteComercial');
+		}catch(error){
+			idExpediente = me.getViewModel().get("expediente.id");
+		}
+		
 
 		parent.mask(HreRem.i18n("msg.mask.loading"));
 		

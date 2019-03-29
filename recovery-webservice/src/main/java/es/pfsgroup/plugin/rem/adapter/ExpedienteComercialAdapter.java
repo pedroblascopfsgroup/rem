@@ -33,8 +33,6 @@ import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.AdjuntoComprador;
 import es.pfsgroup.plugin.rem.model.AdjuntoExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.ClienteCompradorGDPR;
-import es.pfsgroup.plugin.rem.model.ClienteGDPR;
 import es.pfsgroup.plugin.rem.model.Comprador;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
@@ -151,7 +149,7 @@ public class ExpedienteComercialAdapter {
 			Filter filtroComprador = null;
 			Comprador comprador = null;
 			if(!Checks.esNulo(idIntervinienteHaya)) {
-				filtroComprador = genericDao.createFilter(FilterType.EQUALS, "idPersonaHaya", idIntervinienteHaya);
+				filtroComprador = genericDao.createFilter(FilterType.EQUALS, "idPersonaHaya", Long.parseLong(idIntervinienteHaya));
 			} else {
 				filtroComprador = genericDao.createFilter(FilterType.EQUALS, "documento", docCliente);
 			}

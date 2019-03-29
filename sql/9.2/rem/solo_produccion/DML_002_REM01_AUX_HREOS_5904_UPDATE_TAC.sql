@@ -1,7 +1,7 @@
 --/*
 --#########################################
 --## AUTOR=Pablo Meseguer
---## FECHA_CREACION=20190328
+--## FECHA_CREACION=20190329
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=2.0.17
 --## INCIDENCIA_LINK=HREOS-5904

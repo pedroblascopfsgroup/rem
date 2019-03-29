@@ -1,7 +1,6 @@
 package es.pfsgroup.plugin.rem.model;
 
 import java.io.Serializable;
-import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -22,22 +21,10 @@ import javax.persistence.Version;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Where;
-import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
-import es.capgemini.pfs.direccion.model.DDProvincia;
-import es.capgemini.pfs.direccion.model.DDTipoVia;
-import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
-import es.capgemini.pfs.users.domain.Usuario;
-import es.pfsgroup.commons.utils.Checks;
-import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
-import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBien;
-import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
-import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
-import es.pfsgroup.plugin.rem.model.dd.DDTiposColaborador;
-import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
 /**
  * HREOS-4937
  * 
@@ -77,7 +64,7 @@ public class ClienteGDPR implements Serializable, Auditable{
     private AdjuntoComprador adjuntoComprador;
     
 
-	  //Se añaden nuevos atributos. HREOS-4851
+	  //Se añaden nuevos atributos. HREOS-4851<o
     @Column(name = "CLC_CESION_DATOS")
     private Boolean cesionDatos;
     

@@ -54,6 +54,8 @@ import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.ACCION_CODIGO;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.ENTIDAD_CODIGO;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.REQUEST_STATUS_CODE;
 import es.pfsgroup.plugin.rem.model.AdjuntoComprador;
+import es.pfsgroup.plugin.rem.model.ClienteComercial;
+import es.pfsgroup.plugin.rem.model.ClienteGDPR;
 import es.pfsgroup.plugin.rem.model.Comprador;
 import es.pfsgroup.plugin.rem.model.DtoActivosExpediente;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
@@ -638,6 +640,18 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 			if (!Checks.esNulo(comprador)) {
 				if (!Checks.esNulo(comprador.getIdPersonaHaya())) {
 					idPersonaHaya = String.valueOf(comprador.getIdPersonaHaya());
+					//caso residuales, compradores dados de alta sin interviniente 
+					if(Checks.esNulo(idPersonaHaya)){
+						List<ClienteComercial> clientes = genericDao.getList(ClienteComercial.class,genericDao.createFilter(FilterType.EQUALS, "documento", docCliente) );
+						if(clientes != null && clientes.size() > 0){
+							for(ClienteComercial clc : clientes){
+								if(clc.getIdPersonaHaya() != null){
+									idPersonaHaya = clc.getIdPersonaHaya();
+									break;
+								}
+							}
+						}
+					}
 				} else {
 					tmpClienteGDPR = genericDao.get(TmpClienteGDPR.class,
 							genericDao.createFilter(FilterType.EQUALS, "numDocumento", docCliente));

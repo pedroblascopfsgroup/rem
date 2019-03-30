@@ -640,23 +640,23 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 			if (!Checks.esNulo(comprador)) {
 				if (!Checks.esNulo(comprador.getIdPersonaHaya())) {
 					idPersonaHaya = String.valueOf(comprador.getIdPersonaHaya());
+				} else {
 					//caso residuales, compradores dados de alta sin interviniente 
-					if(Checks.esNulo(idPersonaHaya)){
-						List<ClienteComercial> clientes = genericDao.getList(ClienteComercial.class,genericDao.createFilter(FilterType.EQUALS, "documento", docCliente) );
-						if(clientes != null && clientes.size() > 0){
-							for(ClienteComercial clc : clientes){
-								if(clc.getIdPersonaHaya() != null){
-									idPersonaHaya = clc.getIdPersonaHaya();
-									break;
-								}
+					List<ClienteComercial> clientes = genericDao.getList(ClienteComercial.class,genericDao.createFilter(FilterType.EQUALS, "documento", docCliente) );
+					if(clientes != null && clientes.size() > 0){
+						for(ClienteComercial clc : clientes){
+							if(clc.getIdPersonaHaya() != null){
+								idPersonaHaya = clc.getIdPersonaHaya();
+								break;
 							}
 						}
 					}
-				} else {
-					tmpClienteGDPR = genericDao.get(TmpClienteGDPR.class,
-							genericDao.createFilter(FilterType.EQUALS, "numDocumento", docCliente));
-					if (!Checks.esNulo(tmpClienteGDPR) && !Checks.esNulo(tmpClienteGDPR.getIdPersonaHaya())) {
-						idPersonaHaya = String.valueOf(tmpClienteGDPR.getIdPersonaHaya());
+					if(Checks.esNulo(idPersonaHaya)){
+						tmpClienteGDPR = genericDao.get(TmpClienteGDPR.class,
+								genericDao.createFilter(FilterType.EQUALS, "numDocumento", docCliente));
+						if (!Checks.esNulo(tmpClienteGDPR) && !Checks.esNulo(tmpClienteGDPR.getIdPersonaHaya())) {
+							idPersonaHaya = String.valueOf(tmpClienteGDPR.getIdPersonaHaya());
+						}
 					}
 				}
 			} else {

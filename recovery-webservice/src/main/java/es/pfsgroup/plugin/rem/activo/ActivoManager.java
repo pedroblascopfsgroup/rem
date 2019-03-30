@@ -712,8 +712,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 		validateSaveOferta(dto, oferta, estadoOferta);
 
-		oferta.setEstadoOferta(estadoOferta);
-
 		// Al aceptar la oferta, se crea el trabajo de sancion oferta y el
 		// expediente comercial
 		if (DDEstadoOferta.CODIGO_ACEPTADA.equals(estadoOferta.getCodigo())) {
@@ -726,14 +724,13 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			resultado = doRechazaOferta(dto, oferta);
 		}
 		
+		oferta.setEstadoOferta(estadoOferta);
+		
 		if(!resultado){
 			resultado = this.persistOferta(oferta);
 		}
 		
-		// HREOS-5146 Si deja crear una nueva oferta, debe dejar pasarla a congelada manualmente.
-		if (DDEstadoOferta.CODIGO_CONGELADA.equals(estadoOferta.getCodigo())) {
-			resultado = this.persistOferta(oferta);
-		}
+		
 
 		return resultado;
 	}

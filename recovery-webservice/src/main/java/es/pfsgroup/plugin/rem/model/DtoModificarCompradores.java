@@ -138,6 +138,10 @@ public class DtoModificarCompradores {
 	private Boolean transferenciasInternacionales;
 
 	private Boolean esCarteraBankia;
+	
+	private Boolean mostrarUrsus;
+	
+	private Boolean mostrarUrsusBh;
 
 	public String getId() {
 		return id;
@@ -673,7 +677,21 @@ public class DtoModificarCompradores {
 	public void setEsCarteraBankia(Boolean esCarteraBankia) {
 		this.esCarteraBankia = esCarteraBankia;
 	}
-	
-	
+
+	public Boolean getMostrarUrsus() {
+		return mostrarUrsus;
+	}
+
+	public void setMostrarUrsus(Boolean mostrarUrsus) {
+		this.mostrarUrsus = mostrarUrsus;
+	}
+
+	public Boolean getMostrarUrsusBh() {
+		return mostrarUrsusBh;
+	}
+
+	public void setMostrarUrsusBh(Boolean mostrarUrsusBh) {
+		this.mostrarUrsusBh = mostrarUrsusBh;
+	}	
 
 }

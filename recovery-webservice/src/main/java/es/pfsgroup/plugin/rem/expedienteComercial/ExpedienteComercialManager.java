@@ -7477,6 +7477,20 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			comprador.setTransferenciasInternacionales(vista.getTransferenciasInternacionales());
 			comprador.setEntidadPropietariaCodigo(getCodigoCarteraExpediente(vista.getIdExpedienteComercial()));
 			comprador.setEsCarteraBankia(getCodigoCarteraExpediente(vista.getIdExpedienteComercial()).equals(DDCartera.CODIGO_CARTERA_BANKIA));
+			
+			if(comprador.getEsCarteraBankia()){
+				if(comprador.getEsBH()){
+					comprador.setMostrarUrsus(false);
+					comprador.setMostrarUrsusBh(true);
+				}else{
+					comprador.setMostrarUrsus(true);
+					comprador.setMostrarUrsusBh(false);
+				}
+				
+			}else{
+				comprador.setMostrarUrsus(false);
+				comprador.setMostrarUrsusBh(false);
+			}
 
 		} catch (Exception e) {
 			logger.error("vistaADtoModCompradores", e);
@@ -7495,6 +7509,20 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			comprador.setEsBH(esBH(vista.getIdExpedienteComercial()));
 			comprador.setEntidadPropietariaCodigo(getCodigoCarteraExpediente(vista.getIdExpedienteComercial()));
 			comprador.setEsCarteraBankia(getCodigoCarteraExpediente(vista.getIdExpedienteComercial()).equals(DDCartera.CODIGO_CARTERA_BANKIA));
+			
+			if(comprador.getEsCarteraBankia()){
+				if(comprador.getEsBH()){
+					comprador.setMostrarUrsus(false);
+					comprador.setMostrarUrsusBh(true);
+				}else{
+					comprador.setMostrarUrsus(true);
+					comprador.setMostrarUrsusBh(false);
+				}
+				
+			}else{
+				comprador.setMostrarUrsus(false);
+				comprador.setMostrarUrsusBh(false);
+			}
 
 		} catch (Exception e) {
 			logger.error("vistaCrearComprador", e);

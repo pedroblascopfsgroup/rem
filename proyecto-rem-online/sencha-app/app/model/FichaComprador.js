@@ -197,6 +197,16 @@ Ext.define('HreRem.model.FichaComprador', {
     		type : 'boolean'
     			
     	},
+    	{
+    		name: 'mostrarUrsus', 
+    		type : 'boolean'
+    			
+    	},
+    	{
+    		name: 'mostrarUrsusBh', 
+    		type : 'boolean'
+    			
+    	},
 		{
 			name: 'entidadPropietariaCodigo'
 		},

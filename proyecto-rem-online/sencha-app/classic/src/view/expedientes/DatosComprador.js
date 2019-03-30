@@ -358,7 +358,7 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 												        reference: 'numeroClienteUrsusRef',
 												        bind: {
 											            	value: '{comprador.numeroClienteUrsus}',
-											            	hidden: '{!comprador.esCarteraBankia}'
+											            	hidden: '{!comprador.mostrarUrsus}'
 											            },
 											            editable: true
 								                    },
@@ -369,7 +369,7 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 												        reference: 'numeroClienteUrsusBhRef',
 												        bind: {
 											            	value: '{comprador.numeroClienteUrsusBh}',
-											            	hidden: '{!comprador.esBH}'
+											            	hidden: '{!comprador.mostrarUrsusBh}'
 											            },
 											            editable: true
 						                            }

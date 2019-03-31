@@ -711,6 +711,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				.dameValorDiccionarioByCod(DDEstadoOferta.class, dto.getCodigoEstadoOferta());
 
 		validateSaveOferta(dto, oferta, estadoOferta);
+		
+		oferta.setEstadoOferta(estadoOferta);
 
 		// Al aceptar la oferta, se crea el trabajo de sancion oferta y el
 		// expediente comercial
@@ -724,7 +726,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			resultado = doRechazaOferta(dto, oferta);
 		}
 		
-		oferta.setEstadoOferta(estadoOferta);
 		
 		if(!resultado){
 			resultado = this.persistOferta(oferta);

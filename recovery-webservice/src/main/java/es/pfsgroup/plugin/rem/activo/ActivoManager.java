@@ -5166,12 +5166,13 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 //				dto.getNumeroActivo()
 				if (!Checks.esNulo(dto.getIdActivo())) {
 					activo = genericDao.get(Activo.class, genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdActivo()));
+					if(!Checks.esNulo(activo.getTitulo()) && !Checks.esNulo(activo.getTitulo().getEstado())) {
+						if(DDEstadoTitulo.ESTADO_INSCRITO.equals(activo.getTitulo().getEstado().getCodigo())) {
+							return false;
+						}
+					}
 					activoCalificacionNegativa.setActivo(activo);
 				} else {
-					return false;
-				}
-				
-				if (DDEstadoTitulo.ESTADO_INSCRITO.equals(dto.getEstadoTitulo())) {
 					return false;
 				}
 
@@ -5212,7 +5213,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				DDCalificacionNegativa calificacionNegativa = genericDao.get(DDCalificacionNegativa.class, genericDao.createFilter(FilterType.EQUALS, "codigo","02"));
 				activoCalificacionNegativa.setCalificacionNegativa(calificacionNegativa);
 				
-				if(DDEstadoMotivoCalificacionNegativa.DD_SUBSANADO_CODIGO.equals(activoCalificacionNegativa.getEstadoMotivoCalificacionNegativa().getCodigo())) {
+				if(!Checks.esNulo(activoCalificacionNegativa.getEstadoMotivoCalificacionNegativa()) 
+						&& DDEstadoMotivoCalificacionNegativa.DD_SUBSANADO_CODIGO.equals(activoCalificacionNegativa.getEstadoMotivoCalificacionNegativa().getCodigo())) {
 					if (!Checks.esNulo(dto.getFechaSubsanacion())) {
 						beanUtilNotNull.copyProperty(activoCalificacionNegativa, "fechaSubsanacion", dto.getFechaSubsanacion());
 					}

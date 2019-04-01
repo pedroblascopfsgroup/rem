@@ -70,7 +70,7 @@ Ext.define('HreRem.model.OfertaComercial', {
             	name: 'direccion'
             },
             {
-            	name: 'cesionDatosHaya',
+            	name: 'cesionDatos',
             	type : 'boolean'
             },
             {

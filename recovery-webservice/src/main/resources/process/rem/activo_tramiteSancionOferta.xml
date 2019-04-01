@@ -405,6 +405,7 @@
 	
 	<decision name="T013_ResolucionExpedienteDecision" expression="#{T013_ResolucionExpedienteDecision}">
 		<transition to="T013_RespuestaBankiaDevolucion" name="avanzaRespuestaBankia"></transition>
+		<transition to="T013_PendienteDevolucion" name="avanzaPendienteDevol"></transition>
 		<transition to="Fin" name="noAvanzaRespuestaBankia"></transition>
 	</decision>
 	

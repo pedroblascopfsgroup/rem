@@ -25,6 +25,7 @@ import es.capgemini.devon.pagination.Page;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.framework.paradise.agenda.controller.TareaController;
+import es.pfsgroup.framework.paradise.utils.BeanUtilNotNull;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.rem.adapter.AgendaAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
@@ -42,6 +43,7 @@ import es.pfsgroup.plugin.rem.model.DtoSolicitarProrrogaTarea;
 import es.pfsgroup.plugin.rem.model.DtoTareaFilter;
 import es.pfsgroup.plugin.rem.model.DtoTareaGestorSustitutoFilter;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.rest.dto.WSDevolBankiaDto;
 import es.pfsgroup.recovery.ext.factory.dao.dto.DtoResultadoBusquedaTareasBuzones;
 
 @Controller
@@ -66,7 +68,7 @@ public class AgendaController extends TareaController {
 	@Autowired
 	private UvemManagerApi uvemManagerApi;
 	
-	
+	BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
 	
 	private final Log logger = LogFactory.getLog(getClass());
 
@@ -388,8 +390,10 @@ public class AgendaController extends TareaController {
 							if(salto){
 								//Se entiende que cuando salta a la tarea anterior a Resolución Expendiente, la reserva y el expediente han llegado en los siguientes estados
 								expedienteComercialApi.updateExpedienteComercialEstadoPrevioResolucionExpediente(eco, ComercialUserAssigantionService.CODIGO_T013_RESPUESTA_BANKIA_DEVOLUCION, tareaSalto.getTareaProcedimiento().getCodigo(), true);
-								uvemManagerApi.notificarDevolucionReserva(eco.getOferta().getNumOferta().toString(), UvemManagerApi.MOTIVO_ANULACION.NO_APLICA,
+								WSDevolBankiaDto dto = uvemManagerApi.notificarDevolucionReserva(eco.getOferta().getNumOferta().toString(), UvemManagerApi.MOTIVO_ANULACION.NO_APLICA,
 										UvemManagerApi.INDICADOR_DEVOLUCION_RESERVA.NO_APLICA, UvemManagerApi.CODIGO_SERVICIO_MODIFICACION.ANULACION_PROPUESTA_ANULACION_RESERVA_FIRMADA);
+								
+								beanUtilNotNull.copyProperties(eco, dto);
 							}
 							else{
 								logger.error("Error al saltar a tarea anterior a Resolución Expediente");
@@ -453,10 +457,12 @@ public class AgendaController extends TareaController {
 							// Devolucion y llamada UVEM cosem1: 6
 							salto = adapter.saltoRespuestaBankiaAnulacionDevolucion(tarea.getId());
 							if (salto) {
-								uvemManagerApi.notificarDevolucionReserva(eco.getOferta().getNumOferta().toString(),
+								WSDevolBankiaDto dto = uvemManagerApi.notificarDevolucionReserva(eco.getOferta().getNumOferta().toString(),
 										UvemManagerApi.MOTIVO_ANULACION.NO_APLICA,
 										UvemManagerApi.INDICADOR_DEVOLUCION_RESERVA.NO_APLICA,
 										UvemManagerApi.CODIGO_SERVICIO_MODIFICACION.SOLICITUD_ANULACION_PROPUESTA_ANULACION_RESERVA_FIRMADA);
+								
+								beanUtilNotNull.copyProperties(eco, dto);
 							} else {
 								logger.error("Error al saltar a tarea anterior a Resolución Expediente");
 								throw new Exception();
@@ -519,10 +525,12 @@ public class AgendaController extends TareaController {
 							// UVEM cosem1: 7
 							salto = adapter.saltoPendienteDevolucion(tarea.getId());
 							if (salto) {
-								uvemManagerApi.notificarDevolucionReserva(eco.getOferta().getNumOferta().toString(),
+								WSDevolBankiaDto dto = uvemManagerApi.notificarDevolucionReserva(eco.getOferta().getNumOferta().toString(),
 										UvemManagerApi.MOTIVO_ANULACION.NO_APLICA,
 										UvemManagerApi.INDICADOR_DEVOLUCION_RESERVA.NO_APLICA,
 										UvemManagerApi.CODIGO_SERVICIO_MODIFICACION.ANULAR_SOLICITUD_ANULACION_PROPUESTA_ANULACION_RESERVA_FIRMADA);
+								
+								beanUtilNotNull.copyProperties(eco, dto);
 							} else {
 								logger.error("Error al saltar a tarea anterior a Resolución Expediente");
 								throw new Exception();

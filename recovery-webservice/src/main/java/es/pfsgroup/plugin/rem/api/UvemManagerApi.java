@@ -9,6 +9,7 @@ import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.rest.dto.DatosClienteDto;
 import es.pfsgroup.plugin.rem.rest.dto.InstanciaDecisionDto;
 import es.pfsgroup.plugin.rem.rest.dto.ResultadoInstanciaDecisionDto;
+import es.pfsgroup.plugin.rem.rest.dto.WSDevolBankiaDto;
 
 /**
  * Interface operaciones UVEM
@@ -162,10 +163,11 @@ public interface UvemManagerApi {
 	 * Invoca al servicio O-RB-DEVOL para generar la propuesta de anulación de
 	 * reserva firmada o la anulación de la propuesta de anulación reserva
 	 * firmada
+	 * @return 
 	 * 
 	 * @throws Exception
 	 */
-	public void notificarDevolucionReserva(String codigoDeOfertaHaya, MOTIVO_ANULACION motivoAnulacionReserva,
+	public WSDevolBankiaDto notificarDevolucionReserva(String codigoDeOfertaHaya, MOTIVO_ANULACION motivoAnulacionReserva,
 			INDICADOR_DEVOLUCION_RESERVA indicadorDevolucionReserva,CODIGO_SERVICIO_MODIFICACION codigoServicioModificacion) throws Exception;
 
 	/**

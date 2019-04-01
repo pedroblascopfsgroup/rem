@@ -81,6 +81,7 @@ import es.pfsgroup.plugin.rem.rest.dto.InstanciaDecisionDataDto;
 import es.pfsgroup.plugin.rem.rest.dto.InstanciaDecisionDto;
 import es.pfsgroup.plugin.rem.rest.dto.ResultadoInstanciaDecisionDto;
 import es.pfsgroup.plugin.rem.rest.dto.TitularDto;
+import es.pfsgroup.plugin.rem.rest.dto.WSDevolBankiaDto;
 import es.pfsgroup.plugin.rem.restclient.registro.dao.RestLlamadaDao;
 import es.pfsgroup.plugin.rem.restclient.registro.model.RestLlamada;
 
@@ -1294,7 +1295,7 @@ public class UvemManager implements UvemManagerApi {
 	}
 
 	@Override
-	public void notificarDevolucionReserva(String codigoDeOfertaHaya, MOTIVO_ANULACION motivoAnulacionReserva,
+	public WSDevolBankiaDto notificarDevolucionReserva(String codigoDeOfertaHaya, MOTIVO_ANULACION motivoAnulacionReserva,
 			INDICADOR_DEVOLUCION_RESERVA indicadorDevolucionReserva,
 			CODIGO_SERVICIO_MODIFICACION codigoServicioModificacion) throws Exception {
 
@@ -1418,6 +1419,13 @@ public class UvemManager implements UvemManagerApi {
 			throw new JsonViewerException("Error notificación reserva (UVEM): " + wie.getMessage());
 		} finally {
 			registrarLlamada(servicioGMPTOE83_INS, errorDesc);
+			
+			WSDevolBankiaDto dto = new WSDevolBankiaDto();
+			
+			dto.setCorrectw((long) servicioGMPTOE83_INS.getCodigoResolucionComitecorecw());
+			dto.setComoa3((long) servicioGMPTOE83_INS.getCodigoMotivoAnulacionPropuestacomoa3());	
+			
+			return dto;
 		}
 
 	}

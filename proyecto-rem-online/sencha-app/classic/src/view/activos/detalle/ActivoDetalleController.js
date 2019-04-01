@@ -1634,10 +1634,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	     						form3.reset();
 	     					}
 	     					window.hide();
-	                        //me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
 	                     },
 	                     failure: function(record, operation) {
-	                        me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+	                        //me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
 	                     }
 	                });
 					
@@ -1665,7 +1664,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 				tipoDocumento: bindRecord.tipoDocumento,
 				nombreCliente: bindRecord.nombreCliente,
 				apellidosCliente: bindRecord.apellidosCliente,
-				cesionDatos: bindRecord.cesionDatosHaya,
+				cesionDatos: bindRecord.cesionDatos,
 				comunicacionTerceros: bindRecord.comunicacionTerceros,
 				transferenciasInternacionales: bindRecord.transferenciasInternacionales,
 				codigoPrescriptor: bindRecord.codigoPrescriptor,
@@ -1686,7 +1685,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 				tipoDocumento: bindRecord.tipoDocumento,
 				nombreCliente: bindRecord.nombreCliente,
 				apellidosCliente: bindRecord.apellidosCliente,
-				cesionDatos: bindRecord.cesionDatosHaya,
+				cesionDatos: bindRecord.cesionDatos,
 				comunicacionTerceros: bindRecord.comunicacionTerceros,
 				transferenciasInternacionales: bindRecord.transferenciasInternacionales,
 				codigoPrescriptor: bindRecord.codigoPrescriptor,
@@ -4025,7 +4024,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 
 	    				   if(!Ext.isEmpty(comprador)){
 	    					   if(!Ext.isEmpty(comprador.cesionDatos)){
-	    					      ventanaAltaWizard.getForm().findField('cesionDatosHaya').setValue(comprador.cesionDatos);
+	    					      ventanaAltaWizard.getForm().findField('cesionDatos').setValue(comprador.cesionDatos);
 	    					   }
 	    					   if(!Ext.isEmpty(comprador.comunicacionTerceros)){
 	        				     ventanaAltaWizard.getForm().findField('comunicacionTerceros').setValue(comprador.comunicacionTerceros);
@@ -4040,9 +4039,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	    				ventanaWizard.height = Ext.Element.getViewportHeight() > 800 ? 800 : Ext.Element.getViewportHeight() -100;
 	        			ventanaWizard.setY( Ext.Element.getViewportHeight()/2 - ((Ext.Element.getViewportHeight() > 800 ? 800 : Ext.Element.getViewportHeight() -100)/2));
 	    			}
-
+	    			
+	    			ventanaAdjuntarDocumento = ventanaWizard.down('anyadirnuevaofertaactivoadjuntardocumento');
 	    			if(!Ext.isEmpty(datos.carteraInternacional)){
-	    				ventanaAdjuntarDocumento = ventanaWizard.down('anyadirnuevaofertaactivoadjuntardocumento');
 	    				ventanaAdjuntarDocumento.getForm().findField('carteraInternacional').setValue(datos.carteraInternacional);
  				    }
 	    			var wizard = btn.up().up().up();
@@ -4634,7 +4633,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
             idExpediente= ventana2.getBindRecord().comprador.data.idExpedienteComercial;
             numDoc = ventana2.getBindRecord().comprador.data.numDocumento;
             nombre=ventana2.getBindRecord().comprador.data.nombreRazonSocial + " " + ventana2.getBindRecord().comprador.data.apellidos;
-            direccion = ventana2.getForm().getValues().direccion;
+            direccion = ventana2.getBindRecord().comprador.data.direccion;
             email = ventana2.getBindRecord().comprador.data.email;
             telefono = ventana2.getBindRecord().comprador.data.telefono1;
         }

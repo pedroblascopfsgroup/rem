@@ -7,8 +7,6 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import org.springframework.transaction.annotation.Transactional;
-
 /**
  * 
  * Modelo que gestiona la informacion temporal GDPR de un cliente
@@ -26,10 +24,10 @@ public class TmpClienteGDPR implements Serializable {
 	
     @Column(name = "NUM_DOCUMENTO")
     private String numDocumento;
-    
-    @Column(name = "ADCOM_ID")
-    private Long idAdjunto;
 
+	@Column(name = "ADCOM_ID")
+    private Long idAdjunto;
+	
 	public Long getIdPersonaHaya() {
 		return idPersonaHaya;
 	}

@@ -27,6 +27,7 @@ import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.devon.utils.FileUtils;
 import es.capgemini.pfs.adjunto.model.Adjunto;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
@@ -41,6 +42,7 @@ import es.pfsgroup.plugin.rem.adapter.ExpedienteComercialAdapter;
 import es.pfsgroup.plugin.rem.adapter.TrabajoAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
+import es.pfsgroup.plugin.rem.api.ExpedienteAvisadorApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.clienteComercial.dao.ClienteComercialDao;
 import es.pfsgroup.plugin.rem.excel.ActivosExpedienteExcelReport;
@@ -56,6 +58,8 @@ import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.REQUEST_STATUS_CODE;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.AdjuntoComprador;
 import es.pfsgroup.plugin.rem.model.ClienteComercial;
+import es.pfsgroup.plugin.rem.model.ClienteGDPR;
+import es.pfsgroup.plugin.rem.model.Comprador;
 import es.pfsgroup.plugin.rem.model.DtoActivosExpediente;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoAviso;
@@ -97,16 +101,16 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	protected static final Log logger = LogFactory.getLog(ActivoController.class);
 	private static final String CONSTANTE_REST_CLIENT = "rest.client.gestor.documental.constante";
 
-	private static final String CONSTANTE_CARTERA_HAYA = "Haya";
+	//private static final String CONSTANTE_CARTERA_HAYA = "Haya";
 	private static final String ERROR_EXPEDIENTE_NOT_EXISTS = "No existe el expediente que esta buscando, pruebe con otro Nº de Expediente";
 	private static final String ERROR_OFERTA_NOT_EXISTS = "No existe la oferta que esta buscando, pruebe con otro Nº de Oferta";
 	private static final String ERROR_CAMPO_NO_NUMERICO = "El campo introducido es de carácter numérico";
 	private static final String ERROR_NO_ASOCIADO_GDPR = "No se ha encontrado un documento GDPR asociado a este comprador";
 	private static final String ERROR_GENERICO = "La operación no se ha podido realizar";
-	private static final String ERROR_NO_EXISTE_PERSONA_HAYA = "No existe persona Haya";
+	//private static final String ERROR_NO_EXISTE_PERSONA_HAYA = "No existe persona Haya";
 	private static final String ERROR_NO_EXISTE_NUM_DOCUMENTO = "No existe número de documento";
 	public static final String CAMPO_EXPEDIENTE = "E";
-	private static final String CAMPO_OFERTA = "O";
+	//private static final String CAMPO_OFERTA = "O";
 
 	private static final String RESPONSE_DATA_KEY = "data";
 	private static final String RESPONSE_SUCCESS_KEY = "success";
@@ -114,7 +118,8 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	private static final String RESPONSE_ERROR_MESSAGE_KEY = "errorMessage";
 	private static final String RESPONSE_MESSAGE_KEY = "msg";
 	private static final String RESPONSE_TOTALCOUNT_KEY = "totalCount";
-
+	
+	
 	@Autowired
 	private GenericABMDao genericDao;
 	
@@ -123,6 +128,12 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 
 	@Autowired
 	private ExpedienteComercialApi expedienteComercialApi;
+
+	@Autowired
+	private GenericAdapter genericAdapter;
+
+	@Autowired
+	private List<ExpedienteAvisadorApi> avisadores;
 
 	@Autowired
 	private UploadAdapter uploadAdapter;
@@ -494,27 +505,17 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 			}
 		}
 	}
-	@SuppressWarnings("unchecked")
+	
 	@RequestMapping(method = RequestMethod.GET)
 	public void bajarAdjuntoExpedienteGDPR (HttpServletRequest request, HttpServletResponse response, ModelMap model) {
 
 				String key = appProperties.getProperty(CONSTANTE_REST_CLIENT);
 				Downloader dl = downloaderFactoryApi.getDownloader(key);
 				String nombreDocumento = request.getParameter("nombreAdjunto");
-				String idDocRestClient = request.getParameter("idDocRestClient");
-				String idDocAdjunto = request.getParameter("idDocAdjunto");
+				Long idDocRestClient = Long.parseLong(request.getParameter("idDocRestClient"));
 				
        	try {
-	       		FileItem fileItem;
-	       		if(gestorDocumentalAdapterApi.modoRestClientActivado()) {
-	       			fileItem = dl.getFileItem(Long.parseLong(idDocRestClient), nombreDocumento);
-	       		} else {
-	       			AdjuntoComprador adjuntoComprador = genericDao.get(AdjuntoComprador.class, genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(idDocAdjunto)));
-	       			Adjunto adjunto = genericDao.get(Adjunto.class, genericDao.createFilter(FilterType.EQUALS, "id", adjuntoComprador.getAdjunto()));
-	
-	       			fileItem = adjunto.getFileItem();
-	       			fileItem.setFileName(adjuntoComprador.getNombreAdjunto());
-	       		}
+	       		FileItem fileItem = dl.getFileItem( idDocRestClient , nombreDocumento);
            		ServletOutputStream salida = response.getOutputStream(); 
            			
            		response.setHeader("Content-disposition", "attachment; filename=" + fileItem.getFileName());
@@ -591,27 +592,13 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getListAdjuntosComprador(String docCliente, Long idExpediente, ModelMap model) {
+
 		try {
-			String idPersonaHaya = null;
-
-			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "documento", docCliente);
-			Filter filtrohaya = genericDao.createFilter(FilterType.NOTNULL, "idPersonaHaya");
-			List<ClienteComercial> clienteCom = genericDao.getList(ClienteComercial.class, filtro, filtrohaya);
-			if (!Checks.estaVacio(clienteCom)) {
-				idPersonaHaya = clienteCom.get(0).getIdPersonaHaya();
-			} else {
-				TmpClienteGDPR tmpClienteGDPR = genericDao.get(TmpClienteGDPR.class,
-						genericDao.createFilter(FilterType.EQUALS, "numDocumento", docCliente));
-
-				if (!Checks.esNulo(tmpClienteGDPR)) {
-					idPersonaHaya = String.valueOf(tmpClienteGDPR.getIdPersonaHaya());
-				}
-			}
-
+			String idPersonaHaya = obtnerIdClienteHaya(docCliente);
 			model.put(RESPONSE_DATA_KEY,
 					expedienteComercialAdapter.getAdjuntoExpedienteComprador(idPersonaHaya, docCliente, idExpediente));
 		} catch (Exception e) {
-			logger.error(e.getMessage());
+			logger.error(e.getMessage(), e);
 			model.put(RESPONSE_SUCCESS_KEY, false);
 			model.put(RESPONSE_ERROR_MESSAGE_KEY, e.getMessage());
 		}
@@ -622,69 +609,81 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView saveDocumentoComprador(String docCliente, Long idEntidad, HttpServletRequest request) {
-		
-		String idPersonaHaya = null;
-		
-		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "documento", docCliente);
-		ClienteComercial clienteCom = genericDao.get(ClienteComercial.class, filtro);
-			if(!Checks.esNulo(clienteCom)) {
-				idPersonaHaya = clienteCom.getIdPersonaHaya();
-			} else {
-				TmpClienteGDPR tmpClienteGDPR = genericDao.get(TmpClienteGDPR.class, genericDao.createFilter(FilterType.EQUALS, "numDocumento", docCliente));
-
-				if(!Checks.esNulo(tmpClienteGDPR)) {
-					idPersonaHaya = String.valueOf(tmpClienteGDPR.getIdPersonaHaya());
-				}
-			} 
-			
-			
 		ModelMap model = new ModelMap();
-		
 		try {
-			WebFileItem fileItem = uploadAdapter.getWebFileItem(request);
 			
-			List<DtoAdjunto> listaAdjuntos = expedienteComercialAdapter.getAdjuntoExpedienteComprador(idPersonaHaya, docCliente, idEntidad);
-			if(listaAdjuntos.size() <= 0) {
-				String errores = expedienteComercialAdapter.uploadDocumentoComprador(fileItem, idPersonaHaya);
-				model.put("errores", errores);
-				model.put(RESPONSE_SUCCESS_KEY, errores==null);
-			}
+			String idPersonaHaya = obtnerIdClienteHaya(docCliente);
+
+			WebFileItem fileItem = uploadAdapter.getWebFileItem(request);
+
+			String errores = expedienteComercialAdapter.uploadDocumentoComprador(fileItem, idPersonaHaya, docCliente);
+			model.put("errores", errores);
+			model.put(RESPONSE_SUCCESS_KEY, errores == null);
 		} catch (Exception e) {
-			e.printStackTrace();
 			model.put(RESPONSE_SUCCESS_KEY, false);
 			model.put(RESPONSE_ERROR_KEY, e.getMessage());
-			logger.error(e.getMessage());
+			logger.error("error subiendo documento persona", e);
 		}
 
 		return createModelAndViewJson(model);
+	}
+	
+	private String obtnerIdClienteHaya(String docCliente) throws Exception{
+		String idPersonaHaya = null;
+		TmpClienteGDPR tmpClienteGDPR = null;
+		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "documento", docCliente);
+		Comprador comprador = genericDao.get(Comprador.class, filtro);
+		if (!Checks.esNulo(comprador)) {
+			if (!Checks.esNulo(comprador.getIdPersonaHaya())) {
+				idPersonaHaya = String.valueOf(comprador.getIdPersonaHaya());
+			} else {
+				//caso residuales, compradores dados de alta sin interviniente 
+				List<ClienteComercial> clientes = genericDao.getList(ClienteComercial.class,genericDao.createFilter(FilterType.EQUALS, "documento", docCliente) );
+				if(clientes != null && clientes.size() > 0){
+					for(ClienteComercial clc : clientes){
+						if(clc.getIdPersonaHaya() != null){
+							idPersonaHaya = clc.getIdPersonaHaya();
+							break;
+						}
+					}
+				}
+				if(Checks.esNulo(idPersonaHaya)){
+					tmpClienteGDPR = genericDao.get(TmpClienteGDPR.class,
+							genericDao.createFilter(FilterType.EQUALS, "numDocumento", docCliente));
+					if (!Checks.esNulo(tmpClienteGDPR) && !Checks.esNulo(tmpClienteGDPR.getIdPersonaHaya())) {
+						idPersonaHaya = String.valueOf(tmpClienteGDPR.getIdPersonaHaya());
+					}
+				}
+			}
+		} else {
+			tmpClienteGDPR = genericDao.get(TmpClienteGDPR.class,
+					genericDao.createFilter(FilterType.EQUALS, "numDocumento", docCliente));
+
+			if (!Checks.esNulo(tmpClienteGDPR) && !Checks.esNulo(tmpClienteGDPR.getIdPersonaHaya())) {
+				idPersonaHaya = String.valueOf(tmpClienteGDPR.getIdPersonaHaya());
+			}
+		}
+		if(Checks.esNulo(idPersonaHaya)){
+			throw new Exception("El comprador no está dado de alta en el maestro de personas");
+		}
+		return idPersonaHaya;
 	}
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView eliminarDocumentoAdjuntoComprador(String docCliente) {
 		
-		String idPersonaHaya = null;
 		
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "documento", docCliente);
-		ClienteComercial clienteCom = genericDao.get(ClienteComercial.class, filtro);
-			if(!Checks.esNulo(clienteCom)) {
-				idPersonaHaya = clienteCom.getIdPersonaHaya();
-			} else {
-				TmpClienteGDPR tmpClienteGDPR = genericDao.get(TmpClienteGDPR.class, genericDao.createFilter(FilterType.EQUALS, "numDocumento", docCliente));
-
-				if(!Checks.esNulo(tmpClienteGDPR)) {
-					idPersonaHaya = String.valueOf(tmpClienteGDPR.getIdPersonaHaya());
-				}
-			} 
-			
-		
+		Comprador comprador = genericDao.get(Comprador.class, filtro);
 		ModelMap model = new ModelMap();
 		
 		List<DtoAdjunto> listaAdjuntos = null;
 		try {
+			String idPersonaHaya = obtnerIdClienteHaya(docCliente);
 			listaAdjuntos = expedienteComercialAdapter.getAdjuntoExpedienteComprador(idPersonaHaya, docCliente, null);							
-		} catch (GestorDocumentalException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
+			logger.error("Error en ExpedienteComercialController", e);
 		}
 		
 		Filter filtroDoc;
@@ -696,7 +695,7 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 		Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
 		AdjuntoComprador adjComprador = genericDao.get(AdjuntoComprador.class, filtroDoc, filtroBorrado);
 
-		boolean success = expedienteComercialAdapter.deleteAdjuntoComprador(adjComprador, null);
+		boolean success = expedienteComercialAdapter.deleteAdjuntoComprador(adjComprador, comprador);
 		model.put(RESPONSE_SUCCESS_KEY, success);
 
 		return createModelAndViewJson(model);
@@ -928,40 +927,34 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getCompradorById(VBusquedaDatosCompradorExpediente dto, ModelMap model) {
 		try {
-			VBusquedaDatosCompradorExpediente vistaConExp = expedienteComercialApi.getDatosCompradorById(dto.getId(),
-					dto.getIdExpedienteComercial());
-			if (!Checks.esNulo(vistaConExp)) {
-				if (!Checks.esNulo(dto.getCesionDatos())) {
-					vistaConExp.setCesionDatos(dto.getCesionDatos());
-				}
-				if (!Checks.esNulo(dto.getComunicacionTerceros())) {
-					vistaConExp.setComunicacionTerceros(dto.getComunicacionTerceros());
-				}
-				if (!Checks.esNulo(dto.getTransferenciasInternacionales())) {
-					vistaConExp.setTransferenciasInternacionales(dto.getTransferenciasInternacionales());
-				}
-				DtoModificarCompradores comprador = expedienteComercialApi.vistaADtoModCompradores(vistaConExp);
-				model.put(RESPONSE_DATA_KEY, comprador);
-				model.put(RESPONSE_SUCCESS_KEY, true);
-			} else {
-				VBusquedaDatosCompradorExpediente vistaSinExp = expedienteComercialApi.getDatCompradorById(dto.getId());
-				if (!Checks.esNulo(vistaSinExp)) {
-					if (!Checks.esNulo(dto.getCesionDatos())) {
-						vistaSinExp.setCesionDatos(dto.getCesionDatos());
-					}
-					if (!Checks.esNulo(dto.getComunicacionTerceros())) {
-						vistaSinExp.setComunicacionTerceros(dto.getComunicacionTerceros());
-					}
-					if (!Checks.esNulo(dto.getTransferenciasInternacionales())) {
-						vistaSinExp.setTransferenciasInternacionales(dto.getTransferenciasInternacionales());
-					}
-					if (!Checks.esNulo(dto.getIdExpedienteComercial())) {
-						vistaSinExp.setIdExpedienteComercial(dto.getIdExpedienteComercial());
-					}
-					DtoModificarCompradores comprador = expedienteComercialApi.vistaCrearComprador(vistaSinExp); 
+			if (!Checks.esNulo(dto.getId())) {
+				VBusquedaDatosCompradorExpediente vistaConExp = expedienteComercialApi
+						.getDatosCompradorById(dto.getId(), dto.getIdExpedienteComercial());
+				if (!Checks.esNulo(vistaConExp)) {
+					DtoModificarCompradores comprador = expedienteComercialApi.vistaADtoModCompradores(vistaConExp);
 					model.put(RESPONSE_DATA_KEY, comprador);
 					model.put(RESPONSE_SUCCESS_KEY, true);
+				} else {
+					VBusquedaDatosCompradorExpediente vistaSinExp = expedienteComercialApi
+							.getDatCompradorById(dto.getId());
+					if (!Checks.esNulo(vistaSinExp)) {
+						if (!Checks.esNulo(dto.getIdExpedienteComercial())) {
+							vistaSinExp.setIdExpedienteComercial(dto.getIdExpedienteComercial());
+						}
+						DtoModificarCompradores comprador = expedienteComercialApi.vistaCrearComprador(vistaSinExp);
+						model.put(RESPONSE_DATA_KEY, comprador);
+						model.put(RESPONSE_SUCCESS_KEY, true);
+					}
 				}
+			}else{
+				VBusquedaDatosCompradorExpediente vistaSinComprador = new VBusquedaDatosCompradorExpediente();
+				vistaSinComprador.setIdExpedienteComercial(dto.getIdExpedienteComercial());
+				vistaSinComprador.setNumDocumento(dto.getNumDocumento());
+				vistaSinComprador.setCodTipoDocumento(dto.getCodTipoDocumento());
+				DtoModificarCompradores comprador = expedienteComercialApi.vistaCrearComprador(vistaSinComprador);
+				model.put(RESPONSE_DATA_KEY, comprador);
+				model.put(RESPONSE_SUCCESS_KEY, true);
+				
 			}
 		} catch (Exception e) {
 			model.put(RESPONSE_SUCCESS_KEY, false);
@@ -975,7 +968,14 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView saveFichaComprador(ModelMap model, VBusquedaDatosCompradorExpediente vDatosComprador, @RequestParam Long id) {
 		try {
-			boolean success = expedienteComercialApi.saveFichaComprador(vDatosComprador);
+			boolean success = false;
+			if(vDatosComprador.getId()==null || vDatosComprador.getId().isEmpty()){
+				this.createComprador(model, vDatosComprador, Long.valueOf(vDatosComprador.getIdExpedienteComercial()));
+				success = true;
+			}else{
+				success = expedienteComercialApi.saveFichaComprador(vDatosComprador);
+			}
+			
 			model.put(RESPONSE_SUCCESS_KEY, success);
 
 		} catch (Exception e) {
@@ -1099,9 +1099,9 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView createComprador(ModelMap model, VBusquedaDatosCompradorExpediente vDatosComprador,
-			Long idExpediente) {
+			Long idExpedienteComercial) {
 		try {
-			boolean success = expedienteComercialApi.createComprador(vDatosComprador, idExpediente);
+			boolean success = expedienteComercialApi.createComprador(vDatosComprador, idExpedienteComercial);
 			model.put(RESPONSE_SUCCESS_KEY, success);
 
 		} catch (Exception e) {
@@ -2028,6 +2028,7 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 		return createModelAndViewJson(model);
 	}
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView getActivosPropagables(ModelMap model, @RequestParam(value = "idExpediente") Long idExpediente){
 		try{

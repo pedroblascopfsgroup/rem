@@ -40,7 +40,7 @@ DECLARE
     V_CUENTAS T_ARRAY_CUENTAS := T_ARRAY_CUENTAS(
         
                 --CODIGO GESTOR		   --CARTERA	--DD_GCM_ACTIVO		--DD_GCM_EXPEDIENTE		--DD_GCM_AGRUPACION
-        T_CUENTA('GIAFORM',			    '02',				1,						0,					1)
+        T_CUENTA('HAYAGBOINM',		   '02',				1,						0,					1)
 
     );
     V_TMP_CUENTA T_CUENTA;

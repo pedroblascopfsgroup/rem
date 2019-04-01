@@ -125,6 +125,9 @@ public class Comprador implements Serializable, Auditable {
     
     @Column(name = "COM_COMUNI_TERCEROS")
     private Boolean transferenciasInternacionales;
+    
+    @Column(name = "ID_PERSONA_HAYA")
+    private Long idPersonaHaya;
 
 	
 	public Long getId() {
@@ -316,5 +319,13 @@ public class Comprador implements Serializable, Auditable {
 
 	public void setTransferenciasInternacionales(Boolean transferenciasInternacionales) {
 		this.transferenciasInternacionales = transferenciasInternacionales;
+	}
+
+	public Long getIdPersonaHaya() {
+		return idPersonaHaya;
+	}
+
+	public void setIdPersonaHaya(Long idPersonaHaya) {
+		this.idPersonaHaya = idPersonaHaya;
 	}
 }

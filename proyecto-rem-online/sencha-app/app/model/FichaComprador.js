@@ -193,7 +193,18 @@ Ext.define('HreRem.model.FichaComprador', {
 			type : 'boolean'
 		},
 		{
-    		name: 'esCarteraBankia'  		
+    		name: 'esCarteraBankia', 
+    		type : 'boolean'
+    			
+    	},
+    	{
+    		name: 'mostrarUrsus', 
+    		type : 'boolean'
+    			
+    	},
+    	{
+    		name: 'mostrarUrsusBh', 
+    		type : 'boolean'
     			
     	},
 		{
@@ -203,7 +214,7 @@ Ext.define('HreRem.model.FichaComprador', {
 			name: 'idDocAdjunto'
 		},
 		{
-        	name: 'cesionDatosHaya',
+        	name: 'cesionDatos',
         	type : 'boolean'
         },
         {

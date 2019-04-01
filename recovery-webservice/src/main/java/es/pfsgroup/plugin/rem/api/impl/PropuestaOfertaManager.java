@@ -894,12 +894,17 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi {
 							DDTipoHabitaculo.TIPO_HABITACULO_GARAJE),
 					genericDao.createFilter(FilterType.EQUALS, "infoComercial", infoComercial));
 			if (!Checks.esNulo(activoDistribucion)) {
-				if (activoDistribucion.getCantidad() > 0) {
+				if (activoDistribucion.getCantidad() != null && activoDistribucion.getCantidad() > 0) {
 					mapaValores.put("ActivoGaraje", FileUtilsREM.stringify(true));
 				} else {
 					mapaValores.put("ActivoGaraje", FileUtilsREM.stringify(false));
 				}
-				mapaValores.put("ActivoPlazas", FileUtilsREM.stringify(activoDistribucion.getCantidad()));
+				if (activoDistribucion.getCantidad() != null && activoDistribucion.getCantidad() > 0) {
+					mapaValores.put("ActivoPlazas", FileUtilsREM.stringify(activoDistribucion.getCantidad()));
+				}else{
+					mapaValores.put("ActivoPlazas", FileUtilsREM.stringify(0));
+				}
+				
 				mapaValores.put("ActivoSuperficie", FileUtilsREM.stringify(activoDistribucion.getSuperficie()));
 			} else {
 				mapaValores.put("ActivoGaraje", FileUtilsREM.stringify(null));
@@ -914,7 +919,7 @@ public class PropuestaOfertaManager implements PropuestaOfertaApi {
 							DDTipoHabitaculo.TIPO_HABITACULO_TRASTERO),
 					genericDao.createFilter(FilterType.EQUALS, "infoComercial", infoComercial));
 			if (!Checks.esNulo(activoDistribucion)) {
-				if (activoDistribucion.getCantidad() > 0) {
+				if (activoDistribucion.getCantidad() != null && activoDistribucion.getCantidad() > 0) {
 					mapaValores.put("ActivoTrastero", FileUtilsREM.stringify(true));
 				} else {
 					mapaValores.put("ActivoTrastero", FileUtilsREM.stringify(false));

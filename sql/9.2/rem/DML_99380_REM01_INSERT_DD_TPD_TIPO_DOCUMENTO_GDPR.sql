@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=Alejandro Valverde Herrera
---## FECHA_CREACION=20190114
+--## FECHA_CREACION=20190115
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
 --## INCIDENCIA_LINK=HREOS-5215
@@ -37,7 +37,7 @@ DECLARE
     TYPE T_TIPO_DATA IS TABLE OF VARCHAR2(150);
     TYPE T_ARRAY_DATA IS TABLE OF T_TIPO_DATA;
     V_TIPO_DATA T_ARRAY_DATA := T_ARRAY_DATA(
-      T_TIPO_DATA('77'  ,'Consentimiento protección de datos (GDPR)', 'Consentimiento protección de datos (GDPR)', 'EN-01-CNCV-82')
+      T_TIPO_DATA('83'  ,'Consentimiento protección de datos (GDPR)', 'Consentimiento protección de datos (GDPR)', 'EN-01-CNCV-82')
     ); 
     V_TMP_TIPO_DATA T_TIPO_DATA;
     

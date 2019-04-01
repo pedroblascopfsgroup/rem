@@ -185,7 +185,19 @@ Ext.define('HreRem.model.FichaComprador', {
 			name: 'codigoPaisRte'
 		},
 		{
-			name: 'esBH'
+			name: 'esBankia',
+			type : 'boolean'
+		},
+		{
+			name: 'esBH',
+			type : 'boolean'
+		},
+		{
+    		name: 'esCarteraBankia'  		
+    			
+    	},
+		{
+			name: 'entidadPropietariaCodigo'
 		},
 		{
 			name: 'idDocAdjunto'

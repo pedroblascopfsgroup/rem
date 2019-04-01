@@ -569,5 +569,26 @@ public interface ParticularValidatorApi {
 	String getSuperficieUtilPromocionAlquilerByAgrupacion(String numAgrupacion);
 
 	String getProcentajeTotalActualPromocionAlquiler(String numAgrupacion);
+	
+	/**
+	 * 
+	 * @param idImpuesto
+	 * @return true si existe, false si no existe o es nulo
+	 */
+	public Boolean existeCodImpuesto(String idImpuesto);
+
+	/**
+	 * 
+	 * @param codPeriodicidad
+	 * @return true si existe, false si no existe o es nulo
+	 */
+	public Boolean existePeriodicidad(String codPeriodicidad);
+	
+	/**
+	 * 
+	 * @param codCalculo
+	 * @return true si existe, false si no existe o es nulo
+	 */
+	public Boolean existeCalculo(String codCalculo);
 
 }

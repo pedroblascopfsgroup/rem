@@ -3572,6 +3572,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 				if (Checks.esNulo(compradorExpediente)) { 
 					compradorExpediente = new CompradorExpediente();
+					compradorExpediente.setBorrado(false);
 				
 					CompradorExpedientePk pk = new CompradorExpedientePk();
 					pk.setComprador(comprador);
@@ -3613,7 +3614,15 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					reiniciarPBC = true;
 				}
 
-				compradorExpediente.setDocumentoConyuge(dto.getDocumentoConyuge());
+				if(!Checks.esNulo(dto.getDocumentoConyuge())) {
+					compradorExpediente.setDocumentoConyuge(dto.getDocumentoConyuge());
+				}
+				
+				if(!Checks.esNulo(dto.getCodTipoDocumentoConyuge())) {
+					compradorExpediente.setTipoDocumentoConyuge((DDTipoDocumento) utilDiccionarioApi
+							.dameValorDiccionarioByCod(DDTipoDocumento.class,
+									dto.getCodTipoDocumentoConyuge()));
+				}
 
 				if (!Checks.esNulo(dto.getRelacionAntDeudor())) {
 					compradorExpediente.setRelacionAntDeudor(dto.getRelacionAntDeudor());
@@ -7459,9 +7468,10 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 			comprador.setEsBH(esBH(vista.getIdExpedienteComercial()));
 			comprador.setEntidadPropietariaCodigo(getCodigoCarteraExpediente(vista.getIdExpedienteComercial()));
+			comprador.setEsCarteraBankia(getCodigoCarteraExpediente(vista.getIdExpedienteComercial())==DDCartera.CODIGO_CARTERA_BANKIA);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("vistaADtoModCompradores", e);
 		}
 
 		return comprador;
@@ -7473,9 +7483,13 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 		try {
 			beanUtilNotNull.copyProperties(comprador, vista);
+			
+			comprador.setEsBH(esBH(vista.getIdExpedienteComercial()));
+			comprador.setEntidadPropietariaCodigo(getCodigoCarteraExpediente(vista.getIdExpedienteComercial()));
+			comprador.setEsCarteraBankia(getCodigoCarteraExpediente(vista.getIdExpedienteComercial())==DDCartera.CODIGO_CARTERA_BANKIA);
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("vistaCrearComprador", e);
 		}
 
 		return comprador;

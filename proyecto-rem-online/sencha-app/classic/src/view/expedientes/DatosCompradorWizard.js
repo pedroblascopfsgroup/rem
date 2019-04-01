@@ -11,7 +11,7 @@ Ext.define('HreRem.view.expedientes.DatosCompradorWizard', {
 	modoEdicion: true, // Inicializado para evitar errores.
 	scrollable	: 'y',
 	listeners: {
-		boxready:'cargarDatosCompradorWizard'
+		show:'cargarDatosCompradorWizard'
 	},
   
 
@@ -119,7 +119,7 @@ Ext.define('HreRem.view.expedientes.DatosCompradorWizard', {
 			        {
             			xtype: 'comboboxfieldbase',
 			        	fieldLabel: HreRem.i18n('fieldlabel.titular.contratacion'),
-						reference: 'titularContratacion',
+						reference: 'titularContratacionWizard',
 						padding: '5px',
 			        	bind: {
 		            		store: '{comboSiNoRem}',
@@ -305,7 +305,7 @@ Ext.define('HreRem.view.expedientes.DatosCompradorWizard', {
 								padding: '5px',
 					        	bind: {
 				            		store: '{comboClienteUrsus}',
-				            		hidden: '{!esCarteraBankia}'
+				            		hidden: '{!comprador.esCarteraBankia}'
 				            	},
 				            	listeners: {
 				            		change: 'establecerNumClienteURSUS',
@@ -324,7 +324,7 @@ Ext.define('HreRem.view.expedientes.DatosCompradorWizard', {
 					            handler: 'mostrarDetallesClienteUrsus',
 					            padding: '5px',
 					            bind: {
-					            	hidden: '{!esCarteraBankia}'
+					            	hidden: '{!comprador.esCarteraBankia}'
 					            },
 					            reference: 'btnVerDatosClienteUrsus',
 					            disabled: true,
@@ -341,7 +341,7 @@ Ext.define('HreRem.view.expedientes.DatosCompradorWizard', {
 				        padding: '5px',
 				        bind: {
 			            	value: '{comprador.numeroClienteUrsus}',
-			            	hidden: '{!esCarteraBankia}'
+			            	hidden: '{!comprador.esCarteraBankia}'
 			            },
 			            editable: true
                    },
@@ -353,7 +353,7 @@ Ext.define('HreRem.view.expedientes.DatosCompradorWizard', {
 				        padding: '5px',
 				        bind: {
 			            	value: '{comprador.numeroClienteUrsusBh}',
-			            	hidden: '{!esBankiaHabitat}'
+			            	hidden: '{!comprador.esBH}'
 			            },
 			            editable: true
                    }

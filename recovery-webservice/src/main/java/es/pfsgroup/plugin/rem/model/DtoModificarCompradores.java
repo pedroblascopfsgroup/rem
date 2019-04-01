@@ -53,6 +53,8 @@ public class DtoModificarCompradores {
 	
 	private String documentoConyuge;
 	
+	private String codTipoDocumentoConyuge;
+	
 	private Integer antiguoDeudor;
 	
 	private Integer relacionAntDeudor;
@@ -128,6 +130,8 @@ public class DtoModificarCompradores {
 	private String descripcionPaisRte;
 	
 	private Boolean esBH;
+	
+	private Boolean esCarteraBankia;
 
 	public String getId() {
 		return id;
@@ -319,6 +323,14 @@ public class DtoModificarCompradores {
 
 	public void setDocumentoConyuge(String documentoConyuge) {
 		this.documentoConyuge = documentoConyuge;
+	}
+	
+	public String getCodTipoDocumentoConyuge() {
+		return codTipoDocumentoConyuge;
+	}
+
+	public void setCodTipoDocumentoConyuge(String codTipoDocumentoConyuge) {
+		this.codTipoDocumentoConyuge = codTipoDocumentoConyuge;
 	}
 
 	public Integer getAntiguoDeudor() {
@@ -624,5 +636,15 @@ public class DtoModificarCompradores {
 	public void setEsBH(Boolean esBH) {
 		this.esBH = esBH;
 	}
+
+	public Boolean getEsCarteraBankia() {
+		return esCarteraBankia;
+	}
+
+	public void setEsCarteraBankia(Boolean esCarteraBankia) {
+		this.esCarteraBankia = esCarteraBankia;
+	}
+	
+	
 
 }

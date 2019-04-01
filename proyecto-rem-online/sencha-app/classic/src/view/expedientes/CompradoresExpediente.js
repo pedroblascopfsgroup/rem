@@ -93,7 +93,7 @@ Ext.define('HreRem.view.expedientes.CompradoresExpediente', {
 						columns: [
 							{
 						        xtype: 'actioncolumn',
-						        reference: 'titularContratacion',
+						        reference: 'titularContratacio',
 						        width: 30,
 						        text: HreRem.i18n('header.principal'),
 								hideable: false,

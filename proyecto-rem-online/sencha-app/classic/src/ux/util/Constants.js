@@ -37,7 +37,7 @@ Ext.define('HreRem.ux.util.Constants', {
 		VENTA:'Venta',
 		ALQUILER: 'Alquiler',
 		ALQUILER_VENTA: 'Alquiler y venta',
-		ALQUILER_OPCION_COMPRA: 'Alquiler con opción a compra'
+		ALQUILER_OPCION_COMPRA: 'Alquiler con opciï¿½n a compra'
 	},
 
 	TIPOS_AGRUPACION: {
@@ -190,7 +190,8 @@ Ext.define('HreRem.ux.util.Constants', {
     	'10': 'TANGO',
     	'12': 'GIANTS',
     	'15': 'GALEON',
-    	'15': 'ZEUS'
+    	'15': 'ZEUS',
+    	'07': 'CERBERUS'
     },
 
     
@@ -206,11 +207,15 @@ Ext.define('HreRem.ux.util.Constants', {
     },
     
     SUBCARTERA: {
-    	BH: '06'
+    	BH: '06',
+    	AGORAINMOBILIARIO: '135',
+		AGORAFINANCIERO: '137',
+		APPLEINMOBILIARIO: '138'
     },
     
     NOMBRE_SUBCARTERA: {
-    	BANKIA_HABITAT: 'BANKIA HABITAT'
+    	BANKIA_HABITAT: 'BANKIA HABITAT',
+    	CERBERUS_AGORA: 'Agora - Inmobiliario'
     },
 
     IMAGENES_CARTERA: {

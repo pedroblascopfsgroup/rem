@@ -24,9 +24,10 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
     requires: ['HreRem.model.FichaComprador'],
     
 	listeners: {
-		boxready: 'cargarDatosComprador',
+		//boxready: 'cargarDatosComprador',
 		show: function() {
 			var me = this;
+			this.lookupController().cargarDatosComprador(this);
 		}
 	},
 
@@ -322,7 +323,7 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 																reference: 'seleccionClienteUrsus',
 													        	bind: {
 												            		store: '{comboClienteUrsus}',
-												            		hidden: '{!esCarteraBankia}'
+												            		hidden: '{!comprador.esCarteraBankia}'
 												            	},
 												            	listeners: {
 												            		change: 'establecerNumClienteURSUS',
@@ -341,7 +342,7 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 	//												            cls: 'searchfield-input sf-con-borde',
 													            handler: 'mostrarDetallesClienteUrsus',
 													            bind: {
-													            	hidden: '{!esCarteraBankia}'
+													            	hidden: '{!comprador.esCarteraBankia}'
 													            },
 													            reference: 'btnVerDatosClienteUrsus',
 													            disabled: true,
@@ -357,7 +358,7 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 												        reference: 'numeroClienteUrsusRef',
 												        bind: {
 											            	value: '{comprador.numeroClienteUrsus}',
-											            	hidden: '{!esCarteraBankia}'
+											            	hidden: '{!comprador.mostrarUrsus}'
 											            },
 											            editable: true
 								                    },
@@ -368,7 +369,7 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 												        reference: 'numeroClienteUrsusBhRef',
 												        bind: {
 											            	value: '{comprador.numeroClienteUrsusBh}',
-											            	hidden: '{!esBankiaHabitat}'
+											            	hidden: '{!comprador.mostrarUrsusBh}'
 											            },
 											            editable: true
 						                            }
@@ -609,6 +610,20 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 										            	bind: {
 										            		store: '{comboPaises}',
 										            		value: '{comprador.codigoPaisRte}'
+										            	},
+										            	listeners : {
+										            		change: function(combo, value) {
+										            			try{
+										            				var me = this;
+											            			if(value == '28') {
+											            				me.up('formBase').down('[reference=provinciaComboRte]').allowBlank = false;
+											            				me.up('formBase').down('[reference=municipioComboRte]').allowBlank = false;
+											            			} 
+										            			}catch (err){
+										            				Ext.global.console.log(err);
+										            			}
+										            			
+										            		}
 										            	}
 													}
 												]

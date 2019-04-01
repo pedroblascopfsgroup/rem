@@ -1,7 +1,7 @@
 --/*
 --##########################################
 --## AUTOR=MARIAM LLISO
---## FECHA_CREACION=20190305
+--## FECHA_CREACION=20190326
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=2.5.0
 --## INCIDENCIA_LINK=HREOS-5539
@@ -147,7 +147,7 @@ BEGIN
 		END IF;
 	END LOOP;
     
-    ROLLBACK;
+    COMMIT;
 
 EXCEPTION
      WHEN OTHERS THEN

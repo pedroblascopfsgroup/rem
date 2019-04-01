@@ -1,5 +1,13 @@
 package es.pfsgroup.plugin.gestorDocumental.model.documentos;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
+import es.capgemini.devon.files.FileItem;
+
 public class RespuestaDescargarDocumento {
 
 	/**
@@ -41,7 +49,7 @@ public class RespuestaDescargarDocumento {
 	/**
 	 * Contenido binario del documento
 	 */
-	private Byte[] contenido;
+	private FileItem fileItem;
 	
 	/**
 	 * Content type
@@ -104,12 +112,12 @@ public class RespuestaDescargarDocumento {
 		this.numVersion = numVersion;
 	}
 
-	public Byte[] getContenido() {
-		return contenido;
+	public FileItem getFileItem() {
+		return fileItem;
 	}
 
-	public void setContenido(Byte[] contenido) {
-		this.contenido = contenido;
+	public void setFileItem(FileItem fileItem) {
+		this.fileItem = fileItem;
 	}
 
 	public String getContentType() {
@@ -118,6 +126,33 @@ public class RespuestaDescargarDocumento {
 
 	public void setContentType(String contentType) {
 		this.contentType = contentType;
+	}
+	
+	public byte[] getContenido() throws IOException {
+	    ByteArrayOutputStream ous = null;
+	    InputStream ios = null;
+	    try {
+	        byte[] buffer = new byte[4096];
+	        ous = new ByteArrayOutputStream();
+	        ios = new FileInputStream(this.getFileItem().getFile());
+	        int read = 0;
+	        while ((read = ios.read(buffer)) != -1) {
+	            ous.write(buffer, 0, read);
+	        }
+	    }finally {
+	        try {
+	            if (ous != null)
+	                ous.close();
+	        } catch (IOException e) {
+	        }
+
+	        try {
+	            if (ios != null)
+	                ios.close();
+	        } catch (IOException e) {
+	        }
+	    }
+	    return ous.toByteArray();
 	}
 
 }

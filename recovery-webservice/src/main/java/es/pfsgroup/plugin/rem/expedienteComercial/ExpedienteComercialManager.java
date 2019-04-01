@@ -75,7 +75,6 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBLocalizacionesBien
 import es.pfsgroup.plugin.rem.activo.dao.ActivoTramiteDao;
 import es.pfsgroup.plugin.rem.activo.dao.impl.ActivoDaoImpl;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
-import es.pfsgroup.plugin.rem.adapter.ExpedienteComercialAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoAgrupacionApi;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
@@ -310,8 +309,6 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 	@Autowired
 	private ActivoAdapter activoAdapter;
 	
-	@Autowired
-	private ExpedienteComercialAdapter expedienteAdapter;
 	
 	@Autowired
 	private UvemManagerApi uvemManagerApi;
@@ -1299,7 +1296,6 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 								dto.setPermiteProponer(true);
 								break;
 							}
-
 						}
 					}
 				}
@@ -3433,274 +3429,287 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 	@Override
 	@Transactional(readOnly = false)
-	public boolean saveFichaComprador(VBusquedaDatosCompradorExpediente dto) { 
+	public boolean saveFichaComprador(VBusquedaDatosCompradorExpediente dto) {
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(dto.getId()));
 		Comprador comprador = genericDao.get(Comprador.class, filtro);
 
-		try {
-			if (!Checks.esNulo(comprador)) {
-				boolean reiniciarPBC = false;
+		if (!Checks.esNulo(comprador)) {
+			boolean reiniciarPBC = false;
 
-				comprador.setIdCompradorUrsus(dto.getNumeroClienteUrsus());
-				comprador.setIdCompradorUrsusBh(dto.getNumeroClienteUrsusBh());
+			comprador.setIdCompradorUrsus(dto.getNumeroClienteUrsus());
+			comprador.setIdCompradorUrsusBh(dto.getNumeroClienteUrsusBh());
 
-				if (!Checks.esNulo(dto.getCodTipoPersona())) {
-					DDTiposPersona tipoPersona = (DDTiposPersona) utilDiccionarioApi
-							.dameValorDiccionarioByCod(DDTiposPersona.class, dto.getCodTipoPersona());
-					comprador.setTipoPersona(tipoPersona);
-				}
+			if (!Checks.esNulo(dto.getCodTipoPersona())) {
+				DDTiposPersona tipoPersona = (DDTiposPersona) utilDiccionarioApi
+						.dameValorDiccionarioByCod(DDTiposPersona.class, dto.getCodTipoPersona());
+				comprador.setTipoPersona(tipoPersona);
+			}
 
-				// Datos de identificación
-				if (!Checks.esNulo(dto.getApellidos())) {
-					reiniciarPBC = true;
-				}
+			// Datos de identificación
+			if (!Checks.esNulo(dto.getApellidos())) {
+				reiniciarPBC = true;
+			}
 
-				comprador.setApellidos(dto.getApellidos());
+			comprador.setApellidos(dto.getApellidos());
 
-				if (!Checks.esNulo(dto.getCodTipoDocumento())) {
-					DDTipoDocumento tipoDocumentoComprador = (DDTipoDocumento) utilDiccionarioApi
-							.dameValorDiccionarioByCod(DDTipoDocumento.class, dto.getCodTipoDocumento());
-					comprador.setTipoDocumento(tipoDocumentoComprador);
-				}
+			if (!Checks.esNulo(dto.getCodTipoDocumento())) {
+				DDTipoDocumento tipoDocumentoComprador = (DDTipoDocumento) utilDiccionarioApi
+						.dameValorDiccionarioByCod(DDTipoDocumento.class, dto.getCodTipoDocumento());
+				comprador.setTipoDocumento(tipoDocumentoComprador);
+			}
 
-				if (!Checks.esNulo(dto.getNombreRazonSocial())) {
-					reiniciarPBC = true;
-				}
+			if (!Checks.esNulo(dto.getNombreRazonSocial())) {
+				reiniciarPBC = true;
+			}
 
-				comprador.setNombre(dto.getNombreRazonSocial());
+			comprador.setNombre(dto.getNombreRazonSocial());
 
-				if (!Checks.esNulo(dto.getProvinciaCodigo())) {
-					DDProvincia provincia = (DDProvincia) utilDiccionarioApi
-							.dameValorDiccionarioByCod(DDProvincia.class, dto.getProvinciaCodigo());
-					comprador.setProvincia(provincia);
-					reiniciarPBC = true;
-				}
+			if (!Checks.esNulo(dto.getProvinciaCodigo())) {
+				DDProvincia provincia = (DDProvincia) utilDiccionarioApi.dameValorDiccionarioByCod(DDProvincia.class,
+						dto.getProvinciaCodigo());
+				comprador.setProvincia(provincia);
+				reiniciarPBC = true;
+			}
 
-				if (!Checks.esNulo(dto.getMunicipioCodigo())) {
-					Filter filtroLocalidad = genericDao.createFilter(FilterType.EQUALS, "codigo",
-							dto.getMunicipioCodigo());
-					Localidad localidad = genericDao.get(Localidad.class, filtroLocalidad);
-					comprador.setLocalidad(localidad);
-					reiniciarPBC = true;
-				}
+			if (!Checks.esNulo(dto.getMunicipioCodigo())) {
+				Filter filtroLocalidad = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getMunicipioCodigo());
+				Localidad localidad = genericDao.get(Localidad.class, filtroLocalidad);
+				comprador.setLocalidad(localidad);
+				reiniciarPBC = true;
+			}
 
-				if (!Checks.esNulo(dto.getCodigoPostal())) {
-					reiniciarPBC = true;
-				}
+			if (!Checks.esNulo(dto.getCodigoPostal())) {
+				reiniciarPBC = true;
+			}
 
-				comprador.setCodigoPostal(dto.getCodigoPostal());
+			comprador.setCodigoPostal(dto.getCodigoPostal());
 
-				if (!Checks.esNulo(dto.getNumDocumento())) {
-					comprador.setDocumento(dto.getNumDocumento());
-					reiniciarPBC = true;
-				}
+			if (!Checks.esNulo(dto.getNumDocumento())) {
+				comprador.setDocumento(dto.getNumDocumento());
+				reiniciarPBC = true;
+			}
 
-				if (!Checks.esNulo(dto.getDireccion())) {
-					reiniciarPBC = true;
-				}
+			if (!Checks.esNulo(dto.getDireccion())) {
+				reiniciarPBC = true;
+			}
 
-				comprador.setDireccion(dto.getDireccion());
+			comprador.setDireccion(dto.getDireccion());
 
-				if (!Checks.esNulo(dto.getTelefono1())) {
-					comprador.setTelefono1(dto.getTelefono1());
-				}
+			if (!Checks.esNulo(dto.getTelefono1())) {
+				comprador.setTelefono1(dto.getTelefono1());
+			}
 
-				if (!Checks.esNulo(dto.getTelefono2())) {
-					comprador.setTelefono2(dto.getTelefono2());
-				}
+			if (!Checks.esNulo(dto.getTelefono2())) {
+				comprador.setTelefono2(dto.getTelefono2());
+			}
 
-				if (!Checks.esNulo(dto.getEmail())) {
-					comprador.setEmail(dto.getEmail());
-				}
+			if (!Checks.esNulo(dto.getEmail())) {
+				comprador.setEmail(dto.getEmail());
+			}
 
-				// HREOS-4937 -- GDPR
-				// Actualizamos datos GDPR del comprador
-				if (!Checks.esNulo(dto.getCesionDatos())) {
-					comprador.setCesionDatos(dto.getCesionDatos());
-				}
-				if (!Checks.esNulo(dto.getComunicacionTerceros())) {
-					comprador.setComunicacionTerceros(dto.getComunicacionTerceros());
-				}
-				if (!Checks.esNulo(dto.getTransferenciasInternacionales())) {
-					comprador.setTransferenciasInternacionales(dto.getTransferenciasInternacionales());
-				}
-				TmpClienteGDPR tmpClienteGDPR = genericDao.get(TmpClienteGDPR.class, genericDao.createFilter(FilterType.EQUALS, "numDocumento", dto.getNumDocumento()));
-				
-				// Historificamos despues del update
-				AdjuntoComprador docAdjunto = null;
-				if (!Checks.esNulo(dto.getIdDocAdjunto())) {
+			// HREOS-4937 -- GDPR
+			// Actualizamos datos GDPR del comprador
+			if (!Checks.esNulo(dto.getCesionDatos())) {
+				comprador.setCesionDatos(dto.getCesionDatos());
+			}
+			if (!Checks.esNulo(dto.getComunicacionTerceros())) {
+				comprador.setComunicacionTerceros(dto.getComunicacionTerceros());
+			}
+			if (!Checks.esNulo(dto.getTransferenciasInternacionales())) {
+				comprador.setTransferenciasInternacionales(dto.getTransferenciasInternacionales());
+			}
+
+			TmpClienteGDPR tmpClienteGDPR = genericDao.get(TmpClienteGDPR.class,
+					genericDao.createFilter(FilterType.EQUALS, "numDocumento", dto.getNumDocumento()));
+
+			// Historificamos despues del update
+			AdjuntoComprador docAdjunto = null;
+			if (!Checks.esNulo(dto.getIdDocAdjunto())) {
+				docAdjunto = genericDao.get(AdjuntoComprador.class,
+						genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdDocAdjunto()));
+			} else {
+				if (!Checks.esNulo(tmpClienteGDPR) && !Checks.esNulo(tmpClienteGDPR.getIdAdjunto())) {
 					docAdjunto = genericDao.get(AdjuntoComprador.class,
-							genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdDocAdjunto()));
-				}  else {
-					if (!Checks.esNulo(tmpClienteGDPR) && !Checks.esNulo(tmpClienteGDPR.getIdAdjunto())) {
-						docAdjunto = genericDao.get(AdjuntoComprador.class,
-								genericDao.createFilter(FilterType.EQUALS, "id", tmpClienteGDPR.getIdAdjunto()));	
-					}						
-				}					
-				
-				ClienteCompradorGDPR clienteCompradorGDPR = new ClienteCompradorGDPR();
-				
-				
-				if (!Checks.esNulo(comprador.getTipoDocumento())) {
-					clienteCompradorGDPR.setTipoDocumento(comprador.getTipoDocumento());
+							genericDao.createFilter(FilterType.EQUALS, "id", tmpClienteGDPR.getIdAdjunto()));
 				}
-				if (!Checks.esNulo(comprador.getDocumento())) {
-					clienteCompradorGDPR.setNumDocumento(comprador.getDocumento());
-				}
-				if (!Checks.esNulo(comprador.getCesionDatos())) {
-					clienteCompradorGDPR.setCesionDatos(comprador.getCesionDatos());
-				}
-				if (!Checks.esNulo(comprador.getComunicacionTerceros())) {
-					clienteCompradorGDPR.setComunicacionTerceros(comprador.getComunicacionTerceros());
-				}
-				if (!Checks.esNulo(comprador.getTransferenciasInternacionales())) {
-					clienteCompradorGDPR.setTransferenciasInternacionales(comprador.getTransferenciasInternacionales());
+			}
 
-				}
-				if (!Checks.esNulo(docAdjunto)) {
-					clienteCompradorGDPR.setAdjuntoComprador(docAdjunto);
-				}
-				
-				genericDao.save(ClienteCompradorGDPR.class, clienteCompradorGDPR);
+			if (!Checks.esNulo(docAdjunto)) {
+				comprador.setAdjunto(docAdjunto);
+			}
 
-				Filter filtroComprador = genericDao.createFilter(FilterType.EQUALS, "comprador", Long.parseLong(dto.getId())); 
-				Filter filtroExpComComprador = genericDao.createFilter(FilterType.EQUALS, "expediente", Long.parseLong(dto.getIdExpedienteComercial()));
-				Filter filtroExpedienteComercial = genericDao.createFilter(FilterType.EQUALS, "id", Long.parseLong(dto.getIdExpedienteComercial()));
-				
-				ExpedienteComercial expedienteComercial = genericDao.get(ExpedienteComercial.class, filtroExpedienteComercial);				
-				CompradorExpediente compradorExpediente = genericDao.get(CompradorExpediente.class, filtroComprador, filtroExpComComprador);
+			ClienteCompradorGDPR clienteCompradorGDPR = new ClienteCompradorGDPR();
 
-				if (Checks.esNulo(compradorExpediente)) { 
-					compradorExpediente = new CompradorExpediente();
-				
-					CompradorExpedientePk pk = new CompradorExpedientePk();
-					pk.setComprador(comprador);
-					pk.setExpediente(expedienteComercial);
-					compradorExpediente.setPrimaryKey(pk);
+			if (!Checks.esNulo(comprador.getTipoDocumento())) {
+				clienteCompradorGDPR.setTipoDocumento(comprador.getTipoDocumento());
+			}
+			if (!Checks.esNulo(comprador.getDocumento())) {
+				clienteCompradorGDPR.setNumDocumento(comprador.getDocumento());
+			}
+			if (!Checks.esNulo(comprador.getCesionDatos())) {
+				clienteCompradorGDPR.setCesionDatos(comprador.getCesionDatos());
+			}
+			if (!Checks.esNulo(comprador.getComunicacionTerceros())) {
+				clienteCompradorGDPR.setComunicacionTerceros(comprador.getComunicacionTerceros());
+			}
+			if (!Checks.esNulo(comprador.getTransferenciasInternacionales())) {
+				clienteCompradorGDPR.setTransferenciasInternacionales(comprador.getTransferenciasInternacionales());
 
-				}
+			}
+			if (!Checks.esNulo(docAdjunto)) {
+				clienteCompradorGDPR.setAdjuntoComprador(docAdjunto);
+			}
 
-				if (!Checks.esNulo(dto.getPorcentajeCompra())) {
-					compradorExpediente.setPorcionCompra(dto.getPorcentajeCompra());
-				}
+			genericDao.save(ClienteCompradorGDPR.class, clienteCompradorGDPR);
 
-				if (!Checks.esNulo(dto.getTitularContratacion())) {
-					compradorExpediente.setTitularContratacion(dto.getTitularContratacion());
+			Filter filtroComprador = genericDao.createFilter(FilterType.EQUALS, "comprador",
+					Long.parseLong(dto.getId()));
+			Filter filtroExpComComprador = genericDao.createFilter(FilterType.EQUALS, "expediente",
+					Long.parseLong(dto.getIdExpedienteComercial()));
+			Filter filtroExpedienteComercial = genericDao.createFilter(FilterType.EQUALS, "id",
+					Long.parseLong(dto.getIdExpedienteComercial()));
 
-					if (dto.getTitularContratacion() == 1) {
-						compradorExpediente.setTitularReserva(0);
-					} else if (dto.getTitularContratacion() == 0) {
-						compradorExpediente.setTitularReserva(1);
-					}
-				}
-						// Nexos
-						if (!Checks.esNulo(dto.getCodEstadoCivil())) {
-							DDEstadosCiviles estadoCivil = (DDEstadosCiviles) utilDiccionarioApi.dameValorDiccionarioByCod(DDEstadosCiviles.class, dto.getCodEstadoCivil());
-							compradorExpediente.setEstadoCivil(estadoCivil);
-							reiniciarPBC = true;
-						}
-						
-						if (!Checks.esNulo(dto.getCodTipoDocumentoConyuge())) {
-							DDTipoDocumento tipoDocumento = (DDTipoDocumento) utilDiccionarioApi.dameValorDiccionarioByCod(DDTipoDocumento.class, dto.getCodTipoDocumentoConyuge());
-							compradorExpediente.setTipoDocumentoConyuge(tipoDocumento);
-						}
+			ExpedienteComercial expedienteComercial = genericDao.get(ExpedienteComercial.class,
+					filtroExpedienteComercial);
+			CompradorExpediente compradorExpediente = genericDao.get(CompradorExpediente.class, filtroComprador,
+					filtroExpComComprador);
 
-				// Nexos
-				if (!Checks.esNulo(dto.getCodEstadoCivil())) {
-					DDEstadosCiviles estadoCivil = (DDEstadosCiviles) utilDiccionarioApi
-							.dameValorDiccionarioByCod(DDEstadosCiviles.class, dto.getCodEstadoCivil());
-					compradorExpediente.setEstadoCivil(estadoCivil);
-					reiniciarPBC = true;
-				}
+			if (Checks.esNulo(compradorExpediente)) {
+				compradorExpediente = new CompradorExpediente();
+				compradorExpediente.setBorrado(false);
 
-				compradorExpediente.setDocumentoConyuge(dto.getDocumentoConyuge());
-
-				if (!Checks.esNulo(dto.getRelacionAntDeudor())) {
-					compradorExpediente.setRelacionAntDeudor(dto.getRelacionAntDeudor());
-				}
-
-				compradorExpediente.setRelacionHre(dto.getRelacionHre());
-
-				if (!Checks.esNulo(dto.getCodigoRegimenMatrimonial())) {
-					DDRegimenesMatrimoniales regimenMatrimonial = (DDRegimenesMatrimoniales) utilDiccionarioApi
-							.dameValorDiccionarioByCod(DDRegimenesMatrimoniales.class,
-									dto.getCodigoRegimenMatrimonial());
-					compradorExpediente.setRegimenMatrimonial(regimenMatrimonial);
-					reiniciarPBC = true;
-				}
-
-				if (!Checks.esNulo(dto.getAntiguoDeudor())) {
-					compradorExpediente.setAntiguoDeudor(dto.getAntiguoDeudor());
-				}
-
-				// Datos representante
-				if (!Checks.esNulo(dto.getCodTipoDocumentoRte())) {
-					DDTipoDocumento tipoDocumento = (DDTipoDocumento) utilDiccionarioApi
-							.dameValorDiccionarioByCod(DDTipoDocumento.class, dto.getCodTipoDocumentoRte());
-					compradorExpediente.setTipoDocumentoRepresentante(tipoDocumento);
-				}
-
-				compradorExpediente.setNombreRepresentante(dto.getNombreRazonSocialRte());
-				compradorExpediente.setApellidosRepresentante(dto.getApellidosRte());
-
-				if (!Checks.esNulo(dto.getProvinciaRteCodigo())) {
-					DDProvincia provinciaRte = (DDProvincia) utilDiccionarioApi
-							.dameValorDiccionarioByCod(DDProvincia.class, dto.getProvinciaRteCodigo());
-					compradorExpediente.setProvinciaRepresentante(provinciaRte);
-				}
-
-				if (!Checks.esNulo(dto.getMunicipioRteCodigo())) {
-					Filter filtroLocalidadRte = genericDao.createFilter(FilterType.EQUALS, "codigo",
-							dto.getMunicipioRteCodigo());
-					Localidad localidadRte = (Localidad) genericDao.get(Localidad.class, filtroLocalidadRte);
-					compradorExpediente.setLocalidadRepresentante(localidadRte);
-				}
-
-				compradorExpediente.setCodigoPostalRepresentante(dto.getCodigoPostalRte());
-				compradorExpediente.setDocumentoRepresentante(dto.getNumDocumentoRte());
-				compradorExpediente.setDireccionRepresentante(dto.getDireccionRte());
-				compradorExpediente.setTelefono1Representante(dto.getTelefono1Rte());
-				compradorExpediente.setTelefono2Representante(dto.getTelefono2Rte());
-				compradorExpediente.setEmailRepresentante(dto.getEmailRte());
-
-				if (!Checks.esNulo(dto.getCodigoPais())) {
-					Filter filtroPais = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getCodigoPais());
-					DDPaises pais = genericDao.get(DDPaises.class, filtroPais);
-					compradorExpediente.setPais(pais);
-				}
-
-				if (!Checks.esNulo(dto.getCodigoPaisRte())) {
-					Filter filtroPaisRte = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getCodigoPaisRte());
-					DDPaises paisRte = genericDao.get(DDPaises.class, filtroPaisRte);
-					compradorExpediente.setPaisRte(paisRte);
-				}
-
-				if (!Checks.esNulo(dto.getCodigoGradoPropiedad())) {
-					Filter filtroGradoPropiedad = genericDao.createFilter(FilterType.EQUALS, "codigo",
-							dto.getCodigoGradoPropiedad());
-					DDTipoGradoPropiedad gradoPropiedad = genericDao.get(DDTipoGradoPropiedad.class,
-							filtroGradoPropiedad);
-					compradorExpediente.setGradoPropiedad(gradoPropiedad);
-				}
-				
-				if (!Checks.esNulo(docAdjunto)) {
-					compradorExpediente.setDocumentoAdjunto(docAdjunto);
-				}
-
-				genericDao.update(Comprador.class, comprador); 
-
-				expedienteComercial.getCompradores().add(compradorExpediente);
-				genericDao.save(ExpedienteComercial.class, expedienteComercial);
-
-				if (reiniciarPBC) {
-					ofertaApi.resetPBC(expedienteComercial, false);  
-				}
+				CompradorExpedientePk pk = new CompradorExpedientePk();
+				pk.setComprador(comprador);
+				pk.setExpediente(expedienteComercial);
+				compradorExpediente.setPrimaryKey(pk);
 
 			}
 
-		} catch (NumberFormatException e) {
-			logger.error("error en expedienteComercialManager", e);
-			return false;
+			if (!Checks.esNulo(dto.getPorcentajeCompra())) {
+				compradorExpediente.setPorcionCompra(dto.getPorcentajeCompra());
+			}
+
+			if (!Checks.esNulo(dto.getTitularContratacion())) {
+				compradorExpediente.setTitularContratacion(dto.getTitularContratacion());
+
+				if (dto.getTitularContratacion() == 1) {
+					compradorExpediente.setTitularReserva(0);
+				} else if (dto.getTitularContratacion() == 0) {
+					compradorExpediente.setTitularReserva(1);
+				}
+			}
+			// Nexos
+			if (!Checks.esNulo(dto.getCodEstadoCivil())) {
+				DDEstadosCiviles estadoCivil = (DDEstadosCiviles) utilDiccionarioApi
+						.dameValorDiccionarioByCod(DDEstadosCiviles.class, dto.getCodEstadoCivil());
+				compradorExpediente.setEstadoCivil(estadoCivil);
+				reiniciarPBC = true;
+			}
+
+			if (!Checks.esNulo(dto.getCodTipoDocumentoConyuge())) {
+				DDTipoDocumento tipoDocumento = (DDTipoDocumento) utilDiccionarioApi
+						.dameValorDiccionarioByCod(DDTipoDocumento.class, dto.getCodTipoDocumentoConyuge());
+				compradorExpediente.setTipoDocumentoConyuge(tipoDocumento);
+			}
+
+			// Nexos
+			if (!Checks.esNulo(dto.getCodEstadoCivil())) {
+				DDEstadosCiviles estadoCivil = (DDEstadosCiviles) utilDiccionarioApi
+						.dameValorDiccionarioByCod(DDEstadosCiviles.class, dto.getCodEstadoCivil());
+				compradorExpediente.setEstadoCivil(estadoCivil);
+				reiniciarPBC = true;
+			}
+
+			if (!Checks.esNulo(dto.getDocumentoConyuge())) {
+				compradorExpediente.setDocumentoConyuge(dto.getDocumentoConyuge());
+			}
+
+			if (!Checks.esNulo(dto.getCodTipoDocumentoConyuge())) {
+				compradorExpediente.setTipoDocumentoConyuge((DDTipoDocumento) utilDiccionarioApi
+						.dameValorDiccionarioByCod(DDTipoDocumento.class, dto.getCodTipoDocumentoConyuge()));
+			}
+
+			if (!Checks.esNulo(dto.getRelacionAntDeudor())) {
+				compradorExpediente.setRelacionAntDeudor(dto.getRelacionAntDeudor());
+			}
+
+			compradorExpediente.setRelacionHre(dto.getRelacionHre());
+
+			if (!Checks.esNulo(dto.getCodigoRegimenMatrimonial())) {
+				DDRegimenesMatrimoniales regimenMatrimonial = (DDRegimenesMatrimoniales) utilDiccionarioApi
+						.dameValorDiccionarioByCod(DDRegimenesMatrimoniales.class, dto.getCodigoRegimenMatrimonial());
+				compradorExpediente.setRegimenMatrimonial(regimenMatrimonial);
+				reiniciarPBC = true;
+			}
+
+			if (!Checks.esNulo(dto.getAntiguoDeudor())) {
+				compradorExpediente.setAntiguoDeudor(dto.getAntiguoDeudor());
+			}
+
+			// Datos representante
+			if (!Checks.esNulo(dto.getCodTipoDocumentoRte())) {
+				DDTipoDocumento tipoDocumento = (DDTipoDocumento) utilDiccionarioApi
+						.dameValorDiccionarioByCod(DDTipoDocumento.class, dto.getCodTipoDocumentoRte());
+				compradorExpediente.setTipoDocumentoRepresentante(tipoDocumento);
+			}
+
+			compradorExpediente.setNombreRepresentante(dto.getNombreRazonSocialRte());
+			compradorExpediente.setApellidosRepresentante(dto.getApellidosRte());
+
+			if (!Checks.esNulo(dto.getProvinciaRteCodigo())) {
+				DDProvincia provinciaRte = (DDProvincia) utilDiccionarioApi.dameValorDiccionarioByCod(DDProvincia.class,
+						dto.getProvinciaRteCodigo());
+				compradorExpediente.setProvinciaRepresentante(provinciaRte);
+			}
+
+			if (!Checks.esNulo(dto.getMunicipioRteCodigo())) {
+				Filter filtroLocalidadRte = genericDao.createFilter(FilterType.EQUALS, "codigo",
+						dto.getMunicipioRteCodigo());
+				Localidad localidadRte = (Localidad) genericDao.get(Localidad.class, filtroLocalidadRte);
+				compradorExpediente.setLocalidadRepresentante(localidadRte);
+			}
+
+			compradorExpediente.setCodigoPostalRepresentante(dto.getCodigoPostalRte());
+			compradorExpediente.setDocumentoRepresentante(dto.getNumDocumentoRte());
+			compradorExpediente.setDireccionRepresentante(dto.getDireccionRte());
+			compradorExpediente.setTelefono1Representante(dto.getTelefono1Rte());
+			compradorExpediente.setTelefono2Representante(dto.getTelefono2Rte());
+			compradorExpediente.setEmailRepresentante(dto.getEmailRte());
+
+			if (!Checks.esNulo(dto.getCodigoPais())) {
+				Filter filtroPais = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getCodigoPais());
+				DDPaises pais = genericDao.get(DDPaises.class, filtroPais);
+				compradorExpediente.setPais(pais);
+			}
+
+			if (!Checks.esNulo(dto.getCodigoPaisRte())) {
+				Filter filtroPaisRte = genericDao.createFilter(FilterType.EQUALS, "codigo", dto.getCodigoPaisRte());
+				DDPaises paisRte = genericDao.get(DDPaises.class, filtroPaisRte);
+				compradorExpediente.setPaisRte(paisRte);
+			}
+
+			if (!Checks.esNulo(dto.getCodigoGradoPropiedad())) {
+				Filter filtroGradoPropiedad = genericDao.createFilter(FilterType.EQUALS, "codigo",
+						dto.getCodigoGradoPropiedad());
+				DDTipoGradoPropiedad gradoPropiedad = genericDao.get(DDTipoGradoPropiedad.class, filtroGradoPropiedad);
+				compradorExpediente.setGradoPropiedad(gradoPropiedad);
+			}
+
+			if (!Checks.esNulo(docAdjunto)) {
+				compradorExpediente.setDocumentoAdjunto(docAdjunto);
+			} else if (!Checks.esNulo(comprador.getAdjunto())) {
+				compradorExpediente.setDocumentoAdjunto(comprador.getAdjunto());
+			}
+
+			genericDao.update(Comprador.class, comprador);
+
+			expedienteComercial.getCompradores().add(compradorExpediente);
+			genericDao.save(ExpedienteComercial.class, expedienteComercial);
+
+			if (reiniciarPBC) {
+				ofertaApi.resetPBC(expedienteComercial, false);
+			}
+
 		}
 
 		return true;
@@ -4265,19 +4274,23 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			}
 			
 			AdjuntoComprador docAdjunto = null;
-			TmpClienteGDPR tmpClienteGDPR = null;
+			TmpClienteGDPR tmpClienteGDPR = genericDao.get(TmpClienteGDPR.class, genericDao.createFilter(FilterType.EQUALS, "numDocumento", dto.getNumDocumento()));
 			if (!Checks.esNulo(dto.getIdDocAdjunto())) {
 				docAdjunto = genericDao.get(AdjuntoComprador.class, genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdDocAdjunto()));
 			} else {
-				tmpClienteGDPR = genericDao.get(TmpClienteGDPR.class,
-						genericDao.createFilter(FilterType.EQUALS, "numDocumento", dto.getNumDocumento()));
 				if(!Checks.esNulo(tmpClienteGDPR.getIdAdjunto())) {
 					docAdjunto = genericDao.get(AdjuntoComprador.class,
 							genericDao.createFilter(FilterType.EQUALS, "id", tmpClienteGDPR.getIdAdjunto()));
 				}
 			}
 			
-			compradorExpediente.setDocumentoAdjunto(docAdjunto);
+			if(!Checks.esNulo(docAdjunto)) {
+				compradorBusqueda.setAdjunto(docAdjunto);
+				compradorExpediente.setDocumentoAdjunto(docAdjunto);
+			}
+			
+			if(!Checks.esNulo(tmpClienteGDPR) && !Checks.esNulo(tmpClienteGDPR.getIdPersonaHaya()))
+				compradorBusqueda.setIdPersonaHaya(tmpClienteGDPR.getIdPersonaHaya());
 
 			expediente.getCompradores().add(compradorExpediente);
 
@@ -4285,7 +4298,8 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 			ofertaApi.resetPBC(expediente, true);
 			
-			clienteComercialDao.deleteTmpClienteByDocumento(tmpClienteGDPR.getNumDocumento());
+			if(!Checks.esNulo(tmpClienteGDPR))
+					clienteComercialDao.deleteTmpClienteByDocumento(tmpClienteGDPR.getNumDocumento());
 
 			return true;
 		} else {
@@ -4494,6 +4508,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				pk.setExpediente(expediente);
 				compradorExpediente.setPrimaryKey(pk);
 
+				TmpClienteGDPR tmpClienteGDPR = genericDao.get(TmpClienteGDPR.class, genericDao.createFilter(FilterType.EQUALS, "numDocumento", dto.getNumDocumento()));
 				// HREOS - 4937
 				// Historificamos
 				AdjuntoComprador docAdjunto = null;
@@ -4501,15 +4516,19 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 					docAdjunto = genericDao.get(AdjuntoComprador.class,
 							genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdDocAdjunto()));
 				} else {
-					TmpClienteGDPR tmpClienteGDPR = genericDao.get(TmpClienteGDPR.class,
-							genericDao.createFilter(FilterType.EQUALS, "numDocumento", dto.getNumDocumento()));
 					if(tmpClienteGDPR != null && !Checks.esNulo(tmpClienteGDPR.getIdAdjunto())) {
 						docAdjunto = genericDao.get(AdjuntoComprador.class,
 								genericDao.createFilter(FilterType.EQUALS, "id", tmpClienteGDPR.getIdAdjunto()));
 					}
 				}
 				
-				compradorExpediente.setDocumentoAdjunto(docAdjunto);
+				if(!Checks.esNulo(docAdjunto)) {
+					comprador.setAdjunto(docAdjunto);
+					compradorExpediente.setDocumentoAdjunto(docAdjunto);
+				}
+				
+				if(!Checks.esNulo(tmpClienteGDPR) && !Checks.esNulo(tmpClienteGDPR.getIdPersonaHaya()))
+					comprador.setIdPersonaHaya(tmpClienteGDPR.getIdPersonaHaya());
 				
 				ClienteCompradorGDPR clienteCompradorGDPR = new ClienteCompradorGDPR();
 
@@ -4543,11 +4562,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 				ofertaApi.resetPBC(expediente, true);
 				
-				TmpClienteGDPR tmpClienteGDPR = genericDao.get(TmpClienteGDPR.class, genericDao.createFilter(FilterType.EQUALS, "numDocumento", comprador.getDocumento()));
-				if(tmpClienteGDPR != null){
+				tmpClienteGDPR = genericDao.get(TmpClienteGDPR.class, genericDao.createFilter(FilterType.EQUALS, "numDocumento", comprador.getDocumento()));
+				if(!Checks.esNulo(tmpClienteGDPR))
 					clienteComercialDao.deleteTmpClienteByDocumento(tmpClienteGDPR.getNumDocumento());
-				}
-
 				return true; 
 
 			} catch (Exception e) {
@@ -4555,9 +4572,6 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				return false; 
 			}
 		}
-		
-		
-
 	}
 
 	@Override
@@ -7458,10 +7472,28 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 			beanUtilNotNull.copyProperties(comprador, vista);
 
 			comprador.setEsBH(esBH(vista.getIdExpedienteComercial()));
+			comprador.setCesionDatos(vista.getCesionDatos());
+			comprador.setComunicacionTerceros(vista.getComunicacionTerceros());
+			comprador.setTransferenciasInternacionales(vista.getTransferenciasInternacionales());
 			comprador.setEntidadPropietariaCodigo(getCodigoCarteraExpediente(vista.getIdExpedienteComercial()));
+			comprador.setEsCarteraBankia(getCodigoCarteraExpediente(vista.getIdExpedienteComercial()).equals(DDCartera.CODIGO_CARTERA_BANKIA));
+			
+			if(comprador.getEsCarteraBankia()){
+				if(comprador.getEsBH()){
+					comprador.setMostrarUrsus(false);
+					comprador.setMostrarUrsusBh(true);
+				}else{
+					comprador.setMostrarUrsus(true);
+					comprador.setMostrarUrsusBh(false);
+				}
+				
+			}else{
+				comprador.setMostrarUrsus(false);
+				comprador.setMostrarUrsusBh(false);
+			}
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("vistaADtoModCompradores", e);
 		}
 
 		return comprador;
@@ -7473,9 +7505,27 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 		try {
 			beanUtilNotNull.copyProperties(comprador, vista);
+			
+			comprador.setEsBH(esBH(vista.getIdExpedienteComercial()));
+			comprador.setEntidadPropietariaCodigo(getCodigoCarteraExpediente(vista.getIdExpedienteComercial()));
+			comprador.setEsCarteraBankia(getCodigoCarteraExpediente(vista.getIdExpedienteComercial()).equals(DDCartera.CODIGO_CARTERA_BANKIA));
+			
+			if(comprador.getEsCarteraBankia()){
+				if(comprador.getEsBH()){
+					comprador.setMostrarUrsus(false);
+					comprador.setMostrarUrsusBh(true);
+				}else{
+					comprador.setMostrarUrsus(true);
+					comprador.setMostrarUrsusBh(false);
+				}
+				
+			}else{
+				comprador.setMostrarUrsus(false);
+				comprador.setMostrarUrsusBh(false);
+			}
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("vistaCrearComprador", e);
 		}
 
 		return comprador;
@@ -8134,6 +8184,7 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 				|| DDSubcartera.CODIGO_AGORA_INMOBILIARIO.equals(expedienteComercial.getOferta().getActivoPrincipal().getSubcartera().getCodigo()))));*/
 	}
 	
+	@SuppressWarnings("unused")
 	@Override
 	public boolean checkDepositoRelleno(TareaExterna tareaExterna) {
 		ExpedienteComercial expedienteComercial = tareaExternaToExpedienteComercial(tareaExterna);

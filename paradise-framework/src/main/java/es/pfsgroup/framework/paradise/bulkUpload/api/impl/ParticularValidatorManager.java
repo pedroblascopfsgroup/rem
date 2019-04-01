@@ -2593,12 +2593,12 @@ public class ParticularValidatorManager implements ParticularValidatorApi {
 	
 	@Override
 	public Boolean existeCodImpuesto(String idImpuesto){
-		if(Checks.esNulo(idImpuesto) || !StringUtils.isAlphanumeric(idImpuesto))
+		if(Checks.esNulo(idImpuesto) || !StringUtils.isNumeric(idImpuesto))
 			return false;
 
 		String resultado = rawDao.getExecuteSQL("SELECT COUNT(*) "
 				+ "		 FROM DD_STG_SUBTIPOS_GASTO WHERE"
-				+ "		 DD_STG_CODIGO ="+idImpuesto+""
+				+ "		 DD_STG_CODIGO ='"+idImpuesto+"'"
 				+ "		 	AND BORRADO = 0");
 		return !"0".equals(resultado);
 	}

@@ -33,10 +33,6 @@ import es.pfsgroup.plugin.rem.excel.AgrupacionExcelReport;
 import es.pfsgroup.plugin.rem.excel.AgrupacionListadoActivosExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
-import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento;
-import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.ACCION_CODIGO;
-import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.ENTIDAD_CODIGO;
-import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.REQUEST_STATUS_CODE;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoFoto;
 import es.pfsgroup.plugin.rem.model.AgrupacionesVigencias;
@@ -74,8 +70,6 @@ public class AgrupacionController extends ParadiseJsonController {
 	@Autowired
 	private ExcelReportGeneratorApi excelReportGeneratorApi;
 
-	@Autowired
-	private LogTrustEvento trustMe;
 
 	private final Log logger = LogFactory.getLog(getClass());
 

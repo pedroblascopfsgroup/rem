@@ -552,6 +552,7 @@ public interface ParticularValidatorApi {
 
 	public Boolean isActivoFinanciero(String numActivo);
 
+
 	/**
 	 * 
 	 * @param idImpuesto

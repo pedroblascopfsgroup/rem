@@ -94,7 +94,7 @@ DECLARE
          T_TIPO_DATA('GIAFORM', '7', '', '', '', '', '', 'ogf03', 'OGF', '138'),
          T_TIPO_DATA('GFORM', '7', '', '', '', '', '', 'iba', 'IRENE BERENGUER ALEIXANDRE', '138'),
          T_TIPO_DATA('GFORMADM', '7', '', '', '', '', '', 'iba', 'IRENE BERENGUER ALEIXANDRE', '138'),
-         T_TIPO_DATA('GESTCOMALQ', '', '', '', '', '', '', 'dleganes', 'Daniel', '138'), 
+         T_TIPO_DATA('GESTCOMALQ', '7', '', '', '', '', '', 'dleganes', 'Daniel', '138'), 
          T_TIPO_DATA('GALQ', '7', '', '', '', '', '', 'dleganes', 'Daniel', '138'),
          T_TIPO_DATA('GAREO', '7', '', '', '', '', '', 'acarabal', 'Aida', '138'), 
          T_TIPO_DATA('GADM', '7', '', '', '', '', '', 'acarabal', 'Aida', '138'),  

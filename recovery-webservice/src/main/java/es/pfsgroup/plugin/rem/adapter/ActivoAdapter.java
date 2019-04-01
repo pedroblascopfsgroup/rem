@@ -334,6 +334,7 @@ public class ActivoAdapter {
 
 	@Autowired
     private ActivoAgrupacionDao activoAgrupacionDao;
+	
 
 	private static final String CONSTANTE_REST_CLIENT = "rest.client.gestor.documental.constante";
 	public static final String OFERTA_INCOMPATIBLE_MSG = "El tipo de oferta es incompatible con el destino comercial del activo";
@@ -2766,98 +2767,110 @@ public class ActivoAdapter {
 		// Disponible para ejercicio actual
 		// Se calcula el disponible, el gasto conforme la lógica anterior, pero optimizando costes
 		dtoFilter.setEjercicioPresupuestario(ejercicioActual);
-		Page vista = trabajoApi.getListActivosPresupuesto(dtoFilter);
-		if (vista.getTotalCount() > 0) {
-			List<VBusquedaActivosTrabajoPresupuesto> activosTrabajo = (List<VBusquedaActivosTrabajoPresupuesto>) vista.getResults();
-			presupuestoGrafico.setDisponible(new Double(activosTrabajo.get(0).getSaldoDisponible()));
-			presupuestoGrafico.setGastado(new Double(0));
-			presupuestoGrafico.setDispuesto(new Double(0));
-			
-			for(VBusquedaActivosTrabajoPresupuesto activoTrabajoTemp : activosTrabajo){
-				
-				if("1".equals(activoTrabajoTemp.getEstadoContable())){
-					presupuestoGrafico.setGastado(
-							presupuestoGrafico.getGastado() + new Double(activoTrabajoTemp.getImporteParticipa()));
-				}
-				
-				if("1".equals(activoTrabajoTemp.getEstadoContable()) && DDEstadoTrabajo.ESTADO_PENDIENTE_PAGO.equals(activoTrabajoTemp.getCodigoEstado())){
-					presupuestoGrafico.setDispuesto(
-							presupuestoGrafico.getDispuesto() + new Double(activoTrabajoTemp.getImporteParticipa()));
-				}
-			}
-			//Lógica anterior
-			/*
-			dtoFilter.setEstadoContable("1");
-
-			// Gastado + Pendiente de pago, para el ejercicio actual
-			dtoFilter.setEjercicioPresupuestario(ejercicioActual);
-			vista = trabajoApi.getListActivosPresupuesto(dtoFilter);
-			if (vista.getTotalCount() > 0) {
-
-				List<VBusquedaActivosTrabajoPresupuesto> listaTemp = (List<VBusquedaActivosTrabajoPresupuesto>) vista
-						.getResults();
-				presupuestoGrafico.setGastado(new Double(0));
-				for (VBusquedaActivosTrabajoPresupuesto activoTrabajoTemp : listaTemp) {
-
-					presupuestoGrafico.setGastado(
-							presupuestoGrafico.getGastado() + new Double(activoTrabajoTemp.getImporteParticipa()));
-
-				}
-
-			} else {
-				presupuestoGrafico.setGastado(new Double(0));
-			}
-
-			// Pendiente de pago, para el ejercicio actual
-			dtoFilter.setEstadoCodigo(DDEstadoTrabajo.ESTADO_PENDIENTE_PAGO);
-			dtoFilter.setEjercicioPresupuestario(ejercicioActual);
-			vista = trabajoApi.getListActivosPresupuesto(dtoFilter);
-			if (vista.getTotalCount() > 0) {
-
-				List<VBusquedaActivosTrabajoPresupuesto> listaTemp = (List<VBusquedaActivosTrabajoPresupuesto>) vista
-						.getResults();
-				presupuestoGrafico.setDispuesto(new Double(0));
-				for (VBusquedaActivosTrabajoPresupuesto activoTrabajoTemp : listaTemp) {
-
-					presupuestoGrafico.setDispuesto(
-							presupuestoGrafico.getDispuesto() + new Double(activoTrabajoTemp.getImporteParticipa()));
-
-				}
-
-			} else {
-				presupuestoGrafico.setDispuesto(new Double(0));
-			}*/
-
-			presupuestoGrafico.setGastado(presupuestoGrafico.getGastado() - presupuestoGrafico.getDispuesto());
-			presupuestoGrafico.setPresupuesto(presupuestoGrafico.getDisponible() + presupuestoGrafico.getDispuesto()
-					+ presupuestoGrafico.getGastado());
-			presupuestoGrafico.setDisponiblePorcentaje(
-					Double.valueOf(((presupuestoGrafico.getDisponible() / presupuestoGrafico.getPresupuesto()) * 100)));
-			presupuestoGrafico.setDispuestoPorcentaje(
-					Double.valueOf(((presupuestoGrafico.getDispuesto() / presupuestoGrafico.getPresupuesto()) * 100)));
-			presupuestoGrafico.setGastadoPorcentaje(
-					Double.valueOf(((presupuestoGrafico.getGastado() / presupuestoGrafico.getPresupuesto()) * 100)));
-
-			presupuestoGrafico.setEjercicio(presupuestoActivo.getEjercicioAnyo());
-
-		} else {
-
-			if (presupuestoActivo.getSumaIncrementos() != null) {
-				presupuestoGrafico.setDisponible(
-						presupuestoActivo.getImporteInicial() + Double.valueOf(presupuestoActivo.getSumaIncrementos()));
-			} else {
-				presupuestoGrafico.setDisponible(presupuestoActivo.getImporteInicial());
-			}
-			presupuestoGrafico.setDisponiblePorcentaje(new Double(100));
-			presupuestoGrafico.setEjercicio(presupuestoActivo.getEjercicioAnyo());
-			presupuestoGrafico.setDispuesto(new Double(0));
-			presupuestoGrafico.setGastado(new Double(0));
-			presupuestoGrafico.setDispuestoPorcentaje(new Double(0));
-			presupuestoGrafico.setGastadoPorcentaje(new Double(0));
-			presupuestoGrafico.setPresupuesto(presupuestoGrafico.getDisponible());
-
+		Activo activo = getActivoById(Long.parseLong(dtoFilter.getIdActivo()));
+		Boolean esMatrizoUA = false;
+		//TODO HREOS-5598
+		if(activoDao.isUnidadAlquilable(activo.getId())) {
+			activo = getActivoById(activoDao.getIdActivoMatriz(activoDao.getAgrupacionPAByIdActivo(activo.getId()).getId()));
+			esMatrizoUA = true;
+		}else if(activoDao.isActivoMatriz(activo.getId())) {
+			esMatrizoUA = true;
 		}
-
+		if(esMatrizoUA) {
+			//RECOGER DE LA VISTA CUANDO SE CREE PARA MATRICES/UAS
+		}else{
+			Page vista = trabajoApi.getListActivosPresupuesto(dtoFilter);
+			if (vista.getTotalCount() > 0) {
+				List<VBusquedaActivosTrabajoPresupuesto> activosTrabajo = (List<VBusquedaActivosTrabajoPresupuesto>) vista.getResults();
+				presupuestoGrafico.setDisponible(new Double(activosTrabajo.get(0).getSaldoDisponible()));
+				presupuestoGrafico.setGastado(new Double(0));
+				presupuestoGrafico.setDispuesto(new Double(0));
+				
+				for(VBusquedaActivosTrabajoPresupuesto activoTrabajoTemp : activosTrabajo){
+					
+					if("1".equals(activoTrabajoTemp.getEstadoContable())){
+						presupuestoGrafico.setGastado(
+								presupuestoGrafico.getGastado() + new Double(activoTrabajoTemp.getImporteParticipa()));
+					}
+					
+					if("1".equals(activoTrabajoTemp.getEstadoContable()) && DDEstadoTrabajo.ESTADO_PENDIENTE_PAGO.equals(activoTrabajoTemp.getCodigoEstado())){
+						presupuestoGrafico.setDispuesto(
+								presupuestoGrafico.getDispuesto() + new Double(activoTrabajoTemp.getImporteParticipa()));
+					}
+				}
+				//Lógica anterior
+				/*
+				dtoFilter.setEstadoContable("1");
+	
+				// Gastado + Pendiente de pago, para el ejercicio actual
+				dtoFilter.setEjercicioPresupuestario(ejercicioActual);
+				vista = trabajoApi.getListActivosPresupuesto(dtoFilter);
+				if (vista.getTotalCount() > 0) {
+	
+					List<VBusquedaActivosTrabajoPresupuesto> listaTemp = (List<VBusquedaActivosTrabajoPresupuesto>) vista
+							.getResults();
+					presupuestoGrafico.setGastado(new Double(0));
+					for (VBusquedaActivosTrabajoPresupuesto activoTrabajoTemp : listaTemp) {
+	
+						presupuestoGrafico.setGastado(
+								presupuestoGrafico.getGastado() + new Double(activoTrabajoTemp.getImporteParticipa()));
+	
+					}
+	
+				} else {
+					presupuestoGrafico.setGastado(new Double(0));
+				}
+	
+				// Pendiente de pago, para el ejercicio actual
+				dtoFilter.setEstadoCodigo(DDEstadoTrabajo.ESTADO_PENDIENTE_PAGO);
+				dtoFilter.setEjercicioPresupuestario(ejercicioActual);
+				vista = trabajoApi.getListActivosPresupuesto(dtoFilter);
+				if (vista.getTotalCount() > 0) {
+	
+					List<VBusquedaActivosTrabajoPresupuesto> listaTemp = (List<VBusquedaActivosTrabajoPresupuesto>) vista
+							.getResults();
+					presupuestoGrafico.setDispuesto(new Double(0));
+					for (VBusquedaActivosTrabajoPresupuesto activoTrabajoTemp : listaTemp) {
+	
+						presupuestoGrafico.setDispuesto(
+								presupuestoGrafico.getDispuesto() + new Double(activoTrabajoTemp.getImporteParticipa()));
+	
+					}
+	
+				} else {
+					presupuestoGrafico.setDispuesto(new Double(0));
+				}*/
+	
+				presupuestoGrafico.setGastado(presupuestoGrafico.getGastado() - presupuestoGrafico.getDispuesto());
+				presupuestoGrafico.setPresupuesto(presupuestoGrafico.getDisponible() + presupuestoGrafico.getDispuesto()
+						+ presupuestoGrafico.getGastado());
+				presupuestoGrafico.setDisponiblePorcentaje(
+						Double.valueOf(((presupuestoGrafico.getDisponible() / presupuestoGrafico.getPresupuesto()) * 100)));
+				presupuestoGrafico.setDispuestoPorcentaje(
+						Double.valueOf(((presupuestoGrafico.getDispuesto() / presupuestoGrafico.getPresupuesto()) * 100)));
+				presupuestoGrafico.setGastadoPorcentaje(
+						Double.valueOf(((presupuestoGrafico.getGastado() / presupuestoGrafico.getPresupuesto()) * 100)));
+	
+				presupuestoGrafico.setEjercicio(presupuestoActivo.getEjercicioAnyo());
+	
+			} else {
+	
+				if (presupuestoActivo.getSumaIncrementos() != null) {
+					presupuestoGrafico.setDisponible(
+							presupuestoActivo.getImporteInicial() + Double.valueOf(presupuestoActivo.getSumaIncrementos()));
+				} else {
+					presupuestoGrafico.setDisponible(presupuestoActivo.getImporteInicial());
+				}
+				presupuestoGrafico.setDisponiblePorcentaje(new Double(100));
+				presupuestoGrafico.setEjercicio(presupuestoActivo.getEjercicioAnyo());
+				presupuestoGrafico.setDispuesto(new Double(0));
+				presupuestoGrafico.setGastado(new Double(0));
+				presupuestoGrafico.setDispuestoPorcentaje(new Double(0));
+				presupuestoGrafico.setGastadoPorcentaje(new Double(0));
+				presupuestoGrafico.setPresupuesto(presupuestoGrafico.getDisponible());
+	
+			}
+		}
 		return presupuestoGrafico;
 
 	}

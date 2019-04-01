@@ -106,7 +106,15 @@ public class VActivosAgrupacion implements Serializable {
 	
 	@Column(name = "ID_PRINEX_HPM")
 	private Long idPrinexHPM;
-
+	
+	@Column(name ="REG_SUPERFICIE_UTIL")
+	private Float superficieUtil;
+	
+	@Column(name = "REG_SUPERFICIE_ELEM_COMUN")
+	private Float superficieElementoComun;
+	
+	@Column(name = "REG_SUPERFICIE_PARCELA")
+	private Float superficieParcela;
 
 	public Long getId() {
 		return id;
@@ -338,6 +346,30 @@ public class VActivosAgrupacion implements Serializable {
 
 	public void setIdPrinexHPM(Long idPrinexHPM) {
 		this.idPrinexHPM = idPrinexHPM;
+	}
+
+	public Float getSuperficieUtil() {
+		return superficieUtil;
+	}
+
+	public void setSuperficieUtil(Float superficieUtil) {
+		this.superficieUtil = superficieUtil;
+	}
+
+	public Float getSuperficieElementoComun() {
+		return superficieElementoComun;
+	}
+
+	public void setSuperficieElementoComun(Float superficieElementoComun) {
+		this.superficieElementoComun = superficieElementoComun;
+	}
+
+	public Float getSuperficieParcela() {
+		return superficieParcela;
+	}
+
+	public void setSuperficieParcela(Float superficieParcela) {
+		this.superficieParcela = superficieParcela;
 	}
 	
 }

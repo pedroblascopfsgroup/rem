@@ -3284,13 +3284,30 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	numTotalActivos = grid.getSelectionModel().getSelection().length + 1,
     	targetGrid = window.targetGrid,
     	numActivoActual = numTotalActivos;
-
+    	
     	if (activos.length>0) {
     		var activo = activos.shift();
     		
     		numActivoActual = numTotalActivos - activos.length;
-    		
-    		if (Ext.isEmpty(targetGrid)) {
+    		if(activo.data.esUnidadAlquilable != undefined && activo.data.esUnidadAlquilable == true){
+    			if(propagableData.models[0].data.numFinca != undefined){
+    				var stringnumFinca;
+    				if(propagableData.models[0].data.numFinca.includes('-')){
+    					var numeroguion = propagableData.models[0].data.numFinca.indexOf("-")
+    					stringnumFinca = propagableData.models[0].data.numFinca.slice(0,numeroguion);
+    				}else{
+    					stringnumFinca = propagableData.models[0].data.numFinca;
+    				}
+    				
+    				var guion = '-';
+    				var stringnumUa = activos.length +1;
+    				stringnumUa = me.pad(stringnumUa,4);
+    				
+    				var res = stringnumFinca.concat(guion.concat(stringnumUa));
+    				propagableData.models[0].data.numFinca = res;
+    			}
+    			propagableData.id = activo.get("activoId");
+    		}else if(Ext.isEmpty(targetGrid)) {
     			propagableData.id = activo.get("activoId");
     		} else {
     			if(targetGrid=='mediadoractivo') {
@@ -3420,7 +3437,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	camposPropagables = [],
     	dirtyFieldsModel =  [],
     	propagableData = [];
-    	
     	var records = [],
     	models = [];
     	
@@ -3712,6 +3728,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			method : 'POST',
 			params: {idActivo: idActivo},
     		success: function(response, opts){
+    			
     			var isActivoMatriz = Ext.decode(response.responseText).data;
 				if(isActivoMatriz == "true"){
 					url3 =  $AC.getRemoteUrl('activo/propagarActivosMatriz');
@@ -3721,6 +3738,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		        		params: {idActivo: idActivo},
 	    		    		success: function(response, opts){	
 	    		    			var activosSeleccionados = Ext.decode(response.responseText).data.activosPropagables;
+	    		    			
 		    		    			if(me.getViewModel() != null){
 	    		    					if(me.getViewModel().get('activo') != null){
 	    		    						if(me.getViewModel().get('activo').data != null){
@@ -3728,37 +3746,89 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		    								}
 		    							}
 		    						}
-	    		    				if(activosSeleccionados.length > 0) {
-	    								tabPropagableData = me.createFormPropagableData(form, tabData);
-	    								if (!Ext.isEmpty(tabPropagableData)) {
-	    									// sacamos el activo actual del listado
-	    								
-	    									var activo = function(activo){return activo.activoId == me.getViewModel().get("activo.id")};
-	    								
-	    									// Abrimos la ventana de selección de activos
-	    									var ventanaOpcionesPropagacionCambios = Ext.create("HreRem.view.activos.detalle.OpcionesPropagacionCambiosMatrizExpediente", {form: form, activoActual: activo, activos: activosSeleccionados, tabData: tabData, propagableData: tabPropagableData}).show();
-	    										me.getView().add(ventanaOpcionesPropagacionCambios);
-	    										me.getView().unmask();
-	    										return false;
-	    								}
-	    		    				}
-	    	
-    								var successFn = function(response, eOpts) {
-	    		
-										me.manageToastJsonResponse(me, response.responseText);
-	   									me.getView().unmask();
-	   									me.refrescarActivo(form.refreshAfterSave);
-	   									me.getView().fireEvent("refreshComponentOnActivate", "container[reference=tabBuscadorActivos]");
-	   									me.actualizarGridHistoricoDestinoComercial(form);
-	    							}
-	    	
-									if(restringida == true){
-	    								me.saveActivosAgrRestringida(tabData, successFn);
-	    							} else {
-	    								me.getView().fireEvent("No hay activos propagables");
-	    								me.saveActivo(tabData, successFn);
-	    							}
-	    		    			me.getView().unmask();
+		    		    			
+		    		    			var EsLaSuperficieMenor = true;
+		    		    			
+		    		    			var superficieConstruidaAcumulable =  parseFloat("0",10);
+		    		    			var superficieElementosComunesAcumulables= parseFloat("0",10);
+		    		    			var superficieParcelaAcumulable= parseFloat("0",10);
+		    		    			var superficieUtilAcumulable= parseFloat("0",10);
+		    		    			
+		    		    			for(var i = 0; i < activosSeleccionados.length; i++){
+		    		    				if(activosSeleccionados[i].superficieConstruida == undefined){
+		    		    					activosSeleccionados[i].superficieConstruida = parseFloat("0",10);
+		    		    				}
+		    		    				superficieConstruidaAcumulable = parseFloat(activosSeleccionados[i].superficieConstruida, 10) + superficieConstruidaAcumulable;
+		    		    				if(activosSeleccionados[i].superficieElementoComun == undefined){
+		    		    					activosSeleccionados[i].superficieElementoComun = parseFloat("0",10);
+		    		    				}
+		    		    				superficieElementosComunesAcumulables = parseFloat(activosSeleccionados[i].superficieElementoComun, 10) + superficieElementosComunesAcumulables;
+		    		    				if(activosSeleccionados[i].superficieParcela == undefined){
+		    		    					activosSeleccionados[i].superficieParcela = parseFloat("0",10);
+		    		    				}
+		    		    				superficieParcelaAcumulable += parseFloat(activosSeleccionados[i].superficieParcela, 10);
+		    		    				if(activosSeleccionados[i].superficieUtil == undefined){
+		    		    					activosSeleccionados[i].superficieUtil = parseFloat("0",10);
+		    		    				}
+		    		    				superficieUtilAcumulable += parseFloat(activosSeleccionados[i].superficieUtil, 10);
+		    		    			}
+		    		    			
+		    		    			if(superficieConstruidaAcumulable > record.data.superficieConstruida){
+		    		    				EsLaSuperficieMenor = false;
+		    		    			}
+		    		    			if(superficieElementosComunesAcumulables > record.data.superficieElementosComunes){
+		    		    				EsLaSuperficieMenor = false;
+		    		    			}
+		    		    			if(superficieParcelaAcumulable > record.data.superficieParcela){
+		    		    				EsLaSuperficieMenor = false;
+		    		    			}	
+		    		    			if(superficieUtilAcumulable > record.data.superficieUtil){
+		    		    				EsLaSuperficieMenor = false;
+		    		    			}	
+		    		    			
+		    		    			if(EsLaSuperficieMenor==false){
+		    		    				me.getView().fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.propagar.ua.superficies"));
+		    		    				me.getView().unmask();
+		    		    			}else{
+		    		    				if(activosSeleccionados.length > 0) {
+		    								tabPropagableData = me.createFormPropagableData(form, tabData);
+		    								if (!Ext.isEmpty(tabPropagableData)) {
+		    									// sacamos el activo actual del listado
+		    									//debugger;
+		    									if(tabPropagableData.models[0].data.numFinca != undefined){
+		    										tabPropagableData.models[0].data.numFinca = me.pad(tabPropagableData.models[0].data.numFinca, 4);
+		    									}
+		    									
+		    									var activo = function(activo){return activo.activoId == me.getViewModel().get("activo.id")};
+		    									for(var cont=0; cont <activosSeleccionados.length; cont++){
+		    										activosSeleccionados[cont].esUnidadAlquilable=true;
+		    										//debugger;
+		    									}
+		    									// Abrimos la ventana de selección de activos
+		    									var ventanaOpcionesPropagacionCambios = Ext.create("HreRem.view.activos.detalle.OpcionesPropagacionCambiosMatrizExpediente", {form: form, activoActual: activo, activos: activosSeleccionados, tabData: tabData, propagableData: tabPropagableData}).show();
+		    										me.getView().add(ventanaOpcionesPropagacionCambios);
+		    										me.getView().unmask();
+		    										return false;
+		    								}
+		    		    				}
+		    	
+	    								var successFn = function(response, eOpts) {
+		    		
+											me.manageToastJsonResponse(me, response.responseText);
+		   									me.getView().unmask();
+		   									me.refrescarActivo(form.refreshAfterSave);
+		   									me.getView().fireEvent("refreshComponentOnActivate", "container[reference=tabBuscadorActivos]");
+		   									me.actualizarGridHistoricoDestinoComercial(form);
+		    							}
+		    	
+										if(restringida == true){
+		    								me.saveActivosAgrRestringida(tabData, successFn);
+		    							} else {
+		    								me.getView().fireEvent("No hay activos propagables");
+		    								me.saveActivo(tabData, successFn);
+		    							}
+		    		    			me.getView().unmask();
+		    		    		}		
 	    		    		},failure: function(record, operation) {
 	    		    			me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
 	    		    		}
@@ -4847,6 +4917,17 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			}
 		}	
 			
-	}
+	},
+    
+     pad: function(number, length) {
+    	   
+        var str = '' + number;
+        while (str.length < length) {
+            str = '0' + str;
+        }
+       
+        return str;
+
+    }
 
 });

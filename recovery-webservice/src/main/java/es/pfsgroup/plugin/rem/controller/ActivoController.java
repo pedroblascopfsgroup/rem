@@ -75,6 +75,7 @@ import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.ENTIDAD_CODIGO;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.REQUEST_STATUS_CODE;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoFoto;
 import es.pfsgroup.plugin.rem.model.DtoActivoAdministracion;
 import es.pfsgroup.plugin.rem.model.DtoActivoCargas;
@@ -2816,40 +2817,16 @@ public class ActivoController extends ParadiseJsonController {
 	public ModelAndView propagarActivosMatriz(String idActivo, ModelMap model){
 		try{
 			
-			//Comprobaciones que se pedirán en la segunda parte del item HREOS-5784
-			/*DDTipoComercializacion comercializacionAlquiler = genericDao.get(DDTipoComercializacion.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDTipoComercializacion.CODIGOS_ALQUILER));
-			activoActual.setTipoComercializacion(comercializacionAlquiler);
-			activoActual.setBloqueoTipoComercializacionAutomatico(true);
+		model.put(RESPONSE_DATA_KEY, activoApi.getActivosPropagables(Long.valueOf(idActivo)));
 			
-			ActivoAgrupacion agr = activoDao.getAgrupacionPAByIdActivo(activoActual.getId());
-			List<Activo> listaUAs = activoAgrupacionActivoDao.getListUAsByIdAgrupacion(agr.getId());
-			float superficie_parcela = 0;
-			float superficie_util = 0;
-			float superficie_bajoRasante = 0;
-			float superficie_sobreRasante = 0;
 			
-			for (Activo activo : listaUAs) {
-				superficie_parcela += activo.getInfoRegistral().getSuperficieParcela();
-				superficie_util += activo.getInfoRegistral().getSuperficieUtil();
-				superficie_bajoRasante += activo.getInfoRegistral().getSuperficieBajoRasante();
-				superficie_sobreRasante += activo.getInfoRegistral().getSuperficieSobreRasante();
-			}
+		} catch (JsonViewerException jvex) {
+						model.put(RESPONSE_SUCCESS_KEY, false);
+						model.put(RESPONSE_ERROR_MESSAGE_KEY, jvex.getMessage());
+						logger.error(jvex.getMessage());
+						throw new JsonViewerException(jvex.getMessage());
+		}catch (Exception e) {
 			
-			if(superficie_parcela > activoActual.getInfoRegistral().getSuperficieParcela()) {
-				throw new JsonViewerException("La superficie de la parcela del activo es menor que la superficie de la parcela todal de las UAs");
-			}else if(superficie_util > activoActual.getInfoRegistral().getSuperficieUtil()) {
-				throw new JsonViewerException("La superficie útil del activo es menor que la superficie de útil todal de las UAs");
-			}else if(superficie_bajoRasante > activoActual.getInfoRegistral().getSuperficieUtil()) {
-				throw new JsonViewerException("La superficie bajo rasante  del activo es menor que la superficie de bajo rasante todal de las UAs");
-			}else if(superficie_sobreRasante > activoActual.getInfoRegistral().getSuperficieUtil()) {
-				throw new JsonViewerException("La superficie sobre rasante  del activo es menor que la superficie de sobre rasante todal de las UAs");
-			}
-			
-
- */	
-			
-			model.put(RESPONSE_DATA_KEY, activoApi.getActivosPropagables(Long.valueOf(idActivo)));
-		} catch (Exception e) {
 			logger.error("error en activoController", e);
 			model.put(RESPONSE_SUCCESS_KEY, false);
 			model.put(RESPONSE_ERROR_KEY, e.getMessage());

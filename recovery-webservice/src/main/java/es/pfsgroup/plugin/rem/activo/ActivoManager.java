@@ -1244,6 +1244,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					if (!Checks.esNulo(clienteGDPR.get(0).getTransferenciasInternacionales())) {
 						nuevoComprador.setTransferenciasInternacionales(clienteGDPR.get(0).getTransferenciasInternacionales());
 					}
+					if (!Checks.esNulo(oferta.getCliente().getIdPersonaHaya())) {
+						nuevoComprador.setIdPersonaHaya(new Long(oferta.getCliente().getIdPersonaHaya()));
+					}
 				}
 
 				genericDao.save(Comprador.class, nuevoComprador);

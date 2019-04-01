@@ -5743,10 +5743,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	
 	private RespuestaDescargarDocumento rellenarRespuestaDescarga(byte[] contenido, String nombreDocumento){
 		
-		Byte[] bytes = ArrayUtils.toObject(contenido);
-		
 		RespuestaDescargarDocumento respuesta = new RespuestaDescargarDocumento();
-		respuesta.setContenido(bytes);
 		respuesta.setNombreDocumento(nombreDocumento+".pdf");
 		
 		return respuesta;

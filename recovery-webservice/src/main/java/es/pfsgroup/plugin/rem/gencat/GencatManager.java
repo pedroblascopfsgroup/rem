@@ -57,6 +57,7 @@ import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
 import es.pfsgroup.plugin.rem.jbpm.activo.JBPMActivoTramiteManager;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjuntoActivo;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.AdecuacionGencat;
 import es.pfsgroup.plugin.rem.model.AdjuntoComunicacion;
@@ -95,6 +96,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoComunicacionGencat;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDSancionGencat;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoTrabajo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoComunicacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoNotificacionGencat;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
@@ -1509,6 +1511,21 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 		return false;
 	}
 	
+	@Override
+	public boolean esAgrupacionRestringida(DtoGencatSave gencatDto) {
+		
+		return activoApi.isActivoIntegradoAgrupacionRestringida(gencatDto.getIdActivo());			
+
+	}
+	@Override
+	public Long obtenerIdAgrupacionRestringida(DtoGencatSave gencatDto) {
+		if (!Checks.esNulo(gencatDto.getSancion()) && gencatDto.getSancion().equals(DDSancionGencat.COD_EJERCE)){
+			return activoApi.getIdAgrupacionActivoAgrRestringidaPorActivoId(gencatDto.getIdActivo());
+		}
+		else {
+			return null;
+		}
+	}
 	public void dtoToBeanPreSave(ComunicacionGencat cg , DtoGencatSave gencatDto)
 	{		
 		DDSancionGencat sancion = (DDSancionGencat) utilDiccionarioApi.dameValorDiccionarioByCod( DDSancionGencat.class , gencatDto.getSancion() );	

@@ -273,4 +273,21 @@ public interface GencatApi {
 	 * @return boolean
 	 */
 	public boolean comprobacionDocumentoAnulacion(Long idActivo);
+	
+	 /* Obtiene si tiene la agrupación del activo es Restringida, devuelve true si lo es
+	 * 
+	 * @param gencatDto
+	 * @return boolean
+	 */
+	
+	public boolean esAgrupacionRestringida(DtoGencatSave gencatDto);
+	
+	 /* Obtiene el id de la agrupación del activo cuando es Restringida
+	 * 
+	 * @param gencatDto
+	 * @return Long
+	 */
+
+	public Long obtenerIdAgrupacionRestringida(DtoGencatSave gencatDto);
+
 }

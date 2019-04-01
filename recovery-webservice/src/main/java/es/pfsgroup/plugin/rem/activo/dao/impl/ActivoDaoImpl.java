@@ -395,6 +395,16 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 
 		return ((ActivoAgrupacionActivo) getHibernateTemplate().find(hb.toString()).get(0));
 	}
+	
+	@Override
+	public Long getIdAgrupacionActivoAgrRestringidaPorActivoId(Long id) {
+		HQLBuilder hb = new HQLBuilder(
+				"select act.agrupacion.id from ActivoAgrupacionActivo act where act.agrupacion.fechaBaja is null and act.activo.id = "
+						+ id + " and act.agrupacion.tipoAgrupacion.codigo = "
+						+ DDTipoAgrupacion.AGRUPACION_RESTRINGIDA);
+
+		return ((Long) getHibernateTemplate().find(hb.toString()).get(0));
+	}
 
 	@Override
 	public Integer isIntegradoAgrupacionObraNueva(Long id, Usuario usuLogado) {

@@ -1179,4 +1179,6 @@ public interface ActivoApi {
 	boolean esSubcarteraPromontoria(Long idActivo);
 
 	boolean esSubcarteraApple(Long idActivo);
+
+	Long getIdAgrupacionActivoAgrRestringidaPorActivoId(Long idActivo);
 }

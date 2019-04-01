@@ -216,4 +216,11 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 	Boolean todasLasOfertasEstanAnuladas(Long idActivo);
 
 	List<ActivoCalificacionNegativa> getListActivoCalificacionNegativaByIdActivoBorradoFalse(Long idActivo);
+	
+	/**
+	 * Devuelve el id de una agrupacion restringida.
+	 * @param id
+	 * @return Long
+	 */
+	Long getIdAgrupacionActivoAgrRestringidaPorActivoId(Long id);
 }

@@ -1,5 +1,7 @@
 package es.pfsgroup.plugin.rem.controller;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.ServletOutputStream;
@@ -26,16 +28,23 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
+import es.pfsgroup.plugin.rem.adapter.AgrupacionAdapter;
 import es.pfsgroup.plugin.rem.adapter.GencatAdapter;
+import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.GencatApi;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
+import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.AdjuntoComunicacion;
 import es.pfsgroup.plugin.rem.model.ComunicacionGencat;
 import es.pfsgroup.plugin.rem.model.DtoAltaVisita;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
+import es.pfsgroup.plugin.rem.model.DtoAgrupaciones;
 import es.pfsgroup.plugin.rem.model.DtoGencatSave;
 import es.pfsgroup.plugin.rem.model.DtoNotificacionActivo;
 import es.pfsgroup.plugin.rem.model.DtoReclamacionActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDSancionGencat;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoComunicacion;
 
 
@@ -50,6 +59,9 @@ public class GencatController {
 	private GencatApi gencatApi;
 	
 	@Autowired
+	private ActivoApi activoApi;
+	
+	@Autowired
 	private ActivoAdapter activoAdapter;
 	
 	@Autowired
@@ -60,6 +72,9 @@ public class GencatController {
 	
 	@Autowired
 	private GestorDocumentalAdapterApi gestorDocumentalAdapterApi;
+	
+	@Autowired
+	private AgrupacionAdapter agrupacionAdapter;
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
@@ -354,11 +369,43 @@ public class GencatController {
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView saveDatosComunicacion(DtoGencatSave gencatDto, ModelMap model) {
-
 		model.remove("dtoGencatSave");
-		if( gencatApi.saveDatosComunicacion(gencatDto) )
+
+		if(gencatApi.saveDatosComunicacion(gencatDto))
 		{
-			model.put("success", true);			
+			model.put("success", true);	
+			try {
+				
+				if (gencatApi.esAgrupacionRestringida(gencatDto)) {
+					
+					Long idAgrupacion = gencatApi.obtenerIdAgrupacionRestringida(gencatDto);
+					if(!Checks.esNulo(idAgrupacion)){
+						DtoAgrupaciones dtoAgrupacion = new DtoAgrupaciones();
+						Date date = Calendar.getInstance().getTime();
+						dtoAgrupacion.setFechaBaja(date);
+						dtoAgrupacion.setFechaFinVigencia(date);
+						
+						String success = agrupacionAdapter.saveAgrupacion(dtoAgrupacion, idAgrupacion);
+						
+						if(success.contains(AgrupacionAdapter.SPLIT_VALUE)){
+							String response[] = success.split(AgrupacionAdapter.SPLIT_VALUE);
+							if(response.length == 2)
+							{
+								model.put("success", response[0]);
+								model.put("errorMessage", response[1]);
+							}
+						}
+						else {
+							model.put("success", success);
+						}
+					}
+				}
+			}
+			catch (Exception e) {
+				logger.error("Error en gencatController al dar de baja la agrupación restringida", e);
+				model.put("errorMessage", e.getMessage());
+			}
+					
 		}
 		else
 		{
@@ -366,6 +413,7 @@ public class GencatController {
 			model.put("success", false);
 			model.put("errorMessage", "Ha habido un problema en el guardado del formulario.");
 		}
+
 		
 		return createModelAndViewJson(model);
 	}

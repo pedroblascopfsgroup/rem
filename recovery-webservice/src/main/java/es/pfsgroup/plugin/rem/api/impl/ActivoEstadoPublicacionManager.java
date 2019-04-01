@@ -17,7 +17,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import es.capgemini.devon.message.MessageService;
-import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.users.UsuarioManager;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -354,12 +353,14 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 
 	// Comprobación mínima.
 	private Boolean tienePrecioVenta(Long idActivo) {
-		return !Checks.esNulo(activoValoracionDao.getImporteValoracionVentaWebPorIdActivo(idActivo));
+		Double tienePrecioVenta = activoValoracionDao.getImporteValoracionVentaWebPorIdActivo(idActivo);
+		return !Checks.esNulo(tienePrecioVenta) && tienePrecioVenta != 0.0;
 	}
 
 	// Comprobación mínima.
 	private Boolean tienePrecioRenta(Long idActivo) {
-		return !Checks.esNulo(activoValoracionDao.getImporteValoracionRentaWebPorIdActivo(idActivo));
+		Double tienePrecioRenta = activoValoracionDao.getImporteValoracionRentaWebPorIdActivo(idActivo);
+		return !Checks.esNulo(tienePrecioRenta) && tienePrecioRenta != 0.0;
 	}
 
 	// Comprobación mínima.
@@ -396,7 +397,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 
 		if(!Checks.esNulo(ofertaAceptada)) {
 			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
-			if(DDEstadosExpedienteComercial.VENDIDO.equals(expediente.getEstado().getCodigo())) {
+			if(!Checks.esNulo(expediente) && !Checks.esNulo(expediente.getEstado()) && DDEstadosExpedienteComercial.VENDIDO.equals(expediente.getEstado().getCodigo())) {
 				return true;
 			}
 		}
@@ -412,7 +413,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 			ExpedienteComercial expediente = expedienteComercialApi.expedienteComercialPorOferta(ofertaAceptada.getId());
 			
 			
-			if (!Checks.esNulo(expediente.getReserva()) && !Checks.esNulo(expediente.getReserva().getEstadoReserva().getCodigo())){
+			if (!Checks.esNulo(expediente) && !Checks.esNulo(expediente.getReserva()) && !Checks.esNulo(expediente.getReserva().getEstadoReserva().getCodigo())){
 				
 				return DDEstadosReserva.CODIGO_FIRMADA.equals(expediente.getReserva().getEstadoReserva().getCodigo());
 			}
@@ -659,7 +660,8 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 			}
 			
 			activoPublicacion.setMotivoPublicacion(dto.getMotivoPublicacion());
-
+			activoPublicacion.setMotivoPublicacionAlquiler(dto.getMotivoPublicacionAlquiler());
+			
 			activoPublicacionDao.save(activoPublicacion);
 			
 			if((Checks.esNulo(dto.getOcultarVenta()) && !Checks.esNulo(dto.getMotivoOcultacionVentaCodigo())) || (Checks.esNulo(dto.getOcultarAlquiler()) && !Checks.esNulo(dto.getMotivoOcultacionAlquilerCodigo()))) {
@@ -725,6 +727,7 @@ public class ActivoEstadoPublicacionManager implements ActivoEstadoPublicacionAp
 				}
 				
 				activoPublicacion.setMotivoPublicacion(dto.getMotivoPublicacion());
+				activoPublicacion.setMotivoPublicacionAlquiler(dto.getMotivoPublicacionAlquiler());
 	
 				activoPublicacionDao.save(activoPublicacion);
 			}

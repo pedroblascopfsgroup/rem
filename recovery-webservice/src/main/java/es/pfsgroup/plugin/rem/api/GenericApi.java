@@ -31,6 +31,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoBloqueo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoCalculo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivoTPA;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPorCuenta;
 
@@ -253,4 +254,10 @@ public interface GenericApi {
 	 */
 	public List<DDTipoAgrupacion> getTodosComboTipoAgrupacion();
 
+	/**
+	 * Devuelve los tipos de titulo, filtrando por la posesión del activo
+	 * Si no se pasa ningun activo, devuelve la lista completa de tipos.
+	 * @return
+	 */
+	public List<DDTipoTituloActivoTPA> getComboTipoTituloActivoTPA(Long idActivo);
 }

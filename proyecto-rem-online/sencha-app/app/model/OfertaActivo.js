@@ -40,7 +40,12 @@ Ext.define('HreRem.model.OfertaActivo', {
     		name : 'precioPublicado'
     	},
     	{
-    		name : 'importeOferta'
+    		name : 'importeOferta',
+			type: 'number'
+    	},
+    	{
+    		name : 'importeContraOferta',
+			type: 'number'
     	},
     	{
     		name : 'estadoOferta'

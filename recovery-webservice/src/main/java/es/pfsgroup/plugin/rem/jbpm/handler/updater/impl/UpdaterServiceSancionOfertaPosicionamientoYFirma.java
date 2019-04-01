@@ -84,8 +84,10 @@ public class UpdaterServiceSancionOfertaPosicionamientoYFirma implements Updater
 					if(COMBO_FIRMA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())) {
 						Filter filtro;
 						if(DDSiNo.SI.equals(valor.getValor())){
-	
-							if(DDCartera.CODIGO_CARTERA_LIBERBANK.equals(ofertaAceptada.getActivoPrincipal().getCartera().getCodigo()) || (Checks.esNulo(expediente.getFechaContabilizacionPropietario()) && DDCartera.CODIGO_CARTERA_BANKIA.equals(ofertaAceptada.getActivoPrincipal().getCartera().getCodigo()))) {
+							String codCartera = ofertaAceptada.getActivoPrincipal().getCartera().getCodigo();
+							if(DDCartera.CODIGO_CARTERA_LIBERBANK.equals(codCartera)  
+									|| (Checks.esNulo(expediente.getFechaContabilizacionPropietario()) && DDCartera.CODIGO_CARTERA_BANKIA.equals(codCartera))
+									|| DDCartera.CODIGO_CARTERA_CERBERUS.equals(codCartera)) {
 								// Si el activo es de la cartera Bankia y no se ha hecho el ingreso de la compraventa (campo fecha ingreso cheque vacío).
 								filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadosExpedienteComercial.FIRMADO);
 							} else {
@@ -160,9 +162,11 @@ public class UpdaterServiceSancionOfertaPosicionamientoYFirma implements Updater
 							tituloActivo = genericDao.createFilter(FilterType.EQUALS, "codigo", valor.getValor());
 							tipoTitulo = genericDao.get(DDTipoTituloActivoTPA.class, tituloActivo);
 							
-							if((situacionPosesoria.getConTitulo().equals(DDTipoTituloActivoTPA.tipoTituloSi)) && (situacionPosesoria.getOcupado() == 1)){
+							if(!Checks.esNulo(situacionPosesoria) && !Checks.esNulo(situacionPosesoria.getConTitulo()) && (DDTipoTituloActivoTPA.tipoTituloSi.equals(situacionPosesoria.getConTitulo().getCodigo()) && situacionPosesoria.getOcupado() == 1)){
 								situacionPosesoria.setConTitulo(tipoTitulo);
 								situacionPosesoria.setOcupado(1);
+							}else if(!Checks.esNulo(situacionPosesoria) && !Checks.esNulo(situacionPosesoria.getConTitulo()) && (DDTipoTituloActivoTPA.tipoTituloNo.equals(situacionPosesoria.getConTitulo().getCodigo()) && situacionPosesoria.getOcupado() == 1)) {
+								//si esta okupado ilegalmente no se modifica la situación posesoria
 							}else{
 								situacionPosesoria.setConTitulo(tipoTitulo);
 								situacionPosesoria.setOcupado(0);

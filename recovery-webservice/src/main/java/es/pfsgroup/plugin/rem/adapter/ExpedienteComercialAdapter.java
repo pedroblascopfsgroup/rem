@@ -4,6 +4,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.beanutils.BeanUtils;
@@ -15,11 +16,14 @@ import org.springframework.transaction.annotation.Transactional;
 import es.capgemini.devon.beans.Service;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
+import es.capgemini.pfs.adjunto.model.Adjunto;
+import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.plugin.gestorDocumental.dto.documentos.CrearRelacionExpedienteDto;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.rem.activo.ActivoManager;
@@ -27,17 +31,23 @@ import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.AdjuntoComprador;
 import es.pfsgroup.plugin.rem.model.AdjuntoExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.Comprador;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
+import es.pfsgroup.plugin.rem.model.TmpClienteGDPR;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoDocumentoExpediente;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoDocumentoActivo;
 
 @Service
 public class ExpedienteComercialAdapter {
 
 	private static final String EXCEPTION_DOCUMENTO_SUBTIPO = "Error, solo se puede insertar 1 documento de este subtipo";
 	private static final String RELACION_TIPO_DOCUMENTO_EXPEDIENTE = "d-e";	
-	private static final String OPERACION_ALTA = "Alta";	
+	private static final String OPERACION_ALTA = "Alta";
+	private static final String ERROR_CREACION_CONTENEDOR = "Error creando el contenedor de la persona";
+	private static final String CREANDO_CONTENEDOR = "Creando contenedor...";
 
 	@Autowired
 	private GestorDocumentalAdapterApi gestorDocumentalAdapterApi;
@@ -57,8 +67,11 @@ public class ExpedienteComercialAdapter {
 	@Autowired
 	private GenericABMDao genericDao;
 	
+	@Autowired
+	private UploadAdapter uploadAdapter;
 	
-	protected static final Log logger = LogFactory.getLog(ActivoAdapter.class);
+	
+	protected static final Log logger = LogFactory.getLog(ExpedienteComercialAdapter.class);
 	
 	@Transactional(readOnly = false)
 	public List<DtoAdjunto> getAdjuntosExpedienteComercial(Long id)	throws GestorDocumentalException{
@@ -105,6 +118,191 @@ public class ExpedienteComercialAdapter {
 			listaAdjuntos = getAdjuntos(id, listaAdjuntos);
 		}
 		return listaAdjuntos;
+	}
+	
+	@Transactional(readOnly = false)
+	public List<DtoAdjunto> getAdjuntoExpedienteComprador(String idIntervinienteHaya, String docCliente,
+			Long idExpediente) throws GestorDocumentalException {
+		List<DtoAdjunto> listaAdjuntos = new ArrayList<DtoAdjunto>();
+		if (gestorDocumentalAdapterApi.modoRestClientActivado() && !Checks.esNulo(idIntervinienteHaya)) {
+			try {
+				listaAdjuntos = gestorDocumentalAdapterApi.getAdjuntosEntidadComprador(idIntervinienteHaya);
+			} catch (GestorDocumentalException gex) {
+				if (GestorDocumentalException.CODIGO_ERROR_CONTENEDOR_NO_EXISTE.equals(gex.getCodigoError())) {
+					crearContenedorComprador(idIntervinienteHaya, docCliente, idExpediente);
+				}
+				throw gex;
+			} catch (Exception ex) {
+				logger.error(ex.getMessage(), ex);
+			}
+		} else {
+			Filter filtroComprador = null;
+			Comprador comprador = null;
+			if (!Checks.esNulo(idIntervinienteHaya)) {
+				filtroComprador = genericDao.createFilter(FilterType.EQUALS, "idPersonaHaya",
+						Long.parseLong(idIntervinienteHaya));
+			} else {
+				filtroComprador = genericDao.createFilter(FilterType.EQUALS, "documento", docCliente);
+			}
+			comprador = genericDao.get(Comprador.class, filtroComprador);
+
+			DtoAdjunto dtoAdjunto = new DtoAdjunto();
+			AdjuntoComprador adjuntoComprador = null;
+
+			if (!Checks.esNulo(comprador) && !Checks.esNulo(comprador.getAdjunto())) {
+				adjuntoComprador = comprador.getAdjunto();
+			} else {
+				if (!Checks.esNulo(idIntervinienteHaya)) {
+					filtroComprador = genericDao.createFilter(FilterType.EQUALS, "idPersonaHaya",
+							Long.parseLong(idIntervinienteHaya));
+				} else {
+					filtroComprador = genericDao.createFilter(FilterType.EQUALS, "numDocumento",
+							comprador.getDocumento());
+				}
+				TmpClienteGDPR tmpClienteGDPR = genericDao.get(TmpClienteGDPR.class, filtroComprador);
+				if (!Checks.esNulo(tmpClienteGDPR) && !Checks.esNulo(tmpClienteGDPR.getIdAdjunto())) {
+					adjuntoComprador = genericDao.get(AdjuntoComprador.class,
+							genericDao.createFilter(FilterType.EQUALS, "id", tmpClienteGDPR.getIdAdjunto()));
+				}
+			}
+
+			if (!Checks.esNulo(adjuntoComprador)) {
+				dtoAdjunto.setId(adjuntoComprador.getId());
+				dtoAdjunto.setMatricula(adjuntoComprador.getMatricula());
+				dtoAdjunto.setNombre(adjuntoComprador.getNombreAdjunto());
+				dtoAdjunto.setDescripcionTipo(adjuntoComprador.getTipoDocumento());
+				listaAdjuntos.add(dtoAdjunto);
+			}
+		}
+		return listaAdjuntos;
+	}
+	
+	private void crearContenedorComprador(String idIntervinienteHaya,String docCliente,Long idExpediente){
+		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+		try {
+			logger.info(CREANDO_CONTENEDOR+" ID PERSONA: "+idIntervinienteHaya+", DOCUMENTO: "+docCliente);
+			Integer idPersonaHaya = gestorDocumentalAdapterApi.crearEntidadComprador(idIntervinienteHaya, usuarioLogado.getUsername(), null, null, idExpediente);
+			logger.debug("GESTOR DOCUMENTAL [ crearExpedienteComprador para " + docCliente + "]: ID PERSONA RECIBIDO " + idPersonaHaya);
+		} catch (Exception gexc) {
+			logger.error(ERROR_CREACION_CONTENEDOR, gexc);
+		}
+	}
+	
+	@Transactional(readOnly = false)
+	public String uploadDocumentoComprador(WebFileItem webFileItem, String idIntervinienteHaya, String docCliente) throws Exception {
+		
+		try {
+			Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+			AdjuntoComprador adjuntoComprador = new AdjuntoComprador();
+			Adjunto adj = null;
+			Long idDocRestClient = null;
+			
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoDocumentoActivo.CODIGO_CONSENTIMIENTO_PROTECCION_DATOS);
+			DDTipoDocumentoActivo tipoDocumento = genericDao.get(DDTipoDocumentoActivo.class, filtro);
+						
+			if (gestorDocumentalAdapterApi.modoRestClientActivado() && !Checks.esNulo(idIntervinienteHaya)) {
+				idDocRestClient = gestorDocumentalAdapterApi.uploadDocumentoEntidadComprador(idIntervinienteHaya, webFileItem, usuarioLogado.getUsername(), tipoDocumento.getMatricula());
+
+				if (!Checks.esNulo(idDocRestClient)) {
+					adjuntoComprador.setIdDocRestClient(idDocRestClient);
+				}
+			} else {
+				//Subida del adjunto en BBDD si el GD no esta activado.
+				adj = uploadAdapter.saveBLOB(webFileItem.getFileItem());
+								
+				if(!Checks.esNulo(adj)) {
+					adjuntoComprador.setAdjunto(adj.getId());
+				}
+			}
+			
+			adjuntoComprador.setMatricula(tipoDocumento.getMatricula());
+			adjuntoComprador.setNombreAdjunto(webFileItem.getFileItem().getFileName());
+			adjuntoComprador.setTipoDocumento(tipoDocumento.getDescripcion());
+			Auditoria.save(adjuntoComprador);
+			genericDao.save(AdjuntoComprador.class, adjuntoComprador);
+			
+			Filter filtroComprador = null;
+			Comprador comprador = null;
+			
+			if(!Checks.esNulo(idIntervinienteHaya)) {
+				filtroComprador = genericDao.createFilter(FilterType.EQUALS, "idPersonaHaya", Long.parseLong(idIntervinienteHaya));
+			} else {
+				filtroComprador = genericDao.createFilter(FilterType.EQUALS, "documento", docCliente);
+			}
+			comprador = genericDao.get(Comprador.class, filtroComprador);
+			
+			//Filtro para conseguir el registro del Adjunto
+			Filter filtroDocumento = null;
+			if (!Checks.esNulo(adj) && Checks.esNulo(idDocRestClient)) {
+				filtroDocumento = genericDao.createFilter(FilterType.EQUALS, "adjunto", adj.getId());
+			} else if (Checks.esNulo(adj) && !Checks.esNulo(idDocRestClient)){
+				filtroDocumento = genericDao.createFilter(FilterType.EQUALS, "idDocRestClient", idDocRestClient);
+			}
+			
+			if (!Checks.esNulo(filtroDocumento))
+				adjuntoComprador = genericDao.get(AdjuntoComprador.class, filtroDocumento);
+			
+			if(!Checks.esNulo(comprador)) {
+				//Actualizacion de cliente para adjuntar documento
+				comprador.setAdjunto(adjuntoComprador);
+				Auditoria.save(comprador);
+				genericDao.update(Comprador.class, comprador);
+			} else {
+				if(!Checks.esNulo(idIntervinienteHaya)) {
+					filtroComprador = genericDao.createFilter(FilterType.EQUALS, "idPersonaHaya", Long.parseLong(idIntervinienteHaya));
+				} else {
+					filtroComprador = genericDao.createFilter(FilterType.EQUALS, "numDocumento", docCliente);
+				}
+				TmpClienteGDPR tmpClienteGDPR = genericDao.get(TmpClienteGDPR.class, filtroComprador);
+				if(!Checks.esNulo(tmpClienteGDPR)) {
+					tmpClienteGDPR.setIdAdjunto(adjuntoComprador.getId());
+					genericDao.update(TmpClienteGDPR.class, tmpClienteGDPR);
+				}
+			}				
+		} catch (GestorDocumentalException gex) {
+				logger.error(gex.getMessage());
+				return gex.getMessage();
+		} catch (Exception ex) {
+			logger.error(ex.getMessage());
+			return ex.getMessage();
+		}
+		return null;
+	}
+	
+	@Transactional(readOnly = false)
+	public boolean deleteAdjuntoComprador(AdjuntoComprador adjuntoComprador, Comprador comprador) {
+		boolean borrado = true;
+		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+			if (gestorDocumentalAdapterApi.modoRestClientActivado()) {	
+				try {
+					borrado = gestorDocumentalAdapterApi.borrarAdjunto(adjuntoComprador.getIdDocRestClient(), usuarioLogado.getUsername());
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+				
+			if(borrado) {
+				//Borrado lógico del documento
+				adjuntoComprador.getAuditoria().setBorrado(true);
+				adjuntoComprador.getAuditoria().setUsuarioBorrar(usuarioLogado.getUsername());
+				adjuntoComprador.getAuditoria().setFechaBorrar(new Date());
+				genericDao.update(AdjuntoComprador.class, adjuntoComprador);
+				
+				if (!Checks.esNulo(comprador)) {
+					//Actualizacion del campo en Comprador
+					comprador.setAdjunto(null);
+					Auditoria.save(comprador);
+					genericDao.update(Comprador.class, comprador);
+				} else {
+					Filter filtroDocumento = genericDao.createFilter(FilterType.EQUALS, "idAdjunto", adjuntoComprador.getId());
+					TmpClienteGDPR tmpClienteGDPR = genericDao.get(TmpClienteGDPR.class, filtroDocumento);
+					if(!Checks.esNulo(tmpClienteGDPR)) {
+						tmpClienteGDPR.setIdAdjunto(null);
+						genericDao.update(TmpClienteGDPR.class, tmpClienteGDPR);
+					}
+				}
+			}
+		return borrado;		
 	}
 
 	public List<DtoAdjunto> getAdjuntos(Long idExpediente, List<DtoAdjunto> listaAdjuntos) {

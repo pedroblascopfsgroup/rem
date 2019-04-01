@@ -479,8 +479,8 @@ Ext.define('HreRem.view.common.GridBaseEditableRow', {
                 		
                 	}catch(err) {}
                 	
-                	if(!Ext.isEmpty(response) && !Ext.isEmpty(response.msg)) {
-                		me.fireEvent("errorToast", response.msg);
+                	if(!Ext.isEmpty(response) && !Ext.isEmpty(response.msgError)) {
+                		me.fireEvent("errorToast", response.msgError);
                 	} else {
                 		me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
                 	}                        	

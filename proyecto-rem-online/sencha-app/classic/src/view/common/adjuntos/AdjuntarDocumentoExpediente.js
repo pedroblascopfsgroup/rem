@@ -228,46 +228,6 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoExpediente', {
     	];
     	
     	me.callParent();
-    },
-    
-    onClickBotonAdjuntarDocumento: function(btn) {
-    	
-    	var me = this,
-    	form = me.down("form");
-    	if(form.isValid()){
-    		var comboSubtipoDocumento = form.down("[name=subtipo]"); 
-    		var subtipoDocumento = comboSubtipoDocumento.findRecordByValue(comboSubtipoDocumento.getValue());
-    		var activosSeleccionados = [];
-    		
-    		Ext.Array.each(me.down('gridBase').getSelection(), function(selected, index) {
-    		 	activosSeleccionados.push(selected.get("numActivo"));
-    		});
-    		
-	            
-            form.submit({
-                waitMsg: HreRem.i18n('msg.mask.loading'),
-                params: {idEntidad: me.idEntidad, activos: activosSeleccionados.toString()},
-                success: function(fp, o) {
-                	
-                	if(o.result.success == "false") {
-                		me.fireEvent("errorToast", o.result.errores);
-                	}else{
-                		me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-                	}
-                	if(!Ext.isEmpty(me.parent)) {
-                		me.parent.fireEvent("afterupload", me.parent);
-                	}
-                    me.close();
-                }, 
-                failure: function(fp, o) {
-                	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-                }
-            });
-			
-        }
-    	
-    	
-    	
     }
 });
     

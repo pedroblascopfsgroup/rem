@@ -67,6 +67,15 @@ public class TitularesAdicionalesOferta  implements Serializable, Auditable {
 	@Column(name="TIA_DIRECCION")
 	private String direccion;
 	
+	@Column(name="TIA_RECHAZAR_PUBLI")
+	private Boolean rechazarCesionDatosPublicidad;
+	 
+	@Column(name="TIA_RECHAZAR_PROPI")
+	private Boolean rechazarCesionDatosPropietario;
+	
+	@Column(name="TIA_RECHAZAR_PROVE")
+	private Boolean rechazarCesionDatosProveedores;
+	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "DD_LOC_ID")
 	private Localidad localidad;
@@ -92,14 +101,14 @@ public class TitularesAdicionalesOferta  implements Serializable, Auditable {
     
     @Column(name = "TIA_DOCUMENTO")
     private String documento;
-  
+    
     @Version   
 	private Long version;
 
 	@Embedded
 	private Auditoria auditoria;
 	
-	
+    
 	
 	
     public Long getId() {
@@ -210,4 +219,29 @@ public class TitularesAdicionalesOferta  implements Serializable, Auditable {
 		this.regimenMatrimonial = regimenMatrimonial;
 	}
 
+	public Boolean getRechazarCesionDatosPublicidad() {
+		return rechazarCesionDatosPublicidad;
+	}
+
+	public void setRechazarCesionDatosPublicidad(Boolean rechazarCesionDatosPublicidad) {
+		this.rechazarCesionDatosPublicidad = rechazarCesionDatosPublicidad;
+	}
+
+	public Boolean getRechazarCesionDatosPropietario() {
+		return rechazarCesionDatosPropietario;
+	}
+
+	public void setRechazarCesionDatosPropietario(Boolean rechazarCesionDatosPropietario) {
+		this.rechazarCesionDatosPropietario = rechazarCesionDatosPropietario;
+	}
+
+	public Boolean getRechazarCesionDatosProveedores() {
+		return rechazarCesionDatosProveedores;
+	}
+
+	public void setRechazarCesionDatosProveedores(Boolean rechazarCesionDatosProveedores) {
+		this.rechazarCesionDatosProveedores = rechazarCesionDatosProveedores;
+	}
+
+	
 }

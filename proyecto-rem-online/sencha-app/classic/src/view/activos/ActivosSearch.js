@@ -435,7 +435,7 @@ Ext.define('HreRem.view.activos.ActivosSearch', {
 						            	name:		'conTitulo',
 						            	reference:	'conTitulo',
 							        	bind: {
-						            		store: '{comboDDTipoTituloActivoTPA}'
+						            		store: '{comboDDTipoTituloActivo}'
 						            	}
 							        },
 							        {

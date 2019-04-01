@@ -45,7 +45,6 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoHabitaculo;
 import es.pfsgroup.plugin.rem.rest.api.DtoToEntityApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
-import es.pfsgroup.plugin.rem.rest.api.RestApi.ENTIDADES;
 import es.pfsgroup.plugin.rem.rest.api.RestApi.TIPO_VALIDACION;
 import es.pfsgroup.plugin.rem.rest.dao.impl.GenericaRestDaoImp;
 import es.pfsgroup.plugin.rem.rest.dto.InformeMediadorDto;
@@ -1241,18 +1240,18 @@ public class InformeMediadorManager implements InformeMediadorApi {
 			if (infoAux != null && infoAux.getId() != null) {
 				if ((infoAux.getId() != null && infoAux.getTipoActivo() != null && informe.getCodTipoActivo() != null
 						&& !infoAux.getTipoActivo().getCodigo().equals(informe.getCodTipoActivo()))
-						|| (infoAux.getId() != null && infoAux.getTipoActivo() == null)
+						|| (infoAux.getId() != null && infoAux.getTipoActivo() == null
+								&& !infoAux.getActivo().getTipoActivo().getCodigo().equals(informe.getCodTipoActivo()))
 						|| ((ActivoInfoComercial) objeto).getId() == null) {
-					if(infoAux.getMediadorInforme() != null){
+					if (infoAux.getMediadorInforme() != null) {
 						idProveedor = infoAux.getMediadorInforme().getId();
 					}
-					
+
 					genericaRestDaoImp.deleteInformeMediador(infoAux);
-					//((ActivoInfoComercial) objeto).setAuditoria(null);
-					//((ActivoInfoComercial) objeto).setId(null);
 				}
 			}
 		}
+
 		return idProveedor;
 	}
 

@@ -19,7 +19,7 @@ import es.pfsgroup.plugin.rem.model.DtoCondicionEspecificaAgrupacion;
 import es.pfsgroup.plugin.rem.model.DtoEstadoDisponibilidadComercial;
 import es.pfsgroup.plugin.rem.model.DtoSubdivisiones;
 import es.pfsgroup.plugin.rem.model.DtoVigenciaAgrupacion;
-import es.pfsgroup.plugin.rem.model.GestorActivo;
+import es.pfsgroup.plugin.rem.rest.dto.ActivosLoteOfertaDto;
 import es.pfsgroup.plugin.rem.rest.dto.File;
 
 public interface ActivoAgrupacionApi {
@@ -140,8 +140,8 @@ public interface ActivoAgrupacionApi {
 	Boolean saveCondicionEspecifica(DtoCondicionEspecificaAgrupacion dto);
 	
 	Boolean darDeBajaCondicionEspecifica(DtoCondicionEspecificaAgrupacion dto);
-
-	public Usuario getGestorComercialAgrupacion(List<Long> numActivos);
 	
 	public Boolean arrayComparer(Long idAgr, List<Long> agrupaciones);
+
+	Usuario getGestorComercialAgrupacion(List<ActivosLoteOfertaDto> dtoActivos);
 }

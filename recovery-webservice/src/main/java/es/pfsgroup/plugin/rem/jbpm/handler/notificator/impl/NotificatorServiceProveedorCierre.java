@@ -13,7 +13,6 @@ import es.capgemini.devon.mail.MailManager;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
-import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.notificator.AbstractNotificatorService;
 import es.pfsgroup.plugin.rem.jbpm.handler.notificator.NotificatorService;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
@@ -27,8 +26,6 @@ public class NotificatorServiceProveedorCierre extends AbstractNotificatorServic
 	@Autowired
 	private GenericAdapter genericAdapter;
 	
-	@Autowired
-	private ActivoTramiteApi activoTramiteApi;
 	
 	
 	@Override

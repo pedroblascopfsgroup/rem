@@ -116,8 +116,24 @@ public class Comprador implements Serializable, Auditable {
 	@Embedded
 	private Auditoria auditoria;
     
+	//Se añaden nuevos atributos. HREOS-4851
+    @Column(name = "COM_CESION_DATOS")
+    private Boolean cesionDatos;
+    
+    @Column(name = "COM_TRANSF_INTER")
+    private Boolean transferenciasInternacionales;
+    
+    @Column(name = "COM_COMUNI_TERCEROS")
+    private Boolean comunicacionTerceros;
 
+    @Column(name = "ID_PERSONA_HAYA")
+    private Long idPersonaHaya;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ADCOM_ID")
+    private AdjuntoComprador adjunto;
 	
+
 	public Long getId() {
 		return id;
 	}
@@ -283,5 +299,45 @@ public class Comprador implements Serializable, Auditable {
 
 	public void setCompradorEnviado(Date compradorEnviado) {
 		this.compradorEnviado = compradorEnviado;
+	}
+
+	public Boolean getCesionDatos() {
+		return cesionDatos;
+	}
+
+	public void setCesionDatos(Boolean cesionDatos) {
+		this.cesionDatos = cesionDatos;
+	}
+
+	public Boolean getComunicacionTerceros() {
+		return comunicacionTerceros;
+	}
+
+	public void setComunicacionTerceros(Boolean comunicacionTerceros) {
+		this.comunicacionTerceros = comunicacionTerceros;
+	}
+
+	public Boolean getTransferenciasInternacionales() {
+		return transferenciasInternacionales;
+	}
+
+	public void setTransferenciasInternacionales(Boolean transferenciasInternacionales) {
+		this.transferenciasInternacionales = transferenciasInternacionales;
+	}
+	
+	public Long getIdPersonaHaya() {
+		return idPersonaHaya;
+	}
+
+	public void setIdPersonaHaya(Long idPersonaHaya) {
+		this.idPersonaHaya = idPersonaHaya;
+	}
+	
+	public AdjuntoComprador getAdjunto() {
+		return adjunto;
+	}
+
+	public void setAdjunto(AdjuntoComprador adjunto) {
+		this.adjunto = adjunto;
 	}
 }

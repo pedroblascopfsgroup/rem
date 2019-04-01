@@ -328,7 +328,7 @@ public class TrabajoController extends ParadiseJsonController {
 			trustMe.registrarSuceso(request, id, ENTIDAD_CODIGO.CODIGO_TRABAJO, "adjuntos", ACCION_CODIGO.CODIGO_VER);
 
 		} catch(GestorDocumentalException gex) {
-			logger.error(ERROR_GD_NO_EXISTE_CONTENEDOR);
+			logger.info(ERROR_GD_NO_EXISTE_CONTENEDOR);
 			trustMe.registrarError(request, id, ENTIDAD_CODIGO.CODIGO_TRABAJO, "adjuntos", ACCION_CODIGO.CODIGO_VER, REQUEST_STATUS_CODE.CODIGO_ESTADO_KO);
 		} catch(Exception ex) {
 			logger.error(ex.getMessage());
@@ -875,6 +875,7 @@ public class TrabajoController extends ParadiseJsonController {
 		} catch (Exception e) {
 			model.put("success", false);
 			model.put("msg", "Se ha producido un error al ejecutar la petición.");
+			logger.error("error obteniendo contactos",e);
 		}
 		return createModelAndViewJson(model);
 		

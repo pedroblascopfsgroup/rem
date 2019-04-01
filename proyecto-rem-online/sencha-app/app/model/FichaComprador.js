@@ -17,12 +17,6 @@ Ext.define('HreRem.model.FichaComprador', {
 		    	name: 'idExpedienteComercial'
 		},
 		{
-		    	name: 'codTipoPersona'
-		},
-		{
-		    	name: 'titularReserva'
-		},
-		{
 		    	name: 'descripcionTipoPersona'
 		},
 		{
@@ -72,6 +66,12 @@ Ext.define('HreRem.model.FichaComprador', {
 		},
 		{
 		    	name: 'descripcionEstadoCivil'
+		},
+		{
+		    	name: 'codTipoDocumentoConyuge'
+		},
+		{
+	    		name: 'descripcionTipoDocumentoConyuge'
 		},
 		{
 		    	name: 'documentoConyuge'
@@ -185,22 +185,63 @@ Ext.define('HreRem.model.FichaComprador', {
 			name: 'codigoPaisRte'
 		},
 		{
-			name: 'esBH'
-		}
+			name: 'esBankia',
+			type : 'boolean'
+		},
+		{
+			name: 'esBH',
+			type : 'boolean'
+		},
+		{
+    		name: 'esCarteraBankia', 
+    		type : 'boolean'
+    			
+    	},
+    	{
+    		name: 'mostrarUrsus', 
+    		type : 'boolean'
+    			
+    	},
+    	{
+    		name: 'mostrarUrsusBh', 
+    		type : 'boolean'
+    			
+    	},
+		{
+			name: 'entidadPropietariaCodigo'
+		},
+		{
+			name: 'idDocAdjunto'
+		},
+		{
+        	name: 'cesionDatos',
+        	type : 'boolean'
+        },
+        {
+        	name: 'comunicacionTerceros',
+        	type : 'boolean'
+        },
+        {
+        	name: 'transferenciasInternacionales',
+        	type : 'boolean'
+        },
+        {
+        	name: 'pedirDoc',
+        	type : 'boolean'
+        }
 		
     ],
     
 	proxy: {
 		type: 'uxproxy',
+		writeAll: true,
 		remoteUrl: 'expedientecomercial/getCompradorById',
 		api: {
             read: 'expedientecomercial/getCompradorById',
             create: 'expedientecomercial/createComprador',
             update: 'expedientecomercial/saveFichaComprador',
             destroy: 'expedientecomercial/findOne'
-        }
-        
-        
-    }    
+        }       
+	}    
 
 });

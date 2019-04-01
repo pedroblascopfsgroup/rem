@@ -41,7 +41,7 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoActivoProyecto', {
 			}
     	});
 
-    	me.buttons = [ { formBind: true, itemId: 'btnGuardar', text: 'Adjuntar', handler: 'onClickBotonAdjuntarDocPromo', scope: this},{ itemId: 'btnCancelar', text: 'Cancelar', handler: 'closeWindow', scope: this}];
+    	me.buttons = [ { formBind: true, itemId: 'btnGuardar', text: 'Adjuntar', handler: 'onClickBotonAdjuntarDocumento', scope: this},{ itemId: 'btnCancelar', text: 'Cancelar', handler: 'closeWindow', scope: this}];
 
     	me.items = [
     				{
@@ -108,36 +108,5 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoActivoProyecto', {
     	];
 
     	me.callParent();
-    },
-
-    onClickBotonAdjuntarDocPromo: function(btn) {
-
-    	var me = this,
-    	form = me.down("form");
-    	if(form.isValid()){
-
-            form.submit({
-                waitMsg: HreRem.i18n('msg.mask.loading'),
-                params: {idEntidad: me.idEntidad},
-                success: function(fp, o) {
-
-                	if(o.result.success == "false") {
-                		me.fireEvent("errorToast", o.result.errorMessage);
-                	}else{
-                		me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-                	}
-                	if(!Ext.isEmpty(me.parent)) {
-                		me.parent.fireEvent("afterupload", me.parent);
-                	}
-                    me.close();
-                },
-                failure: function(fp, o) {
-                	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
-                }
-            });
-        }
-
-
-
     }
 });

@@ -1,5 +1,8 @@
 package es.pfsgroup.plugin.rem.controller;
 
+import java.io.IOException;
+import java.nio.charset.Charset;
+
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -13,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
+import es.capgemini.devon.exception.UserException;
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.utils.FileUtils;
@@ -83,12 +87,12 @@ public class PromocionController extends ParadiseJsonController {
 	 */
 	@RequestMapping(method = RequestMethod.GET)
 	public void bajarAdjuntoActivoPromocion(HttpServletRequest request, HttpServletResponse response) {
-
+		ServletOutputStream salida = null;
 		Long id = null;
 		try {
 			id = Long.parseLong(request.getParameter("id"));
 			String nombreDocumento = request.getParameter("nombreDocumento");
-			ServletOutputStream salida = response.getOutputStream();
+			salida = response.getOutputStream();
 			FileItem fileItem = promocionAdapter.download(id,nombreDocumento);
 			response.setHeader("Content-disposition", "attachment; filename=" + fileItem.getFileName());
 			response.setHeader("Cache-Control", "must-revalidate, post-check=0,pre-check=0");
@@ -103,10 +107,23 @@ public class PromocionController extends ParadiseJsonController {
 			
 			// Write
 			FileUtils.copy(fileItem.getInputStream(), salida);
-			salida.flush();
-			salida.close();
+			
+		}catch(UserException ex) {
+			try {
+				salida.write(ex.toString().getBytes(Charset.forName("UTF-8")));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+	
 		} catch (Exception e) {
 			logger.error("error en activoController", e);
+		}finally {
+			try {
+				salida.flush();			
+				salida.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 
 	}

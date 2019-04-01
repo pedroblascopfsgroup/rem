@@ -91,7 +91,6 @@ Ext.define('HreRem.view.activos.detalle.PatrimonioActivoTabPanel', {
 	initComponent: function () {
 	     var me = this;
 	     me.callParent();
-	          	     
 	     me.add({xtype: 'datospatrimonio', ocultarBotonesEdicion: false, title: HreRem.i18n('title.datos.basicos')})
 	     me.add({xtype: 'contratospatrimonio', ocultarBotonesEdicion: true, bind: {disabled:'{!esActivoAlquilado}'}, title: HreRem.i18n('title.patrimonio.datos.patrimonio.contratos')})
 	 },

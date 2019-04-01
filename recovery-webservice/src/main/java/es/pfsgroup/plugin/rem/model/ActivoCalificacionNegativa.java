@@ -24,7 +24,9 @@ import org.hibernate.annotations.Where;
 import es.capgemini.pfs.auditoria.Auditable;
 import es.capgemini.pfs.auditoria.model.Auditoria;
 import es.pfsgroup.plugin.rem.model.dd.DDCalificacionNegativa;
+import es.pfsgroup.plugin.rem.model.dd.DDEstadoMotivoCalificacionNegativa;
 import es.pfsgroup.plugin.rem.model.dd.DDMotivoCalificacionNegativa;
+import es.pfsgroup.plugin.rem.model.dd.DDResponsableSubsanar;
 
 /**
  * Modelo que gestiona la calificacion negativa de un activo
@@ -34,6 +36,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDMotivoCalificacionNegativa;
 @Entity
 @Table(name = "ACT_CAN_CALIFICACION_NEG", schema = "${entity.schema}")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@Where(clause = Auditoria.UNDELETED_RESTICTION)
 public class ActivoCalificacionNegativa implements Serializable, Auditable {
 
 
@@ -59,12 +62,31 @@ public class ActivoCalificacionNegativa implements Serializable, Auditable {
     
     @Column(name = "CAN_DESCRIPCION")
 	private String descripcion;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "DD_EMN_ID")
+  	private DDEstadoMotivoCalificacionNegativa estadoMotivoCalificacioNegativa;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "DD_RSU_ID")
+  	private DDResponsableSubsanar responsableSubsanar;
+    
+    @Column(name = "ACT_FECHA_SUBSANACION")
+	private Date fechaSubsanacion;
 
 	@Version   
 	private Long version;
 	
 	@Embedded
 	private Auditoria auditoria;
+
+	public Date getFechaSubsanacion() {
+		return fechaSubsanacion;
+	}
+
+	public void setFechaSubsanacion(Date fechaSubsanacion) {
+		this.fechaSubsanacion = fechaSubsanacion;
+	}
 
 	public Long getId() {
 		return id;
@@ -123,7 +145,20 @@ public class ActivoCalificacionNegativa implements Serializable, Auditable {
 		this.auditoria = auditoria;
 	}
 	
+
+	public DDEstadoMotivoCalificacionNegativa getEstadoMotivoCalificacionNegativa() {
+		return estadoMotivoCalificacioNegativa;
+	}
+
+	public void setEstadoMotivoCalificacionNegativa(DDEstadoMotivoCalificacionNegativa estadoMotivoCalificacioNegativa) {
+		this.estadoMotivoCalificacioNegativa = estadoMotivoCalificacioNegativa;
+	}
 	
-	
+	public DDResponsableSubsanar getResponsableSubsanar () {
+		return responsableSubsanar;
+	}
+	public void setResponsableSubsanar(DDResponsableSubsanar responsableSubsanar) {
+		this.responsableSubsanar = responsableSubsanar;
+	}
 	
 }

@@ -304,8 +304,12 @@ public class MSVActualizadorPublicadoVentaExcelValidator extends MSVExcelValidat
 		int i = 0;
 		try{
 			for(i=1; i<this.numFilasHoja;i++){
-				if(particularValidator.isActivoPublicadoVenta(exc.dameCelda(i, 0)))
-					listaFilas.add(i);
+				if(particularValidator.isActivoDestinoComercialNoAlquiler(exc.dameCelda(i, 0))) {
+					if(particularValidator.isActivoPublicadoVenta(exc.dameCelda(i, 0))) {
+						listaFilas.add(i);
+					}
+				}
+				
 			}
 		}catch (Exception e){
 			if(i!=0) listaFilas.add(i);

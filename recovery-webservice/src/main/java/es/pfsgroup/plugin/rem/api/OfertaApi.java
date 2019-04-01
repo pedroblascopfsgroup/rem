@@ -12,11 +12,13 @@ import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
+import es.pfsgroup.plugin.rem.model.DtoClienteComercial;
 import es.pfsgroup.plugin.rem.model.DtoDetalleOferta;
 import es.pfsgroup.plugin.rem.model.DtoGastoExpediente;
 import es.pfsgroup.plugin.rem.model.DtoHonorariosOferta;
 import es.pfsgroup.plugin.rem.model.DtoOfertantesOferta;
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
+import es.pfsgroup.plugin.rem.model.DtoPropuestaAlqBankia;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.Trabajo;
@@ -327,14 +329,14 @@ public interface OfertaApi {
 	 */
 	public boolean checkComiteSancionador(TareaExterna tareaExterna);
 	
-	
+
 	/**
 	 * Metodo que comprueba si la oferta tiene el comite sancionador alquiler HAYA
 	 * @param tareaExterna
 	 * @return
 	 */
 	public boolean checkComiteSancionadorAlquilerHaya(TareaExterna tareaExterna);
-	
+
 	/**
 	 * Método que comprueba si el activo tiene atribuciones para sancionar el
 	 * expediente
@@ -542,7 +544,7 @@ public interface OfertaApi {
 	 * @return ActivoProveedor
 	 */
 	public ActivoProveedor getPreescriptor(Oferta oferta);
-	
+
 	public void desocultarActivoOferta(Oferta oferta) throws Exception;
 	
 	/**
@@ -564,11 +566,45 @@ public interface OfertaApi {
 
 	Boolean checkNifConyugueLBB(TareaExterna tareaExterna);
 
-	/*
+	/**
 	 * Método que comprueba que la oferta está activa, es decir, el estado de la oferta es: Tramitada, Congelada o Pendiente.
 	 */
 	boolean estaViva(Oferta oferta);
-	
+
 	public List<Oferta> getListaOfertasByActivo(Activo activo);
+
+	public List<DtoPropuestaAlqBankia> getListPropuestasAlqBankiaFromView(Long ecoId);
+
+	/**
+	 * @param idActivo
+	 * @param comprador
+	 * @return TRUE ->NO hace falta pedir documentación. FALSE ->Sí hace falta.
+	 */
+	boolean checkPedirDoc(Long idActivo, Long idAgrupacion,Long idExpediente, String dniComprador, String codtipoDoc);
+
+	DtoClienteComercial getClienteComercialByTipoDoc(String dniComprador, String codtipoDoc);
+
+	DtoClienteComercial getClienteGDPRByTipoDoc(String dniComprador, String codtipoDoc);
+
+	public void llamadaMaestroPersonas(String numDocCliente, String cartera);
+	
+	/**
+	 * Devuelve el destino comercial segun el id del activo.
+	 * @return String destino comercial del activo.
+	 */
+	public String getDestinoComercialActivo(Long idActivo, Long idAgrupacion, Long idExpediente);
+	
+	/**
+	 * Devuelve un booleano indicando si existe el cliente GDPR o el comprador.
+	 * @param idActivo
+	 * @param idAgrupacion
+	 * @param idExpediente
+	 * @param docCliente
+	 * @param codtipoDoc
+	 * @return boolean si existe el cliente o el comprador.
+	 */
+	public boolean existeClienteOComprador(Long idActivo, Long idAgrupacion, Long idExpediente, String docCliente, String codtipoDoc);
+	
+	public boolean esCarteraInternacional(Long idActivo, Long idAgrupacion, Long idExpediente);
 }
 

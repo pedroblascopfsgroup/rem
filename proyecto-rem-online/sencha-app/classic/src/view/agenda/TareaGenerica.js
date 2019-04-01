@@ -131,7 +131,6 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
             }
 
             me.campos[i].msgTarget = 'side';
-
             //Este switch seg�n el caso reutiliza las propiedades de items que se han
             // definido en el array "me.campos[]" o crean arrays de items nuevos.
             // Si creas un nuevo "case" y decides crear un array nuevo en lugar de reutilizar
@@ -799,9 +798,14 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 
     T004_FijacionPlazoValidacion: function() {
         var me = this;
+        var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
         
         me.down('[name=fechaTope]').allowBlank = true;
-        me.down('[name=fechaConcreta]').allowBlank = true;
+        if(CONST.CARTERA['CERBERUS'] == codigoCartera || CONST.CARTERA['EGEO'] == codigoCartera){
+        	me.down('[name=fechaConcreta]').allowBlank = false;
+        }else{
+        	me.down('[name=fechaConcreta]').allowBlank = true;
+        }
         me.down('[name=horaConcreta]').allowBlank = true;
         
         if (me.down('[name=fechaTope]').value != null) {
@@ -1141,12 +1145,6 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 		}else{
 			me.ocultarCampo(comiteSuperior);
 		}
-		
-		if(CONST.CARTERA['LIBERBANK'] == codigoCartera) {
-			me.bloquearCampo(comite);
-		} else {
-			me.desbloquearCampo(comite);
-		}
 	},
 	T013_DocumentosPostVentaValidacion: function() {
 		var me = this;
@@ -1158,16 +1156,16 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 		if(CONST.CARTERA['BANKIA'] == codigoCartera && CONST.SUBCARTERA['BH'] != codigoSubcartera){
 			me.deshabilitarCampo(me.down('[name=checkboxVentaDirecta]'));
 			me.deshabilitarCampo(me.down('[name=fechaIngreso]'));
-		}else if(!Ext.isEmpty(fechaIngreso.getValue()) && CONST.CARTERA['CAJAMAR'] != codigoCartera) {
+		}else if(!Ext.isEmpty(fechaIngreso.getValue()) && CONST.CARTERA['CAJAMAR'] != codigoCartera && (CONST.CARTERA['CERBERUS'] == codigoCartera && CONST.SUBCARTERA['AGORAINMOBILIARIO'] != codigoSubcartera)) {
 			me.deshabilitarCampo(me.down('[name=checkboxVentaDirecta]'));
 			me.bloquearCampo(me.down('[name=fechaIngreso]'));
-		} else if(Ext.isEmpty(fechaIngreso.getValue()) && CONST.CARTERA['CAJAMAR'] != codigoCartera) {
+		} else if(Ext.isEmpty(fechaIngreso.getValue()) && CONST.CARTERA['CAJAMAR'] != codigoCartera && (CONST.CARTERA['CERBERUS'] == codigoCartera && CONST.SUBCARTERA['AGORAINMOBILIARIO'] != codigoSubcartera)) {
 			me.habilitarCampo(me.down('[name=checkboxVentaDirecta]'));
 			me.deshabilitarCampo(me.down('[name=fechaIngreso]'));
 		}
 
 		me.down('[name=checkboxVentaDirecta]').addListener('change', function(checkbox, newValue, oldValue, eOpts) {
-			if(CONST.CARTERA['LIBERBANK'] != codigoCartera || CONST.CARTERA['CAJAMAR'] != codigoCartera){
+			if(CONST.CARTERA['LIBERBANK'] != codigoCartera && CONST.CARTERA['CAJAMAR'] != codigoCartera && (CONST.CARTERA['CERBERUS'] == codigoCartera && CONST.SUBCARTERA['AGORAINMOBILIARIO'] != codigoSubcartera)){
 				if (newValue) {
 	            	me.habilitarCampo(me.down('[name=fechaIngreso]'));
 	            	me.down('[name=fechaIngreso]').allowBlank = false;
@@ -1233,7 +1231,10 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 			me.down('[name=numImporteContra]').setReadOnly(false);
 			me.down('[name=fechaRespuesta]').setReadOnly(false);
         }
-		
+		if(CONST.CARTERA['LIBERBANK'] != codigoCartera) {
+			me.down('[name=fechaReunionComite]').hide();
+			me.down('[name=comiteInternoSancionador]').hide();
+		}
         me.down('[name=comboResolucion]').addListener('change', function(combo) {
             if (combo.value == '03') {
                 me.habilitarCampo(me.down('[name=numImporteContra]'));
@@ -1986,6 +1987,7 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
     
     T015_ResolucionExpedienteValidacion: function(){
     	var me = this;
+    	var codigoCartera = me.up('tramitesdetalle').getViewModel().get('tramite.codigoCartera');
     	me.deshabilitarCampo(me.down('[name=motivo]'));
     	me.deshabilitarCampo(me.down('[name=importeContraoferta]'));
     	
@@ -2020,6 +2022,11 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
     		}
 
     	});
+    	
+    	if(CONST.CARTERA['LIBERBANK'] != codigoCartera) {
+			me.down('[name=fechaReunionComite]').hide();
+			me.down('[name=comiteInternoSancionador]').hide();
+		}
     	
     },
     

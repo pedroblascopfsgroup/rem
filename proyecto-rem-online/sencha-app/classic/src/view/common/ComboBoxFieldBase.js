@@ -44,19 +44,33 @@ Ext.define('HreRem.view.common.ComboBoxFieldBase', {
 				if (me.loadOnBind && me.getStore() != null && me.getStore().type!="chained") {
 					me.loadPage();
 				}
-				/*me.getStore().load({
-					    scope: this,
-					    callback: function(records, operation, success) {
-					    	this[binding._config.names.set](value);
-					    }
-					});
-				}*/
+				/*
+				me.getStore().load({
+				    scope: this,
+				    callback: function(records, operation, success) {
+				    	this[binding._config.names.set](value);
+				    	
+				    }
+				});
+				*/
+				
 			}
-	        binding.syncing = (binding.syncing + 1) || 1;
+			
+			//Log
+			if(!Ext.isEmpty(value) && !Ext.isEmpty(value.data)){
+				Ext.global.console.log('Label: ' + binding.scope.fieldLabel + ' Ref.: ' + binding.scope.reference + ' Name: ' + binding.scope.name + ' / Metodo: ' + binding._config.names.set + ' / Value: ');
+				Ext.global.console.log(value.data.items);
+			}else if(value == null){
+				Ext.global.console.log('Label: ' + binding.scope.fieldLabel + ' Ref.: ' + binding.scope.reference + ' Name: ' + binding.scope.name + ' / Metodo: ' + binding._config.names.set + ' / Value: null');
+			}else{
+				Ext.global.console.log('Label: ' + binding.scope.fieldLabel + ' Ref.: ' + binding.scope.reference + ' Name: ' + binding.scope.name + ' / Metodo: ' + binding._config.names.set + ' / Value: ' + value);
+			}
+			//
+				       
+			binding.syncing = (binding.syncing + 1) || 1;
 	        this[binding._config.names.set](value);
 	        --binding.syncing;
-	        this.fireEvent("afterbind", this, value);
-		
+	    	this.fireEvent("afterbind", this, value);
 		},
 		
 		 onTriggerClick: function() {

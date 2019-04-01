@@ -115,6 +115,24 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 			 return CONST.CARTERA['GALEON'] == carteraCodigo || CONST.CARTERA['ZEUS'] == carteraCodigo;
 		 },
 	     
+		 esCarteraAgora: function(get) {
+			 var carteraCodigo = get('expediente.entidadPropietariaCodigo');
+			 var subcarteraCodigo = get('expediente.subcarteraCodigo');
+			 return CONST.CARTERA['CERBERUS'] == carteraCodigo && (CONST.SUBCARTERA['AGORAINMOBILIARIO'] == subcarteraCodigo || CONST.SUBCARTERA['AGORAFINANCIERO'] == subcarteraCodigo) ;
+		 },
+		 
+		 esCarteraApple: function(get) {
+			 var carteraCodigo = get('expediente.entidadPropietariaCodigo');
+			 var subcarteraCodigo = get('expediente.subcarteraCodigo');
+			 return CONST.CARTERA['CERBERUS'] == carteraCodigo && CONST.SUBCARTERA['APPLEINMOBILIARIO'] == subcarteraCodigo ;
+		 },
+		 
+		 esCarteraAppleOAgora: function(get) {
+			 var carteraCodigo = get('expediente.entidadPropietariaCodigo');
+			 var subcarteraCodigo = get('expediente.subcarteraCodigo');
+			 return (CONST.CARTERA['CERBERUS'] == carteraCodigo && CONST.SUBCARTERA['APPLEINMOBILIARIO'] == subcarteraCodigo) || CONST.CARTERA['CERBERUS'] == carteraCodigo && (CONST.SUBCARTERA['AGORAINMOBILIARIO'] == subcarteraCodigo || CONST.SUBCARTERA['AGORAFINANCIERO'] == subcarteraCodigo) ;
+		 },
+		 
 	     esCarteraCajamar: function(get) {
 		     	
 	     	var carteraCodigo = get('expediente.entidadPropietariaCodigo');
@@ -370,7 +388,18 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 			 }
 			 return fechaFinal;
 			 
-		 }
+		 },
+		 esObligatorio: function(){
+		    	var me = this;
+		    	if(!Ext.isEmpty(me.getView().expediente)){
+		    		if(me.getView().expediente.data.tipoExpedienteCodigo == "01"){
+			    		return false;
+			    	}else{
+			    		return true;
+			    	}
+		    	}
+		    	
+		    }
 	 },
 
 
@@ -611,8 +640,9 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 				type: 'uxproxy',
 				remoteUrl: 'generic/getDiccionario',
 				extraParams: {diccionario: 'tiposDocumentos'}
-			}   	
-	    },
+			}
+		
+	    }, 
     	
 	    comboEstadoCivil: {
 			model: 'HreRem.model.ComboBase',

@@ -32,12 +32,18 @@ public class DtoSendNotificator extends WebDto {
 		this.fechaFinalizacion = fechaFinalizacion;
 	}
 	public Long getNumActivo() {
+		if(numActivo == null){
+			numActivo = 0L;
+		}
 		return numActivo;
 	}
 	public void setNumActivo(Long numActivo) {
 		this.numActivo = numActivo;
 	}
 	public String getDireccion() {
+		if(direccion == null){
+			direccion = "";
+		}
 		return direccion;
 	}
 	public void setDireccion(String direccion) {
@@ -50,6 +56,9 @@ public class DtoSendNotificator extends WebDto {
 		this.numAgrupacion = numAgrupacion;
 	}
 	public String getTitulo() {
+		if(titulo == null){
+			titulo = "";
+		}
 		return titulo;
 	}
 	public void setTitulo(String titulo) {

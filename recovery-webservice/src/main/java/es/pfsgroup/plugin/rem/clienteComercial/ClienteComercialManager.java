@@ -5,8 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import net.sf.json.JSONObject;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,12 +26,15 @@ import es.pfsgroup.plugin.rem.api.ClienteComercialApi;
 import es.pfsgroup.plugin.rem.clienteComercial.dao.ClienteComercialDao;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.ClienteComercial;
+import es.pfsgroup.plugin.rem.model.ClienteCompradorGDPR;
+import es.pfsgroup.plugin.rem.model.ClienteGDPR;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.api.RestApi.TIPO_VALIDACION;
 import es.pfsgroup.plugin.rem.rest.dto.ClienteDto;
+import net.sf.json.JSONObject;
 
 @Service("clienteComercialManager")
 public class ClienteComercialManager extends BusinessOperationOverrider<ClienteComercialApi>
@@ -49,6 +50,11 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 
 	@Autowired
 	private ClienteComercialDao clienteComercialDao;
+	
+	/*@Autowired
+	private OfertaApi ofertaApi;
+	
+	private final static String CLIENTE_HAYA = "HAYA";*/
 
 	@Override
 	public String managerName() {
@@ -176,12 +182,13 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 	
 	@Override
 	public void saveClienteComercial(ClienteDto clienteDto) {
-		ClienteComercial cliente = null;
+		ClienteComercial cliente = null; 
+		ClienteGDPR clienteGDPR = null; //HREOS-4937
 		try {
 
-			cliente = new ClienteComercial();
+			cliente = new ClienteComercial();			
 			beanUtilNotNull.copyProperties(cliente, clienteDto);
-			cliente.setIdClienteRem(clienteComercialDao.getNextClienteRemId());
+			cliente.setIdClienteRem(clienteComercialDao.getNextClienteRemId());					
 
 			if (!Checks.esNulo(clienteDto.getIdUsuarioRemAccion())) {
 				Usuario user = (Usuario) genericDao.get(Usuario.class,
@@ -272,6 +279,27 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 			}
 
 			clienteComercialDao.save(cliente);
+			
+			// HREOS-4937 GDPR
+			clienteGDPR = new ClienteGDPR();
+			clienteGDPR.setCliente(cliente);
+			beanUtilNotNull.copyProperties(clienteGDPR, clienteDto);
+
+			if (!Checks.esNulo(clienteDto.getCodTipoDocumento())) {
+				DDTipoDocumento tipoDoc = (DDTipoDocumento) genericDao.get(DDTipoDocumento.class,
+						genericDao.createFilter(FilterType.EQUALS, "codigo", clienteDto.getCodTipoDocumento()));
+				if (!Checks.esNulo(tipoDoc)) {
+					clienteGDPR.setTipoDocumento(tipoDoc);
+				}
+			}
+			if (!Checks.esNulo(clienteDto.getDocumento())) {
+				clienteGDPR.setNumDocumento(clienteDto.getDocumento());
+			}
+
+			genericDao.save(ClienteGDPR.class, clienteGDPR);
+
+			
+			
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 		}
@@ -475,10 +503,68 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 				}else{
 					cliente.setRegimenMatrimonial(null);
 				}
-			}
-
-
+			}				
+			
 			clienteComercialDao.saveOrUpdate(cliente);
+			
+			// HREOS-4937 
+			List<ClienteGDPR> clienteGDPR = genericDao.getList(ClienteGDPR.class,
+					genericDao.createFilter(FilterType.EQUALS, "tipoDocumento.id", cliente.getTipoDocumento().getId()),
+					genericDao.createFilter(FilterType.EQUALS, "numDocumento", cliente.getDocumento()));
+			
+			if (!Checks.estaVacio(clienteGDPR)) {
+				// Primero historificamos los datos de ClienteGDPR en ClienteCompradorGDPR
+				ClienteCompradorGDPR clienteCompradorGDPR = new ClienteCompradorGDPR();
+				clienteCompradorGDPR.setTipoDocumento(clienteGDPR.get(0).getTipoDocumento());
+				clienteCompradorGDPR.setNumDocumento(clienteGDPR.get(0).getNumDocumento());
+				clienteCompradorGDPR.setCesionDatos(clienteGDPR.get(0).getCesionDatos());
+				clienteCompradorGDPR.setComunicacionTerceros(clienteGDPR.get(0).getComunicacionTerceros());
+				clienteCompradorGDPR.setTransferenciasInternacionales(clienteGDPR.get(0).getTransferenciasInternacionales());
+				clienteCompradorGDPR.setAdjuntoComprador(clienteGDPR.get(0).getAdjuntoComprador());							
+
+				genericDao.save(ClienteCompradorGDPR.class, clienteCompradorGDPR);
+
+				// Despues se hace el update en ClienteGDPR
+				
+				for(ClienteGDPR clc: clienteGDPR){
+					clc.setCliente(cliente);
+
+					if (((JSONObject) jsonFields).containsKey("cesionDatos")) {
+						clc.setCesionDatos(clienteDto.getCesionDatos());
+					}
+					if (((JSONObject) jsonFields).containsKey("comunicacionTerceros")) {
+						clc.setComunicacionTerceros(clienteDto.getComunicacionTerceros());
+					}
+					if (((JSONObject) jsonFields).containsKey("transferenciasInternacionales")) {
+						clc.setTransferenciasInternacionales(clienteDto.getTransferenciasInternacionales());
+					}				
+
+					genericDao.update(ClienteGDPR.class, clc);					
+				}
+				
+
+			} else {
+				ClienteGDPR clienteGDPRNew = new ClienteGDPR();
+				clienteGDPRNew.setCliente(cliente);
+				
+				if (!Checks.esNulo(cliente.getTipoDocumento())) {
+					clienteGDPRNew.setTipoDocumento(cliente.getTipoDocumento());
+				}				
+				if (!Checks.esNulo(cliente.getDocumento())) {
+					clienteGDPRNew.setNumDocumento(cliente.getDocumento());
+				}		
+				if (((JSONObject) jsonFields).containsKey("cesionDatos")) {
+					clienteGDPRNew.setCesionDatos(clienteDto.getCesionDatos());
+				}
+				if (((JSONObject) jsonFields).containsKey("comunicacionTerceros")) {
+					clienteGDPRNew.setComunicacionTerceros(clienteDto.getComunicacionTerceros());
+				}
+				if (((JSONObject) jsonFields).containsKey("transferenciasInternacionales")) {
+					clienteGDPRNew.setTransferenciasInternacionales(clienteDto.getTransferenciasInternacionales());
+				}
+				
+				genericDao.save(ClienteGDPR.class, clienteGDPRNew);
+			}
 			
 
 		} catch (Exception e) {
@@ -561,18 +647,6 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 			ClienteComercial cliente = this.getClienteComercialByIdClienteWebcom(clienteDto.getIdClienteWebcom());
 			if (Checks.esNulo(cliente)) {
 				errorsList = restApi.validateRequestObject(clienteDto, TIPO_VALIDACION.INSERT);
-				//validamos los campos que dependen del tipo de persona
-				/*if (!Checks.esNulo(clienteDto.getCodTipoPersona())
-						&& clienteDto.getCodTipoPersona().equals(DDTiposPersona.CODIGO_TIPO_PERSONA_FISICA)) {
-					if(Checks.esNulo(clienteDto.getCodEstadoCivil())){
-						errorsList.put("codEstadoCivil", RestApi.REST_MSG_MISSING_REQUIRED);
-					}else if(clienteDto.getCodEstadoCivil().equals(DDEstadosCiviles.CODIGO_ESTADO_CIVIL_CASADO)){
-						if(Checks.esNulo(clienteDto.getCodRegimenMatrimonial())){
-							errorsList.put("codRegimenMatrimonial", RestApi.REST_MSG_MISSING_REQUIRED);
-						}
-					}
-				}*/
-				
 				if (errorsList.size() == 0) {
 					this.saveClienteComercial(clienteDto);
 				}
@@ -589,6 +663,7 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 				map.put("idClienteWebcom", cliente.getIdClienteWebcom());
 				map.put("idClienteRem", cliente.getIdClienteRem());
 				map.put("success", true);
+				//ofertaApi.llamadaMaestroPersonas(cliente.getDocumento(), CLIENTE_HAYA);
 			} else {
 				map.put("idClienteWebcom", clienteDto.getIdClienteWebcom());
 				map.put("idClienteRem", clienteDto.getIdClienteRem());

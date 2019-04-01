@@ -429,11 +429,43 @@ Ext.define('HreRem.model.ActivoDatosRegistrales', {
     		{
     			name:'calificacionNegativa'
     		},
-    		{
+    		/*{
     			name:'motivoCalificacionNegativa'
-    		},
+    		},*/
     		{
     			name:'descripcionCalificacionNegativa'
+    		},
+      		{
+    			name:'estadoMotivoCalificacionNegativa'
+    		},
+    		{
+    			name: 'responsableSubsanar'
+    		},
+    		{
+    			name: 'puedeEditarCalificacionNegativa',
+    			type: 'boolean'
+    		},
+    		{
+    			name: 'isCalificacionNegativaEnabled',
+    			type: 'boolean'
+    		},
+    		{
+    			name: 'noEstaInscrito',
+    			type: 'boolean'
+    		},
+    		{
+    			name: 'fechaSubsanacion',
+    			type:'date',
+    			dateWriteFormat: 'Y-m.d',
+    			convert: function(value) {
+    				if (!Ext.isEmpty(value)) {
+						if  ((typeof value) == 'string') {
+	    					return value.substr(8,2) + '/' + value.substr(5,2) + '/' + value.substr(0,4);
+	    				} else {
+	    					return value;
+	    				}
+    				}
+    			}
     		}
 
     ],

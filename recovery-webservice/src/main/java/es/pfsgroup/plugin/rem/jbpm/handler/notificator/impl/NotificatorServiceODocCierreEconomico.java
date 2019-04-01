@@ -11,7 +11,6 @@ import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
-import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.notificator.AbstractNotificatorService;
 import es.pfsgroup.plugin.rem.jbpm.handler.notificator.NotificatorService;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
@@ -26,8 +25,6 @@ public class NotificatorServiceODocCierreEconomico extends AbstractNotificatorSe
 	@Autowired
 	private GenericAdapter genericAdapter;
 	
-	@Autowired
-	private GestorActivoApi gestorActivoApi;
 		
 	@Override
 	public String[] getKeys() {

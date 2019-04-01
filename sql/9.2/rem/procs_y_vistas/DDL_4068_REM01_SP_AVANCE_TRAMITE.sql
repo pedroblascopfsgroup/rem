@@ -1,7 +1,7 @@
 --/*
 --#########################################
 --## AUTOR=DAP
---## FECHA_CREACION=20180226
+--## FECHA_CREACION=20190221
 --## ARTEFACTO=batch
 --## VERSION_ARTEFACTO=2.0.14
 --## INCIDENCIA_LINK=REMVIP
@@ -12,6 +12,7 @@
 --## INSTRUCCIONES:  
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##	    0.2 Se modifican los merges para que se puedan crear tareas en trámites relacionados con agrupaciones
 --#########################################
 --*/
 --Para permitir la visualización de texto en un bloque PL/SQL utilizando DBMS_OUTPUT.PUT_LINE
@@ -33,8 +34,8 @@ create or replace PROCEDURE AVANCE_TRAMITE (USUARIO VARCHAR2
 	LIST_EXP_EEC es la lista de números de expediente comerciales, separados por comas, que queramos cambiar su estado. No es obligatorio, si se deja vacío no hará ese paso.
 	EEC_DESTINO es el estado en el que se quiere poner el expediente o expedientes comerciales que se pasen en la lista anterior. No es obligatorio, si se deja vacío no hará ese paso.
 	*/
-    V_ESQUEMA VARCHAR2(25 CHAR) := 'REM01';			-- 'REM01'; -- Configuracion Esquema
-    V_ESQUEMA_M VARCHAR2(25 CHAR) := 'REMMASTER';	-- 'REMMASTER'; -- Configuracion Esquema Master
+    V_ESQUEMA VARCHAR2(25 CHAR) := '#ESQUEMA#';			-- 'REM01'; -- Configuracion Esquema
+    V_ESQUEMA_M VARCHAR2(25 CHAR) := '#ESQUEMA_MASTER#';	-- 'REMMASTER'; -- Configuracion Esquema Master
     V_USUARIO VARCHAR2(50 CHAR);
     ERR_NUM NUMBER;-- Numero de errores
     ERR_MSG VARCHAR2(2048);-- Mensaje de error
@@ -52,7 +53,7 @@ create or replace PROCEDURE AVANCE_TRAMITE (USUARIO VARCHAR2
     CURSOR CURSOR_OFERTAS IS
     SELECT DISTINCT OFR_ID FROM REM01.MIG2_TRAMITES_OFERTAS_REP TRA;
     V_TABLA_TBJ 	VARCHAR2(30 CHAR) := 'ACT_TBJ_TRABAJO';
-    V_TABLA_ACT_TBJ VARCHAR2(30 CHAR) := 'ACT_TBJ';
+    V_TABLA_ACT_TBJ 	VARCHAR2(30 CHAR) := 'ACT_TBJ';
     V_TABLA_ECO 	VARCHAR2(30 CHAR) := 'ECO_EXPEDIENTE_COMERCIAL';
     V_TABLA_TRA 	VARCHAR2(30 CHAR) := 'ACT_TRA_TRAMITE';
     V_TABLA_TAR 	VARCHAR2(30 CHAR) := 'TAR_TAREAS_NOTIFICACIONES';
@@ -60,7 +61,7 @@ create or replace PROCEDURE AVANCE_TRAMITE (USUARIO VARCHAR2
     V_TABLA_TEX 	VARCHAR2(30 CHAR) := 'TEX_TAREA_EXTERNA';
     V_TABLA_TAC 	VARCHAR2(30 CHAR) := 'TAC_TAREAS_ACTIVOS';
     V_UPDATE 		NUMBER(16);
-    V_COUNT			NUMBER(16);
+    V_COUNT		NUMBER(16);
     
 BEGIN
 
@@ -93,7 +94,7 @@ BEGIN
     PL_OUTPUT := PL_OUTPUT ||chr(10) || '   [INFO] '|| V_COUNT ||' trámites a reposicionar.';
     
     V_MSQL := 'MERGE INTO '||V_ESQUEMA||'.TAR_TAREAS_NOTIFICACIONES T1
-        USING REM01.OFERTAS_REPOSICIONAR T2
+        USING (SELECT DISTINCT TAR_ID FROM '||V_ESQUEMA||'.OFERTAS_REPOSICIONAR ) T2
         ON (T1.TAR_ID = T2.TAR_ID)
         WHEN MATCHED THEN UPDATE SET
             T1.TAR_FECHA_FIN = SYSDATE, T1.TAR_TAREA_FINALIZADA = 1, T1.BORRADO = 1
@@ -103,7 +104,7 @@ BEGIN
     PL_OUTPUT := PL_OUTPUT ||chr(10) || '   [INFO] '|| SQL%ROWCOUNT||' tareas antiguas finalizadas.';
     
     V_MSQL := 'MERGE INTO '||V_ESQUEMA||'.TEX_TAREA_EXTERNA T1
-        USING REM01.OFERTAS_REPOSICIONAR T2
+        USING (SELECT DISTINCT TEX_ID FROM '||V_ESQUEMA||'.OFERTAS_REPOSICIONAR ) T2
         ON (T1.TEX_ID = T2.TEX_ID)
         WHEN MATCHED THEN UPDATE SET
             T1.BORRADO = 1, T1.USUARIOBORRAR = '''||V_USUARIO||''', T1.FECHABORRAR = SYSDATE

@@ -10,16 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import es.capgemini.devon.mail.MailManager;
-import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
-import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
 import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
-import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.jbpm.handler.notificator.AbstractNotificatorService;
 import es.pfsgroup.plugin.rem.jbpm.handler.notificator.NotificatorService;
@@ -35,14 +29,10 @@ public class NotificatorServiceODocCEECierreEconomico extends AbstractNotificato
 	@Autowired
 	private GenericAdapter genericAdapter;
 	
-	@Autowired
-	private ActivoTramiteApi activoTramiteApi;
+
 	
 	@Autowired
 	private GestorActivoApi gestorActivoApi;
-	
-	@Autowired
-	private GenericABMDao genericDao;
 	
 	@Override
 	public String[] getKeys() {

@@ -348,7 +348,9 @@ Ext.define('HreRem.view.activos.detalle.OpcionesPropagacionCambios', {
     	me.down("grid").setStore(store);
     	
     	me.down("[reference=displayListaActivos]").setValue("Seleccionados 0 de " + store.getCount());
-
+    	if(Ext.isEmpty(me.form)) { 
+    		me.down("grid").getSelectionModel().selectAll();
+    	}
     },
     
     onChangeOpcionesPropagacion: function(newValue) {

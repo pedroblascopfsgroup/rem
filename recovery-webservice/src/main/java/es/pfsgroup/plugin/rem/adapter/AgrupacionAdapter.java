@@ -63,6 +63,7 @@ import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.ProveedoresApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
+import es.pfsgroup.plugin.rem.clienteComercial.dao.ClienteComercialDao;
 import es.pfsgroup.plugin.rem.jbpm.handler.notificator.impl.NotificatorServiceSancionOfertaAceptacionYRechazo;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
@@ -82,8 +83,11 @@ import es.pfsgroup.plugin.rem.model.ActivoProyecto;
 import es.pfsgroup.plugin.rem.model.ActivoPublicacion;
 import es.pfsgroup.plugin.rem.model.ActivoRestringida;
 import es.pfsgroup.plugin.rem.model.ActivoTrabajo;
+import es.pfsgroup.plugin.rem.model.AdjuntoComprador;
 import es.pfsgroup.plugin.rem.model.AgrupacionesVigencias;
 import es.pfsgroup.plugin.rem.model.ClienteComercial;
+import es.pfsgroup.plugin.rem.model.ClienteCompradorGDPR;
+import es.pfsgroup.plugin.rem.model.ClienteGDPR;
 import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
 import es.pfsgroup.plugin.rem.model.DtoAgrupacionFilter;
 import es.pfsgroup.plugin.rem.model.DtoAgrupaciones;
@@ -98,6 +102,7 @@ import es.pfsgroup.plugin.rem.model.DtoUsuario;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
+import es.pfsgroup.plugin.rem.model.TmpClienteGDPR;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.VBusquedaAgrupaciones;
@@ -237,7 +242,10 @@ public class AgrupacionAdapter {
 
 	@Autowired
 	private ActivoHistoricoPatrimonioDao activoHistoricoPatrimonioDao;
-	
+
+	@Autowired
+	private ClienteComercialDao clienteComercialDao;
+
 	@Resource(name = "entityTransactionManager")
     private PlatformTransactionManager transactionManager;
 
@@ -358,9 +366,9 @@ public class AgrupacionAdapter {
 							if(!Checks.esNulo(act.getCartera())){
 								BeanUtils.copyProperty(dtoAgrupacion, "codigoCartera", act.getCartera().getCodigo());
 							}
-							if(!Checks.esNulo(act.getTipoComercializacion())){
-								BeanUtils.copyProperty(dtoAgrupacion, "tipoComercializacionCodigo", act.getTipoComercializacion().getCodigo());
-								BeanUtils.copyProperty(dtoAgrupacion, "tipoComercializacionDescripcion", act.getTipoComercializacion().getDescripcion());
+							if(!Checks.esNulo(act.getActivoPublicacion().getTipoComercializacion())){
+								BeanUtils.copyProperty(dtoAgrupacion, "tipoComercializacionCodigo", act.getActivoPublicacion().getTipoComercializacion().getCodigo());
+								BeanUtils.copyProperty(dtoAgrupacion, "tipoComercializacionDescripcion", act.getActivoPublicacion().getTipoComercializacion().getDescripcion());
 							}
 						}
 					}
@@ -520,7 +528,11 @@ public class AgrupacionAdapter {
 
 				if(activoPrincipal != null) {
 					PerimetroActivo perimetroActivo = activoApi.getPerimetroByIdActivo(activoPrincipal.getId());
-
+					
+					if(!Checks.esNulo(activoPrincipal.getSubcartera())){
+						BeanUtils.copyProperty(dtoAgrupacion, "codSubcartera", activoPrincipal.getSubcartera().getCodigo());
+					}
+					
 					if (perimetroActivo != null) {
 						BeanUtils.copyProperty(dtoAgrupacion, "incluidoEnPerimetro", perimetroActivo.getIncluidoEnPerimetro() == 1);
 					}
@@ -585,6 +597,9 @@ public class AgrupacionAdapter {
 						BeanUtils.copyProperty(dtoAgrupacion, "cartera", agrupacion.getActivos().get(0).getActivo().getCartera().getDescripcion());
 						BeanUtils.copyProperty(dtoAgrupacion, "codigoCartera", agrupacion.getActivos().get(0).getActivo().getCartera().getCodigo());
 					}
+					 if(!Checks.estaVacio(agrupacion.getActivos()) && !Checks.esNulo(agrupacion.getActivos().get(0).getActivo().getSubcartera())){
+						 BeanUtils.copyProperty(dtoAgrupacion, "codSubcartera", agrupacion.getActivos().get(0).getActivo().getSubcartera().getCodigo());
+					 }
 					 if (!agrupacion.getActivos().isEmpty() && !Checks.esNulo(agrupacion.getActivos().get(0)) && agrupacion.getActivos().get(0).getActivo().getActivoPublicacion().getTipoComercializacion() != null) {
 						BeanUtils.copyProperty(dtoAgrupacion, "tipoComercializacionDescripcion", agrupacion.getActivos().get(0).getActivo().getActivoPublicacion().getTipoComercializacion().getDescripcion());
 						BeanUtils.copyProperty(dtoAgrupacion, "tipoComercializacionCodigo", agrupacion.getActivos().get(0).getActivo().getActivoPublicacion().getTipoComercializacion().getCodigo());
@@ -943,6 +958,20 @@ public class AgrupacionAdapter {
 					if (!Checks.esNulo(aga)) {
 						activoEstadoPublicacionApi.setDatosPublicacionAgrupacion(aga.getAgrupacion().getId(), dto);
 					}
+					
+					ActivoPublicacion activoPublicacionPrincipal = activoPublicacionDao.getActivoPublicacionPorIdActivo(agrupacion.getActivoPrincipal().getId());
+					ActivoPublicacion activoPublicacion = activoPublicacionDao.getActivoPublicacionPorIdActivo(activo.getId());
+					BeanUtils.copyProperty(activoPublicacion, "estadoPublicacionVenta", activoPublicacionPrincipal.getEstadoPublicacionVenta());
+					BeanUtils.copyProperty(activoPublicacion, "estadoPublicacionAlquiler", activoPublicacionPrincipal.getEstadoPublicacionAlquiler());
+					BeanUtils.copyProperty(activoPublicacion, "checkPublicarVenta", activoPublicacionPrincipal.getCheckPublicarVenta());
+					BeanUtils.copyProperty(activoPublicacion, "checkPublicarAlquiler", activoPublicacionPrincipal.getCheckPublicarAlquiler());
+					BeanUtils.copyProperty(activoPublicacion, "checkOcultarVenta", activoPublicacionPrincipal.getCheckOcultarVenta());
+					BeanUtils.copyProperty(activoPublicacion, "checkOcultarAlquiler", activoPublicacionPrincipal.getCheckOcultarAlquiler());
+					BeanUtils.copyProperty(activoPublicacion, "checkSinPrecioVenta", activoPublicacionPrincipal.getCheckSinPrecioVenta());
+					BeanUtils.copyProperty(activoPublicacion, "checkSinPrecioAlquiler", activoPublicacionPrincipal.getCheckSinPrecioAlquiler());
+					BeanUtils.copyProperty(activoPublicacion, "checkOcultarPrecioVenta", activoPublicacionPrincipal.getCheckOcultarPrecioVenta());
+					BeanUtils.copyProperty(activoPublicacion, "checkOcultarPrecioAlquiler", activoPublicacionPrincipal.getCheckOcultarPrecioAlquiler());
+					activoPublicacionDao.saveOrUpdate(activoPublicacion);
 				} else {
 					throw new JsonViewerException(BusinessValidators.ERROR_ESTADO_PUBLICACION_NOT_EQUAL);
 				}
@@ -963,8 +992,7 @@ public class AgrupacionAdapter {
 		} catch (JsonViewerException jve) {
 			throw jve;
 		} catch (Exception e) {
-			logger.error(e);
-			e.printStackTrace();
+			throw new JsonViewerException(e);
 		}
 	}
 	
@@ -2040,6 +2068,25 @@ public class AgrupacionAdapter {
 				}
 			}
 			
+			if (!Checks.esNulo(dto.getCesionDatos())) {
+				clienteComercial.setCesionDatos(dto.getCesionDatos());
+			}
+			
+			if (!Checks.esNulo(dto.getTransferenciasInternacionales())) {
+				clienteComercial.setTransferenciasInternacionales(dto.getTransferenciasInternacionales());
+			}
+			
+			if (!Checks.esNulo(dto.getComunicacionTerceros())) {
+				clienteComercial.setComunicacionTerceros(dto.getComunicacionTerceros());
+			}
+			
+			TmpClienteGDPR tmpClienteGDPR = genericDao.get(TmpClienteGDPR.class,
+					genericDao.createFilter(FilterType.EQUALS, "numDocumento", dto.getNumDocumentoCliente()));
+			
+			if (!Checks.esNulo(tmpClienteGDPR) && !Checks.esNulo(tmpClienteGDPR.getIdPersonaHaya())) {
+				clienteComercial.setIdPersonaHaya(String.valueOf(tmpClienteGDPR.getIdPersonaHaya()));
+			}
+			
 			genericDao.save(ClienteComercial.class, clienteComercial);
 
 			Oferta oferta = new Oferta();
@@ -2092,6 +2139,75 @@ public class AgrupacionAdapter {
 						}
 					}
 				}
+			}
+			
+			// HREOS-4937 -- 'General Data Protection Regulation'
+
+			// Comprobamos si existe en la tabla CGD_CLIENTE_GDPR un registro con el mismo
+			// número y tipo de documento
+			List<ClienteGDPR> cliGDPR = genericDao.getList(ClienteGDPR.class,
+					genericDao.createFilter(FilterType.EQUALS, "tipoDocumento.id", tipoDocumento.getId()),
+					genericDao.createFilter(FilterType.EQUALS, "numDocumento", dto.getNumDocumentoCliente()));
+
+			AdjuntoComprador docAdjunto = null;
+			if (!Checks.esNulo(dto.getIdDocAdjunto())) {
+				docAdjunto = genericDao.get(AdjuntoComprador.class,
+						genericDao.createFilter(FilterType.EQUALS, "id", dto.getIdDocAdjunto()));
+			} 
+			
+			// Si existe pasamos la información al histórico y actualizamos el objeto con
+			// los nuevos datos
+			if (!Checks.estaVacio(cliGDPR) && cliGDPR.size() > 0) {
+
+				// Primero historificamos los datos de ClienteGDPR en ClienteCompradorGDPR
+				ClienteCompradorGDPR clienteCompradorGDPR = new ClienteCompradorGDPR();
+				clienteCompradorGDPR.setTipoDocumento(cliGDPR.get(0).getTipoDocumento());
+				clienteCompradorGDPR.setNumDocumento(cliGDPR.get(0).getNumDocumento());
+				clienteCompradorGDPR.setCesionDatos(cliGDPR.get(0).getCesionDatos());
+				clienteCompradorGDPR.setComunicacionTerceros(cliGDPR.get(0).getComunicacionTerceros());
+				clienteCompradorGDPR.setTransferenciasInternacionales(cliGDPR.get(0).getTransferenciasInternacionales());
+				if (!Checks.esNulo(cliGDPR.get(0).getAdjuntoComprador())) {
+					clienteCompradorGDPR.setAdjuntoComprador(cliGDPR.get(0).getAdjuntoComprador());
+				}
+
+				genericDao.save(ClienteCompradorGDPR.class, clienteCompradorGDPR);
+
+				for(ClienteGDPR clc : cliGDPR){
+					// Despues se hace el update en ClienteGDPR
+					clc.setCliente(clienteComercial);
+					clc.setCesionDatos(dto.getCesionDatos());
+					clc.setComunicacionTerceros(dto.getComunicacionTerceros());
+					clc.setTransferenciasInternacionales(dto.getTransferenciasInternacionales());
+	
+					if (!Checks.esNulo(docAdjunto)) {
+						clc.setAdjuntoComprador(docAdjunto);
+					}
+					genericDao.update(ClienteGDPR.class, clc);
+	
+					
+				}
+				clienteComercialDao.deleteTmpClienteByDocumento(cliGDPR.get(0).getNumDocumento());
+
+				// Si no existe simplemente creamos e insertamos un nuevo objeto ClienteGDPR
+			} else {
+				ClienteGDPR clienteGDPR =  new ClienteGDPR();
+				clienteGDPR.setCliente(clienteComercial);
+				clienteGDPR.setTipoDocumento(tipoDocumento);
+				clienteGDPR.setNumDocumento(dto.getNumDocumentoCliente());
+				clienteGDPR.setCesionDatos(dto.getCesionDatos());
+				clienteGDPR.setComunicacionTerceros(dto.getComunicacionTerceros());
+				clienteGDPR.setTransferenciasInternacionales(dto.getTransferenciasInternacionales());
+				
+				if(!Checks.esNulo(tmpClienteGDPR.getIdAdjunto())) {
+					docAdjunto = genericDao.get(AdjuntoComprador.class,
+							genericDao.createFilter(FilterType.EQUALS, "id", tmpClienteGDPR.getIdAdjunto()));
+				}
+				if (!Checks.esNulo(docAdjunto)) {
+					clienteGDPR.setAdjuntoComprador(docAdjunto);
+				}
+				genericDao.save(ClienteGDPR.class, clienteGDPR);
+								
+				clienteComercialDao.deleteTmpClienteByDocumento(clienteGDPR.getNumDocumento());
 			}
 
 		} catch (Exception ex) {
@@ -3160,24 +3276,28 @@ public class AgrupacionAdapter {
 		VCondicionantesAgrDisponibilidad vCondicionantesAgrDisponibilidad = genericDao.get(VCondicionantesAgrDisponibilidad.class, idAgrupacionFilter);
 		Double precioWebVenta = 0.0;
 		Double precioWebAlquiler = 0.0;
-		Boolean tienePrecioVenta = true;
 
 		try {
-
-			for(ActivoAgrupacionActivo aga : agrupacion.getActivos()) {
-				if(Checks.esNulo(activoValoracionDao.getImporteValoracionVentaWebPorIdActivo(aga.getActivo().getId()))) {
-					tienePrecioVenta = false;
+			List<ActivoAgrupacionActivo> l_activos = agrupacion.getActivos();
+			
+			for (ActivoAgrupacionActivo aga : l_activos) { // Verificamos que todos los activos tengaun un precio de venta 
+				Double precioAuxVenta = activoValoracionDao.getImporteValoracionVentaWebPorIdActivo(aga.getActivo().getId());
+				if (Checks.esNulo(precioAuxVenta) || (!Checks.esNulo(precioAuxVenta) && precioAuxVenta == 0.0)) {
+					precioWebVenta = 0.0;
 					break;
+				} else {
+					precioWebVenta += precioAuxVenta;
 				}
 			}
-
-			for(ActivoAgrupacionActivo aga : agrupacion.getActivos()) {
-				if(tienePrecioVenta) {
-				precioWebVenta += !Checks.esNulo(activoValoracionDao.getImporteValoracionVentaWebPorIdActivo(aga.getActivo().getId()))
-						? activoValoracionDao.getImporteValoracionVentaWebPorIdActivo(aga.getActivo().getId()): 0.0;
+			
+			for (ActivoAgrupacionActivo aga : l_activos) { // Verificamos que todos los activos tengaun un precio de alquiler
+				Double precioAuxAlquiler = activoValoracionDao.getImporteValoracionRentaWebPorIdActivo(aga.getActivo().getId());
+				if (Checks.esNulo(precioAuxAlquiler) || (!Checks.esNulo(precioAuxAlquiler) && precioAuxAlquiler == 0.0)) {
+					precioWebAlquiler = 0.0;
+					break;
+				} else {
+					precioWebAlquiler += precioAuxAlquiler;
 				}
-				precioWebAlquiler += !Checks.esNulo(activoValoracionDao.getImporteValoracionRentaWebPorIdActivo(aga.getActivo().getId()))
-						? activoValoracionDao.getImporteValoracionRentaWebPorIdActivo(aga.getActivo().getId()): 0.0;
 			}
 
 		} catch (Exception e) {

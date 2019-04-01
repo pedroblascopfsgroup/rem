@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.rem.api;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.text.ParseException;
@@ -17,7 +18,9 @@ import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.api.BusinessOperationDefinition;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
+import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
+//import es.pfsgroup.plugin.rem.activo.DtoCalificacionNegativa;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoBancario;
@@ -28,6 +31,7 @@ import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
 import es.pfsgroup.plugin.rem.model.DtoActivoCargas;
 import es.pfsgroup.plugin.rem.model.DtoActivoCargasTab;
+import es.pfsgroup.plugin.rem.model.DtoActivoDatosRegistrales;
 import es.pfsgroup.plugin.rem.model.DtoActivoFichaCabecera;
 import es.pfsgroup.plugin.rem.model.DtoActivoFilter;
 import es.pfsgroup.plugin.rem.model.DtoActivoIntegrado;
@@ -40,6 +44,7 @@ import es.pfsgroup.plugin.rem.model.DtoComunidadpropietariosActivo;
 import es.pfsgroup.plugin.rem.model.DtoCondicionEspecifica;
 import es.pfsgroup.plugin.rem.model.DtoCondicionantesDisponibilidad;
 import es.pfsgroup.plugin.rem.model.DtoEstadosInformeComercialHistorico;
+import es.pfsgroup.plugin.rem.model.DtoGenerarDocGDPR;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoDestinoComercial;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoMediador;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPreciosFilter;
@@ -452,6 +457,24 @@ public interface ActivoApi {
 	 * @return ActivoCalificacionNegativa
 	 */
 	List<ActivoCalificacionNegativa> getActivoCalificacionNegativaByIdActivo(Long idActivo);
+	
+	/**
+	 * Devuelve un dto con la calificacion negativa del ID de un activo dado
+	 *
+	 * @param idActivo
+	 * @return DtoActivoDatosRegistrales
+	 */
+	List<DtoActivoDatosRegistrales> getActivoCalificacionNegativa(Long idActivo);
+	
+	
+	/**
+	 * Devuelve un dto con los codigos de calificacion negativa del ID de un activo dado
+	 *
+	 * @param idActivo
+	 * @return DtoActivoDatosRegistrales
+	 */
+	List<DtoActivoDatosRegistrales> getActivoCalificacionNegativaCodigos(Long idActivo);
+	
 
 	PerimetroActivo saveOrUpdatePerimetroActivo(PerimetroActivo perimetroActivo);
 
@@ -1018,10 +1041,16 @@ public interface ActivoApi {
 	boolean isActivoEnPuja(Activo activo);
 
 	boolean updateImpuestos(DtoImpuestosActivo dtoImpuestosFilter) throws ParseException;
+	
+	boolean updateCalificacionNegativa(DtoActivoDatosRegistrales dto);
+	
+	boolean createCalificacionNegativa(DtoActivoDatosRegistrales dto) throws JsonViewerException, Exception;
+	
+	boolean destroyCalificacionNegativa(DtoActivoDatosRegistrales dto);
 
 	DtoActivoFichaCabecera getActivosAgrupacionRestringida(Long idActivo);
 
-	Long getIdByNumActivo(Long numActivo);
+	Long getActivoExists(Long numActivo);
 
 	Integer getGeolocalizacion(Activo activo);
 
@@ -1042,6 +1071,15 @@ public interface ActivoApi {
 	boolean compruebaSiExisteActivoBienPorMatricula(Long idActivo, String matriculaActivo);
 
 	/**
+	 * Genera la url del documento GDPR
+	 * @param dtoGenerarDocGDPR
+	 * @return string url del documento GDPR
+	 * @throws GestorDocumentalException 
+	 * @throws IOException 
+	 */
+	FileItem generarUrlGDPR(DtoGenerarDocGDPR dtoGenerarDocGDPR) throws GestorDocumentalException, IOException;
+
+	/**
 	 * Recoge el activo relacionado con el proveedor a partir del id del proveedor.
 	 * @param idProveedor
 	 * @return
@@ -1054,6 +1092,7 @@ public interface ActivoApi {
 	 * @return
 	 */
 	public Activo getActivoByIdGastoProveedor(Long idGastoProveedor);
+
 	
 	/**
 	 * Devuelve el activoPatrimonio a partir de la id de un activo.
@@ -1070,4 +1109,42 @@ public interface ActivoApi {
 	 * @return DtoMotivoAnulacionExpediente.
 	 */
 	List<DtoMotivoAnulacionExpediente> getMotivoAnulacionExpediente();
+	
+	/**
+	 * Devuelve la calificacion negativa de un activo a partir de un motivo
+	 * @param idActivo
+	 * @param idMotivo
+	 * @return
+	 */
+	DtoActivoDatosRegistrales getCalificacionNegativoByidActivoIdMotivo(Long idActivo, String idMotivo);
+	
+	/**
+	 * Guarda la calificacion negativa de un motivo en un activo
+	 * @param dto
+	 * @return boolean 
+	 */
+	boolean saveCalificacionNegativoMotivo(DtoActivoDatosRegistrales dto);
+	
+	/**
+	 * Devuelve un boolean al comprobar si los motivos de calificacion negativa tienen como estado subsanado.
+	 * @param idActivo
+	 * @return boolean
+	 */
+	boolean getMotivosCalificacionNegativaSubsanados(Long idActivo, String idMotivo);
+
+	boolean esCerberus(Long idActivo);
+
+	boolean esEgeo(Long idActivo);
+
+	boolean esSubcarteraJaipurInmobiliario(Long idActivo);
+
+	boolean esSubcarteraAgoraInmobiliario(Long idActivo);
+
+	boolean esSubcarteraEgeo(Long idActivo);
+
+	boolean esSubcarteraZeus(Long idActivo);
+
+	boolean esSubcarteraPromontoria(Long idActivo);
+
+	boolean esSubcarteraApple(Long idActivo);
 }

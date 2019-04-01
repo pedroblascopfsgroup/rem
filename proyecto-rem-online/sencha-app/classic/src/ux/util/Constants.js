@@ -32,6 +32,13 @@ Ext.define('HreRem.ux.util.Constants', {
 		SOLO_ALQUILER: '03',
 		ALQUILER_OPCION_COMPRA: '04'
 	},
+	
+	TIPO_COMERCIALIZACION_ACTIVO: {
+		VENTA:'Venta',
+		ALQUILER: 'Alquiler',
+		ALQUILER_VENTA: 'Alquiler y venta',
+		ALQUILER_OPCION_COMPRA: 'Alquiler con opci�n a compra'
+	},
 
 	TIPOS_AGRUPACION: {
 		OBRA_NUEVA: '01',
@@ -164,9 +171,11 @@ Ext.define('HreRem.ux.util.Constants', {
     	BANKIA: '03',
     	TERCEROS: '04',
     	HYT: '06',
+    	CERBERUS: '07',
     	LIBERBANK: '08',
     	TANGO: '10',
     	GIANTS: '12',
+    	EGEO: '13',
     	GALEON:'15',
     	ZEUS: '14'
     },
@@ -181,7 +190,8 @@ Ext.define('HreRem.ux.util.Constants', {
     	'10': 'TANGO',
     	'12': 'GIANTS',
     	'15': 'GALEON',
-    	'15': 'ZEUS'
+    	'15': 'ZEUS',
+    	'07': 'CERBERUS'
     },
 
     
@@ -197,11 +207,15 @@ Ext.define('HreRem.ux.util.Constants', {
     },
     
     SUBCARTERA: {
-    	BH: '06'
+    	BH: '06',
+    	AGORAINMOBILIARIO: '135',
+		AGORAFINANCIERO: '137',
+		APPLEINMOBILIARIO: '138'
     },
     
     NOMBRE_SUBCARTERA: {
-    	BANKIA_HABITAT: 'BANKIA HABITAT'
+    	BANKIA_HABITAT: 'BANKIA HABITAT',
+    	CERBERUS_AGORA: 'Agora - Inmobiliario'
     },
 
     IMAGENES_CARTERA: {
@@ -349,7 +363,10 @@ Ext.define('HreRem.ux.util.Constants', {
 	},
 
 	SUBCARTERA: {
-		BH: '06'
+		BH: '06',
+		AGORAINMOBILIARIO: '135',
+		AGORAFINANCIERO: '137',
+		APPLEINMOBILIARIO: '138'
 	},
 
 	NOMBRE_CARTERA:	{
@@ -622,6 +639,11 @@ Ext.define('HreRem.ux.util.Constants', {
 	MOTIVOS_CAL_NEGATIVA:{
 		OTROS: '21'
 	},
+	
+	ESTADOS_MOTIVOS_CAL_NEGATIVA:{
+		PENDIENTE: '01',
+		SUBSANADO: '02'
+	},
     
     TAREAS:{
     	T015_DEFINICIONOFERTA : 'T015_DefinicionOferta',
@@ -642,5 +664,15 @@ Ext.define('HreRem.ux.util.Constants', {
 		AVAL_BANCARIO: '52',
 		JUSTIFICANTE_INGRESOS: '53',
 		ALQUILER_CON_OPCION_A_COMPRA: '54'
-	}
+	},
+	COMBO_MOTIVO_CALIFICACION_NEGATIVA:{
+ 		OTROS: 'OTROS',
+ 		COD_OTROS: '21'
+ 	},
+ 	COMBO_ESTADO_CALIFICACION_NEGATIVA:{
+ 		PENDIENTE: 'Pendiente',
+ 		SUBSANADO: 'Subsanado',
+ 		COD_PENDIENTE: '01',
+ 		COD_SUBSANADO: '02'
+ 	}
 });

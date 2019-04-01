@@ -1,46 +1,47 @@
  package es.pfsgroup.plugin.rem.gestor;
  
  import java.util.Date;
- import java.util.List;
- 
- import org.springframework.beans.factory.annotation.Autowired;
- import org.springframework.stereotype.Component;
- import org.springframework.transaction.annotation.Transactional;
- 
- import es.capgemini.devon.beans.Service;
- import es.capgemini.pfs.auditoria.model.Auditoria;
- import es.capgemini.pfs.gestorEntidad.model.GestorEntidad;
- import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
- import es.capgemini.pfs.procesosJudiciales.model.EXTTareaProcedimiento;
- import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
- import es.capgemini.pfs.users.domain.Perfil;
- import es.capgemini.pfs.users.domain.Usuario;
- import es.pfsgroup.commons.utils.Checks;
- import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
- import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
- import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
- import es.pfsgroup.framework.paradise.gestorEntidad.api.GestorEntidadApi;
- import es.pfsgroup.framework.paradise.gestorEntidad.dao.GestorEntidadDao;
- import es.pfsgroup.framework.paradise.gestorEntidad.dao.GestorEntidadHistoricoDao;
- import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
- import es.pfsgroup.framework.paradise.gestorEntidad.manager.GestorEntidadManager;
- import es.pfsgroup.framework.paradise.gestorEntidad.model.GestorEntidadHistorico;
- import es.pfsgroup.plugin.rem.api.ActivoApi;
- import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
- import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
- import es.pfsgroup.plugin.rem.api.GestorActivoApi;
- import es.pfsgroup.plugin.rem.gestor.dao.GestorActivoDao;
- import es.pfsgroup.plugin.rem.jbpm.handler.user.UserAssigantionService;
- import es.pfsgroup.plugin.rem.jbpm.handler.user.UserAssigantionServiceFactoryApi;
- import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.TrabajoUserAssigantionService;
- import es.pfsgroup.plugin.rem.model.Activo;
- import es.pfsgroup.plugin.rem.model.ActivoProveedor;
- import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
- import es.pfsgroup.plugin.rem.model.ActivoTramite;
- import es.pfsgroup.plugin.rem.model.GestorActivo;
- import es.pfsgroup.plugin.rem.model.GestorActivoHistorico;
- import es.pfsgroup.plugin.rem.model.TareaActivo;
- import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+
+import es.capgemini.devon.beans.Service;
+import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.capgemini.pfs.gestorEntidad.model.GestorEntidad;
+import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
+import es.capgemini.pfs.procesosJudiciales.model.EXTTareaProcedimiento;
+import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
+import es.capgemini.pfs.users.domain.Perfil;
+import es.capgemini.pfs.users.domain.Usuario;
+import es.pfsgroup.commons.utils.Checks;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
+import es.pfsgroup.framework.paradise.gestorEntidad.api.GestorEntidadApi;
+import es.pfsgroup.framework.paradise.gestorEntidad.dao.GestorEntidadDao;
+import es.pfsgroup.framework.paradise.gestorEntidad.dao.GestorEntidadHistoricoDao;
+import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
+import es.pfsgroup.framework.paradise.gestorEntidad.manager.GestorEntidadManager;
+import es.pfsgroup.framework.paradise.gestorEntidad.model.GestorEntidadHistorico;
+import es.pfsgroup.plugin.rem.api.ActivoApi;
+import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
+import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
+import es.pfsgroup.plugin.rem.api.GestorActivoApi;
+import es.pfsgroup.plugin.rem.gestor.dao.GestorActivoDao;
+import es.pfsgroup.plugin.rem.gestor.dao.GestorActivoHistoricoDao;
+import es.pfsgroup.plugin.rem.jbpm.handler.user.UserAssigantionService;
+import es.pfsgroup.plugin.rem.jbpm.handler.user.UserAssigantionServiceFactoryApi;
+import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.TrabajoUserAssigantionService;
+import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoProveedor;
+import es.pfsgroup.plugin.rem.model.ActivoProveedorContacto;
+import es.pfsgroup.plugin.rem.model.ActivoTramite;
+import es.pfsgroup.plugin.rem.model.GestorActivo;
+import es.pfsgroup.plugin.rem.model.GestorActivoHistorico;
+import es.pfsgroup.plugin.rem.model.TareaActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
  
  @Component
  @Service("gestorActivoManager")
@@ -72,6 +73,9 @@
  	
  	@Autowired
  	private GestorActivoDao gestorActivoDao;
+ 	
+ 	@Autowired
+ 	private GestorActivoHistoricoDao gestorActivoHistoricoDao;
  	
  	public static final String CODIGO_TGE_PROVEEDOR_TECNICO = "PTEC";
  
@@ -199,7 +203,7 @@
  	}
  	
  	public Usuario getGestorByActivoYTipo(Activo activo, Long tipo){
- 		List<Usuario> usuariosGestoresList = ((GestorActivoDao) gestorEntidadDao).getListUsuariosGestoresActivoByTipoYActivo(tipo, activo);
+ 		List<Usuario> usuariosGestoresList = ((GestorActivoHistoricoDao) gestorEntidadHistoricoDao).getListUsuariosGestoresActivoByTipoYActivo(tipo, activo);
  		
  		if(usuariosGestoresList != null && !usuariosGestoresList.isEmpty()) {
  			return usuariosGestoresList.get(0);

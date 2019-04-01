@@ -7,6 +7,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -35,6 +38,7 @@ import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.devon.pagination.Page;
 import es.capgemini.devon.utils.FileUtils;
+import es.capgemini.pfs.config.ConfigManager;
 import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
@@ -42,6 +46,7 @@ import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
+import es.pfsgroup.framework.paradise.utils.JsonViewer;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
@@ -57,11 +62,11 @@ import es.pfsgroup.plugin.rem.excel.ActivoExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
 import es.pfsgroup.plugin.rem.excel.PublicacionExcelReport;
+import es.pfsgroup.plugin.rem.exception.RemUserException;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.ACCION_CODIGO;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.ENTIDAD_CODIGO;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.REQUEST_STATUS_CODE;
-import es.pfsgroup.plugin.rem.exception.RemUserException;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoFoto;
 import es.pfsgroup.plugin.rem.model.DtoActivoAdministracion;
@@ -93,6 +98,7 @@ import es.pfsgroup.plugin.rem.model.DtoDatosPublicacionActivo;
 import es.pfsgroup.plugin.rem.model.DtoDistribucion;
 import es.pfsgroup.plugin.rem.model.DtoFichaTrabajo;
 import es.pfsgroup.plugin.rem.model.DtoFoto;
+import es.pfsgroup.plugin.rem.model.DtoGenerarDocGDPR;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoDestinoComercial;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoMediador;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoPreciosFilter;
@@ -180,6 +186,10 @@ public class ActivoController extends ParadiseJsonController {
 	
 	@Autowired
 	private ActivoAdapter activoAdapter;
+	
+	@Autowired
+	private ConfigManager configManager;
+	
 
 	public ActivoApi getActivoApi() {
 		return activoApi;
@@ -1352,7 +1362,7 @@ public class ActivoController extends ParadiseJsonController {
 		try {
 			WebFileItem webFileItem = uploadAdapter.getWebFileItem(request);
 			adapter.upload(webFileItem);
-			model.put(RESPONSE_SUCCESS_KEY, true);
+			model.put(RESPONSE_SUCCESS_KEY, true);			
 		} catch (GestorDocumentalException e) {
 			model.put(RESPONSE_SUCCESS_KEY, false);
 			model.put("errorMessage", "Ha habido un problema con la subida del fichero al gestor documental.");
@@ -1365,13 +1375,25 @@ public class ActivoController extends ParadiseJsonController {
 
 		return createModelAndViewJson(model);
 	}
-
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getLimiteArchivo(HttpServletRequest request, HttpServletResponse response) {
+		String limite = configManager.getConfigByKey("documentos.max.size").getValor();
+		ModelMap model = new ModelMap();
+		model.put("sucess",true);
+		model.put("limite", limite);
+		return JsonViewer.createModelAndViewJson(model);
+	}
+	
 	@RequestMapping(method = RequestMethod.GET)
 	public void bajarAdjuntoActivo(HttpServletRequest request, HttpServletResponse response) {
+		ServletOutputStream salida = null;
+		
 		try {
 			Long id = Long.parseLong(request.getParameter("id"));
 			String nombreDocumento = request.getParameter("nombreDocumento");
-			ServletOutputStream salida = response.getOutputStream();
+			salida = response.getOutputStream();
 			FileItem fileItem = adapter.download(id, nombreDocumento);
 			response.setHeader("Content-disposition", "attachment; filename=" + fileItem.getFileName());
 			response.setHeader("Cache-Control", "must-revalidate, post-check=0,pre-check=0");
@@ -1385,12 +1407,26 @@ public class ActivoController extends ParadiseJsonController {
 
 			// Write
 			FileUtils.copy(fileItem.getInputStream(), salida);
-			salida.flush();
-			salida.close();
 
-		} catch (Exception e) {
-			logger.error("error en activoController", e);
+		} catch(UserException ex) {
+			try {
+				salida.write(ex.toString().getBytes(Charset.forName("UTF-8")));
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	
 		}
+		catch (Exception e) {
+			logger.error("error en activoController", e);
+		}finally {
+			try {
+				salida.flush();			
+				salida.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}		
 	}
 
 	@SuppressWarnings("unchecked")
@@ -2484,6 +2520,52 @@ public class ActivoController extends ParadiseJsonController {
 
 		return createModelAndViewJson(model);
 	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView updateCalificacionNegativa(DtoActivoDatosRegistrales dtoActivosDatosRegistrales, ModelMap model) {
+		try {
+			boolean success = activoApi.updateCalificacionNegativa(dtoActivosDatosRegistrales);
+			model.put(RESPONSE_SUCCESS_KEY, success);
+		} catch (Exception e) {
+			logger.error("error en updateCalificacionNegativa", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put(RESPONSE_ERROR_MESSAGE_KEY, e.getMessage());
+		}
+		
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView createCalificacionNegativa(@RequestParam Long idEntidadPk, DtoActivoDatosRegistrales dtoActivosDatosRegistrales, ModelMap model) {
+		try {
+			dtoActivosDatosRegistrales.setIdActivo(idEntidadPk);
+			boolean success = activoApi.createCalificacionNegativa(dtoActivosDatosRegistrales);
+			model.put(RESPONSE_SUCCESS_KEY, success);
+		} catch (Exception e) {
+			logger.error("error en CalificacionNegativa", e);
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			model.put(RESPONSE_ERROR_MESSAGE_KEY, e.getMessage());
+		}
+		
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView destroyCalificacionNegativa(DtoActivoDatosRegistrales dtoActivosDatosRegistrales, ModelMap model) {
+		try {
+			boolean success = activoApi.destroyCalificacionNegativa(dtoActivosDatosRegistrales);
+			model.put(RESPONSE_SUCCESS_KEY, success);
+
+		} catch (Exception e) {
+			model.put(RESPONSE_SUCCESS_KEY, false);
+			logger.error("error en destroyCalificacionNegativa", e);
+		}
+
+		return createModelAndViewJson(model);
+	}
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
@@ -2522,7 +2604,7 @@ public class ActivoController extends ParadiseJsonController {
 	public ModelAndView getActivoExists(String numActivo, ModelMap model) {
 
 		try {
-			Long idActivo = activoApi.getIdByNumActivo(Long.parseLong(numActivo));
+			Long idActivo = activoApi.getActivoExists(Long.parseLong(numActivo));
 
 			if(!Checks.esNulo(idActivo)) {
 				model.put("success", true);
@@ -2553,6 +2635,31 @@ public class ActivoController extends ParadiseJsonController {
 		}
 		return false;
 	}
+
+
+	@RequestMapping(method = RequestMethod.POST)
+	public void generarUrlGDPR(DtoGenerarDocGDPR dtoGenerarDocGDPR, HttpServletRequest request, HttpServletResponse response) {
+		try {
+			FileItem fileItem = activoApi.generarUrlGDPR(dtoGenerarDocGDPR);
+			ServletOutputStream salida = response.getOutputStream();
+
+			response.setHeader("Content-disposition", "attachment; filename=" + fileItem.getFileName());
+			response.setHeader("Cache-Control", "must-revalidate, post-check=0,pre-check=0");
+			response.setHeader("Cache-Control", "max-age=0");
+			response.setHeader("Expires", "0");
+			response.setHeader("Pragma", "public");
+			response.setDateHeader("Expires", 0); // prevents caching at the proxy
+			response.setContentType(fileItem.getContentType());
+
+			// Write
+			FileUtils.copy(fileItem.getInputStream(), salida);
+			salida.flush();
+			salida.close();
+
+		} catch (Exception e) {
+			logger.error("Error en ActivoCOntroller", e);
+		}
+	}
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
@@ -2571,4 +2678,92 @@ public class ActivoController extends ParadiseJsonController {
 
 		return createModelAndViewJson(model);
 	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST) // TODO --> BORRAR
+	public ModelAndView getCalificacionNegativaMotivo( Long idActivo, String idMotivo, ModelMap model) {
+
+		try {
+			
+			DtoActivoDatosRegistrales dtoActCalNeg = activoApi.getCalificacionNegativoByidActivoIdMotivo(idActivo, idMotivo);
+
+			model.put("data", dtoActCalNeg);
+			model.put("success", true);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}
+
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST) // TODO --> BORRAR
+	public ModelAndView saveCalificacionNegativaMotivo(Long idActivo, String idMotivo, String calificacionNegativa, String estadoMotivoCalificacionNegativa, 
+			String responsableSubsanar, String descripcionCalificacionNegativa, String fechaSubsanacion, ModelMap model) {
+		
+		DtoActivoDatosRegistrales dto = new DtoActivoDatosRegistrales();
+		dto.setNumeroActivo(idActivo.toString());
+		dto.setMotivoCalificacionNegativa(idMotivo);
+		dto.setCodigoMotivoCalificacionNegativa(idMotivo);
+		dto.setCalificacionNegativa(calificacionNegativa);
+		dto.setEstadoMotivoCalificacionNegativa(estadoMotivoCalificacionNegativa);
+		dto.setResponsableSubsanar(responsableSubsanar);
+		dto.setDescripcionCalificacionNegativa(descripcionCalificacionNegativa);
+		if(!Checks.esNulo(fechaSubsanacion)) {
+			
+			try {
+				SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+				Date fecha = format.parse(fechaSubsanacion);
+				dto.setFechaSubsanacion(fecha);
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+			
+		}
+		
+		
+		try {
+			model.put("success", activoApi.saveCalificacionNegativoMotivo(dto));
+		}catch(Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}
+		
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST) // TODO --> BORRAR ?? 
+	public ModelAndView getMotivosCalificacionNegativaSubsanados( Long idActivo, String idMotivo, ModelMap model) {
+
+		try {
+			
+			boolean resultado = activoApi.getMotivosCalificacionNegativaSubsanados(idActivo,idMotivo);
+
+			model.put("data", resultado);
+			model.put("success", true);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			model.put("success", false);
+		}
+
+		return createModelAndViewJson(model);
+	}
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public ModelAndView getCalificacionNegativa(Long id, ModelMap model) {
+		model.put(RESPONSE_DATA_KEY, activoApi.getActivoCalificacionNegativa(id));
+
+		return createModelAndViewJson(model);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.GET)
+	public List<DtoActivoDatosRegistrales> getCalificacionNegativabyId(Long id) {
+		return activoApi.getActivoCalificacionNegativaCodigos(id);
+	}
+	
 }

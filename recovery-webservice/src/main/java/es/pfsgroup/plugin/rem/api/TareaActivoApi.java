@@ -68,4 +68,6 @@ public interface TareaActivoApi {
 
 		public String getValorFechaSeguroRentaPorIdActivo(Long idActivo);
 
+		public void saltoFinAlquileres(Long id);
+
     }

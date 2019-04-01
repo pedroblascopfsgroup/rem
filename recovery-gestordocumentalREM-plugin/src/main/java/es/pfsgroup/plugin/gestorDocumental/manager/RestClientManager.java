@@ -18,8 +18,12 @@ import org.apache.commons.logging.LogFactory;
 import org.glassfish.jersey.jackson.JacksonFeature;
 import org.glassfish.jersey.media.multipart.BodyPart;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import es.capgemini.devon.beans.Service;
+import es.capgemini.devon.exception.UserException;
+import es.capgemini.pfs.config.Config;
+import es.capgemini.pfs.config.ConfigManager;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.plugin.gestorDocumental.api.RestClientApi;
 import es.pfsgroup.plugin.gestorDocumental.model.ServerRequest;
@@ -38,6 +42,8 @@ public class RestClientManager implements RestClientApi {
 	
 	private static final String PROPIEDAD_ACTIVAR_REST_CLIENT = "rest.client.gestor.documental.activar";
 	
+	@Autowired
+	private ConfigManager configManager;
 	@Resource
 	private Properties appProperties;
 
@@ -105,7 +111,8 @@ public class RestClientManager implements RestClientApi {
 	@Override
 	public Object getBinaryResponse(ServerRequest serverRequest) {
 		String restClientUrl = appProperties.getProperty(serverRequest.getRestClientUrl());
-		
+		String limite = configManager.getConfigByKey("documentos.max.size").getValor();
+		int limiteTotal = Integer.parseInt(limite);
 		final Client client = ClientBuilder.newBuilder().register(MultiPartFeature.class).register(JacksonFeature.class).build();
 		String url = restClientUrl + serverRequest.getPath();
 		WebTarget webTarget = client.target(url);
@@ -116,11 +123,17 @@ public class RestClientManager implements RestClientApi {
 		Response res = (Response) response;
 		InputStream is = (InputStream)res.getEntity();
 		ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-		int nRead;
+		int nRead,totalLeido = 0;
 	    byte[] data = new byte[1024];
 	    try {
 		    while ((nRead = is.read(data, 0, data.length)) != -1) {
-		        buffer.write(data, 0, nRead);
+		    	totalLeido += nRead;
+		    	if(limiteTotal == 0 || totalLeido < limiteTotal*1024*1024) {
+		    		buffer.write(data, 0, nRead);
+		    	}else {
+		    		logger.error("RestClientManager: No se puede descargar ficheros mayores a " + limiteTotal + "Mb");
+		    		return (String)("No se puede descargar ficheros mayores a " + limiteTotal + "Mb");
+		    	}
 		    }
 		 
 		    buffer.flush();

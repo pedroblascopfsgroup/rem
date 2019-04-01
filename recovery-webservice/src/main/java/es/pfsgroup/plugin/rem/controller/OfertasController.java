@@ -3,6 +3,7 @@ package es.pfsgroup.plugin.rem.controller;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -20,9 +21,18 @@ import org.springframework.web.servlet.ModelAndView;
 
 import es.capgemini.devon.exception.UserException;
 import es.capgemini.devon.files.FileItem;
+import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
+import es.capgemini.pfs.procesosJudiciales.model.TareaExternaValor;
+import es.capgemini.pfs.procesosJudiciales.model.TareaProcedimiento;
+import es.capgemini.pfs.users.domain.Usuario;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
+import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
+import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
+import es.pfsgroup.plugin.rem.api.ActivoTareaExternaApi;
+import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
@@ -30,13 +40,17 @@ import es.pfsgroup.plugin.rem.excel.OfertasExcelReport;
 import es.pfsgroup.plugin.rem.model.DtoHonorariosOferta;
 import es.pfsgroup.plugin.rem.model.DtoOfertantesOferta;
 import es.pfsgroup.plugin.rem.model.DtoOfertasFilter;
+import es.pfsgroup.plugin.rem.model.DtoPropuestaAlqBankia;
 import es.pfsgroup.plugin.rem.model.Oferta;
+import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
+import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.oferta.NotificationOfertaManager;
 import es.pfsgroup.plugin.rem.rest.api.RestApi;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaDto;
 import es.pfsgroup.plugin.rem.rest.dto.OfertaRequestDto;
 import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
+import es.pfsgroup.plugin.rem.tareasactivo.dao.ActivoTareaExternaDao;
 import net.sf.json.JSONObject;
 
 @Controller
@@ -44,22 +58,35 @@ public class OfertasController {
 
 	@Autowired
 	private OfertaApi ofertaApi;
+	
+	@Autowired
+	private ExpedienteComercialApi expedienteComercialApi;
 
 	@Autowired
 	private ExcelReportGeneratorApi excelReportGeneratorApi;
 
 	@Autowired
 	private RestApi restApi;
-
+	
+	
+	@Autowired
+	private GenericAdapter genericAdapter;
+	
 	private final Log logger = LogFactory.getLog(getClass());
 
 	@Autowired
 	GenericABMDao genericDao;
-	
 		
 	@Autowired
 	private NotificationOfertaManager notificationOferta;
-
+	
+	@Autowired
+	private ActivoTareaExternaDao activoTareaExternaDao;
+	
+	@Autowired
+	private ActivoTareaExternaApi activoTareaExternaApi;
+	
+	private final static String CLIENTE_HAYA = "HAYA";
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
@@ -87,14 +114,64 @@ public class OfertasController {
 	public void generateExcel(DtoOfertasFilter dtoOfertasFilter, HttpServletRequest request, HttpServletResponse response) throws IOException {
 		dtoOfertasFilter.setStart(excelReportGeneratorApi.getStart());
 		dtoOfertasFilter.setLimit(excelReportGeneratorApi.getLimit());
-
+		
+		String dtoCarteraCodigo = dtoOfertasFilter.getCarteraCodigo();
+		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+		UsuarioCartera usuarioCartera = genericDao.get(UsuarioCartera.class,
+				genericDao.createFilter(FilterType.EQUALS, "usuario.id", usuarioLogado.getId()));
 		List<VOfertasActivosAgrupacion> listaOfertas = (List<VOfertasActivosAgrupacion>) ofertaApi.getListOfertasUsuario(dtoOfertasFilter).getResults();
-
-		ExcelReport report = new OfertasExcelReport(listaOfertas);
+		HashMap<Long,String> fechasReunionComite = new HashMap<Long, String>();
+		HashMap<Long,String> sancionadores = new HashMap<Long, String>();
+		
+		if((!Checks.esNulo(usuarioCartera) && (DDCartera.CODIGO_CARTERA_LIBERBANK).equals(usuarioCartera.getCartera().getCodigo()))
+				|| (!Checks.esNulo(dtoCarteraCodigo) && (DDCartera.CODIGO_CARTERA_LIBERBANK.equals(dtoCarteraCodigo)))){
+			for(VOfertasActivosAgrupacion oferta : listaOfertas){
+				List<Long> TareasExternasId = activoTareaExternaDao.getTareasExternasIdByOfertaId(oferta.getId());
+				Filter filterTap01 = genericDao.createFilter(FilterType.EQUALS, "codigo", "T013_ResolucionComite");
+				Long idResolucionComite = genericDao.get(TareaProcedimiento.class, filterTap01).getId();
+				Filter filterTap02 = genericDao.createFilter(FilterType.EQUALS, "codigo", "T015_ResolucionExpediente");
+				Long idResolucionExpediente = genericDao.get(TareaProcedimiento.class, filterTap02).getId();
+				
+				//01->Venta, 02->Alquiler
+				if(("01").equals(oferta.getCodigoTipoOferta())){
+					for(Long tareaExternaId : TareasExternasId){
+						TareaExterna tareaExterna = activoTareaExternaApi.get(tareaExternaId);
+						if((idResolucionComite).equals(tareaExterna.getTareaProcedimiento().getId())){
+							List<TareaExternaValor> valores = activoTareaExternaDao.getByTareaExterna(tareaExterna.getId());
+							for(TareaExternaValor valor : valores){
+								if(("fechaReunionComite").equals(valor.getNombre())){
+									fechasReunionComite.put(oferta.getId(), valor.getValor());
+								}
+								if(("comiteInternoSancionador").equals(valor.getNombre())){
+									sancionadores.put(oferta.getId(), valor.getValor());
+								}
+							}
+						}
+					}
+				}else if(("02").equals(oferta.getCodigoTipoOferta())){
+					for(Long tareaExternaId : TareasExternasId){
+						TareaExterna tareaExterna = activoTareaExternaApi.get(tareaExternaId);
+						if((idResolucionExpediente).equals(tareaExterna.getTareaProcedimiento().getId())){
+							List<TareaExternaValor> valores = activoTareaExternaDao.getByTareaExterna(tareaExterna.getId());
+							for(TareaExternaValor valor : valores){
+								if(("fechaReunionComite").equals(valor.getNombre())){
+									fechasReunionComite.put(oferta.getId(), valor.getValor());
+								}
+								if(("comiteInternoSancionador").equals(valor.getNombre())){
+									sancionadores.put(oferta.getId(), valor.getValor());
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		ExcelReport report = new OfertasExcelReport(listaOfertas, dtoCarteraCodigo, usuarioCartera, fechasReunionComite, sancionadores);
 
 		excelReportGeneratorApi.generateAndSend(report, response);
 	}
-
+	
 	private ModelAndView createModelAndViewJson(ModelMap model) {
 
 		return new ModelAndView("jsonView", model);
@@ -105,7 +182,7 @@ public class OfertasController {
 	 * HEADERS: Content-Type - application/json signature - sdgsdgsdgsdg
 	 * 
 	 * BODY: {"id":"111111114111","data": [{
-	 * "idOfertaWebcom": "1000", "idVisitaRem": "1", "idClienteRem": "1", 
+	 * "idOfertaWebcom": "1000", "idVisitaRem": "1", "idClienteRem": "1",
 	 * "activosLote": ["6346320", "6346321", "6346322"],
 	 * "codEstadoOferta": "04","codTipoOferta": "01", "fechaAccion":
 	 * "2016-01-01T10:10:10", "idUsuarioRemAccion": "29468",
@@ -127,7 +204,7 @@ public class OfertasController {
 		ArrayList<Map<String, Object>> listaRespuesta = new ArrayList<Map<String, Object>>();
 		JSONObject jsonFields = null;
 		List<OfertaDto> listaOfertaDto = null;
-		
+
 		try {
 
 			jsonFields = request.getJsonObject();
@@ -140,7 +217,7 @@ public class OfertasController {
 			} else {
 
 				ofertaApi.saveOrUpdateOfertas(listaOfertaDto, jsonFields, listaRespuesta);
-				
+
 				model.put("id", jsonFields.get("id"));
 				model.put("data", listaRespuesta);
 				model.put("error", "null");
@@ -241,48 +318,65 @@ public class OfertasController {
 		return createModelAndViewJson(new ModelMap("data", ofertaApi.getDiccionarioSubtipoProveedorCanal()));
 	}
 	
-	
+
 	@RequestMapping(method = RequestMethod.GET)
-	public void generateExcelOferta(Long idOferta, HttpServletRequest request, HttpServletResponse response) throws IOException {
+	public void generateExcelOferta(Long idEco, Long idOferta, HttpServletRequest request, HttpServletResponse response) throws IOException {
 		
-		DtoOfertasFilter dto = new DtoOfertasFilter();
-		dto.setIdOferta(idOferta);
-		ExcelReport report = new OfertasExcelReport(ofertaApi.getListOfertasFromView(dto));
-		File file = excelReportGeneratorApi.generateReport(report);
+		List <DtoPropuestaAlqBankia> listaPropuestaAlquilerBankia = ofertaApi.getListPropuestasAlqBankiaFromView(idEco);
 		
+		File file = excelReportGeneratorApi.generateBankiaReport(listaPropuestaAlquilerBankia, request);
+		excelReportGeneratorApi.sendReport(file, response);
 		Oferta oferta = ofertaApi.getOfertaById(idOferta);
 		notificationOferta.sendNotificationPropuestaOferta(oferta, new FileItem(file));
-		
-		excelReportGeneratorApi.sendReport(file, response);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView enviarMailAprobacion(ModelMap model, Long idOferta) {
-		
+
 		try {
-			
+
 			Oferta oferta = ofertaApi.getOfertaById(idOferta);
 			String errorCode = notificationOferta.enviarMailAprobacion(oferta);
-			
+
 			if(errorCode == null || errorCode.isEmpty()){
 				model.put("success", true);
 			}
 			else{
 				model.put("success", false);
 				model.put("errorCode", errorCode);
-			}			
-			
-			
-		} 
+			}
+
+
+		}
 		catch (Exception e) {
 			e.printStackTrace();
 			model.put("success", false);
 			model.put("errorCode", "imposible.bloquear.general");
-		}		
-		
+		}
+
 		return createModelAndViewJson(model);
-		
+
 	}
-	
+
+	@SuppressWarnings("unchecked")
+	@RequestMapping(method = RequestMethod.POST)
+	public ModelAndView checkPedirDoc(Long idActivo, Long idAgrupacion, Long idExpediente, String dniComprador, String codtipoDoc, ModelMap model) {
+
+		try {
+			ofertaApi.llamadaMaestroPersonas(dniComprador, CLIENTE_HAYA);
+			//model.put("data", ofertaApi.checkPedirDoc(idActivo,idAgrupacion,idExpediente, dniComprador, codtipoDoc));
+			model.put("data", false);
+			model.put("comprador",ofertaApi.getClienteGDPRByTipoDoc(dniComprador, codtipoDoc));
+			model.put("compradorId", expedienteComercialApi.getCompradorIdByDocumento(dniComprador, codtipoDoc));
+			model.put("destinoComercial", ofertaApi.getDestinoComercialActivo(idActivo, idAgrupacion, idExpediente));
+			model.put("carteraInternacional", ofertaApi.esCarteraInternacional(idActivo, idAgrupacion, idExpediente));
+			model.put("success", true);
+		} catch (Exception e) {
+			logger.error("Error en ofertasController", e);
+			model.put("success", false);
+		}
+
+		return createModelAndViewJson(model);
+	}
 }

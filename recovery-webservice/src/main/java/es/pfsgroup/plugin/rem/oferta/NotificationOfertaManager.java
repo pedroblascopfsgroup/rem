@@ -305,7 +305,7 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 
 			if(!Checks.esNulo(usuario)){
 				mailsPara.add(usuario.getEmail());
-				
+			
 				List<GestorSustituto> sustitutos = genericDao.getList(GestorSustituto.class, genericDao.createFilter(FilterType.EQUALS, "usuarioGestorOriginal.id", usuario.getId()));
 				for (GestorSustituto gestorSustituto : sustitutos) {
 					if ((gestorSustituto.getFechaFin().after(new Date()) || gestorSustituto.getFechaFin().equals(new Date())) && (gestorSustituto.getFechaInicio().before(new Date()) || gestorSustituto.getFechaInicio().equals(new Date())) && !gestorSustituto.getAuditoria().isBorrado()){
@@ -439,8 +439,15 @@ public class NotificationOfertaManager extends AbstractNotificatorService {
 			para.add(buzonPfs.getEmail());
 		}
 		
-		String tipoDocIndentificacion= oferta.getCliente().getTipoDocumento().getDescripcion();
-		String docIdentificacion= oferta.getCliente().getDocumento();
+		String tipoDocIndentificacion=null;
+		String docIdentificacion=null;
+		if(!Checks.esNulo(oferta.getCliente())) {
+			if(!Checks.esNulo(oferta.getCliente().getTipoDocumento())) {
+				tipoDocIndentificacion= oferta.getCliente().getTipoDocumento().getDescripcion();
+			}
+			docIdentificacion= oferta.getCliente().getDocumento();
+		}
+		
 		String codigoPrescriptor= oferta.getPrescriptor().getCodigoProveedorRem().toString();
 		String nombrePrescriptor= oferta.getPrescriptor().getNombre();
 		List<DtoAdjuntoMail> adjuntos = new ArrayList<DtoAdjuntoMail>();

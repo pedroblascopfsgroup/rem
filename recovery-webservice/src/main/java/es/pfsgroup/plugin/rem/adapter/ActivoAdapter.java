@@ -3522,9 +3522,15 @@ public class ActivoAdapter {
 			
 			TmpClienteGDPR tmpClienteGDPR = genericDao.get(TmpClienteGDPR.class,
 					genericDao.createFilter(FilterType.EQUALS, "numDocumento", dto.getNumDocumentoCliente()));
+
+			List<ClienteComercial> clientes = genericDao.getList(ClienteComercial.class,
+					genericDao.createFilter(FilterType.EQUALS, "numDocumento", dto.getNumDocumentoCliente()),
+					genericDao.createFilter(FilterType.NOTNULL, "idPersonaHaya"));
 			
-			if (!Checks.esNulo(tmpClienteGDPR)) {
+			if (!Checks.esNulo(tmpClienteGDPR) && !Checks.esNulo(tmpClienteGDPR.getIdPersonaHaya())) {
 				clienteComercial.setIdPersonaHaya(String.valueOf(tmpClienteGDPR.getIdPersonaHaya()));
+			} else if (!Checks.esNulo(clientes) && !clientes.isEmpty()) {
+				clienteComercial.setIdPersonaHaya(clientes.get(0).getIdPersonaHaya());
 			}
 					
 			clienteComercial = genericDao.save(ClienteComercial.class, clienteComercial);

@@ -1906,16 +1906,8 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					.expedienteComercialToInstanciaDecisionList(expediente, porcentajeImpuesto, codComiteSuperior);
 
 			ResultadoInstanciaDecisionDto resultadoDto = uvemManagerApi.altaInstanciaDecision(instanciaDecisionDto);
-			String codigoComite = null;
-			if (!Checks.esNulo(resultadoDto.getCodigoComiteSuperior())) {
-				codigoComite = resultadoDto.getCodigoComiteSuperior();
-			} else {
-				codigoComite = resultadoDto.getCodigoComite();
-			}
+			
 			this.guardarUvemCodigoAgrupacionInmueble(expediente, resultadoDto);
-//			DDComiteSancion comite = expedienteComercialApi.comiteSancionadorByCodigo(codigoComite);
-//			expediente.setComiteSancion(comite);
-//			expediente.setComiteSuperior(comite);
 
 			if(!Checks.esNulo(resultadoDto.getCodigoOfertaUvem())){
 				if(!Checks.esNulo(expediente.getOferta())){
@@ -3636,6 +3628,54 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 		}
 		
 	return destinoComercial;
+		
+	}
+	
+	public boolean existeClienteOComprador(Long idActivo, Long idAgrupacion, Long idExpediente, String docCliente, String codtipoDoc) {
+		ClienteGDPR clienteGDPR = null; Comprador comprador = null;
+		
+		Filter filterCodigoTpoDoc = genericDao.createFilter(FilterType.EQUALS, "tipoDocumento.codigo", codtipoDoc);
+		Boolean existeCliOCom = false;
+		if(!Checks.esNulo(idActivo) || !Checks.esNulo(idAgrupacion)) {
+			clienteGDPR = genericDao.get(ClienteGDPR.class, 
+					genericDao.createFilter(FilterType.EQUALS, "numDocumento", docCliente), filterCodigoTpoDoc);
+			if(!Checks.esNulo(clienteGDPR)) existeCliOCom = true;
+		} else if(!Checks.esNulo(idExpediente)) {
+			comprador = genericDao.get(Comprador.class, 
+					genericDao.createFilter(FilterType.EQUALS, "documento", docCliente), filterCodigoTpoDoc);
+			if(!Checks.esNulo(comprador)) existeCliOCom = true;
+		}
+		return existeCliOCom;
+	}
+	
+	public boolean esCarteraInternacional(Long idActivo, Long idAgrupacion, Long idExpediente) {
+		Boolean esCarteraInternacional = false;
+		String codCartera = null;
+		if (!Checks.esNulo(idActivo) && Checks.esNulo(idAgrupacion)) {
+			codCartera = activoApi.get(idActivo).getCartera().getCodigo();
+		} else if (Checks.esNulo(idActivo) && !Checks.esNulo(idAgrupacion)) {
+			ActivoAgrupacion agr = activoAgrupacionApi.get(idAgrupacion);
+			if(!Checks.esNulo(agr.getActivoPrincipal())) {
+				codCartera = agr.getActivoPrincipal().getCartera().getCodigo();
+			} else {
+				codCartera = agr.getActivos().get(0).getActivo().getCartera().getCodigo();
+			}
+		} else {
+			codCartera = expedienteComercialApi.findOne(idExpediente).getOferta().getActivoPrincipal().getCartera().getCodigo();
+		}
+		
+		if(!Checks.esNulo(codCartera)) {
+			if(codCartera.equals(DDCartera.CODIGO_CARTERA_CERBERUS)
+					|| codCartera.equals(DDCartera.CODIGO_CARTERA_GIANTS)
+					|| codCartera.equals(DDCartera.CODIGO_CARTERA_TANGO)
+					|| codCartera.equals(DDCartera.CODIGO_CARTERA_GALEON)) {
+				esCarteraInternacional = true;
+			} else {
+				esCarteraInternacional = false;
+			}
+		}
+		
+	return esCarteraInternacional;
 		
 	}
 }

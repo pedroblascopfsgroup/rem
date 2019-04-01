@@ -121,15 +121,19 @@ public class Comprador implements Serializable, Auditable {
     private Boolean cesionDatos;
     
     @Column(name = "COM_TRANSF_INTER")
-    private Boolean comunicacionTerceros;
-    
-    @Column(name = "COM_COMUNI_TERCEROS")
     private Boolean transferenciasInternacionales;
     
+    @Column(name = "COM_COMUNI_TERCEROS")
+    private Boolean comunicacionTerceros;
+
     @Column(name = "ID_PERSONA_HAYA")
     private Long idPersonaHaya;
-
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ADCOM_ID")
+    private AdjuntoComprador adjunto;
 	
+
 	public Long getId() {
 		return id;
 	}
@@ -327,5 +331,13 @@ public class Comprador implements Serializable, Auditable {
 
 	public void setIdPersonaHaya(Long idPersonaHaya) {
 		this.idPersonaHaya = idPersonaHaya;
+	}
+	
+	public AdjuntoComprador getAdjunto() {
+		return adjunto;
+	}
+
+	public void setAdjunto(AdjuntoComprador adjunto) {
+		this.adjunto = adjunto;
 	}
 }

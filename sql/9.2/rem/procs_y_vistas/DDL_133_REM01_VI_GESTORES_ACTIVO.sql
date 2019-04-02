@@ -255,7 +255,7 @@ SELECT  act.act_id,
                     ON (dist0.cod_cartera = dd_cra.dd_cra_codigo 
                         AND dist0.cod_subcartera IS NULL
                         AND dist0.tipo_gestor = TGE.DD_TGE_CODIGO
-                        AND PRV.DD_PRV_CODIGO = dist0.COD_PROVINCIA 
+                        AND PRV.DD_PRV_CODIGO = NVL(dist0.COD_PROVINCIA, PRV.DD_PRV_CODIGO)
                         AND LOC.DD_LOC_CODIGO = NVL(dist0.COD_MUNICIPIO,LOC.DD_LOC_CODIGO)  
                         AND (dist0.COD_TIPO_COMERZIALZACION IS NULL OR DD_TCR.DD_TCR_CODIGO = NVL(dist0.COD_TIPO_COMERZIALZACION,DD_TCR.DD_TCR_CODIGO))
                         AND (dist0.COD_POSTAL IS NULL OR BL.BIE_LOC_COD_POST = NVL(dist0.COD_POSTAL,BL.BIE_LOC_COD_POST)))
@@ -263,7 +263,7 @@ SELECT  act.act_id,
                     ON (dist1.cod_cartera = dd_cra.dd_cra_codigo 
                         AND dist1.cod_subcartera = dd_scr.dd_scr_codigo 
                         AND dist1.tipo_gestor = TGE.DD_TGE_CODIGO
-                        AND PRV.DD_PRV_CODIGO = dist1.COD_PROVINCIA 
+                        AND PRV.DD_PRV_CODIGO = NVL(dist1.COD_PROVINCIA, PRV.DD_PRV_CODIGO)
                         AND LOC.DD_LOC_CODIGO = NVL(dist1.COD_MUNICIPIO,LOC.DD_LOC_CODIGO)  
                         AND (DIST1.COD_TIPO_COMERZIALZACION IS NULL OR DD_TCR.DD_TCR_CODIGO = NVL(dist1.COD_TIPO_COMERZIALZACION,DD_TCR.DD_TCR_CODIGO))
                         AND (DIST1.COD_POSTAL IS NULL OR BL.BIE_LOC_COD_POST = NVL(DIST1.COD_POSTAL,BL.BIE_LOC_COD_POST)))
@@ -291,14 +291,14 @@ SELECT  act.act_id,
                         ON (dist0.cod_cartera = dd_cra.dd_cra_codigo  
                             AND dist0.cod_subcartera IS NULL
                             AND dist0.tipo_gestor = TGE.DD_TGE_CODIGO
-                            AND PRV.DD_PRV_CODIGO = dist0.COD_PROVINCIA 
+                            AND PRV.DD_PRV_CODIGO = NVL(dist0.COD_PROVINCIA,PRV.DD_PRV_CODIGO)
                             AND LOC.DD_LOC_CODIGO = NVL(dist0.COD_MUNICIPIO,LOC.DD_LOC_CODIGO) 
                             AND (DIST0.COD_TIPO_COMERZIALZACION IS NULL OR DD_TCR.DD_TCR_CODIGO = NVL(dist0.COD_TIPO_COMERZIALZACION,DD_TCR.DD_TCR_CODIGO)))
                   LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist1 
                         ON (dist1.cod_cartera = dd_cra.dd_cra_codigo  
                             AND dist1.cod_subcartera = dd_scr.dd_scr_codigo 
                             AND dist1.tipo_gestor = TGE.DD_TGE_CODIGO
-                            AND PRV.DD_PRV_CODIGO = dist1.COD_PROVINCIA 
+                            AND PRV.DD_PRV_CODIGO = NVL(dist1.COD_PROVINCIA,PRV.DD_PRV_CODIGO)
                             AND LOC.DD_LOC_CODIGO = NVL(dist1.COD_MUNICIPIO,LOC.DD_LOC_CODIGO) 
                             AND (DIST1.COD_TIPO_COMERZIALZACION IS NULL OR DD_TCR.DD_TCR_CODIGO = NVL(dist1.COD_TIPO_COMERZIALZACION,DD_TCR.DD_TCR_CODIGO)))          
            where act.borrado = 0 

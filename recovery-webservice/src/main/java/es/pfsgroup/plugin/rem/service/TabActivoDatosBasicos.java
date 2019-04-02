@@ -480,10 +480,11 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		if(esUA) {
 			//Cuando es una UA, cargamos los datos de su AM
 			ActivoAgrupacion agrupacion = activoDao.getAgrupacionPAByIdActivo(activo.getId());
-			Activo activoMatriz = activoAgrupacionActivoDao.getActivoMatrizByIdAgrupacion(agrupacion.getId());
-			
-			if (!Checks.esNulo(activoMatriz)) {
-				activoBancario = activoApi.getActivoBancarioByIdActivo(activoMatriz.getId());
+			if (!Checks.esNulo(agrupacion)) {
+				Activo activoMatriz = activoAgrupacionActivoDao.getActivoMatrizByIdAgrupacion(agrupacion.getId());
+				if (!Checks.esNulo(activoMatriz)) {
+					activoBancario = activoApi.getActivoBancarioByIdActivo(activoMatriz.getId());
+				}
 			}
 		}
 		

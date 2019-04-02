@@ -87,8 +87,8 @@ Ext.define('HreRem.view.common.DDViewModel', {
 
     		comboAceptadoRechazado: {
 				data : [
-			        {"codigo": 0, "descripcion": "Rechazado"},
-			        {"codigo": 1, "descripcion": "Aprobado"}
+			        {"codigo": "0", "descripcion": "Rechazado"},
+			        {"codigo": "1", "descripcion": "Aprobado"}
 			    ]
     		},
     		

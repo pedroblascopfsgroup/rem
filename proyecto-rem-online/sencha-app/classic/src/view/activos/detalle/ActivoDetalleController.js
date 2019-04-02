@@ -3582,16 +3582,12 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     onChangeCheckboxOcultar: function(checkbox, isDirty) {
         var me = this;
         var combobox = me.lookupReference(checkbox.comboRefChained);
-        var textarea = me.lookupReference(combobox.textareaRefChained);
 
         if(checkbox.getValue()) {
             combobox.setDisabled(false);
-            textarea.setReadOnly(false);
         } else {
             combobox.setDisabled(true);
             combobox.clearValue();
-            textarea.setReadOnly(true);
-            textarea.reset();
         }
 
 		if (isDirty) {

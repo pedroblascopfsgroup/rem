@@ -728,7 +728,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			if(me.getViewModel().get('expediente.tipoExpedienteCodigo') === tipoExpedienteAlquiler){
 				deshabilitarCamposDoc = true;
 			}
-			me.getView().fireEvent('openModalWindow', "HreRem.view.expedientes.DatosComprador",{idComprador: idCliente, modoEdicion: edicion, storeGrid:storeGrid, expediente: expediente,deshabilitarCamposDoc: deshabilitarCamposDoc });
+			var window = me.getView().fireEvent('openModalWindow', "HreRem.view.expedientes.DatosComprador",{idComprador: idCliente, modoEdicion: edicion, storeGrid:storeGrid, expediente: expediente,deshabilitarCamposDoc: deshabilitarCamposDoc });
 			
 		}
 		if (me.getViewModel().get('expediente.tipoExpedienteCodigo') === tipoExpedienteAlquiler && !Ext.isEmpty(fechaPosicionamiento)){
@@ -967,37 +967,30 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	
 	cargarDatosComprador: function (window) {
 		var me = this,
-		model = null,
-		models = null,
-		nameModels = null,
-		id = window.idComprador,
-		idExpediente = window.expediente.get("id");
-
-		if(!Ext.isEmpty(id)){
-			var form= window.down('formBase');
-			form.mask(HreRem.i18n("msg.mask.loading"));
-			if(!form.saveMultiple) {	
-				model = form.getModelInstance(),
-				model.setId(id);
-				if(Ext.isDefined(model.getProxy().getApi().read)) {
-					// Si la API tiene metodo de lectura (read).
-					model.load({
-						params: {idExpedienteComercial: idExpediente},
-					    success: function(record) {
-					    	form.setBindRecord(record);			    	
-					    	form.unmask();
-					    	if(Ext.isFunction(form.afterLoad)) {
-					    		form.afterLoad();
-					    	}
-					    }
-					});
-				}
+			model = Ext.create('HreRem.model.FichaComprador'),
+			idExpediente = window.expediente.get("id"),
+			form = window.down('formBase');
+		
+		form.mask(HreRem.i18n("msg.mask.loading"));
+		
+		model.setId(window.idComprador);
+		model.load({
+			params: {idExpedienteComercial: idExpediente},
+		    success: function(record) {
+		    	form.unmask();
+		    	form.loadRecord(record);
+		    	window.getViewModel().set('comprador', record);
+		    	
+		    	if(Ext.isFunction(form.afterLoad)) {
+		    		form.afterLoad();
+		    	}
+		    },
+		    failure : function(record, operation) {
+				console.log("Failure: no ha sido posible cargar los datos del comprador");
+				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+				form.unmask();
 			}
-		}
-		else{
-			var form= window.down('formBase');
-			form.setBindRecord(Ext.create('HreRem.model.FichaComprador'));		
-		}
+		});
 	},
 	
 	cargarDatosCompradorWizard : function(window) {
@@ -1115,9 +1108,10 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	
 	onSaveFormularioCompletoComprador: function(form, success, failure) {
 		var me = this,
-		datoscom= form.up(),
-		storeGrid= datoscom.storeGrid,
-		record = form.getBindRecord();
+		datoscom = form.up(),
+		storeGrid = datoscom.storeGrid;
+		form.getForm().updateRecord();
+		var record = form.getForm().getRecord();		
 		success = success || function() {
 			me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
 			storeGrid.load();
@@ -1128,51 +1122,9 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		}; 
 		
 		if(form.isFormValid()) {
-			var idExpedienteComercial = record.get("idExpedienteComercial");			
-			var numeroClienteUrsus = record.get("numeroClienteUrsus");
-			var nombreRazonSocial = record.get("nombreRazonSocial");
-			var apellidos = record.get("apellidos");
-			var direccion = record.get("direccion");
-			var telefono1 = record.get("telefono1");
-			var telefono2 = record.get("telefono2");
-			var codigoPostal = record.get("codigoPostal");
-			var email = record.get("email");
-			
-			var documentoConyuge = record.get("documentoConyuge");
-			var relacionHre = record.get("relacionHre");
-			
-			var numDocumentoRte = record.get("numDocumentoRte");
-			var nombreRazonSocialRte = record.get("nombreRazonSocialRte");
-			var apellidosRte = record.get("apellidosRte");
-			var direccionRte = record.get("direccionRte");
-			var telefono1Rte = record.get("telefono1Rte");
-			var telefono2Rte = record.get("telefono2Rte");
-			var codigoPostalRte = record.get("codigoPostalRte");
-			var emailRte = record.get("emailRte");
-			
-			
 			form.mask(HreRem.i18n("msg.mask.espere"));
 			
 			record.save({
-				params: {idExpedienteComercial: idExpedienteComercial,
-						 numeroClienteUrsus:		numeroClienteUrsus,
-						 direccion: direccion,
-						 nombreRazonSocial: nombreRazonSocial,
-						 apellidos: apellidos,
-						 telefono1: telefono1,
-						 telefono2: telefono2,
-						 codigoPostal: codigoPostal,
-						 email: email,
-						 documentoConyuge: documentoConyuge,
-						 relacionHre: relacionHre,
-						 numDocumentoRte: numDocumentoRte,
-						 nombreRazonSocialRte: nombreRazonSocialRte,
-						 apellidosRte: apellidosRte,
-						 direccionRte: direccionRte,
-						 telefono1Rte: telefono1Rte,
-						 telefono2Rte: telefono2Rte,
-						 codigoPostalRte: codigoPostalRte,
-						 emailRte: emailRte},
 			    success: success,
 			 	failure: failure,
 			    callback: function(record, operation) {
@@ -1739,6 +1691,40 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
     	}
 
 		chainedCombo.getStore().load({ 			
+			callback: function(records, operation, success) {
+   				if(!Ext.isEmpty(records) && records.length > 0) {
+   					if (chainedCombo.selectFirst == true) {
+	   					chainedCombo.setSelection(1);
+	   				};
+   					chainedCombo.setDisabled(false);
+   				} else {
+   					chainedCombo.setDisabled(true);
+   				}
+			}
+		});
+
+		if (me.lookupReference(chainedCombo.chainedReference) != null) {
+			var chainedDos = me.lookupReference(chainedCombo.chainedReference);
+			if(!chainedDos.isDisabled()) {
+				chainedDos.clearValue();
+				chainedDos.getStore().removeAll();
+				chainedDos.setDisabled(true);
+			}
+		}
+    },
+    
+    onChangeComboProvincia: function(combo) {
+    	var me = this,
+    	chainedCombo = me.lookupReference(combo.chainedReference);   
+
+    	me.getViewModel().notify();
+
+    	if(!Ext.isEmpty(chainedCombo.getValue())) {
+			chainedCombo.clearValue();
+    	}
+
+		chainedCombo.getStore().load({ 			
+			params: {codigoProvincia: combo.getValue()},
 			callback: function(records, operation, success) {
    				if(!Ext.isEmpty(records) && records.length > 0) {
    					if (chainedCombo.selectFirst == true) {

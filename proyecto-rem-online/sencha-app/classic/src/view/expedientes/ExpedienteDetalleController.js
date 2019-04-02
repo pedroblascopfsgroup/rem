@@ -2018,7 +2018,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		var parent = field.up('windowBase');
 		var idExpediente;
 		try{
-			idExpediente = form.getBindRecord().get('idExpedienteComercial');
+			idExpediente = form.getRecord().get('idExpedienteComercial');
 		}catch(error){
 			idExpediente = me.getViewModel().get("expediente.id");
 		}

@@ -158,7 +158,7 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoOfertacomercial', {
 	                		} else {
 	                			url = $AC.getRemoteUrl('expedientecomercial/getListAdjuntosComprador');
 	                			params.docCliente = me.docCliente;
-	                			params.idExpediente = ventanaWizard.down('datoscompradorwizard').getBindRecord().comprador.data.idExpedienteComercial;
+	                			params.idExpediente = ventanaWizard.down('datoscompradorwizard').getRecord().data.idExpedienteComercial;
 	                		}
 	                		
 	                		Ext.Ajax.request({

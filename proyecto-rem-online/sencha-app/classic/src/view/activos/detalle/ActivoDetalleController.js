@@ -1038,7 +1038,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			}
 			docCliente = me.getViewModel().get("oferta.numDocumentoCliente");
 		} else {
-			idEntidad = grid.up('wizardaltacomprador').down('datoscompradorwizard').getBindRecord().comprador.data.idExpedienteComercial;
+			idEntidad = grid.up('wizardaltacomprador').down('datoscompradorwizard').getRecord().data.idExpedienteComercial;
 			entidad = 'expediente';
 			docCliente = me.getViewModel().get("comprador.numDocumento");
 		}
@@ -4566,18 +4566,18 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
             telefono = ventana2.getForm().getValues().telefono;
         }else{
             ventana2=window.down('datoscompradorwizard');
-            idExpediente= ventana2.getBindRecord().comprador.data.idExpedienteComercial;
-            tipoPersona = ventana2.getBindRecord().comprador.data.codTipoPersona;
-            numDoc = ventana2.getBindRecord().comprador.data.numDocumento;
+            idExpediente= ventana2.getRecord().data.idExpedienteComercial;
+            tipoPersona = ventana2.getRecord().data.codTipoPersona;
+            numDoc = ventana2.getRecord().data.numDocumento;
             if(tipoPersona == '1'){
-            	nombre=ventana2.getBindRecord().comprador.data.nombreRazonSocial + " " + ventana2.getBindRecord().comprador.data.apellidos;
+            	nombre=ventana2.getRecord().data.nombreRazonSocial + " " + ventana2.getRecord().data.apellidos;
             }else{
-            	nombre=ventana2.getBindRecord().comprador.data.nombreRazonSocial;
+            	nombre=ventana2.getRecord().data.nombreRazonSocial;
             }
             
-            direccion = ventana2.getBindRecord().comprador.data.direccion;
-            email = ventana2.getBindRecord().comprador.data.email;
-            telefono = ventana2.getBindRecord().comprador.data.telefono1;
+            direccion = ventana2.getRecord().data.direccion;
+            email = ventana2.getRecord().data.email;
+            telefono = ventana2.getRecord().data.telefono1;
         }
         var cesionDatos = ventana3.getForm().findField('cesionDatos').value;
         var transIntern = ventana3.getForm().findField('transferenciasInternacionales').value;

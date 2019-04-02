@@ -96,24 +96,37 @@ Ext.define('HreRem.view.activos.detalle.AnyadirNuevaOfertaActivoAdjuntarDocument
 						{
 							xtype:'checkboxfieldbase',
 							fieldLabel: HreRem.i18n('wizard.oferta.documento.cesionDatos'),							
-							bind:  '{oferta.cesionDatosHaya}',
+							bind:  '{oferta.cesionDatos}',
 							name:       'cesionDatos',
 							margin: '50px 0 0 200px',
 							reference: 'chkbxCesionDatosHaya',
 							readOnly: false,
 							listeners: {
 	                              change: function (checkbox, newVal, oldVal) {
-	                              	  var ventanaWizard = checkbox.up('anyadirnuevaofertaactivoadjuntardocumento'),
-	                            	  btnFinalizar = ventanaWizard.down('button[itemId=btnFinalizar]'),
-	                              	  btnGenerarDoc = ventanaWizard.down('button[itemId=btnGenerarDoc]'),
-	                            	  btnSubirDoc = ventanaWizard.down('button[itemId=btnSubirDoc]');
-	                              	  if(checkbox.getValue()){
-	                              		  btnGenerarDoc.enable();
-		                              	  btnSubirDoc.enable();
-	                              	  } else {
-	                              		  btnGenerarDoc.disable();
-		                              	  btnSubirDoc.disable();
-	                              	  }
+	                            	  var ventanaWizard = checkbox.up('anyadirnuevaofertaactivoadjuntardocumento'),
+	                            	  checkTransInternacionales = ventanaWizard.getForm().findField('transferenciasInternacionales').getValue(),
+	                            	  esInternacional = ventanaWizard.getForm().findField('carteraInternacional').getValue(),
+	                            	  btnGenerarDoc = ventanaWizard.down('button[itemId=btnGenerarDoc]'),
+	                            	  btnSubirDoc = ventanaWizard.down('button[itemId=btnSubirDoc]'),
+	                            	  btnFinalizar = ventanaWizard.down('button[itemId=btnFinalizar]');
+	                            	  
+	                            	  if(checkbox.getValue()) {
+	                            		  if(esInternacional) {
+	                            			  if(checkTransInternacionales) {
+	                            				  btnGenerarDoc.enable();
+	                            				  btnSubirDoc.enable();
+	                            			  } else {
+	                            				  btnGenerarDoc.disable();
+	                            			  	  btnSubirDoc.disable();
+	                            			  }
+	                            		  } else {
+	                            			  btnGenerarDoc.enable();
+	                            			  btnSubirDoc.enable();
+	                            		  }
+	                            	  } else {
+	                            		  btnGenerarDoc.disable();
+	                            		  btnSubirDoc.disable();
+	                            	  }
 	                            	  btnFinalizar.disable();
 	                              }
 	                          }
@@ -129,7 +142,30 @@ Ext.define('HreRem.view.activos.detalle.AnyadirNuevaOfertaActivoAdjuntarDocument
 							listeners: {
 	                              change: function (checkbox, newVal, oldVal) {
 	                            	  var ventanaWizard = checkbox.up('anyadirnuevaofertaactivoadjuntardocumento'),
+	                            	  checkCesionDatos = ventanaWizard.getForm().findField('cesionDatos').getValue(),
+	                            	  checkTransInternacionales = ventanaWizard.getForm().findField('transferenciasInternacionales').getValue(),
+	                            	  esInternacional = ventanaWizard.getForm().findField('carteraInternacional').getValue(),
+	                            	  btnGenerarDoc = ventanaWizard.down('button[itemId=btnGenerarDoc]'),
+	                            	  btnSubirDoc = ventanaWizard.down('button[itemId=btnSubirDoc]'),
 	                            	  btnFinalizar = ventanaWizard.down('button[itemId=btnFinalizar]');
+	                            	  
+	                            	  if(checkCesionDatos) {
+	                            		  if(esInternacional) {
+	                            			  if(checkTransInternacionales) {
+	                            				  btnGenerarDoc.enable();
+	                            				  btnSubirDoc.enable();
+	                            			  } else {
+	                            				  btnGenerarDoc.disable();
+	                            			  	  btnSubirDoc.disable();
+	                            			  }
+	                            		  } else {
+	                            			  btnGenerarDoc.enable();
+	                            			  btnSubirDoc.enable();
+	                            		  }
+	                            	  } else {
+	                            		  btnGenerarDoc.disable();
+	                            		  btnSubirDoc.disable();
+	                            	  }
 	                            	  btnFinalizar.disable();
 	                              }
 	                          }
@@ -145,8 +181,30 @@ Ext.define('HreRem.view.activos.detalle.AnyadirNuevaOfertaActivoAdjuntarDocument
 							listeners: {
 	                              change: function (checkbox, newVal, oldVal) {
 	                            	  var ventanaWizard = checkbox.up('anyadirnuevaofertaactivoadjuntardocumento'),
+	                            	  checkCesionDatos = ventanaWizard.getForm().findField('cesionDatos').getValue(),
+	                            	  esInternacional = ventanaWizard.getForm().findField('carteraInternacional').getValue(),
+	                            	  btnGenerarDoc = ventanaWizard.down('button[itemId=btnGenerarDoc]'),
+	                            	  btnSubirDoc = ventanaWizard.down('button[itemId=btnSubirDoc]'),
 	                            	  btnFinalizar = ventanaWizard.down('button[itemId=btnFinalizar]');
-	                            	  btnFinalizar.disable();
+	                            	  
+	                            	  if(checkCesionDatos) {
+	                            		  if(esInternacional) {
+	                            			  if(checkbox.getValue()) {
+	                            				  btnGenerarDoc.enable();
+	                            				  btnSubirDoc.enable();
+	                            			  } else {
+	                            				  btnGenerarDoc.disable();
+	                            			  	  btnSubirDoc.disable();
+	                            			  }
+	                            		  } else {
+	                            			  btnGenerarDoc.enable();
+	                            			  btnSubirDoc.enable();
+	                            		  }
+	                            	  } else {
+	                            		  btnGenerarDoc.disable();
+	                            		  btnSubirDoc.disable();
+	                            	  }
+                            		  btnFinalizar.disable();
 	                              }
 	                          }
 						},

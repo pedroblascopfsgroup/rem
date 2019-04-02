@@ -324,11 +324,6 @@ public class Comprador implements Serializable, Auditable {
 	public void setTransferenciasInternacionales(Boolean transferenciasInternacionales) {
 		this.transferenciasInternacionales = transferenciasInternacionales;
 	}
-<<<<<<< HEAD
-	
-=======
-
->>>>>>> 27f71b4... REMVIP-3812 - IdPersonaHaya compradores
 	public Long getIdPersonaHaya() {
 		return idPersonaHaya;
 	}
@@ -336,8 +331,6 @@ public class Comprador implements Serializable, Auditable {
 	public void setIdPersonaHaya(Long idPersonaHaya) {
 		this.idPersonaHaya = idPersonaHaya;
 	}
-<<<<<<< HEAD
-	
 	public AdjuntoComprador getAdjunto() {
 		return adjunto;
 	}
@@ -345,6 +338,4 @@ public class Comprador implements Serializable, Auditable {
 	public void setAdjunto(AdjuntoComprador adjunto) {
 		this.adjunto = adjunto;
 	}
-=======
->>>>>>> 27f71b4... REMVIP-3812 - IdPersonaHaya compradores
 }

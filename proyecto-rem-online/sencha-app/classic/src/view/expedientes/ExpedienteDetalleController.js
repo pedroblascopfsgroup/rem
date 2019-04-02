@@ -2536,7 +2536,7 @@ comprobarObligatoriedadRte: function(){
 						campoEstadoCivil.allowBlank = false;
 						//campoEstadoCivil.validate();
 						if(campoEstadoCivil.getValue() === "02") {
-							// Si el Estado civil es 'Casado', entonces Reg. económico es obligatorio.
+							// Si el Estado civil es 'Casado', entonces Reg. economica es obligatorio.
 							if(!Ext.isEmpty(campoRegEconomico)){
 								campoRegEconomico.allowBlank = false;
 								//campoRegEconomico.validate();
@@ -2544,6 +2544,11 @@ comprobarObligatoriedadRte: function(){
 								if(campoRegEconomico.getValue() == "01"){
 									campoTipoConyuge.allowBlank = false;
 									campoNumConyuge.allowBlank = false;
+								}else{
+									campoTipoConyuge.allowBlank = true;
+									campoTipoConyuge.reset();
+									campoNumConyuge.allowBlank = true;
+									campoNumConyuge.reset();
 								}
 							}
 							

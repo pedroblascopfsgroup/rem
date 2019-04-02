@@ -1009,40 +1009,41 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		form = window.getForm();
 		window.mask(HreRem.i18n("msg.mask.loading"));
 
-		model = Ext.create('HreRem.model.FichaComprador', {
-			id : id,
-			idExpedienteComercial : idExpediente,
-			cesionDatos: form.findField('cesionDatos').getValue(),
-			comunicacionTerceros: form.findField('comunicacionTerceros').getValue(),
-			transferenciasInternacionales: form.findField('transferenciasInternacionales').getValue(),
-			pedirDoc: form.findField('pedirDoc').getValue(),
-			numDocumento: form.findField('numDocumento').getValue(),
-			codTipoDocumento: form.findField('codTipoDocumento').getValue()
-		});
+		model = Ext.create('HreRem.model.FichaComprador');//, {
+//			id : id,
+//			idExpedienteComercial : idExpediente,
+//			cesionDatos: form.findField('cesionDatos').getValue(),
+//			comunicacionTerceros: form.findField('comunicacionTerceros').getValue(),
+//			transferenciasInternacionales: form.findField('transferenciasInternacionales').getValue(),
+//			pedirDoc: form.findField('pedirDoc').getValue(),
+//			numDocumento: form.findField('numDocumento').getValue(),
+//			codTipoDocumento: form.findField('codTipoDocumento').getValue()
+//		});
 
 		
 
 		
-
+		model.setId(id);
 		model.load({
 				params : {
-					id : id,
-					idExpedienteComercial : idExpediente,
-					cesionDatos: form.findField('cesionDatos').getValue(),
-					comunicacionTerceros: form.findField('comunicacionTerceros').getValue(),
-					transferenciasInternacionales: form.findField('transferenciasInternacionales').getValue(),
-					pedirDoc: form.findField('pedirDoc').getValue(),
-					numDocumento: form.findField('numDocumento').getValue(),
-					codTipoDocumento: form.findField('codTipoDocumento').getValue()
+					idExpedienteComercial : idExpediente
+//					cesionDatos: form.findField('cesionDatos').getValue(),
+//					comunicacionTerceros: form.findField('comunicacionTerceros').getValue(),
+//					transferenciasInternacionales: form.findField('transferenciasInternacionales').getValue(),
+//					pedirDoc: form.findField('pedirDoc').getValue(),
+//					numDocumento: form.findField('numDocumento').getValue(),
+//					codTipoDocumento: form.findField('codTipoDocumento').getValue()
 				},
 				success : function(record) {
 					if (Ext.isEmpty(id)) {
 						model.setId(undefined);
 					}
-					me.getViewModel().set('comprador', model);
+					window.unmask();
+			    	
 					form.findField('numDocumento').setDisabled(true);
 					form.findField('codTipoDocumento').setDisabled(true);
-					window.unmask();
+					form.loadRecord(record);
+			    	window.getViewModel().set('comprador', record);
 				},
 				failure : function(record, operation) {
 					console.log("Failure: no ha sido posible cargar los datos del comprador.");
@@ -1539,10 +1540,10 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		
 		ventanaWizard.height =  Ext.Element.getViewportHeight() > 500 ? 500 : Ext.Element.getViewportHeight()-100;
 		ventanaWizard.setY( Ext.Element.getViewportHeight()/2 - ((Ext.Element.getViewportHeight() > 500 ? 500 : Ext.Element.getViewportHeight() -100)/2));
-
+		
 		if(ventanaDetalle.config.xtype.indexOf('datoscompradorwizard') >=0){
 			var pedirDocValor = ventanaDetalle.getForm().findField('pedirDoc').getValue(),
-			comprador = ventanaDetalle.getBindRecord().comprador;
+			comprador = form.getRecord();
 
 			if (pedirDocValor == 'false'){
 
@@ -1944,8 +1945,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		var idExpediente = me.getViewModel().get(
 				"expediente.id");
 		if (idExpediente == null) {
-			idExpediente = fichaComprador.getBindRecord().get(
-					'idExpedienteComercial');
+			idExpediente = fichaComprador.getRecord().get('idExpedienteComercial');
 		}
 
 		if (!Ext.isEmpty(tipoDocumento)

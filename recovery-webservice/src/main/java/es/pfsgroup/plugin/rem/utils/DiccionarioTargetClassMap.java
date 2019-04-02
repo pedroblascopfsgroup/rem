@@ -211,6 +211,8 @@ public class DiccionarioTargetClassMap{
 		mapa.put("motivosCalificacionNegativa", DDMotivoCalificacionNegativa.class);
 		mapa.put("tipoTituloActivoTPA", DDTipoTituloActivoTPA.class);
 		mapa.put("clasificacionApple", DDClasificacionApple.class);
+		mapa.put("entidadFinanciera", DDEntidadFinanciera.class);
+		
 		
 		return Collections.unmodifiableMap(mapa);
 	}

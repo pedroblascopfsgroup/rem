@@ -751,20 +751,31 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		}
 	},
 	onHaCambiadoSolicitaFinanciacion: function(combo, value){
-		var me = this,
-    	disabled = value == 0,
-    	entidadFinanciacion = me.lookupReference('entidadFinanciacion');
+		var me = this;
+    	var disabled = value == 0;
+    	var esBankia = me.getViewModel().get("expediente.esBankia");
+    	
+    	  	
 		numExpedienteRiesgo = me.lookupReference('numExpedienteRiesgo');
 		comboTipoFinanciacion = me.lookupReference('comboTipoFinanciacion');
+		comboEntidadFinancieraCodigo = me.lookupReference('comboEntidadFinancieraCodigo');  
+		cncyCapitalConcedidoBnk = me.lookupReference('cncyCapitalConcedidoBnk')
     	
-    	entidadFinanciacion.setDisabled(disabled);
-    	entidadFinanciacion.allowBlank = disabled;
+    	    	
+    	comboEntidadFinancieraCodigo.setDisabled(disabled);
+    	comboEntidadFinancieraCodigo.allowBlank = disabled;
+    	
+    	if(esBankia) {
+    		numExpedienteRiesgo.allowBlank = false;
+    		comboTipoFinanciacion.allowBlank = false;
+    		cncyCapitalConcedidoBnk.allowBlank = false;
+    	}
     	
     	
     	if(disabled) {
-    		entidadFinanciacion.setValue("");
     		numExpedienteRiesgo.setValue("");
     		comboTipoFinanciacion.setValue("");
+    		comboEntidadFinancieraCodigo.setValue("");
     	}
 	},
 	
@@ -1756,6 +1767,48 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 				chainedDos.setDisabled(true);
 			}
 		}
+    },
+    
+	onChangeComboEntidadFinanciera: function(combo, nValue, oValue, eOps) {
+	
+		var me =this;
+		var esBankia = me.getViewModel().get("expediente.esBankia");
+		var valorComboEsBankia = CONST.COMBO_ENTIDAD_FINANCIERA['BANKIA'];			
+		
+		bloqueBankia = me.lookupReference("bloqueBankia");
+		dummyBloqueBankia = me.lookupReference("dummyBloqueBankia");
+		numeroExpedienteRef = me.lookupReference("numeroExpedienteRef");
+		tipoFinanciacionRef = me.lookupReference("tipoFinanciacionRef");
+		fechaInicioFinanciacion = me.lookupReference("fechaInicioFinanciacion"); 
+		fechaFinFinanciacion = me.lookupReference("fechaFinFinanciacion");
+		estadoExpedienteRef = me.lookupReference("estadoExpedienteRef"); 
+		capitalCondedidoRef = me.lookupReference("capitalCondedidoRef");
+		
+		
+		if(!Ext.isEmpty(nValue)) {
+			if (esBankia && nValue == valorComboEsBankia) { 
+				bloqueBankia.setHidden(false);
+				dummyBloqueBankia.setHidden(false);
+				
+				numeroExpedienteRef.setHidden(true);
+				tipoFinanciacionRef.setHidden(true);
+				fechaInicioFinanciacion.setHidden(true);
+				fechaFinFinanciacion.setHidden(true);
+				estadoExpedienteRef.setHidden(true);
+				capitalCondedidoRef.setHidden(true);
+				
+			} else if ((esBankia && nValue != valorComboEsBankia) || (!esBankia && nValue == valorComboEsBankia) || (!esBankia && nValue != valorComboEsBankia)){
+				bloqueBankia.setHidden(true);
+				dummyBloqueBankia.setHidden(true);
+				
+				numeroExpedienteRef.setHidden(false);
+				tipoFinanciacionRef.setHidden(false);
+				fechaInicioFinanciacion.setHidden(false);
+				fechaFinFinanciacion.setHidden(false);
+				estadoExpedienteRef.setHidden(false);
+				capitalCondedidoRef.setHidden(false);
+			}
+    	} 
     },
 
 	consultarComiteSancionador: function(btn) {

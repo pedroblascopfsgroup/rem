@@ -37,7 +37,7 @@ Ext.define('HreRem.ux.util.Constants', {
 		VENTA:'Venta',
 		ALQUILER: 'Alquiler',
 		ALQUILER_VENTA: 'Alquiler y venta',
-		ALQUILER_OPCION_COMPRA: 'Alquiler con opción a compra'
+		ALQUILER_OPCION_COMPRA: 'Alquiler con opciï¿½n a compra'
 	},
 
 	TIPOS_AGRUPACION: {
@@ -660,5 +660,8 @@ Ext.define('HreRem.ux.util.Constants', {
  		SUBSANADO: 'Subsanado',
  		COD_PENDIENTE: '01',
  		COD_SUBSANADO: '02'
+ 	}, 
+ 	COMBO_ENTIDAD_FINANCIERA:{
+ 		BANKIA: '01'
  	}
 });

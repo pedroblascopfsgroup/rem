@@ -508,6 +508,15 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 			}   
     	},
     	
+    	comboEntidadFinanciera: {
+    		model: 'HreRem.model.ComboBase',
+			proxy: {
+				type: 'uxproxy',
+				remoteUrl: 'generic/getDiccionario',
+				extraParams: {diccionario: 'entidadFinanciera'}
+			}   
+    	},
+    	
     	comboEntidadesAvalistas: {
     		model: 'HreRem.model.ComboBase',
 			proxy: {

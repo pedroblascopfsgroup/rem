@@ -1040,8 +1040,8 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 					}
 					window.unmask();
 			    	
-					form.findField('numDocumento').setDisabled(true);
-					form.findField('codTipoDocumento').setDisabled(true);
+					form.findField('numDocumento').setReadOnly(true);
+					form.findField('codTipoDocumento').setReadOnly(true);
 					form.loadRecord(record);
 			    	window.getViewModel().set('comprador', record);
 				},
@@ -1537,7 +1537,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		ventanaDetalle = btn.up().up(),
 	    form = ventanaDetalle.getForm(),
 		ventanaWizard = btn.up('wizardaltacomprador');
-		
+		form.updateRecord();
 		ventanaWizard.height =  Ext.Element.getViewportHeight() > 500 ? 500 : Ext.Element.getViewportHeight()-100;
 		ventanaWizard.setY( Ext.Element.getViewportHeight()/2 - ((Ext.Element.getViewportHeight() > 500 ? 500 : Ext.Element.getViewportHeight() -100)/2));
 		

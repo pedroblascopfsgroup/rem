@@ -1028,6 +1028,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		var me = this;
 		var idEntidad = null, entidad = null,
 		docCliente = null;
+		
 		if(grid.up('anyadirnuevaofertaactivoadjuntardocumento').up().xtype.indexOf('oferta') >= 0) {
 			if(!Ext.isEmpty(grid.up('wizardaltaoferta').oferta.data.idActivo)) {
 				idEntidad = grid.up('wizardaltaoferta').oferta.data.idActivo;
@@ -1040,7 +1041,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		} else {
 			idEntidad = grid.up('wizardaltacomprador').down('datoscompradorwizard').getRecord().data.idExpedienteComercial;
 			entidad = 'expediente';
-			docCliente = me.getViewModel().get("comprador.numDocumento");
+			docCliente = grid.up('window').down("datoscompradorwizard").getForm().getFieldValues().numDocumento;
 		}
 		Ext.create("HreRem.view.common.adjuntos.AdjuntarDocumentoOfertacomercial",
 		{
@@ -3943,11 +3944,12 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	    					   ventanaAltaWizard.idComprador=datos.compradorId;
 	    				   }
 	    				   else{
+	    					   
 	        				   form = ventanaWizard.down('anyadirnuevaofertadocumento').form;
 	        				   ventanaAltaWizard.getForm().findField('numDocumento').setValue(form.findField('numDocumentoCliente').getValue());
-	        				   ventanaAltaWizard.getForm().findField('numDocumento').setDisabled(true);
+	        				   ventanaAltaWizard.getForm().findField('numDocumento').readOnly = true;
 	        				   ventanaAltaWizard.getForm().findField('codTipoDocumento').setValue(form.findField('comboTipoDocumento').getValue());
-	        				   ventanaAltaWizard.getForm().findField('codTipoDocumento').setDisabled(true);
+	        				   ventanaAltaWizard.getForm().findField('codTipoDocumento').readOnly = true;
 	    				   }
 
 	    				   if(!Ext.isEmpty(comprador)){

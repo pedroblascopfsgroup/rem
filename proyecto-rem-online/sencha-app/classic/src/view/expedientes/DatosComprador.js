@@ -270,7 +270,7 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 										            		value: '{comprador.provinciaCodigo}'*/
 										            	},
 							    						listeners: {
-															select: 'onChangeComboProvincia'
+															change: 'onChangeComboProvincia'
 							    						}
 													},
 											        {
@@ -287,10 +287,11 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 														fieldLabel: HreRem.i18n('fieldlabel.municipio'),
 														reference: 'municipioCombo',
 														name: 'municipioCodigo',
+														disabled: true,
 										            	bind: {
-										            		store: '{comboMunicipio}',
+										            		store: '{comboMunicipio}'//,
 										            		//value: '{comprador.municipioCodigo}',
-										            		disabled: '{!comprador.provinciaCodigo}'
+										            		//disabled: '{!comprador.provinciaCodigo}'
 										            	}
 													},
 											        {
@@ -575,7 +576,7 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 										            		value: '{comprador.provinciaRteCodigo}'*/
 										            	},
 							    						listeners: {
-															select: 'onChangeComboProvincia'
+															change: 'onChangeComboProvincia'
 							    						}
 													},
 	//										        {
@@ -610,10 +611,11 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 														fieldLabel: HreRem.i18n('fieldlabel.municipio'),
 														reference: 'municipioComboRte',
 														name: 'municipioRteCodigo',
+														disabled: true,
 										            	bind: {
-										            		store: '{comboMunicipioRte}',
+										            		store: '{comboMunicipioRte}'//,
 										            		//value: '{comprador.municipioRteCodigo}',
-										            		disabled: '{!comprador.provinciaRteCodigo}'
+										            		//disabled: '{!comprador.provinciaRteCodigo}'
 										            	}
 													},
 	//

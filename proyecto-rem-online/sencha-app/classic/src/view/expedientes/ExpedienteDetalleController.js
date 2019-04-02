@@ -1719,24 +1719,16 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 
     	me.getViewModel().notify();
 
-    	if(!Ext.isEmpty(chainedCombo.getValue())) {
-			chainedCombo.clearValue();
-    	}
-
 		chainedCombo.getStore().load({ 			
 			params: {codigoProvincia: combo.getValue()},
 			callback: function(records, operation, success) {
-   				if(!Ext.isEmpty(records) && records.length > 0) {
-   					if (chainedCombo.selectFirst == true) {
-	   					chainedCombo.setSelection(1);
-	   				};
+   				if(!Ext.isEmpty(records) && records.length > 0) {   					
    					chainedCombo.setDisabled(false);
    				} else {
    					chainedCombo.setDisabled(true);
    				}
 			}
 		});
-
 		if (me.lookupReference(chainedCombo.chainedReference) != null) {
 			var chainedDos = me.lookupReference(chainedCombo.chainedReference);
 			if(!chainedDos.isDisabled()) {

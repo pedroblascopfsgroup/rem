@@ -21,7 +21,7 @@ Ext.define('HreRem.view.common.ComboBoxFieldBase', {
     
     editable		: false,
     
-    forceSelection	: false,
+    forceSelection	: true,
     
     loadOnBind	: true,
 	
@@ -55,7 +55,7 @@ Ext.define('HreRem.view.common.ComboBoxFieldBase', {
 				*/
 				
 			}
-			binding.syncing = (binding.syncing + 1) || 1;
+			
 			//Log
 			if(!Ext.isEmpty(value) && !Ext.isEmpty(value.data)){
 				Ext.global.console.log('Label: ' + binding.scope.fieldLabel + ' Ref.: ' + binding.scope.reference + ' Name: ' + binding.scope.name + ' / Metodo: ' + binding._config.names.set + ' / Value: ');
@@ -65,13 +65,12 @@ Ext.define('HreRem.view.common.ComboBoxFieldBase', {
 			}else{
 				Ext.global.console.log('Label: ' + binding.scope.fieldLabel + ' Ref.: ' + binding.scope.reference + ' Name: ' + binding.scope.name + ' / Metodo: ' + binding._config.names.set + ' / Value: ' + value);
 			}
-
-			if(binding._config.names.set == 'setValue' && !Ext.isEmpty(me.getStore())){
-				this[binding._config.names.set](value);
-				--binding.syncing;
-		    	this.fireEvent("afterbind", this, value);
-			}
-	        
+			//
+				       
+			binding.syncing = (binding.syncing + 1) || 1;
+	        this[binding._config.names.set](value);
+	        --binding.syncing;
+	    	this.fireEvent("afterbind", this, value);
 		},
 		
 		 onTriggerClick: function() {

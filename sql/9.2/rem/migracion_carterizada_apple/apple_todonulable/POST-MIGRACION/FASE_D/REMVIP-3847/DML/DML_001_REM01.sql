@@ -33,7 +33,8 @@ BEGIN
     
     V_SQL :=   'MERGE INTO '||V_ESQUEMA||'.OKU_DEMANDA_OCUPACION_ILEGAL T1
 				USING (
-					SELECT ACT.ACT_NUM_ACTIVO, 
+					SELECT DISTINCT
+					       ACT.ACT_NUM_ACTIVO, 
 						   ACT.ACT_ID,
 						   OKU.OKU_ID,
 						   AUX.*

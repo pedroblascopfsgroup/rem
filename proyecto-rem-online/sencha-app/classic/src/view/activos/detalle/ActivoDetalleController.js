@@ -1918,9 +1918,10 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 //		    	fieldset.unmask();
 //		    }
 //		});
+		debugger;
 		var me=this;
-		idProveedor= record.get('id');
-		idActivo= record.get('idActivo');
+		idProveedor= record.get('idFalso').id;
+		idActivo= record.get('idFalso').idActivo;
 		gridView.up('form').down('[reference=listadogastosref]').getStore().getProxy().setExtraParams({'idActivo': idActivo,'idProveedor': idProveedor});
 		gridView.up('form').down('[reference=listadogastosref]').getStore().load();
 		

@@ -76,6 +76,12 @@ Ext.define('HreRem.view.activos.detalle.AdministracionActivo', {
 				        } 
 				    },
 					columns: [
+						{    text: HreRem.i18n('title.activo.administracion.activooo'),
+				        	dataIndex: 'numActivo',
+				        	hidden: false,
+				        	hideable: false,
+				        	flex: 1
+				       },
 						{
 				        	xtype: 'actioncolumn',
 				            dataIndex: 'codigoProveedorRem',

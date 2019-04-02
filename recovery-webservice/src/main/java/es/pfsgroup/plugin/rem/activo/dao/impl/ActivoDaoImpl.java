@@ -1356,7 +1356,7 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 				ids+=", ";
 			}
 		}
-		hb.appendWhereIN("acn.idActivo", ids);
+		hb.appendWhereIN("acn.idFalso.idActivo", ids);
 		
 
 		return (List<VBusquedaProveedoresActivo>) this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).list();

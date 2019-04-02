@@ -148,6 +148,7 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoOfertacomercial', {
 	                	if(o.result.success == "false") {
 	                	me.fireEvent("errorToast", o.result.errorMessage);
 	                	}else{
+	                		ventanaWizard.mask("Cargando datos comprador");
 	                		var url = null;
 	                		if(btn.up('anyadirnuevaofertaactivoadjuntardocumento').up().xtype.indexOf('oferta') >= 0) {
 	                			url = $AC.getRemoteUrl('activooferta/getListAdjuntos');
@@ -179,9 +180,11 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoOfertacomercial', {
 	                		    		ventanaWizardAdjuntarDocumento.getForm().findField('transferenciasInternacionales').disable();
 	                		    	 	me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
 	                		    	 }
+	                		    	 ventanaWizard.unmask();
 	                		     },
 
 	                			 failure: function(record, operation) {
+	                			 	 ventanaWizard.unmask();
 	                				 me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
 	                			 }
 	                		});

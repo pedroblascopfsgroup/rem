@@ -3582,16 +3582,12 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     onChangeCheckboxOcultar: function(checkbox, isDirty) {
         var me = this;
         var combobox = me.lookupReference(checkbox.comboRefChained);
-        var textarea = me.lookupReference(combobox.textareaRefChained);
 
         if(checkbox.getValue()) {
             combobox.setDisabled(false);
-            textarea.setReadOnly(false);
         } else {
             combobox.setDisabled(true);
             combobox.clearValue();
-            textarea.setReadOnly(true);
-            textarea.reset();
         }
 
 		if (isDirty) {
@@ -4464,7 +4460,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
                         ventanaWizard = btn.up('wizardaltaoferta'),
                         idActivo = ventanaWizard.oferta.data.idActivo,
                         idAgrupacion = ventanaWizard.oferta.data.idAgrupacion;
-
+						ventanaWizard.mask("Cargando documentos comprador");
                         Ext.Ajax.request({
                              url: url,
                              method : 'GET',
@@ -4502,6 +4498,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 
                                     ventanaWizardAdjuntarDocumento.getForm().findField('docOfertaComercial').setValue(data.data[0].nombre);
                                     ventanaWizardAdjuntarDocumento.down().down('panel').down('button').show();
+                                    ventanaWizard.unmask()
                                  }
                              },
 

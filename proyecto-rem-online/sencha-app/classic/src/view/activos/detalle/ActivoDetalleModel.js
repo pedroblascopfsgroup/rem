@@ -513,7 +513,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 
 		filtrarComboMotivosOcultacionVenta: function(get) {
 			var bloqueoCheckOcultar = get('datospublicacionactivo.deshabilitarCheckOcultarVenta');
-
 			if(!Ext.isEmpty(bloqueoCheckOcultar) && !bloqueoCheckOcultar) {
 				 this.getData().comboMotivosOcultacionVenta.filter([{
                      filterFn: function(rec){
@@ -522,7 +521,18 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
                  }]);
 			} else {
 				this.getData().comboMotivosOcultacionVenta.clearFilter();
+				if (this.getView('activosdetalle').lookupReference('chkbxocultarventa') != null)
+					this.getView('activosdetalle').lookupReference('chkbxocultarventa').setDisabled(true);
+				if (this.getView('activosdetalle').lookupReference('comboMotivoOcultacionVenta') != null) 
+					this.getView('activosdetalle').lookupReference('comboMotivoOcultacionVenta').setDisabled(true)
+		
+				
+				
+				
 			}
+		},
+		disabledData: function (){
+
 		},
 
 		filtrarComboMotivosOcultacionAlquiler: function(get) {

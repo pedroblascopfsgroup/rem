@@ -4571,7 +4571,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
         }else{
             ventana2=window.down('datoscompradorwizard');
             idExpediente= ventana2.getBindRecord().comprador.data.idExpedienteComercial;
-            tipoPersona = ventana2.getForm().findField('comboTipoPersona').value;
+            tipoPersona = ventana2.getBindRecord().comprador.data.codTipoPersona;
             numDoc = ventana2.getBindRecord().comprador.data.numDocumento;
             if(tipoPersona == '1'){
             	nombre=ventana2.getBindRecord().comprador.data.nombreRazonSocial + " " + ventana2.getBindRecord().comprador.data.apellidos;

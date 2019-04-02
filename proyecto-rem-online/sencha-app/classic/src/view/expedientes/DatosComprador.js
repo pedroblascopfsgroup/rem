@@ -253,7 +253,7 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 														chainedReference: 'municipioCombo',
 										            	bind: {
 										            		store: '{comboProvincia}',
-										            	    value: '{comprador.provinciaCodigo}'
+										            		value: '{comprador.provinciaCodigo}'
 										            	},
 							    						listeners: {
 															select: 'onChangeChainedCombo'
@@ -493,8 +493,7 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 											        {
 											        	fieldLabel: HreRem.i18n('fieldlabel.numero.documento'),
 														reference: 'numeroDocumentoRte',
-											        	bind: {
-										            		value: '{numeroDocumentoRte}',
+														bind: {
 										            		value: '{comprador.numDocumentoRte}'
 										            	},
 										            	listeners : {
@@ -538,7 +537,7 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 														chainedReference: 'municipioComboRte',
 										            	bind: {
 										            		store: '{comboProvincia}',
-										            	    value: '{comprador.provinciaRteCodigo}'
+										            		value: '{comprador.provinciaRteCodigo}'
 										            	},
 							    						listeners: {
 															select: 'onChangeChainedCombo'
@@ -612,18 +611,7 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 										            		value: '{comprador.codigoPaisRte}'
 										            	},
 										            	listeners : {
-										            		change: function(combo, value) {
-										            			try{
-										            				var me = this;
-											            			if(value == '28') {
-											            				me.up('formBase').down('[reference=provinciaComboRte]').allowBlank = false;
-											            				me.up('formBase').down('[reference=municipioComboRte]').allowBlank = false;
-											            			} 
-										            			}catch (err){
-										            				Ext.global.console.log(err);
-										            			}
-										            			
-										            		}
+										            		change: 'comprobarObligatoriedadRte'
 										            	}
 													}
 												]

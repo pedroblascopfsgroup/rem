@@ -88,9 +88,10 @@ Ext.define('HreRem.view.expedientes.DatosCompradorWizard', {
 						reference: 'tipoPersona',
 						margin: '10px 0 10px 0',
 						padding: '5px',
-			        	bind: {		            		
-		            		value: '{comprador.codTipoPersona}',
-		            		store: '{comboTipoPersona}'
+			        	bind: {	
+			        		store: '{comboTipoPersona}',
+		            		value: '{comprador.codTipoPersona}'
+		            		
 		            	},
 		            	allowBlank: false,		            	
 						listeners: {
@@ -223,7 +224,7 @@ Ext.define('HreRem.view.expedientes.DatosCompradorWizard', {
 						chainedReference: 'municipioCombo',
 		            	bind: {
 		            		store: '{comboProvincia}',
-		            	    value: '{comprador.provinciaCodigo}'
+		            		value: '{comprador.provinciaCodigo}'
 		            	},
 		            	displayField: 'descripcion',
 						valueField: 'codigo',
@@ -415,7 +416,7 @@ Ext.define('HreRem.view.expedientes.DatosCompradorWizard', {
 			        	padding: '5px',
 			        	bind: {
 			        		store: '{comboTipoDocumento}',
-		            		value: '{comprador.codTipoDocumentoConyuge}'
+			        		value: '{comprador.codTipoDocumentoConyuge}'
 		            	}
 			        },
 					{ 
@@ -552,7 +553,7 @@ Ext.define('HreRem.view.expedientes.DatosCompradorWizard', {
 						padding: '5px',
 		            	bind: {
 		            		store: '{comboProvincia}',
-		            	    value: '{comprador.provinciaRteCodigo}'
+		            		value: '{comprador.provinciaRteCodigo}'
 		            	},
 						listeners: {
 							select: 'onChangeChainedCombo'
@@ -612,18 +613,7 @@ Ext.define('HreRem.view.expedientes.DatosCompradorWizard', {
 		            		value: '{comprador.codigoPaisRte}'
 		            	},
 		            	listeners : {
-		            		change: function(combo, value) {
-		            			try{
-		            				var me = this;
-			            			if(value == '28') {
-			            				me.up('formBase').down('[reference=provinciaComboRte]').allowBlank = false;
-			            				me.up('formBase').down('[reference=municipioComboRte]').allowBlank = false;
-			            			} 
-		            			}catch (err){
-		            				Ext.global.console.log(err);
-		            			}
-		            			
-		            		}
+		            		change: 'comprobarObligatoriedadRte'
 		            	}
 					}
 				]

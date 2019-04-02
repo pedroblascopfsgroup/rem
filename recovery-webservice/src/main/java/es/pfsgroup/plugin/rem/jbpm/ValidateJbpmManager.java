@@ -56,8 +56,7 @@ public class ValidateJbpmManager implements ValidateJbpmApi {
 		if (!trabajoApi.checkReservaNecesariaNotNull(tareaExterna)) return FALTA_MARCAR_RESERVA_NECESARIA;
 		if (trabajoApi.checkBankia(tareaExterna) || trabajoApi.checkLiberbank(tareaExterna)
 				|| trabajoApi.checkGiants(tareaExterna))
-			return null;
-		return activoTramiteApi.existeAdjuntoUGValidacion(tareaExterna, DDTipoDocumentoActivo.CODIGO_PROPUESTA_PRECIOS_SANCIONADA,"E");
+			return null;return activoTramiteApi.existeAdjuntoUGValidacion(tareaExterna, "23","E");
 	}	
 	
 	@Override

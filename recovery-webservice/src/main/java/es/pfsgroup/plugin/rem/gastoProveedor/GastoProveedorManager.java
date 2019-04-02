@@ -2865,12 +2865,20 @@ public class GastoProveedorManager implements GastoProveedorApi {
 						if(!todosActivoAlquilados){
 							if(Checks.esNulo(partidaNoArrendada)){
 								partidaNoArrendada = genericDao.get(ConfigPdaPresupuestaria.class, filtroEjercicioCuentaContable,filtroSubtipoGasto,filtroCartera,filtroSubcarteraNull,filtroCuentaNoArrendamiento,filtroBorrado);
-								gastoInfoContabilidad.setPartidaPresupuestaria(partidaNoArrendada.getPartidaPresupuestaria());	
+								if(!Checks.esNulo(partidaNoArrendada)){
+									gastoInfoContabilidad.setPartidaPresupuestaria(partidaNoArrendada.getPartidaPresupuestaria());	
+								} else {
+									gastoInfoContabilidad.setPartidaPresupuestaria(null);
+								}
 							}
 						} else {
 							if(Checks.esNulo(partidaArrendada)){
 								partidaArrendada = genericDao.get(ConfigPdaPresupuestaria.class, filtroEjercicioCuentaContable,filtroSubtipoGasto,filtroCartera,filtroSubcarteraNull,filtroCuentaArrendamiento,filtroBorrado);
-								gastoInfoContabilidad.setPartidaPresupuestaria(partidaNoArrendada.getPartidaPresupuestaria());		
+								if(!Checks.esNulo(partidaArrendada)){
+									gastoInfoContabilidad.setPartidaPresupuestaria(partidaArrendada.getPartidaPresupuestaria());		
+								} else {
+									gastoInfoContabilidad.setPartidaPresupuestaria(null);
+								}
 							}
 						}			
 					}
@@ -2894,12 +2902,20 @@ public class GastoProveedorManager implements GastoProveedorApi {
 						if(!todosActivoAlquilados){
 							if(Checks.esNulo(cuentaNoArrendada)){
 								cuentaNoArrendada = genericDao.get(ConfigCuentaContable.class, filtroEjercicioCuentaContable,filtroSubtipoGasto,filtroCartera,filtroSubcarteraNull,filtroCuentaNoArrendamiento,filtroBorrado);
-								gastoInfoContabilidad.setCuentaContable(cuentaNoArrendada.getCuentaContable());	
+								if(!Checks.esNulo(cuentaNoArrendada)){
+									gastoInfoContabilidad.setCuentaContable(cuentaNoArrendada.getCuentaContable());	
+								} else {
+									gastoInfoContabilidad.setCuentaContable(null);	
+								}
 							}
 						} else {
-							if(Checks.esNulo(partidaArrendada)){
-							cuentaArrendada = genericDao.get(ConfigCuentaContable.class, filtroEjercicioCuentaContable,filtroSubtipoGasto,filtroCartera,filtroSubcarteraNull,filtroCuentaArrendamiento,filtroBorrado);
-							gastoInfoContabilidad.setCuentaContable(cuentaArrendada.getCuentaContable());
+							if(Checks.esNulo(cuentaArrendada)){
+								cuentaArrendada = genericDao.get(ConfigCuentaContable.class, filtroEjercicioCuentaContable,filtroSubtipoGasto,filtroCartera,filtroSubcarteraNull,filtroCuentaArrendamiento,filtroBorrado);
+								if(!Checks.esNulo(cuentaArrendada)){
+									gastoInfoContabilidad.setCuentaContable(cuentaArrendada.getCuentaContable());
+								} else {
+									gastoInfoContabilidad.setCuentaContable(null);
+								}
 							}
 						}		
 					}
@@ -2911,7 +2927,6 @@ public class GastoProveedorManager implements GastoProveedorApi {
 			gastoInfoContabilidad.setPartidaPresupuestaria(null);
 			gasto.setGastoInfoContabilidad(gastoInfoContabilidad);
 		}
-
 		return gasto;
 	}
 

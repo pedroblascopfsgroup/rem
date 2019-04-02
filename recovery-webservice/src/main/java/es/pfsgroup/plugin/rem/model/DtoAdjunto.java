@@ -199,6 +199,6 @@ public class DtoAdjunto implements Serializable, Comparable<DtoAdjunto>{
 		if(o.getCreateDate() == null){
 			return -1;
 		}
-		return this.createDate.compareTo(o.getCreateDate());
+		return o.getCreateDate().compareTo(this.createDate);
 	}
 }

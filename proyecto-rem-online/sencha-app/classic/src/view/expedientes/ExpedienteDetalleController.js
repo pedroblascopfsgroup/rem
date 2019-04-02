@@ -973,6 +973,14 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		
 		form.mask(HreRem.i18n("msg.mask.loading"));
 		
+		form.reset(true);
+		Ext.Array.each(form.query('component[isReadOnlyEdit]'),
+				function (field, index) 
+					{ 
+						field.setValue(null)
+					});
+		
+		
 		model.setId(window.idComprador);
 		model.load({
 			params: {idExpedienteComercial: idExpediente},
@@ -1718,6 +1726,9 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
     	chainedCombo = me.lookupReference(combo.chainedReference);   
 
     	me.getViewModel().notify();
+    	if(Ext.isEmpty(combo.getValue())) {
+			chainedCombo.clearValue();
+    	}
 
 		chainedCombo.getStore().load({ 			
 			params: {codigoProvincia: combo.getValue()},

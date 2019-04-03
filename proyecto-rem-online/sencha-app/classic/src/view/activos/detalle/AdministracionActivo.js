@@ -63,7 +63,6 @@ Ext.define('HreRem.view.activos.detalle.AdministracionActivo', {
 					cls	: 'panel-base shadow-panel',
 					bind: {
 						store: '{storeProveedores}',
-						disabled: '{administracion.isUnidadAlquilable}'
 					},
 					listeners : {
 					    	rowclick: 'onProveedoresListClick'

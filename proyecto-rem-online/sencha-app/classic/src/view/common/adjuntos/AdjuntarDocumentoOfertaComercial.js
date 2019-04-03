@@ -146,7 +146,7 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoOfertacomercial', {
 	                params: {docCliente : me.docCliente, idEntidad: me.idEntidad},
 	                success: function(fp, o) {
 	                	if(o.result.success == "false") {
-	                	me.fireEvent("errorToast", o.result.errorMessage);
+	                	me.fireEvent("errorToast", o.result.errores);
 	                	}else{
 	                		ventanaWizard.mask("Cargando datos comprador");
 	                		var url = null;
@@ -158,7 +158,7 @@ Ext.define('HreRem.view.common.adjuntos.AdjuntarDocumentoOfertacomercial', {
 	                		} else {
 	                			url = $AC.getRemoteUrl('expedientecomercial/getListAdjuntosComprador');
 	                			params.docCliente = me.docCliente;
-	                			params.idExpediente = ventanaWizard.down('datoscompradorwizard').getBindRecord().comprador.data.idExpedienteComercial;
+	                			params.idExpediente = ventanaWizard.down('datoscompradorwizard').getRecord().data.idExpedienteComercial;
 	                		}
 	                		
 	                		Ext.Ajax.request({

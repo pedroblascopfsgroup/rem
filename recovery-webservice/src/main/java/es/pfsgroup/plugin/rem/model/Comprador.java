@@ -332,7 +332,6 @@ public class Comprador implements Serializable, Auditable {
 	public void setIdPersonaHaya(Long idPersonaHaya) {
 		this.idPersonaHaya = idPersonaHaya;
 	}
-	
 	public AdjuntoComprador getAdjunto() {
 		return adjunto;
 	}

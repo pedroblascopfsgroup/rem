@@ -620,7 +620,7 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 			model.put(RESPONSE_SUCCESS_KEY, errores == null);
 		} catch (Exception e) {
 			model.put(RESPONSE_SUCCESS_KEY, false);
-			model.put(RESPONSE_ERROR_KEY, e.getMessage());
+			model.put("errores", e.getMessage());
 			logger.error("error subiendo documento persona", e);
 		}
 

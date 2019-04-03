@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.adapter;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -58,6 +59,7 @@ public class ActivoOfertaAdapter {
 		if (gestorDocumentalAdapterApi.modoRestClientActivado() && !Checks.esNulo(idIntervinienteHaya)) {
 			try {
 				listaAdjuntos = gestorDocumentalAdapterApi.getAdjuntosEntidadComprador(idIntervinienteHaya);
+				Collections.sort(listaAdjuntos);
 			} catch (GestorDocumentalException gex) {
 					logger.error(gex.getMessage());
 					
@@ -74,8 +76,7 @@ public class ActivoOfertaAdapter {
 				}
 				throw gex;
 			} catch (Exception ex) {
-				logger.error(ex.getMessage());
-				ex.printStackTrace();
+				logger.error(ex.getMessage(),ex);
 			}		
 		} else {
 			ClienteComercial clienteCom = null;

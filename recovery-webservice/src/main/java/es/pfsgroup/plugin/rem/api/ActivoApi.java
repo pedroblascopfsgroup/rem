@@ -1180,5 +1180,4 @@ public interface ActivoApi {
 
 	boolean esSubcarteraApple(Long idActivo);
 
-	Long getIdAgrupacionActivoAgrRestringidaPorActivoId(Long idActivo);
 }

@@ -57,7 +57,9 @@ import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
 import es.pfsgroup.plugin.rem.jbpm.activo.JBPMActivoTramiteManager;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjuntoActivo;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
+import es.pfsgroup.plugin.rem.model.ActivoLoteComercial;
 import es.pfsgroup.plugin.rem.model.ActivoOferta;
 import es.pfsgroup.plugin.rem.model.AdecuacionGencat;
 import es.pfsgroup.plugin.rem.model.AdjuntoComunicacion;
@@ -68,7 +70,9 @@ import es.pfsgroup.plugin.rem.model.ComunicacionGencat;
 import es.pfsgroup.plugin.rem.model.ComunicacionGencatAdjunto;
 import es.pfsgroup.plugin.rem.model.CondicionanteExpediente;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
+import es.pfsgroup.plugin.rem.model.DtoAgrupaciones;
 import es.pfsgroup.plugin.rem.model.DtoAltaVisita;
+import es.pfsgroup.plugin.rem.model.DtoAviso;
 import es.pfsgroup.plugin.rem.model.DtoGencat;
 import es.pfsgroup.plugin.rem.model.DtoGencatSave;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoComunicacionGencat;
@@ -1482,6 +1486,7 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 				}
 				
 				notificacionesGencat.sendMailNotificacionSancionGencat(gencatDto, activo, sancion);
+				bajaAgrupacionRestringida(activo);
 
 				return true;
 			}
@@ -1500,6 +1505,7 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 					comunicacionGencat.setActivo(activo);
 					comunicacionGencatDao.saveOrUpdate(comunicacionGencat);	
 					notificacionesGencat.sendMailNotificacionSancionGencat(gencatDto, activo, sancion);
+					bajaAgrupacionRestringida(activo);
 
 					return true;
 				}
@@ -1511,21 +1517,60 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 		return false;
 	}
 	
-	@Override
-	public boolean esAgrupacionRestringida(DtoGencatSave gencatDto) {
+	public void bajaAgrupacionRestringida(Activo activo){
 		
-		return activoApi.isActivoIntegradoAgrupacionRestringida(gencatDto.getIdActivo());			
+		List<ActivoAgrupacionActivo> listaAgrupaciones = activo.getAgrupaciones();
+		if(!Checks.estaVacio(listaAgrupaciones)){
+			for(ActivoAgrupacionActivo agr : listaAgrupaciones){
+				DDTipoAgrupacion tipoAgrupacion = agr.getAgrupacion().getTipoAgrupacion();
+				if(!Checks.esNulo(tipoAgrupacion)){
+					if(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA.equals(tipoAgrupacion.getCodigo())){
+						if(Checks.esNulo(agr.getAgrupacion().getFechaBaja())) {
+							ActivoAgrupacion agrupacion = new ActivoAgrupacion();
+							agrupacion = agr.getAgrupacion();
+							Date date = Calendar.getInstance().getTime();
+							//ActivoAgrupacion agrupacionRestringida= genericDao.get(ActivoAgrupacion.class, genericDao.createFilter(FilterType.EQUALS, "id", agr.getAgrupacion().getId()));
+							agr.getAgrupacion().setFechaBaja(date);
+							genericDao.save(ActivoAgrupacion.class, agrupacion);
+						}
+							 
+					}
+				}
+			}
+		}
+		
+	}
+	
+	public DtoAviso getAviso(ActivoAgrupacion agrupacion, Usuario usuarioLogado) {
 
-	}
-	@Override
-	public Long obtenerIdAgrupacionRestringida(DtoGencatSave gencatDto) {
-		if (!Checks.esNulo(gencatDto.getSancion()) && gencatDto.getSancion().equals(DDSancionGencat.COD_EJERCE)){
-			return activoApi.getIdAgrupacionActivoAgrRestringidaPorActivoId(gencatDto.getIdActivo());
+
+		DtoAviso dtoAviso = new DtoAviso();
+		boolean continuar = true;
+		if (!Checks.esNulo(agrupacion.getTipoAgrupacion()) && DDTipoAgrupacion.AGRUPACION_RESTRINGIDA.equals(agrupacion.getTipoAgrupacion().getCodigo())) {
+
+			// Obtener los activos de la agrupación restringida.
+			for(ActivoAgrupacionActivo activoAgrupacion : agrupacion.getActivos()) {
+				// Por cada activo obtener las agrupaciones a las que pertenezca.
+				for(ActivoAgrupacionActivo agr : activoAgrupacion.getActivo().getAgrupaciones()) {
+					// Comprobar si alguna (primera coincidencia) es de tipo obra nueva.
+					if(!Checks.esNulo(agr.getAgrupacion().getTipoAgrupacion()) && DDTipoAgrupacion.AGRUPACION_OBRA_NUEVA.equals(agr.getAgrupacion().getTipoAgrupacion().getCodigo())) {
+						dtoAviso.setDescripcion("Agrupación restringida integrada en obra nueva");
+						dtoAviso.setId(String.valueOf(agrupacion.getId()));
+						continuar = false;
+						break;
+					}
+				}
+				if(!continuar) {
+					break;
+				}
+			}
 		}
-		else {
-			return null;
-		}
+
+		return dtoAviso;		
 	}
+	
+	
+
 	public void dtoToBeanPreSave(ComunicacionGencat cg , DtoGencatSave gencatDto)
 	{		
 		DDSancionGencat sancion = (DDSancionGencat) utilDiccionarioApi.dameValorDiccionarioByCod( DDSancionGencat.class , gencatDto.getSancion() );	

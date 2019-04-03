@@ -2459,11 +2459,11 @@ comprobarObligatoriedadRte: function(){
 								}
 							}
 						} else {
-								campoRegEconomico.reset();
+								campoRegEconomico.setValue("");
 								campoRegEconomico.allowBlank = true;
 							
-								campoTipoConyuge.reset();
-								campoNumConyuge.reset();
+								campoTipoConyuge.setValue("");
+								campoNumConyuge.setValue("");
 								campoNumConyuge.allowBlank = true;
 								campoTipoConyuge.allowBlank = true;
 							

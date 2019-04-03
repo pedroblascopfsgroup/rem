@@ -17,7 +17,6 @@ Ext.define('HreRem.view.activos.detalle.CargasActivo', {
       requires : ['HreRem.model.ActivoCargasTab', 'HreRem.view.common.FieldSetTable'],
 
       initComponent : function() {
-
         var me = this;
         me.setTitle(HreRem.i18n('title.cargas'));
         var items = [

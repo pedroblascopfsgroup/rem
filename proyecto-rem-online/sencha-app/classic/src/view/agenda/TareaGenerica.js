@@ -1156,16 +1156,16 @@ Ext.define('HreRem.view.agenda.TareaGenerica', {
 		if(CONST.CARTERA['BANKIA'] == codigoCartera && CONST.SUBCARTERA['BH'] != codigoSubcartera){
 			me.deshabilitarCampo(me.down('[name=checkboxVentaDirecta]'));
 			me.deshabilitarCampo(me.down('[name=fechaIngreso]'));
-		}else if(!Ext.isEmpty(fechaIngreso.getValue()) && CONST.CARTERA['CAJAMAR'] != codigoCartera) {
+		}else if(!Ext.isEmpty(fechaIngreso.getValue()) && CONST.CARTERA['CAJAMAR'] != codigoCartera && (CONST.CARTERA['CERBERUS'] == codigoCartera && CONST.SUBCARTERA['AGORAINMOBILIARIO'] != codigoSubcartera)) {
 			me.deshabilitarCampo(me.down('[name=checkboxVentaDirecta]'));
 			me.bloquearCampo(me.down('[name=fechaIngreso]'));
-		} else if(Ext.isEmpty(fechaIngreso.getValue()) && CONST.CARTERA['CAJAMAR'] != codigoCartera) {
+		} else if(Ext.isEmpty(fechaIngreso.getValue()) && CONST.CARTERA['CAJAMAR'] != codigoCartera && (CONST.CARTERA['CERBERUS'] == codigoCartera && CONST.SUBCARTERA['AGORAINMOBILIARIO'] != codigoSubcartera)) {
 			me.habilitarCampo(me.down('[name=checkboxVentaDirecta]'));
 			me.deshabilitarCampo(me.down('[name=fechaIngreso]'));
 		}
 
 		me.down('[name=checkboxVentaDirecta]').addListener('change', function(checkbox, newValue, oldValue, eOpts) {
-			if(CONST.CARTERA['LIBERBANK'] != codigoCartera || CONST.CARTERA['CAJAMAR'] != codigoCartera){
+			if(CONST.CARTERA['LIBERBANK'] != codigoCartera && CONST.CARTERA['CAJAMAR'] != codigoCartera && (CONST.CARTERA['CERBERUS'] == codigoCartera && CONST.SUBCARTERA['AGORAINMOBILIARIO'] != codigoSubcartera)){
 				if (newValue) {
 	            	me.habilitarCampo(me.down('[name=fechaIngreso]'));
 	            	me.down('[name=fechaIngreso]').allowBlank = false;

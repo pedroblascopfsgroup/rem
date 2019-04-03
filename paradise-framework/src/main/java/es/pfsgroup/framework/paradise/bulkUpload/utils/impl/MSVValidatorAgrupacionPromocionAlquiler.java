@@ -235,7 +235,7 @@ public class MSVValidatorAgrupacionPromocionAlquiler extends MSVExcelValidatorAb
 					&& particularValidator.tieneActivoMatriz(exc.dameCelda(1, 0))){
 				String gestor = particularValidator.getGestorComercialAlquilerByAgrupacion(numAgrupacion);
 				String supervisor = particularValidator.getSupervisorComercialAlquilerByAgrupacion(numAgrupacion);
-				if(!usernameLogado.equals(gestor) && !usernameLogado.equals(supervisor)){
+				if((!usernameLogado.equals(gestor) && !usernameLogado.equals(supervisor)) && !usernameLogado.equals("SUPER")){
 					listaFilas.add(1);
 				}
 			}
@@ -482,4 +482,5 @@ public class MSVValidatorAgrupacionPromocionAlquiler extends MSVExcelValidatorAb
 		
 		return listaFilas;
 	}
+	
 }

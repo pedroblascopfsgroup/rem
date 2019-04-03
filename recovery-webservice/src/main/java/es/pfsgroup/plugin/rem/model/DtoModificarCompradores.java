@@ -142,6 +142,8 @@ public class DtoModificarCompradores {
 	private Boolean mostrarUrsus;
 	
 	private Boolean mostrarUrsusBh;
+	
+	private String descripcionTipoDocumentoConyuge;
 
 	public String getId() {
 		return id;
@@ -692,6 +694,16 @@ public class DtoModificarCompradores {
 
 	public void setMostrarUrsusBh(Boolean mostrarUrsusBh) {
 		this.mostrarUrsusBh = mostrarUrsusBh;
+	}
+
+	public String getDescripcionTipoDocumentoConyuge() {
+		return descripcionTipoDocumentoConyuge;
+	}
+
+	public void setDescripcionTipoDocumentoConyuge(String descripcionTipoDocumentoConyuge) {
+		this.descripcionTipoDocumentoConyuge = descripcionTipoDocumentoConyuge;
 	}	
+	
+	
 
 }

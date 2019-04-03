@@ -41,6 +41,7 @@ import es.pfsgroup.plugin.rem.adapter.TrabajoAdapter;
 import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.ActivoTramiteApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
+import es.pfsgroup.plugin.rem.api.GdprApi;
 import es.pfsgroup.plugin.rem.clienteComercial.dao.ClienteComercialDao;
 import es.pfsgroup.plugin.rem.excel.ActivosExpedienteExcelReport;
 import es.pfsgroup.plugin.rem.excel.ExcelReport;
@@ -87,7 +88,6 @@ import es.pfsgroup.plugin.rem.model.DtoTanteoYRetractoOferta;
 import es.pfsgroup.plugin.rem.model.DtoTextosOferta;
 import es.pfsgroup.plugin.rem.model.DtoTipoDocExpedientes;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
-import es.pfsgroup.plugin.rem.model.TmpClienteGDPR;
 import es.pfsgroup.plugin.rem.model.VBusquedaDatosCompradorExpediente;
 
 
@@ -148,6 +148,9 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 
 	@Autowired
 	private LogTrustEvento trustMe;
+	
+	@Autowired
+	private GdprApi gdprManager;
 
 	@Autowired
 	private ActivoTramiteApi activoTramiteApi;
@@ -584,7 +587,7 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 	public ModelAndView getListAdjuntosComprador(String docCliente, Long idExpediente, ModelMap model) {
 
 		try {
-			String idPersonaHaya = obtnerIdClienteHaya(docCliente);
+			String idPersonaHaya = gdprManager.obtenerIdPersonaHaya(docCliente);
 			model.put(RESPONSE_DATA_KEY,
 					expedienteComercialAdapter.getAdjuntoExpedienteComprador(idPersonaHaya, docCliente, idExpediente));
 		} catch (Exception e) {
@@ -602,7 +605,7 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 		ModelMap model = new ModelMap();
 		try {
 			
-			String idPersonaHaya = obtnerIdClienteHaya(docCliente);
+			String idPersonaHaya = gdprManager.obtenerIdPersonaHaya(docCliente);
 
 			WebFileItem fileItem = uploadAdapter.getWebFileItem(request);
 
@@ -611,52 +614,11 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 			model.put(RESPONSE_SUCCESS_KEY, errores == null);
 		} catch (Exception e) {
 			model.put(RESPONSE_SUCCESS_KEY, false);
-			model.put(RESPONSE_ERROR_KEY, e.getMessage());
+			model.put("errores", e.getMessage());
 			logger.error("error subiendo documento persona", e);
 		}
 
 		return createModelAndViewJson(model);
-	}
-	
-	private String obtnerIdClienteHaya(String docCliente) throws Exception{
-		String idPersonaHaya = null;
-		TmpClienteGDPR tmpClienteGDPR = null;
-		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "documento", docCliente);
-		Comprador comprador = genericDao.get(Comprador.class, filtro);
-		if (!Checks.esNulo(comprador)) {
-			if (!Checks.esNulo(comprador.getIdPersonaHaya())) {
-				idPersonaHaya = String.valueOf(comprador.getIdPersonaHaya());
-			} else {
-				//caso residuales, compradores dados de alta sin interviniente 
-				List<ClienteComercial> clientes = genericDao.getList(ClienteComercial.class,genericDao.createFilter(FilterType.EQUALS, "documento", docCliente) );
-				if(clientes != null && clientes.size() > 0){
-					for(ClienteComercial clc : clientes){
-						if(clc.getIdPersonaHaya() != null){
-							idPersonaHaya = clc.getIdPersonaHaya();
-							break;
-						}
-					}
-				}
-				if(Checks.esNulo(idPersonaHaya)){
-					tmpClienteGDPR = genericDao.get(TmpClienteGDPR.class,
-							genericDao.createFilter(FilterType.EQUALS, "numDocumento", docCliente));
-					if (!Checks.esNulo(tmpClienteGDPR) && !Checks.esNulo(tmpClienteGDPR.getIdPersonaHaya())) {
-						idPersonaHaya = String.valueOf(tmpClienteGDPR.getIdPersonaHaya());
-					}
-				}
-			}
-		} else {
-			tmpClienteGDPR = genericDao.get(TmpClienteGDPR.class,
-					genericDao.createFilter(FilterType.EQUALS, "numDocumento", docCliente));
-
-			if (!Checks.esNulo(tmpClienteGDPR) && !Checks.esNulo(tmpClienteGDPR.getIdPersonaHaya())) {
-				idPersonaHaya = String.valueOf(tmpClienteGDPR.getIdPersonaHaya());
-			}
-		}
-		if(Checks.esNulo(idPersonaHaya)){
-			throw new Exception("El comprador no está dado de alta en el maestro de personas");
-		}
-		return idPersonaHaya;
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -670,7 +632,7 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 		
 		List<DtoAdjunto> listaAdjuntos = null;
 		try {
-			String idPersonaHaya = obtnerIdClienteHaya(docCliente);
+			String idPersonaHaya = gdprManager.obtenerIdPersonaHaya(docCliente);
 			listaAdjuntos = expedienteComercialAdapter.getAdjuntoExpedienteComprador(idPersonaHaya, docCliente, null);							
 		} catch (Exception e) {
 			logger.error("Error en ExpedienteComercialController", e);

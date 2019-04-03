@@ -7,7 +7,7 @@ import java.util.Date;
  * Modelo que gestiona la informacion de los adjuntos.
  */
 
-public class DtoAdjunto implements Serializable{
+public class DtoAdjunto implements Serializable, Comparable<DtoAdjunto>{
 
 	private static final long serialVersionUID = -7785802535778510517L;
 
@@ -189,5 +189,16 @@ public class DtoAdjunto implements Serializable{
 
 	public void setTipoExpediente(String tipoExpediente) {
 		this.tipoExpediente = tipoExpediente;
+	}
+
+	@Override
+	public int compareTo(DtoAdjunto o) {
+		if(this.getCreateDate() == null ){
+			return 1;
+		}
+		if(o.getCreateDate() == null){
+			return -1;
+		}
+		return o.getCreateDate().compareTo(this.createDate);
 	}
 }

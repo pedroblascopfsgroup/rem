@@ -377,7 +377,7 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 											        	xtype: 'comboboxfieldbase',
 											        	fieldLabel: HreRem.i18n('fieldlabel.regimen.economico'),
 														reference: 'regimenMatrimonial',
-														name: 'codTipoDocumentoConyuge',
+														name: 'codigoRegimenMatrimonial',
 														bind: {
 										            		store: '{comboRegimenesMatrimoniales}'
 										            	},

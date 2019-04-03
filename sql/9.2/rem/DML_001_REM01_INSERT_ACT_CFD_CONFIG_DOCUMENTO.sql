@@ -89,7 +89,7 @@ BEGIN
 						,0
 						)';
 		
-		DBMS_OUTPUT.PUT_LINE(V_MSQL);
+		-- DBMS_OUTPUT.PUT_LINE(V_MSQL);
 		EXECUTE IMMEDIATE V_MSQL;
 			
 			V_COUNT := V_COUNT + 1 ;

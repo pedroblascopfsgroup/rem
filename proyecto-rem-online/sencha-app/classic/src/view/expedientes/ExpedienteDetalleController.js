@@ -1532,11 +1532,11 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	},
 	
 	onClickBotonCrearComprador: function(btn){
-
 		var me = this,
-		ventanaDetalle = btn.up().up(),
-	    form = ventanaDetalle.getForm(),
-		ventanaWizard = btn.up('wizardaltacomprador');
+		ventanaDetalle = btn.up().up(),	    
+		ventanaWizard = btn.up('wizardaltacomprador'),
+		ventanaDatosComprador = ventanaWizard.down("datoscompradorwizard"),
+		form = ventanaDatosComprador.getForm();
 		form.updateRecord();
 		ventanaWizard.height =  Ext.Element.getViewportHeight() > 500 ? 500 : Ext.Element.getViewportHeight()-100;
 		ventanaWizard.setY( Ext.Element.getViewportHeight()/2 - ((Ext.Element.getViewportHeight() > 500 ? 500 : Ext.Element.getViewportHeight() -100)/2));
@@ -1606,11 +1606,12 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 
 		var me = this;
 		if (form.isValid()) {
-
-			model = this.getViewModel().get('comprador');
+			form.recordName = "comprador";
+			form.recordClass = "HreRem.model.FichaComprador";
+			form.updateRecord();
 			ventanaWizard.mask(HreRem.i18n("msg.mask.espere"));
-
-			model.save({
+			var record = form.getRecord();
+			record.save({
 				success : function(a, operation, c) {
 					me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
 					form.reset();
@@ -1621,8 +1622,6 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 				failure : function(a, operation) {
 					ventanaWizard.unmask();
 					me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-					//form.reset();
-					//ventanaWizard.hide();
 				}
 			});
 

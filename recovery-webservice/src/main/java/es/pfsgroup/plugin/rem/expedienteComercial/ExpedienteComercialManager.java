@@ -8742,4 +8742,54 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		}
 		return esApple;
 	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public boolean checkInquilinos(TareaExterna tareaExterna){
+		
+		ExpedienteComercial expedienteComercial = tareaExternaToExpedienteComercial(tareaExterna);
+		
+		if(!Checks.esNulo(expedienteComercial)) {
+			Filter filtroId = genericDao.createFilter(FilterType.EQUALS, "idExpedienteComercial",Long.toString(expedienteComercial.getId()));
+			Filter filtroTitular = genericDao.createFilter(FilterType.EQUALS, "titularContratacion",1);
+			VBusquedaDatosCompradorExpediente comprador = genericDao.get(VBusquedaDatosCompradorExpediente.class, filtroId, filtroTitular); 
+			
+			if (!Checks.esNulo(comprador.getCodTipoDocumento())) {					//Tipo de documento
+				if (!Checks.esNulo(comprador.getNumDocumento())) {					//Número de documento
+									
+						//Campos dependientes de si el tipo de persona es física
+						if (!Checks.esNulo(DDTiposPersona.CODIGO_TIPO_PERSONA_FISICA.equals(comprador.getCodTipoPersona()))) {							
+							if (!Checks.esNulo(comprador.getNombreRazonSocial())) {																		//Nombre
+								if (!Checks.esNulo(comprador.getApellidos())) {																			//Apellidos
+									if (!Checks.esNulo(comprador.getDireccion())) {																		//Dirección
+										if (!Checks.esNulo(comprador.getCodEstadoCivil())) {															//Estado civil
+											return true;
+										}
+									}
+								}
+							}
+						}
+		
+						//Campos dependientes de si el tipo de persona es jurídica
+						if (!Checks.esNulo(DDTiposPersona.CODIGO_TIPO_PERSONA_JURIDICA.equals(comprador.getCodTipoPersona()))) {						
+							if (!Checks.esNulo(comprador.getNombreRazonSocial())) {																		//Razón social (Titular)
+								if (!Checks.esNulo(comprador.getNombreRazonSocialRte())) {																//Nombre del representante
+									if (!Checks.esNulo(comprador.getApellidosRte())) {																	//Apellidos del representante
+										if (!Checks.esNulo(comprador.getCodTipoDocumentoRte())) {														//Tipo de documento del representante
+											if (!Checks.esNulo(comprador.getNumDocumentoRte())) {														//Número de documento del representante
+												if (!Checks.esNulo(comprador.getCodigoPaisRte())) {														//País de residencia del representante
+													return true;
+												}
+											}
+										}
+									}
+								}
+							}
+						}		
+				}
+			}
+		}
+		return false;
+		
+	}
 }

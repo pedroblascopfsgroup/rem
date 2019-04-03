@@ -1,16 +1,17 @@
 --/*
 --##########################################
---## AUTOR=OSCAR DIESTRE
---## FECHA_CREACION=20180110
+--## AUTOR=Daniel Algaba
+--## FECHA_CREACION=20190328
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-5124
+--## INCIDENCIA_LINK=HREOS-5950
 --## PRODUCTO=NO
 --## Finalidad: Tabla auxiliar para crear los históricos de las comunicaciones de GENCAT
 --##           
 --## INSTRUCCIONES: Configurar las variables necesarias en el principio del DECLARE
 --## VERSIONES:
 --##        0.1 Versión inicial
+--##		0.2 HREOS-5950 - Añadimos el HCG_CMG_ID
 --##########################################
 --*/
 
@@ -59,7 +60,8 @@ BEGIN
 		ACT_ID 					NUMBER(16,0), 
 		CMG_ID	 				NUMBER(16,0),
 		HCG_ID	 				NUMBER(16,0),
-		CMG_ID_NUEVO				NUMBER(16,0)
+		CMG_ID_NUEVO			NUMBER(16,0),
+		HCG_CMG_ID				NUMBER(16,0)
 	)
 	LOGGING 
 	NOCOMPRESS 

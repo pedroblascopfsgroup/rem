@@ -92,6 +92,7 @@ import es.pfsgroup.plugin.rem.model.NotificacionGencat;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.OfertaGencat;
 import es.pfsgroup.plugin.rem.model.ReclamacionGencat;
+import es.pfsgroup.plugin.rem.model.RelacionHistoricoComunicacion;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.VExpPreBloqueoGencat;
 import es.pfsgroup.plugin.rem.model.Visita;
@@ -714,7 +715,7 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 			
 			//if... gestor documental activado
 			if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
-				listaAdjuntos = getAdjuntosComunicacionHistoricoGD(hComunicacionGencat, listaAdjuntos);
+				listaAdjuntos = gestorDocumentalAdapterApi.getAdjuntosComunicacionGencat(null, hComunicacionGencat);
 			} 
 			else {
 				listaAdjuntos = getAdjuntosComunicacionHistorico(hComunicacionGencat, listaAdjuntos);
@@ -739,38 +740,6 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 			dto.setGestor(adjunto.getAuditoria().getUsuarioCrear());
 
 			listaAdjuntos.add(dto);
-		}
-		return listaAdjuntos;
-	}
-	
-	private List<DtoAdjunto> getAdjuntosComunicacionHistoricoGD(HistoricoComunicacionGencat hComunicacionGencat, List<DtoAdjunto> listaAdjuntos) 
-			throws IllegalAccessException, InvocationTargetException {
-		
-		Activo activo = activoApi.get(hComunicacionGencat.getActivo().getId());
-		
-		for (HistoricoComunicacionGencatAdjunto referenciaAdjunto : hComunicacionGencat.getAdjuntos()) {
-			DtoAdjunto dto = new DtoAdjunto();
-			
-			Long idAdjuntoGD = referenciaAdjunto.getAdjuntoComunicacion().getIdDocRestClient();
-
-			if (!Checks.esNulo(idAdjuntoGD)) {
-				
-				ActivoAdjuntoActivo adjunto = activo.getAdjuntoGD(idAdjuntoGD);
-				if (!Checks.esNulo(adjunto)) {
-					BeanUtils.copyProperties(dto, adjunto);
-					dto.setIdEntidad(activo.getId());
-					dto.setId(idAdjuntoGD);
-					if (!Checks.esNulo(adjunto.getTipoDocumentoActivo())) {
-						dto.setDescripcionTipo(adjunto.getTipoDocumentoActivo().getDescripcion());
-					}
-					dto.setContentType(adjunto.getContentType());
-					if (!Checks.esNulo(adjunto.getAuditoria())) {
-						dto.setGestor(adjunto.getAuditoria().getUsuarioCrear());
-					}
-					dto.setTamanyo(adjunto.getTamanyo());
-					listaAdjuntos.add(dto);
-				}
-			}
 		}
 		return listaAdjuntos;
 	}
@@ -1271,6 +1240,7 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 					
 					// Historificacion del tramite de GENCAT
 					HistoricoComunicacionGencat historicoComunicacionGencat = crearHistoricoComunicacionGencatByComunicacionGencat(comunicacionGencat);
+					crearRelacionHistoricoComunicacionByComunicacionGencatAndHistorico(historicoComunicacionGencat, comunicacionGencat);
 					crearHistoricoAdecuacionGencatByAdecuacionGencat(adecuacionGencat, historicoComunicacionGencat);
 					crearHistoricoOfertaGencatByOfertaGencat(ofertaGencat, historicoComunicacionGencat);
 //					crearHistoricoNotificacionGencatByNotificacionGencat(notificacionGencat, historicoComunicacionGencat);
@@ -1340,6 +1310,22 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 		 }
 	
 		return historicoComunicacionGencat;
+		
+	}
+	
+
+	private void crearRelacionHistoricoComunicacionByComunicacionGencatAndHistorico(HistoricoComunicacionGencat historicoComunicacionGencat, ComunicacionGencat comunicacionGencat) {
+		
+		RelacionHistoricoComunicacion relacionHistoricoComunicacion = new RelacionHistoricoComunicacion();
+				
+		if(!Checks.esNulo(comunicacionGencat) && !Checks.esNulo(historicoComunicacionGencat)) {
+			relacionHistoricoComunicacion.setHistoricoComunicacionGencat(historicoComunicacionGencat);
+			relacionHistoricoComunicacion.setIdComunicacionGencat(comunicacionGencat.getId());
+			relacionHistoricoComunicacion.setAuditoria(comunicacionGencat.getAuditoria());
+			relacionHistoricoComunicacion.setVersion(comunicacionGencat.getVersion());
+		}
+		
+		genericDao.save(RelacionHistoricoComunicacion.class, relacionHistoricoComunicacion);
 		
 	}
 	

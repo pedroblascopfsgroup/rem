@@ -26,7 +26,8 @@ Ext.define('HreRem.view.activos.detalle.DocumentosComunicacionHistoricoGencatLis
     initComponent: function () {
         
         var me = this;  
-        
+
+        me.topBar = me.lookupViewModel().get('activo.tieneComunicacionGencat')!='false' && ($AU.userIsRol(CONST.PERFILES['HAYASUPER']) || $AU.userIsRol(CONST.PERFILES['GESTIAFORM'])|| $AU.userIsRol(CONST.PERFILES['HAYAGESTFORMADM'])); 
         //me.topBar = $AU.userHasFunction('EDITAR_TAB_ACTIVO_DOCUMENTOS');
         
         /*me.listeners = {	    	
@@ -55,16 +56,14 @@ Ext.define('HreRem.view.activos.detalle.DocumentosComunicacionHistoricoGencatLis
 	    		{
 		            dataIndex: 'nombre',
 		            text: HreRem.i18n('header.nombre.documento'),
-		            flex: 1,
-		            hidden: true
+		            flex: 1
 		        },
 		        {   text: HreRem.i18n('header.tipo'),
 		        	dataIndex: 'descripcionTipo',
-		        	flex: 1,
-		        	hidden: true
+		        	flex: 1
 		        },
 		        {
-		            dataIndex: 'fechaDocumento',
+		            dataIndex: 'createDate',
 		            text: HreRem.i18n('header.fecha.subida'),
 		            formatter: 'date("d/m/Y")',
 		            flex: 1

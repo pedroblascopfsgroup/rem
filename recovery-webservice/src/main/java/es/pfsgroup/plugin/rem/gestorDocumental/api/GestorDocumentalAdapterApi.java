@@ -13,6 +13,7 @@ import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoAdjuntoPromocion;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
+import es.pfsgroup.plugin.rem.model.HistoricoComunicacionGencat;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 
 public interface GestorDocumentalAdapterApi {
@@ -56,6 +57,9 @@ public interface GestorDocumentalAdapterApi {
 	void crearRelacionTrabajosActivo(Trabajo trabajo, Long idDocRestClient, String activo, String login, CrearRelacionExpedienteDto crearRelacionExpedienteDto) throws GestorDocumentalException ;
 
 	List<DtoAdjunto> getAdjuntosComunicacionGencat(ComunicacionGencat comunicacionGencat) throws GestorDocumentalException;
+	
+	List<DtoAdjunto> getAdjuntosComunicacionGencat(ComunicacionGencat comunicacionGencat, HistoricoComunicacionGencat historicoComunicacion) throws GestorDocumentalException;
+
 
 	Integer crearContenedorComunicacionGencat(ComunicacionGencat comunicacionGencat, String username) throws GestorDocumentalException;
 

@@ -65,8 +65,10 @@ import es.pfsgroup.plugin.rem.model.DtoAdjunto;
 import es.pfsgroup.plugin.rem.model.DtoAdjuntoPromocion;
 import es.pfsgroup.plugin.rem.model.ExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.GastoProveedor;
+import es.pfsgroup.plugin.rem.model.HistoricoComunicacionGencat;
 import es.pfsgroup.plugin.rem.model.MapeoGestorDocumental;
 import es.pfsgroup.plugin.rem.model.MapeoPropietarioGestorDocumental;
+import es.pfsgroup.plugin.rem.model.RelacionHistoricoComunicacion;
 import es.pfsgroup.plugin.rem.model.Trabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
 import es.pfsgroup.plugin.rem.model.dd.DDClaseActivoBancario;
@@ -758,14 +760,24 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 
 	@Override
 	public List<DtoAdjunto> getAdjuntosComunicacionGencat(ComunicacionGencat comunicacionGencat) throws GestorDocumentalException  {
+		return getAdjuntosComunicacionGencat(comunicacionGencat, null);
+	}
+	@Override
+	public List<DtoAdjunto> getAdjuntosComunicacionGencat(ComunicacionGencat comunicacionGencat, HistoricoComunicacionGencat historicoComunicacion) throws GestorDocumentalException  {
 		RecoveryToGestorDocAssembler recoveryToGestorDocAssembler = new RecoveryToGestorDocAssembler(appProperties);
 		List<DtoAdjunto> list;
 
 		String codigoEstado = "31";
 		
-
+		String idComunicacion = "";
+		if (!Checks.esNulo(comunicacionGencat)) {
+			idComunicacion = comunicacionGencat.getId().toString();
+		} else if (!Checks.esNulo(historicoComunicacion)) {
+			RelacionHistoricoComunicacion relacionHistoricoComunicacion = genericDao.get(RelacionHistoricoComunicacion.class, genericDao.createFilter(FilterType.EQUALS, "historicoComunicacionGencat.id", historicoComunicacion.getId()));
+			idComunicacion = relacionHistoricoComunicacion.getIdComunicacionGencat().toString();
+		}
 		CabeceraPeticionRestClientDto cabecera = recoveryToGestorDocAssembler.getCabeceraPeticionRestClient(
-				comunicacionGencat.getId().toString(), GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_OPERACIONES, codigoEstado);
+				idComunicacion, GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_OPERACIONES, codigoEstado);
 		Usuario userLogin = genericAdapter.getUsuarioLogado();
 		DocumentosExpedienteDto docExpDto = recoveryToGestorDocAssembler.getDocumentosExpedienteDto(userLogin.getUsername());
 		RespuestaDocumentosExpedientes respuesta = gestorDocumentalApi.documentosExpediente(cabecera, docExpDto);
@@ -846,8 +858,13 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 			SimpleDateFormat sdf = new SimpleDateFormat("dd/M/yyyy hh:mm");
 			fechaNotificacion = sdf.format(new Date());
 		}
+		String idComunicacion = comunicacionGencat.getId().toString();
+		if (!Checks.esNulo(webFileItem.getParameter("idHComunicacion"))) {
+			RelacionHistoricoComunicacion relacionHistoricoComunicacion = genericDao.get(RelacionHistoricoComunicacion.class, genericDao.createFilter(FilterType.EQUALS, "historicoComunicacionGencat.id", Long.parseLong(webFileItem.getParameter("idHComunicacion"))));
+			idComunicacion = relacionHistoricoComunicacion.getIdComunicacionGencat().toString();
+		}
 		CabeceraPeticionRestClientDto cabecera = recoveryToGestorDocAssembler.getCabeceraPeticionRestClient(
-				comunicacionGencat.getId().toString(), GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_OPERACIONES, codigoEstado);
+				idComunicacion, GestorDocumentalConstants.CODIGO_TIPO_EXPEDIENTE_OPERACIONES, codigoEstado);
 		CrearDocumentoDto crearDoc = recoveryToGestorDocAssembler.getCrearDocumentoComunicacionGencatDto(webFileItem, userLogin, matricula,fechaNotificacion);
 		
 		RespuestaCrearDocumento respuestaCrearDocumento;

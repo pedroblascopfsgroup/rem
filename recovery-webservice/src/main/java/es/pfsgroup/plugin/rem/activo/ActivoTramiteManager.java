@@ -927,7 +927,6 @@ public class ActivoTramiteManager implements ActivoTramiteApi{
 		boolean tramiteGencatActivo = false;
 		boolean tieneTramiteGENCAT = false;
 		TareaActivo tareaActivo = tareaActivoApi.getByIdTareaExterna(tareaExterna.getId());
-		Long idActivo = tareaActivo.getActivo().getId();
 		Filter filtroTrabajo = genericDao.createFilter(FilterType.EQUALS, "trabajo.id", tareaActivo.getTramite().getTrabajo().getId());
 		ExpedienteComercial expediente = genericDao.get(ExpedienteComercial.class, filtroTrabajo);
 		List<ActivoOferta> listaActivos = expediente.getOferta().getActivosOferta();

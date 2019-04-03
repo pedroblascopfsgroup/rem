@@ -728,7 +728,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			if(me.getViewModel().get('expediente.tipoExpedienteCodigo') === tipoExpedienteAlquiler){
 				deshabilitarCamposDoc = true;
 			}
-			me.getView().fireEvent('openModalWindow', "HreRem.view.expedientes.DatosComprador",{idComprador: idCliente, modoEdicion: edicion, storeGrid:storeGrid, expediente: expediente,deshabilitarCamposDoc: deshabilitarCamposDoc });
+			var window = me.getView().fireEvent('openModalWindow', "HreRem.view.expedientes.DatosComprador",{idComprador: idCliente, modoEdicion: edicion, storeGrid:storeGrid, expediente: expediente,deshabilitarCamposDoc: deshabilitarCamposDoc });
 			
 		}
 		if (me.getViewModel().get('expediente.tipoExpedienteCodigo') === tipoExpedienteAlquiler && !Ext.isEmpty(fechaPosicionamiento)){
@@ -967,37 +967,38 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	
 	cargarDatosComprador: function (window) {
 		var me = this,
-		model = null,
-		models = null,
-		nameModels = null,
-		id = window.idComprador,
-		idExpediente = window.expediente.get("id");
-
-		if(!Ext.isEmpty(id)){
-			var form= window.down('formBase');
-			form.mask(HreRem.i18n("msg.mask.loading"));
-			if(!form.saveMultiple) {	
-				model = form.getModelInstance(),
-				model.setId(id);
-				if(Ext.isDefined(model.getProxy().getApi().read)) {
-					// Si la API tiene metodo de lectura (read).
-					model.load({
-						params: {idExpedienteComercial: idExpediente},
-					    success: function(record) {
-					    	form.setBindRecord(record);			    	
-					    	form.unmask();
-					    	if(Ext.isFunction(form.afterLoad)) {
-					    		form.afterLoad();
-					    	}
-					    }
+			model = Ext.create('HreRem.model.FichaComprador'),
+			idExpediente = window.expediente.get("id"),
+			form = window.down('formBase');
+		
+		form.mask(HreRem.i18n("msg.mask.loading"));
+		
+		form.reset(true);
+		Ext.Array.each(form.query('component[isReadOnlyEdit]'),
+				function (field, index) 
+					{ 
+						field.setValue(null)
 					});
-				}
+		
+		
+		model.setId(window.idComprador);
+		model.load({
+			params: {idExpedienteComercial: idExpediente},
+		    success: function(record) {
+		    	form.unmask();
+		    	form.loadRecord(record);
+		    	window.getViewModel().set('comprador', record);
+		    	
+		    	if(Ext.isFunction(form.afterLoad)) {
+		    		form.afterLoad();
+		    	}
+		    },
+		    failure : function(record, operation) {
+				console.log("Failure: no ha sido posible cargar los datos del comprador");
+				me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+				form.unmask();
 			}
-		}
-		else{
-			var form= window.down('formBase');
-			form.setBindRecord(Ext.create('HreRem.model.FichaComprador'));		
-		}
+		});
 	},
 	
 	cargarDatosCompradorWizard : function(window) {
@@ -1006,47 +1007,51 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		    id = window.idComprador,
 		    idExpediente = window.up().expediente.get("id");
 		form = window.getForm();
-
-		model = Ext.create('HreRem.model.FichaComprador', {
-			id : id,
-			idExpedienteComercial : idExpediente,
-			cesionDatosHaya: form.findField('cesionDatosHaya').getValue(),
-			comunicacionTerceros: form.findField('comunicacionTerceros').getValue(),
-			transferenciasInternacionales: form.findField('transferenciasInternacionales').getValue(),
-			pedirDoc: form.findField('pedirDoc').getValue(),
-			numDocumento: form.findField('numDocumento').getValue(),
-			codTipoDocumento: form.findField('codTipoDocumento').getValue()
-		});
-
 		window.mask(HreRem.i18n("msg.mask.loading"));
 
-		me.getViewModel().set('comprador', model);
+		model = Ext.create('HreRem.model.FichaComprador');//, {
+//			id : id,
+//			idExpedienteComercial : idExpediente,
+//			cesionDatos: form.findField('cesionDatos').getValue(),
+//			comunicacionTerceros: form.findField('comunicacionTerceros').getValue(),
+//			transferenciasInternacionales: form.findField('transferenciasInternacionales').getValue(),
+//			pedirDoc: form.findField('pedirDoc').getValue(),
+//			numDocumento: form.findField('numDocumento').getValue(),
+//			codTipoDocumento: form.findField('codTipoDocumento').getValue()
+//		});
 
-		if (!Ext.isEmpty(id)) {
-			model.load({
+		
+
+		
+		model.setId(id);
+		model.load({
 				params : {
-					id : id,
-					idExpedienteComercial : idExpediente,
-					cesionDatosHaya: form.findField('cesionDatosHaya').getValue(),
-					comunicacionTerceros: form.findField('comunicacionTerceros').getValue(),
-					transferenciasInternacionales: form.findField('transferenciasInternacionales').getValue(),
-					pedirDoc: form.findField('pedirDoc').getValue(),
-					numDocumento: form.findField('numDocumento').getValue(),
-					codTipoDocumento: form.findField('codTipoDocumento').getValue()
+					idExpedienteComercial : idExpediente
+//					cesionDatos: form.findField('cesionDatos').getValue(),
+//					comunicacionTerceros: form.findField('comunicacionTerceros').getValue(),
+//					transferenciasInternacionales: form.findField('transferenciasInternacionales').getValue(),
+//					pedirDoc: form.findField('pedirDoc').getValue(),
+//					numDocumento: form.findField('numDocumento').getValue(),
+//					codTipoDocumento: form.findField('codTipoDocumento').getValue()
 				},
 				success : function(record) {
+					if (Ext.isEmpty(id)) {
+						model.setId(undefined);
+					}
 					window.unmask();
-					form.findField('numDocumento').setDisabled(true);
-					form.findField('codTipoDocumento').setDisabled(true);
+			    	
+					form.findField('numDocumento').setReadOnly(true);
+					form.findField('codTipoDocumento').setReadOnly(true);
+					form.loadRecord(record);
+			    	window.getViewModel().set('comprador', record);
 				},
 				failure : function(record, operation) {
 					console.log("Failure: no ha sido posible cargar los datos del comprador.");
+					me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+					window.unmask();
 				}
-			});
-		}else{
-			window.unmask();
-		}
-
+		});
+		
 		// Funcionalidad que permite editar los campos
 		Ext.Array.each(window.query('field[isReadOnlyEdit]'),
 				function(field, index) {
@@ -1063,8 +1068,8 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			form.recordName = "comprador";
 			form.recordClass = "HreRem.model.FichaComprador";
 
-			ventanaWizard.width = Ext.Element.getViewportWidth()/2;
-			ventanaWizard.height = Ext.Element.getViewportHeight() > 500 ? 500 : Ext.Element.getViewportHeight()-100;
+			//ventanaWizard.width = Ext.Element.getViewportWidth()/2;
+			//ventanaWizard.height = Ext.Element.getViewportHeight() > 500 ? 500 : Ext.Element.getViewportHeight()-100;
 
 			var success = function(record, operation) {
 				me.getView().unmask();
@@ -1112,9 +1117,10 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	
 	onSaveFormularioCompletoComprador: function(form, success, failure) {
 		var me = this,
-		datoscom= form.up(),
-		storeGrid= datoscom.storeGrid,
-		record = form.getBindRecord();
+		datoscom = form.up(),
+		storeGrid = datoscom.storeGrid;
+		form.getForm().updateRecord();
+		var record = form.getForm().getRecord();		
 		success = success || function() {
 			me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
 			storeGrid.load();
@@ -1125,51 +1131,9 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		}; 
 		
 		if(form.isFormValid()) {
-			var idExpedienteComercial = record.get("idExpedienteComercial");			
-			var numeroClienteUrsus = record.get("numeroClienteUrsus");
-			var nombreRazonSocial = record.get("nombreRazonSocial");
-			var apellidos = record.get("apellidos");
-			var direccion = record.get("direccion");
-			var telefono1 = record.get("telefono1");
-			var telefono2 = record.get("telefono2");
-			var codigoPostal = record.get("codigoPostal");
-			var email = record.get("email");
-			
-			var documentoConyuge = record.get("documentoConyuge");
-			var relacionHre = record.get("relacionHre");
-			
-			var numDocumentoRte = record.get("numDocumentoRte");
-			var nombreRazonSocialRte = record.get("nombreRazonSocialRte");
-			var apellidosRte = record.get("apellidosRte");
-			var direccionRte = record.get("direccionRte");
-			var telefono1Rte = record.get("telefono1Rte");
-			var telefono2Rte = record.get("telefono2Rte");
-			var codigoPostalRte = record.get("codigoPostalRte");
-			var emailRte = record.get("emailRte");
-			
-			
 			form.mask(HreRem.i18n("msg.mask.espere"));
 			
 			record.save({
-				params: {idExpedienteComercial: idExpedienteComercial,
-						 numeroClienteUrsus:		numeroClienteUrsus,
-						 direccion: direccion,
-						 nombreRazonSocial: nombreRazonSocial,
-						 apellidos: apellidos,
-						 telefono1: telefono1,
-						 telefono2: telefono2,
-						 codigoPostal: codigoPostal,
-						 email: email,
-						 documentoConyuge: documentoConyuge,
-						 relacionHre: relacionHre,
-						 numDocumentoRte: numDocumentoRte,
-						 nombreRazonSocialRte: nombreRazonSocialRte,
-						 apellidosRte: apellidosRte,
-						 direccionRte: direccionRte,
-						 telefono1Rte: telefono1Rte,
-						 telefono2Rte: telefono2Rte,
-						 codigoPostalRte: codigoPostalRte,
-						 emailRte: emailRte},
 			    success: success,
 			 	failure: failure,
 			    callback: function(record, operation) {
@@ -1568,27 +1532,26 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	},
 	
 	onClickBotonCrearComprador: function(btn){
-
 		var me = this,
-		ventanaDetalle = btn.up().up(),
-        window = ventanaDetalle.up().xtype,
-	    form = ventanaDetalle.getForm(),
-		ventanaWizard = btn.up('wizardaltacomprador');
-
+		ventanaDetalle = btn.up().up(),	    
+		ventanaWizard = btn.up('wizardaltacomprador'),
+		ventanaDatosComprador = ventanaWizard.down("datoscompradorwizard"),
+		form = ventanaDatosComprador.getForm();
+		form.updateRecord();
 		ventanaWizard.height =  Ext.Element.getViewportHeight() > 500 ? 500 : Ext.Element.getViewportHeight()-100;
 		ventanaWizard.setY( Ext.Element.getViewportHeight()/2 - ((Ext.Element.getViewportHeight() > 500 ? 500 : Ext.Element.getViewportHeight() -100)/2));
-
+		
 		if(ventanaDetalle.config.xtype.indexOf('datoscompradorwizard') >=0){
-			pedirDocValor = ventanaDetalle.getForm().findField('pedirDoc').getValue();
-			comprador = ventanaDetalle.getBindRecord().comprador;
+			var pedirDocValor = ventanaDetalle.getForm().findField('pedirDoc').getValue(),
+			comprador = form.getRecord();
 
 			if (pedirDocValor == 'false'){
 
 				if (form.isValid()) {
-					url = $AC.getRemoteUrl('expedientecomercial/getListAdjuntosComprador');
+					var url = $AC.getRemoteUrl('expedientecomercial/getListAdjuntosComprador'),
+                    idExpediente = comprador.data.idExpedienteComercial,
+                    docCliente = comprador.data.numDocumento;
 
-                    idExpediente = comprador.data.idExpedienteComercial;
-                    var docCliente= comprador.data.numDocumento;
                     Ext.Ajax.request({
                          url: url,
                          method : 'GET',
@@ -1596,7 +1559,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
                          params: {docCliente: docCliente, idExpediente: idExpediente},
 
                          success: function(response, opts) {
-                             data = Ext.decode(response.responseText);
+                             var data = Ext.decode(response.responseText);
                              if(!Ext.isEmpty(data.data)){
                                  ventanaWizard.down('anyadirnuevaofertaactivoadjuntardocumento').getForm().findField('docOfertaComercial').setValue(data.data[0].nombre);
                                  ventanaWizard.down('anyadirnuevaofertaactivoadjuntardocumento').down().down('panel').down('button').show();
@@ -1608,35 +1571,34 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
                          }
                     });
 
-                   // ventanaWizard.down('anyadirnuevaofertaactivoadjuntardocumento').getForm().findField('cesionDatosHaya').setValue(comprador.data.cesionDatosHaya);
-                   // ventanaWizard.down('anyadirnuevaofertaactivoadjuntardocumento').getForm().findField('comunicacionTerceros').setValue(comprador.data.comunicacionTerceros);
-                   // ventanaWizard.down('anyadirnuevaofertaactivoadjuntardocumento').getForm().findField('transferenciasInternacionales').setValue(comprador.data.transferenciasInternacionales);
+                    ventanaWizard.down('anyadirnuevaofertaactivoadjuntardocumento').getForm().findField('cesionDatos').setValue(comprador.data.cesionDatos);
+                    ventanaWizard.down('anyadirnuevaofertaactivoadjuntardocumento').getForm().findField('comunicacionTerceros').setValue(comprador.data.comunicacionTerceros);
+                    ventanaWizard.down('anyadirnuevaofertaactivoadjuntardocumento').getForm().findField('transferenciasInternacionales').setValue(comprador.data.transferenciasInternacionales);
                     
-                    ventanaDetalle.getForm().findField('cesionDatosHaya').setValue(comprador.data.cesionDatosHaya);
-            		ventanaDetalle.getForm().findField('comunicacionTerceros').setValue(comprador.data.comunicacionTerceros);
-            		ventanaDetalle.getForm().findField('transferenciasInternacionales').setValue(comprador.data.transferenciasInternacionales);
-
+                    if(comprador.data.cesionDatos) {
+                    	ventanaWizard.down('anyadirnuevaofertaactivoadjuntardocumento').down('button[itemId=btnGenerarDoc]').disable();
+                    	ventanaWizard.down('anyadirnuevaofertaactivoadjuntardocumento').down('button[itemId=btnSubirDoc]').disable();
+                    	ventanaWizard.down('anyadirnuevaofertaactivoadjuntardocumento').down('button[itemId=btnFinalizar]').enable();
+                    }
+                    
                     var wizard = btn.up().up().up();
                     var layout = wizard.getLayout();
                     layout["next"]();
 				}
-
 			}else{
-
 				me.guardarComprador(form, ventanaWizard);
 			}
 
 		}else{
-
-			/*var cesionDatos = ventanaDetalle.getForm().findField('cesionDatosHaya').getValue(),
+			var cesionDatos = ventanaDetalle.getForm().findField('cesionDatos').getValue(),
 			comunicacionTerceros = ventanaDetalle.getForm().findField('comunicacionTerceros').getValue(),
 			transferenciasInternacionales = ventanaDetalle.getForm().findField('transferenciasInternacionales').getValue();
-            ventanaDetalle.getForm().findField('cesionDatosHaya').setValue(cesionDatos);
-            ventanaDetalle.getForm().findField('comunicacionTerceros').setValue(comunicacionTerceros);
-            ventanaDetalle.getForm().findField('transferenciasInternacionales').setValue(transferenciasInternacionales);*/
 
-            me.guardarComprador(form, ventanaWizard);
-            
+            ventanaWizard.down('datoscompradorwizard').getForm().findField('cesionDatos').setValue(cesionDatos);
+            ventanaWizard.down('datoscompradorwizard').getForm().findField('comunicacionTerceros').setValue(comunicacionTerceros);
+            ventanaWizard.down('datoscompradorwizard').getForm().findField('transferenciasInternacionales').setValue(transferenciasInternacionales);
+
+            me.guardarComprador(form, ventanaWizard);      
 		}
 	},
 
@@ -1644,11 +1606,12 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 
 		var me = this;
 		if (form.isValid()) {
-
-			model = this.getViewModel().get('comprador');
+			form.recordName = "comprador";
+			form.recordClass = "HreRem.model.FichaComprador";
+			form.updateRecord();
 			ventanaWizard.mask(HreRem.i18n("msg.mask.espere"));
-
-			model.save({
+			var record = form.getRecord();
+			record.save({
 				success : function(a, operation, c) {
 					me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
 					form.reset();
@@ -1659,8 +1622,6 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 				failure : function(a, operation) {
 					ventanaWizard.unmask();
 					me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
-					//form.reset();
-					//ventanaWizard.hide();
 				}
 			});
 
@@ -1750,6 +1711,35 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			}
 		});
 
+		if (me.lookupReference(chainedCombo.chainedReference) != null) {
+			var chainedDos = me.lookupReference(chainedCombo.chainedReference);
+			if(!chainedDos.isDisabled()) {
+				chainedDos.clearValue();
+				chainedDos.getStore().removeAll();
+				chainedDos.setDisabled(true);
+			}
+		}
+    },
+    
+    onChangeComboProvincia: function(combo) {
+    	var me = this,
+    	chainedCombo = me.lookupReference(combo.chainedReference);   
+
+    	me.getViewModel().notify();
+    	if(Ext.isEmpty(combo.getValue())) {
+			chainedCombo.clearValue();
+    	}
+
+		chainedCombo.getStore().load({ 			
+			params: {codigoProvincia: combo.getValue()},
+			callback: function(records, operation, success) {
+   				if(!Ext.isEmpty(records) && records.length > 0) {   					
+   					chainedCombo.setDisabled(false);
+   				} else {
+   					chainedCombo.setDisabled(true);
+   				}
+			}
+		});
 		if (me.lookupReference(chainedCombo.chainedReference) != null) {
 			var chainedDos = me.lookupReference(chainedCombo.chainedReference);
 			if(!chainedDos.isDisabled()) {
@@ -1954,8 +1944,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 		var idExpediente = me.getViewModel().get(
 				"expediente.id");
 		if (idExpediente == null) {
-			idExpediente = fichaComprador.getBindRecord().get(
-					'idExpedienteComercial');
+			idExpediente = fichaComprador.getRecord().get('idExpedienteComercial');
 		}
 
 		if (!Ext.isEmpty(tipoDocumento)
@@ -2022,11 +2011,17 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 
 	mostrarDetallesClienteUrsus: function(field, newValue ,oldValue ,eOpts){
 		var me = this;
+		var form = field.up('formBase');
 		var url =  $AC.getRemoteUrl('expedientecomercial/buscarDatosClienteNumeroUrsus');
-		var numeroUrsus = field.up('formBase').down('[reference=seleccionClienteUrsus]').getValue();
-		var fichaComprador= field.up('[xtype=formBase]');
-		var idExpediente = fichaComprador.getBindRecord().get('idExpedienteComercial');
-		var parent = field.up('datoscompradorwindow');
+		var numeroUrsus = form.down('[reference=seleccionClienteUrsus]').getValue();
+		var parent = field.up('windowBase');
+		var idExpediente;
+		try{
+			idExpediente = form.getRecord().get('idExpedienteComercial');
+		}catch(error){
+			idExpediente = me.getViewModel().get("expediente.id");
+		}
+		
 
 		parent.mask(HreRem.i18n("msg.mask.loading"));
 		
@@ -2325,8 +2320,84 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			campoNumVisita.setDisabled(true);
 		}
 	},
+comprobarObligatoriedadRte: function(){
+    	
+    	var me = this;
+    	var venta = null;
+    	if(me.getViewModel().get('expediente.tipoExpedienteCodigo') == null){
+    		if (me.getViewModel().data.esOfertaVentaFicha == true){
+    			venta = true;
+    		}else{
+    			venta = false;
+    		}
+    	}
+    	campoProvinciaRte = me.lookupReference('provinciaComboRte');
+		campoMunicipioRte = me.lookupReference('municipioComboRte');
+		campoDireccion = me.lookupReference('direccion');
+		campoProvincia = me.lookupReference('provinciaCombo');
+		campoMunicipio = me.lookupReference('municipioCombo');
+
+    	if(me.getViewModel().get('expediente.tipoExpedienteCodigo') == "01" || venta == true){
+    		if(me.lookupReference('tipoPersona').getValue() === "2" ) {
+    			if(me.lookupReference('pais').getValue() == "28"){
+    				if(!Ext.isEmpty(campoProvincia)){
+						campoProvincia.allowBlank = false;
+					}
+    				if(!Ext.isEmpty(campoMunicipio)){
+    					campoMunicipio.allowBlank = false;
+					}					
+				}else{
+    				if(!Ext.isEmpty(campoProvincia)){
+    					campoProvincia.allowBlank = true;
+					}
+    				if(!Ext.isEmpty(campoMunicipio)){
+    					campoMunicipio.allowBlank = true;
+					}
+				}
+    			if(me.lookupReference('paisRte').getValue() == "28"){
+					if(!Ext.isEmpty(campoProvinciaRte)){
+						campoProvinciaRte.allowBlank = false;
+					}
+					if(!Ext.isEmpty(campoMunicipioRte)){
+						campoMunicipioRte.allowBlank = false;
+					}
+					
+				}else{
+					if(!Ext.isEmpty(campoProvinciaRte)){
+						campoProvinciaRte.allowBlank = true;
+					}
+					if(!Ext.isEmpty(campoMunicipioRte)){
+						campoMunicipioRte.allowBlank = true;
+					}
+				}
+    		}else if (me.lookupReference('tipoPersona').getValue() === "1"){
+    			if(me.lookupReference('pais').getValue() == "28"){
+    				if(!Ext.isEmpty(campoProvincia)){
+    					campoProvincia.allowBlank = false;
+					}
+    				if(!Ext.isEmpty(campoMunicipio)){
+    					campoMunicipio.allowBlank = false;
+					}
+				}else{
+    				if(!Ext.isEmpty(campoProvincia)){
+    					campoProvincia.allowBlank = true;
+					}
+    				if(!Ext.isEmpty(campoMunicipio)){
+    					campoMunicipio.allowBlank = true;
+					}
+				}
+    			if(!Ext.isEmpty(campoProvinciaRte)){
+					campoProvinciaRte.allowBlank = true;
+				}
+				if(!Ext.isEmpty(campoMunicipioRte)){
+					campoMunicipioRte.allowBlank = true;
+				}
+    		}
+    	}
+    },
 
 	comprobarObligatoriedadCamposNexos: function() {
+
 		try{
 			var me = this;
 			
@@ -2338,7 +2409,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 	    			venta = false;
 	    		}
 	    	}
-			
+	    	me.comprobarObligatoriedadRte();
 			campoEstadoCivil = me.lookupReference('estadoCivil'),
 			campoRegEconomico = me.lookupReference('regimenMatrimonial'),
 			campoNumConyuge = me.lookupReference('numRegConyuge'),
@@ -2348,14 +2419,11 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			campoNumRte = me.lookupReference('numeroDocumentoRte'),
 			campoPaisRte = me.lookupReference('paisRte'),
 			campoApellidosRte = me.lookupReference('apellidosRte'),	
-			campoProvinciaRte = me.lookupReference('provinciaComboRte'),
-			campoMunicipioRte = me.lookupReference('municipioComboRte'),
 			campoApellidos = me.lookupReference('apellidos');
 			campoDireccion = me.lookupReference('direccion');
 			campoProvincia = me.lookupReference('provinciaCombo');
 			campoMunicipio = me.lookupReference('municipioCombo');
 			campoPais = me.lookupReference('pais');
-
 			//Si el expediente es de tipo alquiler
 			if(me.getViewModel().get('expediente.tipoExpedienteCodigo') == "02" || venta == false){
 				// Si el tipo de persona es FÍSICA, entonces el campos Estado civil es obligatorio y se habilitan campos dependientes.
@@ -2365,22 +2433,22 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 					}
 					if(!Ext.isEmpty(campoEstadoCivil)){
 						campoEstadoCivil.allowBlank = false;
-						campoEstadoCivil.validate();
+						//campoEstadoCivil.validate();
 						if(campoEstadoCivil.getValue() === "02") {
 							// Si el Estado civil es 'Casado', entonces Reg. económico es obligatorio.
 							if(!Ext.isEmpty(campoRegEconomico)){
 								campoRegEconomico.allowBlank = false;
-								campoRegEconomico.validate();
+								//campoRegEconomico.validate();
 							}
 							if(me.getViewModel().get('esCarteraLiberbank')|| me.getViewModel().get('comprador.entidadPropietariaCodigo') == CONST.CARTERA['LIBERBANK']){
 								if(!Ext.isEmpty(campoNumConyuge)){
 									campoNumConyuge.allowBlank = false;
-									campoNumConyuge.validate();
+									//campoNumConyuge.validate();
 								}
 								if(!Ext.isEmpty(campoRegEconomico) && !Ext.isEmpty(campoNumConyuge)){
 									if(campoRegEconomico.getValue() === "01" || campoRegEconomico.getValue() === "03"){
 										campoNumConyuge.allowBlank = false;
-										campoNumConyuge.validate();
+										//campoNumConyuge.validate();
 									}else if(campoRegEconomico.getValue() === "02" ){
 										campoNumConyuge.allowBlank = true;
 									}
@@ -2391,12 +2459,14 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 								}
 							}
 						} else {
-							if(!Ext.isEmpty(campoRegEconomico)){
+								campoRegEconomico.setValue("");
 								campoRegEconomico.allowBlank = true;
-							}
-							if(!Ext.isEmpty(campoNumConyuge)){
+							
+								campoTipoConyuge.setValue("");
+								campoNumConyuge.setValue("");
 								campoNumConyuge.allowBlank = true;
-							}
+								campoTipoConyuge.allowBlank = true;
+							
 						}
 					}
 					
@@ -2451,26 +2521,33 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 					}
 					if(!Ext.isEmpty(campoEstadoCivil)){
 						campoEstadoCivil.allowBlank = false;
-						campoEstadoCivil.validate();
+						//campoEstadoCivil.validate();
 						if(campoEstadoCivil.getValue() === "02") {
-							// Si el Estado civil es 'Casado', entonces Reg. económico es obligatorio.
+							// Si el Estado civil es 'Casado', entonces Reg. economica es obligatorio.
 							if(!Ext.isEmpty(campoRegEconomico)){
 								campoRegEconomico.allowBlank = false;
-								campoRegEconomico.validate();
+								//campoRegEconomico.validate();
 								campoRegEconomico.setDisabled(false);
 								if(campoRegEconomico.getValue() == "01"){
 									campoTipoConyuge.allowBlank = false;
 									campoNumConyuge.allowBlank = false;
+								}else{
+									campoTipoConyuge.allowBlank = true;
+									campoTipoConyuge.setValue("");
+									campoNumConyuge.allowBlank = true;
+									campoNumConyuge.setValue("");
 								}
 							}
 							
-						} else {
-							if(!Ext.isEmpty(campoRegEconomico)){
-								campoRegEconomico.allowBlank = true;
-							}
-							if(!Ext.isEmpty(campoNumConyuge)){
+						} else {							
+								campoRegEconomico.setValue("");
+								campoRegEconomico.allowBlank = true;							
+							
+								campoTipoConyuge.setValue("");
+								campoNumConyuge.setValue("");
 								campoNumConyuge.allowBlank = true;
-							}
+								campoTipoConyuge.allowBlank = true;
+							
 						}
 					}
 					
@@ -2505,15 +2582,15 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 				}
 		
 				// Validar campos para que se muestre o desaparezca la visual roja.
-				if(!Ext.isEmpty(campoEstadoCivil)){
-					campoEstadoCivil.validate();
-				}
-				if(!Ext.isEmpty(campoRegEconomico)){
-					campoRegEconomico.validate();
-				}
-				if(!Ext.isEmpty(campoNumConyuge)){
-					campoNumConyuge.validate();
-				}
+//				if(!Ext.isEmpty(campoEstadoCivil)){
+//					campoEstadoCivil.validate();
+//				}
+//				if(!Ext.isEmpty(campoRegEconomico)){
+//					campoRegEconomico.validate();
+//				}
+//				if(!Ext.isEmpty(campoNumConyuge)){
+//					campoNumConyuge.validate();
+//				}
 			}
 				
 		}catch(err) {
@@ -4140,72 +4217,7 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
     	}
     },
     
-    comprobarObligatoriedadRte: function(){
-    	
-    	var me = this;
-    	var venta = null;
-    	if(me.getViewModel().get('expediente.tipoExpedienteCodigo') == null){
-    		if (me.getViewModel().data.esOfertaVentaFicha == true){
-    			venta = true;
-    		}else{
-    			venta = false;
-    		}
-    	}
-    	campoProvinciaRte = me.lookupReference('provinciaComboRte');
-		campoMunicipioRte = me.lookupReference('municipioComboRte');
-		campoDireccion = me.lookupReference('direccion');
-		campoProvincia = me.lookupReference('provinciaCombo');
-		campoMunicipio = me.lookupReference('municipioCombo');
-
-    	if(me.getViewModel().get('expediente.tipoExpedienteCodigo') == "01" || venta == true){
-    		if(me.lookupReference('tipoPersona').getValue() === "2" ) {
-    			if(me.lookupReference('pais').getValue() == "28"){
-    				if(!Ext.isEmpty(campoProvincia)){
-						campoProvinciaRte.allowBlank = false;
-					}
-    				if(!Ext.isEmpty(campoMunicipio)){
-						campoProvinciaRte.allowBlank = false;
-					}
-					if(!Ext.isEmpty(campoProvinciaRte)){
-						campoProvinciaRte.allowBlank = false;
-					}
-					if(!Ext.isEmpty(campoMunicipioRte)){
-						campoMunicipioRte.allowBlank = false;
-					}
-					
-				}else{
-    				if(!Ext.isEmpty(campoProvincia)){
-    					campoProvincia.allowBlank = true;
-					}
-    				if(!Ext.isEmpty(campoMunicipio)){
-    					campoMunicipio.allowBlank = true;
-					}
-					if(!Ext.isEmpty(campoProvinciaRte)){
-						campoProvinciaRte.allowBlank = true;
-					}
-					if(!Ext.isEmpty(campoMunicipioRte)){
-						campoMunicipioRte.allowBlank = true;
-					}
-				}
-    		}else if (me.lookupReference('tipoPersona').getValue() === "1"){
-    			if(me.lookupReference('pais').getValue() == "28"){
-    				if(!Ext.isEmpty(campoProvincia)){
-    					campoProvincia.allowBlank = false;
-					}
-    				if(!Ext.isEmpty(campoMunicipio)){
-    					campoMunicipio.allowBlank = false;
-					}
-				}else{
-    				if(!Ext.isEmpty(campoProvincia)){
-    					campoProvincia.allowBlank = true;
-					}
-    				if(!Ext.isEmpty(campoMunicipio)){
-    					campoMunicipio.allowBlank = true;
-					}
-				}
-    		}
-    	}
-    },
+    
     
     comprobarFormato: function() {
     	

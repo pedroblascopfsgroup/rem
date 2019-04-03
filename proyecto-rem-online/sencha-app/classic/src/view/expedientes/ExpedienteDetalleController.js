@@ -2424,7 +2424,6 @@ comprobarObligatoriedadRte: function(){
 			campoProvincia = me.lookupReference('provinciaCombo');
 			campoMunicipio = me.lookupReference('municipioCombo');
 			campoPais = me.lookupReference('pais');
-
 			//Si el expediente es de tipo alquiler
 			if(me.getViewModel().get('expediente.tipoExpedienteCodigo') == "02" || venta == false){
 				// Si el tipo de persona es FÍSICA, entonces el campos Estado civil es obligatorio y se habilitan campos dependientes.

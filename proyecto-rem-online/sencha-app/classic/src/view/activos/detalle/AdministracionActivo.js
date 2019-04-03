@@ -76,7 +76,7 @@ Ext.define('HreRem.view.activos.detalle.AdministracionActivo', {
 				        } 
 				    },
 					columns: [
-						{    text: HreRem.i18n('title.activo.administracion.activooo'),
+						{    text: HreRem.i18n('title.activo.administracion.numActivo'),
 				        	dataIndex: 'numActivo',
 				        	hidden: false,
 				        	hideable: false,

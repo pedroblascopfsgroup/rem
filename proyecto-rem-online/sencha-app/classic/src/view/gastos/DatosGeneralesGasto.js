@@ -230,9 +230,12 @@ Ext.define('HreRem.view.gastos.DatosGeneralesGasto', {
 								items: [
 										{
 								        	xtype:'datefieldbase',
+								        	formatter: 'date("d/m/Y")',
 											reference: 'fechaEmision',
 									       	fieldLabel: HreRem.i18n('fieldlabel.gasto.fecha.emision')+' *',
-									       	bind: '{gasto.fechaEmision}'
+									       	bind: '{gasto.fechaEmision}',
+									       	maxValue: null,
+									       	allowBlank: false
 									    },
 									    { 
 											xtype: 'comboboxfieldbase',

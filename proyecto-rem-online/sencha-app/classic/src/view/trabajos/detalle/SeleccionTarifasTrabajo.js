@@ -103,6 +103,15 @@ Ext.define('HreRem.view.trabajos.detalle.SeleccionTarifasTrabajo', {
     						valueField: 'codigo'
 						},
 						{
+							fieldLabel:  HreRem.i18n('fieldlabel.proveedores.codigo'),
+							reference: 'textfieldCodigoTarifaTrabajoRef',
+							flex: 1,
+							xtype: 'textfield',
+							bind: {
+			            		value: '{trabajo.codigoTarifaTrabajo}'
+			            	}
+						},
+						{
 							fieldLabel:  HreRem.i18n('fieldlabel.proveedores.subcartera'), // SUBCARTERA
 							flex: 1,
 							readOnly: true,
@@ -128,15 +137,6 @@ Ext.define('HreRem.view.trabajos.detalle.SeleccionTarifasTrabajo', {
     						},*/
 			            	displayField: 'descripcion',
     						valueField: 'codigo'
-						},
-						{
-							fieldLabel:  HreRem.i18n('fieldlabel.proveedores.codigo'),
-							reference: 'textfieldCodigoTarifaTrabajoRef',
-							flex: 1,
-							xtype: 'textfield',
-							bind: {
-			            		value: '{trabajo.codigoTarifaTrabajo}'
-			            	}
 						},
 						{
 							fieldLabel:  HreRem.i18n('header.descripcion'),

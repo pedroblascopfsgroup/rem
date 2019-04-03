@@ -1,7 +1,7 @@
 Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     extend: 'Ext.app.ViewController',
     alias: 'controller.activodetalle',
-    requires: ['HreRem.view.activos.detalle.AnyadirEntidadActivo' , 'HreRem.view.activos.detalle.CargaDetalle',
+    requires: ['HreRem.view.activos.detalle.TituloInformacionRegistralActivo','HreRem.view.activos.detalle.AnyadirEntidadActivo' , 'HreRem.view.activos.detalle.CargaDetalle',
             'HreRem.view.activos.detalle.OpcionesPropagacionCambios', 'HreRem.view.activos.detalle.VentanaEleccionTipoPublicacion',
             'HreRem.view.agrupaciones.detalle.AnyadirNuevaOfertaDetalle', 'HreRem.view.expedientes.ExpedienteDetalleController'],
 
@@ -54,7 +54,11 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
             abrirFormulario: 'abrirFormularioAnyadirCarga',
          	onClickRemove: 'onClickRemoveCarga',
          	onClickPropagation :  'onClickPropagation'
-         }
+         },
+         
+         'tituloinformacionregistralactivo calificacionnegativagrid': {
+          	onClickPropagation: 'onClickPropagationCalificacionNegativa'
+          }
     },
     
 	cargarTabData: function (form) {
@@ -1028,6 +1032,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		var me = this;
 		var idEntidad = null, entidad = null,
 		docCliente = null;
+		
 		if(grid.up('anyadirnuevaofertaactivoadjuntardocumento').up().xtype.indexOf('oferta') >= 0) {
 			if(!Ext.isEmpty(grid.up('wizardaltaoferta').oferta.data.idActivo)) {
 				idEntidad = grid.up('wizardaltaoferta').oferta.data.idActivo;
@@ -1038,9 +1043,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			}
 			docCliente = me.getViewModel().get("oferta.numDocumentoCliente");
 		} else {
-			idEntidad = grid.up('wizardaltacomprador').down('datoscompradorwizard').getBindRecord().comprador.data.idExpedienteComercial;
+			idEntidad = grid.up('wizardaltacomprador').down('datoscompradorwizard').getRecord().data.idExpedienteComercial;
 			entidad = 'expediente';
-			docCliente = me.getViewModel().get("comprador.numDocumento");
+			docCliente = grid.up('window').down("datoscompradorwizard").getForm().getFieldValues().numDocumento;
 		}
 		Ext.create("HreRem.view.common.adjuntos.AdjuntarDocumentoOfertacomercial",
 		{
@@ -1619,22 +1624,23 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	                     method : 'POST',
 	                     params: {docCliente: docCliente},
 	                     success: function(response, opts) {
-	                        // me.fireEvent("infoToast", HreRem.i18n("msg.operacion.ok"));
+
+	                    	if (!Ext.isEmpty(form1)) {
+	     						form1.reset();
+	     					}
+	     					if (!Ext.isEmpty(form2)) {
+	     						form2.reset();
+	     					}
+	     					if (!Ext.isEmpty(form3)) {
+	     						form3.reset();
+	     					}
+	     					window.hide();
 	                     },
 	                     failure: function(record, operation) {
-	                        // me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+	                        //me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
 	                     }
 	                });
-					if (!Ext.isEmpty(form1)) {
-						form1.reset();
-					}
-					if (!Ext.isEmpty(form2)) {
-						form2.reset();
-					}
-					if (!Ext.isEmpty(form3)) {
-						form3.reset();
-					}
-					window.close();
+					
 				}
 			}
 		});
@@ -1659,7 +1665,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 				tipoDocumento: bindRecord.tipoDocumento,
 				nombreCliente: bindRecord.nombreCliente,
 				apellidosCliente: bindRecord.apellidosCliente,
-				cesionDatos: bindRecord.cesionDatosHaya,
+				cesionDatos: bindRecord.cesionDatos,
 				comunicacionTerceros: bindRecord.comunicacionTerceros,
 				transferenciasInternacionales: bindRecord.transferenciasInternacionales,
 				codigoPrescriptor: bindRecord.codigoPrescriptor,
@@ -1680,7 +1686,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 				tipoDocumento: bindRecord.tipoDocumento,
 				nombreCliente: bindRecord.nombreCliente,
 				apellidosCliente: bindRecord.apellidosCliente,
-				cesionDatos: bindRecord.cesionDatosHaya,
+				cesionDatos: bindRecord.cesionDatos,
 				comunicacionTerceros: bindRecord.comunicacionTerceros,
 				transferenciasInternacionales: bindRecord.transferenciasInternacionales,
 				codigoPrescriptor: bindRecord.codigoPrescriptor,
@@ -2836,7 +2842,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     },
 
   onClickPropagation : function(btn) {
-	
+	  
 	  var me = this,
 	    idActivo = me.getViewModel().get('activo').id,
 	    url = $AC.getRemoteUrl('activo/getActivosPropagables'),
@@ -2885,6 +2891,56 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	    }
 	});
   	},
+  	
+  	onClickPropagationCalificacionNegativa : function(grid) {
+  	
+	  var me = this,
+	    idActivo = me.getViewModel().get('activo').id,
+	    url = $AC.getRemoteUrl('activo/getActivosPropagables'),
+	    form = grid.up('form');
+	
+	  form.mask(HreRem.i18n("msg.mask.espere"));
+		
+		Ext.Ajax.request({
+			url: url,
+			method : 'POST',
+			params: {idActivo: idActivo},
+		
+			success: function(response, opts){
+		
+				form.unmask();
+				var activosPropagables = Ext.decode(response.responseText).data.activosPropagables;
+				var tabPropagableData = null;
+				if(me.getViewModel() != null){
+					if(me.getViewModel().get('activo') != null){
+						if(me.getViewModel().get('activo').data != null){
+							me.getViewModel().get('activo').data.activosPropagables = activosPropagables;
+						}
+					}
+				}
+		
+				var activo = activosPropagables.splice(activosPropagables.findIndex(function(activo) {
+		              return activo.activoId == me.getViewModel().get("activo.id");
+		            }), 1)[0];
+				
+		        // Abrimos la ventana de selección de activos
+			    var ventanaOpcionesPropagacionCambios = Ext.create("HreRem.view.activos.detalle.OpcionesPropagacionCambios", {
+			          form : null,
+			          activoActual : activo,
+			          activos : activosPropagables,
+			          tabData : grid.getSelection(),
+			          propagableData : null,
+			          targetGrid: grid.targetGrid
+			        }).show();
+		
+		    	me.getView().add(ventanaOpcionesPropagacionCambios);
+			},
+		
+		    failure: function(record, operation) {
+		        me.fireEvent("errorToast", HreRem.i18n("msg.operacion.ko"));
+		  	}
+		});
+	},
 
 	onClickBotonCancelarCarga: function(btn) { 
 		var me = this;
@@ -3247,6 +3303,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	
 	      }
 	    } else {
+	    	
 			if(targetGrid=='mediadoractivo') {
 				
 		        var successFn = function(record, operation) {
@@ -3273,7 +3330,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		            me.getView().unmask();
 		            me.getView().fireEvent("refreshComponentOnActivate", "container[reference=tabBuscadorActivos]");
 		        };
-		        me.saveActivo(me.createTabDataCalificacionesNegativas(activosSeleccionados), successFn);
+		        me.saveActivo(me.createTabDataCalificacionesNegativas(activosSeleccionados, window.tabData), successFn);
 			}
 	    }
 	     window.mask("Guardando activos 1 de " + (activosSeleccionados.length + 1));
@@ -3376,6 +3433,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     },
     
   createTabDataHistoricoMediadores : function(list) {
+	
     var me = this, tabData = {};
     tabData.id = me.getViewModel().get("activo.id");
     tabData.models = [];
@@ -3407,19 +3465,27 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	    return tabData;
 	},
 	
-	createTabDataCalificacionesNegativas : function(list) {
+	createTabDataCalificacionesNegativas : function(list, recordsGridArray) {
+		
 		var me = this, tabData = {};
 	    tabData.id = me.getViewModel().get("activo.id");
 	    tabData.models = [];
+	    
+	    var l_idMotivos = [];
+	    
+	    for (var i = 0; i < recordsGridArray.length; i++) {
+	    	l_idMotivos.push(recordsGridArray[i].data.idMotivo);
+	    }
 	    
 	    Ext.Array.each(list, function(record, index) {
 	          var model = {};
 	          model.name = 'calificacionNegativa';
 	          model.type = 'activo';
-	          model.data = {};
+	          model.data = {idsMotivo: l_idMotivos};
 	          model.data.idActivo = record.data.activoId;
 	          tabData.models.push(model);
 	        });
+	    
 	    return tabData;
 	},
 
@@ -3582,16 +3648,12 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     onChangeCheckboxOcultar: function(checkbox, isDirty) {
         var me = this;
         var combobox = me.lookupReference(checkbox.comboRefChained);
-        var textarea = me.lookupReference(combobox.textareaRefChained);
 
         if(checkbox.getValue()) {
             combobox.setDisabled(false);
-            textarea.setReadOnly(false);
         } else {
             combobox.setDisabled(true);
             combobox.clearValue();
-            textarea.setReadOnly(true);
-            textarea.reset();
         }
 
 		if (isDirty) {
@@ -3637,7 +3699,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
         if (checkbox.getValue() && me.getViewModel().get('debePreguntarPorTipoPublicacionAlquiler')) {
 			Ext.create('HreRem.view.activos.detalle.VentanaEleccionTipoPublicacion').show();
         }
-
+        
 		var estadoPubAlquilerPublicado = me.getViewModel().get('activo').getData().estadoAlquilerCodigo === CONST.ESTADO_PUBLICACION_ALQUILER['PUBLICADO'] ||
 		me.getViewModel().get('activo').getData().estadoAlquilerCodigo === CONST.ESTADO_PUBLICACION_ALQUILER['OCULTO'];
         if(!isDirty && estadoPubAlquilerPublicado) {
@@ -3645,6 +3707,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
             checkbox.setReadOnly(readOnly);
             checkbox.setValue(true);
 		}
+        if(!checkbox.getValue()){
+        	checkbox.up('activosdetallemain').lookupReference('textareaMotivoPublicacionAlquiler').reset();
+        }
     },
 
 	onChangeCheckboxPublicarSinPrecioVenta: function(checkbox, isDirty) {
@@ -3947,16 +4012,17 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	    					   ventanaAltaWizard.idComprador=datos.compradorId;
 	    				   }
 	    				   else{
+	    					   
 	        				   form = ventanaWizard.down('anyadirnuevaofertadocumento').form;
 	        				   ventanaAltaWizard.getForm().findField('numDocumento').setValue(form.findField('numDocumentoCliente').getValue());
-	        				   ventanaAltaWizard.getForm().findField('numDocumento').setDisabled(true);
+	        				   ventanaAltaWizard.getForm().findField('numDocumento').readOnly = true;
 	        				   ventanaAltaWizard.getForm().findField('codTipoDocumento').setValue(form.findField('comboTipoDocumento').getValue());
-	        				   ventanaAltaWizard.getForm().findField('codTipoDocumento').setDisabled(true);
+	        				   ventanaAltaWizard.getForm().findField('codTipoDocumento').readOnly = true;
 	    				   }
 
 	    				   if(!Ext.isEmpty(comprador)){
 	    					   if(!Ext.isEmpty(comprador.cesionDatos)){
-	    					      ventanaAltaWizard.getForm().findField('cesionDatosHaya').setValue(comprador.cesionDatos);
+	    					      ventanaAltaWizard.getForm().findField('cesionDatos').setValue(comprador.cesionDatos);
 	    					   }
 	    					   if(!Ext.isEmpty(comprador.comunicacionTerceros)){
 	        				     ventanaAltaWizard.getForm().findField('comunicacionTerceros').setValue(comprador.comunicacionTerceros);
@@ -3971,9 +4037,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	    				ventanaWizard.height = Ext.Element.getViewportHeight() > 800 ? 800 : Ext.Element.getViewportHeight() -100;
 	        			ventanaWizard.setY( Ext.Element.getViewportHeight()/2 - ((Ext.Element.getViewportHeight() > 800 ? 800 : Ext.Element.getViewportHeight() -100)/2));
 	    			}
-
+	    			
+	    			ventanaAdjuntarDocumento = ventanaWizard.down('anyadirnuevaofertaactivoadjuntardocumento');
 	    			if(!Ext.isEmpty(datos.carteraInternacional)){
-	    				ventanaAdjuntarDocumento = ventanaWizard.down('anyadirnuevaofertaactivoadjuntardocumento');
 	    				ventanaAdjuntarDocumento.getForm().findField('carteraInternacional').setValue(datos.carteraInternacional);
  				    }
 	    			var wizard = btn.up().up().up();
@@ -4464,7 +4530,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
                         ventanaWizard = btn.up('wizardaltaoferta'),
                         idActivo = ventanaWizard.oferta.data.idActivo,
                         idAgrupacion = ventanaWizard.oferta.data.idAgrupacion;
-
+						ventanaWizard.mask("Cargando documentos comprador");
                         Ext.Ajax.request({
                              url: url,
                              method : 'GET',
@@ -4502,6 +4568,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 
                                     ventanaWizardAdjuntarDocumento.getForm().findField('docOfertaComercial').setValue(data.data[0].nombre);
                                     ventanaWizardAdjuntarDocumento.down().down('panel').down('button').show();
+                                    ventanaWizard.unmask()
                                  }
                              },
 
@@ -4553,21 +4620,34 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
         var direccion = ""
         var email = "";
         var telefono= "";
+        var tipoPersona = "";
         if(!Ext.isEmpty(ventana2)){
+        	tipoPersona = ventana2.getForm().findField('comboTipoPersona').value;
             codPrescriptor = ventana2.getForm().findField('buscadorPrescriptores').value;
             numDoc = ventana2.getForm().findField('numDocumentoCliente').value;
-            nombre= ventana2.getForm().findField('nombreCliente').value + " " + ventana2.getForm().findField('apellidosCliente').value;
+            if(tipoPersona == '1'){
+            	nombre= ventana2.getForm().findField('nombreCliente').value + " " + ventana2.getForm().findField('apellidosCliente').value;
+            }else{
+            	nombre= ventana2.getForm().findField('razonSocialCliente').value;
+            }
+            
             direccion = ventana2.getForm().getValues().direccion;
             email = ventana2.getForm().getValues().email;
             telefono = ventana2.getForm().getValues().telefono;
         }else{
             ventana2=window.down('datoscompradorwizard');
-            idExpediente= ventana2.getBindRecord().comprador.data.idExpedienteComercial;
-            numDoc = ventana2.getBindRecord().comprador.data.numDocumento;
-            nombre=ventana2.getBindRecord().comprador.data.nombreRazonSocial + " " + ventana2.getBindRecord().comprador.data.apellidos;
-            direccion = ventana2.getForm().getValues().direccion;
-            email = ventana2.getBindRecord().comprador.data.email;
-            telefono = ventana2.getBindRecord().comprador.data.telefono1;
+            idExpediente= ventana2.getRecord().data.idExpedienteComercial;
+            tipoPersona = ventana2.getRecord().data.codTipoPersona;
+            numDoc = ventana2.getRecord().data.numDocumento;
+            if(tipoPersona == '1'){
+            	nombre=ventana2.getRecord().data.nombreRazonSocial + " " + ventana2.getRecord().data.apellidos;
+            }else{
+            	nombre=ventana2.getRecord().data.nombreRazonSocial;
+            }
+            
+            direccion = ventana2.getRecord().data.direccion;
+            email = ventana2.getRecord().data.email;
+            telefono = ventana2.getRecord().data.telefono1;
         }
         var cesionDatos = ventana3.getForm().findField('cesionDatos').value;
         var transIntern = ventana3.getForm().findField('transferenciasInternacionales').value;
@@ -4578,6 +4658,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
         config.method='POST';
         config.params = {codPrescriptor:codPrescriptor,cesionDatos:cesionDatos,transIntern:transIntern,comTerceros:comTerceros,
                documento:numDoc,nombre:nombre,direccion:direccion,email:email,idExpediente:idExpediente, telefono:telefono};
+        Ext.global.console.log("Generando documento para "+ nombre);
         me.fireEvent("downloadFile", config);
 
         //ventana3.down('button[itemId=btnSubirDoc]').enable();

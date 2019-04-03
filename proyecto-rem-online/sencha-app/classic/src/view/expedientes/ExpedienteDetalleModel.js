@@ -867,8 +867,8 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 			model: 'HreRem.model.ComboBase',
 			proxy: {
 				type: 'uxproxy',
-				remoteUrl: 'generic/getComboMunicipio',
-				extraParams: {codigoProvincia: '{comprador.provinciaCodigo}'}
+				remoteUrl: 'generic/getComboMunicipio'/*,
+				extraParams: {codigoProvincia: '{comprador.provinciaCodigo}'}*/
 			}
     	},
     	
@@ -876,8 +876,8 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 			model: 'HreRem.model.ComboBase',
 			proxy: {
 				type: 'uxproxy',
-				remoteUrl: 'generic/getComboMunicipio',
-				extraParams: {codigoProvincia: '{comprador.provinciaRteCodigo}'}
+				remoteUrl: 'generic/getComboMunicipio'/*,
+				extraParams: {codigoProvincia: '{comprador.provinciaRteCodigo}'}*/
 			}
     	},
 	    comboComites: {

@@ -158,6 +158,10 @@ public class ActivoValoracionDaoImpl extends AbstractEntityDao<ActivoValoracione
 		criteria.setProjection(Projections.property("importe"));
 		criteria.add(Restrictions.eq("activo.id", idActivo)).createCriteria("tipoPrecio").add(Restrictions.eq("codigo", DDTipoPrecio.CODIGO_TPC_APROBADO_RENTA));
 
-		return HibernateUtils.castObject(Double.class, criteria.uniqueResult());
+		Double resultadoPrecioWeb = HibernateUtils.castObject(Double.class, criteria.uniqueResult());
+		if(Checks.esNulo(resultadoPrecioWeb)) {
+			resultadoPrecioWeb = 0.0; 
+		}
+		return resultadoPrecioWeb;
 	}
 }

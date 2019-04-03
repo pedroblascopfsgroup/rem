@@ -212,7 +212,8 @@ public class DiccionarioTargetClassMap{
 		mapa.put("tipoTituloActivoTPA", DDTipoTituloActivoTPA.class);
 		mapa.put("clasificacionApple", DDClasificacionApple.class);
 		mapa.put("entidadFinanciera", DDEntidadFinanciera.class);
-		
+		mapa.put("estadoMotivoCalificacionNegativa", DDEstadoMotivoCalificacionNegativa.class);
+		mapa.put("responsableSubsanar", DDResponsableSubsanar.class);
 		
 		return Collections.unmodifiableMap(mapa);
 	}

@@ -4535,7 +4535,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
                     valueDestComercial = ventanaDetalle.up().getViewModel().data.valueDestComercial;
                     destinoComercialActivo = ventanaDetalle.up().getViewModel().data.destinoComercialActivo;
                 }else{
-                    valueDestComercial = form.findField('comboTipoOferta').getSelection().data.descripcion;
+                    valueDestComercial = form.findField('tipoOferta').getSelection().data.descripcion;
                     destinoComercialActivo = ventanaDetalle.up().getViewModel().data.destinoComercial;
                     ventanaDetalle.up().getViewModel().data.valueDestComercial = valueDestComercial;
                     ventanaDetalle.up().getViewModel().data.destinoComercialActivo = destinoComercialActivo;

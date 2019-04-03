@@ -136,9 +136,8 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 												fieldLabel: HreRem.i18n('fieldlabel.datos.publicacion.estados.ocultar'),
 												reference: 'chkbxocultarventa',
 												comboRefChained: 'comboMotivoOcultacionVenta',
-												disabled:false,
 												bind: {
-													readOnly: '{datospublicacionactivo.onChangeCheckboxOcultar}',
+													readOnly: '{datospublicacionactivo.deshabilitarCheckOcultarVenta}',
 													value: '{datospublicacionactivo.ocultarVenta}'
 												},
 												listeners: {
@@ -174,10 +173,10 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 												fieldLabel: HreRem.i18n('fieldlabel.datos.publicacion.estados.motivos.ocultacion'),
 												reference: 'comboMotivoOcultacionVenta',
 												textareaRefChained: 'textareaMotivoOcultacionManualVenta',
+												disabled: true,
 												bind: {
 													store: '{comboMotivosOcultacionVenta}',
-													value: '{datospublicacionactivo.motivoOcultacionVentaCodigo}',
-													disabled: '{!datospublicacionactivo.ocultarVenta}'
+													value: '{datospublicacionactivo.motivoOcultacionVentaCodigo}'
 												},
 												listeners: {
 													change: 'onChangeComboMotivoOcultacionVenta'
@@ -319,8 +318,9 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 												fieldLabel: HreRem.i18n('fieldlabel.datos.publicacion.estados.ocultar'),
 												reference: 'chkbxocultaralquiler',
 												comboRefChained: 'comboMotivoOcultacionAlquiler',
+												textareaRefChained: 'textareaMotivoOcultacionManualAlquiler',
 												bind: {
-													readOnly: '{datospublicacionactivo.onChangeCheckboxOcultar}',
+													readOnly: '{datospublicacionactivo.deshabilitarCheckOcultarAlquiler}',
 													value: '{datospublicacionactivo.ocultarAlquiler}'
 												},
 												listeners: {
@@ -357,8 +357,7 @@ Ext.define('HreRem.view.activos.detalle.DatosPublicacionActivo', {
 												textareaRefChained: 'textareaMotivoOcultacionManualAlquiler',
 												bind: {
 								            		store: '{comboMotivosOcultacionAlquiler}',
-								            		value: '{datospublicacionactivo.motivoOcultacionAlquilerCodigo}',
-								            		disabled: '{!datospublicacionactivo.ocultarAlquiler}'
+								            		value: '{datospublicacionactivo.motivoOcultacionAlquilerCodigo}'
 								            	},
 												listeners: {
 													change: 'onChangeComboMotivoOcultacionAlquiler'

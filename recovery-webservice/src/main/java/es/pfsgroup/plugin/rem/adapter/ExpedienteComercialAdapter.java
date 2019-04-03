@@ -4,6 +4,8 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -127,11 +129,14 @@ public class ExpedienteComercialAdapter {
 		if (gestorDocumentalAdapterApi.modoRestClientActivado() && !Checks.esNulo(idIntervinienteHaya)) {
 			try {
 				listaAdjuntos = gestorDocumentalAdapterApi.getAdjuntosEntidadComprador(idIntervinienteHaya);
+				Collections.sort(listaAdjuntos);
 			} catch (GestorDocumentalException gex) {
 				if (GestorDocumentalException.CODIGO_ERROR_CONTENEDOR_NO_EXISTE.equals(gex.getCodigoError())) {
 					crearContenedorComprador(idIntervinienteHaya, docCliente, idExpediente);
+				}else{
+					throw gex;
 				}
-				throw gex;
+				
 			} catch (Exception ex) {
 				logger.error(ex.getMessage(), ex);
 			}

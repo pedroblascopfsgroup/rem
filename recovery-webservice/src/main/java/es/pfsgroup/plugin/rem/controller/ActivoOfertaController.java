@@ -15,26 +15,16 @@ import org.springframework.web.servlet.ModelAndView;
 
 import es.capgemini.devon.files.WebFileItem;
 import es.pfsgroup.commons.utils.Checks;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.Filter;
-import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.framework.paradise.controller.ParadiseJsonController;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
-import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.rem.adapter.ActivoOfertaAdapter;
-import es.pfsgroup.plugin.rem.clienteComercial.dao.ClienteComercialDao;
-import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
+import es.pfsgroup.plugin.rem.api.GdprApi;
 import es.pfsgroup.plugin.rem.model.AdjuntoComprador;
-import es.pfsgroup.plugin.rem.model.ClienteComercial;
-import es.pfsgroup.plugin.rem.model.ClienteGDPR;
 import es.pfsgroup.plugin.rem.model.DtoAdjunto;
-import es.pfsgroup.plugin.rem.model.TmpClienteGDPR;
 
 @Controller
 public class ActivoOfertaController extends ParadiseJsonController {
 	
-	@Autowired
-	private GenericABMDao genericDao;
 	
 	@Autowired 
     private UploadAdapter uploadAdapter;
@@ -42,11 +32,9 @@ public class ActivoOfertaController extends ParadiseJsonController {
 	@Autowired 
     private ActivoOfertaAdapter activoOfertaAdapter;
 	
-	@Autowired
-	private ClienteComercialDao clienteComercialDao;
 	
 	@Autowired
-	private GestorDocumentalAdapterApi gestorDocumentalAdapterApi;
+	private GdprApi gdprManager;
 	
 	protected static final Log logger = LogFactory.getLog(ActivoOfertaController.class);
 	
@@ -54,43 +42,16 @@ public class ActivoOfertaController extends ParadiseJsonController {
 	private static final String RESPONSE_SUCCESS_KEY = "success";
 	private static final String RESPONSE_ERROR_KEY = "error";
 	private static final String RESPONSE_ERROR_MESSAGE_KEY = "errorMessage";
-	private static final String DOC_ADJUNTO_CREAR_OFERTA = "Guardando documento adjunto crear oferta.";
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getListAdjuntos(String docCliente, Long idActivo, Long idAgrupacion) {
-		
-		TmpClienteGDPR tmpClienteGDPR = null;
-		String idPersonaHaya = null;
-		
-		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "numDocumento", docCliente);
-		Filter filtroIdhaya = genericDao.createFilter(FilterType.NOTNULL, "cliente.idPersonaHaya");
-		List<ClienteGDPR> clienteGDPR = genericDao.getList(ClienteGDPR.class, filtro,filtroIdhaya);
-		if(!Checks.estaVacio(clienteGDPR) && clienteGDPR.size() > 0) {
-			ClienteComercial clienteCom = clienteGDPR.get(0).getCliente();
-			if(!Checks.esNulo(clienteCom)) {
-				idPersonaHaya = clienteCom.getIdPersonaHaya();
-			} else {
-				tmpClienteGDPR = genericDao.get(TmpClienteGDPR.class, genericDao.createFilter(FilterType.EQUALS, "numDocumento", docCliente));
-				
-				if(!Checks.esNulo(tmpClienteGDPR) && !Checks.esNulo(tmpClienteGDPR.getIdPersonaHaya())) {
-					idPersonaHaya = String.valueOf(tmpClienteGDPR.getIdPersonaHaya());
-				}
-			}
-		} else {
-			tmpClienteGDPR = genericDao.get(TmpClienteGDPR.class, genericDao.createFilter(FilterType.EQUALS, "numDocumento", docCliente));
-			
-			if(!Checks.esNulo(tmpClienteGDPR) && !Checks.esNulo(tmpClienteGDPR.getIdPersonaHaya())) {
-				idPersonaHaya = String.valueOf(tmpClienteGDPR.getIdPersonaHaya());
-			}
-		}
-		
 		ModelMap model = new ModelMap();
-		
 		try {
+			String idPersonaHaya = gdprManager.obtenerIdPersonaHaya(docCliente);
 			model.put(RESPONSE_DATA_KEY, activoOfertaAdapter.getAdjunto(idPersonaHaya, docCliente, idActivo, idAgrupacion/*, idClienteTmp*/));
 		} catch (Exception e) {
-			logger.error(e.getMessage());
+			logger.error(e.getMessage(),e);
 			model.put(RESPONSE_SUCCESS_KEY, false);
 			model.put(RESPONSE_ERROR_MESSAGE_KEY, e.getMessage());
 		}
@@ -103,49 +64,23 @@ public class ActivoOfertaController extends ParadiseJsonController {
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView saveDocumentoAdjuntoOferta(String docCliente, String idEntidad, HttpServletRequest request) {
 		
-		TmpClienteGDPR tmpClienteGDPR = null;
-		String idPersonaHaya = null;
 		ModelMap model = new ModelMap();
 		
 		try {
 			
-			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "numDocumento", docCliente);
-			Filter filtroIdhaya = genericDao.createFilter(FilterType.NOTNULL, "cliente.idPersonaHaya");
-			List<ClienteGDPR> clienteGDPR = genericDao.getList(ClienteGDPR.class, filtro,filtroIdhaya);
-			if(!Checks.estaVacio(clienteGDPR)) {
-				ClienteComercial clienteCom = clienteGDPR.get(0).getCliente();
-				if(!Checks.esNulo(clienteCom)) {
-					idPersonaHaya = clienteCom.getIdPersonaHaya();
-				} else {
-					tmpClienteGDPR = genericDao.get(TmpClienteGDPR.class, genericDao.createFilter(FilterType.EQUALS, "numDocumento", docCliente));
-					
-					if(!Checks.esNulo(tmpClienteGDPR)) {
-						idPersonaHaya = String.valueOf(tmpClienteGDPR.getIdPersonaHaya());
-					}
-				}
-			} else {
-				tmpClienteGDPR = genericDao.get(TmpClienteGDPR.class, genericDao.createFilter(FilterType.EQUALS, "numDocumento", docCliente));
-				idPersonaHaya = String.valueOf(tmpClienteGDPR.getIdPersonaHaya());
-			}
-			
+			String idPersonaHaya = gdprManager.obtenerIdPersonaHaya(docCliente);
 			WebFileItem fileItem = uploadAdapter.getWebFileItem(request);
+			String errores = null;
 			if(idPersonaHaya != null && !idPersonaHaya.isEmpty()){
-				List<DtoAdjunto> listaAdjuntos = activoOfertaAdapter.getAdjunto(idPersonaHaya, docCliente, null, null);
-				String errores = null;
-				if(listaAdjuntos.size() <= 0) {
-					errores = activoOfertaAdapter.uploadDocumento(fileItem, idPersonaHaya, docCliente);
-					model.put("errores", errores);
-					model.put(RESPONSE_SUCCESS_KEY, errores==null);
-				}else{
-					model.put("errores", errores);
-					model.put(RESPONSE_SUCCESS_KEY, errores==null);
-				}
+				errores =activoOfertaAdapter.uploadDocumento(fileItem, idPersonaHaya, docCliente);
+				model.put("errores", errores);
+				model.put(RESPONSE_SUCCESS_KEY, errores==null);
+			}else{
+				throw new Exception("idPersonaHaya no puede ser null");
 			}
-			
-			logger.info(DOC_ADJUNTO_CREAR_OFERTA);
 			
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error(e.getMessage(),e);
 			model.put(RESPONSE_SUCCESS_KEY, false);
 			model.put(RESPONSE_ERROR_KEY, e.getMessage());
 		}
@@ -156,61 +91,32 @@ public class ActivoOfertaController extends ParadiseJsonController {
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView eliminarDocumentoAdjuntoOferta(String docCliente) {
-		
-		TmpClienteGDPR tmpClienteGDPR = null;
-		String idPersonaHaya = null;
-		
-		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "numDocumento", docCliente);
-		Filter filtroIdhaya = genericDao.createFilter(FilterType.NOTNULL, "cliente.idPersonaHaya");
-		List<ClienteGDPR> clienteGDPR = genericDao.getList(ClienteGDPR.class, filtro,filtroIdhaya);
-		if(!Checks.estaVacio(clienteGDPR)) {
-			ClienteComercial clienteCom = clienteGDPR.get(0).getCliente();
-			if(!Checks.esNulo(clienteCom)) {
-				idPersonaHaya = clienteCom.getIdPersonaHaya();
-			} else {
-				tmpClienteGDPR = genericDao.get(TmpClienteGDPR.class, genericDao.createFilter(FilterType.EQUALS, "numDocumento", docCliente));
-				if(!Checks.esNulo(tmpClienteGDPR) && !Checks.esNulo(tmpClienteGDPR.getIdPersonaHaya())) {
-					idPersonaHaya = String.valueOf(tmpClienteGDPR.getIdPersonaHaya());
-				}
-			}
-		} else {
-			tmpClienteGDPR = genericDao.get(TmpClienteGDPR.class, genericDao.createFilter(FilterType.EQUALS, "numDocumento", docCliente));
-			
-			if(!Checks.esNulo(tmpClienteGDPR) && !Checks.esNulo(tmpClienteGDPR.getIdPersonaHaya())) {
-				idPersonaHaya = String.valueOf(tmpClienteGDPR.getIdPersonaHaya());
-			}
-		}
-		
+
 		ModelMap model = new ModelMap();
-		
 		List<DtoAdjunto> listaAdjuntos = null;
+
 		try {
-			listaAdjuntos = activoOfertaAdapter.getAdjunto(idPersonaHaya, docCliente, null, null);						
-		} catch (GestorDocumentalException e) {
-			e.printStackTrace();
-		}
-		
-		if(listaAdjuntos != null && listaAdjuntos.size() > 0){
-			Filter filtroDoc;
-			if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
-				filtroDoc = genericDao.createFilter(FilterType.EQUALS, "idDocRestClient", listaAdjuntos.get(0).getId());
-			} else {
-				filtroDoc = genericDao.createFilter(FilterType.EQUALS, "id", listaAdjuntos.get(0).getId());
+			String idPersonaHaya = gdprManager.obtenerIdPersonaHaya(docCliente);
+			listaAdjuntos = activoOfertaAdapter.getAdjunto(idPersonaHaya, docCliente, null, null);
+
+			if (!Checks.estaVacio(listaAdjuntos)) {
+				AdjuntoComprador adjComprador = gdprManager.obtenerAdjuntoComprador(docCliente, listaAdjuntos.get(0).getId());
+
+				boolean success = false;
+				if (adjComprador != null) {
+					// esta en el ggdd y en el modelo de datos
+					success = gdprManager.deleteAdjuntoPersona(adjComprador, docCliente);
+				} else {
+					// esta en el ggdd pero no en el modelo
+					success = activoOfertaAdapter.deleteAdjunto(listaAdjuntos.get(0).getId());
+				}
+
+				model.put(RESPONSE_SUCCESS_KEY, success);
 			}
-			
-			Filter filtroBorrado = genericDao.createFilter(FilterType.EQUALS, "auditoria.borrado", false);
-			AdjuntoComprador adjComprador = genericDao.get(AdjuntoComprador.class, filtroDoc, filtroBorrado);
-	
-			boolean success = false;
-			if(adjComprador != null){
-				//esta en el ggdd y en el modelo de datos
-				success = activoOfertaAdapter.deleteAdjunto(adjComprador, clienteGDPR.get(0));
-			}else{
-				//esta en el ggdd pero no en el modelo
-				success = activoOfertaAdapter.deleteAdjunto(listaAdjuntos.get(0).getId());
-			}
-			
-			model.put(RESPONSE_SUCCESS_KEY, success);
+		} catch (Exception e) {
+			model.put("success", false);
+			model.put(RESPONSE_ERROR_KEY, e.getMessage());
+			logger.error(e.getMessage(), e);
 		}
 
 		return createModelAndViewJson(model);
@@ -220,7 +126,7 @@ public class ActivoOfertaController extends ParadiseJsonController {
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView deleteTmpClienteByDocumento(ModelMap model, String docCliente) {
 		try {
-			clienteComercialDao.deleteTmpClienteByDocumento(docCliente);
+			gdprManager.deleteTmpClienteByDocumento(docCliente);
 			model.put("success", true);
 		} catch (Exception e) {
 			model.put("success", false);

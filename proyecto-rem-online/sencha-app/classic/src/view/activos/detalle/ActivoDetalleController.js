@@ -1032,6 +1032,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		var me = this;
 		var idEntidad = null, entidad = null,
 		docCliente = null;
+		
 		if(grid.up('anyadirnuevaofertaactivoadjuntardocumento').up().xtype.indexOf('oferta') >= 0) {
 			if(!Ext.isEmpty(grid.up('wizardaltaoferta').oferta.data.idActivo)) {
 				idEntidad = grid.up('wizardaltaoferta').oferta.data.idActivo;
@@ -1042,9 +1043,9 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 			}
 			docCliente = me.getViewModel().get("oferta.numDocumentoCliente");
 		} else {
-			idEntidad = grid.up('wizardaltacomprador').down('datoscompradorwizard').getBindRecord().comprador.data.idExpedienteComercial;
+			idEntidad = grid.up('wizardaltacomprador').down('datoscompradorwizard').getRecord().data.idExpedienteComercial;
 			entidad = 'expediente';
-			docCliente = me.getViewModel().get("comprador.numDocumento");
+			docCliente = grid.up('window').down("datoscompradorwizard").getForm().getFieldValues().numDocumento;
 		}
 		Ext.create("HreRem.view.common.adjuntos.AdjuntarDocumentoOfertacomercial",
 		{
@@ -3647,16 +3648,12 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     onChangeCheckboxOcultar: function(checkbox, isDirty) {
         var me = this;
         var combobox = me.lookupReference(checkbox.comboRefChained);
-        var textarea = me.lookupReference(combobox.textareaRefChained);
 
         if(checkbox.getValue()) {
             combobox.setDisabled(false);
-            textarea.setReadOnly(false);
         } else {
             combobox.setDisabled(true);
             combobox.clearValue();
-            textarea.setReadOnly(true);
-            textarea.reset();
         }
 
 		if (isDirty) {
@@ -4015,11 +4012,12 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 	    					   ventanaAltaWizard.idComprador=datos.compradorId;
 	    				   }
 	    				   else{
+	    					   
 	        				   form = ventanaWizard.down('anyadirnuevaofertadocumento').form;
 	        				   ventanaAltaWizard.getForm().findField('numDocumento').setValue(form.findField('numDocumentoCliente').getValue());
-	        				   ventanaAltaWizard.getForm().findField('numDocumento').setDisabled(true);
+	        				   ventanaAltaWizard.getForm().findField('numDocumento').readOnly = true;
 	        				   ventanaAltaWizard.getForm().findField('codTipoDocumento').setValue(form.findField('comboTipoDocumento').getValue());
-	        				   ventanaAltaWizard.getForm().findField('codTipoDocumento').setDisabled(true);
+	        				   ventanaAltaWizard.getForm().findField('codTipoDocumento').readOnly = true;
 	    				   }
 
 	    				   if(!Ext.isEmpty(comprador)){
@@ -4532,7 +4530,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
                         ventanaWizard = btn.up('wizardaltaoferta'),
                         idActivo = ventanaWizard.oferta.data.idActivo,
                         idAgrupacion = ventanaWizard.oferta.data.idAgrupacion;
-
+						ventanaWizard.mask("Cargando documentos comprador");
                         Ext.Ajax.request({
                              url: url,
                              method : 'GET',
@@ -4570,6 +4568,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 
                                     ventanaWizardAdjuntarDocumento.getForm().findField('docOfertaComercial').setValue(data.data[0].nombre);
                                     ventanaWizardAdjuntarDocumento.down().down('panel').down('button').show();
+                                    ventanaWizard.unmask()
                                  }
                              },
 
@@ -4621,21 +4620,34 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
         var direccion = ""
         var email = "";
         var telefono= "";
+        var tipoPersona = "";
         if(!Ext.isEmpty(ventana2)){
+        	tipoPersona = ventana2.getForm().findField('comboTipoPersona').value;
             codPrescriptor = ventana2.getForm().findField('buscadorPrescriptores').value;
             numDoc = ventana2.getForm().findField('numDocumentoCliente').value;
-            nombre= ventana2.getForm().findField('nombreCliente').value + " " + ventana2.getForm().findField('apellidosCliente').value;
+            if(tipoPersona == '1'){
+            	nombre= ventana2.getForm().findField('nombreCliente').value + " " + ventana2.getForm().findField('apellidosCliente').value;
+            }else{
+            	nombre= ventana2.getForm().findField('razonSocialCliente').value;
+            }
+            
             direccion = ventana2.getForm().getValues().direccion;
             email = ventana2.getForm().getValues().email;
             telefono = ventana2.getForm().getValues().telefono;
         }else{
             ventana2=window.down('datoscompradorwizard');
-            idExpediente= ventana2.getBindRecord().comprador.data.idExpedienteComercial;
-            numDoc = ventana2.getBindRecord().comprador.data.numDocumento;
-            nombre=ventana2.getBindRecord().comprador.data.nombreRazonSocial + " " + ventana2.getBindRecord().comprador.data.apellidos;
-            direccion = ventana2.getBindRecord().comprador.data.direccion;
-            email = ventana2.getBindRecord().comprador.data.email;
-            telefono = ventana2.getBindRecord().comprador.data.telefono1;
+            idExpediente= ventana2.getRecord().data.idExpedienteComercial;
+            tipoPersona = ventana2.getRecord().data.codTipoPersona;
+            numDoc = ventana2.getRecord().data.numDocumento;
+            if(tipoPersona == '1'){
+            	nombre=ventana2.getRecord().data.nombreRazonSocial + " " + ventana2.getRecord().data.apellidos;
+            }else{
+            	nombre=ventana2.getRecord().data.nombreRazonSocial;
+            }
+            
+            direccion = ventana2.getRecord().data.direccion;
+            email = ventana2.getRecord().data.email;
+            telefono = ventana2.getRecord().data.telefono1;
         }
         var cesionDatos = ventana3.getForm().findField('cesionDatos').value;
         var transIntern = ventana3.getForm().findField('transferenciasInternacionales').value;
@@ -4646,6 +4658,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
         config.method='POST';
         config.params = {codPrescriptor:codPrescriptor,cesionDatos:cesionDatos,transIntern:transIntern,comTerceros:comTerceros,
                documento:numDoc,nombre:nombre,direccion:direccion,email:email,idExpediente:idExpediente, telefono:telefono};
+        Ext.global.console.log("Generando documento para "+ nombre);
         me.fireEvent("downloadFile", config);
 
         //ventana3.down('button[itemId=btnSubirDoc]').enable();

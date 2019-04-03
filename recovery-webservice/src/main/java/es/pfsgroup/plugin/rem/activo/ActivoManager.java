@@ -3290,10 +3290,28 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	}
 
 	public List<VBusquedaProveedoresActivo> getProveedorByActivo(Long idActivo) {
-		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "idActivo", idActivo.toString());
-		List<VBusquedaProveedoresActivo> listadoProveedores = genericDao.getList(VBusquedaProveedoresActivo.class,
-				filtro);
-
+		
+		List<VBusquedaProveedoresActivo> listadoProveedores = null;
+		//si es activo matriz, hay que devolver los datos de todas sus UAS
+		if(activoDao.isActivoMatriz(idActivo)) {
+			ActivoAgrupacion agr = activoDao.getAgrupacionPAByIdActivo(idActivo);
+			if(!Checks.esNulo(agr)) {
+				List<Activo> listaUAs = activoAgrupacionActivoDao.getListUAsByIdAgrupacion(agr.getId());
+				List<String> listaIds = new ArrayList<String>(); 
+				listaIds.add(idActivo.toString());
+				for (Activo activo : listaUAs) {
+					listaIds.add(activo.getId().toString());
+				}
+				listadoProveedores = activoDao.getListProveedor(listaIds);
+			}else {
+				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "idFalso.idActivo", idActivo.toString());
+				listadoProveedores = genericDao.getList(VBusquedaProveedoresActivo.class,filtro);
+			}
+		}else {
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "idFalso.idActivo", idActivo.toString());
+			listadoProveedores = genericDao.getList(VBusquedaProveedoresActivo.class,filtro);
+		}
+		
 		return listadoProveedores;
 	}
 
@@ -5914,8 +5932,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		Filter filterPVE = genericDao.createFilter(FilterType.EQUALS, "id", String.valueOf(idProveedor));
 		VBusquedaProveedoresActivo proveedorActivo = genericDao.get(VBusquedaProveedoresActivo.class, filterPVE);
 
-		if(!Checks.esNulo(proveedorActivo.getIdActivo())) {
-			return get(Long.parseLong(proveedorActivo.getIdActivo()));
+		if(!Checks.esNulo(proveedorActivo.getIdFalso().getIdActivo())) {
+			return get(Long.parseLong(proveedorActivo.getIdFalso().getIdActivo()));
 		} else {
 			return null;
 		}

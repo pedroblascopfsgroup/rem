@@ -12,6 +12,7 @@ import es.capgemini.devon.dto.WebDto;
 import es.pfsgroup.commons.utils.Checks;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.plugin.rem.activo.ActivoManager;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.DtoActivoAdministracion;
 
@@ -22,6 +23,9 @@ public class TabActivoAdministracion implements TabActivoService {
 
 	@Autowired
 	private GenericABMDao genericDao;
+	
+	@Autowired
+	private ActivoDao activoDao;
 
 //	@Autowired
 //	private TabActivoFactoryApi tabActivoFactory;
@@ -39,6 +43,8 @@ public class TabActivoAdministracion implements TabActivoService {
 	public DtoActivoAdministracion getTabData(Activo activo) throws IllegalAccessException, InvocationTargetException {
 		DtoActivoAdministracion activoDto = new DtoActivoAdministracion();
 		BeanUtils.copyProperties(activoDto, activo);
+		boolean isUnidadAlquilable = activoDao.isUnidadAlquilable(activo.getId());
+		activoDto.setIsUnidadAlquilable(isUnidadAlquilable);
 		
 		
 		return activoDto;

@@ -35,7 +35,8 @@ Ext.define('HreRem.view.activos.detalle.DatosPatrimonio', {
 							reference: 'chkPerimetroAlquilerRef',
 							bind: {
 								readOnly: '{enableChkPerimetroAlquiler}',
-								value: '{patrimonio.chkPerimetroAlquiler}'
+								value: '{patrimonio.chkPerimetroAlquiler}',
+								disabled: '{activo.unidadAlquilable}'
 							},
 							listeners: {
 								change:'onChangeCheckPerimetroAlquiler'

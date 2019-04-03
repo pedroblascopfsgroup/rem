@@ -1,6 +1,7 @@
 package es.pfsgroup.plugin.rem.adapter;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -58,6 +59,7 @@ public class ActivoOfertaAdapter {
 		if (gestorDocumentalAdapterApi.modoRestClientActivado() && !Checks.esNulo(idIntervinienteHaya)) {
 			try {
 				listaAdjuntos = gestorDocumentalAdapterApi.getAdjuntosEntidadComprador(idIntervinienteHaya);
+				Collections.sort(listaAdjuntos);
 			} catch (GestorDocumentalException gex) {
 					logger.error(gex.getMessage());
 					
@@ -74,8 +76,7 @@ public class ActivoOfertaAdapter {
 				}
 				throw gex;
 			} catch (Exception ex) {
-				logger.error(ex.getMessage());
-				ex.printStackTrace();
+				logger.error(ex.getMessage(),ex);
 			}		
 		} else {
 			ClienteComercial clienteCom = null;
@@ -210,12 +211,10 @@ public class ActivoOfertaAdapter {
 				}
 			}	
 		} catch (GestorDocumentalException gex) {
-				logger.error(gex.getMessage());
-				gex.printStackTrace();
+				logger.error(gex.getMessage(),gex);
 				return gex.getMessage();
 		} catch (Exception ex) {
-			logger.error(ex.getMessage());
-			ex.printStackTrace();
+			logger.error(ex.getMessage(),ex);
 			return ex.getMessage();
 		}
 		return null;
@@ -225,36 +224,34 @@ public class ActivoOfertaAdapter {
 	public boolean deleteAdjunto(AdjuntoComprador adjuntoComprador, ClienteGDPR clienteGDPR) {
 		boolean borrado = true;
 		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
-			if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
-				try {
-					borrado = gestorDocumentalAdapterApi.borrarAdjunto(adjuntoComprador.getIdDocRestClient(), usuarioLogado.getUsername());
-				} catch (Exception e) {
-					e.printStackTrace();
+		if (gestorDocumentalAdapterApi.modoRestClientActivado()) {
+			borrado = gestorDocumentalAdapterApi.borrarAdjunto(adjuntoComprador.getIdDocRestClient(),
+					usuarioLogado.getUsername());
+		}
+
+		if (borrado) {
+			// Borrado lógico del documento
+			adjuntoComprador.getAuditoria().setBorrado(true);
+			adjuntoComprador.getAuditoria().setUsuarioBorrar(usuarioLogado.getUsername());
+			adjuntoComprador.getAuditoria().setFechaBorrar(new Date());
+			genericDao.update(AdjuntoComprador.class, adjuntoComprador);
+
+			if (!Checks.esNulo(clienteGDPR)) {
+				// Actualizacion del campo en ClienteGDPR
+				clienteGDPR.setAdjuntoComprador(null);
+				Auditoria.save(clienteGDPR);
+				genericDao.update(ClienteGDPR.class, clienteGDPR);
+			} else {
+				Filter filtroDocumento = genericDao.createFilter(FilterType.EQUALS, "idAdjunto",
+						adjuntoComprador.getId());
+				TmpClienteGDPR tmpClienteGDPR = genericDao.get(TmpClienteGDPR.class, filtroDocumento);
+				if (!Checks.esNulo(tmpClienteGDPR)) {
+					tmpClienteGDPR.setIdAdjunto(null);
+					genericDao.update(TmpClienteGDPR.class, tmpClienteGDPR);
 				}
 			}
-			
-			if(borrado) {
-				//Borrado lógico del documento
-				adjuntoComprador.getAuditoria().setBorrado(true);
-				adjuntoComprador.getAuditoria().setUsuarioBorrar(usuarioLogado.getUsername());
-				adjuntoComprador.getAuditoria().setFechaBorrar(new Date());
-				genericDao.update(AdjuntoComprador.class, adjuntoComprador);
-				
-				if (!Checks.esNulo(clienteGDPR)) {
-					//Actualizacion del campo en ClienteGDPR
-					clienteGDPR.setAdjuntoComprador(null);
-					Auditoria.save(clienteGDPR);
-					genericDao.update(ClienteGDPR.class, clienteGDPR);
-				} else {
-					Filter filtroDocumento = genericDao.createFilter(FilterType.EQUALS, "idAdjunto", adjuntoComprador.getId());
-					TmpClienteGDPR tmpClienteGDPR = genericDao.get(TmpClienteGDPR.class, filtroDocumento);
-					if(!Checks.esNulo(tmpClienteGDPR)) {
-						tmpClienteGDPR.setIdAdjunto(null);
-						genericDao.update(TmpClienteGDPR.class, tmpClienteGDPR);
-					}
-				}
-			}
-		return borrado;		
+		}
+		return borrado;
 	}
 	
 	public boolean deleteAdjunto(Long idRemoto) {

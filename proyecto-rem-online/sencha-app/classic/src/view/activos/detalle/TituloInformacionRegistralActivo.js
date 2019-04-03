@@ -18,7 +18,8 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 	
 	recordClass: "HreRem.model.ActivoDatosRegistrales",
 
-    requires: ['HreRem.model.ActivoDatosRegistrales', 'HreRem.view.common.FieldSetTable', 'HreRem.view.common.TextFieldBase', 'HreRem.view.common.ComboBoxFieldBase', 'HreRem.model.ActivoPropietario'],
+    requires: ['HreRem.model.ActivoDatosRegistrales', 'HreRem.view.common.FieldSetTable', 'HreRem.view.common.TextFieldBase', 'HreRem.view.common.ComboBoxFieldBase', 'HreRem.model.ActivoPropietario',
+    	'HreRem.view.activos.detalle.CalificacionNegativaGrid'],
 
     initComponent: function () {
         var me = this;   

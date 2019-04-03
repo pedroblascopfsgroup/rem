@@ -8,7 +8,6 @@ Ext.define('HreRem.view.activos.detalle.AnyadirNuevaOfertaDocumento', {
 	listeners: {    
 		boxready: function(window) {
 			var me = this;
-			
 			var wizard = me.up();
 			
 			Ext.Array.each(window.down('fieldset').query('field[isReadOnlyEdit]'),
@@ -24,11 +23,14 @@ Ext.define('HreRem.view.activos.detalle.AnyadirNuevaOfertaDocumento', {
 			}
 			
 			
+			
 		},
 			
 		show: function() {
 			var me = this;
-			me.resetWindow();			
+			var wizard = me.up();
+			me.resetWindow();	
+
 		}
 	},
 	    

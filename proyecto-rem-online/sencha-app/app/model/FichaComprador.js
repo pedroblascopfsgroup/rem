@@ -17,6 +17,9 @@ Ext.define('HreRem.model.FichaComprador', {
 		    	name: 'idExpedienteComercial'
 		},
 		{
+				name: 'codTipoPersona'
+		},
+		{
 		    	name: 'descripcionTipoPersona'
 		},
 		{
@@ -159,6 +162,9 @@ Ext.define('HreRem.model.FichaComprador', {
 		},
 		{
 				name: 'riesgoReputacional'
+		},
+		{
+				name: 'codigoRegimenMatrimonial'
 		},
 		{
 				name: 'regimenMatrimonial'

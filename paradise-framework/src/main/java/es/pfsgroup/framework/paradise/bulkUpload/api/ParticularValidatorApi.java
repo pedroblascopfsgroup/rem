@@ -552,7 +552,7 @@ public interface ParticularValidatorApi {
 
 	public Boolean isActivoFinanciero(String numActivo);
 
-	
+
 	/**
 	 * 
 	 * @param idImpuesto
@@ -573,5 +573,4 @@ public interface ParticularValidatorApi {
 	 * @return true si existe, false si no existe o es nulo
 	 */
 	public Boolean existeCalculo(String codCalculo);
-
 }

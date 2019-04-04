@@ -5743,17 +5743,14 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		else {
 			throw new GestorDocumentalException("Error al descargar documento");
 		}
-		RespuestaDescargarDocumento respuesta2 = this.rellenarRespuestaDescarga(bytes,dtoGenerarDocGDPR.getDocumento()); 
-		FileItem fileItem = GestorDocToRecoveryAssembler.getFileItem(respuesta2);
+		RespuestaDescargarDocumento respuesta2 = this.rellenarRespuestaDescarga(dtoGenerarDocGDPR.getDocumento()); 
+		FileItem fileItem = GestorDocToRecoveryAssembler.getFileItem(bytes,respuesta2);
 		return fileItem;
 	}
 	
-	private RespuestaDescargarDocumento rellenarRespuestaDescarga(byte[] contenido, String nombreDocumento){
-		
-		Byte[] bytes = ArrayUtils.toObject(contenido);
+	private RespuestaDescargarDocumento rellenarRespuestaDescarga(String nombreDocumento){
 		
 		RespuestaDescargarDocumento respuesta = new RespuestaDescargarDocumento();
-		respuesta.setContenido(bytes);
 		respuesta.setNombreDocumento(nombreDocumento+".pdf");
 		
 		return respuesta;

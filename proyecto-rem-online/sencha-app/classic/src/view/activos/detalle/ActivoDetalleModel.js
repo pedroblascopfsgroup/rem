@@ -485,8 +485,8 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 
 		 enableComboRentaAntigua: function(get){
 			var chkPerimetroAlquiler = get('patrimonio.chkPerimetroAlquiler');
-			var situacionActivo = get('activo.situacionComercialCodigo');
-			if((chkPerimetroAlquiler == true || chkPerimetroAlquiler == "true" ) && CONST.SITUACION_COMERCIAL['ALQUILADO'] == situacionActivo){
+			var situacionActivo = get('patrimonio.estadoAlquiler');
+			if((chkPerimetroAlquiler == true || chkPerimetroAlquiler == "true" ) && CONST.COMBO_ESTADO_ALQUILER['ALQUILADO'] == situacionActivo){
 				return false;
 			}else{
 				return true;

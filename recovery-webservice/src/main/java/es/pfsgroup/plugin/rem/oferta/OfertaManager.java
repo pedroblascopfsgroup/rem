@@ -634,40 +634,37 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				for (ActivosLoteOfertaDto idActivo : ofertaDto.getActivosLote()) {
 					ActivoAgrupacion agrupacion = null;
 					List<ActivoOferta> buildListaActOfr = new ArrayList<ActivoOferta>();
-					List<ActivoAgrupacionActivo> listaAgrups = null;
+					List<ActivoAgrupacionActivo> listaAgrups = null;	
+					Activo activo = genericDao.get(Activo.class,
+							genericDao.createFilter(FilterType.EQUALS, "numActivo", idActivo.getIdActivoHaya()));
+					if (!Checks.esNulo(activo)) {
 				
-					for (int i=0; i<ofertaDto.getActivosLote().size(); i++) {
-						
-						Activo activo = genericDao.get(Activo.class,
-								genericDao.createFilter(FilterType.EQUALS, "numActivo", idActivo.getIdActivoHaya()));
-						if (!Checks.esNulo(activo)) {
-					
-							// Verificamos si el activo pertenece a una agrupación
-							// restringida
-							DtoAgrupacionFilter dtoAgrupActivo = new DtoAgrupacionFilter();
-							dtoAgrupActivo.setActId(activo.getId());
-							dtoAgrupActivo.setTipoAgrupacion(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA);
-							listaAgrups = activoAgrupacionActivoApi.getListActivosAgrupacion(dtoAgrupActivo);
-							if (!Checks.esNulo(listaAgrups) && !listaAgrups.isEmpty()) {
-								ActivoAgrupacionActivo agrAct = listaAgrups.get(0);
-								if (!Checks.esNulo(agrAct) && !Checks.esNulo(agrAct.getAgrupacion())) {
-									// Seteamos la agrupación restringida a la oferta
-									agrupacion = agrAct.getAgrupacion();
-									oferta.setAgrupacion(agrupacion);
-								}
-							}
-				
-							if (!Checks.esNulo(agrupacion)) {
-								// Oferta sobre 1 lote restringido de n activos
-								buildListaActOfr = buildListaActivoOferta(null, agrupacion, oferta);
-								listaActOfr.addAll(buildListaActOfr);
-							} else {
-								// Oferta sobre 1 único activo
-								buildListaActOfr = buildListaActivoOferta(activo, null, oferta);
-								listaActOfr.addAll(buildListaActOfr);
+						// Verificamos si el activo pertenece a una agrupación
+						// restringida
+						DtoAgrupacionFilter dtoAgrupActivo = new DtoAgrupacionFilter();
+						dtoAgrupActivo.setActId(activo.getId());
+						dtoAgrupActivo.setTipoAgrupacion(DDTipoAgrupacion.AGRUPACION_RESTRINGIDA);
+						listaAgrups = activoAgrupacionActivoApi.getListActivosAgrupacion(dtoAgrupActivo);
+						if (!Checks.esNulo(listaAgrups) && !listaAgrups.isEmpty()) {
+							ActivoAgrupacionActivo agrAct = listaAgrups.get(0);
+							if (!Checks.esNulo(agrAct) && !Checks.esNulo(agrAct.getAgrupacion())) {
+								// Seteamos la agrupación restringida a la oferta
+								agrupacion = agrAct.getAgrupacion();
+								oferta.setAgrupacion(agrupacion);
 							}
 						}
+			
+						if (!Checks.esNulo(agrupacion)) {
+							// Oferta sobre 1 lote restringido de n activos
+							buildListaActOfr = buildListaActivoOferta(null, agrupacion, oferta);
+							listaActOfr.addAll(buildListaActOfr);
+						} else {
+							// Oferta sobre 1 único activo
+							buildListaActOfr = buildListaActivoOferta(activo, null, oferta);
+							listaActOfr.addAll(buildListaActOfr);
+						}
 					}
+						
 					// Seteamos la lista de ActivosOferta
 					oferta.setActivosOferta(listaActOfr);
 					// Seteamos la agrupación a la que pertenece la oferta
@@ -3560,6 +3557,7 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					clienteComercialDto.setCesionDatos(clienteGDPR.getCesionDatos());
 					clienteComercialDto.setComunicacionTerceros(clienteGDPR.getComunicacionTerceros());
 					clienteComercialDto.setTransferenciasInternacionales(clienteGDPR.getTransferenciasInternacionales());
+					clienteComercialDto.setIdPersonaHaya(clienteCom.getIdPersonaHaya());
 					if(!Checks.esNulo(clienteCom.getEstadoCivil())) {
 						clienteComercialDto.setEstadoCivilCodigo(clienteCom.getEstadoCivil().getCodigo());
 						clienteComercialDto.setEstadoCivilDescripcion(clienteCom.getEstadoCivil().getDescripcion());

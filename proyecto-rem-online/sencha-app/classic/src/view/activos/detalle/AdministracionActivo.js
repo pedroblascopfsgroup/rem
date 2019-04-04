@@ -62,7 +62,7 @@ Ext.define('HreRem.view.activos.detalle.AdministracionActivo', {
 				    reference: 'listadoproveedoresref',
 					cls	: 'panel-base shadow-panel',
 					bind: {
-						store: '{storeProveedores}',
+						store: '{storeProveedores}'
 					},
 					listeners : {
 					    	rowclick: 'onProveedoresListClick'

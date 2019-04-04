@@ -55,7 +55,7 @@ Ext.define('HreRem.view.activos.detalle.AdmisionCheckInfoActivo', {
 						bind:		'{activoAdmision.fechaRevisionSelloCalidad}',
 						readOnly: true
 						
-					},
+					}
 				],
 				bind:{ disabled: '{activo.unidadAlquilable}'}
 		}, 
@@ -613,7 +613,7 @@ Ext.define('HreRem.view.activos.detalle.AdmisionCheckInfoActivo', {
 					                store: '{storePropietario}'
 					            }
 					        }
-					    ],
+					    ]
 					},
 					{    
 						xtype:'fieldsettable',

@@ -1,0 +1,5 @@
+export DB_PRODUCTO=192.168.49.34:1521/MBD031
+export DB_BI=***
+export BASE_DIR_APP=/recovery/app-server
+export BASE_DIR_BATCH=/recovery/batch-server
+export BASE_DIR_TRANSFERENCIA=/recovery/transferencia

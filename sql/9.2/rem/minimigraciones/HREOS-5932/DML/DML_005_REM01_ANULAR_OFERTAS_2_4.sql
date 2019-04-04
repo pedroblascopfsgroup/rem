@@ -91,7 +91,7 @@ BEGIN
 					  , USUARIOBORRAR = '''||V_USUARIOMODIFICAR||'''
 					  , FECHAMODIFICAR = SYSDATE
 					  , BORRADO = 1
-					WHERE TAR_ID = '||FILA.TAR_ID||'';
+					WHERE TAR_ID = '||FILA.TRA_ID||'';
 		
 		EXECUTE IMMEDIATE V_MSQL;
 		
@@ -104,15 +104,7 @@ BEGIN
 					WHERE TAR_ID = '||FILA.TAR_ID||'';
   		
   		EXECUTE IMMEDIATE V_MSQL;
-  		
-  		V_MSQL := 'UPDATE '||V_ESQUEMA||'.ACT_TRA_TRAMITE SET 
-						TRA_FECHA_FIN = SYSDATE
-					  , USUARIOMODIFICAR = '''||V_USUARIOMODIFICAR||'''
-					  , FECHAMODIFICAR = SYSDATE
-					WHERE TRA_ID = '||FILA.TRA_ID||'';
-  		
-  		EXECUTE IMMEDIATE V_MSQL;
-  		
+  		 		
   		  		
   		V_COUNT := V_COUNT + 1 ;
         V_COUNT2 := V_COUNT2 +1 ;

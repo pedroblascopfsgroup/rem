@@ -170,7 +170,7 @@ public interface GenericApi {
 	 * @param carteraCodigo
 	 * @return
 	 */
-	public List<DDComiteSancion> getComitesByCartera(String carteraCodigo);
+	public List<DDComiteSancion> getComitesByCartera(String carteraCodigo, String subcarteraCodigo);
 
 	/**
 	 * Devuelve una lista de proveedores para mostrar en un combo, filtrado por subtipo proveedor

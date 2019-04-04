@@ -876,7 +876,10 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	    	proxy: {
 		        type: 'uxproxy',
 		        remoteUrl: 'generic/getComitesByCartera',
-		        extraParams: {carteraCodigo: '{expediente.entidadPropietariaCodigo}'}
+		        extraParams: {
+		        	carteraCodigo: '{expediente.entidadPropietariaCodigo}',
+		        	subcarteraCodigo: '{expediente.subcarteraCodigo}'
+		        }
 	    	}	    	
 	    },
 	    
@@ -885,7 +888,10 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleModel', {
 	    	proxy: {
 		        type: 'uxproxy',
 		        remoteUrl: 'generic/getComitesByCartera',
-		        extraParams: {carteraCodigo: '{expediente.entidadPropietariaCodigo}'}
+		        extraParams: {
+		        	carteraCodigo: '{expediente.entidadPropietariaCodigo}',
+		        	subcarteraCodigo: '{expediente.subcarteraCodigo}'
+		        }
 	    	}	    	
 	    },
 

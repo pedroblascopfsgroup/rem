@@ -264,7 +264,7 @@ public class GestorDocumentalAdapterManager implements GestorDocumentalAdapterAp
 
 		try {
 			respuesta = gestorDocumentalApi.descargarDocumento(idDocumento, login,nombreDocumento);
-			fileItem = GestorDocToRecoveryAssembler.getFileItem(respuesta);
+			fileItem = respuesta.getFileItem();
 		} catch (IOException e) {
 			e.printStackTrace();
 		} 

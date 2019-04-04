@@ -55,6 +55,7 @@ Ext.define('HreRem.view.common.ComboBoxFieldBase', {
 				*/
 				
 			}
+
 			binding.syncing = (binding.syncing + 1) || 1;
 			//Log
 //			if(!Ext.isEmpty(value) && !Ext.isEmpty(value.data)){

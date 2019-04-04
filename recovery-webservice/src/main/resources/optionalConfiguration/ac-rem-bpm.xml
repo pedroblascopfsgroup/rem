@@ -588,6 +588,10 @@
             	def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
             	return expedienteComercialManager.checkCamposComprador(tareaExterna);
             }
+            def checkInquilinos = {
+            	def expedienteComercialManager = ctx.getBean("expedienteComercialManager");
+            	return expedienteComercialManager.checkInquilinos(tareaExterna);
+            }
   			 ]]></value>
   		</list>
   	</property>

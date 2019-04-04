@@ -1,5 +1,6 @@
 package es.pfsgroup.plugin.gestorDocumental.controller;
 
+import java.io.IOException;
 import java.util.Properties;
 
 import javax.annotation.Resource;
@@ -95,6 +96,8 @@ public class GestorDocumentalTestController {
 			model.put("Respuesta", respuesta);
 		
 		} catch (GestorDocumentalException e) {
+			model.put("Exception", e);
+		}catch (IOException e) {
 			model.put("Exception", e);
 		}
 	

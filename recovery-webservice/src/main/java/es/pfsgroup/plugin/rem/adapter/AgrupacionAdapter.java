@@ -2763,7 +2763,7 @@ public class AgrupacionAdapter {
 								}
 
 								if(!Checks.esNulo(tipoComercializacion)) {
-									activoPublicacion.setTipoComercializacion(tipoComercializacion);
+									activoEstadoPublicacionApi.actualizarPublicacionActivoCambioTipoComercializacion(activo, dto.getTipoComercializacionCodigo());
 								}
 								
 								if(!ofertaVivaAlquiler && DDTipoComercializacion.CODIGO_VENTA.equals(dto.getTipoComercializacionCodigo())) {

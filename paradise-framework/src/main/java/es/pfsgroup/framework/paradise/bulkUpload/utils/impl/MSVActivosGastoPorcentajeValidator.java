@@ -3,6 +3,7 @@ package es.pfsgroup.framework.paradise.bulkUpload.utils.impl;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Component;
 
 import es.capgemini.devon.files.FileItem;
 import es.capgemini.devon.message.MessageService;
+import es.capgemini.pfs.utils.FormatUtils;
 import es.pfsgroup.commons.utils.api.ApiProxyFactory;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
@@ -64,7 +66,7 @@ public class MSVActivosGastoPorcentajeValidator extends MSVExcelValidatorAbstrac
 	
 	@Autowired
 	private MSVProcesoApi msvProcesoApi;
-	
+		
 	@Resource
     MessageService messageServices;
 	
@@ -265,7 +267,7 @@ public class MSVActivosGastoPorcentajeValidator extends MSVExcelValidatorAbstrac
 			}
 		}
 		
-		if(porcentajeTotal > 100.00){
+		if(FormatUtils.redondear(porcentajeTotal, 2) > 100.00){
 			listaFilas.add(1);
 		}
 		
@@ -332,5 +334,5 @@ public class MSVActivosGastoPorcentajeValidator extends MSVExcelValidatorAbstrac
 		} 
 		return listaFilas;
 	}
-	
+		
 }

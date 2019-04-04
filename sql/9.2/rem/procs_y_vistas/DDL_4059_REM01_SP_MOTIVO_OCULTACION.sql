@@ -113,7 +113,7 @@ create or replace PROCEDURE SP_MOTIVO_OCULTACION (pACT_ID IN NUMBER
                                     LEFT JOIN '|| V_ESQUEMA ||'.DD_MTO_MOTIVOS_OCULTACION MTO ON MTO.DD_MTO_CODIGO = ''01'' AND MTO.BORRADO = 0 /*NO publicable*/
                                     WHERE ACT.BORRADO = 0 
 										AND (ACT.PAC_CHECK_PUBLICAR = 0
-                                        	OR (TAG.DD_TAG_CODIGO = ''13'' AND AGR.AGR_FIN_VIGENCIA < SYSDATE))
+                                        	OR (TAG.DD_TAG_CODIGO = ''13'' AND AGR.AGR_FIN_VIGENCIA < SYSDATE AND AGR.AGR_FECHA_BAJA IS NULL))
                                         AND ACT.ACT_ID = '||pACT_ID||
                          ' UNION
                           SELECT ACT.ACT_ID

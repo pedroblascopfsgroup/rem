@@ -36,8 +36,10 @@ import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
 import es.pfsgroup.framework.paradise.utils.DtoPage;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
 import es.pfsgroup.plugin.rem.adapter.TrabajoAdapter;
+import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.api.PreciosApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
@@ -47,6 +49,7 @@ import es.pfsgroup.plugin.rem.excel.ExcelReportGeneratorApi;
 import es.pfsgroup.plugin.rem.excel.TrabajoExcelReport;
 import es.pfsgroup.plugin.rem.factory.GenerarPropuestaPreciosFactoryApi;
 import es.pfsgroup.plugin.rem.model.Activo;
+import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.ACCION_CODIGO;
 import es.pfsgroup.plugin.rem.logTrust.LogTrustEvento.ENTIDAD_CODIGO;
@@ -126,6 +129,12 @@ public class TrabajoController extends ParadiseJsonController {
 
 	@Autowired
 	private TrabajoDao trabajoDao;
+	
+	@Autowired
+	private ActivoDao activoDao;
+	
+	@Autowired
+	private ActivoApi activoApi;
 
 	private final Log logger = LogFactory.getLog(getClass());
 
@@ -153,7 +162,11 @@ public class TrabajoController extends ParadiseJsonController {
 	@SuppressWarnings("unchecked")
 	@RequestMapping(method = RequestMethod.POST)
 	public ModelAndView findAll(DtoTrabajoFilter dtoTrabajoFilter, ModelMap model){
-
+		if(activoDao.isUnidadAlquilable(dtoTrabajoFilter.getIdActivo())) {
+			ActivoAgrupacion actgagru = activoDao.getAgrupacionPAByIdActivo(dtoTrabajoFilter.getIdActivo());
+			Activo activoM = activoApi.get(activoDao.getIdActivoMatriz(actgagru.getId()));
+			dtoTrabajoFilter.setIdActivo(activoM.getId());
+		}
 		Page page = trabajoApi.findAll(dtoTrabajoFilter, genericAdapter.getUsuarioLogado());
 		
 		model.put("data", page.getResults());

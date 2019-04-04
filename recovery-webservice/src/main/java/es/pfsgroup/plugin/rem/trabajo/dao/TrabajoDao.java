@@ -45,4 +45,6 @@ public interface TrabajoDao extends AbstractDao<Trabajo, Long>{
 	 */
 	public Page findAllFilteredByProveedorContacto(DtoTrabajoFilter dto, Long idUsuario);
 
+	Page getActivoMatrizPresupuesto(DtoActivosTrabajoFilter dto);
+
 }

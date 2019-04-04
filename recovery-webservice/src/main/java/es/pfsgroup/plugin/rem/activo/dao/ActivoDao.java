@@ -269,5 +269,9 @@ public interface ActivoDao extends AbstractDao<Activo, Long>{
 
 	List<ActivoCalificacionNegativa> getListActivoCalificacionNegativaByIdActivoBorradoFalse(Long idActivo);
 
+
 	List<VBusquedaProveedoresActivo> getListProveedor(List<String> listaIds);
+
+	Boolean isPANoDadaDeBaja(Long idActivo);
+
 }

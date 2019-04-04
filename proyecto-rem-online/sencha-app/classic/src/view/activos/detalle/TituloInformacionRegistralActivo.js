@@ -115,7 +115,7 @@ Ext.define('HreRem.view.activos.detalle.TituloInformacionRegistralActivo', {
 										reference: 'poblacionAnterior',
 						            	bind: {
 						            		store: '{comboMunicipio}',
-						            		value: '{localidadAnteriorCodigo}',
+						            		value: '{datosRegistrales.localidadAnteriorCodigo}',
 						            		readOnly: '{datosRegistrales.unidadAlquilable}'
 						            	}
 									},

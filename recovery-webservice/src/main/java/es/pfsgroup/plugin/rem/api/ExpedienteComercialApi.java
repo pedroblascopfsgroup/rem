@@ -1159,4 +1159,6 @@ public interface ExpedienteComercialApi {
 	 * Comprobación de los campos de los compradores en una oferta de venta para poder avanzar la tarea.
 	 */
 	boolean checkCamposComprador(TareaExterna tareaExterna);
+
+
 }

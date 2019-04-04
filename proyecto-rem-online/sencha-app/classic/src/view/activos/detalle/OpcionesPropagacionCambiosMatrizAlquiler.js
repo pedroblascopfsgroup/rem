@@ -255,6 +255,7 @@ Ext.define('HreRem.view.activos.detalle.OpcionesPropagacionCambiosMatrizExpedien
     createContent: function() {
     	var me = this,
     	campos = [];
+    
     	
     	if(!Ext.isEmpty(me.form)) {
     		
@@ -282,7 +283,7 @@ Ext.define('HreRem.view.activos.detalle.OpcionesPropagacionCambiosMatrizExpedien
     	}
     	
     	var containerCampos = me.down("container[reference=campos]");
-
+    
     	if(campos.length==0) {
     		containerCampos.setVisible(false);
     	} else {

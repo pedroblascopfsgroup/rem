@@ -176,6 +176,17 @@ public class TrabajoDaoImpl extends AbstractEntityDao<Trabajo, Long> implements 
    		return HibernateQueryUtils.page(this, hb, dto);
 	}
 	
+	
+	@Override
+	public Page getActivoMatrizPresupuesto(DtoActivosTrabajoFilter dto) {
+
+		HQLBuilder hb = new HQLBuilder(" from VBusquedaActivoMatrizPresupuesto acttbj");		
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "acttbj.activoMatriz", dto.getIdActivo());
+   		HQLBuilder.addFiltroIgualQueSiNotNull(hb, "acttbj.ejercicioAnyo", dto.getEjercicioPresupuestario());
+		
+   		return HibernateQueryUtils.page(this, hb, dto);
+	}
+	
 	@Override
 	public Page getObservaciones(DtoTrabajoFilter dto) {
 		HQLBuilder hb = new HQLBuilder(" from TrabajoObservacion tbo");		

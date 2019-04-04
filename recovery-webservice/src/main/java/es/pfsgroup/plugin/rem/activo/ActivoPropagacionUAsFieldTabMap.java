@@ -36,8 +36,9 @@ public class ActivoPropagacionUAsFieldTabMap {
     	    		"estadoActivoCodigo",
     	    		"tipoUsoDestinoCodigo",  //TipoUsoDestino    
     	    		"motivoActivo",
+    	    		
     	    			// direccion
-    	    		"comunidadAutonomaCodigo", // ?? Se saca a partir de la provincia
+    	    		"comunidadAutonomaCodigo", 
     	    		"inferiorMunicipioCodigo",
     	    		"municipioCodigo",
     	    		"provinciaCodigo",			
@@ -46,9 +47,12 @@ public class ActivoPropagacionUAsFieldTabMap {
     	    		"latitud",
     	    		"codPostal",
     	    		"paisCodigo",
- /*
-  * CAMPOS QUE SE VAN A PEDIR PROPAGAR EN SEGUNDAS PARTES DEL ITEM HREOS-5784
-  */
+    	    		
+    	    		"selloCalidad",
+    	    		"nombreGestorSelloCalidad",
+    	    		"fechaRevisionSelloCalidad",
+
+    	    		
     	    		// perimetro
     	    		"incluidoEnPerimetro",	//PerimetroHaya
     	    		
@@ -87,7 +91,9 @@ public class ActivoPropagacionUAsFieldTabMap {
     				"numExpRiesgo",
     				"estadoExpRiesgoCodigo",
     				"productoDescripcion",
-    				"estadoExpIncorrienteCodigo"
+    				"estadoExpIncorrienteCodigo",
+    				
+    				"admision"
     			));
 
 
@@ -118,10 +124,6 @@ public class ActivoPropagacionUAsFieldTabMap {
 					
 			//INFORMACIÓN REGISTRAL
             	
-					//"superficie",
-					//"superficieUtil",
-					//"superficieElementosComunes",
-					//"superficieParcela",
 					"divHorizontal",
 					"estadoDivHorizontalCodigo",
 					"divHorInscrito",
@@ -130,8 +132,6 @@ public class ActivoPropagacionUAsFieldTabMap {
 
             //LOS DEMÁS
 
-                    //"tipoTituloCodigo", 
-					//"subtipoTituloCodigo", 
                     "vpo",
 					"gestionHre",
 					"porcPropiedad",
@@ -189,6 +189,8 @@ public class ActivoPropagacionUAsFieldTabMap {
 
     	pmap.put(TAB_SIT_POSESORIA,
     			Arrays.asList(
+    					
+    				"fechaTomaPosesion",
 			    	"fechaRevisionEstado" ,
 			    	"ocupado",
 			    	"riesgoOcupacion",
@@ -197,17 +199,30 @@ public class ActivoPropagacionUAsFieldTabMap {
 			    	"fechaAccesoTapiado",
 			    	"accesoAntiocupa",
 			    	"fechaAccesoAntiocupa",
-			    	"tieneOkTecnico"
+			    	"tieneOkTecnico",
+			    	"llavesNecesarias",
+			    	"VllavesHre",
+			    	"fechaRecepcionLlaves",
+			    	"numJuegosLlaves"
     			));
-/*
+
     	
 
     	pmap.put(TAB_INFO_ADMINISTRATIVA,
     			Arrays.asList(
-    				"sujetoAExpediente"/*,
+    				"tipoVpoCodigo",
+    				"numExpediente",
+    				"obligatorioSolDevAyuda",
+    				"obligatorioAutAdmVenta",
+    				"observaciones",
+    				"maxPrecioVenta",
+    				"fechaCalificacion",
+    				"descalificado",
+    				
+    				"sujetoAExpediente",
     				"promocionVpo"
     			));
-*/
+
     	pmap.put(TAB_CARGAS_ACTIVO,
     			Arrays.asList(
     				"fechaRevisionCarga" ,
@@ -257,7 +272,13 @@ public class ActivoPropagacionUAsFieldTabMap {
     				"observaciones"
 
     			));
-*/
+    			*/
+    			
+		pmap.put(TAB_PATRIMONIO,
+			Arrays.asList(
+					"checkHPM"
+		   	));
+
         mapUAs = Collections.unmodifiableMap(pmap);
     }
 }

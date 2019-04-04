@@ -164,6 +164,7 @@ import es.pfsgroup.plugin.rem.model.TmpClienteGDPR;
 import es.pfsgroup.plugin.rem.model.UsuarioCartera;
 import es.pfsgroup.plugin.rem.model.VActivoPatrimonioContrato;
 import es.pfsgroup.plugin.rem.model.VAdmisionDocumentos;
+import es.pfsgroup.plugin.rem.model.VBusquedaActivoMatrizPresupuesto;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivosTrabajoPresupuesto;
 import es.pfsgroup.plugin.rem.model.VBusquedaPresupuestosActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaTramitesActivo;
@@ -2693,6 +2694,15 @@ public class ActivoAdapter {
 	public DtoPage findAllHistoricoPresupuestos(DtoHistoricoPresupuestosFilter dtoPresupuestoFiltro) {
 
 		Usuario usuarioLogado = genericAdapter.getUsuarioLogado();
+		
+		Activo activo = getActivoById(Long.parseLong(dtoPresupuestoFiltro.getIdActivo()));
+		if(activoDao.isUnidadAlquilable(activo.getId())) {
+			activo = getActivoById(activoDao.getIdActivoMatriz(activoDao.getAgrupacionPAByIdActivo(activo.getId()).getId()));
+			dtoPresupuestoFiltro.setIdActivo(Long.toString(activo.getId()));
+			dtoPresupuestoFiltro.setIdActivo(String.valueOf(activo.getId()));
+			dtoPresupuestoFiltro.setIdPresupuesto(String.valueOf(activo.getPresupuesto().get(0).getId()));
+		}
+		
 
 		Page pagePresupuestosActivo = activoApi.getListHistoricoPresupuestos(dtoPresupuestoFiltro, usuarioLogado);
 
@@ -2748,6 +2758,18 @@ public class ActivoAdapter {
 
 		SimpleDateFormat dfAnyo = new SimpleDateFormat("yyyy");
 		String ejercicioActual = dfAnyo.format(new Date());
+		
+		Activo activo = getActivoById(Long.parseLong(dtoFilter.getIdActivo()));
+		Boolean esMatrizoUA = false;
+		
+		if(activoDao.isUnidadAlquilable(activo.getId())) {
+			activo = getActivoById(activoDao.getIdActivoMatriz(activoDao.getAgrupacionPAByIdActivo(activo.getId()).getId()));
+			esMatrizoUA = true;
+			dtoFilter.setIdActivo(Long.toString(activo.getId()));
+		}else if(activoDao.isActivoMatriz(activo.getId())) {
+			esMatrizoUA = true;
+		}
+		
 
 		Long idPresupuesto = activoApi.getUltimoHistoricoPresupuesto(Long.parseLong(dtoFilter.getIdActivo()));
 		DtoHistoricoPresupuestosFilter dtoFiltroHistorico = new DtoHistoricoPresupuestosFilter();
@@ -2762,23 +2784,35 @@ public class ActivoAdapter {
 		// presupuestos porque si no sale ordenado, no coge el bueno
 		// esto se hace gracias a calcular el id de presupuesto con el metodo
 		// "getUltimoHistoricoPresupuesto"
+		
+		
+		//TODO HREOS-5598
+		
 		VBusquedaPresupuestosActivo presupuestoActivo = (VBusquedaPresupuestosActivo) activoApi
-				.getListHistoricoPresupuestos(dtoFiltroHistorico, usuarioLogado).getResults().get(0);
-
+			.getListHistoricoPresupuestos(dtoFiltroHistorico, usuarioLogado).getResults().get(0);	
 		// Disponible para ejercicio actual
 		// Se calcula el disponible, el gasto conforme la lógica anterior, pero optimizando costes
 		dtoFilter.setEjercicioPresupuestario(ejercicioActual);
-		Activo activo = getActivoById(Long.parseLong(dtoFilter.getIdActivo()));
-		Boolean esMatrizoUA = false;
-		//TODO HREOS-5598
-		if(activoDao.isUnidadAlquilable(activo.getId())) {
-			activo = getActivoById(activoDao.getIdActivoMatriz(activoDao.getAgrupacionPAByIdActivo(activo.getId()).getId()));
-			esMatrizoUA = true;
-		}else if(activoDao.isActivoMatriz(activo.getId())) {
-			esMatrizoUA = true;
-		}
 		if(esMatrizoUA) {
-			//RECOGER DE LA VISTA CUANDO SE CREE PARA MATRICES/UAS
+			Page vista = trabajoApi.getActivoMatrizPresupuesto(dtoFilter);
+			if (vista.getTotalCount() > 0) {
+				
+				List<VBusquedaActivoMatrizPresupuesto>  activosMatriz = (List<VBusquedaActivoMatrizPresupuesto>) vista.getResults();
+				VBusquedaActivoMatrizPresupuesto activoMatriz = activosMatriz.get(0);
+				
+				presupuestoGrafico.setDisponible(activoMatriz.getSaldoDisponible());
+				presupuestoGrafico.setGastado(activoMatriz.getImporteTrabajos());
+				presupuestoGrafico.setDispuesto(activoMatriz.getImporteTrabajosPendientesPago());
+				
+				
+				presupuestoGrafico.setGastado(presupuestoGrafico.getGastado() - presupuestoGrafico.getDispuesto());
+				presupuestoGrafico.setPresupuesto(presupuestoGrafico.getDisponible() + presupuestoGrafico.getDispuesto() + presupuestoGrafico.getGastado());
+				presupuestoGrafico.setDisponiblePorcentaje(Double.valueOf(((presupuestoGrafico.getDisponible() / presupuestoGrafico.getPresupuesto()) * 100)));
+				presupuestoGrafico.setDispuestoPorcentaje(Double.valueOf(((presupuestoGrafico.getDispuesto() / presupuestoGrafico.getPresupuesto()) * 100)));
+				presupuestoGrafico.setGastadoPorcentaje(Double.valueOf(((presupuestoGrafico.getGastado() / presupuestoGrafico.getPresupuesto()) * 100)));
+				presupuestoGrafico.setEjercicio(presupuestoActivo.getEjercicioAnyo());
+				
+			}
 		}else{
 			Page vista = trabajoApi.getListActivosPresupuesto(dtoFilter);
 			if (vista.getTotalCount() > 0) {
@@ -2880,33 +2914,36 @@ public class ActivoAdapter {
 
 		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "presupuestoActivo.id", idPresupuesto);
 		Order order = new Order(OrderType.DESC, "fechaAprobacion");
-
-		List<IncrementoPresupuesto> listaPresupuestos = genericDao.getListOrdered(IncrementoPresupuesto.class, order,
-				filtro);
 		List<DtoIncrementoPresupuestoActivo> listaDto = new ArrayList<DtoIncrementoPresupuestoActivo>();
-
-		for (int i = 0; i < listaPresupuestos.size(); i++) {
-			DtoIncrementoPresupuestoActivo dtoPresupuesto = new DtoIncrementoPresupuestoActivo();
-
-			try {
-
-				IncrementoPresupuesto incrementoPresupuesto = listaPresupuestos.get(i);
-				BeanUtils.copyProperties(dtoPresupuesto, incrementoPresupuesto);
-
-				beanUtilNotNull.copyProperty(dtoPresupuesto, "presupuestoActivoImporte",
-						incrementoPresupuesto.getPresupuestoActivo().getImporteInicial());
-				if (incrementoPresupuesto.getTrabajo() != null) {
-					beanUtilNotNull.copyProperty(dtoPresupuesto, "codigoTrabajo",
-							incrementoPresupuesto.getTrabajo().getNumTrabajo());
+		
+		if(!Checks.esNulo(idPresupuesto)) {
+			List<IncrementoPresupuesto> listaPresupuestos = genericDao.getListOrdered(IncrementoPresupuesto.class, order,
+					filtro);
+			
+	
+			for (int i = 0; i < listaPresupuestos.size(); i++) {
+				DtoIncrementoPresupuestoActivo dtoPresupuesto = new DtoIncrementoPresupuestoActivo();
+	
+				try {
+	
+					IncrementoPresupuesto incrementoPresupuesto = listaPresupuestos.get(i);
+					BeanUtils.copyProperties(dtoPresupuesto, incrementoPresupuesto);
+	
+					beanUtilNotNull.copyProperty(dtoPresupuesto, "presupuestoActivoImporte",
+							incrementoPresupuesto.getPresupuestoActivo().getImporteInicial());
+					if (incrementoPresupuesto.getTrabajo() != null) {
+						beanUtilNotNull.copyProperty(dtoPresupuesto, "codigoTrabajo",
+								incrementoPresupuesto.getTrabajo().getNumTrabajo());
+					}
+	
+				} catch (IllegalAccessException e) {
+					logger.error("Error en ActivoAdapter", e);
+				} catch (InvocationTargetException e) {
+					logger.error("Error en ActivoAdapter", e);
 				}
-
-			} catch (IllegalAccessException e) {
-				logger.error("Error en ActivoAdapter", e);
-			} catch (InvocationTargetException e) {
-				logger.error("Error en ActivoAdapter", e);
+	
+				listaDto.add(dtoPresupuesto);
 			}
-
-			listaDto.add(dtoPresupuesto);
 		}
 
 		return listaDto;

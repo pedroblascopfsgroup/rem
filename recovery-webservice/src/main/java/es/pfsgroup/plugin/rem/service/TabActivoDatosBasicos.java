@@ -305,8 +305,16 @@ public class TabActivoDatosBasicos implements TabActivoService {
 		}
 		//Hace referencia a Destino Comercial (Si te lía el nombre, habla con Fernando)
 		if(!Checks.esNulo(activo.getActivoPublicacion()) && !Checks.esNulo(activo.getActivoPublicacion().getTipoComercializacion())){
-			BeanUtils.copyProperty(activoDto, "tipoComercializacionCodigo", activo.getActivoPublicacion().getTipoComercializacion().getCodigo());
-			BeanUtils.copyProperty(activoDto, "tipoComercializacionDescripcion", activo.getActivoPublicacion().getTipoComercializacion().getDescripcion());
+			if(!Checks.esNulo(activo) && activoDao.isPANoDadaDeBaja(activo.getId())) {
+				DDTipoComercializacion comercializacionAlquiler =  genericDao.get(DDTipoComercializacion.class,genericDao.createFilter(FilterType.EQUALS,"codigo", DDTipoComercializacion.CODIGO_SOLO_ALQUILER));
+				BeanUtils.copyProperty(activoDto, "tipoComercializacionCodigo", comercializacionAlquiler.getCodigo());
+				BeanUtils.copyProperty(activoDto, "tipoComercializacionDescripcion", comercializacionAlquiler.getDescripcion());
+				activoDto.setTipoComercializacionCodigo(comercializacionAlquiler.getCodigo());
+				activoDto.setTipoComercializacionDescripcion(comercializacionAlquiler.getDescripcion());
+			}else{
+				BeanUtils.copyProperty(activoDto, "tipoComercializacionCodigo", activo.getActivoPublicacion().getTipoComercializacion().getCodigo());
+				BeanUtils.copyProperty(activoDto, "tipoComercializacionDescripcion", activo.getActivoPublicacion().getTipoComercializacion().getDescripcion());
+			}
 		}
 		
 		if(activo.getTipoAlquiler() != null){
@@ -661,7 +669,7 @@ public class TabActivoDatosBasicos implements TabActivoService {
 			boolean isActivoMatriz = activoDao.isActivoMatriz(activo.getId());
 			
 			if (isUnidadAlquilable || isActivoMatriz) {
-
+				activoDto.setIsPANoDadaDeBaja(activoDao.isPANoDadaDeBaja(activo.getId()));
 				Filter filtroActivo = genericDao.createFilter(FilterType.EQUALS, "ACT_ID", activo.getId());
 				List<ActivoAgrupacionActivo> activosAgrupacion = genericDao.getList(ActivoAgrupacionActivo.class, filtroActivo);
 				if (!Checks.estaVacio(activosAgrupacion)) {

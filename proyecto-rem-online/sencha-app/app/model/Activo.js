@@ -752,7 +752,7 @@ Ext.define('HreRem.model.Activo', {
     			type: 'boolean'
     		},
     		{
-    			name: 'activoChkPerimetroAlquiler',
+    			name: 'checkHPM',
     			type: 'boolean'
     		},
     		{
@@ -776,7 +776,12 @@ Ext.define('HreRem.model.Activo', {
     			type: 'boolean'
     		},
     		{
-    			name: 'activoMatriz'
+    			name: 'activoMatriz',
+    			type: 'boolean'
+    		},
+    		{
+    			name: 'isPANoDadaDeBaja',
+    			type: 'boolean'
     		}
     ],
     

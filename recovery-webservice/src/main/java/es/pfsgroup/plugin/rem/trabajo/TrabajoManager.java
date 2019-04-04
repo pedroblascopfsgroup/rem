@@ -1178,6 +1178,10 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 
 	@Override
 	public ActivoTrabajo createActivoTrabajo(Activo activo, Trabajo trabajo, String participacion) {
+		if(activoDao.isUnidadAlquilable(activo.getId())) {
+			ActivoAgrupacion actagr = activoDao.getAgrupacionPAByIdActivo(activo.getId());
+			activo = activoApi.get(activoDao.getIdActivoMatriz(actagr.getId()));
+		}
 		if (trabajo.getId() == null) {
 			trabajo = genericDao.save(Trabajo.class, trabajo);
 		}
@@ -2203,6 +2207,12 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	public Page getListActivosPresupuesto(DtoActivosTrabajoFilter dto) {
 
 		return trabajoDao.getListActivosTrabajoPresupuesto(dto);
+	}
+	
+	@Override
+	public Page getActivoMatrizPresupuesto(DtoActivosTrabajoFilter dto) {
+
+		return trabajoDao.getActivoMatrizPresupuesto(dto);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -4026,7 +4036,14 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 	}
 
 	public Boolean activoEnTramite(Long idActivo) {
-		Activo activo = activoApi.get(idActivo);
+		Activo activo;
+		if(activoDao.isUnidadAlquilable(idActivo)) {
+			ActivoAgrupacion actagr = activoDao.getAgrupacionPAByIdActivo(idActivo);
+			activo = activoApi.get(activoDao.getIdActivoMatriz(actagr.getId()));
+			
+		}else {
+			activo = activoApi.get(idActivo);
+		}
 		return activo.getEnTramite() == 1;
 	}
 

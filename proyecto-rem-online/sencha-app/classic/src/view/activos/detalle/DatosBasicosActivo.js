@@ -468,7 +468,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								fieldLabel: HreRem.i18n('fieldlabel.perimetro.check.gestion'),
 								bind:{
 									value: '{activo.aplicaGestion}',
-									readOnly : '{!activo.activoMatriz}'
+									readOnly : '{activo.unidadAlquilable}'
 								},
 								reference: 'chkbxPerimetroGestion',
 								listeners: {
@@ -520,7 +520,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								fieldLabel: HreRem.i18n('fieldlabel.perimetro.check.publicacion'),
 								reference: 'chkbxPerimetroPublicar',
 								bind: {
-									readOnly: '{!activo.activoMatriz}',
+									readOnly: '{activo.unidadAlquilable}',
 									value: '{activo.aplicaPublicar}'
 								}
 							},
@@ -545,7 +545,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								fieldLabel: HreRem.i18n('fieldlabel.perimetro.check.comercial'),
 								reference: 'chkbxPerimetroComercializar',
 								bind: {
-									readOnly : '{!activo.activoMatriz}',
+									readOnly : '{activo.unidadAlquilable}',
 									value: '{activo.aplicaComercializar}'
 								},
 								listeners: {
@@ -585,7 +585,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 								fieldLabel: HreRem.i18n('fieldlabel.perimetro.check.formalizar'),
 								reference: 'chkbxPerimetroFormalizar',
 								bind: {
-									readOnly: '{!activo.activoMatriz}',
+									readOnly: '{activo.unidadAlquilable}',
 									value: '{activo.aplicaFormalizar}'
 								},
 								listeners: {
@@ -632,6 +632,7 @@ Ext.define('HreRem.view.activos.detalle.DatosBasicosActivo', {
 										fieldLabel: HreRem.i18n('fieldlabel.perimetro.destino.comercial'),
 										bind: {
 											readOnly : '{esUA}',
+											disabled: '{activo.isPANoDadaDeBaja}',
 											store: '{comboTipoDestinoComercialCreaFiltered}',
 											value: '{activo.tipoComercializacionCodigo}'
 										}

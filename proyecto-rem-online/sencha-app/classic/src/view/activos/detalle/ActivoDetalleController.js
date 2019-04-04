@@ -3185,7 +3185,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	opcionPropagacion = radioGroup.getValue().seleccion,
     	cambios =  window.propagableData,
     	targetGrid = window.targetGrid;
-
+    	
 		me.fireEvent("log", cambios);
 		
     	if (opcionPropagacion == "4" &&  activosSeleccionados.length == 0) {
@@ -3295,19 +3295,24 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	numTotalActivos = grid.getSelectionModel().getSelection().length + 1,
     	targetGrid = window.targetGrid,
     	numActivoActual = numTotalActivos;
+    	var contadorDatosRegistrales = 0;
     	
     	if (activos.length>0) {
     		var activo = activos.shift();
     		
     		numActivoActual = numTotalActivos - activos.length;
     		if(activo.data.esUnidadAlquilable != undefined && activo.data.esUnidadAlquilable == true){
-    			if(propagableData.models[0].data.numFinca != undefined){
+    			for( var i = 0; i < propagableData.models.length; i++){
+					if(propagableData.models[i].name == "datosregistrales")
+						contadorDatosRegistrales = i;
+				}
+    			if(propagableData.models[contadorDatosRegistrales].data.numFinca != undefined){
     				var stringnumFinca;
-    				if(propagableData.models[0].data.numFinca.includes('-')){
-    					var numeroguion = propagableData.models[0].data.numFinca.indexOf("-")
-    					stringnumFinca = propagableData.models[0].data.numFinca.slice(0,numeroguion);
+    				if(propagableData.models[contadorDatosRegistrales].data.numFinca.includes('-')){
+    					var numeroguion = propagableData.models[contadorDatosRegistrales].data.numFinca.indexOf("-")
+    					stringnumFinca = propagableData.models[contadorDatosRegistrales].data.numFinca.slice(0,numeroguion);
     				}else{
-    					stringnumFinca = propagableData.models[0].data.numFinca;
+    					stringnumFinca = propagableData.models[contadorDatosRegistrales].data.numFinca;
     				}
     				
     				var guion = '-';
@@ -3315,7 +3320,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     				stringnumUa = me.pad(stringnumUa,4);
     				
     				var res = stringnumFinca.concat(guion.concat(stringnumUa));
-    				propagableData.models[0].data.numFinca = res;
+    				propagableData.models[contadorDatosRegistrales].data.numFinca = res;
     			}
     			propagableData.id = activo.get("activoId");
     		}else if(Ext.isEmpty(targetGrid)) {
@@ -3450,7 +3455,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	propagableData = [];
     	var records = [],
     	models = [];
-    	
+    
     	if(form.saveMultiple) {
     		records = records.concat(form.getBindRecords()) 
     	} else {
@@ -3463,6 +3468,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	});
 
     	Ext.Array.each(tabData.models, function(model, index) {
+    		
     		var data = {},
     		modelHasData = false;
     		Ext.Array.each(camposPropagables[model.name], function(campo, index){
@@ -3748,6 +3754,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		    			method : 'POST',
 		        		params: {idActivo: idActivo},
 	    		    		success: function(response, opts){	
+	    		    	
 	    		    			var activosSeleccionados = Ext.decode(response.responseText).data.activosPropagables;
 	    		    			
 		    		    			if(me.getViewModel() != null){
@@ -3757,46 +3764,51 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		    								}
 		    							}
 		    						}
-		    		    			
-		    		    			var EsLaSuperficieMenor = true;
-		    		    			
-		    		    			var superficieConstruidaAcumulable =  parseFloat("0",10);
-		    		    			var superficieElementosComunesAcumulables= parseFloat("0",10);
-		    		    			var superficieParcelaAcumulable= parseFloat("0",10);
-		    		    			var superficieUtilAcumulable= parseFloat("0",10);
-		    		    			
-		    		    			for(var i = 0; i < activosSeleccionados.length; i++){
-		    		    				if(activosSeleccionados[i].superficieConstruida == undefined){
-		    		    					activosSeleccionados[i].superficieConstruida = parseFloat("0",10);
-		    		    				}
-		    		    				superficieConstruidaAcumulable = parseFloat(activosSeleccionados[i].superficieConstruida, 10) + superficieConstruidaAcumulable;
-		    		    				if(activosSeleccionados[i].superficieElementoComun == undefined){
-		    		    					activosSeleccionados[i].superficieElementoComun = parseFloat("0",10);
-		    		    				}
-		    		    				superficieElementosComunesAcumulables = parseFloat(activosSeleccionados[i].superficieElementoComun, 10) + superficieElementosComunesAcumulables;
-		    		    				if(activosSeleccionados[i].superficieParcela == undefined){
-		    		    					activosSeleccionados[i].superficieParcela = parseFloat("0",10);
-		    		    				}
-		    		    				superficieParcelaAcumulable += parseFloat(activosSeleccionados[i].superficieParcela, 10);
-		    		    				if(activosSeleccionados[i].superficieUtil == undefined){
-		    		    					activosSeleccionados[i].superficieUtil = parseFloat("0",10);
-		    		    				}
-		    		    				superficieUtilAcumulable += parseFloat(activosSeleccionados[i].superficieUtil, 10);
+		    		    		
+		    		    			var seCompruebanSueprficies = false;
+		    		    			if( tabData.models[0].name == "datosregistrales"){
+		    		    				seCompruebanSueprficies = true;
+		    		    				var EsLaSuperficieMenor = true;
 		    		    			}
 		    		    			
-		    		    			if(superficieConstruidaAcumulable > record.data.superficieConstruida){
-		    		    				EsLaSuperficieMenor = false;
-		    		    			}
-		    		    			if(superficieElementosComunesAcumulables > record.data.superficieElementosComunes){
-		    		    				EsLaSuperficieMenor = false;
-		    		    			}
-		    		    			if(superficieParcelaAcumulable > record.data.superficieParcela){
-		    		    				EsLaSuperficieMenor = false;
-		    		    			}	
-		    		    			if(superficieUtilAcumulable > record.data.superficieUtil){
-		    		    				EsLaSuperficieMenor = false;
-		    		    			}	
-		    		    			
+		    		    			if(seCompruebanSueprficies == true){
+			    		    			var superficieConstruidaAcumulable =  parseFloat("0",10);
+			    		    			var superficieElementosComunesAcumulables= parseFloat("0",10);
+			    		    			var superficieParcelaAcumulable= parseFloat("0",10);
+			    		    			var superficieUtilAcumulable= parseFloat("0",10);
+			    		    			
+			    		    			for(var i = 0; i < activosSeleccionados.length; i++){
+			    		    				if(activosSeleccionados[i].superficieConstruida == undefined){
+			    		    					activosSeleccionados[i].superficieConstruida = parseFloat("0",10);
+			    		    				}
+			    		    				superficieConstruidaAcumulable = parseFloat(activosSeleccionados[i].superficieConstruida, 10) + superficieConstruidaAcumulable;
+			    		    				if(activosSeleccionados[i].superficieElementoComun == undefined){
+			    		    					activosSeleccionados[i].superficieElementoComun = parseFloat("0",10);
+			    		    				}
+			    		    				superficieElementosComunesAcumulables = parseFloat(activosSeleccionados[i].superficieElementoComun, 10) + superficieElementosComunesAcumulables;
+			    		    				if(activosSeleccionados[i].superficieParcela == undefined){
+			    		    					activosSeleccionados[i].superficieParcela = parseFloat("0",10);
+			    		    				}
+			    		    				superficieParcelaAcumulable += parseFloat(activosSeleccionados[i].superficieParcela, 10);
+			    		    				if(activosSeleccionados[i].superficieUtil == undefined){
+			    		    					activosSeleccionados[i].superficieUtil = parseFloat("0",10);
+			    		    				}
+			    		    				superficieUtilAcumulable += parseFloat(activosSeleccionados[i].superficieUtil, 10);
+			    		    			}
+			    		    			
+			    		    			if(superficieConstruidaAcumulable > form.viewModel.linkData.datosRegistrales.data.superficieConstruida){
+			    		    				EsLaSuperficieMenor = false;
+			    		    			}
+			    		    			if(superficieElementosComunesAcumulables > form.viewModel.linkData.datosRegistrales.data.superficieElementosComunes){
+			    		    				EsLaSuperficieMenor = false;
+			    		    			}
+			    		    			if(superficieParcelaAcumulable > form.viewModel.linkData.datosRegistrales.data.superficieParcela){
+			    		    				EsLaSuperficieMenor = false;
+			    		    			}	
+			    		    			if(superficieUtilAcumulable > form.viewModel.linkData.datosRegistrales.data.superficieUtil){
+			    		    				EsLaSuperficieMenor = false;
+			    		    			}	
+	    		    				}
 		    		    			if(EsLaSuperficieMenor==false){
 		    		    				me.getView().fireEvent("errorToast", HreRem.i18n("msg.operacion.ko.propagar.ua.superficies"));
 		    		    				me.getView().unmask();
@@ -3805,7 +3817,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		    								tabPropagableData = me.createFormPropagableData(form, tabData);
 		    								if (!Ext.isEmpty(tabPropagableData)) {
 		    									// sacamos el activo actual del listado
-		    									//debugger;
+		    								
 		    									if(tabPropagableData.models[0].data.numFinca != undefined){
 		    										tabPropagableData.models[0].data.numFinca = me.pad(tabPropagableData.models[0].data.numFinca, 4);
 		    									}
@@ -3813,7 +3825,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
 		    									var activo = function(activo){return activo.activoId == me.getViewModel().get("activo.id")};
 		    									for(var cont=0; cont <activosSeleccionados.length; cont++){
 		    										activosSeleccionados[cont].esUnidadAlquilable=true;
-		    										//debugger;
+		    										
 		    									}
 		    									// Abrimos la ventana de selección de activos
 		    									var ventanaOpcionesPropagacionCambios = Ext.create("HreRem.view.activos.detalle.OpcionesPropagacionCambiosMatrizExpediente", {form: form, activoActual: activo, activos: activosSeleccionados, tabData: tabData, propagableData: tabPropagableData}).show();
@@ -4123,7 +4135,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     	var me = this;
     	var chkPerimetroAlquiler = me.getViewModel().get('patrimonio.chkPerimetroAlquiler');
     	var isRestringida = me.getViewModel().get('activo.pertenceAgrupacionRestringida');
-    	var activoChkPerimetroAlquiler = me.getViewModel().get('activo.activoChkPerimetroAlquiler');
+    	var activoChkPerimetroAlquiler = me.getViewModel().get('activo.checkHPM');
 
     	if(isRestringida == true && activoChkPerimetroAlquiler != chkPerimetroAlquiler){
     		Ext.Msg.confirm(

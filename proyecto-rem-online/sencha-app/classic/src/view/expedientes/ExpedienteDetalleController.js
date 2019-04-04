@@ -970,7 +970,6 @@ Ext.define('HreRem.view.expedientes.ExpedienteDetalleController', {
 			model = Ext.create('HreRem.model.FichaComprador'),
 			idExpediente = window.expediente.get("id"),
 			form = window.down('formBase');
-		
 		form.mask(HreRem.i18n("msg.mask.loading"));
 		
 		form.reset(true);
@@ -2400,7 +2399,6 @@ comprobarObligatoriedadRte: function(){
 
 		try{
 			var me = this;
-			
 			var venta = null;
 	    	if(me.getViewModel().get('expediente.tipoExpedienteCodigo') == null){
 	    		if (me.getViewModel().data.esOfertaVentaFicha == true){
@@ -2409,8 +2407,11 @@ comprobarObligatoriedadRte: function(){
 	    			venta = false;
 	    		}
 	    	}
+	    	
 	    	me.comprobarObligatoriedadRte();
-			campoEstadoCivil = me.lookupReference('estadoCivil'),
+			var comprador = me.getViewModel().get('comprador'),
+			codTipoPersona = me.lookupReference('tipoPersona'),
+	    	campoEstadoCivil = me.lookupReference('estadoCivil'),
 			campoRegEconomico = me.lookupReference('regimenMatrimonial'),
 			campoNumConyuge = me.lookupReference('numRegConyuge'),
 			campoTipoConyuge = me.lookupReference('tipoDocConyuge'),
@@ -2427,14 +2428,14 @@ comprobarObligatoriedadRte: function(){
 			//Si el expediente es de tipo alquiler
 			if(me.getViewModel().get('expediente.tipoExpedienteCodigo') == "02" || venta == false){
 				// Si el tipo de persona es FÍSICA, entonces el campos Estado civil es obligatorio y se habilitan campos dependientes.
-				if(me.lookupReference('tipoPersona').getValue() === "1" ) {
+				if((Ext.isEmpty(codTipoPersona.getValue()) && comprador.get('codTipoPersona') == "1") || codTipoPersona.getValue() === "1") {
 					if(!Ext.isEmpty(campoApellidos)){
 						campoApellidos.setDisabled(false);
 					}
 					if(!Ext.isEmpty(campoEstadoCivil)){
 						campoEstadoCivil.allowBlank = false;
 						//campoEstadoCivil.validate();
-						if(campoEstadoCivil.getValue() === "02") {
+						if((Ext.isEmpty(campoEstadoCivil.getValue()) && comprador.get('codEstadoCivil') === "02") || campoEstadoCivil.getValue() === "02") {
 							// Si el Estado civil es 'Casado', entonces Reg. económico es obligatorio.
 							if(!Ext.isEmpty(campoRegEconomico)){
 								campoRegEconomico.allowBlank = false;
@@ -2446,10 +2447,11 @@ comprobarObligatoriedadRte: function(){
 									//campoNumConyuge.validate();
 								}
 								if(!Ext.isEmpty(campoRegEconomico) && !Ext.isEmpty(campoNumConyuge)){
-									if(campoRegEconomico.getValue() === "01" || campoRegEconomico.getValue() === "03"){
+									if((Ext.isEmpty(campoRegEconomico.getValue()) && comprador.get('codigoRegimenMatrimonial') === "01" || comprador.get('codigoRegimenMatrimonial') === "03") 
+											|| campoRegEconomico.getValue() === "01" || campoRegEconomico.getValue() === "03"){
 										campoNumConyuge.allowBlank = false;
 										//campoNumConyuge.validate();
-									}else if(campoRegEconomico.getValue() === "02" ){
+									}else if((Ext.isEmpty(campoRegEconomico.getValue()) && comprador.get('codigoRegimenMatrimonial') === "02") || campoRegEconomico.getValue() === "02" ){
 										campoNumConyuge.allowBlank = true;
 									}
 								}
@@ -2497,7 +2499,7 @@ comprobarObligatoriedadRte: function(){
 			} else {
 
 				//Si el tipo de expediente es de tipo venta
-				if(me.lookupReference('tipoPersona').getValue() === "1" ) {
+				if((Ext.isEmpty(codTipoPersona.getValue()) && comprador.get('codTipoPersona') == "1") || codTipoPersona.getValue() === "1") {
 					
 					if(!Ext.isEmpty(campoNombreRte)){
 						campoNombreRte.allowBlank = true;
@@ -2522,13 +2524,13 @@ comprobarObligatoriedadRte: function(){
 					if(!Ext.isEmpty(campoEstadoCivil)){
 						campoEstadoCivil.allowBlank = false;
 						//campoEstadoCivil.validate();
-						if(campoEstadoCivil.getValue() === "02") {
+						if((Ext.isEmpty(campoEstadoCivil.getValue()) && comprador.get('codEstadoCivil') === "02") || campoEstadoCivil.getValue() === "02") {
 							// Si el Estado civil es 'Casado', entonces Reg. economica es obligatorio.
 							if(!Ext.isEmpty(campoRegEconomico)){
 								campoRegEconomico.allowBlank = false;
 								//campoRegEconomico.validate();
 								campoRegEconomico.setDisabled(false);
-								if(campoRegEconomico.getValue() == "01"){
+								if((Ext.isEmpty(campoRegEconomico.getValue()) && comprador.get('codigoRegimenMatrimonial') === "01") || campoRegEconomico.getValue() === "01"){
 									campoTipoConyuge.allowBlank = false;
 									campoNumConyuge.allowBlank = false;
 								}else{

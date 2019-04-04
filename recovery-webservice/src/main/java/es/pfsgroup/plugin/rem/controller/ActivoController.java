@@ -134,6 +134,7 @@ import es.pfsgroup.plugin.rem.model.VBusquedaActivos;
 import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaPublicacionActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDRatingActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoAgrupacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoHabitaculo;
 import es.pfsgroup.plugin.rem.rest.filter.RestRequestWrapper;
@@ -1181,6 +1182,14 @@ public class ActivoController extends ParadiseJsonController {
 			if (!success) {
 				model.put("errorCode", "msg.activo.gestores.noasignar.tramite.multiactivo");
 			}
+			
+			//si es activo matriz, debemos propagar a todas sus UA's
+			if(activoDao.isActivoMatriz(idActivo)) {
+				ActivoAgrupacion agr = activoDao.getAgrupacionPAByIdActivo(idActivo);
+				if(!Checks.esNulo(agr)) {
+					propagarCambiosGestoresUAs(agr.getId(), idActivo, usuarioGestor, tipoGestor, webDto, model);
+				}				
+			}
 
 		} catch (Exception e) {
 			logger.error("error en activoController", e);
@@ -1189,6 +1198,14 @@ public class ActivoController extends ParadiseJsonController {
 		}
 
 		return new ModelAndView("jsonView", model);
+	}
+
+	private void propagarCambiosGestoresUAs(Long idAgrupacionUAS, Long idActivo, Long usuarioGestor, Long tipoGestor,
+			WebDto webDto, ModelMap model) {
+		List<Activo> listaUAs = activoAgrupacionActivoDao.getListUAsByIdAgrupacion(idAgrupacionUAS);
+		for (Activo activo : listaUAs) {
+			insertarGestorAdicional(activo.getId(), usuarioGestor, tipoGestor, webDto, model);
+		}
 	}
 
 	@SuppressWarnings("unchecked")

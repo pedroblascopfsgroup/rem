@@ -289,7 +289,7 @@ public class ProveedoresManager extends BusinessOperationOverrider<ProveedoresAp
 
 		//Transforma la lista de la vista en una lista de proveedores
 		for(VBusquedaProveedoresActivo proveedorVB : listadoVBProveedores){
-			Filter filtroProveedor = genericDao.createFilter(FilterType.EQUALS, "id", proveedorVB.getId());
+			Filter filtroProveedor = genericDao.createFilter(FilterType.EQUALS, "id", proveedorVB.getIdFalso().getId());
 			listaProveedores.add(genericDao.get(ActivoProveedor.class, filtroProveedor));
 		}
 		

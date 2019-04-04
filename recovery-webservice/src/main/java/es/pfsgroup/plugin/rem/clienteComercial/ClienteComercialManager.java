@@ -50,6 +50,11 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 
 	@Autowired
 	private ClienteComercialDao clienteComercialDao;
+	
+	/*@Autowired
+	private OfertaApi ofertaApi;
+	
+	private final static String CLIENTE_HAYA = "HAYA";*/
 
 	@Override
 	public String managerName() {
@@ -642,18 +647,6 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 			ClienteComercial cliente = this.getClienteComercialByIdClienteWebcom(clienteDto.getIdClienteWebcom());
 			if (Checks.esNulo(cliente)) {
 				errorsList = restApi.validateRequestObject(clienteDto, TIPO_VALIDACION.INSERT);
-				//validamos los campos que dependen del tipo de persona
-				/*if (!Checks.esNulo(clienteDto.getCodTipoPersona())
-						&& clienteDto.getCodTipoPersona().equals(DDTiposPersona.CODIGO_TIPO_PERSONA_FISICA)) {
-					if(Checks.esNulo(clienteDto.getCodEstadoCivil())){
-						errorsList.put("codEstadoCivil", RestApi.REST_MSG_MISSING_REQUIRED);
-					}else if(clienteDto.getCodEstadoCivil().equals(DDEstadosCiviles.CODIGO_ESTADO_CIVIL_CASADO)){
-						if(Checks.esNulo(clienteDto.getCodRegimenMatrimonial())){
-							errorsList.put("codRegimenMatrimonial", RestApi.REST_MSG_MISSING_REQUIRED);
-						}
-					}
-				}*/
-				
 				if (errorsList.size() == 0) {
 					this.saveClienteComercial(clienteDto);
 				}
@@ -670,6 +663,7 @@ public class ClienteComercialManager extends BusinessOperationOverrider<ClienteC
 				map.put("idClienteWebcom", cliente.getIdClienteWebcom());
 				map.put("idClienteRem", cliente.getIdClienteRem());
 				map.put("success", true);
+				//ofertaApi.llamadaMaestroPersonas(cliente.getDocumento(), CLIENTE_HAYA);
 			} else {
 				map.put("idClienteWebcom", clienteDto.getIdClienteWebcom());
 				map.put("idClienteRem", clienteDto.getIdClienteRem());

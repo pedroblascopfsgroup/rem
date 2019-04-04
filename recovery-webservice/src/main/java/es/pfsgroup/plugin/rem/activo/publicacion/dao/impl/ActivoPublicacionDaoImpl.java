@@ -40,6 +40,7 @@ public class ActivoPublicacionDaoImpl extends AbstractEntityDao<ActivoPublicacio
 		dto.setPublicarVenta(entidad.getCheckPublicarVenta());
 		dto.setOcultarVenta(entidad.getCheckOcultarVenta());
 		dto.setMotivoPublicacion(entidad.getMotivoPublicacion());
+		dto.setMotivoPublicacionAlquiler(entidad.getMotivoPublicacionAlquiler());
 		dto.setPublicarSinPrecioVenta(entidad.getCheckSinPrecioVenta());
 		dto.setNoMostrarPrecioVenta(entidad.getCheckOcultarPrecioVenta());
 		

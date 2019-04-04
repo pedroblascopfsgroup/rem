@@ -14,6 +14,5 @@ public interface ClienteComercialDao extends AbstractDao<ClienteComercial, Long>
 	public List<ClienteComercial> getListaClientes(ClienteDto clienteDto);
 
 	void deleteTmpClienteByDocumento(String documento);
-	
 
 }

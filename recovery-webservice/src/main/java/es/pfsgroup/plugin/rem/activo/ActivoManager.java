@@ -108,7 +108,6 @@ import es.pfsgroup.plugin.rem.factory.TabActivoFactoryApi;
 import es.pfsgroup.plugin.rem.gestor.dao.GestorExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
 import es.pfsgroup.plugin.rem.gestorDocumental.dto.documentos.GestorDocToRecoveryAssembler;
-import es.pfsgroup.plugin.rem.jbpm.handler.ActivoComprobarDatosActionHandler;
 import es.pfsgroup.plugin.rem.jbpm.handler.notificator.impl.NotificatorServiceSancionOfertaAceptacionYRechazo;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjuntoActivo;
@@ -291,7 +290,6 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	private static final String AVISO_MENSAJE_MOTIVO_CALIFICACION = "activo.aviso.motivo.calificacion.duplicado";
 	private SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 	private BeanUtilNotNull beanUtilNotNull = new BeanUtilNotNull();
-	private static final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
 	
 
 	@Resource
@@ -706,7 +704,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	}
 	
 	private boolean doAceptaOferta(Oferta oferta) throws Exception{
-		boolean resultado = true;
+		boolean resultado = false;
 		List<Activo> listaActivos = new ArrayList<Activo>();
 		for (ActivoOferta activoOferta : oferta.getActivosOferta()) {
 			listaActivos.add(activoOferta.getPrimaryKey().getActivo());
@@ -731,7 +729,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				.dameValorDiccionarioByCod(DDEstadoOferta.class, dto.getCodigoEstadoOferta());
 
 		validateSaveOferta(dto, oferta, estadoOferta);
-
+		
 		oferta.setEstadoOferta(estadoOferta);
 
 		// Al aceptar la oferta, se crea el trabajo de sancion oferta y el
@@ -746,14 +744,12 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			resultado = doRechazaOferta(dto, oferta);
 		}
 		
+		
 		if(!resultado){
 			resultado = this.persistOferta(oferta);
 		}
 		
-		// HREOS-5146 Si deja crear una nueva oferta, debe dejar pasarla a congelada manualmente.
-		if (DDEstadoOferta.CODIGO_CONGELADA.equals(estadoOferta.getCodigo())) {
-			resultado = this.persistOferta(oferta);
-		}
+		
 
 		return resultado;
 	}
@@ -1200,7 +1196,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				compradorExpedienteNuevo.setBorrado(false);
 				
 				List<ClienteGDPR> clienteGDPR = genericDao.getList(ClienteGDPR.class,
-						genericDao.createFilter(FilterType.EQUALS, "cliente.id", oferta.getCliente().getId()));
+						genericDao.createFilter(FilterType.EQUALS, "numDocumento", oferta.getCliente().getDocumento())
+						,genericDao.createFilter(FilterType.EQUALS, "tipoDocumento.codigo", oferta.getCliente().getTipoDocumento().getCodigo()));
 				
 				if(clienteGDPR != null && clienteGDPR.size()>0){
 					compradorExpedienteNuevo.setDocumentoAdjunto(clienteGDPR.get(0).getAdjuntoComprador());
@@ -1252,7 +1249,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 								
 				// HREOS - 4937
 				List<ClienteGDPR> clienteGDPR = genericDao.getList(ClienteGDPR.class,
-						genericDao.createFilter(FilterType.EQUALS, "cliente.id", oferta.getCliente().getId()));
+						genericDao.createFilter(FilterType.EQUALS, "numDocumento", oferta.getCliente().getDocumento())
+						,genericDao.createFilter(FilterType.EQUALS, "tipoDocumento.codigo", oferta.getCliente().getTipoDocumento().getCodigo()));
+				
 				if (!Checks.estaVacio(clienteGDPR)) {
 					if (!Checks.esNulo(clienteGDPR.get(0).getCesionDatos())) {
 						nuevoComprador.setCesionDatos(clienteGDPR.get(0).getCesionDatos());
@@ -1262,6 +1261,9 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 					}
 					if (!Checks.esNulo(clienteGDPR.get(0).getTransferenciasInternacionales())) {
 						nuevoComprador.setTransferenciasInternacionales(clienteGDPR.get(0).getTransferenciasInternacionales());
+					}
+					if (!Checks.esNulo(oferta.getCliente().getIdPersonaHaya())) {
+						nuevoComprador.setIdPersonaHaya(new Long(oferta.getCliente().getIdPersonaHaya()));
 					}
 				}
 
@@ -1293,7 +1295,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				ClienteCompradorGDPR clienteCompradorGDPR = new ClienteCompradorGDPR();
 				clienteCompradorGDPR.setTipoDocumento(nuevoComprador.getTipoDocumento());
 				clienteCompradorGDPR.setNumDocumento(nuevoComprador.getDocumento());
-				if (!Checks.esNulo(clienteGDPR)) {
+				if(clienteGDPR != null && clienteGDPR.size()>0){
 					if (!Checks.esNulo(clienteGDPR.get(0).getCesionDatos())) {
 						clienteCompradorGDPR.setCesionDatos(clienteGDPR.get(0).getCesionDatos());
 					}
@@ -3288,10 +3290,28 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	}
 
 	public List<VBusquedaProveedoresActivo> getProveedorByActivo(Long idActivo) {
-		Filter filtro = genericDao.createFilter(FilterType.EQUALS, "idActivo", idActivo.toString());
-		List<VBusquedaProveedoresActivo> listadoProveedores = genericDao.getList(VBusquedaProveedoresActivo.class,
-				filtro);
-
+		
+		List<VBusquedaProveedoresActivo> listadoProveedores = null;
+		//si es activo matriz, hay que devolver los datos de todas sus UAS
+		if(activoDao.isActivoMatriz(idActivo)) {
+			ActivoAgrupacion agr = activoDao.getAgrupacionPAByIdActivo(idActivo);
+			if(!Checks.esNulo(agr)) {
+				List<Activo> listaUAs = activoAgrupacionActivoDao.getListUAsByIdAgrupacion(agr.getId());
+				List<String> listaIds = new ArrayList<String>(); 
+				listaIds.add(idActivo.toString());
+				for (Activo activo : listaUAs) {
+					listaIds.add(activo.getId().toString());
+				}
+				listadoProveedores = activoDao.getListProveedor(listaIds);
+			}else {
+				Filter filtro = genericDao.createFilter(FilterType.EQUALS, "idFalso.idActivo", idActivo.toString());
+				listadoProveedores = genericDao.getList(VBusquedaProveedoresActivo.class,filtro);
+			}
+		}else {
+			Filter filtro = genericDao.createFilter(FilterType.EQUALS, "idFalso.idActivo", idActivo.toString());
+			listadoProveedores = genericDao.getList(VBusquedaProveedoresActivo.class,filtro);
+		}
+		
 		return listadoProveedores;
 	}
 
@@ -5912,8 +5932,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 		Filter filterPVE = genericDao.createFilter(FilterType.EQUALS, "id", String.valueOf(idProveedor));
 		VBusquedaProveedoresActivo proveedorActivo = genericDao.get(VBusquedaProveedoresActivo.class, filterPVE);
 
-		if(!Checks.esNulo(proveedorActivo.getIdActivo())) {
-			return get(Long.parseLong(proveedorActivo.getIdActivo()));
+		if(!Checks.esNulo(proveedorActivo.getIdFalso().getIdActivo())) {
+			return get(Long.parseLong(proveedorActivo.getIdFalso().getIdActivo()));
 		} else {
 			return null;
 		}

@@ -130,8 +130,20 @@ public class DtoModificarCompradores {
 	private String descripcionPaisRte;
 	
 	private Boolean esBH;
+
+	private Boolean cesionDatos;
 	
+	private Boolean comunicacionTerceros;
+	
+	private Boolean transferenciasInternacionales;
+
 	private Boolean esCarteraBankia;
+	
+	private Boolean mostrarUrsus;
+	
+	private Boolean mostrarUrsusBh;
+	
+	private String descripcionTipoDocumentoConyuge;
 
 	public String getId() {
 		return id;
@@ -636,6 +648,29 @@ public class DtoModificarCompradores {
 	public void setEsBH(Boolean esBH) {
 		this.esBH = esBH;
 	}
+	public Boolean getCesionDatos() {
+		return cesionDatos;
+	}
+
+	public void setCesionDatos(Boolean cesionDatos) {
+		this.cesionDatos = cesionDatos;
+	}
+
+	public Boolean getComunicacionTerceros() {
+		return comunicacionTerceros;
+	}
+
+	public void setComunicacionTerceros(Boolean comunicacionTerceros) {
+		this.comunicacionTerceros = comunicacionTerceros;
+	}
+
+	public Boolean getTransferenciasInternacionales() {
+		return transferenciasInternacionales;
+	}
+
+	public void setTransferenciasInternacionales(Boolean transferenciasInternacionales) {
+		this.transferenciasInternacionales = transferenciasInternacionales;
+	}
 
 	public Boolean getEsCarteraBankia() {
 		return esCarteraBankia;
@@ -644,6 +679,30 @@ public class DtoModificarCompradores {
 	public void setEsCarteraBankia(Boolean esCarteraBankia) {
 		this.esCarteraBankia = esCarteraBankia;
 	}
+
+	public Boolean getMostrarUrsus() {
+		return mostrarUrsus;
+	}
+
+	public void setMostrarUrsus(Boolean mostrarUrsus) {
+		this.mostrarUrsus = mostrarUrsus;
+	}
+
+	public Boolean getMostrarUrsusBh() {
+		return mostrarUrsusBh;
+	}
+
+	public void setMostrarUrsusBh(Boolean mostrarUrsusBh) {
+		this.mostrarUrsusBh = mostrarUrsusBh;
+	}
+
+	public String getDescripcionTipoDocumentoConyuge() {
+		return descripcionTipoDocumentoConyuge;
+	}
+
+	public void setDescripcionTipoDocumentoConyuge(String descripcionTipoDocumentoConyuge) {
+		this.descripcionTipoDocumentoConyuge = descripcionTipoDocumentoConyuge;
+	}	
 	
 	
 

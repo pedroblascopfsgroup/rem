@@ -57,6 +57,7 @@ import es.pfsgroup.plugin.rem.model.DtoTrabajoListActivos;
 import es.pfsgroup.plugin.rem.model.HistoricoDestinoComercial;
 import es.pfsgroup.plugin.rem.model.PropuestaActivosVinculados;
 import es.pfsgroup.plugin.rem.model.VBusquedaActivosPrecios;
+import es.pfsgroup.plugin.rem.model.VBusquedaProveedoresActivo;
 import es.pfsgroup.plugin.rem.model.VBusquedaPublicacionActivo;
 import es.pfsgroup.plugin.rem.model.VOfertasActivosAgrupacion;
 import es.pfsgroup.plugin.rem.model.VOfertasTramitadasPendientesActivosAgrupacion;
@@ -1340,6 +1341,26 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 				
 			}
 		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<VBusquedaProveedoresActivo> getListProveedor(List<String> listaIds) {
+		String hql = " from VBusquedaProveedoresActivo acn ";
+		String ids = "";
+		HQLBuilder hb = new HQLBuilder(hql);
+		
+		for (int i = 0; i<listaIds.size();i++) {
+			ids+=listaIds.get(i);
+			if(i+1 != listaIds.size()){
+				ids+=", ";
+			}
+		}
+		hb.appendWhereIN("acn.idFalso.idActivo", ids);
+		
+
+		return (List<VBusquedaProveedoresActivo>) this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).list();
+
 	}
 
 }

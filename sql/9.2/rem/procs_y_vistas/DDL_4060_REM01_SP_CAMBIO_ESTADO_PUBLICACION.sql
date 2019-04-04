@@ -1146,6 +1146,36 @@ END IF;
               ,apu.USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''';
             EXECUTE IMMEDIATE V_MSQL;
         END IF;
+           V_MSQL :=' SELECT count(1) 
+            FROM ACT_ACTIVO act
+            INNER JOIN ACT_AGA_AGRUPACION_ACTIVO aga ON aga.ACT_ID = act.ACT_ID
+            WHERE act.ACT_ID = '||nACT_ID||' 
+            AND DD_SCM_ID = (SELECT DD_SCM_ID FROM DD_SCM_SITUACION_COMERCIAL WHERE DD_SCM_CODIGO = ''07'')
+            AND aga.AGA_PRINCIPAL = 1';
+          EXECUTE IMMEDIATE V_MSQL INTO V_AUX;
+          IF V_AUX > 0 THEN
+
+            V_MSQL :='MERGE INTO ACT_APU_ACTIVO_PUBLICACION apu
+              USING (
+              SELECT ACT_ID
+              FROM ACT_AGA_AGRUPACION_ACTIVO aga
+              INNER JOIN 
+              (SELECT AGR_ID 
+              FROM ACT_AGA_AGRUPACION_ACTIVO
+              WHERE ACT_ID = '||nACT_ID||' ) agaFilter ON aga.AGR_ID = agaFilter.AGR_ID
+              AND aga.AGA_PRINCIPAL = 1
+              ) filtroUAs ON (filtroUas.ACT_ID = apu.ACT_ID)
+              WHEN MATCHED 
+              THEN UPDATE SET 
+              apu.APU_CHECK_OCULTAR_A = 1
+              ,apu.DD_MTO_A_ID = (SELECT DD_MTO_ID FROM DD_MTO_MOTIVOS_OCULTACION WHERE DD_MTO_CODIGO = ''17'')
+              ,apu.APU_MOT_OCULTACION_MANUAL_A = 0
+              ,apu.FECHAMODIFICAR = SYSDATE
+              ,apu.USUARIOMODIFICAR = '''||pUSUARIOMODIFICAR||'''';
+            EXECUTE IMMEDIATE V_MSQL;
+        END IF;
+
+
         /**************/
         /*HISTORIFICAR*/
         /**************/

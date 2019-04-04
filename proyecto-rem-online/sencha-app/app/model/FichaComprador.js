@@ -17,6 +17,9 @@ Ext.define('HreRem.model.FichaComprador', {
 		    	name: 'idExpedienteComercial'
 		},
 		{
+				name: 'codTipoPersona'
+		},
+		{
 		    	name: 'descripcionTipoPersona'
 		},
 		{
@@ -161,6 +164,9 @@ Ext.define('HreRem.model.FichaComprador', {
 				name: 'riesgoReputacional'
 		},
 		{
+				name: 'codigoRegimenMatrimonial'
+		},
+		{
 				name: 'regimenMatrimonial'
 		},
 		{
@@ -193,7 +199,18 @@ Ext.define('HreRem.model.FichaComprador', {
 			type : 'boolean'
 		},
 		{
-    		name: 'esCarteraBankia'  		
+    		name: 'esCarteraBankia', 
+    		type : 'boolean'
+    			
+    	},
+    	{
+    		name: 'mostrarUrsus', 
+    		type : 'boolean'
+    			
+    	},
+    	{
+    		name: 'mostrarUrsusBh', 
+    		type : 'boolean'
     			
     	},
 		{
@@ -203,7 +220,7 @@ Ext.define('HreRem.model.FichaComprador', {
 			name: 'idDocAdjunto'
 		},
 		{
-        	name: 'cesionDatosHaya',
+        	name: 'cesionDatos',
         	type : 'boolean'
         },
         {

@@ -45,6 +45,7 @@ Ext.define('HreRem.view.activos.detalle.AdmisionCheckInfoActivo', {
 		            	fieldLabel:  HreRem.i18n('fieldlabel.admision.gestor.calidad'),
 		            	reference: 'nomGestorCalidad',
 		            	bind:		'{activoAdmision.nombreGestorSelloCalidad}'
+		 
 		            },  
 					{ 
 						xtype: 'datefieldbase',
@@ -53,8 +54,10 @@ Ext.define('HreRem.view.activos.detalle.AdmisionCheckInfoActivo', {
 						reference: 'fechaRevisionCalidad',
 						bind:		'{activoAdmision.fechaRevisionSelloCalidad}',
 						readOnly: true
+						
 					}
-				]        	
+				],
+				bind:{ disabled: '{activo.unidadAlquilable}'}
 		}, 
         {
 			xtype:'fieldsettable',
@@ -144,7 +147,8 @@ Ext.define('HreRem.view.activos.detalle.AdmisionCheckInfoActivo', {
 		            		value: '{activoAdmision.tipoUsoDestinoCodigo}'
 		            	}
 	                }			
-				]        	
+				],
+				bind:{ disabled: '{activo.unidadAlquilable}'}
         },             
         {      
 				xtype:'fieldsettable',
@@ -288,7 +292,8 @@ Ext.define('HreRem.view.activos.detalle.AdmisionCheckInfoActivo', {
 		                	maxLength: 5,
 		                	colspan: 2
 						}
-				]    
+				],
+				bind:{ disabled: '{activo.unidadAlquilable}'}
     	 },    	       
     	 {     
 				xtype:'fieldsettable',
@@ -370,7 +375,8 @@ Ext.define('HreRem.view.activos.detalle.AdmisionCheckInfoActivo', {
 							bind: '{datosRegistralesAdmision.folio}'
 		                }
 				        
-					]
+					],
+					bind:{ disabled: '{activo.unidadAlquilable}'}
                 
            
     		},
@@ -502,7 +508,8 @@ Ext.define('HreRem.view.activos.detalle.AdmisionCheckInfoActivo', {
 									}
 							]
 				        }
-					]
+					],
+					bind:{ disabled: '{activo.unidadAlquilable}'}
                 
     		},   		
            	{    
@@ -704,7 +711,8 @@ Ext.define('HreRem.view.activos.detalle.AdmisionCheckInfoActivo', {
 			                	bind: '{datosRegistralesAdmision.idAsunto}'
 			                }					
 						
-						]
+						],
+						bind:{ disabled: '{activo.unidadAlquilable}'}
                 
             		},
             		
@@ -758,7 +766,8 @@ Ext.define('HreRem.view.activos.detalle.AdmisionCheckInfoActivo', {
 							}
 						
 						
-						]
+						],
+						bind:{ disabled: '{activo.unidadAlquilable}'}
             
         			},       			
         			
@@ -807,10 +816,10 @@ Ext.define('HreRem.view.activos.detalle.AdmisionCheckInfoActivo', {
 	
 						
 						]
-            
         			}
            	
-			   ]
+			   ],
+				bind:{ disabled: '{activo.unidadAlquilable}'}
             },
                 		{    
                 
@@ -1068,14 +1077,13 @@ Ext.define('HreRem.view.activos.detalle.AdmisionCheckInfoActivo', {
 					        }
 					    ]
 					}
-				]
+				],
+				bind:{ disabled: '{activo.unidadAlquilable}'}
 			
 			}
         
         
         ];
-        
-        
         
    	 	me.callParent();    	
     	

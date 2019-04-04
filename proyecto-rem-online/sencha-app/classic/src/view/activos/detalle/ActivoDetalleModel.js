@@ -665,7 +665,7 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleModel', {
 			    	}
 		    	}
 		}]);
-				console.log(tiposDeOferta.getData());
+				
 				return tiposDeOferta;
 		},
 				

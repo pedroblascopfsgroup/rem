@@ -5,7 +5,9 @@ import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.Date;
+import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,17 +26,26 @@ import es.pfsgroup.framework.paradise.bulkUpload.liberators.MSVLiberator;
 import es.pfsgroup.framework.paradise.bulkUpload.model.MSVDDOperacionMasiva;
 import es.pfsgroup.framework.paradise.bulkUpload.model.ResultadoProcesarFila;
 import es.pfsgroup.framework.paradise.bulkUpload.utils.impl.MSVHojaExcel;
+import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
+import es.pfsgroup.framework.paradise.gestorEntidad.model.GestorEntidadHistorico;
 import es.pfsgroup.framework.paradise.utils.JsonViewerException;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBBien;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBInformacionRegistralBien;
 import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.NMBLocalizacionesBien;
+import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
+import es.pfsgroup.plugin.rem.adapter.ActivoAdapter;
 import es.pfsgroup.plugin.rem.adapter.AgrupacionAdapter;
 import es.pfsgroup.plugin.rem.adapter.GenericAdapter;
+import es.pfsgroup.plugin.rem.api.ActivoApi;
+import es.pfsgroup.plugin.rem.api.GestorActivoApi;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoInfoRegistral;
+import es.pfsgroup.plugin.rem.model.ActivoLocalizacion;
 import es.pfsgroup.plugin.rem.model.ActivoPublicacion;
+import es.pfsgroup.plugin.rem.model.DtoHistoricoMediador;
+import es.pfsgroup.plugin.rem.model.PerimetroActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionVenta;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
@@ -50,7 +61,13 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 	ProcessAdapter processAdapter;
 	
 	@Autowired
+	ActivoAdapter activoAdapter;
+	
+	@Autowired
 	private GenericABMDao genericDao;
+	
+	@Autowired
+	private ActivoDao activoDao;
 	
 	@Autowired
 	private MSVRawSQLDao rawDao;
@@ -60,7 +77,11 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 	
 	@Autowired
 	private AgrupacionAdapter agrupacionAdapter;
-
+	@Autowired 
+	ActivoApi activoApi;
+	@Autowired
+	private GestorActivoApi gestorActivoApi;
+	
 	@Override
 	public String getValidOperation() {
 		return MSVDDOperacionMasiva.CODE_FILE_BULKUPLOAD_AGRUPACION_PROMOCION_ALQUILER;
@@ -81,9 +102,64 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 		NMBBien bien = new NMBBien();
 		bien.setAuditoria(auditoria);
 		genericDao.save(Bien.class, bien);
-		
+
+		//-----Se obtiene el activo matriz de la agrupacion indicada en la carga masiva  para generar la plantilla de guardado de unidades alquilables.
+		Activo activoMatriz = null; 
+		if(!Checks.esNulo(exc.dameCelda(fila, 0))){
+			Long idAgrupacion = agrupacionAdapter.getAgrupacionIdByNumAgrupRem(Long.valueOf(exc.dameCelda(fila, 0)));
+			Long idActivoMatriz = activoDao.getIdActivoMatriz(idAgrupacion);
+			Filter f1 = genericDao.createFilter(FilterType.EQUALS, "id", idActivoMatriz);
+			activoMatriz = genericDao.get(Activo.class, f1);
+		}	
 		//-----Nueva Unidad alquilable (activo)
-		Activo unidadAlquilable = new Activo();
+		Activo unidadAlquilable = new Activo(); 
+		if (!Checks.esNulo(activoMatriz)) {    
+			//Insercion de datos Basicos del Activo Matriz a la unidad alquilable
+			if (!Checks.esNulo(activoMatriz.getBien())) {			
+				//Insercion bien
+				NMBBien bienMatriz = activoMatriz.getBien();
+				 
+				if (!Checks.esNulo(bienMatriz.getTipoBien()))
+					bien.setTipoBien(bienMatriz.getTipoBien());
+				if (!Checks.esNulo(bienMatriz.getParticipacion()))
+					bien.setParticipacion((bienMatriz.getParticipacion()));
+				if (!Checks.esNulo(bienMatriz.getTipoBien()))
+					bien.setTipoBien(bienMatriz.getTipoBien());
+				if (!Checks.esNulo(bienMatriz.getValorActual()))
+					bien.setValorActual(bienMatriz.getValorActual());
+				if (!Checks.esNulo(bienMatriz.getImporteCargas()))
+					bien.setImporteCargas(bienMatriz.getImporteCargas());
+				if (!Checks.esNulo(bienMatriz.getSuperficie()))
+					bien.setSuperficie(bienMatriz.getSuperficie());
+				if (!Checks.esNulo(bienMatriz.getPoblacion()))
+					bien.setPoblacion(bienMatriz.getPoblacion());
+				if (!Checks.esNulo(bienMatriz.getDatosRegistrales()))
+					bien.setDatosRegistrales(bienMatriz.getDatosRegistrales());
+				if (!Checks.esNulo(bienMatriz.getReferenciaCatastral()))
+					bien.setReferenciaCatastral(bienMatriz.getReferenciaCatastral());
+				if (!Checks.esNulo(bienMatriz.getDescripcionBien()))
+					bien.setDescripcionBien(bienMatriz.getDescripcionBien());
+				if (!Checks.esNulo(bienMatriz.getFechaVerificacion()))
+					bien.setFechaVerificacion(bienMatriz.getFechaVerificacion());
+				if (!Checks.esNulo(bienMatriz.getEmbargoProcedimiento()))
+					bien.setEmbargoProcedimiento(bienMatriz.getEmbargoProcedimiento());				
+				genericDao.save(Bien.class, bien);
+				unidadAlquilable.setBien(bien);				
+			}
+			if (!Checks.esNulo(activoMatriz.getTipoActivo())) {
+				unidadAlquilable.setTipoActivo(activoMatriz.getTipoActivo()); 
+			}			
+			if ( !Checks.esNulo(activoMatriz.getSubtipoActivo())){
+				unidadAlquilable.setSubtipoActivo(activoMatriz.getSubtipoActivo());
+			}
+			//Estado del activo
+			if ( !Checks.esNulo(activoMatriz.getEstadoActivo()))
+					unidadAlquilable.setEstadoActivo(activoMatriz.getEstadoActivo());
+			
+
+		}
+		
+		
 		Long newNumActivo = Long.valueOf(rawDao.getExecuteSQL("SELECT MAX(ACT_NUM_ACTIVO) + 1 FROM ACT_ACTIVO"));
 		Long newNumActivoRem = Long.valueOf(rawDao.getExecuteSQL("SELECT MAX(ACT_NUM_ACTIVO_REM) + 1 FROM ACT_ACTIVO"));
 		Filter tipoTituloFilter = genericDao.createFilter(FilterType.EQUALS, "codigo", DDTipoTituloActivo.UNIDAD_ALQUILABLE);
@@ -125,12 +201,12 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 			unidadAlquilable.setDescripcion(descripcion);
 		}
 		
-		genericDao.save(Activo.class, unidadAlquilable);
-		
+		genericDao.save(Activo.class, unidadAlquilable);	
+		 
 		//-----Nueva Publicacion
 		ActivoPublicacion nuevaPublicacion = new ActivoPublicacion();
 		nuevaPublicacion.setActivo(unidadAlquilable);
-		Filter epaFilter = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoPublicacionAlquiler.CODIGO_PUBLICADO_ALQUILER);
+		Filter epaFilter = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoPublicacionAlquiler.CODIGO_NO_PUBLICADO_ALQUILER);
 		DDEstadoPublicacionAlquiler estadoPublicacionAlquiler = genericDao.get(DDEstadoPublicacionAlquiler.class, epaFilter);
 		nuevaPublicacion.setEstadoPublicacionAlquiler(estadoPublicacionAlquiler);
 		Filter epvFilter = genericDao.createFilter(FilterType.EQUALS, "codigo", DDEstadoPublicacionVenta.CODIGO_NO_PUBLICADO_VENTA);
@@ -151,9 +227,90 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 		
 		genericDao.save(ActivoPublicacion.class, nuevaPublicacion);
 		
+		
+		//----Perimetro del activo matriz
+		
+		if (!Checks.esNulo(activoMatriz)) {
+			Filter f1 = genericDao.createFilter(FilterType.EQUALS, "activo.id", activoMatriz.getId());
+			PerimetroActivo perimetroActivoMatriz = genericDao.get(PerimetroActivo.class, f1);
+			if (!Checks.esNulo(perimetroActivoMatriz)) {  
+				PerimetroActivo perimetroActivoUnidadAlquilable = new PerimetroActivo();
+				perimetroActivoUnidadAlquilable.setActivo(unidadAlquilable);
+				perimetroActivoUnidadAlquilable.setAuditoria(auditoria);
+				if (!Checks.esNulo(perimetroActivoMatriz.getIncluidoEnPerimetro()))
+					perimetroActivoUnidadAlquilable.setIncluidoEnPerimetro(perimetroActivoMatriz.getIncluidoEnPerimetro());
+				
+				if (!Checks.esNulo(perimetroActivoMatriz.getAplicaTramiteAdmision()))
+					perimetroActivoUnidadAlquilable.setAplicaTramiteAdmision(perimetroActivoMatriz.getAplicaTramiteAdmision());
+				
+				if (!Checks.esNulo(perimetroActivoMatriz.getFechaAplicaTramiteAdmision()))
+					perimetroActivoUnidadAlquilable.setFechaAplicaTramiteAdmision(perimetroActivoMatriz.getFechaAplicaTramiteAdmision());
+				
+				if (!Checks.esNulo(perimetroActivoMatriz.getMotivoAplicaTramiteAdmision()))
+					perimetroActivoUnidadAlquilable.setMotivoAplicaTramiteAdmision(perimetroActivoMatriz.getMotivoAplicaTramiteAdmision());
+				
+				if (!Checks.esNulo(perimetroActivoMatriz.getAplicaGestion()))
+					perimetroActivoUnidadAlquilable.setAplicaGestion(perimetroActivoMatriz.getAplicaGestion());
+				
+				if (!Checks.esNulo(perimetroActivoMatriz.getFechaAplicaGestion()))
+					perimetroActivoUnidadAlquilable.setFechaAplicaGestion(perimetroActivoMatriz.getFechaAplicaGestion());
+				
+				if (!Checks.esNulo(perimetroActivoMatriz.getMotivoAplicaGestion()))
+					perimetroActivoUnidadAlquilable.setMotivoAplicaGestion(perimetroActivoMatriz.getMotivoAplicaGestion());
+				
+				if (!Checks.esNulo(perimetroActivoMatriz.getAplicaAsignarMediador()))
+					perimetroActivoUnidadAlquilable.setAplicaAsignarMediador(perimetroActivoMatriz.getAplicaAsignarMediador());
+				
+				if (!Checks.esNulo(perimetroActivoMatriz.getFechaAplicaAsignarMediador()))
+					perimetroActivoUnidadAlquilable.setFechaAplicaAsignarMediador(perimetroActivoMatriz.getFechaAplicaAsignarMediador());
+				
+				if (!Checks.esNulo(perimetroActivoMatriz.getMotivoAplicaAsignarMediador()))
+					perimetroActivoUnidadAlquilable.setMotivoAplicaAsignarMediador(perimetroActivoMatriz.getMotivoAplicaAsignarMediador());
+				
+				if (!Checks.esNulo(perimetroActivoMatriz.getAplicaComercializar()))
+					perimetroActivoUnidadAlquilable.setAplicaComercializar(perimetroActivoMatriz.getAplicaComercializar());
+				
+				if (!Checks.esNulo(perimetroActivoMatriz.getFechaAplicaComercializar()))
+					perimetroActivoUnidadAlquilable.setFechaAplicaComercializar(perimetroActivoMatriz.getFechaAplicaComercializar());
+				
+				if (!Checks.esNulo(perimetroActivoMatriz.getMotivoAplicaComercializar()))
+					perimetroActivoUnidadAlquilable.setMotivoAplicaComercializar(perimetroActivoMatriz.getMotivoAplicaComercializar());
+				
+				if (!Checks.esNulo(perimetroActivoMatriz.getAplicaFormalizar()))
+					perimetroActivoUnidadAlquilable.setAplicaFormalizar(perimetroActivoMatriz.getAplicaFormalizar());
+				
+				if (!Checks.esNulo(perimetroActivoMatriz.getFechaAplicaFormalizar()))
+					perimetroActivoUnidadAlquilable.setFechaAplicaFormalizar(perimetroActivoMatriz.getFechaAplicaFormalizar());
+				
+				if (!Checks.esNulo(perimetroActivoMatriz.getMotivoAplicaFormalizar()))
+					perimetroActivoUnidadAlquilable.setMotivoAplicaFormalizar(perimetroActivoMatriz.getMotivoAplicaFormalizar());
+				
+				if (!Checks.esNulo(perimetroActivoMatriz.getAplicaPublicar()))
+					perimetroActivoUnidadAlquilable.setAplicaPublicar(perimetroActivoMatriz.getAplicaPublicar());
+				
+				if (!Checks.esNulo(perimetroActivoMatriz.getFechaAplicaPublicar()))
+					perimetroActivoUnidadAlquilable.setFechaAplicaPublicar(perimetroActivoMatriz.getFechaAplicaPublicar());
+				
+				if (!Checks.esNulo(perimetroActivoMatriz.getMotivoAplicaPublicar()))
+					perimetroActivoUnidadAlquilable.setMotivoAplicaPublicar(perimetroActivoMatriz.getMotivoAplicaPublicar());
+				
+				
+				
+				genericDao.save(PerimetroActivo.class,perimetroActivoUnidadAlquilable);
+				
+				
+			}
+		}
+		
 		//-----Nuevo NMBInformacionRegistralBien (Superficie construida)
 		if(!Checks.esNulo(exc.dameCelda(fila, 11))){
+			Filter f1 = genericDao.createFilter(FilterType.EQUALS, "activo.id", activoMatriz.getId());
+			ActivoInfoRegistral infoRegistralActivoMatriz = genericDao.get(ActivoInfoRegistral.class, f1);
+			NMBInformacionRegistralBien bieInfoRegistralActivoMatriz = infoRegistralActivoMatriz.getInfoRegistralBien();
 			NMBInformacionRegistralBien bieInfoRegistral = new NMBInformacionRegistralBien();
+			String numUnidadAlquilable = Integer.toString(fila),
+			numFinca = "-"+StringUtils.leftPad(numUnidadAlquilable, 4, "0");
+			bieInfoRegistral.setNumFinca(bieInfoRegistralActivoMatriz.getNumFinca().concat(numFinca));
 			bieInfoRegistral.setBien(bien);
 			bieInfoRegistral.setSuperficieConstruida(BigDecimal.valueOf(Double.valueOf(exc.dameCelda(fila, 11))));
 			bieInfoRegistral.setAuditoria(auditoria);
@@ -169,7 +326,34 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 				genericDao.save(ActivoInfoRegistral.class, actInfoRegistral);
 			}
 		}
-		
+		//-----Insercion de gestores a la Unidad Alquilable
+		if (!Checks.esNulo(activoMatriz)) {
+			GestorEntidadDto gestorEntidadDto = new GestorEntidadDto();
+			gestorEntidadDto.setIdEntidad(activoMatriz.getId());
+			gestorEntidadDto.setTipoEntidad(GestorEntidadDto.TIPO_ENTIDAD_ACTIVO);
+			List<GestorEntidadHistorico> gestoresEntidad = gestorActivoApi
+					.getListGestoresActivosAdicionalesHistoricoData(gestorEntidadDto);
+			
+			for (GestorEntidadHistorico gestor : gestoresEntidad) {
+				String gestorCode = gestor.getTipoGestor().getCodigo();
+				if ( !gestorCode.equals("SUPADM") || !gestorCode.equals("GGADM") || !gestorCode.equals("GIAADMT")) {
+					//---- Se insertan los gestores				
+					GestorEntidadDto dtoGestores = new GestorEntidadDto();
+					dtoGestores.setIdEntidad(unidadAlquilable.getId());
+					dtoGestores.setIdTipoGestor(gestor.getTipoGestor().getId());
+					dtoGestores.setIdUsuario(gestor.getUsuario().getId());
+					activoAdapter.insertarGestorAdicional(dtoGestores);
+				}		
+			}
+		}
+		//------Insercion del api (Mediador)
+		if ( !Checks.esNulo(activoMatriz)) {
+			List<DtoHistoricoMediador> dtoHistoricoMediador = activoApi.getHistoricoMediadorByActivo(activoMatriz.getId());
+			for (DtoHistoricoMediador dto : dtoHistoricoMediador) {
+				dto.setIdActivo(unidadAlquilable.getId());
+				activoApi.createHistoricoMediador(dto);
+			}
+		}
 		//-----Nuevo ActivoAgrupacionActivo
 		if(!Checks.esNulo(exc.dameCelda(fila, 0))){
 			ActivoAgrupacionActivo activoAgrupacionActivo= new ActivoAgrupacionActivo();
@@ -202,7 +386,50 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 		//-----Nuevo NMBLocalizacionesBien
 		NMBLocalizacionesBien localizacion = new NMBLocalizacionesBien();
 		localizacion.setBien(bien);
-		
+		localizacion.setAuditoria(auditoria);
+		if (!Checks.esNulo(activoMatriz)) {
+			Long  idBieLocalizacionAM = activoMatriz.getBien().getId();
+			if (!Checks.esNulo(idBieLocalizacionAM)) {
+				Filter bieLoc = genericDao.createFilter(FilterType.EQUALS, "bien.id", idBieLocalizacionAM);
+				NMBLocalizacionesBien bieLocAM = genericDao.get(NMBLocalizacionesBien.class, bieLoc);
+				//Insercion de localizacion del activo matriz a la unidad alquilable
+				if (!Checks.esNulo(bieLocAM)){
+					if (!Checks.esNulo(bieLocAM.getPoblacion()))
+						localizacion.setPoblacion(bieLocAM.getPoblacion());
+					if (!Checks.esNulo(bieLocAM.getPoblacion()))
+						localizacion.setPoblacion(bieLocAM.getPoblacion());
+					if (!Checks.esNulo(bieLocAM.getDireccion()))
+						localizacion.setDireccion(bieLocAM.getDireccion());
+					if (!Checks.esNulo(bieLocAM.getCodPostal()))
+						localizacion.setCodPostal(bieLocAM.getCodPostal());
+					if (!Checks.esNulo(bieLocAM.getProvincia()))
+						localizacion.setProvincia(bieLocAM.getProvincia());
+					if (!Checks.esNulo(bieLocAM.getProvincia()))
+						localizacion.setProvincia(bieLocAM.getProvincia());
+					if (!Checks.esNulo(bieLocAM.getPortal()))
+						localizacion.setPortal(bieLocAM.getPortal());
+					if (!Checks.esNulo(bieLocAM.getBloque()))
+						localizacion.setBloque(bieLocAM.getBloque());
+					if (!Checks.esNulo(bieLocAM.getEscalera()))
+						localizacion.setEscalera(bieLocAM.getEscalera());
+					if (!Checks.esNulo(bieLocAM.getPiso()))
+						localizacion.setPiso(bieLocAM.getPiso());
+					if (!Checks.esNulo(bieLocAM.getPuerta()))
+						localizacion.setPuerta(bieLocAM.getPuerta());
+					if (!Checks.esNulo(bieLocAM.getBarrio()))
+						localizacion.setBarrio(bieLocAM.getBarrio());
+					if (!Checks.esNulo(bieLocAM.getPais()))
+						localizacion.setPais(bieLocAM.getPais());
+					if (!Checks.esNulo(bieLocAM.getLocalidad()))
+						localizacion.setLocalidad(bieLocAM.getLocalidad());
+					if (!Checks.esNulo(bieLocAM.getUnidadPoblacional()))
+						localizacion.setUnidadPoblacional(bieLocAM.getUnidadPoblacional());
+				}
+			}
+		}
+
+
+				
 		//-----Tipo de via
 		if(!Checks.esNulo(exc.dameCelda(fila, 5))){
 			String codTipoVia = exc.dameCelda(fila, 5);
@@ -243,7 +470,36 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 		
 		genericDao.save(NMBLocalizacionesBien.class, localizacion);
 		
+		//Localizacion (act_loc_localizacion)
+		Filter actLocFilter = genericDao.createFilter(FilterType.EQUALS, "activo.id", activoMatriz.getId());
+		ActivoLocalizacion actLocAM = genericDao.get(ActivoLocalizacion.class, actLocFilter);
+		ActivoLocalizacion actLocUA = new ActivoLocalizacion();
+		actLocUA.setActivo(unidadAlquilable);
+		if (!Checks.esNulo(actLocAM)) {
+			Long bienId = unidadAlquilable.getBien().getId();
+			Filter locUaFilter = genericDao.createFilter(FilterType.EQUALS, "bien.id", bienId);
+			NMBLocalizacionesBien localizacionUa = genericDao.get(NMBLocalizacionesBien.class, locUaFilter);
+			if (!Checks.esNulo(localizacionUa))
+				actLocUA.setLocalizacionBien(localizacionUa);
+			if (!Checks.esNulo(actLocAM.getLongitud()))
+				actLocUA.setLongitud(actLocAM.getLongitud());
+			if (!Checks.esNulo(actLocAM.getLongitud()))
+				actLocUA.setLongitud(actLocAM.getLongitud());
+			if (!Checks.esNulo(actLocAM.getLatitud()))
+				actLocUA.setLatitud(actLocAM.getLatitud());
+			if (!Checks.esNulo(actLocAM.getDistanciaPlaya()))
+				actLocUA.setDistanciaPlaya(actLocAM.getDistanciaPlaya());	
+			if (!Checks.esNulo(actLocAM.getTipoUbicacion()))
+				actLocUA.setTipoUbicacion(actLocAM.getTipoUbicacion());	
+		}
+		genericDao.save(ActivoLocalizacion.class, actLocUA);
+		actualizarEstadoPublicacion(activoMatriz);
 		return new ResultadoProcesarFila();
 	}
-
+	//HREOS-5902. Los registros de la fila son correctos. Se lanza el SP_CAMBIO_ESTADO_PUBLICACION.
+	private void actualizarEstadoPublicacion(Activo unidadAlquilable) {
+		@SuppressWarnings("unused")
+		boolean result = activoAdapter.actualizarEstadoPublicacionActivo(unidadAlquilable.getId());
+	}
+	
 }

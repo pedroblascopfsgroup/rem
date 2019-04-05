@@ -29,6 +29,7 @@ import es.capgemini.pfs.core.api.usuario.UsuarioApi;
 import es.capgemini.pfs.direccion.model.DDProvincia;
 import es.capgemini.pfs.direccion.model.Localidad;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
+import es.capgemini.pfs.persona.model.DDTipoPersona;
 import es.capgemini.pfs.procesosJudiciales.model.DDSiNo;
 import es.capgemini.pfs.procesosJudiciales.model.TareaExterna;
 import es.capgemini.pfs.users.domain.Usuario;
@@ -107,6 +108,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosReserva;
+import es.pfsgroup.plugin.rem.model.dd.DDPaises;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
 import es.pfsgroup.plugin.rem.model.dd.DDResultadoTanteo;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
@@ -121,6 +123,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDTipoOferta;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoPrecio;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposImpuesto;
+import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
 import es.pfsgroup.plugin.rem.oferta.dao.OfertaDao;
 import es.pfsgroup.plugin.rem.oferta.dao.VOfertaActivoDao;
 import es.pfsgroup.plugin.rem.proveedores.dao.ProveedoresDao;
@@ -820,7 +823,22 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 				titAdi.setTipoDocumento((DDTipoDocumento) genericDao.get(DDTipoDocumento.class,
 						genericDao.createFilter(FilterType.EQUALS, "codigo", titDto.getCodTipoDocumento())));
 				titAdi.setApellidos(titDto.getApellidos());
-				titAdi.setDireccion(titDto.getDireccion());
+				
+				String dir = "";
+				if (!Checks.esNulo(titDto.getCodTipoVia()))
+					dir = titDto.getCodTipoVia()+" ";
+				if (!Checks.esNulo(titDto.getNombreCalle()))
+					dir = dir.concat(titDto.getNombreCalle());
+				if (!Checks.esNulo(titDto.getNumeroCalle()))
+					dir = dir.concat(" "+titDto.getNumeroCalle());
+				if (!Checks.esNulo(titDto.getPuerta()))
+					dir = dir.concat(", pta "+titDto.getPuerta());
+				if (!Checks.esNulo(titDto.getPlanta()))
+					dir = dir.concat(", plta "+titDto.getPlanta());
+				if (!Checks.esNulo(titDto.getEscalera()))
+					dir = dir.concat(", esc "+titDto.getEscalera());
+				titAdi.setDireccion(dir);
+				
 				if (titDto.getCodigoMunicipio() != null) {
 					titAdi.setLocalidad((Localidad) genericDao.get(Localidad.class,
 							genericDao.createFilter(FilterType.EQUALS, "codigo", titDto.getCodigoMunicipio())));
@@ -834,14 +852,61 @@ public class OfertaManager extends BusinessOperationOverrider<OfertaApi> impleme
 					titAdi.setEstadoCivil((DDEstadosCiviles) genericDao.get(DDEstadosCiviles.class,
 							genericDao.createFilter(FilterType.EQUALS, "codigo", titDto.getCodigoEstadoCivil())));
 				}
-				if (titDto.getCodigoRegimenEconomico() != null) {
+				if (titDto.getCodRegimenMatrimonial() != null) {
 					titAdi.setRegimenMatrimonial((DDRegimenesMatrimoniales) genericDao.get(
 							DDRegimenesMatrimoniales.class,
-							genericDao.createFilter(FilterType.EQUALS, "codigo", titDto.getCodigoRegimenEconomico())));
+							genericDao.createFilter(FilterType.EQUALS, "codigo", titDto.getCodRegimenMatrimonial())));
 				}
 				titAdi.setRechazarCesionDatosPropietario(titDto.getRechazarCesionDatosPropietario());
 				titAdi.setRechazarCesionDatosProveedores(titDto.getRechazarCesionDatosProveedores());
 				titAdi.setRechazarCesionDatosPublicidad(titDto.getRechazarCesionDatosPublicidad());
+				
+				titAdi.setRazonSocial(titDto.getRazonSocial());
+				titAdi.setTelefono1(titDto.getTelefono1());
+				titAdi.setTelefono2(titDto.getTelefono2());
+				titAdi.setEmail(titDto.getEmail());
+				if (titDto.getConyugeTipoDocumento() != null) {
+					titAdi.setTipoDocumentoConyuge(genericDao.get(DDTipoDocumento.class,
+							genericDao.createFilter(FilterType.EQUALS, "codigo", titDto.getConyugeDocumento())));
+				}
+				titAdi.setDocumentoConyuge(titDto.getConyugeDocumento());
+				if (titDto.getCodTipoPersona() != null) {
+					titAdi.setTipoPersona(genericDao.get(DDTiposPersona.class,
+							genericDao.createFilter(FilterType.EQUALS, "codigo", titDto.getCodTipoPersona())));
+				}
+				if (!Checks.esNulo(titDto.getCodPais())) {
+					titAdi.setPais(genericDao.get(DDPaises.class, 
+							genericDao.createFilter(FilterType.EQUALS, "codigo", titDto.getCodPais())));
+				}
+				if (!Checks.esNulo(titDto.getCodTipoDocumentoRepresentante())) {
+					titAdi.setTipoDocumentoRepresentante(genericDao.get(DDTipoDocumento.class, 
+							genericDao.createFilter(FilterType.EQUALS, "codigo", titDto.getCodTipoDocumentoRepresentante())));
+				}
+				if (!Checks.esNulo(titDto.getDocumentoRepresentante())) {
+					titAdi.setDocumentoRepresentante(titDto.getDocumentoRepresentante());
+				}
+				if (!Checks.esNulo(titDto.getDireccionRepresentante())) {
+					titAdi.setDireccionRepresentante(titDto.getDireccionRepresentante());
+				}
+				if (!Checks.esNulo(titDto.getCodProvinciaRepresentante())) {
+					titAdi.setProvinciaRepresentante(genericDao.get(DDProvincia.class,
+							genericDao.createFilter(FilterType.EQUALS, "codigo", titDto.getCodProvinciaRepresentante())));
+				}
+				
+				if (!Checks.esNulo(titDto.getCodMunicipioRepresentante())) {
+					titAdi.setMunicipioRepresentante(genericDao.get(Localidad.class,
+							genericDao.createFilter(FilterType.EQUALS, "codigo", titDto.getCodMunicipioRepresentante())));
+				}
+				
+				if (!Checks.esNulo(titDto.getCodPaisRepresentante())) {
+					titAdi.setPaisRepresentante(genericDao.get(DDPaises.class, 
+							genericDao.createFilter(FilterType.EQUALS, "codigo", titDto.getCodPaisRepresentante())));
+				}
+				
+				if (!Checks.esNulo(titDto.getCodigoPostalRepresentante())) {
+					titAdi.setCodPostalRepresentante(titDto.getCodigoPostalRepresentante());
+				}
+				
 				listaTit.add(titAdi);			
 				genericDao.save(TitularesAdicionalesOferta.class, titAdi);
 			}

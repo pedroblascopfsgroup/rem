@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -43,6 +44,8 @@ import es.pfsgroup.plugin.rem.model.ActivoAgrupacion;
 import es.pfsgroup.plugin.rem.model.ActivoAgrupacionActivo;
 import es.pfsgroup.plugin.rem.model.ActivoInfoRegistral;
 import es.pfsgroup.plugin.rem.model.ActivoLocalizacion;
+import es.pfsgroup.plugin.rem.model.ActivoPatrimonio;
+import es.pfsgroup.plugin.rem.model.ActivoPropietarioActivo;
 import es.pfsgroup.plugin.rem.model.ActivoPublicacion;
 import es.pfsgroup.plugin.rem.model.DtoHistoricoMediador;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
@@ -51,6 +54,7 @@ import es.pfsgroup.plugin.rem.model.dd.DDEstadoPublicacionVenta;
 import es.pfsgroup.plugin.rem.model.dd.DDSituacionComercial;
 import es.pfsgroup.plugin.rem.model.dd.DDSubtipoActivo;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoActivo;
+import es.pfsgroup.plugin.rem.model.dd.DDTipoAlquiler;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoComercializacion;
 import es.pfsgroup.plugin.rem.model.dd.DDTipoTituloActivo;
 
@@ -152,11 +156,17 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 			if ( !Checks.esNulo(activoMatriz.getSubtipoActivo())){
 				unidadAlquilable.setSubtipoActivo(activoMatriz.getSubtipoActivo());
 			}
-			//Estado del activo
-			if ( !Checks.esNulo(activoMatriz.getEstadoActivo()))
+			//Estado del activo 
+			if ( !Checks.esNulo(activoMatriz.getEstadoActivo())) 
 					unidadAlquilable.setEstadoActivo(activoMatriz.getEstadoActivo());
+			if (!Checks.esNulo(activoMatriz.getCartera())) {
+					unidadAlquilable.setCartera(activoMatriz.getCartera());
+					if (!Checks.esNulo(activoMatriz.getSubcartera()))
+						unidadAlquilable.setSubcartera(activoMatriz.getSubcartera());
+			}
+			if (!Checks.esNulo(activoMatriz.getTipoAlquiler()))
+				unidadAlquilable.setTipoAlquiler(activoMatriz.getTipoAlquiler());
 			
-
 		}
 		
 		
@@ -194,15 +204,59 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 			DDSubtipoActivo subtipoActivo = genericDao.get(DDSubtipoActivo.class, subtipoFilter);
 			unidadAlquilable.setSubtipoActivo(subtipoActivo);
 		}
-		
+		 
 		//-----Descripcion
 		if(!Checks.esNulo(exc.dameCelda(fila, 4))){
 			String descripcion = exc.dameCelda(fila, 4);
 			unidadAlquilable.setDescripcion(descripcion);
 		}
-		
-		genericDao.save(Activo.class, unidadAlquilable);	
 		 
+		genericDao.save(Activo.class, unidadAlquilable);	  
+		 //-- Lista propietarios 
+		if (!Checks.estaVacio(activoMatriz.getPropietariosActivo())){  
+			List<ActivoPropietarioActivo> propietariosUA = new ArrayList<ActivoPropietarioActivo>();
+			List<ActivoPropietarioActivo> propietariosAM = activoMatriz.getPropietariosActivo();
+			//Bucle para evitar la Excepcion "Found shared references to a collection:"
+			for (ActivoPropietarioActivo propietarioAM : propietariosAM) {
+				ActivoPropietarioActivo nuevoPropietarioUA = new ActivoPropietarioActivo();
+				if (!Checks.esNulo(propietarioAM.getPorcPropiedad()))
+					nuevoPropietarioUA.setPorcPropiedad(propietarioAM.getPorcPropiedad());
+				if (!Checks.esNulo(propietarioAM.getPropietario()))
+					nuevoPropietarioUA.setPropietario(propietarioAM.getPropietario());
+				if (!Checks.esNulo(propietarioAM.getTipoGradoPropiedad()))
+					nuevoPropietarioUA.setTipoGradoPropiedad(propietarioAM.getTipoGradoPropiedad());
+					nuevoPropietarioUA.setActivo(unidadAlquilable);
+					nuevoPropietarioUA.setAuditoria(auditoria);
+					genericDao.save(ActivoPropietarioActivo.class, nuevoPropietarioUA);
+					propietariosUA.add(propietarioAM);
+			}
+			unidadAlquilable.setPropietariosActivo(propietariosUA);
+		}
+		
+		//--Patrimonio Unidad Alquilable
+		Filter patrimonioFilter = genericDao.createFilter(FilterType.EQUALS, "id", activoMatriz.getId());
+		ActivoPatrimonio patrimonioAm = genericDao.get(ActivoPatrimonio.class, patrimonioFilter);
+		ActivoPatrimonio patrimonioUa = new ActivoPatrimonio();
+		if (!Checks.esNulo(unidadAlquilable.getId())) {
+			patrimonioUa.setActivo(unidadAlquilable);
+			if (!Checks.esNulo(patrimonioAm.getAdecuacionAlquiler()))
+				patrimonioUa.setAdecuacionAlquiler(patrimonioAm.getAdecuacionAlquiler());
+			if (!Checks.esNulo(patrimonioAm.getAdecuacionAlquilerAnterior()))
+				patrimonioUa.setAdecuacionAlquilerAnterior(patrimonioAm.getAdecuacionAlquilerAnterior());
+			if (!Checks.esNulo(patrimonioAm.getCheckSubrogado()))
+				patrimonioUa.setCheckSubrogado(patrimonioAm.getCheckSubrogado());
+			if (!Checks.esNulo(patrimonioAm.getComboRentaAntigua()))
+				patrimonioUa.setComboRentaAntigua(patrimonioAm.getComboRentaAntigua());
+			if (!Checks.esNulo(patrimonioAm.getTipoEstadoAlquiler()))
+				patrimonioUa.setTipoEstadoAlquiler(patrimonioAm.getTipoEstadoAlquiler());
+			if (!Checks.esNulo(patrimonioAm.getTipoInquilino()))
+				patrimonioUa.setTipoInquilino(patrimonioAm.getTipoInquilino());
+			patrimonioUa.setAuditoria(auditoria);
+			patrimonioUa.setCheckHPM(true);
+			
+			genericDao.save(ActivoPatrimonio.class, patrimonioUa);
+		}
+		
 		//-----Nueva Publicacion
 		ActivoPublicacion nuevaPublicacion = new ActivoPublicacion();
 		nuevaPublicacion.setActivo(unidadAlquilable);
@@ -314,6 +368,10 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 			bieInfoRegistral.setBien(bien);
 			bieInfoRegistral.setSuperficieConstruida(BigDecimal.valueOf(Double.valueOf(exc.dameCelda(fila, 11))));
 			bieInfoRegistral.setAuditoria(auditoria);
+			if (!Checks.esNulo(bieInfoRegistralActivoMatriz.getLocalidad()))
+				bieInfoRegistral.setLocalidad(bieInfoRegistralActivoMatriz.getLocalidad());
+			if (!Checks.esNulo(bieInfoRegistralActivoMatriz.getProvincia()))
+				bieInfoRegistral.setProvincia(bieInfoRegistralActivoMatriz.getProvincia());	
 			genericDao.save(NMBInformacionRegistralBien.class, bieInfoRegistral);
 			
 			//-----Nuevo ActivoInfoRegistral (superficie util)
@@ -322,10 +380,30 @@ public class MSVActualizadorAgrupacionPromocionAlquiler extends AbstractMSVActua
 				actInfoRegistral.setActivo(unidadAlquilable);
 				actInfoRegistral.setSuperficieUtil(Float.valueOf(exc.dameCelda(fila, 12)));
 				actInfoRegistral.setInfoRegistralBien(bieInfoRegistral);
+				if (!Checks.esNulo(infoRegistralActivoMatriz.getIdufir()))
+					actInfoRegistral.setIdufir(infoRegistralActivoMatriz.getIdufir());
+				if (!Checks.esNulo(infoRegistralActivoMatriz.getHanCambiado()))
+					actInfoRegistral.setHanCambiado(infoRegistralActivoMatriz.getHanCambiado());
+				if (!Checks.esNulo(infoRegistralActivoMatriz.getLocalidadAnterior()))
+					actInfoRegistral.setLocalidadAnterior(infoRegistralActivoMatriz.getLocalidadAnterior());
+				if (!Checks.esNulo(infoRegistralActivoMatriz.getNumAnterior()))
+					actInfoRegistral.setNumAnterior(infoRegistralActivoMatriz.getNumAnterior());
+				if (!Checks.esNulo(infoRegistralActivoMatriz.getNumFincaAnterior()))
+					actInfoRegistral.setNumFincaAnterior(infoRegistralActivoMatriz.getNumFincaAnterior());
+				if (!Checks.esNulo(infoRegistralActivoMatriz.getDivHorInscrito()))
+					actInfoRegistral.setDivHorInscrito(infoRegistralActivoMatriz.getDivHorInscrito());
+				if (!Checks.esNulo(infoRegistralActivoMatriz.getEstadoDivHorizontal()))
+					actInfoRegistral.setEstadoDivHorizontal(infoRegistralActivoMatriz.getEstadoDivHorizontal());
+				if (!Checks.esNulo(infoRegistralActivoMatriz.getEstadoObraNueva()))
+					actInfoRegistral.setEstadoObraNueva(infoRegistralActivoMatriz.getEstadoObraNueva());
+				if (!Checks.esNulo(infoRegistralActivoMatriz.getFechaCfo()))
+					actInfoRegistral.setFechaCfo(infoRegistralActivoMatriz.getFechaCfo());
+				
 				actInfoRegistral.setAuditoria(auditoria);
 				genericDao.save(ActivoInfoRegistral.class, actInfoRegistral);
 			}
 		}
+		
 		//-----Insercion de gestores a la Unidad Alquilable
 		if (!Checks.esNulo(activoMatriz)) {
 			GestorEntidadDto gestorEntidadDto = new GestorEntidadDto();

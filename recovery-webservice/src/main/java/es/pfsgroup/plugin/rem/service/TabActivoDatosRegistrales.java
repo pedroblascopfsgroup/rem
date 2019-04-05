@@ -193,63 +193,6 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 			}
 		}
 		
-		if(esUA) {
-			if(!Checks.esNulo(activoMatriz.getInfoRegistral())) {
-				BeanUtils.copyProperties(activoDto, activoMatriz.getInfoRegistral().getInfoRegistralBien());
-				
-				if (!Checks.esNulo(activoMatriz.getInfoRegistral().getIdufir())) {
-					BeanUtils.copyProperty(activoDto, "idufir" , activoMatriz.getInfoRegistral().getIdufir());
-				}
-				
-				BeanUtils.copyProperty(activoDto, "numDepartamento" , !Checks.esNulo(activoMatriz.getInfoRegistral().getNumDepartamento()) ? activoMatriz.getInfoRegistral().getNumDepartamento() : 0);
-				
-				if (!Checks.esNulo(activo.getInfoRegistral().getHanCambiado())) {
-					BeanUtils.copyProperty(activoDto, "hanCambiado" , activoMatriz.getInfoRegistral().getHanCambiado());
-				}
-				
-				if (!Checks.esNulo(activo.getInfoRegistral().getInfoRegistralBien().getSuperficieConstruida())) {
-					BeanUtils.copyProperty(activoDto, "superficieConstruida" , activo.getInfoRegistral().getInfoRegistralBien().getSuperficieConstruida());
-				}
-
-				if (!Checks.esNulo(activoMatriz.getInfoRegistral().getEstadoDivHorizontal())) {
-					BeanUtils.copyProperty(activoDto, "estadoDivHorizontalCodigo", activoMatriz.getInfoRegistral().getEstadoDivHorizontal().getCodigo());
-				}
-				
-				if (Checks.esNulo(activoMatriz.getInfoRegistral().getDivHorInscrito())) {
-					activoDto.setDivHorInscrito(null);
-				}
-				
-				if (!Checks.esNulo(activoMatriz.getInfoRegistral().getEstadoObraNueva())) {
-					BeanUtils.copyProperty(activoDto, "estadoObraNuevaCodigo", activoMatriz.getInfoRegistral().getEstadoObraNueva().getCodigo());
-				}
-				
-				if (!Checks.esNulo(activoMatriz.getInfoRegistral().getFechaCfo())) {
-					BeanUtils.copyProperty(activoDto, "fechaCfo", activoMatriz.getInfoRegistral().getFechaCfo());
-				}
-				
-				if (!Checks.esNulo(activoMatriz.getInfoRegistral().getInfoRegistralBien()) && !Checks.esNulo(activoMatriz.getInfoRegistral().getInfoRegistralBien().getLocalidad())) {
-					BeanUtils.copyProperty(activoDto, "poblacionRegistro", activoMatriz.getInfoRegistral().getInfoRegistralBien().getLocalidad().getCodigo());
-				}
-	
-				if (!Checks.esNulo(activoMatriz.getInfoRegistral().getInfoRegistralBien()) && !Checks.esNulo(activoMatriz.getInfoRegistral().getInfoRegistralBien().getProvincia())) {
-					BeanUtils.copyProperty(activoDto, "provinciaRegistro", activoMatriz.getInfoRegistral().getInfoRegistralBien().getProvincia().getCodigo());
-				}
-				
-				if (!Checks.esNulo(activoMatriz.getInfoRegistral().getInfoRegistralBien()) && !Checks.esNulo(activoMatriz.getInfoRegistral().getLocalidadAnterior())) {
-					BeanUtils.copyProperty(activoDto, "localidadAnteriorCodigo", activoMatriz.getInfoRegistral().getLocalidadAnterior().getCodigo());
-				}
-				
-				if (!Checks.esNulo(activoMatriz.getTipoTitulo())) {
-					BeanUtils.copyProperty(activoDto, "tipoTituloCodigo", activoMatriz.getTipoTitulo().getCodigo());
-				}
-				if (!Checks.esNulo(activoMatriz.getSubtipoTitulo())) {
-					BeanUtils.copyProperty(activoDto, "subtipoTituloCodigo", activoMatriz.getSubtipoTitulo().getCodigo());
-				}
-				if (!Checks.esNulo(activoMatriz.getCartera())) {
-					BeanUtils.copyProperty(activoDto, "entidadPropietariaCodigo", activoMatriz.getCartera().getCodigo());
-				}
-			}
-		}else {
 			if (activo.getInfoRegistral() != null) {
 				BeanUtils.copyProperties(activoDto, activo.getInfoRegistral().getInfoRegistralBien());
 				
@@ -288,7 +231,6 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 				}
 				
 			}
-		}
 		
 		if(esUA) {
 			if (!Checks.esNulo(activoMatriz.getAdjJudicial())) {

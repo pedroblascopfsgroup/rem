@@ -19,13 +19,7 @@ Ext.define('HreRem.view.agrupaciones.detalle.AgrupacionDetalleModel', {
     	},
     	
     	existeActivoEnAgrupacion: function(get) {
-    		var activoMatriz=get('agrupacionficha.activoMatriz');
-    		if(get('agrupacionficha.numeroActivos') > 1 && (activoMatriz!== undefined || activoMatriz!==null || activoMatriz!=='')){
-    			return true;
-    		}
-    		else{
-    			return false;
-    		}	
+    		return get('agrupacionficha.numeroActivos') > 0;
     	},
     		
     	getSrcCartera: function(get) {

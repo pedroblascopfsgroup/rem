@@ -1,10 +1,10 @@
 --/*
 --##########################################
---## AUTOR=Sergio Salt 
---## FECHA_CREACION=20190114
+--## AUTOR=Juan Angel Sánchez
+--## FECHA_CREACION=20190405
 --## ARTEFACTO=online
 --## VERSION_ARTEFACTO=9.2
---## INCIDENCIA_LINK=HREOS-5231
+--## INCIDENCIA_LINK=HREOS-6004
 --## PRODUCTO=NO
 --## Finalidad: Vista para la búsqueda de agrupaciones.
 --##  
@@ -18,6 +18,7 @@
 --##		0.6 Nuevo campo en select (código e id del tipo de alquiler)
 --##		0.7 Corrección activos publicados (módulo publicaciones)
 --##		0.8 Borrada vista duplicada
+--##        0.9 Se modifica vista para que el AM no sea considerado activo en agrupaciones PA
 --##########################################
 --*/
 
@@ -76,15 +77,18 @@ BEGIN
 		    FROM '|| V_ESQUEMA ||'.ACT_AGR_AGRUPACION AGR
 		    JOIN '|| V_ESQUEMA ||'.DD_TAG_TIPO_AGRUPACION TAG ON TAG.DD_TAG_ID = AGR.DD_TAG_ID AND TAG.BORRADO = 0
 		    LEFT JOIN
-		      (SELECT SUM (1) ACTIVOS,
+		      (SELECT SUM (CASE WHEN TAGA.DD_TAG_CODIGO = ''16'' AND AGA.AGA_PRINCIPAL = 1 then 0 else 1 end) ACTIVOS,
 			    SUM (CASE
-		      WHEN EPA.DD_EPA_CODIGO = ''03'' OR EPV.DD_EPV_CODIGO = ''03''
+		      WHEN (EPA.DD_EPA_CODIGO = ''03'' AND (TAGA.DD_TAG_CODIGO <> ''16'' AND AGA.AGA_PRINCIPAL = 1)) OR (EPV.DD_EPV_CODIGO = ''03''  AND (TAGA.DD_TAG_CODIGO <> ''16'' AND AGA.AGA_PRINCIPAL = 1))
+			  OR (EPA.DD_EPA_CODIGO = ''03'' AND (TAGA.DD_TAG_CODIGO = ''16'' AND AGA.AGA_PRINCIPAL = 0)) OR (EPV.DD_EPV_CODIGO = ''03''  AND (TAGA.DD_TAG_CODIGO = ''16'' AND AGA.AGA_PRINCIPAL = 0))
 		      THEN 1
 		      ELSE 0
 		      END) PUBLICADOS,
 		      AGA.AGR_ID,
 		      CRA.DD_CRA_CODIGO
 		      FROM '|| V_ESQUEMA ||'.ACT_AGA_AGRUPACION_ACTIVO AGA
+			  JOIN '|| V_ESQUEMA ||'.ACT_AGR_AGRUPACION AGRU ON AGRU.AGR_ID = AGA.AGR_ID AND AGRU.BORRADO = 0  
+              JOIN '|| V_ESQUEMA ||'.DD_TAG_TIPO_AGRUPACION TAGA ON TAGA.DD_TAG_ID = AGRU.DD_TAG_ID AND TAGA.BORRADO = 0
 		      LEFT JOIN '|| V_ESQUEMA ||'.ACT_ACTIVO ACT ON ACT.ACT_ID = AGA.ACT_ID AND ACT.BORRADO = 0
 			    LEFT JOIN '|| V_ESQUEMA ||'.ACT_APU_ACTIVO_PUBLICACION ACT_APU ON ACT_APU.ACT_ID = AGA.ACT_ID AND ACT_APU.BORRADO = 0
 			    LEFT JOIN '|| V_ESQUEMA ||'.DD_EPA_ESTADO_PUB_ALQUILER EPA ON ACT_APU.DD_EPA_ID = EPA.DD_EPA_ID AND EPA.BORRADO = 0

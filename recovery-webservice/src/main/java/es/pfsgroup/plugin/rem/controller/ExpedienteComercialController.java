@@ -674,10 +674,10 @@ public class ExpedienteComercialController extends ParadiseJsonController {
 
 		} catch (GestorDocumentalException eGd) {
 			model.put(RESPONSE_SUCCESS_KEY, false);
-			model.put("errores", eGd.getMessage());
+			model.put("errorMessage", eGd.getMessage());
 		} catch (Exception e) {
 			model.put(RESPONSE_SUCCESS_KEY, false);
-			model.put("errores", e.getMessage());
+			model.put("errorMessage", e.getMessage());
 			logger.error("Error en ExpedienteComercialController", e);
 		}
 

@@ -15,6 +15,7 @@ import es.pfsgroup.plugin.recovery.nuevoModeloBienes.model.DDUnidadPoblacional;
 import es.pfsgroup.plugin.rem.api.services.webcom.dto.datatype.annotations.Diccionary;
 import es.pfsgroup.plugin.rem.model.ActivoProveedor;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadosCiviles;
+import es.pfsgroup.plugin.rem.model.dd.DDPaises;
 import es.pfsgroup.plugin.rem.model.dd.DDRegimenesMatrimoniales;
 import es.pfsgroup.plugin.rem.model.dd.DDTiposPersona;
 import es.pfsgroup.plugin.rem.rest.validator.groups.Insert;
@@ -124,6 +125,42 @@ public class ClienteDto implements Serializable{
 	private Boolean cesionDatos;
 	private Boolean comunicacionTerceros;
 	private Boolean transferenciasInternacionales;
+	
+	//REMVIP-3846
+	@Size(max=10,groups = { Insert.class, Update.class })
+	@Diccionary(clase = DDTipoDocumento.class, message = "El conyugeTipoDocumento no existe", groups = { Insert.class,
+			Update.class })
+	private String conyugeTipoDocumento;
+	
+	@Size(max=14,groups = { Insert.class, Update.class })
+	private String conyugeDocumento;
+	
+	@Size(max=5,groups = { Insert.class, Update.class })
+	@Diccionary(clase = DDPaises.class, message = "El codPais no existe", groups = { Insert.class,
+			Update.class })
+	private String codPais;
+	
+	@Size(max=100,groups = { Insert.class, Update.class })
+	private String direccionRepresentante;
+	
+	@Size(max=5,groups = { Insert.class, Update.class })
+	@Diccionary(clase = DDProvincia.class, message = "El codProvinciaRepresentante no existe", groups = { Insert.class,
+			Update.class })
+	private String codProvinciaRepresentante;
+	
+	@Size(max=5,groups = { Insert.class, Update.class })
+	@Diccionary(clase = Localidad.class, message = "El codMunicipioRepresentante no existe", groups = { Insert.class,
+			Update.class })
+	private String codMunicipioRepresentante;
+	
+	@Size(max=5,groups = { Insert.class, Update.class })
+	@Diccionary(clase = DDPaises.class, message = "El codPaisRepresentante no existe", groups = { Insert.class,
+			Update.class })
+	private String codPaisRepresentante;
+	
+	@Size(max=5,groups = { Insert.class, Update.class })
+	private String codigoPostalRepresentante;
+	
 	
 	public String getCodTipoPersona() {
 		return codTipoPersona;
@@ -341,5 +378,53 @@ public class ClienteDto implements Serializable{
 	}
 	public void setTransferenciasInternacionales(Boolean transferenciasInternacionales) {
 		this.transferenciasInternacionales = transferenciasInternacionales;
+	}
+	public String getConyugeTipoDocumento() {
+		return conyugeTipoDocumento;
+	}
+	public void setConyugeTipoDocumento(String conyugeTipoDocumento) {
+		this.conyugeTipoDocumento = conyugeTipoDocumento;
+	}
+	public String getConyugeDocumento() {
+		return conyugeDocumento;
+	}
+	public void setConyugeDocumento(String conyugeDocumento) {
+		this.conyugeDocumento = conyugeDocumento;
+	}
+	public String getCodPais() {
+		return codPais;
+	}
+	public void setCodPais(String codPais) {
+		this.codPais = codPais;
+	}
+	public String getDireccionRepresentante() {
+		return direccionRepresentante;
+	}
+	public void setDireccionRepresentante(String direccionRepresentante) {
+		this.direccionRepresentante = direccionRepresentante;
+	}
+	public String getCodProvinciaRepresentante() {
+		return codProvinciaRepresentante;
+	}
+	public void setCodProvinciaRepresentante(String codProvinciaRepresentante) {
+		this.codProvinciaRepresentante = codProvinciaRepresentante;
+	}
+	public String getCodMunicipioRepresentante() {
+		return codMunicipioRepresentante;
+	}
+	public void setCodMunicipioRepresentante(String codMunicipioRepresentante) {
+		this.codMunicipioRepresentante = codMunicipioRepresentante;
+	}
+	public String getCodPaisRepresentante() {
+		return codPaisRepresentante;
+	}
+	public void setCodPaisRepresentante(String codPaisRepresentante) {
+		this.codPaisRepresentante = codPaisRepresentante;
+	}
+	public String getCodigoPostalRepresentante() {
+		return codigoPostalRepresentante;
+	}
+	public void setCodigoPostalRepresentante(String codigoPostalRepresentante) {
+		this.codigoPostalRepresentante = codigoPostalRepresentante;
 	}
 }

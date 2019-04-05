@@ -142,6 +142,7 @@ import es.pfsgroup.plugin.rem.model.ActivoSituacionPosesoria;
 import es.pfsgroup.plugin.rem.model.ActivoTasacion;
 import es.pfsgroup.plugin.rem.model.ActivoTramite;
 import es.pfsgroup.plugin.rem.model.ActivoValoraciones;
+import es.pfsgroup.plugin.rem.model.ClienteComercial;
 import es.pfsgroup.plugin.rem.model.ClienteCompradorGDPR;
 import es.pfsgroup.plugin.rem.model.ClienteGDPR;
 import es.pfsgroup.plugin.rem.model.Comprador;
@@ -1120,13 +1121,14 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 	}
 
 	public boolean crearCompradores(Oferta oferta, ExpedienteComercial nuevoExpediente) {
-
-		if (!Checks.esNulo(oferta.getCliente())) {
+		ClienteComercial cliente = oferta.getCliente();
+		
+		if (!Checks.esNulo(cliente)) {
 			// Busca un comprador con el mismo dni que el cliente de la oferta
 			Comprador compradorBusqueda = null;
-			if (!Checks.esNulo(oferta.getCliente().getDocumento())) {
+			if (!Checks.esNulo(cliente.getDocumento())) {
 				Filter filtroComprador = genericDao.createFilter(FilterType.EQUALS, "documento",
-						oferta.getCliente().getDocumento());
+						cliente.getDocumento());
 				compradorBusqueda = genericDao.get(Comprador.class, filtroComprador);
 			}
 			List<CompradorExpediente> listaCompradoresExpediente = new ArrayList<CompradorExpediente>();
@@ -1150,7 +1152,7 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			 */
 			if (!Checks.estaVacio(oferta.getTitularesAdicionales())) {
 				for (TitularesAdicionalesOferta titularAdicional : oferta.getTitularesAdicionales()) {
-					if (!titularAdicional.getDocumento().equals(oferta.getCliente().getDocumento())) {
+					if (!titularAdicional.getDocumento().equals(cliente.getDocumento())) {
 						listaTitularesAdicionalesSinRepetirDocumento.add(titularAdicional);
 					}
 				}
@@ -1164,136 +1166,121 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 				parteCompraPrincipal = 100 - totalParteCompraAdicional;
 			}
 
-			// si ya existe un comprador con dicho dni, crea una nueva relación
-			// Comprador-Expediente
-			if (!Checks.esNulo(compradorBusqueda)) {
-
-				CompradorExpediente.CompradorExpedientePk pk = new CompradorExpediente.CompradorExpedientePk();
-				pk.setComprador(compradorBusqueda);
-				pk.setExpediente(nuevoExpediente);
-				compradorExpedienteNuevo.setPrimaryKey(pk);
-				compradorExpedienteNuevo.setTitularReserva(0);
-				compradorExpedienteNuevo.setTitularContratacion(1);
-				compradorExpedienteNuevo.setPorcionCompra(parteCompraPrincipal);
-				compradorExpedienteNuevo.setBorrado(false);
-				
-				List<ClienteGDPR> clienteGDPR = genericDao.getList(ClienteGDPR.class,
-						genericDao.createFilter(FilterType.EQUALS, "numDocumento", oferta.getCliente().getDocumento())
-						,genericDao.createFilter(FilterType.EQUALS, "tipoDocumento.codigo", oferta.getCliente().getTipoDocumento().getCodigo()));
-				
-				if(clienteGDPR != null && clienteGDPR.size()>0){
-					compradorExpedienteNuevo.setDocumentoAdjunto(clienteGDPR.get(0).getAdjuntoComprador());
-				}
-				
-				
-
-				listaCompradoresExpediente.add(compradorExpedienteNuevo);
-			} else { // Si no existe un comprador con dicho dni, lo crea, añade
-				// los datos posibles del cliente comercial y crea una
-				// nueva relación Comprador-Expediente
-
-				Comprador nuevoComprador = new Comprador();
-				nuevoComprador.setClienteComercial(oferta.getCliente());
-				nuevoComprador.setDocumento(oferta.getCliente().getDocumento());
-
-				if (!Checks.esNulo(oferta.getCliente().getTipoPersona()) && DDTipoPersona.CODIGO_TIPO_PERSONA_JURIDICA
-						.equals(oferta.getCliente().getTipoPersona().getCodigo())) {
-					nuevoComprador.setNombre(oferta.getCliente().getRazonSocial());
-					compradorExpedienteNuevo.setNombreRepresentante(oferta.getCliente().getNombre());
-					compradorExpedienteNuevo.setApellidosRepresentante(oferta.getCliente().getApellidos());
-					compradorExpedienteNuevo
-							.setTipoDocumentoRepresentante(oferta.getCliente().getTipoDocumentoRepresentante());
-					compradorExpedienteNuevo.setDocumentoRepresentante(oferta.getCliente().getDocumentoRepresentante());
-
-				} else {
-					nuevoComprador.setNombre(oferta.getCliente().getNombre());
-					nuevoComprador.setApellidos(oferta.getCliente().getApellidos());
-				}
-
-				nuevoComprador.setTipoDocumento(oferta.getCliente().getTipoDocumento());
-				nuevoComprador.setTelefono1(oferta.getCliente().getTelefono1());
-				nuevoComprador.setTelefono2(oferta.getCliente().getTelefono2());
-				nuevoComprador.setEmail(oferta.getCliente().getEmail());
-				nuevoComprador.setDireccion(oferta.getCliente().getDireccion());
-
-				if (!Checks.esNulo(oferta.getCliente().getMunicipio())) {
-					nuevoComprador.setLocalidad(oferta.getCliente().getMunicipio());
-				}
-				if (!Checks.esNulo(oferta.getCliente().getProvincia())) {
-					nuevoComprador.setProvincia(oferta.getCliente().getProvincia());
-				}
-
-				nuevoComprador.setCodigoPostal(oferta.getCliente().getCodigoPostal());
-
-				if (!Checks.esNulo(oferta.getCliente().getTipoPersona())) {
-					nuevoComprador.setTipoPersona(oferta.getCliente().getTipoPersona());
-				}
-								
-				// HREOS - 4937
-				List<ClienteGDPR> clienteGDPR = genericDao.getList(ClienteGDPR.class,
-						genericDao.createFilter(FilterType.EQUALS, "numDocumento", oferta.getCliente().getDocumento())
-						,genericDao.createFilter(FilterType.EQUALS, "tipoDocumento.codigo", oferta.getCliente().getTipoDocumento().getCodigo()));
-				
-				if (!Checks.estaVacio(clienteGDPR)) {
-					if (!Checks.esNulo(clienteGDPR.get(0).getCesionDatos())) {
-						nuevoComprador.setCesionDatos(clienteGDPR.get(0).getCesionDatos());
-					}
-					if (!Checks.esNulo(clienteGDPR.get(0).getComunicacionTerceros())) {
-						nuevoComprador.setComunicacionTerceros(clienteGDPR.get(0).getComunicacionTerceros());
-					}
-					if (!Checks.esNulo(clienteGDPR.get(0).getTransferenciasInternacionales())) {
-						nuevoComprador.setTransferenciasInternacionales(clienteGDPR.get(0).getTransferenciasInternacionales());
-					}
-					if (!Checks.esNulo(oferta.getCliente().getIdPersonaHaya())) {
-						nuevoComprador.setIdPersonaHaya(new Long(oferta.getCliente().getIdPersonaHaya()));
-					}
-				}
-
-				genericDao.save(Comprador.class, nuevoComprador);
-
-				CompradorExpedientePk pk = new CompradorExpedientePk();
-				pk.setComprador(nuevoComprador);
-				pk.setExpediente(nuevoExpediente);
-				compradorExpedienteNuevo.setPrimaryKey(pk);
-				compradorExpedienteNuevo.setTitularReserva(0);
-				compradorExpedienteNuevo.setTitularContratacion(1);
-				compradorExpedienteNuevo.setPorcionCompra(parteCompraPrincipal);
-				compradorExpedienteNuevo.setBorrado(false);
-
-				if (!Checks.esNulo(oferta.getCliente().getEstadoCivil())) {
-					compradorExpedienteNuevo.setEstadoCivil(oferta.getCliente().getEstadoCivil());
-				}
-				if (!Checks.esNulo(oferta.getCliente().getRegimenMatrimonial())) {
-					compradorExpedienteNuevo.setRegimenMatrimonial(oferta.getCliente().getRegimenMatrimonial());
-				}
-				
-				if(clienteGDPR != null && clienteGDPR.size() > 0){
-					compradorExpedienteNuevo.setDocumentoAdjunto(clienteGDPR.get(0).getAdjuntoComprador());
-				}				
-
-				listaCompradoresExpediente.add(compradorExpedienteNuevo);
-								
-				// HREOS - 4937 - Historificando				
-				ClienteCompradorGDPR clienteCompradorGDPR = new ClienteCompradorGDPR();
-				clienteCompradorGDPR.setTipoDocumento(nuevoComprador.getTipoDocumento());
-				clienteCompradorGDPR.setNumDocumento(nuevoComprador.getDocumento());
-				if(clienteGDPR != null && clienteGDPR.size()>0){
-					if (!Checks.esNulo(clienteGDPR.get(0).getCesionDatos())) {
-						clienteCompradorGDPR.setCesionDatos(clienteGDPR.get(0).getCesionDatos());
-					}
-					if (!Checks.esNulo(clienteGDPR.get(0).getComunicacionTerceros())) {
-						clienteCompradorGDPR.setComunicacionTerceros(clienteGDPR.get(0).getComunicacionTerceros());
-					}
-					if (!Checks.esNulo(clienteGDPR.get(0).getTransferenciasInternacionales())) {
-						clienteCompradorGDPR.setTransferenciasInternacionales(clienteGDPR.get(0).getTransferenciasInternacionales());								
-					}
-					if (!Checks.esNulo(clienteGDPR.get(0).getAdjuntoComprador())) {
-						clienteCompradorGDPR.setAdjuntoComprador(clienteGDPR.get(0).getAdjuntoComprador());
-					}
-				}				
-				genericDao.save(ClienteCompradorGDPR.class, clienteCompradorGDPR);				
-				
+			if (Checks.esNulo(compradorBusqueda)) {
+				compradorBusqueda = new Comprador();
+				compradorBusqueda.setClienteComercial(cliente);
+				compradorBusqueda.setDocumento(cliente.getDocumento());
 			}
+
+			if (!Checks.esNulo(cliente.getTipoPersona()) && DDTipoPersona.CODIGO_TIPO_PERSONA_JURIDICA
+					.equals(cliente.getTipoPersona().getCodigo())) {
+				compradorBusqueda.setNombre(cliente.getRazonSocial());
+				compradorExpedienteNuevo.setNombreRepresentante(cliente.getNombre());
+				compradorExpedienteNuevo.setApellidosRepresentante(cliente.getApellidos());
+				compradorExpedienteNuevo
+						.setTipoDocumentoRepresentante(cliente.getTipoDocumentoRepresentante());
+				compradorExpedienteNuevo.setDocumentoRepresentante(cliente.getDocumentoRepresentante());
+
+			} else {
+				compradorBusqueda.setNombre(cliente.getNombre());
+				compradorBusqueda.setApellidos(cliente.getApellidos());
+			}
+
+			if (!Checks.esNulo(cliente.getTipoDocumento())) {
+				compradorBusqueda.setTipoDocumento(cliente.getTipoDocumento());
+			}
+			if (!Checks.esNulo(cliente.getTelefono1())) {
+				compradorBusqueda.setTelefono1(cliente.getTelefono1());
+			}
+			if (!Checks.esNulo(cliente.getTelefono2())) {
+				compradorBusqueda.setTelefono2(cliente.getTelefono2());
+			}
+			if (!Checks.esNulo(cliente.getEmail())) {
+				compradorBusqueda.setEmail(cliente.getEmail());
+			}
+			if (!Checks.esNulo(cliente.getDireccion())) {
+				compradorBusqueda.setDireccion(cliente.getDireccion());
+			}
+
+			if (!Checks.esNulo(cliente.getMunicipio())) {
+				compradorBusqueda.setLocalidad(cliente.getMunicipio());
+			}
+			if (!Checks.esNulo(cliente.getProvincia())) {
+				compradorBusqueda.setProvincia(cliente.getProvincia());
+			}
+
+			if (!Checks.esNulo(cliente.getCodigoPostal())) {
+				compradorBusqueda.setCodigoPostal(cliente.getCodigoPostal());
+			}
+
+			if (!Checks.esNulo(cliente.getTipoPersona())) {
+				compradorBusqueda.setTipoPersona(cliente.getTipoPersona());
+			}
+			
+			//CHECKS GDPR
+			if (!Checks.esNulo(cliente.getCesionDatos())) {
+				compradorBusqueda.setCesionDatos(cliente.getCesionDatos());
+			}
+			if (!Checks.esNulo(cliente.getComunicacionTerceros())) {
+				compradorBusqueda.setComunicacionTerceros(cliente.getComunicacionTerceros());
+			}
+			if (!Checks.esNulo(cliente.getTransferenciasInternacionales())) {
+				compradorBusqueda.setTransferenciasInternacionales(cliente.getTransferenciasInternacionales());
+			}
+			if (!Checks.esNulo(cliente.getIdPersonaHaya())) {
+				compradorBusqueda.setIdPersonaHaya(new Long(cliente.getIdPersonaHaya()));
+			}
+
+			genericDao.save(Comprador.class, compradorBusqueda);
+			
+			CompradorExpediente.CompradorExpedientePk pk = new CompradorExpediente.CompradorExpedientePk();
+			pk.setComprador(compradorBusqueda);
+			pk.setExpediente(nuevoExpediente);
+			compradorExpedienteNuevo.setPrimaryKey(pk);
+			compradorExpedienteNuevo.setTitularReserva(0);
+			compradorExpedienteNuevo.setTitularContratacion(1);
+			compradorExpedienteNuevo.setPorcionCompra(parteCompraPrincipal);
+			compradorExpedienteNuevo.setBorrado(false);
+			compradorExpedienteNuevo.setEstadoCivil(cliente.getEstadoCivil());
+			compradorExpedienteNuevo.setRegimenMatrimonial(cliente.getRegimenMatrimonial());
+			compradorExpedienteNuevo.setTipoDocumentoConyuge(cliente.getTipoDocumentoConyuge());
+			compradorExpedienteNuevo.setDocumentoConyuge(cliente.getDocumentoConyuge());
+			compradorExpedienteNuevo.setPais(cliente.getPais());
+			compradorExpedienteNuevo.setDireccionRepresentante(cliente.getDireccionRepresentante());
+			compradorExpedienteNuevo.setProvinciaRepresentante(cliente.getProvinciaRepresentante());
+			compradorExpedienteNuevo.setLocalidadRepresentante(cliente.getMunicipioRepresentante());
+			compradorExpedienteNuevo.setPaisRte(cliente.getPaisRepresentante());
+			compradorExpedienteNuevo.setCodigoPostalRepresentante(cliente.getCodigoPostalRepresentante());
+			
+			List<ClienteGDPR> clienteGDPR = genericDao.getList(ClienteGDPR.class,
+					genericDao.createFilter(FilterType.EQUALS, "numDocumento", cliente.getDocumento())
+					,genericDao.createFilter(FilterType.EQUALS, "tipoDocumento.codigo", cliente.getTipoDocumento().getCodigo()));
+			
+			if (clienteGDPR != null && !clienteGDPR.isEmpty()){
+				compradorExpedienteNuevo.setDocumentoAdjunto(clienteGDPR.get(0).getAdjuntoComprador());
+			}
+			
+			listaCompradoresExpediente.add(compradorExpedienteNuevo);
+			
+			// HREOS - 4937 - Historificando				
+			ClienteCompradorGDPR clienteCompradorGDPR = new ClienteCompradorGDPR();
+			clienteCompradorGDPR.setTipoDocumento(compradorBusqueda.getTipoDocumento());
+			clienteCompradorGDPR.setNumDocumento(compradorBusqueda.getDocumento());
+			if(!Checks.esNulo(clienteGDPR) && !clienteGDPR.isEmpty()){
+				if (!Checks.esNulo(clienteGDPR.get(0).getCesionDatos())) {
+					clienteCompradorGDPR.setCesionDatos(clienteGDPR.get(0).getCesionDatos());
+				}
+				if (!Checks.esNulo(clienteGDPR.get(0).getComunicacionTerceros())) {
+					clienteCompradorGDPR.setComunicacionTerceros(clienteGDPR.get(0).getComunicacionTerceros());
+				}
+				if (!Checks.esNulo(clienteGDPR.get(0).getTransferenciasInternacionales())) {
+					clienteCompradorGDPR.setTransferenciasInternacionales(clienteGDPR.get(0).getTransferenciasInternacionales());								
+				}
+				if (!Checks.esNulo(clienteGDPR.get(0).getAdjuntoComprador())) {
+					clienteCompradorGDPR.setAdjuntoComprador(clienteGDPR.get(0).getAdjuntoComprador());
+				}
+			}				
+			genericDao.save(ClienteCompradorGDPR.class, clienteCompradorGDPR);
 
 			// Se recorre todos los titulares adicionales, estos tambien se
 			// crean como compradores y su relacion Comprador-Expediente con la
@@ -1302,94 +1289,126 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 			// decirlo de alguna forma son "Compradores secundarios"
 			for (TitularesAdicionalesOferta titularAdicional : listaTitularesAdicionalesSinRepetirDocumento) {
 
-				// TODO: Dani: Si el comprador adicional viene sin documento, lo
-				// descartamos
 				if (!Checks.esNulo(titularAdicional.getDocumento())) {
 					Filter filtroCompradorAdicional = genericDao.createFilter(FilterType.EQUALS, "documento",
 							titularAdicional.getDocumento());
 					Comprador compradorBusquedaAdicional = genericDao.get(Comprador.class, filtroCompradorAdicional);
-
-					if (!Checks.esNulo(compradorBusquedaAdicional)) {
-						CompradorExpediente compradorExpedienteAdicionalNuevo = new CompradorExpediente();
-						CompradorExpedientePk pk = new CompradorExpedientePk();
-
-						pk.setComprador(compradorBusquedaAdicional);
-						pk.setExpediente(nuevoExpediente);
-						compradorExpedienteAdicionalNuevo.setPrimaryKey(pk);
-						compradorExpedienteAdicionalNuevo.setBorrado(false);
-						compradorExpedienteAdicionalNuevo.setTitularReserva(1);
-						compradorExpedienteAdicionalNuevo.setTitularContratacion(0);
-						compradorExpedienteAdicionalNuevo.setPorcionCompra(parteCompraAdicionales);
-
-						listaCompradoresExpediente.add(compradorExpedienteAdicionalNuevo);
+					compradorExpedienteNuevo = new CompradorExpediente();
+					
+					if (Checks.esNulo(compradorBusquedaAdicional)) {
+						compradorBusquedaAdicional = new Comprador();
+						compradorBusquedaAdicional.setDocumento(titularAdicional.getDocumento());
+					}
+						
+					if (!Checks.esNulo(titularAdicional.getTipoPersona()) && DDTipoPersona.CODIGO_TIPO_PERSONA_JURIDICA
+							.equals(titularAdicional.getTipoPersona().getCodigo())) {
+						compradorBusquedaAdicional.setNombre(titularAdicional.getRazonSocial());
+						compradorExpedienteNuevo.setNombreRepresentante(titularAdicional.getNombre());
+						compradorExpedienteNuevo.setApellidosRepresentante(titularAdicional.getApellidos());
+						compradorExpedienteNuevo
+								.setTipoDocumentoRepresentante(titularAdicional.getTipoDocumentoRepresentante());
+						compradorExpedienteNuevo.setDocumentoRepresentante(titularAdicional.getDocumentoRepresentante());
 
 					} else {
-						ClienteGDPR cliGDPR = null;
-						List<ClienteGDPR> cliGDPRLista = genericDao.getList(ClienteGDPR.class,
-								genericDao.createFilter(FilterType.EQUALS, "tipoDocumento.id", titularAdicional.getTipoDocumento().getId()),
-								genericDao.createFilter(FilterType.EQUALS, "numDocumento", titularAdicional.getDocumento()));
-						
-						if(cliGDPRLista != null && cliGDPRLista.size() > 0){
-							cliGDPR = cliGDPRLista.get(0);
-						}
-						
-						Comprador nuevoCompradorAdicional = new Comprador();
-						CompradorExpediente compradorExpedienteAdicionalNuevo = new CompradorExpediente();
-						compradorExpedienteAdicionalNuevo.setBorrado(false);
-						if (!Checks.esNulo(oferta.getCliente().getTipoPersona())) {
-							nuevoCompradorAdicional.setTipoPersona(oferta.getCliente().getTipoPersona());
-						}
-
-						nuevoCompradorAdicional.setDocumento(titularAdicional.getDocumento());
-						nuevoCompradorAdicional.setNombre(titularAdicional.getNombre());
-						nuevoCompradorAdicional.setTipoDocumento(titularAdicional.getTipoDocumento());
-						
-						//AGREGAR CHECKS DE TITULARES ADICIONALES
-						if (!Checks.esNulo(titularAdicional)) {
-							if (!Checks.esNulo(titularAdicional.getRechazarCesionDatosPropietario())) {
-								nuevoCompradorAdicional.setCesionDatos(!titularAdicional.getRechazarCesionDatosPropietario());
-							}
-							if (!Checks.esNulo(titularAdicional.getRechazarCesionDatosProveedores())) {
-								nuevoCompradorAdicional.setComunicacionTerceros(!titularAdicional.getRechazarCesionDatosProveedores());
-							}
-							if (!Checks.esNulo(titularAdicional.getRechazarCesionDatosPublicidad())) {
-								nuevoCompradorAdicional.setTransferenciasInternacionales(!titularAdicional.getRechazarCesionDatosPublicidad());
-							}
-						}
-						genericDao.save(Comprador.class, nuevoCompradorAdicional);
-
-						CompradorExpedientePk pk = new CompradorExpedientePk();
-
-						pk.setComprador(nuevoCompradorAdicional);
-						pk.setExpediente(nuevoExpediente);
-						compradorExpedienteAdicionalNuevo.setPrimaryKey(pk);
-						compradorExpedienteAdicionalNuevo.setTitularReserva(1);
-						compradorExpedienteAdicionalNuevo.setTitularContratacion(0);
-						compradorExpedienteAdicionalNuevo.setPorcionCompra(parteCompraAdicionales);
-
-						listaCompradoresExpediente.add(compradorExpedienteAdicionalNuevo);
-						
-						// HREOS - 4937 - Historificando				
-						ClienteCompradorGDPR clienteCompradorGDPR = new ClienteCompradorGDPR();
-						clienteCompradorGDPR.setTipoDocumento(nuevoCompradorAdicional.getTipoDocumento());
-						clienteCompradorGDPR.setNumDocumento(nuevoCompradorAdicional.getDocumento());
-						if (!Checks.esNulo(cliGDPR)) {
-							if (!Checks.esNulo(cliGDPR.getCesionDatos())) {
-								clienteCompradorGDPR.setCesionDatos(cliGDPR.getCesionDatos());
-							}
-							if (!Checks.esNulo(cliGDPR.getComunicacionTerceros())) {
-								clienteCompradorGDPR.setComunicacionTerceros(cliGDPR.getComunicacionTerceros());
-							}
-							if (!Checks.esNulo(cliGDPR.getTransferenciasInternacionales())) {
-								clienteCompradorGDPR.setTransferenciasInternacionales(cliGDPR.getTransferenciasInternacionales());								
-							}
-							if (!Checks.esNulo(cliGDPR.getAdjuntoComprador())) {
-								clienteCompradorGDPR.setAdjuntoComprador(cliGDPR.getAdjuntoComprador());
-							}
-						}						
-						genericDao.save(ClienteCompradorGDPR.class, clienteCompradorGDPR);
-
+						compradorBusquedaAdicional.setNombre(titularAdicional.getNombre());
+						compradorBusquedaAdicional.setApellidos(titularAdicional.getApellidos());
 					}
+
+					if (!Checks.esNulo(titularAdicional.getTipoDocumento())) {
+						compradorBusquedaAdicional.setTipoDocumento(titularAdicional.getTipoDocumento());
+					}
+					if (!Checks.esNulo(titularAdicional.getTelefono1())) {
+						compradorBusquedaAdicional.setTelefono1(titularAdicional.getTelefono1());
+					}
+					if (!Checks.esNulo(titularAdicional.getTelefono2())) {
+						compradorBusquedaAdicional.setTelefono2(titularAdicional.getTelefono2());
+					}
+					if (!Checks.esNulo(titularAdicional.getEmail())) {
+						compradorBusquedaAdicional.setEmail(titularAdicional.getEmail());
+					}
+					if (!Checks.esNulo(titularAdicional.getDireccion())) {
+						compradorBusquedaAdicional.setDireccion(titularAdicional.getDireccion());
+					}
+
+					if (!Checks.esNulo(titularAdicional.getLocalidad())) {
+						compradorBusquedaAdicional.setLocalidad(titularAdicional.getLocalidad());
+					}
+					if (!Checks.esNulo(titularAdicional.getProvincia())) {
+						compradorBusquedaAdicional.setProvincia(titularAdicional.getProvincia());
+					}
+
+					if (!Checks.esNulo(titularAdicional.getCodPostal())) {
+						compradorBusquedaAdicional.setCodigoPostal(titularAdicional.getCodPostal());
+					}
+
+					if (!Checks.esNulo(titularAdicional.getTipoPersona())) {
+						compradorBusquedaAdicional.setTipoPersona(titularAdicional.getTipoPersona());
+					}
+									
+					//AGREGAR CHECKS DE TITULARES ADICIONALES
+					if (!Checks.esNulo(titularAdicional)) {
+						if (!Checks.esNulo(titularAdicional.getRechazarCesionDatosPropietario())) {
+							compradorBusquedaAdicional.setCesionDatos(!titularAdicional.getRechazarCesionDatosPropietario());
+						}
+						if (!Checks.esNulo(titularAdicional.getRechazarCesionDatosProveedores())) {
+							compradorBusquedaAdicional.setComunicacionTerceros(!titularAdicional.getRechazarCesionDatosProveedores());
+						}
+						if (!Checks.esNulo(titularAdicional.getRechazarCesionDatosPublicidad())) {
+							compradorBusquedaAdicional.setTransferenciasInternacionales(!titularAdicional.getRechazarCesionDatosPublicidad());
+						}
+					}
+					genericDao.save(Comprador.class, compradorBusquedaAdicional);
+					
+					CompradorExpediente compradorExpedienteAdicionalNuevo = new CompradorExpediente();
+					pk = new CompradorExpedientePk();
+
+					pk.setComprador(compradorBusquedaAdicional);
+					pk.setExpediente(nuevoExpediente);
+					compradorExpedienteAdicionalNuevo.setPrimaryKey(pk);
+					compradorExpedienteAdicionalNuevo.setBorrado(false);
+					compradorExpedienteAdicionalNuevo.setTitularReserva(1);
+					compradorExpedienteAdicionalNuevo.setTitularContratacion(0);
+					compradorExpedienteAdicionalNuevo.setPorcionCompra(parteCompraAdicionales);
+					compradorExpedienteAdicionalNuevo.setEstadoCivil(titularAdicional.getEstadoCivil());
+					compradorExpedienteAdicionalNuevo.setRegimenMatrimonial(titularAdicional.getRegimenMatrimonial());
+					compradorExpedienteAdicionalNuevo.setTipoDocumentoConyuge(titularAdicional.getTipoDocumentoConyuge());
+					compradorExpedienteAdicionalNuevo.setDocumentoConyuge(titularAdicional.getDocumentoConyuge());
+					compradorExpedienteAdicionalNuevo.setPais(titularAdicional.getPais());
+					compradorExpedienteAdicionalNuevo.setDireccionRepresentante(titularAdicional.getDireccionRepresentante());
+					compradorExpedienteAdicionalNuevo.setProvinciaRepresentante(titularAdicional.getProvinciaRepresentante());
+					compradorExpedienteAdicionalNuevo.setLocalidadRepresentante(titularAdicional.getMunicipioRepresentante());
+					compradorExpedienteAdicionalNuevo.setPaisRte(titularAdicional.getPaisRepresentante());
+					compradorExpedienteAdicionalNuevo.setCodigoPostalRepresentante(titularAdicional.getCodPostalRepresentante());
+					
+					clienteGDPR = genericDao.getList(ClienteGDPR.class,
+							genericDao.createFilter(FilterType.EQUALS, "numDocumento", titularAdicional.getDocumento())
+							,genericDao.createFilter(FilterType.EQUALS, "tipoDocumento.codigo", titularAdicional.getTipoDocumento().getCodigo()));
+					
+					if (!Checks.esNulo(clienteGDPR) && !clienteGDPR.isEmpty()){
+						compradorExpedienteNuevo.setDocumentoAdjunto(clienteGDPR.get(0).getAdjuntoComprador());
+					}
+					
+					listaCompradoresExpediente.add(compradorExpedienteAdicionalNuevo);
+					
+					// HREOS - 4937 - Historificando				
+					clienteCompradorGDPR = new ClienteCompradorGDPR();
+					clienteCompradorGDPR.setTipoDocumento(compradorBusquedaAdicional.getTipoDocumento());
+					clienteCompradorGDPR.setNumDocumento(compradorBusquedaAdicional.getDocumento());
+					if(!Checks.esNulo(clienteGDPR) && !clienteGDPR.isEmpty()){
+						if (!Checks.esNulo(clienteGDPR.get(0).getCesionDatos())) {
+							clienteCompradorGDPR.setCesionDatos(clienteGDPR.get(0).getCesionDatos());
+						}
+						if (!Checks.esNulo(clienteGDPR.get(0).getComunicacionTerceros())) {
+							clienteCompradorGDPR.setComunicacionTerceros(clienteGDPR.get(0).getComunicacionTerceros());
+						}
+						if (!Checks.esNulo(clienteGDPR.get(0).getTransferenciasInternacionales())) {
+							clienteCompradorGDPR.setTransferenciasInternacionales(clienteGDPR.get(0).getTransferenciasInternacionales());								
+						}
+						if (!Checks.esNulo(clienteGDPR.get(0).getAdjuntoComprador())) {
+							clienteCompradorGDPR.setAdjuntoComprador(clienteGDPR.get(0).getAdjuntoComprador());
+						}
+					}
+					genericDao.save(ClienteCompradorGDPR.class, clienteCompradorGDPR);
 				}
 			}
 

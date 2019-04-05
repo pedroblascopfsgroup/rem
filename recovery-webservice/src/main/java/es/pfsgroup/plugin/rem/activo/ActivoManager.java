@@ -176,6 +176,7 @@ import es.pfsgroup.plugin.rem.model.DtoMotivoAnulacionExpediente;
 import es.pfsgroup.plugin.rem.model.DtoMovimientoLlave;
 import es.pfsgroup.plugin.rem.model.DtoOcupacionIlegal;
 import es.pfsgroup.plugin.rem.model.DtoOfertaActivo;
+import es.pfsgroup.plugin.rem.model.DtoPlusvaliaVenta;
 import es.pfsgroup.plugin.rem.model.DtoPrecioVigente;
 import es.pfsgroup.plugin.rem.model.DtoPropietario;
 import es.pfsgroup.plugin.rem.model.DtoPropuestaActivosVinculados;
@@ -191,6 +192,7 @@ import es.pfsgroup.plugin.rem.model.HistoricoDestinoComercial;
 import es.pfsgroup.plugin.rem.model.ImpuestosActivo;
 import es.pfsgroup.plugin.rem.model.Oferta;
 import es.pfsgroup.plugin.rem.model.PerimetroActivo;
+import es.pfsgroup.plugin.rem.model.PlusvaliaVentaExpedienteComercial;
 import es.pfsgroup.plugin.rem.model.PropuestaActivosVinculados;
 import es.pfsgroup.plugin.rem.model.PropuestaPrecio;
 import es.pfsgroup.plugin.rem.model.Reserva;
@@ -1823,6 +1825,11 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 	@BusinessOperationDefinition("activoManager.checkHayPresupuestoEjercicioActual")
 	public boolean checkHayPresupuestoEjercicioActual(Long idActivo) {
+		if(activoDao.isUnidadAlquilable(idActivo)) {
+			ActivoAgrupacion actagr = activoDao.getAgrupacionPAByIdActivo(idActivo);
+			idActivo = activoDao.getIdActivoMatriz(actagr.getId());
+			
+		}
 		return !Checks.esNulo(activoDao.getPresupuestoActual(idActivo));
 	}
 

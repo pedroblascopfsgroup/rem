@@ -1360,6 +1360,15 @@ public class ActivoDaoImpl extends AbstractEntityDao<Activo, Long> implements Ac
 		
 
 		return (List<VBusquedaProveedoresActivo>) this.getSessionFactory().getCurrentSession().createQuery(hb.toString()).list();
+	}
+
+	@Override
+	public Boolean isPANoDadaDeBaja(Long idActivo) {  
+		HQLBuilder hb = new HQLBuilder("select count(*) from ActivoAgrupacionActivo aga where aga.activo.id = " + idActivo 
+				+ " and aga.agrupacion.tipoAgrupacion.codigo = " + DDTipoAgrupacion.AGRUPACION_PROMOCION_ALQUILER 
+				+ " and aga.principal = 1 and aga.agrupacion.fechaBaja is null");
+
+   		return ((Long) getHibernateTemplate().find(hb.toString()).get(0)).intValue() > 0;
 
 	}
 

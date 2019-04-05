@@ -470,6 +470,8 @@ Ext.define('HreRem.model.ActivoDatosRegistrales', {
     		{
 				name: 'unidadAlquilable',
 				type: 'boolean'
+    		},{
+    			name:'localidadAnteriorCodigo'
     		}
 
     ],

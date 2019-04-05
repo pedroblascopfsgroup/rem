@@ -152,11 +152,33 @@ V_MSQL1 := 'CREATE OR REPLACE FORCE VIEW '||V_ESQUEMA||'.'||V_1||' AS
 				SELECT ACT_ID , DD_CRA_CODIGO, DD_SCR_CODIGO, DD_EAC_CODIGO, DD_TCR_CODIGO, DD_PRV_CODIGO, DD_LOC_CODIGO, COD_POSTAL, TIPO_GESTOR, USERNAME, NOMBRE 
 				FROM (
 /*Gestores de grupo*/
-SELECT act.act_id, NULL dd_cra_codigo, NULL dd_scr_codigo, NULL dd_eac_codigo, NULL dd_tcr_codigo, NULL dd_prv_codigo, NULL dd_loc_codigo, NULL cod_postal, dist1.tipo_gestor, dist1.username username,
-				  dist1.nombre_usuario nombre
-			 FROM '||V_ESQUEMA||'.act_activo act 
-				  JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist1 ON dist1.tipo_gestor IN (''GADM'', ''GMARK'', ''GPREC'', ''GTOPDV'', ''GTOPLUS'', ''GESTLLA'', ''GADMT'', ''GFSV'', ''GCAL'', ''GESMIN'', ''SUPMIN'', ''SUPADM'')
-		   where act.borrado = 0          
+SELECT act.act_id,
+                TO_NUMBER(COALESCE(dist2.cod_cartera,dist1.cod_cartera,dist0.cod_cartera)) cod_cartera, 
+                TO_NUMBER(COALESCE(dist2.cod_subcartera,dist1.cod_subcartera,dist0.cod_subcartera)) cod_subcartera,  
+                NULL dd_eac_codigo, NULL dd_tcr_codigo, NULL dd_prv_codigo, NULL dd_loc_codigo, NULL cod_postal, 
+                COALESCE(dist2.tipo_gestor,dist1.tipo_gestor,dist0.tipo_gestor) tipo_gestor, 
+                COALESCE(dist2.username,dist1.username,dist0.username) username,
+                COALESCE(dist2.nombre_usuario,dist1.nombre_usuario,dist0.nombre_usuario) nombre
+			 FROM '||V_ESQUEMA||'.ACT_ACTIVO ACT 
+                JOIN '||V_ESQUEMA||'.DD_CRA_CARTERA cra on act.dd_cra_id = cra.dd_cra_id
+                JOIN '||V_ESQUEMA||'.DD_SCR_SUBCARTERA scr on act.dd_scr_id = scr.dd_scr_id AND cra.dd_cra_id = scr.dd_cra_id
+                JOIN '||V_ESQUEMA_M||'.DD_TGE_TIPO_GESTOR TGE ON TGE.DD_TGE_CODIGO IN (''GADM'', ''GMARK'', ''GPREC'', ''GTOPDV'', ''GTOPLUS'', ''GESTLLA'', ''GADMT'', ''GFSV'', ''GCAL'', ''GESMIN'', ''SUPMIN'', ''SUPADM'')
+                LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist0 
+                ON (dist0.tipo_gestor = TGE.DD_TGE_CODIGO
+                    AND dist0.cod_cartera IS NULL
+                    AND dist0.cod_subcartera IS NULL)
+                LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist1 
+                ON (dist1.tipo_gestor = TGE.DD_TGE_CODIGO
+                    AND dist1.cod_cartera = cra.dd_cra_codigo
+                    AND dist1.cod_subcartera IS NULL)
+                LEFT JOIN '||V_ESQUEMA||'.act_ges_dist_gestores dist2
+                ON (dist2.tipo_gestor = TGE.DD_TGE_CODIGO
+                    AND dist2.cod_cartera = cra.dd_cra_codigo
+                    AND dist2.cod_subcartera = scr.dd_scr_codigo)
+                where act.borrado = 0 
+                    AND (dist0.tipo_gestor = TGE.DD_TGE_CODIGO
+                      OR dist1.tipo_gestor = TGE.DD_TGE_CODIGO 
+                      OR dist2.tipo_gestor = TGE.DD_TGE_CODIGO)         
 UNION ALL
 /*Gestor de grupo - SUPERVISOR COMERCIAL BACKOFFICE*/
 SELECT  act.act_id , 

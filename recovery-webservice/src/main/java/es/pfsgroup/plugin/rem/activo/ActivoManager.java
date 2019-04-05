@@ -644,7 +644,8 @@ public class ActivoManager extends BusinessOperationOverrider<ActivoApi> impleme
 
 			for (ActivoOferta acivoOferta : ofertasActivo) {
 				// Si existe oferta de venta lanzar error
-				if (DDTipoOferta.CODIGO_VENTA
+				if (!Checks.esNulo(acivoOferta.getPrimaryKey()) && !Checks.esNulo(acivoOferta.getPrimaryKey().getOferta()) 
+						&& !Checks.esNulo(acivoOferta.getPrimaryKey().getOferta().getTipoOferta()) && DDTipoOferta.CODIGO_VENTA
 						.equals(acivoOferta.getPrimaryKey().getOferta().getTipoOferta().getCodigo())
 						&& !DDEstadoOferta.CODIGO_RECHAZADA
 								.equals(acivoOferta.getPrimaryKey().getOferta().getEstadoOferta().getCodigo())) {

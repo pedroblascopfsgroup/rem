@@ -209,7 +209,7 @@ BEGIN
 				
 				COMMIT;
 				
-				DBMS_OUTPUT.PUT_LINE('[INFO] Se comitean '||V_COUNT2||' registros ');
+				DBMS_OUTPUT.PUT_LINE('	[INFO] Se comitean '||V_COUNT2||' registros ');
 				V_COUNT2 := 0;
 				
 			END IF;
@@ -316,7 +316,7 @@ BEGIN
 				
 				COMMIT;
 				
-				DBMS_OUTPUT.PUT_LINE('[INFO] Se comitean '||V_COUNT2||' registros ');
+				DBMS_OUTPUT.PUT_LINE('	[INFO] Se comitean '||V_COUNT2||' registros ');
 				V_COUNT2 := 0;
 				
 			END IF;
@@ -473,7 +473,7 @@ BEGIN
 				
 				COMMIT;
 				
-				DBMS_OUTPUT.PUT_LINE('[INFO] Se comitean '||V_COUNT2||' registros ');
+				DBMS_OUTPUT.PUT_LINE('	[INFO] Se comitean '||V_COUNT2||' registros ');
 				V_COUNT2 := 0;
 				
 			END IF;
@@ -581,7 +581,7 @@ BEGIN
 				
 				COMMIT;
 				
-				DBMS_OUTPUT.PUT_LINE('[INFO] Se comitean '||V_COUNT2||' registros ');
+				DBMS_OUTPUT.PUT_LINE('	[INFO] Se comitean '||V_COUNT2||' registros ');
 				V_COUNT2 := 0;
 				
 			END IF;
@@ -686,7 +686,7 @@ BEGIN
 				
 				COMMIT;
 				
-				DBMS_OUTPUT.PUT_LINE('[INFO] Se comitean '||V_COUNT2||' registros ');
+				DBMS_OUTPUT.PUT_LINE('	[INFO] Se comitean '||V_COUNT2||' registros ');
 				V_COUNT2 := 0;
 				
 			END IF;

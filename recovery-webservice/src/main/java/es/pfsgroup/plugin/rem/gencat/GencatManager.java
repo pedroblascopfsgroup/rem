@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import es.capgemini.devon.files.WebFileItem;
 import es.capgemini.pfs.adjunto.model.Adjunto;
 import es.capgemini.pfs.auditoria.model.Auditoria;
+import es.capgemini.pfs.multigestor.model.EXTDDTipoGestor;
 import es.capgemini.pfs.persona.model.DDTipoDocumento;
 import es.capgemini.pfs.procesosJudiciales.TipoProcedimientoManager;
 import es.capgemini.pfs.users.UsuarioManager;
@@ -30,8 +31,10 @@ import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.FilterType;
 import es.pfsgroup.commons.utils.dao.abm.GenericABMDao.OrderType;
 import es.pfsgroup.commons.utils.dao.abm.Order;
 import es.pfsgroup.framework.paradise.fileUpload.adapter.UploadAdapter;
+import es.pfsgroup.framework.paradise.gestorEntidad.dto.GestorEntidadDto;
 import es.pfsgroup.plugin.gestorDocumental.exception.GestorDocumentalException;
 import es.pfsgroup.plugin.recovery.coreextension.utils.api.UtilDiccionarioApi;
+import es.pfsgroup.plugin.rem.activo.ActivoManager;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoAgrupacionActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.ActivoDao;
 import es.pfsgroup.plugin.rem.activo.dao.AdecuacionGencatDao;
@@ -46,6 +49,7 @@ import es.pfsgroup.plugin.rem.api.ActivoApi;
 import es.pfsgroup.plugin.rem.api.AdecuacionGencatApi;
 import es.pfsgroup.plugin.rem.api.ExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.GencatApi;
+import es.pfsgroup.plugin.rem.api.GestorExpedienteComercialApi;
 import es.pfsgroup.plugin.rem.api.NotificacionGencatApi;
 import es.pfsgroup.plugin.rem.api.OfertaApi;
 import es.pfsgroup.plugin.rem.api.OfertaGencatApi;
@@ -53,6 +57,7 @@ import es.pfsgroup.plugin.rem.api.ReclamacionGencatApi;
 import es.pfsgroup.plugin.rem.api.TrabajoApi;
 import es.pfsgroup.plugin.rem.api.VisitaGencatApi;
 import es.pfsgroup.plugin.rem.gastosExpediente.dao.GastosExpedienteDao;
+import es.pfsgroup.plugin.rem.gestor.dao.GestorExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
 import es.pfsgroup.plugin.rem.jbpm.activo.JBPMActivoTramiteManager;
 import es.pfsgroup.plugin.rem.model.Activo;
@@ -215,6 +220,8 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 	@Autowired
 	private VisitaGencatDao visitaGencatDao;
 	
+	@Autowired
+	private GestorExpedienteComercialApi gestorExpedienteComercialApi;
 	
 	@Override
 	public DtoGencat getDetalleGencatByIdActivo(Long idActivo) {
@@ -1748,6 +1755,8 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 		nuevoExpedienteComercial.setRiesgoReputacional(expedienteComercial.getRiesgoReputacional());
 		nuevoExpedienteComercial.setEstadoPbc(expedienteComercial.getEstadoPbc());
 		
+		this.copiarGestoresNuevaOfertaGENCAT(expedienteComercial, nuevoExpedienteComercial);
+		
 		genericDao.save(ExpedienteComercial.class, nuevoExpedienteComercial);
 		
 		// Condiciones
@@ -1838,6 +1847,42 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 		}
 		*/
 	/////////////////////////////////////////////////////////////////
+	}
+	
+	@SuppressWarnings("static-access")
+	private void copiarGestoresNuevaOfertaGENCAT(ExpedienteComercial expedienteOrigen, ExpedienteComercial expedienteGENCAT) {
+		// Copiamos los gestores del expediente origen
+		GestorEntidadDto dto = new GestorEntidadDto();
+		dto.setIdEntidad(expedienteGENCAT.getId());
+		dto.setTipoEntidad(GestorEntidadDto.TIPO_ENTIDAD_EXPEDIENTE_COMERCIAL);
+		
+		Usuario usuarioGestorFormalizacion = gestorExpedienteComercialApi.getGestorByExpedienteComercialYTipo(expedienteOrigen
+				, gestorExpedienteComercialApi.CODIGO_GESTOR_FORMALIZACION);
+		Usuario usuarioGestoriaFormalizacion = gestorExpedienteComercialApi.getGestorByExpedienteComercialYTipo(expedienteOrigen
+				, gestorExpedienteComercialApi.CODIGO_GESTORIA_FORMALIZACION);
+		Usuario usuarioSupervisorFormalizacion = gestorExpedienteComercialApi.getGestorByExpedienteComercialYTipo(expedienteOrigen
+				, gestorExpedienteComercialApi.CODIGO_SUPERVISOR_FORMALIZACION);
+		if (!Checks.esNulo(usuarioGestorFormalizacion)) {
+			this.agregarTipoGestorYUsuarioEnOfertaGENCAT(gestorExpedienteComercialApi.CODIGO_GESTOR_FORMALIZACION, usuarioGestorFormalizacion.getUsername(), dto);
+		}
+		if (!Checks.esNulo(usuarioGestoriaFormalizacion)) {
+			this.agregarTipoGestorYUsuarioEnOfertaGENCAT(gestorExpedienteComercialApi.CODIGO_GESTORIA_FORMALIZACION, usuarioGestoriaFormalizacion.getUsername(), dto);
+		}
+		if (!Checks.esNulo(usuarioSupervisorFormalizacion)) {
+			this.agregarTipoGestorYUsuarioEnOfertaGENCAT(gestorExpedienteComercialApi.CODIGO_SUPERVISOR_FORMALIZACION, usuarioSupervisorFormalizacion.getUsername(), dto);
+		}		
+	}
+	
+	private void agregarTipoGestorYUsuarioEnOfertaGENCAT(String codTipoGestor, String username, GestorEntidadDto dto) {
+		EXTDDTipoGestor tipoGestor = genericDao.get(EXTDDTipoGestor.class,
+				genericDao.createFilter(FilterType.EQUALS, "codigo", codTipoGestor));
+		Usuario usu = genericDao.get(Usuario.class, genericDao.createFilter(FilterType.EQUALS, "username", username));
+
+		if (!Checks.esNulo(tipoGestor) && !Checks.esNulo(usu)) {
+			dto.setIdTipoGestor(tipoGestor.getId());
+			dto.setIdUsuario(usu.getId());
+			gestorExpedienteComercialApi.insertarGestorAdicionalExpedienteComercial(dto);
+		}
 	}
 
 	@Override

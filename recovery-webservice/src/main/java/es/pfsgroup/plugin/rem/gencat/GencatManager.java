@@ -562,9 +562,12 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 					gencatDto.setNuevoCompradorApellido2(hComunicacionGencat.getCompradorApellido2());
 				}
 				if(!Checks.esNulo(hComunicacionGencat.getSancion())) {
-					if(!hComunicacionGencat.getSancion().getCodigo().equals(hComunicacionGencat.getSancion().COD_EJERCE)) {
+					if(!DDSancionGencat.COD_EJERCE.equals(hComunicacionGencat.getSancion().getCodigo())) {
 						gencatDto.setOfertaGencat(null);
 					}
+				}
+				if(!Checks.esNulo(hComunicacionGencat.getAnulacion())) {
+					gencatDto.setComunicadoAnulacionAGencat(hComunicacionGencat.getAnulacion());
 				}
 				
 				
@@ -572,10 +575,19 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 				Order orderByFechaCrear = new Order(OrderType.DESC, "auditoria.fechaCrear");
 				
 				//Adecuacion
-				List <HistoricoAdecuacionGencat> resultAdecuacion = genericDao.getListOrdered(HistoricoAdecuacionGencat.class, orderByFechaCrear, filtroIdComunicacion, filtroBorrado);
-				if (resultAdecuacion != null && !resultAdecuacion.isEmpty()) {
-					HistoricoAdecuacionGencat adecuacionGencat = resultAdecuacion.get(0);
-					BeanUtils.copyProperties(gencatDto, adecuacionGencat);
+				HistoricoAdecuacionGencat adecuacionGencat = genericDao.get(HistoricoAdecuacionGencat.class, filtroIdComunicacion, filtroBorrado);
+				if (!Checks.esNulo(adecuacionGencat)) {
+					if (!Checks.esNulo(adecuacionGencat.getNecesitaReforma())) {
+						gencatDto.setNecesitaReforma(adecuacionGencat.getNecesitaReforma());
+					}
+					if (!Checks.esNulo(adecuacionGencat.getImporteReforma())) {
+						gencatDto.setImporteReforma(adecuacionGencat.getImporteReforma());
+					} else {
+						gencatDto.setImporteReforma(0.00);
+					}
+					if (!Checks.esNulo(adecuacionGencat.getFechaRevision())) {
+						gencatDto.setFechaRevision(adecuacionGencat.getFechaRevision());
+					}
 				}
 				
 				//Visita
@@ -602,7 +614,7 @@ public class GencatManager extends  BusinessOperationOverrider<GencatApi> implem
 					Oferta oferta = ofertaGencat.getOferta();
 					if (oferta != null) {
 						if(!Checks.esNulo(hComunicacionGencat.getSancion())) {
-							if(hComunicacionGencat.getSancion().getCodigo().equals(hComunicacionGencat.getSancion().COD_EJERCE)) {
+							if(DDSancionGencat.COD_EJERCE.equals(hComunicacionGencat.getSancion().getCodigo())) {
 								gencatDto.setOfertaGencat(oferta.getNumOferta());
 							}else {
 								gencatDto.setOfertaGencat(null);

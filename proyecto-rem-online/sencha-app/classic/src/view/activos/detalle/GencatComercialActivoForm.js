@@ -12,19 +12,13 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoForm', {
     	'HreRem.view.activos.detalle.OfertasAsociadasActivoList',
     	'HreRem.view.activos.detalle.DocumentosComunicacionGencatList',
     	'HreRem.view.activos.detalle.ReclamacionesActivoList',
-    	'HreRem.view.activos.detalle.HistoricoReclamacionesActivoList',
     	'HreRem.view.activos.detalle.NotificacionesActivoList',
-		'HreRem.view.activos.detalle.HistoricoNotificacionesActivoList',
 		'HreRem.view.activos.detalle.VentanaCrearNotificacion',
 		'HreRem.view.activos.detalle.VentanaAltaVisita'
     ],
     
     listeners: { 
 		boxready:'cargarTabData'
-    },
-    
-    data: {
-        idHComunicacion: -1
     },
     
     //url: $AC.getRemoteUrl("gencat/URL_GENCAT_GUARDAR_FORM"),

@@ -3,7 +3,6 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoFormHist', {
     xtype: 'gencatcomercialactivoformhist',
     
     cls: 'panel-base shadow-panel',
-    refreshAfterSave: true,
     recordName: "gencatHistorico",
 	recordClass: "HreRem.model.GencatHistorico",
     requires	: [
@@ -21,13 +20,11 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoFormHist', {
     data: {
         idHComunicacion: -1
     },
-
-    /*url: $AC.getRemoteUrl("gencat/saveDatosComunicacion"),*/
         
     initComponent: function () {
         
         var me = this;
-        
+
         var title;
         var ofertasasociadasactivolist;
         var reclamacionesactivolist;

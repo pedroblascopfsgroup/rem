@@ -76,8 +76,7 @@ Ext.define('HreRem.model.GencatHistorico', {
 		
 		//Adecuacion
 		{
-			name:'necesitaReforma',
-			type: 'boolean'
+			name:'necesitaReforma'
 		},
 		{
 			name:'importeReforma'

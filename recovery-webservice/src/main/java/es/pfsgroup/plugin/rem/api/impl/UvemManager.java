@@ -1422,7 +1422,7 @@ public class UvemManager implements UvemManagerApi {
 			
 			WSDevolBankiaDto dto = new WSDevolBankiaDto();
 			
-			dto.setCorrectw((long) servicioGMPTOE83_INS.getCodigoResolucionComitecorecw());
+			dto.setCorrecw((long) servicioGMPTOE83_INS.getCodigoResolucionComitecorecw());
 			dto.setComoa3((long) servicioGMPTOE83_INS.getCodigoMotivoAnulacionPropuestacomoa3());	
 			
 			return dto;

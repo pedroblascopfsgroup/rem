@@ -91,6 +91,7 @@ import es.pfsgroup.plugin.rem.clienteComercial.dao.ClienteComercialDao;
 import es.pfsgroup.plugin.rem.controller.ExpedienteComercialController;
 import es.pfsgroup.plugin.rem.expedienteComercial.dao.ExpedienteComercialDao;
 import es.pfsgroup.plugin.rem.gestorDocumental.api.GestorDocumentalAdapterApi;
+import es.pfsgroup.plugin.rem.jbpm.handler.updater.impl.UpdaterServiceSancionOfertaResolucionExpediente;
 import es.pfsgroup.plugin.rem.jbpm.handler.user.impl.ComercialUserAssigantionService;
 import es.pfsgroup.plugin.rem.model.Activo;
 import es.pfsgroup.plugin.rem.model.ActivoAdjuntoActivo;
@@ -243,6 +244,7 @@ import es.pfsgroup.plugin.rem.rest.dto.ResolucionComiteDto;
 import es.pfsgroup.plugin.rem.rest.dto.ResultadoInstanciaDecisionDto;
 import es.pfsgroup.plugin.rem.rest.dto.TitularDto;
 import es.pfsgroup.plugin.rem.rest.dto.TitularUVEMDto;
+import es.pfsgroup.plugin.rem.rest.dto.WSDevolBankiaDto;
 
 @Service("expedienteComercialManager")
 public class ExpedienteComercialManager extends BusinessOperationOverrider<ExpedienteComercialApi>
@@ -351,6 +353,9 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 
 	@Resource
 	private Properties appProperties;
+	
+    @Autowired
+    private ActivoTareaExternaApi activoTareaExternaManagerApi;
 
 	@Override
 	public String managerName() {
@@ -8748,6 +8753,34 @@ public class ExpedienteComercialManager extends BusinessOperationOverrider<Exped
 		
 		ExpedienteComercial expedienteComercial = tareaExternaToExpedienteComercial(tareaExterna);
 		
-		return expedienteComercial.getCorrecw() == 1;
+		if(Checks.esNulo(expedienteComercial.getCorrecw())) {
+			Oferta ofertaAceptada = expedienteComercial.getOferta();
+			
+			List<TareaExternaValor> valores = activoTareaExternaManagerApi.obtenerValoresTarea(tareaExterna.getId());
+			
+			String valorComboMotivoAnularReserva = null;
+			
+			for(TareaExternaValor valor :  valores) {
+				if(UpdaterServiceSancionOfertaResolucionExpediente.MOTIVO_ANULACION_RESERVA.equals(valor.getNombre()) && !Checks.esNulo(valor.getValor())){
+					valorComboMotivoAnularReserva= valor.getValor();
+				}
+			}
+			
+			WSDevolBankiaDto dto = null;
+			
+			try {
+				dto = uvemManagerApi.notificarDevolucionReserva(ofertaAceptada.getNumOferta().toString(), uvemManagerApi.obtenerMotivoAnulacionPorCodigoMotivoAnulacionReserva(valorComboMotivoAnularReserva),
+						UvemManagerApi.INDICADOR_DEVOLUCION_RESERVA.DEVOLUCION_RESERVA, UvemManagerApi.CODIGO_SERVICIO_MODIFICACION.PROPUESTA_ANULACION_RESERVA_FIRMADA);
+				
+				beanUtilNotNull.copyProperties(expedienteComercial, dto);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			
+			genericDao.save(ExpedienteComercial.class, expedienteComercial);
+		
+		}
+		
+		return Checks.esNulo(expedienteComercial.getCorrecw()) ? false : expedienteComercial.getCorrecw() == 1;
 	}
 }

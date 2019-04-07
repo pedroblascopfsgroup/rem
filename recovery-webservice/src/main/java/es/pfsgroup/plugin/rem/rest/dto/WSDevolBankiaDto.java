@@ -2,16 +2,16 @@ package es.pfsgroup.plugin.rem.rest.dto;
 
 public class WSDevolBankiaDto {
 	
-	private Long correctw;
+	private Long correcw;
 	
 	private Long comoa3;
 
-	public Long getCorrectw() {
-		return correctw;
+	public Long getCorrecw() {
+		return correcw;
 	}
 
-	public void setCorrectw(Long correctw) {
-		this.correctw = correctw;
+	public void setCorrecw(Long correcw) {
+		this.correcw = correcw;
 	}
 
 	public Long getComoa3() {

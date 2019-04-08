@@ -677,8 +677,6 @@ Ext.define('HreRem.view.activos.detalle.ActivoDetalleController', {
     onAgregarGestoresClick: function(btn){
 		
 		var me = this;
-		
-		btn.setDisabled(true);
 
     	var url =  $AC.getRemoteUrl('activo/insertarGestorAdicional');
     	var parametros = btn.up("combogestores").getValues();

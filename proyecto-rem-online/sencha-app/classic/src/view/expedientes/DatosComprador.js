@@ -252,8 +252,7 @@ Ext.define('HreRem.view.expedientes.DatosComprador', {
 														xtype: 'comboboxfieldbase',
 														fieldLabel: HreRem.i18n('fieldlabel.municipio'),
 														reference: 'municipioCombo',
-														name: 'municipioCodigo',
-														
+														name: 'municipioCodigo',														
 														disabled: true,
 										            	bind: {
 										            		store: '{comboMunicipio}'

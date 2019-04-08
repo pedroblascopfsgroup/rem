@@ -235,9 +235,9 @@ Ext.define('HreRem.view.expedientes.DatosCompradorWizard', {
 						reference: 'municipioCombo',
 						name: 'municipioCodigo',
 						padding: '5px',
+						disabled: true,
 		            	bind: {
-		            		store: '{comboMunicipio}',
-		            		disabled: '{!comprador.provinciaCodigo}'
+		            		store: '{comboMunicipio}'
 		            	}
 					},
 			        { 

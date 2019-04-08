@@ -1201,9 +1201,14 @@ public class GastoProveedorManager implements GastoProveedorApi {
 
 						if (!Checks.esNulo(gasto.getPropietario().getDocIdentificativo())){
 							ActivoPropietario propietario = activo.getPropietarioPrincipal();
-							if (!gasto.getPropietario().getDocIdentificativo().equals(propietario.getDocIdentificativo())) {
+							if (!Checks.esNulo(propietario)) {
+								if (!gasto.getPropietario().getDocIdentificativo().equals(propietario.getDocIdentificativo())) {
 								throw new JsonViewerException("Propietario diferente al propietario actual del gasto");
+								}
 							}
+							else {
+								throw new JsonViewerException("Propietario diferente al propietario actual del gasto");
+							}				
 						}else{
 							throw new JsonViewerException("Propietario del gasto sin documento");
 						}
@@ -1262,6 +1267,8 @@ public class GastoProveedorManager implements GastoProveedorApi {
 						if (!gasto.getPropietario().getDocIdentificativo().equals(propietario.getDocIdentificativo())) {
 							throw new JsonViewerException("Propietario diferente al propietario actual del gasto");
 						}
+					}else {
+						throw new JsonViewerException("Propietario diferente al propietario actual del gasto");
 					}
 
 					for (ActivoAgrupacionActivo activoAgrupacion : agrupacion.getActivos()) {

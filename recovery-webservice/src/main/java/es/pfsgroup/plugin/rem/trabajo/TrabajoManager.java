@@ -120,6 +120,7 @@ import es.pfsgroup.plugin.rem.model.VBusquedaActivosTrabajoPresupuesto;
 import es.pfsgroup.plugin.rem.model.VBusquedaPresupuestosActivo;
 import es.pfsgroup.plugin.rem.model.VProveedores;
 import es.pfsgroup.plugin.rem.model.dd.DDCartera;
+import es.pfsgroup.plugin.rem.model.dd.DDComiteSancion;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoPresupuesto;
 import es.pfsgroup.plugin.rem.model.dd.DDEstadoTrabajo;
 import es.pfsgroup.plugin.rem.model.dd.DDSubcartera;
@@ -3739,6 +3740,41 @@ public class TrabajoManager extends BusinessOperationOverrider<TrabajoApi> imple
 			Activo primerActivo = trabajo.getActivo();
 			if (!Checks.esNulo(primerActivo)) {
 				return (DDCartera.CODIGO_CARTERA_BANKIA.equals(primerActivo.getCartera().getCodigo()));
+			}
+		}
+		return false;
+	}
+	
+	@Override
+	public boolean checkCerberusAgoraApple(TareaExterna tareaExterna) {
+		Trabajo trabajo = tareaExternaToTrabajo(tareaExterna);
+		if (!Checks.esNulo(trabajo)) {
+			Activo primerActivo = trabajo.getActivo();
+			if (!Checks.esNulo(primerActivo)) {
+				if((DDCartera.CODIGO_CARTERA_CERBERUS.equals(primerActivo.getCartera().getCodigo()))&&
+				(DDSubcartera.CODIGO_AGORA_FINANCIERO.equals(primerActivo.getSubcartera().getCodigo())||
+				DDSubcartera.CODIGO_AGORA_INMOBILIARIO.equals(primerActivo.getSubcartera().getCodigo())||
+				DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(primerActivo.getSubcartera().getCodigo())))
+				{
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public boolean checkCerberusAgoraApple(Trabajo trabajo) {
+		if (!Checks.esNulo(trabajo)) {
+			Activo primerActivo = trabajo.getActivo();
+			if (!Checks.esNulo(primerActivo)) {
+				if((DDCartera.CODIGO_CARTERA_CERBERUS.equals(primerActivo.getCartera().getCodigo()))&&
+				(DDSubcartera.CODIGO_AGORA_FINANCIERO.equals(primerActivo.getSubcartera().getCodigo())||
+				DDSubcartera.CODIGO_AGORA_INMOBILIARIO.equals(primerActivo.getSubcartera().getCodigo())||
+				DDSubcartera.CODIGO_APPLE_INMOBILIARIO.equals(primerActivo.getSubcartera().getCodigo())))
+				{
+					return true;
+				}
 			}
 		}
 		return false;

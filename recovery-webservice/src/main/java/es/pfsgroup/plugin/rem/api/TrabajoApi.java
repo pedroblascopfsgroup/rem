@@ -721,10 +721,25 @@ public interface TrabajoApi {
 	 */
 	public boolean checkBankia(Trabajo trabajo);
 	/**
-	 * Método que comprueba si el activo pertenece a la cartera Cajamar.
+	 * Método que comprueba si el activo pertenece a la cartera Cerberus subcarteras Agora/Apple.
 	 * 
 	 * @param tareaExterna
 	 * @return true si pertenece a la cartera, false si no.
+	 */
+	public boolean checkCerberusAgoraApple(TareaExterna tareaExterna);
+
+	/**
+	 * Método que comprueba si el activo pertenece a la cartera Cerberus subcarteras Agora/Apple.
+	 * 
+	 * @param trabajo
+	 * @return true si pertenece a alguna de sus subcarteras, false si no
+	 */
+	public boolean checkCerberusAgoraApple(Trabajo trabajo);
+	/**
+	 * Método que comprueba si el activo pertenece a la cartera Cajamar.
+	 * 
+	 * @param tareaExterna
+	 * @return true si pertenece a a alguna de sus subcarteras, false si no.
 	 */
 	public boolean checkCajamar(TareaExterna tareaExterna);
 

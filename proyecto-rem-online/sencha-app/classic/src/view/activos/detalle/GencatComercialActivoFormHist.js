@@ -1,7 +1,7 @@
 Ext.define('HreRem.view.activos.detalle.GencatComercialActivoFormHist', {
 	extend: 'HreRem.view.common.FormBase',
     xtype: 'gencatcomercialactivoformhist',
-    
+    refreshAfterSave: true,
     cls: 'panel-base shadow-panel',
     recordName: "gencatHistorico",
 	recordClass: "HreRem.model.GencatHistorico",
@@ -20,17 +20,14 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoFormHist', {
     data: {
         idHComunicacion: -1
     },
-        
-    initComponent: function () {
-        
+    
+    initComponent: function () {    
         var me = this;
-
         var title;
         var ofertasasociadasactivolist;
         var reclamacionesactivolist;
         var documentoscomunicaciongencatlist;
         var notificacionactivolist;
-        	
     	title = HreRem.i18n('title.comunicacion.historico');
     	me.recordClass = 'HreRem.model.GencatHistorico';
     	me.getModelInstance().getProxy().setExtraParam('idHComunicacion', me.idHComunicacion);
@@ -252,14 +249,25 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoFormHist', {
 						items:
 							[ 
 								{
-				    				xtype: "comboboxfieldbase",
 				    				fieldLabel: HreRem.i18n('fieldlabel.necesita.reforma'),
 				    				readOnly: true,
 				    				name: 'necesitaReforma',
-									bind: {
-										store: '{comboSiNo}',
-										value: '{gencatHistorico.necesitaReforma}'
-									}
+				    				reference:'comboSiNoHist',
+				    				bind : {
+				    					value: '{gencatHistorico.necesitaReforma}'
+				    				},
+				    				listeners: {
+				    					change: function (combo,newVal, oldVal, eOps){
+				    						var me = this ;
+				    						if (newVal == "true" || newVal == "Si") {
+				    							me.setValue(eval(String.fromCharCode(34,83,237,34)));
+				    						}else if (newVal == "false" || newVal == "No"){
+				    							me.setValue("No");
+				    						}
+				    						
+				    					}
+				    				
+				    				}
 				    			},
 				    			{
 				    				xtype: "currencyfieldbase",
@@ -322,14 +330,13 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoFormHist', {
 							    }
 			    			},
 			    			{
-			    				xtype: "comboboxfieldbase",
 			    				fieldLabel: HreRem.i18n('fieldlabel.estado.visita'),
 			    				readOnly: true,
+			    				reference:'comboEstadoVisitaHist',
 			    				name: 'estadoVisita',
-								bind: {
-									store: '{comboEstadoVisita}',
-									value: '{gencatHistorico.estadoVisita}'									
-								}
+			    				bind: {
+				    				value: me.up('gencatcomercialactivo').getViewModel().get('gencatHistorico.estadoVisita')
+			    				}
 			    			},
 			    			{
 			    				fieldLabel: HreRem.i18n('fieldlabel.api.realiza.visita'),
@@ -402,7 +409,6 @@ Ext.define('HreRem.view.activos.detalle.GencatComercialActivoFormHist', {
 				]
         	}
         ];
-        
         me.addPlugin({ptype: 'lazyitems', items: items });
 		    
         me.callParent(); 

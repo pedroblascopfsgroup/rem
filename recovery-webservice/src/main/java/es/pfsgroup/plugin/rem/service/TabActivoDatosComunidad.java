@@ -61,108 +61,56 @@ public class TabActivoDatosComunidad implements TabActivoService {
 	public DtoComunidadpropietariosActivo getTabData(Activo activo) throws IllegalAccessException, InvocationTargetException {
 
 		DtoComunidadpropietariosActivo datosComunidad = new DtoComunidadpropietariosActivo();
-		boolean esUA = activoDao.isUnidadAlquilable(activo.getId());
-		ActivoAgrupacion agrupacion = activoDao.getAgrupacionPAByIdActivo(activo.getId());
-		Activo activoMatriz = null;
-		if (!Checks.esNulo(agrupacion)) {
-			activoMatriz = activoAgrupacionActivoDao.getActivoMatrizByIdAgrupacion(agrupacion.getId());
-		}
 
 		try {
-			beanUtilNotNull.copyProperty(datosComunidad, "unidadAlquilable", esUA);
-			if (esUA) {
-				if (!Checks.esNulo(activoMatriz.getComunidadPropietarios())) {
-					beanUtilNotNull.copyProperties(datosComunidad, activoMatriz.getComunidadPropietarios());
-					if (!Checks.esNulo(activoMatriz.getComunidadPropietarios().getFechaComunicacionComunidad())) {
-						beanUtilNotNull.copyProperty(datosComunidad, "fechaComunicacionComunidad", activoMatriz.getComunidadPropietarios().getFechaComunicacionComunidad());
+
+			if (!Checks.esNulo(activo.getComunidadPropietarios())) {
+				// Copia al "informe comercial" todos los atributos de "informacion comercial".
+				beanUtilNotNull.copyProperties(datosComunidad, activo.getComunidadPropietarios());
+
+				if (!Checks.esNulo(activo.getComunidadPropietarios().getFechaComunicacionComunidad())) {
+					beanUtilNotNull.copyProperty(datosComunidad, "fechaComunicacionComunidad", activo.getComunidadPropietarios().getFechaComunicacionComunidad());
+				}
+
+				if (!Checks.esNulo(activo.getComunidadPropietarios().getEnvioCartas())) {
+					beanUtilNotNull.copyProperty(datosComunidad, "envioCartas", activo.getComunidadPropietarios().getEnvioCartas());
+				}
+
+				if (!Checks.esNulo(activo.getComunidadPropietarios().getNumCartas())) {
+					beanUtilNotNull.copyProperty(datosComunidad, "numCartas", activo.getComunidadPropietarios().getNumCartas());
+				}
+
+				if (!Checks.esNulo(activo.getComunidadPropietarios().getContactoTel())) {
+					beanUtilNotNull.copyProperty(datosComunidad, "contactoTel", activo.getComunidadPropietarios().getContactoTel());
+				}
+
+				if (!Checks.esNulo(activo.getComunidadPropietarios().getVisita())) {
+					beanUtilNotNull.copyProperty(datosComunidad, "visita", activo.getComunidadPropietarios().getVisita());
+				}
+
+				if (!Checks.esNulo(activo.getComunidadPropietarios().getBurofax())) {
+					beanUtilNotNull.copyProperty(datosComunidad, "burofax", activo.getComunidadPropietarios().getBurofax());
+				}
+				
+				if (!Checks.esNulo(activo.getComunidadPropietarios().getFechaEnvioCarta())) {
+						beanUtilNotNull.copyProperty(datosComunidad, "fechaEnvioCarta", activo.getComunidadPropietarios().getFechaEnvioCarta());
+				}
+				
+				if (!Checks.esNulo(activo.getComunidadPropietarios().getSituacion())) {
+					
+					if (!Checks.esNulo(activo.getComunidadPropietarios().getSituacion().getId())) {
+						beanUtilNotNull.copyProperty(datosComunidad, "situacionId", activo.getComunidadPropietarios().getSituacion().getId());
 					}
 					
-					if (!Checks.esNulo(activoMatriz.getComunidadPropietarios().getEnvioCartas())) {
-						beanUtilNotNull.copyProperty(datosComunidad, "envioCartas", activoMatriz.getComunidadPropietarios().getEnvioCartas());
+					if (!Checks.esNulo(activo.getComunidadPropietarios().getSituacion().getDescripcionLarga())) {
+						beanUtilNotNull.copyProperty(datosComunidad, "situacionDescripcion", activo.getComunidadPropietarios().getSituacion().getDescripcionLarga());
 					}
 					
-					if (!Checks.esNulo(activoMatriz.getComunidadPropietarios().getNumCartas())) {
-						beanUtilNotNull.copyProperty(datosComunidad, "numCartas", activoMatriz.getComunidadPropietarios().getNumCartas());
-					}
-					
-					if (!Checks.esNulo(activoMatriz.getComunidadPropietarios().getContactoTel())) {
-						beanUtilNotNull.copyProperty(datosComunidad, "contactoTel", activoMatriz.getComunidadPropietarios().getContactoTel());
-					}
-					
-					if (!Checks.esNulo(activoMatriz.getComunidadPropietarios().getVisita())) {
-						beanUtilNotNull.copyProperty(datosComunidad, "visita", activoMatriz.getComunidadPropietarios().getVisita());
-					}
-					
-					if (!Checks.esNulo(activoMatriz.getComunidadPropietarios().getBurofax())) {
-						beanUtilNotNull.copyProperty(datosComunidad, "burofax", activoMatriz.getComunidadPropietarios().getBurofax());
-					}
-					
-					if (!Checks.esNulo(activoMatriz.getComunidadPropietarios().getFechaEnvioCarta())) {
-							beanUtilNotNull.copyProperty(datosComunidad, "fechaEnvioCarta", activoMatriz.getComunidadPropietarios().getFechaEnvioCarta());
-					}
-					
-					if (!Checks.esNulo(activoMatriz.getComunidadPropietarios().getSituacion())) {
-						
-						if (!Checks.esNulo(activoMatriz.getComunidadPropietarios().getSituacion().getId())) {
-							beanUtilNotNull.copyProperty(datosComunidad, "situacionId", activoMatriz.getComunidadPropietarios().getSituacion().getId());
-						}
-						
-						if (!Checks.esNulo(activoMatriz.getComunidadPropietarios().getSituacion().getDescripcionLarga())) {
-							beanUtilNotNull.copyProperty(datosComunidad, "situacionDescripcion", activoMatriz.getComunidadPropietarios().getSituacion().getDescripcionLarga());
-						}
-						
-						if (!Checks.esNulo(activoMatriz.getComunidadPropietarios().getSituacion().getCodigo())) {
-							beanUtilNotNull.copyProperty(datosComunidad, "situacionCodigo", activoMatriz.getComunidadPropietarios().getSituacion().getCodigo());
-						}
+					if (!Checks.esNulo(activo.getComunidadPropietarios().getSituacion().getCodigo())) {
+						beanUtilNotNull.copyProperty(datosComunidad, "situacionCodigo", activo.getComunidadPropietarios().getSituacion().getCodigo());
 					}
 				}
-			} else {
-				if (!Checks.esNulo(activo.getComunidadPropietarios())) {
-					// Copia al "informe comercial" todos los atributos de "informacion comercial".
-					beanUtilNotNull.copyProperties(datosComunidad, activo.getComunidadPropietarios());
-	
-					if (!Checks.esNulo(activo.getComunidadPropietarios().getFechaComunicacionComunidad())) {
-						beanUtilNotNull.copyProperty(datosComunidad, "fechaComunicacionComunidad", activo.getComunidadPropietarios().getFechaComunicacionComunidad());
-					}
-	
-					if (!Checks.esNulo(activo.getComunidadPropietarios().getEnvioCartas())) {
-						beanUtilNotNull.copyProperty(datosComunidad, "envioCartas", activo.getComunidadPropietarios().getEnvioCartas());
-					}
-	
-					if (!Checks.esNulo(activo.getComunidadPropietarios().getNumCartas())) {
-						beanUtilNotNull.copyProperty(datosComunidad, "numCartas", activo.getComunidadPropietarios().getNumCartas());
-					}
-	
-					if (!Checks.esNulo(activo.getComunidadPropietarios().getContactoTel())) {
-						beanUtilNotNull.copyProperty(datosComunidad, "contactoTel", activo.getComunidadPropietarios().getContactoTel());
-					}
-	
-					if (!Checks.esNulo(activo.getComunidadPropietarios().getVisita())) {
-						beanUtilNotNull.copyProperty(datosComunidad, "visita", activo.getComunidadPropietarios().getVisita());
-					}
-	
-					if (!Checks.esNulo(activo.getComunidadPropietarios().getBurofax())) {
-						beanUtilNotNull.copyProperty(datosComunidad, "burofax", activo.getComunidadPropietarios().getBurofax());
-					}
-					if (!Checks.esNulo(activo.getComunidadPropietarios().getFechaEnvioCarta())) {
-							beanUtilNotNull.copyProperty(datosComunidad, "fechaEnvioCarta", activo.getComunidadPropietarios().getFechaEnvioCarta());
-					}
-					if (!Checks.esNulo(activo.getComunidadPropietarios().getSituacion())) {
-						
-						if (!Checks.esNulo(activo.getComunidadPropietarios().getSituacion().getId())) {
-							beanUtilNotNull.copyProperty(datosComunidad, "situacionId", activo.getComunidadPropietarios().getSituacion().getId());
-						}
-						
-						if (!Checks.esNulo(activo.getComunidadPropietarios().getSituacion().getDescripcionLarga())) {
-							beanUtilNotNull.copyProperty(datosComunidad, "situacionDescripcion", activo.getComunidadPropietarios().getSituacion().getDescripcionLarga());
-						}
-						if (!Checks.esNulo(activo.getComunidadPropietarios().getSituacion().getCodigo())) {
-							beanUtilNotNull.copyProperty(datosComunidad, "situacionCodigo", activo.getComunidadPropietarios().getSituacion().getCodigo());
-						}
-					}
 					
-					
-				}
 			}
 			
 			if(!Checks.esNulo(activo) && activoDao.isActivoMatriz(activo.getId())) {	

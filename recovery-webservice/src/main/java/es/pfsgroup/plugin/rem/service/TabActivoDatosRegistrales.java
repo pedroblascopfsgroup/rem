@@ -132,63 +132,28 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 	public DtoActivoDatosRegistrales getTabData(Activo activo) throws IllegalAccessException, InvocationTargetException {
 
 		DtoActivoDatosRegistrales activoDto = new DtoActivoDatosRegistrales();
-		boolean esUA = activoDao.isUnidadAlquilable(activo.getId());
-		ActivoAgrupacion agrupacion = activoDao.getAgrupacionPAByIdActivo(activo.getId());
-		Activo activoMatriz = null;
-		if (!Checks.esNulo(agrupacion)) {
-			activoMatriz = activoAgrupacionActivoDao.getActivoMatrizByIdAgrupacion(agrupacion.getId());
-		}
+
 				
 		BeanUtils.copyProperties(activoDto, activo);
-		beanUtilNotNull.copyProperty(activoDto, "unidadAlquilable", esUA);
-		if(esUA && !Checks.esNulo(activoMatriz)) {
-			if (!Checks.esNulo(activo.getInfoRegistral())) {
-				BeanUtils.copyProperty(activoDto, "superficieUtil" , activo.getInfoRegistral().getSuperficieUtil());
-				BeanUtils.copyProperty(activoDto, "superficieElementosComunes" , activo.getInfoRegistral().getSuperficieElementosComunes());
-				BeanUtils.copyProperty(activoDto, "superficieParcela" , activo.getInfoRegistral().getSuperficieParcela());
-			}
-		}else {
-			if (activo.getInfoRegistral() != null) {
-				BeanUtils.copyProperties(activoDto, activo.getInfoRegistral());
-			}
+
+		if (activo.getInfoRegistral() != null) {
+			BeanUtils.copyProperties(activoDto, activo.getInfoRegistral());
 		}
 		
-		if(esUA) {
-			if (activoMatriz.getAdjNoJudicial() != null) {
-				BeanUtils.copyProperties(activoDto, activoMatriz.getAdjNoJudicial());
-			}
-		}else {
-			if (activo.getAdjNoJudicial() != null) {
-				BeanUtils.copyProperties(activoDto, activo.getAdjNoJudicial());
-			}
+		if (activo.getAdjNoJudicial() != null) {
+			BeanUtils.copyProperties(activoDto, activo.getAdjNoJudicial());
 		}
 		
-		if(esUA) {
-			if (!Checks.estaVacio(activoMatriz.getPdvs())) {
-				BeanUtils.copyProperties(activoDto, activoMatriz.getPdvs().get(0));
-			}
-		}else {
-			if (!Checks.estaVacio(activo.getPdvs())) {
+		if (!Checks.estaVacio(activo.getPdvs())) {
 				BeanUtils.copyProperties(activoDto, activo.getPdvs().get(0));
-			}
 		}
 		
-		if(esUA) {
-			if(activoMatriz.getTitulo() != null) {
-				BeanUtils.copyProperties(activoDto, activoMatriz.getTitulo());
-				if (activoMatriz.getTitulo().getEstado() != null) {
-					if (activoMatriz.getTitulo().getEstado() != null) {
-						BeanUtils.copyProperty(activoDto, "estadoTitulo", activoMatriz.getTitulo().getEstado().getCodigo());
-					}
-				}
-			}
-		}else {
-			if (activo.getTitulo() != null) {
-				BeanUtils.copyProperties(activoDto, activo.getTitulo());
+
+		if (activo.getTitulo() != null) {
+			BeanUtils.copyProperties(activoDto, activo.getTitulo());
+			if (activo.getTitulo().getEstado() != null) {
 				if (activo.getTitulo().getEstado() != null) {
-					if (activo.getTitulo().getEstado() != null) {
-						BeanUtils.copyProperty(activoDto, "estadoTitulo", activo.getTitulo().getEstado().getCodigo());
-					}
+					BeanUtils.copyProperty(activoDto, "estadoTitulo", activo.getTitulo().getEstado().getCodigo());
 				}
 			}
 		}
@@ -232,53 +197,6 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 				
 			}
 		
-		if(esUA) {
-			if (!Checks.esNulo(activoMatriz.getAdjJudicial())) {
-				
-				BeanUtils.copyProperties(activoDto, activoMatriz.getAdjJudicial());
-				
-				if (!Checks.esNulo(activoMatriz.getAdjJudicial().getAdjudicacionBien())) {
-					BeanUtils.copyProperties(activoDto, activoMatriz.getAdjJudicial().getAdjudicacionBien());
-					
-					if(Checks.esNulo(activoMatriz.getAdjJudicial().getAdjudicacionBien().getLanzamientoNecesario())){
-						activoDto.setLanzamientoNecesario(null);
-					}else{
-						if(activoMatriz.getAdjJudicial().getAdjudicacionBien().getLanzamientoNecesario()){
-							activoDto.setLanzamientoNecesario(1);
-							activoApi.calcularFechaTomaPosesion(activoMatriz);
-						}
-						else{
-							activoDto.setLanzamientoNecesario(0);
-							activoApi.calcularFechaTomaPosesion(activoMatriz);
-						}
-					}
-	
-					if (!Checks.esNulo(activoMatriz.getAdjJudicial().getAdjudicacionBien().getEntidadAdjudicataria())) {
-						BeanUtils.copyProperty(activoDto, "entidadAdjudicatariaCodigo", activoMatriz.getAdjJudicial().getAdjudicacionBien().getEntidadAdjudicataria().getCodigo());
-					}
-					
-					if(!Checks.esNulo(activoMatriz.getAdjJudicial().getAdjudicacionBien().getResolucionMoratoria())){
-						BeanUtils.copyProperty(activoDto, "resolucionMoratoriaCodigo", activoMatriz.getAdjJudicial().getAdjudicacionBien().getResolucionMoratoria().getCodigo());
-					}	
-				}
-				
-				if (!Checks.esNulo(activoMatriz.getAdjJudicial().getEntidadEjecutante())) {
-					BeanUtils.copyProperty(activoDto, "entidadEjecutanteCodigo", activoMatriz.getAdjJudicial().getEntidadEjecutante().getCodigo());
-				}
-	
-				if (!Checks.esNulo(activoMatriz.getAdjJudicial().getJuzgado())) {
-					BeanUtils.copyProperty(activoDto, "tipoJuzgadoCodigo", activoMatriz.getAdjJudicial().getJuzgado().getCodigo());
-				}
-				
-				if (!Checks.esNulo(activoMatriz.getAdjJudicial().getPlazaJuzgado())) {
-					BeanUtils.copyProperty(activoDto, "tipoPlazaCodigo", activoMatriz.getAdjJudicial().getPlazaJuzgado().getCodigo());
-				}
-				
-				if (!Checks.esNulo(activoMatriz.getAdjJudicial().getEstadoAdjudicacion())) {
-					BeanUtils.copyProperty(activoDto, "estadoAdjudicacionCodigo", activoMatriz.getAdjJudicial().getEstadoAdjudicacion().getCodigo());
-				}
-			}
-		}else {
 			if (!Checks.esNulo(activo.getAdjJudicial())) {
 				
 				BeanUtils.copyProperties(activoDto, activo.getAdjJudicial());
@@ -286,47 +204,46 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 				if (!Checks.esNulo(activo.getAdjJudicial().getAdjudicacionBien())) {
 					BeanUtils.copyProperties(activoDto, activo.getAdjJudicial().getAdjudicacionBien());
 					
-					if(Checks.esNulo(activo.getAdjJudicial().getAdjudicacionBien().getLanzamientoNecesario())){
-						activoDto.setLanzamientoNecesario(null);
-					}else{
-						if(activo.getAdjJudicial().getAdjudicacionBien().getLanzamientoNecesario()){
-							activoDto.setLanzamientoNecesario(1);
-							activoApi.calcularFechaTomaPosesion(activo);
-						}
-						else{
-							activoDto.setLanzamientoNecesario(0);
-							activoApi.calcularFechaTomaPosesion(activo);
-						}
+				if(Checks.esNulo(activo.getAdjJudicial().getAdjudicacionBien().getLanzamientoNecesario())){
+					activoDto.setLanzamientoNecesario(null);
+				}else{
+					if(activo.getAdjJudicial().getAdjudicacionBien().getLanzamientoNecesario()){
+						activoDto.setLanzamientoNecesario(1);
+						activoApi.calcularFechaTomaPosesion(activo);
 					}
+					else{
+						activoDto.setLanzamientoNecesario(0);
+						activoApi.calcularFechaTomaPosesion(activo);
+					}
+				}
 	
-					if (!Checks.esNulo(activo.getAdjJudicial().getAdjudicacionBien().getEntidadAdjudicataria())) {
-						BeanUtils.copyProperty(activoDto, "entidadAdjudicatariaCodigo", activo.getAdjJudicial().getAdjudicacionBien().getEntidadAdjudicataria().getCodigo());
-					}
+				if (!Checks.esNulo(activo.getAdjJudicial().getAdjudicacionBien().getEntidadAdjudicataria())) {
+					BeanUtils.copyProperty(activoDto, "entidadAdjudicatariaCodigo", activo.getAdjJudicial().getAdjudicacionBien().getEntidadAdjudicataria().getCodigo());
+				}
 					
-					if(!Checks.esNulo(activo.getAdjJudicial().getAdjudicacionBien().getResolucionMoratoria())){
-						BeanUtils.copyProperty(activoDto, "resolucionMoratoriaCodigo", activo.getAdjJudicial().getAdjudicacionBien().getResolucionMoratoria().getCodigo());
-					}
-						
-				}
-				
-				if (!Checks.esNulo(activo.getAdjJudicial().getEntidadEjecutante())) {
-					BeanUtils.copyProperty(activoDto, "entidadEjecutanteCodigo", activo.getAdjJudicial().getEntidadEjecutante().getCodigo());
-				}
-	
-				if (!Checks.esNulo(activo.getAdjJudicial().getJuzgado())) {
-					BeanUtils.copyProperty(activoDto, "tipoJuzgadoCodigo", activo.getAdjJudicial().getJuzgado().getCodigo());
-				}
-				
-				if (!Checks.esNulo(activo.getAdjJudicial().getPlazaJuzgado())) {
-					BeanUtils.copyProperty(activoDto, "tipoPlazaCodigo", activo.getAdjJudicial().getPlazaJuzgado().getCodigo());
-				}
-				
-				if (!Checks.esNulo(activo.getAdjJudicial().getEstadoAdjudicacion())) {
-					BeanUtils.copyProperty(activoDto, "estadoAdjudicacionCodigo", activo.getAdjJudicial().getEstadoAdjudicacion().getCodigo());
-	
+				if(!Checks.esNulo(activo.getAdjJudicial().getAdjudicacionBien().getResolucionMoratoria())){
+					BeanUtils.copyProperty(activoDto, "resolucionMoratoriaCodigo", activo.getAdjJudicial().getAdjudicacionBien().getResolucionMoratoria().getCodigo());
 				}
 				
 			}
+			
+			if (!Checks.esNulo(activo.getAdjJudicial().getEntidadEjecutante())) {
+				BeanUtils.copyProperty(activoDto, "entidadEjecutanteCodigo", activo.getAdjJudicial().getEntidadEjecutante().getCodigo());
+			}
+
+			if (!Checks.esNulo(activo.getAdjJudicial().getJuzgado())) {
+				BeanUtils.copyProperty(activoDto, "tipoJuzgadoCodigo", activo.getAdjJudicial().getJuzgado().getCodigo());
+			}
+			
+			if (!Checks.esNulo(activo.getAdjJudicial().getPlazaJuzgado())) {
+				BeanUtils.copyProperty(activoDto, "tipoPlazaCodigo", activo.getAdjJudicial().getPlazaJuzgado().getCodigo());
+			}
+			
+			if (!Checks.esNulo(activo.getAdjJudicial().getEstadoAdjudicacion())) {
+				BeanUtils.copyProperty(activoDto, "estadoAdjudicacionCodigo", activo.getAdjJudicial().getEstadoAdjudicacion().getCodigo());
+
+			}
+				
 		}
 		
 		ActivoBancario activoBancario = activoApi.getActivoBancarioByIdActivo(activo.getId());
@@ -336,10 +253,6 @@ public class TabActivoDatosRegistrales implements TabActivoService {
 		}
 		
 		Filter filterActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", activo.getId());
-		
-		if(esUA) {
-			filterActivo = genericDao.createFilter(FilterType.EQUALS, "activo.id", activoMatriz.getId());
-		}
 		
 		List<ActivoCalificacionNegativa> motivosCalificacionNegativa = genericDao.getList(ActivoCalificacionNegativa.class, filterActivo);
 		List<ActivoCalificacionNegativa> motivosVigentes = new ArrayList<ActivoCalificacionNegativa>();
